@@ -17,7 +17,6 @@ import { getAuthorizationToken } from '../../../utils/codeless/getAuthorizationT
 import { sendAzureRequest } from '../../../utils/requestUtils';
 import type { IAzureConnectorsContext } from '../azureConnectorWizard';
 import { OpenMonitoringViewBase } from './openMonitoringViewBase';
-import type { ServiceClientCredentials } from '@azure/ms-rest-js';
 import { getTriggerName, HTTP_METHODS } from '@microsoft/logic-apps-shared';
 import type { IActionContext } from '@microsoft/vscode-azext-utils';
 import type { IDesignerPanelMetadata, IWorkflowFileContent } from '@microsoft/vscode-extension-logic-apps';
@@ -63,7 +62,7 @@ export default class openMonitoringViewForAzureResource extends OpenMonitoringVi
     this.panelMetadata = await this.getDesignerPanelMetadata();
 
     this.baseUrl = getWorkflowManagementBaseURI(this.node);
-    const accessToken = await getAuthorizationToken(this.node.credentials);
+    const accessToken = await this.node.subscription.credentials.getToken();
 
     this.panel.webview.html = await this.getWebviewContent({
       connectionsData: this.panelMetadata.connectionsData,
@@ -157,8 +156,7 @@ export default class openMonitoringViewForAzureResource extends OpenMonitoringVi
   }
 
   private async getDesignerPanelMetadata(): Promise<IDesignerPanelMetadata> {
-    const credentials: ServiceClientCredentials = this.node.credentials;
-    const accessToken: string = await getAuthorizationToken(credentials);
+    const accessToken: string = await getAuthorizationToken();
 
     return {
       panelId: this.panelName,

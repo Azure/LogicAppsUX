@@ -12,6 +12,10 @@ import {
   useAllSettingsValidationErrors,
   useWorkflowParameterValidationErrors,
   openPanel,
+  onRedoClick,
+  onUndoClick,
+  useCanUndo,
+  useCanRedo,
 } from '@microsoft/logic-apps-designer';
 import { EditorLanguage, RUN_AFTER_COLORS } from '@microsoft/logic-apps-shared';
 import { useMemo, useState } from 'react';
@@ -103,6 +107,8 @@ export const PseudoCommandBar = () => {
         onClick={() => dispatch(openPanel({ panelMode: 'Error' }))}
         disabled={!haveErrors}
       />
+      <ActionButton iconProps={{ iconName: 'Undo' }} text="Undo" onClick={() => dispatch(onUndoClick())} disabled={!useCanUndo()} />
+      <ActionButton iconProps={{ iconName: 'Redo' }} text="Redo" onClick={() => dispatch(onRedoClick())} disabled={!useCanRedo()} />
 
       {/* Code view modal */}
       <Modal

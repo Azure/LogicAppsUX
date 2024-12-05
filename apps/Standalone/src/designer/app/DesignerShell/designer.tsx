@@ -20,16 +20,18 @@ export const DesignerWrapper = () => {
   return (
     <ReactQueryProvider>
       <LoadWhenArmTokenIsLoaded>
-        <SettingsBox />
-        {isLocal ? (
-          <LocalDesigner />
-        ) : resourcePath ? (
-          hostingPlan === 'consumption' ? (
-            <LogicAppsDesignerConsumption />
-          ) : (
-            <LogicAppsDesignerStandard />
-          )
-        ) : null}
+        <div style={{ height: '100vh' }}>
+          <SettingsBox />
+          {isLocal ? (
+            <LocalDesigner />
+          ) : resourcePath ? (
+            hostingPlan === 'consumption' ? (
+              <LogicAppsDesignerConsumption />
+            ) : (
+              <LogicAppsDesignerStandard />
+            )
+          ) : null}
+        </div>
       </LoadWhenArmTokenIsLoaded>
     </ReactQueryProvider>
   );

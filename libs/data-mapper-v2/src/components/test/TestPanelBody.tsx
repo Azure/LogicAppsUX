@@ -8,8 +8,10 @@ import { type EditorContentChangedEventArgs, MonacoEditor } from '@microsoft/des
 import { EditorLanguage, SchemaFileFormat } from '@microsoft/logic-apps-shared';
 import { updateTestInput } from '../../core/state/PanelSlice';
 
-type TestPanelBodyProps = {};
+const sampleDataPlaceHolderEditorId = 'sample-data-editor-placeholder';
+const resultPlaceHolderEditorId = 'result-editor-placeholder';
 
+type TestPanelBodyProps = {};
 export const TestPanelBody = (_props: TestPanelBodyProps) => {
   const intl = useIntl();
   const styles = useStyles();
@@ -21,14 +23,14 @@ export const TestPanelBody = (_props: TestPanelBodyProps) => {
 
   const stringResources = useMemo(
     () => ({
-      SAMPLE_TEST_DATA: intl.formatMessage({
-        defaultMessage: 'Sample test data',
-        id: 'zR2qGG',
-        description: 'Sample test data for testing',
+      SAMPLE_DATA: intl.formatMessage({
+        defaultMessage: 'Sample data',
+        id: 'nRjpgk',
+        description: 'Sample data for testing',
       }),
       SAMPLE_TEST_DATA_PLACEHOLDER: intl.formatMessage({
-        defaultMessage: 'Paste your sample data to test the mapping.',
-        id: '33U26u',
+        defaultMessage: 'Paste your sample data to test the mapping',
+        id: 'S5kFNK',
         description: 'Sample test data placeholder',
       }),
       RESULT: intl.formatMessage({
@@ -37,37 +39,72 @@ export const TestPanelBody = (_props: TestPanelBodyProps) => {
         description: 'Result',
       }),
       RESULT_PLACEHOLDER: intl.formatMessage({
-        defaultMessage: 'Paste and Test sample data to get the latest results',
-        id: 'iKzxth',
+        defaultMessage: 'Test your map to see a result',
+        id: 'UVr0mL',
         description: 'Placeholder result',
       }),
     }),
     [intl]
   );
 
+  const updatePlaceHolder = useCallback((id: string, value?: string) => {
+    const placeholder = document.getElementById(id);
+    if (placeholder) {
+      placeholder.style.display = value ? 'none' : 'block';
+    }
+  }, []);
+
   const onSampleDataChange = useCallback(
     (e: EditorContentChangedEventArgs) => {
-      dispatch(updateTestInput(e.value ?? ''));
+      const value = e?.value ?? '';
+      dispatch(updateTestInput(value));
+      updatePlaceHolder(sampleDataPlaceHolderEditorId, value);
     },
-    [dispatch]
+    [dispatch, updatePlaceHolder]
   );
 
-  const error = useMemo(() => {
-    let error: any;
+  const onSampleDataEditorLoaded = useCallback(() => {
+    updatePlaceHolder(sampleDataPlaceHolderEditorId, testMapInput);
+  }, [testMapInput, updatePlaceHolder]);
 
+  const onResultContentChange = useCallback(
+    (e: EditorContentChangedEventArgs) => {
+      updatePlaceHolder(resultPlaceHolderEditorId, e?.value ?? '');
+    },
+    [updatePlaceHolder]
+  );
+
+  const onResultEditorLoaded = useCallback(() => {
+    updatePlaceHolder(resultPlaceHolderEditorId, testMapInput);
+  }, [testMapInput, updatePlaceHolder]);
+
+  const content = useMemo(() => {
+    let content: any;
+
+    // If there's an error, show the error message
     if (testMapOutputError) {
-      error = testMapOutputError;
+      content = testMapOutputError;
     }
 
-    if (testMapOutput?.statusCode && testMapOutput?.statusCode >= 300) {
-      error = testMapOutput?.outputInstance?.$content;
+    // If there's a response, show the response content
+    if (!content && testMapOutput?.outputInstance?.$content) {
+      content = testMapOutput?.outputInstance?.$content;
     }
 
-    if (error) {
+    // If there's neither of the above, show the status code and status text
+    if (!content && testMapOutput?.statusCode) {
+      content = testMapOutput?.statusCode;
+
+      if (testMapOutput?.statusText) {
+        content = `${content} - ${testMapOutput?.statusText}`;
+      }
+    }
+
+    if (content) {
       try {
-        return JSON.stringify(JSON.parse(error), null, 2);
+        return JSON.stringify(JSON.parse(content), null, 2);
       } catch (_err) {
-        return error;
+        return content;
       }
     }
 
@@ -79,40 +116,50 @@ export const TestPanelBody = (_props: TestPanelBodyProps) => {
       <Accordion multiple={true} collapsible={true} defaultOpenItems={['sample-data', 'result']}>
         <AccordionItem value={'sample-data'}>
           <AccordionHeader className={styles.accordianHeader} expandIconPosition={'end'}>
-            {stringResources.SAMPLE_TEST_DATA}
+            {stringResources.SAMPLE_DATA}
           </AccordionHeader>
-          <AccordionPanel>
+          <AccordionPanel className={styles.accordianPanel}>
             <MonacoEditor
               language={sourceSchema?.type === SchemaFileFormat.JSON ? EditorLanguage.json : EditorLanguage.xml}
               value={testMapInput ?? ''}
               className={styles.editorStyle}
               lineNumbers={'on'}
-              scrollbar={{ horizontal: 'hidden', vertical: 'auto' }}
+              scrollbar={{ horizontal: 'hidden', vertical: 'visible' }}
               height="200px"
+              width="100%"
               wordWrap="on"
               wrappingIndent="same"
               onContentChanged={onSampleDataChange}
+              onEditorLoaded={onSampleDataEditorLoaded}
             />
+            <div id={sampleDataPlaceHolderEditorId} className={styles.monacoEditorPlaceHolder}>
+              {stringResources.SAMPLE_TEST_DATA_PLACEHOLDER}
+            </div>
           </AccordionPanel>
         </AccordionItem>
         <AccordionItem value={'result'}>
           <AccordionHeader className={styles.accordianHeader} expandIconPosition={'end'}>
             {stringResources.RESULT}
           </AccordionHeader>
-          <AccordionPanel>
+          <AccordionPanel className={styles.accordianPanel}>
             <MonacoEditor
               language={
-                error ? EditorLanguage.json : targetSchema?.type === SchemaFileFormat.JSON ? EditorLanguage.json : EditorLanguage.xml
+                content ? EditorLanguage.json : targetSchema?.type === SchemaFileFormat.JSON ? EditorLanguage.json : EditorLanguage.xml
               }
-              value={error ?? testMapOutput?.outputInstance?.$content ?? ''}
+              value={content}
               className={styles.editorStyle}
               lineNumbers={'on'}
-              scrollbar={{ horizontal: 'hidden', vertical: 'auto' }}
+              scrollbar={{ horizontal: 'hidden', vertical: 'visible' }}
               height="200px"
+              width="100%"
               wordWrap="on"
-              wrappingIndent="same"
+              onContentChanged={onResultContentChange}
+              onEditorLoaded={onResultEditorLoaded}
               readOnly
             />
+            <div id={resultPlaceHolderEditorId} className={styles.monacoEditorPlaceHolder}>
+              {stringResources.RESULT_PLACEHOLDER}
+            </div>
           </AccordionPanel>
         </AccordionItem>
       </Accordion>

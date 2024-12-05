@@ -12,7 +12,7 @@ export interface FilePickerPopoverItemProps {
 
 export const FilePickerPopoverItem: React.FC<FilePickerPopoverItemProps> = (props) => {
   const { file, handleFolderNavigation, handleItemSelected } = props;
-  const { displayName, isParent, value } = file;
+  const { displayName, id, isParent } = file;
 
   const intl = useIntl();
   const navMessage = intl.formatMessage(
@@ -28,7 +28,7 @@ export const FilePickerPopoverItem: React.FC<FilePickerPopoverItemProps> = (prop
 
   if (isParent) {
     return (
-      <MenuSplitGroup className="msla-filepicker-item-split" key={`FilePicker.folder.${value.Id}`}>
+      <MenuSplitGroup className="msla-filepicker-item-split" key={`FilePicker.folder.${id}`}>
         <MenuItem className="msla-filepicker-item" icon={<Folder28Regular />} onClick={() => handleItemSelected(file)}>
           {displayName}
         </MenuItem>
@@ -45,7 +45,7 @@ export const FilePickerPopoverItem: React.FC<FilePickerPopoverItemProps> = (prop
     <MenuItem
       className="msla-filepicker-item"
       icon={<Document28Regular />}
-      key={`FilePicker.item.${value.Id}`}
+      key={`FilePicker.item.${id}`}
       onClick={() => handleItemSelected(file)}
     >
       {displayName}

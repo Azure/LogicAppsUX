@@ -1,16 +1,15 @@
 import type { AppDispatch, RootState } from '../../../../core';
 import { addEdgeFromRunAfterOperation, removeEdgeFromRunAfterOperation } from '../../../../core/actions/bjsworkflow/runafter';
 import { useOperationVisuals } from '../../../../core/state/operation/operationSelector';
-import { useSelectedNodeId } from '../../../../core/state/panel/panelSelectors';
-import { useNodeDisplayName } from '../../../../core/state/workflow/workflowSelectors';
-import { Button, Input, Menu, MenuButton, MenuItemCheckbox, MenuList, MenuPopover, MenuTrigger } from '@fluentui/react-components';
+import { useOperationPanelSelectedNodeId } from '../../../../core/state/panel/panelSelectors';
+import { useNodeDisplayName, useRootTriggerId } from '../../../../core/state/workflow/workflowSelectors';
+import { Button, Input, Menu, MenuButton, MenuItemCheckbox, MenuList, MenuPopover, MenuTrigger, Text } from '@fluentui/react-components';
 import { Add20Filled, Add20Regular, DismissRegular, Search24Regular, bundleIcon } from '@fluentui/react-icons';
 import { LogEntryLevel, LoggerService, getRecordEntry, type LogicAppsV2 } from '@microsoft/logic-apps-shared';
 import Fuse from 'fuse.js';
 import { useMemo, useState } from 'react';
 import { useIntl } from 'react-intl';
 import { useDispatch, useSelector } from 'react-redux';
-import { Label } from '@microsoft/designer-ui';
 
 const AddIcon = bundleIcon(Add20Filled, Add20Regular);
 const getSuccessorNodes = (state: RootState, nodeId: string) => {
@@ -41,7 +40,7 @@ const ActionMenuItem = ({ id, readOnly }: { id: string; readOnly: boolean }) => 
       tabIndex={1}
       disabled={readOnly}
     >
-      <Label style={{ overflow: 'hidden' }} text={actionName} />
+      <Text style={{ overflow: 'hidden' }}>{actionName}</Text>
     </MenuItemCheckbox>
   );
 };
@@ -49,8 +48,9 @@ const ActionMenuItem = ({ id, readOnly }: { id: string; readOnly: boolean }) => 
 export const RunAfterActionSelector = ({ readOnly }: { readOnly: boolean }) => {
   const intl = useIntl();
   const [searchText, setSearchText] = useState<string>('');
-  const currentNodeId = useSelectedNodeId();
+  const currentNodeId = useOperationPanelSelectedNodeId();
   const currentNodeRunAfter = useSelector((state: RootState) => getRecordEntry(state.workflow.operations, currentNodeId));
+  const rootTriggerId = useRootTriggerId();
   const actions = useSelector((state: RootState) => {
     if (!currentNodeRunAfter) {
       return [];
@@ -77,9 +77,14 @@ export const RunAfterActionSelector = ({ readOnly }: { readOnly: boolean }) => {
   });
 
   const selectedValues = useSelector((state: RootState) => {
-    return {
-      actions: Object.keys((getRecordEntry(state.workflow.operations, currentNodeId) as LogicAppsV2.ActionDefinition)?.runAfter ?? {}),
-    };
+    const actions = Object.keys((getRecordEntry(state.workflow.operations, currentNodeId) as LogicAppsV2.ActionDefinition)?.runAfter ?? {});
+
+    // If running after the trigger, add the trigger id as dummy data
+    if (actions.length === 0) {
+      actions.push(rootTriggerId);
+    }
+
+    return { actions };
   });
 
   const dispatch = useDispatch<AppDispatch>();
@@ -139,7 +144,7 @@ export const RunAfterActionSelector = ({ readOnly }: { readOnly: boolean }) => {
       }}
     >
       <MenuTrigger>
-        <MenuButton icon={<AddIcon />} size="large" appearance="subtle" style={{ padding: '8px', marginTop: '-8px' }}>
+        <MenuButton icon={<AddIcon />} appearance="subtle" style={{ padding: '8px', marginTop: '-8px' }}>
           {RUN_AFTER_CONFIGURATION_SELECT_ACTIONS_TITLE}
         </MenuButton>
       </MenuTrigger>

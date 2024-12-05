@@ -4,11 +4,15 @@ import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
 import type { RootState } from './store';
 import type { FilterObject } from '@microsoft/designer-ui';
 
+export const templatesCountPerPage = 25;
+const initialPageNum = 0;
+
 export interface ManifestState {
   availableTemplateNames?: ManifestName[];
   filteredTemplateNames?: ManifestName[];
   availableTemplates?: Record<ManifestName, Template.Manifest>;
   filters: {
+    pageNum: number;
     keyword?: string;
     sortKey: string;
     connectors: FilterObject[] | undefined;
@@ -21,6 +25,7 @@ type ManifestName = string;
 export const initialManifestState: ManifestState = {
   availableTemplateNames: undefined,
   filters: {
+    pageNum: initialPageNum,
     sortKey: 'a-to-z',
     connectors: undefined,
     detailFilters: {},
@@ -66,14 +71,19 @@ export const manifestSlice = createSlice({
         state.filteredTemplateNames = action.payload;
       }
     },
+    setPageNum: (state, action: PayloadAction<number>) => {
+      state.filters.pageNum = action.payload;
+    },
     setKeywordFilter: (state, action: PayloadAction<string | undefined>) => {
       state.filters.keyword = action.payload;
+      state.filters.pageNum = initialPageNum;
     },
     setSortKey: (state, action: PayloadAction<string>) => {
       state.filters.sortKey = action.payload;
     },
     setConnectorsFilters: (state, action: PayloadAction<FilterObject[] | undefined>) => {
       state.filters.connectors = action.payload;
+      state.filters.pageNum = initialPageNum;
     },
     setDetailsFilters: (
       state,
@@ -89,6 +99,7 @@ export const manifestSlice = createSlice({
         delete currentDetailFilters[action.payload.filterName];
       }
       state.filters.detailFilters = currentDetailFilters;
+      state.filters.pageNum = initialPageNum;
     },
   },
   extraReducers: (builder) => {
@@ -116,6 +127,7 @@ export const {
   setavailableTemplatesNames,
   setavailableTemplates,
   setFilteredTemplateNames,
+  setPageNum,
   setKeywordFilter,
   setSortKey,
   setConnectorsFilters,

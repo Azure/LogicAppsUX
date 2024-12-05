@@ -38,8 +38,15 @@ export class StandardConnectorService extends BaseConnectorService {
     managedIdentityProperties?: ManagedIdentityRequestProperties
   ): Promise<any> {
     const { baseUrl, apiHubServiceDetails } = this.options;
-    const dynamicBaseUrl = isArmResourceId(connectorId) ? apiHubServiceDetails?.baseUrl ?? baseUrl : baseUrl;
-    return this._executeAzureDynamicApi(pathCombine(dynamicBaseUrl, connectionId), parameters, managedIdentityProperties);
+    let dynamicUrl: string;
+    let apiVersion = this.options.apiVersion;
+    if (isArmResourceId(connectorId)) {
+      dynamicUrl = managedIdentityProperties ? baseUrl : pathCombine(apiHubServiceDetails?.baseUrl as string, connectionId);
+      apiVersion = managedIdentityProperties ? apiVersion : (apiHubServiceDetails?.apiVersion as string);
+    } else {
+      dynamicUrl = baseUrl;
+    }
+    return this._executeAzureDynamicApi(dynamicUrl, apiVersion, parameters, managedIdentityProperties);
   }
 
   async getListDynamicValues(
@@ -128,7 +135,7 @@ export class StandardConnectorService extends BaseConnectorService {
           'x-ms-logicapps-proxy-path': `/runtime/webhooks/workflow/api/management/operationGroups/${connectorId
             .split('/')
             .slice(-1)}/operations/${dynamicOperation}/dynamicInvoke`,
-          'x-ms-logicapps-proxy-method': 'GET',
+          'x-ms-logicapps-proxy-method': 'POST',
         },
         content: { parameters: invokeParameters, configuration },
       });

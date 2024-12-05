@@ -72,7 +72,6 @@ import {
   isLegacyDynamicValuesExtension,
   ParameterLocations,
   ExpressionType,
-  ExtensionProperties,
   createEx,
   convertToStringLiteral,
   decodePropertySegment,
@@ -117,11 +116,11 @@ import {
   isRecordNotEmpty,
   isBodySegment,
   canStringBeConverted,
-  isStringLiteral,
+  splitAtIndex,
+  unescapeString,
 } from '@microsoft/logic-apps-shared';
 import type {
   AuthProps,
-  ComboboxItem,
   DictionaryEditorItemProps,
   DropdownItem,
   FloatingActionMenuOutputViewModel,
@@ -143,7 +142,6 @@ import {
   GroupType,
   AuthenticationType,
   ColumnMode,
-  DynamicCallStatus,
   ValueSegmentType,
   TokenType,
   AuthenticationOAuthType,
@@ -210,6 +208,20 @@ export interface RepetitionReference {
   repetitionPath?: string; // NOTE: the full output path for repetition value if it coming from output
 }
 
+export interface UpdateParameterAndDependenciesPayload {
+  nodeId: string;
+  groupId: string;
+  parameterId: string;
+  properties: Partial<ParameterInfo>;
+  isTrigger: boolean;
+  operationInfo: NodeOperation;
+  connectionReference: ConnectionReference;
+  nodeInputs: NodeInputs;
+  dependencies: NodeDependencies;
+  operationDefinition?: any;
+  skipStateSave?: boolean;
+}
+
 export function getParametersSortedByVisibility(parameters: ParameterInfo[]): ParameterInfo[] {
   return parameters.sort((a, b) => {
     // Sort by dynamic data dependencies
@@ -261,7 +273,7 @@ export function addRecurrenceParametersInGroup(
     return;
   }
 
-  const recurrenceParameters = getRecurrenceParameters(recurrence, definition);
+  const { parameters: recurrenceParameters, rawParameters } = getRecurrenceParameters(recurrence, definition);
 
   if (recurrenceParameters.length) {
     const intl = getIntl();
@@ -278,6 +290,7 @@ export function addRecurrenceParametersInGroup(
           description: 'Recurrence parameter group title',
         }),
         parameters: recurrenceParameters,
+        rawInputs: rawParameters,
       };
     }
   }
@@ -351,7 +364,7 @@ export function createParameterInfo(
   const parameterInfo: ParameterInfo = {
     alternativeKey: parameter.alternativeKey,
     id: guid(),
-    dynamicData: parameter.dynamicValues ? { status: DynamicCallStatus.NOTSTARTED } : undefined,
+    dynamicData: parameter.dynamicValues ? { status: DynamicLoadStatus.NOTSTARTED } : undefined,
     editor,
     editorOptions,
     editorViewModel,
@@ -400,11 +413,11 @@ export function getParameterEditorProps(
   _shouldIgnoreDefaultValue: boolean,
   nodeMetadata?: Record<string, any>
 ): ParameterEditorProps {
-  const { dynamicValues, type, itemSchema, visibility, value, enum: schemaEnum, format } = parameter;
+  const { dynamicValues, type, itemSchema, visibility, value, format } = parameter;
   let { editor, editorOptions, schema } = parameter;
   let editorViewModel: any;
   if (editor === constants.EDITOR.DICTIONARY) {
-    editorViewModel = toDictionaryViewModel(value);
+    editorViewModel = toDictionaryViewModel(value, editorOptions);
   } else if (editor === constants.EDITOR.TABLE) {
     editorViewModel = toTableViewModel(value, editorOptions);
   } else if (editor === constants.EDITOR.AUTHENTICATION) {
@@ -459,7 +472,7 @@ export function getParameterEditorProps(
     editorOptions = {
       ...editorOptions,
       serialization: { ...editorOptions?.serialization, separator: editorOptions?.titleSeparator },
-      options: dropdownOptions.length > 0 ? dropdownOptions : modifiedOptions ?? [],
+      options: dropdownOptions.length > 0 ? dropdownOptions : (modifiedOptions ?? []),
     };
   } else if (editor === constants.EDITOR.FLOATINGACTIONMENU && editorOptions?.menuKind === FloatingActionMenuKind.outputs) {
     editorViewModel = toFloatingActionMenuOutputsViewModel(value);
@@ -476,38 +489,6 @@ export function getParameterEditorProps(
       editor = constants.EDITOR.ARRAY;
       editorViewModel = { ...toArrayViewModelSchema(itemSchema), uncastedValue: parameterValue };
       schema = { ...schema, ...{ 'x-ms-editor': editor } };
-    } else if (
-      (schemaEnum || schema?.enum || (schemaEnum && schema?.[ExtensionProperties.CustomEnum])) &&
-      !equals(visibility, Visibility.Internal)
-    ) {
-      editor = constants.EDITOR.COMBOBOX;
-      schema = { ...schema, ...{ 'x-ms-editor': editor } };
-
-      let schemaEnumOptions: ComboboxItem[];
-      if (schema[ExtensionProperties.CustomEnum]) {
-        schemaEnumOptions = schema[ExtensionProperties.CustomEnum];
-      } else if (schemaEnum) {
-        schemaEnumOptions = schemaEnum.map((enumItem) => {
-          return {
-            ...enumItem,
-            value: enumItem.value?.toString(),
-            key: enumItem.displayName,
-          };
-        });
-      } else {
-        schemaEnumOptions = schema.enum.map(
-          (val: string): ComboboxItem => ({
-            displayName: val,
-            key: val,
-            value: val,
-          })
-        );
-      }
-
-      editorOptions = {
-        ...editorOptions,
-        options: schemaEnumOptions,
-      };
     } else {
       editorOptions = undefined;
     }
@@ -521,46 +502,43 @@ const containsExpression = (operand: string): boolean => {
   return operand.includes('(') && operand.includes(')');
 };
 
+export interface LoadParamteerValueFromStringOptions {
+  removeQuotesFromExpression?: boolean;
+  trimExpression?: boolean;
+  convertIfContainsExpression?: boolean;
+  parameterType?: string;
+}
+
 export const loadParameterValueFromString = (
   value: string,
-  removeQuotesFromExpression?: boolean,
-  trimExpression?: boolean,
-  convertIfContainsExpression?: boolean
+  options: LoadParamteerValueFromStringOptions = {
+    removeQuotesFromExpression: false,
+    trimExpression: false,
+    convertIfContainsExpression: false,
+  }
 ) => {
-  const inputParameter = convertStringToInputParameter(value, removeQuotesFromExpression, trimExpression, convertIfContainsExpression);
+  const inputParameter = convertStringToInputParameter(value, options);
   return loadParameterValue(inputParameter);
 };
 
-const convertStringToInputParameter = (
-  value: string,
-  removeQuotesFromExpression?: boolean,
-  trimExpression?: boolean,
-  convertIfContainsExpression?: boolean
-): InputParameter => {
+const convertStringToInputParameter = (value: string, options: LoadParamteerValueFromStringOptions): InputParameter => {
+  const { removeQuotesFromExpression, trimExpression, convertIfContainsExpression, parameterType } = options ?? {};
   if (typeof value !== 'string') {
-    return {
-      key: guid(),
-      name: value,
-      type: typeof value,
-      hideInUI: false,
-      value: value,
-    };
+    return { key: guid(), name: value, type: parameterType ?? typeof value, hideInUI: false, value };
   }
-  const hasExpression = containsExpression(value);
-  let newValue = value;
-  if (trimExpression) {
-    newValue = newValue.trim();
-  }
+
+  let newValue = trimExpression ? value.trim() : value;
   if (removeQuotesFromExpression) {
     newValue = removeQuotes(newValue);
   }
-  if (hasExpression && convertIfContainsExpression && !newValue.startsWith('@')) {
+  if (containsExpression(newValue) && convertIfContainsExpression && !newValue.startsWith('@')) {
     newValue = `@${newValue}`;
   }
+
   return {
     key: guid(),
     name: newValue,
-    type: 'any',
+    type: parameterType ?? constants.SWAGGER.TYPE.ANY,
     hideInUI: false,
     value: newValue,
     suppressCasting: true,
@@ -596,53 +574,58 @@ const parseArrayItemSchema = (itemSchema: any, itemPath = itemSchema?.title?.toL
 };
 
 // Create SimpleQueryBuilder Editor View Model
-const toSimpleQueryBuilderViewModel = (
+export const toSimpleQueryBuilderViewModel = (
   input: any
 ): { isOldFormat: boolean; itemValue: ValueSegment[] | undefined; isRowFormat: boolean } => {
   const advancedModeResult = { isOldFormat: true, isRowFormat: false, itemValue: undefined };
-  let operand1: ValueSegment;
-  let operand2: ValueSegment;
-  let operationLiteral: ValueSegment;
-  // default value
-  if (!input || input.length === 0) {
-    return { isOldFormat: true, isRowFormat: true, itemValue: [createLiteralValueSegment("@equals('','')")] };
-  }
 
-  if (!input.includes('@') || !input.includes(',')) {
-    return advancedModeResult;
+  if (!input || !input.includes('@') || !input.includes(',')) {
+    return input?.length === 0
+      ? { isOldFormat: true, isRowFormat: true, itemValue: [createLiteralValueSegment("@equals('','')")] }
+      : advancedModeResult;
   }
-
-  let stringValue = input;
 
   try {
+    let stringValue = input;
     let operator: string = stringValue.substring(stringValue.indexOf('@') + 1, stringValue.indexOf('('));
     const negatory = operator === 'not';
-    let endingLiteral: ValueSegment;
+
     if (negatory) {
       stringValue = stringValue.replace('@not(', '@');
-      const baseOperator = stringValue.substring(stringValue.indexOf('@') + 1, stringValue.indexOf('('));
-      operator = `not${baseOperator}`;
-      operationLiteral = createLiteralValueSegment(`@not(${baseOperator}(`);
-      endingLiteral = createLiteralValueSegment('))');
-    } else {
-      operationLiteral = createLiteralValueSegment(`@${operator}(`);
-      endingLiteral = createLiteralValueSegment(')');
+      operator = `not${stringValue.substring(stringValue.indexOf('@') + 1, stringValue.indexOf('('))}`;
     }
 
-    // if operator is not of the dropdownlist, it cannot be converted into row format
+    const operationLiteral = createLiteralValueSegment(`@${operator}(`);
+    const endingLiteral = createLiteralValueSegment(')');
+
     if (!Object.values(RowDropdownOptions).includes(operator as RowDropdownOptions)) {
       return advancedModeResult;
     }
-    const operandSubstring = stringValue.substring(stringValue.indexOf('(') + 1, nthLastIndexOf(stringValue, ')', negatory ? 2 : 1));
-    const operand1String = removeQuotes(operandSubstring.substring(0, getOuterMostCommaIndex(operandSubstring)).trim());
-    const operand2String = removeQuotes(operandSubstring.substring(getOuterMostCommaIndex(operandSubstring) + 1).trim());
-    operand1 = loadParameterValueFromString(operand1String, true, true, true)[0];
-    operand2 = loadParameterValueFromString(operand2String, true, true, true)[0];
-    const separatorLiteral: ValueSegment = createLiteralValueSegment(',');
+
+    const operandSubstring: string = stringValue.substring(
+      stringValue.indexOf('(') + 1,
+      nthLastIndexOf(stringValue, ')', negatory ? 2 : 1)
+    );
+    const [operand1String, operand2String] = splitAtIndex(operandSubstring, getOuterMostCommaIndex(operandSubstring)).map(removeQuotes);
+
     return {
       isOldFormat: true,
       isRowFormat: true,
-      itemValue: [operationLiteral, operand1, separatorLiteral, operand2, endingLiteral],
+      itemValue: [
+        operationLiteral,
+        loadParameterValueFromString(operand1String.trim(), {
+          removeQuotesFromExpression: true,
+          trimExpression: true,
+          convertIfContainsExpression: true,
+        })[0],
+        createLiteralValueSegment(','),
+        loadParameterValueFromString(operand2String.trim(), {
+          removeQuotesFromExpression: true,
+          trimExpression: true,
+          convertIfContainsExpression: true,
+        })[0],
+        endingLiteral,
+      ],
     };
   } catch {
     return advancedModeResult;
@@ -710,38 +693,46 @@ const getConditionalSelectedOption = (input: any): GroupDropdownOptions | undefi
 };
 
 function recurseConditionalItems(input: any, selectedOption?: GroupDropdownOptions): (RowItemProps | GroupItemProps)[] {
-  const output: (RowItemProps | GroupItemProps)[] = [];
-  if (selectedOption) {
-    const items = input[selectedOption];
-    items.forEach((item: any) => {
-      const condition = getConditionalSelectedOption(item);
-      if (condition) {
-        output.push({ type: GroupType.GROUP, condition: condition, items: recurseConditionalItems(item, condition) });
-      } else {
-        let not = '';
-        let dropdownVal = '';
-        if (item?.['not']) {
-          not = 'not';
-          dropdownVal = Object.keys(item?.[not])[0];
-        } else {
-          dropdownVal = Object.keys(item)[0];
-        }
-        output.push({
-          type: GroupType.ROW,
-          operator: not + dropdownVal,
-          operand1: loadParameterValueFromString(not ? item[not][dropdownVal][0] : item[dropdownVal][0], true, true, true),
-          operand2: loadParameterValueFromString(not ? item[not][dropdownVal][1] : item[dropdownVal][1], true, true, true),
-        });
-      }
-    });
+  if (!selectedOption) {
+    return [];
   }
-  return output;
+
+  return input[selectedOption].map((item: any) => {
+    const condition = getConditionalSelectedOption(item);
+
+    if (condition) {
+      return {
+        type: GroupType.GROUP,
+        condition,
+        items: recurseConditionalItems(item, condition),
+      };
+    }
+
+    const isNegated = item?.['not'];
+    const key = Object.keys(isNegated ? item['not'] : item)[0];
+    const value = isNegated ? item['not'][key] : item[key];
+
+    return {
+      type: GroupType.ROW,
+      operator: (isNegated ? 'not' : '') + key,
+      operand1: loadParameterValueFromString(value[0], {
+        removeQuotesFromExpression: true,
+        trimExpression: true,
+        convertIfContainsExpression: true,
+      }),
+      operand2: loadParameterValueFromString(value[1], {
+        removeQuotesFromExpression: true,
+        trimExpression: true,
+        convertIfContainsExpression: true,
+      }),
+    };
+  });
 }
 
 // Create Dictionary Editor View Model
-function toDictionaryViewModel(value: any): { items: DictionaryEditorItemProps[] | undefined } {
+function toDictionaryViewModel(value: any, editorOptions: any): { items: DictionaryEditorItemProps[] | undefined } {
   let items: DictionaryEditorItemProps[] | undefined = [];
-  const valueToParse = value !== null ? value ?? {} : value;
+  const valueToParse = value !== null ? (value ?? {}) : value;
   const canParseObject = valueToParse !== null && isObject(valueToParse);
 
   if (canParseObject) {
@@ -749,8 +740,8 @@ function toDictionaryViewModel(value: any): { items: DictionaryEditorItemProps[]
     for (const itemKey of keys) {
       items.push({
         id: guid(),
-        key: loadParameterValueFromString(itemKey),
-        value: loadParameterValueFromString(valueToParse[itemKey]),
+        key: loadParameterValueFromString(itemKey, { parameterType: editorOptions?.keyType }),
+        value: loadParameterValueFromString(valueToParse[itemKey], { parameterType: editorOptions?.valueType }),
       });
     }
 
@@ -769,12 +760,13 @@ function toTableViewModel(value: any, editorOptions: any): { items: DictionaryEd
   const placeholderItem = { key: [createLiteralValueSegment('')], value: [createLiteralValueSegment('')], id: guid() };
   if (Array.isArray(value)) {
     const keys = editorOptions.columns.keys;
+    const types = editorOptions.columns?.types;
     const items: DictionaryEditorItemProps[] = [];
     for (const item of value) {
       items.push({
         id: guid(),
-        key: loadParameterValueFromString(item[keys[0]]),
-        value: loadParameterValueFromString(item[keys[1]]),
+        key: loadParameterValueFromString(item[keys[0]], { parameterType: types?.[keys[0]] }),
+        value: loadParameterValueFromString(item[keys[1]], { parameterType: types?.[keys[1]] }),
       });
     }
 
@@ -795,8 +787,8 @@ function toAuthenticationViewModel(value: any): { type: AuthenticationType; auth
           type: value.type,
           authenticationValue: {
             basic: {
-              basicUsername: loadParameterValueFromString(value.username),
-              basicPassword: loadParameterValueFromString(value.password),
+              basicUsername: loadParameterValueFromString(value.username, { parameterType: constants.SWAGGER.TYPE.STRING }),
+              basicPassword: loadParameterValueFromString(value.password, { parameterType: constants.SWAGGER.TYPE.STRING }),
             },
           },
         };
@@ -805,8 +797,8 @@ function toAuthenticationViewModel(value: any): { type: AuthenticationType; auth
           type: value.type,
           authenticationValue: {
             clientCertificate: {
-              clientCertificatePfx: loadParameterValueFromString(value.pfx),
-              clientCertificatePassword: loadParameterValueFromString(value.password),
+              clientCertificatePfx: loadParameterValueFromString(value.pfx, { parameterType: constants.SWAGGER.TYPE.STRING }),
+              clientCertificatePassword: loadParameterValueFromString(value.password, { parameterType: constants.SWAGGER.TYPE.STRING }),
             },
           },
         };
@@ -816,14 +808,14 @@ function toAuthenticationViewModel(value: any): { type: AuthenticationType; auth
           type: value.type,
           authenticationValue: {
             aadOAuth: {
-              oauthTenant: loadParameterValueFromString(value.tenant),
-              oauthAudience: loadParameterValueFromString(value.audience),
-              oauthAuthority: loadParameterValueFromString(value.authority),
-              oauthClientId: loadParameterValueFromString(value.clientId),
+              oauthTenant: loadParameterValueFromString(value.tenant, { parameterType: constants.SWAGGER.TYPE.STRING }),
+              oauthAudience: loadParameterValueFromString(value.audience, { parameterType: constants.SWAGGER.TYPE.STRING }),
+              oauthAuthority: loadParameterValueFromString(value.authority, { parameterType: constants.SWAGGER.TYPE.STRING }),
+              oauthClientId: loadParameterValueFromString(value.clientId, { parameterType: constants.SWAGGER.TYPE.STRING }),
               oauthType: loadOauthType(value),
-              oauthTypeSecret: loadParameterValueFromString(value.secret),
-              oauthTypeCertificatePfx: loadParameterValueFromString(value.pfx),
-              oauthTypeCertificatePassword: loadParameterValueFromString(value.password),
+              oauthTypeSecret: loadParameterValueFromString(value.secret, { parameterType: constants.SWAGGER.TYPE.STRING }),
+              oauthTypeCertificatePfx: loadParameterValueFromString(value.pfx, { parameterType: constants.SWAGGER.TYPE.STRING }),
+              oauthTypeCertificatePassword: loadParameterValueFromString(value.password, { parameterType: constants.SWAGGER.TYPE.STRING }),
             },
           },
         };
@@ -843,7 +835,7 @@ function toAuthenticationViewModel(value: any): { type: AuthenticationType; auth
           type: value.type,
           authenticationValue: {
             msi: {
-              msiAudience: loadParameterValueFromString(value.audience),
+              msiAudience: loadParameterValueFromString(value.audience, { parameterType: constants.SWAGGER.TYPE.STRING }),
               msiIdentity: value.identity,
             },
           },
@@ -909,7 +901,7 @@ export function loadParameterValue(parameter: InputParameter): ValueSegment[] {
     }
   }
 
-  let valueSegments = convertToValueSegments(valueObject, !parameter.suppressCasting /* shouldUncast */);
+  let valueSegments = convertToValueSegments(valueObject, !parameter.suppressCasting /* shouldUncast */, parameter.type);
 
   valueSegments = compressSegments(valueSegments);
 
@@ -962,13 +954,13 @@ export function convertToTokenExpression(value: any): string {
   return value.toString();
 }
 
-export function convertToValueSegments(value: any, shouldUncast: boolean): ValueSegment[] {
+export function convertToValueSegments(value: any, shouldUncast: boolean, parameterType?: string): ValueSegment[] {
   try {
     const convertor = new ValueSegmentConvertor({
       shouldUncast,
       rawModeEnabled: true,
     });
-    return convertor.convertToValueSegments(value);
+    return convertor.convertToValueSegments(value, parameterType);
   } catch {
     return [createLiteralValueSegment(typeof value === 'string' ? value : JSON.stringify(value, null, 2))];
   }
@@ -1530,11 +1522,11 @@ function deletePropertyValueWithSpecifiedPathSegment(value: any, segments: Segme
   }
 }
 
-export function getAndEscapeSegment(segment: Segment): string | number {
+export function getAndEscapeSegment(segment: Segment, decodeSegment = true): string | number {
   // NOTE: for property segment, return the property name as key; for index segment, return the index value or 0
   switch (segment.type) {
     case SegmentType.Property:
-      return tryConvertStringToExpression(decodePropertySegment(segment.value as string));
+      return tryConvertStringToExpression(decodeSegment ? decodePropertySegment(segment.value as string) : (segment.value as string));
     case SegmentType.Index:
       return segment.value || 0;
     default:
@@ -1756,21 +1748,7 @@ export function isArrayOrObjectValueCompatibleWithSchema(value: any, schema: any
 
 export const updateParameterAndDependencies = createAsyncThunk(
   'updateParameterAndDependencies',
-  async (
-    actionPayload: {
-      nodeId: string;
-      groupId: string;
-      parameterId: string;
-      properties: Partial<ParameterInfo>;
-      isTrigger: boolean;
-      operationInfo: NodeOperation;
-      connectionReference: ConnectionReference;
-      nodeInputs: NodeInputs;
-      dependencies: NodeDependencies;
-      operationDefinition?: any;
-    },
-    { dispatch, getState }
-  ): Promise<void> => {
+  async (actionPayload: UpdateParameterAndDependenciesPayload, { dispatch, getState }): Promise<void> => {
     const {
       nodeId,
       groupId,
@@ -1821,7 +1799,7 @@ export const updateParameterAndDependencies = createAsyncThunk(
             groupId,
             parameterId: dependentParameter.id,
             propertiesToUpdate: {
-              dynamicData: { status: DynamicCallStatus.NOTSTARTED },
+              dynamicData: { status: DynamicLoadStatus.NOTSTARTED },
               editorOptions: { options: [] },
             },
           });
@@ -1900,7 +1878,7 @@ function getDependenciesToUpdate(
   return dependenciesToUpdate;
 }
 
-export async function updateDynamicDataInNode(
+export const updateDynamicDataInNode = async (
   nodeId: string,
   isTrigger: boolean,
   operationInfo: NodeOperation,
@@ -1909,7 +1887,7 @@ export async function updateDynamicDataInNode(
   dispatch: Dispatch,
   getState: () => RootState,
   operationDefinition?: any
-): Promise<void> {
+): Promise<void> => {
   await loadDynamicData(nodeId, isTrigger, operationInfo, connectionReference, dependencies, dispatch, getState, operationDefinition);
 
   const { operations, workflowParameters } = getState();
@@ -1934,7 +1912,9 @@ export async function updateDynamicDataInNode(
       nodeDependencies,
       false /* showErrorWhenNotReady */,
       undefined /* idReplacements */,
-      workflowParameters.definitions
+      workflowParameters.definitions,
+      nodeId,
+      dispatch
     );
 
     if (!isNullOrUndefined(parameter)) {
@@ -1944,7 +1924,7 @@ export async function updateDynamicDataInNode(
   if (parameterDynamicValues.length > 0) {
     dispatch(updateNodeParameters({ nodeId, parameters: parameterDynamicValues }));
   }
-}
+};
 
 async function loadDynamicData(
   nodeId: string,
@@ -1967,8 +1947,6 @@ async function loadDynamicData(
       rootState.operations.inputParameters[nodeId],
       rootState.operations.settings[nodeId],
       rootState.workflowParameters.definitions,
-      rootState.workflow.workflowKind,
-      rootState.designerOptions.hostOptions.forceEnableSplitOn ?? false,
       dispatch
     );
   }
@@ -2067,6 +2045,7 @@ export const loadDynamicContentForInputsInNode = async (
       }
 
       const updatedParameters = [...allInputs.parameterGroups[ParameterGroupKeys.DEFAULT].parameters];
+      const updatedRawParameters = [...allInputs.parameterGroups[ParameterGroupKeys.DEFAULT].rawInputs];
 
       for (const input of inputParameters) {
         const index = updatedParameters.findIndex((parameter) => parameter.parameterKey === input.parameterKey);
@@ -2074,6 +2053,19 @@ export const loadDynamicContentForInputsInNode = async (
           updatedParameters.splice(index, 1, input);
         } else {
           updatedParameters.push(input);
+        }
+      }
+
+      for (const input of inputsWithSchema) {
+        if (input.dynamicSchema) {
+          continue;
+        }
+
+        const rawInputIndex = updatedRawParameters.findIndex((parameter) => parameter.key === input.key);
+        if (rawInputIndex > -1) {
+          updatedRawParameters.splice(rawInputIndex, 1, input);
+        } else {
+          updatedRawParameters.push(input);
         }
       }
 
@@ -2087,7 +2079,15 @@ export const loadDynamicContentForInputsInNode = async (
 
       const dependencies = getInputDependencies(newNodeInputs, schemaInputs, swagger);
 
-      dispatch(addDynamicInputs({ nodeId, groupId: ParameterGroupKeys.DEFAULT, inputs: updatedParameters, dependencies }));
+      dispatch(
+        addDynamicInputs({
+          nodeId,
+          groupId: ParameterGroupKeys.DEFAULT,
+          inputs: updatedParameters,
+          rawInputs: updatedRawParameters,
+          dependencies,
+        })
+      );
 
       // Recursively load dynamic content for the newly added dynamic inputs
       return updateDynamicDataInNode(
@@ -2193,7 +2193,7 @@ export async function loadDynamicTreeItemsForParameter(
               parameterId,
               groupId,
               propertiesToUpdate: {
-                dynamicData: { status: DynamicCallStatus.STARTED },
+                dynamicData: { status: DynamicLoadStatus.LOADING },
                 editorOptions: { ...originalEditorOptions, items: [] },
               },
             },
@@ -2220,7 +2220,7 @@ export async function loadDynamicTreeItemsForParameter(
                 parameterId,
                 groupId,
                 propertiesToUpdate: {
-                  dynamicData: { status: DynamicCallStatus.SUCCEEDED },
+                  dynamicData: { status: DynamicLoadStatus.SUCCEEDED },
                   editorOptions: { ...originalEditorOptions, items: treeItems },
                 },
               },
@@ -2235,7 +2235,7 @@ export async function loadDynamicTreeItemsForParameter(
               {
                 parameterId,
                 groupId,
-                propertiesToUpdate: { dynamicData: { status: DynamicCallStatus.FAILED, error: error as Exception } },
+                propertiesToUpdate: { dynamicData: { status: DynamicLoadStatus.FAILED, error: error as Exception } },
               },
             ],
           })
@@ -2277,7 +2277,7 @@ export async function loadDynamicValuesForParameter(
     return;
   }
 
-  let propertiesToUpdate: any = { dynamicData: { status: DynamicCallStatus.STARTED }, editorOptions: { options: [] } };
+  let propertiesToUpdate: any = { dynamicData: { status: DynamicLoadStatus.LOADING }, editorOptions: { options: [] } };
 
   dispatch(updateNodeParameters({ nodeId, parameters: [{ parameterId, groupId, propertiesToUpdate }] }));
 
@@ -2291,11 +2291,11 @@ export async function loadDynamicValuesForParameter(
       workflowParameters
     );
 
-    propertiesToUpdate = { dynamicData: { status: DynamicCallStatus.SUCCEEDED }, editorOptions: { options: dynamicValues } };
+    propertiesToUpdate = { dynamicData: { status: DynamicLoadStatus.SUCCEEDED }, editorOptions: { options: dynamicValues } };
   } catch (error: any) {
     const rootMessage = parseErrorMessage(error);
     const message = error?.response?.data?.error?.message ?? rootMessage;
-    propertiesToUpdate = { dynamicData: { status: DynamicCallStatus.FAILED, error: { ...error, message } } };
+    propertiesToUpdate = { dynamicData: { status: DynamicLoadStatus.FAILED, error: { ...error, message } } };
   }
 
   dispatch(updateNodeParameters({ nodeId, parameters: [{ parameterId, groupId, propertiesToUpdate }] }));
@@ -2310,7 +2310,9 @@ export async function fetchDynamicValuesForParameter(
   dependencies: NodeDependencies,
   showErrorWhenNotReady: boolean,
   idReplacements: Record<string, string> = {},
-  workflowParameters: Record<string, WorkflowParameterDefinition>
+  workflowParameters: Record<string, WorkflowParameterDefinition>,
+  nodeId: string,
+  dispatch: Dispatch
 ): Promise<{ parameterId: string; groupId: string; propertiesToUpdate: any } | undefined> {
   const groupParameters = nodeInputs.parameterGroups[groupId].parameters;
   const parameter = groupParameters.find((parameter) => parameter.id === parameterId) as ParameterInfo;
@@ -2329,7 +2331,10 @@ export async function fetchDynamicValuesForParameter(
     return;
   }
 
-  let propertiesToUpdate: any = { dynamicData: { status: DynamicCallStatus.STARTED }, editorOptions: { options: [] } };
+  let propertiesToUpdate: any = { dynamicData: { status: DynamicLoadStatus.LOADING }, editorOptions: { options: [] } };
+
+  // Send the initial status update to the store
+  dispatch(updateNodeParameters({ nodeId, parameters: [{ parameterId, groupId, propertiesToUpdate }] }));
 
   try {
     const dynamicValues = await getDynamicValues(
@@ -2341,11 +2346,11 @@ export async function fetchDynamicValuesForParameter(
       workflowParameters
     );
 
-    propertiesToUpdate = { dynamicData: { status: DynamicCallStatus.SUCCEEDED }, editorOptions: { options: dynamicValues } };
+    propertiesToUpdate = { dynamicData: { status: DynamicLoadStatus.SUCCEEDED }, editorOptions: { options: dynamicValues } };
   } catch (error: any) {
     const rootMessage = parseErrorMessage(error);
     const message = error?.response?.data?.error?.message ?? rootMessage;
-    propertiesToUpdate = { dynamicData: { status: DynamicCallStatus.FAILED, error: { ...error, message } } };
+    propertiesToUpdate = { dynamicData: { status: DynamicLoadStatus.FAILED, error: { ...error, message } } };
   }
 
   return { parameterId, groupId, propertiesToUpdate };
@@ -2442,7 +2447,7 @@ function showErrorWhenDependenciesNotReady(
                   { parameters: `${invalidParameterNames.join(' , ')}` }
                 ),
               },
-              status: DynamicCallStatus.FAILED,
+              status: DynamicLoadStatus.FAILED,
             },
           },
         },
@@ -2479,7 +2484,7 @@ export function fetchErrorWhenDependenciesNotReady(
             { parameters: `${invalidParameterNames.join(' , ')}` }
           ),
         },
-        status: DynamicCallStatus.FAILED,
+        status: DynamicLoadStatus.FAILED,
       },
     },
   };
@@ -2563,7 +2568,15 @@ const getStringifiedValueFromFloatingActionMenuOutputsViewModel = (
       if (valueSegments?.length) {
         outputValueMap[keyFromTitle] =
           // We want to transform (for example) "1" to 1, "false" to false, if the dynamically added parameter type is not 'String'
-          parameterValueWithoutCasting({ type: config.type, value: valueSegments, ...commonProperties } as any);
+          // We will only interpolate a single token if the parameter config is of type 'string'
+          parameterValueWithoutCasting(
+            {
+              type: config.type,
+              value: valueSegments,
+              ...commonProperties,
+            } as any,
+            /* shouldInterpolateSingleToken */ config.type === constants.SWAGGER.TYPE.STRING
+          );
       }
     }
   });
@@ -2969,7 +2982,7 @@ function getClosestRepetitionReference(repetitionContext: RepetitionContext): Re
   return undefined;
 }
 
-export function updateTokenMetadataInParameters(nodeId: string, parameters: ParameterInfo[], rootState: RootState): void {
+export const updateTokenMetadataInParameters = (nodeId: string, parameters: ParameterInfo[], rootState: RootState): void => {
   const {
     workflow: { operations, nodesMetadata },
     operations: { operationMetadata, outputParameters, settings },
@@ -3030,7 +3043,7 @@ export function updateTokenMetadataInParameters(nodeId: string, parameters: Para
       );
     }
   }
-}
+};
 
 export const flattenAndUpdateViewModel = (
   repetitionContext: RepetitionContext,
@@ -3313,6 +3326,10 @@ export function getExpressionTokenTitle(expression: Expression): string {
   }
 }
 
+export function getTypeForTokenFiltering(parameterType: string | undefined): string {
+  return parameterType && parameterType in constants.TOKENS ? parameterType : constants.SWAGGER.TYPE.ANY;
+}
+
 function getOutputByTokenInfo(
   nodeOutputs: OutputInfo[],
   tokenInfo: SegmentToken,
@@ -3324,7 +3341,7 @@ function getOutputByTokenInfo(
     return undefined;
   }
 
-  const supportedTypes: string[] = getPropertyValue(constants.TOKENS, type);
+  const supportedTypes: string[] = getPropertyValue(constants.TOKENS, getTypeForTokenFiltering(type));
   const allOutputs = supportedTypes.map((supportedType) => getOutputsByType(nodeOutputs, supportedType));
   const outputs = aggregate(allOutputs);
 
@@ -3442,7 +3459,11 @@ export function getInterpolatedExpression(expression: string, parameterType: str
   if (isUndefinedOrEmptyString(expression)) {
     return expression;
   }
-  if (parameterType === constants.SWAGGER.TYPE.STRING && parameterFormat !== constants.SWAGGER.FORMAT.BINARY) {
+  if (
+    parameterType === constants.SWAGGER.TYPE.STRING &&
+    parameterFormat !== constants.SWAGGER.FORMAT.BINARY &&
+    parameterFormat !== constants.SWAGGER.FORMAT.BYTE
+  ) {
     return `@{${expression}}`;
   }
   return `@${expression}`;
@@ -3484,11 +3505,11 @@ export function parameterValueToString(
   }
 
   const parameter = { ...remappedParameterInfo };
-  const isPathParameter = parameter.info.in === ParameterLocations.Path;
+  const requiresUrlEncoding = parameter.info.in === ParameterLocations.Path || parameter.info.encode !== undefined;
   const value = parameter.value.filter((segment) => segment.value !== '');
 
   if (!value || !value.length) {
-    if (isPathParameter && isDefinitionValue) {
+    if (requiresUrlEncoding && isDefinitionValue) {
       if (parameter.required) {
         return encodePathValueWithFunction("''", parameter.info.encode);
       }
@@ -3502,7 +3523,7 @@ export function parameterValueToString(
   const parameterSuppressesCasting = !!remappedParameterInfo.suppressCasting;
 
   const shouldCast = requiresCast(parameterType, parameterFormat, value, parameterSuppressesCasting);
-  if (!isPathParameter && shouldCast) {
+  if (!requiresUrlEncoding && shouldCast) {
     return castParameterValueToString(value, parameterFormat, parameterType);
   }
 
@@ -3514,8 +3535,8 @@ export function parameterValueToString(
     ? value
     : castTokenSegmentsInValue(value, parameterType, parameterFormat);
 
-  // Note: Path parameter values are always enclosed inside encodeComponent function if specified.
-  if (isPathParameter && isDefinitionValue) {
+  // Note: Path parameter values or parameters which requires url encoding are always enclosed inside encodeComponent function if specified.
+  if (requiresUrlEncoding && isDefinitionValue) {
     const segmentValues = segmentsAfterCasting.map((segment) => {
       if (!isTokenValueSegment(segment)) {
         return convertToStringLiteral(segment.value);
@@ -3526,7 +3547,7 @@ export function parameterValueToString(
     return encodePathValueWithFunction(fold(segmentValues, parameter.type) ?? '', parameter.info.encode);
   }
   const shouldInterpolate = value.length > 1;
-  return castValueSegments(segmentsAfterCasting, shouldInterpolate, parameterType, remappedParameterInfo.suppressCasting);
+  return castValueSegments(segmentsAfterCasting, shouldInterpolate, parameterType, remappedParameterInfo);
 }
 
 /**
@@ -3541,7 +3562,7 @@ export const castValueSegments = (
   segmentsAfterCasting: ValueSegment[],
   shouldInterpolate: boolean,
   parameterType: string,
-  suppressCasting?: boolean
+  remappedParameterInfo?: any
 ) => {
   return segmentsAfterCasting
     .map((segment) => {
@@ -3553,11 +3574,11 @@ export const castValueSegments = (
           // Note: Token segment should be auto casted using interpolation if token type is
           // non string and referred in a string parameter.
           const shouldCastToString =
-            !suppressCasting &&
+            !remappedParameterInfo.suppressCasting &&
             parameterType === 'string' &&
             segment.token?.type !== 'string' &&
-            segment.token?.expression &&
-            isStringLiteral(segment.token.expression);
+            segment.token?.tokenType !== TokenType.FX;
+
           expressionValue = `@${shouldCastToString ? `{${expressionValue}}` : expressionValue}`;
         }
       }
@@ -3565,7 +3586,7 @@ export const castValueSegments = (
       return expressionValue;
     })
     .join('');
-};
+}
 
 export function parameterValueToJSONString(parameterValue: ValueSegment[], applyCasting = true, forValidation = false): string {
   let shouldInterpolate = false;
@@ -3584,6 +3605,7 @@ export function parameterValueToJSONString(parameterValue: ValueSegment[], apply
     let tokenExpression: string = expression.value;
 
     if (isTokenValueSegment(expression)) {
+      const stringifiedTokenExpression = tokenExpression;
       // Note: Stringify the token expression to escape double quotes and other characters which must be escaped in JSON.
       if (shouldInterpolate) {
         if (applyCasting) {
@@ -3596,20 +3618,15 @@ export function parameterValueToJSONString(parameterValue: ValueSegment[], apply
           );
         }
 
-        const stringifiedTokenExpression = JSON.stringify(tokenExpression).slice(1, -1);
         tokenExpression = `@{${stringifiedTokenExpression}}`;
       } else {
         // Add quotes around tokens. Tokens directly after a literal need a leading quote, and those before another literal need an ending quote.
         const lastExpressionWasLiteral = i > 0 && updatedParameterValue[i - 1].type !== ValueSegmentType.TOKEN;
         const nextExpressionIsLiteral =
           i < updatedParameterValue.length - 1 && updatedParameterValue[i + 1].type !== ValueSegmentType.TOKEN;
-
-        const stringifiedTokenExpression = JSON.stringify(tokenExpression).slice(1, -1);
         tokenExpression = `@${stringifiedTokenExpression}`;
-        // eslint-disable-next-line no-useless-escape
-        tokenExpression = lastExpressionWasLiteral ? `\"${tokenExpression}` : tokenExpression;
-        // eslint-disable-next-line no-useless-escape
-        tokenExpression = nextExpressionIsLiteral ? `${tokenExpression}\"` : `${tokenExpression}`;
+        tokenExpression = lastExpressionWasLiteral ? `"${tokenExpression}` : tokenExpression;
+        tokenExpression = nextExpressionIsLiteral ? `${tokenExpression}"` : `${tokenExpression}`;
       }
 
       parameterValueString += tokenExpression;
@@ -3630,8 +3647,8 @@ export function parameterValueToJSONString(parameterValue: ValueSegment[], apply
   }
 }
 
-export function parameterValueWithoutCasting(parameter: ParameterInfo): any {
-  const stringifiedValue = parameterValueToStringWithoutCasting(parameter.value);
+export function parameterValueWithoutCasting(parameter: ParameterInfo, shouldInterpolateSingleToken = false): any {
+  const stringifiedValue = parameterValueToStringWithoutCasting(parameter.value, false, shouldInterpolateSingleToken);
   return getJSONValueFromString(stringifiedValue, parameter.type);
 }
 
@@ -3733,17 +3750,18 @@ export function remapTokenSegmentValue(
  * @arg {boolean} [forValidation=false]
  * @return {string}
  */
-function parameterValueToStringWithoutCasting(value: ValueSegment[], forValidation = false): string {
-  const shouldInterpolateTokens = value.length > 1 && value.some(isTokenValueSegment);
+function parameterValueToStringWithoutCasting(value: ValueSegment[], forValidation = false, shouldInterpolateSingleToken = false): string {
+  const shouldInterpolateTokens = (value.length > 1 || shouldInterpolateSingleToken) && value.some(isTokenValueSegment);
 
   return value
-    .map((expression) => {
-      let expressionValue = forValidation ? expression.value || null : expression.value;
-      if (isTokenValueSegment(expression)) {
-        expressionValue = shouldInterpolateTokens ? `@{${expressionValue}}` : `@${expressionValue}`;
+    .map((segment) => {
+      const { value: segmentValue } = segment;
+      if (isTokenValueSegment(segment)) {
+        const token = forValidation ? segmentValue || null : unescapeString(segmentValue);
+        return shouldInterpolateTokens ? `@{${token}}` : `@${token}`;
       }
 
-      return expressionValue;
+      return forValidation ? segmentValue || null : segmentValue;
     })
     .join('');
 }
@@ -3948,8 +3966,8 @@ export function validateUntilAction(
   const countParameter = parameters.find((parameter) => parameter.parameterName === 'limit.count');
   const timeoutParameter = parameters.find((parameter) => parameter.parameterName === 'limit.timeout');
 
-  const countValue = countParameter?.id === parameterId ? changedParameter?.value ?? [] : countParameter?.value ?? [];
-  const timeoutValue = timeoutParameter?.id === parameterId ? changedParameter?.value ?? [] : timeoutParameter?.value ?? [];
+  const countValue = countParameter?.id === parameterId ? (changedParameter?.value ?? []) : (countParameter?.value ?? []);
+  const timeoutValue = timeoutParameter?.id === parameterId ? (changedParameter?.value ?? []) : (timeoutParameter?.value ?? []);
 
   if ((countValue.length ?? 0) === 0 && (timeoutValue.length ?? 0) === 0) {
     dispatch(

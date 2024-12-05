@@ -1,0 +1,5 @@
+steps:
+  - script: pnpm run build:extension
+    displayName: "Build with pnpm"
+    workingDirectory: $(working_directory)
+    condition: succeeded()

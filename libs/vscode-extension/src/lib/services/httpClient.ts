@@ -61,9 +61,8 @@ export class HttpClient implements IHttpClient {
     const responseData = await axios({
       method: HTTP_METHODS.POST,
       ...request,
-    }).catch((error) => {
-      return { status: error.response.status, data: error.response.data };
     });
+
     if (!isSuccessResponse(responseData.status)) {
       return Promise.reject(responseData);
     }
@@ -153,6 +152,6 @@ function isUrl(uri: string): boolean {
   return uri.startsWith('http://') || uri.startsWith('https://');
 }
 
-function isSuccessResponse(statusCode: number): boolean {
+export function isSuccessResponse(statusCode: number): boolean {
   return statusCode >= 200 && statusCode <= 299;
 }

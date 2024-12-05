@@ -21,6 +21,17 @@ export const funcIgnoreFileName = '.funcignore';
 export const unitTestsFileName = '.unit-test.json';
 export const nugetFileName = 'nuget.config';
 
+// Directories names
+export const deploymentsDirectory = 'deployments';
+export const diagnosticsDirectory = 'diagnostics';
+export const locksDirectory = 'locks';
+export const wwwrootDirectory = 'wwwroot';
+export const artifactsDirectory = 'Artifacts';
+export const libDirectory = 'lib';
+export const mapsDirectory = 'Maps';
+export const schemasDirectory = 'Schemas';
+
+// Extension Id
 // Folder names
 export const designTimeDirectoryName = 'workflow-designtime';
 export const testsDirectoryName = 'Tests';
@@ -204,6 +215,7 @@ export const showStartDesignTimeMessageSetting = 'showStartDesignTimeMessage';
 export const autoStartDesignTimeSetting = 'autoStartDesignTime';
 export const autoRuntimeDependenciesValidationAndInstallationSetting = 'autoRuntimeDependenciesValidationAndInstallation';
 export const azuriteBinariesLocationSetting = 'azuriteLocationSetting';
+export const driveLetterSMBSetting = 'driveLetterSMB';
 export const parameterizeConnectionsInProjectLoadSetting = 'parameterizeConnectionsInProjectLoad';
 export const showAutoStartAzuriteWarning = 'showAutoStartAzuriteWarning';
 export const autoStartAzuriteSetting = 'autoStartAzurite';
@@ -222,6 +234,8 @@ export const targetBundleKey = 'FUNCTIONS_EXTENSIONBUNDLE_SOURCE_URI';
 // local.settings.json
 export const localEmulatorConnectionString = 'UseDevelopmentStorage=true';
 export const appKindSetting = 'APP_KIND';
+export const sqlStorageConnectionStringKey = 'Workflows.Sql.ConnectionString';
+
 export const workerRuntimeKey = 'FUNCTIONS_WORKER_RUNTIME';
 export const ProjectDirectoryPath = 'ProjectDirectoryPath';
 export const extensionVersionKey = 'FUNCTIONS_EXTENSION_VERSION';
@@ -307,8 +321,6 @@ export const functionAppKind = 'functionapp';
 export const logicAppKind = 'workflowapp';
 export const logicAppKindAppSetting = 'workflowApp';
 
-export const sqlStorageConnectionStringKey = 'Workflows.Sql.ConnectionString';
-
 export const logicAppFilter = {
   type: 'microsoft.web/sites',
   kind: 'functionapp,workflowapp',
@@ -317,9 +329,30 @@ export const logicAppFilter = {
 // Telemetry Events
 export const saveUnitTestEvent = 'saveUnitTestDefinition';
 export const runUnitTestEvent = 'runUnitTest';
+// Container Apps
+export const containerAppsId = 'containerApps';
+export const managedEnvironmentsId = 'managedEnvironments';
+
+// Resources providers
+export const appProvider = 'Microsoft.App';
+export const webProvider = 'Microsoft.Web';
+export const operationalInsightsProvider = 'Microsoft.OperationalInsights';
+export const storageProvider = 'Microsoft.Storage';
+export const insightsProvider = 'Microsoft.Insights';
+export const managedEnvironmentsAppProvider = `${appProvider}/${managedEnvironmentsId}`;
+
+export const DirectoryKind = {
+  directory: 'directory',
+  file: 'file',
+} as const;
+
+// App settings
+export const AzureWebJobsStorage = 'AzureWebJobsStorage';
+export const WEBSITE_CONTENTAZUREFILECONNECTIONSTRING = 'WEBSITE_CONTENTAZUREFILECONNECTIONSTRING';
 export const COMMON_ERRORS = {
   OPERATION_CANCELLED: 'Operation cancelled',
 } as const;
 export type COMMON_ERRORS = (typeof COMMON_ERRORS)[keyof typeof COMMON_ERRORS];
 // Environment Variables
 export const azurePublicBaseUrl = 'https://management.azure.com';
+export const sqlConnectionStringSecretName = 'sqlconnectionstring';

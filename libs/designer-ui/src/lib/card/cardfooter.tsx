@@ -2,29 +2,39 @@
 import type { CardProps } from './index';
 import { getHeaderStyle } from './utils';
 import type { IIconProps } from '@fluentui/react';
-import { css, Icon } from '@fluentui/react';
-import { Tooltip } from '@fluentui/react-components';
+import { Icon } from '@fluentui/react';
+import { Spinner, Tooltip } from '@fluentui/react-components';
 import { memo, useMemo } from 'react';
 import { useIntl } from 'react-intl';
 
 export type CardFooterProps = Pick<
   CardProps,
-  'commentBox' | 'connectionDisplayName' | 'connectionRequired' | 'staticResultsEnabled' | 'isSecureInputsOutputs' | 'nodeIndex'
+  | 'commentBox'
+  | 'connectionDisplayName'
+  | 'connectionRequired'
+  | 'staticResultsEnabled'
+  | 'isSecureInputsOutputs'
+  | 'nodeIndex'
+  | 'isLoadingDynamicData'
+  | 'title'
 >;
 
 interface CardBadgeBarProps {
   badges: CardBadgeProps[];
   brandColor?: string;
   tabIndex?: number;
+  cardTitle?: string;
 }
 
 interface CardBadgeProps {
+  enabled?: boolean;
   active: boolean;
-  content: string;
-  darkBackground?: boolean;
-  iconProps: IIconProps;
+  content?: string;
+  iconProps?: IIconProps;
+  badgeContent?: any;
   title: string;
   tabIndex?: number;
+  cardTitle?: string;
 }
 
 const commentIconProps: IIconProps = {
@@ -44,9 +54,17 @@ const lockIconProps: IIconProps = {
 };
 
 export const CardFooter: React.FC<CardFooterProps> = memo(
-  ({ commentBox, connectionDisplayName, connectionRequired, staticResultsEnabled, isSecureInputsOutputs, nodeIndex }) => {
+  ({
+    title: cardTitle,
+    commentBox,
+    connectionDisplayName,
+    connectionRequired,
+    staticResultsEnabled,
+    isSecureInputsOutputs,
+    isLoadingDynamicData,
+    nodeIndex,
+  }) => {
     const intl = useIntl();
-
     const strings = useMemo(
       () => ({
         CONNECTION_NAME_DISPLAY: intl.formatMessage({
@@ -84,6 +102,11 @@ export const CardFooter: React.FC<CardFooterProps> = memo(
           id: 'byRkj+',
           description: 'This operation has secure inputs or outputs enabled.',
         }),
+        LOADING_DYNAMIC_DATA: intl.formatMessage({
+          defaultMessage: 'Loading dynamic data',
+          id: 'qMFpNH',
+          description: 'Loading dynamic data',
+        }),
       }),
       [intl]
     );
@@ -94,49 +117,54 @@ export const CardFooter: React.FC<CardFooterProps> = memo(
     );
 
     const badges: CardBadgeProps[] = useMemo(
-      () => [
-        ...(staticResultsEnabled
-          ? [
-              {
-                active: true,
-                content: strings.MENU_STATIC_RESULT_ICON_TOOLTIP,
-                iconProps: staticResultIconProps,
-                title: strings.PANEL_STATIC_RESULT_TITLE,
-              },
-            ]
-          : []),
-        ...(commentBox && commentBox.comment
-          ? [
-              {
-                active: true,
-                content: commentBox.comment,
-                iconProps: commentIconProps,
-                title: strings.COMMENT,
-              },
-            ]
-          : []),
-        ...(connectionRequired || connectionDisplayName
-          ? [
-              {
-                active: !!connectionDisplayName,
-                content: connectionDisplayName || connectionTitle,
-                iconProps: connectionIconProps,
-                title: connectionTitle,
-              },
-            ]
-          : []),
-        ...(isSecureInputsOutputs
-          ? [
-              {
-                active: true,
-                content: strings.SECURE_INPUTS_OUTPUTS_TOOLTIP,
-                iconProps: lockIconProps,
-                title: strings.SECURE_INPUTS_OUTPUTS_TITLE,
-              },
-            ]
-          : []),
-      ],
-      [commentBox, connectionDisplayName, connectionRequired, connectionTitle, isSecureInputsOutputs, staticResultsEnabled, strings]
+      () =>
+        [
+          {
+            enabled: isLoadingDynamicData,
+            active: true,
+            content: strings.LOADING_DYNAMIC_DATA,
+            badgeContent: <Spinner className="msla-badge-spinner" size={'extra-tiny'} />,
+            title: strings.LOADING_DYNAMIC_DATA,
+          },
+          {
+            enabled: staticResultsEnabled,
+            active: true,
+            content: strings.MENU_STATIC_RESULT_ICON_TOOLTIP,
+            iconProps: staticResultIconProps,
+            title: strings.PANEL_STATIC_RESULT_TITLE,
+          },
+          {
+            enabled: !!commentBox?.comment,
+            active: true,
+            content: commentBox?.comment,
+            iconProps: commentIconProps,
+            title: strings.COMMENT,
+          },
+          {
+            enabled: !!(connectionRequired || connectionDisplayName),
+            active: !!connectionDisplayName,
+            content: connectionDisplayName || connectionTitle,
+            iconProps: connectionIconProps,
+            title: connectionTitle,
+          },
+          {
+            enabled: isSecureInputsOutputs,
+            active: true,
+            content: strings.SECURE_INPUTS_OUTPUTS_TOOLTIP,
+            iconProps: lockIconProps,
+            title: strings.SECURE_INPUTS_OUTPUTS_TITLE,
+          },
+        ].filter((badge) => badge.enabled),
+      [
+        commentBox,
+        connectionDisplayName,
+        connectionRequired,
+        connectionTitle,
+        isSecureInputsOutputs,
+        staticResultsEnabled,
+        strings,
+        isLoadingDynamicData,
+      ]
     );
 
     if (!badges.length) {
@@ -145,22 +173,24 @@ export const CardFooter: React.FC<CardFooterProps> = memo(
 
     return (
       <div className="msla-card-v2-footer">
-        <CardBadgeBar badges={badges} tabIndex={nodeIndex} />
+        <CardBadgeBar badges={badges} tabIndex={nodeIndex} cardTitle={cardTitle} />
       </div>
     );
   }
 );
 
-const CardBadgeBar: React.FC<CardBadgeBarProps> = ({ badges, brandColor, tabIndex }) => {
+const CardBadgeBar: React.FC<CardBadgeBarProps> = ({ badges, brandColor, tabIndex, cardTitle }) => {
   return (
     <div className="msla-badges" style={getHeaderStyle(brandColor)}>
-      {badges.map(({ active, content, darkBackground, iconProps, title }) => (
+      {badges.map(({ enabled, active, content, badgeContent, iconProps, title }) => (
         <CardBadge
           key={title}
           title={title}
+          cardTitle={cardTitle}
           content={content}
-          darkBackground={darkBackground}
+          badgeContent={badgeContent}
           iconProps={iconProps}
+          enabled={enabled}
           active={active}
           tabIndex={tabIndex}
         />
@@ -169,23 +199,20 @@ const CardBadgeBar: React.FC<CardBadgeBarProps> = ({ badges, brandColor, tabInde
   );
 };
 
-const CardBadge: React.FC<CardBadgeProps> = ({ active, content, darkBackground = false, iconProps, title, tabIndex }) => {
-  if (!content) {
+const CardBadge: React.FC<CardBadgeProps> = ({ enabled, active, content, badgeContent, iconProps, title, cardTitle, tabIndex }) => {
+  if (!enabled || !content) {
     return null;
   }
-  if (active) {
-    return (
-      <Tooltip relationship={'label'} withArrow={true} content={content}>
+
+  return active ? (
+    <Tooltip relationship={'label'} withArrow={true} content={`${cardTitle ?? ''} ${title}: ${content}`}>
+      {badgeContent ?? (
         <div>
-          <Icon
-            className={css('panel-card-v2-badge', 'active', darkBackground && 'darkBackground')}
-            {...iconProps}
-            ariaLabel={`${title}: ${content}`}
-            tabIndex={tabIndex}
-          />
+          <Icon role="button" className={'panel-card-v2-badge active'} {...iconProps} tabIndex={tabIndex} />
         </div>
-      </Tooltip>
-    );
-  }
-  return <Icon className="panel-card-v2-badge inactive" {...iconProps} ariaLabel={title} tabIndex={0} />;
+      )}
+    </Tooltip>
+  ) : (
+    (badgeContent ?? <Icon className="panel-card-v2-badge inactive" {...iconProps} aria-label={title} tabIndex={0} />)
+  );
 };

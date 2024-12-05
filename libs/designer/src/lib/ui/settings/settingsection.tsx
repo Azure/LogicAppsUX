@@ -1,14 +1,14 @@
 import type { HeaderClickHandler, SettingSectionName } from '.';
 import { useReadOnly } from '../../core/state/designerOptions/designerOptionsSelectors';
 import { updateParameterConditionalVisibility } from '../../core/state/operation/operationMetadataSlice';
-import { useSelectedNodeId } from '../../core/state/panel/panelSelectors';
+import { useOperationPanelSelectedNodeId } from '../../core/state/panel/panelSelectors';
 import type { RunAfterProps } from './sections/runafterconfiguration';
 import { RunAfter } from './sections/runafterconfiguration';
 import { CustomizableMessageBar } from './validation/errorbar';
 import type { ValidationError } from './validation/validation';
 import { ValidationErrorType } from './validation/validation';
 import type { IDropdownOption } from '@fluentui/react';
-import { Button, Divider, Tooltip } from '@fluentui/react-components';
+import { Button, Divider, type MessageBarIntent, Tooltip, Badge } from '@fluentui/react-components';
 import {
   bundleIcon,
   ChevronDown24Filled,
@@ -18,7 +18,6 @@ import {
   Dismiss24Filled,
   Dismiss24Regular,
 } from '@fluentui/react-icons';
-import { MessageBarType } from '@fluentui/react/lib/MessageBar';
 import {
   MultiSelectSetting,
   MultiAddExpressionEditor,
@@ -49,6 +48,8 @@ import type {
   SettingDropdownProps,
   ChangeState,
 } from '@microsoft/designer-ui';
+import { guid } from '@microsoft/logic-apps-shared';
+import { type AppDispatch, storeStateToUndoRedoHistory } from '../../core';
 import type { FC } from 'react';
 import { useMemo, useState } from 'react';
 import { useIntl } from 'react-intl';
@@ -149,7 +150,7 @@ export const SettingsSection: FC<SettingsSectionProps> = ({
   validationErrors,
   onDismiss,
 }) => {
-  const selectedNodeId = useSelectedNodeId();
+  const selectedNodeId = useOperationPanelSelectedNodeId();
   const settingNodeId = nodeId ?? selectedNodeId;
 
   const intl = useIntl();
@@ -209,6 +210,7 @@ export const SettingsSection: FC<SettingsSectionProps> = ({
           aria-label={`${expanded ? expandedLabel : collapsedLabel} ${title}, ${expanded ? expandAriaLabel : collapseAriaLabel}`}
         >
           {title}
+          {(validationErrors?.length ?? 0) > 0 && <Badge className="error-dot" size="extra-small" color="danger" />}
         </Button>
         {internalSettings}
       </div>
@@ -223,7 +225,7 @@ const Setting = ({
   isReadOnly,
 }: { id?: string; nodeId: string; settings: Settings[]; isReadOnly?: boolean }): JSX.Element => {
   const intl = useIntl();
-  const dispatch = useDispatch();
+  const dispatch = useDispatch<AppDispatch>();
   const readOnly = useReadOnly();
   const [hideErrorMessage, setHideErrorMessage] = useState<boolean[]>(new Array(settings.length).fill(false));
 
@@ -331,6 +333,7 @@ const Setting = ({
     };
 
     const removeParamCallback = () => {
+      dispatch(storeStateToUndoRedoHistory({ type: updateParameterConditionalVisibility.type }));
       dispatch(updateParameterConditionalVisibility({ nodeId, groupId: id ?? '', parameterId, value: false }));
     };
 
@@ -381,7 +384,7 @@ const Setting = ({
               multiSelect: true,
               options: conditionallyInvisibleSettings.map(
                 (setting): IDropdownOption => ({
-                  key: (setting.settingProp as any).id,
+                  key: (setting.settingProp as any).id ?? guid(),
                   text: (setting.settingProp as any).label ?? '',
                 })
               ),
@@ -390,7 +393,9 @@ const Setting = ({
             onItemSelectionChanged={(parameterId, value) => {
               dispatch(updateParameterConditionalVisibility({ nodeId, groupId: id ?? '', parameterId, value }));
             }}
-            onShowAllClick={() =>
+            onDismiss={() => dispatch(storeStateToUndoRedoHistory({ type: updateParameterConditionalVisibility.type }))}
+            onShowAllClick={() => {
+              dispatch(storeStateToUndoRedoHistory({ type: updateParameterConditionalVisibility.type }));
               conditionallyInvisibleSettings.forEach((setting) =>
                 dispatch(
                   updateParameterConditionalVisibility({
@@ -400,9 +405,10 @@ const Setting = ({
                     value: true,
                   })
                 )
-              )
-            }
-            onHideAllClick={() =>
+              );
+            }}
+            onHideAllClick={() => {
+              dispatch(storeStateToUndoRedoHistory({ type: updateParameterConditionalVisibility.type }));
               allConditionalSettings.forEach(
                 (setting) =>
                   (setting.settingProp as any).conditionalVisibility &&
@@ -414,8 +420,8 @@ const Setting = ({
                       value: false,
                     })
                   )
-              )
-            }
+              );
+            }}
             addAllButtonText={addAllButtonText}
             addAllButtonTooltip={addAllButtonTooltip}
             addAllButtonEnabled={conditionallyInvisibleSettings.length > 0}
@@ -432,15 +438,15 @@ const Setting = ({
   );
 };
 
-const matchErrorTypeToMessageBar = (errorType: ValidationErrorType): MessageBarType => {
+const matchErrorTypeToMessageBar = (errorType: ValidationErrorType): MessageBarIntent => {
   switch (errorType) {
     case ValidationErrorType.ERROR:
-      return MessageBarType.error;
+      return 'error';
     case ValidationErrorType.WARNING:
-      return MessageBarType.warning;
+      return 'warning';
     case ValidationErrorType.INFO:
-      return MessageBarType.info;
+      return 'info';
     default:
-      return MessageBarType.info;
+      return 'info';
   }
 };

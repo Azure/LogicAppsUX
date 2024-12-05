@@ -52,6 +52,7 @@ export interface CardProps {
   isSecureInputsOutputs?: boolean;
   nodeMockResults?: OutputMock;
   isMockSupported?: boolean;
+  isLoadingDynamicData?: boolean;
 }
 
 export interface BadgeProps {
@@ -93,6 +94,7 @@ export const Card: React.FC<CardProps> = memo(
     runData,
     setFocus,
     isSecureInputsOutputs,
+    isLoadingDynamicData,
   }) => {
     const handleClick: React.MouseEventHandler<HTMLElement> = (e) => {
       e.stopPropagation();
@@ -220,7 +222,9 @@ export const Card: React.FC<CardProps> = memo(
             connectionRequired={connectionRequired}
             staticResultsEnabled={staticResultsEnabled}
             isSecureInputsOutputs={isSecureInputsOutputs}
+            isLoadingDynamicData={isLoadingDynamicData}
             nodeIndex={nodeIndex}
+            title={title}
           />
         </div>
       </div>

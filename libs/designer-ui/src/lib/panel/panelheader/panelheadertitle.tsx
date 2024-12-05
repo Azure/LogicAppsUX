@@ -26,6 +26,7 @@ export interface PanelHeaderTitleProps {
   titleId?: string;
   onChange: (newId: string) => ReturnType<TitleChangeHandler>;
   onBlur?: (prevTitle: string) => void;
+  handleTitleUpdate: (newId: string) => void;
 }
 
 export const PanelHeaderTitle = ({
@@ -35,6 +36,7 @@ export const PanelHeaderTitle = ({
   renameTitleDisabled,
   onChange,
   onBlur,
+  handleTitleUpdate,
 }: PanelHeaderTitleProps): JSX.Element => {
   const intl = useIntl();
 
@@ -68,9 +70,11 @@ export const PanelHeaderTitle = ({
       onChange(validValue || '');
       setNewTitleValue(validValue);
       setErrorMessage('');
+      handleTitleUpdate(validValue || '');
     } else {
       onBlur?.(titleBeforeBlur);
       setTitleBeforeBlur(newTitleValue ?? '');
+      handleTitleUpdate(newTitleValue ?? '');
     }
   };
 

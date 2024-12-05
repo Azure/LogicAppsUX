@@ -149,7 +149,7 @@ export const CreateConnection = (props: CreateConnectionProps) => {
     [connectionParameters]
   );
   const multiAuthParams = useMemo(
-    () => connectionParameterSets?.values[selectedParamSetIndex].parameters ?? {},
+    () => connectionParameterSets?.values[selectedParamSetIndex]?.parameters ?? {},
     [connectionParameterSets, selectedParamSetIndex]
   );
   const isMultiAuth = useMemo(() => (connectionParameterSets?.values?.length ?? 0) > 0, [connectionParameterSets?.values]);
@@ -253,7 +253,7 @@ export const CreateConnection = (props: CreateConnectionProps) => {
     Object.entries(parameters ?? {}).forEach(([key, parameter]) => {
       const capability =
         (parameter.uiDefinition?.constraints?.capability?.length ?? 0) === 1
-          ? parameter.uiDefinition?.constraints?.capability?.[0] ?? 'general'
+          ? (parameter.uiDefinition?.constraints?.capability?.[0] ?? 'general')
           : 'general';
       output[capability] = {
         ...output[capability],
@@ -329,13 +329,24 @@ export const CreateConnection = (props: CreateConnectionProps) => {
     ) {
       return false;
     }
+    if (legacyManagedIdentitySelected && !selectedManagedIdentity) {
+      return false;
+    }
     if (Object.keys(capabilityEnabledParameters ?? {}).length === 0) {
       return true;
     }
     return Object.entries(capabilityEnabledParameters).every(
       ([key, parameter]) => parameter?.uiDefinition?.constraints?.required !== 'true' || !!parameterValues[key]
     );
-  }, [showNameInput, connectionDisplayName, resourceSelectorProps, capabilityEnabledParameters, parameterValues]);
+  }, [
+    showNameInput,
+    connectionDisplayName,
+    resourceSelectorProps,
+    legacyManagedIdentitySelected,
+    selectedManagedIdentity,
+    capabilityEnabledParameters,
+    parameterValues,
+  ]);
 
   const canSubmit = useMemo(() => !isLoading && validParams, [isLoading, validParams]);
 
@@ -598,7 +609,7 @@ export const CreateConnection = (props: CreateConnectionProps) => {
       >
         {/* Error Bar */}
         {errorMessage && (
-          <MessageBar intent={'error'} style={{ width: '100%' }}>
+          <MessageBar intent={'error'} style={{ width: '100%', whiteSpace: 'normal' }}>
             <MessageBarBody>{errorMessage}</MessageBarBody>
             <MessageBarActions
               containerAction={

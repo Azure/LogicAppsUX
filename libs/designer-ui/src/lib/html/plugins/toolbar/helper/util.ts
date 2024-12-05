@@ -129,11 +129,11 @@ export const getDomFromHtmlEditorString = (htmlEditorString: string, nodeMap: Ma
   const purifiedHtmlEditorString = DomPurify.sanitize(wrappedHtmlEditorString, { ADD_TAGS: ['#comment'] });
   const encodedHtmlEditorString = encodeStringSegmentTokensInDomContext(purifiedHtmlEditorString, nodeMap);
 
-  const tempElement = document.createElement('div', {});
-  tempElement.innerHTML = encodedHtmlEditorString;
+  const tempElement = document.createElement('div');
+  tempElement.innerHTML = DomPurify.sanitize(encodedHtmlEditorString);
 
   // Unwrap the wrapper <div>.
-  return tempElement.children[0] as HTMLElement;
+  return tempElement.firstElementChild as HTMLElement;
 };
 
 export const isAttributeSupportedByHtmlEditor = (tagName: string, attribute: string): boolean => {

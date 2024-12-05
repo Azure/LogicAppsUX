@@ -4,18 +4,20 @@ import { StaticResultOption } from '../../actions/bjsworkflow/staticresults';
 import type { RepetitionContext } from '../../utils/parameters/helper';
 import { createTokenValueSegment, isTokenValueSegment } from '../../utils/parameters/segment';
 import { getTokenTitle, normalizeKey } from '../../utils/tokens';
-import { resetNodesLoadStatus, resetWorkflowState } from '../global';
+import { resetNodesLoadStatus, resetWorkflowState, setStateAfterUndoRedo } from '../global';
 import { LogEntryLevel, LoggerService, filterRecord, getRecordEntry } from '@microsoft/logic-apps-shared';
 import type { ParameterInfo } from '@microsoft/designer-ui';
 import type { FilePickerInfo, InputParameter, OutputParameter, OpenAPIV2, OperationInfo } from '@microsoft/logic-apps-shared';
 import { createSlice } from '@reduxjs/toolkit';
 import type { PayloadAction } from '@reduxjs/toolkit';
 import type { WritableDraft } from 'immer/dist/internal';
+import type { UndoRedoPartialRootState } from '../undoRedo/undoRedoTypes';
 
 export interface ParameterGroup {
   id: string;
   description?: string;
   parameters: ParameterInfo[];
+  rawInputs: InputParameter[];
   showAdvancedParameters?: boolean;
   hasAdvancedParameters?: boolean;
 }
@@ -40,10 +42,10 @@ export interface OutputInfo {
 }
 
 export const DynamicLoadStatus = {
-  NOTSTARTED: 'NotStarted',
-  STARTED: 'Started',
-  FAILED: 'Failed',
-  SUCCEEDED: 'Succeeded',
+  NOTSTARTED: 'notstarted',
+  LOADING: 'loading',
+  FAILED: 'failed',
+  SUCCEEDED: 'succeeded',
 } as const;
 export type DynamicLoadStatus = (typeof DynamicLoadStatus)[keyof typeof DynamicLoadStatus];
 
@@ -118,7 +120,7 @@ interface OperationMetadataLoadStatus {
   nodesAndDynamicDataInitialized: boolean;
 }
 
-const initialState: OperationMetadataState = {
+export const initialState: OperationMetadataState = {
   operationInfo: {},
   inputParameters: {},
   outputParameters: {},
@@ -183,6 +185,7 @@ interface AddDynamicInputsPayload {
   nodeId: string;
   groupId: string;
   inputs: ParameterInfo[];
+  rawInputs: InputParameter[];
   dependencies?: Record<string, DependencyInfo>;
 }
 
@@ -197,16 +200,32 @@ export interface UpdateParametersPayload {
   isUserAction?: boolean;
 }
 
+export interface InitializeNodesPayload {
+  nodes: (NodeData | undefined)[];
+  clearExisting?: boolean; // Optional flag to clear the existing nodes
+}
+
 export const operationMetadataSlice = createSlice({
   name: 'operationMetadata',
-  initialState,
+  initialState: initialState,
   reducers: {
     initializeOperationInfo: (state, action: PayloadAction<AddNodeOperationPayload>) => {
       const { id, connectorId, operationId, type, kind } = action.payload;
       state.operationInfo[id] = { connectorId, operationId, type, kind };
     },
-    initializeNodes: (state, action: PayloadAction<(NodeData | undefined)[]>) => {
-      for (const nodeData of action.payload) {
+    initializeNodes: (state, action: PayloadAction<InitializeNodesPayload>) => {
+      const { nodes, clearExisting = false } = action.payload;
+      if (clearExisting) {
+        state.inputParameters = {};
+        state.outputParameters = {};
+        state.dependencies = {};
+        state.operationMetadata = {};
+        state.settings = {};
+        state.staticResults = {};
+        state.actionMetadata = {};
+        state.repetitionInfos = {};
+      }
+      for (const nodeData of nodes) {
         if (!nodeData) {
           return;
         }
@@ -243,13 +262,14 @@ export const operationMetadataSlice = createSlice({
       });
     },
     addDynamicInputs: (state, action: PayloadAction<AddDynamicInputsPayload>) => {
-      const { nodeId, groupId, inputs, dependencies } = action.payload;
+      const { nodeId, groupId, inputs, rawInputs, dependencies } = action.payload;
       const inputParameters = getRecordEntry(state.inputParameters, nodeId) ?? {
         parameterGroups: {},
       };
       const parameterGroup = getRecordEntry(inputParameters?.parameterGroups, groupId);
       if (parameterGroup) {
         parameterGroup.parameters = inputs;
+        parameterGroup.rawInputs = rawInputs;
       }
 
       if (dependencies) {
@@ -338,6 +358,17 @@ export const operationMetadataSlice = createSlice({
         };
       }
       state.staticResults[id] = { ...nodeStaticResults, ...staticResults };
+
+      LoggerService().log({
+        level: LogEntryLevel.Verbose,
+        area: 'Designer:Operation Metadata Slice',
+        message: action.type,
+        args: [action.payload.id],
+      });
+    },
+    deleteStaticResult: (state, action: PayloadAction<{ id: string }>) => {
+      const { id } = action.payload;
+      delete state.staticResults[id];
 
       LoggerService().log({
         level: LogEntryLevel.Verbose,
@@ -534,6 +565,7 @@ export const operationMetadataSlice = createSlice({
       state.loadStatus.nodesInitialized = false;
       state.loadStatus.nodesAndDynamicDataInitialized = false;
     });
+    builder.addCase(setStateAfterUndoRedo, (_, action: PayloadAction<UndoRedoPartialRootState>) => action.payload.operations);
   },
 });
 
@@ -573,6 +605,7 @@ export const {
   clearDynamicIO,
   updateNodeSettings,
   updateStaticResults,
+  deleteStaticResult,
   updateParameterConditionalVisibility,
   updateParameterValidation,
   updateParameterEditorViewModel,

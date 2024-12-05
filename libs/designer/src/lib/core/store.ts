@@ -2,6 +2,7 @@ import connectionsReducer from './state/connection/connectionSlice';
 import customCodeReducer from './state/customcode/customcodeSlice';
 import designerOptionsReducer from './state/designerOptions/designerOptionsSlice';
 import designerViewReducer from './state/designerView/designerViewSlice';
+import devReducer from './state/dev/devSlice';
 import operationMetadataReducer from './state/operation/operationMetadataSlice';
 import panelReducer from './state/panel/panelSlice';
 import panelV2Reducer from './state/panelV2/panelSlice';
@@ -9,12 +10,14 @@ import settingsReducer from './state/setting/settingSlice';
 import staticResultsSchemasReducer from './state/staticresultschema/staticresultsSlice';
 import tokens from './state/tokens/tokensSlice';
 import unitTestReducer from './state/unitTest/unitTestSlice';
+import undoRedoReducer from './state/undoRedo/undoRedoSlice';
 import workflowReducer from './state/workflow/workflowSlice';
 import workflowParametersReducer from './state/workflowparameters/workflowparametersSlice';
-import devReducer from './state/dev/devSlice';
 
 import { configureStore } from '@reduxjs/toolkit';
 import type {} from 'redux-thunk';
+import { storeStateHistoryMiddleware } from './utils/middleware';
+
 export const store = configureStore({
   reducer: {
     workflow: workflowReducer,
@@ -30,13 +33,14 @@ export const store = configureStore({
     staticResults: staticResultsSchemasReducer,
     unitTest: unitTestReducer,
     customCode: customCodeReducer,
+    undoRedo: undoRedoReducer,
     // if is in dev environment, add devSlice to store
     ...(process.env.NODE_ENV === 'development' ? { dev: devReducer } : {}),
   },
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware({
       serializableCheck: false,
-    }),
+    }).concat(storeStateHistoryMiddleware),
 });
 
 if (process.env.NODE_ENV === 'development') {

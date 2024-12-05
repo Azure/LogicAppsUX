@@ -5,12 +5,13 @@ import { initializeOperationMetadata, initializeDynamicDataInNodes } from '../ac
 import { getConnectionsQuery } from '../queries/connections';
 import { initializeConnectionReferences } from '../state/connection/connectionSlice';
 import { initializeStaticResultProperties } from '../state/staticresultschema/staticresultsSlice';
+import { setCollapsedGraphIds } from '../state/workflow/workflowSlice';
 import type { RootState } from '../store';
 import { getCustomCodeFilesWithData } from '../utils/parameters/helper';
 import type { DeserializedWorkflow } from './BJSWorkflow/BJSDeserializer';
 import { Deserialize as BJSDeserialize } from './BJSWorkflow/BJSDeserializer';
 import type { WorkflowNode } from './models/workflowNode';
-import { LoggerService, Status } from '@microsoft/logic-apps-shared';
+import { LoggerService, Status, WORKFLOW_NODE_TYPES } from '@microsoft/logic-apps-shared';
 import type { LogicAppsV2 } from '@microsoft/logic-apps-shared';
 import { createAsyncThunk } from '@reduxjs/toolkit';
 import { batch } from 'react-redux';
@@ -24,67 +25,83 @@ export const initializeGraphState = createAsyncThunk<
   InitWorkflowPayload,
   { workflowDefinition: Workflow; runInstance: LogicAppsV2.RunInstanceDefinition | null | undefined },
   { state: RootState }
->('parser/deserialize', async (graphState: { workflowDefinition: Workflow; runInstance: any }, thunkAPI): Promise<InitWorkflowPayload> => {
-  const { workflowDefinition, runInstance } = graphState;
-  const { workflow, designerOptions } = thunkAPI.getState() as RootState;
-  const spec = workflow.workflowSpec;
+>(
+  'parser/deserialize',
+  async (graphState: { workflowDefinition: Workflow; runInstance: any }, { getState, dispatch }): Promise<InitWorkflowPayload> => {
+    const { workflowDefinition, runInstance } = graphState;
+    const { workflow, designerOptions } = getState() as RootState;
+    const spec = workflow.workflowSpec;
 
-  if (spec === undefined) {
-    throw new Error('Trying to import workflow without specifying the workflow type');
-  }
-  if (spec === 'BJS') {
-    const traceId = LoggerService().startTrace({
-      name: 'Initialize Graph State',
-      action: 'initializeGraphState',
-      source: 'ParseReduxAction.ts',
-    });
-
-    getConnectionsQuery();
-    const { definition, connectionReferences, parameters } = workflowDefinition;
-    const deserializedWorkflow = BJSDeserialize(definition, runInstance);
-    // For situations where there is an existing workflow, respect the node dimensions so that they are not reset
-    const previousGraphFlattened = flattenWorkflowNodes(workflow.graph?.children || []);
-    updateChildrenDimensions(deserializedWorkflow?.graph?.children || [], previousGraphFlattened);
-
-    thunkAPI.dispatch(initializeConnectionReferences(connectionReferences ?? {}));
-    thunkAPI.dispatch(initializeStaticResultProperties(deserializedWorkflow.staticResults ?? {}));
-    updateWorkflowParameters(parameters ?? {}, thunkAPI.dispatch);
-
-    const { connections, customCode } = thunkAPI.getState();
-    const customCodeWithData = getCustomCodeFilesWithData(customCode);
-
-    const asyncInitialize = async () => {
-      batch(async () => {
-        try {
-          await Promise.all([
-            initializeOperationMetadata(
-              deserializedWorkflow,
-              connections.connectionReferences,
-              parameters ?? {},
-              customCodeWithData,
-              workflow.workflowKind,
-              designerOptions.hostOptions.forceEnableSplitOn ?? false,
-              thunkAPI.dispatch
-            ),
-            getConnectionsApiAndMapping(deserializedWorkflow, thunkAPI.dispatch),
-          ]);
-          await initializeDynamicDataInNodes(thunkAPI.getState, thunkAPI.dispatch);
-
-          LoggerService().endTrace(traceId, { status: Status.Success });
-        } catch (e) {
-          LoggerService().endTrace(traceId, { status: Status.Failure });
-        }
+    if (spec === undefined) {
+      throw new Error('Trying to import workflow without specifying the workflow type');
+    }
+    if (spec === 'BJS') {
+      const traceId = LoggerService().startTrace({
+        name: 'Initialize Graph State',
+        action: 'initializeGraphState',
+        source: 'ParseReduxAction.ts',
       });
-    };
-    asyncInitialize();
 
-    return { deserializedWorkflow, originalDefinition: definition };
+      getConnectionsQuery();
+      const { definition, connectionReferences, parameters } = workflowDefinition;
+      const deserializedWorkflow = BJSDeserialize(definition, runInstance);
+      // For situations where there is an existing workflow, respect the node dimensions so that they are not reset
+      const previousGraphFlattened = flattenWorkflowNodes(workflow.graph?.children || []);
+      updateChildrenDimensions(deserializedWorkflow?.graph?.children || [], previousGraphFlattened);
+
+      dispatch(initializeConnectionReferences(connectionReferences ?? {}));
+      dispatch(initializeStaticResultProperties(deserializedWorkflow.staticResults ?? {}));
+      updateWorkflowParameters(parameters ?? {}, dispatch);
+
+      // If host option has 'collapseGraphsByDefault' set to true, collapse all graphs
+      const collapseGraphsByDefaultFlag = designerOptions?.hostOptions?.collapseGraphsByDefault;
+      if (collapseGraphsByDefaultFlag) {
+        const allGraphIds: string[] = [];
+        const collapseGraphs = (graph: WorkflowNode) => {
+          if (graph.children && graph.type !== WORKFLOW_NODE_TYPES.HIDDEN_NODE) {
+            allGraphIds.push(graph.id);
+            graph.children.forEach(collapseGraphs);
+          }
+        };
+        collapseGraphs(deserializedWorkflow.graph);
+        dispatch(setCollapsedGraphIds(allGraphIds));
+      }
+
+      const { connections, customCode } = getState();
+      const customCodeWithData = getCustomCodeFilesWithData(customCode);
+
+      const asyncInitialize = async () => {
+        batch(async () => {
+          try {
+            await Promise.all([
+              initializeOperationMetadata(
+                deserializedWorkflow,
+                connections.connectionReferences,
+                parameters ?? {},
+                customCodeWithData,
+                workflow.workflowKind,
+                dispatch
+              ),
+              getConnectionsApiAndMapping(deserializedWorkflow, dispatch),
+            ]);
+            await initializeDynamicDataInNodes(getState, dispatch);
+
+            LoggerService().endTrace(traceId, { status: Status.Success });
+          } catch (e) {
+            LoggerService().endTrace(traceId, { status: Status.Failure });
+          }
+        });
+      };
+      asyncInitialize();
+
+      return { deserializedWorkflow, originalDefinition: definition };
+    }
+    if (spec === 'CNCF') {
+      throw new Error('Spec not implemented.');
+    }
+    throw new Error('Invalid Workflow Spec');
   }
-  if (spec === 'CNCF') {
-    throw new Error('Spec not implemented.');
-  }
-  throw new Error('Invalid Workflow Spec');
-});
+);
 
 export function updateChildrenDimensions(currentChildren: WorkflowNode[], previousChildren: WorkflowNode[]) {
   for (const node of currentChildren) {

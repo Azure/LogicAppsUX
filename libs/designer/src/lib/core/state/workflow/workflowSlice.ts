@@ -13,7 +13,7 @@ import { pasteScopeInWorkflow } from '../../parsers/pasteScopeInWorkflow';
 import type { PasteScopeNodePayload } from '../../parsers/pasteScopeInWorkflow';
 import { addNewEdge } from '../../parsers/restructuringHelpers';
 import { createWorkflowNode, getImmediateSourceNodeIds, transformOperationTitle } from '../../utils/graph';
-import { resetWorkflowState } from '../global';
+import { resetWorkflowState, setStateAfterUndoRedo } from '../global';
 import type { NodeOperation } from '../operation/operationMetadataSlice';
 import {
   updateNodeParameters,
@@ -21,10 +21,10 @@ import {
   updateParameterConditionalVisibility,
   updateStaticResults,
 } from '../operation/operationMetadataSlice';
-import type { RelationshipIds } from '../panel/panelInterfaces';
+import type { RelationshipIds } from '../panel/panelTypes';
 import type { ErrorMessage, SpecTypes, WorkflowState, WorkflowKind } from './workflowInterfaces';
-import { getWorkflowNodeFromGraphState } from './workflowSelectors';
 import type { BoundParameters } from '@microsoft/logic-apps-shared';
+import { getParentsUncollapseFromGraphState, getWorkflowNodeFromGraphState } from './workflowSelectors';
 import {
   LogEntryLevel,
   LoggerService,
@@ -39,7 +39,9 @@ import { getDurationStringPanelMode } from '@microsoft/designer-ui';
 import type * as LogicAppsV2 from '@microsoft/logic-apps-shared/src/utils/src/lib/models/logicAppsV2';
 import { createSlice, isAnyOf } from '@reduxjs/toolkit';
 import type { PayloadAction } from '@reduxjs/toolkit';
-import type { NodeChange, NodeDimensionChange } from '@xyflow/react';
+import type { NodeChange, NodeDimensionChange } from '@xyflow/system';
+import type { UndoRedoPartialRootState } from '../undoRedo/undoRedoTypes';
+import { initializeInputsOutputsBinding } from '../../actions/bjsworkflow/monitoring';
 
 export interface AddImplicitForeachPayload {
   nodeId: string;
@@ -149,7 +151,7 @@ export const workflowSlice = createSlice({
     },
     pasteNode: (
       state: WorkflowState,
-      action: PayloadAction<{ nodeId: string; relationshipIds: RelationshipIds; operation: NodeOperation }>
+      action: PayloadAction<{ nodeId: string; relationshipIds: RelationshipIds; operation: NodeOperation; isParallelBranch?: boolean }>
     ) => {
       const graph = getWorkflowNodeFromGraphState(state, action.payload.relationshipIds.graphId);
       if (!graph) {
@@ -161,6 +163,7 @@ export const workflowSlice = createSlice({
           operation: action.payload.operation as any,
           nodeId: action.payload.nodeId,
           relationshipIds: action.payload.relationshipIds,
+          isParallelBranch: action.payload.isParallelBranch,
         },
         graph,
         state.nodesMetadata,
@@ -168,12 +171,12 @@ export const workflowSlice = createSlice({
       );
     },
     pasteScopeNode: (state: WorkflowState, action: PayloadAction<PasteScopeNodePayload>) => {
-      const { relationshipIds, scopeNode, operations, nodesMetadata, allActions } = action.payload;
+      const { relationshipIds, scopeNode, operations, nodesMetadata, allActions, isParallelBranch } = action.payload;
       const graph = getWorkflowNodeFromGraphState(state, relationshipIds.graphId);
       if (!graph) {
         throw new Error('graph not set');
       }
-      pasteScopeInWorkflow(scopeNode, graph, relationshipIds, operations, nodesMetadata, allActions, state);
+      pasteScopeInWorkflow(scopeNode, graph, relationshipIds, operations, nodesMetadata, allActions, state, isParallelBranch);
     },
     moveNode: (state: WorkflowState, action: PayloadAction<MoveNodePayload>) => {
       if (!state.graph) {
@@ -286,8 +289,19 @@ export const workflowSlice = createSlice({
         !!node?.children?.length && stack.push(...node.children);
       }
     },
-    setCollapsedGraphIds: (state: WorkflowState, action: PayloadAction<Record<string, boolean>>) => {
-      state.collapsedGraphIds = action.payload;
+    setCollapsedGraphIds: (state: WorkflowState, action: PayloadAction<string[]>) => {
+      const idArray = action.payload;
+      const idRecord = idArray.reduce(
+        (acc, id) => {
+          acc[id] = true;
+          return acc;
+        },
+        {} as Record<string, boolean>
+      );
+      state.collapsedGraphIds = idRecord;
+    },
+    collapseGraphsToShowNode: (state: WorkflowState, action: PayloadAction<string>) => {
+      state.collapsedGraphIds = getParentsUncollapseFromGraphState(state, action.payload);
     },
     toggleCollapsedGraphId: (state: WorkflowState, action: PayloadAction<string>) => {
       if (getRecordEntry(state.collapsedGraphIds, action.payload) === true) {
@@ -401,6 +415,16 @@ export const workflowSlice = createSlice({
       }
       delete childOperation.runAfter?.[parentOperationId];
 
+      // If there is only the trigger node left, set to empty object
+      if (Object.keys(childOperation.runAfter ?? {}).length === 1) {
+        const rootTriggerNodeId = Object.entries(state.nodesMetadata).find(
+          ([_, node]) => node.graphId === 'root' && node.isRoot === true
+        )?.[0];
+        if (Object.keys(childOperation.runAfter ?? {})[0] === rootTriggerNodeId) {
+          childOperation.runAfter = {};
+        }
+      }
+
       const graphPath: string[] = [];
       let operationGraph = getRecordEntry(state.nodesMetadata, childOperationId);
 
@@ -424,6 +448,15 @@ export const workflowSlice = createSlice({
       if (!parentOperation || !childOperation) {
         return;
       }
+
+      // If there is no existing run after, it was running after the trigger
+      // We need to add a dummy trigger node to populate the settings object and flag validation
+      if (Object.keys(childOperation.runAfter ?? {}).length === 0) {
+        const rootTriggerNodeId =
+          Object.entries(state.nodesMetadata).find(([_, node]) => node.graphId === 'root' && node.isRoot === true)?.[0] ?? '';
+        childOperation.runAfter = { [rootTriggerNodeId]: [RUN_AFTER_STATUS.SUCCEEDED] };
+      }
+
       childOperation.runAfter = { ...(childOperation.runAfter ?? {}), [parentOperationId]: [RUN_AFTER_STATUS.SUCCEEDED] };
 
       const graphPath: string[] = [];
@@ -496,6 +529,20 @@ export const workflowSlice = createSlice({
       state.isDirty = state.isDirty || action.payload.isUserAction || false;
     });
     builder.addCase(resetWorkflowState, () => initialWorkflowState);
+    builder.addCase(initializeInputsOutputsBinding.fulfilled, (state, action) => {
+      const { nodeId, inputs, outputs } = action.payload;
+      const nodeMetadata = getRecordEntry(state.nodesMetadata, nodeId);
+      if (!nodeMetadata) {
+        return;
+      }
+      const nodeRunData = {
+        ...nodeMetadata.runData,
+        inputs: inputs,
+        outputs: outputs,
+      };
+      nodeMetadata.runData = nodeRunData as LogicAppsV2.WorkflowRunAction;
+    });
+    builder.addCase(setStateAfterUndoRedo, (_, action: PayloadAction<UndoRedoPartialRootState>) => action.payload.workflow);
     builder.addMatcher(
       isAnyOf(
         addNode,
@@ -537,7 +584,6 @@ export const {
   deleteSwitchCase,
   updateNodeSizes,
   setNodeDescription,
-  setCollapsedGraphIds,
   toggleCollapsedGraphId,
   addSwitchCase,
   discardAllChanges,
@@ -547,6 +593,8 @@ export const {
   removeEdgeFromRunAfter,
   clearFocusNode,
   setFocusNode,
+  setCollapsedGraphIds,
+  collapseGraphsToShowNode,
   replaceId,
   setRunIndex,
   setRepetitionRunData,

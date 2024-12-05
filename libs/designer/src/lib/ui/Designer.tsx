@@ -1,9 +1,9 @@
 import { openPanel, useNodesInitialized } from '../core';
 import { useLayout } from '../core/graphlayout';
 import { usePreloadOperationsQuery, usePreloadConnectorsQuery } from '../core/queries/browse';
-import { useMonitoringView, useReadOnly, useHostOptions } from '../core/state/designerOptions/designerOptionsSelectors';
+import { useMonitoringView, useReadOnly, useHostOptions, useIsVSCode } from '../core/state/designerOptions/designerOptionsSelectors';
 import { useClampPan } from '../core/state/designerView/designerViewSelectors';
-import { clearPanel } from '../core/state/panelV2/panelSlice';
+import { clearPanel } from '../core/state/panel/panelSlice';
 import { useIsGraphEmpty } from '../core/state/workflow/workflowSelectors';
 import { buildEdgeIdsBySource, updateNodeSizes } from '../core/state/workflow/workflowSlice';
 import type { AppDispatch, RootState } from '../core/store';
@@ -25,7 +25,6 @@ import { PanelLocation } from '@microsoft/designer-ui';
 import type { CustomPanelLocation } from '@microsoft/designer-ui';
 import type { WorkflowNodeType } from '@microsoft/logic-apps-shared';
 import { useWindowDimensions, WORKFLOW_NODE_TYPES, useThrottledEffect } from '@microsoft/logic-apps-shared';
-import type { CSSProperties } from 'react';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import KeyboardBackendFactory, { isKeyboardDragTrigger } from 'react-dnd-accessible-backend';
 import { HTML5Backend } from 'react-dnd-html5-backend';
@@ -39,13 +38,13 @@ import { PerformanceDebugTool } from './common/PerformanceDebug/PerformanceDebug
 import { CanvasFinder } from './CanvasFinder';
 import { DesignerContextualMenu } from './common/DesignerContextualMenu/DesignerContextualMenu';
 import { EdgeContextualMenu } from './common/EdgeContextualMenu/EdgeContextualMenu';
+import { DragPanMonitor } from './common/DragPanMonitor/DragPanMonitor';
 
 export interface DesignerProps {
   backgroundProps?: BackgroundProps;
   panelLocation?: PanelLocation;
   customPanelLocations?: CustomPanelLocation[];
   displayRuntimeInfo?: boolean;
-  rightShift?: string; // How much we shift the canvas to the right (due to copilot)
 }
 
 type NodeTypesObj = {
@@ -79,6 +78,7 @@ export const Designer = (props: DesignerProps) => {
 
   const [nodes, edges, flowSize] = useLayout();
   const isEmpty = useIsGraphEmpty();
+  const isVSCode = useIsVSCode();
   const isReadOnly = useReadOnly();
   const dispatch = useDispatch<AppDispatch>();
   const onNodesChange = useCallback(
@@ -136,7 +136,12 @@ export const Designer = (props: DesignerProps) => {
   useHotkeys(['meta+shift+p', 'ctrl+shift+p'], (event) => {
     event.preventDefault();
     dispatch(openPanel({ panelMode: 'NodeSearch' }));
-  });
+  },{enabled: !isVSCode});
+
+  useHotkeys(['meta+alt+p', 'ctrl+alt+p', 'meta+option+p',  'ctrl+option+p'], (event) => {
+    event.preventDefault();
+    dispatch(openPanel({ panelMode: 'NodeSearch' }));
+  }, {enabled: isVSCode});
 
   const isMonitoringView = useMonitoringView();
   const DND_OPTIONS: any = {
@@ -154,10 +159,6 @@ export const Designer = (props: DesignerProps) => {
         transition: KeyboardTransition,
       },
     ],
-  };
-
-  const copilotPadding: CSSProperties = {
-    marginLeft: props.rightShift,
   };
 
   const isInitialized = useNodesInitialized();
@@ -208,7 +209,7 @@ export const Designer = (props: DesignerProps) => {
   return (
     <DndProvider options={DND_OPTIONS}>
       {preloadSearch ? <SearchPreloader /> : null}
-      <div className="msla-designer-canvas msla-panel-mode" ref={designerContainerRef} style={copilotPadding}>
+      <div className="msla-designer-canvas msla-panel-mode" ref={designerContainerRef}>
         <ReactFlowProvider>
           <ReactFlow
             nodeTypes={nodeTypes}
@@ -245,12 +246,13 @@ export const Designer = (props: DesignerProps) => {
             <DesignerContextualMenu />
             <EdgeContextualMenu />
           </ReactFlow>
-          <div className={css('msla-designer-tools', panelLocation === PanelLocation.Left && 'left-panel')} style={copilotPadding}>
+          <div className={css('msla-designer-tools', panelLocation === PanelLocation.Left && 'left-panel')}>
             <Controls />
             <Minimap />
           </div>
           <PerformanceDebugTool />
           <CanvasFinder panelLocation={panelLocation} />
+          <DragPanMonitor />
         </ReactFlowProvider>
         <div
           id={'msla-layer-host'}

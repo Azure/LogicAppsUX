@@ -1,3 +1,4 @@
+import constants from '../../../common/constants';
 import { VariableBrandColor, FxIcon, ParameterIcon, VariableIcon } from './helper';
 import { JsonSplitter } from './jsonsplitter';
 import { TokenSegmentConvertor } from './tokensegment';
@@ -17,6 +18,7 @@ import {
   isNullOrUndefined,
   startsWith,
   UnsupportedException,
+  escapeString,
 } from '@microsoft/logic-apps-shared';
 
 /**
@@ -56,12 +58,12 @@ export class ValueSegmentConvertor {
    * @arg {any} value - The value.
    * @return {ValueSegment[]}
    */
-  public convertToValueSegments(value: any): ValueSegment[] {
+  public convertToValueSegments(value: any, parameterType?: string): ValueSegment[] {
     if (isNullOrUndefined(value)) {
       return [createLiteralValueSegment('')];
     }
     if (typeof value === 'string') {
-      return this._convertStringToValueSegments(value);
+      return this._convertStringToValueSegments(value, parameterType);
     }
     return this._convertJsonToValueSegments(JSON.stringify(value, null, 2));
   }
@@ -106,12 +108,15 @@ export class ValueSegmentConvertor {
     return [this._createLiteralValueSegment(section)];
   }
 
-  private _convertStringToValueSegments(value: string): ValueSegment[] {
+  private _convertStringToValueSegments(value: string, parameterType?: string): ValueSegment[] {
     if (isTemplateExpression(value)) {
       const expression = ExpressionParser.parseTemplateExpression(value);
       return this._convertTemplateExpressionToValueSegments(expression);
     }
-    return [this._createLiteralValueSegment(value)];
+
+    const isSpecialValue = ['true', 'false', 'null'].includes(value) || /^-?\d+$/.test(value);
+    const stringValue = parameterType === constants.SWAGGER.TYPE.ANY && isSpecialValue ? `"${value}"` : value;
+    return [this._createLiteralValueSegment(stringValue)];
   }
 
   private _convertTemplateExpressionToValueSegments(expression: Expression): ValueSegment[] {
@@ -183,10 +188,11 @@ export class ValueSegmentConvertor {
       return dynamicContentTokenSegment;
     }
     // Note: We need to get the expression value if this is a sub expression resulted from uncasting.
-    const value =
+    const value = escapeString(
       expression.startPosition === 0
         ? expression.expression
-        : expression.expression.substring(expression.startPosition, expression.endPosition);
+        : expression.expression.substring(expression.startPosition, expression.endPosition)
+    );
     return this._createExpressionTokenValueSegment(value, expression);
   }
 

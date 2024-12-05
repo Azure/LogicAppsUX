@@ -1,5 +1,5 @@
+import { describe, expect, it } from 'vitest';
 import reducer, { initDesignerOptions, initialDesignerOptionsState } from '../designerOptions/designerOptionsSlice';
-import { describe, it, expect } from 'vitest';
 
 describe('designer options slice reducers', () => {
   it('should initialize designer options state', async () => {
@@ -13,11 +13,14 @@ describe('designer options slice reducers', () => {
         forceEnableSplitOn: undefined,
         hideUTFExpressions: undefined,
         stringOverrides: undefined,
+        maxStateHistorySize: 5,
       },
     };
 
     const state = reducer(initialDesignerOptionsState, initDesignerOptions(initialOptions));
 
     expect(state.readOnly).toEqual(true);
+    expect(state.hostOptions.maxStateHistorySize).toEqual(5);
+    expect(state.isVSCode).toEqual(false);
   });
 });

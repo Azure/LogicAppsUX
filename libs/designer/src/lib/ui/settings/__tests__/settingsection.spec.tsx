@@ -107,14 +107,14 @@ describe('ui/settings/settingsection', () => {
   });
 
   it('should construct', () => {
-    vi.spyOn(PanelSelectors, 'useSelectedNodeId').mockReturnValue('');
+    vi.spyOn(PanelSelectors, 'useOperationPanelSelectedNodeId').mockReturnValue('');
 
     const settingSection = renderer.render(<SettingsSection {...minimal} />);
     expect(settingSection).toMatchSnapshot();
   });
 
   it('should have child section when expanded', () => {
-    vi.spyOn(PanelSelectors, 'useSelectedNodeId').mockReturnValue('');
+    vi.spyOn(PanelSelectors, 'useOperationPanelSelectedNodeId').mockReturnValue('');
 
     const props: SettingsSectionProps = { ...minimal, expanded: true };
     renderer.render(<SettingsSection {...props} />);

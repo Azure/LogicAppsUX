@@ -29,6 +29,9 @@ import { AllowDropTarget } from './dynamicsvgs/allowdroptarget';
 import { BlockDropTarget } from './dynamicsvgs/blockdroptarget';
 import { retrieveClipboardData } from '../../core/utils/clipboard';
 import { setEdgeContextMenuData } from '../../core/state/designerView/designerViewSlice';
+import { canDropItem } from './helpers';
+import { useIsDraggingNode } from '../../core/hooks/useIsDraggingNode';
+import { useIsDarkMode } from '../../core/state/designerOptions/designerOptionsSelectors';
 
 export interface DropZoneProps {
   graphId: string;
@@ -41,6 +44,7 @@ export interface DropZoneProps {
 export const DropZone: React.FC<DropZoneProps> = memo(({ graphId, parentId, childId, isLeaf = false, tabIndex = 0 }) => {
   const intl = useIntl();
   const dispatch = useDispatch<AppDispatch>();
+  const isDarkMode = useIsDarkMode();
 
   const nodeMetadata = useNodeMetadata(removeIdTag(parentId ?? ''));
   // For subgraph nodes, we want to use the id of the scope node as the parentId to get the dependancies
@@ -50,6 +54,7 @@ export const DropZone: React.FC<DropZoneProps> = memo(({ graphId, parentId, chil
     }
     return parentId;
   }, [nodeMetadata, parentId]);
+
   const upstreamNodesOfChild = useUpstreamNodes(removeIdTag(childId ?? newParentId ?? graphId));
   const immediateAncestor = useGetAllOperationNodesWithin(parentId && !containsIdTag(parentId) ? parentId : '');
   const upstreamNodes = useMemo(() => new Set([...upstreamNodesOfChild, ...immediateAncestor]), [immediateAncestor, upstreamNodesOfChild]);
@@ -105,44 +110,21 @@ export const DropZone: React.FC<DropZoneProps> = memo(({ graphId, parentId, chil
     { preventDefault: true }
   );
 
-  const [{ isOver, canDrop }, drop] = useDrop(
+  const isDragging = useIsDraggingNode();
+
+  const [{ canDrop }, drop] = useDrop(
     () => ({
       accept: 'BOX',
       drop: () => ({ graphId, parentId, childId }),
       canDrop: (item: {
         id: string;
         dependencies?: string[];
+        loopSources?: string[];
         graphId?: string;
         isScope?: boolean;
-      }) => {
-        // This supports preventing moving a node with a dependency above its upstream node
-        for (const dec of item.dependencies ?? []) {
-          if (!upstreamNodes.has(dec)) {
-            return false;
-          }
-        }
-        if (item.isScope) {
-          const scopeNodeId = removeIdTag(item.id);
-          if (upstreamScopes.has(scopeNodeId)) {
-            return false;
-          }
-        }
-
-        for (const node of upstreamNodes) {
-          if (
-            upstreamNodesDependencies[node].has(item.id) ||
-            (upstreamNodesDependencies[item.id] && upstreamNodesDependencies[item.id].has(node))
-          ) {
-            return false;
-          }
-        }
-        // TODO: Support preventing moving a node below downstream output
-        // TODO: Support calculating dependencies when dragging of scopes
-        return item.id !== childId && item.id !== parentId;
-      },
+      }) => canDropItem(item, upstreamNodes, upstreamNodesDependencies, upstreamScopes, childId, parentId),
       collect: (monitor) => ({
-        isOver: monitor.isOver(),
-        canDrop: monitor.isOver() && monitor.canDrop(), // Only calculate canDrop when isOver is true
+        canDrop: monitor.canDrop(),
       }),
     }),
     [graphId, parentId, childId, upstreamNodes, upstreamNodesDependencies]
@@ -228,20 +210,14 @@ export const DropZone: React.FC<DropZoneProps> = memo(({ graphId, parentId, chil
         drop(node);
         hotkeyRef.current = node;
       }}
-      className={css('msla-drop-zone-viewmanager2', isOver && canDrop && 'canDrop', isOver && !canDrop && 'cannotDrop')}
-      style={{
-        display: 'grid',
-        placeItems: 'center',
-        width: '100%',
-        height: '100%',
-      }}
+      className={css('msla-drop-zone-viewmanager', isDragging && (canDrop ? 'canDrop' : 'cannotDrop'))}
     >
-      {isOver && (
-        <div style={{ height: '24px', display: 'grid', placeItems: 'center' }}>
-          {canDrop ? <AllowDropTarget fill="#0078D4" /> : <BlockDropTarget fill="#797775" />}
+      {isDragging && (
+        <div style={{ display: 'grid', placeItems: 'center' }}>
+          {canDrop ? <AllowDropTarget fill="#0078D4" /> : <BlockDropTarget fill={isDarkMode ? '#252423' : '#edebe9'} />}
         </div>
       )}
-      {!isOver && (
+      {!isDragging && (
         <div ref={buttonRef}>
           <ActionButtonV2
             id={buttonId}

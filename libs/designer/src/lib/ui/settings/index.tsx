@@ -10,7 +10,7 @@ import { useOperationDownloadChunkMetadata, useOperationUploadChunkMetadata } fr
 import { useExpandedSections } from '../../core/state/setting/settingSelector';
 import { setExpandedSections } from '../../core/state/setting/settingSlice';
 import { updateTokenSecureStatus } from '../../core/state/tokens/tokensSlice';
-import { useActionMetadata } from '../../core/state/workflow/workflowSelectors';
+import { useRootTriggerId } from '../../core/state/workflow/workflowSelectors';
 import type { AppDispatch, RootState } from '../../core/store';
 import { isRootNodeInGraph } from '../../core/utils/graph';
 import { isSecureOutputsLinkedToInputs } from '../../core/utils/setting';
@@ -23,15 +23,7 @@ import { Tracking } from './sections/tracking';
 import type { ValidationError } from './validation/validation';
 import { ValidationErrorKeys, validateNodeSettings } from './validation/validation';
 import type { IDropdownOption } from '@fluentui/react';
-import {
-  type LogicAppsV2,
-  equals,
-  getRecordEntry,
-  isObject,
-  type UploadChunkMetadata,
-  type DownloadChunkMetadata,
-} from '@microsoft/logic-apps-shared';
-import { useMemo } from 'react';
+import { equals, getRecordEntry, isObject, type UploadChunkMetadata, type DownloadChunkMetadata } from '@microsoft/logic-apps-shared';
 import { useDispatch, useSelector } from 'react-redux';
 
 export type ToggleHandler = (checked: boolean) => void;
@@ -83,6 +75,7 @@ export const SettingsPanel: React.FC<PanelTabProps> = (props) => {
   const operationInfo = useOperationInfo(selectedNode);
   const { result: uploadChunkMetadata } = useOperationUploadChunkMetadata(operationInfo);
   const { result: downloadChunkMetadata } = useOperationDownloadChunkMetadata(operationInfo);
+  const rootState = useSelector((state: RootState) => state);
 
   const { nodeSettings, nodeSettingValidationErrors } = useSelector((state: RootState) => {
     return {
@@ -99,7 +92,7 @@ export const SettingsPanel: React.FC<PanelTabProps> = (props) => {
       })
     );
     if (shouldValidateSetting) {
-      validateNodeSettings(selectedNode, settings, settingSection, dispatch);
+      validateNodeSettings(selectedNode, settings, settingSection, rootState, dispatch);
     }
   };
 
@@ -112,26 +105,35 @@ export const SettingsPanel: React.FC<PanelTabProps> = (props) => {
     switch (settingSection) {
       case SettingSectionName.GENERAL: {
         validationErrors.push(
-          ...nodeSettingValidationErrors.filter(({ key }) => {
-            return (
+          ...nodeSettingValidationErrors.filter(
+            ({ key }) =>
               key === ValidationErrorKeys.TRIGGER_CONDITION_EMPTY ||
               key === ValidationErrorKeys.CHUNK_SIZE_INVALID ||
               key === ValidationErrorKeys.SINGLE_INSTANCE_SPLITON
-            );
-          })
+          )
+        );
+        break;
+      }
+      case SettingSectionName.RUNAFTER: {
+        validationErrors.push(
+          ...nodeSettingValidationErrors.filter(
+            ({ key }) =>
+              key === ValidationErrorKeys.CANNOT_DELETE_LAST_ACTION ||
+              key === ValidationErrorKeys.CANNOT_DELETE_LAST_STATUS ||
+              key === ValidationErrorKeys.CANNOT_RUN_AFTER_TRIGGER_AND_ACTION
+          )
         );
         break;
       }
       case SettingSectionName.NETWORKING: {
         validationErrors.push(
-          ...nodeSettingValidationErrors.filter(({ key }) => {
-            return (
+          ...nodeSettingValidationErrors.filter(
+            ({ key }) =>
               key === ValidationErrorKeys.PAGING_COUNT ||
               key === ValidationErrorKeys.RETRY_COUNT_INVALID ||
               key === ValidationErrorKeys.RETRY_INTERVAL_INVALID ||
               key === ValidationErrorKeys.TIMEOUT_VALUE_INVALID
-            );
-          })
+          )
         );
         break;
       }
@@ -245,7 +247,7 @@ function GeneralSettings({
   );
 
   const onConcurrencyToggle = (checked: boolean): void => {
-    const value = checked ? concurrency?.value?.runs ?? constants.CONCURRENCY_ACTION_SLIDER_LIMITS.DEFAULT : undefined;
+    const value = checked ? (concurrency?.value?.runs ?? constants.CONCURRENCY_ACTION_SLIDER_LIMITS.DEFAULT) : undefined;
     updateSettings({
       concurrency: {
         isSupported: !!concurrency?.isSupported,
@@ -402,6 +404,8 @@ function NetworkingSettings({
     paging,
     downloadChunkSize,
   } = nodeSettings;
+
+  const { hideContentTransferSettings } = useHostOptions();
 
   const onAsyncPatternToggle = (checked: boolean): void => {
     updateSettings({
@@ -619,6 +623,7 @@ function NetworkingSettings({
         retryPolicy={retryPolicy}
         uploadChunk={uploadChunk}
         downloadChunkSize={downloadChunkSize}
+        hideContentTransferSettings={hideContentTransferSettings}
         onHeaderClick={(sectionName) => dispatch(setExpandedSections(sectionName))}
         onAsyncPatternToggle={onAsyncPatternToggle}
         onAsyncResponseToggle={onAsyncResponseToggle}
@@ -642,10 +647,13 @@ function NetworkingSettings({
 }
 
 function RunAfterSettings({ nodeId, readOnly, isExpanded, validationErrors, dispatch }: SettingSectionProps): JSX.Element | null {
-  const nodeData = useActionMetadata(nodeId) as LogicAppsV2.ActionDefinition;
-  const showRunAfterSettings = useMemo(() => Object.keys(nodeData?.runAfter ?? {}).length > 0, [nodeData]);
+  // Don't show run after for the root trigger
+  const rootTriggerId = useRootTriggerId();
+  if (nodeId === rootTriggerId) {
+    return null;
+  }
 
-  return showRunAfterSettings ? (
+  return (
     <RunAfter
       nodeId={nodeId}
       readOnly={readOnly}
@@ -653,7 +661,7 @@ function RunAfterSettings({ nodeId, readOnly, isExpanded, validationErrors, disp
       validationErrors={validationErrors}
       onHeaderClick={(sectionName) => dispatch(setExpandedSections(sectionName))}
     />
-  ) : null;
+  );
 }
 
 function SecuritySettings({

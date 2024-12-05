@@ -10,7 +10,7 @@ import { Label } from '@microsoft/designer-ui';
 import { WorkflowService, isIdentityAssociatedWithLogicApp, equals, getIdentityDropdownOptions } from '@microsoft/logic-apps-shared';
 import type { ManagedIdentity } from '@microsoft/logic-apps-shared';
 import type { FormEvent } from 'react';
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { useIntl } from 'react-intl';
 import { useDispatch, useSelector } from 'react-redux';
 
@@ -42,13 +42,13 @@ export const IdentitySelector = (props: IdentitySelectorProps) => {
 
   const intl = useIntl();
   const dispatch = useDispatch<AppDispatch>();
-  const identity = WorkflowService().getAppIdentity?.() as ManagedIdentity;
+  const identity = useMemo(() => WorkflowService().getAppIdentity?.() as ManagedIdentity, []);
   const options = getIdentityDropdownOptions(identity, intl);
 
   const selectedIdentity = useSelector((state: RootState) => {
     const { connectionProperties } = getConnectionReference(state.connections, nodeId);
     return equals(connectionProperties?.authentication?.type, 'ManagedServiceIdentity')
-      ? connectionProperties?.authentication?.identity ?? constants.SYSTEM_ASSIGNED_MANAGED_IDENTITY
+      ? (connectionProperties?.authentication?.identity ?? constants.SYSTEM_ASSIGNED_MANAGED_IDENTITY)
       : undefined;
   });
 
@@ -78,7 +78,7 @@ export const IdentitySelector = (props: IdentitySelectorProps) => {
         })
       );
     }
-  }, [identity, dispatch, selectedKey, nodeId, intl]);
+  }, [dispatch, intl, identity, selectedKey, nodeId]);
 
   const handleUpdateIdentity = (_event: FormEvent, option?: IDropdownOption) => {
     dispatch(setIsWorkflowDirty(true));

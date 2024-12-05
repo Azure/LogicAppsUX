@@ -9,7 +9,7 @@ import {
   useParameterValidationErrors,
   useTokenDependencies,
 } from '../../core/state/operation/operationSelector';
-import { useIsNodeSelected } from '../../core/state/panel/panelSelectors';
+import { useIsNodePinnedToOperationPanel, useIsNodeSelectedInOperationPanel } from '../../core/state/panel/panelSelectors';
 import { changePanelNode } from '../../core/state/panel/panelSlice';
 import { useAllOperations, useOperationQuery } from '../../core/state/selectors/actionMetadataSelector';
 import { useSettingValidationErrors } from '../../core/state/setting/settingSelector';
@@ -33,7 +33,7 @@ import { LoopsPager } from '../common/LoopsPager/LoopsPager';
 import { getRepetitionName } from '../common/LoopsPager/helper';
 import { DropZone } from '../connections/dropzone';
 import { MessageBarType } from '@fluentui/react';
-import { RunService, isNullOrUndefined, removeIdTag, useNodeIndex } from '@microsoft/logic-apps-shared';
+import { RunService, equals, isNullOrUndefined, removeIdTag, useNodeIndex } from '@microsoft/logic-apps-shared';
 import { ScopeCard } from '@microsoft/designer-ui';
 import type { LogicAppsV2 } from '@microsoft/logic-apps-shared';
 import { memo, useCallback, useEffect, useMemo, useRef, useState } from 'react';
@@ -44,7 +44,6 @@ import { useDispatch } from 'react-redux';
 import { Handle, Position, type NodeProps } from '@xyflow/react';
 import { copyScopeOperation } from '../../core/actions/bjsworkflow/copypaste';
 import { useHotkeys } from 'react-hotkeys-hook';
-import { useIsNodePinnedToOperationPanel } from '../../core/state/panelV2/panelSelectors';
 import { CopyTooltip } from '../common/DesignerContextualMenu/CopyTooltip';
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -101,7 +100,7 @@ const ScopeCardNode = ({ data, targetPosition = Position.Top, sourcePosition = P
       refetchOnWindowFocus: false,
       initialData: null,
       refetchOnMount: true,
-      enabled: parentRunIndex !== undefined && isMonitoringView,
+      enabled: parentRunIndex !== undefined && !!isMonitoringView,
     }
   );
 
@@ -116,7 +115,7 @@ const ScopeCardNode = ({ data, targetPosition = Position.Top, sourcePosition = P
       refetch();
     }
   }, [dispatch, parentRunIndex, isMonitoringView, refetch, repetitionName, parenRunData?.status]);
-  const dependencies = useTokenDependencies(scopeId);
+  const { dependencies, loopSources } = useTokenDependencies(scopeId);
   const [{ isDragging }, drag, dragPreview] = useDrag(
     () => ({
       type: 'BOX',
@@ -140,6 +139,7 @@ const ScopeCardNode = ({ data, targetPosition = Position.Top, sourcePosition = P
       item: {
         id: id,
         dependencies,
+        loopSources,
         isScope: true,
       },
       canDrag: !readOnly,
@@ -151,7 +151,7 @@ const ScopeCardNode = ({ data, targetPosition = Position.Top, sourcePosition = P
   );
 
   const isPinned = useIsNodePinnedToOperationPanel(scopeId);
-  const selected = useIsNodeSelected(scopeId);
+  const selected = useIsNodeSelectedInOperationPanel(scopeId);
   const brandColor = useBrandColor(scopeId);
   const iconUri = useIconUri(scopeId);
   const isLeaf = useIsLeafNode(id);
@@ -270,6 +270,14 @@ const ScopeCardNode = ({ data, targetPosition = Position.Top, sourcePosition = P
     statusRun,
   ]);
 
+  const renderLoopsPager = useMemo(() => {
+    if (metadata?.runData?.status && !equals(metadata.runData.status, 'InProgress')) {
+      return <LoopsPager metadata={metadata} scopeId={scopeId} collapsed={graphCollapsed} />;
+    }
+
+    return null;
+  }, [graphCollapsed, metadata, scopeId]);
+
   const nodeIndex = useNodeIndex(id);
 
   if (!node) {
@@ -334,9 +342,7 @@ const ScopeCardNode = ({ data, targetPosition = Position.Top, sourcePosition = P
             nodeIndex={nodeIndex}
           />
           {showCopyCallout ? <CopyTooltip targetRef={rootRef} hideTooltip={clearCopyCallout} /> : null}
-          {isMonitoringView && normalizedType === constants.NODE.TYPE.FOREACH ? (
-            <LoopsPager metadata={metadata} scopeId={scopeId} collapsed={graphCollapsed} />
-          ) : null}
+          {normalizedType === constants.NODE.TYPE.FOREACH && isMonitoringView ? renderLoopsPager : null}
           <Handle className="node-handle bottom" type="source" position={sourcePosition} isConnectable={false} />
         </div>
       </div>

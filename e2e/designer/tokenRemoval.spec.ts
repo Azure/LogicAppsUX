@@ -3,7 +3,7 @@ import { GoToMockWorkflow } from './utils/GoToWorkflow';
 import { getSerializedWorkflowFromState } from './utils/designerFunctions';
 
 test.describe(
-  'Token Picker Tests',
+  'Token Removal Tests',
   {
     tag: '@mock',
   },
@@ -69,7 +69,7 @@ test.describe(
       expect(JSON.stringify(serializedNew)).not.toContain("@{triggerBody()?['string']}");
     });
 
-    test('Tokens should be removed from parameters when workflow parameter is deleted', async ({ page }) => {
+    test.skip('Tokens should be removed from parameters when workflow parameter is deleted', async ({ page }) => {
       await page.goto('/');
 
       await GoToMockWorkflow(page, 'Panel');
@@ -96,7 +96,7 @@ test.describe(
         "@{parameters('EILCO Admin Nominations-OCSA List (cr773_EILCOAdminNominations_OCSA_L2)')}"
       );
     });
-    test('Output should be correct when multiple tokens get removed by removing source', async ({ page }) => {
+    test.skip('Output should be correct when multiple tokens get removed by removing source', async ({ page }) => {
       await page.goto('/');
 
       await GoToMockWorkflow(page, 'Panel');

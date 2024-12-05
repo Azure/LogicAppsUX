@@ -3,13 +3,18 @@ import { updateNodeConnection } from '../../../../core/actions/bjsworkflow/conne
 import { useConnectionsForConnector } from '../../../../core/queries/connections';
 import { useConnectorByNodeId, useNodeConnectionId } from '../../../../core/state/connection/connectionSelector';
 import { useIsXrmConnectionReferenceMode } from '../../../../core/state/designerOptions/designerOptionsSelectors';
-import { useReferencePanelMode, useSelectedNodeIds } from '../../../../core/state/panel/panelSelectors';
+import { useConnectionPanelSelectedNodeIds, usePreviousPanelMode } from '../../../../core/state/panel/panelSelectors';
 import { openPanel, setIsCreatingConnection } from '../../../../core/state/panel/panelSlice';
 import { ActionList } from '../actionList/actionList';
 import { ConnectionTable } from './connectionTable';
-import { MessageBar, MessageBarType } from '@fluentui/react';
-import { Body1Strong, Button, Divider, Spinner } from '@fluentui/react-components';
-import { ConnectionService, getIconUriFromConnector, type Connection, type Connector } from '@microsoft/logic-apps-shared';
+import { Body1Strong, Button, Divider, Spinner, MessageBar, MessageBarTitle, MessageBarBody, Text } from '@fluentui/react-components';
+import {
+  ConnectionService,
+  getIconUriFromConnector,
+  parseErrorMessage,
+  type Connection,
+  type Connector,
+} from '@microsoft/logic-apps-shared';
 import { useCallback, useEffect, useMemo } from 'react';
 import { useIntl } from 'react-intl';
 import { useDispatch } from 'react-redux';
@@ -18,10 +23,10 @@ export const SelectConnection = () => {
   const dispatch = useDispatch<AppDispatch>();
 
   const intl = useIntl();
-  const selectedNodeIds = useSelectedNodeIds();
+  const selectedNodeIds = useConnectionPanelSelectedNodeIds();
   const currentConnectionId = useNodeConnectionId(selectedNodeIds?.[0]); // only need to grab first one, they should all be the same
   const isXrmConnectionReferenceMode = useIsXrmConnectionReferenceMode();
-  const referencePanelMode = useReferencePanelMode();
+  const referencePanelMode = usePreviousPanelMode();
 
   const closeConnectionsFlow = useCallback(() => {
     const panelMode = referencePanelMode ?? 'Operation';
@@ -36,7 +41,7 @@ export const SelectConnection = () => {
   const connector = useConnectorByNodeId(selectedNodeIds?.[0]); // only need to grab first one, they should all be the same
   const connectorIconUri = useMemo(() => getIconUriFromConnector(connector), [connector]);
   const connectionQuery = useConnectionsForConnector(connector?.id ?? '');
-  const connections = useMemo(() => connectionQuery.data ?? [], [connectionQuery]);
+  const connections = useMemo(() => connectionQuery?.data ?? [], [connectionQuery]);
 
   useEffect(() => {
     if (!connectionQuery.isLoading && !connectionQuery.isError && connections.length === 0) {
@@ -106,6 +111,12 @@ export const SelectConnection = () => {
     description: 'Aria label description for cancel button',
   });
 
+  const connectionLoadErrorTitle = intl.formatMessage({
+    defaultMessage: 'Error loading connections',
+    id: 'HQ/HhZ',
+    description: 'Title for error message when loading connections',
+  });
+
   if (connectionQuery.isLoading) {
     return (
       <div className="msla-loading-container">
@@ -114,24 +125,31 @@ export const SelectConnection = () => {
     );
   }
 
-  if (connectionQuery.isError) {
-    return <MessageBar messageBarType={MessageBarType.error}>{JSON.stringify(connectionQuery.error)}</MessageBar>;
-  }
-
   return (
     <div className="msla-edit-connection-container">
       <ActionList nodeIds={selectedNodeIds} iconUri={connectorIconUri} />
       <Divider />
 
-      <Body1Strong>{componentDescription}</Body1Strong>
-      <ConnectionTable
-        connections={connections}
-        currentConnectionId={currentConnectionId}
-        saveSelectionCallback={saveSelectionCallback}
-        cancelSelectionCallback={closeConnectionsFlow}
-        createConnectionCallback={createConnectionCallback}
-        isXrmConnectionReferenceMode={!!isXrmConnectionReferenceMode}
-      />
+      {connectionQuery.isError ? (
+        <MessageBar intent={'error'}>
+          <MessageBarBody>
+            <MessageBarTitle>{connectionLoadErrorTitle}</MessageBarTitle>
+            <Text>{parseErrorMessage(connectionQuery.error)}</Text>
+          </MessageBarBody>
+        </MessageBar>
+      ) : (
+        <>
+          <Body1Strong>{componentDescription}</Body1Strong>
+          <ConnectionTable
+            connections={connections}
+            currentConnectionId={currentConnectionId}
+            saveSelectionCallback={saveSelectionCallback}
+            cancelSelectionCallback={closeConnectionsFlow}
+            createConnectionCallback={createConnectionCallback}
+            isXrmConnectionReferenceMode={!!isXrmConnectionReferenceMode}
+          />
+        </>
+      )}
 
       <div className="msla-edit-connection-actions-container">
         <Button aria-label={buttonAddAria} onClick={createConnectionCallback}>

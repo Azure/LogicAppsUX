@@ -31,8 +31,9 @@ export interface WorkflowLoadingState {
   suppressDefaultNodeSelect?: boolean;
   hostOptions: {
     displayRuntimeInfo: boolean; // show info about where the action is run(i.e. InApp/Shared/Custom)
-    forceEnableSplitOn?: boolean; // force enable split on for all actions
     stringOverrides?: Record<string, string>; // string overrides for localization
+    maxStateHistorySize?: number; // maximum number of states to save in history for undo/redo
+    collapseGraphsByDefault?: boolean; // collapse scope by default
   };
   showPerformanceDebug?: boolean;
 }
@@ -58,6 +59,8 @@ const initialState: WorkflowLoadingState = {
   suppressDefaultNodeSelect: false,
   hostOptions: {
     displayRuntimeInfo: true,
+    maxStateHistorySize: 0,
+    collapseGraphsByDefault: false,
   },
   showPerformanceDebug: false,
 };

@@ -4,11 +4,11 @@
  *--------------------------------------------------------------------------------------------*/
 import {
   managementApiPrefix,
+  workflowFileName,
   workflowLocationKey,
   workflowResourceGroupNameKey,
   workflowSubscriptionIdKey,
   localSettingsFileName,
-  extensionCommand,
   COMMON_ERRORS,
 } from '../../../constants';
 import { ext } from '../../../extensionVariables';
@@ -17,23 +17,23 @@ import { getLocalSettingsJson } from '../../utils/appSettings/localSettings';
 import { getConnectionsJson } from '../../utils/codeless/connection';
 import { getAuthorizationToken, getCloudHost } from '../../utils/codeless/getAuthorizationToken';
 import { isConnectionsParameterized } from '../../utils/codeless/parameterizer';
-import { getAccountCredentials } from '../../utils/credentials';
 import { addLocalFuncTelemetry } from '../../utils/funcCoreTools/funcVersion';
-import { showPreviewWarning, unzipLogicAppArtifacts } from '../../utils/taskUtils';
+import { unzipLogicAppArtifacts } from '../../utils/taskUtils';
 import { tryGetLogicAppProjectRoot } from '../../utils/verifyIsProject';
 import { getWorkspaceFolder } from '../../utils/workspace';
 import { parameterizeConnections } from '../parameterizeConnections';
 import type { IAzureScriptWizard } from './azureScriptWizard';
 import { createAzureWizard } from './azureScriptWizard';
 import { FileManagement } from './iacGestureHelperFunctions';
-import type { ServiceClientCredentials } from '@azure/ms-rest-js';
 import { isEmptyString } from '@microsoft/logic-apps-shared';
 import { DialogResponses, type IActionContext } from '@microsoft/vscode-azext-utils';
 import { type ConnectionsData, getBaseGraphApi, type ILocalSettingsJson } from '@microsoft/vscode-extension-logic-apps';
+import { startDesignTimeApi } from '../../utils/codeless/startDesignTimeApi';
 import axios from 'axios';
 import * as path from 'path';
-import * as portfinder from 'portfinder';
 import * as vscode from 'vscode';
+import * as fs from 'fs';
+import { v4 as uuidv4 } from 'uuid';
 
 export async function generateDeploymentScripts(context: IActionContext): Promise<void> {
   try {
@@ -41,13 +41,13 @@ export async function generateDeploymentScripts(context: IActionContext): Promis
     ext.outputChannel.appendLog(localize('initScriptGen', 'Initiating script generation...'));
 
     addLocalFuncTelemetry(context);
-    showPreviewWarning(extensionCommand.generateDeploymentScripts);
     const workspaceFolder = await getWorkspaceFolder(context);
     const projectPath = await tryGetLogicAppProjectRoot(context, workspaceFolder);
     const projectRoot = vscode.Uri.file(projectPath);
     const connectionsJson = await getConnectionsJson(projectPath);
     const connectionsData: ConnectionsData = isEmptyString(connectionsJson) ? {} : JSON.parse(connectionsJson);
     const isParameterized = await isConnectionsParameterized(connectionsData);
+    const workflowFiles = getWorkflowFilePaths(projectPath);
 
     if (!isParameterized) {
       const message = localize(
@@ -67,7 +67,7 @@ export async function generateDeploymentScripts(context: IActionContext): Promis
     const inputs = await gatherAndValidateInputs(scriptContext, projectRoot);
     const sourceControlPath = scriptContext.sourceControlPath;
     await callConsumptionApi(scriptContext, inputs);
-    const standardArtifactsContent = await callStandardApi(inputs);
+    const standardArtifactsContent = await callStandardApi(inputs, projectPath);
     await handleApiResponse(standardArtifactsContent, sourceControlPath);
 
     const deploymentScriptLocation = `workspace/${scriptContext.sourceControlPath}`;
@@ -83,14 +83,64 @@ export async function generateDeploymentScripts(context: IActionContext): Promis
     } else {
       FileManagement.convertToValidWorkspace(sourceControlPath);
     }
+
+    const correlationId = uuidv4();
+    const currentDateTime = new Date().toISOString();
+    workflowFiles.forEach((filePath) => updateMetadata(filePath, correlationId, currentDateTime));
   } catch (error) {
     const errorMessage = localize('errorScriptGen', 'Error during deployment script generation: {0}', error.message ?? error);
     ext.outputChannel.appendLog(errorMessage);
     context.telemetry.properties.error = errorMessage;
+    context.telemetry.properties.pinnedBundleVersion = ext.pinnedBundleVersion.toString();
+    context.telemetry.properties.currentWorkflowBundleVersion = ext.currentBundleVersion;
     if (!errorMessage.includes(COMMON_ERRORS.OPERATION_CANCELLED)) {
       throw new Error(errorMessage);
     }
   }
+}
+
+function getWorkflowFilePaths(source: string): string[] {
+  return fs
+    .readdirSync(source)
+    .filter((name) => {
+      const dirPath = path.join(source, name);
+      if (fs.statSync(dirPath).isDirectory()) {
+        const files = fs.readdirSync(dirPath);
+        return files.length === 1 && files[0] === workflowFileName;
+      }
+      return false;
+    })
+    .map((name) => path.join(source, name, workflowFileName));
+}
+
+function updateMetadata(filePath: string, correlationId: string, currentDateTime: string): void {
+  const data = JSON.parse(fs.readFileSync(filePath, 'utf-8'));
+
+  // Normalize the metadata key to lowercase
+  const metadataKey = Object.keys(data.definition).find((key) => key.toLowerCase() === 'metadata');
+  if (metadataKey && metadataKey !== 'metadata') {
+    data.definition.metadata = data.definition[metadataKey];
+    delete data.definition[metadataKey];
+  }
+
+  const iacMetadata = {
+    IaCGenerationDate: currentDateTime,
+    IaCWorkflowCorrelationId: correlationId,
+    LogicAppsExtensionVersion: ext.extensionVersion,
+    LogicAppsPinnedBundle: ext.pinnedBundleVersion,
+    LogicAppsCurrentBundleVersion: ext.currentBundleVersion,
+  };
+
+  if (data.definition.metadata) {
+    data.definition.metadata.IaCMetadata = {
+      ...data.definition.metadata.IaCMetadata,
+      ...iacMetadata,
+    };
+  } else {
+    data.definition.metadata = { IaCMetadata: iacMetadata };
+  }
+
+  fs.writeFileSync(filePath, JSON.stringify(data, null, 2), 'utf-8');
 }
 
 /**
@@ -119,10 +169,18 @@ async function setupWizardScriptContext(context: IActionContext, projectRoot: vs
  * @param inputs - Object containing required inputs like subscriptionId, resourceGroup etc.
  * @returns - Promise<Buffer> containing the API response as a buffer.
  */
-async function callStandardApi(inputs: any): Promise<Buffer> {
+async function callStandardApi(inputs: any, projectPath: string): Promise<Buffer> {
   try {
     const { subscriptionId, resourceGroup, storageAccount, location, logicAppName, appServicePlan } = inputs;
-    return await callStandardResourcesApi(subscriptionId, resourceGroup, storageAccount, location, logicAppName, appServicePlan);
+    return await callStandardResourcesApi(
+      subscriptionId,
+      resourceGroup,
+      storageAccount,
+      location,
+      logicAppName,
+      appServicePlan,
+      projectPath
+    );
   } catch (error) {
     throw new Error(localize('Error calling Standard Resources API', error));
   }
@@ -243,23 +301,17 @@ async function callStandardResourcesApi(
   storageAccount: string,
   location: string,
   logicAppName: string,
-  appServicePlan: string
+  appServicePlan: string,
+  projectPath: string
 ): Promise<Buffer> {
   try {
     ext.outputChannel.appendLog(localize('initApiWorkflowDesignerPort', 'Initiating API connection through workflow designer port...'));
-    if (!ext.designTimePort) {
-      ext.outputChannel.appendLog(
-        localize(
-          'connectionAttemptFailed',
-          'Connection attempt failed. Workflow designer port not set. Trying to find an available port...'
-        )
-      );
-      ext.designTimePort = await portfinder.getPortPromise();
-      ext.outputChannel.appendLog(
-        localize('newPortSet', `New workflow designer port set to ${ext.designTimePort}. Retrying API connection.`)
+    await startDesignTimeApi(projectPath);
+    if (ext.designTimePort === undefined) {
+      throw new Error(
+        localize('errorStandardResourcesApi', 'Design time port is undefined. Please retry once Azure Functions Core Tools has started.')
       );
     }
-
     const apiUrl = `http://localhost:${ext.designTimePort}${managementApiPrefix}/generateDeploymentArtifacts`;
     ext.outputChannel.appendLog(localize('apiUrl', `Calling API URL: ${apiUrl}`));
 
@@ -317,9 +369,8 @@ async function callManagedConnectionsApi(
 ): Promise<Buffer> {
   try {
     const apiVersion = '2018-07-01-preview';
-    const credentials: ServiceClientCredentials | undefined = await getAccountCredentials();
-    const accessToken = await getAuthorizationToken(credentials);
-    const cloudHost = await getCloudHost(credentials);
+    const accessToken = await getAuthorizationToken();
+    const cloudHost = await getCloudHost();
     const baseGraphUri = getBaseGraphApi(cloudHost);
 
     // Build the URL for the API call

@@ -1,4 +1,4 @@
-import { makeStyles, shorthands } from '@fluentui/react-components';
+import { makeStyles, shorthands, tokens } from '@fluentui/react-components';
 
 export const useStyles = makeStyles({
   root: {
@@ -10,11 +10,20 @@ export const useStyles = makeStyles({
   },
   header: {
     paddingTop: '15px',
+    width: '100%',
+  },
+  title: {
+    fontWeight: '600',
   },
   titleIcon: {
     display: 'inline-block',
     verticalAlign: 'text-bottom',
     marginRight: '5px',
+  },
+  subTitle: {
+    display: 'block',
+    fontSize: '13px',
+    color: tokens.colorNeutralForegroundDisabled,
   },
   search: {
     width: '100%',
@@ -26,6 +35,7 @@ export const useStyles = makeStyles({
     backgroundImage: 'none',
     paddingRight: '5px',
     paddingLeft: '10px',
+    width: '100%',
   },
   footer: {
     backgroundColor: 'transparent',

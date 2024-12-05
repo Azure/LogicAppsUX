@@ -1,4 +1,4 @@
-import { localSettingsFileName, managementApiPrefix } from '../../../../constants';
+import { localSettingsFileName, managementApiPrefix, workflowAppApiVersion } from '../../../../constants';
 import { ext } from '../../../../extensionVariables';
 import { localize } from '../../../../localize';
 import { getLocalSettingsJson } from '../../../utils/appSettings/localSettings';
@@ -48,12 +48,11 @@ export default class OpenDesignerForLocalProject extends OpenDesignerBase {
 
   constructor(context: IActionContext, node: Uri, unitTestName?: string, unitTestDefinition?: any, runId?: string) {
     const workflowName = path.basename(path.dirname(node.fsPath));
-    const apiVersion = '2018-11-01';
     const panelName = `${workspace.name}-${workflowName}${unitTestName ? `-${unitTestName}` : ''}`;
     const panelGroupKey = ext.webViewKey.designerLocal;
     const runName = runId ? runId.split('/').slice(-1)[0] : '';
 
-    super(context, workflowName, panelName, apiVersion, panelGroupKey, !!unitTestName, true, false, runName);
+    super(context, workflowName, panelName, workflowAppApiVersion, panelGroupKey, !!unitTestName, true, false, runName);
 
     this.unitTestName = unitTestName;
     this.isUnitTest = !!unitTestName;
@@ -196,7 +195,6 @@ export default class OpenDesignerForLocalProject extends OpenDesignerBase {
           this.panelMetadata.azureDetails?.workflowManagementBaseUrl
         );
         await this.validateWorkflow(this.panelMetadata.workflowContent);
-        await this.reloadWebviewPanel(this.getExistingPanel());
         break;
       }
       case ExtensionCommand.saveUnitTest: {

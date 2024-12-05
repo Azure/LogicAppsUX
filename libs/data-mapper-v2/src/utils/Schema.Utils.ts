@@ -10,8 +10,9 @@ import type {
   SchemaNodeDictionary,
   SchemaNodeExtended,
 } from '@microsoft/logic-apps-shared';
-import { NormalizedDataType, SchemaNodeProperty, SchemaType } from '@microsoft/logic-apps-shared';
+import { guid, NormalizedDataType, SchemaNodeProperty, SchemaType } from '@microsoft/logic-apps-shared';
 import { addReactFlowPrefix } from './ReactFlow.Util';
+import type { Node } from '@xyflow/react';
 
 export const getReactFlowNodeId = (key: string, isLeftDirection: boolean) =>
   addReactFlowPrefix(key, isLeftDirection ? SchemaType.Source : SchemaType.Target);
@@ -249,66 +250,32 @@ export const removePrefixFromNodeID = (nodeID: string): string => {
   return splitID[1];
 };
 
-/* This is to update the temporary connections when a tree item is expanded/collapsed
-  Source and target are used interchangeably here. as the logic is same for both sides
-  Source becomes the side where node is collapsed/expanded and Target becomes the other side
-*/
-export const getUpdatedStateConnections = (
-  key: string,
-  targetOpenKeys: Record<string, boolean>,
-  itemExpanded: boolean,
-  sourceParentChildEdgeMapping: string[],
-  targetChildParentMapping: Record<string, string[]>,
-  sourceStateConnections: Record<string, Record<string, boolean>>,
-  targetStateConnections: Record<string, Record<string, boolean>>
-) => {
-  if (itemExpanded) {
-    const connectedTargetNodes = sourceStateConnections[key] ?? {};
-    for (const targetNode of Object.keys(connectedTargetNodes)) {
-      if (targetStateConnections[targetNode]) {
-        delete targetStateConnections[targetNode][key];
-      }
-    }
-    delete sourceStateConnections[key];
-  } else {
-    // Get all the nodes to which children are connected
-    for (const child of sourceParentChildEdgeMapping) {
-      // Get parents of the child connected to
-      const parents = targetChildParentMapping[child] ?? [];
+export const nodeScrollDirections = ['top-left', 'top-right', 'bottom-left', 'bottom-right'] as const;
+export type NodeScrollDirectionType = (typeof nodeScrollDirections)[number];
 
-      // Fetch the first parent which is collapsed
-      let i = 0;
-      while (i < parents.length) {
-        if (!targetOpenKeys[parents[i]]) {
-          break;
-        }
-        ++i;
-      }
-
-      // Get the node to which temporary node needs to be connected to
-      let connectToChild = child;
-      if (i < parents.length) {
-        connectToChild = parents[i];
-      }
-
-      // Update Source-Target edge mapping
-      if (!sourceStateConnections[key]) {
-        sourceStateConnections[key] = {};
-      }
-      if (!Object.prototype.hasOwnProperty.call(sourceStateConnections[key], connectToChild)) {
-        sourceStateConnections[key][connectToChild] = true;
-      }
-
-      // Update Target-Source edge mapping
-      if (!targetStateConnections[connectToChild]) {
-        targetStateConnections[connectToChild] = {};
-      }
-
-      if (!Object.prototype.hasOwnProperty.call(targetStateConnections[connectToChild], key)) {
-        targetStateConnections[connectToChild][key] = true;
-      }
-    }
+/**
+ *
+ * @returns Need to return 4 nodes, one each for top-left, top-right, bottom-left, bottom-right
+ */
+export const getNodesForScroll = (): Record<string, Node> => {
+  const map: Record<string, Node> = {};
+  const ids = [`top-left-${guid()}`, `top-right-${guid()}`, `bottom-left-${guid()}`, `bottom-right-${guid()}`];
+  for (const id of ids) {
+    map[id] = {
+      id,
+      hidden: false,
+      selectable: false,
+      draggable: false,
+      position: { x: 0, y: 0 },
+      data: {
+        isTemporary: true,
+      },
+      type: 'canvasNode',
+    };
   }
+  return map;
+};
 
-  return [sourceStateConnections, targetStateConnections];
+export const getNodeIdForScroll = (ids: string[], direction: NodeScrollDirectionType) => {
+  return ids.find((id) => id.startsWith(direction));
 };

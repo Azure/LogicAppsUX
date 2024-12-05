@@ -21,6 +21,8 @@ import type {
   LogicApps,
   ICopilotService,
   IDesignerUiInteractionsService,
+  IUserPreferenceService,
+  IExperimentationService,
 } from '@microsoft/logic-apps-shared';
 import type { MaximumWaitingRunsMetadata } from '../../../ui/settings';
 
@@ -31,6 +33,7 @@ export interface DesignerOptionsState {
   isMonitoringView?: boolean;
   isDarkMode?: boolean;
   isUnitTest?: boolean;
+  isVSCode?: boolean;
   servicesInitialized?: boolean;
   designerOptionsInitialized?: boolean;
   useLegacyWorkflowParameters?: boolean;
@@ -41,9 +44,11 @@ export interface DesignerOptionsState {
     suppressCastingForSerialize?: boolean; // suppress casting for serialize
     recurrenceInterval?: LogicApps.Recurrence;
     maxWaitingRuns?: MaximumWaitingRunsMetadata; // min and max of Maximum Waiting Runs Concurrency Setting
-    forceEnableSplitOn?: boolean; // force enable split on (by default it is disabled on stateless workflows)
     hideUTFExpressions?: boolean; // hide UTF expressions in template functions
     stringOverrides?: Record<string, string>; // string overrides for localization
+    maxStateHistorySize?: number; // maximum number of states to save in history for undo/redo (default is 0)
+    hideContentTransferSettings?: boolean; // hide content transfer settings in the designer
+    collapseGraphsByDefault?: boolean; // collapse scope by default
   };
   nodeSelectAdditionalCallback?: (nodeId: string) => any;
   showConnectionsPanel?: boolean;
@@ -72,4 +77,6 @@ export interface ServiceOptions {
   customCodeService?: ICustomCodeService;
   copilotService?: ICopilotService;
   uiInteractionsService?: IDesignerUiInteractionsService;
+  userPreferenceService?: IUserPreferenceService;
+  experimentationService?: IExperimentationService;
 }

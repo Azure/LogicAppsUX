@@ -5,9 +5,16 @@
 import { tryGetWebviewPanel } from '../../../utils/codeless/common';
 import { getWebViewHTML } from '../../../utils/codeless/getWebViewHTML';
 import type { IAzureConnectorsContext } from '../azureConnectorWizard';
-import { ResolutionService, getRecordEntry, isEmptyString } from '@microsoft/logic-apps-shared';
+import { getRecordEntry, isEmptyString } from '@microsoft/logic-apps-shared';
 import type { IActionContext } from '@microsoft/vscode-azext-utils';
-import type { Artifacts, AzureConnectorDetails, ConnectionsData, FileDetails, Parameter } from '@microsoft/vscode-extension-logic-apps';
+import {
+  resolveConnectionsReferences,
+  type Artifacts,
+  type AzureConnectorDetails,
+  type ConnectionsData,
+  type FileDetails,
+  type Parameter,
+} from '@microsoft/vscode-extension-logic-apps';
 import { azurePublicBaseUrl, workflowManagementBaseURIKey } from '../../../../constants';
 import type { WebviewPanel, WebviewOptions, WebviewPanelOptions } from 'vscode';
 
@@ -89,21 +96,16 @@ export abstract class OpenDesignerBase {
     let { connectionsData } = options;
 
     const mapArtifacts = {};
-    const parameters = {};
     connectionsData = this.getInterpolateConnectionData(connectionsData);
-
-    Object.keys(parametersData).forEach((key) => {
-      parameters[key] = parametersData[key].value;
-    });
 
     for (const extension of Object.keys(artifacts.maps)) {
       const extensionName = extension.substr(1);
       mapArtifacts[extensionName] = artifacts.maps[extension];
     }
 
-    const parametersResolutionService = new ResolutionService(parameters, localSettings);
-    const parsedConnections = isEmptyString(connectionsData) ? {} : JSON.parse(connectionsData);
-    const resolvedConnections: ConnectionsData = parametersResolutionService.resolve(parsedConnections);
+    const resolvedConnections: ConnectionsData = isEmptyString(connectionsData)
+      ? {}
+      : resolveConnectionsReferences(connectionsData, parametersData, localSettings);
 
     this.connectionData = resolvedConnections;
     this.apiHubServiceDetails = this.getApiHubServiceDetails(azureDetails, localSettings);

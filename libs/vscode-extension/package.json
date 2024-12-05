@@ -1,13 +1,14 @@
 {
   "name": "@microsoft/vscode-extension-logic-apps",
-  "version": "4.65.0",
+  "version": "5.6.0",
   "dependencies": {
     "@apidevtools/swagger-parser": "10.0.3",
     "@microsoft/logic-apps-shared": "workspace:*",
     "@microsoft/vscode-azext-azureappservice": "0.8.1",
     "@microsoft/vscode-azext-utils": "0.4.6",
-    "@xyflow/react": "^12.0.2",
-    "axios": "1.6.8",
+    "@azure/arm-appcontainers": "^2.0.0-beta.3",
+    "@xyflow/react": "^12.3.5",
+    "axios": "^1.7.7",
     "react-intl": "6.3.0",
     "tslib": "2.4.0"
   },
@@ -54,7 +55,7 @@
   "scripts": {
     "build:lib": "tsup && tsc --emitDeclarationOnly",
     "publish:local": "pnpm unpublish --force && pnpm publish --no-git-checks --registry http://localhost:4873",
-    "test:lib": "vitest --retry=3",
+    "test:lib": "vitest run --retry=3",
     "unpublish:local": "pnpm unpublish --force"
   },
   "sideEffects": false,

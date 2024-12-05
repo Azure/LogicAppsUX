@@ -1,4 +1,4 @@
-import { DynamicCallStatus } from '@microsoft/designer-ui';
+import { DynamicLoadStatus } from '../../../state/operation/operationMetadataSlice';
 import type { SerializedParameter } from '../serializer';
 import { constructInputValues } from '../serializer';
 import { describe, vi, beforeEach, afterEach, beforeAll, afterAll, it, test, expect } from 'vitest';
@@ -214,7 +214,7 @@ describe('constructInputValues', () => {
   const rootArrayWithComplexObjectOpenApiParametersBase = [
     {
       dynamicData: {
-        status: DynamicCallStatus.SUCCEEDED,
+        status: DynamicLoadStatus.SUCCEEDED,
       },
       editor: 'combobox',
       editorOptions: {
@@ -272,10 +272,37 @@ describe('constructInputValues', () => {
     },
   ];
 
+  const dynamicSchemaOpenAPIParametersBase = [
+    {
+      hideInUI: false,
+      id: '926CE3EF-6827-46FC-82BA-A8186DA836B1',
+      info: {
+        alias: 'item/FirstName~1LastName',
+        dynamicParameterReference: 'inputs.$.item',
+      },
+      label: 'FirstName/LastName',
+      parameterKey: 'inputs.$.item.item/FirstName~01LastName',
+      parameterName: 'item/FirstName~1LastName',
+      required: false,
+      schema: {
+        type: 'string',
+        title: 'FirstName/LastName',
+        description: '',
+        'x-ms-property-name-alias': 'item/FirstName~1LastName',
+      },
+      showErrors: false,
+      showTokens: true,
+      suppressCasting: false,
+      type: 'string',
+      Visibility: '',
+    },
+  ];
+
   let simpleArrayParameters: SerializedParameter[],
     rootNestedArrayParameters: SerializedParameter[],
     rootArrayWithNestedObjectParameters: SerializedParameter[],
-    rootArrayWithComplexObjectOpenApiParameters: SerializedParameter[];
+    rootArrayWithComplexObjectOpenApiParameters: SerializedParameter[],
+    dynamicSchemaOpenAPIParameters: SerializedParameter[];
 
   beforeEach(() => {
     simpleArrayParameters = [
@@ -343,6 +370,13 @@ describe('constructInputValues', () => {
       {
         ...rootArrayWithComplexObjectOpenApiParametersBase[1],
         value: 'content',
+      },
+    ];
+
+    dynamicSchemaOpenAPIParameters = [
+      {
+        ...dynamicSchemaOpenAPIParametersBase[0],
+        value: 'John Doe',
       },
     ];
   });
@@ -482,6 +516,15 @@ describe('constructInputValues', () => {
         },
       ],
       'request/to': 'johndoe@example.com;',
+    });
+  });
+
+  it('should serialize the parameter key correctly for encoded key using ~1', () => {
+    const inputPath = 'inputs.$';
+    const parameters = dynamicSchemaOpenAPIParameters;
+
+    expect(constructInputValues(inputPath, parameters, false /* encodePathComponents */)).toEqual({
+      'item/FirstName~1LastName': 'John Doe',
     });
   });
 });

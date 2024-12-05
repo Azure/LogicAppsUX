@@ -5,8 +5,7 @@ import { useHostOptions, useReadOnly } from '../../../../../core/state/designerO
 import type { ParameterGroup } from '../../../../../core/state/operation/operationMetadataSlice';
 import { DynamicLoadStatus, ErrorLevel } from '../../../../../core/state/operation/operationMetadataSlice';
 import { useDependencies, useNodesInitialized, useOperationErrorInfo } from '../../../../../core/state/operation/operationSelector';
-import { usePanelLocation } from '../../../../../core/state/panel/panelSelectors';
-import { useIsPanelInPinnedViewMode } from '../../../../../core/state/panelV2/panelSelectors';
+import { useIsPanelInPinnedViewMode, usePanelLocation } from '../../../../../core/state/panel/panelSelectors';
 import {
   useAllowUserToChangeConnection,
   useConnectorName,
@@ -15,11 +14,17 @@ import {
 } from '../../../../../core/state/selectors/actionMetadataSelector';
 import type { VariableDeclaration } from '../../../../../core/state/tokens/tokensSlice';
 import { updateVariableInfo } from '../../../../../core/state/tokens/tokensSlice';
-import { useNodeDisplayName, useNodeMetadata, useReplacedIds } from '../../../../../core/state/workflow/workflowSelectors';
+import {
+  useGetSwitchParentId,
+  useNodeDisplayName,
+  useNodeMetadata,
+  useReplacedIds,
+} from '../../../../../core/state/workflow/workflowSelectors';
 import type { AppDispatch, RootState } from '../../../../../core/store';
 import { getConnectionReference } from '../../../../../core/utils/connectors/connections';
 import { isRootNodeInGraph } from '../../../../../core/utils/graph';
 import {
+  getTypeForTokenFiltering,
   loadDynamicTreeItemsForParameter,
   loadDynamicValuesForParameter,
   loadParameterValueFromString,
@@ -39,7 +44,6 @@ import { IdentitySelector } from './identityselector';
 import { MessageBar, MessageBarType, Spinner, SpinnerSize } from '@fluentui/react';
 import { Divider } from '@fluentui/react-components';
 import {
-  DynamicCallStatus,
   PanelLocation,
   TokenPicker,
   TokenPickerButtonLocation,
@@ -89,6 +93,9 @@ export const ParametersTab: React.FC<PanelTabProps> = (props) => {
   const errorInfo = useOperationErrorInfo(selectedNodeId);
   const { hideUTFExpressions } = useHostOptions();
   const replacedIds = useReplacedIds();
+  const parentIdOfSwitch = useGetSwitchParentId(selectedNodeId);
+
+  const isPaneInPinnedViewMode = useIsPanelInPinnedViewMode();
 
   const isPaneInPinnedViewMode = useIsPanelInPinnedViewMode();
 
@@ -113,7 +120,7 @@ export const ParametersTab: React.FC<PanelTabProps> = (props) => {
     if (!nodesInitialized) {
       return true;
     }
-    if (inputs?.dynamicLoadStatus === DynamicLoadStatus.STARTED) {
+    if (inputs?.dynamicLoadStatus === DynamicLoadStatus.LOADING) {
       return true;
     }
     return false;
@@ -135,7 +142,13 @@ export const ParametersTab: React.FC<PanelTabProps> = (props) => {
     );
   }
 
-  const tokenGroup = getOutputTokenSections(selectedNodeId, nodeType, tokenState, workflowParametersState, replacedIds);
+  const tokenGroup = getOutputTokenSections(
+    parentIdOfSwitch ?? selectedNodeId,
+    parentIdOfSwitch ? constants.NODE.TYPE.SWITCH_CASE : nodeType,
+    tokenState,
+    workflowParametersState,
+    replacedIds
+  );
   const expressionGroup = getExpressionTokenSections(hideUTFExpressions);
 
   return (
@@ -233,7 +246,7 @@ const ParameterSection = ({
   );
 
   const onValueChange = useCallback(
-    (id: string, newState: ChangeState) => {
+    (id: string, newState: ChangeState, skipStateSave?: boolean) => {
       const { value, viewModel } = newState;
       const parameter = nodeInputs.parameterGroups[group.id].parameters.find((param: any) => param.id === id);
 
@@ -272,6 +285,7 @@ const ParameterSection = ({
           nodeInputs,
           dependencies,
           operationDefinition,
+          skipStateSave,
         })
       );
     },
@@ -280,7 +294,7 @@ const ParameterSection = ({
   );
 
   const onComboboxMenuOpen = (parameter: ParameterInfo): void => {
-    if (parameter.dynamicData?.status === DynamicCallStatus.FAILED || parameter.dynamicData?.status === DynamicCallStatus.NOTSTARTED) {
+    if (parameter.dynamicData?.status === DynamicLoadStatus.FAILED || parameter.dynamicData?.status === DynamicLoadStatus.NOTSTARTED) {
       loadDynamicValuesForParameter(
         nodeId,
         group.id,
@@ -349,10 +363,8 @@ const ParameterSection = ({
     tokenClickedCallback?: (token: ValueSegment) => void
   ): JSX.Element => {
     const parameterType =
-      editorType ??
-      (nodeInputs.parameterGroups[group.id].parameters.find((param) => param.id === parameterId) ?? {})?.type ??
-      constants.SWAGGER.TYPE.ANY;
-    const supportedTypes: string[] = getPropertyValue(constants.TOKENS, parameterType);
+      editorType ?? (nodeInputs.parameterGroups[group.id].parameters.find((param) => param.id === parameterId) ?? {})?.type;
+    const supportedTypes: string[] = getPropertyValue(constants.TOKENS, getTypeForTokenFiltering(parameterType));
 
     const filteredTokenGroup = tokenGroup.map((group) => ({
       ...group,
@@ -444,13 +456,13 @@ const ParameterSection = ({
           editor,
           editorOptions,
           tokenEditor: true,
-          isLoading: dynamicData?.status === DynamicCallStatus.STARTED,
+          isLoading: dynamicData?.status === DynamicLoadStatus.LOADING,
           errorDetails: dynamicData?.error ? { message: dynamicData.error.message } : undefined,
           validationErrors,
           tokenMapping,
           nodeTitle,
-          loadParameterValueFromString: (value: string) => loadParameterValueFromString(value),
-          onValueChange: (newState: ChangeState) => onValueChange(id, newState),
+          loadParameterValueFromString,
+          onValueChange: (newState: ChangeState, skipStateSave?: boolean) => onValueChange(id, newState, skipStateSave),
           onComboboxMenuOpen: () => onComboboxMenuOpen(param),
           pickerCallbacks: getPickerCallbacks(param),
           tokenpickerButtonProps: {

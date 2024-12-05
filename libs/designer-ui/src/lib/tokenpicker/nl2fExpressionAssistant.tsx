@@ -15,11 +15,12 @@ import {
 import type { ExpressionEditorEvent } from '../../lib/expressioneditor';
 import { TokenPickerMode } from '.';
 import useIntl from 'react-intl/src/components/useIntl';
-import type { Nl2fSuggestedExpression } from '@microsoft/logic-apps-shared';
+import type { Nl2fSuggestedExpression, TokenGroup } from '@microsoft/logic-apps-shared';
 import { CopilotService, LogEntryLevel, LoggerService } from '@microsoft/logic-apps-shared';
 import { ProgressCardWithStopButton } from '../../lib/chatbot';
 
 export interface INl2fExpressionAssistantProps {
+  tokenGroup?: TokenGroup[];
   isFullScreen: boolean;
   expression: ExpressionEditorEvent;
   isFixErrorRequest: boolean;
@@ -30,6 +31,7 @@ export interface INl2fExpressionAssistantProps {
 }
 
 export const Nl2fExpressionAssistant: FC<INl2fExpressionAssistantProps> = ({
+  tokenGroup,
   isFullScreen,
   expression,
   isFixErrorRequest,
@@ -191,6 +193,12 @@ export const Nl2fExpressionAssistant: FC<INl2fExpressionAssistantProps> = ({
         return;
       }
 
+      LoggerService().log({
+        level: LogEntryLevel.Trace,
+        area: 'nl2fExpressionAssistant',
+        message: 'Clicked Create Expression Button',
+      });
+
       if (lastSubmittedQuery === query) {
         setNl2fOutputError(intlText.errors.duplicateSubmissionError);
         setIsGeneratingAnswer(false);
@@ -209,15 +217,25 @@ export const Nl2fExpressionAssistant: FC<INl2fExpressionAssistantProps> = ({
       setIsGeneratingAnswer(true);
 
       try {
-        const response = await CopilotService().getNl2fExpressions(query, expression.value, signal);
+        const response = await CopilotService().getNl2fExpressions(query, expression.value, tokenGroup, signal);
         if (response.errorMessage) {
           setNl2fOutputError(response.errorMessage);
           setSuggestedExpressions(undefined);
+          LoggerService().log({
+            level: LogEntryLevel.Trace,
+            area: 'nl2fExpressionAssistant',
+            message: `Unable to provide response due to: ${response.errorMessage}`,
+          });
         } else {
           setSuggestedExpressions(response.suggestions);
           setSuggestedExpressionIndex(0);
           setNl2fOutput((response.suggestions && response.suggestions[0].suggestedExpression) ?? '');
           setNl2fOutputError('');
+          LoggerService().log({
+            level: LogEntryLevel.Trace,
+            area: 'nl2fExpressionAssistant',
+            message: 'Expression assistant provided response',
+          });
         }
       } catch (error: any) {
         const cancelled_code = 'ERR_CANCELED';
@@ -242,7 +260,14 @@ export const Nl2fExpressionAssistant: FC<INl2fExpressionAssistantProps> = ({
         setIsGeneratingAnswer(false);
       }
     },
-    [lastSubmittedQuery, expression.value, intlText.errors, signal]
+    [
+      lastSubmittedQuery,
+      expression.value,
+      intlText.errors.duplicateSubmissionError,
+      intlText.errors.originalExpressionError,
+      tokenGroup,
+      signal,
+    ]
   );
 
   const onQueryChange = (_ev: FormEvent<HTMLInputElement | HTMLTextAreaElement>, newValue: string | undefined) => {
@@ -253,6 +278,11 @@ export const Nl2fExpressionAssistant: FC<INl2fExpressionAssistantProps> = ({
     setExpressionEditorError('');
     setExpression({ ...expression, value: nl2fOutput });
     setSelectedMode(TokenPickerMode.EXPRESSION);
+    LoggerService().log({
+      level: LogEntryLevel.Trace,
+      area: 'nl2fExpressionAssistant',
+      message: 'Accepted Expression Assistant result',
+    });
   };
 
   const navigateToPreviousSuggestion = () => {

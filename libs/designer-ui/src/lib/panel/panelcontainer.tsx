@@ -1,6 +1,15 @@
 import type { ILayerProps } from '@fluentui/react';
-import { MessageBar, MessageBarType } from '@fluentui/react';
-import { Button, Divider, mergeClasses, OverlayDrawer, Spinner } from '@fluentui/react-components';
+import {
+  Button,
+  Divider,
+  mergeClasses,
+  MessageBar,
+  MessageBarBody,
+  Text,
+  OverlayDrawer,
+  Spinner,
+  MessageBarTitle,
+} from '@fluentui/react-components';
 import { ChevronDoubleRightFilled } from '@fluentui/react-icons';
 import { useCallback, useEffect, useRef } from 'react';
 import { useIntl } from 'react-intl';
@@ -34,6 +43,7 @@ export type PanelContainerProps = {
   onCommentChange: (nodeId: string, panelCommentChangeEvent?: string) => void;
   onTitleChange: TitleChangeHandler;
   onTitleBlur?: (prevTitle: string) => void;
+  handleTitleUpdate: (originalId: string, newId: string) => void;
   setOverrideWidth?: (width: string | undefined) => void;
   canShowLogicAppRun?: boolean;
   showLogicAppRun?: () => void;
@@ -58,6 +68,7 @@ export const PanelContainer = ({
   onCommentChange,
   onTitleChange,
   onTitleBlur,
+  handleTitleUpdate,
   setOverrideWidth,
   overrideWidth,
   isResizeable,
@@ -77,7 +88,7 @@ export const PanelContainer = ({
 
   const drawerWidth = isCollapsed
     ? PanelSize.Auto
-    : (canResize ? overrideWidth : undefined) ?? (pinnedNodeIfDifferent ? PanelSize.DualView : PanelSize.Medium);
+    : ((canResize ? overrideWidth : undefined) ?? (pinnedNodeIfDifferent ? PanelSize.DualView : PanelSize.Medium));
 
   useEffect(() => {
     selectedElementRef.current = node?.nodeId ? document.getElementById(`msla-node-${node.nodeId}`) : null;
@@ -113,6 +124,7 @@ export const PanelContainer = ({
           commentChange={(newValue) => onCommentChange(nodeId, newValue)}
           toggleCollapse={toggleCollapse}
           onTitleChange={onTitleChange}
+          handleTitleUpdate={handleTitleUpdate}
           onTitleBlur={onTitleBlur}
         />
       );
@@ -135,6 +147,7 @@ export const PanelContainer = ({
       toggleCollapse,
       onTitleChange,
       onTitleBlur,
+      handleTitleUpdate,
       resubmitOperation,
       onCommentChange,
     ]
@@ -144,6 +157,12 @@ export const PanelContainer = ({
     defaultMessage: 'Operation details panel',
     id: 'nV2Spt',
     description: 'label for operation details panel component',
+  });
+
+  const panelErrorTitle = intl.formatMessage({
+    defaultMessage: 'Operation details error',
+    id: 'ir+plQ',
+    description: 'title for panel error',
   });
 
   const panelErrorMessage = intl.formatMessage({
@@ -164,13 +183,18 @@ export const PanelContainer = ({
       return (
         <div className={mergeClasses('msla-panel-layout', `msla-panel-layout-${type}`)}>
           {renderHeader(contentsNode)}
-          <div className="msla-panel-contents">
+          <div className={`${isError ? 'msla-panel-contents--error' : 'msla-panel-contents'}`}>
             {isLoading ? (
               <div className="msla-loading-container">
                 <Spinner size={'large'} />
               </div>
             ) : isError ? (
-              <MessageBar messageBarType={MessageBarType.error}>{errorMessage ?? panelErrorMessage}</MessageBar>
+              <MessageBar intent={'error'}>
+                <MessageBarBody>
+                  <MessageBarTitle>{panelErrorTitle}</MessageBarTitle>
+                  <Text>{errorMessage ?? panelErrorMessage}</Text>
+                </MessageBarBody>
+              </MessageBar>
             ) : (
               <PanelContent tabs={tabs} trackEvent={trackEvent} nodeId={nodeId} selectedTab={selectedTab} selectTab={onSelectTab} />
             )}
@@ -178,10 +202,15 @@ export const PanelContainer = ({
         </div>
       );
     },
-    [renderHeader, panelErrorMessage, trackEvent]
+    [renderHeader, panelErrorMessage, trackEvent, panelErrorTitle]
   );
 
   const minWidth = pinnedNode ? Number.parseInt(PanelSize.DualView, 10) : undefined;
+
+  if (suppressDefaultNodeSelectFunctionality) {
+    // Used in cases like BPT where we do not want to show the panel during node selection
+    return null;
+  }
 
   return (
     <OverlayDrawer
@@ -194,7 +223,7 @@ export const PanelContainer = ({
       }}
       open={true}
       position={isRight ? 'end' : 'start'}
-      style={{ position: 'absolute', width: drawerWidth }}
+      style={{ position: 'absolute', maxWidth: '100%', width: drawerWidth }}
     >
       {isEmptyPane || isCollapsed ? (
         <Button
@@ -203,6 +232,7 @@ export const PanelContainer = ({
           className={mergeClasses('collapse-toggle', isRight ? 'right' : 'left', isCollapsed && 'collapsed', 'empty')}
           icon={<ChevronDoubleRightFilled />}
           onClick={toggleCollapse}
+          data-automation-id="msla-panel-header-collapse-nav"
         />
       ) : null}
       {isCollapsed ? null : (

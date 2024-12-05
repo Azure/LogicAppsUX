@@ -6,6 +6,7 @@ import * as ParameterKeyUtility from './helpers/keysutility';
 import {
   dereferenceRefSchema,
   getEditorForParameter,
+  getEditorOptionsForParameter,
   getEnum,
   getKnownTitles,
   getKnownTitlesFromKey,
@@ -326,14 +327,16 @@ export class SchemaProcessor {
       const dynamicValues = getParameterDynamicValues(schema);
       const key = keyPrefix || this.options.keyPrefix || '$';
       const description = schema.description;
+      const $enum = getEnum(schema, this.options.required);
       schemaProperties.push({
         alias: this.options.useAliasedIndexing ? schema[SwaggerConstants.ExtensionProperties.Alias] : undefined,
         default: schema.default,
         description,
         dynamicValues,
         dynamicSchema: getParameterDynamicSchema(schema),
-        editor: getEditorForParameter(schema, dynamicValues),
-        editorOptions: dynamicValues ? { options: [] } : schema[SwaggerConstants.ExtensionProperties.EditorOptions],
+        enum: $enum,
+        editor: getEditorForParameter(schema, dynamicValues, $enum),
+        editorOptions: getEditorOptionsForParameter(schema, dynamicValues, $enum),
         format: schema.format,
         isInsideArray: this.options.parentProperty && this.options.parentProperty.isArray,
         isNested: this.options.isNested,
@@ -484,10 +487,10 @@ export class SchemaProcessor {
     const dynamicallyAdded = schema[SwaggerConstants.ExtensionProperties.DynamicallyAdded];
     const dynamicSchema = getParameterDynamicSchema(schema);
     const dynamicValues = getParameterDynamicValues(schema);
-    const editor = getEditorForParameter(schema, dynamicValues);
-    const editorOptions = dynamicValues ? { options: [] } : schema[SwaggerConstants.ExtensionProperties.EditorOptions];
-    const encode = schema[SwaggerConstants.ExtensionProperties.Encode];
     const $enum = getEnum(schema, $required);
+    const editor = getEditorForParameter(schema, dynamicValues, $enum);
+    const editorOptions = getEditorOptionsForParameter(schema, dynamicValues, $enum);
+    const encode = schema[SwaggerConstants.ExtensionProperties.Encode];
     const format = schema.format;
     const itemSchema = this._dereferenceRefSchema(schema.items as OpenApiSchema);
     const isInsideArray = parentProperty && parentProperty.isArray;
@@ -578,7 +581,7 @@ export class SchemaProcessor {
       ? title
       : key === ParameterKeyUtility.WildIndexSegment
         ? defaultItemTitle
-        : getKnownTitlesFromKey(keyPrefix) ?? getKnownTitles(name, description) ?? key;
+        : (getKnownTitlesFromKey(keyPrefix) ?? getKnownTitles(name, description) ?? key);
     const titlePrefix = this.options.titlePrefix || this.options.summaryPrefix;
 
     return titlePrefix && titleText ? `${titlePrefix} ${titleText}` : titleText;

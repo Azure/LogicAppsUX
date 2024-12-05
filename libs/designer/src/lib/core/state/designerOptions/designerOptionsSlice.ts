@@ -22,15 +22,20 @@ import {
   InitCustomCodeService,
   InitCopilotService,
   InitUiInteractionsService,
+  InitUserPreferenceService,
+  InitExperimentationServiceService,
+  BaseExperimentationService,
 } from '@microsoft/logic-apps-shared';
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
 import type { PayloadAction } from '@reduxjs/toolkit';
+import CONSTANTS from '../../../common/constants';
 
 export const initialDesignerOptionsState: DesignerOptionsState = {
   readOnly: false,
   isMonitoringView: false,
   isUnitTest: false,
   isDarkMode: false,
+  isVSCode: false,
   servicesInitialized: false,
   designerOptionsInitialized: false,
   useLegacyWorkflowParameters: false,
@@ -41,6 +46,9 @@ export const initialDesignerOptionsState: DesignerOptionsState = {
     displayRuntimeInfo: true,
     suppressCastingForSerialize: false,
     recurrenceInterval: undefined,
+    maxStateHistorySize: CONSTANTS.DEFAULT_MAX_STATE_HISTORY_SIZE,
+    hideContentTransferSettings: false,
+    collapseGraphsByDefault: false,
   },
 };
 
@@ -67,6 +75,8 @@ export const initializeServices = createAsyncThunk(
     customCodeService,
     copilotService,
     uiInteractionsService,
+    userPreferenceService,
+    experimentationService,
   }: ServiceOptions) => {
     const loggerServices: ILoggerService[] = [];
     if (loggerService) {
@@ -122,6 +132,13 @@ export const initializeServices = createAsyncThunk(
       InitUiInteractionsService(uiInteractionsService);
     }
 
+    if (userPreferenceService) {
+      InitUserPreferenceService(userPreferenceService);
+    }
+
+    // Experimentation service is being used to A/B test features in the designer so in case client does not want to use the A/B test feature,
+    // we are always defaulting to the false implementation of the experimentation service.
+    InitExperimentationServiceService(experimentationService ?? new BaseExperimentationService());
     InitEditorService(editorService);
     InitConnectionParameterEditorService(connectionParameterEditorService);
 
@@ -150,6 +167,7 @@ export const designerOptionsSlice = createSlice({
       };
       state.showPerformanceDebug = action.payload.showPerformanceDebug;
       state.designerOptionsInitialized = true;
+      state.isVSCode = action.payload.isVSCode ?? false;
     },
   },
   extraReducers: (builder) => {

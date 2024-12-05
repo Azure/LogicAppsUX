@@ -6,7 +6,7 @@ import { PropertyEditor } from './propertyEditor';
 import { initializePropertyValueInput } from './util';
 import type { IDropdownOption, IDropdownStyles, ITextFieldStyles } from '@fluentui/react';
 import { Dropdown, TextField } from '@fluentui/react';
-import type { OpenAPIV2 } from '@microsoft/logic-apps-shared';
+import { ExtensionProperties, type OpenAPIV2 } from '@microsoft/logic-apps-shared';
 import { useMountEffect, useUpdateEffect } from '@react-hookz/web';
 import React, { useState } from 'react';
 import { useIntl } from 'react-intl';
@@ -48,6 +48,7 @@ export const textFieldStyles: Partial<ITextFieldStyles> = {
 };
 
 interface StaticResultPropertyProps {
+  title: string;
   isRoot?: boolean;
   required?: boolean;
   schema: StaticResultRootSchemaType | OpenAPIV2.SchemaObject;
@@ -71,6 +72,7 @@ function WrappedStaticResultProperty({
   required = false,
   schema,
   properties,
+  title,
   updateParentProperties,
 }: StaticResultPropertyProps): JSX.Element {
   const intl = useIntl();
@@ -175,7 +177,7 @@ function WrappedStaticResultProperty({
           <TextField
             className="msla-static-result-property-textField"
             styles={textFieldStyles}
-            onRenderLabel={() => onRenderLabel(schema.title ?? '', required, isRoot)}
+            onRenderLabel={() => onRenderLabel(schema.title ?? title, required, isRoot)}
             value={inputValue}
             placeholder={textFieldPlaceHolder}
             onChange={(_e, newVal) => {
@@ -193,7 +195,7 @@ function WrappedStaticResultProperty({
           <TextField
             className="msla-static-result-property-textField"
             styles={textFieldStyles}
-            onRenderLabel={() => onRenderLabel(schema.title ?? '', required, isRoot)}
+            onRenderLabel={() => onRenderLabel(schema.title ?? title, required, isRoot)}
             value={inputValue}
             placeholder={integerTextFieldPlaceHolder}
             onChange={validateInteger}
@@ -203,19 +205,18 @@ function WrappedStaticResultProperty({
         );
       case constants.SWAGGER.TYPE.ARRAY:
       case constants.SWAGGER.TYPE.OBJECT: {
-        if (schema.items) {
+        const propertyEditorTitle = schema.title ?? title;
+        if (schema.items || schema.additionalProperties) {
           return (
             <>
-              <Label text={schema.title ?? ''} isRequiredField={required} />
-              <PropertyEditor schema={schema.items} properties={currProperties} updateProperties={setCurrProperties} />
-            </>
-          );
-        }
-        if (schema.additionalProperties) {
-          return (
-            <>
-              <Label text={schema.title ?? ''} isRequiredField={required} />
-              <PropertyEditor properties={currProperties} updateProperties={setCurrProperties} />
+              <Label text={propertyEditorTitle} isRequiredField={required} />
+              <PropertyEditor
+                title={propertyEditorTitle}
+                // do not use dynamic schema in Static Results
+                schema={schema?.items?.[ExtensionProperties.DynamicSchema] ? undefined : schema?.items}
+                properties={currProperties}
+                updateProperties={setCurrProperties}
+              />
             </>
           );
         }
@@ -223,7 +224,7 @@ function WrappedStaticResultProperty({
           <div className="msla-static-result-property-inner">
             <StaticResult
               propertiesSchema={schema.properties}
-              title={schema?.title ?? ''}
+              title={schema?.title ?? title}
               required={schema.required}
               propertyValues={currProperties}
               setPropertyValues={setCurrProperties}
@@ -236,7 +237,7 @@ function WrappedStaticResultProperty({
           <TextField
             className="msla-static-result-property-textField"
             styles={textFieldStyles}
-            onRenderLabel={() => onRenderLabel(schema.title ?? '', required, isRoot)}
+            onRenderLabel={() => onRenderLabel(schema.title ?? title, required, isRoot)}
             value={inputValue}
             placeholder={textFieldPlaceHolder}
             onChange={(_e, newVal) => {

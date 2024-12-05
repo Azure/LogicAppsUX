@@ -4,7 +4,7 @@ import { shouldUseParameterInGroup } from '../../utils/parameters/helper';
 import type { ErrorInfo, NodeDependencies, NodeInputs, OperationMetadataState } from './operationMetadataSlice';
 import { ErrorLevel } from './operationMetadataSlice';
 import type { NodeOutputs } from '@microsoft/logic-apps-shared';
-import type { ParameterInfo } from '@microsoft/designer-ui';
+import { DynamicLoadStatus, type ParameterInfo } from '@microsoft/designer-ui';
 import { getRecordEntry } from '@microsoft/logic-apps-shared';
 import { createSelector } from '@reduxjs/toolkit';
 import { useMemo } from 'react';
@@ -111,23 +111,31 @@ const mockDeps: NodeDependencies = { inputs: {}, outputs: {} };
 export const useDependencies = (nodeId: string) =>
   useSelector(createSelector(getOperationState, (state) => getRecordEntry(state.dependencies, nodeId) ?? mockDeps));
 
-export const useTokenDependencies = (nodeId: string) => {
+interface TokenDependencies {
+  dependencies: Set<string>;
+  loopSources: Set<string>;
+}
+export const useTokenDependencies = (nodeId: string): TokenDependencies => {
   const operationInputParameters = useRawInputParameters(nodeId);
   return useMemo(() => {
     if (!operationInputParameters) {
-      return new Set();
+      return { dependencies: new Set(), loopSources: new Set() };
     }
-    const dependencies = new Set();
+    const dependencies = new Set<string>();
+    const loopSources = new Set<string>();
     for (const group of Object.values(operationInputParameters.parameterGroups)) {
       for (const parameter of group.parameters) {
         for (const value of parameter.value) {
+          if (value.token?.arrayDetails?.loopSource) {
+            loopSources.add(value.token.arrayDetails.loopSource);
+          }
           if (value.token?.actionName) {
             dependencies.add(value.token.actionName);
           }
         }
       }
     }
-    return dependencies;
+    return { dependencies, loopSources };
   }, [operationInputParameters]);
 };
 
@@ -172,6 +180,16 @@ export const useNodesInitialized = () => useSelector(createSelector(getOperation
 
 export const useNodesAndDynamicDataInitialized = () =>
   useSelector(createSelector(getOperationState, (state) => state.loadStatus.nodesAndDynamicDataInitialized));
+
+export const useIsNodeLoadingDynamicData = (nodeId: string) =>
+  useSelector(
+    createSelector(getOperationState, (state) => {
+      const parameterGroups = getRecordEntry(state.inputParameters, nodeId)?.parameterGroups;
+      return Object.values(parameterGroups ?? {}).some((parameterGroup) =>
+        parameterGroup.parameters.some((parameter) => parameter.dynamicData?.status === DynamicLoadStatus.LOADING)
+      );
+    })
+  );
 
 const getTopErrorInOperation = (errors?: Record<ErrorLevel, ErrorInfo | undefined>): ErrorInfo | undefined => {
   if (!errors) {

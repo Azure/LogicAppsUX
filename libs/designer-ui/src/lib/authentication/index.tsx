@@ -1,7 +1,7 @@
 import type { ValueSegment } from '../editor';
 import { EditorCollapseToggle } from '../editor';
 import type { BaseEditorProps } from '../editor/base';
-import { isTokenValueSegment } from '../editor/base/utils/helper';
+import { isTokenValueSegment, notEqual } from '../editor/base/utils/helper';
 import type { AuthenticationOAuthType } from './AADOAuth/AADOAuth';
 import { ActiveDirectoryAuthentication } from './AADOAuth/AADOAuth';
 import { AuthenticationDropdown } from './AuthenticationDropdown';
@@ -99,15 +99,20 @@ export const AuthenticationEditor = ({
 
   const serializeCodeCollapsedValue = (value: ValueSegment[]): void => {
     setCollapsedValue(value);
-    onChange?.({
-      value: value,
-    });
+    if (notEqual(value, initialValue)) {
+      onChange?.({
+        value: value,
+      });
+    }
   };
 
   useUpdateEffect(() => {
     const collapsedValue = parseAuthEditor(option, currentProps);
     setCollapsedValue(collapsedValue);
-    onChange?.({ value: collapsedValue, viewModel: { type: option, authenticationValue: currentProps } });
+
+    if (notEqual(collapsedValue, initialValue)) {
+      onChange?.({ value: collapsedValue, viewModel: { type: option, authenticationValue: currentProps } });
+    }
   }, [option, currentProps]);
 
   const renderAuthentication = () => {
