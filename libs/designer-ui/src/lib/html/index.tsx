@@ -33,11 +33,6 @@ export const HTMLEditor = ({ initialValue, onChange, ...baseEditorProps }: BaseE
     setIsSwitchFromPlaintextBlocked(!isValueSafeForLexical(value));
   };
 
-  const handleSetIsValuePlaintext = (newIsPlaintext: boolean) => {
-    setIsValuePlaintext(newIsPlaintext);
-    setIsSwitchFromPlaintextBlocked(!isValueSafeForLexical(value));
-  };
-
   return (
     <EditorWrapper
       {...baseEditorProps}

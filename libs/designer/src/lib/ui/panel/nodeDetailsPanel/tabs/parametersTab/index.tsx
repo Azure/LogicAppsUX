@@ -97,8 +97,6 @@ export const ParametersTab: React.FC<PanelTabProps> = (props) => {
 
   const isPaneInPinnedViewMode = useIsPanelInPinnedViewMode();
 
-  const isPaneInPinnedViewMode = useIsPanelInPinnedViewMode();
-
   const intl = useIntl();
 
   const emptyParametersMessage = intl.formatMessage({
