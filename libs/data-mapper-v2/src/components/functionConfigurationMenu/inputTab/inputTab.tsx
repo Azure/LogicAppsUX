@@ -1,4 +1,4 @@
-import { Badge, Button, Caption1, Caption2 } from '@fluentui/react-components';
+import { Badge, Button, Caption1, Caption2, Text } from '@fluentui/react-components';
 import { LinkDismissRegular, AddRegular } from '@fluentui/react-icons';
 import { useDispatch, useSelector } from 'react-redux';
 import { UnboundedInput } from '../../../constants/FunctionConstants';
@@ -33,6 +33,17 @@ export const InputTabContents = (props: {
   func: FunctionData;
   functionKey: string;
 }) => {
+  const intl = useIntl();
+  const resources = useMemo(
+    () => ({
+      ALLOWED_TYPES: intl.formatMessage({
+        defaultMessage: 'Allowed types: ',
+        id: 'EWgDpM',
+        description: 'Allowed types',
+      }),
+    }),
+    [intl]
+  );
   const connectionDictionary = useSelector((state: RootState) => state.dataMap.present.curDataMapOperation.dataMapConnections);
   const sourceSchemaDictionary = useSelector((state: RootState) => state.dataMap.present.curDataMapOperation.flattenedSourceSchema);
   const functionNodeDictionary = useSelector((state: RootState) => state.dataMap.present.curDataMapOperation.functionNodes);
@@ -94,7 +105,10 @@ export const InputTabContents = (props: {
               <Caption1 className={styles.inputName}>{input.name}</Caption1>
               <Caption2>{input.tooltip ?? input.placeHolder ?? ''}</Caption2>
             </div>
-            <Caption2 className={styles.allowedTypes}>Allowed types: {input.allowedTypes}</Caption2>
+            <Caption2 className={styles.allowedTypesComponent}>
+              <Text className={styles.allowedTypes}>{resources.ALLOWED_TYPES}</Text>
+              {input.allowedTypes}
+            </Caption2>
           </div>
           <div>
             <span className={styles.inputDropdownWrapper}>
@@ -191,7 +205,10 @@ const UnlimitedInputs = (props: {
         </span>
       </div>
       <DraggableList<TemplateItemProps, CommonProps, any>
-        list={Object.entries(functionConnection.inputs).map((input, index) => ({ input: input[1], index }))}
+        list={Object.entries(functionConnection.inputs).map((input, index) => ({
+          input: input[1],
+          index,
+        }))}
         commonProps={{
           functionKey: props.functionKey,
           data: props.func,
