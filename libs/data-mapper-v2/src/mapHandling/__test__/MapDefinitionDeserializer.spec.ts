@@ -2,7 +2,14 @@ import { directAccessPseudoFunctionKey, functionMock, ifPseudoFunctionKey, index
 import type { Connection, ConnectionUnit, CustomValueConnection } from '../../models/Connection';
 import { convertSchemaToSchemaExtended } from '../../utils/Schema.Utils';
 import { MapDefinitionDeserializer, getLoopTargetNodeWithJson } from '../MapDefinitionDeserializer';
-import type { DataMapSchema, MapDefinitionEntry, Schema, SchemaExtended, SchemaNodeExtended } from '@microsoft/logic-apps-shared';
+import {
+  map,
+  type DataMapSchema,
+  type MapDefinitionEntry,
+  type Schema,
+  type SchemaExtended,
+  type SchemaNodeExtended,
+} from '@microsoft/logic-apps-shared';
 import {
   comprehensiveSourceSchema,
   comprehensiveTargetSchema,
@@ -1472,6 +1479,201 @@ describe('mapDefinitions/MapDefinitionDeserializer', () => {
         expect(resultEntries[7][0]).toEqual('target-/ns0:TargetSchemaRoot/Looping/OneToOne/StressTest/Direct');
         expect(resultEntries[7][1]).toBeTruthy();
         expect((resultEntries[7][1].inputs[0] as ConnectionUnit).reactFlowKey).toEqual(ifId);
+      });
+    });
+
+    simpleMap['ns0:Root'] = {
+      DirectTranslation: {
+        Employee: {
+          InvalidParent: {
+            Child: 'abc',
+          },
+          Name: '/ns0:Root/DirectTranslation/EmployeeName',
+        },
+      },
+    };
+
+    describe('catches errors while preserving valid connections', () => {
+      it('continues after finding invalid target node', () => {
+        simpleMap['ns0:Root'] = {
+          DirectTranslation: {
+            Employee: {
+              InvalidName: '/ns0:Root/DirectTranslation/EmployeeName',
+              Name: '/ns0:Root/DirectTranslation/EmployeeName',
+            },
+          },
+        };
+
+        const mapDefinitionDeserializer = new MapDefinitionDeserializer(simpleMap, extendedSource, extendedTarget, functionMock);
+        const result = mapDefinitionDeserializer.convertFromMapDefinition();
+        const resultEntries = Object.entries(result);
+        resultEntries.sort();
+
+        expect(resultEntries.length).toEqual(2);
+
+        expect(resultEntries[0][0]).toEqual('source-/ns0:Root/DirectTranslation/EmployeeName');
+        expect(resultEntries[0][1]).toBeTruthy();
+        expect(resultEntries[0][1].outputs[0].reactFlowKey).toEqual('target-/ns0:Root/DirectTranslation/Employee/Name');
+
+        expect(resultEntries[1][0]).toEqual('target-/ns0:Root/DirectTranslation/Employee/Name');
+        expect(resultEntries[1][1]).toBeTruthy();
+        expect((resultEntries[1][1].inputs[0] as ConnectionUnit).reactFlowKey).toEqual('source-/ns0:Root/DirectTranslation/EmployeeName');
+
+        expect(mapDefinitionDeserializer.getWarningMessages().length).toEqual(1);
+      });
+
+      it('continues after finding invalid source node', () => {
+        simpleMap['ns0:Root'] = {
+          DirectTranslation: {
+            Employee: {
+              ID: '/ns0:Root/DirectTranslation/InvalidSource',
+              Name: '/ns0:Root/DirectTranslation/EmployeeName',
+            },
+          },
+        };
+
+        const mapDefinitionDeserializer = new MapDefinitionDeserializer(simpleMap, extendedSource, extendedTarget, functionMock);
+        const result = mapDefinitionDeserializer.convertFromMapDefinition();
+        const resultEntries = Object.entries(result);
+        resultEntries.sort();
+
+        expect(resultEntries.length).toEqual(2);
+
+        expect(resultEntries[0][0]).toEqual('source-/ns0:Root/DirectTranslation/EmployeeName');
+        expect(resultEntries[0][1]).toBeTruthy();
+        expect(resultEntries[0][1].outputs[0].reactFlowKey).toEqual('target-/ns0:Root/DirectTranslation/Employee/Name');
+
+        expect(resultEntries[1][0]).toEqual('target-/ns0:Root/DirectTranslation/Employee/Name');
+        expect(resultEntries[1][1]).toBeTruthy();
+        expect((resultEntries[1][1].inputs[0] as ConnectionUnit).reactFlowKey).toEqual('source-/ns0:Root/DirectTranslation/EmployeeName');
+
+        expect(mapDefinitionDeserializer.getWarningMessages().length).toEqual(1);
+      });
+
+      it('continues after not finding source loop node', () => {
+        simpleMap['ns0:Root'] = {
+          Looping: {
+            '$for(/ns0:Root/Looping/EmployeeInvalid)': {
+              Person: {
+                Name: 'Name',
+              },
+            },
+          },
+          DirectTranslation: {
+            Employee: {
+              Name: '/ns0:Root/DirectTranslation/EmployeeName',
+            },
+          },
+        };
+
+        const mapDefinitionDeserializer = new MapDefinitionDeserializer(simpleMap, extendedSource, extendedTarget, functionMock);
+        const result = mapDefinitionDeserializer.convertFromMapDefinition();
+        const resultEntries = Object.entries(result);
+        resultEntries.sort();
+
+        expect(resultEntries.length).toEqual(2);
+
+        expect(resultEntries[0][0]).toEqual('source-/ns0:Root/DirectTranslation/EmployeeName');
+        expect(resultEntries[0][1]).toBeTruthy();
+        expect(resultEntries[0][1].outputs[0].reactFlowKey).toEqual('target-/ns0:Root/DirectTranslation/Employee/Name');
+
+        expect(resultEntries[1][0]).toEqual('target-/ns0:Root/DirectTranslation/Employee/Name');
+        expect(resultEntries[1][1]).toBeTruthy();
+        expect((resultEntries[1][1].inputs[0] as ConnectionUnit).reactFlowKey).toEqual('source-/ns0:Root/DirectTranslation/EmployeeName');
+
+        expect(mapDefinitionDeserializer.getWarningMessages().length).toEqual(1);
+      });
+
+      it('continues after not finding relative source in a loop', () => {
+        simpleMap['ns0:Root'] = {
+          Looping: {
+            '$for(/ns0:Root/Looping/Employee)': {
+              Person: {
+                Name: '../DoesNotExist',
+              },
+            },
+          },
+          DirectTranslation: {
+            Employee: {
+              Name: '/ns0:Root/DirectTranslation/EmployeeName',
+            },
+          },
+        };
+
+        const mapDefinitionDeserializer = new MapDefinitionDeserializer(simpleMap, extendedSource, extendedTarget, functionMock);
+        const result = mapDefinitionDeserializer.convertFromMapDefinition();
+        const resultEntries = Object.entries(result);
+        resultEntries.sort();
+
+        expect(resultEntries.length).toEqual(4);
+
+        expect(resultEntries[0][0]).toEqual('source-/ns0:Root/DirectTranslation/EmployeeName');
+        expect(resultEntries[0][1]).toBeTruthy();
+        expect(resultEntries[0][1].outputs[0].reactFlowKey).toEqual('target-/ns0:Root/DirectTranslation/Employee/Name');
+
+        expect(resultEntries[1][0]).toEqual('source-/ns0:Root/Looping/Employee');
+        expect(resultEntries[1][1]).toBeTruthy();
+        expect((resultEntries[1][1].outputs[0] as ConnectionUnit).reactFlowKey).toEqual('target-/ns0:Root/Looping/Person');
+
+        expect(mapDefinitionDeserializer.getWarningMessages().length).toEqual(1);
+      });
+
+      it('continues after not finding source loop node with sequence', () => {
+        simpleMap['ns0:Root'] = {
+          Looping: {
+            '$for(reverse(/ns0:Root/Looping/EmployeeDoesNotExist))': {
+              Person: {
+                Name: 'Name',
+              },
+            },
+          },
+          DirectTranslation: {
+            Employee: {
+              Name: '/ns0:Root/DirectTranslation/EmployeeName',
+            },
+          },
+        };
+
+        const mapDefinitionDeserializer = new MapDefinitionDeserializer(simpleMap, extendedSource, extendedTarget, functionMock);
+        const result = mapDefinitionDeserializer.convertFromMapDefinition();
+        const resultEntries = Object.entries(result);
+        resultEntries.sort();
+
+        expect(resultEntries.length).toEqual(4);
+
+        expect(mapDefinitionDeserializer.getWarningMessages().length).toEqual(1);
+      });
+
+      it('continues after not finding source conditional node', () => {
+        simpleMap['ns0:Root'] = {
+          ConditionalMapping: {
+            '$if(/ns0:Root/ConditionalMapping/ItemQuantityDoesNotExist)': {
+              ItemDiscount: '/ns0:Root/ConditionalMapping/ItemPrice',
+            },
+          },
+          DirectTranslation: {
+            Employee: {
+              Name: '/ns0:Root/DirectTranslation/EmployeeName',
+            },
+          },
+        };
+
+        const mapDefinitionDeserializer = new MapDefinitionDeserializer(simpleMap, extendedSource, extendedTarget, functionMock);
+        const result = mapDefinitionDeserializer.convertFromMapDefinition();
+        const resultEntries = Object.entries(result);
+        resultEntries.sort();
+
+        expect(resultEntries.length).toEqual(2);
+
+        expect(resultEntries[0][0]).toEqual('source-/ns0:Root/DirectTranslation/EmployeeName');
+        expect(resultEntries[0][1]).toBeTruthy();
+        expect(resultEntries[0][1].outputs[0].reactFlowKey).toEqual('target-/ns0:Root/DirectTranslation/Employee/Name');
+
+        expect(resultEntries[1][0]).toEqual('target-/ns0:Root/DirectTranslation/Employee/Name');
+        expect(resultEntries[1][1]).toBeTruthy();
+        expect((resultEntries[1][1].inputs[0] as ConnectionUnit).reactFlowKey).toEqual('source-/ns0:Root/DirectTranslation/EmployeeName');
+
+        expect(mapDefinitionDeserializer.getWarningMessages().length).toEqual(1);
       });
     });
 
