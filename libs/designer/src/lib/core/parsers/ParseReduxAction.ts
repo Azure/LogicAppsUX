@@ -5,7 +5,7 @@ import { initializeOperationMetadata, initializeDynamicDataInNodes } from '../ac
 import { getConnectionsQuery } from '../queries/connections';
 import { initializeConnectionReferences } from '../state/connection/connectionSlice';
 import { initializeStaticResultProperties } from '../state/staticresultschema/staticresultsSlice';
-import { setCollapsedGraphIds } from '../state/workflow/workflowSlice';
+import { setCollapsedGraphIds, setIsWorkflowDirty } from '../state/workflow/workflowSlice';
 import type { RootState } from '../store';
 import { getCustomCodeFilesWithData } from '../utils/parameters/helper';
 import type { DeserializedWorkflow } from './BJSWorkflow/BJSDeserializer';
@@ -85,10 +85,11 @@ export const initializeGraphState = createAsyncThunk<
               getConnectionsApiAndMapping(deserializedWorkflow, dispatch),
             ]);
             await initializeDynamicDataInNodes(getState, dispatch);
+            dispatch(setIsWorkflowDirty(false));
 
             LoggerService().endTrace(traceId, { status: Status.Success });
           } catch (e) {
-            LoggerService().endTrace(traceId, { status: Status.Failure });
+            LoggerService().endTrace(traceId, { status: Status.Failure, data: e });
           }
         });
       };
