@@ -2,18 +2,18 @@ import type { ComboboxItem, ComplexArrayItems, DropdownItem, TokenPickerButtonEd
 import { Combobox, DropdownEditor, StringEditor } from '..';
 import constants from '../constants';
 import type { ChangeState, GetTokenPickerHandler, loadParameterValueFromStringHandler } from '../editor/base';
-import { ItemMenuButton } from './expandedsimplearray';
 import { getBooleanDropdownOptions, getComoboxEnumOptions, hideComplexArray } from './util/util';
 import type { ItemSchemaItemProps } from './util/util';
-import type { IIconProps } from '@fluentui/react';
-import { css, DefaultButton } from '@fluentui/react';
+import { css } from '@fluentui/react';
 import { Label } from '../label';
 import { guid } from '@microsoft/logic-apps-shared';
 import { useIntl } from 'react-intl';
+import { Button, Badge } from '@fluentui/react-components';
+import { RemoveItemButton } from './removeitembutton';
 
-const addItemButtonIconProps: IIconProps = {
-  iconName: 'Add',
-};
+import { bundleIcon, AddSquareFilled, AddSquareRegular } from '@fluentui/react-icons';
+
+const AddIcon = bundleIcon(AddSquareFilled, AddSquareRegular);
 
 export interface ExpandedComplexArrayProps {
   dimensionalSchema: ItemSchemaItemProps[];
@@ -89,15 +89,6 @@ export const ExpandedComplexArray = ({
     setItems(newItems);
   };
 
-  const renderLabel = (index: number, schemaItem: ItemSchemaItemProps, isRequired?: boolean): JSX.Element => {
-    const { title } = schemaItem;
-    return (
-      <div className="msla-array-editor-label">
-        <Label isRequiredField={isRequired ?? false} text={`${title} - ${index + 1}`} />
-      </div>
-    );
-  };
-
   return (
     <div className="msla-array-container msla-array-item-container">
       {allItems.map((item, index) => {
@@ -131,19 +122,9 @@ export const ExpandedComplexArray = ({
                         // hide empty readonly editors
                         schemaItem?.readOnly && (!complexItem || complexItem.value.length === 0) ? null : (
                           <>
-                            <div className="msla-array-item-header">
-                              {renderLabel(index, schemaItem, schemaItem?.isRequired)}
-                              {i === 0 ? (
-                                <div className="msla-array-item-commands">
-                                  <ItemMenuButton
-                                    disabled={!!props.readonly}
-                                    itemKey={index}
-                                    visible={canDeleteLastItem || allItems.length > 1}
-                                    onDeleteItem={(index) => deleteItem(index)}
-                                  />
-                                </div>
-                              ) : null}
-                            </div>
+                            <Badge className="msla-array-index" shape="rounded" appearance="tint">
+                              {index + 1}
+                            </Badge>
                             {comboboxOptions ? (
                               <Combobox
                                 {...props}
@@ -171,6 +152,14 @@ export const ExpandedComplexArray = ({
                                 placeholder={schemaItem?.description}
                               />
                             )}
+                            {i === 0 ? (
+                              <RemoveItemButton
+                                disabled={!!props.readonly}
+                                itemKey={index}
+                                visible={canDeleteLastItem || allItems.length > 1}
+                                onClick={(index) => deleteItem(index)}
+                              />
+                            ) : null}
                           </>
                         )
                       }
@@ -183,11 +172,9 @@ export const ExpandedComplexArray = ({
         );
       })}
       <div className="msla-array-toolbar">
-        <DefaultButton
+        <Button
           disabled={props.readonly}
-          className="msla-array-add-item-button"
-          iconProps={addItemButtonIconProps}
-          text={addItemButtonLabel}
+          icon={<AddIcon />}
           onClick={() => {
             setItems([
               ...allItems,
@@ -199,7 +186,10 @@ export const ExpandedComplexArray = ({
               },
             ]);
           }}
-        />
+          style={{ paddingLeft: '1px', gap: '2px' }}
+        >
+          {addItemButtonLabel}
+        </Button>
       </div>
     </div>
   );

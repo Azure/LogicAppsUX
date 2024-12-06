@@ -84,7 +84,11 @@
     padding: 0 @padding;
 
     .msla-array-item {
-      margin-left: 6px;
+      display: flex;
+      flex-direction: row;
+      align-items: top;
+      gap: 4px;
+
       &.complex {
         margin: 4px;
         padding: 4px 4px 4px 4px;
@@ -94,11 +98,10 @@
         border: 1px dotted @defaultBorderColor;
       }
 
-      .msla-array-item-header {
-        display: flex;
-        justify-content: space-between;
-        padding-bottom: 4px;
+      .msla-array-index {
+        margin: 4px;
       }
+
       .msla-array-editor-container-expanded {
         width: 100%;
         border-radius: 2px;
@@ -150,30 +153,10 @@
         margin-bottom: @parameter-interval-margin;
       }
     }
-
-    .msla-array-item-commands {
-      display: inline-block;
-      width: 30px;
-      vertical-align: top;
-
-      .msla-array-item-contextbutton {
-        i[data-icon-name='ChevronDown'] {
-          display: none;
-        }
-        &:hover {
-          background-color: transparent;
-        }
-      }
-    }
   }
 
   .msla-array-toolbar {
     display: flex;
-    margin: @padding;
-
-    .msla-array-add-item-button {
-      height: @parameter-inputbox-height;
-      font-size: @card-label-font-size;
-    }
+    margin: 4px 2px 0px;
   }
 }
