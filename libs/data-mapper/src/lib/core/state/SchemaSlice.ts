@@ -1,4 +1,4 @@
-import type { PayloadAction } from '@reduxjs/toolkit';
+import type { PayloadAction, Reducer } from '@reduxjs/toolkit';
 import { createSlice } from '@reduxjs/toolkit';
 
 export interface SchemaState {
@@ -9,7 +9,11 @@ export const initialSchemaState: SchemaState = {
   availableSchemas: [],
 };
 
-export const schemaSlice = createSlice({
+type Reducers = {
+  setAvailableSchemas: (state: SchemaState, action: PayloadAction<string[] | undefined>) => void;
+};
+
+export const schemaSlice = createSlice<SchemaState, Reducers, 'schema', any>({
   name: 'schema',
   initialState: initialSchemaState,
   reducers: {
@@ -25,4 +29,5 @@ export const schemaSlice = createSlice({
 
 export const { setAvailableSchemas } = schemaSlice.actions;
 
-export default schemaSlice.reducer;
+const schemaReducer: Reducer<SchemaState> = schemaSlice.reducer;
+export default schemaReducer;
