@@ -46,6 +46,7 @@ export const CodeViewPanel = (_props: CodeViewPanelProps) => {
 
   return (
     <Panel
+      position={'end'}
       id={'code-view-panel'}
       isOpen={isCodeViewOpen}
       title={{
