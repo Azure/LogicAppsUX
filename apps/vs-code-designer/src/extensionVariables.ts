@@ -19,6 +19,7 @@ import {
   EventEmitter,
   type Uri,
   type TestController,
+  type MessageOptions,
 } from 'vscode';
 
 /**
@@ -99,9 +100,12 @@ export namespace ext {
     window.showWarningMessage(errMsg);
   };
 
-  export const showError = (errMsg: string) => {
+  export const showError = (errMsg: string, options?: MessageOptions) => {
     ext.log(errMsg);
-    window.showErrorMessage(errMsg);
+    if (options && options.detail) {
+      ext.log(options.detail);
+    }
+    window.showErrorMessage(errMsg, options);
   };
 
   export const logTelemetry = (context: IActionContext, key: string, value: string) => {
