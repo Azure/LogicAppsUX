@@ -17,6 +17,8 @@ import {
   updateParameterValidation,
   openPanel,
   useNodesInitialized,
+  serializeUnitTestDefinition,
+  useAssertionsValidationErrors,
   getCustomCodeFilesWithData,
   resetDesignerDirtyState,
   collapsePanel,
@@ -56,6 +58,7 @@ export const DesignerCommandBar = ({
   isDarkMode,
   showConnectionsPanel,
   enableCopilot,
+  isUnitTest,
   switchViews,
   saveWorkflowFromCode,
 }: {
@@ -66,6 +69,8 @@ export const DesignerCommandBar = ({
   saveWorkflow: (workflow: Workflow, customCodeData: CustomCodeFileNameMapping | undefined, clearDirtyState: () => void) => Promise<void>;
   isDesignerView?: boolean;
   isDarkMode: boolean;
+  isUnitTest: boolean;
+  isConsumption?: boolean;
   showConnectionsPanel?: boolean;
   enableCopilot?: () => void;
   loggerService?: ILoggerService;
@@ -113,6 +118,13 @@ export const DesignerCommandBar = ({
       updateCallbackUrl(designerState, DesignerStore.dispatch);
     }
   });
+  const { isLoading: isSavingUnitTest, mutate: saveUnitTestMutate } = useMutation(async () => {
+    const designerState = DesignerStore.getState();
+    const definition = await serializeUnitTestDefinition(designerState);
+
+    console.log(definition);
+    alert('Check console for unit test serialization');
+  });
 
   const { isLoading: isDownloadingDocument, mutate: downloadDocument } = useMutation(async () => {
     const designerState = DesignerStore.getState();
@@ -143,6 +155,8 @@ export const DesignerCommandBar = ({
   });
   const allWorkflowParameterErrors = useWorkflowParameterValidationErrors();
   const haveWorkflowParameterErrors = Object.keys(allWorkflowParameterErrors ?? {}).length > 0;
+  const allAssertionsErrors = useAssertionsValidationErrors();
+  const haveAssertionErrors = Object.keys(allAssertionsErrors ?? {}).length > 0;
   const allSettingsErrors = useAllSettingsValidationErrors();
   const haveSettingsErrors = Object.keys(allSettingsErrors ?? {}).length > 0;
   const allConnectionErrors = useAllConnectionErrors();
@@ -155,6 +169,7 @@ export const DesignerCommandBar = ({
 
   const saveIsDisabled = isSaving || allInputErrors.length > 0 || haveWorkflowParameterErrors || haveSettingsErrors || !designerIsDirty;
 
+  const saveUnitTestIsDisabled = !isUnitTest || isSavingUnitTest || haveAssertionErrors;
   const isUndoDisabled = !useCanUndo();
   const isRedoDisabled = !useCanRedo();
 
@@ -176,6 +191,21 @@ export const DesignerCommandBar = ({
         },
       },
       {
+        key: 'saveUnitTest',
+        text: 'Save Unit Test',
+        disabled: saveUnitTestIsDisabled,
+        onRenderIcon: () => {
+          return isSavingUnitTest ? (
+            <Spinner size={'extra-tiny'} />
+          ) : (
+            <FontIcon aria-label="Save" iconName="Save" className={saveUnitTestIsDisabled ? classNames.azureGrey : classNames.azureBlue} />
+          );
+        },
+        onClick: () => {
+          saveUnitTestMutate();
+        },
+      },
+      {
         key: 'discard',
         disabled: isSaving || !isDesignerView,
         text: 'Discard',
@@ -191,6 +221,15 @@ export const DesignerCommandBar = ({
         iconProps: { iconName: 'Parameter' },
         onClick: () => !!dispatch(openPanel({ panelMode: 'WorkflowParameters' })),
         onRenderText: (item: { text: string }) => <CustomCommandBarButton text={item.text} showError={haveWorkflowParameterErrors} />,
+      },
+      {
+        key: 'Assertions',
+        text: 'Assertions',
+        ariaLabel: 'Assertions',
+        iconProps: { iconName: 'CheckMark' },
+        disabled: !isUnitTest,
+        onClick: () => !!dispatch(openPanel({ panelMode: 'Assertions' })),
+        onRenderText: (item: { text: string }) => <CustomCommandBarButton text={item.text} showError={haveAssertionErrors} />,
       },
       {
         key: 'codeview',
@@ -297,6 +336,12 @@ export const DesignerCommandBar = ({
       switchViews,
       haveConnectionErrors,
       enableCopilot,
+      isCopilotReady,
+      isUnitTest,
+      saveUnitTestMutate,
+      isSavingUnitTest,
+      saveUnitTestIsDisabled,
+      haveAssertionErrors,
       isDownloadingDocument,
       downloadDocument,
     ]

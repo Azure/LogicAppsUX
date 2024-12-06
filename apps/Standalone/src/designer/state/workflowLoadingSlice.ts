@@ -21,6 +21,7 @@ export interface WorkflowLoadingState {
   isDarkMode: boolean;
   hostingPlan: HostingPlanTypes;
   isLocal: boolean;
+  isUnitTest: boolean;
   showChatBot?: boolean;
   parameters: Record<string, WorkflowParameter>;
   showConnectionsPanel?: boolean;
@@ -46,6 +47,7 @@ const initialState: WorkflowLoadingState = {
   resourcePath: '',
   isReadOnly: false,
   isMonitoringView: false,
+  isUnitTest: false,
   isDarkMode: false,
   hostingPlan: 'standard',
   isLocal: false,
@@ -130,6 +132,12 @@ export const workflowLoadingSlice = createSlice({
         state.isReadOnly = true;
       }
     },
+    setUnitTest: (state, action: PayloadAction<boolean>) => {
+      state.isUnitTest = action.payload;
+      if (action.payload) {
+        state.isReadOnly = true;
+      }
+    },
     setDarkMode: (state, action: PayloadAction<boolean>) => {
       state.isDarkMode = action.payload;
     },
@@ -167,6 +175,7 @@ export const workflowLoadingSlice = createSlice({
       state.isDarkMode = lastWorkflow.isDarkMode;
       state.isReadOnly = lastWorkflow.isReadOnly;
       state.isMonitoringView = lastWorkflow.isMonitoringView;
+      state.isUnitTest = lastWorkflow.isUnitTest;
       // Clear these state values, they get built with the other values
       state.workflowDefinition = null;
       state.runInstance = null;
@@ -220,6 +229,7 @@ export const {
   clearWorkflowDetails,
   setReadOnly,
   setMonitoringView,
+  setUnitTest,
   setDarkMode,
   setHostingPlan,
   setIsLocalSelected,

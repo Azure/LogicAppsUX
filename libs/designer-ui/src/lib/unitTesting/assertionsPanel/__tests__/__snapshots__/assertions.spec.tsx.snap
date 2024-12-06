@@ -1,0 +1,83 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`ui/unitTesting/assertionsPanel/assertions > should render list of assertions and add button 1`] = `
+<div
+  className="msla-workflow-assertions"
+>
+  <div
+    className="msla-workflow-assertions-heading"
+  >
+    <XLargeText
+      text="Assertions"
+    />
+    <Button
+      appearance="subtle"
+      icon={<CompoundIcon />}
+      onClick={[Function]}
+    />
+  </div>
+  <List
+    items={
+      [
+        {
+          "assertionString": "@equals(1, 1)",
+          "description": "test-description",
+          "id": "test-id",
+          "isEditable": true,
+          "name": "test-assertion",
+        },
+        {
+          "assertionString": "@equals(1, 2)",
+          "description": "",
+          "id": "test-id-2",
+          "isEditable": true,
+          "name": "test-assertion-2",
+        },
+      ]
+    }
+    onRenderCell={[Function]}
+    renderedWindowsAhead={2}
+    renderedWindowsBehind={2}
+    startIndex={0}
+  />
+  <div
+    className="msla-workflow-assertions-footer"
+  >
+    <Button
+      icon={<CompoundIcon />}
+      onClick={[Function]}
+    >
+      New assertion
+    </Button>
+  </div>
+</div>
+`;
+
+exports[`ui/unitTesting/assertionsPanel/assertions > should render without assertions items and add button. 1`] = `
+<div
+  className="msla-workflow-assertions"
+>
+  <div
+    className="msla-workflow-assertions-heading"
+  >
+    <XLargeText
+      text="Assertions"
+    />
+    <Button
+      appearance="subtle"
+      icon={<CompoundIcon />}
+      onClick={[Function]}
+    />
+  </div>
+  <div
+    className="msla-workflow-assertions-footer"
+  >
+    <Button
+      icon={<CompoundIcon />}
+      onClick={[Function]}
+    >
+      New assertion
+    </Button>
+  </div>
+</div>
+`;

@@ -1,13 +1,15 @@
 import type { Workflow } from '../common/models/workflow';
 import { ProviderWrappedContext } from './ProviderWrappedContext';
+import { deserializeUnitTestDefinition } from './parsers/BJSWorkflow/BJSDeserializer';
 import { initializeGraphState } from './parsers/ParseReduxAction';
 import { initCustomCode } from './state/customcode/customcodeSlice';
 import { useAreDesignerOptionsInitialized, useAreServicesInitialized } from './state/designerOptions/designerOptionsSelectors';
 import { initializeServices } from './state/designerOptions/designerOptionsSlice';
+import { initUnitTestDefinition } from './state/unitTest/unitTestSlice';
 import { initWorkflowKind, initRunInstance, initWorkflowSpec } from './state/workflow/workflowSlice';
 import type { AppDispatch } from './store';
 import { parseWorkflowKind } from './utils/workflow';
-import type { LogicAppsV2 } from '@microsoft/logic-apps-shared';
+import type { LogicAppsV2, UnitTestDefinition } from '@microsoft/logic-apps-shared';
 import { useDeepCompareEffect } from '@react-hookz/web';
 import type React from 'react';
 import { useContext, useEffect } from 'react';
@@ -22,6 +24,7 @@ export interface BJSWorkflowProviderProps {
   runInstance?: LogicAppsV2.RunInstanceDefinition | null;
   children?: React.ReactNode;
   appSettings?: Record<string, any>;
+  unitTestDefinition?: UnitTestDefinition | null;
 }
 
 const DataProviderInner: React.FC<BJSWorkflowProviderProps> = ({
@@ -31,15 +34,18 @@ const DataProviderInner: React.FC<BJSWorkflowProviderProps> = ({
   runInstance,
   customCode,
   appSettings,
+  unitTestDefinition,
 }) => {
   const dispatch = useDispatch<AppDispatch>();
+
   useDeepCompareEffect(() => {
     dispatch(initWorkflowSpec('BJS'));
     dispatch(initWorkflowKind(parseWorkflowKind(workflow?.kind)));
     dispatch(initRunInstance(runInstance ?? null));
     dispatch(initCustomCode(customCode));
     dispatch(initializeGraphState({ workflowDefinition: workflow, runInstance }));
-  }, [workflowId, runInstance, workflow, customCode]);
+    dispatch(initUnitTestDefinition(deserializeUnitTestDefinition(unitTestDefinition ?? null, workflow)));
+  }, [workflowId, runInstance, workflow, customCode, unitTestDefinition]);
 
   // Store app settings in query to access outside of functional components
   useQuery({

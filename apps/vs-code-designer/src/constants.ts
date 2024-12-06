@@ -16,9 +16,10 @@ export const tasksFileName = 'tasks.json';
 export const launchFileName = 'launch.json';
 export const settingsFileName = 'settings.json';
 export const extensionsFileName = 'extensions.json';
-export const vscodeFolderName = '.vscode';
 export const workflowFileName = 'workflow.json';
 export const funcIgnoreFileName = '.funcignore';
+export const unitTestsFileName = '.unit-test.json';
+export const nugetFileName = 'nuget.config';
 
 // Directories names
 export const deploymentsDirectory = 'deployments';
@@ -33,6 +34,9 @@ export const schemasDirectory = 'Schemas';
 // Extension Id
 // Folder names
 export const designTimeDirectoryName = 'workflow-designtime';
+export const testsDirectoryName = 'Tests';
+export const testResultsDirectoryName = '.testResults';
+export const vscodeFolderName = '.vscode';
 
 export const logicAppsStandardExtensionId = 'ms-azuretools.vscode-azurelogicapps';
 
@@ -168,6 +172,10 @@ export const extensionCommand = {
   dataMapSetSupportedFileExts: 'azureLogicAppsStandard.dataMap.setSupportedFileExts',
   dataMapSaveMapDefinition: 'azureLogicAppsStandard.dataMap.saveMapDefinition',
   dataMapSaveMapXslt: 'azureLogicAppsStandard.dataMap.saveMapXslt',
+  createUnitTest: 'azureLogicAppsStandard.createUnitTest',
+  editUnitTest: 'azureLogicAppsStandard.editUnitTest',
+  openUnitTestResults: 'azureLogicAppsStandard.openUnitTestResults',
+  runUnitTest: 'azureLogicAppsStandard.runUnitTest',
   vscodeOpenFolder: 'vscode.openFolder',
 } as const;
 export type extensionCommand = (typeof extensionCommand)[keyof typeof extensionCommand];
@@ -216,6 +224,7 @@ export const dotNetBinaryPathSettingKey = 'dotnetBinaryPath';
 export const nodeJsBinaryPathSettingKey = 'nodeJsBinaryPath';
 export const funcCoreToolsBinaryPathSettingKey = 'funcCoreToolsBinaryPath';
 export const dependencyTimeoutSettingKey = 'dependencyTimeout';
+export const unitTestExplorer = 'unitTestExplorer';
 export const verifyConnectionKeysSetting = 'verifyConnectionKeys';
 
 // host.json
@@ -317,6 +326,9 @@ export const logicAppFilter = {
   kind: 'functionapp,workflowapp',
 };
 
+// Telemetry Events
+export const saveUnitTestEvent = 'saveUnitTestDefinition';
+export const runUnitTestEvent = 'runUnitTest';
 // Container Apps
 export const containerAppsId = 'containerApps';
 export const managedEnvironmentsId = 'managedEnvironments';

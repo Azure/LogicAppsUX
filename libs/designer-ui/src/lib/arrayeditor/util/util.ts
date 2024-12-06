@@ -181,7 +181,7 @@ export const validationAndSerializeSimpleArray = (
       setItems(returnItems);
     }
     setIsValid?.(true);
-  } catch (e) {
+  } catch {
     setIsValid?.(false);
     setCollapsed?.(true);
   }
@@ -226,7 +226,7 @@ export const validationAndSerializeComplexArray = (
       setItems(returnItems);
     }
     setIsValid?.(true);
-  } catch (e) {
+  } catch {
     setIsValid?.(false);
     setCollapsed?.(true);
   }

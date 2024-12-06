@@ -71,6 +71,7 @@ export const ConnectionType = {
   Function: 'function',
   ServiceProvider: 'serviceprovider',
   ApiManagement: 'apimanagement',
+  ApiConnection: 'apiconnection',
 };
 export type ConnectionType = (typeof ConnectionType)[keyof typeof ConnectionType];
 

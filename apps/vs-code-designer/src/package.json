@@ -335,6 +335,28 @@
         "title": "Data Mapper: Load existing data map"
       },
       {
+        "command": "azureLogicAppsStandard.createUnitTest",
+        "title": "Create unit test",
+        "category": "Azure Logic Apps"
+      },
+      {
+        "command": "azureLogicAppsStandard.openUnitTestResults",
+        "title": "View unit test results",
+        "category": "Azure Logic Apps",
+        "icon": "$(tasklist)"
+      },
+      {
+        "command": "azureLogicAppsStandard.editUnitTest",
+        "title": "Edit unit test",
+        "category": "Azure Logic Apps",
+        "icon": "$(edit)"
+      },
+      {
+        "command": "azureLogicAppsStandard.runUnitTest",
+        "title": "Run unit test",
+        "category": "Azure Logic Apps"
+      },
+      {
         "command": "azureLogicAppsStandard.parameterizeConnections",
         "title": "Parameterize connections",
         "category": "Azure Logic Apps",
@@ -681,6 +703,26 @@
           "submenu": "azureLogicAppsStandard.dataMapperMenu",
           "group": "navigation",
           "when": "resourceExtname in azureLogicAppsStandard.dataMap.setSupportedFileExts"
+        },
+        {
+          "command": "azureLogicAppsStandard.createUnitTest",
+          "when": "false",
+          "group": "navigation@4"
+        },
+        {
+          "command": "azureLogicAppsStandard.openUnitTestResults",
+          "when": "false",
+          "group": "navigation@5"
+        },
+        {
+          "command": "azureLogicAppsStandard.editUnitTest",
+          "when": "false",
+          "group": "navigation@4"
+        },
+        {
+          "command": "azureLogicAppsStandard.runUnitTest",
+          "when": "false",
+          "group": "navigation@4"
         }
       ],
       "commandPalette": [
@@ -715,6 +757,26 @@
         {
           "command": "azureLogicAppsStandard.generateDeploymentScripts",
           "when": "never"
+        }
+      ],
+      "testing/item/context": [
+        {
+          "command": "azureLogicAppsStandard.editUnitTest",
+          "group": "inline@3",
+          "when": "false"
+        },
+        {
+          "command": "azureLogicAppsStandard.openUnitTestResults",
+          "group": "inline@4",
+          "when": "false"
+        },
+        {
+          "command": "azureLogicAppsStandard.editUnitTest",
+          "when": "false"
+        },
+        {
+          "command": "azureLogicAppsStandard.openUnitTestResults",
+          "when": "false"
         }
       ],
       "azureLogicAppsStandard.dataMapperMenu": [
@@ -962,7 +1024,8 @@
     "ms-azuretools.vscode-azurefunctions",
     "azurite.azurite",
     "ms-azuretools.vscode-azureresourcegroups",
-    "ms-dotnettools.csharp"
+    "ms-dotnettools.csharp", 
+     "ms-dotnettools.csdevkit"
   ],
   "activationEvents": [
     "onCommand:azureLogicAppsStandard.openDesigner",

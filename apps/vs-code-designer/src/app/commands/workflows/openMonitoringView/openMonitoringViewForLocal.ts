@@ -14,6 +14,8 @@ import {
 } from '../../../utils/codeless/common';
 import { getConnectionsFromFile, getLogicAppProjectRoot, getParametersFromFile } from '../../../utils/codeless/connection';
 import { sendRequest } from '../../../utils/requestUtils';
+import type { IAzureConnectorsContext } from '../azureConnectorWizard';
+import { createUnitTest } from '../unitTest/createUnitTest';
 import { OpenMonitoringViewBase } from './openMonitoringViewBase';
 import { getTriggerName, HTTP_METHODS } from '@microsoft/logic-apps-shared';
 import type { IActionContext } from '@microsoft/vscode-azext-utils';
@@ -57,6 +59,11 @@ export default class OpenMonitoringViewForLocal extends OpenMonitoringViewBase {
     this.panel.iconPath = {
       light: Uri.file(path.join(ext.context.extensionPath, 'assets', 'dark', 'workflow.svg')),
       dark: Uri.file(path.join(ext.context.extensionPath, 'assets', 'light', 'workflow.svg')),
+    };
+
+    this.panel.iconPath = {
+      light: Uri.file(path.join(ext.context.extensionPath, 'assets', 'light', 'workflow.svg')),
+      dark: Uri.file(path.join(ext.context.extensionPath, 'assets', 'dark', 'workflow.svg')),
     };
 
     this.projectPath = await getLogicAppProjectRoot(this.context, this.workflowFilePath);
@@ -116,7 +123,7 @@ export default class OpenMonitoringViewForLocal extends OpenMonitoringViewBase {
             readOnly: this.readOnly,
             isLocal: this.isLocal,
             isMonitoringView: this.isMonitoringView,
-            runId: this.runName,
+            runId: this.runId,
             hostVersion: ext.extensionVersion,
           },
         });
@@ -128,6 +135,10 @@ export default class OpenMonitoringViewForLocal extends OpenMonitoringViewBase {
       }
       case ExtensionCommand.resubmitRun: {
         await this.resubmitRun();
+        break;
+      }
+      case ExtensionCommand.createUnitTest: {
+        await createUnitTest(this.context as IAzureConnectorsContext, vscode.Uri.file(this.workflowFilePath), message.runId);
         break;
       }
       default:
@@ -146,7 +157,7 @@ export default class OpenMonitoringViewForLocal extends OpenMonitoringViewBase {
         const fileContent = await promises.readFile(this.workflowFilePath, 'utf8');
         const workflowContent: any = JSON.parse(fileContent);
         const triggerName = getTriggerName(workflowContent.definition);
-        const url = `${this.baseUrl}/workflows/${this.workflowName}/triggers/${triggerName}/histories/${this.runName}/resubmit?api-version=${this.apiVersion}`;
+        const url = `${this.baseUrl}/workflows/${this.workflowName}/triggers/${triggerName}/histories/${this.runId}/resubmit?api-version=${this.apiVersion}`;
 
         await sendRequest(this.context, { url, method: HTTP_METHODS.POST });
       } catch (error) {

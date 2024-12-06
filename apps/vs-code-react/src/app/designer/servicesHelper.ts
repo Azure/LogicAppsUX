@@ -14,6 +14,7 @@ import {
   BaseAppServiceService,
   HTTP_METHODS,
   clone,
+  isEmptyString,
   BaseTenantService,
 } from '@microsoft/logic-apps-shared';
 import type {
@@ -30,19 +31,7 @@ import type { QueryClient } from '@tanstack/react-query';
 import type { WebviewApi } from 'vscode-webview';
 import { CustomEditorService } from './customEditorService';
 
-export const getDesignerServices = (
-  baseUrl: string,
-  apiVersion: string,
-  apiHubDetails: ApiHubServiceDetails,
-  isLocal: boolean,
-  connectionData: ConnectionsData,
-  panelMetadata: IDesignerPanelMetadata | null,
-  createFileSystemConnection: (connectionInfo: ConnectionCreationInfo, connectionName: string) => Promise<ConnectionCreationInfo>,
-  vscode: WebviewApi<unknown>,
-  oauthRedirectUrl: string,
-  hostVersion: string,
-  queryClient: QueryClient
-): {
+export interface DesignerServices {
   connectionService: StandardConnectionService;
   connectorService: StandardConnectorService;
   operationManifestService: StandardOperationManifestService;
@@ -56,7 +45,22 @@ export const getDesignerServices = (
   editorService: CustomEditorService;
   apimService: BaseApiManagementService;
   functionService: BaseFunctionService;
-} => {
+}
+
+export const getDesignerServices = (
+  baseUrl: string,
+  workflowRuntimeBaseUrl: string,
+  apiVersion: string,
+  apiHubDetails: ApiHubServiceDetails,
+  isLocal: boolean,
+  connectionData: ConnectionsData,
+  panelMetadata: IDesignerPanelMetadata | null,
+  createFileSystemConnection: (connectionInfo: ConnectionCreationInfo, connectionName: string) => Promise<ConnectionCreationInfo>,
+  vscode: WebviewApi<unknown>,
+  oauthRedirectUrl: string,
+  hostVersion: string,
+  queryClient: QueryClient
+): DesignerServices => {
   let authToken = '';
   let panelId = '';
   let workflowDetails: Record<string, any> = {};
@@ -304,7 +308,7 @@ export const getDesignerServices = (
 
   const runService = new StandardRunService({
     apiVersion,
-    baseUrl,
+    baseUrl: isEmptyString(workflowRuntimeBaseUrl) ? baseUrl : workflowRuntimeBaseUrl,
     workflowName: panelMetadata?.workflowName ?? '',
     httpClient,
   });

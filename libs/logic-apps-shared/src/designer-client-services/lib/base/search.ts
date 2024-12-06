@@ -87,7 +87,7 @@ export abstract class BaseSearchService implements ISearchService {
     try {
       const { nextLink, value = [] } = await httpClient.get<ContinuationTokenResponse<any[]>>({ uri, queryParameters, headers });
       return { value, hasMore: !!nextLink };
-    } catch (error) {
+    } catch {
       return { value: [], hasMore: false };
     }
   }
@@ -105,7 +105,7 @@ export abstract class BaseSearchService implements ISearchService {
           return await requestPage(nextLink, value);
         }
         return value;
-      } catch (error) {
+      } catch {
         return value;
       }
     };
@@ -212,7 +212,7 @@ export abstract class BaseSearchService implements ISearchService {
       };
       // const response = await this.batchAzureResourceRequests(uri, queryParameters);
       return this.getAzureResourceRecursive(uri, queryParameters);
-    } catch (error) {
+    } catch {
       return [];
     }
   }
@@ -231,7 +231,7 @@ export abstract class BaseSearchService implements ISearchService {
       const response = await this.getAzureResourceRecursive(uri, queryParameters);
       const locationFilteredResponse = response.filter((connector: any) => equals(connector.location, location));
       return locationFilteredResponse;
-    } catch (error) {
+    } catch {
       return [];
     }
   }

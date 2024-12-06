@@ -23,6 +23,7 @@ import { sendRequest } from '../../utils/requestUtils';
 import { getWorkflowNode } from '../../utils/workspace';
 import type { IAzureConnectorsContext } from './azureConnectorWizard';
 import { openMonitoringView } from './openMonitoringView/openMonitoringView';
+import { createUnitTest } from './unitTest/createUnitTest';
 import type { IActionContext } from '@microsoft/vscode-azext-utils';
 import type { ICallbackUrlResponse } from '@microsoft/vscode-extension-logic-apps';
 import { ExtensionCommand, ProjectName } from '@microsoft/vscode-extension-logic-apps';
@@ -38,6 +39,7 @@ export async function openOverview(context: IAzureConnectorsContext, node: vscod
   let baseUrl: string;
   let apiVersion: string;
   let accessToken: string;
+  let isLocal: boolean;
   let callbackInfo: ICallbackUrlResponse | undefined;
   let panelName = '';
   let corsNotice: string | undefined;
@@ -54,6 +56,7 @@ export async function openOverview(context: IAzureConnectorsContext, node: vscod
     workflowContent = JSON.parse(readFileSync(workflowFilePath, 'utf8'));
     baseUrl = `http://localhost:${ext.workflowRuntimePort}${managementApiPrefix}`;
     apiVersion = '2019-10-01-edge-preview';
+    isLocal = true;
     accessToken = '';
     triggerName = getTriggerName(workflowContent.definition);
     callbackInfo = await getLocalWorkflowCallbackInfo(context, workflowContent.definition, baseUrl, workflowName, triggerName, apiVersion);
@@ -71,6 +74,7 @@ export async function openOverview(context: IAzureConnectorsContext, node: vscod
     triggerName = getTriggerName(workflowContent.definition);
     callbackInfo = await workflowNode.getCallbackUrl(workflowNode, baseUrl, triggerName, apiVersion);
     corsNotice = localize('CorsNotice', 'To view runs, set "*" to allowed origins in the CORS setting.');
+    isLocal = false;
     isWorkflowRuntimeRunning = true;
   }
 
@@ -131,6 +135,7 @@ export async function openOverview(context: IAzureConnectorsContext, node: vscod
             workflowProperties: workflowProps,
             project: ProjectName.overview,
             hostVersion: ext.extensionVersion,
+            isLocal: isLocal,
             isWorkflowRuntimeRunning: isWorkflowRuntimeRunning,
           },
         });
@@ -149,6 +154,11 @@ export async function openOverview(context: IAzureConnectorsContext, node: vscod
             });
           }
         }, 5000);
+        break;
+      }
+
+      case ExtensionCommand.createUnitTest: {
+        await createUnitTest(context, workflowNode as vscode.Uri, message.runId);
         break;
       }
       default:

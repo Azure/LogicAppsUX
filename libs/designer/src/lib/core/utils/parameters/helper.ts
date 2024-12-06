@@ -1903,7 +1903,6 @@ export const updateDynamicDataInNode = async (
     if (!details) {
       continue;
     }
-
     const parameter = await fetchDynamicValuesForParameter(
       details.groupId,
       details.parameter.id,
@@ -2457,7 +2456,7 @@ function showErrorWhenDependenciesNotReady(
   );
 }
 
-function fetchErrorWhenDependenciesNotReady(
+export function fetchErrorWhenDependenciesNotReady(
   groupId: string,
   parameterId: string,
   dependencyInfo: DependencyInfo,
@@ -3547,8 +3546,24 @@ export function parameterValueToString(
 
     return encodePathValueWithFunction(fold(segmentValues, parameter.type) ?? '', parameter.info.encode);
   }
-
   const shouldInterpolate = value.length > 1;
+  return castValueSegments(segmentsAfterCasting, shouldInterpolate, parameterType, remappedParameterInfo);
+}
+
+/**
+ * Casts the value segments after casting based on the provided parameters.
+ * @param {ValueSegment[]} segmentsAfterCasting - The value segments after casting.
+ * @param {boolean} shouldInterpolate - A boolean indicating whether interpolation should be performed.
+ * @param {string} parameterType - The type of the parameter.
+ * @param {boolean} suppressCasting - Optional. A boolean indicating whether casting should be suppressed.
+ * @returns The concatenated expression value.
+ */
+export const castValueSegments = (
+  segmentsAfterCasting: ValueSegment[],
+  shouldInterpolate: boolean,
+  parameterType: string,
+  remappedParameterInfo?: any
+) => {
   return segmentsAfterCasting
     .map((segment) => {
       let expressionValue = segment.value;
