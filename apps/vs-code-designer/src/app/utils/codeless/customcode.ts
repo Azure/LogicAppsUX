@@ -10,9 +10,11 @@ import { workflowFileName } from '../../../constants';
  * @throws An error if the custom code files cannot be parsed.
  */
 export async function getCustomCode(workflowFilePath: string): Promise<Record<string, string>> {
+  console.log(workflowFilePath);
   const customCodeFiles: Record<string, string> = {};
   try {
     const subPaths: string[] = await fse.readdir(workflowFilePath);
+    console.log(subPaths);
     for (const subPath of subPaths) {
       const fullPath: string = path.join(workflowFilePath, subPath);
 

@@ -218,6 +218,18 @@ export default class OpenDesignerForLocalProject extends OpenDesignerBase {
         }
         break;
       }
+      case ExtensionCommand.uploadCustomCodeAppFile: {
+        console.log('uploadCustomCodeAppFile');
+        break;
+      }
+      case ExtensionCommand.uploadCustomCode: {
+        console.log('uploadCustomCode');
+        break;
+      }
+      case ExtensionCommand.deleteCustomCode: {
+        console.log('deleteCustomCode');
+        break;
+      }
 
       default:
         break;

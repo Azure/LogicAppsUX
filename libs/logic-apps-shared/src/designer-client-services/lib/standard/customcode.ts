@@ -9,6 +9,10 @@ export interface CustomCodeServiceOptions {
   appName: string;
   workflowName: string;
   httpClient: IHttpClient;
+  // overrides for vs code
+  uploadCustomCodeAppFile?(customCode: UploadCustomCodeAppFilePayload): Promise<void>;
+  uploadCustomCode?(customCode: UploadCustomCodePayload): Promise<void>;
+  deleteCustomCode?(fileName: string): Promise<void>;
 }
 
 export class StandardCustomCodeService implements ICustomCodeService {
@@ -38,8 +42,12 @@ export class StandardCustomCodeService implements ICustomCodeService {
   }
 
   async uploadCustomCodeAppFile({ fileName, fileData }: UploadCustomCodeAppFilePayload): Promise<void> {
-    const { apiVersion, baseUrl, subscriptionId, resourceGroup, appName, httpClient } = this.options;
+    const { apiVersion, baseUrl, subscriptionId, resourceGroup, appName, httpClient, uploadCustomCodeAppFile } = this.options;
     if (!(fileName && fileData)) {
+      return;
+    }
+    if (uploadCustomCodeAppFile) {
+      await uploadCustomCodeAppFile({ fileName, fileData });
       return;
     }
     const uri = `${baseUrl}/subscriptions/${subscriptionId}/resourceGroups/${resourceGroup}/providers/Microsoft.Web/sites/${appName}/hostruntime/admin/vfs/${fileName}`;
@@ -69,7 +77,13 @@ export class StandardCustomCodeService implements ICustomCodeService {
   }
 
   async uploadCustomCode({ fileData, fileName, fileExtension }: UploadCustomCodePayload): Promise<void> {
-    const { apiVersion, baseUrl, subscriptionId, resourceGroup, appName, workflowName, httpClient } = this.options;
+    const { apiVersion, baseUrl, subscriptionId, resourceGroup, appName, workflowName, httpClient, uploadCustomCode } = this.options;
+
+    if (uploadCustomCode) {
+      await uploadCustomCode({ fileData, fileName, fileExtension });
+      return;
+    }
+
     const contentType = fileExtension.substring(fileExtension.indexOf('.') + 1) ?? 'plain/text';
     const uri = `${baseUrl}/subscriptions/${subscriptionId}/resourceGroups/${resourceGroup}/providers/Microsoft.Web/sites/${appName}/hostruntime/admin/vfs/${workflowName}/${fileName}`;
 
@@ -99,7 +113,11 @@ export class StandardCustomCodeService implements ICustomCodeService {
   }
 
   async deleteCustomCode(fileName: string): Promise<void> {
-    const { apiVersion, baseUrl, subscriptionId, resourceGroup, appName, workflowName, httpClient } = this.options;
+    const { apiVersion, baseUrl, subscriptionId, resourceGroup, appName, workflowName, httpClient, deleteCustomCode } = this.options;
+    if (deleteCustomCode) {
+      await deleteCustomCode(fileName);
+      return;
+    }
     const uri = `${baseUrl}/subscriptions/${subscriptionId}/resourceGroups/${resourceGroup}/providers/Microsoft.Web/sites/${appName}/hostruntime/admin/vfs/${workflowName}/${fileName}`;
     const headers: Record<string, string | string[]> = {
       'If-Match': ['*'],

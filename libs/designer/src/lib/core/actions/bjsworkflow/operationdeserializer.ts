@@ -375,13 +375,7 @@ const updateTokenMetadataInParameters = (
           let updatedSegment = segment;
 
           if (isTokenValueSegment(segment)) {
-            if (pasteParams) {
-              const { updatedTokenSegment, tokenError } = updateScopePasteTokenMetadata(segment, pasteParams);
-              updatedSegment = updatedTokenSegment;
-              error = tokenError;
-              hasToken = true;
-            }
-            return updateTokenMetadata(
+            updatedSegment = updateTokenMetadata(
               updatedSegment,
               repetitionInfo,
               actionNodes,
@@ -392,6 +386,13 @@ const updateTokenMetadataInParameters = (
               nodesMetadata,
               type
             );
+
+            if (pasteParams) {
+              const { updatedTokenSegment, tokenError } = updateScopePasteTokenMetadata(updatedSegment, pasteParams);
+              updatedSegment = updatedTokenSegment;
+              error = tokenError;
+              hasToken = true;
+            }
           }
           return updatedSegment;
         });
@@ -465,7 +466,7 @@ const initializeOutputTokensForOperations = (
           nodesWithData[operationId]?.settings
         )
       );
-    } catch (e) {
+    } catch (_e) {
       // No tokens will be added if there is an exception. This will allow continuining loading other operations.
     }
 

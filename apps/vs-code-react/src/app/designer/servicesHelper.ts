@@ -15,6 +15,7 @@ import {
   HTTP_METHODS,
   clone,
   BaseTenantService,
+  StandardCustomCodeService,
 } from '@microsoft/logic-apps-shared';
 import type {
   ApiHubServiceDetails,
@@ -23,6 +24,8 @@ import type {
   IHostService,
   IWorkflowService,
   ManagedIdentity,
+  UploadCustomCodeAppFilePayload,
+  UploadCustomCodePayload,
 } from '@microsoft/logic-apps-shared';
 import type { ConnectionAndAppSetting, ConnectionsData, IDesignerPanelMetadata } from '@microsoft/vscode-extension-logic-apps';
 import { ExtensionCommand, HttpClient } from '@microsoft/vscode-extension-logic-apps';
@@ -56,6 +59,7 @@ export const getDesignerServices = (
   editorService: CustomEditorService;
   apimService: BaseApiManagementService;
   functionService: BaseFunctionService;
+  customCodeService: StandardCustomCodeService;
 } => {
   let authToken = '';
   let panelId = '';
@@ -321,6 +325,36 @@ export const getDesignerServices = (
     },
   });
 
+  const customCodeService = new StandardCustomCodeService({
+    // these properties are not used in the vs custom code service
+    apiVersion,
+    baseUrl,
+    subscriptionId,
+    resourceGroup,
+    appName: '',
+    workflowName,
+    httpClient,
+    // these properties are used in override functions
+    uploadCustomCodeAppFile: async (customCode: UploadCustomCodeAppFilePayload) => {
+      vscode.postMessage({
+        command: ExtensionCommand.uploadCustomCodeAppFile,
+        customCode,
+      });
+    },
+    uploadCustomCode: async (customCode: UploadCustomCodePayload) => {
+      vscode.postMessage({
+        command: ExtensionCommand.uploadCustomCode,
+        customCode,
+      });
+    },
+    deleteCustomCode: async (fileName: string) => {
+      vscode.postMessage({
+        command: ExtensionCommand.deleteCustomCode,
+        fileName,
+      });
+    },
+  });
+
   return {
     connectionService,
     connectorService,
@@ -335,6 +369,7 @@ export const getDesignerServices = (
     editorService,
     apimService,
     functionService,
+    customCodeService,
   };
 };
 
