@@ -40,6 +40,7 @@ export interface ExpandedSimpleArrayProps {
   getTokenPicker: GetTokenPickerHandler;
   tokenMapping?: Record<string, ValueSegment>;
   loadParameterValueFromString?: loadParameterValueFromStringHandler;
+  isDynamic?: boolean;
 }
 
 export const ExpandedSimpleArray = ({
@@ -52,6 +53,7 @@ export const ExpandedSimpleArray = ({
   setItems,
   readonly,
   options,
+  isDynamic,
   ...props
 }: ExpandedSimpleArrayProps): JSX.Element => {
   const intl = useIntl();
@@ -92,11 +94,11 @@ export const ExpandedSimpleArray = ({
                 />
               </div>
             </div>
-            {comboboxOptions ? (
+            {isDynamic || (comboboxOptions ?? [])?.length > 0 ? (
               <Combobox
                 {...props}
                 valueType={valueType}
-                options={comboboxOptions}
+                options={comboboxOptions ?? []}
                 initialValue={item.value ?? []}
                 placeholder={placeholder}
                 onChange={(newState) => handleArrayElementSaved(item.value ?? [], newState, index)}
