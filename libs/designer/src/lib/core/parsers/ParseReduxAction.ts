@@ -87,8 +87,8 @@ export const initializeGraphState = createAsyncThunk<
             await initializeDynamicDataInNodes(getState, dispatch);
 
             LoggerService().endTrace(traceId, { status: Status.Success });
-          } catch (e) {
-            LoggerService().endTrace(traceId, { status: Status.Failure });
+          } catch (error) {
+            LoggerService().endTrace(traceId, { status: Status.Failure, data: error instanceof Error ? error : undefined });
           }
         });
       };
