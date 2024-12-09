@@ -14,7 +14,7 @@ import type { PasteScopeNodePayload } from '../../parsers/pasteScopeInWorkflow';
 import { addNewEdge } from '../../parsers/restructuringHelpers';
 import { createWorkflowNode, getImmediateSourceNodeIds, transformOperationTitle } from '../../utils/graph';
 import { resetWorkflowState, setStateAfterUndoRedo } from '../global';
-import type { NodeOperation } from '../operation/operationMetadataSlice';
+import type { AddSettingsPayload, NodeOperation } from '../operation/operationMetadataSlice';
 import {
   updateNodeParameters,
   updateNodeSettings,
@@ -526,8 +526,9 @@ export const workflowSlice = createSlice({
       nodeMetadata.runData = nodeRunData as LogicAppsV2.WorkflowRunAction;
     });
     builder.addCase(setStateAfterUndoRedo, (_, action: PayloadAction<UndoRedoPartialRootState>) => action.payload.workflow);
-    builder.addCase(updateNodeSettings, (state, action) => {
-      if (!action.payload.ignoreDirty) {
+    builder.addCase(updateNodeSettings, (state, action: PayloadAction<AddSettingsPayload>) => {
+      const { ignoreDirty = false } = action.payload;
+      if (!ignoreDirty) {
         state.isDirty = true;
       }
     });
