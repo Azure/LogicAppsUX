@@ -55,16 +55,6 @@ body:
       required: true
 
   - type: dropdown
-    id: designerType
-    attributes:
-      label: Are you using new designer or old designer
-      options:
-        - New Designer
-        - Old Designer
-    validations:
-      required: true
-
-  - type: dropdown
     id: tsgchecked
     attributes:
       label: Did you refer to the TSG before filing this issue? https://aka.ms/lauxtsg
