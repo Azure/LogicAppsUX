@@ -275,7 +275,7 @@ export const initializeOperationDetails = async (
 
   if (triggerNodeManifest) {
     updateInvokerSettings(isTrigger, triggerNodeManifest, initData.settings as Settings, (invokerSettings: Settings) =>
-      dispatch(updateNodeSettings({ id: nodeId, settings: invokerSettings, ignoreDirty: false }))
+      dispatch(updateNodeSettings({ id: nodeId, settings: invokerSettings }))
     );
   }
 
