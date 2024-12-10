@@ -4,6 +4,7 @@ export interface DesignerViewState {
   showDeleteModalNodeId?: string;
   nodeContextMenuData?: NodeContextMenuObject;
   edgeContextMenuData?: EdgeContextMenuObject;
+  deleteFocusedElement?: any;
 }
 
 export interface NodeContextMenuObject {

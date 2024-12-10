@@ -107,11 +107,14 @@ const OverflowButton = (props: PanelHeaderProps): JSX.Element => {
     description: 'Label for commands in panel header',
   });
 
+  const overFlowButtonRef = useRef<HTMLButtonElement>(null);
+
   return (
     <Menu>
       <MenuTrigger>
         <Tooltip relationship={'label'} positioning={'before'} content={panelHeaderMenuCommands}>
           <Button
+            ref={overFlowButtonRef}
             appearance="subtle"
             icon={<OverflowIcon />}
             aria-label={panelHeaderMenuCommands}

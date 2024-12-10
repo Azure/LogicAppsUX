@@ -9,6 +9,7 @@ export const initialState: DesignerViewState = {
   showDeleteModalNodeId: undefined,
   nodeContextMenuData: undefined,
   edgeContextMenuData: undefined,
+  deleteFocusedElement: undefined,
 };
 
 export const designerViewSlice = createSlice({
@@ -30,6 +31,9 @@ export const designerViewSlice = createSlice({
     setEdgeContextMenuData: (state, action: PayloadAction<EdgeContextMenuObject>) => {
       state.edgeContextMenuData = action.payload;
     },
+    setDeleteFocusedElement: (state, action: PayloadAction<any>) => {
+      state.deleteFocusedElement = action.payload;
+    },
     resetDesignerView: () => initialState,
   },
   extraReducers: (builder) => {
@@ -44,6 +48,7 @@ export const {
   setNodeContextMenuData,
   setEdgeContextMenuData,
   resetDesignerView,
+  setDeleteFocusedElement,
 } = designerViewSlice.actions;
 
 export default designerViewSlice.reducer;
