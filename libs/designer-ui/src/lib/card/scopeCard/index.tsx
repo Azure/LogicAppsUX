@@ -6,7 +6,7 @@ import { useCardKeyboardInteraction } from '../hooks';
 import { Gripper } from '../images/dynamicsvgs/gripper';
 import type { CardProps } from '../index';
 import { css, Icon } from '@fluentui/react';
-import { Spinner, Tooltip } from '@fluentui/react-components';
+import { Spinner, Tooltip, useRestoreFocusTarget } from '@fluentui/react-components';
 import { replaceWhiteSpaceWithUnderscore } from '@microsoft/logic-apps-shared';
 import { useIntl } from 'react-intl';
 
@@ -40,6 +40,8 @@ export const ScopeCard: React.FC<ScopeCardProps> = ({
   nodeIndex,
 }) => {
   const focusRef = useRef<HTMLDivElement | null>(null);
+  const restoreFocusTargetAttribute = useRestoreFocusTarget();
+
   const handleClick: React.MouseEventHandler<HTMLElement> = () => {
     onClick?.();
   };
@@ -99,6 +101,7 @@ export const ScopeCard: React.FC<ScopeCardProps> = ({
           <div className="msla-scope-card-content">
             <div className={css('msla-selection-box', 'white-outline', selectionMode)} />
             <button
+              {...restoreFocusTargetAttribute}
               id={`msla-node-${id}`}
               name={title}
               className="msla-scope-card-title-button"
