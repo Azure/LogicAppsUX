@@ -1,11 +1,15 @@
 @import (reference) '../variables.less';
 
 @command-icon-width: 16px;
-@padding: 5px;
 
 .msla-array-editor-container {
-  border: 1px dashed @defaultBorderColor;
+  border: 1px solid @defaultBorderColor;
+	border-radius: 4px;
   display: flex;
+
+	> .msla-array-container {
+		padding: 10px 5px;
+	}
 
   .msla-array-commands {
     vertical-align: top;
@@ -15,9 +19,12 @@
 
   .msla-array-container {
     flex: 1 1 100%;
+		display: flex;
+		flex-direction: column;
+		gap: 8px;
 
     &.msla-array-editor-collapsed {
-      padding: 10px 0px 10px @padding;
+      padding: 10px;
 
       .msla-input-parameter-label {
         align-self: center;
@@ -40,6 +47,7 @@
 
         .editor-input {
           outline: 1px solid @panel-mode-panel-border-color;
+					border-radius: 2px;
           resize: none;
           font-size: 15px;
           tab-size: 1;
@@ -80,8 +88,6 @@
   }
 
   .msla-array-item-container {
-    margin: 10px 0;
-    padding: 0 @padding;
 
     .msla-array-item {
       display: flex;
@@ -89,13 +95,14 @@
       align-items: top;
       gap: 4px;
 
-      &.complex {
-        margin: 4px;
-        padding: 4px 4px 4px 4px;
+      .complex-input-container {
+				flex-grow: 1;
         border: 1px dashed @defaultBorderColor;
-      }
-      &.isNested {
-        border: 1px dotted @defaultBorderColor;
+				border-radius: 4px;
+				padding: 2px 8px 8px;
+				display: flex;
+				flex-direction: column;
+				gap: 2px;
       }
 
       .msla-array-index {
@@ -105,11 +112,11 @@
       .msla-array-editor-container-expanded {
         width: 100%;
         border-radius: 2px;
-        padding-bottom: 5px;
         position: relative;
 
         .editor-input {
           outline: 1px solid @panel-mode-panel-border-color;
+					border-radius: 2px;
           resize: none;
           font-size: 15px;
           tab-size: 1;
@@ -157,6 +164,6 @@
 
   .msla-array-toolbar {
     display: flex;
-    margin: 4px 2px 0px;
+    margin: 0px 2px;
   }
 }

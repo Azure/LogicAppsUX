@@ -42,9 +42,7 @@ export const CollapsedArray = ({
     const { text, isRequiredField } = labelProps as LabelProps;
     return (
       <div className="msla-input-parameter-label">
-        <div className="msla-array-editor-label">
-          <Label text={text} isRequiredField={isRequiredField} requiredMarkerSide={RequiredMarkerSide.LEFT} />
-        </div>
+        <Label text={text} isRequiredField={isRequiredField} requiredMarkerSide={RequiredMarkerSide.LEFT} />
       </div>
     );
   };
