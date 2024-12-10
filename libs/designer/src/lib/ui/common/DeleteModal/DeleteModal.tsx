@@ -4,7 +4,7 @@ import { deleteOperation, deleteGraphNode } from '../../../core/actions/bjsworkf
 import { useShowDeleteModalNodeId } from '../../../core/state/designerView/designerViewSelectors';
 import { setShowDeleteModalNodeId } from '../../../core/state/designerView/designerViewSlice';
 import { useWorkflowNode } from '../../../core/state/workflow/workflowSelectors';
-import { deleteSwitchCase, setFocusNode } from '../../../core/state/workflow/workflowSlice';
+import { deleteSwitchCase } from '../../../core/state/workflow/workflowSlice';
 import { DeleteNodeModal } from '@microsoft/designer-ui';
 import { WORKFLOW_NODE_TYPES } from '@microsoft/logic-apps-shared';
 import { useCallback, useMemo } from 'react';
@@ -21,12 +21,7 @@ const DeleteModal = () => {
 
   const isTrigger = useMemo(() => !!(metadata?.graphId === 'root' && metadata?.isRoot), [metadata]);
 
-  const onDismiss = useCallback(() => {
-    dispatch(setShowDeleteModalNodeId(undefined));
-    if (nodeId) {
-      dispatch(setFocusNode(nodeId));
-    }
-  }, [dispatch, nodeId]);
+  const onDismiss = useCallback(() => dispatch(setShowDeleteModalNodeId(undefined)), [dispatch]);
 
   const handleDelete = useCallback(() => {
     if (!nodeId || !nodeData) {
