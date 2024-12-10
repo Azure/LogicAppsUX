@@ -6,7 +6,7 @@ import { useCardKeyboardInteraction } from '../hooks';
 import { Gripper } from '../images/dynamicsvgs/gripper';
 import type { CardProps } from '../index';
 import { css, Icon } from '@fluentui/react';
-import { Spinner, Tooltip } from '@fluentui/react-components';
+import { Spinner, Tooltip, useRestoreFocusTarget } from '@fluentui/react-components';
 import { replaceWhiteSpaceWithUnderscore } from '@microsoft/logic-apps-shared';
 import { useIntl } from 'react-intl';
 
@@ -40,6 +40,8 @@ export const ScopeCard: React.FC<ScopeCardProps> = ({
   nodeIndex,
 }) => {
   const focusRef = useRef<HTMLDivElement | null>(null);
+  const restoreFocusTargetAttribute = useRestoreFocusTarget();
+
   const handleClick: React.MouseEventHandler<HTMLElement> = () => {
     onClick?.();
   };
@@ -80,6 +82,7 @@ export const ScopeCard: React.FC<ScopeCardProps> = ({
     <div ref={dragPreview} className="msla-content-fit" style={{ cursor: 'default' }}>
       <div className={'msla-content-fit'} aria-label={title}>
         <div
+          {...restoreFocusTargetAttribute}
           ref={drag}
           className="msla-scope-v2--header msla-scope-card-wrapper"
           data-automation-id={`card-${replaceWhiteSpaceWithUnderscore(title)}`}
