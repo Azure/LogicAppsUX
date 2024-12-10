@@ -1,0 +1,41 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`DeleteNodeModal Snapshots > should match snapshot for graph node 1`] = `
+<DocumentFragment>
+  <span
+    hidden=""
+  />
+</DocumentFragment>
+`;
+
+exports[`DeleteNodeModal Snapshots > should match snapshot for operation node 1`] = `
+<DocumentFragment>
+  <span
+    hidden=""
+  />
+</DocumentFragment>
+`;
+
+exports[`DeleteNodeModal Snapshots > should match snapshot for other node types 1`] = `
+<DocumentFragment>
+  <span
+    hidden=""
+  />
+</DocumentFragment>
+`;
+
+exports[`DeleteNodeModal Snapshots > should match snapshot for switch case node 1`] = `
+<DocumentFragment>
+  <span
+    hidden=""
+  />
+</DocumentFragment>
+`;
+
+exports[`DeleteNodeModal Snapshots > should match snapshot when nodeId is not provided 1`] = `
+<DocumentFragment>
+  <span
+    hidden=""
+  />
+</DocumentFragment>
+`;

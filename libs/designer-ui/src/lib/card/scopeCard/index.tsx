@@ -79,10 +79,9 @@ export const ScopeCard: React.FC<ScopeCardProps> = ({
   ) : null;
 
   return (
-    <div ref={dragPreview} className="msla-content-fit" style={{ cursor: 'default' }}>
+    <div {...restoreFocusTargetAttribute} ref={dragPreview} className="msla-content-fit" style={{ cursor: 'default' }}>
       <div className={'msla-content-fit'} aria-label={title}>
         <div
-          {...restoreFocusTargetAttribute}
           ref={drag}
           className="msla-scope-v2--header msla-scope-card-wrapper"
           data-automation-id={`card-${replaceWhiteSpaceWithUnderscore(title)}`}
