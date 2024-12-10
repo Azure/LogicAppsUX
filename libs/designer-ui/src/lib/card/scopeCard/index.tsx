@@ -79,7 +79,7 @@ export const ScopeCard: React.FC<ScopeCardProps> = ({
   ) : null;
 
   return (
-    <div {...restoreFocusTargetAttribute} ref={dragPreview} className="msla-content-fit" style={{ cursor: 'default' }}>
+    <div ref={dragPreview} className="msla-content-fit" style={{ cursor: 'default' }}>
       <div className={'msla-content-fit'} aria-label={title}>
         <div
           ref={drag}
@@ -101,6 +101,7 @@ export const ScopeCard: React.FC<ScopeCardProps> = ({
           <div className="msla-scope-card-content">
             <div className={css('msla-selection-box', 'white-outline', selectionMode)} />
             <button
+              {...restoreFocusTargetAttribute}
               id={`msla-node-${id}`}
               name={title}
               className="msla-scope-card-title-button"
