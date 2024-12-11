@@ -282,7 +282,7 @@ export function getDurationStringPanelMode(milliseconds: number, abbreviated = t
   );
 }
 
-export function getStatusString(status: string, hasRetries: boolean): string {
+export function getStatusString(status: string | undefined, hasRetries: boolean): string {
   const intl = getIntl();
   switch (status) {
     case Constants.STATUS.ABORTED:

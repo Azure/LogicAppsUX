@@ -9,7 +9,7 @@ export interface StatusPillProps {
   startTime?: string;
   endTime?: string;
   hasRetries?: boolean;
-  status?: string;
+  status: string;
   resubmittedResults?: boolean;
 }
 
@@ -20,7 +20,7 @@ export const StatusPill: React.FC<StatusPillProps> = ({
   endTime,
   hasRetries = false,
   resubmittedResults = false,
-  status = 'Waiting',
+  status,
 }) => {
   const statusString = getStatusString(status, hasRetries);
   let tooltipLabel = statusString;

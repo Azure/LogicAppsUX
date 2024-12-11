@@ -185,7 +185,7 @@ export const Card: React.FC<CardProps> = memo(
         tabIndex={nodeIndex}
         onKeyUp={keyboardInteraction.keyUp}
       >
-        {isMonitoringView ? (
+        {isMonitoringView && runData?.status ? (
           <StatusPill
             id={`${title}-status`}
             status={runData?.status}
