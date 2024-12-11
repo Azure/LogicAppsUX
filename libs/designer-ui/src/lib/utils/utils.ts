@@ -336,15 +336,15 @@ export function getStatusString(status: string | undefined, hasRetries: boolean)
           })
         : intl.formatMessage({
             defaultMessage: 'Succeeded',
-            id: '135hQM',
-            description: 'The status message to show succeeeded in monitoring view.',
+            id: 'WbIGAh',
+            description: 'The status message to show succeeded in monitoring view.',
           });
 
     case Constants.STATUS.TIMEDOUT:
       return intl.formatMessage({
         defaultMessage: 'Timed out',
-        id: 'bf4wS4',
-        description: 'The status message to show timed outin monitoring view.',
+        id: 'eofB85',
+        description: 'The status message to show timed out in monitoring view.',
       });
 
     case Constants.STATUS.WAITING:
