@@ -87,7 +87,7 @@ export const ScopeCard: React.FC<ScopeCardProps> = ({
           style={colorVars}
           onContextMenu={onContextMenu}
         >
-          {isMonitoringView ? (
+          {isMonitoringView && runData?.status ? (
             <StatusPill
               id={`${title}-status`}
               status={runData?.status}
