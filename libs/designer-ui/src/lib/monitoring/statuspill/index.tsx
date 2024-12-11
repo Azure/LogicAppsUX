@@ -1,6 +1,7 @@
+import { Tooltip } from '@fluentui/react-components';
 import { getDurationStringFromTimes, getStatusString } from '../../utils';
 import { StatusIcon } from './statusicon';
-import { css, TooltipHost } from '@fluentui/react';
+import { css } from '@fluentui/react';
 
 export interface StatusPillProps {
   id?: string;
@@ -31,12 +32,12 @@ export const StatusPill: React.FC<StatusPillProps> = ({
 
   return (
     <div id={id} aria-label={tooltipLabel} role="status" className={css('msla-pill', statusOnly && 'status-only')}>
-      <TooltipHost content={tooltipLabel}>
+      <Tooltip content={tooltipLabel} relationship="description" withArrow>
         <div className="msla-pill--inner">
           {!statusOnly && <span aria-hidden={true}>{duration}</span>}
           <StatusIcon hasRetries={hasRetries} status={status} iconOpacity={resubmittedResults ? '50%' : '100%'} />
         </div>
-      </TooltipHost>
+      </Tooltip>
     </div>
   );
 };
