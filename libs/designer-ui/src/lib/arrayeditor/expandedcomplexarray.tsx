@@ -2,18 +2,18 @@ import type { ComboboxItem, ComplexArrayItems, DropdownItem, TokenPickerButtonEd
 import { Combobox, DropdownEditor, StringEditor } from '..';
 import constants from '../constants';
 import type { ChangeState, GetTokenPickerHandler, loadParameterValueFromStringHandler } from '../editor/base';
-import { ItemMenuButton } from './expandedsimplearray';
 import { getBooleanDropdownOptions, getComoboxEnumOptions, hideComplexArray } from './util/util';
 import type { ItemSchemaItemProps } from './util/util';
-import type { IIconProps } from '@fluentui/react';
-import { css, DefaultButton } from '@fluentui/react';
+import { css } from '@fluentui/react';
 import { Label } from '../label';
 import { guid } from '@microsoft/logic-apps-shared';
 import { useIntl } from 'react-intl';
+import { Button, Badge } from '@fluentui/react-components';
+import { RemoveItemButton } from './removeitembutton';
 
-const addItemButtonIconProps: IIconProps = {
-  iconName: 'Add',
-};
+import { bundleIcon, AddSquareFilled, AddSquareRegular } from '@fluentui/react-icons';
+
+const AddIcon = bundleIcon(AddSquareFilled, AddSquareRegular);
 
 export interface ExpandedComplexArrayProps {
   dimensionalSchema: ItemSchemaItemProps[];
@@ -35,7 +35,6 @@ export const ExpandedComplexArray = ({
   allItems,
   canDeleteLastItem,
   setItems,
-  isNested = false,
   options,
   ...props
 }: ExpandedComplexArrayProps): JSX.Element => {
@@ -89,105 +88,94 @@ export const ExpandedComplexArray = ({
     setItems(newItems);
   };
 
-  const renderLabel = (index: number, schemaItem: ItemSchemaItemProps, isRequired?: boolean): JSX.Element => {
-    const { title } = schemaItem;
-    return (
-      <div className="msla-array-editor-label">
-        <Label isRequiredField={isRequired ?? false} text={`${title} - ${index + 1}`} />
-      </div>
-    );
-  };
-
   return (
     <div className="msla-array-container msla-array-item-container">
       {allItems.map((item, index) => {
         return (
-          <div key={item.key + index} className={css('msla-array-item', 'complex', isNested && 'isNested')}>
-            {dimensionalSchema.map((schemaItem: ItemSchemaItemProps, i) => {
-              const complexItem = item.items.find((complexItem) => complexItem.key === schemaItem.key);
-              const comboboxOptions = getComoboxEnumOptions(options, schemaItem.enum);
-              const dropdownOptions: DropdownItem[] | undefined =
-                schemaItem.type === constants.SWAGGER.TYPE.BOOLEAN ? getBooleanDropdownOptions() : undefined;
-              return (
-                <div key={schemaItem.key + i}>
-                  {schemaItem.type === constants.SWAGGER.TYPE.ARRAY && schemaItem.items && !hideComplexArray(schemaItem.items) ? (
-                    <div>
-                      <Label text={schemaItem.title} />
-                      <ExpandedComplexArray
-                        {...props}
-                        dimensionalSchema={schemaItem.items}
-                        allItems={complexItem?.arrayItems ?? ([] as ComplexArrayItems[])}
-                        canDeleteLastItem={canDeleteLastItem}
-                        setItems={(newItems) => {
-                          handleNestedArraySaved(newItems, index, schemaItem);
-                        }}
-                        isNested={true}
-                        itemKey={guid()}
-                      />
-                    </div>
-                  ) : (
-                    <>
-                      {
-                        // hide empty readonly editors
-                        schemaItem?.readOnly && (!complexItem || complexItem.value.length === 0) ? null : (
-                          <>
-                            <div className="msla-array-item-header">
-                              {renderLabel(index, schemaItem, schemaItem?.isRequired)}
-                              {i === 0 ? (
-                                <div className="msla-array-item-commands">
-                                  <ItemMenuButton
-                                    disabled={!!props.readonly}
-                                    itemKey={index}
-                                    visible={canDeleteLastItem || allItems.length > 1}
-                                    onDeleteItem={(index) => deleteItem(index)}
-                                  />
-                                </div>
-                              ) : null}
-                            </div>
-                            {comboboxOptions ? (
-                              <Combobox
-                                {...props}
-                                valueType={schemaItem?.type}
-                                options={comboboxOptions}
-                                placeholder={schemaItem.description}
-                                initialValue={complexItem?.value ?? []}
-                                onChange={(newState) => handleArrayElementSaved(newState, index, schemaItem)}
-                              />
-                            ) : dropdownOptions ? (
-                              <DropdownEditor
-                                {...props}
-                                options={dropdownOptions}
-                                initialValue={complexItem?.value ?? []}
-                                onChange={(newState) => handleArrayElementSaved(newState, index, schemaItem)}
-                              />
-                            ) : (
-                              <StringEditor
-                                {...props}
-                                readonly={schemaItem?.readOnly}
-                                valueType={schemaItem?.type}
-                                className="msla-array-editor-container-expanded"
-                                initialValue={complexItem?.value ?? []}
-                                editorBlur={(newState) => handleArrayElementSaved(newState, index, schemaItem)}
-                                placeholder={schemaItem?.description}
-                              />
-                            )}
-                          </>
-                        )
-                      }
-                    </>
-                  )}
-                </div>
-              );
-            })}
+          <div key={item.key + index} className={css('msla-array-item', 'complex')}>
+            <Badge className="msla-array-index" shape="rounded" appearance="tint">
+              {index + 1}
+            </Badge>
+            <div className={'complex-input-container'}>
+              {dimensionalSchema.map((schemaItem: ItemSchemaItemProps, i) => {
+                const complexItem = item.items.find((complexItem) => complexItem.key === schemaItem.key);
+                const comboboxOptions = getComoboxEnumOptions(options, schemaItem.enum);
+                const dropdownOptions: DropdownItem[] | undefined =
+                  schemaItem.type === constants.SWAGGER.TYPE.BOOLEAN ? getBooleanDropdownOptions() : undefined;
+                return (
+                  <div key={schemaItem.key + i}>
+                    {schemaItem.type === constants.SWAGGER.TYPE.ARRAY && schemaItem.items && !hideComplexArray(schemaItem.items) ? (
+                      <div>
+                        <Label text={schemaItem.title} />
+                        <ExpandedComplexArray
+                          {...props}
+                          dimensionalSchema={schemaItem.items}
+                          allItems={complexItem?.arrayItems ?? ([] as ComplexArrayItems[])}
+                          canDeleteLastItem={canDeleteLastItem}
+                          setItems={(newItems) => {
+                            handleNestedArraySaved(newItems, index, schemaItem);
+                          }}
+                          itemKey={guid()}
+                        />
+                      </div>
+                    ) : (
+                      <>
+                        {
+                          // hide empty readonly editors
+                          schemaItem?.readOnly && (!complexItem || complexItem.value.length === 0) ? null : (
+                            <>
+                              <Label isRequiredField={schemaItem?.isRequired ?? false} text={schemaItem.title} />
+                              {comboboxOptions ? (
+                                <Combobox
+                                  {...props}
+                                  valueType={schemaItem?.type}
+                                  options={comboboxOptions}
+                                  placeholder={schemaItem.description}
+                                  initialValue={complexItem?.value ?? []}
+                                  onChange={(newState) => handleArrayElementSaved(newState, index, schemaItem)}
+                                />
+                              ) : dropdownOptions ? (
+                                <DropdownEditor
+                                  {...props}
+                                  options={dropdownOptions}
+                                  initialValue={complexItem?.value ?? []}
+                                  onChange={(newState) => handleArrayElementSaved(newState, index, schemaItem)}
+                                />
+                              ) : (
+                                <StringEditor
+                                  {...props}
+                                  readonly={schemaItem?.readOnly}
+                                  valueType={schemaItem?.type}
+                                  className="msla-array-editor-container-expanded"
+                                  initialValue={complexItem?.value ?? []}
+                                  editorBlur={(newState) => handleArrayElementSaved(newState, index, schemaItem)}
+                                  placeholder={schemaItem?.description}
+                                />
+                              )}
+                            </>
+                          )
+                        }
+                      </>
+                    )}
+                  </div>
+                );
+              })}
+            </div>
+            <RemoveItemButton
+              disabled={!!props.readonly}
+              itemKey={index}
+              visible={canDeleteLastItem || allItems.length > 1}
+              onClick={(index) => deleteItem(index)}
+            />
           </div>
         );
       })}
       <div className="msla-array-toolbar">
-        <DefaultButton
+        <Button
           disabled={props.readonly}
-          className="msla-array-add-item-button"
-          iconProps={addItemButtonIconProps}
-          text={addItemButtonLabel}
+          icon={<AddIcon />}
+          size={'small'}
+          appearance="subtle"
           onClick={() => {
             setItems([
               ...allItems,
@@ -199,7 +187,10 @@ export const ExpandedComplexArray = ({
               },
             ]);
           }}
-        />
+          style={{ paddingLeft: '1px', gap: '2px' }}
+        >
+          {addItemButtonLabel}
+        </Button>
       </div>
     </div>
   );
