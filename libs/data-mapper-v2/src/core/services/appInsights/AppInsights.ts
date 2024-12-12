@@ -16,4 +16,9 @@ if (process.env.NX_AI_CON_STR) {
   appInsights.loadAppInsights();
 }
 
+if (!process.env.NX_AI_CON_STR) {
+  console.log(process.env.AI_KEY);
+  console.error('No Application Insights connection string found.');
+}
+
 export default appInsights;
