@@ -23,7 +23,7 @@ export const RunAfter = ({ nodeId, readOnly = false, expanded, validationErrors,
 
   useEffect(() => {
     validateNodeSettings(nodeId, {}, SettingSectionName.RUNAFTER, rootState, dispatch);
-  }, [nodeId, nodeData?.runAfter, dispatch]);
+  }, [nodeId, nodeData.runAfter, dispatch, rootState]);
 
   const intl = useIntl();
 

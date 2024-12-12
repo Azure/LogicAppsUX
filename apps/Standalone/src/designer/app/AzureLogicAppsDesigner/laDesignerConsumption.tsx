@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/ban-types */
 import { environment } from '../../../environments/environment';
 import type { AppDispatch, RootState } from '../../state/store';
 import { setIsChatBotEnabled } from '../../state/workflowLoadingSlice';
@@ -567,7 +566,7 @@ const getDataForConsumption = (data: any) => {
   return { workflow, connectionReferences, parameters };
 };
 
-const removeProperties = (obj: any = {}, props: string[] = []): Object => {
+const removeProperties = (obj: any = {}, props: string[] = []): object => {
   return Object.fromEntries(Object.entries(obj).filter(([key]) => !props.includes(key)));
 };
 
