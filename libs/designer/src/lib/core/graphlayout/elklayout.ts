@@ -69,7 +69,7 @@ const convertElkGraphToReactFlow = (graph: ElkNode): [Node[], Edge[], number[]] 
   let flowWidth: number = graph?.width ?? 0;
   let flowHeight: number = graph?.height ?? 0;
 
-  let nodeIndex = 1;
+  let nodeIndex = 10; // Set higher to avoid conflict with other values
 
   const processChildren = (node: ElkNode) => {
     const edgesBySource: Record<string, Edge[]> = {};

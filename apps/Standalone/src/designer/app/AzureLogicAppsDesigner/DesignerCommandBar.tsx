@@ -1,9 +1,6 @@
-import { FontIcon, mergeStyles, mergeStyleSets } from '@fluentui/react';
-import { Badge, Spinner } from '@fluentui/react-components';
-import type { ICommandBarItemProps } from '@fluentui/react/lib/CommandBar';
-import { CommandBar } from '@fluentui/react/lib/CommandBar';
+import { Spinner } from '@fluentui/react-components';
 import type { ILoggerService } from '@microsoft/logic-apps-shared';
-import { LogEntryLevel, LoggerService, isNullOrEmpty, RUN_AFTER_COLORS, ChatbotService } from '@microsoft/logic-apps-shared';
+import { LogEntryLevel, LoggerService, isNullOrEmpty, ChatbotService } from '@microsoft/logic-apps-shared';
 import type { AppDispatch, CustomCodeFileNameMapping, RootState, Workflow } from '@microsoft/logic-apps-designer';
 import {
   store as DesignerStore,
@@ -36,18 +33,45 @@ import LogicAppsIcon from '../../../assets/logicapp.svg';
 import { environment } from '../../../environments/environment';
 import { isSuccessResponse } from './Services/HttpClient';
 import { downloadDocumentAsFile } from '@microsoft/logic-apps-designer';
+import { CommandBar, type CommandBarItem } from '@microsoft/designer-ui';
 
-const iconClass = mergeStyles({
-  fontSize: 16,
-  height: 16,
-  width: 16,
-});
+import {
+  bundleIcon,
+  SaveFilled,
+  SaveRegular,
+  DismissFilled,
+  DismissRegular,
+  MentionBracketsFilled,
+  MentionBracketsRegular,
+  BracesFilled,
+  BracesRegular,
+  LinkRegular,
+  LinkFilled,
+  ErrorCircleFilled,
+  ErrorCircleRegular,
+  ChatSparkleFilled,
+  ChatSparkleRegular,
+  DocumentArrowDownFilled,
+  DocumentArrowDownRegular,
+  ArrowUndoFilled,
+  ArrowUndoRegular,
+  ArrowRedoFilled,
+  ArrowRedoRegular,
+  BugFilled,
+  BugRegular,
+} from '@fluentui/react-icons';
 
-const classNames = mergeStyleSets({
-  azureBlue: [{ color: 'rgb(0, 120, 212)' }, iconClass],
-  azureGrey: [{ color: '#A19F9D' }, iconClass],
-  azureRed: [{ color: 'rgb(194, 57, 52)' }, iconClass],
-});
+const SaveIcon = bundleIcon(SaveFilled, SaveRegular);
+const DiscardIcon = bundleIcon(DismissFilled, DismissRegular);
+const ParametersIcon = bundleIcon(MentionBracketsFilled, MentionBracketsRegular);
+const CodeIcon = bundleIcon(BracesFilled, BracesRegular);
+const ConnectionsIcon = bundleIcon(LinkFilled, LinkRegular);
+const ErrorIcon = bundleIcon(ErrorCircleFilled, ErrorCircleRegular);
+const AssistantIcon = bundleIcon(ChatSparkleFilled, ChatSparkleRegular);
+const WorkflowSummaryIcon = bundleIcon(DocumentArrowDownFilled, DocumentArrowDownRegular);
+const UndoIcon = bundleIcon(ArrowUndoFilled, ArrowUndoRegular);
+const RedoIcon = bundleIcon(ArrowRedoFilled, ArrowRedoRegular);
+const BugIcon = bundleIcon(BugFilled, BugRegular);
 
 export const DesignerCommandBar = ({
   discard,
@@ -158,79 +182,69 @@ export const DesignerCommandBar = ({
   const isUndoDisabled = !useCanUndo();
   const isRedoDisabled = !useCanRedo();
 
-  const items: ICommandBarItemProps[] = useMemo(
+  const items: CommandBarItem[] = useMemo(
     () => [
       {
-        key: 'save',
+        id: 'save',
         text: 'Save',
+        icon: <SaveIcon />,
         disabled: saveIsDisabled,
-        onRenderIcon: () => {
-          return isSaving ? (
-            <Spinner size={'extra-tiny'} />
-          ) : (
-            <FontIcon aria-label="Save" iconName="Save" className={saveIsDisabled ? classNames.azureGrey : classNames.azureBlue} />
-          );
-        },
+        loading: isSaving,
         onClick: () => {
-          isDesignerView ? saveWorkflowMutate() : saveWorkflowFromCode(() => dispatch(resetDesignerDirtyState(undefined)));
+          if (isDesignerView) {
+            saveWorkflowMutate();
+          } else {
+            saveWorkflowFromCode(() => dispatch(resetDesignerDirtyState(undefined)));
+          }
         },
       },
       {
-        key: 'discard',
-        disabled: isSaving || !isDesignerView,
+        id: 'discard',
         text: 'Discard',
-        iconProps: { iconName: 'Clear' },
+        icon: <DiscardIcon />,
+        disabled: isSaving || !isDesignerView,
         onClick: () => {
           discard();
         },
       },
       {
-        key: 'parameters',
+        id: 'parameters',
         text: 'Parameters',
+        icon: <ParametersIcon />,
         disabled: !isDesignerView,
-        iconProps: { iconName: 'Parameter' },
+        isError: haveWorkflowParameterErrors,
         onClick: () => !!dispatch(openPanel({ panelMode: 'WorkflowParameters' })),
-        onRenderText: (item: { text: string }) => <CustomCommandBarButton text={item.text} showError={haveWorkflowParameterErrors} />,
       },
       {
-        key: 'codeview',
+        id: 'codeview',
         text: isDesignerView ? 'Code View' : 'Designer View',
-        iconProps: isDesignerView ? { iconName: 'Code' } : { imageProps: { src: LogicAppsIcon } },
+        icon: isDesignerView ? <CodeIcon /> : <img src={LogicAppsIcon} alt="Logic Apps Icon" />,
         onClick: () => {
           switchViews();
           dispatch(collapsePanel());
           dispatch(resetDesignerView());
         },
       },
-      ...(showConnectionsPanel
-        ? [
-            {
-              key: 'connections',
-              text: 'Connections',
-              iconProps: { iconName: 'Link' },
-              onClick: () => !!dispatch(openPanel({ panelMode: 'Connection' })),
-              onRenderText: (item: { text: string }) => <CustomCommandBarButton text={item.text} showError={haveConnectionErrors} />,
-            },
-          ]
-        : []),
       {
-        key: 'errors',
+        id: 'connections',
+        visible: showConnectionsPanel,
+        text: 'Connections',
+        icon: <ConnectionsIcon />,
+        isError: haveConnectionErrors,
+        onClick: () => !!dispatch(openPanel({ panelMode: 'Connection' })),
+      },
+      {
+        id: 'errors',
         text: 'Errors',
+        icon: <ErrorIcon />,
         disabled: !haveErrors,
-        iconProps: {
-          iconName: haveErrors ? 'StatusErrorFull' : 'ErrorBadge',
-          style: haveErrors
-            ? {
-                color: RUN_AFTER_COLORS[isDarkMode ? 'dark' : 'light']['FAILED'],
-              }
-            : undefined,
-        },
+        isError: haveErrors,
         onClick: () => !!dispatch(openPanel({ panelMode: 'Error' })),
       },
       {
-        key: 'copilot',
+        id: 'copilot',
         text: 'Assistant',
-        iconProps: { iconName: 'Chat' },
+        icon: <AssistantIcon />,
         disabled: !isCopilotReady,
         onClick: () => {
           enableCopilot?.();
@@ -242,41 +256,36 @@ export const DesignerCommandBar = ({
         },
       },
       {
-        key: 'document',
+        id: 'document',
         text: 'Document',
+        icon: <WorkflowSummaryIcon />,
         disabled: haveErrors || isDownloadingDocument,
-        onRenderIcon: () => {
-          return isDownloadingDocument ? (
-            <Spinner size={'extra-small'} />
-          ) : (
-            <FontIcon aria-label="Download" iconName="Download" className={haveErrors ? classNames.azureGrey : classNames.azureBlue} />
-          );
-        },
+        loading: isDownloadingDocument,
         onClick: () => {
           downloadDocument();
         },
       },
       {
-        key: 'fileABug',
+        id: 'fileABug',
         text: 'File a bug',
-        iconProps: { iconName: 'Bug' },
+        icon: <BugIcon />,
         onClick: () => {
           window.open('https://github.com/Azure/logic_apps_designer/issues/new', '_blank');
         },
       },
       {
-        key: 'Undo',
+        id: 'Undo',
         text: 'Undo',
-        iconProps: { iconName: 'Undo' },
-        onClick: () => dispatch(onUndoClick()),
+        icon: <UndoIcon />,
         disabled: isUndoDisabled,
+        onClick: () => dispatch(onUndoClick()),
       },
       {
-        key: 'Redo',
+        id: 'Redo',
         text: 'Redo',
-        iconProps: { iconName: 'Redo' },
-        onClick: () => dispatch(onRedoClick()),
+        icon: <RedoIcon />,
         disabled: isRedoDisabled,
+        onClick: () => dispatch(onRedoClick()),
       },
     ],
     [
@@ -285,7 +294,6 @@ export const DesignerCommandBar = ({
       isDesignerView,
       showConnectionsPanel,
       haveErrors,
-      isDarkMode,
       isCopilotReady,
       isUndoDisabled,
       isRedoDisabled,
@@ -304,42 +312,21 @@ export const DesignerCommandBar = ({
 
   return (
     <>
-      <div
-        style={{
-          position: 'absolute',
-          top: '60px',
-          left: '20px',
-          display: 'flex',
-          flexDirection: 'column',
-          gap: '8px',
-        }}
-      >
-        {!isInitialized && <Spinner size={'extra-small'} label={'Loading dynamic data...'} />}
-      </div>
-      <CommandBar
-        items={items}
-        ariaLabel="Use left and right arrow keys to navigate between commands"
-        styles={{
-          root: {
-            borderBottom: `1px solid ${isDarkMode ? '#333333' : '#d6d6d6'}`,
-            position: 'relative',
-            padding: '4px 8px',
-          },
-        }}
-      />
+      {!isInitialized && (
+        <div
+          style={{
+            position: 'absolute',
+            top: '60px',
+            left: '20px',
+            display: 'flex',
+            flexDirection: 'column',
+            gap: '8px',
+          }}
+        >
+          <Spinner size={'extra-small'} label={'Loading dynamic data...'} />
+        </div>
+      )}
+      <CommandBar items={items} isDarkMode={isDarkMode} tabIndex={1} />
     </>
   );
 };
-
-const CustomCommandBarButton = ({
-  text,
-  showError,
-}: {
-  text: string;
-  showError?: boolean;
-}) => (
-  <div style={{ margin: '2px', display: 'flex', gap: '8px', alignItems: 'center' }}>
-    {text}
-    {showError && <Badge size="extra-small" color="danger" />}
-  </div>
-);

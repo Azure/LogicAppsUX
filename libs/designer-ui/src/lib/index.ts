@@ -22,6 +22,7 @@ export * from './combobox';
 export * from './connectors';
 export { default as UIConstants } from './constants';
 export * from './html';
+export * from './commandbar';
 // export * from './conditioncontrol';
 // export * from './configItem';
 export * from './copilotGetStarted/index';

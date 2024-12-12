@@ -1,7 +1,5 @@
 import { VSCodeContext } from '../../../webviewCommunication';
-import { FontIcon, mergeStyles, mergeStyleSets, Spinner, SpinnerSize, CommandBar } from '@fluentui/react';
-import type { ICommandBarItemProps } from '@fluentui/react';
-import { TrafficLightDot } from '@microsoft/designer-ui';
+import { CommandBar, type CommandBarItem } from '@microsoft/designer-ui';
 import {
   serializeWorkflow as serializeBJSWorkflow,
   store as DesignerStore,
@@ -13,12 +11,32 @@ import {
   useAllSettingsValidationErrors,
   useAllConnectionErrors,
 } from '@microsoft/logic-apps-designer';
-import { RUN_AFTER_COLORS, isNullOrEmpty } from '@microsoft/logic-apps-shared';
+import { isNullOrEmpty } from '@microsoft/logic-apps-shared';
 import { ExtensionCommand } from '@microsoft/vscode-extension-logic-apps';
 import { useContext, useMemo } from 'react';
 import { useIntl } from 'react-intl';
 import { useMutation } from '@tanstack/react-query';
 import { useDispatch } from 'react-redux';
+
+import {
+  bundleIcon,
+  ArrowClockwiseFilled,
+  ArrowClockwiseRegular,
+  SaveFilled,
+  SaveRegular,
+  ReplayFilled,
+  ReplayRegular,
+  MentionBracketsFilled,
+  MentionBracketsRegular,
+  ErrorCircleFilled,
+  ErrorCircleRegular,
+} from '@fluentui/react-icons';
+
+const RefreshIcon = bundleIcon(ArrowClockwiseFilled, ArrowClockwiseRegular);
+const SaveIcon = bundleIcon(SaveFilled, SaveRegular);
+const ResubmitIcon = bundleIcon(ReplayFilled, ReplayRegular);
+const ParametersIcon = bundleIcon(MentionBracketsFilled, MentionBracketsRegular);
+const ErrorIcon = bundleIcon(ErrorCircleFilled, ErrorCircleRegular);
 
 export interface DesignerCommandBarProps {
   isRefreshing: boolean;
@@ -105,17 +123,6 @@ export const DesignerCommandBar: React.FC<DesignerCommandBarProps> = ({ isRefres
     }),
   };
 
-  const iconClass = mergeStyles({
-    fontSize: 16,
-    height: 16,
-    width: 16,
-  });
-
-  const classNames = mergeStyleSets({
-    azureBlue: [{ color: 'rgb(0, 120, 212)' }, iconClass],
-    disableGrey: [{ color: 'rgb(121, 119, 117)' }, iconClass],
-  });
-
   const allInputErrors = (Object.entries(designerState.operations.inputParameters) ?? []).filter(([_id, nodeInputs]) =>
     Object.values(nodeInputs.parameterGroups).some((parameterGroup) =>
       parameterGroup.parameters.some((parameter) => (parameter?.validationErrors?.length ?? 0) > 0)
@@ -137,71 +144,50 @@ export const DesignerCommandBar: React.FC<DesignerCommandBarProps> = ({ isRefres
 
   const isSaveDisabled = useMemo(() => isSaving || haveErrors || !designerIsDirty, [isSaving, haveErrors, designerIsDirty]);
 
-  const designerItems: ICommandBarItemProps[] = [
+  const designerItems: CommandBarItem[] = [
     {
-      key: 'Save',
-      disabled: isSaveDisabled,
+      id: 'Save',
       text: Resources.DESIGNER_SAVE,
-      onRenderIcon: () => {
-        return isSaving ? (
-          <Spinner size={SpinnerSize.small} />
-        ) : (
-          <FontIcon
-            aria-label={Resources.DESIGNER_SAVE}
-            iconName="Save"
-            className={isSaveDisabled ? classNames.disableGrey : classNames.azureBlue}
-          />
-        );
-      },
+      icon: <SaveIcon />,
+      disabled: isSaveDisabled,
+      loading: isSaving,
       onClick: () => {
         saveWorkflowMutate();
       },
     },
     {
-      ariaLabel: Resources.DESIGNER_PARAMETERS,
-      iconProps: { iconName: 'Parameter' },
-      key: 'Parameter',
+      id: 'Parameter',
       text: Resources.DESIGNER_PARAMETERS,
-      onRenderText: (item: { text: string }) => {
-        return (
-          <>
-            {item.text}
-            {haveWorkflowParameterErrors ? (
-              <div style={{ display: 'inline-block', marginLeft: 8 }}>
-                <TrafficLightDot fill={RUN_AFTER_COLORS[isDarkMode ? 'dark' : 'light']['FAILED']} />
-              </div>
-            ) : null}
-          </>
-        );
-      },
+      icon: <ParametersIcon />,
+      ariaLabel: Resources.DESIGNER_PARAMETERS,
+      isError: haveWorkflowParameterErrors,
       onClick: () => !!dispatch(openPanel({ panelMode: 'WorkflowParameters' })),
     },
     {
-      key: 'errors',
-      disabled: !haveErrors,
+      id: 'errors',
       text: Resources.DESIGNER_ERRORS,
+      icon: <ErrorIcon />,
       ariaLabel: Resources.DESIGNER_ERRORS,
-      iconProps: {
-        iconName: haveErrors ? 'StatusErrorFull' : 'ErrorBadge',
-        style: haveErrors ? { color: RUN_AFTER_COLORS[isDarkMode ? 'dark' : 'light']['FAILED'] } : undefined,
-      },
+      disabled: !haveErrors,
+      isError: haveErrors,
       onClick: () => !!dispatch(openPanel({ panelMode: 'Error' })),
     },
   ];
 
-  const monitoringViewItems: ICommandBarItemProps[] = [
+  const monitoringViewItems: CommandBarItem[] = [
     {
-      ariaLabel: Resources.MONITORING_VIEW_REFRESH,
-      iconProps: { iconName: 'Refresh' },
-      key: 'Refresh',
-      disabled: isDisabled ? isDisabled : isRefreshing,
+      id: 'Refresh',
       text: Resources.MONITORING_VIEW_REFRESH,
+      icon: <RefreshIcon />,
+      ariaLabel: Resources.MONITORING_VIEW_REFRESH,
+      disabled: isDisabled ? isDisabled : isRefreshing,
+      loading: isRefreshing,
       onClick: onRefresh,
     },
     {
+      id: 'Rerun',
       ariaLabel: Resources.MONITORING_VIEW_RESUBMIT,
-      iconProps: { iconName: 'Rerun' },
-      key: 'Rerun',
+      icon: <ResubmitIcon />,
       disabled: isDisabled,
       text: Resources.MONITORING_VIEW_RESUBMIT,
       onClick: () => {
@@ -210,13 +196,5 @@ export const DesignerCommandBar: React.FC<DesignerCommandBarProps> = ({ isRefres
     },
   ];
 
-  return (
-    <CommandBar
-      items={isMonitoringView ? monitoringViewItems : designerItems}
-      ariaLabel="Use left and right arrow keys to navigate between commands"
-      styles={{
-        root: { borderBottom: `1px solid ${isDarkMode ? '#333333' : '#d6d6d6'}`, padding: '0 20px' },
-      }}
-    />
-  );
+  return <CommandBar items={isMonitoringView ? monitoringViewItems : designerItems} isDarkMode={isDarkMode} tabIndex={1} />;
 };
