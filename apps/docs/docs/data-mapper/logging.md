@@ -21,4 +21,12 @@ We log the name as the name of the command like this: 'vscode-azurelogicapps/azu
 
 #### General VSCode Telemetry Notes
 
-We store the Application Insights IKey and Connection String (remove IKey) in our production-build.yml file. This value is copied over to the package.json of vs-code-designer where we read it and initialize App Insights using the library 
+We store the Application Insights IKey and Connection String (remove IKey) in our production-build.yml file. This value is copied over to the package.json of vs-code-designer where we read it and initialize App Insights using the library in the file 'apps/vs-code-designer/src/app/commands/logstream/startStreamingLogs.ts'
+
+
+#### Designer and Portal
+
+Uses logging from 'logic-apps-shared', designer-client-services has a generic logger service used for standalone and Portal.
+
+Portal implements ILoggerService, initializing AI with a portal library @microsoft/azureportal-reactview/Az
+
