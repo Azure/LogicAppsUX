@@ -16,6 +16,7 @@ import { getConnectionsFromFile, getLogicAppProjectRoot, getParametersFromFile }
 import { sendRequest } from '../../../utils/requestUtils';
 import type { IAzureConnectorsContext } from '../azureConnectorWizard';
 import { createUnitTest } from '../unitTest/createUnitTest';
+import { saveBlankUnitTest } from '../unitTest/saveBlankUnitTest';
 import { OpenMonitoringViewBase } from './openMonitoringViewBase';
 import { getTriggerName, HTTP_METHODS } from '@microsoft/logic-apps-shared';
 import type { IActionContext } from '@microsoft/vscode-azext-utils';
@@ -139,6 +140,10 @@ export default class OpenMonitoringViewForLocal extends OpenMonitoringViewBase {
       }
       case ExtensionCommand.createUnitTest: {
         await createUnitTest(this.context as IAzureConnectorsContext, vscode.Uri.file(this.workflowFilePath), message.runId);
+        break;
+      }
+      case ExtensionCommand.saveBlankUnitTest: {
+        await saveBlankUnitTest(this.context as IAzureConnectorsContext, vscode.Uri.file(this.workflowFilePath), message.definition);
         break;
       }
       default:

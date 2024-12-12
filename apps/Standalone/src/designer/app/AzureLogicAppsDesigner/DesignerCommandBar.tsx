@@ -199,16 +199,11 @@ export const DesignerCommandBar = ({
       {
         key: 'saveBlankUnitTest',
         text: 'Save Blank Unit Test',
-        disabled: saveBlankUnitTestIsDisabled,
         onRenderIcon: () => {
           return isSavingBlankUnitTest ? (
             <Spinner size={SpinnerSize.small} />
           ) : (
-            <FontIcon
-              aria-label="Save"
-              iconName="Save"
-              className={saveBlankUnitTestIsDisabled ? classNames.azureGrey : classNames.azureBlue}
-            />
+            <FontIcon aria-label="Save" iconName="Save" className={classNames.azureBlue} />
           );
         },
         onClick: () => {

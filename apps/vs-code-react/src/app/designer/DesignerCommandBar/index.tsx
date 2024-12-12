@@ -286,6 +286,26 @@ export const DesignerCommandBar: React.FC<DesignerCommandBarProps> = ({
               onCreateUnitTest();
             },
           },
+          {
+            key: 'SaveBlank',
+            disabled: isDisabled,
+            text: Resources.UNIT_TEST_SAVE_BLANK,
+            ariaLabel: Resources.UNIT_TEST_SAVE_BLANK,
+            onRenderIcon: () => {
+              return isSavingBlankUnitTest ? (
+                <Spinner size={SpinnerSize.small} />
+              ) : (
+                <FontIcon
+                  aria-label={Resources.DESIGNER_SAVE}
+                  iconName="Save"
+                  className={isSaveBlankUnitTestDisabled ? classNames.disableGrey : classNames.azureBlue}
+                />
+              );
+            },
+            onClick: () => {
+              saveBlankUnitTestMutate();
+            },
+          },
         ]
       : []),
   ];
