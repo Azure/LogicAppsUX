@@ -114,7 +114,6 @@ export default class OpenMonitoringViewForLocal extends OpenMonitoringViewBase {
             panelMetadata: this.panelMetadata,
             connectionData: this.connectionData,
             workflowDetails: this.workflowDetails,
-            customCode: this.customCode,
             oauthRedirectUrl: this.oauthRedirectUrl,
             baseUrl: this.baseUrl,
             apiVersion: this.apiVersion,
@@ -167,7 +166,7 @@ export default class OpenMonitoringViewForLocal extends OpenMonitoringViewBase {
     const projectPath: string | undefined = await getLogicAppProjectRoot(this.context, this.workflowFilePath);
     const workflowContent: any = JSON.parse(readFileSync(this.workflowFilePath, 'utf8'));
     const parametersData: Record<string, Parameter> = await getParametersFromFile(this.context, this.workflowFilePath);
-    const customCodeData: Record<string, string> = await getCustomCodeFromFiles(this.context, this.workflowFilePath);
+    const customCodeData: Record<string, string> = await getCustomCodeFromFiles(this.workflowFilePath);
     let localSettings: Record<string, string>;
     let azureDetails: AzureConnectorDetails;
 

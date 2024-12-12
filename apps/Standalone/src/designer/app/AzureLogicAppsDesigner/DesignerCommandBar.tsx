@@ -172,7 +172,11 @@ export const DesignerCommandBar = ({
           );
         },
         onClick: () => {
-          isDesignerView ? saveWorkflowMutate() : saveWorkflowFromCode(() => dispatch(resetDesignerDirtyState(undefined)));
+          if (isDesignerView) {
+            saveWorkflowMutate();
+          } else {
+            saveWorkflowFromCode(() => dispatch(resetDesignerDirtyState(undefined)));
+          }
         },
       },
       {

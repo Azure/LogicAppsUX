@@ -15,9 +15,11 @@ import {
   getConnectionsAndSettingsToUpdate,
   getConnectionsFromFile,
   getCustomCodeFromFiles,
+  getCustomCodeToUpdate,
   getLogicAppProjectRoot,
   getParametersFromFile,
   saveConnectionReferences,
+  saveCustomCodeStandard,
 } from '../../../utils/codeless/connection';
 import { saveWorkflowParameter } from '../../../utils/codeless/parameter';
 import { startDesignTimeApi } from '../../../utils/codeless/startDesignTimeApi';
@@ -125,7 +127,6 @@ export default class OpenDesignerForLocalProject extends OpenDesignerBase {
     });
     this.panelMetadata.mapArtifacts = this.mapArtifacts;
     this.panelMetadata.schemaArtifacts = this.schemaArtifacts;
-    this.panelMetadata.customCodeData = this.customCode;
 
     this.panel.webview.onDidReceiveMessage(async (message) => await this._handleWebviewMsg(message), ext.context.subscriptions);
 
@@ -218,18 +219,6 @@ export default class OpenDesignerForLocalProject extends OpenDesignerBase {
         }
         break;
       }
-      case ExtensionCommand.uploadCustomCodeAppFile: {
-        console.log('uploadCustomCodeAppFile');
-        break;
-      }
-      case ExtensionCommand.uploadCustomCode: {
-        console.log('uploadCustomCode');
-        break;
-      }
-      case ExtensionCommand.deleteCustomCode: {
-        console.log('deleteCustomCode');
-        break;
-      }
 
       default:
         break;
@@ -259,14 +248,14 @@ export default class OpenDesignerForLocalProject extends OpenDesignerBase {
 
     await window.withProgress(options, async () => {
       try {
-        const { definition, connectionReferences, parameters } = workflowToSave;
+        const { definition, connectionReferences, parameters, customCodeData } = workflowToSave;
         const definitionToSave: any = definition;
         const parametersFromDefinition = parameters;
+        const projectPath = await getLogicAppProjectRoot(this.context, filePath);
 
         workflow.definition = definitionToSave;
 
         if (connectionReferences) {
-          const projectPath = await getLogicAppProjectRoot(this.context, filePath);
           const connectionsAndSettingsToUpdate = await getConnectionsAndSettingsToUpdate(
             this.context,
             projectPath,
@@ -277,6 +266,11 @@ export default class OpenDesignerForLocalProject extends OpenDesignerBase {
           );
 
           await saveConnectionReferences(this.context, projectPath, connectionsAndSettingsToUpdate);
+        }
+
+        if (customCodeData) {
+          const customCodeToUpdate = await getCustomCodeToUpdate(this.context, filePath, customCodeData);
+          saveCustomCodeStandard(filePath, customCodeToUpdate);
         }
 
         if (parametersFromDefinition) {
@@ -425,7 +419,7 @@ export default class OpenDesignerForLocalProject extends OpenDesignerBase {
     const connectionsData: string = await getConnectionsFromFile(this.context, this.workflowFilePath);
     const projectPath: string | undefined = await getLogicAppProjectRoot(this.context, this.workflowFilePath);
     const parametersData: Record<string, Parameter> = await getParametersFromFile(this.context, this.workflowFilePath);
-    const customCodeData: Record<string, string> = await getCustomCodeFromFiles(this.context, this.workflowFilePath);
+    const customCodeData: Record<string, string> = await getCustomCodeFromFiles(this.workflowFilePath);
     const workflowDetails = await getManualWorkflowsInLocalProject(projectPath, this.workflowName);
     const artifacts = await getArtifactsInLocalProject(projectPath);
     let localSettings: Record<string, string>;
@@ -443,6 +437,7 @@ export default class OpenDesignerForLocalProject extends OpenDesignerBase {
       appSettingNames: Object.keys(localSettings),
       standardApp: getStandardAppData(this.workflowName, workflowContent),
       connectionsData,
+      customCodeData,
       parametersData,
       localSettings,
       azureDetails,
@@ -453,7 +448,6 @@ export default class OpenDesignerForLocalProject extends OpenDesignerBase {
       artifacts,
       schemaArtifacts: this.schemaArtifacts,
       mapArtifacts: this.mapArtifacts,
-      customCodeData,
     };
   }
 
