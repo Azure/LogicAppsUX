@@ -34,8 +34,8 @@ export const getSwagger = async (connectorId: string): Promise<OpenAPIV2.Documen
   }
   const queryClient = getReactQueryClient();
   const connectionService = ConnectionService();
-  connectorId = connectorId.toLowerCase();
-  return queryClient.fetchQuery(['swagger', { connectorId }], () => connectionService.getSwaggerFromConnector(connectorId));
+  const queryKeyObject = { connectorId: connectorId.toLowerCase() };
+  return queryClient.fetchQuery(['swagger', queryKeyObject], () => connectionService.getSwaggerFromConnector(connectorId));
 };
 
 export const getOperationManifest = async ({ connectorId, operationId }: OperationInfo): Promise<OperationManifest> => {

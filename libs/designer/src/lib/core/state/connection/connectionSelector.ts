@@ -57,13 +57,17 @@ export const useConnectors = (connectorIds?: string[]): UseQueryResult<[string, 
   );
 
 export const useSwagger = (connectorId?: string, enabled = true) =>
-  useQuery(['swagger', { connectorId }], async () => ConnectionService().getSwaggerFromConnector(connectorId ?? ''), {
-    enabled: !!connectorId && enabled,
-    cacheTime: 1000 * 60 * 60 * 24,
-    refetchOnMount: false,
-    refetchOnWindowFocus: false,
-    refetchOnReconnect: false,
-  });
+  useQuery(
+    ['swagger', { connectorId: connectorId?.toLowerCase() }],
+    async () => ConnectionService().getSwaggerFromConnector(connectorId ?? ''),
+    {
+      enabled: !!connectorId && enabled,
+      cacheTime: 1000 * 60 * 60 * 24,
+      refetchOnMount: false,
+      refetchOnWindowFocus: false,
+      refetchOnReconnect: false,
+    }
+  );
 
 export const useGateways = (subscriptionId: string, connectorName: string): UseQueryResult<Gateway[], unknown> =>
   useQuery(['gateways', { subscriptionId }, { connectorName }], async () => GatewayService().getGateways(subscriptionId, connectorName), {
