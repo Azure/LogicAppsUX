@@ -270,7 +270,7 @@ export default class OpenDesignerForLocalProject extends OpenDesignerBase {
 
         if (customCodeData) {
           const customCodeToUpdate = await getCustomCodeToUpdate(this.context, filePath, customCodeData);
-          saveCustomCodeStandard(filePath, customCodeToUpdate);
+          await saveCustomCodeStandard(filePath, customCodeToUpdate);
         }
 
         if (parametersFromDefinition) {

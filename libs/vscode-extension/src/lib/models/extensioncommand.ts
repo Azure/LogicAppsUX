@@ -42,9 +42,6 @@ export const ExtensionCommand = {
   webviewLoaded: 'webviewLoaded',
   webviewRscLoadError: 'webviewRscLoadError',
   openRelativeLink: 'openRelativeLink',
-  uploadCustomCodeAppFile: 'uploadCustomCodeAppFile',
-  uploadCustomCode: 'uploadCustomCode',
-  deleteCustomCode: 'deleteCustomCode',
 } as const;
 export type ExtensionCommand = (typeof ExtensionCommand)[keyof typeof ExtensionCommand];
 

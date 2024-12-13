@@ -68,17 +68,6 @@ export async function getCustomCodeAppFilesToUpdate(
   return appFiles;
 }
 
-export async function uploadCustomCodeAppFiles(fileRootPath: string, fileName: string, fileData: string): Promise<void> {
-  const filePath: string = path.join(fileRootPath, fileName);
-  console.log(filePath, fileName, fileData);
-  try {
-    await fse.writeFile(filePath, fileData, 'utf8');
-  } catch (error) {
-    const message: string = localize('Failed to write file at "{0}": {1}', filePath, parseError(error).message);
-    throw new Error(message);
-  }
-}
-
 export async function uploadCustomCode(workflowFilePath: string, fileName: string, fileData: string): Promise<void> {
   const filePath: string = path.join(workflowFilePath, fileName);
   try {

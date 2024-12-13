@@ -1,9 +1,9 @@
 import constants from '../../../../../common/constants';
 import { useShowIdentitySelectorQuery } from '../../../../../core/state/connection/connectionSelector';
-import { addOrUpdateCustomCode } from '../../../../../core/state/customcode/customcodeSlice';
+import { addOrUpdateCustomCode, renameCustomCodeFile } from '../../../../../core/state/customcode/customcodeSlice';
 import { useHostOptions, useReadOnly } from '../../../../../core/state/designerOptions/designerOptionsSelectors';
 import type { ParameterGroup } from '../../../../../core/state/operation/operationMetadataSlice';
-import { DynamicLoadStatus, ErrorLevel } from '../../../../../core/state/operation/operationMetadataSlice';
+import { DynamicLoadStatus, ErrorLevel, updateParameterEditorViewModel } from '../../../../../core/state/operation/operationMetadataSlice';
 import { useDependencies, useNodesInitialized, useOperationErrorInfo } from '../../../../../core/state/operation/operationSelector';
 import { useIsPanelInPinnedViewMode, usePanelLocation } from '../../../../../core/state/panel/panelSelectors';
 import {
@@ -14,12 +14,7 @@ import {
 } from '../../../../../core/state/selectors/actionMetadataSelector';
 import type { VariableDeclaration } from '../../../../../core/state/tokens/tokensSlice';
 import { updateVariableInfo } from '../../../../../core/state/tokens/tokensSlice';
-import {
-  useGetSwitchParentId,
-  useNodeDisplayName,
-  useNodeMetadata,
-  useReplacedIds,
-} from '../../../../../core/state/workflow/workflowSelectors';
+import { useGetSwitchParentId, useNodeMetadata, useReplacedIds } from '../../../../../core/state/workflow/workflowSelectors';
 import type { AppDispatch, RootState } from '../../../../../core/store';
 import { getConnectionReference } from '../../../../../core/utils/connectors/connections';
 import { isRootNodeInGraph } from '../../../../../core/utils/graph';
@@ -28,6 +23,7 @@ import {
   loadDynamicTreeItemsForParameter,
   loadDynamicValuesForParameter,
   loadParameterValueFromString,
+  ParameterGroupKeys,
   parameterValueToString,
   remapEditorViewModelWithNewIds,
   remapValueSegmentsWithNewIds,
@@ -60,14 +56,7 @@ import type {
   PanelTabFn,
   PanelTabProps,
 } from '@microsoft/designer-ui';
-import {
-  EditorService,
-  equals,
-  getPropertyValue,
-  getRecordEntry,
-  isRecordNotEmpty,
-  replaceWhiteSpaceWithUnderscore,
-} from '@microsoft/logic-apps-shared';
+import { EditorService, equals, getPropertyValue, getRecordEntry, isRecordNotEmpty } from '@microsoft/logic-apps-shared';
 import type { OperationInfo } from '@microsoft/logic-apps-shared';
 import type React from 'react';
 import { useCallback, useEffect, useMemo, useState } from 'react';
@@ -232,7 +221,6 @@ const ParameterSection = ({
   const rootState = useSelector((state: RootState) => state);
   const displayNameResult = useConnectorName(operationInfo);
   const panelLocation = usePanelLocation();
-  const nodeTitle = replaceWhiteSpaceWithUnderscore(useNodeDisplayName(nodeId));
 
   const { suppressCastingForSerialize, hideUTFExpressions } = useHostOptions();
 
@@ -307,6 +295,24 @@ const ParameterSection = ({
         workflowParameters
       );
     }
+  };
+
+  const fileNameChange = (parameter: ParameterInfo, originalFileName: string, fileName: string): void => {
+    dispatch(
+      updateParameterEditorViewModel({
+        nodeId,
+        groupId: ParameterGroupKeys.DEFAULT,
+        parameterId: parameter.id,
+        editorViewModel: {
+          ...(parameter.editorViewModel ?? {}),
+          customCodeData: {
+            ...(parameter.editorViewModel?.customCodeData ?? {}),
+            fileName,
+          },
+        },
+      })
+    );
+    dispatch(renameCustomCodeFile({ nodeId, newFileName: fileName, oldFileName: originalFileName }));
   };
 
   const getPickerCallbacks = (parameter: ParameterInfo) => ({
@@ -458,10 +464,10 @@ const ParameterSection = ({
           errorDetails: dynamicData?.error ? { message: dynamicData.error.message } : undefined,
           validationErrors,
           tokenMapping,
-          nodeTitle,
           loadParameterValueFromString,
           onValueChange: (newState: ChangeState, skipStateSave?: boolean) => onValueChange(id, newState, skipStateSave),
           onComboboxMenuOpen: () => onComboboxMenuOpen(param),
+          onFileNameChange: (originalFileName: string, newFileName: string) => fileNameChange(param, originalFileName, newFileName),
           pickerCallbacks: getPickerCallbacks(param),
           tokenpickerButtonProps: {
             location: panelLocation === PanelLocation.Left ? TokenPickerButtonLocation.Right : TokenPickerButtonLocation.Left,

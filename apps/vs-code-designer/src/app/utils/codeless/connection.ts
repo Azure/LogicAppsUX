@@ -9,7 +9,7 @@ import { getContainingWorkspace } from '../workspace';
 import { getWorkflowParameters } from './common';
 import { getAuthorizationToken } from './getAuthorizationToken';
 import { getParametersJson, saveWorkflowParameterRecords } from './parameter';
-import { deleteCustomCode, getCustomCode, getCustomCodeAppFilesToUpdate, uploadCustomCode, uploadCustomCodeAppFiles } from './customcode';
+import { deleteCustomCode, getCustomCode, getCustomCodeAppFilesToUpdate, uploadCustomCode } from './customcode';
 import { addNewFileInCSharpProject } from './updateBuildFile';
 import { HTTP_METHODS, isString } from '@microsoft/logic-apps-shared';
 import type { ParsedSite } from '@microsoft/vscode-azext-azureappservice';
@@ -300,6 +300,8 @@ export async function getCustomCodeToUpdate(
 
   const appFiles = await getCustomCodeAppFiles(context, filePath, customCode);
   Object.entries(customCode).forEach(([fileName, customCodeData]) => {
+    console.log('fileName', fileName);
+    console.log('customCodeData', customCodeData);
     const { isModified, isDeleted } = customCodeData;
     if ((isDeleted && originalCustomCodeData.includes(fileName)) || (isModified && !isDeleted)) {
       filteredCustomCodeMapping[fileName] = { ...customCodeData };
@@ -325,7 +327,8 @@ export async function saveCustomCodeStandard(filePath: string, allCustomCodeFile
         uploadCustomCode(workspaceFolder, fileName, fileData);
       }
     });
-    Object.entries(appFiles ?? {}).forEach(([fileName, fileData]) => uploadCustomCodeAppFiles(projectPath, fileName, fileData));
+    // upload the app files needed for powershell actions
+    Object.entries(appFiles ?? {}).forEach(([fileName, fileData]) => uploadCustomCode(projectPath, fileName, fileData));
   } catch (error) {
     const errorMessage = `Failed to save custom code: ${error}`;
     throw new Error(errorMessage);

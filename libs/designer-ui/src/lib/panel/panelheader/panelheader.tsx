@@ -42,7 +42,6 @@ export interface PanelHeaderProps {
   onRenderWarningMessage?(): JSX.Element;
   toggleCollapse: () => void;
   onTitleChange: TitleChangeHandler;
-  onTitleBlur?: (prevTitle: string) => void;
   handleTitleUpdate: (originalId: string, newId: string) => void;
   canShowLogicAppRun?: boolean;
   showLogicAppRun?: () => void;
@@ -143,7 +142,6 @@ export const PanelHeader = (props: PanelHeaderProps): JSX.Element => {
     commentChange,
     onRenderWarningMessage,
     onTitleChange,
-    onTitleBlur,
     handleTitleUpdate,
     canShowLogicAppRun,
     showLogicAppRun,
@@ -211,7 +209,6 @@ export const PanelHeader = (props: PanelHeaderProps): JSX.Element => {
                   renameTitleDisabled={renameTitleDisabled}
                   titleValue={title}
                   onChange={(newId) => onTitleChange(nodeId, newId)}
-                  onBlur={onTitleBlur}
                   handleTitleUpdate={(newId) => handleTitleUpdate(nodeId, newId)}
                 />
               </div>
