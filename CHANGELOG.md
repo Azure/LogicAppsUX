@@ -1,4 +1,11 @@
 # Logic Apps Designer
+### [5.2.1](https://github.com/Azure/LogicAppsUX/compare/v5.2.0...v5.2.1) (2024-12-13)
+
+
+### Bug Fixes
+
+* **Designer:** Modified connector swagger fetch to have proper casing ([#6255](https://github.com/Azure/LogicAppsUX/issues/6255)) ([3267de2](https://github.com/Azure/LogicAppsUX/commit/3267de27f425d88a44a3e307ee764dcc36e7aeb4))
+
 ## [5.2.0](https://github.com/Azure/LogicAppsUX/compare/v5.1.0...v5.2.0) (2024-11-14)
 
 
