@@ -3,7 +3,7 @@ import type { PanelNodeData } from '../types';
 import { PanelHeaderComment } from './panelheadercomment';
 import type { TitleChangeHandler } from './panelheadertitle';
 import { PanelHeaderTitle } from './panelheadertitle';
-import { Button, Menu, MenuList, MenuPopover, MenuTrigger, Spinner, Tooltip } from '@fluentui/react-components';
+import { Button, Menu, MenuList, MenuPopover, MenuTrigger, Spinner, Tooltip, useRestoreFocusTarget } from '@fluentui/react-components';
 import {
   bundleIcon,
   ChevronDoubleRightFilled,
@@ -97,7 +97,7 @@ const CollapseButton = (props: PanelHeaderProps & { isRight: boolean; nodeId: st
 
 const OverflowButton = (props: PanelHeaderProps): JSX.Element => {
   const { headerItems } = props;
-
+  const restoreFocusTargetAttribute = useRestoreFocusTarget();
   const intl = useIntl();
 
   const panelHeaderMenuCommands = intl.formatMessage({
@@ -111,6 +111,7 @@ const OverflowButton = (props: PanelHeaderProps): JSX.Element => {
       <MenuTrigger>
         <Tooltip relationship={'label'} positioning={'before'} content={panelHeaderMenuCommands}>
           <Button
+            {...restoreFocusTargetAttribute}
             appearance="subtle"
             icon={<OverflowIcon />}
             aria-label={panelHeaderMenuCommands}
