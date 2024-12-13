@@ -53,7 +53,7 @@ export const customCodeSlice = createSlice({
       delete state.fileData[nodeId];
     },
     renameCustomCodeFile: (state, action: PayloadAction<RenameCustomCodePayload>) => {
-      const { nodeId, oldFileName, newFileName } = action.payload;
+      const { oldFileName, newFileName } = action.payload;
 
       const originalFile = state.files[oldFileName];
       if (!originalFile) {
@@ -68,13 +68,6 @@ export const customCodeSlice = createSlice({
 
       // Mark old file as deleted
       state.files[oldFileName] = { ...originalFile, isDeleted: true };
-
-      // Mark other files with the same nodeId as deleted
-      Object.entries(state.files).forEach(([fileName, file]) => {
-        if (file.nodeId === nodeId && fileName !== newFileName) {
-          state.files[fileName] = { ...file, isDeleted: true };
-        }
-      });
     },
     // on save we want to remove all deleted files and reset the modified flag
     resetCustomCode: (state) => {

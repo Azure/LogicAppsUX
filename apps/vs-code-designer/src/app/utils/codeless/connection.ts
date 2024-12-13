@@ -300,8 +300,6 @@ export async function getCustomCodeToUpdate(
 
   const appFiles = await getCustomCodeAppFiles(context, filePath, customCode);
   Object.entries(customCode).forEach(([fileName, customCodeData]) => {
-    console.log('fileName', fileName);
-    console.log('customCodeData', customCodeData);
     const { isModified, isDeleted } = customCodeData;
     if ((isDeleted && originalCustomCodeData.includes(fileName)) || (isModified && !isDeleted)) {
       filteredCustomCodeMapping[fileName] = { ...customCodeData };

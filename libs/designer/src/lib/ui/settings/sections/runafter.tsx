@@ -23,7 +23,8 @@ export const RunAfter = ({ nodeId, readOnly = false, expanded, validationErrors,
 
   useEffect(() => {
     validateNodeSettings(nodeId, {}, SettingSectionName.RUNAFTER, rootState, dispatch);
-  }, [nodeId, nodeData.runAfter, dispatch, rootState]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [nodeId, nodeData?.runAfter, dispatch]);
 
   const intl = useIntl();
 

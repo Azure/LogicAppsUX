@@ -3,7 +3,7 @@ import { useShowIdentitySelectorQuery } from '../../../../../core/state/connecti
 import { addOrUpdateCustomCode, renameCustomCodeFile } from '../../../../../core/state/customcode/customcodeSlice';
 import { useHostOptions, useReadOnly } from '../../../../../core/state/designerOptions/designerOptionsSelectors';
 import type { ParameterGroup } from '../../../../../core/state/operation/operationMetadataSlice';
-import { DynamicLoadStatus, ErrorLevel, updateParameterEditorViewModel } from '../../../../../core/state/operation/operationMetadataSlice';
+import { DynamicLoadStatus, ErrorLevel } from '../../../../../core/state/operation/operationMetadataSlice';
 import { useDependencies, useNodesInitialized, useOperationErrorInfo } from '../../../../../core/state/operation/operationSelector';
 import { useIsPanelInPinnedViewMode, usePanelLocation } from '../../../../../core/state/panel/panelSelectors';
 import {
@@ -23,7 +23,6 @@ import {
   loadDynamicTreeItemsForParameter,
   loadDynamicValuesForParameter,
   loadParameterValueFromString,
-  ParameterGroupKeys,
   parameterValueToString,
   remapEditorViewModelWithNewIds,
   remapValueSegmentsWithNewIds,
@@ -297,22 +296,8 @@ const ParameterSection = ({
     }
   };
 
-  const fileNameChange = (parameter: ParameterInfo, originalFileName: string, fileName: string): void => {
-    dispatch(
-      updateParameterEditorViewModel({
-        nodeId,
-        groupId: ParameterGroupKeys.DEFAULT,
-        parameterId: parameter.id,
-        editorViewModel: {
-          ...(parameter.editorViewModel ?? {}),
-          customCodeData: {
-            ...(parameter.editorViewModel?.customCodeData ?? {}),
-            fileName,
-          },
-        },
-      })
-    );
-    dispatch(renameCustomCodeFile({ nodeId, newFileName: fileName, oldFileName: originalFileName }));
+  const fileNameChange = (originalFileName: string, fileName: string): void => {
+    dispatch(renameCustomCodeFile({ newFileName: fileName, oldFileName: originalFileName }));
   };
 
   const getPickerCallbacks = (parameter: ParameterInfo) => ({
@@ -467,7 +452,7 @@ const ParameterSection = ({
           loadParameterValueFromString,
           onValueChange: (newState: ChangeState, skipStateSave?: boolean) => onValueChange(id, newState, skipStateSave),
           onComboboxMenuOpen: () => onComboboxMenuOpen(param),
-          onFileNameChange: (originalFileName: string, newFileName: string) => fileNameChange(param, originalFileName, newFileName),
+          onFileNameChange: fileNameChange,
           pickerCallbacks: getPickerCallbacks(param),
           tokenpickerButtonProps: {
             location: panelLocation === PanelLocation.Left ? TokenPickerButtonLocation.Right : TokenPickerButtonLocation.Left,

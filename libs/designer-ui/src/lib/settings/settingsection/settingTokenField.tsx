@@ -166,14 +166,16 @@ export const TokenField = ({
         />
       );
     case constants.PARAMETER.EDITOR.CODE: {
-      const customCodeEditor = isCustomCode(editor, editorOptions?.language);
-      let customCodeData = editorViewModel?.customCodeData?.fileData ?? '';
+      console.log(editorViewModel);
+      const { language = EditorLanguage.javascript } = editorOptions || {};
+      const customCodeEditor = isCustomCode(editor, language);
+      const customCodeData = (() => {
+        const data = editorViewModel?.customCodeData?.fileData ?? '';
+        return typeof data === 'string' ? data : JSON.stringify(data);
+      })();
       const fileName = editorViewModel?.customCodeData?.fileName;
-      if (typeof customCodeData !== 'string') {
-        customCodeData = JSON.stringify(customCodeData);
-      }
-      const initialValue = editorOptions?.language && customCodeEditor ? [createLiteralValueSegment(customCodeData)] : value;
-      const language = editorOptions.language ?? EditorLanguage.javascript;
+
+      const initialValue = customCodeEditor ? [createLiteralValueSegment(customCodeData)] : value;
 
       return (
         <CodeEditor

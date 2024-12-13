@@ -41,11 +41,11 @@ export function CodeEditor({
   onFocus,
   getTokenPicker,
   label,
-  originalFileName,
+  originalFileName = '',
   customCodeEditor,
   onFileNameChange,
 }: CodeEditorProps): JSX.Element {
-  console.log(originalFileName);
+  console.log(initialValue);
   const intl = useIntl();
   const codeEditorRef = useRef<editor.IStandaloneCodeEditor | null>(null);
   const editorId = useId('msla-tokenpicker-callout-location');
