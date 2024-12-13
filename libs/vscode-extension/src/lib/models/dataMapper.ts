@@ -1,5 +1,5 @@
 import type { ExtensionCommand } from './extensioncommand';
-import type { IFileSysTreeItem, MapDefinitionEntry, MapMetadataV2, SchemaType } from '@microsoft/logic-apps-shared';
+import type { IFileSysTreeItem, MapDefinitionEntry, MapMetadata, SchemaType } from '@microsoft/logic-apps-shared';
 
 type InitializeData = { project: string };
 type FetchSchemaData = { fileName: string; type: SchemaType };
@@ -9,7 +9,7 @@ export type MapDefinitionData = {
   mapDefinition: MapDefinitionEntry;
   sourceSchemaFileName: string;
   targetSchemaFileName: string;
-  metadata: MapMetadataV2 | undefined;
+  metadata: MapMetadata | undefined;
 };
 export type XsltData = { filename: string; fileContents: string };
 

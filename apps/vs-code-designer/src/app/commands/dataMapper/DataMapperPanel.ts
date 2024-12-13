@@ -13,7 +13,7 @@ import {
   supportedSchemaFileExts,
   supportedCustomXsltFileExts,
 } from './extensionConfig';
-import type { SchemaType, IFileSysTreeItem, MapMetadataV2 } from '@microsoft/logic-apps-shared';
+import type { SchemaType, IFileSysTreeItem, MapMetadata } from '@microsoft/logic-apps-shared';
 import type { IActionContext } from '@microsoft/vscode-azext-utils';
 import { callWithTelemetryAndErrorHandlingSync } from '@microsoft/vscode-azext-utils';
 import type { MapDefinitionData, MessageToVsix, MessageToWebview } from '@microsoft/vscode-extension-logic-apps';
@@ -418,12 +418,12 @@ export default class DataMapperPanel {
       .catch(ext.showError);
   }
 
-  private readMapMetadataFile(): MapMetadataV2 | undefined {
+  private readMapMetadataFile(): MapMetadata | undefined {
     const vscodeFolderPath = this.getMapMetadataPath();
     if (fileExistsSync(vscodeFolderPath)) {
       try {
         const fileBuffer = readFileSync(vscodeFolderPath);
-        const metadataJson = JSON.parse(fileBuffer.toString()) as MapMetadataV2;
+        const metadataJson = JSON.parse(fileBuffer.toString()) as MapMetadata;
         return metadataJson;
       } catch {
         ext.showError(
