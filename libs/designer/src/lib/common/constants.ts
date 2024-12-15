@@ -142,6 +142,9 @@ export default {
     MIN: 1,
     MAX: 100,
   },
+  COLLECTION_FORMAT: {
+    CSV: 'csv',
+  },
   CONDITION_COLORS: {
     YES: '#88DA8D',
     NO: '#FB8981',
