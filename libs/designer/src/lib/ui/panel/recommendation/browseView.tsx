@@ -39,7 +39,6 @@ const getRunTimeValue = (connector: Connector): number => {
 };
 const getPriorityValue = (connector: Connector): number => {
   const t = priorityConnectors.findIndex((p) => connector.id.toLowerCase().endsWith(p.toLowerCase()));
-  !connector.id.startsWith('/subscriptions/') && console.log(`pvalue: ${connector.id.toLowerCase()} : ${t}`);
   return t !== -1 ? 200 - t : 100;
 };
 const defaultSortConnectors = (connectors: Connector[]): Connector[] => {
