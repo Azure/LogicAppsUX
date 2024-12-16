@@ -9,7 +9,7 @@ export interface StatusPillProps {
   startTime?: string;
   endTime?: string;
   hasRetries?: boolean;
-  status: string;
+  status?: string;
   resubmittedResults?: boolean;
 }
 

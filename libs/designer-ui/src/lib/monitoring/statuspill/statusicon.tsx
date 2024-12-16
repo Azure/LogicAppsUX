@@ -12,7 +12,7 @@ import { Waiting } from './images/waiting';
 type IconOpacity = `${number}%`;
 export interface StatusIconProps {
   hasRetries: boolean;
-  status: string;
+  status?: string;
   iconOpacity?: IconOpacity;
 }
 
