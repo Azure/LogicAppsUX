@@ -1,6 +1,7 @@
 import type { ApiHubServiceDetails } from '../base/connection';
 import type { ListDynamicValue } from '../connector';
 import type { IHttpClient } from '../httpClient';
+import { validateRequiredServiceArguments } from '../../../utils/src/lib/helpers/functions';
 
 interface ArtifactServiceOptions {
   apiVersion: string;
@@ -36,16 +37,8 @@ export class StandardArtifactService {
 
   constructor(private readonly options: ArtifactServiceOptions) {
     const { apiVersion, baseUrl, httpClient, schemaArtifacts, mapArtifacts } = this.options;
+    validateRequiredServiceArguments({ apiVersion, baseUrl, httpClient });
 
-    if (!apiVersion) {
-      throw new Error('apiVersion required');
-    }
-    if (!baseUrl) {
-      throw new Error('baseUrl required');
-    }
-    if (!httpClient) {
-      throw new Error('httpClient required');
-    }
     this._schemaArtifacts = schemaArtifacts;
     this._mapArtifacts = mapArtifacts;
   }

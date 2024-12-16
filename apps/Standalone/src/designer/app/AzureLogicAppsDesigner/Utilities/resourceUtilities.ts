@@ -39,7 +39,7 @@ export const fetchAppsByQuery = async (query: string): Promise<any[]> => {
         return await requestPage(value, pageNum + 1, $skipToken);
       }
       return value;
-    } catch (error) {
+    } catch (_e) {
       return value;
     }
   };

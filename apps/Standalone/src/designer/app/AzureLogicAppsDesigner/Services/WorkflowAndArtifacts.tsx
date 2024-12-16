@@ -38,7 +38,7 @@ export const useConnectionsData = (appId?: string) => {
         }
         const { error } = health;
         throw new Error(error.message);
-      } catch (error) {
+      } catch (_error) {
         return {};
       }
     },
