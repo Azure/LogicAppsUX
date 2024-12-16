@@ -1,9 +1,8 @@
 import type { OutputInfo } from '@microsoft/logic-apps-shared';
 import { isNullOrUndefined } from '@microsoft/logic-apps-shared';
-import { Constants } from '../../../../../../../src/lib';
+import { Constants, useOperationPanelSelectedNodeId } from '../../../../../../../src/lib';
 import { convertVariableTypeToSwaggerType } from '../../../../../../lib/core/utils/variables';
 import constants from '../../../../../common/constants';
-import { useSelectedNodeId } from '../../../../../core/state/panel/panelSelectors';
 import {
   useMocksValidationErrors,
   useIsMockSupported,
@@ -33,7 +32,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { getFilteredOutputs } from './helper';
 
 const MockResultsTab = () => {
-  const nodeId = useSelectedNodeId();
+  const nodeId = useOperationPanelSelectedNodeId();
   const isTrigger = useSelector((state: RootState) => isRootNodeInGraph(nodeId, 'root', state.workflow.nodesMetadata));
   const nodeType = useNodeType(nodeId);
   const isMockSupported = useIsMockSupported(nodeId, isTrigger);
@@ -57,7 +56,7 @@ const MockResultsTab = () => {
         dispatch(
           updateMockFailure({
             operationName: nodeName,
-            outputs: id === 'errorMessage' || id === 'errorCode' ? [] : propertiesToUpdate.value ?? [],
+            outputs: id === 'errorMessage' || id === 'errorCode' ? [] : (propertiesToUpdate.value ?? []),
             outputId: id,
             completed: true,
             type: type,
