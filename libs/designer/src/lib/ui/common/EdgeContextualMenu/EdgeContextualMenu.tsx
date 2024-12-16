@@ -147,7 +147,8 @@ export const EdgeContextualMenu = () => {
     }
     return parentId;
   }, [nodeMetadata, parentId]);
-  const upstreamNodesOfChild = useUpstreamNodes(removeIdTag(childId ?? newParentId ?? graphId ?? ''));
+
+  const upstreamNodesOfChild = useUpstreamNodes(removeIdTag(childId ?? newParentId ?? ''), graphId, childId);
 
   const handlePasteClicked = useCallback(
     async (isParallelBranch: boolean) => {
