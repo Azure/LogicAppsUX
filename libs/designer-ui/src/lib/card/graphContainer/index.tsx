@@ -7,6 +7,5 @@ interface GraphContainerProps {
 
 export const GraphContainer: React.FC<GraphContainerProps> = (props: GraphContainerProps) => {
   const { selected = false, active = true } = props;
-  console.log(active);
-  return <div className={css('msla-graph-container', selected && 'selected')} />;
+  return <div className={css('msla-graph-container', selected && 'selected', !active && 'msla-card-inactive')} />;
 };
