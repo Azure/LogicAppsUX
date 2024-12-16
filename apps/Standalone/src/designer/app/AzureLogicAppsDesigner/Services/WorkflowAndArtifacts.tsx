@@ -38,7 +38,7 @@ export const useConnectionsData = (appId?: string) => {
         }
         const { error } = health;
         throw new Error(error.message);
-      } catch (error) {
+      } catch {
         return {};
       }
     },
@@ -220,7 +220,7 @@ export const useRunInstanceStandard = (workflowName: string, appId?: string, run
 
 export const useRunInstanceConsumption = (
   workflowname: string,
-  onRunInstanceSuccess: (data: LogicAppsV2.RunInstanceDefinition) => void,
+  onRunInstanceSuccess?: (data: LogicAppsV2.RunInstanceDefinition) => void,
   appId?: string,
   runId?: string
 ) => {

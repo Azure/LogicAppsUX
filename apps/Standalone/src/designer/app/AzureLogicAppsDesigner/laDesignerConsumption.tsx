@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/ban-types */
 import { environment } from '../../../environments/environment';
 import type { AppDispatch, RootState } from '../../state/store';
 import { setIsChatBotEnabled } from '../../state/workflowLoadingSlice';
@@ -19,7 +18,7 @@ import {
 import { ArmParser } from './Utilities/ArmParser';
 import { WorkflowUtility } from './Utilities/Workflow';
 import { Chatbot } from '@microsoft/logic-apps-chatbot';
-import type { ContentType, LogicAppsV2 } from '@microsoft/logic-apps-shared';
+import type { ContentType } from '@microsoft/logic-apps-shared';
 import {
   BaseApiManagementService,
   BaseAppServiceService,
@@ -93,24 +92,20 @@ const DesignerEditorConsumption = () => {
 
   const {
     workflow: baseWorkflow,
-    connectionReferences,
-    parameters,
+    connectionReferences: baseConnectionReferences,
+    parameters: baseParameters,
   } = useMemo(() => getDataForConsumption(workflowAndArtifactsData), [workflowAndArtifactsData]);
 
-  const [runWorkflow, setRunWorkflow] = useState<any>();
-
-  const onRunInstanceSuccess = async (runDefinition: LogicAppsV2.RunInstanceDefinition) => {
-    if (isMonitoringView) {
-      const standardAppInstance = {
-        ...workflow,
-        definition: runDefinition.properties.workflow.properties.definition,
-      };
-      setRunWorkflow(standardAppInstance);
-    }
-  };
-  const { data: runInstanceData } = useRunInstanceConsumption(workflowName, onRunInstanceSuccess, appId, runId);
+  const { data: runInstanceData } = useRunInstanceConsumption(workflowName, undefined, appId, runId);
+  const {
+    workflow: runWorkflow,
+    connectionReferences: runConnectionReferences,
+    parameters: runParameters,
+  } = useMemo(() => getDataForConsumption(runInstanceData?.properties.workflow), [runInstanceData]);
 
   const workflow = runWorkflow ?? baseWorkflow;
+  const connectionReferences = runConnectionReferences ?? baseConnectionReferences;
+  const parameters = runParameters ?? baseParameters;
 
   const [definition, setDefinition] = useState(workflow.definition);
   const [workflowDefinitionId, setWorkflowDefinitionId] = useState(guid());
@@ -274,7 +269,7 @@ const DesignerEditorConsumption = () => {
         {workflow?.definition ? (
           <BJSWorkflowProvider
             workflow={{
-              definition,
+              definition: workflow.definition,
               connectionReferences,
               parameters,
             }}
@@ -567,7 +562,7 @@ const getDataForConsumption = (data: any) => {
   return { workflow, connectionReferences, parameters };
 };
 
-const removeProperties = (obj: any = {}, props: string[] = []): Object => {
+const removeProperties = (obj: any = {}, props: string[] = []): object => {
   return Object.fromEntries(Object.entries(obj).filter(([key]) => !props.includes(key)));
 };
 
