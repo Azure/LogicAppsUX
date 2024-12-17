@@ -39,6 +39,9 @@ const SWAGGER = {
     URI: 'uri',
     UUID: 'uuid',
   },
+  COLLECTION_FORMAT: {
+    CSV: 'csv',
+  },
   EXTENSION: {
     CAPABILITIES: 'x-ms-capabilities',
   },
@@ -141,9 +144,6 @@ export default {
     DEFAULT: 25,
     MIN: 1,
     MAX: 100,
-  },
-  COLLECTION_FORMAT: {
-    CSV: 'csv',
   },
   CONDITION_COLORS: {
     YES: '#88DA8D',

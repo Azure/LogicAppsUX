@@ -107,7 +107,6 @@ export class ParametersProcessor {
   private _getParameters(parameter: Parameter, keyProjectionOption: KeyProjectionOptions = {}): InputParameter[] {
     const { in: location, schema, required } = parameter;
     let type = parameter.type;
-    console.log(parameter);
     switch (location) {
       case Constants.ParameterLocations.Body: {
         type = parameter.schema.type;
@@ -275,7 +274,7 @@ export class ParametersProcessor {
       type,
       visibility,
       isNotificationUrl,
-      collectionFormat
+      collectionFormat,
     };
   }
 

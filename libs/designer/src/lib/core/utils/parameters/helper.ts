@@ -346,13 +346,26 @@ export function createParameterInfo(
 ): ParameterInfo {
   const value = loadParameterValue(parameter);
   const { editor, editorOptions, editorViewModel, schema } = getParameterEditorProps(parameter, value, shouldIgnoreDefaultValue, metadata);
-  const { alias, dependencies, encode, format, isDynamic, isUnknown, serialization, deserialization, dynamicParameterReference } =
-    parameter;
+  const {
+    alternativeKey,
+    alias,
+    dependencies,
+    encode,
+    format,
+    isDynamic,
+    isUnknown,
+    serialization,
+    deserialization,
+    dynamicParameterReference,
+    collectionFormat,
+  } = parameter;
+
   const info = {
     alias,
     dependencies,
     encode,
     format,
+    collectionFormat,
     in: parameter.in,
     isDynamic: !!isDynamic,
     isUnknown,
@@ -362,7 +375,7 @@ export function createParameterInfo(
   };
 
   const parameterInfo: ParameterInfo = {
-    alternativeKey: parameter.alternativeKey,
+    alternativeKey,
     id: guid(),
     dynamicData: parameter.dynamicValues ? { status: DynamicLoadStatus.NOTSTARTED } : undefined,
     editor,
@@ -413,7 +426,7 @@ export function getParameterEditorProps(
   _shouldIgnoreDefaultValue: boolean,
   nodeMetadata?: Record<string, any>
 ): ParameterEditorProps {
-  const { dynamicValues, type, itemSchema, visibility, value, format, collectionFormat } = parameter;
+  const { dynamicValues, type, itemSchema, visibility, value, format } = parameter;
   let { editor, editorOptions, schema } = parameter;
   let editorViewModel: any;
   if (editor === constants.EDITOR.DICTIONARY) {
@@ -489,13 +502,6 @@ export function getParameterEditorProps(
       editor = constants.EDITOR.ARRAY;
       editorViewModel = { ...toArrayViewModelSchema(itemSchema), uncastedValue: parameterValue };
       schema = { ...schema, ...{ 'x-ms-editor': editor } };
-    } else if (type === constants.SWAGGER.TYPE.ARRAY && collectionFormat === constants.COLLECTION_FORMAT.CSV) {
-      editor = constants.EDITOR.ARRAY;
-      editorViewModel = {
-        ...toArrayViewModelSchema({ type: schema?.items?.type ?? constants.SWAGGER.TYPE.STRING }),
-        uncastedValue: parameterValue,
-      };
-      editorOptions = { ...editorOptions, collectionFormat };
     } else {
       editorOptions = undefined;
     }
@@ -553,7 +559,6 @@ const convertStringToInputParameter = (value: string, options: LoadParamteerValu
 };
 
 export const toArrayViewModelSchema = (schema: any): { arrayType: ArrayType; itemSchema: any; uncastedValue: undefined } => {
-  console.log(schema);
   const itemSchema = parseArrayItemSchema(schema);
   const arrayType = schema?.type === constants.SWAGGER.TYPE.OBJECT && schema.properties ? ArrayType.COMPLEX : ArrayType.SIMPLE;
   return { arrayType, itemSchema, uncastedValue: undefined };
