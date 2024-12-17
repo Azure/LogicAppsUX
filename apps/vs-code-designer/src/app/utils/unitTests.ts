@@ -59,6 +59,53 @@ export const saveUnitTestDefinition = async (
 };
 
 /**
+ * Saves the blank unit test definition for a workflow.
+ * @param {string} projectPath The path of the project.
+ * @param {string} workflowName The name of the workflow.
+ * @param {string} unitTestName The name of the unit test.
+ * @param {any} unitTestDefinition The unit test definition.
+ * @returns A Promise that resolves when the unit test definition is saved.
+ */
+export const saveBlankUnitTestDefinition = async (
+  projectPath: string,
+  workflowName: string,
+  unitTestName: string,
+  unitTestDefinition: any
+): Promise<void> => {
+  await callWithTelemetryAndErrorHandling(saveUnitTestEvent, async () => {
+    const options: vscode.ProgressOptions = {
+      location: vscode.ProgressLocation.Notification,
+      title: localize('azureFunctions.savingWorkflow', 'Saving Blank Unit Test Definition...'),
+    };
+
+    await vscode.window.withProgress(options, async () => {
+      const projectName = path.basename(projectPath);
+      const testsDirectory = getTestsDirectory(projectPath);
+      const unitTestsPath = getUnitTestsPath(testsDirectory.fsPath, projectName, workflowName, unitTestName);
+      const workflowTestsPath = getWorkflowTestsPath(testsDirectory.fsPath, projectName, workflowName);
+
+      if (!fs.existsSync(workflowTestsPath)) {
+        fs.mkdirSync(workflowTestsPath, { recursive: true });
+      }
+      try {
+        fs.writeFileSync(unitTestsPath, JSON.stringify(unitTestDefinition, null, 4));
+        await vscode.workspace.updateWorkspaceFolders(
+          vscode.workspace.workspaceFolders ? vscode.workspace.workspaceFolders.length : 0,
+          null,
+          { uri: testsDirectory }
+        );
+      } catch (error) {
+        vscode.window.showErrorMessage(
+          `${localize('saveFailure', 'Blank Unit Test Definition not saved.')} ${error.message}`,
+          localize('OK', 'OK')
+        );
+        throw error;
+      }
+    });
+  });
+};
+
+/**
  * Retrieves the name of the unit test from the given file path.
  * @param {string} filePath - The path of the unit test file.
  * @returns The name of the unit test.
