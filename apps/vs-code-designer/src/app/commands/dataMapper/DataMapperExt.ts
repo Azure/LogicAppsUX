@@ -5,9 +5,9 @@ import { webviewType } from './extensionConfig';
 import type { MapDefinitionEntry } from '@microsoft/logic-apps-shared';
 import type { IActionContext } from '@microsoft/vscode-azext-utils';
 import type { MapDefinitionData } from '@microsoft/vscode-extension-logic-apps';
-import * as yaml from 'js-yaml';
 import * as path from 'path';
 import { Uri, ViewColumn, window } from 'vscode';
+import * as yaml from 'js-yaml';
 import { localize } from '../../../localize';
 
 export default class DataMapperExt {
@@ -66,16 +66,18 @@ export default class DataMapperExt {
   if this method gets updated, both need to be updated to keep them in sync. This exists as a copy to avoid a
   package import issue.
   */
-  public static loadMapDefinition = (mapDefinitionString: string | undefined): MapDefinitionEntry => {
+  public static loadMapDefinition = (mapDefinitionString: string | undefined, ext: any): MapDefinitionEntry => {
     if (mapDefinitionString) {
-      // Add extra escapes around custom string values, so that we don't lose which ones are which
-      const modifiedMapDefinitionString = mapDefinitionString.replaceAll('"', `\\"`);
-      const mapDefinition = yaml.load(modifiedMapDefinitionString) as MapDefinitionEntry;
-
-      // Now that we've parsed the yml, remove the extra escaped quotes to restore the values
-      DataMapperExt.fixMapDefinitionCustomValues(mapDefinition);
-
-      return mapDefinition;
+      try {
+        // Add extra escapes around custom string values, so that we don't lose which ones are which
+        const modifiedMapDefinitionString = mapDefinitionString.replaceAll('"', `\\"`);
+        const mapDefinition = yaml.load(modifiedMapDefinitionString) as MapDefinitionEntry;
+        // Now that we've parsed the yml, remove the extra escaped quotes to restore the values
+        DataMapperExt.fixMapDefinitionCustomValues(mapDefinition);
+        return mapDefinition;
+      } catch (e) {
+        ext.showError('Exception while parsing LML file!', { detail: e.message, modal: true });
+      }
     }
     return {};
   };

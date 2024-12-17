@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/ban-types */
 import { environment } from '../../../environments/environment';
 import type { AppDispatch, RootState } from '../../state/store';
 import { setIsChatBotEnabled } from '../../state/workflowLoadingSlice';
@@ -342,6 +341,7 @@ const getDesignerServices = (
     location,
     tenantId,
     httpClient,
+    locale,
   });
 
   const apimService = new BaseApiManagementService({
