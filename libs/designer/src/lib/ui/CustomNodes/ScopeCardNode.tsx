@@ -317,6 +317,7 @@ const ScopeCardNode = ({ data, targetPosition = Position.Top, sourcePosition = P
         <div ref={rootRef}>
           <Handle className="node-handle top" type="target" position={targetPosition} isConnectable={false} />
           <ScopeCard
+            active={isMonitoringView ? !isNullOrUndefined(runData?.status) : true}
             brandColor={brandColor}
             icon={iconUri}
             isLoading={isLoading}
