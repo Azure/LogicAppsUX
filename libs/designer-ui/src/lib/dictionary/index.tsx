@@ -97,6 +97,7 @@ export const DictionaryEditor: React.FC<DictionaryEditorProps> = ({
         />
       ) : (
         <ExpandedDictionary
+          label={baseEditorProps?.label}
           items={items ?? [{ key: [], value: [], id: guid() }]}
           readonly={baseEditorProps.readonly}
           keyTitle={keyTitle}

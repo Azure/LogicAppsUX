@@ -26,6 +26,7 @@ export interface ExpandedDictionaryProps {
   getTokenPicker: GetTokenPickerHandler;
   tokenMapping?: Record<string, ValueSegment>;
   loadParameterValueFromString?: loadParameterValueFromStringHandler;
+  label?: string;
 }
 
 export const ExpandedDictionary = ({
@@ -35,6 +36,7 @@ export const ExpandedDictionary = ({
   valueTitle,
   valueType,
   setItems,
+  label,
   ...props
 }: ExpandedDictionaryProps): JSX.Element => {
   const intl = useIntl();
@@ -51,6 +53,23 @@ export const ExpandedDictionary = ({
     id: 'zCsGWP',
     description: 'Placeholder text for Value',
   });
+
+  const itemKeyLabel = intl.formatMessage(
+    {
+      defaultMessage: '{label} key item',
+      id: '5+zBXE',
+      description: 'Label for Key',
+    },
+    { label }
+  );
+  const itemValueLabel = intl.formatMessage(
+    {
+      defaultMessage: '{label} value item',
+      id: 'cKNvk6',
+      description: 'Label for Value',
+    },
+    { label }
+  );
 
   const addItem = (index: number) => {
     if (index === items.length - 1 && !isEmpty(items[index])) {
@@ -80,9 +99,10 @@ export const ExpandedDictionary = ({
       {items.map((item, index) => {
         return (
           <div key={item.id} className="msla-dictionary-editor-item">
-            <div className="msla-dictionary-item-cell" aria-label={`dict-item-${index}`} ref={(el) => (editorRef.current[index] = el)}>
+            <div className="msla-dictionary-item-cell" ref={(el) => (editorRef.current[index] = el)}>
               <StringEditor
                 {...props}
+                ariaLabel={`${itemKeyLabel} ${index}`}
                 className="msla-dictionary-editor-container-expanded"
                 placeholder={keyPlaceholder}
                 initialValue={item.key ?? []}
@@ -95,6 +115,7 @@ export const ExpandedDictionary = ({
             <div className="msla-dictionary-item-cell" ref={(el) => (editorRef.current[index] = el)}>
               <StringEditor
                 {...props}
+                ariaLabel={`${itemValueLabel} ${index}`}
                 className="msla-dictionary-editor-container-expanded"
                 placeholder={valuePlaceholder}
                 initialValue={item.value ?? []}
