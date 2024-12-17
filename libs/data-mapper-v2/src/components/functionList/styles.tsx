@@ -9,7 +9,7 @@ export const useStyles = makeStyles({
   },
   headerText: {
     ...typographyStyles.caption1,
-    ...shorthands.borderRadius(tokens.borderRadiusMedium),
+    borderRadius: tokens.borderRadiusMedium,
     paddingLeft: tokens.spacingHorizontalXS,
     fontSize: '14px',
     fontWeight: 600,
@@ -22,19 +22,19 @@ export const useStyles = makeStyles({
     height: '100%',
     marginLeft: '15px',
     marginRight: '10px',
-    ...shorthands.overflow('srcoll', 'scroll'),
+    overflow: 'scroll scroll',
   },
   functionTreeItem: {
     backgroundColor: '#E8F3FE',
     paddingLeft: '10px',
     ':hover': {
       backgroundColor: '#D5E4FF',
-      ...shorthands.borderRadius(tokens.borderRadiusCircular, 0, 0, tokens.borderRadiusCircular),
+      borderRadius: `${tokens.borderRadiusCircular} 0 0 ${tokens.borderRadiusCircular}`,
       width: '100%',
     },
     ':active': {
       backgroundColor: '#D5E4FF',
-      ...shorthands.borderRadius(tokens.borderRadiusCircular),
+      borderRadius: tokens.borderRadiusCircular,
     },
   },
   dragWrapper: {
@@ -54,7 +54,7 @@ export const useStyles = makeStyles({
     height: fnIconSize,
     flexShrink: '0 !important',
     flexBasis: fnIconSize,
-    ...shorthands.borderRadius(tokens.borderRadiusCircular),
+    borderRadius: tokens.borderRadiusCircular,
     color: tokens.colorNeutralBackground1,
     display: 'flex',
     justifyContent: 'center',
@@ -68,7 +68,7 @@ export const useStyles = makeStyles({
     paddingRight: '4px',
     fontSize: '13px',
     color: '#242424',
-    ...shorthands.overflow('hidden'),
+    overflow: 'hidden',
   },
   treeItem: {
     ':hover': {

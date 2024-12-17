@@ -92,6 +92,7 @@ export const TestPanel = (_props: TestPanelProps) => {
     <Panel
       id={'test-panel'}
       isOpen={isOpen}
+      position={'end'}
       title={{
         text: resources.TEST_MAP,
         rightAction: (

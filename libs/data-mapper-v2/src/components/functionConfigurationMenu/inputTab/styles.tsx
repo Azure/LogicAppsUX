@@ -27,9 +27,12 @@ export const useStyles = makeStyles({
   boundedInputRow: {
     paddingBottom: '25px',
   },
-  allowedTypes: {
+  allowedTypesComponent: {
     width: '170px',
     textAlign: 'end',
+  },
+  typesParent: {
+    fontSize: '14px',
   },
   inputNameDiv: {
     width: '200px',
