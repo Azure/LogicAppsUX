@@ -14,10 +14,8 @@ import { type IAzureQuickPickItem, type IActionContext, callWithTelemetryAndErro
 import * as path from 'path';
 import * as vscode from 'vscode';
 import * as fs from 'fs-extra';
-import axios from 'axios';
 import { ext } from '../../../../extensionVariables';
-import { unzipLogicAppArtifacts } from '../../../utils/taskUtils';
-import { isNullOrUndefined } from '@microsoft/logic-apps-shared';
+import { FileManagement } from '../../generateDeploymentScripts/iacGestureHelperFunctions';
 
 /**
  * Creates a unit test for a Logic App workflow (codeful only).
@@ -37,19 +35,21 @@ export async function saveBlankUnitTest(
   const parsedDefinition = await parseOutputsInto(unitTestDefinition);
   const operationInfo = unitTestDefinition['operationInfo'];
   const outputParameters = unitTestDefinition['outputParameters'];
+
   console.log(parsedDefinition);
   console.log(operationInfo);
   console.log(outputParameters);
 
+  // Determine the workflow node
   if (node) {
     workflowNode = getWorkflowNode(node) as vscode.Uri;
   } else {
     const workflow = await pickWorkflow(context, projectPath);
     workflowNode = vscode.Uri.file(workflow.data) as vscode.Uri;
   }
+  const workflowName = path.basename(path.dirname(workflowNode.fsPath));
 
   if (isMultiRootWorkspace()) {
-    const workflowName = path.basename(path.dirname(workflowNode.fsPath));
     const unitTestName = await context.ui.showInputBox({
       prompt: localize('unitTestNamePrompt', 'Provide a unit test name'),
       placeHolder: localize('unitTestNamePlaceholder', 'Unit test name'),
@@ -57,6 +57,15 @@ export async function saveBlankUnitTest(
     });
 
     ext.outputChannel.appendLog(localize('unitTestNameEntered', `Unit test name entered: ${unitTestName}`));
+
+    // Retrieve unitTestFolderPath from our helper
+    const { unitTestFolderPath, logicAppName } = getUnitTestPaths(projectPath, workflowName, unitTestName);
+
+    // Ensure directories exist
+    await fs.ensureDir(unitTestFolderPath!);
+
+    // Process mockable operations and write C# classes
+    await processAndWriteMockableOperations(operationInfo, outputParameters, unitTestFolderPath!, logicAppName);
 
     // Set telemetry properties for unit test creation
     context.telemetry.properties.workflowName = workflowName;
@@ -109,11 +118,7 @@ async function parseOutputsInto(unitTestDefinition: any) {
           return acc[part];
         }, result);
       }
-      // console.log("within transform steps");
-      // console.log(result);
     }
-    // console.log("finished transform");
-    // console.log(result);
     return result;
   };
   const outputOperations2: { operationInfo: any; outputParameters: any } = {
@@ -146,74 +151,21 @@ async function generateBlankCodefulUnitTest(
   unitTestName: string
 ): Promise<void> {
   try {
-    if (isNullOrUndefined(ext.workflowRuntimePort)) {
-      context.telemetry.properties.missingRuntimePort = 'true';
-      throw new Error(
-        localize('workflowRuntimeNotRunning', 'The workflow runtime is not running. Please start the workflow runtime and try again.')
-      );
-    }
-
-    context.telemetry.properties.runtimePort = ext.workflowRuntimePort?.toString();
-
-    const baseUrl = `http://localhost:${ext.workflowRuntimePort}`;
-
-    const apiUrl = `${baseUrl}/runtime/webhooks/workflow/api/management/workflows/${encodeURIComponent(
-      workflowName
-    )}/runs/${encodeURIComponent(runId)}/generateUnitTest`;
-
-    ext.outputChannel.appendLog(localize('apiUrl', `Calling API URL: ${apiUrl}`));
-
-    const unitTestGenerationInput = {
-      UnitTestName: unitTestName,
-    };
-
-    ext.outputChannel.appendLog(
-      localize(
-        'operationalContext',
-        `Operational context: Workflow Name: ${workflowName}, Run ID: ${runId}, Unit Test Name: ${unitTestName}`
-      )
+    // Destructure testsDirectory in addition to other paths
+    const { testsDirectory, logicAppName, logicAppFolderPath, workflowFolderPath, unitTestFolderPath } = getUnitTestPaths(
+      projectPath,
+      workflowName,
+      unitTestName
     );
 
-    ext.outputChannel.appendLog(localize('initiatingApiCall', 'Initiating Unit Test Generation API call...'));
-
-    context.telemetry.properties.processStage = 'API Call Initiated';
-
-    const response = await axios.post(apiUrl, unitTestGenerationInput, {
-      headers: {
-        Accept: 'application/zip',
-        'Content-Type': 'application/json',
-      },
-      responseType: 'arraybuffer',
-    });
-
-    ext.outputChannel.appendLog(localize('apiCallSuccessful', 'API call successful, processing response...'));
-
-    const zipBuffer = Buffer.from(response.data);
-
-    const contentType = response.headers['content-type'];
-    if (contentType !== 'application/zip') {
-      throw new Error(localize('invalidResponseType', 'Expected a zip file but received {0}', contentType));
-    }
-
-    const testsDirectoryUri = getTestsDirectory(projectPath);
-    const testsDirectory = testsDirectoryUri.fsPath;
-    const logicAppName = path.basename(path.dirname(path.join(projectPath, workflowName)));
-    const logicAppFolderPath = path.join(testsDirectory, logicAppName);
+    // Ensure the required directories exist
     await fs.ensureDir(logicAppFolderPath);
-    const workflowFolderPath = path.join(logicAppFolderPath, workflowName);
     await fs.ensureDir(workflowFolderPath);
-    const unitTestFolderPath = path.join(workflowFolderPath, unitTestName);
-    await fs.ensureDir(unitTestFolderPath);
+    await fs.ensureDir(unitTestFolderPath!);
 
     const csprojFilePath = path.join(logicAppFolderPath, `${logicAppName}.csproj`);
 
-    // Unzip the response into the unit test folder (Mock.json)
-    ext.outputChannel.appendLog(localize('unzippingFiles', 'Unzipping Mock.json into: {0}', unitTestFolderPath));
-    await unzipLogicAppArtifacts(zipBuffer, unitTestFolderPath);
-
-    ext.outputChannel.appendLog(localize('filesUnzipped', 'Files successfully unzipped.'));
-    context.telemetry.properties.processStage = 'Files Unzipped';
-    await createCsFile(unitTestFolderPath, unitTestName, workflowName);
+    await createCsFile(unitTestFolderPath!, unitTestName, workflowName);
 
     // Generate the .csproj file if it doesn't exist
     if (!(await fs.pathExists(csprojFilePath))) {
@@ -225,35 +177,23 @@ async function generateBlankCodefulUnitTest(
       localize('info.generateCodefulUnitTest', 'Generated unit test "{0}" in "{1}"', unitTestName, unitTestFolderPath)
     );
 
+    // Check if testsDirectory is already part of the workspace
+    const workspaceFolders = vscode.workspace.workspaceFolders || [];
+    const isTestsDirectoryInWorkspace = workspaceFolders.some((folder) => folder.uri.fsPath === testsDirectory);
+
+    if (!isTestsDirectoryInWorkspace) {
+      // Add testsDirectory to workspace if not already included
+      ext.outputChannel.appendLog(localize('addingTestsDirectory', 'Adding tests directory to workspace: {0}', testsDirectory));
+      FileManagement.addFolderToWorkspace(testsDirectory);
+    }
+
     context.telemetry.properties.unitTestGenerationStatus = 'Success';
-  } catch (error) {
+  } catch (error: any) {
     context.telemetry.properties.unitTestGenerationStatus = 'Failed';
 
     if (error.code) {
       context.telemetry.properties.networkErrorCode = error.code;
     }
-
-    // Handle errors and parse error response if available
-    let errorMessage: string;
-    // eslint-disable-next-line import/no-named-as-default-member
-    if (axios.isAxiosError(error) && error.response?.data) {
-      try {
-        const responseData = JSON.parse(new TextDecoder().decode(error.response.data));
-        const { message = '', code = '' } = responseData?.error ?? {};
-        errorMessage = localize('apiError', `API Error: ${code} - ${message}`);
-        ext.outputChannel.appendLog(errorMessage);
-      } catch (parseError) {
-        errorMessage = error.message;
-      }
-    } else if (error instanceof Error) {
-      errorMessage = error.message;
-    } else {
-      errorMessage = String(error);
-    }
-    context.telemetry.properties.error = errorMessage;
-    const errorDisplayMessage = localize('error.generateCodefulUnitTest', 'Failed to generate codeful unit test: {0}', errorMessage);
-    vscode.window.showErrorMessage(errorDisplayMessage);
-    ext.outputChannel.appendLog(errorDisplayMessage);
   }
 }
 
@@ -324,3 +264,175 @@ const getWorkflowsPick = async (projectPath: string): Promise<IAzureQuickPickIte
   picks.sort((a, b) => a.label.localeCompare(b.label));
   return picks;
 };
+
+/**
+ * Filters mockable operations, transforms their output parameters, and writes C# class definitions to .cs files.
+ * @param {any} operationInfo - The operation info object.
+ * @param {any} outputParameters - The output parameters object.
+ * @param {string} unitTestFolderPath - The directory where the .cs files will be saved.
+ * @param {string} logicAppName - The name of the Logic App to use as the namespace.
+ */
+async function processAndWriteMockableOperations(
+  operationInfo: any,
+  outputParameters: any,
+  unitTestFolderPath: string,
+  logicAppName: string
+): Promise<void> {
+  const mockableActionTypes = new Set<string>(['Http', 'InvokeFunction', 'Function', 'ServiceProvider', 'ApiManagement', 'ApiConnection']);
+
+  const mockableTriggerTypes = new Set<string>(['HttpWebhook', 'Request', 'Manual', 'ApiConnectionWebhook', 'ServiceProvider']);
+
+  function isMockable(type: string, isTrigger: boolean): boolean {
+    return isTrigger ? mockableTriggerTypes.has(type) : mockableActionTypes.has(type);
+  }
+
+  function transformParameters(params: any): any {
+    const allowedFields = ['type', 'title', 'format', 'description'];
+    const result: any = {};
+
+    for (const key in params) {
+      if (Object.prototype.hasOwnProperty.call(params, key)) {
+        const cleanedKey = key.replace(/outputs\.\$\.|body\.\$\.?/g, '');
+        const keys = cleanedKey.split('.');
+
+        keys.reduce((acc, part, index) => {
+          if (index === keys.length - 1) {
+            acc[part] = Object.keys(params[key]).reduce((filtered: any, fieldKey) => {
+              if (allowedFields.includes(fieldKey)) {
+                filtered[fieldKey] = params[key][fieldKey];
+              }
+              return filtered;
+            }, {});
+          } else {
+            acc[part] = acc[part] || {};
+          }
+          return acc[part];
+        }, result);
+      }
+    }
+
+    return result;
+  }
+
+  for (const operationName in operationInfo) {
+    const operation = operationInfo[operationName];
+    const type = operation.type;
+    const isTrigger = ['HttpWebhook', 'Request', 'Manual', 'ApiConnectionWebhook'].includes(type);
+
+    if (isMockable(type, isTrigger)) {
+      const className = toPascalCase(operationName);
+      const outputs = transformParameters(outputParameters[operationName]?.outputs || {});
+      const classContent = generateCSharpClass(className, logicAppName, outputs);
+      const filePath = path.join(unitTestFolderPath, `${className}.cs`);
+
+      await fs.writeFile(filePath, classContent, 'utf-8');
+      ext.outputChannel.appendLog(localize('csFileCreated', 'Created .cs file at: {0}', filePath));
+    }
+  }
+}
+
+/**
+ * Generates a C# class definition based on the provided class name, namespace, and output fields.
+ * @param {string} className - The name of the C# class.
+ * @param {string} namespaceName - The namespace for the C# class.
+ * @param {any} outputs - The transformed output parameters.
+ * @returns {string} - The C# class definition as a string.
+ */
+function generateCSharpClass(className: string, namespaceName: string, outputs: any): string {
+  let classDef = `namespace ${namespaceName}\n{\n    public class ${className}\n    {\n`;
+
+  for (const field in outputs) {
+    const fieldDetails = outputs[field];
+    const fieldType = mapJsonTypeToCSharp(fieldDetails.type);
+    const fieldName = toPascalCase(field);
+
+    if (fieldDetails.description) {
+      classDef += `        /// <summary>\n        /// ${fieldDetails.description}\n        /// </summary>\n`;
+    }
+
+    classDef += `        public ${fieldType} ${fieldName} { get; set; }\n\n`;
+  }
+
+  classDef += '    }\n}\n'; // Replaced template literal with string literal here
+  return classDef;
+}
+
+/**
+ * Converts a string to PascalCase.
+ * @param {string} str - The input string.
+ * @returns {string} - The PascalCase version of the string.
+ */
+function toPascalCase(str: string): string {
+  return str.replace(/(^\w|_\w)/g, (match) => match.replace('_', '').toUpperCase());
+}
+
+/**
+ * Maps JSON types to corresponding C# types.
+ * @param {string} jsonType - The JSON type (e.g., "string", "object", "array").
+ * @returns {string} - The corresponding C# type.
+ */
+function mapJsonTypeToCSharp(jsonType: string): string {
+  switch (jsonType) {
+    case 'string':
+      return 'string';
+    case 'integer':
+      return 'int';
+    case 'number':
+      return 'double';
+    case 'boolean':
+      return 'bool';
+    case 'array':
+      return 'List<object>';
+    case 'object':
+      return 'JObject';
+    case 'any':
+      return 'object';
+    case 'date-time':
+      return 'DateTime';
+    default:
+      return 'object';
+  }
+}
+
+/**
+ * Returns standardized paths for unit test generation.
+ * The structure is the same as originally used in generateBlankCodefulUnitTest.
+ *
+ * @param {string} projectPath - The base project path.
+ * @param {string} workflowName - The workflow name.
+ * @param {string | undefined} unitTestName - The unit test name, if any.
+ * @returns An object containing testsDirectory, logicAppName, logicAppFolderPath, workflowFolderPath, and optionally unitTestFolderPath.
+ */
+function getUnitTestPaths(
+  projectPath: string,
+  workflowName: string,
+  unitTestName?: string
+): {
+  testsDirectory: string;
+  logicAppName: string;
+  logicAppFolderPath: string;
+  workflowFolderPath: string;
+  unitTestFolderPath?: string;
+} {
+  const testsDirectoryUri = getTestsDirectory(projectPath);
+  const testsDirectory = testsDirectoryUri.fsPath;
+
+  // This logic for deriving logicAppName matches what generateBlankCodefulUnitTest currently uses
+  const logicAppName = path.basename(path.dirname(path.join(projectPath, workflowName)));
+
+  const logicAppFolderPath = path.join(testsDirectory, logicAppName);
+  const workflowFolderPath = path.join(logicAppFolderPath, workflowName);
+
+  const paths = {
+    testsDirectory,
+    logicAppName,
+    logicAppFolderPath,
+    workflowFolderPath,
+  };
+
+  if (unitTestName) {
+    paths['unitTestFolderPath'] = path.join(workflowFolderPath, unitTestName);
+  }
+
+  return paths;
+}
