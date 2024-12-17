@@ -16,12 +16,12 @@ export class DevLogger implements ILoggerService {
 
   public startTrace = (eventData: Pick<TelemetryEvent, 'action' | 'actionModifier' | 'name' | 'source'>) => {
     const timestamp = Date.now();
-    // BrowserReporter.log({
-    //   level: LogEntryLevel.Trace,
-    //   message: `Trace Started: ${eventData.name} - ${eventData.action} - ${eventData.actionModifier}`,
-    //   timestamp: timestamp,
-    //   area: eventData.source,
-    // });
+    BrowserReporter.log({
+      level: LogEntryLevel.Trace,
+      message: `Trace Started: ${eventData.name} - ${eventData.action} - ${eventData.actionModifier}`,
+      timestamp: timestamp,
+      area: eventData.source,
+    });
 
     const id = guid();
     this.traceIds.set(id, {
