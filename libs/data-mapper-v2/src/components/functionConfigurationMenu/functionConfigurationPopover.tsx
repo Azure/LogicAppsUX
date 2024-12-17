@@ -1,11 +1,20 @@
-import { Button, Tab, TabList, PopoverSurface, Subtitle2, Caption1 } from '@fluentui/react-components';
+import {
+  Button,
+  Tab,
+  TabList,
+  PopoverSurface,
+  Subtitle2,
+  Caption1,
+  type OpenPopoverEvents,
+  type OnOpenChangeData,
+} from '@fluentui/react-components';
 import { useStyles } from './styles';
-import { DeleteRegular } from '@fluentui/react-icons';
+import { DeleteRegular, DismissRegular } from '@fluentui/react-icons';
 import { useCallback, useMemo, useState } from 'react';
 import type { RootState } from '../../core/state/Store';
 import { useDispatch, useSelector } from 'react-redux';
 import type { FunctionData } from '../../models';
-import { deleteFunction } from '../../core/state/DataMapSlice';
+import { deleteFunction, setSelectedItem } from '../../core/state/DataMapSlice';
 import { useIntl } from 'react-intl';
 import { InputTabContents } from './inputTab/inputTab';
 import { OutputTabContents } from './outputTab/outputTab';
@@ -13,12 +22,13 @@ import { guid } from '@microsoft/logic-apps-shared';
 
 export interface FunctionConfigurationPopoverProps {
   functionId: string;
+  onOpenChange: (e?: OpenPopoverEvents, data?: OnOpenChangeData) => void;
 }
 
 type TabTypes = 'input' | 'output' | 'details';
 
 export const FunctionConfigurationPopover = (props: FunctionConfigurationPopoverProps) => {
-  const { functionId } = props;
+  const { functionId, onOpenChange } = props;
   const dispatch = useDispatch();
   const styles = useStyles();
   const [selectedTab, setSelectedTab] = useState<TabTypes>('input');
@@ -68,22 +78,22 @@ export const FunctionConfigurationPopover = (props: FunctionConfigurationPopover
     }
   }, []);
 
-  const onDeleteClick = () => {
-    dispatch(deleteFunction(props.functionId));
-  };
+  const onDeleteClick = useCallback(() => {
+    dispatch(deleteFunction(functionId));
+    dispatch(setSelectedItem());
+  }, [dispatch, functionId]);
+
+  const onCloseClick = useCallback(() => onOpenChange(), [onOpenChange]);
 
   return (
     func && (
       <PopoverSurface className={styles.surface} data-selectableid={`${functionId}_${guid()}`} onClick={onModalClick}>
         <div className={styles.headerRow}>
           <Subtitle2>{func.displayName}</Subtitle2>
-          <Button
-            className={styles.deleteButton}
-            appearance="transparent"
-            size="small"
-            onClick={onDeleteClick}
-            icon={<DeleteRegular className={styles.deleteIcon} />}
-          />
+          <div className={styles.topRightActions}>
+            <Button appearance="transparent" size="small" onClick={onDeleteClick} icon={<DeleteRegular className={styles.actionIcon} />} />
+            <Button appearance="transparent" size="small" onClick={onCloseClick} icon={<DismissRegular className={styles.actionIcon} />} />
+          </div>
         </div>
         <TabList defaultSelectedValue={'input'} onTabSelect={(e, data) => setSelectedTab(data.value as TabTypes)}>
           <Tab value="input">{stringResources.INPUT}</Tab>

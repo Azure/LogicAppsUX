@@ -1,4 +1,4 @@
-import { makeStyles, shorthands } from '@fluentui/react-components';
+import { makeStyles } from '@fluentui/react-components';
 
 export const useStyles = makeStyles({
   root: {
@@ -15,7 +15,7 @@ export const usePanelStyles = makeStyles({
   root: {
     width: '300px',
     height: '100%',
-    ...shorthands.overflow('visible'),
+    overflow: 'visible',
   },
   schemaSelection: {
     backgroundColor: '#fff',
