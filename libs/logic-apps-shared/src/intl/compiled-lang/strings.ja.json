@@ -1323,6 +1323,16 @@
       "value": "(UTC+08:45) ユークラ"
     }
   ],
+  "5+zBXE": [
+    {
+      "type": 1,
+      "value": "label"
+    },
+    {
+      "type": 0,
+      "value": " key item"
+    }
+  ],
   "50W8FI": [
     {
       "type": 0,
@@ -7285,6 +7295,16 @@
       "value": "ページネーションの制限に達するまで結果をさらに取得する"
     }
   ],
+  "cKNvk6": [
+    {
+      "type": 1,
+      "value": "label"
+    },
+    {
+      "type": 0,
+      "value": " value item"
+    }
+  ],
   "cNXS5n": [
     {
       "type": 0,
@@ -7785,6 +7805,16 @@
       "value": "1 番目の引数が 2 番目の引数以上の場合は true を返します"
     }
   ],
+  "fBUCrA": [
+    {
+      "type": 1,
+      "value": "label"
+    },
+    {
+      "type": 0,
+      "value": " Item"
+    }
+  ],
   "fElufw": [
     {
       "type": 0,
@@ -7957,6 +7987,12 @@
     {
       "type": 0,
       "value": "情報"
+    }
+  ],
+  "gS4Teq": [
+    {
+      "type": 0,
+      "value": "Array Item"
     }
   ],
   "gWyYg0": [

@@ -1323,6 +1323,16 @@
       "value": "(UTC+08:45) 유클라"
     }
   ],
+  "5+zBXE": [
+    {
+      "type": 1,
+      "value": "label"
+    },
+    {
+      "type": 0,
+      "value": " key item"
+    }
+  ],
   "50W8FI": [
     {
       "type": 0,
@@ -7273,6 +7283,16 @@
       "value": "페이지 매김 한도까지 더 많은 결과를 검색합니다."
     }
   ],
+  "cKNvk6": [
+    {
+      "type": 1,
+      "value": "label"
+    },
+    {
+      "type": 0,
+      "value": " value item"
+    }
+  ],
   "cNXS5n": [
     {
       "type": 0,
@@ -7773,6 +7793,16 @@
       "value": "첫 번째 인수가 두 번째 인수보다 크거나 같은 경우 true를 반환합니다."
     }
   ],
+  "fBUCrA": [
+    {
+      "type": 1,
+      "value": "label"
+    },
+    {
+      "type": 0,
+      "value": " Item"
+    }
+  ],
   "fElufw": [
     {
       "type": 0,
@@ -7945,6 +7975,12 @@
     {
       "type": 0,
       "value": "정보"
+    }
+  ],
+  "gS4Teq": [
+    {
+      "type": 0,
+      "value": "Array Item"
     }
   ],
   "gWyYg0": [
