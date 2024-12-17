@@ -1339,6 +1339,16 @@
       "value": "(UTC+08:45) Eucla"
     }
   ],
+  "5+zBXE": [
+    {
+      "type": 1,
+      "value": "label"
+    },
+    {
+      "type": 0,
+      "value": " key item"
+    }
+  ],
   "50W8FI": [
     {
       "type": 0,
@@ -7333,6 +7343,16 @@
       "value": "További találatok lekérése az oldalakra tördelési korlátig"
     }
   ],
+  "cKNvk6": [
+    {
+      "type": 1,
+      "value": "label"
+    },
+    {
+      "type": 0,
+      "value": " value item"
+    }
+  ],
   "cNXS5n": [
     {
       "type": 0,
@@ -7837,6 +7857,16 @@
       "value": "Igaz értéket ad vissza, ha az első argumentum nagyobb a másodiknál, vagy azzal egyenlő."
     }
   ],
+  "fBUCrA": [
+    {
+      "type": 1,
+      "value": "label"
+    },
+    {
+      "type": 0,
+      "value": " Item"
+    }
+  ],
   "fElufw": [
     {
       "type": 0,
@@ -8009,6 +8039,12 @@
     {
       "type": 0,
       "value": "Információ"
+    }
+  ],
+  "gS4Teq": [
+    {
+      "type": 0,
+      "value": "Array Item"
     }
   ],
   "gWyYg0": [
