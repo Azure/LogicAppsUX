@@ -1331,6 +1331,16 @@
       "value": "(UTC+08:45) 尤克拉"
     }
   ],
+  "5+zBXE": [
+    {
+      "type": 1,
+      "value": "label"
+    },
+    {
+      "type": 0,
+      "value": " key item"
+    }
+  ],
   "50W8FI": [
     {
       "type": 0,
@@ -7313,6 +7323,16 @@
       "value": "擷取更多結果，最多可達分頁限制"
     }
   ],
+  "cKNvk6": [
+    {
+      "type": 1,
+      "value": "label"
+    },
+    {
+      "type": 0,
+      "value": " value item"
+    }
+  ],
   "cNXS5n": [
     {
       "type": 0,
@@ -7817,6 +7837,16 @@
       "value": "若第一個引數大於或等於第二個引數，則傳回 True"
     }
   ],
+  "fBUCrA": [
+    {
+      "type": 1,
+      "value": "label"
+    },
+    {
+      "type": 0,
+      "value": " Item"
+    }
+  ],
   "fElufw": [
     {
       "type": 0,
@@ -7989,6 +8019,12 @@
     {
       "type": 0,
       "value": "資訊"
+    }
+  ],
+  "gS4Teq": [
+    {
+      "type": 0,
+      "value": "Array Item"
     }
   ],
   "gWyYg0": [

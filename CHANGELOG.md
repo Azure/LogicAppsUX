@@ -1,4 +1,11 @@
 # Logic Apps Designer
+## [5.9.0](https://github.com/Azure/LogicAppsUX/compare/v5.8.0...v5.9.0) (2024-12-16)
+
+
+### Bug Fixes
+
+* **designer:** Add locale to connections API call for connectors and swagger ([#6262](https://github.com/Azure/LogicAppsUX/issues/6262)) ([91e7925](https://github.com/Azure/LogicAppsUX/commit/91e7925b9e630b6a2765f93d814c77ff33413128))
+
 ## [5.8.0](https://github.com/Azure/LogicAppsUX/compare/v5.7.0...v5.8.0) (2024-12-12)
 
 

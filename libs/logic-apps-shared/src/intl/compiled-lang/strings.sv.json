@@ -1331,6 +1331,16 @@
       "value": "(UTC+08:45) Eucla"
     }
   ],
+  "5+zBXE": [
+    {
+      "type": 1,
+      "value": "label"
+    },
+    {
+      "type": 0,
+      "value": " key item"
+    }
+  ],
   "50W8FI": [
     {
       "type": 0,
@@ -7321,6 +7331,16 @@
       "value": "Hämta fler resultat upp till sidnumreringsgränsen"
     }
   ],
+  "cKNvk6": [
+    {
+      "type": 1,
+      "value": "label"
+    },
+    {
+      "type": 0,
+      "value": " value item"
+    }
+  ],
   "cNXS5n": [
     {
       "type": 0,
@@ -7825,6 +7845,16 @@
       "value": "Returnerar sant om det första argumentet är större än eller lika med det andra"
     }
   ],
+  "fBUCrA": [
+    {
+      "type": 1,
+      "value": "label"
+    },
+    {
+      "type": 0,
+      "value": " Item"
+    }
+  ],
   "fElufw": [
     {
       "type": 0,
@@ -7997,6 +8027,12 @@
     {
       "type": 0,
       "value": "Information"
+    }
+  ],
+  "gS4Teq": [
+    {
+      "type": 0,
+      "value": "Array Item"
     }
   ],
   "gWyYg0": [
