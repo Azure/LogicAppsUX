@@ -14,10 +14,10 @@ export const useStyles = makeStyles({
   detailsButton: {
     paddingLeft: '10px',
   },
-  deleteIcon: {
+  actionIcon: {
     color: tokens.colorPaletteBlueBorderActive,
   },
-  deleteButton: {
+  topRightActions: {
     marginLeft: 'auto',
   },
   headerRow: {
