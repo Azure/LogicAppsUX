@@ -1,4 +1,31 @@
 # Logic Apps Designer
+## [5.9.0](https://github.com/Azure/LogicAppsUX/compare/v5.8.0...v5.9.0) (2024-12-16)
+
+
+### Bug Fixes
+
+* **designer:** Add locale to connections API call for connectors and swagger ([#6262](https://github.com/Azure/LogicAppsUX/issues/6262)) ([91e7925](https://github.com/Azure/LogicAppsUX/commit/91e7925b9e630b6a2765f93d814c77ff33413128))
+
+## [5.8.0](https://github.com/Azure/LogicAppsUX/compare/v5.7.0...v5.8.0) (2024-12-12)
+
+
+### Features
+
+* **DM:** deserialization error handling ([#6164](https://github.com/Azure/LogicAppsUX/issues/6164)) ([ebb0df3](https://github.com/Azure/LogicAppsUX/commit/ebb0df3c09c10a853cb5d7b2426c8de5bbb8f2f8))
+
+
+### Bug Fixes
+
+* **designer:** Accessibility - Add focus target attribute to overflow button ([#6243](https://github.com/Azure/LogicAppsUX/issues/6243)) ([374664e](https://github.com/Azure/LogicAppsUX/commit/374664e65a832a13565cf5c9ea14869f5b605baf))
+
+## [5.7.0](https://github.com/Azure/LogicAppsUX/compare/v5.6.0...v5.7.0) (2024-12-05)
+
+
+### Bug Fixes
+
+* **designer:** Accessibility - Set right aria label for concurrency control inputs ([#6195](https://github.com/Azure/LogicAppsUX/issues/6195)) ([2f8066b](https://github.com/Azure/LogicAppsUX/commit/2f8066bf9f8c29fb3592c98f0bd519e8d1da4918))
+* **vscode:** Accessibility - Add specific key combo to search nodes in designer for vscode ([#6204](https://github.com/Azure/LogicAppsUX/issues/6204)) ([becf7d8](https://github.com/Azure/LogicAppsUX/commit/becf7d8d32251631f6937f58ea3c13a4b13a5786))
+
 ## [5.6.0](https://github.com/Azure/LogicAppsUX/compare/v5.5.0...v5.6.0) (2024-11-28)
 
 
