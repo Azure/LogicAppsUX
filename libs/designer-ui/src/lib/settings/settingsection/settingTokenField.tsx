@@ -38,6 +38,7 @@ import { Label } from '../../label';
 import { EditorLanguage, equals, getPropertyValue, replaceWhiteSpaceWithUnderscore } from '@microsoft/logic-apps-shared';
 import { MixedInputEditor } from '../../mixedinputeditor/mixedinputeditor';
 import { useMemo } from 'react';
+import { useIntl } from 'react-intl';
 
 export interface SettingTokenFieldProps extends SettingProps {
   id?: string;
@@ -115,8 +116,24 @@ export const TokenField = ({
   getTokenPicker,
   suppressCastingForSerialize,
 }: TokenFieldProps) => {
+  const intl = useIntl();
   const dropdownOptions = useMemo(() => getDropdownOptionsFromOptions(editorOptions), [editorOptions]);
   const labelForAutomationId = useMemo(() => replaceWhiteSpaceWithUnderscore(label), [label]);
+
+  const arrayItemLabel = intl.formatMessage(
+    {
+      defaultMessage: '{label} Item',
+      id: 'fBUCrA',
+      description: 'Label for array item',
+    },
+    { label }
+  );
+
+  const defaultArrayItemLabel = intl.formatMessage({
+    defaultMessage: 'Array Item',
+    id: 'gS4Teq',
+    description: 'Label for array item',
+  });
 
   switch (editor?.toLowerCase()) {
     case constants.PARAMETER.EDITOR.ARRAY:
@@ -125,7 +142,7 @@ export const TokenField = ({
           labelId={labelId}
           arrayType={editorViewModel.arrayType}
           initialMode={editorOptions?.initialMode}
-          labelProps={{ text: label ? `${label} Item` : 'Array Item' }}
+          labelProps={{ text: label ? arrayItemLabel : defaultArrayItemLabel }}
           placeholder={placeholder}
           readonly={readOnly}
           initialValue={editorViewModel.uncastedValue}
@@ -244,6 +261,7 @@ export const TokenField = ({
       return (
         <DictionaryEditor
           labelId={labelId}
+          label={label}
           placeholder={placeholder}
           readonly={readOnly}
           initialValue={value}
