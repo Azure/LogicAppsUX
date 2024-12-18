@@ -129,7 +129,7 @@ export const useCreateWorkflowPanelTabs = ({
     try {
       await onCreateClick();
       LoggerService().log({
-        level: LogEntryLevel.Verbose,
+        level: LogEntryLevel.Trace,
         area: 'Templates.createTab',
         message: isMultiWorkflowTemplate ? 'Multi workflows template is created' : 'Template is created',
         args: [templateName, workflowAppName, `isMultiWorkflowTemplate:${isMultiWorkflowTemplate}`],
