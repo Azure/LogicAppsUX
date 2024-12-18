@@ -1,4 +1,12 @@
 # Logic Apps Designer
+## [5.10.0](https://github.com/Azure/LogicAppsUX/compare/v5.9.0...v5.10.0) (2024-12-18)
+
+
+### Bug Fixes
+
+* **Data Mapper:** UI issues (I) ([#6222](https://github.com/Azure/LogicAppsUX/issues/6222)) ([10f7c95](https://github.com/Azure/LogicAppsUX/commit/10f7c95a3a3581aba375ce8cb0049b3cb26cbc38))
+* **designer:** Added support for arialabels in dictionary editor ([#6264](https://github.com/Azure/LogicAppsUX/issues/6264)) ([1e618e7](https://github.com/Azure/LogicAppsUX/commit/1e618e7bad76fc2038596a6e61172b5890eaedc9))
+
 ## [5.9.0](https://github.com/Azure/LogicAppsUX/compare/v5.8.0...v5.9.0) (2024-12-16)
 
 
