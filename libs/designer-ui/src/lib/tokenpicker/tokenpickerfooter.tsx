@@ -148,8 +148,6 @@ export function TokenPickerFooter({
         brandColor: constants.FX_COLOR,
         icon: FxIcon,
         title: getExpressionTokenTitle(currExpression),
-        // Todo: get Expression Token description
-        description: '',
         key: guid(),
         value: expression.value,
       };

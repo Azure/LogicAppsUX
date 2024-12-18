@@ -260,35 +260,19 @@ export class TokenSegmentConvertor {
 
   private _getTokenSource(expression: ExpressionFunction): string {
     const dereferences = expression.dereferences;
-    switch (expression.name.toUpperCase()) {
-      case 'BODY':
-      case 'ACTIONBODY':
-      case 'TRIGGERBODY':
-        return OutputSource.Body;
-      default:
-        break;
+    if (['BODY', 'ACTIONBODY', 'TRIGGERBODY'].includes(expression.name.toUpperCase())) {
+      return OutputSource.Body;
     }
 
-    // TODO: Please fix the below logic, it seems redundant to check and return the same output source.
     if (dereferences.length >= 1) {
       const dereferenceExpression = dereferences[0].expression;
       if (isStringLiteral(dereferenceExpression)) {
         const value = dereferenceExpression.value;
-        if (equals(value, OutputSource.StatusCode)) {
-          return OutputSource.StatusCode;
-        }
-        if (equals(value, OutputSource.Queries)) {
-          return OutputSource.Queries;
-        }
-        if (equals(value, OutputSource.Headers)) {
-          return OutputSource.Headers;
-        }
-        if (equals(value, OutputSource.Body)) {
-          return OutputSource.Body;
+        if ([OutputSource.StatusCode, OutputSource.Queries, OutputSource.Headers, OutputSource.Body].includes(value)) {
+          return value;
         }
       }
     }
-
     return OutputSource.Outputs;
   }
 
