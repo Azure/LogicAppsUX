@@ -1,6 +1,15 @@
 import type { FunctionData } from '../../../models';
 import { FunctionIcon } from '../../functionIcon/FunctionIcon';
-import { Button, Caption1, tokens, Popover, PopoverTrigger, mergeClasses } from '@fluentui/react-components';
+import {
+  Button,
+  Caption1,
+  tokens,
+  Popover,
+  PopoverTrigger,
+  mergeClasses,
+  type OpenPopoverEvents,
+  type OnOpenChangeData,
+} from '@fluentui/react-components';
 import { useCardContextMenu } from '@microsoft/designer-ui';
 import { Handle, Position, type NodeProps, type Node } from '@xyflow/react';
 import { useStyles } from './styles';
@@ -11,7 +20,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import type { StringIndexed } from '@microsoft/logic-apps-shared';
 import { setHoverState, setSelectedItem } from '../../../core/state/DataMapSlice';
 import { useHoverFunctionNode, useSelectedNode } from '../../../core/state/selectors/selectors';
-import { useCallback, useMemo } from 'react';
+import { useCallback, useMemo, useState } from 'react';
 import { isEmptyConnection, isFunctionInputSlotAvailable } from '../../../utils/Connection.Utils';
 import { customTokens } from '../../../core/ThemeConect';
 
@@ -30,6 +39,7 @@ export interface CardProps {
 export const FunctionNode = (props: NodeProps<Node<StringIndexed<FunctionCardProps>, 'function'>>) => {
   const { id } = props;
   const dispatch = useDispatch();
+  const [open, setOpen] = useState(false);
   const { functionData, disabled, dataTestId } = props.data;
   const functionWithConnections = useSelector((state: RootState) => state.dataMap.present.curDataMapOperation.dataMapConnections[id]);
   const isSelected = useSelectedNode(id);
@@ -52,6 +62,8 @@ export const FunctionNode = (props: NodeProps<Node<StringIndexed<FunctionCardPro
     functionWithConnections?.inputs[0] !== undefined &&
     !isEmptyConnection(functionWithConnections?.inputs[0]);
   const isRightConnected = functionWithConnections?.outputs.length > 0;
+
+  const handleOpenChange = useCallback((_e?: OpenPopoverEvents, data?: OnOpenChangeData) => setOpen(data?.open ?? false), []);
 
   const getHandleStyle = useCallback(
     (_isInput: boolean, isConnected: boolean) => {
@@ -109,7 +121,7 @@ export const FunctionNode = (props: NodeProps<Node<StringIndexed<FunctionCardPro
           style={{ left: '-7px' }}
         />
       )}
-      <Popover withArrow={true} trapFocus={true}>
+      <Popover open={open} onOpenChange={handleOpenChange} withArrow={true} trapFocus={true}>
         <PopoverTrigger>
           <Button
             onClick={onClick}
@@ -138,7 +150,7 @@ export const FunctionNode = (props: NodeProps<Node<StringIndexed<FunctionCardPro
             </Caption1>
           </Button>
         </PopoverTrigger>
-        <FunctionConfigurationPopover functionId={props.id} />
+        <FunctionConfigurationPopover functionId={props.id} onOpenChange={handleOpenChange} />
       </Popover>
       <Handle type={'source'} position={Position.Right} className={getHandleStyle(false, isRightConnected)} isConnectable={true} />
     </div>
