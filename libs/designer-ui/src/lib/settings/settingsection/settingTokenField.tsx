@@ -115,6 +115,7 @@ export const TokenField = ({
   onCastParameter,
   getTokenPicker,
   suppressCastingForSerialize,
+  required,
 }: TokenFieldProps) => {
   const intl = useIntl();
   const dropdownOptions = useMemo(() => getDropdownOptionsFromOptions(editorOptions), [editorOptions]);
@@ -139,6 +140,7 @@ export const TokenField = ({
     case constants.PARAMETER.EDITOR.ARRAY:
       return (
         <ArrayEditor
+          isRequired={required}
           labelId={labelId}
           arrayType={editorViewModel.arrayType}
           initialMode={editorOptions?.initialMode}
