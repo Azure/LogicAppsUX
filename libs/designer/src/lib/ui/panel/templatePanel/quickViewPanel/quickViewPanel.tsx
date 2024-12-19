@@ -80,7 +80,7 @@ export const QuickViewPanel = ({ onClose, showCreate, workflowId, clearDetailsOn
 
   return (
     <Panel
-      styles={{ main: { padding: '0 20px', zIndex: 1000 }, content: { paddingLeft: '0px' } }}
+      styles={{ main: { padding: '0 20px', zIndex: 1000 }, content: { paddingLeft: '0px', backgroundColor: 'yellow' } }}
       isLightDismiss
       type={PanelType.medium}
       customWidth={'50%'}

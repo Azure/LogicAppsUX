@@ -23,7 +23,7 @@ export const TemplatesPanelContent = ({ tabs = [], selectedTab, selectTab, class
 
   const tabClass = className ?? 'msla-templates-panel-tabs';
   return (
-    <div className="msla-templates-panel">
+    <div className="msla-templates-panel" style={{ height: '100%', border: '1px solid red', display: 'flex', flexDirection: 'column' }}>
       {tabs.length > 1 && (
         <>
           <TabList selectedValue={selectedTabId} onTabSelect={onTabSelected} className={tabClass}>
@@ -41,7 +41,9 @@ export const TemplatesPanelContent = ({ tabs = [], selectedTab, selectTab, class
           {selectedTabProps?.description && <div className="msla-panel-content-description">{selectedTabProps?.description}</div>}
         </>
       )}
-      <div className="msla-panel-content-container">{selectedTabProps?.content}</div>
+      <div className="msla-panel-content-container" style={{ height: 'inherit' }}>
+        {selectedTabProps?.content}
+      </div>
     </div>
   );
 };

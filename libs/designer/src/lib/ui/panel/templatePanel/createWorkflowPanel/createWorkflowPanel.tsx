@@ -97,7 +97,7 @@ export const CreateWorkflowPanel = ({ createWorkflow, onClose, clearDetailsOnClo
 
   return (
     <Panel
-      styles={{ main: { padding: '0 20px', zIndex: 1000 }, content: { paddingLeft: '0px' } }}
+      // styles={{ main: { padding: '0 20px 0px 60px', zIndex: 1000 }, content: { paddingLeft: '0px' } }}
       isLightDismiss
       type={PanelType.custom}
       customWidth={'50%'}
@@ -107,9 +107,10 @@ export const CreateWorkflowPanel = ({ createWorkflow, onClose, clearDetailsOnClo
       onRenderHeader={onRenderHeaderContent}
       onRenderFooterContent={onRenderFooterContent}
       layerProps={layerProps}
-      isFooterAtBottom={true}
+      isFooterAtBottom={false}
     >
       <TemplatesPanelContent tabs={panelTabs} selectedTab={selectedTabId ?? panelTabs?.[0]?.id} selectTab={handleSelectTab} />
+      {/* {(selectedTabProps?.footerContent ? <TemplatesPanelFooter showPrimaryButton={true} {...selectedTabProps?.footerContent} /> : null)} */}
     </Panel>
   );
 };
