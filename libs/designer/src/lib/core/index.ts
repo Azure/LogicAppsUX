@@ -35,7 +35,12 @@ export {
 export { useIsDesignerDirty, resetDesignerDirtyState } from './state/global';
 export { useAllSettingsValidationErrors } from './state/setting/settingSelector';
 export { useAllConnectionErrors } from './state/operation/operationSelector';
-export { serializeWorkflow, serializeUnitTestDefinition, parseWorkflowParameterValue } from './actions/bjsworkflow/serializer';
+export {
+  serializeWorkflow,
+  serializeUnitTestDefinition,
+  getNodeOutputOperations,
+  parseWorkflowParameterValue,
+} from './actions/bjsworkflow/serializer';
 export {
   setSelectedNodeId,
   changePanelNode,

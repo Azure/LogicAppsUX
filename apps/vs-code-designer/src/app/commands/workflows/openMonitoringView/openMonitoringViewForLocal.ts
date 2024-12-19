@@ -27,6 +27,7 @@ import * as vscode from 'vscode';
 import type { WebviewPanel } from 'vscode';
 import { Uri, ViewColumn } from 'vscode';
 import { getArtifactsInLocalProject } from '../../../utils/codeless/artifacts';
+import { saveBlankUnitTest } from '../unitTest/saveBlankUnitTest';
 
 export default class OpenMonitoringViewForLocal extends OpenMonitoringViewBase {
   private projectPath: string | undefined;
@@ -139,6 +140,10 @@ export default class OpenMonitoringViewForLocal extends OpenMonitoringViewBase {
       }
       case ExtensionCommand.createUnitTest: {
         await createUnitTest(this.context as IAzureConnectorsContext, vscode.Uri.file(this.workflowFilePath), message.runId);
+        break;
+      }
+      case ExtensionCommand.saveBlankUnitTest: {
+        await saveBlankUnitTest(this.context as IAzureConnectorsContext, vscode.Uri.file(this.workflowFilePath), message.definition);
         break;
       }
       default:
