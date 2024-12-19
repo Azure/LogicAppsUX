@@ -34,6 +34,7 @@ export interface PanelState {
   testPanel: TestPanelState;
   codeViewPanel: CodeViewState;
   functionPanel: FunctionPanelState;
+  mapCheckerPanel: FunctionPanelState;
 }
 
 export interface TestMapOutput {
@@ -53,6 +54,9 @@ const initialState: PanelState = {
   functionPanel: {
     isOpen: true,
   },
+  mapCheckerPanel: {
+    isOpen: false,
+  },
 };
 
 export const panelSlice = createSlice({
@@ -63,6 +67,17 @@ export const panelSlice = createSlice({
     openDefaultConfigPanelView: (state) => {
       state.schemaType = undefined;
       state.currentPanelView = ConfigPanelView.DefaultConfig;
+    },
+
+    toggleMapChecker: (state) => {
+      const newState = !state.mapCheckerPanel.isOpen;
+
+      if (newState) {
+        state.testPanel.isOpen = false;
+        state.functionPanel.isOpen = false;
+      }
+
+      state.mapCheckerPanel.isOpen = newState;
     },
 
     toggleCodeView: (state) => {
@@ -159,6 +174,7 @@ export const {
   updateTestInput,
   updateTestOutput,
   toggleFunctionPanel,
+  toggleMapChecker,
 } = panelSlice.actions;
 
 export default panelSlice.reducer;

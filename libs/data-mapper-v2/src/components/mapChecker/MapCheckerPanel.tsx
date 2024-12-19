@@ -19,15 +19,30 @@ import {
 } from '../../utils/MapChecker.Utils';
 import { iconForMapCheckerSeverity } from '../../utils/Icon.Utils';
 import { MapCheckerItem } from './MapCheckerItem';
+import { Panel } from '../common/panel/Panel';
+import { useStyles } from './styles';
 
-export const MapCheckerTab = () => {
+export const MapCheckerPanel = () => {
   const intl = useIntl();
+  const styles = useStyles();
+  const isMapCheckerPanelOpen = useSelector((state: RootState) => state.panel.mapCheckerPanel.isOpen);
   //const dispatch = useDispatch<AppDispatch>();
 
   const sourceSchema = useSelector((state: RootState) => state.dataMap.present.curDataMapOperation.sourceSchema);
   const targetSchema = useSelector((state: RootState) => state.dataMap.present.curDataMapOperation.targetSchema);
   const targetSchemaDictionary = useSelector((state: RootState) => state.dataMap.present.curDataMapOperation.flattenedTargetSchema);
   const connectionDictionary = useSelector((state: RootState) => state.dataMap.present.curDataMapOperation.dataMapConnections);
+
+  const stringResources = useMemo(
+    () => ({
+      MAP_ISSUES: intl.formatMessage({
+        defaultMessage: 'Map Issues',
+        id: 'rwrlsB',
+        description: 'problems with the map',
+      }),
+    }),
+    [intl]
+  );
 
   const errorTitleLoc = intl.formatMessage({
     defaultMessage: 'Errors',
@@ -166,8 +181,15 @@ export const MapCheckerTab = () => {
 
   const totalItems = errorItems.length + warningItems.length + infoItems.length + otherItems.length;
 
-  return (
-    <div style={{ overflowY: 'scroll', width: '100%', flex: '1 1 1px' }}>
+  const panelBody = (
+    <div
+      style={{
+        width: '100%',
+        display: 'flex',
+        flexDirection: 'column',
+        flex: '1 1 auto',
+      }}
+    >
       {totalItems > 0 ? (
         <Accordion multiple collapsible defaultOpenItems={[MapCheckerItemSeverity.Error, MapCheckerItemSeverity.Warning]}>
           {errorItems.length > 0 && (
@@ -210,5 +232,21 @@ export const MapCheckerTab = () => {
         </Stack>
       )}
     </div>
+  );
+
+  return (
+    isMapCheckerPanelOpen && (
+      <Panel
+        id="map-checker"
+        isOpen={true}
+        title={{
+          text: stringResources.MAP_ISSUES,
+          size: 500,
+        }}
+        body={panelBody}
+        styles={{ root: styles.root }}
+        position={'end'}
+      />
+    )
   );
 };

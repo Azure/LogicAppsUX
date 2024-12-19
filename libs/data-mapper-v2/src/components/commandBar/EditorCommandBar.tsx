@@ -23,7 +23,7 @@ import { saveDataMap, updateDataMapLML } from '../../core/state/DataMapSlice';
 import { LogCategory, LogService } from '../../utils/Logging.Utils';
 import type { MetaMapDefinition } from '../../mapHandling/MapDefinitionSerializer';
 import { convertToMapDefinition } from '../../mapHandling/MapDefinitionSerializer';
-import { toggleCodeView, toggleTestPanel } from '../../core/state/PanelSlice';
+import { toggleCodeView, toggleMapChecker, toggleTestPanel } from '../../core/state/PanelSlice';
 import { useStyles } from './styles';
 import { emptyCanvasRect } from '@microsoft/logic-apps-shared';
 
@@ -36,6 +36,7 @@ export const EditorCommandBar = (_props: EditorCommandBarProps) => {
   const { isDirty, sourceInEditState, targetInEditState } = useSelector((state: RootState) => state.dataMap.present);
   const undoStack = useSelector((state: RootState) => state.dataMap.past);
   const isCodeViewOpen = useSelector((state: RootState) => state.panel.codeViewPanel.isOpen);
+  const isMapCheckerOpen = useSelector((state: RootState) => state.panel.mapCheckerPanel.isOpen);
   const { sourceSchema, targetSchema } = useSelector((state: RootState) => state.dataMap.present.curDataMapOperation);
 
   const xsltFilename = useSelector((state: RootState) => state.dataMap.present.curDataMapOperation.xsltFilename);
@@ -87,6 +88,10 @@ export const EditorCommandBar = (_props: EditorCommandBarProps) => {
 
   const onCodeViewClick = useCallback(() => {
     dispatch(toggleCodeView());
+  }, [dispatch]);
+
+  const onMapCheckerClick = useCallback(() => {
+    dispatch(toggleMapChecker());
   }, [dispatch]);
 
   const onSaveClick = useCallback(() => {
@@ -194,6 +199,11 @@ export const EditorCommandBar = (_props: EditorCommandBarProps) => {
         id: 'VysSj3',
         description: 'Button for View Code',
       }),
+      VIEW_MAP_CHECKER: intl.formatMessage({
+        defaultMessage: 'Map errors',
+        id: '1QktJw',
+        description: 'Button to see map errors',
+      }),
       DISABLED_TEST: intl.formatMessage({
         defaultMessage: 'Please save the map before testing',
         id: 'wTaSTp',
@@ -249,6 +259,7 @@ export const EditorCommandBar = (_props: EditorCommandBarProps) => {
         </ToolbarGroup>
         <ToolbarGroup>
           <Switch disabled={disabledState.codeView} label={Resources.VIEW_CODE} onChange={onCodeViewClick} checked={isCodeViewOpen} />
+          <Switch label={Resources.VIEW_MAP_CHECKER} onChange={onMapCheckerClick} checked={isMapCheckerOpen} />
         </ToolbarGroup>
       </Toolbar>
       <Toaster timeout={10000} toasterId={toasterId} />

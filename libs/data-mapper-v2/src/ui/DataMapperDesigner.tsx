@@ -15,6 +15,7 @@ import { TestPanel } from '../components/test/TestPanel';
 import DialogView from './DialogView';
 import { useDispatch } from 'react-redux';
 import { setSelectedItem } from '../core/state/DataMapSlice';
+import { MapCheckerPanel } from '../components/mapChecker/MapCheckerPanel';
 
 interface DataMapperDesignerProps {
   fileService: IDataMapperFileService;
@@ -58,7 +59,6 @@ export const DataMapperDesigner = ({ fileService, setIsMapStateDirty }: DataMapp
     }
   }, [fileService]);
   return (
-    // danielle rename back and add width and height
     <DataMapperWrappedContext.Provider
       value={{
         scroll: {
@@ -74,6 +74,7 @@ export const DataMapperDesigner = ({ fileService, setIsMapStateDirty }: DataMapp
         <FunctionPanel />
         <ReactFlowWrapper setIsMapStateDirty={setIsMapStateDirty} />
         <CodeViewPanel />
+        <MapCheckerPanel />
         <TestPanel />
       </div>
     </DataMapperWrappedContext.Provider>
