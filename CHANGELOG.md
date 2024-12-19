@@ -1,4 +1,11 @@
 # Logic Apps Designer
+## [5.11.0](https://github.com/Azure/LogicAppsUX/compare/v5.10.0...v5.11.0) (2024-12-19)
+
+
+### Bug Fixes
+
+* **Designer:** Switched edge labels from foreign object to xyflow component ([#6275](https://github.com/Azure/LogicAppsUX/issues/6275)) ([5acf6c0](https://github.com/Azure/LogicAppsUX/commit/5acf6c0c0a0ba0a463433784a83f435a30122f2f))
+
 ## [5.10.0](https://github.com/Azure/LogicAppsUX/compare/v5.9.0...v5.10.0) (2024-12-18)
 
 
