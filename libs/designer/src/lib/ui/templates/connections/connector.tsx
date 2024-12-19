@@ -10,6 +10,7 @@ import { getConnectorResources } from '../../../core/templates/utils/helper';
 import { useEffect } from 'react';
 import type { ConnectorInfo } from '../../../core/templates/utils/queries';
 import { useConnectorInfo } from '../../../core/templates/utils/queries';
+import { Tooltip } from '@fluentui/react-components';
 
 export const ConnectorIcon = ({
   connectorId,
@@ -26,10 +27,20 @@ export const ConnectorIcon = ({
     return isLoading ? <Spinner size={SpinnerSize.small} /> : isError ? <Icon iconName="Error" /> : <Icon iconName="Unknown" />;
   }
 
-  return (
+  const wrappedIcon = (
     <div className={classes['root']}>
-      <img className={classes['icon']} src={connector?.iconUrl} />
+      <img className={classes['icon']} src={connector?.iconUrl} alt={connector?.displayName ?? connector?.id?.split('/')?.slice(-1)} />
     </div>
+  );
+
+  if (!connector.displayName) {
+    return wrappedIcon;
+  }
+
+  return (
+    <Tooltip content={connector.displayName} relationship="label" positioning="below-start" withArrow showDelay={100} hideDelay={500}>
+      {wrappedIcon}
+    </Tooltip>
   );
 };
 

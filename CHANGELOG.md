@@ -1,4 +1,75 @@
 # Logic Apps Designer
+## [5.10.0](https://github.com/Azure/LogicAppsUX/compare/v5.9.0...v5.10.0) (2024-12-18)
+
+
+### Bug Fixes
+
+* **Data Mapper:** UI issues (I) ([#6222](https://github.com/Azure/LogicAppsUX/issues/6222)) ([10f7c95](https://github.com/Azure/LogicAppsUX/commit/10f7c95a3a3581aba375ce8cb0049b3cb26cbc38))
+* **designer:** Added support for arialabels in dictionary editor ([#6264](https://github.com/Azure/LogicAppsUX/issues/6264)) ([1e618e7](https://github.com/Azure/LogicAppsUX/commit/1e618e7bad76fc2038596a6e61172b5890eaedc9))
+
+## [5.9.0](https://github.com/Azure/LogicAppsUX/compare/v5.8.0...v5.9.0) (2024-12-16)
+
+
+### Bug Fixes
+
+* **designer:** Add locale to connections API call for connectors and swagger ([#6262](https://github.com/Azure/LogicAppsUX/issues/6262)) ([91e7925](https://github.com/Azure/LogicAppsUX/commit/91e7925b9e630b6a2765f93d814c77ff33413128))
+
+## [5.8.0](https://github.com/Azure/LogicAppsUX/compare/v5.7.0...v5.8.0) (2024-12-12)
+
+
+### Features
+
+* **DM:** deserialization error handling ([#6164](https://github.com/Azure/LogicAppsUX/issues/6164)) ([ebb0df3](https://github.com/Azure/LogicAppsUX/commit/ebb0df3c09c10a853cb5d7b2426c8de5bbb8f2f8))
+
+
+### Bug Fixes
+
+* **designer:** Accessibility - Add focus target attribute to overflow button ([#6243](https://github.com/Azure/LogicAppsUX/issues/6243)) ([374664e](https://github.com/Azure/LogicAppsUX/commit/374664e65a832a13565cf5c9ea14869f5b605baf))
+
+## [5.7.0](https://github.com/Azure/LogicAppsUX/compare/v5.6.0...v5.7.0) (2024-12-05)
+
+
+### Bug Fixes
+
+* **designer:** Accessibility - Set right aria label for concurrency control inputs ([#6195](https://github.com/Azure/LogicAppsUX/issues/6195)) ([2f8066b](https://github.com/Azure/LogicAppsUX/commit/2f8066bf9f8c29fb3592c98f0bd519e8d1da4918))
+* **vscode:** Accessibility - Add specific key combo to search nodes in designer for vscode ([#6204](https://github.com/Azure/LogicAppsUX/issues/6204)) ([becf7d8](https://github.com/Azure/LogicAppsUX/commit/becf7d8d32251631f6937f58ea3c13a4b13a5786))
+
+## [5.6.0](https://github.com/Azure/LogicAppsUX/compare/v5.5.0...v5.6.0) (2024-11-28)
+
+
+### Features
+
+* **vscode:** Removed preview tag for workspace and IaC ([#6190](https://github.com/Azure/LogicAppsUX/issues/6190)) ([b878b59](https://github.com/Azure/LogicAppsUX/commit/b878b59474ff5960f0f41268f1eb571710f09a43))
+
+
+### Bug Fixes
+
+* **designer:** Implicit String type conversions ([#6185](https://github.com/Azure/LogicAppsUX/issues/6185)) ([19829eb](https://github.com/Azure/LogicAppsUX/commit/19829ebf16055d01ee296189140ef9dff27e1059))
+* **vscode:** Remove warning preview messages to non preview features ([#6191](https://github.com/Azure/LogicAppsUX/issues/6191)) ([6db03b7](https://github.com/Azure/LogicAppsUX/commit/6db03b7e001d34db64cd6c4544b4d972dcbca53d))
+
+## [5.5.0](https://github.com/Azure/LogicAppsUX/compare/v5.4.0...v5.5.0) (2024-11-21)
+
+
+### Bug Fixes
+
+* **designer:** Fixed fluent drawer stutter ([#6163](https://github.com/Azure/LogicAppsUX/issues/6163)) ([ee40498](https://github.com/Azure/LogicAppsUX/commit/ee404986071c2c0c2118923ecdf152b2e46c48c7))
+
+## [5.4.0](https://github.com/Azure/LogicAppsUX/compare/v5.3.0...v5.4.0) (2024-11-21)
+
+
+### Features
+
+* **Data Mapper:** Move edge path logic to useInternal Reactflow state ([#6139](https://github.com/Azure/LogicAppsUX/issues/6139)) ([9603d91](https://github.com/Azure/LogicAppsUX/commit/9603d918093c86f519f99aab7e68566139eb768f))
+* **Templates:** Hover text for connectors ([#6152](https://github.com/Azure/LogicAppsUX/issues/6152)) ([29d7fcb](https://github.com/Azure/LogicAppsUX/commit/29d7fcbeea29f0a6bd2f3e8c88c524d302a56b38))
+
+
+### Bug Fixes
+
+* **designer:** Prevent Crash When No Parameter Label ([#6146](https://github.com/Azure/LogicAppsUX/issues/6146)) ([ac3b09f](https://github.com/Azure/LogicAppsUX/commit/ac3b09f758a5bd9fbe5d94d39bf7d6f1d4e473f5))
+* **Designer:** Prevent HTML editor from allowing DOM-based XSS ([#6147](https://github.com/Azure/LogicAppsUX/issues/6147)) ([f85d50f](https://github.com/Azure/LogicAppsUX/commit/f85d50f1a7b46adf301f0ad8ff0ba2c872181a9b))
+* **Designer:** Updated to Fluent V9 component to fix scroll ([#6123](https://github.com/Azure/LogicAppsUX/issues/6123)) ([ae3e44e](https://github.com/Azure/LogicAppsUX/commit/ae3e44e42f2961f124f049f8364992c29bcd196b))
+* **Templates:** Pagination bug of not resetting page num on filter change ([#6150](https://github.com/Azure/LogicAppsUX/issues/6150)) ([46f62d3](https://github.com/Azure/LogicAppsUX/commit/46f62d3c13587d9114db5203a37fb9abd9d5bdb8))
+
 ## [5.3.0](https://github.com/Azure/LogicAppsUX/compare/v5.2.0...v5.3.0) (2024-11-18)
 
 

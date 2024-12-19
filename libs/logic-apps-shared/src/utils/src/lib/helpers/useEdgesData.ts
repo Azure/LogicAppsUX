@@ -34,7 +34,7 @@ export function useEdgesData(edgeIds: any): any {
           }
         }
 
-        return isArrayOfIds ? data : data[0] ?? null;
+        return isArrayOfIds ? data : (data[0] ?? null);
       },
       [edgeIds]
     ),

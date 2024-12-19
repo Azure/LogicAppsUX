@@ -205,7 +205,7 @@ export const initializePropertyValueInput = (
       ? currProperties
       : Object.keys(currProperties).length > 0
         ? JSON.stringify(currProperties, null, 2)
-        : schema?.default ?? ''
+        : (schema?.default ?? '')
   ) as string;
   return inputVal;
 };

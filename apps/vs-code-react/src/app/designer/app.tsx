@@ -180,6 +180,7 @@ export const DesignerApp = () => {
         locale="en-US"
         options={{
           isDarkMode: theme === Theme.Dark,
+          isVSCode: true,
           readOnly,
           isMonitoringView,
           services: services,
