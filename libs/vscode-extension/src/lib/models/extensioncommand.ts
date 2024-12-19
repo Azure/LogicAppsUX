@@ -42,6 +42,7 @@ export const ExtensionCommand = {
   webviewLoaded: 'webviewLoaded',
   webviewRscLoadError: 'webviewRscLoadError',
   saveUnitTest: 'saveUnitTest',
+  saveBlankUnitTest: 'saveBlankUnitTest',
   createUnitTest: 'createUnitTest',
   viewWorkflow: 'viewWorkflow',
   openRelativeLink: 'openRelativeLink',

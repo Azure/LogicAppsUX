@@ -19,6 +19,7 @@ import {
   useNodesInitialized,
   serializeUnitTestDefinition,
   useAssertionsValidationErrors,
+  getNodeOutputOperations,
   getCustomCodeFilesWithData,
   resetDesignerDirtyState,
   collapsePanel,
@@ -126,6 +127,14 @@ export const DesignerCommandBar = ({
     alert('Check console for unit test serialization');
   });
 
+  const { isLoading: isSavingBlankUnitTest, mutate: saveBlankUnitTestMutate } = useMutation(async () => {
+    const designerState = DesignerStore.getState();
+    const operationContents = await getNodeOutputOperations(designerState);
+
+    console.log(operationContents);
+    alert('Check console for blank unit test operationContents');
+  });
+
   const { isLoading: isDownloadingDocument, mutate: downloadDocument } = useMutation(async () => {
     const designerState = DesignerStore.getState();
     const workflow = await serializeWorkflow(designerState);
@@ -161,6 +170,7 @@ export const DesignerCommandBar = ({
   const haveSettingsErrors = Object.keys(allSettingsErrors ?? {}).length > 0;
   const allConnectionErrors = useAllConnectionErrors();
   const haveConnectionErrors = Object.keys(allConnectionErrors ?? {}).length > 0;
+  const saveBlankUnitTestIsDisabled = !isUnitTest || isSavingBlankUnitTest || haveAssertionErrors;
 
   const haveErrors = useMemo(
     () => allInputErrors.length > 0 || haveWorkflowParameterErrors || haveSettingsErrors || haveConnectionErrors,
@@ -187,6 +197,7 @@ export const DesignerCommandBar = ({
           );
         },
         onClick: () => {
+          // eslint-disable-next-line @typescript-eslint/no-unused-expressions
           isDesignerView ? saveWorkflowMutate() : saveWorkflowFromCode(() => dispatch(resetDesignerDirtyState(undefined)));
         },
       },
@@ -203,6 +214,20 @@ export const DesignerCommandBar = ({
         },
         onClick: () => {
           saveUnitTestMutate();
+        },
+      },
+      {
+        key: 'saveBlankUnitTest',
+        text: 'Save Blank Unit Test',
+        onRenderIcon: () => {
+          return isSavingBlankUnitTest ? (
+            <Spinner size="small" />
+          ) : (
+            <FontIcon aria-label="Save" iconName="Save" className={classNames.azureBlue} />
+          );
+        },
+        onClick: () => {
+          saveBlankUnitTestMutate();
         },
       },
       {
@@ -323,6 +348,8 @@ export const DesignerCommandBar = ({
       isSaving,
       isDesignerView,
       showConnectionsPanel,
+      isSavingBlankUnitTest,
+      saveBlankUnitTestIsDisabled,
       haveErrors,
       isDarkMode,
       isCopilotReady,

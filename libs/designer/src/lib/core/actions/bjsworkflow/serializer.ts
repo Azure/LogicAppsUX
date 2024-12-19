@@ -3,7 +3,7 @@ import type { ConnectionReferences, Workflow, WorkflowParameter } from '../../..
 import type { WorkflowNode } from '../../parsers/models/workflowNode';
 import { getConnectorWithSwagger } from '../../queries/connections';
 import { getOperationManifest } from '../../queries/operation';
-import type { NodeInputs, NodeOperation, ParameterGroup } from '../../state/operation/operationMetadataSlice';
+import type { NodeInputs, NodeOperation, NodeOutputs, ParameterGroup } from '../../state/operation/operationMetadataSlice';
 import { ErrorLevel } from '../../state/operation/operationMetadataSlice';
 import { getOperationInputParameters } from '../../state/operation/operationSelector';
 import type { OutputMock } from '../../state/unitTest/unitTestInterfaces';
@@ -1117,6 +1117,19 @@ export const serializeUnitTestDefinition = async (rootState: RootState): Promise
     actionMocks: actionMocks,
     assertions: getAssertions(assertions),
   };
+};
+
+/**
+ * Gets the node output operations based on the provided root state.
+ * @param {RootState} rootState The root state object containing the current designer state.
+ * @returns A promise that resolves to the serialized unit test definition.
+ */
+export const getNodeOutputOperations = (state: RootState) => {
+  const outputOperations: { operationInfo: Record<string, NodeOperation>; outputParameters: Record<string, NodeOutputs> } = {
+    operationInfo: state.operations.operationInfo,
+    outputParameters: state.operations.outputParameters,
+  };
+  return outputOperations;
 };
 
 /**

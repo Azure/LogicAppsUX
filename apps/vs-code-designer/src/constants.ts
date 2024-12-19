@@ -173,6 +173,7 @@ export const extensionCommand = {
   dataMapSaveMapDefinition: 'azureLogicAppsStandard.dataMap.saveMapDefinition',
   dataMapSaveMapXslt: 'azureLogicAppsStandard.dataMap.saveMapXslt',
   createUnitTest: 'azureLogicAppsStandard.createUnitTest',
+  saveBlankUnitTest: 'azureLogicAppsStandard.saveBlankUnitTest',
   editUnitTest: 'azureLogicAppsStandard.editUnitTest',
   openUnitTestResults: 'azureLogicAppsStandard.openUnitTestResults',
   runUnitTest: 'azureLogicAppsStandard.runUnitTest',
