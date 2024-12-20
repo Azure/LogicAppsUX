@@ -12,7 +12,7 @@ import { setPageNum, templatesCountPerPage } from '../../core/state/templates/ma
 import { QuickViewPanel } from '../panel/templatePanel/quickViewPanel/quickViewPanel';
 import { CreateWorkflowPanel } from '../panel/templatePanel/createWorkflowPanel/createWorkflowPanel';
 import { changeCurrentTemplateName } from '../../core/state/templates/templateSlice';
-import { openQuickViewPanelView } from '../../core/state/templates/panelSlice';
+import { openCreateWorkflowPanelView } from '../../core/state/templates/panelSlice';
 import { loadTemplate } from '../../core/actions/bjsworkflow/templates';
 
 export const TemplatesList = ({ detailFilters, createWorkflowCall, templateName: preselectedTemplateName }: TemplatesDesignerProps) => {
@@ -30,7 +30,7 @@ export const TemplatesList = ({ detailFilters, createWorkflowCall, templateName:
       dispatch(loadTemplate(templateManifest));
 
       if (Object.keys(templateManifest?.workflows ?? {}).length === 0) {
-        dispatch(openQuickViewPanelView());
+        dispatch(openCreateWorkflowPanelView());
       }
     };
     if (templateManifest && !selected) {
