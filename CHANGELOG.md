@@ -1,4 +1,11 @@
 # Logic Apps Designer
+## [5.12.0](https://github.com/Azure/LogicAppsUX/compare/v5.11.0...v5.12.0) (2024-12-20)
+
+
+### Bug Fixes
+
+* **templates:** Changing logentry level to Trace from Verbose for templates telemetry ([#6277](https://github.com/Azure/LogicAppsUX/issues/6277)) ([501803d](https://github.com/Azure/LogicAppsUX/commit/501803d69a4f78295f4ce796d65a7d44ebbaafbb))
+
 ## [5.11.0](https://github.com/Azure/LogicAppsUX/compare/v5.10.0...v5.11.0) (2024-12-19)
 
 
