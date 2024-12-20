@@ -30,6 +30,7 @@ import type { QueryClient } from '@tanstack/react-query';
 import type { WebviewApi } from 'vscode-webview';
 import { CustomEditorService } from './customEditorService';
 import { VSCodeLoggerService } from './services/Logger';
+import packagejson from '../../../package.json';
 
 export interface IDesignerServices {
   connectionService: StandardConnectionService;
@@ -323,7 +324,12 @@ export const getDesignerServices = (
     },
   });
 
-  const loggerService = new VSCodeLoggerService();
+  const loggerService = new VSCodeLoggerService(
+    {
+      designerVersion: packagejson.dependencies['@microsoft/logic-apps-designer'],
+    },
+    vscode
+  );
 
   return {
     connectionService,

@@ -217,6 +217,13 @@ export default class OpenDesignerForLocalProject extends OpenDesignerBase {
         break;
       }
 
+      case 'LogTelemetry': {
+        console.log('charlie 2', msg);
+        const telemetryData = msg.data;
+        ext.telemetryReporter.sendTelemetryEvent(telemetryData.area, { ...telemetryData });
+        break;
+      }
+
       default:
         break;
     }

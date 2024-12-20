@@ -112,6 +112,7 @@ export async function activate(context: vscode.ExtensionContext) {
 
 export function deactivate(): Promise<any> {
   stopDesignTimeApi();
+  ext.telemetryReporter.dispose();
   return undefined;
 }
 
