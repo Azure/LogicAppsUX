@@ -326,7 +326,7 @@ export const getDesignerServices = (
 
   const loggerService = new VSCodeLoggerService(
     {
-      designerVersion: packagejson.dependencies['@microsoft/logic-apps-designer'],
+      designerVersion: packagejson.version,
     },
     vscode
   );

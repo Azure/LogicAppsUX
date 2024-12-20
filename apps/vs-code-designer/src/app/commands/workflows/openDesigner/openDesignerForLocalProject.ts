@@ -218,9 +218,8 @@ export default class OpenDesignerForLocalProject extends OpenDesignerBase {
       }
 
       case 'LogTelemetry': {
-        console.log('charlie 2', msg);
-        const telemetryData = msg.data;
-        ext.telemetryReporter.sendTelemetryEvent(telemetryData.area, { ...telemetryData });
+        const eventName = msg.data.name ?? msg.data.area;
+        ext.telemetryReporter.sendTelemetryEvent(eventName, { ...msg.data });
         break;
       }
 
