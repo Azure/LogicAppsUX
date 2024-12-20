@@ -29,20 +29,9 @@ import { ExtensionCommand, HttpClient } from '@microsoft/vscode-extension-logic-
 import type { QueryClient } from '@tanstack/react-query';
 import type { WebviewApi } from 'vscode-webview';
 import { CustomEditorService } from './customEditorService';
+import { VSCodeLoggerService } from './services/Logger';
 
-export const getDesignerServices = (
-  baseUrl: string,
-  apiVersion: string,
-  apiHubDetails: ApiHubServiceDetails,
-  isLocal: boolean,
-  connectionData: ConnectionsData,
-  panelMetadata: IDesignerPanelMetadata | null,
-  createFileSystemConnection: (connectionInfo: ConnectionCreationInfo, connectionName: string) => Promise<ConnectionCreationInfo>,
-  vscode: WebviewApi<unknown>,
-  oauthRedirectUrl: string,
-  hostVersion: string,
-  queryClient: QueryClient
-): {
+export interface IDesignerServices {
   connectionService: StandardConnectionService;
   connectorService: StandardConnectorService;
   operationManifestService: StandardOperationManifestService;
@@ -56,7 +45,22 @@ export const getDesignerServices = (
   editorService: CustomEditorService;
   apimService: BaseApiManagementService;
   functionService: BaseFunctionService;
-} => {
+  loggerService: VSCodeLoggerService;
+}
+
+export const getDesignerServices = (
+  baseUrl: string,
+  apiVersion: string,
+  apiHubDetails: ApiHubServiceDetails,
+  isLocal: boolean,
+  connectionData: ConnectionsData,
+  panelMetadata: IDesignerPanelMetadata | null,
+  createFileSystemConnection: (connectionInfo: ConnectionCreationInfo, connectionName: string) => Promise<ConnectionCreationInfo>,
+  vscode: WebviewApi<unknown>,
+  oauthRedirectUrl: string,
+  hostVersion: string,
+  queryClient: QueryClient
+): IDesignerServices => {
   let authToken = '';
   let panelId = '';
   let workflowDetails: Record<string, any> = {};
@@ -319,6 +323,8 @@ export const getDesignerServices = (
     },
   });
 
+  const loggerService = new VSCodeLoggerService();
+
   return {
     connectionService,
     connectorService,
@@ -332,6 +338,7 @@ export const getDesignerServices = (
     runService,
     editorService,
     apimService,
+    loggerService,
     functionService,
   };
 };
