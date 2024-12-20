@@ -1,7 +1,7 @@
 import { describe, beforeAll, it, expect } from 'vitest';
 import { AppStore, setupStore } from '../store';
-import { changeCurrentTemplateName, updateKind, updateWorkflowName } from '../templateSlice';
-import { manifestSlice, setavailableTemplates, setavailableTemplatesNames } from '../manifestSlice';
+import { lockTemplate, changeCurrentTemplateName, updateKind, updateWorkflowName } from '../templateSlice';
+import { setavailableTemplates, setavailableTemplatesNames } from '../manifestSlice';
 import { SkuType, WorkflowKindType } from '../../../../../../../logic-apps-shared/src/utils/src/lib/models/template';
 
 describe('template store reducers', () => {
@@ -49,7 +49,12 @@ describe('template store reducers', () => {
 
   it('update state call tests for template slice', async () => {
     store.dispatch(changeCurrentTemplateName('templateName1'));
+    expect(store.getState().template.isTemplateNameLocked).toBe(undefined);
     expect(store.getState().template.templateName).toBe('templateName1');
+
+    store.dispatch(lockTemplate('templateNameX'));
+    expect(store.getState().template.isTemplateNameLocked).toBe(true);
+    expect(store.getState().template.templateName).toBe('templateNameX');
 
     store.dispatch(updateWorkflowName({ id: 'default', name: 'workflowName1' }));
     expect(store.getState().template.workflows['default'].workflowName).toBe('workflowName1');

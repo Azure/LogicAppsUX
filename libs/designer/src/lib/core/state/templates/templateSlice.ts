@@ -5,6 +5,7 @@ import { getCurrentWorkflowNames, validateConnectionsValue, validateParameterVal
 import { initializeTemplateServices, loadTemplate, validateWorkflowName, type TemplatePayload } from '../../actions/bjsworkflow/templates';
 
 export interface TemplateState extends TemplatePayload {
+  isTemplateNameLocked?: boolean;
   templateName?: string;
   servicesInitialized: boolean;
 }
@@ -27,6 +28,10 @@ export const templateSlice = createSlice({
   reducers: {
     changeCurrentTemplateName: (state, action: PayloadAction<string>) => {
       state.templateName = action.payload;
+    },
+    lockTemplate: (state, action: PayloadAction<string>) => {
+      state.templateName = action.payload;
+      state.isTemplateNameLocked = true;
     },
     updateWorkflowName: (state, action: PayloadAction<{ id: string; name: string | undefined }>) => {
       const { id, name } = action.payload;
@@ -148,6 +153,7 @@ export const templateSlice = createSlice({
 
 export const {
   changeCurrentTemplateName,
+  lockTemplate,
   updateWorkflowName,
   updateKind,
   validateWorkflowsBasicInfo,

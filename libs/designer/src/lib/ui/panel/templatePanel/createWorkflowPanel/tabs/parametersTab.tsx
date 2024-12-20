@@ -14,7 +14,7 @@ export const ParametersPanel: React.FC = () => {
 export const parametersTab = (
   intl: IntlShape,
   dispatch: AppDispatch,
-  { isCreating, shouldClearDetails, previousTabId, hasError }: CreateWorkflowTabProps
+  { isCreating, shouldClearDetails, previousTabId, hasError, isTemplateNameLocked }: CreateWorkflowTabProps
 ): TemplatePanelTab => ({
   id: constants.TEMPLATE_PANEL_TAB_NAMES.PARAMETERS,
   title: intl.formatMessage({
@@ -60,6 +60,6 @@ export const parametersTab = (
         }
       }
     },
-    secondaryButtonDisabled: isCreating,
+    secondaryButtonDisabled: isCreating || (!previousTabId && isTemplateNameLocked),
   },
 });
