@@ -17,9 +17,13 @@ export type CreateWorkflowHandler = (
   connectionsMapping: ConnectionMapping,
   parametersData: Record<string, Template.ParameterDefinition>
 ) => Promise<void>;
+
 export interface TemplatesDesignerProps {
   detailFilters: TemplateDetailFilterType;
   createWorkflowCall: CreateWorkflowHandler;
+  viewTemplate?: {
+    templateName?: string;
+  };
 }
 
 export const TemplatesDesigner = (props: TemplatesDesignerProps) => {

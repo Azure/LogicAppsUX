@@ -20,6 +20,7 @@ export interface CreateWorkflowTabProps {
   nextTabId?: string;
   hasError: boolean;
   shouldClearDetails: boolean;
+  templateNameLocked?: boolean;
 }
 
 export interface CreateWorkflowPanelProps {
@@ -37,11 +38,12 @@ export const CreateWorkflowPanel = ({ createWorkflow, onClose, clearDetailsOnClo
   const dispatch = useDispatch<AppDispatch>();
   const intl = useIntl();
   const { refetch: refetchWorkflowNames } = useExistingWorkflowNames();
-  const { selectedTabId, manifest, isOpen, currentPanelView } = useSelector((state: RootState) => ({
+  const { selectedTabId, manifest, isOpen, currentPanelView, templateNameLocked } = useSelector((state: RootState) => ({
     selectedTabId: state.panel.selectedTabId,
     manifest: state.template.manifest,
     isOpen: state.panel.isOpen,
     currentPanelView: state.panel.currentPanelView,
+    templateNameLocked: state.template.templateNameLocked,
   }));
   const isMultiWorkflow = useMemo(() => !!manifest && isMultiWorkflowTemplate(manifest), [manifest]);
 
@@ -69,6 +71,10 @@ export const CreateWorkflowPanel = ({ createWorkflow, onClose, clearDetailsOnClo
   };
 
   const dismissPanel = useCallback(() => {
+    if (templateNameLocked) {
+      return;
+    }
+
     dispatch(closePanel());
 
     if (clearDetailsOnClose) {
@@ -103,7 +109,7 @@ export const CreateWorkflowPanel = ({ createWorkflow, onClose, clearDetailsOnClo
       customWidth={'50%'}
       isOpen={isOpen && currentPanelView === TemplatePanelView.CreateWorkflow}
       onDismiss={dismissPanel}
-      hasCloseButton={true}
+      hasCloseButton={!templateNameLocked}
       onRenderHeader={onRenderHeaderContent}
       onRenderFooterContent={onRenderFooterContent}
       layerProps={layerProps}
