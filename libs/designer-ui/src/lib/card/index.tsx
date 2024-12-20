@@ -202,7 +202,9 @@ export const Card: React.FC<CardProps> = memo(
               <div className={css('panel-card-content-gripper-section', draggable && 'draggable')}>{draggable ? <Gripper /> : null}</div>
               <div className="panel-card-content-icon-section">{cardIcon}</div>
               <div className="panel-card-top-content">
-                <div className="panel-msla-title">{title}</div>
+                <div className="panel-msla-title">
+                  {nodeIndex} | {title}
+                </div>
               </div>
             </div>
             {errorMessage ? <ErrorBanner errorLevel={errorLevel} errorMessage={errorMessage} /> : null}

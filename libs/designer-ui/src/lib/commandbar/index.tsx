@@ -1,6 +1,7 @@
 import type React from 'react';
 import {
   Badge,
+  Button,
   Menu,
   MenuButton,
   MenuDivider,
@@ -13,8 +14,6 @@ import {
   OverflowItem,
   Spinner,
   SplitButton,
-  Toolbar,
-  ToolbarButton,
   ToolbarDivider,
   Tooltip,
   useIsOverflowGroupVisible,
@@ -23,6 +22,9 @@ import {
 } from '@fluentui/react-components';
 import { MoreHorizontal20Filled } from '@fluentui/react-icons';
 import './commandbar.less';
+
+import { RovingTabIndexProvider, useRovingTabIndex, useFocusEffect } from 'react-roving-tabindex';
+import { useRef } from 'react';
 
 export interface CommandBarItem {
   id: string;
@@ -44,112 +46,126 @@ export interface CommandBarProps extends React.HTMLAttributes<HTMLDivElement> {
   isDarkMode?: boolean;
 }
 
-export const CommandBar = ({ items, isDarkMode, tabIndex, ...props }: CommandBarProps) => {
+export const CommandBar = ({ items, isDarkMode, ...props }: CommandBarProps) => {
   const visibleItems = items.filter((item) => item.visible !== false);
 
   return (
-    <div style={{ overflow: 'hidden' }} {...props}>
+    <RovingTabIndexProvider>
       <Overflow padding={90}>
-        <Toolbar
+        <div
           className="msla-command-bar"
           style={{ borderBottom: `1px solid ${isDarkMode ? '#333333' : '#d6d6d6'}` }}
-          tabIndex={tabIndex}
+          role={'toolbar'}
+          {...props}
         >
-          {visibleItems.map((item, index) => {
-            const { id, groupId = 'default', loading, text, icon, ariaLabel, onClick, tooltip, disabled, isError, subItems } = item;
-
-            const buttonContent = (
-              <>
-                {text}
-                {isError && <Badge size="extra-small" color="danger" className="msla-command-bar-error-badge" />}
-              </>
-            );
-
-            const buttonProps = {
-              overflowId: id,
-              overflowGroupId: groupId,
-              className: 'msla-command-bar-button',
-              icon: loading ? <Spinner size="extra-tiny" /> : icon,
-              ariaLabel: ariaLabel ?? text,
-              disabled,
-              onClick,
-            };
-
-            const toolbarButton = (
-              <OverflowItem id={id} groupId={groupId}>
-                <ToolbarButton {...buttonProps}>{buttonContent}</ToolbarButton>
-              </OverflowItem>
-            );
-
-            const menuButtonWithMenu = (
-              <Menu>
-                {onClick ? (
-                  <MenuTrigger disableButtonEnhancement>
-                    {(triggerProps) => (
-                      <OverflowItem id={id} groupId={groupId}>
-                        <SplitButton
-                          primaryActionButton={buttonProps}
-                          menuButton={triggerProps}
-                          appearance="subtle"
-                          disabled={buttonProps.disabled}
-                        >
-                          {buttonContent}
-                        </SplitButton>
-                      </OverflowItem>
-                    )}
-                  </MenuTrigger>
-                ) : (
-                  <MenuTrigger disableButtonEnhancement>
-                    <OverflowItem id={id} groupId={groupId}>
-                      <MenuButton {...buttonProps} appearance="subtle">
-                        {buttonContent}
-                      </MenuButton>
-                    </OverflowItem>
-                  </MenuTrigger>
-                )}
-                <MenuPopover>
-                  <MenuList>
-                    {(subItems ?? []).map((subItem) => (
-                      <MenuItem
-                        key={subItem.id}
-                        icon={subItem.icon}
-                        aria-label={subItem.text}
-                        onClick={subItem.onClick}
-                        disabled={subItem.disabled}
-                      >
-                        {subItem.text}
-                      </MenuItem>
-                    ))}
-                  </MenuList>
-                </MenuPopover>
-              </Menu>
-            );
-
-            const button = subItems ? menuButtonWithMenu : toolbarButton;
-
-            const divider = visibleItems?.[index + 1] && (visibleItems[index + 1].groupId ?? 'default') !== groupId && (
-              <ToolbarOverflowDivider groupId={groupId} />
-            );
-
-            const content = tooltip ? (
-              <Tooltip relationship={'description'} content={tooltip} withArrow showDelay={0}>
-                {button}
-              </Tooltip>
-            ) : (
-              button
-            );
-
-            return (
-              <>
-                {content}
-                {divider}
-              </>
-            );
-          })}
+          {visibleItems.map((item, index) => (
+            <ToolbarButton key={item.id} index={index} item={item} visibleItems={visibleItems} />
+          ))}
           <OverflowMenu items={visibleItems} />
-        </Toolbar>
+        </div>
       </Overflow>
-    </div>
+    </RovingTabIndexProvider>
+  );
+};
+
+const ToolbarButton = (props: { item: CommandBarItem; index: number; visibleItems: CommandBarItem[] }) => {
+  const { item, index, visibleItems } = props;
+
+  const { id, groupId = 'default', loading, text, icon, ariaLabel, onClick, tooltip, disabled, isError, subItems } = item;
+
+  // The ref of the input to be controlled.
+  const ref = useRef<HTMLButtonElement>(null);
+
+  // handleKeyDown and handleClick are stable for the lifetime of the component:
+  const [tabIndexRoving, focused, handleKeyDownRoving, handleClickRoving] = useRovingTabIndex(
+    ref, // Don't change the value of this ref.
+    disabled ?? false // But change this as you like throughout the lifetime of the component.
+  );
+
+  // Use some mechanism to set focus on the button if it gets focus.
+  // In this case I use the included useFocusEffect hook:
+  useFocusEffect(focused, ref);
+
+  const buttonContent = (
+    <>
+      {text}
+      {isError && <Badge size="extra-small" color="danger" className="msla-command-bar-error-badge" />}
+    </>
+  );
+
+  const buttonProps: any = {
+    ref,
+    overflowId: id,
+    overflowGroupId: groupId,
+    className: 'msla-command-bar-button',
+    icon: loading ? <Spinner size="extra-tiny" /> : icon,
+    ariaLabel: ariaLabel ?? text,
+    appearance: 'subtle',
+    disabled,
+    onClick: () => {
+      handleClickRoving();
+      onClick?.();
+    },
+    onKeyDown: handleKeyDownRoving,
+    tabIndex: tabIndexRoving,
+  };
+
+  const toolbarButton = (
+    <OverflowItem id={id} groupId={groupId}>
+      <Button {...buttonProps}>{buttonContent}</Button>
+    </OverflowItem>
+  );
+
+  const menuButtonWithMenu = (
+    <Menu>
+      {onClick ? (
+        <MenuTrigger disableButtonEnhancement>
+          {(triggerProps) => (
+            <OverflowItem id={id} groupId={groupId}>
+              <SplitButton primaryActionButton={buttonProps} menuButton={triggerProps} appearance="subtle" disabled={buttonProps.disabled}>
+                {buttonContent}
+              </SplitButton>
+            </OverflowItem>
+          )}
+        </MenuTrigger>
+      ) : (
+        <MenuTrigger disableButtonEnhancement>
+          <OverflowItem id={id} groupId={groupId}>
+            <MenuButton {...buttonProps}>{buttonContent}</MenuButton>
+          </OverflowItem>
+        </MenuTrigger>
+      )}
+      <MenuPopover>
+        <MenuList>
+          {(subItems ?? []).map((subItem) => (
+            <MenuItem key={subItem.id} icon={subItem.icon} aria-label={subItem.text} onClick={subItem.onClick} disabled={subItem.disabled}>
+              {subItem.text}
+            </MenuItem>
+          ))}
+        </MenuList>
+      </MenuPopover>
+    </Menu>
+  );
+
+  const button = subItems ? menuButtonWithMenu : toolbarButton;
+
+  const divider = visibleItems?.[index + 1] && (visibleItems[index + 1].groupId ?? 'default') !== groupId && (
+    <ToolbarOverflowDivider groupId={groupId} />
+  );
+
+  const content = tooltip ? (
+    <Tooltip relationship={'description'} content={tooltip} withArrow showDelay={0}>
+      {button}
+    </Tooltip>
+  ) : (
+    button
+  );
+
+  return (
+    <>
+      {content}
+      {divider}
+    </>
   );
 };
 
