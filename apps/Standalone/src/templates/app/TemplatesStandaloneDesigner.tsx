@@ -310,6 +310,7 @@ export const TemplatesStandaloneDesigner = () => {
               }}
             >
               <TemplatesDesigner
+                templateName="ingest-index-ai-blob-storage-rag"
                 detailFilters={{
                   Category: {
                     displayName: 'Categories',

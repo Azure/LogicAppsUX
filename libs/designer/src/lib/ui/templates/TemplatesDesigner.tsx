@@ -20,6 +20,7 @@ export type CreateWorkflowHandler = (
 export interface TemplatesDesignerProps {
   detailFilters: TemplateDetailFilterType;
   createWorkflowCall: CreateWorkflowHandler;
+  templateName?: string;
 }
 
 export const TemplatesDesigner = (props: TemplatesDesignerProps) => {

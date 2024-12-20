@@ -1,6 +1,6 @@
 import type { AppDispatch, RootState } from '../state/Store';
 import type { IDropdownOption } from '@fluentui/react';
-import { Dropdown, Stack, StackItem } from '@fluentui/react';
+import { Dropdown, Stack, StackItem, TextField } from '@fluentui/react';
 import { Accordion, AccordionHeader, AccordionItem, AccordionPanel, tokens } from '@fluentui/react-components';
 import { Theme as ThemeType } from '@microsoft/logic-apps-shared';
 import { useCallback } from 'react';
@@ -62,6 +62,9 @@ export const DevToolbox = () => {
                   </StackItem>
                   <StackItem style={{ width: '100%' }}>
                     {isConsumption ? <AzureConsumptionLogicAppSelector /> : <AzureStandardLogicAppSelector />}
+                  </StackItem>
+                  <StackItem style={{ width: '100%' }}>
+                    <TextField label="TemplateName" />
                   </StackItem>
                 </Stack>
               </AccordionPanel>

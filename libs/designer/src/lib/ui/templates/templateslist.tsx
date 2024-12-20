@@ -5,17 +5,39 @@ import { EmptySearch, Pager } from '@microsoft/designer-ui';
 import { Text } from '@fluentui/react-components';
 import { useIntl } from 'react-intl';
 import { TemplateFilters } from './filters/templateFilters';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { setLayerHostSelector } from '@fluentui/react';
 import type { TemplatesDesignerProps } from './TemplatesDesigner';
 import { setPageNum, templatesCountPerPage } from '../../core/state/templates/manifestSlice';
 import { QuickViewPanel } from '../panel/templatePanel/quickViewPanel/quickViewPanel';
 import { CreateWorkflowPanel } from '../panel/templatePanel/createWorkflowPanel/createWorkflowPanel';
+import { changeCurrentTemplateName } from '../../core/state/templates/templateSlice';
+import { openQuickViewPanelView } from '../../core/state/templates/panelSlice';
+import { loadTemplate } from '../../core/actions/bjsworkflow/templates';
 
-export const TemplatesList = ({ detailFilters, createWorkflowCall }: TemplatesDesignerProps) => {
+export const TemplatesList = ({ detailFilters, createWorkflowCall, templateName: preselectedTemplateName }: TemplatesDesignerProps) => {
   useEffect(() => setLayerHostSelector('#msla-layer-host'), []);
   const intl = useIntl();
   const dispatch = useDispatch<AppDispatch>();
+
+  const [selected, setSelected] = useState(false);
+  const availableTemplates = useSelector((state: RootState) => state.manifest.availableTemplates);
+
+  if (preselectedTemplateName) {
+    const templateManifest = availableTemplates?.[preselectedTemplateName];
+    const onSelectTemplate = () => {
+      dispatch(changeCurrentTemplateName(preselectedTemplateName));
+      dispatch(loadTemplate(templateManifest));
+
+      if (Object.keys(templateManifest?.workflows ?? {}).length === 0) {
+        dispatch(openQuickViewPanelView());
+      }
+    };
+    if (templateManifest && !selected) {
+      setSelected(true);
+      onSelectTemplate();
+    }
+  }
 
   const { templateName, workflows } = useSelector((state: RootState) => state.template);
   const {
