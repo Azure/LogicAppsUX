@@ -26,7 +26,6 @@ export const MapCheckerPanel = () => {
   const intl = useIntl();
   const styles = useStyles();
   const isMapCheckerPanelOpen = useSelector((state: RootState) => state.panel.mapCheckerPanel.isOpen);
-  //const dispatch = useDispatch<AppDispatch>();
 
   const sourceSchema = useSelector((state: RootState) => state.dataMap.present.curDataMapOperation.sourceSchema);
   const targetSchema = useSelector((state: RootState) => state.dataMap.present.curDataMapOperation.targetSchema);

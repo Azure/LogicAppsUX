@@ -63,6 +63,8 @@ const DataProviderInner = ({
         fetchedFunctions
       );
       const connections = mapDefinitionDeserializer.convertFromMapDefinition();
+      // const warningMessages = mapDefinitionDeserializer.getWarningMessages();
+      // dispatch()
       dispatch(
         setInitialDataMap({
           sourceSchema: extendedSourceSchema,

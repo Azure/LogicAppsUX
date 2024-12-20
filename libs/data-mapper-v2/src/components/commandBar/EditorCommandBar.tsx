@@ -222,6 +222,7 @@ export const EditorCommandBar = (_props: EditorCommandBarProps) => {
       discard: !isDirty,
       test: sourceInEditState || targetInEditState || !xsltFilename,
       codeView: sourceInEditState || targetInEditState,
+      mapChecker: sourceInEditState || targetInEditState,
     }),
     [isDirty, undoStack.length, sourceInEditState, targetInEditState, xsltFilename]
   );
@@ -259,7 +260,12 @@ export const EditorCommandBar = (_props: EditorCommandBarProps) => {
         </ToolbarGroup>
         <ToolbarGroup>
           <Switch disabled={disabledState.codeView} label={Resources.VIEW_CODE} onChange={onCodeViewClick} checked={isCodeViewOpen} />
-          <Switch label={Resources.VIEW_MAP_CHECKER} onChange={onMapCheckerClick} checked={isMapCheckerOpen} />
+          <Switch
+            disabled={disabledState.mapChecker}
+            label={Resources.VIEW_MAP_CHECKER}
+            onChange={onMapCheckerClick}
+            checked={isMapCheckerOpen}
+          />
         </ToolbarGroup>
       </Toolbar>
       <Toaster timeout={10000} toasterId={toasterId} />

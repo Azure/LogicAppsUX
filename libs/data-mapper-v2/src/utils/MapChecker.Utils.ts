@@ -15,6 +15,31 @@ import { SchemaNodeProperty } from '@microsoft/logic-apps-shared';
 import { defineMessages } from 'react-intl';
 import type { IntlMessage } from './Intl.Utils';
 
+export class DeserializationError extends Error {
+  public mapIssue: MapIssue;
+
+  constructor(message: string, mapIssue: MapIssue) {
+    super(message);
+    this.name = 'DeserializationError';
+    this.mapIssue = mapIssue;
+  }
+}
+export interface MapIssue {
+  severity: MapCheckerItemSeverity;
+  reactFlowId: string;
+  issueType: MapIssueType;
+}
+
+export const MapIssueType = {
+  TargetSchemaNodeNotFound: 'TargetSchemaNodeNotFound',
+  FunctionNotFound: 'FunctionNotFound',
+  KeyNotFound: 'KeyNotFound',
+  LoopSourceNotFound: 'LoopSourceNotFound',
+  SourceSchemaNodeNotFound: 'SourceSchemaNodeNotFound',
+};
+
+export type MapIssueType = (typeof MapIssueType)[keyof typeof MapIssueType];
+
 export const MapCheckerItemSeverity = {
   Error: 'Error',
   Warning: 'Warning',
