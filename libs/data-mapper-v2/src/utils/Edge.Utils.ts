@@ -1,8 +1,9 @@
-import { LogCategory, LogService } from './Logging.Utils';
+import { LogCategory } from './Logging.Utils';
 import * as PF from 'pathfinding';
 import type { Node as ReactFlowNode, XYPosition } from '@xyflow/react';
 import { Position } from '@xyflow/react';
 import { guid } from '@microsoft/logic-apps-shared';
+import { LoggerService } from '../core/services/LoggerServicer';
 
 interface BoundingBox {
   width: number;
@@ -342,7 +343,7 @@ const findPath = (grid: PF.Grid, start: XYPosition, end: XYPosition): number[][]
   const path = pathfinder.findPath(start.x, start.y, end.x, end.y, grid);
 
   if (path.length === 0) {
-    LogService.error(LogCategory.EdgeUtils, 'findPath', {
+    LoggerService().error(LogCategory.EdgeUtils, 'findPath', {
       message: `Unable to find path between (${start.x}, ${start.y}) and (${end.x}, ${end.y}) - using simple path instead`,
     });
 

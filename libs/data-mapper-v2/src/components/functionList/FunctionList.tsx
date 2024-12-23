@@ -2,7 +2,7 @@ import type { RootState } from '../../core/state/Store';
 import type { FunctionData } from '../../models/Function';
 import { FunctionCategory } from '../../models/Function';
 import { hasOnlyCustomInputType } from '../../utils/Function.Utils';
-import { LogCategory, LogService } from '../../utils/Logging.Utils';
+import { LogCategory } from '../../utils/Logging.Utils';
 import FunctionListHeader from './FunctionListHeader';
 import FunctionListItem from './FunctionListItem';
 import type { TreeItemValue, TreeOpenChangeData, TreeOpenChangeEvent } from '@fluentui/react-components';
@@ -11,6 +11,7 @@ import Fuse from 'fuse.js';
 import React, { useCallback, useMemo } from 'react';
 import { useStyles } from './styles';
 import { useSelector } from 'react-redux';
+import { LoggerService } from '../../core';
 
 const fuseFunctionSearchOptions: Fuse.IFuseOptions<FunctionData> = {
   includeScore: true,
@@ -106,13 +107,13 @@ export const FunctionList = (props: FunctionListProps) => {
       return Object.values(updatedFunctionCategories).filter((category) => category.children.length > 0);
     } catch (error) {
       if (typeof error === 'string') {
-        LogService.error(LogCategory.FunctionList, 'functionListError', {
+        LoggerService().error(LogCategory.FunctionList, 'functionListError', {
           message: error,
         });
         throw new Error(`Function List Error: ${error}`);
       }
       if (error instanceof Error) {
-        LogService.error(LogCategory.FunctionList, 'functionListError', {
+        LoggerService().error(LogCategory.FunctionList, 'functionListError', {
           message: error.message,
         });
         throw new Error(`Function List Error: ${error.message}`);

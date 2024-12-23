@@ -17,7 +17,6 @@ import {
 import type { UnknownNode } from '../../utils/DataMap.Utils';
 import { addParentConnectionForRepeatingElementsNested, getParentId } from '../../utils/DataMap.Utils';
 import { createFunctionDictionary, isFunctionData } from '../../utils/Function.Utils';
-import { LogService } from '../../utils/Logging.Utils';
 import { flattenSchemaIntoDictionary, flattenSchemaNode, isSchemaNodeExtended, flattenSchemaIntoSortArray } from '../../utils/Schema.Utils';
 import type {
   FunctionMetadata,
@@ -34,6 +33,7 @@ import type { Rect, XYPosition } from '@xyflow/react';
 import { createReactFlowFunctionKey, isFunctionNode, isSourceNode, isTargetNode } from '../../utils/ReactFlow.Util';
 import { UnboundedInput } from '../../constants/FunctionConstants';
 import { splitEdgeId } from '../../utils/Edge.Utils';
+import { LoggerService } from '../services/LoggerServicer';
 
 export interface DataMapState {
   curDataMapOperation: DataMapOperationState;
@@ -676,7 +676,7 @@ export default dataMapSlice.reducer;
 
 /* eslint-disable no-param-reassign */
 const doDataMapOperation = (state: DataMapState, newCurrentState: DataMapState, action: string) => {
-  if (LogService.logToConsole) {
+  if (LoggerService().logToConsole) {
     console.log(`Action: ${action}`);
   }
 

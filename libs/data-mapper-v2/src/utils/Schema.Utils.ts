@@ -1,7 +1,7 @@
 import { mapNodeParams } from '../constants/MapDefinitionConstants';
 import { sourcePrefix, targetPrefix } from '../constants/ReactFlowConstants';
 import type { FunctionData } from '../models/Function';
-import { LogCategory, LogService } from './Logging.Utils';
+import { LogCategory } from './Logging.Utils';
 import type {
   PathItem,
   DataMapSchema,
@@ -13,6 +13,7 @@ import type {
 import { guid, NormalizedDataType, SchemaNodeProperty, SchemaType } from '@microsoft/logic-apps-shared';
 import { addReactFlowPrefix } from './ReactFlow.Util';
 import type { Node } from '@xyflow/react';
+import { LoggerService } from '../core/services/LoggerServicer';
 
 export const getReactFlowNodeId = (key: string, isLeftDirection: boolean) =>
   addReactFlowPrefix(key, isLeftDirection ? SchemaType.Source : SchemaType.Target);
@@ -23,7 +24,7 @@ export const convertSchemaToSchemaExtended = (schema: DataMapSchema): SchemaExte
     schemaTreeRoot: convertSchemaNodeToSchemaNodeExtended(schema.schemaTreeRoot, undefined, []),
   };
 
-  LogService.log(LogCategory.SchemaUtils, 'convertSchemaToSchemaExtended', {
+  LoggerService().log(LogCategory.SchemaUtils, 'convertSchemaToSchemaExtended', {
     message: 'Schema converted',
     data: {
       schemaFileFormat: schema.type,

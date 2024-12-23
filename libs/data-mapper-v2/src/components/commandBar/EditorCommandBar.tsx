@@ -18,9 +18,9 @@ import { useCallback, useEffect, useMemo } from 'react';
 import { useIntl } from 'react-intl';
 import { useDispatch, useSelector } from 'react-redux';
 import { generateMapMetadata } from '../../mapHandling/MapMetadataSerializer';
-import { DataMapperFileService, generateDataMapXslt } from '../../core';
+import { DataMapperFileService, generateDataMapXslt, LoggerService } from '../../core';
 import { saveDataMap, updateDataMapLML } from '../../core/state/DataMapSlice';
-import { LogCategory, LogService } from '../../utils/Logging.Utils';
+import { LogCategory } from '../../utils/Logging.Utils';
 import type { MetaMapDefinition } from '../../mapHandling/MapDefinitionSerializer';
 import { convertToMapDefinition } from '../../mapHandling/MapDefinitionSerializer';
 import { toggleCodeView, toggleTestPanel } from '../../core/state/PanelSlice';
@@ -72,7 +72,7 @@ export const EditorCommandBar = (_props: EditorCommandBarProps) => {
         } else if (error instanceof Error) {
           errorMessage = error.message;
         }
-        LogService.error(LogCategory.DataMapperDesigner, 'dataMapDefinition', {
+        LoggerService().error(LogCategory.DataMapperDesigner, 'dataMapDefinition', {
           message: errorMessage,
         });
         return { isSuccess: false, errorNodes: [] };
@@ -110,12 +110,12 @@ export const EditorCommandBar = (_props: EditorCommandBarProps) => {
         .then((xsltStr) => {
           DataMapperFileService().saveXsltCall(xsltStr);
 
-          LogService.log(LogCategory.DataMapperDesigner, 'onGenerateClick', {
+          LoggerService().log(LogCategory.DataMapperDesigner, 'onGenerateClick', {
             message: 'Successfully generated xslt',
           });
         })
         .catch((error: Error) => {
-          LogService.error(LogCategory.DataMapperDesigner, 'onGenerateClick', {
+          LoggerService().error(LogCategory.DataMapperDesigner, 'onGenerateClick', {
             message: JSON.stringify(error),
           });
           dispatchToast(

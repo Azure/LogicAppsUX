@@ -1,4 +1,5 @@
 //import { MapCheckerItemSeverity } from '../components/sidePane/tabs/mapCheckerTab/MapCheckerItem';
+import { LoggerService } from '../core';
 import { CollectionRegular, StringCategory20Regular } from '../images/FunctionIcons/CategoryIcons';
 import {
   Any16Filled,
@@ -51,7 +52,7 @@ import {
   XPowerY32Regular,
 } from '../images/FunctionIcons/FunctionIcons';
 import { FunctionCategory } from '../models/Function';
-import { LogCategory, LogService } from './Logging.Utils';
+import { LogCategory } from './Logging.Utils';
 import { FontIcon } from '@fluentui/react';
 import type { FluentIcon } from '@fluentui/react-icons';
 import {
@@ -151,7 +152,7 @@ export const iconForNormalizedDataType = (
       break;
     }
     default: {
-      LogService.error(LogCategory.IconUtils, 'iconForNormalizedDataType', {
+      LoggerService().error(LogCategory.IconUtils, 'iconForNormalizedDataType', {
         message: `No icon found for type: ${nodeType}`,
       });
 
@@ -192,7 +193,7 @@ export const iconForFunctionCategory = (functionCategory: FunctionCategory) => {
       return WrenchRegular;
     }
     default: {
-      LogService.error(LogCategory.IconUtils, 'iconForFunctionCategory', {
+      LoggerService().error(LogCategory.IconUtils, 'iconForFunctionCategory', {
         message: `Invalid category type: ${functionCategory}`,
       });
 

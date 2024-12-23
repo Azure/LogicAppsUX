@@ -16,7 +16,7 @@ import type { FunctionDictionary, FunctionData } from '../models/Function';
 import { FunctionCategory, directAccessPseudoFunctionKey, ifPseudoFunctionKey, indexPseudoFunctionKey } from '../models/Function';
 import { connectionDoesExist, isNodeConnection, isCustomValueConnection, isEmptyConnection } from './Connection.Utils';
 import { getInputValues } from './DataMap.Utils';
-import { LogCategory, LogService } from './Logging.Utils';
+import { LogCategory } from './Logging.Utils';
 import { isSchemaNodeExtended } from './Schema.Utils';
 import {
   isAGuid,
@@ -25,6 +25,7 @@ import {
   type SchemaNodeExtended,
   type FunctionMetadata,
 } from '@microsoft/logic-apps-shared';
+import { LoggerService } from '../core';
 
 export const getFunctionBrandingForCategory = (functionCategory: FunctionCategory) => {
   switch (functionCategory) {
@@ -53,7 +54,7 @@ export const getFunctionBrandingForCategory = (functionCategory: FunctionCategor
       return conversionBranding;
     }
     default: {
-      LogService.error(LogCategory.FunctionUtils, 'getFunctionBrandingForCategory', {
+      LoggerService().error(LogCategory.FunctionUtils, 'getFunctionBrandingForCategory', {
         message: `Invalid category provided: ${functionCategory}`,
       });
 
@@ -106,7 +107,7 @@ export const getIndexValueForCurrentConnection = (currentConnection: Connection,
     // Function, try moving back the chain to find the source
     return getIndexValueForCurrentConnection(connections[firstInput.reactFlowKey], connections);
   }
-  LogService.error(LogCategory.FunctionUtils, 'getIndexValueForCurrentConnection', {
+  LoggerService().error(LogCategory.FunctionUtils, 'getIndexValueForCurrentConnection', {
     message: `Didn't find inputNode to make index value`,
     data: {
       connection: currentConnection,

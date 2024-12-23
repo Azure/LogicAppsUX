@@ -1,7 +1,7 @@
 import type { FunctionData } from '../../models/Function';
 import { pseudoFunctions } from '../../models/Function';
-import { LogCategory, LogService } from '../../utils/Logging.Utils';
-import { DataMapperApiServiceInstance } from '../services';
+import { LogCategory } from '../../utils/Logging.Utils';
+import { DataMapperApiServiceInstance, LoggerService } from '../services';
 
 // Returns a Promise of either the Function manifest, or the response's error message
 export const getFunctions = (): Promise<FunctionData[] | string> => {
@@ -21,7 +21,7 @@ export const getFunctions = (): Promise<FunctionData[] | string> => {
       return [...filteredFunctions, ...pseudoFunctions];
     })
     .catch((error: Error) => {
-      LogService.error(LogCategory.FunctionsQuery, 'getFunctionsManifest', {
+      LoggerService().error(LogCategory.FunctionsQuery, 'getFunctionsManifest', {
         message: `Error getting functions manifest: ${error.message}`,
       });
 
