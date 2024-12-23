@@ -13,8 +13,8 @@ import { TokenPickerHeader } from './tokenpickerheader';
 import { TokenPickerPivot } from './tokenpickerpivot';
 import type { GetValueSegmentHandler } from './tokenpickersection/tokenpickeroption';
 import { TokenPickerSection } from './tokenpickersection/tokenpickersection';
-import type { ICalloutContentStyles, ISearchBox, PivotItem } from '@fluentui/react';
-import { SearchBox, DirectionalHint, Callout } from '@fluentui/react';
+import type { ICalloutContentStyles, IFocusTrapZoneProps, ISearchBox, PivotItem } from '@fluentui/react';
+import { SearchBox, DirectionalHint, FocusTrapCallout } from '@fluentui/react';
 import { useLexicalComposerContext } from '@lexical/react/LexicalComposerContext';
 import { $getSelection, type LexicalEditor, type NodeKey } from 'lexical';
 import { useEffect, useRef, useState } from 'react';
@@ -222,14 +222,17 @@ export function TokenPicker({
     description: 'Button text for the create expression with copilot feature',
   });
 
+  const focusTrapProps: IFocusTrapZoneProps = { isClickableOutsideFocusTrap: true };
+
   const nl2fExpressionPane = (
-    <Callout
+    <FocusTrapCallout
       role="dialog"
       ariaLabelledBy={labelId}
       gapSpace={gapSpace}
       target={`#${editorId}`}
       beakWidth={beakWidth}
       directionalHint={directionalHint}
+      focusTrapProps={focusTrapProps}
       onMouseMove={handleExpressionEditorMoveDistance}
       onMouseUp={() => {
         if (isDraggingExpressionEditor) {
@@ -277,7 +280,7 @@ export function TokenPicker({
           setExpressionEditorError={setExpressionEditorError}
         />
       </div>
-    </Callout>
+    </FocusTrapCallout>
   );
 
   if (isNl2fExpression) {
@@ -286,13 +289,14 @@ export function TokenPicker({
 
   return (
     <>
-      <Callout
+      <FocusTrapCallout
         role="dialog"
         ariaLabelledBy={labelId}
         gapSpace={gapSpace}
         target={`#${editorId}`}
         beakWidth={beakWidth}
         directionalHint={directionalHint}
+        focusTrapProps={focusTrapProps}
         onMouseMove={handleExpressionEditorMoveDistance}
         onMouseUp={() => {
           if (isDraggingExpressionEditor) {
@@ -414,7 +418,7 @@ export function TokenPicker({
             ) : null}
           </div>
         </div>
-      </Callout>
+      </FocusTrapCallout>
       {tokenClickedCallback ? null : <TokenPickerHandler handleUpdateExpressionToken={handleUpdateExpressionToken} />}
       {tokenClickedCallback ? null : <UpdateTokenNode />}
     </>
