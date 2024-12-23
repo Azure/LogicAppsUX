@@ -3,11 +3,13 @@ import { EditorCommandBar } from '../components/commandBar/EditorCommandBar';
 import { useStaticStyles, useStyles } from './styles';
 import { FunctionPanel } from '../components/functionsPanel/FunctionPanel';
 import {
+  type ILoggerService,
   DataMapperWrappedContext,
   InitDataMapperFileService,
   type ScrollLocation,
   type ScrollProps,
   type IDataMapperFileService,
+  InitDataMapperLoggerService,
 } from '../core';
 import { CodeViewPanel } from '../components/codeView/CodeViewPanel';
 import { ReactFlowWrapper } from '../components/canvas/ReactFlow';
@@ -18,10 +20,11 @@ import { setSelectedItem } from '../core/state/DataMapSlice';
 
 interface DataMapperDesignerProps {
   fileService: IDataMapperFileService;
+  loggerService: ILoggerService;
   setIsMapStateDirty?: (isMapStateDirty: boolean) => void;
 }
 
-export const DataMapperDesigner = ({ fileService, setIsMapStateDirty }: DataMapperDesignerProps) => {
+export const DataMapperDesigner = ({ fileService, loggerService, setIsMapStateDirty }: DataMapperDesignerProps) => {
   useStaticStyles();
   const styles = useStyles();
   const [sourceScroll, setSourceScroll] = useState<ScrollProps>();
@@ -41,6 +44,10 @@ export const DataMapperDesigner = ({ fileService, setIsMapStateDirty }: DataMapp
 
   if (fileService) {
     InitDataMapperFileService(fileService);
+  }
+
+  if (fileService) {
+    InitDataMapperLoggerService(loggerService);
   }
 
   const onContainerClick = useCallback(
