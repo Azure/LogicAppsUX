@@ -1,4 +1,4 @@
-import { AssertionErrorCode, AssertionException, guid } from '@microsoft/logic-apps-shared';
+import { AssertionErrorCode, AssertionException, guid, isObject } from '@microsoft/logic-apps-shared';
 import type { LogCategory } from 'utils/Logging.Utils';
 
 export interface LogMessage {
@@ -7,7 +7,7 @@ export interface LogMessage {
 }
 
 export interface ILoggerService {
-  trackEvent: (name: string, data: any) => void;
+  trackEvent: (name: string, data: Record<string, any>) => void;
   startTrace: (eventName: string) => string;
   endTrace: (id: string, eventName: string, data: LogMessage) => void;
 }
@@ -158,8 +158,8 @@ class DataMapperLoggerService implements IDataMapperLoggerService {
     }
   }
 
-  private _getTrackingData(data: any) {
-    const properties = typeof data === 'object' ? data : { message: data };
+  private _getTrackingData(data: any): Record<string, any> {
+    const properties = isObject(data) ? data : { message: data };
 
     return {
       ...properties,

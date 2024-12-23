@@ -11,6 +11,7 @@ import {
   defaultDataMapperApiServiceOptions,
   getFunctions,
   getSelectedSchema,
+  InitDataMapperLoggerService,
 } from '@microsoft/logic-apps-data-mapper-v2';
 import { getTheme, useThemeObserver } from '@microsoft/logic-apps-designer';
 import type { Theme } from '@microsoft/logic-apps-shared';
@@ -18,6 +19,7 @@ import type { MessageToVsix } from '@microsoft/vscode-extension-logic-apps';
 import { ExtensionCommand } from '@microsoft/vscode-extension-logic-apps';
 import { useCallback, useContext, useEffect, useMemo, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
+import { DataMapperLoggerService } from './services/dataMapperLoggerService';
 
 export const DataMapperAppV2 = () => {
   const dispatch = useDispatch<AppDispatch>();
@@ -42,6 +44,7 @@ export const DataMapperAppV2 = () => {
       ...defaultDataMapperApiServiceOptions,
       port: runtimePort ?? defaultDataMapperApiServiceOptions.port,
     });
+    InitDataMapperLoggerService(new DataMapperLoggerService());
   }
 
   const sendMsgToVsix = useCallback(
