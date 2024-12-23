@@ -12,7 +12,7 @@ export class DataMapperLoggerService implements ILoggerService {
 
   public trackEvent = (name: string, data: Record<string, any>) => {
     this.sendMsgToVsix({
-      command: ExtensionCommand.logTelmetry,
+      command: ExtensionCommand.logTelemetry,
       data: { ...data, timestamp: Date.now(), name },
     });
   };
@@ -21,7 +21,7 @@ export class DataMapperLoggerService implements ILoggerService {
     const id = guid();
     const startTimestamp = Date.now();
     this.sendMsgToVsix({
-      command: ExtensionCommand.logTelmetry,
+      command: ExtensionCommand.logTelemetry,
       data: { timestamp: startTimestamp, actionModifier: 'start', duration: 0, data: { id, eventName } },
     });
 
@@ -37,7 +37,7 @@ export class DataMapperLoggerService implements ILoggerService {
     }
     this.inProgressTraces.delete(id);
     this.sendMsgToVsix({
-      command: ExtensionCommand.logTelmetry,
+      command: ExtensionCommand.logTelemetry,
       data: {
         ...traceData.data,
         timestamp: endTimestamp,
