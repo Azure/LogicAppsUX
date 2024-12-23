@@ -11,7 +11,6 @@ import {
   defaultDataMapperApiServiceOptions,
   getFunctions,
   getSelectedSchema,
-  InitDataMapperLoggerService,
 } from '@microsoft/logic-apps-data-mapper-v2';
 import { getTheme, useThemeObserver } from '@microsoft/logic-apps-designer';
 import type { Theme } from '@microsoft/logic-apps-shared';
@@ -44,7 +43,6 @@ export const DataMapperAppV2 = () => {
       ...defaultDataMapperApiServiceOptions,
       port: runtimePort ?? defaultDataMapperApiServiceOptions.port,
     });
-    InitDataMapperLoggerService(new DataMapperLoggerService());
   }
 
   const sendMsgToVsix = useCallback(
@@ -56,6 +54,10 @@ export const DataMapperAppV2 = () => {
 
   const dataMapperFileService = useMemo(() => {
     return new DataMapperFileService(sendMsgToVsix);
+  }, [sendMsgToVsix]);
+
+  const dataMapperLoggerService = useMemo(() => {
+    return new DataMapperLoggerService(sendMsgToVsix);
   }, [sendMsgToVsix]);
 
   const setIsMapStateDirty = (isMapStateDirty: boolean) => {
@@ -169,7 +171,11 @@ export const DataMapperAppV2 = () => {
           theme={theme}
         >
           <div style={{ height: '100vh', overflow: 'hidden' }}>
-            <DataMapperDesigner fileService={dataMapperFileService} setIsMapStateDirty={setIsMapStateDirty} />
+            <DataMapperDesigner
+              fileService={dataMapperFileService}
+              loggerService={dataMapperLoggerService}
+              setIsMapStateDirty={setIsMapStateDirty}
+            />
           </div>
         </DataMapDataProvider>
       </DataMapperDesignerProvider>
