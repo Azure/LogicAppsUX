@@ -19,6 +19,7 @@ import { ExtensionCommand } from '@microsoft/vscode-extension-logic-apps';
 import { useCallback, useContext, useEffect, useMemo, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { DataMapperLoggerService } from './services/dataMapperLoggerService';
+import packagejson from '../../../package.json';
 
 export const DataMapperAppV2 = () => {
   const dispatch = useDispatch<AppDispatch>();
@@ -35,6 +36,7 @@ export const DataMapperAppV2 = () => {
   const schemaFileList = useSelector((state: RootState) => state.dataMap.schemaFileList);
   const customXsltPathsList = useSelector((state: RootState) => state.dataMap.customXsltPathsList);
   const fetchedFunctions = useSelector((state: RootState) => state.dataMap.fetchedFunctions);
+  const dataMapperVersion = useSelector((state: RootState) => state.project.dataMapperVersion);
 
   const runtimePort = useSelector((state: RootState) => state.dataMap.runtimePort);
 
@@ -57,8 +59,8 @@ export const DataMapperAppV2 = () => {
   }, [sendMsgToVsix]);
 
   const dataMapperLoggerService = useMemo(() => {
-    return new DataMapperLoggerService(sendMsgToVsix);
-  }, [sendMsgToVsix]);
+    return new DataMapperLoggerService(sendMsgToVsix, { designerVersion: packagejson.version, dataMapperVersion });
+  }, [sendMsgToVsix, dataMapperVersion]);
 
   const setIsMapStateDirty = (isMapStateDirty: boolean) => {
     sendMsgToVsix({

@@ -8,7 +8,7 @@ interface LoggerContext {
 }
 
 export class VSCodeLoggerService implements ILoggerService {
-  private context: any;
+  private context: LoggerContext;
   private vscodeContext: WebviewApi<unknown>;
   private inProgressTraces = new Map<string, { data: traceStart; startTimestamp: number }>();
 

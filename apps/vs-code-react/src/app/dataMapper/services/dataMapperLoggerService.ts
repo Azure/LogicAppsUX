@@ -2,12 +2,19 @@ import type { ILoggerService, LogMessage } from '@microsoft/logic-apps-data-mapp
 import { guid } from '@microsoft/logic-apps-shared';
 import { ExtensionCommand, type MessageToVsix } from '@microsoft/vscode-extension-logic-apps';
 
+interface LoggerContext {
+  designerVersion: string;
+  dataMapperVersion?: number;
+}
+
 export class DataMapperLoggerService implements ILoggerService {
   private sendMsgToVsix: (msg: MessageToVsix) => void;
   private inProgressTraces = new Map<string, { data: Record<string, any>; startTimestamp: number }>();
+  private context: LoggerContext;
 
-  constructor(sendMsgToVsix: (msg: MessageToVsix) => void) {
+  constructor(sendMsgToVsix: (msg: MessageToVsix) => void, context: LoggerContext) {
     this.sendMsgToVsix = sendMsgToVsix;
+    this.context = context;
   }
 
   public trackEvent = (name: string, data: Record<string, any>) => {
