@@ -26,7 +26,7 @@
   "+5Jp42": [
     {
       "type": 0,
-      "value": "By"
+      "value": "Da"
     }
   ],
   "+Agiub": [
@@ -38,7 +38,7 @@
   "+EREVh": [
     {
       "type": 0,
-      "value": "Name"
+      "value": "Nome"
     }
   ],
   "+FcXe9": [
@@ -74,7 +74,7 @@
   "+R90eK": [
     {
       "type": 0,
-      "value": "Retry policy interval is invalid, must match ISO 8601 duration format"
+      "value": "L'intervallo tra i criteri di ripetizione dei tentativi non è valido. Deve corrispondere al formato di durata ISO 8601"
     }
   ],
   "+Uvo/p": [
@@ -162,7 +162,7 @@
   "/IVuGP": [
     {
       "type": 0,
-      "value": "Discard"
+      "value": "Rimuovi"
     }
   ],
   "/KRvvg": [
@@ -222,7 +222,7 @@
   "/csbOB": [
     {
       "type": 0,
-      "value": "Retry policy count is invalid (must be from "
+      "value": "Il numero di criteri di ripetizione dei tentativi non è valido (deve essere compreso tra "
     },
     {
       "type": 1,
@@ -230,7 +230,7 @@
     },
     {
       "type": 0,
-      "value": " to "
+      "value": " e "
     },
     {
       "type": 1,
@@ -274,7 +274,7 @@
   "/qrBuJ": [
     {
       "type": 0,
-      "value": "Create"
+      "value": "Crea"
     }
   ],
   "/qu3zt": [
@@ -304,13 +304,13 @@
   "/ye9Df": [
     {
       "type": 0,
-      "value": "Delete workflow action"
+      "value": "Elimina azione flusso di lavoro"
     }
   ],
   "0/VGiF": [
     {
       "type": 0,
-      "value": "Add action"
+      "value": "Aggiungi azione"
     }
   ],
   "00xlpa": [
@@ -392,13 +392,13 @@
   "0BO/tO": [
     {
       "type": 0,
-      "value": "Split-on tracking ID"
+      "value": "ID di traccia suddivisione"
     }
   ],
   "0C5Ywr": [
     {
       "type": 0,
-      "value": "Enter an array"
+      "value": "Immettere una matrice"
     }
   ],
   "0CPsxh": [
@@ -470,7 +470,7 @@
   "0UfxUM": [
     {
       "type": 0,
-      "value": "Next"
+      "value": "Avanti"
     }
   ],
   "0Vzp0l": [
@@ -554,7 +554,7 @@
   "0uuxAX": [
     {
       "type": 0,
-      "value": "Delete mapping"
+      "value": "Elimina mapping"
     }
   ],
   "0vfdFS": [
@@ -624,7 +624,7 @@
   "1HhCtq": [
     {
       "type": 0,
-      "value": "Headers"
+      "value": "Intestazioni"
     }
   ],
   "1KFpTX": [
@@ -636,7 +636,7 @@
   "1LSKq8": [
     {
       "type": 0,
-      "value": "Basics"
+      "value": "Dati principali"
     }
   ],
   "1NBvKu": [
@@ -666,7 +666,7 @@
   "1f7LG4": [
     {
       "type": 0,
-      "value": "Fixed interval"
+      "value": "Intervallo fisso"
     }
   ],
   "1hHFdx": [
@@ -816,7 +816,7 @@
   "2On4Xu": [
     {
       "type": 0,
-      "value": "Code view tab"
+      "value": "Scheda Visualizzazione Codice"
     }
   ],
   "2TMGk7": [
@@ -834,7 +834,7 @@
   "2adqQ4": [
     {
       "type": 0,
-      "value": "Maximum interval"
+      "value": "Intervallo massimo"
     }
   ],
   "2cVEMV": [
@@ -898,7 +898,7 @@
   "2xQWRt": [
     {
       "type": 0,
-      "value": "Search Functions"
+      "value": "Funzioni di ricerca"
     }
   ],
   "2y24a/": [
@@ -966,7 +966,7 @@
   "3BXdMk": [
     {
       "type": 0,
-      "value": "Request settings"
+      "value": "Impostazioni della richiesta"
     }
   ],
   "3BZnxY": [
@@ -990,7 +990,7 @@
   "3JEC7U": [
     {
       "type": 0,
-      "value": "Error type"
+      "value": "Tipo di errore"
     }
   ],
   "3KPLpx": [
@@ -1044,7 +1044,7 @@
   "3Xf/4S": [
     {
       "type": 0,
-      "value": "Swagger endpoint"
+      "value": "Endpoint Swagger"
     }
   ],
   "3Y8a6G": [
@@ -1064,13 +1064,13 @@
   "3a3eHg": [
     {
       "type": 0,
-      "value": "Select actions"
+      "value": "Selezionare azioni"
     }
   ],
   "3cZFcy": [
     {
       "type": 0,
-      "value": "Error Panel"
+      "value": "Pannello errori"
     }
   ],
   "3cZZKj": [
@@ -1088,7 +1088,7 @@
   "3hHkAn": [
     {
       "type": 0,
-      "value": "Result"
+      "value": "Risultato"
     }
   ],
   "3n5pnv": [
@@ -1106,7 +1106,7 @@
   "3pheF6": [
     {
       "type": 0,
-      "value": "Select schema"
+      "value": "Selezionare uno schema"
     }
   ],
   "3rzrWf": [
@@ -1204,7 +1204,7 @@
   "4BuCdw": [
     {
       "type": 0,
-      "value": "Specify the behavior and capabilities for transferring content over HTTP."
+      "value": "Specificare il comportamento e le funzionalità per il trasferimento di contenuto tramite HTTP."
     }
   ],
   "4D7H4R": [
@@ -1220,7 +1220,7 @@
   "4E69aV": [
     {
       "type": 0,
-      "value": "Background color"
+      "value": "Colore di sfondo"
     }
   ],
   "4Ekn9t": [
@@ -1244,7 +1244,7 @@
   "4SIrVn": [
     {
       "type": 0,
-      "value": "Body"
+      "value": "Corpo"
     }
   ],
   "4YKQAF": [
@@ -1274,7 +1274,7 @@
   "4hlqgK": [
     {
       "type": 0,
-      "value": "No results found for "
+      "value": "Non sono stati trovati risultati per "
     },
     {
       "type": 1,
@@ -1296,7 +1296,7 @@
   "4rVVyW": [
     {
       "type": 0,
-      "value": "Retry history"
+      "value": "Cronologia tentativi"
     }
   ],
   "4vcnOA": [
@@ -1468,13 +1468,13 @@
   "5szzYP": [
     {
       "type": 0,
-      "value": "Use this template"
+      "value": "Usa questo modello"
     }
   ],
   "5we9SR": [
     {
       "type": 0,
-      "value": "Client tracking ID"
+      "value": "ID di traccia client"
     }
   ],
   "5ytHcK": [
@@ -1522,13 +1522,13 @@
   "6DZp5H": [
     {
       "type": 0,
-      "value": "Search"
+      "value": "Cerca"
     }
   ],
   "6LJZ7n": [
     {
       "type": 0,
-      "value": "Retry policy"
+      "value": "Criteri di ripetizione"
     }
   ],
   "6OSgRP": [
@@ -1546,7 +1546,7 @@
   "6SQuYg": [
     {
       "type": 0,
-      "value": "See more ("
+      "value": "Vedi altri ("
     },
     {
       "type": 1,
@@ -1572,13 +1572,13 @@
   "6eDY1H": [
     {
       "type": 0,
-      "value": "optional"
+      "value": "facoltativo"
     }
   ],
   "6epkWC": [
     {
       "type": 0,
-      "value": "Body item"
+      "value": "Elemento corpo"
     }
   ],
   "6fDYzG": [
@@ -1634,7 +1634,7 @@
   "6nWQm7": [
     {
       "type": 0,
-      "value": "Start time"
+      "value": "Ora di inizio"
     }
   ],
   "6oOQnD": [
@@ -1664,7 +1664,7 @@
   "6rJ+Fj": [
     {
       "type": 0,
-      "value": "Delete workflow graph"
+      "value": "Elimina grafo flusso di lavoro"
     }
   ],
   "6sGj3J": [
@@ -1724,7 +1724,7 @@
   "7+ZxCU": [
     {
       "type": 0,
-      "value": "Invalid authentication value"
+      "value": "Valore di autenticazione non valido"
     }
   ],
   "70cHmm": [
@@ -1760,7 +1760,7 @@
   "7F4Bzv": [
     {
       "type": 0,
-      "value": "Workflow with name \""
+      "value": "Il flusso di lavoro denominato \""
     },
     {
       "type": 1,
@@ -1768,7 +1768,7 @@
     },
     {
       "type": 0,
-      "value": "\" already exists."
+      "value": "\" esiste già."
     }
   ],
   "7Fyq1F": [
@@ -1812,7 +1812,7 @@
   "7ZF1Hr": [
     {
       "type": 0,
-      "value": "Validation error"
+      "value": "Errore di convalida"
     }
   ],
   "7ZR1xr": [
@@ -1830,13 +1830,13 @@
   "7adnmH": [
     {
       "type": 0,
-      "value": "Back to template library"
+      "value": "Torna alla raccolta dei modelli"
     }
   ],
   "7fZkLA": [
     {
       "type": 0,
-      "value": "Disable static result"
+      "value": "Disabilita risultato statico"
     }
   ],
   "7gUE8h": [
@@ -2034,7 +2034,7 @@
   "8p0yK8": [
     {
       "type": 0,
-      "value": "Run after"
+      "value": "Esegui dopo"
     }
   ],
   "8wlfdo": [
@@ -2052,7 +2052,7 @@
   "8zcsPi": [
     {
       "type": 0,
-      "value": "Expression editor"
+      "value": "Editor espressioni"
     }
   ],
   "8zkvmc": [
@@ -2076,7 +2076,7 @@
   "90Vi7t": [
     {
       "type": 0,
-      "value": "Expand static result"
+      "value": "Espandi risultato statico"
     }
   ],
   "90o7sB": [
@@ -2134,7 +2134,7 @@
   "9OzDnJ": [
     {
       "type": 0,
-      "value": "Search tips"
+      "value": "Suggerimenti per la ricerca"
     }
   ],
   "9QNZSj": [
@@ -2166,7 +2166,7 @@
   "9V2Uwf": [
     {
       "type": 0,
-      "value": "Insert expression (you can also add by typing '/' in the editor)"
+      "value": "Inserisci espressione (è anche possibile aggiungere digitando /nell'editor)"
     }
   ],
   "9W0lck": [
@@ -2222,7 +2222,7 @@
   "9uv02q": [
     {
       "type": 0,
-      "value": "Set the tracking ID for the run. For split-on this tracking ID is for the initiating request"
+      "value": "Impostare l'ID di traccia per l'esecuzione. Per le operazioni di suddivisione, l'ID di traccia è per la richiesta di avvio"
     }
   ],
   "9wX3u9": [
@@ -2246,7 +2246,7 @@
   "A5/UwX": [
     {
       "type": 0,
-      "value": "Accelerators"
+      "value": "Acceleratori"
     }
   ],
   "A5Ferh": [
@@ -2258,7 +2258,7 @@
   "A8T1X/": [
     {
       "type": 0,
-      "value": "Whitespaces must be encoded for URIs."
+      "value": "Gli spazi vuoti devono essere codificati per gli URI."
     }
   ],
   "A8l+k7": [
@@ -2278,7 +2278,7 @@
   "AB+yPQ": [
     {
       "type": 0,
-      "value": "Connection details"
+      "value": "Dettagli connessione"
     }
   ],
   "AEguAy": [
@@ -2302,13 +2302,13 @@
   "AKOkI2": [
     {
       "type": 0,
-      "value": "Service principal"
+      "value": "Entità servizio"
     }
   ],
   "APKdYG": [
     {
       "type": 0,
-      "value": "Enter a valid double number."
+      "value": "Immetti un numero double valido."
     }
   ],
   "AQ7Zxc": [
@@ -2350,7 +2350,7 @@
   "Alq4/3": [
     {
       "type": 0,
-      "value": "Hybrid connector"
+      "value": "Connettore ibrido"
     }
   ],
   "AnX5yC": [
@@ -2553,7 +2553,7 @@
   "BRMOfD": [
     {
       "type": 0,
-      "value": "Timed out"
+      "value": "Timeout"
     }
   ],
   "BS3gy8": [
@@ -2577,7 +2577,7 @@
   "BXb3CB": [
     {
       "type": 0,
-      "value": "Testing tab"
+      "value": "Scheda di test"
     }
   ],
   "BYrP8F": [
@@ -2595,7 +2595,7 @@
   "Bkc/+3": [
     {
       "type": 0,
-      "value": "Retry policy minimum interval is invalid, must match ISO 8601 duration format"
+      "value": "L'intervallo minimo tra i criteri di ripetizione dei tentativi non è valido. Deve corrispondere al formato di durata ISO 8601"
     }
   ],
   "Bl4Iv0": [
@@ -2613,7 +2613,7 @@
   "BnkCwH": [
     {
       "type": 0,
-      "value": "Search properties"
+      "value": "Cerca nelle proprietà"
     }
   ],
   "BoMvF2": [
@@ -2685,7 +2685,7 @@
   "CRTB+v": [
     {
       "type": 0,
-      "value": "Value should be greater than "
+      "value": "Il valore deve essere maggiore di "
     },
     {
       "type": 1,
@@ -2719,7 +2719,7 @@
   "CeF40t": [
     {
       "type": 0,
-      "value": "Authentication type"
+      "value": "Tipo di autenticazione"
     }
   ],
   "Ci41Od": [
@@ -2749,7 +2749,7 @@
   "ClowJ/": [
     {
       "type": 0,
-      "value": "Authentication type"
+      "value": "Tipo di autenticazione"
     }
   ],
   "CvoqQ6": [
@@ -2767,7 +2767,7 @@
   "Cy4+KL": [
     {
       "type": 0,
-      "value": "Redo"
+      "value": "Ripeti"
     }
   ],
   "CyT8H7": [
@@ -2859,7 +2859,7 @@
   "D89UXR": [
     {
       "type": 0,
-      "value": "action"
+      "value": "azione"
     }
   ],
   "DDIIAQ": [
@@ -2895,7 +2895,7 @@
   "DNQtFr": [
     {
       "type": 0,
-      "value": "Name"
+      "value": "Nome"
     }
   ],
   "DQV7aK": [
@@ -2925,7 +2925,7 @@
   "DX9jWz": [
     {
       "type": 0,
-      "value": "Name"
+      "value": "Nome"
     }
   ],
   "DYXoEM": [
@@ -2949,7 +2949,7 @@
   "DcJBUx": [
     {
       "type": 0,
-      "value": "Trigger type"
+      "value": "Tipo di trigger"
     }
   ],
   "DfXxoX": [
@@ -3023,7 +3023,7 @@
   "E70Rdt": [
     {
       "type": 0,
-      "value": "Internal errors"
+      "value": "Errori interni"
     }
   ],
   "E7NzDN": [
@@ -3047,13 +3047,13 @@
   "EFQ56R": [
     {
       "type": 0,
-      "value": "Source code"
+      "value": "Codice sorgente"
     }
   ],
   "EMbxLf": [
     {
       "type": 0,
-      "value": "Previous suggestion"
+      "value": "Suggerimento precedente"
     }
   ],
   "ERAWZA": [
@@ -3077,13 +3077,13 @@
   "EX0g1d": [
     {
       "type": 0,
-      "value": "Secure outputs"
+      "value": "Output sicuri"
     }
   ],
   "EXEL2j": [
     {
       "type": 0,
-      "value": "Destination"
+      "value": "Destinazione"
     }
   ],
   "EZz5q7": [
@@ -3127,7 +3127,7 @@
   "EeJitp": [
     {
       "type": 0,
-      "value": "Type"
+      "value": "Tipo"
     }
   ],
   "EiRMD4": [
@@ -3159,7 +3159,7 @@
   "EoRB1V": [
     {
       "type": 0,
-      "value": "Details"
+      "value": "Dettagli"
     }
   ],
   "EptZhD": [
@@ -3195,7 +3195,7 @@
   "F/13eU": [
     {
       "type": 0,
-      "value": "Delete"
+      "value": "Elimina"
     }
   ],
   "F1AkvV": [
@@ -3207,7 +3207,7 @@
   "F2wR+r": [
     {
       "type": 0,
-      "value": "Insert expression"
+      "value": "Inserisci espressione"
     }
   ],
   "F3IDl8": [
@@ -3273,7 +3273,7 @@
   "FTrMxN": [
     {
       "type": 0,
-      "value": "Close"
+      "value": "Chiudi"
     }
   ],
   "FUuFlC": [
@@ -3352,7 +3352,7 @@
   "Fx/6sv": [
     {
       "type": 0,
-      "value": "Go to operation"
+      "value": "Vai all'operazione"
     }
   ],
   "FxQ2Ts": [
@@ -3364,7 +3364,7 @@
   "G+6Juu": [
     {
       "type": 0,
-      "value": "Click to expand"
+      "value": "Fai clic per espandere"
     }
   ],
   "G+XvKn": [
@@ -3418,7 +3418,7 @@
   "GFnJQe": [
     {
       "type": 0,
-      "value": "Test map"
+      "value": "Test mappa"
     }
   ],
   "GIUSQs": [
@@ -3486,7 +3486,7 @@
   "Gk79Ma": [
     {
       "type": 0,
-      "value": "Status code"
+      "value": "Codice di stato"
     }
   ],
   "Gl5khw": [
@@ -3628,7 +3628,7 @@
   "He4Z+v": [
     {
       "type": 0,
-      "value": "Credential type"
+      "value": "Tipo di credenziali"
     }
   ],
   "HfinO2": [
@@ -3722,7 +3722,7 @@
   "IGpV1W": [
     {
       "type": 0,
-      "value": "Asynchronous response"
+      "value": "Risposta asincrona"
     }
   ],
   "IHMd3X": [
@@ -3738,7 +3738,7 @@
   "IHzSSN": [
     {
       "type": 0,
-      "value": "Path parameters"
+      "value": "Parametri del percorso"
     }
   ],
   "IPwWgu": [
@@ -3768,7 +3768,7 @@
   "IUbVFR": [
     {
       "type": 0,
-      "value": "Search"
+      "value": "Cerca"
     }
   ],
   "IW2MjQ": [
@@ -3894,7 +3894,7 @@
   "J7PN35": [
     {
       "type": 0,
-      "value": "Make group"
+      "value": "Imposta come gruppo"
     }
   ],
   "J9wWry": [
@@ -3946,7 +3946,7 @@
   "JKfEGS": [
     {
       "type": 0,
-      "value": "Create new"
+      "value": "Crea nuovo"
     }
   ],
   "JMwMaK": [
@@ -3964,7 +3964,7 @@
   "JQBEOg": [
     {
       "type": 0,
-      "value": "Review + create"
+      "value": "Rivedere e creare"
     }
   ],
   "JSfWJ0": [
@@ -3976,13 +3976,13 @@
   "JUZ7g5": [
     {
       "type": 0,
-      "value": "Run history"
+      "value": "Cronologia di esecuzione"
     }
   ],
   "JVNRly": [
     {
       "type": 0,
-      "value": "Solution type"
+      "value": "Tipo di soluzione"
     }
   ],
   "JWl/LD": [
@@ -4024,7 +4024,7 @@
   "Jk2B0i": [
     {
       "type": 0,
-      "value": "Prerequisites"
+      "value": "Prerequisiti"
     }
   ],
   "JnlcZQ": [
@@ -4066,7 +4066,7 @@
   "K9ORYo": [
     {
       "type": 0,
-      "value": "Schema ID"
+      "value": "ID schema"
     }
   ],
   "KBaGkS": [
@@ -4078,7 +4078,7 @@
   "KO2eUv": [
     {
       "type": 0,
-      "value": "Connectors"
+      "value": "Connettori"
     }
   ],
   "KV4uky": [
@@ -4153,7 +4153,7 @@
   "Kb5u9F": [
     {
       "type": 0,
-      "value": "About tab"
+      "value": "Scheda Informazioni"
     }
   ],
   "KlDW+5": [
@@ -4171,7 +4171,7 @@
   "KqJ14/": [
     {
       "type": 0,
-      "value": "Edit schema"
+      "value": "Modifica schema"
     }
   ],
   "KwGA+K": [
@@ -4225,7 +4225,7 @@
   "LPzAHC": [
     {
       "type": 0,
-      "value": "Loading files…"
+      "value": "Caricamento dei file ..."
     }
   ],
   "LR/3Lr": [
@@ -4339,7 +4339,7 @@
   "M/m3nG": [
     {
       "type": 0,
-      "value": "Action timeout"
+      "value": "Timeout azione"
     }
   ],
   "M0bbZk": [
@@ -4363,7 +4363,7 @@
   "M6GI6z": [
     {
       "type": 0,
-      "value": "Custom tracking ID"
+      "value": "ID di traccia personalizzato"
     }
   ],
   "M6U2LE": [
@@ -4381,7 +4381,7 @@
   "MAX7xS": [
     {
       "type": 0,
-      "value": "Show more"
+      "value": "Mostra altro"
     }
   ],
   "MCzWDc": [
@@ -4459,7 +4459,7 @@
   "MWG2k9": [
     {
       "type": 0,
-      "value": "Request history"
+      "value": "Cronologia delle richieste"
     }
   ],
   "MYgKHu": [
@@ -4555,7 +4555,7 @@
   "N8LgJq": [
     {
       "type": 0,
-      "value": "Distinct tracking ID for each split-on instance"
+      "value": "ID di rilevamento distinto per ogni istanza di suddivisione"
     }
   ],
   "NE54Uu": [
@@ -4585,7 +4585,7 @@
   "NHqCeQ": [
     {
       "type": 0,
-      "value": "Create connection"
+      "value": "Crea connessione"
     }
   ],
   "NMpFs6": [
@@ -4633,7 +4633,7 @@
   "NkjtG/": [
     {
       "type": 0,
-      "value": "Dismiss"
+      "value": "Ignora"
     }
   ],
   "NnrHK3": [
@@ -4657,13 +4657,13 @@
   "Nr8FbX": [
     {
       "type": 0,
-      "value": "Connections"
+      "value": "Connessioni"
     }
   ],
   "NtoWaY": [
     {
       "type": 0,
-      "value": "Value should be less than "
+      "value": "Il valore deve essere minore di "
     },
     {
       "type": 1,
@@ -4721,7 +4721,7 @@
   "O8Qy7k": [
     {
       "type": 0,
-      "value": "Close panel"
+      "value": "Chiudi pannello"
     }
   ],
   "O9ZExg": [
@@ -4763,7 +4763,7 @@
   "OMuMCI": [
     {
       "type": 0,
-      "value": "Workflow properties"
+      "value": "Proprietà del flusso di lavoro"
     }
   ],
   "OOUSLP": [
@@ -4873,7 +4873,7 @@
   "OkGMwC": [
     {
       "type": 0,
-      "value": "Monitoring tab"
+      "value": "Scheda Monitoraggio"
     }
   ],
   "OnrO5/": [
@@ -5009,7 +5009,7 @@
   "PTBl5s": [
     {
       "type": 0,
-      "value": "Method"
+      "value": "Metodo"
     }
   ],
   "PXa0D4": [
@@ -5063,7 +5063,7 @@
   "PpupBE": [
     {
       "type": 0,
-      "value": "Add row"
+      "value": "Aggiungi riga"
     }
   ],
   "Pq+4a+": [
@@ -5087,7 +5087,7 @@
   "PuFTgH": [
     {
       "type": 0,
-      "value": "Retry history"
+      "value": "Cronologia tentativi"
     }
   ],
   "Pudllg": [
@@ -5139,7 +5139,7 @@
   "Q/V4Uc": [
     {
       "type": 0,
-      "value": "Add connection"
+      "value": "Aggiungi connessione"
     }
   ],
   "Q0xpPQ": [
@@ -5197,13 +5197,13 @@
   "QNfUf/": [
     {
       "type": 0,
-      "value": "Full screen"
+      "value": "A schermo intero"
     }
   ],
   "QVtqAn": [
     {
       "type": 0,
-      "value": "Description"
+      "value": "Descrizione"
     }
   ],
   "QZBPUx": [
@@ -5273,7 +5273,7 @@
   "Qqmb+W": [
     {
       "type": 0,
-      "value": "Stateful"
+      "value": "Con stato"
     }
   ],
   "QrQDdp": [
@@ -5325,7 +5325,7 @@
   "ROC+1+": [
     {
       "type": 0,
-      "value": "Line position"
+      "value": "Posizione di riga"
     }
   ],
   "RX2Shm": [
@@ -5337,7 +5337,7 @@
   "RZNabt": [
     {
       "type": 0,
-      "value": "Create a new workflow from template"
+      "value": "Crea un nuovo flusso di lavoro dal modello"
     }
   ],
   "RatwOB": [
@@ -5468,7 +5468,7 @@
   "RxbkcI": [
     {
       "type": 0,
-      "value": "Unsupported token type: "
+      "value": "Tipo di token non supportato: "
     },
     {
       "type": 1,
@@ -5538,7 +5538,7 @@
   "STWbak": [
     {
       "type": 0,
-      "value": "Chunk size"
+      "value": "Dimensioni blocco"
     }
   ],
   "SToblZ": [
@@ -5566,13 +5566,13 @@
   "SZ78Xp": [
     {
       "type": 0,
-      "value": "Features"
+      "value": "Funzionalità"
     }
   ],
   "SbCUKw": [
     {
       "type": 0,
-      "value": "Outputs should not be provided when status is \"Failed\""
+      "value": "Non specificare gli output quando lo stato è \"Non riuscito\""
     }
   ],
   "SgiTAh": [
@@ -5608,7 +5608,7 @@
   "Sy4cFC": [
     {
       "type": 0,
-      "value": "Concurrency control"
+      "value": "Controllo concorrenza"
     }
   ],
   "SyFXM3": [
@@ -5626,7 +5626,7 @@
   "TDfQzn": [
     {
       "type": 0,
-      "value": "More…"
+      "value": "Altro..."
     }
   ],
   "TEN+cR": [
@@ -5680,7 +5680,7 @@
   "TZpm7X": [
     {
       "type": 0,
-      "value": "Button to add dynamic content if token picker is shown"
+      "value": "Pulsante per aggiungere contenuto dinamico se TokenPicker è visualizzato"
     }
   ],
   "Tayrub": [
@@ -5698,7 +5698,7 @@
   "TcU2Gf": [
     {
       "type": 0,
-      "value": "Add case"
+      "value": "Aggiungi caso"
     }
   ],
   "TgcgXE": [
@@ -5800,7 +5800,7 @@
   "U2juKb": [
     {
       "type": 0,
-      "value": "Filter actions"
+      "value": "Filtra azioni"
     }
   ],
   "U3guPp": [
@@ -5836,7 +5836,7 @@
   "U9SHxw": [
     {
       "type": 0,
-      "value": "Code"
+      "value": "Codice"
     }
   ],
   "UCNM4L": [
@@ -5848,7 +5848,7 @@
   "UD330h": [
     {
       "type": 0,
-      "value": "Copy action"
+      "value": "Copia azione"
     }
   ],
   "UHCVNK": [
@@ -5876,7 +5876,7 @@
   "UNXQDI": [
     {
       "type": 0,
-      "value": "Loading API Management service instances..."
+      "value": "Caricamento delle istanze del servizio Gestione API in corso..."
     }
   ],
   "UPsZSw": [
@@ -5906,7 +5906,7 @@
   "UTkcyf": [
     {
       "type": 0,
-      "value": "Source code"
+      "value": "Codice sorgente"
     }
   ],
   "UVAfYj": [
@@ -5924,13 +5924,13 @@
   "UWF/WI": [
     {
       "type": 0,
-      "value": "View documentation"
+      "value": "Visualizza documentazione"
     }
   ],
   "UXDOiw": [
     {
       "type": 0,
-      "value": "Description"
+      "value": "Descrizione"
     }
   ],
   "UYRIS/": [
@@ -6032,7 +6032,7 @@
   "UsEvG2": [
     {
       "type": 0,
-      "value": "Tenant ID"
+      "value": "ID tenant"
     }
   ],
   "UtyRCH": [
@@ -6174,13 +6174,13 @@
   "VZh+w2": [
     {
       "type": 0,
-      "value": "Body"
+      "value": "Corpo"
     }
   ],
   "Valy81": [
     {
       "type": 0,
-      "value": "Schema validation"
+      "value": "Convalida schema"
     }
   ],
   "VbMYd8": [
@@ -6192,7 +6192,7 @@
   "VchR9d": [
     {
       "type": 0,
-      "value": "Headers"
+      "value": "Intestazioni"
     }
   ],
   "Vi5TIV": [
@@ -6236,7 +6236,7 @@
   "VysSj3": [
     {
       "type": 0,
-      "value": "View code"
+      "value": "Visualizza codice"
     }
   ],
   "W+mUyI": [
@@ -6258,13 +6258,13 @@
   "W1rlxU": [
     {
       "type": 0,
-      "value": "State type"
+      "value": "Tipo di stato"
     }
   ],
   "W2fZ0v": [
     {
       "type": 0,
-      "value": "Preview"
+      "value": "Anteprima"
     }
   ],
   "W6FdMh": [
@@ -6282,7 +6282,7 @@
   "WGq3Fo": [
     {
       "type": 0,
-      "value": "See less"
+      "value": "Mostra meno"
     }
   ],
   "WGwH45": [
@@ -6352,7 +6352,7 @@
   "WdO1cs": [
     {
       "type": 0,
-      "value": "Template details"
+      "value": "Dettagli modello"
     }
   ],
   "WgChTm": [
@@ -6376,7 +6376,7 @@
   "Wt1TZJ": [
     {
       "type": 0,
-      "value": "Connections"
+      "value": "Connessioni"
     }
   ],
   "Wvnl/V": [
@@ -6394,13 +6394,13 @@
   "WxJJcQ": [
     {
       "type": 0,
-      "value": "Not connected"
+      "value": "Non connesso"
     }
   ],
   "WxcmZr": [
     {
       "type": 0,
-      "value": "This action has testing configured."
+      "value": "Questa azione ha il testing configurato."
     }
   ],
   "X/7je+": [
@@ -6412,7 +6412,7 @@
   "X02GGK": [
     {
       "type": 0,
-      "value": "Tags"
+      "value": "Tag"
     }
   ],
   "X2idLs": [
@@ -6484,7 +6484,7 @@
   "XHQwyJ": [
     {
       "type": 0,
-      "value": "Error executing the API - "
+      "value": "Errore durante l'esecuzione dell'API - "
     },
     {
       "type": 1,
@@ -6500,7 +6500,7 @@
   "XL5UbT": [
     {
       "type": 0,
-      "value": "Click for more information on static result"
+      "value": "Fare clic per visualizzare altre informazioni sul risultato statico"
     }
   ],
   "XOAcjQ": [
@@ -6530,7 +6530,7 @@
   "XR5izH": [
     {
       "type": 0,
-      "value": "Connected"
+      "value": "Connesso"
     }
   ],
   "XRK+gt": [
@@ -6580,7 +6580,7 @@
   "XZrMGZ": [
     {
       "type": 0,
-      "value": "Content transfer"
+      "value": "Trasferimento di contenuto"
     }
   ],
   "XbtEq9": [
@@ -6606,7 +6606,7 @@
   "Xg1UDw": [
     {
       "type": 0,
-      "value": "Learn more"
+      "value": "Altre informazioni"
     }
   ],
   "Xj0Gr/": [
@@ -6690,7 +6690,7 @@
   "Y9VFj8": [
     {
       "type": 0,
-      "value": "Secure inputs"
+      "value": "Input sicuri"
     }
   ],
   "Y9kBz5": [
@@ -6702,7 +6702,7 @@
   "YC56Tr": [
     {
       "type": 0,
-      "value": "Automatic decompression"
+      "value": "Decompressione automatica"
     }
   ],
   "YCDF7A": [
@@ -6766,7 +6766,7 @@
   "YM0e3C": [
     {
       "type": 0,
-      "value": "Asynchronous pattern"
+      "value": "Modello asincrono"
     }
   ],
   "YOOBDW": [
@@ -6814,7 +6814,7 @@
   "YX0jQs": [
     {
       "type": 0,
-      "value": "All"
+      "value": "Tutto"
     }
   ],
   "YZ5Kwe": [
@@ -6826,7 +6826,7 @@
   "YZl7FU": [
     {
       "type": 0,
-      "value": "Loading function apps..."
+      "value": "Caricamento delle app per le funzioni in corso..."
     }
   ],
   "YaFjJQ": [
@@ -6868,7 +6868,7 @@
   "YnSO/8": [
     {
       "type": 0,
-      "value": "Not connected"
+      "value": "Non connesso"
     }
   ],
   "YoQara": [
@@ -6886,7 +6886,7 @@
   "Yua/4o": [
     {
       "type": 0,
-      "value": "Previous"
+      "value": "Indietro"
     }
   ],
   "Yuu5CD": [
@@ -6910,7 +6910,7 @@
   "Z8BOCl": [
     {
       "type": 0,
-      "value": "No identities available"
+      "value": "Identità non disponibili"
     }
   ],
   "Z8tBFS": [
@@ -6940,7 +6940,7 @@
   "ZFNlSA": [
     {
       "type": 0,
-      "value": "Authentication"
+      "value": "Autenticazione"
     }
   ],
   "ZME5hh": [
@@ -6952,7 +6952,7 @@
   "ZN050N": [
     {
       "type": 0,
-      "value": "Select all text in '"
+      "value": "Seleziona tutto il testo in “"
     },
     {
       "type": 1,
@@ -6960,13 +6960,13 @@
     },
     {
       "type": 0,
-      "value": "'"
+      "value": "”"
     }
   ],
   "ZOIvqN": [
     {
       "type": 0,
-      "value": "Sort By"
+      "value": "Ordina per"
     }
   ],
   "ZUCTVP": [
@@ -6984,13 +6984,13 @@
   "ZXc10N": [
     {
       "type": 0,
-      "value": "Add group"
+      "value": "Aggiungi gruppo"
     }
   ],
   "ZXha+w": [
     {
       "type": 0,
-      "value": "Error message"
+      "value": "Messaggio di errore"
     }
   ],
   "ZaIeDG": [
@@ -7020,7 +7020,7 @@
   "ZgyD93": [
     {
       "type": 0,
-      "value": "Accepted types:"
+      "value": "Tipi accettati:"
     }
   ],
   "Zi9gQK": [
@@ -7068,7 +7068,7 @@
   "aGxYMY": [
     {
       "type": 0,
-      "value": "Clear editor"
+      "value": "Cancella editor"
     }
   ],
   "aGyVJT": [
@@ -7086,7 +7086,7 @@
   "aJg1gl": [
     {
       "type": 0,
-      "value": "Retry policy maximum interval is invalid, must match ISO 8601 duration format"
+      "value": "L'intervallo massimo tra i criteri di ripetizione dei tentativi non è valido. Deve corrispondere al formato di durata ISO 8601"
     }
   ],
   "aP1wk9": [
@@ -7110,7 +7110,7 @@
   "aWdfiw": [
     {
       "type": 0,
-      "value": "Next suggestion"
+      "value": "Suggerimento successivo"
     }
   ],
   "aYTy7X": [
@@ -7128,7 +7128,7 @@
   "ao6BlS": [
     {
       "type": 0,
-      "value": "Resource group"
+      "value": "Gruppo di risorse"
     }
   ],
   "aoUT/3": [
@@ -7140,7 +7140,7 @@
   "apZgmJ": [
     {
       "type": 0,
-      "value": "Invalid operation path input value. Path value - "
+      "value": "Valore di input del percorso dell'operazione non valido. Valore percorso: "
     },
     {
       "type": 1,
@@ -7148,7 +7148,7 @@
     },
     {
       "type": 0,
-      "value": ", Path template - "
+      "value": ", Modello percorso: "
     },
     {
       "type": 1,
@@ -7164,7 +7164,7 @@
   "aurgrg": [
     {
       "type": 0,
-      "value": "Managed identity"
+      "value": "Identità gestita"
     }
   ],
   "b2aL+f": [
@@ -7176,7 +7176,7 @@
   "b6G9bq": [
     {
       "type": 0,
-      "value": "URL encodes the input string"
+      "value": "L'URL codifica la stringa di input"
     }
   ],
   "b7BQdu": [
@@ -7244,7 +7244,7 @@
   "bJMlgW": [
     {
       "type": 0,
-      "value": "Connections"
+      "value": "Connessioni"
     }
   ],
   "bMUkSN": [
@@ -7292,7 +7292,7 @@
   "bg00eY": [
     {
       "type": 0,
-      "value": "Numbered list"
+      "value": "Elenco numerato"
     }
   ],
   "blRFVt": [
@@ -7340,7 +7340,7 @@
   "c2ZT7p": [
     {
       "type": 0,
-      "value": "Details"
+      "value": "Dettagli"
     }
   ],
   "c3FLox": [
@@ -7376,7 +7376,7 @@
   "cBw7SC": [
     {
       "type": 0,
-      "value": "Created"
+      "value": "Creato"
     }
   ],
   "cHiBAn": [
@@ -7416,7 +7416,7 @@
   "cZ60Tk": [
     {
       "type": 0,
-      "value": "Loading...."
+      "value": "Caricamento..."
     }
   ],
   "cZv9J0": [
@@ -7446,7 +7446,7 @@
   "chEskq": [
     {
       "type": 0,
-      "value": "Enable static result"
+      "value": "Abilita risultato statico"
     }
   ],
   "ciLkfU": [
@@ -7494,13 +7494,13 @@
   "cw9FiJ": [
     {
       "type": 0,
-      "value": "Schema URI"
+      "value": "URI schema"
     }
   ],
   "cwHxwb": [
     {
       "type": 0,
-      "value": "Add connection"
+      "value": "Aggiungi connessione"
     }
   ],
   "cyEBus": [
@@ -7596,7 +7596,7 @@
   "dVFyPb": [
     {
       "type": 0,
-      "value": "Default value"
+      "value": "Valore predefinito"
     }
   ],
   "daoo3l": [
@@ -7730,13 +7730,13 @@
   "eLthgv": [
     {
       "type": 0,
-      "value": "Client certificate"
+      "value": "Certificato client"
     }
   ],
   "eNp9V6": [
     {
       "type": 0,
-      "value": "Upload PFX File"
+      "value": "Caricare file PFX"
     }
   ],
   "eO1h/h": [
@@ -7748,7 +7748,7 @@
   "eOAJQk": [
     {
       "type": 0,
-      "value": "Degree of parallelism"
+      "value": "Grado di parallelismo"
     }
   ],
   "eRvRWs": [
@@ -7766,25 +7766,25 @@
   "eTW4SD": [
     {
       "type": 0,
-      "value": "Description"
+      "value": "Descrizione"
     }
   ],
   "eUxnDx": [
     {
       "type": 0,
-      "value": "Status code"
+      "value": "Codice di stato"
     }
   ],
   "eaEXYa": [
     {
       "type": 0,
-      "value": "All"
+      "value": "Tutto"
     }
   ],
   "eb91v1": [
     {
       "type": 0,
-      "value": "Change connection"
+      "value": "Modifica connessione"
     }
   ],
   "egLI8P": [
@@ -7802,7 +7802,7 @@
   "ekM77J": [
     {
       "type": 0,
-      "value": "Workflow name"
+      "value": "Nome flusso di lavoro"
     }
   ],
   "elD6+N": [
@@ -7814,7 +7814,7 @@
   "elWEjT": [
     {
       "type": 0,
-      "value": "Click to collapse"
+      "value": "Fai clic per comprimere"
     }
   ],
   "en/5A3": [
@@ -7838,7 +7838,7 @@
   "er6O+w": [
     {
       "type": 0,
-      "value": "Name"
+      "value": "Nome"
     }
   ],
   "evyGYj": [
@@ -7850,7 +7850,7 @@
   "ewGciu": [
     {
       "type": 0,
-      "value": "Authentication"
+      "value": "Autenticazione"
     }
   ],
   "eyuBr7": [
@@ -7884,7 +7884,7 @@
   "f7cxXb": [
     {
       "type": 0,
-      "value": "Split on"
+      "value": "SplitOn"
     }
   ],
   "f81ClO": [
@@ -7930,7 +7930,7 @@
   "fNE/hg": [
     {
       "type": 0,
-      "value": "Button to add dynamic content if token picker is hidden"
+      "value": "Pulsante per aggiungere contenuto dinamico se TokenPicker è nascosto"
     }
   ],
   "fNlJSh": [
@@ -7942,7 +7942,7 @@
   "fSMyDJ": [
     {
       "type": 0,
-      "value": "Request options - Timeout"
+      "value": "Opzioni richiesta - Timeout"
     }
   ],
   "fVG5aD": [
@@ -7990,7 +7990,7 @@
   "fxue5l": [
     {
       "type": 0,
-      "value": "Workflows"
+      "value": "Flussi di lavoro"
     }
   ],
   "g076bL": [
@@ -8190,7 +8190,7 @@
     },
     {
       "type": 0,
-      "value": " Install gateway"
+      "value": " Installa gateway"
     }
   ],
   "h1lQDa": [
@@ -8214,13 +8214,13 @@
   "hCrg+6": [
     {
       "type": 0,
-      "value": "Actions must have one or more run after configurations"
+      "value": "È necessario eseguire una o più operazioni dopo le configurazioni"
     }
   ],
   "hHDJhD": [
     {
       "type": 0,
-      "value": "File content"
+      "value": "Contenuto file"
     }
   ],
   "hLOIwp": [
@@ -8238,7 +8238,7 @@
   "hMpLz3": [
     {
       "type": 0,
-      "value": "Callback URL"
+      "value": "URL di callback"
     }
   ],
   "hN7iBP": [
@@ -8331,13 +8331,13 @@
   "hlrKDC": [
     {
       "type": 0,
-      "value": "Connection"
+      "value": "Connessione"
     }
   ],
   "ho2D6F": [
     {
       "type": 0,
-      "value": "Close panel"
+      "value": "Chiudi pannello"
     }
   ],
   "hq1mk6": [
@@ -8385,7 +8385,7 @@
   "hz9HJ2": [
     {
       "type": 0,
-      "value": "Insert dynamic content"
+      "value": "Inserisci contenuto dinamico"
     }
   ],
   "hza/cT": [
@@ -8397,7 +8397,7 @@
   "i/R+Q7": [
     {
       "type": 0,
-      "value": "Local time"
+      "value": "Ora locale"
     }
   ],
   "i/SguY": [
@@ -8463,7 +8463,7 @@
   "iCni1C": [
     {
       "type": 0,
-      "value": "Can't find any search results"
+      "value": "Non è possibile trovare i risultati della ricerca"
     }
   ],
   "iE2+sy": [
@@ -8579,7 +8579,7 @@
   "im0GMa": [
     {
       "type": 0,
-      "value": "Show less"
+      "value": "Mostra meno"
     }
   ],
   "ioUq6Q": [
@@ -8625,7 +8625,7 @@
   "j4OKkU": [
     {
       "type": 0,
-      "value": "Text color"
+      "value": "Colore testo"
     }
   ],
   "j5z8Vd": [
@@ -8763,13 +8763,13 @@
   "jvVVTG": [
     {
       "type": 0,
-      "value": "Action type"
+      "value": "Tipo di azione"
     }
   ],
   "k/X2ml": [
     {
       "type": 0,
-      "value": "Type"
+      "value": "Tipo"
     }
   ],
   "k/oqFL": [
@@ -8869,7 +8869,7 @@
   "kU4VfD": [
     {
       "type": 0,
-      "value": "Stateful"
+      "value": "Con stato"
     }
   ],
   "kVwJXt": [
@@ -9004,13 +9004,13 @@
   "l8lP1X": [
     {
       "type": 0,
-      "value": "The error and its code are required when status is \"Failed\""
+      "value": "L'errore e il relativo codice sono obbligatori quando lo stato è \"Non riuscito\""
     }
   ],
   "l9+EbH": [
     {
       "type": 0,
-      "value": "Description"
+      "value": "Descrizione"
     }
   ],
   "lA/sHA": [
@@ -9036,13 +9036,13 @@
   "lFWXhc": [
     {
       "type": 0,
-      "value": "Workflow"
+      "value": "Flusso di lavoro"
     }
   ],
   "lK+Vzo": [
     {
       "type": 0,
-      "value": "Secure string"
+      "value": "Stringa sicura"
     }
   ],
   "lM9qrG": [
@@ -9072,7 +9072,7 @@
   "lSUNx5": [
     {
       "type": 0,
-      "value": "Action tracking ID"
+      "value": "ID di traccia azione"
     }
   ],
   "lX30/R": [
@@ -9084,7 +9084,7 @@
   "lbq5E1": [
     {
       "type": 0,
-      "value": "Large messages may be split up into smaller requests to the connector to allow large message upload. More details can be found at http://aka.ms/logicapps-chunk#upload-content-in-chunks"
+      "value": "È possibile dividere i messaggi di grandi dimensioni in richieste più piccole per il connettore, per consentire il caricamento di messaggi di grandi dimensioni. Per altri dettagli, vedere http://aka.ms/logicapps-chunk#upload-content-in-chunks"
     }
   ],
   "lckgnb": [
@@ -9134,7 +9134,7 @@
   "lk/Qic": [
     {
       "type": 0,
-      "value": "connector"
+      "value": "connettore"
     }
   ],
   "lkgjxD": [
@@ -9152,7 +9152,7 @@
   "lqF8H5": [
     {
       "type": 0,
-      "value": "Collapse static result"
+      "value": "Comprimi risultato statico"
     }
   ],
   "lsH37F": [
@@ -9182,13 +9182,13 @@
   "m4qt/b": [
     {
       "type": 0,
-      "value": "ACL creation failed for connection. Deleting the connection."
+      "value": "Creazione ACL non riuscita per la connessione. Eliminazione della connessione."
     }
   ],
   "m5InJc": [
     {
       "type": 0,
-      "value": "Status Code"
+      "value": "Codice di stato"
     }
   ],
   "m7Y6Qf": [
@@ -9200,7 +9200,7 @@
   "m8MjHH": [
     {
       "type": 0,
-      "value": "Enter a value"
+      "value": "Immetti un valore"
     }
   ],
   "m8Q61y": [
@@ -9268,7 +9268,7 @@
   "mQJXU4": [
     {
       "type": 0,
-      "value": "Run after"
+      "value": "Esegui dopo"
     }
   ],
   "mUURJW": [
@@ -9298,7 +9298,7 @@
   "mb1XDD": [
     {
       "type": 0,
-      "value": "Actual value"
+      "value": "Valore effettivo"
     }
   ],
   "mca3Ml": [
@@ -9322,7 +9322,7 @@
   "mgD2ZT": [
     {
       "type": 0,
-      "value": "Summary"
+      "value": "Riepilogo"
     }
   ],
   "mjS/k1": [
@@ -9364,7 +9364,7 @@
   "mxSILx": [
     {
       "type": 0,
-      "value": "Queries"
+      "value": "Query"
     }
   ],
   "n+F7e2": [
@@ -9376,7 +9376,7 @@
   "n+sJ5W": [
     {
       "type": 0,
-      "value": "Published by"
+      "value": "Pubblicato da"
     }
   ],
   "n20T2h": [
@@ -9442,7 +9442,7 @@
   "nODesn": [
     {
       "type": 0,
-      "value": "Source"
+      "value": "Origine"
     }
   ],
   "nOWGAV": [
@@ -9466,7 +9466,7 @@
   "nRjpgk": [
     {
       "type": 0,
-      "value": "Sample data"
+      "value": "Dati di esempio"
     }
   ],
   "nRpM02": [
@@ -9538,7 +9538,7 @@
   "nhEgHb": [
     {
       "type": 0,
-      "value": "By"
+      "value": "Da"
     }
   ],
   "njGstq": [
@@ -9562,7 +9562,7 @@
   "no+blV": [
     {
       "type": 0,
-      "value": "Cancel"
+      "value": "Annulla"
     }
   ],
   "no/SMg": [
@@ -9580,7 +9580,7 @@
   "nuNBYE": [
     {
       "type": 0,
-      "value": "Path"
+      "value": "Percorso"
     }
   ],
   "nwLd4b": [
@@ -9648,7 +9648,7 @@
   "o6x5J4": [
     {
       "type": 0,
-      "value": "Create expression"
+      "value": "Crea espressione"
     }
   ],
   "o7bd1o": [
@@ -9684,13 +9684,13 @@
   "oOGTSo": [
     {
       "type": 0,
-      "value": "Connected"
+      "value": "Connesso"
     }
   ],
   "oPKLDZ": [
     {
       "type": 0,
-      "value": "Delete switch case"
+      "value": "Elimina switch case"
     }
   ],
   "oQjIWf": [
@@ -9726,7 +9726,7 @@
   "oWAB0H": [
     {
       "type": 0,
-      "value": "Parameters"
+      "value": "Parametri"
     }
   ],
   "oZMhX/": [
@@ -9738,7 +9738,7 @@
   "ocW+RF": [
     {
       "type": 0,
-      "value": "Details"
+      "value": "Dettagli"
     }
   ],
   "odQ554": [
@@ -9750,7 +9750,7 @@
   "ohpbkw": [
     {
       "type": 0,
-      "value": "Exponential interval"
+      "value": "Intervallo esponenziale"
     }
   ],
   "onXUu0": [
@@ -9762,13 +9762,13 @@
   "oqgNX3": [
     {
       "type": 0,
-      "value": "Workflow name"
+      "value": "Nome flusso di lavoro"
     }
   ],
   "osln7P": [
     {
       "type": 0,
-      "value": "URL decodes the input string"
+      "value": "L'URL decodifica la stringa di input"
     }
   ],
   "ox2Ou7": [
@@ -9834,7 +9834,7 @@
   "pH6ubt": [
     {
       "type": 0,
-      "value": "Details"
+      "value": "Dettagli"
     }
   ],
   "pIczsS": [
@@ -9888,7 +9888,7 @@
   "pfmki/": [
     {
       "type": 0,
-      "value": "Specify the behavior and capabilities for transferring content over HTTP."
+      "value": "Specificare il comportamento e le funzionalità per il trasferimento di contenuto tramite HTTP."
     }
   ],
   "piaRy6": [
@@ -9930,7 +9930,7 @@
   "pykp8c": [
     {
       "type": 0,
-      "value": "Blank workflow"
+      "value": "Flusso di lavoro vuoto"
     }
   ],
   "q/+Uex": [
@@ -9978,7 +9978,7 @@
   "q5lttG": [
     {
       "type": 0,
-      "value": "Undo"
+      "value": "Annulla"
     }
   ],
   "q87X20": [
@@ -10123,7 +10123,7 @@
   "qp3gCy": [
     {
       "type": 0,
-      "value": "Insert link"
+      "value": "Inserisci collegamento"
     }
   ],
   "qr1lLG": [
@@ -10149,13 +10149,13 @@
   "qsL/fE": [
     {
       "type": 0,
-      "value": "Delete parameter"
+      "value": "Elimina parametro"
     }
   ],
   "qxw9UO": [
     {
       "type": 0,
-      "value": "Status"
+      "value": "Stato"
     }
   ],
   "qy5WqY": [
@@ -10331,7 +10331,7 @@
   "s5AOpV": [
     {
       "type": 0,
-      "value": "Card title"
+      "value": "Titolo carta"
     }
   ],
   "s5RV9B": [
@@ -10391,7 +10391,7 @@
   "sVcvcG": [
     {
       "type": 0,
-      "value": "Basics"
+      "value": "Dati principali"
     }
   ],
   "sYQDN+": [
@@ -10427,7 +10427,7 @@
   "sfTqHY": [
     {
       "type": 0,
-      "value": "Close panel"
+      "value": "Chiudi pannello"
     }
   ],
   "shF9tZ": [
@@ -10525,13 +10525,13 @@
   "t0tN4J": [
     {
       "type": 0,
-      "value": "Code view"
+      "value": "Visualizzazione Codice"
     }
   ],
   "t7ytOJ": [
     {
       "type": 0,
-      "value": "Status"
+      "value": "Stato"
     }
   ],
   "t9RwOi": [
@@ -10561,7 +10561,7 @@
   "tGSsgZ": [
     {
       "type": 0,
-      "value": "select an identity"
+      "value": "seleziona un'identità"
     }
   ],
   "tH2pT1": [
@@ -10621,7 +10621,7 @@
   "tRe2Ct": [
     {
       "type": 0,
-      "value": "Name"
+      "value": "Nome"
     }
   ],
   "tTIsTX": [
@@ -10689,7 +10689,7 @@
   "tbl/ar": [
     {
       "type": 0,
-      "value": "No items"
+      "value": "Nessun elemento"
     }
   ],
   "td5//c": [
@@ -10707,13 +10707,13 @@
   "tjQdhq": [
     {
       "type": 0,
-      "value": "Type"
+      "value": "Tipo"
     }
   ],
   "toWTrl": [
     {
       "type": 0,
-      "value": "Search"
+      "value": "Cerca"
     }
   ],
   "tooc6v": [
@@ -10751,13 +10751,13 @@
   "twr0pi": [
     {
       "type": 0,
-      "value": "Copy trigger"
+      "value": "Copia trigger"
     }
   ],
   "tzeDPE": [
     {
       "type": 0,
-      "value": "State type"
+      "value": "Tipo di stato"
     }
   ],
   "u81zB9": [
@@ -10781,13 +10781,13 @@
   "uEI5Wo": [
     {
       "type": 0,
-      "value": "Value"
+      "value": "Valore"
     }
   ],
   "uIgGKj": [
     {
       "type": 0,
-      "value": "Managed identity"
+      "value": "Identità gestita"
     }
   ],
   "uIurld": [
@@ -10833,7 +10833,7 @@
   "uSr3WX": [
     {
       "type": 0,
-      "value": "Connection name"
+      "value": "Nome connessione"
     }
   ],
   "uTTbhk": [
@@ -10887,7 +10887,7 @@
   "udnt8c": [
     {
       "type": 0,
-      "value": "Secure object"
+      "value": "Oggetto sicuro"
     }
   ],
   "uesaee": [
@@ -10917,7 +10917,7 @@
   "umLmPm": [
     {
       "type": 0,
-      "value": "Operation Panel"
+      "value": "Pannello operazioni"
     }
   ],
   "unMG8m": [
@@ -10989,7 +10989,7 @@
   "uzj2d3": [
     {
       "type": 0,
-      "value": "Close panel"
+      "value": "Chiudi pannello"
     }
   ],
   "uzsleE": [
@@ -11001,7 +11001,7 @@
   "v+FA8N": [
     {
       "type": 0,
-      "value": "Local time"
+      "value": "Ora locale"
     }
   ],
   "v+keTP": [
@@ -11057,7 +11057,7 @@
   "vNqq43": [
     {
       "type": 0,
-      "value": "Add loop"
+      "value": "Aggiungi ciclo"
     }
   ],
   "vO/I7P": [
@@ -11131,7 +11131,7 @@
   "voRDKP": [
     {
       "type": 0,
-      "value": "Headers"
+      "value": "Intestazioni"
     }
   ],
   "vr70Gn": [
@@ -11181,7 +11181,7 @@
   "w+t06Q": [
     {
       "type": 0,
-      "value": "Select fields"
+      "value": "Seleziona campi"
     }
   ],
   "w0pI5M": [
@@ -11235,7 +11235,7 @@
   "wG8fwz": [
     {
       "type": 0,
-      "value": "Bullet list"
+      "value": "Elenco puntato"
     }
   ],
   "wGYmui": [
@@ -11247,7 +11247,7 @@
   "wKJdDk": [
     {
       "type": 0,
-      "value": "Unsupported token type: "
+      "value": "Tipo di token non supportato: "
     },
     {
       "type": 1,
@@ -11317,13 +11317,13 @@
   "wXLEcJ": [
     {
       "type": 0,
-      "value": "Insert data from previous step (you can also add by typing Alt + / in the editor)"
+      "value": "Inserire i dati del passaggio precedente (è anche possibile aggiungere digitando ALT+/nell'editor)"
     }
   ],
   "wYzIf2": [
     {
       "type": 0,
-      "value": "Unsupported token type: "
+      "value": "Tipo di token non supportato: "
     },
     {
       "type": 1,
@@ -11333,7 +11333,7 @@
   "wfekJ7": [
     {
       "type": 0,
-      "value": "Type"
+      "value": "Tipo"
     }
   ],
   "wjiptl": [
@@ -11387,7 +11387,7 @@
   "wx/ZQP": [
     {
       "type": 0,
-      "value": "Add Input"
+      "value": "Aggiungi input"
     }
   ],
   "wxaQwD": [
@@ -11483,7 +11483,7 @@
   "xMgLd8": [
     {
       "type": 0,
-      "value": "Minimum interval"
+      "value": "Intervallo minimo"
     }
   ],
   "xN3GEX": [
@@ -11555,7 +11555,7 @@
   "xwB12G": [
     {
       "type": 0,
-      "value": "Enter another option"
+      "value": "Immettere un'altra opzione"
     }
   ],
   "xwD1VZ": [
@@ -11573,7 +11573,7 @@
   "y+eYFf": [
     {
       "type": 0,
-      "value": "Workflow parameters"
+      "value": "Parametri flusso di lavoro"
     }
   ],
   "y1e9yw": [
@@ -11615,7 +11615,7 @@
   "yENrOg": [
     {
       "type": 0,
-      "value": "here"
+      "value": "qui"
     }
   ],
   "yF2R//": [
@@ -11645,13 +11645,13 @@
   "yOyeBT": [
     {
       "type": 0,
-      "value": "Toggle minimap"
+      "value": "Attiva/disattiva minimappa"
     }
   ],
   "yQ6+nV": [
     {
       "type": 0,
-      "value": "Connect"
+      "value": "Connetti"
     }
   ],
   "yRDuqj": [
@@ -11707,7 +11707,7 @@
   "yjjXCQ": [
     {
       "type": 0,
-      "value": "Close panel"
+      "value": "Chiudi pannello"
     }
   ],
   "yk7L+4": [
@@ -11731,7 +11731,7 @@
   "yqF/Ew": [
     {
       "type": 0,
-      "value": "Search workflow actions"
+      "value": "Cerca azioni flusso di lavoro"
     }
   ],
   "yqRrQ/": [
@@ -11767,7 +11767,7 @@
   "yxctQw": [
     {
       "type": 0,
-      "value": "Logical name"
+      "value": "Nome logico"
     }
   ],
   "yzqXMp": [
@@ -11789,7 +11789,7 @@
   "z/vIwi": [
     {
       "type": 0,
-      "value": "Data handling"
+      "value": "Gestione dei dati"
     }
   ],
   "z3VuE+": [
@@ -11801,7 +11801,7 @@
   "z5H3GF": [
     {
       "type": 0,
-      "value": "Display name"
+      "value": "Nome visualizzato"
     }
   ],
   "z9kH+0": [
@@ -11915,7 +11915,7 @@
   "zkqKJ+": [
     {
       "type": 0,
-      "value": "Body"
+      "value": "Corpo"
     }
   ],
   "znGyyU": [
@@ -11933,7 +11933,7 @@
   "zsc+jp": [
     {
       "type": 0,
-      "value": "Functions"
+      "value": "Funzioni"
     }
   ],
   "zxF7g+": [
