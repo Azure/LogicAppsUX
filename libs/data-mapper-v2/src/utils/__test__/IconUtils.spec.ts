@@ -2,7 +2,7 @@ import { StringCategory20Regular } from '../../images/FunctionIcons/CategoryIcon
 import { FunctionCategory } from '../../models/Function';
 import { iconForFunctionCategory } from '../Icon.Utils';
 import { WrenchRegular } from '@fluentui/react-icons';
-import { describe, it, expect } from 'vitest';
+import { describe, vi, beforeEach, afterEach, beforeAll, afterAll, it, test, expect } from 'vitest';
 
 describe('icon utils', () => {
   describe('iconForFunctionCategory', () => {
