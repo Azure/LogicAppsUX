@@ -16,16 +16,11 @@ import {
   isFunctionInputSlotAvailable,
   isValidConnectionByType,
   newConnectionWillHaveCircularLogic,
-  nodeHasSourceNodeEventually,
-  nodeHasSpecificInputEventually,
-  nodeHasSpecificOutputEventually,
 } from '../Connection.Utils';
-import { convertSchemaToSchemaExtended, isSchemaNodeExtended } from '../Schema.Utils';
-import { fullConnectionDictionaryForOneToManyLoop, fullMapForSimplifiedLoop } from '../__mocks__';
+import { convertSchemaToSchemaExtended } from '../Schema.Utils';
 import type { DataMapSchema, MapDefinitionEntry, SchemaExtended, SchemaNodeExtended } from '@microsoft/logic-apps-shared';
 import { NormalizedDataType, SchemaNodeProperty, SchemaType } from '@microsoft/logic-apps-shared';
-import { describe, vi, beforeEach, afterEach, beforeAll, afterAll, it, test, expect } from 'vitest';
-import { current } from 'immer';
+import { describe, it, expect, beforeEach, vi } from 'vitest';
 import { deepNestedSequenceAndObject, sourceMockSchema, targetMockSchema } from '../../__mocks__/schemas';
 import { addReactFlowPrefix, createReactFlowFunctionKey } from '../ReactFlow.Util';
 
@@ -49,6 +44,18 @@ const mockBoundedFunctionInputs: FunctionInput[] = [
 ];
 
 describe('utils/Connections', () => {
+  let loggerService: any;
+
+  beforeEach(() => {
+    loggerService = vi.fn(() => ({
+      error: vi.fn(),
+    }));
+
+    vi.mock('../../core/services/LoggerServicer', () => ({
+      LoggerService: loggerService,
+    }));
+  });
+
   describe('createConnectionEntryIfNeeded', () => {
     const connections: ConnectionDictionary = {};
 

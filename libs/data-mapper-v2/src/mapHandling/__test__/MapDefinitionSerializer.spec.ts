@@ -20,11 +20,17 @@ import {
   playgroundSourceSchema,
   playgroundTargetSchema,
 } from '../../__mocks__/schemas';
-import { describe, vi, beforeEach, afterEach, beforeAll, afterAll, it, test, expect } from 'vitest';
-import { AddRegular } from '@fluentui/react-icons';
-import { SchemaDefinition } from 'js-yaml';
-import { create } from 'domain';
+import { describe, vi, beforeEach, it, expect } from 'vitest';
+
 describe('mapDefinitions/MapDefinitionSerializer', () => {
+  beforeEach(() => {
+    vi.mock('../../core/services/LoggerServicer', () => ({
+      LoggerService: vi.fn(() => ({
+        log: vi.fn(),
+      })),
+    }));
+  });
+
   describe('XML to XML', () => {
     describe('generateMapDefinitionHeader', () => {
       const sourceSchema: Schema = sourceMockSchema;

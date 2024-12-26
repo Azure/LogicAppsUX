@@ -27,7 +27,7 @@ class DataMapperLoggerService implements IDataMapperLoggerService {
   private traceIds = new Map<string, string>();
   private dmPrefix = 'data-mapper-vscode-extension';
 
-  private _logToAppInsights = process.env.NODE_ENV !== 'development';
+  private logToAppInsights = process.env.NODE_ENV !== 'development';
   public logToConsole = process.env.NODE_ENV !== 'production';
 
   constructor(service: ILoggerService) {
@@ -55,7 +55,7 @@ class DataMapperLoggerService implements IDataMapperLoggerService {
   };
 
   public startTrackEvent(eventName: string) {
-    if (this._logToAppInsights) {
+    if (this.logToAppInsights) {
       this.loggingService.startTrace(eventName);
     }
 
@@ -66,7 +66,7 @@ class DataMapperLoggerService implements IDataMapperLoggerService {
 
   public stopTrackEvent(id: string, eventName: string, data: LogMessage) {
     this._validateData(data);
-    if (this._logToAppInsights) {
+    if (this.logToAppInsights) {
       this.loggingService.endTrace(id, eventName, data);
     }
 
@@ -82,7 +82,7 @@ class DataMapperLoggerService implements IDataMapperLoggerService {
 
     const logId = `${this.dmPrefix}/log/${category}/${id}`;
 
-    if (this._logToAppInsights) {
+    if (this.logToAppInsights) {
       this.trackEvent(logId, data);
     }
 
@@ -97,7 +97,7 @@ class DataMapperLoggerService implements IDataMapperLoggerService {
     this._validateData(data);
     const errorId = `${this.dmPrefix}/errors/${category}/${id}`;
 
-    if (this._logToAppInsights) {
+    if (this.logToAppInsights) {
       this.trackEvent(errorId, data);
     }
 
@@ -113,7 +113,7 @@ class DataMapperLoggerService implements IDataMapperLoggerService {
 
     const warningId = `${this.dmPrefix}/warnings/${category}/${id}`;
 
-    if (this._logToAppInsights) {
+    if (this.logToAppInsights) {
       this.trackEvent(warningId, data);
     }
 

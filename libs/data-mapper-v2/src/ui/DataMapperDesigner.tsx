@@ -46,7 +46,7 @@ export const DataMapperDesigner = ({ fileService, loggerService, setIsMapStateDi
     InitDataMapperFileService(fileService);
   }
 
-  if (fileService) {
+  if (loggerService) {
     InitDataMapperLoggerService(loggerService);
   }
 
