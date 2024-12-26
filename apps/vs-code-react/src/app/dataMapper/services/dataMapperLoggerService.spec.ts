@@ -1,8 +1,7 @@
-import { describe, it, expect, vi, afterEach } from 'vitest';
+import { describe, it, expect, vi, afterEach, beforeEach } from 'vitest';
 import { DataMapperLoggerService } from './dataMapperLoggerService';
 import { ExtensionCommand } from '@microsoft/vscode-extension-logic-apps';
 import { LogEntryLevel } from '@microsoft/logic-apps-shared';
-import { beforeEach } from 'node:test';
 
 describe('DataMapperLoggerService', () => {
   const mockSendMsgToVsix = vi.fn();
@@ -26,12 +25,21 @@ describe('DataMapperLoggerService', () => {
     });
 
     expect(mockSendMsgToVsix).toHaveBeenCalledWith({
-      command: ExtensionCommand.logTelemetry,
-      data: expect.objectContaining({
-        name: 'testEvent',
-        args: ['arg1', 'arg2', context],
+      command: 'logTelemetry',
+      data: {
+        area: 'testEvent',
+        args: [
+          'arg1',
+          'arg2',
+          {
+            dataMapperVersion: 2,
+            designerVersion: '1.0.0',
+          },
+        ],
+        level: LogEntryLevel.Verbose,
+        message: 'test message',
         timestamp: expect.any(Number),
-      }),
+      },
     });
   });
 
