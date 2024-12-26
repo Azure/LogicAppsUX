@@ -1,11 +1,12 @@
 import { simpleMockSchema, noChildrenMockSchema } from '../../__mocks__';
 import { convertSchemaToSchemaExtended } from '../../utils/Schema.Utils';
-import { describe, it, expect, beforeEach, vi } from 'vitest';
+import type { Schema } from '../Schema';
+import { describe, vi, beforeEach, afterEach, beforeAll, afterAll, it, test, expect } from 'vitest';
 
 describe('models/Schema', () => {
   describe('convertSchemaToSchemaExtended', () => {
     it('Test pathToRoot generates in correct order', () => {
-      const schema: any = simpleMockSchema;
+      const schema: Schema = simpleMockSchema;
       const extendedSchema = convertSchemaToSchemaExtended(schema);
 
       expect(extendedSchema.schemaTreeRoot.pathToRoot.length).toEqual(1);
@@ -26,7 +27,7 @@ describe('models/Schema', () => {
     });
 
     it('Test with no children', () => {
-      const schema: any = noChildrenMockSchema;
+      const schema: Schema = noChildrenMockSchema;
       const extendedSchema = convertSchemaToSchemaExtended(schema);
 
       expect(extendedSchema.schemaTreeRoot.pathToRoot.length).toEqual(1);

@@ -1,4 +1,6 @@
+import { mock } from 'node:test';
 import { concatFunction, greaterThanFunction } from '../../__mocks__/FunctionMock';
+import type { DataMapOperationState } from '../../core/state/DataMapSlice';
 import type { Connection, ConnectionDictionary, NodeConnection, InputConnection, CustomValueConnection } from '../../models/Connection';
 import type { FunctionData, FunctionInput } from '../../models/Function';
 import { FunctionCategory, functionMock, ifPseudoFunction, indexPseudoFunction } from '../../models/Function';
@@ -14,11 +16,16 @@ import {
   isFunctionInputSlotAvailable,
   isValidConnectionByType,
   newConnectionWillHaveCircularLogic,
+  nodeHasSourceNodeEventually,
+  nodeHasSpecificInputEventually,
+  nodeHasSpecificOutputEventually,
 } from '../Connection.Utils';
-import { convertSchemaToSchemaExtended } from '../Schema.Utils';
+import { convertSchemaToSchemaExtended, isSchemaNodeExtended } from '../Schema.Utils';
+import { fullConnectionDictionaryForOneToManyLoop, fullMapForSimplifiedLoop } from '../__mocks__';
 import type { DataMapSchema, MapDefinitionEntry, SchemaExtended, SchemaNodeExtended } from '@microsoft/logic-apps-shared';
 import { NormalizedDataType, SchemaNodeProperty, SchemaType } from '@microsoft/logic-apps-shared';
-import { describe, it, expect } from 'vitest';
+import { describe, vi, beforeEach, afterEach, beforeAll, afterAll, it, test, expect } from 'vitest';
+import { current } from 'immer';
 import { deepNestedSequenceAndObject, sourceMockSchema, targetMockSchema } from '../../__mocks__/schemas';
 import { addReactFlowPrefix, createReactFlowFunctionKey } from '../ReactFlow.Util';
 
