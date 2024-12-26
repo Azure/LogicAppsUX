@@ -1,83 +1,85 @@
-import { describe, it, expect, vi, beforeEach } from 'vitest';
+import { describe, it, expect, vi, afterEach } from 'vitest';
 import { DataMapperLoggerService } from './dataMapperLoggerService';
 import { ExtensionCommand } from '@microsoft/vscode-extension-logic-apps';
+import { LogEntryLevel } from '@microsoft/logic-apps-shared';
+import { beforeEach } from 'node:test';
 
 describe('DataMapperLoggerService', () => {
-  let mockSendMsgToVsix: ReturnType<typeof vi.fn>;
-  let logger: DataMapperLoggerService;
+  const mockSendMsgToVsix = vi.fn();
+  const context = { designerVersion: '1.0.0', dataMapperVersion: 2 };
+  const loggerService = new DataMapperLoggerService(mockSendMsgToVsix, context);
 
   beforeEach(() => {
-    mockSendMsgToVsix = vi.fn();
-    logger = new DataMapperLoggerService(mockSendMsgToVsix, {
-      designerVersion: 'testVersion',
-      dataMapperVersion: 2,
-    });
     vi.useFakeTimers();
-    vi.setSystemTime(12345678);
   });
 
-  it('tracks an event properly', () => {
-    logger.trackEvent('testEvent', { foo: 'bar' });
+  afterEach(() => {
+    vi.clearAllMocks();
+  });
+
+  it('should log telemetry event', () => {
+    loggerService.log({
+      level: LogEntryLevel.Verbose,
+      area: 'testEvent',
+      message: 'test message',
+      args: ['arg1', 'arg2'],
+    });
+
     expect(mockSendMsgToVsix).toHaveBeenCalledWith({
       command: ExtensionCommand.logTelemetry,
-      data: {
-        foo: 'bar',
-        timestamp: 12345678,
+      data: expect.objectContaining({
         name: 'testEvent',
-        context: {
-          designerVersion: 'testVersion',
-          dataMapperVersion: 2,
-        },
-      },
+        args: ['arg1', 'arg2', context],
+        timestamp: expect.any(Number),
+      }),
     });
   });
 
-  it('starts a trace and returns an id', () => {
-    const id = logger.startTrace('traceEvent');
-    expect(id).toBeTruthy();
+  it('should start a trace and return an id', () => {
+    const eventData = { action: 'testAction', actionModifier: 'start', name: 'testTrace', source: 'testSource' };
+    const traceId = loggerService.startTrace(eventData);
+
+    expect(traceId).toBeDefined();
     expect(mockSendMsgToVsix).toHaveBeenCalledWith({
       command: ExtensionCommand.logTelemetry,
-      data: {
-        timestamp: 12345678,
+      data: expect.objectContaining({
+        action: 'testAction',
         actionModifier: 'start',
+        name: 'testTrace',
+        source: 'testSource',
+        timestamp: expect.any(Number),
         duration: 0,
-        data: {
-          id,
-          eventName: 'traceEvent',
-          context: {
-            designerVersion: 'testVersion',
-            dataMapperVersion: 2,
-          },
-        },
-      },
+        data: { id: traceId, context },
+      }),
     });
   });
 
-  it('ends a trace properly', () => {
-    const id = logger.startTrace('traceEvent');
-    logger.endTrace(id, 'traceEventEnd', { message: 'data' });
-    expect(mockSendMsgToVsix).toHaveBeenCalledTimes(2);
-    expect(mockSendMsgToVsix).toHaveBeenNthCalledWith(2, {
+  it('should end a trace and log the duration', () => {
+    const eventData = { action: 'testAction', actionModifier: 'start', name: 'testTrace', source: 'testSource' };
+    const traceId = loggerService.startTrace(eventData);
+
+    // Simulate some delay
+    vi.advanceTimersByTime(1000);
+
+    loggerService.endTrace(traceId, { data: { additional: 'info' } });
+
+    expect(mockSendMsgToVsix).toHaveBeenCalledWith({
       command: ExtensionCommand.logTelemetry,
-      data: {
-        eventName: 'traceEventEnd',
-        timestamp: 12345678,
+      data: expect.objectContaining({
+        action: 'testAction',
         actionModifier: 'end',
-        duration: 0,
-        data: {
-          id,
-          custom: 'data',
-        },
-        context: {
-          designerVersion: 'testVersion',
-          dataMapperVersion: 2,
-        },
-      },
+        name: 'testTrace',
+        source: 'testSource',
+        timestamp: expect.any(Number),
+        duration: expect.any(Number),
+        data: { additional: 'info', context, id: traceId },
+      }),
     });
   });
 
-  it('does nothing if ending a non-existent trace', () => {
-    logger.endTrace('fakeId', 'fakeEvent', { message: 'data' });
+  it('should not log if trace id is invalid', () => {
+    loggerService.endTrace('invalidId');
+
     expect(mockSendMsgToVsix).not.toHaveBeenCalled();
   });
 });

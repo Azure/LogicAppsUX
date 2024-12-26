@@ -1,6 +1,7 @@
-import type { ILoggerService, LogMessage } from '@microsoft/logic-apps-data-mapper-v2';
+import type { ILoggerService, LogEntry, TelemetryEvent } from '@microsoft/logic-apps-shared';
 import { guid } from '@microsoft/logic-apps-shared';
 import { ExtensionCommand, type MessageToVsix } from '@microsoft/vscode-extension-logic-apps';
+type traceStart = Pick<TelemetryEvent, 'action' | 'actionModifier' | 'name' | 'source'>;
 
 interface LoggerContext {
   designerVersion: string;
@@ -32,10 +33,10 @@ export class DataMapperLoggerService implements ILoggerService {
    * @param name - A string identifying the name of the event.
    * @param data - A record of key-value pairs providing additional details for the event.
    */
-  public trackEvent = (name: string, data: Record<string, any>) => {
+  public log = (entry: Omit<LogEntry, 'timestamp'>) => {
     this.sendMsgToVsix({
       command: ExtensionCommand.logTelemetry,
-      data: { ...data, timestamp: Date.now(), name, context: this.context },
+      data: { ...entry, timestamp: Date.now(), args: [...(entry.args ?? []), this.context] },
     });
   };
 
@@ -46,15 +47,15 @@ export class DataMapperLoggerService implements ILoggerService {
    * trace operations. Each operation logs a timestamp, relevant context, and optional custom data.
    */
 
-  public startTrace = (eventName: string): string => {
+  public startTrace = (eventData: traceStart): string => {
     const id = guid();
     const startTimestamp = Date.now();
     this.sendMsgToVsix({
       command: ExtensionCommand.logTelemetry,
-      data: { timestamp: startTimestamp, actionModifier: 'start', duration: 0, data: { id, eventName, context: this.context } },
+      data: { ...eventData, timestamp: startTimestamp, actionModifier: 'start', duration: 0, data: { id, context: this.context } },
     });
 
-    this.inProgressTraces.set(id, { data: { eventName }, startTimestamp });
+    this.inProgressTraces.set(id, { data: eventData, startTimestamp });
     return id;
   };
 
@@ -64,7 +65,7 @@ export class DataMapperLoggerService implements ILoggerService {
    * @param eventName - The name used to identify the trace event.
    * @param data - Additional custom data to attach to the trace event log.
    */
-  public endTrace = (id: string, eventName: string, data: LogMessage) => {
+  public endTrace = (id: string, eventData?: Pick<TelemetryEvent, 'data'> | undefined) => {
     const traceData = this.inProgressTraces.get(id);
     const endTimestamp = Date.now();
     if (!traceData) {
@@ -76,11 +77,9 @@ export class DataMapperLoggerService implements ILoggerService {
       data: {
         ...traceData.data,
         timestamp: endTimestamp,
-        eventName,
         actionModifier: 'end',
         duration: endTimestamp - traceData.startTimestamp,
-        data: { ...data, id },
-        context: this.context,
+        data: { ...eventData?.data, context: this.context, id },
       },
     });
   };
