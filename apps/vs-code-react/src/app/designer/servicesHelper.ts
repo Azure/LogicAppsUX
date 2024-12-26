@@ -21,16 +21,22 @@ import type {
   ConnectionCreationInfo,
   ContentType,
   IHostService,
+  ILoggerService,
   IWorkflowService,
   ManagedIdentity,
 } from '@microsoft/logic-apps-shared';
-import type { ConnectionAndAppSetting, ConnectionsData, IDesignerPanelMetadata } from '@microsoft/vscode-extension-logic-apps';
+import type {
+  ConnectionAndAppSetting,
+  ConnectionsData,
+  IDesignerPanelMetadata,
+  MessageToVsix,
+} from '@microsoft/vscode-extension-logic-apps';
 import { ExtensionCommand, HttpClient } from '@microsoft/vscode-extension-logic-apps';
 import type { QueryClient } from '@tanstack/react-query';
 import type { WebviewApi } from 'vscode-webview';
 import { CustomEditorService } from './customEditorService';
-import { VSCodeLoggerService } from './services/Logger';
 import packagejson from '../../../package.json';
+import { LoggerService } from '../services/Logger';
 
 export interface IDesignerServices {
   connectionService: StandardConnectionService;
@@ -46,7 +52,7 @@ export interface IDesignerServices {
   editorService: CustomEditorService;
   apimService: BaseApiManagementService;
   functionService: BaseFunctionService;
-  loggerService: VSCodeLoggerService;
+  loggerService: ILoggerService;
 }
 
 export const getDesignerServices = (
@@ -60,7 +66,8 @@ export const getDesignerServices = (
   vscode: WebviewApi<unknown>,
   oauthRedirectUrl: string,
   hostVersion: string,
-  queryClient: QueryClient
+  queryClient: QueryClient,
+  sendMsgToVsix: (msg: MessageToVsix) => void
 ): IDesignerServices => {
   let authToken = '';
   let panelId = '';
@@ -324,12 +331,9 @@ export const getDesignerServices = (
     },
   });
 
-  const loggerService = new VSCodeLoggerService(
-    {
-      designerVersion: packagejson.version,
-    },
-    vscode
-  );
+  const loggerService = new LoggerService(sendMsgToVsix, {
+    designerVersion: packagejson.version,
+  });
 
   return {
     connectionService,

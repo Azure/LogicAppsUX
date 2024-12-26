@@ -13,7 +13,7 @@ interface LoggerContext {
  * @param eventName - A string denoting the name of the trace event to start.
  * @returns A string serving as a unique identifier to end the trace later.
  */
-export class DataMapperLoggerService implements ILoggerService {
+export class LoggerService implements ILoggerService {
   private sendMsgToVsix: (msg: MessageToVsix) => void;
   private inProgressTraces = new Map<string, { data: Record<string, any>; startTimestamp: number }>();
   private context: LoggerContext;

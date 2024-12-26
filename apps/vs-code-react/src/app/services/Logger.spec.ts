@@ -1,12 +1,12 @@
 import { describe, it, expect, vi, afterEach, beforeEach } from 'vitest';
-import { DataMapperLoggerService } from './dataMapperLoggerService';
 import { ExtensionCommand } from '@microsoft/vscode-extension-logic-apps';
 import { LogEntryLevel } from '@microsoft/logic-apps-shared';
+import { LoggerService } from './Logger';
 
 describe('DataMapperLoggerService', () => {
   const mockSendMsgToVsix = vi.fn();
   const context = { designerVersion: '1.0.0', dataMapperVersion: 2 };
-  const loggerService = new DataMapperLoggerService(mockSendMsgToVsix, context);
+  const loggerService = new LoggerService(mockSendMsgToVsix, context);
 
   beforeEach(() => {
     vi.useFakeTimers();

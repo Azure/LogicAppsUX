@@ -18,8 +18,8 @@ import type { MessageToVsix } from '@microsoft/vscode-extension-logic-apps';
 import { ExtensionCommand } from '@microsoft/vscode-extension-logic-apps';
 import { useCallback, useContext, useEffect, useMemo, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { DataMapperLoggerService } from './services/dataMapperLoggerService';
 import packagejson from '../../../package.json';
+import { LoggerService } from '../services/Logger';
 
 export const DataMapperAppV2 = () => {
   const dispatch = useDispatch<AppDispatch>();
@@ -59,7 +59,7 @@ export const DataMapperAppV2 = () => {
   }, [sendMsgToVsix]);
 
   const dataMapperLoggerService = useMemo(() => {
-    return new DataMapperLoggerService(sendMsgToVsix, { designerVersion: packagejson.version, dataMapperVersion });
+    return new LoggerService(sendMsgToVsix, { designerVersion: packagejson.version, dataMapperVersion });
   }, [sendMsgToVsix, dataMapperVersion]);
 
   const setIsMapStateDirty = (isMapStateDirty: boolean) => {
