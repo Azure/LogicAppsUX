@@ -18,14 +18,14 @@ import { useCallback, useEffect, useMemo } from 'react';
 import { useIntl } from 'react-intl';
 import { useDispatch, useSelector } from 'react-redux';
 import { generateMapMetadata } from '../../mapHandling/MapMetadataSerializer';
-import { DataMapperFileService, generateDataMapXslt, LoggerService } from '../../core';
+import { DataMapperFileService, generateDataMapXslt } from '../../core';
 import { saveDataMap, updateDataMapLML } from '../../core/state/DataMapSlice';
 import { LogCategory } from '../../utils/Logging.Utils';
 import type { MetaMapDefinition } from '../../mapHandling/MapDefinitionSerializer';
 import { convertToMapDefinition } from '../../mapHandling/MapDefinitionSerializer';
 import { toggleCodeView, toggleTestPanel } from '../../core/state/PanelSlice';
 import { useStyles } from './styles';
-import { emptyCanvasRect } from '@microsoft/logic-apps-shared';
+import { emptyCanvasRect, LogEntryLevel, LoggerService } from '@microsoft/logic-apps-shared';
 
 export type EditorCommandBarProps = {};
 
@@ -72,7 +72,9 @@ export const EditorCommandBar = (_props: EditorCommandBarProps) => {
         } else if (error instanceof Error) {
           errorMessage = error.message;
         }
-        LoggerService().error(LogCategory.DataMapperDesigner, 'dataMapDefinition', {
+        LoggerService().log({
+          level: LogEntryLevel.Error,
+          area: `${LogCategory.DataMapperDesigner}/dataMapDefinition`,
           message: errorMessage,
         });
         return { isSuccess: false, errorNodes: [] };
@@ -110,12 +112,16 @@ export const EditorCommandBar = (_props: EditorCommandBarProps) => {
         .then((xsltStr) => {
           DataMapperFileService().saveXsltCall(xsltStr);
 
-          LoggerService().log(LogCategory.DataMapperDesigner, 'onGenerateClick', {
+          LoggerService().log({
+            level: LogEntryLevel.Verbose,
+            area: `${LogCategory.DataMapperDesigner}/onGenerateClick`,
             message: 'Successfully generated xslt',
           });
         })
         .catch((error: Error) => {
-          LoggerService().error(LogCategory.DataMapperDesigner, 'onGenerateClick', {
+          LoggerService().log({
+            level: LogEntryLevel.Error,
+            area: `${LogCategory.DataMapperDesigner}/onGenerateClick`,
             message: JSON.stringify(error),
           });
           dispatchToast(

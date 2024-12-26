@@ -10,8 +10,7 @@ import { useStyles } from './styles';
 import { TestPanelBody } from './TestPanelBody';
 import { testDataMap } from '../../core/queries/datamap';
 import { LogCategory } from '../../utils/Logging.Utils';
-import { guid } from '@microsoft/logic-apps-shared';
-import { LoggerService } from '../../core';
+import { guid, LogEntryLevel, LoggerService } from '@microsoft/logic-apps-shared';
 type TestPanelProps = {};
 
 export const TestPanel = (_props: TestPanelProps) => {
@@ -63,21 +62,29 @@ export const TestPanel = (_props: TestPanelProps) => {
             })
           );
 
-          LoggerService().log(LogCategory.TestMapPanel, 'testDataMap', {
+          LoggerService().log({
+            level: LogEntryLevel.Verbose,
+            area: `${LogCategory.TestMapPanel}/testDataMap`,
             message: 'Successfully tested data map',
-            data: {
-              attempt,
-              statusCode: response.statusCode,
-              statusText: response.statusText,
-            },
+            args: [
+              {
+                attempt,
+                statusCode: response.statusCode,
+                statusText: response.statusText,
+              },
+            ],
           });
         })
         .catch((error: Error) => {
-          LoggerService().error(LogCategory.TestMapPanel, 'testDataMap', {
+          LoggerService().log({
+            level: LogEntryLevel.Error,
+            area: `${LogCategory.TestMapPanel}/testDataMap`,
             message: error.message,
-            data: {
-              attempt,
-            },
+            args: [
+              {
+                attempt,
+              },
+            ],
           });
 
           dispatch(

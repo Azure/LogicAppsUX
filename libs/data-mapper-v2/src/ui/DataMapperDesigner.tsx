@@ -3,13 +3,11 @@ import { EditorCommandBar } from '../components/commandBar/EditorCommandBar';
 import { useStaticStyles, useStyles } from './styles';
 import { FunctionPanel } from '../components/functionsPanel/FunctionPanel';
 import {
-  type ILoggerService,
   DataMapperWrappedContext,
   InitDataMapperFileService,
   type ScrollLocation,
   type ScrollProps,
   type IDataMapperFileService,
-  InitDataMapperLoggerService,
 } from '../core';
 import { CodeViewPanel } from '../components/codeView/CodeViewPanel';
 import { ReactFlowWrapper } from '../components/canvas/ReactFlow';
@@ -17,10 +15,12 @@ import { TestPanel } from '../components/test/TestPanel';
 import DialogView from './DialogView';
 import { useDispatch } from 'react-redux';
 import { setSelectedItem } from '../core/state/DataMapSlice';
+import type { ILoggerService } from '@microsoft/logic-apps-shared';
+import { DevLogger, InitLoggerService } from '@microsoft/logic-apps-shared';
 
 interface DataMapperDesignerProps {
   fileService: IDataMapperFileService;
-  loggerService: ILoggerService;
+  loggerService?: ILoggerService;
   setIsMapStateDirty?: (isMapStateDirty: boolean) => void;
 }
 
@@ -42,12 +42,18 @@ export const DataMapperDesigner = ({ fileService, loggerService, setIsMapStateDi
     [setSourceScroll, setTargetScroll]
   );
 
-  if (fileService) {
-    InitDataMapperFileService(fileService);
+  const loggerServices: ILoggerService[] = [];
+  if (loggerService) {
+    loggerServices.push(loggerService);
+  }
+  if (process.env.NODE_ENV !== 'production') {
+    loggerServices.push(new DevLogger());
   }
 
-  if (loggerService) {
-    InitDataMapperLoggerService(loggerService);
+  InitLoggerService(loggerServices);
+
+  if (fileService) {
+    InitDataMapperFileService(fileService);
   }
 
   const onContainerClick = useCallback(

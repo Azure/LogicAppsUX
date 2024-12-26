@@ -11,14 +11,8 @@ import {
   removeQuotesFromString,
 } from '../Function.Utils';
 import { convertSchemaToSchemaExtended } from '../Schema.Utils';
-import {
-  // NormalizedDataType,
-  // SchemaNodeProperty,
-  type Schema,
-  // type SchemaExtended,
-  // type SchemaNodeDictionary,
-} from '@microsoft/logic-apps-shared';
-import { describe, vi, beforeEach, afterEach, beforeAll, afterAll, it, test, expect } from 'vitest';
+import { type Schema } from '@microsoft/logic-apps-shared';
+import { describe, vi, beforeEach, it, expect } from 'vitest';
 
 describe('utils/Functions', () => {
   describe('getFunctionOutputValue', () => {

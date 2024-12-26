@@ -33,7 +33,6 @@ import type { Rect, XYPosition } from '@xyflow/react';
 import { createReactFlowFunctionKey, isFunctionNode, isSourceNode, isTargetNode } from '../../utils/ReactFlow.Util';
 import { UnboundedInput } from '../../constants/FunctionConstants';
 import { splitEdgeId } from '../../utils/Edge.Utils';
-import { LoggerService } from '../services/LoggerServicer';
 
 export interface DataMapState {
   curDataMapOperation: DataMapOperationState;
@@ -676,10 +675,6 @@ export default dataMapSlice.reducer;
 
 /* eslint-disable no-param-reassign */
 const doDataMapOperation = (state: DataMapState, newCurrentState: DataMapState, action: string) => {
-  if (LoggerService().logToConsole) {
-    console.log(`Action: ${action}`);
-  }
-
   state.curDataMapOperation = newCurrentState.curDataMapOperation;
   state.lastAction = action;
   state.sourceInEditState = newCurrentState.sourceInEditState;

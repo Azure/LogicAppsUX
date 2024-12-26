@@ -10,10 +10,9 @@ import type {
   SchemaNodeDictionary,
   SchemaNodeExtended,
 } from '@microsoft/logic-apps-shared';
-import { guid, NormalizedDataType, SchemaNodeProperty, SchemaType } from '@microsoft/logic-apps-shared';
+import { guid, LogEntryLevel, LoggerService, NormalizedDataType, SchemaNodeProperty, SchemaType } from '@microsoft/logic-apps-shared';
 import { addReactFlowPrefix } from './ReactFlow.Util';
 import type { Node } from '@xyflow/react';
-import { LoggerService } from '../core/services/LoggerServicer';
 
 export const getReactFlowNodeId = (key: string, isLeftDirection: boolean) =>
   addReactFlowPrefix(key, isLeftDirection ? SchemaType.Source : SchemaType.Target);
@@ -24,16 +23,20 @@ export const convertSchemaToSchemaExtended = (schema: DataMapSchema): SchemaExte
     schemaTreeRoot: convertSchemaNodeToSchemaNodeExtended(schema.schemaTreeRoot, undefined, []),
   };
 
-  LoggerService().log(LogCategory.SchemaUtils, 'convertSchemaToSchemaExtended', {
+  LoggerService().log({
+    level: LogEntryLevel.Verbose,
+    area: `${LogCategory.SchemaUtils}/convertSchemaToSchemaExtended`,
     message: 'Schema converted',
-    data: {
-      schemaFileFormat: schema.type,
-      largestNode: telemetryLargestNode(extendedSchema),
-      deepestNodeChild: telemetryDeepestNodeChild(extendedSchema),
-      totalNumberOfNodes: telemetrySchemaNodeCount(extendedSchema),
-      roughSchemaSize: JSON.stringify(schema).length,
-      roughExtendedSchemaSize: JSON.stringify(extendedSchema).length,
-    },
+    args: [
+      {
+        schemaFileFormat: schema.type,
+        largestNode: telemetryLargestNode(extendedSchema),
+        deepestNodeChild: telemetryDeepestNodeChild(extendedSchema),
+        totalNumberOfNodes: telemetrySchemaNodeCount(extendedSchema),
+        roughSchemaSize: JSON.stringify(schema).length,
+        roughExtendedSchemaSize: JSON.stringify(extendedSchema).length,
+      },
+    ],
   });
 
   return extendedSchema;

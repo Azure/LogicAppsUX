@@ -23,14 +23,6 @@ import {
 import { describe, vi, beforeEach, it, expect } from 'vitest';
 
 describe('mapDefinitions/MapDefinitionSerializer', () => {
-  beforeEach(() => {
-    vi.mock('../../core/services/LoggerServicer', () => ({
-      LoggerService: vi.fn(() => ({
-        log: vi.fn(),
-      })),
-    }));
-  });
-
   describe('XML to XML', () => {
     describe('generateMapDefinitionHeader', () => {
       const sourceSchema: Schema = sourceMockSchema;

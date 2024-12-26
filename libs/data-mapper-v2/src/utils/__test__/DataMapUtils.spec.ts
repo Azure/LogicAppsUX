@@ -18,14 +18,6 @@ import { applyConnectionValue } from '../Connection.Utils';
 import { beforeEach } from 'node:test';
 
 describe('utils/DataMap', () => {
-  beforeEach(() => {
-    vi.mock('../../core/services/LoggerServicer', () => ({
-      LoggerService: vi.fn(() => ({
-        log: vi.fn(),
-      })),
-    }));
-  });
-
   describe('addParentConnectionForRepeatingElementsNested', () => {
     it('adds parent connection for repeating elements simple', () => {
       const extendedSource = convertSchemaToSchemaExtended(sourceMockSchema as any as DataMapSchema);
