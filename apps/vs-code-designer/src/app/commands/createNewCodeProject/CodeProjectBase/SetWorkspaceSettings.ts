@@ -104,7 +104,7 @@ export class SetWorkspaceSettings extends AzureWizardPromptStep<IProjectWizardCo
     };
 
     const workspaceFilePath = path.join(context.customWorkspaceFolderPath, `${context.workspaceName}.code-workspace`);
-    context.customWorkspaceFolderPath = workspaceFilePath;
+    context.workspaceCustomFilePath = workspaceFilePath;
 
     await fs.writeJSON(workspaceFilePath, workspaceData, { spaces: 2 });
   }
