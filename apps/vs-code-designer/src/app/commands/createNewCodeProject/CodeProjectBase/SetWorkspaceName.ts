@@ -10,7 +10,7 @@ import { OpenBehavior } from '@microsoft/vscode-extension-logic-apps';
 import type { IProjectWizardContext } from '@microsoft/vscode-extension-logic-apps';
 import * as path from 'path';
 
-export class setWorkspaceName extends AzureWizardPromptStep<IProjectWizardContext> {
+export class SetWorkspaceName extends AzureWizardPromptStep<IProjectWizardContext> {
   public hideStepCount = true;
 
   public async prompt(context: IProjectWizardContext): Promise<void> {

@@ -8,7 +8,7 @@ import { FolderListStep } from '../createNewProject/createProjectSteps/FolderLis
 import { NewCodeProjectTypeStep } from './CodeProjectBase/NewCodeProjectTypeStep';
 import { SetWorkspaceSettings } from './CodeProjectBase/SetWorkspaceSettings';
 import { SetLogicAppName } from './CodeProjectBase/SetLogicAppNameStep';
-import { setWorkspaceName } from './CodeProjectBase/SetWorkspaceName';
+import { SetWorkspaceName } from './CodeProjectBase/SetWorkspaceName';
 import { SetLogicAppType } from './CodeProjectBase/setLogicAppType';
 import { isString } from '@microsoft/logic-apps-shared';
 import type { IActionContext } from '@microsoft/vscode-azext-utils';
@@ -40,7 +40,7 @@ export async function createNewCodeProjectFromCommand(
     'Create new logic app workspace',
     [
       new FolderListStep(),
-      new setWorkspaceName(),
+      new SetWorkspaceName(),
       new SetLogicAppType(),
       new TargetFrameworkStep(),
       new SetLogicAppName(),

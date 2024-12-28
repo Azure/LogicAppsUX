@@ -34,6 +34,7 @@ import * as path from 'path';
 import * as vscode from 'vscode';
 import * as fs from 'fs';
 import { v4 as uuidv4 } from 'uuid';
+import { ConvertToWorkspace } from '../createNewCodeProject/CodeProjectBase/ConvertToWorkspace';
 
 export async function generateDeploymentScripts(context: IActionContext): Promise<void> {
   try {
@@ -48,6 +49,10 @@ export async function generateDeploymentScripts(context: IActionContext): Promis
     const connectionsData: ConnectionsData = isEmptyString(connectionsJson) ? {} : JSON.parse(connectionsJson);
     const isParameterized = await isConnectionsParameterized(connectionsData);
     const workflowFiles = getWorkflowFilePaths(projectPath);
+    await ConvertToWorkspace(context);
+    if (context.telemetry.properties.isWorkspace !== 'true') {
+      return;
+    }
 
     if (!isParameterized) {
       const message = localize(

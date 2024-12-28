@@ -26,6 +26,7 @@ import {
 } from '@microsoft/vscode-azext-utils';
 import type { IActionContext } from '@microsoft/vscode-azext-utils';
 import * as vscode from 'vscode';
+import { ConvertToWorkspace } from './app/commands/createNewCodeProject/CodeProjectBase/ConvertToWorkspace';
 
 const perfStats = {
   loadStartTime: Date.now(),
@@ -66,6 +67,7 @@ export async function activate(context: vscode.ExtensionContext) {
     promptParameterizeConnections(activateContext, true);
     verifyLocalConnectionKeys(activateContext, true);
     await startOnboarding(activateContext);
+    await ConvertToWorkspace(activateContext);
 
     ext.extensionVersion = getExtensionVersion();
     ext.currentBundleVersion = activateContext.telemetry.properties.latestBundleVersion;
