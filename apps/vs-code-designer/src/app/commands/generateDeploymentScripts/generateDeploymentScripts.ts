@@ -51,6 +51,7 @@ export async function generateDeploymentScripts(context: IActionContext): Promis
     const workflowFiles = getWorkflowFilePaths(projectPath);
     await ConvertToWorkspace(context);
     if (context.telemetry.properties.isWorkspace !== 'true') {
+      ext.outputChannel.appendLog(localize('exitScriptGen', 'Exiting script generation...'));
       return;
     }
 
@@ -65,6 +66,7 @@ export async function generateDeploymentScripts(context: IActionContext): Promis
         context.telemetry.properties.parameterizeConnectionsInDeploymentScripts = 'true';
       } else {
         context.telemetry.properties.parameterizeConnectionsInDeploymentScripts = 'false';
+        ext.outputChannel.appendLog(localize('exitScriptGen', 'Exiting script generation...'));
         return;
       }
     }
