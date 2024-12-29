@@ -1,9 +1,9 @@
 import type { PayloadAction } from '@reduxjs/toolkit';
 import { createSlice } from '@reduxjs/toolkit';
-import type { MapCheckerEntry } from '../../utils/MapChecker.Utils';
+import type { MapIssue } from '../../utils/MapChecker.Utils';
 
 export interface ErrorsState {
-  deserializationMessages: MapCheckerEntry[];
+  deserializationMessages: MapIssue[];
 }
 
 export const initialFunctionState: ErrorsState = {
@@ -14,7 +14,7 @@ export const errorsSlice = createSlice({
   name: 'errors',
   initialState: initialFunctionState,
   reducers: {
-    updateDeserializationMessages: (state, action: PayloadAction<MapCheckerEntry[]>) => {
+    updateDeserializationMessages: (state, action: PayloadAction<MapIssue[]>) => {
       state.deserializationMessages = action.payload;
     },
   },

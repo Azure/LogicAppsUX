@@ -30,7 +30,7 @@ const mapDefinitionDropdownOptions: MapDefDropdownOption[] = [
     data: {
       mapDefinitionString: fullTranscriptMapDefinitionString,
       mapMetadataString: JSON.stringify(testMetadata),
-      associatedSchemaIdx: 2,
+      associatedSchemaIdx: 1,
     },
   },
   {
@@ -58,7 +58,6 @@ const sourceSchemaFileOptions: SchemaFileData[] = [
 ];
 const targetSchemaFileOptions: SchemaFileData[] = [
   { filename: 'PlaygroundTargetSchema.json', schemaFormat: SchemaFileFormat.XML },
-  { filename: 'OebsProjectRequest.json', schemaFormat: SchemaFileFormat.XML },
   { filename: 'TargetSchema.json', schemaFormat: SchemaFileFormat.XML },
   { filename: 'ComprehensiveTargetSchema.json', schemaFormat: SchemaFileFormat.XML },
   { filename: 'TargetSchemaJson.json', schemaFormat: SchemaFileFormat.JSON },

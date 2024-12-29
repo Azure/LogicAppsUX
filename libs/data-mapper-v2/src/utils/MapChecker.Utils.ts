@@ -48,15 +48,15 @@ export const MapCheckerItemSeverity = {
 } as const;
 export type MapCheckerItemSeverity = (typeof MapCheckerItemSeverity)[keyof typeof MapCheckerItemSeverity];
 
-export interface MapCheckerEntry {
+export interface MapCheckerMessage {
   title: IntlMessage;
   description: IntlMessage;
   severity: MapCheckerItemSeverity;
   reactFlowId: string;
 }
 
-export const collectErrorsForMapChecker = (connections: ConnectionDictionary, _targetSchema: SchemaNodeDictionary): MapCheckerEntry[] => {
-  const errors: MapCheckerEntry[] = [];
+export const collectErrorsForMapChecker = (connections: ConnectionDictionary, _targetSchema: SchemaNodeDictionary): MapCheckerMessage[] => {
+  const errors: MapCheckerMessage[] = [];
 
   // Valid input types
   Object.entries(connections).forEach(([_connectionKey, connectionValue]) => {
@@ -86,8 +86,26 @@ export const collectErrorsForMapChecker = (connections: ConnectionDictionary, _t
   return errors;
 };
 
-export const collectWarningsForMapChecker = (connections: ConnectionDictionary, targetSchema: SchemaNodeDictionary): MapCheckerEntry[] => {
-  const warnings: MapCheckerEntry[] = [];
+export const convertMapIssuesToMessages = (mapIssues: MapIssue[]): MapCheckerMessage[] => {
+  const mapCheckerMessages: MapCheckerMessage[] = [];
+  mapIssues.forEach((mapIssue) => {
+    const mapMessage: MapCheckerMessage = {
+      title: { message: deserializationMessages.MapLoadError },
+      description: { message: deserializationMessages[mapIssue.issueType], value: { nodeKey: mapIssue.reactFlowId } },
+      severity: MapCheckerItemSeverity.Error,
+      reactFlowId: mapIssue.reactFlowId,
+    };
+
+    mapCheckerMessages.push(mapMessage);
+  });
+  return mapCheckerMessages;
+};
+
+export const collectWarningsForMapChecker = (
+  connections: ConnectionDictionary,
+  targetSchema: SchemaNodeDictionary
+): MapCheckerMessage[] => {
+  const warnings: MapCheckerMessage[] = [];
 
   // Valid input types
   Object.entries(connections).forEach(([_connectionKey, connectionValue]) => {
@@ -136,14 +154,14 @@ export const collectWarningsForMapChecker = (connections: ConnectionDictionary, 
   return warnings;
 };
 
-export const collectInfoForMapChecker = (_connections: ConnectionDictionary, _targetSchema: SchemaNodeDictionary): MapCheckerEntry[] => {
-  const info: MapCheckerEntry[] = [];
+export const collectInfoForMapChecker = (_connections: ConnectionDictionary, _targetSchema: SchemaNodeDictionary): MapCheckerMessage[] => {
+  const info: MapCheckerMessage[] = [];
 
   return info;
 };
 
-export const collectOtherForMapChecker = (_connections: ConnectionDictionary, _targetSchema: SchemaNodeDictionary): MapCheckerEntry[] => {
-  const other: MapCheckerEntry[] = [];
+export const collectOtherForMapChecker = (_connections: ConnectionDictionary, _targetSchema: SchemaNodeDictionary): MapCheckerMessage[] => {
+  const other: MapCheckerMessage[] = [];
 
   return other;
 };
@@ -198,15 +216,15 @@ export const areInputTypesValidForSchemaNode = (selfNode: SchemaNodeExtended, co
 //   return isEveryInputValid;
 // };
 
-export const functionHasRequiredInputs = (functionData: FunctionData, connection: Connection): boolean => {
-  let isEveryInputValid = true;
+export const functionHasRequiredInputs = (_functionData: FunctionData, _connection: Connection): boolean => {
+  const isEveryInputValid = true;
 
-  Object.values(connection.inputs).forEach((inputVal, inputIdx) => {
-    if (!functionData.inputs[inputIdx].isOptional) {
-      // danielle add logic here
-      isEveryInputValid = false;
-    }
-  });
+  // Object.values(connection.inputs).forEach((inputVal, inputIdx) => {
+  //   if (!functionData.inputs[inputIdx].isOptional) {
+  //     // danielle add logic here
+  //     isEveryInputValid = false;
+  //   }
+  // });
 
   return isEveryInputValid;
 };
@@ -225,6 +243,34 @@ export const functionHasRequiredInputs = (functionData: FunctionData, connection
 
 //   return anyInvalidInput;
 // };
+
+const deserializationMessages = defineMessages<MapIssueType>({
+  MapLoadError: {
+    defaultMessage: 'Error loading data map',
+    id: 'PEJ+e4',
+    description: 'Error message for data map load error',
+  },
+  TargetSchemaNodeNotFound: {
+    defaultMessage: `Target schema node not found for node key ''{nodeKey}''`,
+    id: '5DkTf5',
+    description: 'Error message for target schema node not found',
+  },
+  FunctionNotFound: {
+    defaultMessage: `Function not found- ''{nodeKey}''`,
+    id: 'GiR7ll',
+    description: 'Error message for function not found',
+  },
+  KeyNotFound: {
+    defaultMessage: `Key not found ''{nodeKey}''`,
+    id: 'Bwqlxd',
+    description: 'Error message for key not found',
+  },
+  SourceSchemaNodeNotFound: {
+    defaultMessage: `Source schema node not found for node key ''{nodeKey}''`,
+    id: 'FPBmrA',
+    description: 'Error message for source schema node not found',
+  },
+});
 
 const mapCheckerResources = defineMessages({
   inputTypeMismatchTitle: {

@@ -1,11 +1,11 @@
 import { Stack } from '@fluentui/react';
 import { Button, Text, typographyStyles } from '@fluentui/react-components';
 import { useIntl } from 'react-intl';
-import type { MapCheckerEntry } from '../../utils/MapChecker.Utils';
+import type { MapCheckerMessage } from '../../utils/MapChecker.Utils';
 import { iconForMapCheckerSeverity } from '../../utils/Icon.Utils';
 import { useMapCheckerItemStyles } from './styles';
 
-export interface MapCheckerItemProps extends MapCheckerEntry {
+export interface MapCheckerItemProps extends MapCheckerMessage {
   onClick: () => void;
 }
 

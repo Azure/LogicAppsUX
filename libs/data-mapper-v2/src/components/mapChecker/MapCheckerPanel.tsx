@@ -14,8 +14,9 @@ import {
   collectInfoForMapChecker,
   collectOtherForMapChecker,
   collectWarningsForMapChecker,
+  convertMapIssuesToMessages,
   MapCheckerItemSeverity,
-  type MapCheckerEntry,
+  type MapCheckerMessage,
 } from '../../utils/MapChecker.Utils';
 import { iconForMapCheckerSeverity } from '../../utils/Icon.Utils';
 import { MapCheckerItem } from './MapCheckerItem';
@@ -31,6 +32,7 @@ export const MapCheckerPanel = () => {
   const targetSchema = useSelector((state: RootState) => state.dataMap.present.curDataMapOperation.targetSchema);
   const targetSchemaDictionary = useSelector((state: RootState) => state.dataMap.present.curDataMapOperation.flattenedTargetSchema);
   const connectionDictionary = useSelector((state: RootState) => state.dataMap.present.curDataMapOperation.dataMapConnections);
+  const storeErrors = useSelector((state: RootState) => state.errors.deserializationMessages);
 
   const stringResources = useMemo(
     () => ({
@@ -97,7 +99,7 @@ export const MapCheckerPanel = () => {
     //dispatch(setSelectedItem(reactFlowId));
   };
 
-  const mapMapCheckerContentToElements = (elements: MapCheckerEntry[], severity: MapCheckerItemSeverity) => {
+  const mapMapCheckerContentToElements = (elements: MapCheckerMessage[], severity: MapCheckerItemSeverity) => {
     return elements.map((item, index) => {
       return (
         <MapCheckerItem
@@ -116,7 +118,9 @@ export const MapCheckerPanel = () => {
 
   const errorContent = useMemo(() => {
     if (sourceSchema && targetSchema) {
-      return collectErrorsForMapChecker(connectionDictionary, targetSchemaDictionary);
+      const errors = collectErrorsForMapChecker(connectionDictionary, targetSchemaDictionary);
+      const deserializationWarnings = convertMapIssuesToMessages(storeErrors);
+      return errors.concat(deserializationWarnings);
     }
 
     return [];
@@ -132,7 +136,9 @@ export const MapCheckerPanel = () => {
 
   const warningContent = useMemo(() => {
     if (sourceSchema && targetSchema) {
-      return collectWarningsForMapChecker(connectionDictionary, targetSchemaDictionary);
+      const warnings = collectWarningsForMapChecker(connectionDictionary, targetSchemaDictionary);
+
+      return warnings;
     }
 
     return [];
