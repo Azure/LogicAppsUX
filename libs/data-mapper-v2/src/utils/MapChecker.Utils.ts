@@ -14,6 +14,7 @@ import type { SchemaNodeDictionary, SchemaNodeExtended } from '@microsoft/logic-
 import { SchemaNodeProperty } from '@microsoft/logic-apps-shared';
 import { defineMessages } from 'react-intl';
 import type { IntlMessage } from './Intl.Utils';
+import { UnboundedInput } from '../constants/FunctionConstants';
 
 export class DeserializationError extends Error {
   public mapIssue: MapIssue;
@@ -71,15 +72,6 @@ export const collectErrorsForMapChecker = (connections: ConnectionDictionary, _t
           reactFlowId: connectionValue.self.reactFlowKey,
         });
       }
-
-      //   if (functionConnectionHasTooManyInputs(node, connectionValue)) {
-      //     errors.push({
-      //       title: { message: mapCheckerResources.functionExceedsMaxInputsTitle },
-      //       description: { message: mapCheckerResources.functionExceedsMaxInputsBody, value: { functionName: node.displayName } },
-      //       severity: MapCheckerItemSeverity.Error,
-      //       reactFlowId: connectionValue.self.reactFlowKey,
-      //     });
-      //   }
     }
   });
 
@@ -112,7 +104,8 @@ export const collectWarningsForMapChecker = (
     const node = connectionValue.self.node;
 
     if (isFunctionData(node)) {
-      //   if (!areInputTypesValidForFunction(node, connectionValue)) { not needed until we get function types from backend
+      // not needed until we get function types from backend
+      //   if (!areInputTypesValidForFunction(node, connectionValue)) {
       //     warnings.push({
       //       title: { message: mapCheckerResources.inputTypeMismatchTitle },
       //       description: {
@@ -181,6 +174,7 @@ export const areInputTypesValidForSchemaNode = (selfNode: SchemaNodeExtended, co
   return isValidConnectionByType(selfNode.type, input.node.outputValueType);
 };
 
+// will add back when we get type info from backend
 // export const areInputTypesValidForFunction = (functionData: FunctionData, connection: Connection): boolean => {
 //   let isEveryInputValid = true;
 
@@ -216,33 +210,23 @@ export const areInputTypesValidForSchemaNode = (selfNode: SchemaNodeExtended, co
 //   return isEveryInputValid;
 // };
 
-export const functionHasRequiredInputs = (_functionData: FunctionData, _connection: Connection): boolean => {
-  const isEveryInputValid = true;
+export const functionHasRequiredInputs = (functionData: FunctionData, connection: Connection): boolean => {
+  let isEveryInputValid = true;
 
-  // Object.values(connection.inputs).forEach((inputVal, inputIdx) => {
-  //   if (!functionData.inputs[inputIdx].isOptional) {
-  //     // danielle add logic here
-  //     isEveryInputValid = false;
-  //   }
-  // });
+  if (functionData.maxNumberOfInputs === UnboundedInput) {
+    return true;
+  }
+
+  functionData.inputs.forEach((input, inputIdx) => {
+    if (!input.isOptional) {
+      if (isEmptyConnection(connection.inputs[inputIdx])) {
+        isEveryInputValid = false;
+      }
+    }
+  });
 
   return isEveryInputValid;
 };
-
-// export const functionConnectionHasTooManyInputs = (functionData: FunctionData, connection: Connection) => { is this a possible scenario in v2?
-//   if (functionData.maxNumberOfInputs === -1) {
-//     return false;
-//   }
-
-//   let anyInvalidInput = false;
-//   Object.values(connection.inputs).forEach((inputArr) => {
-//     if (inputArr.length > 1) {
-//       anyInvalidInput = true;
-//     }
-//   });
-
-//   return anyInvalidInput;
-// };
 
 const deserializationMessages = defineMessages<MapIssueType>({
   MapLoadError: {
@@ -294,8 +278,8 @@ const mapCheckerResources = defineMessages({
     description: 'Title for a function missing a required input card',
   },
   functionMissingInputsBody: {
-    defaultMessage: `Function ''{functionName}'' has an non-terminating connection chain`,
-    id: 'XRK+gt',
+    defaultMessage: `Function ''{functionName}'' is missing required inputs`,
+    id: 'kfmLTY',
     description: 'Body text for a function missing a required input card',
   },
   requiredSchemaNodeTitle: {
