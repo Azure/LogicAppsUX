@@ -1,22 +1,22 @@
 import { Stack } from '@fluentui/react';
-import { Button, Text, typographyStyles } from '@fluentui/react-components';
+import { Text, typographyStyles } from '@fluentui/react-components';
 import { useIntl } from 'react-intl';
 import type { MapCheckerMessage } from '../../utils/MapChecker.Utils';
 import { iconForMapCheckerSeverity } from '../../utils/Icon.Utils';
 import { useMapCheckerItemStyles } from './styles';
 
 export interface MapCheckerItemProps extends MapCheckerMessage {
-  onClick: () => void;
+  _onClick?: () => void;
 }
 
-export const MapCheckerItem = ({ title, description, severity, onClick }: MapCheckerItemProps) => {
+export const MapCheckerItem = ({ title, description, severity, _onClick }: MapCheckerItemProps) => {
   const intl = useIntl();
   const styles = useMapCheckerItemStyles();
 
   const icon = iconForMapCheckerSeverity(severity);
 
   return (
-    <Button className={styles.buttonStyle} onClick={onClick}>
+    <div className={styles.buttonStyle}>
       <Stack
         horizontal
         tokens={{
@@ -35,6 +35,6 @@ export const MapCheckerItem = ({ title, description, severity, onClick }: MapChe
           </Text>
         </Stack>
       </Stack>
-    </Button>
+    </div>
   );
 };

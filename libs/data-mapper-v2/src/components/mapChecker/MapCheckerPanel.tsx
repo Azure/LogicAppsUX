@@ -1,14 +1,10 @@
-import { targetPrefix } from '../../constants/ReactFlowConstants';
 import type { RootState } from '../../core/state/Store';
 import { Stack } from '@fluentui/react';
 import { Accordion, AccordionHeader, AccordionItem, AccordionPanel, Text, tokens } from '@fluentui/react-components';
 import { CheckmarkCircle20Filled } from '@fluentui/react-icons';
-import type { SchemaNodeDictionary, SchemaNodeExtended } from '@microsoft/logic-apps-shared';
 import { useMemo } from 'react';
 import { useIntl } from 'react-intl';
 import { useSelector } from 'react-redux';
-import { getConnectedTargetSchemaNodes } from '../../utils/Connection.Utils';
-import type { ConnectionDictionary } from '../../models/Connection';
 import {
   collectErrorsForMapChecker,
   collectInfoForMapChecker,
@@ -75,43 +71,10 @@ export const MapCheckerPanel = () => {
     description: 'Message displayed when map checker has no errors or warnings',
   });
 
-  const onMapCheckerItemClick = (reactFlowId: string, connections: ConnectionDictionary, targetSchemaDictionary: SchemaNodeDictionary) => {
-    let destinationTargetNode: SchemaNodeExtended | undefined = undefined;
-    if (reactFlowId.startsWith(targetPrefix)) {
-      destinationTargetNode = targetSchemaDictionary[reactFlowId];
-    } else {
-      const targetNodes = getConnectedTargetSchemaNodes([connections[reactFlowId]], connections);
-      if (targetNodes.length > 0) {
-        // We could have a input end up at more than one target, so just pick the first to navigate to
-        destinationTargetNode = targetNodes[0];
-      }
-    }
-
-    if (destinationTargetNode) {
-      // This is a leaf node, use the parent
-      //   if (destinationTargetNode.children.length === 0 && destinationTargetNode.parentKey) {
-      //     dispatch(setCurrentTargetSchemaNode(targetSchemaDictionary[`${targetPrefix}${destinationTargetNode.parentKey}`]));
-      //   } else {
-      //     dispatch(setCurrentTargetSchemaNode(destinationTargetNode));
-      //   }
-    }
-
-    //dispatch(setSelectedItem(reactFlowId));
-  };
-
   const mapMapCheckerContentToElements = (elements: MapCheckerMessage[], severity: MapCheckerItemSeverity) => {
     return elements.map((item, index) => {
       return (
-        <MapCheckerItem
-          key={index}
-          title={item.title}
-          description={item.description}
-          severity={severity}
-          reactFlowId={item.reactFlowId}
-          onClick={() => {
-            onMapCheckerItemClick(item.reactFlowId, connectionDictionary, targetSchemaDictionary);
-          }}
-        />
+        <MapCheckerItem key={index} title={item.title} description={item.description} severity={severity} reactFlowId={item.reactFlowId} />
       );
     });
   };
@@ -124,14 +87,10 @@ export const MapCheckerPanel = () => {
     }
 
     return [];
-    //Intentional, only want to update when we update connections
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [connectionDictionary]);
+  }, [connectionDictionary, sourceSchema, storeErrors, targetSchema, targetSchemaDictionary]);
 
   const errorItems = useMemo(() => {
     return mapMapCheckerContentToElements(errorContent, MapCheckerItemSeverity.Error);
-    //Intentional, only want to update when we update the content array
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [errorContent]);
 
   const warningContent = useMemo(() => {
@@ -142,15 +101,11 @@ export const MapCheckerPanel = () => {
     }
 
     return [];
-    //Intentional, only want to update when we update connections
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [connectionDictionary]);
+  }, [connectionDictionary, sourceSchema, targetSchema, targetSchemaDictionary]);
 
   const warningItems = useMemo(() => {
     return mapMapCheckerContentToElements(warningContent, MapCheckerItemSeverity.Warning);
-    //Intentional, only want to update when we update the content array
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [errorContent]);
+  }, [warningContent]);
 
   const infoContent = useMemo(() => {
     if (sourceSchema && targetSchema) {
@@ -158,15 +113,11 @@ export const MapCheckerPanel = () => {
     }
 
     return [];
-    //Intentional, only want to update when we update connections
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [connectionDictionary]);
+  }, [connectionDictionary, targetSchemaDictionary, sourceSchema, targetSchema]);
 
   const infoItems = useMemo(() => {
     return mapMapCheckerContentToElements(infoContent, MapCheckerItemSeverity.Info);
-    //Intentional, only want to update when we update the content array
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [errorContent]);
+  }, [infoContent]);
 
   const otherContent = useMemo(() => {
     if (sourceSchema && targetSchema) {
