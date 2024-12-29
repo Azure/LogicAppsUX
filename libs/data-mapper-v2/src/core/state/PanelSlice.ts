@@ -73,6 +73,7 @@ export const panelSlice = createSlice({
       const newState = !state.mapCheckerPanel.isOpen;
 
       if (newState) {
+        state.codeViewPanel.isOpen = false;
         state.testPanel.isOpen = false;
         state.functionPanel.isOpen = false;
       }
@@ -85,6 +86,7 @@ export const panelSlice = createSlice({
 
       // Close other panels if code view panel is opened
       if (newState) {
+        state.mapCheckerPanel.isOpen = false;
         state.testPanel.isOpen = false;
         state.functionPanel.isOpen = false;
       }
@@ -97,6 +99,7 @@ export const panelSlice = createSlice({
 
       // Close other panels if test panel is opened
       if (newState) {
+        state.mapCheckerPanel.isOpen = false;
         state.codeViewPanel.isOpen = false;
         state.functionPanel.isOpen = false;
       }
@@ -109,6 +112,7 @@ export const panelSlice = createSlice({
 
       // Close other panels if function panel is opened
       if (newState) {
+        state.mapCheckerPanel.isOpen = false;
         state.codeViewPanel.isOpen = false;
         state.testPanel.isOpen = false;
       }

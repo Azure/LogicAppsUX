@@ -240,18 +240,16 @@ export const MapCheckerPanel = () => {
   );
 
   return (
-    isMapCheckerPanelOpen && (
-      <Panel
-        id="map-checker"
-        isOpen={true}
-        title={{
-          text: stringResources.MAP_ISSUES,
-          size: 500,
-        }}
-        body={panelBody}
-        styles={{ root: styles.root }}
-        position={'end'}
-      />
-    )
+    <Panel
+      id="map-checker"
+      isOpen={isMapCheckerPanelOpen}
+      title={{
+        text: stringResources.MAP_ISSUES,
+        size: 500,
+      }}
+      body={panelBody}
+      styles={{ root: styles.root }}
+      position={'end'}
+    />
   );
 };
