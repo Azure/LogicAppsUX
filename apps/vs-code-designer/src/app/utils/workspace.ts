@@ -21,7 +21,7 @@ import * as vscode from 'vscode';
  */
 export const getWorkspaceRoot = async (actionContext: IActionContext): Promise<string | undefined> => {
   for (const folder of vscode.workspace.workspaceFolders) {
-    const projectRoot = await tryGetLogicAppProjectRoot(actionContext, folder);
+    const projectRoot = await tryGetLogicAppProjectRoot(actionContext, folder, true);
     if (projectRoot) {
       return vscode.workspace.workspaceFile ? path.dirname(vscode.workspace.workspaceFile.fsPath) : undefined;
     }
@@ -36,7 +36,7 @@ export const getWorkspaceRoot = async (actionContext: IActionContext): Promise<s
  */
 export const getWorkspaceFile = async (actionContext: IActionContext): Promise<string | undefined> => {
   for (const folder of vscode.workspace.workspaceFolders) {
-    const projectRoot = await tryGetLogicAppProjectRoot(actionContext, folder);
+    const projectRoot = await tryGetLogicAppProjectRoot(actionContext, folder, true);
     if (projectRoot) {
       return vscode.workspace.workspaceFile ? vscode.workspace.workspaceFile.fsPath : undefined;
     }
@@ -51,7 +51,7 @@ export const getWorkspaceFile = async (actionContext: IActionContext): Promise<s
  */
 export const getWorkspaceFileInParentDirectory = async (actionContext: IActionContext): Promise<string | undefined> => {
   for (const folder of vscode.workspace.workspaceFolders) {
-    const projectRoot = await tryGetLogicAppProjectRoot(actionContext, folder);
+    const projectRoot = await tryGetLogicAppProjectRoot(actionContext, folder, true);
     if (projectRoot) {
       if (vscode.workspace.workspaceFile) {
         return vscode.workspace.workspaceFile.fsPath;

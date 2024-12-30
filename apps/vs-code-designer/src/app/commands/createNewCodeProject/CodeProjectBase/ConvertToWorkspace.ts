@@ -8,37 +8,11 @@ import { AzureWizard, DialogResponses } from '@microsoft/vscode-azext-utils';
 import type { IActionContext } from '@microsoft/vscode-azext-utils';
 import { latestGAVersion } from '@microsoft/vscode-extension-logic-apps';
 import type { IFunctionWizardContext } from '@microsoft/vscode-extension-logic-apps';
-import * as fse from 'fs-extra';
-import * as path from 'path';
 import * as vscode from 'vscode';
 import { window } from 'vscode';
 import { getWorkspaceFile, getWorkspaceFileInParentDirectory, getWorkspaceRoot } from '../../../utils/workspace';
 import { SetWorkspaceName } from './SetWorkspaceName';
 import { SetWorkspaceContents } from './SetWorkspaceContents';
-
-export async function createWorkspaceFile(context: IFunctionWizardContext): Promise<void> {
-  // Start with an empty folders array
-  const workspaceFolders = [];
-
-  // Add Functions folder first if it's a custom code code Logic App
-  const functionsFolder = context.methodName;
-  if (context.isWorkspaceWithFunctions) {
-    workspaceFolders.push({ name: functionsFolder, path: `./${functionsFolder}` });
-  }
-
-  // Use context.logicAppName for the folder name; default to 'LogicApp' if not available
-  const logicAppName = context.logicAppName || 'LogicApp';
-  workspaceFolders.push({ name: logicAppName, path: `./${logicAppName}` });
-
-  const workspaceData = {
-    folders: workspaceFolders,
-  };
-
-  const workspaceFilePath = path.join(context.customWorkspaceFolderPath, `${context.workspaceName}.code-workspace`);
-  context.workspaceCustomFilePath = workspaceFilePath;
-
-  await fse.writeJSON(workspaceFilePath, workspaceData, { spaces: 2 });
-}
 
 export async function ConvertToWorkspace(context: IActionContext): Promise<void> {
   addLocalFuncTelemetry(context);

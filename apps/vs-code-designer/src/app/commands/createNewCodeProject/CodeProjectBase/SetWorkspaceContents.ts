@@ -65,10 +65,7 @@ export class SetWorkspaceContents extends AzureWizardPromptStep<IProjectWizardCo
       folders: workspaceFolders,
     };
 
-    const workspaceFilePath = path.join(context.workspacePath, `${context.workspaceName}.code-workspace`);
-    context.workspaceCustomFilePath = workspaceFilePath;
-
-    await fse.writeJSON(workspaceFilePath, workspaceData, { spaces: 2 });
+    await fse.writeJSON(context.workspaceCustomFilePath, workspaceData, { spaces: 2 });
     context.openBehavior = OpenBehavior.openInCurrentWindow;
   }
 }

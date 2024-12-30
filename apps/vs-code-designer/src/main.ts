@@ -57,6 +57,7 @@ export async function activate(context: vscode.ExtensionContext) {
 
     runPostWorkflowCreateStepsFromCache();
 
+    await ConvertToWorkspace(activateContext);
     try {
       await downloadExtensionBundle(activateContext);
     } catch (error) {
@@ -67,7 +68,6 @@ export async function activate(context: vscode.ExtensionContext) {
     promptParameterizeConnections(activateContext, true);
     verifyLocalConnectionKeys(activateContext, true);
     await startOnboarding(activateContext);
-    await ConvertToWorkspace(activateContext);
 
     ext.extensionVersion = getExtensionVersion();
     ext.currentBundleVersion = activateContext.telemetry.properties.latestBundleVersion;

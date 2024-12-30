@@ -23,6 +23,8 @@ export class SetWorkspaceName extends AzureWizardPromptStep<IProjectWizardContex
     await fs.ensureDir(context.workspacePath);
     context.workspacePath = context.workspaceCustomFilePath;
     context.workspaceFolder = getContainingWorkspace(context.workspacePath);
+    const workspaceFilePath = path.join(context.workspacePath, `${context.workspaceName}.code-workspace`);
+    context.workspaceCustomFilePath = workspaceFilePath;
 
     if (context.workspaceFolder) {
       context.openBehavior = OpenBehavior.alreadyOpen;

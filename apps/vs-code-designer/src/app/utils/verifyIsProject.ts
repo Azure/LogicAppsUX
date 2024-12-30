@@ -60,7 +60,7 @@ export async function tryGetLogicAppProjectRoot(
       })
     );
 
-    if (matchingSubpaths.length === 1) {
+    if (matchingSubpaths.length === 1 || (matchingSubpaths.length !== 0 && suppressPrompt)) {
       subpath = matchingSubpaths[0];
     } else if (matchingSubpaths.length !== 0 && !suppressPrompt) {
       subpath = await promptForProjectSubpath(context, folderPath, matchingSubpaths);
