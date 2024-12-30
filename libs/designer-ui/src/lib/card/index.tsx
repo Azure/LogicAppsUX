@@ -166,11 +166,10 @@ export const Card: React.FC<CardProps> = memo(
           focusRef.current = node;
           drag(node);
         }}
-        role={'button'}
         id={`msla-node-${id}`}
         aria-label={cardAltText}
         className={css(
-          'msla-panel-card-container',
+					'msla-panel-card-container',
           selectionMode === 'selected' && 'msla-panel-card-container-selected',
           !active && 'inactive',
           cloned && 'msla-card-ghost-image',
@@ -182,7 +181,8 @@ export const Card: React.FC<CardProps> = memo(
         onClick={handleClick}
         onContextMenu={onContextMenu}
         onKeyDown={keyboardInteraction.keyDown}
-        tabIndex={nodeIndex}
+        tabIndex={0}
+				role={'button'}
         onKeyUp={keyboardInteraction.keyUp}
       >
         {isMonitoringView ? (

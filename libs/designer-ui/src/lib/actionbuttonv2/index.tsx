@@ -13,7 +13,6 @@ export interface ActionButtonV2Props {
 }
 
 export const ActionButtonV2: React.FC<ActionButtonV2Props> = ({
-  tabIndex,
   id,
   dataAutomationId,
   className,
@@ -31,7 +30,7 @@ export const ActionButtonV2: React.FC<ActionButtonV2Props> = ({
         disabled={disabled}
         onClick={onClick}
         onContextMenu={onClick}
-        tabIndex={tabIndex ?? 0}
+        // tabIndex={tabIndex ?? 0}
       >
         <Plus />
       </button>

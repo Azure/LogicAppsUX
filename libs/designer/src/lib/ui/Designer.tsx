@@ -39,6 +39,7 @@ import { CanvasFinder } from './CanvasFinder';
 import { DesignerContextualMenu } from './common/DesignerContextualMenu/DesignerContextualMenu';
 import { EdgeContextualMenu } from './common/EdgeContextualMenu/EdgeContextualMenu';
 import { DragPanMonitor } from './common/DragPanMonitor/DragPanMonitor';
+import { ReactFlowDOMReordering } from './common/ReactFlowDOMReordering/ReactFlowDOMReordering';
 
 export interface DesignerProps {
   backgroundProps?: BackgroundProps;
@@ -253,6 +254,7 @@ export const Designer = (props: DesignerProps) => {
           <PerformanceDebugTool />
           <CanvasFinder panelLocation={panelLocation} />
           <DragPanMonitor />
+					<ReactFlowDOMReordering />
         </ReactFlowProvider>
         <div
           id={'msla-layer-host'}
