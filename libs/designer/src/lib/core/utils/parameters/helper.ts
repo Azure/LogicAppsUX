@@ -346,13 +346,26 @@ export function createParameterInfo(
 ): ParameterInfo {
   const value = loadParameterValue(parameter);
   const { editor, editorOptions, editorViewModel, schema } = getParameterEditorProps(parameter, value, shouldIgnoreDefaultValue, metadata);
-  const { alias, dependencies, encode, format, isDynamic, isUnknown, serialization, deserialization, dynamicParameterReference } =
-    parameter;
+  const {
+    alternativeKey,
+    alias,
+    dependencies,
+    encode,
+    format,
+    isDynamic,
+    isUnknown,
+    serialization,
+    deserialization,
+    dynamicParameterReference,
+    collectionFormat,
+  } = parameter;
+
   const info = {
     alias,
     dependencies,
     encode,
     format,
+    collectionFormat,
     in: parameter.in,
     isDynamic: !!isDynamic,
     isUnknown,
@@ -362,7 +375,7 @@ export function createParameterInfo(
   };
 
   const parameterInfo: ParameterInfo = {
-    alternativeKey: parameter.alternativeKey,
+    alternativeKey,
     id: guid(),
     dynamicData: parameter.dynamicValues ? { status: DynamicLoadStatus.NOTSTARTED } : undefined,
     editor,
