@@ -35,6 +35,7 @@ const regex = {
   zipcode: /^[0-9]{5}$/,
   zipcode4: /^[0-9]{5}(?:-[0-9]{4})$/,
   whiteSpace: /\s/g,
+  csv: /^([^,]+)(,([^,]+))*$/,
 };
 
 /**
@@ -50,16 +51,16 @@ export function validateStaticParameterInfo(
   shouldValidateUnknownParameterAsError: boolean
 ): string[] {
   const intl = getIntl();
-
   const parameterTitle = getTitleOrSummary(parameterMetadata.schema) || parameterMetadata.parameterName;
   const parameterFormat = parameterMetadata.info.format;
+  const parameterCollectionFormat = parameterMetadata.info.collectionFormat;
   const parameterName = capitalizeFirstLetter(parameterTitle);
   const pattern = parameterMetadata.pattern;
   const type = parameterMetadata.type;
   const editor = parameterMetadata.editor;
   const required = isParameterRequired(parameterMetadata);
   const parameterErrorMessages: string[] = [];
-  const typeError = validateType(type, parameterFormat ?? '', parameterValue, editor);
+  const typeError = validateType(type, parameterValue, editor, { format: parameterFormat, collectionFormat: parameterCollectionFormat });
   const isUnknown = parameterMetadata.info.isUnknown;
 
   if (typeError) {
@@ -117,7 +118,13 @@ export function validateStaticParameterInfo(
  * @arg {string} parameterValue - The stringified parameter value.
  * @return {string}
  */
-export function validateType(type: string, parameterFormat: string, parameterValue: string, editor?: string): string | undefined {
+export function validateType(
+  type: string,
+  parameterValue: string,
+  editor: string | undefined,
+  validationOptions: { format?: string; collectionFormat?: string }
+): string | undefined {
+  const { format: parameterFormat = '', collectionFormat } = validationOptions;
   if (!parameterValue) {
     return;
   }
@@ -198,7 +205,15 @@ export function validateType(type: string, parameterFormat: string, parameterVal
       if (isExpression) {
         return;
       }
-      if (!isValidArrayFormat(parameterValue)) {
+      if (collectionFormat === Constants.SWAGGER.COLLECTION_FORMAT.CSV) {
+        if (!regex.csv.test(parameterValue)) {
+          return intl.formatMessage({
+            defaultMessage: 'Enter a valid comma-separated string.',
+            id: 'auci7r',
+            description: 'Error validation message for CSVs',
+          });
+        }
+      } else if (!isValidArrayFormat(parameterValue)) {
         return intl.formatMessage({
           defaultMessage: 'Enter a valid array.',
           id: '2pRsUf',
@@ -372,7 +387,7 @@ export function validateJSONParameter(parameterMetadata: ParameterInfo, paramete
   if (shouldValidateJSON(parameterValue) && value) {
     try {
       JSON.parse(value);
-    } catch (e) {
+    } catch {
       if (!parameterHasOnlyTokenBinding(parameterValue)) {
         errors.push(
           intl.formatMessage({
@@ -527,7 +542,7 @@ export const validateParameterValueWithSwaggerType = (
   }
 
   const swaggerType = convertWorkflowParameterTypeToSwaggerType(type);
-  let error = validateType(swaggerType, /* parameterFormat */ '', valueToValidate);
+  let error = validateType(swaggerType, valueToValidate, undefined, {});
 
   if (error) {
     return error;
@@ -577,7 +592,7 @@ function isValidArrayFormat(value: string): boolean {
   try {
     const v = JSON.parse(value);
     return typeof v === 'object' && Array.isArray(v) && v.every((item) => item !== undefined && item !== null);
-  } catch (e) {
+  } catch {
     return false;
   }
 }
