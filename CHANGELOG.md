@@ -1,4 +1,11 @@
 # Logic Apps Designer
+## [5.14.0](https://github.com/Azure/LogicAppsUX/compare/v5.13.0...v5.14.0) (2024-12-31)
+
+
+### Features
+
+* **vscode:** Implement telemetry in designer and data-mapper  ([#6307](https://github.com/Azure/LogicAppsUX/issues/6307)) ([5dfee02](https://github.com/Azure/LogicAppsUX/commit/5dfee02e248f26690ee068be436a8123c521e72a))
+
 ## [5.13.0](https://github.com/Azure/LogicAppsUX/compare/v5.12.0...v5.13.0) (2024-12-26)
 
 ## [5.12.0](https://github.com/Azure/LogicAppsUX/compare/v5.11.0...v5.12.0) (2024-12-20)
