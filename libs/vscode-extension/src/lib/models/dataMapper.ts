@@ -61,4 +61,8 @@ export type MessageToVsix =
     }
   | {
       command: typeof ExtensionCommand.getDataMapperVersion;
+    }
+  | {
+      command: typeof ExtensionCommand.logTelemetry;
+      data: any;
     };
