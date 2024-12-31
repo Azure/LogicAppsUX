@@ -121,7 +121,17 @@ export async function getWorkspaceFolder(
       folder = logicAppsWorkspaces[0];
     } else {
       const placeHolder: string = localize('selectProjectFolder', 'Select the folder containing your logic app project');
-      folder = await vscode.window.showWorkspaceFolderPick({ placeHolder });
+      const folderPicks: IAzureQuickPickItem<vscode.WorkspaceFolder>[] = logicAppsWorkspaces.map((projectRoot) => {
+        const workspaceFolder = vscode.workspace.workspaceFolders?.find((folder) => folder.uri.fsPath === projectRoot);
+        return {
+          label: path.basename(projectRoot),
+          description: projectRoot,
+          data: workspaceFolder,
+        };
+      });
+
+      const selectedItem = await context.ui.showQuickPick(folderPicks, { placeHolder });
+      folder = selectedItem?.data;
       if (!folder) {
         throw new UserCancelledError();
       }

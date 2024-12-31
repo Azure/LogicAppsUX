@@ -12,6 +12,7 @@ import {
   localEmulatorConnectionString,
   localSettingsFileName,
   logicAppKind,
+  vscodeFolderName,
   workerRuntimeKey,
   workflowSubscriptionIdKey,
 } from '../../../../constants';
@@ -34,7 +35,7 @@ export class ScriptProjectCreateStep extends ProjectCreateStepBase {
     '__queuestorage__',
     '__azurite_db*__.json',
     '.git*',
-    '.vscode',
+    vscodeFolderName,
     localSettingsFileName,
     'test',
     '.debug',
