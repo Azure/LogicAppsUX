@@ -37,7 +37,9 @@ export class OpenFolderStepCodeProject extends AzureWizardExecuteStep<IProjectWi
     }
 
     if (context.openBehavior === OpenBehavior.addToWorkspace) {
-      workspace.updateWorkspaceFolders(openFolders.length, 0, { uri: uri });
+      if (!uri.path.endsWith('.code-workspace')) {
+        workspace.updateWorkspaceFolders(openFolders.length, 0, { uri: uri });
+      }
     } else {
       // Open folder using executeCommand method of commands object with vscode.openFolder command
       await commands.executeCommand(
