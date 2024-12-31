@@ -16,7 +16,7 @@ import type { FunctionDictionary, FunctionData } from '../models/Function';
 import { FunctionCategory, directAccessPseudoFunctionKey, ifPseudoFunctionKey, indexPseudoFunctionKey } from '../models/Function';
 import { connectionDoesExist, isNodeConnection, isCustomValueConnection, isEmptyConnection } from './Connection.Utils';
 import { getInputValues } from './DataMap.Utils';
-import { LogCategory, LogService } from './Logging.Utils';
+import { LogCategory } from './Logging.Utils';
 import { isSchemaNodeExtended } from './Schema.Utils';
 import {
   isAGuid,
@@ -24,6 +24,8 @@ import {
   type SchemaNodeDictionary,
   type SchemaNodeExtended,
   type FunctionMetadata,
+  LogEntryLevel,
+  LoggerService,
 } from '@microsoft/logic-apps-shared';
 
 export const getFunctionBrandingForCategory = (functionCategory: FunctionCategory) => {
@@ -53,10 +55,11 @@ export const getFunctionBrandingForCategory = (functionCategory: FunctionCategor
       return conversionBranding;
     }
     default: {
-      LogService.error(LogCategory.FunctionUtils, 'getFunctionBrandingForCategory', {
+      LoggerService().log({
+        level: LogEntryLevel.Error,
+        area: `${LogCategory.FunctionUtils}/getFunctionBrandingForCategory`,
         message: `Invalid category provided: ${functionCategory}`,
       });
-
       return utilityBranding;
     }
   }
@@ -106,13 +109,16 @@ export const getIndexValueForCurrentConnection = (currentConnection: Connection,
     // Function, try moving back the chain to find the source
     return getIndexValueForCurrentConnection(connections[firstInput.reactFlowKey], connections);
   }
-  LogService.error(LogCategory.FunctionUtils, 'getIndexValueForCurrentConnection', {
+  LoggerService().log({
+    level: LogEntryLevel.Error,
+    area: `${LogCategory.FunctionUtils}/getIndexValueForCurrentConnection`,
     message: `Didn't find inputNode to make index value`,
-    data: {
-      connection: currentConnection,
-    },
+    args: [
+      {
+        connection: currentConnection,
+      },
+    ],
   });
-
   return '';
 };
 

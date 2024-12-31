@@ -2,7 +2,7 @@ import type { RootState } from '../../core/state/Store';
 import type { FunctionData } from '../../models/Function';
 import { FunctionCategory } from '../../models/Function';
 import { hasOnlyCustomInputType } from '../../utils/Function.Utils';
-import { LogCategory, LogService } from '../../utils/Logging.Utils';
+import { LogCategory } from '../../utils/Logging.Utils';
 import FunctionListHeader from './FunctionListHeader';
 import FunctionListItem from './FunctionListItem';
 import type { TreeItemValue, TreeOpenChangeData, TreeOpenChangeEvent } from '@fluentui/react-components';
@@ -11,6 +11,8 @@ import Fuse from 'fuse.js';
 import React, { useCallback, useMemo } from 'react';
 import { useStyles } from './styles';
 import { useSelector } from 'react-redux';
+import { LogEntryLevel, LoggerService } from '@microsoft/logic-apps-shared';
+import { isString } from 'lodash';
 
 const fuseFunctionSearchOptions: Fuse.IFuseOptions<FunctionData> = {
   includeScore: true,
@@ -105,18 +107,12 @@ export const FunctionList = (props: FunctionListProps) => {
       // Add function categories as children to the tree root, filtering out any that don't have any children
       return Object.values(updatedFunctionCategories).filter((category) => category.children.length > 0);
     } catch (error) {
-      if (typeof error === 'string') {
-        LogService.error(LogCategory.FunctionList, 'functionListError', {
-          message: error,
-        });
-        throw new Error(`Function List Error: ${error}`);
-      }
-      if (error instanceof Error) {
-        LogService.error(LogCategory.FunctionList, 'functionListError', {
-          message: error.message,
-        });
-        throw new Error(`Function List Error: ${error.message}`);
-      }
+      const errorMessage = isString(error) ? error : error instanceof Error ? error.message : 'Unknown error';
+      LoggerService().log({
+        level: LogEntryLevel.Error,
+        area: `${LogCategory.FunctionList}/functionListError`,
+        message: errorMessage,
+      });
     }
 
     return [];

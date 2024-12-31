@@ -18,6 +18,8 @@ import type { MessageToVsix } from '@microsoft/vscode-extension-logic-apps';
 import { ExtensionCommand } from '@microsoft/vscode-extension-logic-apps';
 import { useCallback, useContext, useEffect, useMemo, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
+import packagejson from '../../../package.json';
+import { LoggerService } from '../services/Logger';
 
 export const DataMapperAppV2 = () => {
   const dispatch = useDispatch<AppDispatch>();
@@ -34,6 +36,7 @@ export const DataMapperAppV2 = () => {
   const schemaFileList = useSelector((state: RootState) => state.dataMap.schemaFileList);
   const customXsltPathsList = useSelector((state: RootState) => state.dataMap.customXsltPathsList);
   const fetchedFunctions = useSelector((state: RootState) => state.dataMap.fetchedFunctions);
+  const dataMapperVersion = useSelector((state: RootState) => state.project.dataMapperVersion);
 
   const runtimePort = useSelector((state: RootState) => state.dataMap.runtimePort);
 
@@ -54,6 +57,10 @@ export const DataMapperAppV2 = () => {
   const dataMapperFileService = useMemo(() => {
     return new DataMapperFileService(sendMsgToVsix);
   }, [sendMsgToVsix]);
+
+  const dataMapperLoggerService = useMemo(() => {
+    return new LoggerService(sendMsgToVsix, { designerVersion: packagejson.version, dataMapperVersion });
+  }, [sendMsgToVsix, dataMapperVersion]);
 
   const setIsMapStateDirty = (isMapStateDirty: boolean) => {
     sendMsgToVsix({
@@ -166,7 +173,11 @@ export const DataMapperAppV2 = () => {
           theme={theme}
         >
           <div style={{ height: '100vh', overflow: 'hidden' }}>
-            <DataMapperDesigner fileService={dataMapperFileService} setIsMapStateDirty={setIsMapStateDirty} />
+            <DataMapperDesigner
+              fileService={dataMapperFileService}
+              loggerService={dataMapperLoggerService}
+              setIsMapStateDirty={setIsMapStateDirty}
+            />
           </div>
         </DataMapDataProvider>
       </DataMapperDesignerProvider>
