@@ -8,8 +8,9 @@ import { dotnet, func, node, npm } from './constants';
 import type { ContainerApp, Site } from '@azure/arm-appservice';
 import type { IActionContext, IAzExtOutputChannel } from '@microsoft/vscode-azext-utils';
 import type { AzureHostExtensionApi } from '@microsoft/vscode-azext-utils/hostapi';
+import type TelemetryReporter from '@vscode/extension-telemetry';
 import type * as cp from 'child_process';
-import { window, type ExtensionContext, type WebviewPanel } from 'vscode';
+import { type MessageOptions, window, type ExtensionContext, type WebviewPanel } from 'vscode';
 
 /**
  * Namespace for common variables used throughout the extension. They must be initialized in the activate() method of extension.ts
@@ -87,14 +88,20 @@ export namespace ext {
     window.showWarningMessage(errMsg);
   };
 
-  export const showError = (errMsg: string) => {
+  export const showError = (errMsg: string, options?: MessageOptions) => {
     ext.log(errMsg);
-    window.showErrorMessage(errMsg);
+    if (options && options.detail) {
+      ext.log(options.detail);
+    }
+    window.showErrorMessage(errMsg, options);
   };
 
   export const logTelemetry = (context: IActionContext, key: string, value: string) => {
     context.telemetry.properties[key] = value;
   };
+
+  // Telemetry
+  export let telemetryReporter: TelemetryReporter;
 }
 
 export const ExtensionCommand = {

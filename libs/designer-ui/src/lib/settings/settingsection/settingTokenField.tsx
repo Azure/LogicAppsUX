@@ -38,10 +38,12 @@ import { Label } from '../../label';
 import { EditorLanguage, equals, getPropertyValue, replaceWhiteSpaceWithUnderscore } from '@microsoft/logic-apps-shared';
 import { MixedInputEditor } from '../../mixedinputeditor/mixedinputeditor';
 import { useMemo } from 'react';
+import { useIntl } from 'react-intl';
 
 export interface SettingTokenFieldProps extends SettingProps {
   id?: string;
   value: ValueSegment[];
+  isDynamic?: boolean;
   isLoading?: boolean;
   errorDetails?: { message: string };
   editor?: string;
@@ -99,6 +101,7 @@ export const TokenField = ({
   placeholder,
   readOnly,
   value,
+  isDynamic,
   isLoading,
   errorDetails,
   showTokens,
@@ -115,8 +118,24 @@ export const TokenField = ({
   getTokenPicker,
   suppressCastingForSerialize,
 }: TokenFieldProps) => {
+  const intl = useIntl();
   const dropdownOptions = useMemo(() => getDropdownOptionsFromOptions(editorOptions), [editorOptions]);
   const labelForAutomationId = useMemo(() => replaceWhiteSpaceWithUnderscore(label), [label]);
+
+  const arrayItemLabel = intl.formatMessage(
+    {
+      defaultMessage: '{label} Item',
+      id: 'fBUCrA',
+      description: 'Label for array item',
+    },
+    { label }
+  );
+
+  const defaultArrayItemLabel = intl.formatMessage({
+    defaultMessage: 'Array Item',
+    id: 'gS4Teq',
+    description: 'Label for array item',
+  });
 
   switch (editor?.toLowerCase()) {
     case constants.PARAMETER.EDITOR.ARRAY:
@@ -125,7 +144,7 @@ export const TokenField = ({
           labelId={labelId}
           arrayType={editorViewModel.arrayType}
           initialMode={editorOptions?.initialMode}
-          labelProps={{ text: label ? `${label} Item` : 'Array Item' }}
+          labelProps={{ text: label ? arrayItemLabel : defaultArrayItemLabel }}
           placeholder={placeholder}
           readonly={readOnly}
           initialValue={editorViewModel.uncastedValue}
@@ -136,7 +155,8 @@ export const TokenField = ({
           onChange={onValueChange}
           dataAutomationId={`msla-setting-token-editor-arrayeditor-${labelForAutomationId}`}
           // Props for dynamic options
-          options={dropdownOptions.length > 0 ? dropdownOptions : undefined}
+          isDynamic={isDynamic}
+          options={dropdownOptions}
           isLoading={isLoading}
           errorDetails={errorDetails}
           onMenuOpen={onComboboxMenuOpen}
@@ -163,6 +183,7 @@ export const TokenField = ({
           tokenPickerButtonProps={tokenpickerButtonProps}
         />
       );
+
     case constants.PARAMETER.EDITOR.CODE: {
       const customCodeEditor = isCustomCode(editor, editorOptions?.language);
       let customCodeData = editorViewModel?.customCodeData?.fileData ?? '';
@@ -186,6 +207,7 @@ export const TokenField = ({
         />
       );
     }
+
     case constants.PARAMETER.EDITOR.COMBOBOX:
       return (
         <Combobox
@@ -244,6 +266,7 @@ export const TokenField = ({
       return (
         <DictionaryEditor
           labelId={labelId}
+          label={label}
           placeholder={placeholder}
           readonly={readOnly}
           initialValue={value}

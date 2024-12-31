@@ -440,6 +440,9 @@ importers:
       '@types/vscode-webview':
         specifier: 1.57.1
         version: 1.57.1
+      '@vscode/extension-telemetry':
+        specifier: ^0.9.8
+        version: 0.9.8(tslib@2.4.0)
       '@vscode/test-electron':
         specifier: 2.3.0
         version: 2.3.0
@@ -4290,8 +4293,14 @@ packages:
   '@microsoft/1ds-core-js@3.2.17':
     resolution: {integrity: sha512-S9EgWfY9NP0oiB3sdsTL41hJ71rbQzz9ziijQjHoklFADv+vKNe/TbOAgupBKAW04FaL0wmfE7HGF7mao84hUw==}
 
+  '@microsoft/1ds-core-js@4.3.4':
+    resolution: {integrity: sha512-3gbDUQgAO8EoyQTNcAEkxpuPnioC0May13P1l1l0NKZ128L9Ts/sj8QsfwCRTjHz0HThlA+4FptcAJXNYUy3rg==}
+
   '@microsoft/1ds-post-js@3.2.17':
     resolution: {integrity: sha512-YD/pGW/WqijRFEZ/1sSdlkFVM2ZWLGQIMDxRD6/o58c3cC5jzG5PlR1PLp314jFjpUrBc4cmico+WAOP548z4w==}
+
+  '@microsoft/1ds-post-js@4.3.4':
+    resolution: {integrity: sha512-nlKjWricDj0Tn68Dt0P8lX9a+X7LYrqJ6/iSfQwMfDhRIGLqW+wxx8gxS+iGWC/oc8zMQAeiZaemUpCwQcwpRQ==}
 
   '@microsoft/applicationinsights-analytics-js@2.8.9':
     resolution: {integrity: sha512-7Mu1vJQe2RUFuMXSmQqqk/pzqk0HoWnDH297trDdXPSDgU40YXTp+E5PWD9qoVUnhftb2LYKSL9HlWIBn705eg==}
@@ -4303,6 +4312,11 @@ packages:
     peerDependencies:
       tslib: '*'
 
+  '@microsoft/applicationinsights-channel-js@3.3.4':
+    resolution: {integrity: sha512-Z4nrxYwGKP9iyrYtm7iPQXVOFy4FsEsX0nDKkAi96Qpgw+vEh6NH4ORxMMuES0EollBQ3faJyvYCwckuCVIj0g==}
+    peerDependencies:
+      tslib: '>= 1.0.0'
+
   '@microsoft/applicationinsights-common@2.8.18':
     resolution: {integrity: sha512-/PBRmRL6rFCoO3vWpIEHuFnu+TinEYRKWOj+I+XVUH5myZpv+nYvaRdwryVTkmCYxLyL9kxtNn7hQx8DBlhdSw==}
     peerDependencies:
@@ -4313,6 +4327,11 @@ packages:
     peerDependencies:
       tslib: '*'
 
+  '@microsoft/applicationinsights-common@3.3.4':
+    resolution: {integrity: sha512-4ms16MlIvcP4WiUPqopifNxcWCcrXQJ2ADAK/75uok2mNQe6ZNRsqb/P+pvhUxc8A5HRlvoXPP1ptDSN5Girgw==}
+    peerDependencies:
+      tslib: '>= 1.0.0'
+
   '@microsoft/applicationinsights-core-js@2.8.18':
     resolution: {integrity: sha512-yPHRZFLpnEO0uSgFPM1BLMRRwjoten9YBbn4pJRbCT4PigLnj748knmWsMwXIdcehtkRTYz78kPYa/LWP7nvmA==}
     peerDependencies:
@@ -4322,6 +4341,11 @@ packages:
     resolution: {integrity: sha512-HRuIuZ6aOWezcg/G5VyFDDWGL8hDNe/ljPP01J7ImH2kRPEgbtcfPSUMjkamGMefgdq81GZsSoC/NNGTP4pp2w==}
     peerDependencies:
       tslib: '*'
+
+  '@microsoft/applicationinsights-core-js@3.3.4':
+    resolution: {integrity: sha512-MummANF0mgKIkdvVvfmHQTBliK114IZLRhTL0X0Ep+zjDwWMHqYZgew0nlFKAl6ggu42abPZFK5afpE7qjtYJA==}
+    peerDependencies:
+      tslib: '>= 1.0.0'
 
   '@microsoft/applicationinsights-dependencies-js@2.8.9':
     resolution: {integrity: sha512-tbssKmuA8I/s09elAvYtkChif3Ary/s9CliriFZ8aQsIM6iLv9Fm9sM2q/gDADO8a4HGuR2a+KahXfqqRdHYKQ==}
@@ -4343,6 +4367,14 @@ packages:
   '@microsoft/applicationinsights-shims@2.0.2':
     resolution: {integrity: sha512-PoHEgsnmcqruLNHZ/amACqdJ6YYQpED0KSRe6J7gIJTtpZC1FfFU9b1fmDKDKtFoUSrPzEh1qzO3kmRZP0betg==}
 
+  '@microsoft/applicationinsights-shims@3.0.1':
+    resolution: {integrity: sha512-DKwboF47H1nb33rSUfjqI6ryX29v+2QWcTrRvcQDA32AZr5Ilkr7whOOSsD1aBzwqX0RJEIP1Z81jfE3NBm/Lg==}
+
+  '@microsoft/applicationinsights-web-basic@3.3.4':
+    resolution: {integrity: sha512-OpEPXr8vU/t/M8T9jvWJzJx/pCyygIiR1nGM/2PTde0wn7anl71Gxl5fWol7K/WwFEORNjkL3CEyWOyDc+28AA==}
+    peerDependencies:
+      tslib: '>= 1.0.0'
+
   '@microsoft/applicationinsights-web@2.8.9':
     resolution: {integrity: sha512-uyJMNWUMQAehfK1UeAPd3+T5STOeuwty54yfoff12hyF1lWADkV5lEo4ohhMcRhQKdk7AUrhDF4eQnLrm61Mbg==}
     peerDependencies:
@@ -4350,6 +4382,9 @@ packages:
 
   '@microsoft/dynamicproto-js@1.1.11':
     resolution: {integrity: sha512-gNw9z9LbqLV+WadZ6/MMrWwO3e0LuoUH1wve/1iPsBNbgqeVCiB0EZFNNj2lysxS2gkqoF9hmyVaG3MoM1BkxA==}
+
+  '@microsoft/dynamicproto-js@2.0.3':
+    resolution: {integrity: sha512-JTWTU80rMy3mdxOjjpaiDQsTLZ6YSGGqsjURsY6AUQtIj0udlF/jYmhdLZu8693ZIC0T1IwYnFa0+QeiMnziBA==}
 
   '@microsoft/load-themed-styles@1.10.295':
     resolution: {integrity: sha512-W+IzEBw8a6LOOfRJM02dTT7BDZijxm+Z7lhtOAz1+y9vQm1Kdz9jlAO+qCEKsfxtUOmKilW8DIRqFw2aUgKeGg==}
@@ -4382,6 +4417,12 @@ packages:
       monaco-editor: '>= 0.25.0 < 1'
       react: ^16.8.0 || ^17.0.0 || ^18.0.0
       react-dom: ^16.8.0 || ^17.0.0 || ^18.0.0
+
+  '@nevware21/ts-async@0.5.4':
+    resolution: {integrity: sha512-IBTyj29GwGlxfzXw2NPnzty+w0Adx61Eze1/lknH/XIVdxtF9UnOpk76tnrHXWa6j84a1RR9hsOcHQPFv9qJjA==}
+
+  '@nevware21/ts-utils@0.11.6':
+    resolution: {integrity: sha512-OUUJTh3fnaUSzg9DEHgv3d7jC+DnPL65mIO7RaR+jWve7+MmcgIvF79gY97DPQ4frH+IpNR78YAYd/dW4gK3kg==}
 
   '@nodelib/fs.scandir@2.1.5':
     resolution: {integrity: sha512-vq24Bq3ym5HEQm2NKCr3yXDwjc7vTsEThRDnkp2DK9p1uqLR+DHurm/NOTo0KG7HYHU7eppKZj3MyqYuMBf62g==}
@@ -5443,6 +5484,10 @@ packages:
   '@vscode/extension-telemetry@0.6.2':
     resolution: {integrity: sha512-yb/wxLuaaCRcBAZtDCjNYSisAXz3FWsSqAha5nhHcYxx2ZPdQdWuZqVXGKq0ZpHVndBWWtK6XqtpCN2/HB4S1w==}
     engines: {vscode: ^1.60.0}
+
+  '@vscode/extension-telemetry@0.9.8':
+    resolution: {integrity: sha512-7YcKoUvmHlIB8QYCE4FNzt3ErHi9gQPhdCM3ZWtpw1bxPT0I+lMdx52KHlzTNoJzQ2NvMX7HyzyDwBEiMgTrWQ==}
+    engines: {vscode: ^1.75.0}
 
   '@vscode/test-electron@2.3.0':
     resolution: {integrity: sha512-fwzA9RtazH1GT/sckYlbxu6t5e4VaMXwCVtyLv4UAG0hP6NTfnMaaG25XCfWqlVwFhBMcQXHBCy5dmz2eLUnkw==}
@@ -10160,6 +10205,7 @@ packages:
     engines: {node: '>=0.6.0', teleport: '>=0.2.0'}
     deprecated: |-
       You or someone you depend on is using Q, the JavaScript Promise library that gave JavaScript developers strong feelings about promises. They can almost certainly migrate to the native JavaScript promise now. Thank you literally everyone for joining me in this bet against the odds. Be excellent to each other.
+
       (For a CapTP with native promises, see @endo/eventual-send and @endo/captp)
 
   qs@6.12.0:
@@ -17555,11 +17601,31 @@ snapshots:
     transitivePeerDependencies:
       - tslib
 
+  '@microsoft/1ds-core-js@4.3.4(tslib@2.4.0)':
+    dependencies:
+      '@microsoft/applicationinsights-core-js': 3.3.4(tslib@2.4.0)
+      '@microsoft/applicationinsights-shims': 3.0.1
+      '@microsoft/dynamicproto-js': 2.0.3
+      '@nevware21/ts-async': 0.5.4
+      '@nevware21/ts-utils': 0.11.6
+    transitivePeerDependencies:
+      - tslib
+
   '@microsoft/1ds-post-js@3.2.17(tslib@2.4.0)':
     dependencies:
       '@microsoft/1ds-core-js': 3.2.17(tslib@2.4.0)
       '@microsoft/applicationinsights-shims': 2.0.2
       '@microsoft/dynamicproto-js': 1.1.11
+    transitivePeerDependencies:
+      - tslib
+
+  '@microsoft/1ds-post-js@4.3.4(tslib@2.4.0)':
+    dependencies:
+      '@microsoft/1ds-core-js': 4.3.4(tslib@2.4.0)
+      '@microsoft/applicationinsights-shims': 3.0.1
+      '@microsoft/dynamicproto-js': 2.0.3
+      '@nevware21/ts-async': 0.5.4
+      '@nevware21/ts-utils': 0.11.6
     transitivePeerDependencies:
       - tslib
 
@@ -17579,6 +17645,16 @@ snapshots:
       '@microsoft/dynamicproto-js': 1.1.11
       tslib: 2.7.0
 
+  '@microsoft/applicationinsights-channel-js@3.3.4(tslib@2.4.0)':
+    dependencies:
+      '@microsoft/applicationinsights-common': 3.3.4(tslib@2.4.0)
+      '@microsoft/applicationinsights-core-js': 3.3.4(tslib@2.4.0)
+      '@microsoft/applicationinsights-shims': 3.0.1
+      '@microsoft/dynamicproto-js': 2.0.3
+      '@nevware21/ts-async': 0.5.4
+      '@nevware21/ts-utils': 0.11.6
+      tslib: 2.4.0
+
   '@microsoft/applicationinsights-common@2.8.18(tslib@2.7.0)':
     dependencies:
       '@microsoft/applicationinsights-core-js': 2.8.18(tslib@2.7.0)
@@ -17592,6 +17668,14 @@ snapshots:
       '@microsoft/applicationinsights-shims': 2.0.2
       '@microsoft/dynamicproto-js': 1.1.11
       tslib: 2.7.0
+
+  '@microsoft/applicationinsights-common@3.3.4(tslib@2.4.0)':
+    dependencies:
+      '@microsoft/applicationinsights-core-js': 3.3.4(tslib@2.4.0)
+      '@microsoft/applicationinsights-shims': 3.0.1
+      '@microsoft/dynamicproto-js': 2.0.3
+      '@nevware21/ts-utils': 0.11.6
+      tslib: 2.4.0
 
   '@microsoft/applicationinsights-core-js@2.8.18(tslib@2.4.0)':
     dependencies:
@@ -17610,6 +17694,14 @@ snapshots:
       '@microsoft/applicationinsights-shims': 2.0.2
       '@microsoft/dynamicproto-js': 1.1.11
       tslib: 2.7.0
+
+  '@microsoft/applicationinsights-core-js@3.3.4(tslib@2.4.0)':
+    dependencies:
+      '@microsoft/applicationinsights-shims': 3.0.1
+      '@microsoft/dynamicproto-js': 2.0.3
+      '@nevware21/ts-async': 0.5.4
+      '@nevware21/ts-utils': 0.11.6
+      tslib: 2.4.0
 
   '@microsoft/applicationinsights-dependencies-js@2.8.9(tslib@2.7.0)':
     dependencies:
@@ -17639,6 +17731,21 @@ snapshots:
 
   '@microsoft/applicationinsights-shims@2.0.2': {}
 
+  '@microsoft/applicationinsights-shims@3.0.1':
+    dependencies:
+      '@nevware21/ts-utils': 0.11.6
+
+  '@microsoft/applicationinsights-web-basic@3.3.4(tslib@2.4.0)':
+    dependencies:
+      '@microsoft/applicationinsights-channel-js': 3.3.4(tslib@2.4.0)
+      '@microsoft/applicationinsights-common': 3.3.4(tslib@2.4.0)
+      '@microsoft/applicationinsights-core-js': 3.3.4(tslib@2.4.0)
+      '@microsoft/applicationinsights-shims': 3.0.1
+      '@microsoft/dynamicproto-js': 2.0.3
+      '@nevware21/ts-async': 0.5.4
+      '@nevware21/ts-utils': 0.11.6
+      tslib: 2.4.0
+
   '@microsoft/applicationinsights-web@2.8.9(tslib@2.7.0)':
     dependencies:
       '@microsoft/applicationinsights-analytics-js': 2.8.9(tslib@2.7.0)
@@ -17652,6 +17759,10 @@ snapshots:
       tslib: 2.7.0
 
   '@microsoft/dynamicproto-js@1.1.11': {}
+
+  '@microsoft/dynamicproto-js@2.0.3':
+    dependencies:
+      '@nevware21/ts-utils': 0.11.6
 
   '@microsoft/load-themed-styles@1.10.295': {}
 
@@ -17742,6 +17853,12 @@ snapshots:
       monaco-editor: 0.44.0
       react: 18.2.0
       react-dom: 18.2.0(react@18.2.0)
+
+  '@nevware21/ts-async@0.5.4':
+    dependencies:
+      '@nevware21/ts-utils': 0.11.6
+
+  '@nevware21/ts-utils@0.11.6': {}
 
   '@nodelib/fs.scandir@2.1.5':
     dependencies:
@@ -19012,6 +19129,14 @@ snapshots:
     dependencies:
       '@microsoft/1ds-core-js': 3.2.17(tslib@2.4.0)
       '@microsoft/1ds-post-js': 3.2.17(tslib@2.4.0)
+    transitivePeerDependencies:
+      - tslib
+
+  '@vscode/extension-telemetry@0.9.8(tslib@2.4.0)':
+    dependencies:
+      '@microsoft/1ds-core-js': 4.3.4(tslib@2.4.0)
+      '@microsoft/1ds-post-js': 4.3.4(tslib@2.4.0)
+      '@microsoft/applicationinsights-web-basic': 3.3.4(tslib@2.4.0)
     transitivePeerDependencies:
       - tslib
 

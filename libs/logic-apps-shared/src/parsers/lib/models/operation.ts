@@ -19,6 +19,7 @@ export interface InputParameter extends ParameterBase {
   hideInUI?: boolean;
   alternativeKey?: string;
   dynamicParameterReference?: string;
+  collectionFormat?: string;
 }
 
 export interface Annotation {

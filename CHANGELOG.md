@@ -1,4 +1,54 @@
 # Logic Apps Designer
+## [5.14.0](https://github.com/Azure/LogicAppsUX/compare/v5.13.0...v5.14.0) (2024-12-31)
+
+
+### Features
+
+* **vscode:** Implement telemetry in designer and data-mapper  ([#6307](https://github.com/Azure/LogicAppsUX/issues/6307)) ([5dfee02](https://github.com/Azure/LogicAppsUX/commit/5dfee02e248f26690ee068be436a8123c521e72a))
+
+## [5.13.0](https://github.com/Azure/LogicAppsUX/compare/v5.12.0...v5.13.0) (2024-12-26)
+
+## [5.12.0](https://github.com/Azure/LogicAppsUX/compare/v5.11.0...v5.12.0) (2024-12-20)
+
+
+### Bug Fixes
+
+* **templates:** Changing logentry level to Trace from Verbose for templates telemetry ([#6277](https://github.com/Azure/LogicAppsUX/issues/6277)) ([501803d](https://github.com/Azure/LogicAppsUX/commit/501803d69a4f78295f4ce796d65a7d44ebbaafbb))
+
+## [5.11.0](https://github.com/Azure/LogicAppsUX/compare/v5.10.0...v5.11.0) (2024-12-19)
+
+
+### Bug Fixes
+
+* **Designer:** Switched edge labels from foreign object to xyflow component ([#6275](https://github.com/Azure/LogicAppsUX/issues/6275)) ([5acf6c0](https://github.com/Azure/LogicAppsUX/commit/5acf6c0c0a0ba0a463433784a83f435a30122f2f))
+
+## [5.10.0](https://github.com/Azure/LogicAppsUX/compare/v5.9.0...v5.10.0) (2024-12-18)
+
+
+### Bug Fixes
+
+* **Data Mapper:** UI issues (I) ([#6222](https://github.com/Azure/LogicAppsUX/issues/6222)) ([10f7c95](https://github.com/Azure/LogicAppsUX/commit/10f7c95a3a3581aba375ce8cb0049b3cb26cbc38))
+* **designer:** Added support for arialabels in dictionary editor ([#6264](https://github.com/Azure/LogicAppsUX/issues/6264)) ([1e618e7](https://github.com/Azure/LogicAppsUX/commit/1e618e7bad76fc2038596a6e61172b5890eaedc9))
+
+## [5.9.0](https://github.com/Azure/LogicAppsUX/compare/v5.8.0...v5.9.0) (2024-12-16)
+
+
+### Bug Fixes
+
+* **designer:** Add locale to connections API call for connectors and swagger ([#6262](https://github.com/Azure/LogicAppsUX/issues/6262)) ([91e7925](https://github.com/Azure/LogicAppsUX/commit/91e7925b9e630b6a2765f93d814c77ff33413128))
+
+## [5.8.0](https://github.com/Azure/LogicAppsUX/compare/v5.7.0...v5.8.0) (2024-12-12)
+
+
+### Features
+
+* **DM:** deserialization error handling ([#6164](https://github.com/Azure/LogicAppsUX/issues/6164)) ([ebb0df3](https://github.com/Azure/LogicAppsUX/commit/ebb0df3c09c10a853cb5d7b2426c8de5bbb8f2f8))
+
+
+### Bug Fixes
+
+* **designer:** Accessibility - Add focus target attribute to overflow button ([#6243](https://github.com/Azure/LogicAppsUX/issues/6243)) ([374664e](https://github.com/Azure/LogicAppsUX/commit/374664e65a832a13565cf5c9ea14869f5b605baf))
+
 ## [5.7.0](https://github.com/Azure/LogicAppsUX/compare/v5.6.0...v5.7.0) (2024-12-05)
 
 
