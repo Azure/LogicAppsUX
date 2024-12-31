@@ -11,7 +11,7 @@ import { getInputName, getInputValue } from '../../../utils/Function.Utils';
 import { useStyles } from './styles';
 import { ListItem } from '@fluentui/react-list-preview';
 import { Badge, Button } from '@fluentui/react-components';
-import { LinkDismissRegular, ReOrderRegular } from '@fluentui/react-icons';
+import { DeleteRegular, ReOrderRegular } from '@fluentui/react-icons';
 import type { SchemaType } from '@microsoft/logic-apps-shared';
 import * as React from 'react';
 
@@ -160,7 +160,7 @@ export const CustomListItem = (props: CustomListItemProps) => {
               </Badge>
             )}
           </span>
-          <Button className={styles.listButton} appearance="transparent" icon={<LinkDismissRegular />} onClick={remove} />
+          <Button className={styles.listButton} appearance="transparent" icon={<DeleteRegular />} onClick={remove} />
           {draggable && dragHandleProps && (
             <Button className={styles.listButton} appearance="transparent" icon={<ReOrderRegular />} {...dragHandleProps} />
           )}

@@ -1,23 +1,23 @@
-import { makeStyles, shorthands, tokens } from '@fluentui/react-components';
+import { makeStyles, tokens } from '@fluentui/react-components';
 
 export const useStyles = makeStyles({
   surface: {
     display: 'flex',
     width: '390px',
-    maxHeight: '410px',
-    minHeight: '300px',
+    paddingBottom: '10px',
+    height: 'contents',
     flexDirection: 'column',
     paddingLeft: '24px',
     paddingRight: '24px',
-    ...shorthands.overflow('scroll'),
+    overflow: 'scroll',
   },
   detailsButton: {
     paddingLeft: '10px',
   },
-  deleteIcon: {
+  actionIcon: {
     color: tokens.colorPaletteBlueBorderActive,
   },
-  deleteButton: {
+  topRightActions: {
     marginLeft: 'auto',
   },
   headerRow: {

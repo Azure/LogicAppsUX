@@ -60,6 +60,7 @@ export interface BaseEditorProps {
   basePlugins?: BasePlugins;
   initialValue: ValueSegment[];
   children?: React.ReactNode;
+  ariaLabel?: string;
   labelId?: string;
   label?: string;
   valueType?: string;
@@ -95,6 +96,7 @@ export const BaseEditor = ({
   basePlugins = {},
   children,
   labelId,
+  ariaLabel,
   tokenPickerButtonProps,
   valueType,
   dataAutomationId,
@@ -187,6 +189,7 @@ export const BaseEditor = ({
             <ContentEditable
               spellCheck={false}
               className={css('editor-input', readonly && 'readonly')}
+              ariaLabel={ariaLabel}
               ariaLabelledBy={labelId}
               ariaDescribedBy={id}
               tabIndex={0}
