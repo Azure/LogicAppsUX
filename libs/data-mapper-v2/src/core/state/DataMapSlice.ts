@@ -17,7 +17,6 @@ import {
 import type { UnknownNode } from '../../utils/DataMap.Utils';
 import { addParentConnectionForRepeatingElementsNested, getParentId } from '../../utils/DataMap.Utils';
 import { createFunctionDictionary, isFunctionData } from '../../utils/Function.Utils';
-import { LogService } from '../../utils/Logging.Utils';
 import { flattenSchemaIntoDictionary, flattenSchemaNode, isSchemaNodeExtended, flattenSchemaIntoSortArray } from '../../utils/Schema.Utils';
 import type {
   FunctionMetadata,
@@ -676,10 +675,6 @@ export default dataMapSlice.reducer;
 
 /* eslint-disable no-param-reassign */
 const doDataMapOperation = (state: DataMapState, newCurrentState: DataMapState, action: string) => {
-  if (LogService.logToConsole) {
-    console.log(`Action: ${action}`);
-  }
-
   state.curDataMapOperation = newCurrentState.curDataMapOperation;
   state.lastAction = action;
   state.sourceInEditState = newCurrentState.sourceInEditState;
