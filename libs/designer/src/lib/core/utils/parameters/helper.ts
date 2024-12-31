@@ -3245,9 +3245,10 @@ export function updateTokenMetadata(
   const tokenNodeOperation = operations[tokenNodeId];
   const nodeType = tokenNodeOperation?.type;
   const isSecure = hasSecureOutputs(nodeType, settings ?? {});
+  const isFromExistingLoop = Boolean(arrayDetails?.loopSource && getPropertyValue(actionNodes, arrayDetails.loopSource));
   const nodeOutputInfo = getOutputByTokenInfo(unmap(nodeOutputs?.outputs), valueSegment.token as SegmentToken, parameterType);
-  const brandColor = token.tokenType === TokenType.ITEM ? ItemBrandColor : operationMetadata?.brandColor;
-  const iconUri = token.tokenType === TokenType.ITEM ? ItemIcon : operationMetadata?.iconUri;
+  const brandColor = token.tokenType === TokenType.ITEM || isFromExistingLoop ? ItemBrandColor : operationMetadata?.brandColor;
+  const iconUri = token.tokenType === TokenType.ITEM || isFromExistingLoop ? ItemIcon : operationMetadata?.iconUri;
 
   let outputInsideForeach = false;
   if (parameterNodeId) {
