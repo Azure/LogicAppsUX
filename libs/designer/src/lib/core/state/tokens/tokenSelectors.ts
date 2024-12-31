@@ -6,10 +6,12 @@ import { useSelector } from 'react-redux';
 
 export const getTokenState = (state: RootState): TokensState => state.tokens;
 
-export const useUpstreamNodes = (id?: string) => {
+export const useUpstreamNodes = (id?: string, graphId?: string, childId?: string) => {
   return useSelector(
     createSelector(getTokenState, (state: TokensState) => {
-      // TODO: Support variables
+      if (graphId === 'root' && !childId) {
+        return Object.keys(state.outputTokens);
+      }
       return getRecordEntry(state.outputTokens, id)?.upstreamNodeIds ?? [];
     })
   );
