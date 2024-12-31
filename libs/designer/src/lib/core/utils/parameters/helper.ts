@@ -450,29 +450,23 @@ export function getParameterEditorProps(
       editor = undefined;
     }
   } else if (editor === constants.EDITOR.DROPDOWN) {
-    // making dropdown editor backwards compatible with old format
-    const dropdownOptions: DropdownItem[] = (editorOptions?.items ?? []).map((item: any) => {
-      const { disabled, key, value, title: displayName, type } = item;
-      return {
-        disabled,
+    // Backwards compatibility for dropdown editor with old format
+    const options: DropdownItem[] = (editorOptions?.items ?? editorOptions?.options ?? []).map(
+      ({ key, value, title: displayName, ...props }: any) => ({
+        ...props,
         key: key ?? displayName,
         value: value?.toString(),
         displayName,
-        type,
-      };
-    });
-
-    const modifiedOptions = editorOptions?.options?.map((option: any) => {
-      return {
-        ...option,
-        value: option?.value?.toString(),
-      };
-    });
+      })
+    );
 
     editorOptions = {
       ...editorOptions,
-      serialization: { ...editorOptions?.serialization, separator: editorOptions?.titleSeparator },
-      options: dropdownOptions.length > 0 ? dropdownOptions : (modifiedOptions ?? []),
+      serialization: {
+        ...editorOptions?.serialization,
+        separator: editorOptions?.titleSeparator,
+      },
+      options,
     };
   } else if (editor === constants.EDITOR.FLOATINGACTIONMENU && editorOptions?.menuKind === FloatingActionMenuKind.outputs) {
     editorViewModel = toFloatingActionMenuOutputsViewModel(value);
