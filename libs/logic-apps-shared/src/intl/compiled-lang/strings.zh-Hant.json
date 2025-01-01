@@ -6599,6 +6599,12 @@
       "value": "限制 Logic Apps 不要在回應中包含工作流程中繼資料標頭。"
     }
   ],
+  "XtVOMn": [
+    {
+      "type": 0,
+      "value": "Something went wrong"
+    }
+  ],
   "XtuP5e": [
     {
       "type": 0,
@@ -7107,6 +7113,12 @@
     {
       "type": 0,
       "value": "新增或選取要用於對應的來源結構描述。"
+    }
+  ],
+  "auci7r": [
+    {
+      "type": 0,
+      "value": "Enter a valid comma-separated string."
     }
   ],
   "aurgrg": [
@@ -7889,6 +7901,12 @@
     {
       "type": 0,
       "value": "(UTC-05:00) 海地"
+    }
+  ],
+  "fZJWBR": [
+    {
+      "type": 0,
+      "value": "Loading designer"
     }
   ],
   "faUrud": [

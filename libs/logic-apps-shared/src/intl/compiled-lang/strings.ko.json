@@ -6547,6 +6547,12 @@
       "value": "Logic Apps가 응답에 워크플로 메타데이터 헤더를 포함하지 않도록 제한합니다."
     }
   ],
+  "XtVOMn": [
+    {
+      "type": 0,
+      "value": "Something went wrong"
+    }
+  ],
   "XtuP5e": [
     {
       "type": 0,
@@ -7055,6 +7061,12 @@
     {
       "type": 0,
       "value": "맵에 사용할 원본 스키마를 추가하거나 선택합니다."
+    }
+  ],
+  "auci7r": [
+    {
+      "type": 0,
+      "value": "Enter a valid comma-separated string."
     }
   ],
   "aurgrg": [
@@ -7833,6 +7845,12 @@
     {
       "type": 0,
       "value": "(UTC-05:00) 아이티"
+    }
+  ],
+  "fZJWBR": [
+    {
+      "type": 0,
+      "value": "Loading designer"
     }
   ],
   "faUrud": [

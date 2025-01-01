@@ -6599,6 +6599,12 @@
       "value": "限制逻辑应用，使其不在响应中包含工作流元数据标头。"
     }
   ],
+  "XtVOMn": [
+    {
+      "type": 0,
+      "value": "Something went wrong"
+    }
+  ],
   "XtuP5e": [
     {
       "type": 0,
@@ -7107,6 +7113,12 @@
     {
       "type": 0,
       "value": "添加或选择要用于映射的源架构。"
+    }
+  ],
+  "auci7r": [
+    {
+      "type": 0,
+      "value": "Enter a valid comma-separated string."
     }
   ],
   "aurgrg": [
@@ -7897,6 +7909,12 @@
     {
       "type": 0,
       "value": "(UTC-05:00)海地"
+    }
+  ],
+  "fZJWBR": [
+    {
+      "type": 0,
+      "value": "Loading designer"
     }
   ],
   "faUrud": [
