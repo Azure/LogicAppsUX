@@ -130,6 +130,7 @@ export async function startDesignTimeApi(projectPath: string): Promise<void> {
         throw new Error(localize('DesignTimeDirectoryError', 'Failed to create design-time directory.'));
       }
     } catch (ex) {
+      ext.outputChannel.appendLog(`${ex.message}`);
       const viewOutput: MessageItem = { title: localize('viewOutput', 'View output') };
       const message: string = localize('DesignTimeError', "Can't start the background design-time process.");
       await window.showErrorMessage(message, viewOutput).then(async (result) => {
@@ -205,6 +206,7 @@ export async function isDesignTimeUp(url: string): Promise<boolean> {
     await axios.get(url);
     return Promise.resolve(true);
   } catch (ex) {
+    ext.outputChannel.appendLog(`${ex.message}`);
     return Promise.resolve(false);
   }
 }
@@ -239,6 +241,13 @@ export function startDesignTimeProcess(
     if (outputChannel) {
       outputChannel.append(data);
     }
+    if (data.includes('Failed to start a new language worker for runtime: node.')) {
+      ext.outputChannel.appendLog(
+        'Language worker issue found when launching func most likely due to a conflicting port. Restarting design-time process.'
+      );
+      stopDesignTimeApi();
+      startDesignTimeApi(path.dirname(workingDirectory));
+    }
   });
 
   ext.designChildProcess.stderr.on('data', (data: string | Buffer) => {
@@ -247,11 +256,17 @@ export function startDesignTimeProcess(
     if (outputChannel) {
       outputChannel.append(data);
     }
+    if (data.includes(' is unavailable. Close the process using that port, or specify another port using')) {
+      ext.outputChannel.appendLog('Conflicting port found when launching func. Restarting design-time process.');
+      stopDesignTimeApi();
+      startDesignTimeApi(path.dirname(workingDirectory));
+    }
   });
 }
 
 export function stopDesignTimeApi(): void {
   ext.outputChannel.appendLog('Stopping Design Time Api');
+  ext.designTimePort = undefined;
   if (ext.designChildProcess === null || ext.designChildProcess === undefined) {
     return;
   }
