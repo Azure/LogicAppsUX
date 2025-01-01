@@ -279,7 +279,6 @@ export function stopDesignTimeApi(): void {
   }
   ext.designChildProcess = undefined;
   ext.designChildFuncProcessId = undefined;
-  ext.designTimePort = undefined;
 }
 
 export async function promptStartDesignTimeOption(context: IActionContext) {
