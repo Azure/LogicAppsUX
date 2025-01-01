@@ -6651,6 +6651,12 @@
       "value": "Limita le app per la logica per non includere le intestazioni dei metadati del flusso di lavoro nella risposta."
     }
   ],
+  "XtVOMn": [
+    {
+      "type": 0,
+      "value": "Something went wrong"
+    }
+  ],
   "XtuP5e": [
     {
       "type": 0,
@@ -7159,6 +7165,12 @@
     {
       "type": 0,
       "value": "Aggiungere o selezionare uno schema di origine da usare per la mappa."
+    }
+  ],
+  "auci7r": [
+    {
+      "type": 0,
+      "value": "Enter a valid comma-separated string."
     }
   ],
   "aurgrg": [
@@ -7949,6 +7961,12 @@
     {
       "type": 0,
       "value": "(UTC-05:00) Haiti"
+    }
+  ],
+  "fZJWBR": [
+    {
+      "type": 0,
+      "value": "Loading designer"
     }
   ],
   "faUrud": [

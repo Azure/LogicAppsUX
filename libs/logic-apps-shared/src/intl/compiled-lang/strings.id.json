@@ -6563,6 +6563,12 @@
       "value": "Batasi Logic Apps agar tidak menyertakan header metadata alur kerja dalam respons."
     }
   ],
+  "XtVOMn": [
+    {
+      "type": 0,
+      "value": "Something went wrong"
+    }
+  ],
   "XtuP5e": [
     {
       "type": 0,
@@ -7071,6 +7077,12 @@
     {
       "type": 0,
       "value": "Tambahkan atau pilih skema sumber yang akan digunakan untuk peta Anda."
+    }
+  ],
+  "auci7r": [
+    {
+      "type": 0,
+      "value": "Enter a valid comma-separated string."
     }
   ],
   "aurgrg": [
@@ -7861,6 +7873,12 @@
     {
       "type": 0,
       "value": "(UTC-05.00) Haiti"
+    }
+  ],
+  "fZJWBR": [
+    {
+      "type": 0,
+      "value": "Loading designer"
     }
   ],
   "faUrud": [

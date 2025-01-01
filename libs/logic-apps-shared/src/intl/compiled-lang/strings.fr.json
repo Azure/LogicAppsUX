@@ -6659,6 +6659,12 @@
       "value": "Limitez Logic Apps de sorte qu’aucun en-tête de métadonnées de workflow ne soit inclus dans la réponse."
     }
   ],
+  "XtVOMn": [
+    {
+      "type": 0,
+      "value": "Something went wrong"
+    }
+  ],
   "XtuP5e": [
     {
       "type": 0,
@@ -7167,6 +7173,12 @@
     {
       "type": 0,
       "value": "Ajoutez ou sélectionnez un schéma source à utiliser pour votre mappage."
+    }
+  ],
+  "auci7r": [
+    {
+      "type": 0,
+      "value": "Enter a valid comma-separated string."
     }
   ],
   "aurgrg": [
@@ -7957,6 +7969,12 @@
     {
       "type": 0,
       "value": "(UTC-05:00) Haïti"
+    }
+  ],
+  "fZJWBR": [
+    {
+      "type": 0,
+      "value": "Loading designer"
     }
   ],
   "faUrud": [

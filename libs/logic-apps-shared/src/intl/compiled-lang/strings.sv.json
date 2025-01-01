@@ -6591,6 +6591,12 @@
       "value": "Begränsa Logic Apps så att rubriker för arbetsflödesmetadata inte inkluderas i svaret."
     }
   ],
+  "XtVOMn": [
+    {
+      "type": 0,
+      "value": "Something went wrong"
+    }
+  ],
   "XtuP5e": [
     {
       "type": 0,
@@ -7095,6 +7101,12 @@
     {
       "type": 0,
       "value": "Lägg till eller välj ett källschema som ska användas för kartan."
+    }
+  ],
+  "auci7r": [
+    {
+      "type": 0,
+      "value": "Enter a valid comma-separated string."
     }
   ],
   "aurgrg": [
@@ -7885,6 +7897,12 @@
     {
       "type": 0,
       "value": "(UTC-05:00) Haiti"
+    }
+  ],
+  "fZJWBR": [
+    {
+      "type": 0,
+      "value": "Loading designer"
     }
   ],
   "faUrud": [

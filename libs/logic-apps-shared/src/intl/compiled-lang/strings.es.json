@@ -6659,6 +6659,12 @@
       "value": "Limita Logic Apps para que no incluya encabezados de metadatos de flujo de trabajo en la respuesta."
     }
   ],
+  "XtVOMn": [
+    {
+      "type": 0,
+      "value": "Something went wrong"
+    }
+  ],
   "XtuP5e": [
     {
       "type": 0,
@@ -7167,6 +7173,12 @@
     {
       "type": 0,
       "value": "Agregue o seleccione un esquema de origen para usarlo en la asignación."
+    }
+  ],
+  "auci7r": [
+    {
+      "type": 0,
+      "value": "Enter a valid comma-separated string."
     }
   ],
   "aurgrg": [
@@ -7957,6 +7969,12 @@
     {
       "type": 0,
       "value": "(UTC-05:00) Haití"
+    }
+  ],
+  "fZJWBR": [
+    {
+      "type": 0,
+      "value": "Loading designer"
     }
   ],
   "faUrud": [
