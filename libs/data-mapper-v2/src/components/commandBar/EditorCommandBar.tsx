@@ -36,7 +36,6 @@ export const EditorCommandBar = (_props: EditorCommandBarProps) => {
   const { isDirty, sourceInEditState, targetInEditState } = useSelector((state: RootState) => state.dataMap.present);
   const undoStack = useSelector((state: RootState) => state.dataMap.past);
   const isCodeViewOpen = useSelector((state: RootState) => state.panel.codeViewPanel.isOpen);
-  const isMapCheckerOpen = useSelector((state: RootState) => state.panel.mapCheckerPanel.isOpen);
   const { sourceSchema, targetSchema } = useSelector((state: RootState) => state.dataMap.present.curDataMapOperation);
 
   const xsltFilename = useSelector((state: RootState) => state.dataMap.present.curDataMapOperation.xsltFilename);
@@ -264,14 +263,15 @@ export const EditorCommandBar = (_props: EditorCommandBarProps) => {
             {Resources.OPEN_TEST_PANEL}
           </ToolbarButton>
         </ToolbarGroup>
-        <ToolbarGroup>
-          <Switch disabled={disabledState.codeView} label={Resources.VIEW_CODE} onChange={onCodeViewClick} checked={isCodeViewOpen} />
-          <Switch
+        <ToolbarGroup className={toolbarStyles.toolbarGroup}>
+          <ToolbarButton
             disabled={disabledState.mapChecker}
-            label={Resources.VIEW_MAP_CHECKER}
-            onChange={onMapCheckerClick}
-            checked={isMapCheckerOpen}
-          />
+            icon={<OpenFilled color={disabledState.mapChecker ? undefined : tokens.colorPaletteBlueBorderActive} />}
+            onClick={onMapCheckerClick}
+          >
+            {Resources.VIEW_MAP_CHECKER}
+          </ToolbarButton>
+          <Switch disabled={disabledState.codeView} label={Resources.VIEW_CODE} onChange={onCodeViewClick} checked={isCodeViewOpen} />
         </ToolbarGroup>
       </Toolbar>
       <Toaster timeout={10000} toasterId={toasterId} />

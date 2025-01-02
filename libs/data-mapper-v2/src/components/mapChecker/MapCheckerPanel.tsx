@@ -2,9 +2,9 @@ import type { RootState } from '../../core/state/Store';
 import { Stack } from '@fluentui/react';
 import { Accordion, AccordionHeader, AccordionItem, AccordionPanel, Text, tokens } from '@fluentui/react-components';
 import { CheckmarkCircle20Filled } from '@fluentui/react-icons';
-import { useMemo } from 'react';
+import { useCallback, useMemo } from 'react';
 import { useIntl } from 'react-intl';
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import {
   collectErrorsForMapChecker,
   collectInfoForMapChecker,
@@ -18,17 +18,24 @@ import { iconForMapCheckerSeverity } from '../../utils/Icon.Utils';
 import { MapCheckerItem } from './MapCheckerItem';
 import { Panel } from '../common/panel/Panel';
 import { useStyles } from './styles';
+import { PanelXButton } from '../common/panel/PanelXButton';
+import { toggleMapChecker } from '../../core/state/PanelSlice';
 
 export const MapCheckerPanel = () => {
   const intl = useIntl();
   const styles = useStyles();
-  const isMapCheckerPanelOpen = useSelector((state: RootState) => state.panel.mapCheckerPanel.isOpen);
+  const dispatch = useDispatch();
 
+  const isMapCheckerPanelOpen = useSelector((state: RootState) => state.panel.mapCheckerPanel.isOpen);
   const sourceSchema = useSelector((state: RootState) => state.dataMap.present.curDataMapOperation.sourceSchema);
   const targetSchema = useSelector((state: RootState) => state.dataMap.present.curDataMapOperation.targetSchema);
   const targetSchemaDictionary = useSelector((state: RootState) => state.dataMap.present.curDataMapOperation.flattenedTargetSchema);
   const connectionDictionary = useSelector((state: RootState) => state.dataMap.present.curDataMapOperation.dataMapConnections);
   const storeErrors = useSelector((state: RootState) => state.errors.deserializationMessages);
+
+  const onCloseClick = useCallback(() => {
+    dispatch(toggleMapChecker());
+  }, [dispatch]);
 
   const stringResources = useMemo(
     () => ({
@@ -36,6 +43,11 @@ export const MapCheckerPanel = () => {
         defaultMessage: 'Map Issues',
         id: 'rwrlsB',
         description: 'problems with the map',
+      }),
+      CLOSE_MAP_CHECKER: intl.formatMessage({
+        defaultMessage: 'Close map checker',
+        id: 'epi+zR',
+        description: 'Describes X button to close the map checker panel',
       }),
     }),
     [intl]
@@ -197,6 +209,7 @@ export const MapCheckerPanel = () => {
       title={{
         text: stringResources.MAP_ISSUES,
         size: 500,
+        rightAction: <PanelXButton onCloseClick={onCloseClick} ariaLabel={stringResources.CLOSE_MAP_CHECKER} />,
       }}
       body={panelBody}
       styles={{ root: styles.root }}
