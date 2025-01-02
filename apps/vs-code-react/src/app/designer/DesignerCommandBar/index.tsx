@@ -18,7 +18,6 @@ import { ExtensionCommand } from '@microsoft/vscode-extension-logic-apps';
 import { useContext, useMemo } from 'react';
 import { useIntl } from 'react-intl';
 import { useMutation } from '@tanstack/react-query';
-import { useDispatch } from 'react-redux';
 
 export interface DesignerCommandBarProps {
   isRefreshing: boolean;
@@ -30,7 +29,7 @@ export interface DesignerCommandBarProps {
 export const DesignerCommandBar: React.FC<DesignerCommandBarProps> = ({ isRefreshing, isDisabled, onRefresh, isDarkMode }) => {
   const intl = useIntl();
   const vscode = useContext(VSCodeContext);
-  const dispatch = useDispatch();
+  const dispatch = DesignerStore.dispatch;
   const designerState = DesignerStore.getState();
 
   const isMonitoringView = designerState.designerOptions.isMonitoringView;
