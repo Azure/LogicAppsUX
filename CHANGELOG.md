@@ -1,4 +1,20 @@
 # Logic Apps Designer
+## [5.15.0](https://github.com/Azure/LogicAppsUX/compare/v5.14.0...v5.15.0) (2025-01-02)
+
+
+### Features
+
+* **designer:** Adding Support for new collectionFormat property ([#6269](https://github.com/Azure/LogicAppsUX/issues/6269)) ([74fbaf1](https://github.com/Azure/LogicAppsUX/commit/74fbaf193b983e0f3d9b7521084736284e4ff788))
+
+
+### Bug Fixes
+
+* **designer:** Default nested items to use item token brandcolor/icon ([#6276](https://github.com/Azure/LogicAppsUX/issues/6276)) ([716aa43](https://github.com/Azure/LogicAppsUX/commit/716aa4370770cf531d31b82d0c6e5432b18c956e))
+* **Designer:** Fixed issue with array editor dynamic data ([#6221](https://github.com/Azure/LogicAppsUX/issues/6221)) ([4b2228d](https://github.com/Azure/LogicAppsUX/commit/4b2228d3e3d7d147a004ce28d57298cd60842125))
+* **designer:** Fixing Implicit For Each within Copy-Paste Scope  ([#6236](https://github.com/Azure/LogicAppsUX/issues/6236)) ([0d95dcd](https://github.com/Azure/LogicAppsUX/commit/0d95dcd2fbc5b2977e6c0d61fbf3d9ee5fe4fe7c))
+* **Designer:** Sorted connector browse actions alphabetically ([#6245](https://github.com/Azure/LogicAppsUX/issues/6245)) ([0d5ef5d](https://github.com/Azure/LogicAppsUX/commit/0d5ef5d958de21c2059b27499d312dc77212826a))
+* **standalone:** Passing Appsettings to standalone designer services ([#6210](https://github.com/Azure/LogicAppsUX/issues/6210)) ([59251b6](https://github.com/Azure/LogicAppsUX/commit/59251b6c5f8d055faa8fb610cdbf3be6ec127d1f))
+
 ## [5.14.0](https://github.com/Azure/LogicAppsUX/compare/v5.13.0...v5.14.0) (2024-12-31)
 
 
