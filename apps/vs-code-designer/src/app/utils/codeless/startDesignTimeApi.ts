@@ -239,10 +239,11 @@ export function startDesignTimeProcess(
     data = data.toString();
     cmdOutput = cmdOutput.concat(data);
     cmdOutputIncludingStderr = cmdOutputIncludingStderr.concat(data);
+    const languageWorkerText = 'Failed to start a new language worker for runtime: node';
     if (outputChannel) {
       outputChannel.append(data);
     }
-    if (data.includes('Failed to start a new language worker for runtime: node.')) {
+    if (data.toLowerCase().includes(languageWorkerText.toLowerCase())) {
       ext.outputChannel.appendLog(
         'Language worker issue found when launching func most likely due to a conflicting port. Restarting design-time process.'
       );
@@ -254,10 +255,11 @@ export function startDesignTimeProcess(
   ext.designChildProcess.stderr.on('data', (data: string | Buffer) => {
     data = data.toString();
     cmdOutputIncludingStderr = cmdOutputIncludingStderr.concat(data);
+    const portUnavailableText = 'is unavailable. Close the process using that port, or specify another port using';
     if (outputChannel) {
       outputChannel.append(data);
     }
-    if (data.includes(' is unavailable. Close the process using that port, or specify another port using')) {
+    if (data.toLowerCase().includes(portUnavailableText.toLowerCase())) {
       ext.outputChannel.appendLog('Conflicting port found when launching func. Restarting design-time process.');
       stopDesignTimeApi();
       startDesignTimeApi(path.dirname(workingDirectory));
