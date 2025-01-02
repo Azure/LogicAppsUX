@@ -1,5 +1,4 @@
 import { VSCodeContext } from '../../../webviewCommunication';
-import { mergeStyles, mergeStyleSets, Spinner, SpinnerSize } from '@fluentui/react';
 import {
   serializeWorkflow as serializeBJSWorkflow,
   store as DesignerStore,
@@ -16,15 +15,16 @@ import { ExtensionCommand } from '@microsoft/vscode-extension-logic-apps';
 import { useContext, useMemo } from 'react';
 import { useIntl } from 'react-intl';
 import { useMutation } from '@tanstack/react-query';
-import { Toolbar, ToolbarButton } from '@fluentui/react-components';
+import { Spinner, Toolbar, ToolbarButton } from '@fluentui/react-components';
 import {
   SaveRegular,
   ArrowClockwiseRegular,
   ErrorCircleFilled,
   ErrorCircleRegular,
-  ArrowSyncRegular,
   SettingsRegular,
+  ReplayRegular,
 } from '@fluentui/react-icons';
+import { TrafficLightDot } from '@microsoft/designer-ui';
 
 export interface DesignerCommandBarProps {
   isRefreshing: boolean;
@@ -116,17 +116,6 @@ export const DesignerCommandBar: React.FC<DesignerCommandBarProps> = ({ isRefres
     }),
   };
 
-  const iconClass = mergeStyles({
-    fontSize: 16,
-    height: 16,
-    width: 16,
-  });
-
-  const classNames = mergeStyleSets({
-    azureBlue: [{ color: 'rgb(0, 120, 212)' }, iconClass],
-    disableGrey: [{ color: 'rgb(121, 119, 117)' }, iconClass],
-  });
-
   const allInputErrors = (Object.entries(designerState.operations.inputParameters) ?? []).filter(([_id, nodeInputs]) =>
     Object.values(nodeInputs.parameterGroups).some((parameterGroup) =>
       parameterGroup.parameters.some((parameter) => (parameter?.validationErrors?.length ?? 0) > 0)
@@ -154,11 +143,8 @@ export const DesignerCommandBar: React.FC<DesignerCommandBarProps> = ({ isRefres
       disabled: isSaveDisabled,
       ariaLabel: Resources.DESIGNER_SAVE,
       text: Resources.DESIGNER_SAVE,
-      icon: isSaving ? (
-        <Spinner size={SpinnerSize.small} />
-      ) : (
-        <SaveRegular className={isSaveDisabled ? classNames.disableGrey : classNames.azureBlue} />
-      ),
+      icon: isSaving ? <Spinner size="extra-small" /> : <SaveRegular />,
+      renderTextIcon: null,
       onClick: () => {
         saveWorkflowMutate();
       },
@@ -169,18 +155,11 @@ export const DesignerCommandBar: React.FC<DesignerCommandBarProps> = ({ isRefres
       ariaLabel: Resources.DESIGNER_PARAMETERS,
       text: Resources.DESIGNER_PARAMETERS,
       icon: <SettingsRegular />,
-      // onRenderText: (item: { text: string }) => {
-      //   return (
-      //     <>
-      //       {item.text}
-      //       {haveWorkflowParameterErrors ? (
-      //         <div style={{ display: 'inline-block', marginLeft: 8 }}>
-      //           <TrafficLightDot fill={RUN_AFTER_COLORS[isDarkMode ? 'dark' : 'light']['FAILED']} />
-      //         </div>
-      //       ) : null}
-      //     </>
-      //   );
-      // },
+      renderTextIcon: haveWorkflowParameterErrors ? (
+        <div style={{ display: 'inline-block', marginLeft: 8 }}>
+          <TrafficLightDot fill={RUN_AFTER_COLORS[isDarkMode ? 'dark' : 'light']['FAILED']} />
+        </div>
+      ) : null,
       onClick: () => !!dispatch(openPanel({ panelMode: 'WorkflowParameters' })),
     },
     {
@@ -193,6 +172,7 @@ export const DesignerCommandBar: React.FC<DesignerCommandBarProps> = ({ isRefres
       ) : (
         <ErrorCircleRegular />
       ),
+      renderTextIcon: null,
       onClick: () => !!dispatch(openPanel({ panelMode: 'Error' })),
     },
   ];
@@ -203,7 +183,8 @@ export const DesignerCommandBar: React.FC<DesignerCommandBarProps> = ({ isRefres
       disabled: isDisabled ? isDisabled : isRefreshing,
       ariaLabel: Resources.MONITORING_VIEW_REFRESH,
       text: Resources.MONITORING_VIEW_REFRESH,
-      icon: <ArrowSyncRegular />,
+      icon: <ArrowClockwiseRegular />,
+      renderTextIcon: null,
       onClick: onRefresh,
     },
     {
@@ -211,7 +192,8 @@ export const DesignerCommandBar: React.FC<DesignerCommandBarProps> = ({ isRefres
       disabled: isDisabled,
       ariaLabel: Resources.MONITORING_VIEW_RESUBMIT,
       text: Resources.MONITORING_VIEW_RESUBMIT,
-      icon: <ArrowClockwiseRegular />,
+      icon: <ReplayRegular />,
+      renderTextIcon: null,
       onClick: () => {
         onResubmit();
       },
@@ -219,7 +201,13 @@ export const DesignerCommandBar: React.FC<DesignerCommandBarProps> = ({ isRefres
   ];
 
   return (
-    <Toolbar aria-label={Resources.COMMAND_BAR_ARIA}>
+    <Toolbar
+      style={{
+        borderBottom: `1px solid ${isDarkMode ? '#333333' : '#d6d6d6'}`,
+        padding: '0 20px',
+      }}
+      aria-label={Resources.COMMAND_BAR_ARIA}
+    >
       {(isMonitoringView ? monitoringViewItems : designerItems).map((buttonProps) => (
         <ToolbarButton
           disabled={buttonProps.disabled}
@@ -229,15 +217,9 @@ export const DesignerCommandBar: React.FC<DesignerCommandBarProps> = ({ isRefres
           onClick={buttonProps.onClick}
         >
           {buttonProps.text}
+          {buttonProps.renderTextIcon}
         </ToolbarButton>
       ))}
     </Toolbar>
-    // <CommandBar
-    //   items={isMonitoringView ? monitoringViewItems : designerItems}
-    //   ariaLabel=
-    //   styles={{
-    //     root: { borderBottom: `1px solid ${isDarkMode ? '#333333' : '#d6d6d6'}`, padding: '0 20px' },
-    //   }}
-    // />
   );
 };
