@@ -1,4 +1,3 @@
-//import { MapCheckerItemSeverity } from '../components/sidePane/tabs/mapCheckerTab/MapCheckerItem';
 import { CollectionRegular, StringCategory20Regular } from '../images/FunctionIcons/CategoryIcons';
 import {
   Any16Filled,
@@ -51,7 +50,7 @@ import {
   XPowerY32Regular,
 } from '../images/FunctionIcons/FunctionIcons';
 import { FunctionCategory } from '../models/Function';
-import { LogCategory, LogService } from './Logging.Utils';
+import { LogCategory } from './Logging.Utils';
 import { FontIcon } from '@fluentui/react';
 import type { FluentIcon } from '@fluentui/react-icons';
 import {
@@ -90,7 +89,7 @@ import {
   WarningFilled,
   WrenchRegular,
 } from '@fluentui/react-icons';
-import { NormalizedDataType, SchemaNodeProperty } from '@microsoft/logic-apps-shared';
+import { LogEntryLevel, LoggerService, NormalizedDataType, SchemaNodeProperty } from '@microsoft/logic-apps-shared';
 import type { ReactElement } from 'react';
 import { MapCheckerItemSeverity } from './MapChecker.Utils';
 import { tokens } from '@fluentui/react-components';
@@ -177,7 +176,9 @@ export const iconForNormalizedDataType = (
       break;
     }
     default: {
-      LogService.error(LogCategory.IconUtils, 'iconForNormalizedDataType', {
+      LoggerService().log({
+        level: LogEntryLevel.Error,
+        area: `${LogCategory.IconUtils}/iconForNormalizedDataType`,
         message: `No icon found for type: ${nodeType}`,
       });
 
@@ -218,7 +219,9 @@ export const iconForFunctionCategory = (functionCategory: FunctionCategory) => {
       return WrenchRegular;
     }
     default: {
-      LogService.error(LogCategory.IconUtils, 'iconForFunctionCategory', {
+      LoggerService().log({
+        level: LogEntryLevel.Error,
+        area: `${LogCategory.IconUtils}/iconForFunctionCategory`,
         message: `Invalid category type: ${functionCategory}`,
       });
 
