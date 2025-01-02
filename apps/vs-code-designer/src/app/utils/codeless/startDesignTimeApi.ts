@@ -129,10 +129,12 @@ export async function startDesignTimeApi(projectPath: string): Promise<void> {
       } else {
         throw new Error(localize('DesignTimeDirectoryError', 'Failed to create design-time directory.'));
       }
-    } catch (ex) {
-      ext.outputChannel.appendLog(`${ex.message}`);
+    } catch (error) {
+      const errorMessage = error instanceof Error ? error.message : error;
       const viewOutput: MessageItem = { title: localize('viewOutput', 'View output') };
-      const message: string = localize('DesignTimeError', "Can't start the background design-time process.");
+      const message = localize('DesignTimeError', "Can't start the background design-time process.") + errorMessage;
+      actionContext.telemetry.properties.startDesignTimeApiError = errorMessage;
+
       await window.showErrorMessage(message, viewOutput).then(async (result) => {
         if (result === viewOutput) {
           ext.outputChannel.show();
@@ -205,8 +207,7 @@ export async function isDesignTimeUp(url: string): Promise<boolean> {
   try {
     await axios.get(url);
     return Promise.resolve(true);
-  } catch (ex) {
-    ext.outputChannel.appendLog(`${ex.message}`);
+  } catch {
     return Promise.resolve(false);
   }
 }

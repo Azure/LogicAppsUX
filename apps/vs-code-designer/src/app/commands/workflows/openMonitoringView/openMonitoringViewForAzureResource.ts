@@ -132,6 +132,11 @@ export default class openMonitoringViewForAzureResource extends OpenMonitoringVi
         await this.resubmitRun();
         break;
       }
+      case ExtensionCommand.logTelemetry: {
+        const eventName = message.data.name ?? message.data.area;
+        ext.telemetryReporter.sendTelemetryEvent(eventName, { ...message.data });
+        break;
+      }
       default:
         break;
     }
