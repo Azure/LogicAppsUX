@@ -3,7 +3,6 @@ import { useIntl } from 'react-intl';
 import { Button } from '@fluentui/react-components';
 import { useSelector, useDispatch } from 'react-redux';
 import type { RootState, AppDispatch } from '../../core/state/Store';
-import { Dismiss20Regular } from '@fluentui/react-icons';
 import { Panel } from '../common/panel/Panel';
 import { toggleTestPanel, updateTestOutput } from '../../core/state/PanelSlice';
 import { useStyles } from './styles';
@@ -11,6 +10,7 @@ import { TestPanelBody } from './TestPanelBody';
 import { testDataMap } from '../../core/queries/datamap';
 import { LogCategory } from '../../utils/Logging.Utils';
 import { guid, LogEntryLevel, LoggerService } from '@microsoft/logic-apps-shared';
+import { PanelXButton } from '../common/panel/PanelXButton';
 type TestPanelProps = {};
 
 export const TestPanel = (_props: TestPanelProps) => {
@@ -103,15 +103,7 @@ export const TestPanel = (_props: TestPanelProps) => {
       position={'end'}
       title={{
         text: resources.TEST_MAP,
-        rightAction: (
-          <Button
-            className={styles.closeHeaderButton}
-            appearance="transparent"
-            aria-label={resources.CLOSE_TEST_MAP}
-            icon={<Dismiss20Regular />}
-            onClick={onCloseClick}
-          />
-        ),
+        rightAction: <PanelXButton onCloseClick={onCloseClick} ariaLabel={resources.CLOSE_TEST_MAP} />,
         size: 500,
       }}
       body={<TestPanelBody />}

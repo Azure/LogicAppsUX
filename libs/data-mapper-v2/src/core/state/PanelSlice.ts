@@ -34,6 +34,7 @@ export interface PanelState {
   testPanel: TestPanelState;
   codeViewPanel: CodeViewState;
   functionPanel: FunctionPanelState;
+  mapCheckerPanel: FunctionPanelState;
 }
 
 export interface TestMapOutput {
@@ -53,6 +54,9 @@ const initialState: PanelState = {
   functionPanel: {
     isOpen: true,
   },
+  mapCheckerPanel: {
+    isOpen: false,
+  },
 };
 
 export const panelSlice = createSlice({
@@ -65,11 +69,24 @@ export const panelSlice = createSlice({
       state.currentPanelView = ConfigPanelView.DefaultConfig;
     },
 
+    toggleMapChecker: (state) => {
+      const newState = !state.mapCheckerPanel.isOpen;
+
+      if (newState) {
+        state.codeViewPanel.isOpen = false;
+        state.testPanel.isOpen = false;
+        state.functionPanel.isOpen = false;
+      }
+
+      state.mapCheckerPanel.isOpen = newState;
+    },
+
     toggleCodeView: (state) => {
       const newState = !state.codeViewPanel.isOpen;
 
       // Close other panels if code view panel is opened
       if (newState) {
+        state.mapCheckerPanel.isOpen = false;
         state.testPanel.isOpen = false;
         state.functionPanel.isOpen = false;
       }
@@ -82,6 +99,7 @@ export const panelSlice = createSlice({
 
       // Close other panels if test panel is opened
       if (newState) {
+        state.mapCheckerPanel.isOpen = false;
         state.codeViewPanel.isOpen = false;
         state.functionPanel.isOpen = false;
       }
@@ -94,6 +112,7 @@ export const panelSlice = createSlice({
 
       // Close other panels if function panel is opened
       if (newState) {
+        state.mapCheckerPanel.isOpen = false;
         state.codeViewPanel.isOpen = false;
         state.testPanel.isOpen = false;
       }
@@ -159,6 +178,7 @@ export const {
   updateTestInput,
   updateTestOutput,
   toggleFunctionPanel,
+  toggleMapChecker,
 } = panelSlice.actions;
 
 export default panelSlice.reducer;

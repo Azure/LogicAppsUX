@@ -4,6 +4,7 @@ import functionReducer from './FunctionSlice';
 import modalReducer from './ModalSlice';
 import panelReducer from './PanelSlice';
 import schemaReducer from './SchemaSlice';
+import errorsReducer from './ErrorsSlice';
 import type {} from 'redux-thunk';
 import { configureStore } from '@reduxjs/toolkit';
 import undoable, { includeAction } from 'redux-undo';
@@ -24,6 +25,7 @@ export const store = configureStore({
     function: functionReducer,
     panel: panelReducer,
     modal: modalReducer,
+    errors: errorsReducer,
     dataMap: undoable(dataMapReducer, {
       filter: includeAction(includedActions),
     }),

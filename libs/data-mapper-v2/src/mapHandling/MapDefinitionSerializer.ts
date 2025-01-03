@@ -41,6 +41,7 @@ interface FailedMapDefinition {
 interface SuccessfulMapDefinition {
   isSuccess: true;
   definition: string;
+  warnings?: string[];
 }
 
 export const convertToMapDefinition = (

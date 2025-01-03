@@ -71,11 +71,14 @@ import {
   ClockRegular,
   CopyRegular,
   CubeRegular,
+  DismissCircleFilled,
   EqualOffRegular,
   GatherRegular,
+  InfoFilled,
   MathSymbolsRegular,
   NumberSymbolFilled,
   NumberSymbolRegular,
+  QuestionCircleFilled,
   ReOrderRegular,
   SubtractCircleRegular,
   TextAsteriskRegular,
@@ -83,14 +86,37 @@ import {
   TextCaseUppercaseRegular,
   TextNumberFormatRegular,
   TextWholeWordRegular,
+  WarningFilled,
   WrenchRegular,
 } from '@fluentui/react-icons';
 import { LogEntryLevel, LoggerService, NormalizedDataType, SchemaNodeProperty } from '@microsoft/logic-apps-shared';
 import type { ReactElement } from 'react';
+import { MapCheckerItemSeverity } from './MapChecker.Utils';
+import { tokens } from '@fluentui/react-components';
 
 // Using Fluent v8 as it has option for fallback icon
 
 type iconSize = 16 | 24;
+
+const mapCheckerIconStyle = { minHeight: '20px', minWidth: '20px' };
+
+export const iconForMapCheckerSeverity = (severity: MapCheckerItemSeverity) => {
+  switch (severity) {
+    case MapCheckerItemSeverity.Error: {
+      return <DismissCircleFilled style={mapCheckerIconStyle} primaryFill={tokens.colorPaletteRedBackground3} />;
+    }
+    case MapCheckerItemSeverity.Warning: {
+      return <WarningFilled style={mapCheckerIconStyle} primaryFill={tokens.colorPaletteGoldBorderActive} />;
+    }
+    case MapCheckerItemSeverity.Info: {
+      return <InfoFilled style={mapCheckerIconStyle} primaryFill={tokens.colorPaletteBlueBorderActive} />;
+    }
+    case MapCheckerItemSeverity.Unknown:
+    default: {
+      return <QuestionCircleFilled style={mapCheckerIconStyle} primaryFill={tokens.colorPaletteBeigeBorderActive} />;
+    }
+  }
+};
 
 export const iconForNormalizedDataType = (
   nodeType: NormalizedDataType,

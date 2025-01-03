@@ -14,6 +14,7 @@ import {
   amendSourceKeyForDirectAccessIfNeeded,
 } from '../utils/DataMap.Utils';
 import { isFunctionData } from '../utils/Function.Utils';
+import { DeserializationError, MapCheckerItemSeverity, MapIssueType, type MapIssue } from '../utils/MapChecker.Utils';
 import { addSourceReactFlowPrefix, addTargetReactFlowPrefix, createReactFlowFunctionKey } from '../utils/ReactFlow.Util';
 import { findNodeForKey, flattenSchemaIntoDictionary, isSchemaNodeExtended } from '../utils/Schema.Utils';
 import type { MapDefinitionEntry, SchemaExtended, SchemaNodeDictionary, SchemaNodeExtended } from '@microsoft/logic-apps-shared';
@@ -39,7 +40,7 @@ export class MapDefinitionDeserializer {
   private readonly _functionsMetadata: FunctionData[];
   private _loop: LoopMetadata[];
   private _conditional: ConditionalMetadata;
-  private _warningMessages: string[];
+  private _warningMessages: MapIssue[];
 
   private readonly _sourceSchemaFlattened: SchemaNodeDictionary;
   private readonly _targetSchemaFlattened: SchemaNodeDictionary;
@@ -118,7 +119,13 @@ export class MapDefinitionDeserializer {
       }
     }
     if (targetNode === undefined) {
-      throw new Error(`Target node not found for key ${currentTargetKey}`);
+      const issueType = MapIssueType.TargetSchemaNodeNotFound;
+      const error: MapIssue = {
+        severity: MapCheckerItemSeverity.Warning,
+        reactFlowId: currentTargetKey,
+        issueType: issueType,
+      };
+      throw new DeserializationError(issueType, error);
     }
     return targetNode;
   };
@@ -193,7 +200,13 @@ export class MapDefinitionDeserializer {
         if (connections[funcKey]) {
           func = connections[funcKey].self.node as FunctionData;
         } else {
-          throw new Error(`Function ${funcKey} not found in connections`);
+          const issueType = MapIssueType.FunctionNotFound;
+          const error: MapIssue = {
+            issueType: issueType,
+            severity: MapCheckerItemSeverity.Warning,
+            reactFlowId: funcKey,
+          };
+          throw new DeserializationError(issueType, error);
         }
       }
       // get function node
@@ -239,7 +252,13 @@ export class MapDefinitionDeserializer {
         input: createNodeConnection(possibleSourceSchemaNode, addSourceReactFlowPrefix(possibleSourceSchemaNode.key)),
       });
     } else {
-      throw new Error(`Cannot find value for ${key} in LML file`); // danielle show error here
+      const issueType = MapIssueType.KeyNotFound;
+      const error: MapIssue = {
+        issueType: issueType,
+        severity: MapCheckerItemSeverity.Warning,
+        reactFlowId: key,
+      };
+      throw new DeserializationError(issueType, error);
     }
   };
 
@@ -260,7 +279,13 @@ export class MapDefinitionDeserializer {
             false
           ) as SchemaNodeExtended;
           if (!loopSrc) {
-            throw new Error(`Loop source not found for key ${loop.key}`);
+            const issueType = MapIssueType.LoopSourceNotFound;
+            const error: MapIssue = {
+              issueType: issueType,
+              severity: MapCheckerItemSeverity.Warning,
+              reactFlowId: loop.key,
+            };
+            throw new DeserializationError(issueType, error);
           }
           let key = addSourceReactFlowPrefix(loopSrc.key);
           if (loop.indexFn) {
@@ -345,8 +370,8 @@ export class MapDefinitionDeserializer {
           try {
             this.createConnectionsForLMLObject(child[1], child[0], targetNode, connections);
           } catch (error) {
-            if (error instanceof Error) {
-              this._warningMessages.push(error.message);
+            if (error instanceof DeserializationError) {
+              this._warningMessages.push(error.mapIssue);
               console.log(error);
             }
           }
@@ -505,7 +530,13 @@ export class MapDefinitionDeserializer {
         this._loop.push(loopMetadata);
         this.createIndexFunctionIfNeeded(forFunc, loopSource, connections, loopMetadata);
       } else {
-        throw Error(`Loop source not found for key ${sourceLoopKey.value}`);
+        const issueType = MapIssueType.LoopSourceNotFound;
+        const error: MapIssue = {
+          severity: MapCheckerItemSeverity.Warning,
+          reactFlowId: sourceLoopKey.value,
+          issueType: issueType,
+        };
+        throw new DeserializationError(issueType, error);
       }
     } else {
       const meta: FunctionCreationMetadata = this.getSourceLoopFromSequenceFunctions(sourceFor);
@@ -579,7 +610,13 @@ export class MapDefinitionDeserializer {
 
       this.handleSingleValueOrFunction('', schemaNodeOrFunction.term, targetNode, connections);
     } else {
-      throw new Error(`Key ${key} not found in source schema`);
+      const issueType = MapIssueType.SourceSchemaNodeNotFound;
+      const error: MapIssue = {
+        severity: MapCheckerItemSeverity.Warning,
+        reactFlowId: key,
+        issueType: issueType,
+      };
+      throw new DeserializationError(issueType, error);
     }
   };
 

@@ -6,10 +6,6 @@ export const useStyles = makeStyles({
     backgroundColor: '#fff',
     overflow: 'visible',
   },
-  closeHeaderButton: {
-    paddingBottom: '0px',
-    paddingTop: '0px',
-  },
   bodyWrapper: {
     display: 'flex',
     width: '100%',
