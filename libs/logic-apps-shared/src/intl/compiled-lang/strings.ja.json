@@ -641,6 +641,12 @@
       "value": "パラメーターの引数を浮動小数点数に変換します"
     }
   ],
+  "1QktJw": [
+    {
+      "type": 0,
+      "value": "Map errors"
+    }
+  ],
   "1Xke9D": [
     {
       "type": 0,
@@ -1345,6 +1351,20 @@
     {
       "type": 0,
       "value": "(UTC+09:00) 大阪、札幌、東京"
+    }
+  ],
+  "5DkTf5": [
+    {
+      "type": 0,
+      "value": "Target schema node not found for node key '"
+    },
+    {
+      "type": 1,
+      "value": "nodeKey"
+    },
+    {
+      "type": 0,
+      "value": "'"
     }
   ],
   "5J9jne": [
@@ -2620,6 +2640,20 @@
       "value": "この GUID の値の書式設定方法を示す単一の書式指定子。"
     }
   ],
+  "Bwqlxd": [
+    {
+      "type": 0,
+      "value": "Key not found '"
+    },
+    {
+      "type": 1,
+      "value": "nodeKey"
+    },
+    {
+      "type": 0,
+      "value": "'"
+    }
+  ],
   "BxITRH": [
     {
       "type": 0,
@@ -3242,6 +3276,20 @@
       "value": "開始インデックスと終了インデックスで定義される文字列のセクションを返します"
     }
   ],
+  "FPBmrA": [
+    {
+      "type": 0,
+      "value": "Source schema node not found for node key '"
+    },
+    {
+      "type": 1,
+      "value": "nodeKey"
+    },
+    {
+      "type": 0,
+      "value": "'"
+    }
+  ],
   "FT3jt6": [
     {
       "type": 0,
@@ -3437,6 +3485,20 @@
     {
       "type": 0,
       "value": "ソース スキーマ要素"
+    }
+  ],
+  "GiR7ll": [
+    {
+      "type": 0,
+      "value": "Function not found- '"
+    },
+    {
+      "type": 1,
+      "value": "nodeKey"
+    },
+    {
+      "type": 0,
+      "value": "'"
     }
   ],
   "Gk79Ma": [
@@ -4890,6 +4952,12 @@
     {
       "type": 0,
       "value": "折りたたみ済み"
+    }
+  ],
+  "PEJ+e4": [
+    {
+      "type": 0,
+      "value": "Error loading data map"
     }
   ],
   "PNk3n4": [
@@ -6551,12 +6619,6 @@
       "value": "応答にワークフロー メタデータ ヘッダーを含めないように Logic Apps を制限します。"
     }
   ],
-  "XtVOMn": [
-    {
-      "type": 0,
-      "value": "Something went wrong"
-    }
-  ],
   "XtuP5e": [
     {
       "type": 0,
@@ -7743,6 +7805,12 @@
       "value": "共有済み"
     }
   ],
+  "epi+zR": [
+    {
+      "type": 0,
+      "value": "Close map checker"
+    }
+  ],
   "er6O+w": [
     {
       "type": 0,
@@ -7857,12 +7925,6 @@
     {
       "type": 0,
       "value": "(UTC-05:00) ハイチ"
-    }
-  ],
-  "fZJWBR": [
-    {
-      "type": 0,
-      "value": "Loading designer"
     }
   ],
   "faUrud": [
@@ -8782,6 +8844,20 @@
     {
       "type": 0,
       "value": "ターゲット要素に接続されていない要素とマッピングは削除されます。"
+    }
+  ],
+  "kfmLTY": [
+    {
+      "type": 0,
+      "value": "Function '"
+    },
+    {
+      "type": 1,
+      "value": "functionName"
+    },
+    {
+      "type": 0,
+      "value": "' is missing required inputs"
     }
   ],
   "klY9UN": [
@@ -10138,6 +10214,12 @@
     {
       "type": 0,
       "value": "新規追加"
+    }
+  ],
+  "rwrlsB": [
+    {
+      "type": 0,
+      "value": "Map Issues"
     }
   ],
   "rxIJfD": [
