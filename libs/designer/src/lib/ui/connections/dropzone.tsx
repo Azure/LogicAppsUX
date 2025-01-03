@@ -55,7 +55,7 @@ export const DropZone: React.FC<DropZoneProps> = memo(({ graphId, parentId, chil
     return parentId;
   }, [nodeMetadata, parentId]);
 
-  const upstreamNodesOfChild = useUpstreamNodes(removeIdTag(childId ?? newParentId ?? graphId));
+  const upstreamNodesOfChild = useUpstreamNodes(removeIdTag(childId ?? newParentId ?? ''), graphId, childId);
   const immediateAncestor = useGetAllOperationNodesWithin(parentId && !containsIdTag(parentId) ? parentId : '');
   const upstreamNodes = useMemo(() => new Set([...upstreamNodesOfChild, ...immediateAncestor]), [immediateAncestor, upstreamNodesOfChild]);
   const upstreamNodesDependencies = useNodesTokenDependencies(upstreamNodes);

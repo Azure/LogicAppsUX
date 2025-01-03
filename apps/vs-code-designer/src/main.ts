@@ -27,11 +27,14 @@ import {
 import type { IActionContext } from '@microsoft/vscode-azext-utils';
 import * as vscode from 'vscode';
 import { ConvertToWorkspace } from './app/commands/createNewCodeProject/CodeProjectBase/ConvertToWorkspace';
+import TelemetryReporter from '@vscode/extension-telemetry';
 
 const perfStats = {
   loadStartTime: Date.now(),
   loadEndTime: undefined,
 };
+
+const telemetryString = 'setInGitHubBuild';
 
 export async function activate(context: vscode.ExtensionContext) {
   vscode.commands.executeCommand(
@@ -46,6 +49,8 @@ export async function activate(context: vscode.ExtensionContext) {
   ]);
 
   ext.context = context;
+  ext.telemetryReporter = new TelemetryReporter(telemetryString);
+  context.subscriptions.push(ext.telemetryReporter);
 
   ext.outputChannel = createAzExtOutputChannel('Azure Logic Apps (Standard)', ext.prefix);
   registerUIExtensionVariables(ext);
@@ -109,6 +114,7 @@ export async function activate(context: vscode.ExtensionContext) {
 
 export function deactivate(): Promise<any> {
   stopDesignTimeApi();
+  ext.telemetryReporter.dispose();
   return undefined;
 }
 
