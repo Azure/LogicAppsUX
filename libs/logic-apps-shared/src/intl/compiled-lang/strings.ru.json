@@ -26,19 +26,19 @@
   "+5Jp42": [
     {
       "type": 0,
-      "value": "By"
+      "value": "Автор"
     }
   ],
   "+Agiub": [
     {
       "type": 0,
-      "value": "Create an expression with Copilot"
+      "value": "Создать выражение с помощью Copilot"
     }
   ],
   "+EREVh": [
     {
       "type": 0,
-      "value": "Name"
+      "value": "Имя"
     }
   ],
   "+FcXe9": [
@@ -74,7 +74,7 @@
   "+R90eK": [
     {
       "type": 0,
-      "value": "Retry policy interval is invalid, must match ISO 8601 duration format"
+      "value": "Недопустимый интервал политики повтора. Необходимо указать длительность в формате ISO 8601."
     }
   ],
   "+Uvo/p": [
@@ -102,7 +102,7 @@
   "+l5XmZ": [
     {
       "type": 0,
-      "value": "Enter a positive integer between "
+      "value": "Введите положительное целое число от "
     },
     {
       "type": 1,
@@ -110,7 +110,7 @@
     },
     {
       "type": 0,
-      "value": " and "
+      "value": " до "
     },
     {
       "type": 1,
@@ -162,7 +162,7 @@
   "/IVuGP": [
     {
       "type": 0,
-      "value": "Discard"
+      "value": "Удалить"
     }
   ],
   "/KRvvg": [
@@ -222,7 +222,7 @@
   "/csbOB": [
     {
       "type": 0,
-      "value": "Retry policy count is invalid (must be from "
+      "value": "Недопустимое количество политик повтора (должно быть от "
     },
     {
       "type": 1,
@@ -230,7 +230,7 @@
     },
     {
       "type": 0,
-      "value": " to "
+      "value": " до "
     },
     {
       "type": 1,
@@ -274,7 +274,7 @@
   "/qrBuJ": [
     {
       "type": 0,
-      "value": "Create"
+      "value": "Создать"
     }
   ],
   "/qu3zt": [
@@ -304,13 +304,13 @@
   "/ye9Df": [
     {
       "type": 0,
-      "value": "Delete workflow action"
+      "value": "Удалить действие рабочего процесса"
     }
   ],
   "0/VGiF": [
     {
       "type": 0,
-      "value": "Add action"
+      "value": "Добавить действие"
     }
   ],
   "00xlpa": [
@@ -392,13 +392,13 @@
   "0BO/tO": [
     {
       "type": 0,
-      "value": "Split-on tracking ID"
+      "value": "Идентификатор отслеживания разделения"
     }
   ],
   "0C5Ywr": [
     {
       "type": 0,
-      "value": "Enter an array"
+      "value": "Введите массив"
     }
   ],
   "0CPsxh": [
@@ -422,7 +422,7 @@
   "0FRVkr": [
     {
       "type": 0,
-      "value": "Connection Panel"
+      "value": "Панель подключения"
     }
   ],
   "0FzNJV": [
@@ -470,7 +470,7 @@
   "0UfxUM": [
     {
       "type": 0,
-      "value": "Next"
+      "value": "Далее"
     }
   ],
   "0Vzp0l": [
@@ -482,7 +482,7 @@
   "0ZZJos": [
     {
       "type": 0,
-      "value": "Showing "
+      "value": "Отображение "
     },
     {
       "type": 1,
@@ -498,7 +498,7 @@
     },
     {
       "type": 0,
-      "value": " of "
+      "value": " "
     },
     {
       "type": 1,
@@ -506,7 +506,7 @@
     },
     {
       "type": 0,
-      "value": " results."
+      "value": " результатов."
     }
   ],
   "0i/6TR": [
@@ -554,7 +554,7 @@
   "0uuxAX": [
     {
       "type": 0,
-      "value": "Delete mapping"
+      "value": "Удалить сопоставление"
     }
   ],
   "0vfdFS": [
@@ -570,7 +570,7 @@
     },
     {
       "type": 0,
-      "value": " connection"
+      "value": " подключение"
     }
   ],
   "0xLWzG": [
@@ -624,7 +624,7 @@
   "1HhCtq": [
     {
       "type": 0,
-      "value": "Headers"
+      "value": "Заголовки"
     }
   ],
   "1KFpTX": [
@@ -636,7 +636,7 @@
   "1LSKq8": [
     {
       "type": 0,
-      "value": "Basics"
+      "value": "Основные сведения"
     }
   ],
   "1NBvKu": [
@@ -645,10 +645,16 @@
       "value": "Преобразует аргумент параметра в число с плавающей запятой"
     }
   ],
+  "1QktJw": [
+    {
+      "type": 0,
+      "value": "Map errors"
+    }
+  ],
   "1Xke9D": [
     {
       "type": 0,
-      "value": "open functions drawer"
+      "value": "открыть панель функций"
     }
   ],
   "1dlfUe": [
@@ -666,7 +672,7 @@
   "1f7LG4": [
     {
       "type": 0,
-      "value": "Fixed interval"
+      "value": "Фиксированный интервал"
     }
   ],
   "1hHFdx": [
@@ -690,7 +696,7 @@
   "1jf3Dq": [
     {
       "type": 0,
-      "value": "Z to A, descending"
+      "value": "От Я до А, по убыванию"
     }
   ],
   "1jhzOM": [
@@ -732,7 +738,7 @@
   "1vqDeQ": [
     {
       "type": 0,
-      "value": "Select Create to start a new workflow based on this template, no configuration required."
+      "value": "Нажмите кнопку \"Создать\", чтобы запустить новый рабочий процесс на основе этого шаблона, конфигурация не требуется."
     }
   ],
   "20oqsp": [
@@ -810,13 +816,13 @@
   "2OQU3/": [
     {
       "type": 0,
-      "value": "Cannot run after both trigger and action"
+      "value": "Запуск после триггера и действия не может быть выполнен"
     }
   ],
   "2On4Xu": [
     {
       "type": 0,
-      "value": "Code view tab"
+      "value": "Вкладка \"Просмотр кода\""
     }
   ],
   "2TMGk7": [
@@ -834,7 +840,7 @@
   "2adqQ4": [
     {
       "type": 0,
-      "value": "Maximum interval"
+      "value": "Максимальный интервал"
     }
   ],
   "2cVEMV": [
@@ -898,7 +904,7 @@
   "2xQWRt": [
     {
       "type": 0,
-      "value": "Search Functions"
+      "value": "Поиск функций"
     }
   ],
   "2y24a/": [
@@ -914,7 +920,7 @@
     },
     {
       "type": 0,
-      "value": " of "
+      "value": " "
     },
     {
       "type": 1,
@@ -954,7 +960,7 @@
   "36sF7T": [
     {
       "type": 0,
-      "value": "Associated workflows"
+      "value": "Связанные рабочие процессы"
     }
   ],
   "3AWwVl": [
@@ -966,7 +972,7 @@
   "3BXdMk": [
     {
       "type": 0,
-      "value": "Request settings"
+      "value": "Параметры запроса"
     }
   ],
   "3BZnxY": [
@@ -990,7 +996,7 @@
   "3JEC7U": [
     {
       "type": 0,
-      "value": "Error type"
+      "value": "Тип ошибки"
     }
   ],
   "3KPLpx": [
@@ -1052,7 +1058,7 @@
   "3Xf/4S": [
     {
       "type": 0,
-      "value": "Swagger endpoint"
+      "value": "Конечная точка Swagger"
     }
   ],
   "3Y8a6G": [
@@ -1072,13 +1078,13 @@
   "3a3eHg": [
     {
       "type": 0,
-      "value": "Select actions"
+      "value": "Выбрать действия"
     }
   ],
   "3cZFcy": [
     {
       "type": 0,
-      "value": "Error Panel"
+      "value": "Панель ошибок"
     }
   ],
   "3cZZKj": [
@@ -1096,7 +1102,7 @@
   "3hHkAn": [
     {
       "type": 0,
-      "value": "Result"
+      "value": "Результат"
     }
   ],
   "3n5pnv": [
@@ -1114,7 +1120,7 @@
   "3pheF6": [
     {
       "type": 0,
-      "value": "Select schema"
+      "value": "Выбор схемы"
     }
   ],
   "3rzrWf": [
@@ -1212,7 +1218,7 @@
   "4BuCdw": [
     {
       "type": 0,
-      "value": "Specify the behavior and capabilities for transferring content over HTTP."
+      "value": "Укажите поведение и возможности передачи содержимого по протоколу HTTP."
     }
   ],
   "4D7H4R": [
@@ -1228,7 +1234,7 @@
   "4E69aV": [
     {
       "type": 0,
-      "value": "Background color"
+      "value": "Цвет фона"
     }
   ],
   "4Ekn9t": [
@@ -1252,7 +1258,7 @@
   "4SIrVn": [
     {
       "type": 0,
-      "value": "Body"
+      "value": "Текст"
     }
   ],
   "4YKQAF": [
@@ -1282,11 +1288,15 @@
   "4hlqgK": [
     {
       "type": 0,
-      "value": "No results found for "
+      "value": "Не найдены результаты для запроса \""
     },
     {
       "type": 1,
       "value": "searchTermBeingSearchedFor_DO_NOT_TRANSLATE"
+    },
+    {
+      "type": 0,
+      "value": "\""
     }
   ],
   "4iyEAY": [
@@ -1304,7 +1314,7 @@
   "4rVVyW": [
     {
       "type": 0,
-      "value": "Retry history"
+      "value": "Журнал повторов"
     }
   ],
   "4vcnOA": [
@@ -1338,7 +1348,7 @@
     },
     {
       "type": 0,
-      "value": " key item"
+      "value": " элемент ключа"
     }
   ],
   "50W8FI": [
@@ -1357,6 +1367,20 @@
     {
       "type": 0,
       "value": "(UTC+09:00) Осака, Саппоро, Токио"
+    }
+  ],
+  "5DkTf5": [
+    {
+      "type": 0,
+      "value": "Target schema node not found for node key '"
+    },
+    {
+      "type": 1,
+      "value": "nodeKey"
+    },
+    {
+      "type": 0,
+      "value": "'"
     }
   ],
   "5J9jne": [
@@ -1458,7 +1482,7 @@
   "5pSOjg": [
     {
       "type": 0,
-      "value": "Create workflows from template"
+      "value": "Создание рабочих процессов на основе шаблона"
     }
   ],
   "5qzZMo": [
@@ -1470,19 +1494,19 @@
   "5rljf7": [
     {
       "type": 0,
-      "value": "Discovery Panel"
+      "value": "Панель обнаружения"
     }
   ],
   "5szzYP": [
     {
       "type": 0,
-      "value": "Use this template"
+      "value": "Использовать этот шаблон"
     }
   ],
   "5we9SR": [
     {
       "type": 0,
-      "value": "Client tracking ID"
+      "value": "Идентификатор отслеживания клиента"
     }
   ],
   "5ytHcK": [
@@ -1530,13 +1554,13 @@
   "6DZp5H": [
     {
       "type": 0,
-      "value": "Search"
+      "value": "Поиск"
     }
   ],
   "6LJZ7n": [
     {
       "type": 0,
-      "value": "Retry policy"
+      "value": "Политика повтора"
     }
   ],
   "6OSgRP": [
@@ -1554,7 +1578,7 @@
   "6SQuYg": [
     {
       "type": 0,
-      "value": "See more ("
+      "value": "Показать больше ("
     },
     {
       "type": 1,
@@ -1574,19 +1598,19 @@
   "6c1ffO": [
     {
       "type": 0,
-      "value": "Enter JSON object of authentication parameter"
+      "value": "Введите объект JSON для параметра проверки подлинности"
     }
   ],
   "6eDY1H": [
     {
       "type": 0,
-      "value": "optional"
+      "value": "необязательно"
     }
   ],
   "6epkWC": [
     {
       "type": 0,
-      "value": "Body item"
+      "value": "Элемент текста"
     }
   ],
   "6fDYzG": [
@@ -1642,13 +1666,13 @@
   "6nWQm7": [
     {
       "type": 0,
-      "value": "Start time"
+      "value": "Время начала"
     }
   ],
   "6oOQnD": [
     {
       "type": 0,
-      "value": "Close test map"
+      "value": "Закрыть тестовую карту"
     }
   ],
   "6oqk+A": [
@@ -1672,7 +1696,7 @@
   "6rJ+Fj": [
     {
       "type": 0,
-      "value": "Delete workflow graph"
+      "value": "Удалить граф рабочего процесса"
     }
   ],
   "6sGj3J": [
@@ -1732,13 +1756,13 @@
   "7+ZxCU": [
     {
       "type": 0,
-      "value": "Invalid authentication value"
+      "value": "Недопустимое значение проверки подлинности"
     }
   ],
   "70cHmm": [
     {
       "type": 0,
-      "value": "OK"
+      "value": "ОК"
     }
   ],
   "73iM9+": [
@@ -1768,7 +1792,7 @@
   "7F4Bzv": [
     {
       "type": 0,
-      "value": "Workflow with name \""
+      "value": "Рабочий процесс с именем \""
     },
     {
       "type": 1,
@@ -1776,7 +1800,7 @@
     },
     {
       "type": 0,
-      "value": "\" already exists."
+      "value": "\" уже существует."
     }
   ],
   "7Fyq1F": [
@@ -1820,7 +1844,7 @@
   "7ZF1Hr": [
     {
       "type": 0,
-      "value": "Validation error"
+      "value": "Ошибка проверки"
     }
   ],
   "7ZR1xr": [
@@ -1838,13 +1862,13 @@
   "7adnmH": [
     {
       "type": 0,
-      "value": "Back to template library"
+      "value": "Назад в библиотеку шаблонов"
     }
   ],
   "7fZkLA": [
     {
       "type": 0,
-      "value": "Disable static result"
+      "value": "Отключить статический результат"
     }
   ],
   "7gUE8h": [
@@ -1954,7 +1978,7 @@
   "8KpZmj": [
     {
       "type": 0,
-      "value": "The system-assigned identity is unavailable because it's not enabled."
+      "value": "Удостоверение, назначаемое системой, недоступно, так как оно не включено."
     }
   ],
   "8L+oIz": [
@@ -2042,13 +2066,13 @@
   "8p0yK8": [
     {
       "type": 0,
-      "value": "Run after"
+      "value": "Запустить после"
     }
   ],
   "8wlfdo": [
     {
       "type": 0,
-      "value": "Suppress workflow headers on response"
+      "value": "Скрытие заголовков рабочего процесса при ответе"
     }
   ],
   "8wr0zO": [
@@ -2060,7 +2084,7 @@
   "8zcsPi": [
     {
       "type": 0,
-      "value": "Expression editor"
+      "value": "Редактор выражений"
     }
   ],
   "8zkvmc": [
@@ -2084,7 +2108,7 @@
   "90Vi7t": [
     {
       "type": 0,
-      "value": "Expand static result"
+      "value": "Развернуть статический результат"
     }
   ],
   "90o7sB": [
@@ -2142,7 +2166,7 @@
   "9OzDnJ": [
     {
       "type": 0,
-      "value": "Search tips"
+      "value": "Советы по поиску"
     }
   ],
   "9QNZSj": [
@@ -2174,7 +2198,7 @@
   "9V2Uwf": [
     {
       "type": 0,
-      "value": "Insert expression (you can also add by typing '/' in the editor)"
+      "value": "Вставить выражение (для добавления также можно ввести \"/\" в редакторе)"
     }
   ],
   "9W0lck": [
@@ -2230,7 +2254,7 @@
   "9uv02q": [
     {
       "type": 0,
-      "value": "Set the tracking ID for the run. For split-on this tracking ID is for the initiating request"
+      "value": "Задает идентификатор отслеживания для запуска. При использовании разделения этот идентификатор отслеживания будет использован для инициирующего запроса"
     }
   ],
   "9wX3u9": [
@@ -2254,7 +2278,7 @@
   "A5/UwX": [
     {
       "type": 0,
-      "value": "Accelerators"
+      "value": "Ускорители"
     }
   ],
   "A5Ferh": [
@@ -2266,7 +2290,7 @@
   "A8T1X/": [
     {
       "type": 0,
-      "value": "Whitespaces must be encoded for URIs."
+      "value": "Пробелы должны быть закодированы для URI."
     }
   ],
   "A8l+k7": [
@@ -2286,7 +2310,7 @@
   "AB+yPQ": [
     {
       "type": 0,
-      "value": "Connection details"
+      "value": "Сведения о подключении"
     }
   ],
   "AEguAy": [
@@ -2304,19 +2328,19 @@
   "AJ+LDh": [
     {
       "type": 0,
-      "value": "Provide a unique, descriptive name and review the state type to ensure your workflows are properly configured."
+      "value": "Укажите уникальное описательное имя и проверьте тип состояния, чтобы убедиться, что рабочие процессы настроены правильно."
     }
   ],
   "AKOkI2": [
     {
       "type": 0,
-      "value": "Service principal"
+      "value": "Субъект-служба"
     }
   ],
   "APKdYG": [
     {
       "type": 0,
-      "value": "Enter a valid double number."
+      "value": "Введите допустимое двойное число."
     }
   ],
   "AQ7Zxc": [
@@ -2334,7 +2358,7 @@
   "Agqhgu": [
     {
       "type": 0,
-      "value": "Describe how you'd like to update your expression."
+      "value": "Опишите, как вы хотите обновить выражение."
     }
   ],
   "AheXMN": [
@@ -2358,7 +2382,7 @@
   "Alq4/3": [
     {
       "type": 0,
-      "value": "Hybrid connector"
+      "value": "Гибридный соединитель"
     }
   ],
   "AnX5yC": [
@@ -2386,7 +2410,7 @@
     },
     {
       "type": 0,
-      "value": " operation"
+      "value": " операции"
     }
   ],
   "Az0QvG": [
@@ -2478,7 +2502,7 @@
   "B6BjCl": [
     {
       "type": 0,
-      "value": "Drop-down list of options"
+      "value": "Раскрывающийся список вариантов"
     }
   ],
   "B999mz": [
@@ -2572,7 +2596,7 @@
   "BRMOfD": [
     {
       "type": 0,
-      "value": "Timed out"
+      "value": "Время ожидания истекло"
     }
   ],
   "BS3gy8": [
@@ -2596,7 +2620,7 @@
   "BXb3CB": [
     {
       "type": 0,
-      "value": "Testing tab"
+      "value": "Вкладка \"Тестирование\""
     }
   ],
   "BYrP8F": [
@@ -2614,7 +2638,7 @@
   "Bkc/+3": [
     {
       "type": 0,
-      "value": "Retry policy minimum interval is invalid, must match ISO 8601 duration format"
+      "value": "Недопустимый минимальный интервал политики повтора. Укажите длительность в формате ISO 8601."
     }
   ],
   "Bl4Iv0": [
@@ -2632,7 +2656,7 @@
   "BnkCwH": [
     {
       "type": 0,
-      "value": "Search properties"
+      "value": "Поиск свойств"
     }
   ],
   "BoMvF2": [
@@ -2663,6 +2687,20 @@
     {
       "type": 0,
       "value": "Одинарный описатель формата, указывающий формат значения этого идентификатора GUID."
+    }
+  ],
+  "Bwqlxd": [
+    {
+      "type": 0,
+      "value": "Key not found '"
+    },
+    {
+      "type": 1,
+      "value": "nodeKey"
+    },
+    {
+      "type": 0,
+      "value": "'"
     }
   ],
   "BxITRH": [
@@ -2704,7 +2742,7 @@
   "CRTB+v": [
     {
       "type": 0,
-      "value": "Value should be greater than "
+      "value": "Значение должно быть больше "
     },
     {
       "type": 1,
@@ -2732,13 +2770,13 @@
   "Ccbm2Y": [
     {
       "type": 0,
-      "value": "Multi-select list of options"
+      "value": "Список вариантов с множественным выбором"
     }
   ],
   "CeF40t": [
     {
       "type": 0,
-      "value": "Authentication type"
+      "value": "Тип проверки подлинности"
     }
   ],
   "Ci41Od": [
@@ -2768,7 +2806,7 @@
   "ClowJ/": [
     {
       "type": 0,
-      "value": "Authentication type"
+      "value": "Тип проверки подлинности"
     }
   ],
   "CvoqQ6": [
@@ -2786,7 +2824,7 @@
   "Cy4+KL": [
     {
       "type": 0,
-      "value": "Redo"
+      "value": "Повторить"
     }
   ],
   "CyT8H7": [
@@ -2838,7 +2876,7 @@
   "D0D3Sf": [
     {
       "type": 0,
-      "value": "switch case"
+      "value": "метка case оператора switch"
     }
   ],
   "D1lgsT": [
@@ -2856,7 +2894,7 @@
   "D6KzoS": [
     {
       "type": 0,
-      "value": "Specify upload chunk size between "
+      "value": "Укажите размер блока отправки от "
     },
     {
       "type": 1,
@@ -2864,7 +2902,7 @@
     },
     {
       "type": 0,
-      "value": " and "
+      "value": " до "
     },
     {
       "type": 1,
@@ -2872,13 +2910,13 @@
     },
     {
       "type": 0,
-      "value": " Mb. Example: 10"
+      "value": " МБ. Пример: 10"
     }
   ],
   "D89UXR": [
     {
       "type": 0,
-      "value": "action"
+      "value": "действие"
     }
   ],
   "DDIIAQ": [
@@ -2914,7 +2952,7 @@
   "DNQtFr": [
     {
       "type": 0,
-      "value": "Name"
+      "value": "Имя"
     }
   ],
   "DQV7aK": [
@@ -2952,7 +2990,7 @@
   "DX9jWz": [
     {
       "type": 0,
-      "value": "Name"
+      "value": "Имя"
     }
   ],
   "DYXoEM": [
@@ -2970,13 +3008,13 @@
   "DbxZhS": [
     {
       "type": 0,
-      "value": "Remove list of options"
+      "value": "Удалить список параметров"
     }
   ],
   "DcJBUx": [
     {
       "type": 0,
-      "value": "Trigger type"
+      "value": "Тип триггера"
     }
   ],
   "DfXxoX": [
@@ -3050,7 +3088,7 @@
   "E70Rdt": [
     {
       "type": 0,
-      "value": "Internal errors"
+      "value": "Внутренние ошибки"
     }
   ],
   "E7NzDN": [
@@ -3074,13 +3112,13 @@
   "EFQ56R": [
     {
       "type": 0,
-      "value": "Source code"
+      "value": "Исходный код"
     }
   ],
   "EMbxLf": [
     {
       "type": 0,
-      "value": "Previous suggestion"
+      "value": "Предыдущее предложение"
     }
   ],
   "ERAWZA": [
@@ -3104,13 +3142,13 @@
   "EX0g1d": [
     {
       "type": 0,
-      "value": "Secure outputs"
+      "value": "Безопасные выходные данные"
     }
   ],
   "EXEL2j": [
     {
       "type": 0,
-      "value": "Destination"
+      "value": "Место назначения"
     }
   ],
   "EZz5q7": [
@@ -3154,7 +3192,7 @@
   "EeJitp": [
     {
       "type": 0,
-      "value": "Type"
+      "value": "Тип"
     }
   ],
   "EiRMD4": [
@@ -3186,7 +3224,7 @@
   "EoRB1V": [
     {
       "type": 0,
-      "value": "Details"
+      "value": "Сведения"
     }
   ],
   "EptZhD": [
@@ -3210,31 +3248,31 @@
   "Eyxa6q": [
     {
       "type": 0,
-      "value": "The number of workflow instances that can wait to run when your current workflow instance is already running the maximum concurrent instances."
+      "value": "Число экземпляров рабочих процессов, которые могут ожидать выполнения, когда текущий экземпляр рабочего процесса уже выполняет максимальное число одновременных экземпляров."
     }
   ],
   "F+cOLr": [
     {
       "type": 0,
-      "value": "Community Authored"
+      "value": "Создано сообществом"
     }
   ],
   "F/13eU": [
     {
       "type": 0,
-      "value": "Delete"
+      "value": "Удалить"
     }
   ],
   "F1AkvV": [
     {
       "type": 0,
-      "value": "Ideal for process business transitional data"
+      "value": "Идеально подходит для обработки временных данных для бизнеса"
     }
   ],
   "F2wR+r": [
     {
       "type": 0,
-      "value": "Insert expression"
+      "value": "Вставить выражение"
     }
   ],
   "F3IDl8": [
@@ -3258,7 +3296,7 @@
   "FEYdkx": [
     {
       "type": 0,
-      "value": "Maximum waiting runs"
+      "value": "Максимальное число ожидающих запусков"
     }
   ],
   "FIL1Nt": [
@@ -3291,6 +3329,20 @@
       "value": "Возвращает раздел строки, определяемый начальным и конечным индексом"
     }
   ],
+  "FPBmrA": [
+    {
+      "type": 0,
+      "value": "Source schema node not found for node key '"
+    },
+    {
+      "type": 1,
+      "value": "nodeKey"
+    },
+    {
+      "type": 0,
+      "value": "'"
+    }
+  ],
   "FT3jt6": [
     {
       "type": 0,
@@ -3300,7 +3352,7 @@
   "FTrMxN": [
     {
       "type": 0,
-      "value": "Close"
+      "value": "Закрыть"
     }
   ],
   "FUuFlC": [
@@ -3390,7 +3442,7 @@
   "Fx/6sv": [
     {
       "type": 0,
-      "value": "Go to operation"
+      "value": "Перейти к операции"
     }
   ],
   "FxQ2Ts": [
@@ -3402,7 +3454,7 @@
   "G+6Juu": [
     {
       "type": 0,
-      "value": "Click to expand"
+      "value": "Щелкните, чтобы развернуть"
     }
   ],
   "G+XvKn": [
@@ -3420,7 +3472,7 @@
   "G0gnge": [
     {
       "type": 0,
-      "value": "Copy entire action"
+      "value": "Копировать все действие"
     }
   ],
   "GAY7b8": [
@@ -3456,7 +3508,7 @@
   "GFnJQe": [
     {
       "type": 0,
-      "value": "Test map"
+      "value": "Карта тестирования"
     }
   ],
   "GIUSQs": [
@@ -3521,10 +3573,24 @@
       "value": "Элемент исходной схемы"
     }
   ],
+  "GiR7ll": [
+    {
+      "type": 0,
+      "value": "Function not found- '"
+    },
+    {
+      "type": 1,
+      "value": "nodeKey"
+    },
+    {
+      "type": 0,
+      "value": "'"
+    }
+  ],
   "Gk79Ma": [
     {
       "type": 0,
-      "value": "Status code"
+      "value": "Код состояния"
     }
   ],
   "Gl5khw": [
@@ -3636,13 +3702,13 @@
   "HQ/HhZ": [
     {
       "type": 0,
-      "value": "Error loading connections"
+      "value": "Ошибка при загрузке подключений"
     }
   ],
   "HQQtFz": [
     {
       "type": 0,
-      "value": "Make the field required"
+      "value": "Сделать поле обязательным"
     }
   ],
   "HSJLCu": [
@@ -3666,7 +3732,7 @@
   "He4Z+v": [
     {
       "type": 0,
-      "value": "Credential type"
+      "value": "Тип учетных данных"
     }
   ],
   "HfinO2": [
@@ -3754,13 +3820,13 @@
   "IBFBR2": [
     {
       "type": 0,
-      "value": "Remove loop"
+      "value": "Удалить цикл"
     }
   ],
   "IGpV1W": [
     {
       "type": 0,
-      "value": "Asynchronous response"
+      "value": "Асинхронный отклик"
     }
   ],
   "IHMd3X": [
@@ -3776,7 +3842,7 @@
   "IHzSSN": [
     {
       "type": 0,
-      "value": "Path parameters"
+      "value": "Параметры пути"
     }
   ],
   "IPwWgu": [
@@ -3806,7 +3872,7 @@
   "IUbVFR": [
     {
       "type": 0,
-      "value": "Search"
+      "value": "Поиск"
     }
   ],
   "IW2MjQ": [
@@ -3844,13 +3910,13 @@
     },
     {
       "type": 0,
-      "value": " more item"
+      "value": " элемент"
     }
   ],
   "IqNEui": [
     {
       "type": 0,
-      "value": "Specify download chunk size between "
+      "value": "Укажите размер загружаемого блока от "
     },
     {
       "type": 1,
@@ -3858,7 +3924,7 @@
     },
     {
       "type": 0,
-      "value": " and "
+      "value": " до "
     },
     {
       "type": 1,
@@ -3866,7 +3932,7 @@
     },
     {
       "type": 0,
-      "value": " Mb. Example: 10"
+      "value": " МБ. Пример: 10"
     }
   ],
   "IsVhkH": [
@@ -3932,7 +3998,7 @@
   "J7PN35": [
     {
       "type": 0,
-      "value": "Make group"
+      "value": "Создать группу"
     }
   ],
   "J9wWry": [
@@ -3984,13 +4050,13 @@
   "JKfEGS": [
     {
       "type": 0,
-      "value": "Create new"
+      "value": "Создать"
     }
   ],
   "JMwMaK": [
     {
       "type": 0,
-      "value": "AI-generated content may be incorrect"
+      "value": "Содержимое, созданное ИИ, может быть неправильным"
     }
   ],
   "JNQHws": [
@@ -4002,7 +4068,7 @@
   "JQBEOg": [
     {
       "type": 0,
-      "value": "Review + create"
+      "value": "Проверка и создание"
     }
   ],
   "JSfWJ0": [
@@ -4014,13 +4080,13 @@
   "JUZ7g5": [
     {
       "type": 0,
-      "value": "Run history"
+      "value": "Журнал выполнения"
     }
   ],
   "JVNRly": [
     {
       "type": 0,
-      "value": "Solution type"
+      "value": "Тип решения"
     }
   ],
   "JWl/LD": [
@@ -4062,7 +4128,7 @@
   "Jk2B0i": [
     {
       "type": 0,
-      "value": "Prerequisites"
+      "value": "Необходимые компоненты"
     }
   ],
   "JnlcZQ": [
@@ -4086,7 +4152,7 @@
   "JzvOUc": [
     {
       "type": 0,
-      "value": "The value must not be empty."
+      "value": "Значение не может быть пустым."
     }
   ],
   "K50znc": [
@@ -4104,7 +4170,7 @@
   "K9ORYo": [
     {
       "type": 0,
-      "value": "Schema ID"
+      "value": "Идентификатор схемы"
     }
   ],
   "KBaGkS": [
@@ -4116,7 +4182,7 @@
   "KO2eUv": [
     {
       "type": 0,
-      "value": "Connectors"
+      "value": "Соединители"
     }
   ],
   "KV4uky": [
@@ -4202,7 +4268,7 @@
   "Kb5u9F": [
     {
       "type": 0,
-      "value": "About tab"
+      "value": "Вкладка \"Сведения\""
     }
   ],
   "KlDW+5": [
@@ -4220,7 +4286,7 @@
   "KqJ14/": [
     {
       "type": 0,
-      "value": "Edit schema"
+      "value": "Изменить схему"
     }
   ],
   "KwGA+K": [
@@ -4274,7 +4340,7 @@
   "LPzAHC": [
     {
       "type": 0,
-      "value": "Loading files…"
+      "value": "Загрузка файлов..."
     }
   ],
   "LR/3Lr": [
@@ -4388,7 +4454,7 @@
   "M/m3nG": [
     {
       "type": 0,
-      "value": "Action timeout"
+      "value": "Время ожидания действия"
     }
   ],
   "M0bbZk": [
@@ -4412,7 +4478,7 @@
   "M6GI6z": [
     {
       "type": 0,
-      "value": "Custom tracking ID"
+      "value": "Настраиваемый идентификатор отслеживания"
     }
   ],
   "M6U2LE": [
@@ -4430,7 +4496,7 @@
   "MAX7xS": [
     {
       "type": 0,
-      "value": "Show more"
+      "value": "Показать больше"
     }
   ],
   "MCzWDc": [
@@ -4454,7 +4520,7 @@
   "MGq28G": [
     {
       "type": 0,
-      "value": "Trigger"
+      "value": "Триггер"
     }
   ],
   "MIX4f9": [
@@ -4502,13 +4568,13 @@
   "MVrv+N": [
     {
       "type": 0,
-      "value": "Enter a valid array."
+      "value": "Введите допустимый массив."
     }
   ],
   "MWG2k9": [
     {
       "type": 0,
-      "value": "Request history"
+      "value": "Журнал запросов"
     }
   ],
   "MYgKHu": [
@@ -4562,13 +4628,13 @@
   "MqZCAn": [
     {
       "type": 0,
-      "value": "Host"
+      "value": "Узел"
     }
   ],
   "MwMpAh": [
     {
       "type": 0,
-      "value": "Return to expression editor"
+      "value": "Вернуться в редактор выражений"
     }
   ],
   "N0pS6Y": [
@@ -4604,7 +4670,7 @@
   "N8LgJq": [
     {
       "type": 0,
-      "value": "Distinct tracking ID for each split-on instance"
+      "value": "Уникальный идентификатор отслеживания для каждого экземпляра split-on"
     }
   ],
   "NE54Uu": [
@@ -4634,7 +4700,7 @@
   "NHqCeQ": [
     {
       "type": 0,
-      "value": "Create connection"
+      "value": "Создание подключения"
     }
   ],
   "NMpFs6": [
@@ -4658,13 +4724,13 @@
   "NaW0ga": [
     {
       "type": 0,
-      "value": "This workflow supports the following states. The state determines how data is managed and retained during execution of workflows."
+      "value": "Этот рабочий процесс поддерживает следующие состояния. Состояние определяет способ управления и хранения данных во время выполнения рабочих процессов."
     }
   ],
   "Nbl3zN": [
     {
       "type": 0,
-      "value": "Enter a description of the output"
+      "value": "Введите описание выходных данных"
     }
   ],
   "Nh91qA": [
@@ -4682,7 +4748,7 @@
   "NkjtG/": [
     {
       "type": 0,
-      "value": "Dismiss"
+      "value": "Закрыть"
     }
   ],
   "NnrHK3": [
@@ -4706,13 +4772,13 @@
   "Nr8FbX": [
     {
       "type": 0,
-      "value": "Connections"
+      "value": "Подключения"
     }
   ],
   "NtoWaY": [
     {
       "type": 0,
-      "value": "Value should be less than "
+      "value": "Значение должно быть меньше "
     },
     {
       "type": 1,
@@ -4770,7 +4836,7 @@
   "O8Qy7k": [
     {
       "type": 0,
-      "value": "Close panel"
+      "value": "Закрыть панель"
     }
   ],
   "O9ZExg": [
@@ -4812,7 +4878,7 @@
   "OMuMCI": [
     {
       "type": 0,
-      "value": "Workflow properties"
+      "value": "Свойства рабочего процесса"
     }
   ],
   "OOUSLP": [
@@ -4914,7 +4980,7 @@
   "OkGMwC": [
     {
       "type": 0,
-      "value": "Monitoring tab"
+      "value": "Вкладка \"Мониторинг\""
     }
   ],
   "OnrO5/": [
@@ -5007,6 +5073,12 @@
       "value": "Свернуто"
     }
   ],
+  "PEJ+e4": [
+    {
+      "type": 0,
+      "value": "Error loading data map"
+    }
+  ],
   "PNk3n4": [
     {
       "type": 0,
@@ -5050,7 +5122,7 @@
   "PTBl5s": [
     {
       "type": 0,
-      "value": "Method"
+      "value": "Метод"
     }
   ],
   "PXa0D4": [
@@ -5092,7 +5164,7 @@
   "Pkxg6Q": [
     {
       "type": 0,
-      "value": "Describe the expression you want Copilot to create. You can reference data from other actions in the flow. For example, “Combine the first and last name of the person who went the email” or “Check the status of the current job.”"
+      "value": "Опишите выражение, которое вы хотите создать в Copilot. Вы можете ссылаться на данные из других действий в потоке. Например, \"Объединить имя и фамилию пользователя, отправившего письмо\" или \"Проверить состояние текущего задания\"."
     }
   ],
   "Pnt0Xj": [
@@ -5104,7 +5176,7 @@
   "PpupBE": [
     {
       "type": 0,
-      "value": "Add row"
+      "value": "Добавить строку"
     }
   ],
   "Pq+4a+": [
@@ -5128,7 +5200,7 @@
   "PuFTgH": [
     {
       "type": 0,
-      "value": "Retry history"
+      "value": "Журнал повторов"
     }
   ],
   "Pudllg": [
@@ -5152,7 +5224,7 @@
   "Px7S/2": [
     {
       "type": 0,
-      "value": "Close"
+      "value": "Закрыть"
     }
   ],
   "PytMJ0": [
@@ -5180,7 +5252,7 @@
   "Q/V4Uc": [
     {
       "type": 0,
-      "value": "Add connection"
+      "value": "Добавить подключение"
     }
   ],
   "Q0xpPQ": [
@@ -5226,7 +5298,7 @@
   "QBK72a": [
     {
       "type": 0,
-      "value": "Add custom modules, uncover new scenarios, and find troubleshooting tips"
+      "value": "Добавление пользовательских модулей, обнаружение новых сценариев и поиск советов по устранению неполадок"
     }
   ],
   "QGbUXX": [
@@ -5238,13 +5310,13 @@
   "QNfUf/": [
     {
       "type": 0,
-      "value": "Full screen"
+      "value": "Во весь экран"
     }
   ],
   "QVtqAn": [
     {
       "type": 0,
-      "value": "Description"
+      "value": "Описание"
     }
   ],
   "QZBPUx": [
@@ -5268,7 +5340,7 @@
   "QbVD0F": [
     {
       "type": 0,
-      "value": "This expression has a problem. You can fix it manually or with Copilot."
+      "value": "В этом выражении возникла проблема. Вы можете исправить это вручную или с помощью Copilot."
     }
   ],
   "QdJUaS": [
@@ -5314,7 +5386,7 @@
   "Qqmb+W": [
     {
       "type": 0,
-      "value": "Stateful"
+      "value": "С отслеживанием состояния"
     }
   ],
   "QrQDdp": [
@@ -5360,13 +5432,13 @@
   "RLoDgQ": [
     {
       "type": 0,
-      "value": "Optimized for high reliability"
+      "value": "Оптимизировано для высокой надежности"
     }
   ],
   "ROC+1+": [
     {
       "type": 0,
-      "value": "Line position"
+      "value": "Позиция в строке"
     }
   ],
   "RX2Shm": [
@@ -5378,13 +5450,13 @@
   "RZNabt": [
     {
       "type": 0,
-      "value": "Create a new workflow from template"
+      "value": "Создание нового рабочего процесса из шаблона"
     }
   ],
   "RatwOB": [
     {
       "type": 0,
-      "value": "In-app"
+      "value": "В приложении"
     }
   ],
   "RbJNVk": [
@@ -5454,7 +5526,7 @@
     },
     {
       "type": 0,
-      "value": " (content)"
+      "value": " (содержимое)"
     }
   ],
   "RjvpD+": [
@@ -5520,7 +5592,7 @@
   "RxbkcI": [
     {
       "type": 0,
-      "value": "Unsupported token type: "
+      "value": "Тип маркера не поддерживается: "
     },
     {
       "type": 1,
@@ -5530,7 +5602,7 @@
   "S0N/tx": [
     {
       "type": 0,
-      "value": "Resubmit a workflow run from this action"
+      "value": "Повторно отправить выполнение рабочего процесса из этого действия"
     }
   ],
   "S138/4": [
@@ -5542,7 +5614,7 @@
   "S5kFNK": [
     {
       "type": 0,
-      "value": "Paste your sample data to test the mapping"
+      "value": "Вставьте пример данных для проверки сопоставления"
     }
   ],
   "SCCE6s": [
@@ -5590,7 +5662,7 @@
   "STWbak": [
     {
       "type": 0,
-      "value": "Chunk size"
+      "value": "Размер блока"
     }
   ],
   "SToblZ": [
@@ -5618,13 +5690,13 @@
   "SZ78Xp": [
     {
       "type": 0,
-      "value": "Features"
+      "value": "Функции"
     }
   ],
   "SbCUKw": [
     {
       "type": 0,
-      "value": "Outputs should not be provided when status is \"Failed\""
+      "value": "При состоянии \"Сбой\" не должны выводиться выходные данные"
     }
   ],
   "SgiTAh": [
@@ -5660,7 +5732,7 @@
   "Sy4cFC": [
     {
       "type": 0,
-      "value": "Concurrency control"
+      "value": "Управление параллелизмом"
     }
   ],
   "SyFXM3": [
@@ -5678,7 +5750,7 @@
   "TDfQzn": [
     {
       "type": 0,
-      "value": "More…"
+      "value": "Еще…"
     }
   ],
   "TEN+cR": [
@@ -5732,7 +5804,7 @@
   "TZpm7X": [
     {
       "type": 0,
-      "value": "Button to add dynamic content if token picker is shown"
+      "value": "Кнопка добавления динамического содержимого, если отображается средство выбора маркеров"
     }
   ],
   "Tayrub": [
@@ -5750,7 +5822,7 @@
   "TcU2Gf": [
     {
       "type": 0,
-      "value": "Add case"
+      "value": "Добавить обращение"
     }
   ],
   "TgcgXE": [
@@ -5798,7 +5870,7 @@
   "TnwRGo": [
     {
       "type": 0,
-      "value": "Connections included in this template"
+      "value": "Connections в этот шаблон"
     }
   ],
   "To3RNy": [
@@ -5852,7 +5924,7 @@
   "U2juKb": [
     {
       "type": 0,
-      "value": "Filter actions"
+      "value": "Фильтр действий"
     }
   ],
   "U3guPp": [
@@ -5888,7 +5960,7 @@
   "U9SHxw": [
     {
       "type": 0,
-      "value": "Code"
+      "value": "Код"
     }
   ],
   "UCNM4L": [
@@ -5900,7 +5972,7 @@
   "UD330h": [
     {
       "type": 0,
-      "value": "Copy action"
+      "value": "Копировать действие"
     }
   ],
   "UHCVNK": [
@@ -5912,7 +5984,7 @@
   "UJho0j": [
     {
       "type": 0,
-      "value": "(Optional) Password for PFX file"
+      "value": "(Необязательно) Пароль для PFX-файла"
     }
   ],
   "UMPuUJ": [
@@ -5928,13 +6000,13 @@
   "UNXQDI": [
     {
       "type": 0,
-      "value": "Loading API Management service instances..."
+      "value": "Загрузка Управление API службы..."
     }
   ],
   "UPsZSw": [
     {
       "type": 0,
-      "value": "The entered identity is not associated with this logic app."
+      "value": "Введенное удостоверение не связано с этим приложением логики."
     }
   ],
   "UR1CS5": [
@@ -5958,7 +6030,7 @@
   "UTkcyf": [
     {
       "type": 0,
-      "value": "Source code"
+      "value": "Исходный код"
     }
   ],
   "UVAfYj": [
@@ -5970,19 +6042,19 @@
   "UVr0mL": [
     {
       "type": 0,
-      "value": "Test your map to see a result"
+      "value": "Протестируйте карту, чтобы увидеть результат"
     }
   ],
   "UWF/WI": [
     {
       "type": 0,
-      "value": "View documentation"
+      "value": "Просмотреть документацию"
     }
   ],
   "UXDOiw": [
     {
       "type": 0,
-      "value": "Description"
+      "value": "Описание"
     }
   ],
   "UYRIS/": [
@@ -6084,7 +6156,7 @@
   "UsEvG2": [
     {
       "type": 0,
-      "value": "Tenant ID"
+      "value": "Идентификатор клиента"
     }
   ],
   "UtyRCH": [
@@ -6154,7 +6226,7 @@
   "VFnuA2": [
     {
       "type": 0,
-      "value": "Add a drop-down list of options"
+      "value": "Добавить раскрывающийся список вариантов"
     }
   ],
   "VHm1Sr": [
@@ -6226,13 +6298,13 @@
   "VZh+w2": [
     {
       "type": 0,
-      "value": "Body"
+      "value": "Текст"
     }
   ],
   "Valy81": [
     {
       "type": 0,
-      "value": "Schema validation"
+      "value": "Проверка схемы"
     }
   ],
   "VbMYd8": [
@@ -6244,7 +6316,7 @@
   "VchR9d": [
     {
       "type": 0,
-      "value": "Headers"
+      "value": "Заголовки"
     }
   ],
   "Vi5TIV": [
@@ -6288,7 +6360,7 @@
   "VysSj3": [
     {
       "type": 0,
-      "value": "View code"
+      "value": "Просмотреть код"
     }
   ],
   "W+mUyI": [
@@ -6310,13 +6382,13 @@
   "W1rlxU": [
     {
       "type": 0,
-      "value": "State type"
+      "value": "Тип состояния"
     }
   ],
   "W2fZ0v": [
     {
       "type": 0,
-      "value": "Preview"
+      "value": "Предварительный просмотр"
     }
   ],
   "W6FdMh": [
@@ -6334,7 +6406,7 @@
   "WGq3Fo": [
     {
       "type": 0,
-      "value": "See less"
+      "value": "Показать меньше"
     }
   ],
   "WGwH45": [
@@ -6392,7 +6464,7 @@
   "Wc77aJ": [
     {
       "type": 0,
-      "value": "In-app"
+      "value": "В приложении"
     }
   ],
   "WcnIF8": [
@@ -6404,7 +6476,7 @@
   "WdO1cs": [
     {
       "type": 0,
-      "value": "Template details"
+      "value": "Сведения о шаблоне"
     }
   ],
   "WgChTm": [
@@ -6428,13 +6500,13 @@
   "Wt1TZJ": [
     {
       "type": 0,
-      "value": "Connections"
+      "value": "Подключения"
     }
   ],
   "Wvnl/V": [
     {
       "type": 0,
-      "value": "Delete the static result configuration"
+      "value": "Удалить конфигурацию статических результатов"
     }
   ],
   "WvvJYw": [
@@ -6446,13 +6518,13 @@
   "WxJJcQ": [
     {
       "type": 0,
-      "value": "Not connected"
+      "value": "Не подключено"
     }
   ],
   "WxcmZr": [
     {
       "type": 0,
-      "value": "This action has testing configured."
+      "value": "Для этого действия настроено тестирование."
     }
   ],
   "X/7je+": [
@@ -6464,7 +6536,7 @@
   "X02GGK": [
     {
       "type": 0,
-      "value": "Tags"
+      "value": "Теги"
     }
   ],
   "X2idLs": [
@@ -6536,7 +6608,7 @@
   "XHQwyJ": [
     {
       "type": 0,
-      "value": "Error executing the API - "
+      "value": "Ошибка при выполнении API — "
     },
     {
       "type": 1,
@@ -6552,7 +6624,7 @@
   "XL5UbT": [
     {
       "type": 0,
-      "value": "Click for more information on static result"
+      "value": "Щелкните, чтобы получить дополнительные сведения о статическом результате"
     }
   ],
   "XOAcjQ": [
@@ -6582,7 +6654,7 @@
   "XR5izH": [
     {
       "type": 0,
-      "value": "Connected"
+      "value": "Подключено"
     }
   ],
   "XRK+gt": [
@@ -6632,7 +6704,7 @@
   "XZrMGZ": [
     {
       "type": 0,
-      "value": "Content transfer"
+      "value": "Передача содержимого"
     }
   ],
   "XbtEq9": [
@@ -6658,7 +6730,7 @@
   "Xg1UDw": [
     {
       "type": 0,
-      "value": "Learn more"
+      "value": "Подробнее"
     }
   ],
   "Xj0Gr/": [
@@ -6724,7 +6796,7 @@
   "Xz88HV": [
     {
       "type": 0,
-      "value": "Associated workflows"
+      "value": "Связанные рабочие процессы"
     }
   ],
   "Y/bcmG": [
@@ -6742,7 +6814,7 @@
   "Y9VFj8": [
     {
       "type": 0,
-      "value": "Secure inputs"
+      "value": "Безопасные входные данные"
     }
   ],
   "Y9kBz5": [
@@ -6754,7 +6826,7 @@
   "YC56Tr": [
     {
       "type": 0,
-      "value": "Automatic decompression"
+      "value": "Автоматическая распаковка"
     }
   ],
   "YCDF7A": [
@@ -6818,13 +6890,13 @@
   "YM0e3C": [
     {
       "type": 0,
-      "value": "Asynchronous pattern"
+      "value": "Асинхронный шаблон"
     }
   ],
   "YOOBDW": [
     {
       "type": 0,
-      "value": "Avoid spaces and the following symbols in your workflow name: \\ / : * ? \" < > | @, #, $, %, &"
+      "value": "Избегайте пробелов и следующих символов в имени рабочего процесса: \\ / : * ? \" < > | @, #, $, %, &"
     }
   ],
   "YOUfNf": [
@@ -6854,7 +6926,7 @@
   "YWD/RY": [
     {
       "type": 0,
-      "value": "condition, collapse"
+      "value": "условие, свернуть"
     }
   ],
   "YWws/r": [
@@ -6866,7 +6938,7 @@
   "YX0jQs": [
     {
       "type": 0,
-      "value": "All"
+      "value": "Все"
     }
   ],
   "YZ5Kwe": [
@@ -6878,7 +6950,7 @@
   "YZl7FU": [
     {
       "type": 0,
-      "value": "Loading function apps..."
+      "value": "Загрузка приложений-функций..."
     }
   ],
   "YaFjJQ": [
@@ -6920,7 +6992,7 @@
   "YnSO/8": [
     {
       "type": 0,
-      "value": "Not connected"
+      "value": "Не подключено"
     }
   ],
   "YoQara": [
@@ -6938,7 +7010,7 @@
   "Yua/4o": [
     {
       "type": 0,
-      "value": "Previous"
+      "value": "Назад"
     }
   ],
   "Yuu5CD": [
@@ -6962,7 +7034,7 @@
   "Z8BOCl": [
     {
       "type": 0,
-      "value": "No identities available"
+      "value": "Нет доступных удостоверений"
     }
   ],
   "Z8tBFS": [
@@ -6992,7 +7064,7 @@
   "ZFNlSA": [
     {
       "type": 0,
-      "value": "Authentication"
+      "value": "Проверка подлинности"
     }
   ],
   "ZME5hh": [
@@ -7004,7 +7076,7 @@
   "ZN050N": [
     {
       "type": 0,
-      "value": "Select all text in '"
+      "value": "Выделить весь текст в '"
     },
     {
       "type": 1,
@@ -7018,7 +7090,7 @@
   "ZOIvqN": [
     {
       "type": 0,
-      "value": "Sort By"
+      "value": "Сортировать по"
     }
   ],
   "ZUCTVP": [
@@ -7036,13 +7108,13 @@
   "ZXc10N": [
     {
       "type": 0,
-      "value": "Add group"
+      "value": "Добавить группу"
     }
   ],
   "ZXha+w": [
     {
       "type": 0,
-      "value": "Error message"
+      "value": "Сообщение об ошибке"
     }
   ],
   "ZaIeDG": [
@@ -7060,7 +7132,7 @@
   "ZbeL1D": [
     {
       "type": 0,
-      "value": "Avoid spaces and the following symbols in your workflow name: \\ / : * ? \" < > | @, #, $, %, &"
+      "value": "Избегайте пробелов и следующих символов в имени рабочего процесса: \\ / : * ? \" < > | @, #, $, %, &"
     }
   ],
   "Zg3IjD": [
@@ -7072,7 +7144,7 @@
   "ZgyD93": [
     {
       "type": 0,
-      "value": "Accepted types:"
+      "value": "Принятые типы:"
     }
   ],
   "Zi9gQK": [
@@ -7120,7 +7192,7 @@
   "aGxYMY": [
     {
       "type": 0,
-      "value": "Clear editor"
+      "value": "Очистить редактор"
     }
   ],
   "aGyVJT": [
@@ -7132,13 +7204,13 @@
   "aI9W5L": [
     {
       "type": 0,
-      "value": "This template does not have connectors"
+      "value": "У этого шаблона нет соединителей"
     }
   ],
   "aJg1gl": [
     {
       "type": 0,
-      "value": "Retry policy maximum interval is invalid, must match ISO 8601 duration format"
+      "value": "Недопустимый максимальный интервал политики повтора. Необходимо указать длительность в формате ISO 8601."
     }
   ],
   "aP1wk9": [
@@ -7162,7 +7234,7 @@
   "aWdfiw": [
     {
       "type": 0,
-      "value": "Next suggestion"
+      "value": "Следующее предложение"
     }
   ],
   "aYTy7X": [
@@ -7180,7 +7252,7 @@
   "ao6BlS": [
     {
       "type": 0,
-      "value": "Resource group"
+      "value": "Группа ресурсов"
     }
   ],
   "aoUT/3": [
@@ -7192,7 +7264,7 @@
   "apZgmJ": [
     {
       "type": 0,
-      "value": "Invalid operation path input value. Path value - "
+      "value": "Введено недопустимое значение пути операции. Значение пути — "
     },
     {
       "type": 1,
@@ -7200,7 +7272,7 @@
     },
     {
       "type": 0,
-      "value": ", Path template - "
+      "value": ", шаблон пути — "
     },
     {
       "type": 1,
@@ -7213,22 +7285,28 @@
       "value": "Добавьте или выберите исходную схему, которая будет применяться для вашей карты."
     }
   ],
+  "auci7r": [
+    {
+      "type": 0,
+      "value": "Enter a valid comma-separated string."
+    }
+  ],
   "aurgrg": [
     {
       "type": 0,
-      "value": "Managed identity"
+      "value": "Управляемое удостоверение"
     }
   ],
   "b2aL+f": [
     {
       "type": 0,
-      "value": "Pin action"
+      "value": "Закрепить действие"
     }
   ],
   "b6G9bq": [
     {
       "type": 0,
-      "value": "URL encodes the input string"
+      "value": "Кодирует входную строку в виде URL-адреса"
     }
   ],
   "b7BQdu": [
@@ -7296,13 +7374,13 @@
   "bJMlgW": [
     {
       "type": 0,
-      "value": "Connections"
+      "value": "Подключения"
     }
   ],
   "bMUkSN": [
     {
       "type": 0,
-      "value": "This operation contains a token that does not exist in the current workflow."
+      "value": "Эта операция содержит токен, который не существует в текущем рабочем процессе."
     }
   ],
   "bTrk+S": [
@@ -7344,7 +7422,7 @@
   "bg00eY": [
     {
       "type": 0,
-      "value": "Numbered list"
+      "value": "Нумерованный список"
     }
   ],
   "blRFVt": [
@@ -7392,7 +7470,7 @@
   "c2ZT7p": [
     {
       "type": 0,
-      "value": "Details"
+      "value": "Сведения"
     }
   ],
   "c3FLox": [
@@ -7428,7 +7506,7 @@
   "cBw7SC": [
     {
       "type": 0,
-      "value": "Created"
+      "value": "Создано"
     }
   ],
   "cHiBAn": [
@@ -7450,13 +7528,13 @@
     },
     {
       "type": 0,
-      "value": " value item"
+      "value": " элемент значения"
     }
   ],
   "cNXS5n": [
     {
       "type": 0,
-      "value": "Stateless"
+      "value": "Без учета состояния"
     }
   ],
   "cR9RtV": [
@@ -7468,7 +7546,7 @@
   "cZ60Tk": [
     {
       "type": 0,
-      "value": "Loading...."
+      "value": "Загрузка..."
     }
   ],
   "cZv9J0": [
@@ -7498,7 +7576,7 @@
   "chEskq": [
     {
       "type": 0,
-      "value": "Enable static result"
+      "value": "Включить статический результат"
     }
   ],
   "ciLkfU": [
@@ -7534,7 +7612,7 @@
   "cuKbLw": [
     {
       "type": 0,
-      "value": "Premium"
+      "value": "Премиум"
     }
   ],
   "cvp9VP": [
@@ -7546,13 +7624,13 @@
   "cw9FiJ": [
     {
       "type": 0,
-      "value": "Schema URI"
+      "value": "URI схемы"
     }
   ],
   "cwHxwb": [
     {
       "type": 0,
-      "value": "Add connection"
+      "value": "Добавить подключение"
     }
   ],
   "cyEBus": [
@@ -7636,7 +7714,7 @@
   "dU0RgS": [
     {
       "type": 0,
-      "value": "Add a multi-select list of options"
+      "value": "Добавить список вариантов с множественным выбором"
     }
   ],
   "dUbKuK": [
@@ -7648,7 +7726,7 @@
   "dVFyPb": [
     {
       "type": 0,
-      "value": "Default value"
+      "value": "Значение по умолчанию"
     }
   ],
   "daoo3l": [
@@ -7740,7 +7818,7 @@
   "eDHwU7": [
     {
       "type": 0,
-      "value": "🖊️ Working on it..."
+      "value": "🖊️ Мы работаем над этим..."
     }
   ],
   "eESljX": [
@@ -7782,13 +7860,13 @@
   "eLthgv": [
     {
       "type": 0,
-      "value": "Client certificate"
+      "value": "Сертификат клиента"
     }
   ],
   "eNp9V6": [
     {
       "type": 0,
-      "value": "Upload PFX File"
+      "value": "Отправить файл PFX"
     }
   ],
   "eO1h/h": [
@@ -7800,7 +7878,7 @@
   "eOAJQk": [
     {
       "type": 0,
-      "value": "Degree of parallelism"
+      "value": "Степень параллелизма"
     }
   ],
   "eRvRWs": [
@@ -7818,25 +7896,25 @@
   "eTW4SD": [
     {
       "type": 0,
-      "value": "Description"
+      "value": "Описание"
     }
   ],
   "eUxnDx": [
     {
       "type": 0,
-      "value": "Status code"
+      "value": "Код состояния"
     }
   ],
   "eaEXYa": [
     {
       "type": 0,
-      "value": "All"
+      "value": "Все"
     }
   ],
   "eb91v1": [
     {
       "type": 0,
-      "value": "Change connection"
+      "value": "Изменить подключение"
     }
   ],
   "egLI8P": [
@@ -7854,7 +7932,7 @@
   "ekM77J": [
     {
       "type": 0,
-      "value": "Workflow name"
+      "value": "Имя рабочего процесса"
     }
   ],
   "elD6+N": [
@@ -7866,7 +7944,7 @@
   "elWEjT": [
     {
       "type": 0,
-      "value": "Click to collapse"
+      "value": "Щелкните, чтобы свернуть"
     }
   ],
   "en/5A3": [
@@ -7887,10 +7965,16 @@
       "value": "Общий доступ"
     }
   ],
+  "epi+zR": [
+    {
+      "type": 0,
+      "value": "Close map checker"
+    }
+  ],
   "er6O+w": [
     {
       "type": 0,
-      "value": "Name"
+      "value": "Имя"
     }
   ],
   "evyGYj": [
@@ -7902,13 +7986,13 @@
   "ewGciu": [
     {
       "type": 0,
-      "value": "Authentication"
+      "value": "Проверка подлинности"
     }
   ],
   "eyuBr7": [
     {
       "type": 0,
-      "value": "Please submit a different query than the previously submitted query. Previously submitted query: "
+      "value": "Отправьте запрос, отличный от ранее отправленного. Ранее отправленный запрос: "
     },
     {
       "type": 1,
@@ -7936,7 +8020,7 @@
   "f7cxXb": [
     {
       "type": 0,
-      "value": "Split on"
+      "value": "Разделение"
     }
   ],
   "f81ClO": [
@@ -7948,7 +8032,7 @@
   "fAB0Ww": [
     {
       "type": 0,
-      "value": "Output"
+      "value": "Выходные данные"
     }
   ],
   "fBQBw/": [
@@ -7964,7 +8048,7 @@
     },
     {
       "type": 0,
-      "value": " Item"
+      "value": " элемент"
     }
   ],
   "fElufw": [
@@ -7982,19 +8066,19 @@
   "fNE/hg": [
     {
       "type": 0,
-      "value": "Button to add dynamic content if token picker is hidden"
+      "value": "Кнопка добавления динамического содержимого, если средство выбора маркеров скрыто"
     }
   ],
   "fNlJSh": [
     {
       "type": 0,
-      "value": "All connections must be connected for workflow creation"
+      "value": "Все подключения должны быть подключены для создания рабочего процесса"
     }
   ],
   "fSMyDJ": [
     {
       "type": 0,
-      "value": "Request options - Timeout"
+      "value": "Параметры запроса — время ожидания истекло"
     }
   ],
   "fVG5aD": [
@@ -8042,7 +8126,7 @@
   "fxue5l": [
     {
       "type": 0,
-      "value": "Workflows"
+      "value": "Рабочие процессы"
     }
   ],
   "g076bL": [
@@ -8144,7 +8228,7 @@
   "gS4Teq": [
     {
       "type": 0,
-      "value": "Array Item"
+      "value": "Элемент массива"
     }
   ],
   "gWyYg0": [
@@ -8166,7 +8250,7 @@
     },
     {
       "type": 0,
-      "value": " more items"
+      "value": " другие элементы"
     }
   ],
   "gc6v4X": [
@@ -8242,7 +8326,7 @@
     },
     {
       "type": 0,
-      "value": " Install gateway"
+      "value": " Установить шлюз"
     }
   ],
   "h1lQDa": [
@@ -8266,13 +8350,13 @@
   "hCrg+6": [
     {
       "type": 0,
-      "value": "Actions must have one or more run after configurations"
+      "value": "У каждого действия должна быть одна или несколько конфигураций последующего выполнения"
     }
   ],
   "hHDJhD": [
     {
       "type": 0,
-      "value": "File content"
+      "value": "Содержимое файла"
     }
   ],
   "hLOIwp": [
@@ -8290,7 +8374,7 @@
   "hMpLz3": [
     {
       "type": 0,
-      "value": "Callback URL"
+      "value": "URL-адрес обратного вызова"
     }
   ],
   "hN7iBP": [
@@ -8368,7 +8452,7 @@
   "haeWoU": [
     {
       "type": 0,
-      "value": "Failed to evaluate outputs because splitOn "
+      "value": "Не удалось вычислить выходные данные, так как "
     },
     {
       "type": 1,
@@ -8376,7 +8460,7 @@
     },
     {
       "type": 0,
-      "value": " cannot be evaluated. As a result, this operation's outputs might not be correctly visible in subsequent actions"
+      "value": " параметр splitOn не может быть вычислен. В результате выходные данные этой операции могут неправильно отображаться в последующих действиях"
     }
   ],
   "hbOvB4": [
@@ -8394,13 +8478,13 @@
   "hlrKDC": [
     {
       "type": 0,
-      "value": "Connection"
+      "value": "Подключение"
     }
   ],
   "ho2D6F": [
     {
       "type": 0,
-      "value": "Close panel"
+      "value": "Закрыть панель"
     }
   ],
   "hq1mk6": [
@@ -8448,7 +8532,7 @@
   "hz9HJ2": [
     {
       "type": 0,
-      "value": "Insert dynamic content"
+      "value": "Вставить динамическое содержимое"
     }
   ],
   "hza/cT": [
@@ -8460,7 +8544,7 @@
   "i/R+Q7": [
     {
       "type": 0,
-      "value": "Local time"
+      "value": "Местное время"
     }
   ],
   "i/SguY": [
@@ -8514,7 +8598,7 @@
   "iBArTB": [
     {
       "type": 0,
-      "value": "collapse functions drawer"
+      "value": "свернуть панель функций"
     }
   ],
   "iCSHJG": [
@@ -8526,7 +8610,7 @@
   "iCni1C": [
     {
       "type": 0,
-      "value": "Can't find any search results"
+      "value": "Не найдены результаты поиска"
     }
   ],
   "iE2+sy": [
@@ -8588,7 +8672,7 @@
   "iTz1lp": [
     {
       "type": 0,
-      "value": "Unpin action"
+      "value": "Открепить действие"
     }
   ],
   "iU1OJh": [
@@ -8642,13 +8726,13 @@
   "im0GMa": [
     {
       "type": 0,
-      "value": "Show less"
+      "value": "Показать меньше"
     }
   ],
   "ioUq6Q": [
     {
       "type": 0,
-      "value": "Password"
+      "value": "Пароль"
     }
   ],
   "iq+tiv": [
@@ -8670,7 +8754,7 @@
   "ir+plQ": [
     {
       "type": 0,
-      "value": "Operation details error"
+      "value": "Ошибка сведений об операции"
     }
   ],
   "iy8rNf": [
@@ -8682,13 +8766,13 @@
   "j2v8BE": [
     {
       "type": 0,
-      "value": "No connections are needed in this template"
+      "value": "В этом шаблоне нет необходимых подключений"
     }
   ],
   "j4OKkU": [
     {
       "type": 0,
-      "value": "Text color"
+      "value": "Цвет текста"
     }
   ],
   "j5z8Vd": [
@@ -8826,13 +8910,13 @@
   "jvVVTG": [
     {
       "type": 0,
-      "value": "Action type"
+      "value": "Тип действия"
     }
   ],
   "k/X2ml": [
     {
       "type": 0,
-      "value": "Type"
+      "value": "Тип"
     }
   ],
   "k/oqFL": [
@@ -8862,7 +8946,7 @@
   "kBTFhL": [
     {
       "type": 0,
-      "value": "Fix my expression: "
+      "value": "Исправить мое выражение: "
     },
     {
       "type": 1,
@@ -8932,7 +9016,7 @@
   "kU4VfD": [
     {
       "type": 0,
-      "value": "Stateful"
+      "value": "С отслеживанием состояния"
     }
   ],
   "kVwJXt": [
@@ -8957,6 +9041,20 @@
     {
       "type": 0,
       "value": "Элементы и сопоставления, не связанные с целевым элементом, удаляются."
+    }
+  ],
+  "kfmLTY": [
+    {
+      "type": 0,
+      "value": "Function '"
+    },
+    {
+      "type": 1,
+      "value": "functionName"
+    },
+    {
+      "type": 0,
+      "value": "' is missing required inputs"
     }
   ],
   "klY9UN": [
@@ -9040,7 +9138,7 @@
   "kvUaFw": [
     {
       "type": 0,
-      "value": "More info"
+      "value": "Дополнительные сведения"
     }
   ],
   "l/3yJr": [
@@ -9082,13 +9180,13 @@
   "l8lP1X": [
     {
       "type": 0,
-      "value": "The error and its code are required when status is \"Failed\""
+      "value": "При состоянии \"Сбой\" требуется ошибка и ее код"
     }
   ],
   "l9+EbH": [
     {
       "type": 0,
-      "value": "Description"
+      "value": "Описание"
     }
   ],
   "lA/sHA": [
@@ -9114,13 +9212,13 @@
   "lFWXhc": [
     {
       "type": 0,
-      "value": "Workflow"
+      "value": "Рабочий процесс"
     }
   ],
   "lK+Vzo": [
     {
       "type": 0,
-      "value": "Secure string"
+      "value": "Безопасная строка"
     }
   ],
   "lM9qrG": [
@@ -9150,7 +9248,7 @@
   "lSUNx5": [
     {
       "type": 0,
-      "value": "Action tracking ID"
+      "value": "Идентификатор отслеживания действия"
     }
   ],
   "lX30/R": [
@@ -9162,7 +9260,7 @@
   "lbq5E1": [
     {
       "type": 0,
-      "value": "Large messages may be split up into smaller requests to the connector to allow large message upload. More details can be found at http://aka.ms/logicapps-chunk#upload-content-in-chunks"
+      "value": "Для отправки больших сообщений через соединитель их можно разделить на несколько мелких запросов. Дополнительные сведения см. по адресу http://aka.ms/logicapps-chunk#upload-content-in-chunks"
     }
   ],
   "lckgnb": [
@@ -9174,7 +9272,7 @@
   "ldn/IC": [
     {
       "type": 0,
-      "value": "Test"
+      "value": "Тест"
     }
   ],
   "lexzgJ": [
@@ -9212,7 +9310,7 @@
   "lk/Qic": [
     {
       "type": 0,
-      "value": "connector"
+      "value": "соединитель"
     }
   ],
   "lkgjxD": [
@@ -9224,13 +9322,13 @@
   "lkmLHk": [
     {
       "type": 0,
-      "value": "Use Schema Editor"
+      "value": "Использовать Редактор"
     }
   ],
   "lqF8H5": [
     {
       "type": 0,
-      "value": "Collapse static result"
+      "value": "Свернуть статический результат"
     }
   ],
   "lsH37F": [
@@ -9260,13 +9358,13 @@
   "m4qt/b": [
     {
       "type": 0,
-      "value": "ACL creation failed for connection. Deleting the connection."
+      "value": "Не удалось создать список управления доступом для подключения. Удаление подключения."
     }
   ],
   "m5InJc": [
     {
       "type": 0,
-      "value": "Status Code"
+      "value": "Код состояния"
     }
   ],
   "m7Y6Qf": [
@@ -9278,7 +9376,7 @@
   "m8MjHH": [
     {
       "type": 0,
-      "value": "Enter a value"
+      "value": "Введите значение"
     }
   ],
   "m8Q61y": [
@@ -9346,7 +9444,7 @@
   "mQJXU4": [
     {
       "type": 0,
-      "value": "Run after"
+      "value": "Запустить после"
     }
   ],
   "mUURJW": [
@@ -9376,7 +9474,7 @@
   "mb1XDD": [
     {
       "type": 0,
-      "value": "Actual value"
+      "value": "Действительное значение"
     }
   ],
   "mca3Ml": [
@@ -9400,7 +9498,7 @@
   "mgD2ZT": [
     {
       "type": 0,
-      "value": "Summary"
+      "value": "Сводка"
     }
   ],
   "mjS/k1": [
@@ -9446,7 +9544,7 @@
   "mxSILx": [
     {
       "type": 0,
-      "value": "Queries"
+      "value": "Запросы"
     }
   ],
   "n+F7e2": [
@@ -9458,7 +9556,7 @@
   "n+sJ5W": [
     {
       "type": 0,
-      "value": "Published by"
+      "value": "Издатель"
     }
   ],
   "n20T2h": [
@@ -9512,7 +9610,7 @@
   "nN1ezT": [
     {
       "type": 0,
-      "value": "Start with a blank workflow to build your integration process from scratch."
+      "value": "Начните с пустого рабочего процесса, чтобы создать процесс интеграции с нуля."
     }
   ],
   "nNWAAh": [
@@ -9524,7 +9622,7 @@
   "nODesn": [
     {
       "type": 0,
-      "value": "Source"
+      "value": "Источник"
     }
   ],
   "nOWGAV": [
@@ -9548,7 +9646,7 @@
   "nRjpgk": [
     {
       "type": 0,
-      "value": "Sample data"
+      "value": "Образец данных"
     }
   ],
   "nRpM02": [
@@ -9578,7 +9676,7 @@
   "nV2Spt": [
     {
       "type": 0,
-      "value": "Operation details panel"
+      "value": "Панель сведений об операции"
     }
   ],
   "nVDG00": [
@@ -9620,7 +9718,7 @@
   "nhEgHb": [
     {
       "type": 0,
-      "value": "By"
+      "value": "Автор"
     }
   ],
   "njGstq": [
@@ -9644,7 +9742,7 @@
   "no+blV": [
     {
       "type": 0,
-      "value": "Cancel"
+      "value": "Отмена"
     }
   ],
   "no/SMg": [
@@ -9656,13 +9754,13 @@
   "nr6bPd": [
     {
       "type": 0,
-      "value": "Open Test panel"
+      "value": "Открыть панель тестирования"
     }
   ],
   "nuNBYE": [
     {
       "type": 0,
-      "value": "Path"
+      "value": "Путь"
     }
   ],
   "nwLd4b": [
@@ -9730,7 +9828,7 @@
   "o6x5J4": [
     {
       "type": 0,
-      "value": "Create expression"
+      "value": "Создать выражение"
     }
   ],
   "o7bd1o": [
@@ -9766,13 +9864,13 @@
   "oOGTSo": [
     {
       "type": 0,
-      "value": "Connected"
+      "value": "Подключено"
     }
   ],
   "oPKLDZ": [
     {
       "type": 0,
-      "value": "Delete switch case"
+      "value": "Удалить метку case оператора switch"
     }
   ],
   "oQjIWf": [
@@ -9808,7 +9906,7 @@
   "oWAB0H": [
     {
       "type": 0,
-      "value": "Parameters"
+      "value": "Параметры"
     }
   ],
   "oZMhX/": [
@@ -9820,7 +9918,7 @@
   "ocW+RF": [
     {
       "type": 0,
-      "value": "Details"
+      "value": "Сведения"
     }
   ],
   "odQ554": [
@@ -9832,7 +9930,7 @@
   "ohpbkw": [
     {
       "type": 0,
-      "value": "Exponential interval"
+      "value": "Экспоненциальный интервал"
     }
   ],
   "onXUu0": [
@@ -9844,13 +9942,13 @@
   "oqgNX3": [
     {
       "type": 0,
-      "value": "Workflow name"
+      "value": "Имя рабочего процесса"
     }
   ],
   "osln7P": [
     {
       "type": 0,
-      "value": "URL decodes the input string"
+      "value": "Декодирует URL-адрес входной строки"
     }
   ],
   "ox2Ou7": [
@@ -9862,7 +9960,7 @@
   "oxCSqB": [
     {
       "type": 0,
-      "value": "You can edit parameters here or in designer."
+      "value": "Параметры можно изменить здесь или в конструкторе."
     }
   ],
   "oxXV4+": [
@@ -9874,7 +9972,7 @@
   "oxcHvs": [
     {
       "type": 0,
-      "value": "Remove list of multi options"
+      "value": "Удалить список вариантов с множественным выбором"
     }
   ],
   "p/0r2N": [
@@ -9916,7 +10014,7 @@
   "pH6ubt": [
     {
       "type": 0,
-      "value": "Details"
+      "value": "Сведения"
     }
   ],
   "pIczsS": [
@@ -9970,7 +10068,7 @@
   "pfmki/": [
     {
       "type": 0,
-      "value": "Specify the behavior and capabilities for transferring content over HTTP."
+      "value": "Укажите поведение и возможности передачи содержимого по протоколу HTTP."
     }
   ],
   "piaRy6": [
@@ -9982,7 +10080,7 @@
   "pjC3M9": [
     {
       "type": 0,
-      "value": "Suggested expression"
+      "value": "Предложенное выражение"
     }
   ],
   "pozypE": [
@@ -9994,7 +10092,7 @@
   "pqprxZ": [
     {
       "type": 0,
-      "value": "Configure connections to authenticate and link your workflows with services and applications."
+      "value": "Настройте подключения для проверки подлинности и связывания рабочих процессов со службами и приложениями."
     }
   ],
   "pr9GwA": [
@@ -10012,7 +10110,7 @@
   "pykp8c": [
     {
       "type": 0,
-      "value": "Blank workflow"
+      "value": "Пустой рабочий процесс"
     }
   ],
   "q/+Uex": [
@@ -10060,7 +10158,7 @@
   "q5lttG": [
     {
       "type": 0,
-      "value": "Undo"
+      "value": "Отменить"
     }
   ],
   "q87X20": [
@@ -10110,7 +10208,7 @@
   "qMFpNH": [
     {
       "type": 0,
-      "value": "Loading dynamic data"
+      "value": "Загрузка динамических данных"
     }
   ],
   "qSejoi": [
@@ -10216,7 +10314,7 @@
   "qp3gCy": [
     {
       "type": 0,
-      "value": "Insert link"
+      "value": "Вставить ссылку"
     }
   ],
   "qr1lLG": [
@@ -10242,13 +10340,13 @@
   "qsL/fE": [
     {
       "type": 0,
-      "value": "Delete parameter"
+      "value": "Удалить параметр"
     }
   ],
   "qxw9UO": [
     {
       "type": 0,
-      "value": "Status"
+      "value": "Состояние"
     }
   ],
   "qy5WqY": [
@@ -10314,19 +10412,19 @@
   "rEQceE": [
     {
       "type": 0,
-      "value": "Microsoft Authored"
+      "value": "Автор: Майкрософт"
     }
   ],
   "rHySVF": [
     {
       "type": 0,
-      "value": "Missing information for workflows creation"
+      "value": "Отсутствуют сведения для создания рабочих процессов"
     }
   ],
   "rMYBfw": [
     {
       "type": 0,
-      "value": "Make the field optional"
+      "value": "Сделать поле необязательным"
     }
   ],
   "rNi5Y3": [
@@ -10382,7 +10480,7 @@
   "rl9UOO": [
     {
       "type": 0,
-      "value": "Connections cannot be edited in pinned view. Release the pinned action to make connection changes."
+      "value": "Connections нельзя изменить в закрепленное представление. Отпустите закрепленное действие, чтобы внести изменения в подключение."
     }
   ],
   "rsdJcV": [
@@ -10395,6 +10493,12 @@
     {
       "type": 0,
       "value": "Добавить"
+    }
+  ],
+  "rwrlsB": [
+    {
+      "type": 0,
+      "value": "Map Issues"
     }
   ],
   "rxIJfD": [
@@ -10418,13 +10522,13 @@
   "s0Qaot": [
     {
       "type": 0,
-      "value": "Workflow Parameters Panel"
+      "value": "Панель параметров рабочего процесса"
     }
   ],
   "s5AOpV": [
     {
       "type": 0,
-      "value": "Card title"
+      "value": "Заголовок карточки"
     }
   ],
   "s5RV9B": [
@@ -10466,7 +10570,7 @@
   "sKy720": [
     {
       "type": 0,
-      "value": "Must provide value for workflow name."
+      "value": "Необходимо указать значение для имени рабочего процесса."
     }
   ],
   "sRpETS": [
@@ -10484,7 +10588,7 @@
   "sVcvcG": [
     {
       "type": 0,
-      "value": "Basics"
+      "value": "Основные сведения"
     }
   ],
   "sYQDN+": [
@@ -10520,7 +10624,7 @@
   "sfTqHY": [
     {
       "type": 0,
-      "value": "Close panel"
+      "value": "Закрыть панель"
     }
   ],
   "shF9tZ": [
@@ -10606,7 +10710,7 @@
   "t+h+KW": [
     {
       "type": 0,
-      "value": "Input"
+      "value": "Входные данные"
     }
   ],
   "t/RPwA": [
@@ -10618,13 +10722,13 @@
   "t0tN4J": [
     {
       "type": 0,
-      "value": "Code view"
+      "value": "Представление кода"
     }
   ],
   "t7ytOJ": [
     {
       "type": 0,
-      "value": "Status"
+      "value": "Состояние"
     }
   ],
   "t9RwOi": [
@@ -10654,7 +10758,7 @@
   "tGSsgZ": [
     {
       "type": 0,
-      "value": "select an identity"
+      "value": "выберите удостоверение"
     }
   ],
   "tH2pT1": [
@@ -10708,13 +10812,13 @@
   "tQIXhy": [
     {
       "type": 0,
-      "value": "Original expression"
+      "value": "Исходное выражение"
     }
   ],
   "tRe2Ct": [
     {
       "type": 0,
-      "value": "Name"
+      "value": "Имя"
     }
   ],
   "tTIsTX": [
@@ -10782,7 +10886,7 @@
   "tbl/ar": [
     {
       "type": 0,
-      "value": "No items"
+      "value": "Нет элементов"
     }
   ],
   "td5//c": [
@@ -10800,19 +10904,19 @@
   "tjQdhq": [
     {
       "type": 0,
-      "value": "Type"
+      "value": "Тип"
     }
   ],
   "toWTrl": [
     {
       "type": 0,
-      "value": "Search"
+      "value": "Поиск"
     }
   ],
   "tooc6v": [
     {
       "type": 0,
-      "value": "Switch '"
+      "value": "Переключить '"
     },
     {
       "type": 1,
@@ -10820,7 +10924,7 @@
     },
     {
       "type": 0,
-      "value": "' to the local time"
+      "value": "' на местное время"
     }
   ],
   "tqqUHX": [
@@ -10832,7 +10936,7 @@
   "tt1pJC": [
     {
       "type": 0,
-      "value": "You will lose all unsaved changes. Are you sure you want to discard the changes?"
+      "value": "Все несохраненные изменения будут потеряны. Вы действительно хотите отменить изменения?"
     }
   ],
   "tu4TTM": [
@@ -10844,13 +10948,13 @@
   "twr0pi": [
     {
       "type": 0,
-      "value": "Copy trigger"
+      "value": "Копировать триггер"
     }
   ],
   "tzeDPE": [
     {
       "type": 0,
-      "value": "State type"
+      "value": "Тип состояния"
     }
   ],
   "u81zB9": [
@@ -10874,13 +10978,13 @@
   "uEI5Wo": [
     {
       "type": 0,
-      "value": "Value"
+      "value": "Значение"
     }
   ],
   "uIgGKj": [
     {
       "type": 0,
-      "value": "Managed identity"
+      "value": "Управляемое удостоверение"
     }
   ],
   "uIurld": [
@@ -10926,13 +11030,13 @@
   "uSr3WX": [
     {
       "type": 0,
-      "value": "Connection name"
+      "value": "Имя подключения"
     }
   ],
   "uTTbhk": [
     {
       "type": 0,
-      "value": "Stateless"
+      "value": "Без учета состояния"
     }
   ],
   "uUlBZ8": [
@@ -10980,7 +11084,7 @@
   "udnt8c": [
     {
       "type": 0,
-      "value": "Secure object"
+      "value": "Безопасный объект"
     }
   ],
   "uesaee": [
@@ -11010,7 +11114,7 @@
   "umLmPm": [
     {
       "type": 0,
-      "value": "Operation Panel"
+      "value": "Панель операций"
     }
   ],
   "unMG8m": [
@@ -11082,7 +11186,7 @@
   "uzj2d3": [
     {
       "type": 0,
-      "value": "Close panel"
+      "value": "Закрыть панель"
     }
   ],
   "uzsleE": [
@@ -11094,7 +11198,7 @@
   "v+FA8N": [
     {
       "type": 0,
-      "value": "Local time"
+      "value": "Местное время"
     }
   ],
   "v+keTP": [
@@ -11112,7 +11216,7 @@
   "v4JmCE": [
     {
       "type": 0,
-      "value": "Please explain how you would like to update your expression: \""
+      "value": "Объясните, как вы хотите обновить выражение: \""
     },
     {
       "type": 1,
@@ -11150,13 +11254,13 @@
   "vNqq43": [
     {
       "type": 0,
-      "value": "Add loop"
+      "value": "Добавить цикл"
     }
   ],
   "vO/I7P": [
     {
       "type": 0,
-      "value": "Switch '"
+      "value": "Переключить '"
     },
     {
       "type": 1,
@@ -11164,7 +11268,7 @@
     },
     {
       "type": 0,
-      "value": "' to the UTC time format"
+      "value": "' формат времени в формате UTC"
     }
   ],
   "vQcQkU": [
@@ -11224,7 +11328,7 @@
   "voRDKP": [
     {
       "type": 0,
-      "value": "Headers"
+      "value": "Заголовки"
     }
   ],
   "vr70Gn": [
@@ -11268,13 +11372,13 @@
   "w+7aGo": [
     {
       "type": 0,
-      "value": "Connections list"
+      "value": "Connections список"
     }
   ],
   "w+t06Q": [
     {
       "type": 0,
-      "value": "Select fields"
+      "value": "Выберите поля"
     }
   ],
   "w0pI5M": [
@@ -11304,7 +11408,7 @@
   "wBBu4g": [
     {
       "type": 0,
-      "value": "Missing information for workflow creation"
+      "value": "Отсутствуют сведения для создания рабочего процесса"
     }
   ],
   "wEaGWn": [
@@ -11328,7 +11432,7 @@
   "wG8fwz": [
     {
       "type": 0,
-      "value": "Bullet list"
+      "value": "Маркированный список"
     }
   ],
   "wGYmui": [
@@ -11340,7 +11444,7 @@
   "wKJdDk": [
     {
       "type": 0,
-      "value": "Unsupported token type: "
+      "value": "Тип маркера не поддерживается: "
     },
     {
       "type": 1,
@@ -11362,7 +11466,7 @@
   "wPjnM9": [
     {
       "type": 0,
-      "value": "Paste a parallel action"
+      "value": "Вставить параллельное действие"
     }
   ],
   "wPlTDB": [
@@ -11386,7 +11490,7 @@
   "wTaSTp": [
     {
       "type": 0,
-      "value": "Please save the map before testing"
+      "value": "Сохраните карту перед тестированием"
     }
   ],
   "wV3Lmd": [
@@ -11410,13 +11514,13 @@
   "wXLEcJ": [
     {
       "type": 0,
-      "value": "Insert data from previous step (you can also add by typing Alt + / in the editor)"
+      "value": "Вставка данных из предыдущего шага (вы также можете добавить их, ALT + / в редакторе)"
     }
   ],
   "wYzIf2": [
     {
       "type": 0,
-      "value": "Unsupported token type: "
+      "value": "Тип маркера не поддерживается: "
     },
     {
       "type": 1,
@@ -11426,13 +11530,13 @@
   "wfekJ7": [
     {
       "type": 0,
-      "value": "Type"
+      "value": "Тип"
     }
   ],
   "wjiptl": [
     {
       "type": 0,
-      "value": "Node Search Panel"
+      "value": "Панель поиска узлов"
     }
   ],
   "wkvUUA": [
@@ -11480,7 +11584,7 @@
   "wx/ZQP": [
     {
       "type": 0,
-      "value": "Add Input"
+      "value": "Добавить входные данные"
     }
   ],
   "wxaQwD": [
@@ -11540,7 +11644,7 @@
   "xDHpeS": [
     {
       "type": 0,
-      "value": "Review your settings, ensure everything is correctly set up, and create your workflow."
+      "value": "Проверьте параметры, убедитесь, что все правильно настроено, и создайте рабочий процесс."
     }
   ],
   "xFQXAI": [
@@ -11552,7 +11656,7 @@
   "xHyhqO": [
     {
       "type": 0,
-      "value": "Optimized for low latency"
+      "value": "Оптимизировано для низкой задержки"
     }
   ],
   "xJ6vjn": [
@@ -11570,13 +11674,13 @@
   "xK8r1/": [
     {
       "type": 0,
-      "value": "Run information loading"
+      "value": "Загрузка сведений о запуске"
     }
   ],
   "xMgLd8": [
     {
       "type": 0,
-      "value": "Minimum interval"
+      "value": "Минимальный интервал"
     }
   ],
   "xN3GEX": [
@@ -11648,7 +11752,7 @@
   "xwB12G": [
     {
       "type": 0,
-      "value": "Enter another option"
+      "value": "Введите еще один параметр"
     }
   ],
   "xwD1VZ": [
@@ -11666,7 +11770,7 @@
   "y+eYFf": [
     {
       "type": 0,
-      "value": "Workflow parameters"
+      "value": "Параметры рабочего процесса"
     }
   ],
   "y1e9yw": [
@@ -11690,7 +11794,7 @@
   "y6aoMi": [
     {
       "type": 0,
-      "value": "Show Logic App run details"
+      "value": "Сведения о запуске приложения логики"
     }
   ],
   "yB6PB/": [
@@ -11708,7 +11812,7 @@
   "yENrOg": [
     {
       "type": 0,
-      "value": "here"
+      "value": "здесь"
     }
   ],
   "yF2R//": [
@@ -11720,7 +11824,7 @@
   "yKNKV/": [
     {
       "type": 0,
-      "value": "Try a different search term or remove filters"
+      "value": "Попробуйте другой поисковый запрос или удалите фильтры"
     }
   ],
   "yKOsmK": [
@@ -11738,13 +11842,13 @@
   "yOyeBT": [
     {
       "type": 0,
-      "value": "Toggle minimap"
+      "value": "Переключить мини-карту"
     }
   ],
   "yQ6+nV": [
     {
       "type": 0,
-      "value": "Connect"
+      "value": "Подключить"
     }
   ],
   "yRDuqj": [
@@ -11780,7 +11884,7 @@
   "yeagrz": [
     {
       "type": 0,
-      "value": "Ideal for request-response and processing IoT events"
+      "value": "Идеально подходит для запросов и обработки событий Интернета вещей"
     }
   ],
   "yjierd": [
@@ -11800,7 +11904,7 @@
   "yjjXCQ": [
     {
       "type": 0,
-      "value": "Close panel"
+      "value": "Закрыть панель"
     }
   ],
   "yk7L+4": [
@@ -11824,7 +11928,7 @@
   "yqF/Ew": [
     {
       "type": 0,
-      "value": "Search workflow actions"
+      "value": "Поиск действий рабочего процесса"
     }
   ],
   "yqRrQ/": [
@@ -11860,7 +11964,7 @@
   "yxctQw": [
     {
       "type": 0,
-      "value": "Logical name"
+      "value": "Логическое имя"
     }
   ],
   "yzqXMp": [
@@ -11882,7 +11986,7 @@
   "z/vIwi": [
     {
       "type": 0,
-      "value": "Data handling"
+      "value": "Обработка данных"
     }
   ],
   "z3VuE+": [
@@ -11894,7 +11998,7 @@
   "z5H3GF": [
     {
       "type": 0,
-      "value": "Display name"
+      "value": "Отображаемое имя"
     }
   ],
   "z9kH+0": [
@@ -11924,13 +12028,13 @@
   "zK5VPq": [
     {
       "type": 0,
-      "value": "Workflows in this Accelerator"
+      "value": "Рабочие процессы в этом ускорителе"
     }
   ],
   "zMKxg9": [
     {
       "type": 0,
-      "value": "Name does not match the given pattern."
+      "value": "Имя не соответствует заданному шаблону."
     }
   ],
   "zNesUZ": [
@@ -11948,7 +12052,7 @@
   "zPRSM9": [
     {
       "type": 0,
-      "value": "App identity is not configured on the logic app environment variables."
+      "value": "Удостоверение приложения не настроено для переменных среды приложения логики."
     }
   ],
   "zUWAsJ": [
@@ -12008,7 +12112,7 @@
   "zkqKJ+": [
     {
       "type": 0,
-      "value": "Body"
+      "value": "Текст"
     }
   ],
   "znGyyU": [
@@ -12026,13 +12130,13 @@
   "zsc+jp": [
     {
       "type": 0,
-      "value": "Functions"
+      "value": "Функции"
     }
   ],
   "zxF7g+": [
     {
       "type": 0,
-      "value": "A to Z, ascending"
+      "value": "От А до Я, по возрастанию"
     }
   ],
   "zxe9hh": [

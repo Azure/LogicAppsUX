@@ -107,7 +107,6 @@ export class ParametersProcessor {
   private _getParameters(parameter: Parameter, keyProjectionOption: KeyProjectionOptions = {}): InputParameter[] {
     const { in: location, schema, required } = parameter;
     let type = parameter.type;
-
     switch (location) {
       case Constants.ParameterLocations.Body: {
         type = parameter.schema.type;
@@ -254,6 +253,7 @@ export class ParametersProcessor {
     const type = parameter.type;
     const visibility = parameter[Constants.ExtensionProperties.Visibility];
     const isNotificationUrl = parameter[Constants.ExtensionProperties.NotificationUrl];
+    const collectionFormat = parameter.collectionFormat;
 
     return {
       key: key ?? (create([...this._getMergedKeySegments($in, keyProjectionOption), name]) as string),
@@ -274,6 +274,7 @@ export class ParametersProcessor {
       type,
       visibility,
       isNotificationUrl,
+      collectionFormat,
     };
   }
 

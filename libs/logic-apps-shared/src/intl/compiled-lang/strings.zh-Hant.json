@@ -26,19 +26,19 @@
   "+5Jp42": [
     {
       "type": 0,
-      "value": "By"
+      "value": "由"
     }
   ],
   "+Agiub": [
     {
       "type": 0,
-      "value": "Create an expression with Copilot"
+      "value": "使用 Copilot 建立表達式"
     }
   ],
   "+EREVh": [
     {
       "type": 0,
-      "value": "Name"
+      "value": "名稱"
     }
   ],
   "+FcXe9": [
@@ -74,7 +74,7 @@
   "+R90eK": [
     {
       "type": 0,
-      "value": "Retry policy interval is invalid, must match ISO 8601 duration format"
+      "value": "重試原則間隔無效，必須符合 ISO 8601 持續時間格式"
     }
   ],
   "+Uvo/p": [
@@ -102,7 +102,7 @@
   "+l5XmZ": [
     {
       "type": 0,
-      "value": "Enter a positive integer between "
+      "value": "請輸入介於 "
     },
     {
       "type": 1,
@@ -110,11 +110,15 @@
     },
     {
       "type": 0,
-      "value": " and "
+      "value": " 到 "
     },
     {
       "type": 1,
       "value": "max"
+    },
+    {
+      "type": 0,
+      "value": " 之間的正整數"
     }
   ],
   "+mAJR3": [
@@ -162,7 +166,7 @@
   "/IVuGP": [
     {
       "type": 0,
-      "value": "Discard"
+      "value": "捨棄"
     }
   ],
   "/KRvvg": [
@@ -222,7 +226,7 @@
   "/csbOB": [
     {
       "type": 0,
-      "value": "Retry policy count is invalid (must be from "
+      "value": "重試原則計數無效 (必須介於 "
     },
     {
       "type": 1,
@@ -230,7 +234,7 @@
     },
     {
       "type": 0,
-      "value": " to "
+      "value": " 到 "
     },
     {
       "type": 1,
@@ -274,7 +278,7 @@
   "/qrBuJ": [
     {
       "type": 0,
-      "value": "Create"
+      "value": "建立"
     }
   ],
   "/qu3zt": [
@@ -304,13 +308,13 @@
   "/ye9Df": [
     {
       "type": 0,
-      "value": "Delete workflow action"
+      "value": "刪除工作流程動作"
     }
   ],
   "0/VGiF": [
     {
       "type": 0,
-      "value": "Add action"
+      "value": "新增動作"
     }
   ],
   "00xlpa": [
@@ -392,13 +396,13 @@
   "0BO/tO": [
     {
       "type": 0,
-      "value": "Split-on tracking ID"
+      "value": "分割追蹤識別碼"
     }
   ],
   "0C5Ywr": [
     {
       "type": 0,
-      "value": "Enter an array"
+      "value": "輸入陣列"
     }
   ],
   "0CPsxh": [
@@ -422,7 +426,7 @@
   "0FRVkr": [
     {
       "type": 0,
-      "value": "Connection Panel"
+      "value": "線上面板"
     }
   ],
   "0FzNJV": [
@@ -470,7 +474,7 @@
   "0UfxUM": [
     {
       "type": 0,
-      "value": "Next"
+      "value": "下一步"
     }
   ],
   "0Vzp0l": [
@@ -482,7 +486,7 @@
   "0ZZJos": [
     {
       "type": 0,
-      "value": "Showing "
+      "value": "正在顯示 "
     },
     {
       "type": 1,
@@ -498,7 +502,7 @@
     },
     {
       "type": 0,
-      "value": " of "
+      "value": " "
     },
     {
       "type": 1,
@@ -506,7 +510,7 @@
     },
     {
       "type": 0,
-      "value": " results."
+      "value": " 結果。"
     }
   ],
   "0i/6TR": [
@@ -554,7 +558,7 @@
   "0uuxAX": [
     {
       "type": 0,
-      "value": "Delete mapping"
+      "value": "刪除對應"
     }
   ],
   "0vfdFS": [
@@ -570,7 +574,7 @@
     },
     {
       "type": 0,
-      "value": " connection"
+      "value": " 連線"
     }
   ],
   "0xLWzG": [
@@ -624,7 +628,7 @@
   "1HhCtq": [
     {
       "type": 0,
-      "value": "Headers"
+      "value": "標頭"
     }
   ],
   "1KFpTX": [
@@ -636,7 +640,7 @@
   "1LSKq8": [
     {
       "type": 0,
-      "value": "Basics"
+      "value": "基本資料"
     }
   ],
   "1NBvKu": [
@@ -645,10 +649,16 @@
       "value": "將參數引數轉換為浮點數"
     }
   ],
+  "1QktJw": [
+    {
+      "type": 0,
+      "value": "Map errors"
+    }
+  ],
   "1Xke9D": [
     {
       "type": 0,
-      "value": "open functions drawer"
+      "value": "開啟函數選取器"
     }
   ],
   "1dlfUe": [
@@ -666,7 +676,7 @@
   "1f7LG4": [
     {
       "type": 0,
-      "value": "Fixed interval"
+      "value": "固定間隔"
     }
   ],
   "1hHFdx": [
@@ -690,7 +700,7 @@
   "1jf3Dq": [
     {
       "type": 0,
-      "value": "Z to A, descending"
+      "value": "Z 到 A，遞減"
     }
   ],
   "1jhzOM": [
@@ -732,7 +742,7 @@
   "1vqDeQ": [
     {
       "type": 0,
-      "value": "Select Create to start a new workflow based on this template, no configuration required."
+      "value": "選取 [建立] 即可根據此範本啟動新的工作流程，不需要設定。"
     }
   ],
   "20oqsp": [
@@ -810,13 +820,13 @@
   "2OQU3/": [
     {
       "type": 0,
-      "value": "Cannot run after both trigger and action"
+      "value": "無法在觸發程式和動作之後執行"
     }
   ],
   "2On4Xu": [
     {
       "type": 0,
-      "value": "Code view tab"
+      "value": "程式代碼檢視索引標籤"
     }
   ],
   "2TMGk7": [
@@ -834,7 +844,7 @@
   "2adqQ4": [
     {
       "type": 0,
-      "value": "Maximum interval"
+      "value": "最大間隔"
     }
   ],
   "2cVEMV": [
@@ -902,7 +912,7 @@
   "2xQWRt": [
     {
       "type": 0,
-      "value": "Search Functions"
+      "value": "搜尋函式"
     }
   ],
   "2y24a/": [
@@ -914,15 +924,15 @@
   "2yUM4j": [
     {
       "type": 1,
-      "value": "suggestionIndex"
+      "value": "suggestionsCount"
     },
     {
       "type": 0,
-      "value": " of "
+      "value": " 的 "
     },
     {
       "type": 1,
-      "value": "suggestionsCount"
+      "value": "suggestionIndex"
     }
   ],
   "2z5HGT": [
@@ -958,7 +968,7 @@
   "36sF7T": [
     {
       "type": 0,
-      "value": "Associated workflows"
+      "value": "關聯的工作流程"
     }
   ],
   "3AWwVl": [
@@ -970,7 +980,7 @@
   "3BXdMk": [
     {
       "type": 0,
-      "value": "Request settings"
+      "value": "要求設定"
     }
   ],
   "3BZnxY": [
@@ -994,7 +1004,7 @@
   "3JEC7U": [
     {
       "type": 0,
-      "value": "Error type"
+      "value": "錯誤類型"
     }
   ],
   "3KPLpx": [
@@ -1048,7 +1058,7 @@
   "3Xf/4S": [
     {
       "type": 0,
-      "value": "Swagger endpoint"
+      "value": "Swagger 端點"
     }
   ],
   "3Y8a6G": [
@@ -1068,13 +1078,13 @@
   "3a3eHg": [
     {
       "type": 0,
-      "value": "Select actions"
+      "value": "選取動作"
     }
   ],
   "3cZFcy": [
     {
       "type": 0,
-      "value": "Error Panel"
+      "value": "錯誤面板"
     }
   ],
   "3cZZKj": [
@@ -1092,7 +1102,7 @@
   "3hHkAn": [
     {
       "type": 0,
-      "value": "Result"
+      "value": "結果"
     }
   ],
   "3n5pnv": [
@@ -1110,7 +1120,7 @@
   "3pheF6": [
     {
       "type": 0,
-      "value": "Select schema"
+      "value": "選取結構描述"
     }
   ],
   "3rzrWf": [
@@ -1208,7 +1218,7 @@
   "4BuCdw": [
     {
       "type": 0,
-      "value": "Specify the behavior and capabilities for transferring content over HTTP."
+      "value": "請指定經 HTTP 傳輸內容的行為及功能。"
     }
   ],
   "4D7H4R": [
@@ -1228,7 +1238,7 @@
   "4E69aV": [
     {
       "type": 0,
-      "value": "Background color"
+      "value": "背景色彩"
     }
   ],
   "4Ekn9t": [
@@ -1252,7 +1262,7 @@
   "4SIrVn": [
     {
       "type": 0,
-      "value": "Body"
+      "value": "本文"
     }
   ],
   "4YKQAF": [
@@ -1282,11 +1292,15 @@
   "4hlqgK": [
     {
       "type": 0,
-      "value": "No results found for "
+      "value": "找不到 "
     },
     {
       "type": 1,
       "value": "searchTermBeingSearchedFor_DO_NOT_TRANSLATE"
+    },
+    {
+      "type": 0,
+      "value": " 的結果"
     }
   ],
   "4iyEAY": [
@@ -1304,7 +1318,7 @@
   "4rVVyW": [
     {
       "type": 0,
-      "value": "Retry history"
+      "value": "重試歷程記錄"
     }
   ],
   "4vcnOA": [
@@ -1338,7 +1352,7 @@
     },
     {
       "type": 0,
-      "value": " key item"
+      "value": " 金鑰專案"
     }
   ],
   "50W8FI": [
@@ -1357,6 +1371,20 @@
     {
       "type": 0,
       "value": "(UTC+09:00) 大阪，北海道，東京"
+    }
+  ],
+  "5DkTf5": [
+    {
+      "type": 0,
+      "value": "Target schema node not found for node key '"
+    },
+    {
+      "type": 1,
+      "value": "nodeKey"
+    },
+    {
+      "type": 0,
+      "value": "'"
     }
   ],
   "5J9jne": [
@@ -1458,7 +1486,7 @@
   "5pSOjg": [
     {
       "type": 0,
-      "value": "Create workflows from template"
+      "value": "從範本建立工作流程"
     }
   ],
   "5qzZMo": [
@@ -1470,19 +1498,19 @@
   "5rljf7": [
     {
       "type": 0,
-      "value": "Discovery Panel"
+      "value": "探索面板"
     }
   ],
   "5szzYP": [
     {
       "type": 0,
-      "value": "Use this template"
+      "value": "使用此範本"
     }
   ],
   "5we9SR": [
     {
       "type": 0,
-      "value": "Client tracking ID"
+      "value": "用戶端追蹤 ID"
     }
   ],
   "5ytHcK": [
@@ -1530,13 +1558,13 @@
   "6DZp5H": [
     {
       "type": 0,
-      "value": "Search"
+      "value": "搜尋"
     }
   ],
   "6LJZ7n": [
     {
       "type": 0,
-      "value": "Retry policy"
+      "value": "重試原則"
     }
   ],
   "6OSgRP": [
@@ -1554,7 +1582,7 @@
   "6SQuYg": [
     {
       "type": 0,
-      "value": "See more ("
+      "value": "查看更多内容 ("
     },
     {
       "type": 1,
@@ -1574,19 +1602,19 @@
   "6c1ffO": [
     {
       "type": 0,
-      "value": "Enter JSON object of authentication parameter"
+      "value": "請輸入驗證參數的 JSON 物件"
     }
   ],
   "6eDY1H": [
     {
       "type": 0,
-      "value": "optional"
+      "value": "選用"
     }
   ],
   "6epkWC": [
     {
       "type": 0,
-      "value": "Body item"
+      "value": "本文項目"
     }
   ],
   "6fDYzG": [
@@ -1642,13 +1670,13 @@
   "6nWQm7": [
     {
       "type": 0,
-      "value": "Start time"
+      "value": "開始時間"
     }
   ],
   "6oOQnD": [
     {
       "type": 0,
-      "value": "Close test map"
+      "value": "關閉測試地圖"
     }
   ],
   "6oqk+A": [
@@ -1672,7 +1700,7 @@
   "6rJ+Fj": [
     {
       "type": 0,
-      "value": "Delete workflow graph"
+      "value": "刪除工作流程圖"
     }
   ],
   "6sGj3J": [
@@ -1732,13 +1760,13 @@
   "7+ZxCU": [
     {
       "type": 0,
-      "value": "Invalid authentication value"
+      "value": "無效的驗證值"
     }
   ],
   "70cHmm": [
     {
       "type": 0,
-      "value": "OK"
+      "value": "確定"
     }
   ],
   "73iM9+": [
@@ -1768,7 +1796,7 @@
   "7F4Bzv": [
     {
       "type": 0,
-      "value": "Workflow with name \""
+      "value": "已有名為 \""
     },
     {
       "type": 1,
@@ -1776,7 +1804,7 @@
     },
     {
       "type": 0,
-      "value": "\" already exists."
+      "value": "\" 的工作流程。"
     }
   ],
   "7Fyq1F": [
@@ -1820,7 +1848,7 @@
   "7ZF1Hr": [
     {
       "type": 0,
-      "value": "Validation error"
+      "value": "驗證錯誤"
     }
   ],
   "7ZR1xr": [
@@ -1838,13 +1866,13 @@
   "7adnmH": [
     {
       "type": 0,
-      "value": "Back to template library"
+      "value": "返回範本庫"
     }
   ],
   "7fZkLA": [
     {
       "type": 0,
-      "value": "Disable static result"
+      "value": "停用靜態結果"
     }
   ],
   "7gUE8h": [
@@ -1954,7 +1982,7 @@
   "8KpZmj": [
     {
       "type": 0,
-      "value": "The system-assigned identity is unavailable because it's not enabled."
+      "value": "系統指派的身分識別無法使用，因為它未啟用。"
     }
   ],
   "8L+oIz": [
@@ -2042,13 +2070,13 @@
   "8p0yK8": [
     {
       "type": 0,
-      "value": "Run after"
+      "value": "執行時間點"
     }
   ],
   "8wlfdo": [
     {
       "type": 0,
-      "value": "Suppress workflow headers on response"
+      "value": "回應時抑制工作流程標頭"
     }
   ],
   "8wr0zO": [
@@ -2060,7 +2088,7 @@
   "8zcsPi": [
     {
       "type": 0,
-      "value": "Expression editor"
+      "value": "運算式編輯器"
     }
   ],
   "8zkvmc": [
@@ -2084,7 +2112,7 @@
   "90Vi7t": [
     {
       "type": 0,
-      "value": "Expand static result"
+      "value": "展開靜態結果"
     }
   ],
   "90o7sB": [
@@ -2142,7 +2170,7 @@
   "9OzDnJ": [
     {
       "type": 0,
-      "value": "Search tips"
+      "value": "搜尋祕訣"
     }
   ],
   "9QNZSj": [
@@ -2174,7 +2202,7 @@
   "9V2Uwf": [
     {
       "type": 0,
-      "value": "Insert expression (you can also add by typing '/' in the editor)"
+      "value": "插入運算式 (您也可以在編輯器中輸入 / 以新增)"
     }
   ],
   "9W0lck": [
@@ -2230,7 +2258,7 @@
   "9uv02q": [
     {
       "type": 0,
-      "value": "Set the tracking ID for the run. For split-on this tracking ID is for the initiating request"
+      "value": "為執行設定追蹤識別碼。針對分割，此追蹤識別碼適用於起始要求"
     }
   ],
   "9wX3u9": [
@@ -2254,7 +2282,7 @@
   "A5/UwX": [
     {
       "type": 0,
-      "value": "Accelerators"
+      "value": "加速器"
     }
   ],
   "A5Ferh": [
@@ -2266,7 +2294,7 @@
   "A8T1X/": [
     {
       "type": 0,
-      "value": "Whitespaces must be encoded for URIs."
+      "value": "URI 必須編碼空格符。"
     }
   ],
   "A8l+k7": [
@@ -2286,7 +2314,7 @@
   "AB+yPQ": [
     {
       "type": 0,
-      "value": "Connection details"
+      "value": "連線詳細資料"
     }
   ],
   "AEguAy": [
@@ -2304,19 +2332,19 @@
   "AJ+LDh": [
     {
       "type": 0,
-      "value": "Provide a unique, descriptive name and review the state type to ensure your workflows are properly configured."
+      "value": "提供唯一且具描述性的名稱並檢閱狀態類型，以確保您的工作流程已正確設定。"
     }
   ],
   "AKOkI2": [
     {
       "type": 0,
-      "value": "Service principal"
+      "value": "服務主體"
     }
   ],
   "APKdYG": [
     {
       "type": 0,
-      "value": "Enter a valid double number."
+      "value": "輸入有效的雙數字。"
     }
   ],
   "AQ7Zxc": [
@@ -2334,7 +2362,7 @@
   "Agqhgu": [
     {
       "type": 0,
-      "value": "Describe how you'd like to update your expression."
+      "value": "描述您想要更新表達式的方式。"
     }
   ],
   "AheXMN": [
@@ -2358,7 +2386,7 @@
   "Alq4/3": [
     {
       "type": 0,
-      "value": "Hybrid connector"
+      "value": "混合式連接器"
     }
   ],
   "AnX5yC": [
@@ -2386,7 +2414,7 @@
     },
     {
       "type": 0,
-      "value": " operation"
+      "value": " 作業"
     }
   ],
   "Az0QvG": [
@@ -2445,7 +2473,7 @@
   "B6BjCl": [
     {
       "type": 0,
-      "value": "Drop-down list of options"
+      "value": "選項下拉式清單"
     }
   ],
   "B999mz": [
@@ -2539,7 +2567,7 @@
   "BRMOfD": [
     {
       "type": 0,
-      "value": "Timed out"
+      "value": "逾時"
     }
   ],
   "BS3gy8": [
@@ -2563,7 +2591,7 @@
   "BXb3CB": [
     {
       "type": 0,
-      "value": "Testing tab"
+      "value": "測試索引標籤"
     }
   ],
   "BYrP8F": [
@@ -2581,7 +2609,7 @@
   "Bkc/+3": [
     {
       "type": 0,
-      "value": "Retry policy minimum interval is invalid, must match ISO 8601 duration format"
+      "value": "重試原則最小間隔無效，必須符合 ISO 8601 持續時間格式"
     }
   ],
   "Bl4Iv0": [
@@ -2599,7 +2627,7 @@
   "BnkCwH": [
     {
       "type": 0,
-      "value": "Search properties"
+      "value": "搜尋屬性"
     }
   ],
   "BoMvF2": [
@@ -2630,6 +2658,20 @@
     {
       "type": 0,
       "value": "表示如何格式化此 Guid 值的單一格式規範。"
+    }
+  ],
+  "Bwqlxd": [
+    {
+      "type": 0,
+      "value": "Key not found '"
+    },
+    {
+      "type": 1,
+      "value": "nodeKey"
+    },
+    {
+      "type": 0,
+      "value": "'"
     }
   ],
   "BxITRH": [
@@ -2671,7 +2713,7 @@
   "CRTB+v": [
     {
       "type": 0,
-      "value": "Value should be greater than "
+      "value": "值應大於 "
     },
     {
       "type": 1,
@@ -2699,13 +2741,13 @@
   "Ccbm2Y": [
     {
       "type": 0,
-      "value": "Multi-select list of options"
+      "value": "選項的複選清單"
     }
   ],
   "CeF40t": [
     {
       "type": 0,
-      "value": "Authentication type"
+      "value": "驗證類型"
     }
   ],
   "Ci41Od": [
@@ -2735,7 +2777,7 @@
   "ClowJ/": [
     {
       "type": 0,
-      "value": "Authentication type"
+      "value": "驗證類型"
     }
   ],
   "CvoqQ6": [
@@ -2753,7 +2795,7 @@
   "Cy4+KL": [
     {
       "type": 0,
-      "value": "Redo"
+      "value": "重做"
     }
   ],
   "CyT8H7": [
@@ -2809,7 +2851,7 @@
   "D0D3Sf": [
     {
       "type": 0,
-      "value": "switch case"
+      "value": "切換案例"
     }
   ],
   "D1lgsT": [
@@ -2827,7 +2869,7 @@
   "D6KzoS": [
     {
       "type": 0,
-      "value": "Specify upload chunk size between "
+      "value": "指定介於 "
     },
     {
       "type": 1,
@@ -2835,7 +2877,7 @@
     },
     {
       "type": 0,
-      "value": " and "
+      "value": " 到 "
     },
     {
       "type": 1,
@@ -2843,13 +2885,13 @@
     },
     {
       "type": 0,
-      "value": " Mb. Example: 10"
+      "value": " Mb 之間的上傳區塊大小。範例： 10"
     }
   ],
   "D89UXR": [
     {
       "type": 0,
-      "value": "action"
+      "value": "動作"
     }
   ],
   "DDIIAQ": [
@@ -2885,7 +2927,7 @@
   "DNQtFr": [
     {
       "type": 0,
-      "value": "Name"
+      "value": "名稱"
     }
   ],
   "DQV7aK": [
@@ -2923,7 +2965,7 @@
   "DX9jWz": [
     {
       "type": 0,
-      "value": "Name"
+      "value": "名稱"
     }
   ],
   "DYXoEM": [
@@ -2941,13 +2983,13 @@
   "DbxZhS": [
     {
       "type": 0,
-      "value": "Remove list of options"
+      "value": "移除選項清單"
     }
   ],
   "DcJBUx": [
     {
       "type": 0,
-      "value": "Trigger type"
+      "value": "觸發程序類型"
     }
   ],
   "DfXxoX": [
@@ -3021,7 +3063,7 @@
   "E70Rdt": [
     {
       "type": 0,
-      "value": "Internal errors"
+      "value": "內部錯誤"
     }
   ],
   "E7NzDN": [
@@ -3045,13 +3087,13 @@
   "EFQ56R": [
     {
       "type": 0,
-      "value": "Source code"
+      "value": "原始程式碼"
     }
   ],
   "EMbxLf": [
     {
       "type": 0,
-      "value": "Previous suggestion"
+      "value": "上一個建議"
     }
   ],
   "ERAWZA": [
@@ -3075,13 +3117,13 @@
   "EX0g1d": [
     {
       "type": 0,
-      "value": "Secure outputs"
+      "value": "安全輸出"
     }
   ],
   "EXEL2j": [
     {
       "type": 0,
-      "value": "Destination"
+      "value": "目的地"
     }
   ],
   "EZz5q7": [
@@ -3125,7 +3167,7 @@
   "EeJitp": [
     {
       "type": 0,
-      "value": "Type"
+      "value": "類型"
     }
   ],
   "EiRMD4": [
@@ -3157,7 +3199,7 @@
   "EoRB1V": [
     {
       "type": 0,
-      "value": "Details"
+      "value": "詳細資料"
     }
   ],
   "EptZhD": [
@@ -3181,31 +3223,31 @@
   "Eyxa6q": [
     {
       "type": 0,
-      "value": "The number of workflow instances that can wait to run when your current workflow instance is already running the maximum concurrent instances."
+      "value": "當您目前的工作流程實例已執行最大並行實例時，可等候執行的工作流程實例數目。"
     }
   ],
   "F+cOLr": [
     {
       "type": 0,
-      "value": "Community Authored"
+      "value": "社群已撰寫"
     }
   ],
   "F/13eU": [
     {
       "type": 0,
-      "value": "Delete"
+      "value": "刪除"
     }
   ],
   "F1AkvV": [
     {
       "type": 0,
-      "value": "Ideal for process business transitional data"
+      "value": "適用於處理商務過渡數據"
     }
   ],
   "F2wR+r": [
     {
       "type": 0,
-      "value": "Insert expression"
+      "value": "插入運算式"
     }
   ],
   "F3IDl8": [
@@ -3229,7 +3271,7 @@
   "FEYdkx": [
     {
       "type": 0,
-      "value": "Maximum waiting runs"
+      "value": "等候執行次數上限"
     }
   ],
   "FIL1Nt": [
@@ -3262,6 +3304,20 @@
       "value": "傳回起始索引和結束索引所定義之字串的區段"
     }
   ],
+  "FPBmrA": [
+    {
+      "type": 0,
+      "value": "Source schema node not found for node key '"
+    },
+    {
+      "type": 1,
+      "value": "nodeKey"
+    },
+    {
+      "type": 0,
+      "value": "'"
+    }
+  ],
   "FT3jt6": [
     {
       "type": 0,
@@ -3271,7 +3327,7 @@
   "FTrMxN": [
     {
       "type": 0,
-      "value": "Close"
+      "value": "關閉"
     }
   ],
   "FUuFlC": [
@@ -3328,7 +3384,7 @@
   "Fx/6sv": [
     {
       "type": 0,
-      "value": "Go to operation"
+      "value": "移至作業"
     }
   ],
   "FxQ2Ts": [
@@ -3340,7 +3396,7 @@
   "G+6Juu": [
     {
       "type": 0,
-      "value": "Click to expand"
+      "value": "按一下以展開"
     }
   ],
   "G+XvKn": [
@@ -3358,7 +3414,7 @@
   "G0gnge": [
     {
       "type": 0,
-      "value": "Copy entire action"
+      "value": "複製整個動作"
     }
   ],
   "GAY7b8": [
@@ -3394,7 +3450,7 @@
   "GFnJQe": [
     {
       "type": 0,
-      "value": "Test map"
+      "value": "測試對應"
     }
   ],
   "GIUSQs": [
@@ -3459,10 +3515,24 @@
       "value": "來源結構描述元素"
     }
   ],
+  "GiR7ll": [
+    {
+      "type": 0,
+      "value": "Function not found- '"
+    },
+    {
+      "type": 1,
+      "value": "nodeKey"
+    },
+    {
+      "type": 0,
+      "value": "'"
+    }
+  ],
   "Gk79Ma": [
     {
       "type": 0,
-      "value": "Status code"
+      "value": "狀態碼"
     }
   ],
   "Gl5khw": [
@@ -3574,13 +3644,13 @@
   "HQ/HhZ": [
     {
       "type": 0,
-      "value": "Error loading connections"
+      "value": "載入連線時發生錯誤"
     }
   ],
   "HQQtFz": [
     {
       "type": 0,
-      "value": "Make the field required"
+      "value": "將欄位設為必要"
     }
   ],
   "HSJLCu": [
@@ -3604,7 +3674,7 @@
   "He4Z+v": [
     {
       "type": 0,
-      "value": "Credential type"
+      "value": "認證類型"
     }
   ],
   "HfinO2": [
@@ -3692,13 +3762,13 @@
   "IBFBR2": [
     {
       "type": 0,
-      "value": "Remove loop"
+      "value": "拿掉迴圈"
     }
   ],
   "IGpV1W": [
     {
       "type": 0,
-      "value": "Asynchronous response"
+      "value": "非同步回應"
     }
   ],
   "IHMd3X": [
@@ -3714,7 +3784,7 @@
   "IHzSSN": [
     {
       "type": 0,
-      "value": "Path parameters"
+      "value": "路徑參數"
     }
   ],
   "IPwWgu": [
@@ -3744,7 +3814,7 @@
   "IUbVFR": [
     {
       "type": 0,
-      "value": "Search"
+      "value": "搜尋"
     }
   ],
   "IW2MjQ": [
@@ -3782,13 +3852,13 @@
     },
     {
       "type": 0,
-      "value": " more item"
+      "value": " 更多專案"
     }
   ],
   "IqNEui": [
     {
       "type": 0,
-      "value": "Specify download chunk size between "
+      "value": "指定介於 "
     },
     {
       "type": 1,
@@ -3796,7 +3866,7 @@
     },
     {
       "type": 0,
-      "value": " and "
+      "value": " 到 "
     },
     {
       "type": 1,
@@ -3804,7 +3874,7 @@
     },
     {
       "type": 0,
-      "value": " Mb. Example: 10"
+      "value": " Mb 之間的下載區塊大小。範例： 10"
     }
   ],
   "IsVhkH": [
@@ -3870,7 +3940,7 @@
   "J7PN35": [
     {
       "type": 0,
-      "value": "Make group"
+      "value": "設定群組"
     }
   ],
   "J9wWry": [
@@ -3922,13 +3992,13 @@
   "JKfEGS": [
     {
       "type": 0,
-      "value": "Create new"
+      "value": "建立新的"
     }
   ],
   "JMwMaK": [
     {
       "type": 0,
-      "value": "AI-generated content may be incorrect"
+      "value": "AI 產生的內容可能不正確"
     }
   ],
   "JNQHws": [
@@ -3940,7 +4010,7 @@
   "JQBEOg": [
     {
       "type": 0,
-      "value": "Review + create"
+      "value": "檢閱 + 建立"
     }
   ],
   "JSfWJ0": [
@@ -3952,13 +4022,13 @@
   "JUZ7g5": [
     {
       "type": 0,
-      "value": "Run history"
+      "value": "執行歷程記錄"
     }
   ],
   "JVNRly": [
     {
       "type": 0,
-      "value": "Solution type"
+      "value": "解決方案類型"
     }
   ],
   "JWl/LD": [
@@ -4000,7 +4070,7 @@
   "Jk2B0i": [
     {
       "type": 0,
-      "value": "Prerequisites"
+      "value": "必要條件"
     }
   ],
   "JnlcZQ": [
@@ -4024,7 +4094,7 @@
   "JzvOUc": [
     {
       "type": 0,
-      "value": "The value must not be empty."
+      "value": "值不得為空白。"
     }
   ],
   "K50znc": [
@@ -4042,7 +4112,7 @@
   "K9ORYo": [
     {
       "type": 0,
-      "value": "Schema ID"
+      "value": "結構描述識別碼"
     }
   ],
   "KBaGkS": [
@@ -4054,7 +4124,7 @@
   "KO2eUv": [
     {
       "type": 0,
-      "value": "Connectors"
+      "value": "連接器"
     }
   ],
   "KV4uky": [
@@ -4107,7 +4177,7 @@
   "Kb5u9F": [
     {
       "type": 0,
-      "value": "About tab"
+      "value": "[關於] 索引標籤"
     }
   ],
   "KlDW+5": [
@@ -4125,7 +4195,7 @@
   "KqJ14/": [
     {
       "type": 0,
-      "value": "Edit schema"
+      "value": "編輯結構描述"
     }
   ],
   "KwGA+K": [
@@ -4179,7 +4249,7 @@
   "LPzAHC": [
     {
       "type": 0,
-      "value": "Loading files…"
+      "value": "正在載入檔案..."
     }
   ],
   "LR/3Lr": [
@@ -4293,7 +4363,7 @@
   "M/m3nG": [
     {
       "type": 0,
-      "value": "Action timeout"
+      "value": "動作逾時"
     }
   ],
   "M0bbZk": [
@@ -4317,7 +4387,7 @@
   "M6GI6z": [
     {
       "type": 0,
-      "value": "Custom tracking ID"
+      "value": "自訂追蹤識別碼"
     }
   ],
   "M6U2LE": [
@@ -4335,7 +4405,7 @@
   "MAX7xS": [
     {
       "type": 0,
-      "value": "Show more"
+      "value": "顯示更多"
     }
   ],
   "MCzWDc": [
@@ -4359,7 +4429,7 @@
   "MGq28G": [
     {
       "type": 0,
-      "value": "Trigger"
+      "value": "觸發程序"
     }
   ],
   "MIX4f9": [
@@ -4407,13 +4477,13 @@
   "MVrv+N": [
     {
       "type": 0,
-      "value": "Enter a valid array."
+      "value": "輸入有效的陣列。"
     }
   ],
   "MWG2k9": [
     {
       "type": 0,
-      "value": "Request history"
+      "value": "要求歷程記錄"
     }
   ],
   "MYgKHu": [
@@ -4467,13 +4537,13 @@
   "MqZCAn": [
     {
       "type": 0,
-      "value": "Host"
+      "value": "主機"
     }
   ],
   "MwMpAh": [
     {
       "type": 0,
-      "value": "Return to expression editor"
+      "value": "返回表達式編輯器"
     }
   ],
   "N0pS6Y": [
@@ -4509,7 +4579,7 @@
   "N8LgJq": [
     {
       "type": 0,
-      "value": "Distinct tracking ID for each split-on instance"
+      "value": "每個分割執行個體的獨特追蹤識別碼"
     }
   ],
   "NE54Uu": [
@@ -4539,7 +4609,7 @@
   "NHqCeQ": [
     {
       "type": 0,
-      "value": "Create connection"
+      "value": "建立連線"
     }
   ],
   "NMpFs6": [
@@ -4563,13 +4633,13 @@
   "NaW0ga": [
     {
       "type": 0,
-      "value": "This workflow supports the following states. The state determines how data is managed and retained during execution of workflows."
+      "value": "此工作流程支援下列狀態。狀態決定在工作流程執行期間如何管理和保留數據。"
     }
   ],
   "Nbl3zN": [
     {
       "type": 0,
-      "value": "Enter a description of the output"
+      "value": "輸入輸出的描述"
     }
   ],
   "Nh91qA": [
@@ -4587,7 +4657,7 @@
   "NkjtG/": [
     {
       "type": 0,
-      "value": "Dismiss"
+      "value": "關閉"
     }
   ],
   "NnrHK3": [
@@ -4611,13 +4681,13 @@
   "Nr8FbX": [
     {
       "type": 0,
-      "value": "Connections"
+      "value": "連線"
     }
   ],
   "NtoWaY": [
     {
       "type": 0,
-      "value": "Value should be less than "
+      "value": "值應小於 "
     },
     {
       "type": 1,
@@ -4675,7 +4745,7 @@
   "O8Qy7k": [
     {
       "type": 0,
-      "value": "Close panel"
+      "value": "關閉面板"
     }
   ],
   "O9ZExg": [
@@ -4717,7 +4787,7 @@
   "OMuMCI": [
     {
       "type": 0,
-      "value": "Workflow properties"
+      "value": "工作流程屬性"
     }
   ],
   "OOUSLP": [
@@ -4819,7 +4889,7 @@
   "OkGMwC": [
     {
       "type": 0,
-      "value": "Monitoring tab"
+      "value": "監視索引標籤"
     }
   ],
   "OnrO5/": [
@@ -4912,6 +4982,12 @@
       "value": "已摺疊"
     }
   ],
+  "PEJ+e4": [
+    {
+      "type": 0,
+      "value": "Error loading data map"
+    }
+  ],
   "PNk3n4": [
     {
       "type": 0,
@@ -4959,7 +5035,7 @@
   "PTBl5s": [
     {
       "type": 0,
-      "value": "Method"
+      "value": "方法"
     }
   ],
   "PXa0D4": [
@@ -5001,7 +5077,7 @@
   "Pkxg6Q": [
     {
       "type": 0,
-      "value": "Describe the expression you want Copilot to create. You can reference data from other actions in the flow. For example, “Combine the first and last name of the person who went the email” or “Check the status of the current job.”"
+      "value": "描述您要 Copilot 建立的表達式。您可以參考流程中其他動作的數據。例如「合併傳送電子郵件人員的名字和姓氏」或「檢查目前工作的狀態」。"
     }
   ],
   "Pnt0Xj": [
@@ -5013,7 +5089,7 @@
   "PpupBE": [
     {
       "type": 0,
-      "value": "Add row"
+      "value": "新增資料列"
     }
   ],
   "Pq+4a+": [
@@ -5037,7 +5113,7 @@
   "PuFTgH": [
     {
       "type": 0,
-      "value": "Retry history"
+      "value": "重試歷程記錄"
     }
   ],
   "Pudllg": [
@@ -5061,7 +5137,7 @@
   "Px7S/2": [
     {
       "type": 0,
-      "value": "Close"
+      "value": "關閉"
     }
   ],
   "PytMJ0": [
@@ -5093,7 +5169,7 @@
   "Q/V4Uc": [
     {
       "type": 0,
-      "value": "Add connection"
+      "value": "新增連線"
     }
   ],
   "Q0xpPQ": [
@@ -5139,7 +5215,7 @@
   "QBK72a": [
     {
       "type": 0,
-      "value": "Add custom modules, uncover new scenarios, and find troubleshooting tips"
+      "value": "新增自定義模組、發現新案例，並尋找疑難解答提示"
     }
   ],
   "QGbUXX": [
@@ -5151,13 +5227,13 @@
   "QNfUf/": [
     {
       "type": 0,
-      "value": "Full screen"
+      "value": "全螢幕"
     }
   ],
   "QVtqAn": [
     {
       "type": 0,
-      "value": "Description"
+      "value": "描述"
     }
   ],
   "QZBPUx": [
@@ -5181,7 +5257,7 @@
   "QbVD0F": [
     {
       "type": 0,
-      "value": "This expression has a problem. You can fix it manually or with Copilot."
+      "value": "此表達式有問題。您可以手動或使用 Copilot 修正。"
     }
   ],
   "QdJUaS": [
@@ -5273,13 +5349,13 @@
   "RLoDgQ": [
     {
       "type": 0,
-      "value": "Optimized for high reliability"
+      "value": "已針對高可靠性進行優化"
     }
   ],
   "ROC+1+": [
     {
       "type": 0,
-      "value": "Line position"
+      "value": "行位置"
     }
   ],
   "RX2Shm": [
@@ -5291,13 +5367,13 @@
   "RZNabt": [
     {
       "type": 0,
-      "value": "Create a new workflow from template"
+      "value": "從範本建立新工作流程"
     }
   ],
   "RatwOB": [
     {
       "type": 0,
-      "value": "In-app"
+      "value": "應用程式內"
     }
   ],
   "RbJNVk": [
@@ -5334,7 +5410,7 @@
     },
     {
       "type": 0,
-      "value": " (content)"
+      "value": " (內容)"
     }
   ],
   "RjvpD+": [
@@ -5404,7 +5480,7 @@
   "RxbkcI": [
     {
       "type": 0,
-      "value": "Unsupported token type: "
+      "value": "不支援的權杖類型: "
     },
     {
       "type": 1,
@@ -5414,7 +5490,7 @@
   "S0N/tx": [
     {
       "type": 0,
-      "value": "Resubmit a workflow run from this action"
+      "value": "重新提交此動作執行的工作流程"
     }
   ],
   "S138/4": [
@@ -5426,7 +5502,7 @@
   "S5kFNK": [
     {
       "type": 0,
-      "value": "Paste your sample data to test the mapping"
+      "value": "貼上您的範例數據以測試對應"
     }
   ],
   "SCCE6s": [
@@ -5474,7 +5550,7 @@
   "STWbak": [
     {
       "type": 0,
-      "value": "Chunk size"
+      "value": "區塊大小"
     }
   ],
   "SToblZ": [
@@ -5502,13 +5578,13 @@
   "SZ78Xp": [
     {
       "type": 0,
-      "value": "Features"
+      "value": "功能"
     }
   ],
   "SbCUKw": [
     {
       "type": 0,
-      "value": "Outputs should not be provided when status is \"Failed\""
+      "value": "當狀態為 [失敗] 時，不應提供輸出"
     }
   ],
   "SgiTAh": [
@@ -5544,7 +5620,7 @@
   "Sy4cFC": [
     {
       "type": 0,
-      "value": "Concurrency control"
+      "value": "並行控制"
     }
   ],
   "SyFXM3": [
@@ -5562,7 +5638,7 @@
   "TDfQzn": [
     {
       "type": 0,
-      "value": "More…"
+      "value": "更多…"
     }
   ],
   "TEN+cR": [
@@ -5616,7 +5692,7 @@
   "TZpm7X": [
     {
       "type": 0,
-      "value": "Button to add dynamic content if token picker is shown"
+      "value": "當權杖選擇器顯示時新增動態內容的按鈕"
     }
   ],
   "Tayrub": [
@@ -5634,7 +5710,7 @@
   "TcU2Gf": [
     {
       "type": 0,
-      "value": "Add case"
+      "value": "新增案例"
     }
   ],
   "TgcgXE": [
@@ -5682,7 +5758,7 @@
   "TnwRGo": [
     {
       "type": 0,
-      "value": "Connections included in this template"
+      "value": "Connections 包含在此範本中"
     }
   ],
   "To3RNy": [
@@ -5736,7 +5812,7 @@
   "U2juKb": [
     {
       "type": 0,
-      "value": "Filter actions"
+      "value": "篩選動作"
     }
   ],
   "U3guPp": [
@@ -5776,7 +5852,7 @@
   "U9SHxw": [
     {
       "type": 0,
-      "value": "Code"
+      "value": "代碼"
     }
   ],
   "UCNM4L": [
@@ -5788,7 +5864,7 @@
   "UD330h": [
     {
       "type": 0,
-      "value": "Copy action"
+      "value": "複製動作"
     }
   ],
   "UHCVNK": [
@@ -5800,7 +5876,7 @@
   "UJho0j": [
     {
       "type": 0,
-      "value": "(Optional) Password for PFX file"
+      "value": "(PFX 檔案的選擇性) 密碼"
     }
   ],
   "UMPuUJ": [
@@ -5816,13 +5892,13 @@
   "UNXQDI": [
     {
       "type": 0,
-      "value": "Loading API Management service instances..."
+      "value": "正在載入 API 管理服務執行個體..."
     }
   ],
   "UPsZSw": [
     {
       "type": 0,
-      "value": "The entered identity is not associated with this logic app."
+      "value": "輸入的身分識別未與此邏輯應用程式建立關聯。"
     }
   ],
   "UR1CS5": [
@@ -5846,7 +5922,7 @@
   "UTkcyf": [
     {
       "type": 0,
-      "value": "Source code"
+      "value": "原始程式碼"
     }
   ],
   "UVAfYj": [
@@ -5858,19 +5934,19 @@
   "UVr0mL": [
     {
       "type": 0,
-      "value": "Test your map to see a result"
+      "value": "測試您的地圖以查看結果"
     }
   ],
   "UWF/WI": [
     {
       "type": 0,
-      "value": "View documentation"
+      "value": "檢視文件"
     }
   ],
   "UXDOiw": [
     {
       "type": 0,
-      "value": "Description"
+      "value": "描述"
     }
   ],
   "UYRIS/": [
@@ -5972,7 +6048,7 @@
   "UsEvG2": [
     {
       "type": 0,
-      "value": "Tenant ID"
+      "value": "租用戶識別碼"
     }
   ],
   "UtyRCH": [
@@ -6042,7 +6118,7 @@
   "VFnuA2": [
     {
       "type": 0,
-      "value": "Add a drop-down list of options"
+      "value": "新增選項下拉式清單"
     }
   ],
   "VHm1Sr": [
@@ -6114,13 +6190,13 @@
   "VZh+w2": [
     {
       "type": 0,
-      "value": "Body"
+      "value": "本文"
     }
   ],
   "Valy81": [
     {
       "type": 0,
-      "value": "Schema validation"
+      "value": "結構描述驗證"
     }
   ],
   "VbMYd8": [
@@ -6132,7 +6208,7 @@
   "VchR9d": [
     {
       "type": 0,
-      "value": "Headers"
+      "value": "標頭"
     }
   ],
   "Vi5TIV": [
@@ -6176,7 +6252,7 @@
   "VysSj3": [
     {
       "type": 0,
-      "value": "View code"
+      "value": "檢視程式碼"
     }
   ],
   "W+mUyI": [
@@ -6198,13 +6274,13 @@
   "W1rlxU": [
     {
       "type": 0,
-      "value": "State type"
+      "value": "狀態類型"
     }
   ],
   "W2fZ0v": [
     {
       "type": 0,
-      "value": "Preview"
+      "value": "預覽"
     }
   ],
   "W6FdMh": [
@@ -6222,7 +6298,7 @@
   "WGq3Fo": [
     {
       "type": 0,
-      "value": "See less"
+      "value": "查看較少內容"
     }
   ],
   "WGwH45": [
@@ -6280,7 +6356,7 @@
   "Wc77aJ": [
     {
       "type": 0,
-      "value": "In-app"
+      "value": "應用程式內"
     }
   ],
   "WcnIF8": [
@@ -6292,7 +6368,7 @@
   "WdO1cs": [
     {
       "type": 0,
-      "value": "Template details"
+      "value": "範本詳細資料"
     }
   ],
   "WgChTm": [
@@ -6316,13 +6392,13 @@
   "Wt1TZJ": [
     {
       "type": 0,
-      "value": "Connections"
+      "value": "連線"
     }
   ],
   "Wvnl/V": [
     {
       "type": 0,
-      "value": "Delete the static result configuration"
+      "value": "刪除靜態結果組態"
     }
   ],
   "WvvJYw": [
@@ -6334,13 +6410,13 @@
   "WxJJcQ": [
     {
       "type": 0,
-      "value": "Not connected"
+      "value": "未連線"
     }
   ],
   "WxcmZr": [
     {
       "type": 0,
-      "value": "This action has testing configured."
+      "value": "此動作已設定測試。"
     }
   ],
   "X/7je+": [
@@ -6352,7 +6428,7 @@
   "X02GGK": [
     {
       "type": 0,
-      "value": "Tags"
+      "value": "標籤"
     }
   ],
   "X2idLs": [
@@ -6424,7 +6500,7 @@
   "XHQwyJ": [
     {
       "type": 0,
-      "value": "Error executing the API - "
+      "value": "執行 API 時發生錯誤 - "
     },
     {
       "type": 1,
@@ -6440,7 +6516,7 @@
   "XL5UbT": [
     {
       "type": 0,
-      "value": "Click for more information on static result"
+      "value": "按一下以取得 [靜態結果] 的詳細資訊"
     }
   ],
   "XOAcjQ": [
@@ -6470,7 +6546,7 @@
   "XR5izH": [
     {
       "type": 0,
-      "value": "Connected"
+      "value": "已連線"
     }
   ],
   "XRK+gt": [
@@ -6520,7 +6596,7 @@
   "XZrMGZ": [
     {
       "type": 0,
-      "value": "Content transfer"
+      "value": "內容傳輸"
     }
   ],
   "XbtEq9": [
@@ -6546,7 +6622,7 @@
   "Xg1UDw": [
     {
       "type": 0,
-      "value": "Learn more"
+      "value": "深入了解"
     }
   ],
   "Xj0Gr/": [
@@ -6612,7 +6688,7 @@
   "Xz88HV": [
     {
       "type": 0,
-      "value": "Associated workflows"
+      "value": "關聯的工作流程"
     }
   ],
   "Y/bcmG": [
@@ -6630,7 +6706,7 @@
   "Y9VFj8": [
     {
       "type": 0,
-      "value": "Secure inputs"
+      "value": "安全輸入"
     }
   ],
   "Y9kBz5": [
@@ -6642,7 +6718,7 @@
   "YC56Tr": [
     {
       "type": 0,
-      "value": "Automatic decompression"
+      "value": "自動解壓縮"
     }
   ],
   "YCDF7A": [
@@ -6706,13 +6782,13 @@
   "YM0e3C": [
     {
       "type": 0,
-      "value": "Asynchronous pattern"
+      "value": "非同步模式"
     }
   ],
   "YOOBDW": [
     {
       "type": 0,
-      "value": "Avoid spaces and the following symbols in your workflow name: \\ / : * ? \" < > | @, #, $, %, &"
+      "value": "在您的工作流程名稱中避免使用空白和下列符號： \\ / ： * ？“ < > |@, #, $, %, &"
     }
   ],
   "YOUfNf": [
@@ -6742,7 +6818,7 @@
   "YWD/RY": [
     {
       "type": 0,
-      "value": "condition, collapse"
+      "value": "條件，折疊"
     }
   ],
   "YWws/r": [
@@ -6754,7 +6830,7 @@
   "YX0jQs": [
     {
       "type": 0,
-      "value": "All"
+      "value": "全部"
     }
   ],
   "YZ5Kwe": [
@@ -6766,7 +6842,7 @@
   "YZl7FU": [
     {
       "type": 0,
-      "value": "Loading function apps..."
+      "value": "正在載入函數應用程式..."
     }
   ],
   "YaFjJQ": [
@@ -6808,7 +6884,7 @@
   "YnSO/8": [
     {
       "type": 0,
-      "value": "Not connected"
+      "value": "未連線"
     }
   ],
   "YoQara": [
@@ -6826,7 +6902,7 @@
   "Yua/4o": [
     {
       "type": 0,
-      "value": "Previous"
+      "value": "上一步"
     }
   ],
   "Yuu5CD": [
@@ -6850,7 +6926,7 @@
   "Z8BOCl": [
     {
       "type": 0,
-      "value": "No identities available"
+      "value": "沒有任何可用的身分識別"
     }
   ],
   "Z8tBFS": [
@@ -6880,7 +6956,7 @@
   "ZFNlSA": [
     {
       "type": 0,
-      "value": "Authentication"
+      "value": "驗證"
     }
   ],
   "ZME5hh": [
@@ -6892,7 +6968,7 @@
   "ZN050N": [
     {
       "type": 0,
-      "value": "Select all text in '"
+      "value": "選取 "
     },
     {
       "type": 1,
@@ -6900,13 +6976,13 @@
     },
     {
       "type": 0,
-      "value": "'"
+      "value": " 中的所有文字"
     }
   ],
   "ZOIvqN": [
     {
       "type": 0,
-      "value": "Sort By"
+      "value": "排序依據"
     }
   ],
   "ZUCTVP": [
@@ -6924,13 +7000,13 @@
   "ZXc10N": [
     {
       "type": 0,
-      "value": "Add group"
+      "value": "新增群組"
     }
   ],
   "ZXha+w": [
     {
       "type": 0,
-      "value": "Error message"
+      "value": "錯誤訊息"
     }
   ],
   "ZaIeDG": [
@@ -6948,7 +7024,7 @@
   "ZbeL1D": [
     {
       "type": 0,
-      "value": "Avoid spaces and the following symbols in your workflow name: \\ / : * ? \" < > | @, #, $, %, &"
+      "value": "在您的工作流程名稱中避免使用空白和下列符號： \\ / ： * ？“ < > |@, #, $, %, &"
     }
   ],
   "Zg3IjD": [
@@ -6960,7 +7036,7 @@
   "ZgyD93": [
     {
       "type": 0,
-      "value": "Accepted types:"
+      "value": "接受的類型:"
     }
   ],
   "Zi9gQK": [
@@ -7008,7 +7084,7 @@
   "aGxYMY": [
     {
       "type": 0,
-      "value": "Clear editor"
+      "value": "清除編輯器"
     }
   ],
   "aGyVJT": [
@@ -7020,13 +7096,13 @@
   "aI9W5L": [
     {
       "type": 0,
-      "value": "This template does not have connectors"
+      "value": "此範本沒有連接器"
     }
   ],
   "aJg1gl": [
     {
       "type": 0,
-      "value": "Retry policy maximum interval is invalid, must match ISO 8601 duration format"
+      "value": "重試原則最大間隔無效，必須符合 ISO 8601 持續時間格式"
     }
   ],
   "aP1wk9": [
@@ -7050,7 +7126,7 @@
   "aWdfiw": [
     {
       "type": 0,
-      "value": "Next suggestion"
+      "value": "下一個建議"
     }
   ],
   "aYTy7X": [
@@ -7068,7 +7144,7 @@
   "ao6BlS": [
     {
       "type": 0,
-      "value": "Resource group"
+      "value": "資源群組"
     }
   ],
   "aoUT/3": [
@@ -7080,7 +7156,7 @@
   "apZgmJ": [
     {
       "type": 0,
-      "value": "Invalid operation path input value. Path value - "
+      "value": "不正確作業路徑輸入值。路徑值 - "
     },
     {
       "type": 1,
@@ -7088,7 +7164,7 @@
     },
     {
       "type": 0,
-      "value": ", Path template - "
+      "value": " 路徑範本 - "
     },
     {
       "type": 1,
@@ -7101,22 +7177,28 @@
       "value": "新增或選取要用於對應的來源結構描述。"
     }
   ],
+  "auci7r": [
+    {
+      "type": 0,
+      "value": "Enter a valid comma-separated string."
+    }
+  ],
   "aurgrg": [
     {
       "type": 0,
-      "value": "Managed identity"
+      "value": "受控識別"
     }
   ],
   "b2aL+f": [
     {
       "type": 0,
-      "value": "Pin action"
+      "value": "釘選動作"
     }
   ],
   "b6G9bq": [
     {
       "type": 0,
-      "value": "URL encodes the input string"
+      "value": "編碼輸入字串的 URL"
     }
   ],
   "b7BQdu": [
@@ -7176,13 +7258,13 @@
   "bJMlgW": [
     {
       "type": 0,
-      "value": "Connections"
+      "value": "連線"
     }
   ],
   "bMUkSN": [
     {
       "type": 0,
-      "value": "This operation contains a token that does not exist in the current workflow."
+      "value": "此作業包含不存在於目前工作流程中的令牌。"
     }
   ],
   "bTrk+S": [
@@ -7224,7 +7306,7 @@
   "bg00eY": [
     {
       "type": 0,
-      "value": "Numbered list"
+      "value": "編號清單"
     }
   ],
   "blRFVt": [
@@ -7272,7 +7354,7 @@
   "c2ZT7p": [
     {
       "type": 0,
-      "value": "Details"
+      "value": "詳細資料"
     }
   ],
   "c3FLox": [
@@ -7308,7 +7390,7 @@
   "cBw7SC": [
     {
       "type": 0,
-      "value": "Created"
+      "value": "已建立"
     }
   ],
   "cHiBAn": [
@@ -7330,7 +7412,7 @@
     },
     {
       "type": 0,
-      "value": " value item"
+      "value": " 值專案"
     }
   ],
   "cNXS5n": [
@@ -7348,7 +7430,7 @@
   "cZ60Tk": [
     {
       "type": 0,
-      "value": "Loading...."
+      "value": "正在載入..."
     }
   ],
   "cZv9J0": [
@@ -7378,7 +7460,7 @@
   "chEskq": [
     {
       "type": 0,
-      "value": "Enable static result"
+      "value": "啟用靜態結果"
     }
   ],
   "ciLkfU": [
@@ -7414,7 +7496,7 @@
   "cuKbLw": [
     {
       "type": 0,
-      "value": "Premium"
+      "value": "進階"
     }
   ],
   "cvp9VP": [
@@ -7426,13 +7508,13 @@
   "cw9FiJ": [
     {
       "type": 0,
-      "value": "Schema URI"
+      "value": "結構描述 URI"
     }
   ],
   "cwHxwb": [
     {
       "type": 0,
-      "value": "Add connection"
+      "value": "新增連線"
     }
   ],
   "cyEBus": [
@@ -7516,7 +7598,7 @@
   "dU0RgS": [
     {
       "type": 0,
-      "value": "Add a multi-select list of options"
+      "value": "新增選項的複選清單"
     }
   ],
   "dUbKuK": [
@@ -7528,7 +7610,7 @@
   "dVFyPb": [
     {
       "type": 0,
-      "value": "Default value"
+      "value": "預設值"
     }
   ],
   "daoo3l": [
@@ -7620,7 +7702,7 @@
   "eDHwU7": [
     {
       "type": 0,
-      "value": "🖊️ Working on it..."
+      "value": "🖊️ 處理中..."
     }
   ],
   "eESljX": [
@@ -7662,13 +7744,13 @@
   "eLthgv": [
     {
       "type": 0,
-      "value": "Client certificate"
+      "value": "用戶端憑證"
     }
   ],
   "eNp9V6": [
     {
       "type": 0,
-      "value": "Upload PFX File"
+      "value": "上傳 PFX 檔案"
     }
   ],
   "eO1h/h": [
@@ -7680,7 +7762,7 @@
   "eOAJQk": [
     {
       "type": 0,
-      "value": "Degree of parallelism"
+      "value": "平行處理原則程度"
     }
   ],
   "eRvRWs": [
@@ -7698,25 +7780,25 @@
   "eTW4SD": [
     {
       "type": 0,
-      "value": "Description"
+      "value": "描述"
     }
   ],
   "eUxnDx": [
     {
       "type": 0,
-      "value": "Status code"
+      "value": "狀態碼"
     }
   ],
   "eaEXYa": [
     {
       "type": 0,
-      "value": "All"
+      "value": "全部"
     }
   ],
   "eb91v1": [
     {
       "type": 0,
-      "value": "Change connection"
+      "value": "變更連線"
     }
   ],
   "egLI8P": [
@@ -7734,7 +7816,7 @@
   "ekM77J": [
     {
       "type": 0,
-      "value": "Workflow name"
+      "value": "工作流程名稱"
     }
   ],
   "elD6+N": [
@@ -7746,7 +7828,7 @@
   "elWEjT": [
     {
       "type": 0,
-      "value": "Click to collapse"
+      "value": "按一下以摺疊"
     }
   ],
   "en/5A3": [
@@ -7767,10 +7849,16 @@
       "value": "已共用"
     }
   ],
+  "epi+zR": [
+    {
+      "type": 0,
+      "value": "Close map checker"
+    }
+  ],
   "er6O+w": [
     {
       "type": 0,
-      "value": "Name"
+      "value": "名稱"
     }
   ],
   "evyGYj": [
@@ -7782,13 +7870,13 @@
   "ewGciu": [
     {
       "type": 0,
-      "value": "Authentication"
+      "value": "驗證"
     }
   ],
   "eyuBr7": [
     {
       "type": 0,
-      "value": "Please submit a different query than the previously submitted query. Previously submitted query: "
+      "value": "請提交與先前提交的查詢不同的查詢。先前提交的查詢： "
     },
     {
       "type": 1,
@@ -7816,7 +7904,7 @@
   "f7cxXb": [
     {
       "type": 0,
-      "value": "Split on"
+      "value": "分割"
     }
   ],
   "f81ClO": [
@@ -7828,7 +7916,7 @@
   "fAB0Ww": [
     {
       "type": 0,
-      "value": "Output"
+      "value": "輸出"
     }
   ],
   "fBQBw/": [
@@ -7844,7 +7932,7 @@
     },
     {
       "type": 0,
-      "value": " Item"
+      "value": " 專案"
     }
   ],
   "fElufw": [
@@ -7862,19 +7950,19 @@
   "fNE/hg": [
     {
       "type": 0,
-      "value": "Button to add dynamic content if token picker is hidden"
+      "value": "當權杖選擇器隱藏時新增動態內容的按鈕"
     }
   ],
   "fNlJSh": [
     {
       "type": 0,
-      "value": "All connections must be connected for workflow creation"
+      "value": "必須連接所有連線才能建立工作流程"
     }
   ],
   "fSMyDJ": [
     {
       "type": 0,
-      "value": "Request options - Timeout"
+      "value": "要求選項 - 逾時"
     }
   ],
   "fVG5aD": [
@@ -7922,7 +8010,7 @@
   "fxue5l": [
     {
       "type": 0,
-      "value": "Workflows"
+      "value": "工作流程"
     }
   ],
   "g076bL": [
@@ -8024,7 +8112,7 @@
   "gS4Teq": [
     {
       "type": 0,
-      "value": "Array Item"
+      "value": "陣列專案"
     }
   ],
   "gWyYg0": [
@@ -8046,7 +8134,7 @@
     },
     {
       "type": 0,
-      "value": " more items"
+      "value": " 更多專案"
     }
   ],
   "gc6v4X": [
@@ -8122,7 +8210,7 @@
     },
     {
       "type": 0,
-      "value": " Install gateway"
+      "value": " 安裝閘道"
     }
   ],
   "h1lQDa": [
@@ -8146,13 +8234,13 @@
   "hCrg+6": [
     {
       "type": 0,
-      "value": "Actions must have one or more run after configurations"
+      "value": "動作在設定之後必須執行一或多個"
     }
   ],
   "hHDJhD": [
     {
       "type": 0,
-      "value": "File content"
+      "value": "檔案內容"
     }
   ],
   "hLOIwp": [
@@ -8170,7 +8258,7 @@
   "hMpLz3": [
     {
       "type": 0,
-      "value": "Callback URL"
+      "value": "回呼 URL"
     }
   ],
   "hN7iBP": [
@@ -8215,7 +8303,7 @@
   "haeWoU": [
     {
       "type": 0,
-      "value": "Failed to evaluate outputs because splitOn "
+      "value": "無法評估輸出，因為無法評估splitOn "
     },
     {
       "type": 1,
@@ -8223,7 +8311,7 @@
     },
     {
       "type": 0,
-      "value": " cannot be evaluated. As a result, this operation's outputs might not be correctly visible in subsequent actions"
+      "value": "。因此，此作業的輸出可能無法在後續動作中正確顯示"
     }
   ],
   "hbOvB4": [
@@ -8241,13 +8329,13 @@
   "hlrKDC": [
     {
       "type": 0,
-      "value": "Connection"
+      "value": "連線"
     }
   ],
   "ho2D6F": [
     {
       "type": 0,
-      "value": "Close panel"
+      "value": "關閉面板"
     }
   ],
   "hq1mk6": [
@@ -8295,7 +8383,7 @@
   "hz9HJ2": [
     {
       "type": 0,
-      "value": "Insert dynamic content"
+      "value": "插入動態內容"
     }
   ],
   "hza/cT": [
@@ -8307,7 +8395,7 @@
   "i/R+Q7": [
     {
       "type": 0,
-      "value": "Local time"
+      "value": "當地時間"
     }
   ],
   "i/SguY": [
@@ -8361,7 +8449,7 @@
   "iBArTB": [
     {
       "type": 0,
-      "value": "collapse functions drawer"
+      "value": "折疊函數選取器"
     }
   ],
   "iCSHJG": [
@@ -8373,7 +8461,7 @@
   "iCni1C": [
     {
       "type": 0,
-      "value": "Can't find any search results"
+      "value": "找不到任何搜尋結果"
     }
   ],
   "iE2+sy": [
@@ -8435,7 +8523,7 @@
   "iTz1lp": [
     {
       "type": 0,
-      "value": "Unpin action"
+      "value": "取消釘選動作"
     }
   ],
   "iU1OJh": [
@@ -8489,13 +8577,13 @@
   "im0GMa": [
     {
       "type": 0,
-      "value": "Show less"
+      "value": "顯示較少"
     }
   ],
   "ioUq6Q": [
     {
       "type": 0,
-      "value": "Password"
+      "value": "密碼"
     }
   ],
   "iq+tiv": [
@@ -8517,7 +8605,7 @@
   "ir+plQ": [
     {
       "type": 0,
-      "value": "Operation details error"
+      "value": "作業詳細數據錯誤"
     }
   ],
   "iy8rNf": [
@@ -8529,13 +8617,13 @@
   "j2v8BE": [
     {
       "type": 0,
-      "value": "No connections are needed in this template"
+      "value": "此範本不需要連線"
     }
   ],
   "j4OKkU": [
     {
       "type": 0,
-      "value": "Text color"
+      "value": "文字色彩"
     }
   ],
   "j5z8Vd": [
@@ -8673,13 +8761,13 @@
   "jvVVTG": [
     {
       "type": 0,
-      "value": "Action type"
+      "value": "動作類型"
     }
   ],
   "k/X2ml": [
     {
       "type": 0,
-      "value": "Type"
+      "value": "類型"
     }
   ],
   "k/oqFL": [
@@ -8709,7 +8797,7 @@
   "kBTFhL": [
     {
       "type": 0,
-      "value": "Fix my expression: "
+      "value": "修正我的表達式： "
     },
     {
       "type": 1,
@@ -8806,6 +8894,20 @@
       "value": "已移除未連線到目標元素的元素和對應。"
     }
   ],
+  "kfmLTY": [
+    {
+      "type": 0,
+      "value": "Function '"
+    },
+    {
+      "type": 1,
+      "value": "functionName"
+    },
+    {
+      "type": 0,
+      "value": "' is missing required inputs"
+    }
+  ],
   "klY9UN": [
     {
       "offset": 0,
@@ -8850,7 +8952,7 @@
   "kvUaFw": [
     {
       "type": 0,
-      "value": "More info"
+      "value": "其他資訊"
     }
   ],
   "l/3yJr": [
@@ -8892,13 +8994,13 @@
   "l8lP1X": [
     {
       "type": 0,
-      "value": "The error and its code are required when status is \"Failed\""
+      "value": "當狀態為 [失敗] 時，需要錯誤及其程式碼"
     }
   ],
   "l9+EbH": [
     {
       "type": 0,
-      "value": "Description"
+      "value": "描述"
     }
   ],
   "lA/sHA": [
@@ -8924,13 +9026,13 @@
   "lFWXhc": [
     {
       "type": 0,
-      "value": "Workflow"
+      "value": "工作流程"
     }
   ],
   "lK+Vzo": [
     {
       "type": 0,
-      "value": "Secure string"
+      "value": "安全字串"
     }
   ],
   "lM9qrG": [
@@ -8960,7 +9062,7 @@
   "lSUNx5": [
     {
       "type": 0,
-      "value": "Action tracking ID"
+      "value": "動作追蹤 ID"
     }
   ],
   "lX30/R": [
@@ -8972,7 +9074,7 @@
   "lbq5E1": [
     {
       "type": 0,
-      "value": "Large messages may be split up into smaller requests to the connector to allow large message upload. More details can be found at http://aka.ms/logicapps-chunk#upload-content-in-chunks"
+      "value": "大型訊息可以分割為連接器的數個較小要求，使大型訊息得以上傳。如需詳細資料，請參閱 http://aka.ms/logicapps-chunk#upload-content-in-chunks"
     }
   ],
   "lckgnb": [
@@ -8984,7 +9086,7 @@
   "ldn/IC": [
     {
       "type": 0,
-      "value": "Test"
+      "value": "測試"
     }
   ],
   "lexzgJ": [
@@ -9014,7 +9116,7 @@
   "lk/Qic": [
     {
       "type": 0,
-      "value": "connector"
+      "value": "連接器"
     }
   ],
   "lkgjxD": [
@@ -9026,13 +9128,13 @@
   "lkmLHk": [
     {
       "type": 0,
-      "value": "Use Schema Editor"
+      "value": "使用架構 編輯器"
     }
   ],
   "lqF8H5": [
     {
       "type": 0,
-      "value": "Collapse static result"
+      "value": "摺疊靜態結果"
     }
   ],
   "lsH37F": [
@@ -9062,13 +9164,13 @@
   "m4qt/b": [
     {
       "type": 0,
-      "value": "ACL creation failed for connection. Deleting the connection."
+      "value": "連線的 Acl 建立失敗。正在刪除連線。"
     }
   ],
   "m5InJc": [
     {
       "type": 0,
-      "value": "Status Code"
+      "value": "狀態碼"
     }
   ],
   "m7Y6Qf": [
@@ -9080,7 +9182,7 @@
   "m8MjHH": [
     {
       "type": 0,
-      "value": "Enter a value"
+      "value": "輸入值"
     }
   ],
   "m8Q61y": [
@@ -9148,7 +9250,7 @@
   "mQJXU4": [
     {
       "type": 0,
-      "value": "Run after"
+      "value": "執行時間點"
     }
   ],
   "mUURJW": [
@@ -9178,7 +9280,7 @@
   "mb1XDD": [
     {
       "type": 0,
-      "value": "Actual value"
+      "value": "實際值"
     }
   ],
   "mca3Ml": [
@@ -9202,7 +9304,7 @@
   "mgD2ZT": [
     {
       "type": 0,
-      "value": "Summary"
+      "value": "摘要"
     }
   ],
   "mjS/k1": [
@@ -9248,7 +9350,7 @@
   "mxSILx": [
     {
       "type": 0,
-      "value": "Queries"
+      "value": "查詢"
     }
   ],
   "n+F7e2": [
@@ -9260,7 +9362,7 @@
   "n+sJ5W": [
     {
       "type": 0,
-      "value": "Published by"
+      "value": "發佈者"
     }
   ],
   "n20T2h": [
@@ -9314,7 +9416,7 @@
   "nN1ezT": [
     {
       "type": 0,
-      "value": "Start with a blank workflow to build your integration process from scratch."
+      "value": "從空白工作流程開始，從頭開始建立整合程式。"
     }
   ],
   "nNWAAh": [
@@ -9326,7 +9428,7 @@
   "nODesn": [
     {
       "type": 0,
-      "value": "Source"
+      "value": "來源"
     }
   ],
   "nOWGAV": [
@@ -9350,7 +9452,7 @@
   "nRjpgk": [
     {
       "type": 0,
-      "value": "Sample data"
+      "value": "範例資料"
     }
   ],
   "nRpM02": [
@@ -9380,7 +9482,7 @@
   "nV2Spt": [
     {
       "type": 0,
-      "value": "Operation details panel"
+      "value": "作業詳細數據面板"
     }
   ],
   "nVDG00": [
@@ -9422,7 +9524,7 @@
   "nhEgHb": [
     {
       "type": 0,
-      "value": "By"
+      "value": "由"
     }
   ],
   "njGstq": [
@@ -9446,7 +9548,7 @@
   "no+blV": [
     {
       "type": 0,
-      "value": "Cancel"
+      "value": "取消"
     }
   ],
   "no/SMg": [
@@ -9458,13 +9560,13 @@
   "nr6bPd": [
     {
       "type": 0,
-      "value": "Open Test panel"
+      "value": "開啟測試面板"
     }
   ],
   "nuNBYE": [
     {
       "type": 0,
-      "value": "Path"
+      "value": "路徑"
     }
   ],
   "nwLd4b": [
@@ -9532,7 +9634,7 @@
   "o6x5J4": [
     {
       "type": 0,
-      "value": "Create expression"
+      "value": "建立運算式"
     }
   ],
   "o7bd1o": [
@@ -9568,13 +9670,13 @@
   "oOGTSo": [
     {
       "type": 0,
-      "value": "Connected"
+      "value": "已連線"
     }
   ],
   "oPKLDZ": [
     {
       "type": 0,
-      "value": "Delete switch case"
+      "value": "刪除切換案例"
     }
   ],
   "oQjIWf": [
@@ -9610,7 +9712,7 @@
   "oWAB0H": [
     {
       "type": 0,
-      "value": "Parameters"
+      "value": "參數"
     }
   ],
   "oZMhX/": [
@@ -9622,7 +9724,7 @@
   "ocW+RF": [
     {
       "type": 0,
-      "value": "Details"
+      "value": "詳細資料"
     }
   ],
   "odQ554": [
@@ -9634,7 +9736,7 @@
   "ohpbkw": [
     {
       "type": 0,
-      "value": "Exponential interval"
+      "value": "指數間隔"
     }
   ],
   "onXUu0": [
@@ -9646,13 +9748,13 @@
   "oqgNX3": [
     {
       "type": 0,
-      "value": "Workflow name"
+      "value": "工作流程名稱"
     }
   ],
   "osln7P": [
     {
       "type": 0,
-      "value": "URL decodes the input string"
+      "value": "解碼輸入字串的 URL"
     }
   ],
   "ox2Ou7": [
@@ -9664,7 +9766,7 @@
   "oxCSqB": [
     {
       "type": 0,
-      "value": "You can edit parameters here or in designer."
+      "value": "您可以在這裏或設計工具中編輯參數。"
     }
   ],
   "oxXV4+": [
@@ -9676,7 +9778,7 @@
   "oxcHvs": [
     {
       "type": 0,
-      "value": "Remove list of multi options"
+      "value": "移除複選清單"
     }
   ],
   "p/0r2N": [
@@ -9718,7 +9820,7 @@
   "pH6ubt": [
     {
       "type": 0,
-      "value": "Details"
+      "value": "詳細資料"
     }
   ],
   "pIczsS": [
@@ -9772,7 +9874,7 @@
   "pfmki/": [
     {
       "type": 0,
-      "value": "Specify the behavior and capabilities for transferring content over HTTP."
+      "value": "請指定經 HTTP 傳輸內容的行為及功能。"
     }
   ],
   "piaRy6": [
@@ -9784,7 +9886,7 @@
   "pjC3M9": [
     {
       "type": 0,
-      "value": "Suggested expression"
+      "value": "建議的表達式"
     }
   ],
   "pozypE": [
@@ -9796,7 +9898,7 @@
   "pqprxZ": [
     {
       "type": 0,
-      "value": "Configure connections to authenticate and link your workflows with services and applications."
+      "value": "設定連線以驗證您的工作流程，並與服務和應用程式連結。"
     }
   ],
   "pr9GwA": [
@@ -9814,7 +9916,7 @@
   "pykp8c": [
     {
       "type": 0,
-      "value": "Blank workflow"
+      "value": "空白工作流程"
     }
   ],
   "q/+Uex": [
@@ -9862,7 +9964,7 @@
   "q5lttG": [
     {
       "type": 0,
-      "value": "Undo"
+      "value": "復原"
     }
   ],
   "q87X20": [
@@ -9912,7 +10014,7 @@
   "qMFpNH": [
     {
       "type": 0,
-      "value": "Loading dynamic data"
+      "value": "正在載入動態數據"
     }
   ],
   "qSejoi": [
@@ -9985,7 +10087,7 @@
   "qp3gCy": [
     {
       "type": 0,
-      "value": "Insert link"
+      "value": "插入連結"
     }
   ],
   "qr1lLG": [
@@ -10011,13 +10113,13 @@
   "qsL/fE": [
     {
       "type": 0,
-      "value": "Delete parameter"
+      "value": "刪除參數"
     }
   ],
   "qxw9UO": [
     {
       "type": 0,
-      "value": "Status"
+      "value": "狀態"
     }
   ],
   "qy5WqY": [
@@ -10083,19 +10185,19 @@
   "rEQceE": [
     {
       "type": 0,
-      "value": "Microsoft Authored"
+      "value": "Microsoft撰寫"
     }
   ],
   "rHySVF": [
     {
       "type": 0,
-      "value": "Missing information for workflows creation"
+      "value": "缺少建立工作流程的資訊"
     }
   ],
   "rMYBfw": [
     {
       "type": 0,
-      "value": "Make the field optional"
+      "value": "將欄位設為選用"
     }
   ],
   "rNi5Y3": [
@@ -10151,7 +10253,7 @@
   "rl9UOO": [
     {
       "type": 0,
-      "value": "Connections cannot be edited in pinned view. Release the pinned action to make connection changes."
+      "value": "無法在釘選的檢視中編輯 Connections。釋放釘選的動作以變更連線。"
     }
   ],
   "rsdJcV": [
@@ -10164,6 +10266,12 @@
     {
       "type": 0,
       "value": "新增"
+    }
+  ],
+  "rwrlsB": [
+    {
+      "type": 0,
+      "value": "Map Issues"
     }
   ],
   "rxIJfD": [
@@ -10187,13 +10295,13 @@
   "s0Qaot": [
     {
       "type": 0,
-      "value": "Workflow Parameters Panel"
+      "value": "工作流程參數面板"
     }
   ],
   "s5AOpV": [
     {
       "type": 0,
-      "value": "Card title"
+      "value": "卡片標題"
     }
   ],
   "s5RV9B": [
@@ -10235,7 +10343,7 @@
   "sKy720": [
     {
       "type": 0,
-      "value": "Must provide value for workflow name."
+      "value": "必須提供工作流程名稱的值。"
     }
   ],
   "sRpETS": [
@@ -10253,7 +10361,7 @@
   "sVcvcG": [
     {
       "type": 0,
-      "value": "Basics"
+      "value": "基本資料"
     }
   ],
   "sYQDN+": [
@@ -10289,7 +10397,7 @@
   "sfTqHY": [
     {
       "type": 0,
-      "value": "Close panel"
+      "value": "關閉面板"
     }
   ],
   "shF9tZ": [
@@ -10375,7 +10483,7 @@
   "t+h+KW": [
     {
       "type": 0,
-      "value": "Input"
+      "value": "輸入"
     }
   ],
   "t/RPwA": [
@@ -10387,13 +10495,13 @@
   "t0tN4J": [
     {
       "type": 0,
-      "value": "Code view"
+      "value": "程式碼檢視"
     }
   ],
   "t7ytOJ": [
     {
       "type": 0,
-      "value": "Status"
+      "value": "狀態"
     }
   ],
   "t9RwOi": [
@@ -10423,7 +10531,7 @@
   "tGSsgZ": [
     {
       "type": 0,
-      "value": "select an identity"
+      "value": "選取身分識別"
     }
   ],
   "tH2pT1": [
@@ -10477,13 +10585,13 @@
   "tQIXhy": [
     {
       "type": 0,
-      "value": "Original expression"
+      "value": "原始表達式"
     }
   ],
   "tRe2Ct": [
     {
       "type": 0,
-      "value": "Name"
+      "value": "名稱"
     }
   ],
   "tTIsTX": [
@@ -10551,7 +10659,7 @@
   "tbl/ar": [
     {
       "type": 0,
-      "value": "No items"
+      "value": "沒有項目"
     }
   ],
   "td5//c": [
@@ -10569,19 +10677,19 @@
   "tjQdhq": [
     {
       "type": 0,
-      "value": "Type"
+      "value": "類型"
     }
   ],
   "toWTrl": [
     {
       "type": 0,
-      "value": "Search"
+      "value": "搜尋"
     }
   ],
   "tooc6v": [
     {
       "type": 0,
-      "value": "Switch '"
+      "value": "將 '"
     },
     {
       "type": 1,
@@ -10589,7 +10697,7 @@
     },
     {
       "type": 0,
-      "value": "' to the local time"
+      "value": "' 切換到當地時間"
     }
   ],
   "tqqUHX": [
@@ -10601,7 +10709,7 @@
   "tt1pJC": [
     {
       "type": 0,
-      "value": "You will lose all unsaved changes. Are you sure you want to discard the changes?"
+      "value": "您將會遺失所有未儲存的變更。您確定要捨棄變更嗎？"
     }
   ],
   "tu4TTM": [
@@ -10613,13 +10721,13 @@
   "twr0pi": [
     {
       "type": 0,
-      "value": "Copy trigger"
+      "value": "複製觸發程式"
     }
   ],
   "tzeDPE": [
     {
       "type": 0,
-      "value": "State type"
+      "value": "狀態類型"
     }
   ],
   "u81zB9": [
@@ -10643,13 +10751,13 @@
   "uEI5Wo": [
     {
       "type": 0,
-      "value": "Value"
+      "value": "值"
     }
   ],
   "uIgGKj": [
     {
       "type": 0,
-      "value": "Managed identity"
+      "value": "受控識別"
     }
   ],
   "uIurld": [
@@ -10695,7 +10803,7 @@
   "uSr3WX": [
     {
       "type": 0,
-      "value": "Connection name"
+      "value": "連線名稱"
     }
   ],
   "uTTbhk": [
@@ -10749,7 +10857,7 @@
   "udnt8c": [
     {
       "type": 0,
-      "value": "Secure object"
+      "value": "安全物件"
     }
   ],
   "uesaee": [
@@ -10779,7 +10887,7 @@
   "umLmPm": [
     {
       "type": 0,
-      "value": "Operation Panel"
+      "value": "作業面板"
     }
   ],
   "unMG8m": [
@@ -10851,7 +10959,7 @@
   "uzj2d3": [
     {
       "type": 0,
-      "value": "Close panel"
+      "value": "關閉面板"
     }
   ],
   "uzsleE": [
@@ -10863,7 +10971,7 @@
   "v+FA8N": [
     {
       "type": 0,
-      "value": "Local time"
+      "value": "當地時間"
     }
   ],
   "v+keTP": [
@@ -10881,7 +10989,7 @@
   "v4JmCE": [
     {
       "type": 0,
-      "value": "Please explain how you would like to update your expression: \""
+      "value": "請說明您要如何更新表示式： \""
     },
     {
       "type": 1,
@@ -10919,13 +11027,13 @@
   "vNqq43": [
     {
       "type": 0,
-      "value": "Add loop"
+      "value": "新增迴圈"
     }
   ],
   "vO/I7P": [
     {
       "type": 0,
-      "value": "Switch '"
+      "value": "將 '"
     },
     {
       "type": 1,
@@ -10933,7 +11041,7 @@
     },
     {
       "type": 0,
-      "value": "' to the UTC time format"
+      "value": "' 切換為 UTC 時間格式"
     }
   ],
   "vQcQkU": [
@@ -10993,7 +11101,7 @@
   "voRDKP": [
     {
       "type": 0,
-      "value": "Headers"
+      "value": "標頭"
     }
   ],
   "vr70Gn": [
@@ -11037,13 +11145,13 @@
   "w+7aGo": [
     {
       "type": 0,
-      "value": "Connections list"
+      "value": "Connections 清單"
     }
   ],
   "w+t06Q": [
     {
       "type": 0,
-      "value": "Select fields"
+      "value": "選取欄位"
     }
   ],
   "w0pI5M": [
@@ -11073,7 +11181,7 @@
   "wBBu4g": [
     {
       "type": 0,
-      "value": "Missing information for workflow creation"
+      "value": "缺少建立工作流程的資訊"
     }
   ],
   "wEaGWn": [
@@ -11097,7 +11205,7 @@
   "wG8fwz": [
     {
       "type": 0,
-      "value": "Bullet list"
+      "value": "項目符號清單"
     }
   ],
   "wGYmui": [
@@ -11109,7 +11217,7 @@
   "wKJdDk": [
     {
       "type": 0,
-      "value": "Unsupported token type: "
+      "value": "不支援的權杖類型: "
     },
     {
       "type": 1,
@@ -11131,7 +11239,7 @@
   "wPjnM9": [
     {
       "type": 0,
-      "value": "Paste a parallel action"
+      "value": "貼上平行動作"
     }
   ],
   "wPlTDB": [
@@ -11155,7 +11263,7 @@
   "wTaSTp": [
     {
       "type": 0,
-      "value": "Please save the map before testing"
+      "value": "測試前請先儲存對應"
     }
   ],
   "wV3Lmd": [
@@ -11179,13 +11287,13 @@
   "wXLEcJ": [
     {
       "type": 0,
-      "value": "Insert data from previous step (you can also add by typing Alt + / in the editor)"
+      "value": "插入上一個步驟的資料 (您也可以在編輯器中輸入 Alt + / 來新增)"
     }
   ],
   "wYzIf2": [
     {
       "type": 0,
-      "value": "Unsupported token type: "
+      "value": "不支援的權杖類型: "
     },
     {
       "type": 1,
@@ -11195,13 +11303,13 @@
   "wfekJ7": [
     {
       "type": 0,
-      "value": "Type"
+      "value": "類型"
     }
   ],
   "wjiptl": [
     {
       "type": 0,
-      "value": "Node Search Panel"
+      "value": "節點搜尋面板"
     }
   ],
   "wkvUUA": [
@@ -11249,7 +11357,7 @@
   "wx/ZQP": [
     {
       "type": 0,
-      "value": "Add Input"
+      "value": "新增輸入"
     }
   ],
   "wxaQwD": [
@@ -11309,7 +11417,7 @@
   "xDHpeS": [
     {
       "type": 0,
-      "value": "Review your settings, ensure everything is correctly set up, and create your workflow."
+      "value": "檢閱您的設定、確定所有專案都已正確設定，以及建立您的工作流程。"
     }
   ],
   "xFQXAI": [
@@ -11321,7 +11429,7 @@
   "xHyhqO": [
     {
       "type": 0,
-      "value": "Optimized for low latency"
+      "value": "已針對低延遲進行優化"
     }
   ],
   "xJ6vjn": [
@@ -11339,13 +11447,13 @@
   "xK8r1/": [
     {
       "type": 0,
-      "value": "Run information loading"
+      "value": "正在載入執行資訊"
     }
   ],
   "xMgLd8": [
     {
       "type": 0,
-      "value": "Minimum interval"
+      "value": "最小間隔"
     }
   ],
   "xN3GEX": [
@@ -11417,7 +11525,7 @@
   "xwB12G": [
     {
       "type": 0,
-      "value": "Enter another option"
+      "value": "輸入其他選項"
     }
   ],
   "xwD1VZ": [
@@ -11435,7 +11543,7 @@
   "y+eYFf": [
     {
       "type": 0,
-      "value": "Workflow parameters"
+      "value": "工作流程參數"
     }
   ],
   "y1e9yw": [
@@ -11459,7 +11567,7 @@
   "y6aoMi": [
     {
       "type": 0,
-      "value": "Show Logic App run details"
+      "value": "顯示邏輯應用程式的執行詳細資料"
     }
   ],
   "yB6PB/": [
@@ -11477,7 +11585,7 @@
   "yENrOg": [
     {
       "type": 0,
-      "value": "here"
+      "value": "這裡"
     }
   ],
   "yF2R//": [
@@ -11489,7 +11597,7 @@
   "yKNKV/": [
     {
       "type": 0,
-      "value": "Try a different search term or remove filters"
+      "value": "嘗試不同的搜尋字詞或移除篩選"
     }
   ],
   "yKOsmK": [
@@ -11507,13 +11615,13 @@
   "yOyeBT": [
     {
       "type": 0,
-      "value": "Toggle minimap"
+      "value": "切換縮圖"
     }
   ],
   "yQ6+nV": [
     {
       "type": 0,
-      "value": "Connect"
+      "value": "連線"
     }
   ],
   "yRDuqj": [
@@ -11549,7 +11657,7 @@
   "yeagrz": [
     {
       "type": 0,
-      "value": "Ideal for request-response and processing IoT events"
+      "value": "適用於要求-回應與處理IoT事件"
     }
   ],
   "yjierd": [
@@ -11569,7 +11677,7 @@
   "yjjXCQ": [
     {
       "type": 0,
-      "value": "Close panel"
+      "value": "關閉面板"
     }
   ],
   "yk7L+4": [
@@ -11593,7 +11701,7 @@
   "yqF/Ew": [
     {
       "type": 0,
-      "value": "Search workflow actions"
+      "value": "搜尋工作流程動作"
     }
   ],
   "yqRrQ/": [
@@ -11629,7 +11737,7 @@
   "yxctQw": [
     {
       "type": 0,
-      "value": "Logical name"
+      "value": "邏輯名稱"
     }
   ],
   "yzqXMp": [
@@ -11655,7 +11763,7 @@
   "z/vIwi": [
     {
       "type": 0,
-      "value": "Data handling"
+      "value": "資料處理"
     }
   ],
   "z3VuE+": [
@@ -11667,7 +11775,7 @@
   "z5H3GF": [
     {
       "type": 0,
-      "value": "Display name"
+      "value": "顯示名稱"
     }
   ],
   "z9kH+0": [
@@ -11697,13 +11805,13 @@
   "zK5VPq": [
     {
       "type": 0,
-      "value": "Workflows in this Accelerator"
+      "value": "此加速器中的工作流程"
     }
   ],
   "zMKxg9": [
     {
       "type": 0,
-      "value": "Name does not match the given pattern."
+      "value": "名稱不符合指定的模式。"
     }
   ],
   "zNesUZ": [
@@ -11721,7 +11829,7 @@
   "zPRSM9": [
     {
       "type": 0,
-      "value": "App identity is not configured on the logic app environment variables."
+      "value": "邏輯應用程式環境變數上未設定應用程式身分識別。"
     }
   ],
   "zUWAsJ": [
@@ -11781,7 +11889,7 @@
   "zkqKJ+": [
     {
       "type": 0,
-      "value": "Body"
+      "value": "本文"
     }
   ],
   "znGyyU": [
@@ -11805,7 +11913,7 @@
   "zxF7g+": [
     {
       "type": 0,
-      "value": "A to Z, ascending"
+      "value": "A 到 Z，遞增"
     }
   ],
   "zxe9hh": [
