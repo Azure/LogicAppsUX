@@ -9,7 +9,7 @@ import type { ElkExtendedEdge } from 'elkjs/lib/elk-api';
 import type React from 'react';
 import { memo, useMemo } from 'react';
 import { EdgeLabelRenderer, getSmoothStepPath, useReactFlow, type EdgeProps } from '@xyflow/react';
-import { useOperationPanelSelectedNodeId } from '../../core/state/panel/panelSelectors';
+import { useIsNodeSelectedInOperationPanel } from '../../core/state/panel/panelSelectors';
 import { css } from '@fluentui/utilities';
 
 interface EdgeContentProps {
@@ -82,8 +82,6 @@ const ButtonEdge: React.FC<EdgeProps<LogicAppsEdgeProps>> = ({
     targetY,
   });
 
-  const selectedNode = useOperationPanelSelectedNodeId();
-
   const filteredRunAfters: Record<string, string[]> = useMemo(
     () =>
       Object.entries(operationData?.runAfter ?? {}).reduce((pv: Record<string, string[]>, [id, cv]) => {
@@ -135,9 +133,10 @@ const ButtonEdge: React.FC<EdgeProps<LogicAppsEdgeProps>> = ({
 
   const tabIndex = useEdgeIndex(id);
 
-  const highlighted = useMemo(() => {
-    return sourceId === selectedNode || targetId === selectedNode;
-  }, [sourceId, targetId, selectedNode]);
+  const isSourceSelected = useIsNodeSelectedInOperationPanel(sourceId);
+  const isTargetSelected = useIsNodeSelectedInOperationPanel(targetId);
+
+  const highlighted = useMemo(() => isSourceSelected || isTargetSelected, [isSourceSelected, isTargetSelected]);
 
   return (
     <>
