@@ -454,6 +454,7 @@ const ParameterSection = ({
           editor,
           editorOptions,
           tokenEditor: true,
+          isDynamic: dynamicData !== undefined,
           isLoading: dynamicData?.status === DynamicLoadStatus.LOADING,
           errorDetails: dynamicData?.error ? { message: dynamicData.error.message } : undefined,
           validationErrors,

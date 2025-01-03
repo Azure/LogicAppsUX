@@ -26,19 +26,19 @@
   "+5Jp42": [
     {
       "type": 0,
-      "value": "By"
+      "value": "Door"
     }
   ],
   "+Agiub": [
     {
       "type": 0,
-      "value": "Create an expression with Copilot"
+      "value": "Een expressie maken met Copilot"
     }
   ],
   "+EREVh": [
     {
       "type": 0,
-      "value": "Name"
+      "value": "Naam"
     }
   ],
   "+FcXe9": [
@@ -74,7 +74,7 @@
   "+R90eK": [
     {
       "type": 0,
-      "value": "Retry policy interval is invalid, must match ISO 8601 duration format"
+      "value": "Het interval voor het beleid voor opnieuw proberen is ongeldig, het moet overeenkomen met de ISO 8601-notatie voor duur"
     }
   ],
   "+Uvo/p": [
@@ -102,7 +102,7 @@
   "+l5XmZ": [
     {
       "type": 0,
-      "value": "Enter a positive integer between "
+      "value": "Voer een positief geheel getal in tussen "
     },
     {
       "type": 1,
@@ -110,7 +110,7 @@
     },
     {
       "type": 0,
-      "value": " and "
+      "value": " en "
     },
     {
       "type": 1,
@@ -162,7 +162,7 @@
   "/IVuGP": [
     {
       "type": 0,
-      "value": "Discard"
+      "value": "Verwijderen"
     }
   ],
   "/KRvvg": [
@@ -222,7 +222,7 @@
   "/csbOB": [
     {
       "type": 0,
-      "value": "Retry policy count is invalid (must be from "
+      "value": "Het aantal beleidsregels voor opnieuw proberen is ongeldig (moet van "
     },
     {
       "type": 1,
@@ -230,7 +230,7 @@
     },
     {
       "type": 0,
-      "value": " to "
+      "value": " tot "
     },
     {
       "type": 1,
@@ -238,7 +238,7 @@
     },
     {
       "type": 0,
-      "value": ")"
+      "value": " zijn)"
     }
   ],
   "/doURb": [
@@ -274,7 +274,7 @@
   "/qrBuJ": [
     {
       "type": 0,
-      "value": "Create"
+      "value": "Maken"
     }
   ],
   "/qu3zt": [
@@ -304,13 +304,13 @@
   "/ye9Df": [
     {
       "type": 0,
-      "value": "Delete workflow action"
+      "value": "Werkstroomactie verwijderen"
     }
   ],
   "0/VGiF": [
     {
       "type": 0,
-      "value": "Add action"
+      "value": "Actie toevoegen"
     }
   ],
   "00xlpa": [
@@ -392,13 +392,13 @@
   "0BO/tO": [
     {
       "type": 0,
-      "value": "Split-on tracking ID"
+      "value": "Tracerings-id voor split-on"
     }
   ],
   "0C5Ywr": [
     {
       "type": 0,
-      "value": "Enter an array"
+      "value": "Een matrix invoeren"
     }
   ],
   "0CPsxh": [
@@ -422,7 +422,7 @@
   "0FRVkr": [
     {
       "type": 0,
-      "value": "Connection Panel"
+      "value": "Verbindingsvenster"
     }
   ],
   "0FzNJV": [
@@ -470,7 +470,7 @@
   "0UfxUM": [
     {
       "type": 0,
-      "value": "Next"
+      "value": "Volgende"
     }
   ],
   "0Vzp0l": [
@@ -480,10 +480,6 @@
     }
   ],
   "0ZZJos": [
-    {
-      "type": 0,
-      "value": "Showing "
-    },
     {
       "type": 1,
       "value": "current_index_start"
@@ -498,7 +494,7 @@
     },
     {
       "type": 0,
-      "value": " of "
+      "value": " van "
     },
     {
       "type": 1,
@@ -506,7 +502,7 @@
     },
     {
       "type": 0,
-      "value": " results."
+      "value": " resultaten worden weergegeven."
     }
   ],
   "0i/6TR": [
@@ -554,7 +550,7 @@
   "0uuxAX": [
     {
       "type": 0,
-      "value": "Delete mapping"
+      "value": "Toewijzing verwijderen"
     }
   ],
   "0vfdFS": [
@@ -570,7 +566,7 @@
     },
     {
       "type": 0,
-      "value": " connection"
+      "value": " verbinding"
     }
   ],
   "0xLWzG": [
@@ -636,7 +632,7 @@
   "1LSKq8": [
     {
       "type": 0,
-      "value": "Basics"
+      "value": "Basis"
     }
   ],
   "1NBvKu": [
@@ -648,7 +644,7 @@
   "1Xke9D": [
     {
       "type": 0,
-      "value": "open functions drawer"
+      "value": "functieslade openen"
     }
   ],
   "1dlfUe": [
@@ -666,7 +662,7 @@
   "1f7LG4": [
     {
       "type": 0,
-      "value": "Fixed interval"
+      "value": "Vast interval"
     }
   ],
   "1hHFdx": [
@@ -690,7 +686,7 @@
   "1jf3Dq": [
     {
       "type": 0,
-      "value": "Z to A, descending"
+      "value": "Z tot A, aflopend"
     }
   ],
   "1jhzOM": [
@@ -732,7 +728,7 @@
   "1vqDeQ": [
     {
       "type": 0,
-      "value": "Select Create to start a new workflow based on this template, no configuration required."
+      "value": "Selecteer Maken om een nieuwe werkstroom te starten op basis van deze sjabloon. Er is geen configuratie vereist."
     }
   ],
   "20oqsp": [
@@ -810,13 +806,13 @@
   "2OQU3/": [
     {
       "type": 0,
-      "value": "Cannot run after both trigger and action"
+      "value": "Kan niet worden uitgevoerd na zowel trigger als actie"
     }
   ],
   "2On4Xu": [
     {
       "type": 0,
-      "value": "Code view tab"
+      "value": "Tabblad codeweergave"
     }
   ],
   "2TMGk7": [
@@ -834,7 +830,7 @@
   "2adqQ4": [
     {
       "type": 0,
-      "value": "Maximum interval"
+      "value": "Maximuminterval"
     }
   ],
   "2cVEMV": [
@@ -898,7 +894,7 @@
   "2xQWRt": [
     {
       "type": 0,
-      "value": "Search Functions"
+      "value": "Functies zoeken"
     }
   ],
   "2y24a/": [
@@ -914,7 +910,7 @@
     },
     {
       "type": 0,
-      "value": " of "
+      "value": " van "
     },
     {
       "type": 1,
@@ -954,7 +950,7 @@
   "36sF7T": [
     {
       "type": 0,
-      "value": "Associated workflows"
+      "value": "Gekoppelde werkstromen"
     }
   ],
   "3AWwVl": [
@@ -966,7 +962,7 @@
   "3BXdMk": [
     {
       "type": 0,
-      "value": "Request settings"
+      "value": "Aanvraaginstellingen"
     }
   ],
   "3BZnxY": [
@@ -990,7 +986,7 @@
   "3JEC7U": [
     {
       "type": 0,
-      "value": "Error type"
+      "value": "Fouttype"
     }
   ],
   "3KPLpx": [
@@ -1052,7 +1048,7 @@
   "3Xf/4S": [
     {
       "type": 0,
-      "value": "Swagger endpoint"
+      "value": "Swagger-eindpunt"
     }
   ],
   "3Y8a6G": [
@@ -1072,13 +1068,13 @@
   "3a3eHg": [
     {
       "type": 0,
-      "value": "Select actions"
+      "value": "Acties selecteren"
     }
   ],
   "3cZFcy": [
     {
       "type": 0,
-      "value": "Error Panel"
+      "value": "Foutvenster"
     }
   ],
   "3cZZKj": [
@@ -1096,7 +1092,7 @@
   "3hHkAn": [
     {
       "type": 0,
-      "value": "Result"
+      "value": "Resultaat"
     }
   ],
   "3n5pnv": [
@@ -1114,7 +1110,7 @@
   "3pheF6": [
     {
       "type": 0,
-      "value": "Select schema"
+      "value": "Schema selecteren"
     }
   ],
   "3rzrWf": [
@@ -1208,7 +1204,7 @@
   "4BuCdw": [
     {
       "type": 0,
-      "value": "Specify the behavior and capabilities for transferring content over HTTP."
+      "value": "Geef het gedrag en de mogelijkheden op voor het overbrengen van inhoud via HTTP."
     }
   ],
   "4D7H4R": [
@@ -1228,7 +1224,7 @@
   "4E69aV": [
     {
       "type": 0,
-      "value": "Background color"
+      "value": "Achtergrondkleur"
     }
   ],
   "4Ekn9t": [
@@ -1252,7 +1248,7 @@
   "4SIrVn": [
     {
       "type": 0,
-      "value": "Body"
+      "value": "Hoofdtekst"
     }
   ],
   "4YKQAF": [
@@ -1282,7 +1278,7 @@
   "4hlqgK": [
     {
       "type": 0,
-      "value": "No results found for "
+      "value": "Geen resultaten gevonden voor "
     },
     {
       "type": 1,
@@ -1304,7 +1300,7 @@
   "4rVVyW": [
     {
       "type": 0,
-      "value": "Retry history"
+      "value": "Geschiedenis voor opnieuw proberen"
     }
   ],
   "4vcnOA": [
@@ -1329,6 +1325,16 @@
     {
       "type": 0,
       "value": "(UTC+08:45) Eucla"
+    }
+  ],
+  "5+zBXE": [
+    {
+      "type": 1,
+      "value": "label"
+    },
+    {
+      "type": 0,
+      "value": " sleutelitem"
     }
   ],
   "50W8FI": [
@@ -1448,7 +1454,7 @@
   "5pSOjg": [
     {
       "type": 0,
-      "value": "Create workflows from template"
+      "value": "Werkstromen maken van sjabloon"
     }
   ],
   "5qzZMo": [
@@ -1460,19 +1466,19 @@
   "5rljf7": [
     {
       "type": 0,
-      "value": "Discovery Panel"
+      "value": "Detectiepaneel"
     }
   ],
   "5szzYP": [
     {
       "type": 0,
-      "value": "Use this template"
+      "value": "Deze sjabloon gebruiken"
     }
   ],
   "5we9SR": [
     {
       "type": 0,
-      "value": "Client tracking ID"
+      "value": "Clienttracerings-id"
     }
   ],
   "5ytHcK": [
@@ -1520,13 +1526,13 @@
   "6DZp5H": [
     {
       "type": 0,
-      "value": "Search"
+      "value": "Zoeken"
     }
   ],
   "6LJZ7n": [
     {
       "type": 0,
-      "value": "Retry policy"
+      "value": "Beleid voor opnieuw proberen"
     }
   ],
   "6OSgRP": [
@@ -1544,7 +1550,7 @@
   "6SQuYg": [
     {
       "type": 0,
-      "value": "See more ("
+      "value": "Meer weergeven ("
     },
     {
       "type": 1,
@@ -1564,19 +1570,19 @@
   "6c1ffO": [
     {
       "type": 0,
-      "value": "Enter JSON object of authentication parameter"
+      "value": "JSON-object van verificatieparameters invoeren"
     }
   ],
   "6eDY1H": [
     {
       "type": 0,
-      "value": "optional"
+      "value": "optioneel"
     }
   ],
   "6epkWC": [
     {
       "type": 0,
-      "value": "Body item"
+      "value": "Hoofdtekstitem"
     }
   ],
   "6fDYzG": [
@@ -1632,13 +1638,13 @@
   "6nWQm7": [
     {
       "type": 0,
-      "value": "Start time"
+      "value": "Begintijd"
     }
   ],
   "6oOQnD": [
     {
       "type": 0,
-      "value": "Close test map"
+      "value": "Testtoewijzing sluiten"
     }
   ],
   "6oqk+A": [
@@ -1662,7 +1668,7 @@
   "6rJ+Fj": [
     {
       "type": 0,
-      "value": "Delete workflow graph"
+      "value": "Werkstroomgrafiek verwijderen"
     }
   ],
   "6sGj3J": [
@@ -1722,7 +1728,7 @@
   "7+ZxCU": [
     {
       "type": 0,
-      "value": "Invalid authentication value"
+      "value": "Ongeldige verificatiewaarde"
     }
   ],
   "70cHmm": [
@@ -1758,7 +1764,7 @@
   "7F4Bzv": [
     {
       "type": 0,
-      "value": "Workflow with name \""
+      "value": "Er bestaat al een werkstroom met de naam "
     },
     {
       "type": 1,
@@ -1766,7 +1772,7 @@
     },
     {
       "type": 0,
-      "value": "\" already exists."
+      "value": "."
     }
   ],
   "7Fyq1F": [
@@ -1810,7 +1816,7 @@
   "7ZF1Hr": [
     {
       "type": 0,
-      "value": "Validation error"
+      "value": "Validatiefout"
     }
   ],
   "7ZR1xr": [
@@ -1828,13 +1834,13 @@
   "7adnmH": [
     {
       "type": 0,
-      "value": "Back to template library"
+      "value": "Terug naar sjabloonbibliotheek"
     }
   ],
   "7fZkLA": [
     {
       "type": 0,
-      "value": "Disable static result"
+      "value": "Statisch resultaat uitschakelen"
     }
   ],
   "7gUE8h": [
@@ -1944,7 +1950,7 @@
   "8KpZmj": [
     {
       "type": 0,
-      "value": "The system-assigned identity is unavailable because it's not enabled."
+      "value": "De door het systeem toegewezen identiteit is niet beschikbaar omdat deze niet is ingeschakeld."
     }
   ],
   "8L+oIz": [
@@ -2032,13 +2038,13 @@
   "8p0yK8": [
     {
       "type": 0,
-      "value": "Run after"
+      "value": "Uitvoeren na"
     }
   ],
   "8wlfdo": [
     {
       "type": 0,
-      "value": "Suppress workflow headers on response"
+      "value": "Werkstroomheaders onderdrukken bij antwoord"
     }
   ],
   "8wr0zO": [
@@ -2050,7 +2056,7 @@
   "8zcsPi": [
     {
       "type": 0,
-      "value": "Expression editor"
+      "value": "Expressie-editor"
     }
   ],
   "8zkvmc": [
@@ -2074,7 +2080,7 @@
   "90Vi7t": [
     {
       "type": 0,
-      "value": "Expand static result"
+      "value": "Statisch resultaat uitvouwen"
     }
   ],
   "90o7sB": [
@@ -2132,7 +2138,7 @@
   "9OzDnJ": [
     {
       "type": 0,
-      "value": "Search tips"
+      "value": "Zoektips"
     }
   ],
   "9QNZSj": [
@@ -2160,7 +2166,7 @@
   "9V2Uwf": [
     {
       "type": 0,
-      "value": "Insert expression (you can also add by typing '/' in the editor)"
+      "value": "Expressie invoegen (u kunt ook toevoegen door '/' te typen in de editor)"
     }
   ],
   "9W0lck": [
@@ -2216,7 +2222,7 @@
   "9uv02q": [
     {
       "type": 0,
-      "value": "Set the tracking ID for the run. For split-on this tracking ID is for the initiating request"
+      "value": "Stel de tracerings-id voor de uitvoering in. Bij splitOn is deze tracerings-id is voor de initiatie-aanvraag"
     }
   ],
   "9wX3u9": [
@@ -2252,7 +2258,7 @@
   "A8T1X/": [
     {
       "type": 0,
-      "value": "Whitespaces must be encoded for URIs."
+      "value": "Spaties moeten worden gecodeerd voor URI's."
     }
   ],
   "A8l+k7": [
@@ -2268,7 +2274,7 @@
   "AB+yPQ": [
     {
       "type": 0,
-      "value": "Connection details"
+      "value": "Verbindingsgegevens"
     }
   ],
   "AEguAy": [
@@ -2286,19 +2292,19 @@
   "AJ+LDh": [
     {
       "type": 0,
-      "value": "Provide a unique, descriptive name and review the state type to ensure your workflows are properly configured."
+      "value": "Geef een unieke, beschrijvende naam op en controleer het statustype om ervoor te zorgen dat uw werkstromen correct zijn geconfigureerd."
     }
   ],
   "AKOkI2": [
     {
       "type": 0,
-      "value": "Service principal"
+      "value": "Service-principal"
     }
   ],
   "APKdYG": [
     {
       "type": 0,
-      "value": "Enter a valid double number."
+      "value": "Voer een geldig dubbel getal in."
     }
   ],
   "AQ7Zxc": [
@@ -2316,7 +2322,7 @@
   "Agqhgu": [
     {
       "type": 0,
-      "value": "Describe how you'd like to update your expression."
+      "value": "Beschrijf hoe u de expressie wilt bijwerken."
     }
   ],
   "AheXMN": [
@@ -2340,7 +2346,7 @@
   "Alq4/3": [
     {
       "type": 0,
-      "value": "Hybrid connector"
+      "value": "Hybride connector"
     }
   ],
   "AnX5yC": [
@@ -2368,7 +2374,7 @@
     },
     {
       "type": 0,
-      "value": " operation"
+      "value": " bewerking"
     }
   ],
   "Az0QvG": [
@@ -2438,7 +2444,7 @@
   "B6BjCl": [
     {
       "type": 0,
-      "value": "Drop-down list of options"
+      "value": "Vervolgkeuzelijst met opties"
     }
   ],
   "B999mz": [
@@ -2528,7 +2534,7 @@
   "BRMOfD": [
     {
       "type": 0,
-      "value": "Timed out"
+      "value": "Er is een time-out opgetreden"
     }
   ],
   "BS3gy8": [
@@ -2552,7 +2558,7 @@
   "BXb3CB": [
     {
       "type": 0,
-      "value": "Testing tab"
+      "value": "Tabblad Testen"
     }
   ],
   "BYrP8F": [
@@ -2570,7 +2576,7 @@
   "Bkc/+3": [
     {
       "type": 0,
-      "value": "Retry policy minimum interval is invalid, must match ISO 8601 duration format"
+      "value": "Het minimuminterval voor het beleid voor opnieuw proberen is ongeldig, het moet overeenkomen met de ISO 8601-notatie voor duur"
     }
   ],
   "Bl4Iv0": [
@@ -2588,7 +2594,7 @@
   "BnkCwH": [
     {
       "type": 0,
-      "value": "Search properties"
+      "value": "Zoekeigenschappen"
     }
   ],
   "BoMvF2": [
@@ -2660,7 +2666,7 @@
   "CRTB+v": [
     {
       "type": 0,
-      "value": "Value should be greater than "
+      "value": "De waarde moet groter zijn dan "
     },
     {
       "type": 1,
@@ -2688,13 +2694,13 @@
   "Ccbm2Y": [
     {
       "type": 0,
-      "value": "Multi-select list of options"
+      "value": "Multi-keuzelijst met opties"
     }
   ],
   "CeF40t": [
     {
       "type": 0,
-      "value": "Authentication type"
+      "value": "Verificatietype"
     }
   ],
   "Ci41Od": [
@@ -2724,7 +2730,7 @@
   "ClowJ/": [
     {
       "type": 0,
-      "value": "Authentication type"
+      "value": "Verificatietype"
     }
   ],
   "CvoqQ6": [
@@ -2742,7 +2748,7 @@
   "Cy4+KL": [
     {
       "type": 0,
-      "value": "Redo"
+      "value": "Vooruitrolfase"
     }
   ],
   "CyT8H7": [
@@ -2794,7 +2800,7 @@
   "D0D3Sf": [
     {
       "type": 0,
-      "value": "switch case"
+      "value": "hoofdlettergebruik"
     }
   ],
   "D1lgsT": [
@@ -2812,7 +2818,7 @@
   "D6KzoS": [
     {
       "type": 0,
-      "value": "Specify upload chunk size between "
+      "value": "Geef de grootte van het uploadsegment op tussen "
     },
     {
       "type": 1,
@@ -2820,7 +2826,7 @@
     },
     {
       "type": 0,
-      "value": " and "
+      "value": " en "
     },
     {
       "type": 1,
@@ -2828,13 +2834,13 @@
     },
     {
       "type": 0,
-      "value": " Mb. Example: 10"
+      "value": " Mb. Voorbeeld: 10"
     }
   ],
   "D89UXR": [
     {
       "type": 0,
-      "value": "action"
+      "value": "actie"
     }
   ],
   "DDIIAQ": [
@@ -2870,7 +2876,7 @@
   "DNQtFr": [
     {
       "type": 0,
-      "value": "Name"
+      "value": "Naam"
     }
   ],
   "DQV7aK": [
@@ -2908,7 +2914,7 @@
   "DX9jWz": [
     {
       "type": 0,
-      "value": "Name"
+      "value": "Naam"
     }
   ],
   "DYXoEM": [
@@ -2926,13 +2932,13 @@
   "DbxZhS": [
     {
       "type": 0,
-      "value": "Remove list of options"
+      "value": "Een lijst met opties verwijderen"
     }
   ],
   "DcJBUx": [
     {
       "type": 0,
-      "value": "Trigger type"
+      "value": "Triggertype"
     }
   ],
   "DfXxoX": [
@@ -3006,7 +3012,7 @@
   "E70Rdt": [
     {
       "type": 0,
-      "value": "Internal errors"
+      "value": "Interne fouten"
     }
   ],
   "E7NzDN": [
@@ -3030,13 +3036,13 @@
   "EFQ56R": [
     {
       "type": 0,
-      "value": "Source code"
+      "value": "Broncode"
     }
   ],
   "EMbxLf": [
     {
       "type": 0,
-      "value": "Previous suggestion"
+      "value": "Vorige suggestie"
     }
   ],
   "ERAWZA": [
@@ -3060,13 +3066,13 @@
   "EX0g1d": [
     {
       "type": 0,
-      "value": "Secure outputs"
+      "value": "Beveiligde uitvoerwaarden"
     }
   ],
   "EXEL2j": [
     {
       "type": 0,
-      "value": "Destination"
+      "value": "Bestemming"
     }
   ],
   "EZz5q7": [
@@ -3166,31 +3172,31 @@
   "Eyxa6q": [
     {
       "type": 0,
-      "value": "The number of workflow instances that can wait to run when your current workflow instance is already running the maximum concurrent instances."
+      "value": "Het aantal werkstroomexemplaren dat kan wachten op uitvoering wanneer het maximumaantal gelijktijdige exemplaren al wordt uitgevoerd op het huidige werkstroomexemplaar."
     }
   ],
   "F+cOLr": [
     {
       "type": 0,
-      "value": "Community Authored"
+      "value": "Door de community geschreven"
     }
   ],
   "F/13eU": [
     {
       "type": 0,
-      "value": "Delete"
+      "value": "Verwijderen"
     }
   ],
   "F1AkvV": [
     {
       "type": 0,
-      "value": "Ideal for process business transitional data"
+      "value": "Ideaal voor overgangsgegevens van processen"
     }
   ],
   "F2wR+r": [
     {
       "type": 0,
-      "value": "Insert expression"
+      "value": "Expressie invoegen"
     }
   ],
   "F3IDl8": [
@@ -3214,7 +3220,7 @@
   "FEYdkx": [
     {
       "type": 0,
-      "value": "Maximum waiting runs"
+      "value": "Maximum aantal wachtende uitvoeringen"
     }
   ],
   "FIL1Nt": [
@@ -3256,7 +3262,7 @@
   "FTrMxN": [
     {
       "type": 0,
-      "value": "Close"
+      "value": "Sluiten"
     }
   ],
   "FUuFlC": [
@@ -3324,7 +3330,7 @@
   "Fx/6sv": [
     {
       "type": 0,
-      "value": "Go to operation"
+      "value": "Naar bewerking"
     }
   ],
   "FxQ2Ts": [
@@ -3336,7 +3342,7 @@
   "G+6Juu": [
     {
       "type": 0,
-      "value": "Click to expand"
+      "value": "Klik om uit te vouwen"
     }
   ],
   "G+XvKn": [
@@ -3354,7 +3360,7 @@
   "G0gnge": [
     {
       "type": 0,
-      "value": "Copy entire action"
+      "value": "Volledige actie kopiëren"
     }
   ],
   "GAY7b8": [
@@ -3390,7 +3396,7 @@
   "GFnJQe": [
     {
       "type": 0,
-      "value": "Test map"
+      "value": "Testkaart"
     }
   ],
   "GIUSQs": [
@@ -3458,7 +3464,7 @@
   "Gk79Ma": [
     {
       "type": 0,
-      "value": "Status code"
+      "value": "Statuscode"
     }
   ],
   "Gl5khw": [
@@ -3570,13 +3576,13 @@
   "HQ/HhZ": [
     {
       "type": 0,
-      "value": "Error loading connections"
+      "value": "Fout bij het laden van verbindingen"
     }
   ],
   "HQQtFz": [
     {
       "type": 0,
-      "value": "Make the field required"
+      "value": "Het veld vereist maken"
     }
   ],
   "HSJLCu": [
@@ -3600,7 +3606,7 @@
   "He4Z+v": [
     {
       "type": 0,
-      "value": "Credential type"
+      "value": "Referentietype"
     }
   ],
   "HfinO2": [
@@ -3688,13 +3694,13 @@
   "IBFBR2": [
     {
       "type": 0,
-      "value": "Remove loop"
+      "value": "Lus verwijderen"
     }
   ],
   "IGpV1W": [
     {
       "type": 0,
-      "value": "Asynchronous response"
+      "value": "Asynchroon antwoord"
     }
   ],
   "IHMd3X": [
@@ -3710,7 +3716,7 @@
   "IHzSSN": [
     {
       "type": 0,
-      "value": "Path parameters"
+      "value": "Padparameters"
     }
   ],
   "IPwWgu": [
@@ -3740,7 +3746,7 @@
   "IUbVFR": [
     {
       "type": 0,
-      "value": "Search"
+      "value": "Zoeken"
     }
   ],
   "IW2MjQ": [
@@ -3778,13 +3784,13 @@
     },
     {
       "type": 0,
-      "value": " more item"
+      "value": " meer item"
     }
   ],
   "IqNEui": [
     {
       "type": 0,
-      "value": "Specify download chunk size between "
+      "value": "Geef de grootte van het downloadsegment op tussen "
     },
     {
       "type": 1,
@@ -3792,7 +3798,7 @@
     },
     {
       "type": 0,
-      "value": " and "
+      "value": " en "
     },
     {
       "type": 1,
@@ -3800,7 +3806,7 @@
     },
     {
       "type": 0,
-      "value": " Mb. Example: 10"
+      "value": " Mb. Voorbeeld: 10"
     }
   ],
   "IsVhkH": [
@@ -3866,7 +3872,7 @@
   "J7PN35": [
     {
       "type": 0,
-      "value": "Make group"
+      "value": "Groep maken"
     }
   ],
   "J9wWry": [
@@ -3918,13 +3924,13 @@
   "JKfEGS": [
     {
       "type": 0,
-      "value": "Create new"
+      "value": "Nieuwe maken"
     }
   ],
   "JMwMaK": [
     {
       "type": 0,
-      "value": "AI-generated content may be incorrect"
+      "value": "Door AI gegenereerde inhoud is mogelijk onjuist"
     }
   ],
   "JNQHws": [
@@ -3936,7 +3942,7 @@
   "JQBEOg": [
     {
       "type": 0,
-      "value": "Review + create"
+      "value": "Beoordelen en maken"
     }
   ],
   "JSfWJ0": [
@@ -3948,13 +3954,13 @@
   "JUZ7g5": [
     {
       "type": 0,
-      "value": "Run history"
+      "value": "Uitvoeringsgeschiedenis"
     }
   ],
   "JVNRly": [
     {
       "type": 0,
-      "value": "Solution type"
+      "value": "Oplossingstype"
     }
   ],
   "JWl/LD": [
@@ -3996,7 +4002,7 @@
   "Jk2B0i": [
     {
       "type": 0,
-      "value": "Prerequisites"
+      "value": "Vereisten"
     }
   ],
   "JnlcZQ": [
@@ -4020,7 +4026,7 @@
   "JzvOUc": [
     {
       "type": 0,
-      "value": "The value must not be empty."
+      "value": "De waarde mag niet leeg zijn."
     }
   ],
   "K50znc": [
@@ -4038,7 +4044,7 @@
   "K9ORYo": [
     {
       "type": 0,
-      "value": "Schema ID"
+      "value": "Schema-ID"
     }
   ],
   "KBaGkS": [
@@ -4114,7 +4120,7 @@
   "Kb5u9F": [
     {
       "type": 0,
-      "value": "About tab"
+      "value": "Tabblad Info"
     }
   ],
   "KlDW+5": [
@@ -4132,7 +4138,7 @@
   "KqJ14/": [
     {
       "type": 0,
-      "value": "Edit schema"
+      "value": "Schema bewerken"
     }
   ],
   "KwGA+K": [
@@ -4186,7 +4192,7 @@
   "LPzAHC": [
     {
       "type": 0,
-      "value": "Loading files…"
+      "value": "Bestanden laden..."
     }
   ],
   "LR/3Lr": [
@@ -4300,7 +4306,7 @@
   "M/m3nG": [
     {
       "type": 0,
-      "value": "Action timeout"
+      "value": "Actietime-out"
     }
   ],
   "M0bbZk": [
@@ -4324,7 +4330,7 @@
   "M6GI6z": [
     {
       "type": 0,
-      "value": "Custom tracking ID"
+      "value": "Aangepaste tracerings-id"
     }
   ],
   "M6U2LE": [
@@ -4342,7 +4348,7 @@
   "MAX7xS": [
     {
       "type": 0,
-      "value": "Show more"
+      "value": "Meer weergeven"
     }
   ],
   "MCzWDc": [
@@ -4414,13 +4420,13 @@
   "MVrv+N": [
     {
       "type": 0,
-      "value": "Enter a valid array."
+      "value": "Voer een geldige matrix in."
     }
   ],
   "MWG2k9": [
     {
       "type": 0,
-      "value": "Request history"
+      "value": "Aanvraaggeschiedenis"
     }
   ],
   "MYgKHu": [
@@ -4480,7 +4486,7 @@
   "MwMpAh": [
     {
       "type": 0,
-      "value": "Return to expression editor"
+      "value": "Terug naar expressie-editor"
     }
   ],
   "N0pS6Y": [
@@ -4516,7 +4522,7 @@
   "N8LgJq": [
     {
       "type": 0,
-      "value": "Distinct tracking ID for each split-on instance"
+      "value": "Afzonderlijke tracerings-id voor elk splitOn-exemplaar"
     }
   ],
   "NE54Uu": [
@@ -4546,7 +4552,7 @@
   "NHqCeQ": [
     {
       "type": 0,
-      "value": "Create connection"
+      "value": "Verbinding maken"
     }
   ],
   "NMpFs6": [
@@ -4570,13 +4576,13 @@
   "NaW0ga": [
     {
       "type": 0,
-      "value": "This workflow supports the following states. The state determines how data is managed and retained during execution of workflows."
+      "value": "Deze werkstroom ondersteunt de volgende statussen. De status bepaalt hoe gegevens worden beheerd en bewaard tijdens het uitvoeren van werkstromen."
     }
   ],
   "Nbl3zN": [
     {
       "type": 0,
-      "value": "Enter a description of the output"
+      "value": "Voer een beschrijving van de uitvoer in"
     }
   ],
   "Nh91qA": [
@@ -4594,7 +4600,7 @@
   "NkjtG/": [
     {
       "type": 0,
-      "value": "Dismiss"
+      "value": "Sluiten"
     }
   ],
   "NnrHK3": [
@@ -4618,13 +4624,13 @@
   "Nr8FbX": [
     {
       "type": 0,
-      "value": "Connections"
+      "value": "Verbindingen"
     }
   ],
   "NtoWaY": [
     {
       "type": 0,
-      "value": "Value should be less than "
+      "value": "Waarde moet minder zijn dan "
     },
     {
       "type": 1,
@@ -4682,7 +4688,7 @@
   "O8Qy7k": [
     {
       "type": 0,
-      "value": "Close panel"
+      "value": "Deelvenster sluiten"
     }
   ],
   "O9ZExg": [
@@ -4724,7 +4730,7 @@
   "OMuMCI": [
     {
       "type": 0,
-      "value": "Workflow properties"
+      "value": "Werkstroomeigenschappen"
     }
   ],
   "OOUSLP": [
@@ -4826,7 +4832,7 @@
   "OkGMwC": [
     {
       "type": 0,
-      "value": "Monitoring tab"
+      "value": "Tabblad Monitoren"
     }
   ],
   "OnrO5/": [
@@ -4962,7 +4968,7 @@
   "PTBl5s": [
     {
       "type": 0,
-      "value": "Method"
+      "value": "Methode"
     }
   ],
   "PXa0D4": [
@@ -5004,7 +5010,7 @@
   "Pkxg6Q": [
     {
       "type": 0,
-      "value": "Describe the expression you want Copilot to create. You can reference data from other actions in the flow. For example, “Combine the first and last name of the person who went the email” or “Check the status of the current job.”"
+      "value": "Beschrijf de expressie die copilot moet maken. U kunt verwijzen naar gegevens uit andere acties in de stroom. Bijvoorbeeld: 'Combineer de voor- en achternaam van de persoon die het e-mailbericht heeft geopend' of 'Controleer de status van de huidige taak'."
     }
   ],
   "Pnt0Xj": [
@@ -5016,7 +5022,7 @@
   "PpupBE": [
     {
       "type": 0,
-      "value": "Add row"
+      "value": "Rij toevoegen"
     }
   ],
   "Pq+4a+": [
@@ -5040,7 +5046,7 @@
   "PuFTgH": [
     {
       "type": 0,
-      "value": "Retry history"
+      "value": "Geschiedenis voor opnieuw proberen"
     }
   ],
   "Pudllg": [
@@ -5064,7 +5070,7 @@
   "Px7S/2": [
     {
       "type": 0,
-      "value": "Close"
+      "value": "Sluiten"
     }
   ],
   "PytMJ0": [
@@ -5092,7 +5098,7 @@
   "Q/V4Uc": [
     {
       "type": 0,
-      "value": "Add connection"
+      "value": "Verbinding toevoegen"
     }
   ],
   "Q0xpPQ": [
@@ -5138,7 +5144,7 @@
   "QBK72a": [
     {
       "type": 0,
-      "value": "Add custom modules, uncover new scenarios, and find troubleshooting tips"
+      "value": "Aangepaste modules toevoegen, nieuwe scenario's ontdekken en tips voor probleemoplossing zoeken"
     }
   ],
   "QGbUXX": [
@@ -5150,13 +5156,13 @@
   "QNfUf/": [
     {
       "type": 0,
-      "value": "Full screen"
+      "value": "Volledig scherm"
     }
   ],
   "QVtqAn": [
     {
       "type": 0,
-      "value": "Description"
+      "value": "Beschrijving"
     }
   ],
   "QZBPUx": [
@@ -5180,7 +5186,7 @@
   "QbVD0F": [
     {
       "type": 0,
-      "value": "This expression has a problem. You can fix it manually or with Copilot."
+      "value": "Er is een probleem met deze expressie. U kunt dit handmatig of met Copilot oplossen."
     }
   ],
   "QdJUaS": [
@@ -5272,13 +5278,13 @@
   "RLoDgQ": [
     {
       "type": 0,
-      "value": "Optimized for high reliability"
+      "value": "Geoptimaliseerd voor hoge betrouwbaarheid"
     }
   ],
   "ROC+1+": [
     {
       "type": 0,
-      "value": "Line position"
+      "value": "Regelpositie"
     }
   ],
   "RX2Shm": [
@@ -5290,7 +5296,7 @@
   "RZNabt": [
     {
       "type": 0,
-      "value": "Create a new workflow from template"
+      "value": "Een nieuwe werkstroom maken van sjabloon"
     }
   ],
   "RatwOB": [
@@ -5344,7 +5350,7 @@
     },
     {
       "type": 0,
-      "value": " (content)"
+      "value": " (inhoud)"
     }
   ],
   "RjvpD+": [
@@ -5406,7 +5412,7 @@
   "RxbkcI": [
     {
       "type": 0,
-      "value": "Unsupported token type: "
+      "value": "Niet-ondersteund tokentype: "
     },
     {
       "type": 1,
@@ -5416,7 +5422,7 @@
   "S0N/tx": [
     {
       "type": 0,
-      "value": "Resubmit a workflow run from this action"
+      "value": "Een werkstroomuitvoering opnieuw verzenden vanuit deze actie"
     }
   ],
   "S138/4": [
@@ -5428,7 +5434,7 @@
   "S5kFNK": [
     {
       "type": 0,
-      "value": "Paste your sample data to test the mapping"
+      "value": "Plak uw voorbeeldgegevens om de toewijzing te testen"
     }
   ],
   "SCCE6s": [
@@ -5476,7 +5482,7 @@
   "STWbak": [
     {
       "type": 0,
-      "value": "Chunk size"
+      "value": "Segmentgrootte"
     }
   ],
   "SToblZ": [
@@ -5504,13 +5510,13 @@
   "SZ78Xp": [
     {
       "type": 0,
-      "value": "Features"
+      "value": "Functies"
     }
   ],
   "SbCUKw": [
     {
       "type": 0,
-      "value": "Outputs should not be provided when status is \"Failed\""
+      "value": "Uitvoer mag niet worden opgegeven wanneer de status Mislukt is"
     }
   ],
   "SgiTAh": [
@@ -5546,7 +5552,7 @@
   "Sy4cFC": [
     {
       "type": 0,
-      "value": "Concurrency control"
+      "value": "Gelijktijdigheid beheren"
     }
   ],
   "SyFXM3": [
@@ -5564,7 +5570,7 @@
   "TDfQzn": [
     {
       "type": 0,
-      "value": "More…"
+      "value": "Meer…"
     }
   ],
   "TEN+cR": [
@@ -5618,7 +5624,7 @@
   "TZpm7X": [
     {
       "type": 0,
-      "value": "Button to add dynamic content if token picker is shown"
+      "value": "Knop om dynamische inhoud toe te voegen als tokenkiezer wordt weergegeven"
     }
   ],
   "Tayrub": [
@@ -5636,7 +5642,7 @@
   "TcU2Gf": [
     {
       "type": 0,
-      "value": "Add case"
+      "value": "Case toevoegen"
     }
   ],
   "TgcgXE": [
@@ -5684,7 +5690,7 @@
   "TnwRGo": [
     {
       "type": 0,
-      "value": "Connections included in this template"
+      "value": "Connections opgenomen in deze sjabloon"
     }
   ],
   "To3RNy": [
@@ -5738,7 +5744,7 @@
   "U2juKb": [
     {
       "type": 0,
-      "value": "Filter actions"
+      "value": "Filteracties"
     }
   ],
   "U3guPp": [
@@ -5790,7 +5796,7 @@
   "UD330h": [
     {
       "type": 0,
-      "value": "Copy action"
+      "value": "Actie kopiëren"
     }
   ],
   "UHCVNK": [
@@ -5802,7 +5808,7 @@
   "UJho0j": [
     {
       "type": 0,
-      "value": "(Optional) Password for PFX file"
+      "value": "(Optioneel) Wachtwoord voor PFX-bestand"
     }
   ],
   "UMPuUJ": [
@@ -5818,13 +5824,13 @@
   "UNXQDI": [
     {
       "type": 0,
-      "value": "Loading API Management service instances..."
+      "value": "API Management-service-exemplaren laden..."
     }
   ],
   "UPsZSw": [
     {
       "type": 0,
-      "value": "The entered identity is not associated with this logic app."
+      "value": "De ingevoerde identiteit is niet gekoppeld aan deze logische app."
     }
   ],
   "UR1CS5": [
@@ -5848,7 +5854,7 @@
   "UTkcyf": [
     {
       "type": 0,
-      "value": "Source code"
+      "value": "Broncode"
     }
   ],
   "UVAfYj": [
@@ -5860,19 +5866,19 @@
   "UVr0mL": [
     {
       "type": 0,
-      "value": "Test your map to see a result"
+      "value": "Test uw kaart om een resultaat te zien"
     }
   ],
   "UWF/WI": [
     {
       "type": 0,
-      "value": "View documentation"
+      "value": "Documentatie weergeven"
     }
   ],
   "UXDOiw": [
     {
       "type": 0,
-      "value": "Description"
+      "value": "Beschrijving"
     }
   ],
   "UYRIS/": [
@@ -5974,7 +5980,7 @@
   "UsEvG2": [
     {
       "type": 0,
-      "value": "Tenant ID"
+      "value": "Tenant-id"
     }
   ],
   "UtyRCH": [
@@ -6040,7 +6046,7 @@
   "VFnuA2": [
     {
       "type": 0,
-      "value": "Add a drop-down list of options"
+      "value": "Een vervolgkeuzelijst met opties toevoegen"
     }
   ],
   "VHm1Sr": [
@@ -6112,13 +6118,13 @@
   "VZh+w2": [
     {
       "type": 0,
-      "value": "Body"
+      "value": "Hoofdtekst"
     }
   ],
   "Valy81": [
     {
       "type": 0,
-      "value": "Schema validation"
+      "value": "Schemavalidatie"
     }
   ],
   "VbMYd8": [
@@ -6174,7 +6180,7 @@
   "VysSj3": [
     {
       "type": 0,
-      "value": "View code"
+      "value": "Code weergeven"
     }
   ],
   "W+mUyI": [
@@ -6196,7 +6202,7 @@
   "W1rlxU": [
     {
       "type": 0,
-      "value": "State type"
+      "value": "Statustype"
     }
   ],
   "W2fZ0v": [
@@ -6220,7 +6226,7 @@
   "WGq3Fo": [
     {
       "type": 0,
-      "value": "See less"
+      "value": "Minder weergeven"
     }
   ],
   "WGwH45": [
@@ -6290,7 +6296,7 @@
   "WdO1cs": [
     {
       "type": 0,
-      "value": "Template details"
+      "value": "Sjabloondetails"
     }
   ],
   "WgChTm": [
@@ -6314,13 +6320,13 @@
   "Wt1TZJ": [
     {
       "type": 0,
-      "value": "Connections"
+      "value": "Verbindingen"
     }
   ],
   "Wvnl/V": [
     {
       "type": 0,
-      "value": "Delete the static result configuration"
+      "value": "De statische resultaatconfiguratie verwijderen"
     }
   ],
   "WvvJYw": [
@@ -6332,13 +6338,13 @@
   "WxJJcQ": [
     {
       "type": 0,
-      "value": "Not connected"
+      "value": "Niet verbonden"
     }
   ],
   "WxcmZr": [
     {
       "type": 0,
-      "value": "This action has testing configured."
+      "value": "Voor deze actie zijn tests geconfigureerd."
     }
   ],
   "X/7je+": [
@@ -6422,7 +6428,7 @@
   "XHQwyJ": [
     {
       "type": 0,
-      "value": "Error executing the API - "
+      "value": "Fout bij het uitvoeren van de API - "
     },
     {
       "type": 1,
@@ -6438,7 +6444,7 @@
   "XL5UbT": [
     {
       "type": 0,
-      "value": "Click for more information on static result"
+      "value": "Klik voor meer informatie over statisch resultaat"
     }
   ],
   "XOAcjQ": [
@@ -6468,7 +6474,7 @@
   "XR5izH": [
     {
       "type": 0,
-      "value": "Connected"
+      "value": "Verbonden"
     }
   ],
   "XRK+gt": [
@@ -6518,7 +6524,7 @@
   "XZrMGZ": [
     {
       "type": 0,
-      "value": "Content transfer"
+      "value": "Inhoudsoverdracht"
     }
   ],
   "XbtEq9": [
@@ -6544,7 +6550,7 @@
   "Xg1UDw": [
     {
       "type": 0,
-      "value": "Learn more"
+      "value": "Meer informatie"
     }
   ],
   "Xj0Gr/": [
@@ -6589,6 +6595,12 @@
       "value": "Een beperking voor Logic Apps instellen om te voorkomen dat het antwoord metagegevens van de werkstroom bevat."
     }
   ],
+  "XtVOMn": [
+    {
+      "type": 0,
+      "value": "Something went wrong"
+    }
+  ],
   "XtuP5e": [
     {
       "type": 0,
@@ -6610,7 +6622,7 @@
   "Xz88HV": [
     {
       "type": 0,
-      "value": "Associated workflows"
+      "value": "Gekoppelde werkstromen"
     }
   ],
   "Y/bcmG": [
@@ -6628,7 +6640,7 @@
   "Y9VFj8": [
     {
       "type": 0,
-      "value": "Secure inputs"
+      "value": "Beveiligde invoerwaarden"
     }
   ],
   "Y9kBz5": [
@@ -6640,7 +6652,7 @@
   "YC56Tr": [
     {
       "type": 0,
-      "value": "Automatic decompression"
+      "value": "Automatisch decomprimeren"
     }
   ],
   "YCDF7A": [
@@ -6704,13 +6716,13 @@
   "YM0e3C": [
     {
       "type": 0,
-      "value": "Asynchronous pattern"
+      "value": "Asynchroon patroon"
     }
   ],
   "YOOBDW": [
     {
       "type": 0,
-      "value": "Avoid spaces and the following symbols in your workflow name: \\ / : * ? \" < > | @, #, $, %, &"
+      "value": "Vermijd spaties en de volgende symbolen in uw werkstroomnaam: \\ / : * ? \" < > | @, #, $, %, &"
     }
   ],
   "YOUfNf": [
@@ -6740,7 +6752,7 @@
   "YWD/RY": [
     {
       "type": 0,
-      "value": "condition, collapse"
+      "value": "voorwaarde, samenvouwen"
     }
   ],
   "YWws/r": [
@@ -6752,7 +6764,7 @@
   "YX0jQs": [
     {
       "type": 0,
-      "value": "All"
+      "value": "Alle"
     }
   ],
   "YZ5Kwe": [
@@ -6764,7 +6776,7 @@
   "YZl7FU": [
     {
       "type": 0,
-      "value": "Loading function apps..."
+      "value": "Functie-apps laden..."
     }
   ],
   "YaFjJQ": [
@@ -6806,7 +6818,7 @@
   "YnSO/8": [
     {
       "type": 0,
-      "value": "Not connected"
+      "value": "Niet verbonden"
     }
   ],
   "YoQara": [
@@ -6824,7 +6836,7 @@
   "Yua/4o": [
     {
       "type": 0,
-      "value": "Previous"
+      "value": "Vorige"
     }
   ],
   "Yuu5CD": [
@@ -6848,7 +6860,7 @@
   "Z8BOCl": [
     {
       "type": 0,
-      "value": "No identities available"
+      "value": "Geen identiteiten beschikbaar"
     }
   ],
   "Z8tBFS": [
@@ -6878,7 +6890,7 @@
   "ZFNlSA": [
     {
       "type": 0,
-      "value": "Authentication"
+      "value": "Verificatie"
     }
   ],
   "ZME5hh": [
@@ -6890,21 +6902,17 @@
   "ZN050N": [
     {
       "type": 0,
-      "value": "Select all text in '"
+      "value": "Alle tekst selecteren in "
     },
     {
       "type": 1,
       "value": "label"
-    },
-    {
-      "type": 0,
-      "value": "'"
     }
   ],
   "ZOIvqN": [
     {
       "type": 0,
-      "value": "Sort By"
+      "value": "Sorteren op"
     }
   ],
   "ZUCTVP": [
@@ -6922,13 +6930,13 @@
   "ZXc10N": [
     {
       "type": 0,
-      "value": "Add group"
+      "value": "Groep toevoegen"
     }
   ],
   "ZXha+w": [
     {
       "type": 0,
-      "value": "Error message"
+      "value": "Foutbericht"
     }
   ],
   "ZaIeDG": [
@@ -6946,7 +6954,7 @@
   "ZbeL1D": [
     {
       "type": 0,
-      "value": "Avoid spaces and the following symbols in your workflow name: \\ / : * ? \" < > | @, #, $, %, &"
+      "value": "Vermijd spaties en de volgende symbolen in uw werkstroomnaam: \\ / : * ? \" < > | @, #, $, %, &"
     }
   ],
   "Zg3IjD": [
@@ -6958,7 +6966,7 @@
   "ZgyD93": [
     {
       "type": 0,
-      "value": "Accepted types:"
+      "value": "Geaccepteerde typen:"
     }
   ],
   "Zi9gQK": [
@@ -7006,7 +7014,7 @@
   "aGxYMY": [
     {
       "type": 0,
-      "value": "Clear editor"
+      "value": "Editor wissen"
     }
   ],
   "aGyVJT": [
@@ -7018,13 +7026,13 @@
   "aI9W5L": [
     {
       "type": 0,
-      "value": "This template does not have connectors"
+      "value": "Deze sjabloon heeft geen connectors"
     }
   ],
   "aJg1gl": [
     {
       "type": 0,
-      "value": "Retry policy maximum interval is invalid, must match ISO 8601 duration format"
+      "value": "Het maximuminterval voor het beleid voor opnieuw proberen is ongeldig, het moet overeenkomen met de ISO 8601-notatie voor duur"
     }
   ],
   "aP1wk9": [
@@ -7048,7 +7056,7 @@
   "aWdfiw": [
     {
       "type": 0,
-      "value": "Next suggestion"
+      "value": "Volgende suggestie"
     }
   ],
   "aYTy7X": [
@@ -7066,7 +7074,7 @@
   "ao6BlS": [
     {
       "type": 0,
-      "value": "Resource group"
+      "value": "Resourcegroep"
     }
   ],
   "aoUT/3": [
@@ -7078,7 +7086,7 @@
   "apZgmJ": [
     {
       "type": 0,
-      "value": "Invalid operation path input value. Path value - "
+      "value": "Ongeldige invoerwaarde voor bewerkingspad. Padwaarde - "
     },
     {
       "type": 1,
@@ -7086,7 +7094,7 @@
     },
     {
       "type": 0,
-      "value": ", Path template - "
+      "value": ", padsjabloon - "
     },
     {
       "type": 1,
@@ -7099,22 +7107,28 @@
       "value": "Voeg een bronschema toe of selecteer dit om te gebruiken voor uw kaart."
     }
   ],
+  "auci7r": [
+    {
+      "type": 0,
+      "value": "Enter a valid comma-separated string."
+    }
+  ],
   "aurgrg": [
     {
       "type": 0,
-      "value": "Managed identity"
+      "value": "Beheerde identiteit"
     }
   ],
   "b2aL+f": [
     {
       "type": 0,
-      "value": "Pin action"
+      "value": "Actie vastmaken"
     }
   ],
   "b6G9bq": [
     {
       "type": 0,
-      "value": "URL encodes the input string"
+      "value": "De invoertekensreeks wordt door URL gecodeerd"
     }
   ],
   "b7BQdu": [
@@ -7182,13 +7196,13 @@
   "bJMlgW": [
     {
       "type": 0,
-      "value": "Connections"
+      "value": "Verbindingen"
     }
   ],
   "bMUkSN": [
     {
       "type": 0,
-      "value": "This operation contains a token that does not exist in the current workflow."
+      "value": "Deze bewerking bevat een token dat niet bestaat in de huidige werkstroom."
     }
   ],
   "bTrk+S": [
@@ -7230,7 +7244,7 @@
   "bg00eY": [
     {
       "type": 0,
-      "value": "Numbered list"
+      "value": "Genummerde lijst"
     }
   ],
   "blRFVt": [
@@ -7314,7 +7328,7 @@
   "cBw7SC": [
     {
       "type": 0,
-      "value": "Created"
+      "value": "Gemaakt"
     }
   ],
   "cHiBAn": [
@@ -7327,6 +7341,16 @@
     {
       "type": 0,
       "value": "Meer resultaten ophalen tot de pagineringslimiet"
+    }
+  ],
+  "cKNvk6": [
+    {
+      "type": 1,
+      "value": "label"
+    },
+    {
+      "type": 0,
+      "value": " waarde-item"
     }
   ],
   "cNXS5n": [
@@ -7344,7 +7368,7 @@
   "cZ60Tk": [
     {
       "type": 0,
-      "value": "Loading...."
+      "value": "Laden...."
     }
   ],
   "cZv9J0": [
@@ -7374,7 +7398,7 @@
   "chEskq": [
     {
       "type": 0,
-      "value": "Enable static result"
+      "value": "Statisch resultaat inschakelen"
     }
   ],
   "ciLkfU": [
@@ -7422,13 +7446,13 @@
   "cw9FiJ": [
     {
       "type": 0,
-      "value": "Schema URI"
+      "value": "Schema-URI"
     }
   ],
   "cwHxwb": [
     {
       "type": 0,
-      "value": "Add connection"
+      "value": "Verbinding toevoegen"
     }
   ],
   "cyEBus": [
@@ -7512,7 +7536,7 @@
   "dU0RgS": [
     {
       "type": 0,
-      "value": "Add a multi-select list of options"
+      "value": "Een multi-keuzelijst met opties toevoegen"
     }
   ],
   "dUbKuK": [
@@ -7524,7 +7548,7 @@
   "dVFyPb": [
     {
       "type": 0,
-      "value": "Default value"
+      "value": "Standaardwaarde"
     }
   ],
   "daoo3l": [
@@ -7616,7 +7640,7 @@
   "eDHwU7": [
     {
       "type": 0,
-      "value": "🖊️ Working on it..."
+      "value": "🖊️ Er wordt aan gewerkt..."
     }
   ],
   "eESljX": [
@@ -7658,13 +7682,13 @@
   "eLthgv": [
     {
       "type": 0,
-      "value": "Client certificate"
+      "value": "Clientcertificaat"
     }
   ],
   "eNp9V6": [
     {
       "type": 0,
-      "value": "Upload PFX File"
+      "value": "PFX-bestand uploaden"
     }
   ],
   "eO1h/h": [
@@ -7676,7 +7700,7 @@
   "eOAJQk": [
     {
       "type": 0,
-      "value": "Degree of parallelism"
+      "value": "Niveau van parallelle uitvoering"
     }
   ],
   "eRvRWs": [
@@ -7694,25 +7718,25 @@
   "eTW4SD": [
     {
       "type": 0,
-      "value": "Description"
+      "value": "Beschrijving"
     }
   ],
   "eUxnDx": [
     {
       "type": 0,
-      "value": "Status code"
+      "value": "Statuscode"
     }
   ],
   "eaEXYa": [
     {
       "type": 0,
-      "value": "All"
+      "value": "Alle"
     }
   ],
   "eb91v1": [
     {
       "type": 0,
-      "value": "Change connection"
+      "value": "De verbinding wijzigen"
     }
   ],
   "egLI8P": [
@@ -7730,7 +7754,7 @@
   "ekM77J": [
     {
       "type": 0,
-      "value": "Workflow name"
+      "value": "Werkstroomnaam"
     }
   ],
   "elD6+N": [
@@ -7742,7 +7766,7 @@
   "elWEjT": [
     {
       "type": 0,
-      "value": "Click to collapse"
+      "value": "Klik om samen te vouwen"
     }
   ],
   "en/5A3": [
@@ -7766,7 +7790,7 @@
   "er6O+w": [
     {
       "type": 0,
-      "value": "Name"
+      "value": "Naam"
     }
   ],
   "evyGYj": [
@@ -7778,13 +7802,13 @@
   "ewGciu": [
     {
       "type": 0,
-      "value": "Authentication"
+      "value": "Verificatie"
     }
   ],
   "eyuBr7": [
     {
       "type": 0,
-      "value": "Please submit a different query than the previously submitted query. Previously submitted query: "
+      "value": "Verzend een andere query dan de eerder ingediende query. Eerder ingediende query: "
     },
     {
       "type": 1,
@@ -7812,7 +7836,7 @@
   "f7cxXb": [
     {
       "type": 0,
-      "value": "Split on"
+      "value": "Splitsen op"
     }
   ],
   "f81ClO": [
@@ -7824,13 +7848,23 @@
   "fAB0Ww": [
     {
       "type": 0,
-      "value": "Output"
+      "value": "Uitvoer"
     }
   ],
   "fBQBw/": [
     {
       "type": 0,
       "value": "Indien het eerste argument groter dan of gelijk aan het tweede is, wordt Waar geretourneerd"
+    }
+  ],
+  "fBUCrA": [
+    {
+      "type": 1,
+      "value": "label"
+    },
+    {
+      "type": 0,
+      "value": " item"
     }
   ],
   "fElufw": [
@@ -7848,25 +7882,31 @@
   "fNE/hg": [
     {
       "type": 0,
-      "value": "Button to add dynamic content if token picker is hidden"
+      "value": "Knop om dynamische inhoud toe te voegen als tokenkiezer wordt verborgen"
     }
   ],
   "fNlJSh": [
     {
       "type": 0,
-      "value": "All connections must be connected for workflow creation"
+      "value": "Alle verbindingen moeten zijn verbonden voor het maken van werkstroom"
     }
   ],
   "fSMyDJ": [
     {
       "type": 0,
-      "value": "Request options - Timeout"
+      "value": "Aanvraagopties - Time-out"
     }
   ],
   "fVG5aD": [
     {
       "type": 0,
       "value": "(UTC-05:00) Haïti"
+    }
+  ],
+  "fZJWBR": [
+    {
+      "type": 0,
+      "value": "Loading designer"
     }
   ],
   "faUrud": [
@@ -7908,7 +7948,7 @@
   "fxue5l": [
     {
       "type": 0,
-      "value": "Workflows"
+      "value": "Werkstromen"
     }
   ],
   "g076bL": [
@@ -8007,6 +8047,12 @@
       "value": "Info"
     }
   ],
+  "gS4Teq": [
+    {
+      "type": 0,
+      "value": "Matrixitem"
+    }
+  ],
   "gWyYg0": [
     {
       "type": 0,
@@ -8026,7 +8072,7 @@
     },
     {
       "type": 0,
-      "value": " more items"
+      "value": " meer items"
     }
   ],
   "gc6v4X": [
@@ -8102,7 +8148,7 @@
     },
     {
       "type": 0,
-      "value": " Install gateway"
+      "value": " Gateway installeren"
     }
   ],
   "h1lQDa": [
@@ -8126,13 +8172,13 @@
   "hCrg+6": [
     {
       "type": 0,
-      "value": "Actions must have one or more run after configurations"
+      "value": "Acties moeten een of meer uitvoeringen hebben na configuraties"
     }
   ],
   "hHDJhD": [
     {
       "type": 0,
-      "value": "File content"
+      "value": "Bestandsinhoud"
     }
   ],
   "hLOIwp": [
@@ -8150,7 +8196,7 @@
   "hMpLz3": [
     {
       "type": 0,
-      "value": "Callback URL"
+      "value": "Callback-URL"
     }
   ],
   "hN7iBP": [
@@ -8206,7 +8252,7 @@
   "haeWoU": [
     {
       "type": 0,
-      "value": "Failed to evaluate outputs because splitOn "
+      "value": "Kan de uitvoer niet evalueren omdat splitOn "
     },
     {
       "type": 1,
@@ -8214,7 +8260,7 @@
     },
     {
       "type": 0,
-      "value": " cannot be evaluated. As a result, this operation's outputs might not be correctly visible in subsequent actions"
+      "value": " niet kan worden geëvalueerd. Als gevolg hiervan zijn de uitvoer van deze bewerking mogelijk niet goed zichtbaar in volgende acties"
     }
   ],
   "hbOvB4": [
@@ -8232,13 +8278,13 @@
   "hlrKDC": [
     {
       "type": 0,
-      "value": "Connection"
+      "value": "Verbinding"
     }
   ],
   "ho2D6F": [
     {
       "type": 0,
-      "value": "Close panel"
+      "value": "Deelvenster sluiten"
     }
   ],
   "hq1mk6": [
@@ -8286,7 +8332,7 @@
   "hz9HJ2": [
     {
       "type": 0,
-      "value": "Insert dynamic content"
+      "value": "Dynamische inhoud invoegen"
     }
   ],
   "hza/cT": [
@@ -8298,7 +8344,7 @@
   "i/R+Q7": [
     {
       "type": 0,
-      "value": "Local time"
+      "value": "Lokale tijd"
     }
   ],
   "i/SguY": [
@@ -8352,7 +8398,7 @@
   "iBArTB": [
     {
       "type": 0,
-      "value": "collapse functions drawer"
+      "value": "functielade samenvouwen"
     }
   ],
   "iCSHJG": [
@@ -8364,7 +8410,7 @@
   "iCni1C": [
     {
       "type": 0,
-      "value": "Can't find any search results"
+      "value": "Kan geen zoekresultaten vinden"
     }
   ],
   "iE2+sy": [
@@ -8426,7 +8472,7 @@
   "iTz1lp": [
     {
       "type": 0,
-      "value": "Unpin action"
+      "value": "Actie losmaken"
     }
   ],
   "iU1OJh": [
@@ -8480,13 +8526,13 @@
   "im0GMa": [
     {
       "type": 0,
-      "value": "Show less"
+      "value": "Minder weergeven"
     }
   ],
   "ioUq6Q": [
     {
       "type": 0,
-      "value": "Password"
+      "value": "Wachtwoord"
     }
   ],
   "iq+tiv": [
@@ -8508,7 +8554,7 @@
   "ir+plQ": [
     {
       "type": 0,
-      "value": "Operation details error"
+      "value": "Fout in bewerkingsdetails"
     }
   ],
   "iy8rNf": [
@@ -8520,13 +8566,13 @@
   "j2v8BE": [
     {
       "type": 0,
-      "value": "No connections are needed in this template"
+      "value": "Er zijn geen verbindingen nodig in deze sjabloon"
     }
   ],
   "j4OKkU": [
     {
       "type": 0,
-      "value": "Text color"
+      "value": "Tekstkleur"
     }
   ],
   "j5z8Vd": [
@@ -8664,7 +8710,7 @@
   "jvVVTG": [
     {
       "type": 0,
-      "value": "Action type"
+      "value": "Actietype"
     }
   ],
   "k/X2ml": [
@@ -8700,7 +8746,7 @@
   "kBTFhL": [
     {
       "type": 0,
-      "value": "Fix my expression: "
+      "value": "Mijn expressie herstellen: "
     },
     {
       "type": 1,
@@ -8852,7 +8898,7 @@
   "kvUaFw": [
     {
       "type": 0,
-      "value": "More info"
+      "value": "Meer informatie"
     }
   ],
   "l/3yJr": [
@@ -8894,13 +8940,13 @@
   "l8lP1X": [
     {
       "type": 0,
-      "value": "The error and its code are required when status is \"Failed\""
+      "value": "De fout en de bijbehorende code zijn vereist wanneer de status Mislukt is"
     }
   ],
   "l9+EbH": [
     {
       "type": 0,
-      "value": "Description"
+      "value": "Beschrijving"
     }
   ],
   "lA/sHA": [
@@ -8926,13 +8972,13 @@
   "lFWXhc": [
     {
       "type": 0,
-      "value": "Workflow"
+      "value": "Werkstroom"
     }
   ],
   "lK+Vzo": [
     {
       "type": 0,
-      "value": "Secure string"
+      "value": "Beveiligde tekenreeks"
     }
   ],
   "lM9qrG": [
@@ -8962,7 +9008,7 @@
   "lSUNx5": [
     {
       "type": 0,
-      "value": "Action tracking ID"
+      "value": "Actietracerings-id"
     }
   ],
   "lX30/R": [
@@ -8974,7 +9020,7 @@
   "lbq5E1": [
     {
       "type": 0,
-      "value": "Large messages may be split up into smaller requests to the connector to allow large message upload. More details can be found at http://aka.ms/logicapps-chunk#upload-content-in-chunks"
+      "value": "Grote berichten worden mogelijk opgesplitst in kleinere aanvragen aan de connector, om het uploaden van grote berichten toe te staan. Meer informatie vindt u op http://aka.ms/logicapps-chunk#upload-content-in-chunks"
     }
   ],
   "lckgnb": [
@@ -8986,7 +9032,7 @@
   "ldn/IC": [
     {
       "type": 0,
-      "value": "Test"
+      "value": "Testen"
     }
   ],
   "lexzgJ": [
@@ -9036,13 +9082,13 @@
   "lkmLHk": [
     {
       "type": 0,
-      "value": "Use Schema Editor"
+      "value": "Schema Editor gebruiken"
     }
   ],
   "lqF8H5": [
     {
       "type": 0,
-      "value": "Collapse static result"
+      "value": "Statisch resultaat samenvouwen"
     }
   ],
   "lsH37F": [
@@ -9072,13 +9118,13 @@
   "m4qt/b": [
     {
       "type": 0,
-      "value": "ACL creation failed for connection. Deleting the connection."
+      "value": "Maken van ACL mislukt voor de verbinding. De verbinding wordt verwijderd."
     }
   ],
   "m5InJc": [
     {
       "type": 0,
-      "value": "Status Code"
+      "value": "Statuscode"
     }
   ],
   "m7Y6Qf": [
@@ -9090,7 +9136,7 @@
   "m8MjHH": [
     {
       "type": 0,
-      "value": "Enter a value"
+      "value": "Voer een waarde in"
     }
   ],
   "m8Q61y": [
@@ -9158,7 +9204,7 @@
   "mQJXU4": [
     {
       "type": 0,
-      "value": "Run after"
+      "value": "Uitvoeren na"
     }
   ],
   "mUURJW": [
@@ -9188,7 +9234,7 @@
   "mb1XDD": [
     {
       "type": 0,
-      "value": "Actual value"
+      "value": "Werkelijke waarde"
     }
   ],
   "mca3Ml": [
@@ -9212,7 +9258,7 @@
   "mgD2ZT": [
     {
       "type": 0,
-      "value": "Summary"
+      "value": "Samenvatting"
     }
   ],
   "mjS/k1": [
@@ -9258,7 +9304,7 @@
   "mxSILx": [
     {
       "type": 0,
-      "value": "Queries"
+      "value": "Query's"
     }
   ],
   "n+F7e2": [
@@ -9270,7 +9316,7 @@
   "n+sJ5W": [
     {
       "type": 0,
-      "value": "Published by"
+      "value": "Gepubliceerd door"
     }
   ],
   "n20T2h": [
@@ -9324,7 +9370,7 @@
   "nN1ezT": [
     {
       "type": 0,
-      "value": "Start with a blank workflow to build your integration process from scratch."
+      "value": "Begin met een lege werkstroom om uw integratieproces helemaal opnieuw te maken."
     }
   ],
   "nNWAAh": [
@@ -9336,7 +9382,7 @@
   "nODesn": [
     {
       "type": 0,
-      "value": "Source"
+      "value": "Bron"
     }
   ],
   "nOWGAV": [
@@ -9360,7 +9406,7 @@
   "nRjpgk": [
     {
       "type": 0,
-      "value": "Sample data"
+      "value": "Voorbeeldgegevens"
     }
   ],
   "nRpM02": [
@@ -9390,7 +9436,7 @@
   "nV2Spt": [
     {
       "type": 0,
-      "value": "Operation details panel"
+      "value": "Detailvenster voor bewerking"
     }
   ],
   "nVDG00": [
@@ -9432,7 +9478,7 @@
   "nhEgHb": [
     {
       "type": 0,
-      "value": "By"
+      "value": "Door"
     }
   ],
   "njGstq": [
@@ -9456,7 +9502,7 @@
   "no+blV": [
     {
       "type": 0,
-      "value": "Cancel"
+      "value": "Annuleren"
     }
   ],
   "no/SMg": [
@@ -9468,13 +9514,13 @@
   "nr6bPd": [
     {
       "type": 0,
-      "value": "Open Test panel"
+      "value": "Testpaneel openen"
     }
   ],
   "nuNBYE": [
     {
       "type": 0,
-      "value": "Path"
+      "value": "Pad"
     }
   ],
   "nwLd4b": [
@@ -9542,7 +9588,7 @@
   "o6x5J4": [
     {
       "type": 0,
-      "value": "Create expression"
+      "value": "Expressie maken"
     }
   ],
   "o7bd1o": [
@@ -9578,13 +9624,13 @@
   "oOGTSo": [
     {
       "type": 0,
-      "value": "Connected"
+      "value": "Verbonden"
     }
   ],
   "oPKLDZ": [
     {
       "type": 0,
-      "value": "Delete switch case"
+      "value": "Schakelcassette verwijderen"
     }
   ],
   "oQjIWf": [
@@ -9644,7 +9690,7 @@
   "ohpbkw": [
     {
       "type": 0,
-      "value": "Exponential interval"
+      "value": "Exponentieel interval"
     }
   ],
   "onXUu0": [
@@ -9656,13 +9702,13 @@
   "oqgNX3": [
     {
       "type": 0,
-      "value": "Workflow name"
+      "value": "Werkstroomnaam"
     }
   ],
   "osln7P": [
     {
       "type": 0,
-      "value": "URL decodes the input string"
+      "value": "De invoertekenreeks wordt door URL gedecodeerd"
     }
   ],
   "ox2Ou7": [
@@ -9674,7 +9720,7 @@
   "oxCSqB": [
     {
       "type": 0,
-      "value": "You can edit parameters here or in designer."
+      "value": "U kunt parameters hier of in designer bewerken."
     }
   ],
   "oxXV4+": [
@@ -9686,7 +9732,7 @@
   "oxcHvs": [
     {
       "type": 0,
-      "value": "Remove list of multi options"
+      "value": "Multi-keuzelijst verwijderen"
     }
   ],
   "p/0r2N": [
@@ -9782,7 +9828,7 @@
   "pfmki/": [
     {
       "type": 0,
-      "value": "Specify the behavior and capabilities for transferring content over HTTP."
+      "value": "Geef het gedrag en de mogelijkheden op voor het overbrengen van inhoud via HTTP."
     }
   ],
   "piaRy6": [
@@ -9794,7 +9840,7 @@
   "pjC3M9": [
     {
       "type": 0,
-      "value": "Suggested expression"
+      "value": "Voorgestelde expressie"
     }
   ],
   "pozypE": [
@@ -9806,7 +9852,7 @@
   "pqprxZ": [
     {
       "type": 0,
-      "value": "Configure connections to authenticate and link your workflows with services and applications."
+      "value": "Configureer verbindingen om uw werkstromen te verifiëren en te koppelen aan services en toepassingen."
     }
   ],
   "pr9GwA": [
@@ -9824,7 +9870,7 @@
   "pykp8c": [
     {
       "type": 0,
-      "value": "Blank workflow"
+      "value": "Lege werkstroom"
     }
   ],
   "q/+Uex": [
@@ -9872,7 +9918,7 @@
   "q5lttG": [
     {
       "type": 0,
-      "value": "Undo"
+      "value": "Ongedaan maken"
     }
   ],
   "q87X20": [
@@ -9918,7 +9964,7 @@
   "qMFpNH": [
     {
       "type": 0,
-      "value": "Loading dynamic data"
+      "value": "Dynamische gegevens laden"
     }
   ],
   "qSejoi": [
@@ -10002,7 +10048,7 @@
   "qp3gCy": [
     {
       "type": 0,
-      "value": "Insert link"
+      "value": "Koppeling invoegen"
     }
   ],
   "qr1lLG": [
@@ -10028,7 +10074,7 @@
   "qsL/fE": [
     {
       "type": 0,
-      "value": "Delete parameter"
+      "value": "Parameter verwijderen"
     }
   ],
   "qxw9UO": [
@@ -10100,19 +10146,19 @@
   "rEQceE": [
     {
       "type": 0,
-      "value": "Microsoft Authored"
+      "value": "Door Microsoft gemaakt"
     }
   ],
   "rHySVF": [
     {
       "type": 0,
-      "value": "Missing information for workflows creation"
+      "value": "Ontbrekende informatie voor het maken van werkstromen"
     }
   ],
   "rMYBfw": [
     {
       "type": 0,
-      "value": "Make the field optional"
+      "value": "Het veld optioneel maken"
     }
   ],
   "rNi5Y3": [
@@ -10168,7 +10214,7 @@
   "rl9UOO": [
     {
       "type": 0,
-      "value": "Connections cannot be edited in pinned view. Release the pinned action to make connection changes."
+      "value": "Connections kan niet worden bewerkt in de vastgemaakte weergave. Laat de vastgemaakte actie los om verbindingswijzigingen aan te brengen."
     }
   ],
   "rsdJcV": [
@@ -10204,13 +10250,13 @@
   "s0Qaot": [
     {
       "type": 0,
-      "value": "Workflow Parameters Panel"
+      "value": "Paneel Werkstroomparameters"
     }
   ],
   "s5AOpV": [
     {
       "type": 0,
-      "value": "Card title"
+      "value": "Kaarttitel"
     }
   ],
   "s5RV9B": [
@@ -10252,7 +10298,7 @@
   "sKy720": [
     {
       "type": 0,
-      "value": "Must provide value for workflow name."
+      "value": "U moet een waarde opgeven voor de werkstroomnaam."
     }
   ],
   "sRpETS": [
@@ -10270,7 +10316,7 @@
   "sVcvcG": [
     {
       "type": 0,
-      "value": "Basics"
+      "value": "Basis"
     }
   ],
   "sYQDN+": [
@@ -10306,7 +10352,7 @@
   "sfTqHY": [
     {
       "type": 0,
-      "value": "Close panel"
+      "value": "Deelvenster sluiten"
     }
   ],
   "shF9tZ": [
@@ -10388,7 +10434,7 @@
   "t+h+KW": [
     {
       "type": 0,
-      "value": "Input"
+      "value": "Invoer"
     }
   ],
   "t/RPwA": [
@@ -10400,7 +10446,7 @@
   "t0tN4J": [
     {
       "type": 0,
-      "value": "Code view"
+      "value": "Codeweergave"
     }
   ],
   "t7ytOJ": [
@@ -10436,7 +10482,7 @@
   "tGSsgZ": [
     {
       "type": 0,
-      "value": "select an identity"
+      "value": "een identiteit selecteren"
     }
   ],
   "tH2pT1": [
@@ -10490,13 +10536,13 @@
   "tQIXhy": [
     {
       "type": 0,
-      "value": "Original expression"
+      "value": "Oorspronkelijke expressie"
     }
   ],
   "tRe2Ct": [
     {
       "type": 0,
-      "value": "Name"
+      "value": "Naam"
     }
   ],
   "tTIsTX": [
@@ -10560,7 +10606,7 @@
   "tbl/ar": [
     {
       "type": 0,
-      "value": "No items"
+      "value": "Geen items"
     }
   ],
   "td5//c": [
@@ -10584,13 +10630,13 @@
   "toWTrl": [
     {
       "type": 0,
-      "value": "Search"
+      "value": "Zoeken"
     }
   ],
   "tooc6v": [
     {
       "type": 0,
-      "value": "Switch '"
+      "value": "'"
     },
     {
       "type": 1,
@@ -10598,7 +10644,7 @@
     },
     {
       "type": 0,
-      "value": "' to the local time"
+      "value": "' overschakelen naar de lokale tijd"
     }
   ],
   "tqqUHX": [
@@ -10610,7 +10656,7 @@
   "tt1pJC": [
     {
       "type": 0,
-      "value": "You will lose all unsaved changes. Are you sure you want to discard the changes?"
+      "value": "Alle niet-opgeslagen wijzigingen gaan verloren. Weet u zeker dat u de wijzigingen wilt negeren?"
     }
   ],
   "tu4TTM": [
@@ -10622,13 +10668,13 @@
   "twr0pi": [
     {
       "type": 0,
-      "value": "Copy trigger"
+      "value": "Trigger kopiëren"
     }
   ],
   "tzeDPE": [
     {
       "type": 0,
-      "value": "State type"
+      "value": "Statustype"
     }
   ],
   "u81zB9": [
@@ -10652,13 +10698,13 @@
   "uEI5Wo": [
     {
       "type": 0,
-      "value": "Value"
+      "value": "Waarde"
     }
   ],
   "uIgGKj": [
     {
       "type": 0,
-      "value": "Managed identity"
+      "value": "Beheerde identiteit"
     }
   ],
   "uIurld": [
@@ -10704,7 +10750,7 @@
   "uSr3WX": [
     {
       "type": 0,
-      "value": "Connection name"
+      "value": "Verbindingsnaam"
     }
   ],
   "uTTbhk": [
@@ -10758,7 +10804,7 @@
   "udnt8c": [
     {
       "type": 0,
-      "value": "Secure object"
+      "value": "Object beveiligen"
     }
   ],
   "uesaee": [
@@ -10788,7 +10834,7 @@
   "umLmPm": [
     {
       "type": 0,
-      "value": "Operation Panel"
+      "value": "Bewerkingsvenster"
     }
   ],
   "unMG8m": [
@@ -10860,7 +10906,7 @@
   "uzj2d3": [
     {
       "type": 0,
-      "value": "Close panel"
+      "value": "Deelvenster sluiten"
     }
   ],
   "uzsleE": [
@@ -10872,7 +10918,7 @@
   "v+FA8N": [
     {
       "type": 0,
-      "value": "Local time"
+      "value": "Lokale tijd"
     }
   ],
   "v+keTP": [
@@ -10890,7 +10936,7 @@
   "v4JmCE": [
     {
       "type": 0,
-      "value": "Please explain how you would like to update your expression: \""
+      "value": "Leg uit hoe u de expressie wilt bijwerken: \""
     },
     {
       "type": 1,
@@ -10928,13 +10974,13 @@
   "vNqq43": [
     {
       "type": 0,
-      "value": "Add loop"
+      "value": "Lus toevoegen"
     }
   ],
   "vO/I7P": [
     {
       "type": 0,
-      "value": "Switch '"
+      "value": "Schakel '"
     },
     {
       "type": 1,
@@ -10942,7 +10988,7 @@
     },
     {
       "type": 0,
-      "value": "' to the UTC time format"
+      "value": "' over naar de UTC-tijdnotatie"
     }
   ],
   "vQcQkU": [
@@ -11046,13 +11092,13 @@
   "w+7aGo": [
     {
       "type": 0,
-      "value": "Connections list"
+      "value": "Connections lijst"
     }
   ],
   "w+t06Q": [
     {
       "type": 0,
-      "value": "Select fields"
+      "value": "Velden selecteren"
     }
   ],
   "w0pI5M": [
@@ -11082,7 +11128,7 @@
   "wBBu4g": [
     {
       "type": 0,
-      "value": "Missing information for workflow creation"
+      "value": "Ontbrekende informatie voor het maken van werkstroom"
     }
   ],
   "wEaGWn": [
@@ -11106,7 +11152,7 @@
   "wG8fwz": [
     {
       "type": 0,
-      "value": "Bullet list"
+      "value": "Lijst met opsommingstekens"
     }
   ],
   "wGYmui": [
@@ -11118,7 +11164,7 @@
   "wKJdDk": [
     {
       "type": 0,
-      "value": "Unsupported token type: "
+      "value": "Niet-ondersteund tokentype: "
     },
     {
       "type": 1,
@@ -11140,7 +11186,7 @@
   "wPjnM9": [
     {
       "type": 0,
-      "value": "Paste a parallel action"
+      "value": "Een parallelle actie plakken"
     }
   ],
   "wPlTDB": [
@@ -11164,7 +11210,7 @@
   "wTaSTp": [
     {
       "type": 0,
-      "value": "Please save the map before testing"
+      "value": "Sla de kaart op voordat u gaat testen"
     }
   ],
   "wV3Lmd": [
@@ -11188,13 +11234,13 @@
   "wXLEcJ": [
     {
       "type": 0,
-      "value": "Insert data from previous step (you can also add by typing Alt + / in the editor)"
+      "value": "Gegevens uit de vorige stap invoegen (u kunt ook toevoegen door Alt + '/' te typen in de editor)"
     }
   ],
   "wYzIf2": [
     {
       "type": 0,
-      "value": "Unsupported token type: "
+      "value": "Niet-ondersteund tokentype: "
     },
     {
       "type": 1,
@@ -11210,7 +11256,7 @@
   "wjiptl": [
     {
       "type": 0,
-      "value": "Node Search Panel"
+      "value": "Deelvenster Knooppunt zoeken"
     }
   ],
   "wkvUUA": [
@@ -11253,6 +11299,12 @@
     {
       "type": 0,
       "value": "Canvas"
+    }
+  ],
+  "wx/ZQP": [
+    {
+      "type": 0,
+      "value": "Invoer toevoegen"
     }
   ],
   "wxaQwD": [
@@ -11312,7 +11364,7 @@
   "xDHpeS": [
     {
       "type": 0,
-      "value": "Review your settings, ensure everything is correctly set up, and create your workflow."
+      "value": "Controleer uw instellingen, controleer of alles juist is ingesteld en maak uw werkstroom."
     }
   ],
   "xFQXAI": [
@@ -11324,7 +11376,7 @@
   "xHyhqO": [
     {
       "type": 0,
-      "value": "Optimized for low latency"
+      "value": "Geoptimaliseerd voor lage latentie"
     }
   ],
   "xJ6vjn": [
@@ -11342,13 +11394,13 @@
   "xK8r1/": [
     {
       "type": 0,
-      "value": "Run information loading"
+      "value": "Informatie over uitvoering laden"
     }
   ],
   "xMgLd8": [
     {
       "type": 0,
-      "value": "Minimum interval"
+      "value": "Minimuminterval"
     }
   ],
   "xN3GEX": [
@@ -11420,7 +11472,7 @@
   "xwB12G": [
     {
       "type": 0,
-      "value": "Enter another option"
+      "value": "Geef een andere optie op"
     }
   ],
   "xwD1VZ": [
@@ -11438,7 +11490,7 @@
   "y+eYFf": [
     {
       "type": 0,
-      "value": "Workflow parameters"
+      "value": "Werkstroomparameters"
     }
   ],
   "y1e9yw": [
@@ -11462,7 +11514,7 @@
   "y6aoMi": [
     {
       "type": 0,
-      "value": "Show Logic App run details"
+      "value": "Details voor de uitvoering van de logische app"
     }
   ],
   "yB6PB/": [
@@ -11480,7 +11532,7 @@
   "yENrOg": [
     {
       "type": 0,
-      "value": "here"
+      "value": "hier"
     }
   ],
   "yF2R//": [
@@ -11492,7 +11544,7 @@
   "yKNKV/": [
     {
       "type": 0,
-      "value": "Try a different search term or remove filters"
+      "value": "Probeer een andere zoekterm of verwijder filters"
     }
   ],
   "yKOsmK": [
@@ -11510,13 +11562,13 @@
   "yOyeBT": [
     {
       "type": 0,
-      "value": "Toggle minimap"
+      "value": "Minimap in-/uitschakelen"
     }
   ],
   "yQ6+nV": [
     {
       "type": 0,
-      "value": "Connect"
+      "value": "Verbinding maken"
     }
   ],
   "yRDuqj": [
@@ -11552,7 +11604,7 @@
   "yeagrz": [
     {
       "type": 0,
-      "value": "Ideal for request-response and processing IoT events"
+      "value": "Ideaal voor aanvraagreacties en het verwerken van IoT-gebeurtenissen"
     }
   ],
   "yjierd": [
@@ -11572,7 +11624,7 @@
   "yjjXCQ": [
     {
       "type": 0,
-      "value": "Close panel"
+      "value": "Deelvenster sluiten"
     }
   ],
   "yk7L+4": [
@@ -11596,7 +11648,7 @@
   "yqF/Ew": [
     {
       "type": 0,
-      "value": "Search workflow actions"
+      "value": "Werkstroomacties zoeken"
     }
   ],
   "yqRrQ/": [
@@ -11632,7 +11684,7 @@
   "yxctQw": [
     {
       "type": 0,
-      "value": "Logical name"
+      "value": "Logische naam"
     }
   ],
   "yzqXMp": [
@@ -11654,7 +11706,7 @@
   "z/vIwi": [
     {
       "type": 0,
-      "value": "Data handling"
+      "value": "Gegevensverwerking"
     }
   ],
   "z3VuE+": [
@@ -11666,7 +11718,7 @@
   "z5H3GF": [
     {
       "type": 0,
-      "value": "Display name"
+      "value": "Weergavenaam"
     }
   ],
   "z9kH+0": [
@@ -11696,13 +11748,13 @@
   "zK5VPq": [
     {
       "type": 0,
-      "value": "Workflows in this Accelerator"
+      "value": "Werkstromen in deze accelerator"
     }
   ],
   "zMKxg9": [
     {
       "type": 0,
-      "value": "Name does not match the given pattern."
+      "value": "De naam komt niet overeen met het opgegeven patroon."
     }
   ],
   "zNesUZ": [
@@ -11720,7 +11772,7 @@
   "zPRSM9": [
     {
       "type": 0,
-      "value": "App identity is not configured on the logic app environment variables."
+      "value": "De app-identiteit is niet geconfigureerd voor de omgevingsvariabelen van de logische app."
     }
   ],
   "zUWAsJ": [
@@ -11780,7 +11832,7 @@
   "zkqKJ+": [
     {
       "type": 0,
-      "value": "Body"
+      "value": "Hoofdtekst"
     }
   ],
   "znGyyU": [
@@ -11798,13 +11850,13 @@
   "zsc+jp": [
     {
       "type": 0,
-      "value": "Functions"
+      "value": "Functies"
     }
   ],
   "zxF7g+": [
     {
       "type": 0,
-      "value": "A to Z, ascending"
+      "value": "A tot Z, oplopend"
     }
   ],
   "zxe9hh": [
