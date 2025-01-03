@@ -33,7 +33,7 @@ const perfStats = {
   loadEndTime: undefined,
 };
 
-const telemetryString = 'setInGitHubBuild';
+const telemetryString = '1a499736-bf50-4298-a04a-74d8e5de6220';
 
 export async function activate(context: vscode.ExtensionContext) {
   vscode.commands.executeCommand(
