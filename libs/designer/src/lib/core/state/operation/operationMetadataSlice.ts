@@ -158,9 +158,10 @@ export interface NodeData {
   repetitionInfo?: RepetitionContext;
 }
 
-interface AddSettingsPayload {
+export interface AddSettingsPayload {
   id: string;
   settings: Settings;
+  ignoreDirty?: boolean;
 }
 
 interface AddStaticResultsPayload {
