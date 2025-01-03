@@ -15,13 +15,17 @@ import { TestPanel } from '../components/test/TestPanel';
 import DialogView from './DialogView';
 import { useDispatch } from 'react-redux';
 import { setSelectedItem } from '../core/state/DataMapSlice';
+import { MapCheckerPanel } from '../components/mapChecker/MapCheckerPanel';
+import type { ILoggerService } from '@microsoft/logic-apps-shared';
+import { DevLogger, InitLoggerService } from '@microsoft/logic-apps-shared';
 
 interface DataMapperDesignerProps {
   fileService: IDataMapperFileService;
+  loggerService?: ILoggerService;
   setIsMapStateDirty?: (isMapStateDirty: boolean) => void;
 }
 
-export const DataMapperDesigner = ({ fileService, setIsMapStateDirty }: DataMapperDesignerProps) => {
+export const DataMapperDesigner = ({ fileService, loggerService, setIsMapStateDirty }: DataMapperDesignerProps) => {
   useStaticStyles();
   const styles = useStyles();
   const [sourceScroll, setSourceScroll] = useState<ScrollProps>();
@@ -38,6 +42,16 @@ export const DataMapperDesigner = ({ fileService, setIsMapStateDirty }: DataMapp
     },
     [setSourceScroll, setTargetScroll]
   );
+
+  const loggerServices: ILoggerService[] = [];
+  if (loggerService) {
+    loggerServices.push(loggerService);
+  }
+  if (process.env.NODE_ENV !== 'production') {
+    loggerServices.push(new DevLogger());
+  }
+
+  InitLoggerService(loggerServices);
 
   if (fileService) {
     InitDataMapperFileService(fileService);
@@ -58,7 +72,6 @@ export const DataMapperDesigner = ({ fileService, setIsMapStateDirty }: DataMapp
     }
   }, [fileService]);
   return (
-    // danielle rename back and add width and height
     <DataMapperWrappedContext.Provider
       value={{
         scroll: {
@@ -74,6 +87,7 @@ export const DataMapperDesigner = ({ fileService, setIsMapStateDirty }: DataMapp
         <FunctionPanel />
         <ReactFlowWrapper setIsMapStateDirty={setIsMapStateDirty} />
         <CodeViewPanel />
+        <MapCheckerPanel />
         <TestPanel />
       </div>
     </DataMapperWrappedContext.Provider>
