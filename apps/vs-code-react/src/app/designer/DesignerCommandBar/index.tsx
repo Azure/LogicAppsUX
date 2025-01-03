@@ -19,10 +19,10 @@ import { Spinner, Toolbar, ToolbarButton } from '@fluentui/react-components';
 import {
   SaveRegular,
   ArrowClockwiseRegular,
-  ErrorCircleFilled,
-  ErrorCircleRegular,
-  SettingsRegular,
+  MentionBracketsRegular,
   ReplayRegular,
+  DismissCircleRegular,
+  DismissCircleFilled,
 } from '@fluentui/react-icons';
 import { TrafficLightDot } from '@microsoft/designer-ui';
 
@@ -154,7 +154,7 @@ export const DesignerCommandBar: React.FC<DesignerCommandBarProps> = ({ isRefres
       disabled: false,
       ariaLabel: Resources.DESIGNER_PARAMETERS,
       text: Resources.DESIGNER_PARAMETERS,
-      icon: <SettingsRegular />,
+      icon: <MentionBracketsRegular />,
       renderTextIcon: haveWorkflowParameterErrors ? (
         <div style={{ display: 'inline-block', marginLeft: 8 }}>
           <TrafficLightDot fill={RUN_AFTER_COLORS[isDarkMode ? 'dark' : 'light']['FAILED']} />
@@ -168,9 +168,9 @@ export const DesignerCommandBar: React.FC<DesignerCommandBarProps> = ({ isRefres
       ariaLabel: Resources.DESIGNER_ERRORS,
       text: Resources.DESIGNER_ERRORS,
       icon: haveErrors ? (
-        <ErrorCircleFilled style={{ color: RUN_AFTER_COLORS[isDarkMode ? 'dark' : 'light']['FAILED'] }} />
+        <DismissCircleFilled style={{ color: RUN_AFTER_COLORS[isDarkMode ? 'dark' : 'light']['FAILED'] }} />
       ) : (
-        <ErrorCircleRegular />
+        <DismissCircleRegular />
       ),
       renderTextIcon: null,
       onClick: () => !!dispatch(openPanel({ panelMode: 'Error' })),
