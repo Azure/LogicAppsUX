@@ -1,6 +1,5 @@
 import type { Recurrence } from '.';
 import constants from '../constants';
-import { getIntervalValue } from './util';
 import { getIntl, equals, getPropertyValue } from '@microsoft/logic-apps-shared';
 import { useIntl } from 'react-intl';
 
@@ -13,7 +12,7 @@ export const Preview = ({ recurrence }: PreviewProps): JSX.Element => {
   const { frequency, interval, schedule, startTime } = recurrence;
   const previewTitle = intl.formatMessage({ defaultMessage: 'Preview', id: 'MCzWDc', description: 'Recurrence preview title' });
   const scheduleHours = (schedule?.hours ?? []).map((hour) => {
-    return getIntervalValue(hour);
+    return hour;
   });
   return (
     <>
