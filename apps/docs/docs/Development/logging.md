@@ -26,10 +26,10 @@ In the github build we copy over the key from production-build.yml into main.ts 
 ##### Testing locally
 
 To test telemetry changes locally
-1. Get IKey from this [test AI resource](https://ms.portal.azure.com/#@microsoft.onmicrosoft.com/resource/subscriptions/11e43792-2b16-4f94-b5ea-de10eade3aef/resourcegroups/cleanupservice/providers/microsoft.insights/components/TestAppInsightVsCode/overview)
+1. Get IKey from this [test AI resource](https://ms.portal.azure.com/#@microsoft.onmicrosoft.com/resource/subscriptions/80d4fe69-c95b-4dd2-a938-9250f1c8ab03/resourcegroups/laux/providers/microsoft.insights/components/VSCodeTelemetry/overview)
 2. Copy this value and replace setInGitHubBuild with the IKey
 3. Build and test the extension
-4. View [log data](https://ms.portal.azure.com/#@microsoft.onmicrosoft.com/resource/subscriptions/11e43792-2b16-4f94-b5ea-de10eade3aef/resourcegroups/cleanupservice/providers/microsoft.insights/components/TestAppInsightVsCode/logs).Logs are stored in the customEvents table.
+4. View [log data](https://ms.portal.azure.com/#@microsoft.onmicrosoft.com/resource/subscriptions/80d4fe69-c95b-4dd2-a938-9250f1c8ab03/resourcegroups/laux/providers/microsoft.insights/components/VSCodeTelemetry/logs).Logs are stored in the customEvents table.
 
 ### Data Mapper Library
 
