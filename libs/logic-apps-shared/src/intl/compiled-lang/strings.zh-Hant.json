@@ -649,6 +649,12 @@
       "value": "將參數引數轉換為浮點數"
     }
   ],
+  "1QktJw": [
+    {
+      "type": 0,
+      "value": "Map errors"
+    }
+  ],
   "1Xke9D": [
     {
       "type": 0,
@@ -1365,6 +1371,20 @@
     {
       "type": 0,
       "value": "(UTC+09:00) 大阪，北海道，東京"
+    }
+  ],
+  "5DkTf5": [
+    {
+      "type": 0,
+      "value": "Target schema node not found for node key '"
+    },
+    {
+      "type": 1,
+      "value": "nodeKey"
+    },
+    {
+      "type": 0,
+      "value": "'"
     }
   ],
   "5J9jne": [
@@ -2640,6 +2660,20 @@
       "value": "表示如何格式化此 Guid 值的單一格式規範。"
     }
   ],
+  "Bwqlxd": [
+    {
+      "type": 0,
+      "value": "Key not found '"
+    },
+    {
+      "type": 1,
+      "value": "nodeKey"
+    },
+    {
+      "type": 0,
+      "value": "'"
+    }
+  ],
   "BxITRH": [
     {
       "type": 0,
@@ -3270,6 +3304,20 @@
       "value": "傳回起始索引和結束索引所定義之字串的區段"
     }
   ],
+  "FPBmrA": [
+    {
+      "type": 0,
+      "value": "Source schema node not found for node key '"
+    },
+    {
+      "type": 1,
+      "value": "nodeKey"
+    },
+    {
+      "type": 0,
+      "value": "'"
+    }
+  ],
   "FT3jt6": [
     {
       "type": 0,
@@ -3465,6 +3513,20 @@
     {
       "type": 0,
       "value": "來源結構描述元素"
+    }
+  ],
+  "GiR7ll": [
+    {
+      "type": 0,
+      "value": "Function not found- '"
+    },
+    {
+      "type": 1,
+      "value": "nodeKey"
+    },
+    {
+      "type": 0,
+      "value": "'"
     }
   ],
   "Gk79Ma": [
@@ -4918,6 +4980,12 @@
     {
       "type": 0,
       "value": "已摺疊"
+    }
+  ],
+  "PEJ+e4": [
+    {
+      "type": 0,
+      "value": "Error loading data map"
     }
   ],
   "PNk3n4": [
@@ -6599,12 +6667,6 @@
       "value": "限制 Logic Apps 不要在回應中包含工作流程中繼資料標頭。"
     }
   ],
-  "XtVOMn": [
-    {
-      "type": 0,
-      "value": "Something went wrong"
-    }
-  ],
   "XtuP5e": [
     {
       "type": 0,
@@ -7787,6 +7849,12 @@
       "value": "已共用"
     }
   ],
+  "epi+zR": [
+    {
+      "type": 0,
+      "value": "Close map checker"
+    }
+  ],
   "er6O+w": [
     {
       "type": 0,
@@ -7901,12 +7969,6 @@
     {
       "type": 0,
       "value": "(UTC-05:00) 海地"
-    }
-  ],
-  "fZJWBR": [
-    {
-      "type": 0,
-      "value": "Loading designer"
     }
   ],
   "faUrud": [
@@ -8830,6 +8892,20 @@
     {
       "type": 0,
       "value": "已移除未連線到目標元素的元素和對應。"
+    }
+  ],
+  "kfmLTY": [
+    {
+      "type": 0,
+      "value": "Function '"
+    },
+    {
+      "type": 1,
+      "value": "functionName"
+    },
+    {
+      "type": 0,
+      "value": "' is missing required inputs"
     }
   ],
   "klY9UN": [
@@ -10190,6 +10266,12 @@
     {
       "type": 0,
       "value": "新增"
+    }
+  ],
+  "rwrlsB": [
+    {
+      "type": 0,
+      "value": "Map Issues"
     }
   ],
   "rxIJfD": [
