@@ -641,6 +641,12 @@
       "value": "Het parameterargument naar een drijvend-kommagetal converteren"
     }
   ],
+  "1QktJw": [
+    {
+      "type": 0,
+      "value": "Map errors"
+    }
+  ],
   "1Xke9D": [
     {
       "type": 0,
@@ -1353,6 +1359,20 @@
     {
       "type": 0,
       "value": "(UTC+09:00) Osaka, Sapporo, Tokio"
+    }
+  ],
+  "5DkTf5": [
+    {
+      "type": 0,
+      "value": "Target schema node not found for node key '"
+    },
+    {
+      "type": 1,
+      "value": "nodeKey"
+    },
+    {
+      "type": 0,
+      "value": "'"
     }
   ],
   "5J9jne": [
@@ -2627,6 +2647,20 @@
       "value": "Eén teken voor aanduiding van de indeling waarmee de indeling van de waarde van deze GUID wordt aangegeven."
     }
   ],
+  "Bwqlxd": [
+    {
+      "type": 0,
+      "value": "Key not found '"
+    },
+    {
+      "type": 1,
+      "value": "nodeKey"
+    },
+    {
+      "type": 0,
+      "value": "'"
+    }
+  ],
   "BxITRH": [
     {
       "type": 0,
@@ -3253,6 +3287,20 @@
       "value": "Retourneert een sectie van een tekenreeks die wordt gedefinieerd door de beginindex en de eindindex"
     }
   ],
+  "FPBmrA": [
+    {
+      "type": 0,
+      "value": "Source schema node not found for node key '"
+    },
+    {
+      "type": 1,
+      "value": "nodeKey"
+    },
+    {
+      "type": 0,
+      "value": "'"
+    }
+  ],
   "FT3jt6": [
     {
       "type": 0,
@@ -3459,6 +3507,20 @@
     {
       "type": 0,
       "value": "Bronschema-element"
+    }
+  ],
+  "GiR7ll": [
+    {
+      "type": 0,
+      "value": "Function not found- '"
+    },
+    {
+      "type": 1,
+      "value": "nodeKey"
+    },
+    {
+      "type": 0,
+      "value": "'"
     }
   ],
   "Gk79Ma": [
@@ -4919,6 +4981,12 @@
     {
       "type": 0,
       "value": "Samengevouwen"
+    }
+  ],
+  "PEJ+e4": [
+    {
+      "type": 0,
+      "value": "Error loading data map"
     }
   ],
   "PNk3n4": [
@@ -6595,12 +6663,6 @@
       "value": "Een beperking voor Logic Apps instellen om te voorkomen dat het antwoord metagegevens van de werkstroom bevat."
     }
   ],
-  "XtVOMn": [
-    {
-      "type": 0,
-      "value": "Something went wrong"
-    }
-  ],
   "XtuP5e": [
     {
       "type": 0,
@@ -7787,6 +7849,12 @@
       "value": "Gedeeld"
     }
   ],
+  "epi+zR": [
+    {
+      "type": 0,
+      "value": "Close map checker"
+    }
+  ],
   "er6O+w": [
     {
       "type": 0,
@@ -7901,12 +7969,6 @@
     {
       "type": 0,
       "value": "(UTC-05:00) Haïti"
-    }
-  ],
-  "fZJWBR": [
-    {
-      "type": 0,
-      "value": "Loading designer"
     }
   ],
   "faUrud": [
@@ -8841,6 +8903,20 @@
     {
       "type": 0,
       "value": "Elementen en toewijzingen worden verwijderd wanneer deze niet zijn verbonden met een doelelement."
+    }
+  ],
+  "kfmLTY": [
+    {
+      "type": 0,
+      "value": "Function '"
+    },
+    {
+      "type": 1,
+      "value": "functionName"
+    },
+    {
+      "type": 0,
+      "value": "' is missing required inputs"
     }
   ],
   "klY9UN": [
@@ -10227,6 +10303,12 @@
     {
       "type": 0,
       "value": "Nieuwe toevoegen"
+    }
+  ],
+  "rwrlsB": [
+    {
+      "type": 0,
+      "value": "Map Issues"
     }
   ],
   "rxIJfD": [

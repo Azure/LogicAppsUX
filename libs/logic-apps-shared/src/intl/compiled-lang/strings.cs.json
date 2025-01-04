@@ -649,6 +649,12 @@
       "value": "Převede argument parametru na číslo s plovoucí desetinnou čárkou."
     }
   ],
+  "1QktJw": [
+    {
+      "type": 0,
+      "value": "Map errors"
+    }
+  ],
   "1Xke9D": [
     {
       "type": 0,
@@ -1365,6 +1371,20 @@
     {
       "type": 0,
       "value": "(UTC+09:00) Ósaka, Sapporo, Tokio"
+    }
+  ],
+  "5DkTf5": [
+    {
+      "type": 0,
+      "value": "Target schema node not found for node key '"
+    },
+    {
+      "type": 1,
+      "value": "nodeKey"
+    },
+    {
+      "type": 0,
+      "value": "'"
     }
   ],
   "5J9jne": [
@@ -2673,6 +2693,20 @@
       "value": "Jeden specifikátor formátu, který označuje, jak formátovat hodnotu tohoto GUID"
     }
   ],
+  "Bwqlxd": [
+    {
+      "type": 0,
+      "value": "Key not found '"
+    },
+    {
+      "type": 1,
+      "value": "nodeKey"
+    },
+    {
+      "type": 0,
+      "value": "'"
+    }
+  ],
   "BxITRH": [
     {
       "type": 0,
@@ -3299,6 +3333,20 @@
       "value": "Vrátí část řetězce definovanou počátečním a koncovým indexem."
     }
   ],
+  "FPBmrA": [
+    {
+      "type": 0,
+      "value": "Source schema node not found for node key '"
+    },
+    {
+      "type": 1,
+      "value": "nodeKey"
+    },
+    {
+      "type": 0,
+      "value": "'"
+    }
+  ],
   "FT3jt6": [
     {
       "type": 0,
@@ -3527,6 +3575,20 @@
     {
       "type": 0,
       "value": "Prvek zdrojového schématu"
+    }
+  ],
+  "GiR7ll": [
+    {
+      "type": 0,
+      "value": "Function not found- '"
+    },
+    {
+      "type": 1,
+      "value": "nodeKey"
+    },
+    {
+      "type": 0,
+      "value": "'"
     }
   ],
   "Gk79Ma": [
@@ -5005,6 +5067,12 @@
     {
       "type": 0,
       "value": "Sbaleno"
+    }
+  ],
+  "PEJ+e4": [
+    {
+      "type": 0,
+      "value": "Error loading data map"
     }
   ],
   "PNk3n4": [
@@ -6703,12 +6771,6 @@
       "value": "Omezí aplikace Logic Apps tak, aby do odpovědi nezahrnovaly hlavičky metadat pracovních postupů."
     }
   ],
-  "XtVOMn": [
-    {
-      "type": 0,
-      "value": "Something went wrong"
-    }
-  ],
   "XtuP5e": [
     {
       "type": 0,
@@ -7899,6 +7961,12 @@
       "value": "Sdíleno"
     }
   ],
+  "epi+zR": [
+    {
+      "type": 0,
+      "value": "Close map checker"
+    }
+  ],
   "er6O+w": [
     {
       "type": 0,
@@ -8013,12 +8081,6 @@
     {
       "type": 0,
       "value": "(UTC-05:00) Haiti"
-    }
-  ],
-  "fZJWBR": [
-    {
-      "type": 0,
-      "value": "Loading designer"
     }
   ],
   "faUrud": [
@@ -8979,6 +9041,20 @@
     {
       "type": 0,
       "value": "Prvky a mapování, které nejsou připojeny k cílovému elementu, se odeberou."
+    }
+  ],
+  "kfmLTY": [
+    {
+      "type": 0,
+      "value": "Function '"
+    },
+    {
+      "type": 1,
+      "value": "functionName"
+    },
+    {
+      "type": 0,
+      "value": "' is missing required inputs"
     }
   ],
   "klY9UN": [
@@ -10413,6 +10489,12 @@
     {
       "type": 0,
       "value": "Přidat nový"
+    }
+  ],
+  "rwrlsB": [
+    {
+      "type": 0,
+      "value": "Map Issues"
     }
   ],
   "rxIJfD": [
