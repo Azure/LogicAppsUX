@@ -76,10 +76,15 @@ export const DataMapperDesigner = ({ fileService, loggerService, setIsMapStateDi
         return;
       }
 
-      e.stopPropagation();
-      e.preventDefault();
+      const selectedKeys = Object.keys(selectedNodes ?? {});
 
-      if (e.key === 'Delete' || e.key === 'Backspace') {
+      if (
+        selectedKeys.length > 0 &&
+        selectedKeys.some((key) => isFunctionNode(key) || isEdgeId(key)) &&
+        (e.key === 'Delete' || e.key === 'Backspace')
+      ) {
+        e.stopPropagation();
+        e.preventDefault();
         for (const key of Object.keys(selectedNodes ?? {})) {
           if (isFunctionNode(key)) {
             dispatch(deleteFunction(key));
