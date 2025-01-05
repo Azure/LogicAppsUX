@@ -13,11 +13,14 @@ import { CodeViewPanel } from '../components/codeView/CodeViewPanel';
 import { ReactFlowWrapper } from '../components/canvas/ReactFlow';
 import { TestPanel } from '../components/test/TestPanel';
 import DialogView from './DialogView';
-import { useDispatch } from 'react-redux';
-import { setSelectedItem } from '../core/state/DataMapSlice';
+import { useDispatch, useSelector } from 'react-redux';
+import { deleteEdge, deleteFunction, setSelectedItem } from '../core/state/DataMapSlice';
 import { MapCheckerPanel } from '../components/mapChecker/MapCheckerPanel';
 import type { ILoggerService } from '@microsoft/logic-apps-shared';
 import { DevLogger, InitLoggerService } from '@microsoft/logic-apps-shared';
+import type { RootState } from '../core/state/Store';
+import { isFunctionNode } from '../utils/ReactFlow.Util';
+import { isEdgeId } from '../utils/Edge.Utils';
 
 interface DataMapperDesignerProps {
   fileService: IDataMapperFileService;
@@ -31,6 +34,7 @@ export const DataMapperDesigner = ({ fileService, loggerService, setIsMapStateDi
   const [sourceScroll, setSourceScroll] = useState<ScrollProps>();
   const [targetScroll, setTargetScroll] = useState<ScrollProps>();
   const dispatch = useDispatch();
+  const selectedNodes = useSelector((state: RootState) => state.dataMap.present.curDataMapOperation.selectedItemConnectedNodes);
 
   const setScroll = useCallback(
     (scrollProps: ScrollProps, location: ScrollLocation) => {
@@ -66,6 +70,28 @@ export const DataMapperDesigner = ({ fileService, loggerService, setIsMapStateDi
     [dispatch]
   );
 
+  const onKeyDown = useCallback(
+    (e?: any) => {
+      if (!e) {
+        return;
+      }
+
+      e.stopPropagation();
+      e.preventDefault();
+
+      if (e.key === 'Delete' || e.key === 'Backspace') {
+        for (const key of Object.keys(selectedNodes ?? {})) {
+          if (isFunctionNode(key)) {
+            dispatch(deleteFunction(key));
+          } else if (isEdgeId(key)) {
+            dispatch(deleteEdge(key));
+          }
+        }
+      }
+    },
+    [dispatch, selectedNodes]
+  );
+
   useEffect(() => {
     if (fileService) {
       fileService.readCurrentCustomXsltPathOptions();
@@ -82,7 +108,7 @@ export const DataMapperDesigner = ({ fileService, loggerService, setIsMapStateDi
       }}
     >
       <EditorCommandBar />
-      <div className={styles.root} onClick={onContainerClick}>
+      <div className={styles.root} onClick={onContainerClick} onKeyDown={onKeyDown}>
         <DialogView />
         <FunctionPanel />
         <ReactFlowWrapper setIsMapStateDirty={setIsMapStateDirty} />
