@@ -2119,6 +2119,12 @@ export const loadDynamicContentForInputsInNode = async (
         },
         { message }
       );
+      LoggerService().log({
+        level: LogEntryLevel.Error,
+        area: 'loadDynamicContentForInputsInNode',
+        message: errorMessage,
+        error: error instanceof Error ? error : undefined,
+      });
 
       dispatch(
         updateErrorDetails({
@@ -2408,6 +2414,13 @@ async function tryGetInputDynamicSchema(
       },
       { message }
     );
+
+    LoggerService().log({
+      level: LogEntryLevel.Error,
+      area: 'tryGetInputDynamicSchema',
+      message: errorMessage,
+      error: error instanceof Error ? error : undefined,
+    });
 
     dispatch(
       updateErrorDetails({

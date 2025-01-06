@@ -1,4 +1,13 @@
 # Logic Apps Designer
+## [5.17.0](https://github.com/Azure/LogicAppsUX/compare/v5.16.0...v5.17.0) (2025-01-06)
+
+
+### Features
+
+* **Data Mapper:** Add keyboard delete, fix circles cutting, handle existing map loading ([#6329](https://github.com/Azure/LogicAppsUX/issues/6329)) ([cc6be0b](https://github.com/Azure/LogicAppsUX/commit/cc6be0b3fcf3b78dda484db2ba44dd3ed48439cd))
+* **designer:** Add priority sort to Action and Trigger browse to make top actions more useful ([#6263](https://github.com/Azure/LogicAppsUX/issues/6263)) ([52ab139](https://github.com/Azure/LogicAppsUX/commit/52ab1392e001a58e5483fe433b46f4c9e7488e0f))
+* **vscode:** added telemetry docs and prefix for Data Mapper ([#6326](https://github.com/Azure/LogicAppsUX/issues/6326)) ([d53566a](https://github.com/Azure/LogicAppsUX/commit/d53566a2682e4b3ae5c5f697ddcc4fa617b2c90a))
+
 ## [5.16.0](https://github.com/Azure/LogicAppsUX/compare/v5.15.0...v5.16.0) (2025-01-03)
 
 

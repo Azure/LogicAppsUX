@@ -7,6 +7,7 @@ import { isFunctionData } from './Function.Utils';
 import { nodeScrollDirections } from './Schema.Utils';
 import { UnboundedInput } from '../constants/FunctionConstants';
 
+export const panelWidth = 300;
 export const addReactFlowPrefix = (key: string, type: SchemaType) => `${type}-${key}`;
 export const addSourceReactFlowPrefix = (key: string) => `${sourcePrefix}${key}`;
 export const addTargetReactFlowPrefix = (key: string) => `${targetPrefix}${key}`;
@@ -76,7 +77,7 @@ export const getSplitIdsFromReactFlowConnectionId = (reactFlowId: string): React
 
 const createReactFlowEdgeLabels = (connection: Connection, inputIndex: number): string[] => {
   let labels: string[] = [];
-  if (isFunctionData(connection.self.node)) {
+  if (isFunctionData(connection.self.node) && connection.self?.node?.inputs?.length > inputIndex) {
     // only function nodes need labels for their multiple inputs
     if (connection.self.node.maxNumberOfInputs > UnboundedInput) {
       labels = [connection.self.node.inputs[inputIndex].name];
