@@ -184,7 +184,7 @@ export async function updateConnectionKeys(context: IFunctionWizardContext): Pro
     } catch (error) {
       const errorMessage = localize(
         'errorVerifyingConnectionKeys',
-        'Error while verifying existing managed api connections: {0}',
+        'Error encountered while verifying existing managed API connections: {0}',
         error.message ?? error
       );
       ext.outputChannel.appendLog(errorMessage);
