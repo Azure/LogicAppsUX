@@ -716,7 +716,7 @@
         },
         {
           "command": "azureLogicAppsStandard.saveBlankUnitTest",
-          "when": "resourceFilename==workflow.json",
+          "when": "false",
           "group": "navigation@4"
         },
         {
