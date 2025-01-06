@@ -71,27 +71,27 @@ describe('DeleteNodeModal', () => {
 
 describe('DeleteNodeModal Snapshots', () => {
   it('should match snapshot for operation node', () => {
-    const { asFragment } = renderComponent({ nodeType: 'OPERATION_NODE' });
-    expect(asFragment()).toMatchSnapshot();
+    const deleteNodeModal = renderComponent({ nodeType: 'OPERATION_NODE' });
+    expect(deleteNodeModal).toMatchSnapshot();
   });
 
   it('should match snapshot for graph node', () => {
-    const { asFragment } = renderComponent({ nodeType: 'GRAPH_NODE' });
-    expect(asFragment()).toMatchSnapshot();
+    const deleteNodeModal = renderComponent({ nodeType: 'GRAPH_NODE' });
+    expect(deleteNodeModal).toMatchSnapshot();
   });
 
   it('should match snapshot for switch case node', () => {
-    const { asFragment } = renderComponent({ nodeType: 'SUBGRAPH_NODE' });
-    expect(asFragment()).toMatchSnapshot();
+    const deleteNodeModal = renderComponent({ nodeType: 'SUBGRAPH_NODE' });
+    expect(deleteNodeModal).toMatchSnapshot();
   });
 
   it('should match snapshot for other node types', () => {
-    const { asFragment } = renderComponent({ nodeType: 'PLACEHOLDER_NODE' });
-    expect(asFragment()).toMatchSnapshot();
+    const deleteNodeModal = renderComponent({ nodeType: 'PLACEHOLDER_NODE' });
+    expect(deleteNodeModal).toMatchSnapshot();
   });
 
   it('should match snapshot when nodeId is not provided', () => {
-    const { asFragment } = renderComponent({ nodeId: '' });
-    expect(asFragment()).toMatchSnapshot();
+    const deleteNodeModal = renderComponent({ nodeId: '' });
+    expect(deleteNodeModal).toMatchSnapshot();
   });
 });
