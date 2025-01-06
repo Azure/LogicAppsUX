@@ -67,7 +67,7 @@ export async function extractConnectionSettings(context: IFunctionWizardContext)
       const connectionsValues = await extractConnectionDetails(connectionsData);
       const connectionDetail = connectionsValues[0];
 
-      context.telemetry.properties.addedConnectionDetails = `Extracted the following settings ${connectionDetail}`;
+      context.telemetry.properties.addedConnectionDetails = `Extracted the following settings: ${connectionDetail}`;
       const newValues = {
         ...connectionDetail,
         ...localSettings.Values,
