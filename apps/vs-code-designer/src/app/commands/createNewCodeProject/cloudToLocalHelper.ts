@@ -163,7 +163,7 @@ export async function updateConnectionKeys(context: IFunctionWizardContext): Pro
     try {
       const connectionsJson = await getConnectionsJson(projectPath);
       if (isEmptyString(connectionsJson)) {
-        ext.outputChannel.appendLog(localize('noConnectionKeysFound', 'No connection keys found to verify'));
+        ext.outputChannel.appendLog(localize('noConnectionKeysFound', 'No connection keys found for validation'));
         return;
       }
       const parametersData = getParametersJson(projectPath);
