@@ -227,7 +227,7 @@ export async function parameterizeConnectionsDuringImport(
               localSettingsValues
             );
 
-            context.telemetry.properties.parameterizedConnections = `Parameterized ${connectionKey} connection`;
+            context.telemetry.properties.parameterizedConnections = `Parameterized ${connectionKey} connection.`;
           });
         }
       });
