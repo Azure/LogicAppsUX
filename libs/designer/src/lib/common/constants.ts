@@ -39,6 +39,9 @@ const SWAGGER = {
     URI: 'uri',
     UUID: 'uuid',
   },
+  COLLECTION_FORMAT: {
+    CSV: 'csv',
+  },
   EXTENSION: {
     CAPABILITIES: 'x-ms-capabilities',
   },

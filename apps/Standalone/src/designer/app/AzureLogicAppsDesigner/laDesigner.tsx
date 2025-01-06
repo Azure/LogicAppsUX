@@ -175,6 +175,7 @@ const DesignerEditor = () => {
         canonicalLocation,
         language,
         queryClient,
+        settingsData?.properties ?? {},
         dispatch
       ),
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -445,6 +446,7 @@ const getDesignerServices = (
   location: string,
   locale: string | undefined,
   queryClient: QueryClient,
+  appSettings: Record<string, string>,
   dispatch: AppDispatch
 ): any => {
   const siteResourceId = new ArmParser(workflowId).topmostResourceId;
@@ -473,7 +475,15 @@ const getDesignerServices = (
       tenantId,
       httpClient,
     },
-    workflowAppDetails: { appName, identity: workflowApp?.identity as any },
+    workflowAppDetails: isHybrid
+      ? {
+          appName,
+          identity: {
+            principalId: appSettings['WORKFLOWAPP_AAD_OBJECTID'],
+            tenantId: appSettings['WORKFLOWAPP_AAD_TENANTID'],
+          },
+        }
+      : { appName, identity: workflowApp?.identity as any },
     readConnections: () => Promise.resolve(connectionsData),
     writeConnection: addConnection as any,
     connectionCreationClients: {
@@ -504,7 +514,7 @@ const getDesignerServices = (
   const artifactService = new ArtifactService({
     ...armServiceParams,
     siteResourceId,
-    integrationAccountCallbackUrl: undefined,
+    integrationAccountCallbackUrl: appSettings['WORKFLOW_INTEGRATION_ACCOUNT_CALLBACK_URL'],
   });
   const appService = new BaseAppServiceService({
     baseUrl: armUrl,

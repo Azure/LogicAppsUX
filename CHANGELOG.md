@@ -1,4 +1,43 @@
 # Logic Apps Designer
+## [5.16.0](https://github.com/Azure/LogicAppsUX/compare/v5.15.0...v5.16.0) (2025-01-03)
+
+
+### Features
+
+* **Data Mapper:** Panel with warning and error messages ([#6315](https://github.com/Azure/LogicAppsUX/issues/6315)) ([0654502](https://github.com/Azure/LogicAppsUX/commit/0654502c9e73377a967df3f651bc9c0baf8ee113))
+
+
+### Bug Fixes
+
+* **designer:** Add ignore dirty prop to updateNodeSettings action ([#6224](https://github.com/Azure/LogicAppsUX/issues/6224)) ([0aed6e3](https://github.com/Azure/LogicAppsUX/commit/0aed6e3232668c8b4d07f094e66bc0158dbe77bd))
+* **Designer:** Optimized node and edge re-rendering on selection ([#6319](https://github.com/Azure/LogicAppsUX/issues/6319)) ([77611d8](https://github.com/Azure/LogicAppsUX/commit/77611d88ef910c37588ecdd3bb273c3a3bbfbfae))
+* **vscode:** Add designer dispatcher for command bar  ([#6320](https://github.com/Azure/LogicAppsUX/issues/6320)) ([86d40ac](https://github.com/Azure/LogicAppsUX/commit/86d40ac50fa1975e052576146bbae52431a3ff99))
+* **vscode:** Fixed IaC Generation Errors Due to Port Collision ([#6321](https://github.com/Azure/LogicAppsUX/issues/6321)) ([0527ef6](https://github.com/Azure/LogicAppsUX/commit/0527ef653f16dade79848d5790281a421242a0de))
+* **vscode:** Remove azure identity and restrict hybrid for public cloud ([#6215](https://github.com/Azure/LogicAppsUX/issues/6215)) ([e7d235a](https://github.com/Azure/LogicAppsUX/commit/e7d235ae697d36417f19f50852231d0385653aae))
+
+## [5.15.0](https://github.com/Azure/LogicAppsUX/compare/v5.14.0...v5.15.0) (2025-01-02)
+
+
+### Features
+
+* **designer:** Adding Support for new collectionFormat property ([#6269](https://github.com/Azure/LogicAppsUX/issues/6269)) ([74fbaf1](https://github.com/Azure/LogicAppsUX/commit/74fbaf193b983e0f3d9b7521084736284e4ff788))
+
+
+### Bug Fixes
+
+* **designer:** Default nested items to use item token brandcolor/icon ([#6276](https://github.com/Azure/LogicAppsUX/issues/6276)) ([716aa43](https://github.com/Azure/LogicAppsUX/commit/716aa4370770cf531d31b82d0c6e5432b18c956e))
+* **Designer:** Fixed issue with array editor dynamic data ([#6221](https://github.com/Azure/LogicAppsUX/issues/6221)) ([4b2228d](https://github.com/Azure/LogicAppsUX/commit/4b2228d3e3d7d147a004ce28d57298cd60842125))
+* **designer:** Fixing Implicit For Each within Copy-Paste Scope  ([#6236](https://github.com/Azure/LogicAppsUX/issues/6236)) ([0d95dcd](https://github.com/Azure/LogicAppsUX/commit/0d95dcd2fbc5b2977e6c0d61fbf3d9ee5fe4fe7c))
+* **Designer:** Sorted connector browse actions alphabetically ([#6245](https://github.com/Azure/LogicAppsUX/issues/6245)) ([0d5ef5d](https://github.com/Azure/LogicAppsUX/commit/0d5ef5d958de21c2059b27499d312dc77212826a))
+* **standalone:** Passing Appsettings to standalone designer services ([#6210](https://github.com/Azure/LogicAppsUX/issues/6210)) ([59251b6](https://github.com/Azure/LogicAppsUX/commit/59251b6c5f8d055faa8fb610cdbf3be6ec127d1f))
+
+## [5.14.0](https://github.com/Azure/LogicAppsUX/compare/v5.13.0...v5.14.0) (2024-12-31)
+
+
+### Features
+
+* **vscode:** Implement telemetry in designer and data-mapper  ([#6307](https://github.com/Azure/LogicAppsUX/issues/6307)) ([5dfee02](https://github.com/Azure/LogicAppsUX/commit/5dfee02e248f26690ee068be436a8123c521e72a))
+
 ## [5.13.0](https://github.com/Azure/LogicAppsUX/compare/v5.12.0...v5.13.0) (2024-12-26)
 
 ## [5.12.0](https://github.com/Azure/LogicAppsUX/compare/v5.11.0...v5.12.0) (2024-12-20)
