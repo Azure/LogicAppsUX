@@ -83,13 +83,17 @@ export const ScopeCard: React.FC<ScopeCardProps> = ({
       <div className={'msla-content-fit'} aria-label={title}>
         <div
           ref={drag}
-          className="msla-scope-v2--header msla-scope-card-wrapper"
           data-automation-id={`card-${replaceWhiteSpaceWithUnderscore(title)}`}
           draggable={draggable}
           style={colorVars}
           onContextMenu={onContextMenu}
+          className={css(
+            'msla-scope-v2--header msla-scope-card-wrapper',
+            !active && 'msla-card-inactive',
+          )}
+          
         >
-          {isMonitoringView ? (
+          {isMonitoringView && active ? (
             <StatusPill
               id={`${title}-status`}
               status={runData?.status}

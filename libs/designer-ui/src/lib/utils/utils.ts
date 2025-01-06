@@ -282,7 +282,7 @@ export function getDurationStringPanelMode(milliseconds: number, abbreviated = t
   );
 }
 
-export function getStatusString(status: string, hasRetries: boolean): string {
+export function getStatusString(status: string | undefined, hasRetries: boolean): string {
   const intl = getIntl();
   switch (status) {
     case Constants.STATUS.ABORTED:
@@ -330,35 +330,43 @@ export function getStatusString(status: string, hasRetries: boolean): string {
       return hasRetries
         ? intl.formatMessage({
             defaultMessage: 'Succeeded with retries',
-            id: 'BFTwRN',
-            description: 'The status message to show in monitoring view.. This refers to the succeeded status of a previous action.',
+            id: '+M7bC6',
+            description:
+              'The status message to show succeeeded retries in monitoring view.. This refers to the succeeded status of a previous action.',
           })
         : intl.formatMessage({
             defaultMessage: 'Succeeded',
-            id: 'uanMWm',
-            description: 'The status message to show in monitoring view.',
+            id: 'WbIGAh',
+            description: 'The status message to show succeeded in monitoring view.',
           });
 
     case Constants.STATUS.TIMEDOUT:
       return intl.formatMessage({
         defaultMessage: 'Timed out',
-        id: 'BRMOfD',
-        description: 'The status message to show in monitoring view.',
+        id: 'eofB85',
+        description: 'The status message to show timed out in monitoring view.',
       });
 
     case Constants.STATUS.WAITING:
       return intl.formatMessage({
         defaultMessage: 'Waiting',
-        id: '41eMpW',
-        description: 'The status message to show in monitoring view.',
+        id: '7X4UA/',
+        description: 'The status message to show waiting in monitoring view.',
+      });
+
+    case Constants.STATUS.RUNNING:
+      return intl.formatMessage({
+        defaultMessage: 'Running',
+        id: '9dd0/m',
+        description: 'The status message to show running in monitoring view.',
       });
 
     case Constants.STATUS.NOT_SPECIFIED:
     default:
       return intl.formatMessage({
         defaultMessage: 'Not specified',
-        id: 'BPYdTX',
-        description: 'The status message to show in monitoring view.',
+        id: 'LBlM+D',
+        description: 'The status message to show not specified in monitoring view.',
       });
   }
 }
