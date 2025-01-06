@@ -158,6 +158,7 @@ exports[`lib/panel/panelHeader/main > should render 1`] = `
 ]
 `;
 
+<<<<<<< HEAD
 exports[`lib/panel/panelHeader/main > should render 2`] = `
 [
   <div
@@ -317,6 +318,8 @@ exports[`lib/panel/panelHeader/main > should render 2`] = `
 ]
 `;
 
+=======
+>>>>>>> 60ba90790 (chore: update playwright to run on latest ubuntu (#6328))
 exports[`lib/panel/panelHeader/main > should render with panel header buttons 1`] = `
 [
   <div
@@ -512,6 +515,7 @@ exports[`lib/panel/panelHeader/main > should render with panel header buttons 1`
 ]
 `;
 
+<<<<<<< HEAD
 exports[`lib/panel/panelHeader/main > should render with panel header buttons 2`] = `
 [
   <div
@@ -708,6 +712,8 @@ exports[`lib/panel/panelHeader/main > should render with panel header buttons 2`
 ]
 `;
 
+=======
+>>>>>>> 60ba90790 (chore: update playwright to run on latest ubuntu (#6328))
 exports[`lib/panel/panelHeader/main > should render with panel header menu 1`] = `
 [
   <div
@@ -865,6 +871,7 @@ exports[`lib/panel/panelHeader/main > should render with panel header menu 1`] =
   />,
 ]
 `;
+<<<<<<< HEAD
 
 exports[`lib/panel/panelHeader/main > should render with panel header menu 2`] = `
 [
@@ -1024,3 +1031,5 @@ exports[`lib/panel/panelHeader/main > should render with panel header menu 2`] =
   />,
 ]
 `;
+=======
+>>>>>>> 60ba90790 (chore: update playwright to run on latest ubuntu (#6328))
