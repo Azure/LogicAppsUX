@@ -649,6 +649,12 @@
       "value": "Convert the parameter argument to a floating-point number"
     }
   ],
+  "1QktJw": [
+    {
+      "type": 0,
+      "value": "Map errors"
+    }
+  ],
   "1Xke9D": [
     {
       "type": 0,
@@ -1361,6 +1367,20 @@
     {
       "type": 0,
       "value": "(UTC+09:00) Osaka, Sapporo, Tokyo"
+    }
+  ],
+  "5DkTf5": [
+    {
+      "type": 0,
+      "value": "Target schema node not found for node key '"
+    },
+    {
+      "type": 1,
+      "value": "nodeKey"
+    },
+    {
+      "type": 0,
+      "value": "'"
     }
   ],
   "5J9jne": [
@@ -2647,6 +2667,20 @@
       "value": "A single format specifier that indicates how to format the value of this Guid."
     }
   ],
+  "Bwqlxd": [
+    {
+      "type": 0,
+      "value": "Key not found '"
+    },
+    {
+      "type": 1,
+      "value": "nodeKey"
+    },
+    {
+      "type": 0,
+      "value": "'"
+    }
+  ],
   "BxITRH": [
     {
       "type": 0,
@@ -3273,6 +3307,20 @@
       "value": "Returns a section of a string defined by the start index and the end index"
     }
   ],
+  "FPBmrA": [
+    {
+      "type": 0,
+      "value": "Source schema node not found for node key '"
+    },
+    {
+      "type": 1,
+      "value": "nodeKey"
+    },
+    {
+      "type": 0,
+      "value": "'"
+    }
+  ],
   "FT3jt6": [
     {
       "type": 0,
@@ -3479,6 +3527,20 @@
     {
       "type": 0,
       "value": "Source schema element"
+    }
+  ],
+  "GiR7ll": [
+    {
+      "type": 0,
+      "value": "Function not found- '"
+    },
+    {
+      "type": 1,
+      "value": "nodeKey"
+    },
+    {
+      "type": 0,
+      "value": "'"
     }
   ],
   "Gk79Ma": [
@@ -4943,6 +5005,12 @@
     {
       "type": 0,
       "value": "Collapsed"
+    }
+  ],
+  "PEJ+e4": [
+    {
+      "type": 0,
+      "value": "Error loading data map"
     }
   ],
   "PNk3n4": [
@@ -7129,6 +7197,12 @@
       "value": "Add or select a source schema to use for your map."
     }
   ],
+  "auci7r": [
+    {
+      "type": 0,
+      "value": "Enter a valid comma-separated string."
+    }
+  ],
   "aurgrg": [
     {
       "type": 0,
@@ -7801,6 +7875,12 @@
     {
       "type": 0,
       "value": "Shared"
+    }
+  ],
+  "epi+zR": [
+    {
+      "type": 0,
+      "value": "Close map checker"
     }
   ],
   "er6O+w": [
@@ -8851,6 +8931,20 @@
     {
       "type": 0,
       "value": "Elements and mappings that aren't connected to a target element are removed."
+    }
+  ],
+  "kfmLTY": [
+    {
+      "type": 0,
+      "value": "Function '"
+    },
+    {
+      "type": 1,
+      "value": "functionName"
+    },
+    {
+      "type": 0,
+      "value": "' is missing required inputs"
     }
   ],
   "klY9UN": [
@@ -10241,6 +10335,12 @@
     {
       "type": 0,
       "value": "Add new"
+    }
+  ],
+  "rwrlsB": [
+    {
+      "type": 0,
+      "value": "Map Issues"
     }
   ],
   "rxIJfD": [

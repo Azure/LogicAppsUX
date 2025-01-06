@@ -653,6 +653,12 @@
       "value": "Parameterargument in Gleitkommazahl konvertieren"
     }
   ],
+  "1QktJw": [
+    {
+      "type": 0,
+      "value": "Map errors"
+    }
+  ],
   "1Xke9D": [
     {
       "type": 0,
@@ -1377,6 +1383,20 @@
     {
       "type": 0,
       "value": "(UTC+09:00) Osaka, Sapporo, Tokyo"
+    }
+  ],
+  "5DkTf5": [
+    {
+      "type": 0,
+      "value": "Target schema node not found for node key '"
+    },
+    {
+      "type": 1,
+      "value": "nodeKey"
+    },
+    {
+      "type": 0,
+      "value": "'"
     }
   ],
   "5J9jne": [
@@ -2667,6 +2687,20 @@
       "value": "Ein einzelner Formatspezifizierer, der angibt, wie der Wert dieser GUID formatiert werden soll."
     }
   ],
+  "Bwqlxd": [
+    {
+      "type": 0,
+      "value": "Key not found '"
+    },
+    {
+      "type": 1,
+      "value": "nodeKey"
+    },
+    {
+      "type": 0,
+      "value": "'"
+    }
+  ],
   "BxITRH": [
     {
       "type": 0,
@@ -3301,6 +3335,20 @@
       "value": "Gibt einen Abschnitt einer Zeichenfolge zurück, die durch den Startindex und den Endindex definiert wird."
     }
   ],
+  "FPBmrA": [
+    {
+      "type": 0,
+      "value": "Source schema node not found for node key '"
+    },
+    {
+      "type": 1,
+      "value": "nodeKey"
+    },
+    {
+      "type": 0,
+      "value": "'"
+    }
+  ],
   "FT3jt6": [
     {
       "type": 0,
@@ -3507,6 +3555,20 @@
     {
       "type": 0,
       "value": "Quellschemaelement"
+    }
+  ],
+  "GiR7ll": [
+    {
+      "type": 0,
+      "value": "Function not found- '"
+    },
+    {
+      "type": 1,
+      "value": "nodeKey"
+    },
+    {
+      "type": 0,
+      "value": "'"
     }
   ],
   "Gk79Ma": [
@@ -4979,6 +5041,12 @@
     {
       "type": 0,
       "value": "Reduziert"
+    }
+  ],
+  "PEJ+e4": [
+    {
+      "type": 0,
+      "value": "Error loading data map"
     }
   ],
   "PNk3n4": [
@@ -7177,6 +7245,12 @@
       "value": "Fügen Sie ein Quellschema hinzu, oder wählen Sie eines aus, das für Ihre Zuordnung verwendet werden soll."
     }
   ],
+  "auci7r": [
+    {
+      "type": 0,
+      "value": "Enter a valid comma-separated string."
+    }
+  ],
   "aurgrg": [
     {
       "type": 0,
@@ -7849,6 +7923,12 @@
     {
       "type": 0,
       "value": "Freigegeben"
+    }
+  ],
+  "epi+zR": [
+    {
+      "type": 0,
+      "value": "Close map checker"
     }
   ],
   "er6O+w": [
@@ -8899,6 +8979,20 @@
     {
       "type": 0,
       "value": "Elemente und Zuordnungen, die nicht mit einem Zielelement verbunden sind, werden entfernt."
+    }
+  ],
+  "kfmLTY": [
+    {
+      "type": 0,
+      "value": "Function '"
+    },
+    {
+      "type": 1,
+      "value": "functionName"
+    },
+    {
+      "type": 0,
+      "value": "' is missing required inputs"
     }
   ],
   "klY9UN": [
@@ -10293,6 +10387,12 @@
     {
       "type": 0,
       "value": "Neu hinzufügen"
+    }
+  ],
+  "rwrlsB": [
+    {
+      "type": 0,
+      "value": "Map Issues"
     }
   ],
   "rxIJfD": [

@@ -645,6 +645,12 @@
       "value": "Parametre bağımsız değişkenini bir kayan noktalı sayıya dönüştürür"
     }
   ],
+  "1QktJw": [
+    {
+      "type": 0,
+      "value": "Map errors"
+    }
+  ],
   "1Xke9D": [
     {
       "type": 0,
@@ -1349,6 +1355,20 @@
     {
       "type": 0,
       "value": "(UTC+09:00) Osaka, Sapporo, Tokyo"
+    }
+  ],
+  "5DkTf5": [
+    {
+      "type": 0,
+      "value": "Target schema node not found for node key '"
+    },
+    {
+      "type": 1,
+      "value": "nodeKey"
+    },
+    {
+      "type": 0,
+      "value": "'"
     }
   ],
   "5J9jne": [
@@ -2635,6 +2655,20 @@
       "value": "Bu Guid değerinin nasıl biçimlendirileceğini gösteren tek bir biçim belirtici."
     }
   ],
+  "Bwqlxd": [
+    {
+      "type": 0,
+      "value": "Key not found '"
+    },
+    {
+      "type": 1,
+      "value": "nodeKey"
+    },
+    {
+      "type": 0,
+      "value": "'"
+    }
+  ],
   "BxITRH": [
     {
       "type": 0,
@@ -3261,6 +3295,20 @@
       "value": "Başlangıç dizini ve bitiş dizini tarafından tanımlanan bir dize bölümü döndürür"
     }
   ],
+  "FPBmrA": [
+    {
+      "type": 0,
+      "value": "Source schema node not found for node key '"
+    },
+    {
+      "type": 1,
+      "value": "nodeKey"
+    },
+    {
+      "type": 0,
+      "value": "'"
+    }
+  ],
   "FT3jt6": [
     {
       "type": 0,
@@ -3467,6 +3515,20 @@
     {
       "type": 0,
       "value": "Kaynak şema öğesi"
+    }
+  ],
+  "GiR7ll": [
+    {
+      "type": 0,
+      "value": "Function not found- '"
+    },
+    {
+      "type": 1,
+      "value": "nodeKey"
+    },
+    {
+      "type": 0,
+      "value": "'"
     }
   ],
   "Gk79Ma": [
@@ -4935,6 +4997,12 @@
     {
       "type": 0,
       "value": "Daraltıldı"
+    }
+  ],
+  "PEJ+e4": [
+    {
+      "type": 0,
+      "value": "Error loading data map"
     }
   ],
   "PNk3n4": [
@@ -7121,6 +7189,12 @@
       "value": "Eşlemeniz için kullanmak üzere bir kaynak şema ekleyin veya seçin."
     }
   ],
+  "auci7r": [
+    {
+      "type": 0,
+      "value": "Enter a valid comma-separated string."
+    }
+  ],
   "aurgrg": [
     {
       "type": 0,
@@ -7789,6 +7863,12 @@
     {
       "type": 0,
       "value": "Paylaşılan"
+    }
+  ],
+  "epi+zR": [
+    {
+      "type": 0,
+      "value": "Close map checker"
     }
   ],
   "er6O+w": [
@@ -8835,6 +8915,20 @@
     {
       "type": 0,
       "value": "Hedef öğeye bağlı olmayan öğeler ve eşlemeler kaldırılır."
+    }
+  ],
+  "kfmLTY": [
+    {
+      "type": 0,
+      "value": "Function '"
+    },
+    {
+      "type": 1,
+      "value": "functionName"
+    },
+    {
+      "type": 0,
+      "value": "' is missing required inputs"
     }
   ],
   "klY9UN": [
@@ -10221,6 +10315,12 @@
     {
       "type": 0,
       "value": "Yeni ekle"
+    }
+  ],
+  "rwrlsB": [
+    {
+      "type": 0,
+      "value": "Map Issues"
     }
   ],
   "rxIJfD": [
