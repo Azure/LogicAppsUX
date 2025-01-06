@@ -26,6 +26,7 @@ import {
 } from '@microsoft/vscode-azext-utils';
 import type { IActionContext } from '@microsoft/vscode-azext-utils';
 import * as vscode from 'vscode';
+import { ConvertToWorkspace } from './app/commands/createNewCodeProject/CodeProjectBase/ConvertToWorkspace';
 import TelemetryReporter from '@vscode/extension-telemetry';
 
 const perfStats = {
@@ -61,6 +62,7 @@ export async function activate(context: vscode.ExtensionContext) {
 
     runPostWorkflowCreateStepsFromCache();
 
+    await ConvertToWorkspace(activateContext);
     try {
       await downloadExtensionBundle(activateContext);
     } catch (error) {

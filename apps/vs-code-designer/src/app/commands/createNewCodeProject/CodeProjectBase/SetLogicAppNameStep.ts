@@ -4,27 +4,39 @@
  *--------------------------------------------------------------------------------------------*/
 import { ext } from '../../../../extensionVariables';
 import { localize } from '../../../../localize';
+import * as vscode from 'vscode';
+import * as fse from 'fs-extra';
 import { AzureWizardPromptStep } from '@microsoft/vscode-azext-utils';
-import { ProjectType, type IProjectWizardContext } from '@microsoft/vscode-extension-logic-apps';
+import type { IProjectWizardContext } from '@microsoft/vscode-extension-logic-apps';
 
 export class SetLogicAppName extends AzureWizardPromptStep<IProjectWizardContext> {
   public async prompt(context: IProjectWizardContext): Promise<void> {
-    const logicAppName = await context.ui.showInputBox({
+    context.logicAppName = await context.ui.showInputBox({
       placeHolder: localize('logicAppNamePlaceHolder', 'Logic App name'),
       prompt: localize('logicAppNamePrompt', 'Enter a name for your Logic App project'),
-      validateInput: (value: string): string | undefined => {
-        if (!value || value.length === 0) {
-          return localize('projectNameEmpty', 'Project name cannot be empty');
-        }
-        return undefined;
-      },
+      validateInput: async (input: string): Promise<string | undefined> => await this.validateLogicAppName(input, context),
     });
 
-    context.logicAppName = logicAppName;
-    ext.outputChannel.appendLog(localize('logicAppNameSet', `Logic App project name set to ${logicAppName}`));
+    ext.outputChannel.appendLog(localize('logicAppNameSet', `Logic App project name set to ${context.logicAppName}`));
   }
 
   public shouldPrompt(context: IProjectWizardContext): boolean {
-    return context.projectType === ProjectType.logicApp;
+    return context.projectType !== undefined;
+  }
+
+  private async validateLogicAppName(name: string | undefined, context: IProjectWizardContext): Promise<string | undefined> {
+    if (!name || name.length === 0) {
+      return localize('projectNameEmpty', 'Project name cannot be empty');
+    }
+
+    if (fse.existsSync(context.workspaceCustomFilePath)) {
+      const workspaceFileContent = await vscode.workspace.fs.readFile(vscode.Uri.file(context.workspaceCustomFilePath));
+      const workspaceFileJson = JSON.parse(workspaceFileContent.toString());
+
+      if (workspaceFileJson.folders && workspaceFileJson.folders.some((folder: { path: string }) => folder.path === `./${name}`)) {
+        return localize('projectNameExists', 'A project with this name already exists in the workspace');
+      }
+    }
+    return undefined;
   }
 }

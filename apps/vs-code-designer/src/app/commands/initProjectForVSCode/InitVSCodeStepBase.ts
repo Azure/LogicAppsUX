@@ -81,7 +81,7 @@ export abstract class InitVSCodeStepBase extends AzureWizardExecuteStep<IProject
 
     context.telemetry.properties.isProjectInSubDir = String(isSubpath(context.workspacePath, context.projectPath));
 
-    const vscodePath: string = path.join(context.workspacePath, vscodeFolderName);
+    const vscodePath: string = path.join(context.projectPath, vscodeFolderName);
     await fse.ensureDir(vscodePath);
     await this.writeTasksJson(context, vscodePath);
     await this.writeLaunchJson(context, context.workspaceFolder, vscodePath, version);

@@ -10,7 +10,7 @@ import { OpenBehavior } from '@microsoft/vscode-extension-logic-apps';
 import type { IProjectWizardContext } from '@microsoft/vscode-extension-logic-apps';
 import * as path from 'path';
 
-export class setWorkspaceName extends AzureWizardPromptStep<IProjectWizardContext> {
+export class SetWorkspaceName extends AzureWizardPromptStep<IProjectWizardContext> {
   public hideStepCount = true;
 
   public async prompt(context: IProjectWizardContext): Promise<void> {
@@ -23,6 +23,8 @@ export class setWorkspaceName extends AzureWizardPromptStep<IProjectWizardContex
     await fs.ensureDir(context.workspacePath);
     context.workspacePath = context.workspaceCustomFilePath;
     context.workspaceFolder = getContainingWorkspace(context.workspacePath);
+    const workspaceFilePath = path.join(context.workspacePath, `${context.workspaceName}.code-workspace`);
+    context.workspaceCustomFilePath = workspaceFilePath;
 
     if (context.workspaceFolder) {
       context.openBehavior = OpenBehavior.alreadyOpen;
