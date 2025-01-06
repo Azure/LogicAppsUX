@@ -30,7 +30,7 @@ export class SelectPackageStep extends AzureWizardPromptStep<IFunctionWizardCont
    * @param context - Project wizard context containing user selections and settings
    */
   public async prompt(context: IFunctionWizardContext): Promise<void> {
-    const placeHolder: string = localize('selectPackage', 'Select the package to import to your new logic app workspace');
+    const placeHolder: string = localize('selectPackage', 'Select the package to import into your new logic app workspace');
     context.packagePath = await SelectPackageStep.selectPackagePath(context, placeHolder);
   }
 
