@@ -69,8 +69,14 @@ export abstract class BaseConnectionService implements IConnectionService {
     }
 
     try {
-      const { apiVersion, httpClient } = this.options;
-      return httpClient.get<OpenAPIV2.Document>({ uri: connectorId, queryParameters: { 'api-version': apiVersion, export: 'true' } });
+      const { apiVersion, httpClient, locale } = this.options;
+      const headers = locale ? { 'Accept-Language': locale } : undefined;
+
+      return httpClient.get<OpenAPIV2.Document>({
+        uri: connectorId,
+        queryParameters: { 'api-version': apiVersion, export: 'true' },
+        headers,
+      });
     } catch (error: any) {
       throw error?.response?.data?.error?.message ?? error;
     }
@@ -133,8 +139,9 @@ export abstract class BaseConnectionService implements IConnectionService {
   }
 
   protected async _getAzureConnector(connectorId: string): Promise<Connector> {
-    const { apiVersion, httpClient } = this.options;
-    const response = await httpClient.get<Connector>({ uri: connectorId, queryParameters: { 'api-version': apiVersion } });
+    const { apiVersion, httpClient, locale } = this.options;
+    const headers = locale ? { 'Accept-Language': locale } : undefined;
+    const response = await httpClient.get<Connector>({ uri: connectorId, queryParameters: { 'api-version': apiVersion }, headers });
 
     return {
       ...response,

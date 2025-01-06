@@ -15,6 +15,7 @@ steps:
       isCreatePrSelected: true
       gitHubPatVariable: $(GithubPAT)
       gitHubPrMergeMethod: squash
+      isDeletePrSourceBranchSelected: false
       packageSourceAuth: 'patAuth'
       dependencyPackageSource: 'https://pkgs.dev.azure.com/azure-logic-apps-ux/logic-apps-ux/_packaging/designer/nuget/v3/index.json'
 

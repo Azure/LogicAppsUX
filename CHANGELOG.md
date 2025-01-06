@@ -1,4 +1,103 @@
 # Logic Apps Designer
+## [5.17.0](https://github.com/Azure/LogicAppsUX/compare/v5.16.0...v5.17.0) (2025-01-06)
+
+
+### Features
+
+* **Data Mapper:** Add keyboard delete, fix circles cutting, handle existing map loading ([#6329](https://github.com/Azure/LogicAppsUX/issues/6329)) ([cc6be0b](https://github.com/Azure/LogicAppsUX/commit/cc6be0b3fcf3b78dda484db2ba44dd3ed48439cd))
+* **designer:** Add priority sort to Action and Trigger browse to make top actions more useful ([#6263](https://github.com/Azure/LogicAppsUX/issues/6263)) ([52ab139](https://github.com/Azure/LogicAppsUX/commit/52ab1392e001a58e5483fe433b46f4c9e7488e0f))
+* **vscode:** added telemetry docs and prefix for Data Mapper ([#6326](https://github.com/Azure/LogicAppsUX/issues/6326)) ([d53566a](https://github.com/Azure/LogicAppsUX/commit/d53566a2682e4b3ae5c5f697ddcc4fa617b2c90a))
+
+## [5.16.0](https://github.com/Azure/LogicAppsUX/compare/v5.15.0...v5.16.0) (2025-01-03)
+
+
+### Features
+
+* **Data Mapper:** Panel with warning and error messages ([#6315](https://github.com/Azure/LogicAppsUX/issues/6315)) ([0654502](https://github.com/Azure/LogicAppsUX/commit/0654502c9e73377a967df3f651bc9c0baf8ee113))
+
+
+### Bug Fixes
+
+* **designer:** Add ignore dirty prop to updateNodeSettings action ([#6224](https://github.com/Azure/LogicAppsUX/issues/6224)) ([0aed6e3](https://github.com/Azure/LogicAppsUX/commit/0aed6e3232668c8b4d07f094e66bc0158dbe77bd))
+* **Designer:** Optimized node and edge re-rendering on selection ([#6319](https://github.com/Azure/LogicAppsUX/issues/6319)) ([77611d8](https://github.com/Azure/LogicAppsUX/commit/77611d88ef910c37588ecdd3bb273c3a3bbfbfae))
+* **vscode:** Add designer dispatcher for command bar  ([#6320](https://github.com/Azure/LogicAppsUX/issues/6320)) ([86d40ac](https://github.com/Azure/LogicAppsUX/commit/86d40ac50fa1975e052576146bbae52431a3ff99))
+* **vscode:** Fixed IaC Generation Errors Due to Port Collision ([#6321](https://github.com/Azure/LogicAppsUX/issues/6321)) ([0527ef6](https://github.com/Azure/LogicAppsUX/commit/0527ef653f16dade79848d5790281a421242a0de))
+* **vscode:** Remove azure identity and restrict hybrid for public cloud ([#6215](https://github.com/Azure/LogicAppsUX/issues/6215)) ([e7d235a](https://github.com/Azure/LogicAppsUX/commit/e7d235ae697d36417f19f50852231d0385653aae))
+
+## [5.15.0](https://github.com/Azure/LogicAppsUX/compare/v5.14.0...v5.15.0) (2025-01-02)
+
+
+### Features
+
+* **designer:** Adding Support for new collectionFormat property ([#6269](https://github.com/Azure/LogicAppsUX/issues/6269)) ([74fbaf1](https://github.com/Azure/LogicAppsUX/commit/74fbaf193b983e0f3d9b7521084736284e4ff788))
+
+
+### Bug Fixes
+
+* **designer:** Default nested items to use item token brandcolor/icon ([#6276](https://github.com/Azure/LogicAppsUX/issues/6276)) ([716aa43](https://github.com/Azure/LogicAppsUX/commit/716aa4370770cf531d31b82d0c6e5432b18c956e))
+* **Designer:** Fixed issue with array editor dynamic data ([#6221](https://github.com/Azure/LogicAppsUX/issues/6221)) ([4b2228d](https://github.com/Azure/LogicAppsUX/commit/4b2228d3e3d7d147a004ce28d57298cd60842125))
+* **designer:** Fixing Implicit For Each within Copy-Paste Scope  ([#6236](https://github.com/Azure/LogicAppsUX/issues/6236)) ([0d95dcd](https://github.com/Azure/LogicAppsUX/commit/0d95dcd2fbc5b2977e6c0d61fbf3d9ee5fe4fe7c))
+* **Designer:** Sorted connector browse actions alphabetically ([#6245](https://github.com/Azure/LogicAppsUX/issues/6245)) ([0d5ef5d](https://github.com/Azure/LogicAppsUX/commit/0d5ef5d958de21c2059b27499d312dc77212826a))
+* **standalone:** Passing Appsettings to standalone designer services ([#6210](https://github.com/Azure/LogicAppsUX/issues/6210)) ([59251b6](https://github.com/Azure/LogicAppsUX/commit/59251b6c5f8d055faa8fb610cdbf3be6ec127d1f))
+
+## [5.14.0](https://github.com/Azure/LogicAppsUX/compare/v5.13.0...v5.14.0) (2024-12-31)
+
+
+### Features
+
+* **vscode:** Implement telemetry in designer and data-mapper  ([#6307](https://github.com/Azure/LogicAppsUX/issues/6307)) ([5dfee02](https://github.com/Azure/LogicAppsUX/commit/5dfee02e248f26690ee068be436a8123c521e72a))
+
+## [5.13.0](https://github.com/Azure/LogicAppsUX/compare/v5.12.0...v5.13.0) (2024-12-26)
+
+## [5.12.0](https://github.com/Azure/LogicAppsUX/compare/v5.11.0...v5.12.0) (2024-12-20)
+
+
+### Bug Fixes
+
+* **templates:** Changing logentry level to Trace from Verbose for templates telemetry ([#6277](https://github.com/Azure/LogicAppsUX/issues/6277)) ([501803d](https://github.com/Azure/LogicAppsUX/commit/501803d69a4f78295f4ce796d65a7d44ebbaafbb))
+
+## [5.11.0](https://github.com/Azure/LogicAppsUX/compare/v5.10.0...v5.11.0) (2024-12-19)
+
+
+### Bug Fixes
+
+* **Designer:** Switched edge labels from foreign object to xyflow component ([#6275](https://github.com/Azure/LogicAppsUX/issues/6275)) ([5acf6c0](https://github.com/Azure/LogicAppsUX/commit/5acf6c0c0a0ba0a463433784a83f435a30122f2f))
+
+## [5.10.0](https://github.com/Azure/LogicAppsUX/compare/v5.9.0...v5.10.0) (2024-12-18)
+
+
+### Bug Fixes
+
+* **Data Mapper:** UI issues (I) ([#6222](https://github.com/Azure/LogicAppsUX/issues/6222)) ([10f7c95](https://github.com/Azure/LogicAppsUX/commit/10f7c95a3a3581aba375ce8cb0049b3cb26cbc38))
+* **designer:** Added support for arialabels in dictionary editor ([#6264](https://github.com/Azure/LogicAppsUX/issues/6264)) ([1e618e7](https://github.com/Azure/LogicAppsUX/commit/1e618e7bad76fc2038596a6e61172b5890eaedc9))
+
+## [5.9.0](https://github.com/Azure/LogicAppsUX/compare/v5.8.0...v5.9.0) (2024-12-16)
+
+
+### Bug Fixes
+
+* **designer:** Add locale to connections API call for connectors and swagger ([#6262](https://github.com/Azure/LogicAppsUX/issues/6262)) ([91e7925](https://github.com/Azure/LogicAppsUX/commit/91e7925b9e630b6a2765f93d814c77ff33413128))
+
+## [5.8.0](https://github.com/Azure/LogicAppsUX/compare/v5.7.0...v5.8.0) (2024-12-12)
+
+
+### Features
+
+* **DM:** deserialization error handling ([#6164](https://github.com/Azure/LogicAppsUX/issues/6164)) ([ebb0df3](https://github.com/Azure/LogicAppsUX/commit/ebb0df3c09c10a853cb5d7b2426c8de5bbb8f2f8))
+
+
+### Bug Fixes
+
+* **designer:** Accessibility - Add focus target attribute to overflow button ([#6243](https://github.com/Azure/LogicAppsUX/issues/6243)) ([374664e](https://github.com/Azure/LogicAppsUX/commit/374664e65a832a13565cf5c9ea14869f5b605baf))
+
+## [5.7.0](https://github.com/Azure/LogicAppsUX/compare/v5.6.0...v5.7.0) (2024-12-05)
+
+
+### Bug Fixes
+
+* **designer:** Accessibility - Set right aria label for concurrency control inputs ([#6195](https://github.com/Azure/LogicAppsUX/issues/6195)) ([2f8066b](https://github.com/Azure/LogicAppsUX/commit/2f8066bf9f8c29fb3592c98f0bd519e8d1da4918))
+* **vscode:** Accessibility - Add specific key combo to search nodes in designer for vscode ([#6204](https://github.com/Azure/LogicAppsUX/issues/6204)) ([becf7d8](https://github.com/Azure/LogicAppsUX/commit/becf7d8d32251631f6937f58ea3c13a4b13a5786))
+
 ## [5.6.0](https://github.com/Azure/LogicAppsUX/compare/v5.5.0...v5.6.0) (2024-11-28)
 
 

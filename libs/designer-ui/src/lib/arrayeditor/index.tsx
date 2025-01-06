@@ -65,6 +65,7 @@ export interface ArrayEditorProps extends BaseEditorProps {
   castParameter: CastHandler;
   initialMode?: string;
   // Props for dynamic options
+  isDynamic?: boolean;
   isLoading?: boolean;
   options?: ComboboxItem[];
   errorDetails?: { message: string };
