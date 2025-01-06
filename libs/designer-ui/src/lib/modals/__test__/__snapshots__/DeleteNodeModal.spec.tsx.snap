@@ -1,0 +1,688 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`DeleteNodeModal Snapshots > should match snapshot for graph node 1`] = `
+{
+  "asFragment": [Function],
+  "baseElement": <body
+    data-tabster="{"root":{}}"
+  >
+    <div>
+      <span
+        hidden=""
+      />
+    </div>
+    <div
+      class="___1uxlrft_djprso0 f1euv43f f15twtuk f1vgc2s3 f1e31b4d f494woh"
+      data-portal-node="true"
+      dir="ltr"
+    >
+      <div
+        aria-hidden="true"
+        class="fui-DialogSurface__backdrop rsptlh5"
+      />
+      <div
+        aria-labelledby="dialog-title-r12"
+        aria-modal="true"
+        class="fui-DialogSurface rsmdyd3"
+        data-tabster="{"restorer":{"type":0},"modalizer":{"id":"modal-r11","isOthersAccessible":false,"isTrapped":false}}"
+        role="dialog"
+        tabindex="-1"
+      >
+        <div
+          class="fui-DialogBody r1h3qql9"
+        >
+          <h2
+            class="fui-DialogTitle rxjm636 ___mh25s00_kwrsjh0 fsyjsko"
+            id="dialog-title-r12"
+          >
+            Delete workflow graph
+          </h2>
+          <div
+            class="fui-DialogContent r1v5zwsm msla-modal-container"
+          >
+            <p>
+              Are you sure you want to delete 
+              <b>
+                Test Node
+              </b>
+              ?
+            </p>
+            <p>
+              This will also remove all child steps.
+            </p>
+          </div>
+          <div
+            class="fui-DialogActions rhfpeu0 ___pj8zjl0_1y84z0u f1a7i8kp fd46tj4 fsyjsko f1f41i0t f1jaqex3 f2ao6jk"
+          >
+            <button
+              class="fui-Button r1alrhcs ___1akj6hk_ih97uj0 ffp7eso f1p3nwhy f11589ue f1q5o8ev f1pdflbu f1phragk f15wkkf3 f1s2uweq fr80ssc f1ukrpxl fecsdlb f1rq72xc fnp9lpt f1h0usnq fs4ktlq f16h9ulv fx2bmrt f1d6v5y2 f1rirnrt f1uu00uk fkvaka8 f1ux7til f9a0qzu f1lkg8j3 fkc42ay fq7113v ff1wgvm fiob0tu f1j6scgf f1x4h75k f4xjyn1 fbgcvur f1ks1yx8 f1o6qegi fcnxywj fmxjhhp f9ddjv3 f17t0x8g f194v5ow f1qgg65p fk7jm04 fhgccpy f32wu9k fu5nqqq f13prjl2 f1czftr5 f1nl83rv f12k37oa fr96u23"
+              data-tabster="{"restorer":{"type":1}}"
+              role="button"
+              tabindex="0"
+              type="button"
+            >
+              OK
+            </button>
+            <button
+              class="fui-Button r1alrhcs"
+              data-tabster="{"restorer":{"type":1}}"
+              role="button"
+              tabindex="0"
+              type="button"
+            >
+              Cancel
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </body>,
+  "container": <div>
+    <span
+      hidden=""
+    />
+  </div>,
+  "debug": [Function],
+  "findAllByAltText": [Function],
+  "findAllByDisplayValue": [Function],
+  "findAllByLabelText": [Function],
+  "findAllByPlaceholderText": [Function],
+  "findAllByRole": [Function],
+  "findAllByTestId": [Function],
+  "findAllByText": [Function],
+  "findAllByTitle": [Function],
+  "findByAltText": [Function],
+  "findByDisplayValue": [Function],
+  "findByLabelText": [Function],
+  "findByPlaceholderText": [Function],
+  "findByRole": [Function],
+  "findByTestId": [Function],
+  "findByText": [Function],
+  "findByTitle": [Function],
+  "getAllByAltText": [Function],
+  "getAllByDisplayValue": [Function],
+  "getAllByLabelText": [Function],
+  "getAllByPlaceholderText": [Function],
+  "getAllByRole": [Function],
+  "getAllByTestId": [Function],
+  "getAllByText": [Function],
+  "getAllByTitle": [Function],
+  "getByAltText": [Function],
+  "getByDisplayValue": [Function],
+  "getByLabelText": [Function],
+  "getByPlaceholderText": [Function],
+  "getByRole": [Function],
+  "getByTestId": [Function],
+  "getByText": [Function],
+  "getByTitle": [Function],
+  "queryAllByAltText": [Function],
+  "queryAllByDisplayValue": [Function],
+  "queryAllByLabelText": [Function],
+  "queryAllByPlaceholderText": [Function],
+  "queryAllByRole": [Function],
+  "queryAllByTestId": [Function],
+  "queryAllByText": [Function],
+  "queryAllByTitle": [Function],
+  "queryByAltText": [Function],
+  "queryByDisplayValue": [Function],
+  "queryByLabelText": [Function],
+  "queryByPlaceholderText": [Function],
+  "queryByRole": [Function],
+  "queryByTestId": [Function],
+  "queryByText": [Function],
+  "queryByTitle": [Function],
+  "rerender": [Function],
+  "unmount": [Function],
+}
+`;
+
+exports[`DeleteNodeModal Snapshots > should match snapshot for operation node 1`] = `
+{
+  "asFragment": [Function],
+  "baseElement": <body
+    data-tabster="{"root":{}}"
+  >
+    <div>
+      <span
+        hidden=""
+      />
+    </div>
+    <div
+      class="___1uxlrft_djprso0 f1euv43f f15twtuk f1vgc2s3 f1e31b4d f494woh"
+      data-portal-node="true"
+      dir="ltr"
+    >
+      <div
+        aria-hidden="true"
+        class="fui-DialogSurface__backdrop rsptlh5"
+      />
+      <div
+        aria-labelledby="dialog-title-ru"
+        aria-modal="true"
+        class="fui-DialogSurface rsmdyd3"
+        data-tabster="{"restorer":{"type":0},"modalizer":{"id":"modal-rt","isOthersAccessible":false,"isTrapped":false}}"
+        role="dialog"
+        tabindex="-1"
+      >
+        <div
+          class="fui-DialogBody r1h3qql9"
+        >
+          <h2
+            class="fui-DialogTitle rxjm636 ___mh25s00_kwrsjh0 fsyjsko"
+            id="dialog-title-ru"
+          >
+            Delete workflow action
+          </h2>
+          <div
+            class="fui-DialogContent r1v5zwsm msla-modal-container"
+          >
+            <p>
+              Are you sure you want to delete 
+              <b>
+                Test Node
+              </b>
+              ?
+            </p>
+            <p>
+              This step will be removed from the Logic App.
+            </p>
+          </div>
+          <div
+            class="fui-DialogActions rhfpeu0 ___pj8zjl0_1y84z0u f1a7i8kp fd46tj4 fsyjsko f1f41i0t f1jaqex3 f2ao6jk"
+          >
+            <button
+              class="fui-Button r1alrhcs ___1akj6hk_ih97uj0 ffp7eso f1p3nwhy f11589ue f1q5o8ev f1pdflbu f1phragk f15wkkf3 f1s2uweq fr80ssc f1ukrpxl fecsdlb f1rq72xc fnp9lpt f1h0usnq fs4ktlq f16h9ulv fx2bmrt f1d6v5y2 f1rirnrt f1uu00uk fkvaka8 f1ux7til f9a0qzu f1lkg8j3 fkc42ay fq7113v ff1wgvm fiob0tu f1j6scgf f1x4h75k f4xjyn1 fbgcvur f1ks1yx8 f1o6qegi fcnxywj fmxjhhp f9ddjv3 f17t0x8g f194v5ow f1qgg65p fk7jm04 fhgccpy f32wu9k fu5nqqq f13prjl2 f1czftr5 f1nl83rv f12k37oa fr96u23"
+              data-tabster="{"restorer":{"type":1}}"
+              role="button"
+              tabindex="0"
+              type="button"
+            >
+              OK
+            </button>
+            <button
+              class="fui-Button r1alrhcs"
+              data-tabster="{"restorer":{"type":1}}"
+              role="button"
+              tabindex="0"
+              type="button"
+            >
+              Cancel
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </body>,
+  "container": <div>
+    <span
+      hidden=""
+    />
+  </div>,
+  "debug": [Function],
+  "findAllByAltText": [Function],
+  "findAllByDisplayValue": [Function],
+  "findAllByLabelText": [Function],
+  "findAllByPlaceholderText": [Function],
+  "findAllByRole": [Function],
+  "findAllByTestId": [Function],
+  "findAllByText": [Function],
+  "findAllByTitle": [Function],
+  "findByAltText": [Function],
+  "findByDisplayValue": [Function],
+  "findByLabelText": [Function],
+  "findByPlaceholderText": [Function],
+  "findByRole": [Function],
+  "findByTestId": [Function],
+  "findByText": [Function],
+  "findByTitle": [Function],
+  "getAllByAltText": [Function],
+  "getAllByDisplayValue": [Function],
+  "getAllByLabelText": [Function],
+  "getAllByPlaceholderText": [Function],
+  "getAllByRole": [Function],
+  "getAllByTestId": [Function],
+  "getAllByText": [Function],
+  "getAllByTitle": [Function],
+  "getByAltText": [Function],
+  "getByDisplayValue": [Function],
+  "getByLabelText": [Function],
+  "getByPlaceholderText": [Function],
+  "getByRole": [Function],
+  "getByTestId": [Function],
+  "getByText": [Function],
+  "getByTitle": [Function],
+  "queryAllByAltText": [Function],
+  "queryAllByDisplayValue": [Function],
+  "queryAllByLabelText": [Function],
+  "queryAllByPlaceholderText": [Function],
+  "queryAllByRole": [Function],
+  "queryAllByTestId": [Function],
+  "queryAllByText": [Function],
+  "queryAllByTitle": [Function],
+  "queryByAltText": [Function],
+  "queryByDisplayValue": [Function],
+  "queryByLabelText": [Function],
+  "queryByPlaceholderText": [Function],
+  "queryByRole": [Function],
+  "queryByTestId": [Function],
+  "queryByText": [Function],
+  "queryByTitle": [Function],
+  "rerender": [Function],
+  "unmount": [Function],
+}
+`;
+
+exports[`DeleteNodeModal Snapshots > should match snapshot for other node types 1`] = `
+{
+  "asFragment": [Function],
+  "baseElement": <body
+    data-tabster="{"root":{}}"
+  >
+    <div>
+      <span
+        hidden=""
+      />
+    </div>
+    <div
+      class="___1uxlrft_djprso0 f1euv43f f15twtuk f1vgc2s3 f1e31b4d f494woh"
+      data-portal-node="true"
+      dir="ltr"
+    >
+      <div
+        aria-hidden="true"
+        class="fui-DialogSurface__backdrop rsptlh5"
+      />
+      <div
+        aria-labelledby="dialog-title-r1a"
+        aria-modal="true"
+        class="fui-DialogSurface rsmdyd3"
+        data-tabster="{"restorer":{"type":0},"modalizer":{"id":"modal-r19","isOthersAccessible":false,"isTrapped":false}}"
+        role="dialog"
+        tabindex="-1"
+      >
+        <div
+          class="fui-DialogBody r1h3qql9"
+        >
+          <h2
+            class="fui-DialogTitle rxjm636 ___mh25s00_kwrsjh0 fsyjsko"
+            id="dialog-title-r1a"
+          >
+            Node
+          </h2>
+          <div
+            class="fui-DialogContent r1v5zwsm msla-modal-container"
+          >
+            <p>
+              Are you sure you want to delete 
+              <b>
+                Test Node
+              </b>
+              ?
+            </p>
+            <p>
+              This will also remove all child steps.
+            </p>
+          </div>
+          <div
+            class="fui-DialogActions rhfpeu0 ___pj8zjl0_1y84z0u f1a7i8kp fd46tj4 fsyjsko f1f41i0t f1jaqex3 f2ao6jk"
+          >
+            <button
+              class="fui-Button r1alrhcs ___1akj6hk_ih97uj0 ffp7eso f1p3nwhy f11589ue f1q5o8ev f1pdflbu f1phragk f15wkkf3 f1s2uweq fr80ssc f1ukrpxl fecsdlb f1rq72xc fnp9lpt f1h0usnq fs4ktlq f16h9ulv fx2bmrt f1d6v5y2 f1rirnrt f1uu00uk fkvaka8 f1ux7til f9a0qzu f1lkg8j3 fkc42ay fq7113v ff1wgvm fiob0tu f1j6scgf f1x4h75k f4xjyn1 fbgcvur f1ks1yx8 f1o6qegi fcnxywj fmxjhhp f9ddjv3 f17t0x8g f194v5ow f1qgg65p fk7jm04 fhgccpy f32wu9k fu5nqqq f13prjl2 f1czftr5 f1nl83rv f12k37oa fr96u23"
+              data-tabster="{"restorer":{"type":1}}"
+              role="button"
+              tabindex="0"
+              type="button"
+            >
+              OK
+            </button>
+            <button
+              class="fui-Button r1alrhcs"
+              data-tabster="{"restorer":{"type":1}}"
+              role="button"
+              tabindex="0"
+              type="button"
+            >
+              Cancel
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </body>,
+  "container": <div>
+    <span
+      hidden=""
+    />
+  </div>,
+  "debug": [Function],
+  "findAllByAltText": [Function],
+  "findAllByDisplayValue": [Function],
+  "findAllByLabelText": [Function],
+  "findAllByPlaceholderText": [Function],
+  "findAllByRole": [Function],
+  "findAllByTestId": [Function],
+  "findAllByText": [Function],
+  "findAllByTitle": [Function],
+  "findByAltText": [Function],
+  "findByDisplayValue": [Function],
+  "findByLabelText": [Function],
+  "findByPlaceholderText": [Function],
+  "findByRole": [Function],
+  "findByTestId": [Function],
+  "findByText": [Function],
+  "findByTitle": [Function],
+  "getAllByAltText": [Function],
+  "getAllByDisplayValue": [Function],
+  "getAllByLabelText": [Function],
+  "getAllByPlaceholderText": [Function],
+  "getAllByRole": [Function],
+  "getAllByTestId": [Function],
+  "getAllByText": [Function],
+  "getAllByTitle": [Function],
+  "getByAltText": [Function],
+  "getByDisplayValue": [Function],
+  "getByLabelText": [Function],
+  "getByPlaceholderText": [Function],
+  "getByRole": [Function],
+  "getByTestId": [Function],
+  "getByText": [Function],
+  "getByTitle": [Function],
+  "queryAllByAltText": [Function],
+  "queryAllByDisplayValue": [Function],
+  "queryAllByLabelText": [Function],
+  "queryAllByPlaceholderText": [Function],
+  "queryAllByRole": [Function],
+  "queryAllByTestId": [Function],
+  "queryAllByText": [Function],
+  "queryAllByTitle": [Function],
+  "queryByAltText": [Function],
+  "queryByDisplayValue": [Function],
+  "queryByLabelText": [Function],
+  "queryByPlaceholderText": [Function],
+  "queryByRole": [Function],
+  "queryByTestId": [Function],
+  "queryByText": [Function],
+  "queryByTitle": [Function],
+  "rerender": [Function],
+  "unmount": [Function],
+}
+`;
+
+exports[`DeleteNodeModal Snapshots > should match snapshot for switch case node 1`] = `
+{
+  "asFragment": [Function],
+  "baseElement": <body
+    data-tabster="{"root":{}}"
+  >
+    <div>
+      <span
+        hidden=""
+      />
+    </div>
+    <div
+      class="___1uxlrft_djprso0 f1euv43f f15twtuk f1vgc2s3 f1e31b4d f494woh"
+      data-portal-node="true"
+      dir="ltr"
+    >
+      <div
+        aria-hidden="true"
+        class="fui-DialogSurface__backdrop rsptlh5"
+      />
+      <div
+        aria-labelledby="dialog-title-r16"
+        aria-modal="true"
+        class="fui-DialogSurface rsmdyd3"
+        data-tabster="{"restorer":{"type":0},"modalizer":{"id":"modal-r15","isOthersAccessible":false,"isTrapped":false}}"
+        role="dialog"
+        tabindex="-1"
+      >
+        <div
+          class="fui-DialogBody r1h3qql9"
+        >
+          <h2
+            class="fui-DialogTitle rxjm636 ___mh25s00_kwrsjh0 fsyjsko"
+            id="dialog-title-r16"
+          >
+            Delete switch case
+          </h2>
+          <div
+            class="fui-DialogContent r1v5zwsm msla-modal-container"
+          >
+            <p>
+              Are you sure you want to delete 
+              <b>
+                Test Node
+              </b>
+              ?
+            </p>
+            <p>
+              This will also remove all child steps.
+            </p>
+          </div>
+          <div
+            class="fui-DialogActions rhfpeu0 ___pj8zjl0_1y84z0u f1a7i8kp fd46tj4 fsyjsko f1f41i0t f1jaqex3 f2ao6jk"
+          >
+            <button
+              class="fui-Button r1alrhcs ___1akj6hk_ih97uj0 ffp7eso f1p3nwhy f11589ue f1q5o8ev f1pdflbu f1phragk f15wkkf3 f1s2uweq fr80ssc f1ukrpxl fecsdlb f1rq72xc fnp9lpt f1h0usnq fs4ktlq f16h9ulv fx2bmrt f1d6v5y2 f1rirnrt f1uu00uk fkvaka8 f1ux7til f9a0qzu f1lkg8j3 fkc42ay fq7113v ff1wgvm fiob0tu f1j6scgf f1x4h75k f4xjyn1 fbgcvur f1ks1yx8 f1o6qegi fcnxywj fmxjhhp f9ddjv3 f17t0x8g f194v5ow f1qgg65p fk7jm04 fhgccpy f32wu9k fu5nqqq f13prjl2 f1czftr5 f1nl83rv f12k37oa fr96u23"
+              data-tabster="{"restorer":{"type":1}}"
+              role="button"
+              tabindex="0"
+              type="button"
+            >
+              OK
+            </button>
+            <button
+              class="fui-Button r1alrhcs"
+              data-tabster="{"restorer":{"type":1}}"
+              role="button"
+              tabindex="0"
+              type="button"
+            >
+              Cancel
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </body>,
+  "container": <div>
+    <span
+      hidden=""
+    />
+  </div>,
+  "debug": [Function],
+  "findAllByAltText": [Function],
+  "findAllByDisplayValue": [Function],
+  "findAllByLabelText": [Function],
+  "findAllByPlaceholderText": [Function],
+  "findAllByRole": [Function],
+  "findAllByTestId": [Function],
+  "findAllByText": [Function],
+  "findAllByTitle": [Function],
+  "findByAltText": [Function],
+  "findByDisplayValue": [Function],
+  "findByLabelText": [Function],
+  "findByPlaceholderText": [Function],
+  "findByRole": [Function],
+  "findByTestId": [Function],
+  "findByText": [Function],
+  "findByTitle": [Function],
+  "getAllByAltText": [Function],
+  "getAllByDisplayValue": [Function],
+  "getAllByLabelText": [Function],
+  "getAllByPlaceholderText": [Function],
+  "getAllByRole": [Function],
+  "getAllByTestId": [Function],
+  "getAllByText": [Function],
+  "getAllByTitle": [Function],
+  "getByAltText": [Function],
+  "getByDisplayValue": [Function],
+  "getByLabelText": [Function],
+  "getByPlaceholderText": [Function],
+  "getByRole": [Function],
+  "getByTestId": [Function],
+  "getByText": [Function],
+  "getByTitle": [Function],
+  "queryAllByAltText": [Function],
+  "queryAllByDisplayValue": [Function],
+  "queryAllByLabelText": [Function],
+  "queryAllByPlaceholderText": [Function],
+  "queryAllByRole": [Function],
+  "queryAllByTestId": [Function],
+  "queryAllByText": [Function],
+  "queryAllByTitle": [Function],
+  "queryByAltText": [Function],
+  "queryByDisplayValue": [Function],
+  "queryByLabelText": [Function],
+  "queryByPlaceholderText": [Function],
+  "queryByRole": [Function],
+  "queryByTestId": [Function],
+  "queryByText": [Function],
+  "queryByTitle": [Function],
+  "rerender": [Function],
+  "unmount": [Function],
+}
+`;
+
+exports[`DeleteNodeModal Snapshots > should match snapshot when nodeId is not provided 1`] = `
+{
+  "asFragment": [Function],
+  "baseElement": <body
+    data-tabster="{"root":{}}"
+  >
+    <div>
+      <span
+        hidden=""
+      />
+    </div>
+    <div
+      class="___1uxlrft_djprso0 f1euv43f f15twtuk f1vgc2s3 f1e31b4d f494woh"
+      data-portal-node="true"
+      dir="ltr"
+    >
+      <div
+        aria-hidden="true"
+        class="fui-DialogSurface__backdrop rsptlh5"
+      />
+      <div
+        aria-labelledby="dialog-title-r1e"
+        aria-modal="true"
+        class="fui-DialogSurface rsmdyd3"
+        data-tabster="{"restorer":{"type":0},"modalizer":{"id":"modal-r1d","isOthersAccessible":false,"isTrapped":false}}"
+        role="dialog"
+        tabindex="-1"
+      >
+        <div
+          class="fui-DialogBody r1h3qql9"
+        >
+          <h2
+            class="fui-DialogTitle rxjm636 ___mh25s00_kwrsjh0 fsyjsko"
+            id="dialog-title-r1e"
+          />
+          <div
+            class="fui-DialogContent r1v5zwsm msla-modal-container"
+          >
+            <div
+              aria-labelledby="spinnerr1f"
+              class="fui-Spinner r82apo5"
+              role="progressbar"
+            >
+              <span
+                class="fui-Spinner__spinner rvgcg50 ___1xxu43e_eahmz60 f1d2rq10 f1szoe96 fb52u90"
+              >
+                <span
+                  class="fui-Spinner__spinnerTail rxov3xa"
+                />
+              </span>
+              <label
+                class="fui-Label fui-Spinner__label ___qwq3bl0_b1t5ty0 fk6fouc f19n0e5 fod5ikn faaz57k fl43uef"
+                id="spinnerr1f"
+              >
+                Deleting...
+              </label>
+            </div>
+          </div>
+          <div
+            class="fui-DialogActions rhfpeu0 ___pj8zjl0_1y84z0u f1a7i8kp fd46tj4 fsyjsko f1f41i0t f1jaqex3 f2ao6jk"
+          >
+            <button
+              class="fui-Button r1alrhcs ___1akj6hk_ih97uj0 ffp7eso f1p3nwhy f11589ue f1q5o8ev f1pdflbu f1phragk f15wkkf3 f1s2uweq fr80ssc f1ukrpxl fecsdlb f1rq72xc fnp9lpt f1h0usnq fs4ktlq f16h9ulv fx2bmrt f1d6v5y2 f1rirnrt f1uu00uk fkvaka8 f1ux7til f9a0qzu f1lkg8j3 fkc42ay fq7113v ff1wgvm fiob0tu f1j6scgf f1x4h75k f4xjyn1 fbgcvur f1ks1yx8 f1o6qegi fcnxywj fmxjhhp f9ddjv3 f17t0x8g f194v5ow f1qgg65p fk7jm04 fhgccpy f32wu9k fu5nqqq f13prjl2 f1czftr5 f1nl83rv f12k37oa fr96u23"
+              data-tabster="{"restorer":{"type":1}}"
+              role="button"
+              tabindex="0"
+              type="button"
+            >
+              OK
+            </button>
+            <button
+              class="fui-Button r1alrhcs"
+              data-tabster="{"restorer":{"type":1}}"
+              role="button"
+              tabindex="0"
+              type="button"
+            >
+              Cancel
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </body>,
+  "container": <div>
+    <span
+      hidden=""
+    />
+  </div>,
+  "debug": [Function],
+  "findAllByAltText": [Function],
+  "findAllByDisplayValue": [Function],
+  "findAllByLabelText": [Function],
+  "findAllByPlaceholderText": [Function],
+  "findAllByRole": [Function],
+  "findAllByTestId": [Function],
+  "findAllByText": [Function],
+  "findAllByTitle": [Function],
+  "findByAltText": [Function],
+  "findByDisplayValue": [Function],
+  "findByLabelText": [Function],
+  "findByPlaceholderText": [Function],
+  "findByRole": [Function],
+  "findByTestId": [Function],
+  "findByText": [Function],
+  "findByTitle": [Function],
+  "getAllByAltText": [Function],
+  "getAllByDisplayValue": [Function],
+  "getAllByLabelText": [Function],
+  "getAllByPlaceholderText": [Function],
+  "getAllByRole": [Function],
+  "getAllByTestId": [Function],
+  "getAllByText": [Function],
+  "getAllByTitle": [Function],
+  "getByAltText": [Function],
+  "getByDisplayValue": [Function],
+  "getByLabelText": [Function],
+  "getByPlaceholderText": [Function],
+  "getByRole": [Function],
+  "getByTestId": [Function],
+  "getByText": [Function],
+  "getByTitle": [Function],
+  "queryAllByAltText": [Function],
+  "queryAllByDisplayValue": [Function],
+  "queryAllByLabelText": [Function],
+  "queryAllByPlaceholderText": [Function],
+  "queryAllByRole": [Function],
+  "queryAllByTestId": [Function],
+  "queryAllByText": [Function],
+  "queryAllByTitle": [Function],
+  "queryByAltText": [Function],
+  "queryByDisplayValue": [Function],
+  "queryByLabelText": [Function],
+  "queryByPlaceholderText": [Function],
+  "queryByRole": [Function],
+  "queryByTestId": [Function],
+  "queryByText": [Function],
+  "queryByTitle": [Function],
+  "rerender": [Function],
+  "unmount": [Function],
+}
+`;
