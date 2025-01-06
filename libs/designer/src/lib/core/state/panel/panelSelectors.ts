@@ -38,9 +38,11 @@ export const useIsPanelCollapsed = () => useSelector(createSelector(getPanelStat
 
 export const useIsPanelLoading = () => useSelector(createSelector(getPanelState, (state) => state.isLoading));
 
-export const useIsNodePinnedToOperationPanel = (nodeId: string) => useOperationPanelPinnedNodeId() === nodeId;
+export const useIsNodePinnedToOperationPanel = (nodeId: string) =>
+  useSelector(createSelector(getPanelState, (state) => (state.operationContent.pinnedNodeId ?? '') === nodeId));
 
-export const useIsNodeSelectedInOperationPanel = (nodeId: string) => useOperationPanelSelectedNodeId() === nodeId;
+export const useIsNodeSelectedInOperationPanel = (nodeId: string) =>
+  useSelector(createSelector(getPanelState, (state) => (state.operationContent.selectedNodeId ?? '') === nodeId));
 
 export const useIsPanelInPinnedViewMode = (): boolean => {
   const selectedNodeId = useOperationPanelSelectedNodeId();

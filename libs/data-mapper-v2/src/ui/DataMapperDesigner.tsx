@@ -15,6 +15,7 @@ import { TestPanel } from '../components/test/TestPanel';
 import DialogView from './DialogView';
 import { useDispatch } from 'react-redux';
 import { setSelectedItem } from '../core/state/DataMapSlice';
+import { MapCheckerPanel } from '../components/mapChecker/MapCheckerPanel';
 import type { ILoggerService } from '@microsoft/logic-apps-shared';
 import { DevLogger, InitLoggerService } from '@microsoft/logic-apps-shared';
 
@@ -71,7 +72,6 @@ export const DataMapperDesigner = ({ fileService, loggerService, setIsMapStateDi
     }
   }, [fileService]);
   return (
-    // danielle rename back and add width and height
     <DataMapperWrappedContext.Provider
       value={{
         scroll: {
@@ -87,6 +87,7 @@ export const DataMapperDesigner = ({ fileService, loggerService, setIsMapStateDi
         <FunctionPanel />
         <ReactFlowWrapper setIsMapStateDirty={setIsMapStateDirty} />
         <CodeViewPanel />
+        <MapCheckerPanel />
         <TestPanel />
       </div>
     </DataMapperWrappedContext.Provider>

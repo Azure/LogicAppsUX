@@ -1,14 +1,14 @@
 {
   "name": "@microsoft/logicappsux",
-  "version": "5.15.0",
+  "version": "5.16.0",
   "devDependencies": {
     "@biomejs/biome": "1.9.4",
     "@eslint/eslintrc": "^3.0.2",
     "@eslint/js": "^9.0.0",
     "@faker-js/faker": "^8.4.1",
     "@formatjs/cli": "^6.2.9",
-    "@playwright/test": "^1.43.1",
-    "@testing-library/jest-dom": "^6.4.2",
+    "@playwright/test": "^1.49.1",
+    "@testing-library/jest-dom": "^6.6.3",
     "@testing-library/react": "^15.0.2",
     "@testing-library/react-hooks": "^8.0.1",
     "@types/node": "^20.12.7",
