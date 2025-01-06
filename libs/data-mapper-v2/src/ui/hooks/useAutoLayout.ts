@@ -158,7 +158,12 @@ const useAutoLayout = () => {
           nextNodes
             .filter((node) => isFunctionNode(node.id))
             .reduce((acc: Record<string, XYPosition>, node) => {
-              acc[node.id] = node.position;
+              const { x: currentX, y: currentY } = node.position;
+              acc[node.id] = {
+                // Todo: This is a temporary fix for the layout issue. We need to find a better solution.
+                x: currentX < 310 ? currentX + 310 : currentX,
+                y: currentY,
+              };
               return acc;
             }, {})
         )
