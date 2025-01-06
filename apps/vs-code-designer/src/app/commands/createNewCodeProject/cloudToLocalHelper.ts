@@ -80,7 +80,7 @@ export async function extractConnectionSettings(context: IFunctionWizardContext)
       return settings;
     } catch (error) {
       context.telemetry.properties.error = error.message;
-      console.error('Error extracting connection details:', error);
+      console.error('Error encountered while extracting connection details:', error);
     }
   }
 }
