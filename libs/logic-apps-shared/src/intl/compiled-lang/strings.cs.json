@@ -26,19 +26,19 @@
   "+5Jp42": [
     {
       "type": 0,
-      "value": "By"
+      "value": "Poskytovatel:"
     }
   ],
   "+Agiub": [
     {
       "type": 0,
-      "value": "Create an expression with Copilot"
+      "value": "Vytvořit výraz pomocí Copilotu"
     }
   ],
   "+EREVh": [
     {
       "type": 0,
-      "value": "Name"
+      "value": "Název"
     }
   ],
   "+FcXe9": [
@@ -74,7 +74,7 @@
   "+R90eK": [
     {
       "type": 0,
-      "value": "Retry policy interval is invalid, must match ISO 8601 duration format"
+      "value": "Interval zásady opakování je neplatný, musí odpovídat formátu doby trvání ISO 8601."
     }
   ],
   "+Uvo/p": [
@@ -102,7 +102,7 @@
   "+l5XmZ": [
     {
       "type": 0,
-      "value": "Enter a positive integer between "
+      "value": "Zadejte kladné celé číslo mezi "
     },
     {
       "type": 1,
@@ -110,11 +110,15 @@
     },
     {
       "type": 0,
-      "value": " and "
+      "value": " a "
     },
     {
       "type": 1,
       "value": "max"
+    },
+    {
+      "type": 0,
+      "value": "."
     }
   ],
   "+mAJR3": [
@@ -162,7 +166,7 @@
   "/IVuGP": [
     {
       "type": 0,
-      "value": "Discard"
+      "value": "Zahodit"
     }
   ],
   "/KRvvg": [
@@ -222,7 +226,7 @@
   "/csbOB": [
     {
       "type": 0,
-      "value": "Retry policy count is invalid (must be from "
+      "value": "Počet zásad opakování není platný (musí být od "
     },
     {
       "type": 1,
@@ -230,7 +234,7 @@
     },
     {
       "type": 0,
-      "value": " to "
+      "value": " do "
     },
     {
       "type": 1,
@@ -274,7 +278,7 @@
   "/qrBuJ": [
     {
       "type": 0,
-      "value": "Create"
+      "value": "Vytvořit"
     }
   ],
   "/qu3zt": [
@@ -304,13 +308,13 @@
   "/ye9Df": [
     {
       "type": 0,
-      "value": "Delete workflow action"
+      "value": "Odstranit akci pracovního postupu"
     }
   ],
   "0/VGiF": [
     {
       "type": 0,
-      "value": "Add action"
+      "value": "Přidat akci"
     }
   ],
   "00xlpa": [
@@ -392,13 +396,13 @@
   "0BO/tO": [
     {
       "type": 0,
-      "value": "Split-on tracking ID"
+      "value": "ID sledování při dělení"
     }
   ],
   "0C5Ywr": [
     {
       "type": 0,
-      "value": "Enter an array"
+      "value": "Zadejte pole"
     }
   ],
   "0CPsxh": [
@@ -422,7 +426,7 @@
   "0FRVkr": [
     {
       "type": 0,
-      "value": "Connection Panel"
+      "value": "Panel připojení"
     }
   ],
   "0FzNJV": [
@@ -470,7 +474,7 @@
   "0UfxUM": [
     {
       "type": 0,
-      "value": "Next"
+      "value": "Další"
     }
   ],
   "0Vzp0l": [
@@ -482,7 +486,7 @@
   "0ZZJos": [
     {
       "type": 0,
-      "value": "Showing "
+      "value": "Zobrazuje se "
     },
     {
       "type": 1,
@@ -490,7 +494,7 @@
     },
     {
       "type": 0,
-      "value": " - "
+      "value": " – "
     },
     {
       "type": 1,
@@ -498,7 +502,7 @@
     },
     {
       "type": 0,
-      "value": " of "
+      "value": " výsledků "
     },
     {
       "type": 1,
@@ -506,7 +510,7 @@
     },
     {
       "type": 0,
-      "value": " results."
+      "value": "."
     }
   ],
   "0i/6TR": [
@@ -554,7 +558,7 @@
   "0uuxAX": [
     {
       "type": 0,
-      "value": "Delete mapping"
+      "value": "Odstranit mapování"
     }
   ],
   "0vfdFS": [
@@ -570,7 +574,7 @@
     },
     {
       "type": 0,
-      "value": " connection"
+      "value": " připojení"
     }
   ],
   "0xLWzG": [
@@ -624,7 +628,7 @@
   "1HhCtq": [
     {
       "type": 0,
-      "value": "Headers"
+      "value": "Hlavičky"
     }
   ],
   "1KFpTX": [
@@ -636,7 +640,7 @@
   "1LSKq8": [
     {
       "type": 0,
-      "value": "Basics"
+      "value": "Základní informace"
     }
   ],
   "1NBvKu": [
@@ -645,10 +649,16 @@
       "value": "Převede argument parametru na číslo s plovoucí desetinnou čárkou."
     }
   ],
+  "1QktJw": [
+    {
+      "type": 0,
+      "value": "Map errors"
+    }
+  ],
   "1Xke9D": [
     {
       "type": 0,
-      "value": "open functions drawer"
+      "value": "otevřít panel funkcí"
     }
   ],
   "1dlfUe": [
@@ -666,7 +676,7 @@
   "1f7LG4": [
     {
       "type": 0,
-      "value": "Fixed interval"
+      "value": "Pevný interval"
     }
   ],
   "1hHFdx": [
@@ -690,7 +700,7 @@
   "1jf3Dq": [
     {
       "type": 0,
-      "value": "Z to A, descending"
+      "value": "Z až A sestupně"
     }
   ],
   "1jhzOM": [
@@ -732,7 +742,7 @@
   "1vqDeQ": [
     {
       "type": 0,
-      "value": "Select Create to start a new workflow based on this template, no configuration required."
+      "value": "Chcete-li zahájit nový pracovní postup založený na této šabloně, není vyžadována žádná konfigurace, vyberte možnost Vytvořit."
     }
   ],
   "20oqsp": [
@@ -810,13 +820,13 @@
   "2OQU3/": [
     {
       "type": 0,
-      "value": "Cannot run after both trigger and action"
+      "value": "Nejde spustit po triggeru i akci."
     }
   ],
   "2On4Xu": [
     {
       "type": 0,
-      "value": "Code view tab"
+      "value": "Karta Zobrazení kódu"
     }
   ],
   "2TMGk7": [
@@ -834,7 +844,7 @@
   "2adqQ4": [
     {
       "type": 0,
-      "value": "Maximum interval"
+      "value": "Maximální interval"
     }
   ],
   "2cVEMV": [
@@ -898,7 +908,7 @@
   "2xQWRt": [
     {
       "type": 0,
-      "value": "Search Functions"
+      "value": "Hledat funkce"
     }
   ],
   "2y24a/": [
@@ -914,7 +924,7 @@
     },
     {
       "type": 0,
-      "value": " of "
+      "value": " "
     },
     {
       "type": 1,
@@ -954,7 +964,7 @@
   "36sF7T": [
     {
       "type": 0,
-      "value": "Associated workflows"
+      "value": "Přidružené pracovní postupy"
     }
   ],
   "3AWwVl": [
@@ -966,7 +976,7 @@
   "3BXdMk": [
     {
       "type": 0,
-      "value": "Request settings"
+      "value": "Nastavení žádosti"
     }
   ],
   "3BZnxY": [
@@ -990,7 +1000,7 @@
   "3JEC7U": [
     {
       "type": 0,
-      "value": "Error type"
+      "value": "Typ chyby"
     }
   ],
   "3KPLpx": [
@@ -1052,7 +1062,7 @@
   "3Xf/4S": [
     {
       "type": 0,
-      "value": "Swagger endpoint"
+      "value": "Koncový bod swaggeru"
     }
   ],
   "3Y8a6G": [
@@ -1072,13 +1082,13 @@
   "3a3eHg": [
     {
       "type": 0,
-      "value": "Select actions"
+      "value": "Vybrat akce"
     }
   ],
   "3cZFcy": [
     {
       "type": 0,
-      "value": "Error Panel"
+      "value": "Panel chyb"
     }
   ],
   "3cZZKj": [
@@ -1096,7 +1106,7 @@
   "3hHkAn": [
     {
       "type": 0,
-      "value": "Result"
+      "value": "Výsledek"
     }
   ],
   "3n5pnv": [
@@ -1114,7 +1124,7 @@
   "3pheF6": [
     {
       "type": 0,
-      "value": "Select schema"
+      "value": "Vybrat schéma"
     }
   ],
   "3rzrWf": [
@@ -1212,7 +1222,7 @@
   "4BuCdw": [
     {
       "type": 0,
-      "value": "Specify the behavior and capabilities for transferring content over HTTP."
+      "value": "Zadejte chování a možnosti pro přenos obsahu přes protokol HTTP."
     }
   ],
   "4D7H4R": [
@@ -1228,7 +1238,7 @@
   "4E69aV": [
     {
       "type": 0,
-      "value": "Background color"
+      "value": "Barva pozadí"
     }
   ],
   "4Ekn9t": [
@@ -1252,7 +1262,7 @@
   "4SIrVn": [
     {
       "type": 0,
-      "value": "Body"
+      "value": "Text"
     }
   ],
   "4YKQAF": [
@@ -1282,11 +1292,15 @@
   "4hlqgK": [
     {
       "type": 0,
-      "value": "No results found for "
+      "value": "Pro "
     },
     {
       "type": 1,
       "value": "searchTermBeingSearchedFor_DO_NOT_TRANSLATE"
+    },
+    {
+      "type": 0,
+      "value": " se nenašly žádné výsledky."
     }
   ],
   "4iyEAY": [
@@ -1304,7 +1318,7 @@
   "4rVVyW": [
     {
       "type": 0,
-      "value": "Retry history"
+      "value": "Historie opakování pokusů"
     }
   ],
   "4vcnOA": [
@@ -1331,6 +1345,16 @@
       "value": "(UTC+08:45) Eucla"
     }
   ],
+  "5+zBXE": [
+    {
+      "type": 1,
+      "value": "label"
+    },
+    {
+      "type": 0,
+      "value": " položku klíče"
+    }
+  ],
   "50W8FI": [
     {
       "type": 0,
@@ -1347,6 +1371,20 @@
     {
       "type": 0,
       "value": "(UTC+09:00) Ósaka, Sapporo, Tokio"
+    }
+  ],
+  "5DkTf5": [
+    {
+      "type": 0,
+      "value": "Target schema node not found for node key '"
+    },
+    {
+      "type": 1,
+      "value": "nodeKey"
+    },
+    {
+      "type": 0,
+      "value": "'"
     }
   ],
   "5J9jne": [
@@ -1448,7 +1486,7 @@
   "5pSOjg": [
     {
       "type": 0,
-      "value": "Create workflows from template"
+      "value": "Vytvořit pracovní postupy ze šablony"
     }
   ],
   "5qzZMo": [
@@ -1460,19 +1498,19 @@
   "5rljf7": [
     {
       "type": 0,
-      "value": "Discovery Panel"
+      "value": "Panel zjišťování"
     }
   ],
   "5szzYP": [
     {
       "type": 0,
-      "value": "Use this template"
+      "value": "Použít tuto šablonu"
     }
   ],
   "5we9SR": [
     {
       "type": 0,
-      "value": "Client tracking ID"
+      "value": "ID pro sledování klienta"
     }
   ],
   "5ytHcK": [
@@ -1520,13 +1558,13 @@
   "6DZp5H": [
     {
       "type": 0,
-      "value": "Search"
+      "value": "Hledat"
     }
   ],
   "6LJZ7n": [
     {
       "type": 0,
-      "value": "Retry policy"
+      "value": "Zásady opakování"
     }
   ],
   "6OSgRP": [
@@ -1544,7 +1582,7 @@
   "6SQuYg": [
     {
       "type": 0,
-      "value": "See more ("
+      "value": "Zobrazit více ("
     },
     {
       "type": 1,
@@ -1564,19 +1602,19 @@
   "6c1ffO": [
     {
       "type": 0,
-      "value": "Enter JSON object of authentication parameter"
+      "value": "Zadejte objekt JSON parametru ověřování."
     }
   ],
   "6eDY1H": [
     {
       "type": 0,
-      "value": "optional"
+      "value": "nepovinné"
     }
   ],
   "6epkWC": [
     {
       "type": 0,
-      "value": "Body item"
+      "value": "Položka textu"
     }
   ],
   "6fDYzG": [
@@ -1632,13 +1670,13 @@
   "6nWQm7": [
     {
       "type": 0,
-      "value": "Start time"
+      "value": "Čas zahájení"
     }
   ],
   "6oOQnD": [
     {
       "type": 0,
-      "value": "Close test map"
+      "value": "Zavřít testovací mapu"
     }
   ],
   "6oqk+A": [
@@ -1662,7 +1700,7 @@
   "6rJ+Fj": [
     {
       "type": 0,
-      "value": "Delete workflow graph"
+      "value": "Odstranit graf pracovního postupu"
     }
   ],
   "6sGj3J": [
@@ -1722,7 +1760,7 @@
   "7+ZxCU": [
     {
       "type": 0,
-      "value": "Invalid authentication value"
+      "value": "Neplatná hodnota ověřování"
     }
   ],
   "70cHmm": [
@@ -1758,7 +1796,7 @@
   "7F4Bzv": [
     {
       "type": 0,
-      "value": "Workflow with name \""
+      "value": "Pracovní postup s názvem "
     },
     {
       "type": 1,
@@ -1766,7 +1804,7 @@
     },
     {
       "type": 0,
-      "value": "\" already exists."
+      "value": " už existuje."
     }
   ],
   "7Fyq1F": [
@@ -1810,7 +1848,7 @@
   "7ZF1Hr": [
     {
       "type": 0,
-      "value": "Validation error"
+      "value": "Chyba ověřování"
     }
   ],
   "7ZR1xr": [
@@ -1828,13 +1866,13 @@
   "7adnmH": [
     {
       "type": 0,
-      "value": "Back to template library"
+      "value": "Zpět do knihovny šablon"
     }
   ],
   "7fZkLA": [
     {
       "type": 0,
-      "value": "Disable static result"
+      "value": "Zakázat statický výsledek"
     }
   ],
   "7gUE8h": [
@@ -1944,7 +1982,7 @@
   "8KpZmj": [
     {
       "type": 0,
-      "value": "The system-assigned identity is unavailable because it's not enabled."
+      "value": "Identita přiřazená systémem není k dispozici, protože není povolená."
     }
   ],
   "8L+oIz": [
@@ -2032,13 +2070,13 @@
   "8p0yK8": [
     {
       "type": 0,
-      "value": "Run after"
+      "value": "Spustit po"
     }
   ],
   "8wlfdo": [
     {
       "type": 0,
-      "value": "Suppress workflow headers on response"
+      "value": "Potlačit hlavičky pracovního postupu v odpovědi"
     }
   ],
   "8wr0zO": [
@@ -2050,7 +2088,7 @@
   "8zcsPi": [
     {
       "type": 0,
-      "value": "Expression editor"
+      "value": "Editor výrazů"
     }
   ],
   "8zkvmc": [
@@ -2074,7 +2112,7 @@
   "90Vi7t": [
     {
       "type": 0,
-      "value": "Expand static result"
+      "value": "Rozbalit statický výsledek"
     }
   ],
   "90o7sB": [
@@ -2132,7 +2170,7 @@
   "9OzDnJ": [
     {
       "type": 0,
-      "value": "Search tips"
+      "value": "Tipy pro hledání"
     }
   ],
   "9QNZSj": [
@@ -2164,7 +2202,7 @@
   "9V2Uwf": [
     {
       "type": 0,
-      "value": "Insert expression (you can also add by typing '/' in the editor)"
+      "value": "Vložit výraz (můžete ho přidat i zadáním / v editoru)"
     }
   ],
   "9W0lck": [
@@ -2220,7 +2258,7 @@
   "9uv02q": [
     {
       "type": 0,
-      "value": "Set the tracking ID for the run. For split-on this tracking ID is for the initiating request"
+      "value": "Nastavte ID pro sledování běhu. V případě dělení toto ID pro sledování slouží k zahájení žádosti."
     }
   ],
   "9wX3u9": [
@@ -2244,7 +2282,7 @@
   "A5/UwX": [
     {
       "type": 0,
-      "value": "Accelerators"
+      "value": "Akcelerátory"
     }
   ],
   "A5Ferh": [
@@ -2256,7 +2294,7 @@
   "A8T1X/": [
     {
       "type": 0,
-      "value": "Whitespaces must be encoded for URIs."
+      "value": "Prázdné znaky musí být zakódované pro identifikátory URI."
     }
   ],
   "A8l+k7": [
@@ -2276,7 +2314,7 @@
   "AB+yPQ": [
     {
       "type": 0,
-      "value": "Connection details"
+      "value": "Podrobnosti o připojení"
     }
   ],
   "AEguAy": [
@@ -2294,19 +2332,19 @@
   "AJ+LDh": [
     {
       "type": 0,
-      "value": "Provide a unique, descriptive name and review the state type to ensure your workflows are properly configured."
+      "value": "Zadejte jedinečný popisný název a zkontrolujte typ stavu, abyste zajistili správnou konfiguraci pracovních postupů."
     }
   ],
   "AKOkI2": [
     {
       "type": 0,
-      "value": "Service principal"
+      "value": "Instanční objekt"
     }
   ],
   "APKdYG": [
     {
       "type": 0,
-      "value": "Enter a valid double number."
+      "value": "Zadejte platné číslo datového typu Double."
     }
   ],
   "AQ7Zxc": [
@@ -2324,7 +2362,7 @@
   "Agqhgu": [
     {
       "type": 0,
-      "value": "Describe how you'd like to update your expression."
+      "value": "Popište, jak chcete aktualizovat svůj výraz."
     }
   ],
   "AheXMN": [
@@ -2348,7 +2386,7 @@
   "Alq4/3": [
     {
       "type": 0,
-      "value": "Hybrid connector"
+      "value": "Hybridní konektor"
     }
   ],
   "AnX5yC": [
@@ -2371,12 +2409,12 @@
   ],
   "Aui3Mq": [
     {
-      "type": 1,
-      "value": "title"
+      "type": 0,
+      "value": "operace "
     },
     {
-      "type": 0,
-      "value": " operation"
+      "type": 1,
+      "value": "title"
     }
   ],
   "Az0QvG": [
@@ -2468,7 +2506,7 @@
   "B6BjCl": [
     {
       "type": 0,
-      "value": "Drop-down list of options"
+      "value": "Rozevírací seznam možností"
     }
   ],
   "B999mz": [
@@ -2562,7 +2600,7 @@
   "BRMOfD": [
     {
       "type": 0,
-      "value": "Timed out"
+      "value": "Vypršel časový limit."
     }
   ],
   "BS3gy8": [
@@ -2586,7 +2624,7 @@
   "BXb3CB": [
     {
       "type": 0,
-      "value": "Testing tab"
+      "value": "Karta Testování"
     }
   ],
   "BYrP8F": [
@@ -2604,7 +2642,7 @@
   "Bkc/+3": [
     {
       "type": 0,
-      "value": "Retry policy minimum interval is invalid, must match ISO 8601 duration format"
+      "value": "Minimální interval zásady opakování je neplatný, musí odpovídat formátu doby trvání ISO 8601"
     }
   ],
   "Bl4Iv0": [
@@ -2622,7 +2660,7 @@
   "BnkCwH": [
     {
       "type": 0,
-      "value": "Search properties"
+      "value": "Prohledat vlastnosti"
     }
   ],
   "BoMvF2": [
@@ -2653,6 +2691,20 @@
     {
       "type": 0,
       "value": "Jeden specifikátor formátu, který označuje, jak formátovat hodnotu tohoto GUID"
+    }
+  ],
+  "Bwqlxd": [
+    {
+      "type": 0,
+      "value": "Key not found '"
+    },
+    {
+      "type": 1,
+      "value": "nodeKey"
+    },
+    {
+      "type": 0,
+      "value": "'"
     }
   ],
   "BxITRH": [
@@ -2694,7 +2746,7 @@
   "CRTB+v": [
     {
       "type": 0,
-      "value": "Value should be greater than "
+      "value": "Hodnota by měla být větší než "
     },
     {
       "type": 1,
@@ -2722,13 +2774,13 @@
   "Ccbm2Y": [
     {
       "type": 0,
-      "value": "Multi-select list of options"
+      "value": "Odebrat seznam možností s vícenásobným výběrem"
     }
   ],
   "CeF40t": [
     {
       "type": 0,
-      "value": "Authentication type"
+      "value": "Typ ověřování"
     }
   ],
   "Ci41Od": [
@@ -2758,7 +2810,7 @@
   "ClowJ/": [
     {
       "type": 0,
-      "value": "Authentication type"
+      "value": "Typ ověřování"
     }
   ],
   "CvoqQ6": [
@@ -2776,7 +2828,7 @@
   "Cy4+KL": [
     {
       "type": 0,
-      "value": "Redo"
+      "value": "Provést znovu"
     }
   ],
   "CyT8H7": [
@@ -2828,7 +2880,7 @@
   "D0D3Sf": [
     {
       "type": 0,
-      "value": "switch case"
+      "value": "přepínač případů"
     }
   ],
   "D1lgsT": [
@@ -2846,7 +2898,7 @@
   "D6KzoS": [
     {
       "type": 0,
-      "value": "Specify upload chunk size between "
+      "value": "Zadejte velikost bloku dat nahrávání mezi "
     },
     {
       "type": 1,
@@ -2854,7 +2906,7 @@
     },
     {
       "type": 0,
-      "value": " and "
+      "value": " a "
     },
     {
       "type": 1,
@@ -2862,13 +2914,13 @@
     },
     {
       "type": 0,
-      "value": " Mb. Example: 10"
+      "value": " Mb. Příklad: 10"
     }
   ],
   "D89UXR": [
     {
       "type": 0,
-      "value": "action"
+      "value": "akce"
     }
   ],
   "DDIIAQ": [
@@ -2904,7 +2956,7 @@
   "DNQtFr": [
     {
       "type": 0,
-      "value": "Name"
+      "value": "Název"
     }
   ],
   "DQV7aK": [
@@ -2942,7 +2994,7 @@
   "DX9jWz": [
     {
       "type": 0,
-      "value": "Name"
+      "value": "Název"
     }
   ],
   "DYXoEM": [
@@ -2960,13 +3012,13 @@
   "DbxZhS": [
     {
       "type": 0,
-      "value": "Remove list of options"
+      "value": "Odebrat seznam možností"
     }
   ],
   "DcJBUx": [
     {
       "type": 0,
-      "value": "Trigger type"
+      "value": "Typ aktivační události"
     }
   ],
   "DfXxoX": [
@@ -3040,7 +3092,7 @@
   "E70Rdt": [
     {
       "type": 0,
-      "value": "Internal errors"
+      "value": "Vnitřní chyby"
     }
   ],
   "E7NzDN": [
@@ -3064,13 +3116,13 @@
   "EFQ56R": [
     {
       "type": 0,
-      "value": "Source code"
+      "value": "Zdrojový kód"
     }
   ],
   "EMbxLf": [
     {
       "type": 0,
-      "value": "Previous suggestion"
+      "value": "Předchozí návrh"
     }
   ],
   "ERAWZA": [
@@ -3094,13 +3146,13 @@
   "EX0g1d": [
     {
       "type": 0,
-      "value": "Secure outputs"
+      "value": "Zabezpečit výstupy"
     }
   ],
   "EXEL2j": [
     {
       "type": 0,
-      "value": "Destination"
+      "value": "Cíl"
     }
   ],
   "EZz5q7": [
@@ -3144,7 +3196,7 @@
   "EeJitp": [
     {
       "type": 0,
-      "value": "Type"
+      "value": "Typ"
     }
   ],
   "EiRMD4": [
@@ -3176,7 +3228,7 @@
   "EoRB1V": [
     {
       "type": 0,
-      "value": "Details"
+      "value": "Podrobnosti"
     }
   ],
   "EptZhD": [
@@ -3200,31 +3252,31 @@
   "Eyxa6q": [
     {
       "type": 0,
-      "value": "The number of workflow instances that can wait to run when your current workflow instance is already running the maximum concurrent instances."
+      "value": "Počet instancí pracovních postupů, které mohou čekat na spuštění, když je v aktuální instanci pracovního postupu již spuštěn maximální počet souběžných instancí."
     }
   ],
   "F+cOLr": [
     {
       "type": 0,
-      "value": "Community Authored"
+      "value": "Komunita vytvořena"
     }
   ],
   "F/13eU": [
     {
       "type": 0,
-      "value": "Delete"
+      "value": "Odstranit"
     }
   ],
   "F1AkvV": [
     {
       "type": 0,
-      "value": "Ideal for process business transitional data"
+      "value": "Ideální pro zpracování obchodních přechodových dat"
     }
   ],
   "F2wR+r": [
     {
       "type": 0,
-      "value": "Insert expression"
+      "value": "Vložit výraz"
     }
   ],
   "F3IDl8": [
@@ -3248,7 +3300,7 @@
   "FEYdkx": [
     {
       "type": 0,
-      "value": "Maximum waiting runs"
+      "value": "Maximální počet čekajících běhů"
     }
   ],
   "FIL1Nt": [
@@ -3281,6 +3333,20 @@
       "value": "Vrátí část řetězce definovanou počátečním a koncovým indexem."
     }
   ],
+  "FPBmrA": [
+    {
+      "type": 0,
+      "value": "Source schema node not found for node key '"
+    },
+    {
+      "type": 1,
+      "value": "nodeKey"
+    },
+    {
+      "type": 0,
+      "value": "'"
+    }
+  ],
   "FT3jt6": [
     {
       "type": 0,
@@ -3290,7 +3356,7 @@
   "FTrMxN": [
     {
       "type": 0,
-      "value": "Close"
+      "value": "Zavřít"
     }
   ],
   "FUuFlC": [
@@ -3380,7 +3446,7 @@
   "Fx/6sv": [
     {
       "type": 0,
-      "value": "Go to operation"
+      "value": "Přejít na operaci"
     }
   ],
   "FxQ2Ts": [
@@ -3392,7 +3458,7 @@
   "G+6Juu": [
     {
       "type": 0,
-      "value": "Click to expand"
+      "value": "Kliknutím rozbalte."
     }
   ],
   "G+XvKn": [
@@ -3410,7 +3476,7 @@
   "G0gnge": [
     {
       "type": 0,
-      "value": "Copy entire action"
+      "value": "Kopírovat celou akci"
     }
   ],
   "GAY7b8": [
@@ -3446,7 +3512,7 @@
   "GFnJQe": [
     {
       "type": 0,
-      "value": "Test map"
+      "value": "Otestovat mapu"
     }
   ],
   "GIUSQs": [
@@ -3511,10 +3577,24 @@
       "value": "Prvek zdrojového schématu"
     }
   ],
+  "GiR7ll": [
+    {
+      "type": 0,
+      "value": "Function not found- '"
+    },
+    {
+      "type": 1,
+      "value": "nodeKey"
+    },
+    {
+      "type": 0,
+      "value": "'"
+    }
+  ],
   "Gk79Ma": [
     {
       "type": 0,
-      "value": "Status code"
+      "value": "Stavový kód"
     }
   ],
   "Gl5khw": [
@@ -3626,13 +3706,13 @@
   "HQ/HhZ": [
     {
       "type": 0,
-      "value": "Error loading connections"
+      "value": "Chyba při načítání připojení"
     }
   ],
   "HQQtFz": [
     {
       "type": 0,
-      "value": "Make the field required"
+      "value": "Nastavit pole jako povinné"
     }
   ],
   "HSJLCu": [
@@ -3656,7 +3736,7 @@
   "He4Z+v": [
     {
       "type": 0,
-      "value": "Credential type"
+      "value": "Typ přihlašovacích údajů"
     }
   ],
   "HfinO2": [
@@ -3740,13 +3820,13 @@
   "IBFBR2": [
     {
       "type": 0,
-      "value": "Remove loop"
+      "value": "Odebrat smyčku"
     }
   ],
   "IGpV1W": [
     {
       "type": 0,
-      "value": "Asynchronous response"
+      "value": "Asynchronní odpověď"
     }
   ],
   "IHMd3X": [
@@ -3762,7 +3842,7 @@
   "IHzSSN": [
     {
       "type": 0,
-      "value": "Path parameters"
+      "value": "Parametry cesty"
     }
   ],
   "IPwWgu": [
@@ -3792,7 +3872,7 @@
   "IUbVFR": [
     {
       "type": 0,
-      "value": "Search"
+      "value": "Hledat"
     }
   ],
   "IW2MjQ": [
@@ -3830,13 +3910,13 @@
     },
     {
       "type": 0,
-      "value": " more item"
+      "value": " další položku"
     }
   ],
   "IqNEui": [
     {
       "type": 0,
-      "value": "Specify download chunk size between "
+      "value": "Zadejte velikost bloku dat pro stahování mezi "
     },
     {
       "type": 1,
@@ -3844,7 +3924,7 @@
     },
     {
       "type": 0,
-      "value": " and "
+      "value": " a "
     },
     {
       "type": 1,
@@ -3852,7 +3932,7 @@
     },
     {
       "type": 0,
-      "value": " Mb. Example: 10"
+      "value": " Mb. Příklad: 10"
     }
   ],
   "IsVhkH": [
@@ -3914,7 +3994,7 @@
   "J7PN35": [
     {
       "type": 0,
-      "value": "Make group"
+      "value": "Vytvořit skupinu"
     }
   ],
   "J9wWry": [
@@ -3966,13 +4046,13 @@
   "JKfEGS": [
     {
       "type": 0,
-      "value": "Create new"
+      "value": "Vytvořit nový"
     }
   ],
   "JMwMaK": [
     {
       "type": 0,
-      "value": "AI-generated content may be incorrect"
+      "value": "Obsah vygenerovaný umělou inteligencí může být nesprávný."
     }
   ],
   "JNQHws": [
@@ -3984,7 +4064,7 @@
   "JQBEOg": [
     {
       "type": 0,
-      "value": "Review + create"
+      "value": "Zkontrolovat a vytvořit"
     }
   ],
   "JSfWJ0": [
@@ -3996,13 +4076,13 @@
   "JUZ7g5": [
     {
       "type": 0,
-      "value": "Run history"
+      "value": "Historie spuštění"
     }
   ],
   "JVNRly": [
     {
       "type": 0,
-      "value": "Solution type"
+      "value": "Typ řešení"
     }
   ],
   "JWl/LD": [
@@ -4044,7 +4124,7 @@
   "Jk2B0i": [
     {
       "type": 0,
-      "value": "Prerequisites"
+      "value": "Předpoklady"
     }
   ],
   "JnlcZQ": [
@@ -4068,7 +4148,7 @@
   "JzvOUc": [
     {
       "type": 0,
-      "value": "The value must not be empty."
+      "value": "Hodnota nesmí být prázdná."
     }
   ],
   "K50znc": [
@@ -4086,7 +4166,7 @@
   "K9ORYo": [
     {
       "type": 0,
-      "value": "Schema ID"
+      "value": "ID schématu"
     }
   ],
   "KBaGkS": [
@@ -4098,7 +4178,7 @@
   "KO2eUv": [
     {
       "type": 0,
-      "value": "Connectors"
+      "value": "Konektory"
     }
   ],
   "KV4uky": [
@@ -4184,7 +4264,7 @@
   "Kb5u9F": [
     {
       "type": 0,
-      "value": "About tab"
+      "value": "Karta Informace"
     }
   ],
   "KlDW+5": [
@@ -4202,7 +4282,7 @@
   "KqJ14/": [
     {
       "type": 0,
-      "value": "Edit schema"
+      "value": "Upravit schéma"
     }
   ],
   "KwGA+K": [
@@ -4256,7 +4336,7 @@
   "LPzAHC": [
     {
       "type": 0,
-      "value": "Loading files…"
+      "value": "Načítají se soubory..."
     }
   ],
   "LR/3Lr": [
@@ -4370,7 +4450,7 @@
   "M/m3nG": [
     {
       "type": 0,
-      "value": "Action timeout"
+      "value": "Časový limit akce"
     }
   ],
   "M0bbZk": [
@@ -4394,7 +4474,7 @@
   "M6GI6z": [
     {
       "type": 0,
-      "value": "Custom tracking ID"
+      "value": "Vlastní ID sledování"
     }
   ],
   "M6U2LE": [
@@ -4412,7 +4492,7 @@
   "MAX7xS": [
     {
       "type": 0,
-      "value": "Show more"
+      "value": "Zobrazit více"
     }
   ],
   "MCzWDc": [
@@ -4484,13 +4564,13 @@
   "MVrv+N": [
     {
       "type": 0,
-      "value": "Enter a valid array."
+      "value": "Zadejte platné pole."
     }
   ],
   "MWG2k9": [
     {
       "type": 0,
-      "value": "Request history"
+      "value": "Historie žádostí"
     }
   ],
   "MYgKHu": [
@@ -4544,13 +4624,13 @@
   "MqZCAn": [
     {
       "type": 0,
-      "value": "Host"
+      "value": "Hostitel"
     }
   ],
   "MwMpAh": [
     {
       "type": 0,
-      "value": "Return to expression editor"
+      "value": "Zpět do editoru výrazů"
     }
   ],
   "N0pS6Y": [
@@ -4586,7 +4666,7 @@
   "N8LgJq": [
     {
       "type": 0,
-      "value": "Distinct tracking ID for each split-on instance"
+      "value": "Jedinečné ID sledování pro každou instanci dělení"
     }
   ],
   "NE54Uu": [
@@ -4616,7 +4696,7 @@
   "NHqCeQ": [
     {
       "type": 0,
-      "value": "Create connection"
+      "value": "Vytvořit připojení"
     }
   ],
   "NMpFs6": [
@@ -4640,13 +4720,13 @@
   "NaW0ga": [
     {
       "type": 0,
-      "value": "This workflow supports the following states. The state determines how data is managed and retained during execution of workflows."
+      "value": "Tento pracovní postup podporuje následující stavy. Stav určuje způsob správy a uchovávání dat během provádění pracovních postupů."
     }
   ],
   "Nbl3zN": [
     {
       "type": 0,
-      "value": "Enter a description of the output"
+      "value": "Zadejte popis výstupu."
     }
   ],
   "Nh91qA": [
@@ -4664,7 +4744,7 @@
   "NkjtG/": [
     {
       "type": 0,
-      "value": "Dismiss"
+      "value": "Zavřít"
     }
   ],
   "NnrHK3": [
@@ -4688,17 +4768,21 @@
   "Nr8FbX": [
     {
       "type": 0,
-      "value": "Connections"
+      "value": "Připojení"
     }
   ],
   "NtoWaY": [
     {
       "type": 0,
-      "value": "Value should be less than "
+      "value": "Hodnota by měla být menší než "
     },
     {
       "type": 1,
       "value": "max"
+    },
+    {
+      "type": 0,
+      "value": "."
     }
   ],
   "NvJDn/": [
@@ -4752,7 +4836,7 @@
   "O8Qy7k": [
     {
       "type": 0,
-      "value": "Close panel"
+      "value": "Zavřít panel"
     }
   ],
   "O9ZExg": [
@@ -4794,7 +4878,7 @@
   "OMuMCI": [
     {
       "type": 0,
-      "value": "Workflow properties"
+      "value": "Vlastnosti pracovního postupu"
     }
   ],
   "OOUSLP": [
@@ -4896,7 +4980,7 @@
   "OkGMwC": [
     {
       "type": 0,
-      "value": "Monitoring tab"
+      "value": "Karta Monitorování"
     }
   ],
   "OnrO5/": [
@@ -4985,6 +5069,12 @@
       "value": "Sbaleno"
     }
   ],
+  "PEJ+e4": [
+    {
+      "type": 0,
+      "value": "Error loading data map"
+    }
+  ],
   "PNk3n4": [
     {
       "type": 0,
@@ -5028,7 +5118,7 @@
   "PTBl5s": [
     {
       "type": 0,
-      "value": "Method"
+      "value": "Metoda"
     }
   ],
   "PXa0D4": [
@@ -5070,7 +5160,7 @@
   "Pkxg6Q": [
     {
       "type": 0,
-      "value": "Describe the expression you want Copilot to create. You can reference data from other actions in the flow. For example, “Combine the first and last name of the person who went the email” or “Check the status of the current job.”"
+      "value": "Popište výraz, který má Copilot vytvořit. Můžete odkazovat na data z jiných akcí v toku. Například Sloučit jméno a příjmení osoby, která e-mail přešel, nebo Zkontrolovat stav aktuální úlohy"
     }
   ],
   "Pnt0Xj": [
@@ -5082,7 +5172,7 @@
   "PpupBE": [
     {
       "type": 0,
-      "value": "Add row"
+      "value": "Přidat řádek"
     }
   ],
   "Pq+4a+": [
@@ -5106,7 +5196,7 @@
   "PuFTgH": [
     {
       "type": 0,
-      "value": "Retry history"
+      "value": "Historie opakování pokusů"
     }
   ],
   "Pudllg": [
@@ -5130,7 +5220,7 @@
   "Px7S/2": [
     {
       "type": 0,
-      "value": "Close"
+      "value": "Zavřít"
     }
   ],
   "PytMJ0": [
@@ -5158,7 +5248,7 @@
   "Q/V4Uc": [
     {
       "type": 0,
-      "value": "Add connection"
+      "value": "Přidat připojení"
     }
   ],
   "Q0xpPQ": [
@@ -5204,7 +5294,7 @@
   "QBK72a": [
     {
       "type": 0,
-      "value": "Add custom modules, uncover new scenarios, and find troubleshooting tips"
+      "value": "Přidejte vlastní moduly, odhalte nové scénáře a najděte tipy pro řešení problémů."
     }
   ],
   "QGbUXX": [
@@ -5216,13 +5306,13 @@
   "QNfUf/": [
     {
       "type": 0,
-      "value": "Full screen"
+      "value": "Na celou obrazovku"
     }
   ],
   "QVtqAn": [
     {
       "type": 0,
-      "value": "Description"
+      "value": "Popis"
     }
   ],
   "QZBPUx": [
@@ -5246,7 +5336,7 @@
   "QbVD0F": [
     {
       "type": 0,
-      "value": "This expression has a problem. You can fix it manually or with Copilot."
+      "value": "Tento výraz má problém. Můžete to opravit ručně nebo pomocí Copilotu."
     }
   ],
   "QdJUaS": [
@@ -5342,13 +5432,13 @@
   "RLoDgQ": [
     {
       "type": 0,
-      "value": "Optimized for high reliability"
+      "value": "Optimalizováno pro vysokou spolehlivost"
     }
   ],
   "ROC+1+": [
     {
       "type": 0,
-      "value": "Line position"
+      "value": "Pozice na řádku"
     }
   ],
   "RX2Shm": [
@@ -5360,13 +5450,13 @@
   "RZNabt": [
     {
       "type": 0,
-      "value": "Create a new workflow from template"
+      "value": "Vytvořit nový pracovní postup ze šablony"
     }
   ],
   "RatwOB": [
     {
       "type": 0,
-      "value": "In-app"
+      "value": "V aplikaci"
     }
   ],
   "RbJNVk": [
@@ -5436,7 +5526,7 @@
     },
     {
       "type": 0,
-      "value": " (content)"
+      "value": " (obsah)"
     }
   ],
   "RjvpD+": [
@@ -5498,7 +5588,7 @@
   "RxbkcI": [
     {
       "type": 0,
-      "value": "Unsupported token type: "
+      "value": "Nepodporovaný typ tokenu: "
     },
     {
       "type": 1,
@@ -5508,7 +5598,7 @@
   "S0N/tx": [
     {
       "type": 0,
-      "value": "Resubmit a workflow run from this action"
+      "value": "Znovu odeslat spuštění pracovního postupu z této akce"
     }
   ],
   "S138/4": [
@@ -5520,7 +5610,7 @@
   "S5kFNK": [
     {
       "type": 0,
-      "value": "Paste your sample data to test the mapping"
+      "value": "Pokud chcete otestovat mapování, vložte ukázková data."
     }
   ],
   "SCCE6s": [
@@ -5568,7 +5658,7 @@
   "STWbak": [
     {
       "type": 0,
-      "value": "Chunk size"
+      "value": "Velikost bloku dat"
     }
   ],
   "SToblZ": [
@@ -5596,13 +5686,13 @@
   "SZ78Xp": [
     {
       "type": 0,
-      "value": "Features"
+      "value": "Funkce"
     }
   ],
   "SbCUKw": [
     {
       "type": 0,
-      "value": "Outputs should not be provided when status is \"Failed\""
+      "value": "Pokud je stav „Neúspěšné“, neměly by se uvádět výstupy."
     }
   ],
   "SgiTAh": [
@@ -5638,7 +5728,7 @@
   "Sy4cFC": [
     {
       "type": 0,
-      "value": "Concurrency control"
+      "value": "Řízení souběžnosti"
     }
   ],
   "SyFXM3": [
@@ -5656,7 +5746,7 @@
   "TDfQzn": [
     {
       "type": 0,
-      "value": "More…"
+      "value": "Více…"
     }
   ],
   "TEN+cR": [
@@ -5710,7 +5800,7 @@
   "TZpm7X": [
     {
       "type": 0,
-      "value": "Button to add dynamic content if token picker is shown"
+      "value": "Tlačítko pro přidání dynamického obsahu, pokud je ovládací prvek pro výběr tokenů zobrazený"
     }
   ],
   "Tayrub": [
@@ -5728,7 +5818,7 @@
   "TcU2Gf": [
     {
       "type": 0,
-      "value": "Add case"
+      "value": "Přidat případ"
     }
   ],
   "TgcgXE": [
@@ -5776,7 +5866,7 @@
   "TnwRGo": [
     {
       "type": 0,
-      "value": "Connections included in this template"
+      "value": "Connections zahrnuté v této šabloně"
     }
   ],
   "To3RNy": [
@@ -5830,7 +5920,7 @@
   "U2juKb": [
     {
       "type": 0,
-      "value": "Filter actions"
+      "value": "Akce filtru"
     }
   ],
   "U3guPp": [
@@ -5866,7 +5956,7 @@
   "U9SHxw": [
     {
       "type": 0,
-      "value": "Code"
+      "value": "Kód"
     }
   ],
   "UCNM4L": [
@@ -5878,7 +5968,7 @@
   "UD330h": [
     {
       "type": 0,
-      "value": "Copy action"
+      "value": "Akce kopírování"
     }
   ],
   "UHCVNK": [
@@ -5890,7 +5980,7 @@
   "UJho0j": [
     {
       "type": 0,
-      "value": "(Optional) Password for PFX file"
+      "value": "(Nepovinné) Heslo pro soubor PFX"
     }
   ],
   "UMPuUJ": [
@@ -5906,13 +5996,13 @@
   "UNXQDI": [
     {
       "type": 0,
-      "value": "Loading API Management service instances..."
+      "value": "Načítají se instance služby API Management…"
     }
   ],
   "UPsZSw": [
     {
       "type": 0,
-      "value": "The entered identity is not associated with this logic app."
+      "value": "Zadaná identita není přidružená k této aplikaci logiky."
     }
   ],
   "UR1CS5": [
@@ -5936,7 +6026,7 @@
   "UTkcyf": [
     {
       "type": 0,
-      "value": "Source code"
+      "value": "Zdrojový kód"
     }
   ],
   "UVAfYj": [
@@ -5948,19 +6038,19 @@
   "UVr0mL": [
     {
       "type": 0,
-      "value": "Test your map to see a result"
+      "value": "Pokud si chcete zobrazit výsledek, otestujte svou mapu."
     }
   ],
   "UWF/WI": [
     {
       "type": 0,
-      "value": "View documentation"
+      "value": "Zobrazit dokumentaci"
     }
   ],
   "UXDOiw": [
     {
       "type": 0,
-      "value": "Description"
+      "value": "Popis"
     }
   ],
   "UYRIS/": [
@@ -6062,7 +6152,7 @@
   "UsEvG2": [
     {
       "type": 0,
-      "value": "Tenant ID"
+      "value": "ID tenanta"
     }
   ],
   "UtyRCH": [
@@ -6132,7 +6222,7 @@
   "VFnuA2": [
     {
       "type": 0,
-      "value": "Add a drop-down list of options"
+      "value": "Přidat rozevírací seznam možností"
     }
   ],
   "VHm1Sr": [
@@ -6204,13 +6294,13 @@
   "VZh+w2": [
     {
       "type": 0,
-      "value": "Body"
+      "value": "Text"
     }
   ],
   "Valy81": [
     {
       "type": 0,
-      "value": "Schema validation"
+      "value": "Ověřování schématu"
     }
   ],
   "VbMYd8": [
@@ -6222,7 +6312,7 @@
   "VchR9d": [
     {
       "type": 0,
-      "value": "Headers"
+      "value": "Hlavičky"
     }
   ],
   "Vi5TIV": [
@@ -6266,7 +6356,7 @@
   "VysSj3": [
     {
       "type": 0,
-      "value": "View code"
+      "value": "Zobrazit kód"
     }
   ],
   "W+mUyI": [
@@ -6288,7 +6378,7 @@
   "W1rlxU": [
     {
       "type": 0,
-      "value": "State type"
+      "value": "Typ stavu"
     }
   ],
   "W2fZ0v": [
@@ -6312,7 +6402,7 @@
   "WGq3Fo": [
     {
       "type": 0,
-      "value": "See less"
+      "value": "Zobrazit méně"
     }
   ],
   "WGwH45": [
@@ -6370,7 +6460,7 @@
   "Wc77aJ": [
     {
       "type": 0,
-      "value": "In-app"
+      "value": "V aplikaci"
     }
   ],
   "WcnIF8": [
@@ -6382,7 +6472,7 @@
   "WdO1cs": [
     {
       "type": 0,
-      "value": "Template details"
+      "value": "Podrobnosti šablony"
     }
   ],
   "WgChTm": [
@@ -6406,13 +6496,13 @@
   "Wt1TZJ": [
     {
       "type": 0,
-      "value": "Connections"
+      "value": "Připojení"
     }
   ],
   "Wvnl/V": [
     {
       "type": 0,
-      "value": "Delete the static result configuration"
+      "value": "Odstranit konfiguraci statických výsledků"
     }
   ],
   "WvvJYw": [
@@ -6424,13 +6514,13 @@
   "WxJJcQ": [
     {
       "type": 0,
-      "value": "Not connected"
+      "value": "Nepřipojeno"
     }
   ],
   "WxcmZr": [
     {
       "type": 0,
-      "value": "This action has testing configured."
+      "value": "Tato akce má nakonfigurované testování."
     }
   ],
   "X/7je+": [
@@ -6442,7 +6532,7 @@
   "X02GGK": [
     {
       "type": 0,
-      "value": "Tags"
+      "value": "Značky"
     }
   ],
   "X2idLs": [
@@ -6514,7 +6604,7 @@
   "XHQwyJ": [
     {
       "type": 0,
-      "value": "Error executing the API - "
+      "value": "Chyba při provádění rozhraní API – "
     },
     {
       "type": 1,
@@ -6530,7 +6620,7 @@
   "XL5UbT": [
     {
       "type": 0,
-      "value": "Click for more information on static result"
+      "value": "Kliknutím získáte další informace o statickém výsledku."
     }
   ],
   "XOAcjQ": [
@@ -6560,7 +6650,7 @@
   "XR5izH": [
     {
       "type": 0,
-      "value": "Connected"
+      "value": "Připojeno"
     }
   ],
   "XRK+gt": [
@@ -6610,7 +6700,7 @@
   "XZrMGZ": [
     {
       "type": 0,
-      "value": "Content transfer"
+      "value": "Přenos obsahu"
     }
   ],
   "XbtEq9": [
@@ -6636,7 +6726,7 @@
   "Xg1UDw": [
     {
       "type": 0,
-      "value": "Learn more"
+      "value": "Další informace"
     }
   ],
   "Xj0Gr/": [
@@ -6702,7 +6792,7 @@
   "Xz88HV": [
     {
       "type": 0,
-      "value": "Associated workflows"
+      "value": "Přidružené pracovní postupy"
     }
   ],
   "Y/bcmG": [
@@ -6720,7 +6810,7 @@
   "Y9VFj8": [
     {
       "type": 0,
-      "value": "Secure inputs"
+      "value": "Zabezpečit vstupy"
     }
   ],
   "Y9kBz5": [
@@ -6732,7 +6822,7 @@
   "YC56Tr": [
     {
       "type": 0,
-      "value": "Automatic decompression"
+      "value": "Automatická dekomprese"
     }
   ],
   "YCDF7A": [
@@ -6796,13 +6886,13 @@
   "YM0e3C": [
     {
       "type": 0,
-      "value": "Asynchronous pattern"
+      "value": "Asynchronní zpracování"
     }
   ],
   "YOOBDW": [
     {
       "type": 0,
-      "value": "Avoid spaces and the following symbols in your workflow name: \\ / : * ? \" < > | @, #, $, %, &"
+      "value": "Nepoužívejte mezery a následující symboly v názvu pracovního postupu: \\ / : * ? \" < > | @, #, $, %, &"
     }
   ],
   "YOUfNf": [
@@ -6832,7 +6922,7 @@
   "YWD/RY": [
     {
       "type": 0,
-      "value": "condition, collapse"
+      "value": "podmínka, sbalit"
     }
   ],
   "YWws/r": [
@@ -6844,7 +6934,7 @@
   "YX0jQs": [
     {
       "type": 0,
-      "value": "All"
+      "value": "Vše"
     }
   ],
   "YZ5Kwe": [
@@ -6856,7 +6946,7 @@
   "YZl7FU": [
     {
       "type": 0,
-      "value": "Loading function apps..."
+      "value": "Načítají se aplikace funkcí..."
     }
   ],
   "YaFjJQ": [
@@ -6898,7 +6988,7 @@
   "YnSO/8": [
     {
       "type": 0,
-      "value": "Not connected"
+      "value": "Nepřipojeno"
     }
   ],
   "YoQara": [
@@ -6916,7 +7006,7 @@
   "Yua/4o": [
     {
       "type": 0,
-      "value": "Previous"
+      "value": "Předchozí"
     }
   ],
   "Yuu5CD": [
@@ -6940,7 +7030,7 @@
   "Z8BOCl": [
     {
       "type": 0,
-      "value": "No identities available"
+      "value": "Nejsou k dispozici žádné identity."
     }
   ],
   "Z8tBFS": [
@@ -6970,7 +7060,7 @@
   "ZFNlSA": [
     {
       "type": 0,
-      "value": "Authentication"
+      "value": "Ověřování"
     }
   ],
   "ZME5hh": [
@@ -6982,21 +7072,17 @@
   "ZN050N": [
     {
       "type": 0,
-      "value": "Select all text in '"
+      "value": "Vybrat veškerý text z popisku "
     },
     {
       "type": 1,
       "value": "label"
-    },
-    {
-      "type": 0,
-      "value": "'"
     }
   ],
   "ZOIvqN": [
     {
       "type": 0,
-      "value": "Sort By"
+      "value": "Seřadit podle"
     }
   ],
   "ZUCTVP": [
@@ -7014,13 +7100,13 @@
   "ZXc10N": [
     {
       "type": 0,
-      "value": "Add group"
+      "value": "Přidat skupinu"
     }
   ],
   "ZXha+w": [
     {
       "type": 0,
-      "value": "Error message"
+      "value": "Chybová zpráva"
     }
   ],
   "ZaIeDG": [
@@ -7038,7 +7124,7 @@
   "ZbeL1D": [
     {
       "type": 0,
-      "value": "Avoid spaces and the following symbols in your workflow name: \\ / : * ? \" < > | @, #, $, %, &"
+      "value": "Nepoužívejte mezery a následující symboly v názvu pracovního postupu: \\ / : * ? \" < > | @, #, $, %, &"
     }
   ],
   "Zg3IjD": [
@@ -7050,7 +7136,7 @@
   "ZgyD93": [
     {
       "type": 0,
-      "value": "Accepted types:"
+      "value": "Přijímané typy:"
     }
   ],
   "Zi9gQK": [
@@ -7098,7 +7184,7 @@
   "aGxYMY": [
     {
       "type": 0,
-      "value": "Clear editor"
+      "value": "Vymazat historii editoru"
     }
   ],
   "aGyVJT": [
@@ -7110,13 +7196,13 @@
   "aI9W5L": [
     {
       "type": 0,
-      "value": "This template does not have connectors"
+      "value": "Tato šablona nemá konektory."
     }
   ],
   "aJg1gl": [
     {
       "type": 0,
-      "value": "Retry policy maximum interval is invalid, must match ISO 8601 duration format"
+      "value": "Maximální interval zásady opakování je neplatný, musí odpovídat formátu doby trvání ISO 8601"
     }
   ],
   "aP1wk9": [
@@ -7140,7 +7226,7 @@
   "aWdfiw": [
     {
       "type": 0,
-      "value": "Next suggestion"
+      "value": "Další návrh"
     }
   ],
   "aYTy7X": [
@@ -7158,7 +7244,7 @@
   "ao6BlS": [
     {
       "type": 0,
-      "value": "Resource group"
+      "value": "Skupina prostředků"
     }
   ],
   "aoUT/3": [
@@ -7170,7 +7256,7 @@
   "apZgmJ": [
     {
       "type": 0,
-      "value": "Invalid operation path input value. Path value - "
+      "value": "Vstupní hodnota cesty operace je neplatná. Hodnota cesty: "
     },
     {
       "type": 1,
@@ -7178,11 +7264,15 @@
     },
     {
       "type": 0,
-      "value": ", Path template - "
+      "value": ", šablona cesty: "
     },
     {
       "type": 1,
       "value": "pathTemplate"
+    },
+    {
+      "type": 0,
+      "value": "."
     }
   ],
   "auUI93": [
@@ -7191,22 +7281,28 @@
       "value": "Přidejte nebo vyberte zdrojové schéma, které se použije pro vaši mapu."
     }
   ],
+  "auci7r": [
+    {
+      "type": 0,
+      "value": "Enter a valid comma-separated string."
+    }
+  ],
   "aurgrg": [
     {
       "type": 0,
-      "value": "Managed identity"
+      "value": "Spravovaná identita"
     }
   ],
   "b2aL+f": [
     {
       "type": 0,
-      "value": "Pin action"
+      "value": "Připnout akci"
     }
   ],
   "b6G9bq": [
     {
       "type": 0,
-      "value": "URL encodes the input string"
+      "value": "Zakóduje vstupní řetězec jako adresu URL."
     }
   ],
   "b7BQdu": [
@@ -7274,13 +7370,13 @@
   "bJMlgW": [
     {
       "type": 0,
-      "value": "Connections"
+      "value": "Připojení"
     }
   ],
   "bMUkSN": [
     {
       "type": 0,
-      "value": "This operation contains a token that does not exist in the current workflow."
+      "value": "Tato operace obsahuje token, který v aktuálním pracovním postupu neexistuje."
     }
   ],
   "bTrk+S": [
@@ -7322,7 +7418,7 @@
   "bg00eY": [
     {
       "type": 0,
-      "value": "Numbered list"
+      "value": "Číslovaný seznam"
     }
   ],
   "blRFVt": [
@@ -7370,7 +7466,7 @@
   "c2ZT7p": [
     {
       "type": 0,
-      "value": "Details"
+      "value": "Podrobnosti"
     }
   ],
   "c3FLox": [
@@ -7406,7 +7502,7 @@
   "cBw7SC": [
     {
       "type": 0,
-      "value": "Created"
+      "value": "Vytvořeno"
     }
   ],
   "cHiBAn": [
@@ -7419,6 +7515,16 @@
     {
       "type": 0,
       "value": "Načíst další výsledky až do limitu stránkování"
+    }
+  ],
+  "cKNvk6": [
+    {
+      "type": 0,
+      "value": "položka hodnoty "
+    },
+    {
+      "type": 1,
+      "value": "label"
     }
   ],
   "cNXS5n": [
@@ -7436,7 +7542,7 @@
   "cZ60Tk": [
     {
       "type": 0,
-      "value": "Loading...."
+      "value": "Načítání..."
     }
   ],
   "cZv9J0": [
@@ -7466,7 +7572,7 @@
   "chEskq": [
     {
       "type": 0,
-      "value": "Enable static result"
+      "value": "Povolit statický výsledek"
     }
   ],
   "ciLkfU": [
@@ -7514,13 +7620,13 @@
   "cw9FiJ": [
     {
       "type": 0,
-      "value": "Schema URI"
+      "value": "Identifikátor URI schématu"
     }
   ],
   "cwHxwb": [
     {
       "type": 0,
-      "value": "Add connection"
+      "value": "Přidat připojení"
     }
   ],
   "cyEBus": [
@@ -7604,7 +7710,7 @@
   "dU0RgS": [
     {
       "type": 0,
-      "value": "Add a multi-select list of options"
+      "value": "Přidat seznam možností s vícenásobným výběrem"
     }
   ],
   "dUbKuK": [
@@ -7616,7 +7722,7 @@
   "dVFyPb": [
     {
       "type": 0,
-      "value": "Default value"
+      "value": "Výchozí hodnota"
     }
   ],
   "daoo3l": [
@@ -7708,7 +7814,7 @@
   "eDHwU7": [
     {
       "type": 0,
-      "value": "🖊️ Working on it..."
+      "value": "🖊️ Pracujeme na tom..."
     }
   ],
   "eESljX": [
@@ -7750,13 +7856,13 @@
   "eLthgv": [
     {
       "type": 0,
-      "value": "Client certificate"
+      "value": "Klientský certifikát"
     }
   ],
   "eNp9V6": [
     {
       "type": 0,
-      "value": "Upload PFX File"
+      "value": "Nahrát soubor PFX"
     }
   ],
   "eO1h/h": [
@@ -7768,7 +7874,7 @@
   "eOAJQk": [
     {
       "type": 0,
-      "value": "Degree of parallelism"
+      "value": "Stupeň paralelismu"
     }
   ],
   "eRvRWs": [
@@ -7786,25 +7892,25 @@
   "eTW4SD": [
     {
       "type": 0,
-      "value": "Description"
+      "value": "Popis"
     }
   ],
   "eUxnDx": [
     {
       "type": 0,
-      "value": "Status code"
+      "value": "Stavový kód"
     }
   ],
   "eaEXYa": [
     {
       "type": 0,
-      "value": "All"
+      "value": "Vše"
     }
   ],
   "eb91v1": [
     {
       "type": 0,
-      "value": "Change connection"
+      "value": "Změnit připojení"
     }
   ],
   "egLI8P": [
@@ -7822,7 +7928,7 @@
   "ekM77J": [
     {
       "type": 0,
-      "value": "Workflow name"
+      "value": "Název pracovního postupu"
     }
   ],
   "elD6+N": [
@@ -7834,7 +7940,7 @@
   "elWEjT": [
     {
       "type": 0,
-      "value": "Click to collapse"
+      "value": "Kliknutím sbalíte."
     }
   ],
   "en/5A3": [
@@ -7855,10 +7961,16 @@
       "value": "Sdíleno"
     }
   ],
+  "epi+zR": [
+    {
+      "type": 0,
+      "value": "Close map checker"
+    }
+  ],
   "er6O+w": [
     {
       "type": 0,
-      "value": "Name"
+      "value": "Název"
     }
   ],
   "evyGYj": [
@@ -7870,13 +7982,13 @@
   "ewGciu": [
     {
       "type": 0,
-      "value": "Authentication"
+      "value": "Ověřování"
     }
   ],
   "eyuBr7": [
     {
       "type": 0,
-      "value": "Please submit a different query than the previously submitted query. Previously submitted query: "
+      "value": "Odešlete jiný dotaz než dříve odeslaný dotaz. Dříve odeslaný dotaz: "
     },
     {
       "type": 1,
@@ -7904,7 +8016,7 @@
   "f7cxXb": [
     {
       "type": 0,
-      "value": "Split on"
+      "value": "Rozdělit při pravdivé podmínce"
     }
   ],
   "f81ClO": [
@@ -7916,13 +8028,23 @@
   "fAB0Ww": [
     {
       "type": 0,
-      "value": "Output"
+      "value": "Výstup"
     }
   ],
   "fBQBw/": [
     {
       "type": 0,
       "value": "Vrátí true, pokud je první argument větší nebo roven druhému."
+    }
+  ],
+  "fBUCrA": [
+    {
+      "type": 1,
+      "value": "label"
+    },
+    {
+      "type": 0,
+      "value": " položka"
     }
   ],
   "fElufw": [
@@ -7940,19 +8062,19 @@
   "fNE/hg": [
     {
       "type": 0,
-      "value": "Button to add dynamic content if token picker is hidden"
+      "value": "Tlačítko pro přidání dynamického obsahu, pokud je ovládací prvek pro výběr tokenů skrytý"
     }
   ],
   "fNlJSh": [
     {
       "type": 0,
-      "value": "All connections must be connected for workflow creation"
+      "value": "Aby bylo možné vytvořit pracovní postup, musí být připojena všechna připojení."
     }
   ],
   "fSMyDJ": [
     {
       "type": 0,
-      "value": "Request options - Timeout"
+      "value": "Možnosti žádosti – časový limit"
     }
   ],
   "fVG5aD": [
@@ -8000,7 +8122,7 @@
   "fxue5l": [
     {
       "type": 0,
-      "value": "Workflows"
+      "value": "Pracovní postupy"
     }
   ],
   "g076bL": [
@@ -8099,6 +8221,12 @@
       "value": "Informace"
     }
   ],
+  "gS4Teq": [
+    {
+      "type": 0,
+      "value": "Položka pole"
+    }
+  ],
   "gWyYg0": [
     {
       "type": 0,
@@ -8118,7 +8246,7 @@
     },
     {
       "type": 0,
-      "value": " more items"
+      "value": " další položky"
     }
   ],
   "gc6v4X": [
@@ -8194,7 +8322,7 @@
     },
     {
       "type": 0,
-      "value": " Install gateway"
+      "value": " Nainstalovat bránu"
     }
   ],
   "h1lQDa": [
@@ -8218,13 +8346,13 @@
   "hCrg+6": [
     {
       "type": 0,
-      "value": "Actions must have one or more run after configurations"
+      "value": "Akce musí mít jedno nebo více spuštění po konfiguraci."
     }
   ],
   "hHDJhD": [
     {
       "type": 0,
-      "value": "File content"
+      "value": "Obsah souboru"
     }
   ],
   "hLOIwp": [
@@ -8242,7 +8370,7 @@
   "hMpLz3": [
     {
       "type": 0,
-      "value": "Callback URL"
+      "value": "Adresa URL pro zpětné volání"
     }
   ],
   "hN7iBP": [
@@ -8320,7 +8448,7 @@
   "haeWoU": [
     {
       "type": 0,
-      "value": "Failed to evaluate outputs because splitOn "
+      "value": "Nepovedlo se vyhodnotit výstupy, protože splitOn "
     },
     {
       "type": 1,
@@ -8328,7 +8456,7 @@
     },
     {
       "type": 0,
-      "value": " cannot be evaluated. As a result, this operation's outputs might not be correctly visible in subsequent actions"
+      "value": " nejde vyhodnotit. V důsledku toho nemusí být výstupy této operace správně viditelné v následných akcích."
     }
   ],
   "hbOvB4": [
@@ -8346,13 +8474,13 @@
   "hlrKDC": [
     {
       "type": 0,
-      "value": "Connection"
+      "value": "Připojení"
     }
   ],
   "ho2D6F": [
     {
       "type": 0,
-      "value": "Close panel"
+      "value": "Zavřít panel"
     }
   ],
   "hq1mk6": [
@@ -8404,7 +8532,7 @@
   "hz9HJ2": [
     {
       "type": 0,
-      "value": "Insert dynamic content"
+      "value": "Vložit dynamický obsah"
     }
   ],
   "hza/cT": [
@@ -8416,7 +8544,7 @@
   "i/R+Q7": [
     {
       "type": 0,
-      "value": "Local time"
+      "value": "Místní čas"
     }
   ],
   "i/SguY": [
@@ -8470,7 +8598,7 @@
   "iBArTB": [
     {
       "type": 0,
-      "value": "collapse functions drawer"
+      "value": "sbalit panel funkcí"
     }
   ],
   "iCSHJG": [
@@ -8482,7 +8610,7 @@
   "iCni1C": [
     {
       "type": 0,
-      "value": "Can't find any search results"
+      "value": "Nenašly se žádné výsledky hledání."
     }
   ],
   "iE2+sy": [
@@ -8544,7 +8672,7 @@
   "iTz1lp": [
     {
       "type": 0,
-      "value": "Unpin action"
+      "value": "Odepnout akci"
     }
   ],
   "iU1OJh": [
@@ -8598,13 +8726,13 @@
   "im0GMa": [
     {
       "type": 0,
-      "value": "Show less"
+      "value": "Zobrazit méně"
     }
   ],
   "ioUq6Q": [
     {
       "type": 0,
-      "value": "Password"
+      "value": "Heslo"
     }
   ],
   "iq+tiv": [
@@ -8626,7 +8754,7 @@
   "ir+plQ": [
     {
       "type": 0,
-      "value": "Operation details error"
+      "value": "Chyba podrobností o operaci"
     }
   ],
   "iy8rNf": [
@@ -8638,13 +8766,13 @@
   "j2v8BE": [
     {
       "type": 0,
-      "value": "No connections are needed in this template"
+      "value": "V této šabloně nejsou potřebná žádná připojení."
     }
   ],
   "j4OKkU": [
     {
       "type": 0,
-      "value": "Text color"
+      "value": "Barva textu"
     }
   ],
   "j5z8Vd": [
@@ -8782,13 +8910,13 @@
   "jvVVTG": [
     {
       "type": 0,
-      "value": "Action type"
+      "value": "Typ akce"
     }
   ],
   "k/X2ml": [
     {
       "type": 0,
-      "value": "Type"
+      "value": "Typ"
     }
   ],
   "k/oqFL": [
@@ -8818,7 +8946,7 @@
   "kBTFhL": [
     {
       "type": 0,
-      "value": "Fix my expression: "
+      "value": "Opravit můj výraz: "
     },
     {
       "type": 1,
@@ -8915,6 +9043,20 @@
       "value": "Prvky a mapování, které nejsou připojeny k cílovému elementu, se odeberou."
     }
   ],
+  "kfmLTY": [
+    {
+      "type": 0,
+      "value": "Function '"
+    },
+    {
+      "type": 1,
+      "value": "functionName"
+    },
+    {
+      "type": 0,
+      "value": "' is missing required inputs"
+    }
+  ],
   "klY9UN": [
     {
       "offset": 0,
@@ -8992,7 +9134,7 @@
   "kvUaFw": [
     {
       "type": 0,
-      "value": "More info"
+      "value": "Další informace"
     }
   ],
   "l/3yJr": [
@@ -9034,13 +9176,13 @@
   "l8lP1X": [
     {
       "type": 0,
-      "value": "The error and its code are required when status is \"Failed\""
+      "value": "Pokud je stav „Neúspěšné“, jsou chyba a její kód povinné."
     }
   ],
   "l9+EbH": [
     {
       "type": 0,
-      "value": "Description"
+      "value": "Popis"
     }
   ],
   "lA/sHA": [
@@ -9066,13 +9208,13 @@
   "lFWXhc": [
     {
       "type": 0,
-      "value": "Workflow"
+      "value": "Pracovní postup"
     }
   ],
   "lK+Vzo": [
     {
       "type": 0,
-      "value": "Secure string"
+      "value": "Zabezpečený řetězec"
     }
   ],
   "lM9qrG": [
@@ -9102,7 +9244,7 @@
   "lSUNx5": [
     {
       "type": 0,
-      "value": "Action tracking ID"
+      "value": "ID pro sledování akce"
     }
   ],
   "lX30/R": [
@@ -9114,7 +9256,7 @@
   "lbq5E1": [
     {
       "type": 0,
-      "value": "Large messages may be split up into smaller requests to the connector to allow large message upload. More details can be found at http://aka.ms/logicapps-chunk#upload-content-in-chunks"
+      "value": "Velké zprávy mohou být rozděleny na menší žádosti směřované na konektor, aby je bylo možné nahrát. Další podrobnosti najdete na http://aka.ms/logicapps-chunk#upload-content-in-chunks"
     }
   ],
   "lckgnb": [
@@ -9164,7 +9306,7 @@
   "lk/Qic": [
     {
       "type": 0,
-      "value": "connector"
+      "value": "konektor"
     }
   ],
   "lkgjxD": [
@@ -9176,13 +9318,13 @@
   "lkmLHk": [
     {
       "type": 0,
-      "value": "Use Schema Editor"
+      "value": "Použít Editor schématu"
     }
   ],
   "lqF8H5": [
     {
       "type": 0,
-      "value": "Collapse static result"
+      "value": "Sbalit statický výsledek"
     }
   ],
   "lsH37F": [
@@ -9212,13 +9354,13 @@
   "m4qt/b": [
     {
       "type": 0,
-      "value": "ACL creation failed for connection. Deleting the connection."
+      "value": "Vytvoření seznamu ACL pro připojení se nezdařilo. Odstraňuje se připojení."
     }
   ],
   "m5InJc": [
     {
       "type": 0,
-      "value": "Status Code"
+      "value": "Stavový kód"
     }
   ],
   "m7Y6Qf": [
@@ -9230,7 +9372,7 @@
   "m8MjHH": [
     {
       "type": 0,
-      "value": "Enter a value"
+      "value": "Zadejte hodnotu"
     }
   ],
   "m8Q61y": [
@@ -9298,7 +9440,7 @@
   "mQJXU4": [
     {
       "type": 0,
-      "value": "Run after"
+      "value": "Spustit po"
     }
   ],
   "mUURJW": [
@@ -9328,7 +9470,7 @@
   "mb1XDD": [
     {
       "type": 0,
-      "value": "Actual value"
+      "value": "Skutečná hodnota"
     }
   ],
   "mca3Ml": [
@@ -9352,7 +9494,7 @@
   "mgD2ZT": [
     {
       "type": 0,
-      "value": "Summary"
+      "value": "Shrnutí"
     }
   ],
   "mjS/k1": [
@@ -9398,7 +9540,7 @@
   "mxSILx": [
     {
       "type": 0,
-      "value": "Queries"
+      "value": "Dotazy"
     }
   ],
   "n+F7e2": [
@@ -9410,7 +9552,7 @@
   "n+sJ5W": [
     {
       "type": 0,
-      "value": "Published by"
+      "value": "Publikoval(a)"
     }
   ],
   "n20T2h": [
@@ -9464,7 +9606,7 @@
   "nN1ezT": [
     {
       "type": 0,
-      "value": "Start with a blank workflow to build your integration process from scratch."
+      "value": "Začněte s prázdným pracovním postupem, který vytvoří proces integrace od začátku."
     }
   ],
   "nNWAAh": [
@@ -9476,7 +9618,7 @@
   "nODesn": [
     {
       "type": 0,
-      "value": "Source"
+      "value": "Zdroj"
     }
   ],
   "nOWGAV": [
@@ -9500,7 +9642,7 @@
   "nRjpgk": [
     {
       "type": 0,
-      "value": "Sample data"
+      "value": "Ukázková data"
     }
   ],
   "nRpM02": [
@@ -9530,7 +9672,7 @@
   "nV2Spt": [
     {
       "type": 0,
-      "value": "Operation details panel"
+      "value": "Panel podrobností o operaci"
     }
   ],
   "nVDG00": [
@@ -9572,7 +9714,7 @@
   "nhEgHb": [
     {
       "type": 0,
-      "value": "By"
+      "value": "Poskytovatel:"
     }
   ],
   "njGstq": [
@@ -9596,7 +9738,7 @@
   "no+blV": [
     {
       "type": 0,
-      "value": "Cancel"
+      "value": "Zrušit"
     }
   ],
   "no/SMg": [
@@ -9608,13 +9750,13 @@
   "nr6bPd": [
     {
       "type": 0,
-      "value": "Open Test panel"
+      "value": "Otevřít panel Test"
     }
   ],
   "nuNBYE": [
     {
       "type": 0,
-      "value": "Path"
+      "value": "Cesta"
     }
   ],
   "nwLd4b": [
@@ -9682,7 +9824,7 @@
   "o6x5J4": [
     {
       "type": 0,
-      "value": "Create expression"
+      "value": "Vytvořit výraz"
     }
   ],
   "o7bd1o": [
@@ -9718,13 +9860,13 @@
   "oOGTSo": [
     {
       "type": 0,
-      "value": "Connected"
+      "value": "Připojeno"
     }
   ],
   "oPKLDZ": [
     {
       "type": 0,
-      "value": "Delete switch case"
+      "value": "Odstranit přepínač případů"
     }
   ],
   "oQjIWf": [
@@ -9760,7 +9902,7 @@
   "oWAB0H": [
     {
       "type": 0,
-      "value": "Parameters"
+      "value": "Parametry"
     }
   ],
   "oZMhX/": [
@@ -9772,7 +9914,7 @@
   "ocW+RF": [
     {
       "type": 0,
-      "value": "Details"
+      "value": "Podrobnosti"
     }
   ],
   "odQ554": [
@@ -9784,7 +9926,7 @@
   "ohpbkw": [
     {
       "type": 0,
-      "value": "Exponential interval"
+      "value": "Exponenciální interval"
     }
   ],
   "onXUu0": [
@@ -9796,13 +9938,13 @@
   "oqgNX3": [
     {
       "type": 0,
-      "value": "Workflow name"
+      "value": "Název pracovního postupu"
     }
   ],
   "osln7P": [
     {
       "type": 0,
-      "value": "URL decodes the input string"
+      "value": "Dekóduje vstupní řetězec jako adresu URL."
     }
   ],
   "ox2Ou7": [
@@ -9814,7 +9956,7 @@
   "oxCSqB": [
     {
       "type": 0,
-      "value": "You can edit parameters here or in designer."
+      "value": "Parametry můžete upravit tady nebo v návrháři."
     }
   ],
   "oxXV4+": [
@@ -9826,7 +9968,7 @@
   "oxcHvs": [
     {
       "type": 0,
-      "value": "Remove list of multi options"
+      "value": "Odebrat seznam s více možnostmi"
     }
   ],
   "p/0r2N": [
@@ -9868,7 +10010,7 @@
   "pH6ubt": [
     {
       "type": 0,
-      "value": "Details"
+      "value": "Podrobnosti"
     }
   ],
   "pIczsS": [
@@ -9922,7 +10064,7 @@
   "pfmki/": [
     {
       "type": 0,
-      "value": "Specify the behavior and capabilities for transferring content over HTTP."
+      "value": "Zadejte chování a možnosti pro přenos obsahu přes protokol HTTP."
     }
   ],
   "piaRy6": [
@@ -9934,7 +10076,7 @@
   "pjC3M9": [
     {
       "type": 0,
-      "value": "Suggested expression"
+      "value": "Navrhovaný výraz"
     }
   ],
   "pozypE": [
@@ -9946,7 +10088,7 @@
   "pqprxZ": [
     {
       "type": 0,
-      "value": "Configure connections to authenticate and link your workflows with services and applications."
+      "value": "Nakonfigurujte připojení pro ověřování a propojení pracovních postupů se službami a aplikacemi."
     }
   ],
   "pr9GwA": [
@@ -9964,7 +10106,7 @@
   "pykp8c": [
     {
       "type": 0,
-      "value": "Blank workflow"
+      "value": "Prázdný pracovní postup"
     }
   ],
   "q/+Uex": [
@@ -10012,7 +10154,7 @@
   "q5lttG": [
     {
       "type": 0,
-      "value": "Undo"
+      "value": "Vrátit zpět"
     }
   ],
   "q87X20": [
@@ -10062,7 +10204,7 @@
   "qMFpNH": [
     {
       "type": 0,
-      "value": "Loading dynamic data"
+      "value": "Načítají se dynamická data."
     }
   ],
   "qSejoi": [
@@ -10168,7 +10310,7 @@
   "qp3gCy": [
     {
       "type": 0,
-      "value": "Insert link"
+      "value": "Vložit odkaz"
     }
   ],
   "qr1lLG": [
@@ -10194,13 +10336,13 @@
   "qsL/fE": [
     {
       "type": 0,
-      "value": "Delete parameter"
+      "value": "Odstranit parametr"
     }
   ],
   "qxw9UO": [
     {
       "type": 0,
-      "value": "Status"
+      "value": "Stav"
     }
   ],
   "qy5WqY": [
@@ -10266,19 +10408,19 @@
   "rEQceE": [
     {
       "type": 0,
-      "value": "Microsoft Authored"
+      "value": "Vytvořeno microsoftem"
     }
   ],
   "rHySVF": [
     {
       "type": 0,
-      "value": "Missing information for workflows creation"
+      "value": "Chybí informace pro vytvoření pracovních postupů."
     }
   ],
   "rMYBfw": [
     {
       "type": 0,
-      "value": "Make the field optional"
+      "value": "Nastavit pole jako nepovinné"
     }
   ],
   "rNi5Y3": [
@@ -10334,7 +10476,7 @@
   "rl9UOO": [
     {
       "type": 0,
-      "value": "Connections cannot be edited in pinned view. Release the pinned action to make connection changes."
+      "value": "Connections nelze upravovat v připnutém zobrazení. Uvolněním připnuté akce provedete změny připojení."
     }
   ],
   "rsdJcV": [
@@ -10347,6 +10489,12 @@
     {
       "type": 0,
       "value": "Přidat nový"
+    }
+  ],
+  "rwrlsB": [
+    {
+      "type": 0,
+      "value": "Map Issues"
     }
   ],
   "rxIJfD": [
@@ -10370,13 +10518,13 @@
   "s0Qaot": [
     {
       "type": 0,
-      "value": "Workflow Parameters Panel"
+      "value": "Panel parametrů pracovního postupu"
     }
   ],
   "s5AOpV": [
     {
       "type": 0,
-      "value": "Card title"
+      "value": "Název karty"
     }
   ],
   "s5RV9B": [
@@ -10418,7 +10566,7 @@
   "sKy720": [
     {
       "type": 0,
-      "value": "Must provide value for workflow name."
+      "value": "Je nutné zadat hodnotu pro název pracovního postupu."
     }
   ],
   "sRpETS": [
@@ -10436,7 +10584,7 @@
   "sVcvcG": [
     {
       "type": 0,
-      "value": "Basics"
+      "value": "Základní informace"
     }
   ],
   "sYQDN+": [
@@ -10472,7 +10620,7 @@
   "sfTqHY": [
     {
       "type": 0,
-      "value": "Close panel"
+      "value": "Zavřít panel"
     }
   ],
   "shF9tZ": [
@@ -10554,7 +10702,7 @@
   "t+h+KW": [
     {
       "type": 0,
-      "value": "Input"
+      "value": "Vstup"
     }
   ],
   "t/RPwA": [
@@ -10566,13 +10714,13 @@
   "t0tN4J": [
     {
       "type": 0,
-      "value": "Code view"
+      "value": "Zobrazení kódu"
     }
   ],
   "t7ytOJ": [
     {
       "type": 0,
-      "value": "Status"
+      "value": "Stav"
     }
   ],
   "t9RwOi": [
@@ -10602,7 +10750,7 @@
   "tGSsgZ": [
     {
       "type": 0,
-      "value": "select an identity"
+      "value": "vyberte identitu"
     }
   ],
   "tH2pT1": [
@@ -10656,13 +10804,13 @@
   "tQIXhy": [
     {
       "type": 0,
-      "value": "Original expression"
+      "value": "Původní výraz"
     }
   ],
   "tRe2Ct": [
     {
       "type": 0,
-      "value": "Name"
+      "value": "Název"
     }
   ],
   "tTIsTX": [
@@ -10726,7 +10874,7 @@
   "tbl/ar": [
     {
       "type": 0,
-      "value": "No items"
+      "value": "Žádné položky"
     }
   ],
   "td5//c": [
@@ -10744,19 +10892,19 @@
   "tjQdhq": [
     {
       "type": 0,
-      "value": "Type"
+      "value": "Typ"
     }
   ],
   "toWTrl": [
     {
       "type": 0,
-      "value": "Search"
+      "value": "Hledat"
     }
   ],
   "tooc6v": [
     {
       "type": 0,
-      "value": "Switch '"
+      "value": "Přepnout '"
     },
     {
       "type": 1,
@@ -10764,7 +10912,7 @@
     },
     {
       "type": 0,
-      "value": "' to the local time"
+      "value": "' na místní čas"
     }
   ],
   "tqqUHX": [
@@ -10776,7 +10924,7 @@
   "tt1pJC": [
     {
       "type": 0,
-      "value": "You will lose all unsaved changes. Are you sure you want to discard the changes?"
+      "value": "Přijdete o všechny neuložené změny. Opravdu chcete zahodit změny?"
     }
   ],
   "tu4TTM": [
@@ -10788,13 +10936,13 @@
   "twr0pi": [
     {
       "type": 0,
-      "value": "Copy trigger"
+      "value": "Aktivační událost kopírování"
     }
   ],
   "tzeDPE": [
     {
       "type": 0,
-      "value": "State type"
+      "value": "Typ stavu"
     }
   ],
   "u81zB9": [
@@ -10818,13 +10966,13 @@
   "uEI5Wo": [
     {
       "type": 0,
-      "value": "Value"
+      "value": "Hodnota"
     }
   ],
   "uIgGKj": [
     {
       "type": 0,
-      "value": "Managed identity"
+      "value": "Spravovaná identita"
     }
   ],
   "uIurld": [
@@ -10870,7 +11018,7 @@
   "uSr3WX": [
     {
       "type": 0,
-      "value": "Connection name"
+      "value": "Název připojení"
     }
   ],
   "uTTbhk": [
@@ -10924,7 +11072,7 @@
   "udnt8c": [
     {
       "type": 0,
-      "value": "Secure object"
+      "value": "Zabezpečený objekt"
     }
   ],
   "uesaee": [
@@ -10954,7 +11102,7 @@
   "umLmPm": [
     {
       "type": 0,
-      "value": "Operation Panel"
+      "value": "Panel operace"
     }
   ],
   "unMG8m": [
@@ -11026,7 +11174,7 @@
   "uzj2d3": [
     {
       "type": 0,
-      "value": "Close panel"
+      "value": "Zavřít panel"
     }
   ],
   "uzsleE": [
@@ -11038,7 +11186,7 @@
   "v+FA8N": [
     {
       "type": 0,
-      "value": "Local time"
+      "value": "Místní čas"
     }
   ],
   "v+keTP": [
@@ -11056,7 +11204,7 @@
   "v4JmCE": [
     {
       "type": 0,
-      "value": "Please explain how you would like to update your expression: \""
+      "value": "Vysvětlete prosím, jak chcete aktualizovat svůj výraz: \""
     },
     {
       "type": 1,
@@ -11094,13 +11242,13 @@
   "vNqq43": [
     {
       "type": 0,
-      "value": "Add loop"
+      "value": "Přidat cyklus"
     }
   ],
   "vO/I7P": [
     {
       "type": 0,
-      "value": "Switch '"
+      "value": "Přepnout '"
     },
     {
       "type": 1,
@@ -11108,7 +11256,7 @@
     },
     {
       "type": 0,
-      "value": "' to the UTC time format"
+      "value": "' na formát času UTC"
     }
   ],
   "vQcQkU": [
@@ -11168,7 +11316,7 @@
   "voRDKP": [
     {
       "type": 0,
-      "value": "Headers"
+      "value": "Hlavičky"
     }
   ],
   "vr70Gn": [
@@ -11212,13 +11360,13 @@
   "w+7aGo": [
     {
       "type": 0,
-      "value": "Connections list"
+      "value": "seznam Connections"
     }
   ],
   "w+t06Q": [
     {
       "type": 0,
-      "value": "Select fields"
+      "value": "Vybrat pole"
     }
   ],
   "w0pI5M": [
@@ -11248,7 +11396,7 @@
   "wBBu4g": [
     {
       "type": 0,
-      "value": "Missing information for workflow creation"
+      "value": "Chybí informace pro vytvoření pracovního postupu."
     }
   ],
   "wEaGWn": [
@@ -11272,7 +11420,7 @@
   "wG8fwz": [
     {
       "type": 0,
-      "value": "Bullet list"
+      "value": "Odrážkový seznam"
     }
   ],
   "wGYmui": [
@@ -11284,7 +11432,7 @@
   "wKJdDk": [
     {
       "type": 0,
-      "value": "Unsupported token type: "
+      "value": "Nepodporovaný typ tokenu: "
     },
     {
       "type": 1,
@@ -11306,7 +11454,7 @@
   "wPjnM9": [
     {
       "type": 0,
-      "value": "Paste a parallel action"
+      "value": "Vložit paralelní akci"
     }
   ],
   "wPlTDB": [
@@ -11330,7 +11478,7 @@
   "wTaSTp": [
     {
       "type": 0,
-      "value": "Please save the map before testing"
+      "value": "Před testováním prosím mapu uložte."
     }
   ],
   "wV3Lmd": [
@@ -11354,13 +11502,13 @@
   "wXLEcJ": [
     {
       "type": 0,
-      "value": "Insert data from previous step (you can also add by typing Alt + / in the editor)"
+      "value": "Vložit data z předchozího kroku (můžete také přidat zadáním Alt + / v editoru)"
     }
   ],
   "wYzIf2": [
     {
       "type": 0,
-      "value": "Unsupported token type: "
+      "value": "Nepodporovaný typ tokenu: "
     },
     {
       "type": 1,
@@ -11370,13 +11518,13 @@
   "wfekJ7": [
     {
       "type": 0,
-      "value": "Type"
+      "value": "Typ"
     }
   ],
   "wjiptl": [
     {
       "type": 0,
-      "value": "Node Search Panel"
+      "value": "Panel vyhledávání uzlů"
     }
   ],
   "wkvUUA": [
@@ -11419,6 +11567,12 @@
     {
       "type": 0,
       "value": "Plátno"
+    }
+  ],
+  "wx/ZQP": [
+    {
+      "type": 0,
+      "value": "Přidat vstup"
     }
   ],
   "wxaQwD": [
@@ -11478,7 +11632,7 @@
   "xDHpeS": [
     {
       "type": 0,
-      "value": "Review your settings, ensure everything is correctly set up, and create your workflow."
+      "value": "Zkontrolujte nastavení, ujistěte se, že je všechno správně nastavené, a vytvořte pracovní postup."
     }
   ],
   "xFQXAI": [
@@ -11490,7 +11644,7 @@
   "xHyhqO": [
     {
       "type": 0,
-      "value": "Optimized for low latency"
+      "value": "Optimalizováno pro nízkou latenci"
     }
   ],
   "xJ6vjn": [
@@ -11508,13 +11662,13 @@
   "xK8r1/": [
     {
       "type": 0,
-      "value": "Run information loading"
+      "value": "Načítání informací o spuštění"
     }
   ],
   "xMgLd8": [
     {
       "type": 0,
-      "value": "Minimum interval"
+      "value": "Minimální interval"
     }
   ],
   "xN3GEX": [
@@ -11586,7 +11740,7 @@
   "xwB12G": [
     {
       "type": 0,
-      "value": "Enter another option"
+      "value": "Zadejte jinou možnost"
     }
   ],
   "xwD1VZ": [
@@ -11604,7 +11758,7 @@
   "y+eYFf": [
     {
       "type": 0,
-      "value": "Workflow parameters"
+      "value": "Parametry pracovního postupu"
     }
   ],
   "y1e9yw": [
@@ -11628,7 +11782,7 @@
   "y6aoMi": [
     {
       "type": 0,
-      "value": "Show Logic App run details"
+      "value": "Zobrazit detaily spuštění aplikace logiky"
     }
   ],
   "yB6PB/": [
@@ -11646,7 +11800,7 @@
   "yENrOg": [
     {
       "type": 0,
-      "value": "here"
+      "value": "tady"
     }
   ],
   "yF2R//": [
@@ -11658,7 +11812,7 @@
   "yKNKV/": [
     {
       "type": 0,
-      "value": "Try a different search term or remove filters"
+      "value": "Zkuste jiný hledaný termín nebo odeberte filtry."
     }
   ],
   "yKOsmK": [
@@ -11676,13 +11830,13 @@
   "yOyeBT": [
     {
       "type": 0,
-      "value": "Toggle minimap"
+      "value": "Přepnout minimapu"
     }
   ],
   "yQ6+nV": [
     {
       "type": 0,
-      "value": "Connect"
+      "value": "Připojit"
     }
   ],
   "yRDuqj": [
@@ -11718,7 +11872,7 @@
   "yeagrz": [
     {
       "type": 0,
-      "value": "Ideal for request-response and processing IoT events"
+      "value": "Ideální pro události žádostí a odpovědí a zpracování událostí IoT"
     }
   ],
   "yjierd": [
@@ -11738,7 +11892,7 @@
   "yjjXCQ": [
     {
       "type": 0,
-      "value": "Close panel"
+      "value": "Zavřít panel"
     }
   ],
   "yk7L+4": [
@@ -11762,7 +11916,7 @@
   "yqF/Ew": [
     {
       "type": 0,
-      "value": "Search workflow actions"
+      "value": "Hledat akce pracovního postupu"
     }
   ],
   "yqRrQ/": [
@@ -11798,7 +11952,7 @@
   "yxctQw": [
     {
       "type": 0,
-      "value": "Logical name"
+      "value": "Logický název"
     }
   ],
   "yzqXMp": [
@@ -11820,7 +11974,7 @@
   "z/vIwi": [
     {
       "type": 0,
-      "value": "Data handling"
+      "value": "Zpracování dat"
     }
   ],
   "z3VuE+": [
@@ -11832,7 +11986,7 @@
   "z5H3GF": [
     {
       "type": 0,
-      "value": "Display name"
+      "value": "Zobrazovaný název"
     }
   ],
   "z9kH+0": [
@@ -11862,13 +12016,13 @@
   "zK5VPq": [
     {
       "type": 0,
-      "value": "Workflows in this Accelerator"
+      "value": "Pracovní postupy v tomto akcelerátoru"
     }
   ],
   "zMKxg9": [
     {
       "type": 0,
-      "value": "Name does not match the given pattern."
+      "value": "Název neodpovídá danému vzoru."
     }
   ],
   "zNesUZ": [
@@ -11886,7 +12040,7 @@
   "zPRSM9": [
     {
       "type": 0,
-      "value": "App identity is not configured on the logic app environment variables."
+      "value": "Identita aplikace není nakonfigurovaná pro proměnné prostředí aplikace logiky."
     }
   ],
   "zUWAsJ": [
@@ -11946,7 +12100,7 @@
   "zkqKJ+": [
     {
       "type": 0,
-      "value": "Body"
+      "value": "Text"
     }
   ],
   "znGyyU": [
@@ -11964,13 +12118,13 @@
   "zsc+jp": [
     {
       "type": 0,
-      "value": "Functions"
+      "value": "Funkce"
     }
   ],
   "zxF7g+": [
     {
       "type": 0,
-      "value": "A to Z, ascending"
+      "value": "A až Z, vzestupně"
     }
   ],
   "zxe9hh": [

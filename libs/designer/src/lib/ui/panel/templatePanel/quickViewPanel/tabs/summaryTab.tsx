@@ -148,7 +148,7 @@ export const summaryTab = (
     }),
     primaryButtonOnClick: () => {
       LoggerService().log({
-        level: LogEntryLevel.Verbose,
+        level: LogEntryLevel.Trace,
         area: 'Templates.overviewTab',
         message: 'Template create button clicked',
         args: [templateId, workflowAppName, `isMultiWorkflowTemplate:${isMultiWorkflow}`],

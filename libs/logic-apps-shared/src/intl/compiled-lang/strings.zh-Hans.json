@@ -26,19 +26,19 @@
   "+5Jp42": [
     {
       "type": 0,
-      "value": "By"
+      "value": "发布者"
     }
   ],
   "+Agiub": [
     {
       "type": 0,
-      "value": "Create an expression with Copilot"
+      "value": "使用 Copilot 创建表达式"
     }
   ],
   "+EREVh": [
     {
       "type": 0,
-      "value": "Name"
+      "value": "名称"
     }
   ],
   "+FcXe9": [
@@ -74,7 +74,7 @@
   "+R90eK": [
     {
       "type": 0,
-      "value": "Retry policy interval is invalid, must match ISO 8601 duration format"
+      "value": "重试策略间隔无效，必须与 ISO 8601 持续时间格式匹配"
     }
   ],
   "+Uvo/p": [
@@ -102,7 +102,7 @@
   "+l5XmZ": [
     {
       "type": 0,
-      "value": "Enter a positive integer between "
+      "value": "输入介于 "
     },
     {
       "type": 1,
@@ -110,11 +110,15 @@
     },
     {
       "type": 0,
-      "value": " and "
+      "value": " 和 "
     },
     {
       "type": 1,
       "value": "max"
+    },
+    {
+      "type": 0,
+      "value": " 之间的正整数"
     }
   ],
   "+mAJR3": [
@@ -162,7 +166,7 @@
   "/IVuGP": [
     {
       "type": 0,
-      "value": "Discard"
+      "value": "放弃"
     }
   ],
   "/KRvvg": [
@@ -222,7 +226,7 @@
   "/csbOB": [
     {
       "type": 0,
-      "value": "Retry policy count is invalid (must be from "
+      "value": "重试策略计数无效(必须介于 "
     },
     {
       "type": 1,
@@ -230,7 +234,7 @@
     },
     {
       "type": 0,
-      "value": " to "
+      "value": " 到 "
     },
     {
       "type": 1,
@@ -238,7 +242,7 @@
     },
     {
       "type": 0,
-      "value": ")"
+      "value": " 之间)"
     }
   ],
   "/doURb": [
@@ -274,7 +278,7 @@
   "/qrBuJ": [
     {
       "type": 0,
-      "value": "Create"
+      "value": "创建"
     }
   ],
   "/qu3zt": [
@@ -304,13 +308,13 @@
   "/ye9Df": [
     {
       "type": 0,
-      "value": "Delete workflow action"
+      "value": "删除工作流操作"
     }
   ],
   "0/VGiF": [
     {
       "type": 0,
-      "value": "Add action"
+      "value": "添加操作"
     }
   ],
   "00xlpa": [
@@ -392,13 +396,13 @@
   "0BO/tO": [
     {
       "type": 0,
-      "value": "Split-on tracking ID"
+      "value": "拆分跟踪 ID"
     }
   ],
   "0C5Ywr": [
     {
       "type": 0,
-      "value": "Enter an array"
+      "value": "输入数组"
     }
   ],
   "0CPsxh": [
@@ -422,7 +426,7 @@
   "0FRVkr": [
     {
       "type": 0,
-      "value": "Connection Panel"
+      "value": "连接面板"
     }
   ],
   "0FzNJV": [
@@ -470,7 +474,7 @@
   "0UfxUM": [
     {
       "type": 0,
-      "value": "Next"
+      "value": "下一个"
     }
   ],
   "0Vzp0l": [
@@ -482,7 +486,7 @@
   "0ZZJos": [
     {
       "type": 0,
-      "value": "Showing "
+      "value": "显示 "
     },
     {
       "type": 1,
@@ -498,7 +502,7 @@
     },
     {
       "type": 0,
-      "value": " of "
+      "value": " "
     },
     {
       "type": 1,
@@ -506,7 +510,7 @@
     },
     {
       "type": 0,
-      "value": " results."
+      "value": " 结果。"
     }
   ],
   "0i/6TR": [
@@ -554,7 +558,7 @@
   "0uuxAX": [
     {
       "type": 0,
-      "value": "Delete mapping"
+      "value": "删除映射"
     }
   ],
   "0vfdFS": [
@@ -570,7 +574,7 @@
     },
     {
       "type": 0,
-      "value": " connection"
+      "value": " 连接"
     }
   ],
   "0xLWzG": [
@@ -624,7 +628,7 @@
   "1HhCtq": [
     {
       "type": 0,
-      "value": "Headers"
+      "value": "标头"
     }
   ],
   "1KFpTX": [
@@ -636,7 +640,7 @@
   "1LSKq8": [
     {
       "type": 0,
-      "value": "Basics"
+      "value": "基本信息"
     }
   ],
   "1NBvKu": [
@@ -645,10 +649,16 @@
       "value": "将参数转换为浮点数"
     }
   ],
+  "1QktJw": [
+    {
+      "type": 0,
+      "value": "Map errors"
+    }
+  ],
   "1Xke9D": [
     {
       "type": 0,
-      "value": "open functions drawer"
+      "value": "打开函数抽屉"
     }
   ],
   "1dlfUe": [
@@ -666,7 +676,7 @@
   "1f7LG4": [
     {
       "type": 0,
-      "value": "Fixed interval"
+      "value": "固定间隔"
     }
   ],
   "1hHFdx": [
@@ -690,7 +700,7 @@
   "1jf3Dq": [
     {
       "type": 0,
-      "value": "Z to A, descending"
+      "value": "Z 到 A，降序"
     }
   ],
   "1jhzOM": [
@@ -732,7 +742,7 @@
   "1vqDeQ": [
     {
       "type": 0,
-      "value": "Select Create to start a new workflow based on this template, no configuration required."
+      "value": "选择“创建”以基于此模板启动新工作流，无需配置。"
     }
   ],
   "20oqsp": [
@@ -810,13 +820,13 @@
   "2OQU3/": [
     {
       "type": 0,
-      "value": "Cannot run after both trigger and action"
+      "value": "无法在触发器和操作后运行"
     }
   ],
   "2On4Xu": [
     {
       "type": 0,
-      "value": "Code view tab"
+      "value": "“代码视图”选项卡"
     }
   ],
   "2TMGk7": [
@@ -834,7 +844,7 @@
   "2adqQ4": [
     {
       "type": 0,
-      "value": "Maximum interval"
+      "value": "最大间隔"
     }
   ],
   "2cVEMV": [
@@ -902,7 +912,7 @@
   "2xQWRt": [
     {
       "type": 0,
-      "value": "Search Functions"
+      "value": "搜索函数"
     }
   ],
   "2y24a/": [
@@ -914,15 +924,15 @@
   "2yUM4j": [
     {
       "type": 1,
-      "value": "suggestionIndex"
+      "value": "suggestionsCount"
     },
     {
       "type": 0,
-      "value": " of "
+      "value": " 的 "
     },
     {
       "type": 1,
-      "value": "suggestionsCount"
+      "value": "suggestionIndex"
     }
   ],
   "2z5HGT": [
@@ -958,7 +968,7 @@
   "36sF7T": [
     {
       "type": 0,
-      "value": "Associated workflows"
+      "value": "关联的工作流"
     }
   ],
   "3AWwVl": [
@@ -970,7 +980,7 @@
   "3BXdMk": [
     {
       "type": 0,
-      "value": "Request settings"
+      "value": "请求设置"
     }
   ],
   "3BZnxY": [
@@ -994,7 +1004,7 @@
   "3JEC7U": [
     {
       "type": 0,
-      "value": "Error type"
+      "value": "错误类型"
     }
   ],
   "3KPLpx": [
@@ -1056,7 +1066,7 @@
   "3Xf/4S": [
     {
       "type": 0,
-      "value": "Swagger endpoint"
+      "value": "Swagger 终结点"
     }
   ],
   "3Y8a6G": [
@@ -1076,13 +1086,13 @@
   "3a3eHg": [
     {
       "type": 0,
-      "value": "Select actions"
+      "value": "选择操作"
     }
   ],
   "3cZFcy": [
     {
       "type": 0,
-      "value": "Error Panel"
+      "value": "错误面板"
     }
   ],
   "3cZZKj": [
@@ -1100,7 +1110,7 @@
   "3hHkAn": [
     {
       "type": 0,
-      "value": "Result"
+      "value": "结果"
     }
   ],
   "3n5pnv": [
@@ -1118,7 +1128,7 @@
   "3pheF6": [
     {
       "type": 0,
-      "value": "Select schema"
+      "value": "选择架构"
     }
   ],
   "3rzrWf": [
@@ -1216,7 +1226,7 @@
   "4BuCdw": [
     {
       "type": 0,
-      "value": "Specify the behavior and capabilities for transferring content over HTTP."
+      "value": "指定通过 HTTP 传输内容的行为和功能。"
     }
   ],
   "4D7H4R": [
@@ -1232,7 +1242,7 @@
   "4E69aV": [
     {
       "type": 0,
-      "value": "Background color"
+      "value": "背景色"
     }
   ],
   "4Ekn9t": [
@@ -1256,7 +1266,7 @@
   "4SIrVn": [
     {
       "type": 0,
-      "value": "Body"
+      "value": "主体"
     }
   ],
   "4YKQAF": [
@@ -1286,11 +1296,15 @@
   "4hlqgK": [
     {
       "type": 0,
-      "value": "No results found for "
+      "value": "找不到 "
     },
     {
       "type": 1,
       "value": "searchTermBeingSearchedFor_DO_NOT_TRANSLATE"
+    },
+    {
+      "type": 0,
+      "value": " 的结果"
     }
   ],
   "4iyEAY": [
@@ -1308,7 +1322,7 @@
   "4rVVyW": [
     {
       "type": 0,
-      "value": "Retry history"
+      "value": "重试历史记录"
     }
   ],
   "4vcnOA": [
@@ -1335,6 +1349,16 @@
       "value": "(UTC+08:45)尤克拉"
     }
   ],
+  "5+zBXE": [
+    {
+      "type": 1,
+      "value": "label"
+    },
+    {
+      "type": 0,
+      "value": " 键项"
+    }
+  ],
   "50W8FI": [
     {
       "type": 0,
@@ -1351,6 +1375,20 @@
     {
       "type": 0,
       "value": "(UTC+09:00)大阪，札幌，东京"
+    }
+  ],
+  "5DkTf5": [
+    {
+      "type": 0,
+      "value": "Target schema node not found for node key '"
+    },
+    {
+      "type": 1,
+      "value": "nodeKey"
+    },
+    {
+      "type": 0,
+      "value": "'"
     }
   ],
   "5J9jne": [
@@ -1452,7 +1490,7 @@
   "5pSOjg": [
     {
       "type": 0,
-      "value": "Create workflows from template"
+      "value": "从模板创建工作流"
     }
   ],
   "5qzZMo": [
@@ -1464,19 +1502,19 @@
   "5rljf7": [
     {
       "type": 0,
-      "value": "Discovery Panel"
+      "value": "发现面板"
     }
   ],
   "5szzYP": [
     {
       "type": 0,
-      "value": "Use this template"
+      "value": "使用此模板"
     }
   ],
   "5we9SR": [
     {
       "type": 0,
-      "value": "Client tracking ID"
+      "value": "客户端跟踪 ID"
     }
   ],
   "5ytHcK": [
@@ -1524,13 +1562,13 @@
   "6DZp5H": [
     {
       "type": 0,
-      "value": "Search"
+      "value": "搜索"
     }
   ],
   "6LJZ7n": [
     {
       "type": 0,
-      "value": "Retry policy"
+      "value": "重试策略"
     }
   ],
   "6OSgRP": [
@@ -1548,7 +1586,7 @@
   "6SQuYg": [
     {
       "type": 0,
-      "value": "See more ("
+      "value": "查看更多("
     },
     {
       "type": 1,
@@ -1556,7 +1594,7 @@
     },
     {
       "type": 0,
-      "value": ")"
+      "value": " 个)"
     }
   ],
   "6VV7OY": [
@@ -1568,19 +1606,19 @@
   "6c1ffO": [
     {
       "type": 0,
-      "value": "Enter JSON object of authentication parameter"
+      "value": "输入身份验证参数的 JSON 对象"
     }
   ],
   "6eDY1H": [
     {
       "type": 0,
-      "value": "optional"
+      "value": "可选"
     }
   ],
   "6epkWC": [
     {
       "type": 0,
-      "value": "Body item"
+      "value": "正文项"
     }
   ],
   "6fDYzG": [
@@ -1636,13 +1674,13 @@
   "6nWQm7": [
     {
       "type": 0,
-      "value": "Start time"
+      "value": "开始时间"
     }
   ],
   "6oOQnD": [
     {
       "type": 0,
-      "value": "Close test map"
+      "value": "关闭测试映射"
     }
   ],
   "6oqk+A": [
@@ -1666,7 +1704,7 @@
   "6rJ+Fj": [
     {
       "type": 0,
-      "value": "Delete workflow graph"
+      "value": "删除工作流图"
     }
   ],
   "6sGj3J": [
@@ -1726,13 +1764,13 @@
   "7+ZxCU": [
     {
       "type": 0,
-      "value": "Invalid authentication value"
+      "value": "身份验证值无效"
     }
   ],
   "70cHmm": [
     {
       "type": 0,
-      "value": "OK"
+      "value": "确定"
     }
   ],
   "73iM9+": [
@@ -1762,7 +1800,7 @@
   "7F4Bzv": [
     {
       "type": 0,
-      "value": "Workflow with name \""
+      "value": "名为“"
     },
     {
       "type": 1,
@@ -1770,7 +1808,7 @@
     },
     {
       "type": 0,
-      "value": "\" already exists."
+      "value": "”的工作流已存在。"
     }
   ],
   "7Fyq1F": [
@@ -1814,7 +1852,7 @@
   "7ZF1Hr": [
     {
       "type": 0,
-      "value": "Validation error"
+      "value": "验证错误"
     }
   ],
   "7ZR1xr": [
@@ -1832,13 +1870,13 @@
   "7adnmH": [
     {
       "type": 0,
-      "value": "Back to template library"
+      "value": "返回到模板库"
     }
   ],
   "7fZkLA": [
     {
       "type": 0,
-      "value": "Disable static result"
+      "value": "禁用静态结果"
     }
   ],
   "7gUE8h": [
@@ -1948,7 +1986,7 @@
   "8KpZmj": [
     {
       "type": 0,
-      "value": "The system-assigned identity is unavailable because it's not enabled."
+      "value": "系统分配的标识不可用，因为它未启用。"
     }
   ],
   "8L+oIz": [
@@ -2036,13 +2074,13 @@
   "8p0yK8": [
     {
       "type": 0,
-      "value": "Run after"
+      "value": "在以下时间后运行"
     }
   ],
   "8wlfdo": [
     {
       "type": 0,
-      "value": "Suppress workflow headers on response"
+      "value": "在响应时抑制工作流标头"
     }
   ],
   "8wr0zO": [
@@ -2054,7 +2092,7 @@
   "8zcsPi": [
     {
       "type": 0,
-      "value": "Expression editor"
+      "value": "表达式编辑器"
     }
   ],
   "8zkvmc": [
@@ -2078,7 +2116,7 @@
   "90Vi7t": [
     {
       "type": 0,
-      "value": "Expand static result"
+      "value": "展开静态结果"
     }
   ],
   "90o7sB": [
@@ -2136,7 +2174,7 @@
   "9OzDnJ": [
     {
       "type": 0,
-      "value": "Search tips"
+      "value": "搜索提示"
     }
   ],
   "9QNZSj": [
@@ -2168,7 +2206,7 @@
   "9V2Uwf": [
     {
       "type": 0,
-      "value": "Insert expression (you can also add by typing '/' in the editor)"
+      "value": "插入表达式(还可以通过在编辑器中键入 \"/\" 来添加)"
     }
   ],
   "9W0lck": [
@@ -2224,7 +2262,7 @@
   "9uv02q": [
     {
       "type": 0,
-      "value": "Set the tracking ID for the run. For split-on this tracking ID is for the initiating request"
+      "value": "设置运行的跟踪 ID。对于拆分，此跟踪 ID 用于正在启动的请求"
     }
   ],
   "9wX3u9": [
@@ -2248,7 +2286,7 @@
   "A5/UwX": [
     {
       "type": 0,
-      "value": "Accelerators"
+      "value": "加速器"
     }
   ],
   "A5Ferh": [
@@ -2260,7 +2298,7 @@
   "A8T1X/": [
     {
       "type": 0,
-      "value": "Whitespaces must be encoded for URIs."
+      "value": "对于 URI，必须编码空格。"
     }
   ],
   "A8l+k7": [
@@ -2280,7 +2318,7 @@
   "AB+yPQ": [
     {
       "type": 0,
-      "value": "Connection details"
+      "value": "连接详细信息"
     }
   ],
   "AEguAy": [
@@ -2298,19 +2336,19 @@
   "AJ+LDh": [
     {
       "type": 0,
-      "value": "Provide a unique, descriptive name and review the state type to ensure your workflows are properly configured."
+      "value": "提供唯一的描述性名称并查看状态类型，以确保工作流配置正确。"
     }
   ],
   "AKOkI2": [
     {
       "type": 0,
-      "value": "Service principal"
+      "value": "服务主体"
     }
   ],
   "APKdYG": [
     {
       "type": 0,
-      "value": "Enter a valid double number."
+      "value": "输入有效的双精度数字。"
     }
   ],
   "AQ7Zxc": [
@@ -2328,7 +2366,7 @@
   "Agqhgu": [
     {
       "type": 0,
-      "value": "Describe how you'd like to update your expression."
+      "value": "描述你希望如何更新表达式。"
     }
   ],
   "AheXMN": [
@@ -2352,7 +2390,7 @@
   "Alq4/3": [
     {
       "type": 0,
-      "value": "Hybrid connector"
+      "value": "混合连接器"
     }
   ],
   "AnX5yC": [
@@ -2380,7 +2418,7 @@
     },
     {
       "type": 0,
-      "value": " operation"
+      "value": " 操作"
     }
   ],
   "Az0QvG": [
@@ -2439,7 +2477,7 @@
   "B6BjCl": [
     {
       "type": 0,
-      "value": "Drop-down list of options"
+      "value": "选项的下拉列表"
     }
   ],
   "B999mz": [
@@ -2533,7 +2571,7 @@
   "BRMOfD": [
     {
       "type": 0,
-      "value": "Timed out"
+      "value": "已超时"
     }
   ],
   "BS3gy8": [
@@ -2557,7 +2595,7 @@
   "BXb3CB": [
     {
       "type": 0,
-      "value": "Testing tab"
+      "value": "“测试”选项卡"
     }
   ],
   "BYrP8F": [
@@ -2575,7 +2613,7 @@
   "Bkc/+3": [
     {
       "type": 0,
-      "value": "Retry policy minimum interval is invalid, must match ISO 8601 duration format"
+      "value": "重试策略最小间隔无效，必须与 ISO 8601 持续时间格式匹配"
     }
   ],
   "Bl4Iv0": [
@@ -2593,7 +2631,7 @@
   "BnkCwH": [
     {
       "type": 0,
-      "value": "Search properties"
+      "value": "搜索属性"
     }
   ],
   "BoMvF2": [
@@ -2624,6 +2662,20 @@
     {
       "type": 0,
       "value": "一个格式说明符，用于指示如何设置此 Guid 值的格式。"
+    }
+  ],
+  "Bwqlxd": [
+    {
+      "type": 0,
+      "value": "Key not found '"
+    },
+    {
+      "type": 1,
+      "value": "nodeKey"
+    },
+    {
+      "type": 0,
+      "value": "'"
     }
   ],
   "BxITRH": [
@@ -2665,7 +2717,7 @@
   "CRTB+v": [
     {
       "type": 0,
-      "value": "Value should be greater than "
+      "value": "值应大于 "
     },
     {
       "type": 1,
@@ -2693,13 +2745,13 @@
   "Ccbm2Y": [
     {
       "type": 0,
-      "value": "Multi-select list of options"
+      "value": "选项的多选列表"
     }
   ],
   "CeF40t": [
     {
       "type": 0,
-      "value": "Authentication type"
+      "value": "身份验证类型"
     }
   ],
   "Ci41Od": [
@@ -2729,7 +2781,7 @@
   "ClowJ/": [
     {
       "type": 0,
-      "value": "Authentication type"
+      "value": "身份验证类型"
     }
   ],
   "CvoqQ6": [
@@ -2747,7 +2799,7 @@
   "Cy4+KL": [
     {
       "type": 0,
-      "value": "Redo"
+      "value": "恢复"
     }
   ],
   "CyT8H7": [
@@ -2821,7 +2873,7 @@
   "D6KzoS": [
     {
       "type": 0,
-      "value": "Specify upload chunk size between "
+      "value": "指定介于 "
     },
     {
       "type": 1,
@@ -2829,7 +2881,7 @@
     },
     {
       "type": 0,
-      "value": " and "
+      "value": " 和 "
     },
     {
       "type": 1,
@@ -2837,13 +2889,13 @@
     },
     {
       "type": 0,
-      "value": " Mb. Example: 10"
+      "value": " Mb 之间的上传区块大小。示例： 10"
     }
   ],
   "D89UXR": [
     {
       "type": 0,
-      "value": "action"
+      "value": "操作"
     }
   ],
   "DDIIAQ": [
@@ -2879,7 +2931,7 @@
   "DNQtFr": [
     {
       "type": 0,
-      "value": "Name"
+      "value": "名称"
     }
   ],
   "DQV7aK": [
@@ -2917,7 +2969,7 @@
   "DX9jWz": [
     {
       "type": 0,
-      "value": "Name"
+      "value": "名称"
     }
   ],
   "DYXoEM": [
@@ -2935,13 +2987,13 @@
   "DbxZhS": [
     {
       "type": 0,
-      "value": "Remove list of options"
+      "value": "删除选项列表"
     }
   ],
   "DcJBUx": [
     {
       "type": 0,
-      "value": "Trigger type"
+      "value": "触发器类型"
     }
   ],
   "DfXxoX": [
@@ -3015,7 +3067,7 @@
   "E70Rdt": [
     {
       "type": 0,
-      "value": "Internal errors"
+      "value": "内部错误"
     }
   ],
   "E7NzDN": [
@@ -3039,13 +3091,13 @@
   "EFQ56R": [
     {
       "type": 0,
-      "value": "Source code"
+      "value": "源代码"
     }
   ],
   "EMbxLf": [
     {
       "type": 0,
-      "value": "Previous suggestion"
+      "value": "上一条建议"
     }
   ],
   "ERAWZA": [
@@ -3069,13 +3121,13 @@
   "EX0g1d": [
     {
       "type": 0,
-      "value": "Secure outputs"
+      "value": "安全输出"
     }
   ],
   "EXEL2j": [
     {
       "type": 0,
-      "value": "Destination"
+      "value": "目标"
     }
   ],
   "EZz5q7": [
@@ -3119,7 +3171,7 @@
   "EeJitp": [
     {
       "type": 0,
-      "value": "Type"
+      "value": "类型"
     }
   ],
   "EiRMD4": [
@@ -3151,7 +3203,7 @@
   "EoRB1V": [
     {
       "type": 0,
-      "value": "Details"
+      "value": "详细信息"
     }
   ],
   "EptZhD": [
@@ -3175,31 +3227,31 @@
   "Eyxa6q": [
     {
       "type": 0,
-      "value": "The number of workflow instances that can wait to run when your current workflow instance is already running the maximum concurrent instances."
+      "value": "当前工作流实例已在运行最大并发实例时可以等待运行的工作流实例数。"
     }
   ],
   "F+cOLr": [
     {
       "type": 0,
-      "value": "Community Authored"
+      "value": "社区创作"
     }
   ],
   "F/13eU": [
     {
       "type": 0,
-      "value": "Delete"
+      "value": "删除"
     }
   ],
   "F1AkvV": [
     {
       "type": 0,
-      "value": "Ideal for process business transitional data"
+      "value": "非常适合处理业务过渡数据"
     }
   ],
   "F2wR+r": [
     {
       "type": 0,
-      "value": "Insert expression"
+      "value": "插入表达式"
     }
   ],
   "F3IDl8": [
@@ -3223,7 +3275,7 @@
   "FEYdkx": [
     {
       "type": 0,
-      "value": "Maximum waiting runs"
+      "value": "最大等待运行数"
     }
   ],
   "FIL1Nt": [
@@ -3256,6 +3308,20 @@
       "value": "返回由开始索引和结束索引定义的字符串部分"
     }
   ],
+  "FPBmrA": [
+    {
+      "type": 0,
+      "value": "Source schema node not found for node key '"
+    },
+    {
+      "type": 1,
+      "value": "nodeKey"
+    },
+    {
+      "type": 0,
+      "value": "'"
+    }
+  ],
   "FT3jt6": [
     {
       "type": 0,
@@ -3265,7 +3331,7 @@
   "FTrMxN": [
     {
       "type": 0,
-      "value": "Close"
+      "value": "关闭"
     }
   ],
   "FUuFlC": [
@@ -3322,7 +3388,7 @@
   "Fx/6sv": [
     {
       "type": 0,
-      "value": "Go to operation"
+      "value": "转到操作"
     }
   ],
   "FxQ2Ts": [
@@ -3334,7 +3400,7 @@
   "G+6Juu": [
     {
       "type": 0,
-      "value": "Click to expand"
+      "value": "单击以展开"
     }
   ],
   "G+XvKn": [
@@ -3352,7 +3418,7 @@
   "G0gnge": [
     {
       "type": 0,
-      "value": "Copy entire action"
+      "value": "复制整个操作"
     }
   ],
   "GAY7b8": [
@@ -3388,7 +3454,7 @@
   "GFnJQe": [
     {
       "type": 0,
-      "value": "Test map"
+      "value": "测试映射"
     }
   ],
   "GIUSQs": [
@@ -3453,10 +3519,24 @@
       "value": "源架构元素"
     }
   ],
+  "GiR7ll": [
+    {
+      "type": 0,
+      "value": "Function not found- '"
+    },
+    {
+      "type": 1,
+      "value": "nodeKey"
+    },
+    {
+      "type": 0,
+      "value": "'"
+    }
+  ],
   "Gk79Ma": [
     {
       "type": 0,
-      "value": "Status code"
+      "value": "状态代码"
     }
   ],
   "Gl5khw": [
@@ -3568,13 +3648,13 @@
   "HQ/HhZ": [
     {
       "type": 0,
-      "value": "Error loading connections"
+      "value": "加载连接时出错"
     }
   ],
   "HQQtFz": [
     {
       "type": 0,
-      "value": "Make the field required"
+      "value": "使字段变为必填字段"
     }
   ],
   "HSJLCu": [
@@ -3598,7 +3678,7 @@
   "He4Z+v": [
     {
       "type": 0,
-      "value": "Credential type"
+      "value": "凭据类型"
     }
   ],
   "HfinO2": [
@@ -3686,13 +3766,13 @@
   "IBFBR2": [
     {
       "type": 0,
-      "value": "Remove loop"
+      "value": "删除循环"
     }
   ],
   "IGpV1W": [
     {
       "type": 0,
-      "value": "Asynchronous response"
+      "value": "异步响应"
     }
   ],
   "IHMd3X": [
@@ -3708,7 +3788,7 @@
   "IHzSSN": [
     {
       "type": 0,
-      "value": "Path parameters"
+      "value": "路径参数"
     }
   ],
   "IPwWgu": [
@@ -3738,7 +3818,7 @@
   "IUbVFR": [
     {
       "type": 0,
-      "value": "Search"
+      "value": "搜索"
     }
   ],
   "IW2MjQ": [
@@ -3776,13 +3856,13 @@
     },
     {
       "type": 0,
-      "value": " more item"
+      "value": " 更多项目"
     }
   ],
   "IqNEui": [
     {
       "type": 0,
-      "value": "Specify download chunk size between "
+      "value": "指定介于 "
     },
     {
       "type": 1,
@@ -3790,7 +3870,7 @@
     },
     {
       "type": 0,
-      "value": " and "
+      "value": " 和 "
     },
     {
       "type": 1,
@@ -3798,7 +3878,7 @@
     },
     {
       "type": 0,
-      "value": " Mb. Example: 10"
+      "value": " Mb 之间的下载区块大小。示例： 10"
     }
   ],
   "IsVhkH": [
@@ -3864,7 +3944,7 @@
   "J7PN35": [
     {
       "type": 0,
-      "value": "Make group"
+      "value": "创建组"
     }
   ],
   "J9wWry": [
@@ -3916,13 +3996,13 @@
   "JKfEGS": [
     {
       "type": 0,
-      "value": "Create new"
+      "value": "新建"
     }
   ],
   "JMwMaK": [
     {
       "type": 0,
-      "value": "AI-generated content may be incorrect"
+      "value": "AI 生成的内容可能不正确"
     }
   ],
   "JNQHws": [
@@ -3934,7 +4014,7 @@
   "JQBEOg": [
     {
       "type": 0,
-      "value": "Review + create"
+      "value": "查看 + 创建"
     }
   ],
   "JSfWJ0": [
@@ -3946,13 +4026,13 @@
   "JUZ7g5": [
     {
       "type": 0,
-      "value": "Run history"
+      "value": "运行历史记录"
     }
   ],
   "JVNRly": [
     {
       "type": 0,
-      "value": "Solution type"
+      "value": "解决方案类型"
     }
   ],
   "JWl/LD": [
@@ -3994,7 +4074,7 @@
   "Jk2B0i": [
     {
       "type": 0,
-      "value": "Prerequisites"
+      "value": "先决条件"
     }
   ],
   "JnlcZQ": [
@@ -4018,7 +4098,7 @@
   "JzvOUc": [
     {
       "type": 0,
-      "value": "The value must not be empty."
+      "value": "值不得为空。"
     }
   ],
   "K50znc": [
@@ -4036,7 +4116,7 @@
   "K9ORYo": [
     {
       "type": 0,
-      "value": "Schema ID"
+      "value": "架构 ID"
     }
   ],
   "KBaGkS": [
@@ -4048,7 +4128,7 @@
   "KO2eUv": [
     {
       "type": 0,
-      "value": "Connectors"
+      "value": "连接器"
     }
   ],
   "KV4uky": [
@@ -4101,7 +4181,7 @@
   "Kb5u9F": [
     {
       "type": 0,
-      "value": "About tab"
+      "value": "“关于”选项卡"
     }
   ],
   "KlDW+5": [
@@ -4119,7 +4199,7 @@
   "KqJ14/": [
     {
       "type": 0,
-      "value": "Edit schema"
+      "value": "编辑架构"
     }
   ],
   "KwGA+K": [
@@ -4173,7 +4253,7 @@
   "LPzAHC": [
     {
       "type": 0,
-      "value": "Loading files…"
+      "value": "正在加载文件..."
     }
   ],
   "LR/3Lr": [
@@ -4287,7 +4367,7 @@
   "M/m3nG": [
     {
       "type": 0,
-      "value": "Action timeout"
+      "value": "操作超时"
     }
   ],
   "M0bbZk": [
@@ -4311,7 +4391,7 @@
   "M6GI6z": [
     {
       "type": 0,
-      "value": "Custom tracking ID"
+      "value": "自定义跟踪 ID"
     }
   ],
   "M6U2LE": [
@@ -4329,7 +4409,7 @@
   "MAX7xS": [
     {
       "type": 0,
-      "value": "Show more"
+      "value": "显示更多"
     }
   ],
   "MCzWDc": [
@@ -4353,7 +4433,7 @@
   "MGq28G": [
     {
       "type": 0,
-      "value": "Trigger"
+      "value": "触发器"
     }
   ],
   "MIX4f9": [
@@ -4401,13 +4481,13 @@
   "MVrv+N": [
     {
       "type": 0,
-      "value": "Enter a valid array."
+      "value": "输入有效的数组。"
     }
   ],
   "MWG2k9": [
     {
       "type": 0,
-      "value": "Request history"
+      "value": "请求历史记录"
     }
   ],
   "MYgKHu": [
@@ -4461,13 +4541,13 @@
   "MqZCAn": [
     {
       "type": 0,
-      "value": "Host"
+      "value": "主机"
     }
   ],
   "MwMpAh": [
     {
       "type": 0,
-      "value": "Return to expression editor"
+      "value": "返回到表达式编辑器"
     }
   ],
   "N0pS6Y": [
@@ -4503,7 +4583,7 @@
   "N8LgJq": [
     {
       "type": 0,
-      "value": "Distinct tracking ID for each split-on instance"
+      "value": "每个拆分实例的非重复跟踪 ID"
     }
   ],
   "NE54Uu": [
@@ -4533,7 +4613,7 @@
   "NHqCeQ": [
     {
       "type": 0,
-      "value": "Create connection"
+      "value": "创建连接"
     }
   ],
   "NMpFs6": [
@@ -4557,13 +4637,13 @@
   "NaW0ga": [
     {
       "type": 0,
-      "value": "This workflow supports the following states. The state determines how data is managed and retained during execution of workflows."
+      "value": "此工作流支持以下状态。状态确定在执行工作流期间如何管理和保留数据。"
     }
   ],
   "Nbl3zN": [
     {
       "type": 0,
-      "value": "Enter a description of the output"
+      "value": "输入输出说明"
     }
   ],
   "Nh91qA": [
@@ -4581,7 +4661,7 @@
   "NkjtG/": [
     {
       "type": 0,
-      "value": "Dismiss"
+      "value": "关闭"
     }
   ],
   "NnrHK3": [
@@ -4605,13 +4685,13 @@
   "Nr8FbX": [
     {
       "type": 0,
-      "value": "Connections"
+      "value": "连接"
     }
   ],
   "NtoWaY": [
     {
       "type": 0,
-      "value": "Value should be less than "
+      "value": "值应小于 "
     },
     {
       "type": 1,
@@ -4669,7 +4749,7 @@
   "O8Qy7k": [
     {
       "type": 0,
-      "value": "Close panel"
+      "value": "关闭面板"
     }
   ],
   "O9ZExg": [
@@ -4711,7 +4791,7 @@
   "OMuMCI": [
     {
       "type": 0,
-      "value": "Workflow properties"
+      "value": "工作流属性"
     }
   ],
   "OOUSLP": [
@@ -4813,7 +4893,7 @@
   "OkGMwC": [
     {
       "type": 0,
-      "value": "Monitoring tab"
+      "value": "“监视”选项卡"
     }
   ],
   "OnrO5/": [
@@ -4906,6 +4986,12 @@
       "value": "已折叠"
     }
   ],
+  "PEJ+e4": [
+    {
+      "type": 0,
+      "value": "Error loading data map"
+    }
+  ],
   "PNk3n4": [
     {
       "type": 0,
@@ -4949,7 +5035,7 @@
   "PTBl5s": [
     {
       "type": 0,
-      "value": "Method"
+      "value": "方法"
     }
   ],
   "PXa0D4": [
@@ -4991,7 +5077,7 @@
   "Pkxg6Q": [
     {
       "type": 0,
-      "value": "Describe the expression you want Copilot to create. You can reference data from other actions in the flow. For example, “Combine the first and last name of the person who went the email” or “Check the status of the current job.”"
+      "value": "描述希望 Copilot 创建的表达式。可以引用流中其他操作中的数据。例如，“合并发送电子邮件的人员的名字和姓氏”或“检查当前作业的状态”。"
     }
   ],
   "Pnt0Xj": [
@@ -5003,7 +5089,7 @@
   "PpupBE": [
     {
       "type": 0,
-      "value": "Add row"
+      "value": "添加行"
     }
   ],
   "Pq+4a+": [
@@ -5027,7 +5113,7 @@
   "PuFTgH": [
     {
       "type": 0,
-      "value": "Retry history"
+      "value": "重试历史记录"
     }
   ],
   "Pudllg": [
@@ -5051,7 +5137,7 @@
   "Px7S/2": [
     {
       "type": 0,
-      "value": "Close"
+      "value": "关闭"
     }
   ],
   "PytMJ0": [
@@ -5083,7 +5169,7 @@
   "Q/V4Uc": [
     {
       "type": 0,
-      "value": "Add connection"
+      "value": "添加连接"
     }
   ],
   "Q0xpPQ": [
@@ -5129,7 +5215,7 @@
   "QBK72a": [
     {
       "type": 0,
-      "value": "Add custom modules, uncover new scenarios, and find troubleshooting tips"
+      "value": "添加自定义模块、发现新方案并查找疑难解答提示"
     }
   ],
   "QGbUXX": [
@@ -5141,13 +5227,13 @@
   "QNfUf/": [
     {
       "type": 0,
-      "value": "Full screen"
+      "value": "全屏"
     }
   ],
   "QVtqAn": [
     {
       "type": 0,
-      "value": "Description"
+      "value": "描述"
     }
   ],
   "QZBPUx": [
@@ -5171,7 +5257,7 @@
   "QbVD0F": [
     {
       "type": 0,
-      "value": "This expression has a problem. You can fix it manually or with Copilot."
+      "value": "此表达式有问题。你可以手动或使用 Copilot 进行修复。"
     }
   ],
   "QdJUaS": [
@@ -5217,7 +5303,7 @@
   "Qqmb+W": [
     {
       "type": 0,
-      "value": "Stateful"
+      "value": "有状态"
     }
   ],
   "QrQDdp": [
@@ -5263,13 +5349,13 @@
   "RLoDgQ": [
     {
       "type": 0,
-      "value": "Optimized for high reliability"
+      "value": "针对高可靠性进行了优化"
     }
   ],
   "ROC+1+": [
     {
       "type": 0,
-      "value": "Line position"
+      "value": "行位置"
     }
   ],
   "RX2Shm": [
@@ -5281,13 +5367,13 @@
   "RZNabt": [
     {
       "type": 0,
-      "value": "Create a new workflow from template"
+      "value": "根据模板创建新工作流"
     }
   ],
   "RatwOB": [
     {
       "type": 0,
-      "value": "In-app"
+      "value": "应用内"
     }
   ],
   "RbJNVk": [
@@ -5324,7 +5410,7 @@
     },
     {
       "type": 0,
-      "value": " (content)"
+      "value": " (内容)"
     }
   ],
   "RjvpD+": [
@@ -5394,7 +5480,7 @@
   "RxbkcI": [
     {
       "type": 0,
-      "value": "Unsupported token type: "
+      "value": "不支持的令牌类型: "
     },
     {
       "type": 1,
@@ -5404,7 +5490,7 @@
   "S0N/tx": [
     {
       "type": 0,
-      "value": "Resubmit a workflow run from this action"
+      "value": "通过此操作重新提交工作流运行"
     }
   ],
   "S138/4": [
@@ -5416,7 +5502,7 @@
   "S5kFNK": [
     {
       "type": 0,
-      "value": "Paste your sample data to test the mapping"
+      "value": "粘贴示例数据以测试映射"
     }
   ],
   "SCCE6s": [
@@ -5464,7 +5550,7 @@
   "STWbak": [
     {
       "type": 0,
-      "value": "Chunk size"
+      "value": "区块大小"
     }
   ],
   "SToblZ": [
@@ -5492,13 +5578,13 @@
   "SZ78Xp": [
     {
       "type": 0,
-      "value": "Features"
+      "value": "功能"
     }
   ],
   "SbCUKw": [
     {
       "type": 0,
-      "value": "Outputs should not be provided when status is \"Failed\""
+      "value": "当状态为“失败”时不应提供输出"
     }
   ],
   "SgiTAh": [
@@ -5534,7 +5620,7 @@
   "Sy4cFC": [
     {
       "type": 0,
-      "value": "Concurrency control"
+      "value": "并发控制"
     }
   ],
   "SyFXM3": [
@@ -5552,7 +5638,7 @@
   "TDfQzn": [
     {
       "type": 0,
-      "value": "More…"
+      "value": "更多…"
     }
   ],
   "TEN+cR": [
@@ -5606,7 +5692,7 @@
   "TZpm7X": [
     {
       "type": 0,
-      "value": "Button to add dynamic content if token picker is shown"
+      "value": "当显示令牌选取器时添加动态内容的按钮"
     }
   ],
   "Tayrub": [
@@ -5624,7 +5710,7 @@
   "TcU2Gf": [
     {
       "type": 0,
-      "value": "Add case"
+      "value": "添加事例"
     }
   ],
   "TgcgXE": [
@@ -5672,7 +5758,7 @@
   "TnwRGo": [
     {
       "type": 0,
-      "value": "Connections included in this template"
+      "value": "此模板中包含Connections"
     }
   ],
   "To3RNy": [
@@ -5726,7 +5812,7 @@
   "U2juKb": [
     {
       "type": 0,
-      "value": "Filter actions"
+      "value": "筛选器操作"
     }
   ],
   "U3guPp": [
@@ -5762,7 +5848,7 @@
   "U9SHxw": [
     {
       "type": 0,
-      "value": "Code"
+      "value": "代码"
     }
   ],
   "UCNM4L": [
@@ -5774,7 +5860,7 @@
   "UD330h": [
     {
       "type": 0,
-      "value": "Copy action"
+      "value": "复制操作"
     }
   ],
   "UHCVNK": [
@@ -5786,7 +5872,7 @@
   "UJho0j": [
     {
       "type": 0,
-      "value": "(Optional) Password for PFX file"
+      "value": "(PFX 文件的可选) 密码"
     }
   ],
   "UMPuUJ": [
@@ -5802,13 +5888,13 @@
   "UNXQDI": [
     {
       "type": 0,
-      "value": "Loading API Management service instances..."
+      "value": "正在加载 API 管理服务实例..."
     }
   ],
   "UPsZSw": [
     {
       "type": 0,
-      "value": "The entered identity is not associated with this logic app."
+      "value": "输入的标识未与此逻辑应用关联。"
     }
   ],
   "UR1CS5": [
@@ -5832,7 +5918,7 @@
   "UTkcyf": [
     {
       "type": 0,
-      "value": "Source code"
+      "value": "源代码"
     }
   ],
   "UVAfYj": [
@@ -5844,19 +5930,19 @@
   "UVr0mL": [
     {
       "type": 0,
-      "value": "Test your map to see a result"
+      "value": "测试映射以查看结果"
     }
   ],
   "UWF/WI": [
     {
       "type": 0,
-      "value": "View documentation"
+      "value": "查看文档"
     }
   ],
   "UXDOiw": [
     {
       "type": 0,
-      "value": "Description"
+      "value": "描述"
     }
   ],
   "UYRIS/": [
@@ -5958,7 +6044,7 @@
   "UsEvG2": [
     {
       "type": 0,
-      "value": "Tenant ID"
+      "value": "租户 ID"
     }
   ],
   "UtyRCH": [
@@ -6028,7 +6114,7 @@
   "VFnuA2": [
     {
       "type": 0,
-      "value": "Add a drop-down list of options"
+      "value": "添加选项的下拉列表"
     }
   ],
   "VHm1Sr": [
@@ -6100,13 +6186,13 @@
   "VZh+w2": [
     {
       "type": 0,
-      "value": "Body"
+      "value": "主体"
     }
   ],
   "Valy81": [
     {
       "type": 0,
-      "value": "Schema validation"
+      "value": "架构验证"
     }
   ],
   "VbMYd8": [
@@ -6118,7 +6204,7 @@
   "VchR9d": [
     {
       "type": 0,
-      "value": "Headers"
+      "value": "标头"
     }
   ],
   "Vi5TIV": [
@@ -6162,7 +6248,7 @@
   "VysSj3": [
     {
       "type": 0,
-      "value": "View code"
+      "value": "查看代码"
     }
   ],
   "W+mUyI": [
@@ -6188,13 +6274,13 @@
   "W1rlxU": [
     {
       "type": 0,
-      "value": "State type"
+      "value": "状态类型"
     }
   ],
   "W2fZ0v": [
     {
       "type": 0,
-      "value": "Preview"
+      "value": "预览"
     }
   ],
   "W6FdMh": [
@@ -6212,7 +6298,7 @@
   "WGq3Fo": [
     {
       "type": 0,
-      "value": "See less"
+      "value": "查看更少"
     }
   ],
   "WGwH45": [
@@ -6270,7 +6356,7 @@
   "Wc77aJ": [
     {
       "type": 0,
-      "value": "In-app"
+      "value": "应用内"
     }
   ],
   "WcnIF8": [
@@ -6282,7 +6368,7 @@
   "WdO1cs": [
     {
       "type": 0,
-      "value": "Template details"
+      "value": "模板详细信息"
     }
   ],
   "WgChTm": [
@@ -6306,13 +6392,13 @@
   "Wt1TZJ": [
     {
       "type": 0,
-      "value": "Connections"
+      "value": "连接"
     }
   ],
   "Wvnl/V": [
     {
       "type": 0,
-      "value": "Delete the static result configuration"
+      "value": "删除静态结果配置"
     }
   ],
   "WvvJYw": [
@@ -6324,13 +6410,13 @@
   "WxJJcQ": [
     {
       "type": 0,
-      "value": "Not connected"
+      "value": "未连接"
     }
   ],
   "WxcmZr": [
     {
       "type": 0,
-      "value": "This action has testing configured."
+      "value": "此操作已配置测试。"
     }
   ],
   "X/7je+": [
@@ -6342,7 +6428,7 @@
   "X02GGK": [
     {
       "type": 0,
-      "value": "Tags"
+      "value": "标记"
     }
   ],
   "X2idLs": [
@@ -6414,7 +6500,7 @@
   "XHQwyJ": [
     {
       "type": 0,
-      "value": "Error executing the API - "
+      "value": "执行 API 时出错 - "
     },
     {
       "type": 1,
@@ -6430,7 +6516,7 @@
   "XL5UbT": [
     {
       "type": 0,
-      "value": "Click for more information on static result"
+      "value": "单击以获取有关静态结果的详细信息"
     }
   ],
   "XOAcjQ": [
@@ -6460,7 +6546,7 @@
   "XR5izH": [
     {
       "type": 0,
-      "value": "Connected"
+      "value": "已连接"
     }
   ],
   "XRK+gt": [
@@ -6510,7 +6596,7 @@
   "XZrMGZ": [
     {
       "type": 0,
-      "value": "Content transfer"
+      "value": "内容传输"
     }
   ],
   "XbtEq9": [
@@ -6536,7 +6622,7 @@
   "Xg1UDw": [
     {
       "type": 0,
-      "value": "Learn more"
+      "value": "详细了解"
     }
   ],
   "Xj0Gr/": [
@@ -6602,7 +6688,7 @@
   "Xz88HV": [
     {
       "type": 0,
-      "value": "Associated workflows"
+      "value": "关联的工作流"
     }
   ],
   "Y/bcmG": [
@@ -6620,7 +6706,7 @@
   "Y9VFj8": [
     {
       "type": 0,
-      "value": "Secure inputs"
+      "value": "安全输入"
     }
   ],
   "Y9kBz5": [
@@ -6632,7 +6718,7 @@
   "YC56Tr": [
     {
       "type": 0,
-      "value": "Automatic decompression"
+      "value": "自动解压缩"
     }
   ],
   "YCDF7A": [
@@ -6696,13 +6782,13 @@
   "YM0e3C": [
     {
       "type": 0,
-      "value": "Asynchronous pattern"
+      "value": "异步模式"
     }
   ],
   "YOOBDW": [
     {
       "type": 0,
-      "value": "Avoid spaces and the following symbols in your workflow name: \\ / : * ? \" < > | @, #, $, %, &"
+      "value": "避免工作流名称中存在空格和以下符号： \\ / ： * ？“ < > |@, #, $, %, &"
     }
   ],
   "YOUfNf": [
@@ -6732,7 +6818,7 @@
   "YWD/RY": [
     {
       "type": 0,
-      "value": "condition, collapse"
+      "value": "条件，折叠"
     }
   ],
   "YWws/r": [
@@ -6744,7 +6830,7 @@
   "YX0jQs": [
     {
       "type": 0,
-      "value": "All"
+      "value": "全部"
     }
   ],
   "YZ5Kwe": [
@@ -6756,7 +6842,7 @@
   "YZl7FU": [
     {
       "type": 0,
-      "value": "Loading function apps..."
+      "value": "正在加载函数应用..."
     }
   ],
   "YaFjJQ": [
@@ -6798,7 +6884,7 @@
   "YnSO/8": [
     {
       "type": 0,
-      "value": "Not connected"
+      "value": "未连接"
     }
   ],
   "YoQara": [
@@ -6816,7 +6902,7 @@
   "Yua/4o": [
     {
       "type": 0,
-      "value": "Previous"
+      "value": "上一个"
     }
   ],
   "Yuu5CD": [
@@ -6840,7 +6926,7 @@
   "Z8BOCl": [
     {
       "type": 0,
-      "value": "No identities available"
+      "value": "无可用标识"
     }
   ],
   "Z8tBFS": [
@@ -6870,7 +6956,7 @@
   "ZFNlSA": [
     {
       "type": 0,
-      "value": "Authentication"
+      "value": "身份验证"
     }
   ],
   "ZME5hh": [
@@ -6882,7 +6968,7 @@
   "ZN050N": [
     {
       "type": 0,
-      "value": "Select all text in '"
+      "value": "选择“"
     },
     {
       "type": 1,
@@ -6890,13 +6976,13 @@
     },
     {
       "type": 0,
-      "value": "'"
+      "value": "”中的所有文本"
     }
   ],
   "ZOIvqN": [
     {
       "type": 0,
-      "value": "Sort By"
+      "value": "排序依据"
     }
   ],
   "ZUCTVP": [
@@ -6914,13 +7000,13 @@
   "ZXc10N": [
     {
       "type": 0,
-      "value": "Add group"
+      "value": "添加组"
     }
   ],
   "ZXha+w": [
     {
       "type": 0,
-      "value": "Error message"
+      "value": "错误消息"
     }
   ],
   "ZaIeDG": [
@@ -6938,7 +7024,7 @@
   "ZbeL1D": [
     {
       "type": 0,
-      "value": "Avoid spaces and the following symbols in your workflow name: \\ / : * ? \" < > | @, #, $, %, &"
+      "value": "避免工作流名称中存在空格和以下符号： \\ / ： * ？“ < > |@, #, $, %, &"
     }
   ],
   "Zg3IjD": [
@@ -6950,7 +7036,7 @@
   "ZgyD93": [
     {
       "type": 0,
-      "value": "Accepted types:"
+      "value": "接受的类型:"
     }
   ],
   "Zi9gQK": [
@@ -6998,7 +7084,7 @@
   "aGxYMY": [
     {
       "type": 0,
-      "value": "Clear editor"
+      "value": "清除编辑器"
     }
   ],
   "aGyVJT": [
@@ -7010,13 +7096,13 @@
   "aI9W5L": [
     {
       "type": 0,
-      "value": "This template does not have connectors"
+      "value": "此模板没有连接器"
     }
   ],
   "aJg1gl": [
     {
       "type": 0,
-      "value": "Retry policy maximum interval is invalid, must match ISO 8601 duration format"
+      "value": "重试策略最大间隔无效，必须与 ISO 8601 持续时间格式匹配"
     }
   ],
   "aP1wk9": [
@@ -7040,7 +7126,7 @@
   "aWdfiw": [
     {
       "type": 0,
-      "value": "Next suggestion"
+      "value": "下一条建议"
     }
   ],
   "aYTy7X": [
@@ -7058,7 +7144,7 @@
   "ao6BlS": [
     {
       "type": 0,
-      "value": "Resource group"
+      "value": "资源组"
     }
   ],
   "aoUT/3": [
@@ -7070,7 +7156,7 @@
   "apZgmJ": [
     {
       "type": 0,
-      "value": "Invalid operation path input value. Path value - "
+      "value": "操作路径输入值无效。路径值 - "
     },
     {
       "type": 1,
@@ -7078,7 +7164,7 @@
     },
     {
       "type": 0,
-      "value": ", Path template - "
+      "value": "，路径模板 - "
     },
     {
       "type": 1,
@@ -7091,22 +7177,28 @@
       "value": "添加或选择要用于映射的源架构。"
     }
   ],
+  "auci7r": [
+    {
+      "type": 0,
+      "value": "Enter a valid comma-separated string."
+    }
+  ],
   "aurgrg": [
     {
       "type": 0,
-      "value": "Managed identity"
+      "value": "托管标识"
     }
   ],
   "b2aL+f": [
     {
       "type": 0,
-      "value": "Pin action"
+      "value": "固定操作"
     }
   ],
   "b6G9bq": [
     {
       "type": 0,
-      "value": "URL encodes the input string"
+      "value": "URL 对输入字符串进行编码"
     }
   ],
   "b7BQdu": [
@@ -7174,13 +7266,13 @@
   "bJMlgW": [
     {
       "type": 0,
-      "value": "Connections"
+      "value": "连接"
     }
   ],
   "bMUkSN": [
     {
       "type": 0,
-      "value": "This operation contains a token that does not exist in the current workflow."
+      "value": "此操作包含当前工作流中不存在的令牌。"
     }
   ],
   "bTrk+S": [
@@ -7222,7 +7314,7 @@
   "bg00eY": [
     {
       "type": 0,
-      "value": "Numbered list"
+      "value": "编号列表"
     }
   ],
   "blRFVt": [
@@ -7270,7 +7362,7 @@
   "c2ZT7p": [
     {
       "type": 0,
-      "value": "Details"
+      "value": "详细信息"
     }
   ],
   "c3FLox": [
@@ -7306,7 +7398,7 @@
   "cBw7SC": [
     {
       "type": 0,
-      "value": "Created"
+      "value": "已创建"
     }
   ],
   "cHiBAn": [
@@ -7321,10 +7413,20 @@
       "value": "检索更多结果，直到分页限制"
     }
   ],
+  "cKNvk6": [
+    {
+      "type": 1,
+      "value": "label"
+    },
+    {
+      "type": 0,
+      "value": " 值项"
+    }
+  ],
   "cNXS5n": [
     {
       "type": 0,
-      "value": "Stateless"
+      "value": "无状态"
     }
   ],
   "cR9RtV": [
@@ -7336,7 +7438,7 @@
   "cZ60Tk": [
     {
       "type": 0,
-      "value": "Loading...."
+      "value": "正在加载..."
     }
   ],
   "cZv9J0": [
@@ -7366,7 +7468,7 @@
   "chEskq": [
     {
       "type": 0,
-      "value": "Enable static result"
+      "value": "启用静态结果"
     }
   ],
   "ciLkfU": [
@@ -7402,7 +7504,7 @@
   "cuKbLw": [
     {
       "type": 0,
-      "value": "Premium"
+      "value": "高级"
     }
   ],
   "cvp9VP": [
@@ -7414,13 +7516,13 @@
   "cw9FiJ": [
     {
       "type": 0,
-      "value": "Schema URI"
+      "value": "架构 URI"
     }
   ],
   "cwHxwb": [
     {
       "type": 0,
-      "value": "Add connection"
+      "value": "添加连接"
     }
   ],
   "cyEBus": [
@@ -7504,7 +7606,7 @@
   "dU0RgS": [
     {
       "type": 0,
-      "value": "Add a multi-select list of options"
+      "value": "添加选项的多选列表"
     }
   ],
   "dUbKuK": [
@@ -7516,7 +7618,7 @@
   "dVFyPb": [
     {
       "type": 0,
-      "value": "Default value"
+      "value": "默认值"
     }
   ],
   "daoo3l": [
@@ -7608,7 +7710,7 @@
   "eDHwU7": [
     {
       "type": 0,
-      "value": "🖊️ Working on it..."
+      "value": "🖊️ 正在处理..."
     }
   ],
   "eESljX": [
@@ -7650,13 +7752,13 @@
   "eLthgv": [
     {
       "type": 0,
-      "value": "Client certificate"
+      "value": "客户端证书"
     }
   ],
   "eNp9V6": [
     {
       "type": 0,
-      "value": "Upload PFX File"
+      "value": "上传 PFX 文件"
     }
   ],
   "eO1h/h": [
@@ -7668,7 +7770,7 @@
   "eOAJQk": [
     {
       "type": 0,
-      "value": "Degree of parallelism"
+      "value": "并行度"
     }
   ],
   "eRvRWs": [
@@ -7686,25 +7788,25 @@
   "eTW4SD": [
     {
       "type": 0,
-      "value": "Description"
+      "value": "描述"
     }
   ],
   "eUxnDx": [
     {
       "type": 0,
-      "value": "Status code"
+      "value": "状态代码"
     }
   ],
   "eaEXYa": [
     {
       "type": 0,
-      "value": "All"
+      "value": "全部"
     }
   ],
   "eb91v1": [
     {
       "type": 0,
-      "value": "Change connection"
+      "value": "更改连接"
     }
   ],
   "egLI8P": [
@@ -7722,7 +7824,7 @@
   "ekM77J": [
     {
       "type": 0,
-      "value": "Workflow name"
+      "value": "工作流名称"
     }
   ],
   "elD6+N": [
@@ -7734,7 +7836,7 @@
   "elWEjT": [
     {
       "type": 0,
-      "value": "Click to collapse"
+      "value": "单击以折叠"
     }
   ],
   "en/5A3": [
@@ -7755,10 +7857,16 @@
       "value": "共享"
     }
   ],
+  "epi+zR": [
+    {
+      "type": 0,
+      "value": "Close map checker"
+    }
+  ],
   "er6O+w": [
     {
       "type": 0,
-      "value": "Name"
+      "value": "名称"
     }
   ],
   "evyGYj": [
@@ -7770,13 +7878,13 @@
   "ewGciu": [
     {
       "type": 0,
-      "value": "Authentication"
+      "value": "身份验证"
     }
   ],
   "eyuBr7": [
     {
       "type": 0,
-      "value": "Please submit a different query than the previously submitted query. Previously submitted query: "
+      "value": "请提交与之前提交的查询不同的查询。以前提交的查询： "
     },
     {
       "type": 1,
@@ -7804,7 +7912,7 @@
   "f7cxXb": [
     {
       "type": 0,
-      "value": "Split on"
+      "value": "拆分对象"
     }
   ],
   "f81ClO": [
@@ -7816,13 +7924,23 @@
   "fAB0Ww": [
     {
       "type": 0,
-      "value": "Output"
+      "value": "输出"
     }
   ],
   "fBQBw/": [
     {
       "type": 0,
       "value": "如果第一个参数大于或等于第二个参数，则返回 true"
+    }
+  ],
+  "fBUCrA": [
+    {
+      "type": 1,
+      "value": "label"
+    },
+    {
+      "type": 0,
+      "value": " 项目"
     }
   ],
   "fElufw": [
@@ -7840,19 +7958,19 @@
   "fNE/hg": [
     {
       "type": 0,
-      "value": "Button to add dynamic content if token picker is hidden"
+      "value": "当隐藏令牌选取器时添加动态内容的按钮"
     }
   ],
   "fNlJSh": [
     {
       "type": 0,
-      "value": "All connections must be connected for workflow creation"
+      "value": "必须连接所有连接才能创建工作流"
     }
   ],
   "fSMyDJ": [
     {
       "type": 0,
-      "value": "Request options - Timeout"
+      "value": "请求选项 - 超时"
     }
   ],
   "fVG5aD": [
@@ -7900,7 +8018,7 @@
   "fxue5l": [
     {
       "type": 0,
-      "value": "Workflows"
+      "value": "工作流"
     }
   ],
   "g076bL": [
@@ -7999,6 +8117,12 @@
       "value": "信息"
     }
   ],
+  "gS4Teq": [
+    {
+      "type": 0,
+      "value": "数组项"
+    }
+  ],
   "gWyYg0": [
     {
       "type": 0,
@@ -8018,7 +8142,7 @@
     },
     {
       "type": 0,
-      "value": " more items"
+      "value": " 更多项目"
     }
   ],
   "gc6v4X": [
@@ -8094,7 +8218,7 @@
     },
     {
       "type": 0,
-      "value": " Install gateway"
+      "value": " 安装网关"
     }
   ],
   "h1lQDa": [
@@ -8118,13 +8242,13 @@
   "hCrg+6": [
     {
       "type": 0,
-      "value": "Actions must have one or more run after configurations"
+      "value": "操作必须在配置后有一个或多个运行"
     }
   ],
   "hHDJhD": [
     {
       "type": 0,
-      "value": "File content"
+      "value": "文件内容"
     }
   ],
   "hLOIwp": [
@@ -8142,7 +8266,7 @@
   "hMpLz3": [
     {
       "type": 0,
-      "value": "Callback URL"
+      "value": "回调 URL"
     }
   ],
   "hN7iBP": [
@@ -8187,7 +8311,7 @@
   "haeWoU": [
     {
       "type": 0,
-      "value": "Failed to evaluate outputs because splitOn "
+      "value": "无法计算输出，因为无法计算 splitOn "
     },
     {
       "type": 1,
@@ -8195,7 +8319,7 @@
     },
     {
       "type": 0,
-      "value": " cannot be evaluated. As a result, this operation's outputs might not be correctly visible in subsequent actions"
+      "value": "。因此，此操作的输出可能在后续操作中不正确可见"
     }
   ],
   "hbOvB4": [
@@ -8213,13 +8337,13 @@
   "hlrKDC": [
     {
       "type": 0,
-      "value": "Connection"
+      "value": "连接"
     }
   ],
   "ho2D6F": [
     {
       "type": 0,
-      "value": "Close panel"
+      "value": "关闭面板"
     }
   ],
   "hq1mk6": [
@@ -8267,7 +8391,7 @@
   "hz9HJ2": [
     {
       "type": 0,
-      "value": "Insert dynamic content"
+      "value": "插入动态内容"
     }
   ],
   "hza/cT": [
@@ -8279,7 +8403,7 @@
   "i/R+Q7": [
     {
       "type": 0,
-      "value": "Local time"
+      "value": "本地时间"
     }
   ],
   "i/SguY": [
@@ -8333,7 +8457,7 @@
   "iBArTB": [
     {
       "type": 0,
-      "value": "collapse functions drawer"
+      "value": "折叠函数抽屉"
     }
   ],
   "iCSHJG": [
@@ -8345,7 +8469,7 @@
   "iCni1C": [
     {
       "type": 0,
-      "value": "Can't find any search results"
+      "value": "找不到任何搜索结果"
     }
   ],
   "iE2+sy": [
@@ -8407,7 +8531,7 @@
   "iTz1lp": [
     {
       "type": 0,
-      "value": "Unpin action"
+      "value": "取消固定操作"
     }
   ],
   "iU1OJh": [
@@ -8461,13 +8585,13 @@
   "im0GMa": [
     {
       "type": 0,
-      "value": "Show less"
+      "value": "显示更少"
     }
   ],
   "ioUq6Q": [
     {
       "type": 0,
-      "value": "Password"
+      "value": "密码"
     }
   ],
   "iq+tiv": [
@@ -8489,7 +8613,7 @@
   "ir+plQ": [
     {
       "type": 0,
-      "value": "Operation details error"
+      "value": "操作详细信息错误"
     }
   ],
   "iy8rNf": [
@@ -8501,13 +8625,13 @@
   "j2v8BE": [
     {
       "type": 0,
-      "value": "No connections are needed in this template"
+      "value": "此模板中不需要连接"
     }
   ],
   "j4OKkU": [
     {
       "type": 0,
-      "value": "Text color"
+      "value": "文本颜色"
     }
   ],
   "j5z8Vd": [
@@ -8649,13 +8773,13 @@
   "jvVVTG": [
     {
       "type": 0,
-      "value": "Action type"
+      "value": "操作类型"
     }
   ],
   "k/X2ml": [
     {
       "type": 0,
-      "value": "Type"
+      "value": "类型"
     }
   ],
   "k/oqFL": [
@@ -8685,7 +8809,7 @@
   "kBTFhL": [
     {
       "type": 0,
-      "value": "Fix my expression: "
+      "value": "修复我的表达式： "
     },
     {
       "type": 1,
@@ -8755,7 +8879,7 @@
   "kU4VfD": [
     {
       "type": 0,
-      "value": "Stateful"
+      "value": "有状态"
     }
   ],
   "kVwJXt": [
@@ -8780,6 +8904,20 @@
     {
       "type": 0,
       "value": "删除了未连接到目标元素的元素和映射。"
+    }
+  ],
+  "kfmLTY": [
+    {
+      "type": 0,
+      "value": "Function '"
+    },
+    {
+      "type": 1,
+      "value": "functionName"
+    },
+    {
+      "type": 0,
+      "value": "' is missing required inputs"
     }
   ],
   "klY9UN": [
@@ -8830,7 +8968,7 @@
   "kvUaFw": [
     {
       "type": 0,
-      "value": "More info"
+      "value": "详细信息"
     }
   ],
   "l/3yJr": [
@@ -8872,13 +9010,13 @@
   "l8lP1X": [
     {
       "type": 0,
-      "value": "The error and its code are required when status is \"Failed\""
+      "value": "当状态为“失败”时需要提供错误信息及其代码"
     }
   ],
   "l9+EbH": [
     {
       "type": 0,
-      "value": "Description"
+      "value": "描述"
     }
   ],
   "lA/sHA": [
@@ -8904,13 +9042,13 @@
   "lFWXhc": [
     {
       "type": 0,
-      "value": "Workflow"
+      "value": "工作流"
     }
   ],
   "lK+Vzo": [
     {
       "type": 0,
-      "value": "Secure string"
+      "value": "安全字符串"
     }
   ],
   "lM9qrG": [
@@ -8940,7 +9078,7 @@
   "lSUNx5": [
     {
       "type": 0,
-      "value": "Action tracking ID"
+      "value": "操作跟踪 ID"
     }
   ],
   "lX30/R": [
@@ -8952,7 +9090,7 @@
   "lbq5E1": [
     {
       "type": 0,
-      "value": "Large messages may be split up into smaller requests to the connector to allow large message upload. More details can be found at http://aka.ms/logicapps-chunk#upload-content-in-chunks"
+      "value": "为了允许大型消息上传，可能会将大型消息拆分成更小的请求来发送到连接器。有关更多详细信息，请访问 http://aka.ms/logicapps-chunk#upload-content-in-chunks"
     }
   ],
   "lckgnb": [
@@ -8964,7 +9102,7 @@
   "ldn/IC": [
     {
       "type": 0,
-      "value": "Test"
+      "value": "测试"
     }
   ],
   "lexzgJ": [
@@ -9002,7 +9140,7 @@
   "lk/Qic": [
     {
       "type": 0,
-      "value": "connector"
+      "value": "连接器"
     }
   ],
   "lkgjxD": [
@@ -9014,13 +9152,13 @@
   "lkmLHk": [
     {
       "type": 0,
-      "value": "Use Schema Editor"
+      "value": "使用架构编辑器"
     }
   ],
   "lqF8H5": [
     {
       "type": 0,
-      "value": "Collapse static result"
+      "value": "折叠静态结果"
     }
   ],
   "lsH37F": [
@@ -9050,13 +9188,13 @@
   "m4qt/b": [
     {
       "type": 0,
-      "value": "ACL creation failed for connection. Deleting the connection."
+      "value": "ACL 创建因为连接而失败。正在删除连接。"
     }
   ],
   "m5InJc": [
     {
       "type": 0,
-      "value": "Status Code"
+      "value": "状态代码"
     }
   ],
   "m7Y6Qf": [
@@ -9068,7 +9206,7 @@
   "m8MjHH": [
     {
       "type": 0,
-      "value": "Enter a value"
+      "value": "输入值"
     }
   ],
   "m8Q61y": [
@@ -9136,7 +9274,7 @@
   "mQJXU4": [
     {
       "type": 0,
-      "value": "Run after"
+      "value": "在以下时间后运行"
     }
   ],
   "mUURJW": [
@@ -9166,7 +9304,7 @@
   "mb1XDD": [
     {
       "type": 0,
-      "value": "Actual value"
+      "value": "实际值"
     }
   ],
   "mca3Ml": [
@@ -9190,7 +9328,7 @@
   "mgD2ZT": [
     {
       "type": 0,
-      "value": "Summary"
+      "value": "摘要"
     }
   ],
   "mjS/k1": [
@@ -9236,7 +9374,7 @@
   "mxSILx": [
     {
       "type": 0,
-      "value": "Queries"
+      "value": "查询"
     }
   ],
   "n+F7e2": [
@@ -9248,7 +9386,7 @@
   "n+sJ5W": [
     {
       "type": 0,
-      "value": "Published by"
+      "value": "发布者"
     }
   ],
   "n20T2h": [
@@ -9302,7 +9440,7 @@
   "nN1ezT": [
     {
       "type": 0,
-      "value": "Start with a blank workflow to build your integration process from scratch."
+      "value": "从空白工作流开始，从头开始生成集成过程。"
     }
   ],
   "nNWAAh": [
@@ -9314,7 +9452,7 @@
   "nODesn": [
     {
       "type": 0,
-      "value": "Source"
+      "value": "源"
     }
   ],
   "nOWGAV": [
@@ -9338,7 +9476,7 @@
   "nRjpgk": [
     {
       "type": 0,
-      "value": "Sample data"
+      "value": "示例数据"
     }
   ],
   "nRpM02": [
@@ -9368,7 +9506,7 @@
   "nV2Spt": [
     {
       "type": 0,
-      "value": "Operation details panel"
+      "value": "操作详细信息面板"
     }
   ],
   "nVDG00": [
@@ -9410,7 +9548,7 @@
   "nhEgHb": [
     {
       "type": 0,
-      "value": "By"
+      "value": "发布者"
     }
   ],
   "njGstq": [
@@ -9434,7 +9572,7 @@
   "no+blV": [
     {
       "type": 0,
-      "value": "Cancel"
+      "value": "取消"
     }
   ],
   "no/SMg": [
@@ -9446,13 +9584,13 @@
   "nr6bPd": [
     {
       "type": 0,
-      "value": "Open Test panel"
+      "value": "打开测试面板"
     }
   ],
   "nuNBYE": [
     {
       "type": 0,
-      "value": "Path"
+      "value": "路径"
     }
   ],
   "nwLd4b": [
@@ -9528,7 +9666,7 @@
   "o6x5J4": [
     {
       "type": 0,
-      "value": "Create expression"
+      "value": "创建表达式"
     }
   ],
   "o7bd1o": [
@@ -9564,13 +9702,13 @@
   "oOGTSo": [
     {
       "type": 0,
-      "value": "Connected"
+      "value": "已连接"
     }
   ],
   "oPKLDZ": [
     {
       "type": 0,
-      "value": "Delete switch case"
+      "value": "删除 switch case"
     }
   ],
   "oQjIWf": [
@@ -9606,7 +9744,7 @@
   "oWAB0H": [
     {
       "type": 0,
-      "value": "Parameters"
+      "value": "参数"
     }
   ],
   "oZMhX/": [
@@ -9618,7 +9756,7 @@
   "ocW+RF": [
     {
       "type": 0,
-      "value": "Details"
+      "value": "详细信息"
     }
   ],
   "odQ554": [
@@ -9630,7 +9768,7 @@
   "ohpbkw": [
     {
       "type": 0,
-      "value": "Exponential interval"
+      "value": "指数间隔"
     }
   ],
   "onXUu0": [
@@ -9642,13 +9780,13 @@
   "oqgNX3": [
     {
       "type": 0,
-      "value": "Workflow name"
+      "value": "工作流名称"
     }
   ],
   "osln7P": [
     {
       "type": 0,
-      "value": "URL decodes the input string"
+      "value": "URL 对输入字符串进行解码"
     }
   ],
   "ox2Ou7": [
@@ -9660,7 +9798,7 @@
   "oxCSqB": [
     {
       "type": 0,
-      "value": "You can edit parameters here or in designer."
+      "value": "可以在此处或设计器中编辑参数。"
     }
   ],
   "oxXV4+": [
@@ -9672,7 +9810,7 @@
   "oxcHvs": [
     {
       "type": 0,
-      "value": "Remove list of multi options"
+      "value": "删除多个选项的列表"
     }
   ],
   "p/0r2N": [
@@ -9714,7 +9852,7 @@
   "pH6ubt": [
     {
       "type": 0,
-      "value": "Details"
+      "value": "详细信息"
     }
   ],
   "pIczsS": [
@@ -9768,7 +9906,7 @@
   "pfmki/": [
     {
       "type": 0,
-      "value": "Specify the behavior and capabilities for transferring content over HTTP."
+      "value": "指定通过 HTTP 传输内容的行为和功能。"
     }
   ],
   "piaRy6": [
@@ -9780,7 +9918,7 @@
   "pjC3M9": [
     {
       "type": 0,
-      "value": "Suggested expression"
+      "value": "建议的表达式"
     }
   ],
   "pozypE": [
@@ -9792,7 +9930,7 @@
   "pqprxZ": [
     {
       "type": 0,
-      "value": "Configure connections to authenticate and link your workflows with services and applications."
+      "value": "配置连接以对工作流进行身份验证，并将工作流与服务和应用程序链接。"
     }
   ],
   "pr9GwA": [
@@ -9810,7 +9948,7 @@
   "pykp8c": [
     {
       "type": 0,
-      "value": "Blank workflow"
+      "value": "空白工作流"
     }
   ],
   "q/+Uex": [
@@ -9858,7 +9996,7 @@
   "q5lttG": [
     {
       "type": 0,
-      "value": "Undo"
+      "value": "撤消"
     }
   ],
   "q87X20": [
@@ -9908,7 +10046,7 @@
   "qMFpNH": [
     {
       "type": 0,
-      "value": "Loading dynamic data"
+      "value": "正在加载动态数据"
     }
   ],
   "qSejoi": [
@@ -9981,7 +10119,7 @@
   "qp3gCy": [
     {
       "type": 0,
-      "value": "Insert link"
+      "value": "插入链接"
     }
   ],
   "qr1lLG": [
@@ -10007,13 +10145,13 @@
   "qsL/fE": [
     {
       "type": 0,
-      "value": "Delete parameter"
+      "value": "删除参数"
     }
   ],
   "qxw9UO": [
     {
       "type": 0,
-      "value": "Status"
+      "value": "状态"
     }
   ],
   "qy5WqY": [
@@ -10079,19 +10217,19 @@
   "rEQceE": [
     {
       "type": 0,
-      "value": "Microsoft Authored"
+      "value": "Microsoft创作"
     }
   ],
   "rHySVF": [
     {
       "type": 0,
-      "value": "Missing information for workflows creation"
+      "value": "缺少创建工作流的信息"
     }
   ],
   "rMYBfw": [
     {
       "type": 0,
-      "value": "Make the field optional"
+      "value": "使字段变为可选字段"
     }
   ],
   "rNi5Y3": [
@@ -10147,7 +10285,7 @@
   "rl9UOO": [
     {
       "type": 0,
-      "value": "Connections cannot be edited in pinned view. Release the pinned action to make connection changes."
+      "value": "无法在固定视图中编辑Connections。释放固定的操作以进行连接更改。"
     }
   ],
   "rsdJcV": [
@@ -10160,6 +10298,12 @@
     {
       "type": 0,
       "value": "新增"
+    }
+  ],
+  "rwrlsB": [
+    {
+      "type": 0,
+      "value": "Map Issues"
     }
   ],
   "rxIJfD": [
@@ -10183,13 +10327,13 @@
   "s0Qaot": [
     {
       "type": 0,
-      "value": "Workflow Parameters Panel"
+      "value": "工作流参数面板"
     }
   ],
   "s5AOpV": [
     {
       "type": 0,
-      "value": "Card title"
+      "value": "卡标题"
     }
   ],
   "s5RV9B": [
@@ -10231,7 +10375,7 @@
   "sKy720": [
     {
       "type": 0,
-      "value": "Must provide value for workflow name."
+      "value": "必须为工作流名称提供值。"
     }
   ],
   "sRpETS": [
@@ -10249,7 +10393,7 @@
   "sVcvcG": [
     {
       "type": 0,
-      "value": "Basics"
+      "value": "基本信息"
     }
   ],
   "sYQDN+": [
@@ -10285,7 +10429,7 @@
   "sfTqHY": [
     {
       "type": 0,
-      "value": "Close panel"
+      "value": "关闭面板"
     }
   ],
   "shF9tZ": [
@@ -10371,7 +10515,7 @@
   "t+h+KW": [
     {
       "type": 0,
-      "value": "Input"
+      "value": "输入"
     }
   ],
   "t/RPwA": [
@@ -10383,13 +10527,13 @@
   "t0tN4J": [
     {
       "type": 0,
-      "value": "Code view"
+      "value": "代码视图"
     }
   ],
   "t7ytOJ": [
     {
       "type": 0,
-      "value": "Status"
+      "value": "状态"
     }
   ],
   "t9RwOi": [
@@ -10419,7 +10563,7 @@
   "tGSsgZ": [
     {
       "type": 0,
-      "value": "select an identity"
+      "value": "选择标识"
     }
   ],
   "tH2pT1": [
@@ -10473,13 +10617,13 @@
   "tQIXhy": [
     {
       "type": 0,
-      "value": "Original expression"
+      "value": "原始表达式"
     }
   ],
   "tRe2Ct": [
     {
       "type": 0,
-      "value": "Name"
+      "value": "名称"
     }
   ],
   "tTIsTX": [
@@ -10543,7 +10687,7 @@
   "tbl/ar": [
     {
       "type": 0,
-      "value": "No items"
+      "value": "无项目"
     }
   ],
   "td5//c": [
@@ -10561,19 +10705,19 @@
   "tjQdhq": [
     {
       "type": 0,
-      "value": "Type"
+      "value": "类型"
     }
   ],
   "toWTrl": [
     {
       "type": 0,
-      "value": "Search"
+      "value": "搜索"
     }
   ],
   "tooc6v": [
     {
       "type": 0,
-      "value": "Switch '"
+      "value": "将 '"
     },
     {
       "type": 1,
@@ -10581,7 +10725,7 @@
     },
     {
       "type": 0,
-      "value": "' to the local time"
+      "value": "' 切换到本地时间"
     }
   ],
   "tqqUHX": [
@@ -10593,7 +10737,7 @@
   "tt1pJC": [
     {
       "type": 0,
-      "value": "You will lose all unsaved changes. Are you sure you want to discard the changes?"
+      "value": "你将丢失所有未保存的更改。是否确实要放弃更改？"
     }
   ],
   "tu4TTM": [
@@ -10605,13 +10749,13 @@
   "twr0pi": [
     {
       "type": 0,
-      "value": "Copy trigger"
+      "value": "复制触发器"
     }
   ],
   "tzeDPE": [
     {
       "type": 0,
-      "value": "State type"
+      "value": "状态类型"
     }
   ],
   "u81zB9": [
@@ -10635,13 +10779,13 @@
   "uEI5Wo": [
     {
       "type": 0,
-      "value": "Value"
+      "value": "值"
     }
   ],
   "uIgGKj": [
     {
       "type": 0,
-      "value": "Managed identity"
+      "value": "托管标识"
     }
   ],
   "uIurld": [
@@ -10687,13 +10831,13 @@
   "uSr3WX": [
     {
       "type": 0,
-      "value": "Connection name"
+      "value": "连接名称"
     }
   ],
   "uTTbhk": [
     {
       "type": 0,
-      "value": "Stateless"
+      "value": "无状态"
     }
   ],
   "uUlBZ8": [
@@ -10741,7 +10885,7 @@
   "udnt8c": [
     {
       "type": 0,
-      "value": "Secure object"
+      "value": "安全对象"
     }
   ],
   "uesaee": [
@@ -10771,7 +10915,7 @@
   "umLmPm": [
     {
       "type": 0,
-      "value": "Operation Panel"
+      "value": "操作面板"
     }
   ],
   "unMG8m": [
@@ -10843,7 +10987,7 @@
   "uzj2d3": [
     {
       "type": 0,
-      "value": "Close panel"
+      "value": "关闭面板"
     }
   ],
   "uzsleE": [
@@ -10855,7 +10999,7 @@
   "v+FA8N": [
     {
       "type": 0,
-      "value": "Local time"
+      "value": "本地时间"
     }
   ],
   "v+keTP": [
@@ -10873,7 +11017,7 @@
   "v4JmCE": [
     {
       "type": 0,
-      "value": "Please explain how you would like to update your expression: \""
+      "value": "请说明你希望如何更新表达式： \""
     },
     {
       "type": 1,
@@ -10911,13 +11055,13 @@
   "vNqq43": [
     {
       "type": 0,
-      "value": "Add loop"
+      "value": "添加循环"
     }
   ],
   "vO/I7P": [
     {
       "type": 0,
-      "value": "Switch '"
+      "value": "将 '"
     },
     {
       "type": 1,
@@ -10925,7 +11069,7 @@
     },
     {
       "type": 0,
-      "value": "' to the UTC time format"
+      "value": "' 切换为 UTC 时间格式"
     }
   ],
   "vQcQkU": [
@@ -10985,7 +11129,7 @@
   "voRDKP": [
     {
       "type": 0,
-      "value": "Headers"
+      "value": "标头"
     }
   ],
   "vr70Gn": [
@@ -11029,13 +11173,13 @@
   "w+7aGo": [
     {
       "type": 0,
-      "value": "Connections list"
+      "value": "Connections列表"
     }
   ],
   "w+t06Q": [
     {
       "type": 0,
-      "value": "Select fields"
+      "value": "选择字段"
     }
   ],
   "w0pI5M": [
@@ -11065,7 +11209,7 @@
   "wBBu4g": [
     {
       "type": 0,
-      "value": "Missing information for workflow creation"
+      "value": "缺少创建工作流的信息"
     }
   ],
   "wEaGWn": [
@@ -11089,7 +11233,7 @@
   "wG8fwz": [
     {
       "type": 0,
-      "value": "Bullet list"
+      "value": "项目符号列表"
     }
   ],
   "wGYmui": [
@@ -11101,7 +11245,7 @@
   "wKJdDk": [
     {
       "type": 0,
-      "value": "Unsupported token type: "
+      "value": "不支持的令牌类型: "
     },
     {
       "type": 1,
@@ -11123,7 +11267,7 @@
   "wPjnM9": [
     {
       "type": 0,
-      "value": "Paste a parallel action"
+      "value": "粘贴并行操作"
     }
   ],
   "wPlTDB": [
@@ -11147,7 +11291,7 @@
   "wTaSTp": [
     {
       "type": 0,
-      "value": "Please save the map before testing"
+      "value": "请在测试前保存地图"
     }
   ],
   "wV3Lmd": [
@@ -11171,13 +11315,13 @@
   "wXLEcJ": [
     {
       "type": 0,
-      "value": "Insert data from previous step (you can also add by typing Alt + / in the editor)"
+      "value": "插入上一步中的数据(还可以通过在编辑器中键入 Alt + / 来添加)"
     }
   ],
   "wYzIf2": [
     {
       "type": 0,
-      "value": "Unsupported token type: "
+      "value": "不支持的令牌类型: "
     },
     {
       "type": 1,
@@ -11187,13 +11331,13 @@
   "wfekJ7": [
     {
       "type": 0,
-      "value": "Type"
+      "value": "类型"
     }
   ],
   "wjiptl": [
     {
       "type": 0,
-      "value": "Node Search Panel"
+      "value": "节点搜索面板"
     }
   ],
   "wkvUUA": [
@@ -11236,6 +11380,12 @@
     {
       "type": 0,
       "value": "画布"
+    }
+  ],
+  "wx/ZQP": [
+    {
+      "type": 0,
+      "value": "添加输入"
     }
   ],
   "wxaQwD": [
@@ -11295,7 +11445,7 @@
   "xDHpeS": [
     {
       "type": 0,
-      "value": "Review your settings, ensure everything is correctly set up, and create your workflow."
+      "value": "查看你的设置，确保所有内容都已正确设置，并创建工作流。"
     }
   ],
   "xFQXAI": [
@@ -11307,7 +11457,7 @@
   "xHyhqO": [
     {
       "type": 0,
-      "value": "Optimized for low latency"
+      "value": "针对低延迟进行了优化"
     }
   ],
   "xJ6vjn": [
@@ -11325,13 +11475,13 @@
   "xK8r1/": [
     {
       "type": 0,
-      "value": "Run information loading"
+      "value": "正在加载运行信息"
     }
   ],
   "xMgLd8": [
     {
       "type": 0,
-      "value": "Minimum interval"
+      "value": "最小间隔"
     }
   ],
   "xN3GEX": [
@@ -11403,7 +11553,7 @@
   "xwB12G": [
     {
       "type": 0,
-      "value": "Enter another option"
+      "value": "输入另一个选项"
     }
   ],
   "xwD1VZ": [
@@ -11421,7 +11571,7 @@
   "y+eYFf": [
     {
       "type": 0,
-      "value": "Workflow parameters"
+      "value": "工作流参数"
     }
   ],
   "y1e9yw": [
@@ -11445,7 +11595,7 @@
   "y6aoMi": [
     {
       "type": 0,
-      "value": "Show Logic App run details"
+      "value": "显示逻辑应用的运行详细信息"
     }
   ],
   "yB6PB/": [
@@ -11463,7 +11613,7 @@
   "yENrOg": [
     {
       "type": 0,
-      "value": "here"
+      "value": "此处"
     }
   ],
   "yF2R//": [
@@ -11475,7 +11625,7 @@
   "yKNKV/": [
     {
       "type": 0,
-      "value": "Try a different search term or remove filters"
+      "value": "请尝试其他搜索词或删除筛选器"
     }
   ],
   "yKOsmK": [
@@ -11493,13 +11643,13 @@
   "yOyeBT": [
     {
       "type": 0,
-      "value": "Toggle minimap"
+      "value": "切换缩略图"
     }
   ],
   "yQ6+nV": [
     {
       "type": 0,
-      "value": "Connect"
+      "value": "连接"
     }
   ],
   "yRDuqj": [
@@ -11535,7 +11685,7 @@
   "yeagrz": [
     {
       "type": 0,
-      "value": "Ideal for request-response and processing IoT events"
+      "value": "非常适合请求响应和处理 IoT 事件"
     }
   ],
   "yjierd": [
@@ -11555,7 +11705,7 @@
   "yjjXCQ": [
     {
       "type": 0,
-      "value": "Close panel"
+      "value": "关闭面板"
     }
   ],
   "yk7L+4": [
@@ -11579,7 +11729,7 @@
   "yqF/Ew": [
     {
       "type": 0,
-      "value": "Search workflow actions"
+      "value": "搜索工作流操作"
     }
   ],
   "yqRrQ/": [
@@ -11615,7 +11765,7 @@
   "yxctQw": [
     {
       "type": 0,
-      "value": "Logical name"
+      "value": "逻辑名称"
     }
   ],
   "yzqXMp": [
@@ -11641,7 +11791,7 @@
   "z/vIwi": [
     {
       "type": 0,
-      "value": "Data handling"
+      "value": "数据处理"
     }
   ],
   "z3VuE+": [
@@ -11653,7 +11803,7 @@
   "z5H3GF": [
     {
       "type": 0,
-      "value": "Display name"
+      "value": "显示名称"
     }
   ],
   "z9kH+0": [
@@ -11683,13 +11833,13 @@
   "zK5VPq": [
     {
       "type": 0,
-      "value": "Workflows in this Accelerator"
+      "value": "此加速器中的工作流"
     }
   ],
   "zMKxg9": [
     {
       "type": 0,
-      "value": "Name does not match the given pattern."
+      "value": "名称与给定的模式不匹配。"
     }
   ],
   "zNesUZ": [
@@ -11707,7 +11857,7 @@
   "zPRSM9": [
     {
       "type": 0,
-      "value": "App identity is not configured on the logic app environment variables."
+      "value": "未在逻辑应用环境变量上配置应用标识。"
     }
   ],
   "zUWAsJ": [
@@ -11767,7 +11917,7 @@
   "zkqKJ+": [
     {
       "type": 0,
-      "value": "Body"
+      "value": "主体"
     }
   ],
   "znGyyU": [
@@ -11785,13 +11935,13 @@
   "zsc+jp": [
     {
       "type": 0,
-      "value": "Functions"
+      "value": "函数"
     }
   ],
   "zxF7g+": [
     {
       "type": 0,
-      "value": "A to Z, ascending"
+      "value": "A 到 Z，升序"
     }
   ],
   "zxe9hh": [

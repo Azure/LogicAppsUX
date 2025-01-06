@@ -99,7 +99,6 @@ const CollapseButton = (props: PanelHeaderProps & { isRight: boolean; nodeId: st
 const OverflowButton = (props: PanelHeaderProps): JSX.Element => {
   const { headerItems } = props;
   const restoreFocusTargetAttribute = useRestoreFocusTarget();
-
   const intl = useIntl();
 
   const panelHeaderMenuCommands = intl.formatMessage({

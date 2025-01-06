@@ -129,9 +129,12 @@ export async function startDesignTimeApi(projectPath: string): Promise<void> {
       } else {
         throw new Error(localize('DesignTimeDirectoryError', 'Failed to create design-time directory.'));
       }
-    } catch (ex) {
+    } catch (error) {
+      const errorMessage = error instanceof Error ? error.message : error;
       const viewOutput: MessageItem = { title: localize('viewOutput', 'View output') };
-      const message: string = localize('DesignTimeError', "Can't start the background design-time process.");
+      const message = localize('DesignTimeError', "Can't start the background design-time process.") + errorMessage;
+      actionContext.telemetry.properties.startDesignTimeApiError = errorMessage;
+
       await window.showErrorMessage(message, viewOutput).then(async (result) => {
         if (result === viewOutput) {
           ext.outputChannel.show();
@@ -204,7 +207,7 @@ export async function isDesignTimeUp(url: string): Promise<boolean> {
   try {
     await axios.get(url);
     return Promise.resolve(true);
-  } catch (ex) {
+  } catch {
     return Promise.resolve(false);
   }
 }
@@ -236,22 +239,37 @@ export function startDesignTimeProcess(
     data = data.toString();
     cmdOutput = cmdOutput.concat(data);
     cmdOutputIncludingStderr = cmdOutputIncludingStderr.concat(data);
+    const languageWorkerText = 'Failed to start a new language worker for runtime: node';
     if (outputChannel) {
       outputChannel.append(data);
+    }
+    if (data.toLowerCase().includes(languageWorkerText.toLowerCase())) {
+      ext.outputChannel.appendLog(
+        'Language worker issue found when launching func most likely due to a conflicting port. Restarting design-time process.'
+      );
+      stopDesignTimeApi();
+      startDesignTimeApi(path.dirname(workingDirectory));
     }
   });
 
   ext.designChildProcess.stderr.on('data', (data: string | Buffer) => {
     data = data.toString();
     cmdOutputIncludingStderr = cmdOutputIncludingStderr.concat(data);
+    const portUnavailableText = 'is unavailable. Close the process using that port, or specify another port using';
     if (outputChannel) {
       outputChannel.append(data);
+    }
+    if (data.toLowerCase().includes(portUnavailableText.toLowerCase())) {
+      ext.outputChannel.appendLog('Conflicting port found when launching func. Restarting design-time process.');
+      stopDesignTimeApi();
+      startDesignTimeApi(path.dirname(workingDirectory));
     }
   });
 }
 
 export function stopDesignTimeApi(): void {
   ext.outputChannel.appendLog('Stopping Design Time Api');
+  ext.designTimePort = undefined;
   if (ext.designChildProcess === null || ext.designChildProcess === undefined) {
     return;
   }
@@ -264,7 +282,6 @@ export function stopDesignTimeApi(): void {
   }
   ext.designChildProcess = undefined;
   ext.designChildFuncProcessId = undefined;
-  ext.designTimePort = undefined;
 }
 
 export async function promptStartDesignTimeOption(context: IActionContext) {

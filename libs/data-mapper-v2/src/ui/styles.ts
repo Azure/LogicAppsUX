@@ -8,8 +8,8 @@ export const useStyles = makeStyles({
     width: '100vw',
     minHeight: 'calc(100vh - 50px)',
     maxHeight: 'calc(100vh - 40px)',
-    ...shorthands.overflow('hidden'),
-    ...shorthands.flex(1, 1, '1px'),
+    overflow: 'hidden',
+    flex: '1 1 1px',
   },
   dataMapperFunctionPanel: {
     backgroundColor: '#E8F3FE',
@@ -65,5 +65,8 @@ export const useStaticStyles = makeStaticStyles({
   },
   '.react-flow__node': {
     zIndex: '200 !important',
+  },
+  '.react-flow__node-schemaPanel': {
+    top: '0 !important',
   },
 });
