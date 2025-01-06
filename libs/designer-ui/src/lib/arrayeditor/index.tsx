@@ -71,6 +71,7 @@ export interface ArrayEditorProps extends BaseEditorProps {
   errorDetails?: { message: string };
   onMenuOpen?: CallbackHandler;
   suppressCastingForSerialize?: boolean;
+  isRequired?: boolean;
 }
 
 export const ArrayEditor: React.FC<ArrayEditorProps> = ({
@@ -86,6 +87,7 @@ export const ArrayEditor: React.FC<ArrayEditorProps> = ({
   castParameter,
   dataAutomationId,
   suppressCastingForSerialize,
+  isRequired = false,
   ...baseEditorProps
 }): JSX.Element => {
   const [collapsed, setCollapsed] = useState<boolean>(initialMode === InitialMode.Array);
@@ -100,8 +102,8 @@ export const ArrayEditor: React.FC<ArrayEditorProps> = ({
     if (!isComplex) {
       return [];
     }
-    return getOneDimensionalSchema(itemSchema);
-  }, [isComplex, itemSchema]);
+    return getOneDimensionalSchema(itemSchema, isRequired);
+  }, [isComplex, isRequired, itemSchema]);
 
   useEffect(() => {
     arrayType === ArrayType.COMPLEX
@@ -132,7 +134,7 @@ export const ArrayEditor: React.FC<ArrayEditorProps> = ({
   const updateComplexItems = (newItems: ComplexArrayItems[]) => {
     setItems(newItems);
     // we want to supress casting for when switching between expanded and collapsed array, but cast when serializing
-    const objectValue = parseComplexItems(newItems, itemSchema, castParameter, suppressCastingForSerialize);
+    const objectValue = parseComplexItems(newItems, itemSchema, isRequired, castParameter, suppressCastingForSerialize);
     const { castedValue, uncastedValue } = objectValue;
     setCollapsedValue(uncastedValue);
     if (!collapsed) {
