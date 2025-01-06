@@ -41,6 +41,10 @@
         {
             "filename": "libs/chatbot/package.json",
             "type": "json"
+        },
+        {
+            "filename": "apps/vs-code-react/package.json",
+            "type": "json"
         }
     ]
 }

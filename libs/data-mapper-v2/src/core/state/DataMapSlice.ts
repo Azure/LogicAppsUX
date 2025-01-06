@@ -17,7 +17,6 @@ import {
 import type { UnknownNode } from '../../utils/DataMap.Utils';
 import { addParentConnectionForRepeatingElementsNested, getParentId } from '../../utils/DataMap.Utils';
 import { createFunctionDictionary, isFunctionData } from '../../utils/Function.Utils';
-import { LogService } from '../../utils/Logging.Utils';
 import { flattenSchemaIntoDictionary, flattenSchemaNode, isSchemaNodeExtended, flattenSchemaIntoSortArray } from '../../utils/Schema.Utils';
 import type {
   FunctionMetadata,
@@ -473,7 +472,9 @@ export const dataMapSlice = createSlice({
       state.curDataMapOperation = newOp;
     },
     deleteConnectionFromFunctionMenu: (state, action: PayloadAction<{ inputIndex: number; targetId: string }>) => {
-      const newConnections = { ...state.curDataMapOperation.dataMapConnections };
+      const newConnections = {
+        ...state.curDataMapOperation.dataMapConnections,
+      };
       const inputValueToRemove = newConnections[action.payload.targetId].inputs[action.payload.inputIndex];
       if (isEmptyConnection(inputValueToRemove)) {
         return;
@@ -482,7 +483,13 @@ export const dataMapSlice = createSlice({
       deleteConnectionFromConnections(newConnections, sourceIdToRemove, action.payload.targetId, undefined);
       doDataMapOperation(
         state,
-        { ...state, curDataMapOperation: { ...state.curDataMapOperation, dataMapConnections: newConnections } },
+        {
+          ...state,
+          curDataMapOperation: {
+            ...state.curDataMapOperation,
+            dataMapConnections: newConnections,
+          },
+        },
         'Delete connection from function menu'
       );
     },
@@ -676,10 +683,6 @@ export default dataMapSlice.reducer;
 
 /* eslint-disable no-param-reassign */
 const doDataMapOperation = (state: DataMapState, newCurrentState: DataMapState, action: string) => {
-  if (LogService.logToConsole) {
-    console.log(`Action: ${action}`);
-  }
-
   state.curDataMapOperation = newCurrentState.curDataMapOperation;
   state.lastAction = action;
   state.sourceInEditState = newCurrentState.sourceInEditState;
@@ -738,9 +741,10 @@ export const deleteConnectionFromConnections = (
   if (connections[inputKey] !== undefined) {
     connections[inputKey].outputs = connections[inputKey].outputs.filter((output) => output.reactFlowKey !== outputKey);
   }
-  const outputNode = connections[outputKey].self.node;
-  let outputNodeInputs = connections[outputKey].inputs;
-  if (isFunctionData(outputNode) && outputNode?.maxNumberOfInputs === UnboundedInput) {
+  const outputNode = connections[outputKey]?.self?.node;
+  let outputNodeInputs = connections[outputKey]?.inputs ?? [];
+
+  if (outputNode && isFunctionData(outputNode) && outputNode?.maxNumberOfInputs === UnboundedInput) {
     outputNodeInputs.forEach((input, inputIndex) => {
       if (isNodeConnection(input) && input.reactFlowKey === inputKey) {
         if (!port || (port && generateInputHandleId(outputNode.inputs[inputIndex].name, inputIndex) === port)) {

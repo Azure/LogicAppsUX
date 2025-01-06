@@ -13,6 +13,7 @@ import type React from 'react';
 import { useContext, useEffect, useMemo } from 'react';
 import { useDispatch } from 'react-redux';
 import { MapDefinitionDeserializer } from '../mapHandling/MapDefinitionDeserializer';
+import { updateDeserializationMessages } from './state/ErrorsSlice';
 
 export interface DataMapDataProviderProps {
   xsltFilename?: string;
@@ -63,6 +64,8 @@ const DataProviderInner = ({
         fetchedFunctions
       );
       const connections = mapDefinitionDeserializer.convertFromMapDefinition();
+      const warningMessages = mapDefinitionDeserializer.getWarningMessages();
+      dispatch(updateDeserializationMessages(warningMessages));
       dispatch(
         setInitialDataMap({
           sourceSchema: extendedSourceSchema,

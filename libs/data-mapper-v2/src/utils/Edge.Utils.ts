@@ -1,8 +1,8 @@
-import { LogCategory, LogService } from './Logging.Utils';
+import { LogCategory } from './Logging.Utils';
 import * as PF from 'pathfinding';
 import type { Node as ReactFlowNode, XYPosition } from '@xyflow/react';
 import { Position } from '@xyflow/react';
-import { guid } from '@microsoft/logic-apps-shared';
+import { guid, LogEntryLevel, LoggerService } from '@microsoft/logic-apps-shared';
 
 interface BoundingBox {
   width: number;
@@ -67,8 +67,8 @@ const getQuadraticCurve = (a: XYPosition, b: XYPosition, c: XYPosition, borderRa
 
 export const createEdgeId = (sourceId: string, targetId: string) => `${sourceId}__edge__${targetId}`;
 export const createTemporaryEdgeId = (sourceId: string, targetId: string) => `${sourceId}__edge__${targetId}__edge__${guid()}`; //When scrolled out or parent collapsed
-
 export const splitEdgeId = (edgeId: string) => edgeId.split('__edge__');
+export const isEdgeId = (id: string) => splitEdgeId(id).length === 2;
 
 const getNextPointFromPosition = (curPoint: XYPosition, position: Position): XYPosition => {
   switch (position) {
@@ -342,10 +342,11 @@ const findPath = (grid: PF.Grid, start: XYPosition, end: XYPosition): number[][]
   const path = pathfinder.findPath(start.x, start.y, end.x, end.y, grid);
 
   if (path.length === 0) {
-    LogService.error(LogCategory.EdgeUtils, 'findPath', {
+    LoggerService().log({
+      level: LogEntryLevel.Error,
+      area: `${LogCategory.EdgeUtils}/findPath`,
       message: `Unable to find path between (${start.x}, ${start.y}) and (${end.x}, ${end.y}) - using simple path instead`,
     });
-
     const simplePathStart = [start.x, start.y];
     const simplePathMid = [(start.x + end.x) / 2, (start.y + end.y) / 2];
     const simplePathEnd = [end.x, end.y];

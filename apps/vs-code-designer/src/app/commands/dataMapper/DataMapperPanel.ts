@@ -39,6 +39,7 @@ export default class DataMapperPanel {
   public dataMapName: string;
   public dataMapStateIsDirty: boolean;
   public mapDefinitionData: MapDefinitionData | undefined;
+  private telemetryPrefix = 'data-mapper-vscode-extension';
 
   constructor(panel: WebviewPanel, dataMapName: string) {
     this.panel = panel;
@@ -167,6 +168,11 @@ export default class DataMapperPanel {
 
       case ExtensionCommand.getDataMapperVersion: {
         this.handleGetDataMapperVersion();
+        break;
+      }
+      case ExtensionCommand.logTelemetry: {
+        const eventName = `${this.telemetryPrefix}/${msg.data.name ?? msg.data.area}`;
+        ext.telemetryReporter.sendTelemetryEvent(eventName, { ...msg.data });
         break;
       }
     }
