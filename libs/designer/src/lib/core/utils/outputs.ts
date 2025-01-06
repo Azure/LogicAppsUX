@@ -41,6 +41,8 @@ import {
   safeSetObjectPropertyValue,
   unmap,
   WorkflowService,
+  LoggerService,
+  LogEntryLevel,
 } from '@microsoft/logic-apps-shared';
 import { ValueSegmentType, generateSchemaFromJsonString } from '@microsoft/designer-ui';
 import type {
@@ -528,6 +530,13 @@ export const loadDynamicOutputsInNode = async (
             },
             { message }
           );
+
+          LoggerService().log({
+            level: LogEntryLevel.Error,
+            area: 'loadDynamicOutputsInNode',
+            message: errorMessage,
+            error: error instanceof Error ? error : undefined,
+          });
 
           dispatch(
             updateErrorDetails({

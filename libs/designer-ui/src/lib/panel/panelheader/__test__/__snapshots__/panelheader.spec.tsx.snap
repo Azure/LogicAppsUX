@@ -8,7 +8,7 @@ exports[`lib/panel/panelHeader/main > should render 1`] = `
   >
     <button
       aria-label="Collapse"
-      className="fui-Button r1alrhcs collapse-toggle right ___1p24v7a_y4hy550 fhovq9v f1p3nwhy f11589ue f1q5o8ev f1pdflbu fkfq4zb f1t94bn6 f1s2uweq fr80ssc f1ukrpxl fecsdlb fnwyq0v ft1hn21 fuxngvv fy5bs14 fsv2rcd f1h0usnq fs4ktlq f16h9ulv fx2bmrt f1omzyqd f1dfjoow f1j98vj9 fj8yq94 f4xjyn1 f1et0tmh f9ddjv3 f1wi8ngl f1sbtcvk fwiuce9 fdghr9 f15vdbe4 fwbmr0d f44c6la"
+      className="fui-Button r1alrhcs collapse-toggle right ___w3o4yv0_df8ghi0 fhovq9v f1p3nwhy f11589ue f1q5o8ev f1pdflbu fkfq4zb f1t94bn6 f1s2uweq fr80ssc f1ukrpxl fecsdlb fnwyq0v ft1hn21 fuxngvv fy5bs14 fsv2rcd f1h0usnq fs4ktlq f16h9ulv fx2bmrt f1omzyqd f1dfjoow f1j98vj9 fj8yq94 f4xjyn1 f1et0tmh f9ddjv3 f1wi8ngl f18ktai2 fwbmr0d f44c6la"
       data-automation-id="msla-panel-header-collapse-nav"
       id="msla-panel-header-collapse-nav"
       onBlur={[Function]}
@@ -55,14 +55,14 @@ exports[`lib/panel/panelHeader/main > should render 1`] = `
       className="msla-panel-card-header"
     >
       <div
-        className="fui-Spinner r1k3z50n msla-card-header-spinner"
+        className="fui-Spinner r82apo5 msla-card-header-spinner"
         role="progressbar"
       >
         <span
           className="fui-Spinner__spinner rvgcg50 ___ruqntd0_k4fqbj0 fjamq6b f64fuq3 f1v3ph3m"
         >
           <span
-            className="fui-Spinner__spinnerTail r1lregi5"
+            className="fui-Spinner__spinnerTail rxov3xa"
           />
         </span>
       </div>
@@ -99,7 +99,7 @@ exports[`lib/panel/panelHeader/main > should render 1`] = `
       <button
         aria-haspopup="menu"
         aria-label="More commands"
-        className="fui-Button r1alrhcs ___1p24v7a_y4hy550 fhovq9v f1p3nwhy f11589ue f1q5o8ev f1pdflbu fkfq4zb f1t94bn6 f1s2uweq fr80ssc f1ukrpxl fecsdlb fnwyq0v ft1hn21 fuxngvv fy5bs14 fsv2rcd f1h0usnq fs4ktlq f16h9ulv fx2bmrt f1omzyqd f1dfjoow f1j98vj9 fj8yq94 f4xjyn1 f1et0tmh f9ddjv3 f1wi8ngl f1sbtcvk fwiuce9 fdghr9 f15vdbe4 fwbmr0d f44c6la"
+        className="fui-Button r1alrhcs ___w3o4yv0_df8ghi0 fhovq9v f1p3nwhy f11589ue f1q5o8ev f1pdflbu fkfq4zb f1t94bn6 f1s2uweq fr80ssc f1ukrpxl fecsdlb fnwyq0v ft1hn21 fuxngvv fy5bs14 fsv2rcd f1h0usnq fs4ktlq f16h9ulv fx2bmrt f1omzyqd f1dfjoow f1j98vj9 fj8yq94 f4xjyn1 f1et0tmh f9ddjv3 f1wi8ngl f18ktai2 fwbmr0d f44c6la"
         data-automation-id="msla-panel-header-more-options"
         data-tabster="{"restorer":{"type":1}}"
         id="menur2"
@@ -167,7 +167,7 @@ exports[`lib/panel/panelHeader/main > should render with panel header buttons 1`
   >
     <button
       aria-label="Collapse"
-      className="fui-Button r1alrhcs collapse-toggle right ___1p24v7a_y4hy550 fhovq9v f1p3nwhy f11589ue f1q5o8ev f1pdflbu fkfq4zb f1t94bn6 f1s2uweq fr80ssc f1ukrpxl fecsdlb fnwyq0v ft1hn21 fuxngvv fy5bs14 fsv2rcd f1h0usnq fs4ktlq f16h9ulv fx2bmrt f1omzyqd f1dfjoow f1j98vj9 fj8yq94 f4xjyn1 f1et0tmh f9ddjv3 f1wi8ngl f1sbtcvk fwiuce9 fdghr9 f15vdbe4 fwbmr0d f44c6la"
+      className="fui-Button r1alrhcs collapse-toggle right ___w3o4yv0_df8ghi0 fhovq9v f1p3nwhy f11589ue f1q5o8ev f1pdflbu fkfq4zb f1t94bn6 f1s2uweq fr80ssc f1ukrpxl fecsdlb fnwyq0v ft1hn21 fuxngvv fy5bs14 fsv2rcd f1h0usnq fs4ktlq f16h9ulv fx2bmrt f1omzyqd f1dfjoow f1j98vj9 fj8yq94 f4xjyn1 f1et0tmh f9ddjv3 f1wi8ngl f18ktai2 fwbmr0d f44c6la"
       data-automation-id="msla-panel-header-collapse-nav"
       id="msla-panel-header-collapse-nav"
       onBlur={[Function]}
@@ -214,14 +214,14 @@ exports[`lib/panel/panelHeader/main > should render with panel header buttons 1`
       className="msla-panel-card-header"
     >
       <div
-        className="fui-Spinner r1k3z50n msla-card-header-spinner"
+        className="fui-Spinner r82apo5 msla-card-header-spinner"
         role="progressbar"
       >
         <span
           className="fui-Spinner__spinner rvgcg50 ___ruqntd0_k4fqbj0 fjamq6b f64fuq3 f1v3ph3m"
         >
           <span
-            className="fui-Spinner__spinnerTail r1lregi5"
+            className="fui-Spinner__spinnerTail rxov3xa"
           />
         </span>
       </div>
@@ -258,7 +258,7 @@ exports[`lib/panel/panelHeader/main > should render with panel header buttons 1`
       <button
         aria-haspopup="menu"
         aria-label="More commands"
-        className="fui-Button r1alrhcs ___1p24v7a_y4hy550 fhovq9v f1p3nwhy f11589ue f1q5o8ev f1pdflbu fkfq4zb f1t94bn6 f1s2uweq fr80ssc f1ukrpxl fecsdlb fnwyq0v ft1hn21 fuxngvv fy5bs14 fsv2rcd f1h0usnq fs4ktlq f16h9ulv fx2bmrt f1omzyqd f1dfjoow f1j98vj9 fj8yq94 f4xjyn1 f1et0tmh f9ddjv3 f1wi8ngl f1sbtcvk fwiuce9 fdghr9 f15vdbe4 fwbmr0d f44c6la"
+        className="fui-Button r1alrhcs ___w3o4yv0_df8ghi0 fhovq9v f1p3nwhy f11589ue f1q5o8ev f1pdflbu fkfq4zb f1t94bn6 f1s2uweq fr80ssc f1ukrpxl fecsdlb fnwyq0v ft1hn21 fuxngvv fy5bs14 fsv2rcd f1h0usnq fs4ktlq f16h9ulv fx2bmrt f1omzyqd f1dfjoow f1j98vj9 fj8yq94 f4xjyn1 f1et0tmh f9ddjv3 f1wi8ngl f18ktai2 fwbmr0d f44c6la"
         data-automation-id="msla-panel-header-more-options"
         data-tabster="{"restorer":{"type":1}}"
         id="menura"
@@ -363,7 +363,7 @@ exports[`lib/panel/panelHeader/main > should render with panel header menu 1`] =
   >
     <button
       aria-label="Collapse"
-      className="fui-Button r1alrhcs collapse-toggle right ___1p24v7a_y4hy550 fhovq9v f1p3nwhy f11589ue f1q5o8ev f1pdflbu fkfq4zb f1t94bn6 f1s2uweq fr80ssc f1ukrpxl fecsdlb fnwyq0v ft1hn21 fuxngvv fy5bs14 fsv2rcd f1h0usnq fs4ktlq f16h9ulv fx2bmrt f1omzyqd f1dfjoow f1j98vj9 fj8yq94 f4xjyn1 f1et0tmh f9ddjv3 f1wi8ngl f1sbtcvk fwiuce9 fdghr9 f15vdbe4 fwbmr0d f44c6la"
+      className="fui-Button r1alrhcs collapse-toggle right ___w3o4yv0_df8ghi0 fhovq9v f1p3nwhy f11589ue f1q5o8ev f1pdflbu fkfq4zb f1t94bn6 f1s2uweq fr80ssc f1ukrpxl fecsdlb fnwyq0v ft1hn21 fuxngvv fy5bs14 fsv2rcd f1h0usnq fs4ktlq f16h9ulv fx2bmrt f1omzyqd f1dfjoow f1j98vj9 fj8yq94 f4xjyn1 f1et0tmh f9ddjv3 f1wi8ngl f18ktai2 fwbmr0d f44c6la"
       data-automation-id="msla-panel-header-collapse-nav"
       id="msla-panel-header-collapse-nav"
       onBlur={[Function]}
@@ -410,14 +410,14 @@ exports[`lib/panel/panelHeader/main > should render with panel header menu 1`] =
       className="msla-panel-card-header"
     >
       <div
-        className="fui-Spinner r1k3z50n msla-card-header-spinner"
+        className="fui-Spinner r82apo5 msla-card-header-spinner"
         role="progressbar"
       >
         <span
           className="fui-Spinner__spinner rvgcg50 ___ruqntd0_k4fqbj0 fjamq6b f64fuq3 f1v3ph3m"
         >
           <span
-            className="fui-Spinner__spinnerTail r1lregi5"
+            className="fui-Spinner__spinnerTail rxov3xa"
           />
         </span>
       </div>
@@ -454,7 +454,7 @@ exports[`lib/panel/panelHeader/main > should render with panel header menu 1`] =
       <button
         aria-haspopup="menu"
         aria-label="More commands"
-        className="fui-Button r1alrhcs ___1p24v7a_y4hy550 fhovq9v f1p3nwhy f11589ue f1q5o8ev f1pdflbu fkfq4zb f1t94bn6 f1s2uweq fr80ssc f1ukrpxl fecsdlb fnwyq0v ft1hn21 fuxngvv fy5bs14 fsv2rcd f1h0usnq fs4ktlq f16h9ulv fx2bmrt f1omzyqd f1dfjoow f1j98vj9 fj8yq94 f4xjyn1 f1et0tmh f9ddjv3 f1wi8ngl f1sbtcvk fwiuce9 fdghr9 f15vdbe4 fwbmr0d f44c6la"
+        className="fui-Button r1alrhcs ___w3o4yv0_df8ghi0 fhovq9v f1p3nwhy f11589ue f1q5o8ev f1pdflbu fkfq4zb f1t94bn6 f1s2uweq fr80ssc f1ukrpxl fecsdlb fnwyq0v ft1hn21 fuxngvv fy5bs14 fsv2rcd f1h0usnq fs4ktlq f16h9ulv fx2bmrt f1omzyqd f1dfjoow f1j98vj9 fj8yq94 f4xjyn1 f1et0tmh f9ddjv3 f1wi8ngl f18ktai2 fwbmr0d f44c6la"
         data-automation-id="msla-panel-header-more-options"
         data-tabster="{"restorer":{"type":1}}"
         id="menur6"

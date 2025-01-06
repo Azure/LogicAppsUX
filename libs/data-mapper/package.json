@@ -1,10 +1,10 @@
 {
   "name": "@microsoft/logic-apps-data-mapper",
-  "version": "5.3.0",
+  "version": "5.17.0",
   "dependencies": {
     "@fluentui/azure-themes": "8.5.70",
     "@fluentui/react": "8.110.2",
-    "@fluentui/react-components": "9.42.0",
+    "@fluentui/react-components": "9.56.0",
     "@fluentui/react-hooks": "8.6.20",
     "@fluentui/react-icons": "2.0.224",
     "@fluentui/react-migration-v8-v9": "^9.2.16",
@@ -44,7 +44,10 @@
     },
     "./package.json": "./package.json"
   },
-  "files": ["build/lib/**/*", "src"],
+  "files": [
+    "build/lib/**/*",
+    "src"
+  ],
   "license": "MIT",
   "main": "src/index.ts",
   "module": "src/index.ts",

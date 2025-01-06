@@ -20,12 +20,12 @@ import { useDispatch, useSelector } from 'react-redux';
 import { generateMapMetadata } from '../../mapHandling/MapMetadataSerializer';
 import { DataMapperFileService, generateDataMapXslt } from '../../core';
 import { saveDataMap, updateDataMapLML } from '../../core/state/DataMapSlice';
-import { LogCategory, LogService } from '../../utils/Logging.Utils';
+import { LogCategory } from '../../utils/Logging.Utils';
 import type { MetaMapDefinition } from '../../mapHandling/MapDefinitionSerializer';
 import { convertToMapDefinition } from '../../mapHandling/MapDefinitionSerializer';
-import { toggleCodeView, toggleTestPanel } from '../../core/state/PanelSlice';
+import { toggleCodeView, toggleMapChecker, toggleTestPanel } from '../../core/state/PanelSlice';
 import { useStyles } from './styles';
-import { emptyCanvasRect } from '@microsoft/logic-apps-shared';
+import { emptyCanvasRect, LogEntryLevel, LoggerService } from '@microsoft/logic-apps-shared';
 
 export type EditorCommandBarProps = {};
 
@@ -72,7 +72,9 @@ export const EditorCommandBar = (_props: EditorCommandBarProps) => {
         } else if (error instanceof Error) {
           errorMessage = error.message;
         }
-        LogService.error(LogCategory.DataMapperDesigner, 'dataMapDefinition', {
+        LoggerService().log({
+          level: LogEntryLevel.Error,
+          area: `${LogCategory.DataMapperDesigner}/dataMapDefinition`,
           message: errorMessage,
         });
         return { isSuccess: false, errorNodes: [] };
@@ -87,6 +89,10 @@ export const EditorCommandBar = (_props: EditorCommandBarProps) => {
 
   const onCodeViewClick = useCallback(() => {
     dispatch(toggleCodeView());
+  }, [dispatch]);
+
+  const onMapCheckerClick = useCallback(() => {
+    dispatch(toggleMapChecker());
   }, [dispatch]);
 
   const onSaveClick = useCallback(() => {
@@ -110,12 +116,16 @@ export const EditorCommandBar = (_props: EditorCommandBarProps) => {
         .then((xsltStr) => {
           DataMapperFileService().saveXsltCall(xsltStr);
 
-          LogService.log(LogCategory.DataMapperDesigner, 'onGenerateClick', {
+          LoggerService().log({
+            level: LogEntryLevel.Verbose,
+            area: `${LogCategory.DataMapperDesigner}/onGenerateClick`,
             message: 'Successfully generated xslt',
           });
         })
         .catch((error: Error) => {
-          LogService.error(LogCategory.DataMapperDesigner, 'onGenerateClick', {
+          LoggerService().log({
+            level: LogEntryLevel.Error,
+            area: `${LogCategory.DataMapperDesigner}/onGenerateClick`,
             message: JSON.stringify(error),
           });
           dispatchToast(
@@ -194,6 +204,11 @@ export const EditorCommandBar = (_props: EditorCommandBarProps) => {
         id: 'VysSj3',
         description: 'Button for View Code',
       }),
+      VIEW_MAP_CHECKER: intl.formatMessage({
+        defaultMessage: 'Map errors',
+        id: '1QktJw',
+        description: 'Button to see map errors',
+      }),
       DISABLED_TEST: intl.formatMessage({
         defaultMessage: 'Please save the map before testing',
         id: 'wTaSTp',
@@ -212,6 +227,7 @@ export const EditorCommandBar = (_props: EditorCommandBarProps) => {
       discard: !isDirty,
       test: sourceInEditState || targetInEditState || !xsltFilename,
       codeView: sourceInEditState || targetInEditState,
+      mapChecker: sourceInEditState || targetInEditState,
     }),
     [isDirty, undoStack.length, sourceInEditState, targetInEditState, xsltFilename]
   );
@@ -247,7 +263,14 @@ export const EditorCommandBar = (_props: EditorCommandBarProps) => {
             {Resources.OPEN_TEST_PANEL}
           </ToolbarButton>
         </ToolbarGroup>
-        <ToolbarGroup>
+        <ToolbarGroup className={toolbarStyles.toolbarGroup}>
+          <ToolbarButton
+            disabled={disabledState.mapChecker}
+            icon={<OpenFilled color={disabledState.mapChecker ? undefined : tokens.colorPaletteBlueBorderActive} />}
+            onClick={onMapCheckerClick}
+          >
+            {Resources.VIEW_MAP_CHECKER}
+          </ToolbarButton>
           <Switch disabled={disabledState.codeView} label={Resources.VIEW_CODE} onChange={onCodeViewClick} checked={isCodeViewOpen} />
         </ToolbarGroup>
       </Toolbar>

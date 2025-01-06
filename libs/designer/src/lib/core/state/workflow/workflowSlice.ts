@@ -14,7 +14,7 @@ import type { PasteScopeNodePayload } from '../../parsers/pasteScopeInWorkflow';
 import { addNewEdge } from '../../parsers/restructuringHelpers';
 import { createWorkflowNode, getImmediateSourceNodeIds, transformOperationTitle } from '../../utils/graph';
 import { resetWorkflowState, setStateAfterUndoRedo } from '../global';
-import type { NodeOperation } from '../operation/operationMetadataSlice';
+import type { AddSettingsPayload, NodeOperation } from '../operation/operationMetadataSlice';
 import {
   updateNodeParameters,
   updateNodeSettings,
@@ -38,7 +38,7 @@ import { getDurationStringPanelMode } from '@microsoft/designer-ui';
 import type * as LogicAppsV2 from '@microsoft/logic-apps-shared/src/utils/src/lib/models/logicAppsV2';
 import { createSlice, isAnyOf } from '@reduxjs/toolkit';
 import type { PayloadAction } from '@reduxjs/toolkit';
-import type { NodeChange, NodeDimensionChange } from '@xyflow/react';
+import type { NodeChange, NodeDimensionChange } from '@xyflow/system';
 import type { UndoRedoPartialRootState } from '../undoRedo/undoRedoTypes';
 import { initializeInputsOutputsBinding } from '../../actions/bjsworkflow/monitoring';
 
@@ -526,6 +526,12 @@ export const workflowSlice = createSlice({
       nodeMetadata.runData = nodeRunData as LogicAppsV2.WorkflowRunAction;
     });
     builder.addCase(setStateAfterUndoRedo, (_, action: PayloadAction<UndoRedoPartialRootState>) => action.payload.workflow);
+    builder.addCase(updateNodeSettings, (state, action: PayloadAction<AddSettingsPayload>) => {
+      const { ignoreDirty = false } = action.payload;
+      if (!ignoreDirty) {
+        state.isDirty = true;
+      }
+    });
     builder.addMatcher(
       isAnyOf(
         addNode,
@@ -541,7 +547,6 @@ export const workflowSlice = createSlice({
         removeEdgeFromRunAfter,
         addEdgeFromRunAfter,
         replaceId,
-        updateNodeSettings,
         updateNodeConnection.fulfilled,
         updateStaticResults,
         updateParameterConditionalVisibility

@@ -242,7 +242,7 @@ export const General = ({
             concurrencySubLabel,
             /* isSubLabelToggle*/ true
           ),
-          ariaLabel: concurrencyTitle,
+          ariaLabel: concurrencySubLabel,
         },
         visible: concurrency?.isSupported,
       },
@@ -257,7 +257,7 @@ export const General = ({
           onValueChange: onConcurrencyRunValueChange,
           sliderLabel: degreeOfParallelism,
           readOnly,
-          ariaLabel: concurrencyTitle,
+          ariaLabel: degreeOfParallelism,
         },
         visible: concurrency?.isSupported && concurrency?.value?.enabled,
       },

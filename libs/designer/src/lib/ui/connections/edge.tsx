@@ -8,8 +8,8 @@ import { containsIdTag, removeIdTag, getEdgeCenter, RUN_AFTER_STATUS, useEdgeInd
 import type { ElkExtendedEdge } from 'elkjs/lib/elk-api';
 import type React from 'react';
 import { memo, useMemo } from 'react';
-import { getSmoothStepPath, useReactFlow, type EdgeProps } from '@xyflow/react';
-import { useOperationPanelSelectedNodeId } from '../../core/state/panel/panelSelectors';
+import { EdgeLabelRenderer, getSmoothStepPath, useReactFlow, type EdgeProps } from '@xyflow/react';
+import { useIsNodeSelectedInOperationPanel } from '../../core/state/panel/panelSelectors';
 import { css } from '@fluentui/utilities';
 
 interface EdgeContentProps {
@@ -23,18 +23,21 @@ interface EdgeContentProps {
 }
 
 const EdgeContent = (props: EdgeContentProps) => (
-  <foreignObject
-    width={foreignObjectWidth}
-    height={foreignObjectHeight}
-    x={props.x}
-    y={props.y}
-    className="edgebutton-foreignobject"
-    requiredExtensions="http://www.w3.org/1999/xhtml"
-  >
-    <div style={{ padding: '4px' }}>
+  <EdgeLabelRenderer>
+    <div
+      style={{
+        width: edgeContentWidth,
+        height: edgeContentHeight,
+        position: 'absolute',
+        left: props.x,
+        top: props.y,
+        pointerEvents: 'all',
+        zIndex: 100,
+      }}
+    >
       <DropZone graphId={props.graphId} parentId={props.parentId} childId={props.childId} isLeaf={props.isLeaf} tabIndex={props.tabIndex} />
     </div>
-  </foreignObject>
+  </EdgeLabelRenderer>
 );
 
 export interface LogicAppsEdgeProps {
@@ -45,8 +48,8 @@ export interface LogicAppsEdgeProps {
   style?: React.CSSProperties;
 }
 
-const foreignObjectHeight = 32;
-const foreignObjectWidth = 200;
+const edgeContentHeight = 24;
+const edgeContentWidth = 200;
 
 const runAfterWidth = 36;
 const runAfterHeight = 12;
@@ -78,8 +81,6 @@ const ButtonEdge: React.FC<EdgeProps<LogicAppsEdgeProps>> = ({
     targetX,
     targetY,
   });
-
-  const selectedNode = useOperationPanelSelectedNodeId();
 
   const filteredRunAfters: Record<string, string[]> = useMemo(
     () =>
@@ -132,9 +133,10 @@ const ButtonEdge: React.FC<EdgeProps<LogicAppsEdgeProps>> = ({
 
   const tabIndex = useEdgeIndex(id);
 
-  const highlighted = useMemo(() => {
-    return sourceId === selectedNode || targetId === selectedNode;
-  }, [sourceId, targetId, selectedNode]);
+  const isSourceSelected = useIsNodeSelectedInOperationPanel(sourceId);
+  const isTargetSelected = useIsNodeSelectedInOperationPanel(targetId);
+
+  const highlighted = useMemo(() => isSourceSelected || isTargetSelected, [isSourceSelected, isTargetSelected]);
 
   return (
     <>
@@ -160,14 +162,15 @@ const ButtonEdge: React.FC<EdgeProps<LogicAppsEdgeProps>> = ({
         strokeDasharray={showRunAfter ? '4' : '0'}
         markerEnd={`url(#arrow-end-${id})`}
       />
+
       {/* ADD ACTION / BRANCH BUTTONS */}
       {readOnly ? null : (
         <>
           {/* TOP BUTTON */}
           {((multipleTargets && showSourceButton) || multipleSources) && (
             <EdgeContent
-              x={sourceX - foreignObjectWidth / 2}
-              y={sourceY + 28 - foreignObjectHeight / 2}
+              x={sourceX - edgeContentWidth / 2}
+              y={sourceY + 28 - edgeContentHeight / 2}
               graphId={graphId}
               parentId={source}
               childId={multipleTargets ? undefined : target}
@@ -178,8 +181,8 @@ const ButtonEdge: React.FC<EdgeProps<LogicAppsEdgeProps>> = ({
           {/* MIDDLE BUTTON */}
           {(onlyEdge || (multipleTargets && multipleSources)) && (
             <EdgeContent
-              x={centerX - foreignObjectWidth / 2}
-              y={centerY - foreignObjectHeight / 2}
+              x={centerX - edgeContentWidth / 2}
+              y={centerY - edgeContentHeight / 2}
               graphId={graphId}
               parentId={source}
               childId={target}
@@ -190,8 +193,8 @@ const ButtonEdge: React.FC<EdgeProps<LogicAppsEdgeProps>> = ({
           {/* BOTTOM BUTTOM */}
           {((multipleSources && showTargetButton) || multipleTargets) && (
             <EdgeContent
-              x={targetX - foreignObjectWidth / 2}
-              y={targetY - 32 - foreignObjectHeight / 2 - (numRunAfters !== 0 ? 4 : 0)} // Make a little more room for run after
+              x={targetX - edgeContentWidth / 2}
+              y={targetY - 32 - edgeContentHeight / 2 - (numRunAfters !== 0 ? 4 : 0)} // Make a little more room for run after
               graphId={graphId}
               parentId={multipleSources ? undefined : source}
               childId={target}

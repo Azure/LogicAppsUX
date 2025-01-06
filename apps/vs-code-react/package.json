@@ -1,10 +1,10 @@
 {
   "name": "vscode-react",
-  "version": "0.0.0",
+  "version": "5.17.0",
   "dependencies": {
     "@fluentui/azure-themes": "8.5.70",
     "@fluentui/react": "8.110.2",
-    "@fluentui/react-components": "9.42.0",
+    "@fluentui/react-components": "9.56.0",
     "@fluentui/react-hooks": "8.6.20",
     "@microsoft/designer-ui": "workspace:*",
     "@microsoft/logic-apps-chatbot": "workspace:*",
@@ -38,7 +38,8 @@
   "scripts": {
     "build": "vite build",
     "build:extension": "vite build --outDir ../../vs-code-designer/dist/vs-code-react",
-    "lint": "eslint . --ext ts,tsx --report-unused-disable-directives --max-warnings 0"
+    "lint": "eslint . --ext ts,tsx --report-unused-disable-directives --max-warnings 0",
+    "test:extension-unit": "vitest run --retry=3"
   },
   "type": "module"
 }
