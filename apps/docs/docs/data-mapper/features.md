@@ -12,3 +12,6 @@ Checks run by MapCheckerPanel
 Deserialization Warnings
 - We generate warnings during deserialization if we are unable to find nodes or functions
 - These warnings are stored in Redux
+
+## Telemetry logging
+Docs can be found with the general logging [documentation](../Development/logging.md)

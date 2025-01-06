@@ -19,9 +19,36 @@ const defaultFilterConnector = (connector: Connector, runtimeFilter: string): bo
   }
   return true;
 };
-
+const priorityConnectors = [
+  'connectionproviders/request',
+  'connectionProviders/http',
+  'connectionProviders/inlineCode',
+  'serviceProviders/serviceBus',
+  '/managedApis/sql',
+  '/connectionProviders/azureFunctionOperation',
+  'managedApis/office365',
+];
+const getRunTimeValue = (connector: Connector): number => {
+  if (isBuiltInConnector(connector)) {
+    return 100;
+  }
+  if (isCustomConnector(connector)) {
+    return 200;
+  }
+  return 300;
+};
+const getPriorityValue = (connector: Connector): number => {
+  const t = priorityConnectors.findIndex((p) => connector.id.toLowerCase().endsWith(p.toLowerCase()));
+  return t !== -1 ? 200 - t : 100;
+};
 const defaultSortConnectors = (connectors: Connector[]): Connector[] => {
-  return connectors.sort((a, b) => a.properties.displayName?.localeCompare(b.properties.displayName));
+  return connectors.sort((a, b) => {
+    return (
+      getPriorityValue(b) - getPriorityValue(a) ||
+      getRunTimeValue(a) - getRunTimeValue(b) ||
+      a.properties.displayName?.localeCompare(b.properties.displayName)
+    );
+  });
 };
 
 export interface BrowseViewProps {

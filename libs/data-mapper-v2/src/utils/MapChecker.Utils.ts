@@ -169,9 +169,9 @@ export const areInputTypesValidForSchemaNode = (selfNode: SchemaNodeExtended, co
     return isValidCustomValueByType(input.value, selfNode.type);
   }
   if (isSchemaNodeExtended(input.node)) {
-    return isValidConnectionByType(selfNode.type, input.node.type);
+    return isValidConnectionByType(selfNode.type, input.node?.type);
   }
-  return isValidConnectionByType(selfNode.type, input.node.outputValueType);
+  return isValidConnectionByType(selfNode.type, input.node?.outputValueType);
 };
 
 // will add back when we get type info from backend

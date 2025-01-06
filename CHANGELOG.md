@@ -1,4 +1,29 @@
 # Logic Apps Designer
+## [5.17.0](https://github.com/Azure/LogicAppsUX/compare/v5.16.0...v5.17.0) (2025-01-06)
+
+
+### Features
+
+* **Data Mapper:** Add keyboard delete, fix circles cutting, handle existing map loading ([#6329](https://github.com/Azure/LogicAppsUX/issues/6329)) ([cc6be0b](https://github.com/Azure/LogicAppsUX/commit/cc6be0b3fcf3b78dda484db2ba44dd3ed48439cd))
+* **designer:** Add priority sort to Action and Trigger browse to make top actions more useful ([#6263](https://github.com/Azure/LogicAppsUX/issues/6263)) ([52ab139](https://github.com/Azure/LogicAppsUX/commit/52ab1392e001a58e5483fe433b46f4c9e7488e0f))
+* **vscode:** added telemetry docs and prefix for Data Mapper ([#6326](https://github.com/Azure/LogicAppsUX/issues/6326)) ([d53566a](https://github.com/Azure/LogicAppsUX/commit/d53566a2682e4b3ae5c5f697ddcc4fa617b2c90a))
+
+## [5.16.0](https://github.com/Azure/LogicAppsUX/compare/v5.15.0...v5.16.0) (2025-01-03)
+
+
+### Features
+
+* **Data Mapper:** Panel with warning and error messages ([#6315](https://github.com/Azure/LogicAppsUX/issues/6315)) ([0654502](https://github.com/Azure/LogicAppsUX/commit/0654502c9e73377a967df3f651bc9c0baf8ee113))
+
+
+### Bug Fixes
+
+* **designer:** Add ignore dirty prop to updateNodeSettings action ([#6224](https://github.com/Azure/LogicAppsUX/issues/6224)) ([0aed6e3](https://github.com/Azure/LogicAppsUX/commit/0aed6e3232668c8b4d07f094e66bc0158dbe77bd))
+* **Designer:** Optimized node and edge re-rendering on selection ([#6319](https://github.com/Azure/LogicAppsUX/issues/6319)) ([77611d8](https://github.com/Azure/LogicAppsUX/commit/77611d88ef910c37588ecdd3bb273c3a3bbfbfae))
+* **vscode:** Add designer dispatcher for command bar  ([#6320](https://github.com/Azure/LogicAppsUX/issues/6320)) ([86d40ac](https://github.com/Azure/LogicAppsUX/commit/86d40ac50fa1975e052576146bbae52431a3ff99))
+* **vscode:** Fixed IaC Generation Errors Due to Port Collision ([#6321](https://github.com/Azure/LogicAppsUX/issues/6321)) ([0527ef6](https://github.com/Azure/LogicAppsUX/commit/0527ef653f16dade79848d5790281a421242a0de))
+* **vscode:** Remove azure identity and restrict hybrid for public cloud ([#6215](https://github.com/Azure/LogicAppsUX/issues/6215)) ([e7d235a](https://github.com/Azure/LogicAppsUX/commit/e7d235ae697d36417f19f50852231d0385653aae))
+
 ## [5.15.0](https://github.com/Azure/LogicAppsUX/compare/v5.14.0...v5.15.0) (2025-01-02)
 
 
