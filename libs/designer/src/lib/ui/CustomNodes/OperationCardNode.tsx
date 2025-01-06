@@ -302,6 +302,7 @@ const DefaultNode = ({ targetPosition = Position.Top, sourcePosition = Position.
       <div className="nopan" ref={ref as any}>
         <Handle className="node-handle top" type="target" position={targetPosition} isConnectable={false} />
         <Card
+          active={isMonitoringView ? !isNullOrUndefined(runData?.status) :true}
           title={label}
           icon={iconUri}
           draggable={!readOnly && !isTrigger}

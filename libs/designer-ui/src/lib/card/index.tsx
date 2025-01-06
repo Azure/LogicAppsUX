@@ -174,7 +174,7 @@ export const Card: React.FC<CardProps> = memo(
         className={css(
           'msla-panel-card-container',
           selectionMode === 'selected' && 'msla-panel-card-container-selected',
-          !active && 'inactive',
+          !active && 'msla-card-inactive',
           cloned && 'msla-card-ghost-image',
           isDragging && 'dragging'
         )}
@@ -187,7 +187,7 @@ export const Card: React.FC<CardProps> = memo(
         tabIndex={nodeIndex}
         onKeyUp={keyboardInteraction.keyUp}
       >
-        {isMonitoringView ? (
+        {isMonitoringView && active ? (
           <StatusPill
             id={`${title}-status`}
             status={runData?.status}

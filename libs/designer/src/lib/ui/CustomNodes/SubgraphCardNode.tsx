@@ -15,6 +15,7 @@ import {
   useNewSwitchCaseId,
   useNodeDisplayName,
   useNodeMetadata,
+  useRunData,
   useWorkflowNode,
 } from '../../core/state/workflow/workflowSelectors';
 import { addSwitchCase, setFocusNode, toggleCollapsedGraphId } from '../../core/state/workflow/workflowSlice';
@@ -22,7 +23,7 @@ import { LoopsPager } from '../common/LoopsPager/LoopsPager';
 import { DropZone } from '../connections/dropzone';
 import { MessageBarType } from '@fluentui/react';
 import { SubgraphCard } from '@microsoft/designer-ui';
-import { SUBGRAPH_TYPES, removeIdTag, useNodeIndex } from '@microsoft/logic-apps-shared';
+import { SUBGRAPH_TYPES, isNullOrUndefined, removeIdTag, useNodeIndex } from '@microsoft/logic-apps-shared';
 import { memo, useCallback, useMemo } from 'react';
 import { useIntl } from 'react-intl';
 import { useDispatch } from 'react-redux';
@@ -46,6 +47,7 @@ const SubgraphCardNode = ({ data, targetPosition = Position.Top, sourcePosition 
   const operationInfo = useOperationInfo(graphId);
   const isMonitoringView = useMonitoringView();
   const normalizedType = node?.type.toLowerCase();
+  const runData = useRunData(id);
 
   const title = useNodeDisplayName(subgraphId);
 
@@ -138,6 +140,7 @@ const SubgraphCardNode = ({ data, targetPosition = Position.Top, sourcePosition 
             <>
               <SubgraphCard
                 id={subgraphId}
+                active={isMonitoringView ? !isNullOrUndefined(runData?.status) : true}
                 parentId={metadata?.graphId}
                 subgraphType={metadata.subgraphType}
                 title={title}

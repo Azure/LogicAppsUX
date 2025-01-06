@@ -1,10 +1,10 @@
-import { useReadOnly } from '../../core/state/designerOptions/designerOptionsSelectors';
+import { useMonitoringView, useReadOnly } from '../../core/state/designerOptions/designerOptionsSelectors';
 import { useIsNodeSelectedInOperationPanel } from '../../core/state/panel/panelSelectors';
-import { useActionMetadata, useIsLeafNode, useNodeMetadata } from '../../core/state/workflow/workflowSelectors';
+import { useActionMetadata, useIsLeafNode, useNodeMetadata, useRunData } from '../../core/state/workflow/workflowSelectors';
 import { DropZone } from '../connections/dropzone';
 import { css } from '@fluentui/react';
 import { GraphContainer } from '@microsoft/designer-ui';
-import { SUBGRAPH_TYPES, useNodeSize, useNodeLeafIndex } from '@microsoft/logic-apps-shared';
+import { SUBGRAPH_TYPES, useNodeSize, useNodeLeafIndex, isNullOrUndefined } from '@microsoft/logic-apps-shared';
 import { memo } from 'react';
 import { Handle, Position, type NodeProps } from '@xyflow/react';
 
@@ -15,9 +15,11 @@ const GraphContainerNode = ({ targetPosition = Position.Top, sourcePosition = Po
   const actionMetadata = useActionMetadata(id);
   const nodeMetadata = useNodeMetadata(id);
   const isLeaf = useIsLeafNode(id);
+  const isMonitoringView = useMonitoringView();
   const showLeafComponents = !readOnly && actionMetadata?.type && isLeaf;
   const isSubgraphContainer = nodeMetadata?.subgraphType !== undefined;
   const hasFooter = nodeMetadata?.subgraphType === SUBGRAPH_TYPES.UNTIL_DO;
+  const runData = useRunData(id);
 
   const nodeSize = useNodeSize(id);
 
@@ -33,7 +35,7 @@ const GraphContainerNode = ({ targetPosition = Position.Top, sourcePosition = Po
         }}
       >
         <Handle className="node-handle top" type="target" position={targetPosition} isConnectable={false} />
-        <GraphContainer selected={selected} />
+        <GraphContainer active={isMonitoringView ? !isNullOrUndefined(runData?.status) : true} selected={selected} />
         <Handle className="node-handle bottom" type="source" position={sourcePosition} isConnectable={false} />
       </div>
       {showLeafComponents && (
