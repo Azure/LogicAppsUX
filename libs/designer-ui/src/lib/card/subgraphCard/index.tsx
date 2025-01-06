@@ -28,6 +28,7 @@ interface SubgraphCardProps {
   errorLevel?: MessageBarType;
   errorMessage?: string;
   nodeIndex?: number;
+  active?: boolean;
 }
 
 export const SubgraphCard: React.FC<SubgraphCardProps> = ({
@@ -45,6 +46,7 @@ export const SubgraphCard: React.FC<SubgraphCardProps> = ({
   errorLevel,
   errorMessage,
   nodeIndex,
+  active = true,
 }) => {
   const intl = useIntl();
 
@@ -149,7 +151,7 @@ export const SubgraphCard: React.FC<SubgraphCardProps> = ({
 
   if (data.size === 'large') {
     return (
-      <div className={css('msla-subgraph-card', data.size)} style={colorVars} tabIndex={-1}>
+      <div className={css('msla-subgraph-card', data.size, !active && 'msla-card-inactive')} style={colorVars} tabIndex={-1}>
         <div className={css('msla-selection-box', 'white-outline', selectionMode)} tabIndex={-1} />
         <button
           id={`msla-node-${id}`}
@@ -170,7 +172,7 @@ export const SubgraphCard: React.FC<SubgraphCardProps> = ({
   }
   if (data.size === 'small') {
     return (
-      <div style={{ width: 200, display: 'grid', placeItems: 'center' }}>
+      <div className={css(!active && 'msla-card-inactive')} style={{ width: 200, display: 'grid', placeItems: 'center' }}>
         <div
           tabIndex={nodeIndex}
           role={'button'}

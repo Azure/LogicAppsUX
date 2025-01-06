@@ -55,7 +55,7 @@ export const isTokenValueSegment = (value: ValueSegment[]): boolean => {
 export const validateDictionaryStrings = (s: string): boolean => {
   try {
     JSON.parse(s);
-  } catch (e) {
+  } catch {
     return false;
   }
   return true;
@@ -179,12 +179,24 @@ export const removeQuotes = (s: string): string => {
 };
 
 export const getDropdownOptionsFromOptions = (editorOptions: any): ComboboxItem[] => {
+  const usedKeys = new Set<string>();
   let dropdownOptions: ComboboxItem[] = editorOptions?.options ?? [];
 
   // handle cases where the displayName is not a string
   dropdownOptions = dropdownOptions.map((option) => {
     const stringifiedDisplayName = typeof option.displayName === 'string' ? option.displayName : JSON.stringify(option.displayName);
-    return { ...option, displayName: stringifiedDisplayName, key: option.key ?? stringifiedDisplayName };
+    const baseKey = option.key ?? stringifiedDisplayName;
+    let uniqueKey = baseKey;
+    let counter = 1;
+
+    while (usedKeys.has(uniqueKey)) {
+      uniqueKey = `${baseKey}_${counter}`;
+      counter++;
+    }
+
+    usedKeys.add(uniqueKey);
+
+    return { ...option, displayName: stringifiedDisplayName, key: uniqueKey };
   });
 
   return dropdownOptions;
