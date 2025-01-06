@@ -28,7 +28,7 @@ export class SelectFolderForNewWorkspaceStep extends AzureWizardPromptStep<IProj
   }
 
   public async prompt(context: IProjectWizardContext): Promise<void> {
-    const placeHolder: string = localize('selectNewProjectFolder', 'Select the folder that will contain your Logic Apps Workspace');
+    const placeHolder: string = localize('selectNewProjectFolder', 'Select the folder to store your logic app workspace');
     const projectPath = await SelectFolderForNewWorkspaceStep.setProjectPath(context, placeHolder);
     context.projectPath = projectPath;
     context.projectType = ProjectType.logicApp;
