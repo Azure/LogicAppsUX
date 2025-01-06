@@ -245,7 +245,7 @@ export async function parameterizeConnectionsDuringImport(
     } catch (error) {
       const errorMessage = localize(
         'errorParameterizeConnections',
-        'Error while parameterizing existing connections: {0}',
+        'Error encountered while parameterizing existing connections: {0}',
         error.message ?? error
       );
       ext.outputChannel.appendLog(errorMessage);
