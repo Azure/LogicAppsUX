@@ -58,7 +58,7 @@ export async function cloudToLocalCommand(
   }
 
   const wizard: AzureWizard<IFunctionWizardContext> = new AzureWizard(wizardContext, {
-    title: localize('createLogicAppWorkspaceFromPackage', 'Create New Logic App Workspace from Package'),
+    title: localize('createLogicAppWorkspaceFromPackage', 'Create new logic app workspace from package'),
     promptSteps: [
       new SelectPackageStep(),
       new SelectFolderForNewWorkspaceStep(),
