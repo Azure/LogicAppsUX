@@ -452,12 +452,15 @@ export function getParameterEditorProps(
   } else if (editor === constants.EDITOR.DROPDOWN) {
     // Backwards compatibility for dropdown editor with old format
     const options: DropdownItem[] = (editorOptions?.items ?? editorOptions?.options ?? []).map(
-      ({ key, value, title: displayName, ...props }: any) => ({
-        ...props,
-        key: key ?? displayName,
-        value: value?.toString(),
-        displayName,
-      })
+      ({ key, value, title, displayName: _displayName, ...props }: any) => {
+        const displayName = _displayName ?? title;
+        return {
+          ...props,
+          key: key ?? displayName,
+          value: value?.toString(),
+          displayName: displayName,
+        };
+      }
     );
 
     editorOptions = {
