@@ -1,4 +1,11 @@
 # Logic Apps Designer
+### [4.105.9](https://github.com/Azure/LogicAppsUX/compare/v4.105.8...v4.105.9) (2025-01-07)
+
+
+### Bug Fixes
+
+* **Designer:** Prevent HTML editor from allowing DOM-based XSS ([#6147](https://github.com/Azure/LogicAppsUX/issues/6147)) ([#6331](https://github.com/Azure/LogicAppsUX/issues/6331)) ([5e4652c](https://github.com/Azure/LogicAppsUX/commit/5e4652ceeca23e1f6575dfaa035858876a7c06f6))
+
 ### [4.105.8](https://github.com/Azure/LogicAppsUX/compare/v4.105.7...v4.105.8) (2024-10-31)
 
 
