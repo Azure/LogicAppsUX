@@ -1,6 +1,6 @@
 import type { IDropdownOption, IDropdownStyles } from '@fluentui/react';
 import { css, Dropdown, FontSizes } from '@fluentui/react';
-import { useState } from 'react';
+import { useMemo, useState } from 'react';
 import { Label } from '../label';
 
 export const DropdownType = {
@@ -52,7 +52,7 @@ interface DropdownProps {
   selectedKeys?: string[] | undefined;
   options: IDropdownOption<any>[];
   placeholder: string;
-  onChange: (selectedValues: string[] | string) => void;
+  onChange: (selectedValues: string[] | string | number[]) => void;
   isMultiSelect?: boolean;
   className?: string;
   readOnly?: boolean;
@@ -72,6 +72,7 @@ export const DropdownControl = ({
   className,
   type,
 }: DropdownProps): JSX.Element => {
+  const isHoursDropDown = useMemo(() => type === DropdownType.Hours, [type]);
   const [selectedOption, setSelectedOption] = useState<string | undefined>(selectedKey);
   const [selectedOptions, setSelectedOptions] = useState<string[]>(selectedKeys ?? []);
   const handleOptionSelect = (_: React.FormEvent, option?: IDropdownOption<string>) => {
@@ -79,8 +80,15 @@ export const DropdownControl = ({
       const newKeys = option?.selected
         ? [...selectedOptions, option.key as string]
         : selectedOptions.filter((key: string) => key !== option?.key);
-      setSelectedOptions(newKeys);
-      onChange(newKeys);
+
+      if (isHoursDropDown) {
+        const newKeysAsIntegers = newKeys.map((key) => Number.parseInt(key, 10)).filter(Number.isFinite);
+        setSelectedOptions(newKeys);
+        onChange(newKeysAsIntegers);
+      } else {
+        setSelectedOptions(newKeys);
+        onChange(newKeys);
+      }
     } else if (option) {
       setSelectedOption(option.key as string);
       onChange(option.key as string);
@@ -93,7 +101,7 @@ export const DropdownControl = ({
         <Label text={label} isRequiredField={required} />
       </div>
       <Dropdown
-        styles={type === DropdownType.Timezone ? timezoneDropdownStyles : type === DropdownType.Hours ? hoursDropdownStyles : dropdownStyle}
+        styles={type === DropdownType.Timezone ? timezoneDropdownStyles : isHoursDropDown ? hoursDropdownStyles : dropdownStyle}
         selectedKey={selectedOption}
         selectedKeys={isMultiSelect ? selectedOptions : undefined}
         placeholder={placeholder}
