@@ -24,7 +24,7 @@ export interface Recurrence {
   startTime?: string;
   timeZone?: string;
   schedule?: {
-    hours?: string[];
+    hours?: number[];
     minutes?: number[];
     weekDays?: string[];
   };
@@ -84,13 +84,16 @@ export const ScheduleEditor = ({
             label={resources.hours.label}
             required={false}
             options={getScheduleHourValues(intl).map((option) => ({ key: option.value, text: option.displayName }))}
-            selectedKeys={recurrence.schedule?.hours}
+            selectedKeys={recurrence?.schedule?.hours?.map((hour) => hour.toString())}
             placeholder={resources.hours.description}
             isMultiSelect={true}
             onChange={(values) => {
+              const hours = Array.isArray(values)
+                ? values.map((value) => Number.parseInt(value as string, 10)).filter(Number.isFinite)
+                : undefined;
               updateRecurrence({
                 ...recurrence,
-                schedule: { ...recurrence.schedule, hours: (values as string[]).length ? (values as string[]) : undefined },
+                schedule: { ...recurrence.schedule, hours: hours?.length ? hours : undefined },
               });
             }}
             readOnly={readOnly}
