@@ -11,6 +11,12 @@
       "value": "Ostrzeżenie: typ węzła danych wejściowych jest niezgodny z typem węzła schematu"
     }
   ],
+  "+0ua83": [
+    {
+      "type": 0,
+      "value": "Parameters"
+    }
+  ],
   "+0yxlR": [
     {
       "type": 0,
@@ -69,6 +75,12 @@
     {
       "type": 0,
       "value": "Przegląd"
+    }
+  ],
+  "+M7bC6": [
+    {
+      "type": 0,
+      "value": "Succeeded with retries"
     }
   ],
   "+R90eK": [
@@ -1165,12 +1177,6 @@
       "value": "Otwórz połączenie"
     }
   ],
-  "41eMpW": [
-    {
-      "type": 0,
-      "value": "Oczekiwanie"
-    }
-  ],
   "43xObP": [
     {
       "type": 0,
@@ -1837,6 +1843,12 @@
       "value": "Parametr wymagany. Ciąg, z którego został pobrany podciąg."
     }
   ],
+  "7X4UA/": [
+    {
+      "type": 0,
+      "value": "Waiting"
+    }
+  ],
   "7ZF1Hr": [
     {
       "type": 0,
@@ -2235,6 +2247,12 @@
       "value": "Dodaj"
     }
   ],
+  "9dd0/m": [
+    {
+      "type": 0,
+      "value": "Running"
+    }
+  ],
   "9djnqI": [
     {
       "type": 0,
@@ -2525,12 +2543,6 @@
       "value": "Ostrzeżenie: wartość niestandardowa nie jest zgodna z jednym z dozwolonych typów dla tych danych wejściowych"
     }
   ],
-  "BFTwRN": [
-    {
-      "type": 0,
-      "value": "Powodzenie dzięki ponownym próbom"
-    }
-  ],
   "BGw6eH": [
     {
       "type": 0,
@@ -2571,12 +2583,6 @@
       "value": "Godzina rozpoczęcia"
     }
   ],
-  "BPYdTX": [
-    {
-      "type": 0,
-      "value": "Nie określono"
-    }
-  ],
   "BQCPY7": [
     {
       "type": 0,
@@ -2587,12 +2593,6 @@
     {
       "type": 0,
       "value": "Wprowadź hasło w postaci zwykłego tekstu lub użyj parametru secure"
-    }
-  ],
-  "BRMOfD": [
-    {
-      "type": 0,
-      "value": "Przekroczono limit czasu"
     }
   ],
   "BS3gy8": [
@@ -4187,6 +4187,12 @@
       "value": "Gdy nowy element..."
     }
   ],
+  "KWeLBB": [
+    {
+      "type": 0,
+      "value": "Closing..."
+    }
+  ],
   "KX1poC": [
     {
       "offset": 0,
@@ -4313,6 +4319,12 @@
     {
       "type": 0,
       "value": "Rozwiń"
+    }
+  ],
+  "LBlM+D": [
+    {
+      "type": 0,
+      "value": "Not specified"
     }
   ],
   "LCRHQ9": [
@@ -6461,6 +6473,12 @@
       "value": "Skrót dla trigger().outputs"
     }
   ],
+  "WbIGAh": [
+    {
+      "type": 0,
+      "value": "Succeeded"
+    }
+  ],
   "Wc77aJ": [
     {
       "type": 0,
@@ -6773,6 +6791,12 @@
     {
       "type": 0,
       "value": "Ogranicz aplikacje usługi Logic Apps, aby nie dołączały nagłówków metadanych przepływu pracy do odpowiedzi."
+    }
+  ],
+  "XtVOMn": [
+    {
+      "type": 0,
+      "value": "Something went wrong"
     }
   ],
   "XtuP5e": [
@@ -7163,6 +7187,12 @@
     {
       "type": 0,
       "value": "Dowiedz się więcej o zawartości dynamicznej."
+    }
+  ],
+  "ZvAp7m": [
+    {
+      "type": 0,
+      "value": "Save"
     }
   ],
   "ZyDq4/": [
@@ -7959,6 +7989,12 @@
       "value": "Włącz podział, aby uruchomić wystąpienie przepływu pracy na element w wybranej tablicy. Każde wystąpienie może mieć również oddzielny identyfikator śledzenia"
     }
   ],
+  "eofB85": [
+    {
+      "type": 0,
+      "value": "Timed out"
+    }
+  ],
   "epOMnV": [
     {
       "type": 0,
@@ -8085,6 +8121,12 @@
     {
       "type": 0,
       "value": "(UTC-05:00) Haiti"
+    }
+  ],
+  "fZJWBR": [
+    {
+      "type": 0,
+      "value": "Loading designer"
     }
   ],
   "faUrud": [
@@ -9939,6 +9981,12 @@
       "value": "Treść odpowiedzi"
     }
   ],
+  "ohOaXj": [
+    {
+      "type": 0,
+      "value": "Errors"
+    }
+  ],
   "ohpbkw": [
     {
       "type": 0,
@@ -10585,6 +10633,12 @@
       "value": "Należy podać wartość dla nazwy przepływu pracy."
     }
   ],
+  "sOnphB": [
+    {
+      "type": 0,
+      "value": "Resubmit"
+    }
+  ],
   "sRpETS": [
     {
       "type": 0,
@@ -11067,12 +11121,6 @@
     {
       "type": 0,
       "value": "Niestety, funkcja Copilot osiągnęła maksymalną pojemność i jest tymczasowo niedostępna — spróbuj ponownie za chwilę."
-    }
-  ],
-  "uanMWm": [
-    {
-      "type": 0,
-      "value": "Zakończone powodzeniem"
     }
   ],
   "uc/PoD": [

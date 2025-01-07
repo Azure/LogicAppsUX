@@ -11,6 +11,12 @@
       "value": "警告: 输入节点类型与架构节点的类型不匹配"
     }
   ],
+  "+0ua83": [
+    {
+      "type": 0,
+      "value": "Parameters"
+    }
+  ],
   "+0yxlR": [
     {
       "type": 0,
@@ -69,6 +75,12 @@
     {
       "type": 0,
       "value": "概述"
+    }
+  ],
+  "+M7bC6": [
+    {
+      "type": 0,
+      "value": "Succeeded with retries"
     }
   ],
   "+R90eK": [
@@ -1173,12 +1185,6 @@
       "value": "打开连接"
     }
   ],
-  "41eMpW": [
-    {
-      "type": 0,
-      "value": "正在等待"
-    }
-  ],
   "43xObP": [
     {
       "type": 0,
@@ -1849,6 +1855,12 @@
       "value": "必需。要从中获取子字符串的字符串。"
     }
   ],
+  "7X4UA/": [
+    {
+      "type": 0,
+      "value": "Waiting"
+    }
+  ],
   "7ZF1Hr": [
     {
       "type": 0,
@@ -2247,6 +2259,12 @@
       "value": "添加"
     }
   ],
+  "9dd0/m": [
+    {
+      "type": 0,
+      "value": "Running"
+    }
+  ],
   "9djnqI": [
     {
       "type": 0,
@@ -2504,12 +2522,6 @@
       "value": "警告: 自定义值与此输入的允许类型之一不匹配"
     }
   ],
-  "BFTwRN": [
-    {
-      "type": 0,
-      "value": "重试成功"
-    }
-  ],
   "BGw6eH": [
     {
       "type": 0,
@@ -2550,12 +2562,6 @@
       "value": "开始时间"
     }
   ],
-  "BPYdTX": [
-    {
-      "type": 0,
-      "value": "未指定"
-    }
-  ],
   "BQCPY7": [
     {
       "type": 0,
@@ -2566,12 +2572,6 @@
     {
       "type": 0,
       "value": "以纯文本形式输入密码或使用安全参数"
-    }
-  ],
-  "BRMOfD": [
-    {
-      "type": 0,
-      "value": "已超时"
     }
   ],
   "BS3gy8": [
@@ -4137,6 +4137,12 @@
       "value": "当有新项时..."
     }
   ],
+  "KWeLBB": [
+    {
+      "type": 0,
+      "value": "Closing..."
+    }
+  ],
   "KX1poC": [
     {
       "offset": 0,
@@ -4230,6 +4236,12 @@
     {
       "type": 0,
       "value": "展开"
+    }
+  ],
+  "LBlM+D": [
+    {
+      "type": 0,
+      "value": "Not specified"
     }
   ],
   "LCRHQ9": [
@@ -6353,6 +6365,12 @@
       "value": "trigger().outputs 的速记"
     }
   ],
+  "WbIGAh": [
+    {
+      "type": 0,
+      "value": "Succeeded"
+    }
+  ],
   "Wc77aJ": [
     {
       "type": 0,
@@ -6665,6 +6683,12 @@
     {
       "type": 0,
       "value": "限制逻辑应用，使其不在响应中包含工作流元数据标头。"
+    }
+  ],
+  "XtVOMn": [
+    {
+      "type": 0,
+      "value": "Something went wrong"
     }
   ],
   "XtuP5e": [
@@ -7055,6 +7079,12 @@
     {
       "type": 0,
       "value": "详细了解动态内容。"
+    }
+  ],
+  "ZvAp7m": [
+    {
+      "type": 0,
+      "value": "Save"
     }
   ],
   "ZyDq4/": [
@@ -7851,6 +7881,12 @@
       "value": "启用拆分以启动所选数组中每个项的工作流实例。每个实例也可具有不同的跟踪 ID"
     }
   ],
+  "eofB85": [
+    {
+      "type": 0,
+      "value": "Timed out"
+    }
+  ],
   "epOMnV": [
     {
       "type": 0,
@@ -7977,6 +8013,12 @@
     {
       "type": 0,
       "value": "(UTC-05:00)海地"
+    }
+  ],
+  "fZJWBR": [
+    {
+      "type": 0,
+      "value": "Loading designer"
     }
   ],
   "faUrud": [
@@ -9765,6 +9807,12 @@
       "value": "响应正文"
     }
   ],
+  "ohOaXj": [
+    {
+      "type": 0,
+      "value": "Errors"
+    }
+  ],
   "ohpbkw": [
     {
       "type": 0,
@@ -10378,6 +10426,12 @@
       "value": "必须为工作流名称提供值。"
     }
   ],
+  "sOnphB": [
+    {
+      "type": 0,
+      "value": "Resubmit"
+    }
+  ],
   "sRpETS": [
     {
       "type": 0,
@@ -10856,12 +10910,6 @@
     {
       "type": 0,
       "value": "很抱歉，Copilot 已满载，暂时不可用 - 请稍后重试。"
-    }
-  ],
-  "uanMWm": [
-    {
-      "type": 0,
-      "value": "成功"
     }
   ],
   "uc/PoD": [

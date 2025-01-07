@@ -11,6 +11,12 @@
       "value": "Aviso: o tipo de nó de entrada não corresponde ao tipo do nó de esquema."
     }
   ],
+  "+0ua83": [
+    {
+      "type": 0,
+      "value": "Parameters"
+    }
+  ],
   "+0yxlR": [
     {
       "type": 0,
@@ -69,6 +75,12 @@
     {
       "type": 0,
       "value": "Vista Geral"
+    }
+  ],
+  "+M7bC6": [
+    {
+      "type": 0,
+      "value": "Succeeded with retries"
     }
   ],
   "+R90eK": [
@@ -1165,12 +1177,6 @@
       "value": "Abrir ligação"
     }
   ],
-  "41eMpW": [
-    {
-      "type": 0,
-      "value": "A aguardar"
-    }
-  ],
   "43xObP": [
     {
       "type": 0,
@@ -1837,6 +1843,12 @@
       "value": "Obrigatório. A cadeia da qual a subcadeia é retirada."
     }
   ],
+  "7X4UA/": [
+    {
+      "type": 0,
+      "value": "Waiting"
+    }
+  ],
   "7ZF1Hr": [
     {
       "type": 0,
@@ -2235,6 +2247,12 @@
       "value": "Adicionar"
     }
   ],
+  "9dd0/m": [
+    {
+      "type": 0,
+      "value": "Running"
+    }
+  ],
   "9djnqI": [
     {
       "type": 0,
@@ -2514,12 +2532,6 @@
       "value": "Aviso: o valor personalizado não corresponde a um dos tipos permitidos para esta entrada"
     }
   ],
-  "BFTwRN": [
-    {
-      "type": 0,
-      "value": "Êxito após novas tentativas"
-    }
-  ],
   "BGw6eH": [
     {
       "type": 0,
@@ -2560,12 +2572,6 @@
       "value": "Hora de início"
     }
   ],
-  "BPYdTX": [
-    {
-      "type": 0,
-      "value": "Não especificado"
-    }
-  ],
   "BQCPY7": [
     {
       "type": 0,
@@ -2576,12 +2582,6 @@
     {
       "type": 0,
       "value": "Introduzir palavra-passe como texto simples ou utilizar um parâmetro seguro"
-    }
-  ],
-  "BRMOfD": [
-    {
-      "type": 0,
-      "value": "Tempo limite excedido"
     }
   ],
   "BS3gy8": [
@@ -4165,6 +4165,12 @@
       "value": "Quando um novo item..."
     }
   ],
+  "KWeLBB": [
+    {
+      "type": 0,
+      "value": "Closing..."
+    }
+  ],
   "KX1poC": [
     {
       "offset": 0,
@@ -4280,6 +4286,12 @@
     {
       "type": 0,
       "value": "Expandir"
+    }
+  ],
+  "LBlM+D": [
+    {
+      "type": 0,
+      "value": "Not specified"
     }
   ],
   "LCRHQ9": [
@@ -6413,6 +6425,12 @@
       "value": "Forma abreviada do acionador ().outputs"
     }
   ],
+  "WbIGAh": [
+    {
+      "type": 0,
+      "value": "Succeeded"
+    }
+  ],
   "Wc77aJ": [
     {
       "type": 0,
@@ -6725,6 +6743,12 @@
     {
       "type": 0,
       "value": "Limite o Logic Apps para não incluir cabeçalhos de metadados do fluxo de trabalho na resposta."
+    }
+  ],
+  "XtVOMn": [
+    {
+      "type": 0,
+      "value": "Something went wrong"
     }
   ],
   "XtuP5e": [
@@ -7115,6 +7139,12 @@
     {
       "type": 0,
       "value": "Saiba mais sobre conteúdos dinâmicos."
+    }
+  ],
+  "ZvAp7m": [
+    {
+      "type": 0,
+      "value": "Save"
     }
   ],
   "ZyDq4/": [
@@ -7911,6 +7941,12 @@
       "value": "Ative a divisão para iniciar uma instância do fluxo de trabalho por item na matriz selecionada. Cada instância também pode ter um ID de rastreio distinto"
     }
   ],
+  "eofB85": [
+    {
+      "type": 0,
+      "value": "Timed out"
+    }
+  ],
   "epOMnV": [
     {
       "type": 0,
@@ -8037,6 +8073,12 @@
     {
       "type": 0,
       "value": "(UTC-05:00) Haiti"
+    }
+  ],
+  "fZJWBR": [
+    {
+      "type": 0,
+      "value": "Loading designer"
     }
   ],
   "faUrud": [
@@ -9853,6 +9895,12 @@
       "value": "Corpo de resposta"
     }
   ],
+  "ohOaXj": [
+    {
+      "type": 0,
+      "value": "Errors"
+    }
+  ],
   "ohpbkw": [
     {
       "type": 0,
@@ -10488,6 +10536,12 @@
       "value": "Tem de fornecer um valor para o nome do fluxo de trabalho."
     }
   ],
+  "sOnphB": [
+    {
+      "type": 0,
+      "value": "Resubmit"
+    }
+  ],
   "sRpETS": [
     {
       "type": 0,
@@ -10970,12 +11024,6 @@
     {
       "type": 0,
       "value": "Lamentamos, mas o Copilot está temporariamente indisponível. Tente novamente dentro de momentos."
-    }
-  ],
-  "uanMWm": [
-    {
-      "type": 0,
-      "value": "Com êxito"
     }
   ],
   "uc/PoD": [

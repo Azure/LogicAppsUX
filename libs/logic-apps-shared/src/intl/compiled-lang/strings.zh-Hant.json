@@ -11,6 +11,12 @@
       "value": "警告: 輸入節點類型不符合結構描述節點的類型"
     }
   ],
+  "+0ua83": [
+    {
+      "type": 0,
+      "value": "Parameters"
+    }
+  ],
   "+0yxlR": [
     {
       "type": 0,
@@ -69,6 +75,12 @@
     {
       "type": 0,
       "value": "概觀"
+    }
+  ],
+  "+M7bC6": [
+    {
+      "type": 0,
+      "value": "Succeeded with retries"
     }
   ],
   "+R90eK": [
@@ -1165,12 +1177,6 @@
       "value": "開啟連線"
     }
   ],
-  "41eMpW": [
-    {
-      "type": 0,
-      "value": "等待中"
-    }
-  ],
   "43xObP": [
     {
       "type": 0,
@@ -1845,6 +1851,12 @@
       "value": "必要。取出子字串的字串。"
     }
   ],
+  "7X4UA/": [
+    {
+      "type": 0,
+      "value": "Waiting"
+    }
+  ],
   "7ZF1Hr": [
     {
       "type": 0,
@@ -2243,6 +2255,12 @@
       "value": "新增"
     }
   ],
+  "9dd0/m": [
+    {
+      "type": 0,
+      "value": "Running"
+    }
+  ],
   "9djnqI": [
     {
       "type": 0,
@@ -2500,12 +2518,6 @@
       "value": "警告: 自訂值不符合此輸入允許的其中一種類型"
     }
   ],
-  "BFTwRN": [
-    {
-      "type": 0,
-      "value": "重試後成功"
-    }
-  ],
   "BGw6eH": [
     {
       "type": 0,
@@ -2546,12 +2558,6 @@
       "value": "開始時間"
     }
   ],
-  "BPYdTX": [
-    {
-      "type": 0,
-      "value": "未指定"
-    }
-  ],
   "BQCPY7": [
     {
       "type": 0,
@@ -2562,12 +2568,6 @@
     {
       "type": 0,
       "value": "以純文字形式輸入密碼或使用安全參數"
-    }
-  ],
-  "BRMOfD": [
-    {
-      "type": 0,
-      "value": "逾時"
     }
   ],
   "BS3gy8": [
@@ -4133,6 +4133,12 @@
       "value": "當新項目..."
     }
   ],
+  "KWeLBB": [
+    {
+      "type": 0,
+      "value": "Closing..."
+    }
+  ],
   "KX1poC": [
     {
       "offset": 0,
@@ -4226,6 +4232,12 @@
     {
       "type": 0,
       "value": "展開"
+    }
+  ],
+  "LBlM+D": [
+    {
+      "type": 0,
+      "value": "Not specified"
     }
   ],
   "LCRHQ9": [
@@ -6353,6 +6365,12 @@
       "value": "trigger().outputs 的速記"
     }
   ],
+  "WbIGAh": [
+    {
+      "type": 0,
+      "value": "Succeeded"
+    }
+  ],
   "Wc77aJ": [
     {
       "type": 0,
@@ -6665,6 +6683,12 @@
     {
       "type": 0,
       "value": "限制 Logic Apps 不要在回應中包含工作流程中繼資料標頭。"
+    }
+  ],
+  "XtVOMn": [
+    {
+      "type": 0,
+      "value": "Something went wrong"
     }
   ],
   "XtuP5e": [
@@ -7055,6 +7079,12 @@
     {
       "type": 0,
       "value": "深入了解動態內容。"
+    }
+  ],
+  "ZvAp7m": [
+    {
+      "type": 0,
+      "value": "Save"
     }
   ],
   "ZyDq4/": [
@@ -7843,6 +7873,12 @@
       "value": "啟用分割以啟動所選陣列中每個項目的工作流程執行個體。每個執行個體也可以有不同的追蹤識別碼"
     }
   ],
+  "eofB85": [
+    {
+      "type": 0,
+      "value": "Timed out"
+    }
+  ],
   "epOMnV": [
     {
       "type": 0,
@@ -7969,6 +8005,12 @@
     {
       "type": 0,
       "value": "(UTC-05:00) 海地"
+    }
+  ],
+  "fZJWBR": [
+    {
+      "type": 0,
+      "value": "Loading designer"
     }
   ],
   "faUrud": [
@@ -9733,6 +9775,12 @@
       "value": "回應本文"
     }
   ],
+  "ohOaXj": [
+    {
+      "type": 0,
+      "value": "Errors"
+    }
+  ],
   "ohpbkw": [
     {
       "type": 0,
@@ -10346,6 +10394,12 @@
       "value": "必須提供工作流程名稱的值。"
     }
   ],
+  "sOnphB": [
+    {
+      "type": 0,
+      "value": "Resubmit"
+    }
+  ],
   "sRpETS": [
     {
       "type": 0,
@@ -10828,12 +10882,6 @@
     {
       "type": 0,
       "value": "很抱歉，Copilot 已到達容量，暫時無法使用 — 請稍後再試一次。"
-    }
-  ],
-  "uanMWm": [
-    {
-      "type": 0,
-      "value": "已成功"
     }
   ],
   "uc/PoD": [

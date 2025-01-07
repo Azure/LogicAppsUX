@@ -11,6 +11,12 @@
       "value": "Varning! Indatanodens typ matchar inte typ av schemanod"
     }
   ],
+  "+0ua83": [
+    {
+      "type": 0,
+      "value": "Parameters"
+    }
+  ],
   "+0yxlR": [
     {
       "type": 0,
@@ -69,6 +75,12 @@
     {
       "type": 0,
       "value": "Översikt"
+    }
+  ],
+  "+M7bC6": [
+    {
+      "type": 0,
+      "value": "Succeeded with retries"
     }
   ],
   "+R90eK": [
@@ -1169,12 +1181,6 @@
       "value": "Öppna anslutning"
     }
   ],
-  "41eMpW": [
-    {
-      "type": 0,
-      "value": "Väntar"
-    }
-  ],
   "43xObP": [
     {
       "type": 0,
@@ -1837,6 +1843,12 @@
       "value": "Obligatoriskt. Den sträng från vilken delsträngen hämtas."
     }
   ],
+  "7X4UA/": [
+    {
+      "type": 0,
+      "value": "Waiting"
+    }
+  ],
   "7ZF1Hr": [
     {
       "type": 0,
@@ -2235,6 +2247,12 @@
       "value": "Lägg till"
     }
   ],
+  "9dd0/m": [
+    {
+      "type": 0,
+      "value": "Running"
+    }
+  ],
   "9djnqI": [
     {
       "type": 0,
@@ -2499,12 +2517,6 @@
       "value": "Varning! Det anpassade värdet matchar inte någon av de tillåtna typerna för dessa indata"
     }
   ],
-  "BFTwRN": [
-    {
-      "type": 0,
-      "value": "Lyckades med återförsök"
-    }
-  ],
   "BGw6eH": [
     {
       "type": 0,
@@ -2541,12 +2553,6 @@
       "value": "Starttid"
     }
   ],
-  "BPYdTX": [
-    {
-      "type": 0,
-      "value": "Inte angivet"
-    }
-  ],
   "BQCPY7": [
     {
       "type": 0,
@@ -2557,12 +2563,6 @@
     {
       "type": 0,
       "value": "Ange lösenordet som oformaterad text eller använd en säker parameter"
-    }
-  ],
-  "BRMOfD": [
-    {
-      "type": 0,
-      "value": "Tidsgräns uppnådd"
     }
   ],
   "BS3gy8": [
@@ -4131,6 +4131,12 @@
       "value": "När ett nytt objekt..."
     }
   ],
+  "KWeLBB": [
+    {
+      "type": 0,
+      "value": "Closing..."
+    }
+  ],
   "KX1poC": [
     {
       "offset": 0,
@@ -4235,6 +4241,12 @@
     {
       "type": 0,
       "value": "Expandera"
+    }
+  ],
+  "LBlM+D": [
+    {
+      "type": 0,
+      "value": "Not specified"
     }
   ],
   "LCRHQ9": [
@@ -6345,6 +6357,12 @@
       "value": "Snabbformat för trigger().outputs"
     }
   ],
+  "WbIGAh": [
+    {
+      "type": 0,
+      "value": "Succeeded"
+    }
+  ],
   "Wc77aJ": [
     {
       "type": 0,
@@ -6657,6 +6675,12 @@
     {
       "type": 0,
       "value": "Begränsa Logic Apps så att rubriker för arbetsflödesmetadata inte inkluderas i svaret."
+    }
+  ],
+  "XtVOMn": [
+    {
+      "type": 0,
+      "value": "Something went wrong"
     }
   ],
   "XtuP5e": [
@@ -7043,6 +7067,12 @@
     {
       "type": 0,
       "value": "Läs mer om dynamiskt innehåll."
+    }
+  ],
+  "ZvAp7m": [
+    {
+      "type": 0,
+      "value": "Save"
     }
   ],
   "ZyDq4/": [
@@ -7839,6 +7869,12 @@
       "value": "Starta en instans av arbetsflödet per objekt i den markerade matrisen genom att aktivera delning. Varje instans kan också ha ett distinkt spårnings-id."
     }
   ],
+  "eofB85": [
+    {
+      "type": 0,
+      "value": "Timed out"
+    }
+  ],
   "epOMnV": [
     {
       "type": 0,
@@ -7965,6 +8001,12 @@
     {
       "type": 0,
       "value": "(UTC-05:00) Haiti"
+    }
+  ],
+  "fZJWBR": [
+    {
+      "type": 0,
+      "value": "Loading designer"
     }
   ],
   "faUrud": [
@@ -9759,6 +9801,12 @@
       "value": "Svarstext"
     }
   ],
+  "ohOaXj": [
+    {
+      "type": 0,
+      "value": "Errors"
+    }
+  ],
   "ohpbkw": [
     {
       "type": 0,
@@ -10379,6 +10427,12 @@
       "value": "Du måste ange ett värde för arbetsflödesnamnet."
     }
   ],
+  "sOnphB": [
+    {
+      "type": 0,
+      "value": "Resubmit"
+    }
+  ],
   "sRpETS": [
     {
       "type": 0,
@@ -10857,12 +10911,6 @@
     {
       "type": 0,
       "value": "Copilot har nått sin kapacitet och är inte tillgänglig för tillfället. Försök igen om en liten stund."
-    }
-  ],
-  "uanMWm": [
-    {
-      "type": 0,
-      "value": "Slutfört"
     }
   ],
   "uc/PoD": [
