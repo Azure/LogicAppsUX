@@ -11,6 +11,12 @@
       "value": "Peringatan: tipe node input tidak cocok dengan tipe node skema"
     }
   ],
+  "+0ua83": [
+    {
+      "type": 0,
+      "value": "Parameters"
+    }
+  ],
   "+0yxlR": [
     {
       "type": 0,
@@ -69,6 +75,12 @@
     {
       "type": 0,
       "value": "Gambaran Umum"
+    }
+  ],
+  "+M7bC6": [
+    {
+      "type": 0,
+      "value": "Succeeded with retries"
     }
   ],
   "+R90eK": [
@@ -1157,12 +1169,6 @@
       "value": "Buka koneksi"
     }
   ],
-  "41eMpW": [
-    {
-      "type": 0,
-      "value": "Menunggu"
-    }
-  ],
   "43xObP": [
     {
       "type": 0,
@@ -1829,6 +1835,12 @@
       "value": "Harus diisi. String dari substring yang diambil."
     }
   ],
+  "7X4UA/": [
+    {
+      "type": 0,
+      "value": "Waiting"
+    }
+  ],
   "7ZF1Hr": [
     {
       "type": 0,
@@ -2227,6 +2239,12 @@
       "value": "Tambahkan"
     }
   ],
+  "9dd0/m": [
+    {
+      "type": 0,
+      "value": "Running"
+    }
+  ],
   "9djnqI": [
     {
       "type": 0,
@@ -2484,12 +2502,6 @@
       "value": "Peringatan: nilai kustom tidak cocok dengan salah satu tipe yang diizinkan untuk input ini"
     }
   ],
-  "BFTwRN": [
-    {
-      "type": 0,
-      "value": "Berhasil dengan percobaan ulang"
-    }
-  ],
   "BGw6eH": [
     {
       "type": 0,
@@ -2530,12 +2542,6 @@
       "value": "Waktu mulai"
     }
   ],
-  "BPYdTX": [
-    {
-      "type": 0,
-      "value": "Tidak ditentukan"
-    }
-  ],
   "BQCPY7": [
     {
       "type": 0,
@@ -2546,12 +2552,6 @@
     {
       "type": 0,
       "value": "Masukkan kata sandi sebagai teks biasa atau gunakan parameter yang aman"
-    }
-  ],
-  "BRMOfD": [
-    {
-      "type": 0,
-      "value": "Waktu habis"
     }
   ],
   "BS3gy8": [
@@ -4113,6 +4113,12 @@
       "value": "Saat item baru..."
     }
   ],
+  "KWeLBB": [
+    {
+      "type": 0,
+      "value": "Closing..."
+    }
+  ],
   "KX1poC": [
     {
       "offset": 0,
@@ -4206,6 +4212,12 @@
     {
       "type": 0,
       "value": "Luaskan"
+    }
+  ],
+  "LBlM+D": [
+    {
+      "type": 0,
+      "value": "Not specified"
     }
   ],
   "LCRHQ9": [
@@ -6317,6 +6329,12 @@
       "value": "Pintasan untuk pemicu().outputs"
     }
   ],
+  "WbIGAh": [
+    {
+      "type": 0,
+      "value": "Succeeded"
+    }
+  ],
   "Wc77aJ": [
     {
       "type": 0,
@@ -6629,6 +6647,12 @@
     {
       "type": 0,
       "value": "Batasi Logic Apps agar tidak menyertakan header metadata alur kerja dalam respons."
+    }
+  ],
+  "XtVOMn": [
+    {
+      "type": 0,
+      "value": "Something went wrong"
     }
   ],
   "XtuP5e": [
@@ -7019,6 +7043,12 @@
     {
       "type": 0,
       "value": "Pelajari selengkapnya tentang konten dinamis."
+    }
+  ],
+  "ZvAp7m": [
+    {
+      "type": 0,
+      "value": "Save"
     }
   ],
   "ZyDq4/": [
@@ -7815,6 +7845,12 @@
       "value": "Aktifkan pemisahan untuk memulai instans alur kerja setiap item dalam array yang dipilih. Setiap instans juga dapat memiliki id pelacakan yang berbeda"
     }
   ],
+  "eofB85": [
+    {
+      "type": 0,
+      "value": "Timed out"
+    }
+  ],
   "epOMnV": [
     {
       "type": 0,
@@ -7941,6 +7977,12 @@
     {
       "type": 0,
       "value": "(UTC-05.00) Haiti"
+    }
+  ],
+  "fZJWBR": [
+    {
+      "type": 0,
+      "value": "Loading designer"
     }
   ],
   "faUrud": [
@@ -9713,6 +9755,12 @@
       "value": "Isi respons"
     }
   ],
+  "ohOaXj": [
+    {
+      "type": 0,
+      "value": "Errors"
+    }
+  ],
   "ohpbkw": [
     {
       "type": 0,
@@ -10326,6 +10374,12 @@
       "value": "Harus memberikan nilai untuk nama alur kerja."
     }
   ],
+  "sOnphB": [
+    {
+      "type": 0,
+      "value": "Resubmit"
+    }
+  ],
   "sRpETS": [
     {
       "type": 0,
@@ -10808,12 +10862,6 @@
     {
       "type": 0,
       "value": "Maaf, kapasitas Copilot sedang penuh dan sementara tidak tersedia — coba beberapa saat lagi."
-    }
-  ],
-  "uanMWm": [
-    {
-      "type": 0,
-      "value": "Berhasil"
     }
   ],
   "uc/PoD": [

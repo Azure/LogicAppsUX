@@ -11,6 +11,12 @@
       "value": "Uyarı: Giriş düğümü türü şema düğümünün türüyle eşleşmiyor"
     }
   ],
+  "+0ua83": [
+    {
+      "type": 0,
+      "value": "Parameters"
+    }
+  ],
   "+0yxlR": [
     {
       "type": 0,
@@ -69,6 +75,12 @@
     {
       "type": 0,
       "value": "Genel Bakış"
+    }
+  ],
+  "+M7bC6": [
+    {
+      "type": 0,
+      "value": "Succeeded with retries"
     }
   ],
   "+R90eK": [
@@ -1157,12 +1169,6 @@
       "value": "Bağlantıyı açın"
     }
   ],
-  "41eMpW": [
-    {
-      "type": 0,
-      "value": "Bekliyor"
-    }
-  ],
   "43xObP": [
     {
       "type": 0,
@@ -1829,6 +1835,12 @@
       "value": "Gerekli. Alt dizenin alındığı dize."
     }
   ],
+  "7X4UA/": [
+    {
+      "type": 0,
+      "value": "Waiting"
+    }
+  ],
   "7ZF1Hr": [
     {
       "type": 0,
@@ -2227,6 +2239,12 @@
       "value": "Ekle"
     }
   ],
+  "9dd0/m": [
+    {
+      "type": 0,
+      "value": "Running"
+    }
+  ],
   "9djnqI": [
     {
       "type": 0,
@@ -2495,12 +2513,6 @@
       "value": "Uyarı: Özel değer, bu giriş için izin verilen türlerden biriyle eşleşmiyor"
     }
   ],
-  "BFTwRN": [
-    {
-      "type": 0,
-      "value": "Yeniden denemeler ile başarılı oldu"
-    }
-  ],
   "BGw6eH": [
     {
       "type": 0,
@@ -2541,12 +2553,6 @@
       "value": "Başlangıç zamanı"
     }
   ],
-  "BPYdTX": [
-    {
-      "type": 0,
-      "value": "Belirtilmedi"
-    }
-  ],
   "BQCPY7": [
     {
       "type": 0,
@@ -2557,12 +2563,6 @@
     {
       "type": 0,
       "value": "Parolayı düz metin olarak girin veya güvenli bir parametre kullanın"
-    }
-  ],
-  "BRMOfD": [
-    {
-      "type": 0,
-      "value": "Zaman aşımına uğradı"
     }
   ],
   "BS3gy8": [
@@ -4135,6 +4135,12 @@
       "value": "Yeni bir öğe şu durumda olduğunda..."
     }
   ],
+  "KWeLBB": [
+    {
+      "type": 0,
+      "value": "Closing..."
+    }
+  ],
   "KX1poC": [
     {
       "offset": 0,
@@ -4239,6 +4245,12 @@
     {
       "type": 0,
       "value": "Genişlet"
+    }
+  ],
+  "LBlM+D": [
+    {
+      "type": 0,
+      "value": "Not specified"
     }
   ],
   "LCRHQ9": [
@@ -6365,6 +6377,12 @@
       "value": "trigger().outputs için kısayol"
     }
   ],
+  "WbIGAh": [
+    {
+      "type": 0,
+      "value": "Succeeded"
+    }
+  ],
   "Wc77aJ": [
     {
       "type": 0,
@@ -6677,6 +6695,12 @@
     {
       "type": 0,
       "value": "Logic Apps'i yanıtta iş akışı meta veri üst bilgileri eklememek için sınırlandırın."
+    }
+  ],
+  "XtVOMn": [
+    {
+      "type": 0,
+      "value": "Something went wrong"
     }
   ],
   "XtuP5e": [
@@ -7067,6 +7091,12 @@
     {
       "type": 0,
       "value": "Dinamik içerikler hakkında daha fazla bilgi edinin."
+    }
+  ],
+  "ZvAp7m": [
+    {
+      "type": 0,
+      "value": "Save"
     }
   ],
   "ZyDq4/": [
@@ -7859,6 +7889,12 @@
       "value": "Seçili dizideki her öğe için iş akışının bir örneğini başlatmak istiyorsanız bölünmüş seçeneğini etkinleştirin. Her örnek, özgün bir izleme kimliğine de sahip olabilir"
     }
   ],
+  "eofB85": [
+    {
+      "type": 0,
+      "value": "Timed out"
+    }
+  ],
   "epOMnV": [
     {
       "type": 0,
@@ -7985,6 +8021,12 @@
     {
       "type": 0,
       "value": "(UTC-05:00) Haiti"
+    }
+  ],
+  "fZJWBR": [
+    {
+      "type": 0,
+      "value": "Loading designer"
     }
   ],
   "faUrud": [
@@ -9775,6 +9817,12 @@
       "value": "Yanıt gövdesi"
     }
   ],
+  "ohOaXj": [
+    {
+      "type": 0,
+      "value": "Errors"
+    }
+  ],
   "ohpbkw": [
     {
       "type": 0,
@@ -10395,6 +10443,12 @@
       "value": "İş akışı adı için değer sağlandı."
     }
   ],
+  "sOnphB": [
+    {
+      "type": 0,
+      "value": "Resubmit"
+    }
+  ],
   "sRpETS": [
     {
       "type": 0,
@@ -10877,12 +10931,6 @@
     {
       "type": 0,
       "value": "Ne yazık ki Copilot tam kapasitede ve geçici olarak kullanılamıyor. Lütfen kısa bir süre sonra yeniden deneyin."
-    }
-  ],
-  "uanMWm": [
-    {
-      "type": 0,
-      "value": "Başarılı"
     }
   ],
   "uc/PoD": [
