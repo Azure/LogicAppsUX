@@ -518,6 +518,9 @@ importers:
       '@fluentui/react-hooks':
         specifier: 8.6.20
         version: 8.6.20(@types/react@18.3.0)(react@18.2.0)
+      '@fluentui/react-icons':
+        specifier: 2.0.224
+        version: 2.0.224(react@18.2.0)
       '@microsoft/designer-ui':
         specifier: workspace:*
         version: link:../../libs/designer-ui
@@ -16035,7 +16038,7 @@ snapshots:
 
   '@fluentui/react-icons@2.0.224(react@18.2.0)':
     dependencies:
-      '@griffel/react': 1.5.21(react@18.2.0)
+      '@griffel/react': 1.5.24(react@18.2.0)
       react: 18.2.0
       tslib: 2.4.0
 
