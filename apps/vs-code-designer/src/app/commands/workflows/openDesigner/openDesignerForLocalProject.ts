@@ -39,6 +39,8 @@ import { writeFileSync, readFileSync } from 'fs';
 import * as path from 'path';
 import { env, ProgressLocation, Uri, ViewColumn, window, workspace } from 'vscode';
 import type { WebviewPanel, ProgressOptions } from 'vscode';
+import type { IAzureConnectorsContext } from '../azureConnectorWizard';
+import { saveBlankUnitTest } from '../unitTest/saveBlankUnitTest';
 
 export default class OpenDesignerForLocalProject extends OpenDesignerBase {
   private readonly workflowFilePath: string;
@@ -195,6 +197,10 @@ export default class OpenDesignerForLocalProject extends OpenDesignerBase {
           this.panelMetadata.azureDetails?.workflowManagementBaseUrl
         );
         await this.validateWorkflow(this.panelMetadata.workflowContent);
+        break;
+      }
+      case ExtensionCommand.saveBlankUnitTest: {
+        await saveBlankUnitTest(this.context as IAzureConnectorsContext, Uri.file(this.workflowFilePath), msg.definition);
         break;
       }
       case ExtensionCommand.saveUnitTest: {

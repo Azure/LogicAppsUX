@@ -346,6 +346,11 @@
         "icon": "$(tasklist)"
       },
       {
+        "command": "azureLogicAppsStandard.saveBlankUnitTest",
+        "title": "Create blank unit test",
+        "category": "Azure Logic Apps"
+      },
+      {
         "command": "azureLogicAppsStandard.editUnitTest",
         "title": "Edit unit test",
         "category": "Azure Logic Apps",
@@ -706,6 +711,11 @@
         },
         {
           "command": "azureLogicAppsStandard.createUnitTest",
+          "when": "false",
+          "group": "navigation@4"
+        },
+        {
+          "command": "azureLogicAppsStandard.saveBlankUnitTest",
           "when": "false",
           "group": "navigation@4"
         },
