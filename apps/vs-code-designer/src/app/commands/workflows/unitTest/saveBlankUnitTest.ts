@@ -12,7 +12,7 @@ import * as vscode from 'vscode';
  * @param _node - The URI of the workflow node, if available.
  * @param _unitTestDefinition - The unit test definition object.
  */
-export async function saveBlankUnitTestSkeleton(_context: any, _node: vscode.Uri | undefined, _unitTestDefinition: any): Promise<void> {
+export async function saveBlankUnitTest(_context: any, _node: vscode.Uri | undefined, _unitTestDefinition: any): Promise<void> {
   // TODO: Validate context, node, and unitTestDefinition inputs
 
   try {

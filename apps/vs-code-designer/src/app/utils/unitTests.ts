@@ -60,11 +60,11 @@ export const saveUnitTestDefinition = async (
 
 /**
  * Saves the blank unit test definition for a workflow.
- * @param {string} projectPath The path of the project.
- * @param {string} workflowName The name of the workflow.
- * @param {string} unitTestName The name of the unit test.
- * @param {any} unitTestDefinition The unit test definition.
- * @returns A Promise that resolves when the unit test definition is saved.
+ * @param {string} projectPath - The path of the project.
+ * @param {string} workflowName - The name of the workflow.
+ * @param {string} unitTestName - The name of the unit test.
+ * @param {any} unitTestDefinition - The unit test definition.
+ * @returns {Promise<void>} - A promise that resolves when the unit test definition is saved.
  */
 export const saveBlankUnitTestDefinition = async (
   projectPath: string,
@@ -72,7 +72,9 @@ export const saveBlankUnitTestDefinition = async (
   unitTestName: string,
   unitTestDefinition: any
 ): Promise<void> => {
-  await callWithTelemetryAndErrorHandling(saveUnitTestEvent, async () => {
+  await callWithTelemetryAndErrorHandling(saveUnitTestEvent, async (context) => {
+    context.telemetry.properties.unitTestSaveStatus = 'Started';
+
     const options: vscode.ProgressOptions = {
       location: vscode.ProgressLocation.Notification,
       title: localize('azureFunctions.savingWorkflow', 'Saving Blank Unit Test Definition...'),
@@ -87,6 +89,7 @@ export const saveBlankUnitTestDefinition = async (
       if (!fs.existsSync(workflowTestsPath)) {
         fs.mkdirSync(workflowTestsPath, { recursive: true });
       }
+
       try {
         fs.writeFileSync(unitTestsPath, JSON.stringify(unitTestDefinition, null, 4));
         await vscode.workspace.updateWorkspaceFolders(
@@ -94,11 +97,22 @@ export const saveBlankUnitTestDefinition = async (
           null,
           { uri: testsDirectory }
         );
-      } catch (error) {
+
+        context.telemetry.properties.unitTestSaveStatus = 'Success';
+      } catch (error: any) {
+        // Log error details in telemetry
+        context.telemetry.properties.unitTestSaveStatus = 'Failed';
+        context.telemetry.properties.errorMessage = error.message;
+        if (error.code) {
+          context.telemetry.properties.errorCode = error.code;
+        }
+
         vscode.window.showErrorMessage(
           `${localize('saveFailure', 'Blank Unit Test Definition not saved.')} ${error.message}`,
           localize('OK', 'OK')
         );
+
+        // Rethrow the error to ensure proper error handling
         throw error;
       }
     });
