@@ -14,7 +14,7 @@
   "+0ua83": [
     {
       "type": 0,
-      "value": "Parameters"
+      "value": "Paraméterek"
     }
   ],
   "+0yxlR": [
@@ -2666,7 +2666,7 @@
   "Bwqlxd": [
     {
       "type": 0,
-      "value": "Key not found '"
+      "value": "Nem található „"
     },
     {
       "type": 1,
@@ -2674,7 +2674,7 @@
     },
     {
       "type": 0,
-      "value": "'"
+      "value": "” kulcs"
     }
   ],
   "BxITRH": [
@@ -7084,7 +7084,7 @@
   "ZvAp7m": [
     {
       "type": 0,
-      "value": "Save"
+      "value": "Mentés"
     }
   ],
   "ZyDq4/": [
@@ -8018,7 +8018,7 @@
   "fZJWBR": [
     {
       "type": 0,
-      "value": "Loading designer"
+      "value": "Tervező betöltése"
     }
   ],
   "faUrud": [
@@ -9816,7 +9816,7 @@
   "ohOaXj": [
     {
       "type": 0,
-      "value": "Errors"
+      "value": "Hibák"
     }
   ],
   "ohpbkw": [
@@ -10446,7 +10446,7 @@
   "sOnphB": [
     {
       "type": 0,
-      "value": "Resubmit"
+      "value": "Újraküldés"
     }
   ],
   "sRpETS": [

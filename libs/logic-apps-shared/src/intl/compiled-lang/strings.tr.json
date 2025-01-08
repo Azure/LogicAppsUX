@@ -14,7 +14,7 @@
   "+0ua83": [
     {
       "type": 0,
-      "value": "Parameters"
+      "value": "Parametreler"
     }
   ],
   "+0yxlR": [
@@ -80,7 +80,7 @@
   "+M7bC6": [
     {
       "type": 0,
-      "value": "Succeeded with retries"
+      "value": "Yeniden denemelerle başarılı oldu"
     }
   ],
   "+R90eK": [
@@ -660,7 +660,7 @@
   "1QktJw": [
     {
       "type": 0,
-      "value": "Map errors"
+      "value": "Eşleme hataları"
     }
   ],
   "1Xke9D": [
@@ -1366,7 +1366,7 @@
   "5DkTf5": [
     {
       "type": 0,
-      "value": "Target schema node not found for node key '"
+      "value": "Düğüm anahtarı kimliği için hedef şema '"
     },
     {
       "type": 1,
@@ -1838,7 +1838,7 @@
   "7X4UA/": [
     {
       "type": 0,
-      "value": "Waiting"
+      "value": "Bekliyor"
     }
   ],
   "7ZF1Hr": [
@@ -2242,7 +2242,7 @@
   "9dd0/m": [
     {
       "type": 0,
-      "value": "Running"
+      "value": "Çalışıyor"
     }
   ],
   "9djnqI": [
@@ -2658,7 +2658,7 @@
   "Bwqlxd": [
     {
       "type": 0,
-      "value": "Key not found '"
+      "value": "Anahtar bulunamadı '"
     },
     {
       "type": 1,
@@ -3298,7 +3298,7 @@
   "FPBmrA": [
     {
       "type": 0,
-      "value": "Source schema node not found for node key '"
+      "value": "Düğüm anahtarı yapılandırması için kaynak şema '"
     },
     {
       "type": 1,
@@ -3520,7 +3520,7 @@
   "GiR7ll": [
     {
       "type": 0,
-      "value": "Function not found- '"
+      "value": "İşlev bulunamadı- '"
     },
     {
       "type": 1,
@@ -4138,7 +4138,7 @@
   "KWeLBB": [
     {
       "type": 0,
-      "value": "Closing..."
+      "value": "Kapatılıyor..."
     }
   ],
   "KX1poC": [
@@ -4250,7 +4250,7 @@
   "LBlM+D": [
     {
       "type": 0,
-      "value": "Not specified"
+      "value": "Belirtilmedi"
     }
   ],
   "LCRHQ9": [
@@ -5014,7 +5014,7 @@
   "PEJ+e4": [
     {
       "type": 0,
-      "value": "Error loading data map"
+      "value": "Veri eşlemesi yüklenirken hata oluştu"
     }
   ],
   "PNk3n4": [
@@ -6380,7 +6380,7 @@
   "WbIGAh": [
     {
       "type": 0,
-      "value": "Succeeded"
+      "value": "Başarılı"
     }
   ],
   "Wc77aJ": [
@@ -6700,7 +6700,7 @@
   "XtVOMn": [
     {
       "type": 0,
-      "value": "Something went wrong"
+      "value": "Bir sorun oluştu"
     }
   ],
   "XtuP5e": [
@@ -7096,7 +7096,7 @@
   "ZvAp7m": [
     {
       "type": 0,
-      "value": "Save"
+      "value": "Kaydet"
     }
   ],
   "ZyDq4/": [
@@ -7222,7 +7222,7 @@
   "auci7r": [
     {
       "type": 0,
-      "value": "Enter a valid comma-separated string."
+      "value": "Virgülle ayrılmış geçerli bir dize girin."
     }
   ],
   "aurgrg": [
@@ -7892,7 +7892,7 @@
   "eofB85": [
     {
       "type": 0,
-      "value": "Timed out"
+      "value": "Zaman aşımına uğradı"
     }
   ],
   "epOMnV": [
@@ -7904,7 +7904,7 @@
   "epi+zR": [
     {
       "type": 0,
-      "value": "Close map checker"
+      "value": "Harita denetleyicisini kapat"
     }
   ],
   "er6O+w": [
@@ -8026,7 +8026,7 @@
   "fZJWBR": [
     {
       "type": 0,
-      "value": "Loading designer"
+      "value": "Tasarımcı yükleniyor"
     }
   ],
   "faUrud": [
@@ -8962,7 +8962,7 @@
   "kfmLTY": [
     {
       "type": 0,
-      "value": "Function '"
+      "value": "İşlev '"
     },
     {
       "type": 1,
@@ -8970,7 +8970,7 @@
     },
     {
       "type": 0,
-      "value": "' is missing required inputs"
+      "value": "' gerekli girişler eksik"
     }
   ],
   "klY9UN": [
@@ -9820,7 +9820,7 @@
   "ohOaXj": [
     {
       "type": 0,
-      "value": "Errors"
+      "value": "Hatalar"
     }
   ],
   "ohpbkw": [
@@ -10368,7 +10368,7 @@
   "rwrlsB": [
     {
       "type": 0,
-      "value": "Map Issues"
+      "value": "Harita Sorunları"
     }
   ],
   "rxIJfD": [
@@ -10446,7 +10446,7 @@
   "sOnphB": [
     {
       "type": 0,
-      "value": "Resubmit"
+      "value": "Yeniden Gönder"
     }
   ],
   "sRpETS": [

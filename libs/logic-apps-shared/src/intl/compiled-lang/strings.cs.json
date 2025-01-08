@@ -14,7 +14,7 @@
   "+0ua83": [
     {
       "type": 0,
-      "value": "Parameters"
+      "value": "Parametry"
     }
   ],
   "+0yxlR": [
@@ -80,7 +80,7 @@
   "+M7bC6": [
     {
       "type": 0,
-      "value": "Succeeded with retries"
+      "value": "Proběhlo úspěšně s opakováním pokusů"
     }
   ],
   "+R90eK": [
@@ -1854,7 +1854,7 @@
   "7X4UA/": [
     {
       "type": 0,
-      "value": "Waiting"
+      "value": "Čekání"
     }
   ],
   "7ZF1Hr": [
@@ -2258,7 +2258,7 @@
   "9dd0/m": [
     {
       "type": 0,
-      "value": "Running"
+      "value": "Spuštěno"
     }
   ],
   "9djnqI": [
@@ -2696,7 +2696,7 @@
   "Bwqlxd": [
     {
       "type": 0,
-      "value": "Key not found '"
+      "value": "Klíč "
     },
     {
       "type": 1,
@@ -2704,7 +2704,7 @@
     },
     {
       "type": 0,
-      "value": "'"
+      "value": " se nenašel"
     }
   ],
   "BxITRH": [
@@ -4190,7 +4190,7 @@
   "KWeLBB": [
     {
       "type": 0,
-      "value": "Closing..."
+      "value": "Zavírání…"
     }
   ],
   "KX1poC": [
@@ -4324,7 +4324,7 @@
   "LBlM+D": [
     {
       "type": 0,
-      "value": "Not specified"
+      "value": "Neuvedeno"
     }
   ],
   "LCRHQ9": [
@@ -6472,7 +6472,7 @@
   "WbIGAh": [
     {
       "type": 0,
-      "value": "Succeeded"
+      "value": "Úspěšné"
     }
   ],
   "Wc77aJ": [
@@ -6792,7 +6792,7 @@
   "XtVOMn": [
     {
       "type": 0,
-      "value": "Something went wrong"
+      "value": "Došlo k chybě"
     }
   ],
   "XtuP5e": [
@@ -7184,7 +7184,7 @@
   "ZvAp7m": [
     {
       "type": 0,
-      "value": "Save"
+      "value": "Uložit"
     }
   ],
   "ZyDq4/": [
@@ -7988,7 +7988,7 @@
   "eofB85": [
     {
       "type": 0,
-      "value": "Timed out"
+      "value": "Vypršel časový limit."
     }
   ],
   "epOMnV": [
@@ -8122,7 +8122,7 @@
   "fZJWBR": [
     {
       "type": 0,
-      "value": "Loading designer"
+      "value": "Načítání designeru"
     }
   ],
   "faUrud": [
@@ -9968,7 +9968,7 @@
   "ohOaXj": [
     {
       "type": 0,
-      "value": "Errors"
+      "value": "Chyby"
     }
   ],
   "ohpbkw": [
@@ -10620,7 +10620,7 @@
   "sOnphB": [
     {
       "type": 0,
-      "value": "Resubmit"
+      "value": "Znovu odeslat"
     }
   ],
   "sRpETS": [

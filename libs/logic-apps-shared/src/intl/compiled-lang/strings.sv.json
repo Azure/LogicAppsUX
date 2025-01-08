@@ -14,7 +14,7 @@
   "+0ua83": [
     {
       "type": 0,
-      "value": "Parameters"
+      "value": "Parametrar"
     }
   ],
   "+0yxlR": [
@@ -664,7 +664,7 @@
   "1QktJw": [
     {
       "type": 0,
-      "value": "Map errors"
+      "value": "Mappningsfel"
     }
   ],
   "1Xke9D": [
@@ -1374,7 +1374,7 @@
   "5DkTf5": [
     {
       "type": 0,
-      "value": "Target schema node not found for node key '"
+      "value": "Det gick inte att hitta målschemanoden för nodnyckeln '"
     },
     {
       "type": 1,
@@ -2658,15 +2658,11 @@
   "Bwqlxd": [
     {
       "type": 0,
-      "value": "Key not found '"
+      "value": "Nyckeln hittades inte "
     },
     {
       "type": 1,
       "value": "nodeKey"
-    },
-    {
-      "type": 0,
-      "value": "'"
     }
   ],
   "BxITRH": [
@@ -3294,7 +3290,7 @@
   "FPBmrA": [
     {
       "type": 0,
-      "value": "Source schema node not found for node key '"
+      "value": "Det gick inte att hitta källschemanoden för nodnyckeln '"
     },
     {
       "type": 1,
@@ -3516,7 +3512,7 @@
   "GiR7ll": [
     {
       "type": 0,
-      "value": "Function not found- '"
+      "value": "Funktionen hittades inte- '"
     },
     {
       "type": 1,
@@ -5002,7 +4998,7 @@
   "PEJ+e4": [
     {
       "type": 0,
-      "value": "Error loading data map"
+      "value": "Fel vid inläsning av datamappning"
     }
   ],
   "PNk3n4": [
@@ -7072,7 +7068,7 @@
   "ZvAp7m": [
     {
       "type": 0,
-      "value": "Save"
+      "value": "Spara"
     }
   ],
   "ZyDq4/": [
@@ -7198,7 +7194,7 @@
   "auci7r": [
     {
       "type": 0,
-      "value": "Enter a valid comma-separated string."
+      "value": "Ange en giltig kommaavgränsad sträng."
     }
   ],
   "aurgrg": [
@@ -7884,7 +7880,7 @@
   "epi+zR": [
     {
       "type": 0,
-      "value": "Close map checker"
+      "value": "Stäng kartkontrollen"
     }
   ],
   "er6O+w": [
@@ -8006,7 +8002,7 @@
   "fZJWBR": [
     {
       "type": 0,
-      "value": "Loading designer"
+      "value": "Läser in designer"
     }
   ],
   "faUrud": [
@@ -8946,7 +8942,7 @@
   "kfmLTY": [
     {
       "type": 0,
-      "value": "Function '"
+      "value": "Funktionen '"
     },
     {
       "type": 1,
@@ -8954,7 +8950,7 @@
     },
     {
       "type": 0,
-      "value": "' is missing required inputs"
+      "value": "' saknar nödvändiga indata"
     }
   ],
   "klY9UN": [
@@ -9804,7 +9800,7 @@
   "ohOaXj": [
     {
       "type": 0,
-      "value": "Errors"
+      "value": "Fel"
     }
   ],
   "ohpbkw": [
@@ -10352,7 +10348,7 @@
   "rwrlsB": [
     {
       "type": 0,
-      "value": "Map Issues"
+      "value": "Kartproblem"
     }
   ],
   "rxIJfD": [
@@ -10430,7 +10426,7 @@
   "sOnphB": [
     {
       "type": 0,
-      "value": "Resubmit"
+      "value": "Skicka igen"
     }
   ],
   "sRpETS": [

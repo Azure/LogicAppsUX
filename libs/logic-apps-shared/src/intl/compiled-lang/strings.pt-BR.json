@@ -14,7 +14,7 @@
   "+0ua83": [
     {
       "type": 0,
-      "value": "Parameters"
+      "value": "Parâmetros"
     }
   ],
   "+0yxlR": [
@@ -644,7 +644,7 @@
   "1QktJw": [
     {
       "type": 0,
-      "value": "Map errors"
+      "value": "Erros de mapa"
     }
   ],
   "1Xke9D": [
@@ -1358,7 +1358,7 @@
   "5DkTf5": [
     {
       "type": 0,
-      "value": "Target schema node not found for node key '"
+      "value": "Nó de esquema de destino não encontrado para a chave do nó '"
     },
     {
       "type": 1,
@@ -2653,7 +2653,7 @@
   "Bwqlxd": [
     {
       "type": 0,
-      "value": "Key not found '"
+      "value": "Chave não encontrada '"
     },
     {
       "type": 1,
@@ -3293,7 +3293,7 @@
   "FPBmrA": [
     {
       "type": 0,
-      "value": "Source schema node not found for node key '"
+      "value": "Nó de esquema de origem não encontrado para a chave de nó '"
     },
     {
       "type": 1,
@@ -3526,7 +3526,7 @@
   "GiR7ll": [
     {
       "type": 0,
-      "value": "Function not found- '"
+      "value": "Função não encontrada- '"
     },
     {
       "type": 1,
@@ -5027,7 +5027,7 @@
   "PEJ+e4": [
     {
       "type": 0,
-      "value": "Error loading data map"
+      "value": "Erro ao carregar o mapa de dados"
     }
   ],
   "PNk3n4": [
@@ -7116,7 +7116,7 @@
   "ZvAp7m": [
     {
       "type": 0,
-      "value": "Save"
+      "value": "Salvar"
     }
   ],
   "ZyDq4/": [
@@ -7242,7 +7242,7 @@
   "auci7r": [
     {
       "type": 0,
-      "value": "Enter a valid comma-separated string."
+      "value": "Insira uma cadeia de caracteres separada por vírgulas válida."
     }
   ],
   "aurgrg": [
@@ -7928,7 +7928,7 @@
   "epi+zR": [
     {
       "type": 0,
-      "value": "Close map checker"
+      "value": "Fechar verificador de mapa"
     }
   ],
   "er6O+w": [
@@ -9001,7 +9001,7 @@
   "kfmLTY": [
     {
       "type": 0,
-      "value": "Function '"
+      "value": "O '"
     },
     {
       "type": 1,
@@ -9009,7 +9009,7 @@
     },
     {
       "type": 0,
-      "value": "' is missing required inputs"
+      "value": "' função não tem as entradas necessárias"
     }
   ],
   "klY9UN": [
@@ -9870,7 +9870,7 @@
   "ohOaXj": [
     {
       "type": 0,
-      "value": "Errors"
+      "value": "Erros"
     }
   ],
   "ohpbkw": [
@@ -10433,7 +10433,7 @@
   "rwrlsB": [
     {
       "type": 0,
-      "value": "Map Issues"
+      "value": "Problemas de Mapa"
     }
   ],
   "rxIJfD": [
@@ -10511,7 +10511,7 @@
   "sOnphB": [
     {
       "type": 0,
-      "value": "Resubmit"
+      "value": "Reenviar"
     }
   ],
   "sRpETS": [

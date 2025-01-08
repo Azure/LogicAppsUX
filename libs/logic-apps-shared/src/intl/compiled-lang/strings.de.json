@@ -14,7 +14,7 @@
   "+0ua83": [
     {
       "type": 0,
-      "value": "Parameters"
+      "value": "Parameter"
     }
   ],
   "+0yxlR": [
@@ -2690,7 +2690,7 @@
   "Bwqlxd": [
     {
       "type": 0,
-      "value": "Key not found '"
+      "value": "Der Schlüssel „"
     },
     {
       "type": 1,
@@ -2698,7 +2698,7 @@
     },
     {
       "type": 0,
-      "value": "'"
+      "value": "“ wurde nicht gefunden."
     }
   ],
   "BxITRH": [
@@ -7152,7 +7152,7 @@
   "ZvAp7m": [
     {
       "type": 0,
-      "value": "Save"
+      "value": "Speichern"
     }
   ],
   "ZyDq4/": [
@@ -9888,7 +9888,7 @@
   "ohOaXj": [
     {
       "type": 0,
-      "value": "Errors"
+      "value": "Fehler"
     }
   ],
   "ohpbkw": [
@@ -10518,7 +10518,7 @@
   "sOnphB": [
     {
       "type": 0,
-      "value": "Resubmit"
+      "value": "Erneut übermitteln"
     }
   ],
   "sRpETS": [

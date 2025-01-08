@@ -14,7 +14,7 @@
   "+0ua83": [
     {
       "type": 0,
-      "value": "Parameters"
+      "value": "Parâmetros"
     }
   ],
   "+0yxlR": [
@@ -660,7 +660,7 @@
   "1QktJw": [
     {
       "type": 0,
-      "value": "Map errors"
+      "value": "Erros de mapa"
     }
   ],
   "1Xke9D": [
@@ -1374,7 +1374,7 @@
   "5DkTf5": [
     {
       "type": 0,
-      "value": "Target schema node not found for node key '"
+      "value": "Nó de esquema de destino não encontrado para a chave de nó '"
     },
     {
       "type": 1,
@@ -2677,7 +2677,7 @@
   "Bwqlxd": [
     {
       "type": 0,
-      "value": "Key not found '"
+      "value": "Chave não encontrada “"
     },
     {
       "type": 1,
@@ -2685,7 +2685,7 @@
     },
     {
       "type": 0,
-      "value": "'"
+      "value": "”"
     }
   ],
   "BxITRH": [
@@ -3317,7 +3317,7 @@
   "FPBmrA": [
     {
       "type": 0,
-      "value": "Source schema node not found for node key '"
+      "value": "O nó de esquema de origem não foi encontrado para a chave de nó '"
     },
     {
       "type": 1,
@@ -3550,7 +3550,7 @@
   "GiR7ll": [
     {
       "type": 0,
-      "value": "Function not found- '"
+      "value": "Função não encontrada- '"
     },
     {
       "type": 1,
@@ -5051,7 +5051,7 @@
   "PEJ+e4": [
     {
       "type": 0,
-      "value": "Error loading data map"
+      "value": "Erro ao carregar mapa de dados"
     }
   ],
   "PNk3n4": [
@@ -7144,7 +7144,7 @@
   "ZvAp7m": [
     {
       "type": 0,
-      "value": "Save"
+      "value": "Guardar"
     }
   ],
   "ZyDq4/": [
@@ -7270,7 +7270,7 @@
   "auci7r": [
     {
       "type": 0,
-      "value": "Enter a valid comma-separated string."
+      "value": "Introduza uma cadeia separada por vírgulas válida."
     }
   ],
   "aurgrg": [
@@ -7956,7 +7956,7 @@
   "epi+zR": [
     {
       "type": 0,
-      "value": "Close map checker"
+      "value": "Fechar verificador de mapa"
     }
   ],
   "er6O+w": [
@@ -8078,7 +8078,7 @@
   "fZJWBR": [
     {
       "type": 0,
-      "value": "Loading designer"
+      "value": "A carregar estruturador"
     }
   ],
   "faUrud": [
@@ -9029,7 +9029,7 @@
   "kfmLTY": [
     {
       "type": 0,
-      "value": "Function '"
+      "value": "Faltam entradas necessárias no '"
     },
     {
       "type": 1,
@@ -9037,7 +9037,7 @@
     },
     {
       "type": 0,
-      "value": "' is missing required inputs"
+      "value": "' de função"
     }
   ],
   "klY9UN": [
@@ -9898,7 +9898,7 @@
   "ohOaXj": [
     {
       "type": 0,
-      "value": "Errors"
+      "value": "Erros"
     }
   ],
   "ohpbkw": [
@@ -10461,7 +10461,7 @@
   "rwrlsB": [
     {
       "type": 0,
-      "value": "Map Issues"
+      "value": "Problemas do Mapa"
     }
   ],
   "rxIJfD": [
@@ -10539,7 +10539,7 @@
   "sOnphB": [
     {
       "type": 0,
-      "value": "Resubmit"
+      "value": "Submeter novamente"
     }
   ],
   "sRpETS": [
