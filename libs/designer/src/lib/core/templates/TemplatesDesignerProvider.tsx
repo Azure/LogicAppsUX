@@ -16,12 +16,12 @@ interface ExtendedTheme extends Theme {
 const extendedWebLightTheme: ExtendedTheme = {
   ...webLightTheme,
   colorFnCategoryCollection: '#ae8c00',
-  colorFnCategoryDateTime: '#4f6bed',
+  colorFnCategoryDateTime: '#0099BC',
   colorFnCategoryLogical: '#038387',
-  colorFnCategoryMath: '#004e8c',
+  colorFnCategoryMath: '#252379',
   colorFnCategoryString: '#e43ba6',
-  colorFnCategoryUtility: '#8764b8',
-  colorFnCategoryConversion: '#814e29',
+  colorFnCategoryUtility: '#F6CA30',
+  colorFnCategoryConversion: '#367DE7',
 };
 
 const extendedWebDarkTheme: ExtendedTheme = {
