@@ -641,6 +641,12 @@
       "value": "매개 변수 인수를 부동 소수점 숫자로 변환합니다."
     }
   ],
+  "1QktJw": [
+    {
+      "type": 0,
+      "value": "Map errors"
+    }
+  ],
   "1Xke9D": [
     {
       "type": 0,
@@ -1345,6 +1351,20 @@
     {
       "type": 0,
       "value": "(UTC+09:00) 오사카, 삿포로, 도쿄"
+    }
+  ],
+  "5DkTf5": [
+    {
+      "type": 0,
+      "value": "Target schema node not found for node key '"
+    },
+    {
+      "type": 1,
+      "value": "nodeKey"
+    },
+    {
+      "type": 0,
+      "value": "'"
     }
   ],
   "5J9jne": [
@@ -2612,6 +2632,20 @@
       "value": "이 GUID 값의 서식을 지정하는 방법을 나타내는 단일 형식 지정자입니다."
     }
   ],
+  "Bwqlxd": [
+    {
+      "type": 0,
+      "value": "Key not found '"
+    },
+    {
+      "type": 1,
+      "value": "nodeKey"
+    },
+    {
+      "type": 0,
+      "value": "'"
+    }
+  ],
   "BxITRH": [
     {
       "type": 0,
@@ -3234,6 +3268,20 @@
       "value": "시작 인덱스와 끝 인덱스로 정의된 문자열의 섹션을 반환합니다."
     }
   ],
+  "FPBmrA": [
+    {
+      "type": 0,
+      "value": "Source schema node not found for node key '"
+    },
+    {
+      "type": 1,
+      "value": "nodeKey"
+    },
+    {
+      "type": 0,
+      "value": "'"
+    }
+  ],
   "FT3jt6": [
     {
       "type": 0,
@@ -3429,6 +3477,20 @@
     {
       "type": 0,
       "value": "원본 스키마 요소"
+    }
+  ],
+  "GiR7ll": [
+    {
+      "type": 0,
+      "value": "Function not found- '"
+    },
+    {
+      "type": 1,
+      "value": "nodeKey"
+    },
+    {
+      "type": 0,
+      "value": "'"
     }
   ],
   "Gk79Ma": [
@@ -4882,6 +4944,12 @@
     {
       "type": 0,
       "value": "축소됨"
+    }
+  ],
+  "PEJ+e4": [
+    {
+      "type": 0,
+      "value": "Error loading data map"
     }
   ],
   "PNk3n4": [
@@ -6547,12 +6615,6 @@
       "value": "Logic Apps가 응답에 워크플로 메타데이터 헤더를 포함하지 않도록 제한합니다."
     }
   ],
-  "XtVOMn": [
-    {
-      "type": 0,
-      "value": "Something went wrong"
-    }
-  ],
   "XtuP5e": [
     {
       "type": 0,
@@ -7731,6 +7793,12 @@
       "value": "공유"
     }
   ],
+  "epi+zR": [
+    {
+      "type": 0,
+      "value": "Close map checker"
+    }
+  ],
   "er6O+w": [
     {
       "type": 0,
@@ -7845,12 +7913,6 @@
     {
       "type": 0,
       "value": "(UTC-05:00) 아이티"
-    }
-  ],
-  "fZJWBR": [
-    {
-      "type": 0,
-      "value": "Loading designer"
     }
   ],
   "faUrud": [
@@ -8770,6 +8832,20 @@
     {
       "type": 0,
       "value": "대상 요소에 연결되지 않은 요소 및 매핑이 제거됩니다."
+    }
+  ],
+  "kfmLTY": [
+    {
+      "type": 0,
+      "value": "Function '"
+    },
+    {
+      "type": 1,
+      "value": "functionName"
+    },
+    {
+      "type": 0,
+      "value": "' is missing required inputs"
     }
   ],
   "klY9UN": [
@@ -10126,6 +10202,12 @@
     {
       "type": 0,
       "value": "새로 추가"
+    }
+  ],
+  "rwrlsB": [
+    {
+      "type": 0,
+      "value": "Map Issues"
     }
   ],
   "rxIJfD": [
