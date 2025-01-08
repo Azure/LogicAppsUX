@@ -14,7 +14,7 @@
   "+0ua83": [
     {
       "type": 0,
-      "value": "Parameters"
+      "value": "Parametry"
     }
   ],
   "+0yxlR": [
@@ -660,7 +660,7 @@
   "1QktJw": [
     {
       "type": 0,
-      "value": "Map errors"
+      "value": "Błędy mapy"
     }
   ],
   "1Xke9D": [
@@ -1374,7 +1374,7 @@
   "5DkTf5": [
     {
       "type": 0,
-      "value": "Target schema node not found for node key '"
+      "value": "Nie znaleziono docelowego węzła schematu dla '"
     },
     {
       "type": 1,
@@ -1382,7 +1382,7 @@
     },
     {
       "type": 0,
-      "value": "'"
+      "value": "' klucza węzła"
     }
   ],
   "5J9jne": [
@@ -2688,7 +2688,7 @@
   "Bwqlxd": [
     {
       "type": 0,
-      "value": "Key not found '"
+      "value": "Nie znaleziono klucza „"
     },
     {
       "type": 1,
@@ -2696,7 +2696,7 @@
     },
     {
       "type": 0,
-      "value": "'"
+      "value": "”"
     }
   ],
   "BxITRH": [
@@ -3328,7 +3328,7 @@
   "FPBmrA": [
     {
       "type": 0,
-      "value": "Source schema node not found for node key '"
+      "value": "Nie znaleziono węzła schematu źródłowego dla '"
     },
     {
       "type": 1,
@@ -3336,7 +3336,7 @@
     },
     {
       "type": 0,
-      "value": "'"
+      "value": "' klucza węzła"
     }
   ],
   "FT3jt6": [
@@ -3572,7 +3572,7 @@
   "GiR7ll": [
     {
       "type": 0,
-      "value": "Function not found- '"
+      "value": "Nie znaleziono funkcji — '"
     },
     {
       "type": 1,
@@ -5084,7 +5084,7 @@
   "PEJ+e4": [
     {
       "type": 0,
-      "value": "Error loading data map"
+      "value": "Błąd podczas ładowania mapy danych"
     }
   ],
   "PNk3n4": [
@@ -7192,7 +7192,7 @@
   "ZvAp7m": [
     {
       "type": 0,
-      "value": "Save"
+      "value": "Zapisz"
     }
   ],
   "ZyDq4/": [
@@ -7318,7 +7318,7 @@
   "auci7r": [
     {
       "type": 0,
-      "value": "Enter a valid comma-separated string."
+      "value": "Wprowadź prawidłowy ciąg rozdzielany przecinkami."
     }
   ],
   "aurgrg": [
@@ -8004,7 +8004,7 @@
   "epi+zR": [
     {
       "type": 0,
-      "value": "Close map checker"
+      "value": "Zamknij narzędzie do sprawdzania map"
     }
   ],
   "er6O+w": [
@@ -9088,7 +9088,7 @@
   "kfmLTY": [
     {
       "type": 0,
-      "value": "Function '"
+      "value": "W '"
     },
     {
       "type": 1,
@@ -9096,7 +9096,7 @@
     },
     {
       "type": 0,
-      "value": "' is missing required inputs"
+      "value": "' funkcji brakuje wymaganych danych wejściowych"
     }
   ],
   "klY9UN": [
@@ -9984,7 +9984,7 @@
   "ohOaXj": [
     {
       "type": 0,
-      "value": "Errors"
+      "value": "Błędy"
     }
   ],
   "ohpbkw": [
@@ -10558,7 +10558,7 @@
   "rwrlsB": [
     {
       "type": 0,
-      "value": "Map Issues"
+      "value": "Problemy z mapą"
     }
   ],
   "rxIJfD": [
@@ -10636,7 +10636,7 @@
   "sOnphB": [
     {
       "type": 0,
-      "value": "Resubmit"
+      "value": "Prześlij ponownie"
     }
   ],
   "sRpETS": [

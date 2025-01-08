@@ -14,7 +14,7 @@
   "+0ua83": [
     {
       "type": 0,
-      "value": "Parameters"
+      "value": "매개 변수"
     }
   ],
   "+0yxlR": [
@@ -80,7 +80,7 @@
   "+M7bC6": [
     {
       "type": 0,
-      "value": "Succeeded with retries"
+      "value": "성공했지만 다시 시도해야 함"
     }
   ],
   "+R90eK": [
@@ -656,7 +656,7 @@
   "1QktJw": [
     {
       "type": 0,
-      "value": "Map errors"
+      "value": "지도 오류"
     }
   ],
   "1Xke9D": [
@@ -1362,7 +1362,7 @@
   "5DkTf5": [
     {
       "type": 0,
-      "value": "Target schema node not found for node key '"
+      "value": "노드 키 '"
     },
     {
       "type": 1,
@@ -1370,7 +1370,7 @@
     },
     {
       "type": 0,
-      "value": "'"
+      "value": "' 대한 대상 스키마 노드를 찾을 수 없습니다."
     }
   ],
   "5J9jne": [
@@ -1834,7 +1834,7 @@
   "7X4UA/": [
     {
       "type": 0,
-      "value": "Waiting"
+      "value": "기다리는 중"
     }
   ],
   "7ZF1Hr": [
@@ -2230,7 +2230,7 @@
   "9dd0/m": [
     {
       "type": 0,
-      "value": "Running"
+      "value": "실행하는 중"
     }
   ],
   "9djnqI": [
@@ -2635,7 +2635,7 @@
   "Bwqlxd": [
     {
       "type": 0,
-      "value": "Key not found '"
+      "value": "키를 찾을 수 없습니다'"
     },
     {
       "type": 1,
@@ -3271,7 +3271,7 @@
   "FPBmrA": [
     {
       "type": 0,
-      "value": "Source schema node not found for node key '"
+      "value": "노드 키 '"
     },
     {
       "type": 1,
@@ -3279,7 +3279,7 @@
     },
     {
       "type": 0,
-      "value": "'"
+      "value": "' 대한 원본 스키마 노드를 찾을 수 없습니다."
     }
   ],
   "FT3jt6": [
@@ -3482,7 +3482,7 @@
   "GiR7ll": [
     {
       "type": 0,
-      "value": "Function not found- '"
+      "value": "함수를 찾을 수 없습니다. '"
     },
     {
       "type": 1,
@@ -4096,7 +4096,7 @@
   "KWeLBB": [
     {
       "type": 0,
-      "value": "Closing..."
+      "value": "닫는 중..."
     }
   ],
   "KX1poC": [
@@ -4197,7 +4197,7 @@
   "LBlM+D": [
     {
       "type": 0,
-      "value": "Not specified"
+      "value": "지정되지 않음"
     }
   ],
   "LCRHQ9": [
@@ -4961,7 +4961,7 @@
   "PEJ+e4": [
     {
       "type": 0,
-      "value": "Error loading data map"
+      "value": "데이터 맵을 로드하는 동안 오류가 발생했습니다."
     }
   ],
   "PNk3n4": [
@@ -6316,7 +6316,7 @@
   "WbIGAh": [
     {
       "type": 0,
-      "value": "Succeeded"
+      "value": "성공"
     }
   ],
   "Wc77aJ": [
@@ -6636,7 +6636,7 @@
   "XtVOMn": [
     {
       "type": 0,
-      "value": "Something went wrong"
+      "value": "문제가 발생함"
     }
   ],
   "XtuP5e": [
@@ -7032,7 +7032,7 @@
   "ZvAp7m": [
     {
       "type": 0,
-      "value": "Save"
+      "value": "저장"
     }
   ],
   "ZyDq4/": [
@@ -7158,7 +7158,7 @@
   "auci7r": [
     {
       "type": 0,
-      "value": "Enter a valid comma-separated string."
+      "value": "쉼표로 구분된 올바른 문자열을 입력하십시오."
     }
   ],
   "aurgrg": [
@@ -7820,7 +7820,7 @@
   "eofB85": [
     {
       "type": 0,
-      "value": "Timed out"
+      "value": "시간이 초과됨"
     }
   ],
   "epOMnV": [
@@ -7832,7 +7832,7 @@
   "epi+zR": [
     {
       "type": 0,
-      "value": "Close map checker"
+      "value": "지도 검사기 닫기"
     }
   ],
   "er6O+w": [
@@ -7954,7 +7954,7 @@
   "fZJWBR": [
     {
       "type": 0,
-      "value": "Loading designer"
+      "value": "디자이너를 로드하는 중"
     }
   ],
   "faUrud": [
@@ -8879,7 +8879,7 @@
   "kfmLTY": [
     {
       "type": 0,
-      "value": "Function '"
+      "value": "함수 '"
     },
     {
       "type": 1,
@@ -8887,7 +8887,7 @@
     },
     {
       "type": 0,
-      "value": "' is missing required inputs"
+      "value": "' 필수 입력이 누락되었습니다."
     }
   ],
   "klY9UN": [
@@ -9718,7 +9718,7 @@
   "ohOaXj": [
     {
       "type": 0,
-      "value": "Errors"
+      "value": "오류"
     }
   ],
   "ohpbkw": [
@@ -10255,7 +10255,7 @@
   "rwrlsB": [
     {
       "type": 0,
-      "value": "Map Issues"
+      "value": "맵 문제"
     }
   ],
   "rxIJfD": [
@@ -10333,7 +10333,7 @@
   "sOnphB": [
     {
       "type": 0,
-      "value": "Resubmit"
+      "value": "다시 제출"
     }
   ],
   "sRpETS": [

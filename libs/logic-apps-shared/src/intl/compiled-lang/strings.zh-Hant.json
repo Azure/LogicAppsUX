@@ -14,7 +14,7 @@
   "+0ua83": [
     {
       "type": 0,
-      "value": "Parameters"
+      "value": "參數"
     }
   ],
   "+0yxlR": [
@@ -80,7 +80,7 @@
   "+M7bC6": [
     {
       "type": 0,
-      "value": "Succeeded with retries"
+      "value": "重試後成功"
     }
   ],
   "+R90eK": [
@@ -664,7 +664,7 @@
   "1QktJw": [
     {
       "type": 0,
-      "value": "Map errors"
+      "value": "對應錯誤"
     }
   ],
   "1Xke9D": [
@@ -1382,7 +1382,7 @@
   "5DkTf5": [
     {
       "type": 0,
-      "value": "Target schema node not found for node key '"
+      "value": "找不到節點索引鍵 '"
     },
     {
       "type": 1,
@@ -1390,7 +1390,7 @@
     },
     {
       "type": 0,
-      "value": "'"
+      "value": "' 的目標架構節點"
     }
   ],
   "5J9jne": [
@@ -1854,7 +1854,7 @@
   "7X4UA/": [
     {
       "type": 0,
-      "value": "Waiting"
+      "value": "等待中"
     }
   ],
   "7ZF1Hr": [
@@ -2258,7 +2258,7 @@
   "9dd0/m": [
     {
       "type": 0,
-      "value": "Running"
+      "value": "正在執行"
     }
   ],
   "9djnqI": [
@@ -2663,7 +2663,7 @@
   "Bwqlxd": [
     {
       "type": 0,
-      "value": "Key not found '"
+      "value": "找不到金鑰 '"
     },
     {
       "type": 1,
@@ -3307,7 +3307,7 @@
   "FPBmrA": [
     {
       "type": 0,
-      "value": "Source schema node not found for node key '"
+      "value": "找不到節點索引鍵 '"
     },
     {
       "type": 1,
@@ -3315,7 +3315,7 @@
     },
     {
       "type": 0,
-      "value": "'"
+      "value": "' 的來源架構節點"
     }
   ],
   "FT3jt6": [
@@ -3518,7 +3518,7 @@
   "GiR7ll": [
     {
       "type": 0,
-      "value": "Function not found- '"
+      "value": "找不到函數- '"
     },
     {
       "type": 1,
@@ -4136,7 +4136,7 @@
   "KWeLBB": [
     {
       "type": 0,
-      "value": "Closing..."
+      "value": "正在關閉..."
     }
   ],
   "KX1poC": [
@@ -4237,7 +4237,7 @@
   "LBlM+D": [
     {
       "type": 0,
-      "value": "Not specified"
+      "value": "未指定"
     }
   ],
   "LCRHQ9": [
@@ -4997,7 +4997,7 @@
   "PEJ+e4": [
     {
       "type": 0,
-      "value": "Error loading data map"
+      "value": "載入數據對應時發生錯誤"
     }
   ],
   "PNk3n4": [
@@ -6368,7 +6368,7 @@
   "WbIGAh": [
     {
       "type": 0,
-      "value": "Succeeded"
+      "value": "成功"
     }
   ],
   "Wc77aJ": [
@@ -6688,7 +6688,7 @@
   "XtVOMn": [
     {
       "type": 0,
-      "value": "Something went wrong"
+      "value": "發生問題"
     }
   ],
   "XtuP5e": [
@@ -7084,7 +7084,7 @@
   "ZvAp7m": [
     {
       "type": 0,
-      "value": "Save"
+      "value": "儲存"
     }
   ],
   "ZyDq4/": [
@@ -7210,7 +7210,7 @@
   "auci7r": [
     {
       "type": 0,
-      "value": "Enter a valid comma-separated string."
+      "value": "請輸入以逗號分隔的有效字串。"
     }
   ],
   "aurgrg": [
@@ -7876,7 +7876,7 @@
   "eofB85": [
     {
       "type": 0,
-      "value": "Timed out"
+      "value": "逾時"
     }
   ],
   "epOMnV": [
@@ -7888,7 +7888,7 @@
   "epi+zR": [
     {
       "type": 0,
-      "value": "Close map checker"
+      "value": "關閉地圖檢查器"
     }
   ],
   "er6O+w": [
@@ -8010,7 +8010,7 @@
   "fZJWBR": [
     {
       "type": 0,
-      "value": "Loading designer"
+      "value": "正在載入設計工具"
     }
   ],
   "faUrud": [
@@ -8939,7 +8939,7 @@
   "kfmLTY": [
     {
       "type": 0,
-      "value": "Function '"
+      "value": "函數 '"
     },
     {
       "type": 1,
@@ -8947,7 +8947,7 @@
     },
     {
       "type": 0,
-      "value": "' is missing required inputs"
+      "value": "' 遺失必要的輸入"
     }
   ],
   "klY9UN": [
@@ -9778,7 +9778,7 @@
   "ohOaXj": [
     {
       "type": 0,
-      "value": "Errors"
+      "value": "錯誤"
     }
   ],
   "ohpbkw": [
@@ -10319,7 +10319,7 @@
   "rwrlsB": [
     {
       "type": 0,
-      "value": "Map Issues"
+      "value": "對應問題"
     }
   ],
   "rxIJfD": [
@@ -10397,7 +10397,7 @@
   "sOnphB": [
     {
       "type": 0,
-      "value": "Resubmit"
+      "value": "重新提交"
     }
   ],
   "sRpETS": [
