@@ -11,6 +11,12 @@
       "value": "Warnung: Der Eingabeknotentyp stimmt nicht mit dem Typ des Schemaknotens überein."
     }
   ],
+  "+0ua83": [
+    {
+      "type": 0,
+      "value": "Parameter"
+    }
+  ],
   "+0yxlR": [
     {
       "type": 0,
@@ -69,6 +75,12 @@
     {
       "type": 0,
       "value": "Übersicht"
+    }
+  ],
+  "+M7bC6": [
+    {
+      "type": 0,
+      "value": "Succeeded with retries"
     }
   ],
   "+R90eK": [
@@ -656,7 +668,7 @@
   "1QktJw": [
     {
       "type": 0,
-      "value": "Map errors"
+      "value": "Zuordnungsfehler"
     }
   ],
   "1Xke9D": [
@@ -1177,12 +1189,6 @@
       "value": "Verbindung öffnen"
     }
   ],
-  "41eMpW": [
-    {
-      "type": 0,
-      "value": "Wartet"
-    }
-  ],
   "43xObP": [
     {
       "type": 0,
@@ -1388,7 +1394,7 @@
   "5DkTf5": [
     {
       "type": 0,
-      "value": "Target schema node not found for node key '"
+      "value": "Der Zielschemaknoten für den Knotenschlüssel '"
     },
     {
       "type": 1,
@@ -1396,7 +1402,7 @@
     },
     {
       "type": 0,
-      "value": "'"
+      "value": "' nicht gefunden."
     }
   ],
   "5J9jne": [
@@ -1857,6 +1863,12 @@
       "value": "Erforderlich. Die Zeichenfolge, aus der die Teilzeichenfolge entnommen wird."
     }
   ],
+  "7X4UA/": [
+    {
+      "type": 0,
+      "value": "Waiting"
+    }
+  ],
   "7ZF1Hr": [
     {
       "type": 0,
@@ -2259,6 +2271,12 @@
       "value": "Hinzufügen"
     }
   ],
+  "9dd0/m": [
+    {
+      "type": 0,
+      "value": "Running"
+    }
+  ],
   "9djnqI": [
     {
       "type": 0,
@@ -2527,12 +2545,6 @@
       "value": "Warnung: Der benutzerdefinierte Wert stimmt nicht mit einem der zulässigen Typen für diese Eingabe überein."
     }
   ],
-  "BFTwRN": [
-    {
-      "type": 0,
-      "value": "Erfolgreich mit Wiederholungen"
-    }
-  ],
   "BGw6eH": [
     {
       "type": 0,
@@ -2573,12 +2585,6 @@
       "value": "Startzeit"
     }
   ],
-  "BPYdTX": [
-    {
-      "type": 0,
-      "value": "Nicht angegeben"
-    }
-  ],
   "BQCPY7": [
     {
       "type": 0,
@@ -2589,12 +2595,6 @@
     {
       "type": 0,
       "value": "Geben Sie das Kennwort in Nur-Text-Form oder als sicheren Parameter ein."
-    }
-  ],
-  "BRMOfD": [
-    {
-      "type": 0,
-      "value": "Zeitüberschreitung"
     }
   ],
   "BS3gy8": [
@@ -2690,7 +2690,7 @@
   "Bwqlxd": [
     {
       "type": 0,
-      "value": "Key not found '"
+      "value": "Der Schlüssel „"
     },
     {
       "type": 1,
@@ -2698,7 +2698,7 @@
     },
     {
       "type": 0,
-      "value": "'"
+      "value": "“ wurde nicht gefunden."
     }
   ],
   "BxITRH": [
@@ -3338,7 +3338,7 @@
   "FPBmrA": [
     {
       "type": 0,
-      "value": "Source schema node not found for node key '"
+      "value": "Der Quellschemaknoten für den Knotenschlüssel '"
     },
     {
       "type": 1,
@@ -3346,7 +3346,7 @@
     },
     {
       "type": 0,
-      "value": "'"
+      "value": "' nicht gefunden."
     }
   ],
   "FT3jt6": [
@@ -3560,7 +3560,7 @@
   "GiR7ll": [
     {
       "type": 0,
-      "value": "Function not found- '"
+      "value": "Funktion nicht gefunden– '"
     },
     {
       "type": 1,
@@ -4179,6 +4179,12 @@
       "value": "Wenn ein neues Element..."
     }
   ],
+  "KWeLBB": [
+    {
+      "type": 0,
+      "value": "Closing..."
+    }
+  ],
   "KX1poC": [
     {
       "offset": 0,
@@ -4283,6 +4289,12 @@
     {
       "type": 0,
       "value": "Erweitern"
+    }
+  ],
+  "LBlM+D": [
+    {
+      "type": 0,
+      "value": "Not specified"
     }
   ],
   "LCRHQ9": [
@@ -5046,7 +5058,7 @@
   "PEJ+e4": [
     {
       "type": 0,
-      "value": "Error loading data map"
+      "value": "Fehler beim Laden der Datenzuordnung."
     }
   ],
   "PNk3n4": [
@@ -6421,6 +6433,12 @@
       "value": "Kompakteigenschaft für trigger().outputs"
     }
   ],
+  "WbIGAh": [
+    {
+      "type": 0,
+      "value": "Succeeded"
+    }
+  ],
   "Wc77aJ": [
     {
       "type": 0,
@@ -6733,6 +6751,12 @@
     {
       "type": 0,
       "value": "Durch diese Einstellung schließen Logik-Apps keine Workflow-Metadatenheader in der Antwort ein."
+    }
+  ],
+  "XtVOMn": [
+    {
+      "type": 0,
+      "value": "Something went wrong"
     }
   ],
   "XtuP5e": [
@@ -7125,6 +7149,12 @@
       "value": "Erfahren Sie mehr über dynamische Inhalte."
     }
   ],
+  "ZvAp7m": [
+    {
+      "type": 0,
+      "value": "Speichern"
+    }
+  ],
   "ZyDq4/": [
     {
       "type": 0,
@@ -7248,7 +7278,7 @@
   "auci7r": [
     {
       "type": 0,
-      "value": "Enter a valid comma-separated string."
+      "value": "Geben Sie eine gültige durch Kommas getrennte Zeichenfolge ein."
     }
   ],
   "aurgrg": [
@@ -7919,6 +7949,12 @@
       "value": "Aktivieren Sie die aufgeteilte Ausführung, um für jedes Element im ausgewählten Array eine Instanz des Workflows zu starten. Jede Instanz kann auch eine eindeutige Nachverfolgungs-ID aufweisen."
     }
   ],
+  "eofB85": [
+    {
+      "type": 0,
+      "value": "Timed out"
+    }
+  ],
   "epOMnV": [
     {
       "type": 0,
@@ -7928,7 +7964,7 @@
   "epi+zR": [
     {
       "type": 0,
-      "value": "Close map checker"
+      "value": "Kartenprüfer schließen"
     }
   ],
   "er6O+w": [
@@ -8045,6 +8081,12 @@
     {
       "type": 0,
       "value": "(UTC-05:00) Haiti"
+    }
+  ],
+  "fZJWBR": [
+    {
+      "type": 0,
+      "value": "Loading designer"
     }
   ],
   "faUrud": [
@@ -8984,7 +9026,7 @@
   "kfmLTY": [
     {
       "type": 0,
-      "value": "Function '"
+      "value": "In der Funktion '"
     },
     {
       "type": 1,
@@ -8992,7 +9034,7 @@
     },
     {
       "type": 0,
-      "value": "' is missing required inputs"
+      "value": "' fehlen erforderliche Eingaben."
     }
   ],
   "klY9UN": [
@@ -9843,6 +9885,12 @@
       "value": "Antworttext"
     }
   ],
+  "ohOaXj": [
+    {
+      "type": 0,
+      "value": "Fehler"
+    }
+  ],
   "ohpbkw": [
     {
       "type": 0,
@@ -10392,7 +10440,7 @@
   "rwrlsB": [
     {
       "type": 0,
-      "value": "Map Issues"
+      "value": "Kartenprobleme"
     }
   ],
   "rxIJfD": [
@@ -10465,6 +10513,12 @@
     {
       "type": 0,
       "value": "Für den Workflownamen muss ein Wert angegeben werden."
+    }
+  ],
+  "sOnphB": [
+    {
+      "type": 0,
+      "value": "Erneut übermitteln"
     }
   ],
   "sRpETS": [
@@ -10949,12 +11003,6 @@
     {
       "type": 0,
       "value": "Leider hat Copilot die Kapazität erreicht und ist vorübergehend nicht verfügbar. Versuchen Sie es später noch mal."
-    }
-  ],
-  "uanMWm": [
-    {
-      "type": 0,
-      "value": "Erfolgreich"
     }
   ],
   "uc/PoD": [

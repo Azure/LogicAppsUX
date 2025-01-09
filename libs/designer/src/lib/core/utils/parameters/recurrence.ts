@@ -5,18 +5,6 @@ import type { ParameterInfo } from '@microsoft/designer-ui';
 import { OutputMapKey, SchemaProcessor, toInputParameter, map, RecurrenceType } from '@microsoft/logic-apps-shared';
 import type { InputParameter, OpenAPIV2, RecurrenceSetting } from '@microsoft/logic-apps-shared';
 
-export interface Recurrence {
-  frequency: string | undefined;
-  interval: number | undefined;
-  startTime?: string;
-  timeZone?: string;
-  schedule?: {
-    hours?: string[];
-    minutes?: number[];
-    weekDays?: string[];
-  };
-}
-
 const getRecurrenceSchema = (recurrenceType?: RecurrenceType): OpenAPIV2.SchemaObject => {
   return {
     type: 'object',
@@ -56,17 +44,17 @@ export const getRecurrenceParameters = (
 
   const queryClient = getReactQueryClient();
   const recurrenceInterval = queryClient.getQueryData(['recurrenceInterval']);
-  const defaultRecurrence = recurrenceInterval ?? constants.DEFAULT_RECURRENCE;
+  const recurrenceValue = recurrenceInterval ?? constants.DEFAULT_RECURRENCE;
 
   for (const parameter of recurrenceParameters) {
     if (!parameter.default) {
-      parameter.default = defaultRecurrence;
+      parameter.default = recurrenceValue;
     }
   }
 
   if (operationDefinition) {
     for (const parameter of recurrenceParameters) {
-      parameter.value = operationDefinition?.recurrence ?? defaultRecurrence;
+      parameter.value = operationDefinition?.recurrence ?? recurrenceValue;
     }
   } else {
     loadParameterValuesFromDefault(map(recurrenceParameters, OutputMapKey));

@@ -11,6 +11,12 @@
       "value": "Figyelmeztetés: a bemeneti csomópont típusa nem felel meg a sémacsomópont típusának"
     }
   ],
+  "+0ua83": [
+    {
+      "type": 0,
+      "value": "Paraméterek"
+    }
+  ],
   "+0yxlR": [
     {
       "type": 0,
@@ -69,6 +75,12 @@
     {
       "type": 0,
       "value": "Áttekintés"
+    }
+  ],
+  "+M7bC6": [
+    {
+      "type": 0,
+      "value": "Succeeded with retries"
     }
   ],
   "+R90eK": [
@@ -652,7 +664,7 @@
   "1QktJw": [
     {
       "type": 0,
-      "value": "Map errors"
+      "value": "Leképezési hibák"
     }
   ],
   "1Xke9D": [
@@ -1173,12 +1185,6 @@
       "value": "Kapcsolat megnyitása"
     }
   ],
-  "41eMpW": [
-    {
-      "type": 0,
-      "value": "Várakozás"
-    }
-  ],
   "43xObP": [
     {
       "type": 0,
@@ -1376,7 +1382,7 @@
   "5DkTf5": [
     {
       "type": 0,
-      "value": "Target schema node not found for node key '"
+      "value": "A csomópontkulcshoz tartozó célsémacsomópont nem található '"
     },
     {
       "type": 1,
@@ -1837,6 +1843,12 @@
       "value": "Kötelező megadni. Az a sztring, amelyből a sztringrész származik."
     }
   ],
+  "7X4UA/": [
+    {
+      "type": 0,
+      "value": "Waiting"
+    }
+  ],
   "7ZF1Hr": [
     {
       "type": 0,
@@ -2235,6 +2247,12 @@
       "value": "Hozzáadás"
     }
   ],
+  "9dd0/m": [
+    {
+      "type": 0,
+      "value": "Running"
+    }
+  ],
   "9djnqI": [
     {
       "type": 0,
@@ -2503,12 +2521,6 @@
       "value": "Figyelmeztetés: az egyéni érték nem felel meg a bemenethez engedélyezett típusok egyikének"
     }
   ],
-  "BFTwRN": [
-    {
-      "type": 0,
-      "value": "Újrapróbálkozásokkal sikeres"
-    }
-  ],
   "BGw6eH": [
     {
       "type": 0,
@@ -2549,12 +2561,6 @@
       "value": "Kezdés időpontja"
     }
   ],
-  "BPYdTX": [
-    {
-      "type": 0,
-      "value": "Nincs megadva"
-    }
-  ],
   "BQCPY7": [
     {
       "type": 0,
@@ -2565,12 +2571,6 @@
     {
       "type": 0,
       "value": "Adja meg a jelszót egyszerű szövegként, vagy használjon biztonságos paramétert"
-    }
-  ],
-  "BRMOfD": [
-    {
-      "type": 0,
-      "value": "Lejárt az időkorlát"
     }
   ],
   "BS3gy8": [
@@ -2666,7 +2666,7 @@
   "Bwqlxd": [
     {
       "type": 0,
-      "value": "Key not found '"
+      "value": "Nem található „"
     },
     {
       "type": 1,
@@ -2674,7 +2674,7 @@
     },
     {
       "type": 0,
-      "value": "'"
+      "value": "” kulcs"
     }
   ],
   "BxITRH": [
@@ -3306,7 +3306,7 @@
   "FPBmrA": [
     {
       "type": 0,
-      "value": "Source schema node not found for node key '"
+      "value": "A(z) '"
     },
     {
       "type": 1,
@@ -3314,7 +3314,7 @@
     },
     {
       "type": 0,
-      "value": "'"
+      "value": "' csomópontkulcs forrásséma-csomópontja nem található"
     }
   ],
   "FT3jt6": [
@@ -3528,7 +3528,7 @@
   "GiR7ll": [
     {
       "type": 0,
-      "value": "Function not found- '"
+      "value": "A függvény nem található – '"
     },
     {
       "type": 1,
@@ -4143,6 +4143,12 @@
       "value": "Új elem esetén..."
     }
   ],
+  "KWeLBB": [
+    {
+      "type": 0,
+      "value": "Closing..."
+    }
+  ],
   "KX1poC": [
     {
       "offset": 0,
@@ -4247,6 +4253,12 @@
     {
       "type": 0,
       "value": "Kibontás"
+    }
+  ],
+  "LBlM+D": [
+    {
+      "type": 0,
+      "value": "Not specified"
     }
   ],
   "LCRHQ9": [
@@ -5006,7 +5018,7 @@
   "PEJ+e4": [
     {
       "type": 0,
-      "value": "Error loading data map"
+      "value": "Hiba történt az adattérkép betöltésekor"
     }
   ],
   "PNk3n4": [
@@ -6357,6 +6369,12 @@
       "value": "A trigger().outputs rövid függvényneve."
     }
   ],
+  "WbIGAh": [
+    {
+      "type": 0,
+      "value": "Succeeded"
+    }
+  ],
   "Wc77aJ": [
     {
       "type": 0,
@@ -6669,6 +6687,12 @@
     {
       "type": 0,
       "value": "A munkafolyamat-metaadatokat tartalmazó fejlécek a Logic Apps-válaszban való megjelenítésének letiltása."
+    }
+  ],
+  "XtVOMn": [
+    {
+      "type": 0,
+      "value": "Something went wrong"
     }
   ],
   "XtuP5e": [
@@ -7057,6 +7081,12 @@
       "value": "További információ a dinamikus tartalmakról."
     }
   ],
+  "ZvAp7m": [
+    {
+      "type": 0,
+      "value": "Mentés"
+    }
+  ],
   "ZyDq4/": [
     {
       "type": 0,
@@ -7180,7 +7210,7 @@
   "auci7r": [
     {
       "type": 0,
-      "value": "Enter a valid comma-separated string."
+      "value": "Adjon meg érvényes, vesszővel tagolt karakterláncot."
     }
   ],
   "aurgrg": [
@@ -7851,6 +7881,12 @@
       "value": "Ha engedélyezi a felosztást, a rendszer a kiválasztott tömb minden eleméhez elindítja a munkafolyamat egy példányát. Minden példány rendelkezhet eltérő követési azonosítóval is"
     }
   ],
+  "eofB85": [
+    {
+      "type": 0,
+      "value": "Timed out"
+    }
+  ],
   "epOMnV": [
     {
       "type": 0,
@@ -7860,7 +7896,7 @@
   "epi+zR": [
     {
       "type": 0,
-      "value": "Close map checker"
+      "value": "Térképellenző bezárása"
     }
   ],
   "er6O+w": [
@@ -7977,6 +8013,12 @@
     {
       "type": 0,
       "value": "(UTC-05:00) Haiti"
+    }
+  ],
+  "fZJWBR": [
+    {
+      "type": 0,
+      "value": "Tervező betöltése"
     }
   ],
   "faUrud": [
@@ -8916,7 +8958,7 @@
   "kfmLTY": [
     {
       "type": 0,
-      "value": "Function '"
+      "value": "A(z) '"
     },
     {
       "type": 1,
@@ -8924,7 +8966,7 @@
     },
     {
       "type": 0,
-      "value": "' is missing required inputs"
+      "value": "' függvény kötelező bemenetei hiányoznak"
     }
   ],
   "klY9UN": [
@@ -9771,6 +9813,12 @@
       "value": "Választörzs"
     }
   ],
+  "ohOaXj": [
+    {
+      "type": 0,
+      "value": "Hibák"
+    }
+  ],
   "ohpbkw": [
     {
       "type": 0,
@@ -10320,7 +10368,7 @@
   "rwrlsB": [
     {
       "type": 0,
-      "value": "Map Issues"
+      "value": "Leképezési problémák"
     }
   ],
   "rxIJfD": [
@@ -10393,6 +10441,12 @@
     {
       "type": 0,
       "value": "A munkafolyamat nevének értékét kötelező megadni."
+    }
+  ],
+  "sOnphB": [
+    {
+      "type": 0,
+      "value": "Újraküldés"
     }
   ],
   "sRpETS": [
@@ -10873,12 +10927,6 @@
     {
       "type": 0,
       "value": "Sajnáljuk, a Copilot kapacitása jelenleg ki van használva és átmenetileg nem érhető el. Próbálkozzon újra egy kicsit később."
-    }
-  ],
-  "uanMWm": [
-    {
-      "type": 0,
-      "value": "Sikeres"
     }
   ],
   "uc/PoD": [

@@ -11,6 +11,12 @@
       "value": "警告: 入力ノードの種類がスキーマ ノードの種類と一致しません"
     }
   ],
+  "+0ua83": [
+    {
+      "type": 0,
+      "value": "パラメーター"
+    }
+  ],
   "+0yxlR": [
     {
       "type": 0,
@@ -69,6 +75,12 @@
     {
       "type": 0,
       "value": "概要"
+    }
+  ],
+  "+M7bC6": [
+    {
+      "type": 0,
+      "value": "Succeeded with retries"
     }
   ],
   "+R90eK": [
@@ -644,7 +656,7 @@
   "1QktJw": [
     {
       "type": 0,
-      "value": "Map errors"
+      "value": "マップ エラー"
     }
   ],
   "1Xke9D": [
@@ -1153,12 +1165,6 @@
       "value": "接続を開く"
     }
   ],
-  "41eMpW": [
-    {
-      "type": 0,
-      "value": "待機中"
-    }
-  ],
   "43xObP": [
     {
       "type": 0,
@@ -1356,7 +1362,7 @@
   "5DkTf5": [
     {
       "type": 0,
-      "value": "Target schema node not found for node key '"
+      "value": "ノード キー '"
     },
     {
       "type": 1,
@@ -1364,7 +1370,7 @@
     },
     {
       "type": 0,
-      "value": "'"
+      "value": "' のターゲット スキーマ ノードが見つかりません"
     }
   ],
   "5J9jne": [
@@ -1825,6 +1831,12 @@
       "value": "必須。取得する部分文字列が含まれる文字列。"
     }
   ],
+  "7X4UA/": [
+    {
+      "type": 0,
+      "value": "Waiting"
+    }
+  ],
   "7ZF1Hr": [
     {
       "type": 0,
@@ -2223,6 +2235,12 @@
       "value": "追加"
     }
   ],
+  "9dd0/m": [
+    {
+      "type": 0,
+      "value": "Running"
+    }
+  ],
   "9djnqI": [
     {
       "type": 0,
@@ -2480,12 +2498,6 @@
       "value": "警告: カスタム値が、この入力に許可されている型のいずれかと一致しません"
     }
   ],
-  "BFTwRN": [
-    {
-      "type": 0,
-      "value": "再試行により成功しました"
-    }
-  ],
   "BGw6eH": [
     {
       "type": 0,
@@ -2526,12 +2538,6 @@
       "value": "開始時刻"
     }
   ],
-  "BPYdTX": [
-    {
-      "type": 0,
-      "value": "指定されていません"
-    }
-  ],
   "BQCPY7": [
     {
       "type": 0,
@@ -2542,12 +2548,6 @@
     {
       "type": 0,
       "value": "パスワードをプレーンテキストとして入力するか、セキュリティで保護されたパラメーターを使用してください"
-    }
-  ],
-  "BRMOfD": [
-    {
-      "type": 0,
-      "value": "タイムアウト"
     }
   ],
   "BS3gy8": [
@@ -2643,7 +2643,7 @@
   "Bwqlxd": [
     {
       "type": 0,
-      "value": "Key not found '"
+      "value": "キーが見つかりません '"
     },
     {
       "type": 1,
@@ -3279,7 +3279,7 @@
   "FPBmrA": [
     {
       "type": 0,
-      "value": "Source schema node not found for node key '"
+      "value": "ノード キー '"
     },
     {
       "type": 1,
@@ -3287,7 +3287,7 @@
     },
     {
       "type": 0,
-      "value": "'"
+      "value": "' のソース スキーマ ノードが見つかりません"
     }
   ],
   "FT3jt6": [
@@ -3490,7 +3490,7 @@
   "GiR7ll": [
     {
       "type": 0,
-      "value": "Function not found- '"
+      "value": "関数が見つかりません- '"
     },
     {
       "type": 1,
@@ -4101,6 +4101,12 @@
       "value": "新しいアイテムが..."
     }
   ],
+  "KWeLBB": [
+    {
+      "type": 0,
+      "value": "Closing..."
+    }
+  ],
   "KX1poC": [
     {
       "offset": 0,
@@ -4194,6 +4200,12 @@
     {
       "type": 0,
       "value": "展開"
+    }
+  ],
+  "LBlM+D": [
+    {
+      "type": 0,
+      "value": "Not specified"
     }
   ],
   "LCRHQ9": [
@@ -4957,7 +4969,7 @@
   "PEJ+e4": [
     {
       "type": 0,
-      "value": "Error loading data map"
+      "value": "データ マップの読み込み中にエラーが発生しました"
     }
   ],
   "PNk3n4": [
@@ -6305,6 +6317,12 @@
       "value": "trigger().outputs の短縮形"
     }
   ],
+  "WbIGAh": [
+    {
+      "type": 0,
+      "value": "Succeeded"
+    }
+  ],
   "Wc77aJ": [
     {
       "type": 0,
@@ -6617,6 +6635,12 @@
     {
       "type": 0,
       "value": "応答にワークフロー メタデータ ヘッダーを含めないように Logic Apps を制限します。"
+    }
+  ],
+  "XtVOMn": [
+    {
+      "type": 0,
+      "value": "Something went wrong"
     }
   ],
   "XtuP5e": [
@@ -7009,6 +7033,12 @@
       "value": "動的コンテンツの詳細情報。"
     }
   ],
+  "ZvAp7m": [
+    {
+      "type": 0,
+      "value": "保存"
+    }
+  ],
   "ZyDq4/": [
     {
       "type": 0,
@@ -7132,7 +7162,7 @@
   "auci7r": [
     {
       "type": 0,
-      "value": "Enter a valid comma-separated string."
+      "value": "有効なコンマ区切り文字列を入力してください。"
     }
   ],
   "aurgrg": [
@@ -7799,6 +7829,12 @@
       "value": "選択したアレイの各項目のワークフローのインスタンスを開始するために分割を有効にします。各インスタンスには、個別の追跡 ID がある場合もあります"
     }
   ],
+  "eofB85": [
+    {
+      "type": 0,
+      "value": "Timed out"
+    }
+  ],
   "epOMnV": [
     {
       "type": 0,
@@ -7808,7 +7844,7 @@
   "epi+zR": [
     {
       "type": 0,
-      "value": "Close map checker"
+      "value": "マップ チェッカーを閉じる"
     }
   ],
   "er6O+w": [
@@ -7925,6 +7961,12 @@
     {
       "type": 0,
       "value": "(UTC-05:00) ハイチ"
+    }
+  ],
+  "fZJWBR": [
+    {
+      "type": 0,
+      "value": "Loading designer"
     }
   ],
   "faUrud": [
@@ -8849,7 +8891,7 @@
   "kfmLTY": [
     {
       "type": 0,
-      "value": "Function '"
+      "value": "関数 '"
     },
     {
       "type": 1,
@@ -8857,7 +8899,7 @@
     },
     {
       "type": 0,
-      "value": "' is missing required inputs"
+      "value": "' に必要な入力がありません"
     }
   ],
   "klY9UN": [
@@ -9685,6 +9727,12 @@
       "value": "応答本文"
     }
   ],
+  "ohOaXj": [
+    {
+      "type": 0,
+      "value": "エラー"
+    }
+  ],
   "ohpbkw": [
     {
       "type": 0,
@@ -10219,7 +10267,7 @@
   "rwrlsB": [
     {
       "type": 0,
-      "value": "Map Issues"
+      "value": "マップの問題"
     }
   ],
   "rxIJfD": [
@@ -10292,6 +10340,12 @@
     {
       "type": 0,
       "value": "ワークフロー名の値を指定する必要があります。"
+    }
+  ],
+  "sOnphB": [
+    {
+      "type": 0,
+      "value": "再送信"
     }
   ],
   "sRpETS": [
@@ -10772,12 +10826,6 @@
     {
       "type": 0,
       "value": "申し訳ございません。Copilot はフル操業しており、一時的に利用できません。しばらくしてからもう一度お試しください。"
-    }
-  ],
-  "uanMWm": [
-    {
-      "type": 0,
-      "value": "成功しました"
     }
   ],
   "uc/PoD": [

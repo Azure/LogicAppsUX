@@ -11,6 +11,12 @@
       "value": "Varning! Indatanodens typ matchar inte typ av schemanod"
     }
   ],
+  "+0ua83": [
+    {
+      "type": 0,
+      "value": "Parametrar"
+    }
+  ],
   "+0yxlR": [
     {
       "type": 0,
@@ -69,6 +75,12 @@
     {
       "type": 0,
       "value": "Översikt"
+    }
+  ],
+  "+M7bC6": [
+    {
+      "type": 0,
+      "value": "Succeeded with retries"
     }
   ],
   "+R90eK": [
@@ -652,7 +664,7 @@
   "1QktJw": [
     {
       "type": 0,
-      "value": "Map errors"
+      "value": "Mappningsfel"
     }
   ],
   "1Xke9D": [
@@ -1169,12 +1181,6 @@
       "value": "Öppna anslutning"
     }
   ],
-  "41eMpW": [
-    {
-      "type": 0,
-      "value": "Väntar"
-    }
-  ],
   "43xObP": [
     {
       "type": 0,
@@ -1368,7 +1374,7 @@
   "5DkTf5": [
     {
       "type": 0,
-      "value": "Target schema node not found for node key '"
+      "value": "Det gick inte att hitta målschemanoden för nodnyckeln '"
     },
     {
       "type": 1,
@@ -1837,6 +1843,12 @@
       "value": "Obligatoriskt. Den sträng från vilken delsträngen hämtas."
     }
   ],
+  "7X4UA/": [
+    {
+      "type": 0,
+      "value": "Waiting"
+    }
+  ],
   "7ZF1Hr": [
     {
       "type": 0,
@@ -2235,6 +2247,12 @@
       "value": "Lägg till"
     }
   ],
+  "9dd0/m": [
+    {
+      "type": 0,
+      "value": "Running"
+    }
+  ],
   "9djnqI": [
     {
       "type": 0,
@@ -2499,12 +2517,6 @@
       "value": "Varning! Det anpassade värdet matchar inte någon av de tillåtna typerna för dessa indata"
     }
   ],
-  "BFTwRN": [
-    {
-      "type": 0,
-      "value": "Lyckades med återförsök"
-    }
-  ],
   "BGw6eH": [
     {
       "type": 0,
@@ -2541,12 +2553,6 @@
       "value": "Starttid"
     }
   ],
-  "BPYdTX": [
-    {
-      "type": 0,
-      "value": "Inte angivet"
-    }
-  ],
   "BQCPY7": [
     {
       "type": 0,
@@ -2557,12 +2563,6 @@
     {
       "type": 0,
       "value": "Ange lösenordet som oformaterad text eller använd en säker parameter"
-    }
-  ],
-  "BRMOfD": [
-    {
-      "type": 0,
-      "value": "Tidsgräns uppnådd"
     }
   ],
   "BS3gy8": [
@@ -2658,15 +2658,11 @@
   "Bwqlxd": [
     {
       "type": 0,
-      "value": "Key not found '"
+      "value": "Nyckeln hittades inte "
     },
     {
       "type": 1,
       "value": "nodeKey"
-    },
-    {
-      "type": 0,
-      "value": "'"
     }
   ],
   "BxITRH": [
@@ -3294,7 +3290,7 @@
   "FPBmrA": [
     {
       "type": 0,
-      "value": "Source schema node not found for node key '"
+      "value": "Det gick inte att hitta källschemanoden för nodnyckeln '"
     },
     {
       "type": 1,
@@ -3516,7 +3512,7 @@
   "GiR7ll": [
     {
       "type": 0,
-      "value": "Function not found- '"
+      "value": "Funktionen hittades inte- '"
     },
     {
       "type": 1,
@@ -4131,6 +4127,12 @@
       "value": "När ett nytt objekt..."
     }
   ],
+  "KWeLBB": [
+    {
+      "type": 0,
+      "value": "Closing..."
+    }
+  ],
   "KX1poC": [
     {
       "offset": 0,
@@ -4235,6 +4237,12 @@
     {
       "type": 0,
       "value": "Expandera"
+    }
+  ],
+  "LBlM+D": [
+    {
+      "type": 0,
+      "value": "Not specified"
     }
   ],
   "LCRHQ9": [
@@ -4990,7 +4998,7 @@
   "PEJ+e4": [
     {
       "type": 0,
-      "value": "Error loading data map"
+      "value": "Fel vid inläsning av datamappning"
     }
   ],
   "PNk3n4": [
@@ -6345,6 +6353,12 @@
       "value": "Snabbformat för trigger().outputs"
     }
   ],
+  "WbIGAh": [
+    {
+      "type": 0,
+      "value": "Succeeded"
+    }
+  ],
   "Wc77aJ": [
     {
       "type": 0,
@@ -6657,6 +6671,12 @@
     {
       "type": 0,
       "value": "Begränsa Logic Apps så att rubriker för arbetsflödesmetadata inte inkluderas i svaret."
+    }
+  ],
+  "XtVOMn": [
+    {
+      "type": 0,
+      "value": "Something went wrong"
     }
   ],
   "XtuP5e": [
@@ -7045,6 +7065,12 @@
       "value": "Läs mer om dynamiskt innehåll."
     }
   ],
+  "ZvAp7m": [
+    {
+      "type": 0,
+      "value": "Spara"
+    }
+  ],
   "ZyDq4/": [
     {
       "type": 0,
@@ -7168,7 +7194,7 @@
   "auci7r": [
     {
       "type": 0,
-      "value": "Enter a valid comma-separated string."
+      "value": "Ange en giltig kommaavgränsad sträng."
     }
   ],
   "aurgrg": [
@@ -7839,6 +7865,12 @@
       "value": "Starta en instans av arbetsflödet per objekt i den markerade matrisen genom att aktivera delning. Varje instans kan också ha ett distinkt spårnings-id."
     }
   ],
+  "eofB85": [
+    {
+      "type": 0,
+      "value": "Timed out"
+    }
+  ],
   "epOMnV": [
     {
       "type": 0,
@@ -7848,7 +7880,7 @@
   "epi+zR": [
     {
       "type": 0,
-      "value": "Close map checker"
+      "value": "Stäng kartkontrollen"
     }
   ],
   "er6O+w": [
@@ -7965,6 +7997,12 @@
     {
       "type": 0,
       "value": "(UTC-05:00) Haiti"
+    }
+  ],
+  "fZJWBR": [
+    {
+      "type": 0,
+      "value": "Läser in designer"
     }
   ],
   "faUrud": [
@@ -8904,7 +8942,7 @@
   "kfmLTY": [
     {
       "type": 0,
-      "value": "Function '"
+      "value": "Funktionen '"
     },
     {
       "type": 1,
@@ -8912,7 +8950,7 @@
     },
     {
       "type": 0,
-      "value": "' is missing required inputs"
+      "value": "' saknar nödvändiga indata"
     }
   ],
   "klY9UN": [
@@ -9759,6 +9797,12 @@
       "value": "Svarstext"
     }
   ],
+  "ohOaXj": [
+    {
+      "type": 0,
+      "value": "Fel"
+    }
+  ],
   "ohpbkw": [
     {
       "type": 0,
@@ -10304,7 +10348,7 @@
   "rwrlsB": [
     {
       "type": 0,
-      "value": "Map Issues"
+      "value": "Kartproblem"
     }
   ],
   "rxIJfD": [
@@ -10377,6 +10421,12 @@
     {
       "type": 0,
       "value": "Du måste ange ett värde för arbetsflödesnamnet."
+    }
+  ],
+  "sOnphB": [
+    {
+      "type": 0,
+      "value": "Skicka igen"
     }
   ],
   "sRpETS": [
@@ -10857,12 +10907,6 @@
     {
       "type": 0,
       "value": "Copilot har nått sin kapacitet och är inte tillgänglig för tillfället. Försök igen om en liten stund."
-    }
-  ],
-  "uanMWm": [
-    {
-      "type": 0,
-      "value": "Slutfört"
     }
   ],
   "uc/PoD": [

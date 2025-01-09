@@ -76,7 +76,7 @@ export const parseSimpleItems = (
       castedValue: convertStringToSegments(stringValueCasted, nodeMap, { tokensEnabled: false }),
       uncastedValue: convertStringToSegments(stringValueUncasted, nodeMap, { tokensEnabled: true }),
     };
-  } catch (e) {
+  } catch {
     return { uncastedValue: uncastedArraySegments, castedValue: castedArraySegments };
   }
 };
@@ -84,6 +84,7 @@ export const parseSimpleItems = (
 export const parseComplexItems = (
   allItems: ComplexArrayItems[],
   itemSchema: ArrayItemSchema,
+  isRequired: boolean,
   castParameter: CastHandler,
   suppressCastingForSerialize?: boolean
 ): { castedValue: ValueSegment[]; uncastedValue: ValueSegment[] } => {
@@ -96,9 +97,16 @@ export const parseComplexItems = (
   allItems.forEach((currItem) => {
     const { items } = currItem;
     castedArrayVal.push(
-      convertComplexItemsToArray(itemSchema, items, nodeMap, /*suppress casting*/ suppressCastingForSerialize ?? false, castParameter)
+      convertComplexItemsToArray(
+        itemSchema,
+        items,
+        isRequired,
+        nodeMap,
+        /*suppress casting*/ suppressCastingForSerialize ?? false,
+        castParameter
+      )
     );
-    uncastedArrayVal.push(convertComplexItemsToArray(itemSchema, items, nodeMap, /*suppress casting*/ true, castParameter));
+    uncastedArrayVal.push(convertComplexItemsToArray(itemSchema, items, isRequired, nodeMap, /*suppress casting*/ true, castParameter));
   });
   return {
     castedValue: convertStringToSegments(JSON.stringify(castedArrayVal, null, 4), nodeMap, { tokensEnabled: false }),

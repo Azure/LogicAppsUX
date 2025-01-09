@@ -43,7 +43,7 @@ export async function createNewProjectFromCommand(
       new SetLogicAppType(),
       new TargetFrameworkStep(),
       new SetLogicAppName(),
-      new NewCodeProjectTypeStep(templateId, functionSettings),
+      new NewCodeProjectTypeStep(templateId, functionSettings, false),
       new SetWorkspaceSettings(),
     ]
   );

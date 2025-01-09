@@ -11,6 +11,12 @@
       "value": "Waarschuwing: Het type invoerknooppunt komt niet overeen met het type van het schemaknooppunt"
     }
   ],
+  "+0ua83": [
+    {
+      "type": 0,
+      "value": "Parameters"
+    }
+  ],
   "+0yxlR": [
     {
       "type": 0,
@@ -69,6 +75,12 @@
     {
       "type": 0,
       "value": "Overzicht"
+    }
+  ],
+  "+M7bC6": [
+    {
+      "type": 0,
+      "value": "Succeeded with retries"
     }
   ],
   "+R90eK": [
@@ -644,7 +656,7 @@
   "1QktJw": [
     {
       "type": 0,
-      "value": "Map errors"
+      "value": "Toewijzingsfouten"
     }
   ],
   "1Xke9D": [
@@ -1161,12 +1173,6 @@
       "value": "Verbinding openen"
     }
   ],
-  "41eMpW": [
-    {
-      "type": 0,
-      "value": "Wachten"
-    }
-  ],
   "43xObP": [
     {
       "type": 0,
@@ -1364,7 +1370,7 @@
   "5DkTf5": [
     {
       "type": 0,
-      "value": "Target schema node not found for node key '"
+      "value": "Kan het doelschemaknooppunt niet vinden voor de knooppuntsleutel '"
     },
     {
       "type": 1,
@@ -1833,6 +1839,12 @@
       "value": "Vereist. De tekenreeks waarvan de subtekenreeks wordt gebruikt."
     }
   ],
+  "7X4UA/": [
+    {
+      "type": 0,
+      "value": "Waiting"
+    }
+  ],
   "7ZF1Hr": [
     {
       "type": 0,
@@ -2227,6 +2239,12 @@
       "value": "Toevoegen"
     }
   ],
+  "9dd0/m": [
+    {
+      "type": 0,
+      "value": "Running"
+    }
+  ],
   "9djnqI": [
     {
       "type": 0,
@@ -2491,12 +2509,6 @@
       "value": "Waarschuwing: De aangepaste waarde komt niet overeen met een van de toegestane typen voor deze invoer"
     }
   ],
-  "BFTwRN": [
-    {
-      "type": 0,
-      "value": "Voltooid met nieuwe pogingen"
-    }
-  ],
   "BGw6eH": [
     {
       "type": 0,
@@ -2533,12 +2545,6 @@
       "value": "Begintijd"
     }
   ],
-  "BPYdTX": [
-    {
-      "type": 0,
-      "value": "Niet opgegeven"
-    }
-  ],
   "BQCPY7": [
     {
       "type": 0,
@@ -2549,12 +2555,6 @@
     {
       "type": 0,
       "value": "Wachtwoord invoeren als tekst zonder opmaak of een beveiligde parameter gebruiken"
-    }
-  ],
-  "BRMOfD": [
-    {
-      "type": 0,
-      "value": "Er is een time-out opgetreden"
     }
   ],
   "BS3gy8": [
@@ -3290,7 +3290,7 @@
   "FPBmrA": [
     {
       "type": 0,
-      "value": "Source schema node not found for node key '"
+      "value": "Bronschemaknooppunt niet gevonden voor knooppuntsleutel '"
     },
     {
       "type": 1,
@@ -3512,7 +3512,7 @@
   "GiR7ll": [
     {
       "type": 0,
-      "value": "Function not found- '"
+      "value": "Functie niet gevonden- '"
     },
     {
       "type": 1,
@@ -4127,6 +4127,12 @@
       "value": "Wanneer een nieuw item..."
     }
   ],
+  "KWeLBB": [
+    {
+      "type": 0,
+      "value": "Closing..."
+    }
+  ],
   "KX1poC": [
     {
       "offset": 0,
@@ -4231,6 +4237,12 @@
     {
       "type": 0,
       "value": "Uitvouwen"
+    }
+  ],
+  "LBlM+D": [
+    {
+      "type": 0,
+      "value": "Not specified"
     }
   ],
   "LCRHQ9": [
@@ -4986,7 +4998,7 @@
   "PEJ+e4": [
     {
       "type": 0,
-      "value": "Error loading data map"
+      "value": "Fout bij het laden van gegevenstoewijzing"
     }
   ],
   "PNk3n4": [
@@ -6349,6 +6361,12 @@
       "value": "Verkorte versie van trigger().outputs"
     }
   ],
+  "WbIGAh": [
+    {
+      "type": 0,
+      "value": "Succeeded"
+    }
+  ],
   "Wc77aJ": [
     {
       "type": 0,
@@ -6661,6 +6679,12 @@
     {
       "type": 0,
       "value": "Een beperking voor Logic Apps instellen om te voorkomen dat het antwoord metagegevens van de werkstroom bevat."
+    }
+  ],
+  "XtVOMn": [
+    {
+      "type": 0,
+      "value": "Something went wrong"
     }
   ],
   "XtuP5e": [
@@ -7049,6 +7073,12 @@
       "value": "Meer informatie over dynamische inhoud"
     }
   ],
+  "ZvAp7m": [
+    {
+      "type": 0,
+      "value": "Opslaan"
+    }
+  ],
   "ZyDq4/": [
     {
       "type": 0,
@@ -7172,7 +7202,7 @@
   "auci7r": [
     {
       "type": 0,
-      "value": "Enter a valid comma-separated string."
+      "value": "Voer een geldige door komma's gescheiden tekenreeks in."
     }
   ],
   "aurgrg": [
@@ -7843,6 +7873,12 @@
       "value": "Schakel splitOn in om een exemplaar van de werkstroom per item te starten in de geselecteerde matrix. Elk exemplaar kan ook een afzonderlijke tracerings-id hebben"
     }
   ],
+  "eofB85": [
+    {
+      "type": 0,
+      "value": "Timed out"
+    }
+  ],
   "epOMnV": [
     {
       "type": 0,
@@ -7852,7 +7888,7 @@
   "epi+zR": [
     {
       "type": 0,
-      "value": "Close map checker"
+      "value": "Kaartcontrole sluiten"
     }
   ],
   "er6O+w": [
@@ -7969,6 +8005,12 @@
     {
       "type": 0,
       "value": "(UTC-05:00) Haïti"
+    }
+  ],
+  "fZJWBR": [
+    {
+      "type": 0,
+      "value": "Ontwerpfunctie laden"
     }
   ],
   "faUrud": [
@@ -8908,7 +8950,7 @@
   "kfmLTY": [
     {
       "type": 0,
-      "value": "Function '"
+      "value": "Er ontbreken vereiste invoerwaarden voor de functie '"
     },
     {
       "type": 1,
@@ -8916,7 +8958,7 @@
     },
     {
       "type": 0,
-      "value": "' is missing required inputs"
+      "value": "'"
     }
   ],
   "klY9UN": [
@@ -9763,6 +9805,12 @@
       "value": "Hoofdtekst van de reactie"
     }
   ],
+  "ohOaXj": [
+    {
+      "type": 0,
+      "value": "Fouten"
+    }
+  ],
   "ohpbkw": [
     {
       "type": 0,
@@ -10308,7 +10356,7 @@
   "rwrlsB": [
     {
       "type": 0,
-      "value": "Map Issues"
+      "value": "Kaartproblemen"
     }
   ],
   "rxIJfD": [
@@ -10381,6 +10429,12 @@
     {
       "type": 0,
       "value": "U moet een waarde opgeven voor de werkstroomnaam."
+    }
+  ],
+  "sOnphB": [
+    {
+      "type": 0,
+      "value": "Opnieuw indienen"
     }
   ],
   "sRpETS": [
@@ -10857,12 +10911,6 @@
     {
       "type": 0,
       "value": "Copilot heeft de capaciteit bereikt en is tijdelijk niet beschikbaar. Probeer het later opnieuw."
-    }
-  ],
-  "uanMWm": [
-    {
-      "type": 0,
-      "value": "Voltooid"
     }
   ],
   "uc/PoD": [
