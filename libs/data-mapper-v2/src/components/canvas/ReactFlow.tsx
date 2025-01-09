@@ -19,6 +19,8 @@ import EdgePopOver from './EdgePopOver';
 import CanvasNode from '../common/reactflow/CanvasNode';
 import { isFunctionNode } from '../../utils/ReactFlow.Util';
 import useReactFlowStates from './useReactflowStates';
+import mapPlaceholder from '../../images/map-placeholder.svg';
+import { useSchemasButNoConnections } from '../../core/state/selectors/selectors';
 interface DMReactFlowProps {
   setIsMapStateDirty?: (isMapStateDirty: boolean) => void;
 }
@@ -36,6 +38,7 @@ const edgeTypes = {
 export const ReactFlowWrapper = ({ setIsMapStateDirty }: DMReactFlowProps) => {
   const styles = useStyles();
   const reactFlowInstance = useReactFlow();
+  const showPlaceholder = useSchemasButNoConnections();
   const ref = useRef<HTMLDivElement>(null);
   const dispatch = useDispatch<AppDispatch>();
   const { width: newWidth = undefined, height: newHeight = undefined } = useResizeObserver<HTMLDivElement>({
@@ -234,7 +237,16 @@ export const ReactFlowWrapper = ({ setIsMapStateDirty }: DMReactFlowProps) => {
             [0, 0],
             [ref.current.getBoundingClientRect().width, ref.current.getBoundingClientRect().height],
           ]}
-        />
+        >
+          {showPlaceholder && (
+            <div className={styles.background}>
+              <div className={styles.placeholderContainer}>
+                <div className={styles.placeholderText}>Drag and drop properties to transform</div>
+                <img src={mapPlaceholder} alt="placeholder" className={styles.placeholderImage} />
+              </div>
+            </div>
+          )}
+        </ReactFlow>
       ) : null}
       {edgePopoverBounds && <EdgePopOver {...edgePopoverBounds} />}
     </div>
