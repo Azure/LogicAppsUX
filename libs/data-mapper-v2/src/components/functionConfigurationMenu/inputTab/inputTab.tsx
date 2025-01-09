@@ -27,6 +27,7 @@ import DraggableList from 'react-draggable-list';
 import InputListWrapper, { type TemplateItemProps, type CommonProps } from './InputList';
 import { useCallback, useMemo } from 'react';
 import { useIntl } from 'react-intl';
+import { InputCustomInfoLabel } from './inputCustomInfoLabel';
 
 export const InputTabContents = (props: {
   func: FunctionData;
@@ -108,6 +109,7 @@ export const InputTabContents = (props: {
               <Text className={styles.typesParent}>{resources.ACCEPTED_TYPES}</Text>
               {input.allowedTypes}
             </Caption2>
+            <InputCustomInfoLabel />
           </div>
           <div>
             <span className={styles.inputDropdownWrapper}>
@@ -203,6 +205,7 @@ const UnlimitedInputs = (props: {
       <div>
         <span className={styles.unlimitedInputHeaderCell} key="input-name">
           <Caption1>{`${inputsFromManifest[0].name}${inputsFromManifest[0].isOptional ? ` (${stringResources.OPTIONAL})` : ''}`}</Caption1>
+          <InputCustomInfoLabel />
         </span>
         <span className={styles.unlimitedInputHeaderCell} key="input-types">
           <Caption2>
