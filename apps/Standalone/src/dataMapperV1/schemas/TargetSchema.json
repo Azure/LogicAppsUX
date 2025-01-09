@@ -190,6 +190,14 @@
         "properties": "None",
         "children": [
           {
+            "key": "/ns0:Root/Looping/Above",
+            "name": "Name",
+            "type": "String",
+            "properties": "None",
+            "qName": "Name",
+            "parentKey": "/ns0:Root/Looping"
+          },
+          {
             "key": "/ns0:Root/Looping/Person",
             "name": "Person",
             "type": "Complex",

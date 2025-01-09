@@ -67,21 +67,30 @@ export const EditorCommandBar = (_props: EditorCommandBarProps) => {
         return result;
       } catch (error) {
         let errorMessage = '';
+        let errorDetails = '';
         if (typeof error === 'string') {
           errorMessage = error;
         } else if (error instanceof Error) {
           errorMessage = error.message;
+          errorDetails = error.stack ?? '';
         }
         LoggerService().log({
           level: LogEntryLevel.Error,
           area: `${LogCategory.DataMapperDesigner}/dataMapDefinition`,
           message: errorMessage,
         });
+        dispatchToast(
+          <Toast style={{ maxHeight: '300px' }}>
+            <ToastTitle>{errorMessage}</ToastTitle>
+            <ToastBody style={{ overflow: 'hidden', textOverflow: 'ellipsis', maxHeight: '250px' }}>{errorDetails}</ToastBody>
+          </Toast>,
+          { intent: 'error' }
+        );
         return { isSuccess: false, errorNodes: [] };
       }
     }
     return { isSuccess: false, errorNodes: [] };
-  }, [sourceSchema, targetSchema, currentConnections, targetSchemaSortArray]);
+  }, [sourceSchema, targetSchema, currentConnections, targetSchemaSortArray, dispatchToast]);
 
   const onTestClick = useCallback(() => {
     dispatch(toggleTestPanel());
