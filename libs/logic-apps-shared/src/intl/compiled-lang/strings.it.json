@@ -11,6 +11,12 @@
       "value": "Avviso: il tipo del nodo di input non corrisponde al tipo di nodo dello schema."
     }
   ],
+  "+0ua83": [
+    {
+      "type": 0,
+      "value": "Parametri"
+    }
+  ],
   "+0yxlR": [
     {
       "type": 0,
@@ -69,6 +75,12 @@
     {
       "type": 0,
       "value": "Informazioni generali"
+    }
+  ],
+  "+M7bC6": [
+    {
+      "type": 0,
+      "value": "Operazione riuscita in più tentativi"
     }
   ],
   "+R90eK": [
@@ -648,7 +660,7 @@
   "1QktJw": [
     {
       "type": 0,
-      "value": "Map errors"
+      "value": "Errori mappa"
     }
   ],
   "1Xke9D": [
@@ -1157,12 +1169,6 @@
       "value": "Apri connessione"
     }
   ],
-  "41eMpW": [
-    {
-      "type": 0,
-      "value": "In attesa"
-    }
-  ],
   "43xObP": [
     {
       "type": 0,
@@ -1360,7 +1366,7 @@
   "5DkTf5": [
     {
       "type": 0,
-      "value": "Target schema node not found for node key '"
+      "value": "Nodo dello schema di destinazione non trovato per la chiave del nodo '"
     },
     {
       "type": 1,
@@ -1829,6 +1835,12 @@
       "value": "Obbligatorio. Stringa da cui viene recuperata la sottostringa."
     }
   ],
+  "7X4UA/": [
+    {
+      "type": 0,
+      "value": "In attesa"
+    }
+  ],
   "7ZF1Hr": [
     {
       "type": 0,
@@ -2227,6 +2239,12 @@
       "value": "Aggiungi"
     }
   ],
+  "9dd0/m": [
+    {
+      "type": 0,
+      "value": "In esecuzione"
+    }
+  ],
   "9djnqI": [
     {
       "type": 0,
@@ -2506,12 +2524,6 @@
       "value": "Avviso: il valore personalizzato non corrisponde a uno dei tipi consentiti per questo input"
     }
   ],
-  "BFTwRN": [
-    {
-      "type": 0,
-      "value": "Operazione riuscita in più tentativi"
-    }
-  ],
   "BGw6eH": [
     {
       "type": 0,
@@ -2552,12 +2564,6 @@
       "value": "Ora di inizio"
     }
   ],
-  "BPYdTX": [
-    {
-      "type": 0,
-      "value": "Non specificato"
-    }
-  ],
   "BQCPY7": [
     {
       "type": 0,
@@ -2568,12 +2574,6 @@
     {
       "type": 0,
       "value": "Immettere la password come testo normale o usare un parametro protetto"
-    }
-  ],
-  "BRMOfD": [
-    {
-      "type": 0,
-      "value": "Timeout"
     }
   ],
   "BS3gy8": [
@@ -2669,7 +2669,7 @@
   "Bwqlxd": [
     {
       "type": 0,
-      "value": "Key not found '"
+      "value": "Chiave non trovata '"
     },
     {
       "type": 1,
@@ -3301,7 +3301,7 @@
   "FPBmrA": [
     {
       "type": 0,
-      "value": "Source schema node not found for node key '"
+      "value": "Nodo dello schema di origine non trovato per la chiave del nodo '"
     },
     {
       "type": 1,
@@ -3534,7 +3534,7 @@
   "GiR7ll": [
     {
       "type": 0,
-      "value": "Function not found- '"
+      "value": "Funzione non trovata- '"
     },
     {
       "type": 1,
@@ -4149,6 +4149,12 @@
       "value": "Quando un nuovo elemento..."
     }
   ],
+  "KWeLBB": [
+    {
+      "type": 0,
+      "value": "Chiusura in corso..."
+    }
+  ],
   "KX1poC": [
     {
       "offset": 0,
@@ -4264,6 +4270,12 @@
     {
       "type": 0,
       "value": "Espandi"
+    }
+  ],
+  "LBlM+D": [
+    {
+      "type": 0,
+      "value": "Non specificato"
     }
   ],
   "LCRHQ9": [
@@ -5031,7 +5043,7 @@
   "PEJ+e4": [
     {
       "type": 0,
-      "value": "Error loading data map"
+      "value": "Errore durante il caricamento della mappa dati"
     }
   ],
   "PNk3n4": [
@@ -6405,6 +6417,12 @@
       "value": "Abbreviazione per trigger().outputs"
     }
   ],
+  "WbIGAh": [
+    {
+      "type": 0,
+      "value": "Operazione completata"
+    }
+  ],
   "Wc77aJ": [
     {
       "type": 0,
@@ -6717,6 +6735,12 @@
     {
       "type": 0,
       "value": "Limita le app per la logica per non includere le intestazioni dei metadati del flusso di lavoro nella risposta."
+    }
+  ],
+  "XtVOMn": [
+    {
+      "type": 0,
+      "value": "Si è verificato un problema"
     }
   ],
   "XtuP5e": [
@@ -7109,6 +7133,12 @@
       "value": "Altre informazioni sul contenuto dinamico."
     }
   ],
+  "ZvAp7m": [
+    {
+      "type": 0,
+      "value": "Salva"
+    }
+  ],
   "ZyDq4/": [
     {
       "type": 0,
@@ -7232,7 +7262,7 @@
   "auci7r": [
     {
       "type": 0,
-      "value": "Enter a valid comma-separated string."
+      "value": "Immettere una stringa con valori delimitati da virgole valida."
     }
   ],
   "aurgrg": [
@@ -7903,6 +7933,12 @@
       "value": "Abilita la suddivisione per avviare un'istanza del flusso di lavoro per ogni elemento nella matrice selezionata. Ogni istanza può anche avere un ID di traccia distinto"
     }
   ],
+  "eofB85": [
+    {
+      "type": 0,
+      "value": "Timeout"
+    }
+  ],
   "epOMnV": [
     {
       "type": 0,
@@ -7912,7 +7948,7 @@
   "epi+zR": [
     {
       "type": 0,
-      "value": "Close map checker"
+      "value": "Chiudi controllo mappa"
     }
   ],
   "er6O+w": [
@@ -8029,6 +8065,12 @@
     {
       "type": 0,
       "value": "(UTC-05:00) Haiti"
+    }
+  ],
+  "fZJWBR": [
+    {
+      "type": 0,
+      "value": "Caricamento finestra di progettazione"
     }
   ],
   "faUrud": [
@@ -8979,7 +9021,7 @@
   "kfmLTY": [
     {
       "type": 0,
-      "value": "Function '"
+      "value": "Input obbligatori mancanti nella '"
     },
     {
       "type": 1,
@@ -8987,7 +9029,7 @@
     },
     {
       "type": 0,
-      "value": "' is missing required inputs"
+      "value": "' della funzione"
     }
   ],
   "klY9UN": [
@@ -9841,6 +9883,12 @@
       "value": "Corpo della risposta"
     }
   ],
+  "ohOaXj": [
+    {
+      "type": 0,
+      "value": "Errori"
+    }
+  ],
   "ohpbkw": [
     {
       "type": 0,
@@ -10401,7 +10449,7 @@
   "rwrlsB": [
     {
       "type": 0,
-      "value": "Map Issues"
+      "value": "Problemi mappa"
     }
   ],
   "rxIJfD": [
@@ -10474,6 +10522,12 @@
     {
       "type": 0,
       "value": "È necessario specificare il valore per il nome del flusso di lavoro."
+    }
+  ],
+  "sOnphB": [
+    {
+      "type": 0,
+      "value": "Inviare di nuovo"
     }
   ],
   "sRpETS": [
@@ -10958,12 +11012,6 @@
     {
       "type": 0,
       "value": "Copilot ha raggiunto la massima capacità e temporaneamente non è disponibile. Riprovare tra qualche minuto."
-    }
-  ],
-  "uanMWm": [
-    {
-      "type": 0,
-      "value": "Operazione riuscita"
     }
   ],
   "uc/PoD": [

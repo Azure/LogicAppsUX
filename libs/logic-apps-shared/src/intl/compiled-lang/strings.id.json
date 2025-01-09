@@ -11,6 +11,12 @@
       "value": "Peringatan: tipe node input tidak cocok dengan tipe node skema"
     }
   ],
+  "+0ua83": [
+    {
+      "type": 0,
+      "value": "Parameter"
+    }
+  ],
   "+0yxlR": [
     {
       "type": 0,
@@ -69,6 +75,12 @@
     {
       "type": 0,
       "value": "Gambaran Umum"
+    }
+  ],
+  "+M7bC6": [
+    {
+      "type": 0,
+      "value": "Berhasil dengan percobaan ulang"
     }
   ],
   "+R90eK": [
@@ -648,7 +660,7 @@
   "1QktJw": [
     {
       "type": 0,
-      "value": "Map errors"
+      "value": "Kesalahan peta"
     }
   ],
   "1Xke9D": [
@@ -1157,12 +1169,6 @@
       "value": "Buka koneksi"
     }
   ],
-  "41eMpW": [
-    {
-      "type": 0,
-      "value": "Menunggu"
-    }
-  ],
   "43xObP": [
     {
       "type": 0,
@@ -1360,7 +1366,7 @@
   "5DkTf5": [
     {
       "type": 0,
-      "value": "Target schema node not found for node key '"
+      "value": "Node skema target tidak ditemukan untuk kunci node '"
     },
     {
       "type": 1,
@@ -1829,6 +1835,12 @@
       "value": "Harus diisi. String dari substring yang diambil."
     }
   ],
+  "7X4UA/": [
+    {
+      "type": 0,
+      "value": "Menunggu"
+    }
+  ],
   "7ZF1Hr": [
     {
       "type": 0,
@@ -2227,6 +2239,12 @@
       "value": "Tambahkan"
     }
   ],
+  "9dd0/m": [
+    {
+      "type": 0,
+      "value": "Berjalan"
+    }
+  ],
   "9djnqI": [
     {
       "type": 0,
@@ -2484,12 +2502,6 @@
       "value": "Peringatan: nilai kustom tidak cocok dengan salah satu tipe yang diizinkan untuk input ini"
     }
   ],
-  "BFTwRN": [
-    {
-      "type": 0,
-      "value": "Berhasil dengan percobaan ulang"
-    }
-  ],
   "BGw6eH": [
     {
       "type": 0,
@@ -2530,12 +2542,6 @@
       "value": "Waktu mulai"
     }
   ],
-  "BPYdTX": [
-    {
-      "type": 0,
-      "value": "Tidak ditentukan"
-    }
-  ],
   "BQCPY7": [
     {
       "type": 0,
@@ -2546,12 +2552,6 @@
     {
       "type": 0,
       "value": "Masukkan kata sandi sebagai teks biasa atau gunakan parameter yang aman"
-    }
-  ],
-  "BRMOfD": [
-    {
-      "type": 0,
-      "value": "Waktu habis"
     }
   ],
   "BS3gy8": [
@@ -2647,7 +2647,7 @@
   "Bwqlxd": [
     {
       "type": 0,
-      "value": "Key not found '"
+      "value": "Kunci tidak ditemukan '"
     },
     {
       "type": 1,
@@ -3287,7 +3287,7 @@
   "FPBmrA": [
     {
       "type": 0,
-      "value": "Source schema node not found for node key '"
+      "value": "Node skema sumber tidak ditemukan untuk kunci node '"
     },
     {
       "type": 1,
@@ -3498,7 +3498,7 @@
   "GiR7ll": [
     {
       "type": 0,
-      "value": "Function not found- '"
+      "value": "Fungsi tidak ditemukan- '"
     },
     {
       "type": 1,
@@ -4113,6 +4113,12 @@
       "value": "Saat item baru..."
     }
   ],
+  "KWeLBB": [
+    {
+      "type": 0,
+      "value": "Penutupan..."
+    }
+  ],
   "KX1poC": [
     {
       "offset": 0,
@@ -4206,6 +4212,12 @@
     {
       "type": 0,
       "value": "Luaskan"
+    }
+  ],
+  "LBlM+D": [
+    {
+      "type": 0,
+      "value": "Tidak ditentukan"
     }
   ],
   "LCRHQ9": [
@@ -4965,7 +4977,7 @@
   "PEJ+e4": [
     {
       "type": 0,
-      "value": "Error loading data map"
+      "value": "Kesalahan saat memuat peta data"
     }
   ],
   "PNk3n4": [
@@ -6317,6 +6329,12 @@
       "value": "Pintasan untuk pemicu().outputs"
     }
   ],
+  "WbIGAh": [
+    {
+      "type": 0,
+      "value": "Berhasil"
+    }
+  ],
   "Wc77aJ": [
     {
       "type": 0,
@@ -6629,6 +6647,12 @@
     {
       "type": 0,
       "value": "Batasi Logic Apps agar tidak menyertakan header metadata alur kerja dalam respons."
+    }
+  ],
+  "XtVOMn": [
+    {
+      "type": 0,
+      "value": "Terjadi kesalahan"
     }
   ],
   "XtuP5e": [
@@ -7021,6 +7045,12 @@
       "value": "Pelajari selengkapnya tentang konten dinamis."
     }
   ],
+  "ZvAp7m": [
+    {
+      "type": 0,
+      "value": "Simpan"
+    }
+  ],
   "ZyDq4/": [
     {
       "type": 0,
@@ -7144,7 +7174,7 @@
   "auci7r": [
     {
       "type": 0,
-      "value": "Enter a valid comma-separated string."
+      "value": "Masukkan string yang dipisahkan koma yang valid."
     }
   ],
   "aurgrg": [
@@ -7815,6 +7845,12 @@
       "value": "Aktifkan pemisahan untuk memulai instans alur kerja setiap item dalam array yang dipilih. Setiap instans juga dapat memiliki id pelacakan yang berbeda"
     }
   ],
+  "eofB85": [
+    {
+      "type": 0,
+      "value": "Waktu habis"
+    }
+  ],
   "epOMnV": [
     {
       "type": 0,
@@ -7824,7 +7860,7 @@
   "epi+zR": [
     {
       "type": 0,
-      "value": "Close map checker"
+      "value": "Tutup pemeriksa peta"
     }
   ],
   "er6O+w": [
@@ -7941,6 +7977,12 @@
     {
       "type": 0,
       "value": "(UTC-05.00) Haiti"
+    }
+  ],
+  "fZJWBR": [
+    {
+      "type": 0,
+      "value": "Memuat desainer"
     }
   ],
   "faUrud": [
@@ -8869,7 +8911,7 @@
   "kfmLTY": [
     {
       "type": 0,
-      "value": "Function '"
+      "value": "'"
     },
     {
       "type": 1,
@@ -8877,7 +8919,7 @@
     },
     {
       "type": 0,
-      "value": "' is missing required inputs"
+      "value": "' fungsi tidak memiliki input yang diperlukan"
     }
   ],
   "klY9UN": [
@@ -9713,6 +9755,12 @@
       "value": "Isi respons"
     }
   ],
+  "ohOaXj": [
+    {
+      "type": 0,
+      "value": "Kesalahan"
+    }
+  ],
   "ohpbkw": [
     {
       "type": 0,
@@ -10251,7 +10299,7 @@
   "rwrlsB": [
     {
       "type": 0,
-      "value": "Map Issues"
+      "value": "Masalah Peta"
     }
   ],
   "rxIJfD": [
@@ -10324,6 +10372,12 @@
     {
       "type": 0,
       "value": "Harus memberikan nilai untuk nama alur kerja."
+    }
+  ],
+  "sOnphB": [
+    {
+      "type": 0,
+      "value": "Kirim ulang"
     }
   ],
   "sRpETS": [
@@ -10808,12 +10862,6 @@
     {
       "type": 0,
       "value": "Maaf, kapasitas Copilot sedang penuh dan sementara tidak tersedia — coba beberapa saat lagi."
-    }
-  ],
-  "uanMWm": [
-    {
-      "type": 0,
-      "value": "Berhasil"
     }
   ],
   "uc/PoD": [

@@ -1,7 +1,4 @@
 import { VSCodeContext } from '../../../webviewCommunication';
-import { FontIcon, mergeStyles, mergeStyleSets, Spinner, SpinnerSize, CommandBar } from '@fluentui/react';
-import type { ICommandBarItemProps } from '@fluentui/react';
-import { TrafficLightDot } from '@microsoft/designer-ui';
 import {
   serializeWorkflow as serializeBJSWorkflow,
   store as DesignerStore,
@@ -18,6 +15,16 @@ import { ExtensionCommand } from '@microsoft/vscode-extension-logic-apps';
 import { useContext, useMemo } from 'react';
 import { useIntl } from 'react-intl';
 import { useMutation } from '@tanstack/react-query';
+import { Spinner, Toolbar, ToolbarButton } from '@fluentui/react-components';
+import {
+  SaveRegular,
+  ArrowClockwiseRegular,
+  MentionBracketsRegular,
+  ReplayRegular,
+  DismissCircleRegular,
+  DismissCircleFilled,
+} from '@fluentui/react-icons';
+import { TrafficLightDot } from '@microsoft/designer-ui';
 
 export interface DesignerCommandBarProps {
   isRefreshing: boolean;
@@ -102,18 +109,12 @@ export const DesignerCommandBar: React.FC<DesignerCommandBarProps> = ({ isRefres
       id: 'sOnphB',
       description: 'Button text for resubmit',
     }),
+    COMMAND_BAR_ARIA: intl.formatMessage({
+      defaultMessage: 'Use left and right arrow keys to navigate between commands',
+      id: 'rd6fai',
+      description: 'Aria describing the way to control the keyboard navigation',
+    }),
   };
-
-  const iconClass = mergeStyles({
-    fontSize: 16,
-    height: 16,
-    width: 16,
-  });
-
-  const classNames = mergeStyleSets({
-    azureBlue: [{ color: 'rgb(0, 120, 212)' }, iconClass],
-    disableGrey: [{ color: 'rgb(121, 119, 117)' }, iconClass],
-  });
 
   const allInputErrors = (Object.entries(designerState.operations.inputParameters) ?? []).filter(([_id, nodeInputs]) =>
     Object.values(nodeInputs.parameterGroups).some((parameterGroup) =>
@@ -136,73 +137,63 @@ export const DesignerCommandBar: React.FC<DesignerCommandBarProps> = ({ isRefres
 
   const isSaveDisabled = useMemo(() => isSaving || haveErrors || !designerIsDirty, [isSaving, haveErrors, designerIsDirty]);
 
-  const designerItems: ICommandBarItemProps[] = [
+  const designerItems = [
     {
       key: 'Save',
       disabled: isSaveDisabled,
+      ariaLabel: Resources.DESIGNER_SAVE,
       text: Resources.DESIGNER_SAVE,
-      onRenderIcon: () => {
-        return isSaving ? (
-          <Spinner size={SpinnerSize.small} />
-        ) : (
-          <FontIcon
-            aria-label={Resources.DESIGNER_SAVE}
-            iconName="Save"
-            className={isSaveDisabled ? classNames.disableGrey : classNames.azureBlue}
-          />
-        );
-      },
+      icon: isSaving ? <Spinner size="extra-small" /> : <SaveRegular />,
+      renderTextIcon: null,
       onClick: () => {
         saveWorkflowMutate();
       },
     },
     {
-      ariaLabel: Resources.DESIGNER_PARAMETERS,
-      iconProps: { iconName: 'Parameter' },
       key: 'Parameter',
+      disabled: false,
+      ariaLabel: Resources.DESIGNER_PARAMETERS,
       text: Resources.DESIGNER_PARAMETERS,
-      onRenderText: (item: { text: string }) => {
-        return (
-          <>
-            {item.text}
-            {haveWorkflowParameterErrors ? (
-              <div style={{ display: 'inline-block', marginLeft: 8 }}>
-                <TrafficLightDot fill={RUN_AFTER_COLORS[isDarkMode ? 'dark' : 'light']['FAILED']} />
-              </div>
-            ) : null}
-          </>
-        );
-      },
+      icon: <MentionBracketsRegular />,
+      renderTextIcon: haveWorkflowParameterErrors ? (
+        <div style={{ display: 'inline-block', marginLeft: 8 }}>
+          <TrafficLightDot fill={RUN_AFTER_COLORS[isDarkMode ? 'dark' : 'light']['FAILED']} />
+        </div>
+      ) : null,
       onClick: () => !!dispatch(openPanel({ panelMode: 'WorkflowParameters' })),
     },
     {
       key: 'errors',
       disabled: !haveErrors,
-      text: Resources.DESIGNER_ERRORS,
       ariaLabel: Resources.DESIGNER_ERRORS,
-      iconProps: {
-        iconName: haveErrors ? 'StatusErrorFull' : 'ErrorBadge',
-        style: haveErrors ? { color: RUN_AFTER_COLORS[isDarkMode ? 'dark' : 'light']['FAILED'] } : undefined,
-      },
+      text: Resources.DESIGNER_ERRORS,
+      icon: haveErrors ? (
+        <DismissCircleFilled style={{ color: RUN_AFTER_COLORS[isDarkMode ? 'dark' : 'light']['FAILED'] }} />
+      ) : (
+        <DismissCircleRegular />
+      ),
+      renderTextIcon: null,
       onClick: () => !!dispatch(openPanel({ panelMode: 'Error' })),
     },
   ];
 
-  const monitoringViewItems: ICommandBarItemProps[] = [
+  const monitoringViewItems = [
     {
-      ariaLabel: Resources.MONITORING_VIEW_REFRESH,
-      iconProps: { iconName: 'Refresh' },
       key: 'Refresh',
       disabled: isDisabled ? isDisabled : isRefreshing,
+      ariaLabel: Resources.MONITORING_VIEW_REFRESH,
       text: Resources.MONITORING_VIEW_REFRESH,
+      icon: <ArrowClockwiseRegular />,
+      renderTextIcon: null,
       onClick: onRefresh,
     },
     {
-      ariaLabel: Resources.MONITORING_VIEW_RESUBMIT,
-      iconProps: { iconName: 'Rerun' },
       key: 'Rerun',
       disabled: isDisabled,
+      ariaLabel: Resources.MONITORING_VIEW_RESUBMIT,
       text: Resources.MONITORING_VIEW_RESUBMIT,
+      icon: <ReplayRegular />,
+      renderTextIcon: null,
       onClick: () => {
         onResubmit();
       },
@@ -210,12 +201,25 @@ export const DesignerCommandBar: React.FC<DesignerCommandBarProps> = ({ isRefres
   ];
 
   return (
-    <CommandBar
-      items={isMonitoringView ? monitoringViewItems : designerItems}
-      ariaLabel="Use left and right arrow keys to navigate between commands"
-      styles={{
-        root: { borderBottom: `1px solid ${isDarkMode ? '#333333' : '#d6d6d6'}`, padding: '0 20px' },
+    <Toolbar
+      style={{
+        borderBottom: `1px solid ${isDarkMode ? '#333333' : '#d6d6d6'}`,
+        padding: '0 20px',
       }}
-    />
+      aria-label={Resources.COMMAND_BAR_ARIA}
+    >
+      {(isMonitoringView ? monitoringViewItems : designerItems).map((buttonProps) => (
+        <ToolbarButton
+          disabled={buttonProps.disabled}
+          key={buttonProps.key}
+          aria-label={buttonProps.ariaLabel}
+          icon={buttonProps.icon}
+          onClick={buttonProps.onClick}
+        >
+          {buttonProps.text}
+          {buttonProps.renderTextIcon}
+        </ToolbarButton>
+      ))}
+    </Toolbar>
   );
 };

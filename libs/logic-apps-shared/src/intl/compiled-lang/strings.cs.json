@@ -11,6 +11,12 @@
       "value": "Upozornění: Typ vstupního uzlu neodpovídá typu uzlu schématu."
     }
   ],
+  "+0ua83": [
+    {
+      "type": 0,
+      "value": "Parametry"
+    }
+  ],
   "+0yxlR": [
     {
       "type": 0,
@@ -69,6 +75,12 @@
     {
       "type": 0,
       "value": "Přehled"
+    }
+  ],
+  "+M7bC6": [
+    {
+      "type": 0,
+      "value": "Proběhlo úspěšně s opakováním pokusů"
     }
   ],
   "+R90eK": [
@@ -652,7 +664,7 @@
   "1QktJw": [
     {
       "type": 0,
-      "value": "Map errors"
+      "value": "Chyby mapy"
     }
   ],
   "1Xke9D": [
@@ -1169,12 +1181,6 @@
       "value": "Otevřít připojení"
     }
   ],
-  "41eMpW": [
-    {
-      "type": 0,
-      "value": "Čekající"
-    }
-  ],
   "43xObP": [
     {
       "type": 0,
@@ -1376,7 +1382,7 @@
   "5DkTf5": [
     {
       "type": 0,
-      "value": "Target schema node not found for node key '"
+      "value": "Cílový uzel schématu pro '"
     },
     {
       "type": 1,
@@ -1384,7 +1390,7 @@
     },
     {
       "type": 0,
-      "value": "'"
+      "value": "' klíče uzlu se nenašel."
     }
   ],
   "5J9jne": [
@@ -1845,6 +1851,12 @@
       "value": "Vyžadováno. Řetězec, ze kterého se má získat podřetězec."
     }
   ],
+  "7X4UA/": [
+    {
+      "type": 0,
+      "value": "Čekání"
+    }
+  ],
   "7ZF1Hr": [
     {
       "type": 0,
@@ -2243,6 +2255,12 @@
       "value": "Přidat"
     }
   ],
+  "9dd0/m": [
+    {
+      "type": 0,
+      "value": "Spuštěno"
+    }
+  ],
   "9djnqI": [
     {
       "type": 0,
@@ -2533,12 +2551,6 @@
       "value": "Upozornění: Vlastní hodnota neodpovídá jednomu z povolených typů pro tento vstup."
     }
   ],
-  "BFTwRN": [
-    {
-      "type": 0,
-      "value": "Proběhlo úspěšně s opakováním pokusů"
-    }
-  ],
   "BGw6eH": [
     {
       "type": 0,
@@ -2579,12 +2591,6 @@
       "value": "Čas zahájení"
     }
   ],
-  "BPYdTX": [
-    {
-      "type": 0,
-      "value": "Neuvedeno"
-    }
-  ],
   "BQCPY7": [
     {
       "type": 0,
@@ -2595,12 +2601,6 @@
     {
       "type": 0,
       "value": "Zadejte heslo jako prostý text nebo použijte zabezpečený parametr."
-    }
-  ],
-  "BRMOfD": [
-    {
-      "type": 0,
-      "value": "Vypršel časový limit."
     }
   ],
   "BS3gy8": [
@@ -2696,7 +2696,7 @@
   "Bwqlxd": [
     {
       "type": 0,
-      "value": "Key not found '"
+      "value": "Klíč "
     },
     {
       "type": 1,
@@ -2704,7 +2704,7 @@
     },
     {
       "type": 0,
-      "value": "'"
+      "value": " se nenašel"
     }
   ],
   "BxITRH": [
@@ -3336,7 +3336,7 @@
   "FPBmrA": [
     {
       "type": 0,
-      "value": "Source schema node not found for node key '"
+      "value": "Nenašel se zdrojový uzel schématu pro '"
     },
     {
       "type": 1,
@@ -3344,7 +3344,7 @@
     },
     {
       "type": 0,
-      "value": "'"
+      "value": "' klíče uzlu."
     }
   ],
   "FT3jt6": [
@@ -3580,7 +3580,7 @@
   "GiR7ll": [
     {
       "type": 0,
-      "value": "Function not found- '"
+      "value": "Funkce se nenašla – '"
     },
     {
       "type": 1,
@@ -4187,6 +4187,12 @@
       "value": "Když nová položka…"
     }
   ],
+  "KWeLBB": [
+    {
+      "type": 0,
+      "value": "Zavírání…"
+    }
+  ],
   "KX1poC": [
     {
       "offset": 0,
@@ -4313,6 +4319,12 @@
     {
       "type": 0,
       "value": "Rozbalit"
+    }
+  ],
+  "LBlM+D": [
+    {
+      "type": 0,
+      "value": "Neuvedeno"
     }
   ],
   "LCRHQ9": [
@@ -5072,7 +5084,7 @@
   "PEJ+e4": [
     {
       "type": 0,
-      "value": "Error loading data map"
+      "value": "Chyba při načítání mapování dat"
     }
   ],
   "PNk3n4": [
@@ -6457,6 +6469,12 @@
       "value": "Zkratka pro trigger().outputs"
     }
   ],
+  "WbIGAh": [
+    {
+      "type": 0,
+      "value": "Úspěšné"
+    }
+  ],
   "Wc77aJ": [
     {
       "type": 0,
@@ -6769,6 +6787,12 @@
     {
       "type": 0,
       "value": "Omezí aplikace Logic Apps tak, aby do odpovědi nezahrnovaly hlavičky metadat pracovních postupů."
+    }
+  ],
+  "XtVOMn": [
+    {
+      "type": 0,
+      "value": "Došlo k chybě"
     }
   ],
   "XtuP5e": [
@@ -7157,6 +7181,12 @@
       "value": "Další informace o dynamickém obsahu"
     }
   ],
+  "ZvAp7m": [
+    {
+      "type": 0,
+      "value": "Uložit"
+    }
+  ],
   "ZyDq4/": [
     {
       "type": 0,
@@ -7284,7 +7314,7 @@
   "auci7r": [
     {
       "type": 0,
-      "value": "Enter a valid comma-separated string."
+      "value": "Zadejte platný řetězec oddělený čárkami."
     }
   ],
   "aurgrg": [
@@ -7955,6 +7985,12 @@
       "value": "Pokud chcete spustit instanci pracovního postupu pro jednotlivé položky ve vybraném poli, povolte dělení. Každá instance navíc může mít své vlastní ID sledování."
     }
   ],
+  "eofB85": [
+    {
+      "type": 0,
+      "value": "Vypršel časový limit."
+    }
+  ],
   "epOMnV": [
     {
       "type": 0,
@@ -7964,7 +8000,7 @@
   "epi+zR": [
     {
       "type": 0,
-      "value": "Close map checker"
+      "value": "Zavřít kontrolu mapy"
     }
   ],
   "er6O+w": [
@@ -8081,6 +8117,12 @@
     {
       "type": 0,
       "value": "(UTC-05:00) Haiti"
+    }
+  ],
+  "fZJWBR": [
+    {
+      "type": 0,
+      "value": "Načítání designeru"
     }
   ],
   "faUrud": [
@@ -9046,7 +9088,7 @@
   "kfmLTY": [
     {
       "type": 0,
-      "value": "Function '"
+      "value": "V '"
     },
     {
       "type": 1,
@@ -9054,7 +9096,7 @@
     },
     {
       "type": 0,
-      "value": "' is missing required inputs"
+      "value": "' funkce chybí požadované vstupy."
     }
   ],
   "klY9UN": [
@@ -9923,6 +9965,12 @@
       "value": "Text odpovědi"
     }
   ],
+  "ohOaXj": [
+    {
+      "type": 0,
+      "value": "Chyby"
+    }
+  ],
   "ohpbkw": [
     {
       "type": 0,
@@ -10494,7 +10542,7 @@
   "rwrlsB": [
     {
       "type": 0,
-      "value": "Map Issues"
+      "value": "Problémy s mapou"
     }
   ],
   "rxIJfD": [
@@ -10567,6 +10615,12 @@
     {
       "type": 0,
       "value": "Je nutné zadat hodnotu pro název pracovního postupu."
+    }
+  ],
+  "sOnphB": [
+    {
+      "type": 0,
+      "value": "Znovu odeslat"
     }
   ],
   "sRpETS": [
@@ -11043,12 +11097,6 @@
     {
       "type": 0,
       "value": "Je nám líto, ale funkce Copilot vyčerpala svou kapacitu a je dočasně nedostupná . Zkuste to prosím znovu za chvíli."
-    }
-  ],
-  "uanMWm": [
-    {
-      "type": 0,
-      "value": "Podařilo se"
     }
   ],
   "uc/PoD": [

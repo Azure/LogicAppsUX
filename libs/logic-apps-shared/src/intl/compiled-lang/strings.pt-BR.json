@@ -11,6 +11,12 @@
       "value": "Aviso: o tipo de nó de entrada não corresponde ao tipo do nó de esquema"
     }
   ],
+  "+0ua83": [
+    {
+      "type": 0,
+      "value": "Parâmetros"
+    }
+  ],
   "+0yxlR": [
     {
       "type": 0,
@@ -69,6 +75,12 @@
     {
       "type": 0,
       "value": "Visão geral"
+    }
+  ],
+  "+M7bC6": [
+    {
+      "type": 0,
+      "value": "Novas tentativas bem-sucedidas"
     }
   ],
   "+R90eK": [
@@ -632,7 +644,7 @@
   "1QktJw": [
     {
       "type": 0,
-      "value": "Map errors"
+      "value": "Erros de mapa"
     }
   ],
   "1Xke9D": [
@@ -1149,12 +1161,6 @@
       "value": "Abrir conexão"
     }
   ],
-  "41eMpW": [
-    {
-      "type": 0,
-      "value": "Aguardando"
-    }
-  ],
   "43xObP": [
     {
       "type": 0,
@@ -1352,7 +1358,7 @@
   "5DkTf5": [
     {
       "type": 0,
-      "value": "Target schema node not found for node key '"
+      "value": "Nó de esquema de destino não encontrado para a chave do nó '"
     },
     {
       "type": 1,
@@ -1813,6 +1819,12 @@
       "value": "Necessário. A cadeia de caracteres da qual a subcadeia de caracteres é obtida."
     }
   ],
+  "7X4UA/": [
+    {
+      "type": 0,
+      "value": "Esperando"
+    }
+  ],
   "7ZF1Hr": [
     {
       "type": 0,
@@ -2211,6 +2223,12 @@
       "value": "Adicionar"
     }
   ],
+  "9dd0/m": [
+    {
+      "type": 0,
+      "value": "Executando"
+    }
+  ],
   "9djnqI": [
     {
       "type": 0,
@@ -2490,12 +2508,6 @@
       "value": "O valor personalizado não corresponde a um dos tipos permitidos para essa entrada"
     }
   ],
-  "BFTwRN": [
-    {
-      "type": 0,
-      "value": "Novas tentativas bem-sucedidas"
-    }
-  ],
   "BGw6eH": [
     {
       "type": 0,
@@ -2536,12 +2548,6 @@
       "value": "Hora de início"
     }
   ],
-  "BPYdTX": [
-    {
-      "type": 0,
-      "value": "Não especificado"
-    }
-  ],
   "BQCPY7": [
     {
       "type": 0,
@@ -2552,12 +2558,6 @@
     {
       "type": 0,
       "value": "Insira a senha como texto sem formatação ou use um parâmetro seguro"
-    }
-  ],
-  "BRMOfD": [
-    {
-      "type": 0,
-      "value": "Tempo limite atingido"
     }
   ],
   "BS3gy8": [
@@ -2653,7 +2653,7 @@
   "Bwqlxd": [
     {
       "type": 0,
-      "value": "Key not found '"
+      "value": "Chave não encontrada '"
     },
     {
       "type": 1,
@@ -3293,7 +3293,7 @@
   "FPBmrA": [
     {
       "type": 0,
-      "value": "Source schema node not found for node key '"
+      "value": "Nó de esquema de origem não encontrado para a chave de nó '"
     },
     {
       "type": 1,
@@ -3526,7 +3526,7 @@
   "GiR7ll": [
     {
       "type": 0,
-      "value": "Function not found- '"
+      "value": "Função não encontrada- '"
     },
     {
       "type": 1,
@@ -4141,6 +4141,12 @@
       "value": "Quando um novo item..."
     }
   ],
+  "KWeLBB": [
+    {
+      "type": 0,
+      "value": "Fechando..."
+    }
+  ],
   "KX1poC": [
     {
       "offset": 0,
@@ -4256,6 +4262,12 @@
     {
       "type": 0,
       "value": "Expandir"
+    }
+  ],
+  "LBlM+D": [
+    {
+      "type": 0,
+      "value": "Não especificado"
     }
   ],
   "LCRHQ9": [
@@ -5015,7 +5027,7 @@
   "PEJ+e4": [
     {
       "type": 0,
-      "value": "Error loading data map"
+      "value": "Erro ao carregar o mapa de dados"
     }
   ],
   "PNk3n4": [
@@ -6385,6 +6397,12 @@
       "value": "Abreviação de trigger().outputs"
     }
   ],
+  "WbIGAh": [
+    {
+      "type": 0,
+      "value": "Bem-sucedido"
+    }
+  ],
   "Wc77aJ": [
     {
       "type": 0,
@@ -6697,6 +6715,12 @@
     {
       "type": 0,
       "value": "Limite os Aplicativos Lógicos para não incluir cabeçalhos de metadados de fluxo de trabalho na resposta."
+    }
+  ],
+  "XtVOMn": [
+    {
+      "type": 0,
+      "value": "Ocorreu um erro"
     }
   ],
   "XtuP5e": [
@@ -7089,6 +7113,12 @@
       "value": "Saiba mais sobre limites dinâmicos."
     }
   ],
+  "ZvAp7m": [
+    {
+      "type": 0,
+      "value": "Salvar"
+    }
+  ],
   "ZyDq4/": [
     {
       "type": 0,
@@ -7212,7 +7242,7 @@
   "auci7r": [
     {
       "type": 0,
-      "value": "Enter a valid comma-separated string."
+      "value": "Insira uma cadeia de caracteres separada por vírgulas válida."
     }
   ],
   "aurgrg": [
@@ -7883,6 +7913,12 @@
       "value": "Habilitar a divisão para iniciar uma instância do fluxo de trabalho por item na matriz selecionada. Cada instância também pode ter uma ID de rastreamento distinta"
     }
   ],
+  "eofB85": [
+    {
+      "type": 0,
+      "value": "Tempo limite atingido"
+    }
+  ],
   "epOMnV": [
     {
       "type": 0,
@@ -7892,7 +7928,7 @@
   "epi+zR": [
     {
       "type": 0,
-      "value": "Close map checker"
+      "value": "Fechar verificador de mapa"
     }
   ],
   "er6O+w": [
@@ -8009,6 +8045,12 @@
     {
       "type": 0,
       "value": "(UTC-05:00) Haiti"
+    }
+  ],
+  "fZJWBR": [
+    {
+      "type": 0,
+      "value": "Carregando o designer"
     }
   ],
   "faUrud": [
@@ -8959,7 +9001,7 @@
   "kfmLTY": [
     {
       "type": 0,
-      "value": "Function '"
+      "value": "O '"
     },
     {
       "type": 1,
@@ -8967,7 +9009,7 @@
     },
     {
       "type": 0,
-      "value": "' is missing required inputs"
+      "value": "' função não tem as entradas necessárias"
     }
   ],
   "klY9UN": [
@@ -9825,6 +9867,12 @@
       "value": "Corpo da resposta"
     }
   ],
+  "ohOaXj": [
+    {
+      "type": 0,
+      "value": "Erros"
+    }
+  ],
   "ohpbkw": [
     {
       "type": 0,
@@ -10385,7 +10433,7 @@
   "rwrlsB": [
     {
       "type": 0,
-      "value": "Map Issues"
+      "value": "Problemas de Mapa"
     }
   ],
   "rxIJfD": [
@@ -10458,6 +10506,12 @@
     {
       "type": 0,
       "value": "É necessário fornecer um valor para o nome do fluxo de trabalho."
+    }
+  ],
+  "sOnphB": [
+    {
+      "type": 0,
+      "value": "Reenviar"
     }
   ],
   "sRpETS": [
@@ -10942,12 +10996,6 @@
     {
       "type": 0,
       "value": "Desculpe, o Copilot está com a capacidade esgotada e temporariamente indisponível - tente novamente em breve."
-    }
-  ],
-  "uanMWm": [
-    {
-      "type": 0,
-      "value": "Bem-sucedido"
     }
   ],
   "uc/PoD": [

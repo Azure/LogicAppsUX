@@ -11,6 +11,12 @@
       "value": "Avertissement : le type de nœud d’entrée ne correspond pas au type du nœud de schéma"
     }
   ],
+  "+0ua83": [
+    {
+      "type": 0,
+      "value": "Paramètres"
+    }
+  ],
   "+0yxlR": [
     {
       "type": 0,
@@ -69,6 +75,12 @@
     {
       "type": 0,
       "value": "Vue d’ensemble"
+    }
+  ],
+  "+M7bC6": [
+    {
+      "type": 0,
+      "value": "Réussite avec nouvelles tentatives"
     }
   ],
   "+R90eK": [
@@ -648,7 +660,7 @@
   "1QktJw": [
     {
       "type": 0,
-      "value": "Map errors"
+      "value": "Erreurs de mappage"
     }
   ],
   "1Xke9D": [
@@ -1165,12 +1177,6 @@
       "value": "Ouvrir une connexion"
     }
   ],
-  "41eMpW": [
-    {
-      "type": 0,
-      "value": "Attente"
-    }
-  ],
   "43xObP": [
     {
       "type": 0,
@@ -1368,7 +1374,7 @@
   "5DkTf5": [
     {
       "type": 0,
-      "value": "Target schema node not found for node key '"
+      "value": "Nœud de schéma cible introuvable pour la clé de nœud '"
     },
     {
       "type": 1,
@@ -1837,6 +1843,12 @@
       "value": "Obligatoire. Chaîne dont la sous-chaîne est extraite."
     }
   ],
+  "7X4UA/": [
+    {
+      "type": 0,
+      "value": "En attente"
+    }
+  ],
   "7ZF1Hr": [
     {
       "type": 0,
@@ -2235,6 +2247,12 @@
       "value": "Ajouter"
     }
   ],
+  "9dd0/m": [
+    {
+      "type": 0,
+      "value": "En cours d’exécution"
+    }
+  ],
   "9djnqI": [
     {
       "type": 0,
@@ -2514,12 +2532,6 @@
       "value": "Avertissement : la valeur personnalisée ne correspond pas à l’un des types autorisés pour cette entrée"
     }
   ],
-  "BFTwRN": [
-    {
-      "type": 0,
-      "value": "Réussi avec nouvelles tentatives"
-    }
-  ],
   "BGw6eH": [
     {
       "type": 0,
@@ -2560,12 +2572,6 @@
       "value": "Heure de début"
     }
   ],
-  "BPYdTX": [
-    {
-      "type": 0,
-      "value": "Non spécifié"
-    }
-  ],
   "BQCPY7": [
     {
       "type": 0,
@@ -2576,12 +2582,6 @@
     {
       "type": 0,
       "value": "Entrez le mot de passe en tant que texte brut ou utilisez un paramètre sécurisé"
-    }
-  ],
-  "BRMOfD": [
-    {
-      "type": 0,
-      "value": "Délai expiré"
     }
   ],
   "BS3gy8": [
@@ -2677,7 +2677,7 @@
   "Bwqlxd": [
     {
       "type": 0,
-      "value": "Key not found '"
+      "value": "Clé introuvable pour « "
     },
     {
       "type": 1,
@@ -2685,7 +2685,7 @@
     },
     {
       "type": 0,
-      "value": "'"
+      "value": " »"
     }
   ],
   "BxITRH": [
@@ -3317,7 +3317,7 @@
   "FPBmrA": [
     {
       "type": 0,
-      "value": "Source schema node not found for node key '"
+      "value": "Nœud de schéma source introuvable pour la clé de nœud '"
     },
     {
       "type": 1,
@@ -3550,7 +3550,7 @@
   "GiR7ll": [
     {
       "type": 0,
-      "value": "Function not found- '"
+      "value": "Fonction introuvable - '"
     },
     {
       "type": 1,
@@ -4165,6 +4165,12 @@
       "value": "Lorsqu’un nouvel élément..."
     }
   ],
+  "KWeLBB": [
+    {
+      "type": 0,
+      "value": "Fermeture en cours..."
+    }
+  ],
   "KX1poC": [
     {
       "offset": 0,
@@ -4280,6 +4286,12 @@
     {
       "type": 0,
       "value": "Développer"
+    }
+  ],
+  "LBlM+D": [
+    {
+      "type": 0,
+      "value": "Non spécifié"
     }
   ],
   "LCRHQ9": [
@@ -5039,7 +5051,7 @@
   "PEJ+e4": [
     {
       "type": 0,
-      "value": "Error loading data map"
+      "value": "Erreur lors du chargement du mappage de données"
     }
   ],
   "PNk3n4": [
@@ -6413,6 +6425,12 @@
       "value": "Raccourci pour trigger().outputs"
     }
   ],
+  "WbIGAh": [
+    {
+      "type": 0,
+      "value": "Réussite"
+    }
+  ],
   "Wc77aJ": [
     {
       "type": 0,
@@ -6725,6 +6743,12 @@
     {
       "type": 0,
       "value": "Limitez Logic Apps de sorte qu’aucun en-tête de métadonnées de workflow ne soit inclus dans la réponse."
+    }
+  ],
+  "XtVOMn": [
+    {
+      "type": 0,
+      "value": "Un problème s’est produit"
     }
   ],
   "XtuP5e": [
@@ -7117,6 +7141,12 @@
       "value": "Découvrez plus d'informations sur le contenu dynamique."
     }
   ],
+  "ZvAp7m": [
+    {
+      "type": 0,
+      "value": "Enregistrer"
+    }
+  ],
   "ZyDq4/": [
     {
       "type": 0,
@@ -7240,7 +7270,7 @@
   "auci7r": [
     {
       "type": 0,
-      "value": "Enter a valid comma-separated string."
+      "value": "Entrez une chaîne valide séparée par des virgules."
     }
   ],
   "aurgrg": [
@@ -7911,6 +7941,12 @@
       "value": "Activez le fractionnement pour démarrer une instance du flux de travail par élément dans le tableau sélectionné. Chaque instance peut également avoir un ID de suivi distinct"
     }
   ],
+  "eofB85": [
+    {
+      "type": 0,
+      "value": "Délai d’attente dépassé"
+    }
+  ],
   "epOMnV": [
     {
       "type": 0,
@@ -7920,7 +7956,7 @@
   "epi+zR": [
     {
       "type": 0,
-      "value": "Close map checker"
+      "value": "Fermer le vérificateur de carte"
     }
   ],
   "er6O+w": [
@@ -8037,6 +8073,12 @@
     {
       "type": 0,
       "value": "(UTC-05:00) Haïti"
+    }
+  ],
+  "fZJWBR": [
+    {
+      "type": 0,
+      "value": "Chargement du concepteur"
     }
   ],
   "faUrud": [
@@ -8987,7 +9029,7 @@
   "kfmLTY": [
     {
       "type": 0,
-      "value": "Function '"
+      "value": "Des entrées obligatoires sont manquantes dans le '"
     },
     {
       "type": 1,
@@ -8995,7 +9037,7 @@
     },
     {
       "type": 0,
-      "value": "' is missing required inputs"
+      "value": "' de fonction"
     }
   ],
   "klY9UN": [
@@ -9853,6 +9895,12 @@
       "value": "Corps de la réponse"
     }
   ],
+  "ohOaXj": [
+    {
+      "type": 0,
+      "value": "Erreurs"
+    }
+  ],
   "ohpbkw": [
     {
       "type": 0,
@@ -10413,7 +10461,7 @@
   "rwrlsB": [
     {
       "type": 0,
-      "value": "Map Issues"
+      "value": "Problèmes de carte"
     }
   ],
   "rxIJfD": [
@@ -10486,6 +10534,12 @@
     {
       "type": 0,
       "value": "Vous devez fournir une valeur pour le nom du flux de travail."
+    }
+  ],
+  "sOnphB": [
+    {
+      "type": 0,
+      "value": "Nouvelle soumission"
     }
   ],
   "sRpETS": [
@@ -10970,12 +11024,6 @@
     {
       "type": 0,
       "value": "Désolé... Copilot a atteint sa capacité maximale et est temporairement indisponible. Veuillez réessayer dans quelques instants."
-    }
-  ],
-  "uanMWm": [
-    {
-      "type": 0,
-      "value": "Réussi"
     }
   ],
   "uc/PoD": [

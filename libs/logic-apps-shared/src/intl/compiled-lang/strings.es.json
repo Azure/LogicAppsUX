@@ -11,6 +11,12 @@
       "value": "Advertencia: el tipo de nodo de entrada no coincide con el tipo del nodo de esquema"
     }
   ],
+  "+0ua83": [
+    {
+      "type": 0,
+      "value": "Parámetros"
+    }
+  ],
   "+0yxlR": [
     {
       "type": 0,
@@ -69,6 +75,12 @@
     {
       "type": 0,
       "value": "Información general"
+    }
+  ],
+  "+M7bC6": [
+    {
+      "type": 0,
+      "value": "Correcto con reintentos"
     }
   ],
   "+R90eK": [
@@ -648,7 +660,7 @@
   "1QktJw": [
     {
       "type": 0,
-      "value": "Map errors"
+      "value": "Errores de asignación"
     }
   ],
   "1Xke9D": [
@@ -1165,12 +1177,6 @@
       "value": "Abrir conexión"
     }
   ],
-  "41eMpW": [
-    {
-      "type": 0,
-      "value": "Esperando"
-    }
-  ],
   "43xObP": [
     {
       "type": 0,
@@ -1368,7 +1374,7 @@
   "5DkTf5": [
     {
       "type": 0,
-      "value": "Target schema node not found for node key '"
+      "value": "No se encontró el nodo de esquema de destino para la clave de nodo '"
     },
     {
       "type": 1,
@@ -1837,6 +1843,12 @@
       "value": "Obligatorio. La cadena de la que se toma la subcadena."
     }
   ],
+  "7X4UA/": [
+    {
+      "type": 0,
+      "value": "Esperando"
+    }
+  ],
   "7ZF1Hr": [
     {
       "type": 0,
@@ -2235,6 +2247,12 @@
       "value": "Agregar"
     }
   ],
+  "9dd0/m": [
+    {
+      "type": 0,
+      "value": "En ejecución"
+    }
+  ],
   "9djnqI": [
     {
       "type": 0,
@@ -2514,12 +2532,6 @@
       "value": "Advertencia: el valor personalizado no coincide con uno de los tipos permitidos para esta entrada"
     }
   ],
-  "BFTwRN": [
-    {
-      "type": 0,
-      "value": "Correcto con reintentos"
-    }
-  ],
   "BGw6eH": [
     {
       "type": 0,
@@ -2560,12 +2572,6 @@
       "value": "Hora de inicio"
     }
   ],
-  "BPYdTX": [
-    {
-      "type": 0,
-      "value": "Sin especificar"
-    }
-  ],
   "BQCPY7": [
     {
       "type": 0,
@@ -2576,12 +2582,6 @@
     {
       "type": 0,
       "value": "Escribir la contraseña como texto sin formato o usar un parámetro seguro"
-    }
-  ],
-  "BRMOfD": [
-    {
-      "type": 0,
-      "value": "Se agotó el tiempo de espera"
     }
   ],
   "BS3gy8": [
@@ -2677,7 +2677,7 @@
   "Bwqlxd": [
     {
       "type": 0,
-      "value": "Key not found '"
+      "value": "Clave no encontrada '"
     },
     {
       "type": 1,
@@ -3317,7 +3317,7 @@
   "FPBmrA": [
     {
       "type": 0,
-      "value": "Source schema node not found for node key '"
+      "value": "No se encontró el nodo de esquema de origen para la clave de nodo '"
     },
     {
       "type": 1,
@@ -3550,7 +3550,7 @@
   "GiR7ll": [
     {
       "type": 0,
-      "value": "Function not found- '"
+      "value": "Función no encontrada: '"
     },
     {
       "type": 1,
@@ -4165,6 +4165,12 @@
       "value": "Cuando un elemento nuevo..."
     }
   ],
+  "KWeLBB": [
+    {
+      "type": 0,
+      "value": "Cerrando..."
+    }
+  ],
   "KX1poC": [
     {
       "offset": 0,
@@ -4280,6 +4286,12 @@
     {
       "type": 0,
       "value": "Expandir"
+    }
+  ],
+  "LBlM+D": [
+    {
+      "type": 0,
+      "value": "Sin especificar"
     }
   ],
   "LCRHQ9": [
@@ -5039,7 +5051,7 @@
   "PEJ+e4": [
     {
       "type": 0,
-      "value": "Error loading data map"
+      "value": "Error al cargar el mapa de datos"
     }
   ],
   "PNk3n4": [
@@ -6413,6 +6425,12 @@
       "value": "Forma abreviada de trigger().outputs"
     }
   ],
+  "WbIGAh": [
+    {
+      "type": 0,
+      "value": "Se realizó correctamente"
+    }
+  ],
   "Wc77aJ": [
     {
       "type": 0,
@@ -6725,6 +6743,12 @@
     {
       "type": 0,
       "value": "Limita Logic Apps para que no incluya encabezados de metadatos de flujo de trabajo en la respuesta."
+    }
+  ],
+  "XtVOMn": [
+    {
+      "type": 0,
+      "value": "Se ha producido un error"
     }
   ],
   "XtuP5e": [
@@ -7117,6 +7141,12 @@
       "value": "Más información acerca del contenido dinámico"
     }
   ],
+  "ZvAp7m": [
+    {
+      "type": 0,
+      "value": "Guardar"
+    }
+  ],
   "ZyDq4/": [
     {
       "type": 0,
@@ -7240,7 +7270,7 @@
   "auci7r": [
     {
       "type": 0,
-      "value": "Enter a valid comma-separated string."
+      "value": "Escriba una cadena separada por comas válida."
     }
   ],
   "aurgrg": [
@@ -7911,6 +7941,12 @@
       "value": "Habilita una división para iniciar una instancia del flujo de trabajo por elemento en la matriz seleccionada. Cada instancia también puede tener un id de seguimiento distinto"
     }
   ],
+  "eofB85": [
+    {
+      "type": 0,
+      "value": "Se agotó el tiempo de espera"
+    }
+  ],
   "epOMnV": [
     {
       "type": 0,
@@ -7920,7 +7956,7 @@
   "epi+zR": [
     {
       "type": 0,
-      "value": "Close map checker"
+      "value": "Cerrar comprobador de mapa"
     }
   ],
   "er6O+w": [
@@ -8037,6 +8073,12 @@
     {
       "type": 0,
       "value": "(UTC-05:00) Haití"
+    }
+  ],
+  "fZJWBR": [
+    {
+      "type": 0,
+      "value": "Cargando el diseñador"
     }
   ],
   "faUrud": [
@@ -8987,7 +9029,7 @@
   "kfmLTY": [
     {
       "type": 0,
-      "value": "Function '"
+      "value": "Faltan entradas necesarias en la función '"
     },
     {
       "type": 1,
@@ -8995,7 +9037,7 @@
     },
     {
       "type": 0,
-      "value": "' is missing required inputs"
+      "value": "'"
     }
   ],
   "klY9UN": [
@@ -9845,6 +9887,12 @@
       "value": "Cuerpo de la respuesta"
     }
   ],
+  "ohOaXj": [
+    {
+      "type": 0,
+      "value": "Errores"
+    }
+  ],
   "ohpbkw": [
     {
       "type": 0,
@@ -10405,7 +10453,7 @@
   "rwrlsB": [
     {
       "type": 0,
-      "value": "Map Issues"
+      "value": "Asignar problemas"
     }
   ],
   "rxIJfD": [
@@ -10478,6 +10526,12 @@
     {
       "type": 0,
       "value": "Debe proporcionar un valor para el nombre del flujo de trabajo."
+    }
+  ],
+  "sOnphB": [
+    {
+      "type": 0,
+      "value": "Volver a enviar"
     }
   ],
   "sRpETS": [
@@ -10962,12 +11016,6 @@
     {
       "type": 0,
       "value": "Lo sentimos, Copilot está al máximo de su capacidad y no está disponible temporalmente. Inténtelo de nuevo más tarde."
-    }
-  ],
-  "uanMWm": [
-    {
-      "type": 0,
-      "value": "Correcto"
     }
   ],
   "uc/PoD": [

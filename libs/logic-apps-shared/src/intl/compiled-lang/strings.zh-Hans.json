@@ -11,6 +11,12 @@
       "value": "警告: 输入节点类型与架构节点的类型不匹配"
     }
   ],
+  "+0ua83": [
+    {
+      "type": 0,
+      "value": "参数"
+    }
+  ],
   "+0yxlR": [
     {
       "type": 0,
@@ -69,6 +75,12 @@
     {
       "type": 0,
       "value": "概述"
+    }
+  ],
+  "+M7bC6": [
+    {
+      "type": 0,
+      "value": "重试成功"
     }
   ],
   "+R90eK": [
@@ -652,7 +664,7 @@
   "1QktJw": [
     {
       "type": 0,
-      "value": "Map errors"
+      "value": "映射错误"
     }
   ],
   "1Xke9D": [
@@ -1173,12 +1185,6 @@
       "value": "打开连接"
     }
   ],
-  "41eMpW": [
-    {
-      "type": 0,
-      "value": "正在等待"
-    }
-  ],
   "43xObP": [
     {
       "type": 0,
@@ -1380,7 +1386,7 @@
   "5DkTf5": [
     {
       "type": 0,
-      "value": "Target schema node not found for node key '"
+      "value": "找不到节点密钥 '"
     },
     {
       "type": 1,
@@ -1388,7 +1394,7 @@
     },
     {
       "type": 0,
-      "value": "'"
+      "value": "' 的目标架构节点"
     }
   ],
   "5J9jne": [
@@ -1849,6 +1855,12 @@
       "value": "必需。要从中获取子字符串的字符串。"
     }
   ],
+  "7X4UA/": [
+    {
+      "type": 0,
+      "value": "正在等待"
+    }
+  ],
   "7ZF1Hr": [
     {
       "type": 0,
@@ -2247,6 +2259,12 @@
       "value": "添加"
     }
   ],
+  "9dd0/m": [
+    {
+      "type": 0,
+      "value": "正在运行"
+    }
+  ],
   "9djnqI": [
     {
       "type": 0,
@@ -2504,12 +2522,6 @@
       "value": "警告: 自定义值与此输入的允许类型之一不匹配"
     }
   ],
-  "BFTwRN": [
-    {
-      "type": 0,
-      "value": "重试成功"
-    }
-  ],
   "BGw6eH": [
     {
       "type": 0,
@@ -2550,12 +2562,6 @@
       "value": "开始时间"
     }
   ],
-  "BPYdTX": [
-    {
-      "type": 0,
-      "value": "未指定"
-    }
-  ],
   "BQCPY7": [
     {
       "type": 0,
@@ -2566,12 +2572,6 @@
     {
       "type": 0,
       "value": "以纯文本形式输入密码或使用安全参数"
-    }
-  ],
-  "BRMOfD": [
-    {
-      "type": 0,
-      "value": "已超时"
     }
   ],
   "BS3gy8": [
@@ -2667,7 +2667,7 @@
   "Bwqlxd": [
     {
       "type": 0,
-      "value": "Key not found '"
+      "value": "找不到密钥 '"
     },
     {
       "type": 1,
@@ -3311,7 +3311,7 @@
   "FPBmrA": [
     {
       "type": 0,
-      "value": "Source schema node not found for node key '"
+      "value": "找不到节点密钥 '"
     },
     {
       "type": 1,
@@ -3319,7 +3319,7 @@
     },
     {
       "type": 0,
-      "value": "'"
+      "value": "' 的源架构节点"
     }
   ],
   "FT3jt6": [
@@ -3522,7 +3522,7 @@
   "GiR7ll": [
     {
       "type": 0,
-      "value": "Function not found- '"
+      "value": "找不到函数- '"
     },
     {
       "type": 1,
@@ -4137,6 +4137,12 @@
       "value": "当有新项时..."
     }
   ],
+  "KWeLBB": [
+    {
+      "type": 0,
+      "value": "正在关闭..."
+    }
+  ],
   "KX1poC": [
     {
       "offset": 0,
@@ -4230,6 +4236,12 @@
     {
       "type": 0,
       "value": "展开"
+    }
+  ],
+  "LBlM+D": [
+    {
+      "type": 0,
+      "value": "未指定"
     }
   ],
   "LCRHQ9": [
@@ -4989,7 +5001,7 @@
   "PEJ+e4": [
     {
       "type": 0,
-      "value": "Error loading data map"
+      "value": "加载数据映射时出错"
     }
   ],
   "PNk3n4": [
@@ -6353,6 +6365,12 @@
       "value": "trigger().outputs 的速记"
     }
   ],
+  "WbIGAh": [
+    {
+      "type": 0,
+      "value": "成功"
+    }
+  ],
   "Wc77aJ": [
     {
       "type": 0,
@@ -6665,6 +6683,12 @@
     {
       "type": 0,
       "value": "限制逻辑应用，使其不在响应中包含工作流元数据标头。"
+    }
+  ],
+  "XtVOMn": [
+    {
+      "type": 0,
+      "value": "出错了"
     }
   ],
   "XtuP5e": [
@@ -7057,6 +7081,12 @@
       "value": "详细了解动态内容。"
     }
   ],
+  "ZvAp7m": [
+    {
+      "type": 0,
+      "value": "保存"
+    }
+  ],
   "ZyDq4/": [
     {
       "type": 0,
@@ -7180,7 +7210,7 @@
   "auci7r": [
     {
       "type": 0,
-      "value": "Enter a valid comma-separated string."
+      "value": "输入有效的逗号分隔字符串。"
     }
   ],
   "aurgrg": [
@@ -7851,6 +7881,12 @@
       "value": "启用拆分以启动所选数组中每个项的工作流实例。每个实例也可具有不同的跟踪 ID"
     }
   ],
+  "eofB85": [
+    {
+      "type": 0,
+      "value": "已超时"
+    }
+  ],
   "epOMnV": [
     {
       "type": 0,
@@ -7860,7 +7896,7 @@
   "epi+zR": [
     {
       "type": 0,
-      "value": "Close map checker"
+      "value": "关闭地图检查器"
     }
   ],
   "er6O+w": [
@@ -7977,6 +8013,12 @@
     {
       "type": 0,
       "value": "(UTC-05:00)海地"
+    }
+  ],
+  "fZJWBR": [
+    {
+      "type": 0,
+      "value": "正在加载设计器"
     }
   ],
   "faUrud": [
@@ -8909,7 +8951,7 @@
   "kfmLTY": [
     {
       "type": 0,
-      "value": "Function '"
+      "value": "函数 '"
     },
     {
       "type": 1,
@@ -8917,7 +8959,7 @@
     },
     {
       "type": 0,
-      "value": "' is missing required inputs"
+      "value": "' 缺少必需的输入"
     }
   ],
   "klY9UN": [
@@ -9765,6 +9807,12 @@
       "value": "响应正文"
     }
   ],
+  "ohOaXj": [
+    {
+      "type": 0,
+      "value": "错误"
+    }
+  ],
   "ohpbkw": [
     {
       "type": 0,
@@ -10303,7 +10351,7 @@
   "rwrlsB": [
     {
       "type": 0,
-      "value": "Map Issues"
+      "value": "映射问题"
     }
   ],
   "rxIJfD": [
@@ -10376,6 +10424,12 @@
     {
       "type": 0,
       "value": "必须为工作流名称提供值。"
+    }
+  ],
+  "sOnphB": [
+    {
+      "type": 0,
+      "value": "重新提交"
     }
   ],
   "sRpETS": [
@@ -10856,12 +10910,6 @@
     {
       "type": 0,
       "value": "很抱歉，Copilot 已满载，暂时不可用 - 请稍后重试。"
-    }
-  ],
-  "uanMWm": [
-    {
-      "type": 0,
-      "value": "成功"
     }
   ],
   "uc/PoD": [

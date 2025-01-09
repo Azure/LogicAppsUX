@@ -11,6 +11,12 @@
       "value": "Ostrzeżenie: typ węzła danych wejściowych jest niezgodny z typem węzła schematu"
     }
   ],
+  "+0ua83": [
+    {
+      "type": 0,
+      "value": "Parametry"
+    }
+  ],
   "+0yxlR": [
     {
       "type": 0,
@@ -69,6 +75,12 @@
     {
       "type": 0,
       "value": "Przegląd"
+    }
+  ],
+  "+M7bC6": [
+    {
+      "type": 0,
+      "value": "Powodzenie dzięki ponownym próbom"
     }
   ],
   "+R90eK": [
@@ -648,7 +660,7 @@
   "1QktJw": [
     {
       "type": 0,
-      "value": "Map errors"
+      "value": "Błędy mapy"
     }
   ],
   "1Xke9D": [
@@ -1165,12 +1177,6 @@
       "value": "Otwórz połączenie"
     }
   ],
-  "41eMpW": [
-    {
-      "type": 0,
-      "value": "Oczekiwanie"
-    }
-  ],
   "43xObP": [
     {
       "type": 0,
@@ -1368,7 +1374,7 @@
   "5DkTf5": [
     {
       "type": 0,
-      "value": "Target schema node not found for node key '"
+      "value": "Nie znaleziono docelowego węzła schematu dla '"
     },
     {
       "type": 1,
@@ -1376,7 +1382,7 @@
     },
     {
       "type": 0,
-      "value": "'"
+      "value": "' klucza węzła"
     }
   ],
   "5J9jne": [
@@ -1837,6 +1843,12 @@
       "value": "Parametr wymagany. Ciąg, z którego został pobrany podciąg."
     }
   ],
+  "7X4UA/": [
+    {
+      "type": 0,
+      "value": "Oczekiwanie"
+    }
+  ],
   "7ZF1Hr": [
     {
       "type": 0,
@@ -2235,6 +2247,12 @@
       "value": "Dodaj"
     }
   ],
+  "9dd0/m": [
+    {
+      "type": 0,
+      "value": "Uruchomione"
+    }
+  ],
   "9djnqI": [
     {
       "type": 0,
@@ -2525,12 +2543,6 @@
       "value": "Ostrzeżenie: wartość niestandardowa nie jest zgodna z jednym z dozwolonych typów dla tych danych wejściowych"
     }
   ],
-  "BFTwRN": [
-    {
-      "type": 0,
-      "value": "Powodzenie dzięki ponownym próbom"
-    }
-  ],
   "BGw6eH": [
     {
       "type": 0,
@@ -2571,12 +2583,6 @@
       "value": "Godzina rozpoczęcia"
     }
   ],
-  "BPYdTX": [
-    {
-      "type": 0,
-      "value": "Nie określono"
-    }
-  ],
   "BQCPY7": [
     {
       "type": 0,
@@ -2587,12 +2593,6 @@
     {
       "type": 0,
       "value": "Wprowadź hasło w postaci zwykłego tekstu lub użyj parametru secure"
-    }
-  ],
-  "BRMOfD": [
-    {
-      "type": 0,
-      "value": "Przekroczono limit czasu"
     }
   ],
   "BS3gy8": [
@@ -2688,7 +2688,7 @@
   "Bwqlxd": [
     {
       "type": 0,
-      "value": "Key not found '"
+      "value": "Nie znaleziono klucza „"
     },
     {
       "type": 1,
@@ -2696,7 +2696,7 @@
     },
     {
       "type": 0,
-      "value": "'"
+      "value": "”"
     }
   ],
   "BxITRH": [
@@ -3328,7 +3328,7 @@
   "FPBmrA": [
     {
       "type": 0,
-      "value": "Source schema node not found for node key '"
+      "value": "Nie znaleziono węzła schematu źródłowego dla '"
     },
     {
       "type": 1,
@@ -3336,7 +3336,7 @@
     },
     {
       "type": 0,
-      "value": "'"
+      "value": "' klucza węzła"
     }
   ],
   "FT3jt6": [
@@ -3572,7 +3572,7 @@
   "GiR7ll": [
     {
       "type": 0,
-      "value": "Function not found- '"
+      "value": "Nie znaleziono funkcji — '"
     },
     {
       "type": 1,
@@ -4187,6 +4187,12 @@
       "value": "Gdy nowy element..."
     }
   ],
+  "KWeLBB": [
+    {
+      "type": 0,
+      "value": "Trwa zamykanie..."
+    }
+  ],
   "KX1poC": [
     {
       "offset": 0,
@@ -4313,6 +4319,12 @@
     {
       "type": 0,
       "value": "Rozwiń"
+    }
+  ],
+  "LBlM+D": [
+    {
+      "type": 0,
+      "value": "Nie określono"
     }
   ],
   "LCRHQ9": [
@@ -5072,7 +5084,7 @@
   "PEJ+e4": [
     {
       "type": 0,
-      "value": "Error loading data map"
+      "value": "Błąd podczas ładowania mapy danych"
     }
   ],
   "PNk3n4": [
@@ -6461,6 +6473,12 @@
       "value": "Skrót dla trigger().outputs"
     }
   ],
+  "WbIGAh": [
+    {
+      "type": 0,
+      "value": "Powodzenie"
+    }
+  ],
   "Wc77aJ": [
     {
       "type": 0,
@@ -6773,6 +6791,12 @@
     {
       "type": 0,
       "value": "Ogranicz aplikacje usługi Logic Apps, aby nie dołączały nagłówków metadanych przepływu pracy do odpowiedzi."
+    }
+  ],
+  "XtVOMn": [
+    {
+      "type": 0,
+      "value": "Wystąpił błąd"
     }
   ],
   "XtuP5e": [
@@ -7165,6 +7189,12 @@
       "value": "Dowiedz się więcej o zawartości dynamicznej."
     }
   ],
+  "ZvAp7m": [
+    {
+      "type": 0,
+      "value": "Zapisz"
+    }
+  ],
   "ZyDq4/": [
     {
       "type": 0,
@@ -7288,7 +7318,7 @@
   "auci7r": [
     {
       "type": 0,
-      "value": "Enter a valid comma-separated string."
+      "value": "Wprowadź prawidłowy ciąg rozdzielany przecinkami."
     }
   ],
   "aurgrg": [
@@ -7959,6 +7989,12 @@
       "value": "Włącz podział, aby uruchomić wystąpienie przepływu pracy na element w wybranej tablicy. Każde wystąpienie może mieć również oddzielny identyfikator śledzenia"
     }
   ],
+  "eofB85": [
+    {
+      "type": 0,
+      "value": "Przekroczono limit czasu"
+    }
+  ],
   "epOMnV": [
     {
       "type": 0,
@@ -7968,7 +8004,7 @@
   "epi+zR": [
     {
       "type": 0,
-      "value": "Close map checker"
+      "value": "Zamknij narzędzie do sprawdzania map"
     }
   ],
   "er6O+w": [
@@ -8085,6 +8121,12 @@
     {
       "type": 0,
       "value": "(UTC-05:00) Haiti"
+    }
+  ],
+  "fZJWBR": [
+    {
+      "type": 0,
+      "value": "Ładowanie projektanta"
     }
   ],
   "faUrud": [
@@ -9046,7 +9088,7 @@
   "kfmLTY": [
     {
       "type": 0,
-      "value": "Function '"
+      "value": "W '"
     },
     {
       "type": 1,
@@ -9054,7 +9096,7 @@
     },
     {
       "type": 0,
-      "value": "' is missing required inputs"
+      "value": "' funkcji brakuje wymaganych danych wejściowych"
     }
   ],
   "klY9UN": [
@@ -9939,6 +9981,12 @@
       "value": "Treść odpowiedzi"
     }
   ],
+  "ohOaXj": [
+    {
+      "type": 0,
+      "value": "Błędy"
+    }
+  ],
   "ohpbkw": [
     {
       "type": 0,
@@ -10510,7 +10558,7 @@
   "rwrlsB": [
     {
       "type": 0,
-      "value": "Map Issues"
+      "value": "Problemy z mapą"
     }
   ],
   "rxIJfD": [
@@ -10583,6 +10631,12 @@
     {
       "type": 0,
       "value": "Należy podać wartość dla nazwy przepływu pracy."
+    }
+  ],
+  "sOnphB": [
+    {
+      "type": 0,
+      "value": "Prześlij ponownie"
     }
   ],
   "sRpETS": [
@@ -11067,12 +11121,6 @@
     {
       "type": 0,
       "value": "Niestety, funkcja Copilot osiągnęła maksymalną pojemność i jest tymczasowo niedostępna — spróbuj ponownie za chwilę."
-    }
-  ],
-  "uanMWm": [
-    {
-      "type": 0,
-      "value": "Zakończone powodzeniem"
     }
   ],
   "uc/PoD": [
