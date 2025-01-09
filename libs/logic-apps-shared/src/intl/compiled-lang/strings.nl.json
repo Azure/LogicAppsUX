@@ -80,7 +80,7 @@
   "+M7bC6": [
     {
       "type": 0,
-      "value": "Succeeded with retries"
+      "value": "Voltooid met nieuwe pogingen"
     }
   ],
   "+R90eK": [
@@ -1842,7 +1842,7 @@
   "7X4UA/": [
     {
       "type": 0,
-      "value": "Waiting"
+      "value": "Wachten..."
     }
   ],
   "7ZF1Hr": [
@@ -2242,7 +2242,7 @@
   "9dd0/m": [
     {
       "type": 0,
-      "value": "Running"
+      "value": "Actief"
     }
   ],
   "9djnqI": [
@@ -2650,7 +2650,7 @@
   "Bwqlxd": [
     {
       "type": 0,
-      "value": "Key not found '"
+      "value": "Kan sleutel '"
     },
     {
       "type": 1,
@@ -2658,7 +2658,7 @@
     },
     {
       "type": 0,
-      "value": "'"
+      "value": "' niet vinden"
     }
   ],
   "BxITRH": [
@@ -4130,7 +4130,7 @@
   "KWeLBB": [
     {
       "type": 0,
-      "value": "Closing..."
+      "value": "Sluiten..."
     }
   ],
   "KX1poC": [
@@ -4242,7 +4242,7 @@
   "LBlM+D": [
     {
       "type": 0,
-      "value": "Not specified"
+      "value": "Niet opgegeven"
     }
   ],
   "LCRHQ9": [
@@ -6364,7 +6364,7 @@
   "WbIGAh": [
     {
       "type": 0,
-      "value": "Succeeded"
+      "value": "Geslaagd"
     }
   ],
   "Wc77aJ": [
@@ -6684,7 +6684,7 @@
   "XtVOMn": [
     {
       "type": 0,
-      "value": "Something went wrong"
+      "value": "Er is iets verkeerd gegaan"
     }
   ],
   "XtuP5e": [
@@ -7876,7 +7876,7 @@
   "eofB85": [
     {
       "type": 0,
-      "value": "Timed out"
+      "value": "Er is een time-out opgetreden"
     }
   ],
   "epOMnV": [

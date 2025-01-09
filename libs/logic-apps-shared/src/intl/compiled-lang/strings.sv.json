@@ -80,7 +80,7 @@
   "+M7bC6": [
     {
       "type": 0,
-      "value": "Succeeded with retries"
+      "value": "Lyckades med återförsök"
     }
   ],
   "+R90eK": [
@@ -1846,7 +1846,7 @@
   "7X4UA/": [
     {
       "type": 0,
-      "value": "Waiting"
+      "value": "Väntar"
     }
   ],
   "7ZF1Hr": [
@@ -2250,7 +2250,7 @@
   "9dd0/m": [
     {
       "type": 0,
-      "value": "Running"
+      "value": "Körs"
     }
   ],
   "9djnqI": [
@@ -4130,7 +4130,7 @@
   "KWeLBB": [
     {
       "type": 0,
-      "value": "Closing..."
+      "value": "Stänger..."
     }
   ],
   "KX1poC": [
@@ -4242,7 +4242,7 @@
   "LBlM+D": [
     {
       "type": 0,
-      "value": "Not specified"
+      "value": "Inte angivet"
     }
   ],
   "LCRHQ9": [
@@ -6356,7 +6356,7 @@
   "WbIGAh": [
     {
       "type": 0,
-      "value": "Succeeded"
+      "value": "Slutfört"
     }
   ],
   "Wc77aJ": [
@@ -6676,7 +6676,7 @@
   "XtVOMn": [
     {
       "type": 0,
-      "value": "Something went wrong"
+      "value": "Det har uppstått ett fel"
     }
   ],
   "XtuP5e": [
@@ -7868,7 +7868,7 @@
   "eofB85": [
     {
       "type": 0,
-      "value": "Timed out"
+      "value": "Tidsgräns uppnådd"
     }
   ],
   "epOMnV": [

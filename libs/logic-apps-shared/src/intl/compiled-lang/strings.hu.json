@@ -80,7 +80,7 @@
   "+M7bC6": [
     {
       "type": 0,
-      "value": "Succeeded with retries"
+      "value": "Újrapróbálkozásokkal sikeres"
     }
   ],
   "+R90eK": [
@@ -1846,7 +1846,7 @@
   "7X4UA/": [
     {
       "type": 0,
-      "value": "Waiting"
+      "value": "Várakozás"
     }
   ],
   "7ZF1Hr": [
@@ -2250,7 +2250,7 @@
   "9dd0/m": [
     {
       "type": 0,
-      "value": "Running"
+      "value": "Fut"
     }
   ],
   "9djnqI": [
@@ -4146,7 +4146,7 @@
   "KWeLBB": [
     {
       "type": 0,
-      "value": "Closing..."
+      "value": "Bezárás..."
     }
   ],
   "KX1poC": [
@@ -4258,7 +4258,7 @@
   "LBlM+D": [
     {
       "type": 0,
-      "value": "Not specified"
+      "value": "Nincs megadva"
     }
   ],
   "LCRHQ9": [
@@ -6372,7 +6372,7 @@
   "WbIGAh": [
     {
       "type": 0,
-      "value": "Succeeded"
+      "value": "Sikerült"
     }
   ],
   "Wc77aJ": [
@@ -6692,7 +6692,7 @@
   "XtVOMn": [
     {
       "type": 0,
-      "value": "Something went wrong"
+      "value": "Hiba történt"
     }
   ],
   "XtuP5e": [
@@ -7884,7 +7884,7 @@
   "eofB85": [
     {
       "type": 0,
-      "value": "Timed out"
+      "value": "Lejárt az időkorlát"
     }
   ],
   "epOMnV": [

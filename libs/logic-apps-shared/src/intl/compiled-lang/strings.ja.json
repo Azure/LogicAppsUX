@@ -80,7 +80,7 @@
   "+M7bC6": [
     {
       "type": 0,
-      "value": "Succeeded with retries"
+      "value": "再試行により成功"
     }
   ],
   "+R90eK": [
@@ -1834,7 +1834,7 @@
   "7X4UA/": [
     {
       "type": 0,
-      "value": "Waiting"
+      "value": "待機中"
     }
   ],
   "7ZF1Hr": [
@@ -2238,7 +2238,7 @@
   "9dd0/m": [
     {
       "type": 0,
-      "value": "Running"
+      "value": "実行中"
     }
   ],
   "9djnqI": [
@@ -4104,7 +4104,7 @@
   "KWeLBB": [
     {
       "type": 0,
-      "value": "Closing..."
+      "value": "閉じています..."
     }
   ],
   "KX1poC": [
@@ -4205,7 +4205,7 @@
   "LBlM+D": [
     {
       "type": 0,
-      "value": "Not specified"
+      "value": "指定なし"
     }
   ],
   "LCRHQ9": [
@@ -6320,7 +6320,7 @@
   "WbIGAh": [
     {
       "type": 0,
-      "value": "Succeeded"
+      "value": "成功"
     }
   ],
   "Wc77aJ": [
@@ -6640,7 +6640,7 @@
   "XtVOMn": [
     {
       "type": 0,
-      "value": "Something went wrong"
+      "value": "問題が発生しました"
     }
   ],
   "XtuP5e": [
@@ -7832,7 +7832,7 @@
   "eofB85": [
     {
       "type": 0,
-      "value": "Timed out"
+      "value": "タイムアウト"
     }
   ],
   "epOMnV": [
@@ -7966,7 +7966,7 @@
   "fZJWBR": [
     {
       "type": 0,
-      "value": "Loading designer"
+      "value": "デザイナーの読み込み中"
     }
   ],
   "faUrud": [

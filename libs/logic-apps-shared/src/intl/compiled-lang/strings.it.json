@@ -80,7 +80,7 @@
   "+M7bC6": [
     {
       "type": 0,
-      "value": "Succeeded with retries"
+      "value": "Operazione riuscita in più tentativi"
     }
   ],
   "+R90eK": [
@@ -1838,7 +1838,7 @@
   "7X4UA/": [
     {
       "type": 0,
-      "value": "Waiting"
+      "value": "In attesa"
     }
   ],
   "7ZF1Hr": [
@@ -2242,7 +2242,7 @@
   "9dd0/m": [
     {
       "type": 0,
-      "value": "Running"
+      "value": "In esecuzione"
     }
   ],
   "9djnqI": [
@@ -4152,7 +4152,7 @@
   "KWeLBB": [
     {
       "type": 0,
-      "value": "Closing..."
+      "value": "Chiusura in corso..."
     }
   ],
   "KX1poC": [
@@ -4275,7 +4275,7 @@
   "LBlM+D": [
     {
       "type": 0,
-      "value": "Not specified"
+      "value": "Non specificato"
     }
   ],
   "LCRHQ9": [
@@ -6420,7 +6420,7 @@
   "WbIGAh": [
     {
       "type": 0,
-      "value": "Succeeded"
+      "value": "Operazione completata"
     }
   ],
   "Wc77aJ": [
@@ -6740,7 +6740,7 @@
   "XtVOMn": [
     {
       "type": 0,
-      "value": "Something went wrong"
+      "value": "Si è verificato un problema"
     }
   ],
   "XtuP5e": [
@@ -7936,7 +7936,7 @@
   "eofB85": [
     {
       "type": 0,
-      "value": "Timed out"
+      "value": "Timeout"
     }
   ],
   "epOMnV": [
@@ -8070,7 +8070,7 @@
   "fZJWBR": [
     {
       "type": 0,
-      "value": "Loading designer"
+      "value": "Caricamento finestra di progettazione"
     }
   ],
   "faUrud": [
