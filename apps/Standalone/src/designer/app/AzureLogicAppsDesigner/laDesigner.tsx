@@ -210,21 +210,19 @@ const DesignerEditor = () => {
   }, [data?.properties.files]);
 
   // RUN HISTORY
-  const switchToEditor = useCallback(() => {
-    dispatch(setMonitoringView(false));
-    dispatch(setReadOnly(false));
-    dispatch(changeRunId(undefined));
-  }, [dispatch]);
-  const switchToMonitoring = useCallback(() => {
-    dispatch(setMonitoringView(true));
-    dispatch(setReadOnly(true));
-  }, [dispatch]);
+  const toggleMonitoringView = useCallback(() => {
+    dispatch(setMonitoringView(!isMonitoringView));
+    dispatch(setReadOnly(!isMonitoringView));
+    dispatch(setRunHistoryEnabled(!isMonitoringView));
+    if (runId) {
+      dispatch(changeRunId(undefined));
+    }
+  }, [dispatch, isMonitoringView, runId]);
   const onRunSelected = useCallback(
     (runId: string) => {
-      switchToMonitoring();
       dispatch(changeRunId(runId));
     },
-    [dispatch, switchToMonitoring]
+    [dispatch]
   );
 
   if (isLoading || appLoading || settingsLoading || customCodeLoading) {
@@ -413,8 +411,6 @@ const DesignerEditor = () => {
                 collapsed={!showRunHistory}
                 onClose={() => dispatch(setRunHistoryEnabled(false))}
                 onRunSelected={onRunSelected}
-                switchToEditor={switchToEditor}
-                switchToMonitoring={switchToMonitoring}
               />
               {displayChatbotUI ? (
                 <div style={{ minWidth: chatbotPanelWidth }}>
@@ -438,8 +434,13 @@ const DesignerEditor = () => {
                   isDesignerView={designerView}
                   showConnectionsPanel={showConnectionsPanel}
                   enableCopilot={() => dispatch(setIsChatBotEnabled(!showChatBot))}
-                  selectRun={onRunSelected}
+                  toggleMonitoringView={toggleMonitoringView}
+                  showRunHistory={showRunHistory}
                   toggleRunHistory={() => dispatch(setRunHistoryEnabled(!showRunHistory))}
+                  selectRun={(runId: string) => {
+                    toggleMonitoringView();
+                    dispatch(changeRunId(runId));
+                  }}
                   switchViews={handleSwitchView}
                   saveWorkflowFromCode={saveWorkflowFromCode}
                 />

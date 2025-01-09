@@ -151,21 +151,19 @@ const DesignerEditorConsumption = () => {
   }, []);
 
   // RUN HISTORY
-  const switchToEditor = useCallback(() => {
-    dispatch(setMonitoringView(false));
-    dispatch(setReadOnly(false));
-    dispatch(changeRunId(undefined));
-  }, [dispatch]);
-  const switchToMonitoring = useCallback(() => {
-    dispatch(setMonitoringView(true));
-    dispatch(setReadOnly(true));
-  }, [dispatch]);
+  const toggleMonitoringView = useCallback(() => {
+    dispatch(setMonitoringView(!isMonitoringView));
+    dispatch(setReadOnly(!isMonitoringView));
+    dispatch(setRunHistoryEnabled(!isMonitoringView));
+    if (runId) {
+      dispatch(changeRunId(undefined));
+    }
+  }, [dispatch, isMonitoringView, runId]);
   const onRunSelected = useCallback(
     (runId: string) => {
-      switchToMonitoring();
       dispatch(changeRunId(runId));
     },
-    [dispatch, switchToMonitoring]
+    [dispatch]
   );
 
   if (!definition || isWorkflowAndArtifactsLoading) {
@@ -305,8 +303,6 @@ const DesignerEditorConsumption = () => {
                 collapsed={!showRunHistory}
                 onClose={() => dispatch(setRunHistoryEnabled(false))}
                 onRunSelected={onRunSelected}
-                switchToEditor={switchToEditor}
-                switchToMonitoring={switchToMonitoring}
               />
               {showChatBot ? (
                 <Chatbot
@@ -327,12 +323,15 @@ const DesignerEditorConsumption = () => {
                   isReadOnly={readOnly}
                   isDarkMode={isDarkMode}
                   isDesignerView={designerView}
+                  isMonitoringView={isMonitoringView}
                   showConnectionsPanel={showConnectionsPanel}
                   enableCopilot={() => dispatch(setIsChatBotEnabled(!showChatBot))}
+                  toggleMonitoringView={toggleMonitoringView}
+                  showRunHistory={showRunHistory}
                   toggleRunHistory={() => dispatch(setRunHistoryEnabled(!showRunHistory))}
                   selectRun={(runId: string) => {
+                    toggleMonitoringView();
                     dispatch(changeRunId(runId));
-                    dispatch(setMonitoringView(true));
                   }}
                   switchViews={handleSwitchView}
                   saveWorkflowFromCode={saveWorkflowFromCode}

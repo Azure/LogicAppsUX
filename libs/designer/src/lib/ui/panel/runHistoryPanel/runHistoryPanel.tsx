@@ -12,13 +12,11 @@ import {
   DrawerBody,
   DrawerHeader,
   DrawerHeaderTitle,
-  Label,
   MessageBar,
   MessageBarBody,
   MessageBarTitle,
   Portal,
   Spinner,
-  Switch,
   Tag,
   TagGroup,
 } from '@fluentui/react-components';
@@ -28,7 +26,6 @@ import { toFriendlyDurationString, type Run } from '@microsoft/logic-apps-shared
 import StatusIndicator from './statusIndicator';
 import { useRunInstance } from '../../../core/state/workflow/workflowSelectors';
 import { useIntl } from 'react-intl';
-import { useMonitoringView } from '../../../core/state/designerOptions/designerOptionsSelectors';
 import { useIntervalEffect } from '@react-hookz/web';
 import { RunPopover } from './runPopover';
 import { parseErrorMessage } from '@microsoft/logic-apps-shared';
@@ -43,8 +40,6 @@ export type FilterTypes = 'runId' | 'workflowVersion' | 'status';
 export interface RunHistoryPanelProps {
   collapsed: boolean;
   onRunSelected: (runId: string) => void;
-  switchToEditor: () => void;
-  switchToMonitoring: () => void;
   onClose: () => void;
 }
 
@@ -60,7 +55,6 @@ export const RunHistoryPanel = (props: RunHistoryPanelProps) => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [props.collapsed]);
 
-  const isMonitoringView = useMonitoringView();
   const selectedRunInstance = useRunInstance();
 
   // FILTERING
@@ -278,11 +272,6 @@ export const RunHistoryPanel = (props: RunHistoryPanelProps) => {
           <DrawerHeaderTitle action={<Button appearance="subtle" aria-label="Close" icon={<DismissIcon />} onClick={props.onClose} />}>
             Run History
           </DrawerHeaderTitle>
-          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-            <Label>Editor</Label>
-            <Switch checked={isMonitoringView} onChange={() => (isMonitoringView ? props.switchToEditor() : props.switchToMonitoring())} />
-            <Label>Monitoring</Label>
-          </div>
           {Object.keys(filters).length > 0 ? (
             <TagGroup
               onDismiss={(_e, data) => {
@@ -324,7 +313,6 @@ export const RunHistoryPanel = (props: RunHistoryPanelProps) => {
                 items={filteredRuns ?? []}
                 columns={columns}
                 defaultSortState={defaultSortState}
-                // size={"small"}
                 resizableColumns
                 columnSizingOptions={columnSizing}
               >

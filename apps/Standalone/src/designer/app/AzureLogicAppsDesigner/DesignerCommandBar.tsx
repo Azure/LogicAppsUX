@@ -63,12 +63,15 @@ export const DesignerCommandBar = ({
   discard,
   saveWorkflow,
   isDesignerView,
+  isMonitoringView,
   isDarkMode,
   showConnectionsPanel,
+  showRunHistory,
+  toggleRunHistory,
   enableCopilot,
   switchViews,
   saveWorkflowFromCode,
-  toggleRunHistory,
+  toggleMonitoringView,
   selectRun,
 }: {
   id: string;
@@ -77,13 +80,16 @@ export const DesignerCommandBar = ({
   discard: () => unknown;
   saveWorkflow: (workflow: Workflow, customCodeData: CustomCodeFileNameMapping | undefined, clearDirtyState: () => void) => Promise<void>;
   isDesignerView?: boolean;
+  isMonitoringView?: boolean;
   isDarkMode: boolean;
   showConnectionsPanel?: boolean;
+  showRunHistory?: boolean;
+  toggleRunHistory: () => void;
   enableCopilot?: () => void;
   loggerService?: ILoggerService;
   switchViews: () => void;
   saveWorkflowFromCode: (clearDirtyState: () => void) => void;
-  toggleRunHistory: () => void;
+  toggleMonitoringView: () => void;
   selectRun?: (runId: string) => void;
 }) => {
   const dispatch = useDispatch<AppDispatch>();
@@ -190,40 +196,76 @@ export const DesignerCommandBar = ({
   const isUndoDisabled = !useCanUndo();
   const isRedoDisabled = !useCanRedo();
 
-  const items: ICommandBarItemProps[] = useMemo(
+  const baseStartItems: ICommandBarItemProps[] = useMemo(
     () => [
+      ...(showRunHistory
+        ? []
+        : [
+            {
+              key: 'runHistory',
+              text: 'Run History',
+              iconProps: { iconName: 'History' },
+              onClick: () => {
+                if (!isMonitoringView) {
+                  toggleMonitoringView();
+                }
+                toggleRunHistory();
+              },
+            },
+          ]),
+    ],
+    [showRunHistory, isMonitoringView, toggleMonitoringView, toggleRunHistory]
+  );
+
+  const baseEndItems: ICommandBarItemProps[] = useMemo(
+    () => [
+      {
+        key: 'fileABug',
+        text: 'File a bug',
+        iconProps: { iconName: 'Bug' },
+        onClick: () => {
+          window.open('https://github.com/Azure/logic_apps_designer/issues/new', '_blank');
+        },
+      },
+    ],
+    []
+  );
+
+  const monitoringItems: ICommandBarItemProps[] = useMemo(
+    () => [
+      ...baseStartItems,
+      {
+        key: 'edit',
+        text: 'Edit',
+        iconProps: { iconName: 'Edit' },
+        onClick: () => {
+          toggleMonitoringView();
+        },
+      },
+      ...baseEndItems,
+    ],
+    [baseStartItems, baseEndItems, toggleMonitoringView]
+  );
+
+  const editorItems: ICommandBarItemProps[] = useMemo(
+    () => [
+      ...baseStartItems,
       {
         key: 'run',
         text: 'Run',
-        disabled: !isDesignerView,
+        disabled: !isDesignerView || runLoading,
         iconProps: { iconName: 'Play' },
-        subMenuProps: {
-          items: [
-            {
-              key: 'runNow',
-              text: 'Run now',
-              iconProps: { iconName: 'Play' },
-              disabled: !isDesignerView || runLoading,
-              onClick: () => {
-                const asyncOnClick = async () => {
-                  const result = await runWorkflow();
-                  const runId = result.headers?.['x-ms-workflow-run-id'];
-                  const fullRunId = `${id}/runs/${runId}`;
-                  if (fullRunId) {
-                    await getRun(fullRunId);
-                    selectRun?.(runId);
-                  }
-                };
-                asyncOnClick();
-              },
-            },
-            {
-              key: 'runHistory',
-              text: 'Run history',
-              iconProps: { iconName: 'History' },
-              onClick: toggleRunHistory,
-            },
-          ],
+        onClick: () => {
+          const asyncOnClick = async () => {
+            const result = await runWorkflow();
+            const runId = result.headers?.['x-ms-workflow-run-id'];
+            const fullRunId = `${id}/runs/${runId}`;
+            if (fullRunId) {
+              await getRun(fullRunId);
+              selectRun?.(runId);
+            }
+          };
+          asyncOnClick();
         },
       },
       {
@@ -327,14 +369,6 @@ export const DesignerCommandBar = ({
         },
       },
       {
-        key: 'fileABug',
-        text: 'File a bug',
-        iconProps: { iconName: 'Bug' },
-        onClick: () => {
-          window.open('https://github.com/Azure/logic_apps_designer/issues/new', '_blank');
-        },
-      },
-      {
         key: 'Undo',
         text: 'Undo',
         iconProps: { iconName: 'Undo' },
@@ -348,8 +382,13 @@ export const DesignerCommandBar = ({
         onClick: () => dispatch(onRedoClick()),
         disabled: isRedoDisabled,
       },
+      ...baseEndItems,
     ],
     [
+      id,
+      runLoading,
+      selectRun,
+      runWorkflow,
       saveIsDisabled,
       isSaving,
       isDesignerView,
@@ -367,9 +406,10 @@ export const DesignerCommandBar = ({
       switchViews,
       haveConnectionErrors,
       enableCopilot,
-      toggleRunHistory,
       isDownloadingDocument,
       downloadDocument,
+      baseEndItems,
+      baseStartItems,
     ]
   );
 
@@ -388,7 +428,7 @@ export const DesignerCommandBar = ({
         {!isInitialized && <Spinner size={'extra-small'} label={'Loading dynamic data...'} />}
       </div>
       <CommandBar
-        items={items}
+        items={isMonitoringView ? monitoringItems : editorItems}
         ariaLabel="Use left and right arrow keys to navigate between commands"
         styles={{
           root: {
