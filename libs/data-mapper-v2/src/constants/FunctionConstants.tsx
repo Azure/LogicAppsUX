@@ -18,7 +18,7 @@ export const UnboundedInput = -1;
 
 export const customBranding: FunctionGroupBranding = {
   displayName: 'Custom',
-  colorTokenName: 'colorFnCategoryCollection',
+  colorTokenName: 'colorFnCategoryCustom',
   icon: <Wrench20Regular />,
 };
 

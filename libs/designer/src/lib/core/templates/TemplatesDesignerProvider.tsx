@@ -16,23 +16,23 @@ interface ExtendedTheme extends Theme {
 const extendedWebLightTheme: ExtendedTheme = {
   ...webLightTheme,
   colorFnCategoryCollection: '#ae8c00',
-  colorFnCategoryDateTime: '#0099BC',
+  colorFnCategoryDateTime: '#4f6bed',
   colorFnCategoryLogical: '#038387',
-  colorFnCategoryMath: '#252379',
+  colorFnCategoryMath: '#004e8c',
   colorFnCategoryString: '#e43ba6',
-  colorFnCategoryUtility: '#F6CA30',
-  colorFnCategoryConversion: '#367DE7',
+  colorFnCategoryUtility: '#8764b8',
+  colorFnCategoryConversion: '#814e29',
 };
 
 const extendedWebDarkTheme: ExtendedTheme = {
   ...webDarkTheme,
-  colorFnCategoryCollection: '#c9a618',
-  colorFnCategoryDateTime: '#93a4f4',
-  colorFnCategoryLogical: '#4bb4b7',
-  colorFnCategoryMath: '#286ea8',
-  colorFnCategoryString: '#ef85cb',
-  colorFnCategoryUtility: '#a083c9',
-  colorFnCategoryConversion: '#9c663f',
+  colorFnCategoryCollection: '#ae8c00',
+  colorFnCategoryDateTime: '#4f6bed',
+  colorFnCategoryLogical: '#038387',
+  colorFnCategoryMath: '#004e8c',
+  colorFnCategoryString: '#e43ba6',
+  colorFnCategoryUtility: '#8764b8',
+  colorFnCategoryConversion: '#814e29',
 };
 
 export const customTokens = themeToTokensObject(extendedWebLightTheme);
