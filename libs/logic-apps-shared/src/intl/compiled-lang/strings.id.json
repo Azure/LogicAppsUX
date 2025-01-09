@@ -80,7 +80,7 @@
   "+M7bC6": [
     {
       "type": 0,
-      "value": "Succeeded with retries"
+      "value": "Berhasil dengan percobaan ulang"
     }
   ],
   "+R90eK": [
@@ -1838,7 +1838,7 @@
   "7X4UA/": [
     {
       "type": 0,
-      "value": "Waiting"
+      "value": "Menunggu"
     }
   ],
   "7ZF1Hr": [
@@ -2242,7 +2242,7 @@
   "9dd0/m": [
     {
       "type": 0,
-      "value": "Running"
+      "value": "Berjalan"
     }
   ],
   "9djnqI": [
@@ -4217,7 +4217,7 @@
   "LBlM+D": [
     {
       "type": 0,
-      "value": "Not specified"
+      "value": "Tidak ditentukan"
     }
   ],
   "LCRHQ9": [
@@ -6332,7 +6332,7 @@
   "WbIGAh": [
     {
       "type": 0,
-      "value": "Succeeded"
+      "value": "Berhasil"
     }
   ],
   "Wc77aJ": [
@@ -6652,7 +6652,7 @@
   "XtVOMn": [
     {
       "type": 0,
-      "value": "Something went wrong"
+      "value": "Terjadi kesalahan"
     }
   ],
   "XtuP5e": [
@@ -7848,7 +7848,7 @@
   "eofB85": [
     {
       "type": 0,
-      "value": "Timed out"
+      "value": "Waktu habis"
     }
   ],
   "epOMnV": [
