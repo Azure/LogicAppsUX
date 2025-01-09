@@ -3,7 +3,14 @@ import { Badge, Spinner } from '@fluentui/react-components';
 import type { ICommandBarItemProps } from '@fluentui/react/lib/CommandBar';
 import { CommandBar } from '@fluentui/react/lib/CommandBar';
 import type { ILoggerService } from '@microsoft/logic-apps-shared';
-import { LogEntryLevel, LoggerService, isNullOrEmpty, RUN_AFTER_COLORS, ChatbotService } from '@microsoft/logic-apps-shared';
+import {
+  LogEntryLevel,
+  LoggerService,
+  isNullOrEmpty,
+  RUN_AFTER_COLORS,
+  ChatbotService,
+  WorkflowService,
+} from '@microsoft/logic-apps-shared';
 import type { AppDispatch, CustomCodeFileNameMapping, RootState, Workflow } from '@microsoft/logic-apps-designer';
 import {
   store as DesignerStore,
@@ -28,14 +35,16 @@ import {
   getDocumentationMetadata,
   resetDesignerView,
   useNodesAndDynamicDataInitialized,
+  getRun,
+  downloadDocumentAsFile,
 } from '@microsoft/logic-apps-designer';
-import { useMemo } from 'react';
+import { useCallback, useMemo, useState } from 'react';
 import { useMutation } from '@tanstack/react-query';
 import { useDispatch, useSelector } from 'react-redux';
 import LogicAppsIcon from '../../../assets/logicapp.svg';
 import { environment } from '../../../environments/environment';
 import { isSuccessResponse } from './Services/HttpClient';
-import { downloadDocumentAsFile } from '@microsoft/logic-apps-designer';
+import axios from 'axios';
 
 const iconClass = mergeStyles({
   fontSize: 16,
@@ -50,6 +59,7 @@ const classNames = mergeStyleSets({
 });
 
 export const DesignerCommandBar = ({
+  id,
   discard,
   saveWorkflow,
   isDesignerView,
@@ -58,6 +68,8 @@ export const DesignerCommandBar = ({
   enableCopilot,
   switchViews,
   saveWorkflowFromCode,
+  toggleRunHistory,
+  selectRun,
 }: {
   id: string;
   location: string;
@@ -71,6 +83,8 @@ export const DesignerCommandBar = ({
   loggerService?: ILoggerService;
   switchViews: () => void;
   saveWorkflowFromCode: (clearDirtyState: () => void) => void;
+  toggleRunHistory: () => void;
+  selectRun?: (runId: string) => void;
 }) => {
   const dispatch = useDispatch<AppDispatch>();
   const isCopilotReady = useNodesInitialized();
@@ -131,6 +145,24 @@ export const DesignerCommandBar = ({
     downloadDocumentAsFile(queryResponse);
   });
 
+  const [runLoading, setRunLoading] = useState(false);
+  const runWorkflow = useCallback(async () => {
+    setRunLoading(true);
+    const designerState = DesignerStore.getState();
+    const serializedWorkflow = await serializeBJSWorkflow(designerState, {
+      skipValidation: false,
+      ignoreNonCriticalErrors: true,
+    });
+    const triggerId = Object.keys(serializedWorkflow.definition?.triggers ?? {})?.[0];
+    const callbackInfo = await WorkflowService().getCallbackUrl(triggerId);
+    const result = await axios.create().request({
+      method: callbackInfo.method,
+      url: callbackInfo.value,
+    });
+    setRunLoading(false);
+    return result;
+  }, []);
+
   const designerIsDirty = useIsDesignerDirty();
   const isInitialized = useNodesAndDynamicDataInitialized();
 
@@ -161,6 +193,40 @@ export const DesignerCommandBar = ({
   const items: ICommandBarItemProps[] = useMemo(
     () => [
       {
+        key: 'run',
+        text: 'Run',
+        disabled: !isDesignerView,
+        iconProps: { iconName: 'Play' },
+        subMenuProps: {
+          items: [
+            {
+              key: 'runNow',
+              text: 'Run now',
+              iconProps: { iconName: 'Play' },
+              disabled: !isDesignerView || runLoading,
+              onClick: () => {
+                const asyncOnClick = async () => {
+                  const result = await runWorkflow();
+                  const runId = result.headers?.['x-ms-workflow-run-id'];
+                  const fullRunId = `${id}/runs/${runId}`;
+                  if (fullRunId) {
+                    await getRun(fullRunId);
+                    selectRun?.(runId);
+                  }
+                };
+                asyncOnClick();
+              },
+            },
+            {
+              key: 'runHistory',
+              text: 'Run history',
+              iconProps: { iconName: 'History' },
+              onClick: toggleRunHistory,
+            },
+          ],
+        },
+      },
+      {
         key: 'save',
         text: 'Save',
         disabled: saveIsDisabled,
@@ -172,7 +238,11 @@ export const DesignerCommandBar = ({
           );
         },
         onClick: () => {
-          isDesignerView ? saveWorkflowMutate() : saveWorkflowFromCode(() => dispatch(resetDesignerDirtyState(undefined)));
+          if (isDesignerView) {
+            saveWorkflowMutate();
+          } else {
+            saveWorkflowFromCode(() => dispatch(resetDesignerDirtyState(undefined)));
+          }
         },
       },
       {
@@ -297,6 +367,7 @@ export const DesignerCommandBar = ({
       switchViews,
       haveConnectionErrors,
       enableCopilot,
+      toggleRunHistory,
       isDownloadingDocument,
       downloadDocument,
     ]

@@ -1,6 +1,6 @@
 import { environment } from '../../../environments/environment';
 import type { AppDispatch, RootState } from '../../state/store';
-import { setIsChatBotEnabled } from '../../state/workflowLoadingSlice';
+import { changeRunId, setIsChatBotEnabled, setMonitoringView, setReadOnly, setRunHistoryEnabled } from '../../state/workflowLoadingSlice';
 import { DesignerCommandBar } from './DesignerCommandBar';
 import type { ParametersData } from './Models/Workflow';
 import { ChildWorkflowService } from './Services/ChildWorkflow';
@@ -18,7 +18,7 @@ import {
 import { ArmParser } from './Utilities/ArmParser';
 import { WorkflowUtility } from './Utilities/Workflow';
 import { Chatbot } from '@microsoft/logic-apps-chatbot';
-import type { ContentType, LogicAppsV2 } from '@microsoft/logic-apps-shared';
+import type { ContentType } from '@microsoft/logic-apps-shared';
 import {
   BaseApiManagementService,
   BaseAppServiceService,
@@ -47,9 +47,10 @@ import {
   store as DesignerStore,
   getSKUDefaultHostOptions,
   Constants,
+  RunHistoryPanel,
 } from '@microsoft/logic-apps-designer';
 import { useDispatch, useSelector } from 'react-redux';
-import { useEffect, useMemo, useRef, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import CodeViewEditor from './CodeView';
 
 const apiVersion = '2020-06-01';
@@ -69,6 +70,7 @@ const DesignerEditorConsumption = () => {
     runId,
     appId,
     showChatBot,
+    showRunHistory,
     hostOptions,
     showConnectionsPanel,
     suppressDefaultNodeSelect,
@@ -96,20 +98,20 @@ const DesignerEditorConsumption = () => {
     parameters,
   } = useMemo(() => getDataForConsumption(workflowAndArtifactsData), [workflowAndArtifactsData]);
 
+  const { data: runInstanceData } = useRunInstanceConsumption(workflowName, appId, runId);
   const [runWorkflow, setRunWorkflow] = useState<any>();
 
-  const onRunInstanceSuccess = async (runDefinition: LogicAppsV2.RunInstanceDefinition) => {
-    if (isMonitoringView) {
-      const standardAppInstance = {
-        ...workflow,
-        definition: runDefinition.properties.workflow.properties.definition,
+  useEffect(() => {
+    if (runInstanceData && isMonitoringView) {
+      const appInstance = {
+        ...baseWorkflow,
+        definition: runInstanceData.properties.workflow.properties.definition,
       };
-      setRunWorkflow(standardAppInstance);
+      setRunWorkflow(appInstance);
     }
-  };
-  const { data: runInstanceData } = useRunInstanceConsumption(workflowName, onRunInstanceSuccess, appId, runId);
+  }, [runInstanceData, baseWorkflow, isMonitoringView]);
 
-  const workflow = runWorkflow ?? baseWorkflow;
+  const workflow = useMemo(() => runWorkflow ?? baseWorkflow, [runWorkflow, baseWorkflow]);
 
   const [definition, setDefinition] = useState(workflow.definition);
   const [workflowDefinitionId, setWorkflowDefinitionId] = useState(guid());
@@ -147,6 +149,24 @@ const DesignerEditorConsumption = () => {
       root.style.overflow = 'hidden';
     }
   }, []);
+
+  // RUN HISTORY
+  const switchToEditor = useCallback(() => {
+    dispatch(setMonitoringView(false));
+    dispatch(setReadOnly(false));
+    dispatch(changeRunId(undefined));
+  }, [dispatch]);
+  const switchToMonitoring = useCallback(() => {
+    dispatch(setMonitoringView(true));
+    dispatch(setReadOnly(true));
+  }, [dispatch]);
+  const onRunSelected = useCallback(
+    (runId: string) => {
+      switchToMonitoring();
+      dispatch(changeRunId(runId));
+    },
+    [dispatch, switchToMonitoring]
+  );
 
   if (!definition || isWorkflowAndArtifactsLoading) {
     return <></>;
@@ -280,23 +300,14 @@ const DesignerEditorConsumption = () => {
             workflowId={workflowDefinitionId}
             runInstance={runInstanceData}
           >
-            <div style={{ display: 'flex', flexDirection: 'column', height: 'inherit', width: 'inherit' }}>
-              <DesignerCommandBar
-                id={workflowId}
-                saveWorkflow={saveWorkflowFromDesigner}
-                discard={discardAllChanges}
-                location={canonicalLocation}
-                isReadOnly={readOnly}
-                isDarkMode={isDarkMode}
-                isDesignerView={designerView}
-                showConnectionsPanel={showConnectionsPanel}
-                enableCopilot={() => {
-                  dispatch(setIsChatBotEnabled(!showChatBot));
-                }}
-                switchViews={handleSwitchView}
-                saveWorkflowFromCode={saveWorkflowFromCode}
+            <div style={{ display: 'flex', flexDirection: 'row', height: 'inherit' }}>
+              <RunHistoryPanel
+                collapsed={!showRunHistory}
+                onClose={() => dispatch(setRunHistoryEnabled(false))}
+                onRunSelected={onRunSelected}
+                switchToEditor={switchToEditor}
+                switchToMonitoring={switchToMonitoring}
               />
-              {designerView ? <Designer /> : <CodeViewEditor ref={codeEditorRef} isConsumption />}
               {showChatBot ? (
                 <Chatbot
                   getUpdatedWorkflow={getUpdatedWorkflow}
@@ -307,6 +318,27 @@ const DesignerEditorConsumption = () => {
                   getAuthToken={getAuthToken}
                 />
               ) : null}
+              <div style={{ display: 'flex', flexDirection: 'column', height: 'inherit', flexGrow: 1 }}>
+                <DesignerCommandBar
+                  id={workflowId}
+                  saveWorkflow={saveWorkflowFromDesigner}
+                  discard={discardAllChanges}
+                  location={canonicalLocation}
+                  isReadOnly={readOnly}
+                  isDarkMode={isDarkMode}
+                  isDesignerView={designerView}
+                  showConnectionsPanel={showConnectionsPanel}
+                  enableCopilot={() => dispatch(setIsChatBotEnabled(!showChatBot))}
+                  toggleRunHistory={() => dispatch(setRunHistoryEnabled(!showRunHistory))}
+                  selectRun={(runId: string) => {
+                    dispatch(changeRunId(runId));
+                    dispatch(setMonitoringView(true));
+                  }}
+                  switchViews={handleSwitchView}
+                  saveWorkflowFromCode={saveWorkflowFromCode}
+                />
+                {designerView ? <Designer /> : <CodeViewEditor ref={codeEditorRef} isConsumption />}
+              </div>
             </div>
           </BJSWorkflowProvider>
         ) : null}

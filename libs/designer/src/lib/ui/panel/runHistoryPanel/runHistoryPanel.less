@@ -1,0 +1,43 @@
+
+
+.resizer {
+	border-right: 1px solid #ccc;
+	width: 4px;
+	position: absolute;
+	top: 0;
+	right: 0;
+	bottom: 0;
+	cursor: col-resize;
+	resize: horizontal;
+	z-index: 1;
+
+	&:hover {
+		border-right-width: 4px,
+	}
+}
+
+.resizer--active {
+	border-right-width: 4px,
+}
+
+.run-selected {
+	background-color: #ebf3fc;
+}
+
+.run-actions-popover {
+	display: flex;
+	flex-direction: column;
+	gap: 6px;
+}
+
+.run-property {
+	display: flex;
+	flex-direction: column;
+	gap: 4px;
+}
+
+.msla-theme-dark {
+	.run-selected {
+		background-color: #082338;
+	}
+}

@@ -4,3 +4,5 @@ export * from './connectionsPanel/allConnections/allConnections';
 export * from './connectionsPanel/allConnections/connectionEntry';
 export * from './connectionsPanel/allConnections/connectorConnectionsCard';
 export * from './connectionsPanel/createConnection/createConnection';
+
+export * from './runHistoryPanel/runHistoryPanel';

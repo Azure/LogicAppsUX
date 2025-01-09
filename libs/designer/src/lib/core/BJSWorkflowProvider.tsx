@@ -13,6 +13,7 @@ import type React from 'react';
 import { useContext, useEffect } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { useDispatch } from 'react-redux';
+import { initRunInPanel } from './state/panel/panelSlice';
 
 export interface BJSWorkflowProviderProps {
   // used to force a workflow rerender when switching from code view
@@ -37,6 +38,7 @@ const DataProviderInner: React.FC<BJSWorkflowProviderProps> = ({
     dispatch(initWorkflowSpec('BJS'));
     dispatch(initWorkflowKind(parseWorkflowKind(workflow?.kind)));
     dispatch(initRunInstance(runInstance ?? null));
+    dispatch(initRunInPanel(runInstance ?? null));
     dispatch(initCustomCode(customCode));
     dispatch(initializeGraphState({ workflowDefinition: workflow, runInstance }));
   }, [workflowId, runInstance, workflow, customCode]);
