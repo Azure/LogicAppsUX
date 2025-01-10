@@ -11258,6 +11258,12 @@
       "value": "Per creare e usare una connessione API, è necessario configurare un'identità gestita in questa app per la logica."
     }
   ],
+  "vhwaYb": [
+    {
+      "type": 0,
+      "value": "Wrap all custom value string and DateTime values in double quotes. For example, \"abc\"."
+    }
+  ],
   "viee6C": [
     {
       "type": 0,

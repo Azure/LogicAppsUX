@@ -11156,6 +11156,12 @@
       "value": "要创建和使用 API 连接，必须在此逻辑应用上配置托管标识。"
     }
   ],
+  "vhwaYb": [
+    {
+      "type": 0,
+      "value": "Wrap all custom value string and DateTime values in double quotes. For example, \"abc\"."
+    }
+  ],
   "viee6C": [
     {
       "type": 0,

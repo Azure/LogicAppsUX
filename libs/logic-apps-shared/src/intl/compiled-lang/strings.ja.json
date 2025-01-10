@@ -11072,6 +11072,12 @@
       "value": "API 接続を作成して使用するには、このロジック アプリ上で構成したマネージド ID が必要です。"
     }
   ],
+  "vhwaYb": [
+    {
+      "type": 0,
+      "value": "Wrap all custom value string and DateTime values in double quotes. For example, \"abc\"."
+    }
+  ],
   "viee6C": [
     {
       "type": 0,
