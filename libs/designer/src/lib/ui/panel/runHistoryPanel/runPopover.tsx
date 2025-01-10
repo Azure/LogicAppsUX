@@ -35,11 +35,6 @@ export const RunPopover = (props: {
     id: 'd9RCuq',
   });
 
-  const filterRunIdCallback = useCallback(() => {
-    const runId = run.id.split('/').at(-1) ?? '';
-    props.addFilterCallback({ key: 'runId', value: runId });
-  }, [run.id, props]);
-
   const filterVersionCallback = useCallback(() => {
     const version = (run.properties.workflow as any)?.name;
     props.addFilterCallback({ key: 'workflowVersion', value: version });
@@ -53,7 +48,7 @@ export const RunPopover = (props: {
 
       <PopoverSurface tabIndex={-1} className={'run-actions-popover'}>
         <RunProperty label={workflowRunStatusText} text={run.properties.status} />
-        <RunProperty label={runIdentifierText} text={run.id.split('/').at(-1) ?? ''} copyable addFilterCallback={filterRunIdCallback} />
+        <RunProperty label={runIdentifierText} text={run.id.split('/').at(-1) ?? ''} copyable />
         <RunProperty
           label={workflowVersionText}
           text={(run.properties.workflow as any)?.name}
