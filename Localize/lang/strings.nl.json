@@ -1673,6 +1673,7 @@
   "vX9WYS": "Doelgroep",
   "va40BJ": "Vereist. De naam van de actie met de gewenste uitvoer.",
   "vdtKjT": "Als u een API-verbinding wilt maken en gebruiken, moet u een beheerde identiteit hebben geconfigureerd voor deze logische app.",
+  "vhwaYb": "Wrap all custom value string and DateTime values in double quotes. For example, \"abc\".",
   "viee6C": "Duur",
   "vlDynP": "Verwijderen",
   "vmlhVB": "Voltooi het instellen van deze actie om deze werkstroom voor te bereiden:",
