@@ -1,4 +1,5 @@
 import { PanelLocation } from '@microsoft/designer-ui';
+import type { LogicAppsV2 } from '@microsoft/logic-apps-shared';
 import { cleanConnectorId, LogEntryLevel, LoggerService } from '@microsoft/logic-apps-shared';
 import type { PayloadAction } from '@reduxjs/toolkit';
 import { createSlice } from '@reduxjs/toolkit';
@@ -260,6 +261,23 @@ export const panelSlice = createSlice({
         args: [action.payload],
       });
     },
+    initRunInPanel: (state, action: PayloadAction<LogicAppsV2.RunInstanceDefinition | null>) => {
+      const actionIds = Object.keys(action.payload?.properties?.actions ?? {});
+      actionIds.push(action.payload?.properties?.trigger.name ?? '');
+      if (actionIds.length === 0) {
+        return; // This is sometimes run too early when we don't have any actions yet
+      }
+      if (state.operationContent.pinnedNodeId && !actionIds.includes(state.operationContent.pinnedNodeId ?? '')) {
+        state.operationContent.pinnedNodeId = undefined;
+      }
+      if (state.operationContent.selectedNodeId && !actionIds.includes(state.operationContent.selectedNodeId ?? '')) {
+        state.operationContent.selectedNodeId = undefined;
+      }
+      if (state.operationContent.pinnedNodeId == null && state.operationContent.selectedNodeId == null) {
+        state.operationContent = getInitialOperationContentState();
+        state.isCollapsed = true;
+      }
+    },
   },
   extraReducers: (builder) => {
     builder.addCase(resetWorkflowState, () => initialState);
@@ -285,6 +303,7 @@ export const {
   setSelectedNodeId,
   setSelectedNodeIds,
   updatePanelLocation,
+  initRunInPanel,
 } = panelSlice.actions;
 
 export default panelSlice.reducer;
