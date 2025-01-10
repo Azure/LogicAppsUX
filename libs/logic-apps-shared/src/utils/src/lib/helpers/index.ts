@@ -2,6 +2,7 @@ export * from './color';
 export * from './connections';
 export * from './connectors';
 export * from './customcode';
+export * from './datetime';
 export * from './flow-utils';
 export * from './functions';
 export * from './guid';

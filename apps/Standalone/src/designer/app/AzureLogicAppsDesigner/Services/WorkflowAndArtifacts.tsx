@@ -38,7 +38,7 @@ export const useConnectionsData = (appId?: string) => {
         }
         const { error } = health;
         throw new Error(error.message);
-      } catch (error) {
+      } catch {
         return {};
       }
     },
@@ -218,12 +218,7 @@ export const useRunInstanceStandard = (workflowName: string, appId?: string, run
   );
 };
 
-export const useRunInstanceConsumption = (
-  workflowname: string,
-  onRunInstanceSuccess: (data: LogicAppsV2.RunInstanceDefinition) => void,
-  appId?: string,
-  runId?: string
-) => {
+export const useRunInstanceConsumption = (workflowname: string, appId?: string, runId?: string) => {
   return useQuery(
     ['getRunInstance', workflowname, runId],
     async () => {
@@ -242,7 +237,6 @@ export const useRunInstanceConsumption = (
       refetchOnMount: false,
       refetchOnReconnect: false,
       refetchOnWindowFocus: false,
-      onSuccess: onRunInstanceSuccess,
     }
   );
 };

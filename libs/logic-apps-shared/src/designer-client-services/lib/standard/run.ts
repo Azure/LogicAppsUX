@@ -117,12 +117,12 @@ export class StandardRunService implements IRunService {
    */
   async getRun(runId: string): Promise<Run> {
     const { apiVersion, baseUrl, httpClient, workflowName } = this.options;
-
-    let uri = `${baseUrl}/workflows/${workflowName}/runs/${runId}?api-version=${apiVersion}&$expand=properties/actions,workflow/properties`;
+    const onlyRunId = runId.split('/')?.at(-1);
+    let uri = `${baseUrl}/workflows/${workflowName}/runs/${onlyRunId}?api-version=${apiVersion}&$expand=properties/actions,workflow/properties`;
 
     try {
       if (isHybridLogicApp(uri)) {
-        uri = `${baseUrl}/workflows/${workflowName}/runs/${runId}?$expand=properties/actions,workflow/properties`;
+        uri = `${baseUrl}/workflows/${workflowName}/runs/${onlyRunId}?$expand=properties/actions,workflow/properties`;
 
         const { uri: newUri, headerPath } = StandardRunService.getProxyUrl(uri);
         const response = await httpClient.post<Run, undefined>({
