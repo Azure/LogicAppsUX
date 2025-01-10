@@ -311,7 +311,7 @@ const addLoopingForToNewPathItems = (
   rootTargetConnection: Connection,
   connections: ConnectionDictionary,
   newPath: OutputPathItem[],
-  currentLoop: { loop: string }
+  currentSourceLoop: { loop: string }
 ) => {
   const rootSourceNodes = [...rootTargetConnection.inputs];
 
@@ -372,11 +372,17 @@ const addLoopingForToNewPathItems = (
           addConditionalToNewPathItems(connections[sourceNode.reactFlowKey], connections, newPath);
           prevPathItemWasConditional = true;
         } else {
-          // Loop with an index
+          // Loop with an index or sequence
           if (!prevPathItemWasConditional) {
             const functionKey = sourceNode.reactFlowKey;
             const functionConnection = connections[functionKey];
-            const sequenceValueResult = collectSequenceValue(sourceNode.node, functionConnection, connections, true);
+            const sequenceValueResult = collectSequenceValue(
+              sourceNode.node,
+              functionConnection,
+              connections,
+              true,
+              currentSourceLoop.loop
+            );
 
             newPath.forEach((pathItem) => {
               const extractedScope = extractScopeFromLoop(pathItem.key);
@@ -394,6 +400,8 @@ const addLoopingForToNewPathItems = (
             } else {
               loopValue = `${mapNodeParams.for}(${sequenceValueResult.sequenceValue})`;
             }
+
+            currentSourceLoop.loop = sequenceValueResult.rootLoop;
 
             // For entry
             newPath.push({ key: loopValue });
@@ -414,7 +422,7 @@ const addLoopingForToNewPathItems = (
 
           // For entry
           newPath.push({ key: loopValue });
-          currentLoop.loop = sourceNode.node.key;
+          currentSourceLoop.loop = sourceNode.node.key;
         }
 
         prevPathItemWasConditional = false;
