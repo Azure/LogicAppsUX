@@ -1673,6 +1673,7 @@
   "vX9WYS": "Destinatari",
   "va40BJ": "Obbligatorio. Nome dell'azione di cui si desidera ottenere gli output.",
   "vdtKjT": "Per creare e usare una connessione API, è necessario configurare un'identità gestita in questa app per la logica.",
+  "vhwaYb": "Wrap all custom value string and DateTime values in double quotes. For example, \"abc\".",
   "viee6C": "Durata",
   "vlDynP": "Rimuovi",
   "vmlhVB": "Per preparare il flusso di lavoro, completare la configurazione di questa azione:",

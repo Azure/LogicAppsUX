@@ -1673,6 +1673,7 @@
   "vX9WYS": "Audience",
   "va40BJ": "Obligatoire. Nom de l'action dont vous voulez obtenir les sorties.",
   "vdtKjT": "Pour créer et utiliser une connexion d’API, vous devez avoir une identité managée configurée sur cette application logique.",
+  "vhwaYb": "Wrap all custom value string and DateTime values in double quotes. For example, \"abc\".",
   "viee6C": "Durée",
   "vlDynP": "Abandonner",
   "vmlhVB": "Pour préparer ce flux de travail, terminez la configuration de cette action :",
