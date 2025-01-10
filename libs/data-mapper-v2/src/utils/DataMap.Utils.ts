@@ -131,7 +131,7 @@ export const collectSequenceValue = (
     result.rootLoop = valueToTrim;
   }
 
-  if (valueToTrim.includes(parentLoopPath)) {
+  if (parentLoopPath !== '' && valueToTrim.includes(parentLoopPath)) {
     const relativePath = valueToTrim.replace(`${parentLoopPath}/`, '');
     localizedInputValues[0] = relativePath;
   }
