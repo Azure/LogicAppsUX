@@ -24,7 +24,7 @@ import { css, setLayerHostSelector } from '@fluentui/react';
 import { PanelLocation } from '@microsoft/designer-ui';
 import type { CustomPanelLocation } from '@microsoft/designer-ui';
 import type { WorkflowNodeType } from '@microsoft/logic-apps-shared';
-import { useWindowDimensions, WORKFLOW_NODE_TYPES, useThrottledEffect } from '@microsoft/logic-apps-shared';
+import { WORKFLOW_NODE_TYPES, useThrottledEffect } from '@microsoft/logic-apps-shared';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import KeyboardBackendFactory, { isKeyboardDragTrigger } from 'react-dnd-accessible-backend';
 import { HTML5Backend } from 'react-dnd-html5-backend';
@@ -39,6 +39,8 @@ import { CanvasFinder } from './CanvasFinder';
 import { DesignerContextualMenu } from './common/DesignerContextualMenu/DesignerContextualMenu';
 import { EdgeContextualMenu } from './common/EdgeContextualMenu/EdgeContextualMenu';
 import { DragPanMonitor } from './common/DragPanMonitor/DragPanMonitor';
+import { CanvasResizer } from './CanvasResizer';
+import { useResizeObserver } from '@react-hookz/web';
 
 export interface DesignerProps {
   backgroundProps?: BackgroundProps;
@@ -107,7 +109,10 @@ export const Designer = (props: DesignerProps) => {
   useThrottledEffect(() => dispatch(buildEdgeIdsBySource()), [graph], 200);
 
   const clampPan = useClampPan();
-  const windowDimensions = useWindowDimensions();
+	
+	const canvasRef = useRef<HTMLDivElement>(null);
+	const [containerDimensions, setContainerDimentions] = useState(canvasRef.current?.getBoundingClientRect() ?? { width: 0, height: 0 });
+	useResizeObserver(canvasRef, (el) => setContainerDimentions(el.contentRect));
 
   const [zoom, setZoom] = useState(1);
 
@@ -115,14 +120,14 @@ export const Designer = (props: DesignerProps) => {
     const padding = 64 + 24;
     const [flowWidth, flowHeight] = flowSize;
 
-    const xVal = windowDimensions.width / zoom - padding - DEFAULT_NODE_SIZE.width;
-    const yVal = windowDimensions.height / zoom - padding - DEFAULT_NODE_SIZE.height;
+		const xVal = containerDimensions.width / zoom - padding - DEFAULT_NODE_SIZE.width;
+		const yVal = containerDimensions.height / zoom - padding - DEFAULT_NODE_SIZE.height;
 
     return [
       [-xVal + 32, -yVal],
       [xVal + flowWidth, yVal + flowHeight - 30],
     ];
-  }, [flowSize, windowDimensions, zoom]);
+	}, [flowSize, containerDimensions, zoom]);
 
   useEffect(() => setLayerHostSelector('#msla-layer-host'), []);
   const KeyboardTransition = createTransition('keydown', (event) => {
@@ -212,6 +217,7 @@ export const Designer = (props: DesignerProps) => {
       <div className="msla-designer-canvas msla-panel-mode" ref={designerContainerRef}>
         <ReactFlowProvider>
           <ReactFlow
+						ref={canvasRef}
             nodeTypes={nodeTypes}
             nodes={nodesWithPlaceholder}
             edges={edges}
@@ -252,7 +258,8 @@ export const Designer = (props: DesignerProps) => {
           </div>
           <PerformanceDebugTool />
           <CanvasFinder panelLocation={panelLocation} />
-          <DragPanMonitor />
+					<CanvasResizer watch={canvasRef} />
+          <DragPanMonitor containerElement={canvasRef} />
         </ReactFlowProvider>
         <div
           id={'msla-layer-host'}
