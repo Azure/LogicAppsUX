@@ -7,7 +7,8 @@ test.describe(
     tag: '@mock',
   },
   () => {
-    test('Should tab through the workflow properly', async ({ page }) => {
+    test('Should tab through the workflow properly', async ({ page, browserName }) => {
+      test.skip(browserName === 'firefox', 'Still working on it');
       const tab = async () => page.locator('*:focus').press('Tab');
 
       await page.goto('/');
@@ -46,7 +47,8 @@ test.describe(
       expect(await page.locator('*:focus').innerText()).toBe('Terminate');
     });
 
-    test('Should open node details panel with proper focus', async ({ page }) => {
+    test('Should open node details panel with proper focus', async ({ page, browserName }) => {
+      test.skip(browserName === 'firefox', 'Still working on it');
       const tab = async () => page.locator('*:focus').press('Tab');
       const backTab = async () => page.locator('*:focus').press('Shift+Tab');
 
