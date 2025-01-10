@@ -20,10 +20,12 @@ import * as vscode from 'vscode';
  * @returns A promise that resolves to a boolean indicating whether a Logic App project exists in the workspace.
  */
 export const getWorkspaceRoot = async (actionContext: IActionContext): Promise<string | undefined> => {
-  for (const folder of vscode.workspace.workspaceFolders) {
-    const projectRoot = await tryGetLogicAppProjectRoot(actionContext, folder, true);
-    if (projectRoot) {
-      return vscode.workspace.workspaceFile ? path.dirname(vscode.workspace.workspaceFile.fsPath) : undefined;
+  if (vscode.workspace.workspaceFolders !== undefined) {
+    for (const folder of vscode.workspace.workspaceFolders) {
+      const projectRoot = await tryGetLogicAppProjectRoot(actionContext, folder, true);
+      if (projectRoot) {
+        return vscode.workspace.workspaceFile ? path.dirname(vscode.workspace.workspaceFile.fsPath) : undefined;
+      }
     }
   }
   return undefined;
@@ -35,10 +37,12 @@ export const getWorkspaceRoot = async (actionContext: IActionContext): Promise<s
  * @returns A promise that resolves to a boolean indicating whether a Logic App project exists in the workspace.
  */
 export const getWorkspaceFile = async (actionContext: IActionContext): Promise<string | undefined> => {
-  for (const folder of vscode.workspace.workspaceFolders) {
-    const projectRoot = await tryGetLogicAppProjectRoot(actionContext, folder, true);
-    if (projectRoot) {
-      return vscode.workspace.workspaceFile ? vscode.workspace.workspaceFile.fsPath : undefined;
+  if (vscode.workspace.workspaceFolders !== undefined) {
+    for (const folder of vscode.workspace.workspaceFolders) {
+      const projectRoot = await tryGetLogicAppProjectRoot(actionContext, folder, true);
+      if (projectRoot) {
+        return vscode.workspace.workspaceFile ? vscode.workspace.workspaceFile.fsPath : undefined;
+      }
     }
   }
   return undefined;
@@ -50,23 +54,28 @@ export const getWorkspaceFile = async (actionContext: IActionContext): Promise<s
  * @returns A promise that resolves to a boolean indicating whether a Logic App project exists in the workspace.
  */
 export const getWorkspaceFileInParentDirectory = async (actionContext: IActionContext): Promise<string | undefined> => {
-  for (const folder of vscode.workspace.workspaceFolders) {
-    const projectRoot = await tryGetLogicAppProjectRoot(actionContext, folder, true);
-    if (projectRoot) {
-      if (vscode.workspace.workspaceFile) {
-        return vscode.workspace.workspaceFile.fsPath;
-      }
-      const parentDir = path.dirname(projectRoot);
-      const currentFolder = path.basename(projectRoot);
-      const relativeFolderPath = `./${currentFolder}`;
-      const workspaceFiles = await globby('*.code-workspace', { cwd: parentDir });
-      if (workspaceFiles.length > 0) {
-        const workspaceFilePath = path.join(parentDir, workspaceFiles[0]);
-        const workspaceFileContent = await vscode.workspace.fs.readFile(vscode.Uri.file(workspaceFilePath));
-        const workspaceFileJson = JSON.parse(workspaceFileContent.toString());
+  if (vscode.workspace.workspaceFolders !== undefined) {
+    for (const folder of vscode.workspace.workspaceFolders) {
+      const projectRoot = await tryGetLogicAppProjectRoot(actionContext, folder, true);
+      if (projectRoot) {
+        if (vscode.workspace.workspaceFile) {
+          return vscode.workspace.workspaceFile.fsPath;
+        }
+        const parentDir = path.dirname(projectRoot);
+        const currentFolder = path.basename(projectRoot);
+        const relativeFolderPath = `./${currentFolder}`;
+        const workspaceFiles = await globby('*.code-workspace', { cwd: parentDir });
+        if (workspaceFiles.length > 0) {
+          const workspaceFilePath = path.join(parentDir, workspaceFiles[0]);
+          const workspaceFileContent = await vscode.workspace.fs.readFile(vscode.Uri.file(workspaceFilePath));
+          const workspaceFileJson = JSON.parse(workspaceFileContent.toString());
 
-        if (workspaceFileJson.folders && workspaceFileJson.folders.some((folder: { path: string }) => folder.path === relativeFolderPath)) {
-          return workspaceFilePath;
+          if (
+            workspaceFileJson.folders &&
+            workspaceFileJson.folders.some((folder: { path: string }) => folder.path === relativeFolderPath)
+          ) {
+            return workspaceFilePath;
+          }
         }
       }
     }

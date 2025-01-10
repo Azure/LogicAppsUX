@@ -21,7 +21,7 @@ export class NewCodeProjectTypeStep extends AzureWizardPromptStep<IProjectWizard
   public hideStepCount = true;
   private readonly templateId?: string;
   private readonly functionSettings?: { [key: string]: string | undefined };
-  private readonly skipWorkflowStateTypeStep?: boolean;
+  private readonly skipWorkflowStateTypeStep: boolean;
 
   /**
    * The constructor initializes the NewCodeProjectTypeStep object with optional templateId and functionSettings parameters.
@@ -31,7 +31,7 @@ export class NewCodeProjectTypeStep extends AzureWizardPromptStep<IProjectWizard
   public constructor(
     templateId: string | undefined,
     functionSettings: { [key: string]: string | undefined } | undefined,
-    skipWorkflowStateTypeStep: any
+    skipWorkflowStateTypeStep: boolean
   ) {
     super();
     this.templateId = templateId;

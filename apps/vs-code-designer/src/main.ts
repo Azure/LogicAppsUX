@@ -64,7 +64,10 @@ export async function activate(context: vscode.ExtensionContext) {
     runPostWorkflowCreateStepsFromCache();
     runPostExtractStepsFromCache();
 
-    await ConvertToWorkspace(activateContext);
+    if (vscode.workspace.workspaceFolders && vscode.workspace.workspaceFolders.length > 0) {
+      await ConvertToWorkspace(activateContext);
+    }
+
     try {
       await downloadExtensionBundle(activateContext);
     } catch (error) {
