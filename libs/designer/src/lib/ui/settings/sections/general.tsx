@@ -268,6 +268,7 @@ export const General = ({
           value: concurrency?.value?.maximumWaitingRuns ?? 10,
           placeholder: maximumWaitingDescription,
           customLabel: getSettingLabel(maxWaitingRunsTitle, maximumWaitingRunsTooltipText),
+          ariaLabel: maxWaitingRunsTitle,
           onValueChange: (_e: FormEvent<HTMLInputElement | HTMLTextAreaElement>, newValue?: string | undefined) =>
             onConcurrencyMaxWaitRunChange(Number(newValue)),
           max: maximumWaitingRunsMetadata.max,
