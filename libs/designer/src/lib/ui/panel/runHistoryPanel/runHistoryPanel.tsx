@@ -21,6 +21,7 @@ import {
   Spinner,
   Tag,
   TagGroup,
+  Text,
 } from '@fluentui/react-components';
 import { getRun, useRuns } from '../../../core/queries/runs';
 import { useState, useMemo, useCallback, useEffect } from 'react';
@@ -126,6 +127,12 @@ export const RunHistoryPanel = (props: RunHistoryPanelProps) => {
     defaultMessage: 'Refresh',
     description: 'Refresh button aria label',
     id: '0a4IGE',
+  });
+
+  const noRunsText = intl.formatMessage({
+    defaultMessage: 'No runs found',
+    description: 'No runs found text',
+    id: 'SbHBIZ',
   });
 
   const runsErrorMessageTitle = intl.formatMessage({
@@ -299,30 +306,32 @@ export const RunHistoryPanel = (props: RunHistoryPanelProps) => {
       </DrawerHeader>
 
       <DrawerBody>
-        {runs.isLoading ? (
-          <Spinner />
-        ) : (
-          <div style={{ margin: '0 -8px' }}>
-            <DataGrid
-              items={filteredRuns ?? []}
-              columns={columns}
-              defaultSortState={defaultSortState}
-              resizableColumns
-              columnSizingOptions={columnSizing}
-            >
-              <Portal mountNode={dataGridHeaderPortal}>
-                <DataGridHeader>
-                  <DataGridRow>{({ renderHeaderCell }) => <DataGridHeaderCell>{renderHeaderCell()}</DataGridHeaderCell>}</DataGridRow>
-                </DataGridHeader>
-              </Portal>
-              <DataGridBody<Run>>
-                {({ item, rowId }) => (
-                  <RunRow item={item} rowId={rowId} isSelected={selectedRunInstance?.id === item.id} onRunSelected={props.onRunSelected} />
-                )}
-              </DataGridBody>
-            </DataGrid>
-          </div>
-        )}
+        <div style={{ margin: '0 -8px' }}>
+          <DataGrid
+            items={filteredRuns ?? []}
+            columns={columns}
+            defaultSortState={defaultSortState}
+            resizableColumns
+            columnSizingOptions={columnSizing}
+          >
+            <Portal mountNode={dataGridHeaderPortal}>
+              <DataGridHeader>
+                <DataGridRow>{({ renderHeaderCell }) => <DataGridHeaderCell>{renderHeaderCell()}</DataGridHeaderCell>}</DataGridRow>
+              </DataGridHeader>
+            </Portal>
+            <DataGridBody<Run>>
+              {({ item, rowId }) => (
+                <RunRow item={item} rowId={rowId} isSelected={selectedRunInstance?.id === item.id} onRunSelected={props.onRunSelected} />
+              )}
+            </DataGridBody>
+            {filteredRuns?.length === 0 && (
+              <Text className={'no-runs-text'} align={'center'}>
+                {noRunsText}
+              </Text>
+            )}
+            {runs.isLoading && <Spinner style={{ padding: '16px' }} />}
+          </DataGrid>
+        </div>
       </DrawerBody>
     </Drawer>
   );
