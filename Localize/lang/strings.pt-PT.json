@@ -1673,6 +1673,7 @@
   "vX9WYS": "Audiência",
   "va40BJ": "Obrigatório. O nome da ação cujas saídas quer.",
   "vdtKjT": "Para criar e utilizar uma ligação à API, tem de ter uma identidade gerida configurada nesta aplicação lógica.",
+  "vhwaYb": "Wrap all custom value string and DateTime values in double quotes. For example, \"abc\".",
   "viee6C": "Duração",
   "vlDynP": "Descartar",
   "vmlhVB": "Para preparar este fluxo de trabalho, conclua a configuração desta ação:",

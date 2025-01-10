@@ -11262,6 +11262,12 @@
       "value": "Para crear y usar una conexión API, debe tener una identidad administrada configurada en esta aplicación lógica."
     }
   ],
+  "vhwaYb": [
+    {
+      "type": 0,
+      "value": "Wrap all custom value string and DateTime values in double quotes. For example, \"abc\"."
+    }
+  ],
   "viee6C": [
     {
       "type": 0,

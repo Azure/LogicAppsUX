@@ -11197,6 +11197,12 @@
       "value": "To create and use an API connection, you must have a managed identity configured on this logic app."
     }
   ],
+  "vhwaYb": [
+    {
+      "type": 0,
+      "value": "Wrap all custom value string and DateTime values in double quotes. For example, \"abc\"."
+    }
+  ],
   "viee6C": [
     {
       "type": 0,

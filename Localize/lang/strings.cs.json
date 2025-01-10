@@ -1673,6 +1673,7 @@
   "vX9WYS": "Cílová skupina",
   "va40BJ": "Povinný parametr. Název akce, jejíž výstupy požadujete.",
   "vdtKjT": "Pokud chcete vytvořit a použít připojení rozhraní API, musíte mít v této aplikaci logiky nakonfigurovanou spravovanou identitu.",
+  "vhwaYb": "Wrap all custom value string and DateTime values in double quotes. For example, \"abc\".",
   "viee6C": "Doba trvání",
   "vlDynP": "Zahodit",
   "vmlhVB": "Pokud chcete tento pracovní postup připravit, dokončete nastavení této akce:",

@@ -11153,6 +11153,12 @@
       "value": "Om du vill skapa och använda en API-anslutning måste du ha konfigurerat en hanterad identitet på den här logikappen."
     }
   ],
+  "vhwaYb": [
+    {
+      "type": 0,
+      "value": "Wrap all custom value string and DateTime values in double quotes. For example, \"abc\"."
+    }
+  ],
   "viee6C": [
     {
       "type": 0,
