@@ -11177,6 +11177,12 @@
       "value": "Bir API bağlantısı oluşturmak ve kullanmak için bu mantıksal uygulamada yapılandırılmış bir yönetilen kimliğe sahip olmanız gerekir."
     }
   ],
+  "vhwaYb": [
+    {
+      "type": 0,
+      "value": "Wrap all custom value string and DateTime values in double quotes. For example, \"abc\"."
+    }
+  ],
   "viee6C": [
     {
       "type": 0,

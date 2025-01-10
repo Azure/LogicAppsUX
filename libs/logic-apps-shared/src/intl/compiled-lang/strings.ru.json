@@ -11355,6 +11355,12 @@
       "value": "Для создания и использования подключения к API в приложении логики должно быть настроено управляемое удостоверение."
     }
   ],
+  "vhwaYb": [
+    {
+      "type": 0,
+      "value": "Wrap all custom value string and DateTime values in double quotes. For example, \"abc\"."
+    }
+  ],
   "viee6C": [
     {
       "type": 0,

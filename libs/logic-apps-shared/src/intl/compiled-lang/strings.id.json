@@ -11108,6 +11108,12 @@
       "value": "Untuk membuat dan menggunakan koneksi API, Anda harus memiliki identitas terkelola yang dikonfigurasi di aplikasi logika ini."
     }
   ],
+  "vhwaYb": [
+    {
+      "type": 0,
+      "value": "Wrap all custom value string and DateTime values in double quotes. For example, \"abc\"."
+    }
+  ],
   "viee6C": [
     {
       "type": 0,
