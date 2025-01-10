@@ -1,4 +1,17 @@
 # Logic Apps Designer
+## [5.20.0](https://github.com/Azure/LogicAppsUX/compare/v5.19.0...v5.20.0) (2025-01-10)
+
+
+### Features
+
+* **Data Mapper:** UX fixes for Public Preview ([#6363](https://github.com/Azure/LogicAppsUX/issues/6363)) ([3e3214a](https://github.com/Azure/LogicAppsUX/commit/3e3214aef9be7d4f3e9a1ff91bc1b4561790aae4))
+* **Designer:** Exported Run History panel ([#6372](https://github.com/Azure/LogicAppsUX/issues/6372)) ([f3b8a5f](https://github.com/Azure/LogicAppsUX/commit/f3b8a5f09235f9086eabf4341a921e9187a47461))
+
+
+### Bug Fixes
+
+* **designer:** Error Being thrown On Extended Text Node ([#6370](https://github.com/Azure/LogicAppsUX/issues/6370)) ([69a6995](https://github.com/Azure/LogicAppsUX/commit/69a69955a5157a19971ad13f48b5c193b37e2695))
+
 ## [5.19.0](https://github.com/Azure/LogicAppsUX/compare/v5.18.0...v5.19.0) (2025-01-09)
 
 ## [5.18.0](https://github.com/Azure/LogicAppsUX/compare/v5.17.0...v5.18.0) (2025-01-08)
