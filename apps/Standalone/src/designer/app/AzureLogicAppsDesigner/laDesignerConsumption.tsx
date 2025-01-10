@@ -298,7 +298,7 @@ const DesignerEditorConsumption = () => {
             workflowId={workflowDefinitionId}
             runInstance={runInstanceData}
           >
-            <div style={{ display: 'flex', flexDirection: 'row', height: 'inherit' }}>
+            <div style={{ display: 'flex', height: 'inherit' }}>
               <RunHistoryPanel
                 collapsed={!showRunHistory}
                 onClose={() => dispatch(setRunHistoryEnabled(false))}

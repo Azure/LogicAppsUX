@@ -1,4 +1,3 @@
-// import { PresenceBadge, type PresenceBadgeStatus } from '@fluentui/react-components';
 import * as React from 'react';
 import StatusSucceededIcon from '../../../../lib/common/images/status_success.svg';
 import StatusFailedIcon from '../../../../lib/common/images/status_failure.svg';
