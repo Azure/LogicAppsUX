@@ -1673,6 +1673,7 @@
   "vX9WYS": "Målgrupp",
   "va40BJ": "Krävs. Namnet på åtgärden vars utdata du vill ha.",
   "vdtKjT": "Om du vill skapa och använda en API-anslutning måste du ha konfigurerat en hanterad identitet på den här logikappen.",
+  "vhwaYb": "Wrap all custom value string and DateTime values in double quotes. For example, \"abc\".",
   "viee6C": "Varaktighet",
   "vlDynP": "Ignorera",
   "vmlhVB": "Slutför konfigurationen av den här åtgärden om du vill göra det här arbetsflödet redo:",

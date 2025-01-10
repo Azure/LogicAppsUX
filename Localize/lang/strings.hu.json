@@ -1673,6 +1673,7 @@
   "vX9WYS": "Célközönség",
   "va40BJ": "Kötelező megadni. Azon művelet neve, melynek kimenetei szükségesek.",
   "vdtKjT": "API-kapcsolat létrehozásához és használatához konfigurálni kell egy felügyelt identitást ebben a logikai alkalmazásban.",
+  "vhwaYb": "Wrap all custom value string and DateTime values in double quotes. For example, \"abc\".",
   "viee6C": "Időtartam",
   "vlDynP": "Elvetés",
   "vmlhVB": "A munkafolyamat előkészítéséhez fejezze be a művelet beállítását:",

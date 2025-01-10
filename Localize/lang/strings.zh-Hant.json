@@ -1673,6 +1673,7 @@
   "vX9WYS": "對象",
   "va40BJ": "必要。您需要之輸出所屬動作的名稱。",
   "vdtKjT": "若要建立及使用 API 連線，您必須在此邏輯應用程式上設定受控識別。",
+  "vhwaYb": "Wrap all custom value string and DateTime values in double quotes. For example, \"abc\".",
   "viee6C": "持續時間",
   "vlDynP": "捨棄",
   "vmlhVB": "若要準備好此工作流程，請完成設定此動作:",

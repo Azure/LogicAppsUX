@@ -1673,6 +1673,7 @@
   "vX9WYS": "Odbiorcy",
   "va40BJ": "Wymagane. Nazwa akcji z żądanymi danymi wyjściowymi.",
   "vdtKjT": "Aby utworzyć i użyć połączenia interfejsu API, musisz mieć skonfigurowaną tożsamość zarządzaną w tej aplikacji logiki.",
+  "vhwaYb": "Wrap all custom value string and DateTime values in double quotes. For example, \"abc\".",
   "viee6C": "Czas trwania",
   "vlDynP": "Odrzuć",
   "vmlhVB": "Aby przygotować ten przepływ pracy, zakończ konfigurowanie tej akcji:",

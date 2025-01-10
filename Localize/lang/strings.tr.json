@@ -1673,6 +1673,7 @@
   "vX9WYS": "Hedef kitle",
   "va40BJ": "Gerekli. Çıkışlarını istediğiniz eylemin adı.",
   "vdtKjT": "Bir API bağlantısı oluşturmak ve kullanmak için bu mantıksal uygulamada yapılandırılmış bir yönetilen kimliğe sahip olmanız gerekir.",
+  "vhwaYb": "Wrap all custom value string and DateTime values in double quotes. For example, \"abc\".",
   "viee6C": "Süre",
   "vlDynP": "At",
   "vmlhVB": "Bu iş akışını hazır hale getirmek için bu eylemi ayarlamayı bitirin:",

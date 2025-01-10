@@ -1673,6 +1673,7 @@
   "vX9WYS": "対象ユーザー",
   "va40BJ": "必須。出力を求める対象のアクションの名前。",
   "vdtKjT": "API 接続を作成して使用するには、このロジック アプリ上で構成したマネージド ID が必要です。",
+  "vhwaYb": "Wrap all custom value string and DateTime values in double quotes. For example, \"abc\".",
   "viee6C": "期間",
   "vlDynP": "破棄",
   "vmlhVB": "このワークフローを準備するには、このアクションの設定を終了してください:",

@@ -1673,6 +1673,7 @@
   "vX9WYS": "受众",
   "va40BJ": "必需。需要获取其输出的操作的名称。",
   "vdtKjT": "要创建和使用 API 连接，必须在此逻辑应用上配置托管标识。",
+  "vhwaYb": "Wrap all custom value string and DateTime values in double quotes. For example, \"abc\".",
   "viee6C": "持续时间",
   "vlDynP": "放弃",
   "vmlhVB": "若要准备好此工作流，请设置完以下操作:",
