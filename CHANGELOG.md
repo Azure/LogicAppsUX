@@ -1,4 +1,12 @@
 # Logic Apps Designer
+### [5.14.1](https://github.com/Azure/LogicAppsUX/compare/v5.14.0...v5.14.1) (2025-01-10)
+
+
+### Bug Fixes
+
+* **Designer:** Fixed issue with array editor dynamic data ([#6221](https://github.com/Azure/LogicAppsUX/issues/6221)) ([4b2228d](https://github.com/Azure/LogicAppsUX/commit/4b2228d3e3d7d147a004ce28d57298cd60842125))
+* **Designer:** Sorted connector browse actions alphabetically ([#6245](https://github.com/Azure/LogicAppsUX/issues/6245)) ([0d5ef5d](https://github.com/Azure/LogicAppsUX/commit/0d5ef5d958de21c2059b27499d312dc77212826a))
+
 ## [5.14.0](https://github.com/Azure/LogicAppsUX/compare/v5.13.0...v5.14.0) (2024-12-31)
 
 
