@@ -1,7 +1,7 @@
 import Elk, { type ElkNode } from 'elkjs/lib/elk.bundled.js';
 import { useEffect, useState } from 'react';
 import { type Node, type Edge, type XYPosition, useStore, useReactFlow } from '@xyflow/react';
-import { isFunctionNode } from '../../utils/ReactFlow.Util';
+import { isFunctionNode, panelWidth } from '../../utils/ReactFlow.Util';
 import { useDispatch } from 'react-redux';
 import type { AppDispatch } from '../../core/state/Store';
 import { updateFunctionNodesPosition } from '../../core/state/DataMapSlice';
@@ -161,7 +161,7 @@ const useAutoLayout = () => {
               const { x: currentX, y: currentY } = node.position;
               acc[node.id] = {
                 // Todo: This is a temporary fix for the layout issue. We need to find a better solution.
-                x: currentX < 310 ? currentX + 310 : currentX,
+                x: currentX < panelWidth ? currentX + panelWidth : currentX,
                 y: currentY,
               };
               return acc;
