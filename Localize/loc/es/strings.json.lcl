@@ -15396,6 +15396,15 @@
         </Str>
         <Disp Icon="Str" />
       </Item>
+      <Item ItemId=";vhwaYb" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[Wrap all custom value string and DateTime values in double quotes. For example, "abc".]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Ajuste todos los valores DateTime y cadena de valor personalizado entre comillas dobles. Por ejemplo, "abc".]]></Val>
+          </Tgt>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
       <Item ItemId=";viee6C" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[Duration]]></Val>
