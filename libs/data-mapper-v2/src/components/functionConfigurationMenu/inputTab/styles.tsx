@@ -32,7 +32,7 @@ export const useStyles = makeStyles({
     textAlign: 'end',
   },
   typesParent: {
-    fontSize: '14px',
+    fontSize: '11px',
   },
   inputNameDiv: {
     width: '200px',
