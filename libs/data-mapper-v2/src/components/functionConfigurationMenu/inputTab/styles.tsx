@@ -1,5 +1,60 @@
 import { makeStyles } from '@fluentui/react-components';
 
+export const useBoundedInputStyles = makeStyles({
+  row: {
+    width: '100%',
+    paddingBottom: '20px',
+  },
+  header: {
+    display: 'flex',
+    flexDirection: 'column',
+  },
+  titleContainer: {
+    display: 'flex',
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+  },
+  titleText: {
+    display: 'inline',
+    fontSize: '12px',
+  },
+  titleLabelText: {
+    fontStyle: 'italic',
+  },
+  titleRequiredLabelText: {
+    color: 'red',
+  },
+  descriptionContainer: {
+    display: 'flex',
+    flexDirection: 'row',
+    width: '60%',
+  },
+  descriptionText: {
+    display: 'inline',
+    fontSize: '10px',
+  },
+  body: {
+    display: 'flex',
+    flexDirection: 'column',
+  },
+  formControlWrapper: {
+    display: 'flex',
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+  },
+  formControl: {
+    display: 'inline-block',
+    width: '60%',
+  },
+  formControlDescription: {
+    display: 'inline-block',
+    width: '60%',
+  },
+  controlButton: {
+    paddingTop: '0px',
+  },
+});
+
 export const useStyles = makeStyles({
   unlimitedInputHeaderCell: {
     width: '170px',
@@ -39,6 +94,9 @@ export const useStyles = makeStyles({
   },
   inputName: {
     display: 'block',
+  },
+  inputDescription: {
+    fontSize: '11px',
   },
   addButton: {
     marginLEft: '0px',

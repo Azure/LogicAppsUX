@@ -14,7 +14,7 @@ import type { ConnectionDictionary, NodeConnection, CustomValueConnection, Input
 import { getInputName, getInputValue } from '../../../utils/Function.Utils';
 import type { InputOptionProps } from '../inputDropdown/InputDropdown';
 import { InputDropdown } from '../inputDropdown/InputDropdown';
-import { useStyles } from './styles';
+import { useBoundedInputStyles, useStyles } from './styles';
 import { isSchemaNodeExtended } from '../../../utils';
 import {
   connectionDoesExist,
@@ -47,7 +47,7 @@ export const InputTabContents = (props: {
   const connectionDictionary = useSelector((state: RootState) => state.dataMap.present.curDataMapOperation.dataMapConnections);
   const sourceSchemaDictionary = useSelector((state: RootState) => state.dataMap.present.curDataMapOperation.flattenedSourceSchema);
   const functionNodeDictionary = useSelector((state: RootState) => state.dataMap.present.curDataMapOperation.functionNodes);
-  const styles = useStyles();
+  const styles = useBoundedInputStyles();
   const dispatch = useDispatch();
 
   const connections = useSelector((state: RootState) => state.dataMap.present.curDataMapOperation.dataMapConnections);
@@ -99,43 +99,52 @@ export const InputTabContents = (props: {
       };
 
       return (
-        <div className={styles.boundedInputRow} key={index}>
-          <div className={styles.boundedInputTopRow}>
-            <div className={styles.inputNameDiv}>
-              <Caption1 className={styles.inputName}>{input.name}</Caption1>
-              <Caption2>{input.tooltip ?? input.placeHolder ?? ''}</Caption2>
+        <div className={styles.row} key={index}>
+          <div className={styles.header}>
+            <div className={styles.titleContainer}>
+              <div>
+                <Caption1 className={styles.titleText}>
+                  {input.name}
+                  <Text className={styles.titleRequiredLabelText}>{input.isOptional ? '' : '*'}</Text>
+                </Caption1>
+                <InputCustomInfoLabel />
+              </div>
+              <Text className={styles.titleText}>
+                <span className={styles.titleLabelText}>{resources.ACCEPTED_TYPES}</span>
+                {input.allowedTypes}
+              </Text>
             </div>
-            <Caption2 className={styles.allowedTypesComponent}>
-              <Text className={styles.typesParent}>{resources.ACCEPTED_TYPES}</Text>
-              {input.allowedTypes}
-            </Caption2>
-            <InputCustomInfoLabel />
+            <div className={styles.descriptionContainer}>
+              <Text className={styles.descriptionText}>{input.tooltip ?? input.placeHolder ?? ''}</Text>
+            </div>
           </div>
-          <div>
-            <span className={styles.inputDropdownWrapper}>
-              <InputDropdown
-                index={index}
-                schemaListType={SchemaType.Source}
-                functionId={props.functionKey}
-                currentNode={props.func}
-                inputName={getInputName(inputConnection, connections)}
-                inputValue={getInputValue(inputConnection)}
-                validateAndCreateConnection={validateAndCreateConnection}
+          <div className={styles.body}>
+            <div className={styles.formControlWrapper}>
+              <span className={styles.formControl}>
+                <InputDropdown
+                  index={index}
+                  schemaListType={SchemaType.Source}
+                  functionId={props.functionKey}
+                  currentNode={props.func}
+                  inputName={getInputName(inputConnection, connections)}
+                  inputValue={getInputValue(inputConnection)}
+                  validateAndCreateConnection={validateAndCreateConnection}
+                />
+              </span>
+              <Button
+                className={styles.controlButton}
+                appearance="transparent"
+                icon={<DeleteRegular />}
+                onClick={() => removeConnection(index)}
               />
-            </span>
-            <span className={styles.badgeWrapper}>
+            </div>
+            <div className={styles.formControlDescription}>
               {inputType && (
                 <Badge appearance="filled" color="informative">
                   {inputType}
                 </Badge>
               )}
-            </span>
-            <Button
-              className={styles.listButton}
-              appearance="transparent"
-              icon={<DeleteRegular />}
-              onClick={() => removeConnection(index)}
-            />
+            </div>
           </div>
         </div>
       );
