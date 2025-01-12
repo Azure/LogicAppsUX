@@ -138,9 +138,9 @@ export const CustomListItem = (props: CustomListItemProps) => {
   } = props;
 
   return (
-    <ListItem key={`input-${name}`}>
-      <div className={styles.draggableListItem}>
-        <span className={styles.inputDropdown}>
+    <ListItem key={`input-${name}`} className={styles.draggableListItem}>
+      <div className={styles.draggableListContainer}>
+        <span className={styles.formControl}>
           <InputDropdown
             inputAllowsCustomValues={customValueAllowed}
             index={index}
@@ -152,20 +152,20 @@ export const CustomListItem = (props: CustomListItemProps) => {
             validateAndCreateConnection={validateAndCreateConnection}
           />
         </span>
-        <span className={styles.listButtons}>
-          <span className={styles.badgeWrapper}>
-            {type && (
-              <Badge appearance="filled" color="informative">
-                {type}
-              </Badge>
-            )}
-          </span>
+        <span>
           <Button className={styles.listButton} appearance="transparent" icon={<DeleteRegular />} onClick={remove} />
           {draggable && dragHandleProps && (
             <Button className={styles.listButton} appearance="transparent" icon={<ReOrderRegular />} {...dragHandleProps} />
           )}
         </span>
       </div>
+      <span className={styles.formControlDescription}>
+        {type && (
+          <Badge appearance="filled" color="informative">
+            {type}
+          </Badge>
+        )}
+      </span>
     </ListItem>
   );
 };
