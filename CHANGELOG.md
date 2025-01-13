@@ -1,4 +1,13 @@
 # Logic Apps Designer
+## [5.21.0](https://github.com/Azure/LogicAppsUX/compare/v5.20.0...v5.21.0) (2025-01-11)
+
+
+### Bug Fixes
+
+* **a11y:** Fix auto focus of panel and fix field names ([#6376](https://github.com/Azure/LogicAppsUX/issues/6376)) ([d974754](https://github.com/Azure/LogicAppsUX/commit/d97475446099c59ee36c66371bace26aac9da6fb))
+* **Data Mapper:** Fix circles cutting off ([#6379](https://github.com/Azure/LogicAppsUX/issues/6379)) ([5599c5e](https://github.com/Azure/LogicAppsUX/commit/5599c5ecc71c08913cff07cc34325ef26ec3b908))
+* **Data Mapper:** Sequence function serialization bug ([#6378](https://github.com/Azure/LogicAppsUX/issues/6378)) ([a6e389f](https://github.com/Azure/LogicAppsUX/commit/a6e389f3f8f1a6f9bb42fa41409569d3f123dc98))
+
 ## [5.20.0](https://github.com/Azure/LogicAppsUX/compare/v5.19.0...v5.20.0) (2025-01-10)
 
 
