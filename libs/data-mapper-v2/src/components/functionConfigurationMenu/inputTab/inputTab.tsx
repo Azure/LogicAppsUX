@@ -131,19 +131,17 @@ export const InputTabContents = (props: {
                   validateAndCreateConnection={validateAndCreateConnection}
                 />
               </span>
+              {inputType && (
+                <Badge appearance="filled" color="informative">
+                  {inputType}
+                </Badge>
+              )}
               <Button
                 className={styles.controlButton}
                 appearance="transparent"
                 icon={<DeleteRegular />}
                 onClick={() => removeConnection(index)}
               />
-            </div>
-            <div className={styles.formControlDescription}>
-              {inputType && (
-                <Badge appearance="filled" color="informative">
-                  {inputType}
-                </Badge>
-              )}
             </div>
           </div>
         </div>
