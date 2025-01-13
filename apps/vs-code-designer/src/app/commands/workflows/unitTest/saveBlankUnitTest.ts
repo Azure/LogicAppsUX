@@ -296,7 +296,7 @@ function isMockable(type: string, isTrigger: boolean): boolean {
  * @param params - The parameters object.
  * @returns A transformed object with cleaned keys and limited fields.
  */
-function transformParameters(params: any): any {
+export function transformParameters(params: any): any {
   const allowedFields = ['type', 'title', 'format', 'description'];
   const result: any = {};
 
