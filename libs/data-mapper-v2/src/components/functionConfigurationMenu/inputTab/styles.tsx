@@ -43,12 +43,11 @@ export const useStyles = makeStyles({
     justifyContent: 'space-between',
   },
   formControl: {
-    display: 'inline-block',
     width: '60%',
   },
   formControlDescription: {
-    display: 'inline-block',
     width: '60%',
+    display: 'block',
   },
   controlButton: {
     paddingTop: '0px',

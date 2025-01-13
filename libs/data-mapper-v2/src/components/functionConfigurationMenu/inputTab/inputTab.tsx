@@ -22,12 +22,12 @@ import {
   newConnectionWillHaveCircularLogic,
 } from '../../../utils/Connection.Utils';
 import { SchemaType, type SchemaNodeDictionary } from '@microsoft/logic-apps-shared';
-import DraggableList from 'react-draggable-list';
-import InputListWrapper, { type TemplateItemProps, type CommonProps } from './InputList';
+import { CustomListItem } from './InputList';
 import { useCallback, useMemo } from 'react';
 import { useIntl } from 'react-intl';
 import { InputCustomInfoLabel } from './inputCustomInfoLabel';
 import { useStyles } from './styles';
+import ReactDragListView from 'react-drag-listview';
 
 export const InputTabContents = (props: {
   func: FunctionData;
@@ -165,11 +165,14 @@ const UnlimitedInputs = (props: {
   functionKey: string;
   connections: ConnectionDictionary;
 }) => {
-  const inputsFromManifest = props.func.inputs;
   const styles = useStyles();
   const dispatch = useDispatch();
   const intl = useIntl();
-
+  const connectionDictionary = useSelector((state: RootState) => state.dataMap.present.curDataMapOperation.dataMapConnections);
+  const sourceSchemaDictionary = useSelector((state: RootState) => state.dataMap.present.curDataMapOperation.flattenedSourceSchema);
+  const functionNodeDictionary = useSelector((state: RootState) => state.dataMap.present.curDataMapOperation.functionNodes);
+  const { func, connections, functionKey } = props;
+  const inputsFromManifest = useMemo(() => func.inputs, [func.inputs]);
   const functionConnection = useMemo(() => props.connections[props.functionKey], [props.connections, props.functionKey]);
 
   const stringResources = useMemo(
@@ -194,19 +197,69 @@ const UnlimitedInputs = (props: {
   );
 
   const addUnboundedInputSlot = useCallback(() => {
-    dispatch(createInputSlotForUnboundedInput(props.functionKey));
-  }, [dispatch, props.functionKey]);
+    dispatch(createInputSlotForUnboundedInput(functionKey));
+  }, [dispatch, functionKey]);
 
-  const onDragMoveEnd = useCallback(
-    (newList: readonly TemplateItemProps[], _movedItem: TemplateItemProps, _oldIndex: number, _newIndex: number) => {
+  const removeUnboundedInput = useCallback(
+    (index: number) => {
+      const targetNodeReactFlowKey = functionKey;
       dispatch(
-        updateFunctionConnectionInputs({
-          functionKey: props.functionKey,
-          inputs: newList.map((item) => item.input),
+        deleteConnectionFromFunctionMenu({
+          targetId: targetNodeReactFlowKey,
+          inputIndex: index,
         })
       );
     },
-    [dispatch, props.functionKey]
+    [dispatch, functionKey]
+  );
+
+  const updateInput = useCallback(
+    (newValue: InputConnection, index: number) => {
+      const targetNodeReactFlowKey = functionKey;
+      dispatch(
+        setConnectionInput({
+          targetNode: func,
+          targetNodeReactFlowKey,
+          inputIndex: index,
+          input: newValue,
+        })
+      );
+    },
+    [func, dispatch, functionKey]
+  );
+
+  const validateAndCreateConnection = useCallback(
+    (optionValue: string | undefined, option: InputOptionProps | undefined, index: number) => {
+      if (optionValue) {
+        const input = validateAndCreateConnectionInput(
+          optionValue,
+          option,
+          connectionDictionary,
+          func,
+          functionNodeDictionary,
+          sourceSchemaDictionary
+        );
+        if (input) {
+          updateInput(input, index);
+        }
+      }
+    },
+    [connectionDictionary, func, functionNodeDictionary, sourceSchemaDictionary, updateInput]
+  );
+
+  const onDragEnd = useCallback(
+    (fromIndex: number, toIndex: number) => {
+      const newInputList = [...(functionConnection.inputs ?? [])];
+      const item = newInputList.splice(fromIndex, 1)[0];
+      newInputList.splice(toIndex, 0, item);
+      dispatch(
+        updateFunctionConnectionInputs({
+          functionKey: functionKey,
+          inputs: newInputList,
+        })
+      );
+    },
+    [dispatch, functionConnection.inputs, functionKey]
   );
 
   return (
@@ -230,7 +283,7 @@ const UnlimitedInputs = (props: {
         </div>
       </div>
       <div className={styles.body}>
-        <DraggableList<TemplateItemProps, CommonProps, any>
+        {/* <DraggableList<TemplateItemProps, CommonProps, any>
           list={Object.entries(functionConnection.inputs).map((input, index) => ({
             input: input[1],
             index,
@@ -246,7 +299,29 @@ const UnlimitedInputs = (props: {
           onMoveEnd={onDragMoveEnd}
           itemKey={'index'}
           template={InputListWrapper}
-        />
+        /> */}
+        <ReactDragListView nodeSelector={'#function-input-row'} handleSelector={'#function-input-row-drag'} onDragEnd={onDragEnd}>
+          {Object.entries(functionConnection.inputs).map((input, index) => (
+            <CustomListItem
+              name={getInputName(input[1], connections)}
+              value={getInputValue(input[1])}
+              remove={() => {
+                removeUnboundedInput(index);
+              }}
+              index={index}
+              customValueAllowed={inputsFromManifest[0].allowCustomInput}
+              schemaType={SchemaType.Source}
+              type={getInputTypeFromNode(input[1])}
+              validateAndCreateConnection={(optionValue: string | undefined, option: InputOptionProps | undefined) => {
+                validateAndCreateConnection(optionValue, option, index);
+              }}
+              functionData={func}
+              functionKey={functionKey}
+              key={`input-${getInputName(input[1], connections)}`}
+              draggable={true}
+            />
+          ))}
+        </ReactDragListView>
         <div className={styles.formControlDescription}>
           <Button
             icon={<AddRegular className={styles.addIcon} />}

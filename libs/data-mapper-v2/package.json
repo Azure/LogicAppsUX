@@ -27,6 +27,7 @@
     "react-arborist": "^3.4.0",
     "react-dnd": "16.0.1",
     "react-dnd-html5-backend": "16.0.1",
+    "react-drag-listview": "^2.0.0",
     "react-draggable-list": "^4.2.1",
     "react-icons": "4.8.0",
     "react-intl": "6.3.0",
