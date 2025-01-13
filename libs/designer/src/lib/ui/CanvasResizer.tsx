@@ -1,32 +1,69 @@
 
+import React from 'react';
 import { useResizeObserver } from '@react-hookz/web';
 import { useReactFlow } from '@xyflow/react';
-import React from 'react';
+import { useLayout } from '../core/graphlayout';
+import { DEFAULT_NODE_SIZE } from '../core/utils/graph';
+import { clamp } from '@microsoft/logic-apps-shared';
+
+interface Size {
+	width: number;
+	height: number;
+	zoom?: number;
+}
 
 interface CavasResizerProps {
 	watch: React.RefObject<Element>;
 }
 
 export const CanvasResizer = (props: CavasResizerProps) => {
-  const { watch } = props;
+	const { watch } = props;
 
 	const { getViewport, setViewport } = useReactFlow();
+	const [_nodes, _edges, flowSize] = useLayout();
+	const [prevSize, setPrevSize] = React.useState(watch.current?.getBoundingClientRect() ?? { width: 0, height: 0 });
 
-	const [prevSize, setPrevSize] = React.useState({ width: 0, height: 0 });
-	const updateCanvas = React.useCallback(({ width, height }: { width: number, height: number }) => {
-		
+	const getTranslateExtent = React.useCallback(({ width, height, zoom = 1 }: Size): {
+		x: { min: number, max: number },
+		y: { min: number, max: number },
+	} => {
+		const padding = 64 * zoom;
+		const [flowWidth, flowHeight] = flowSize;
+
+		return {
+			x: {
+				min: -flowWidth * zoom + DEFAULT_NODE_SIZE.width * zoom + padding,
+				max: width - DEFAULT_NODE_SIZE.width * zoom - padding,
+			},
+			y: {
+				min: -flowHeight * zoom + DEFAULT_NODE_SIZE.height * zoom + padding,
+				max: height - DEFAULT_NODE_SIZE.height * zoom - padding,
+			},
+		};
+	}, [flowSize]);
+
+	const updateCanvas = React.useCallback(({ width, height }: Size) => {
+		var v = getViewport();
 		const xDiff = width - prevSize.width;
 		const yDiff = height - prevSize.height;
-
-		setPrevSize({ width, height });
-
-		var v = getViewport();
 		v.x += xDiff / 2;
 		v.y += yDiff / 2;
+
+		const translateExtent = getTranslateExtent({ width, height, zoom: v.zoom });
+
+		v.x = clamp(v.x, translateExtent.x.min, translateExtent.x.max);
+		v.y = clamp(v.y, translateExtent.y.min, translateExtent.y.max);
+
 		setViewport(v);
-
-	}, [getViewport, prevSize.height, prevSize.width, setViewport]);
-
+		console.log('#> New viewport:', { 
+			flowSize: flowSize[0],
+			nodeSize: DEFAULT_NODE_SIZE.width,
+			padding: 64,
+			zoom: v.zoom,
+			output: translateExtent.x.min, 
+		});
+		setPrevSize({ width, height });
+	}, [getViewport, prevSize, setViewport, getTranslateExtent, flowSize]);
 
 	useResizeObserver(watch, (el) => updateCanvas(el.contentRect));
 

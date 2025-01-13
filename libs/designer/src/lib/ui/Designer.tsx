@@ -117,14 +117,14 @@ export const Designer = (props: DesignerProps) => {
   const [zoom, setZoom] = useState(1);
 
   const translateExtent = useMemo((): [[number, number], [number, number]] => {
-    const padding = 64 + 24;
+    const padding = 64;
     const [flowWidth, flowHeight] = flowSize;
 
 		const xVal = containerDimensions.width / zoom - padding - DEFAULT_NODE_SIZE.width;
 		const yVal = containerDimensions.height / zoom - padding - DEFAULT_NODE_SIZE.height;
 
     return [
-      [-xVal + 32, -yVal],
+      [-xVal, -yVal],
       [xVal + flowWidth, yVal + flowHeight - 30],
     ];
 	}, [flowSize, containerDimensions, zoom]);
@@ -216,48 +216,50 @@ export const Designer = (props: DesignerProps) => {
       {preloadSearch ? <SearchPreloader /> : null}
       <div className="msla-designer-canvas msla-panel-mode" ref={designerContainerRef}>
         <ReactFlowProvider>
-          <ReactFlow
-						ref={canvasRef}
-            nodeTypes={nodeTypes}
-            nodes={nodesWithPlaceholder}
-            edges={edges}
-            onNodesChange={onNodesChange}
-            nodesConnectable={false}
-            nodesDraggable={false}
-            nodesFocusable={false}
-            edgesFocusable={false}
-            edgeTypes={edgeTypes}
-            panOnScroll={true}
-            deleteKeyCode={['Backspace', 'Delete']}
-            zoomActivationKeyCode={['Ctrl', 'Meta', 'Alt', 'Control']}
-            translateExtent={clampPan ? translateExtent : undefined}
-            onMove={(_e, viewport) => setZoom(viewport.zoom)}
-            minZoom={0.05}
-            onPaneClick={() => dispatch(clearPanel())}
-            disableKeyboardA11y={true}
-            onlyRenderVisibleElements={!userInferredTabNavigation}
-            proOptions={{
-              account: 'paid-sponsor',
-              hideAttribution: true,
-            }}
-          >
-            <PanelRoot
-              panelContainerRef={designerContainerRef}
-              panelLocation={panelLocation}
-              customPanelLocations={customPanelLocations}
-              isResizeable={true}
-            />
-            {backgroundProps ? <Background {...backgroundProps} /> : null}
-            <DeleteModal />
-            <DesignerContextualMenu />
-            <EdgeContextualMenu />
-          </ReactFlow>
+					<div style={{ flexGrow: 1}}>
+						<ReactFlow
+							ref={canvasRef}
+							nodeTypes={nodeTypes}
+							nodes={nodesWithPlaceholder}
+							edges={edges}
+							onNodesChange={onNodesChange}
+							nodesConnectable={false}
+							nodesDraggable={false}
+							nodesFocusable={false}
+							edgesFocusable={false}
+							edgeTypes={edgeTypes}
+							panOnScroll={true}
+							deleteKeyCode={['Backspace', 'Delete']}
+							zoomActivationKeyCode={['Ctrl', 'Meta', 'Alt', 'Control']}
+							translateExtent={clampPan ? translateExtent : undefined}
+							onMove={(_e, viewport) => setZoom(viewport.zoom)}
+							minZoom={0.05}
+							onPaneClick={() => dispatch(clearPanel())}
+							disableKeyboardA11y={true}
+							onlyRenderVisibleElements={!userInferredTabNavigation}
+							proOptions={{
+								account: 'paid-sponsor',
+								hideAttribution: true,
+							}}
+						>
+							{backgroundProps ? <Background {...backgroundProps} /> : null}
+							<DeleteModal />
+							<DesignerContextualMenu />
+							<EdgeContextualMenu />
+						</ReactFlow>
+					</div>
+					<PanelRoot
+						panelContainerRef={designerContainerRef}
+						panelLocation={panelLocation}
+						customPanelLocations={customPanelLocations}
+						isResizeable={true}
+					/>
           <div className={css('msla-designer-tools', panelLocation === PanelLocation.Left && 'left-panel')}>
             <Controls />
             <Minimap />
           </div>
           <PerformanceDebugTool />
-          <CanvasFinder panelLocation={panelLocation} />
+          <CanvasFinder />
 					<CanvasResizer watch={canvasRef} />
           <DragPanMonitor containerElement={canvasRef} />
         </ReactFlowProvider>
