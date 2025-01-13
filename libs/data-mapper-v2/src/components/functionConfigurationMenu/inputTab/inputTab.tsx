@@ -281,24 +281,12 @@ const UnlimitedInputs = (props: {
         </div>
       </div>
       <div className={styles.body}>
-        {/* <DraggableList<TemplateItemProps, CommonProps, any>
-          list={Object.entries(functionConnection.inputs).map((input, index) => ({
-            input: input[1],
-            index,
-          }))}
-          commonProps={{
-            functionKey: props.functionKey,
-            data: props.func,
-            inputsFromManifest,
-            connections: props.connections,
-            schemaType: SchemaType.Source,
-            draggable: true,
-          }}
-          onMoveEnd={onDragMoveEnd}
-          itemKey={'index'}
-          template={InputListWrapper}
-        /> */}
-        <ReactDragListView nodeSelector={'#function-input-row'} handleSelector={'#function-input-row-drag'} onDragEnd={onDragEnd}>
+        <ReactDragListView
+          enableScroll={false}
+          nodeSelector={'#function-input-row'}
+          handleSelector={'#function-input-row-drag'}
+          onDragEnd={onDragEnd}
+        >
           {Object.entries(functionConnection.inputs).map((input, index) => (
             <CustomListItem
               name={getInputName(input[1], connections)}
