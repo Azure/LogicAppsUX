@@ -1,9 +1,10 @@
 import { FontIcon, mergeStyles, mergeStyleSets } from '@fluentui/react';
-import { Badge, Spinner } from '@fluentui/react-components';
+import { Badge } from '@fluentui/react-components';
 import type { ICommandBarItemProps } from '@fluentui/react/lib/CommandBar';
 import { CommandBar } from '@fluentui/react/lib/CommandBar';
+import { Spinner, SpinnerSize } from '@fluentui/react/lib/Spinner';
 import type { ILoggerService } from '@microsoft/logic-apps-shared';
-import { LogEntryLevel, LoggerService, isNullOrEmpty, RUN_AFTER_COLORS, ChatbotService } from '@microsoft/logic-apps-shared';
+import { LogEntryLevel, LoggerService, isNullOrEmpty, RUN_AFTER_COLORS } from '@microsoft/logic-apps-shared';
 import type { AppDispatch, CustomCodeFileNameMapping, RootState, Workflow } from '@microsoft/logic-apps-designer';
 import {
   store as DesignerStore,
@@ -13,32 +14,20 @@ import {
   useAllSettingsValidationErrors,
   useWorkflowParameterValidationErrors,
   useAllConnectionErrors,
+  serializeWorkflow,
   validateParameter,
   updateParameterValidation,
   openPanel,
   useNodesInitialized,
   serializeUnitTestDefinition,
-  useAssertionsValidationErrors,
   getNodeOutputOperations,
+  useAssertionsValidationErrors,
   getCustomCodeFilesWithData,
   resetDesignerDirtyState,
-  collapsePanel,
-  onUndoClick,
-  useCanUndo,
-  useCanRedo,
-  onRedoClick,
-  serializeWorkflow,
-  getDocumentationMetadata,
-  resetDesignerView,
-  useNodesAndDynamicDataInitialized,
 } from '@microsoft/logic-apps-designer';
 import { useMemo } from 'react';
 import { useMutation } from '@tanstack/react-query';
 import { useDispatch, useSelector } from 'react-redux';
-import LogicAppsIcon from '../../../assets/logicapp.svg';
-import { environment } from '../../../environments/environment';
-import { isSuccessResponse } from './Services/HttpClient';
-import { downloadDocumentAsFile } from '@microsoft/logic-apps-designer';
 
 const iconClass = mergeStyles({
   fontSize: 16,
@@ -55,28 +44,24 @@ const classNames = mergeStyleSets({
 export const DesignerCommandBar = ({
   discard,
   saveWorkflow,
-  isDesignerView,
   isDarkMode,
   showConnectionsPanel,
+  rightShift,
   enableCopilot,
   isUnitTest,
-  switchViews,
-  saveWorkflowFromCode,
 }: {
   id: string;
   location: string;
   isReadOnly: boolean;
   discard: () => unknown;
   saveWorkflow: (workflow: Workflow, customCodeData: CustomCodeFileNameMapping | undefined, clearDirtyState: () => void) => Promise<void>;
-  isDesignerView?: boolean;
   isDarkMode: boolean;
   isUnitTest: boolean;
   isConsumption?: boolean;
   showConnectionsPanel?: boolean;
+  rightShift?: string;
   enableCopilot?: () => void;
   loggerService?: ILoggerService;
-  switchViews: () => void;
-  saveWorkflowFromCode: (clearDirtyState: () => void) => void;
 }) => {
   const dispatch = useDispatch<AppDispatch>();
   const isCopilotReady = useNodesInitialized();
@@ -119,6 +104,7 @@ export const DesignerCommandBar = ({
       updateCallbackUrl(designerState, DesignerStore.dispatch);
     }
   });
+
   const { isLoading: isSavingUnitTest, mutate: saveUnitTestMutate } = useMutation(async () => {
     const designerState = DesignerStore.getState();
     const definition = await serializeUnitTestDefinition(designerState);
@@ -135,25 +121,7 @@ export const DesignerCommandBar = ({
     alert('Check console for blank unit test operationContents');
   });
 
-  const { isLoading: isDownloadingDocument, mutate: downloadDocument } = useMutation(async () => {
-    const designerState = DesignerStore.getState();
-    const workflow = await serializeWorkflow(designerState);
-    const docMetaData = getDocumentationMetadata(designerState.operations.operationInfo, designerState.tokens.outputTokens);
-    const response = await ChatbotService().getCopilotDocumentation(
-      docMetaData,
-      workflow,
-      environment?.armToken ? `Bearer ${environment.armToken}` : ''
-    );
-    if (!isSuccessResponse(response.status)) {
-      alert('Failed to download document');
-      return;
-    }
-    const queryResponse: string = response.data.properties.response;
-    downloadDocumentAsFile(queryResponse);
-  });
-
   const designerIsDirty = useIsDesignerDirty();
-  const isInitialized = useNodesAndDynamicDataInitialized();
 
   const allInputErrors = useSelector((state: RootState) => {
     return (Object.entries(state.operations.inputParameters) ?? []).filter(([_id, nodeInputs]) =>
@@ -170,7 +138,6 @@ export const DesignerCommandBar = ({
   const haveSettingsErrors = Object.keys(allSettingsErrors ?? {}).length > 0;
   const allConnectionErrors = useAllConnectionErrors();
   const haveConnectionErrors = Object.keys(allConnectionErrors ?? {}).length > 0;
-  const saveBlankUnitTestIsDisabled = !isUnitTest || isSavingBlankUnitTest || haveAssertionErrors;
 
   const haveErrors = useMemo(
     () => allInputErrors.length > 0 || haveWorkflowParameterErrors || haveSettingsErrors || haveConnectionErrors,
@@ -180,8 +147,7 @@ export const DesignerCommandBar = ({
   const saveIsDisabled = isSaving || allInputErrors.length > 0 || haveWorkflowParameterErrors || haveSettingsErrors || !designerIsDirty;
 
   const saveUnitTestIsDisabled = !isUnitTest || isSavingUnitTest || haveAssertionErrors;
-  const isUndoDisabled = !useCanUndo();
-  const isRedoDisabled = !useCanRedo();
+  const saveBlankUnitTestIsDisabled = !isUnitTest || isSavingBlankUnitTest || haveAssertionErrors;
 
   const items: ICommandBarItemProps[] = useMemo(
     () => [
@@ -191,14 +157,13 @@ export const DesignerCommandBar = ({
         disabled: saveIsDisabled,
         onRenderIcon: () => {
           return isSaving ? (
-            <Spinner size={'extra-tiny'} />
+            <Spinner size={SpinnerSize.small} />
           ) : (
             <FontIcon aria-label="Save" iconName="Save" className={saveIsDisabled ? classNames.azureGrey : classNames.azureBlue} />
           );
         },
         onClick: () => {
-          // eslint-disable-next-line @typescript-eslint/no-unused-expressions
-          isDesignerView ? saveWorkflowMutate() : saveWorkflowFromCode(() => dispatch(resetDesignerDirtyState(undefined)));
+          saveWorkflowMutate();
         },
       },
       {
@@ -207,7 +172,7 @@ export const DesignerCommandBar = ({
         disabled: saveUnitTestIsDisabled,
         onRenderIcon: () => {
           return isSavingUnitTest ? (
-            <Spinner size={'extra-tiny'} />
+            <Spinner size={SpinnerSize.small} />
           ) : (
             <FontIcon aria-label="Save" iconName="Save" className={saveUnitTestIsDisabled ? classNames.azureGrey : classNames.azureBlue} />
           );
@@ -219,11 +184,16 @@ export const DesignerCommandBar = ({
       {
         key: 'saveBlankUnitTest',
         text: 'Save Blank Unit Test',
+        disabled: saveBlankUnitTestIsDisabled,
         onRenderIcon: () => {
           return isSavingBlankUnitTest ? (
-            <Spinner size="small" />
+            <Spinner size={SpinnerSize.small} />
           ) : (
-            <FontIcon aria-label="Save" iconName="Save" className={classNames.azureBlue} />
+            <FontIcon
+              aria-label="Save"
+              iconName="Save"
+              className={saveBlankUnitTestIsDisabled ? classNames.azureGrey : classNames.azureBlue}
+            />
           );
         },
         onClick: () => {
@@ -232,7 +202,7 @@ export const DesignerCommandBar = ({
       },
       {
         key: 'discard',
-        disabled: isSaving || !isDesignerView,
+        disabled: isSaving,
         text: 'Discard',
         iconProps: { iconName: 'Clear' },
         onClick: () => {
@@ -242,7 +212,6 @@ export const DesignerCommandBar = ({
       {
         key: 'parameters',
         text: 'Parameters',
-        disabled: !isDesignerView,
         iconProps: { iconName: 'Parameter' },
         onClick: () => !!dispatch(openPanel({ panelMode: 'WorkflowParameters' })),
         onRenderText: (item: { text: string }) => <CustomCommandBarButton text={item.text} showError={haveWorkflowParameterErrors} />,
@@ -258,12 +227,11 @@ export const DesignerCommandBar = ({
       },
       {
         key: 'codeview',
-        text: isDesignerView ? 'Code View' : 'Designer View',
-        iconProps: isDesignerView ? { iconName: 'Code' } : { imageProps: { src: LogicAppsIcon } },
-        onClick: () => {
-          switchViews();
-          dispatch(collapsePanel());
-          dispatch(resetDesignerView());
+        text: 'View Code',
+        iconProps: { iconName: 'Code' },
+        onClick: async () => {
+          console.log(await serializeWorkflow(DesignerStore.getState()));
+          alert('Check console for workflow serialization');
         },
       },
       ...(showConnectionsPanel
@@ -306,21 +274,6 @@ export const DesignerCommandBar = ({
         },
       },
       {
-        key: 'document',
-        text: 'Document',
-        disabled: haveErrors || isDownloadingDocument,
-        onRenderIcon: () => {
-          return isDownloadingDocument ? (
-            <Spinner size={'extra-small'} />
-          ) : (
-            <FontIcon aria-label="Download" iconName="Download" className={haveErrors ? classNames.azureGrey : classNames.azureBlue} />
-          );
-        },
-        onClick: () => {
-          downloadDocument();
-        },
-      },
-      {
         key: 'fileABug',
         text: 'File a bug',
         iconProps: { iconName: 'Bug' },
@@ -328,78 +281,44 @@ export const DesignerCommandBar = ({
           window.open('https://github.com/Azure/logic_apps_designer/issues/new', '_blank');
         },
       },
-      {
-        key: 'Undo',
-        text: 'Undo',
-        iconProps: { iconName: 'Undo' },
-        onClick: () => dispatch(onUndoClick()),
-        disabled: isUndoDisabled,
-      },
-      {
-        key: 'Redo',
-        text: 'Redo',
-        iconProps: { iconName: 'Redo' },
-        onClick: () => dispatch(onRedoClick()),
-        disabled: isRedoDisabled,
-      },
     ],
     [
-      saveIsDisabled,
-      isSaving,
-      isDesignerView,
-      showConnectionsPanel,
-      isSavingBlankUnitTest,
-      saveBlankUnitTestIsDisabled,
-      haveErrors,
-      isDarkMode,
-      isCopilotReady,
-      isUndoDisabled,
-      isRedoDisabled,
-      saveWorkflowMutate,
-      saveWorkflowFromCode,
       discard,
       dispatch,
+      haveErrors,
       haveWorkflowParameterErrors,
-      switchViews,
       haveConnectionErrors,
+      isDarkMode,
+      isSaving,
+      saveIsDisabled,
+      saveWorkflowMutate,
+      showConnectionsPanel,
       enableCopilot,
       isCopilotReady,
       isUnitTest,
       saveUnitTestMutate,
       isSavingUnitTest,
+      isSavingBlankUnitTest,
       saveUnitTestIsDisabled,
+      saveBlankUnitTestIsDisabled,
       haveAssertionErrors,
-      isDownloadingDocument,
-      downloadDocument,
     ]
   );
 
   return (
-    <>
-      <div
-        style={{
-          position: 'absolute',
-          top: '60px',
-          left: '20px',
-          display: 'flex',
-          flexDirection: 'column',
-          gap: '8px',
-        }}
-      >
-        {!isInitialized && <Spinner size={'extra-small'} label={'Loading dynamic data...'} />}
-      </div>
-      <CommandBar
-        items={items}
-        ariaLabel="Use left and right arrow keys to navigate between commands"
-        styles={{
-          root: {
-            borderBottom: `1px solid ${isDarkMode ? '#333333' : '#d6d6d6'}`,
-            position: 'relative',
-            padding: '4px 8px',
-          },
-        }}
-      />
-    </>
+    <CommandBar
+      items={items}
+      ariaLabel="Use left and right arrow keys to navigate between commands"
+      styles={{
+        root: {
+          borderBottom: `1px solid ${isDarkMode ? '#333333' : '#d6d6d6'}`,
+          position: 'relative',
+          // we should modify what we pass back from logic app designer to simplify this logic
+          left: rightShift ?? 0,
+          padding: '4px 8px',
+        },
+      }}
+    />
   );
 };
 

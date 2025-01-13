@@ -30,20 +30,19 @@ export async function saveBlankUnitTest(
   let workflowNode: vscode.Uri;
   const workspaceFolder = await getWorkspaceFolder(context);
   const projectPath = await tryGetLogicAppProjectRoot(context, workspaceFolder);
-  const parsedDefinition = await parseOutputsInto(unitTestDefinition);
+  await parseUnitTestOutputs(unitTestDefinition);
   const operationInfo = unitTestDefinition['operationInfo'];
   const outputParameters = unitTestDefinition['outputParameters'];
-  console.log(parsedDefinition);
-  console.log(operationInfo);
-  console.log(outputParameters);
-  // Determine the workflow node
+
   if (node) {
     workflowNode = getWorkflowNode(node) as vscode.Uri;
   } else {
     const workflow = await pickWorkflow(context, projectPath);
     workflowNode = vscode.Uri.file(workflow.data) as vscode.Uri;
   }
+
   const workflowName = path.basename(path.dirname(workflowNode.fsPath));
+
   if (isMultiRootWorkspace()) {
     const unitTestName = await context.ui.showInputBox({
       prompt: localize('unitTestNamePrompt', 'Provide a unit test name'),
@@ -51,13 +50,14 @@ export async function saveBlankUnitTest(
       validateInput: async (name: string): Promise<string | undefined> => await validateUnitTestName(projectPath, workflowName, name),
     });
     ext.outputChannel.appendLog(localize('unitTestNameEntered', `Unit test name entered: ${unitTestName}`));
-    // Retrieve unitTestFolderPath from our helper
+
+    // Retrieve unitTestFolderPath from helper
     const { unitTestFolderPath, logicAppName } = getUnitTestPaths(projectPath, workflowName, unitTestName);
-    // Ensure directories exist
     await fs.ensureDir(unitTestFolderPath!);
+
     // Process mockable operations and write C# classes
     await processAndWriteMockableOperations(operationInfo, outputParameters, unitTestFolderPath!, logicAppName);
-    // Set telemetry properties for unit test creation
+
     context.telemetry.properties.workflowName = workflowName;
     context.telemetry.properties.unitTestName = unitTestName;
     await callWithTelemetryAndErrorHandling('logicApp.saveBlankUnitTest', async (telemetryContext: IActionContext) => {
@@ -71,56 +71,88 @@ export async function saveBlankUnitTest(
   }
 }
 
-async function parseOutputsInto(unitTestDefinition: any) {
+/**
+ * Parses and transforms raw output parameters from a unit test definition into a structured format.
+ * @param {any} unitTestDefinition - The unit test definition object containing operation info and raw output parameters.
+ * @returns {Promise<{ operationInfo: any; outputParameters: Record<string, any>; }>}
+ * - A Promise that resolves to a structured object containing operation info and transformed output parameters.
+ */
+async function parseUnitTestOutputs(unitTestDefinition: any): Promise<{
+  operationInfo: any;
+  outputParameters: Record<string, any>;
+}> {
+  // Define the fields allowed to be included in the transformed output
   const allowedFields = ['type', 'title', 'format', 'description'];
-  const transform = (obj: any) => {
-    const result: any = {};
-    for (const key in obj) {
-      if (Object.prototype.hasOwnProperty.call(obj, key)) {
-        const cleanedKey = key.replace('outputs.$.', '').replace('.$.', '.').replace('$.', '').replace('.$', '');
-        const keys = cleanedKey.split('.');
-        keys.reduce((acc, part, index) => {
-          if (index === keys.length - 1) {
-            if (Object.prototype.hasOwnProperty.call(acc, part) && typeof acc[part] === 'object' && typeof obj[key] === 'object') {
-              acc[part] = {
-                ...acc[part],
-                ...Object.keys(obj[key]).reduce((filtered, k) => {
-                  if (allowedFields.includes(k)) {
-                    (filtered as Record<string, any>)[k] = obj[key][k];
+
+  /**
+   * Transforms raw output objects by cleaning keys and filtering fields.
+   * @param {any} rawOutput - The raw output object to transform.
+   * @returns {Record<string, any>}
+   * - A transformed object with cleaned keys and filtered fields.
+   */
+  const transformRawOutputs = (rawOutput: any): Record<string, any> => {
+    const transformedOutput: Record<string, any> = {};
+
+    for (const rawKey in rawOutput) {
+      if (Object.prototype.hasOwnProperty.call(rawOutput, rawKey)) {
+        // Clean the key by removing unwanted prefixes and suffixes
+        const cleanedKey = rawKey.replace('outputs.$.', '').replace('.$.', '.').replace('$.', '').replace('.$', '');
+
+        const keyParts = cleanedKey.split('.');
+
+        // Build the nested structure for the cleaned key
+        keyParts.reduce((nestedObject, part, index) => {
+          if (index === keyParts.length - 1) {
+            if (
+              Object.prototype.hasOwnProperty.call(nestedObject, part) &&
+              typeof nestedObject[part] === 'object' &&
+              typeof rawOutput[rawKey] === 'object'
+            ) {
+              // Merge fields for existing nested keys
+              nestedObject[part] = {
+                ...nestedObject[part],
+                ...Object.keys(rawOutput[rawKey]).reduce((filteredFields, fieldKey) => {
+                  if (allowedFields.includes(fieldKey)) {
+                    (filteredFields as Record<string, any>)[fieldKey] = rawOutput[rawKey][fieldKey];
                   }
-                  return filtered;
+                  return filteredFields;
                 }, {}),
               };
             } else {
-              acc[part] = {
-                ...Object.keys(obj[key]).reduce((filtered, k) => {
-                  if (allowedFields.includes(k)) {
-                    (filtered as Record<string, any>)[k] = obj[key][k];
-                  }
-                  return filtered;
-                }, {}),
-              };
+              // Add filtered fields for new keys
+              nestedObject[part] = Object.keys(rawOutput[rawKey]).reduce((filteredFields, fieldKey) => {
+                if (allowedFields.includes(fieldKey)) {
+                  (filteredFields as Record<string, any>)[fieldKey] = rawOutput[rawKey][fieldKey];
+                }
+                return filteredFields;
+              }, {});
             }
           } else {
-            acc[part] = acc[part] || {};
+            // Create nested objects for intermediate keys
+            nestedObject[part] = nestedObject[part] || {};
           }
-          return acc[part];
-        }, result);
+          return nestedObject[part];
+        }, transformedOutput);
       }
     }
-    return result;
+
+    return transformedOutput;
   };
-  const outputOperations2: { operationInfo: any; outputParameters: any } = {
+
+  // Initialize the structured output object
+  const parsedOutputs: { operationInfo: any; outputParameters: any } = {
     operationInfo: unitTestDefinition['operationInfo'],
     outputParameters: {},
   };
-  for (const paramKey in unitTestDefinition['outputParameters']) {
-    outputOperations2.outputParameters[paramKey] = {
-      outputs: transform(unitTestDefinition['outputParameters'][paramKey].outputs),
+
+  // Process each output parameter
+  for (const parameterKey in unitTestDefinition['outputParameters']) {
+    parsedOutputs.outputParameters[parameterKey] = {
+      outputs: transformRawOutputs(unitTestDefinition['outputParameters'][parameterKey].outputs),
     };
   }
-  console.log(outputOperations2);
-  return outputOperations2;
+
+  return parsedOutputs;
 }
 
 /**
@@ -238,92 +270,118 @@ const getWorkflowsPick = async (projectPath: string): Promise<IAzureQuickPickIte
   picks.sort((a, b) => a.label.localeCompare(b.label));
   return picks;
 };
+
 /**
- * Filters mockable operations, transforms their output parameters, and writes C# class definitions to .cs files.
- * @param {any} operationInfo - The operation info object.
- * @param {any} outputParameters - The output parameters object.
- * @param {string} unitTestFolderPath - The directory where the .cs files will be saved.
- * @param {string} logicAppName - The name of the Logic App to use as the namespace.
+ * Set of action types that can be mocked.
  */
-async function processAndWriteMockableOperations(
+const mockableActionTypes = new Set<string>(['Http', 'InvokeFunction', 'Function', 'ServiceProvider', 'ApiManagement', 'ApiConnection']);
+
+/**
+ * Set of trigger types that can be mocked.
+ */
+const mockableTriggerTypes = new Set<string>(['HttpWebhook', 'Request', 'Manual', 'ApiConnectionWebhook', 'ServiceProvider']);
+
+/**
+ * Determines if a given operation type (and whether it is a trigger or not) can be mocked.
+ * @param type - The operation type.
+ * @param isTrigger - Whether the operation is a trigger.
+ * @returns True if the operation is mockable, false otherwise.
+ */
+function isMockable(type: string, isTrigger: boolean): boolean {
+  return isTrigger ? mockableTriggerTypes.has(type) : mockableActionTypes.has(type);
+}
+
+/**
+ * Transforms the output parameters object by cleaning keys and keeping only certain fields.
+ * @param params - The parameters object.
+ * @returns A transformed object with cleaned keys and limited fields.
+ */
+function transformParameters(params: any): any {
+  const allowedFields = ['type', 'title', 'format', 'description'];
+  const result: any = {};
+
+  for (const key in params) {
+    if (Object.prototype.hasOwnProperty.call(params, key)) {
+      // STEP 1: Clean up the key.
+      const cleanedKey = key
+        .replace(/^outputs\.\$\./, '') // remove "outputs.$." prefix
+        .replace(/^outputs\.\$$/, '') // remove "outputs.$" prefix
+        .replace(/^body\.\$\./, 'body.') // replace "body.$." prefix with "body."
+        .replace(/^body\.\$$/, 'body'); // replace "body.$" prefix with "body"
+
+      // STEP 2: Split on '.' to build or traverse nested keys.
+      const keys = cleanedKey.split('.');
+      keys.reduce((acc, part, index) => {
+        const isLastPart = index === keys.length - 1;
+
+        if (isLastPart) {
+          if (!acc[part]) {
+            acc[part] = {};
+          }
+
+          // Filter the fields in params[key] to keep only those in allowedFields.
+          const filteredFields = Object.keys(params[key]).reduce((filtered: any, fieldKey) => {
+            if (allowedFields.includes(fieldKey)) {
+              filtered[fieldKey] = params[key][fieldKey];
+            }
+            return filtered;
+          }, {});
+
+          // Merge these filtered fields into the existing object at acc[part].
+          acc[part] = { ...acc[part], ...filteredFields };
+        } else if (!acc[part]) {
+          // Combine into `else if`
+          // Not the last segment: ensure the path is an object so we can keep nesting.
+          acc[part] = {};
+        }
+
+        return acc[part];
+      }, result);
+    }
+  }
+
+  return result;
+}
+
+/**
+ * Filters mockable operations, transforms their output parameters,
+ * and writes C# class definitions to .cs files.
+ * @param operationInfo - The operation info object.
+ * @param outputParameters - The output parameters object.
+ * @param unitTestFolderPath - The directory where the .cs files will be saved.
+ * @param logicAppName - The name of the Logic App to use as the namespace.
+ */
+export async function processAndWriteMockableOperations(
   operationInfo: any,
   outputParameters: any,
   unitTestFolderPath: string,
   logicAppName: string
 ): Promise<void> {
-  const mockableActionTypes = new Set<string>(['Http', 'InvokeFunction', 'Function', 'ServiceProvider', 'ApiManagement', 'ApiConnection']);
-  const mockableTriggerTypes = new Set<string>(['HttpWebhook', 'Request', 'Manual', 'ApiConnectionWebhook', 'ServiceProvider']);
-  function isMockable(type: string, isTrigger: boolean): boolean {
-    return isTrigger ? mockableTriggerTypes.has(type) : mockableActionTypes.has(type);
-  }
-  function transformParameters(params: any): any {
-    const allowedFields = ['type', 'title', 'format', 'description'];
-    const result: any = {};
-    for (const key in params) {
-      if (Object.prototype.hasOwnProperty.call(params, key)) {
-        const cleanedKey = key.replace(/outputs\.\$\.|body\.\$\.?/g, '');
-        const keys = cleanedKey.split('.');
-        keys.reduce((acc, part, index) => {
-          if (index === keys.length - 1) {
-            acc[part] = Object.keys(params[key]).reduce((filtered: any, fieldKey) => {
-              if (allowedFields.includes(fieldKey)) {
-                filtered[fieldKey] = params[key][fieldKey];
-              }
-              return filtered;
-            }, {});
-          } else {
-            acc[part] = acc[part] || {};
-          }
-          return acc[part];
-        }, result);
-      }
-    }
-    return result;
-  }
   for (const operationName in operationInfo) {
     const operation = operationInfo[operationName];
     const type = operation.type;
+
+    // For triggers, check if it's one of these types:
     const isTrigger = ['HttpWebhook', 'Request', 'Manual', 'ApiConnectionWebhook'].includes(type);
+
+    // Only proceed if this operation type is mockable
     if (isMockable(type, isTrigger)) {
       const className = toPascalCase(operationName);
+
+      // Transform the output parameters for this operation
       const outputs = transformParameters(outputParameters[operationName]?.outputs || {});
-      const classContent = await generateCSharpClassFromJson(outputs, className, logicAppName);
+
+      // Generate C# class content (assuming generateCSharpClasses returns a string)
+      const classContent = generateCSharpClasses(logicAppName, className, outputs);
+
+      // Write the .cs file
       const filePath = path.join(unitTestFolderPath, `${className}.cs`);
       await fs.writeFile(filePath, classContent, 'utf-8');
+
+      // Log to output channel
       ext.outputChannel.appendLog(localize('csFileCreated', 'Created .cs file at: {0}', filePath));
     }
   }
-}
-
-/**
- * Converts JSON data into C# class definitions using the provided namespace.
- * @param jsonData - The JSON string or object to convert.
- * @param className - The root class name for the generated C# class.
- * @param namespace - The namespace to use for the generated C# class.
- * @returns {Promise<string>} - A promise that resolves to the C# class definition.
- */
-export async function generateCSharpClassFromJson(jsonData: string | object, className: string, namespace: string): Promise<string> {
-  // Parse the JSON data into a schema
-  const schema = JsonSchema.FromSampleJson(typeof jsonData === 'string' ? jsonData : JSON.stringify(jsonData));
-
-  // Generate the C# class definition
-  const csharpCode = await schema.generateCSharp({
-    namespace, // Use the provided logicAppName as the namespace
-    className, // Root class name
-    generateRequiredProperties: true, // Ensures required properties are included
-    generateDataAnnotations: true, // Adds validation attributes like [Required]
-  });
-
-  return csharpCode;
-}
-
-/**
- * Converts a string to PascalCase.
- * @param {string} str - The input string.
- * @returns {string} - The PascalCase version of the string.
- */
-function toPascalCase(str: string): string {
-  return str.replace(/(^\w|_\w)/g, (match) => match.replace('_', '').toUpperCase());
 }
 
 /**
@@ -362,4 +420,73 @@ function getUnitTestPaths(
     paths['unitTestFolderPath'] = path.join(workflowFolderPath, unitTestName);
   }
   return paths;
+}
+
+/**
+ * Generates a C# class definition as a string.
+ * @param {string} logicAppName - The name of the Logic App, used as the namespace.
+ * @param {string} className - The name of the class to generate.
+ * @param {any} outputs - The outputs object containing properties to include in the class.
+ * @returns {string} - The generated C# class definition.
+ */
+function generateCSharpClasses(logicAppName: string, className: string, outputs: any): string {
+  // Start building the class definition
+  let classDefinition = 'using System;\nusing System.Collections.Generic;\nusing Newtonsoft.Json.Linq;\n\n';
+  classDefinition += `namespace ${logicAppName} {\n`;
+  classDefinition += `    public class ${className} {\n`;
+
+  // Generate properties for the class based on the outputs
+  for (const key in outputs) {
+    if (Object.prototype.hasOwnProperty.call(outputs, key)) {
+      const jsonType = outputs[key]?.type || 'object'; // Default to 'object' if type is not defined
+      const propertyType = mapJsonTypeToCSharp(jsonType);
+      const propertyName = toPascalCase(key);
+
+      // Add the property to the class definition
+      classDefinition += `        public ${propertyType} ${propertyName} { get; set; }\n`;
+    }
+  }
+
+  // Close the class and namespace
+  classDefinition += '    }\n';
+  classDefinition += '}\n';
+
+  return classDefinition;
+}
+
+/**
+ * Maps JSON types to corresponding C# types.
+ * @param {string} jsonType - The JSON type (e.g., "string", "object", "array").
+ * @returns {string} - The corresponding C# type.
+ */
+function mapJsonTypeToCSharp(jsonType: string): string {
+  switch (jsonType) {
+    case 'string':
+      return 'string';
+    case 'integer':
+      return 'int';
+    case 'number':
+      return 'double';
+    case 'boolean':
+      return 'bool';
+    case 'array':
+      return 'List<object>';
+    case 'object':
+      return 'JObject';
+    case 'any':
+      return 'object';
+    case 'date-time':
+      return 'DateTime';
+    default:
+      return 'JObject';
+  }
+}
+
+/**
+ * Converts a string to PascalCase.
+ * @param {string} str - The input string.
+ * @returns {string} - The PascalCase version of the string.
+ */
+function toPascalCase(str: string): string {
+  return str.replace(/(^\w|_\w)/g, (match) => match.replace('_', '').toUpperCase());
 }
