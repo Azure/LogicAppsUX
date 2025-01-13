@@ -39,7 +39,7 @@ import { CanvasFinder } from './CanvasFinder';
 import { DesignerContextualMenu } from './common/DesignerContextualMenu/DesignerContextualMenu';
 import { EdgeContextualMenu } from './common/EdgeContextualMenu/EdgeContextualMenu';
 import { DragPanMonitor } from './common/DragPanMonitor/DragPanMonitor';
-import { CanvasResizer } from './CanvasResizer';
+import { CanvasSizeMonitor } from './CanvasSizeMonitor';
 import { useResizeObserver } from '@react-hookz/web';
 
 export interface DesignerProps {
@@ -260,8 +260,8 @@ export const Designer = (props: DesignerProps) => {
           </div>
           <PerformanceDebugTool />
           <CanvasFinder />
-					<CanvasResizer watch={canvasRef} />
-          <DragPanMonitor containerElement={canvasRef} />
+					<CanvasSizeMonitor canvasRef={canvasRef} />
+          <DragPanMonitor canvasRef={canvasRef} />
         </ReactFlowProvider>
         <div
           id={'msla-layer-host'}

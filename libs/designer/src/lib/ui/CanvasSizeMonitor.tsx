@@ -12,16 +12,16 @@ interface Size {
 	zoom?: number;
 }
 
-interface CavasResizerProps {
-	watch: React.RefObject<Element>;
+interface CanvasSizeMonitorProps {
+	canvasRef: React.RefObject<Element>;
 }
 
-export const CanvasResizer = (props: CavasResizerProps) => {
-	const { watch } = props;
+export const CanvasSizeMonitor = (props: CanvasSizeMonitorProps) => {
+	const { canvasRef } = props;
 
 	const { getViewport, setViewport } = useReactFlow();
 	const [_nodes, _edges, flowSize] = useLayout();
-	const [prevSize, setPrevSize] = React.useState(watch.current?.getBoundingClientRect() ?? { width: 0, height: 0 });
+	const [prevSize, setPrevSize] = React.useState(canvasRef.current?.getBoundingClientRect() ?? { width: 0, height: 0 });
 
 	const getTranslateExtent = React.useCallback(({ width, height, zoom = 1 }: Size): {
 		x: { min: number, max: number },
@@ -65,7 +65,7 @@ export const CanvasResizer = (props: CavasResizerProps) => {
 		setPrevSize({ width, height });
 	}, [getViewport, prevSize, setViewport, getTranslateExtent, flowSize]);
 
-	useResizeObserver(watch, (el) => updateCanvas(el.contentRect));
+	useResizeObserver(canvasRef, (el) => updateCanvas(el.contentRect));
 
   return null;
 };

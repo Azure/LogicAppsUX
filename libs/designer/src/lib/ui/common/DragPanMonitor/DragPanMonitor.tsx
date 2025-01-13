@@ -16,16 +16,16 @@ const speed = 40;
 const pollingRate = 16;
 
 interface DragPanMonitorProps {
-	containerElement: React.RefObject<Element>;
+	canvasRef: React.RefObject<Element>;
 }
 
 export const DragPanMonitor = (props: DragPanMonitorProps) => {
-	const { containerElement } = props;
+	const { canvasRef } = props;
 
 	const [_nodes, _edges, flowSize] = useLayout();
 
-	const [containerDimensions, setContainerDimentions] = useState(containerElement.current?.getBoundingClientRect() ?? { width: 0, height: 0 });
-	useResizeObserver(containerElement, (el) => setContainerDimentions(el.contentRect));
+	const [containerDimensions, setContainerDimentions] = useState(canvasRef.current?.getBoundingClientRect() ?? { width: 0, height: 0 });
+	useResizeObserver(canvasRef, (el) => setContainerDimentions(el.contentRect));
 
 	const [zoom, setZoom] = useState(1);
 
