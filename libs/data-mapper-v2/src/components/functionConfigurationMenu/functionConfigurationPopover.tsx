@@ -95,7 +95,7 @@ export const FunctionConfigurationPopover = (props: FunctionConfigurationPopover
             <Button appearance="transparent" size="small" onClick={onCloseClick} icon={<DismissRegular className={styles.actionIcon} />} />
           </div>
         </div>
-        <TabList defaultSelectedValue={'input'} onTabSelect={(e, data) => setSelectedTab(data.value as TabTypes)}>
+        <TabList defaultSelectedValue={'input'} onTabSelect={(_e, data) => setSelectedTab(data.value as TabTypes)}>
           <Tab value="input">{stringResources.INPUT}</Tab>
           <Tab value="output">{stringResources.OUTPUT}</Tab>
           <Tab className={styles.detailsButton} value="details">

@@ -87,11 +87,7 @@ export const ScopeCard: React.FC<ScopeCardProps> = ({
           draggable={draggable}
           style={colorVars}
           onContextMenu={onContextMenu}
-          className={css(
-            'msla-scope-v2--header msla-scope-card-wrapper',
-            !active && 'msla-card-inactive',
-          )}
-          
+          className={css('msla-scope-v2--header msla-scope-card-wrapper', !active && 'msla-card-inactive')}
         >
           {isMonitoringView && active ? (
             <StatusPill

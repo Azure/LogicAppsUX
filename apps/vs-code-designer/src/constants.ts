@@ -19,6 +19,7 @@ export const extensionsFileName = 'extensions.json';
 export const vscodeFolderName = '.vscode';
 export const workflowFileName = 'workflow.json';
 export const funcIgnoreFileName = '.funcignore';
+export const powershellRequirementsFileName = 'requirements.psd1';
 
 // Directories names
 export const deploymentsDirectory = 'deployments';

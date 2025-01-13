@@ -95,7 +95,7 @@ export const NodeSearchPanel = (props: NodeSearchPanelProps) => {
         <Button aria-label={closeButtonAriaLabel} appearance="subtle" onClick={props.toggleCollapse} icon={<CloseIcon />} />
       </div>
       <div style={{ padding: 20 }}>
-        <SearchBox placeholder={searchOperation} autoFocus={true} onChange={(e, newValue) => setSearchTerm(newValue ?? null)} />
+        <SearchBox placeholder={searchOperation} autoFocus={true} onChange={(_e, newValue) => setSearchTerm(newValue ?? null)} />
       </div>
       <div aria-description={'List of operation results'}>
         {searchNodeNames.map((node) => (

@@ -14,6 +14,7 @@ import { getContainingWorkspace } from '../workspace';
 import { getWorkflowParameters } from './common';
 import { getAuthorizationToken } from './getAuthorizationToken';
 import { getParametersJson, saveWorkflowParameterRecords } from './parameter';
+import { deleteCustomCode, getCustomCode, getCustomCodeAppFilesToUpdate, uploadCustomCode } from './customcode';
 import { addNewFileInCSharpProject } from './updateBuildFile';
 import { HTTP_METHODS, isString } from '@microsoft/logic-apps-shared';
 import type { ParsedSite } from '@microsoft/vscode-azext-azureappservice';
@@ -28,6 +29,8 @@ import type {
   ConnectionAcl,
   ConnectionAndAppSetting,
   Parameter,
+  CustomCodeFileNameMapping,
+  AllCustomCodeFiles,
 } from '@microsoft/vscode-extension-logic-apps';
 import { JwtTokenHelper, JwtTokenConstants, resolveConnectionsReferences } from '@microsoft/vscode-extension-logic-apps';
 import axios from 'axios';
@@ -46,6 +49,20 @@ export async function getConnectionsFromFile(context: IActionContext, workflowFi
 export async function getParametersFromFile(context: IActionContext, workflowFilePath: string): Promise<Record<string, Parameter>> {
   const projectRoot: string = await getLogicAppProjectRoot(context, workflowFilePath);
   return getParametersJson(projectRoot);
+}
+
+async function getCustomCodeAppFiles(
+  context: IActionContext,
+  workflowFilePath: string,
+  customCode: CustomCodeFileNameMapping
+): Promise<Record<string, string>> {
+  const projectRoot: string = await getLogicAppProjectRoot(context, workflowFilePath);
+  return getCustomCodeAppFilesToUpdate(projectRoot, customCode);
+}
+
+export async function getCustomCodeFromFiles(workflowFilePath: string): Promise<Record<string, string>> {
+  const workspaceFolder = path.dirname(workflowFilePath);
+  return getCustomCode(workspaceFolder);
 }
 
 export async function getConnectionsJson(projectRoot: string): Promise<string> {
@@ -303,6 +320,52 @@ export async function getConnectionsAndSettingsToUpdate(
   };
 }
 
+export async function getCustomCodeToUpdate(
+  context: IActionContext,
+  filePath: string,
+  customCode: CustomCodeFileNameMapping
+): Promise<AllCustomCodeFiles | undefined> {
+  const filteredCustomCodeMapping: CustomCodeFileNameMapping = {};
+  const originalCustomCodeData = Object.keys(await getCustomCodeFromFiles(filePath));
+  if (!customCode || Object.keys(customCode).length === 0) {
+    return;
+  }
+
+  const appFiles = await getCustomCodeAppFiles(context, filePath, customCode);
+  Object.entries(customCode).forEach(([fileName, customCodeData]) => {
+    const { isModified, isDeleted } = customCodeData;
+    if ((isDeleted && originalCustomCodeData.includes(fileName)) || (isModified && !isDeleted)) {
+      filteredCustomCodeMapping[fileName] = { ...customCodeData };
+    }
+  });
+  return { customCodeFiles: filteredCustomCodeMapping, appFiles };
+}
+
+export async function saveCustomCodeStandard(filePath: string, allCustomCodeFiles?: AllCustomCodeFiles): Promise<void> {
+  const { customCodeFiles: customCode, appFiles } = allCustomCodeFiles ?? {};
+  if (!customCode || Object.keys(customCode).length === 0) {
+    return;
+  }
+  try {
+    const projectPath = await getLogicAppProjectRoot(this.context, filePath);
+    const workspaceFolder = path.dirname(filePath);
+    // to prevent 404's we first check which custom code files are already present before deleting
+    Object.entries(customCode).forEach(([fileName, customCodeData]) => {
+      const { isModified, isDeleted, fileData } = customCodeData;
+      if (isDeleted) {
+        deleteCustomCode(workspaceFolder, fileName);
+      } else if (isModified && fileData) {
+        uploadCustomCode(workspaceFolder, fileName, fileData);
+      }
+    });
+    // upload the app files needed for powershell actions
+    Object.entries(appFiles ?? {}).forEach(([fileName, fileData]) => uploadCustomCode(projectPath, fileName, fileData));
+  } catch (error) {
+    const errorMessage = `Failed to save custom code: ${error}`;
+    throw new Error(errorMessage);
+  }
+}
+
 export async function saveConnectionReferences(
   context: IActionContext,
   projectPath: string,
@@ -385,7 +448,7 @@ export async function createAclInConnectionIfNeeded(
   try {
     const response = await sendAzureRequest(url, identityWizardContext, HTTP_METHODS.GET, site.subscription);
     connectionAcls = response.parsedBody.value;
-  } catch (error) {
+  } catch (_error) {
     connectionAcls = [];
   }
 
