@@ -2,7 +2,12 @@ import { addFunction, concatFunction, greaterThanFunction, reverseFunction, sort
 import { reservedMapDefinitionKeys } from '../../constants/MapDefinitionConstants';
 import { directAccessPseudoFunction, FunctionData, functionMock, ifPseudoFunction, indexPseudoFunction } from '../../models';
 import type { ConnectionDictionary } from '../../models/Connection';
-import { applyConnectionValue, createCustomInputConnection, createNodeConnection } from '../../utils/Connection.Utils';
+import {
+  applyConnectionValue,
+  createCustomInputConnection,
+  createNewEmptyConnection,
+  createNodeConnection,
+} from '../../utils/Connection.Utils';
 import { addReactFlowPrefix, createReactFlowFunctionKey } from '../../utils/ReactFlow.Util';
 import { convertSchemaToSchemaExtended } from '../../utils/Schema.Utils';
 import { createYamlFromMap, generateMapDefinitionBody, generateMapDefinitionHeader } from '../MapDefinitionSerializer';
@@ -850,6 +855,33 @@ describe('mapDefinitions/MapDefinitionSerializer', () => {
         expect(name).toEqual('../ns0:author/ns0:first-name');
         expect(other).toEqual('../../ns0:title');
         expect(publisherLine).toEqual('../ns0:author/ns0:publisher/ns0:line1');
+      });
+
+      it("doesn't add brackets to deleted connected target nodes", () => {
+        const srcDirectTranslation = extendedSourceSchema.schemaTreeRoot.children[0];
+        //const srcEmployeeID = srcDirectTranslation.children.find((child) => child.name === 'EmployeeID') as SchemaNodeExtended;
+        const srcEmployeeName = srcDirectTranslation.children.find((child) => child.name === 'EmployeeName') as SchemaNodeExtended;
+
+        const tgtDirectTranslation = extendedTargetSchema.schemaTreeRoot.children[0];
+        const tgtEmployee = tgtDirectTranslation.children.find((child) => child.name === 'Employee') as SchemaNodeExtended;
+        const tgtID = tgtEmployee.children.find((child) => child.name === 'ID') as SchemaNodeExtended;
+        const tgtName = tgtEmployee.children.find((child) => child.name === 'Name') as SchemaNodeExtended;
+
+        const mapDefinition: MapDefinitionEntry = {};
+        const connections: ConnectionDictionary = {};
+
+        applyConnectionValue(connections, {
+          targetNode: tgtID,
+          targetNodeReactFlowKey: addReactFlowPrefix(tgtID.key, SchemaType.Target),
+          findInputSlot: true,
+          input: createNewEmptyConnection(),
+        });
+
+        createSchemaToSchemaNodeConnection(connections, srcEmployeeName, tgtName);
+
+        generateMapDefinitionBody(mapDefinition, connections);
+
+        expect(Object.keys(mapDefinition['ns0:Root']['DirectTranslation']['Employee'])[0]).toEqual('Name');
       });
 
       it('many to one nested loops', () => {
