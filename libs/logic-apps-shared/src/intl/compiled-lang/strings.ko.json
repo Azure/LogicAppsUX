@@ -11,12 +11,6 @@
       "value": "경고: 입력 노드 형식이 스키마 노드의 형식과 일치하지 않습니다."
     }
   ],
-  "+0ua83": [
-    {
-      "type": 0,
-      "value": "매개 변수"
-    }
-  ],
   "+0yxlR": [
     {
       "type": 0,
@@ -517,6 +511,12 @@
       "value": "."
     }
   ],
+  "0a4IGE": [
+    {
+      "type": 0,
+      "value": "Refresh"
+    }
+  ],
   "0i/6TR": [
     {
       "type": 0,
@@ -735,6 +735,12 @@
     {
       "type": 0,
       "value": "올바른 URI를 입력하세요."
+    }
+  ],
+  "1tmN2o": [
+    {
+      "type": 0,
+      "value": "Workflow version"
     }
   ],
   "1uGBLP": [
@@ -1305,6 +1311,12 @@
     {
       "type": 0,
       "value": "다시 시도 기록"
+    }
+  ],
+  "4rdY7D": [
+    {
+      "type": 0,
+      "value": "Run ID"
     }
   ],
   "4vcnOA": [
@@ -2269,6 +2281,12 @@
       "value": "자세한 내용은 다음 리소스를 참조하세요."
     }
   ],
+  "A5/IqS": [
+    {
+      "type": 0,
+      "value": "Run identifier"
+    }
+  ],
   "A5/UwX": [
     {
       "type": 0,
@@ -2329,6 +2347,16 @@
     {
       "type": 0,
       "value": "서비스 주체"
+    }
+  ],
+  "AMMfbt": [
+    {
+      "type": 1,
+      "value": "count"
+    },
+    {
+      "type": 0,
+      "value": " Second"
     }
   ],
   "APKdYG": [
@@ -2958,6 +2986,12 @@
     {
       "type": 0,
       "value": "트리거 유형"
+    }
+  ],
+  "DeM/yz": [
+    {
+      "type": 0,
+      "value": "Start time"
     }
   ],
   "DfXxoX": [
@@ -3901,6 +3935,12 @@
     {
       "type": 0,
       "value": "그룹 만들기"
+    }
+  ],
+  "J8G55j": [
+    {
+      "type": 0,
+      "value": "Search by run identifier"
     }
   ],
   "J9wWry": [
@@ -5198,6 +5238,12 @@
       "value": "전체 화면"
     }
   ],
+  "QT4IaP": [
+    {
+      "type": 0,
+      "value": "Filtered!"
+    }
+  ],
   "QVtqAn": [
     {
       "type": 0,
@@ -5555,6 +5601,12 @@
       "value": "상태 \"실패\"인 경우 출력을 제공하지 않아야 합니다."
     }
   ],
+  "SbHBIZ": [
+    {
+      "type": 0,
+      "value": "No runs found"
+    }
+  ],
   "SgiTAh": [
     {
       "type": 0,
@@ -5585,6 +5637,12 @@
       "value": "완료"
     }
   ],
+  "SwWaHa": [
+    {
+      "type": 0,
+      "value": "Enter a valid run identifier"
+    }
+  ],
   "Sy4cFC": [
     {
       "type": 0,
@@ -5601,6 +5659,12 @@
     {
       "type": 0,
       "value": "테스트"
+    }
+  ],
+  "T/7b2y": [
+    {
+      "type": 0,
+      "value": "Duration"
     }
   ],
   "TDfQzn": [
@@ -6633,12 +6697,6 @@
       "value": "Logic Apps가 응답에 워크플로 메타데이터 헤더를 포함하지 않도록 제한합니다."
     }
   ],
-  "XtVOMn": [
-    {
-      "type": 0,
-      "value": "문제가 발생함"
-    }
-  ],
   "XtuP5e": [
     {
       "type": 0,
@@ -7005,6 +7063,16 @@
       "value": "닫기"
     }
   ],
+  "ZgU5eu": [
+    {
+      "type": 1,
+      "value": "count"
+    },
+    {
+      "type": 0,
+      "value": " Day"
+    }
+  ],
   "ZgyD93": [
     {
       "type": 0,
@@ -7027,12 +7095,6 @@
     {
       "type": 0,
       "value": "동적 콘텐츠에 대해 자세히 알아보세요."
-    }
-  ],
-  "ZvAp7m": [
-    {
-      "type": 0,
-      "value": "저장"
     }
   ],
   "ZyDq4/": [
@@ -7081,6 +7143,12 @@
     {
       "type": 0,
       "value": "최대 재시도 정책 간격이 잘못되었습니다. ISO 8601 기간 형식과 일치해야 합니다."
+    }
+  ],
+  "aKf/r+": [
+    {
+      "type": 0,
+      "value": "Specified run identifier not found"
     }
   ],
   "aP1wk9": [
@@ -7243,6 +7311,12 @@
     {
       "type": 0,
       "value": "이 작업에는 현재 워크플로에 없는 토큰이 포함되어 있습니다."
+    }
+  ],
+  "bPyWVY": [
+    {
+      "type": 0,
+      "value": "Failed to load runs"
     }
   ],
   "bTrk+S": [
@@ -7513,6 +7587,12 @@
       "value": "다운로드(Alt 또는 Option + select)"
     }
   ],
+  "d9RCuq": [
+    {
+      "type": 0,
+      "value": "Workflow run status"
+    }
+  ],
   "dBWIjR": [
     {
       "type": 0,
@@ -7713,6 +7793,12 @@
     {
       "type": 0,
       "value": "다음으로 이 흐름 편집"
+    }
+  ],
+  "eLQPek": [
+    {
+      "type": 0,
+      "value": "Status"
     }
   ],
   "eLthgv": [
@@ -7951,12 +8037,6 @@
       "value": "(UTC-05:00) 아이티"
     }
   ],
-  "fZJWBR": [
-    {
-      "type": 0,
-      "value": "디자이너를 로드하는 중"
-    }
-  ],
   "faUrud": [
     {
       "type": 0,
@@ -7985,6 +8065,16 @@
     {
       "type": 0,
       "value": "(UTC+08:00) 베이징, 충칭, 홍콩 특별행정구, 우루무치"
+    }
+  ],
+  "ft8BH8": [
+    {
+      "type": 1,
+      "value": "count"
+    },
+    {
+      "type": 0,
+      "value": " Seconds"
     }
   ],
   "fvGvnA": [
@@ -8304,6 +8394,16 @@
     {
       "type": 0,
       "value": "찾고 있는 항목이 아닙니다."
+    }
+  ],
+  "hesDPs": [
+    {
+      "type": 1,
+      "value": "count"
+    },
+    {
+      "type": 0,
+      "value": " Milliseconds"
     }
   ],
   "hihfHd": [
@@ -9259,6 +9359,16 @@
       "value": "필수 항목으로, 소문자로 변환할 문자열입니다. 문자열의 문자에 해당하는 소문자가 없는 경우 해당 문자는 변경되지 않은 상태로 반환된 문자열에 포함됩니다."
     }
   ],
+  "maP1K/": [
+    {
+      "type": 1,
+      "value": "count"
+    },
+    {
+      "type": 0,
+      "value": " Minutes"
+    }
+  ],
   "mb1XDD": [
     {
       "type": 0,
@@ -9631,6 +9741,16 @@
       "value": "필수 사항으로, 이진 표현으로 디코딩할 데이터 URI입니다."
     }
   ],
+  "oBAL2F": [
+    {
+      "type": 1,
+      "value": "count"
+    },
+    {
+      "type": 0,
+      "value": " Days"
+    }
+  ],
   "oDHXKh": [
     {
       "type": 0,
@@ -9715,10 +9835,14 @@
       "value": "응답 본문"
     }
   ],
-  "ohOaXj": [
+  "og5JOA": [
+    {
+      "type": 1,
+      "value": "count"
+    },
     {
       "type": 0,
-      "value": "오류"
+      "value": " Millisecond"
     }
   ],
   "ohpbkw": [
@@ -10324,16 +10448,20 @@
       "value": "연결 만들기 취소"
     }
   ],
+  "sJQee6": [
+    {
+      "type": 1,
+      "value": "count"
+    },
+    {
+      "type": 0,
+      "value": " Hours"
+    }
+  ],
   "sKy720": [
     {
       "type": 0,
       "value": "워크플로 이름 값을 제공해야 합니다."
-    }
-  ],
-  "sOnphB": [
-    {
-      "type": 0,
-      "value": "다시 제출"
     }
   ],
   "sRpETS": [
@@ -11063,7 +11191,7 @@
   "vhwaYb": [
     {
       "type": 0,
-      "value": "Wrap all custom value string and DateTime values in double quotes. For example, \"abc\"."
+      "value": "모든 사용자 지정 값 문자열 및 DateTime 값을 큰따옴표로 겹치게 래핑합니다. 예: \"abc\"."
     }
   ],
   "viee6C": [
@@ -11124,6 +11252,12 @@
       "value": "중복 값이 포함되어 있습니다."
     }
   ],
+  "vzXXFP": [
+    {
+      "type": 0,
+      "value": "Workflow version"
+    }
+  ],
   "w+7aGo": [
     {
       "type": 0,
@@ -11158,6 +11292,16 @@
     {
       "type": 0,
       "value": "축소"
+    }
+  ],
+  "wAg9+z": [
+    {
+      "type": 1,
+      "value": "count"
+    },
+    {
+      "type": 0,
+      "value": " Hour"
     }
   ],
   "wBBu4g": [
@@ -11484,6 +11628,16 @@
     {
       "type": 0,
       "value": "URI에서 경로를 반환합니다. 경로를 지정하지 않으면 '/'가 반환됩니다."
+    }
+  ],
+  "xfXUGz": [
+    {
+      "type": 1,
+      "value": "count"
+    },
+    {
+      "type": 0,
+      "value": " Minute"
     }
   ],
   "xi2tn6": [
