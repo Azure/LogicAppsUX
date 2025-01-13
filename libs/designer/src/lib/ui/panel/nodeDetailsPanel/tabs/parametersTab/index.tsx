@@ -296,9 +296,12 @@ const ParameterSection = ({
     }
   };
 
-  const fileNameChange = (originalFileName: string, fileName: string): void => {
-    dispatch(renameCustomCodeFile({ newFileName: fileName, oldFileName: originalFileName }));
-  };
+  const fileNameChange = useCallback(
+    (originalFileName: string, fileName: string): void => {
+      dispatch(renameCustomCodeFile({ newFileName: fileName, oldFileName: originalFileName }));
+    },
+    [dispatch]
+  );
 
   const getPickerCallbacks = (parameter: ParameterInfo) => ({
     getFileSourceName: (): string => {

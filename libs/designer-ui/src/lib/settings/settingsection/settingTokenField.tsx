@@ -166,7 +166,6 @@ export const TokenField = ({
         />
       );
     case constants.PARAMETER.EDITOR.CODE: {
-      console.log(editorViewModel);
       const { language = EditorLanguage.javascript } = editorOptions || {};
       const customCodeEditor = isCustomCode(editor, language);
       const customCodeData = (() => {

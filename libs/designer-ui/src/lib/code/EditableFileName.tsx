@@ -1,4 +1,5 @@
-import { useState } from 'react';
+import { useState, useRef, useEffect } from 'react';
+import { Input } from '@fluentui/react-components';
 
 interface EditableFileNameProps {
   fileExtension: string;
@@ -8,6 +9,8 @@ interface EditableFileNameProps {
 
 const EditableFileName = ({ fileExtension, initialFileName, handleFileNameChange }: EditableFileNameProps) => {
   const [fileName, setFileName] = useState(initialFileName);
+  const [inputWidth, setInputWidth] = useState(1);
+  const spanRef = useRef<HTMLSpanElement>(null);
 
   const getFileNameWithoutExtension = (fileName: string) => fileName.slice(0, fileName.lastIndexOf('.'));
 
@@ -16,21 +19,45 @@ const EditableFileName = ({ fileExtension, initialFileName, handleFileNameChange
     const newFileName = `${base}${fileExtension}`;
     setFileName(newFileName);
   };
+
   const handleBlur = () => {
     handleFileNameChange(fileName);
   };
 
+  // Dynamically adjust the width of the input
+  useEffect(() => {
+    if (spanRef.current) {
+      setInputWidth(spanRef.current.offsetWidth + 20);
+    }
+  }, [fileName]);
+
   return (
-    <div className="msla-custom-code-editor-fileName">
-      <input
-        type="text"
+    <div className="msla-custom-code-editor-fileName" style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
+      {/* Hidden span to measure text width */}
+      <span
+        ref={spanRef}
+        style={{
+          position: 'absolute',
+          visibility: 'hidden',
+          whiteSpace: 'pre',
+          fontSize: '14px',
+          fontFamily: 'inherit',
+        }}
+      >
+        {getFileNameWithoutExtension(fileName) || ' '}
+      </span>
+      <Input
         value={getFileNameWithoutExtension(fileName)}
         onChange={handleInputChange}
         onBlur={handleBlur}
-        style={{ display: 'inline-block', border: '1px solid gray', padding: '2px' }}
-        size={getFileNameWithoutExtension(fileName).length || 1}
+        size="small"
+        appearance="outline"
+        style={{
+          width: `${inputWidth}px`,
+          minWidth: '50px',
+        }}
       />
-      {fileExtension}
+      <span>{fileExtension}</span>
     </div>
   );
 };
