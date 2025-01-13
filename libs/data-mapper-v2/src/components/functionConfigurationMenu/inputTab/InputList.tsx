@@ -152,6 +152,11 @@ export const CustomListItem = (props: CustomListItemProps) => {
             validateAndCreateConnection={validateAndCreateConnection}
           />
         </span>
+        {type && (
+          <Badge appearance="filled" color="informative">
+            {type}
+          </Badge>
+        )}
         <span>
           <Button className={styles.listButton} appearance="transparent" icon={<DeleteRegular />} onClick={remove} />
           {draggable && dragHandleProps && (
@@ -159,13 +164,6 @@ export const CustomListItem = (props: CustomListItemProps) => {
           )}
         </span>
       </div>
-      <span className={styles.formControlDescription}>
-        {type && (
-          <Badge appearance="filled" color="informative">
-            {type}
-          </Badge>
-        )}
-      </span>
     </ListItem>
   );
 };

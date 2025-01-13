@@ -47,8 +47,9 @@ export const useStyles = makeStyles({
     width: '60%',
   },
   formControlDescription: {
-    display: 'inline-block',
     width: '60%',
+    display: 'block',
+    marginTop: '15px',
   },
   controlButton: {
     paddingTop: '0px',
@@ -69,7 +70,6 @@ export const useStyles = makeStyles({
     justifyContent: 'space-between',
   },
   draggableListItem: {
-    height: '30px',
-    maxHeight: '50px',
+    maxHeight: 'fit-content',
   },
 });
