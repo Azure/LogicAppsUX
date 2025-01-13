@@ -11,12 +11,6 @@
       "value": "Peringatan: tipe node input tidak cocok dengan tipe node skema"
     }
   ],
-  "+0ua83": [
-    {
-      "type": 0,
-      "value": "Parameter"
-    }
-  ],
   "+0yxlR": [
     {
       "type": 0,
@@ -521,6 +515,12 @@
       "value": "."
     }
   ],
+  "0a4IGE": [
+    {
+      "type": 0,
+      "value": "Refresh"
+    }
+  ],
   "0i/6TR": [
     {
       "type": 0,
@@ -739,6 +739,12 @@
     {
       "type": 0,
       "value": "Masukkan URI yang valid."
+    }
+  ],
+  "1tmN2o": [
+    {
+      "type": 0,
+      "value": "Workflow version"
     }
   ],
   "1uGBLP": [
@@ -1309,6 +1315,12 @@
     {
       "type": 0,
       "value": "Riwayat percobaan kembali"
+    }
+  ],
+  "4rdY7D": [
+    {
+      "type": 0,
+      "value": "Run ID"
     }
   ],
   "4vcnOA": [
@@ -2281,6 +2293,12 @@
       "value": "Untuk informasi yang lebih mendetail, Anda dapat merujuk ke sumber daya berikut"
     }
   ],
+  "A5/IqS": [
+    {
+      "type": 0,
+      "value": "Run identifier"
+    }
+  ],
   "A5/UwX": [
     {
       "type": 0,
@@ -2341,6 +2359,16 @@
     {
       "type": 0,
       "value": "Prinsipal layanan"
+    }
+  ],
+  "AMMfbt": [
+    {
+      "type": 1,
+      "value": "count"
+    },
+    {
+      "type": 0,
+      "value": " Second"
     }
   ],
   "APKdYG": [
@@ -2970,6 +2998,12 @@
     {
       "type": 0,
       "value": "Tipe pemicu"
+    }
+  ],
+  "DeM/yz": [
+    {
+      "type": 0,
+      "value": "Start time"
     }
   ],
   "DfXxoX": [
@@ -3921,6 +3955,12 @@
     {
       "type": 0,
       "value": "Buat grup"
+    }
+  ],
+  "J8G55j": [
+    {
+      "type": 0,
+      "value": "Search by run identifier"
     }
   ],
   "J9wWry": [
@@ -5214,6 +5254,12 @@
       "value": "Layar penuh"
     }
   ],
+  "QT4IaP": [
+    {
+      "type": 0,
+      "value": "Filtered!"
+    }
+  ],
   "QVtqAn": [
     {
       "type": 0,
@@ -5567,6 +5613,12 @@
       "value": "Output tidak boleh diberikan saat status adalah \"Gagal\""
     }
   ],
+  "SbHBIZ": [
+    {
+      "type": 0,
+      "value": "No runs found"
+    }
+  ],
   "SgiTAh": [
     {
       "type": 0,
@@ -5597,6 +5649,12 @@
       "value": "Selesai"
     }
   ],
+  "SwWaHa": [
+    {
+      "type": 0,
+      "value": "Enter a valid run identifier"
+    }
+  ],
   "Sy4cFC": [
     {
       "type": 0,
@@ -5613,6 +5671,12 @@
     {
       "type": 0,
       "value": "Uji"
+    }
+  ],
+  "T/7b2y": [
+    {
+      "type": 0,
+      "value": "Duration"
     }
   ],
   "TDfQzn": [
@@ -6649,12 +6713,6 @@
       "value": "Batasi Logic Apps agar tidak menyertakan header metadata alur kerja dalam respons."
     }
   ],
-  "XtVOMn": [
-    {
-      "type": 0,
-      "value": "Terjadi kesalahan"
-    }
-  ],
   "XtuP5e": [
     {
       "type": 0,
@@ -7021,6 +7079,16 @@
       "value": "Tutup"
     }
   ],
+  "ZgU5eu": [
+    {
+      "type": 1,
+      "value": "count"
+    },
+    {
+      "type": 0,
+      "value": " Day"
+    }
+  ],
   "ZgyD93": [
     {
       "type": 0,
@@ -7043,12 +7111,6 @@
     {
       "type": 0,
       "value": "Pelajari selengkapnya tentang konten dinamis."
-    }
-  ],
-  "ZvAp7m": [
-    {
-      "type": 0,
-      "value": "Simpan"
     }
   ],
   "ZyDq4/": [
@@ -7097,6 +7159,12 @@
     {
       "type": 0,
       "value": "Interval maksimum kebijakan percobaan kembali tidak valid, harus cocok dengan format durasi ISO 8601"
+    }
+  ],
+  "aKf/r+": [
+    {
+      "type": 0,
+      "value": "Specified run identifier not found"
     }
   ],
   "aP1wk9": [
@@ -7267,6 +7335,12 @@
     {
       "type": 0,
       "value": "Operasi ini berisi token yang tidak ada dalam alur kerja saat ini."
+    }
+  ],
+  "bPyWVY": [
+    {
+      "type": 0,
+      "value": "Failed to load runs"
     }
   ],
   "bTrk+S": [
@@ -7537,6 +7611,12 @@
       "value": "Unduh (Alt atau Option + pilih)"
     }
   ],
+  "d9RCuq": [
+    {
+      "type": 0,
+      "value": "Workflow run status"
+    }
+  ],
   "dBWIjR": [
     {
       "type": 0,
@@ -7741,6 +7821,12 @@
     {
       "type": 0,
       "value": "Edit alur ini untuk"
+    }
+  ],
+  "eLQPek": [
+    {
+      "type": 0,
+      "value": "Status"
     }
   ],
   "eLthgv": [
@@ -7979,12 +8065,6 @@
       "value": "(UTC-05.00) Haiti"
     }
   ],
-  "fZJWBR": [
-    {
-      "type": 0,
-      "value": "Memuat desainer"
-    }
-  ],
   "faUrud": [
     {
       "type": 0,
@@ -8013,6 +8093,16 @@
     {
       "type": 0,
       "value": "(UTC+08:00) Beijing, Chongqing, Hong Kong, Urumqi"
+    }
+  ],
+  "ft8BH8": [
+    {
+      "type": 1,
+      "value": "count"
+    },
+    {
+      "type": 0,
+      "value": " Seconds"
     }
   ],
   "fvGvnA": [
@@ -8332,6 +8422,16 @@
     {
       "type": 0,
       "value": "Ini bukan yang saya cari"
+    }
+  ],
+  "hesDPs": [
+    {
+      "type": 1,
+      "value": "count"
+    },
+    {
+      "type": 0,
+      "value": " Milliseconds"
     }
   ],
   "hihfHd": [
@@ -9299,6 +9399,16 @@
       "value": "Harus diisi. String untuk dikonversi ke huruf kecil. Jika karakter dalam string tidak memiliki huruf kecil yang ekuivalen, karakter meliputi string yang tidak berubah dalam string yang belum dikembalikan."
     }
   ],
+  "maP1K/": [
+    {
+      "type": 1,
+      "value": "count"
+    },
+    {
+      "type": 0,
+      "value": " Minutes"
+    }
+  ],
   "mb1XDD": [
     {
       "type": 0,
@@ -9671,6 +9781,16 @@
       "value": "Wajib. Ini adalah dataURI yang dikodekan menjadi representasi biner."
     }
   ],
+  "oBAL2F": [
+    {
+      "type": 1,
+      "value": "count"
+    },
+    {
+      "type": 0,
+      "value": " Days"
+    }
+  ],
   "oDHXKh": [
     {
       "type": 0,
@@ -9755,10 +9875,14 @@
       "value": "Isi respons"
     }
   ],
-  "ohOaXj": [
+  "og5JOA": [
+    {
+      "type": 1,
+      "value": "count"
+    },
     {
       "type": 0,
-      "value": "Kesalahan"
+      "value": " Millisecond"
     }
   ],
   "ohpbkw": [
@@ -10368,16 +10492,20 @@
       "value": "Batalkan pembuatan koneksi"
     }
   ],
+  "sJQee6": [
+    {
+      "type": 1,
+      "value": "count"
+    },
+    {
+      "type": 0,
+      "value": " Hours"
+    }
+  ],
   "sKy720": [
     {
       "type": 0,
       "value": "Harus memberikan nilai untuk nama alur kerja."
-    }
-  ],
-  "sOnphB": [
-    {
-      "type": 0,
-      "value": "Kirim ulang"
     }
   ],
   "sRpETS": [
@@ -11111,7 +11239,7 @@
   "vhwaYb": [
     {
       "type": 0,
-      "value": "Wrap all custom value string and DateTime values in double quotes. For example, \"abc\"."
+      "value": "Bungkus semua string nilai kustom dan nilai DateTime dalam tanda kutip ganda. Misalnya, \"abc\"."
     }
   ],
   "viee6C": [
@@ -11176,6 +11304,12 @@
       "value": "Berisi nilai duplikat"
     }
   ],
+  "vzXXFP": [
+    {
+      "type": 0,
+      "value": "Workflow version"
+    }
+  ],
   "w+7aGo": [
     {
       "type": 0,
@@ -11210,6 +11344,16 @@
     {
       "type": 0,
       "value": "Ciutkan"
+    }
+  ],
+  "wAg9+z": [
+    {
+      "type": 1,
+      "value": "count"
+    },
+    {
+      "type": 0,
+      "value": " Hour"
     }
   ],
   "wBBu4g": [
@@ -11536,6 +11680,16 @@
     {
       "type": 0,
       "value": "Menghasilkan jalur dari URI. Jika jalur tidak ditentukan, akan menghasilkan '/'"
+    }
+  ],
+  "xfXUGz": [
+    {
+      "type": 1,
+      "value": "count"
+    },
+    {
+      "type": 0,
+      "value": " Minute"
     }
   ],
   "xi2tn6": [
