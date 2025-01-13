@@ -146,10 +146,10 @@ const createSourcePath = (
   connections: ConnectionDictionary,
   input: InputConnection,
   array: PathItem[]
-): string => {
+): string | undefined => {
   if (isFinalPath) {
     // Handle custom values, source schema nodes, or Functions applied to the current target schema node
-    let value = '';
+    let value: string | undefined = '';
     if (input && !isEmptyConnection(input)) {
       if (isCustomValueConnection(input)) {
         value = input.value;
@@ -169,6 +169,8 @@ const createSourcePath = (
           array.some((arrayItems) => arrayItems.repeating)
         );
       }
+    } else if (input && isEmptyConnection(input)) {
+      value = undefined;
     }
     return value;
 
@@ -221,6 +223,10 @@ const createNewPathItems = (input: InputConnection, targetNode: SchemaNodeExtend
       const isFinalPath = targetNode.key === targetPath.key;
 
       let formattedLmlSnippetForSource = createSourcePath(newPath, isFinalPath, targetPath, connections, input, pathToRoot);
+
+      if (formattedLmlSnippetForSource === undefined) {
+        return;
+      }
 
       // construct source side of LML for connection
       if (isFinalPath) {
