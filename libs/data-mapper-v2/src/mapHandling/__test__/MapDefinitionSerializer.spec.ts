@@ -881,7 +881,7 @@ describe('mapDefinitions/MapDefinitionSerializer', () => {
 
         generateMapDefinitionBody(mapDefinition, connections);
 
-        expect(Object.keys(mapDefinition['ns0:Root ']['DirectTranslation']['Employee'])[0]).toEqual('Name');
+        expect(Object.keys(mapDefinition['ns0:Root']['DirectTranslation']['Employee'])[0]).toEqual('Name');
       });
 
       it('many to one nested loops', () => {
