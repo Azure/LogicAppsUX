@@ -11,7 +11,7 @@ import {
   MessageBarTitle,
 } from '@fluentui/react-components';
 import { ChevronDoubleRightFilled } from '@fluentui/react-icons';
-import { useCallback, useEffect, useRef } from 'react';
+import { useCallback } from 'react';
 import { useIntl } from 'react-intl';
 import { EmptyContent } from '../card/emptycontent';
 import type { PageActionTelemetryData } from '../telemetry/models';
@@ -75,9 +75,6 @@ export const PanelContainer = ({
   showLogicAppRun,
 }: PanelContainerProps) => {
   const intl = useIntl();
-
-  const selectedElementRef = useRef<HTMLElement | null>(null);
-
   const canResize = !!(isResizeable && setOverrideWidth);
   const isEmptyPane = noNodeSelected && panelScope === PanelScope.CardLevel;
   const isRight = panelLocation === PanelLocation.Right;
@@ -87,14 +84,6 @@ export const PanelContainer = ({
   const drawerWidth = isCollapsed
     ? PanelSize.Auto
     : ((canResize ? overrideWidth : undefined) ?? (pinnedNodeIfDifferent ? PanelSize.DualView : PanelSize.Medium));
-
-  useEffect(() => {
-    selectedElementRef.current = node?.nodeId ? document.getElementById(`msla-node-${node.nodeId}`) : null;
-  }, [node?.nodeId]);
-
-  useEffect(() => {
-    selectedElementRef.current?.focus();
-  }, [isCollapsed]);
 
   const renderHeader = useCallback(
     (headerNode: PanelNodeData): JSX.Element => {

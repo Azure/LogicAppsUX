@@ -1,4 +1,9 @@
-import { azurePublicBaseUrl, connectionsFileName, localSettingsFileName } from '../../../constants';
+import {
+  azurePublicBaseUrl,
+  connectionsFileName,
+  localSettingsFileName,
+  parameterizeConnectionsInProjectLoadSetting,
+} from '../../../constants';
 import { localize } from '../../../localize';
 import { isCSharpProject } from '../../commands/initProjectForVSCode/detectProjectLanguage';
 import { addOrUpdateLocalAppSettings, getLocalSettingsJson } from '../appSettings/localSettings';
@@ -34,6 +39,7 @@ import * as path from 'path';
 import * as vscode from 'vscode';
 import { parameterizeConnection } from './parameterizer';
 import { window } from 'vscode';
+import { getGlobalSetting } from '../vsCodeConfig/settings';
 
 export async function getConnectionsFromFile(context: IActionContext, workflowFilePath: string): Promise<string> {
   const projectRoot: string = await getLogicAppProjectRoot(context, workflowFilePath);
@@ -109,6 +115,7 @@ async function addConnectionDataInJson(
   ConnectionAndAppSetting: ConnectionAndAppSetting,
   parametersData: Record<string, Parameter>
 ): Promise<void> {
+  const parameterizeConnectionsSetting = getGlobalSetting(parameterizeConnectionsInProjectLoadSetting);
   const connectionsFilePath = path.join(functionAppPath, connectionsFileName);
   const connectionsFileExists = fse.pathExistsSync(connectionsFilePath);
 
@@ -133,7 +140,9 @@ async function addConnectionDataInJson(
     return;
   }
 
-  parameterizeConnection(connectionData, connectionKey, parametersData, settings);
+  if (parameterizeConnectionsSetting) {
+    parameterizeConnection(connectionData, connectionKey, parametersData, settings);
+  }
 
   pathToSetConnectionsData[connectionKey] = connectionData;
   await writeFormattedJson(connectionsFilePath, connectionsJson);
@@ -169,7 +178,8 @@ async function getConnectionReference(
   accessToken: string,
   workflowBaseManagementUri: string,
   settingsToAdd: Record<string, string>,
-  parametersToAdd: any
+  parametersToAdd: any,
+  parameterizeConnectionsSetting: any
 ): Promise<ConnectionReferenceModel> {
   const {
     api: { id: apiId },
@@ -199,7 +209,9 @@ async function getConnectionReference(
         connectionProperties,
       };
 
-      parameterizeConnection(connectionReference, referenceKey, parametersToAdd, settingsToAdd);
+      if (parameterizeConnectionsSetting) {
+        parameterizeConnection(connectionReference, referenceKey, parametersToAdd, settingsToAdd);
+      }
 
       return connectionReference;
     })
@@ -228,6 +240,7 @@ export async function getConnectionsAndSettingsToUpdate(
   const settingsToAdd: Record<string, string> = {};
   const jwtTokenHelper: JwtTokenHelper = JwtTokenHelper.createInstance();
   let accessToken: string | undefined;
+  const parameterizeConnectionsSetting = getGlobalSetting(parameterizeConnectionsInProjectLoadSetting);
 
   for (const referenceKey of Object.keys(connectionReferences)) {
     const reference = connectionReferences[referenceKey];
@@ -242,12 +255,31 @@ export async function getConnectionsAndSettingsToUpdate(
         accessToken,
         workflowBaseManagementUri,
         settingsToAdd,
-        parametersFromDefinition
+        parametersFromDefinition,
+        parameterizeConnectionsSetting
+      );
+
+      context.telemetry.properties.connectionKeyGenerated = `${referenceKey}-connectionKey generated and is valid for 7 days`;
+      areKeysGenerated = true;
+    } else if (isApiHubConnectionId(reference.connection.id) && !localSettings.Values[`${referenceKey}-connectionKey`]) {
+      const resolvedConnectionReference = resolveConnectionsReferences(JSON.stringify(reference), undefined, localSettings.Values);
+
+      accessToken = accessToken ? accessToken : await getAuthorizationToken(azureTenantId);
+      referencesToAdd[referenceKey] = await getConnectionReference(
+        context,
+        referenceKey,
+        resolvedConnectionReference,
+        accessToken,
+        workflowBaseManagementUri,
+        settingsToAdd,
+        parametersFromDefinition,
+        parameterizeConnectionsSetting
       );
 
       context.telemetry.properties.connectionKeyGenerated = `${referenceKey}-connectionKey generated and is valid for 7 days`;
       areKeysGenerated = true;
     } else if (
+      isApiHubConnectionId(reference.connection.id) &&
       localSettings.Values[`${referenceKey}-connectionKey`] &&
       isKeyExpired(jwtTokenHelper, Date.now(), localSettings.Values[`${referenceKey}-connectionKey`], 3)
     ) {
@@ -261,7 +293,8 @@ export async function getConnectionsAndSettingsToUpdate(
         accessToken,
         workflowBaseManagementUri,
         settingsToAdd,
-        parametersFromDefinition
+        parametersFromDefinition,
+        parameterizeConnectionsSetting
       );
 
       context.telemetry.properties.connectionKeyRegenerate = `${referenceKey}-connectionKey regenerated and is valid for 7 days`;

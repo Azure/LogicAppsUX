@@ -382,7 +382,13 @@ export const updateOutputsAndTokens = async (
   if (shouldProcessSettings && operationSupportsSplitOn(isTrigger)) {
     const hasSplitOnOptions = getSplitOnOptions(nodeOutputs, supportsManifest).length > 0;
     if (settings.splitOn?.isSupported !== hasSplitOnOptions) {
-      dispatch(updateNodeSettings({ id: nodeId, settings: { splitOn: { ...settings.splitOn, isSupported: hasSplitOnOptions } } }));
+      dispatch(
+        updateNodeSettings({
+          id: nodeId,
+          settings: { splitOn: { ...settings.splitOn, isSupported: hasSplitOnOptions } },
+          ignoreDirty: true,
+        })
+      );
     }
   }
 };

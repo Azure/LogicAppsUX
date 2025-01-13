@@ -26,19 +26,19 @@
   "+5Jp42": [
     {
       "type": 0,
-      "value": "By"
+      "value": "Oleh"
     }
   ],
   "+Agiub": [
     {
       "type": 0,
-      "value": "Create an expression with Copilot"
+      "value": "Buat ekspresi dengan Copilot"
     }
   ],
   "+EREVh": [
     {
       "type": 0,
-      "value": "Name"
+      "value": "Nama"
     }
   ],
   "+FcXe9": [
@@ -71,10 +71,16 @@
       "value": "Gambaran Umum"
     }
   ],
+  "+M7bC6": [
+    {
+      "type": 0,
+      "value": "Berhasil dengan percobaan ulang"
+    }
+  ],
   "+R90eK": [
     {
       "type": 0,
-      "value": "Retry policy interval is invalid, must match ISO 8601 duration format"
+      "value": "Interval kebijakan percobaan kembali tidak valid, harus cocok dengan format durasi ISO 8601"
     }
   ],
   "+Uvo/p": [
@@ -102,7 +108,7 @@
   "+l5XmZ": [
     {
       "type": 0,
-      "value": "Enter a positive integer between "
+      "value": "Masukkan bilangan bulat positif antara "
     },
     {
       "type": 1,
@@ -110,7 +116,7 @@
     },
     {
       "type": 0,
-      "value": " and "
+      "value": " dan "
     },
     {
       "type": 1,
@@ -162,7 +168,7 @@
   "/IVuGP": [
     {
       "type": 0,
-      "value": "Discard"
+      "value": "Buang"
     }
   ],
   "/KRvvg": [
@@ -222,7 +228,7 @@
   "/csbOB": [
     {
       "type": 0,
-      "value": "Retry policy count is invalid (must be from "
+      "value": "Jumlah kebijakan percobaan kembali tidak valid (harus dari "
     },
     {
       "type": 1,
@@ -230,7 +236,7 @@
     },
     {
       "type": 0,
-      "value": " to "
+      "value": " hingga "
     },
     {
       "type": 1,
@@ -274,7 +280,7 @@
   "/qrBuJ": [
     {
       "type": 0,
-      "value": "Create"
+      "value": "Buat"
     }
   ],
   "/qu3zt": [
@@ -304,13 +310,13 @@
   "/ye9Df": [
     {
       "type": 0,
-      "value": "Delete workflow action"
+      "value": "Hapus tindakan alur kerja"
     }
   ],
   "0/VGiF": [
     {
       "type": 0,
-      "value": "Add action"
+      "value": "Tambahkan tindakan"
     }
   ],
   "00xlpa": [
@@ -392,13 +398,13 @@
   "0BO/tO": [
     {
       "type": 0,
-      "value": "Split-on tracking ID"
+      "value": "ID pelacakan pemisahan"
     }
   ],
   "0C5Ywr": [
     {
       "type": 0,
-      "value": "Enter an array"
+      "value": "Masukkan array"
     }
   ],
   "0CPsxh": [
@@ -422,7 +428,7 @@
   "0FRVkr": [
     {
       "type": 0,
-      "value": "Connection Panel"
+      "value": "Panel Koneksi"
     }
   ],
   "0FzNJV": [
@@ -470,7 +476,7 @@
   "0UfxUM": [
     {
       "type": 0,
-      "value": "Next"
+      "value": "Berikutnya"
     }
   ],
   "0Vzp0l": [
@@ -482,7 +488,7 @@
   "0ZZJos": [
     {
       "type": 0,
-      "value": "Showing "
+      "value": "Menampilkan "
     },
     {
       "type": 1,
@@ -498,7 +504,7 @@
     },
     {
       "type": 0,
-      "value": " of "
+      "value": " hasil "
     },
     {
       "type": 1,
@@ -506,7 +512,13 @@
     },
     {
       "type": 0,
-      "value": " results."
+      "value": "."
+    }
+  ],
+  "0a4IGE": [
+    {
+      "type": 0,
+      "value": "Refresh"
     }
   ],
   "0i/6TR": [
@@ -554,7 +566,7 @@
   "0uuxAX": [
     {
       "type": 0,
-      "value": "Delete mapping"
+      "value": "Hapus pemetaan"
     }
   ],
   "0vfdFS": [
@@ -565,12 +577,12 @@
   ],
   "0w/olE": [
     {
-      "type": 1,
-      "value": "connectorName"
+      "type": 0,
+      "value": "koneksi "
     },
     {
-      "type": 0,
-      "value": " connection"
+      "type": 1,
+      "value": "connectorName"
     }
   ],
   "0xLWzG": [
@@ -624,7 +636,7 @@
   "1HhCtq": [
     {
       "type": 0,
-      "value": "Headers"
+      "value": "Header"
     }
   ],
   "1KFpTX": [
@@ -636,7 +648,7 @@
   "1LSKq8": [
     {
       "type": 0,
-      "value": "Basics"
+      "value": "Dasar"
     }
   ],
   "1NBvKu": [
@@ -645,10 +657,16 @@
       "value": "Konversikan argumen parameter menjadi angka titik mengambang"
     }
   ],
+  "1QktJw": [
+    {
+      "type": 0,
+      "value": "Kesalahan peta"
+    }
+  ],
   "1Xke9D": [
     {
       "type": 0,
-      "value": "open functions drawer"
+      "value": "buka laci fungsi"
     }
   ],
   "1dlfUe": [
@@ -666,7 +684,7 @@
   "1f7LG4": [
     {
       "type": 0,
-      "value": "Fixed interval"
+      "value": "Interval tetap"
     }
   ],
   "1hHFdx": [
@@ -690,7 +708,7 @@
   "1jf3Dq": [
     {
       "type": 0,
-      "value": "Z to A, descending"
+      "value": "Z ke A, turun"
     }
   ],
   "1jhzOM": [
@@ -723,6 +741,12 @@
       "value": "Masukkan URI yang valid."
     }
   ],
+  "1tmN2o": [
+    {
+      "type": 0,
+      "value": "Workflow version"
+    }
+  ],
   "1uGBLP": [
     {
       "type": 0,
@@ -732,7 +756,7 @@
   "1vqDeQ": [
     {
       "type": 0,
-      "value": "Select Create to start a new workflow based on this template, no configuration required."
+      "value": "Pilih Buat untuk memulai alur kerja baru berdasarkan templat ini, tidak diperlukan konfigurasi."
     }
   ],
   "20oqsp": [
@@ -810,13 +834,13 @@
   "2OQU3/": [
     {
       "type": 0,
-      "value": "Cannot run after both trigger and action"
+      "value": "Tidak dapat berjalan setelah pemicu dan tindakan"
     }
   ],
   "2On4Xu": [
     {
       "type": 0,
-      "value": "Code view tab"
+      "value": "Tab tampilan kode"
     }
   ],
   "2TMGk7": [
@@ -834,7 +858,7 @@
   "2adqQ4": [
     {
       "type": 0,
-      "value": "Maximum interval"
+      "value": "Interval maksimum"
     }
   ],
   "2cVEMV": [
@@ -898,7 +922,7 @@
   "2xQWRt": [
     {
       "type": 0,
-      "value": "Search Functions"
+      "value": "Fungsi Pencarian"
     }
   ],
   "2y24a/": [
@@ -914,7 +938,7 @@
     },
     {
       "type": 0,
-      "value": " of "
+      "value": " "
     },
     {
       "type": 1,
@@ -954,7 +978,7 @@
   "36sF7T": [
     {
       "type": 0,
-      "value": "Associated workflows"
+      "value": "Alur kerja terkait"
     }
   ],
   "3AWwVl": [
@@ -966,7 +990,7 @@
   "3BXdMk": [
     {
       "type": 0,
-      "value": "Request settings"
+      "value": "Pengaturan permintaan"
     }
   ],
   "3BZnxY": [
@@ -990,7 +1014,7 @@
   "3JEC7U": [
     {
       "type": 0,
-      "value": "Error type"
+      "value": "Tipe kesalahan"
     }
   ],
   "3KPLpx": [
@@ -1044,7 +1068,7 @@
   "3Xf/4S": [
     {
       "type": 0,
-      "value": "Swagger endpoint"
+      "value": "Titik akhir Swagger"
     }
   ],
   "3Y8a6G": [
@@ -1064,13 +1088,13 @@
   "3a3eHg": [
     {
       "type": 0,
-      "value": "Select actions"
+      "value": "Pilih tindakan"
     }
   ],
   "3cZFcy": [
     {
       "type": 0,
-      "value": "Error Panel"
+      "value": "Panel Kesalahan"
     }
   ],
   "3cZZKj": [
@@ -1088,7 +1112,7 @@
   "3hHkAn": [
     {
       "type": 0,
-      "value": "Result"
+      "value": "Hasil"
     }
   ],
   "3n5pnv": [
@@ -1106,7 +1130,7 @@
   "3pheF6": [
     {
       "type": 0,
-      "value": "Select schema"
+      "value": "Pilih skema"
     }
   ],
   "3rzrWf": [
@@ -1149,12 +1173,6 @@
     {
       "type": 0,
       "value": "Buka koneksi"
-    }
-  ],
-  "41eMpW": [
-    {
-      "type": 0,
-      "value": "Menunggu"
     }
   ],
   "43xObP": [
@@ -1204,7 +1222,7 @@
   "4BuCdw": [
     {
       "type": 0,
-      "value": "Specify the behavior and capabilities for transferring content over HTTP."
+      "value": "Tentukan perilaku dan kemampuan untuk mentransfer konten melalui HTTP."
     }
   ],
   "4D7H4R": [
@@ -1220,7 +1238,7 @@
   "4E69aV": [
     {
       "type": 0,
-      "value": "Background color"
+      "value": "Warna latar belakang"
     }
   ],
   "4Ekn9t": [
@@ -1244,7 +1262,7 @@
   "4SIrVn": [
     {
       "type": 0,
-      "value": "Body"
+      "value": "Isi"
     }
   ],
   "4YKQAF": [
@@ -1274,7 +1292,7 @@
   "4hlqgK": [
     {
       "type": 0,
-      "value": "No results found for "
+      "value": "Tidak ditemukan hasil untuk "
     },
     {
       "type": 1,
@@ -1296,7 +1314,13 @@
   "4rVVyW": [
     {
       "type": 0,
-      "value": "Retry history"
+      "value": "Riwayat percobaan kembali"
+    }
+  ],
+  "4rdY7D": [
+    {
+      "type": 0,
+      "value": "Run ID"
     }
   ],
   "4vcnOA": [
@@ -1323,6 +1347,16 @@
       "value": "(UTC+08.45) Eucla"
     }
   ],
+  "5+zBXE": [
+    {
+      "type": 1,
+      "value": "label"
+    },
+    {
+      "type": 0,
+      "value": " item kunci"
+    }
+  ],
   "50W8FI": [
     {
       "type": 0,
@@ -1339,6 +1373,20 @@
     {
       "type": 0,
       "value": "(UTC+09:00) Osaka, Sapporo, Tokyo"
+    }
+  ],
+  "5DkTf5": [
+    {
+      "type": 0,
+      "value": "Node skema target tidak ditemukan untuk kunci node '"
+    },
+    {
+      "type": 1,
+      "value": "nodeKey"
+    },
+    {
+      "type": 0,
+      "value": "'"
     }
   ],
   "5J9jne": [
@@ -1440,7 +1488,7 @@
   "5pSOjg": [
     {
       "type": 0,
-      "value": "Create workflows from template"
+      "value": "Buat alur kerja dari templat"
     }
   ],
   "5qzZMo": [
@@ -1452,19 +1500,19 @@
   "5rljf7": [
     {
       "type": 0,
-      "value": "Discovery Panel"
+      "value": "Panel Penemuan"
     }
   ],
   "5szzYP": [
     {
       "type": 0,
-      "value": "Use this template"
+      "value": "Gunakan template ini"
     }
   ],
   "5we9SR": [
     {
       "type": 0,
-      "value": "Client tracking ID"
+      "value": "ID pelacakan klien"
     }
   ],
   "5ytHcK": [
@@ -1512,13 +1560,13 @@
   "6DZp5H": [
     {
       "type": 0,
-      "value": "Search"
+      "value": "Cari"
     }
   ],
   "6LJZ7n": [
     {
       "type": 0,
-      "value": "Retry policy"
+      "value": "Kebijakan percobaan kembali"
     }
   ],
   "6OSgRP": [
@@ -1536,7 +1584,7 @@
   "6SQuYg": [
     {
       "type": 0,
-      "value": "See more ("
+      "value": "Lihat ("
     },
     {
       "type": 1,
@@ -1544,7 +1592,7 @@
     },
     {
       "type": 0,
-      "value": ")"
+      "value": ") lainnya"
     }
   ],
   "6VV7OY": [
@@ -1556,19 +1604,19 @@
   "6c1ffO": [
     {
       "type": 0,
-      "value": "Enter JSON object of authentication parameter"
+      "value": "Masukkan objek JSON parameter autentikasi"
     }
   ],
   "6eDY1H": [
     {
       "type": 0,
-      "value": "optional"
+      "value": "opsional"
     }
   ],
   "6epkWC": [
     {
       "type": 0,
-      "value": "Body item"
+      "value": "Item isi"
     }
   ],
   "6fDYzG": [
@@ -1624,13 +1672,13 @@
   "6nWQm7": [
     {
       "type": 0,
-      "value": "Start time"
+      "value": "Waktu mulai"
     }
   ],
   "6oOQnD": [
     {
       "type": 0,
-      "value": "Close test map"
+      "value": "Tutup peta pengujian"
     }
   ],
   "6oqk+A": [
@@ -1654,7 +1702,7 @@
   "6rJ+Fj": [
     {
       "type": 0,
-      "value": "Delete workflow graph"
+      "value": "Hapus grafik alur kerja"
     }
   ],
   "6sGj3J": [
@@ -1714,7 +1762,7 @@
   "7+ZxCU": [
     {
       "type": 0,
-      "value": "Invalid authentication value"
+      "value": "Nilai autentikasi tidak valid"
     }
   ],
   "70cHmm": [
@@ -1750,7 +1798,7 @@
   "7F4Bzv": [
     {
       "type": 0,
-      "value": "Workflow with name \""
+      "value": "Alur kerja dengan nama \""
     },
     {
       "type": 1,
@@ -1758,7 +1806,7 @@
     },
     {
       "type": 0,
-      "value": "\" already exists."
+      "value": "\" sudah ada."
     }
   ],
   "7Fyq1F": [
@@ -1799,10 +1847,16 @@
       "value": "Harus diisi. String dari substring yang diambil."
     }
   ],
+  "7X4UA/": [
+    {
+      "type": 0,
+      "value": "Menunggu"
+    }
+  ],
   "7ZF1Hr": [
     {
       "type": 0,
-      "value": "Validation error"
+      "value": "Kesalahan validasi"
     }
   ],
   "7ZR1xr": [
@@ -1820,13 +1874,13 @@
   "7adnmH": [
     {
       "type": 0,
-      "value": "Back to template library"
+      "value": "Kembali ke pustaka templat"
     }
   ],
   "7fZkLA": [
     {
       "type": 0,
-      "value": "Disable static result"
+      "value": "Nonaktifkan hasil statik"
     }
   ],
   "7gUE8h": [
@@ -1936,7 +1990,7 @@
   "8KpZmj": [
     {
       "type": 0,
-      "value": "The system-assigned identity is unavailable because it's not enabled."
+      "value": "Identitas yang ditetapkan sistem tidak tersedia karena tidak diaktifkan."
     }
   ],
   "8L+oIz": [
@@ -2024,13 +2078,13 @@
   "8p0yK8": [
     {
       "type": 0,
-      "value": "Run after"
+      "value": "Jalankan setelah"
     }
   ],
   "8wlfdo": [
     {
       "type": 0,
-      "value": "Suppress workflow headers on response"
+      "value": "Sembunyikan header alur kerja pada respons"
     }
   ],
   "8wr0zO": [
@@ -2042,7 +2096,7 @@
   "8zcsPi": [
     {
       "type": 0,
-      "value": "Expression editor"
+      "value": "Editor ekspresi"
     }
   ],
   "8zkvmc": [
@@ -2066,7 +2120,7 @@
   "90Vi7t": [
     {
       "type": 0,
-      "value": "Expand static result"
+      "value": "Luaskan hasil statik"
     }
   ],
   "90o7sB": [
@@ -2124,7 +2178,7 @@
   "9OzDnJ": [
     {
       "type": 0,
-      "value": "Search tips"
+      "value": "Kiat pencarian"
     }
   ],
   "9QNZSj": [
@@ -2156,7 +2210,7 @@
   "9V2Uwf": [
     {
       "type": 0,
-      "value": "Insert expression (you can also add by typing '/' in the editor)"
+      "value": "Sisipkan ekspresi (Anda juga dapat menambahkannya dengan mengetik '/' di editor)"
     }
   ],
   "9W0lck": [
@@ -2197,6 +2251,12 @@
       "value": "Tambahkan"
     }
   ],
+  "9dd0/m": [
+    {
+      "type": 0,
+      "value": "Berjalan"
+    }
+  ],
   "9djnqI": [
     {
       "type": 0,
@@ -2212,7 +2272,7 @@
   "9uv02q": [
     {
       "type": 0,
-      "value": "Set the tracking ID for the run. For split-on this tracking ID is for the initiating request"
+      "value": "Atur ID pelacakan untuk eksekusi. Untuk pemisahan, ID pelacakan ini untuk memulai permintaan"
     }
   ],
   "9wX3u9": [
@@ -2233,10 +2293,16 @@
       "value": "Untuk informasi yang lebih mendetail, Anda dapat merujuk ke sumber daya berikut"
     }
   ],
+  "A5/IqS": [
+    {
+      "type": 0,
+      "value": "Run identifier"
+    }
+  ],
   "A5/UwX": [
     {
       "type": 0,
-      "value": "Accelerators"
+      "value": "Akselerator"
     }
   ],
   "A5Ferh": [
@@ -2248,7 +2314,7 @@
   "A8T1X/": [
     {
       "type": 0,
-      "value": "Whitespaces must be encoded for URIs."
+      "value": "Spasi kosong harus dikodekan untuk URI."
     }
   ],
   "A8l+k7": [
@@ -2268,7 +2334,7 @@
   "AB+yPQ": [
     {
       "type": 0,
-      "value": "Connection details"
+      "value": "Detail koneksi"
     }
   ],
   "AEguAy": [
@@ -2286,19 +2352,29 @@
   "AJ+LDh": [
     {
       "type": 0,
-      "value": "Provide a unique, descriptive name and review the state type to ensure your workflows are properly configured."
+      "value": "Berikan nama yang unik dan deskriptif dan tinjau tipe status untuk memastikan alur kerja Anda dikonfigurasi dengan benar."
     }
   ],
   "AKOkI2": [
     {
       "type": 0,
-      "value": "Service principal"
+      "value": "Prinsipal layanan"
+    }
+  ],
+  "AMMfbt": [
+    {
+      "type": 1,
+      "value": "count"
+    },
+    {
+      "type": 0,
+      "value": " Second"
     }
   ],
   "APKdYG": [
     {
       "type": 0,
-      "value": "Enter a valid double number."
+      "value": "Masukkan nomor ganda yang valid."
     }
   ],
   "AQ7Zxc": [
@@ -2316,7 +2392,7 @@
   "Agqhgu": [
     {
       "type": 0,
-      "value": "Describe how you'd like to update your expression."
+      "value": "Jelaskan cara Anda ingin memperbarui ekspresi."
     }
   ],
   "AheXMN": [
@@ -2340,7 +2416,7 @@
   "Alq4/3": [
     {
       "type": 0,
-      "value": "Hybrid connector"
+      "value": "Konektor hibrid"
     }
   ],
   "AnX5yC": [
@@ -2363,12 +2439,12 @@
   ],
   "Aui3Mq": [
     {
-      "type": 1,
-      "value": "title"
+      "type": 0,
+      "value": "operasi "
     },
     {
-      "type": 0,
-      "value": " operation"
+      "type": 1,
+      "value": "title"
     }
   ],
   "Az0QvG": [
@@ -2427,7 +2503,7 @@
   "B6BjCl": [
     {
       "type": 0,
-      "value": "Drop-down list of options"
+      "value": "Daftar menurun opsi"
     }
   ],
   "B999mz": [
@@ -2452,12 +2528,6 @@
     {
       "type": 0,
       "value": "Peringatan: nilai kustom tidak cocok dengan salah satu tipe yang diizinkan untuk input ini"
-    }
-  ],
-  "BFTwRN": [
-    {
-      "type": 0,
-      "value": "Berhasil dengan percobaan ulang"
     }
   ],
   "BGw6eH": [
@@ -2500,12 +2570,6 @@
       "value": "Waktu mulai"
     }
   ],
-  "BPYdTX": [
-    {
-      "type": 0,
-      "value": "Tidak ditentukan"
-    }
-  ],
   "BQCPY7": [
     {
       "type": 0,
@@ -2516,12 +2580,6 @@
     {
       "type": 0,
       "value": "Masukkan kata sandi sebagai teks biasa atau gunakan parameter yang aman"
-    }
-  ],
-  "BRMOfD": [
-    {
-      "type": 0,
-      "value": "Timed out"
     }
   ],
   "BS3gy8": [
@@ -2545,7 +2603,7 @@
   "BXb3CB": [
     {
       "type": 0,
-      "value": "Testing tab"
+      "value": "Tab pengujian"
     }
   ],
   "BYrP8F": [
@@ -2563,7 +2621,7 @@
   "Bkc/+3": [
     {
       "type": 0,
-      "value": "Retry policy minimum interval is invalid, must match ISO 8601 duration format"
+      "value": "Interval minimum kebijakan percobaan kembali tidak valid, harus cocok dengan format durasi ISO 8601"
     }
   ],
   "Bl4Iv0": [
@@ -2581,7 +2639,7 @@
   "BnkCwH": [
     {
       "type": 0,
-      "value": "Search properties"
+      "value": "Properti pencarian"
     }
   ],
   "BoMvF2": [
@@ -2612,6 +2670,20 @@
     {
       "type": 0,
       "value": "Format tunggal penentu yang menunjukkan cara memformat nilai dari Guid ini."
+    }
+  ],
+  "Bwqlxd": [
+    {
+      "type": 0,
+      "value": "Kunci tidak ditemukan '"
+    },
+    {
+      "type": 1,
+      "value": "nodeKey"
+    },
+    {
+      "type": 0,
+      "value": "'"
     }
   ],
   "BxITRH": [
@@ -2653,7 +2725,7 @@
   "CRTB+v": [
     {
       "type": 0,
-      "value": "Value should be greater than "
+      "value": "Nilai harus lebih besar dari "
     },
     {
       "type": 1,
@@ -2681,13 +2753,13 @@
   "Ccbm2Y": [
     {
       "type": 0,
-      "value": "Multi-select list of options"
+      "value": "Daftar multi-pilih opsi"
     }
   ],
   "CeF40t": [
     {
       "type": 0,
-      "value": "Authentication type"
+      "value": "Jenis autentikasi"
     }
   ],
   "Ci41Od": [
@@ -2717,7 +2789,7 @@
   "ClowJ/": [
     {
       "type": 0,
-      "value": "Authentication type"
+      "value": "Jenis autentikasi"
     }
   ],
   "CvoqQ6": [
@@ -2735,7 +2807,7 @@
   "Cy4+KL": [
     {
       "type": 0,
-      "value": "Redo"
+      "value": "Ulangi"
     }
   ],
   "CyT8H7": [
@@ -2787,7 +2859,7 @@
   "D0D3Sf": [
     {
       "type": 0,
-      "value": "switch case"
+      "value": "kasus switch"
     }
   ],
   "D1lgsT": [
@@ -2805,7 +2877,7 @@
   "D6KzoS": [
     {
       "type": 0,
-      "value": "Specify upload chunk size between "
+      "value": "Tentukan ukuran potongan unggahan antara "
     },
     {
       "type": 1,
@@ -2813,7 +2885,7 @@
     },
     {
       "type": 0,
-      "value": " and "
+      "value": " dan "
     },
     {
       "type": 1,
@@ -2821,13 +2893,13 @@
     },
     {
       "type": 0,
-      "value": " Mb. Example: 10"
+      "value": " Mb. Contoh: 10"
     }
   ],
   "D89UXR": [
     {
       "type": 0,
-      "value": "action"
+      "value": "tindakan"
     }
   ],
   "DDIIAQ": [
@@ -2863,7 +2935,7 @@
   "DNQtFr": [
     {
       "type": 0,
-      "value": "Name"
+      "value": "Nama"
     }
   ],
   "DQV7aK": [
@@ -2901,7 +2973,7 @@
   "DX9jWz": [
     {
       "type": 0,
-      "value": "Name"
+      "value": "Nama"
     }
   ],
   "DYXoEM": [
@@ -2919,13 +2991,19 @@
   "DbxZhS": [
     {
       "type": 0,
-      "value": "Remove list of options"
+      "value": "Hapus daftar opsi"
     }
   ],
   "DcJBUx": [
     {
       "type": 0,
-      "value": "Trigger type"
+      "value": "Tipe pemicu"
+    }
+  ],
+  "DeM/yz": [
+    {
+      "type": 0,
+      "value": "Start time"
     }
   ],
   "DfXxoX": [
@@ -2999,7 +3077,7 @@
   "E70Rdt": [
     {
       "type": 0,
-      "value": "Internal errors"
+      "value": "Kesalahan internal"
     }
   ],
   "E7NzDN": [
@@ -3023,13 +3101,13 @@
   "EFQ56R": [
     {
       "type": 0,
-      "value": "Source code"
+      "value": "Kode sumber"
     }
   ],
   "EMbxLf": [
     {
       "type": 0,
-      "value": "Previous suggestion"
+      "value": "Saran sebelumnya"
     }
   ],
   "ERAWZA": [
@@ -3053,13 +3131,13 @@
   "EX0g1d": [
     {
       "type": 0,
-      "value": "Secure outputs"
+      "value": "Output aman"
     }
   ],
   "EXEL2j": [
     {
       "type": 0,
-      "value": "Destination"
+      "value": "Tujuan"
     }
   ],
   "EZz5q7": [
@@ -3103,7 +3181,7 @@
   "EeJitp": [
     {
       "type": 0,
-      "value": "Type"
+      "value": "Jenis"
     }
   ],
   "EiRMD4": [
@@ -3135,7 +3213,7 @@
   "EoRB1V": [
     {
       "type": 0,
-      "value": "Details"
+      "value": "Detail"
     }
   ],
   "EptZhD": [
@@ -3159,31 +3237,31 @@
   "Eyxa6q": [
     {
       "type": 0,
-      "value": "The number of workflow instances that can wait to run when your current workflow instance is already running the maximum concurrent instances."
+      "value": "Jumlah contoh alur kerja yang dapat menunggu untuk dijalankan saat contoh alur kerja Anda saat ini sudah menjalankan instans serentak maksimum."
     }
   ],
   "F+cOLr": [
     {
       "type": 0,
-      "value": "Community Authored"
+      "value": "Komunitas Yang Ditulis"
     }
   ],
   "F/13eU": [
     {
       "type": 0,
-      "value": "Delete"
+      "value": "Hapus"
     }
   ],
   "F1AkvV": [
     {
       "type": 0,
-      "value": "Ideal for process business transitional data"
+      "value": "Ideal untuk data transisi bisnis proses"
     }
   ],
   "F2wR+r": [
     {
       "type": 0,
-      "value": "Insert expression"
+      "value": "Sisipkan ekspresi"
     }
   ],
   "F3IDl8": [
@@ -3207,7 +3285,7 @@
   "FEYdkx": [
     {
       "type": 0,
-      "value": "Maximum waiting runs"
+      "value": "Eksekusi tunggu maksimum"
     }
   ],
   "FIL1Nt": [
@@ -3240,6 +3318,20 @@
       "value": "Menghasilkan bagian string yang ditentukan oleh indeks awal dan indeks akhir"
     }
   ],
+  "FPBmrA": [
+    {
+      "type": 0,
+      "value": "Node skema sumber tidak ditemukan untuk kunci node '"
+    },
+    {
+      "type": 1,
+      "value": "nodeKey"
+    },
+    {
+      "type": 0,
+      "value": "'"
+    }
+  ],
   "FT3jt6": [
     {
       "type": 0,
@@ -3249,7 +3341,7 @@
   "FTrMxN": [
     {
       "type": 0,
-      "value": "Close"
+      "value": "Tutup"
     }
   ],
   "FUuFlC": [
@@ -3306,7 +3398,7 @@
   "Fx/6sv": [
     {
       "type": 0,
-      "value": "Go to operation"
+      "value": "Buka operasi"
     }
   ],
   "FxQ2Ts": [
@@ -3318,7 +3410,7 @@
   "G+6Juu": [
     {
       "type": 0,
-      "value": "Click to expand"
+      "value": "Klik untuk memperluas"
     }
   ],
   "G+XvKn": [
@@ -3336,7 +3428,7 @@
   "G0gnge": [
     {
       "type": 0,
-      "value": "Copy entire action"
+      "value": "Salin seluruh tindakan"
     }
   ],
   "GAY7b8": [
@@ -3372,7 +3464,7 @@
   "GFnJQe": [
     {
       "type": 0,
-      "value": "Test map"
+      "value": "Uji peta"
     }
   ],
   "GIUSQs": [
@@ -3437,10 +3529,24 @@
       "value": "Elemen skema sumber"
     }
   ],
+  "GiR7ll": [
+    {
+      "type": 0,
+      "value": "Fungsi tidak ditemukan- '"
+    },
+    {
+      "type": 1,
+      "value": "nodeKey"
+    },
+    {
+      "type": 0,
+      "value": "'"
+    }
+  ],
   "Gk79Ma": [
     {
       "type": 0,
-      "value": "Status code"
+      "value": "Kode status"
     }
   ],
   "Gl5khw": [
@@ -3552,13 +3658,13 @@
   "HQ/HhZ": [
     {
       "type": 0,
-      "value": "Error loading connections"
+      "value": "Kesalahan saat memuat koneksi"
     }
   ],
   "HQQtFz": [
     {
       "type": 0,
-      "value": "Make the field required"
+      "value": "Buat bidang menjadi wajib diisi"
     }
   ],
   "HSJLCu": [
@@ -3582,7 +3688,7 @@
   "He4Z+v": [
     {
       "type": 0,
-      "value": "Credential type"
+      "value": "Tipe kredensial"
     }
   ],
   "HfinO2": [
@@ -3670,13 +3776,13 @@
   "IBFBR2": [
     {
       "type": 0,
-      "value": "Remove loop"
+      "value": "Hapus pengulangan"
     }
   ],
   "IGpV1W": [
     {
       "type": 0,
-      "value": "Asynchronous response"
+      "value": "Respons asinkron"
     }
   ],
   "IHMd3X": [
@@ -3692,7 +3798,7 @@
   "IHzSSN": [
     {
       "type": 0,
-      "value": "Path parameters"
+      "value": "Parameter jalur"
     }
   ],
   "IPwWgu": [
@@ -3722,7 +3828,7 @@
   "IUbVFR": [
     {
       "type": 0,
-      "value": "Search"
+      "value": "Cari"
     }
   ],
   "IW2MjQ": [
@@ -3760,13 +3866,13 @@
     },
     {
       "type": 0,
-      "value": " more item"
+      "value": " item lainnya"
     }
   ],
   "IqNEui": [
     {
       "type": 0,
-      "value": "Specify download chunk size between "
+      "value": "Tentukan ukuran potongan unduhan antara "
     },
     {
       "type": 1,
@@ -3774,7 +3880,7 @@
     },
     {
       "type": 0,
-      "value": " and "
+      "value": " dan "
     },
     {
       "type": 1,
@@ -3782,7 +3888,7 @@
     },
     {
       "type": 0,
-      "value": " Mb. Example: 10"
+      "value": " Mb. Contoh: 10"
     }
   ],
   "IsVhkH": [
@@ -3848,7 +3954,13 @@
   "J7PN35": [
     {
       "type": 0,
-      "value": "Make group"
+      "value": "Buat grup"
+    }
+  ],
+  "J8G55j": [
+    {
+      "type": 0,
+      "value": "Search by run identifier"
     }
   ],
   "J9wWry": [
@@ -3900,13 +4012,13 @@
   "JKfEGS": [
     {
       "type": 0,
-      "value": "Create new"
+      "value": "Buat baru"
     }
   ],
   "JMwMaK": [
     {
       "type": 0,
-      "value": "AI-generated content may be incorrect"
+      "value": "Konten yang dibuat AI mungkin salah"
     }
   ],
   "JNQHws": [
@@ -3918,7 +4030,7 @@
   "JQBEOg": [
     {
       "type": 0,
-      "value": "Review + create"
+      "value": "Tinjau + buat"
     }
   ],
   "JSfWJ0": [
@@ -3930,13 +4042,13 @@
   "JUZ7g5": [
     {
       "type": 0,
-      "value": "Run history"
+      "value": "Riwayat eksekusi"
     }
   ],
   "JVNRly": [
     {
       "type": 0,
-      "value": "Solution type"
+      "value": "Jenis solusi"
     }
   ],
   "JWl/LD": [
@@ -3978,7 +4090,7 @@
   "Jk2B0i": [
     {
       "type": 0,
-      "value": "Prerequisites"
+      "value": "Prasyarat"
     }
   ],
   "JnlcZQ": [
@@ -4002,7 +4114,7 @@
   "JzvOUc": [
     {
       "type": 0,
-      "value": "The value must not be empty."
+      "value": "Nilai tidak boleh kosong."
     }
   ],
   "K50znc": [
@@ -4020,7 +4132,7 @@
   "K9ORYo": [
     {
       "type": 0,
-      "value": "Schema ID"
+      "value": "ID Skema"
     }
   ],
   "KBaGkS": [
@@ -4032,13 +4144,19 @@
   "KO2eUv": [
     {
       "type": 0,
-      "value": "Connectors"
+      "value": "Konektor"
     }
   ],
   "KV4uky": [
     {
       "type": 0,
       "value": "Saat item baru..."
+    }
+  ],
+  "KWeLBB": [
+    {
+      "type": 0,
+      "value": "Penutupan..."
     }
   ],
   "KX1poC": [
@@ -4085,7 +4203,7 @@
   "Kb5u9F": [
     {
       "type": 0,
-      "value": "About tab"
+      "value": "Tab Tentang"
     }
   ],
   "KlDW+5": [
@@ -4103,7 +4221,7 @@
   "KqJ14/": [
     {
       "type": 0,
-      "value": "Edit schema"
+      "value": "Edit skema"
     }
   ],
   "KwGA+K": [
@@ -4136,6 +4254,12 @@
       "value": "Luaskan"
     }
   ],
+  "LBlM+D": [
+    {
+      "type": 0,
+      "value": "Tidak ditentukan"
+    }
+  ],
   "LCRHQ9": [
     {
       "type": 0,
@@ -4157,7 +4281,7 @@
   "LPzAHC": [
     {
       "type": 0,
-      "value": "Loading files…"
+      "value": "Memuat file…"
     }
   ],
   "LR/3Lr": [
@@ -4271,7 +4395,7 @@
   "M/m3nG": [
     {
       "type": 0,
-      "value": "Action timeout"
+      "value": "Batas waktu tindakan"
     }
   ],
   "M0bbZk": [
@@ -4295,7 +4419,7 @@
   "M6GI6z": [
     {
       "type": 0,
-      "value": "Custom tracking ID"
+      "value": "ID pelacakan kustom"
     }
   ],
   "M6U2LE": [
@@ -4313,7 +4437,7 @@
   "MAX7xS": [
     {
       "type": 0,
-      "value": "Show more"
+      "value": "Tampilkan lebih banyak"
     }
   ],
   "MCzWDc": [
@@ -4337,7 +4461,7 @@
   "MGq28G": [
     {
       "type": 0,
-      "value": "Trigger"
+      "value": "Pemicu"
     }
   ],
   "MIX4f9": [
@@ -4385,13 +4509,13 @@
   "MVrv+N": [
     {
       "type": 0,
-      "value": "Enter a valid array."
+      "value": "Masukkan array yang valid."
     }
   ],
   "MWG2k9": [
     {
       "type": 0,
-      "value": "Request history"
+      "value": "Riwayat permintaan"
     }
   ],
   "MYgKHu": [
@@ -4451,7 +4575,7 @@
   "MwMpAh": [
     {
       "type": 0,
-      "value": "Return to expression editor"
+      "value": "Kembali ke editor ekspresi"
     }
   ],
   "N0pS6Y": [
@@ -4487,7 +4611,7 @@
   "N8LgJq": [
     {
       "type": 0,
-      "value": "Distinct tracking ID for each split-on instance"
+      "value": "ID pelacakan berbeda untuk setiap instans yang dibagi"
     }
   ],
   "NE54Uu": [
@@ -4517,7 +4641,7 @@
   "NHqCeQ": [
     {
       "type": 0,
-      "value": "Create connection"
+      "value": "Buat koneksi"
     }
   ],
   "NMpFs6": [
@@ -4541,13 +4665,13 @@
   "NaW0ga": [
     {
       "type": 0,
-      "value": "This workflow supports the following states. The state determines how data is managed and retained during execution of workflows."
+      "value": "Alur kerja ini mendukung status berikut. Status menentukan bagaimana data dikelola dan dipertahankan selama eksekusi alur kerja."
     }
   ],
   "Nbl3zN": [
     {
       "type": 0,
-      "value": "Enter a description of the output"
+      "value": "Masukkan deskripsi output"
     }
   ],
   "Nh91qA": [
@@ -4565,7 +4689,7 @@
   "NkjtG/": [
     {
       "type": 0,
-      "value": "Dismiss"
+      "value": "Tutup"
     }
   ],
   "NnrHK3": [
@@ -4589,13 +4713,13 @@
   "Nr8FbX": [
     {
       "type": 0,
-      "value": "Connections"
+      "value": "Koneksi"
     }
   ],
   "NtoWaY": [
     {
       "type": 0,
-      "value": "Value should be less than "
+      "value": "Nilai harus lebih kecil dari "
     },
     {
       "type": 1,
@@ -4653,7 +4777,7 @@
   "O8Qy7k": [
     {
       "type": 0,
-      "value": "Close panel"
+      "value": "Tutup panel"
     }
   ],
   "O9ZExg": [
@@ -4695,7 +4819,7 @@
   "OMuMCI": [
     {
       "type": 0,
-      "value": "Workflow properties"
+      "value": "Properti alur kerja"
     }
   ],
   "OOUSLP": [
@@ -4797,7 +4921,7 @@
   "OkGMwC": [
     {
       "type": 0,
-      "value": "Monitoring tab"
+      "value": "Tab Pemantauan"
     }
   ],
   "OnrO5/": [
@@ -4890,6 +5014,12 @@
       "value": "Diciutkan"
     }
   ],
+  "PEJ+e4": [
+    {
+      "type": 0,
+      "value": "Kesalahan saat memuat peta data"
+    }
+  ],
   "PNk3n4": [
     {
       "type": 0,
@@ -4933,7 +5063,7 @@
   "PTBl5s": [
     {
       "type": 0,
-      "value": "Method"
+      "value": "Metode"
     }
   ],
   "PXa0D4": [
@@ -4975,7 +5105,7 @@
   "Pkxg6Q": [
     {
       "type": 0,
-      "value": "Describe the expression you want Copilot to create. You can reference data from other actions in the flow. For example, “Combine the first and last name of the person who went the email” or “Check the status of the current job.”"
+      "value": "Jelaskan ekspresi yang Anda inginkan untuk dibuat copilot. Anda dapat mereferensikan data dari tindakan lain dalam alur. Misalnya, \"Gabungkan nama depan dan belakang orang yang mengirim email\" atau \"Periksa status pekerjaan saat ini.\""
     }
   ],
   "Pnt0Xj": [
@@ -4987,7 +5117,7 @@
   "PpupBE": [
     {
       "type": 0,
-      "value": "Add row"
+      "value": "Tambahkan baris"
     }
   ],
   "Pq+4a+": [
@@ -5011,7 +5141,7 @@
   "PuFTgH": [
     {
       "type": 0,
-      "value": "Retry history"
+      "value": "Riwayat percobaan kembali"
     }
   ],
   "Pudllg": [
@@ -5035,7 +5165,7 @@
   "Px7S/2": [
     {
       "type": 0,
-      "value": "Close"
+      "value": "Tutup"
     }
   ],
   "PytMJ0": [
@@ -5063,7 +5193,7 @@
   "Q/V4Uc": [
     {
       "type": 0,
-      "value": "Add connection"
+      "value": "Tambahkan koneksi"
     }
   ],
   "Q0xpPQ": [
@@ -5109,7 +5239,7 @@
   "QBK72a": [
     {
       "type": 0,
-      "value": "Add custom modules, uncover new scenarios, and find troubleshooting tips"
+      "value": "Tambahkan modul kustom, temukan skenario baru, dan temukan tips pemecahan masalah"
     }
   ],
   "QGbUXX": [
@@ -5121,13 +5251,19 @@
   "QNfUf/": [
     {
       "type": 0,
-      "value": "Full screen"
+      "value": "Layar penuh"
+    }
+  ],
+  "QT4IaP": [
+    {
+      "type": 0,
+      "value": "Filtered!"
     }
   ],
   "QVtqAn": [
     {
       "type": 0,
-      "value": "Description"
+      "value": "Deskripsi"
     }
   ],
   "QZBPUx": [
@@ -5151,7 +5287,7 @@
   "QbVD0F": [
     {
       "type": 0,
-      "value": "This expression has a problem. You can fix it manually or with Copilot."
+      "value": "Ekspresi ini bermasalah. Anda dapat memperbaikinya secara manual atau dengan Copilot."
     }
   ],
   "QdJUaS": [
@@ -5243,13 +5379,13 @@
   "RLoDgQ": [
     {
       "type": 0,
-      "value": "Optimized for high reliability"
+      "value": "Dioptimalkan untuk keandalan tinggi"
     }
   ],
   "ROC+1+": [
     {
       "type": 0,
-      "value": "Line position"
+      "value": "Posisi baris"
     }
   ],
   "RX2Shm": [
@@ -5261,13 +5397,13 @@
   "RZNabt": [
     {
       "type": 0,
-      "value": "Create a new workflow from template"
+      "value": "Buat alur kerja baru dari templat"
     }
   ],
   "RatwOB": [
     {
       "type": 0,
-      "value": "In-app"
+      "value": "Dalam aplikasi"
     }
   ],
   "RbJNVk": [
@@ -5304,7 +5440,7 @@
     },
     {
       "type": 0,
-      "value": " (content)"
+      "value": " (konten)"
     }
   ],
   "RjvpD+": [
@@ -5370,7 +5506,7 @@
   "RxbkcI": [
     {
       "type": 0,
-      "value": "Unsupported token type: "
+      "value": "Tipe token yang tidak didukung: "
     },
     {
       "type": 1,
@@ -5380,7 +5516,7 @@
   "S0N/tx": [
     {
       "type": 0,
-      "value": "Resubmit a workflow run from this action"
+      "value": "Kirim ulang eksekusi alur kerja dari tindakan ini"
     }
   ],
   "S138/4": [
@@ -5392,7 +5528,7 @@
   "S5kFNK": [
     {
       "type": 0,
-      "value": "Paste your sample data to test the mapping"
+      "value": "Tempelkan data sampel Anda untuk menguji pemetaan"
     }
   ],
   "SCCE6s": [
@@ -5440,7 +5576,7 @@
   "STWbak": [
     {
       "type": 0,
-      "value": "Chunk size"
+      "value": "Ukuran potongan"
     }
   ],
   "SToblZ": [
@@ -5468,13 +5604,19 @@
   "SZ78Xp": [
     {
       "type": 0,
-      "value": "Features"
+      "value": "Fitur"
     }
   ],
   "SbCUKw": [
     {
       "type": 0,
-      "value": "Outputs should not be provided when status is \"Failed\""
+      "value": "Output tidak boleh diberikan saat status adalah \"Gagal\""
+    }
+  ],
+  "SbHBIZ": [
+    {
+      "type": 0,
+      "value": "No runs found"
     }
   ],
   "SgiTAh": [
@@ -5507,10 +5649,16 @@
       "value": "Selesai"
     }
   ],
+  "SwWaHa": [
+    {
+      "type": 0,
+      "value": "Enter a valid run identifier"
+    }
+  ],
   "Sy4cFC": [
     {
       "type": 0,
-      "value": "Concurrency control"
+      "value": "Kontrol konkurensi"
     }
   ],
   "SyFXM3": [
@@ -5525,10 +5673,16 @@
       "value": "Uji"
     }
   ],
+  "T/7b2y": [
+    {
+      "type": 0,
+      "value": "Duration"
+    }
+  ],
   "TDfQzn": [
     {
       "type": 0,
-      "value": "More…"
+      "value": "Lainnya…"
     }
   ],
   "TEN+cR": [
@@ -5582,7 +5736,7 @@
   "TZpm7X": [
     {
       "type": 0,
-      "value": "Button to add dynamic content if token picker is shown"
+      "value": "Tombol untuk menambahkan konten dinamis jika pemilih token ditampilkan"
     }
   ],
   "Tayrub": [
@@ -5600,7 +5754,7 @@
   "TcU2Gf": [
     {
       "type": 0,
-      "value": "Add case"
+      "value": "Tambahkan kasus"
     }
   ],
   "TgcgXE": [
@@ -5648,7 +5802,7 @@
   "TnwRGo": [
     {
       "type": 0,
-      "value": "Connections included in this template"
+      "value": "Connections disertakan dalam templat ini"
     }
   ],
   "To3RNy": [
@@ -5702,7 +5856,7 @@
   "U2juKb": [
     {
       "type": 0,
-      "value": "Filter actions"
+      "value": "Filter tindakan"
     }
   ],
   "U3guPp": [
@@ -5738,7 +5892,7 @@
   "U9SHxw": [
     {
       "type": 0,
-      "value": "Code"
+      "value": "Kode"
     }
   ],
   "UCNM4L": [
@@ -5750,7 +5904,7 @@
   "UD330h": [
     {
       "type": 0,
-      "value": "Copy action"
+      "value": "Salin tindakan"
     }
   ],
   "UHCVNK": [
@@ -5762,7 +5916,7 @@
   "UJho0j": [
     {
       "type": 0,
-      "value": "(Optional) Password for PFX file"
+      "value": "(Opsional) Kata sandi untuk file PFX"
     }
   ],
   "UMPuUJ": [
@@ -5778,13 +5932,13 @@
   "UNXQDI": [
     {
       "type": 0,
-      "value": "Loading API Management service instances..."
+      "value": "Memuat instans layanan API Management..."
     }
   ],
   "UPsZSw": [
     {
       "type": 0,
-      "value": "The entered identity is not associated with this logic app."
+      "value": "Identitas yang dimasukkan tidak terkait dengan aplikasi logika ini."
     }
   ],
   "UR1CS5": [
@@ -5808,7 +5962,7 @@
   "UTkcyf": [
     {
       "type": 0,
-      "value": "Source code"
+      "value": "Kode sumber"
     }
   ],
   "UVAfYj": [
@@ -5820,19 +5974,19 @@
   "UVr0mL": [
     {
       "type": 0,
-      "value": "Test your map to see a result"
+      "value": "Uji peta Anda untuk melihat hasil"
     }
   ],
   "UWF/WI": [
     {
       "type": 0,
-      "value": "View documentation"
+      "value": "Tampilkan dokumentasi"
     }
   ],
   "UXDOiw": [
     {
       "type": 0,
-      "value": "Description"
+      "value": "Deskripsi"
     }
   ],
   "UYRIS/": [
@@ -5934,7 +6088,7 @@
   "UsEvG2": [
     {
       "type": 0,
-      "value": "Tenant ID"
+      "value": "ID Penyewa"
     }
   ],
   "UtyRCH": [
@@ -6004,7 +6158,7 @@
   "VFnuA2": [
     {
       "type": 0,
-      "value": "Add a drop-down list of options"
+      "value": "Tambahkan daftar menurun opsi"
     }
   ],
   "VHm1Sr": [
@@ -6076,13 +6230,13 @@
   "VZh+w2": [
     {
       "type": 0,
-      "value": "Body"
+      "value": "Isi"
     }
   ],
   "Valy81": [
     {
       "type": 0,
-      "value": "Schema validation"
+      "value": "Skema validasi"
     }
   ],
   "VbMYd8": [
@@ -6094,7 +6248,7 @@
   "VchR9d": [
     {
       "type": 0,
-      "value": "Headers"
+      "value": "Header"
     }
   ],
   "Vi5TIV": [
@@ -6138,7 +6292,7 @@
   "VysSj3": [
     {
       "type": 0,
-      "value": "View code"
+      "value": "Tampilkan kode"
     }
   ],
   "W+mUyI": [
@@ -6160,13 +6314,13 @@
   "W1rlxU": [
     {
       "type": 0,
-      "value": "State type"
+      "value": "Tipe status"
     }
   ],
   "W2fZ0v": [
     {
       "type": 0,
-      "value": "Preview"
+      "value": "Pratinjau"
     }
   ],
   "W6FdMh": [
@@ -6184,7 +6338,7 @@
   "WGq3Fo": [
     {
       "type": 0,
-      "value": "See less"
+      "value": "Lihat lebih sedikit"
     }
   ],
   "WGwH45": [
@@ -6239,10 +6393,16 @@
       "value": "Pintasan untuk pemicu().outputs"
     }
   ],
+  "WbIGAh": [
+    {
+      "type": 0,
+      "value": "Berhasil"
+    }
+  ],
   "Wc77aJ": [
     {
       "type": 0,
-      "value": "In-app"
+      "value": "Dalam aplikasi"
     }
   ],
   "WcnIF8": [
@@ -6254,7 +6414,7 @@
   "WdO1cs": [
     {
       "type": 0,
-      "value": "Template details"
+      "value": "Detail templat"
     }
   ],
   "WgChTm": [
@@ -6278,13 +6438,13 @@
   "Wt1TZJ": [
     {
       "type": 0,
-      "value": "Connections"
+      "value": "Koneksi"
     }
   ],
   "Wvnl/V": [
     {
       "type": 0,
-      "value": "Delete the static result configuration"
+      "value": "Hapus konfigurasi hasil statis"
     }
   ],
   "WvvJYw": [
@@ -6296,13 +6456,13 @@
   "WxJJcQ": [
     {
       "type": 0,
-      "value": "Not connected"
+      "value": "Tidak tersambung"
     }
   ],
   "WxcmZr": [
     {
       "type": 0,
-      "value": "This action has testing configured."
+      "value": "Tindakan ini memiliki pengujian yang dikonfigurasi."
     }
   ],
   "X/7je+": [
@@ -6314,7 +6474,7 @@
   "X02GGK": [
     {
       "type": 0,
-      "value": "Tags"
+      "value": "Label"
     }
   ],
   "X2idLs": [
@@ -6386,7 +6546,7 @@
   "XHQwyJ": [
     {
       "type": 0,
-      "value": "Error executing the API - "
+      "value": "Kesalahan saat menjalankan API - "
     },
     {
       "type": 1,
@@ -6402,7 +6562,7 @@
   "XL5UbT": [
     {
       "type": 0,
-      "value": "Click for more information on static result"
+      "value": "Klik untuk informasi selengkapnya tentang hasil statis"
     }
   ],
   "XOAcjQ": [
@@ -6432,7 +6592,7 @@
   "XR5izH": [
     {
       "type": 0,
-      "value": "Connected"
+      "value": "Tersambung"
     }
   ],
   "XRK+gt": [
@@ -6482,7 +6642,7 @@
   "XZrMGZ": [
     {
       "type": 0,
-      "value": "Content transfer"
+      "value": "Transfer konten"
     }
   ],
   "XbtEq9": [
@@ -6508,7 +6668,7 @@
   "Xg1UDw": [
     {
       "type": 0,
-      "value": "Learn more"
+      "value": "Pelajari selengkapnya"
     }
   ],
   "Xj0Gr/": [
@@ -6574,7 +6734,7 @@
   "Xz88HV": [
     {
       "type": 0,
-      "value": "Associated workflows"
+      "value": "Alur kerja terkait"
     }
   ],
   "Y/bcmG": [
@@ -6592,7 +6752,7 @@
   "Y9VFj8": [
     {
       "type": 0,
-      "value": "Secure inputs"
+      "value": "Input aman"
     }
   ],
   "Y9kBz5": [
@@ -6604,7 +6764,7 @@
   "YC56Tr": [
     {
       "type": 0,
-      "value": "Automatic decompression"
+      "value": "Dekompresi otomatis"
     }
   ],
   "YCDF7A": [
@@ -6668,13 +6828,13 @@
   "YM0e3C": [
     {
       "type": 0,
-      "value": "Asynchronous pattern"
+      "value": "Pola asinkron"
     }
   ],
   "YOOBDW": [
     {
       "type": 0,
-      "value": "Avoid spaces and the following symbols in your workflow name: \\ / : * ? \" < > | @, #, $, %, &"
+      "value": "Hindari spasi dan simbol berikut dalam nama alur kerja Anda: \\ / : * ? \" < > | @, #, $, %, &"
     }
   ],
   "YOUfNf": [
@@ -6704,7 +6864,7 @@
   "YWD/RY": [
     {
       "type": 0,
-      "value": "condition, collapse"
+      "value": "kondisi, ciutkan"
     }
   ],
   "YWws/r": [
@@ -6716,7 +6876,7 @@
   "YX0jQs": [
     {
       "type": 0,
-      "value": "All"
+      "value": "Semua"
     }
   ],
   "YZ5Kwe": [
@@ -6728,7 +6888,7 @@
   "YZl7FU": [
     {
       "type": 0,
-      "value": "Loading function apps..."
+      "value": "Memuat aplikasi fungsi..."
     }
   ],
   "YaFjJQ": [
@@ -6770,7 +6930,7 @@
   "YnSO/8": [
     {
       "type": 0,
-      "value": "Not connected"
+      "value": "Tidak tersambung"
     }
   ],
   "YoQara": [
@@ -6788,7 +6948,7 @@
   "Yua/4o": [
     {
       "type": 0,
-      "value": "Previous"
+      "value": "Sebelumnya"
     }
   ],
   "Yuu5CD": [
@@ -6812,7 +6972,7 @@
   "Z8BOCl": [
     {
       "type": 0,
-      "value": "No identities available"
+      "value": "Tidak ada identitas yang tersedia"
     }
   ],
   "Z8tBFS": [
@@ -6842,7 +7002,7 @@
   "ZFNlSA": [
     {
       "type": 0,
-      "value": "Authentication"
+      "value": "Autentikasi"
     }
   ],
   "ZME5hh": [
@@ -6854,7 +7014,7 @@
   "ZN050N": [
     {
       "type": 0,
-      "value": "Select all text in '"
+      "value": "Pilih semua teks dalam '"
     },
     {
       "type": 1,
@@ -6868,7 +7028,7 @@
   "ZOIvqN": [
     {
       "type": 0,
-      "value": "Sort By"
+      "value": "Urutkan Berdasarkan"
     }
   ],
   "ZUCTVP": [
@@ -6886,13 +7046,13 @@
   "ZXc10N": [
     {
       "type": 0,
-      "value": "Add group"
+      "value": "Tambahkan grup"
     }
   ],
   "ZXha+w": [
     {
       "type": 0,
-      "value": "Error message"
+      "value": "Pesan kesalahan"
     }
   ],
   "ZaIeDG": [
@@ -6910,7 +7070,7 @@
   "ZbeL1D": [
     {
       "type": 0,
-      "value": "Avoid spaces and the following symbols in your workflow name: \\ / : * ? \" < > | @, #, $, %, &"
+      "value": "Hindari spasi dan simbol berikut dalam nama alur kerja Anda: \\ / : * ? \" < > | @, #, $, %, &"
     }
   ],
   "Zg3IjD": [
@@ -6919,10 +7079,20 @@
       "value": "Tutup"
     }
   ],
+  "ZgU5eu": [
+    {
+      "type": 1,
+      "value": "count"
+    },
+    {
+      "type": 0,
+      "value": " Day"
+    }
+  ],
   "ZgyD93": [
     {
       "type": 0,
-      "value": "Accepted types:"
+      "value": "Tipe yang diterima:"
     }
   ],
   "Zi9gQK": [
@@ -6970,7 +7140,7 @@
   "aGxYMY": [
     {
       "type": 0,
-      "value": "Clear editor"
+      "value": "Bersihkan editor"
     }
   ],
   "aGyVJT": [
@@ -6982,13 +7152,19 @@
   "aI9W5L": [
     {
       "type": 0,
-      "value": "This template does not have connectors"
+      "value": "Templat ini tidak memiliki konektor"
     }
   ],
   "aJg1gl": [
     {
       "type": 0,
-      "value": "Retry policy maximum interval is invalid, must match ISO 8601 duration format"
+      "value": "Interval maksimum kebijakan percobaan kembali tidak valid, harus cocok dengan format durasi ISO 8601"
+    }
+  ],
+  "aKf/r+": [
+    {
+      "type": 0,
+      "value": "Specified run identifier not found"
     }
   ],
   "aP1wk9": [
@@ -7012,7 +7188,7 @@
   "aWdfiw": [
     {
       "type": 0,
-      "value": "Next suggestion"
+      "value": "Saran berikutnya"
     }
   ],
   "aYTy7X": [
@@ -7030,7 +7206,7 @@
   "ao6BlS": [
     {
       "type": 0,
-      "value": "Resource group"
+      "value": "Grup sumber daya"
     }
   ],
   "aoUT/3": [
@@ -7042,7 +7218,7 @@
   "apZgmJ": [
     {
       "type": 0,
-      "value": "Invalid operation path input value. Path value - "
+      "value": "Nilai input jalur operasi tidak valid. Nilai jalur - "
     },
     {
       "type": 1,
@@ -7050,7 +7226,7 @@
     },
     {
       "type": 0,
-      "value": ", Path template - "
+      "value": ", Templat jalur - "
     },
     {
       "type": 1,
@@ -7063,22 +7239,28 @@
       "value": "Tambahkan atau pilih skema sumber yang akan digunakan untuk peta Anda."
     }
   ],
+  "auci7r": [
+    {
+      "type": 0,
+      "value": "Masukkan string yang dipisahkan koma yang valid."
+    }
+  ],
   "aurgrg": [
     {
       "type": 0,
-      "value": "Managed identity"
+      "value": "Identitas terkelola"
     }
   ],
   "b2aL+f": [
     {
       "type": 0,
-      "value": "Pin action"
+      "value": "Sematkan tindakan"
     }
   ],
   "b6G9bq": [
     {
       "type": 0,
-      "value": "URL encodes the input string"
+      "value": "URL mengkodekan string input"
     }
   ],
   "b7BQdu": [
@@ -7146,13 +7328,19 @@
   "bJMlgW": [
     {
       "type": 0,
-      "value": "Connections"
+      "value": "Koneksi"
     }
   ],
   "bMUkSN": [
     {
       "type": 0,
-      "value": "This operation contains a token that does not exist in the current workflow."
+      "value": "Operasi ini berisi token yang tidak ada dalam alur kerja saat ini."
+    }
+  ],
+  "bPyWVY": [
+    {
+      "type": 0,
+      "value": "Failed to load runs"
     }
   ],
   "bTrk+S": [
@@ -7194,7 +7382,7 @@
   "bg00eY": [
     {
       "type": 0,
-      "value": "Numbered list"
+      "value": "Daftar bernomor"
     }
   ],
   "blRFVt": [
@@ -7242,7 +7430,7 @@
   "c2ZT7p": [
     {
       "type": 0,
-      "value": "Details"
+      "value": "Detail"
     }
   ],
   "c3FLox": [
@@ -7278,7 +7466,7 @@
   "cBw7SC": [
     {
       "type": 0,
-      "value": "Created"
+      "value": "Dibuat"
     }
   ],
   "cHiBAn": [
@@ -7291,6 +7479,16 @@
     {
       "type": 0,
       "value": "Ambil hasil lainnya hingga batas penomoran halaman"
+    }
+  ],
+  "cKNvk6": [
+    {
+      "type": 0,
+      "value": "item nilai "
+    },
+    {
+      "type": 1,
+      "value": "label"
     }
   ],
   "cNXS5n": [
@@ -7308,7 +7506,7 @@
   "cZ60Tk": [
     {
       "type": 0,
-      "value": "Loading...."
+      "value": "Memuat...."
     }
   ],
   "cZv9J0": [
@@ -7338,7 +7536,7 @@
   "chEskq": [
     {
       "type": 0,
-      "value": "Enable static result"
+      "value": "Aktifkan hasil statik"
     }
   ],
   "ciLkfU": [
@@ -7386,13 +7584,13 @@
   "cw9FiJ": [
     {
       "type": 0,
-      "value": "Schema URI"
+      "value": "URI Skema"
     }
   ],
   "cwHxwb": [
     {
       "type": 0,
-      "value": "Add connection"
+      "value": "Tambahkan koneksi"
     }
   ],
   "cyEBus": [
@@ -7411,6 +7609,12 @@
     {
       "type": 0,
       "value": "Unduh (Alt atau Option + pilih)"
+    }
+  ],
+  "d9RCuq": [
+    {
+      "type": 0,
+      "value": "Workflow run status"
     }
   ],
   "dBWIjR": [
@@ -7476,7 +7680,7 @@
   "dU0RgS": [
     {
       "type": 0,
-      "value": "Add a multi-select list of options"
+      "value": "Tambahkan daftar multi-pilih opsi"
     }
   ],
   "dUbKuK": [
@@ -7488,7 +7692,7 @@
   "dVFyPb": [
     {
       "type": 0,
-      "value": "Default value"
+      "value": "Nilai default"
     }
   ],
   "daoo3l": [
@@ -7580,7 +7784,7 @@
   "eDHwU7": [
     {
       "type": 0,
-      "value": "🖊️ Working on it..."
+      "value": "🖊️ Sedang mengerjakannya..."
     }
   ],
   "eESljX": [
@@ -7619,16 +7823,22 @@
       "value": "Edit alur ini untuk"
     }
   ],
+  "eLQPek": [
+    {
+      "type": 0,
+      "value": "Status"
+    }
+  ],
   "eLthgv": [
     {
       "type": 0,
-      "value": "Client certificate"
+      "value": "Sertifikat klien"
     }
   ],
   "eNp9V6": [
     {
       "type": 0,
-      "value": "Upload PFX File"
+      "value": "Unggah file PFX"
     }
   ],
   "eO1h/h": [
@@ -7640,7 +7850,7 @@
   "eOAJQk": [
     {
       "type": 0,
-      "value": "Degree of parallelism"
+      "value": "Tingkat Paralelisme"
     }
   ],
   "eRvRWs": [
@@ -7658,25 +7868,25 @@
   "eTW4SD": [
     {
       "type": 0,
-      "value": "Description"
+      "value": "Deskripsi"
     }
   ],
   "eUxnDx": [
     {
       "type": 0,
-      "value": "Status code"
+      "value": "Kode status"
     }
   ],
   "eaEXYa": [
     {
       "type": 0,
-      "value": "All"
+      "value": "Semua"
     }
   ],
   "eb91v1": [
     {
       "type": 0,
-      "value": "Change connection"
+      "value": "Ubah koneksi"
     }
   ],
   "egLI8P": [
@@ -7694,7 +7904,7 @@
   "ekM77J": [
     {
       "type": 0,
-      "value": "Workflow name"
+      "value": "Nama alur kerja"
     }
   ],
   "elD6+N": [
@@ -7706,7 +7916,7 @@
   "elWEjT": [
     {
       "type": 0,
-      "value": "Click to collapse"
+      "value": "Klik untuk menciutkan"
     }
   ],
   "en/5A3": [
@@ -7721,16 +7931,28 @@
       "value": "Aktifkan pemisahan untuk memulai instans alur kerja setiap item dalam array yang dipilih. Setiap instans juga dapat memiliki id pelacakan yang berbeda"
     }
   ],
+  "eofB85": [
+    {
+      "type": 0,
+      "value": "Waktu habis"
+    }
+  ],
   "epOMnV": [
     {
       "type": 0,
       "value": "Dibagikan"
     }
   ],
+  "epi+zR": [
+    {
+      "type": 0,
+      "value": "Tutup pemeriksa peta"
+    }
+  ],
   "er6O+w": [
     {
       "type": 0,
-      "value": "Name"
+      "value": "Nama"
     }
   ],
   "evyGYj": [
@@ -7742,13 +7964,13 @@
   "ewGciu": [
     {
       "type": 0,
-      "value": "Authentication"
+      "value": "Autentikasi"
     }
   ],
   "eyuBr7": [
     {
       "type": 0,
-      "value": "Please submit a different query than the previously submitted query. Previously submitted query: "
+      "value": "Kirimkan kueri yang berbeda dari kueri yang dikirim sebelumnya. Kueri yang dikirim sebelumnya: "
     },
     {
       "type": 1,
@@ -7776,7 +7998,7 @@
   "f7cxXb": [
     {
       "type": 0,
-      "value": "Split on"
+      "value": "Pisahkan"
     }
   ],
   "f81ClO": [
@@ -7797,6 +8019,16 @@
       "value": "Menampilkan true jika argumen pertama lebih besar atau sama dengan yang kedua"
     }
   ],
+  "fBUCrA": [
+    {
+      "type": 0,
+      "value": "Item "
+    },
+    {
+      "type": 1,
+      "value": "label"
+    }
+  ],
   "fElufw": [
     {
       "type": 0,
@@ -7812,19 +8044,19 @@
   "fNE/hg": [
     {
       "type": 0,
-      "value": "Button to add dynamic content if token picker is hidden"
+      "value": "Tombol untuk menambahkan konten dinamis jika pemilih token disembunyikan"
     }
   ],
   "fNlJSh": [
     {
       "type": 0,
-      "value": "All connections must be connected for workflow creation"
+      "value": "Semua koneksi harus tersambung untuk pembuatan alur kerja"
     }
   ],
   "fSMyDJ": [
     {
       "type": 0,
-      "value": "Request options - Timeout"
+      "value": "Opsi permintaan - Batas Waktu"
     }
   ],
   "fVG5aD": [
@@ -7863,6 +8095,16 @@
       "value": "(UTC+08:00) Beijing, Chongqing, Hong Kong, Urumqi"
     }
   ],
+  "ft8BH8": [
+    {
+      "type": 1,
+      "value": "count"
+    },
+    {
+      "type": 0,
+      "value": " Seconds"
+    }
+  ],
   "fvGvnA": [
     {
       "type": 0,
@@ -7872,7 +8114,7 @@
   "fxue5l": [
     {
       "type": 0,
-      "value": "Workflows"
+      "value": "Alur kerja"
     }
   ],
   "g076bL": [
@@ -7971,6 +8213,12 @@
       "value": "Info"
     }
   ],
+  "gS4Teq": [
+    {
+      "type": 0,
+      "value": "Array Item"
+    }
+  ],
   "gWyYg0": [
     {
       "type": 0,
@@ -7990,7 +8238,7 @@
     },
     {
       "type": 0,
-      "value": " more items"
+      "value": " item lainnya"
     }
   ],
   "gc6v4X": [
@@ -8066,7 +8314,7 @@
     },
     {
       "type": 0,
-      "value": " Install gateway"
+      "value": " Instal gateway"
     }
   ],
   "h1lQDa": [
@@ -8090,13 +8338,13 @@
   "hCrg+6": [
     {
       "type": 0,
-      "value": "Actions must have one or more run after configurations"
+      "value": "Tindakan harus memiliki satu atau beberapa operasi setelah konfigurasi"
     }
   ],
   "hHDJhD": [
     {
       "type": 0,
-      "value": "File content"
+      "value": "Konten file"
     }
   ],
   "hLOIwp": [
@@ -8114,7 +8362,7 @@
   "hMpLz3": [
     {
       "type": 0,
-      "value": "Callback URL"
+      "value": "URL Panggilan Balik"
     }
   ],
   "hN7iBP": [
@@ -8159,7 +8407,7 @@
   "haeWoU": [
     {
       "type": 0,
-      "value": "Failed to evaluate outputs because splitOn "
+      "value": "Gagal mengevaluasi output karena splitOn "
     },
     {
       "type": 1,
@@ -8167,13 +8415,23 @@
     },
     {
       "type": 0,
-      "value": " cannot be evaluated. As a result, this operation's outputs might not be correctly visible in subsequent actions"
+      "value": " tidak dapat dievaluasi. Akibatnya, output operasi ini mungkin tidak terlihat dengan benar dalam tindakan berikutnya"
     }
   ],
   "hbOvB4": [
     {
       "type": 0,
       "value": "Ini bukan yang saya cari"
+    }
+  ],
+  "hesDPs": [
+    {
+      "type": 1,
+      "value": "count"
+    },
+    {
+      "type": 0,
+      "value": " Milliseconds"
     }
   ],
   "hihfHd": [
@@ -8185,13 +8443,13 @@
   "hlrKDC": [
     {
       "type": 0,
-      "value": "Connection"
+      "value": "Koneksi"
     }
   ],
   "ho2D6F": [
     {
       "type": 0,
-      "value": "Close panel"
+      "value": "Tutup panel"
     }
   ],
   "hq1mk6": [
@@ -8239,7 +8497,7 @@
   "hz9HJ2": [
     {
       "type": 0,
-      "value": "Insert dynamic content"
+      "value": "Sisipkan konten dinamis"
     }
   ],
   "hza/cT": [
@@ -8251,7 +8509,7 @@
   "i/R+Q7": [
     {
       "type": 0,
-      "value": "Local time"
+      "value": "Waktu lokal"
     }
   ],
   "i/SguY": [
@@ -8305,7 +8563,7 @@
   "iBArTB": [
     {
       "type": 0,
-      "value": "collapse functions drawer"
+      "value": "ciutkan laci fungsi"
     }
   ],
   "iCSHJG": [
@@ -8317,7 +8575,7 @@
   "iCni1C": [
     {
       "type": 0,
-      "value": "Can't find any search results"
+      "value": "Tidak dapat menemukan hasil pencarian apa pun"
     }
   ],
   "iE2+sy": [
@@ -8379,7 +8637,7 @@
   "iTz1lp": [
     {
       "type": 0,
-      "value": "Unpin action"
+      "value": "Lepas sematan tindakan"
     }
   ],
   "iU1OJh": [
@@ -8433,13 +8691,13 @@
   "im0GMa": [
     {
       "type": 0,
-      "value": "Show less"
+      "value": "Tampilkan lebih sedikit"
     }
   ],
   "ioUq6Q": [
     {
       "type": 0,
-      "value": "Password"
+      "value": "Kata sandi"
     }
   ],
   "iq+tiv": [
@@ -8461,7 +8719,7 @@
   "ir+plQ": [
     {
       "type": 0,
-      "value": "Operation details error"
+      "value": "Kesalahan detail operasi"
     }
   ],
   "iy8rNf": [
@@ -8473,13 +8731,13 @@
   "j2v8BE": [
     {
       "type": 0,
-      "value": "No connections are needed in this template"
+      "value": "Tidak ada koneksi yang diperlukan dalam templat ini"
     }
   ],
   "j4OKkU": [
     {
       "type": 0,
-      "value": "Text color"
+      "value": "Warna teks"
     }
   ],
   "j5z8Vd": [
@@ -8617,13 +8875,13 @@
   "jvVVTG": [
     {
       "type": 0,
-      "value": "Action type"
+      "value": "Tipe tindakan"
     }
   ],
   "k/X2ml": [
     {
       "type": 0,
-      "value": "Type"
+      "value": "Jenis"
     }
   ],
   "k/oqFL": [
@@ -8653,7 +8911,7 @@
   "kBTFhL": [
     {
       "type": 0,
-      "value": "Fix my expression: "
+      "value": "Perbaiki ekspresi saya: "
     },
     {
       "type": 1,
@@ -8750,6 +9008,20 @@
       "value": "Elemen dan pemetaan yang tidak tersambung ke elemen target telah dihapus."
     }
   ],
+  "kfmLTY": [
+    {
+      "type": 0,
+      "value": "'"
+    },
+    {
+      "type": 1,
+      "value": "functionName"
+    },
+    {
+      "type": 0,
+      "value": "' fungsi tidak memiliki input yang diperlukan"
+    }
+  ],
   "klY9UN": [
     {
       "offset": 0,
@@ -8794,7 +9066,7 @@
   "kvUaFw": [
     {
       "type": 0,
-      "value": "More info"
+      "value": "Info selengkapnya"
     }
   ],
   "l/3yJr": [
@@ -8836,13 +9108,13 @@
   "l8lP1X": [
     {
       "type": 0,
-      "value": "The error and its code are required when status is \"Failed\""
+      "value": "Kesalahan dan kodenya diperlukan jika status adalah \"Gagal\""
     }
   ],
   "l9+EbH": [
     {
       "type": 0,
-      "value": "Description"
+      "value": "Deskripsi"
     }
   ],
   "lA/sHA": [
@@ -8868,13 +9140,13 @@
   "lFWXhc": [
     {
       "type": 0,
-      "value": "Workflow"
+      "value": "Alur kerja"
     }
   ],
   "lK+Vzo": [
     {
       "type": 0,
-      "value": "Secure string"
+      "value": "String aman"
     }
   ],
   "lM9qrG": [
@@ -8904,7 +9176,7 @@
   "lSUNx5": [
     {
       "type": 0,
-      "value": "Action tracking ID"
+      "value": "ID pelacakan tindakan"
     }
   ],
   "lX30/R": [
@@ -8916,7 +9188,7 @@
   "lbq5E1": [
     {
       "type": 0,
-      "value": "Large messages may be split up into smaller requests to the connector to allow large message upload. More details can be found at http://aka.ms/logicapps-chunk#upload-content-in-chunks"
+      "value": "Pesan berukuran besar dapat dibagi menjadi permintaan yang lebih kecil ke konektor untuk memungkinkan pengunggahan pesan berukuran besar. Detail lebih lanjut dapat ditemukan di http://aka.ms/logicapps-chunk#upload-content-in-chunks"
     }
   ],
   "lckgnb": [
@@ -8928,7 +9200,7 @@
   "ldn/IC": [
     {
       "type": 0,
-      "value": "Test"
+      "value": "Uji"
     }
   ],
   "lexzgJ": [
@@ -8966,7 +9238,7 @@
   "lk/Qic": [
     {
       "type": 0,
-      "value": "connector"
+      "value": "konektor"
     }
   ],
   "lkgjxD": [
@@ -8978,13 +9250,13 @@
   "lkmLHk": [
     {
       "type": 0,
-      "value": "Use Schema Editor"
+      "value": "Gunakan Editor Skema"
     }
   ],
   "lqF8H5": [
     {
       "type": 0,
-      "value": "Collapse static result"
+      "value": "Ciutkan hasil statik"
     }
   ],
   "lsH37F": [
@@ -9014,13 +9286,13 @@
   "m4qt/b": [
     {
       "type": 0,
-      "value": "ACL creation failed for connection. Deleting the connection."
+      "value": "Pembuatan ACL gagal karena koneksi. Menghapus koneksi."
     }
   ],
   "m5InJc": [
     {
       "type": 0,
-      "value": "Status Code"
+      "value": "Kode Status"
     }
   ],
   "m7Y6Qf": [
@@ -9032,7 +9304,7 @@
   "m8MjHH": [
     {
       "type": 0,
-      "value": "Enter a value"
+      "value": "Masukkan nilai"
     }
   ],
   "m8Q61y": [
@@ -9100,7 +9372,7 @@
   "mQJXU4": [
     {
       "type": 0,
-      "value": "Run after"
+      "value": "Jalankan setelah"
     }
   ],
   "mUURJW": [
@@ -9127,10 +9399,20 @@
       "value": "Harus diisi. String untuk dikonversi ke huruf kecil. Jika karakter dalam string tidak memiliki huruf kecil yang ekuivalen, karakter meliputi string yang tidak berubah dalam string yang belum dikembalikan."
     }
   ],
+  "maP1K/": [
+    {
+      "type": 1,
+      "value": "count"
+    },
+    {
+      "type": 0,
+      "value": " Minutes"
+    }
+  ],
   "mb1XDD": [
     {
       "type": 0,
-      "value": "Actual value"
+      "value": "Nilai aktual"
     }
   ],
   "mca3Ml": [
@@ -9154,7 +9436,7 @@
   "mgD2ZT": [
     {
       "type": 0,
-      "value": "Summary"
+      "value": "Ringkasan"
     }
   ],
   "mjS/k1": [
@@ -9200,7 +9482,7 @@
   "mxSILx": [
     {
       "type": 0,
-      "value": "Queries"
+      "value": "Kueri"
     }
   ],
   "n+F7e2": [
@@ -9212,7 +9494,7 @@
   "n+sJ5W": [
     {
       "type": 0,
-      "value": "Published by"
+      "value": "Diterbitkan oleh"
     }
   ],
   "n20T2h": [
@@ -9266,7 +9548,7 @@
   "nN1ezT": [
     {
       "type": 0,
-      "value": "Start with a blank workflow to build your integration process from scratch."
+      "value": "Mulai dengan alur kerja kosong untuk membangun proses integrasi Anda dari awal."
     }
   ],
   "nNWAAh": [
@@ -9278,7 +9560,7 @@
   "nODesn": [
     {
       "type": 0,
-      "value": "Source"
+      "value": "Sumber"
     }
   ],
   "nOWGAV": [
@@ -9302,7 +9584,7 @@
   "nRjpgk": [
     {
       "type": 0,
-      "value": "Sample data"
+      "value": "Data sampel"
     }
   ],
   "nRpM02": [
@@ -9332,7 +9614,7 @@
   "nV2Spt": [
     {
       "type": 0,
-      "value": "Operation details panel"
+      "value": "Panel detail operasi"
     }
   ],
   "nVDG00": [
@@ -9374,7 +9656,7 @@
   "nhEgHb": [
     {
       "type": 0,
-      "value": "By"
+      "value": "Oleh"
     }
   ],
   "njGstq": [
@@ -9398,7 +9680,7 @@
   "no+blV": [
     {
       "type": 0,
-      "value": "Cancel"
+      "value": "Batal"
     }
   ],
   "no/SMg": [
@@ -9410,13 +9692,13 @@
   "nr6bPd": [
     {
       "type": 0,
-      "value": "Open Test panel"
+      "value": "Buka panel Uji"
     }
   ],
   "nuNBYE": [
     {
       "type": 0,
-      "value": "Path"
+      "value": "Jalur"
     }
   ],
   "nwLd4b": [
@@ -9484,7 +9766,7 @@
   "o6x5J4": [
     {
       "type": 0,
-      "value": "Create expression"
+      "value": "Buat ekspresi"
     }
   ],
   "o7bd1o": [
@@ -9497,6 +9779,16 @@
     {
       "type": 0,
       "value": "Wajib. Ini adalah dataURI yang dikodekan menjadi representasi biner."
+    }
+  ],
+  "oBAL2F": [
+    {
+      "type": 1,
+      "value": "count"
+    },
+    {
+      "type": 0,
+      "value": " Days"
     }
   ],
   "oDHXKh": [
@@ -9520,13 +9812,13 @@
   "oOGTSo": [
     {
       "type": 0,
-      "value": "Connected"
+      "value": "Tersambung"
     }
   ],
   "oPKLDZ": [
     {
       "type": 0,
-      "value": "Delete switch case"
+      "value": "Hapus kasus switch"
     }
   ],
   "oQjIWf": [
@@ -9562,7 +9854,7 @@
   "oWAB0H": [
     {
       "type": 0,
-      "value": "Parameters"
+      "value": "Parameter"
     }
   ],
   "oZMhX/": [
@@ -9574,7 +9866,7 @@
   "ocW+RF": [
     {
       "type": 0,
-      "value": "Details"
+      "value": "Detail"
     }
   ],
   "odQ554": [
@@ -9583,10 +9875,20 @@
       "value": "Isi respons"
     }
   ],
+  "og5JOA": [
+    {
+      "type": 1,
+      "value": "count"
+    },
+    {
+      "type": 0,
+      "value": " Millisecond"
+    }
+  ],
   "ohpbkw": [
     {
       "type": 0,
-      "value": "Exponential interval"
+      "value": "Interval eksponensial"
     }
   ],
   "onXUu0": [
@@ -9598,13 +9900,13 @@
   "oqgNX3": [
     {
       "type": 0,
-      "value": "Workflow name"
+      "value": "Nama alur kerja"
     }
   ],
   "osln7P": [
     {
       "type": 0,
-      "value": "URL decodes the input string"
+      "value": "URL mendekodekan string input"
     }
   ],
   "ox2Ou7": [
@@ -9616,7 +9918,7 @@
   "oxCSqB": [
     {
       "type": 0,
-      "value": "You can edit parameters here or in designer."
+      "value": "Anda dapat mengedit parameter di sini atau di desainer."
     }
   ],
   "oxXV4+": [
@@ -9628,7 +9930,7 @@
   "oxcHvs": [
     {
       "type": 0,
-      "value": "Remove list of multi options"
+      "value": "Hapus daftar multi opsi"
     }
   ],
   "p/0r2N": [
@@ -9670,7 +9972,7 @@
   "pH6ubt": [
     {
       "type": 0,
-      "value": "Details"
+      "value": "Detail"
     }
   ],
   "pIczsS": [
@@ -9724,7 +10026,7 @@
   "pfmki/": [
     {
       "type": 0,
-      "value": "Specify the behavior and capabilities for transferring content over HTTP."
+      "value": "Tentukan perilaku dan kemampuan untuk mentransfer konten melalui HTTP."
     }
   ],
   "piaRy6": [
@@ -9736,7 +10038,7 @@
   "pjC3M9": [
     {
       "type": 0,
-      "value": "Suggested expression"
+      "value": "Ekspresi yang disarankan"
     }
   ],
   "pozypE": [
@@ -9748,7 +10050,7 @@
   "pqprxZ": [
     {
       "type": 0,
-      "value": "Configure connections to authenticate and link your workflows with services and applications."
+      "value": "Konfigurasikan koneksi untuk mengautentikasi dan menautkan alur kerja Anda dengan layanan dan aplikasi."
     }
   ],
   "pr9GwA": [
@@ -9766,7 +10068,7 @@
   "pykp8c": [
     {
       "type": 0,
-      "value": "Blank workflow"
+      "value": "Alur kerja kosong"
     }
   ],
   "q/+Uex": [
@@ -9814,7 +10116,7 @@
   "q5lttG": [
     {
       "type": 0,
-      "value": "Undo"
+      "value": "Batalkan"
     }
   ],
   "q87X20": [
@@ -9864,7 +10166,7 @@
   "qMFpNH": [
     {
       "type": 0,
-      "value": "Loading dynamic data"
+      "value": "Memuat data dinamis"
     }
   ],
   "qSejoi": [
@@ -9937,7 +10239,7 @@
   "qp3gCy": [
     {
       "type": 0,
-      "value": "Insert link"
+      "value": "Sisipkan tautan"
     }
   ],
   "qr1lLG": [
@@ -9963,7 +10265,7 @@
   "qsL/fE": [
     {
       "type": 0,
-      "value": "Delete parameter"
+      "value": "Hapus parameter"
     }
   ],
   "qxw9UO": [
@@ -10041,13 +10343,13 @@
   "rHySVF": [
     {
       "type": 0,
-      "value": "Missing information for workflows creation"
+      "value": "Informasi tidak ada untuk pembuatan alur kerja"
     }
   ],
   "rMYBfw": [
     {
       "type": 0,
-      "value": "Make the field optional"
+      "value": "Buat bidang menjadi opsional"
     }
   ],
   "rNi5Y3": [
@@ -10103,7 +10405,7 @@
   "rl9UOO": [
     {
       "type": 0,
-      "value": "Connections cannot be edited in pinned view. Release the pinned action to make connection changes."
+      "value": "Connections tidak dapat diedit dalam tampilan tersemat. Lepaskan tindakan yang disematkan untuk membuat perubahan koneksi."
     }
   ],
   "rsdJcV": [
@@ -10116,6 +10418,12 @@
     {
       "type": 0,
       "value": "Tambah baru"
+    }
+  ],
+  "rwrlsB": [
+    {
+      "type": 0,
+      "value": "Masalah Peta"
     }
   ],
   "rxIJfD": [
@@ -10139,13 +10447,13 @@
   "s0Qaot": [
     {
       "type": 0,
-      "value": "Workflow Parameters Panel"
+      "value": "Panel Parameter Alur Kerja"
     }
   ],
   "s5AOpV": [
     {
       "type": 0,
-      "value": "Card title"
+      "value": "Judul kartu"
     }
   ],
   "s5RV9B": [
@@ -10184,10 +10492,20 @@
       "value": "Batalkan pembuatan koneksi"
     }
   ],
+  "sJQee6": [
+    {
+      "type": 1,
+      "value": "count"
+    },
+    {
+      "type": 0,
+      "value": " Hours"
+    }
+  ],
   "sKy720": [
     {
       "type": 0,
-      "value": "Must provide value for workflow name."
+      "value": "Harus memberikan nilai untuk nama alur kerja."
     }
   ],
   "sRpETS": [
@@ -10205,7 +10523,7 @@
   "sVcvcG": [
     {
       "type": 0,
-      "value": "Basics"
+      "value": "Dasar"
     }
   ],
   "sYQDN+": [
@@ -10241,7 +10559,7 @@
   "sfTqHY": [
     {
       "type": 0,
-      "value": "Close panel"
+      "value": "Tutup panel"
     }
   ],
   "shF9tZ": [
@@ -10339,7 +10657,7 @@
   "t0tN4J": [
     {
       "type": 0,
-      "value": "Code view"
+      "value": "Tampilan kode"
     }
   ],
   "t7ytOJ": [
@@ -10375,7 +10693,7 @@
   "tGSsgZ": [
     {
       "type": 0,
-      "value": "select an identity"
+      "value": "Pilih identitas"
     }
   ],
   "tH2pT1": [
@@ -10429,13 +10747,13 @@
   "tQIXhy": [
     {
       "type": 0,
-      "value": "Original expression"
+      "value": "Ekspresi asli"
     }
   ],
   "tRe2Ct": [
     {
       "type": 0,
-      "value": "Name"
+      "value": "Nama"
     }
   ],
   "tTIsTX": [
@@ -10503,7 +10821,7 @@
   "tbl/ar": [
     {
       "type": 0,
-      "value": "No items"
+      "value": "Tidak ada item"
     }
   ],
   "td5//c": [
@@ -10521,19 +10839,19 @@
   "tjQdhq": [
     {
       "type": 0,
-      "value": "Type"
+      "value": "Jenis"
     }
   ],
   "toWTrl": [
     {
       "type": 0,
-      "value": "Search"
+      "value": "Cari"
     }
   ],
   "tooc6v": [
     {
       "type": 0,
-      "value": "Switch '"
+      "value": "Beralih '"
     },
     {
       "type": 1,
@@ -10541,7 +10859,7 @@
     },
     {
       "type": 0,
-      "value": "' to the local time"
+      "value": "' ke waktu lokal"
     }
   ],
   "tqqUHX": [
@@ -10553,7 +10871,7 @@
   "tt1pJC": [
     {
       "type": 0,
-      "value": "You will lose all unsaved changes. Are you sure you want to discard the changes?"
+      "value": "Anda akan kehilangan semua perubahan yang belum disimpan. Anda yakin ingin membuang perubahan?"
     }
   ],
   "tu4TTM": [
@@ -10565,13 +10883,13 @@
   "twr0pi": [
     {
       "type": 0,
-      "value": "Copy trigger"
+      "value": "Salin pemicu"
     }
   ],
   "tzeDPE": [
     {
       "type": 0,
-      "value": "State type"
+      "value": "Tipe status"
     }
   ],
   "u81zB9": [
@@ -10595,13 +10913,13 @@
   "uEI5Wo": [
     {
       "type": 0,
-      "value": "Value"
+      "value": "Nilai"
     }
   ],
   "uIgGKj": [
     {
       "type": 0,
-      "value": "Managed identity"
+      "value": "Identitas terkelola"
     }
   ],
   "uIurld": [
@@ -10647,7 +10965,7 @@
   "uSr3WX": [
     {
       "type": 0,
-      "value": "Connection name"
+      "value": "Nama koneksi"
     }
   ],
   "uTTbhk": [
@@ -10674,12 +10992,6 @@
       "value": "Maaf, kapasitas Copilot sedang penuh dan sementara tidak tersedia — coba beberapa saat lagi."
     }
   ],
-  "uanMWm": [
-    {
-      "type": 0,
-      "value": "Berhasil"
-    }
-  ],
   "uc/PoD": [
     {
       "type": 0,
@@ -10701,7 +11013,7 @@
   "udnt8c": [
     {
       "type": 0,
-      "value": "Secure object"
+      "value": "Objek aman"
     }
   ],
   "uesaee": [
@@ -10731,7 +11043,7 @@
   "umLmPm": [
     {
       "type": 0,
-      "value": "Operation Panel"
+      "value": "Panel Operasi"
     }
   ],
   "unMG8m": [
@@ -10803,7 +11115,7 @@
   "uzj2d3": [
     {
       "type": 0,
-      "value": "Close panel"
+      "value": "Tutup panel"
     }
   ],
   "uzsleE": [
@@ -10815,7 +11127,7 @@
   "v+FA8N": [
     {
       "type": 0,
-      "value": "Local time"
+      "value": "Waktu lokal"
     }
   ],
   "v+keTP": [
@@ -10833,7 +11145,7 @@
   "v4JmCE": [
     {
       "type": 0,
-      "value": "Please explain how you would like to update your expression: \""
+      "value": "Jelaskan bagaimana Anda ingin memperbarui ekspresi: \""
     },
     {
       "type": 1,
@@ -10871,13 +11183,13 @@
   "vNqq43": [
     {
       "type": 0,
-      "value": "Add loop"
+      "value": "Tambahkan pengulangan"
     }
   ],
   "vO/I7P": [
     {
       "type": 0,
-      "value": "Switch '"
+      "value": "Beralih '"
     },
     {
       "type": 1,
@@ -10885,7 +11197,7 @@
     },
     {
       "type": 0,
-      "value": "' to the UTC time format"
+      "value": "' ke format waktu UTC"
     }
   ],
   "vQcQkU": [
@@ -10924,6 +11236,12 @@
       "value": "Untuk membuat dan menggunakan koneksi API, Anda harus memiliki identitas terkelola yang dikonfigurasi di aplikasi logika ini."
     }
   ],
+  "vhwaYb": [
+    {
+      "type": 0,
+      "value": "Bungkus semua string nilai kustom dan nilai DateTime dalam tanda kutip ganda. Misalnya, \"abc\"."
+    }
+  ],
   "viee6C": [
     {
       "type": 0,
@@ -10945,7 +11263,7 @@
   "voRDKP": [
     {
       "type": 0,
-      "value": "Headers"
+      "value": "Header"
     }
   ],
   "vr70Gn": [
@@ -10986,16 +11304,22 @@
       "value": "Berisi nilai duplikat"
     }
   ],
+  "vzXXFP": [
+    {
+      "type": 0,
+      "value": "Workflow version"
+    }
+  ],
   "w+7aGo": [
     {
       "type": 0,
-      "value": "Connections list"
+      "value": "daftar Connections"
     }
   ],
   "w+t06Q": [
     {
       "type": 0,
-      "value": "Select fields"
+      "value": "Pilih bidang"
     }
   ],
   "w0pI5M": [
@@ -11022,10 +11346,20 @@
       "value": "Ciutkan"
     }
   ],
+  "wAg9+z": [
+    {
+      "type": 1,
+      "value": "count"
+    },
+    {
+      "type": 0,
+      "value": " Hour"
+    }
+  ],
   "wBBu4g": [
     {
       "type": 0,
-      "value": "Missing information for workflow creation"
+      "value": "Informasi tidak ada untuk pembuatan alur kerja"
     }
   ],
   "wEaGWn": [
@@ -11049,7 +11383,7 @@
   "wG8fwz": [
     {
       "type": 0,
-      "value": "Bullet list"
+      "value": "Daftar poin"
     }
   ],
   "wGYmui": [
@@ -11061,7 +11395,7 @@
   "wKJdDk": [
     {
       "type": 0,
-      "value": "Unsupported token type: "
+      "value": "Tipe token yang tidak didukung: "
     },
     {
       "type": 1,
@@ -11083,7 +11417,7 @@
   "wPjnM9": [
     {
       "type": 0,
-      "value": "Paste a parallel action"
+      "value": "Tempel tindakan paralel"
     }
   ],
   "wPlTDB": [
@@ -11107,7 +11441,7 @@
   "wTaSTp": [
     {
       "type": 0,
-      "value": "Please save the map before testing"
+      "value": "Simpan peta sebelum pengujian"
     }
   ],
   "wV3Lmd": [
@@ -11131,13 +11465,13 @@
   "wXLEcJ": [
     {
       "type": 0,
-      "value": "Insert data from previous step (you can also add by typing Alt + / in the editor)"
+      "value": "Sisipkan data dari langkah sebelumnya (Anda juga dapat menambahkannya dengan mengetik Alt + / di editor)"
     }
   ],
   "wYzIf2": [
     {
       "type": 0,
-      "value": "Unsupported token type: "
+      "value": "Tipe token yang tidak didukung: "
     },
     {
       "type": 1,
@@ -11147,13 +11481,13 @@
   "wfekJ7": [
     {
       "type": 0,
-      "value": "Type"
+      "value": "Jenis"
     }
   ],
   "wjiptl": [
     {
       "type": 0,
-      "value": "Node Search Panel"
+      "value": "Panel Pencarian Node"
     }
   ],
   "wkvUUA": [
@@ -11196,6 +11530,12 @@
     {
       "type": 0,
       "value": "Canvas"
+    }
+  ],
+  "wx/ZQP": [
+    {
+      "type": 0,
+      "value": "Tambahkan Input"
     }
   ],
   "wxaQwD": [
@@ -11255,7 +11595,7 @@
   "xDHpeS": [
     {
       "type": 0,
-      "value": "Review your settings, ensure everything is correctly set up, and create your workflow."
+      "value": "Tinjau pengaturan Anda, pastikan semuanya disiapkan dengan benar, dan buat alur kerja Anda."
     }
   ],
   "xFQXAI": [
@@ -11267,7 +11607,7 @@
   "xHyhqO": [
     {
       "type": 0,
-      "value": "Optimized for low latency"
+      "value": "Dioptimalkan untuk latensi rendah"
     }
   ],
   "xJ6vjn": [
@@ -11285,13 +11625,13 @@
   "xK8r1/": [
     {
       "type": 0,
-      "value": "Run information loading"
+      "value": "Jalankan pemuatan informasi"
     }
   ],
   "xMgLd8": [
     {
       "type": 0,
-      "value": "Minimum interval"
+      "value": "Interval minimum"
     }
   ],
   "xN3GEX": [
@@ -11342,6 +11682,16 @@
       "value": "Menghasilkan jalur dari URI. Jika jalur tidak ditentukan, akan menghasilkan '/'"
     }
   ],
+  "xfXUGz": [
+    {
+      "type": 1,
+      "value": "count"
+    },
+    {
+      "type": 0,
+      "value": " Minute"
+    }
+  ],
   "xi2tn6": [
     {
       "type": 0,
@@ -11363,7 +11713,7 @@
   "xwB12G": [
     {
       "type": 0,
-      "value": "Enter another option"
+      "value": "Masukkan opsi lain"
     }
   ],
   "xwD1VZ": [
@@ -11381,7 +11731,7 @@
   "y+eYFf": [
     {
       "type": 0,
-      "value": "Workflow parameters"
+      "value": "Parameter alur kerja"
     }
   ],
   "y1e9yw": [
@@ -11405,7 +11755,7 @@
   "y6aoMi": [
     {
       "type": 0,
-      "value": "Show Logic App run details"
+      "value": "Tampilkan detail pelaksanakan Aplikasi Logika"
     }
   ],
   "yB6PB/": [
@@ -11423,7 +11773,7 @@
   "yENrOg": [
     {
       "type": 0,
-      "value": "here"
+      "value": "di sini"
     }
   ],
   "yF2R//": [
@@ -11435,7 +11785,7 @@
   "yKNKV/": [
     {
       "type": 0,
-      "value": "Try a different search term or remove filters"
+      "value": "Coba istilah pencarian lain atau hapus filter"
     }
   ],
   "yKOsmK": [
@@ -11453,13 +11803,13 @@
   "yOyeBT": [
     {
       "type": 0,
-      "value": "Toggle minimap"
+      "value": "Hidupkan/matikan peta mini"
     }
   ],
   "yQ6+nV": [
     {
       "type": 0,
-      "value": "Connect"
+      "value": "Sambungkan"
     }
   ],
   "yRDuqj": [
@@ -11495,7 +11845,7 @@
   "yeagrz": [
     {
       "type": 0,
-      "value": "Ideal for request-response and processing IoT events"
+      "value": "Ideal untuk permintaan-respons dan pemrosesan kejadian IoT"
     }
   ],
   "yjierd": [
@@ -11515,7 +11865,7 @@
   "yjjXCQ": [
     {
       "type": 0,
-      "value": "Close panel"
+      "value": "Tutup panel"
     }
   ],
   "yk7L+4": [
@@ -11539,7 +11889,7 @@
   "yqF/Ew": [
     {
       "type": 0,
-      "value": "Search workflow actions"
+      "value": "Cari tindakan alur kerja"
     }
   ],
   "yqRrQ/": [
@@ -11575,7 +11925,7 @@
   "yxctQw": [
     {
       "type": 0,
-      "value": "Logical name"
+      "value": "Nama logis"
     }
   ],
   "yzqXMp": [
@@ -11597,7 +11947,7 @@
   "z/vIwi": [
     {
       "type": 0,
-      "value": "Data handling"
+      "value": "Penanganan Data"
     }
   ],
   "z3VuE+": [
@@ -11609,7 +11959,7 @@
   "z5H3GF": [
     {
       "type": 0,
-      "value": "Display name"
+      "value": "Nama tampilan"
     }
   ],
   "z9kH+0": [
@@ -11639,13 +11989,13 @@
   "zK5VPq": [
     {
       "type": 0,
-      "value": "Workflows in this Accelerator"
+      "value": "Alur kerja dalam Akselerator ini"
     }
   ],
   "zMKxg9": [
     {
       "type": 0,
-      "value": "Name does not match the given pattern."
+      "value": "Nama tidak cocok dengan pola yang diberikan."
     }
   ],
   "zNesUZ": [
@@ -11663,7 +12013,7 @@
   "zPRSM9": [
     {
       "type": 0,
-      "value": "App identity is not configured on the logic app environment variables."
+      "value": "Identitas aplikasi tidak dikonfigurasi pada variabel lingkungan aplikasi logika."
     }
   ],
   "zUWAsJ": [
@@ -11723,7 +12073,7 @@
   "zkqKJ+": [
     {
       "type": 0,
-      "value": "Body"
+      "value": "Isi"
     }
   ],
   "znGyyU": [
@@ -11747,7 +12097,7 @@
   "zxF7g+": [
     {
       "type": 0,
-      "value": "A to Z, ascending"
+      "value": "A ke Z, naik"
     }
   ],
   "zxe9hh": [

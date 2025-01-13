@@ -466,8 +466,14 @@ const initializeOutputTokensForOperations = (
           nodesWithData[operationId]?.settings
         )
       );
-    } catch (_e) {
+    } catch (error: any) {
       // No tokens will be added if there is an exception. This will allow continuining loading other operations.
+      const errorMessage = parseErrorMessage(error);
+      LoggerService().log({
+        level: LogEntryLevel.Warning,
+        area: 'OperationDeserializer:InitializeOutputTokens',
+        message: `Error initializing output tokens for operation - ${operationId}. Error details - ${errorMessage}`,
+      });
     }
 
     result[operationId] = nodeTokens;

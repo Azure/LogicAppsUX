@@ -18,6 +18,7 @@ import type { FluentIcon } from '@fluentui/react-icons';
 type PanelProps = {
   id: string;
   isOpen: boolean;
+  position?: 'start' | 'end';
   title?: {
     text: string;
     icon?: FluentIcon;
@@ -46,10 +47,10 @@ type PanelProps = {
 
 export const Panel = (props: PanelProps) => {
   const defaultStyles = useStyles();
-  const { title, body, isOpen, styles, search, footer } = props;
+  const { title, body, isOpen, styles, search, footer, position } = props;
 
   return (
-    <InlineDrawer className={mergeClasses(defaultStyles.root, styles?.root)} open={isOpen}>
+    <InlineDrawer className={mergeClasses(defaultStyles.root, styles?.root)} open={isOpen} position={position}>
       {title ? (
         <DrawerHeader className={mergeClasses(defaultStyles.header, styles?.header)}>
           <DrawerHeaderTitle action={title?.rightAction} heading={{ as: 'div' }}>

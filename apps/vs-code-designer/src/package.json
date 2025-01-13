@@ -1,7 +1,7 @@
 {
   "name": "vscode-azurelogicapps",
   "displayName": "Azure Logic Apps (Standard)",
-  "version": "5.8.0",
+  "version": "5.21.0",
   "aiKey": "setInGitHubBuild",
   "repository": "https://github.com/Azure/LogicAppsUX",
   "main": "main.js",
@@ -141,6 +141,12 @@
         "command": "azureLogicAppsStandard.openOverview",
         "title": "Overview",
         "category": "Azure Logic Apps"
+      },
+      {
+        "command": "azureLogicAppsStandard.cloudToLocal",
+        "title": "Create new logic app workspace from package...",
+        "category": "Azure Logic Apps",
+        "preview": true
       },
       {
         "command": "azureLogicAppsStandard.exportLogicApp",
@@ -390,6 +396,10 @@
         {
           "command": "azureLogicAppsStandard.exportLogicApp",
           "group": "3_export@1"
+        },
+        {
+          "command": "azureLogicAppsStandard.cloudToLocal",
+          "group": "4_create@3"
         }
       ],
       "view/title": [
@@ -982,6 +992,7 @@
     "onCommand:azureLogicAppsStandard.deleteLogicApp",
     "onCommand:azureLogicAppsStandard.openOverview",
     "onCommand:azureLogicAppsStandard.exportLogicApp",
+    "onCommand:azureLogicAppsStandard.cloudToLocal",
     "onCommand:azureLogicAppsStandard.reviewValidation",
     "onCommand:azureLogicAppsStandard.switchToDotnetProject",
     "onCommand:azureLogicAppsStandard.openInPortal",

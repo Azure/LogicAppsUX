@@ -1,6 +1,9 @@
 import renderer from 'react-test-renderer';
 import { StatusIcon } from '../statusicon';
-import { describe, vi, beforeEach, afterEach, beforeAll, afterAll, it, test, expect } from 'vitest';
+import { describe, it, expect } from 'vitest';
+import React from 'react';
+import { IntlProvider } from 'react-intl';
+
 describe('lib/monitoring/statuspill/statusicon', () => {
   for (const { hasRetries, status } of [
     { hasRetries: false, status: 'Aborted' },
@@ -15,8 +18,13 @@ describe('lib/monitoring/statuspill/statusicon', () => {
     { hasRetries: false, status: 'Waiting' },
   ]) {
     it(`renders (status = ${status}, has retries = ${hasRetries})`, () => {
-      const tree = renderer.create(<StatusIcon hasRetries={hasRetries} status={status} />).toJSON();
-      expect(tree).toMatchSnapshot();
+      const iconComponent = (
+        <IntlProvider locale="en">
+          <StatusIcon hasRetries={hasRetries} status={status} />
+        </IntlProvider>
+      );
+      const icon = renderer.create(iconComponent).toJSON();
+      expect(icon).toMatchSnapshot();
     });
   }
 });

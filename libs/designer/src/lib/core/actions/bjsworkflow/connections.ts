@@ -36,6 +36,8 @@ import {
   ConnectionReferenceKeyFormat,
   getRecordEntry,
   UserPreferenceService,
+  LoggerService,
+  LogEntryLevel,
 } from '@microsoft/logic-apps-shared';
 import type { Dispatch } from '@reduxjs/toolkit';
 import { createAsyncThunk } from '@reduxjs/toolkit';
@@ -260,7 +262,14 @@ export const getConnectionMappingForNode = (
       }
     }
     return Promise.resolve(undefined);
-  } catch (exception) {
+  } catch (error) {
+    const errorMessage = `Failed to get connection mapping for node: ${error}`;
+    LoggerService().log({
+      level: LogEntryLevel.Error,
+      area: 'getConnectionMappingForNode',
+      message: errorMessage,
+      error: error instanceof Error ? error : undefined,
+    });
     return Promise.resolve(undefined);
     // log exception
   }
@@ -310,8 +319,14 @@ export async function getManifestBasedConnectionMapping(
     }
 
     return connectionReferenceKey ? { [nodeId]: connectionReferenceKey } : undefined;
-  } catch (exception) {
-    // log exception
+  } catch (error) {
+    const errorMessage = `Failed to get manifest based connection mapping: ${error}`;
+    LoggerService().log({
+      level: LogEntryLevel.Error,
+      area: 'getManifestBasedConnectionMapping',
+      message: errorMessage,
+      error: error instanceof Error ? error : undefined,
+    });
     return Promise.resolve(undefined);
   }
 }

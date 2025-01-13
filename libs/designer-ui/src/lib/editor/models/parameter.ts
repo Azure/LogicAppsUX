@@ -43,6 +43,7 @@ export interface ParameterDetails {
   dependencies?: InputDependencies;
   encode?: string;
   format?: string;
+  collectionFormat?: string;
   in?: string;
   isDynamic?: boolean;
   dynamicParameterReference?: string;

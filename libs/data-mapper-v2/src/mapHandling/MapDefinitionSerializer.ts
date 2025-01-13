@@ -41,6 +41,7 @@ interface FailedMapDefinition {
 interface SuccessfulMapDefinition {
   isSuccess: true;
   definition: string;
+  warnings?: string[];
 }
 
 export const convertToMapDefinition = (
@@ -145,10 +146,10 @@ const createSourcePath = (
   connections: ConnectionDictionary,
   input: InputConnection,
   array: PathItem[]
-): string => {
+): string | undefined => {
   if (isFinalPath) {
     // Handle custom values, source schema nodes, or Functions applied to the current target schema node
-    let value = '';
+    let value: string | undefined = '';
     if (input && !isEmptyConnection(input)) {
       if (isCustomValueConnection(input)) {
         value = input.value;
@@ -168,6 +169,8 @@ const createSourcePath = (
           array.some((arrayItems) => arrayItems.repeating)
         );
       }
+    } else if (input && isEmptyConnection(input)) {
+      value = undefined;
     }
     return value;
 
@@ -199,7 +202,7 @@ const createNewPathItems = (input: InputConnection, targetNode: SchemaNodeExtend
 
   // build the target section of the yml starting with 'root' going down to the target node
   const lastLoop = { loop: '' };
-  targetNode.pathToRoot.forEach((targetPath, index, pathToRoot) => {
+  targetNode.pathToRoot.forEach((targetPath, _index, pathToRoot) => {
     const connectionsIntoCurrentTargetPath = connections[addTargetReactFlowPrefix(targetPath.key)];
 
     // If there is no rootTargetConnection that means there is a looping node in the source structure, but we aren't using it
@@ -220,6 +223,10 @@ const createNewPathItems = (input: InputConnection, targetNode: SchemaNodeExtend
       const isFinalPath = targetNode.key === targetPath.key;
 
       let formattedLmlSnippetForSource = createSourcePath(newPath, isFinalPath, targetPath, connections, input, pathToRoot);
+
+      if (formattedLmlSnippetForSource === undefined) {
+        return;
+      }
 
       // construct source side of LML for connection
       if (isFinalPath) {
@@ -310,7 +317,7 @@ const addLoopingForToNewPathItems = (
   rootTargetConnection: Connection,
   connections: ConnectionDictionary,
   newPath: OutputPathItem[],
-  currentLoop: { loop: string }
+  currentSourceLoop: { loop: string }
 ) => {
   const rootSourceNodes = [...rootTargetConnection.inputs];
 
@@ -371,11 +378,17 @@ const addLoopingForToNewPathItems = (
           addConditionalToNewPathItems(connections[sourceNode.reactFlowKey], connections, newPath);
           prevPathItemWasConditional = true;
         } else {
-          // Loop with an index
+          // Loop with an index or sequence
           if (!prevPathItemWasConditional) {
             const functionKey = sourceNode.reactFlowKey;
             const functionConnection = connections[functionKey];
-            const sequenceValueResult = collectSequenceValue(sourceNode.node, functionConnection, connections, true);
+            const sequenceValueResult = collectSequenceValue(
+              sourceNode.node,
+              functionConnection,
+              connections,
+              true,
+              currentSourceLoop.loop
+            );
 
             newPath.forEach((pathItem) => {
               const extractedScope = extractScopeFromLoop(pathItem.key);
@@ -393,6 +406,8 @@ const addLoopingForToNewPathItems = (
             } else {
               loopValue = `${mapNodeParams.for}(${sequenceValueResult.sequenceValue})`;
             }
+
+            currentSourceLoop.loop = sequenceValueResult.rootLoop;
 
             // For entry
             newPath.push({ key: loopValue });
@@ -413,7 +428,7 @@ const addLoopingForToNewPathItems = (
 
           // For entry
           newPath.push({ key: loopValue });
-          currentLoop.loop = sourceNode.node.key;
+          currentSourceLoop.loop = sourceNode.node.key;
         }
 
         prevPathItemWasConditional = false;
