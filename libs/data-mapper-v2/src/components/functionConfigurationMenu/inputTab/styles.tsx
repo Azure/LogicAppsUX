@@ -56,6 +56,7 @@ export const useStyles = makeStyles({
   listButton: {
     width: '40px',
     maxWidth: '40px',
+    paddingTop: '0px',
   },
   addButton: {
     paddingLeft: '0px',
@@ -69,6 +70,7 @@ export const useStyles = makeStyles({
     justifyContent: 'space-between',
   },
   draggableListItem: {
+    marginTop: '5px',
     maxHeight: 'fit-content',
   },
 });
