@@ -317,7 +317,7 @@ export const InputDropdown = ({
           </Option>
         )}
       </Combobox>
-      <Caption2>{typeValidationMessage}</Caption2>
+      <Caption2 className={styles.validationWarningmessage}>{typeValidationMessage}</Caption2>
     </Stack>
   );
 };
