@@ -416,7 +416,7 @@ export default class DataMapperPanel {
     });
   }
 
-  public addSchemaFromFile(schemaType: SchemaType) {
+  public addSchemaFromFile(_schemaType: SchemaType) {
     callWithTelemetryAndErrorHandlingSync(
       extensionCommand.dataMapAddSchemaFromFile,
       (_context: IActionContext) => {
@@ -434,29 +434,43 @@ export default class DataMapperPanel {
           workspace.fs.readFile(selectedFile).then((fileContents) => {
             const text = Buffer.from(fileContents).toString("utf-8");
 
-            // Check that the schema file dependency exists in the same directory as the primary schema file
-            if (!fileExistsSync(expectedPrimarySchemaPath)) {
-              ext.showError(
-                localize(
-                  "SchemaLoadingError",
-                  `Schema loading error: couldn't find schema file dependency 
-                        "{0}" in the same directory as "{1}". "{1}" will still be copied to the Schemas folder.`,
-                  schemaFile,
-                  expectedPrimarySchemaPath
-                )
-              );
-              return;
-            }
+            const schemaFileDependencies = [
+              ...text.matchAll(/schemaLocation="[A-Za-z.]*"/g),
+            ].map((schemaFileAttributeMatch) => {
+              // Trim down to just the filename
+              return schemaFileAttributeMatch[0].split('"')[1];
+            });
 
-            // Check that the schema file dependency doesn't already exist in the Schemas folder
-            const expectedSchemaFilePath = path.join(
-              ext.logicAppWorkspace,
-              schemasPath,
-              schemaFile
-            );
-            if (!fileExistsSync(expectedSchemaFilePath)) {
-              copyFileSync(schemaFilePath, expectedSchemaFilePath);
-            }
+            schemaFileDependencies.forEach((schemaFile) => {
+              const schemaFilePath = path.join(
+                path.dirname(filePath),
+                schemaFile
+              );
+
+              // Check that the schema file dependency exists in the same directory as the primary schema file
+              if (!fileExistsSync(expectedPrimarySchemaPath)) {
+                ext.showError(
+                  localize(
+                    "SchemaLoadingError",
+                    `Schema loading error: couldn't find schema file dependency 
+                        "{0}" in the same directory as "{1}". "{1}" will still be copied to the Schemas folder.`,
+                    schemaFile,
+                    expectedPrimarySchemaPath
+                  )
+                );
+                return;
+              }
+
+              // Check that the schema file dependency doesn't already exist in the Schemas folder
+              const expectedSchemaFilePath = path.join(
+                ext.logicAppWorkspace,
+                schemasPath,
+                schemaFile
+              );
+              if (!fileExistsSync(expectedSchemaFilePath)) {
+                copyFileSync(schemaFilePath, expectedSchemaFilePath);
+              }
+            });
           });
         });
 
