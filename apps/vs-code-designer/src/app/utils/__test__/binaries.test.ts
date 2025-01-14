@@ -1,10 +1,7 @@
-import { describe, it, expect, vi, beforeEach, afterEach, beforeAll, Mock } from 'vitest';
+import { describe, it, expect, vi, beforeEach, afterEach, Mock } from 'vitest';
 import * as fs from 'fs';
-import * as path from 'path';
-import * as os from 'os';
 import axios from 'axios';
 import * as vscode from 'vscode';
-import * as semver from 'semver';
 import {
   downloadAndExtractDependency,
   binariesExist,
@@ -20,17 +17,13 @@ import {
   useBinariesDependencies,
 } from '../binaries';
 import { ext } from '../../../extensionVariables';
-import { DependencyVersion, Platform, dotnetDependencyName, funcPackageName } from '../../../constants';
+import { DependencyVersion, Platform } from '../../../constants';
 import { executeCommand } from '../funcCoreTools/cpUtils';
 import { getNpmCommand } from '../nodeJs/nodeJsVersion';
 import { getGlobalSetting, getWorkspaceSetting, updateGlobalSetting } from '../vsCodeConfig/settings';
 import type { IActionContext } from '@microsoft/vscode-azext-utils';
 import { isNodeJsInstalled } from '../../commands/nodeJs/validateNodeJsInstalled';
 
-// vi.mock('path');
-// vi.mock('os');
-// vi.mock('semver');
-// vi.mock('../../../extensionVariables');
 vi.mock('../funcCoreTools/cpUtils');
 vi.mock('../nodeJs/nodeJsVersion');
 vi.mock('../../../onboarding');
@@ -38,30 +31,57 @@ vi.mock('../vsCodeConfig/settings');
 vi.mock('../../commands/nodeJs/validateNodeJsInstalled');
 
 describe('binaries', () => {
-  //   describe('downloadAndExtractDependency', () => {
-  //     it('should download and extract dependency', async () => {
-  //       const context = {} as IActionContext;
-  //       const downloadUrl = 'https://example.com/dependency.zip';
-  //       const targetFolder = 'targetFolder';
-  //       const dependencyName = 'dependency';
-  //       const folderName = 'folderName';
-  //       const dotNetVersion = '6.0';
+  describe('downloadAndExtractDependency', () => {
+    let context: IActionContext;
 
-  //       (axios as any).mockResolvedValue({
-  //         data: {
-  //           pipe: vi.fn().mockImplementation((writer) => {
-  //             writer.emit('finish');
-  //           }),
-  //         },
-  //       });
+    beforeEach(() => {
+      context = {
+        telemetry: {
+          properties: {},
+        },
+      } as IActionContext;
+    });
 
-  //       await downloadAndExtractDependency(context, downloadUrl, targetFolder, dependencyName, folderName, dotNetVersion);
+    it('should download and extract dependency', async () => {
+      const downloadUrl = 'https://example.com/dependency.zip';
+      const targetFolder = 'targetFolder';
+      const dependencyName = 'dependency';
+      const folderName = 'folderName';
+      const dotNetVersion = '6.0';
 
-  //       expect(fs.mkdirSync).toHaveBeenCalledWith(expect.any(String), { recursive: true });
-  //       expect(fs.chmodSync).toHaveBeenCalledWith(expect.any(String), 0o777);
-  //       expect(executeCommand).toHaveBeenCalledWith(ext.outputChannel, undefined, 'echo', `Downloading dependency from: ${downloadUrl}`);
-  //     });
-  //   });
+      const writer = {
+        on: vi.fn(),
+      } as any;
+
+      (axios.get as Mock).mockResolvedValue({
+        data: {
+          pipe: vi.fn().mockImplementation((writer) => {
+            writer.on('finish');
+          }),
+        },
+      });
+
+      (fs.createWriteStream as Mock).mockReturnValue(writer);
+
+      await downloadAndExtractDependency(context, downloadUrl, targetFolder, dependencyName, folderName, dotNetVersion);
+
+      expect(fs.mkdirSync).toHaveBeenCalledWith(expect.any(String), { recursive: true });
+      expect(fs.chmodSync).toHaveBeenCalledWith(expect.any(String), 0o777);
+      expect(executeCommand).toHaveBeenCalledWith(ext.outputChannel, undefined, 'echo', `Downloading dependency from: ${downloadUrl}`);
+    });
+
+    it('should throw error when the compression file extension is not supported', async () => {
+      const downloadUrl = 'https://example.com/dependency.zip222';
+      const targetFolder = 'targetFolder';
+      const dependencyName = 'dependency';
+      const folderName = 'folderName';
+      const dotNetVersion = '6.0';
+
+      await expect(
+        downloadAndExtractDependency(context, downloadUrl, targetFolder, dependencyName, folderName, dotNetVersion)
+      ).rejects.toThrowError();
+    });
+  });
 
   describe('binariesExist', () => {
     beforeEach(() => {

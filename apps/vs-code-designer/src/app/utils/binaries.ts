@@ -33,7 +33,7 @@ import * as semver from 'semver';
 import * as vscode from 'vscode';
 
 import AdmZip = require('adm-zip');
-import { HTTP_METHODS, isNullOrUndefined } from '@microsoft/logic-apps-shared';
+import { isNullOrUndefined } from '@microsoft/logic-apps-shared';
 
 /**
  * Download and Extracts dependency zip.
@@ -63,15 +63,9 @@ export async function downloadAndExtractDependency(
   const dependencyFileExtension = getCompressionFileExtension(downloadUrl);
   const dependencyFilePath = path.join(tempFolderPath, `${dependencyName}${dependencyFileExtension}`);
 
-  const downloadPromise = axios({
-    method: HTTP_METHODS.GET,
-    url: downloadUrl,
-    responseType: 'stream',
-  });
-
   executeCommand(ext.outputChannel, undefined, 'echo', `Downloading dependency from: ${downloadUrl}`);
 
-  downloadPromise.then((response) => {
+  axios.get(downloadUrl, { responseType: 'stream' }).then((response) => {
     executeCommand(ext.outputChannel, undefined, 'echo', `Creating temporary folder... ${tempFolderPath}`);
     fs.mkdirSync(tempFolderPath, { recursive: true });
     fs.chmodSync(tempFolderPath, 0o777);

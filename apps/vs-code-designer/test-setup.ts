@@ -28,6 +28,9 @@ vi.mock('@microsoft/vscode-azext-utils', () => {
 
 vi.mock('fs', () => ({
   existsSync: vi.fn(),
+  mkdirSync: vi.fn(),
+  chmodSync: vi.fn(),
+  createWriteStream: vi.fn(),
 }));
 
 vi.mock('axios');
