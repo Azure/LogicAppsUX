@@ -128,6 +128,7 @@ export const EditorCommandBar = (_props: EditorCommandBarProps) => {
             area: `${LogCategory.DataMapperDesigner}/onGenerateClick`,
             message: JSON.stringify(error),
           });
+
           dispatchToast(
             <Toast>
               <ToastTitle>{failedXsltMessage}</ToastTitle>
