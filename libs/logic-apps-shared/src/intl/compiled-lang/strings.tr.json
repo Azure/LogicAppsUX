@@ -11,12 +11,6 @@
       "value": "Uyarı: Giriş düğümü türü şema düğümünün türüyle eşleşmiyor"
     }
   ],
-  "+0ua83": [
-    {
-      "type": 0,
-      "value": "Parametreler"
-    }
-  ],
   "+0yxlR": [
     {
       "type": 0,
@@ -521,6 +515,12 @@
       "value": " gösteriliyor."
     }
   ],
+  "0a4IGE": [
+    {
+      "type": 0,
+      "value": "Refresh"
+    }
+  ],
   "0i/6TR": [
     {
       "type": 0,
@@ -739,6 +739,12 @@
     {
       "type": 0,
       "value": "Geçerli bir URI girin."
+    }
+  ],
+  "1tmN2o": [
+    {
+      "type": 0,
+      "value": "Workflow version"
     }
   ],
   "1uGBLP": [
@@ -1309,6 +1315,12 @@
     {
       "type": 0,
       "value": "Yeniden deneme geçmişi"
+    }
+  ],
+  "4rdY7D": [
+    {
+      "type": 0,
+      "value": "Run ID"
     }
   ],
   "4vcnOA": [
@@ -2281,6 +2293,12 @@
       "value": "Daha ayrıntılı bilgi için aşağıdaki kaynaklara başvurabilirsiniz:"
     }
   ],
+  "A5/IqS": [
+    {
+      "type": 0,
+      "value": "Run identifier"
+    }
+  ],
   "A5/UwX": [
     {
       "type": 0,
@@ -2341,6 +2359,16 @@
     {
       "type": 0,
       "value": "Hizmet sorumlusu"
+    }
+  ],
+  "AMMfbt": [
+    {
+      "type": 1,
+      "value": "count"
+    },
+    {
+      "type": 0,
+      "value": " Second"
     }
   ],
   "APKdYG": [
@@ -2985,6 +3013,12 @@
     {
       "type": 0,
       "value": "Tetikleyici türü"
+    }
+  ],
+  "DeM/yz": [
+    {
+      "type": 0,
+      "value": "Start time"
     }
   ],
   "DfXxoX": [
@@ -3943,6 +3977,12 @@
     {
       "type": 0,
       "value": "Grup oluştur"
+    }
+  ],
+  "J8G55j": [
+    {
+      "type": 0,
+      "value": "Search by run identifier"
     }
   ],
   "J9wWry": [
@@ -5251,6 +5291,12 @@
       "value": "Tam ekran"
     }
   ],
+  "QT4IaP": [
+    {
+      "type": 0,
+      "value": "Filtered!"
+    }
+  ],
   "QVtqAn": [
     {
       "type": 0,
@@ -5619,6 +5665,12 @@
       "value": "Durum “Başarısız” olduğunda çıkışlar gösterilmemelidir"
     }
   ],
+  "SbHBIZ": [
+    {
+      "type": 0,
+      "value": "No runs found"
+    }
+  ],
   "SgiTAh": [
     {
       "type": 0,
@@ -5649,6 +5701,12 @@
       "value": "Bitti"
     }
   ],
+  "SwWaHa": [
+    {
+      "type": 0,
+      "value": "Enter a valid run identifier"
+    }
+  ],
   "Sy4cFC": [
     {
       "type": 0,
@@ -5665,6 +5723,12 @@
     {
       "type": 0,
       "value": "Test et"
+    }
+  ],
+  "T/7b2y": [
+    {
+      "type": 0,
+      "value": "Duration"
     }
   ],
   "TDfQzn": [
@@ -6697,12 +6761,6 @@
       "value": "Logic Apps'i yanıtta iş akışı meta veri üst bilgileri eklememek için sınırlandırın."
     }
   ],
-  "XtVOMn": [
-    {
-      "type": 0,
-      "value": "Bir sorun oluştu"
-    }
-  ],
   "XtuP5e": [
     {
       "type": 0,
@@ -7069,6 +7127,16 @@
       "value": "Kapat"
     }
   ],
+  "ZgU5eu": [
+    {
+      "type": 1,
+      "value": "count"
+    },
+    {
+      "type": 0,
+      "value": " Day"
+    }
+  ],
   "ZgyD93": [
     {
       "type": 0,
@@ -7091,12 +7159,6 @@
     {
       "type": 0,
       "value": "Dinamik içerikler hakkında daha fazla bilgi edinin."
-    }
-  ],
-  "ZvAp7m": [
-    {
-      "type": 0,
-      "value": "Kaydet"
     }
   ],
   "ZyDq4/": [
@@ -7145,6 +7207,12 @@
     {
       "type": 0,
       "value": "Yeniden deneme ilkesi maksimum aralığı geçersiz, ISO 8601 süre biçimiyle eşleşmelidir"
+    }
+  ],
+  "aKf/r+": [
+    {
+      "type": 0,
+      "value": "Specified run identifier not found"
     }
   ],
   "aP1wk9": [
@@ -7315,6 +7383,12 @@
     {
       "type": 0,
       "value": "Bu işlem, geçerli iş akışında mevcut olmayan bir belirteç içeriyor."
+    }
+  ],
+  "bPyWVY": [
+    {
+      "type": 0,
+      "value": "Failed to load runs"
     }
   ],
   "bTrk+S": [
@@ -7585,6 +7659,12 @@
       "value": "İndir (Alt veya Option tuşu + seç)"
     }
   ],
+  "d9RCuq": [
+    {
+      "type": 0,
+      "value": "Workflow run status"
+    }
+  ],
   "dBWIjR": [
     {
       "type": 0,
@@ -7785,6 +7865,12 @@
     {
       "type": 0,
       "value": "Bu akışı şunun için düzenleyin:"
+    }
+  ],
+  "eLQPek": [
+    {
+      "type": 0,
+      "value": "Status"
     }
   ],
   "eLthgv": [
@@ -8023,12 +8109,6 @@
       "value": "(UTC-05:00) Haiti"
     }
   ],
-  "fZJWBR": [
-    {
-      "type": 0,
-      "value": "Tasarımcı yükleniyor"
-    }
-  ],
   "faUrud": [
     {
       "type": 0,
@@ -8057,6 +8137,16 @@
     {
       "type": 0,
       "value": "(UTC+08:00) Pekin, Çongçing, Hong Kong, Urumçi"
+    }
+  ],
+  "ft8BH8": [
+    {
+      "type": 1,
+      "value": "count"
+    },
+    {
+      "type": 0,
+      "value": " Seconds"
     }
   ],
   "fvGvnA": [
@@ -8387,6 +8477,16 @@
     {
       "type": 0,
       "value": "Aradığım şey bu değil"
+    }
+  ],
+  "hesDPs": [
+    {
+      "type": 1,
+      "value": "count"
+    },
+    {
+      "type": 0,
+      "value": " Milliseconds"
     }
   ],
   "hihfHd": [
@@ -9361,6 +9461,16 @@
       "value": "Gerekli. Küçük harfe dönüştürülecek dize. Dizedeki bir karakterin küçük harf eşdeğeri yoksa, karakter, döndürülen dizeye değiştirilmeden eklenir."
     }
   ],
+  "maP1K/": [
+    {
+      "type": 1,
+      "value": "count"
+    },
+    {
+      "type": 0,
+      "value": " Minutes"
+    }
+  ],
   "mb1XDD": [
     {
       "type": 0,
@@ -9733,6 +9843,16 @@
       "value": "Gerekli. İkili gösterim olarak kodu çözülecek dataURI."
     }
   ],
+  "oBAL2F": [
+    {
+      "type": 1,
+      "value": "count"
+    },
+    {
+      "type": 0,
+      "value": " Days"
+    }
+  ],
   "oDHXKh": [
     {
       "type": 0,
@@ -9817,10 +9937,14 @@
       "value": "Yanıt gövdesi"
     }
   ],
-  "ohOaXj": [
+  "og5JOA": [
+    {
+      "type": 1,
+      "value": "count"
+    },
     {
       "type": 0,
-      "value": "Hatalar"
+      "value": " Millisecond"
     }
   ],
   "ohpbkw": [
@@ -10437,16 +10561,20 @@
       "value": "Bağlantı oluşturmayı iptal et"
     }
   ],
+  "sJQee6": [
+    {
+      "type": 1,
+      "value": "count"
+    },
+    {
+      "type": 0,
+      "value": " Hours"
+    }
+  ],
   "sKy720": [
     {
       "type": 0,
       "value": "İş akışı adı için değer sağlandı."
-    }
-  ],
-  "sOnphB": [
-    {
-      "type": 0,
-      "value": "Yeniden Gönder"
     }
   ],
   "sRpETS": [
@@ -11177,6 +11305,12 @@
       "value": "Bir API bağlantısı oluşturmak ve kullanmak için bu mantıksal uygulamada yapılandırılmış bir yönetilen kimliğe sahip olmanız gerekir."
     }
   ],
+  "vhwaYb": [
+    {
+      "type": 0,
+      "value": "Tüm özel değer dizesini ve DateTime değerlerini çift tırnak içine alın. Örneğin, \"abc\"."
+    }
+  ],
   "viee6C": [
     {
       "type": 0,
@@ -11235,6 +11369,12 @@
       "value": "Bu yinelenen bir değer içeriyor"
     }
   ],
+  "vzXXFP": [
+    {
+      "type": 0,
+      "value": "Workflow version"
+    }
+  ],
   "w+7aGo": [
     {
       "type": 0,
@@ -11269,6 +11409,16 @@
     {
       "type": 0,
       "value": "Daralt"
+    }
+  ],
+  "wAg9+z": [
+    {
+      "type": 1,
+      "value": "count"
+    },
+    {
+      "type": 0,
+      "value": " Hour"
     }
   ],
   "wBBu4g": [
@@ -11595,6 +11745,16 @@
     {
       "type": 0,
       "value": "Bir URI'den yolu döndürür. Yol belirtilmezse, '/' döndürür"
+    }
+  ],
+  "xfXUGz": [
+    {
+      "type": 1,
+      "value": "count"
+    },
+    {
+      "type": 0,
+      "value": " Minute"
     }
   ],
   "xi2tn6": [

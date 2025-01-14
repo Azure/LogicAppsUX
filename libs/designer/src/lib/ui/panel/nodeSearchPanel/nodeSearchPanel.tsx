@@ -60,6 +60,7 @@ export const NodeSearchPanel = (props: NodeSearchPanelProps) => {
       fuseOptions
     );
   }, [allNodeNames]);
+
   const searchNodeNames = useMemo(() => {
     if (!searchTerm) {
       return allNodeNames;
@@ -72,6 +73,7 @@ export const NodeSearchPanel = (props: NodeSearchPanelProps) => {
     defaultMessage: 'Go to operation',
     id: 'Fx/6sv',
   });
+
   const searchOperation = intl.formatMessage({
     defaultMessage: 'Search for operation',
     id: 'i0XjL5',

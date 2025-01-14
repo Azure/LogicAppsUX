@@ -15354,6 +15354,15 @@
         </Str>
         <Disp Icon="Str" />
       </Item>
+      <Item ItemId=";vhwaYb" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[Wrap all custom value string and DateTime values in double quotes. For example, "abc".]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[모든 사용자 지정 값 문자열 및 DateTime 값을 큰따옴표로 겹치게 래핑합니다. 예: "abc".]]></Val>
+          </Tgt>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
       <Item ItemId=";viee6C" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[Duration]]></Val>

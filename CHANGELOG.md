@@ -1,4 +1,28 @@
 # Logic Apps Designer
+## [5.21.0](https://github.com/Azure/LogicAppsUX/compare/v5.20.0...v5.21.0) (2025-01-11)
+
+
+### Bug Fixes
+
+* **a11y:** Fix auto focus of panel and fix field names ([#6376](https://github.com/Azure/LogicAppsUX/issues/6376)) ([d974754](https://github.com/Azure/LogicAppsUX/commit/d97475446099c59ee36c66371bace26aac9da6fb))
+* **Data Mapper:** Fix circles cutting off ([#6379](https://github.com/Azure/LogicAppsUX/issues/6379)) ([5599c5e](https://github.com/Azure/LogicAppsUX/commit/5599c5ecc71c08913cff07cc34325ef26ec3b908))
+* **Data Mapper:** Sequence function serialization bug ([#6378](https://github.com/Azure/LogicAppsUX/issues/6378)) ([a6e389f](https://github.com/Azure/LogicAppsUX/commit/a6e389f3f8f1a6f9bb42fa41409569d3f123dc98))
+
+## [5.20.0](https://github.com/Azure/LogicAppsUX/compare/v5.19.0...v5.20.0) (2025-01-10)
+
+
+### Features
+
+* **Data Mapper:** UX fixes for Public Preview ([#6363](https://github.com/Azure/LogicAppsUX/issues/6363)) ([3e3214a](https://github.com/Azure/LogicAppsUX/commit/3e3214aef9be7d4f3e9a1ff91bc1b4561790aae4))
+* **Designer:** Exported Run History panel ([#6372](https://github.com/Azure/LogicAppsUX/issues/6372)) ([f3b8a5f](https://github.com/Azure/LogicAppsUX/commit/f3b8a5f09235f9086eabf4341a921e9187a47461))
+
+
+### Bug Fixes
+
+* **designer:** Error Being thrown On Extended Text Node ([#6370](https://github.com/Azure/LogicAppsUX/issues/6370)) ([69a6995](https://github.com/Azure/LogicAppsUX/commit/69a69955a5157a19971ad13f48b5c193b37e2695))
+
+## [5.19.0](https://github.com/Azure/LogicAppsUX/compare/v5.18.0...v5.19.0) (2025-01-09)
+
 ## [5.18.0](https://github.com/Azure/LogicAppsUX/compare/v5.17.0...v5.18.0) (2025-01-08)
 
 
