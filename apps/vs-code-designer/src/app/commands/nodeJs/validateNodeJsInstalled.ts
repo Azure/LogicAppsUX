@@ -69,7 +69,7 @@ export async function isNodeJsInstalled(): Promise<boolean> {
   try {
     await executeCommand(undefined, undefined, getNodeJsCommand(), '--version');
     return true;
-  } catch (error) {
+  } catch {
     return false;
   }
 }
