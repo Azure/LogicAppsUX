@@ -55,6 +55,39 @@ export async function isLogicAppProject(folderPath: string): Promise<boolean> {
 
 /**
  * Checks root folder and subFolders one level down
+ * If any logic app projects are found return true.
+ */
+export async function isLogicAppProjectInRoot(workspaceFolder: WorkspaceFolder | string): Promise<boolean | undefined> {
+  const subpath: string | undefined = getWorkspaceSetting(projectSubpathKey, workspaceFolder);
+  const folderPath = isString(workspaceFolder) ? workspaceFolder : workspaceFolder.uri.fsPath;
+  if (!subpath) {
+    if (!(await fse.pathExists(folderPath))) {
+      return undefined;
+    }
+    if (await isLogicAppProject(folderPath)) {
+      return true;
+    }
+    const subpaths: string[] = await fse.readdir(folderPath);
+    const matchingSubpaths: string[] = [];
+    await Promise.all(
+      subpaths.map(async (s) => {
+        if (await isLogicAppProject(path.join(folderPath, s))) {
+          matchingSubpaths.push(s);
+        }
+      })
+    );
+
+    if (matchingSubpaths.length !== 0) {
+      return true;
+    }
+    return false;
+  }
+
+  return false;
+}
+
+/**
+ * Checks root folder and subFolders one level down
  * If a single logic app project is found, return that path.
  * If multiple projects are found, prompt to pick the project.
  */
