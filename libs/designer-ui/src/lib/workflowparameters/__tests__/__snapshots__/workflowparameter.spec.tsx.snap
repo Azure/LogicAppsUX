@@ -10,8 +10,10 @@ exports[`ui/workflowparameters/workflowparameter > should construct. 1`] = `
         appearance="subtle"
         aria-expanded={false}
         className="msla-workflow-parameter-heading-button"
+        data-automation-id="-parameter-heading-button"
         data-testid="-parameter-heading-button"
         icon={<CompoundIcon />}
+        id="id"
         onClick={[Function]}
       >
         New parameter
