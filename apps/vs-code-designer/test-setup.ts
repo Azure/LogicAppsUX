@@ -31,7 +31,7 @@ vi.mock('fs', () => ({
 }));
 
 vi.mock('axios');
-// vi.mock('vscode');
+
 vi.mock('vscode', () => ({
   window: {},
 }));

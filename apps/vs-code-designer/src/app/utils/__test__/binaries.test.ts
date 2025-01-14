@@ -136,6 +136,7 @@ describe('binaries', () => {
   describe('getLatestFunctionCoreToolsVersion', () => {
     let context: IActionContext;
     let majorVersion;
+
     beforeEach(() => {
       context = {
         telemetry: {
@@ -179,6 +180,14 @@ describe('binaries', () => {
 
       expect(result).toBe(DependencyVersion.funcCoreTools);
       expect(showErrorMessage).toHaveBeenCalled();
+      expect(context.telemetry.properties.getLatestFunctionCoreToolsVersion).toBe('fallback');
+    });
+
+    it('should return the fallback Function Core Tools version when no major version is sent', async () => {
+      (isNodeJsInstalled as Mock).mockResolvedValue(false);
+      const result = await getLatestFunctionCoreToolsVersion(context);
+
+      expect(result).toBe(DependencyVersion.funcCoreTools);
       expect(context.telemetry.properties.getLatestFunctionCoreToolsVersion).toBe('fallback');
     });
   });

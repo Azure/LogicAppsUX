@@ -119,7 +119,7 @@ export async function downloadAndExtractDependency(
   });
 }
 
-export async function getLatestFunctionCoreToolsVersion(context: IActionContext, majorVersion: string): Promise<string> {
+export async function getLatestFunctionCoreToolsVersion(context: IActionContext, majorVersion?: string): Promise<string> {
   context.telemetry.properties.funcCoreTools = majorVersion;
 
   // Use npm to find newest func core tools version
