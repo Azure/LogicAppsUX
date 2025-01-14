@@ -88,6 +88,10 @@ export namespace ext {
     window.showWarningMessage(errMsg);
   };
 
+  export const showInformation = (msg: string) => {
+    window.showInformationMessage(msg);
+  };
+
   export const showError = (errMsg: string, options?: MessageOptions) => {
     ext.log(errMsg);
     if (options && options.detail) {
