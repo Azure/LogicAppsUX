@@ -54,7 +54,7 @@ export const useTreeNodeStyles = makeStyles({
     paddingLeft: '16px',
   },
   sourceSchemaContainer: {
-    marginRight: '7px',
+    marginRight: '11px',
   },
   wrapper: {
     display: 'flex',

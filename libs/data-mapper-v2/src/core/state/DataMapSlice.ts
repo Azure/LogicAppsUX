@@ -475,12 +475,17 @@ export const dataMapSlice = createSlice({
       const newConnections = {
         ...state.curDataMapOperation.dataMapConnections,
       };
-      const inputValueToRemove = newConnections[action.payload.targetId].inputs[action.payload.inputIndex];
-      if (isEmptyConnection(inputValueToRemove)) {
-        return;
+      const { inputIndex, targetId } = action.payload;
+      const inputs = newConnections[targetId].inputs;
+      const inputValueToRemove = inputs[inputIndex];
+      if (!isEmptyConnection(inputValueToRemove)) {
+        const sourceIdToRemove = isCustomValueConnection(inputValueToRemove) ? inputValueToRemove.value : inputValueToRemove.reactFlowKey;
+        deleteConnectionFromConnections(newConnections, sourceIdToRemove, targetId, undefined);
       }
-      const sourceIdToRemove = isCustomValueConnection(inputValueToRemove) ? inputValueToRemove.value : inputValueToRemove.reactFlowKey;
-      deleteConnectionFromConnections(newConnections, sourceIdToRemove, action.payload.targetId, undefined);
+
+      // Remove the input completely once it has been emptied
+      newConnections[targetId].inputs = [...inputs.slice(0, inputIndex), ...inputs.slice(inputIndex + 1)];
+
       doDataMapOperation(
         state,
         {

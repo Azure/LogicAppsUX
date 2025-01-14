@@ -40,4 +40,7 @@ export const useStyles = makeStyles({
     fontSize: '10px',
     color: tokens.colorPaletteYellowForeground2,
   },
+  validationWarningmessage: {
+    fontStyle: 'italic',
+  },
 });
