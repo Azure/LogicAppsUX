@@ -81,7 +81,7 @@ export const loadWorkflow = createAsyncThunk('workflowLoadingState/loadWorkflow'
   return {
     workflowDefinition: wf.definition as LogicAppsV2.WorkflowDefinition,
     connectionReferences: wf.connections as ConnectionReferences,
-    parameters: wf.parameters ?? {},
+    parameters: wf?.parameters ?? wf?.definition?.parameters ?? {},
   } as WorkflowPayload;
 });
 

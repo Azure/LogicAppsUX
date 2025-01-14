@@ -70,8 +70,10 @@ export function WorkflowParameter({ definition, isReadOnly, useLegacy, isInverte
       <div>
         <div>
           <Button
-            appearance="subtle"
+            id={definition.id}
+            data-automation-id={`${name}-parameter-heading-button`}
             data-testid={`${name}-parameter-heading-button`}
+            appearance="subtle"
             className="msla-workflow-parameter-heading-button"
             onClick={handleToggleExpand}
             icon={expanded ? <CollapseIcon /> : <ExpandIcon />}
