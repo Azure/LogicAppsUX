@@ -50,7 +50,17 @@ export class DataMapperFileService implements IDataMapperFileService {
   public addSchemaFromFile = (selectedSchemaFile: SchemaFile) => {
     this.sendMsgToVsix({
       command: ExtensionCommand.addSchemaFromFile,
-      data: { path: selectedSchemaFile.path, type: selectedSchemaFile.type as SchemaType },
+      data: {
+        path: selectedSchemaFile.path,
+        type: selectedSchemaFile.type as SchemaType,
+      },
     });
   };
+
+  public sendNotification(title: string, text: string, level: number) {
+    this.sendMsgToVsix({
+      command: ExtensionCommand.sendNotification,
+      data: { title, text, level },
+    });
+  }
 }

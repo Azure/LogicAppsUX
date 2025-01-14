@@ -1,5 +1,5 @@
-import type { SchemaType } from '@microsoft/logic-apps-shared';
 import { AssertionErrorCode, AssertionException } from '@microsoft/logic-apps-shared';
+import type { SchemaType } from '@microsoft/logic-apps-shared';
 
 export interface SchemaFile {
   path: string;
@@ -50,6 +50,8 @@ export interface IDataMapperFileService {
    * Adds a schema from a file to the data mapper.
    */
   addSchemaFromFile(selectedSchemaFile: SchemaFile): void;
+
+  sendNotification(title: string, text: string, level: number): void;
 }
 
 let service: IDataMapperFileService;

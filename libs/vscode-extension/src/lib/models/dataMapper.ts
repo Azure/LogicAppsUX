@@ -18,8 +18,14 @@ export type MessageToWebview =
   | { command: typeof ExtensionCommand.fetchSchema; data: FetchSchemaData }
   | { command: typeof ExtensionCommand.loadDataMap; data: MapDefinitionData }
   | { command: typeof ExtensionCommand.showAvailableSchemas; data: string[] }
-  | { command: typeof ExtensionCommand.showAvailableSchemasV2; data: IFileSysTreeItem[] }
-  | { command: typeof ExtensionCommand.getAvailableCustomXsltPaths; data: string[] }
+  | {
+      command: typeof ExtensionCommand.showAvailableSchemasV2;
+      data: IFileSysTreeItem[];
+    }
+  | {
+      command: typeof ExtensionCommand.getAvailableCustomXsltPaths;
+      data: string[];
+    }
   | { command: typeof ExtensionCommand.setXsltData; data: XsltData }
   | { command: typeof ExtensionCommand.setRuntimePort; data: string }
   | { command: typeof ExtensionCommand.getConfigurationSetting; data: boolean }
@@ -65,4 +71,8 @@ export type MessageToVsix =
   | {
       command: typeof ExtensionCommand.logTelemetry;
       data: any;
+    }
+  | {
+      command: typeof ExtensionCommand.sendNotification;
+      data: { title: string; text: string; level: number };
     };
