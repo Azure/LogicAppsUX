@@ -43,6 +43,7 @@ export const canStringBeConverted = (s: string): boolean => {
   try {
     const parsed = JSON.parse(s);
     return Array.isArray(parsed);
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
   } catch (e) {
     return false;
   }
@@ -87,3 +88,12 @@ export const escapeString = (input: string): string => {
     }
   });
 };
+
+/**
+ * Converts a string to PascalCase.
+ * @param {string} str - The input string.
+ * @returns {string} - The PascalCase version of the string.
+ */
+export function toPascalCase(str: string): string {
+  return str.replace(/(^\w|_\w)/g, (match) => match.replace('_', '').toUpperCase());
+}

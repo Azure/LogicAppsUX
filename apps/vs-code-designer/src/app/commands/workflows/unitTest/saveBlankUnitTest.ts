@@ -15,6 +15,7 @@ import * as vscode from 'vscode';
 import * as fs from 'fs-extra';
 import { ext } from '../../../../extensionVariables';
 import { FileManagement } from '../../generateDeploymentScripts/iacGestureHelperFunctions';
+import { toPascalCase } from '@microsoft/logic-apps-shared/src/utils/src/lib/helpers/stringFunctions';
 /**
  * Creates a unit test for a Logic App workflow (codeful only).
  * @param {IAzureConnectorsContext} context - The context object for Azure Connectors.
@@ -161,7 +162,6 @@ async function parseUnitTestOutputs(unitTestDefinition: any): Promise<{
  * @param {string} projectPath - The path to the project directory.
  * @param {string} workflowName - The name of the workflow for which the test is being created.
  * @param {string} unitTestName - The name of the unit test to be created.
- * @param {string | undefined} runId - The ID of the run.
  * @returns {Promise<void>} - A promise that resolves when the unit test has been generated.
  */
 async function generateBlankCodefulUnitTest(
@@ -201,10 +201,19 @@ async function generateBlankCodefulUnitTest(
     }
     context.telemetry.properties.unitTestGenerationStatus = 'Success';
   } catch (error: any) {
+    const errorMessage = error instanceof Error ? error.message : typeof error === 'string' ? error : 'Unknown error';
+
+    // Log to telemetry
     context.telemetry.properties.unitTestGenerationStatus = 'Failed';
+    context.telemetry.properties.errorMessage = errorMessage;
     if (error.code) {
       context.telemetry.properties.networkErrorCode = error.code;
     }
+
+    // Display and log the error message
+    const errorDisplayMessage = localize('error.generateCodefulUnitTest', 'Failed to generate codeful unit test: {0}', errorMessage);
+    vscode.window.showErrorMessage(errorDisplayMessage);
+    ext.outputChannel.appendLog(errorDisplayMessage);
   }
 }
 
@@ -480,13 +489,4 @@ function mapJsonTypeToCSharp(jsonType: string): string {
     default:
       return 'JObject';
   }
-}
-
-/**
- * Converts a string to PascalCase.
- * @param {string} str - The input string.
- * @returns {string} - The PascalCase version of the string.
- */
-function toPascalCase(str: string): string {
-  return str.replace(/(^\w|_\w)/g, (match) => match.replace('_', '').toUpperCase());
 }
