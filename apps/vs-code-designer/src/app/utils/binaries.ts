@@ -216,11 +216,11 @@ export async function getLatestNodeJsVersion(context: IActionContext, majorVersi
 }
 
 export function getNodeJsBinariesReleaseUrl(version: string, osPlatform: string, arch: string): string {
-  if (osPlatform !== 'win') {
-    return `https://nodejs.org/dist/v${version}/node-v${version}-${osPlatform}-${arch}.tar.gz`;
+  if (osPlatform === 'win') {
+    return `https://nodejs.org/dist/v${version}/node-v${version}-${osPlatform}-${arch}.zip`;
   }
 
-  return `https://nodejs.org/dist/v${version}/node-v${version}-${osPlatform}-${arch}.zip`;
+  return `https://nodejs.org/dist/v${version}/node-v${version}-${osPlatform}-${arch}.tar.gz`;
 }
 
 export function getFunctionCoreToolsBinariesReleaseUrl(version: string, osPlatform: string, arch: string): string {
