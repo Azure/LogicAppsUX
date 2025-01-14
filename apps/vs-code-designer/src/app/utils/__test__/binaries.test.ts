@@ -25,15 +25,17 @@ import { executeCommand } from '../funcCoreTools/cpUtils';
 import { getNpmCommand } from '../nodeJs/nodeJsVersion';
 import { getGlobalSetting, getWorkspaceSetting, updateGlobalSetting } from '../vsCodeConfig/settings';
 import type { IActionContext } from '@microsoft/vscode-azext-utils';
+import { isNodeJsInstalled } from '../../commands/nodeJs/validateNodeJsInstalled';
 
 // vi.mock('path');
 // vi.mock('os');
 // vi.mock('semver');
 // vi.mock('../../../extensionVariables');
-// vi.mock('../funcCoreTools/cpUtils');
-// vi.mock('../nodeJs/nodeJsVersion');
+vi.mock('../funcCoreTools/cpUtils');
+vi.mock('../nodeJs/nodeJsVersion');
 vi.mock('../../../onboarding');
 vi.mock('../vsCodeConfig/settings');
+vi.mock('../../commands/nodeJs/validateNodeJsInstalled');
 
 describe('binaries', () => {
   //   describe('downloadAndExtractDependency', () => {
@@ -113,13 +115,14 @@ describe('binaries', () => {
       expect(result).toBe('6.0.0');
     });
 
-    it('should throw error when api call to get dotnet version fails', async () => {
+    it('should throw error when api call to get dotnet version fails and return fallback version', async () => {
       const showErrorMessage = vi.fn();
       (axios.get as Mock).mockResolvedValue({ data: [], status: 500 });
 
       vscode.window.showErrorMessage = showErrorMessage;
 
-      await expect(getLatestDotNetVersion(context, majorVersion)).rejects.toThrowError();
+      const result = await getLatestDotNetVersion(context, majorVersion);
+      expect(result).toBe(DependencyVersion.dotnet6);
       expect(showErrorMessage).toHaveBeenCalled();
     });
 
@@ -130,19 +133,55 @@ describe('binaries', () => {
     });
   });
 
-  //   describe('getLatestFunctionCoreToolsVersion', () => {
-  //     it('should return the latest Function Core Tools version', async () => {
-  //       const context = {} as IActionContext;
-  //       const majorVersion = '3';
-  //       const response = { tag_name: 'v3.0.0' };
+  describe('getLatestFunctionCoreToolsVersion', () => {
+    let context: IActionContext;
+    let majorVersion;
+    beforeEach(() => {
+      context = {
+        telemetry: {
+          properties: {},
+        },
+      } as IActionContext;
+      majorVersion = '3';
+    });
 
-  //       (axios.get as any).mockResolvedValue({ data: response });
+    it('should return the latest Function Core Tools version from npm', async () => {
+      const npmVersion = '3.0.0';
+      (isNodeJsInstalled as Mock).mockResolvedValue(true);
+      (getNpmCommand as Mock).mockReturnValue('npm');
+      (executeCommand as Mock).mockResolvedValue(npmVersion);
 
-  //       const result = await getLatestFunctionCoreToolsVersion(context, majorVersion);
+      const result = await getLatestFunctionCoreToolsVersion(context, majorVersion);
 
-  //       expect(result).toBe('3.0.0');
-  //     });
-  //   });
+      expect(result).toBe(npmVersion);
+      expect(context.telemetry.properties.latestVersionSource).toBe('node');
+    });
+
+    it('should return the latest Function Core Tools version from GitHub', async () => {
+      const githubVersion = '3.0.0';
+      (isNodeJsInstalled as Mock).mockResolvedValue(false);
+      (axios.get as Mock).mockResolvedValue({ data: { tag_name: `v${githubVersion}` }, status: 200 });
+
+      const result = await getLatestFunctionCoreToolsVersion(context, majorVersion);
+
+      expect(result).toBe(githubVersion);
+      expect(context.telemetry.properties.latestVersionSource).toBe('github');
+    });
+
+    it('should return the fallback Function Core Tools version', async () => {
+      const showErrorMessage = vi.fn();
+      (isNodeJsInstalled as Mock).mockResolvedValue(false);
+      (axios.get as Mock).mockResolvedValue({ data: [], status: 500 });
+
+      vscode.window.showErrorMessage = showErrorMessage;
+
+      const result = await getLatestFunctionCoreToolsVersion(context, majorVersion);
+
+      expect(result).toBe(DependencyVersion.funcCoreTools);
+      expect(showErrorMessage).toHaveBeenCalled();
+      expect(context.telemetry.properties.getLatestFunctionCoreToolsVersion).toBe('fallback');
+    });
+  });
 
   describe('getLatestNodeJsVersion', () => {
     let context: IActionContext;
@@ -171,7 +210,8 @@ describe('binaries', () => {
 
       vscode.window.showErrorMessage = showErrorMessage;
 
-      await expect(getLatestNodeJsVersion(context, majorVersion)).rejects.toThrowError();
+      const result = await getLatestNodeJsVersion(context, majorVersion);
+      expect(result).toBe(DependencyVersion.nodeJs);
       expect(showErrorMessage).toHaveBeenCalled();
     });
 
