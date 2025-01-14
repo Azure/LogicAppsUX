@@ -385,7 +385,7 @@ export async function createAclInConnectionIfNeeded(
   try {
     const response = await sendAzureRequest(url, identityWizardContext, HTTP_METHODS.GET, site.subscription);
     connectionAcls = response.parsedBody.value;
-  } catch (error) {
+  } catch {
     connectionAcls = [];
   }
 
