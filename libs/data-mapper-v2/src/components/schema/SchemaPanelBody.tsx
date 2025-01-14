@@ -146,9 +146,8 @@ export const SchemaPanelBody = ({
           upload={{
             uploadButtonText: stringResources.BROWSE,
             inputPlaceholder: stringResources.BROWSE_MESSAGE,
-            acceptedExtensions: '.xsd, .json',
             fileName: selectedSchemaFile?.name,
-            onUpload: onUpload,
+            onUploadClick: onUpload,
           }}
           existing={{
             fileList: availableSchemaList,

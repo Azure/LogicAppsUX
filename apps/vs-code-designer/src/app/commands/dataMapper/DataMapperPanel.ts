@@ -1,7 +1,12 @@
-import { dataMapperVersionSetting, defaultDataMapperVersion, extensionCommand } from '../../../constants';
-import { ext } from '../../../extensionVariables';
-import { localize } from '../../../localize';
-import { getWebViewHTML } from '../../utils/codeless/getWebViewHTML';
+import select from "@microsoft/logic-apps-shared/src/designer-client-services/lib/base/manifests/select";
+import {
+  dataMapperVersionSetting,
+  defaultDataMapperVersion,
+  extensionCommand,
+} from "../../../constants";
+import { ext } from "../../../extensionVariables";
+import { localize } from "../../../localize";
+import { getWebViewHTML } from "../../utils/codeless/getWebViewHTML";
 import {
   dataMapDefinitionsPath,
   dataMapsPath,
@@ -12,12 +17,24 @@ import {
   customXsltPath,
   supportedSchemaFileExts,
   supportedCustomXsltFileExts,
-} from './extensionConfig';
-import { type SchemaType, type MapMetadata, type IFileSysTreeItem, LogEntryLevel } from '@microsoft/logic-apps-shared';
-import type { IActionContext } from '@microsoft/vscode-azext-utils';
-import { callWithTelemetryAndErrorHandlingSync } from '@microsoft/vscode-azext-utils';
-import type { MapDefinitionData, MessageToVsix, MessageToWebview } from '@microsoft/vscode-extension-logic-apps';
-import { ExtensionCommand, ProjectName } from '@microsoft/vscode-extension-logic-apps';
+} from "./extensionConfig";
+import {
+  type SchemaType,
+  type MapMetadata,
+  type IFileSysTreeItem,
+  LogEntryLevel,
+} from "@microsoft/logic-apps-shared";
+import type { IActionContext } from "@microsoft/vscode-azext-utils";
+import { callWithTelemetryAndErrorHandlingSync } from "@microsoft/vscode-azext-utils";
+import type {
+  MapDefinitionData,
+  MessageToVsix,
+  MessageToWebview,
+} from "@microsoft/vscode-extension-logic-apps";
+import {
+  ExtensionCommand,
+  ProjectName,
+} from "@microsoft/vscode-extension-logic-apps";
 import {
   copyFileSync,
   existsSync as fileExistsSync,
@@ -26,11 +43,11 @@ import {
   statSync,
   readdirSync,
   readFileSync,
-} from 'fs';
-import * as path from 'path';
-import type { WebviewPanel } from 'vscode';
-import { RelativePattern, window, workspace } from 'vscode';
-import * as vscode from 'vscode';
+} from "fs";
+import * as path from "path";
+import type { WebviewPanel } from "vscode";
+import { RelativePattern, window, workspace } from "vscode";
+import * as vscode from "vscode";
 
 export default class DataMapperPanel {
   public panel: WebviewPanel;
@@ -39,25 +56,30 @@ export default class DataMapperPanel {
   public dataMapName: string;
   public dataMapStateIsDirty: boolean;
   public mapDefinitionData: MapDefinitionData | undefined;
-  private telemetryPrefix = 'data-mapper-vscode-extension';
+  private telemetryPrefix = "data-mapper-vscode-extension";
 
   constructor(panel: WebviewPanel, dataMapName: string) {
     this.panel = panel;
     this.dataMapVersion = this.getDataMapperVersion();
     this.dataMapName = dataMapName;
     this.dataMapStateIsDirty = false;
-    this.handleReadSchemaFileOptions = this.handleReadSchemaFileOptions.bind(this); // Bind these as they're used as callbacks
+    this.handleReadSchemaFileOptions =
+      this.handleReadSchemaFileOptions.bind(this); // Bind these as they're used as callbacks
     this._handleWebviewMsg = this._handleWebviewMsg.bind(this);
 
-    vscode.commands.executeCommand('workbench.action.toggleSidebarVisibility');
-    vscode.commands.executeCommand('workbench.action.togglePanel');
+    vscode.commands.executeCommand("workbench.action.toggleSidebarVisibility");
+    vscode.commands.executeCommand("workbench.action.togglePanel");
 
     ext.context.subscriptions.push(panel);
 
     this._setWebviewHtml();
 
     // watch folder for file changes
-    const schemaFolderWatcher = this.watchFolderForChanges(schemasPath, supportedSchemaFileExts, this.handleReadSchemaFileOptions);
+    const schemaFolderWatcher = this.watchFolderForChanges(
+      schemasPath,
+      supportedSchemaFileExts,
+      this.handleReadSchemaFileOptions
+    );
     const customXsltFolderWatcher = this.watchFolderForChanges(
       customXsltPath,
       supportedCustomXsltFileExts,
@@ -65,7 +87,11 @@ export default class DataMapperPanel {
     );
 
     // Handle messages from the webview (Data Mapper component)
-    this.panel.webview.onDidReceiveMessage(this._handleWebviewMsg, undefined, ext.context.subscriptions);
+    this.panel.webview.onDidReceiveMessage(
+      this._handleWebviewMsg,
+      undefined,
+      ext.context.subscriptions
+    );
 
     this.panel.onDidDispose(
       () => {
@@ -82,11 +108,20 @@ export default class DataMapperPanel {
     );
   }
 
-  private watchFolderForChanges(folderPath: string, fileExtensions: string[], fn: () => void) {
+  private watchFolderForChanges(
+    folderPath: string,
+    fileExtensions: string[],
+    fn: () => void
+  ) {
     // Watch folder for changes to update available file list within Data Mapper
     const absoluteFolderPath = path.join(ext.logicAppWorkspace, folderPath);
     if (fileExistsSync(absoluteFolderPath)) {
-      const folderWatcher = workspace.createFileSystemWatcher(new RelativePattern(absoluteFolderPath, `**/*.{${fileExtensions.join()}}`));
+      const folderWatcher = workspace.createFileSystemWatcher(
+        new RelativePattern(
+          absoluteFolderPath,
+          `**/*.{${fileExtensions.join()}}`
+        )
+      );
       folderWatcher.onDidCreate(fn);
       folderWatcher.onDidDelete(fn);
       return folderWatcher;
@@ -95,7 +130,7 @@ export default class DataMapperPanel {
   }
 
   private async _setWebviewHtml() {
-    this.panel.webview.html = await getWebViewHTML('vs-code-react', this.panel);
+    this.panel.webview.html = await getWebViewHTML("vs-code-react", this.panel);
   }
 
   public sendMsgToWebview(msg: MessageToWebview) {
@@ -127,11 +162,17 @@ export default class DataMapperPanel {
       }
       case ExtensionCommand.webviewRscLoadError: {
         // Handle DM top-level errors (such as loading schemas added from file, or general function manifest fetching issues)
-        ext.showError(localize('WebviewRscLoadError', `Error loading Data Mapper resource: "{0}"`, msg.data));
+        ext.showError(
+          localize(
+            "WebviewRscLoadError",
+            `Error loading Data Mapper resource: "{0}"`,
+            msg.data
+          )
+        );
         break;
       }
       case ExtensionCommand.addSchemaFromFile: {
-        this.addSchemaFromFile(msg.data.path, msg.data.type);
+        this.addSchemaFromFile(msg.data);
         break;
       }
       case ExtensionCommand.readLocalSchemaFileOptions: {
@@ -165,7 +206,7 @@ export default class DataMapperPanel {
         break;
       }
       case ExtensionCommand.getFunctionDisplayExpanded: {
-        this.getConfigurationSetting('useExpandedFunctionCards');
+        this.getConfigurationSetting("useExpandedFunctionCards");
         break;
       }
 
@@ -174,7 +215,9 @@ export default class DataMapperPanel {
         break;
       }
       case ExtensionCommand.logTelemetry: {
-        const eventName = `${this.telemetryPrefix}/${msg.data.name ?? msg.data.area}`;
+        const eventName = `${this.telemetryPrefix}/${
+          msg.data.name ?? msg.data.area
+        }`;
         ext.telemetryReporter.sendTelemetryEvent(eventName, { ...msg.data });
         break;
       }
@@ -186,7 +229,9 @@ export default class DataMapperPanel {
   }
 
   public updateWebviewPanelTitle() {
-    this.panel.title = `${this.dataMapName ?? 'Untitled'} ${this.dataMapStateIsDirty ? '●' : ''}`;
+    this.panel.title = `${this.dataMapName ?? "Untitled"} ${
+      this.dataMapStateIsDirty ? "●" : ""
+    }`;
   }
 
   public handleUpdateMapDirtyState(isMapStateDirty: boolean) {
@@ -213,13 +258,25 @@ export default class DataMapperPanel {
     }
   }
 
-  public getNestedFilePaths(fileName: string, parentPath: string, relativePath: string, filesToDisplay: string[], filetypes: string[]) {
+  public getNestedFilePaths(
+    fileName: string,
+    parentPath: string,
+    relativePath: string,
+    filesToDisplay: string[],
+    filetypes: string[]
+  ) {
     const rootPath = path.join(ext.logicAppWorkspace, relativePath);
     const absolutePath = path.join(rootPath, parentPath, fileName);
     if (statSync(absolutePath).isDirectory()) {
       readdirSync(absolutePath).forEach((childFileName) => {
         const combinedRelativePath = path.join(parentPath, fileName);
-        this.getNestedFilePaths(childFileName, combinedRelativePath, relativePath, filesToDisplay, filetypes);
+        this.getNestedFilePaths(
+          childFileName,
+          combinedRelativePath,
+          relativePath,
+          filesToDisplay,
+          filetypes
+        );
       });
     } else {
       const fileExt = path.extname(fileName).toLowerCase();
@@ -243,12 +300,18 @@ export default class DataMapperPanel {
       const childrenFilesToDisplay: IFileSysTreeItem[] = [];
       const combinedRelativePath = path.join(parentPath, fileName);
       readdirSync(absolutePath).forEach((childFileName) => {
-        this.getNestedFileTreePaths(childFileName, combinedRelativePath, relativePath, childrenFilesToDisplay, filetypes);
+        this.getNestedFileTreePaths(
+          childFileName,
+          combinedRelativePath,
+          relativePath,
+          childrenFilesToDisplay,
+          filetypes
+        );
       });
       if (childrenFilesToDisplay?.length > 0) {
         filesToDisplay.push({
           name: fileName,
-          type: 'directory',
+          type: "directory",
           children: childrenFilesToDisplay,
         });
       }
@@ -258,7 +321,7 @@ export default class DataMapperPanel {
         const relativePath = path.join(parentPath, fileName);
         filesToDisplay.push({
           name: fileName,
-          type: 'file',
+          type: "file",
           fullPath: relativePath,
         });
       }
@@ -269,13 +332,21 @@ export default class DataMapperPanel {
     if (this.dataMapVersion === 2) {
       return this.getFilesTreeForPath(schemasPath, supportedSchemaFileExts);
     }
-    return this.getFilesForPath(schemasPath, ExtensionCommand.showAvailableSchemas, supportedSchemaFileExts);
+    return this.getFilesForPath(
+      schemasPath,
+      ExtensionCommand.showAvailableSchemas,
+      supportedSchemaFileExts
+    );
   }
 
   public handleReadAvailableFunctionPaths() {
     const absoluteFolderPath = path.join(ext.logicAppWorkspace, customXsltPath);
     if (fileExistsSync(absoluteFolderPath)) {
-      return this.getFilesForPath(customXsltPath, ExtensionCommand.getAvailableCustomXsltPaths, supportedCustomXsltFileExts);
+      return this.getFilesForPath(
+        customXsltPath,
+        ExtensionCommand.getAvailableCustomXsltPaths,
+        supportedCustomXsltFileExts
+      );
     }
   }
 
@@ -303,13 +374,21 @@ export default class DataMapperPanel {
 
   private getFilesForPath(
     folderPath: string,
-    command: typeof ExtensionCommand.showAvailableSchemas | typeof ExtensionCommand.getAvailableCustomXsltPaths,
+    command:
+      | typeof ExtensionCommand.showAvailableSchemas
+      | typeof ExtensionCommand.getAvailableCustomXsltPaths,
     fileTypes: string[]
   ) {
     fs.readdir(path.join(ext.logicAppWorkspace, folderPath)).then((result) => {
       const filesToDisplay: string[] = [];
       result.forEach((file) => {
-        this.getNestedFilePaths(file, '', folderPath, filesToDisplay, fileTypes);
+        this.getNestedFilePaths(
+          file,
+          "",
+          folderPath,
+          filesToDisplay,
+          fileTypes
+        );
       });
       this.sendMsgToWebview({
         command,
@@ -322,7 +401,13 @@ export default class DataMapperPanel {
     fs.readdir(path.join(ext.logicAppWorkspace, folderPath)).then((result) => {
       const filesToDisplay: IFileSysTreeItem[] = [];
       result.forEach((file) => {
-        this.getNestedFileTreePaths(file, '', folderPath, filesToDisplay, fileTypes);
+        this.getNestedFileTreePaths(
+          file,
+          "",
+          folderPath,
+          filesToDisplay,
+          fileTypes
+        );
       });
       this.sendMsgToWebview({
         command: ExtensionCommand.showAvailableSchemasV2,
@@ -331,127 +416,146 @@ export default class DataMapperPanel {
     });
   }
 
-  public addSchemaFromFile(filePath: string, schemaType: SchemaType) {
-    callWithTelemetryAndErrorHandlingSync(extensionCommand.dataMapAddSchemaFromFile, (_context: IActionContext) => {
-      fs.readFile(filePath, 'utf8').then((text: string) => {
-        const primarySchemaFileName = path.basename(filePath); // Ex: inpSchema.xsd
-        const expectedPrimarySchemaPath = path.join(ext.logicAppWorkspace, schemasPath, primarySchemaFileName);
-
-        // Examine the loaded text for the 'schemaLocation' attribute to auto-load in any dependencies too
-        // NOTE: We only check in the same directory as the primary schema file (also, it doesn't attempt to deal with complicated paths/URLs, just filenames)
-        const schemaFileDependencies = [...text.matchAll(/schemaLocation="[A-Za-z.]*"/g)].map((schemaFileAttributeMatch) => {
-          // Trim down to just the filename
-          return schemaFileAttributeMatch[0].split('"')[1];
-        });
-
-        schemaFileDependencies.forEach((schemaFile) => {
-          const schemaFilePath = path.join(path.dirname(filePath), schemaFile);
-
-          // Check that the schema file dependency exists in the same directory as the primary schema file
-          if (!fileExistsSync(schemaFilePath)) {
-            ext.showError(
-              localize(
-                'SchemaLoadingError',
-                `Schema loading error: couldn't find schema file dependency 
-              "{0}" in the same directory as "{1}". "{1}" will still be copied to the Schemas folder.`,
-                schemaFile,
-                primarySchemaFileName
-              )
-            );
+  public addSchemaFromFile(schemaType: SchemaType) {
+    callWithTelemetryAndErrorHandlingSync(
+      extensionCommand.dataMapAddSchemaFromFile,
+      (_context: IActionContext) => {
+        const fileSelectOptions: vscode.OpenDialogOptions = {
+          filters: { Schemas: ["xsd", "json"] },
+          canSelectMany: false,
+        };
+        window.showOpenDialog(fileSelectOptions).then((files) => {
+          if (!files[0]) {
             return;
           }
+          const selectedFile = files[0];
+          const expectedPrimarySchemaPath = selectedFile.path;
 
-          // Check that the schema file dependency doesn't already exist in the Schemas folder
-          const expectedSchemaFilePath = path.join(ext.logicAppWorkspace, schemasPath, schemaFile);
-          if (!fileExistsSync(expectedSchemaFilePath)) {
-            copyFileSync(schemaFilePath, expectedSchemaFilePath);
-          }
+          workspace.fs.readFile(selectedFile).then((fileContents) => {
+            const text = Buffer.from(fileContents).toString("utf-8");
+
+            // Check that the schema file dependency exists in the same directory as the primary schema file
+            if (!fileExistsSync(expectedPrimarySchemaPath)) {
+              ext.showError(
+                localize(
+                  "SchemaLoadingError",
+                  `Schema loading error: couldn't find schema file dependency 
+                        "{0}" in the same directory as "{1}". "{1}" will still be copied to the Schemas folder.`,
+                  schemaFile,
+                  expectedPrimarySchemaPath
+                )
+              );
+              return;
+            }
+
+            // Check that the schema file dependency doesn't already exist in the Schemas folder
+            const expectedSchemaFilePath = path.join(
+              ext.logicAppWorkspace,
+              schemasPath,
+              schemaFile
+            );
+            if (!fileExistsSync(expectedSchemaFilePath)) {
+              copyFileSync(schemaFilePath, expectedSchemaFilePath);
+            }
+          });
         });
 
-        // Check if in Artifacts/Schemas, and if not, create it and send it to DM for API call
-        if (!fileExistsSync(expectedPrimarySchemaPath)) {
-          copyFileSync(filePath, expectedPrimarySchemaPath);
-        }
-
-        this.sendMsgToWebview({
-          command: ExtensionCommand.fetchSchema,
-          data: {
-            fileName: primarySchemaFileName,
-            type: schemaType as SchemaType,
-          },
-        });
-      });
-    });
+        // danielle you can try 'copy' on the files directly
+      }
+    );
   }
 
   public saveMapDefinition(mapDefinition: string) {
-    callWithTelemetryAndErrorHandlingSync(extensionCommand.dataMapSaveMapDefinition, (_context: IActionContext) => {
-      // Delete *draft* map definition as it's no longer needed
-      this.deleteDraftDataMapDefinition();
+    callWithTelemetryAndErrorHandlingSync(
+      extensionCommand.dataMapSaveMapDefinition,
+      (_context: IActionContext) => {
+        // Delete *draft* map definition as it's no longer needed
+        this.deleteDraftDataMapDefinition();
 
-      const fileName = `${this.dataMapName}${mapDefinitionExtension}`;
-      const dataMapFolderPath = path.join(ext.logicAppWorkspace, dataMapDefinitionsPath);
-      const filePath = path.join(dataMapFolderPath, fileName);
+        const fileName = `${this.dataMapName}${mapDefinitionExtension}`;
+        const dataMapFolderPath = path.join(
+          ext.logicAppWorkspace,
+          dataMapDefinitionsPath
+        );
+        const filePath = path.join(dataMapFolderPath, fileName);
 
-      // Mkdir as extra insurance that directory exists so file can be written
-      // - harmless if directory already exists
-      fs.mkdir(dataMapFolderPath, { recursive: true })
-        .then(() => {
-          fs.writeFile(filePath, mapDefinition, 'utf8').then(() => {
-            // If XSLT, show notification and re-check/set xslt filename
-            const openMapBtnText = `Open ${fileName}`;
-            window.showInformationMessage('Map saved', openMapBtnText).then((clickedButton?: string) => {
-              if (clickedButton && clickedButton === openMapBtnText) {
-                workspace.openTextDocument(filePath).then(window.showTextDocument);
-              }
+        // Mkdir as extra insurance that directory exists so file can be written
+        // - harmless if directory already exists
+        fs.mkdir(dataMapFolderPath, { recursive: true })
+          .then(() => {
+            fs.writeFile(filePath, mapDefinition, "utf8").then(() => {
+              // If XSLT, show notification and re-check/set xslt filename
+              const openMapBtnText = `Open ${fileName}`;
+              window
+                .showInformationMessage("Map saved", openMapBtnText)
+                .then((clickedButton?: string) => {
+                  if (clickedButton && clickedButton === openMapBtnText) {
+                    workspace
+                      .openTextDocument(filePath)
+                      .then(window.showTextDocument);
+                  }
+                });
             });
-          });
-        })
-        .catch(ext.showError);
-    });
+          })
+          .catch(ext.showError);
+      }
+    );
   }
 
   public saveMapMetadata(mapMetadata: string) {
     const vscodeFolderPath = this.getMapMetadataPath();
 
-    fs.writeFile(vscodeFolderPath, mapMetadata, 'utf8').catch(ext.showError);
+    fs.writeFile(vscodeFolderPath, mapMetadata, "utf8").catch(ext.showError);
   }
 
   public saveMapXslt(mapXslt: string) {
-    callWithTelemetryAndErrorHandlingSync(extensionCommand.dataMapSaveMapXslt, (_context: IActionContext) => {
-      const fileName = `${this.dataMapName}${mapXsltExtension}`;
-      const dataMapFolderPath = path.join(ext.logicAppWorkspace, dataMapsPath);
-      const filePath = path.join(dataMapFolderPath, fileName);
+    callWithTelemetryAndErrorHandlingSync(
+      extensionCommand.dataMapSaveMapXslt,
+      (_context: IActionContext) => {
+        const fileName = `${this.dataMapName}${mapXsltExtension}`;
+        const dataMapFolderPath = path.join(
+          ext.logicAppWorkspace,
+          dataMapsPath
+        );
+        const filePath = path.join(dataMapFolderPath, fileName);
 
-      // Mkdir as extra insurance that directory exists so file can be written
-      // - harmless if directory already exists
-      fs.mkdir(dataMapFolderPath, { recursive: true })
-        .then(() => {
-          fs.writeFile(filePath, mapXslt, 'utf8').then(() => {
-            const openMapBtnText = `Open ${fileName}`;
-            window.showInformationMessage('Map XSLT generated.', openMapBtnText).then((clickedButton?: string) => {
-              if (clickedButton && clickedButton === openMapBtnText) {
-                workspace.openTextDocument(filePath).then(window.showTextDocument);
-              }
+        // Mkdir as extra insurance that directory exists so file can be written
+        // - harmless if directory already exists
+        fs.mkdir(dataMapFolderPath, { recursive: true })
+          .then(() => {
+            fs.writeFile(filePath, mapXslt, "utf8").then(() => {
+              const openMapBtnText = `Open ${fileName}`;
+              window
+                .showInformationMessage("Map XSLT generated.", openMapBtnText)
+                .then((clickedButton?: string) => {
+                  if (clickedButton && clickedButton === openMapBtnText) {
+                    workspace
+                      .openTextDocument(filePath)
+                      .then(window.showTextDocument);
+                  }
+                });
+
+              this.checkAndSetXslt();
             });
-
-            this.checkAndSetXslt();
-          });
-        })
-        .catch(ext.showError);
-    });
+          })
+          .catch(ext.showError);
+      }
+    );
   }
 
   public saveDraftDataMapDefinition(mapDefFileContents: string) {
     const mapDefileName = `${this.dataMapName}${draftMapDefinitionSuffix}${mapDefinitionExtension}`;
-    const dataMapDefFolderPath = path.join(ext.logicAppWorkspace, dataMapDefinitionsPath);
+    const dataMapDefFolderPath = path.join(
+      ext.logicAppWorkspace,
+      dataMapDefinitionsPath
+    );
     const filePath = path.join(dataMapDefFolderPath, mapDefileName);
 
     // Mkdir as extra insurance that directory exists so file can be written
     // Harmless if directory already exists
     fs.mkdir(dataMapDefFolderPath, { recursive: true })
       .then(() => {
-        fs.writeFile(filePath, mapDefFileContents, 'utf8');
+        fs.writeFile(filePath, mapDefFileContents, "utf8");
       })
       .catch(ext.showError);
   }
@@ -466,7 +570,7 @@ export default class DataMapperPanel {
       } catch {
         ext.showError(
           localize(
-            'MetadataInvalidJSON',
+            "MetadataInvalidJSON",
             `Data map metadata file found at "{0}" contains invalid JSON. Data map will load without metadata file.`,
             vscodeFolderPath
           )
@@ -476,7 +580,7 @@ export default class DataMapperPanel {
     } else {
       ext.showWarning(
         localize(
-          'MetadataNotFound',
+          "MetadataNotFound",
           `Data map metadata not found at path "{0}". This file configures your function positioning and other info. Please save your map to regenerate the file.`,
           vscodeFolderPath
         )
@@ -497,10 +601,14 @@ export default class DataMapperPanel {
   }
 
   public checkAndSetXslt() {
-    const expectedXsltPath = path.join(ext.logicAppWorkspace, dataMapsPath, `${this.dataMapName}${mapXsltExtension}`);
+    const expectedXsltPath = path.join(
+      ext.logicAppWorkspace,
+      dataMapsPath,
+      `${this.dataMapName}${mapXsltExtension}`
+    );
 
     if (fileExistsSync(expectedXsltPath)) {
-      fs.readFile(expectedXsltPath, 'utf-8').then((fileContents) => {
+      fs.readFile(expectedXsltPath, "utf-8").then((fileContents) => {
         this.sendMsgToWebview({
           command: ExtensionCommand.setXsltData,
           data: {
@@ -510,13 +618,20 @@ export default class DataMapperPanel {
         });
       });
     } else {
-      ext.showWarning(localize('XSLTFileNotDetected', `XSLT file not detected for "{0}"`, this.dataMapName));
+      ext.showWarning(
+        localize(
+          "XSLTFileNotDetected",
+          `XSLT file not detected for "{0}"`,
+          this.dataMapName
+        )
+      );
     }
   }
 
   public getConfigurationSetting(configSetting: string) {
     const azureDataMapperConfig = workspace.getConfiguration(ext.prefix);
-    const configValue = azureDataMapperConfig.get<boolean>(configSetting) ?? true;
+    const configValue =
+      azureDataMapperConfig.get<boolean>(configSetting) ?? true;
     this.sendMsgToWebview({
       command: ExtensionCommand.getConfigurationSetting,
       data: configValue,
@@ -532,17 +647,27 @@ export default class DataMapperPanel {
 
   public getDataMapperVersion() {
     const azureDataMapperConfig = workspace.getConfiguration(ext.prefix);
-    const configValue = azureDataMapperConfig.get<number>(dataMapperVersionSetting) ?? defaultDataMapperVersion;
+    const configValue =
+      azureDataMapperConfig.get<number>(dataMapperVersionSetting) ??
+      defaultDataMapperVersion;
     return configValue;
   }
 
   private getMapMetadataPath() {
     const projectPath = ext.logicAppWorkspace;
-    let vscodeFolderPath = '';
+    let vscodeFolderPath = "";
     if (this.dataMapVersion === 2) {
-      vscodeFolderPath = path.join(projectPath, '.vscode', `${this.dataMapName}DataMapMetadata-v2.json`);
+      vscodeFolderPath = path.join(
+        projectPath,
+        ".vscode",
+        `${this.dataMapName}DataMapMetadata-v2.json`
+      );
     } else {
-      vscodeFolderPath = path.join(projectPath, '.vscode', `${this.dataMapName}DataMapMetadata.json`);
+      vscodeFolderPath = path.join(
+        projectPath,
+        ".vscode",
+        `${this.dataMapName}DataMapMetadata.json`
+      );
     }
     return vscodeFolderPath;
   }
