@@ -1,18 +1,6 @@
 import { WarningModalState, openDiscardWarningModal } from '../../core/state/ModalSlice';
 import type { AppDispatch, RootState } from '../../core/state/Store';
-import {
-  Toolbar,
-  ToolbarButton,
-  ToolbarGroup,
-  Switch,
-  tokens,
-  useId,
-  useToastController,
-  Toast,
-  ToastTitle,
-  Toaster,
-  ToastBody,
-} from '@fluentui/react-components';
+import { Toolbar, ToolbarButton, ToolbarGroup, Switch, tokens, useId, Toaster } from '@fluentui/react-components';
 import { Dismiss20Regular, OpenFilled, Save20Regular } from '@fluentui/react-icons';
 import { useCallback, useEffect, useMemo } from 'react';
 import { useIntl } from 'react-intl';
@@ -41,7 +29,6 @@ export const EditorCommandBar = (_props: EditorCommandBarProps) => {
   const xsltFilename = useSelector((state: RootState) => state.dataMap.present.curDataMapOperation.xsltFilename);
 
   const toasterId = useId('toaster');
-  const { dispatchToast } = useToastController(toasterId);
 
   const currentConnections = useSelector((state: RootState) => state.dataMap.present.curDataMapOperation.dataMapConnections);
   const functions = useSelector((state: RootState) => state.dataMap.present.curDataMapOperation.functionNodes);
@@ -115,7 +102,6 @@ export const EditorCommandBar = (_props: EditorCommandBarProps) => {
       generateDataMapXslt(dataMapDefinition.definition)
         .then((xsltStr) => {
           DataMapperFileService().saveXsltCall(xsltStr);
-
           LoggerService().log({
             level: LogEntryLevel.Verbose,
             area: `${LogCategory.DataMapperDesigner}/onGenerateClick`,
@@ -128,33 +114,12 @@ export const EditorCommandBar = (_props: EditorCommandBarProps) => {
             area: `${LogCategory.DataMapperDesigner}/onGenerateClick`,
             message: JSON.stringify(error),
           });
-          dispatchToast(
-            <Toast>
-              <ToastTitle>{failedXsltMessage}</ToastTitle>
-              <ToastBody>{error.message} </ToastBody>
-            </Toast>,
-            { intent: 'error' }
-          );
+          DataMapperFileService().sendNotification(failedXsltMessage, error.message, LogEntryLevel.Error);
         });
     } else {
-      dispatchToast(
-        <Toast>
-          <ToastTitle>{failedXsltMessage}</ToastTitle>
-        </Toast>,
-        { intent: 'error' }
-      );
+      DataMapperFileService().sendNotification(failedXsltMessage, '', LogEntryLevel.Error);
     }
-  }, [
-    currentConnections,
-    functions,
-    dataMapDefinition,
-    sourceSchema,
-    targetSchema,
-    dispatch,
-    canvasRect,
-    failedXsltMessage,
-    dispatchToast,
-  ]);
+  }, [currentConnections, functions, dataMapDefinition, sourceSchema, targetSchema, dispatch, canvasRect, failedXsltMessage]);
 
   const triggerDiscardWarningModal = useCallback(() => {
     dispatch(openDiscardWarningModal());
