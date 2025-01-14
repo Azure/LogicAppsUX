@@ -22,5 +22,7 @@ vi.mock('@microsoft/vscode-azext-utils', () => {
     AzureWizardPromptStep: vi.fn().mockImplementation(() => {
       return {};
     }),
+    nonNullProp: vi.fn(),
+    nonNullValue: vi.fn(),
   };
 });
