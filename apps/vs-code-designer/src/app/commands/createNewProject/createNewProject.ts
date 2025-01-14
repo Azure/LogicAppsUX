@@ -25,26 +25,28 @@ export async function createNewProjectFromCommand(
   functionSettings?: { [key: string]: string | undefined }
 ): Promise<void> {
   await ConvertToWorkspace(context);
-  await createNewProjectInternalBase(
-    context,
-    {
-      folderPath: isString(folderPath) ? folderPath : undefined,
-      templateId,
-      functionName,
-      functionSettings,
-      suppressOpenFolder: !openFolder,
-      language,
-      version,
-    },
-    'createNewProject',
-    'Create new project',
-    [
-      new ExistingWorkspaceStep(),
-      new SetLogicAppType(),
-      new TargetFrameworkStep(),
-      new SetLogicAppName(),
-      new NewCodeProjectTypeStep(templateId, functionSettings, false),
-      new SetWorkspaceSettings(),
-    ]
-  );
+  if (context.telemetry.properties.isWorkspace === 'true') {
+    await createNewProjectInternalBase(
+      context,
+      {
+        folderPath: isString(folderPath) ? folderPath : undefined,
+        templateId,
+        functionName,
+        functionSettings,
+        suppressOpenFolder: !openFolder,
+        language,
+        version,
+      },
+      'createNewProject',
+      'Create new project',
+      [
+        new ExistingWorkspaceStep(),
+        new SetLogicAppType(),
+        new TargetFrameworkStep(),
+        new SetLogicAppName(),
+        new NewCodeProjectTypeStep(templateId, functionSettings, false),
+        new SetWorkspaceSettings(),
+      ]
+    );
+  }
 }
