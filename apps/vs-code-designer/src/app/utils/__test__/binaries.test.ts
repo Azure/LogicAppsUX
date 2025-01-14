@@ -1,4 +1,4 @@
-import { describe, it, expect, vi, beforeEach, afterEach, beforeAll } from 'vitest';
+import { describe, it, expect, vi, beforeEach, afterEach, beforeAll, Mock } from 'vitest';
 import * as fs from 'fs';
 import * as path from 'path';
 import * as os from 'os';
@@ -26,11 +26,8 @@ import { getNpmCommand } from '../nodeJs/nodeJsVersion';
 import { getGlobalSetting, getWorkspaceSetting, updateGlobalSetting } from '../vsCodeConfig/settings';
 import type { IActionContext } from '@microsoft/vscode-azext-utils';
 
-// vi.mock('fs');
 // vi.mock('path');
 // vi.mock('os');
-// vi.mock('axios');
-// vi.mock('vscode');
 // vi.mock('semver');
 // vi.mock('../../../extensionVariables');
 // vi.mock('../funcCoreTools/cpUtils');
@@ -64,39 +61,74 @@ describe('binaries', () => {
   //     });
   //   });
 
-  //   describe('binariesExist', () => {
-  //     it('should return true if binaries exist', () => {
-  //       (fs.existsSync as any).mockReturnValue(true);
-  //       (getGlobalSetting as any).mockReturnValue('binariesLocation');
+  describe('binariesExist', () => {
+    beforeEach(() => {
+      (getGlobalSetting as Mock).mockReturnValue('binariesLocation');
+    });
+    it('should return true if binaries exist', () => {
+      (fs.existsSync as Mock).mockReturnValue(true);
 
-  //       const result = binariesExist('dependencyName');
+      const result = binariesExist('dependencyName');
 
-  //       expect(result).toBe(true);
-  //     });
+      expect(result).toBe(true);
+    });
 
-  //     it('should return false if binaries do not exist', () => {
-  //       (fs.existsSync as any).mockReturnValue(false);
-  //       (getGlobalSetting as any).mockReturnValue('binariesLocation');
+    it('should return false if binaries do not exist', () => {
+      (fs.existsSync as Mock).mockReturnValue(false);
 
-  //       const result = binariesExist('dependencyName');
+      const result = binariesExist('dependencyName');
 
-  //       expect(result).toBe(false);
-  //     });
-  //   });
+      expect(result).toBe(false);
+    });
 
-  //   describe('getLatestDotNetVersion', () => {
-  //     it('should return the latest .NET version', async () => {
-  //       const context = {} as IActionContext;
-  //       const majorVersion = '6';
-  //       const response = [{ tag_name: 'v6.0.0' }];
+    it('should return false if useBinariesDependencies returns false', () => {
+      (fs.existsSync as Mock).mockReturnValue(false);
+      (getGlobalSetting as Mock).mockReturnValue(false);
+      const result = binariesExist('dependencyName');
 
-  //       (axios.get as any).mockResolvedValue({ data: response });
+      expect(result).toBe(false);
+    });
+  });
 
-  //       const result = await getLatestDotNetVersion(context, majorVersion);
+  describe('getLatestDotNetVersion', () => {
+    let context: IActionContext;
+    let majorVersion;
 
-  //       expect(result).toBe('6.0.0');
-  //     });
-  //   });
+    beforeEach(() => {
+      context = {
+        telemetry: {
+          properties: {},
+        },
+      } as IActionContext;
+      majorVersion = '6';
+    });
+
+    it('should return the latest .NET version', async () => {
+      const response = [{ tag_name: 'v6.0.0' }];
+
+      (axios.get as Mock).mockResolvedValue({ data: response, status: 200 });
+
+      const result = await getLatestDotNetVersion(context, majorVersion);
+
+      expect(result).toBe('6.0.0');
+    });
+
+    it('should throw error when api call to get dotnet version fails', async () => {
+      const showErrorMessage = vi.fn();
+      (axios.get as Mock).mockResolvedValue({ data: [], status: 500 });
+
+      vscode.window.showErrorMessage = showErrorMessage;
+
+      await expect(getLatestDotNetVersion(context, majorVersion)).rejects.toThrowError();
+      expect(showErrorMessage).toHaveBeenCalled();
+    });
+
+    it('should return fallback dotnet version when no major version is sent', async () => {
+      const result = await getLatestDotNetVersion(context);
+
+      expect(result).toBe(DependencyVersion.dotnet6);
+    });
+  });
 
   //   describe('getLatestFunctionCoreToolsVersion', () => {
   //     it('should return the latest Function Core Tools version', async () => {
@@ -112,19 +144,42 @@ describe('binaries', () => {
   //     });
   //   });
 
-  //   describe('getLatestNodeJsVersion', () => {
-  //     it('should return the latest Node.js version', async () => {
-  //       const context = {} as IActionContext;
-  //       const majorVersion = '14';
-  //       const response = [{ tag_name: 'v14.0.0' }];
+  describe('getLatestNodeJsVersion', () => {
+    let context: IActionContext;
+    let majorVersion;
 
-  //       (axios.get as any).mockResolvedValue({ data: response });
+    beforeEach(() => {
+      context = {
+        telemetry: {
+          properties: {},
+        },
+      } as IActionContext;
+      majorVersion = '14';
+    });
 
-  //       const result = await getLatestNodeJsVersion(context, majorVersion);
+    it('should return the latest Node.js version', async () => {
+      const response = [{ tag_name: 'v14.0.0' }];
+      (axios.get as any).mockResolvedValue({ data: response, status: 200 });
+      const result = await getLatestNodeJsVersion(context, majorVersion);
 
-  //       expect(result).toBe('14.0.0');
-  //     });
-  //   });
+      expect(result).toBe('14.0.0');
+    });
+
+    it('should throw error when api call to get dotnet version fails', async () => {
+      const showErrorMessage = vi.fn();
+      (axios.get as Mock).mockResolvedValue({ data: [], status: 500 });
+
+      vscode.window.showErrorMessage = showErrorMessage;
+
+      await expect(getLatestNodeJsVersion(context, majorVersion)).rejects.toThrowError();
+      expect(showErrorMessage).toHaveBeenCalled();
+    });
+
+    it('should return fallback nodejs version when no major version is sent', async () => {
+      const result = await getLatestNodeJsVersion(context);
+      expect(result).toBe(DependencyVersion.nodeJs);
+    });
+  });
 
   describe('getNodeJsBinariesReleaseUrl', () => {
     const version = '14.0.0';
@@ -221,7 +276,7 @@ describe('binaries', () => {
 
   describe('getDependencyTimeout', () => {
     it('should return the dependency timeout value', () => {
-      (getWorkspaceSetting as any).mockReturnValue(60);
+      (getWorkspaceSetting as Mock).mockReturnValue(60);
 
       const result = getDependencyTimeout();
 
@@ -229,20 +284,24 @@ describe('binaries', () => {
     });
 
     it('should throw an error for invalid timeout value', () => {
-      (getWorkspaceSetting as any).mockReturnValue('invalid');
+      (getWorkspaceSetting as Mock).mockReturnValue('invalid');
 
       expect(() => getDependencyTimeout()).toThrowError('The setting "invalid" must be a number, but instead found "invalid".');
     });
   });
 
   describe('installBinaries', () => {
-    const context = {
-      telemetry: {
-        properties: {},
-      },
-    } as IActionContext;
+    let context: IActionContext;
+
+    beforeEach(() => {
+      context = {
+        telemetry: {
+          properties: {},
+        },
+      } as IActionContext;
+    });
     it('should install binaries', async () => {
-      (getGlobalSetting as any).mockReturnValue(true);
+      (getGlobalSetting as Mock).mockReturnValue(true);
 
       await installBinaries(context);
 
@@ -250,7 +309,7 @@ describe('binaries', () => {
     });
 
     it('should not install binaries', async () => {
-      (getGlobalSetting as any).mockReturnValue(false);
+      (getGlobalSetting as Mock).mockReturnValue(false);
 
       await installBinaries(context);
 
@@ -260,7 +319,7 @@ describe('binaries', () => {
 
   describe('useBinariesDependencies', () => {
     it('should return true if binaries dependencies are used', () => {
-      (getGlobalSetting as any).mockReturnValue(true);
+      (getGlobalSetting as Mock).mockReturnValue(true);
 
       const result = useBinariesDependencies();
 
@@ -268,7 +327,7 @@ describe('binaries', () => {
     });
 
     it('should return false if binaries dependencies are not used', () => {
-      (getGlobalSetting as any).mockReturnValue(false);
+      (getGlobalSetting as Mock).mockReturnValue(false);
 
       const result = useBinariesDependencies();
 

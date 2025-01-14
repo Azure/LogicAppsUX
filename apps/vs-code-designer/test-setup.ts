@@ -10,7 +10,6 @@ vi.mock('@microsoft/vscode-azext-azureutils', () => ({
 }));
 
 vi.mock('@microsoft/vscode-azext-azureauth', () => ({
-  // Mock any methods or exports used by your code from `@microsoft/vscode-azext-azureauth`
   getSessionFromVSCode: vi.fn(() => Promise.resolve({})), // example of a mocked function
 }));
 
@@ -26,3 +25,13 @@ vi.mock('@microsoft/vscode-azext-utils', () => {
     nonNullValue: vi.fn(),
   };
 });
+
+vi.mock('fs', () => ({
+  existsSync: vi.fn(),
+}));
+
+vi.mock('axios');
+// vi.mock('vscode');
+vi.mock('vscode', () => ({
+  window: {},
+}));

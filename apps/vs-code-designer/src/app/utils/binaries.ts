@@ -195,16 +195,16 @@ export async function getLatestNodeJsVersion(context: IActionContext, majorVersi
   context.telemetry.properties.nodeMajorVersion = majorVersion;
 
   if (majorVersion) {
-    await readJsonFromUrl('https://api.github.com/repos/nodejs/node/releases')
+    return await readJsonFromUrl('https://api.github.com/repos/nodejs/node/releases')
       .then((response: IGitHubReleaseInfo[]) => {
         context.telemetry.properties.latestVersionSource = 'github';
-        response.forEach((releaseInfo: IGitHubReleaseInfo) => {
+        for (const releaseInfo of response) {
           const releaseVersion = semver.valid(semver.coerce(releaseInfo.tag_name));
           context.telemetry.properties.latestGithubVersion = releaseInfo.tag_name;
           if (checkMajorVersion(releaseVersion, majorVersion)) {
             return releaseVersion;
           }
-        });
+        }
       })
       .catch((error) => {
         throw Error(localize('errorNewestNodeJsVersion', `Error getting latest Node JS version: ${error}`));
