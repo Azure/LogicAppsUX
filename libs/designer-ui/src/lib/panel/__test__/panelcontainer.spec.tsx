@@ -5,7 +5,7 @@ import * as React from 'react';
 import * as ReactShallowRenderer from 'react-test-renderer/shallow';
 import { describe, vi, beforeEach, afterEach, beforeAll, afterAll, it, test, expect } from 'vitest';
 
-describe('ui/workflowparameters/workflowparameter', () => {
+describe('ui/panel/panelContainer', () => {
   let minimal: PanelContainerProps, renderer: ReactShallowRenderer.ShallowRenderer;
   beforeEach(() => {
     minimal = {
@@ -42,6 +42,6 @@ describe('ui/workflowparameters/workflowparameter', () => {
     const panel = renderer.getRenderOutput();
 
     expect(panel.props.className).toBe('msla-panel-container');
-    expect(panel.props.style).toEqual({ position: 'absolute', maxWidth: '100%', width: minimal.overrideWidth });
+    expect(panel.props.style).toEqual({ position: 'relative', height: '100%', maxWidth: '100%', width: minimal.overrideWidth });
   });
 });

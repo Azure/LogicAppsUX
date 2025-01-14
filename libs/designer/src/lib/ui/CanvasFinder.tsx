@@ -1,26 +1,19 @@
-import { PanelLocation } from '@microsoft/designer-ui';
 import { useState, useMemo, useEffect, useCallback } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { useInternalNode, useNodes, useReactFlow } from '@xyflow/react';
 
-import { useIsPanelCollapsed } from '../core/state/panel/panelSelectors';
 import { useIsGraphEmpty } from '../core/state/workflow/workflowSelectors';
 import { clearFocusNode } from '../core/state/workflow/workflowSlice';
 import { DEFAULT_NODE_SIZE } from '../core/utils/graph';
 import type { RootState, AppDispatch } from '../core';
 
-export interface CanvasFinderProps {
-  panelLocation: PanelLocation;
-}
 
-export const CanvasFinder = (props: CanvasFinderProps) => {
-  const { panelLocation } = props;
+export const CanvasFinder = () => {
   const focusNodeId = useSelector((state: RootState) => state.workflow.focusedCanvasNodeId);
   const isEmpty = useIsGraphEmpty();
   const { setCenter, getZoom } = useReactFlow();
   const dispatch = useDispatch<AppDispatch>();
 
-  const isPanelCollapsed = useIsPanelCollapsed();
   const [firstLoad, setFirstLoad] = useState(true);
 
   const nodes = useNodes();
@@ -58,13 +51,6 @@ export const CanvasFinder = (props: CanvasFinderProps) => {
     let xRawPos = focusNode?.internals.positionAbsolute?.x ?? 0;
     const yRawPos = focusNode?.internals.positionAbsolute?.y ?? 0;
 
-    // If the panel is open, reduce X space
-    if (!isPanelCollapsed) {
-      // Move center to the right if Panel is located to the left; otherwise move center to the left.
-      const directionMultiplier = panelLocation === PanelLocation.Left ? -1 : 1;
-      xRawPos += (directionMultiplier * 630) / 2 / getZoom();
-    }
-
     const xTarget = xRawPos + (focusNode?.measured?.width ?? DEFAULT_NODE_SIZE.width) / 2; // Center X on node midpoint
     const yTarget = yRawPos + (focusNode?.measured?.height ?? DEFAULT_NODE_SIZE.height); // Center Y on bottom edge
 
@@ -74,7 +60,7 @@ export const CanvasFinder = (props: CanvasFinderProps) => {
     });
 
     dispatch(clearFocusNode());
-  }, [focusNode, isPanelCollapsed, setCenter, getZoom, dispatch, panelLocation]);
+  }, [focusNode, setCenter, getZoom, dispatch]);
 
   useEffect(() => {
     setCanvasCenterToFocus();

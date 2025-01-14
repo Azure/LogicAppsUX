@@ -1,7 +1,7 @@
 // Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
 
-exports[`ui/workflowparameters/workflowparameter > should construct 1`] = `
-<OverlayDrawer
+exports[`ui/panel/panelContainer > should construct 1`] = `
+<Drawer
   aria-label="Operation details panel"
   className="msla-panel-container"
   modalType="non-modal"
@@ -15,8 +15,9 @@ exports[`ui/workflowparameters/workflowparameter > should construct 1`] = `
   position="end"
   style={
     {
+      "height": "100%",
       "maxWidth": "100%",
-      "position": "absolute",
+      "position": "relative",
       "width": "630px",
     }
   }
@@ -28,5 +29,5 @@ exports[`ui/workflowparameters/workflowparameter > should construct 1`] = `
       <React.Fragment />
     </div>
   </React.Fragment>
-</OverlayDrawer>
+</Drawer>
 `;
