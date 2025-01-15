@@ -417,7 +417,7 @@ export const DesignerCommandBar = ({
     <>
       <div
         style={{
-          position: 'absolute',
+          position: 'relative',
           top: '60px',
           left: '20px',
           display: 'flex',
