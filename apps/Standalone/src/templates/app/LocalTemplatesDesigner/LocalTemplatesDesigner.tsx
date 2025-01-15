@@ -19,9 +19,11 @@ import { BaseTemplateService } from '@microsoft/logic-apps-shared';
 import { useQuery } from '@tanstack/react-query';
 
 const loadLocalTemplateFromResourcePath = async (resourcePath: string, resourceFile = 'manifest') => {
-  const hello = (await import(`./../../../../../../__mocks__/templates/${resourcePath}/${resourceFile}.json`))?.default as any;
-  console.log('Elaina: LOAD hello ', hello);
-  return hello;
+  const paths = resourcePath.split('/');
+
+  return paths.length === 2
+    ? (await import(`./../../../../../../__mocks__/templates/${paths[0]}/${paths[1]}/${resourceFile}.json`)).default
+    : (await import(`./../../../../../../__mocks__/templates//${resourcePath}/${resourceFile}.json`)).default;
 };
 
 export const LocalTemplatesStandaloneDesigner = () => {

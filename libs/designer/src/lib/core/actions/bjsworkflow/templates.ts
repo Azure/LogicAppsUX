@@ -301,30 +301,20 @@ const loadWorkflowTemplateFromManifest = async (
 };
 
 const getWorkflowAndManifest = async (templatePath: string, manifest: Template.Manifest | undefined, isCustomTemplate: boolean) => {
-  console.log('Elaina: getWorkflowAndManifest ', isCustomTemplate, templatePath, templatePath?.split('/')?.[0], manifest);
-  const paths = templatePath.split('/');
-  const templateManifest: Template.Manifest =
-    !manifest && paths.length === 2
-      ? // (await import(`./../../templates/templateFiles/${paths[0]}/${paths[1]}/manifest.json`)).default
-        await getManifestGivenPath(`${paths[0]}/${paths[1]}`, 'manifest', isCustomTemplate)
-      : // : (manifest ?? (await import(`./../../templates/templateFiles/${templatePath}/manifest.json`)).default);
-        await getManifestGivenPath(templatePath, 'manifest', isCustomTemplate);
+  const templateManifest: Template.Manifest = manifest ?? (await getManifestGivenPath(templatePath, 'manifest', isCustomTemplate));
 
-  const templateWorkflowDefinition: LogicAppsV2.WorkflowDefinition =
-    paths.length === 2
-      ? // ? (await import(`./../../templates/templateFiles/${paths[0]}/${paths[1]}/workflow.json`)).default
-        await getManifestGivenPath(`${paths[0]}/${paths[1]}`, 'workflow', isCustomTemplate)
-      : // : (await import(`./../../templates/templateFiles/${templatePath}/workflow.json`)).default;
-        await getManifestGivenPath(templatePath, 'workflow', isCustomTemplate);
+  const templateWorkflowDefinition: LogicAppsV2.WorkflowDefinition = await getManifestGivenPath(templatePath, 'workflow', isCustomTemplate);
 
   return { templateManifest, templateWorkflowDefinition };
 };
 
 const getManifestGivenPath = async (resourcePath: string, resourceFile: string, isCustomTemplate: boolean) => {
   if (isCustomTemplate) {
-    const hello = await TemplateService()?.getCustomResource?.(resourcePath, resourceFile);
-    console.log('Elaina: hello from custom ', hello);
-    return hello;
+    return await TemplateService()?.getCustomResource?.(resourcePath, resourceFile);
   }
-  return (await import(`./../../templates/templateFiles/${resourcePath}/${resourceFile}.json`)).default;
+  const paths = resourcePath.split('/');
+
+  return paths.length === 2
+    ? (await import(`./../../templates/templateFiles/${paths[0]}/${paths[1]}/${resourceFile}.json`)).default
+    : (await import(`./../../templates/templateFiles/${resourcePath}/${resourceFile}.json`)).default;
 };
