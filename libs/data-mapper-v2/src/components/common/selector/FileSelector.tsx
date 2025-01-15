@@ -1,4 +1,3 @@
-import { useCallback, useRef } from 'react';
 import { useStyles } from './styles';
 import { StackShim } from '@fluentui/react-migration-v8-v9';
 import { Button, Caption2, Input, Radio, RadioGroup, Text, type RadioGroupOnChangeData } from '@fluentui/react-components';
@@ -17,9 +16,8 @@ export type FileSelectorProps<T> = {
   options?: Record<string, T>;
   errorMessage?: string;
   upload: {
-    onUpload: (files?: FileList) => void;
+    onUploadClick: () => void;
     uploadButtonText: string;
-    acceptedExtensions?: string;
     inputPlaceholder?: string;
     fileName?: string;
   };
@@ -38,20 +36,12 @@ const FileSelector = <T extends U>(props: FileSelectorProps<T>) => {
     selectedKey,
     options = {},
     onOptionChange,
-    upload: { onUpload, acceptedExtensions, uploadButtonText, inputPlaceholder, fileName },
+    upload: { onUploadClick, uploadButtonText, inputPlaceholder, fileName },
     cancel,
     existing: { onSelect },
     errorMessage,
   } = props;
-  const uploadFileRef = useRef<HTMLInputElement>(null);
   const styles = useStyles();
-
-  const onInput = useCallback(
-    (event: React.FormEvent<HTMLInputElement>) => {
-      onUpload(event.currentTarget.files ?? undefined);
-    },
-    [onUpload]
-  );
 
   return (
     <div className={styles.root}>
@@ -72,14 +62,13 @@ const FileSelector = <T extends U>(props: FileSelectorProps<T>) => {
                   <br />
                   {selectedKey === key && key === 'upload-new' ? (
                     <div className={styles.uploadInputRoot}>
-                      <input type="file" ref={uploadFileRef} onInput={onInput} accept={acceptedExtensions} hidden />
                       <StackShim horizontal>
                         <Input size="small" value={fileName} placeholder={inputPlaceholder} readOnly />
                         <Button
                           size="small"
                           shape="square"
                           appearance="primary"
-                          onClick={() => uploadFileRef.current?.click()}
+                          onClick={() => onUploadClick()}
                           style={{ marginLeft: 8 }}
                         >
                           {uploadButtonText}

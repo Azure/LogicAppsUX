@@ -3,7 +3,7 @@ import type { IFileSysTreeItem, MapDefinitionEntry, MapMetadata, SchemaType } fr
 
 type InitializeData = { project: string };
 type FetchSchemaData = { fileName: string; type: SchemaType };
-type SchemaPathData = { path: string; type: SchemaType };
+export type SchemaPathData = { path: string; type: SchemaType };
 
 export type MapDefinitionData = {
   mapDefinition: MapDefinitionEntry;
@@ -38,7 +38,7 @@ export type MessageToVsix =
     }
   | {
       command: typeof ExtensionCommand.addSchemaFromFile;
-      data: SchemaPathData;
+      data: SchemaType;
     }
   | {
       command:
