@@ -33,7 +33,7 @@ import * as semver from 'semver';
 import * as vscode from 'vscode';
 
 import AdmZip = require('adm-zip');
-import { HTTP_METHODS, isNullOrUndefined } from '@microsoft/logic-apps-shared';
+import { isNullOrUndefined } from '@microsoft/logic-apps-shared';
 
 /**
  * Download and Extracts dependency zip.
@@ -63,15 +63,9 @@ export async function downloadAndExtractDependency(
   const dependencyFileExtension = getCompressionFileExtension(downloadUrl);
   const dependencyFilePath = path.join(tempFolderPath, `${dependencyName}${dependencyFileExtension}`);
 
-  const downloadPromise = axios({
-    method: HTTP_METHODS.GET,
-    url: downloadUrl,
-    responseType: 'stream',
-  });
-
   executeCommand(ext.outputChannel, undefined, 'echo', `Downloading dependency from: ${downloadUrl}`);
 
-  downloadPromise.then((response) => {
+  axios.get(downloadUrl, { responseType: 'stream' }).then((response) => {
     executeCommand(ext.outputChannel, undefined, 'echo', `Creating temporary folder... ${tempFolderPath}`);
     fs.mkdirSync(tempFolderPath, { recursive: true });
     fs.chmodSync(tempFolderPath, 0o777);
@@ -119,7 +113,7 @@ export async function downloadAndExtractDependency(
   });
 }
 
-export async function getLatestFunctionCoreToolsVersion(context: IActionContext, majorVersion: string): Promise<string> {
+export async function getLatestFunctionCoreToolsVersion(context: IActionContext, majorVersion?: string): Promise<string> {
   context.telemetry.properties.funcCoreTools = majorVersion;
 
   // Use npm to find newest func core tools version
@@ -134,20 +128,26 @@ export async function getLatestFunctionCoreToolsVersion(context: IActionContext,
         return latestVersion;
       }
     } catch (error) {
-      console.log(error);
+      context.telemetry.properties.getLatestFunctionCoreToolsVersion = 'fallback';
+      context.telemetry.properties.errorLatestFunctionCoretoolsVersion = `Error executing npm command to get latest function core tools version: ${error}`;
+      return DependencyVersion.funcCoreTools;
     }
   } else if (majorVersion) {
     // fallback to github api to look for latest version
-    await readJsonFromUrl('https://api.github.com/repos/Azure/azure-functions-core-tools/releases/latest').then(
-      (response: IGitHubReleaseInfo) => {
+    return await readJsonFromUrl('https://api.github.com/repos/Azure/azure-functions-core-tools/releases/latest')
+      .then((response: IGitHubReleaseInfo) => {
         latestVersion = semver.valid(semver.coerce(response.tag_name));
         context.telemetry.properties.latestVersionSource = 'github';
         context.telemetry.properties.latestGithubVersion = response.tag_name;
         if (checkMajorVersion(latestVersion, majorVersion)) {
           return latestVersion;
         }
-      }
-    );
+      })
+      .catch((error) => {
+        context.telemetry.properties.getLatestFunctionCoreToolsVersion = 'fallback';
+        context.telemetry.properties.errorLatestFunctionCoretoolsVersion = `Error getting latest Function Core tools version: ${error}`;
+        return DependencyVersion.funcCoreTools;
+      });
   }
 
   // Fall back to hardcoded version
@@ -183,7 +183,9 @@ export async function getLatestDotNetVersion(context: IActionContext, majorVersi
         return latestVersion;
       })
       .catch((error) => {
-        throw Error(localize('errorNewestDotNetVersion', `Error getting latest .NET SDK version: ${error}`));
+        context.telemetry.properties.latestVersionSource = 'fallback';
+        context.telemetry.properties.errorNewestDotNetVersion = `Error getting latest .NET SDK version: ${error}`;
+        return DependencyVersion.dotnet6;
       });
   }
 
@@ -195,32 +197,34 @@ export async function getLatestNodeJsVersion(context: IActionContext, majorVersi
   context.telemetry.properties.nodeMajorVersion = majorVersion;
 
   if (majorVersion) {
-    await readJsonFromUrl('https://api.github.com/repos/nodejs/node/releases')
+    return await readJsonFromUrl('https://api.github.com/repos/nodejs/node/releases')
       .then((response: IGitHubReleaseInfo[]) => {
         context.telemetry.properties.latestVersionSource = 'github';
-        response.forEach((releaseInfo: IGitHubReleaseInfo) => {
+        for (const releaseInfo of response) {
           const releaseVersion = semver.valid(semver.coerce(releaseInfo.tag_name));
           context.telemetry.properties.latestGithubVersion = releaseInfo.tag_name;
           if (checkMajorVersion(releaseVersion, majorVersion)) {
             return releaseVersion;
           }
-        });
+        }
       })
       .catch((error) => {
-        throw Error(localize('errorNewestNodeJsVersion', `Error getting latest Node JS version: ${error}`));
+        context.telemetry.properties.latestNodeJSVersion = 'fallback';
+        context.telemetry.properties.errorLatestNodeJsVersion = `Error getting latest Node JS version: ${error}`;
+        return DependencyVersion.nodeJs;
       });
   }
 
-  context.telemetry.properties.latestVersionSource = 'fallback';
+  context.telemetry.properties.latestNodeJSVersion = 'fallback';
   return DependencyVersion.nodeJs;
 }
 
 export function getNodeJsBinariesReleaseUrl(version: string, osPlatform: string, arch: string): string {
-  if (osPlatform !== 'win') {
-    return `https://nodejs.org/dist/v${version}/node-v${version}-${osPlatform}-${arch}.tar.gz`;
+  if (osPlatform === 'win') {
+    return `https://nodejs.org/dist/v${version}/node-v${version}-${osPlatform}-${arch}.zip`;
   }
 
-  return `https://nodejs.org/dist/v${version}/node-v${version}-${osPlatform}-${arch}.zip`;
+  return `https://nodejs.org/dist/v${version}/node-v${version}-${osPlatform}-${arch}.tar.gz`;
 }
 
 export function getFunctionCoreToolsBinariesReleaseUrl(version: string, osPlatform: string, arch: string): string {
