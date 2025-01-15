@@ -3,10 +3,10 @@
   "version": "5.21.0",
   "dependencies": {
     "@apidevtools/swagger-parser": "10.0.3",
-    "@formatjs/intl": "^2.10.1",
-    "@xyflow/react": "^12.3.5",
+    "@formatjs/intl": "^2.10.15",
+    "@xyflow/react": "^12.3.6",
     "@xyflow/system": "^0.0.37",
-    "axios": "^1.7.7",
+    "axios": "^1.7.9",
     "react-intl": "6.3.0"
   },
   "engines": {
