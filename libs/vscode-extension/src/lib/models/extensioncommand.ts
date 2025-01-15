@@ -46,6 +46,8 @@ export const ExtensionCommand = {
   createUnitTest: 'createUnitTest',
   viewWorkflow: 'viewWorkflow',
   openRelativeLink: 'openRelativeLink',
+  logTelemetry: 'logTelemetry',
+  sendNotification: 'sendNotification',
 } as const;
 export type ExtensionCommand = (typeof ExtensionCommand)[keyof typeof ExtensionCommand];
 

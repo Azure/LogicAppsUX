@@ -21,16 +21,22 @@ export class NewCodeProjectTypeStep extends AzureWizardPromptStep<IProjectWizard
   public hideStepCount = true;
   private readonly templateId?: string;
   private readonly functionSettings?: { [key: string]: string | undefined };
+  private readonly skipWorkflowStateTypeStep?: boolean;
 
   /**
    * The constructor initializes the NewCodeProjectTypeStep object with optional templateId and functionSettings parameters.
    * @param templateId - The ID of the template for the code project.
    * @param functionSettings - The settings for the functions in the code project.
    */
-  public constructor(templateId: string | undefined, functionSettings: { [key: string]: string | undefined } | undefined) {
+  public constructor(
+    templateId: string | undefined,
+    functionSettings: { [key: string]: string | undefined } | undefined,
+    skipWorkflowStateTypeStep: any
+  ) {
     super();
     this.templateId = templateId;
     this.functionSettings = functionSettings;
+    this.skipWorkflowStateTypeStep = skipWorkflowStateTypeStep;
   }
 
   /**
@@ -153,13 +159,15 @@ export class NewCodeProjectTypeStep extends AzureWizardPromptStep<IProjectWizard
     executeSteps.push(new WorkflowProjectCreateStep());
     await addInitVSCodeSteps(context, executeSteps, false);
 
-    promptSteps.push(
-      await WorkflowStateTypeStep.create(context, {
-        isProjectWizard: true,
-        templateId: this.templateId,
-        triggerSettings: this.functionSettings,
-      })
-    );
+    if (!this.skipWorkflowStateTypeStep) {
+      promptSteps.push(
+        await WorkflowStateTypeStep.create(context, {
+          isProjectWizard: true,
+          templateId: this.templateId,
+          triggerSettings: this.functionSettings,
+        })
+      );
+    }
   }
 
   /**

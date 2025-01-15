@@ -23,6 +23,7 @@ export interface WorkflowLoadingState {
   isLocal: boolean;
   isUnitTest: boolean;
   showChatBot?: boolean;
+  showRunHistory?: boolean;
   parameters: Record<string, WorkflowParameter>;
   showConnectionsPanel?: boolean;
   workflowKind?: string;
@@ -106,7 +107,7 @@ export const workflowLoadingSlice = createSlice({
     setWorkflowName: (state, action: PayloadAction<string>) => {
       state.workflowName = action.payload;
     },
-    changeRunId: (state, action: PayloadAction<string>) => {
+    changeRunId: (state, action: PayloadAction<string | undefined>) => {
       state.runId = action.payload;
     },
     setResourcePath: (state, action: PayloadAction<string>) => {
@@ -155,6 +156,9 @@ export const workflowLoadingSlice = createSlice({
     },
     setIsChatBotEnabled: (state, action: PayloadAction<boolean>) => {
       state.showChatBot = action.payload;
+    },
+    setRunHistoryEnabled: (state, action: PayloadAction<boolean>) => {
+      state.showRunHistory = action.payload;
     },
     setShowConnectionsPanel: (state, action: PayloadAction<boolean>) => {
       state.showConnectionsPanel = action.payload;
@@ -234,6 +238,7 @@ export const {
   setHostingPlan,
   setIsLocalSelected,
   setIsChatBotEnabled,
+  setRunHistoryEnabled,
   setShowConnectionsPanel,
   changeRunId,
   setLanguage,

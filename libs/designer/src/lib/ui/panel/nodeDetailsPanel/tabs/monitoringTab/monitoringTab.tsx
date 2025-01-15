@@ -8,7 +8,7 @@ import { PropertiesPanel } from './propertiesPanel';
 import { RunService, isNullOrUndefined } from '@microsoft/logic-apps-shared';
 import { ErrorSection } from '@microsoft/designer-ui';
 import type { PanelTabFn, PanelTabProps } from '@microsoft/designer-ui';
-import { useEffect } from 'react';
+import { useCallback, useEffect } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { useDispatch } from 'react-redux';
 import type { AppDispatch } from '../../../../../core';
@@ -22,9 +22,9 @@ export const MonitoringPanel: React.FC<PanelTabProps> = (props) => {
   const { status: statusRun, error: errorRun, code: codeRun } = runMetaData ?? {};
   const error = getMonitoringTabError(errorRun, statusRun, codeRun);
 
-  const getActionInputsOutputs = () => {
+  const getActionInputsOutputs = useCallback(() => {
     return RunService().getActionLinks(runMetaData, selectedNodeId);
-  };
+  }, [selectedNodeId, runMetaData]);
 
   const {
     data: inputOutputs,

@@ -9,6 +9,7 @@ import { dotnet, func, node, npm } from './constants';
 import type { ContainerApp, Site } from '@azure/arm-appservice';
 import type { IActionContext, IAzExtOutputChannel } from '@microsoft/vscode-azext-utils';
 import type { AzureHostExtensionApi } from '@microsoft/vscode-azext-utils/hostapi';
+import type TelemetryReporter from '@vscode/extension-telemetry';
 import type * as cp from 'child_process';
 import {
   window,
@@ -100,6 +101,10 @@ export namespace ext {
     window.showWarningMessage(errMsg);
   };
 
+  export const showInformation = (msg: string) => {
+    window.showInformationMessage(msg);
+  };
+
   export const showError = (errMsg: string, options?: MessageOptions) => {
     ext.log(errMsg);
     if (options && options.detail) {
@@ -118,6 +123,8 @@ export namespace ext {
   export const testData = new WeakMap<TestItem, TestData>();
   export let unitTestController: TestController;
   export const testRuns = new Map<string, any>();
+  // Telemetry
+  export let telemetryReporter: TelemetryReporter;
 }
 
 export const ExtensionCommand = {

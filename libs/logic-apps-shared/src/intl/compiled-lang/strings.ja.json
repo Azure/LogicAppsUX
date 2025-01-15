@@ -26,19 +26,19 @@
   "+5Jp42": [
     {
       "type": 0,
-      "value": "By"
+      "value": "発行者:"
     }
   ],
   "+Agiub": [
     {
       "type": 0,
-      "value": "Create an expression with Copilot"
+      "value": "Copilot で式を作成する"
     }
   ],
   "+EREVh": [
     {
       "type": 0,
-      "value": "Name"
+      "value": "名前"
     }
   ],
   "+FcXe9": [
@@ -71,10 +71,16 @@
       "value": "概要"
     }
   ],
+  "+M7bC6": [
+    {
+      "type": 0,
+      "value": "再試行により成功"
+    }
+  ],
   "+R90eK": [
     {
       "type": 0,
-      "value": "Retry policy interval is invalid, must match ISO 8601 duration format"
+      "value": "再試行ポリシーの間隔が無効です。ISO 8601 の期間の形式と一致する必要があります"
     }
   ],
   "+Uvo/p": [
@@ -101,20 +107,20 @@
   ],
   "+l5XmZ": [
     {
-      "type": 0,
-      "value": "Enter a positive integer between "
-    },
-    {
       "type": 1,
       "value": "min"
     },
     {
       "type": 0,
-      "value": " and "
+      "value": " ~ "
     },
     {
       "type": 1,
       "value": "max"
+    },
+    {
+      "type": 0,
+      "value": " の正の整数を入力してください"
     }
   ],
   "+mAJR3": [
@@ -162,7 +168,7 @@
   "/IVuGP": [
     {
       "type": 0,
-      "value": "Discard"
+      "value": "破棄"
     }
   ],
   "/KRvvg": [
@@ -222,7 +228,7 @@
   "/csbOB": [
     {
       "type": 0,
-      "value": "Retry policy count is invalid (must be from "
+      "value": "再試行ポリシー数が無効です ("
     },
     {
       "type": 1,
@@ -230,7 +236,7 @@
     },
     {
       "type": 0,
-      "value": " to "
+      "value": " から "
     },
     {
       "type": 1,
@@ -238,7 +244,7 @@
     },
     {
       "type": 0,
-      "value": ")"
+      "value": " にする必要があります)"
     }
   ],
   "/doURb": [
@@ -274,7 +280,7 @@
   "/qrBuJ": [
     {
       "type": 0,
-      "value": "Create"
+      "value": "作成"
     }
   ],
   "/qu3zt": [
@@ -304,13 +310,13 @@
   "/ye9Df": [
     {
       "type": 0,
-      "value": "Delete workflow action"
+      "value": "Workflow アクションの削除"
     }
   ],
   "0/VGiF": [
     {
       "type": 0,
-      "value": "Add action"
+      "value": "アクションの追加"
     }
   ],
   "00xlpa": [
@@ -392,13 +398,13 @@
   "0BO/tO": [
     {
       "type": 0,
-      "value": "Split-on tracking ID"
+      "value": "分割の追跡 ID"
     }
   ],
   "0C5Ywr": [
     {
       "type": 0,
-      "value": "Enter an array"
+      "value": "配列を入力してください"
     }
   ],
   "0CPsxh": [
@@ -422,7 +428,7 @@
   "0FRVkr": [
     {
       "type": 0,
-      "value": "Connection Panel"
+      "value": "接続パネル"
     }
   ],
   "0FzNJV": [
@@ -470,7 +476,7 @@
   "0UfxUM": [
     {
       "type": 0,
-      "value": "Next"
+      "value": "次へ"
     }
   ],
   "0Vzp0l": [
@@ -481,24 +487,12 @@
   ],
   "0ZZJos": [
     {
-      "type": 0,
-      "value": "Showing "
-    },
-    {
       "type": 1,
       "value": "current_index_start"
     },
     {
       "type": 0,
-      "value": " - "
-    },
-    {
-      "type": 1,
-      "value": "current_index_last"
-    },
-    {
-      "type": 0,
-      "value": " of "
+      "value": " を表示しています - "
     },
     {
       "type": 1,
@@ -506,7 +500,21 @@
     },
     {
       "type": 0,
-      "value": " results."
+      "value": " 結果の "
+    },
+    {
+      "type": 1,
+      "value": "current_index_last"
+    },
+    {
+      "type": 0,
+      "value": "。"
+    }
+  ],
+  "0a4IGE": [
+    {
+      "type": 0,
+      "value": "Refresh"
     }
   ],
   "0i/6TR": [
@@ -554,7 +562,7 @@
   "0uuxAX": [
     {
       "type": 0,
-      "value": "Delete mapping"
+      "value": "マッピングの削除"
     }
   ],
   "0vfdFS": [
@@ -570,7 +578,7 @@
     },
     {
       "type": 0,
-      "value": " connection"
+      "value": " 接続"
     }
   ],
   "0xLWzG": [
@@ -624,7 +632,7 @@
   "1HhCtq": [
     {
       "type": 0,
-      "value": "Headers"
+      "value": "ヘッダー"
     }
   ],
   "1KFpTX": [
@@ -636,7 +644,7 @@
   "1LSKq8": [
     {
       "type": 0,
-      "value": "Basics"
+      "value": "基本情報"
     }
   ],
   "1NBvKu": [
@@ -645,10 +653,16 @@
       "value": "パラメーターの引数を浮動小数点数に変換します"
     }
   ],
+  "1QktJw": [
+    {
+      "type": 0,
+      "value": "マップ エラー"
+    }
+  ],
   "1Xke9D": [
     {
       "type": 0,
-      "value": "open functions drawer"
+      "value": "関数ドロワーを開く"
     }
   ],
   "1dlfUe": [
@@ -666,7 +680,7 @@
   "1f7LG4": [
     {
       "type": 0,
-      "value": "Fixed interval"
+      "value": "固定間隔"
     }
   ],
   "1hHFdx": [
@@ -690,7 +704,7 @@
   "1jf3Dq": [
     {
       "type": 0,
-      "value": "Z to A, descending"
+      "value": "降順の Z から A"
     }
   ],
   "1jhzOM": [
@@ -723,6 +737,12 @@
       "value": "有効な URI を入力してください。"
     }
   ],
+  "1tmN2o": [
+    {
+      "type": 0,
+      "value": "Workflow version"
+    }
+  ],
   "1uGBLP": [
     {
       "type": 0,
@@ -732,7 +752,7 @@
   "1vqDeQ": [
     {
       "type": 0,
-      "value": "Select Create to start a new workflow based on this template, no configuration required."
+      "value": "[作成] を選択して、このテンプレートに基づいて新しいワークフローを開始します。構成は必要ありません。"
     }
   ],
   "20oqsp": [
@@ -810,13 +830,13 @@
   "2OQU3/": [
     {
       "type": 0,
-      "value": "Cannot run after both trigger and action"
+      "value": "トリガーとアクションの両方の後に実行することはできません"
     }
   ],
   "2On4Xu": [
     {
       "type": 0,
-      "value": "Code view tab"
+      "value": "[コード ビュー] タブ"
     }
   ],
   "2TMGk7": [
@@ -834,7 +854,7 @@
   "2adqQ4": [
     {
       "type": 0,
-      "value": "Maximum interval"
+      "value": "最大間隔"
     }
   ],
   "2cVEMV": [
@@ -898,7 +918,7 @@
   "2xQWRt": [
     {
       "type": 0,
-      "value": "Search Functions"
+      "value": "関数の検索"
     }
   ],
   "2y24a/": [
@@ -910,15 +930,15 @@
   "2yUM4j": [
     {
       "type": 1,
-      "value": "suggestionIndex"
+      "value": "suggestionsCount"
     },
     {
       "type": 0,
-      "value": " of "
+      "value": " の "
     },
     {
       "type": 1,
-      "value": "suggestionsCount"
+      "value": "suggestionIndex"
     }
   ],
   "2z5HGT": [
@@ -954,7 +974,7 @@
   "36sF7T": [
     {
       "type": 0,
-      "value": "Associated workflows"
+      "value": "関連付けられているワークフロー"
     }
   ],
   "3AWwVl": [
@@ -966,7 +986,7 @@
   "3BXdMk": [
     {
       "type": 0,
-      "value": "Request settings"
+      "value": "要求の設定"
     }
   ],
   "3BZnxY": [
@@ -990,7 +1010,7 @@
   "3JEC7U": [
     {
       "type": 0,
-      "value": "Error type"
+      "value": "エラーの種類"
     }
   ],
   "3KPLpx": [
@@ -1044,7 +1064,7 @@
   "3Xf/4S": [
     {
       "type": 0,
-      "value": "Swagger endpoint"
+      "value": "Swagger エンドポイント"
     }
   ],
   "3Y8a6G": [
@@ -1064,13 +1084,13 @@
   "3a3eHg": [
     {
       "type": 0,
-      "value": "Select actions"
+      "value": "アクションの選択"
     }
   ],
   "3cZFcy": [
     {
       "type": 0,
-      "value": "Error Panel"
+      "value": "エラー パネル"
     }
   ],
   "3cZZKj": [
@@ -1088,7 +1108,7 @@
   "3hHkAn": [
     {
       "type": 0,
-      "value": "Result"
+      "value": "結果"
     }
   ],
   "3n5pnv": [
@@ -1106,7 +1126,7 @@
   "3pheF6": [
     {
       "type": 0,
-      "value": "Select schema"
+      "value": "スキーマの選択"
     }
   ],
   "3rzrWf": [
@@ -1149,12 +1169,6 @@
     {
       "type": 0,
       "value": "接続を開く"
-    }
-  ],
-  "41eMpW": [
-    {
-      "type": 0,
-      "value": "待機中"
     }
   ],
   "43xObP": [
@@ -1204,7 +1218,7 @@
   "4BuCdw": [
     {
       "type": 0,
-      "value": "Specify the behavior and capabilities for transferring content over HTTP."
+      "value": "HTTP 経由でコンテンツを転送する場合の動作と機能を指定します。"
     }
   ],
   "4D7H4R": [
@@ -1220,7 +1234,7 @@
   "4E69aV": [
     {
       "type": 0,
-      "value": "Background color"
+      "value": "背景色"
     }
   ],
   "4Ekn9t": [
@@ -1244,7 +1258,7 @@
   "4SIrVn": [
     {
       "type": 0,
-      "value": "Body"
+      "value": "本文"
     }
   ],
   "4YKQAF": [
@@ -1273,12 +1287,12 @@
   ],
   "4hlqgK": [
     {
-      "type": 0,
-      "value": "No results found for "
-    },
-    {
       "type": 1,
       "value": "searchTermBeingSearchedFor_DO_NOT_TRANSLATE"
+    },
+    {
+      "type": 0,
+      "value": " の結果が見つかりませんでした"
     }
   ],
   "4iyEAY": [
@@ -1296,7 +1310,13 @@
   "4rVVyW": [
     {
       "type": 0,
-      "value": "Retry history"
+      "value": "再試行の履歴"
+    }
+  ],
+  "4rdY7D": [
+    {
+      "type": 0,
+      "value": "Run ID"
     }
   ],
   "4vcnOA": [
@@ -1325,12 +1345,12 @@
   ],
   "5+zBXE": [
     {
-      "type": 1,
-      "value": "label"
+      "type": 0,
+      "value": "キー項目の "
     },
     {
-      "type": 0,
-      "value": " key item"
+      "type": 1,
+      "value": "label"
     }
   ],
   "50W8FI": [
@@ -1349,6 +1369,20 @@
     {
       "type": 0,
       "value": "(UTC+09:00) 大阪、札幌、東京"
+    }
+  ],
+  "5DkTf5": [
+    {
+      "type": 0,
+      "value": "ノード キー '"
+    },
+    {
+      "type": 1,
+      "value": "nodeKey"
+    },
+    {
+      "type": 0,
+      "value": "' のターゲット スキーマ ノードが見つかりません"
     }
   ],
   "5J9jne": [
@@ -1450,7 +1484,7 @@
   "5pSOjg": [
     {
       "type": 0,
-      "value": "Create workflows from template"
+      "value": "テンプレートからワークフローを作成する"
     }
   ],
   "5qzZMo": [
@@ -1462,19 +1496,19 @@
   "5rljf7": [
     {
       "type": 0,
-      "value": "Discovery Panel"
+      "value": "検出パネル"
     }
   ],
   "5szzYP": [
     {
       "type": 0,
-      "value": "Use this template"
+      "value": "このテンプレートを使用する"
     }
   ],
   "5we9SR": [
     {
       "type": 0,
-      "value": "Client tracking ID"
+      "value": "クライアントの追跡 ID"
     }
   ],
   "5ytHcK": [
@@ -1522,13 +1556,13 @@
   "6DZp5H": [
     {
       "type": 0,
-      "value": "Search"
+      "value": "検索"
     }
   ],
   "6LJZ7n": [
     {
       "type": 0,
-      "value": "Retry policy"
+      "value": "再試行ポリシー"
     }
   ],
   "6OSgRP": [
@@ -1546,7 +1580,7 @@
   "6SQuYg": [
     {
       "type": 0,
-      "value": "See more ("
+      "value": "表示数を増やす ("
     },
     {
       "type": 1,
@@ -1554,7 +1588,7 @@
     },
     {
       "type": 0,
-      "value": ")"
+      "value": " 件)"
     }
   ],
   "6VV7OY": [
@@ -1566,19 +1600,19 @@
   "6c1ffO": [
     {
       "type": 0,
-      "value": "Enter JSON object of authentication parameter"
+      "value": "認証パラメーターの JSON オブジェクトを入力してください"
     }
   ],
   "6eDY1H": [
     {
       "type": 0,
-      "value": "optional"
+      "value": "オプション"
     }
   ],
   "6epkWC": [
     {
       "type": 0,
-      "value": "Body item"
+      "value": "本文項目"
     }
   ],
   "6fDYzG": [
@@ -1634,13 +1668,13 @@
   "6nWQm7": [
     {
       "type": 0,
-      "value": "Start time"
+      "value": "開始時刻"
     }
   ],
   "6oOQnD": [
     {
       "type": 0,
-      "value": "Close test map"
+      "value": "テスト マップを閉じる"
     }
   ],
   "6oqk+A": [
@@ -1664,7 +1698,7 @@
   "6rJ+Fj": [
     {
       "type": 0,
-      "value": "Delete workflow graph"
+      "value": "WorkflowGraph の削除"
     }
   ],
   "6sGj3J": [
@@ -1724,7 +1758,7 @@
   "7+ZxCU": [
     {
       "type": 0,
-      "value": "Invalid authentication value"
+      "value": "認証値が無効です"
     }
   ],
   "70cHmm": [
@@ -1760,7 +1794,7 @@
   "7F4Bzv": [
     {
       "type": 0,
-      "value": "Workflow with name \""
+      "value": "\""
     },
     {
       "type": 1,
@@ -1768,7 +1802,7 @@
     },
     {
       "type": 0,
-      "value": "\" already exists."
+      "value": "\" という名前のワークフローは既に存在します。"
     }
   ],
   "7Fyq1F": [
@@ -1809,10 +1843,16 @@
       "value": "必須。取得する部分文字列が含まれる文字列。"
     }
   ],
+  "7X4UA/": [
+    {
+      "type": 0,
+      "value": "待機中"
+    }
+  ],
   "7ZF1Hr": [
     {
       "type": 0,
-      "value": "Validation error"
+      "value": "検証エラー"
     }
   ],
   "7ZR1xr": [
@@ -1830,13 +1870,13 @@
   "7adnmH": [
     {
       "type": 0,
-      "value": "Back to template library"
+      "value": "テンプレート ライブラリに戻る"
     }
   ],
   "7fZkLA": [
     {
       "type": 0,
-      "value": "Disable static result"
+      "value": "静的な結果の無効化"
     }
   ],
   "7gUE8h": [
@@ -1946,7 +1986,7 @@
   "8KpZmj": [
     {
       "type": 0,
-      "value": "The system-assigned identity is unavailable because it's not enabled."
+      "value": "システム割り当て ID は有効になっていないため、使用できません。"
     }
   ],
   "8L+oIz": [
@@ -2034,13 +2074,13 @@
   "8p0yK8": [
     {
       "type": 0,
-      "value": "Run after"
+      "value": "後に実行"
     }
   ],
   "8wlfdo": [
     {
       "type": 0,
-      "value": "Suppress workflow headers on response"
+      "value": "応答時のワークフロー ヘッダーを抑制する"
     }
   ],
   "8wr0zO": [
@@ -2052,7 +2092,7 @@
   "8zcsPi": [
     {
       "type": 0,
-      "value": "Expression editor"
+      "value": "式エディター"
     }
   ],
   "8zkvmc": [
@@ -2076,7 +2116,7 @@
   "90Vi7t": [
     {
       "type": 0,
-      "value": "Expand static result"
+      "value": "静的な結果の展開"
     }
   ],
   "90o7sB": [
@@ -2134,7 +2174,7 @@
   "9OzDnJ": [
     {
       "type": 0,
-      "value": "Search tips"
+      "value": "検索のヒント"
     }
   ],
   "9QNZSj": [
@@ -2166,7 +2206,7 @@
   "9V2Uwf": [
     {
       "type": 0,
-      "value": "Insert expression (you can also add by typing '/' in the editor)"
+      "value": "式の挿入 (エディターで「/」を入力して追加することもできます)"
     }
   ],
   "9W0lck": [
@@ -2207,6 +2247,12 @@
       "value": "追加"
     }
   ],
+  "9dd0/m": [
+    {
+      "type": 0,
+      "value": "実行中"
+    }
+  ],
   "9djnqI": [
     {
       "type": 0,
@@ -2222,7 +2268,7 @@
   "9uv02q": [
     {
       "type": 0,
-      "value": "Set the tracking ID for the run. For split-on this tracking ID is for the initiating request"
+      "value": "実行の追跡 ID を設定します。分割の場合、この追跡 ID は開始要求用です"
     }
   ],
   "9wX3u9": [
@@ -2243,10 +2289,16 @@
       "value": "さらに詳細な情報については、次のリソースを参照してください。"
     }
   ],
+  "A5/IqS": [
+    {
+      "type": 0,
+      "value": "Run identifier"
+    }
+  ],
   "A5/UwX": [
     {
       "type": 0,
-      "value": "Accelerators"
+      "value": "アクセラレータ"
     }
   ],
   "A5Ferh": [
@@ -2258,7 +2310,7 @@
   "A8T1X/": [
     {
       "type": 0,
-      "value": "Whitespaces must be encoded for URIs."
+      "value": "URI には空白文字をエンコードする必要があります。"
     }
   ],
   "A8l+k7": [
@@ -2278,7 +2330,7 @@
   "AB+yPQ": [
     {
       "type": 0,
-      "value": "Connection details"
+      "value": "接続の詳細"
     }
   ],
   "AEguAy": [
@@ -2296,19 +2348,29 @@
   "AJ+LDh": [
     {
       "type": 0,
-      "value": "Provide a unique, descriptive name and review the state type to ensure your workflows are properly configured."
+      "value": "一意でわかりやすい名前を指定し、状態の種類を確認して、ワークフローが正しく構成されていることを確認します。"
     }
   ],
   "AKOkI2": [
     {
       "type": 0,
-      "value": "Service principal"
+      "value": "サービス プリンシパル"
+    }
+  ],
+  "AMMfbt": [
+    {
+      "type": 1,
+      "value": "count"
+    },
+    {
+      "type": 0,
+      "value": " Second"
     }
   ],
   "APKdYG": [
     {
       "type": 0,
-      "value": "Enter a valid double number."
+      "value": "有効な倍精度浮動小数点数を入力してください。"
     }
   ],
   "AQ7Zxc": [
@@ -2326,7 +2388,7 @@
   "Agqhgu": [
     {
       "type": 0,
-      "value": "Describe how you'd like to update your expression."
+      "value": "式を更新する方法を説明してください。"
     }
   ],
   "AheXMN": [
@@ -2350,7 +2412,7 @@
   "Alq4/3": [
     {
       "type": 0,
-      "value": "Hybrid connector"
+      "value": "ハイブリッド コネクタ"
     }
   ],
   "AnX5yC": [
@@ -2378,7 +2440,7 @@
     },
     {
       "type": 0,
-      "value": " operation"
+      "value": " 操作"
     }
   ],
   "Az0QvG": [
@@ -2437,7 +2499,7 @@
   "B6BjCl": [
     {
       "type": 0,
-      "value": "Drop-down list of options"
+      "value": "オプションのドロップダウン リスト"
     }
   ],
   "B999mz": [
@@ -2462,12 +2524,6 @@
     {
       "type": 0,
       "value": "警告: カスタム値が、この入力に許可されている型のいずれかと一致しません"
-    }
-  ],
-  "BFTwRN": [
-    {
-      "type": 0,
-      "value": "再試行により成功しました"
     }
   ],
   "BGw6eH": [
@@ -2510,12 +2566,6 @@
       "value": "開始時刻"
     }
   ],
-  "BPYdTX": [
-    {
-      "type": 0,
-      "value": "指定されていません"
-    }
-  ],
   "BQCPY7": [
     {
       "type": 0,
@@ -2526,12 +2576,6 @@
     {
       "type": 0,
       "value": "パスワードをプレーンテキストとして入力するか、セキュリティで保護されたパラメーターを使用してください"
-    }
-  ],
-  "BRMOfD": [
-    {
-      "type": 0,
-      "value": "Timed out"
     }
   ],
   "BS3gy8": [
@@ -2555,7 +2599,7 @@
   "BXb3CB": [
     {
       "type": 0,
-      "value": "Testing tab"
+      "value": "[テスト] タブ"
     }
   ],
   "BYrP8F": [
@@ -2573,7 +2617,7 @@
   "Bkc/+3": [
     {
       "type": 0,
-      "value": "Retry policy minimum interval is invalid, must match ISO 8601 duration format"
+      "value": "再試行ポリシーの最小間隔が無効です。ISO 8601 の期間の形式と一致する必要があります"
     }
   ],
   "Bl4Iv0": [
@@ -2591,7 +2635,7 @@
   "BnkCwH": [
     {
       "type": 0,
-      "value": "Search properties"
+      "value": "検索プロパティ"
     }
   ],
   "BoMvF2": [
@@ -2622,6 +2666,20 @@
     {
       "type": 0,
       "value": "この GUID の値の書式設定方法を示す単一の書式指定子。"
+    }
+  ],
+  "Bwqlxd": [
+    {
+      "type": 0,
+      "value": "キーが見つかりません '"
+    },
+    {
+      "type": 1,
+      "value": "nodeKey"
+    },
+    {
+      "type": 0,
+      "value": "'"
     }
   ],
   "BxITRH": [
@@ -2663,11 +2721,15 @@
   "CRTB+v": [
     {
       "type": 0,
-      "value": "Value should be greater than "
+      "value": "値は "
     },
     {
       "type": 1,
       "value": "min"
+    },
+    {
+      "type": 0,
+      "value": " 以上にする必要があります"
     }
   ],
   "CaajcD": [
@@ -2691,13 +2753,13 @@
   "Ccbm2Y": [
     {
       "type": 0,
-      "value": "Multi-select list of options"
+      "value": "オプションの複数選択リスト"
     }
   ],
   "CeF40t": [
     {
       "type": 0,
-      "value": "Authentication type"
+      "value": "認証の種類"
     }
   ],
   "Ci41Od": [
@@ -2727,7 +2789,7 @@
   "ClowJ/": [
     {
       "type": 0,
-      "value": "Authentication type"
+      "value": "認証の種類"
     }
   ],
   "CvoqQ6": [
@@ -2745,7 +2807,7 @@
   "Cy4+KL": [
     {
       "type": 0,
-      "value": "Redo"
+      "value": "やり直す"
     }
   ],
   "CyT8H7": [
@@ -2797,7 +2859,7 @@
   "D0D3Sf": [
     {
       "type": 0,
-      "value": "switch case"
+      "value": "スイッチ ケース"
     }
   ],
   "D1lgsT": [
@@ -2814,16 +2876,12 @@
   ],
   "D6KzoS": [
     {
-      "type": 0,
-      "value": "Specify upload chunk size between "
-    },
-    {
       "type": 1,
       "value": "minimumSize"
     },
     {
       "type": 0,
-      "value": " and "
+      "value": " ~ "
     },
     {
       "type": 1,
@@ -2831,13 +2889,13 @@
     },
     {
       "type": 0,
-      "value": " Mb. Example: 10"
+      "value": " Mb のアップロード チャンク サイズを指定します。例: 10"
     }
   ],
   "D89UXR": [
     {
       "type": 0,
-      "value": "action"
+      "value": "アクション"
     }
   ],
   "DDIIAQ": [
@@ -2873,7 +2931,7 @@
   "DNQtFr": [
     {
       "type": 0,
-      "value": "Name"
+      "value": "名前"
     }
   ],
   "DQV7aK": [
@@ -2911,7 +2969,7 @@
   "DX9jWz": [
     {
       "type": 0,
-      "value": "Name"
+      "value": "名前"
     }
   ],
   "DYXoEM": [
@@ -2929,13 +2987,19 @@
   "DbxZhS": [
     {
       "type": 0,
-      "value": "Remove list of options"
+      "value": "オプションの一覧を削除する"
     }
   ],
   "DcJBUx": [
     {
       "type": 0,
-      "value": "Trigger type"
+      "value": "トリガーの種類"
+    }
+  ],
+  "DeM/yz": [
+    {
+      "type": 0,
+      "value": "Start time"
     }
   ],
   "DfXxoX": [
@@ -3009,7 +3073,7 @@
   "E70Rdt": [
     {
       "type": 0,
-      "value": "Internal errors"
+      "value": "内部エラー"
     }
   ],
   "E7NzDN": [
@@ -3033,13 +3097,13 @@
   "EFQ56R": [
     {
       "type": 0,
-      "value": "Source code"
+      "value": "ソース コード"
     }
   ],
   "EMbxLf": [
     {
       "type": 0,
-      "value": "Previous suggestion"
+      "value": "前の候補"
     }
   ],
   "ERAWZA": [
@@ -3063,13 +3127,13 @@
   "EX0g1d": [
     {
       "type": 0,
-      "value": "Secure outputs"
+      "value": "セキュリティで保護された出力"
     }
   ],
   "EXEL2j": [
     {
       "type": 0,
-      "value": "Destination"
+      "value": "宛先"
     }
   ],
   "EZz5q7": [
@@ -3109,7 +3173,7 @@
   "EeJitp": [
     {
       "type": 0,
-      "value": "Type"
+      "value": "種類"
     }
   ],
   "EiRMD4": [
@@ -3141,7 +3205,7 @@
   "EoRB1V": [
     {
       "type": 0,
-      "value": "Details"
+      "value": "詳細"
     }
   ],
   "EptZhD": [
@@ -3165,31 +3229,31 @@
   "Eyxa6q": [
     {
       "type": 0,
-      "value": "The number of workflow instances that can wait to run when your current workflow instance is already running the maximum concurrent instances."
+      "value": "現在のワークフロー インスタンスが既に最大同時インスタンスを実行している場合に、実行を待機できるワークフロー インスタンスの数です。"
     }
   ],
   "F+cOLr": [
     {
       "type": 0,
-      "value": "Community Authored"
+      "value": "コミュニティが作成されました"
     }
   ],
   "F/13eU": [
     {
       "type": 0,
-      "value": "Delete"
+      "value": "削除"
     }
   ],
   "F1AkvV": [
     {
       "type": 0,
-      "value": "Ideal for process business transitional data"
+      "value": "プロセス ビジネスの移行データに最適です"
     }
   ],
   "F2wR+r": [
     {
       "type": 0,
-      "value": "Insert expression"
+      "value": "式の挿入"
     }
   ],
   "F3IDl8": [
@@ -3213,7 +3277,7 @@
   "FEYdkx": [
     {
       "type": 0,
-      "value": "Maximum waiting runs"
+      "value": "最大待機実行数"
     }
   ],
   "FIL1Nt": [
@@ -3246,6 +3310,20 @@
       "value": "開始インデックスと終了インデックスで定義される文字列のセクションを返します"
     }
   ],
+  "FPBmrA": [
+    {
+      "type": 0,
+      "value": "ノード キー '"
+    },
+    {
+      "type": 1,
+      "value": "nodeKey"
+    },
+    {
+      "type": 0,
+      "value": "' のソース スキーマ ノードが見つかりません"
+    }
+  ],
   "FT3jt6": [
     {
       "type": 0,
@@ -3255,7 +3333,7 @@
   "FTrMxN": [
     {
       "type": 0,
-      "value": "Close"
+      "value": "閉じる"
     }
   ],
   "FUuFlC": [
@@ -3312,7 +3390,7 @@
   "Fx/6sv": [
     {
       "type": 0,
-      "value": "Go to operation"
+      "value": "操作に移動"
     }
   ],
   "FxQ2Ts": [
@@ -3324,7 +3402,7 @@
   "G+6Juu": [
     {
       "type": 0,
-      "value": "Click to expand"
+      "value": "クリックして展開"
     }
   ],
   "G+XvKn": [
@@ -3342,7 +3420,7 @@
   "G0gnge": [
     {
       "type": 0,
-      "value": "Copy entire action"
+      "value": "アクション全体をコピー"
     }
   ],
   "GAY7b8": [
@@ -3378,7 +3456,7 @@
   "GFnJQe": [
     {
       "type": 0,
-      "value": "Test map"
+      "value": "マップのテスト"
     }
   ],
   "GIUSQs": [
@@ -3443,10 +3521,24 @@
       "value": "ソース スキーマ要素"
     }
   ],
+  "GiR7ll": [
+    {
+      "type": 0,
+      "value": "関数が見つかりません- '"
+    },
+    {
+      "type": 1,
+      "value": "nodeKey"
+    },
+    {
+      "type": 0,
+      "value": "'"
+    }
+  ],
   "Gk79Ma": [
     {
       "type": 0,
-      "value": "Status code"
+      "value": "状態コード"
     }
   ],
   "Gl5khw": [
@@ -3558,13 +3650,13 @@
   "HQ/HhZ": [
     {
       "type": 0,
-      "value": "Error loading connections"
+      "value": "接続の読み込み中にエラーが発生"
     }
   ],
   "HQQtFz": [
     {
       "type": 0,
-      "value": "Make the field required"
+      "value": "必須のフィールドに変更"
     }
   ],
   "HSJLCu": [
@@ -3588,7 +3680,7 @@
   "He4Z+v": [
     {
       "type": 0,
-      "value": "Credential type"
+      "value": "資格情報の種類"
     }
   ],
   "HfinO2": [
@@ -3676,13 +3768,13 @@
   "IBFBR2": [
     {
       "type": 0,
-      "value": "Remove loop"
+      "value": "ループの削除"
     }
   ],
   "IGpV1W": [
     {
       "type": 0,
-      "value": "Asynchronous response"
+      "value": "非同期応答"
     }
   ],
   "IHMd3X": [
@@ -3698,7 +3790,7 @@
   "IHzSSN": [
     {
       "type": 0,
-      "value": "Path parameters"
+      "value": "パス パラメーター"
     }
   ],
   "IPwWgu": [
@@ -3728,7 +3820,7 @@
   "IUbVFR": [
     {
       "type": 0,
-      "value": "Search"
+      "value": "検索"
     }
   ],
   "IW2MjQ": [
@@ -3761,26 +3853,22 @@
   ],
   "IlyNs0": [
     {
-      "type": 1,
-      "value": "overflowItemsLength"
+      "type": 0,
+      "value": "その他のアイテムを "
     },
     {
-      "type": 0,
-      "value": " more item"
+      "type": 1,
+      "value": "overflowItemsLength"
     }
   ],
   "IqNEui": [
-    {
-      "type": 0,
-      "value": "Specify download chunk size between "
-    },
     {
       "type": 1,
       "value": "minimumSize"
     },
     {
       "type": 0,
-      "value": " and "
+      "value": " ~ "
     },
     {
       "type": 1,
@@ -3788,7 +3876,7 @@
     },
     {
       "type": 0,
-      "value": " Mb. Example: 10"
+      "value": " Mb のダウンロード チャンク サイズを指定します。例: 10"
     }
   ],
   "IsVhkH": [
@@ -3854,7 +3942,13 @@
   "J7PN35": [
     {
       "type": 0,
-      "value": "Make group"
+      "value": "グループの作成"
+    }
+  ],
+  "J8G55j": [
+    {
+      "type": 0,
+      "value": "Search by run identifier"
     }
   ],
   "J9wWry": [
@@ -3906,13 +4000,13 @@
   "JKfEGS": [
     {
       "type": 0,
-      "value": "Create new"
+      "value": "新規作成"
     }
   ],
   "JMwMaK": [
     {
       "type": 0,
-      "value": "AI-generated content may be incorrect"
+      "value": "AI によって生成されたコンテンツが正しくない可能性があります"
     }
   ],
   "JNQHws": [
@@ -3924,7 +4018,7 @@
   "JQBEOg": [
     {
       "type": 0,
-      "value": "Review + create"
+      "value": "レビューと作成"
     }
   ],
   "JSfWJ0": [
@@ -3936,13 +4030,13 @@
   "JUZ7g5": [
     {
       "type": 0,
-      "value": "Run history"
+      "value": "実行履歴"
     }
   ],
   "JVNRly": [
     {
       "type": 0,
-      "value": "Solution type"
+      "value": "ソリューションの種類"
     }
   ],
   "JWl/LD": [
@@ -3984,7 +4078,7 @@
   "Jk2B0i": [
     {
       "type": 0,
-      "value": "Prerequisites"
+      "value": "前提条件"
     }
   ],
   "JnlcZQ": [
@@ -4008,7 +4102,7 @@
   "JzvOUc": [
     {
       "type": 0,
-      "value": "The value must not be empty."
+      "value": "値を空にすることはできません。"
     }
   ],
   "K50znc": [
@@ -4026,7 +4120,7 @@
   "K9ORYo": [
     {
       "type": 0,
-      "value": "Schema ID"
+      "value": "スキーマ ID"
     }
   ],
   "KBaGkS": [
@@ -4038,13 +4132,19 @@
   "KO2eUv": [
     {
       "type": 0,
-      "value": "Connectors"
+      "value": "コネクタ"
     }
   ],
   "KV4uky": [
     {
       "type": 0,
       "value": "新しいアイテムが..."
+    }
+  ],
+  "KWeLBB": [
+    {
+      "type": 0,
+      "value": "閉じています..."
     }
   ],
   "KX1poC": [
@@ -4091,7 +4191,7 @@
   "Kb5u9F": [
     {
       "type": 0,
-      "value": "About tab"
+      "value": "[情報] タブ"
     }
   ],
   "KlDW+5": [
@@ -4109,7 +4209,7 @@
   "KqJ14/": [
     {
       "type": 0,
-      "value": "Edit schema"
+      "value": "スキーマの編集"
     }
   ],
   "KwGA+K": [
@@ -4142,6 +4242,12 @@
       "value": "展開"
     }
   ],
+  "LBlM+D": [
+    {
+      "type": 0,
+      "value": "指定なし"
+    }
+  ],
   "LCRHQ9": [
     {
       "type": 0,
@@ -4163,7 +4269,7 @@
   "LPzAHC": [
     {
       "type": 0,
-      "value": "Loading files…"
+      "value": "ファイルを読み込んでいます..."
     }
   ],
   "LR/3Lr": [
@@ -4277,7 +4383,7 @@
   "M/m3nG": [
     {
       "type": 0,
-      "value": "Action timeout"
+      "value": "アクションのタイムアウト"
     }
   ],
   "M0bbZk": [
@@ -4301,7 +4407,7 @@
   "M6GI6z": [
     {
       "type": 0,
-      "value": "Custom tracking ID"
+      "value": "カスタムの追跡 ID"
     }
   ],
   "M6U2LE": [
@@ -4319,7 +4425,7 @@
   "MAX7xS": [
     {
       "type": 0,
-      "value": "Show more"
+      "value": "さらに表示"
     }
   ],
   "MCzWDc": [
@@ -4343,7 +4449,7 @@
   "MGq28G": [
     {
       "type": 0,
-      "value": "Trigger"
+      "value": "トリガー"
     }
   ],
   "MIX4f9": [
@@ -4391,13 +4497,13 @@
   "MVrv+N": [
     {
       "type": 0,
-      "value": "Enter a valid array."
+      "value": "有効な配列を入力してください。"
     }
   ],
   "MWG2k9": [
     {
       "type": 0,
-      "value": "Request history"
+      "value": "要求の履歴"
     }
   ],
   "MYgKHu": [
@@ -4451,13 +4557,13 @@
   "MqZCAn": [
     {
       "type": 0,
-      "value": "Host"
+      "value": "ホスト"
     }
   ],
   "MwMpAh": [
     {
       "type": 0,
-      "value": "Return to expression editor"
+      "value": "式エディターに戻る"
     }
   ],
   "N0pS6Y": [
@@ -4493,7 +4599,7 @@
   "N8LgJq": [
     {
       "type": 0,
-      "value": "Distinct tracking ID for each split-on instance"
+      "value": "各分割インスタンスの個別の追跡 ID"
     }
   ],
   "NE54Uu": [
@@ -4523,7 +4629,7 @@
   "NHqCeQ": [
     {
       "type": 0,
-      "value": "Create connection"
+      "value": "接続の作成"
     }
   ],
   "NMpFs6": [
@@ -4547,13 +4653,13 @@
   "NaW0ga": [
     {
       "type": 0,
-      "value": "This workflow supports the following states. The state determines how data is managed and retained during execution of workflows."
+      "value": "このワークフローでは、次の状態がサポートされています。状態によって、ワークフローの実行中にデータを管理および保持する方法が決まります。"
     }
   ],
   "Nbl3zN": [
     {
       "type": 0,
-      "value": "Enter a description of the output"
+      "value": "出力の説明を入力してください"
     }
   ],
   "Nh91qA": [
@@ -4571,7 +4677,7 @@
   "NkjtG/": [
     {
       "type": 0,
-      "value": "Dismiss"
+      "value": "閉じる"
     }
   ],
   "NnrHK3": [
@@ -4595,17 +4701,21 @@
   "Nr8FbX": [
     {
       "type": 0,
-      "value": "Connections"
+      "value": "接続"
     }
   ],
   "NtoWaY": [
     {
       "type": 0,
-      "value": "Value should be less than "
+      "value": "値は "
     },
     {
       "type": 1,
       "value": "max"
+    },
+    {
+      "type": 0,
+      "value": " 未満にする必要があります"
     }
   ],
   "NvJDn/": [
@@ -4659,7 +4769,7 @@
   "O8Qy7k": [
     {
       "type": 0,
-      "value": "Close panel"
+      "value": "パネルを閉じる"
     }
   ],
   "O9ZExg": [
@@ -4701,7 +4811,7 @@
   "OMuMCI": [
     {
       "type": 0,
-      "value": "Workflow properties"
+      "value": "ワークフローのプロパティ"
     }
   ],
   "OOUSLP": [
@@ -4803,7 +4913,7 @@
   "OkGMwC": [
     {
       "type": 0,
-      "value": "Monitoring tab"
+      "value": "[監視] タブ"
     }
   ],
   "OnrO5/": [
@@ -4896,6 +5006,12 @@
       "value": "折りたたみ済み"
     }
   ],
+  "PEJ+e4": [
+    {
+      "type": 0,
+      "value": "データ マップの読み込み中にエラーが発生しました"
+    }
+  ],
   "PNk3n4": [
     {
       "type": 1,
@@ -4939,7 +5055,7 @@
   "PTBl5s": [
     {
       "type": 0,
-      "value": "Method"
+      "value": "方法"
     }
   ],
   "PXa0D4": [
@@ -4981,7 +5097,7 @@
   "Pkxg6Q": [
     {
       "type": 0,
-      "value": "Describe the expression you want Copilot to create. You can reference data from other actions in the flow. For example, “Combine the first and last name of the person who went the email” or “Check the status of the current job.”"
+      "value": "Copilot で作成する式を説明します。フロー内の他のアクションのデータを参照できます。たとえば、\"メールを受け取ったユーザーの姓と名を結合する\" や \"現在のジョブの状態を確認する\" などです。"
     }
   ],
   "Pnt0Xj": [
@@ -4993,7 +5109,7 @@
   "PpupBE": [
     {
       "type": 0,
-      "value": "Add row"
+      "value": "行の追加"
     }
   ],
   "Pq+4a+": [
@@ -5017,7 +5133,7 @@
   "PuFTgH": [
     {
       "type": 0,
-      "value": "Retry history"
+      "value": "再試行の履歴"
     }
   ],
   "Pudllg": [
@@ -5041,7 +5157,7 @@
   "Px7S/2": [
     {
       "type": 0,
-      "value": "Close"
+      "value": "閉じる"
     }
   ],
   "PytMJ0": [
@@ -5069,7 +5185,7 @@
   "Q/V4Uc": [
     {
       "type": 0,
-      "value": "Add connection"
+      "value": "接続の追加"
     }
   ],
   "Q0xpPQ": [
@@ -5115,7 +5231,7 @@
   "QBK72a": [
     {
       "type": 0,
-      "value": "Add custom modules, uncover new scenarios, and find troubleshooting tips"
+      "value": "カスタム モジュールの追加、新しいシナリオの発見、トラブルシューティングのヒントの検索"
     }
   ],
   "QGbUXX": [
@@ -5127,13 +5243,19 @@
   "QNfUf/": [
     {
       "type": 0,
-      "value": "Full screen"
+      "value": "全画面表示"
+    }
+  ],
+  "QT4IaP": [
+    {
+      "type": 0,
+      "value": "Filtered!"
     }
   ],
   "QVtqAn": [
     {
       "type": 0,
-      "value": "Description"
+      "value": "説明"
     }
   ],
   "QZBPUx": [
@@ -5157,7 +5279,7 @@
   "QbVD0F": [
     {
       "type": 0,
-      "value": "This expression has a problem. You can fix it manually or with Copilot."
+      "value": "この式には問題があります。手動または Copilot で修正できます。"
     }
   ],
   "QdJUaS": [
@@ -5207,7 +5329,7 @@
   "Qqmb+W": [
     {
       "type": 0,
-      "value": "Stateful"
+      "value": "ステートフル"
     }
   ],
   "QrQDdp": [
@@ -5253,13 +5375,13 @@
   "RLoDgQ": [
     {
       "type": 0,
-      "value": "Optimized for high reliability"
+      "value": "高い信頼性のために最適化されています"
     }
   ],
   "ROC+1+": [
     {
       "type": 0,
-      "value": "Line position"
+      "value": "行の位置"
     }
   ],
   "RX2Shm": [
@@ -5271,13 +5393,13 @@
   "RZNabt": [
     {
       "type": 0,
-      "value": "Create a new workflow from template"
+      "value": "テンプレートから新しいワークフローを作成する"
     }
   ],
   "RatwOB": [
     {
       "type": 0,
-      "value": "In-app"
+      "value": "アプリ内"
     }
   ],
   "RbJNVk": [
@@ -5314,7 +5436,7 @@
     },
     {
       "type": 0,
-      "value": " (content)"
+      "value": " (コンテンツ)"
     }
   ],
   "RjvpD+": [
@@ -5380,7 +5502,7 @@
   "RxbkcI": [
     {
       "type": 0,
-      "value": "Unsupported token type: "
+      "value": "サポートされていないトークンの種類: "
     },
     {
       "type": 1,
@@ -5390,7 +5512,7 @@
   "S0N/tx": [
     {
       "type": 0,
-      "value": "Resubmit a workflow run from this action"
+      "value": "このアクションからワークフローの実行を再送信する"
     }
   ],
   "S138/4": [
@@ -5402,7 +5524,7 @@
   "S5kFNK": [
     {
       "type": 0,
-      "value": "Paste your sample data to test the mapping"
+      "value": "サンプル データを貼り付けてマッピングをテストします"
     }
   ],
   "SCCE6s": [
@@ -5450,7 +5572,7 @@
   "STWbak": [
     {
       "type": 0,
-      "value": "Chunk size"
+      "value": "チャンク サイズ"
     }
   ],
   "SToblZ": [
@@ -5478,13 +5600,19 @@
   "SZ78Xp": [
     {
       "type": 0,
-      "value": "Features"
+      "value": "機能"
     }
   ],
   "SbCUKw": [
     {
       "type": 0,
-      "value": "Outputs should not be provided when status is \"Failed\""
+      "value": "状態が \"失敗\" の場合には、出力を提供しないでください"
+    }
+  ],
+  "SbHBIZ": [
+    {
+      "type": 0,
+      "value": "No runs found"
     }
   ],
   "SgiTAh": [
@@ -5517,10 +5645,16 @@
       "value": "完了"
     }
   ],
+  "SwWaHa": [
+    {
+      "type": 0,
+      "value": "Enter a valid run identifier"
+    }
+  ],
   "Sy4cFC": [
     {
       "type": 0,
-      "value": "Concurrency control"
+      "value": "コンカレンシー コントロール"
     }
   ],
   "SyFXM3": [
@@ -5535,10 +5669,16 @@
       "value": "テスト"
     }
   ],
+  "T/7b2y": [
+    {
+      "type": 0,
+      "value": "Duration"
+    }
+  ],
   "TDfQzn": [
     {
       "type": 0,
-      "value": "More…"
+      "value": "その他…"
     }
   ],
   "TEN+cR": [
@@ -5588,7 +5728,7 @@
   "TZpm7X": [
     {
       "type": 0,
-      "value": "Button to add dynamic content if token picker is shown"
+      "value": "トークン ピッカーが表示されている場合に動的なコンテンツを追加するボタン"
     }
   ],
   "Tayrub": [
@@ -5606,7 +5746,7 @@
   "TcU2Gf": [
     {
       "type": 0,
-      "value": "Add case"
+      "value": "ケースの追加"
     }
   ],
   "TgcgXE": [
@@ -5654,7 +5794,7 @@
   "TnwRGo": [
     {
       "type": 0,
-      "value": "Connections included in this template"
+      "value": "このテンプレートに含まれるConnections"
     }
   ],
   "To3RNy": [
@@ -5708,7 +5848,7 @@
   "U2juKb": [
     {
       "type": 0,
-      "value": "Filter actions"
+      "value": "フィルター操作"
     }
   ],
   "U3guPp": [
@@ -5744,7 +5884,7 @@
   "U9SHxw": [
     {
       "type": 0,
-      "value": "Code"
+      "value": "コード"
     }
   ],
   "UCNM4L": [
@@ -5756,7 +5896,7 @@
   "UD330h": [
     {
       "type": 0,
-      "value": "Copy action"
+      "value": "アクションのコピー"
     }
   ],
   "UHCVNK": [
@@ -5768,7 +5908,7 @@
   "UJho0j": [
     {
       "type": 0,
-      "value": "(Optional) Password for PFX file"
+      "value": "(省略可能)PFX ファイルのパスワード"
     }
   ],
   "UMPuUJ": [
@@ -5784,13 +5924,13 @@
   "UNXQDI": [
     {
       "type": 0,
-      "value": "Loading API Management service instances..."
+      "value": "API Management サービス インスタンスを読み込んでいます..."
     }
   ],
   "UPsZSw": [
     {
       "type": 0,
-      "value": "The entered identity is not associated with this logic app."
+      "value": "入力された ID は、このロジック アプリに関連付けられていません。"
     }
   ],
   "UR1CS5": [
@@ -5814,7 +5954,7 @@
   "UTkcyf": [
     {
       "type": 0,
-      "value": "Source code"
+      "value": "ソース コード"
     }
   ],
   "UVAfYj": [
@@ -5826,19 +5966,19 @@
   "UVr0mL": [
     {
       "type": 0,
-      "value": "Test your map to see a result"
+      "value": "マップをテストして結果を表示する"
     }
   ],
   "UWF/WI": [
     {
       "type": 0,
-      "value": "View documentation"
+      "value": "ドキュメントの表示"
     }
   ],
   "UXDOiw": [
     {
       "type": 0,
-      "value": "Description"
+      "value": "説明"
     }
   ],
   "UYRIS/": [
@@ -5936,7 +6076,7 @@
   "UsEvG2": [
     {
       "type": 0,
-      "value": "Tenant ID"
+      "value": "テナント ID"
     }
   ],
   "UtyRCH": [
@@ -6006,7 +6146,7 @@
   "VFnuA2": [
     {
       "type": 0,
-      "value": "Add a drop-down list of options"
+      "value": "オプションのドロップダウン リストを追加する"
     }
   ],
   "VHm1Sr": [
@@ -6078,13 +6218,13 @@
   "VZh+w2": [
     {
       "type": 0,
-      "value": "Body"
+      "value": "本文"
     }
   ],
   "Valy81": [
     {
       "type": 0,
-      "value": "Schema validation"
+      "value": "スキーマの検証"
     }
   ],
   "VbMYd8": [
@@ -6096,7 +6236,7 @@
   "VchR9d": [
     {
       "type": 0,
-      "value": "Headers"
+      "value": "ヘッダー"
     }
   ],
   "Vi5TIV": [
@@ -6140,7 +6280,7 @@
   "VysSj3": [
     {
       "type": 0,
-      "value": "View code"
+      "value": "コードの表示"
     }
   ],
   "W+mUyI": [
@@ -6162,13 +6302,13 @@
   "W1rlxU": [
     {
       "type": 0,
-      "value": "State type"
+      "value": "状態の種類"
     }
   ],
   "W2fZ0v": [
     {
       "type": 0,
-      "value": "Preview"
+      "value": "プレビュー"
     }
   ],
   "W6FdMh": [
@@ -6186,7 +6326,7 @@
   "WGq3Fo": [
     {
       "type": 0,
-      "value": "See less"
+      "value": "表示を減らす"
     }
   ],
   "WGwH45": [
@@ -6241,10 +6381,16 @@
       "value": "trigger().outputs の短縮形"
     }
   ],
+  "WbIGAh": [
+    {
+      "type": 0,
+      "value": "成功"
+    }
+  ],
   "Wc77aJ": [
     {
       "type": 0,
-      "value": "In-app"
+      "value": "アプリ内"
     }
   ],
   "WcnIF8": [
@@ -6256,7 +6402,7 @@
   "WdO1cs": [
     {
       "type": 0,
-      "value": "Template details"
+      "value": "テンプレートの詳細"
     }
   ],
   "WgChTm": [
@@ -6280,13 +6426,13 @@
   "Wt1TZJ": [
     {
       "type": 0,
-      "value": "Connections"
+      "value": "接続"
     }
   ],
   "Wvnl/V": [
     {
       "type": 0,
-      "value": "Delete the static result configuration"
+      "value": "静的結果の構成を削除します"
     }
   ],
   "WvvJYw": [
@@ -6298,13 +6444,13 @@
   "WxJJcQ": [
     {
       "type": 0,
-      "value": "Not connected"
+      "value": "接続されていません"
     }
   ],
   "WxcmZr": [
     {
       "type": 0,
-      "value": "This action has testing configured."
+      "value": "このアクションにはテストが構成されています。"
     }
   ],
   "X/7je+": [
@@ -6316,7 +6462,7 @@
   "X02GGK": [
     {
       "type": 0,
-      "value": "Tags"
+      "value": "タグ"
     }
   ],
   "X2idLs": [
@@ -6388,7 +6534,7 @@
   "XHQwyJ": [
     {
       "type": 0,
-      "value": "Error executing the API - "
+      "value": "API の実行でエラーが発生しました - "
     },
     {
       "type": 1,
@@ -6404,7 +6550,7 @@
   "XL5UbT": [
     {
       "type": 0,
-      "value": "Click for more information on static result"
+      "value": "クリックすると、静的な結果に関する詳細情報が表示されます"
     }
   ],
   "XOAcjQ": [
@@ -6434,7 +6580,7 @@
   "XR5izH": [
     {
       "type": 0,
-      "value": "Connected"
+      "value": "接続済み"
     }
   ],
   "XRK+gt": [
@@ -6484,7 +6630,7 @@
   "XZrMGZ": [
     {
       "type": 0,
-      "value": "Content transfer"
+      "value": "コンテンツ転送"
     }
   ],
   "XbtEq9": [
@@ -6510,7 +6656,7 @@
   "Xg1UDw": [
     {
       "type": 0,
-      "value": "Learn more"
+      "value": "詳細情報"
     }
   ],
   "Xj0Gr/": [
@@ -6576,7 +6722,7 @@
   "Xz88HV": [
     {
       "type": 0,
-      "value": "Associated workflows"
+      "value": "関連付けられているワークフロー"
     }
   ],
   "Y/bcmG": [
@@ -6594,7 +6740,7 @@
   "Y9VFj8": [
     {
       "type": 0,
-      "value": "Secure inputs"
+      "value": "セキュリティで保護された入力"
     }
   ],
   "Y9kBz5": [
@@ -6606,7 +6752,7 @@
   "YC56Tr": [
     {
       "type": 0,
-      "value": "Automatic decompression"
+      "value": "自動展開"
     }
   ],
   "YCDF7A": [
@@ -6670,13 +6816,13 @@
   "YM0e3C": [
     {
       "type": 0,
-      "value": "Asynchronous pattern"
+      "value": "非同期パターン"
     }
   ],
   "YOOBDW": [
     {
       "type": 0,
-      "value": "Avoid spaces and the following symbols in your workflow name: \\ / : * ? \" < > | @, #, $, %, &"
+      "value": "ワークフロー名にスペースと次の記号を使用しないでください: \\ / : * ?\" < > |@, #, $, %, &"
     }
   ],
   "YOUfNf": [
@@ -6706,7 +6852,7 @@
   "YWD/RY": [
     {
       "type": 0,
-      "value": "condition, collapse"
+      "value": "条件、折りたたみ"
     }
   ],
   "YWws/r": [
@@ -6718,7 +6864,7 @@
   "YX0jQs": [
     {
       "type": 0,
-      "value": "All"
+      "value": "すべて"
     }
   ],
   "YZ5Kwe": [
@@ -6730,7 +6876,7 @@
   "YZl7FU": [
     {
       "type": 0,
-      "value": "Loading function apps..."
+      "value": "関数アプリを読み込んでいます..."
     }
   ],
   "YaFjJQ": [
@@ -6772,7 +6918,7 @@
   "YnSO/8": [
     {
       "type": 0,
-      "value": "Not connected"
+      "value": "接続されていません"
     }
   ],
   "YoQara": [
@@ -6790,7 +6936,7 @@
   "Yua/4o": [
     {
       "type": 0,
-      "value": "Previous"
+      "value": "前へ"
     }
   ],
   "Yuu5CD": [
@@ -6814,7 +6960,7 @@
   "Z8BOCl": [
     {
       "type": 0,
-      "value": "No identities available"
+      "value": "使用可能な ID はありません"
     }
   ],
   "Z8tBFS": [
@@ -6844,7 +6990,7 @@
   "ZFNlSA": [
     {
       "type": 0,
-      "value": "Authentication"
+      "value": "認証"
     }
   ],
   "ZME5hh": [
@@ -6856,7 +7002,7 @@
   "ZN050N": [
     {
       "type": 0,
-      "value": "Select all text in '"
+      "value": "'"
     },
     {
       "type": 1,
@@ -6864,13 +7010,13 @@
     },
     {
       "type": 0,
-      "value": "'"
+      "value": "' のすべてのテキストを選択"
     }
   ],
   "ZOIvqN": [
     {
       "type": 0,
-      "value": "Sort By"
+      "value": "並べ替え基準"
     }
   ],
   "ZUCTVP": [
@@ -6888,13 +7034,13 @@
   "ZXc10N": [
     {
       "type": 0,
-      "value": "Add group"
+      "value": "グループの追加"
     }
   ],
   "ZXha+w": [
     {
       "type": 0,
-      "value": "Error message"
+      "value": "エラー メッセージ"
     }
   ],
   "ZaIeDG": [
@@ -6912,7 +7058,7 @@
   "ZbeL1D": [
     {
       "type": 0,
-      "value": "Avoid spaces and the following symbols in your workflow name: \\ / : * ? \" < > | @, #, $, %, &"
+      "value": "ワークフロー名にスペースと次の記号を使用しないでください: \\ / : * ?\" < > |@, #, $, %, &"
     }
   ],
   "Zg3IjD": [
@@ -6921,10 +7067,20 @@
       "value": "閉じる"
     }
   ],
+  "ZgU5eu": [
+    {
+      "type": 1,
+      "value": "count"
+    },
+    {
+      "type": 0,
+      "value": " Day"
+    }
+  ],
   "ZgyD93": [
     {
       "type": 0,
-      "value": "Accepted types:"
+      "value": "受け入れられる型"
     }
   ],
   "Zi9gQK": [
@@ -6972,7 +7128,7 @@
   "aGxYMY": [
     {
       "type": 0,
-      "value": "Clear editor"
+      "value": "エディターのクリア"
     }
   ],
   "aGyVJT": [
@@ -6984,13 +7140,19 @@
   "aI9W5L": [
     {
       "type": 0,
-      "value": "This template does not have connectors"
+      "value": "このテンプレートにはコネクタがありません"
     }
   ],
   "aJg1gl": [
     {
       "type": 0,
-      "value": "Retry policy maximum interval is invalid, must match ISO 8601 duration format"
+      "value": "再試行ポリシーの最大間隔が無効です。ISO 8601 の期間の形式と一致する必要があります"
+    }
+  ],
+  "aKf/r+": [
+    {
+      "type": 0,
+      "value": "Specified run identifier not found"
     }
   ],
   "aP1wk9": [
@@ -7014,7 +7176,7 @@
   "aWdfiw": [
     {
       "type": 0,
-      "value": "Next suggestion"
+      "value": "次の候補"
     }
   ],
   "aYTy7X": [
@@ -7032,7 +7194,7 @@
   "ao6BlS": [
     {
       "type": 0,
-      "value": "Resource group"
+      "value": "リソース グループ"
     }
   ],
   "aoUT/3": [
@@ -7044,7 +7206,7 @@
   "apZgmJ": [
     {
       "type": 0,
-      "value": "Invalid operation path input value. Path value - "
+      "value": "操作パスの入力値が無効です。パスの値 - "
     },
     {
       "type": 1,
@@ -7052,7 +7214,7 @@
     },
     {
       "type": 0,
-      "value": ", Path template - "
+      "value": "、パス テンプレート - "
     },
     {
       "type": 1,
@@ -7065,22 +7227,28 @@
       "value": "マップに使用するソース スキーマを追加または選択します。"
     }
   ],
+  "auci7r": [
+    {
+      "type": 0,
+      "value": "有効なコンマ区切り文字列を入力してください。"
+    }
+  ],
   "aurgrg": [
     {
       "type": 0,
-      "value": "Managed identity"
+      "value": "マネージド ID"
     }
   ],
   "b2aL+f": [
     {
       "type": 0,
-      "value": "Pin action"
+      "value": "アクションをピン留めする"
     }
   ],
   "b6G9bq": [
     {
       "type": 0,
-      "value": "URL encodes the input string"
+      "value": "URL で入力文字列をエンコードします"
     }
   ],
   "b7BQdu": [
@@ -7148,13 +7316,19 @@
   "bJMlgW": [
     {
       "type": 0,
-      "value": "Connections"
+      "value": "接続"
     }
   ],
   "bMUkSN": [
     {
       "type": 0,
-      "value": "This operation contains a token that does not exist in the current workflow."
+      "value": "この操作には、現在のワークフローに存在しないトークンが含まれています。"
+    }
+  ],
+  "bPyWVY": [
+    {
+      "type": 0,
+      "value": "Failed to load runs"
     }
   ],
   "bTrk+S": [
@@ -7196,7 +7370,7 @@
   "bg00eY": [
     {
       "type": 0,
-      "value": "Numbered list"
+      "value": "番号付きリスト"
     }
   ],
   "blRFVt": [
@@ -7244,7 +7418,7 @@
   "c2ZT7p": [
     {
       "type": 0,
-      "value": "Details"
+      "value": "詳細"
     }
   ],
   "c3FLox": [
@@ -7280,7 +7454,7 @@
   "cBw7SC": [
     {
       "type": 0,
-      "value": "Created"
+      "value": "作成済み"
     }
   ],
   "cHiBAn": [
@@ -7297,12 +7471,12 @@
   ],
   "cKNvk6": [
     {
-      "type": 1,
-      "value": "label"
+      "type": 0,
+      "value": "値項目の "
     },
     {
-      "type": 0,
-      "value": " value item"
+      "type": 1,
+      "value": "label"
     }
   ],
   "cNXS5n": [
@@ -7320,7 +7494,7 @@
   "cZ60Tk": [
     {
       "type": 0,
-      "value": "Loading...."
+      "value": "読み込み中..."
     }
   ],
   "cZv9J0": [
@@ -7350,7 +7524,7 @@
   "chEskq": [
     {
       "type": 0,
-      "value": "Enable static result"
+      "value": "静的な結果の有効化"
     }
   ],
   "ciLkfU": [
@@ -7398,13 +7572,13 @@
   "cw9FiJ": [
     {
       "type": 0,
-      "value": "Schema URI"
+      "value": "スキーマ URI"
     }
   ],
   "cwHxwb": [
     {
       "type": 0,
-      "value": "Add connection"
+      "value": "接続の追加"
     }
   ],
   "cyEBus": [
@@ -7423,6 +7597,12 @@
     {
       "type": 0,
       "value": "ダウンロード (Alt または Option + 選択)"
+    }
+  ],
+  "d9RCuq": [
+    {
+      "type": 0,
+      "value": "Workflow run status"
     }
   ],
   "dBWIjR": [
@@ -7488,7 +7668,7 @@
   "dU0RgS": [
     {
       "type": 0,
-      "value": "Add a multi-select list of options"
+      "value": "オプションの複数選択リストを追加する"
     }
   ],
   "dUbKuK": [
@@ -7500,7 +7680,7 @@
   "dVFyPb": [
     {
       "type": 0,
-      "value": "Default value"
+      "value": "既定値"
     }
   ],
   "daoo3l": [
@@ -7588,7 +7768,7 @@
   "eDHwU7": [
     {
       "type": 0,
-      "value": "🖊️ Working on it..."
+      "value": "🖊️ 処理中..."
     }
   ],
   "eESljX": [
@@ -7627,16 +7807,22 @@
       "value": "このフローを次のものに編集してください"
     }
   ],
+  "eLQPek": [
+    {
+      "type": 0,
+      "value": "Status"
+    }
+  ],
   "eLthgv": [
     {
       "type": 0,
-      "value": "Client certificate"
+      "value": "クライアント証明書"
     }
   ],
   "eNp9V6": [
     {
       "type": 0,
-      "value": "Upload PFX File"
+      "value": "PFX ファイルをアップロードしてください"
     }
   ],
   "eO1h/h": [
@@ -7648,7 +7834,7 @@
   "eOAJQk": [
     {
       "type": 0,
-      "value": "Degree of parallelism"
+      "value": "並列処理の次数"
     }
   ],
   "eRvRWs": [
@@ -7666,25 +7852,25 @@
   "eTW4SD": [
     {
       "type": 0,
-      "value": "Description"
+      "value": "説明"
     }
   ],
   "eUxnDx": [
     {
       "type": 0,
-      "value": "Status code"
+      "value": "状態コード"
     }
   ],
   "eaEXYa": [
     {
       "type": 0,
-      "value": "All"
+      "value": "すべて"
     }
   ],
   "eb91v1": [
     {
       "type": 0,
-      "value": "Change connection"
+      "value": "接続の変更"
     }
   ],
   "egLI8P": [
@@ -7702,7 +7888,7 @@
   "ekM77J": [
     {
       "type": 0,
-      "value": "Workflow name"
+      "value": "ワークフロー名"
     }
   ],
   "elD6+N": [
@@ -7714,7 +7900,7 @@
   "elWEjT": [
     {
       "type": 0,
-      "value": "Click to collapse"
+      "value": "クリックして折りたたむ"
     }
   ],
   "en/5A3": [
@@ -7729,16 +7915,28 @@
       "value": "選択したアレイの各項目のワークフローのインスタンスを開始するために分割を有効にします。各インスタンスには、個別の追跡 ID がある場合もあります"
     }
   ],
+  "eofB85": [
+    {
+      "type": 0,
+      "value": "タイムアウト"
+    }
+  ],
   "epOMnV": [
     {
       "type": 0,
       "value": "共有済み"
     }
   ],
+  "epi+zR": [
+    {
+      "type": 0,
+      "value": "マップ チェッカーを閉じる"
+    }
+  ],
   "er6O+w": [
     {
       "type": 0,
-      "value": "Name"
+      "value": "名前"
     }
   ],
   "evyGYj": [
@@ -7750,13 +7948,13 @@
   "ewGciu": [
     {
       "type": 0,
-      "value": "Authentication"
+      "value": "認証"
     }
   ],
   "eyuBr7": [
     {
       "type": 0,
-      "value": "Please submit a different query than the previously submitted query. Previously submitted query: "
+      "value": "以前に送信されたクエリとは別のクエリを送信してください。以前に送信されたクエリ: "
     },
     {
       "type": 1,
@@ -7784,7 +7982,7 @@
   "f7cxXb": [
     {
       "type": 0,
-      "value": "Split on"
+      "value": "分割対象"
     }
   ],
   "f81ClO": [
@@ -7796,7 +7994,7 @@
   "fAB0Ww": [
     {
       "type": 0,
-      "value": "Output"
+      "value": "出力"
     }
   ],
   "fBQBw/": [
@@ -7807,12 +8005,12 @@
   ],
   "fBUCrA": [
     {
-      "type": 1,
-      "value": "label"
+      "type": 0,
+      "value": "アイテムの "
     },
     {
-      "type": 0,
-      "value": " Item"
+      "type": 1,
+      "value": "label"
     }
   ],
   "fElufw": [
@@ -7830,19 +8028,19 @@
   "fNE/hg": [
     {
       "type": 0,
-      "value": "Button to add dynamic content if token picker is hidden"
+      "value": "トークン ピッカーが非表示の場合に動的なコンテンツを追加するボタン"
     }
   ],
   "fNlJSh": [
     {
       "type": 0,
-      "value": "All connections must be connected for workflow creation"
+      "value": "ワークフローを作成するには、すべての接続が接続されている必要があります"
     }
   ],
   "fSMyDJ": [
     {
       "type": 0,
-      "value": "Request options - Timeout"
+      "value": "要求オプション - タイムアウト"
     }
   ],
   "fVG5aD": [
@@ -7881,6 +8079,16 @@
       "value": "(UTC+08:00) 北京、重慶、香港特別行政区、ウルムチ"
     }
   ],
+  "ft8BH8": [
+    {
+      "type": 1,
+      "value": "count"
+    },
+    {
+      "type": 0,
+      "value": " Seconds"
+    }
+  ],
   "fvGvnA": [
     {
       "type": 0,
@@ -7890,7 +8098,7 @@
   "fxue5l": [
     {
       "type": 0,
-      "value": "Workflows"
+      "value": "ワークフロー"
     }
   ],
   "g076bL": [
@@ -7992,7 +8200,7 @@
   "gS4Teq": [
     {
       "type": 0,
-      "value": "Array Item"
+      "value": "配列項目"
     }
   ],
   "gWyYg0": [
@@ -8009,12 +8217,12 @@
   ],
   "gaHI0k": [
     {
-      "type": 1,
-      "value": "overflowItemsLength"
+      "type": 0,
+      "value": "その他のアイテムを "
     },
     {
-      "type": 0,
-      "value": " more items"
+      "type": 1,
+      "value": "overflowItemsLength"
     }
   ],
   "gc6v4X": [
@@ -8090,7 +8298,7 @@
     },
     {
       "type": 0,
-      "value": " Install gateway"
+      "value": " ゲートウェイのインストール"
     }
   ],
   "h1lQDa": [
@@ -8114,13 +8322,13 @@
   "hCrg+6": [
     {
       "type": 0,
-      "value": "Actions must have one or more run after configurations"
+      "value": "アクションには 1 つ以上の実行後の構成が必要です"
     }
   ],
   "hHDJhD": [
     {
       "type": 0,
-      "value": "File content"
+      "value": "ファイルのコンテンツ"
     }
   ],
   "hLOIwp": [
@@ -8138,7 +8346,7 @@
   "hMpLz3": [
     {
       "type": 0,
-      "value": "Callback URL"
+      "value": "コールバック URL"
     }
   ],
   "hN7iBP": [
@@ -8183,7 +8391,7 @@
   "haeWoU": [
     {
       "type": 0,
-      "value": "Failed to evaluate outputs because splitOn "
+      "value": "splitOn "
     },
     {
       "type": 1,
@@ -8191,13 +8399,23 @@
     },
     {
       "type": 0,
-      "value": " cannot be evaluated. As a result, this operation's outputs might not be correctly visible in subsequent actions"
+      "value": " を評価できないため、出力を評価できませんでした。その結果、この操作の出力が後続のアクションで正しく表示されない可能性があります"
     }
   ],
   "hbOvB4": [
     {
       "type": 0,
       "value": "これは私が探しているものではありません"
+    }
+  ],
+  "hesDPs": [
+    {
+      "type": 1,
+      "value": "count"
+    },
+    {
+      "type": 0,
+      "value": " Milliseconds"
     }
   ],
   "hihfHd": [
@@ -8209,13 +8427,13 @@
   "hlrKDC": [
     {
       "type": 0,
-      "value": "Connection"
+      "value": "接続"
     }
   ],
   "ho2D6F": [
     {
       "type": 0,
-      "value": "Close panel"
+      "value": "パネルを閉じる"
     }
   ],
   "hq1mk6": [
@@ -8263,7 +8481,7 @@
   "hz9HJ2": [
     {
       "type": 0,
-      "value": "Insert dynamic content"
+      "value": "動的なコンテンツの挿入"
     }
   ],
   "hza/cT": [
@@ -8275,7 +8493,7 @@
   "i/R+Q7": [
     {
       "type": 0,
-      "value": "Local time"
+      "value": "ローカル時間"
     }
   ],
   "i/SguY": [
@@ -8329,7 +8547,7 @@
   "iBArTB": [
     {
       "type": 0,
-      "value": "collapse functions drawer"
+      "value": "関数ドロワーを折りたたむ"
     }
   ],
   "iCSHJG": [
@@ -8341,7 +8559,7 @@
   "iCni1C": [
     {
       "type": 0,
-      "value": "Can't find any search results"
+      "value": "検索結果が見つかりません"
     }
   ],
   "iE2+sy": [
@@ -8399,7 +8617,7 @@
   "iTz1lp": [
     {
       "type": 0,
-      "value": "Unpin action"
+      "value": "アクションのピン留めを外す"
     }
   ],
   "iU1OJh": [
@@ -8453,13 +8671,13 @@
   "im0GMa": [
     {
       "type": 0,
-      "value": "Show less"
+      "value": "表示数を減らす"
     }
   ],
   "ioUq6Q": [
     {
       "type": 0,
-      "value": "Password"
+      "value": "パスワード"
     }
   ],
   "iq+tiv": [
@@ -8481,7 +8699,7 @@
   "ir+plQ": [
     {
       "type": 0,
-      "value": "Operation details error"
+      "value": "操作の詳細エラー"
     }
   ],
   "iy8rNf": [
@@ -8493,13 +8711,13 @@
   "j2v8BE": [
     {
       "type": 0,
-      "value": "No connections are needed in this template"
+      "value": "このテンプレートには接続は必要ありません"
     }
   ],
   "j4OKkU": [
     {
       "type": 0,
-      "value": "Text color"
+      "value": "テキストの色"
     }
   ],
   "j5z8Vd": [
@@ -8637,13 +8855,13 @@
   "jvVVTG": [
     {
       "type": 0,
-      "value": "Action type"
+      "value": "アクションの種類"
     }
   ],
   "k/X2ml": [
     {
       "type": 0,
-      "value": "Type"
+      "value": "種類"
     }
   ],
   "k/oqFL": [
@@ -8673,7 +8891,7 @@
   "kBTFhL": [
     {
       "type": 0,
-      "value": "Fix my expression: "
+      "value": "式の修正: "
     },
     {
       "type": 1,
@@ -8743,7 +8961,7 @@
   "kU4VfD": [
     {
       "type": 0,
-      "value": "Stateful"
+      "value": "ステートフル"
     }
   ],
   "kVwJXt": [
@@ -8768,6 +8986,20 @@
     {
       "type": 0,
       "value": "ターゲット要素に接続されていない要素とマッピングは削除されます。"
+    }
+  ],
+  "kfmLTY": [
+    {
+      "type": 0,
+      "value": "関数 '"
+    },
+    {
+      "type": 1,
+      "value": "functionName"
+    },
+    {
+      "type": 0,
+      "value": "' に必要な入力がありません"
     }
   ],
   "klY9UN": [
@@ -8814,7 +9046,7 @@
   "kvUaFw": [
     {
       "type": 0,
-      "value": "More info"
+      "value": "詳細情報"
     }
   ],
   "l/3yJr": [
@@ -8856,13 +9088,13 @@
   "l8lP1X": [
     {
       "type": 0,
-      "value": "The error and its code are required when status is \"Failed\""
+      "value": "状態が \"失敗\" の場合には、エラーとそのコードが必要です"
     }
   ],
   "l9+EbH": [
     {
       "type": 0,
-      "value": "Description"
+      "value": "説明"
     }
   ],
   "lA/sHA": [
@@ -8888,13 +9120,13 @@
   "lFWXhc": [
     {
       "type": 0,
-      "value": "Workflow"
+      "value": "ワークフロー"
     }
   ],
   "lK+Vzo": [
     {
       "type": 0,
-      "value": "Secure string"
+      "value": "安全な文字列"
     }
   ],
   "lM9qrG": [
@@ -8924,7 +9156,7 @@
   "lSUNx5": [
     {
       "type": 0,
-      "value": "Action tracking ID"
+      "value": "アクションの追跡 ID"
     }
   ],
   "lX30/R": [
@@ -8936,7 +9168,7 @@
   "lbq5E1": [
     {
       "type": 0,
-      "value": "Large messages may be split up into smaller requests to the connector to allow large message upload. More details can be found at http://aka.ms/logicapps-chunk#upload-content-in-chunks"
+      "value": "大きいメッセージをアップロードできるように、大きいメッセージはコネクタへの小さい要求に分割される場合があります。詳細については、http://aka.ms/logicapps-chunk#upload-content-in-chunks をご覧ください"
     }
   ],
   "lckgnb": [
@@ -8948,7 +9180,7 @@
   "ldn/IC": [
     {
       "type": 0,
-      "value": "Test"
+      "value": "テスト"
     }
   ],
   "lexzgJ": [
@@ -8978,7 +9210,7 @@
   "lk/Qic": [
     {
       "type": 0,
-      "value": "connector"
+      "value": "コネクタ"
     }
   ],
   "lkgjxD": [
@@ -8990,13 +9222,13 @@
   "lkmLHk": [
     {
       "type": 0,
-      "value": "Use Schema Editor"
+      "value": "スキーマ エディターを使用する"
     }
   ],
   "lqF8H5": [
     {
       "type": 0,
-      "value": "Collapse static result"
+      "value": "静的な結果を折りたたむ"
     }
   ],
   "lsH37F": [
@@ -9026,13 +9258,13 @@
   "m4qt/b": [
     {
       "type": 0,
-      "value": "ACL creation failed for connection. Deleting the connection."
+      "value": "接続用の ACL の作成に失敗しました。接続を削除しています。"
     }
   ],
   "m5InJc": [
     {
       "type": 0,
-      "value": "Status Code"
+      "value": "状態コード"
     }
   ],
   "m7Y6Qf": [
@@ -9044,7 +9276,7 @@
   "m8MjHH": [
     {
       "type": 0,
-      "value": "Enter a value"
+      "value": "値を入力してください"
     }
   ],
   "m8Q61y": [
@@ -9112,7 +9344,7 @@
   "mQJXU4": [
     {
       "type": 0,
-      "value": "Run after"
+      "value": "後に実行"
     }
   ],
   "mUURJW": [
@@ -9139,10 +9371,20 @@
       "value": "必須。小文字に変換する文字列。文字列に含まれる文字に小文字に相当するものがない場合、その文字は変更されないまま、返される文字列に含まれます。"
     }
   ],
+  "maP1K/": [
+    {
+      "type": 1,
+      "value": "count"
+    },
+    {
+      "type": 0,
+      "value": " Minutes"
+    }
+  ],
   "mb1XDD": [
     {
       "type": 0,
-      "value": "Actual value"
+      "value": "実際の値"
     }
   ],
   "mca3Ml": [
@@ -9166,7 +9408,7 @@
   "mgD2ZT": [
     {
       "type": 0,
-      "value": "Summary"
+      "value": "要約"
     }
   ],
   "mjS/k1": [
@@ -9212,7 +9454,7 @@
   "mxSILx": [
     {
       "type": 0,
-      "value": "Queries"
+      "value": "クエリ"
     }
   ],
   "n+F7e2": [
@@ -9224,7 +9466,7 @@
   "n+sJ5W": [
     {
       "type": 0,
-      "value": "Published by"
+      "value": "発行者"
     }
   ],
   "n20T2h": [
@@ -9278,7 +9520,7 @@
   "nN1ezT": [
     {
       "type": 0,
-      "value": "Start with a blank workflow to build your integration process from scratch."
+      "value": "空のワークフローから開始して、統合プロセスを最初から作成します。"
     }
   ],
   "nNWAAh": [
@@ -9290,7 +9532,7 @@
   "nODesn": [
     {
       "type": 0,
-      "value": "Source"
+      "value": "ソース"
     }
   ],
   "nOWGAV": [
@@ -9314,7 +9556,7 @@
   "nRjpgk": [
     {
       "type": 0,
-      "value": "Sample data"
+      "value": "サンプル データ"
     }
   ],
   "nRpM02": [
@@ -9344,7 +9586,7 @@
   "nV2Spt": [
     {
       "type": 0,
-      "value": "Operation details panel"
+      "value": "操作の詳細パネル"
     }
   ],
   "nVDG00": [
@@ -9386,7 +9628,7 @@
   "nhEgHb": [
     {
       "type": 0,
-      "value": "By"
+      "value": "発行者:"
     }
   ],
   "njGstq": [
@@ -9410,7 +9652,7 @@
   "no+blV": [
     {
       "type": 0,
-      "value": "Cancel"
+      "value": "キャンセル"
     }
   ],
   "no/SMg": [
@@ -9422,13 +9664,13 @@
   "nr6bPd": [
     {
       "type": 0,
-      "value": "Open Test panel"
+      "value": "テスト パネルを開く"
     }
   ],
   "nuNBYE": [
     {
       "type": 0,
-      "value": "Path"
+      "value": "パス"
     }
   ],
   "nwLd4b": [
@@ -9496,7 +9738,7 @@
   "o6x5J4": [
     {
       "type": 0,
-      "value": "Create expression"
+      "value": "式の作成"
     }
   ],
   "o7bd1o": [
@@ -9509,6 +9751,16 @@
     {
       "type": 0,
       "value": "必須。バイナリ表現にデコードする dataURI。"
+    }
+  ],
+  "oBAL2F": [
+    {
+      "type": 1,
+      "value": "count"
+    },
+    {
+      "type": 0,
+      "value": " Days"
     }
   ],
   "oDHXKh": [
@@ -9532,13 +9784,13 @@
   "oOGTSo": [
     {
       "type": 0,
-      "value": "Connected"
+      "value": "接続済み"
     }
   ],
   "oPKLDZ": [
     {
       "type": 0,
-      "value": "Delete switch case"
+      "value": "Switch Case の削除"
     }
   ],
   "oQjIWf": [
@@ -9574,7 +9826,7 @@
   "oWAB0H": [
     {
       "type": 0,
-      "value": "Parameters"
+      "value": "パラメーター"
     }
   ],
   "oZMhX/": [
@@ -9586,7 +9838,7 @@
   "ocW+RF": [
     {
       "type": 0,
-      "value": "Details"
+      "value": "詳細"
     }
   ],
   "odQ554": [
@@ -9595,10 +9847,20 @@
       "value": "応答本文"
     }
   ],
+  "og5JOA": [
+    {
+      "type": 1,
+      "value": "count"
+    },
+    {
+      "type": 0,
+      "value": " Millisecond"
+    }
+  ],
   "ohpbkw": [
     {
       "type": 0,
-      "value": "Exponential interval"
+      "value": "指数間隔"
     }
   ],
   "onXUu0": [
@@ -9610,13 +9872,13 @@
   "oqgNX3": [
     {
       "type": 0,
-      "value": "Workflow name"
+      "value": "ワークフロー名"
     }
   ],
   "osln7P": [
     {
       "type": 0,
-      "value": "URL decodes the input string"
+      "value": "URL で入力文字列をデコードします"
     }
   ],
   "ox2Ou7": [
@@ -9628,7 +9890,7 @@
   "oxCSqB": [
     {
       "type": 0,
-      "value": "You can edit parameters here or in designer."
+      "value": "ここで、またはデザイナーでパラメーターを編集できます。"
     }
   ],
   "oxXV4+": [
@@ -9640,7 +9902,7 @@
   "oxcHvs": [
     {
       "type": 0,
-      "value": "Remove list of multi options"
+      "value": "複数のオプションの一覧を削除する"
     }
   ],
   "p/0r2N": [
@@ -9682,7 +9944,7 @@
   "pH6ubt": [
     {
       "type": 0,
-      "value": "Details"
+      "value": "詳細"
     }
   ],
   "pIczsS": [
@@ -9736,7 +9998,7 @@
   "pfmki/": [
     {
       "type": 0,
-      "value": "Specify the behavior and capabilities for transferring content over HTTP."
+      "value": "HTTP 経由でコンテンツを転送する場合の動作と機能を指定します。"
     }
   ],
   "piaRy6": [
@@ -9748,7 +10010,7 @@
   "pjC3M9": [
     {
       "type": 0,
-      "value": "Suggested expression"
+      "value": "推奨される式"
     }
   ],
   "pozypE": [
@@ -9760,7 +10022,7 @@
   "pqprxZ": [
     {
       "type": 0,
-      "value": "Configure connections to authenticate and link your workflows with services and applications."
+      "value": "ワークフローを認証し、サービスやアプリケーションとリンクするように接続を構成します。"
     }
   ],
   "pr9GwA": [
@@ -9778,7 +10040,7 @@
   "pykp8c": [
     {
       "type": 0,
-      "value": "Blank workflow"
+      "value": "空白のワークフロー"
     }
   ],
   "q/+Uex": [
@@ -9826,7 +10088,7 @@
   "q5lttG": [
     {
       "type": 0,
-      "value": "Undo"
+      "value": "元に戻す"
     }
   ],
   "q87X20": [
@@ -9876,7 +10138,7 @@
   "qMFpNH": [
     {
       "type": 0,
-      "value": "Loading dynamic data"
+      "value": "動的データを読み込んでいます"
     }
   ],
   "qSejoi": [
@@ -9949,7 +10211,7 @@
   "qp3gCy": [
     {
       "type": 0,
-      "value": "Insert link"
+      "value": "リンクの挿入"
     }
   ],
   "qr1lLG": [
@@ -9975,13 +10237,13 @@
   "qsL/fE": [
     {
       "type": 0,
-      "value": "Delete parameter"
+      "value": "パラメーターの削除"
     }
   ],
   "qxw9UO": [
     {
       "type": 0,
-      "value": "Status"
+      "value": "状態"
     }
   ],
   "qy5WqY": [
@@ -10053,13 +10315,13 @@
   "rHySVF": [
     {
       "type": 0,
-      "value": "Missing information for workflows creation"
+      "value": "ワークフロー作成の情報がありません"
     }
   ],
   "rMYBfw": [
     {
       "type": 0,
-      "value": "Make the field optional"
+      "value": "任意のフィールドに変更"
     }
   ],
   "rNi5Y3": [
@@ -10111,7 +10373,7 @@
   "rl9UOO": [
     {
       "type": 0,
-      "value": "Connections cannot be edited in pinned view. Release the pinned action to make connection changes."
+      "value": "ピン留めされたビューではConnectionsを編集できません。接続を変更するには、ピン留めされたアクションを解放します。"
     }
   ],
   "rsdJcV": [
@@ -10124,6 +10386,12 @@
     {
       "type": 0,
       "value": "新規追加"
+    }
+  ],
+  "rwrlsB": [
+    {
+      "type": 0,
+      "value": "マップの問題"
     }
   ],
   "rxIJfD": [
@@ -10147,13 +10415,13 @@
   "s0Qaot": [
     {
       "type": 0,
-      "value": "Workflow Parameters Panel"
+      "value": "ワークフロー パラメーター パネル"
     }
   ],
   "s5AOpV": [
     {
       "type": 0,
-      "value": "Card title"
+      "value": "カード タイトル"
     }
   ],
   "s5RV9B": [
@@ -10192,10 +10460,20 @@
       "value": "接続の作成を取り消します"
     }
   ],
+  "sJQee6": [
+    {
+      "type": 1,
+      "value": "count"
+    },
+    {
+      "type": 0,
+      "value": " Hours"
+    }
+  ],
   "sKy720": [
     {
       "type": 0,
-      "value": "Must provide value for workflow name."
+      "value": "ワークフロー名の値を指定する必要があります。"
     }
   ],
   "sRpETS": [
@@ -10213,7 +10491,7 @@
   "sVcvcG": [
     {
       "type": 0,
-      "value": "Basics"
+      "value": "基本情報"
     }
   ],
   "sYQDN+": [
@@ -10249,7 +10527,7 @@
   "sfTqHY": [
     {
       "type": 0,
-      "value": "Close panel"
+      "value": "パネルを閉じる"
     }
   ],
   "shF9tZ": [
@@ -10335,7 +10613,7 @@
   "t+h+KW": [
     {
       "type": 0,
-      "value": "Input"
+      "value": "入力"
     }
   ],
   "t/RPwA": [
@@ -10347,13 +10625,13 @@
   "t0tN4J": [
     {
       "type": 0,
-      "value": "Code view"
+      "value": "コード ビュー"
     }
   ],
   "t7ytOJ": [
     {
       "type": 0,
-      "value": "Status"
+      "value": "状態"
     }
   ],
   "t9RwOi": [
@@ -10383,7 +10661,7 @@
   "tGSsgZ": [
     {
       "type": 0,
-      "value": "select an identity"
+      "value": "ID を選択してください"
     }
   ],
   "tH2pT1": [
@@ -10437,13 +10715,13 @@
   "tQIXhy": [
     {
       "type": 0,
-      "value": "Original expression"
+      "value": "元の式"
     }
   ],
   "tRe2Ct": [
     {
       "type": 0,
-      "value": "Name"
+      "value": "名前"
     }
   ],
   "tTIsTX": [
@@ -10507,7 +10785,7 @@
   "tbl/ar": [
     {
       "type": 0,
-      "value": "No items"
+      "value": "項目がありません"
     }
   ],
   "td5//c": [
@@ -10525,19 +10803,19 @@
   "tjQdhq": [
     {
       "type": 0,
-      "value": "Type"
+      "value": "種類"
     }
   ],
   "toWTrl": [
     {
       "type": 0,
-      "value": "Search"
+      "value": "検索"
     }
   ],
   "tooc6v": [
     {
       "type": 0,
-      "value": "Switch '"
+      "value": "'"
     },
     {
       "type": 1,
@@ -10545,7 +10823,7 @@
     },
     {
       "type": 0,
-      "value": "' to the local time"
+      "value": "' をローカル時刻に切り替える"
     }
   ],
   "tqqUHX": [
@@ -10557,7 +10835,7 @@
   "tt1pJC": [
     {
       "type": 0,
-      "value": "You will lose all unsaved changes. Are you sure you want to discard the changes?"
+      "value": "保存されていない変更はすべて失われます。変更を破棄しますか?"
     }
   ],
   "tu4TTM": [
@@ -10569,13 +10847,13 @@
   "twr0pi": [
     {
       "type": 0,
-      "value": "Copy trigger"
+      "value": "トリガーのコピー"
     }
   ],
   "tzeDPE": [
     {
       "type": 0,
-      "value": "State type"
+      "value": "状態の種類"
     }
   ],
   "u81zB9": [
@@ -10599,13 +10877,13 @@
   "uEI5Wo": [
     {
       "type": 0,
-      "value": "Value"
+      "value": "値"
     }
   ],
   "uIgGKj": [
     {
       "type": 0,
-      "value": "Managed identity"
+      "value": "マネージド ID"
     }
   ],
   "uIurld": [
@@ -10651,7 +10929,7 @@
   "uSr3WX": [
     {
       "type": 0,
-      "value": "Connection name"
+      "value": "接続名"
     }
   ],
   "uTTbhk": [
@@ -10678,12 +10956,6 @@
       "value": "申し訳ございません。Copilot はフル操業しており、一時的に利用できません。しばらくしてからもう一度お試しください。"
     }
   ],
-  "uanMWm": [
-    {
-      "type": 0,
-      "value": "成功しました"
-    }
-  ],
   "uc/PoD": [
     {
       "type": 0,
@@ -10705,7 +10977,7 @@
   "udnt8c": [
     {
       "type": 0,
-      "value": "Secure object"
+      "value": "セキュリティで保護されたオブジェクト"
     }
   ],
   "uesaee": [
@@ -10735,7 +11007,7 @@
   "umLmPm": [
     {
       "type": 0,
-      "value": "Operation Panel"
+      "value": "操作パネル"
     }
   ],
   "unMG8m": [
@@ -10807,7 +11079,7 @@
   "uzj2d3": [
     {
       "type": 0,
-      "value": "Close panel"
+      "value": "パネルを閉じる"
     }
   ],
   "uzsleE": [
@@ -10819,7 +11091,7 @@
   "v+FA8N": [
     {
       "type": 0,
-      "value": "Local time"
+      "value": "ローカル時間"
     }
   ],
   "v+keTP": [
@@ -10837,7 +11109,7 @@
   "v4JmCE": [
     {
       "type": 0,
-      "value": "Please explain how you would like to update your expression: \""
+      "value": "式を更新する方法を説明してください: \""
     },
     {
       "type": 1,
@@ -10875,13 +11147,13 @@
   "vNqq43": [
     {
       "type": 0,
-      "value": "Add loop"
+      "value": "ループの追加..."
     }
   ],
   "vO/I7P": [
     {
       "type": 0,
-      "value": "Switch '"
+      "value": "'"
     },
     {
       "type": 1,
@@ -10889,7 +11161,7 @@
     },
     {
       "type": 0,
-      "value": "' to the UTC time format"
+      "value": "' を UTC 時刻形式に切り替える"
     }
   ],
   "vQcQkU": [
@@ -10928,6 +11200,12 @@
       "value": "API 接続を作成して使用するには、このロジック アプリ上で構成したマネージド ID が必要です。"
     }
   ],
+  "vhwaYb": [
+    {
+      "type": 0,
+      "value": "すべてのカスタム値文字列と DateTime 値を二重引用符で囲みます。例: \"abc\"。"
+    }
+  ],
   "viee6C": [
     {
       "type": 0,
@@ -10949,7 +11227,7 @@
   "voRDKP": [
     {
       "type": 0,
-      "value": "Headers"
+      "value": "ヘッダー"
     }
   ],
   "vr70Gn": [
@@ -10986,16 +11264,22 @@
       "value": "重複する値が含まれています"
     }
   ],
+  "vzXXFP": [
+    {
+      "type": 0,
+      "value": "Workflow version"
+    }
+  ],
   "w+7aGo": [
     {
       "type": 0,
-      "value": "Connections list"
+      "value": "リストConnections"
     }
   ],
   "w+t06Q": [
     {
       "type": 0,
-      "value": "Select fields"
+      "value": "フィールドを選択します"
     }
   ],
   "w0pI5M": [
@@ -11022,10 +11306,20 @@
       "value": "折りたたむ"
     }
   ],
+  "wAg9+z": [
+    {
+      "type": 1,
+      "value": "count"
+    },
+    {
+      "type": 0,
+      "value": " Hour"
+    }
+  ],
   "wBBu4g": [
     {
       "type": 0,
-      "value": "Missing information for workflow creation"
+      "value": "ワークフロー作成の情報がありません"
     }
   ],
   "wEaGWn": [
@@ -11049,7 +11343,7 @@
   "wG8fwz": [
     {
       "type": 0,
-      "value": "Bullet list"
+      "value": "箇条書きリスト"
     }
   ],
   "wGYmui": [
@@ -11061,7 +11355,7 @@
   "wKJdDk": [
     {
       "type": 0,
-      "value": "Unsupported token type: "
+      "value": "サポートされていないトークンの種類: "
     },
     {
       "type": 1,
@@ -11083,7 +11377,7 @@
   "wPjnM9": [
     {
       "type": 0,
-      "value": "Paste a parallel action"
+      "value": "並列アクションの貼り付け"
     }
   ],
   "wPlTDB": [
@@ -11107,7 +11401,7 @@
   "wTaSTp": [
     {
       "type": 0,
-      "value": "Please save the map before testing"
+      "value": "テストする前にマップを保存してください"
     }
   ],
   "wV3Lmd": [
@@ -11131,13 +11425,13 @@
   "wXLEcJ": [
     {
       "type": 0,
-      "value": "Insert data from previous step (you can also add by typing Alt + / in the editor)"
+      "value": "前のステップからデータを挿入する (エディターで Alt + / を入力して追加することもできます)"
     }
   ],
   "wYzIf2": [
     {
       "type": 0,
-      "value": "Unsupported token type: "
+      "value": "サポートされていないトークンの種類: "
     },
     {
       "type": 1,
@@ -11147,13 +11441,13 @@
   "wfekJ7": [
     {
       "type": 0,
-      "value": "Type"
+      "value": "種類"
     }
   ],
   "wjiptl": [
     {
       "type": 0,
-      "value": "Node Search Panel"
+      "value": "ノード検索パネル"
     }
   ],
   "wkvUUA": [
@@ -11196,6 +11490,12 @@
     {
       "type": 0,
       "value": "キャンバス"
+    }
+  ],
+  "wx/ZQP": [
+    {
+      "type": 0,
+      "value": "入力の追加"
     }
   ],
   "wxaQwD": [
@@ -11255,7 +11555,7 @@
   "xDHpeS": [
     {
       "type": 0,
-      "value": "Review your settings, ensure everything is correctly set up, and create your workflow."
+      "value": "設定を確認し、すべてが正しく設定されていることを確認し、ワークフローを作成します。"
     }
   ],
   "xFQXAI": [
@@ -11267,7 +11567,7 @@
   "xHyhqO": [
     {
       "type": 0,
-      "value": "Optimized for low latency"
+      "value": "低遅延用に最適化"
     }
   ],
   "xJ6vjn": [
@@ -11285,13 +11585,13 @@
   "xK8r1/": [
     {
       "type": 0,
-      "value": "Run information loading"
+      "value": "情報の読み込みを実行する"
     }
   ],
   "xMgLd8": [
     {
       "type": 0,
-      "value": "Minimum interval"
+      "value": "最小間隔"
     }
   ],
   "xN3GEX": [
@@ -11342,6 +11642,16 @@
       "value": "URI からパスを返します。パスが指定されていない場合は、'/' を返します"
     }
   ],
+  "xfXUGz": [
+    {
+      "type": 1,
+      "value": "count"
+    },
+    {
+      "type": 0,
+      "value": " Minute"
+    }
+  ],
   "xi2tn6": [
     {
       "type": 0,
@@ -11363,7 +11673,7 @@
   "xwB12G": [
     {
       "type": 0,
-      "value": "Enter another option"
+      "value": "別のオプションを入力"
     }
   ],
   "xwD1VZ": [
@@ -11381,7 +11691,7 @@
   "y+eYFf": [
     {
       "type": 0,
-      "value": "Workflow parameters"
+      "value": "ワークフロー パラメーター"
     }
   ],
   "y1e9yw": [
@@ -11405,7 +11715,7 @@
   "y6aoMi": [
     {
       "type": 0,
-      "value": "Show Logic App run details"
+      "value": "ロジック アプリの実行の詳細を表示する"
     }
   ],
   "yB6PB/": [
@@ -11423,7 +11733,7 @@
   "yENrOg": [
     {
       "type": 0,
-      "value": "here"
+      "value": "こちら"
     }
   ],
   "yF2R//": [
@@ -11435,7 +11745,7 @@
   "yKNKV/": [
     {
       "type": 0,
-      "value": "Try a different search term or remove filters"
+      "value": "別の検索語句を試すか、フィルターを削除してください"
     }
   ],
   "yKOsmK": [
@@ -11453,13 +11763,13 @@
   "yOyeBT": [
     {
       "type": 0,
-      "value": "Toggle minimap"
+      "value": "ミニマップの切り替え"
     }
   ],
   "yQ6+nV": [
     {
       "type": 0,
-      "value": "Connect"
+      "value": "接続"
     }
   ],
   "yRDuqj": [
@@ -11495,7 +11805,7 @@
   "yeagrz": [
     {
       "type": 0,
-      "value": "Ideal for request-response and processing IoT events"
+      "value": "要求 - 応答と IoT イベントの処理に最適"
     }
   ],
   "yjierd": [
@@ -11515,7 +11825,7 @@
   "yjjXCQ": [
     {
       "type": 0,
-      "value": "Close panel"
+      "value": "パネルを閉じる"
     }
   ],
   "yk7L+4": [
@@ -11539,7 +11849,7 @@
   "yqF/Ew": [
     {
       "type": 0,
-      "value": "Search workflow actions"
+      "value": "ワークフローのアクションの検索"
     }
   ],
   "yqRrQ/": [
@@ -11575,7 +11885,7 @@
   "yxctQw": [
     {
       "type": 0,
-      "value": "Logical name"
+      "value": "論理名"
     }
   ],
   "yzqXMp": [
@@ -11597,7 +11907,7 @@
   "z/vIwi": [
     {
       "type": 0,
-      "value": "Data handling"
+      "value": "データ処理"
     }
   ],
   "z3VuE+": [
@@ -11609,7 +11919,7 @@
   "z5H3GF": [
     {
       "type": 0,
-      "value": "Display name"
+      "value": "表示名"
     }
   ],
   "z9kH+0": [
@@ -11639,13 +11949,13 @@
   "zK5VPq": [
     {
       "type": 0,
-      "value": "Workflows in this Accelerator"
+      "value": "このアクセラレータのワークフロー"
     }
   ],
   "zMKxg9": [
     {
       "type": 0,
-      "value": "Name does not match the given pattern."
+      "value": "名前が指定されたパターンと一致しません。"
     }
   ],
   "zNesUZ": [
@@ -11663,7 +11973,7 @@
   "zPRSM9": [
     {
       "type": 0,
-      "value": "App identity is not configured on the logic app environment variables."
+      "value": "ロジック アプリ環境変数でアプリ ID が構成されていません。"
     }
   ],
   "zUWAsJ": [
@@ -11723,7 +12033,7 @@
   "zkqKJ+": [
     {
       "type": 0,
-      "value": "Body"
+      "value": "本文"
     }
   ],
   "znGyyU": [
@@ -11747,7 +12057,7 @@
   "zxF7g+": [
     {
       "type": 0,
-      "value": "A to Z, ascending"
+      "value": "A から Z(昇順)"
     }
   ],
   "zxe9hh": [

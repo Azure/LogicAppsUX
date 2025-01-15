@@ -4,11 +4,7 @@ export const useStyles = makeStyles({
   root: {
     width: '400px',
     backgroundColor: '#fff',
-    ...shorthands.overflow('visible'),
-  },
-  closeHeaderButton: {
-    paddingBottom: '0px',
-    paddingTop: '0px',
+    overflow: 'visible',
   },
   bodyWrapper: {
     display: 'flex',
@@ -17,7 +13,7 @@ export const useStyles = makeStyles({
   },
   editorStyle: {
     ...shorthands.border('1px', 'solid', tokens.colorNeutralStroke1),
-    ...shorthands.borderRadius(tokens.borderRadiusMedium),
+    borderRadius: tokens.borderRadiusMedium,
     backgroundColor: '#fff',
   },
   accordianHeader: {
@@ -35,7 +31,7 @@ export const useStyles = makeStyles({
     left: '0px',
     zIndex: 1,
     position: 'fixed',
-    ...shorthands.overflow('hidden'),
+    overflow: 'hidden',
   },
   closeButton: {
     marginLeft: '10px',
@@ -52,7 +48,7 @@ export const useStyles = makeStyles({
     pointerEvents: 'none',
     userSelect: 'none',
     display: 'none',
-    ...shorthands.overflow('hidden'),
+    overflow: 'hidden',
     whiteSpace: 'pre-wrap',
     wordWrap: 'break-word',
   },

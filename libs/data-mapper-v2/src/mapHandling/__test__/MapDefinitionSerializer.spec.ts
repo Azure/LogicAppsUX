@@ -1,13 +1,18 @@
-import { addFunction, concatFunction, greaterThanFunction, sortFunction } from '../../__mocks__/FunctionMock';
+import { addFunction, concatFunction, greaterThanFunction, reverseFunction, sortFunction } from '../../__mocks__/FunctionMock';
 import { reservedMapDefinitionKeys } from '../../constants/MapDefinitionConstants';
 import { directAccessPseudoFunction, FunctionData, functionMock, ifPseudoFunction, indexPseudoFunction } from '../../models';
 import type { ConnectionDictionary } from '../../models/Connection';
-import { applyConnectionValue, createCustomInputConnection, createNodeConnection } from '../../utils/Connection.Utils';
+import {
+  applyConnectionValue,
+  createCustomInputConnection,
+  createNewEmptyConnection,
+  createNodeConnection,
+} from '../../utils/Connection.Utils';
 import { addReactFlowPrefix, createReactFlowFunctionKey } from '../../utils/ReactFlow.Util';
 import { convertSchemaToSchemaExtended } from '../../utils/Schema.Utils';
 import { createYamlFromMap, generateMapDefinitionBody, generateMapDefinitionHeader } from '../MapDefinitionSerializer';
 import type { MapDefinitionEntry, Schema, SchemaExtended, SchemaNodeExtended } from '@microsoft/logic-apps-shared';
-import { SchemaFileFormat, SchemaType } from '@microsoft/logic-apps-shared';
+import { SchemaFileFormat, SchemaType, extend } from '@microsoft/logic-apps-shared';
 import {
   deepNestedSequenceAndObject,
   comprehensiveSourceSchema,
@@ -24,6 +29,7 @@ import { describe, vi, beforeEach, afterEach, beforeAll, afterAll, it, test, exp
 import { AddRegular } from '@fluentui/react-icons';
 import { SchemaDefinition } from 'js-yaml';
 import { create } from 'domain';
+import { createSchemaToSchemaNodeConnection } from './MapHandlingTestUtilis';
 describe('mapDefinitions/MapDefinitionSerializer', () => {
   describe('XML to XML', () => {
     describe('generateMapDefinitionHeader', () => {
@@ -851,6 +857,33 @@ describe('mapDefinitions/MapDefinitionSerializer', () => {
         expect(publisherLine).toEqual('../ns0:author/ns0:publisher/ns0:line1');
       });
 
+      it("doesn't add brackets to deleted connected target nodes", () => {
+        const srcDirectTranslation = extendedSourceSchema.schemaTreeRoot.children[0];
+        //const srcEmployeeID = srcDirectTranslation.children.find((child) => child.name === 'EmployeeID') as SchemaNodeExtended;
+        const srcEmployeeName = srcDirectTranslation.children.find((child) => child.name === 'EmployeeName') as SchemaNodeExtended;
+
+        const tgtDirectTranslation = extendedTargetSchema.schemaTreeRoot.children[0];
+        const tgtEmployee = tgtDirectTranslation.children.find((child) => child.name === 'Employee') as SchemaNodeExtended;
+        const tgtID = tgtEmployee.children.find((child) => child.name === 'ID') as SchemaNodeExtended;
+        const tgtName = tgtEmployee.children.find((child) => child.name === 'Name') as SchemaNodeExtended;
+
+        const mapDefinition: MapDefinitionEntry = {};
+        const connections: ConnectionDictionary = {};
+
+        applyConnectionValue(connections, {
+          targetNode: tgtID,
+          targetNodeReactFlowKey: addReactFlowPrefix(tgtID.key, SchemaType.Target),
+          findInputSlot: true,
+          input: createNewEmptyConnection(),
+        });
+
+        createSchemaToSchemaNodeConnection(connections, srcEmployeeName, tgtName);
+
+        generateMapDefinitionBody(mapDefinition, connections);
+
+        expect(Object.keys(mapDefinition['ns0:Root']['DirectTranslation']['Employee'])[0]).toEqual('Name');
+      });
+
       it('many to one nested loops', () => {
         const mockComprehensiveSourceSchema: Schema = comprehensiveSourceSchema;
         const extendedComprehensiveSourceSchema: SchemaExtended = convertSchemaToSchemaExtended(mockComprehensiveSourceSchema);
@@ -1216,6 +1249,72 @@ describe('mapDefinitions/MapDefinitionSerializer', () => {
         expect(employeeObjectEntries.length).toEqual(1);
         expect(employeeObjectEntries[0][0]).toEqual('Name');
         expect(employeeObjectEntries[0][1]).toEqual('"CustomValue"');
+      });
+
+      it('a sequence loop with relative path', () => {
+        const sourceNameValueTransforms = extendedSourceSchema.schemaTreeRoot.children.find(
+          (child) => child.name === 'NameValueTransforms'
+        ) as SchemaNodeExtended;
+        const srcCatalog = sourceNameValueTransforms.children.find((child) => child.name === 'Catalog') as SchemaNodeExtended;
+        const srcProduct = srcCatalog.children.find((child) => child.name === 'Product') as SchemaNodeExtended;
+        const srcField = srcProduct.children.find((child) => child.name === 'Field') as SchemaNodeExtended;
+        const srcName = srcField.children.find((child) => child.name === 'Name') as SchemaNodeExtended;
+
+        const targetNameValueTransforms = extendedTargetSchema.schemaTreeRoot.children.find(
+          (child) => child.name === 'NameValueTransforms'
+        ) as SchemaNodeExtended;
+        const tgtPOStatus = targetNameValueTransforms.children.find((child) => child.name === 'PO_Status') as SchemaNodeExtended;
+        const tgtProduct = tgtPOStatus.children.find((child) => child.name === 'Product') as SchemaNodeExtended;
+        const tgtOrderStatusQuantity = tgtProduct.children.find((child) => child.name === 'OrderStatusQuantity') as SchemaNodeExtended;
+        const tgtProductQuantity = tgtOrderStatusQuantity.children.find((child) => child.name === 'ProductQuantity') as SchemaNodeExtended;
+
+        const reverseFunctionId = createReactFlowFunctionKey(reverseFunction);
+        const mapDefinition: MapDefinitionEntry = {};
+        const connections: ConnectionDictionary = {};
+
+        // connect parents
+        createSchemaToSchemaNodeConnection(connections, srcProduct, tgtProduct);
+
+        // child connection under sequence
+        createSchemaToSchemaNodeConnection(connections, srcName, tgtProductQuantity);
+
+        // connect sequence fn
+        applyConnectionValue(connections, {
+          targetNode: reverseFunction,
+          targetNodeReactFlowKey: reverseFunctionId,
+          findInputSlot: true,
+          input: createNodeConnection(srcField, addReactFlowPrefix(srcField.key, SchemaType.Source)),
+        });
+        applyConnectionValue(connections, {
+          targetNode: tgtOrderStatusQuantity,
+          targetNodeReactFlowKey: addReactFlowPrefix(tgtOrderStatusQuantity.key, SchemaType.Target),
+          findInputSlot: true,
+          input: createNodeConnection(reverseFunction, reverseFunctionId),
+        });
+
+        generateMapDefinitionBody(mapDefinition, connections);
+
+        expect(Object.keys(mapDefinition).length).toEqual(1);
+
+        const rootChildren = Object.entries(mapDefinition['ns0:Root']);
+        expect(rootChildren.length).toEqual(1);
+        expect(rootChildren[0][0]).toEqual('NameValueTransforms');
+
+        const parentLoopObject = ((mapDefinition['ns0:Root'] as MapDefinitionEntry)['NameValueTransforms'] as MapDefinitionEntry)[
+          'PO_Status'
+        ] as MapDefinitionEntry;
+        const loopingEntries = Object.entries(parentLoopObject);
+        expect(loopingEntries.length).toEqual(1);
+        expect(loopingEntries[0][0]).toEqual('$for(/ns0:Root/NameValueTransforms/Catalog/Product)');
+
+        const product = loopingEntries[0][1] as MapDefinitionEntry;
+
+        expect(loopingEntries[0][1]).not.toBe('string');
+        expect(Object.keys(product['Product'])[0]).toEqual('$for(reverse(Field))');
+
+        const orderStatusQuantity = (product['Product'] as MapDefinitionEntry)['$for(reverse(Field))'] as MapDefinitionEntry;
+
+        expect(orderStatusQuantity['OrderStatusQuantity']['ProductQuantity']).toEqual('Name');
       });
 
       it.skip('a sequence loop and function below it', () => {

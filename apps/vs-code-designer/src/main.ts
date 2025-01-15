@@ -1,5 +1,6 @@
 import { LogicAppResolver } from './LogicAppResolver';
 import { runPostWorkflowCreateStepsFromCache } from './app/commands/createCodeless/createCodelessSteps/WorkflowCreateStepBase';
+import { runPostExtractStepsFromCache } from './app/commands/createNewCodeProject/CodeProjectBase/ProcessPackageStep';
 import { supportedDataMapDefinitionFileExts, supportedSchemaFileExts } from './app/commands/dataMapper/extensionConfig';
 import { promptParameterizeConnections } from './app/commands/parameterizeConnections';
 import { registerCommands } from './app/commands/registerCommands';
@@ -26,11 +27,14 @@ import {
 } from '@microsoft/vscode-azext-utils';
 import type { IActionContext } from '@microsoft/vscode-azext-utils';
 import * as vscode from 'vscode';
+import TelemetryReporter from '@vscode/extension-telemetry';
 
 const perfStats = {
   loadStartTime: Date.now(),
   loadEndTime: undefined,
 };
+
+const telemetryString = 'setInGitHubBuild';
 
 export async function activate(context: vscode.ExtensionContext) {
   vscode.commands.executeCommand(
@@ -45,6 +49,8 @@ export async function activate(context: vscode.ExtensionContext) {
   ]);
 
   ext.context = context;
+  ext.telemetryReporter = new TelemetryReporter(telemetryString);
+  context.subscriptions.push(ext.telemetryReporter);
 
   ext.outputChannel = createAzExtOutputChannel('Azure Logic Apps (Standard)', ext.prefix);
   registerUIExtensionVariables(ext);
@@ -55,6 +61,7 @@ export async function activate(context: vscode.ExtensionContext) {
     activateContext.telemetry.measurements.mainFileLoad = (perfStats.loadEndTime - perfStats.loadStartTime) / 1000;
 
     runPostWorkflowCreateStepsFromCache();
+    runPostExtractStepsFromCache();
 
     try {
       await downloadExtensionBundle(activateContext);
@@ -109,6 +116,7 @@ export async function activate(context: vscode.ExtensionContext) {
 export function deactivate(): Promise<any> {
   stopDesignTimeApi();
   ext.unitTestController?.dispose();
+  ext.telemetryReporter.dispose();
   return undefined;
 }
 

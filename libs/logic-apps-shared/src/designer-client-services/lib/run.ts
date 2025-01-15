@@ -6,7 +6,7 @@ export interface IRunService {
   getContent(contentLink: ContentLink): Promise<any>;
   getMoreRuns(continuationToken: string): Promise<Runs>;
   getRun(runId: string): Promise<Run | RunError>;
-  getRuns(workflowId: string): Promise<Runs>;
+  getRuns(): Promise<Runs>;
   runTrigger(callbackInfo: CallbackInfo): Promise<any>;
   getActionLinks(action: any, nodeId: string): Promise<any>;
   getScopeRepetitions(

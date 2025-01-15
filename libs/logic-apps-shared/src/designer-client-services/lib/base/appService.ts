@@ -68,7 +68,7 @@ export class BaseAppServiceService implements IAppServiceService {
       const element = document.createElement('a');
       element.href = swaggerUrl;
 
-      const scheme = swagger.api.schemes?.at(-1) || 'http';
+      const scheme = swagger.api.schemes?.at(-1) || 'https';
       const host = swagger.api.host || element.host;
       const baseUrl = `${scheme}://${host}`;
       schema.properties = {

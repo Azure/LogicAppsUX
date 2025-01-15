@@ -10,7 +10,7 @@ import type { CommentBoxProps } from './types';
 import { getCardStyle } from './utils';
 import type { MessageBarType } from '@fluentui/react';
 import { Icon, css } from '@fluentui/react';
-import { Spinner } from '@fluentui/react-components';
+import { Spinner, useRestoreFocusTarget } from '@fluentui/react-components';
 import type { LogicAppsV2 } from '@microsoft/logic-apps-shared';
 import { replaceWhiteSpaceWithUnderscore } from '@microsoft/logic-apps-shared';
 import type { MouseEventHandler } from 'react';
@@ -102,6 +102,7 @@ export const Card: React.FC<CardProps> = memo(
     };
     const focusRef = useRef<HTMLElement | null>(null);
     const keyboardInteraction = useCardKeyboardInteraction(onClick, onDeleteClick, onCopyClick);
+    const restoreFocusTargetAttribute = useRestoreFocusTarget();
 
     useEffect(() => {
       if (setFocus) {
@@ -169,6 +170,7 @@ export const Card: React.FC<CardProps> = memo(
 
     return (
       <div
+        {...restoreFocusTargetAttribute}
         ref={(node) => {
           dragPreview(node);
           focusRef.current = node;
@@ -180,7 +182,7 @@ export const Card: React.FC<CardProps> = memo(
         className={css(
           'msla-panel-card-container',
           selectionMode === 'selected' && 'msla-panel-card-container-selected',
-          !active && 'inactive',
+          !active && 'msla-card-inactive',
           cloned && 'msla-card-ghost-image',
           isDragging && 'dragging'
         )}
@@ -193,7 +195,7 @@ export const Card: React.FC<CardProps> = memo(
         tabIndex={nodeIndex}
         onKeyUp={keyboardInteraction.keyUp}
       >
-        {isMonitoringView ? (
+        {isMonitoringView && active ? (
           <StatusPill
             id={`${title}-status`}
             status={runData?.status}

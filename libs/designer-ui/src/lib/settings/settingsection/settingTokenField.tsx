@@ -43,6 +43,7 @@ import { useIntl } from 'react-intl';
 export interface SettingTokenFieldProps extends SettingProps {
   id?: string;
   value: ValueSegment[];
+  isDynamic?: boolean;
   isLoading?: boolean;
   errorDetails?: { message: string };
   editor?: string;
@@ -100,6 +101,7 @@ export const TokenField = ({
   placeholder,
   readOnly,
   value,
+  isDynamic,
   isLoading,
   errorDetails,
   showTokens,
@@ -115,6 +117,7 @@ export const TokenField = ({
   onCastParameter,
   getTokenPicker,
   suppressCastingForSerialize,
+  required,
 }: TokenFieldProps) => {
   const intl = useIntl();
   const dropdownOptions = useMemo(() => getDropdownOptionsFromOptions(editorOptions), [editorOptions]);
@@ -139,6 +142,7 @@ export const TokenField = ({
     case constants.PARAMETER.EDITOR.ARRAY:
       return (
         <ArrayEditor
+          isRequired={required}
           labelId={labelId}
           arrayType={editorViewModel.arrayType}
           initialMode={editorOptions?.initialMode}
@@ -154,7 +158,8 @@ export const TokenField = ({
           onChange={onValueChange}
           dataAutomationId={`msla-setting-token-editor-arrayeditor-${labelForAutomationId}`}
           // Props for dynamic options
-          options={dropdownOptions.length > 0 ? dropdownOptions : undefined}
+          isDynamic={isDynamic}
+          options={dropdownOptions}
           isLoading={isLoading}
           errorDetails={errorDetails}
           onMenuOpen={onComboboxMenuOpen}
@@ -181,6 +186,7 @@ export const TokenField = ({
           tokenPickerButtonProps={tokenpickerButtonProps}
         />
       );
+
     case constants.PARAMETER.EDITOR.CODE: {
       const customCodeEditor = isCustomCode(editor, editorOptions?.language);
       let customCodeData = editorViewModel?.customCodeData?.fileData ?? '';
@@ -204,6 +210,7 @@ export const TokenField = ({
         />
       );
     }
+
     case constants.PARAMETER.EDITOR.COMBOBOX:
       return (
         <Combobox

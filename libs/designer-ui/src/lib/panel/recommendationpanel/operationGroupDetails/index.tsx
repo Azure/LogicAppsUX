@@ -1,3 +1,4 @@
+import { useMemo } from 'react';
 import type { OperationActionData } from '../interfaces';
 import { OperationSearchCard } from '../operationSearchCard';
 import HybridNotice from './HybridNotice';
@@ -25,6 +26,8 @@ export const OperationGroupDetailsPage: React.FC<OperationGroupDetailsPageProps>
   const { category } = operationActionsData?.[0] ?? {};
   const isHybrid = operationActionsData.findIndex((action) => action.category !== category) !== -1;
   const isLoadingConnector = isNullOrUndefined(connector);
+
+  const sortedOperations = useMemo(() => operationActionsData.sort((a, b) => a.title.localeCompare(b.title)), [operationActionsData]);
 
   const noOperationsText = intl.formatMessage({
     defaultMessage: 'No operations found',
@@ -56,7 +59,7 @@ export const OperationGroupDetailsPage: React.FC<OperationGroupDetailsPageProps>
         ) : null}
         {isLoadingConnector
           ? null
-          : operationActionsData?.map((op) => (
+          : sortedOperations?.map((op) => (
               <li key={op.id}>
                 <OperationSearchCard operationActionData={op} onClick={onOperationClick} displayRuntimeInfo={displayRuntimeInfo} />
               </li>

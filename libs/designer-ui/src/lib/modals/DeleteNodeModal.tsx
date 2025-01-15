@@ -1,7 +1,17 @@
-import { Modal } from '@fluentui/react';
-import { Button, Spinner } from '@fluentui/react-components';
+import {
+  Button,
+  Dialog,
+  DialogActions,
+  DialogBody,
+  DialogContent,
+  DialogSurface,
+  DialogTitle,
+  DialogTrigger,
+  Spinner,
+} from '@fluentui/react-components';
 import type { WorkflowNodeType } from '@microsoft/logic-apps-shared';
 import { WORKFLOW_NODE_TYPES } from '@microsoft/logic-apps-shared';
+import { useCallback, useState } from 'react';
 import { useIntl } from 'react-intl';
 
 export interface DeleteNodeModalProps {
@@ -18,6 +28,20 @@ export const DeleteNodeModal = (props: DeleteNodeModalProps) => {
   const { nodeId, nodeName, nodeType, isOpen, onDismiss, onConfirm } = props;
 
   const intl = useIntl();
+
+  const deleteLoadingMessage = intl.formatMessage({
+    defaultMessage: 'Deleting...',
+    id: 'HX3Xmx',
+    description: 'Text for loading state of delete modal',
+  });
+
+  const closingLoadingMessage = intl.formatMessage({
+    defaultMessage: 'Closing...',
+    id: 'KWeLBB',
+    description: 'Text for loading state of closing modal',
+  });
+
+  const [spinnerText, setSpinnerText] = useState(deleteLoadingMessage);
 
   const operationNodeTitle = intl.formatMessage({
     defaultMessage: 'Delete workflow action',
@@ -85,33 +109,40 @@ export const DeleteNodeModal = (props: DeleteNodeModalProps) => {
     description: 'Text for delete node modal body',
   });
 
-  const deleteLoadingMessage = intl.formatMessage({
-    defaultMessage: 'Deleting...',
-    id: 'HX3Xmx',
-    description: 'Text for loading state of delete modal',
-  });
-
   const bodyMessage = nodeType === WORKFLOW_NODE_TYPES['OPERATION_NODE'] ? operationBodyMessage : graphBodyMessage;
 
+  const onClosing = useCallback(() => {
+    setSpinnerText(closingLoadingMessage);
+    onDismiss();
+  }, [closingLoadingMessage, onDismiss]);
+
   return (
-    <Modal titleAriaId={title} isOpen={isOpen} onDismiss={onDismiss}>
-      <div className="msla-modal-container">
-        {nodeId ? (
-          <>
-            <h2>{title}</h2>
-            <p>{bodyConfirmText}</p>
-            <p>{bodyMessage}</p>
-            <div className="msla-modal-footer">
+    <Dialog inertTrapFocus={true} open={isOpen} aria-labelledby={title} onOpenChange={onClosing}>
+      <DialogSurface>
+        <DialogBody>
+          <DialogTitle>{nodeId ? title : ''}</DialogTitle>
+          <DialogContent className="msla-modal-container">
+            {nodeId ? (
+              <>
+                <p>{bodyConfirmText}</p>
+                <p>{bodyMessage}</p>
+              </>
+            ) : (
+              <Spinner label={spinnerText} />
+            )}
+          </DialogContent>
+          <DialogActions>
+            <DialogTrigger>
               <Button appearance="primary" onClick={onConfirm}>
                 {confirmText}
               </Button>
-              <Button onClick={onDismiss}>{cancelText}</Button>
-            </div>
-          </>
-        ) : (
-          <Spinner label={deleteLoadingMessage} />
-        )}
-      </div>
-    </Modal>
+            </DialogTrigger>
+            <DialogTrigger>
+              <Button onClick={onClosing}>{cancelText}</Button>
+            </DialogTrigger>
+          </DialogActions>
+        </DialogBody>
+      </DialogSurface>
+    </Dialog>
   );
 };

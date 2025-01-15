@@ -71,6 +71,12 @@
       "value": "Overview"
     }
   ],
+  "+M7bC6": [
+    {
+      "type": 0,
+      "value": "Succeeded with retries"
+    }
+  ],
   "+R90eK": [
     {
       "type": 0,
@@ -513,6 +519,12 @@
       "value": " results."
     }
   ],
+  "0a4IGE": [
+    {
+      "type": 0,
+      "value": "Refresh"
+    }
+  ],
   "0i/6TR": [
     {
       "type": 0,
@@ -649,6 +661,12 @@
       "value": "Convert the parameter argument to a floating-point number"
     }
   ],
+  "1QktJw": [
+    {
+      "type": 0,
+      "value": "Map errors"
+    }
+  ],
   "1Xke9D": [
     {
       "type": 0,
@@ -725,6 +743,12 @@
     {
       "type": 0,
       "value": "Enter a valid URI."
+    }
+  ],
+  "1tmN2o": [
+    {
+      "type": 0,
+      "value": "Workflow version"
     }
   ],
   "1uGBLP": [
@@ -1163,12 +1187,6 @@
       "value": "Open connection"
     }
   ],
-  "41eMpW": [
-    {
-      "type": 0,
-      "value": "Waiting"
-    }
-  ],
   "43xObP": [
     {
       "type": 0,
@@ -1311,6 +1329,12 @@
       "value": "Retry history"
     }
   ],
+  "4rdY7D": [
+    {
+      "type": 0,
+      "value": "Run ID"
+    }
+  ],
   "4vcnOA": [
     {
       "type": 0,
@@ -1361,6 +1385,20 @@
     {
       "type": 0,
       "value": "(UTC+09:00) Osaka, Sapporo, Tokyo"
+    }
+  ],
+  "5DkTf5": [
+    {
+      "type": 0,
+      "value": "Target schema node not found for node key '"
+    },
+    {
+      "type": 1,
+      "value": "nodeKey"
+    },
+    {
+      "type": 0,
+      "value": "'"
     }
   ],
   "5J9jne": [
@@ -1821,6 +1859,12 @@
       "value": "Required. The string from which the substring is taken."
     }
   ],
+  "7X4UA/": [
+    {
+      "type": 0,
+      "value": "Waiting"
+    }
+  ],
   "7ZF1Hr": [
     {
       "type": 0,
@@ -2219,6 +2263,12 @@
       "value": "Add"
     }
   ],
+  "9dd0/m": [
+    {
+      "type": 0,
+      "value": "Running"
+    }
+  ],
   "9djnqI": [
     {
       "type": 0,
@@ -2253,6 +2303,12 @@
     {
       "type": 0,
       "value": "For more detailed information, you can refer to the following resources"
+    }
+  ],
+  "A5/IqS": [
+    {
+      "type": 0,
+      "value": "Run identifier"
     }
   ],
   "A5/UwX": [
@@ -2315,6 +2371,16 @@
     {
       "type": 0,
       "value": "Service principal"
+    }
+  ],
+  "AMMfbt": [
+    {
+      "type": 1,
+      "value": "count"
+    },
+    {
+      "type": 0,
+      "value": " Second"
     }
   ],
   "APKdYG": [
@@ -2487,12 +2553,6 @@
       "value": "Warning: custom value does not match one of the allowed types for this input"
     }
   ],
-  "BFTwRN": [
-    {
-      "type": 0,
-      "value": "Succeeded with retries"
-    }
-  ],
   "BGw6eH": [
     {
       "type": 0,
@@ -2533,12 +2593,6 @@
       "value": "Start time"
     }
   ],
-  "BPYdTX": [
-    {
-      "type": 0,
-      "value": "Not specified"
-    }
-  ],
   "BQCPY7": [
     {
       "type": 0,
@@ -2549,12 +2603,6 @@
     {
       "type": 0,
       "value": "Enter password as plain text or use a secure parameter"
-    }
-  ],
-  "BRMOfD": [
-    {
-      "type": 0,
-      "value": "Timed out"
     }
   ],
   "BS3gy8": [
@@ -2645,6 +2693,20 @@
     {
       "type": 0,
       "value": "A single format specifier that indicates how to format the value of this Guid."
+    }
+  ],
+  "Bwqlxd": [
+    {
+      "type": 0,
+      "value": "Key not found '"
+    },
+    {
+      "type": 1,
+      "value": "nodeKey"
+    },
+    {
+      "type": 0,
+      "value": "'"
     }
   ],
   "BxITRH": [
@@ -2961,6 +3023,12 @@
       "value": "Trigger type"
     }
   ],
+  "DeM/yz": [
+    {
+      "type": 0,
+      "value": "Start time"
+    }
+  ],
   "DfXxoX": [
     {
       "type": 0,
@@ -3273,6 +3341,20 @@
       "value": "Returns a section of a string defined by the start index and the end index"
     }
   ],
+  "FPBmrA": [
+    {
+      "type": 0,
+      "value": "Source schema node not found for node key '"
+    },
+    {
+      "type": 1,
+      "value": "nodeKey"
+    },
+    {
+      "type": 0,
+      "value": "'"
+    }
+  ],
   "FT3jt6": [
     {
       "type": 0,
@@ -3479,6 +3561,20 @@
     {
       "type": 0,
       "value": "Source schema element"
+    }
+  ],
+  "GiR7ll": [
+    {
+      "type": 0,
+      "value": "Function not found- '"
+    },
+    {
+      "type": 1,
+      "value": "nodeKey"
+    },
+    {
+      "type": 0,
+      "value": "'"
     }
   ],
   "Gk79Ma": [
@@ -3895,6 +3991,12 @@
       "value": "Make group"
     }
   ],
+  "J8G55j": [
+    {
+      "type": 0,
+      "value": "Search by run identifier"
+    }
+  ],
   "J9wWry": [
     {
       "type": 0,
@@ -4085,6 +4187,12 @@
       "value": "When a new item..."
     }
   ],
+  "KWeLBB": [
+    {
+      "type": 0,
+      "value": "Closing..."
+    }
+  ],
   "KX1poC": [
     {
       "offset": 0,
@@ -4189,6 +4297,12 @@
     {
       "type": 0,
       "value": "Expand"
+    }
+  ],
+  "LBlM+D": [
+    {
+      "type": 0,
+      "value": "Not specified"
     }
   ],
   "LCRHQ9": [
@@ -4945,6 +5059,12 @@
       "value": "Collapsed"
     }
   ],
+  "PEJ+e4": [
+    {
+      "type": 0,
+      "value": "Error loading data map"
+    }
+  ],
   "PNk3n4": [
     {
       "type": 0,
@@ -5177,6 +5297,12 @@
     {
       "type": 0,
       "value": "Full screen"
+    }
+  ],
+  "QT4IaP": [
+    {
+      "type": 0,
+      "value": "Filtered!"
     }
   ],
   "QVtqAn": [
@@ -5543,6 +5669,12 @@
       "value": "Outputs should not be provided when status is \"Failed\""
     }
   ],
+  "SbHBIZ": [
+    {
+      "type": 0,
+      "value": "No runs found"
+    }
+  ],
   "SgiTAh": [
     {
       "type": 0,
@@ -5573,6 +5705,12 @@
       "value": "Done"
     }
   ],
+  "SwWaHa": [
+    {
+      "type": 0,
+      "value": "Enter a valid run identifier"
+    }
+  ],
   "Sy4cFC": [
     {
       "type": 0,
@@ -5589,6 +5727,12 @@
     {
       "type": 0,
       "value": "Test"
+    }
+  ],
+  "T/7b2y": [
+    {
+      "type": 0,
+      "value": "Duration"
     }
   ],
   "TDfQzn": [
@@ -6305,6 +6449,12 @@
       "value": "Shorthand for trigger().outputs"
     }
   ],
+  "WbIGAh": [
+    {
+      "type": 0,
+      "value": "Succeeded"
+    }
+  ],
   "Wc77aJ": [
     {
       "type": 0,
@@ -6985,6 +7135,16 @@
       "value": "Close"
     }
   ],
+  "ZgU5eu": [
+    {
+      "type": 1,
+      "value": "count"
+    },
+    {
+      "type": 0,
+      "value": " Day"
+    }
+  ],
   "ZgyD93": [
     {
       "type": 0,
@@ -7057,6 +7217,12 @@
       "value": "Retry policy maximum interval is invalid, must match ISO 8601 duration format"
     }
   ],
+  "aKf/r+": [
+    {
+      "type": 0,
+      "value": "Specified run identifier not found"
+    }
+  ],
   "aP1wk9": [
     {
       "type": 0,
@@ -7127,6 +7293,12 @@
     {
       "type": 0,
       "value": "Add or select a source schema to use for your map."
+    }
+  ],
+  "auci7r": [
+    {
+      "type": 0,
+      "value": "Enter a valid comma-separated string."
     }
   ],
   "aurgrg": [
@@ -7219,6 +7391,12 @@
     {
       "type": 0,
       "value": "This operation contains a token that does not exist in the current workflow."
+    }
+  ],
+  "bPyWVY": [
+    {
+      "type": 0,
+      "value": "Failed to load runs"
     }
   ],
   "bTrk+S": [
@@ -7489,6 +7667,12 @@
       "value": "Download (Alt or Option + select)"
     }
   ],
+  "d9RCuq": [
+    {
+      "type": 0,
+      "value": "Workflow run status"
+    }
+  ],
   "dBWIjR": [
     {
       "type": 0,
@@ -7695,6 +7879,12 @@
       "value": "Edit this flow to"
     }
   ],
+  "eLQPek": [
+    {
+      "type": 0,
+      "value": "Status"
+    }
+  ],
   "eLthgv": [
     {
       "type": 0,
@@ -7797,10 +7987,22 @@
       "value": "Enable split-on to start an instance of the workflow per item in the selected array. Each instance can also have a distinct tracking id"
     }
   ],
+  "eofB85": [
+    {
+      "type": 0,
+      "value": "Timed out"
+    }
+  ],
   "epOMnV": [
     {
       "type": 0,
       "value": "Shared"
+    }
+  ],
+  "epi+zR": [
+    {
+      "type": 0,
+      "value": "Close map checker"
     }
   ],
   "er6O+w": [
@@ -7947,6 +8149,16 @@
     {
       "type": 0,
       "value": "(UTC+08:00) Beijing, Chongqing, Hong Kong, Urumqi"
+    }
+  ],
+  "ft8BH8": [
+    {
+      "type": 1,
+      "value": "count"
+    },
+    {
+      "type": 0,
+      "value": " Seconds"
     }
   ],
   "fvGvnA": [
@@ -8277,6 +8489,16 @@
     {
       "type": 0,
       "value": "This isn't what I'm looking for"
+    }
+  ],
+  "hesDPs": [
+    {
+      "type": 1,
+      "value": "count"
+    },
+    {
+      "type": 0,
+      "value": " Milliseconds"
     }
   ],
   "hihfHd": [
@@ -8853,6 +9075,20 @@
       "value": "Elements and mappings that aren't connected to a target element are removed."
     }
   ],
+  "kfmLTY": [
+    {
+      "type": 0,
+      "value": "Function '"
+    },
+    {
+      "type": 1,
+      "value": "functionName"
+    },
+    {
+      "type": 0,
+      "value": "' is missing required inputs"
+    }
+  ],
   "klY9UN": [
     {
       "offset": 0,
@@ -9241,6 +9477,16 @@
       "value": "Required. The string to convert to lower casing. If a character in the string does not have a lowercase equivalent, the character is included unchanged in the returned string."
     }
   ],
+  "maP1K/": [
+    {
+      "type": 1,
+      "value": "count"
+    },
+    {
+      "type": 0,
+      "value": " Minutes"
+    }
+  ],
   "mb1XDD": [
     {
       "type": 0,
@@ -9613,6 +9859,16 @@
       "value": "Required. The dataURI to decode into a binary representation."
     }
   ],
+  "oBAL2F": [
+    {
+      "type": 1,
+      "value": "count"
+    },
+    {
+      "type": 0,
+      "value": " Days"
+    }
+  ],
   "oDHXKh": [
     {
       "type": 0,
@@ -9695,6 +9951,16 @@
     {
       "type": 0,
       "value": "Response body"
+    }
+  ],
+  "og5JOA": [
+    {
+      "type": 1,
+      "value": "count"
+    },
+    {
+      "type": 0,
+      "value": " Millisecond"
     }
   ],
   "ohpbkw": [
@@ -10243,6 +10509,12 @@
       "value": "Add new"
     }
   ],
+  "rwrlsB": [
+    {
+      "type": 0,
+      "value": "Map Issues"
+    }
+  ],
   "rxIJfD": [
     {
       "type": 0,
@@ -10307,6 +10579,16 @@
     {
       "type": 0,
       "value": "Cancel creating a connection"
+    }
+  ],
+  "sJQee6": [
+    {
+      "type": 1,
+      "value": "count"
+    },
+    {
+      "type": 0,
+      "value": " Hours"
     }
   ],
   "sKy720": [
@@ -10799,12 +11081,6 @@
       "value": "Sorry, Copilot is at capacity and temporarily unavailable — please try again in a little while."
     }
   ],
-  "uanMWm": [
-    {
-      "type": 0,
-      "value": "Succeeded"
-    }
-  ],
   "uc/PoD": [
     {
       "type": 0,
@@ -11049,6 +11325,12 @@
       "value": "To create and use an API connection, you must have a managed identity configured on this logic app."
     }
   ],
+  "vhwaYb": [
+    {
+      "type": 0,
+      "value": "Wrap all custom value string and DateTime values in double quotes. For example, \"abc\"."
+    }
+  ],
   "viee6C": [
     {
       "type": 0,
@@ -11111,6 +11393,12 @@
       "value": "This contains a duplicate value"
     }
   ],
+  "vzXXFP": [
+    {
+      "type": 0,
+      "value": "Workflow version"
+    }
+  ],
   "w+7aGo": [
     {
       "type": 0,
@@ -11145,6 +11433,16 @@
     {
       "type": 0,
       "value": "Collapse"
+    }
+  ],
+  "wAg9+z": [
+    {
+      "type": 1,
+      "value": "count"
+    },
+    {
+      "type": 0,
+      "value": " Hour"
     }
   ],
   "wBBu4g": [
@@ -11323,6 +11621,12 @@
       "value": "Canvas"
     }
   ],
+  "wx/ZQP": [
+    {
+      "type": 0,
+      "value": "Add Input"
+    }
+  ],
   "wxaQwD": [
     {
       "type": 0,
@@ -11465,6 +11769,16 @@
     {
       "type": 0,
       "value": "Returns the path from a URI. If path is not specified, returns '/'"
+    }
+  ],
+  "xfXUGz": [
+    {
+      "type": 1,
+      "value": "count"
+    },
+    {
+      "type": 0,
+      "value": " Minute"
     }
   ],
   "xi2tn6": [

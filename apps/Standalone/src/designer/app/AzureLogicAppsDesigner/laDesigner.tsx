@@ -1,6 +1,6 @@
 import { environment } from '../../../environments/environment';
 import type { AppDispatch, RootState } from '../../state/store';
-import { changeRunId, setIsChatBotEnabled } from '../../state/workflowLoadingSlice';
+import { changeRunId, setIsChatBotEnabled, setMonitoringView, setReadOnly, setRunHistoryEnabled } from '../../state/workflowLoadingSlice';
 import { DesignerCommandBar } from './DesignerCommandBar';
 import type { ConnectionAndAppSetting, ConnectionsData, ParametersData } from './Models/Workflow';
 import { Artifact } from './Models/Workflow';
@@ -57,10 +57,11 @@ import {
   store as DesignerStore,
   Constants,
   getSKUDefaultHostOptions,
+  RunHistoryPanel,
 } from '@microsoft/logic-apps-designer';
 import axios from 'axios';
 import isEqual from 'lodash.isequal';
-import { useEffect, useMemo, useRef, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import type { QueryClient } from '@tanstack/react-query';
 import { useDispatch, useSelector } from 'react-redux';
 import { useHostingPlan } from '../../state/workflowLoadingSelectors';
@@ -85,6 +86,7 @@ const DesignerEditor = () => {
     runId,
     appId,
     showChatBot,
+    showRunHistory,
     language,
     hostOptions,
     hostingPlan,
@@ -110,8 +112,6 @@ const DesignerEditor = () => {
   const parameters = useMemo(() => data?.properties.files[Artifact.ParametersFile] ?? {}, [data?.properties.files]);
   const queryClient = getReactQueryClient();
   const displayChatbotUI = showChatBot && designerView;
-
-  const { data: runInstanceData } = useRunInstanceStandard(workflowName, appId, runId);
 
   const connectionsData = useMemo(
     () =>
@@ -176,6 +176,7 @@ const DesignerEditor = () => {
         canonicalLocation,
         language,
         queryClient,
+        settingsData?.properties ?? {},
         dispatch
       ),
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -190,6 +191,8 @@ const DesignerEditor = () => {
       root.style.overflow = 'hidden';
     }
   }, []);
+
+  const { data: runInstanceData } = useRunInstanceStandard(workflowName, appId, runId);
 
   useEffect(() => {
     if (isMonitoringView && runInstanceData) {
@@ -206,6 +209,22 @@ const DesignerEditor = () => {
     setWorkflow(data?.properties.files[Artifact.WorkflowFile]);
     setDesignerView(true);
   }, [data?.properties.files]);
+
+  // RUN HISTORY
+  const toggleMonitoringView = useCallback(() => {
+    dispatch(setMonitoringView(!isMonitoringView));
+    dispatch(setReadOnly(!isMonitoringView));
+    dispatch(setRunHistoryEnabled(!isMonitoringView));
+    if (runId) {
+      dispatch(changeRunId(undefined));
+    }
+  }, [dispatch, isMonitoringView, runId]);
+  const onRunSelected = useCallback(
+    (runId: string) => {
+      dispatch(changeRunId(runId));
+    },
+    [dispatch]
+  );
 
   if (isLoading || appLoading || settingsLoading || customCodeLoading) {
     return <></>;
@@ -390,6 +409,11 @@ const DesignerEditor = () => {
             appSettings={settingsData?.properties}
           >
             <div style={{ display: 'flex', flexDirection: 'row', height: 'inherit' }}>
+              <RunHistoryPanel
+                collapsed={!showRunHistory}
+                onClose={() => dispatch(setRunHistoryEnabled(false))}
+                onRunSelected={onRunSelected}
+              />
               {displayChatbotUI ? (
                 <div style={{ minWidth: chatbotPanelWidth }}>
                   <Chatbot
@@ -401,14 +425,7 @@ const DesignerEditor = () => {
                   />
                 </div>
               ) : null}
-              <div
-                style={{
-                  display: 'flex',
-                  flexDirection: 'column',
-                  height: 'inherit',
-                  width: displayChatbotUI ? `calc(100% - ${chatbotPanelWidth})` : '100%',
-                }}
-              >
+              <div style={{ display: 'flex', flexDirection: 'column', height: 'inherit', flexGrow: 1, maxWidth: '100%' }}>
                 <DesignerCommandBar
                   id={workflowId}
                   saveWorkflow={saveWorkflowFromDesigner}
@@ -419,8 +436,13 @@ const DesignerEditor = () => {
                   isDarkMode={isDarkMode}
                   isDesignerView={designerView}
                   showConnectionsPanel={showConnectionsPanel}
-                  enableCopilot={async () => {
-                    dispatch(setIsChatBotEnabled(!showChatBot));
+                  enableCopilot={() => dispatch(setIsChatBotEnabled(!showChatBot))}
+                  toggleMonitoringView={toggleMonitoringView}
+                  showRunHistory={showRunHistory}
+                  toggleRunHistory={() => dispatch(setRunHistoryEnabled(!showRunHistory))}
+                  selectRun={(runId: string) => {
+                    toggleMonitoringView();
+                    dispatch(changeRunId(runId));
                   }}
                   switchViews={handleSwitchView}
                   saveWorkflowFromCode={saveWorkflowFromCode}
@@ -448,6 +470,7 @@ const getDesignerServices = (
   location: string,
   locale: string | undefined,
   queryClient: QueryClient,
+  appSettings: Record<string, string>,
   dispatch: AppDispatch
 ): any => {
   const siteResourceId = new ArmParser(workflowId).topmostResourceId;
@@ -476,7 +499,15 @@ const getDesignerServices = (
       tenantId,
       httpClient,
     },
-    workflowAppDetails: { appName, identity: workflowApp?.identity as any },
+    workflowAppDetails: isHybrid
+      ? {
+          appName,
+          identity: {
+            principalId: appSettings['WORKFLOWAPP_AAD_OBJECTID'],
+            tenantId: appSettings['WORKFLOWAPP_AAD_TENANTID'],
+          },
+        }
+      : { appName, identity: workflowApp?.identity as any },
     readConnections: () => Promise.resolve(connectionsData),
     writeConnection: addConnection as any,
     connectionCreationClients: {
@@ -507,7 +538,7 @@ const getDesignerServices = (
   const artifactService = new ArtifactService({
     ...armServiceParams,
     siteResourceId,
-    integrationAccountCallbackUrl: undefined,
+    integrationAccountCallbackUrl: appSettings['WORKFLOW_INTEGRATION_ACCOUNT_CALLBACK_URL'],
   });
   const appService = new BaseAppServiceService({
     baseUrl: armUrl,
