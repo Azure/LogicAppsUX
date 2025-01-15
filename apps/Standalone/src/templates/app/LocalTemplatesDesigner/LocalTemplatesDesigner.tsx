@@ -27,10 +27,10 @@ const loadLocalTemplateFromResourcePath = async (resourcePath: string, resourceF
 export const LocalTemplatesStandaloneDesigner = () => {
   const theme = useSelector((state: RootState) => state.workflowLoader.theme);
   const { hostingPlan } = useSelector((state: RootState) => state.workflowLoader);
-  const { data: localManifests, isLoading } = useQuery(
+  const { data: localManifests } = useQuery(
     ['getLocalTemplates'],
     async () => {
-      const manifestPromises = ['local-try-catch'].map((resourcePath) =>
+      const manifestPromises = ['local-try-catch', 'local-accelerator-index-retrieve-resumes-sql'].map((resourcePath) =>
         loadLocalTemplateFromResourcePath(resourcePath).then((response) => [resourcePath, response])
       );
       const manifestsArray = await Promise.all(manifestPromises);
@@ -67,9 +67,9 @@ export const LocalTemplatesStandaloneDesigner = () => {
         customTemplates={localManifests}
         existingWorkflowName={undefined}
       >
-        {'*************'}
+        {/* {'*************'}
         {isLoading ? 'LOADING' : 'NOT LOADING'}
-        {JSON.stringify(localManifests)}
+        {JSON.stringify(localManifests)} */}
         <div
           style={{
             margin: '20px',
