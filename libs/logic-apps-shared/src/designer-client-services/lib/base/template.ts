@@ -1,11 +1,9 @@
-import type * as Template from '../../../utils/src/lib/models/template';
 import type { ITemplateService } from '../template';
 
 export interface BaseTemplateServiceOptions {
   openBladeAfterCreate: (workflowName: string | undefined) => void;
   onAddBlankWorkflow: () => void;
-  getCustomManifestNames?: () => Promise<string[]>;
-  getCustomManifest?: (resourcePath: string) => Promise<Template.Manifest>;
+  getCustomResource?: (resourcePath: string, resourceFile?: string) => Promise<any>;
 }
 
 export class BaseTemplateService implements ITemplateService {
@@ -19,6 +17,5 @@ export class BaseTemplateService implements ITemplateService {
 
   public onAddBlankWorkflow = (): void => this.options.onAddBlankWorkflow();
 
-  // public getCustomManifestNames = (): Promise<string[]> | undefined => this.options?.getCustomManifestNames?.();
-  // public getCustomManifest = (resourcePath: string): Promise<Template.Manifest> => this.options.getCustomManifest(resourcePath);
+  public getCustomResource = async (resourcePath: string): Promise<any> => this.options?.getCustomResource?.(resourcePath);
 }

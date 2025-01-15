@@ -22,6 +22,7 @@ import {
   LoggerService,
   type LogicAppsV2,
   type Template,
+  TemplateService,
 } from '@microsoft/logic-apps-shared';
 import { createAsyncThunk } from '@reduxjs/toolkit';
 import type { RootState } from '../../state/templates/store';
@@ -122,18 +123,25 @@ export const initializeTemplateServices = createAsyncThunk(
   }
 );
 
-export const loadTemplate = createAsyncThunk('loadTemplate', async (preLoadedManifest: Template.Manifest | undefined, thunkAPI) => {
-  const currentState: RootState = thunkAPI.getState() as RootState;
-  const currentTemplateResourcePath = currentState.template.templateName;
+export const loadTemplate = createAsyncThunk(
+  'loadTemplate',
+  async (
+    { preLoadedManifest, isCustomTemplate = false }: { preLoadedManifest: Template.Manifest | undefined; isCustomTemplate?: boolean },
+    thunkAPI
+  ) => {
+    const currentState: RootState = thunkAPI.getState() as RootState;
+    const currentTemplateResourcePath = currentState.template.templateName;
 
-  if (currentTemplateResourcePath) {
-    const hello = await loadTemplateFromResourcePath(currentTemplateResourcePath, preLoadedManifest);
-    console.log('---------LOADEDTEMPLATE ', hello);
-    return hello;
+    if (currentTemplateResourcePath) {
+      console.log('Elaina ISCUSTOM?? ', isCustomTemplate);
+      const hello = await loadTemplateFromResourcePath(currentTemplateResourcePath, preLoadedManifest, isCustomTemplate);
+      console.log('---------LOADEDTEMPLATE ', hello);
+      return hello;
+    }
+
+    return undefined;
   }
-
-  return undefined;
-});
+);
 
 export const validateWorkflowName = (workflowName: string | undefined, existingWorkflowNames: string[]) => {
   const intl = getIntl();
@@ -166,7 +174,11 @@ export const validateWorkflowName = (workflowName: string | undefined, existingW
   return undefined;
 };
 
-const loadTemplateFromResourcePath = async (templateName: string, manifest: Template.Manifest | undefined): Promise<TemplatePayload> => {
+const loadTemplateFromResourcePath = async (
+  templateName: string,
+  manifest: Template.Manifest | undefined,
+  isCustomTemplate: boolean
+): Promise<TemplatePayload> => {
   const templateManifest: Template.Manifest =
     manifest ?? (await import(`./../../templates/templateFiles/${templateName}/manifest.json`)).default;
 
@@ -189,7 +201,8 @@ const loadTemplateFromResourcePath = async (templateName: string, manifest: Temp
       const workflowData = await loadWorkflowTemplateFromManifest(
         workflowPath,
         `${templateName}/${workflowPath}`,
-        /* manifest */ undefined
+        /* manifest */ undefined,
+        isCustomTemplate
       );
       if (workflowData) {
         workflowData.workflow.workflowName = workflows[workflowPath].name;
@@ -221,7 +234,7 @@ const loadTemplateFromResourcePath = async (templateName: string, manifest: Temp
     }
   } else {
     const workflowId = guid();
-    const workflowData = await loadWorkflowTemplateFromManifest(workflowId, templateName, manifest);
+    const workflowData = await loadWorkflowTemplateFromManifest(workflowId, templateName, manifest, isCustomTemplate);
     if (workflowData) {
       data.workflows = {
         [workflowId]: workflowData.workflow,
@@ -237,7 +250,8 @@ const loadTemplateFromResourcePath = async (templateName: string, manifest: Temp
 const loadWorkflowTemplateFromManifest = async (
   workflowId: string,
   templatePath: string,
-  manifest: Template.Manifest | undefined
+  manifest: Template.Manifest | undefined,
+  isCustomTemplate: boolean
 ): Promise<
   | {
       workflow: WorkflowTemplateData;
@@ -247,7 +261,7 @@ const loadWorkflowTemplateFromManifest = async (
   | undefined
 > => {
   try {
-    const { templateManifest, templateWorkflowDefinition } = await getWorkflowAndManifest(templatePath, manifest);
+    const { templateManifest, templateWorkflowDefinition } = await getWorkflowAndManifest(templatePath, manifest, isCustomTemplate);
     const parameterDefinitions = templateManifest.parameters?.reduce((result: Record<string, Template.ParameterDefinition>, parameter) => {
       result[parameter.name] = {
         ...parameter,
@@ -286,17 +300,30 @@ const loadWorkflowTemplateFromManifest = async (
   }
 };
 
-const getWorkflowAndManifest = async (templatePath: string, manifest: Template.Manifest | undefined) => {
+const getWorkflowAndManifest = async (templatePath: string, manifest: Template.Manifest | undefined, isCustomTemplate: boolean) => {
+  console.log('Elaina: getWorkflowAndManifest ', isCustomTemplate, templatePath, templatePath?.split('/')?.[0], manifest);
   const paths = templatePath.split('/');
   const templateManifest: Template.Manifest =
     !manifest && paths.length === 2
-      ? (await import(`./../../templates/templateFiles/${paths[0]}/${paths[1]}/manifest.json`)).default
-      : (manifest ?? (await import(`./../../templates/templateFiles/${templatePath}/manifest.json`)).default);
+      ? // (await import(`./../../templates/templateFiles/${paths[0]}/${paths[1]}/manifest.json`)).default
+        await getManifestGivenPath(`${paths[0]}/${paths[1]}`, 'manifest', isCustomTemplate)
+      : // : (manifest ?? (await import(`./../../templates/templateFiles/${templatePath}/manifest.json`)).default);
+        await getManifestGivenPath(templatePath, 'manifest', isCustomTemplate);
 
   const templateWorkflowDefinition: LogicAppsV2.WorkflowDefinition =
     paths.length === 2
-      ? (await import(`./../../templates/templateFiles/${paths[0]}/${paths[1]}/workflow.json`)).default
-      : (await import(`./../../templates/templateFiles/${templatePath}/workflow.json`)).default;
+      ? // ? (await import(`./../../templates/templateFiles/${paths[0]}/${paths[1]}/workflow.json`)).default
+        await getManifestGivenPath(`${paths[0]}/${paths[1]}`, 'workflow', isCustomTemplate)
+      : // : (await import(`./../../templates/templateFiles/${templatePath}/workflow.json`)).default;
+        await getManifestGivenPath(templatePath, 'workflow', isCustomTemplate);
 
   return { templateManifest, templateWorkflowDefinition };
+};
+
+const getManifestGivenPath = async (resourcePath: string, resourceFile: string, isCustomTemplate: boolean) => {
+  if (isCustomTemplate) {
+    const hello = await TemplateService()?.getCustomResource?.(resourcePath, resourceFile);
+    console.log('Elaina: hello from custom ', hello);
+  }
+  return (await import(`./../../templates/templateFiles/${resourcePath}/${resourceFile}.json`)).default;
 };

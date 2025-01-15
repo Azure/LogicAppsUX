@@ -13,15 +13,13 @@ import {
   ResourceIdentityType,
   BaseOAuthService,
   ConsumptionOperationManifestService,
-  type Template,
 } from '@microsoft/logic-apps-shared';
 import { HttpClient } from '../../../designer/app/AzureLogicAppsDesigner/Services/HttpClient';
 import { BaseTemplateService } from '@microsoft/logic-apps-shared';
 import { useQuery } from '@tanstack/react-query';
 
 const loadLocalTemplateFromResourcePath = async (resourcePath: string, resourceFile = 'manifest') => {
-  const hello = (await import(`./../../../../../../__mocks__/templates/${resourcePath}/${resourceFile}.json`))
-    ?.default as Template.Manifest;
+  const hello = (await import(`./../../../../../../__mocks__/templates/${resourcePath}/${resourceFile}.json`))?.default as any;
   console.log('Elaina: LOAD hello ', hello);
   return hello;
 };
@@ -32,7 +30,6 @@ export const LocalTemplatesStandaloneDesigner = () => {
   const { data: localManifests, isLoading } = useQuery(
     ['getLocalTemplates'],
     async () => {
-      console.log("Elaina: it's cALLED");
       const manifestPromises = ['local-try-catch'].map((resourcePath) =>
         loadLocalTemplateFromResourcePath(resourcePath).then((response) => [resourcePath, response])
       );
@@ -50,7 +47,7 @@ export const LocalTemplatesStandaloneDesigner = () => {
   };
 
   const services = useMemo(
-    () => getServices(isConsumption),
+    () => getServices(isConsumption, loadLocalTemplateFromResourcePath),
     // eslint-disable-next-line react-hooks/exhaustive-deps
     [isConsumption]
   );
@@ -132,7 +129,7 @@ export const LocalTemplatesStandaloneDesigner = () => {
 
 const httpClient = new HttpClient();
 
-const getServices = (isConsumption: boolean): any => {
+const getServices = (isConsumption: boolean, getLocalResource: (resourcePath: string) => Promise<any>): any => {
   const connectionService = isConsumption
     ? new ConsumptionConnectionService({
         apiVersion: '2018-07-01-preview',
@@ -206,6 +203,7 @@ const getServices = (isConsumption: boolean): any => {
         onAddBlankWorkflow: () => {
           console.log('On add blank workflow click');
         },
+        getCustomResource: getLocalResource,
       })
     : new StandardTemplateService({
         baseUrl: '/url',
@@ -221,6 +219,7 @@ const getServices = (isConsumption: boolean): any => {
         onAddBlankWorkflow: () => {
           console.log('On add blank workflow click');
         },
+        getCustomResource: getLocalResource,
       });
 
   return {
