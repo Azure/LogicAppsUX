@@ -3,13 +3,16 @@
  *  Licensed under the MIT License. See License.md in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 import type { UnitTestResult } from '@microsoft/vscode-extension-logic-apps';
-import { saveUnitTestEvent, testsDirectoryName, unitTestsFileName } from '../../constants';
+import { nugetFileName, saveUnitTestEvent, testsDirectoryName, unitTestsFileName, workflowFileName } from '../../constants';
 import { localize } from '../../localize';
 import { type IAzureQuickPickItem, type IActionContext, callWithTelemetryAndErrorHandling } from '@microsoft/vscode-azext-utils';
-import * as fs from 'fs';
 import * as fse from 'fs-extra';
+import * as fs from 'fs-extra';
 import * as path from 'path';
 import * as vscode from 'vscode';
+import { getWorkflowsInLocalProject } from './codeless/common';
+import { ext } from '../../extensionVariables';
+import type { IAzureConnectorsContext } from '../commands/workflows/azureConnectorWizard';
 
 /**
  * Saves the unit test definition for a workflow.
@@ -256,3 +259,281 @@ export const getLatestUnitTest = async (testResultsDirectory: string): Promise<{
     data: fse.readJsonSync(path.join(testResultsDirectory, latestUnitTestFile)),
   };
 };
+
+/**
+ * Prompts the user to select a workflow and returns the selected workflow.
+ * @param {IActionContext} context - The action context.
+ * @param {string} projectPath - The path of the project.
+ * @returns {Promise<IAzureQuickPickItem<string>>} - A promise that resolves to the selected workflow.
+ */
+export const pickWorkflow = async (context: IActionContext, projectPath: string): Promise<IAzureQuickPickItem<string>> => {
+  const placeHolder: string = localize('selectLogicApp', 'Select workflow to create unit test');
+  return await context.ui.showQuickPick(getWorkflowsPick(projectPath), {
+    placeHolder,
+  });
+};
+
+/**
+ * Retrieves the list of workflows in the local project.
+ * @param {string} projectPath - The path to the local project.
+ * @returns {Promise<IAzureQuickPickItem<string>[]>} - An array of Azure Quick Pick items representing the logic apps in the project.
+ */
+export const getWorkflowsPick = async (projectPath: string): Promise<IAzureQuickPickItem<string>[]> => {
+  const listOfWorkflows = await getWorkflowsInLocalProject(projectPath);
+  const picks: IAzureQuickPickItem<string>[] = Array.from(Object.keys(listOfWorkflows)).map((workflowName) => {
+    return {
+      label: workflowName,
+      data: path.join(projectPath, workflowName, workflowFileName),
+    };
+  });
+  picks.sort((a, b) => a.label.localeCompare(b.label));
+  return picks;
+};
+
+/**
+ * Selects a workflow node by prompting the user if none is provided.
+ * @param {IAzureConnectorsContext} context - The Azure Connectors context.
+ * @param {string} projectPath - Path to the project directory.
+ * @returns {Promise<vscode.Uri>} Selected workflow node URI.
+ */
+export async function selectWorkflowNode(context: IAzureConnectorsContext, projectPath: string): Promise<vscode.Uri> {
+  const workflow = await pickWorkflow(context, projectPath);
+  return vscode.Uri.file(workflow.data) as vscode.Uri;
+}
+
+/**
+ * Creates a .csproj file in the specified logic app folder using a template.
+ * @param {string} csprojFilePath - The path where the .csproj file will be created.
+ * @param {string} logicAppName - The name of the Logic App, used to customize the .csproj file.
+ * @returns {Promise<void>} - A promise that resolves when the .csproj file has been created.
+ */
+export async function createCsprojFile(csprojFilePath: string, logicAppName: string): Promise<void> {
+  const templateFolderName = 'UnitTestTemplates';
+  const csprojTemplateFileName = 'TestProjectFile';
+  const templatePath = path.join(__dirname, 'assets', templateFolderName, csprojTemplateFileName);
+  const templateContent = await fs.readFile(templatePath, 'utf-8');
+  const csprojContent = templateContent.replace(/<%= logicAppName %>/g, logicAppName);
+  await fs.writeFile(csprojFilePath, csprojContent);
+  ext.outputChannel.appendLog(localize('csprojFileCreated', 'Created .csproj file at: {0}', csprojFilePath));
+}
+
+/**
+ * Creates a .cs file in the specified unit test folder using a template.
+ * Converts any "-" characters in LogicAppName, WorkflowName, and UnitTestName to "_" only in code-related contexts.
+ * @param {string} unitTestFolderPath - The path to the unit test folder.
+ * @param {string} unitTestName - The name of the unit test.
+ * @param {string} workflowName - The name of the workflow.
+ * @param {string} logicAppName - The name of the logic app.
+ */
+export async function createCsFile(
+  unitTestFolderPath: string,
+  unitTestName: string,
+  workflowName: string,
+  logicAppName: string
+): Promise<void> {
+  const templateFolderName = 'UnitTestTemplates';
+  const csTemplateFileName = 'TestClassFile';
+  const templatePath = path.join(__dirname, 'assets', templateFolderName, csTemplateFileName);
+
+  let templateContent = await fs.readFile(templatePath, 'utf-8');
+
+  const sanitizedUnitTestName = unitTestName.replace(/-/g, '_');
+  const sanitizedWorkflowName = workflowName.replace(/-/g, '_');
+  const sanitizedLogicAppName = logicAppName.replace(/-/g, '_');
+
+  templateContent = templateContent.replace(/namespace <%= LogicAppName %>\.Tests/g, `namespace ${sanitizedLogicAppName}.Tests`);
+  templateContent = templateContent.replace(/public class <%= UnitTestName %>/g, `public class ${sanitizedUnitTestName}`);
+  templateContent = templateContent.replace(/<see cref="<%= UnitTestName %>" \/>/g, `<see cref="${sanitizedUnitTestName}" />`);
+  templateContent = templateContent.replace(/public <%= UnitTestName %>\(\)/g, `public ${sanitizedUnitTestName}()`);
+  templateContent = templateContent.replace(
+    /public async Task <%= WorkflowName %>_<%= UnitTestName %>_ExecuteWorkflow/g,
+    `public async Task ${sanitizedWorkflowName}_${sanitizedUnitTestName}_ExecuteWorkflow`
+  );
+
+  templateContent = templateContent
+    .replace(/<%= LogicAppName %>/g, logicAppName)
+    .replace(/<%= WorkflowName %>/g, workflowName)
+    .replace(/<%= UnitTestName %>/g, unitTestName);
+
+  const csFilePath = path.join(unitTestFolderPath, `${unitTestName}.cs`);
+  await fs.writeFile(csFilePath, templateContent);
+
+  ext.outputChannel.appendLog(localize('csFileCreated', 'Created .cs file at: {0}', csFilePath));
+}
+
+/**
+ * Creates a nuget.config file in the specified logic app folder using a template.
+ * @param {string} nugetConfigFilePath - The path where the .csproj file will be created.
+ * @returns {Promise<void>} - A promise that resolves when the .csproj file has been created.
+ */
+export async function createNugetConfigFile(nugetConfigFilePath: string): Promise<void> {
+  const templateFolderName = 'UnitTestTemplates';
+  const nugetConfigTemplateFileName = 'TestNugetConfig';
+  const templatePath = path.join(__dirname, 'assets', templateFolderName, nugetConfigTemplateFileName);
+
+  const templateContent = await fs.readFile(templatePath, 'utf-8');
+  await fs.writeFile(nugetConfigFilePath, templateContent);
+
+  ext.outputChannel.appendLog(localize('nugetConfigFileCreated', 'Created nuget.config file at: {0}', nugetConfigFilePath));
+}
+
+/**
+ * Validates and extracts the runId from a given input.
+ * Ensures the runId format is correct and extracts it from a path if needed.
+ * @param {string | undefined} runId - The input runId to validate and extract.
+ * @returns {Promise<string>} - A Promise that resolves to the validated and extracted runId.
+ */
+export async function extractAndValidateRunId(runId?: string): Promise<string> {
+  if (!runId) {
+    throw new Error(localize('runIdMissing', 'Run ID is required to generate a codeful unit test.'));
+  }
+
+  // Regular expression to extract the runId from a path
+  const runIdRegex = /\/workflows\/[^/]+\/runs\/(.+)$/;
+  const match = runId.match(runIdRegex);
+  const extractedRunId = match ? match[1].trim() : runId.trim();
+
+  // Validate the extracted runId
+  await validateRunId(extractedRunId);
+  return extractedRunId;
+}
+
+/**
+ * Validates the format of the runId.
+ * Ensures that the runId consists of only uppercase letters and numbers.
+ * @param {string} runId - The runId to validate.
+ * @throws {Error} - Throws an error if the runId format is invalid.
+ */
+export async function validateRunId(runId: string): Promise<void> {
+  const runIdFormat = /^[A-Z0-9]+$/;
+  if (!runIdFormat.test(runId)) {
+    throw new Error(localize('invalidRunIdFormat', 'Invalid runId format.'));
+  }
+}
+
+/**
+ * Logs messages and telemetry for successful operations.
+ * @param {IActionContext} context - The action context.
+ * @param {string} property - The property name for telemetry.
+ * @param {string} message - The message to log.
+ */
+export function logSuccess(context: IActionContext, property: string, message: string): void {
+  context.telemetry.properties[property] = 'Success';
+  ext.outputChannel.appendLog(message);
+}
+
+/**
+ * Logs errors and telemetry for failed operations.
+ * @param {IActionContext} context - The action context.
+ * @param {Error} error - The error to log.
+ * @param {string} property - The property name for telemetry.
+ * @returns {void}
+ */
+export function logError(context: IActionContext, error: Error, property: string): void {
+  context.telemetry.properties[property] = 'Failed';
+  const errorMessage = error.message || localize('unknownError', 'An unknown error occurred.');
+  ext.outputChannel.appendLog(errorMessage);
+  vscode.window.showErrorMessage(errorMessage);
+}
+
+/**
+ * Returns standardized paths for unit test generation.
+ * The structure is the same as originally used in generateBlankCodefulUnitTest.
+ *
+ * @param {string} projectPath - The base project path.
+ * @param {string} workflowName - The workflow name.
+ * @param {string | undefined} unitTestName - The unit test name, if any.
+ * @returns An object containing testsDirectory, logicAppName, logicAppFolderPath, workflowFolderPath, and optionally unitTestFolderPath.
+ */
+export function getUnitTestPaths(
+  projectPath: string,
+  workflowName: string,
+  unitTestName?: string
+): {
+  testsDirectory: string;
+  logicAppName: string;
+  logicAppFolderPath: string;
+  workflowFolderPath: string;
+  unitTestFolderPath?: string;
+} {
+  const testsDirectoryUri = getTestsDirectory(projectPath);
+  const testsDirectory = testsDirectoryUri.fsPath;
+  // This logic for deriving logicAppName matches what generateBlankCodefulUnitTest currently uses
+  const logicAppName = path.basename(path.dirname(path.join(projectPath, workflowName)));
+  const logicAppFolderPath = path.join(testsDirectory, logicAppName);
+  const workflowFolderPath = path.join(logicAppFolderPath, workflowName);
+  const paths = {
+    testsDirectory,
+    logicAppName,
+    logicAppFolderPath,
+    workflowFolderPath,
+  };
+  if (unitTestName) {
+    paths['unitTestFolderPath'] = path.join(workflowFolderPath, unitTestName);
+  }
+  return paths;
+}
+
+/**
+ * Prompts the user for a unit test name with validation.
+ * @param {IAzureConnectorsContext} context - The Azure Connectors context.
+ * @param {string} projectPath - Path to the project directory.
+ * @param {string} workflowName - Name of the workflow.
+ * @returns {Promise<string>} The validated unit test name.
+ */
+export async function promptForUnitTestName(context: IAzureConnectorsContext, projectPath: string, workflowName: string): Promise<string> {
+  return context.ui.showInputBox({
+    prompt: localize('unitTestNamePrompt', 'Provide a unit test name'),
+    placeHolder: localize('unitTestNamePlaceholder', 'Unit test name'),
+    validateInput: (name: string) => validateUnitTestName(projectPath, workflowName, name),
+  });
+}
+
+/**
+ * Logs telemetry properties for unit test creation.
+ * @param {IAzureConnectorsContext} context - The Azure Connectors context.
+ * @param {Record<string, string | undefined>} properties - Telemetry properties.
+ */
+export function logTelemetry(context: IAzureConnectorsContext, properties: Record<string, string | undefined>): void {
+  Object.assign(context.telemetry.properties, properties);
+}
+
+/**
+ * Handles errors by logging them and displaying user-facing messages.
+ * @param {IAzureConnectorsContext} context - The Azure Connectors context.
+ * @param {unknown} error - The error object.
+ * @param {string} source - The source of the error.
+ */
+export function handleError(context: IAzureConnectorsContext, error: unknown, source: string): void {
+  const errorMessage = error instanceof Error ? error.message : String(error);
+  context.telemetry.properties[`${source}Error`] = errorMessage;
+  vscode.window.showErrorMessage(localize(`${source}Error`, 'An error occurred: {0}', errorMessage));
+  ext.outputChannel.appendLog(localize(`${source}Log`, 'Error in {0}: {1}', source, errorMessage));
+}
+
+/**
+ * Ensures the .csproj and NuGet configuration files exist.
+ * @param {string} projectPath - Path to the project directory.
+ * @param {string} workflowName - Name of the workflow.
+ */
+export async function ensureCsprojAndNugetFiles(projectPath: string, workflowName: string): Promise<void> {
+  const logicAppName = path.basename(path.dirname(workflowName));
+  const logicAppFolderPath = path.join(getTestsDirectory(projectPath).fsPath, logicAppName);
+
+  const csprojFilePath = path.join(logicAppFolderPath, `${logicAppName}.csproj`);
+  const nugetConfigFilePath = path.join(logicAppFolderPath, nugetFileName);
+
+  if (!(await fs.pathExists(csprojFilePath))) {
+    ext.outputChannel.appendLog(localize('creatingCsproj', 'Creating .csproj file at: {0}', csprojFilePath));
+    await createCsprojFile(csprojFilePath, logicAppName);
+    const action = 'Reload Window';
+    vscode.window
+      .showInformationMessage('Reload Required: Please reload the VS Code window to enable test discovery in the Test Explorer', action)
+      .then((selectedAction) => {
+        if (selectedAction === action) {
+          vscode.commands.executeCommand('workbench.action.reloadWindow');
+        }
+      });
+  }
+  await createNugetConfigFile(nugetConfigFilePath);
+}
