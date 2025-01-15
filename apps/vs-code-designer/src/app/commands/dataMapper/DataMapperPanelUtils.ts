@@ -1,13 +1,13 @@
 import path from 'path';
 import { copyFileSync, existsSync as fileExistsSync } from 'fs';
-import { ext } from '../../../extensionVariables';
-import { localize } from 'vscode-nls';
+import { localize } from '../../../localize';
 
 export const copyOverImportedSchemas = (
   schemaText: string,
   primarySchemaName: string,
   pathToContainingFolder: string,
-  pathToWorkspaceSchemaFolder: string
+  pathToWorkspaceSchemaFolder: string,
+  ext
 ) => {
   const schemaFileDependencies = [...schemaText.matchAll(/schemaLocation="[A-Za-z.]*"/g)].map((schemaFileAttributeMatch) => {
     // Trim down to just the filename

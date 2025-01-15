@@ -352,7 +352,7 @@ export default class DataMapperPanel {
         workspace.fs.readFile(selectedFile).then((fileContents) => {
           const text = Buffer.from(fileContents).toString('utf-8');
 
-          copyOverImportedSchemas(text, primarySchemaFileName, pathToContainingFolder, pathToWorkspaceSchemaFolder);
+          copyOverImportedSchemas(text, primarySchemaFileName, pathToContainingFolder, pathToWorkspaceSchemaFolder, ext);
 
           const newPath = path.join(pathToWorkspaceSchemaFolder, primarySchemaFileName);
           if (!fileExistsSync(newPath)) {
