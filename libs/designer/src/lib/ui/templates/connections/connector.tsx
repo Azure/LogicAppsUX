@@ -183,7 +183,7 @@ export const ConnectorConnectionStatus = ({
         </div>
       ) : (
         <Text className="msla-templates-tab-review-section-details-title">
-          {connector?.properties.displayName} ({connectionKey})
+          {connector?.properties?.displayName} ({connectionKey})
         </Text>
       )}
       <Text className="msla-templates-tab-review-section-details-value">{hasConnection ? texts.connected : texts.notConnected}</Text>
