@@ -2,6 +2,11 @@
 
 exports[`ui/workflowparameters/workflowparametersButtons > should construct. 1`] = `
 <EditButton
+  definition={
+    {
+      "id": "test",
+    }
+  }
   onClick={[Function]}
 />
 `;
