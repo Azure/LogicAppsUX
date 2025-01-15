@@ -1,8 +1,9 @@
 import { useStyles } from './styles';
 import { StackShim } from '@fluentui/react-migration-v8-v9';
-import { Button, Caption2, Input, Radio, RadioGroup, Text, type RadioGroupOnChangeData } from '@fluentui/react-components';
+import { Button, Caption2, InfoLabel, Input, Radio, RadioGroup, Text, type RadioGroupOnChangeData } from '@fluentui/react-components';
 import type { IFileSysTreeItem } from '@microsoft/logic-apps-shared';
 import { DropdownTree } from '../DropdownTree';
+import { useIntl } from 'react-intl';
 
 type U = {
   text: string;
@@ -42,6 +43,13 @@ const FileSelector = <T extends U>(props: FileSelectorProps<T>) => {
     errorMessage,
   } = props;
   const styles = useStyles();
+  const intl = useIntl();
+
+  const addNewInfo = intl.formatMessage({
+    defaultMessage: 'Copy schema and its imports from the file system to your Logic App.',
+    id: 'nRCTkX',
+    description: 'Add new option',
+  });
 
   return (
     <div className={styles.root}>
@@ -64,15 +72,10 @@ const FileSelector = <T extends U>(props: FileSelectorProps<T>) => {
                     <div className={styles.uploadInputRoot}>
                       <StackShim horizontal>
                         <Input size="small" value={fileName} placeholder={inputPlaceholder} readOnly />
-                        <Button
-                          size="small"
-                          shape="square"
-                          appearance="primary"
-                          onClick={() => onUploadClick()}
-                          style={{ marginLeft: 8 }}
-                        >
+                        <Button size="small" shape="square" appearance="primary" onClick={() => onUploadClick()} style={{ marginLeft: 8 }}>
                           {uploadButtonText}
                         </Button>
+                        <InfoLabel info={<div>{addNewInfo}</div>}></InfoLabel>
                       </StackShim>
                     </div>
                   ) : null}
