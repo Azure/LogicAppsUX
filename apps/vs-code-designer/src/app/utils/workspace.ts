@@ -15,9 +15,9 @@ import * as path from 'path';
 import * as vscode from 'vscode';
 
 /**
- * Checks if the current workspace has a Logic App project.
+ * Gets the folder path that contains the .code-workspace file.
  * @param {IActionContext} actionContext - The action context.
- * @returns A promise that resolves to a boolean indicating whether a Logic App project exists in the workspace.
+ * @returns A promise that resolves to a string of the folder path that contains the .code-workspace file.
  */
 export const getWorkspaceRoot = async (actionContext: IActionContext): Promise<string | undefined> => {
   if (vscode.workspace.workspaceFolders !== undefined) {
@@ -34,7 +34,7 @@ export const getWorkspaceRoot = async (actionContext: IActionContext): Promise<s
 /**
  * Gets the workspace file path.
  * @param {IActionContext} actionContext - The action context.
- * @returns A promise that resolves to a boolean indicating whether a Logic App project exists in the workspace.
+ * @returns A promise that resolves to a string of the .code-workspace file path.
  */
 export const getWorkspaceFile = async (actionContext: IActionContext): Promise<string | undefined> => {
   if (vscode.workspace.workspaceFolders !== undefined) {
@@ -51,7 +51,7 @@ export const getWorkspaceFile = async (actionContext: IActionContext): Promise<s
 /**
  * Gets the workspace file within the current directory or parent directory.
  * @param {IActionContext} actionContext - The action context.
- * @returns A promise that resolves to a boolean indicating whether a Logic App project exists in the workspace.
+ * @returns  A promise that resolves to a string of the .code-workspace file path.
  */
 export const getWorkspaceFileInParentDirectory = async (actionContext: IActionContext): Promise<string | undefined> => {
   if (vscode.workspace.workspaceFolders !== undefined) {
