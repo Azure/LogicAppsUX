@@ -324,6 +324,7 @@ const getManifestGivenPath = async (resourcePath: string, resourceFile: string, 
   if (isCustomTemplate) {
     const hello = await TemplateService()?.getCustomResource?.(resourcePath, resourceFile);
     console.log('Elaina: hello from custom ', hello);
+    return hello;
   }
   return (await import(`./../../templates/templateFiles/${resourcePath}/${resourceFile}.json`)).default;
 };
