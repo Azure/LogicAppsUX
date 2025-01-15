@@ -7,7 +7,7 @@ import { Accordion, AccordionHeader, AccordionItem, AccordionPanel, MessageBar, 
 import { type EditorContentChangedEventArgs, MonacoEditor } from '@microsoft/designer-ui';
 import { EditorLanguage, LogEntryLevel, LoggerService, SchemaFileFormat } from '@microsoft/logic-apps-shared';
 import { updateTestInput } from '../../core/state/PanelSlice';
-import { LogCategory } from '.../../utils/Logging.Utils';
+import { LogCategory } from '../../utils/Logging.Utils';
 
 const sampleDataPlaceHolderEditorId = 'sample-data-editor-placeholder';
 const resultPlaceHolderEditorId = 'result-editor-placeholder';
