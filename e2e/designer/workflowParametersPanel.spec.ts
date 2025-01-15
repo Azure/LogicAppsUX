@@ -7,7 +7,7 @@ test.describe(
     tag: '@mock',
   },
   () => {
-    test('Selecting action from node panel should open action panel', async ({ page }) => {
+    test('Should open workflow parameters panel and add / edit / delete parameter', async ({ page }) => {
       await page.goto('/');
       await GoToMockWorkflow(page, 'Standard Workflow Parameters');
 
