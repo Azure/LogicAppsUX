@@ -1,5 +1,5 @@
 {
-  "title": "Local - Resume matching with Azure OpenAI - RAG with SQL",
+  "title": "[Mock] Resume matching with Azure OpenAI - RAG with SQL",
   "description": "Store embeddings in Azure SQL DB, perform similarity search, and use Azure OpenAI LLMs for advanced resume matching to identify suitable candidates.",
   "skus": [
     "standard"
@@ -8,7 +8,7 @@
   "details": {
     "By": "Microsoft",
     "Type": "Accelerator",
-    "Category": "AI"
+    "Category": "Mock"
   },
   "artifacts": [],
   "workflows": {

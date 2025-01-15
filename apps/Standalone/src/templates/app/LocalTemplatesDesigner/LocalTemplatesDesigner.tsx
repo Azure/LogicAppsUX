@@ -26,17 +26,18 @@ const loadLocalTemplateFromResourcePath = async (resourcePath: string, resourceF
     : (await import(`./../../../../../../__mocks__/templates//${resourcePath}/${resourceFile}.json`)).default;
 };
 
+const localTemplateManifestPaths = ['local-try-catch', 'local-analyze-images-ai-rag', 'local-accelerator-index-retrieve-resumes-sql'];
+
 export const LocalTemplatesStandaloneDesigner = () => {
   const theme = useSelector((state: RootState) => state.workflowLoader.theme);
   const { hostingPlan } = useSelector((state: RootState) => state.workflowLoader);
   const { data: localManifests } = useQuery(
     ['getLocalTemplates'],
     async () => {
-      const manifestPromises = ['local-try-catch', 'local-accelerator-index-retrieve-resumes-sql'].map((resourcePath) =>
+      const manifestPromises = localTemplateManifestPaths.map((resourcePath) =>
         loadLocalTemplateFromResourcePath(resourcePath).then((response) => [resourcePath, response])
       );
       const manifestsArray = await Promise.all(manifestPromises);
-      console.log('Elaina: LOAD LOCAL ', manifestsArray);
       return Object.fromEntries(manifestsArray);
     },
     { enabled: true }
@@ -69,9 +70,6 @@ export const LocalTemplatesStandaloneDesigner = () => {
         customTemplates={localManifests}
         existingWorkflowName={undefined}
       >
-        {/* {'*************'}
-        {isLoading ? 'LOADING' : 'NOT LOADING'}
-        {JSON.stringify(localManifests)} */}
         <div
           style={{
             margin: '20px',
@@ -82,6 +80,10 @@ export const LocalTemplatesStandaloneDesigner = () => {
               Category: {
                 displayName: 'Categories',
                 items: [
+                  {
+                    value: 'Mock',
+                    displayName: 'Mock',
+                  },
                   {
                     value: 'Design Patterns',
                     displayName: 'Design Patterns',

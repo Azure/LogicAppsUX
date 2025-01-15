@@ -73,7 +73,6 @@ export const TemplateCard = ({ templateName }: TemplateCardProps) => {
       message: 'Template is selected',
       args: [templateName, workflowAppName, `isMultiWorkflowTemplate:${isMultiWorkflow}`],
     });
-    console.log('Elaina: ---templateManifest', templateManifest);
     dispatch(changeCurrentTemplateName(templateName));
     dispatch(loadTemplate({ preLoadedManifest: templateManifest, isCustomTemplate }));
 

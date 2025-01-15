@@ -76,9 +76,10 @@ export const manifestSlice = createSlice({
     },
     setCustomTemplates: (state, action: PayloadAction<Record<string, Template.Manifest> | undefined>) => {
       if (action.payload) {
-        state.customTemplateNames = Object.keys(action.payload);
-        state.availableTemplateNames = [...(state.githubTemplateNames ?? []), ...(state.customTemplateNames ?? [])];
-        state.availableTemplates = { ...(state.availableTemplates ?? {}), ...(action.payload ?? {}) };
+        const customTemplateNames = Object.keys(action.payload);
+        state.customTemplateNames = customTemplateNames;
+        state.availableTemplateNames = [...(state.githubTemplateNames ?? []), ...customTemplateNames];
+        state.availableTemplates = { ...(state.availableTemplates ?? {}), ...action.payload };
       }
     },
     setPageNum: (state, action: PayloadAction<number>) => {

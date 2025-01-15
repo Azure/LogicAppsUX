@@ -133,10 +133,7 @@ export const loadTemplate = createAsyncThunk(
     const currentTemplateResourcePath = currentState.template.templateName;
 
     if (currentTemplateResourcePath) {
-      console.log('Elaina ISCUSTOM?? ', isCustomTemplate);
-      const hello = await loadTemplateFromResourcePath(currentTemplateResourcePath, preLoadedManifest, isCustomTemplate);
-      console.log('---------LOADEDTEMPLATE ', hello);
-      return hello;
+      return await loadTemplateFromResourcePath(currentTemplateResourcePath, preLoadedManifest, isCustomTemplate);
     }
 
     return undefined;
@@ -182,7 +179,6 @@ const loadTemplateFromResourcePath = async (
   const templateManifest: Template.Manifest =
     manifest ?? (await import(`./../../templates/templateFiles/${templateName}/manifest.json`)).default;
 
-  console.log('HELEKFJKLEFJKLEFJ ', templateManifest);
   const workflows = templateManifest.workflows;
   const isMultiWorkflow = isMultiWorkflowTemplate(templateManifest);
   const data: TemplatePayload = {

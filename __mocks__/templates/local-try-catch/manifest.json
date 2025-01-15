@@ -1,5 +1,5 @@
 {
-  "title": "Local Try-Catch: Handle exceptions with the Scope action",
+  "title": "[Mock] Try-Catch: Handle exceptions with the Scope action",
   "description": "This workflow template uses the 'Scope' action and Try-Catch pattern for exception handling.",
   "tags": [
     "Exception Handling",
@@ -18,7 +18,7 @@
     "By": "Microsoft",
     "Type": "Workflow",
     "Trigger": "Request",
-    "Category": "Design Patterns"
+    "Category": "Mock"
   },
   "artifacts": [
     {
