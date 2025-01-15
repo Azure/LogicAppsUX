@@ -7,9 +7,12 @@ export interface SchemaFile {
 }
 
 export interface IDataMapperFileService {
-  // these need to be added later
-
-  // addSchemaFromFile,
+  
+  /**
+   * Opens dialog in VSCode to select a file.
+   * @arg {SchemaType} schemaType - used so that we know which schema to use as Source/Target when file path is returned.
+   */
+  getSchemaFromFile(schemaType: SchemaType): void;
 
   /**
    * Saves both the data map definition and metadata to the filesystem.
