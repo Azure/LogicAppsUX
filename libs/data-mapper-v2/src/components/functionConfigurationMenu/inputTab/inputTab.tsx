@@ -163,7 +163,7 @@ const UnlimitedInputs = (props: {
   functionKey: string;
   connections: ConnectionDictionary;
 }) => {
-  const inputsFromManifest = useMemo(() => props.func?.inputs ?? [], [props.func?.inputs]);
+  const inputsFromManifest = props.func.inputs;
   const styles = useStyles();
   const dispatch = useDispatch();
   const intl = useIntl();
@@ -228,7 +228,7 @@ const UnlimitedInputs = (props: {
         </div>
       </div>
       <div className={styles.body}>
-        <DraggableList<TemplateItemProps, CommonProps, InputListWrapper>
+        <DraggableList<TemplateItemProps, CommonProps, any>
           list={Object.entries(functionConnection.inputs).map((input, index) => ({
             input: input[1],
             index,
