@@ -5,6 +5,7 @@ import { DevToolbox } from '../components/DevToolbox';
 import { TemplatesStandaloneDesigner } from './TemplatesStandaloneDesigner';
 import { useIsLocal } from '../../designer/state/workflowLoadingSelectors';
 import { loadToken } from '../../environments/environment';
+import { LocalTemplatesStandaloneDesigner } from './LocalTemplatesDesigner/LocalTemplatesDesigner';
 
 const LoadWhenArmTokenIsLoaded = ({ children }: { children: ReactNode }) => {
   const { isLoading } = useQuery(['armToken'], loadToken);
@@ -17,7 +18,7 @@ export const TemplatesDesignerWrapper = () => {
     <ReactQueryProvider>
       <LoadWhenArmTokenIsLoaded>
         <DevToolbox />
-        <div style={{ height: '100vh' }}>{isLocal ? <div>this is local</div> : <TemplatesStandaloneDesigner />}</div>
+        <div style={{ height: '100vh' }}>{isLocal ? <LocalTemplatesStandaloneDesigner /> : <TemplatesStandaloneDesigner />}</div>
       </LoadWhenArmTokenIsLoaded>
     </ReactQueryProvider>
   );

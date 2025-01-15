@@ -1,0 +1,68 @@
+{
+  "title": "Ingest document from Azure Blob Storage to Azure SQL DB",
+  "description": "Based on the retrieval-augmented generation (RAG) pattern, this workflow template triggers when a file is added or updated in an Azure Blob Storage container. The workflow processes and indexes the document using Azure OpenAI and Azure SQL DB native vector capabilities.",
+  "prerequisites": "Before you use this template, you need to set up an Azure OpenAI instance with an embedding model. You also need to set up a SQL DB table with a dedicated [Vector data type column](https://devblogs.microsoft.com/azure-sql/eap-for-vector-support-refresh-introducing-vector-type/). For detailed prerequisites, see the [Azure SQL DB Vector Search sample on GitHub - RAG with Documents](https://github.com/Azure-Samples/azure-sql-db-vector-search/tree/main/RAG-with-Documents).",
+  "tags": [
+    "RAG-Document-Ingestion"
+  ],
+  "skus": [
+    "standard"
+  ],
+  "kinds": [
+    "stateful",
+    "stateless"
+  ],
+  "detailsDescription": "Based on the retrieval-augmented generation (RAG) pattern, this workflow template processes and indexes a document using the Azure OpenAI and Azure SQL connectors. The workflow triggers when a file is added or updated in an Azure Blob Storage container, fetches the document from the specified endpoint, parses the content, and chunks the text based on token size. The workflow then processes each chunk to generate embeddings through an OpenAI deployment. The text chunks and their embeddings are mapped to the table schema suitable for Azure SQL DB. Finally, the documents are indexed in Azure SQL DB vector table for efficient retrieval and analysis. This template is built on AI building blocks in Azure Logic Apps, and includes the Azure OpenAI connector, Azure SQL connector, and more. The template also uses built-in actions for document parsing and chunking. [Learn more](https://learn.microsoft.com/azure/logic-apps/connectors/azure-ai)",
+  "details": {
+    "By": "Microsoft",
+    "Type": "Workflow",
+    "Trigger": "Request",
+    "Category": "AI,RAG"
+  },
+  "artifacts": [
+    {
+      "type": "workflow",
+      "file": "workflow.json"
+    }
+  ],
+  "images": {
+    "light": "https://raw.githubusercontent.com/azure/LogicAppsTemplates/release/20241028/accelerator-index-retrieve-resumes-sql/index-ai-blob-sql-rag/workflow-light.png",
+    "dark": "https://raw.githubusercontent.com/azure/LogicAppsTemplates/release/20241028/accelerator-index-retrieve-resumes-sql/index-ai-blob-sql-rag/workflow-dark.png"
+  },
+  "parameters": [
+    {
+      "name": "OpenAIEmbeddingModel_#workflowname#",
+      "displayName": "Azure OpenAI text embedding deployment model name",
+      "type": "String",
+      "description": "Provide the Azure OpenAI embedding model to generate vector embeddings.",
+      "required": true
+    },
+    {
+      "name": "BlobPath_#workflowname#",
+      "displayName": "Blob Path",
+      "type": "String",
+      "description": "Provide the Azure Blob container name from where to get your document.",
+      "required": true
+    }
+  ],
+  "connections": {
+    "azuresql_#workflowname#": {
+      "connectorId": "/serviceProviders/sql",
+      "kind": "inapp"
+    },
+    "openai_#workflowname#": {
+      "connectorId": "/serviceProviders/openai",
+      "kind": "inapp"
+    },
+    "azureblob_#workflowname#": {
+      "connectorId": "/serviceProviders/AzureBlob",
+      "kind": "inapp"
+    }
+  },
+  "featuredOperations": [
+    {
+      "type": "ChunkText"
+    }
+  ],
+  "sourceCodeUrl": "https://github.com/Azure/LogicAppsTemplates/tree/release/20241028/accelerator-index-retrieve-resumes-sql/index-ai-blob-sql-rag/manifest.json"
+}

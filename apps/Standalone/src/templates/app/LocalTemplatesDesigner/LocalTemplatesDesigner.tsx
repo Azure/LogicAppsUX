@@ -1,6 +1,6 @@
 import { useMemo } from 'react';
 import { TemplatesDataProvider } from '@microsoft/logic-apps-designer';
-import type { RootState } from '../state/Store';
+import type { RootState } from '../../state/Store';
 import { TemplatesDesigner, TemplatesDesignerProvider } from '@microsoft/logic-apps-designer';
 import { useSelector } from 'react-redux';
 import {
@@ -8,66 +8,42 @@ import {
   StandardTemplateService,
   BaseTenantService,
   StandardConnectionService,
-  // clone,
-  // escapeSpecialChars,
-  // isArmResourceId,
-  // optional,
   StandardOperationManifestService,
   ConsumptionConnectionService,
-  // guid,
-  // setObjectPropertyValue,
   ResourceIdentityType,
   BaseOAuthService,
   ConsumptionOperationManifestService,
+  type Template,
 } from '@microsoft/logic-apps-shared';
-// import {
-// getConnectionStandard,
-// getWorkflowAndArtifactsConsumption,
-// saveWorkflowConsumption,
-// useAppSettings,
-// useConnectionsData,
-// useCurrentObjectId,
-// useCurrentTenantId,
-// useWorkflowApp,
-// } from '../../designer/app/AzureLogicAppsDesigner/Services/WorkflowAndArtifacts';
-// import type { ConnectionsData } from '../../designer/app/AzureLogicAppsDesigner/Models/Workflow';
-// import type { WorkflowApp } from '../../designer/app/AzureLogicAppsDesigner/Models/WorkflowApp';
-// import { ArmParser } from '../../designer/app/AzureLogicAppsDesigner/Utilities/ArmParser';
-// import { StandaloneOAuthService } from '../../designer/app/AzureLogicAppsDesigner/Services/OAuthService';
-// import { WorkflowUtility, addConnectionInJson, addOrUpdateAppSettings } from '../../designer/app/AzureLogicAppsDesigner/Utilities/Workflow';
-import { HttpClient } from '../../designer/app/AzureLogicAppsDesigner/Services/HttpClient';
-// import type { Template, LogicAppsV2, IWorkflowService } from '@microsoft/logic-apps-shared';
-// import { saveWorkflowStandard } from '../../designer/app/AzureLogicAppsDesigner/Services/WorkflowAndArtifacts';
-// import type { ParametersData } from '../../designer/app/AzureLogicAppsDesigner/Models/Workflow';
-// import axios from 'axios';
-// import type { ConnectionMapping } from '@microsoft/logic-apps-designer/src/lib/core/state/templates/workflowSlice';
-// import { parseWorkflowParameterValue } from '@microsoft/logic-apps-designer';
+import { HttpClient } from '../../../designer/app/AzureLogicAppsDesigner/Services/HttpClient';
 import { BaseTemplateService } from '@microsoft/logic-apps-shared';
+import { useQuery } from '@tanstack/react-query';
 
-// interface StringifiedWorkflow {
-//   name: string;
-//   kind: string;
-//   definition: string;
-// }
+const loadLocalTemplateFromResourcePath = async (resourcePath: string, resourceFile = 'manifest') => {
+  const hello = (await import(`./../../../../../../__mocks__/templates/${resourcePath}/${resourceFile}.json`))
+    ?.default as Template.Manifest;
+  console.log('Elaina: LOAD hello ', hello);
+  return hello;
+};
 
-// const workflowIdentifier = '#workflowname#';
-export const TemplatesStandaloneDesigner = () => {
+export const LocalTemplatesStandaloneDesigner = () => {
   const theme = useSelector((state: RootState) => state.workflowLoader.theme);
-  const {
-    // appId,
-    hostingPlan,
-    // workflowName: existingWorkflowName,
-    // resourcePath: workflowId,
-  } = useSelector((state: RootState) => state.workflowLoader);
-  // const { data: workflowAppData } = useWorkflowApp(appId as string, hostingPlan);
-  // const canonicalLocation = WorkflowUtility.convertToCanonicalFormat(workflowAppData?.location ?? '');
-  // const { data: tenantId } = useCurrentTenantId();
-  // const { data: objectId } = useCurrentObjectId();
-  // const { data: originalConnectionsData } = useConnectionsData(appId);
-  // const { data: originalSettingsData } = useAppSettings(appId as string);
-  const isConsumption = hostingPlan === 'consumption';
+  const { hostingPlan } = useSelector((state: RootState) => state.workflowLoader);
+  const { data: localManifests, isLoading } = useQuery(
+    ['getLocalTemplates'],
+    async () => {
+      console.log("Elaina: it's cALLED");
+      const manifestPromises = ['local-try-catch'].map((resourcePath) =>
+        loadLocalTemplateFromResourcePath(resourcePath).then((response) => [resourcePath, response])
+      );
+      const manifestsArray = await Promise.all(manifestPromises);
+      console.log('Elaina: LOAD LOCAL ', manifestsArray);
+      return Object.fromEntries(manifestsArray);
+    },
+    { enabled: true }
+  );
 
-  // const connectionReferences = useMemo(() => WorkflowUtility.convertConnectionsDataToReferences(connectionsData()), [connectionsData]);
+  const isConsumption = hostingPlan === 'consumption';
 
   const createWorkflowCall = async () => {
     alert("Congrats you created the workflow! (Not really, you're in standalone)");
@@ -91,8 +67,12 @@ export const TemplatesStandaloneDesigner = () => {
         connectionReferences={{}}
         services={services}
         isConsumption={isConsumption}
+        customTemplates={localManifests}
         existingWorkflowName={undefined}
       >
+        {'*************'}
+        {isLoading ? 'LOADING' : 'NOT LOADING'}
+        {JSON.stringify(localManifests)}
         <div
           style={{
             margin: '20px',

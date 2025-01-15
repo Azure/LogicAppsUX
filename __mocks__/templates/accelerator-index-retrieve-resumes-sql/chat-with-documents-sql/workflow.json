@@ -1,0 +1,104 @@
+{
+    "$schema": "https://schema.management.azure.com/providers/Microsoft.Logic/schemas/2016-06-01/workflowdefinition.json#",
+    "actions": {
+        "Azure_OpenAI_-_Get_an_embedding": {
+            "type": "ServiceProvider",
+            "inputs": {
+                "parameters": {
+                    "deploymentId": "@parameters('OpenAIEmbeddingModel_#workflowname#')",
+                    "input": "@triggerBody()?['question']"
+                },
+                "serviceProviderConfiguration": {
+                    "connectionName": "openai_#workflowname#",
+                    "operationId": "getSingleEmbedding",
+                    "serviceProviderId": "/serviceProviders/openai"
+                }
+            },
+            "runAfter": {}
+        },
+        "Response": {
+            "type": "Response",
+            "kind": "Http",
+            "inputs": {
+                "statusCode": 200,
+                "body": "@body('Azure_OpenAI_-_Get_chat_completions')?['content']"
+            },
+            "runAfter": {
+                "Azure_OpenAI_-_Get_chat_completions": [
+                    "SUCCEEDED"
+                ]
+            }
+        },
+        "SQL_Server_-_Vector_Search": {
+            "type": "ServiceProvider",
+            "description": "Use this query to retrieve vector embeddings from your SQL vector table. Update the query based on your SQL table and schema.",
+            "inputs": {
+                "parameters": {
+                    "query": "SELECT TOP(2) filename, chunkid, chunk,\n           1-vector_distance('cosine', CAST(@embedding AS VECTOR(1536)), embedding) AS similarity_score,\n           vector_distance('cosine', CAST(@embedding AS VECTOR(1536)), embedding) AS distance_score\n    FROM dbo.resumedocs\n    ORDER BY distance_score ",
+                    "queryParameters": {
+                        "embedding ": "@{body('Azure_OpenAI_-_Get_an_embedding')['embedding']}"
+                    }
+                },
+                "serviceProviderConfiguration": {
+                    "connectionName": "azuresql_#workflowname#",
+                    "operationId": "executeQuery",
+                    "serviceProviderId": "/serviceProviders/sql"
+                }
+            },
+            "runAfter": {
+                "Azure_OpenAI_-_Get_an_embedding": [
+                    "SUCCEEDED"
+                ]
+            }
+        },
+        "Azure_OpenAI_-_Get_chat_completions": {
+            "type": "ServiceProvider",
+            "description": "Update the system message for the LLM based on your requirements.",
+            "inputs": {
+                "parameters": {
+                    "deploymentId": "@parameters('OpenAIChatModel_#workflowname#')",
+                    "messages": [
+                        {
+                            "role": "System",
+                            "content": "You're an intelligent and funny assistant who exclusively answers based on the data provided in the search_results: \n- Use the information from search_results to generate your top 3 responses. If the data isn't a perfect match for the user's query, use your best judgment to provide helpful suggestions and include the following format: \n  File: {filename}\n  Chunk ID: {chunkid}\n  Similarity Score: {similarity_score}\n  Add a small snippet from the Relevant Text: {chunktext}\n  Don't use the entire chunk.\n- Avoid any other external data sources.\n- At the end of the recommendations, add a summary about why the candidate might be a good fit, even if the exact skills and hiring role don't match. Make sure you call out skills that match the description and which ones are missing. If the candidate doesn't have prior experience for the hiring role, we might need to pay extra attention during the interview process.\n- Add an interesting Microsoft-related fact about the technology that was searched: \n\nsearch_results = @{body('SQL_Server_-_Vector_Search')}"
+                        },
+                        {
+                            "role": "User",
+                            "content": "@triggerBody()?['question']",
+                            "user": "Anon"
+                        }
+                    ],
+                    "temperature": 1
+                },
+                "serviceProviderConfiguration": {
+                    "connectionName": "openai_#workflowname#",
+                    "operationId": "getChatCompletions",
+                    "serviceProviderId": "/serviceProviders/openai"
+                }
+            },
+            "runAfter": {
+                "SQL_Server_-_Vector_Search": [
+                    "SUCCEEDED"
+                ]
+            }
+        }
+    },
+    "contentVersion": "1.0.0.0",
+    "outputs": {},
+    "triggers": {
+        "When_a_HTTP_request_is_received": {
+            "type": "Request",
+            "kind": "Http",
+            "inputs": {
+                "schema": {
+                    "type": "object",
+                    "properties": {
+                        "question": {
+                            "type": "string"
+                        }
+                    }
+                }
+            }
+        }
+    }
+}

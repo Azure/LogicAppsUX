@@ -1,0 +1,43 @@
+{
+  "title": "Resume matching with Azure OpenAI - RAG with SQL",
+  "description": "Store embeddings in Azure SQL DB, perform similarity search, and use Azure OpenAI LLMs for advanced resume matching to identify suitable candidates.",
+  "skus": [
+    "standard"
+  ],
+  "detailsDescription": "Based on the Retrieval Augmented Generation (RAG) pattern, this workflow template is for data indexing and retrieval using Azure SQL DB. This template has two workflows: \n- The indexing workflow reads documents (resumes) from an Azure Blob Storage container whenever a new document is added or updated. The workflow then parses, chunks, generates embeddings, and loads these embeddings into a SQL DB vector table. \n- The retrieval workflow performs a similarity search on the stored vectors in the SQL database. The workflow then uses Azure OpenAI LLMs to reason on the data and returns matching resumes, based on the specified system prompt and user question.\n This resume matching solution is based on the [Chat with your Document sample](https://github.com/Azure-Samples/azure-sql-db-vector-search/tree/main/RAG-with-Documents), which is published in the Azure SQL DB Vector Search repository on GitHub. This repository also contains sample documents. To use this solution as is, you need to create the table based on [this table schema](https://github.com/Azure-Samples/azure-sql-db-vector-search/blob/main/RAG-with-Documents/CreateTable.sql).",
+  "details": {
+    "By": "Microsoft",
+    "Type": "Accelerator",
+    "Category": "AI"
+  },
+  "artifacts": [],
+  "workflows": {
+    "chat-with-documents-sql": {
+      "name": "Chat_With_Documents"
+    },
+    "index-ai-blob-sql-rag": {
+      "name": "Index_Data_To_SQL"
+    }
+  },
+  "parameters": [],
+  "connections": {
+    "azuresql_#workflowname#": {
+      "connectorId": "/serviceProviders/sql",
+      "kind": "inapp"
+    },
+    "openai_#workflowname#": {
+      "connectorId": "/serviceProviders/openai",
+      "kind": "inapp"
+    },
+    "azureblob_#workflowname#": {
+      "connectorId": "/serviceProviders/AzureBlob",
+      "kind": "inapp"
+    }
+  },
+  "featuredOperations": [
+    {
+      "type": "ChunkText"
+    }
+  ],
+  "sourceCodeUrl": "https://github.com/Azure/LogicAppsTemplates/tree/release/20241028/accelerator-index-retrieve-resumes-sql/manifest.json"
+}

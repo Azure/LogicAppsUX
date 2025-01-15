@@ -1,0 +1,81 @@
+{
+        "$schema": "https://schema.management.azure.com/providers/Microsoft.Logic/schemas/2016-06-01/workflowdefinition.json#",
+        "actions": {
+            "Catch": {
+                "actions": {
+                    "Compensation_Logic": {
+                        "inputs": "Replace this action with the actions for your exception handling logic.",
+                        "type": "Compose"
+                    },
+                    "Filter_Try_Scope_Errors": {
+                        "inputs": {
+                            "from": "@result('Try')",
+                            "where": "@equals(item()?['status'],'Failed')"
+                        },
+                        "runAfter": {
+                            "Compensation_Logic": [
+                                "SUCCEEDED"
+                            ]
+                        },
+                        "type": "Query"
+                    },
+                    "Format_Errors": {
+                        "inputs": {
+                            "from": "@body('Filter_Try_Scope_Errors')",
+                            "select": {
+                                "action": "@item()?['name']",
+                                "errorResult": "@item()"
+                            }
+                        },
+                        "runAfter": {
+                            "Filter_Try_Scope_Errors": [
+                                "SUCCEEDED"
+                            ]
+                        },
+                        "type": "Select"
+                    },
+                    "Terminate": {
+                        "inputs": {
+                            "runError": {
+                                "code": "500",
+                                "message": "One or more errors occurred while processing messages: \n\n@{body('Format_Errors')}"
+                            },
+                            "runStatus": "Failed"
+                        },
+                        "runAfter": {
+                            "Format_Errors": [
+                                "SUCCEEDED"
+                            ]
+                        },
+                        "type": "Terminate"
+                    }
+                },
+                "runAfter": {
+                    "Try": [
+                        "FAILED",
+                        "SKIPPED",
+                        "TIMEDOUT"
+                    ]
+                },
+                "type": "Scope"
+            },
+            "Try": {
+                "actions": {
+                    "Business_Logic": {
+                        "inputs": "Replace this action with the actions for your business logic.",
+                        "type": "Compose"
+                    }
+                },
+                "runAfter": {},
+                "type": "Scope"
+            }
+        },
+        "contentVersion": "1.0.0.0",
+        "outputs": {},
+        "triggers": {
+            "When_a_HTTP_request_is_received": {
+                "kind": "Http",
+                "type": "Request"
+            }
+        }
+    }

@@ -4,6 +4,7 @@ export interface ITemplateService {
   getExistingWorkflowNames?: () => Promise<string[]>;
   openBladeAfterCreate: (workflowName: string | undefined) => void;
   onAddBlankWorkflow: () => void;
+  getCustomManifestNames?: () => Promise<string[]>;
 }
 
 let service: ITemplateService;

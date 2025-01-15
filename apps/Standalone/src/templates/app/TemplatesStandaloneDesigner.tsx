@@ -437,6 +437,10 @@ const getServices = (
         onAddBlankWorkflow: () => {
           console.log('On add blank workflow click');
         },
+        getCustomManifestNames: async () => {
+          console.log('hello');
+          return ['hello'];
+        },
       })
     : new StandardTemplateService({
         baseUrl: armUrl,
@@ -451,6 +455,10 @@ const getServices = (
         },
         onAddBlankWorkflow: () => {
           console.log('On add blank workflow click');
+        },
+        getCustomManifestNames: async () => {
+          console.log('hello');
+          return ['hello'];
         },
       });
 

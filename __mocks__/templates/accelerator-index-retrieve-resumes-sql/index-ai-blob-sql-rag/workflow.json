@@ -1,0 +1,130 @@
+{
+    "$schema": "https://schema.management.azure.com/providers/Microsoft.Logic/schemas/2016-06-01/workflowdefinition.json#",
+    "actions": {
+        "Chunk_text": {
+            "type": "ChunkText",
+            "inputs": {
+                "chunkingStrategy": "TokenSize",
+                "text": "@body('Parse_a_document')?['text']",
+                "EncodingModel": "cl100k_base",
+                "PageOverlapLength": 0,
+                "TokenSize": 5000
+            },
+            "runAfter": {
+                "Parse_a_document": [
+                    "SUCCEEDED"
+                ]
+            }
+        },
+        "Azure_OpenAI_-_Get_multiple_embeddings": {
+            "type": "ServiceProvider",
+            "inputs": {
+                "parameters": {
+                    "deploymentId": "@parameters('OpenAIEmbeddingModel_#workflowname#')",
+                    "input": "@body('Chunk_text')?['value']"
+                },
+                "serviceProviderConfiguration": {
+                    "connectionName": "openai_#workflowname#",
+                    "operationId": "getArrayEmbeddings",
+                    "serviceProviderId": "/serviceProviders/openai"
+                }
+            },
+            "runAfter": {
+                "Chunk_text": [
+                    "SUCCEEDED"
+                ]
+            }
+        },
+        "Parse_a_document": {
+            "type": "ParseDocument",
+            "inputs": {
+                "content": "@body('Azure_Blob_-_Read_blob_content')?['content']"
+            },
+            "runAfter": {
+                "Azure_Blob_-_Read_blob_content": [
+                    "SUCCEEDED"
+                ]
+            }
+        },
+        "Azure_Blob_-_Read_blob_content": {
+            "type": "ServiceProvider",
+            "inputs": {
+                "parameters": {
+                    "containerName": "@parameters('BlobPath_#workflowname#')",
+                    "blobName": "@triggerBody()?['name']"
+                },
+                "serviceProviderConfiguration": {
+                    "connectionName": "azureblob_#workflowname#",
+                    "operationId": "readBlob",
+                    "serviceProviderId": "/serviceProviders/AzureBlob"
+                }
+            },
+            "runAfter": {}
+        },
+        "Select_embeddings_and_map_to_AI_Search_schema": {
+            "type": "Select",
+            "inputs": {
+                "from": "@range(0, length(body('Chunk_text')['value']))",
+                "select": {
+                    "chunk": "@body('Chunk_text')['value'][item()]",
+                    "filename": "@triggerBody()?['name']",
+                    "embedding": "@body('Azure_OpenAI_-_Get_multiple_embeddings')['embeddings'][item()]",
+                    "chunkid": "@concat(triggerBody()?['name'], item())"
+                }
+            },
+            "runAfter": {
+                "Azure_OpenAI_-_Get_multiple_embeddings": [
+                    "SUCCEEDED"
+                ]
+            }
+        },
+        "For_each": {
+            "type": "Foreach",
+            "foreach": "@body('Select_embeddings_and_map_to_AI_Search_schema')",
+            "actions": {
+                "SQL_-_Insert_vectors_in_table": {
+                    "type": "ServiceProvider",
+                    "description": "This step inserts the vector embeddings, content, and other metadata into the SQL vector database. Update the query and query parameters based on your SQL table schema.",
+                    "inputs": {
+                        "parameters": {
+                            "query": "INSERT INTO resumedocs (chunkid, filename, chunk, embedding)\n    VALUES (@chunkid, @filename, @chunk, CAST(@embedding as VECTOR(1536)))",
+                            "queryParameters": {
+                                "chunkid": "@{item()['chunkid']}",
+                                "filename": "@{item()['filename']}",
+                                "chunk": "@{item()['chunk']}",
+                                "embedding": "@{item()['embedding']}"
+                            }
+                        },
+                        "serviceProviderConfiguration": {
+                            "connectionName": "azuresql_#workflowname#",
+                            "operationId": "executeQuery",
+                            "serviceProviderId": "/serviceProviders/sql"
+                        }
+                    }
+                }
+            },
+            "runAfter": {
+                "Select_embeddings_and_map_to_AI_Search_schema": [
+                    "SUCCEEDED"
+                ]
+            }
+        }
+    },
+    "contentVersion": "1.0.0.0",
+    "outputs": {},
+    "triggers": {
+        "Azure_Blob_-_When_a_blob_is_added_or_updated": {
+            "type": "ServiceProvider",
+            "inputs": {
+                "parameters": {
+                    "path": "@parameters('BlobPath_#workflowname#')"
+                },
+                "serviceProviderConfiguration": {
+                    "connectionName": "azureblob_#workflowname#",
+                    "operationId": "whenABlobIsAddedOrModified",
+                    "serviceProviderId": "/serviceProviders/AzureBlob"
+                }
+            }
+        }
+    }
+}

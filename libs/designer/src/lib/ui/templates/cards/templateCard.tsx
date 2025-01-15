@@ -71,6 +71,7 @@ export const TemplateCard = ({ templateName }: TemplateCardProps) => {
       message: 'Template is selected',
       args: [templateName, workflowAppName, `isMultiWorkflowTemplate:${isMultiWorkflow}`],
     });
+    console.log('---templateManifest', templateManifest);
     dispatch(changeCurrentTemplateName(templateName));
     dispatch(loadTemplate(templateManifest));
 

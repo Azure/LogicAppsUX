@@ -135,7 +135,7 @@ export const ConnectorWithDetails = ({ connectorId, kind }: Template.Connection)
             size={SpinnerSize.xSmall}
           />
         ) : (
-          <div className="msla-template-connector-name">{connector.properties.displayName}</div>
+          <div className="msla-template-connector-name">{connector.properties?.displayName}</div>
         )}
         <div className="msla-template-connector-type">
           <Text style={textStyles.connectorSubDetails} className="msla-template-card-tag">

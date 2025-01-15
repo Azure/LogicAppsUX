@@ -1,0 +1,41 @@
+{
+  "title": "Local Try-Catch: Handle exceptions with the Scope action",
+  "description": "This workflow template uses the 'Scope' action and Try-Catch pattern for exception handling.",
+  "tags": [
+    "Exception Handling",
+    "try catch"
+  ],
+  "skus": [
+    "consumption",
+    "standard"
+  ],
+  "kinds": [
+    "stateful",
+    "stateless"
+  ],
+  "detailsDescription": "This workflow runs the specified actions that you add to represent business logic. If any errors occur, the workflow uses the 'Scope' action to catch and process those errors, which then terminates the workflow with a detailed error message. Learn more about [exception handling in Azure Logic Apps](https://go.microsoft.com/fwlink/?linkid=2226310).",
+  "details": {
+    "By": "Microsoft",
+    "Type": "Workflow",
+    "Trigger": "Request",
+    "Category": "Design Patterns"
+  },
+  "artifacts": [
+    {
+      "type": "workflow",
+      "file": "workflow.json"
+    }
+  ],
+  "images": {
+    "light": "https://raw.githubusercontent.com/azure/LogicAppsTemplates/release/20241028/try-catch/workflow-light.png",
+    "dark": "https://raw.githubusercontent.com/azure/LogicAppsTemplates/release/20241028/try-catch/workflow-dark.png"
+  },
+  "parameters": [],
+  "connections": {},
+  "featuredOperations": [
+    {
+      "type": "Scope"
+    }
+  ],
+  "sourceCodeUrl": "https://github.com/Azure/LogicAppsTemplates/tree/release/20241028/try-catch/manifest.json"
+}

@@ -127,7 +127,9 @@ export const loadTemplate = createAsyncThunk('loadTemplate', async (preLoadedMan
   const currentTemplateResourcePath = currentState.template.templateName;
 
   if (currentTemplateResourcePath) {
-    return loadTemplateFromResourcePath(currentTemplateResourcePath, preLoadedManifest);
+    const hello = await loadTemplateFromResourcePath(currentTemplateResourcePath, preLoadedManifest);
+    console.log('---------LOADEDTEMPLATE ', hello);
+    return hello;
   }
 
   return undefined;
@@ -167,6 +169,8 @@ export const validateWorkflowName = (workflowName: string | undefined, existingW
 const loadTemplateFromResourcePath = async (templateName: string, manifest: Template.Manifest | undefined): Promise<TemplatePayload> => {
   const templateManifest: Template.Manifest =
     manifest ?? (await import(`./../../templates/templateFiles/${templateName}/manifest.json`)).default;
+
+  console.log('HELEKFJKLEFJKLEFJ ', templateManifest);
   const workflows = templateManifest.workflows;
   const isMultiWorkflow = isMultiWorkflowTemplate(templateManifest);
   const data: TemplatePayload = {
