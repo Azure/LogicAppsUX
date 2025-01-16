@@ -1,4 +1,4 @@
-import type { Template } from '@microsoft/logic-apps-shared';
+import { LogEntryLevel, LoggerService, type Template } from '@microsoft/logic-apps-shared';
 import type { PayloadAction } from '@reduxjs/toolkit';
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
 import type { RootState } from './store';
@@ -49,8 +49,13 @@ export const loadGithubManifests = createAsyncThunk('manifest/loadManifests', as
     );
     const manifestsArray = await Promise.all(manifestPromises);
     return Object.fromEntries(manifestsArray);
-  } catch (ex) {
-    console.error(ex);
+  } catch (error) {
+    LoggerService().log({
+      level: LogEntryLevel.Error,
+      area: 'Templates.loadGithubManifests',
+      message: `Error loading manifests: ${error}`,
+      error: error instanceof Error ? error : undefined,
+    });
     return undefined;
   }
 });

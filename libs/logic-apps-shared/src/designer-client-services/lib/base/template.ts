@@ -3,7 +3,7 @@ import type { ITemplateService } from '../template';
 export interface BaseTemplateServiceOptions {
   openBladeAfterCreate: (workflowName: string | undefined) => void;
   onAddBlankWorkflow: () => void;
-  getCustomResource?: (resourcePath: string, resourceFile?: string) => Promise<any>;
+  getCustomResource?: (resourcePath: string, artifactType?: string) => Promise<any>;
 }
 
 export class BaseTemplateService implements ITemplateService {

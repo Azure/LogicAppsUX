@@ -297,20 +297,24 @@ const loadWorkflowTemplateFromManifest = async (
 };
 
 const getWorkflowAndManifest = async (templatePath: string, manifest: Template.Manifest | undefined, isCustomTemplate: boolean) => {
-  const templateManifest: Template.Manifest = manifest ?? (await getManifestGivenPath(templatePath, 'manifest', isCustomTemplate));
+  const templateManifest: Template.Manifest = manifest ?? (await getTemplateResourceGivenPath(templatePath, 'manifest', isCustomTemplate));
 
-  const templateWorkflowDefinition: LogicAppsV2.WorkflowDefinition = await getManifestGivenPath(templatePath, 'workflow', isCustomTemplate);
+  const templateWorkflowDefinition: LogicAppsV2.WorkflowDefinition = await getTemplateResourceGivenPath(
+    templatePath,
+    'workflow',
+    isCustomTemplate
+  );
 
   return { templateManifest, templateWorkflowDefinition };
 };
 
-const getManifestGivenPath = async (resourcePath: string, resourceFile: string, isCustomTemplate: boolean) => {
+const getTemplateResourceGivenPath = async (resourcePath: string, artifactType: string, isCustomTemplate: boolean) => {
   if (isCustomTemplate) {
-    return await TemplateService()?.getCustomResource?.(resourcePath, resourceFile);
+    return await TemplateService()?.getCustomResource?.(resourcePath, artifactType);
   }
   const paths = resourcePath.split('/');
 
   return paths.length === 2
-    ? (await import(`./../../templates/templateFiles/${paths[0]}/${paths[1]}/${resourceFile}.json`)).default
-    : (await import(`./../../templates/templateFiles/${resourcePath}/${resourceFile}.json`)).default;
+    ? (await import(`./../../templates/templateFiles/${paths[0]}/${paths[1]}/${artifactType}.json`)).default
+    : (await import(`./../../templates/templateFiles/${resourcePath}/${artifactType}.json`)).default;
 };

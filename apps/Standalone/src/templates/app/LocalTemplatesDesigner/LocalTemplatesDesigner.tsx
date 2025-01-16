@@ -18,12 +18,12 @@ import { HttpClient } from '../../../designer/app/AzureLogicAppsDesigner/Service
 import { BaseTemplateService } from '@microsoft/logic-apps-shared';
 import { useQuery } from '@tanstack/react-query';
 
-const loadLocalTemplateFromResourcePath = async (resourcePath: string, resourceFile = 'manifest') => {
+const loadLocalTemplateFromResourcePath = async (resourcePath: string, artifactType = 'manifest') => {
   const paths = resourcePath.split('/');
 
   return paths.length === 2
-    ? (await import(`./../../../../../../__mocks__/templates/${paths[0]}/${paths[1]}/${resourceFile}.json`)).default
-    : (await import(`./../../../../../../__mocks__/templates//${resourcePath}/${resourceFile}.json`)).default;
+    ? (await import(`./../../../../../../__mocks__/templates/${paths[0]}/${paths[1]}/${artifactType}.json`)).default
+    : (await import(`./../../../../../../__mocks__/templates//${resourcePath}/${artifactType}.json`)).default;
 };
 
 const localTemplateManifestPaths = ['local-try-catch', 'local-analyze-images-ai-rag', 'local-accelerator-index-retrieve-resumes-sql'];

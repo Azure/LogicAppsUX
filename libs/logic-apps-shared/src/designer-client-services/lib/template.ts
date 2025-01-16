@@ -4,7 +4,7 @@ export interface ITemplateService {
   getExistingWorkflowNames?: () => Promise<string[]>;
   openBladeAfterCreate: (workflowName: string | undefined) => void;
   onAddBlankWorkflow: () => void;
-  getCustomResource?: (resourcePath: string, resourceFile?: string) => Promise<any>;
+  getCustomResource?: (resourcePath: string, artifactType?: string) => Promise<any>;
 }
 
 let service: ITemplateService;
