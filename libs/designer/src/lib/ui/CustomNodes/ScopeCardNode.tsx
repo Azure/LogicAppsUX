@@ -36,7 +36,7 @@ import { MessageBarType } from '@fluentui/react';
 import { RunService, equals, isNullOrUndefined, removeIdTag, useNodeIndex } from '@microsoft/logic-apps-shared';
 import { ScopeCard } from '@microsoft/designer-ui';
 import type { LogicAppsV2 } from '@microsoft/logic-apps-shared';
-import { memo, useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { memo, useCallback, useMemo, useRef, useState } from 'react';
 import { useDrag } from 'react-dnd';
 import { useIntl } from 'react-intl';
 import { useQuery } from '@tanstack/react-query';
@@ -48,7 +48,7 @@ import { CopyTooltip } from '../common/DesignerContextualMenu/CopyTooltip';
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 const ScopeCardNode = ({ data, targetPosition = Position.Top, sourcePosition = Position.Bottom, id }: NodeProps) => {
-  const scopeId = removeIdTag(id);
+  const scopeId = useMemo(() => removeIdTag(id), [id]);
   const nodeComment = useNodeDescription(scopeId);
   const shouldFocus = useShouldNodeFocus(scopeId);
   const node = useActionMetadata(scopeId);
@@ -64,15 +64,16 @@ const ScopeCardNode = ({ data, targetPosition = Position.Top, sourcePosition = P
   const runInstance = useRunInstance();
   const runData = useRunData(scopeId);
   const parentRunId = useParentRunId(scopeId);
-  const parenRunData = useRunData(parentRunId ?? '');
+  const parentRunData = useRunData(parentRunId ?? '');
   const nodesMetaData = useNodesMetadata();
-  const repetitionName = getRepetitionName(parentRunIndex, scopeId, nodesMetaData, operationsInfo);
+  const repetitionName = useMemo(
+    () => getRepetitionName(parentRunIndex, scopeId, nodesMetaData, operationsInfo),
+    [nodesMetaData, operationsInfo, parentRunIndex, scopeId]
+  );
   const rootRef = useRef<HTMLDivElement | null>(null);
 
-  const { status: statusRun, error: errorRun, code: codeRun } = runData ?? {};
-
-  const getRunRepetition = () => {
-    if (parenRunData?.status === constants.FLOW_STATUS.SKIPPED) {
+  const getRunRepetition = useCallback(() => {
+    if (parentRunData?.status === constants.FLOW_STATUS.SKIPPED) {
       return {
         properties: {
           status: constants.FLOW_STATUS.SKIPPED,
@@ -86,35 +87,26 @@ const ScopeCardNode = ({ data, targetPosition = Position.Top, sourcePosition = P
       };
     }
     return RunService().getRepetition({ nodeId: scopeId, runId: runInstance?.id }, repetitionName);
-  };
+  }, [scopeId, parentRunData?.status, repetitionName, runInstance?.id]);
 
-  const {
-    refetch,
-    isLoading: isRepetitionLoading,
-    isRefetching: isRepetitionRefetching,
-    data: repetitionData,
-  } = useQuery<any>(
-    ['runInstance', { nodeId: scopeId, runId: runInstance?.id, repetitionName, parentStatus: parenRunData?.status }],
-    getRunRepetition,
+  const { isLoading: isRepetitionLoading, isRefetching: isRepetitionRefetching } = useQuery<any>(
+    ['runInstance', { nodeId: scopeId, runId: runInstance?.id, repetitionName, parentStatus: parentRunData?.status }],
+    async () => {
+      const data = await getRunRepetition();
+      if (!isNullOrUndefined(data)) {
+        dispatch(setRepetitionRunData({ nodeId: scopeId, runData: data.properties as LogicAppsV2.WorkflowRunAction }));
+      }
+      return data;
+    },
     {
       refetchOnWindowFocus: false,
-      initialData: null,
-      refetchOnMount: true,
+      refetchOnReconnect: false,
+      refetchOnMount: false,
+      retryOnMount: false,
       enabled: parentRunIndex !== undefined && !!isMonitoringView,
     }
   );
 
-  useEffect(() => {
-    if (!isNullOrUndefined(repetitionData)) {
-      dispatch(setRepetitionRunData({ nodeId: scopeId, runData: repetitionData.properties as LogicAppsV2.WorkflowRunAction }));
-    }
-  }, [dispatch, scopeId, repetitionData]);
-
-  useEffect(() => {
-    if (parentRunIndex !== undefined && isMonitoringView) {
-      refetch();
-    }
-  }, [dispatch, parentRunIndex, isMonitoringView, refetch, repetitionName, parenRunData?.status]);
   const { dependencies, loopSources } = useTokenDependencies(scopeId);
   const [{ isDragging }, drag, dragPreview] = useDrag(
     () => ({
@@ -253,6 +245,7 @@ const ScopeCardNode = ({ data, targetPosition = Position.Top, sourcePosition = P
     }
 
     if (isMonitoringView) {
+      const { status: statusRun, error: errorRun, code: codeRun } = runData ?? {};
       return getMonitoringError(errorRun, statusRun, codeRun);
     }
 
@@ -264,10 +257,8 @@ const ScopeCardNode = ({ data, targetPosition = Position.Top, sourcePosition = P
     settingValidationErrorText,
     parameterValidationErrors?.length,
     parameterValidationErrorText,
-    errorRun,
     isMonitoringView,
-    codeRun,
-    statusRun,
+    runData,
   ]);
 
   const renderLoopsPager = useMemo(() => {
