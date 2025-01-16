@@ -38,7 +38,7 @@ export const FunctionList = (props: FunctionListProps) => {
   const { searchTerm } = props;
   const styles = useStyles();
 
-  const [openItems, setOpenItems] = React.useState<Iterable<TreeItemValue>>(Object.values(FunctionCategory).slice(0, 2));
+  const [openItems, setOpenItems] = React.useState<Iterable<TreeItemValue>>(Object.values(FunctionCategory));
   const handleOpenChange = (_event: TreeOpenChangeEvent, data: TreeOpenChangeData) => {
     setOpenItems(data.openItems);
   };
