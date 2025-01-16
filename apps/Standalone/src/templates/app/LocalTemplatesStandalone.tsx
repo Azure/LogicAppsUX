@@ -26,7 +26,7 @@ const loadLocalTemplateFromResourcePath = async (resourcePath: string, artifactT
     : (await import(`./../../../../../__mocks__/templates//${resourcePath}/${artifactType}.json`)).default;
 };
 
-const localTemplateManifestPaths = ['local-try-catch', 'local-analyze-images-ai-rag', 'local-accelerator-index-retrieve-resumes-sql'];
+const localTemplateManifestPaths = ['BasicWorkflowOnly', 'SimpleConnectionParameter', 'SimpleAccelerator'];
 
 export const LocalTemplatesStandalone = () => {
   const theme = useSelector((state: RootState) => state.workflowLoader.theme);
