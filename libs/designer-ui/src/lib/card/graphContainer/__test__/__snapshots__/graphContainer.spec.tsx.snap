@@ -12,12 +12,6 @@ exports[`GraphContainer component > renders with default props 1`] = `
 />
 `;
 
-exports[`GraphContainer component > renders with default props 2`] = `
-<div
-  className="msla-graph-container"
-/>
-`;
-
 exports[`GraphContainer component > renders with selected and active props 1`] = `
 <div
   className="msla-graph-container selected msla-card-inactive"

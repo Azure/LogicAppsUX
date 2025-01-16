@@ -6,7 +6,7 @@ import { useMonitoringView, useReadOnly } from '../../../core/state/designerOpti
 import { useIsNodeSelectedInOperationPanel } from '../../../core/state/panel/panelSelectors';
 import { useNodeMetadata } from '../../../core';
 import { useActionMetadata, useIsLeafNode, useParentRunId, useRunData } from '../../../core/state/workflow/workflowSelectors';
-import { useNodeSize, useNodeLeafIndex } from '@microsoft/logic-apps-shared';
+import { useNodeSize, useNodeLeafIndex, SUBGRAPH_TYPES } from '@microsoft/logic-apps-shared';
 import { NodeProps } from '@xyflow/react';
 
 vi.mock('../../../core/state/designerOptions/designerOptionsSelectors', () => ({
@@ -71,6 +71,33 @@ describe('GraphContainerNode', () => {
 
   it('should render without crashing', () => {
     const tree = renderer.create(<GraphContainerNode {...defaultProps} />).toJSON();
+    expect(tree).toMatchSnapshot();
+  });
+
+  it('should render with footer and be a subgrah', () => {
+    (useNodeMetadata as Mock).mockReturnValue({ subgraphType: SUBGRAPH_TYPES.UNTIL_DO });
+    const tree = renderer.create(<GraphContainerNode {...defaultProps} />).toJSON();
+    expect(tree.props.className).includes('has-footer');
+    expect(tree.props.className).includes('is-subgraph');
+
+    expect(tree).toMatchSnapshot();
+  });
+
+  it('should render graph container as normal when is monitoring view', () => {
+    (useMonitoringView as Mock).mockReturnValue(true);
+    (useRunData as Mock).mockReturnValue({ status: 'Success' });
+
+    const tree = renderer.create(<GraphContainerNode {...defaultProps} />).toJSON();
+
+    expect(tree).toMatchSnapshot();
+  });
+
+  it('should render graph container as inactive when is monitoring view', () => {
+    (useMonitoringView as Mock).mockReturnValue(true);
+    (useRunData as Mock).mockReturnValue({});
+
+    const tree = renderer.create(<GraphContainerNode {...defaultProps} />).toJSON();
+
     expect(tree).toMatchSnapshot();
   });
 

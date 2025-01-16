@@ -110,9 +110,105 @@ exports[`GraphContainerNode > should render DropZone when showLeafComponents is 
 ]
 `;
 
+exports[`GraphContainerNode > should render graph container as inactive when is monitoring view 1`] = `
+<div
+  className="msla-graph-container-wrapper"
+  style={
+    {
+      "height": 100,
+      "width": 100,
+    }
+  }
+>
+  <div
+    className="node-handle top"
+    isConnectable={false}
+    position="top"
+    type="target"
+  >
+    Handle reactflow
+  </div>
+  <div
+    className="msla-graph-container msla-card-inactive"
+  />
+  <div
+    className="node-handle bottom"
+    isConnectable={false}
+    position="bottom"
+    type="source"
+  >
+    Handle reactflow
+  </div>
+</div>
+`;
+
+exports[`GraphContainerNode > should render graph container as normal when is monitoring view 1`] = `
+<div
+  className="msla-graph-container-wrapper"
+  style={
+    {
+      "height": 100,
+      "width": 100,
+    }
+  }
+>
+  <div
+    className="node-handle top"
+    isConnectable={false}
+    position="top"
+    type="target"
+  >
+    Handle reactflow
+  </div>
+  <div
+    className="msla-graph-container"
+  />
+  <div
+    className="node-handle bottom"
+    isConnectable={false}
+    position="bottom"
+    type="source"
+  >
+    Handle reactflow
+  </div>
+</div>
+`;
+
 exports[`GraphContainerNode > should render the top and bottom handles 1`] = `
 <div
   className="msla-graph-container-wrapper"
+  style={
+    {
+      "height": 100,
+      "width": 100,
+    }
+  }
+>
+  <div
+    className="node-handle top"
+    isConnectable={false}
+    position="top"
+    type="target"
+  >
+    Handle reactflow
+  </div>
+  <div
+    className="msla-graph-container"
+  />
+  <div
+    className="node-handle bottom"
+    isConnectable={false}
+    position="bottom"
+    type="source"
+  >
+    Handle reactflow
+  </div>
+</div>
+`;
+
+exports[`GraphContainerNode > should render with footer and be a subgrah 1`] = `
+<div
+  className="msla-graph-container-wrapper has-footer is-subgraph"
   style={
     {
       "height": 100,
