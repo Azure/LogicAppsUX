@@ -52,6 +52,10 @@ export const isTokenValueSegment = (value: ValueSegment[]): boolean => {
   return value.length === 1 && value[0].type === ValueSegmentType.TOKEN;
 };
 
+export const isSingleLiteralValueSegment = (value: ValueSegment[]): boolean => {
+  return value.length === 1 && value[0].type === ValueSegmentType.LITERAL;
+};
+
 export const validateDictionaryStrings = (s: string): boolean => {
   try {
     JSON.parse(s);

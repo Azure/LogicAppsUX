@@ -446,6 +446,7 @@ export default {
       FLOATINGACTIONMENU: 'floatingactionmenu',
       FILEPICKER: 'filepicker',
       HTML: 'html',
+      INITIALIZE_VARIABLE: 'initializevariable',
       RECURRENCE: 'recurrence',
       SCHEMA: 'schema',
       STRING: 'string',

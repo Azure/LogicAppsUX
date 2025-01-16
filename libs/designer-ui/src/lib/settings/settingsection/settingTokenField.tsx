@@ -17,6 +17,7 @@ import type {
 } from '../../editor/base';
 import type { TokenPickerButtonEditorProps } from '../../editor/base/plugins/tokenpickerbutton';
 import { createLiteralValueSegment, getDropdownOptionsFromOptions } from '../../editor/base/utils/helper';
+import { InitializeVariableEditor } from '../../editor/initializevariable';
 import { StringEditor } from '../../editor/string';
 import { FloatingActionMenuKind } from '../../floatingactionmenu/constants';
 import { FloatingActionMenuInputs } from '../../floatingactionmenu/floatingactionmenuinputs';
@@ -362,6 +363,9 @@ export const TokenField = ({
           dataAutomationId={`msla-setting-token-editor-htmleditor-${labelForAutomationId}`}
         />
       );
+
+    case constants.PARAMETER.EDITOR.INITIALIZE_VARIABLE:
+      return <InitializeVariableEditor initialValue={value} getTokenPicker={getTokenPicker} />;
 
     case constants.PARAMETER.EDITOR.RECURRENCE:
       return (
