@@ -54,6 +54,7 @@ export interface MapCheckerMessage {
   description: IntlMessage;
   severity: MapCheckerItemSeverity;
   reactFlowId: string;
+  data?: any;
 }
 
 export const collectErrorsForMapChecker = (connections: ConnectionDictionary, _targetSchema: SchemaNodeDictionary): MapCheckerMessage[] => {
@@ -70,6 +71,7 @@ export const collectErrorsForMapChecker = (connections: ConnectionDictionary, _t
           description: { message: mapCheckerResources.functionMissingInputsBody, value: { functionName: node.displayName } },
           severity: MapCheckerItemSeverity.Error,
           reactFlowId: connectionValue.self.reactFlowKey,
+          data: { functionName: node.displayName },
         });
       }
     }

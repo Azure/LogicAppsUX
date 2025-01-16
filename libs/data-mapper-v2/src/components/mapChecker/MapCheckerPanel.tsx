@@ -86,7 +86,14 @@ export const MapCheckerPanel = () => {
   const mapMapCheckerContentToElements = (elements: MapCheckerMessage[], severity: MapCheckerItemSeverity) => {
     return elements.map((item, index) => {
       return (
-        <MapCheckerItem key={index} title={item.title} description={item.description} severity={severity} reactFlowId={item.reactFlowId} />
+        <MapCheckerItem
+          key={index}
+          title={item.title}
+          description={item.description}
+          severity={severity}
+          reactFlowId={item.reactFlowId}
+          data={item.data}
+        />
       );
     });
   };
@@ -156,14 +163,15 @@ export const MapCheckerPanel = () => {
         display: 'flex',
         flexDirection: 'column',
         flex: '1 1 auto',
+        marginRight: '10px',
       }}
     >
       {totalItems > 0 ? (
-        <Accordion multiple collapsible defaultOpenItems={[MapCheckerItemSeverity.Error, MapCheckerItemSeverity.Warning]}>
+        <Accordion multiple collapsible>
           {errorItems.length > 0 && (
             <AccordionItem value={MapCheckerItemSeverity.Error}>
               <AccordionHeader icon={iconForMapCheckerSeverity(MapCheckerItemSeverity.Error)} size="large">
-                {errorTitleLoc}
+                {`${errorTitleLoc} (${errorItems.length})`}
               </AccordionHeader>
               <AccordionPanel>{errorItems}</AccordionPanel>
             </AccordionItem>
@@ -171,7 +179,7 @@ export const MapCheckerPanel = () => {
           {warningItems.length > 0 && (
             <AccordionItem value={MapCheckerItemSeverity.Warning}>
               <AccordionHeader icon={iconForMapCheckerSeverity(MapCheckerItemSeverity.Warning)} size="large">
-                {warningTitleLoc}
+                {`${warningTitleLoc} (${warningItems.length})`}
               </AccordionHeader>
               <AccordionPanel>{warningItems}</AccordionPanel>
             </AccordionItem>
@@ -208,11 +216,10 @@ export const MapCheckerPanel = () => {
       isOpen={isMapCheckerPanelOpen}
       title={{
         text: stringResources.MAP_ISSUES,
-        size: 500,
         rightAction: <PanelXButton onCloseClick={onCloseClick} ariaLabel={stringResources.CLOSE_MAP_CHECKER} />,
       }}
       body={panelBody}
-      styles={{ root: styles.root }}
+      styles={{ root: styles.root, title: styles.title }}
       position={'end'}
     />
   );

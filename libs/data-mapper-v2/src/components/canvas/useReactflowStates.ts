@@ -2,7 +2,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import type { AppDispatch, RootState } from '../../core/state/Store';
 import { applyEdgeChanges, type EdgeChange, type Edge, type Node, type NodeChange, applyNodeChanges, type XYPosition } from '@xyflow/react';
 import { useEffect, useMemo, useState } from 'react';
-import { convertWholeDataMapToLayoutTree, isFunctionNode, panelWidthWithoutHandles } from '../../utils/ReactFlow.Util';
+import { convertWholeDataMapToLayoutTree, isFunctionNode, panelWidth, panelWidthWithoutHandles } from '../../utils/ReactFlow.Util';
 import { createEdgeId } from '../../utils/Edge.Utils';
 import { getFunctionNode } from '../../utils/Function.Utils';
 import { emptyCanvasRect } from '@microsoft/logic-apps-shared';
@@ -197,12 +197,23 @@ const useReactFlowStates = (props: ReactFlowStatesProps) => {
         y: 0,
       };
 
+      const dimensions = {
+        width: panelWidth,
+        height: newHeight,
+      };
+
       if (currentSourceNode) {
         if (currentSourceNode.position.x !== newSourceNodePosition.x || currentSourceNode.position.y !== newSourceNodePosition.y) {
           changes[NodeIds.source] = {
             type: 'position',
             id: NodeIds.source,
             position: newSourceNodePosition,
+          };
+        } else if (currentSourceNode.width !== panelWidth || currentSourceNode.height !== newHeight) {
+          changes[NodeIds.source] = {
+            type: 'dimensions',
+            id: NodeIds.source,
+            dimensions,
           };
         }
       } else {
@@ -213,6 +224,7 @@ const useReactFlowStates = (props: ReactFlowStatesProps) => {
             type: 'schemaPanel',
             data: {},
             position: newSourceNodePosition,
+            ...dimensions,
           },
         };
       }
@@ -224,6 +236,12 @@ const useReactFlowStates = (props: ReactFlowStatesProps) => {
             id: NodeIds.target,
             position: newTargetNodePosition,
           };
+        } else if (currentTargetNode.width !== panelWidth || currentTargetNode.height !== newHeight) {
+          changes[NodeIds.target] = {
+            type: 'dimensions',
+            id: NodeIds.target,
+            dimensions,
+          };
         }
       } else {
         changes[NodeIds.target] = {
@@ -233,6 +251,7 @@ const useReactFlowStates = (props: ReactFlowStatesProps) => {
             type: 'schemaPanel',
             data: {},
             position: newTargetNodePosition,
+            ...dimensions,
           },
         };
       }
