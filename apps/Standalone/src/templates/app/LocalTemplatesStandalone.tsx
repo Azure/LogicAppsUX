@@ -1,6 +1,6 @@
 import { useMemo } from 'react';
 import { TemplatesDataProvider } from '@microsoft/logic-apps-designer';
-import type { RootState } from '../../state/Store';
+import type { RootState } from '../state/Store';
 import { TemplatesDesigner, TemplatesDesignerProvider } from '@microsoft/logic-apps-designer';
 import { useSelector } from 'react-redux';
 import {
@@ -14,7 +14,7 @@ import {
   BaseOAuthService,
   ConsumptionOperationManifestService,
 } from '@microsoft/logic-apps-shared';
-import { HttpClient } from '../../../designer/app/AzureLogicAppsDesigner/Services/HttpClient';
+import { HttpClient } from '../../designer/app/AzureLogicAppsDesigner/Services/HttpClient';
 import { BaseTemplateService } from '@microsoft/logic-apps-shared';
 import { useQuery } from '@tanstack/react-query';
 
@@ -22,13 +22,13 @@ const loadLocalTemplateFromResourcePath = async (resourcePath: string, artifactT
   const paths = resourcePath.split('/');
 
   return paths.length === 2
-    ? (await import(`./../../../../../../__mocks__/templates/${paths[0]}/${paths[1]}/${artifactType}.json`)).default
-    : (await import(`./../../../../../../__mocks__/templates//${resourcePath}/${artifactType}.json`)).default;
+    ? (await import(`./../../../../../__mocks__/templates/${paths[0]}/${paths[1]}/${artifactType}.json`)).default
+    : (await import(`./../../../../../__mocks__/templates//${resourcePath}/${artifactType}.json`)).default;
 };
 
 const localTemplateManifestPaths = ['local-try-catch', 'local-analyze-images-ai-rag', 'local-accelerator-index-retrieve-resumes-sql'];
 
-export const LocalTemplatesStandaloneDesigner = () => {
+export const LocalTemplatesStandalone = () => {
   const theme = useSelector((state: RootState) => state.workflowLoader.theme);
   const { hostingPlan } = useSelector((state: RootState) => state.workflowLoader);
   const { data: localManifests } = useQuery(

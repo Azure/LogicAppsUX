@@ -2,10 +2,10 @@ import type { ReactNode } from 'react';
 import { ReactQueryProvider } from '@microsoft/logic-apps-designer';
 import { useQuery } from '@tanstack/react-query';
 import { DevToolbox } from '../components/DevToolbox';
-import { TemplatesStandaloneDesigner } from './TemplatesStandaloneDesigner';
+import { TemplatesStandalone } from './TemplatesStandalone';
 import { useIsLocal } from '../../designer/state/workflowLoadingSelectors';
 import { loadToken } from '../../environments/environment';
-import { LocalTemplatesStandaloneDesigner } from './LocalTemplatesDesigner/LocalTemplatesDesigner';
+import { LocalTemplatesStandalone } from './LocalTemplatesStandalone';
 
 const LoadWhenArmTokenIsLoaded = ({ children }: { children: ReactNode }) => {
   const { isLoading } = useQuery(['armToken'], loadToken);
@@ -18,7 +18,7 @@ export const TemplatesDesignerWrapper = () => {
     <ReactQueryProvider>
       <LoadWhenArmTokenIsLoaded>
         <DevToolbox />
-        <div style={{ height: '100vh' }}>{isLocal ? <LocalTemplatesStandaloneDesigner /> : <TemplatesStandaloneDesigner />}</div>
+        <div style={{ height: '100vh' }}>{isLocal ? <LocalTemplatesStandalone /> : <TemplatesStandalone />}</div>
       </LoadWhenArmTokenIsLoaded>
     </ReactQueryProvider>
   );

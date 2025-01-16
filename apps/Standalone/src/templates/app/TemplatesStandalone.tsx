@@ -38,7 +38,7 @@ import type { Template, LogicAppsV2, IWorkflowService } from '@microsoft/logic-a
 import { saveWorkflowStandard } from '../../designer/app/AzureLogicAppsDesigner/Services/WorkflowAndArtifacts';
 import type { ParametersData } from '../../designer/app/AzureLogicAppsDesigner/Models/Workflow';
 import axios from 'axios';
-import type { ConnectionMapping } from '../../../../../libs/designer/src/lib/core/state/templates/workflowSlice';
+import type { ConnectionMapping } from '@microsoft/logic-apps-designer/src/lib/core/state/templates/workflowSlice';
 import { parseWorkflowParameterValue } from '@microsoft/logic-apps-designer';
 import { BaseTemplateService } from '@microsoft/logic-apps-shared';
 import { useFunctionalState } from '@react-hookz/web';
@@ -50,7 +50,7 @@ interface StringifiedWorkflow {
 }
 
 const workflowIdentifier = '#workflowname#';
-export const TemplatesStandaloneDesigner = () => {
+export const TemplatesStandalone = () => {
   const theme = useSelector((state: RootState) => state.workflowLoader.theme);
   const {
     appId,
