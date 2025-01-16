@@ -24,7 +24,7 @@ import { css, setLayerHostSelector } from '@fluentui/react';
 import { PanelLocation } from '@microsoft/designer-ui';
 import type { CustomPanelLocation } from '@microsoft/designer-ui';
 import type { WorkflowNodeType } from '@microsoft/logic-apps-shared';
-import { useWindowDimensions, WORKFLOW_NODE_TYPES, useThrottledEffect } from '@microsoft/logic-apps-shared';
+import { WORKFLOW_NODE_TYPES, useThrottledEffect } from '@microsoft/logic-apps-shared';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import KeyboardBackendFactory, { isKeyboardDragTrigger } from 'react-dnd-accessible-backend';
 import { HTML5Backend } from 'react-dnd-html5-backend';
@@ -39,6 +39,8 @@ import { CanvasFinder } from './CanvasFinder';
 import { DesignerContextualMenu } from './common/DesignerContextualMenu/DesignerContextualMenu';
 import { EdgeContextualMenu } from './common/EdgeContextualMenu/EdgeContextualMenu';
 import { DragPanMonitor } from './common/DragPanMonitor/DragPanMonitor';
+import { CanvasSizeMonitor } from './CanvasSizeMonitor';
+import { useResizeObserver } from '@react-hookz/web';
 
 export interface DesignerProps {
   backgroundProps?: BackgroundProps;
@@ -107,22 +109,25 @@ export const Designer = (props: DesignerProps) => {
   useThrottledEffect(() => dispatch(buildEdgeIdsBySource()), [graph], 200);
 
   const clampPan = useClampPan();
-  const windowDimensions = useWindowDimensions();
+	
+	const canvasRef = useRef<HTMLDivElement>(null);
+	const [containerDimensions, setContainerDimentions] = useState(canvasRef.current?.getBoundingClientRect() ?? { width: 0, height: 0 });
+	useResizeObserver(canvasRef, (el) => setContainerDimentions(el.contentRect));
 
   const [zoom, setZoom] = useState(1);
 
   const translateExtent = useMemo((): [[number, number], [number, number]] => {
-    const padding = 64 + 24;
+    const padding = 64;
     const [flowWidth, flowHeight] = flowSize;
 
-    const xVal = windowDimensions.width / zoom - padding - DEFAULT_NODE_SIZE.width;
-    const yVal = windowDimensions.height / zoom - padding - DEFAULT_NODE_SIZE.height;
+		const xVal = containerDimensions.width / zoom - padding - DEFAULT_NODE_SIZE.width;
+		const yVal = containerDimensions.height / zoom - padding - DEFAULT_NODE_SIZE.height;
 
     return [
-      [-xVal + 32, -yVal],
+      [-xVal, -yVal],
       [xVal + flowWidth, yVal + flowHeight - 30],
     ];
-  }, [flowSize, windowDimensions, zoom]);
+	}, [flowSize, containerDimensions, zoom]);
 
   useEffect(() => setLayerHostSelector('#msla-layer-host'), []);
   const KeyboardTransition = createTransition('keydown', (event) => {
@@ -211,48 +216,52 @@ export const Designer = (props: DesignerProps) => {
       {preloadSearch ? <SearchPreloader /> : null}
       <div className="msla-designer-canvas msla-panel-mode" ref={designerContainerRef}>
         <ReactFlowProvider>
-          <ReactFlow
-            nodeTypes={nodeTypes}
-            nodes={nodesWithPlaceholder}
-            edges={edges}
-            onNodesChange={onNodesChange}
-            nodesConnectable={false}
-            nodesDraggable={false}
-            nodesFocusable={false}
-            edgesFocusable={false}
-            edgeTypes={edgeTypes}
-            panOnScroll={true}
-            deleteKeyCode={['Backspace', 'Delete']}
-            zoomActivationKeyCode={['Ctrl', 'Meta', 'Alt', 'Control']}
-            translateExtent={clampPan ? translateExtent : undefined}
-            onMove={(_e, viewport) => setZoom(viewport.zoom)}
-            minZoom={0.05}
-            onPaneClick={() => dispatch(clearPanel())}
-            disableKeyboardA11y={true}
-            onlyRenderVisibleElements={!userInferredTabNavigation}
-            proOptions={{
-              account: 'paid-sponsor',
-              hideAttribution: true,
-            }}
-          >
-            <PanelRoot
-              panelContainerRef={designerContainerRef}
-              panelLocation={panelLocation}
-              customPanelLocations={customPanelLocations}
-              isResizeable={true}
-            />
-            {backgroundProps ? <Background {...backgroundProps} /> : null}
-            <DeleteModal />
-            <DesignerContextualMenu />
-            <EdgeContextualMenu />
-          </ReactFlow>
+					<div style={{ flexGrow: 1}}>
+						<ReactFlow
+							ref={canvasRef}
+							nodeTypes={nodeTypes}
+							nodes={nodesWithPlaceholder}
+							edges={edges}
+							onNodesChange={onNodesChange}
+							nodesConnectable={false}
+							nodesDraggable={false}
+							nodesFocusable={false}
+							edgesFocusable={false}
+							edgeTypes={edgeTypes}
+							panOnScroll={true}
+							deleteKeyCode={['Backspace', 'Delete']}
+							zoomActivationKeyCode={['Ctrl', 'Meta', 'Alt', 'Control']}
+							translateExtent={clampPan ? translateExtent : undefined}
+							onMove={(_e, viewport) => setZoom(viewport.zoom)}
+							minZoom={0.05}
+							onPaneClick={() => dispatch(clearPanel())}
+							disableKeyboardA11y={true}
+							onlyRenderVisibleElements={!userInferredTabNavigation}
+							proOptions={{
+								account: 'paid-sponsor',
+								hideAttribution: true,
+							}}
+						>
+							{backgroundProps ? <Background {...backgroundProps} /> : null}
+							<DeleteModal />
+							<DesignerContextualMenu />
+							<EdgeContextualMenu />
+						</ReactFlow>
+					</div>
+					<PanelRoot
+						panelContainerRef={designerContainerRef}
+						panelLocation={panelLocation}
+						customPanelLocations={customPanelLocations}
+						isResizeable={true}
+					/>
           <div className={css('msla-designer-tools', panelLocation === PanelLocation.Left && 'left-panel')}>
             <Controls />
             <Minimap />
           </div>
           <PerformanceDebugTool />
-          <CanvasFinder panelLocation={panelLocation} />
-          <DragPanMonitor />
+          <CanvasFinder />
+					<CanvasSizeMonitor canvasRef={canvasRef} />
+          <DragPanMonitor canvasRef={canvasRef} />
         </ReactFlowProvider>
         <div
           id={'msla-layer-host'}

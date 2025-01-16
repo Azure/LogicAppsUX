@@ -52,4 +52,7 @@ export const useStyles = makeStyles({
     whiteSpace: 'pre-wrap',
     wordWrap: 'break-word',
   },
+  messageBar: {
+    marginBelow: '10px',
+  },
 });

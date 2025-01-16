@@ -1,6 +1,6 @@
 // Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
 
-exports[`ui/workflowparameters/workflowparameter > should construct. 1`] = `
+exports[`ui/panel/panelContent > should construct. 1`] = `
 <div
   className="msla-node-details-panel"
   id="msla-node-details-panel-"
