@@ -74,7 +74,7 @@ describe('GraphContainerNode', () => {
     expect(tree).toMatchSnapshot();
   });
 
-  it('should render with footer and be a subgrah', () => {
+  it('should render with footer and be a subgraph', () => {
     (useNodeMetadata as Mock).mockReturnValue({ subgraphType: SUBGRAPH_TYPES.UNTIL_DO });
     const tree = renderer.create(<GraphContainerNode {...defaultProps} />).toJSON();
     expect(tree.props.className).includes('has-footer');
@@ -83,7 +83,7 @@ describe('GraphContainerNode', () => {
     expect(tree).toMatchSnapshot();
   });
 
-  it('should render graph container as normal when is monitoring view', () => {
+  it('should render graph container as normal when in monitoring view', () => {
     (useMonitoringView as Mock).mockReturnValue(true);
     (useRunData as Mock).mockReturnValue({ status: 'Success' });
 
