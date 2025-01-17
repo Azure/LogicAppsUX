@@ -289,9 +289,10 @@ const UnlimitedInputs = (props: {
         <SortableTree<DraggableListProps>
           items={(functionConnection.inputs ?? []).map((input, index) => ({
             data: input,
-            id: index,
+            id: index + 1,
             canHaveChildren: false,
           }))}
+          keepGhostInPlace={true}
           onItemsChanged={onItemsChanged}
           // eslint-disable-next-line react/display-name
           TreeItemComponent={forwardRef((treeProps, treeRef) => {
@@ -313,14 +314,14 @@ const UnlimitedInputs = (props: {
                   name={inputName}
                   value={inputValue}
                   remove={() => {
-                    removeUnboundedInput(index);
+                    removeUnboundedInput(index - 1);
                   }}
                   index={index}
                   customValueAllowed={inputsFromManifest[0].allowCustomInput}
                   schemaType={SchemaType.Source}
                   type={inputType}
                   validateAndCreateConnection={(optionValue: string | undefined, option: InputOptionProps | undefined) => {
-                    validateAndCreateConnection(optionValue, option, index);
+                    validateAndCreateConnection(optionValue, option, index - 1);
                   }}
                   functionData={func}
                   functionKey={functionKey}
