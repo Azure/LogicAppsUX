@@ -47,7 +47,7 @@ test.describe(
       await expect(page.getByTestId('scope-Condition-#scope-no-actions')).toBeVisible();
     });
 
-    test('Should collapse switch actions', async ({ page }) => {
+    test('Should collapse for each actions', async ({ page }) => {
       await page.goto('/');
       await GoToMockWorkflow(page, 'All Scope Nodes');
 
@@ -84,7 +84,36 @@ test.describe(
       await expect(page.getByTestId('scope-ForEach_empty-#scope-no-actions')).toBeVisible();
     });
 
-    test('Should collapse for each actions', async ({ page }) => {
+    test('Should collapse do until actions', async ({ page }) => {
+      await page.goto('/');
+      await GoToMockWorkflow(page, 'All Scope Nodes');
+
+      // Check items inside do until actions are visible
+      await expect(page.getByTestId('card-until_action_1').getByRole('button', { name: 'Until Action' })).toBeVisible();
+      await expect(page.getByTestId('card-until_action_2').getByRole('button', { name: 'Until Action' })).toBeVisible();
+
+      // Collapse do until from do button
+      await page.getByTestId('Until-collapse-toggle-small').click();
+
+      // Check items inside do until actions are hidden
+      await expect(page.getByTestId('card-until_action_1').getByRole('button', { name: 'Until Action' })).not.toBeVisible();
+      await expect(page.getByTestId('card-until_action_2').getByRole('button', { name: 'Until Action' })).not.toBeVisible();
+
+      // Check no actions message is visible
+      await expect(page.getByTestId('subgraph-Until-#subgraph-no-actions')).toBeVisible();
+
+      // Check until box is visible
+      await expect(page.getByLabel('Until operation')).toBeVisible();
+
+      // Expand do until from until button
+      await page.getByTestId('card-until').getByTestId('Until-collapse-toggle').click();
+
+      // Check items inside do until actions are visible
+      await expect(page.getByTestId('card-until_action_1').getByRole('button', { name: 'Until Action' })).toBeVisible();
+      await expect(page.getByTestId('card-until_action_2').getByRole('button', { name: 'Until Action' })).toBeVisible();
+    });
+
+    test('Should collapse switch actions', async ({ page }) => {
       await page.goto('/');
       await GoToMockWorkflow(page, 'All Scope Nodes');
 
@@ -100,8 +129,6 @@ test.describe(
 
       // Check items inside default are visible
       await expect(page.getByTestId('card-default_compose').getByRole('button', { name: 'Default-Compose' })).toBeVisible();
-
-      console.log(await page.innerHTML('body'));
 
       // Collapse default case
       await page.getByTestId('Switch-defaultCase-collapse-toggle-small').click();
