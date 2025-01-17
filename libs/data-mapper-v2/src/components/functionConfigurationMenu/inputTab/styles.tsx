@@ -75,4 +75,10 @@ export const useStyles = makeStyles({
     maxHeight: 'fit-content',
     marginTop: '5px',
   },
+  customizedDraggableListItem: {
+    border: 'unset',
+    boxSizing: 'unset',
+    display: 'unset',
+    padding: '0',
+  },
 });
