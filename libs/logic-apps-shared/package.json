@@ -36,7 +36,6 @@
     "main": "build/lib/index.cjs",
     "module": "build/lib/index.js",
     "types": "build/lib/index.d.ts",
-    "registry": "http://localhost:4873/",
     "exports": {
       ".": {
         "types:": "./build/lib/index.d.ts",
