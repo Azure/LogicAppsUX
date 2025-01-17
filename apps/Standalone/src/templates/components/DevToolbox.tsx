@@ -58,7 +58,7 @@ export const DevToolbox = () => {
                     />
                   </StackItem>
                   <StackItem style={{ width: '100%' }}>
-                    <SourceSettings showEnvironment={false} showHistoryButton={false} />
+                    <SourceSettings showHistoryButton={false} />
                   </StackItem>
                   <StackItem style={{ width: '100%' }}>
                     {isConsumption ? <AzureConsumptionLogicAppSelector /> : <AzureStandardLogicAppSelector />}

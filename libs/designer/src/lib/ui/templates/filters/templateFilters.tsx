@@ -154,7 +154,7 @@ export const TemplateFilters = ({ detailFilters }: TemplateFiltersProps) => {
             filterName={intlText.CONNECTORS}
             items={allUniqueConnectorsEntries?.map(([connectorId, connector]) => ({
               value: connectorId,
-              displayName: connector.properties.displayName,
+              displayName: connector.properties?.displayName,
             }))}
             onApplyButtonClick={(filterItems) => {
               dispatch(setConnectorsFilters(filterItems));

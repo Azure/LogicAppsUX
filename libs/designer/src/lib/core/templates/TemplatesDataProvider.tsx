@@ -3,7 +3,12 @@ import type React from 'react';
 import { useContext, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import type { AppDispatch, RootState } from '../state/templates/store';
-import { loadManifestNames, loadManifests, setFilteredTemplateNames } from '../state/templates/manifestSlice';
+import {
+  loadGithubManifestNames,
+  loadGithubManifests,
+  setCustomTemplates,
+  setFilteredTemplateNames,
+} from '../state/templates/manifestSlice';
 import {
   type ResourceDetails,
   setConsumption,
@@ -15,6 +20,7 @@ import { useAreServicesInitialized } from '../state/templates/templateselectors'
 import type { ConnectionReferences } from '../../common/models/workflow';
 import { getFilteredTemplates } from './utils/helper';
 import { initializeTemplateServices } from '../actions/bjsworkflow/templates';
+import type { Template } from '@microsoft/logic-apps-shared';
 
 export interface TemplatesDataProviderProps {
   isConsumption: boolean | undefined;
@@ -22,18 +28,29 @@ export interface TemplatesDataProviderProps {
   resourceDetails: ResourceDetails;
   services: TemplateServiceOptions;
   connectionReferences: ConnectionReferences;
+  customTemplates?: Record<string, Template.Manifest>;
   children?: React.ReactNode;
 }
 
-const DataProviderInner = ({ isConsumption, existingWorkflowName, children }: TemplatesDataProviderProps) => {
+const DataProviderInner = ({ customTemplates, isConsumption, existingWorkflowName, children }: TemplatesDataProviderProps) => {
   const dispatch = useDispatch<AppDispatch>();
-  const { availableTemplateNames, availableTemplates, filters } = useSelector((state: RootState) => state?.manifest);
+  const { githubTemplateNames, availableTemplates, filters } = useSelector((state: RootState) => state?.manifest);
 
   useEffect(() => {
-    if (availableTemplateNames) {
-      dispatch(loadManifests({}));
+    dispatch(loadGithubManifestNames());
+  }, [dispatch]);
+
+  useEffect(() => {
+    if (githubTemplateNames) {
+      dispatch(loadGithubManifests());
     }
-  }, [dispatch, availableTemplateNames]);
+  }, [dispatch, githubTemplateNames]);
+
+  useEffect(() => {
+    if (customTemplates) {
+      dispatch(setCustomTemplates(customTemplates));
+    }
+  }, [dispatch, customTemplates]);
 
   useEffect(() => {
     if (!availableTemplates) {
@@ -43,10 +60,6 @@ const DataProviderInner = ({ isConsumption, existingWorkflowName, children }: Te
     const filteredTemplateNames = getFilteredTemplates(availableTemplates, filters, !!isConsumption);
     dispatch(setFilteredTemplateNames(filteredTemplateNames));
   }, [dispatch, availableTemplates, filters, isConsumption]);
-
-  useEffect(() => {
-    dispatch(loadManifestNames());
-  }, [dispatch]);
 
   useEffect(() => {
     dispatch(setConsumption(!!isConsumption));

@@ -10,12 +10,14 @@ export interface WorkflowLoadingState {
   workflowName?: string;
   runId?: string;
   hostingPlan: HostingPlanTypes;
+  isLocal: boolean;
   theme: ThemeType;
 }
 
 const initialState: WorkflowLoadingState = {
   appId: undefined,
   hostingPlan: 'standard',
+  isLocal: false,
   theme: ThemeType.Light,
 };
 
@@ -39,6 +41,12 @@ export const workflowLoaderSlice = createSlice({
       state.appId = undefined;
       state.workflowName = undefined;
       state.runId = undefined;
+      state.resourcePath = '';
+    },
+    setIsLocalSelected: (state, action: PayloadAction<boolean>) => {
+      state.isLocal = action.payload;
+      state.appId = undefined;
+      state.workflowName = undefined;
       state.resourcePath = '';
     },
     setHostingPlan: (state, action: PayloadAction<HostingPlanTypes>) => {
