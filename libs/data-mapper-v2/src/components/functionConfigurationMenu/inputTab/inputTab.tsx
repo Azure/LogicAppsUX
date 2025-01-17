@@ -207,6 +207,7 @@ const UnlimitedInputs = (props: {
 
   const onItemsChanged = useCallback(
     (items: TreeItems<DraggableListProps>) => {
+      console.log(items);
       dispatch(
         updateFunctionConnectionInputs({
           functionKey: functionKey,
@@ -289,6 +290,7 @@ const UnlimitedInputs = (props: {
           items={(functionConnection.inputs ?? []).map((input, index) => ({
             data: input,
             id: index,
+            canHaveChildren: false,
           }))}
           onItemsChanged={onItemsChanged}
           // eslint-disable-next-line react/display-name
@@ -303,9 +305,7 @@ const UnlimitedInputs = (props: {
               <SimpleTreeItemWrapper
                 {...treeProps}
                 ref={treeRef}
-                manualDrag={false}
                 showDragHandle={false}
-                style={{ border: 'none', padding: 0 }}
                 contentClassName={styles.customizedDraggableListItem}
               >
                 {/* HERE GOES THE ACTUAL CONTENT OF YOUR COMPONENT */}

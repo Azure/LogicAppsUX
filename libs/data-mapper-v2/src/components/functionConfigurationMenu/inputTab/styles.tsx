@@ -78,7 +78,7 @@ export const useStyles = makeStyles({
   customizedDraggableListItem: {
     border: 'unset',
     boxSizing: 'unset',
-    display: 'unset',
+    display: 'block',
     padding: '0',
   },
 });
