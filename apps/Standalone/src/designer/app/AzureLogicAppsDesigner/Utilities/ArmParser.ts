@@ -7,6 +7,7 @@ export class ArmParser {
   private _provider: string;
   private _topResourceName: string;
   private _resourceType: string;
+  private _resourceName: string;
   constructor(armId: string) {
     const parts = armId.split('/');
     this._subscriptionId = parts[2];
@@ -14,6 +15,7 @@ export class ArmParser {
     this._provider = parts[6];
     this._resourceType = parts[7];
     this._topResourceName = parts[8];
+    this._resourceName = parts[parts.length - 1];
   }
   // this is a function that will get the topmost resource id
   public get topmostResourceId(): string {
@@ -33,5 +35,9 @@ export class ArmParser {
 
   public get topResourceName(): string {
     return this._topResourceName;
+  }
+
+  public get resourceName(): string {
+    return this._resourceName;
   }
 }

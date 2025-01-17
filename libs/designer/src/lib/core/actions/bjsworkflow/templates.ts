@@ -122,6 +122,20 @@ export const initializeTemplateServices = createAsyncThunk(
   }
 );
 
+export const loadTemplateManifests = async (resourcePaths: string[]) => {
+  try {
+    const manifestPromises = resourcePaths.map(async (resourcePath) => {
+      const data = (await import(`./../../templates/templateFiles/${resourcePath}/manifest.json`))?.default as Template.Manifest;
+      return [resourcePath, data];
+    });
+    const manifestsArray = await Promise.all(manifestPromises);
+    return Object.fromEntries(manifestsArray);
+  } catch (ex) {
+    console.error(ex);
+    return undefined;
+  }
+};
+
 export const loadTemplate = createAsyncThunk('loadTemplate', async (preLoadedManifest: Template.Manifest | undefined, thunkAPI) => {
   const currentState: RootState = thunkAPI.getState() as RootState;
   const currentTemplateResourcePath = currentState.template.templateName;

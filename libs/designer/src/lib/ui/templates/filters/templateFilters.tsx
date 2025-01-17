@@ -39,7 +39,7 @@ export const TemplateFilters = ({ detailFilters }: TemplateFiltersProps) => {
     const uniqueConnectorsFromConnections = getUniqueConnectorsFromConnections(allConnections, subscriptionId, location);
     return uniqueConnectorsFromConnections.map((connector) => connector.connectorId);
   }, [availableTemplates, location, subscriptionId]);
-  const { data: allUniqueConnectorsEntries } = useConnectors(allTemplatesUniqueConnectorIds);
+  const { data: allUniqueConnectorsEntries, isLoading: connectorsLoading } = useConnectors(allTemplatesUniqueConnectorIds);
   const selectedTabId = appliedDetailFilters?.Type?.[0]?.value ?? templateDefaultTabKey;
 
   const intlText = {
@@ -96,7 +96,7 @@ export const TemplateFilters = ({ detailFilters }: TemplateFiltersProps) => {
       },
     ];
 
-    if (!isConsumption) {
+    if (!isConsumption && !!availableTemplates) {
       basicTabs.push({
         value: 'Workflow',
         displayName: intl.formatMessage({
@@ -115,7 +115,7 @@ export const TemplateFilters = ({ detailFilters }: TemplateFiltersProps) => {
       });
     }
     return basicTabs;
-  }, [isConsumption, intl]);
+  }, [intl, isConsumption, availableTemplates]);
 
   const onTabSelected = (e?: SelectTabEvent, data?: SelectTabData): void => {
     if (data) {
@@ -149,10 +149,10 @@ export const TemplateFilters = ({ detailFilters }: TemplateFiltersProps) => {
         />
       </div>
       <div className="msla-templates-filters-dropdowns">
-        {allUniqueConnectorsEntries && allUniqueConnectorsEntries.length > 0 && (
+        {allTemplatesUniqueConnectorIds.length > 0 && (
           <TemplatesFilterDropdown
             filterName={intlText.CONNECTORS}
-            items={allUniqueConnectorsEntries?.map(([connectorId, connector]) => ({
+            items={(allUniqueConnectorsEntries ?? []).map(([connectorId, connector]) => ({
               value: connectorId,
               displayName: connector.properties.displayName,
             }))}
@@ -160,6 +160,7 @@ export const TemplateFilters = ({ detailFilters }: TemplateFiltersProps) => {
               dispatch(setConnectorsFilters(filterItems));
             }}
             isSearchable
+            isLoadingContent={connectorsLoading}
           />
         )}
         {Object.keys(detailFilters).map((filterName, index) => (

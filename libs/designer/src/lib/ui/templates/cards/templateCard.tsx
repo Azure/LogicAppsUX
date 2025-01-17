@@ -25,6 +25,7 @@ import { useMemo } from 'react';
 
 interface TemplateCardProps {
   templateName: string;
+  isPlaceholder?: boolean;
 }
 
 const maxConnectorsToShow = 5;
@@ -36,13 +37,12 @@ const cardStyles: IDocumentCardStyles = {
 export const TemplateCard = ({ templateName }: TemplateCardProps) => {
   const dispatch = useDispatch<AppDispatch>();
   const intl = useIntl();
-  const { templates, subscriptionId, workflowAppName, location } = useSelector((state: RootState) => ({
-    templates: state.manifest.availableTemplates,
+  const { templateManifest, subscriptionId, workflowAppName, location } = useSelector((state: RootState) => ({
+    templateManifest: state.manifest.availableTemplates?.[templateName],
     subscriptionId: state.workflow.subscriptionId,
     workflowAppName: state.workflow.workflowAppName,
     location: state.workflow.location,
   }));
-  const templateManifest = templates?.[templateName];
   const isMultiWorkflow = useMemo(() => templateManifest && isMultiWorkflowTemplate(templateManifest), [templateManifest]);
 
   const intlText = {

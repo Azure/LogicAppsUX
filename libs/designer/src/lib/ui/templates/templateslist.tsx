@@ -7,7 +7,7 @@ import { useIntl } from 'react-intl';
 import { TemplateFilters } from './filters/templateFilters';
 import { useEffect } from 'react';
 import { setLayerHostSelector } from '@fluentui/react';
-import type { TemplatesDesignerProps } from './TemplatesDesigner';
+import type { CreateWorkflowHandler, TemplatesDesignerProps } from './TemplatesDesigner';
 import { setPageNum, templatesCountPerPage } from '../../core/state/templates/manifestSlice';
 import { QuickViewPanel } from '../panel/templatePanel/quickViewPanel/quickViewPanel';
 import { CreateWorkflowPanel } from '../panel/templatePanel/createWorkflowPanel/createWorkflowPanel';
@@ -17,7 +17,6 @@ export const TemplatesList = ({ detailFilters, createWorkflowCall }: TemplatesDe
   const intl = useIntl();
   const dispatch = useDispatch<AppDispatch>();
 
-  const { templateName, workflows } = useSelector((state: RootState) => state.template);
   const {
     filteredTemplateNames,
     filters: { pageNum, detailFilters: appliedDetailFilters },
@@ -46,7 +45,15 @@ export const TemplatesList = ({ detailFilters, createWorkflowCall }: TemplatesDe
       <TemplateFilters detailFilters={detailFilters} />
       <br />
 
-      {filteredTemplateNames && filteredTemplateNames?.length > 0 ? (
+      {filteredTemplateNames === undefined ? (
+        <div>
+          <div className="msla-templates-list">
+            {[1, 2, 3, 4].map((i) => (
+              <TemplateCard key={i} templateName={''} />
+            ))}
+          </div>
+        </div>
+      ) : filteredTemplateNames?.length > 0 ? (
         <div>
           <div className="msla-templates-list">
             {selectedTabId !== 'Accelerator' && <BlankWorkflowTemplateCard />}
@@ -77,13 +84,7 @@ export const TemplatesList = ({ detailFilters, createWorkflowCall }: TemplatesDe
         </div>
       )}
 
-      {templateName === undefined || Object.keys(workflows).length !== 1 ? null : (
-        <>
-          <QuickViewPanel showCreate={true} workflowId={Object.keys(workflows)[0]} />
-          <CreateWorkflowPanel createWorkflow={createWorkflowCall} />
-        </>
-      )}
-
+      <WorkflowView createWorkflowCall={createWorkflowCall} />
       <div
         id={'msla-layer-host'}
         style={{
@@ -92,6 +93,17 @@ export const TemplatesList = ({ detailFilters, createWorkflowCall }: TemplatesDe
           visibility: 'hidden',
         }}
       />
+    </>
+  );
+};
+
+const WorkflowView = ({ createWorkflowCall }: { createWorkflowCall: CreateWorkflowHandler }) => {
+  const { templateName, workflows } = useSelector((state: RootState) => state.template);
+
+  return templateName === undefined || Object.keys(workflows).length !== 1 ? null : (
+    <>
+      <QuickViewPanel showCreate={true} workflowId={Object.keys(workflows)[0]} />
+      <CreateWorkflowPanel createWorkflow={createWorkflowCall} />
     </>
   );
 };

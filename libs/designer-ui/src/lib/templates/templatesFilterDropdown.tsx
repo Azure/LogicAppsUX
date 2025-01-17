@@ -1,7 +1,15 @@
-import { Dropdown, type IDropdownOption, type ISelectableOption, SearchBox, SelectableOptionMenuItemType } from '@fluentui/react';
+import {
+  Dropdown,
+  type IDropdownOption,
+  type IDropdownProps,
+  type ISelectableOption,
+  SearchBox,
+  SelectableOptionMenuItemType,
+} from '@fluentui/react';
 import { useMemo, useState } from 'react';
 import { useIntl } from 'react-intl';
 import Fuse from 'fuse.js';
+import { Spinner } from '@fluentui/react-components';
 
 export interface FilterObject {
   value: string;
@@ -16,12 +24,19 @@ interface TemplatesFilterDropdownProps {
   filterName: string;
   items: FilterObject[];
   onApplyButtonClick: (_filterItems: FilterObject[] | undefined) => void;
+  isLoadingContent?: boolean;
   isSearchable?: boolean;
 }
 
 const allOptionId = 'all';
 
-export const TemplatesFilterDropdown = ({ filterName, items, onApplyButtonClick, isSearchable = false }: TemplatesFilterDropdownProps) => {
+export const TemplatesFilterDropdown = ({
+  filterName,
+  items,
+  onApplyButtonClick,
+  isSearchable = false,
+  isLoadingContent = false,
+}: TemplatesFilterDropdownProps) => {
   const intl = useIntl();
   const [displayItems, setDisplayItems] = useState<InternalFilterObject[]>(items);
   const [selectedItems, setSelectedItems] = useState<InternalFilterObject[] | undefined>();
@@ -99,6 +114,13 @@ export const TemplatesFilterDropdown = ({ filterName, items, onApplyButtonClick,
     return defaultRender?.(option) ?? null;
   };
 
+  const onRenderCaretDown = (
+    _?: IDropdownProps | undefined,
+    defaultRender?: ((props?: IDropdownProps | undefined) => JSX.Element | null) | undefined
+  ) => {
+    return isLoadingContent ? <Spinner size="extra-small" /> : (defaultRender?.() ?? null);
+  };
+
   return (
     <Dropdown
       className="msla-templates-filter-dropdown"
@@ -106,6 +128,8 @@ export const TemplatesFilterDropdown = ({ filterName, items, onApplyButtonClick,
         gapSpace: 10,
         calloutMaxHeight: 400,
       }}
+      disabled={isLoadingContent}
+      onRenderCaretDown={onRenderCaretDown}
       multiSelect
       options={dropdownOptions}
       label={filterName}

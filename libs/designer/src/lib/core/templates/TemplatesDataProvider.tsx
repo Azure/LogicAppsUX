@@ -3,7 +3,13 @@ import type React from 'react';
 import { useContext, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import type { AppDispatch, RootState } from '../state/templates/store';
-import { loadManifestNames, loadManifests, setFilteredTemplateNames } from '../state/templates/manifestSlice';
+import {
+  lazyLoadManifests,
+  loadManifestNames,
+  loadManifests,
+  setFilteredTemplateNames,
+  templatesCountPerPage,
+} from '../state/templates/manifestSlice';
 import {
   type ResourceDetails,
   setConsumption,
@@ -25,13 +31,23 @@ export interface TemplatesDataProviderProps {
   children?: React.ReactNode;
 }
 
-const DataProviderInner = ({ isConsumption, existingWorkflowName, children }: TemplatesDataProviderProps) => {
+const DataProviderInner = ({ isConsumption, children }: TemplatesDataProviderProps) => {
   const dispatch = useDispatch<AppDispatch>();
   const { availableTemplateNames, availableTemplates, filters } = useSelector((state: RootState) => state?.manifest);
 
   useEffect(() => {
+    if (!availableTemplateNames) {
+      dispatch(loadManifestNames());
+    }
+  }, [dispatch, availableTemplateNames]);
+
+  useEffect(() => {
     if (availableTemplateNames) {
-      dispatch(loadManifests({}));
+      dispatch(loadManifests(templatesCountPerPage));
+
+      if (availableTemplateNames.length > templatesCountPerPage) {
+        dispatch(lazyLoadManifests(templatesCountPerPage));
+      }
     }
   }, [dispatch, availableTemplateNames]);
 
@@ -43,20 +59,6 @@ const DataProviderInner = ({ isConsumption, existingWorkflowName, children }: Te
     const filteredTemplateNames = getFilteredTemplates(availableTemplates, filters, !!isConsumption);
     dispatch(setFilteredTemplateNames(filteredTemplateNames));
   }, [dispatch, availableTemplates, filters, isConsumption]);
-
-  useEffect(() => {
-    dispatch(loadManifestNames());
-  }, [dispatch]);
-
-  useEffect(() => {
-    dispatch(setConsumption(!!isConsumption));
-  }, [dispatch, isConsumption]);
-
-  useEffect(() => {
-    if (existingWorkflowName) {
-      dispatch(setExistingWorkflowName(existingWorkflowName));
-    }
-  }, [dispatch, existingWorkflowName]);
 
   return <>{children}</>;
 };
@@ -77,7 +79,20 @@ export const TemplatesDataProvider = (props: TemplatesDataProviderProps) => {
 
     dispatch(setResourceDetails(props.resourceDetails));
     dispatch(initializeConnectionReferences(props.connectionReferences));
-  }, [dispatch, servicesInitialized, props.services, props.resourceDetails, props.connectionReferences]);
+    dispatch(setConsumption(!!props.isConsumption));
+
+    if (props.existingWorkflowName) {
+      dispatch(setExistingWorkflowName(props.existingWorkflowName));
+    }
+  }, [
+    dispatch,
+    servicesInitialized,
+    props.services,
+    props.resourceDetails,
+    props.connectionReferences,
+    props.existingWorkflowName,
+    props.isConsumption,
+  ]);
 
   if (!servicesInitialized) {
     return null;

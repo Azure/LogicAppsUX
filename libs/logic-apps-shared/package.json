@@ -1,6 +1,6 @@
 {
   "name": "@microsoft/logic-apps-shared",
-  "version": "5.18.0",
+  "version": "50.1.0",
   "dependencies": {
     "@apidevtools/swagger-parser": "10.0.3",
     "@formatjs/intl": "^2.10.1",
@@ -36,6 +36,7 @@
     "main": "build/lib/index.cjs",
     "module": "build/lib/index.js",
     "types": "build/lib/index.d.ts",
+    "registry": "http://localhost:4873/",
     "exports": {
       ".": {
         "types:": "./build/lib/index.d.ts",
