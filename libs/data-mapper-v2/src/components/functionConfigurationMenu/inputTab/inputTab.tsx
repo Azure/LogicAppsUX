@@ -24,7 +24,7 @@ import {
 import { SchemaType, type SchemaNodeDictionary } from '@microsoft/logic-apps-shared';
 import DraggableList from 'react-draggable-list';
 import InputListWrapper, { type TemplateItemProps, type CommonProps } from './InputList';
-import { useCallback, useMemo } from 'react';
+import { useCallback, useMemo, useRef } from 'react';
 import { useIntl } from 'react-intl';
 import { InputCustomInfoLabel } from './inputCustomInfoLabel';
 import { useStyles } from './styles';
@@ -167,6 +167,7 @@ const UnlimitedInputs = (props: {
   const styles = useStyles();
   const dispatch = useDispatch();
   const intl = useIntl();
+  const containerRef = useRef<HTMLDivElement | null>(null);
 
   const functionConnection = useMemo(() => props.connections[props.functionKey], [props.connections, props.functionKey]);
 
@@ -227,7 +228,7 @@ const UnlimitedInputs = (props: {
           <Text className={styles.descriptionText}>{inputsFromManifest[0].tooltip ?? inputsFromManifest[0].placeHolder ?? ''}</Text>
         </div>
       </div>
-      <div className={styles.body}>
+      <div className={styles.body} ref={containerRef}>
         <DraggableList<TemplateItemProps, CommonProps, any>
           list={Object.entries(functionConnection.inputs).map((input, index) => ({
             input: input[1],
@@ -244,6 +245,7 @@ const UnlimitedInputs = (props: {
           onMoveEnd={onDragMoveEnd}
           itemKey={'index'}
           template={InputListWrapper}
+          container={() => containerRef?.current}
         />
         <div className={styles.formControlDescription}>
           <Button

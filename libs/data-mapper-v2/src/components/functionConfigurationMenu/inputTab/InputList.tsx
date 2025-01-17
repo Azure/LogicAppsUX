@@ -42,7 +42,7 @@ type CustomListItemProps = {
   key: string;
 };
 
-const InputList = (props: InputListProps) => {
+export const InputList = (props: InputListProps) => {
   const connectionDictionary = useSelector((state: RootState) => state.dataMap.present.curDataMapOperation.dataMapConnections);
   const sourceSchemaDictionary = useSelector((state: RootState) => state.dataMap.present.curDataMapOperation.flattenedSourceSchema);
   const functionNodeDictionary = useSelector((state: RootState) => state.dataMap.present.curDataMapOperation.functionNodes);
