@@ -182,6 +182,7 @@ export const SubgraphCard: React.FC<SubgraphCardProps> = ({
           onClick={handleCollapse}
           onKeyDown={collapseKeyboardInteraction.keyUp}
           onKeyUp={collapseKeyboardInteraction.keyDown}
+          data-automation-id={`${id}-collapse-toggle-small`}
         >
           <div className={css('msla-selection-box', 'white-outline', selectionMode)} tabIndex={-1} />
           <div className="msla-subgraph-title msla-subgraph-title-text">{data.title}</div>
