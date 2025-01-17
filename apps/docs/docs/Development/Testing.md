@@ -32,7 +32,7 @@ To run the real API E2E tests, use:
 pnpm run test:e2e
 ```
 
-**Note**: Real API tests require deployment of workflows. To run these tests locally, you need to configure your environment with an `.env`  file with the following variables:
+**Note**: Real API tests require deployment of workflows. To run these tests locally, you need to configure your environment with an `.env` file with the following variables:
 
 ```env
 AZURE_SITE_NAME="Logic App Name"
