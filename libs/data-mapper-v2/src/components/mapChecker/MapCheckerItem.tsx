@@ -48,17 +48,19 @@ export const MapCheckerItem = ({ title, description, severity, _onClick, reactFl
 
   return (
     <div className={styles.buttonStyle} id={reactFlowId}>
-      <Badge appearance="tint" className={styles.badge}>
-        {isSourceNode(reactFlowId) ? resources.Source : isTargetNode(reactFlowId) ? resources.Target : resources.Function}
-      </Badge>
       <Stack
         horizontal
         tokens={{
           childrenGap: '4px',
         }}
       >
-        {icon}
-        <Text className={styles.headerText}>{headerText}</Text>
+        <div className={styles.headerContainer}>
+          {icon}
+          <Text className={styles.headerText}>{headerText}</Text>
+          <Badge appearance="filled" className={styles.badge}>
+            {isSourceNode(reactFlowId) ? resources.Source : isTargetNode(reactFlowId) ? resources.Target : resources.Function}
+          </Badge>
+        </div>
       </Stack>
       <Text className={styles.message}>{intl.formatMessage(description.message, description.value)}</Text>
     </div>
