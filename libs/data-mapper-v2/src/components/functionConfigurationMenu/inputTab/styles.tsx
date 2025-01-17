@@ -36,6 +36,7 @@ export const useStyles = makeStyles({
   body: {
     display: 'flex',
     flexDirection: 'column',
+    marginTop: '5px',
   },
   formControlWrapper: {
     display: 'flex',
@@ -71,7 +72,7 @@ export const useStyles = makeStyles({
     justifyContent: 'space-between',
   },
   draggableListItem: {
-    marginTop: '5px',
     maxHeight: 'fit-content',
+    marginTop: '5px',
   },
 });

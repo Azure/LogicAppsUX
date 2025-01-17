@@ -22,6 +22,7 @@ import {
   LoggerService,
   type LogicAppsV2,
   type Template,
+  TemplateService,
 } from '@microsoft/logic-apps-shared';
 import { createAsyncThunk } from '@reduxjs/toolkit';
 import type { RootState } from '../../state/templates/store';
@@ -122,16 +123,22 @@ export const initializeTemplateServices = createAsyncThunk(
   }
 );
 
-export const loadTemplate = createAsyncThunk('loadTemplate', async (preLoadedManifest: Template.Manifest | undefined, thunkAPI) => {
-  const currentState: RootState = thunkAPI.getState() as RootState;
-  const currentTemplateResourcePath = currentState.template.templateName;
+export const loadTemplate = createAsyncThunk(
+  'loadTemplate',
+  async (
+    { preLoadedManifest, isCustomTemplate = false }: { preLoadedManifest: Template.Manifest | undefined; isCustomTemplate?: boolean },
+    thunkAPI
+  ) => {
+    const currentState: RootState = thunkAPI.getState() as RootState;
+    const currentTemplateResourcePath = currentState.template.templateName;
 
-  if (currentTemplateResourcePath) {
-    return loadTemplateFromResourcePath(currentTemplateResourcePath, preLoadedManifest);
+    if (currentTemplateResourcePath) {
+      return await loadTemplateFromResourcePath(currentTemplateResourcePath, preLoadedManifest, isCustomTemplate);
+    }
+
+    return undefined;
   }
-
-  return undefined;
-});
+);
 
 export const validateWorkflowName = (workflowName: string | undefined, existingWorkflowNames: string[]) => {
   const intl = getIntl();
@@ -164,9 +171,14 @@ export const validateWorkflowName = (workflowName: string | undefined, existingW
   return undefined;
 };
 
-const loadTemplateFromResourcePath = async (templateName: string, manifest: Template.Manifest | undefined): Promise<TemplatePayload> => {
+const loadTemplateFromResourcePath = async (
+  templateName: string,
+  manifest: Template.Manifest | undefined,
+  isCustomTemplate: boolean
+): Promise<TemplatePayload> => {
   const templateManifest: Template.Manifest =
     manifest ?? (await import(`./../../templates/templateFiles/${templateName}/manifest.json`)).default;
+
   const workflows = templateManifest.workflows;
   const isMultiWorkflow = isMultiWorkflowTemplate(templateManifest);
   const data: TemplatePayload = {
@@ -185,7 +197,8 @@ const loadTemplateFromResourcePath = async (templateName: string, manifest: Temp
       const workflowData = await loadWorkflowTemplateFromManifest(
         workflowPath,
         `${templateName}/${workflowPath}`,
-        /* manifest */ undefined
+        /* manifest */ undefined,
+        isCustomTemplate
       );
       if (workflowData) {
         workflowData.workflow.workflowName = workflows[workflowPath].name;
@@ -217,7 +230,7 @@ const loadTemplateFromResourcePath = async (templateName: string, manifest: Temp
     }
   } else {
     const workflowId = guid();
-    const workflowData = await loadWorkflowTemplateFromManifest(workflowId, templateName, manifest);
+    const workflowData = await loadWorkflowTemplateFromManifest(workflowId, templateName, manifest, isCustomTemplate);
     if (workflowData) {
       data.workflows = {
         [workflowId]: workflowData.workflow,
@@ -233,7 +246,8 @@ const loadTemplateFromResourcePath = async (templateName: string, manifest: Temp
 const loadWorkflowTemplateFromManifest = async (
   workflowId: string,
   templatePath: string,
-  manifest: Template.Manifest | undefined
+  manifest: Template.Manifest | undefined,
+  isCustomTemplate: boolean
 ): Promise<
   | {
       workflow: WorkflowTemplateData;
@@ -243,7 +257,7 @@ const loadWorkflowTemplateFromManifest = async (
   | undefined
 > => {
   try {
-    const { templateManifest, templateWorkflowDefinition } = await getWorkflowAndManifest(templatePath, manifest);
+    const { templateManifest, templateWorkflowDefinition } = await getWorkflowAndManifest(templatePath, manifest, isCustomTemplate);
     const parameterDefinitions = templateManifest.parameters?.reduce((result: Record<string, Template.ParameterDefinition>, parameter) => {
       result[parameter.name] = {
         ...parameter,
@@ -282,17 +296,25 @@ const loadWorkflowTemplateFromManifest = async (
   }
 };
 
-const getWorkflowAndManifest = async (templatePath: string, manifest: Template.Manifest | undefined) => {
-  const paths = templatePath.split('/');
-  const templateManifest: Template.Manifest =
-    !manifest && paths.length === 2
-      ? (await import(`./../../templates/templateFiles/${paths[0]}/${paths[1]}/manifest.json`)).default
-      : (manifest ?? (await import(`./../../templates/templateFiles/${templatePath}/manifest.json`)).default);
+const getWorkflowAndManifest = async (templatePath: string, manifest: Template.Manifest | undefined, isCustomTemplate: boolean) => {
+  const templateManifest: Template.Manifest = manifest ?? (await getTemplateResourceGivenPath(templatePath, 'manifest', isCustomTemplate));
 
-  const templateWorkflowDefinition: LogicAppsV2.WorkflowDefinition =
-    paths.length === 2
-      ? (await import(`./../../templates/templateFiles/${paths[0]}/${paths[1]}/workflow.json`)).default
-      : (await import(`./../../templates/templateFiles/${templatePath}/workflow.json`)).default;
+  const templateWorkflowDefinition: LogicAppsV2.WorkflowDefinition = await getTemplateResourceGivenPath(
+    templatePath,
+    'workflow',
+    isCustomTemplate
+  );
 
   return { templateManifest, templateWorkflowDefinition };
+};
+
+const getTemplateResourceGivenPath = async (resourcePath: string, artifactType: string, isCustomTemplate: boolean) => {
+  if (isCustomTemplate) {
+    return await TemplateService()?.getCustomResource?.(resourcePath, artifactType);
+  }
+  const paths = resourcePath.split('/');
+
+  return paths.length === 2
+    ? (await import(`./../../templates/templateFiles/${paths[0]}/${paths[1]}/${artifactType}.json`)).default
+    : (await import(`./../../templates/templateFiles/${resourcePath}/${artifactType}.json`)).default;
 };
