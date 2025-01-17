@@ -18,7 +18,7 @@ export class RealDataApi {
     await this.page.getByPlaceholder('Select an App').click();
     await this.page.getByPlaceholder('Select an App').fill(this.siteName);
     await this.page.getByPlaceholder('Select an App').press('Enter');
-    await this.page.getByLabel('Workflow').locator('span').filter({ hasText: '' }).click();
+    await this.page.getByText('Select a Workflow').click();
     await this.page.getByRole('option', { name: this.workflowName, exact: true }).click();
     await this.page.getByRole('button', { name: 'Toolbox' }).click();
     await this.page.getByLabel('fit view').click({ force: true });
@@ -52,7 +52,9 @@ export class RealDataApi {
         'Content-Type': 'text/plain',
       },
     });
-    while (LAResult && (LAResult.status() !== expectedStatus || (await LAResult.text()) !== expectedBody)) {
+
+    let retries = 5;
+    while (retries-- > 0 && (LAResult.status() !== expectedStatus || (await LAResult.text()) !== expectedBody)) {
       await this.page.waitForTimeout(4000);
       listCallbackUrlCall = await this.request.post(
         `${Constants.managementUrl}${this.siteId}/hostruntime/runtime/webhooks/workflow/api/management/workflows/${this.workflowName}/triggers/${triggerName}/listCallbackUrl?api-version=${Constants.siteApiVersion}`,
@@ -74,9 +76,13 @@ export class RealDataApi {
       });
     }
 
+    if (retries <= 0) {
+      throw new Error('Max retries reached');
+    }
     expect(LAResult.status()).toBe(expectedStatus);
     expect(await LAResult.text()).toBe(expectedBody);
   }
+
   async deployWorkflow(workflowData: any) {
     if ((workflowData.kind as string).toLowerCase() === 'stateless') {
       this.workflowName = `${this.workflowName}-stateless`;
