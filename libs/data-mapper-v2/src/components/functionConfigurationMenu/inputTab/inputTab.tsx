@@ -309,7 +309,6 @@ const UnlimitedInputs = (props: {
                 showDragHandle={false}
                 contentClassName={styles.customizedDraggableListItem}
               >
-                {/* HERE GOES THE ACTUAL CONTENT OF YOUR COMPONENT */}
                 <CustomListItem
                   name={inputName}
                   value={inputValue}
