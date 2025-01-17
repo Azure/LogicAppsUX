@@ -338,7 +338,11 @@ const ScopeCardNode = ({ data, targetPosition = Position.Top, sourcePosition = P
           <Handle className="node-handle bottom" type="source" position={sourcePosition} isConnectable={false} />
         </div>
       </div>
-      {graphCollapsed && !isFooter ? <p className="no-actions-text">{collapsedText}</p> : null}
+      {graphCollapsed && !isFooter ? (
+        <p className="no-actions-text" data-automation-id={`scope-${id}-no-actions`}>
+          {collapsedText}
+        </p>
+      ) : null}
       {showEmptyGraphComponents ? (
         readOnly ? (
           <p className="no-actions-text">No Actions</p>

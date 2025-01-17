@@ -1,0 +1,43 @@
+{
+  "title": "[Mock] Simple Accelerator Template",
+  "description": "This is a simple accelerator description",
+  "skus": [
+    "standard"
+  ],
+  "detailsDescription": "This is a simple accelerator details description \n- point 1 \n- point 2.",
+  "details": {
+    "By": "Microsoft",
+    "Type": "Accelerator",
+    "Category": "Mock"
+  },
+  "artifacts": [],
+  "workflows": {
+    "Workflow1": {
+      "name": "Workflow1_name"
+    },
+    "Workflow2": {
+      "name": "Workflow2_name"
+    }
+  },
+  "parameters": [],
+  "connections": {
+    "azuresql_#workflowname#": {
+      "connectorId": "/serviceProviders/sql",
+      "kind": "inapp"
+    },
+    "openai_#workflowname#": {
+      "connectorId": "/serviceProviders/openai",
+      "kind": "inapp"
+    },
+    "azureblob_#workflowname#": {
+      "connectorId": "/serviceProviders/AzureBlob",
+      "kind": "inapp"
+    }
+  },
+  "featuredOperations": [
+    {
+      "type": "ChunkText"
+    }
+  ],
+  "sourceCodeUrl": "/sourceCodeUrl"
+}
