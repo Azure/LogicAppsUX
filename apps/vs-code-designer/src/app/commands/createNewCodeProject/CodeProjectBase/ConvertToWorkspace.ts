@@ -15,7 +15,7 @@ import { SetWorkspaceName } from './SetWorkspaceName';
 import { SetWorkspaceContents } from './SetWorkspaceContents';
 import { isLogicAppProjectInRoot } from '../../../utils/verifyIsProject';
 
-export async function ConvertToWorkspace(context: IActionContext): Promise<void> {
+export async function ConvertToWorkspace(context: IActionContext): Promise<boolean> {
   const workspaceFolder = await getWorkspaceFolder(context, undefined, true);
   if (await isLogicAppProjectInRoot(workspaceFolder)) {
     addLocalFuncTelemetry(context);
@@ -38,11 +38,12 @@ export async function ConvertToWorkspace(context: IActionContext): Promise<void>
       if (result === DialogResponses.yes) {
         await vscode.commands.executeCommand(extensionCommand.vscodeOpenFolder, vscode.Uri.file(wizardContext.workspaceCustomFilePath));
         context.telemetry.properties.openContainingWorkspace = 'true';
-      } else {
-        context.telemetry.properties.openContainingWorkspace = 'false';
-        return;
+        return true;
       }
-    } else if (!wizardContext.workspaceCustomFilePath && !wizardContext.customWorkspaceFolderPath) {
+      context.telemetry.properties.openContainingWorkspace = 'false';
+      return false;
+    }
+    if (!wizardContext.workspaceCustomFilePath && !wizardContext.customWorkspaceFolderPath) {
       const message = localize(
         'createContainingWorkspace',
         'Full functionality of the Azure Logic Apps (Standard) extension is available only when logic app project(s) are inside a workspace. Your project(s) will be copied over to the new workspace. Do you want to create the workspace before continuing?'
@@ -59,12 +60,12 @@ export async function ConvertToWorkspace(context: IActionContext): Promise<void>
         await workspaceWizard.execute();
         context.telemetry.properties.createContainingWorkspace = 'true';
         window.showInformationMessage(localize('finishedConvertingWorkspace', 'Finished converting to workspace.'));
-      } else {
-        context.telemetry.properties.createContainingWorkspace = 'false';
-        return;
+        return true;
       }
-    } else {
-      context.telemetry.properties.isWorkspace = 'true';
+      context.telemetry.properties.createContainingWorkspace = 'false';
+      return false;
     }
+    context.telemetry.properties.isWorkspace = 'true';
+    return true;
   }
 }

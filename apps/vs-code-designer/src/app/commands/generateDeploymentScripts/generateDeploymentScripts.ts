@@ -49,8 +49,7 @@ export async function generateDeploymentScripts(context: IActionContext): Promis
     const connectionsData: ConnectionsData = isEmptyString(connectionsJson) ? {} : JSON.parse(connectionsJson);
     const isParameterized = await isConnectionsParameterized(connectionsData);
     const workflowFiles = getWorkflowFilePaths(projectPath);
-    await ConvertToWorkspace(context);
-    if (context.telemetry.properties.isWorkspace !== 'true') {
+    if (!(await ConvertToWorkspace(context))) {
       ext.outputChannel.appendLog(localize('exitScriptGen', 'Exiting script generation...'));
       return;
     }

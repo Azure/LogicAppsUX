@@ -24,8 +24,7 @@ export async function createNewProjectFromCommand(
   functionName?: string,
   functionSettings?: { [key: string]: string | undefined }
 ): Promise<void> {
-  await ConvertToWorkspace(context);
-  if (context.telemetry.properties.isWorkspace === 'true') {
+  if (await ConvertToWorkspace(context)) {
     await createNewProjectInternalBase(
       context,
       {
