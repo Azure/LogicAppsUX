@@ -25,7 +25,7 @@
     "react-dnd": "16.0.1",
     "react-dnd-accessible-backend": "1.0.1",
     "react-dnd-html5-backend": "16.0.1",
-    "react-dnd-multi-backend": "8.0.0",
+    "react-dnd-multi-backend": "8.1.2",
     "react-hotkeys-hook": "4.3.8",
     "react-intl": "6.3.0",
     "react-markdown": "8.0.5",
