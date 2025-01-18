@@ -12,7 +12,7 @@ import {
 } from '@microsoft/logic-apps-shared';
 
 import { useNodeContextMenuData } from '../../../core/state/designerView/designerViewSelectors';
-import { DeleteMenuItem, CopyMenuItem, ResubmitMenuItem } from '../../../ui/menuItems';
+import { DeleteMenuItem, CopyMenuItem, ResubmitMenuItem, CollapseMenuItem } from '../../../ui/menuItems';
 import { PinMenuItem } from '../../../ui/menuItems/pinMenuItem';
 import { RunAfterMenuItem } from '../../../ui/menuItems/runAfterMenuItem';
 import { useOperationInfo, type AppDispatch, type RootState } from '../../../core';
@@ -31,6 +31,7 @@ import { CopyTooltip } from './CopyTooltip';
 import { CustomMenu } from '../EdgeContextualMenu/customMenu';
 import { NodeMenuPriorities } from './Priorities';
 import type { DropdownMenuCustomNode } from '@microsoft/logic-apps-shared/src/utils/src/lib/models/dropdownMenuCustomNode';
+import { setCollapsedNode } from '../../../core/state/operation/operationMetadataSlice';
 
 export const DesignerContextualMenu = () => {
   const menuData = useNodeContextMenuData();
@@ -79,6 +80,15 @@ export const DesignerContextualMenu = () => {
       })
     );
   }, [dispatch, nodeId, pinnedNodeId]);
+
+  const collapseClick = useCallback(() => {
+    console.log('collapseClick', nodeId);
+    dispatch(
+      setCollapsedNode({
+        nodeId,
+      })
+    );
+  }, [nodeId, dispatch]);
 
   const operationFromWorkflow = getRecordEntry(rootState.workflow.operations, nodeId) as LogicAppsV2.OperationDefinition;
   const metadata = useNodeMetadata(nodeId);
@@ -138,6 +148,10 @@ export const DesignerContextualMenu = () => {
             },
           ]
         : []),
+      {
+        priority: NodeMenuPriorities.Collapse,
+        renderCustomComponent: () => <CollapseMenuItem key={'collapse'} nodeId={nodeId} onClick={collapseClick} />,
+      },
     ],
     [
       metadata?.graphId,
@@ -151,6 +165,7 @@ export const DesignerContextualMenu = () => {
       pinClick,
       resubmitClick,
       runAfterClick,
+      collapseClick,
     ]
   );
 
