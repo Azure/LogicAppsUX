@@ -6,6 +6,7 @@ import { setNodeContextMenuData, setShowDeleteModalNodeId } from '../../core/sta
 import {
   useBrandColor,
   useIconUri,
+  useIsNodeCollapsed,
   useParameterValidationErrors,
   useTokenDependencies,
 } from '../../core/state/operation/operationSelector';
@@ -71,6 +72,8 @@ const ScopeCardNode = ({ data, targetPosition = Position.Top, sourcePosition = P
     [nodesMetaData, operationsInfo, parentRunIndex, scopeId]
   );
   const rootRef = useRef<HTMLDivElement | null>(null);
+
+  const isNodeCollapsed = useIsNodeCollapsed(scopeId);
 
   const getRunRepetition = useCallback(() => {
     if (parentRunData?.status === constants.FLOW_STATUS.SKIPPED) {
@@ -302,7 +305,9 @@ const ScopeCardNode = ({ data, targetPosition = Position.Top, sourcePosition = P
   const isFooter = id.endsWith('#footer');
   const showEmptyGraphComponents = isLeaf && !graphCollapsed && !isFooter;
 
-  return (
+  return isNodeCollapsed ? (
+    <p>COLLAPSED</p>
+  ) : (
     <>
       <div className="msla-scope-card nopan" ref={ref as any}>
         <div ref={rootRef}>

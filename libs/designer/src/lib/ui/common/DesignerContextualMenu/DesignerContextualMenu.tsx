@@ -82,7 +82,6 @@ export const DesignerContextualMenu = () => {
   }, [dispatch, nodeId, pinnedNodeId]);
 
   const collapseClick = useCallback(() => {
-    console.log('collapseClick', nodeId);
     dispatch(
       setCollapsedNode({
         nodeId,
@@ -150,7 +149,7 @@ export const DesignerContextualMenu = () => {
         : []),
       {
         priority: NodeMenuPriorities.Collapse,
-        renderCustomComponent: () => <CollapseMenuItem key={'collapse'} nodeId={nodeId} onClick={collapseClick} />,
+        renderCustomComponent: () => (isTrigger ? null : <CollapseMenuItem key={'collapse'} nodeId={nodeId} onClick={collapseClick} />),
       },
     ],
     [

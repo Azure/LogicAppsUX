@@ -5,7 +5,7 @@ import { initializeSwitchCaseFromManifest } from '../../core/actions/bjsworkflow
 import { getOperationManifest } from '../../core/queries/operation';
 import { useMonitoringView, useReadOnly } from '../../core/state/designerOptions/designerOptionsSelectors';
 import { setNodeContextMenuData, setShowDeleteModalNodeId } from '../../core/state/designerView/designerViewSlice';
-import { useIconUri, useParameterValidationErrors } from '../../core/state/operation/operationSelector';
+import { useIconUri, useIsNodeCollapsed, useParameterValidationErrors } from '../../core/state/operation/operationSelector';
 import { useIsNodePinnedToOperationPanel, useIsNodeSelectedInOperationPanel } from '../../core/state/panel/panelSelectors';
 import { changePanelNode } from '../../core/state/panel/panelSlice';
 import {
@@ -50,6 +50,7 @@ const SubgraphCardNode = ({ targetPosition = Position.Top, sourcePosition = Posi
   const parentRunId = useParentRunId(subgraphId);
   const parentRunData = useRunData(parentRunId ?? '');
   const title = useNodeDisplayName(subgraphId);
+  const isNodeCollapsed = useIsNodeCollapsed(subgraphId);
 
   const isAddCase = metadata?.subgraphType === SUBGRAPH_TYPES.SWITCH_ADD_CASE;
 
@@ -131,7 +132,9 @@ const SubgraphCardNode = ({ targetPosition = Position.Top, sourcePosition = Posi
 
   const nodeIndex = useNodeIndex(subgraphId);
 
-  return (
+  return isNodeCollapsed ? (
+    <p>COLLAPSED</p>
+  ) : (
     <div>
       <div style={{ display: 'flex', alignItems: 'center' }}>
         <div style={{ position: 'relative' }}>
