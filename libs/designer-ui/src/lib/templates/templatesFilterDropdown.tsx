@@ -118,7 +118,7 @@ export const TemplatesFilterDropdown = ({
     _?: IDropdownProps | undefined,
     defaultRender?: ((props?: IDropdownProps | undefined) => JSX.Element | null) | undefined
   ) => {
-    return isLoadingContent ? <Spinner size="extra-small" /> : (defaultRender?.() ?? null);
+    return isLoadingContent ? <Spinner size="extra-tiny" style={{ marginTop: '3px' }} /> : (defaultRender?.() ?? null);
   };
 
   return (
@@ -128,7 +128,6 @@ export const TemplatesFilterDropdown = ({
         gapSpace: 10,
         calloutMaxHeight: 400,
       }}
-      disabled={isLoadingContent}
       onRenderCaretDown={onRenderCaretDown}
       multiSelect
       options={dropdownOptions}

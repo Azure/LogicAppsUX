@@ -1,9 +1,7 @@
 import type { AppDispatch, RootState } from '../../core/state/templates/store';
 import { useDispatch, useSelector } from 'react-redux';
 import { BlankWorkflowTemplateCard, TemplateCard } from './cards/templateCard';
-import { EmptySearch, Pager } from '@microsoft/designer-ui';
-import { Text } from '@fluentui/react-components';
-import { useIntl } from 'react-intl';
+import { Pager } from '@microsoft/designer-ui';
 import { TemplateFilters } from './filters/templateFilters';
 import { useEffect } from 'react';
 import { setLayerHostSelector } from '@fluentui/react';
@@ -14,27 +12,12 @@ import { CreateWorkflowPanel } from '../panel/templatePanel/createWorkflowPanel/
 
 export const TemplatesList = ({ detailFilters, createWorkflowCall }: TemplatesDesignerProps) => {
   useEffect(() => setLayerHostSelector('#msla-layer-host'), []);
-  const intl = useIntl();
   const dispatch = useDispatch<AppDispatch>();
 
   const {
     filteredTemplateNames,
-    filters: { pageNum, detailFilters: appliedDetailFilters },
+    filters: { pageNum },
   } = useSelector((state: RootState) => state.manifest);
-  const selectedTabId = appliedDetailFilters?.Type?.[0]?.value;
-
-  const intlText = {
-    NO_RESULTS: intl.formatMessage({
-      defaultMessage: "Can't find any search results",
-      id: 'iCni1C',
-      description: 'Accessbility text to indicate no search results found',
-    }),
-    TRY_DIFFERENT: intl.formatMessage({
-      defaultMessage: 'Try a different search term or remove filters',
-      id: 'yKNKV/',
-      description: 'Accessbility text to indicate to try different search term or remove filters',
-    }),
-  };
 
   const startingIndex = pageNum * templatesCountPerPage;
   const endingIndex = startingIndex + templatesCountPerPage;
@@ -45,22 +28,26 @@ export const TemplatesList = ({ detailFilters, createWorkflowCall }: TemplatesDe
       <TemplateFilters detailFilters={detailFilters} />
       <br />
 
-      {filteredTemplateNames === undefined ? (
-        <div>
-          <div className="msla-templates-list">
-            {[1, 2, 3, 4].map((i) => (
-              <TemplateCard key={i} templateName={''} />
-            ))}
-          </div>
+      <div>
+        <div className="msla-templates-list">
+          <BlankWorkflowTemplateCard />
+          {filteredTemplateNames === undefined ? (
+            <>
+              {[1, 2, 3, 4].map((i) => (
+                <TemplateCard key={i} templateName={''} />
+              ))}
+            </>
+          ) : filteredTemplateNames?.length > 0 ? (
+            <>
+              {filteredTemplateNames.slice(startingIndex, endingIndex).map((templateName: string) => (
+                <TemplateCard key={templateName} templateName={templateName} />
+              ))}
+            </>
+          ) : (
+            <></>
+          )}
         </div>
-      ) : filteredTemplateNames?.length > 0 ? (
-        <div>
-          <div className="msla-templates-list">
-            {selectedTabId !== 'Accelerator' && <BlankWorkflowTemplateCard />}
-            {filteredTemplateNames.slice(startingIndex, endingIndex).map((templateName: string) => (
-              <TemplateCard key={templateName} templateName={templateName} />
-            ))}
-          </div>
+        {filteredTemplateNames?.length && filteredTemplateNames.length > 0 && (
           <Pager
             current={pageNum + 1}
             max={lastPage}
@@ -73,16 +60,8 @@ export const TemplatesList = ({ detailFilters, createWorkflowCall }: TemplatesDe
             }}
             onChange={(page) => dispatch(setPageNum(page.value - 1))}
           />
-        </div>
-      ) : (
-        <div className="msla-templates-empty-list">
-          <EmptySearch />
-          <Text size={500} weight="semibold" align="start" className="msla-template-empty-list-title">
-            {intlText.NO_RESULTS}
-          </Text>
-          <Text>{intlText.TRY_DIFFERENT}</Text>
-        </div>
-      )}
+        )}
+      </div>
 
       <WorkflowView createWorkflowCall={createWorkflowCall} />
       <div

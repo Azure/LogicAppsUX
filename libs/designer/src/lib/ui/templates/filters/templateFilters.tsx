@@ -149,20 +149,18 @@ export const TemplateFilters = ({ detailFilters }: TemplateFiltersProps) => {
         />
       </div>
       <div className="msla-templates-filters-dropdowns">
-        {allTemplatesUniqueConnectorIds.length > 0 && (
-          <TemplatesFilterDropdown
-            filterName={intlText.CONNECTORS}
-            items={(allUniqueConnectorsEntries ?? []).map(([connectorId, connector]) => ({
-              value: connectorId,
-              displayName: connector.properties.displayName,
-            }))}
-            onApplyButtonClick={(filterItems) => {
-              dispatch(setConnectorsFilters(filterItems));
-            }}
-            isSearchable
-            isLoadingContent={connectorsLoading}
-          />
-        )}
+        <TemplatesFilterDropdown
+          filterName={intlText.CONNECTORS}
+          items={(allUniqueConnectorsEntries ?? []).map(([connectorId, connector]) => ({
+            value: connectorId,
+            displayName: connector.properties.displayName,
+          }))}
+          onApplyButtonClick={(filterItems) => {
+            dispatch(setConnectorsFilters(filterItems));
+          }}
+          isSearchable
+          isLoadingContent={Object.keys(availableTemplates ?? {}).length === 0 || connectorsLoading || connectorsLoading === undefined}
+        />
         {Object.keys(detailFilters).map((filterName, index) => (
           <TemplatesFilterDropdown
             key={index}

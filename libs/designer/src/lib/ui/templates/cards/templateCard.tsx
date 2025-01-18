@@ -4,7 +4,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { Text } from '@fluentui/react-components';
 import { openQuickViewPanelView } from '../../../core/state/templates/panelSlice';
 import type { IContextualMenuItem, IContextualMenuProps, IDocumentCardStyles } from '@fluentui/react';
-import { DocumentCard, IconButton, Image } from '@fluentui/react';
+import { DocumentCard, IconButton, Image, Shimmer, ShimmerElementType } from '@fluentui/react';
 import { ConnectorIcon, ConnectorIconWithName } from '../connections/connector';
 import type { Manifest } from '@microsoft/logic-apps-shared/src/utils/src/lib/models/template';
 import { getUniqueConnectors } from '../../../core/templates/utils/helper';
@@ -80,7 +80,7 @@ export const TemplateCard = ({ templateName }: TemplateCardProps) => {
   };
 
   if (!templateManifest) {
-    return <DocumentCard className="msla-template-card-wrapper">{intlText.TEMPLATE_LOADING}</DocumentCard>;
+    return <LoadingTemplateCard />;
   }
 
   const { title, details, featuredOperations, connections } = templateManifest as Manifest;
@@ -214,6 +214,40 @@ export const BlankWorkflowTemplateCard = () => {
         <Text size={400} align="center" className="msla-blank-template-card-description">
           {intlText.BLANK_WORKFLOW_DESCRIPTION}
         </Text>
+      </div>
+    </DocumentCard>
+  );
+};
+
+const LoadingTemplateCard = () => {
+  return (
+    <DocumentCard className="msla-template-card-wrapper" styles={cardStyles}>
+      <div className="msla-template-card-authored-wrapper">
+        <div className="msla-template-card-authored">
+          <Shimmer style={{ width: '100%' }} width={'100%'} />
+        </div>
+      </div>
+
+      <div className="msla-template-card-body">
+        <div className="msla-template-card-title-wrapper">
+          <br />
+          <Shimmer width={'100%'} />
+          <br />
+          <Shimmer width={'70%'} />
+        </div>
+        <div className="msla-template-card-footer">
+          <div className="msla-template-card-connectors-list">
+            <Shimmer
+              shimmerElements={[
+                { type: ShimmerElementType.circle },
+                { type: ShimmerElementType.gap },
+                { type: ShimmerElementType.circle },
+                { type: ShimmerElementType.gap },
+                { type: ShimmerElementType.circle },
+              ]}
+            />
+          </div>
+        </div>
       </div>
     </DocumentCard>
   );
