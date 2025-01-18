@@ -18,6 +18,7 @@
     "@react-hookz/web": "22.0.0",
     "@reduxjs/toolkit": "1.8.5",
     "@xyflow/react": "^12.3.5",
+    "dnd-kit-sortable-tree": "^0.1.73",
     "elkjs": "0.9.1",
     "fuse.js": "6.6.2",
     "immer": "9.0.15",
@@ -62,8 +63,8 @@
   "peerDependencies": {
     "@tanstack/react-query": "4.36.1",
     "@tanstack/react-query-devtools": "4.36.1",
-    "react": "^16.4.0 || ^17.0.0 || ^18.0.0",
-    "react-dom": "^16.4.0 || ^17.0.0 || ^18.0.0"
+    "react": "^16.4.0 || ^17.0.0 || 18.2.0",
+    "react-dom": "^16.4.0 || ^17.0.0 || 18.2.0"
   },
   "publishConfig": {
     "main": "build/lib/index.cjs",
