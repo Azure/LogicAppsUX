@@ -1128,7 +1128,7 @@ export const splitAtIndex = (str: string, index: number): [string, string] => {
 export const validateRequiredServiceArguments = (requiredFields: Record<string, unknown>) => {
   for (const [key, value] of Object.entries(requiredFields)) {
     if (isNullOrUndefined(value)) {
-      throw new ArgumentException(`${key} required`);
+      throw new ArgumentException(`${key} is required`);
     }
   }
 };
