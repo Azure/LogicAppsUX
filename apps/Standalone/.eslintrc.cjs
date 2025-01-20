@@ -13,6 +13,7 @@ module.exports = {
       {
         argsIgnorePattern: '^_',
         destructuredArrayIgnorePattern: '^_',
+        caughtErrorsIgnorePattern: '^_',
       },
     ],
   },
