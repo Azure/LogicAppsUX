@@ -6,8 +6,8 @@ import { store as dataMapperStore } from './dataMapperV1/state/Store';
 import { store as templateStore } from './templates/state/Store';
 import { DataMapperStandaloneDesignerV1 } from './dataMapperV1/app/DataMapperStandaloneDesignerV1';
 import { DataMapperStandaloneDesignerV2 } from './dataMapperV1/app/DataMapperStandaloneDesignerV2';
-import { TemplatesStandaloneDesigner } from './templates/app/TemplatesStandaloneDesigner';
 import { ReactQueryProvider } from '@microsoft/logic-apps-designer';
+import { TemplatesDesignerWrapper } from './templates/app/TemplatesDesignerShell';
 
 export const App = () => {
   return (
@@ -53,7 +53,7 @@ const TemplatesStandalone = () => {
   return (
     <Provider store={templateStore}>
       <ReactQueryProvider>
-        <TemplatesStandaloneDesigner />
+        <TemplatesDesignerWrapper />
       </ReactQueryProvider>
     </Provider>
   );

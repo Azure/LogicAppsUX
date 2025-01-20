@@ -8,10 +8,49 @@ export const useMapCheckerItemStyles = makeStyles({
     margin: '5px 0px',
     boxShadow: tokens.shadow4,
   },
+  headerText: {
+    fontSize: '13px',
+    fontWeight: '600',
+    wordBreak: 'break-word',
+    marginLeft: '2px',
+  },
+  message: {
+    fontSize: '11px',
+    wordBreak: 'break-word',
+  },
+  badge: {
+    display: 'block',
+    marginBottom: '5px',
+    fontSize: '11px',
+    paddingLeft: '3px',
+    paddingRight: '3px',
+    borderRadius: '0',
+    marginLeft: 'auto',
+  },
+  headerContainer: {
+    display: 'flex',
+    width: '100%',
+    alignItems: 'center',
+  },
 });
 
 export const useStyles = makeStyles({
   root: {
-    width: '270px',
+    width: '300px',
+    paddingLeft: '10px',
+  },
+  title: {
+    fontSize: '16px',
+  },
+  noDataMessage: {
+    fontStyle: 'italic',
+    marginTop: '10px',
+    fontSize: '12px',
+  },
+  tabContainer: {
+    marginTop: '10px',
+  },
+  body: {
+    alignItems: 'center',
   },
 });

@@ -14,7 +14,7 @@ test.describe(
 
       await page.getByLabel('Parse JSON operation, Data').click();
       await page.getByLabel('Content').click();
-      await page.locator('button').filter({ hasText: '' }).click();
+      await page.locator('[data-automation-id="msla-token-picker-entrypoint-button-dynamic-content"]').click();
       await expect(page.getByRole('button', { name: 'EILCO Admin Nominations-OCSA' })).toBeVisible();
       await page.getByPlaceholder('Search').click();
       await page.getByPlaceholder('Search').fill('OCSA');
@@ -33,7 +33,7 @@ test.describe(
       await GoToMockWorkflow(page, 'Panel');
       await page.getByLabel('Parse JSON operation, Data').click();
       await page.getByLabel('Content').click();
-      await page.locator('button').filter({ hasText: '' }).click();
+      await page.locator('[data-automation-id="msla-token-picker-entrypoint-button-expression"]').click();
       await page.getByRole('button', { name: 'length(collection) Returns' }).click();
       await page.getByText('Dynamic content').click();
       await expect(page.locator('.msla-expression-editor-container')).toBeVisible();

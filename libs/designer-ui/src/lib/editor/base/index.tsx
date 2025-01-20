@@ -188,6 +188,7 @@ export const BaseEditor = ({
         <TextPlugin
           contentEditable={
             <ContentEditable
+              data-testid={`${labelId} contenteditable`}
               spellCheck={false}
               className={css('editor-input', readonly && 'readonly')}
               ariaLabel={ariaLabel}
