@@ -46,7 +46,7 @@ export async function ConvertToWorkspace(context: IActionContext): Promise<boole
     if (!wizardContext.workspaceCustomFilePath && !wizardContext.customWorkspaceFolderPath) {
       const message = localize(
         'createContainingWorkspace',
-        'Full functionality of the Azure Logic Apps (Standard) extension is available only when logic app project(s) are inside a workspace. Your project(s) will be copied over to the new workspace. Do you want to create the workspace before continuing?'
+        'Your logic app projects must exist inside a workspace to use the full functionality in the Azure Logic Apps (Standard) extension. Visual Studio Code will copy your projects to a new workspace. Do you want to create the workspace now?'
       );
       const result = await vscode.window.showInformationMessage(message, { modal: true }, DialogResponses.yes, DialogResponses.no);
       if (result === DialogResponses.yes) {
