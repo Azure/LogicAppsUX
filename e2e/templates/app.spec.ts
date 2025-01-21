@@ -7,7 +7,7 @@ test.describe(
     tag: '@mock',
   },
   () => {
-    test('Should templates gallery', async ({ page }) => {
+    test('Should open templates gallery', async ({ page }) => {
       await page.goto('/templates');
 
       await GoToMockTemplatesGallery(page);
@@ -22,7 +22,7 @@ test.describe(
       expect(true).toBeTruthy();
     });
 
-    test('Should open edge context menus', async ({ page }) => {
+    test('Should open template panel', async ({ page }) => {
       await page.goto('/templates');
       await GoToMockTemplate(page, '[Mock] Basic Workflow Only Template');
       await page.getByRole('tab', { name: 'Workflow' }).click();
