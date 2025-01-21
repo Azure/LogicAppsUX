@@ -51,7 +51,7 @@ export async function ConvertToWorkspace(context: IActionContext): Promise<boole
       const result = await vscode.window.showInformationMessage(message, { modal: true }, DialogResponses.yes, DialogResponses.no);
       if (result === DialogResponses.yes) {
         const workspaceWizard: AzureWizard<IFunctionWizardContext> = new AzureWizard(wizardContext, {
-          title: localize('convertToWorkspace', 'Convert To Workspace'),
+          title: localize('convertToWorkspace', 'Convert to workspace'),
           promptSteps: [new FolderListStep(), new SetWorkspaceName(), new SetWorkspaceContents()],
           executeSteps: [new OpenFolderStepCodeProject()],
         });
