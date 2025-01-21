@@ -1,4 +1,11 @@
 # Logic Apps Designer
+### [5.14.2](https://github.com/Azure/LogicAppsUX/compare/v5.14.1...v5.14.2) (2025-01-21)
+
+
+### Bug Fixes
+
+* **vscode:** Fix command bar redux store and remote logic apps resolver ([#6438](https://github.com/Azure/LogicAppsUX/issues/6438)) ([d545ba0](https://github.com/Azure/LogicAppsUX/commit/d545ba0cd4ca392ceef696a184ee7aeee1395d9b)), closes [#6320](https://github.com/Azure/LogicAppsUX/issues/6320) [#6215](https://github.com/Azure/LogicAppsUX/issues/6215)
+
 ### [5.14.1](https://github.com/Azure/LogicAppsUX/compare/v5.14.0...v5.14.1) (2025-01-10)
 
 
