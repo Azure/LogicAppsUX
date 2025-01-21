@@ -9,7 +9,6 @@ import { ResourceGraphClient } from '@azure/arm-resourcegraph';
 import { LogicAppResourceTree } from './app/tree/LogicAppResourceTree';
 import { logicAppFilter } from './constants';
 import { ext } from './extensionVariables';
-import { DefaultAzureCredential } from '@azure/identity';
 
 export class LogicAppResolver implements AppResourceResolver {
   private siteCacheLastUpdated = 0;
@@ -48,8 +47,7 @@ export class LogicAppResolver implements AppResourceResolver {
     subContext: ISubscriptionContext
   ): Promise<{ logicApps: Map<string, Site>; hybridLogicApps: Map<string, ContainerApp> }> {
     const client = await createWebSiteClient({ ...context, ...subContext });
-    const credential = new DefaultAzureCredential();
-    const resourceGraphClient = new ResourceGraphClient(credential);
+    const resourceGraphClient = new ResourceGraphClient(subContext.credentials);
 
     if (this.siteCacheLastUpdated < Date.now() - 1000 * 3) {
       this.siteCacheLastUpdated = Date.now();
@@ -98,8 +96,14 @@ export class LogicAppResolver implements AppResourceResolver {
           });
       });
 
+      const resolverPromises = [promiseLogicApp];
+
+      if (subContext.environment.resourceManagerEndpointUrl === 'https://management.azure.com/') {
+        resolverPromises.push(promiseHybridLogicApp);
+      }
+
       this.listLogicAppsTask = new Promise((resolve, reject) => {
-        Promise.all([promiseLogicApp, promiseHybridLogicApp])
+        Promise.all(resolverPromises)
           .then(() => {
             resolve();
           })
