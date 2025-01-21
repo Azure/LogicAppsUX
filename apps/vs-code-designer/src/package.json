@@ -85,6 +85,11 @@
           "dark": "assets/dark/Codeless.svg"
         }
       },
+      { 
+        "command": "azureLogicAppsStandard.explorerLmlLoadDataMap",
+        "title": "Load existing data map",
+        "category": "Azure Logic Apps"
+      },
       {
         "command": "azureLogicAppsStandard.deploy",
         "title": "Deploy to logic app...",
@@ -355,10 +360,6 @@
           "dark": "assets/logicapp.png"
         },
         "label": "Azure Logic Apps"
-      },
-      {
-        "id": "azureLogicAppsStandard.dataMapperMenu",
-        "label": "Data Mapper"
       }
     ],
     "views": {
@@ -688,7 +689,7 @@
           "group": "navigation@2"
         },
         {
-          "submenu": "azureLogicAppsStandard.dataMapperMenu",
+          "command": "azureLogicAppsStandard.dataMap.loadDataMapFile",
           "group": "navigation",
           "when": "resourceExtname in azureLogicAppsStandard.dataMap.setSupportedFileExts"
         }
@@ -725,13 +726,6 @@
         {
           "command": "azureLogicAppsStandard.generateDeploymentScripts",
           "when": "never"
-        }
-      ],
-      "azureLogicAppsStandard.dataMapperMenu": [
-        {
-          "command": "azureLogicAppsStandard.dataMap.loadDataMapFile",
-          "group": "navigation",
-          "when": "resourceExtname in azureLogicAppsStandard.dataMap.setSupportedDataMapDefinitionFileExts"
         }
       ]
     },
