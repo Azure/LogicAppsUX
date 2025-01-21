@@ -117,46 +117,75 @@ async function generateUnitTestFromRun(
     ext.outputChannel.appendLog(localize('initiatingApiCall', 'Initiating Unit Test Generation API call...'));
     context.telemetry.properties.processStage = 'API Call Initiated';
 
-    const response = await axios.post(apiUrl, unitTestGenerationInput, {
-      headers: {
-        Accept: 'application/zip',
-        'Content-Type': 'application/json',
-      },
-      responseType: 'arraybuffer',
-    });
+    try {
+      const response = await axios.post(apiUrl, unitTestGenerationInput, {
+        headers: {
+          Accept: 'application/zip',
+          'Content-Type': 'application/json',
+        },
+        responseType: 'arraybuffer',
+      });
 
-    ext.outputChannel.appendLog(localize('apiCallSuccessful', 'API call successful, processing response...'));
+      ext.outputChannel.appendLog(localize('apiCallSuccessful', 'API call successful, processing response...'));
+      context.telemetry.properties.processStage = 'API Call Completed';
 
-    // Process API response
-    const zipBuffer = Buffer.from(response.data);
-    const contentType = response.headers['content-type'];
-    if (contentType !== 'application/zip') {
-      throw new Error(localize('invalidResponseType', 'Expected a zip file but received {0}', contentType));
+      // Process API response
+      const zipBuffer = Buffer.from(response.data);
+      const contentType = response.headers['content-type'];
+
+      if (contentType !== 'application/zip') {
+        throw new Error(localize('invalidResponseType', 'Expected a zip file but received {0}', contentType));
+      }
+
+      const paths = getUnitTestPaths(projectPath, workflowName, unitTestName);
+      await fs.ensureDir(paths.unitTestFolderPath!);
+
+      ext.outputChannel.appendLog(localize('unzippingFiles', 'Unzipping Mock.json into: {0}', paths.unitTestFolderPath!));
+      await unzipLogicAppArtifacts(zipBuffer, paths.unitTestFolderPath!);
+      ext.outputChannel.appendLog(localize('filesUnzipped', 'Files successfully unzipped.'));
+      context.telemetry.properties.processStage = 'Files Unzipped';
+
+      await createCsFile(paths.unitTestFolderPath!, unitTestName, workflowName, paths.logicAppName);
+      await ensureCsprojAndNugetFiles(paths.testsDirectory, paths.logicAppFolderPath, paths.logicAppName);
+
+      // Add testsDirectory to workspace if not already included
+      ext.outputChannel.appendLog(localize('checkingWorkspace', 'Checking if tests directory is already part of the workspace...'));
+      await ensureDirectoryInWorkspace(paths.testsDirectory);
+      ext.outputChannel.appendLog(localize('workspaceUpdated', 'Tests directory added to workspace if not already included.'));
+
+      vscode.window.showInformationMessage(
+        localize('info.generateCodefulUnitTest', 'Generated unit test "{0}" in "{1}"', unitTestName, paths.unitTestFolderPath)
+      );
+
+      context.telemetry.properties.unitTestGenerationStatus = 'Success';
+    } catch (apiError: any) {
+      // eslint-disable-next-line import/no-named-as-default-member
+      if (axios.isAxiosError(apiError)) {
+        // Log HTTP error details for telemetry and debugging
+        context.telemetry.properties.apiCallFailureStatus = apiError.response?.status?.toString() || 'Unknown';
+        context.telemetry.properties.apiCallFailureMessage = apiError.response?.statusText || 'Unknown Error';
+        context.telemetry.properties.apiCallFailureData = JSON.stringify(apiError.response?.data || {});
+
+        ext.outputChannel.appendLog(
+          localize(
+            'apiCallFailed',
+            'API call failed with status: {0}, message: {1}, response: {2}',
+            apiError.response?.status,
+            apiError.response?.statusText,
+            JSON.stringify(apiError.response?.data || {})
+          )
+        );
+      }
+
+      throw apiError;
     }
+  } catch (error: any) {
+    // Log error details for telemetry
+    const errorMessage = error instanceof Error ? error.message : String(error);
+    context.telemetry.properties.unitTestGenerationStatus = 'Failed';
+    context.telemetry.properties.errorMessage = errorMessage;
 
-    // Get path for unit test folder project
-    const paths = getUnitTestPaths(projectPath, workflowName, unitTestName);
-    await fs.ensureDir(paths.unitTestFolderPath!);
-
-    ext.outputChannel.appendLog(localize('unzippingFiles', 'Unzipping Mock.json into: {0}', paths.unitTestFolderPath!));
-    await unzipLogicAppArtifacts(zipBuffer, paths.unitTestFolderPath!);
-    ext.outputChannel.appendLog(localize('filesUnzipped', 'Files successfully unzipped.'));
-    context.telemetry.properties.processStage = 'Files unzipped';
-
-    await createCsFile(paths.unitTestFolderPath!, unitTestName, workflowName, paths.logicAppName);
-    await ensureCsprojAndNugetFiles(paths.testsDirectory, paths.logicAppFolderPath, paths.logicAppName);
-
-    // Add testsDirectory to workspace if not already included
-    ext.outputChannel.appendLog(localize('checkingWorkspace', 'Checking if tests directory is already part of the workspace...'));
-    await ensureDirectoryInWorkspace(paths.testsDirectory);
-    ext.outputChannel.appendLog(localize('workspaceUpdated', 'Tests directory added to workspace if not already included.'));
-
-    vscode.window.showInformationMessage(
-      localize('info.generateCodefulUnitTest', 'Generated unit test "{0}" in "{1}"', unitTestName, paths.unitTestFolderPath)
-    );
-
-    context.telemetry.properties.unitTestGenerationStatus = 'Success';
-  } catch (error) {
+    ext.outputChannel.appendLog(localize('error.generateCodefulUnitTest', 'Failed to generate codeful unit test: {0}', errorMessage));
     handleError(context, error, 'generateCodefulUnitTest');
   }
 }
