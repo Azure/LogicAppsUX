@@ -1,9 +1,3 @@
-## Requirement Checklist
-
-* [ ] The commit message follows our guidelines
-* [ ] Tests for the changes have been added (for bug fixes or features)
-* [ ] Docs have been added or updated (for bug fixes or features)
-
 ## Type of Change
 
 * [ ] Bug fix
@@ -23,6 +17,10 @@
 <!-- If this PR has breaking changes for downstream consumers, check the box below. If you check the box, please provide information about the breaking changes as well. -->
 
 * [ ] **This is a breaking change.**
+
+## Test Plan
+
+<!-- Please post how this change has been tested and will be tested going forward --> 
 
 ## Screenshots or Videos (if applicable)
 
