@@ -32,7 +32,7 @@ export async function ConvertToWorkspace(context: IActionContext): Promise<boole
     if (wizardContext.workspaceCustomFilePath && !wizardContext.customWorkspaceFolderPath) {
       const message = localize(
         'openContainingWorkspace',
-        `Full functionality of the Azure Logic Apps (Standard) extension is available only when the workspace is opened. Workspace found at ${wizardContext.workspaceCustomFilePath} that contains the logic app project. Do you want to open the workspace before continuing?`
+        `You must open your workspace to use the full functionality in the Azure Logic Apps (Standard) extension. You can find the workspace with your logic app project at the following location: ${wizardContext.workspaceCustomFilePath}. Do you want to open this workspace now?`
       );
       const result = await vscode.window.showInformationMessage(message, { modal: true }, DialogResponses.yes, DialogResponses.no);
       if (result === DialogResponses.yes) {
