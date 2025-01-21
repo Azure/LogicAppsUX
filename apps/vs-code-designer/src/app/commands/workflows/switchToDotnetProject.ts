@@ -100,7 +100,7 @@ export async function switchToDotnetProject(context: IProjectWizardContext, targ
   const logicAppFolderName = path.basename(target.fsPath);
   const warning: string = localize(
     'confirmMoveToDotnet',
-    `This action moves your Logic App project, ${logicAppFolderName}, to a NuGet-based project. Confirm that you want to move to a NuGet-based project?`
+    `This action moves your logic app project, ${logicAppFolderName}, to a NuGet-based project. Confirm that you want to move to a NuGet-based project?`
   );
 
   const moveButton: vscode.MessageItem = { title: localize('move', 'Move to a NuGet-based project') };
