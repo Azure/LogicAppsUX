@@ -85,11 +85,6 @@
           "dark": "assets/dark/Codeless.svg"
         }
       },
-      { 
-        "command": "azureLogicAppsStandard.explorerLmlLoadDataMap",
-        "title": "Load existing data map",
-        "category": "Azure Logic Apps"
-      },
       {
         "command": "azureLogicAppsStandard.deploy",
         "title": "Deploy to logic app...",
@@ -343,7 +338,8 @@
       },
       {
         "command": "azureLogicAppsStandard.dataMap.loadDataMapFile",
-        "title": "Data Mapper: Load existing data map"
+        "title": "Data Mapper: Load existing data map",
+        "when": "resourceExtname in azureLogicAppsStandard.dataMap.setSupportedDataMapDefinitionFileExts"
       },
       {
         "command": "azureLogicAppsStandard.parameterizeConnections",
@@ -691,7 +687,7 @@
         {
           "command": "azureLogicAppsStandard.dataMap.loadDataMapFile",
           "group": "navigation",
-          "when": "resourceExtname in azureLogicAppsStandard.dataMap.setSupportedFileExts"
+          "when": "resourceExtname in azureLogicAppsStandard.dataMap.setSupportedDataMapDefinitionFileExts"
         }
       ],
       "commandPalette": [
