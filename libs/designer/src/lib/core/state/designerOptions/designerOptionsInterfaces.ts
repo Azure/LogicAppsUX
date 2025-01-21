@@ -48,6 +48,7 @@ export interface DesignerOptionsState {
     maxStateHistorySize?: number; // maximum number of states to save in history for undo/redo (default is 0)
     hideContentTransferSettings?: boolean; // hide content transfer settings in the designer
     collapseGraphsByDefault?: boolean; // collapse scope by default
+    manualTabIndexing?: boolean; // enable manual tab indexes
   };
   nodeSelectAdditionalCallback?: (nodeId: string) => any;
   showConnectionsPanel?: boolean;

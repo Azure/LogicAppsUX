@@ -34,6 +34,7 @@ export interface WorkflowLoadingState {
     stringOverrides?: Record<string, string>; // string overrides for localization
     maxStateHistorySize?: number; // maximum number of states to save in history for undo/redo
     collapseGraphsByDefault?: boolean; // collapse scope by default
+    manualTabIndexing?: boolean; // enable manual tab indexing
   };
   showPerformanceDebug?: boolean;
 }
