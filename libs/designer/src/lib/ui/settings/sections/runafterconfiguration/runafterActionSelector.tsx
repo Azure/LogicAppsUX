@@ -114,7 +114,7 @@ export const RunAfterActionSelector = ({ readOnly }: { readOnly: boolean }) => {
           message: `Run after action selector ${data.open ? 'opened' : 'closed'}.`,
         });
       }}
-      onCheckedValueChange={(e, data) => {
+      onCheckedValueChange={(_e, data) => {
         if (data.checkedItems.length === 0) {
           return;
         }

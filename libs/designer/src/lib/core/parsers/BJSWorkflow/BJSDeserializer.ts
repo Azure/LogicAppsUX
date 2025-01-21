@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */
 import constants from '../../../common/constants';
 import { UnsupportedException, UnsupportedExceptionCode } from '../../../common/exceptions/unsupported';
 import type { Operations, NodesMetadata } from '../../state/workflow/workflowInterfaces';

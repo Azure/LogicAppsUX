@@ -40,7 +40,8 @@
           "error",
           {
             "argsIgnorePattern": "^_",
-            "destructuredArrayIgnorePattern": "^_"
+            "destructuredArrayIgnorePattern": "^_",
+            "caughtErrorsIgnorePattern": "^_"
           }
         ],
         "@typescript-eslint/explicit-module-boundary-types": "off",

@@ -290,8 +290,7 @@ export const isFunctionInputSlotAvailable = (targetNodeConnection: Connection | 
   return true;
 };
 
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-export const areAllFunctionInputsFilled = (inputs: InputConnection[], maxInputs: number): boolean => {
+export const areAllFunctionInputsFilled = (inputs: InputConnection[], _maxInputs: number): boolean => {
   return inputs.every((input) => !isEmptyConnection(input));
 };
 

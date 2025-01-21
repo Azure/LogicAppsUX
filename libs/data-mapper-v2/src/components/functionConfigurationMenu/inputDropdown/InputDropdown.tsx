@@ -283,7 +283,7 @@ export const InputDropdown = ({
     setCustomValue(value);
   };
 
-  const selectCustomValueOnClose: ComboboxProps['onOpenChange'] = (event, data) => {
+  const selectCustomValueOnClose: ComboboxProps['onOpenChange'] = (_event, data) => {
     if (data.open === false) {
       const matchingOption = customValue && matchingOptions.some((option) => option.text === customValue);
       if (!matchingOption && customValue && customValue !== value) {
