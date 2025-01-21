@@ -1,5 +1,5 @@
 import { Label } from '../../label';
-import { DropdownEditor, StringEditor, TrafficLightDot, useId } from '../..';
+import { DropdownEditor, StringEditor, useId } from '../..';
 import type { DropdownItem } from '../../dropdown';
 import type { BaseEditorProps } from '../base';
 import type { ValueSegment } from '../models/parameter';
@@ -16,8 +16,6 @@ import {
 } from '@fluentui/react-icons';
 import { useState } from 'react';
 import { isSingleLiteralValueSegment } from '../base/utils/helper';
-import { useTheme } from '@fluentui/react';
-import { RUN_AFTER_COLORS } from '@microsoft/logic-apps-shared';
 
 const DeleteIcon = bundleIcon(Delete24Filled, Delete24Regular);
 const ExpandIcon = bundleIcon(ChevronRight24Filled, ChevronRight24Regular);
@@ -67,8 +65,6 @@ const FieldEditor = ({
 export const VariableEditor = ({ variable, onDelete, ...baseEditorProps }: VariableEditorProps) => {
   const intl = useIntl();
   const [expanded, setExpanded] = useState(true);
-  const { isInverted } = useTheme();
-  const themeName = isInverted ? 'dark' : 'light';
 
   const handleToggleExpand = (): void => {
     setExpanded(!expanded);
@@ -114,22 +110,11 @@ export const VariableEditor = ({ variable, onDelete, ...baseEditorProps }: Varia
 
   return (
     <div className="msla-editor-initialize-variable">
-      {/* <div className="msla-delete-variable">
-        <Tooltip relationship="label" content={deleteButtonTitle}>
-          <Button
-            appearance="subtle"
-            aria-label={deleteButtonTitle}
-            onClick={onDelete}
-            icon={<DeleteIcon style={{ color: 'var(--colorBrandForeground1)' }} />}
-          />
-        </Tooltip>
-      </div> */}
       <div>
         <div>
           <Button
             appearance="subtle"
-            data-testid={`${name}-parameter-heading-button`}
-            className="msla-workflow-parameter-heading-button"
+            className="msla-variable-editor-heading-button"
             onClick={handleToggleExpand}
             icon={expanded ? <CollapseIcon /> : <ExpandIcon />}
             aria-expanded={expanded}
@@ -150,7 +135,7 @@ export const VariableEditor = ({ variable, onDelete, ...baseEditorProps }: Varia
           </>
         ) : null}
       </div>
-      <div className="msla-workflow-parameter-edit-or-delete-button">
+      <div className="msla-variable-editor-edit-or-delete-button">
         <Tooltip relationship="label" content={deleteButtonTitle}>
           <Button
             appearance="subtle"

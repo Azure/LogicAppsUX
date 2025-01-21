@@ -1,6 +1,13 @@
 import type { IEditorProps } from '@microsoft/logic-apps-shared';
 
-export const InitializeVariableEditor = ({ value, onValueChange, renderDefaultEditor, editor, editorOptions, disabled }: IEditorProps) => {
+export const CustomEditorInitializeVariable = ({
+  value,
+  onValueChange,
+  renderDefaultEditor,
+  editor,
+  editorOptions,
+  disabled,
+}: IEditorProps) => {
   const color = disabled ? 'rgb(200, 200, 250)' : 'rgb(0, 127, 255)';
   return (
     <div
