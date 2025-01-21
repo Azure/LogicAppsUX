@@ -24,3 +24,5 @@ vi.mock('@microsoft/vscode-azext-utils', () => {
     }),
   };
 });
+
+vi.mock('vscode', () => ({ window: {}, EventEmitter: vi.fn().mockImplementation(() => ({ event: vi.fn() })) }));

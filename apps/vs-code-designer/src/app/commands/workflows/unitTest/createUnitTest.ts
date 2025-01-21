@@ -15,7 +15,7 @@ import {
   selectWorkflowNode,
 } from '../../../utils/unitTests';
 import { tryGetLogicAppProjectRoot } from '../../../utils/verifyIsProject';
-import { getWorkflowNode, getWorkspaceFolder, isMultiRootWorkspace } from '../../../utils/workspace';
+import { ensureDirectoryInWorkspace, getWorkflowNode, getWorkspaceFolder, isMultiRootWorkspace } from '../../../utils/workspace';
 import type { IAzureConnectorsContext } from '../azureConnectorWizard';
 import { type IActionContext, callWithTelemetryAndErrorHandling } from '@microsoft/vscode-azext-utils';
 import * as path from 'path';
@@ -24,7 +24,6 @@ import * as fs from 'fs-extra';
 import axios from 'axios';
 import { ext } from '../../../../extensionVariables';
 import { unzipLogicAppArtifacts } from '../../../utils/taskUtils';
-import { FileManagement } from '../../generateDeploymentScripts/iacGestureHelperFunctions';
 
 /**
  * Handles the creation of a unit test for a Logic App workflow.
@@ -48,7 +47,10 @@ export async function createUnitTest(context: IAzureConnectorsContext, node: vsc
 
     // Check if in a multi-root workspace
     if (!isMultiRootWorkspace()) {
-      const message = localize('expectedWorkspace', 'A workspace must be open to create unit tests.');
+      const message = localize(
+        'expectedWorkspace',
+        'A multi-root workspace must be open to create unit tests. Please navigate to the Logic Apps extension in Visual Studio Code and use the "Create New Logic App Workspace" command to initialize and open a valid workspace.'
+      );
       ext.outputChannel.appendLog(message);
       throw new Error(message);
     }
@@ -142,17 +144,17 @@ async function generateUnitTestFromRun(
     context.telemetry.properties.processStage = 'Files unzipped';
 
     await createCsFile(paths.unitTestFolderPath!, unitTestName, workflowName, paths.logicAppName);
-    await ensureCsprojAndNugetFiles(projectPath, workflowName);
+    await ensureCsprojAndNugetFiles(paths.testsDirectory, paths.logicAppFolderPath, paths.logicAppName);
 
-    // Check if testsDirectory is already part of the workspace
-    const workspaceFolders = vscode.workspace.workspaceFolders || [];
-    const isTestsDirectoryInWorkspace = workspaceFolders.some((folder) => folder.uri.fsPath === paths.unitTestFolderPath!);
+    // Add testsDirectory to workspace if not already included
+    ext.outputChannel.appendLog(localize('checkingWorkspace', 'Checking if tests directory is already part of the workspace...'));
+    await ensureDirectoryInWorkspace(paths.testsDirectory);
+    ext.outputChannel.appendLog(localize('workspaceUpdated', 'Tests directory added to workspace if not already included.'));
 
-    if (!isTestsDirectoryInWorkspace) {
-      // Add testsDirectory to workspace if not already included
-      ext.outputChannel.appendLog(localize('addingTestsDirectory', 'Adding tests directory to workspace: {0}', paths.unitTestFolderPath!));
-      FileManagement.addFolderToWorkspace(paths.unitTestFolderPath!);
-    }
+    vscode.window.showInformationMessage(
+      localize('info.generateCodefulUnitTest', 'Generated unit test "{0}" in "{1}"', unitTestName, paths.unitTestFolderPath)
+    );
+
     context.telemetry.properties.unitTestGenerationStatus = 'Success';
   } catch (error) {
     handleError(context, error, 'generateCodefulUnitTest');

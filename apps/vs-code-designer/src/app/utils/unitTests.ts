@@ -513,15 +513,13 @@ export function handleError(context: IAzureConnectorsContext, error: unknown, so
 
 /**
  * Ensures the .csproj and NuGet configuration files exist.
- * @param {string} projectPath - Path to the project directory.
- * @param {string} workflowName - Name of the workflow.
+ * @param {string} logicAppFolderPath - Path to the project directory.
+ * @param {string} logicAppName - Name of the workflow.
+ * @param {string} testsDirectory - Name of the workflow.
  */
-export async function ensureCsprojAndNugetFiles(projectPath: string, workflowName: string): Promise<void> {
-  const logicAppName = path.basename(path.dirname(workflowName));
-  const logicAppFolderPath = path.join(getTestsDirectory(projectPath).fsPath, logicAppName);
-
+export async function ensureCsprojAndNugetFiles(testsDirectory: string, logicAppFolderPath: string, logicAppName: string): Promise<void> {
   const csprojFilePath = path.join(logicAppFolderPath, `${logicAppName}.csproj`);
-  const nugetConfigFilePath = path.join(logicAppFolderPath, nugetFileName);
+  const nugetConfigFilePath = path.join(testsDirectory, nugetFileName);
 
   if (!(await fs.pathExists(csprojFilePath))) {
     ext.outputChannel.appendLog(localize('creatingCsproj', 'Creating .csproj file at: {0}', csprojFilePath));

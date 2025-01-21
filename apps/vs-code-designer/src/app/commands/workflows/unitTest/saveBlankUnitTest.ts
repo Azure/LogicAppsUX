@@ -22,7 +22,7 @@ import * as path from 'path';
 import * as vscode from 'vscode';
 import * as fs from 'fs-extra';
 import { ext } from '../../../../extensionVariables';
-import { toPascalCase } from '@microsoft/logic-apps-shared/src/utils/src/lib/helpers/stringFunctions';
+import { toPascalCase } from '@microsoft/logic-apps-shared';
 
 /**
  * Creates a unit test for a Logic App workflow (codeful only).
@@ -52,7 +52,10 @@ export async function saveBlankUnitTest(
 
     // Check if in a multi-root workspace
     if (!isMultiRootWorkspace()) {
-      const message = localize('expectedWorkspace', 'A workspace must be open to create unit tests.');
+      const message = localize(
+        'expectedWorkspace',
+        'A multi-root workspace must be open to create unit tests. Please navigate to the Logic Apps extension in Visual Studio Code and use the "Create New Logic App Workspace" command to initialize and open a valid workspace.'
+      );
       ext.outputChannel.appendLog(message);
       throw new Error(message);
     }
@@ -205,7 +208,7 @@ async function generateBlankCodefulUnitTest(
 
     // Ensure .csproj and NuGet files exist
     ext.outputChannel.appendLog(localize('ensuringCsproj', 'Ensuring .csproj and NuGet configuration files exist...'));
-    await ensureCsprojAndNugetFiles(projectPath, workflowName);
+    await ensureCsprojAndNugetFiles(testsDirectory, logicAppFolderPath, logicAppName);
     ext.outputChannel.appendLog(localize('csprojEnsured', 'Ensured .csproj and NuGet configuration files.'));
 
     // Add testsDirectory to workspace if not already included
@@ -258,14 +261,14 @@ export function transformParameters(params: any): any {
 
   for (const key in params) {
     if (Object.prototype.hasOwnProperty.call(params, key)) {
-      // STEP 1: Clean up the key.
+      // Clean up the key.
       const cleanedKey = key
         .replace(/^outputs\.\$\./, '') // remove "outputs.$." prefix
         .replace(/^outputs\.\$$/, '') // remove "outputs.$" prefix
         .replace(/^body\.\$\./, 'body.') // replace "body.$." prefix with "body."
         .replace(/^body\.\$$/, 'body'); // replace "body.$" prefix with "body"
 
-      // STEP 2: Split on '.' to build or traverse nested keys.
+      // Split on '.' to build or traverse nested keys.
       const keys = cleanedKey.split('.');
       keys.reduce((acc, part, index) => {
         const isLastPart = index === keys.length - 1;
@@ -290,7 +293,6 @@ export function transformParameters(params: any): any {
           // Not the last segment: ensure the path is an object so we can keep nesting.
           acc[part] = {};
         }
-
         return acc[part];
       }, result);
     }
@@ -327,8 +329,11 @@ export async function processAndWriteMockableOperations(
       // Transform the output parameters for this operation
       const outputs = transformParameters(outputParameters[operationName]?.outputs || {});
 
+      // Replace char in namepsace var to compile c# file
+      const sanitizedLogicAppName = logicAppName.replace(/-/g, '_');
+
       // Generate C# class content (assuming generateCSharpClasses returns a string)
-      const classContent = generateCSharpClasses(logicAppName, className, outputs);
+      const classContent = generateCSharpClasses(sanitizedLogicAppName, className, outputs);
 
       // Write the .cs file
       const filePath = path.join(unitTestFolderPath, `${className}.cs`);
@@ -348,12 +353,11 @@ export async function processAndWriteMockableOperations(
  * @returns {string} - The generated C# class definition.
  */
 function generateCSharpClasses(logicAppName: string, className: string, outputs: any): string {
-  // Start building the class definition
   let classDefinition = 'using System;\nusing System.Collections.Generic;\nusing Newtonsoft.Json.Linq;\n\n';
-  classDefinition += `namespace ${logicAppName} {\n`;
+  const namespaceName = `${logicAppName}.Tests.Mocks`;
+  classDefinition += `namespace ${namespaceName} {\n`;
   classDefinition += `    public class ${className} {\n`;
 
-  // Generate properties for the class based on the outputs
   for (const key in outputs) {
     if (Object.prototype.hasOwnProperty.call(outputs, key)) {
       const jsonType = outputs[key]?.type || 'object'; // Default to 'object' if type is not defined
@@ -365,7 +369,6 @@ function generateCSharpClasses(logicAppName: string, className: string, outputs:
     }
   }
 
-  // Close the class and namespace
   classDefinition += '    }\n';
   classDefinition += '}\n';
 
