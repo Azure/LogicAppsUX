@@ -95,7 +95,7 @@ export async function switchToDotnetProject(context: IProjectWizardContext, targ
   }
 
   if (!templates) {
-    throw new Error(localize('dotnetTemplateError', 'Dotnet templates could not be found.'));
+    throw new Error(localize('dotnetTemplateError', 'Can't find dotnet templates.'));
   }
   const logicAppFolderName = path.basename(target.fsPath);
   const warning: string = localize(
