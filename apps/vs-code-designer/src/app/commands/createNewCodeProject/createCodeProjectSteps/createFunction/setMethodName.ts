@@ -28,7 +28,7 @@ export class setMethodName extends AzureWizardPromptStep<IProjectWizardContext> 
       return localize('emptyTemplateNameError', 'The function name cannot be empty.');
     }
     if (!/^[a-z][a-z\d_]*$/i.test(name)) {
-      return localize('functionNameInvalidMessage', 'Function name must start with a letter and can only contain letters, digits and "_".');
+      return localize('functionNameInvalidMessage', 'The function name must start with a letter and can only contain letters, digits, or underscores ("_").');
     }
 
     if (name === context.logicAppName) {
