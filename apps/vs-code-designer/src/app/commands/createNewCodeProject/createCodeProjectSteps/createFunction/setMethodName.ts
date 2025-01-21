@@ -32,7 +32,7 @@ export class setMethodName extends AzureWizardPromptStep<IProjectWizardContext> 
     }
 
     if (name === context.logicAppName) {
-      return localize('functionNameSameAsProjectNameError', 'The function name cannot be the same as the project name.');
+      return localize('functionNameSameAsProjectNameError', 'Can't use the same name for the function name and the project name.');
     }
 
     if (fse.existsSync(context.workspaceCustomFilePath)) {
