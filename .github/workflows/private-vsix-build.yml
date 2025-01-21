@@ -4,7 +4,7 @@ on:
   workflow_dispatch: # Trigger only manually  workflow_dispatch: # Trigger only manually
 
 env:
-  AI_KEY: 3cf0d6ae-3327-414a-b7c1-12f31ef45eff
+  AI_KEY: ${{ vars.AI_KEY }}
 
 jobs:
   test:
