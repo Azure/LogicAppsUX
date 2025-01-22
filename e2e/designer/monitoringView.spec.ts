@@ -66,6 +66,13 @@ test.describe(
       await expect(page.getByTestId('msla-pill-delay_status')).toBeVisible();
       await expect(page.getByTestId('msla-pill-delay_status')).toHaveAttribute('aria-label', 'Running');
       await expect(page.getByTestId('msla-pill-delay_status')).toHaveClass(/status-only/);
+
+      // Verify actions below the loading actions are inactive
+      await expect(page.getByTestId('card-increment_variable')).toHaveClass(/msla-card-inactive/);
+      await expect(page.getByTestId('card-filter_array')).toHaveClass(/msla-card-inactive/);
+      await expect(page.getByTestId('card-increment_variable')).toHaveClass(/msla-card-inactive/);
+      await expect(page.getByTestId('msla-graph-container-condition_2')).toHaveClass(/msla-card-inactive/);
+      await expect(page.getByTestId('msla-graph-container-condition')).toHaveClass(/msla-card-inactive/);
     });
   }
 );
