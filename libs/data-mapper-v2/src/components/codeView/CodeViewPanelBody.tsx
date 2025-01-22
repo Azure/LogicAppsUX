@@ -40,11 +40,11 @@ export const CodeViewPanelBody = (_props: CodeViewPanelBodyProps) => {
         language={EditorLanguage.yaml}
         value={dataMapDefinition === '' ? resources.EMPTY_MAP_DEFINITION : dataMapDefinition}
         ref={editorRef}
+        monacoContainerStyle={{ height: '100%' }}
         className={styles.editorStyle}
         lineNumbers={'on'}
         scrollbar={{ horizontal: 'hidden', vertical: 'visible' }}
         width="100%"
-        height={`${bodyContainerRef?.current?.getBoundingClientRect().height ?? 100}px`}
         wordWrap="on"
         wrappingIndent="same"
         readOnly
