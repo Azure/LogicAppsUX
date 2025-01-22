@@ -51,10 +51,10 @@ export const useTreeNodeStyles = makeStyles({
     },
   },
   targetSchemaContainer: {
-    paddingLeft: '16px',
+    paddingLeft: '14px',
   },
   sourceSchemaContainer: {
-    marginRight: '16px',
+    marginRight: '14px',
   },
   wrapper: {
     display: 'flex',
@@ -119,7 +119,7 @@ export const useHandleStyles = makeStyles({
     fontSize: '12px',
   },
   left: {
-    right: '7.5px',
+    right: '12px',
   },
   right: {
     left: '7.5px',
