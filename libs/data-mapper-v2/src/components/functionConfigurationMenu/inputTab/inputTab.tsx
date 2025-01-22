@@ -41,6 +41,11 @@ export const InputTabContents = (props: {
         id: 'ZgyD93',
         description: 'Accepted types',
       }),
+      VALUE: intl.formatMessage({
+        defaultMessage: 'Value',
+        id: 'ES5vsI',
+        description: 'Value',
+      }),
     }),
     [intl]
   );
@@ -104,7 +109,7 @@ export const InputTabContents = (props: {
             <div className={styles.titleContainer}>
               <div>
                 <Caption1 className={styles.titleText}>
-                  {input.name}
+                  {input.name ?? resources.VALUE}
                   <Text className={styles.titleRequiredLabelText}>{input.isOptional ? '' : '*'}</Text>
                 </Caption1>
                 <InputCustomInfoLabel />
@@ -188,6 +193,11 @@ const UnlimitedInputs = (props: {
         id: 'wx/ZQP',
         description: 'Add Input',
       }),
+      VALUE: intl.formatMessage({
+        defaultMessage: 'Value',
+        id: 'ES5vsI',
+        description: 'Value',
+      }),
     }),
     [intl]
   );
@@ -214,7 +224,7 @@ const UnlimitedInputs = (props: {
         <div className={styles.titleContainer}>
           <div>
             <Caption1 className={styles.titleText}>
-              {inputsFromManifest[0].name}
+              {inputsFromManifest[0].name ?? stringResources.VALUE}
               <Text className={styles.titleRequiredLabelText}>{inputsFromManifest[0].isOptional ? '' : '*'}</Text>
             </Caption1>
             <InputCustomInfoLabel />
