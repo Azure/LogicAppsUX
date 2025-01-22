@@ -12,7 +12,21 @@ test.describe(
       await GoToMockWorkflow(page, 'Monitoring view conditional');
       await LoadRunFile(page, 'normalState');
 
-      await expect(page.getByTestId('msla-pill-Condition 2-status')).toBeVisible();
+      // Verify status for success action
+      await expect(page.getByTestId('msla-pill-condition_2_status')).toBeVisible();
+      await expect(page.getByTestId('msla-pill-condition_2_status')).toHaveAttribute('aria-label', '0.1 seconds. Succeeded');
+
+      // Verify status for skipped action
+      await expect(page.getByTestId('msla-pill-compose_2_status')).toBeVisible();
+      await expect(page.getByTestId('msla-pill-compose_2_status')).toHaveAttribute('aria-label', '0 seconds. Skipped');
+      await expect(page.getByTestId('card-compose_2').getByRole('button')).toContainText(" 'Compose_2' skipped");
+
+      // Verify actions below the loading actions are not inactive
+      await expect(page.getByTestId('card-increment_variable')).not.toHaveClass(/msla-card-inactive/);
+      await expect(page.getByTestId('card-filter_array')).not.toHaveClass(/msla-card-inactive/);
+      await expect(page.getByTestId('card-increment_variable')).not.toHaveClass(/msla-card-inactive/);
+      await expect(page.getByTestId('msla-graph-container-condition_2')).not.toHaveClass(/msla-card-inactive/);
+      await expect(page.getByTestId('msla-graph-container-condition')).not.toHaveClass(/msla-card-inactive/);
     });
 
     test('Sanity check for loading state', async ({ page }) => {
