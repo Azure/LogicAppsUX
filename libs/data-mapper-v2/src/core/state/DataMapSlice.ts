@@ -33,7 +33,6 @@ import type { Rect, XYPosition } from '@xyflow/react';
 import { createReactFlowFunctionKey, isFunctionNode, isSourceNode, isTargetNode } from '../../utils/ReactFlow.Util';
 import { UnboundedInput } from '../../constants/FunctionConstants';
 import { splitEdgeId } from '../../utils/Edge.Utils';
-import type { SchemaFile } from '../../models/Schema';
 
 export interface DataMapState {
   curDataMapOperation: DataMapOperationState;
@@ -100,9 +99,6 @@ export interface DataMapOperationState {
   targetSchemaTreeData: SchemaTreeDataProps;
   edgePopOverId?: string;
   state?: ComponentState;
-  // current schema files selected
-  sourceSchemaFile?: SchemaFile;
-  targetSchemaFile?: SchemaFile;
 }
 
 const emptyPristineState: DataMapOperationState = {
@@ -281,8 +277,6 @@ export const dataMapSlice = createSlice({
       state.isDirty = false;
       state.sourceInEditState = false;
       state.targetInEditState = false;
-      state.curDataMapOperation.sourceSchemaFile = undefined;
-      state.curDataMapOperation.targetSchemaFile = undefined;
       state.pristineDataMap = newState;
       state.lastAction = 'Set initial data map';
     },
@@ -660,13 +654,6 @@ export const dataMapSlice = createSlice({
         };
       }
     },
-    setSchemaFile: (state, action: PayloadAction<{ schemaType: SchemaType; schemaFile: SchemaFile }>) => {
-      if (action.payload.schemaType === SchemaType.Source) {
-        state.curDataMapOperation.sourceSchemaFile = action.payload.schemaFile;
-      } else if (action.payload.schemaType === SchemaType.Target) {
-        state.curDataMapOperation.targetSchemaFile = action.payload.schemaFile;
-      }
-    },
   },
 });
 
@@ -695,7 +682,6 @@ export const {
   updateCanvasDimensions,
   updateFunctionConnectionInputs,
   updateTreeData,
-  setSchemaFile,
 } = dataMapSlice.actions;
 
 export default dataMapSlice.reducer;

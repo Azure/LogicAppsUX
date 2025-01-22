@@ -25,9 +25,7 @@ const useSchema = (props: useSchemaProps) => {
   const { id, currentNodeKey } = props;
   const handleStyles = useHandleStyles();
   const dispatch = useDispatch<AppDispatch>();
-  const { sourceOpenKeys, targetOpenKeys, sourceSchemaFile, targetSchemaFile } = useSelector(
-    (state: RootState) => state.dataMap.present.curDataMapOperation
-  );
+  const { sourceOpenKeys, targetOpenKeys } = useSelector((state: RootState) => state.dataMap.present.curDataMapOperation);
 
   const isSourceSchema = useMemo(() => isSourceNode(id), [id]);
   const schemaType = useMemo(() => (isSourceNode(id) ? SchemaType.Source : SchemaType.Target), [id]);
@@ -62,7 +60,6 @@ const useSchema = (props: useSchemaProps) => {
       type: (isSourceSchema ? 'source' : 'target') as HandleType,
       className: isSourceSchema ? handleStyles.left : handleStyles.right,
     } as HandleResponseProps,
-    schemaTreeFromStore: isSourceSchema ? sourceSchemaFile : targetSchemaFile,
   };
 };
 

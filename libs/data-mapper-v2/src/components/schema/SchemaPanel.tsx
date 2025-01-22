@@ -1,5 +1,5 @@
 import { getSelectedSchema } from '../../core';
-import { setInitialSchema, setSchemaFile } from '../../core/state/DataMapSlice';
+import { setInitialSchema } from '../../core/state/DataMapSlice';
 import type { AppDispatch, RootState } from '../../core/state/Store';
 import { convertSchemaToSchemaExtended, flattenSchemaNodeMap, getFileNameAndPath } from '../../utils/Schema.Utils';
 import type { DataMapSchema } from '@microsoft/logic-apps-shared';
@@ -27,7 +27,7 @@ export interface ConfigPanelProps {
 
 export const SchemaPanel = ({ id }: ConfigPanelProps) => {
   const dispatch = useDispatch<AppDispatch>();
-  const { isSourceSchema, schemaType, toggleEditState, schemaTreeFromStore } = useSchema({ id });
+  const { isSourceSchema, schemaType, toggleEditState } = useSchema({ id });
   const intl = useIntl();
   const panelStyles = usePanelStyles();
   const styles = useStyles();
@@ -142,11 +142,6 @@ export const SchemaPanel = ({ id }: ConfigPanelProps) => {
     setErrorMessage(''); //reset the error message
   }, []);
 
-  useEffect(() => {
-    if (selectedSchemaFile) {
-      dispatch(setSchemaFile({ schemaFile: selectedSchemaFile, schemaType }));
-    }
-  }, [selectedSchemaFile, schemaType, dispatch]);
   // if initial flat-map changes, filtered version needs to be reset
   useEffect(() => {
     setFilteredFlattenedScehmaMap(flattenedScehmaMap);
@@ -159,7 +154,7 @@ export const SchemaPanel = ({ id }: ConfigPanelProps) => {
         isOpen={!!currentPanelView}
         title={{
           text: isSourceSchema ? stringResources.SOURCE : stringResources.DESTINATION,
-          subTitleText: selectedSchemaFile?.name ?? schemaTreeFromStore?.name ?? '',
+          subTitleText: selectedSchemaFile?.name,
           rightAction: scehmaInEditState ? null : (
             <Button
               appearance="transparent"
