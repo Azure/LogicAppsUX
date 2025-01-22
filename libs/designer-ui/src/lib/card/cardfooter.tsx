@@ -199,7 +199,7 @@ const CardBadgeBar: React.FC<CardBadgeBarProps> = ({ badges, brandColor, tabInde
   );
 };
 
-const CardBadge: React.FC<CardBadgeProps> = ({ enabled, active, content, badgeContent, iconProps, title, cardTitle, tabIndex }) => {
+const CardBadge: React.FC<CardBadgeProps> = ({ enabled, active, content, badgeContent, iconProps, title, cardTitle }) => {
   if (!enabled || !content) {
     return null;
   }
@@ -208,11 +208,23 @@ const CardBadge: React.FC<CardBadgeProps> = ({ enabled, active, content, badgeCo
     <Tooltip relationship={'label'} withArrow={true} content={`${cardTitle ?? ''} ${title}: ${content}`}>
       {badgeContent ?? (
         <div>
-          <Icon role="button" className={'panel-card-v2-badge active'} {...iconProps} tabIndex={tabIndex} />
+          <Icon 
+						role="button" 
+						className={'panel-card-v2-badge active'} 
+						{...iconProps} 
+						// tabIndex={tabIndex} 
+					/>
         </div>
       )}
     </Tooltip>
   ) : (
-    (badgeContent ?? <Icon className="panel-card-v2-badge inactive" {...iconProps} aria-label={title} tabIndex={0} />)
+    badgeContent ?? (
+			<Icon 
+				className="panel-card-v2-badge inactive" 
+				{...iconProps} 
+				aria-label={title} 
+				// tabIndex={0}
+			/>
+		)
   );
 };

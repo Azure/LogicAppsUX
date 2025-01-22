@@ -103,6 +103,7 @@
     "dotenv": "^16.4.5",
     "find-process": "^1.4.7",
     "fs-extra": "^11.2.0",
+    "tabster": "^8.2.0",
     "ts-node": "^10.9.2"
   },
   "pnpm": {

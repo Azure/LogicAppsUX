@@ -41,6 +41,7 @@ import { EdgeContextualMenu } from './common/EdgeContextualMenu/EdgeContextualMe
 import { DragPanMonitor } from './common/DragPanMonitor/DragPanMonitor';
 import { CanvasSizeMonitor } from './CanvasSizeMonitor';
 import { useResizeObserver } from '@react-hookz/web';
+import { createTabster, disposeTabster, getGroupper, getMover, getTabsterAttribute, MoverDirections } from 'tabster';
 
 export interface DesignerProps {
   backgroundProps?: BackgroundProps;
@@ -211,12 +212,29 @@ export const Designer = (props: DesignerProps) => {
     }, tabCountTimeout * 1000);
   }, [isInitialized]);
 
+	// Initialize tabster
+	useEffect(() => {
+		const tabster = createTabster(window);
+		getMover(tabster);
+		getGroupper(tabster);
+		return () => disposeTabster(tabster);
+	}, []);
+
   return (
     <DndProvider options={DND_OPTIONS}>
       {preloadSearch ? <SearchPreloader /> : null}
       <div className="msla-designer-canvas msla-panel-mode" ref={designerContainerRef}>
         <ReactFlowProvider>
-					<div style={{ flexGrow: 1}}>
+					<div 
+						style={{ flexGrow: 1 }} 
+						{...getTabsterAttribute({ 
+							mover: { 
+								memorizeCurrent: true,
+								tabbable: true,
+								direction: MoverDirections.Grid
+							}
+						})}
+					>
 						<ReactFlow
 							ref={canvasRef}
 							nodeTypes={nodeTypes}

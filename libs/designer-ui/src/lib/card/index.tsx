@@ -15,6 +15,7 @@ import type { MouseEventHandler } from 'react';
 import { memo, useEffect, useMemo, useRef } from 'react';
 import type { ConnectDragPreview, ConnectDragSource } from 'react-dnd';
 import { useIntl } from 'react-intl';
+import { getTabsterAttribute, MoverDirections } from 'tabster';
 
 export interface CardProps {
   active?: boolean;
@@ -184,7 +185,9 @@ export const Card: React.FC<CardProps> = memo(
         onClick={handleClick}
         onContextMenu={onContextMenu}
         onKeyDown={keyboardInteraction.keyDown}
-        tabIndex={nodeIndex}
+        // tabIndex={nodeIndex}
+				tabIndex={0}
+				// {...getTabsterAttribute({ mover: { direction: MoverDirections.Grid } })}
         onKeyUp={keyboardInteraction.keyUp}
       >
         {isMonitoringView && active ? (

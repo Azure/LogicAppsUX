@@ -1,6 +1,7 @@
 import { Plus } from './images/plus';
 import { css } from '@fluentui/react';
 import { Tooltip } from '@fluentui/react-components';
+import { getTabsterAttribute, MoverDirections } from 'tabster';
 
 export interface ActionButtonV2Props {
   id?: string;
@@ -13,7 +14,6 @@ export interface ActionButtonV2Props {
 }
 
 export const ActionButtonV2: React.FC<ActionButtonV2Props> = ({
-  tabIndex,
   id,
   dataAutomationId,
   className,
@@ -31,7 +31,9 @@ export const ActionButtonV2: React.FC<ActionButtonV2Props> = ({
         disabled={disabled}
         onClick={onClick}
         onContextMenu={onClick}
-        tabIndex={tabIndex ?? 0}
+        // tabIndex={tabIndex ?? 0}
+				// tabIndex={0}
+				// {...getTabsterAttribute({ mover: { direction: MoverDirections.Grid } })}
       >
         <Plus />
       </button>
