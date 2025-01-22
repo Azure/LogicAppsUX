@@ -1,4 +1,11 @@
 # Logic Apps Designer
+## [5.24.0](https://github.com/Azure/LogicAppsUX/compare/v5.23.0...v5.24.0) (2025-01-22)
+
+
+### Bug Fixes
+
+* **Data Mapper:** Update name and margin for panel ([#6446](https://github.com/Azure/LogicAppsUX/issues/6446)) ([9a55674](https://github.com/Azure/LogicAppsUX/commit/9a55674ac153e1a4fbbef13bf40d0dc9e2776f9c))
+
 ## [5.23.0](https://github.com/Azure/LogicAppsUX/compare/v5.22.0...v5.23.0) (2025-01-22)
 
 
