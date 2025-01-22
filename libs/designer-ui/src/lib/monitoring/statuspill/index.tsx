@@ -2,9 +2,10 @@ import { Tooltip } from '@fluentui/react-components';
 import { getDurationStringFromTimes, getStatusString } from '../../utils';
 import { StatusIcon } from './statusicon';
 import { css } from '@fluentui/react';
+import { replaceWhiteSpaceWithUnderscore } from '@microsoft/logic-apps-shared';
 
 export interface StatusPillProps {
-  id?: string;
+  id: string;
   duration?: string;
   startTime?: string;
   endTime?: string;
@@ -31,7 +32,13 @@ export const StatusPill: React.FC<StatusPillProps> = ({
   }
 
   return (
-    <div id={id} aria-label={tooltipLabel} role="status" className={css('msla-pill', statusOnly && 'status-only')}>
+    <div
+      id={id}
+      data-automation-id={`msla-pill-${replaceWhiteSpaceWithUnderscore(id)}`}
+      aria-label={tooltipLabel}
+      role="status"
+      className={css('msla-pill', statusOnly && 'status-only')}
+    >
       <Tooltip content={tooltipLabel} relationship="description" withArrow>
         <div className="msla-pill--inner">
           {!statusOnly && <span aria-hidden={true}>{duration}</span>}
