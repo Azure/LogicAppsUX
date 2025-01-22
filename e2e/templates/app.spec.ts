@@ -7,22 +7,24 @@ test.describe(
     tag: '@mock',
   },
   () => {
-    test('Should templates gallery', async ({ page }) => {
+    test('Should open templates gallery', async ({ page }) => {
       await page.goto('/templates');
 
       await GoToMockTemplatesGallery(page);
 
       await page.getByRole('tab', { name: 'All' }).click();
-      await page.getByRole('tab', { name: 'Workflows' }).click();
       await page.getByText('Blank workflow', { exact: true }).click();
       await page.getByRole('tab', { name: 'Accelerators' }).click();
+      await expect(page.getByText('Blank workflow', { exact: true })).not.toBeVisible();
+      await expect(page.getByText('[Mock] Simple Accelerator Template', { exact: true })).toBeVisible();
       await page.getByText('A to Z, ascending').click();
-      await page.keyboard.type('Mock');
-
-      expect(true).toBeTruthy();
+      await page.getByRole('tab', { name: 'Workflows' }).click();
+      await page.getByText('Blank workflow', { exact: true }).click();
+      await expect(page.getByText('[Mock] Basic Workflow Only Template', { exact: true })).toBeVisible();
+      await expect(page.getByText('[Mock] Simple Connection Parameter Template', { exact: true })).toBeVisible();
     });
 
-    test('Should open edge context menus', async ({ page }) => {
+    test('Should open template panel', async ({ page }) => {
       await page.goto('/templates');
       await GoToMockTemplate(page, '[Mock] Basic Workflow Only Template');
       await page.getByRole('tab', { name: 'Workflow' }).click();
@@ -31,8 +33,10 @@ test.describe(
       await page.getByRole('tab', { name: 'Basics' }).click();
       await page.getByText('Stateless', { exact: true }).click();
       await page.getByRole('tab', { name: 'Review + create' }).click();
-
-      expect(true).toBeTruthy();
+      await expect(page.getByText('Create a new workflow from template', { exact: true })).toBeVisible();
+      await page.getByText('Template details').click();
+      await expect(page.getByText('Workflow name', { exact: true })).toBeVisible();
+      await expect(page.getByText('State type')).toBeVisible();
     });
   }
 );
