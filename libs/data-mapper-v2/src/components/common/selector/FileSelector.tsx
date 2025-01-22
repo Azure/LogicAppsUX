@@ -66,7 +66,10 @@ const FileSelector = <T extends U>(props: FileSelectorProps<T>) => {
               key={key}
               label={
                 <div>
-                  <Text>{options[key].text}</Text>
+                  <Text>
+                    {options[key].text}
+                    {selectedKey === key && key === 'upload-new' ? <InfoLabel info={<div>{addNewInfo}</div>} /> : null}
+                  </Text>
                   <br />
                   {selectedKey === key && key === 'upload-new' ? (
                     <div className={styles.uploadInputRoot}>
@@ -75,7 +78,6 @@ const FileSelector = <T extends U>(props: FileSelectorProps<T>) => {
                         <Button size="small" shape="square" appearance="primary" onClick={() => onUploadClick()} style={{ marginLeft: 8 }}>
                           {uploadButtonText}
                         </Button>
-                        <InfoLabel info={<div>{addNewInfo}</div>} />
                       </StackShim>
                     </div>
                   ) : null}
