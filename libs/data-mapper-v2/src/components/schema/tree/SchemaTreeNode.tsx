@@ -90,7 +90,10 @@ const SchemaTreeNode = (props: SchemaTreeNodeProps) => {
   );
 
   const onMouseLeave = useCallback(
-    (_e?: any) => {
+    (e?: any) => {
+      if (e?.stopPropagation) {
+        e.stopPropagation();
+      }
       dispatch(setHoverState());
     },
     [dispatch]
@@ -141,6 +144,7 @@ const SchemaTreeNode = (props: SchemaTreeNodeProps) => {
         )}
         onMouseEnter={onMouseEnter}
         onMouseLeave={onMouseLeave}
+        onMouseOut={onMouseLeave}
       >
         <div style={style} className={mergeClasses(styles.wrapper)} onClick={onClick}>
           {isLeaf ? (

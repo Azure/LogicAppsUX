@@ -41,4 +41,7 @@ export const useStyles = makeStyles({
     paddingBottom: '0px',
     paddingTop: '0px',
   },
+  search: {
+    marginTop: '4px',
+  },
 });

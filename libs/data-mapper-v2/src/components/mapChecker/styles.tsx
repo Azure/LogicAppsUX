@@ -13,6 +13,7 @@ export const useMapCheckerItemStyles = makeStyles({
     fontWeight: '600',
     wordBreak: 'break-word',
     marginLeft: '2px',
+    width: '60%',
   },
   message: {
     fontSize: '11px',

@@ -7,7 +7,7 @@ import { isFunctionData } from './Function.Utils';
 import { nodeScrollDirections } from './Schema.Utils';
 import { UnboundedInput } from '../constants/FunctionConstants';
 
-export const panelWidth = 310;
+export const panelWidth = 315;
 export const panelWidthWithoutHandles = 300;
 export const addReactFlowPrefix = (key: string, type: SchemaType) => `${type}-${key}`;
 export const addSourceReactFlowPrefix = (key: string) => `${sourcePrefix}${key}`;
