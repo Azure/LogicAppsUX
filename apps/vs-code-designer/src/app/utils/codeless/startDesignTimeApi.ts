@@ -159,7 +159,7 @@ function extractPinnedVersion(input: string): string | null {
 export async function checkFuncProcessId(): Promise<boolean> {
   let correctId = false;
   if (os.platform() === Platform.windows) {
-    await pstree(ext.designChildProcess.pid, (err, children) => {
+    await pstree(ext.designChildProcess.pid, (_err, children) => {
       children.forEach((p) => {
         if (p.PID === ext.designChildFuncProcessId && (p.COMMAND || p.COMM) === 'func.exe') {
           correctId = true;

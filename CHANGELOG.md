@@ -1,4 +1,24 @@
 # Logic Apps Designer
+## [5.24.0](https://github.com/Azure/LogicAppsUX/compare/v5.23.0...v5.24.0) (2025-01-22)
+
+
+### Bug Fixes
+
+* **Data Mapper:** Update name and margin for panel ([#6446](https://github.com/Azure/LogicAppsUX/issues/6446)) ([9a55674](https://github.com/Azure/LogicAppsUX/commit/9a55674ac153e1a4fbbef13bf40d0dc9e2776f9c))
+
+## [5.23.0](https://github.com/Azure/LogicAppsUX/compare/v5.22.0...v5.23.0) (2025-01-22)
+
+
+### Features
+
+* **Data Mapper:** Changed VSCode entry menu ([#6437](https://github.com/Azure/LogicAppsUX/issues/6437)) ([6aa0222](https://github.com/Azure/LogicAppsUX/commit/6aa0222da2ccea3ff24898faa8c15fd3e2b28374))
+* **vscode:** Custom Code Support in VSCode ([#6251](https://github.com/Azure/LogicAppsUX/issues/6251)) ([16fc422](https://github.com/Azure/LogicAppsUX/commit/16fc422ea644d37c654769b8a7211a92bd4941f0))
+
+
+### Bug Fixes
+
+* **Data Mapper:** Fit and finish fixes ([#6445](https://github.com/Azure/LogicAppsUX/issues/6445)) ([eeb8d1a](https://github.com/Azure/LogicAppsUX/commit/eeb8d1ac59c7cff22f8037bb3121f18963ed8e08))
+
 ## [5.22.0](https://github.com/Azure/LogicAppsUX/compare/v5.21.0...v5.22.0) (2025-01-17)
 
 
