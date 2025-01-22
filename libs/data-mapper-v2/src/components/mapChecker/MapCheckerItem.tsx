@@ -1,11 +1,12 @@
 import { Stack } from '@fluentui/react';
-import { Badge, Text } from '@fluentui/react-components';
+import { Badge, mergeClasses, Text } from '@fluentui/react-components';
 import { useIntl } from 'react-intl';
-import type { MapCheckerMessage } from '../../utils/MapChecker.Utils';
+import { MapCheckerItemSeverity, type MapCheckerMessage } from '../../utils/MapChecker.Utils';
 import { iconForMapCheckerSeverity } from '../../utils/Icon.Utils';
 import { useMapCheckerItemStyles } from './styles';
 import { getTreeNodeId, isFunctionNode, isSourceNode, isTargetNode } from '../../utils/ReactFlow.Util';
 import { useMemo } from 'react';
+import { equals } from '@microsoft/logic-apps-shared';
 
 export interface MapCheckerItemProps extends MapCheckerMessage {
   _onClick?: () => void;
@@ -35,9 +36,9 @@ export const MapCheckerItem = ({ title, description, severity, _onClick, reactFl
         description: 'Source',
       }),
       Target: intl.formatMessage({
-        defaultMessage: 'Target',
-        id: 'lfD8uQ',
-        description: 'Target',
+        defaultMessage: 'Destination',
+        id: 'EXEL2j',
+        description: 'Destination',
       }),
       Function: intl.formatMessage({
         defaultMessage: 'Function',
@@ -59,7 +60,17 @@ export const MapCheckerItem = ({ title, description, severity, _onClick, reactFl
         <div className={styles.headerContainer}>
           {icon}
           <Text className={styles.headerText}>{headerText}</Text>
-          <Badge appearance="filled" className={styles.badge}>
+          <Badge
+            appearance="filled"
+            className={mergeClasses(
+              styles.badge,
+              equals(severity, MapCheckerItemSeverity.Error)
+                ? styles.errorBadge
+                : equals(severity, MapCheckerItemSeverity.Warning)
+                  ? styles.warningBadge
+                  : ''
+            )}
+          >
             {isSourceNode(reactFlowId) ? resources.Source : isTargetNode(reactFlowId) ? resources.Target : resources.Function}
           </Badge>
         </div>
