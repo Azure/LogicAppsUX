@@ -5,7 +5,7 @@ import type {
   Connector,
   SomeKindOfAzureOperationDiscovery,
 } from '../../../utils/src';
-import { ArgumentException, connectorsSearchResultsMock } from '../../../utils/src';
+import { connectorsSearchResultsMock, validateRequiredServiceArguments } from '../../../utils/src';
 import { almostAllBuiltInOperations } from '../__test__/__mocks__/builtInOperationResponse';
 import { BaseSearchService } from '../base';
 import type { AzureOperationsFetchResponse, BaseSearchServiceOptions } from '../base/search';
@@ -27,15 +27,9 @@ interface StandardSearchServiceOptions extends BaseSearchServiceOptions {
 export class StandardSearchService extends BaseSearchService {
   constructor(public override readonly options: StandardSearchServiceOptions) {
     super(options);
-
     const { baseUrl, apiVersion, hybridLogicApp } = options;
+    validateRequiredServiceArguments({ baseUrl, apiVersion });
 
-    if (!baseUrl) {
-      throw new ArgumentException('baseUrl required');
-    }
-    if (!apiVersion) {
-      throw new ArgumentException('apiVersion required');
-    }
     if (hybridLogicApp) {
       this._isHybridLogicApp = true;
     }
@@ -105,7 +99,7 @@ export class StandardSearchService extends BaseSearchService {
       // const response = await this.pagedBatchAzureResourceRequests(page, uri, queryParameters, 1);
       const { value } = await this.getAzureResourceByPage(uri, queryParameters, page, 100);
       return value;
-    } catch (error) {
+    } catch (_error) {
       return [];
     }
   }
@@ -139,7 +133,7 @@ export class StandardSearchService extends BaseSearchService {
         .filter((connector) => connector.properties?.supportedConnectionKinds?.includes('V2'))
         .filter((connector) => connector?.location === location);
       return { nextlink: nextLink, value: filteredValue };
-    } catch (error) {
+    } catch (_error) {
       return { value: [] };
     }
   }

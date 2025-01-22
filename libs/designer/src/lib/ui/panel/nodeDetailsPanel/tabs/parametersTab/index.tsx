@@ -1,6 +1,6 @@
 import constants from '../../../../../common/constants';
 import { useShowIdentitySelectorQuery } from '../../../../../core/state/connection/connectionSelector';
-import { addOrUpdateCustomCode } from '../../../../../core/state/customcode/customcodeSlice';
+import { addOrUpdateCustomCode, renameCustomCodeFile } from '../../../../../core/state/customcode/customcodeSlice';
 import { useHostOptions, useReadOnly } from '../../../../../core/state/designerOptions/designerOptionsSelectors';
 import type { ParameterGroup } from '../../../../../core/state/operation/operationMetadataSlice';
 import { DynamicLoadStatus, ErrorLevel } from '../../../../../core/state/operation/operationMetadataSlice';
@@ -14,12 +14,7 @@ import {
 } from '../../../../../core/state/selectors/actionMetadataSelector';
 import type { VariableDeclaration } from '../../../../../core/state/tokens/tokensSlice';
 import { updateVariableInfo } from '../../../../../core/state/tokens/tokensSlice';
-import {
-  useGetSwitchParentId,
-  useNodeDisplayName,
-  useNodeMetadata,
-  useReplacedIds,
-} from '../../../../../core/state/workflow/workflowSelectors';
+import { useGetSwitchParentId, useNodeMetadata, useReplacedIds } from '../../../../../core/state/workflow/workflowSelectors';
 import type { AppDispatch, RootState } from '../../../../../core/store';
 import { getConnectionReference } from '../../../../../core/utils/connectors/connections';
 import { isRootNodeInGraph } from '../../../../../core/utils/graph';
@@ -60,14 +55,7 @@ import type {
   PanelTabFn,
   PanelTabProps,
 } from '@microsoft/designer-ui';
-import {
-  EditorService,
-  equals,
-  getPropertyValue,
-  getRecordEntry,
-  isRecordNotEmpty,
-  replaceWhiteSpaceWithUnderscore,
-} from '@microsoft/logic-apps-shared';
+import { EditorService, equals, getPropertyValue, getRecordEntry, isRecordNotEmpty } from '@microsoft/logic-apps-shared';
 import type { OperationInfo } from '@microsoft/logic-apps-shared';
 import type React from 'react';
 import { useCallback, useEffect, useMemo, useState } from 'react';
@@ -232,7 +220,6 @@ const ParameterSection = ({
   const rootState = useSelector((state: RootState) => state);
   const displayNameResult = useConnectorName(operationInfo);
   const panelLocation = usePanelLocation();
-  const nodeTitle = replaceWhiteSpaceWithUnderscore(useNodeDisplayName(nodeId));
 
   const { suppressCastingForSerialize, hideUTFExpressions } = useHostOptions();
 
@@ -308,6 +295,13 @@ const ParameterSection = ({
       );
     }
   };
+
+  const fileNameChange = useCallback(
+    (originalFileName: string, fileName: string): void => {
+      dispatch(renameCustomCodeFile({ newFileName: fileName, oldFileName: originalFileName }));
+    },
+    [dispatch]
+  );
 
   const getPickerCallbacks = (parameter: ParameterInfo) => ({
     getFileSourceName: (): string => {
@@ -459,10 +453,10 @@ const ParameterSection = ({
           errorDetails: dynamicData?.error ? { message: dynamicData.error.message } : undefined,
           validationErrors,
           tokenMapping,
-          nodeTitle,
           loadParameterValueFromString,
           onValueChange: (newState: ChangeState, skipStateSave?: boolean) => onValueChange(id, newState, skipStateSave),
           onComboboxMenuOpen: () => onComboboxMenuOpen(param),
+          onFileNameChange: fileNameChange,
           pickerCallbacks: getPickerCallbacks(param),
           tokenpickerButtonProps: {
             location: panelLocation === PanelLocation.Left ? TokenPickerButtonLocation.Right : TokenPickerButtonLocation.Left,

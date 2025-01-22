@@ -15,6 +15,7 @@ export interface IDesignerPanelMetadata {
   standardApp: StandardApp;
   connectionsData: string;
   parametersData: Record<string, Parameter>;
+  customCodeData: Record<string, string>;
   localSettings: Record<string, string>;
   azureDetails: AzureConnectorDetails;
   workflowDetails: Record<string, any>;

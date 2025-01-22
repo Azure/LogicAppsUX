@@ -75,7 +75,7 @@ const FileSelector = <T extends U>(props: FileSelectorProps<T>) => {
                         <Button size="small" shape="square" appearance="primary" onClick={() => onUploadClick()} style={{ marginLeft: 8 }}>
                           {uploadButtonText}
                         </Button>
-                        <InfoLabel info={<div>{addNewInfo}</div>}></InfoLabel>
+                        <InfoLabel info={<div>{addNewInfo}</div>} />
                       </StackShim>
                     </div>
                   ) : null}
