@@ -163,7 +163,6 @@ export const workflowLoadingSlice = createSlice({
       state.isLocal = action.payload;
       state.appId = undefined;
       state.workflowName = undefined;
-      state.resourcePath = '';
     },
     setIsChatBotEnabled: (state, action: PayloadAction<boolean>) => {
       state.showChatBot = action.payload;
