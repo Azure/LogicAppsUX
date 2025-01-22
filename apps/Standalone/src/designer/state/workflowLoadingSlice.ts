@@ -78,18 +78,16 @@ type RunPayload = {
   runInstance: LogicAppsV2.RunInstanceDefinition;
 };
 
-type LoadWorkflowPayload = {
-  isMonitoringView: boolean;
-  fileName?: string;
+type LoadRunPayload = {
+  runFile: Record<string, any>;
 };
 
-export const loadWorkflow = createAsyncThunk('workflowLoadingState/loadWorkflow', async (payload: LoadWorkflowPayload) => {
-  const fileName = payload.fileName?.split('.')[0];
-  let runFiles = [];
+export const loadWorkflow = createAsyncThunk('workflowLoadingState/loadWorkflow', async (_: unknown, thunkAPI) => {
+  const currentState: RootState = thunkAPI.getState() as RootState;
+  const fileName = currentState.workflowLoader.resourcePath?.split('.')[0];
+  const isMonitoringView = currentState.workflowLoader.isMonitoringView;
 
-  if (payload.isMonitoringView && fileName) {
-    runFiles = await readJsonFiles(fileName);
-  }
+  const runFiles = isMonitoringView && fileName ? await readJsonFiles(fileName) : [];
 
   const wf = await import(`../../../../../__mocks__/workflows/${fileName}.json`);
   return {
@@ -100,10 +98,9 @@ export const loadWorkflow = createAsyncThunk('workflowLoadingState/loadWorkflow'
   } as WorkflowPayload;
 });
 
-export const loadRun = createAsyncThunk('runLoadingState/loadRun', async (_: unknown, thunkAPI) => {
-  const currentState: RootState = thunkAPI.getState() as RootState;
+export const loadRun = createAsyncThunk('runLoadingState/loadRun', async (payload: LoadRunPayload, thunkAPI) => {
   try {
-    const runInstance = await import(`../../../../../__mocks__/runs/${currentState.workflowLoader.resourcePath?.split('.')[0]}.json`);
+    const runInstance = payload.runFile;
 
     return {
       runInstance: {

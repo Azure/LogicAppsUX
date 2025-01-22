@@ -1,6 +1,6 @@
 import type { AppDispatch } from '../../../state/store';
 import { useResourcePath, useIsMonitoringView, useRunFiles } from '../../../state/workflowLoadingSelectors';
-import { setResourcePath, loadWorkflow } from '../../../state/workflowLoadingSlice';
+import { setResourcePath, loadWorkflow, loadRun } from '../../../state/workflowLoadingSlice';
 import type { IDropdownOption } from '@fluentui/react';
 import { Dropdown, DropdownMenuItemType } from '@fluentui/react';
 import { useCallback, useMemo } from 'react';
@@ -67,18 +67,24 @@ export const LocalLogicAppSelector: React.FC = () => {
   const changeResourcePathDropdownCB = useCallback(
     (_: unknown, item: IDropdownOption | undefined) => {
       dispatch(setResourcePath((item?.key as string) ?? ''));
-      dispatch(loadWorkflow({ isMonitoringView, fileName: item?.key as string }));
+      dispatch(loadWorkflow(_));
     },
-    [dispatch, isMonitoringView]
+    [dispatch]
   );
 
-  const onChangeRunInstance = useCallback(() => {}, []);
+  const onChangeRunInstance = useCallback(
+    (_: unknown, item: any) => {
+      dispatch(loadRun({ runFile: item?.module }));
+    },
+    [dispatch]
+  );
 
   const runOptions = useMemo(() => {
     return runFiles.map((runFile) => {
       return {
         key: runFile.path,
-        text: runFile,
+        text: runFile.path.split('/').pop().replace('.json', ''),
+        module: runFile.module,
       };
     });
   }, [runFiles]);

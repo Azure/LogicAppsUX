@@ -68,3 +68,7 @@ export const useStringOverrides = () => {
 export const useRunFiles = () => {
   return useSelector((state: RootState) => state.workflowLoader.runFiles);
 };
+
+export const useRunInstance = () => {
+  return useSelector((state: RootState) => state.workflowLoader.runInstance);
+};

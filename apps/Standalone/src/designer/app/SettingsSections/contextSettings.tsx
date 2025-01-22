@@ -9,7 +9,6 @@ import {
   useShowPerformanceDebug,
   useSuppressDefaultNodeSelect,
   useStringOverrides,
-  useResourcePath,
 } from '../../state/workflowLoadingSelectors';
 import {
   setDarkMode,
@@ -38,16 +37,15 @@ const ContextSettings = () => {
   const showPerformanceDebug = useShowPerformanceDebug();
   const showTestStringOverride = useStringOverrides();
   const dispatch = useDispatch<AppDispatch>();
-  const resourcePath = useResourcePath();
 
   const changeMonitoringView = useCallback(
     (_: unknown, checked?: boolean) => {
       dispatch(setMonitoringView(!!checked));
       if (checked) {
-        dispatch(loadWorkflow({ isMonitoringView, fileName: resourcePath }));
+        dispatch(loadWorkflow(_));
       }
     },
-    [dispatch, isMonitoringView, resourcePath]
+    [dispatch]
   );
 
   return (
