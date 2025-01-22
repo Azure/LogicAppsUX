@@ -7,6 +7,7 @@ export const useMapCheckerItemStyles = makeStyles({
     justifyContent: 'left',
     margin: '5px 0px',
     boxShadow: tokens.shadow4,
+    backgroundColor: tokens.colorNeutralBackground1,
   },
   headerText: {
     fontSize: '13px',
@@ -27,6 +28,7 @@ export const useMapCheckerItemStyles = makeStyles({
     paddingRight: '3px',
     borderRadius: '0',
     marginLeft: 'auto',
+    backgroundColor: tokens.colorNeutralBackground3,
   },
   headerContainer: {
     display: 'flex',

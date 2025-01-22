@@ -22,7 +22,9 @@ export const MapCheckerItem = ({ title, description, severity, _onClick, reactFl
     if (isFunctionNode(reactFlowId)) {
       return data?.functionName ?? defaultTitle;
     }
-    return getTreeNodeId(reactFlowId) ?? defaultTitle;
+    const treeNodeId = getTreeNodeId(reactFlowId);
+    const splitIds = treeNodeId.split('/');
+    return splitIds.length > 0 ? splitIds[splitIds.length - 1] : defaultTitle;
   }, [data?.functionName, intl, reactFlowId, title.message, title.value]);
 
   const resources = useMemo(
