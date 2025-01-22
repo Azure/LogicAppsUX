@@ -346,13 +346,26 @@ export function createParameterInfo(
 ): ParameterInfo {
   const value = loadParameterValue(parameter);
   const { editor, editorOptions, editorViewModel, schema } = getParameterEditorProps(parameter, value, shouldIgnoreDefaultValue, metadata);
-  const { alias, dependencies, encode, format, isDynamic, isUnknown, serialization, deserialization, dynamicParameterReference } =
-    parameter;
+  const {
+    alternativeKey,
+    alias,
+    dependencies,
+    encode,
+    format,
+    isDynamic,
+    isUnknown,
+    serialization,
+    deserialization,
+    dynamicParameterReference,
+    collectionFormat,
+  } = parameter;
+
   const info = {
     alias,
     dependencies,
     encode,
     format,
+    collectionFormat,
     in: parameter.in,
     isDynamic: !!isDynamic,
     isUnknown,
@@ -362,7 +375,7 @@ export function createParameterInfo(
   };
 
   const parameterInfo: ParameterInfo = {
-    alternativeKey: parameter.alternativeKey,
+    alternativeKey,
     id: guid(),
     dynamicData: parameter.dynamicValues ? { status: DynamicLoadStatus.NOTSTARTED } : undefined,
     editor,
@@ -450,29 +463,26 @@ export function getParameterEditorProps(
       editor = undefined;
     }
   } else if (editor === constants.EDITOR.DROPDOWN) {
-    // making dropdown editor backwards compatible with old format
-    const dropdownOptions: DropdownItem[] = (editorOptions?.items ?? []).map((item: any) => {
-      const { disabled, key, value, title: displayName, type } = item;
-      return {
-        disabled,
-        key: key ?? displayName,
-        value: value?.toString(),
-        displayName,
-        type,
-      };
-    });
-
-    const modifiedOptions = editorOptions?.options?.map((option: any) => {
-      return {
-        ...option,
-        value: option?.value?.toString(),
-      };
-    });
+    // Backwards compatibility for dropdown editor with old format
+    const options: DropdownItem[] = (editorOptions?.items ?? editorOptions?.options ?? []).map(
+      ({ key, value, title, displayName: _displayName, ...props }: any) => {
+        const displayName = _displayName ?? title;
+        return {
+          ...props,
+          key: key ?? displayName,
+          value: value?.toString(),
+          displayName: displayName,
+        };
+      }
+    );
 
     editorOptions = {
       ...editorOptions,
-      serialization: { ...editorOptions?.serialization, separator: editorOptions?.titleSeparator },
-      options: dropdownOptions.length > 0 ? dropdownOptions : (modifiedOptions ?? []),
+      serialization: {
+        ...editorOptions?.serialization,
+        separator: editorOptions?.titleSeparator,
+      },
+      options,
     };
   } else if (editor === constants.EDITOR.FLOATINGACTIONMENU && editorOptions?.menuKind === FloatingActionMenuKind.outputs) {
     editorViewModel = toFloatingActionMenuOutputsViewModel(value);
@@ -2111,6 +2121,12 @@ export const loadDynamicContentForInputsInNode = async (
         },
         { message }
       );
+      LoggerService().log({
+        level: LogEntryLevel.Error,
+        area: 'loadDynamicContentForInputsInNode',
+        message: errorMessage,
+        error: error instanceof Error ? error : undefined,
+      });
 
       dispatch(
         updateErrorDetails({
@@ -2400,6 +2416,13 @@ async function tryGetInputDynamicSchema(
       },
       { message }
     );
+
+    LoggerService().log({
+      level: LogEntryLevel.Error,
+      area: 'tryGetInputDynamicSchema',
+      message: errorMessage,
+      error: error instanceof Error ? error : undefined,
+    });
 
     dispatch(
       updateErrorDetails({
@@ -3231,9 +3254,10 @@ export function updateTokenMetadata(
   const tokenNodeOperation = operations[tokenNodeId];
   const nodeType = tokenNodeOperation?.type;
   const isSecure = hasSecureOutputs(nodeType, settings ?? {});
+  const isFromExistingLoop = Boolean(arrayDetails?.loopSource && getPropertyValue(actionNodes, arrayDetails.loopSource));
   const nodeOutputInfo = getOutputByTokenInfo(unmap(nodeOutputs?.outputs), valueSegment.token as SegmentToken, parameterType);
-  const brandColor = token.tokenType === TokenType.ITEM ? ItemBrandColor : operationMetadata?.brandColor;
-  const iconUri = token.tokenType === TokenType.ITEM ? ItemIcon : operationMetadata?.iconUri;
+  const brandColor = token.tokenType === TokenType.ITEM || isFromExistingLoop ? ItemBrandColor : operationMetadata?.brandColor;
+  const iconUri = token.tokenType === TokenType.ITEM || isFromExistingLoop ? ItemIcon : operationMetadata?.iconUri;
 
   let outputInsideForeach = false;
   if (parameterNodeId) {
@@ -3586,7 +3610,7 @@ export const castValueSegments = (
       return expressionValue;
     })
     .join('');
-}
+};
 
 export function parameterValueToJSONString(parameterValue: ValueSegment[], applyCasting = true, forValidation = false): string {
   let shouldInterpolate = false;

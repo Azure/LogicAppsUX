@@ -7,8 +7,14 @@
 To run Data Mapper Standalone:
 
 ```bash
-nx serve data-mapper-standalone
+pnpm turbo run dev
 ```
+
+same as you would to run designer
+
+to access different versions
+- V1- /datamapperv1
+- V2- /datamapperv2
 
 From here (localhost:4200 in your browser), you can either:
 

@@ -11,9 +11,9 @@ import type { ConnectionCreationInfo, LogicAppsV2 } from '@microsoft/logic-apps-
 import type { ConnectionReferences } from '@microsoft/logic-apps-designer';
 import { DesignerProvider, BJSWorkflowProvider, Designer, getTheme, useThemeObserver } from '@microsoft/logic-apps-designer';
 import { isEmptyString, isNullOrUndefined, Theme } from '@microsoft/logic-apps-shared';
-import type { FileSystemConnectionInfo, StandardApp } from '@microsoft/vscode-extension-logic-apps';
+import type { FileSystemConnectionInfo, MessageToVsix, StandardApp } from '@microsoft/vscode-extension-logic-apps';
 import { ExtensionCommand } from '@microsoft/vscode-extension-logic-apps';
-import { useContext, useMemo, useState, useEffect } from 'react';
+import { useContext, useMemo, useState, useEffect, useCallback } from 'react';
 import { useIntl } from 'react-intl';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { useDispatch, useSelector } from 'react-redux';
@@ -63,6 +63,13 @@ export const DesignerApp = () => {
     attributes: true,
   });
 
+  const sendMsgToVsix = useCallback(
+    (msg: MessageToVsix) => {
+      vscode.postMessage(msg);
+    },
+    [vscode]
+  );
+
   const services = useMemo(() => {
     const fileSystemConnectionCreate = async (
       connectionInfo: FileSystemConnectionInfo,
@@ -89,7 +96,8 @@ export const DesignerApp = () => {
       vscode,
       oauthRedirectUrl,
       hostVersion,
-      queryClient
+      queryClient,
+      sendMsgToVsix
     );
   }, [
     baseUrl,
@@ -104,6 +112,7 @@ export const DesignerApp = () => {
     dispatch,
     hostVersion,
     queryClient,
+    sendMsgToVsix,
   ]);
 
   const connectionReferences: ConnectionReferences = useMemo(() => {

@@ -13,7 +13,7 @@ import {
   supportedSchemaFileExts,
   supportedCustomXsltFileExts,
 } from './extensionConfig';
-import type { SchemaType, MapMetadata, IFileSysTreeItem } from '@microsoft/logic-apps-shared';
+import { type SchemaType, type MapMetadata, type IFileSysTreeItem, LogEntryLevel } from '@microsoft/logic-apps-shared';
 import type { IActionContext } from '@microsoft/vscode-azext-utils';
 import { callWithTelemetryAndErrorHandlingSync } from '@microsoft/vscode-azext-utils';
 import type { MapDefinitionData, MessageToVsix, MessageToWebview } from '@microsoft/vscode-extension-logic-apps';
@@ -39,6 +39,7 @@ export default class DataMapperPanel {
   public dataMapName: string;
   public dataMapStateIsDirty: boolean;
   public mapDefinitionData: MapDefinitionData | undefined;
+  private telemetryPrefix = 'data-mapper-vscode-extension';
 
   constructor(panel: WebviewPanel, dataMapName: string) {
     this.panel = panel;
@@ -114,7 +115,10 @@ export default class DataMapperPanel {
       }
       case ExtensionCommand.webviewLoaded: {
         // Send runtime port to webview
-        this.sendMsgToWebview({ command: ExtensionCommand.setRuntimePort, data: `${ext.designTimePort}` });
+        this.sendMsgToWebview({
+          command: ExtensionCommand.setRuntimePort,
+          data: `${ext.designTimePort}`,
+        });
 
         // If loading a data map, handle that + xslt filename
         this.handleLoadMapDefinitionIfAny();
@@ -167,6 +171,15 @@ export default class DataMapperPanel {
 
       case ExtensionCommand.getDataMapperVersion: {
         this.handleGetDataMapperVersion();
+        break;
+      }
+      case ExtensionCommand.logTelemetry: {
+        const eventName = `${this.telemetryPrefix}/${msg.data.name ?? msg.data.area}`;
+        ext.telemetryReporter.sendTelemetryEvent(eventName, { ...msg.data });
+        break;
+      }
+      case ExtensionCommand.sendNotification: {
+        this.sendNotification(msg.data.title, msg.data.text, msg.data.level);
         break;
       }
     }
@@ -266,6 +279,28 @@ export default class DataMapperPanel {
     }
   }
 
+  public sendNotification(title: string, text: string, level: number) {
+    const msg = localize(title, text);
+    switch (level) {
+      case LogEntryLevel.Error: {
+        ext.showError(msg);
+        break;
+      }
+      case LogEntryLevel.Warning: {
+        ext.showWarning(msg);
+        break;
+      }
+      case LogEntryLevel.Verbose: {
+        ext.showInformation(msg);
+        break;
+      }
+      default: {
+        ext.log(msg);
+        break;
+      }
+    }
+  }
+
   private getFilesForPath(
     folderPath: string,
     command: typeof ExtensionCommand.showAvailableSchemas | typeof ExtensionCommand.getAvailableCustomXsltPaths,
@@ -340,7 +375,10 @@ export default class DataMapperPanel {
 
         this.sendMsgToWebview({
           command: ExtensionCommand.fetchSchema,
-          data: { fileName: primarySchemaFileName, type: schemaType as SchemaType },
+          data: {
+            fileName: primarySchemaFileName,
+            type: schemaType as SchemaType,
+          },
         });
       });
     });

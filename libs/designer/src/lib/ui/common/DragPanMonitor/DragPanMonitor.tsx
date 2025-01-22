@@ -1,9 +1,10 @@
-import { clamp, useThrottledEffect, useWindowDimensions } from '@microsoft/logic-apps-shared';
+import { clamp, useThrottledEffect } from '@microsoft/logic-apps-shared';
 import { useOnViewportChange, useReactFlow } from '@xyflow/react';
 import { useLayout } from '../../../core/graphlayout';
 import { DEFAULT_NODE_SIZE } from '../../../core/utils/graph';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useDragDropManager } from 'react-dnd';
+import { useResizeObserver } from '@react-hookz/web';
 
 interface XY {
   x: number;
@@ -14,9 +15,18 @@ const zoneSize = 160;
 const speed = 40;
 const pollingRate = 16;
 
-export const DragPanMonitor = () => {
+interface DragPanMonitorProps {
+  canvasRef: React.RefObject<Element>;
+}
+
+export const DragPanMonitor = (props: DragPanMonitorProps) => {
+  const { canvasRef } = props;
+
   const [_nodes, _edges, flowSize] = useLayout();
-  const windowDimensions = useWindowDimensions();
+
+  const [containerDimensions, setContainerDimentions] = useState(canvasRef.current?.getBoundingClientRect() ?? { width: 0, height: 0 });
+  useResizeObserver(canvasRef, (el) => setContainerDimentions(el.contentRect));
+
   const [zoom, setZoom] = useState(1);
 
   useOnViewportChange({ onChange: (v) => setZoom(v.zoom) });
@@ -31,14 +41,14 @@ export const DragPanMonitor = () => {
     return {
       x: {
         min: -flowWidth * zoom + DEFAULT_NODE_SIZE.width * zoom + padding,
-        max: windowDimensions.width - DEFAULT_NODE_SIZE.width * zoom - padding,
+        max: containerDimensions.width - DEFAULT_NODE_SIZE.width * zoom - padding,
       },
       y: {
         min: -flowHeight * zoom + DEFAULT_NODE_SIZE.height * zoom + padding,
-        max: windowDimensions.height - DEFAULT_NODE_SIZE.height * zoom - padding,
+        max: containerDimensions.height - DEFAULT_NODE_SIZE.height * zoom - padding,
       },
     };
-  }, [zoom, flowSize, windowDimensions]);
+  }, [zoom, flowSize, containerDimensions]);
 
   /////
 

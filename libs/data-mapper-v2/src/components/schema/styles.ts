@@ -1,8 +1,9 @@
-import { makeStyles, shorthands } from '@fluentui/react-components';
+import { makeStyles } from '@fluentui/react-components';
+import { panelWidth, panelWidthWithoutHandles } from '../../utils/ReactFlow.Util';
 
 export const useStyles = makeStyles({
   root: {
-    width: '308px',
+    width: `${panelWidth}px`,
     height: '100vh',
   },
   targetScehmaRoot: {
@@ -13,9 +14,9 @@ export const useStyles = makeStyles({
 
 export const usePanelStyles = makeStyles({
   root: {
-    width: '300px',
+    width: `${panelWidthWithoutHandles}px`,
     height: '100%',
-    ...shorthands.overflow('visible'),
+    overflow: 'visible',
   },
   schemaSelection: {
     backgroundColor: '#fff',
@@ -31,7 +32,7 @@ export const usePanelStyles = makeStyles({
   body: {
     paddingRight: '0px',
     paddingLeft: '0px',
-    width: '308px',
+    width: `${panelWidth}px`,
     scrollbarWidth: 'none',
   },
   targetSchemaBody: {

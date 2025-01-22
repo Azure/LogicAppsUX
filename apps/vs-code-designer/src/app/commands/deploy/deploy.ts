@@ -364,7 +364,7 @@ async function getProjectPathToDeploy(
       secret: `@appsetting('${workflowAppAADClientSecret}')`,
     };
 
-    if (parameterizeConnectionsSetting === null || parameterizeConnectionsSetting) {
+    if (parameterizeConnectionsSetting) {
       identityWizardContext?.useAdvancedIdentity
         ? updateAuthenticationParameters(advancedIdentityAuthValue)
         : updateAuthenticationParameters(authValue);

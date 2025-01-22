@@ -28,6 +28,7 @@ export interface ExpandedComplexArrayProps {
   getTokenPicker: GetTokenPickerHandler;
   tokenMapping?: Record<string, ValueSegment>;
   loadParameterValueFromString?: loadParameterValueFromStringHandler;
+  isDynamic?: boolean;
 }
 
 export const ExpandedComplexArray = ({
@@ -37,6 +38,7 @@ export const ExpandedComplexArray = ({
   setItems,
   isNested = false,
   options,
+  isDynamic,
   ...props
 }: ExpandedComplexArrayProps): JSX.Element => {
   const intl = useIntl();
@@ -144,11 +146,11 @@ export const ExpandedComplexArray = ({
                                 </div>
                               ) : null}
                             </div>
-                            {comboboxOptions ? (
+                            {isDynamic || (comboboxOptions ?? []).length > 0 ? (
                               <Combobox
                                 {...props}
                                 valueType={schemaItem?.type}
-                                options={comboboxOptions}
+                                options={comboboxOptions ?? []}
                                 placeholder={schemaItem.description}
                                 initialValue={complexItem?.value ?? []}
                                 onChange={(newState) => handleArrayElementSaved(newState, index, schemaItem)}

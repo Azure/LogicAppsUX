@@ -1,60 +1,77 @@
 import { makeStyles } from '@fluentui/react-components';
 
 export const useStyles = makeStyles({
-  unlimitedInputHeaderCell: {
-    width: '170px',
-    display: 'inline-block',
-    paddingRight: '5px',
-  },
-  draggableListItem: {
-    display: 'inline-block',
+  row: {
     width: '100%',
+    paddingBottom: '20px',
   },
-  inputDropdownWrapper: {
-    display: 'inline-block',
-    width: '270px',
-    paddingRight: '8px',
+  header: {
+    display: 'flex',
+    flexDirection: 'column',
   },
-  inputDropdown: {
-    width: '220px',
-    display: 'inline-block',
-  },
-  boundedInputTopRow: {
+  titleContainer: {
     display: 'flex',
     flexDirection: 'row',
-    height: '40px',
+    justifyContent: 'space-between',
   },
-  boundedInputRow: {
-    paddingBottom: '25px',
-  },
-  allowedTypes: {
-    width: '170px',
-    textAlign: 'end',
-  },
-  inputNameDiv: {
-    width: '200px',
-  },
-  inputName: {
-    display: 'block',
-  },
-  addButton: {
-    marginLEft: '0px',
-  },
-  addIcon: {
+  titleText: {
+    display: 'inline',
     fontSize: '12px',
   },
-  tabWrapper: {
-    paddingTop: '8px',
+  titleLabelText: {
+    fontStyle: 'italic',
   },
-  listButtons: {
-    paddingLeft: '8px',
+  titleRequiredLabelText: {
+    color: 'red',
   },
-  badgeWrapper: {
-    width: '70px',
+  descriptionContainer: {
+    display: 'flex',
+    flexDirection: 'row',
+    width: '60%',
+  },
+  descriptionText: {
+    display: 'inline',
+    fontSize: '10px',
+  },
+  body: {
+    display: 'flex',
+    flexDirection: 'column',
+  },
+  formControlWrapper: {
+    display: 'flex',
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+  },
+  formControl: {
     display: 'inline-block',
+    width: '60%',
+  },
+  formControlDescription: {
+    width: '60%',
+    display: 'block',
+    marginTop: '15px',
+  },
+  controlButton: {
+    paddingTop: '0px',
   },
   listButton: {
     width: '40px',
     maxWidth: '40px',
+    paddingTop: '0px',
+  },
+  addButton: {
+    paddingLeft: '0px',
+  },
+  addIcon: {
+    fontSize: '12px',
+  },
+  draggableListContainer: {
+    display: 'flex',
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+  },
+  draggableListItem: {
+    marginTop: '5px',
+    maxHeight: 'fit-content',
   },
 });

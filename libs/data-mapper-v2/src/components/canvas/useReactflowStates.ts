@@ -2,7 +2,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import type { AppDispatch, RootState } from '../../core/state/Store';
 import { applyEdgeChanges, type EdgeChange, type Edge, type Node, type NodeChange, applyNodeChanges, type XYPosition } from '@xyflow/react';
 import { useEffect, useMemo, useState } from 'react';
-import { convertWholeDataMapToLayoutTree, isFunctionNode } from '../../utils/ReactFlow.Util';
+import { convertWholeDataMapToLayoutTree, isFunctionNode, panelWidthWithoutHandles } from '../../utils/ReactFlow.Util';
 import { createEdgeId } from '../../utils/Edge.Utils';
 import { getFunctionNode } from '../../utils/Function.Utils';
 import { emptyCanvasRect } from '@microsoft/logic-apps-shared';
@@ -193,7 +193,7 @@ const useReactFlowStates = (props: ReactFlowStatesProps) => {
       };
 
       const newTargetNodePosition = {
-        x: newWidth - 300,
+        x: newWidth - panelWidthWithoutHandles,
         y: 0,
       };
 

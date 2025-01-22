@@ -11,7 +11,7 @@ import { getInputName, getInputValue } from '../../../utils/Function.Utils';
 import { useStyles } from './styles';
 import { ListItem } from '@fluentui/react-list-preview';
 import { Badge, Button } from '@fluentui/react-components';
-import { LinkDismissRegular, ReOrderRegular } from '@fluentui/react-icons';
+import { DeleteRegular, ReOrderRegular } from '@fluentui/react-icons';
 import type { SchemaType } from '@microsoft/logic-apps-shared';
 import * as React from 'react';
 
@@ -138,9 +138,9 @@ export const CustomListItem = (props: CustomListItemProps) => {
   } = props;
 
   return (
-    <ListItem key={`input-${name}`}>
-      <div className={styles.draggableListItem}>
-        <span className={styles.inputDropdown}>
+    <ListItem key={`input-${name}`} className={styles.draggableListItem}>
+      <div className={styles.draggableListContainer}>
+        <span className={styles.formControl}>
           <InputDropdown
             inputAllowsCustomValues={customValueAllowed}
             index={index}
@@ -152,15 +152,13 @@ export const CustomListItem = (props: CustomListItemProps) => {
             validateAndCreateConnection={validateAndCreateConnection}
           />
         </span>
-        <span className={styles.listButtons}>
-          <span className={styles.badgeWrapper}>
-            {type && (
-              <Badge appearance="filled" color="informative">
-                {type}
-              </Badge>
-            )}
-          </span>
-          <Button className={styles.listButton} appearance="transparent" icon={<LinkDismissRegular />} onClick={remove} />
+        {type && (
+          <Badge appearance="filled" color="informative">
+            {type}
+          </Badge>
+        )}
+        <span>
+          <Button className={styles.listButton} appearance="transparent" icon={<DeleteRegular />} onClick={remove} />
           {draggable && dragHandleProps && (
             <Button className={styles.listButton} appearance="transparent" icon={<ReOrderRegular />} {...dragHandleProps} />
           )}

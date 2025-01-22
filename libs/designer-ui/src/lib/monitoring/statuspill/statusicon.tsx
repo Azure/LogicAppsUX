@@ -1,3 +1,4 @@
+import { Spinner } from '@fluentui/react-components';
 import Constants from '../../constants';
 import { Aborted } from './images/aborted';
 import { Cancelled } from './images/cancelled';
@@ -7,25 +8,17 @@ import { Succeeded } from './images/succeeded';
 import { SucceededWithRetries } from './images/succeededwithretries';
 import { TimedOut } from './images/timedout';
 import { Waiting } from './images/waiting';
-import type { ISpinnerStyles } from '@fluentui/react';
-import { Spinner, SpinnerSize } from '@fluentui/react';
 
 type IconOpacity = `${number}%`;
 export interface StatusIconProps {
   hasRetries: boolean;
-  status: string;
+  status?: string;
   iconOpacity?: IconOpacity;
 }
 
-const spinnerStyles: ISpinnerStyles = {
-  root: {
-    width: 24,
-  },
-};
-
 export const StatusIcon: React.FC<StatusIconProps> = ({ hasRetries, status, iconOpacity = '100%' }) => {
   if (status === Constants.STATUS.RUNNING) {
-    return <Spinner size={SpinnerSize.medium} styles={spinnerStyles} />;
+    return <Spinner size="tiny" />;
   }
 
   switch (status) {

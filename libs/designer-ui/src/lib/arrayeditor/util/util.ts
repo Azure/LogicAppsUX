@@ -28,7 +28,7 @@ export const hideComplexArray = (dimensionalSchema: ItemSchemaItemProps[]) => {
   return dimensionalSchema.every((item) => item.readOnly === true);
 };
 
-export const getOneDimensionalSchema = (itemSchema: ArrayItemSchema, isRequired?: any): ItemSchemaItemProps[] => {
+export const getOneDimensionalSchema = (itemSchema: ArrayItemSchema, isRequired: boolean): ItemSchemaItemProps[] => {
   if (!itemSchema || itemSchema[ExtensionProperties.Visibility] === 'internal') {
     return [];
   }
@@ -38,7 +38,7 @@ export const getOneDimensionalSchema = (itemSchema: ArrayItemSchema, isRequired?
   if (type === constants.SWAGGER.TYPE.OBJECT && properties) {
     const requiredElements = required ?? [];
     return Object.entries(properties).flatMap(([key, value]) =>
-      key !== 'key' && value ? getOneDimensionalSchema(value, requiredElements.includes(key)) : []
+      key !== 'key' && value ? getOneDimensionalSchema(value, isRequired && requiredElements.includes(key)) : []
     );
   }
 
@@ -61,59 +61,34 @@ export const getOneDimensionalSchema = (itemSchema: ArrayItemSchema, isRequired?
 export const convertComplexItemsToArray = (
   itemSchema: ArrayItemSchema,
   items: ComplexArrayItem[],
+  isParentRequired: boolean,
   nodeMap?: Map<string, ValueSegment>,
   suppressCasting?: boolean,
   castParameter?: CastHandler
 ) => {
-  const returnItem: any = {};
+  const returnItem: Record<string, any> = {};
+  // Process object type schema
   if (itemSchema.type === constants.SWAGGER.TYPE.OBJECT && itemSchema.properties) {
+    const requiredKeys = new Set(itemSchema.required ?? []);
+
     Object.entries(itemSchema.properties).forEach(([key, value]) => {
       if (key !== 'key' && items) {
-        const keyName = value.key.split('.').at(-1) as string;
-        // handle nested array items
+        const keyName = value.key.split('.').pop() as string;
+        const isKeyRequired = requiredKeys.has(keyName) && isParentRequired;
+
+        // Handle nested array items
         if (value.type === constants.SWAGGER.TYPE.ARRAY && value.items?.properties) {
-          const arrayItems = items.find((item) => {
-            return item.key === value.key;
-          })?.arrayItems;
-          if (arrayItems && arrayItems.length > 0) {
-            const arrayVal: any = [];
-            arrayItems.forEach((arrayItem) => {
-              if (value.items) {
-                arrayVal.push(convertComplexItemsToArray(value.items, arrayItem.items, nodeMap, suppressCasting, castParameter));
-              }
-            });
-            returnItem[keyName] = arrayVal;
-          }
+          handleArrayItems(value, items, isKeyRequired, keyName, returnItem, nodeMap, suppressCasting, castParameter);
         } else {
-          const convertedItem = convertComplexItemsToArray(value, items, nodeMap, suppressCasting, castParameter);
-          if (
-            (typeof convertedItem === 'string' && convertedItem.length > 0) ||
-            (typeof convertedItem === 'object' && Object.keys(convertedItem).length > 0)
-          ) {
-            returnItem[keyName] = castParameterValueToPrimitiveType(convertedItem, value?.type);
-          }
+          handleSimpleItem(value, items, isKeyRequired, keyName, returnItem, nodeMap, suppressCasting, castParameter);
         }
       }
     });
-    // add all required schema properties to the return item
-    itemSchema.required?.forEach((requiredKey) => {
-      if (!returnItem[requiredKey] && itemSchema.properties) {
-        returnItem[requiredKey] = null;
-      }
-    });
   } else {
-    const complexItem = items.find((item) => {
-      return item.key === itemSchema.key;
-    });
+    const complexItem = items.find((item) => item.key === itemSchema.key);
     if (complexItem) {
       if (complexItem.arrayItems && itemSchema.type === constants.SWAGGER.TYPE.ARRAY) {
-        const arrayVal: any = [];
-        complexItem.arrayItems.forEach((arrayItem) => {
-          if (itemSchema.items) {
-            arrayVal.push(convertComplexItemsToArray(itemSchema.items, arrayItem.items, nodeMap, suppressCasting, castParameter));
-          }
-        });
-        return arrayVal;
+        return handleArrayOfComplexItems(itemSchema, complexItem, isParentRequired, nodeMap, suppressCasting, castParameter);
       }
       const segments = complexItem.value;
 
@@ -124,6 +99,75 @@ export const convertComplexItemsToArray = (
     }
   }
   return returnItem;
+};
+
+// Helper to convert array items to complex item schema
+const handleArrayItems = (
+  value: ArrayItemSchema,
+  items: ComplexArrayItem[],
+  isKeyRequired: boolean,
+  keyName: string,
+  returnItem: Record<string, any>,
+  nodeMap?: Map<string, ValueSegment>,
+  suppressCasting?: boolean,
+  castParameter?: CastHandler
+) => {
+  const arrayItems = items.find((item) => item.key === value.key)?.arrayItems;
+
+  if (arrayItems?.length) {
+    const arrayVal: any = [];
+    arrayItems.forEach((arrayItem) => {
+      if (value.items) {
+        arrayVal.push(convertComplexItemsToArray(value.items, arrayItem.items, isKeyRequired, nodeMap, suppressCasting, castParameter));
+      }
+    });
+  } else if (isKeyRequired) {
+    returnItem[keyName] = [];
+  }
+};
+
+// Helper to convert simple items to complex item schema
+const handleSimpleItem = (
+  value: ArrayItemSchema,
+  items: ComplexArrayItem[],
+  isKeyRequired: boolean,
+  keyName: string,
+  returnItem: Record<string, any>,
+  nodeMap?: Map<string, ValueSegment>,
+  suppressCasting?: boolean,
+  castParameter?: CastHandler
+) => {
+  const convertedItem = convertComplexItemsToArray(value, items, isKeyRequired, nodeMap, suppressCasting, castParameter);
+
+  if (convertedItem && (typeof convertedItem === 'string' || Object.keys(convertedItem).length > 0)) {
+    returnItem[keyName] = castParameterValueToPrimitiveType(convertedItem, value?.type);
+  } else if (isKeyRequired) {
+    returnItem[keyName] = null;
+  }
+};
+
+// Helper to handle an array of complex items
+const handleArrayOfComplexItems = (
+  itemSchema: ArrayItemSchema,
+  complexItem: ComplexArrayItem,
+  isParentRequired: boolean,
+  nodeMap?: Map<string, ValueSegment>,
+  suppressCasting?: boolean,
+  castParameter?: CastHandler
+) => {
+  if (!complexItem.arrayItems) {
+    return [];
+  }
+  const arrayVal: any = [];
+  complexItem.arrayItems.forEach((arrayItem) => {
+    const isArrayItemRequired = !!itemSchema.required?.includes(arrayItem.key.split('.').pop() as string) && isParentRequired;
+    if (itemSchema.items) {
+      arrayVal.push(
+        convertComplexItemsToArray(itemSchema.items, arrayItem.items, isArrayItemRequired, nodeMap, suppressCasting, castParameter)
+      );
+    }
+  });
+  return arrayVal;
 };
 
 const castParameterValueToPrimitiveType = (value: any, parameterType?: string): any => {
