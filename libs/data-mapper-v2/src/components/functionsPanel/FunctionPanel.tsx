@@ -14,7 +14,7 @@ type PanelProps = {};
 
 export const FunctionPanel = (_props: PanelProps) => {
   const [searchTerm, setSearchTerm] = useState<string>('');
-  const { sourceSchema, targetSchema, sourceSchemaFile } = useSelector((state: RootState) => state.dataMap.present.curDataMapOperation);
+  const { sourceSchema, targetSchema } = useSelector((state: RootState) => state.dataMap.present.curDataMapOperation);
   const styles = useStyles();
   const intl = useIntl();
 
@@ -86,7 +86,7 @@ export const FunctionPanel = (_props: PanelProps) => {
           // Overlay if both source and target schema are not selected
           sourceSchema === undefined && targetSchema === undefined ? styles.overlay : ''
         ),
-        search: mergeClasses(styles.search, sourceSchemaFile?.name ? styles.searchWithSubTitle : ''),
+        search: styles.search,
       }}
     />
   ) : (
