@@ -120,7 +120,7 @@ export const useHandleStyles = makeStyles({
     fontSize: '12px',
   },
   left: {
-    right: '10px',
+    right: '16px',
   },
   right: {
     left: '7.5px',

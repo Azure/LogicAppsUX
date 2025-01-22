@@ -5,6 +5,7 @@ export const useStyles = makeStyles({
     width: '400px',
     backgroundColor: '#fff',
     overflow: 'visible',
+    paddingLeft: '10px',
   },
   bodyWrapper: {
     display: 'flex',
