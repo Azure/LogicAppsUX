@@ -202,7 +202,7 @@ const createNewPathItems = (input: InputConnection, targetNode: SchemaNodeExtend
 
   // build the target section of the yml starting with 'root' going down to the target node
   const lastLoop = { loop: '' };
-  targetNode.pathToRoot.forEach((targetPath, index, pathToRoot) => {
+  targetNode.pathToRoot.forEach((targetPath, _index, pathToRoot) => {
     const connectionsIntoCurrentTargetPath = connections[addTargetReactFlowPrefix(targetPath.key)];
 
     // If there is no rootTargetConnection that means there is a looping node in the source structure, but we aren't using it
