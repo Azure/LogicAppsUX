@@ -5,6 +5,7 @@ import type { ConnectionReferences, WorkflowParameter } from '@microsoft/logic-a
 import type { LogicAppsV2 } from '@microsoft/logic-apps-shared';
 import type { PayloadAction } from '@reduxjs/toolkit';
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
+import { readJsonFiles } from './helper';
 
 export type HostingPlanTypes = 'standard' | 'consumption' | 'hybrid';
 
@@ -36,6 +37,7 @@ export interface WorkflowLoadingState {
     collapseGraphsByDefault?: boolean; // collapse scope by default
   };
   showPerformanceDebug?: boolean;
+  runFiles: any[];
 }
 
 const initialState: WorkflowLoadingState = {
@@ -62,26 +64,39 @@ const initialState: WorkflowLoadingState = {
     collapseGraphsByDefault: false,
   },
   showPerformanceDebug: false,
+  runFiles: [],
 };
 
 type WorkflowPayload = {
   workflowDefinition: LogicAppsV2.WorkflowDefinition;
   connectionReferences: ConnectionReferences;
   parameters: Record<string, WorkflowParameter>;
+  runFiles: any[];
 };
 
 type RunPayload = {
   runInstance: LogicAppsV2.RunInstanceDefinition;
 };
 
-export const loadWorkflow = createAsyncThunk('workflowLoadingState/loadWorkflow', async (_: unknown, thunkAPI) => {
-  const currentState: RootState = thunkAPI.getState() as RootState;
+type LoadWorkflowPayload = {
+  isMonitoringView: boolean;
+  fileName?: string;
+};
 
-  const wf = await import(`../../../../../__mocks__/workflows/${currentState.workflowLoader.resourcePath?.split('.')[0]}.json`);
+export const loadWorkflow = createAsyncThunk('workflowLoadingState/loadWorkflow', async (payload: LoadWorkflowPayload) => {
+  const fileName = payload.fileName?.split('.')[0];
+  let runFiles = [];
+
+  if (payload.isMonitoringView && fileName) {
+    runFiles = await readJsonFiles(fileName);
+  }
+
+  const wf = await import(`../../../../../__mocks__/workflows/${fileName}.json`);
   return {
     workflowDefinition: wf.definition as LogicAppsV2.WorkflowDefinition,
     connectionReferences: wf.connections as ConnectionReferences,
     parameters: wf?.parameters ?? wf?.definition?.parameters ?? {},
+    runFiles,
   } as WorkflowPayload;
 });
 
@@ -207,6 +222,7 @@ export const workflowLoadingSlice = createSlice({
       state.workflowDefinition = action.payload?.workflowDefinition;
       state.connections = action.payload?.connectionReferences ?? {};
       state.parameters = action.payload?.parameters ?? {};
+      state.runFiles = action.payload?.runFiles ?? [];
     });
     builder.addCase(loadWorkflow.rejected, (state) => {
       state.workflowDefinition = null;

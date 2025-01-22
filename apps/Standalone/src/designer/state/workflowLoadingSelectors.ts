@@ -64,3 +64,7 @@ export const useShowPerformanceDebug = () => {
 export const useStringOverrides = () => {
   return useSelector((state: RootState) => !!state.workflowLoader.hostOptions.stringOverrides);
 };
+
+export const useRunFiles = () => {
+  return useSelector((state: RootState) => state.workflowLoader.runFiles);
+};

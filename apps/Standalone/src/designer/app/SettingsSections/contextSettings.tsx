@@ -9,12 +9,12 @@ import {
   useShowPerformanceDebug,
   useSuppressDefaultNodeSelect,
   useStringOverrides,
+  useResourcePath,
 } from '../../state/workflowLoadingSelectors';
 import {
   setDarkMode,
   setMonitoringView,
   setReadOnly,
-  loadRun,
   loadWorkflow,
   setAreCustomEditorsEnabled,
   setShowConnectionsPanel,
@@ -38,16 +38,16 @@ const ContextSettings = () => {
   const showPerformanceDebug = useShowPerformanceDebug();
   const showTestStringOverride = useStringOverrides();
   const dispatch = useDispatch<AppDispatch>();
+  const resourcePath = useResourcePath();
 
   const changeMonitoringView = useCallback(
     (_: unknown, checked?: boolean) => {
       dispatch(setMonitoringView(!!checked));
       if (checked) {
-        dispatch(loadRun(_));
-        dispatch(loadWorkflow(_));
+        dispatch(loadWorkflow({ isMonitoringView, fileName: resourcePath }));
       }
     },
-    [dispatch]
+    [dispatch, isMonitoringView, resourcePath]
   );
 
   return (
