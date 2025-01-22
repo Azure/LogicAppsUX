@@ -333,7 +333,8 @@
       },
       {
         "command": "azureLogicAppsStandard.dataMap.createNewDataMap",
-        "title": "Data Mapper: Create data map",
+        "title": "Create Data Map",
+        "category": "Azure Logic Apps",
         "icon": "$(add)"
       },
       {
@@ -634,6 +635,11 @@
         }
       ],
       "explorer/context": [
+        {
+          "command": "azureLogicAppsStandard.dataMap.createNewDataMap",
+          "when": "resourceFilename in azureLogicAppsStandard.dataMap.setDmFolders",
+          "group": "navigation"
+        },
         {
           "command": "azureLogicAppsStandard.deploy",
           "when": "explorerResourceIsFolder == true",
