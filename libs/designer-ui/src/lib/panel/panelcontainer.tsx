@@ -6,7 +6,7 @@ import {
   MessageBar,
   MessageBarBody,
   Text,
-	Drawer,
+  Drawer,
   Spinner,
   MessageBarTitle,
 } from '@fluentui/react-components';
@@ -42,7 +42,6 @@ export type PanelContainerProps = {
   toggleCollapse: () => void;
   onCommentChange: (nodeId: string, panelCommentChangeEvent?: string) => void;
   onTitleChange: TitleChangeHandler;
-  onTitleBlur?: (prevTitle: string) => void;
   handleTitleUpdate: (originalId: string, newId: string) => void;
   setOverrideWidth?: (width: string | undefined) => void;
   canShowLogicAppRun?: boolean;
@@ -67,7 +66,6 @@ export const PanelContainer = ({
   trackEvent,
   onCommentChange,
   onTitleChange,
-  onTitleBlur,
   handleTitleUpdate,
   setOverrideWidth,
   overrideWidth,
@@ -114,7 +112,6 @@ export const PanelContainer = ({
           toggleCollapse={toggleCollapse}
           onTitleChange={onTitleChange}
           handleTitleUpdate={handleTitleUpdate}
-          onTitleBlur={onTitleBlur}
         />
       );
     },
@@ -135,7 +132,6 @@ export const PanelContainer = ({
       showLogicAppRun,
       toggleCollapse,
       onTitleChange,
-      onTitleBlur,
       handleTitleUpdate,
       resubmitOperation,
       onCommentChange,

@@ -12,7 +12,12 @@ import {
   getAzureConnectorDetailsForLocalProject,
   getStandardAppData,
 } from '../../../utils/codeless/common';
-import { getConnectionsFromFile, getLogicAppProjectRoot, getParametersFromFile } from '../../../utils/codeless/connection';
+import {
+  getConnectionsFromFile,
+  getCustomCodeFromFiles,
+  getLogicAppProjectRoot,
+  getParametersFromFile,
+} from '../../../utils/codeless/connection';
 import { sendRequest } from '../../../utils/requestUtils';
 import { OpenMonitoringViewBase } from './openMonitoringViewBase';
 import { getTriggerName, HTTP_METHODS } from '@microsoft/logic-apps-shared';
@@ -166,6 +171,7 @@ export default class OpenMonitoringViewForLocal extends OpenMonitoringViewBase {
     const projectPath: string | undefined = await getLogicAppProjectRoot(this.context, this.workflowFilePath);
     const workflowContent: any = JSON.parse(readFileSync(this.workflowFilePath, 'utf8'));
     const parametersData: Record<string, Parameter> = await getParametersFromFile(this.context, this.workflowFilePath);
+    const customCodeData: Record<string, string> = await getCustomCodeFromFiles(this.workflowFilePath);
     let localSettings: Record<string, string>;
     let azureDetails: AzureConnectorDetails;
 
@@ -182,6 +188,7 @@ export default class OpenMonitoringViewForLocal extends OpenMonitoringViewBase {
       connectionsData,
       localSettings,
       parametersData,
+      customCodeData,
       azureDetails,
       accessToken: azureDetails.accessToken,
       workflowName: this.workflowName,
