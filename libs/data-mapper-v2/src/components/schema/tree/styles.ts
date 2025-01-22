@@ -8,10 +8,10 @@ export const useStyles = makeStyles({
     marginRight: '15px',
   },
   sourceSchemaRoot: {
-    marginLeft: '16px',
+    marginLeft: '14px',
   },
   targetScehmaRoot: {
-    marginRight: '16px',
+    marginRight: '14px',
   },
   root: {
     height: '100%',
