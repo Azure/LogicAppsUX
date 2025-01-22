@@ -264,7 +264,7 @@ export const RunHistoryPanel = (props: RunHistoryPanelProps) => {
         </DrawerHeaderTitle>
         <Field label={searchLabelText} validationState={searchError ? 'error' : 'none'} validationMessage={searchError}>
           <SearchBox
-            onChange={(e, data) => {
+            onChange={(_e, data) => {
               if (data.value === '') {
                 setSearchError(null);
               } else if (runIdRegex.test(data.value)) {

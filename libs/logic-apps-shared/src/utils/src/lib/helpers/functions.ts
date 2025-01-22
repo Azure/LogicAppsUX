@@ -1,3 +1,5 @@
+import { ArgumentException } from '../exception';
+
 /* eslint-disable no-param-reassign */
 type Primitive = number | boolean | string;
 type NonPrimitive = Record<string, unknown>;
@@ -1116,4 +1118,17 @@ export const FindPreviousAndNextPage = (page: number, bookmarks: number[]) => {
  */
 export const splitAtIndex = (str: string, index: number): [string, string] => {
   return [str.substring(0, index), str.substring(index + 1)];
+};
+
+/**
+ * Validates that all required fields in an object have non-empty values.
+ * @param requiredFields - An object where keys are field names and values are the corresponding values to validate.
+ * @throws {ArgumentException} If any field has a falsy value (e.g., `undefined`, `null`, `false`, `''`, `0`).
+ */
+export const validateRequiredServiceArguments = (requiredFields: Record<string, unknown>) => {
+  for (const [key, value] of Object.entries(requiredFields)) {
+    if (isNullOrUndefined(value)) {
+      throw new ArgumentException(`${key} is required`);
+    }
+  }
 };
