@@ -166,6 +166,7 @@ export const extensionCommand = {
   dataMapSetSupportedDataMapDefinitionFileExts: 'azureLogicAppsStandard.dataMap.setSupportedDataMapDefinitionFileExts',
   dataMapSetSupportedSchemaFileExts: 'azureLogicAppsStandard.dataMap.setSupportedSchemaFileExts',
   dataMapSetSupportedFileExts: 'azureLogicAppsStandard.dataMap.setSupportedFileExts',
+  dataMapSetDmFolders: 'azureLogicAppsStandard.dataMap.setDmFolders',
   dataMapSaveMapDefinition: 'azureLogicAppsStandard.dataMap.saveMapDefinition',
   dataMapSaveMapXslt: 'azureLogicAppsStandard.dataMap.saveMapXslt',
   vscodeOpenFolder: 'vscode.openFolder',

@@ -1,6 +1,10 @@
 import { LogicAppResolver } from './LogicAppResolver';
 import { runPostWorkflowCreateStepsFromCache } from './app/commands/createCodeless/createCodelessSteps/WorkflowCreateStepBase';
-import { supportedDataMapDefinitionFileExts, supportedSchemaFileExts } from './app/commands/dataMapper/extensionConfig';
+import {
+  supportedDataMapDefinitionFileExts,
+  supportedDataMapperFolders,
+  supportedSchemaFileExts,
+} from './app/commands/dataMapper/extensionConfig';
 import { promptParameterizeConnections } from './app/commands/parameterizeConnections';
 import { registerCommands } from './app/commands/registerCommands';
 import { getResourceGroupsApi } from './app/resourcesExtension/getExtensionApi';
@@ -36,6 +40,7 @@ const perfStats = {
 const telemetryString = 'setInGitHubBuild';
 
 export async function activate(context: vscode.ExtensionContext) {
+  // Data Mapper context
   vscode.commands.executeCommand(
     'setContext',
     extensionCommand.dataMapSetSupportedDataMapDefinitionFileExts,
@@ -46,6 +51,7 @@ export async function activate(context: vscode.ExtensionContext) {
     ...supportedDataMapDefinitionFileExts,
     ...supportedSchemaFileExts,
   ]);
+  vscode.commands.executeCommand('setContext', extensionCommand.dataMapSetDmFolders, supportedDataMapperFolders);
 
   ext.context = context;
   ext.telemetryReporter = new TelemetryReporter(telemetryString);
