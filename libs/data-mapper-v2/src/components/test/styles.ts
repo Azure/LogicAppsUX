@@ -56,4 +56,7 @@ export const useStyles = makeStyles({
   messageBar: {
     marginBelow: '10px',
   },
+  bodySpinner: {
+    marginLeft: '5px',
+  },
 });

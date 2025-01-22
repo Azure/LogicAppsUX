@@ -112,7 +112,7 @@ export const TestPanel = (_props: TestPanelProps) => {
         rightAction: <PanelXButton onCloseClick={onCloseClick} ariaLabel={resources.CLOSE_TEST_MAP} />,
         size: 500,
       }}
-      body={<TestPanelBody />}
+      body={<TestPanelBody loading />}
       footer={
         <div>
           <Button appearance="primary" onClick={onTestClick} disabled={!testMapInput || loading}>
