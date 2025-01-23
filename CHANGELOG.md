@@ -1,4 +1,16 @@
 # Logic Apps Designer
+## [5.25.0](https://github.com/Azure/LogicAppsUX/compare/v5.24.0...v5.25.0) (2025-01-23)
+
+
+### Features
+
+* **Data Mapper:** Loop message when users try to find loop in functions ([#6451](https://github.com/Azure/LogicAppsUX/issues/6451)) ([1b9d0e1](https://github.com/Azure/LogicAppsUX/commit/1b9d0e1896a619d19d34ba1fe2e4019c50d80fdb))
+
+
+### Bug Fixes
+
+* **Data Mapper:** Update Data Mapper margin, positioning, string for Panels and fix CodeView Monaco Editor height ([#6450](https://github.com/Azure/LogicAppsUX/issues/6450)) ([a329004](https://github.com/Azure/LogicAppsUX/commit/a3290043e72038ca4bcc248d6cfe2971d24c8029))
+
 ## [5.24.0](https://github.com/Azure/LogicAppsUX/compare/v5.23.0...v5.24.0) (2025-01-22)
 
 
