@@ -1,6 +1,6 @@
 {
   "name": "@microsoft/vscode-extension-logic-apps",
-  "version": "50.2.9",
+  "version": "50.2.10",
   "dependencies": {
     "@apidevtools/swagger-parser": "10.0.3",
     "@microsoft/logic-apps-shared": "workspace:*",
