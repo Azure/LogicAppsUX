@@ -93,7 +93,6 @@ import {
   PropertyName,
   unmap,
   UnsupportedException,
-  isNullOrEmpty,
   generateDefaultCustomCodeValue,
   getFileExtensionName,
   replaceWhiteSpaceWithUnderscore,
@@ -509,16 +508,18 @@ export const initializeCustomCodeDataInInputs = (parameter: ParameterInfo, nodeI
   if (parameter) {
     const fileData = generateDefaultCustomCodeValue(language);
     if (fileData) {
+      const fileExtension = getFileExtensionName(language);
+      const fileName = replaceWhiteSpaceWithUnderscore(nodeId) + fileExtension;
       parameter.editorViewModel = {
-        customCodeData: { fileData },
+        customCodeData: { fileData, fileName, fileExtension },
       };
-      parameter.value = [createLiteralValueSegment(replaceWhiteSpaceWithUnderscore(nodeId) + getFileExtensionName(language))];
+      parameter.value = [createLiteralValueSegment(fileName)];
       dispatch(
         addOrUpdateCustomCode({
           nodeId,
           fileData,
-          fileExtension: getFileExtensionName(language),
-          fileName: replaceWhiteSpaceWithUnderscore(nodeId) + getFileExtensionName(language),
+          fileExtension,
+          fileName,
         })
       );
     }
@@ -526,19 +527,14 @@ export const initializeCustomCodeDataInInputs = (parameter: ParameterInfo, nodeI
 };
 
 export const updateCustomCodeInInputs = async (parameter: ParameterInfo, customCode: CustomCodeFileNameMapping) => {
-  if (isNullOrEmpty(customCode)) {
-    return;
-  }
   const language: EditorLanguage = parameter?.editorOptions?.language;
   const fileName = getCustomCodeFileNameFromParameter(parameter);
   try {
-    const customCodeValue = getRecordEntry(customCode, fileName)?.fileData;
+    const customCodeValue = getRecordEntry(customCode, fileName)?.fileData ?? '';
 
-    if (parameter && customCodeValue) {
-      parameter.editorViewModel = {
-        customCodeData: { fileData: customCodeValue, fileExtension: getFileExtensionName(language), fileName },
-      };
-    }
+    parameter.editorViewModel = {
+      customCodeData: { fileData: customCodeValue, fileExtension: getFileExtensionName(language), fileName },
+    };
   } catch (error) {
     const errorMessage = `Failed to populate code file ${fileName}: ${error}`;
     LoggerService().log({

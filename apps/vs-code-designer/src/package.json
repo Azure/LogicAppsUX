@@ -1,7 +1,7 @@
 {
   "name": "vscode-azurelogicapps",
   "displayName": "Azure Logic Apps (Standard)",
-  "version": "5.21.0",
+  "version": "5.28.0",
   "aiKey": "setInGitHubBuild",
   "repository": "https://github.com/Azure/LogicAppsUX",
   "main": "main.js",
@@ -333,12 +333,14 @@
       },
       {
         "command": "azureLogicAppsStandard.dataMap.createNewDataMap",
-        "title": "Data Mapper: Create data map",
+        "title": "Create Data Map",
+        "category": "Azure Logic Apps",
         "icon": "$(add)"
       },
       {
         "command": "azureLogicAppsStandard.dataMap.loadDataMapFile",
-        "title": "Data Mapper: Load existing data map"
+        "title": "Data Mapper: Load existing data map",
+        "when": "resourceExtname in azureLogicAppsStandard.dataMap.setSupportedDataMapDefinitionFileExts"
       },
       {
         "command": "azureLogicAppsStandard.createUnitTest",
@@ -382,10 +384,6 @@
           "dark": "assets/logicapp.png"
         },
         "label": "Azure Logic Apps"
-      },
-      {
-        "id": "azureLogicAppsStandard.dataMapperMenu",
-        "label": "Data Mapper"
       }
     ],
     "views": {
@@ -665,6 +663,11 @@
       ],
       "explorer/context": [
         {
+          "command": "azureLogicAppsStandard.dataMap.createNewDataMap",
+          "when": "resourceFilename in azureLogicAppsStandard.dataMap.setDmFolders",
+          "group": "navigation"
+        },
+        {
           "command": "azureLogicAppsStandard.deploy",
           "when": "explorerResourceIsFolder == true",
           "group": "zzz_LogicApptools@1"
@@ -715,9 +718,9 @@
           "group": "navigation@2"
         },
         {
-          "submenu": "azureLogicAppsStandard.dataMapperMenu",
+          "command": "azureLogicAppsStandard.dataMap.loadDataMapFile",
           "group": "navigation",
-          "when": "resourceExtname in azureLogicAppsStandard.dataMap.setSupportedFileExts"
+          "when": "resourceExtname in azureLogicAppsStandard.dataMap.setSupportedDataMapDefinitionFileExts"
         },
         {
           "command": "azureLogicAppsStandard.createUnitTest",
@@ -797,13 +800,6 @@
         {
           "command": "azureLogicAppsStandard.openUnitTestResults",
           "when": "false"
-        }
-      ],
-      "azureLogicAppsStandard.dataMapperMenu": [
-        {
-          "command": "azureLogicAppsStandard.dataMap.loadDataMapFile",
-          "group": "navigation",
-          "when": "resourceExtname in azureLogicAppsStandard.dataMap.setSupportedDataMapDefinitionFileExts"
         }
       ]
     },

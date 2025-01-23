@@ -8,10 +8,11 @@ export const useStyles = makeStyles({
     marginRight: '15px',
   },
   sourceSchemaRoot: {
-    marginLeft: '16px',
+    marginLeft: '14px',
   },
   targetScehmaRoot: {
-    marginRight: '16px',
+    paddingLeft: '14px',
+    paddingRight: '14px',
   },
   root: {
     height: '100%',
@@ -46,15 +47,16 @@ export const useTreeNodeStyles = makeStyles({
     width: '-webkit-fill-available',
     height: '100%',
     zIndex: 998,
+    backgroundColor: 'inherit',
     ':hover': {
       backgroundColor: '#D5E4FF',
     },
   },
   targetSchemaContainer: {
-    paddingLeft: '16px',
+    marginLeft: '16px',
   },
   sourceSchemaContainer: {
-    marginRight: '11px',
+    marginRight: '16px',
   },
   wrapper: {
     display: 'flex',
@@ -119,9 +121,9 @@ export const useHandleStyles = makeStyles({
     fontSize: '12px',
   },
   left: {
-    right: '7.5px',
+    right: '16px',
   },
   right: {
-    left: '7.5px',
+    left: '2px',
   },
 });

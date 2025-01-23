@@ -86,6 +86,7 @@ export const FunctionPanel = (_props: PanelProps) => {
           // Overlay if both source and target schema are not selected
           sourceSchema === undefined && targetSchema === undefined ? styles.overlay : ''
         ),
+        search: mergeClasses(styles.search, sourceSchema?.name ? styles.searchWithSubTitle : ''),
       }}
     />
   ) : (

@@ -13,6 +13,12 @@ import { useStyles } from './styles';
 import { useSelector } from 'react-redux';
 import { LogEntryLevel, LoggerService } from '@microsoft/logic-apps-shared';
 import { isString } from 'lodash';
+import { useIntl } from 'react-intl';
+
+const loopFuseFunctionSearchOptions: Fuse.IFuseOptions<string> = {
+  threshold: 0.2,
+  minMatchCharLength: 4,
+};
 
 const fuseFunctionSearchOptions: Fuse.IFuseOptions<FunctionData> = {
   includeScore: true,
@@ -37,8 +43,14 @@ export type FunctionListProps = {
 export const FunctionList = (props: FunctionListProps) => {
   const { searchTerm } = props;
   const styles = useStyles();
+  const intl = useIntl();
+  const loopInstructionMessage = intl.formatMessage({
+    defaultMessage: 'Loop automatically added when connecting a repeating source element. No function required.',
+    id: 'I2Ztna',
+    description: 'Message explaining user does not need to add a loop function',
+  });
 
-  const [openItems, setOpenItems] = React.useState<Iterable<TreeItemValue>>(Object.values(FunctionCategory).slice(0, 2));
+  const [openItems, setOpenItems] = React.useState<Iterable<TreeItemValue>>(Object.values(FunctionCategory));
   const handleOpenChange = (_event: TreeOpenChangeEvent, data: TreeOpenChangeData) => {
     setOpenItems(data.openItems);
   };
@@ -68,6 +80,18 @@ export const FunctionList = (props: FunctionListProps) => {
     }
     return dict;
   }, []);
+
+  const loopMatch = useMemo(() => {
+    if (searchTerm) {
+      const loopTerms = ['loop', 'looping'];
+      const loopFuse = new Fuse<string>(loopTerms, loopFuseFunctionSearchOptions);
+      const loopMatch = loopFuse.search(searchTerm).map((result) => result.item);
+      if (loopMatch.length > 0) {
+        return true;
+      }
+    }
+    return false;
+  }, [searchTerm]);
 
   const filteredFunctionList = useMemo(() => {
     let updateFunctionList = [...functionList];
@@ -134,7 +158,7 @@ export const FunctionList = (props: FunctionListProps) => {
     [filteredFunctionList]
   );
 
-  return (
+  const searchResultTree = (
     <Tree
       appearance="transparent"
       className={styles.functionTree}
@@ -145,4 +169,6 @@ export const FunctionList = (props: FunctionListProps) => {
       {treeItems}
     </Tree>
   );
+
+  return loopMatch ? <div className={styles.loopInfoText}>{loopInstructionMessage}</div> : searchResultTree;
 };

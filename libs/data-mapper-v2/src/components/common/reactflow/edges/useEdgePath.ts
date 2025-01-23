@@ -42,13 +42,24 @@ const getCoordinatesForHandle = (
     let y: number | undefined = undefined;
     let scenario: 'direct' | 'collapsed' | 'scroll' | undefined;
     let currentHandle = handleBounds.find((handle) => equals(handleId, handle.id ?? ''));
+    let showEdge = false; // This is true only if the current node is visible (i.e. either in the search result or not collapsed) or one of the parent is visible
 
-    if (treeData.visibleNodes.find((node) => node.key === getTreeNodeId(handleId))) {
-      if (currentHandle) {
-        // If the handle is present in the current view, return the x and y coordinates
-        x = currentHandle.x;
-        y = currentHandle.y;
-        scenario = 'direct';
+    const { visibleNodes, startIndex, endIndex } = treeData;
+    const nodeIndexInVisibleNodes = visibleNodes.findIndex((node) => node.key === getTreeNodeId(handleId));
+
+    if (nodeIndexInVisibleNodes === -1) {
+      // Note: Either current node is not in the search results or is collapsed
+    } else {
+      showEdge = true;
+      if (nodeIndexInVisibleNodes >= startIndex && nodeIndexInVisibleNodes <= endIndex) {
+        // Current node is in the search result and on the canvas
+
+        if (currentHandle) {
+          // If the handle is present in the current view, return the x and y coordinates
+          x = currentHandle.x;
+          y = currentHandle.y;
+          scenario = 'direct';
+        }
       }
     }
 
@@ -57,43 +68,49 @@ const getCoordinatesForHandle = (
       const nodeFromSchema = schema.find((node) => node.key === getTreeNodeId(handleId));
       if (nodeFromSchema?.pathToRoot) {
         for (const path of nodeFromSchema.pathToRoot) {
-          // Node is collapsed and visible in the tree
-          if (
-            path.key !== nodeFromSchema.key &&
-            openKeys[path.key] !== undefined &&
-            openKeys[path.key] === false &&
-            treeData.visibleNodes.find((node) => node.key === path.key)
-          ) {
-            currentHandle = handleBounds.find((handle) => equals(createReactFlowKey(path.key), handle.id ?? ''));
-            // If handle is found => Parent is collapsed and we have the dimensions for the handle
-            // handle.hidden is used to check if the handle is scrolled out of view or not
-            if (currentHandle) {
-              x = currentHandle.x;
-              y = currentHandle.y;
-              scenario = 'collapsed';
-              break;
+          // Node is collapsed but parent is in the tree
+          if (path.key !== nodeFromSchema.key && openKeys[path.key] !== undefined && openKeys[path.key] === false) {
+            const parentNodeInVisibleNodes = visibleNodes.findIndex((node) => node.key === path.key);
+            if (parentNodeInVisibleNodes === -1) {
+              // Note: Either current node is not in the search results or is collapsed
+            } else {
+              showEdge = true;
+              if (parentNodeInVisibleNodes >= startIndex && parentNodeInVisibleNodes <= endIndex) {
+                currentHandle = handleBounds.find((handle) => equals(createReactFlowKey(path.key), handle.id ?? ''));
+                // If handle is found => Parent is collapsed and we have the dimensions for the handle
+                if (currentHandle) {
+                  x = currentHandle.x;
+                  y = currentHandle.y;
+                  scenario = 'collapsed';
+                  break;
+                }
+              }
             }
           }
         }
       }
     }
 
-    if (x === undefined && y === undefined) {
-      const indexForNodeInSchema = schema.findIndex((node) => node.key === getTreeNodeId(handleId));
+    // If the current node and parent are scrolled out but in search result or current node is collapsed and one of the parent is in search result
+    if (showEdge && x === undefined && y === undefined) {
+      const indexForNodeInSchema = schema.findIndex((node) => equals(node.key, getTreeNodeId(handleId)));
       if (indexForNodeInSchema >= 0) {
-        if (indexForNodeInSchema > treeData.endIndex) {
-          const reactflowHandle = handleBounds.find((handle) => handle.id?.startsWith('bottom-'));
-          if (reactflowHandle) {
-            x = reactflowHandle.x;
-            y = reactflowHandle.y;
-            scenario = 'scroll';
-          }
-        } else {
-          const reactflowHandle = handleBounds.find((handle) => handle.id?.startsWith('top-'));
-          if (reactflowHandle) {
-            x = reactflowHandle.x;
-            y = reactflowHandle.y;
-            scenario = 'scroll';
+        const lastNodeOnCanvasIndex = schema.findIndex((node) => equals(node.key, visibleNodes[endIndex].key));
+        if (lastNodeOnCanvasIndex > -1) {
+          if (indexForNodeInSchema > lastNodeOnCanvasIndex) {
+            const reactflowHandle = handleBounds.find((handle) => handle.id?.startsWith('bottom-'));
+            if (reactflowHandle) {
+              x = reactflowHandle.x;
+              y = reactflowHandle.y;
+              scenario = 'scroll';
+            }
+          } else {
+            const reactflowHandle = handleBounds.find((handle) => handle.id?.startsWith('top-'));
+            if (reactflowHandle) {
+              x = reactflowHandle.x;
+              y = reactflowHandle.y;
+              scenario = 'scroll';
+            }
           }
         }
       }

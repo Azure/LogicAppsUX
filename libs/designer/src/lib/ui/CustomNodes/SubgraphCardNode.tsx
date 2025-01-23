@@ -15,6 +15,7 @@ import {
   useNewSwitchCaseId,
   useNodeDisplayName,
   useNodeMetadata,
+  useParentRunId,
   useRunData,
   useWorkflowNode,
 } from '../../core/state/workflow/workflowSelectors';
@@ -29,8 +30,7 @@ import { useIntl } from 'react-intl';
 import { useDispatch } from 'react-redux';
 import { Handle, Position, type NodeProps } from '@xyflow/react';
 
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-const SubgraphCardNode = ({ data, targetPosition = Position.Top, sourcePosition = Position.Bottom, id }: NodeProps) => {
+const SubgraphCardNode = ({ targetPosition = Position.Top, sourcePosition = Position.Bottom, id }: NodeProps) => {
   const subgraphId = removeIdTag(id);
   const node = useActionMetadata(subgraphId);
 
@@ -47,8 +47,8 @@ const SubgraphCardNode = ({ data, targetPosition = Position.Top, sourcePosition 
   const operationInfo = useOperationInfo(graphId);
   const isMonitoringView = useMonitoringView();
   const normalizedType = node?.type.toLowerCase();
-  const runData = useRunData(id);
-
+  const parentRunId = useParentRunId(subgraphId);
+  const parentRunData = useRunData(parentRunId ?? '');
   const title = useNodeDisplayName(subgraphId);
 
   const isAddCase = metadata?.subgraphType === SUBGRAPH_TYPES.SWITCH_ADD_CASE;
@@ -140,7 +140,7 @@ const SubgraphCardNode = ({ data, targetPosition = Position.Top, sourcePosition 
             <>
               <SubgraphCard
                 id={subgraphId}
-                active={isMonitoringView ? !isNullOrUndefined(runData?.status) : true}
+                active={isMonitoringView ? !isNullOrUndefined(parentRunData?.status) : true}
                 parentId={metadata?.graphId}
                 subgraphType={metadata.subgraphType}
                 title={title}
@@ -163,7 +163,11 @@ const SubgraphCardNode = ({ data, targetPosition = Position.Top, sourcePosition 
           <Handle className="node-handle bottom" type="source" position={sourcePosition} isConnectable={false} />
         </div>
       </div>
-      {graphCollapsed ? <p className="no-actions-text">{collapsedText}</p> : null}
+      {graphCollapsed ? (
+        <p className="no-actions-text" data-automation-id={`subgraph-${id}-no-actions`}>
+          {collapsedText}
+        </p>
+      ) : null}
       {showEmptyGraphComponents ? (
         readOnly ? (
           <p className="no-actions-text">No Actions</p>

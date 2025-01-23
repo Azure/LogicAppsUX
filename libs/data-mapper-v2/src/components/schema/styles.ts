@@ -4,7 +4,7 @@ import { panelWidth, panelWidthWithoutHandles } from '../../utils/ReactFlow.Util
 export const useStyles = makeStyles({
   root: {
     width: `${panelWidth}px`,
-    height: '100vh',
+    height: '100%',
   },
   targetScehmaRoot: {
     display: 'flex',
@@ -37,7 +37,7 @@ export const usePanelStyles = makeStyles({
   },
   targetSchemaBody: {
     position: 'relative',
-    left: '-7px',
+    left: '-16px',
   },
 });
 

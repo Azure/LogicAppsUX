@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */
 import constants from '../../../common/constants';
 import { UnsupportedException, UnsupportedExceptionCode } from '../../../common/exceptions/unsupported';
 import type { Workflow } from '../../../common/models/workflow';
@@ -329,7 +328,7 @@ export const deserializeUnitTestDefinition = (
     try {
       const uncastAssertionString = ExpressionParser.parseTemplateExpression(assertionString) as ExpressionFunction;
       return { name, description, assertionString: uncastAssertionString.expression };
-    } catch (ParserException) {
+    } catch {
       return { name, description, assertionString: '' };
     }
   });

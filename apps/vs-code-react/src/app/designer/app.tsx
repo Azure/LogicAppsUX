@@ -40,6 +40,7 @@ export const DesignerApp = () => {
     workflowRuntimeBaseUrl,
   } = vscodeState;
   const [standardApp, setStandardApp] = useState<StandardApp | undefined>(panelMetaData?.standardApp);
+  const [customCode, setCustomCode] = useState<Record<string, string> | undefined>(panelMetaData?.customCodeData);
   const [runInstance, setRunInstance] = useState<LogicAppsV2.RunInstanceDefinition | null>(null);
 
   const [theme, setTheme] = useState<Theme>(getTheme(document.body));
@@ -173,6 +174,7 @@ export const DesignerApp = () => {
 
   useEffect(() => {
     setStandardApp(panelMetaData?.standardApp);
+    setCustomCode(panelMetaData?.customCodeData);
   }, [panelMetaData]);
 
   const errorApp = <XLargeText text={`${intlText.ERROR_APP} `} className="designer--error" style={{ display: 'block' }} />;
@@ -200,6 +202,7 @@ export const DesignerApp = () => {
         parameters: panelMetaData?.parametersData,
         kind: standardApp.kind,
       }}
+      customCode={customCode}
       runInstance={runInstance}
       unitTestDefinition={unitTestDefinition}
       appSettings={panelMetaData?.localSettings}
