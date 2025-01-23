@@ -15,7 +15,7 @@ import * as vscode from 'vscode';
 import * as fs from 'fs-extra';
 import { ext } from '../../../../extensionVariables';
 import { FileManagement } from '../../generateDeploymentScripts/iacGestureHelperFunctions';
-import { toPascalCase } from '@microsoft/logic-apps-shared/src/utils/src/lib/helpers/stringFunctions';
+import { toPascalCase } from '@microsoft/logic-apps-shared';
 /**
  * Creates a unit test for a Logic App workflow (codeful only).
  * @param {IAzureConnectorsContext} context - The context object for Azure Connectors.
