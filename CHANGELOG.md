@@ -1,4 +1,11 @@
 # Logic Apps Designer
+## [5.26.0](https://github.com/Azure/LogicAppsUX/compare/v5.25.0...v5.26.0) (2025-01-23)
+
+
+### Bug Fixes
+
+* **Data Mapper:** Fix unnecessary edge when node/parent is not in the search results ([#6454](https://github.com/Azure/LogicAppsUX/issues/6454)) ([7c8e215](https://github.com/Azure/LogicAppsUX/commit/7c8e21506d9e17fbea40d60ca47929a7abef8b93))
+
 ## [5.25.0](https://github.com/Azure/LogicAppsUX/compare/v5.24.0...v5.25.0) (2025-01-23)
 
 
