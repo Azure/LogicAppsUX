@@ -3,7 +3,7 @@ import { useIntl } from 'react-intl';
 import { useStyles } from './styles';
 import { useSelector, useDispatch } from 'react-redux';
 import type { RootState, AppDispatch } from '../../core/state/Store';
-import { Accordion, AccordionHeader, AccordionItem, AccordionPanel, MessageBar, MessageBarBody } from '@fluentui/react-components';
+import { Accordion, AccordionHeader, AccordionItem, AccordionPanel, MessageBar, MessageBarBody, Spinner } from '@fluentui/react-components';
 import { type EditorContentChangedEventArgs, MonacoEditor } from '@microsoft/designer-ui';
 import { EditorLanguage, LogEntryLevel, LoggerService, SchemaFileFormat } from '@microsoft/logic-apps-shared';
 import { updateTestInput } from '../../core/state/PanelSlice';
@@ -12,8 +12,11 @@ import { LogCategory } from '../../utils/Logging.Utils';
 const sampleDataPlaceHolderEditorId = 'sample-data-editor-placeholder';
 const resultPlaceHolderEditorId = 'result-editor-placeholder';
 
-type TestPanelBodyProps = {};
-export const TestPanelBody = (_props: TestPanelBodyProps) => {
+type TestPanelBodyProps = {
+  loading: boolean;
+};
+export const TestPanelBody = (props: TestPanelBodyProps) => {
+  const { loading } = props;
   const intl = useIntl();
   const styles = useStyles();
   const dispatch = useDispatch<AppDispatch>();
@@ -160,6 +163,7 @@ export const TestPanelBody = (_props: TestPanelBodyProps) => {
         <AccordionItem value={'result'}>
           <AccordionHeader className={styles.accordianHeader} expandIconPosition={'end'}>
             {stringResources.RESULT}
+            {loading && <Spinner className={styles.bodySpinner} size={'tiny'} />}
           </AccordionHeader>
           <AccordionPanel className={styles.accordianPanel}>
             <MonacoEditor

@@ -160,8 +160,8 @@ export const EditorCommandBar = (_props: EditorCommandBarProps) => {
         description: 'Button text for discard the unsaved changes',
       }),
       OPEN_TEST_PANEL: intl.formatMessage({
-        defaultMessage: 'Open Test panel',
-        id: 'nr6bPd',
+        defaultMessage: 'Open test panel',
+        id: 'xhBvXj',
         description: 'Button text for opening test panel',
       }),
       VIEW_CODE: intl.formatMessage({
@@ -170,9 +170,9 @@ export const EditorCommandBar = (_props: EditorCommandBarProps) => {
         description: 'Button for View Code',
       }),
       VIEW_MAP_CHECKER: intl.formatMessage({
-        defaultMessage: 'Map errors',
-        id: '1QktJw',
-        description: 'Button to see map errors',
+        defaultMessage: 'View issues',
+        id: 'Ae8T94',
+        description: 'Button to see issues',
       }),
       DISABLED_TEST: intl.formatMessage({
         defaultMessage: 'Please save the map before testing',
