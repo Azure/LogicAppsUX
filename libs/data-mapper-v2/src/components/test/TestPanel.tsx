@@ -55,6 +55,8 @@ export const TestPanel = (_props: TestPanelProps) => {
     if (!!xsltFilename && !!testMapInput) {
       const attempt = guid();
       setLoading(true);
+      // Clear out test output
+      dispatch(updateTestOutput({}));
 
       testDataMap(xsltFilename, testMapInput)
         .then((response) => {

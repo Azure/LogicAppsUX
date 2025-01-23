@@ -121,7 +121,7 @@ export const SchemaTree = (props: SchemaTreeProps) => {
 
   useEffect(() => {
     updateNodeInternals(panelNodeId);
-  }, [panelNodeId, schemaTreeRoot, flattenedSchemaMap, currentHeight, updateNodeInternals, openKeys]);
+  }, [panelNodeId, schemaTreeRoot, flattenedSchemaMap, currentHeight, updateNodeInternals, openKeys, searchTerm]);
 
   return (
     <div ref={ref} className={mergeClasses(styles.root, isSourceSchema ? styles.sourceSchemaRoot : styles.targetScehmaRoot)}>
@@ -156,7 +156,7 @@ export const SchemaTree = (props: SchemaTreeProps) => {
                   position={Position.Left}
                   type="target"
                   className={handleStyles.hidden}
-                  style={{ top: '0px', left: '8px' }}
+                  style={{ top: '0px', left: '18px' }}
                 />
               )}
               {currentHeight !== undefined && nodesForScroll['bottom-right'] && (
@@ -165,7 +165,7 @@ export const SchemaTree = (props: SchemaTreeProps) => {
                   position={Position.Left}
                   type="target"
                   className={handleStyles.hidden}
-                  style={{ top: `${currentHeight}px`, left: '8px' }}
+                  style={{ top: `${currentHeight}px`, left: '18px' }}
                 />
               )}
             </>

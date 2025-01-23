@@ -192,14 +192,6 @@ const useReactFlowStates = (props: ReactFlowStatesProps) => {
         y: 0,
       };
 
-      const commonProps = {
-        draggable: false,
-        selectable: false,
-        deletable: false,
-        dragging: false,
-        selected: false,
-      };
-
       const newTargetNodePosition = {
         x: newWidth - panelWidthWithoutHandles,
         y: 0,
@@ -231,7 +223,11 @@ const useReactFlowStates = (props: ReactFlowStatesProps) => {
             id: NodeIds.source,
             type: 'schemaPanel',
             data: {},
-            ...commonProps,
+            draggable: false,
+            selectable: false,
+            deletable: false,
+            dragging: false,
+            selected: false,
             position: newSourceNodePosition,
             ...dimensions,
           },
@@ -258,7 +254,11 @@ const useReactFlowStates = (props: ReactFlowStatesProps) => {
           item: {
             id: NodeIds.target,
             type: 'schemaPanel',
-            ...commonProps,
+            draggable: false,
+            selectable: false,
+            deletable: false,
+            dragging: false,
+            selected: false,
             data: {},
             position: newTargetNodePosition,
             ...dimensions,

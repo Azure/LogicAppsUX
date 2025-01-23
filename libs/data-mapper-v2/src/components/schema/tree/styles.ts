@@ -11,8 +11,7 @@ export const useStyles = makeStyles({
     marginLeft: '14px',
   },
   targetScehmaRoot: {
-    paddingLeft: '14px',
-    paddingRight: '14px',
+    marginRight: '14px',
   },
   root: {
     height: '100%',
@@ -40,9 +39,6 @@ export const useTreeNodeStyles = makeStyles({
     height: '100%',
     width: '-webkit-fill-available',
   },
-  targetSchemaRoot: {
-    paddingLeft: '7px',
-  },
   container: {
     width: '-webkit-fill-available',
     height: '100%',
@@ -53,7 +49,7 @@ export const useTreeNodeStyles = makeStyles({
     },
   },
   targetSchemaContainer: {
-    marginLeft: '16px',
+    marginLeft: '30px',
   },
   sourceSchemaContainer: {
     marginRight: '16px',
@@ -124,6 +120,6 @@ export const useHandleStyles = makeStyles({
     right: '16px',
   },
   right: {
-    left: '2px',
+    left: '16px',
   },
 });
