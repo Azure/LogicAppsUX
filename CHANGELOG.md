@@ -1,4 +1,12 @@
 # Logic Apps Designer
+## [5.28.0](https://github.com/Azure/LogicAppsUX/compare/v5.27.0...v5.28.0) (2025-01-23)
+
+
+### Bug Fixes
+
+* **Data Mapper:** Pass in loading as a normal prop since boolean behaves differently ([#6456](https://github.com/Azure/LogicAppsUX/issues/6456)) ([643c8b0](https://github.com/Azure/LogicAppsUX/commit/643c8b018fa7029bdd7587a57d46ebaa5af8b301))
+* **designer:** Update Recurrence Preview Message to Add Additional Clarity ([#6434](https://github.com/Azure/LogicAppsUX/issues/6434)) ([3cdd501](https://github.com/Azure/LogicAppsUX/commit/3cdd501e65522f9a4da9dc011585cb3c648d345b))
+
 ## [5.27.0](https://github.com/Azure/LogicAppsUX/compare/v5.26.0...v5.27.0) (2025-01-23)
 
 ## [5.26.0](https://github.com/Azure/LogicAppsUX/compare/v5.25.0...v5.26.0) (2025-01-23)
