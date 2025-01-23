@@ -91,7 +91,7 @@ export class HttpClient implements IHttpClient {
       ...request,
       method: HTTP_METHODS.PUT,
     }).catch((error) => {
-      return { status: error.response.status, data: error.response.data };
+      return { status: error.response.status, ...error.response.data };
     });
     if (!isSuccessResponse(responseData.status)) {
       return Promise.reject(responseData);
