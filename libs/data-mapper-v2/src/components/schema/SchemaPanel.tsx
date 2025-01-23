@@ -27,7 +27,7 @@ export interface ConfigPanelProps {
 
 export const SchemaPanel = ({ id }: ConfigPanelProps) => {
   const dispatch = useDispatch<AppDispatch>();
-  const { isSourceSchema, schemaType, toggleEditState } = useSchema({ id });
+  const { isSourceSchema, schemaType, toggleEditState, schemaFile } = useSchema({ id });
   const intl = useIntl();
   const panelStyles = usePanelStyles();
   const styles = useStyles();
@@ -154,7 +154,7 @@ export const SchemaPanel = ({ id }: ConfigPanelProps) => {
         isOpen={!!currentPanelView}
         title={{
           text: isSourceSchema ? stringResources.SOURCE : stringResources.DESTINATION,
-          subTitleText: selectedSchemaFile?.name,
+          subTitleText: selectedSchemaFile?.name ?? schemaFile ?? '',
           rightAction: scehmaInEditState ? null : (
             <Button
               appearance="transparent"

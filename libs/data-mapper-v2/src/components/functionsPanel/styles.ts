@@ -44,4 +44,7 @@ export const useStyles = makeStyles({
   search: {
     marginTop: '4px',
   },
+  searchWithSubTitle: {
+    marginTop: '14px',
+  },
 });

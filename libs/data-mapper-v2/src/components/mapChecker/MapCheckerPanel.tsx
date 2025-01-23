@@ -43,9 +43,9 @@ export const MapCheckerPanel = () => {
   const stringResources = useMemo(
     () => ({
       MAP_ISSUES: intl.formatMessage({
-        defaultMessage: 'Map Issues',
-        id: 'rwrlsB',
-        description: 'problems with the map',
+        defaultMessage: 'Issues',
+        id: 'iGxL1E',
+        description: 'Issues ith the map',
       }),
       CLOSE_MAP_CHECKER: intl.formatMessage({
         defaultMessage: 'Close map checker',

@@ -5,6 +5,7 @@ export const useStyles = makeStyles({
     width: '400px',
     backgroundColor: '#fff',
     overflow: 'visible',
+    paddingLeft: '10px',
   },
   bodyWrapper: {
     display: 'flex',
@@ -54,5 +55,8 @@ export const useStyles = makeStyles({
   },
   messageBar: {
     marginBelow: '10px',
+  },
+  bodySpinner: {
+    marginLeft: '5px',
   },
 });
