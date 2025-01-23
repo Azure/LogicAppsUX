@@ -45,13 +45,10 @@ export const SchemaTree = (props: SchemaTreeProps) => {
   const updateVisibleNodes = useCallback(() => {
     const startIndex = treeRef?.current?.visibleStartIndex ?? -1;
     const endIndex = treeRef?.current?.visibleStopIndex ?? -1;
+    const visibleNodes = (treeRef?.current?.visibleNodes ?? []).map((node) => node.data);
     if (startIndex === -1 || endIndex === -1) {
       return;
     }
-    const visibleNodes =
-      treeRef?.current?.visibleNodes
-        .filter((data) => data.rowIndex !== null && data.rowIndex >= startIndex && data.rowIndex <= endIndex)
-        .map((node) => node.data) ?? [];
 
     const isVisibleNodesUpdated = (newNodes: SchemaNodeExtended[], currentNodes: SchemaNodeExtended[]) => {
       const nodeSet = new Set<string>();
@@ -138,7 +135,7 @@ export const SchemaTree = (props: SchemaTreeProps) => {
                   position={Position.Right}
                   type="source"
                   className={handleStyles.hidden}
-                  style={{ top: '87px', right: '4px' }}
+                  style={{ top: '0px', right: '18px' }}
                 />
               )}
               {currentHeight !== undefined && nodesForScroll['bottom-left'] && (
@@ -147,7 +144,7 @@ export const SchemaTree = (props: SchemaTreeProps) => {
                   position={Position.Right}
                   type="source"
                   className={handleStyles.hidden}
-                  style={{ top: `${currentHeight}px`, right: '4px' }}
+                  style={{ top: `${currentHeight}px`, right: '18px' }}
                 />
               )}
             </>
