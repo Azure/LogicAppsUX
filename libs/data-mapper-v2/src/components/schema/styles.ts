@@ -37,7 +37,7 @@ export const usePanelStyles = makeStyles({
   },
   targetSchemaBody: {
     position: 'relative',
-    left: '-7px',
+    left: '-16px',
   },
 });
 
