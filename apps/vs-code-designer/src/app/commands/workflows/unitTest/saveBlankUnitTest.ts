@@ -345,6 +345,36 @@ export async function processAndWriteMockableOperations(
   }
 }
 
+// /**
+//  * Generates a C# class definition as a string.
+//  * @param {string} logicAppName - The name of the Logic App, used as the namespace.
+//  * @param {string} className - The name of the class to generate.
+//  * @param {any} outputs - The outputs object containing properties to include in the class.
+//  * @returns {string} - The generated C# class definition.
+//  */
+// function generateCSharpClasses(logicAppName: string, className: string, outputs: any): string {
+//   let classDefinition = 'using System;\nusing System.Collections.Generic;\nusing Newtonsoft.Json.Linq;\n\n';
+//   const namespaceName = `${logicAppName}.Tests.Mocks`;
+//   classDefinition += `namespace ${namespaceName} {\n`;
+//   classDefinition += `    public class ${className} {\n`;
+
+//   for (const key in outputs) {
+//     if (Object.prototype.hasOwnProperty.call(outputs, key)) {
+//       const jsonType = outputs[key]?.type || 'object'; // Default to 'object' if type is not defined
+//       const propertyType = mapJsonTypeToCSharp(jsonType);
+//       const propertyName = toPascalCase(key);
+
+//       // Add the property to the class definition
+//       classDefinition += `        public ${propertyType} ${propertyName} { get; set; }\n`;
+//     }
+//   }
+
+//   classDefinition += '    }\n';
+//   classDefinition += '}\n';
+
+//   return classDefinition;
+// }
+
 /**
  * Generates a C# class definition as a string.
  * @param {string} logicAppName - The name of the Logic App, used as the namespace.
@@ -352,27 +382,198 @@ export async function processAndWriteMockableOperations(
  * @param {any} outputs - The outputs object containing properties to include in the class.
  * @returns {string} - The generated C# class definition.
  */
-function generateCSharpClasses(logicAppName: string, className: string, outputs: any): string {
-  let classDefinition = 'using System;\nusing System.Collections.Generic;\nusing Newtonsoft.Json.Linq;\n\n';
-  const namespaceName = `${logicAppName}.Tests.Mocks`;
-  classDefinition += `namespace ${namespaceName} {\n`;
-  classDefinition += `    public class ${className} {\n`;
+function generateCSharpClasses(namespaceName: string, rootClassName: string, data: any): string {
+  // 1) Build a root class definition (the entire data is assumed to be an object).
+  //    If data isn't type "object", you might want special handling, but typically
+  //    transformParameters() yields an object at the top level.
 
-  for (const key in outputs) {
-    if (Object.prototype.hasOwnProperty.call(outputs, key)) {
-      const jsonType = outputs[key]?.type || 'object'; // Default to 'object' if type is not defined
-      const propertyType = mapJsonTypeToCSharp(jsonType);
-      const propertyName = toPascalCase(key);
+  const rootDef = buildClassDefinition(rootClassName, {
+    type: 'object',
+    ...data, // Merge the data (including "description", subfields, etc.)
+  });
 
-      // Add the property to the class definition
-      classDefinition += `        public ${propertyType} ${propertyName} { get; set; }\n`;
+  // Add `Name` and `Status` properties to the root class
+  rootDef.properties.push(
+    {
+      propertyName: 'Name',
+      propertyType: 'string',
+      description: 'The name of the object.',
+      isObject: false,
+    },
+    {
+      propertyName: 'Status',
+      propertyType: 'string',
+      description: 'The execution status of the object. Example: "Succeeded".',
+      isObject: false,
+    }
+  );
+
+  const adjustedNamespace = `${namespaceName}.Tests.Mocks`;
+
+  // 2) Generate the code for the root class (this also recursively generates nested classes).
+  const classCode = generateClassCode(rootDef);
+  // 3) Wrap it all in the needed "using" statements + namespace.
+  const finalCode = [
+    'using Newtonsoft.Json.Linq;',
+    'using System.Collections.Generic;',
+    '',
+    `namespace ${adjustedNamespace}`,
+    '{',
+    classCode,
+    '}',
+  ].join('\n');
+  return finalCode;
+}
+
+/**
+ * Recursively builds a single C# class string from a ClassDefinition,
+ * plus any child classes it might have.
+ *
+ * @param {ClassDefinition} classDef - The definition of the class to generate.
+ * @returns {string} - The C# code for this class (including any nested classes), as a string.
+ */
+function generateClassCode(classDef: ClassDefinition): string {
+  const sb: string[] = [];
+  // Optionally, include a class-level doc-comment if the classDef has a description
+  if (classDef.description) {
+    sb.push('    /// <summary>');
+    sb.push(`    /// ${classDef.description}`);
+    sb.push('    /// </summary>');
+  }
+  sb.push(`    public class ${classDef.className}`);
+  sb.push('    {');
+  // Generate the class properties
+  for (const prop of classDef.properties) {
+    if (prop.description) {
+      sb.push('        /// <summary>');
+      sb.push(`        /// ${prop.description}`);
+      sb.push('        /// </summary>');
+    }
+    sb.push(`        public ${prop.propertyType} ${prop.propertyName} { get; set; }`);
+    sb.push('');
+  }
+  // Generate a constructor that initializes string properties to "" and object properties to new objects
+  sb.push('        /// <summary>');
+  sb.push(`        /// Initializes a new instance of the <see cref="${classDef.className}"/> class.`);
+  sb.push('        /// </summary>');
+  sb.push(`        public ${classDef.className}()`);
+  sb.push('        {');
+  for (const prop of classDef.properties) {
+    // If it's a string type
+    if (prop.propertyType === 'string') {
+      sb.push(`            ${prop.propertyName} = string.Empty;`);
+    }
+    // If it's a nested object (i.e., we generated a separate class for it),
+    // create a new instance in the constructor
+    else if (prop.isObject) {
+      sb.push(`            ${prop.propertyName} = new ${prop.propertyType}();`);
+    }
+    // For arrays, you might do something like:
+    // else if (prop.propertyType.startsWith("List<")) { ...initialize list... }
+  }
+  sb.push('        }');
+  sb.push('');
+  // End of the class
+  sb.push('    }');
+  sb.push('');
+  // Generate code for each child class recursively
+  for (const child of classDef.children) {
+    sb.push(generateClassCode(child));
+  }
+  return sb.join('\n');
+}
+
+/**
+ * Represents the metadata for generating a single C# class.
+ * We'll store the class name, a doc-comment, properties, and child class definitions.
+ */
+interface ClassDefinition {
+  className: string;
+  description: string | null; // If there's a description at the object level
+  properties: PropertyDefinition[]; // The list of properties in this class
+  children: ClassDefinition[]; // Nested child classes (for sub-objects)
+}
+
+/**
+ * Represents a single property on a C# class, including type and doc-comment.
+ */
+interface PropertyDefinition {
+  propertyName: string; // e.g. "Id", "Name", "Body", etc.
+  propertyType: string; // e.g. "string", "int", "Body" (another class), etc.
+  description: string | null;
+  isObject: boolean; // If true, the propertyType is a nested class name
+}
+
+/**
+ * Recursively traverses the JSON structure ("outputs") to build a ClassDefinition tree.
+ *
+ * @param {string} className - The name for this class in C# (PascalCase).
+ * @param {any}    node      - The node in the JSON structure containing .type, .description, and subfields.
+ * @returns {ClassDefinition} - A class definition describing the current node and its children.
+ */
+function buildClassDefinition(className: string, node: any): ClassDefinition {
+  // If there's a top-level "description" for the object, store it here:
+  const classDescription = node.description ? String(node.description) : null;
+
+  // We'll collect property info for the current class.
+
+  //function buildClassDefinition(className: string, node: any, isRoot: boolean): ClassDefinition {
+
+  const properties: PropertyDefinition[] = [];
+
+  // We'll collect child classes if we see nested objects (type: "object").
+  const children: ClassDefinition[] = [];
+
+  // If this node is an object, it may have sub-fields we need to parse as properties.
+  // We'll look for every key on the node that isn't "type" or "description" to generate properties.
+  if (node.type === 'object') {
+    // Create a combined array of keys we need to skip
+    const skipKeys = ['type', 'title', 'description', 'format', 'headers', 'queries', 'tags', 'relativePathParameters'];
+
+    // For each subfield in node (like "id", "location", "properties", etc.)
+    for (const key of Object.keys(node)) {
+      // Skip known metadata fields and the newly added keys (headers, queries, relativePathParameters)
+      if (skipKeys.includes(key)) {
+        continue;
+      }
+
+      const subNode = node[key];
+      const propName = toPascalCase(key);
+
+      // Determine the child's C# type
+      let csharpType = mapJsonTypeToCSharp(subNode?.type);
+      let isObject = false;
+
+      // If it's an object, we must generate a nested class.
+      // We'll do that recursively, then use the generated child's className for this property type.
+      if (subNode?.type === 'object') {
+        isObject = true;
+        const childClassName = className + propName; // e.g. "ActionOutputs" -> "ActionOutputsBody"
+        const childDef = buildClassDefinition(childClassName, subNode);
+        children.push(childDef);
+
+        // The property for this sub-node points to the newly created child's class name
+        csharpType = childDef.className;
+      }
+
+      // If it's an array, you might want to look at subNode.items.type to refine the list item type.
+      // Check if the subNode has a "description" to be used as a doc-comment on the property.
+      const subDescription = subNode?.description ? String(subNode.description) : null;
+      properties.push({
+        propertyName: propName,
+        propertyType: csharpType,
+        description: subDescription,
+        isObject,
+      });
     }
   }
-
-  classDefinition += '    }\n';
-  classDefinition += '}\n';
-
-  return classDefinition;
+  // Build the ClassDefinition for the current node
+  return {
+    className,
+    description: classDescription,
+    properties,
+    children,
+  };
 }
 
 /**
@@ -395,7 +596,7 @@ function mapJsonTypeToCSharp(jsonType: string): string {
     case 'object':
       return 'JObject';
     case 'any':
-      return 'object';
+      return 'JObject';
     case 'date-time':
       return 'DateTime';
     default:
