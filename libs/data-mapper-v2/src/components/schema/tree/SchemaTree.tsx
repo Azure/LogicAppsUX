@@ -121,7 +121,7 @@ export const SchemaTree = (props: SchemaTreeProps) => {
 
   useEffect(() => {
     updateNodeInternals(panelNodeId);
-  }, [panelNodeId, schemaTreeRoot, flattenedSchemaMap, currentHeight, updateNodeInternals, openKeys]);
+  }, [panelNodeId, schemaTreeRoot, flattenedSchemaMap, currentHeight, updateNodeInternals, openKeys, searchTerm]);
 
   return (
     <div ref={ref} className={mergeClasses(styles.root, isSourceSchema ? styles.sourceSchemaRoot : styles.targetScehmaRoot)}>
