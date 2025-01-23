@@ -12,10 +12,10 @@ import {
   useWorkflowParameterValidationErrors,
   useAllSettingsValidationErrors,
   useAllConnectionErrors,
-  getCustomCodeFilesWithData,
 } from '@microsoft/logic-apps-designer';
 import { RUN_AFTER_COLORS, isNullOrEmpty } from '@microsoft/logic-apps-shared';
 import { ExtensionCommand } from '@microsoft/vscode-extension-logic-apps';
+import type React from 'react';
 import { useContext, useMemo } from 'react';
 import { useIntl } from 'react-intl';
 import { useMutation } from '@tanstack/react-query';
@@ -64,7 +64,6 @@ export const DesignerCommandBar: React.FC<DesignerCommandBarProps> = ({
       skipValidation: false,
       ignoreNonCriticalErrors: true,
     });
-    const customCodeData = getCustomCodeFilesWithData(designerState.customCode);
 
     const validationErrorsList: Record<string, boolean> = {};
     const arr = Object.entries(designerState.operations.inputParameters);
@@ -86,12 +85,11 @@ export const DesignerCommandBar: React.FC<DesignerCommandBarProps> = ({
     const hasParametersErrors = !isNullOrEmpty(validationErrorsList);
 
     if (!hasParametersErrors) {
-      vscode.postMessage({
+      await vscode.postMessage({
         command: ExtensionCommand.save,
         definition,
         parameters,
         connectionReferences,
-        customCodeData,
       });
     }
   });
@@ -109,6 +107,10 @@ export const DesignerCommandBar: React.FC<DesignerCommandBarProps> = ({
   const { isLoading: isSavingBlankUnitTest, mutate: saveBlankUnitTestMutate } = useMutation(async () => {
     const designerState = DesignerStore.getState();
     const definition = await getNodeOutputOperations(designerState);
+    vscode.postMessage({
+      command: ExtensionCommand.logTelemetry,
+      data: { name: 'SaveBlankUnitTest', timestamp: Date.now(), definition: definition },
+    });
 
     await vscode.postMessage({
       command: ExtensionCommand.saveBlankUnitTest,
@@ -221,6 +223,26 @@ export const DesignerCommandBar: React.FC<DesignerCommandBarProps> = ({
       },
     },
     {
+      key: 'SaveBlank',
+      disabled: isDisabled,
+      text: Resources.UNIT_TEST_SAVE_BLANK,
+      ariaLabel: Resources.UNIT_TEST_SAVE_BLANK,
+      onRenderIcon: () => {
+        return isSavingBlankUnitTest ? (
+          <Spinner size={SpinnerSize.small} />
+        ) : (
+          <FontIcon
+            aria-label={Resources.DESIGNER_SAVE}
+            iconName="Save"
+            className={isSaveBlankUnitTestDisabled ? classNames.disableGrey : classNames.azureBlue}
+          />
+        );
+      },
+      onClick: () => {
+        saveBlankUnitTestMutate();
+      },
+    },
+    {
       key: 'Parameter',
       disabled: false,
       ariaLabel: Resources.DESIGNER_PARAMETERS,
@@ -282,17 +304,6 @@ export const DesignerCommandBar: React.FC<DesignerCommandBarProps> = ({
               onCreateUnitTest();
             },
           },
-          {
-            key: 'SaveBlank',
-            disabled: isDisabled,
-            text: Resources.UNIT_TEST_SAVE_BLANK,
-            ariaLabel: Resources.UNIT_TEST_SAVE_BLANK,
-            icon: isSavingBlankUnitTest ? <Spinner size="extra-small" /> : <SaveRegular />,
-            renderTextIcon: null,
-            onClick: () => {
-              saveBlankUnitTestMutate();
-            },
-          },
         ]
       : []),
   ];
@@ -307,17 +318,6 @@ export const DesignerCommandBar: React.FC<DesignerCommandBarProps> = ({
       renderTextIcon: null,
       onClick: () => {
         saveUnitTestMutate();
-      },
-    },
-    {
-      key: 'SaveBlank',
-      disabled: isSaveBlankUnitTestDisabled,
-      text: Resources.UNIT_TEST_SAVE_BLANK,
-      ariaLabel: Resources.UNIT_TEST_SAVE_BLANK,
-      icon: isSavingBlankUnitTest ? <Spinner size="extra-small" /> : <SaveRegular />,
-      renderTextIcon: null,
-      onClick: () => {
-        saveBlankUnitTestMutate();
       },
     },
     {
