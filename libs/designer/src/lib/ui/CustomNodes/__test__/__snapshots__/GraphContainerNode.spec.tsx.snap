@@ -20,6 +20,7 @@ exports[`GraphContainerNode > should apply correct styles based on node size 1`]
   </div>
   <div
     className="msla-graph-container"
+    data-automation-id="msla-graph-container-mockid"
   />
   <div
     className="node-handle bottom"
@@ -52,6 +53,7 @@ exports[`GraphContainerNode > should not render DropZone when showLeafComponents
   </div>
   <div
     className="msla-graph-container"
+    data-automation-id="msla-graph-container-mockid"
   />
   <div
     className="node-handle bottom"
@@ -85,6 +87,7 @@ exports[`GraphContainerNode > should render DropZone when showLeafComponents is 
     </div>
     <div
       className="msla-graph-container"
+      data-automation-id="msla-graph-container-mockid"
     />
     <div
       className="node-handle bottom"
@@ -130,6 +133,7 @@ exports[`GraphContainerNode > should render graph container as inactive when is 
   </div>
   <div
     className="msla-graph-container msla-card-inactive"
+    data-automation-id="msla-graph-container-mockid"
   />
   <div
     className="node-handle bottom"
@@ -162,6 +166,7 @@ exports[`GraphContainerNode > should render graph container as normal when in mo
   </div>
   <div
     className="msla-graph-container"
+    data-automation-id="msla-graph-container-mockid"
   />
   <div
     className="node-handle bottom"
@@ -194,6 +199,7 @@ exports[`GraphContainerNode > should render the top and bottom handles 1`] = `
   </div>
   <div
     className="msla-graph-container"
+    data-automation-id="msla-graph-container-mockid"
   />
   <div
     className="node-handle bottom"
@@ -226,6 +232,7 @@ exports[`GraphContainerNode > should render with footer and be a subgraph 1`] = 
   </div>
   <div
     className="msla-graph-container"
+    data-automation-id="msla-graph-container-mockid"
   />
   <div
     className="node-handle bottom"
@@ -258,6 +265,7 @@ exports[`GraphContainerNode > should render without crashing 1`] = `
   </div>
   <div
     className="msla-graph-container"
+    data-automation-id="msla-graph-container-mockid"
   />
   <div
     className="node-handle bottom"
