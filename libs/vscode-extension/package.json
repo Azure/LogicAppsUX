@@ -18,7 +18,9 @@
   },
   "peerDependencies": {
     "@tanstack/react-query": "4.36.1",
-    "@tanstack/react-query-devtools": "4.36.1"
+    "@tanstack/react-query-devtools": "4.36.1",
+    "react": "^16.4.0 || ^17.0.0 || ^18.0.0",
+    "react-dom": "^16.4.0 || ^17.0.0 || ^18.0.0"
   },
   "engines": {
     "node": ">=12"
