@@ -1,0 +1,279 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`GraphContainerNode > should apply correct styles based on node size 1`] = `
+<div
+  className="msla-graph-container-wrapper"
+  style={
+    {
+      "height": 100,
+      "width": 100,
+    }
+  }
+>
+  <div
+    className="node-handle top"
+    isConnectable={false}
+    position="top"
+    type="target"
+  >
+    Handle reactflow
+  </div>
+  <div
+    className="msla-graph-container"
+    data-automation-id="msla-graph-container-mockid"
+  />
+  <div
+    className="node-handle bottom"
+    isConnectable={false}
+    position="bottom"
+    type="source"
+  >
+    Handle reactflow
+  </div>
+</div>
+`;
+
+exports[`GraphContainerNode > should not render DropZone when showLeafComponents is false 1`] = `
+<div
+  className="msla-graph-container-wrapper"
+  style={
+    {
+      "height": 100,
+      "width": 100,
+    }
+  }
+>
+  <div
+    className="node-handle top"
+    isConnectable={false}
+    position="top"
+    type="target"
+  >
+    Handle reactflow
+  </div>
+  <div
+    className="msla-graph-container"
+    data-automation-id="msla-graph-container-mockid"
+  />
+  <div
+    className="node-handle bottom"
+    isConnectable={false}
+    position="bottom"
+    type="source"
+  >
+    Handle reactflow
+  </div>
+</div>
+`;
+
+exports[`GraphContainerNode > should render DropZone when showLeafComponents is true 1`] = `
+[
+  <div
+    className="msla-graph-container-wrapper"
+    style={
+      {
+        "height": 100,
+        "width": 100,
+      }
+    }
+  >
+    <div
+      className="node-handle top"
+      isConnectable={false}
+      position="top"
+      type="target"
+    >
+      Handle reactflow
+    </div>
+    <div
+      className="msla-graph-container"
+      data-automation-id="msla-graph-container-mockid"
+    />
+    <div
+      className="node-handle bottom"
+      isConnectable={false}
+      position="bottom"
+      type="source"
+    >
+      Handle reactflow
+    </div>
+  </div>,
+  <div
+    className="edge-drop-zone-container"
+  >
+    <div
+      graphId=""
+      isLeaf={true}
+      parentId="mockId"
+      tabIndex={0}
+    >
+      DropZone
+    </div>
+  </div>,
+]
+`;
+
+exports[`GraphContainerNode > should render graph container as inactive when is monitoring view 1`] = `
+<div
+  className="msla-graph-container-wrapper"
+  style={
+    {
+      "height": 100,
+      "width": 100,
+    }
+  }
+>
+  <div
+    className="node-handle top"
+    isConnectable={false}
+    position="top"
+    type="target"
+  >
+    Handle reactflow
+  </div>
+  <div
+    className="msla-graph-container msla-card-inactive"
+    data-automation-id="msla-graph-container-mockid"
+  />
+  <div
+    className="node-handle bottom"
+    isConnectable={false}
+    position="bottom"
+    type="source"
+  >
+    Handle reactflow
+  </div>
+</div>
+`;
+
+exports[`GraphContainerNode > should render graph container as normal when in monitoring view 1`] = `
+<div
+  className="msla-graph-container-wrapper"
+  style={
+    {
+      "height": 100,
+      "width": 100,
+    }
+  }
+>
+  <div
+    className="node-handle top"
+    isConnectable={false}
+    position="top"
+    type="target"
+  >
+    Handle reactflow
+  </div>
+  <div
+    className="msla-graph-container"
+    data-automation-id="msla-graph-container-mockid"
+  />
+  <div
+    className="node-handle bottom"
+    isConnectable={false}
+    position="bottom"
+    type="source"
+  >
+    Handle reactflow
+  </div>
+</div>
+`;
+
+exports[`GraphContainerNode > should render the top and bottom handles 1`] = `
+<div
+  className="msla-graph-container-wrapper"
+  style={
+    {
+      "height": 100,
+      "width": 100,
+    }
+  }
+>
+  <div
+    className="node-handle top"
+    isConnectable={false}
+    position="top"
+    type="target"
+  >
+    Handle reactflow
+  </div>
+  <div
+    className="msla-graph-container"
+    data-automation-id="msla-graph-container-mockid"
+  />
+  <div
+    className="node-handle bottom"
+    isConnectable={false}
+    position="bottom"
+    type="source"
+  >
+    Handle reactflow
+  </div>
+</div>
+`;
+
+exports[`GraphContainerNode > should render with footer and be a subgraph 1`] = `
+<div
+  className="msla-graph-container-wrapper has-footer is-subgraph"
+  style={
+    {
+      "height": 100,
+      "width": 100,
+    }
+  }
+>
+  <div
+    className="node-handle top"
+    isConnectable={false}
+    position="top"
+    type="target"
+  >
+    Handle reactflow
+  </div>
+  <div
+    className="msla-graph-container"
+    data-automation-id="msla-graph-container-mockid"
+  />
+  <div
+    className="node-handle bottom"
+    isConnectable={false}
+    position="bottom"
+    type="source"
+  >
+    Handle reactflow
+  </div>
+</div>
+`;
+
+exports[`GraphContainerNode > should render without crashing 1`] = `
+<div
+  className="msla-graph-container-wrapper"
+  style={
+    {
+      "height": 100,
+      "width": 100,
+    }
+  }
+>
+  <div
+    className="node-handle top"
+    isConnectable={false}
+    position="top"
+    type="target"
+  >
+    Handle reactflow
+  </div>
+  <div
+    className="msla-graph-container"
+    data-automation-id="msla-graph-container-mockid"
+  />
+  <div
+    className="node-handle bottom"
+    isConnectable={false}
+    position="bottom"
+    type="source"
+  >
+    Handle reactflow
+  </div>
+</div>
+`;

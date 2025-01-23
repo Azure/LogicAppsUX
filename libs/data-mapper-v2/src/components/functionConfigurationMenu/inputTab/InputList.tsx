@@ -42,7 +42,7 @@ type CustomListItemProps = {
   key: string;
 };
 
-const InputList = (props: InputListProps) => {
+export const InputList = (props: InputListProps) => {
   const connectionDictionary = useSelector((state: RootState) => state.dataMap.present.curDataMapOperation.dataMapConnections);
   const sourceSchemaDictionary = useSelector((state: RootState) => state.dataMap.present.curDataMapOperation.flattenedSourceSchema);
   const functionNodeDictionary = useSelector((state: RootState) => state.dataMap.present.curDataMapOperation.functionNodes);
@@ -138,9 +138,9 @@ export const CustomListItem = (props: CustomListItemProps) => {
   } = props;
 
   return (
-    <ListItem key={`input-${name}`}>
-      <div className={styles.draggableListItem}>
-        <span className={styles.inputDropdown}>
+    <ListItem key={`input-${name}`} className={styles.draggableListItem}>
+      <div className={styles.draggableListContainer}>
+        <span className={styles.formControl}>
           <InputDropdown
             inputAllowsCustomValues={customValueAllowed}
             index={index}
@@ -152,14 +152,12 @@ export const CustomListItem = (props: CustomListItemProps) => {
             validateAndCreateConnection={validateAndCreateConnection}
           />
         </span>
-        <span className={styles.listButtons}>
-          <span className={styles.badgeWrapper}>
-            {type && (
-              <Badge appearance="filled" color="informative">
-                {type}
-              </Badge>
-            )}
-          </span>
+        {type && (
+          <Badge appearance="filled" color="informative">
+            {type}
+          </Badge>
+        )}
+        <span>
           <Button className={styles.listButton} appearance="transparent" icon={<DeleteRegular />} onClick={remove} />
           {draggable && dragHandleProps && (
             <Button className={styles.listButton} appearance="transparent" icon={<ReOrderRegular />} {...dragHandleProps} />

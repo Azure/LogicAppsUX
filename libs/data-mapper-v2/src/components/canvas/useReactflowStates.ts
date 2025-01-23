@@ -2,7 +2,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import type { AppDispatch, RootState } from '../../core/state/Store';
 import { applyEdgeChanges, type EdgeChange, type Edge, type Node, type NodeChange, applyNodeChanges, type XYPosition } from '@xyflow/react';
 import { useEffect, useMemo, useState } from 'react';
-import { convertWholeDataMapToLayoutTree, isFunctionNode, panelWidthWithoutHandles } from '../../utils/ReactFlow.Util';
+import { convertWholeDataMapToLayoutTree, isFunctionNode, panelWidth, panelWidthWithoutHandles } from '../../utils/ReactFlow.Util';
 import { createEdgeId } from '../../utils/Edge.Utils';
 import { getFunctionNode } from '../../utils/Function.Utils';
 import { emptyCanvasRect } from '@microsoft/logic-apps-shared';
@@ -192,9 +192,22 @@ const useReactFlowStates = (props: ReactFlowStatesProps) => {
         y: 0,
       };
 
+      const commonProps = {
+        draggable: false,
+        selectable: false,
+        deletable: false,
+        dragging: false,
+        selected: false,
+      };
+
       const newTargetNodePosition = {
         x: newWidth - panelWidthWithoutHandles,
         y: 0,
+      };
+
+      const dimensions = {
+        width: panelWidth,
+        height: newHeight,
       };
 
       if (currentSourceNode) {
@@ -204,6 +217,12 @@ const useReactFlowStates = (props: ReactFlowStatesProps) => {
             id: NodeIds.source,
             position: newSourceNodePosition,
           };
+        } else if (currentSourceNode.width !== panelWidth || currentSourceNode.height !== newHeight) {
+          changes[NodeIds.source] = {
+            type: 'dimensions',
+            id: NodeIds.source,
+            dimensions,
+          };
         }
       } else {
         changes[NodeIds.source] = {
@@ -212,7 +231,9 @@ const useReactFlowStates = (props: ReactFlowStatesProps) => {
             id: NodeIds.source,
             type: 'schemaPanel',
             data: {},
+            ...commonProps,
             position: newSourceNodePosition,
+            ...dimensions,
           },
         };
       }
@@ -224,6 +245,12 @@ const useReactFlowStates = (props: ReactFlowStatesProps) => {
             id: NodeIds.target,
             position: newTargetNodePosition,
           };
+        } else if (currentTargetNode.width !== panelWidth || currentTargetNode.height !== newHeight) {
+          changes[NodeIds.target] = {
+            type: 'dimensions',
+            id: NodeIds.target,
+            dimensions,
+          };
         }
       } else {
         changes[NodeIds.target] = {
@@ -231,8 +258,10 @@ const useReactFlowStates = (props: ReactFlowStatesProps) => {
           item: {
             id: NodeIds.target,
             type: 'schemaPanel',
+            ...commonProps,
             data: {},
             position: newTargetNodePosition,
+            ...dimensions,
           },
         };
       }

@@ -3,7 +3,7 @@ import type { IFileSysTreeItem, MapDefinitionEntry, MapMetadata, SchemaType } fr
 
 type InitializeData = { project: string };
 type FetchSchemaData = { fileName: string; type: SchemaType };
-type SchemaPathData = { path: string; type: SchemaType };
+export type SchemaPathData = { path: string; type: SchemaType };
 
 export type MapDefinitionData = {
   mapDefinition: MapDefinitionEntry;
@@ -18,8 +18,14 @@ export type MessageToWebview =
   | { command: typeof ExtensionCommand.fetchSchema; data: FetchSchemaData }
   | { command: typeof ExtensionCommand.loadDataMap; data: MapDefinitionData }
   | { command: typeof ExtensionCommand.showAvailableSchemas; data: string[] }
-  | { command: typeof ExtensionCommand.showAvailableSchemasV2; data: IFileSysTreeItem[] }
-  | { command: typeof ExtensionCommand.getAvailableCustomXsltPaths; data: string[] }
+  | {
+      command: typeof ExtensionCommand.showAvailableSchemasV2;
+      data: IFileSysTreeItem[];
+    }
+  | {
+      command: typeof ExtensionCommand.getAvailableCustomXsltPaths;
+      data: string[];
+    }
   | { command: typeof ExtensionCommand.setXsltData; data: XsltData }
   | { command: typeof ExtensionCommand.setRuntimePort; data: string }
   | { command: typeof ExtensionCommand.getConfigurationSetting; data: boolean }
@@ -32,7 +38,7 @@ export type MessageToVsix =
     }
   | {
       command: typeof ExtensionCommand.addSchemaFromFile;
-      data: SchemaPathData;
+      data: SchemaType;
     }
   | {
       command:
@@ -65,4 +71,8 @@ export type MessageToVsix =
   | {
       command: typeof ExtensionCommand.logTelemetry;
       data: any;
+    }
+  | {
+      command: typeof ExtensionCommand.sendNotification;
+      data: { title: string; text: string; level: number };
     };

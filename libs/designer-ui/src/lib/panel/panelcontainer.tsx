@@ -6,7 +6,7 @@ import {
   MessageBar,
   MessageBarBody,
   Text,
-  OverlayDrawer,
+  Drawer,
   Spinner,
   MessageBarTitle,
 } from '@fluentui/react-components';
@@ -42,7 +42,6 @@ export type PanelContainerProps = {
   toggleCollapse: () => void;
   onCommentChange: (nodeId: string, panelCommentChangeEvent?: string) => void;
   onTitleChange: TitleChangeHandler;
-  onTitleBlur?: (prevTitle: string) => void;
   handleTitleUpdate: (originalId: string, newId: string) => void;
   setOverrideWidth?: (width: string | undefined) => void;
   canShowLogicAppRun?: boolean;
@@ -67,7 +66,6 @@ export const PanelContainer = ({
   trackEvent,
   onCommentChange,
   onTitleChange,
-  onTitleBlur,
   handleTitleUpdate,
   setOverrideWidth,
   overrideWidth,
@@ -114,7 +112,6 @@ export const PanelContainer = ({
           toggleCollapse={toggleCollapse}
           onTitleChange={onTitleChange}
           handleTitleUpdate={handleTitleUpdate}
-          onTitleBlur={onTitleBlur}
         />
       );
     },
@@ -135,7 +132,6 @@ export const PanelContainer = ({
       showLogicAppRun,
       toggleCollapse,
       onTitleChange,
-      onTitleBlur,
       handleTitleUpdate,
       resubmitOperation,
       onCommentChange,
@@ -202,7 +198,7 @@ export const PanelContainer = ({
   }
 
   return (
-    <OverlayDrawer
+    <Drawer
       aria-label={panelLabel}
       className="msla-panel-container"
       modalType="non-modal"
@@ -212,7 +208,7 @@ export const PanelContainer = ({
       }}
       open={true}
       position={isRight ? 'end' : 'start'}
-      style={{ position: 'absolute', maxWidth: '100%', width: drawerWidth }}
+      style={{ position: 'relative', maxWidth: '100%', width: drawerWidth, height: '100%' }}
     >
       {isEmptyPane || isCollapsed ? (
         <Button
@@ -250,6 +246,6 @@ export const PanelContainer = ({
           {canResize ? <PanelResizer minWidth={minWidth} updatePanelWidth={setOverrideWidth} /> : null}
         </>
       )}
-    </OverlayDrawer>
+    </Drawer>
   );
 };
