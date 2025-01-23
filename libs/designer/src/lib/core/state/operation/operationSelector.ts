@@ -219,8 +219,5 @@ export const useBrandColor = (nodeId: string) =>
 export const useIconUri = (nodeId: string) =>
   useSelector(createSelector(getOperationState, (state) => getRecordEntry(state.operationMetadata, nodeId)?.iconUri ?? ''));
 
-export const useIsNodeCollapsed = (nodeId: string) =>
-  useSelector(createSelector(getOperationState, (state) => getRecordEntry(state.operationMetadata, nodeId)?.collapsed ?? false));
-
 export const useNodeConnectorId = (nodeId: string) =>
   useSelector(createSelector(getOperationState, (state) => getRecordEntry(state.operationInfo, nodeId)?.connectorId));

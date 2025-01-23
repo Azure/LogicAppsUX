@@ -42,6 +42,7 @@ import {
   useShouldNodeFocus,
   useParentRunId,
   useIsLeafNode,
+  useIsActionCollapsed,
 } from '../../core/state/workflow/workflowSelectors';
 import { setRepetitionRunData } from '../../core/state/workflow/workflowSlice';
 import { getRepetitionName } from '../common/LoopsPager/helper';
@@ -82,6 +83,7 @@ const DefaultNode = ({ targetPosition = Position.Top, sourcePosition = Position.
   );
   const isSecureInputsOutputs = useSecureInputsOutputs(id);
   const isLoadingDynamicData = useIsNodeLoadingDynamicData(id);
+  const isNodeCollapsed = useIsActionCollapsed(id);
 
   const suppressDefaultNodeSelect = useSuppressDefaultNodeSelectFunctionality();
   const nodeSelectCallbackOverride = useNodeSelectAdditionalCallback();
@@ -305,37 +307,41 @@ const DefaultNode = ({ targetPosition = Position.Top, sourcePosition = Position.
     <>
       <div className="nopan" ref={ref as any}>
         <Handle className="node-handle top" type="target" position={targetPosition} isConnectable={false} />
-        <Card
-          active={isMonitoringView ? !isNullOrUndefined(runData?.status) : true}
-          title={label}
-          icon={iconUri}
-          draggable={!readOnly && !isTrigger}
-          brandColor={brandColor}
-          id={id}
-          connectionRequired={isConnectionRequired}
-          connectionDisplayName={connectionResult.isLoading ? '...' : connectionResult.result}
-          connectorName={connectorName?.result}
-          commentBox={comment}
-          drag={drag}
-          dragPreview={dragPreview}
-          errorMessage={errorMessage}
-          errorLevel={errorLevel}
-          isDragging={isDragging}
-          isLoading={isLoading}
-          isMonitoringView={isMonitoringView}
-          runData={runData}
-          readOnly={readOnly}
-          onClick={nodeClick}
-          onContextMenu={onContextMenu}
-          onDeleteClick={deleteClick}
-          onCopyClick={copyClick}
-          selectionMode={selected ? 'selected' : isPinned ? 'pinned' : false}
-          setFocus={shouldFocus}
-          staticResultsEnabled={!!staticResults}
-          isSecureInputsOutputs={isSecureInputsOutputs}
-          isLoadingDynamicData={isLoadingDynamicData}
-          nodeIndex={nodeIndex}
-        />
+        {isNodeCollapsed ? (
+          <p>Collapsed!</p>
+        ) : (
+          <Card
+            active={isMonitoringView ? !isNullOrUndefined(runData?.status) : true}
+            title={label}
+            icon={iconUri}
+            draggable={!readOnly && !isTrigger}
+            brandColor={brandColor}
+            id={id}
+            connectionRequired={isConnectionRequired}
+            connectionDisplayName={connectionResult.isLoading ? '...' : connectionResult.result}
+            connectorName={connectorName?.result}
+            commentBox={comment}
+            drag={drag}
+            dragPreview={dragPreview}
+            errorMessage={errorMessage}
+            errorLevel={errorLevel}
+            isDragging={isDragging}
+            isLoading={isLoading}
+            isMonitoringView={isMonitoringView}
+            runData={runData}
+            readOnly={readOnly}
+            onClick={nodeClick}
+            onContextMenu={onContextMenu}
+            onDeleteClick={deleteClick}
+            onCopyClick={copyClick}
+            selectionMode={selected ? 'selected' : isPinned ? 'pinned' : false}
+            setFocus={shouldFocus}
+            staticResultsEnabled={!!staticResults}
+            isSecureInputsOutputs={isSecureInputsOutputs}
+            isLoadingDynamicData={isLoadingDynamicData}
+            nodeIndex={nodeIndex}
+          />
+        )}
         {showCopyCallout ? <CopyTooltip targetRef={ref} hideTooltip={clearCopyTooltip} /> : null}
         <Handle className="node-handle bottom" type="source" position={sourcePosition} isConnectable={false} />
       </div>

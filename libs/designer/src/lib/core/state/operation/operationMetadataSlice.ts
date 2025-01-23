@@ -83,7 +83,6 @@ export interface NodeDependencies {
 export interface OperationMetadata {
   iconUri: string;
   brandColor: string;
-  collapsed?: boolean;
 }
 
 export const ErrorLevel = {
@@ -560,11 +559,6 @@ export const operationMetadataSlice = createSlice({
     updateDynamicDataLoadStatus: (state, action: PayloadAction<boolean>) => {
       state.loadStatus.nodesAndDynamicDataInitialized = action.payload;
     },
-    setCollapsedNode: (state, action: PayloadAction<{ nodeId: string }>) => {
-      const { nodeId } = action.payload;
-      const collapsedState = state.operationMetadata[nodeId].collapsed;
-      state.operationMetadata[nodeId].collapsed = !collapsedState;
-    },
   },
   extraReducers: (builder) => {
     builder.addCase(resetWorkflowState, () => initialState);
@@ -624,7 +618,6 @@ export const {
   deinitializeOperationInfo,
   deinitializeNodes,
   updateDynamicDataLoadStatus,
-  setCollapsedNode,
 } = operationMetadataSlice.actions;
 
 export default operationMetadataSlice.reducer;

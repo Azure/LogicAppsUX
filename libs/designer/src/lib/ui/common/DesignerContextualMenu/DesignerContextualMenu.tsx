@@ -31,7 +31,7 @@ import { CopyTooltip } from './CopyTooltip';
 import { CustomMenu } from '../EdgeContextualMenu/customMenu';
 import { NodeMenuPriorities } from './Priorities';
 import type { DropdownMenuCustomNode } from '@microsoft/logic-apps-shared/src/utils/src/lib/models/dropdownMenuCustomNode';
-import { setCollapsedNode } from '../../../core/state/operation/operationMetadataSlice';
+import { toggleCollapsedActionId } from '../../../core/state/workflow/workflowSlice';
 
 export const DesignerContextualMenu = () => {
   const menuData = useNodeContextMenuData();
@@ -82,11 +82,7 @@ export const DesignerContextualMenu = () => {
   }, [dispatch, nodeId, pinnedNodeId]);
 
   const collapseClick = useCallback(() => {
-    dispatch(
-      setCollapsedNode({
-        nodeId,
-      })
-    );
+    dispatch(toggleCollapsedActionId(nodeId));
   }, [nodeId, dispatch]);
 
   const operationFromWorkflow = getRecordEntry(rootState.workflow.operations, nodeId) as LogicAppsV2.OperationDefinition;

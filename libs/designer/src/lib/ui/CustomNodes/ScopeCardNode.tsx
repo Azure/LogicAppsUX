@@ -6,7 +6,6 @@ import { setNodeContextMenuData, setShowDeleteModalNodeId } from '../../core/sta
 import {
   useBrandColor,
   useIconUri,
-  useIsNodeCollapsed,
   useParameterValidationErrors,
   useTokenDependencies,
 } from '../../core/state/operation/operationSelector';
@@ -27,6 +26,7 @@ import {
   useParentRunId,
   useNodeDescription,
   useShouldNodeFocus,
+  useIsActionCollapsed,
 } from '../../core/state/workflow/workflowSelectors';
 import { setRepetitionRunData, toggleCollapsedGraphId } from '../../core/state/workflow/workflowSlice';
 import type { AppDispatch } from '../../core/store';
@@ -73,7 +73,7 @@ const ScopeCardNode = ({ data, targetPosition = Position.Top, sourcePosition = P
   );
   const rootRef = useRef<HTMLDivElement | null>(null);
 
-  const isNodeCollapsed = useIsNodeCollapsed(scopeId);
+  const isNodeCollapsed = useIsActionCollapsed(scopeId);
 
   const getRunRepetition = useCallback(() => {
     if (parentRunData?.status === constants.FLOW_STATUS.SKIPPED) {

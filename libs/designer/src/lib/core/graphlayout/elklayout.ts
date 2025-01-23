@@ -238,7 +238,7 @@ export const useLayout = (): [Node[], Edge[], number[]] => {
     [readOnly, workflowGraph],
     200
   );
-
+  console.log('reactFlowNodes', reactFlowNodes);
   return [reactFlowNodes, reactFlowEdges, reactFlowSize];
 };
 

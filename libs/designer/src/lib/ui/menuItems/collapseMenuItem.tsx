@@ -7,7 +7,7 @@ import {
   ArrowExpand24Regular,
 } from '@fluentui/react-icons';
 import { LogEntryLevel, LoggerService } from '@microsoft/logic-apps-shared';
-import { useIsNodeCollapsed } from '../../core/state/operation/operationSelector';
+import { useIsActionCollapsed } from '../../core/state/workflow/workflowSelectors';
 import { useCallback } from 'react';
 import { useIntl } from 'react-intl';
 
@@ -22,7 +22,7 @@ export interface CollapseMenuItemProps {
 export const CollapseMenuItem: React.FC<CollapseMenuItemProps> = (props) => {
   const { nodeId, onClick } = props;
 
-  const isNodeCollapsed = useIsNodeCollapsed(nodeId);
+  const isNodeCollapsed = useIsActionCollapsed(nodeId);
 
   const intl = useIntl();
 

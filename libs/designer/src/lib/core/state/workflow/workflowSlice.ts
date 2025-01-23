@@ -56,6 +56,7 @@ export const initialWorkflowState: WorkflowState = {
   operations: {},
   nodesMetadata: {},
   collapsedGraphIds: {},
+  collapsedActionIds: {},
   edgeIdsBySource: {},
   idReplacements: {},
   newlyAddedOperations: {},
@@ -307,6 +308,20 @@ export const workflowSlice = createSlice({
         delete state.collapsedGraphIds[action.payload];
       } else {
         state.collapsedGraphIds[action.payload] = true;
+      }
+
+      LoggerService().log({
+        level: LogEntryLevel.Verbose,
+        area: 'Designer:Workflow Slice',
+        message: action.type,
+        args: [action.payload],
+      });
+    },
+    toggleCollapsedActionId: (state: WorkflowState, action: PayloadAction<string>) => {
+      if (getRecordEntry(state.collapsedActionIds, action.payload) === true) {
+        delete state.collapsedActionIds[action.payload];
+      } else {
+        state.collapsedActionIds[action.payload] = true;
       }
 
       LoggerService().log({
@@ -588,6 +603,7 @@ export const {
   setRepetitionRunData,
   setIsWorkflowDirty,
   setHostErrorMessages,
+  toggleCollapsedActionId,
 } = workflowSlice.actions;
 
 export default workflowSlice.reducer;

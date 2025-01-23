@@ -39,16 +39,28 @@ export const useIsWorkflowDirty = () => useSelector(createSelector(getWorkflowSt
 export const getRootWorkflowGraphForLayout = createSelector(getWorkflowState, (data) => {
   const rootNode = data.graph;
   const collapsedIds = data.collapsedGraphIds;
-  if (Object.keys(collapsedIds).length === 0) {
-    return rootNode;
-  }
+  const collapsedActionsIds = data.collapsedActionIds;
   if (!rootNode) {
     return undefined;
   }
+
+  if (Object.keys(collapsedActionsIds).length !== 0) {
+    // const newGraph = {
+    //   ...rootNode,
+    //   children: reduceCollapsed((node: WorkflowNode) => getRecordEntry(collapsedActionsIds, node.id))(rootNode.children ?? []),
+    // };
+    // console.log('charlie', rootNode, newGraph);
+    return rootNode;
+  }
+  if (Object.keys(collapsedIds).length === 0) {
+    return rootNode;
+  }
+
   const newGraph = {
     ...rootNode,
     children: reduceCollapsed((node: WorkflowNode) => getRecordEntry(collapsedIds, node.id))(rootNode.children ?? []),
   };
+
   return newGraph;
 });
 
@@ -77,6 +89,9 @@ const reduceCollapsed =
 
 export const useIsGraphCollapsed = (graphId: string): boolean =>
   useSelector(createSelector(getWorkflowState, (state: WorkflowState): boolean => state.collapsedGraphIds?.[graphId]));
+
+export const useIsActionCollapsed = (actionId: string): boolean =>
+  useSelector(createSelector(getWorkflowState, (state: WorkflowState): boolean => state.collapsedActionIds?.[actionId]));
 
 export const useGetSwitchParentId = (nodeId: string): string | undefined => {
   return useSelector(

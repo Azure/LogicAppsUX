@@ -5,11 +5,12 @@ import { initializeSwitchCaseFromManifest } from '../../core/actions/bjsworkflow
 import { getOperationManifest } from '../../core/queries/operation';
 import { useMonitoringView, useReadOnly } from '../../core/state/designerOptions/designerOptionsSelectors';
 import { setNodeContextMenuData, setShowDeleteModalNodeId } from '../../core/state/designerView/designerViewSlice';
-import { useIconUri, useIsNodeCollapsed, useParameterValidationErrors } from '../../core/state/operation/operationSelector';
+import { useIconUri, useParameterValidationErrors } from '../../core/state/operation/operationSelector';
 import { useIsNodePinnedToOperationPanel, useIsNodeSelectedInOperationPanel } from '../../core/state/panel/panelSelectors';
 import { changePanelNode } from '../../core/state/panel/panelSlice';
 import {
   useActionMetadata,
+  useIsActionCollapsed,
   useIsGraphCollapsed,
   useIsLeafNode,
   useNewSwitchCaseId,
@@ -50,7 +51,7 @@ const SubgraphCardNode = ({ targetPosition = Position.Top, sourcePosition = Posi
   const parentRunId = useParentRunId(subgraphId);
   const parentRunData = useRunData(parentRunId ?? '');
   const title = useNodeDisplayName(subgraphId);
-  const isNodeCollapsed = useIsNodeCollapsed(subgraphId);
+  const isNodeCollapsed = useIsActionCollapsed(subgraphId);
 
   const isAddCase = metadata?.subgraphType === SUBGRAPH_TYPES.SWITCH_ADD_CASE;
 
