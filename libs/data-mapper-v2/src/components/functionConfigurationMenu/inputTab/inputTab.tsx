@@ -22,12 +22,17 @@ import {
   newConnectionWillHaveCircularLogic,
 } from '../../../utils/Connection.Utils';
 import { SchemaType, type SchemaNodeDictionary } from '@microsoft/logic-apps-shared';
-import DraggableList from 'react-draggable-list';
-import InputListWrapper, { type TemplateItemProps, type CommonProps } from './InputList';
-import { useCallback, useMemo, useRef } from 'react';
+import { CustomListItem } from './InputList';
+import { forwardRef, useCallback, useMemo, useRef } from 'react';
 import { useIntl } from 'react-intl';
 import { InputCustomInfoLabel } from './inputCustomInfoLabel';
 import { useStyles } from './styles';
+import { SimpleTreeItemWrapper, SortableTree, type TreeItems } from 'dnd-kit-sortable-tree';
+
+type DraggableListProps = {
+  data: InputConnection;
+  id: number;
+};
 
 export const InputTabContents = (props: {
   func: FunctionData;
@@ -168,7 +173,11 @@ const UnlimitedInputs = (props: {
   functionKey: string;
   connections: ConnectionDictionary;
 }) => {
-  const inputsFromManifest = props.func.inputs;
+  const { connections, func, functionKey } = props;
+  const inputsFromManifest = useMemo(() => func.inputs, [func]);
+  const connectionDictionary = useSelector((state: RootState) => state.dataMap.present.curDataMapOperation.dataMapConnections);
+  const sourceSchemaDictionary = useSelector((state: RootState) => state.dataMap.present.curDataMapOperation.flattenedSourceSchema);
+  const functionNodeDictionary = useSelector((state: RootState) => state.dataMap.present.curDataMapOperation.functionNodes);
   const styles = useStyles();
   const dispatch = useDispatch();
   const intl = useIntl();
@@ -206,16 +215,64 @@ const UnlimitedInputs = (props: {
     dispatch(createInputSlotForUnboundedInput(props.functionKey));
   }, [dispatch, props.functionKey]);
 
-  const onDragMoveEnd = useCallback(
-    (newList: readonly TemplateItemProps[], _movedItem: TemplateItemProps, _oldIndex: number, _newIndex: number) => {
+  const onItemsChanged = useCallback(
+    (items: TreeItems<DraggableListProps>) => {
+      console.log(items);
       dispatch(
         updateFunctionConnectionInputs({
-          functionKey: props.functionKey,
-          inputs: newList.map((item) => item.input),
+          functionKey: functionKey,
+          inputs: items.map((item) => item.data),
         })
       );
     },
-    [dispatch, props.functionKey]
+    [dispatch, functionKey]
+  );
+
+  const removeUnboundedInput = useCallback(
+    (index: number) => {
+      const targetNodeReactFlowKey = functionKey;
+      dispatch(
+        deleteConnectionFromFunctionMenu({
+          targetId: targetNodeReactFlowKey,
+          inputIndex: index,
+        })
+      );
+    },
+    [dispatch, functionKey]
+  );
+
+  const updateInput = useCallback(
+    (newValue: InputConnection, index: number) => {
+      const targetNodeReactFlowKey = functionKey;
+      dispatch(
+        setConnectionInput({
+          targetNode: func,
+          targetNodeReactFlowKey,
+          inputIndex: index,
+          input: newValue,
+        })
+      );
+    },
+    [func, dispatch, functionKey]
+  );
+
+  const validateAndCreateConnection = useCallback(
+    (optionValue: string | undefined, option: InputOptionProps | undefined, index: number) => {
+      if (optionValue) {
+        const input = validateAndCreateConnectionInput(
+          optionValue,
+          option,
+          connectionDictionary,
+          func,
+          functionNodeDictionary,
+          sourceSchemaDictionary
+        );
+        if (input) {
+          updateInput(input, index);
+        }
+      }
+    },
+    [connectionDictionary, func, functionNodeDictionary, sourceSchemaDictionary, updateInput]
   );
 
   return (
@@ -239,23 +296,51 @@ const UnlimitedInputs = (props: {
         </div>
       </div>
       <div className={styles.body} ref={containerRef}>
-        <DraggableList<TemplateItemProps, CommonProps, any>
-          list={Object.entries(functionConnection.inputs).map((input, index) => ({
-            input: input[1],
-            index,
+        <SortableTree<DraggableListProps>
+          items={(functionConnection.inputs ?? []).map((input, index) => ({
+            data: input,
+            id: index + 1,
+            canHaveChildren: false,
           }))}
-          commonProps={{
-            functionKey: props.functionKey,
-            data: props.func,
-            inputsFromManifest,
-            connections: props.connections,
-            schemaType: SchemaType.Source,
-            draggable: true,
-          }}
-          onMoveEnd={onDragMoveEnd}
-          itemKey={'index'}
-          template={InputListWrapper}
-          container={() => containerRef?.current}
+          keepGhostInPlace={true}
+          onItemsChanged={onItemsChanged}
+          // eslint-disable-next-line react/display-name
+          TreeItemComponent={forwardRef((treeProps, treeRef) => {
+            const inputItem = treeProps.item.data;
+            const index = treeProps.item.id;
+            const inputName = getInputName(inputItem, connections);
+            const inputValue = getInputValue(inputItem);
+            const inputType = getInputTypeFromNode(inputItem);
+
+            return (
+              <SimpleTreeItemWrapper
+                {...treeProps}
+                ref={treeRef}
+                showDragHandle={false}
+                contentClassName={styles.customizedDraggableListItem}
+              >
+                <CustomListItem
+                  name={inputName}
+                  value={inputValue}
+                  remove={() => {
+                    removeUnboundedInput(index - 1);
+                  }}
+                  index={index}
+                  customValueAllowed={inputsFromManifest[0].allowCustomInput}
+                  schemaType={SchemaType.Source}
+                  type={inputType}
+                  validateAndCreateConnection={(optionValue: string | undefined, option: InputOptionProps | undefined) => {
+                    validateAndCreateConnection(optionValue, option, index - 1);
+                  }}
+                  functionData={func}
+                  functionKey={functionKey}
+                  key={`input-${inputName}`}
+                  draggable={true}
+                  dragHandleProps={treeProps.handleProps}
+                />
+              </SimpleTreeItemWrapper>
+            );
+          })}
         />
         <div className={styles.formControlDescription}>
           <Button
