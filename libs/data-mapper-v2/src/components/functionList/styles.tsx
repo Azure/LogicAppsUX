@@ -70,6 +70,10 @@ export const useStyles = makeStyles({
     color: '#242424',
     overflow: 'hidden',
   },
+  loopInfoText: {
+    fontSize: '12px',
+    width: '220px',
+  },
   treeItem: {
     ':hover': {
       backgroundColor: '#E8F3FE',
