@@ -99,6 +99,7 @@ const ScopeCardNode = ({ data, targetPosition = Position.Top, sourcePosition = P
       return data;
     },
     {
+      initialData: null,
       refetchOnWindowFocus: false,
       refetchOnReconnect: false,
       refetchOnMount: false,
