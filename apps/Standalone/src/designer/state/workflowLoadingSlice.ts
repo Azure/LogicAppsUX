@@ -5,6 +5,7 @@ import type { ConnectionReferences, WorkflowParameter } from '@microsoft/logic-a
 import type { LogicAppsV2 } from '@microsoft/logic-apps-shared';
 import type { PayloadAction } from '@reduxjs/toolkit';
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
+import { readJsonFiles } from './helper';
 
 export type HostingPlanTypes = 'standard' | 'consumption' | 'hybrid';
 
@@ -35,6 +36,7 @@ export interface WorkflowLoadingState {
     collapseGraphsByDefault?: boolean; // collapse scope by default
   };
   showPerformanceDebug?: boolean;
+  runFiles: any[];
 }
 
 const initialState: WorkflowLoadingState = {
@@ -61,34 +63,51 @@ const initialState: WorkflowLoadingState = {
     collapseGraphsByDefault: false,
   },
   showPerformanceDebug: false,
+  runFiles: [],
 };
 
 type WorkflowPayload = {
   workflowDefinition: LogicAppsV2.WorkflowDefinition;
   connectionReferences: ConnectionReferences;
   parameters: Record<string, WorkflowParameter>;
+  runFiles: any[];
 };
 
 type RunPayload = {
   runInstance: LogicAppsV2.RunInstanceDefinition;
 };
 
+type LoadRunPayload = {
+  runFile: Record<string, any>;
+};
+
 export const loadWorkflow = createAsyncThunk('workflowLoadingState/loadWorkflow', async (_: unknown, thunkAPI) => {
   const currentState: RootState = thunkAPI.getState() as RootState;
+  const fileName = currentState.workflowLoader.resourcePath?.split('.')[0];
+  const isMonitoringView = currentState.workflowLoader.isMonitoringView;
 
-  const wf = await import(`../../../../../__mocks__/workflows/${currentState.workflowLoader.resourcePath?.split('.')[0]}.json`);
+  const runFiles = isMonitoringView && fileName ? await readJsonFiles(fileName) : [];
+
+  const wf = await import(`../../../../../__mocks__/workflows/${fileName}.json`);
   return {
     workflowDefinition: wf.definition as LogicAppsV2.WorkflowDefinition,
     connectionReferences: wf.connections as ConnectionReferences,
-    parameters: wf.parameters ?? {},
+    parameters: wf?.parameters ?? wf?.definition?.parameters ?? {},
+    runFiles,
   } as WorkflowPayload;
 });
 
-export const loadRun = createAsyncThunk('runLoadingState/loadRun', async (_: unknown, thunkAPI) => {
-  const currentState: RootState = thunkAPI.getState() as RootState;
+export const loadRun = createAsyncThunk('runLoadingState/loadRun', async (payload: LoadRunPayload, thunkAPI) => {
   try {
-    const runInstance = await import(`../../../../../__mocks__/runs/${currentState.workflowLoader.resourcePath?.split('.')[0]}.json`);
-    return { runInstance: runInstance as LogicAppsV2.RunInstanceDefinition } as RunPayload;
+    const runInstance = payload.runFile;
+
+    return {
+      runInstance: {
+        properties: runInstance.properties,
+        id: runInstance.id,
+        type: runInstance.type,
+      },
+    } as RunPayload;
   } catch {
     return thunkAPI.rejectWithValue(null);
   }
@@ -143,7 +162,6 @@ export const workflowLoadingSlice = createSlice({
       state.isLocal = action.payload;
       state.appId = undefined;
       state.workflowName = undefined;
-      state.resourcePath = '';
     },
     setIsChatBotEnabled: (state, action: PayloadAction<boolean>) => {
       state.showChatBot = action.payload;
@@ -196,6 +214,7 @@ export const workflowLoadingSlice = createSlice({
       state.workflowDefinition = action.payload?.workflowDefinition;
       state.connections = action.payload?.connectionReferences ?? {};
       state.parameters = action.payload?.parameters ?? {};
+      state.runFiles = action.payload?.runFiles ?? [];
     });
     builder.addCase(loadWorkflow.rejected, (state) => {
       state.workflowDefinition = null;

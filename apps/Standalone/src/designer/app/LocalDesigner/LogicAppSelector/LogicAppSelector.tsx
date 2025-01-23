@@ -1,9 +1,9 @@
 import type { AppDispatch } from '../../../state/store';
-import { useResourcePath, useIsMonitoringView } from '../../../state/workflowLoadingSelectors';
+import { useResourcePath, useIsMonitoringView, useRunFiles } from '../../../state/workflowLoadingSelectors';
 import { setResourcePath, loadWorkflow, loadRun } from '../../../state/workflowLoadingSlice';
 import type { IDropdownOption } from '@fluentui/react';
 import { Dropdown, DropdownMenuItemType } from '@fluentui/react';
-import { useCallback } from 'react';
+import { useCallback, useMemo } from 'react';
 import { useDispatch } from 'react-redux';
 
 const fileOptions = [
@@ -63,17 +63,32 @@ export const LocalLogicAppSelector: React.FC = () => {
   const resourcePath = useResourcePath();
   const isMonitoringView = useIsMonitoringView();
   const dispatch = useDispatch<AppDispatch>();
+  const runFiles = useRunFiles();
 
   const changeResourcePathDropdownCB = useCallback(
     (_: unknown, item: IDropdownOption | undefined) => {
       dispatch(setResourcePath((item?.key as string) ?? ''));
-      if (isMonitoringView) {
-        dispatch(loadRun(_));
-      }
       dispatch(loadWorkflow(_));
     },
-    [dispatch, isMonitoringView]
+    [dispatch]
   );
+
+  const onChangeRunInstance = useCallback(
+    (_: unknown, item: any) => {
+      dispatch(loadRun({ runFile: item?.module }));
+    },
+    [dispatch]
+  );
+
+  const runOptions = useMemo(() => {
+    return runFiles.map((runFile) => {
+      return {
+        key: runFile.path,
+        text: runFile.path.split('/').pop().replace('.json', ''),
+        module: runFile.module,
+      };
+    });
+  }, [runFiles]);
 
   return (
     <div>
@@ -86,6 +101,19 @@ export const LocalLogicAppSelector: React.FC = () => {
           options={fileOptions}
           styles={{ callout: { maxHeight: 800 } }}
         />
+        {isMonitoringView ? (
+          <div style={{ position: 'relative' }}>
+            <Dropdown
+              placeholder={
+                resourcePath ? (runFiles.length > 0 ? 'Select a run file to load' : 'No run files to select') : 'Select workflow first'
+              }
+              label="Run file"
+              options={runOptions}
+              disabled={runFiles.length === 0 || !resourcePath}
+              onChange={onChangeRunInstance}
+            />
+          </div>
+        ) : null}
       </div>
     </div>
   );
