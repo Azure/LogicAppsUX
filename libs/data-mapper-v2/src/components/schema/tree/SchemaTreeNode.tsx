@@ -112,7 +112,7 @@ const SchemaTreeNode = (props: SchemaTreeNodeProps) => {
 
   return (
     <div
-      className={mergeClasses(styles.root, isSourceSchema ? '' : styles.targetSchemaRoot)}
+      className={styles.root}
       ref={(ref) => {
         if (ref) {
           const newRect = ref.getBoundingClientRect();
