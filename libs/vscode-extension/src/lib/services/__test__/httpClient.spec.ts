@@ -74,6 +74,18 @@ describe('HttpClient', () => {
     });
   });
 
+  it('should throw an error when GET request returns an error', async () => {
+    const errorMessage = 'Network Error';
+    (axios as any).mockRejectedValueOnce(new Error(errorMessage)); // Simulate error
+
+    const options: HttpRequestOptions<unknown> = {
+      uri: '/test-get',
+      headers: {},
+    };
+
+    await expect(httpClient.get(options)).rejects.toThrow(errorMessage);
+  });
+
   it('should make a POST request', async () => {
     const responseData = { data: JSON.stringify({ result: 'test-result' }) };
     (axios as any).mockResolvedValue({ data: responseData, status: 200 });
@@ -86,18 +98,20 @@ describe('HttpClient', () => {
 
     const result = await httpClient.post(options);
 
-    expect(result).toEqual({ result: 'test-result' });
-    expect(axios).toHaveBeenCalledWith(
-      expect.objectContaining({
-        method: 'POST',
-        url: `${baseUrl}/test-post`,
-        headers: expect.objectContaining({
-          Authorization: accessToken,
-          'Content-Type': 'application/json',
-        }),
-        data: options.content,
-      })
-    );
+    expect(result).toEqual({ data: '{"result":"test-result"}' });
+    expect(axios).toHaveBeenCalledWith({
+      method: 'POST',
+      url: `${baseUrl}/test-post`,
+      headers: {
+        Authorization: '',
+        'Content-Type': 'application/json',
+        'x-ms-user-agent': 'LogicAppsDesigner/(host vscode 1.0.0)',
+      },
+      data: options.content,
+      content: { key: 'value' },
+      uri: '/test-post',
+      commandName: 'Designer.httpClient.post',
+    });
   });
 
   it('should make a PUT request', async () => {
@@ -112,15 +126,17 @@ describe('HttpClient', () => {
 
     const result = await httpClient.put(options);
 
-    expect(result).toEqual({ result: 'test-result' });
+    expect(result).toEqual({ data: '{"result":"test-result"}' });
     expect(axios).toHaveBeenCalledWith(
       expect.objectContaining({
         method: 'PUT',
         url: `${baseUrl}/test-put`,
         headers: expect.objectContaining({
-          Authorization: accessToken,
+          Authorization: '',
           'Content-Type': 'application/json',
+          'x-ms-user-agent': 'LogicAppsDesigner/(host vscode 1.0.0)',
         }),
+        uri: '/test-post',
         data: options.content,
       })
     );

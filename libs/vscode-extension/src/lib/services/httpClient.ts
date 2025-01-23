@@ -52,7 +52,7 @@ export class HttpClient implements IHttpClient {
       headers: {
         ...this._extraHeaders,
         ...options.headers,
-        Authorization: `${isArmId ? this._accessToken : ''} `,
+        Authorization: `${isArmId ? this._accessToken : ''}`,
         'Content-Type': 'application/json',
       },
       data: options.content,
