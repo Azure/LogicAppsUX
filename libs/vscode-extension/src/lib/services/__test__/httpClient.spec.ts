@@ -1,4 +1,4 @@
-import { describe, it, expect, vi, afterEach } from 'vitest';
+import { describe, it, beforeEach, expect, vi, afterEach } from 'vitest';
 import axios from 'axios';
 import { HttpClient, HttpOptions } from '../httpClient';
 import type { HttpRequestOptions } from '@microsoft/logic-apps-shared';
@@ -18,15 +18,19 @@ describe('HttpClient', () => {
     hostVersion,
   };
 
-  const httpClient = new HttpClient(httpClientOptions);
+  let httpClient: HttpClient;
+
+  beforeEach(() => {
+    httpClient = new HttpClient(httpClientOptions);
+  });
 
   afterEach(() => {
     vi.clearAllMocks();
   });
 
-  it('should make a GET request', async () => {
+  it('should make a successful GET request without arm resourceid', async () => {
     const responseData = { data: 'test-data' };
-    (axios as any).mockResolvedValue({ data: responseData });
+    (axios as any).mockResolvedValue({ data: responseData, status: 200 });
 
     const options: HttpRequestOptions<unknown> = {
       uri: '/test-get',
@@ -36,15 +40,38 @@ describe('HttpClient', () => {
     const result = await httpClient.get(options);
 
     expect(result).toEqual(responseData);
-    expect(axios).toHaveBeenCalledWith(
-      expect.objectContaining({
-        method: 'GET',
-        url: `${baseUrl}/test-get`,
-        headers: expect.objectContaining({
-          Authorization: accessToken,
-        }),
-      })
-    );
+    expect(axios).toHaveBeenCalledWith({
+      method: 'GET',
+      uri: '/test-get',
+      url: `${baseUrl}/test-get`,
+      headers: {
+        Authorization: '',
+        'x-ms-user-agent': 'LogicAppsDesigner/(host vscode 1.0.0)',
+      },
+    });
+  });
+
+  it('should make a successful GET request without arm resourceid', async () => {
+    const responseData = { data: 'test-data' };
+    (axios as any).mockResolvedValue({ data: responseData, status: 200 });
+
+    const options: HttpRequestOptions<unknown> = {
+      uri: '/test/subscriptions/subscription-test/test-get',
+      headers: {},
+    };
+
+    const result = await httpClient.get(options);
+
+    expect(result).toEqual(responseData);
+    expect(axios).toHaveBeenCalledWith({
+      method: 'GET',
+      uri: '/test/subscriptions/subscription-test/test-get',
+      url: `${apiHubBaseUrl}/test/subscriptions/subscription-test/test-get`,
+      headers: {
+        Authorization: 'test-token',
+        'x-ms-user-agent': 'LogicAppsDesigner/(host vscode 1.0.0)',
+      },
+    });
   });
 
   it('should make a POST request', async () => {
