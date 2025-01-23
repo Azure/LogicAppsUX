@@ -1,4 +1,12 @@
 # Logic Apps Designer
+## [5.29.0](https://github.com/Azure/LogicAppsUX/compare/v5.28.0...v5.29.0) (2025-01-23)
+
+
+### Bug Fixes
+
+* **Data Mapper:** Remove extra styling and clear out test results ([#6459](https://github.com/Azure/LogicAppsUX/issues/6459)) ([9d4a584](https://github.com/Azure/LogicAppsUX/commit/9d4a58499d0bd0e9ff43892d6ac0d3cef7d298af))
+* **designer:** Scope Nodes Permanently Loading ([#6458](https://github.com/Azure/LogicAppsUX/issues/6458)) ([0ec40fd](https://github.com/Azure/LogicAppsUX/commit/0ec40fda2eaba369dace22646c4651ae0ddd6c55))
+
 ## [5.28.0](https://github.com/Azure/LogicAppsUX/compare/v5.27.0...v5.28.0) (2025-01-23)
 
 
