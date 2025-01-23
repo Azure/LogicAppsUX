@@ -125,11 +125,14 @@ export const initializeTemplateServices = createAsyncThunk(
 export const loadTemplateManifests = async (resourcePaths: string[]) => {
   try {
     const manifestPromises = resourcePaths.map(async (resourcePath) => {
-      const data = (await import(`./../../templates/templateFiles/${resourcePath}/manifest.json`))?.default as Template.Manifest;
-      return [resourcePath, data];
+      return import(`./../../templates/templateFiles/${resourcePath}/manifest.json`);
     });
     const manifestsArray = await Promise.all(manifestPromises);
-    return Object.fromEntries(manifestsArray);
+    return manifestsArray.reduce((result: Record<string, Template.Manifest>, manifestFile: any, index: number) => {
+      const manifest = manifestFile.default;
+      result[resourcePaths[index]] = manifest;
+      return result;
+    }, {});
   } catch (ex) {
     console.error(ex);
     return undefined;

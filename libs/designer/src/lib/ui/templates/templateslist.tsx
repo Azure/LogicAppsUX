@@ -43,9 +43,7 @@ export const TemplatesList = ({ detailFilters, createWorkflowCall }: TemplatesDe
                 <TemplateCard key={templateName} templateName={templateName} />
               ))}
             </>
-          ) : (
-            <></>
-          )}
+          ) : null}
         </div>
         {filteredTemplateNames?.length && filteredTemplateNames.length > 0 && (
           <Pager
