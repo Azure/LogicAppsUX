@@ -405,6 +405,12 @@ function generateCSharpClasses(namespaceName: string, rootClassName: string, dat
       propertyType: 'string',
       description: 'The execution status of the object. Example: "Succeeded".',
       isObject: false,
+    },
+    {
+      propertyName: 'StatusCode',
+      propertyType: 'int',
+      description: 'The HTTP status code returned by the action. Example: 200 for success.',
+      isObject: false,
     }
   );
 
