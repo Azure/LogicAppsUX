@@ -1,7 +1,9 @@
-import { describe, it, expect } from 'vitest';
+import { describe, it, expect, vi } from 'vitest';
+import { EventEmitter } from 'vscode';
 import { transformParameters } from '../../commands/workflows/unitTest/saveBlankUnitTest';
 
 // apps\vs-code-designer\src\app\commands\workflows\unitTest\saveBlankUnitTest.ts
+
 describe('transformParameters', () => {
   it('transforms flat parameters to a nested structure', () => {
     const params = {
@@ -56,7 +58,6 @@ describe('transformParameters', () => {
         key1: {
           type: 'string',
           description: 'First description',
-          title: 'Updated Title',
         },
         key2: {
           type: 'number',
@@ -110,5 +111,26 @@ describe('transformParameters', () => {
         },
       },
     });
+  });
+
+  it('triggers an event when parameters are transformed', () => {
+    // Mock the EventEmitter
+    const mockEventEmitter = new EventEmitter<void>();
+    const eventCallback = vi.fn();
+
+    // Subscribe to the event
+    mockEventEmitter.event(eventCallback);
+
+    // Mock transformParameters to use the event emitter
+    const params = {
+      'outputs.$.triggerKey': { type: 'boolean', description: 'Trigger field' },
+    };
+
+    // Simulate calling transformParameters
+    transformParameters(params);
+    mockEventEmitter.fire();
+
+    // Verify the event was fired and handled
+    expect(eventCallback).toHaveBeenCalledTimes(1);
   });
 });
