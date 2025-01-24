@@ -110,6 +110,11 @@ export const DesignerCommandBar: React.FC<DesignerCommandBarProps> = ({
     const designerState = DesignerStore.getState();
     const definition = await getNodeOutputOperations(designerState);
 
+    vscode.postMessage({
+      command: ExtensionCommand.logTelemetry,
+      data: { name: 'SaveBlankUnitTest', timestamp: Date.now(), definition: definition },
+    });
+
     await vscode.postMessage({
       command: ExtensionCommand.saveBlankUnitTest,
       definition,
@@ -161,8 +166,8 @@ export const DesignerCommandBar: React.FC<DesignerCommandBarProps> = ({
       description: 'Aria describing the way to control the keyboard navigation',
     }),
     CREATE_UNIT_TEST: intl.formatMessage({
-      defaultMessage: 'Create unit test',
-      id: '7eo4/d',
+      defaultMessage: 'Create unit test from run',
+      id: '4eH9hX',
       description: 'Button text for create unit test',
     }),
     UNIT_TEST_SAVE: intl.formatMessage({
@@ -176,8 +181,8 @@ export const DesignerCommandBar: React.FC<DesignerCommandBarProps> = ({
       description: 'Button text for unit test asssertions',
     }),
     UNIT_TEST_SAVE_BLANK: intl.formatMessage({
-      defaultMessage: 'Save blank unit test',
-      id: '+SHn9P',
+      defaultMessage: 'Create blank unit test',
+      id: '4lAUZW',
       description: 'Button test for save blank unit test',
     }),
   };
@@ -246,6 +251,17 @@ export const DesignerCommandBar: React.FC<DesignerCommandBarProps> = ({
       renderTextIcon: null,
       onClick: () => !!dispatch(openPanel({ panelMode: 'Error' })),
     },
+    {
+      key: 'SaveBlank',
+      disabled: isDisabled,
+      text: Resources.UNIT_TEST_SAVE_BLANK,
+      ariaLabel: Resources.UNIT_TEST_SAVE_BLANK,
+      icon: isSavingBlankUnitTest ? <Spinner size="extra-small" /> : <BeakerRegular />,
+      renderTextIcon: null,
+      onClick: () => {
+        saveBlankUnitTestMutate();
+      },
+    },
   ];
 
   const monitoringViewItems = [
@@ -280,17 +296,6 @@ export const DesignerCommandBar: React.FC<DesignerCommandBarProps> = ({
             renderTextIcon: null,
             onClick: () => {
               onCreateUnitTest();
-            },
-          },
-          {
-            key: 'SaveBlank',
-            disabled: isDisabled,
-            text: Resources.UNIT_TEST_SAVE_BLANK,
-            ariaLabel: Resources.UNIT_TEST_SAVE_BLANK,
-            icon: isSavingBlankUnitTest ? <Spinner size="extra-small" /> : <SaveRegular />,
-            renderTextIcon: null,
-            onClick: () => {
-              saveBlankUnitTestMutate();
             },
           },
         ]
