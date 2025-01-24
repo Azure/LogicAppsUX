@@ -44,6 +44,7 @@ export const ExtensionCommand = {
   openRelativeLink: 'openRelativeLink',
   logTelemetry: 'logTelemetry',
   sendNotification: 'sendNotification',
+  isTestEnabledForOS: 'isTestEnabledForOS',
 } as const;
 export type ExtensionCommand = (typeof ExtensionCommand)[keyof typeof ExtensionCommand];
 

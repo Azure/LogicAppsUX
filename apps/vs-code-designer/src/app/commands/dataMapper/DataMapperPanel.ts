@@ -1,4 +1,4 @@
-import { dataMapperVersionSetting, defaultDataMapperVersion, extensionCommand } from '../../../constants';
+import { dataMapperVersionSetting, defaultDataMapperVersion, extensionCommand, Platform } from '../../../constants';
 import { ext } from '../../../extensionVariables';
 import { localize } from '../../../localize';
 import { getWebViewHTML } from '../../utils/codeless/getWebViewHTML';
@@ -184,7 +184,16 @@ export default class DataMapperPanel {
         this.sendNotification(msg.data.title, msg.data.text, msg.data.level);
         break;
       }
+      case ExtensionCommand.isTestEnabledForOS: {
+        this.isTestEnabledForOS();
+        break;
+      }
     }
+  }
+
+  public isTestEnabledForOS() {
+    // Test feature is not enabled for MAC
+    return process.platform !== Platform.mac;
   }
 
   public updateWebviewPanelTitle() {

@@ -75,4 +75,7 @@ export type MessageToVsix =
   | {
       command: typeof ExtensionCommand.sendNotification;
       data: { title: string; text: string; level: number };
+    }
+  | {
+      command: typeof ExtensionCommand.isTestEnabledForOS;
     };
