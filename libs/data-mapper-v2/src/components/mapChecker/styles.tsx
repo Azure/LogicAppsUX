@@ -42,6 +42,12 @@ export const useMapCheckerItemStyles = makeStyles({
   warningBadge: {
     backgroundColor: '#fef0e7',
   },
+  subtitleText: {
+    marginTop: '5px',
+    display: 'block',
+    color: tokens.colorNeutralForegroundDisabled,
+    fontSize: '10px',
+  },
 });
 
 export const useStyles = makeStyles({

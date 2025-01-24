@@ -28,7 +28,7 @@ const useSchema = (props: useSchemaProps) => {
   const { sourceOpenKeys, targetOpenKeys, sourceSchema, targetSchema } = useSelector(
     (state: RootState) => state.dataMap.present.curDataMapOperation
   );
-
+  const { sourceSchemaTreeData, targetSchemaTreeData } = useSelector((state: RootState) => state.dataMap.present.curDataMapOperation);
   const isSourceSchema = useMemo(() => isSourceNode(id), [id]);
   const schemaType = useMemo(() => (isSourceNode(id) ? SchemaType.Source : SchemaType.Target), [id]);
   const panelNodeId = useMemo(() => (isSourceSchema ? NodeIds.source : NodeIds.target), [isSourceSchema]);
@@ -63,6 +63,7 @@ const useSchema = (props: useSchemaProps) => {
       className: isSourceSchema ? handleStyles.left : handleStyles.right,
     } as HandleResponseProps,
     schemaFile: isSourceSchema ? sourceSchema?.name : targetSchema?.name,
+    schemaTreeData: isSourceSchema ? sourceSchemaTreeData : targetSchemaTreeData,
   };
 };
 

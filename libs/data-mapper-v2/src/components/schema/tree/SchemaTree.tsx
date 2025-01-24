@@ -33,13 +33,13 @@ export const SchemaTree = (props: SchemaTreeProps) => {
     searchTerm,
   } = props;
 
-  const { panelNodeId, openKeys, isSourceSchema } = useSchema({ id });
+  const { panelNodeId, openKeys, isSourceSchema, schemaTreeData } = useSchema({
+    id,
+  });
   const { height: currentHeight } = useSelector(
     (state: RootState) => state.dataMap.present.curDataMapOperation.loadedMapMetadata?.canvasRect ?? emptyCanvasRect
   );
-  const { nodesForScroll, sourceSchemaTreeData, targetSchemaTreeData } = useSelector(
-    (state: RootState) => state.dataMap.present.curDataMapOperation
-  );
+  const { nodesForScroll } = useSelector((state: RootState) => state.dataMap.present.curDataMapOperation);
   const updateNodeInternals = useUpdateNodeInternals();
 
   const updateVisibleNodes = useCallback(() => {
@@ -64,8 +64,6 @@ export const SchemaTree = (props: SchemaTreeProps) => {
       return false;
     };
 
-    const schemaTreeData = isSourceSchema ? sourceSchemaTreeData : targetSchemaTreeData;
-
     if (
       (isSourceSchema && isVisibleNodesUpdated(visibleNodes, schemaTreeData.visibleNodes)) ||
       isVisibleNodesUpdated(schemaTreeData.visibleNodes, visibleNodes) ||
@@ -87,8 +85,7 @@ export const SchemaTree = (props: SchemaTreeProps) => {
   }, [
     dispatch,
     id,
-    sourceSchemaTreeData,
-    targetSchemaTreeData,
+    schemaTreeData,
     isSourceSchema,
     treeRef,
     treeRef?.current,
@@ -111,8 +108,9 @@ export const SchemaTree = (props: SchemaTreeProps) => {
           isExpanded: !openKeys[id],
         })
       );
+      updateNodeInternals(panelNodeId);
     },
-    [openKeys, dispatch, isSourceSchema]
+    [openKeys, dispatch, isSourceSchema, panelNodeId, updateNodeInternals]
   );
 
   useEffect(() => {
@@ -121,7 +119,16 @@ export const SchemaTree = (props: SchemaTreeProps) => {
 
   useEffect(() => {
     updateNodeInternals(panelNodeId);
-  }, [panelNodeId, schemaTreeRoot, flattenedSchemaMap, currentHeight, updateNodeInternals, openKeys, searchTerm]);
+  }, [
+    panelNodeId,
+    schemaTreeRoot,
+    flattenedSchemaMap,
+    currentHeight,
+    updateNodeInternals,
+    openKeys,
+    searchTerm,
+    schemaTreeData.visibleNodes,
+  ]);
 
   return (
     <div ref={ref} className={mergeClasses(styles.root, isSourceSchema ? styles.sourceSchemaRoot : styles.targetScehmaRoot)}>
