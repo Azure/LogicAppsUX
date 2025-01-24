@@ -360,6 +360,6 @@ export const AdvancedOptionsTypes = {
 export type AdvancedOptionsTypes = (typeof AdvancedOptionsTypes)[keyof typeof AdvancedOptionsTypes];
 
 export interface GetTestFeatureEnablementStatus {
-  command: typeof ExtensionCommand.isTestEnabledForOS;
+  command: typeof ExtensionCommand.isTestDisabledForOS;
   data: boolean;
 }

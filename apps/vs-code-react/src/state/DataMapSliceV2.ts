@@ -20,7 +20,7 @@ export interface DataMapState {
   xsltContent: string;
   fetchedFunctions?: FunctionData[];
   useExpandedFunctionCards: boolean;
-  isTestEnabledForOS?: boolean;
+  isTestDisabledForOS?: boolean;
 }
 
 const initialState: DataMapState = {
@@ -28,7 +28,6 @@ const initialState: DataMapState = {
   xsltFilename: '',
   xsltContent: '',
   useExpandedFunctionCards: true,
-  isTestEnabledForOS: true,
 };
 
 export const dataMapSlice = createSlice({
@@ -80,8 +79,8 @@ export const dataMapSlice = createSlice({
     changeUseExpandedFunctionCards: (state, action: PayloadAction<boolean>) => {
       state.useExpandedFunctionCards = action.payload;
     },
-    changeIsTestEnabledForOS: (state, action: PayloadAction<boolean>) => {
-      state.isTestEnabledForOS = action.payload;
+    changeIsTestDisabledForOS: (state, action: PayloadAction<boolean>) => {
+      state.isTestDisabledForOS = action.payload;
     },
   },
 });
@@ -94,7 +93,7 @@ export const {
   changeXsltContent,
   changeMapDefinition,
   changeDataMapMetadata,
-  changeIsTestEnabledForOS,
+  changeIsTestDisabledForOS,
   changeSourceSchemaFilename,
   changeSourceSchema,
   changeTargetSchemaFilename,

@@ -10,9 +10,9 @@ export class DataMapperFileService implements IDataMapperFileService {
     this.sendMsgToVsix = sendMsgToVsix;
   }
 
-  public isTestEnabledForOS = () => {
+  public isTestDisabledForOS = () => {
     this.sendMsgToVsix({
-      command: ExtensionCommand.isTestEnabledForOS,
+      command: ExtensionCommand.isTestDisabledForOS,
     });
   };
 

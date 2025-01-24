@@ -184,17 +184,17 @@ export default class DataMapperPanel {
         this.sendNotification(msg.data.title, msg.data.text, msg.data.level);
         break;
       }
-      case ExtensionCommand.isTestEnabledForOS: {
-        this.isTestEnabledForOS();
+      case ExtensionCommand.isTestDisabledForOS: {
+        this.isTestDisabledForOS();
         break;
       }
     }
   }
 
-  public isTestEnabledForOS() {
+  public isTestDisabledForOS() {
     this.sendMsgToWebview({
-      command: ExtensionCommand.isTestEnabledForOS,
-      data: process.platform !== Platform.mac,
+      command: ExtensionCommand.isTestDisabledForOS,
+      data: process.platform === Platform.mac,
     });
   }
 

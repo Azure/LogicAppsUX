@@ -30,7 +30,7 @@ export type MessageToWebview =
   | { command: typeof ExtensionCommand.setRuntimePort; data: string }
   | { command: typeof ExtensionCommand.getConfigurationSetting; data: boolean }
   | { command: typeof ExtensionCommand.getDataMapperVersion; data: number }
-  | { command: typeof ExtensionCommand.isTestEnabledForOS; data: boolean };
+  | { command: typeof ExtensionCommand.isTestDisabledForOS; data: boolean };
 
 export type MessageToVsix =
   | {
@@ -78,5 +78,5 @@ export type MessageToVsix =
       data: { title: string; text: string; level: number };
     }
   | {
-      command: typeof ExtensionCommand.isTestEnabledForOS;
+      command: typeof ExtensionCommand.isTestDisabledForOS;
     };

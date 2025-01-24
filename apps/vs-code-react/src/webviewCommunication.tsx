@@ -33,7 +33,7 @@ import {
 import {
   changeCustomXsltPathList as changeCustomXsltPathListV2,
   changeDataMapMetadata as changeDataMapMetadataV2,
-  changeIsTestEnabledForOS,
+  changeiITestDisabledForOS,
   changeMapDefinition as changeMapDefinitionV2,
   changeRuntimePort as changeRuntimePortV2,
   changeSchemaTreeList,
@@ -151,8 +151,8 @@ export const WebViewCommunication: React.FC<{ children: ReactNode }> = ({ childr
               dispatch(changeUseExpandedFunctionCardsV2(message.data));
               break;
             }
-            case ExtensionCommand.isTestEnabledForOS: {
-              dispatch(changeIsTestEnabledForOS(message.data));
+            case ExtensionCommand.isTestDisabledForOS: {
+              dispatch(changeiITestDisabledForOS(message.data));
               break;
             }
             default:

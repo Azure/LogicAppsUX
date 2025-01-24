@@ -55,7 +55,7 @@ export interface IDataMapperFileService {
 
   sendNotification(title: string, text: string, level: number): void;
 
-  isTestEnabledForOS(): void;
+  isTestDisabledForOS(): void;
 }
 
 let service: IDataMapperFileService;
