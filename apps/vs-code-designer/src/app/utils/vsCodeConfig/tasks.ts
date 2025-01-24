@@ -13,6 +13,7 @@ import * as fse from 'fs-extra';
 import * as path from 'path';
 import { workspace } from 'vscode';
 import type { MessageItem, TaskDefinition, WorkspaceConfiguration, WorkspaceFolder } from 'vscode';
+import { vscodeFolderName } from '../../../constants';
 
 const tasksKey = 'tasks';
 const inputsKey = 'inputs';
@@ -94,7 +95,7 @@ export async function validateTasksJson(context: IActionContext, folders: readon
         const projectPath: string | undefined = await tryGetLogicAppProjectRoot(context, folder);
         context.telemetry.properties.projectPath = projectPath;
         if (projectPath) {
-          const tasksJsonPath: string = path.join(projectPath, '.vscode', 'tasks.json');
+          const tasksJsonPath: string = path.join(projectPath, vscodeFolderName, 'tasks.json');
 
           if (!fse.existsSync(tasksJsonPath)) {
             throw new Error(localize('noTaskJson', `Failed to find: ${tasksJsonPath}`));
@@ -137,7 +138,7 @@ async function overwriteTasksJson(context: IActionContext, projectPath: string):
       '\n\nSelecting "Cancel" leaves the file unchanged, but shows this message when you open this project again.' +
       '\n\nContinue with the update?';
 
-    const tasksJsonPath: string = path.join(projectPath, '.vscode', 'tasks.json');
+    const tasksJsonPath: string = path.join(projectPath, vscodeFolderName, 'tasks.json');
     let tasksJsonContent: any;
 
     const projectFiles = [
