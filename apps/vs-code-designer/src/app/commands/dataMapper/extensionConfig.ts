@@ -3,6 +3,7 @@ export const webviewType = 'dataMapperWebview';
 export const supportedDataMapDefinitionFileExts = ['.lml', '.yml'];
 export const supportedSchemaFileExts = ['.xsd', '.json'];
 export const supportedCustomXsltFileExts = ['.xslt', '.xml'];
+export const supportedDataMapperFolders = ['Maps', 'MapDefinitions', 'Schemas'];
 
 const artifactsPath = '/Artifacts/';
 export const schemasPath = `${artifactsPath}/Schemas`;

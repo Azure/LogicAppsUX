@@ -253,7 +253,7 @@ export const isValidCustomValueByType = (customValue: string, tgtDataType: Norma
   }
 };
 
-export const isValidConnectionByType = (srcDataType: NormalizedDataType, tgtDataType: NormalizedDataType) => {
+export const isValidConnectionByType = (srcDataType: NormalizedDataType, tgtDataType?: NormalizedDataType) => {
   if (srcDataType === NormalizedDataType.Any || tgtDataType === NormalizedDataType.Any) {
     return true;
   }

@@ -40,4 +40,8 @@ export const useStyles = makeStyles({
   footer: {
     backgroundColor: 'transparent',
   },
+  closeHeaderButton: {
+    paddingBottom: '0px',
+    paddingTop: '0px',
+  },
 });

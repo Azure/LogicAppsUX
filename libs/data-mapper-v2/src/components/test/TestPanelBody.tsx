@@ -3,16 +3,20 @@ import { useIntl } from 'react-intl';
 import { useStyles } from './styles';
 import { useSelector, useDispatch } from 'react-redux';
 import type { RootState, AppDispatch } from '../../core/state/Store';
-import { Accordion, AccordionHeader, AccordionItem, AccordionPanel } from '@fluentui/react-components';
+import { Accordion, AccordionHeader, AccordionItem, AccordionPanel, MessageBar, MessageBarBody, Spinner } from '@fluentui/react-components';
 import { type EditorContentChangedEventArgs, MonacoEditor } from '@microsoft/designer-ui';
-import { EditorLanguage, SchemaFileFormat } from '@microsoft/logic-apps-shared';
+import { EditorLanguage, LogEntryLevel, LoggerService, SchemaFileFormat } from '@microsoft/logic-apps-shared';
 import { updateTestInput } from '../../core/state/PanelSlice';
+import { LogCategory } from '../../utils/Logging.Utils';
 
 const sampleDataPlaceHolderEditorId = 'sample-data-editor-placeholder';
 const resultPlaceHolderEditorId = 'result-editor-placeholder';
 
-type TestPanelBodyProps = {};
-export const TestPanelBody = (_props: TestPanelBodyProps) => {
+type TestPanelBodyProps = {
+  loading: boolean;
+};
+export const TestPanelBody = (props: TestPanelBodyProps) => {
+  const { loading } = props;
   const intl = useIntl();
   const styles = useStyles();
   const dispatch = useDispatch<AppDispatch>();
@@ -20,6 +24,8 @@ export const TestPanelBody = (_props: TestPanelBodyProps) => {
 
   const sourceSchema = useSelector((state: RootState) => state.dataMap.present.curDataMapOperation.sourceSchema);
   const targetSchema = useSelector((state: RootState) => state.dataMap.present.curDataMapOperation.targetSchema);
+
+  const { isDirty } = useSelector((state: RootState) => state.dataMap.present);
 
   const stringResources = useMemo(
     () => ({
@@ -42,6 +48,11 @@ export const TestPanelBody = (_props: TestPanelBodyProps) => {
         defaultMessage: 'Test your map to see a result',
         id: 'UVr0mL',
         description: 'Placeholder result',
+      }),
+      TEST_INFO_MESSAGE: intl.formatMessage({
+        defaultMessage: 'To generate and test with the latest XSLT, please save the map first.',
+        id: 'DIwFTo',
+        description: 'Save map info',
       }),
     }),
     [intl]
@@ -103,7 +114,12 @@ export const TestPanelBody = (_props: TestPanelBodyProps) => {
     if (content) {
       try {
         return JSON.stringify(JSON.parse(content), null, 2);
-      } catch (_err) {
+      } catch (err) {
+        LoggerService().log({
+          level: LogEntryLevel.Error,
+          area: `${LogCategory.DataMapperDesigner}/testPanel`,
+          message: `${err}`,
+        });
         return content;
       }
     }
@@ -113,6 +129,11 @@ export const TestPanelBody = (_props: TestPanelBodyProps) => {
 
   return (
     <div className={styles.bodyWrapper}>
+      {isDirty && (
+        <MessageBar key={'test-panel-info'} intent={'info'} className={styles.messageBar}>
+          <MessageBarBody>{stringResources.TEST_INFO_MESSAGE}</MessageBarBody>
+        </MessageBar>
+      )}
       <Accordion multiple={true} collapsible={true} defaultOpenItems={['sample-data', 'result']}>
         <AccordionItem value={'sample-data'}>
           <AccordionHeader className={styles.accordianHeader} expandIconPosition={'end'}>
@@ -132,14 +153,17 @@ export const TestPanelBody = (_props: TestPanelBodyProps) => {
               onContentChanged={onSampleDataChange}
               onEditorLoaded={onSampleDataEditorLoaded}
             />
-            <div id={sampleDataPlaceHolderEditorId} className={styles.monacoEditorPlaceHolder}>
-              {stringResources.SAMPLE_TEST_DATA_PLACEHOLDER}
-            </div>
+            {!testMapInput && (
+              <div id={sampleDataPlaceHolderEditorId} className={styles.monacoEditorPlaceHolder}>
+                {stringResources.SAMPLE_TEST_DATA_PLACEHOLDER}
+              </div>
+            )}
           </AccordionPanel>
         </AccordionItem>
         <AccordionItem value={'result'}>
           <AccordionHeader className={styles.accordianHeader} expandIconPosition={'end'}>
             {stringResources.RESULT}
+            {loading && <Spinner className={styles.bodySpinner} size={'tiny'} />}
           </AccordionHeader>
           <AccordionPanel className={styles.accordianPanel}>
             <MonacoEditor
@@ -157,9 +181,11 @@ export const TestPanelBody = (_props: TestPanelBodyProps) => {
               onEditorLoaded={onResultEditorLoaded}
               readOnly
             />
-            <div id={resultPlaceHolderEditorId} className={styles.monacoEditorPlaceHolder}>
-              {stringResources.RESULT_PLACEHOLDER}
-            </div>
+            {!content && (
+              <div id={resultPlaceHolderEditorId} className={styles.monacoEditorPlaceHolder}>
+                {stringResources.RESULT_PLACEHOLDER}
+              </div>
+            )}
           </AccordionPanel>
         </AccordionItem>
       </Accordion>

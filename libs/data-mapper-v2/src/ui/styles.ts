@@ -66,4 +66,7 @@ export const useStaticStyles = makeStaticStyles({
   '.react-flow__node': {
     zIndex: '200 !important',
   },
+  '.react-flow__node-schemaPanel': {
+    top: '0 !important',
+  },
 });

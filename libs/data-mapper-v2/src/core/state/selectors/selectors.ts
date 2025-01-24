@@ -6,6 +6,15 @@ import { createEdgeId } from '../../../utils/Edge.Utils';
 export const useSelectedNode = (nodeId: string) =>
   useSelector((state: RootState) => state.dataMap.present.curDataMapOperation.selectedItemConnectedNodes[nodeId]);
 
+export const useSchemasButNoConnections = () => {
+  return useSelector(
+    (state: RootState) =>
+      Object.keys(state.dataMap.present.curDataMapOperation.flattenedSourceSchema).length !== 0 &&
+      Object.keys(state.dataMap.present.curDataMapOperation.flattenedTargetSchema).length !== 0 &&
+      Object.keys(state.dataMap.present.curDataMapOperation.dataMapConnections).length === 0
+  );
+};
+
 export const useSelectedEdge = (edgeId: string) =>
   useSelector((state: RootState) => state.dataMap.present.curDataMapOperation.selectedItemConnectedNodes[edgeId]);
 
