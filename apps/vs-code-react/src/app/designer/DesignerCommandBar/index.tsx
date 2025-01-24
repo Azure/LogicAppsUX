@@ -180,7 +180,7 @@ export const DesignerCommandBar: React.FC<DesignerCommandBarProps> = ({
       id: 'LxRzQm',
       description: 'Button text for unit test asssertions',
     }),
-    UNIT_TEST_SAVE_BLANK: intl.formatMessage({
+    UNIT_TEST_CREATE_BLANK: intl.formatMessage({
       defaultMessage: 'Create blank unit test',
       id: '4lAUZW',
       description: 'Button test for save blank unit test',
@@ -254,8 +254,8 @@ export const DesignerCommandBar: React.FC<DesignerCommandBarProps> = ({
     {
       key: 'SaveBlank',
       disabled: isDisabled,
-      text: Resources.UNIT_TEST_SAVE_BLANK,
-      ariaLabel: Resources.UNIT_TEST_SAVE_BLANK,
+      text: Resources.UNIT_TEST_CREATE_BLANK,
+      ariaLabel: Resources.UNIT_TEST_CREATE_BLANK,
       icon: isSavingBlankUnitTest ? <Spinner size="extra-small" /> : <BeakerRegular />,
       renderTextIcon: null,
       onClick: () => {
@@ -317,8 +317,8 @@ export const DesignerCommandBar: React.FC<DesignerCommandBarProps> = ({
     {
       key: 'SaveBlank',
       disabled: isSaveBlankUnitTestDisabled,
-      text: Resources.UNIT_TEST_SAVE_BLANK,
-      ariaLabel: Resources.UNIT_TEST_SAVE_BLANK,
+      text: Resources.UNIT_TEST_CREATE_BLANK,
+      ariaLabel: Resources.UNIT_TEST_CREATE_BLANK,
       icon: isSavingBlankUnitTest ? <Spinner size="extra-small" /> : <SaveRegular />,
       renderTextIcon: null,
       onClick: () => {
