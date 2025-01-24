@@ -9,10 +9,11 @@ interface NodeCollapseToggleProps {
   onSmallCard?: boolean;
   handleCollapse?: () => void;
   tabIndex?: number;
+  id: string;
 }
 
 const NodeCollapseToggle = (props: NodeCollapseToggleProps) => {
-  const { disabled = false, collapsed = false, onSmallCard = false, handleCollapse, tabIndex } = props;
+  const { disabled = false, collapsed = false, onSmallCard = false, handleCollapse, tabIndex, id } = props;
 
   const intl = useIntl();
   const EXPAND_TEXT = intl.formatMessage({
@@ -42,6 +43,7 @@ const NodeCollapseToggle = (props: NodeCollapseToggleProps) => {
         onKeyDown={keyboardInteraction.keyDown}
         onKeyUp={keyboardInteraction.keyUp}
         tabIndex={disabled ? -1 : tabIndex}
+        data-automation-id={`${id}-collapse-toggle`}
       >
         <Icon iconName={iconName} styles={{ root: { fontSize: FontSizes.small } }} />
       </button>

@@ -18,7 +18,7 @@ on:
     - cron: '0 17 * * 4'
 
 env:
-  AI_KEY: 3cf0d6ae-3327-414a-b7c1-12f31ef45eff
+  AI_KEY: ${{ vars.AI_KEY }}
   NX_AI_CON_STR: InstrumentationKey=3cf0d6ae-3327-414a-b7c1-12f31ef45eff;IngestionEndpoint=https://eastus-8.in.applicationinsights.azure.com/;LiveEndpoint=https://eastus.livediagnostics.monitor.azure.com/
   BUMP_COMMAND: pnpm run bump --release-as ${{ github.event.inputs.release_type || 'minor' }}
 
