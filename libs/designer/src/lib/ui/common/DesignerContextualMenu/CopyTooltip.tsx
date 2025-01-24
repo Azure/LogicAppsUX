@@ -1,4 +1,5 @@
 import { Tooltip } from '@fluentui/react-components';
+import { replaceWhiteSpaceWithUnderscore } from '@microsoft/logic-apps-shared';
 import { useOnViewportChange } from '@xyflow/react';
 import { useRef } from 'react';
 import { useIntl } from 'react-intl';
@@ -31,7 +32,8 @@ export const CopyTooltip = ({ targetRef: ref, location, hideTooltip, id }: CopyT
       visible={true}
     >
       <div
-        data-testid="msla-tooltip-location"
+        data-testid={`msla-tooltip-location-${replaceWhiteSpaceWithUnderscore(id)}`}
+        data-automation-id={`msla-tooltip-location-${replaceWhiteSpaceWithUnderscore(id)}`}
         ref={locationRef}
         style={{ width: '1px', height: '1px', position: 'absolute', top: location?.y ?? 0, left: location?.x ?? 0 }}
       />
