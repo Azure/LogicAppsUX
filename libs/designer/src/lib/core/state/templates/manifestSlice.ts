@@ -1,4 +1,4 @@
-import type { Template } from '@microsoft/logic-apps-shared';
+import { LogEntryLevel, LoggerService, type Template } from '@microsoft/logic-apps-shared';
 import type { PayloadAction } from '@reduxjs/toolkit';
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
 import type { RootState } from './store';
@@ -10,6 +10,8 @@ const initialPageNum = 0;
 export interface ManifestState {
   availableTemplateNames?: ManifestName[];
   filteredTemplateNames?: ManifestName[];
+  githubTemplateNames?: ManifestName[];
+  customTemplateNames?: ManifestName[];
   availableTemplates?: Record<ManifestName, Template.Manifest>;
   filters: {
     pageNum: number;
@@ -32,11 +34,12 @@ export const initialManifestState: ManifestState = {
   },
 };
 
-export const loadManifestNames = createAsyncThunk('manifest/loadManifestNames', async () => {
-  return loadManifestNamesFromGithub();
+export const loadGithubManifestNames = createAsyncThunk('manifest/loadGithubManifestNames', async () => {
+  const githubManifestNames = await loadManifestNamesFromGithub();
+  return githubManifestNames ?? [];
 });
 
-export const loadManifests = createAsyncThunk('manifest/loadManifests', async (_: unknown, thunkAPI) => {
+export const loadGithubManifests = createAsyncThunk('manifest/loadManifests', async (_, thunkAPI) => {
   const currentState: RootState = thunkAPI.getState() as RootState;
   const manifestResourcePaths = currentState.manifest.availableTemplateNames ?? [];
 
@@ -46,8 +49,13 @@ export const loadManifests = createAsyncThunk('manifest/loadManifests', async (_
     );
     const manifestsArray = await Promise.all(manifestPromises);
     return Object.fromEntries(manifestsArray);
-  } catch (ex) {
-    console.error(ex);
+  } catch (error) {
+    LoggerService().log({
+      level: LogEntryLevel.Error,
+      area: 'Templates.loadGithubManifests',
+      message: `Error loading manifests: ${error}`,
+      error: error instanceof Error ? error : undefined,
+    });
     return undefined;
   }
 });
@@ -69,6 +77,14 @@ export const manifestSlice = createSlice({
     setFilteredTemplateNames: (state, action: PayloadAction<ManifestName[] | undefined>) => {
       if (action.payload) {
         state.filteredTemplateNames = action.payload;
+      }
+    },
+    setCustomTemplates: (state, action: PayloadAction<Record<string, Template.Manifest> | undefined>) => {
+      if (action.payload) {
+        const customTemplateNames = Object.keys(action.payload);
+        state.customTemplateNames = customTemplateNames;
+        state.availableTemplateNames = [...(state.githubTemplateNames ?? []), ...customTemplateNames];
+        state.availableTemplates = { ...(state.availableTemplates ?? {}), ...action.payload };
       }
     },
     setPageNum: (state, action: PayloadAction<number>) => {
@@ -103,20 +119,22 @@ export const manifestSlice = createSlice({
     },
   },
   extraReducers: (builder) => {
-    builder.addCase(loadManifestNames.fulfilled, (state, action) => {
-      state.availableTemplateNames = action.payload ?? [];
+    builder.addCase(loadGithubManifestNames.fulfilled, (state, action) => {
+      state.availableTemplateNames = [...action.payload, ...(state.customTemplateNames ?? [])];
+      state.githubTemplateNames = action.payload;
     });
 
-    builder.addCase(loadManifestNames.rejected, (state) => {
+    builder.addCase(loadGithubManifestNames.rejected, (state) => {
       // TODO change to null for error handling case
-      state.availableTemplateNames = [];
+      state.availableTemplateNames = state.customTemplateNames ?? [];
+      state.githubTemplateNames = [];
     });
 
-    builder.addCase(loadManifests.fulfilled, (state, action) => {
-      state.availableTemplates = action.payload ?? [];
+    builder.addCase(loadGithubManifests.fulfilled, (state, action) => {
+      state.availableTemplates = { ...state.availableTemplates, ...(action.payload ?? {}) };
     });
 
-    builder.addCase(loadManifests.rejected, (state) => {
+    builder.addCase(loadGithubManifests.rejected, (state) => {
       // TODO some way of handling error
       state.availableTemplates = undefined;
     });
@@ -127,6 +145,7 @@ export const {
   setavailableTemplatesNames,
   setavailableTemplates,
   setFilteredTemplateNames,
+  setCustomTemplates,
   setPageNum,
   setKeywordFilter,
   setSortKey,

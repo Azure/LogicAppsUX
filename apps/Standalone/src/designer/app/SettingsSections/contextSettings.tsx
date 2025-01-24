@@ -15,7 +15,6 @@ import {
   setDarkMode,
   setMonitoringView,
   setReadOnly,
-  loadRun,
   loadWorkflow,
   setAreCustomEditorsEnabled,
   setShowConnectionsPanel,
@@ -46,7 +45,6 @@ const ContextSettings = () => {
     (_: unknown, checked?: boolean) => {
       dispatch(setMonitoringView(!!checked));
       if (checked) {
-        dispatch(loadRun(_));
         dispatch(loadWorkflow(_));
       }
     },

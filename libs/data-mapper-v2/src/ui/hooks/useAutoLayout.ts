@@ -18,7 +18,7 @@ export type LayoutAlgorithm = (nodes: Node[], edges: Edge[], options: LayoutOpti
 
 const elk = new Elk();
 
-const elkLayout: LayoutAlgorithm = async (nodes, edges, options) => {
+const elkLayout: LayoutAlgorithm = async (nodes, _edges, options) => {
   const graph = {
     id: 'elk-root',
     layoutOptions: {

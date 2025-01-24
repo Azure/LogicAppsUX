@@ -278,7 +278,7 @@ async function getLogicAppsPicks(
  * @param context {@link IActionContext}
  * @param fsPath publish path for logic app extension
  */
-async function cleanupPublishBinPath(context: IActionContext, fsPath: string): Promise<void> {
+async function cleanupPublishBinPath(_context: IActionContext, fsPath: string): Promise<void> {
   const netFxWorkerBinPath = path.join(fsPath, 'bin', 'NetFxWorker');
   const netFxWorkerAssetPath = path.join(fsPath, 'NetFxWorker');
   if (await fse.pathExists(netFxWorkerBinPath)) {

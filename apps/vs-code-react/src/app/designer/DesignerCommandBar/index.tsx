@@ -12,6 +12,7 @@ import {
   useWorkflowParameterValidationErrors,
   useAllSettingsValidationErrors,
   useAllConnectionErrors,
+  getCustomCodeFilesWithData,
 } from '@microsoft/logic-apps-designer';
 import { RUN_AFTER_COLORS, isNullOrEmpty } from '@microsoft/logic-apps-shared';
 import { ExtensionCommand } from '@microsoft/vscode-extension-logic-apps';
@@ -63,6 +64,7 @@ export const DesignerCommandBar: React.FC<DesignerCommandBarProps> = ({
       skipValidation: false,
       ignoreNonCriticalErrors: true,
     });
+    const customCodeData = getCustomCodeFilesWithData(designerState.customCode);
 
     const validationErrorsList: Record<string, boolean> = {};
     const arr = Object.entries(designerState.operations.inputParameters);
@@ -84,11 +86,12 @@ export const DesignerCommandBar: React.FC<DesignerCommandBarProps> = ({
     const hasParametersErrors = !isNullOrEmpty(validationErrorsList);
 
     if (!hasParametersErrors) {
-      await vscode.postMessage({
+      vscode.postMessage({
         command: ExtensionCommand.save,
         definition,
         parameters,
         connectionReferences,
+        customCodeData,
       });
     }
   });

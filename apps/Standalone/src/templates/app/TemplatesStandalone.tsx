@@ -1,10 +1,8 @@
-import { useCallback, useEffect, useMemo, type ReactNode } from 'react';
+import { useCallback, useEffect, useMemo } from 'react';
 import { isOpenApiSchemaVersion, TemplatesDataProvider, templateStore, type WorkflowParameter } from '@microsoft/logic-apps-designer';
-import { environment, loadToken } from '../../environments/environment';
-import { DevToolbox } from '../components/DevToolbox';
+import { environment } from '../../environments/environment';
 import type { RootState } from '../state/Store';
 import { TemplatesDesigner, TemplatesDesignerProvider } from '@microsoft/logic-apps-designer';
-import { useQuery } from '@tanstack/react-query';
 import { useSelector } from 'react-redux';
 import {
   BaseGatewayService,
@@ -40,7 +38,7 @@ import type { Template, LogicAppsV2, IWorkflowService } from '@microsoft/logic-a
 import { saveWorkflowStandard } from '../../designer/app/AzureLogicAppsDesigner/Services/WorkflowAndArtifacts';
 import type { ParametersData } from '../../designer/app/AzureLogicAppsDesigner/Models/Workflow';
 import axios from 'axios';
-import type { ConnectionMapping } from '../../../../../libs/designer/src/lib/core/state/templates/workflowSlice';
+import type { ConnectionMapping } from '@microsoft/logic-apps-designer/src/lib/core/state/templates/workflowSlice';
 import { parseWorkflowParameterValue } from '@microsoft/logic-apps-designer';
 import { BaseTemplateService } from '@microsoft/logic-apps-shared';
 import { useFunctionalState } from '@react-hookz/web';
@@ -52,11 +50,7 @@ interface StringifiedWorkflow {
 }
 
 const workflowIdentifier = '#workflowname#';
-const LoadWhenArmTokenIsLoaded = ({ children }: { children: ReactNode }) => {
-  const { isLoading } = useQuery(['armToken'], loadToken);
-  return isLoading ? null : <>{children}</>;
-};
-export const TemplatesStandaloneDesigner = () => {
+export const TemplatesStandalone = () => {
   const theme = useSelector((state: RootState) => state.workflowLoader.theme);
   const {
     appId,
@@ -287,79 +281,78 @@ export const TemplatesStandaloneDesigner = () => {
     [connectionsData, settingsData, workflowAppData, tenantId, canonicalLocation]
   );
   const resourceDetails = new ArmParser(appId ?? '');
+
+  if (!workflowAppData) {
+    return null;
+  }
   return (
-    <LoadWhenArmTokenIsLoaded>
-      <DevToolbox />
-      {workflowAppData ? (
-        <TemplatesDesignerProvider locale="en-US" theme={theme}>
-          <TemplatesDataProvider
-            resourceDetails={{
-              subscriptionId: resourceDetails.subscriptionId,
-              resourceGroup: resourceDetails.resourceGroup,
-              location: canonicalLocation,
-              workflowAppName: workflowAppData.name as string,
-            }}
-            connectionReferences={connectionReferences}
-            services={services}
-            isConsumption={isConsumption}
-            existingWorkflowName={existingWorkflowName}
-          >
-            <div
-              style={{
-                margin: '20px',
-              }}
-            >
-              <TemplatesDesigner
-                detailFilters={{
-                  Category: {
-                    displayName: 'Categories',
-                    items: [
-                      {
-                        value: 'Design Patterns',
-                        displayName: 'Design Patterns',
-                      },
-                      {
-                        value: 'AI',
-                        displayName: 'AI',
-                      },
-                      {
-                        value: 'B2B',
-                        displayName: 'B2B',
-                      },
-                      {
-                        value: 'EDI',
-                        displayName: 'EDI',
-                      },
-                      {
-                        value: 'Approval',
-                        displayName: 'Approval',
-                      },
-                      {
-                        value: 'RAG',
-                        displayName: 'RAG',
-                      },
-                      {
-                        value: 'Automation',
-                        displayName: 'Automation',
-                      },
-                      {
-                        value: 'BizTalk Migration',
-                        displayName: 'BizTalk Migration',
-                      },
-                      {
-                        value: 'Mainframe Modernization',
-                        displayName: 'Mainframe Modernization',
-                      },
-                    ],
+    <TemplatesDesignerProvider locale="en-US" theme={theme}>
+      <TemplatesDataProvider
+        resourceDetails={{
+          subscriptionId: resourceDetails.subscriptionId,
+          resourceGroup: resourceDetails.resourceGroup,
+          location: canonicalLocation,
+          workflowAppName: workflowAppData.name as string,
+        }}
+        connectionReferences={connectionReferences}
+        services={services}
+        isConsumption={isConsumption}
+        existingWorkflowName={existingWorkflowName}
+      >
+        <div
+          style={{
+            margin: '20px',
+          }}
+        >
+          <TemplatesDesigner
+            detailFilters={{
+              Category: {
+                displayName: 'Categories',
+                items: [
+                  {
+                    value: 'Design Patterns',
+                    displayName: 'Design Patterns',
                   },
-                }}
-                createWorkflowCall={createWorkflowCall}
-              />
-            </div>
-          </TemplatesDataProvider>
-        </TemplatesDesignerProvider>
-      ) : null}
-    </LoadWhenArmTokenIsLoaded>
+                  {
+                    value: 'AI',
+                    displayName: 'AI',
+                  },
+                  {
+                    value: 'B2B',
+                    displayName: 'B2B',
+                  },
+                  {
+                    value: 'EDI',
+                    displayName: 'EDI',
+                  },
+                  {
+                    value: 'Approval',
+                    displayName: 'Approval',
+                  },
+                  {
+                    value: 'RAG',
+                    displayName: 'RAG',
+                  },
+                  {
+                    value: 'Automation',
+                    displayName: 'Automation',
+                  },
+                  {
+                    value: 'BizTalk Migration',
+                    displayName: 'BizTalk Migration',
+                  },
+                  {
+                    value: 'Mainframe Modernization',
+                    displayName: 'Mainframe Modernization',
+                  },
+                ],
+              },
+            }}
+            createWorkflowCall={createWorkflowCall}
+          />
+        </div>
+      </TemplatesDataProvider>
+    </TemplatesDesignerProvider>
   );
 };
 

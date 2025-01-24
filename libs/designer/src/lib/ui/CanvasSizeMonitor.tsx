@@ -62,16 +62,9 @@ export const CanvasSizeMonitor = (props: CanvasSizeMonitorProps) => {
       v.y = clamp(v.y, translateExtent.y.min, translateExtent.y.max);
 
       setViewport(v);
-      console.log('#> New viewport:', {
-        flowSize: flowSize[0],
-        nodeSize: DEFAULT_NODE_SIZE.width,
-        padding: 64,
-        zoom: v.zoom,
-        output: translateExtent.x.min,
-      });
       setPrevSize({ width, height });
     },
-    [getViewport, prevSize, setViewport, getTranslateExtent, flowSize]
+    [getViewport, prevSize, setViewport, getTranslateExtent]
   );
 
   useResizeObserver(canvasRef, (el) => updateCanvas(el.contentRect));

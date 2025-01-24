@@ -77,6 +77,7 @@ export const getDesignerServices = (
   let appSettings = {};
   let isStateful = false;
   let connectionsData = { ...connectionData };
+  let workflowName = '';
 
   const { subscriptionId = 'subscriptionId', resourceGroup, location } = apiHubDetails;
 
@@ -86,6 +87,7 @@ export const getDesignerServices = (
     authToken = panelMetadata.accessToken ?? '';
     panelId = panelMetadata.panelId;
     workflowDetails = panelMetadata.workflowDetails;
+    workflowName = panelMetadata.workflowName;
     appSettings = panelMetadata.localSettings;
     isStateful = panelMetadata.standardApp?.stateful ?? false;
   }
@@ -319,7 +321,7 @@ export const getDesignerServices = (
   const runService = new StandardRunService({
     apiVersion,
     baseUrl: isEmptyString(workflowRuntimeBaseUrl) ? baseUrl : workflowRuntimeBaseUrl,
-    workflowName: panelMetadata?.workflowName ?? '',
+    workflowName: workflowName ?? '',
     httpClient,
   });
 

@@ -1,7 +1,7 @@
 import { WarningModalState, openDiscardWarningModal } from '../../core/state/ModalSlice';
 import type { AppDispatch, RootState } from '../../core/state/Store';
 import { Toolbar, ToolbarButton, ToolbarGroup, Switch, tokens, useId, Toaster } from '@fluentui/react-components';
-import { Dismiss20Regular, OpenFilled, Save20Regular } from '@fluentui/react-icons';
+import { Dismiss20Regular, PlayRegular, Save20Regular, TextGrammarErrorRegular } from '@fluentui/react-icons';
 import { useCallback, useEffect, useMemo } from 'react';
 import { useIntl } from 'react-intl';
 import { useDispatch, useSelector } from 'react-redux';
@@ -160,8 +160,8 @@ export const EditorCommandBar = (_props: EditorCommandBarProps) => {
         description: 'Button text for discard the unsaved changes',
       }),
       OPEN_TEST_PANEL: intl.formatMessage({
-        defaultMessage: 'Open Test panel',
-        id: 'nr6bPd',
+        defaultMessage: 'Open test panel',
+        id: 'xhBvXj',
         description: 'Button text for opening test panel',
       }),
       VIEW_CODE: intl.formatMessage({
@@ -170,9 +170,9 @@ export const EditorCommandBar = (_props: EditorCommandBarProps) => {
         description: 'Button for View Code',
       }),
       VIEW_MAP_CHECKER: intl.formatMessage({
-        defaultMessage: 'Map errors',
-        id: '1QktJw',
-        description: 'Button to see map errors',
+        defaultMessage: 'View issues',
+        id: 'Ae8T94',
+        description: 'Button to see issues',
       }),
       DISABLED_TEST: intl.formatMessage({
         defaultMessage: 'Please save the map before testing',
@@ -220,7 +220,7 @@ export const EditorCommandBar = (_props: EditorCommandBarProps) => {
           </ToolbarButton>
           <ToolbarButton
             aria-label={Resources.OPEN_TEST_PANEL}
-            icon={<OpenFilled color={disabledState.test ? undefined : tokens.colorPaletteBlueBorderActive} />}
+            icon={<PlayRegular color={disabledState.test ? undefined : tokens.colorPaletteBlueBorderActive} />}
             disabled={disabledState.test}
             title={disabledState.test ? Resources.DISABLED_TEST : ''}
             onClick={onTestClick}
@@ -231,7 +231,7 @@ export const EditorCommandBar = (_props: EditorCommandBarProps) => {
         <ToolbarGroup className={toolbarStyles.toolbarGroup}>
           <ToolbarButton
             disabled={disabledState.mapChecker}
-            icon={<OpenFilled color={disabledState.mapChecker ? undefined : tokens.colorPaletteBlueBorderActive} />}
+            icon={<TextGrammarErrorRegular color={disabledState.mapChecker ? undefined : tokens.colorPaletteBlueBorderActive} />}
             onClick={onMapCheckerClick}
           >
             {Resources.VIEW_MAP_CHECKER}

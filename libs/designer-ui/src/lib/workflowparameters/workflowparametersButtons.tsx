@@ -9,6 +9,7 @@ const EditIcon = bundleIcon(Edit24Filled, Edit24Regular);
 
 interface ButtonProps {
   onClick: React.MouseEventHandler<HTMLButtonElement>;
+  definition: WorkflowParameterDefinition;
 }
 
 interface WorkflowParameterDeleteEvent {
@@ -43,10 +44,15 @@ export const EditOrDeleteButton = ({
     setIsEditable(true);
     setExpanded(true);
   };
-  return showDelete ? <DeleteButton onClick={handleDelete} /> : <EditButton onClick={handleEdit} />;
+
+  return showDelete ? (
+    <DeleteButton onClick={handleDelete} definition={definition} />
+  ) : (
+    <EditButton onClick={handleEdit} definition={definition} />
+  );
 };
 
-function DeleteButton({ onClick }: ButtonProps): JSX.Element {
+function DeleteButton({ onClick, definition }: ButtonProps): JSX.Element {
   const intl = useIntl();
 
   const deleteTitle = intl.formatMessage({
@@ -59,6 +65,7 @@ function DeleteButton({ onClick }: ButtonProps): JSX.Element {
     <Tooltip relationship="label" content={deleteTitle}>
       <Button
         appearance="subtle"
+        data-automation-id={`${definition.id}-parameter-delete-button`}
         aria-label={deleteTitle}
         onClick={onClick}
         icon={<DeleteIcon style={{ color: 'var(--colorBrandForeground1)' }} />}
@@ -67,7 +74,7 @@ function DeleteButton({ onClick }: ButtonProps): JSX.Element {
   );
 }
 
-function EditButton({ onClick }: ButtonProps): JSX.Element {
+function EditButton({ onClick, definition }: ButtonProps): JSX.Element {
   const intl = useIntl();
 
   const editTitle = intl.formatMessage({
@@ -80,8 +87,7 @@ function EditButton({ onClick }: ButtonProps): JSX.Element {
     <Tooltip relationship="label" content={editTitle}>
       <Button
         appearance="subtle"
-        data-testid="parameter-edit-icon-button"
-        data-automation-id="parameter-edit-icon-button"
+        data-automation-id={`${definition.id}-parameter-edit-button`}
         aria-label={editTitle}
         onClick={onClick}
         icon={<EditIcon style={{ color: 'var(--colorBrandForeground1)' }} />}
