@@ -30,7 +30,11 @@ export const CopyTooltip = ({ targetRef: ref, location, hideTooltip, id }: CopyT
       relationship="description"
       visible={true}
     >
-      <div ref={locationRef} style={{ position: 'absolute', top: location?.y ?? 0, left: location?.x ?? 0 }} />
+      <div
+        data-testid="msla-tooltip-location"
+        ref={locationRef}
+        style={{ width: '1px', height: '1px', position: 'absolute', top: location?.y ?? 0, left: location?.x ?? 0 }}
+      />
     </Tooltip>
   );
 };
