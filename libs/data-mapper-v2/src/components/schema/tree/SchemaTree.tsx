@@ -108,8 +108,9 @@ export const SchemaTree = (props: SchemaTreeProps) => {
           isExpanded: !openKeys[id],
         })
       );
+      updateNodeInternals(panelNodeId);
     },
-    [openKeys, dispatch, isSourceSchema]
+    [openKeys, dispatch, isSourceSchema, panelNodeId, updateNodeInternals]
   );
 
   useEffect(() => {
@@ -118,7 +119,16 @@ export const SchemaTree = (props: SchemaTreeProps) => {
 
   useEffect(() => {
     updateNodeInternals(panelNodeId);
-  }, [panelNodeId, schemaTreeRoot, flattenedSchemaMap, currentHeight, updateNodeInternals, schemaTreeData.visibleNodes]);
+  }, [
+    panelNodeId,
+    schemaTreeRoot,
+    flattenedSchemaMap,
+    currentHeight,
+    updateNodeInternals,
+    openKeys,
+    searchTerm,
+    schemaTreeData.visibleNodes,
+  ]);
 
   return (
     <div ref={ref} className={mergeClasses(styles.root, isSourceSchema ? styles.sourceSchemaRoot : styles.targetScehmaRoot)}>
