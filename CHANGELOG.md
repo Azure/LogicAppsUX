@@ -1,4 +1,11 @@
 # Logic Apps Designer
+### [4.116.11](https://github.com/Azure/LogicAppsUX/compare/v4.116.10...v4.116.11) (2025-01-24)
+
+
+### Bug Fixes
+
+* **designer:** Hack for dataverse connector incorrect metadata in swa… ([#6468](https://github.com/Azure/LogicAppsUX/issues/6468)) ([510eef5](https://github.com/Azure/LogicAppsUX/commit/510eef5b991bd30473afc7b2778237c7c8ec681b)), closes [#5911](https://github.com/Azure/LogicAppsUX/issues/5911)
+
 ### [4.116.10](https://github.com/Azure/LogicAppsUX/compare/v4.116.9...v4.116.10) (2025-01-07)
 
 ### [4.116.9](https://github.com/Azure/LogicAppsUX/compare/v4.116.8...v4.116.9) (2025-01-06)
