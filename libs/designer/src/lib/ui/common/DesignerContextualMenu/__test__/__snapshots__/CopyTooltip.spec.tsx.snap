@@ -8,7 +8,8 @@ exports[`CopyTooltip > should position the tooltip based on the provided locatio
   <div>
     <div
       aria-describedby="tooltip-r1"
-      data-testid="msla-tooltip-location"
+      data-automation-id="msla-tooltip-location-test_id"
+      data-testid="msla-tooltip-location-test_id"
       style="width: 1px; height: 1px; position: absolute; top: 100px; left: 100px;"
     />
     <span
@@ -40,7 +41,8 @@ exports[`CopyTooltip > should render the tooltip with the correct content 1`] = 
   <div>
     <div
       aria-describedby="tooltip-r0"
-      data-testid="msla-tooltip-location"
+      data-automation-id="msla-tooltip-location-test_id"
+      data-testid="msla-tooltip-location-test_id"
       style="width: 1px; height: 1px; position: absolute; top: 100px; left: 100px;"
     />
     <span

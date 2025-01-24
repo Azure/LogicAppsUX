@@ -53,7 +53,7 @@ describe('CopyTooltip', () => {
 
     // Get the tooltip div and the location div
     const tooltipDiv = screen.getByRole('tooltip');
-    const tooltipLocationDiv = screen.getByTestId('msla-tooltip-location');
+    const tooltipLocationDiv = screen.getByTestId('msla-tooltip-location-test_id');
 
     // Assert that the tooltip and location div are rendered correctly
     expect(tooltipDiv).toBeInTheDocument();
@@ -69,7 +69,7 @@ describe('CopyTooltip', () => {
     const { baseElement } = renderComponent({ location });
 
     // Get the tooltip location div
-    const tooltipLocationDiv = screen.getByTestId('msla-tooltip-location');
+    const tooltipLocationDiv = screen.getByTestId('msla-tooltip-location-test_id');
 
     // Assert that the location div are rendered correctly
     expect(tooltipLocationDiv).toBeInTheDocument();
