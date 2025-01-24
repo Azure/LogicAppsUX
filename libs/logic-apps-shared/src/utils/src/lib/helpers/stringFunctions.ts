@@ -19,6 +19,21 @@ export const normalizeAutomationId = (s: string) => s.replace(/\W/g, '-');
 
 export const wrapTokenValue = (s: string) => `@{${s}}`;
 
+export const wrapStringifiedTokenSegments = (jsonString: string): string => {
+  // Regex to find standalone tokens after a colon and wrap them in quotes
+  const tokenRegex = /:\s*(@{?[^,}\s]*}?)(?=\s*[},])/g;
+
+  const sanitizedString = jsonString.replace(tokenRegex, (match, token) => {
+    // if the token isn't already wrapped in quotes, add them
+    if (!/^".*"$/.test(token)) {
+      return `: "${token}"`;
+    }
+    return match;
+  });
+
+  return sanitizedString;
+};
+
 // Some staging locations like `East US (stage)` show sometimes as `eastus(stage)` and sometimes as `eastusstage`
 // This function just removes the parentheses so they can be compared as equal
 export const cleanConnectorId = (id: string) => id.replace(/[()]/g, '');
@@ -43,7 +58,7 @@ export const canStringBeConverted = (s: string): boolean => {
   try {
     const parsed = JSON.parse(s);
     return Array.isArray(parsed);
-  } catch (e) {
+  } catch (_e) {
     return false;
   }
 };

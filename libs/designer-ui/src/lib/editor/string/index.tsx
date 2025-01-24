@@ -17,7 +17,6 @@ export const StringEditor = ({
   onChange,
   ...baseEditorProps
 }: StringEditorProps) => {
-  console.log(initialValue);
   const [value, setValue] = useState(initialValue);
 
   const onValueChange = (newValue: ValueSegment[]): void => {

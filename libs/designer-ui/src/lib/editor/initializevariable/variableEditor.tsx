@@ -1,7 +1,7 @@
 import { Label } from '../../label';
 import { DropdownEditor, StringEditor, useId } from '../..';
 import type { DropdownItem } from '../../dropdown';
-import type { BaseEditorProps } from '../base';
+import type { BaseEditorProps, ChangeState } from '../base';
 import type { ValueSegment } from '../models/parameter';
 import { Button, Tooltip } from '@fluentui/react-components';
 import { useIntl } from 'react-intl';
@@ -39,6 +39,7 @@ export interface InitializeVariableProps {
 interface VariableEditorProps extends Partial<BaseEditorProps> {
   variable: InitializeVariableProps;
   onDelete: () => void;
+  onVariableChange: (value: InitializeVariableProps[]) => void;
 }
 
 const FieldEditor = ({
@@ -82,6 +83,11 @@ export const VariableEditor = ({ variable, onDelete, ...baseEditorProps }: Varia
     description: 'Heading Title for a Variable Without Name',
   });
 
+  const handleBlur = (newState: ChangeState, property: string): void => {
+    const newVariable = { ...variable, [property]: newState.value };
+    baseEditorProps.onVariableChange?.([newVariable]);
+  };
+
   const { name, type, value } = variable;
 
   const fields = [
@@ -90,21 +96,32 @@ export const VariableEditor = ({ variable, onDelete, ...baseEditorProps }: Varia
       id: useId('Name'),
       isRequired: true,
       editor: StringEditor,
-      editorProps: { ...baseEditorProps, className: 'msla-setting-token-editor-container', initialValue: name },
+      editorProps: {
+        ...baseEditorProps,
+        className: 'msla-setting-token-editor-container',
+        initialValue: name,
+        editorBlur: (newState: ChangeState) => handleBlur(newState, 'name'),
+        basePlugins: { ...baseEditorProps.basePlugins, tokens: false },
+      },
     },
     {
       label: 'Type',
       id: useId('Type'),
       isRequired: true,
       editor: DropdownEditor,
-      editorProps: { initialValue: type, options: typeOptions },
+      editorProps: { initialValue: type, options: typeOptions, onChange: (newState: ChangeState) => handleBlur(newState, 'type') },
     },
     {
       label: 'Value',
       id: useId('Value'),
       isRequired: false,
       editor: StringEditor,
-      editorProps: { ...baseEditorProps, className: 'msla-setting-token-editor-container', initialValue: value },
+      editorProps: {
+        ...baseEditorProps,
+        className: 'msla-setting-token-editor-container',
+        initialValue: value,
+        editorBlur: (newState: ChangeState) => handleBlur(newState, 'value'),
+      },
     },
   ];
 

@@ -3970,10 +3970,16 @@ export function validateUntilAction(
   parameters: ParameterInfo[],
   changedParameter: Partial<ParameterInfo>
 ) {
-  const errorMessage = 'Either limit count or timout must be specified.';
+  const intl = getIntl();
 
-  const countParameter = parameters.find((parameter) => parameter.parameterName === 'limit.count');
-  const timeoutParameter = parameters.find((parameter) => parameter.parameterName === 'limit.timeout');
+  const errorMessage = intl.formatMessage({
+    defaultMessage: 'Either limit count or timout must be specified.',
+    id: 'cHmSb7',
+    description: 'Error message to show when either limit count or timeout is not specified.',
+  });
+
+  const countParameter = parameters.find((parameter) => parameter.parameterName === constants.PARAMETER_NAMES.LIMIT_COUNT);
+  const timeoutParameter = parameters.find((parameter) => parameter.parameterName === constants.PARAMETER_NAMES.LIMIT_TIMEOUT);
 
   const countValue = countParameter?.id === parameterId ? (changedParameter?.value ?? []) : (countParameter?.value ?? []);
   const timeoutValue = timeoutParameter?.id === parameterId ? (changedParameter?.value ?? []) : (timeoutParameter?.value ?? []);

@@ -1,5 +1,6 @@
 import { ArrayEditor } from '../../arrayeditor';
 import { AuthenticationEditor } from '../../authentication';
+import type { FileNameChangeHandler } from '../../code';
 import { CodeEditor } from '../../code';
 import { isCustomCode } from '../../code/util';
 import { Combobox } from '../../combobox';
@@ -12,7 +13,6 @@ import type {
   CallbackHandler,
   CastHandler,
   ChangeHandler,
-  FileNameChangeHandler,
   GetTokenPickerHandler,
   loadParameterValueFromStringHandler,
 } from '../../editor/base';
@@ -115,9 +115,9 @@ export const TokenField = ({
   loadParameterValueFromString,
   onValueChange,
   onComboboxMenuOpen,
+  onFileNameChange,
   hideValidationErrors,
   onCastParameter,
-  onFileNameChange,
   getTokenPicker,
   suppressCastingForSerialize,
   required,
@@ -370,7 +370,7 @@ export const TokenField = ({
       );
 
     case constants.PARAMETER.EDITOR.INITIALIZE_VARIABLE:
-      return <InitializeVariableEditor initialValue={value} getTokenPicker={getTokenPicker} />;
+      return <InitializeVariableEditor initialValue={value} getTokenPicker={getTokenPicker} onChange={onValueChange} />;
 
     case constants.PARAMETER.EDITOR.RECURRENCE:
       return (

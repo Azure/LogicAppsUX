@@ -497,6 +497,7 @@ const initializeVariables = (
         detailsInitialized = true;
       }
 
+      console.log(nodeInputs);
       const variables = getVariableDeclarations(nodeInputs);
       if (variables.length) {
         declarations[id] = variables;

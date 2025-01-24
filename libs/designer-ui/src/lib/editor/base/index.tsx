@@ -46,7 +46,6 @@ export type GetTokenPickerHandler = (
 
 export type ChangeHandler = (newState: ChangeState, skipStateSave?: boolean) => void;
 export type CallbackHandler = () => void;
-export type FileNameChangeHandler = (originalFileName: string, newFileName: string) => void;
 export type CastHandler = (value: ValueSegment[], type?: string, format?: string, suppressCasting?: boolean) => string;
 export type loadParameterValueFromStringHandler = (value: string) => ValueSegment[];
 

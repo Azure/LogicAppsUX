@@ -452,6 +452,11 @@ export default {
     PROPERTIES: 'properties',
     RELATIVE_PATH_PARAMETERS: 'relativePathParameters',
   },
+  PARAMETER_NAMES: {
+    VARIABLES: 'variables',
+    LIMIT_COUNT: 'limit.count',
+    LIMIT_TIMEOUT: 'limit.timeout',
+  },
   PARAMETER_VALUE_TYPE: {
     ALTERNATIVE: 'Alternative',
   },
