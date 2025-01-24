@@ -31,7 +31,7 @@ import { getFramework, executeDotnetTemplateCommand } from '../../utils/dotnet/e
 import { wrapArgInQuotes } from '../../utils/funcCoreTools/cpUtils';
 import { tryGetMajorVersion, tryParseFuncVersion } from '../../utils/funcCoreTools/funcVersion';
 import { getWorkspaceSetting } from '../../utils/vsCodeConfig/settings';
-import { getContainingWorkspace } from '../../utils/workspace';
+import { getContainingWorkspace, getWorkspaceFolder } from '../../utils/workspace';
 import { DotnetInitVSCodeStep } from '../initProjectForVSCode/DotnetInitVSCodeStep';
 import { DialogResponses, nonNullOrEmptyValue } from '@microsoft/vscode-azext-utils';
 import type { IActionContext } from '@microsoft/vscode-azext-utils';
@@ -41,6 +41,7 @@ import * as fse from 'fs-extra';
 import * as path from 'path';
 import * as vscode from 'vscode';
 import { validateDotNetIsInstalled } from '../dotnet/validateDotNetInstalled';
+import { tryGetLogicAppProjectRoot } from '../../utils/verifyIsProject';
 
 export async function switchToDotnetProject(context: IProjectWizardContext, target: vscode.Uri) {
   const isDotNetInstalled = await validateDotNetIsInstalled(context, target.fsPath);
@@ -48,15 +49,10 @@ export async function switchToDotnetProject(context: IProjectWizardContext, targ
     return;
   }
 
-  if (target === undefined) {
-    const workspaceFolders = vscode.workspace.workspaceFolders;
-    if (workspaceFolders === undefined || workspaceFolders.length === 0) {
-      throw new Error(localize('noWorkspace', 'No workspace is open.'));
-    }
-    if (workspaceFolders.length > 1) {
-      throw new Error(localize('multipleWorkspaces', 'Multiple workspaces are open.'));
-    }
-    target = workspaceFolders[0].uri;
+  if (target === undefined || Object.keys(target).length === 0) {
+    const workspaceFolder = await getWorkspaceFolder(context);
+    const projectPath = await tryGetLogicAppProjectRoot(context, workspaceFolder);
+    target = vscode.Uri.file(projectPath);
   }
 
   let version: FuncVersion | undefined = tryParseFuncVersion(getWorkspaceSetting(funcVersionSetting, target.fsPath));
@@ -99,12 +95,12 @@ export async function switchToDotnetProject(context: IProjectWizardContext, targ
   }
 
   if (!templates) {
-    throw new Error(localize('dotnetTemplateError', 'Dotnet templates could not be found.'));
+    throw new Error(localize('dotnetTemplateError', `Can't find dotnet templates.`));
   }
-
+  const logicAppFolderName = path.basename(target.fsPath);
   const warning: string = localize(
     'confirmMoveToDotnet',
-    'This action moves your Logic App project to a NuGet-based project. Confirm that you want to move to a NuGet-based project?'
+    `This action moves your logic app project, ${logicAppFolderName}, to a NuGet-based project. Confirm that you want to move to a NuGet-based project?`
   );
 
   const moveButton: vscode.MessageItem = { title: localize('move', 'Move to a NuGet-based project') };

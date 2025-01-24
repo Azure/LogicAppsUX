@@ -65,6 +65,9 @@ export function parameterizeConnection(
  * @returns A boolean indicating whether the connections data is parameterized or not.
  */
 export function isConnectionsParameterized(connectionsData: ConnectionsData): boolean {
+  if (!connectionsData || Object.keys(connectionsData).length === 0) {
+    return true;
+  }
   for (const connectionType in connectionsData) {
     if (connectionType !== 'serviceProviderConnections') {
       const connectionTypeJson = connectionsData[connectionType];

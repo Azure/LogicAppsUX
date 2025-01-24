@@ -21,11 +21,66 @@ export async function isLogicAppProject(folderPath: string): Promise<boolean> {
   const hasHostJson: boolean = await fse.pathExists(hostFilePath);
 
   if (hasHostJson) {
+    const subpaths: string[] = await fse.readdir(folderPath);
+    const workflowJsonPaths = subpaths.map((subpath) => path.join(folderPath, subpath, 'workflow.json'));
+    const validWorkflowJsonPaths = await Promise.all(
+      workflowJsonPaths.map(async (workflowJsonPath) => {
+        if (await fse.pathExists(workflowJsonPath)) {
+          const workflowJsonData = await fse.readFile(workflowJsonPath, 'utf-8');
+          const workflowJson = JSON.parse(workflowJsonData);
+          const schema = workflowJson?.definition?.$schema;
+          if (schema && schema.includes('Microsoft.Logic') && schema.includes('workflowdefinition.json')) {
+            const filesInSubpath = await fse.readdir(path.dirname(workflowJsonPath));
+            if (filesInSubpath.length === 1 && filesInSubpath[0] === 'workflow.json') {
+              return true;
+            }
+          }
+        }
+        return false;
+      })
+    );
+
+    if (!validWorkflowJsonPaths.some(Boolean)) {
+      return false;
+    }
     const hostJsonData = fse.readFileSync(hostFilePath, 'utf-8');
     const hostJson = JSON.parse(hostJsonData);
 
     const hasWorkflowBundle = hostJson?.extensionBundle?.id === extensionBundleId;
     return hasHostJson && hasWorkflowBundle;
+  }
+
+  return false;
+}
+
+/**
+ * Checks root folder and subFolders one level down
+ * If any logic app projects are found return true.
+ */
+export async function isLogicAppProjectInRoot(workspaceFolder: WorkspaceFolder | string): Promise<boolean | undefined> {
+  const subpath: string | undefined = getWorkspaceSetting(projectSubpathKey, workspaceFolder);
+  const folderPath = isString(workspaceFolder) ? workspaceFolder : workspaceFolder.uri.fsPath;
+  if (!subpath) {
+    if (!(await fse.pathExists(folderPath))) {
+      return undefined;
+    }
+    if (await isLogicAppProject(folderPath)) {
+      return true;
+    }
+    const subpaths: string[] = await fse.readdir(folderPath);
+    const matchingSubpaths: string[] = [];
+    await Promise.all(
+      subpaths.map(async (s) => {
+        if (await isLogicAppProject(path.join(folderPath, s))) {
+          matchingSubpaths.push(s);
+        }
+      })
+    );
+
+    if (matchingSubpaths.length !== 0) {
+      return true;
+    }
+    return false;
   }
 
   return false;
@@ -60,7 +115,7 @@ export async function tryGetLogicAppProjectRoot(
       })
     );
 
-    if (matchingSubpaths.length === 1) {
+    if (matchingSubpaths.length === 1 || (matchingSubpaths.length !== 0 && suppressPrompt)) {
       subpath = matchingSubpaths[0];
     } else if (matchingSubpaths.length !== 0 && !suppressPrompt) {
       subpath = await promptForProjectSubpath(context, folderPath, matchingSubpaths);

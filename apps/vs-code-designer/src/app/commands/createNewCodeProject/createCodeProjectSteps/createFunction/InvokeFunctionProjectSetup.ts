@@ -42,9 +42,12 @@ export class InvokeFunctionProjectSetup extends AzureWizardPromptStep<IProjectWi
     const methodName = context.methodName;
     const namespace = context.namespaceName;
     const targetFramework = context.targetFramework;
+    const logicAppName = context.logicAppName || 'LogicApp';
 
     // Define the functions folder path using the context property of the wizard
-    const functionFolderPath = context.functionFolderPath;
+    const functionFolderPath = path.join(context.workspacePath, context.methodName);
+    await fs.ensureDir(functionFolderPath);
+    context.functionFolderPath = functionFolderPath;
 
     // Define the type of project in the workspace
     const projectType = context.projectType;
@@ -56,7 +59,7 @@ export class InvokeFunctionProjectSetup extends AzureWizardPromptStep<IProjectWi
     await this.createRulesFiles(functionFolderPath, projectType);
 
     // Create the .csproj file inside the functions folder
-    await this.createCsprojFile(functionFolderPath, methodName, projectType, targetFramework);
+    await this.createCsprojFile(functionFolderPath, methodName, logicAppName, projectType, targetFramework);
 
     // Generate the Visual Studio Code configuration files in the specified folder.
     const createConfigFiles = new FunctionConfigFile();
@@ -106,6 +109,7 @@ export class InvokeFunctionProjectSetup extends AzureWizardPromptStep<IProjectWi
   private async createCsprojFile(
     functionFolderPath: string,
     methodName: string,
+    logicAppName: string,
     projectType: ProjectType,
     targetFramework: TargetFramework
   ): Promise<void> {
@@ -115,7 +119,10 @@ export class InvokeFunctionProjectSetup extends AzureWizardPromptStep<IProjectWi
     const templateContent = await fs.readFile(templatePath, 'utf-8');
 
     const csprojFilePath = path.join(functionFolderPath, `${methodName}.csproj`);
-    const csprojFileContent = templateContent.replace(/<%= methodName %>/g, methodName);
+    const csprojFileContent = templateContent.replace(
+      /<LogicAppFolder>LogicApp<\/LogicAppFolder>/g,
+      `<LogicAppFolder>${logicAppName}</LogicAppFolder>`
+    );
     await fs.writeFile(csprojFilePath, csprojFileContent);
   }
 
