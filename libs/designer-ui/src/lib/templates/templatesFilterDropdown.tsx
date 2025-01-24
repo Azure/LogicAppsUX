@@ -23,6 +23,7 @@ interface InternalFilterObject extends FilterObject {
 interface TemplatesFilterDropdownProps {
   filterName: string;
   items: FilterObject[];
+  onRenderItem?: (item: ISelectableOption) => JSX.Element;
   onApplyButtonClick: (_filterItems: FilterObject[] | undefined) => void;
   isLoadingContent?: boolean;
   isSearchable?: boolean;
@@ -34,6 +35,7 @@ export const TemplatesFilterDropdown = ({
   filterName,
   items,
   onApplyButtonClick,
+  onRenderItem,
   isSearchable = false,
   isLoadingContent = false,
 }: TemplatesFilterDropdownProps) => {
@@ -111,7 +113,7 @@ export const TemplatesFilterDropdown = ({
         />
       );
     }
-    return defaultRender?.(option) ?? null;
+    return onRenderItem && option.key !== allOptionId ? onRenderItem(option) : (defaultRender?.(option) ?? null);
   };
 
   const onRenderCaretDown = (

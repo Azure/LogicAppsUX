@@ -3,10 +3,10 @@ import { type FilterObject, TemplatesFilterDropdown } from '@microsoft/designer-
 import type { AppDispatch, RootState } from '../../../core/state/templates/store';
 import { useIntl } from 'react-intl';
 import { useDispatch, useSelector } from 'react-redux';
-import { setDetailsFilters, setKeywordFilter, setSortKey } from '../../../core/state/templates/manifestSlice';
+import { setConnectorsFilters, setDetailsFilters, setKeywordFilter, setSortKey } from '../../../core/state/templates/manifestSlice';
 import { useMemo } from 'react';
-//import { getUniqueConnectorsFromConnections } from '../../../core/templates/utils/helper';
-//import { useConnectors } from '../../../core/state/connection/connectionSelector';
+import { getUniqueConnectorsFromConnections } from '../../../core/templates/utils/helper';
+import { useConnector } from '../../../core/state/connection/connectionSelector';
 import { Tab, TabList } from '@fluentui/react-components';
 import type { SelectTabData, SelectTabEvent } from '@fluentui/react-components';
 
@@ -28,18 +28,18 @@ export const TemplateFilters = ({ detailFilters }: TemplateFiltersProps) => {
   const dispatch = useDispatch<AppDispatch>();
   const { sortKey, detailFilters: appliedDetailFilters } = useSelector((state: RootState) => state?.manifest?.filters);
   const intl = useIntl();
-  const { isConsumption, availableTemplates } = useSelector((state: RootState) => ({
+  const { isConsumption, availableTemplates, subscriptionId, location } = useSelector((state: RootState) => ({
     isConsumption: state.workflow.isConsumption,
     availableTemplates: state.manifest.availableTemplates ?? {},
     subscriptionId: state.workflow.subscriptionId,
     location: state.workflow.location,
   }));
-  /*const allTemplatesUniqueConnectorIds = useMemo(() => {
+  const allTemplatesUniqueConnectorIds = useMemo(() => {
     const allConnections = Object.values(availableTemplates).flatMap((template) => Object.values(template.connections));
     const uniqueConnectorsFromConnections = getUniqueConnectorsFromConnections(allConnections, subscriptionId, location);
     return uniqueConnectorsFromConnections.map((connector) => connector.connectorId);
-  }, [availableTemplates, location, subscriptionId]);*/
-  //const { data: allUniqueConnectorsEntries, isLoading: connectorsLoading } = useConnectors(allTemplatesUniqueConnectorIds);
+  }, [availableTemplates, location, subscriptionId]);
+  //const { data: allUniqueConnectorsEntries, isLoading: connectorsAreLoading } = useConnectors(allTemplatesUniqueConnectorIds);
   const selectedTabId = appliedDetailFilters?.Type?.[0]?.value ?? templateDefaultTabKey;
 
   const intlText = {
@@ -149,6 +149,25 @@ export const TemplateFilters = ({ detailFilters }: TemplateFiltersProps) => {
         />
       </div>
       <div className="msla-templates-filters-dropdowns">
+        {allTemplatesUniqueConnectorIds && allTemplatesUniqueConnectorIds.length > 0 && (
+          <TemplatesFilterDropdown
+            filterName={intlText.CONNECTORS}
+            items={allTemplatesUniqueConnectorIds?.map((connectorId) => ({
+              value: connectorId,
+              displayName: connectorId.split('/').slice(-1)[0],
+            }))}
+            //items={(allUniqueConnectorsEntries ?? []).map(connector => ({
+            //value: connector.id,
+            //displayName: connector.properties?.displayName,
+            //}))}
+            onRenderItem={(item) => <ConnectorName data={item} />}
+            //isLoadingContent={connectorsAreLoading}
+            onApplyButtonClick={(filterItems) => {
+              dispatch(setConnectorsFilters(filterItems));
+            }}
+            isSearchable
+          />
+        )}
         {Object.keys(detailFilters).map((filterName, index) => (
           <TemplatesFilterDropdown
             key={index}
@@ -185,4 +204,9 @@ export const TemplateFilters = ({ detailFilters }: TemplateFiltersProps) => {
       </div>
     </div>
   );
+};
+
+export const ConnectorName = ({ data }: { data: any }) => {
+  const { data: connector, isLoading } = useConnector(data.key);
+  return <Text>{isLoading ? data.key.split('/').slice(-1)[0] : connector?.properties.displayName}</Text>;
 };

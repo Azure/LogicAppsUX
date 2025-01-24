@@ -3,11 +3,11 @@ import { changeCurrentTemplateName } from '../../../core/state/templates/templat
 import { useDispatch, useSelector } from 'react-redux';
 import { Text } from '@fluentui/react-components';
 import { openQuickViewPanelView } from '../../../core/state/templates/panelSlice';
-import type { IDocumentCardStyles } from '@fluentui/react';
-import { DocumentCard, Image, Shimmer, ShimmerElementType } from '@fluentui/react';
-//import { ConnectorIconWithName } from '../connections/connector';
+import type { IContextualMenuItem, IContextualMenuProps, IDocumentCardStyles } from '@fluentui/react';
+import { DocumentCard, IconButton, Image, Shimmer, ShimmerElementType } from '@fluentui/react';
+import { ConnectorIcon, ConnectorIconWithName } from '../connections/connector';
 import type { Manifest } from '@microsoft/logic-apps-shared/src/utils/src/lib/models/template';
-//import { getUniqueConnectors } from '../../../core/templates/utils/helper';
+import { getUniqueConnectors } from '../../../core/templates/utils/helper';
 import { useIntl } from 'react-intl';
 import type { OperationInfo } from '@microsoft/logic-apps-shared';
 import {
@@ -37,7 +37,7 @@ const cardStyles: IDocumentCardStyles = {
 export const TemplateCard = ({ templateName }: TemplateCardProps) => {
   const dispatch = useDispatch<AppDispatch>();
   const intl = useIntl();
-  const { templateManifest, workflowAppName } = useSelector((state: RootState) => ({
+  const { templateManifest, workflowAppName, subscriptionId, location } = useSelector((state: RootState) => ({
     templateManifest: state.manifest.availableTemplates?.[templateName],
     subscriptionId: state.workflow.subscriptionId,
     workflowAppName: state.workflow.workflowAppName,
@@ -83,15 +83,15 @@ export const TemplateCard = ({ templateName }: TemplateCardProps) => {
     return <LoadingTemplateCard />;
   }
 
-  const { title, details } = templateManifest as Manifest;
-  /*const connectorsFromConnections = getUniqueConnectors(connections, subscriptionId, location).map((connection) => ({
+  const { title, details, featuredOperations, connections } = templateManifest as Manifest;
+  const connectorsFromConnections = getUniqueConnectors(connections, subscriptionId, location).map((connection) => ({
     connectorId: connection.connectorId,
     operationId: undefined,
   })) as { connectorId: string; operationId: string | undefined }[];
   const connectorsFeatured = getFeaturedConnectors(featuredOperations);
   const allConnectors = connectorsFromConnections.concat(connectorsFeatured);
   const showOverflow = allConnectors.length > maxConnectorsToShow;
-  //const connectorsToShow = showOverflow ? allConnectors.slice(0, maxConnectorsToShow) : allConnectors;
+  const connectorsToShow = showOverflow ? allConnectors.slice(0, maxConnectorsToShow) : allConnectors;
   const overflowList = showOverflow ? allConnectors.slice(maxConnectorsToShow) : [];
   const onRenderMenuItem = (item: IContextualMenuItem) => (
     <ConnectorIconWithName
@@ -104,12 +104,12 @@ export const TemplateCard = ({ templateName }: TemplateCardProps) => {
       }}
     />
   );
-  //const onRenderMenuIcon = () => <div style={{ color: 'grey' }}>{`+${overflowList.length}`}</div>;
+  const onRenderMenuIcon = () => <div style={{ color: 'grey' }}>{`+${overflowList.length}`}</div>;
   const menuProps: IContextualMenuProps = {
     items: overflowList.map((info) => ({ key: info.connectorId, text: info.connectorId, data: info, onRender: onRenderMenuItem })),
     directionalHintFixed: true,
     className: 'msla-template-card-connector-menu-box',
-  };*/
+  };
 
   const isMicrosoftAuthored = equals(details?.By, 'Microsoft');
 
@@ -147,6 +147,23 @@ export const TemplateCard = ({ templateName }: TemplateCardProps) => {
                 </Text>
               );
             })}
+          </div>
+          <div className="msla-template-card-connectors-list">
+            {connectorsToShow.length > 0 ? (
+              connectorsToShow.map((info) => (
+                <ConnectorIcon
+                  key={info.connectorId}
+                  connectorId={info.connectorId}
+                  operationId={info.operationId}
+                  classes={{ root: 'msla-template-card-connector', icon: 'msla-template-card-connector-icon' }}
+                />
+              ))
+            ) : (
+              <Text className="msla-template-card-connectors-emptyText">{intlText.NO_CONNECTORS}</Text>
+            )}
+            {showOverflow ? (
+              <IconButton className="msla-template-card-connector-overflow" onRenderMenuIcon={onRenderMenuIcon} menuProps={menuProps} />
+            ) : null}
           </div>
         </div>
       </div>
