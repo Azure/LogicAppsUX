@@ -352,14 +352,25 @@ function validateStringFormat(parameterFormat: string, parameterValue: string, i
  * @arg {ValueSegment[]} parameterValue - An array of valuesegments from a parameter value to validate
  * @return {string[]} - An array of validation error messages, if there are any
  */
-export function validateJSONParameter(parameterMetadata: ParameterInfo, parameterValue: ValueSegment[]): string[] {
+export function validateJSONParameter(
+  parameterMetadata: ParameterInfo,
+  parameterValue: ValueSegment[],
+  shouldEncodeBasedOnMetadata = true
+): string[] {
   const intl = getIntl();
   const { editor, editorOptions } = parameterMetadata;
   const isConditionEditor = editor === Constants.EDITOR.CONDITION && !editorOptions?.isOldFormat;
   const errors: string[] = [];
   const value = isConditionEditor
     ? JSON.stringify(
-        recurseSerializeCondition(parameterMetadata, parameterMetadata.editorViewModel.items, true, undefined /* idReplacements*/, errors)
+        recurseSerializeCondition(
+          parameterMetadata,
+          parameterMetadata.editorViewModel.items,
+          true,
+          undefined /* idReplacements*/,
+          errors,
+          shouldEncodeBasedOnMetadata
+        )
       )
     : parameterValueToJSONString(parameterValue, false, true);
 

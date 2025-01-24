@@ -1,3 +1,4 @@
+import { shouldEncodeParameterValueForOperationBasedOnMetadata } from '../../../core/utils/parameters/helper';
 import constants from '../../../common/constants';
 import type { AppDispatch, RootState } from '../../../core';
 import { clearPanel, collapsePanel, updateParameterValidation, validateParameter } from '../../../core';
@@ -43,10 +44,11 @@ export const NodeDetailsPanel = (props: CommonPanelProps): JSX.Element => {
   const selectedNode = useOperationPanelSelectedNodeId();
 
   const runData = useRunData(selectedNode);
-  const { isTriggerNode, nodesMetadata, idReplacements } = useSelector((state: RootState) => ({
+  const { isTriggerNode, nodesMetadata, idReplacements, operationInfo } = useSelector((state: RootState) => ({
     isTriggerNode: isRootNodeInGraph(selectedNode, 'root', state.workflow.nodesMetadata),
     nodesMetadata: state.workflow.nodesMetadata,
     idReplacements: state.workflow.idReplacements,
+    operationInfo: state.operations.operationInfo[selectedNode],
   }));
 
   const [overrideWidth, setOverrideWidth] = useState<string | undefined>();
@@ -226,7 +228,12 @@ export const NodeDetailsPanel = (props: CommonPanelProps): JSX.Element => {
         if (!collapsed) {
           Object.keys(inputs?.parameterGroups ?? {}).forEach((parameterGroup) => {
             inputs.parameterGroups[parameterGroup].parameters.forEach((parameter: any) => {
-              const validationErrors = validateParameter(parameter, parameter.value);
+              const validationErrors = validateParameter(
+                parameter,
+                parameter.value,
+                /* shouldValidateUnknownParameterAsError */ undefined,
+                shouldEncodeParameterValueForOperationBasedOnMetadata(operationInfo)
+              );
               dispatch(
                 updateParameterValidation({
                   nodeId: selectedNode,
