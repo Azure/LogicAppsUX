@@ -192,8 +192,10 @@ export default class DataMapperPanel {
   }
 
   public isTestEnabledForOS() {
-    // Test feature is not enabled for MAC
-    return process.platform !== Platform.mac;
+    this.sendMsgToWebview({
+      command: ExtensionCommand.isTestEnabledForOS,
+      data: process.platform !== Platform.mac,
+    });
   }
 
   public updateWebviewPanelTitle() {
