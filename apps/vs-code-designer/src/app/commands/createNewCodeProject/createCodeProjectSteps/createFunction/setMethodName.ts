@@ -25,14 +25,17 @@ export class setMethodName extends AzureWizardPromptStep<IProjectWizardContext> 
 
   private async validateFunctionName(name: string | undefined, context: IProjectWizardContext): Promise<string | undefined> {
     if (!name) {
-      return localize('emptyTemplateNameError', 'Can't have an empty function name.');
+      return localize('emptyTemplateNameError', `Can't have an empty function name.`);
     }
     if (!/^[a-z][a-z\d_]*$/i.test(name)) {
-      return localize('functionNameInvalidMessage', 'The function name must start with a letter and can only contain letters, digits, or underscores ("_").');
+      return localize(
+        'functionNameInvalidMessage',
+        'The function name must start with a letter and can only contain letters, digits, or underscores ("_").'
+      );
     }
 
     if (name === context.logicAppName) {
-      return localize('functionNameSameAsProjectNameError', 'Can't use the same name for the function name and the project name.');
+      return localize('functionNameSameAsProjectNameError', `Can't use the same name for the function name and the project name.`);
     }
 
     if (fse.existsSync(context.workspaceCustomFilePath)) {
