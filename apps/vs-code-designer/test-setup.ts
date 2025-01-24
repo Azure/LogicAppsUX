@@ -38,3 +38,10 @@ vi.mock('axios');
 vi.mock('vscode', () => ({
   window: {},
 }));
+
+vi.mock('vscode', () => ({
+  window: {},
+  EventEmitter: vi.fn().mockImplementation(() => ({
+    getUser: vi.fn(),
+  })),
+}));
