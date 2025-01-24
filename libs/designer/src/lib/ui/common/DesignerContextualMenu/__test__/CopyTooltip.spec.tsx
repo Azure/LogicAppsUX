@@ -3,9 +3,15 @@ import { CopyTooltip, CopyTooltipProps } from '../CopyTooltip';
 import { describe, it, expect, vi, afterEach, beforeAll } from 'vitest';
 import React from 'react';
 
-vi.mock('@xyflow/react', () => ({
-  useOnViewportChange: vi.fn(),
-}));
+const hideTooltipMock = vi.fn();
+
+vi.mock('@xyflow/react', async () => {
+  const actualIntl = await vi.importActual('@xyflow/react');
+  return {
+    ...actualIntl,
+    useOnViewportChange: vi.fn(() => ({ onStart: hideTooltipMock })),
+  };
+});
 
 vi.mock('react-intl', async () => {
   const actualIntl = await vi.importActual('react-intl');
@@ -18,8 +24,6 @@ vi.mock('react-intl', async () => {
 });
 
 describe('CopyTooltip', () => {
-  const hideTooltipMock = vi.fn();
-
   beforeAll(() => {
     const portalRoot = document.createElement('div');
     portalRoot.setAttribute('id', 'root');
@@ -40,13 +44,12 @@ describe('CopyTooltip', () => {
     return render(<CopyTooltip {...defaultProps} />);
   };
 
-  it('should display the tooltip on hover', () => {
+  it('should render the tooltip with the correct content', () => {
     const copiedText = 'Copied!';
     const location = { x: 100, y: 100 };
 
     // Render the Tooltip component
     const { baseElement } = renderComponent({ location });
-    expect(baseElement).toMatchSnapshot();
 
     // Get the tooltip div and the location div
     const tooltipDiv = screen.getByRole('tooltip');
@@ -56,78 +59,28 @@ describe('CopyTooltip', () => {
     expect(tooltipDiv).toBeInTheDocument();
     expect(screen.getByText(copiedText)).toBeVisible();
     expect(tooltipLocationDiv).toBeInTheDocument();
-    expect(tooltipLocationDiv).toHaveStyle({ position: 'absolute', top: '100px', left: '100px' });
+    expect(baseElement).toMatchSnapshot();
   });
 
-  // it('should render the tooltip with the correct content', () => {
-  //   const { asFragment } = renderComponent();
-  //   expect(asFragment()).toMatchSnapshot();
+  it('should position the tooltip based on the provided location', () => {
+    const location = { x: 100, y: 100 };
 
-  //   // expect(screen.getByText('Copied!')).toBeInTheDocument();
-  // });
+    // Render the Tooltip component
+    const { baseElement } = renderComponent({ location });
 
-  // it('should render the tooltip with the correct content', () => {
-  //   const { asFragment } = renderComponent();
-  //   expect(asFragment()).toMatchSnapshot();
+    // Get the tooltip location div
+    const tooltipLocationDiv = screen.getByTestId('msla-tooltip-location');
 
-  //   expect(screen.getByText('Copied!')).toBeInTheDocument();
-  // });
+    // Assert that the location div are rendered correctly
+    expect(tooltipLocationDiv).toBeInTheDocument();
+    expect(tooltipLocationDiv).toHaveStyle({ position: 'absolute', top: '100px', left: '100px' });
+    expect(baseElement).toMatchSnapshot();
+  });
 
-  // it('should call hideTooltip on viewport change', () => {
-  //   renderComponent();
-  //   expect(useOnViewportChange).toHaveBeenCalledWith({ onStart: hideTooltipMock });
-  // });
+  it('should default to locationRef if targetRef is not provided', () => {
+    renderComponent();
 
-  // it('should position the tooltip based on the provided location', () => {
-  //   const location = { x: 100, y: 200 };
-  //   renderComponent({ location });
-
-  //   const tooltipDiv = screen.getByRole('tooltip').parentElement;
-  //   expect(tooltipDiv).toHaveStyle({ position: 'absolute', top: '200px', left: '100px' });
-  // });
-
-  // it('should use the targetRef if provided', () => {
-  //   const targetRef = { current: document.createElement('div') } as React.RefObject<HTMLElement>;
-  //   renderComponent({ targetRef });
-
-  //   expect(screen.getByRole('tooltip').parentElement).toBe(targetRef.current);
-  // });
-
-  // it('should default to locationRef if targetRef is not provided', () => {
-  //   renderComponent();
-
-  //   const tooltipDiv = screen.getByRole('tooltip').parentElement;
-  //   expect(tooltipDiv).toHaveStyle({ position: 'absolute', top: '0px', left: '0px' });
-  // });
-
-  // // it('should call hideTooltip on viewport change', () => {
-  // //   const copyTooltip = renderComponent();
-  // //   expect(copyTooltip).toMatchSnapshot();
-
-  // //   expect(useOnViewportChange).toHaveBeenCalledWith({ onStart: hideTooltipMock });
-  // // });
-
-  // it('should position the tooltip based on the provided location', () => {
-  //   const location = { x: 100, y: 200 };
-  //   const { asFragment } = renderComponent({location});
-  //   expect(asFragment()).toMatchSnapshot();
-
-  //   const tooltipDiv = screen.getByRole('tooltip');
-  //   console.log('charlie', tooltipDiv);
-  //   expect(tooltipDiv).toHaveStyle({ position: 'absolute', top: '200px', left: '100px' });
-  // });
-
-  // // it('should use the targetRef if provided', () => {
-  // //   const targetRef = { current: document.createElement('div') } as React.RefObject<HTMLElement>;
-  // //   renderComponent({ targetRef });
-
-  // //   expect(screen.getByRole('tooltip').parentElement).toBe(targetRef.current);
-  // // });
-
-  // // it('should default to locationRef if targetRef is not provided', () => {
-  // //   renderComponent();
-
-  // //   const tooltipDiv = screen.getByRole('tooltip').parentElement;
-  // //   expect(tooltipDiv).toHaveStyle({ position: 'absolute', top: '0px', left: '0px' });
-  // // });
+    const tooltipDiv = screen.getByRole('tooltip').parentElement;
+    expect(tooltipDiv).toHaveStyle({ position: 'absolute', top: '0px', left: '0px' });
+  });
 });
