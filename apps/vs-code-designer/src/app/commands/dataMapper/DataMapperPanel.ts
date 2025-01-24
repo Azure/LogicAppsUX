@@ -82,6 +82,8 @@ export default class DataMapperPanel {
       null,
       ext.context.subscriptions
     );
+
+    this.isTestDisabledForOS();
   }
 
   private watchFolderForChanges(folderPath: string, fileExtensions: string[], fn: () => void) {
@@ -182,10 +184,6 @@ export default class DataMapperPanel {
       }
       case ExtensionCommand.sendNotification: {
         this.sendNotification(msg.data.title, msg.data.text, msg.data.level);
-        break;
-      }
-      case ExtensionCommand.isTestDisabledForOS: {
-        this.isTestDisabledForOS();
         break;
       }
     }
