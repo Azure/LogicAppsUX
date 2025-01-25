@@ -92,10 +92,6 @@ export interface ICreateFunctionOptions {
    * If set to true, it will not try to open the folder after create finishes. Defaults to false
    */
   suppressOpenFolder?: boolean;
-  /**
-   * If set to true, it will not prompt for the workflow state type step. Defaults to false
-   */
-  skipWorkflowStateTypeStep?: boolean;
 }
 
 export interface INpmDistTag {

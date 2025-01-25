@@ -21,7 +21,7 @@ export class NewCodeProjectTypeStep extends AzureWizardPromptStep<IProjectWizard
   public hideStepCount = true;
   private readonly templateId?: string;
   private readonly functionSettings?: { [key: string]: string | undefined };
-  private readonly skipWorkflowStateTypeStep?: boolean;
+  private readonly skipWorkflowStateTypeStep: boolean;
 
   /**
    * The constructor initializes the NewCodeProjectTypeStep object with optional templateId and functionSettings parameters.
@@ -31,7 +31,7 @@ export class NewCodeProjectTypeStep extends AzureWizardPromptStep<IProjectWizard
   public constructor(
     templateId: string | undefined,
     functionSettings: { [key: string]: string | undefined } | undefined,
-    skipWorkflowStateTypeStep: any
+    skipWorkflowStateTypeStep: boolean
   ) {
     super();
     this.templateId = templateId;
@@ -47,10 +47,8 @@ export class NewCodeProjectTypeStep extends AzureWizardPromptStep<IProjectWizard
     // Set default project type and language
     context.workflowProjectType = WorkflowProjectType.Bundle;
     context.language = ProjectLanguage.JavaScript;
-
-    // Create directories based on user choices
-    const { workspacePath, isWorkspaceWithFunctions } = context;
-    await this.createDirectories(context, workspacePath, isWorkspaceWithFunctions);
+    const { workspacePath } = context;
+    await this.setPaths(context, workspacePath);
   }
 
   /**
@@ -76,46 +74,25 @@ export class NewCodeProjectTypeStep extends AzureWizardPromptStep<IProjectWizard
     } else {
       await this.setupRegularLogicApp(context, executeSteps, promptSteps);
     }
-
     return { promptSteps, executeSteps };
   }
 
   /**
-   * Creates required directories for the project
+   * Sets the paths required for the project
    * @param context - Project wizard context
    * @param workspacePath - Root path of the workspace
    * @param isWorkspaceWithFunctions - Flag to check if it's a workspace with functions
    */
-  private async createDirectories(context: IProjectWizardContext, workspacePath: string, isWorkspaceWithFunctions: boolean): Promise<void> {
+  private async setPaths(context: IProjectWizardContext, workspacePath: string): Promise<void> {
     await fs.ensureDir(workspacePath);
-    context.customWorkspaceFolderPath = workspacePath;
 
-    let logicAppFolderName = 'LogicApp';
-    if (!isWorkspaceWithFunctions && context.logicAppName) {
-      logicAppFolderName = context.logicAppName;
-    }
+    const logicAppFolderName = context.logicAppName;
 
     const logicAppFolderPath = path.join(workspacePath, logicAppFolderName);
     await fs.ensureDir(logicAppFolderPath);
     context.logicAppFolderPath = logicAppFolderPath;
 
     context.projectPath = logicAppFolderPath;
-    context.workspacePath = logicAppFolderPath;
-
-    if (isWorkspaceWithFunctions) {
-      await this.setupCustomDirectories(context, workspacePath);
-    }
-    await this.createWorkspaceFile(context);
-  }
-  /**
-   * Setup directories and configs for custom code logic app
-   * @param context - Project wizard context
-   * @param workspacePath - Root path of the workspace
-   */
-  private async setupCustomDirectories(context: IProjectWizardContext, workspacePath: string): Promise<void> {
-    const functionFolderPath = path.join(workspacePath, 'Function');
-    await fs.ensureDir(functionFolderPath);
-    context.functionFolderPath = functionFolderPath;
   }
 
   /**
@@ -168,32 +145,5 @@ export class NewCodeProjectTypeStep extends AzureWizardPromptStep<IProjectWizard
         })
       );
     }
-  }
-
-  /**
-   * Creates a .code-workspace file to group project directories in VS Code
-   * @param context - Project wizard context
-   */
-  private async createWorkspaceFile(context: IProjectWizardContext): Promise<void> {
-    // Start with an empty folders array
-    const workspaceFolders = [];
-
-    // Add Functions folder first if it's a custom code code Logic App
-    if (context.isWorkspaceWithFunctions) {
-      workspaceFolders.push({ name: 'Functions', path: './Function' });
-    }
-
-    // Use context.logicAppName for the folder name; default to 'LogicApp' if not available
-    const logicAppName = context.logicAppName || 'LogicApp';
-    workspaceFolders.push({ name: logicAppName, path: `./${logicAppName}` });
-
-    const workspaceData = {
-      folders: workspaceFolders,
-    };
-
-    const workspaceFilePath = path.join(context.customWorkspaceFolderPath, `${context.workspaceName}.code-workspace`);
-    context.customWorkspaceFolderPath = workspaceFilePath;
-
-    await fs.writeJSON(workspaceFilePath, workspaceData, { spaces: 2 });
   }
 }
