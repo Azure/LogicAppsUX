@@ -5,7 +5,7 @@ import { memo } from 'react';
 import { Handle, Position, type NodeProps } from '@xyflow/react';
 import { css } from '@fluentui/react';
 
-const PlaceholderNode = ({ targetPosition = Position.Top, sourcePosition = Position.Bottom, id }: NodeProps) => {
+const CollapsedNode = ({ targetPosition = Position.Top, sourcePosition = Position.Bottom, id }: NodeProps) => {
   const selected = useIsNodeSelectedInOperationPanel(id);
 
   return (
@@ -23,6 +23,6 @@ const PlaceholderNode = ({ targetPosition = Position.Top, sourcePosition = Posit
   );
 };
 
-PlaceholderNode.displayName = 'PlaceholderNode';
+CollapsedNode.displayName = 'CollapsedNode';
 
-export default memo(PlaceholderNode);
+export default memo(CollapsedNode);

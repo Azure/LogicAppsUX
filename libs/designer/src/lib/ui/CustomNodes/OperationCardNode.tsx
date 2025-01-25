@@ -42,7 +42,6 @@ import {
   useShouldNodeFocus,
   useParentRunId,
   useIsLeafNode,
-  useIsActionCollapsed,
 } from '../../core/state/workflow/workflowSelectors';
 import { setRepetitionRunData } from '../../core/state/workflow/workflowSlice';
 import { getRepetitionName } from '../common/LoopsPager/helper';
@@ -83,7 +82,6 @@ const DefaultNode = ({ targetPosition = Position.Top, sourcePosition = Position.
   );
   const isSecureInputsOutputs = useSecureInputsOutputs(id);
   const isLoadingDynamicData = useIsNodeLoadingDynamicData(id);
-  const isNodeCollapsed = useIsActionCollapsed(id);
 
   const suppressDefaultNodeSelect = useSuppressDefaultNodeSelectFunctionality();
   const nodeSelectCallbackOverride = useNodeSelectAdditionalCallback();
@@ -307,9 +305,6 @@ const DefaultNode = ({ targetPosition = Position.Top, sourcePosition = Position.
     <>
       <div className="nopan" ref={ref as any}>
         <Handle className="node-handle top" type="target" position={targetPosition} isConnectable={false} />
-        {isNodeCollapsed ? (
-          <p>Collapsed!</p>
-        ) : (
           <Card
             active={isMonitoringView ? !isNullOrUndefined(runData?.status) : true}
             title={label}
@@ -341,7 +336,6 @@ const DefaultNode = ({ targetPosition = Position.Top, sourcePosition = Position.
             isLoadingDynamicData={isLoadingDynamicData}
             nodeIndex={nodeIndex}
           />
-        )}
         {showCopyCallout ? <CopyTooltip targetRef={ref} hideTooltip={clearCopyTooltip} /> : null}
         <Handle className="node-handle bottom" type="source" position={sourcePosition} isConnectable={false} />
       </div>

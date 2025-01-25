@@ -13,6 +13,7 @@ const nodeColorsLight: Record<WorkflowNodeType, any> = {
   SUBGRAPH_CARD_NODE: { fill: '#486991', stroke: '#486991' },
   HIDDEN_NODE: { fill: '#00000000', stroke: '#00000000' },
   PLACEHOLDER_NODE: { fill: '#ECECEC', stroke: '#A19F9D' },
+  COLLAPSED_NODE: { fill: '#ECECEC', stroke: '#A19F9D' },
 };
 
 const nodeColorsDark: Record<WorkflowNodeType, any> = {
@@ -23,6 +24,7 @@ const nodeColorsDark: Record<WorkflowNodeType, any> = {
   SUBGRAPH_CARD_NODE: { fill: '#486991', stroke: '#486991' },
   HIDDEN_NODE: { fill: '#00000000', stroke: '#00000000' },
   PLACEHOLDER_NODE: { fill: '#323130', stroke: '#8A8886' },
+  COLLAPSED_NODE: { fill: '#323130', stroke: '#8A8886' },
 };
 
 const Minimap = () => {

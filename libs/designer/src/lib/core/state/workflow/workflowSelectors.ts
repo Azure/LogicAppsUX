@@ -49,8 +49,69 @@ export const getRootWorkflowGraphForLayout = createSelector(getWorkflowState, (d
     //   ...rootNode,
     //   children: reduceCollapsed((node: WorkflowNode) => getRecordEntry(collapsedActionsIds, node.id))(rootNode.children ?? []),
     // };
-    // console.log('charlie', rootNode, newGraph);
-    return rootNode;
+    console.log('charlie', rootNode);
+    return {
+      "id": "root",
+      "children": [
+          {
+              "id": "manual",
+              "width": 200,
+              "height": 42,
+              "type": "OPERATION_NODE"
+          },
+          {
+              "id": "Initialize_ArrayVariable",
+              "width": 200,
+              "height": 42,
+              "type": "COLLAPSE_NODE"
+          },
+          {
+              "id": "Parse_JSON",
+              "width": 200,
+              "height": 42,
+              "type": "OPERATION_NODE"
+          },
+          {
+              "id": "Filter_array",
+              "width": 200,
+              "height": 42,
+              "type": "OPERATION_NODE"
+          },
+          {
+              "id": "HTTP",
+              "width": 200,
+              "height": 42,
+              "type": "OPERATION_NODE"
+          }
+      ],
+      "edges": [
+          {
+              "id": "manual-Initialize_ArrayVariable",
+              "source": "manual",
+              "target": "Initialize_ArrayVariable",
+              "type": "BUTTON_EDGE"
+          },
+          {
+              "id": "Initialize_ArrayVariable-Parse_JSON",
+              "source": "Initialize_ArrayVariable",
+              "target": "Parse_JSON",
+              "type": "BUTTON_EDGE"
+          },
+          {
+              "id": "Parse_JSON-Filter_array",
+              "source": "Parse_JSON",
+              "target": "Filter_array",
+              "type": "BUTTON_EDGE"
+          },
+          {
+              "id": "Filter_array-HTTP",
+              "source": "Filter_array",
+              "target": "HTTP",
+              "type": "BUTTON_EDGE"
+          }
+      ],
+      "type": "GRAPH_NODE"
+  };
   }
   if (Object.keys(collapsedIds).length === 0) {
     return rootNode;
