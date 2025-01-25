@@ -44,10 +44,10 @@ export const convertStringToSegments = (
     return [];
   }
 
-  const { tokensEnabled } = options ?? {};
+  const { tokensEnabled, stringifyNonString } = options ?? {};
 
   if (typeof value !== 'string' || !tokensEnabled) {
-    return [createLiteralValueSegment(value)];
+    return [createLiteralValueSegment(stringifyNonString ? JSON.stringify(value) : value)];
   }
 
   const returnSegments: ValueSegment[] = [];

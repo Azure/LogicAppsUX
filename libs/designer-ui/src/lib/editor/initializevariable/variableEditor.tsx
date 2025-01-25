@@ -16,18 +16,20 @@ import {
 } from '@fluentui/react-icons';
 import { useState } from 'react';
 import { isSingleLiteralValueSegment } from '../base/utils/helper';
+import { guid } from '@microsoft/logic-apps-shared';
+import { VARIABLE_TYPE } from '../../constants';
 
 const DeleteIcon = bundleIcon(Delete24Filled, Delete24Regular);
 const ExpandIcon = bundleIcon(ChevronRight24Filled, ChevronRight24Regular);
 const CollapseIcon = bundleIcon(ChevronDown24Regular, ChevronDown24Filled);
 
 const typeOptions: DropdownItem[] = [
-  { key: 'boolean', value: 'boolean', displayName: 'Boolean' },
-  { key: 'integer', value: 'integer', displayName: 'Integer' },
-  { key: 'float', value: 'float', displayName: 'Float' },
-  { key: 'string', value: 'string', displayName: 'String' },
-  { key: 'object', value: 'object', displayName: 'Object' },
-  { key: 'array', value: 'array', displayName: 'Array' },
+  { key: VARIABLE_TYPE.BOOLEAN, value: VARIABLE_TYPE.BOOLEAN, displayName: 'Boolean' },
+  { key: VARIABLE_TYPE.INTEGER, value: VARIABLE_TYPE.INTEGER, displayName: 'Integer' },
+  { key: VARIABLE_TYPE.FLOAT, value: VARIABLE_TYPE.FLOAT, displayName: 'Float' },
+  { key: VARIABLE_TYPE.STRING, value: VARIABLE_TYPE.STRING, displayName: 'String' },
+  { key: VARIABLE_TYPE.OBJECT, value: VARIABLE_TYPE.OBJECT, displayName: 'Object' },
+  { key: VARIABLE_TYPE.ARRAY, value: VARIABLE_TYPE.ARRAY, displayName: 'Array' },
 ];
 
 export interface InitializeVariableProps {
@@ -38,6 +40,7 @@ export interface InitializeVariableProps {
 
 interface VariableEditorProps extends Partial<BaseEditorProps> {
   variable: InitializeVariableProps;
+  disableDelete: boolean;
   onDelete: () => void;
   onVariableChange: (value: InitializeVariableProps[]) => void;
 }
@@ -63,9 +66,10 @@ const FieldEditor = ({
   </div>
 );
 
-export const VariableEditor = ({ variable, onDelete, ...baseEditorProps }: VariableEditorProps) => {
+export const VariableEditor = ({ variable, onDelete, disableDelete, onVariableChange, ...baseEditorProps }: VariableEditorProps) => {
   const intl = useIntl();
   const [expanded, setExpanded] = useState(true);
+  const [variableId, setVariableId] = useState<string>(guid());
 
   const handleToggleExpand = (): void => {
     setExpanded(!expanded);
@@ -77,6 +81,12 @@ export const VariableEditor = ({ variable, onDelete, ...baseEditorProps }: Varia
     description: 'Delete label',
   });
 
+  const deleteButtonDisabledTitle = intl.formatMessage({
+    defaultMessage: 'Cannot delete the last variable',
+    id: 'YL00wK',
+    description: 'Delete label',
+  });
+
   const newVariableName = intl.formatMessage({
     defaultMessage: 'New Variable',
     id: 'TyFREt',
@@ -85,7 +95,7 @@ export const VariableEditor = ({ variable, onDelete, ...baseEditorProps }: Varia
 
   const handleBlur = (newState: ChangeState, property: string): void => {
     const newVariable = { ...variable, [property]: newState.value };
-    baseEditorProps.onVariableChange?.([newVariable]);
+    onVariableChange([newVariable]);
   };
 
   const { name, type, value } = variable;
@@ -98,6 +108,7 @@ export const VariableEditor = ({ variable, onDelete, ...baseEditorProps }: Varia
       editor: StringEditor,
       editorProps: {
         ...baseEditorProps,
+        key: `name-${variableId}`,
         className: 'msla-setting-token-editor-container',
         initialValue: name,
         editorBlur: (newState: ChangeState) => handleBlur(newState, 'name'),
@@ -109,7 +120,12 @@ export const VariableEditor = ({ variable, onDelete, ...baseEditorProps }: Varia
       id: useId('Type'),
       isRequired: true,
       editor: DropdownEditor,
-      editorProps: { initialValue: type, options: typeOptions, onChange: (newState: ChangeState) => handleBlur(newState, 'type') },
+      editorProps: {
+        key: `type-${variableId}`,
+        initialValue: type,
+        options: typeOptions,
+        onChange: (newState: ChangeState) => handleBlur(newState, 'type'),
+      },
     },
     {
       label: 'Value',
@@ -118,12 +134,18 @@ export const VariableEditor = ({ variable, onDelete, ...baseEditorProps }: Varia
       editor: StringEditor,
       editorProps: {
         ...baseEditorProps,
+        key: `value-${variableId}`,
         className: 'msla-setting-token-editor-container',
         initialValue: value,
         editorBlur: (newState: ChangeState) => handleBlur(newState, 'value'),
       },
     },
   ];
+
+  const handleDelete = () => {
+    setVariableId(guid());
+    onDelete();
+  };
 
   return (
     <div className="msla-editor-initialize-variable">
@@ -152,13 +174,15 @@ export const VariableEditor = ({ variable, onDelete, ...baseEditorProps }: Varia
           </>
         ) : null}
       </div>
-      <div className="msla-variable-editor-edit-or-delete-button">
-        <Tooltip relationship="label" content={deleteButtonTitle}>
+      <div className={'msla-variable-editor-edit-or-delete-button'}>
+        <Tooltip relationship="label" content={disableDelete ? deleteButtonDisabledTitle : deleteButtonTitle}>
           <Button
             appearance="subtle"
             aria-label={deleteButtonTitle}
-            onClick={onDelete}
-            icon={<DeleteIcon style={{ color: 'var(--colorBrandForeground1)' }} />}
+            onClick={handleDelete}
+            icon={<DeleteIcon />}
+            disabled={disableDelete}
+            style={{ color: 'var(--colorBrandForeground1)' }}
           />
         </Tooltip>
       </div>

@@ -1821,7 +1821,7 @@ export const updateParameterAndDependencies = createAsyncThunk(
 
     updateNodeMetadataOnParameterUpdate(nodeId, updatedParameter, dispatch);
 
-    if (operationInfo?.type?.toLowerCase() === 'until') {
+    if (operationInfo?.type?.toLowerCase() === constants.NODE.TYPE.UNTIL) {
       validateUntilAction(dispatch, nodeId, groupId, parameterId, nodeInputs.parameterGroups[groupId].parameters, properties);
     }
 

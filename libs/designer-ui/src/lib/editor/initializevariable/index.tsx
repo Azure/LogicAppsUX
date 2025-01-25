@@ -4,10 +4,13 @@ import { createEmptyLiteralValueSegment } from '../base/utils/helper';
 import type { ValueSegment } from '../models/parameter';
 import { StringEditor } from '../string';
 import { VariableEditor } from './variableEditor';
-import { Button } from '@fluentui/react-components';
+import { Button, MessageBar, MessageBarBody, MessageBarTitle } from '@fluentui/react-components';
 import { useIntl } from 'react-intl';
 import { createVariableEditorSegments, parseVariableEditorSegments } from './util';
+import constants from '../../constants';
+import { Add24Filled, Add24Regular, bundleIcon } from '@fluentui/react-icons';
 
+const CreateIcon = bundleIcon(Add24Filled, Add24Regular);
 export interface InitializeVariableProps {
   name: ValueSegment[];
   type: ValueSegment[];
@@ -16,9 +19,19 @@ export interface InitializeVariableProps {
 
 export const InitializeVariableEditor = ({ initialValue, onChange, ...props }: BaseEditorProps) => {
   const intl = useIntl();
-  const [variables, setVariables] = useState(() => parseVariableEditorSegments(initialValue) || []);
+  const [variables, setVariables] = useState<InitializeVariableProps[]>(() => parseVariableEditorSegments(initialValue));
 
   const addVariableLabel = intl.formatMessage({ defaultMessage: 'Add a Variable', id: 'HET2nV', description: 'label to add a variable' });
+  const warningTitle = intl.formatMessage({
+    defaultMessage: 'Unable to Parse Variables',
+    id: 'uqrOee',
+    description: 'Warning title for when unable to parse variables',
+  });
+  const warningBody = intl.formatMessage({
+    defaultMessage: 'This could mean that the variable is set up incorrectly.',
+    id: '3pOMqH',
+    description: 'Warning body for when unable to parse variables',
+  });
 
   const addVariable = () => {
     setVariables((prev) => [
@@ -39,6 +52,9 @@ export const InitializeVariableEditor = ({ initialValue, onChange, ...props }: B
 
   const handleDeleteVariable = (index: number) => {
     setVariables((prev) => {
+      if (prev.length === 1) {
+        return prev;
+      }
       const updatedVariables = prev.filter((_, i) => i !== index);
       return updateVariables(updatedVariables);
     });
@@ -60,14 +76,32 @@ export const InitializeVariableEditor = ({ initialValue, onChange, ...props }: B
           variable={variable}
           onDelete={() => handleDeleteVariable(index)}
           onVariableChange={(value: InitializeVariableProps[]) => handleVariableChange(value, index)}
+          disableDelete={variables.length === 1}
         />
       ))}
 
-      <div className="msla-add-variable-button">
-        <Button onClick={addVariable}>{addVariableLabel}</Button>
+      <div className="msla-initialize-variable-add-variable-button">
+        <Button
+          appearance="subtle"
+          aria-label={addVariableLabel}
+          onClick={addVariable}
+          disabled={variables.length === constants.PARAMETER.VARIABLE_EDITOR_MAX_VARIABLES}
+          icon={<CreateIcon />}
+          style={{ border: '1px solid #9e9e9e', color: 'var(--colorBrandForeground1)' }}
+        >
+          {addVariableLabel}
+        </Button>
       </div>
     </div>
   ) : (
-    <StringEditor {...props} initialValue={initialValue} />
+    <>
+      <StringEditor {...props} initialValue={initialValue} />
+      <MessageBar key={'warning'} intent={'warning'} className="msla-initialize-variable-warning">
+        <MessageBarBody>
+          <MessageBarTitle>{warningTitle}</MessageBarTitle>
+          {warningBody}
+        </MessageBarBody>
+      </MessageBar>
+    </>
   );
 };

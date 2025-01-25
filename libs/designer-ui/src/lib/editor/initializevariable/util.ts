@@ -1,11 +1,12 @@
-import { wrapStringifiedTokenSegments } from '@microsoft/logic-apps-shared';
+import { LogEntryLevel, LoggerService, wrapStringifiedTokenSegments } from '@microsoft/logic-apps-shared';
 import type { InitializeVariableProps } from '.';
 import { createEmptyLiteralValueSegment, createLiteralValueSegment } from '../base/utils/helper';
 import { convertSegmentsToString, isEmptySegments } from '../base/utils/parsesegments';
 import type { ValueSegment } from '../models/parameter';
 import { convertStringToSegments } from '../base/utils/editorToSegment';
+import { VARIABLE_TYPE } from '../../constants';
 
-export const parseVariableEditorSegments = (initialValue: ValueSegment[]): InitializeVariableProps[] | undefined => {
+export const parseVariableEditorSegments = (initialValue: ValueSegment[]): InitializeVariableProps[] => {
   if (isEmptySegments(initialValue)) {
     return [
       { name: [createEmptyLiteralValueSegment()], type: [createEmptyLiteralValueSegment()], value: [createEmptyLiteralValueSegment()] },
@@ -23,12 +24,24 @@ export const parseVariableEditorSegments = (initialValue: ValueSegment[]): Initi
       ? variables.map((variable: { name: string; type: string; value: string }) => ({
           name: [createLiteralValueSegment(variable.name)],
           type: [createLiteralValueSegment(variable.type)],
-          value: convertStringToSegments(variable.value, nodeMap, { tokensEnabled: true }),
+          value: convertStringToSegments(variable.value, nodeMap, {
+            tokensEnabled: true,
+            stringifyNonString: variable.type !== VARIABLE_TYPE.STRING,
+          }),
         }))
-      : undefined;
-  } catch (e) {
-    console.log('Error parsing initialValueString:', e);
-    return undefined;
+      : [];
+  } catch (error) {
+    LoggerService().log({
+      level: LogEntryLevel.Error,
+      area: 'Variable Editor',
+      message: 'Failed to parse variable editor segments',
+      args: [
+        {
+          error,
+        },
+      ],
+    });
+    return [];
   }
 };
 
@@ -41,8 +54,15 @@ export const createVariableEditorSegments = (variables: InitializeVariableProps[
   const mappedVariables = variables.map((variable) => {
     const name = convertSegmentsToString(variable.name);
     const type = convertSegmentsToString(variable.type);
-    const value = convertSegmentsToString(variable.value, nodeMap);
+    let value = convertSegmentsToString(variable.value, nodeMap);
 
+    try {
+      if (type !== VARIABLE_TYPE.STRING) {
+        value = JSON.parse(value);
+      }
+    } catch (_error) {
+      // do nothing
+    }
     return { name, type, value };
   });
 

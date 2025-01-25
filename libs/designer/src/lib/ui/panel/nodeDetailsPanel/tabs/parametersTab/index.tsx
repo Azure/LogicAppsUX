@@ -246,11 +246,12 @@ const ParameterSection = ({
 
       // TODO: This should never be added, since the update is taken care by dynamic parameter update.
       if (getRecordEntry(variables, nodeId)) {
-        if (parameter?.parameterKey === 'inputs.$.name') {
-          dispatch(updateVariableInfo({ id: nodeId, name: value[0]?.value }));
-        } else if (parameter?.parameterKey === 'inputs.$.type') {
-          dispatch(updateVariableInfo({ id: nodeId, type: value[0]?.value }));
-        }
+        console.log('in here', variables);
+        // if (parameter?.parameterKey === 'inputs.$.name') {
+        //   dispatch(updateVariableInfo({ id: nodeId, name: value[0]?.value }));
+        // } else if (parameter?.parameterKey === 'inputs.$.type') {
+        //   dispatch(updateVariableInfo({ id: nodeId, type: value[0]?.value }));
+        // }
       }
 
       if (isCustomCode(parameter?.editor, parameter?.editorOptions?.language)) {
