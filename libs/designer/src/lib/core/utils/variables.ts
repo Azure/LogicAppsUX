@@ -27,7 +27,7 @@ export const getVariableDeclarations = (nodeInputs: NodeInputs): VariableDeclara
       const name = variable.name?.[0]?.value ?? null;
       const type = variable.type?.[0]?.value ?? null;
 
-      return name && type ? { name, type } : null;
+      return name || type ? { name, type } : null;
     })
     .filter((variable): variable is VariableDeclaration => variable !== null);
 };
