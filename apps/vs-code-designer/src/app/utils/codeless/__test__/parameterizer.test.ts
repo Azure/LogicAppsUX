@@ -49,13 +49,13 @@ describe('parameterizeConnection for ConnectionReferenceModel', () => {
     expect(parameters['applicationinsights-Authentication']).not.toBeUndefined();
   });
 
-  it('should parameterize Connection Reference', () => {
+  it('should parameterize Connection Reference for custom connector', () => {
     let connection: ConnectionReferenceModel = {
       api: {
-        id: '/subscriptions/subscription-test-id/resourceGroups/vs-code-debug/providers/Microsoft.Web/customApis/customconnector',
+        id: '/subscriptions/subscription-test-id/resourceGroups/vs-code-debug-connector/providers/Microsoft.Web/customApis/customconnector',
       },
       connection: {
-        id: '/subscriptions/subscription-test-id/resourceGroups/aikita/providers/Microsoft.Web/connections/customconnector',
+        id: '/subscriptions/subscription-test-id/resourceGroups/vs-code-debug/providers/Microsoft.Web/connections/customconnector',
       },
       connectionRuntimeUrl: 'https://common.logic-centralus.azure-apihub.net/apim/customconnector/12345/',
       authentication: {
@@ -65,17 +65,17 @@ describe('parameterizeConnection for ConnectionReferenceModel', () => {
 
     const parameters: any = {};
     const settings: Record<string, string> = {};
-    connection = parameterizeConnection(connection, 'applicationinsights', parameters, settings) as ConnectionReferenceModel;
+    connection = parameterizeConnection(connection, 'customconnector', parameters, settings) as ConnectionReferenceModel;
 
     const expected = {
       api: {
-        id: "/subscriptions/@{appsetting('WORKFLOWS_SUBSCRIPTION_ID')}/providers/Microsoft.Web/locations/@{appsetting('WORKFLOWS_LOCATION_NAME')}/managedApis/applicationinsights",
+        id: "/subscriptions/@{appsetting('WORKFLOWS_SUBSCRIPTION_ID')}/resourceGroups/@{appsetting('CUSTOM_CONNECTOR_RESOURCE_GROUP_NAME')}/providers/Microsoft.Web/customApis/customconnector",
       },
       connection: {
-        id: "/subscriptions/@{appsetting('WORKFLOWS_SUBSCRIPTION_ID')}/resourceGroups/@{appsetting('WORKFLOWS_RESOURCE_GROUP_NAME')}/providers/Microsoft.Web/connections/applicationinsights",
+        id: "/subscriptions/@{appsetting('WORKFLOWS_SUBSCRIPTION_ID')}/resourceGroups/@{appsetting('WORKFLOWS_RESOURCE_GROUP_NAME')}/providers/Microsoft.Web/connections/customconnector",
       },
-      connectionRuntimeUrl: "@parameters('applicationinsights-ConnectionRuntimeUrl')",
-      authentication: "@parameters('applicationinsights-Authentication')",
+      connectionRuntimeUrl: "@parameters('customconnector-ConnectionRuntimeUrl')",
+      authentication: "@parameters('customconnector-Authentication')",
       connectionProperties: null,
     };
 
@@ -85,8 +85,8 @@ describe('parameterizeConnection for ConnectionReferenceModel', () => {
     expect(connection.authentication).toBe(expected.authentication);
     expect(Object.keys(parameters).length).toBe(2);
     expect(Object.keys(settings).length).toBe(1);
-    expect(parameters['applicationinsights-ConnectionRuntimeUrl']).not.toBeUndefined();
-    expect(parameters['applicationinsights-Authentication']).not.toBeUndefined();
+    expect(parameters['customconnector-ConnectionRuntimeUrl']).not.toBeUndefined();
+    expect(parameters['customconnector-Authentication']).not.toBeUndefined();
   });
 });
 
