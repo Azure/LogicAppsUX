@@ -41,7 +41,7 @@ const convertRecurrenceToExpression = (
   weekdays?: string[],
   hours?: number[],
   minutes?: number[],
-  startMinute = 0
+  startMinute?: number
 ): JSX.Element => {
   const intl = getIntl();
   let frequencyDesc: string | undefined;
@@ -111,7 +111,7 @@ const convertRecurrenceToExpression = (
   } else if (hours && hours.length) {
     const projectTimes: string[] = [];
     for (const hour of [...hours].sort(byNumber)) {
-      projectTimes.push(`${hour}:${String(startMinute).padStart(2, '0')}`);
+      projectTimes.push(`${hour}:${String(startMinute ?? 'xx').padStart(2, '0')}`);
     }
 
     onTime = intl.formatMessage(
@@ -147,8 +147,18 @@ const convertRecurrenceToExpression = (
       { onDays }
     );
   }
-
-  return <div className="msla-recurrence-friendly-desc">{summary}</div>;
+  const noMinuteOrStartTimeWarning = intl.formatMessage({
+    defaultMessage:
+      "If a recurrence doesn't specify a specific start date and time, the first recurrence runs immediately when you save or deploy the logic app",
+    id: 'hhW/w8',
+    description: 'Recurrence additional message if no minutes or starttime is specified',
+  });
+  return (
+    <div className="msla-recurrence-friendly-desc">
+      {summary}
+      {(!minutes || !minutes.length) && !startMinute && <div className="warning-message">{noMinuteOrStartTimeWarning}</div>}
+    </div>
+  );
 };
 
 const ISO_DAY_ORDER: Record<string, number> = {

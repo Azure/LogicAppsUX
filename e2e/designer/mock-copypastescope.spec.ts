@@ -15,6 +15,8 @@ test(
     });
     await page.getByTestId('msla-copy-menu-option').click();
 
+    await expect(page.getByRole('tooltip', { name: 'Copied!' })).toBeVisible();
+    await expect(page.getByTestId('msla-tooltip-location-condition')).toBeVisible();
     await page.getByTestId('msla-plus-button-initialize_variable-condition').click();
     await page.getByTestId('msla-paste-button-initialize_variable-condition').click();
     await page.waitForTimeout(1000);
