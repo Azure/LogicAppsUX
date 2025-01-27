@@ -24,10 +24,10 @@ body:
   - type: dropdown
     id: dataMapperType
     attributes:
-      label: Are you using new Data Mapper ?
+      label: Which Data Mapper Version are you using ?
       options:
-          - Yes
-          - No
+          - v1
+          - v2
     validations:
       required: true
 
