@@ -205,7 +205,7 @@ const getServices = (isConsumption: boolean, getLocalResource: (resourcePath: st
           window.alert('Open blade after create, consumption creation is complete');
         },
         onAddBlankWorkflow: async () => {
-          window.alert('Open blade after create, workflow has been overwritten to blank');
+          console.log('On add blank workflow click');
         },
         getCustomResource: getLocalResource,
       })
