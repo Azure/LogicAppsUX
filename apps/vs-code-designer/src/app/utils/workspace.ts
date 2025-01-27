@@ -13,6 +13,8 @@ import type { IActionContext, IAzureQuickPickItem } from '@microsoft/vscode-azex
 import globby from 'globby';
 import * as path from 'path';
 import * as vscode from 'vscode';
+import { FileManagement } from '../commands/generateDeploymentScripts/iacGestureHelperFunctions';
+import { ext } from '../../extensionVariables';
 
 /**
  * Checks if the current workspace has a Logic App project.
@@ -236,4 +238,19 @@ export async function selectWorkspaceFile(
     },
     getSubPath
   );
+}
+
+/**
+ * Ensures a directory is added to the workspace if it is not already included.
+ * @param {string} directoryPath - The path to the directory to be added.
+ * @returns {Promise<void>} - A promise that resolves when the directory is added to the workspace (if needed).
+ */
+export async function ensureDirectoryInWorkspace(directoryPath: string): Promise<void> {
+  const workspaceFolders = vscode.workspace.workspaceFolders || [];
+  const isAlreadyInWorkspace = workspaceFolders.some((folder) => folder.uri.fsPath === directoryPath);
+
+  if (!isAlreadyInWorkspace) {
+    ext.outputChannel.appendLog(localize('addingDirectoryToWorkspace', 'Adding directory to workspace: {0}', directoryPath));
+    await FileManagement.addFolderToWorkspace(directoryPath);
+  }
 }
