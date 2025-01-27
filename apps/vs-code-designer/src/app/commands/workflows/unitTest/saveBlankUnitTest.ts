@@ -345,36 +345,6 @@ export async function processAndWriteMockableOperations(
   }
 }
 
-// /**
-//  * Generates a C# class definition as a string.
-//  * @param {string} logicAppName - The name of the Logic App, used as the namespace.
-//  * @param {string} className - The name of the class to generate.
-//  * @param {any} outputs - The outputs object containing properties to include in the class.
-//  * @returns {string} - The generated C# class definition.
-//  */
-// function generateCSharpClasses(logicAppName: string, className: string, outputs: any): string {
-//   let classDefinition = 'using System;\nusing System.Collections.Generic;\nusing Newtonsoft.Json.Linq;\n\n';
-//   const namespaceName = `${logicAppName}.Tests.Mocks`;
-//   classDefinition += `namespace ${namespaceName} {\n`;
-//   classDefinition += `    public class ${className} {\n`;
-
-//   for (const key in outputs) {
-//     if (Object.prototype.hasOwnProperty.call(outputs, key)) {
-//       const jsonType = outputs[key]?.type || 'object'; // Default to 'object' if type is not defined
-//       const propertyType = mapJsonTypeToCSharp(jsonType);
-//       const propertyName = toPascalCase(key);
-
-//       // Add the property to the class definition
-//       classDefinition += `        public ${propertyType} ${propertyName} { get; set; }\n`;
-//     }
-//   }
-
-//   classDefinition += '    }\n';
-//   classDefinition += '}\n';
-
-//   return classDefinition;
-// }
-
 /**
  * Generates a C# class definition as a string.
  * @param {string} logicAppName - The name of the Logic App, used as the namespace.
@@ -440,14 +410,17 @@ function generateCSharpClasses(namespaceName: string, rootClassName: string, dat
  */
 function generateClassCode(classDef: ClassDefinition): string {
   const sb: string[] = [];
+
   // Optionally, include a class-level doc-comment if the classDef has a description
   if (classDef.description) {
     sb.push('    /// <summary>');
     sb.push(`    /// ${classDef.description}`);
     sb.push('    /// </summary>');
   }
+
   sb.push(`    public class ${classDef.className}`);
   sb.push('    {');
+
   // Generate the class properties
   for (const prop of classDef.properties) {
     if (prop.description) {
@@ -458,12 +431,14 @@ function generateClassCode(classDef: ClassDefinition): string {
     sb.push(`        public ${prop.propertyType} ${prop.propertyName} { get; set; }`);
     sb.push('');
   }
+
   // Generate a constructor that initializes string properties to "" and object properties to new objects
   sb.push('        /// <summary>');
   sb.push(`        /// Initializes a new instance of the <see cref="${classDef.className}"/> class.`);
   sb.push('        /// </summary>');
   sb.push(`        public ${classDef.className}()`);
   sb.push('        {');
+
   for (const prop of classDef.properties) {
     // If it's a string type
     if (prop.propertyType === 'string') {
@@ -474,18 +449,32 @@ function generateClassCode(classDef: ClassDefinition): string {
     else if (prop.isObject) {
       sb.push(`            ${prop.propertyName} = new ${prop.propertyType}();`);
     }
-    // For arrays, you might do something like:
-    // else if (prop.propertyType.startsWith("List<")) { ...initialize list... }
+    // If it's a JObject
+    else if (prop.propertyType === 'JObject') {
+      sb.push(`            ${prop.propertyName} = new JObject();`);
+    }
+    // If it's a List
+    else if (prop.propertyType.startsWith('List<')) {
+      sb.push(`            ${prop.propertyName} = new ${prop.propertyType}();`);
+    }
+    // If it's an int or double
+    else if (prop.propertyType === 'int') {
+      sb.push(`            ${prop.propertyName} = 200;`);
+    }
   }
+
   sb.push('        }');
   sb.push('');
+
   // End of the class
   sb.push('    }');
   sb.push('');
+
   // Generate code for each child class recursively
   for (const child of classDef.children) {
     sb.push(generateClassCode(child));
   }
+
   return sb.join('\n');
 }
 
@@ -587,7 +576,7 @@ function buildClassDefinition(className: string, node: any): ClassDefinition {
  * @param {string} jsonType - The JSON type (e.g., "string", "object", "array").
  * @returns {string} - The corresponding C# type.
  */
-function mapJsonTypeToCSharp(jsonType: string): string {
+export function mapJsonTypeToCSharp(jsonType: string): string {
   switch (jsonType) {
     case 'string':
       return 'string';
