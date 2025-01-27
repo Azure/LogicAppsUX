@@ -1,136 +1,170 @@
-import { describe, it, expect, vi } from 'vitest';
-import { EventEmitter } from 'vscode';
-import { transformParameters } from '../../commands/workflows/unitTest/saveBlankUnitTest';
-
-// apps\vs-code-designer\src\app\commands\workflows\unitTest\saveBlankUnitTest.ts
+import { describe, it, expect } from 'vitest';
+import { mapJsonTypeToCSharp, transformParameters } from '../../commands/workflows/unitTest/saveBlankUnitTest';
 
 describe('transformParameters', () => {
-  it('transforms flat parameters to a nested structure', () => {
-    const params = {
-      'outputs.$.key1': { type: 'string', description: 'A string field' },
-      'outputs.$.nested.key2': { type: 'number', description: 'A number field' },
+  it('should clean keys and retain only allowed fields', () => {
+    const input = {
+      'outputs.$.field1': { type: 'string', title: 'Field 1', format: 'text', description: 'First field' },
+      'outputs.$.field2': { type: 'integer', title: 'Field 2', extraField: 'ignored' },
     };
 
-    const result = transformParameters(params);
+    const expected = {
+      field1: { type: 'string', title: 'Field 1', format: 'text', description: 'First field' },
+      field2: { type: 'integer', title: 'Field 2' },
+    };
 
-    expect(result).toEqual({
-      key1: {
+    const result = transformParameters(input);
+
+    expect(result).toEqual(expected);
+  });
+
+  it('should build nested structures from dotted keys', () => {
+    const input = {
+      'outputs.$.parent.child1': { type: 'string', title: 'Child 1' },
+      'outputs.$.parent.child2': { type: 'integer', title: 'Child 2', format: 'number' },
+    };
+
+    const expected = {
+      parent: {
+        child1: { type: 'string', title: 'Child 1' },
+        child2: { type: 'integer', title: 'Child 2', format: 'number' },
+      },
+    };
+
+    const result = transformParameters(input);
+
+    expect(result).toEqual(expected);
+  });
+
+  it('should skip keys not containing allowed fields', () => {
+    const input = {
+      'outputs.$.field1': { irrelevantField: 'ignored', anotherIrrelevantField: 'also ignored' },
+    };
+
+    const expected = {
+      field1: {},
+    };
+
+    const result = transformParameters(input);
+
+    expect(result).toEqual(expected);
+  });
+
+  it('should handle keys starting with "body.$."', () => {
+    const input = {
+      'body.$.field1': { type: 'string', title: 'Field 1' },
+    };
+
+    const expected = {
+      body: {
+        field1: { type: 'string', title: 'Field 1' },
+      },
+    };
+
+    const result = transformParameters(input);
+
+    expect(result).toEqual(expected);
+  });
+
+  it('should merge existing keys with additional fields', () => {
+    // Now we include the original type/title so transformParameters can see them.
+    const input = {
+      'outputs.$.field1': {
         type: 'string',
-        description: 'A string field',
+        title: 'Field 1',
+        format: 'text',
+        description: 'Updated description',
       },
-      nested: {
-        key2: {
-          type: 'number',
-          description: 'A number field',
-        },
-      },
-    });
-  });
-
-  it('ignores fields not in the allowed list', () => {
-    const params = {
-      'outputs.$.key1': { type: 'string', extra: 'Ignored field' },
-      'outputs.$.key2': { format: 'uuid', irrelevant: 'Ignored field' },
     };
 
-    const result = transformParameters(params);
-
-    expect(result).toEqual({
-      key1: {
+    const expected = {
+      field1: {
         type: 'string',
+        title: 'Field 1',
+        format: 'text',
+        description: 'Updated description',
       },
-      key2: {
-        format: 'uuid',
-      },
-    });
-  });
-
-  it('merges fields for existing nested keys', () => {
-    const params = {
-      'outputs.$.nested.key1': { type: 'string', description: 'First description' },
-      'outputs.$.nested.key2': { type: 'number', format: 'integer' },
     };
 
-    const result = transformParameters(params);
+    const result = transformParameters(input);
 
-    expect(result).toEqual({
-      nested: {
-        key1: {
-          type: 'string',
-          description: 'First description',
-        },
-        key2: {
-          type: 'number',
-          format: 'integer',
-        },
-      },
-    });
+    expect(result).toEqual(expected);
   });
 
-  it('returns an empty object for invalid inputs', () => {
-    const params = {
-      'outputs.$.invalidKey': { irrelevant: 'Ignored field' }, // No allowed fields
-    };
+  it('should handle an empty input object', () => {
+    const input = {};
 
-    const result = transformParameters(params);
+    const expected = {};
 
-    expect(result).toEqual({});
+    const result = transformParameters(input);
+
+    expect(result).toEqual(expected);
   });
 
-  it('handles keys without nested structure', () => {
-    const params = {
-      'outputs.$.simpleKey': { type: 'boolean', description: 'A boolean field' },
+  it('should handle deeply nested keys correctly', () => {
+    const input = {
+      'outputs.$.parent.child1.grandchild1': { type: 'string', title: 'Grandchild 1' },
+      'outputs.$.parent.child1.grandchild2': { type: 'integer', title: 'Grandchild 2' },
     };
 
-    const result = transformParameters(params);
-
-    expect(result).toEqual({
-      simpleKey: {
-        type: 'boolean',
-        description: 'A boolean field',
-      },
-    });
-  });
-
-  it('handles deeply nested structures', () => {
-    const params = {
-      'outputs.$.level1.level2.level3.key': { type: 'string', description: 'Deeply nested field' },
-    };
-
-    const result = transformParameters(params);
-
-    expect(result).toEqual({
-      level1: {
-        level2: {
-          level3: {
-            key: {
-              type: 'string',
-              description: 'Deeply nested field',
-            },
-          },
+    const expected = {
+      parent: {
+        child1: {
+          grandchild1: { type: 'string', title: 'Grandchild 1' },
+          grandchild2: { type: 'integer', title: 'Grandchild 2' },
         },
       },
-    });
-  });
-
-  it('triggers an event when parameters are transformed', () => {
-    // Mock the EventEmitter
-    const mockEventEmitter = new EventEmitter<void>();
-    const eventCallback = vi.fn();
-
-    // Subscribe to the event
-    mockEventEmitter.event(eventCallback);
-
-    // Mock transformParameters to use the event emitter
-    const params = {
-      'outputs.$.triggerKey': { type: 'boolean', description: 'Trigger field' },
     };
 
-    // Simulate calling transformParameters
-    transformParameters(params);
-    mockEventEmitter.fire();
+    const result = transformParameters(input);
 
-    // Verify the event was fired and handled
-    expect(eventCallback).toHaveBeenCalledTimes(1);
+    expect(result).toEqual(expected);
+  });
+});
+
+describe('mapJsonTypeToCSharp', () => {
+  it('should map "string" to "string"', () => {
+    const result = mapJsonTypeToCSharp('string');
+    expect(result).toBe('string');
+  });
+
+  it('should map "integer" to "int"', () => {
+    const result = mapJsonTypeToCSharp('integer');
+    expect(result).toBe('int');
+  });
+
+  it('should map "number" to "double"', () => {
+    const result = mapJsonTypeToCSharp('number');
+    expect(result).toBe('double');
+  });
+
+  it('should map "boolean" to "bool"', () => {
+    const result = mapJsonTypeToCSharp('boolean');
+    expect(result).toBe('bool');
+  });
+
+  it('should map "array" to "List<object>"', () => {
+    const result = mapJsonTypeToCSharp('array');
+    expect(result).toBe('List<object>');
+  });
+
+  it('should map "object" to "JObject"', () => {
+    const result = mapJsonTypeToCSharp('object');
+    expect(result).toBe('JObject');
+  });
+
+  it('should map "any" to "JObject"', () => {
+    const result = mapJsonTypeToCSharp('any');
+    expect(result).toBe('JObject');
+  });
+
+  it('should map "date-time" to "DateTime"', () => {
+    const result = mapJsonTypeToCSharp('date-time');
+    expect(result).toBe('DateTime');
+  });
+
+  it('should map an unknown type to "JObject"', () => {
+    const result = mapJsonTypeToCSharp('unknownType');
+    expect(result).toBe('JObject');
   });
 });

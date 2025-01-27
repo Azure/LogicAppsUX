@@ -95,5 +95,7 @@ export const escapeString = (input: string): string => {
  * @returns {string} - The PascalCase version of the string.
  */
 export function toPascalCase(str: string): string {
+  // Remove invalid characters (e.g., (), -, etc.)
+  str = str.replace(/[^a-zA-Z0-9_]/g, '');
   return str.replace(/(^\w|_\w)/g, (match) => match.replace('_', '').toUpperCase());
 }
