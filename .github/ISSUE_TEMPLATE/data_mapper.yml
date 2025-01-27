@@ -26,8 +26,8 @@ body:
     attributes:
       label: Are you using new Data Mapper ?
       options:
-        - Yes
-        - No
+          - Yes
+          - No
     validations:
       required: true
 
