@@ -2,18 +2,17 @@ import type { ReactNode } from 'react';
 import { ReactQueryProvider } from '@microsoft/logic-apps-designer';
 import { useQuery } from '@tanstack/react-query';
 import { DevToolbox } from '../components/DevToolbox';
-import { TemplatesStandalone } from './TemplatesStandalone';
+import { TemplatesStandard } from './TemplatesStandard';
 import { useHostingPlan, useIsLocal } from '../../designer/state/workflowLoadingSelectors';
 import { loadToken } from '../../environments/environment';
-import { LocalTemplatesStandalone } from './LocalTemplatesStandalone';
-import { ConsumptionTemplatesStandalone } from './ConsumptionTemplatesStandalone';
+import { LocalTemplates } from './LocalTemplates';
+import { TemplatesConsumption } from './TemplatesConsumption';
 
 const LoadWhenArmTokenIsLoaded = ({ children }: { children: ReactNode }) => {
   const { isLoading } = useQuery(['armToken'], loadToken);
   return isLoading ? null : <>{children}</>;
 };
-export const TemplatesDesignerWrapper = () => {
-  // const resourcePath = useResourcePath();
+export const TemplatesWrapper = () => {
   const isLocal = useIsLocal();
   const hostingPlan = useHostingPlan();
 
@@ -22,13 +21,7 @@ export const TemplatesDesignerWrapper = () => {
       <LoadWhenArmTokenIsLoaded>
         <DevToolbox />
         <div style={{ height: '100vh' }}>
-          {isLocal ? (
-            <LocalTemplatesStandalone />
-          ) : hostingPlan === 'consumption' ? (
-            <ConsumptionTemplatesStandalone />
-          ) : (
-            <TemplatesStandalone />
-          )}
+          {isLocal ? <LocalTemplates /> : hostingPlan === 'consumption' ? <TemplatesConsumption /> : <TemplatesStandard />}
         </div>
       </LoadWhenArmTokenIsLoaded>
     </ReactQueryProvider>

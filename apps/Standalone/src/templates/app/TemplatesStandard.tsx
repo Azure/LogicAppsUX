@@ -46,7 +46,7 @@ interface StringifiedWorkflow {
 }
 
 const workflowIdentifier = '#workflowname#';
-export const TemplatesStandalone = () => {
+export const TemplatesStandard = () => {
   const theme = useSelector((state: RootState) => state.workflowLoader.theme);
   const { appId, hostingPlan, workflowName: existingWorkflowName } = useSelector((state: RootState) => state.workflowLoader);
   const { data: workflowAppData } = useWorkflowApp(appId as string, hostingPlan);

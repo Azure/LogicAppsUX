@@ -28,7 +28,7 @@ const loadLocalTemplateFromResourcePath = async (resourcePath: string, artifactT
 
 const localTemplateManifestPaths = ['BasicWorkflowOnly', 'SimpleConnectionParameter', 'SimpleAccelerator'];
 
-export const LocalTemplatesStandalone = () => {
+export const LocalTemplates = () => {
   const theme = useSelector((state: RootState) => state.workflowLoader.theme);
   const { hostingPlan } = useSelector((state: RootState) => state.workflowLoader);
   const { data: localManifests } = useQuery(

@@ -61,7 +61,7 @@ const removeProperties = (obj: any = {}, props: string[] = []): object => {
 
 const workflowIdentifier = '#workflowname#';
 
-export const ConsumptionTemplatesStandalone = () => {
+export const TemplatesConsumption = () => {
   const theme = useSelector((state: RootState) => state.workflowLoader.theme);
   const {
     appId,
@@ -117,10 +117,8 @@ export const ConsumptionTemplatesStandalone = () => {
         const parameter = parametersData[key];
         const sanitizedParameterName = replaceWithWorkflowName(parameter.name, uniqueIdentifier);
         sanitizedParameterData[sanitizedParameterName] = {
-          // name: parameter.name,
           type: parameter.type,
           defaultValue: parseWorkflowParameterValue(parameter.type, parameter?.value ?? parameter?.default),
-          // allowedValues: parameter.allowedValues,
         };
         sanitizedWorkflowDefinition = replaceAllStringInWorkflowDefinition(
           sanitizedWorkflowDefinition,
