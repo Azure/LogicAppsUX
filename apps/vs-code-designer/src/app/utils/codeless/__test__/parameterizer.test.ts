@@ -45,8 +45,8 @@ describe('parameterizeConnection for ConnectionReferenceModel', () => {
     expect(connection.authentication).toBe(expected.authentication);
     expect(Object.keys(parameters).length).toBe(2);
     expect(Object.keys(settings).length).toBe(1);
-    expect(parameters['applicationinsights-ConnectionRuntimeUrl']).not.toBeUndefined();
-    expect(parameters['applicationinsights-Authentication']).not.toBeUndefined();
+    expect(parameters['applicationinsights-ConnectionRuntimeUrl']).toBeDefined();
+    expect(parameters['applicationinsights-Authentication']).toBeDefined();
   });
 
   it('should parameterize Connection Reference for custom connector', () => {
@@ -84,9 +84,11 @@ describe('parameterizeConnection for ConnectionReferenceModel', () => {
     expect(connection.connectionRuntimeUrl).toBe(expected.connectionRuntimeUrl);
     expect(connection.authentication).toBe(expected.authentication);
     expect(Object.keys(parameters).length).toBe(2);
-    expect(Object.keys(settings).length).toBe(1);
-    expect(parameters['customconnector-ConnectionRuntimeUrl']).not.toBeUndefined();
-    expect(parameters['customconnector-Authentication']).not.toBeUndefined();
+    expect(Object.keys(settings).length).toBe(2);
+    expect(settings['CUSTOM_CONNECTOR_RESOURCE_GROUP_NAME']).toBeDefined();
+    expect(settings['CUSTOM_CONNECTOR_RESOURCE_GROUP_NAME']).toEqual('vs-code-debug-connector');
+    expect(parameters['customconnector-ConnectionRuntimeUrl']).toBeDefined();
+    expect(parameters['customconnector-Authentication']).toBeDefined();
   });
 });
 
@@ -127,9 +129,9 @@ describe('parameterizeConnection for FunctionConnectionModel', () => {
     expect(connection.authentication).toStrictEqual(expected.authentication);
     expect(Object.keys(parameters).length).toBe(3);
     expect(Object.keys(settings).length).toBe(0);
-    expect(parameters['azureFunctionOperation-ResourceGroup']).not.toBeUndefined();
-    expect(parameters['azureFunctionOperation-SiteName']).not.toBeUndefined();
-    expect(parameters['azureFunctionOperation-TriggerUrl']).not.toBeUndefined();
+    expect(parameters['azureFunctionOperation-ResourceGroup']).toBeDefined();
+    expect(parameters['azureFunctionOperation-SiteName']).toBeDefined();
+    expect(parameters['azureFunctionOperation-TriggerUrl']).toBeDefined();
   });
 });
 
@@ -160,8 +162,8 @@ describe('parameterizeConnection for APIManagementConnectionModel', () => {
     expect(connection.subscriptionKey).toBe(expected.subscriptionKey);
     expect(Object.keys(parameters).length).toBe(3);
     expect(Object.keys(settings).length).toBe(0);
-    expect(parameters['apiManagementOperation-ResourceGroup']).not.toBeUndefined();
-    expect(parameters['apiManagementOperation-ServiceName']).not.toBeUndefined();
-    expect(parameters['apiManagementOperation-BaseUrl']).not.toBeUndefined();
+    expect(parameters['apiManagementOperation-ResourceGroup']).toBeDefined();
+    expect(parameters['apiManagementOperation-ServiceName']).toBeDefined();
+    expect(parameters['apiManagementOperation-BaseUrl']).toBeDefined();
   });
 });
