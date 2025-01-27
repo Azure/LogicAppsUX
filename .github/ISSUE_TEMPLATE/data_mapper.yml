@@ -26,7 +26,7 @@ body:
     attributes:
       label: Are you using new Data Mapper ?
       options:
-        - Yes (Please mention in the description if the issue is repro'ble in older version too)
+        - Yes (Please mention in the description if you are able to reproduce the issue in Version 1 as well)
         - No
     validations:
       required: true
