@@ -1,4 +1,11 @@
 # Logic Apps Designer
+### [5.14.4](https://github.com/Azure/LogicAppsUX/compare/v5.14.3...v5.14.4) (2025-01-27)
+
+
+### Features
+
+* **Data Mapper:** Cherry-picking January Data Mapper changes for public preview ([#6470](https://github.com/Azure/LogicAppsUX/issues/6470)) ([0ab0b67](https://github.com/Azure/LogicAppsUX/commit/0ab0b671c1e1f0df0272cb17d8532da9e7dff5ba)), closes [#6315](https://github.com/Azure/LogicAppsUX/issues/6315) [#6329](https://github.com/Azure/LogicAppsUX/issues/6329) [#6363](https://github.com/Azure/LogicAppsUX/issues/6363) [#6378](https://github.com/Azure/LogicAppsUX/issues/6378) [#6379](https://github.com/Azure/LogicAppsUX/issues/6379) [#6385](https://github.com/Azure/LogicAppsUX/issues/6385) [#6390](https://github.com/Azure/LogicAppsUX/issues/6390) [#6393](https://github.com/Azure/LogicAppsUX/issues/6393) [#6405](https://github.com/Azure/LogicAppsUX/issues/6405) [#6396](https://github.com/Azure/LogicAppsUX/issues/6396) [#6410](https://github.com/Azure/LogicAppsUX/issues/6410) [#6413](https://github.com/Azure/LogicAppsUX/issues/6413) [#6451](https://github.com/Azure/LogicAppsUX/issues/6451) [#6454](https://github.com/Azure/LogicAppsUX/issues/6454) [#6456](https://github.com/Azure/LogicAppsUX/issues/6456) [#6459](https://github.com/Azure/LogicAppsUX/issues/6459) [#6464](https://github.com/Azure/LogicAppsUX/issues/6464)
+
 ### [5.14.3](https://github.com/Azure/LogicAppsUX/compare/v5.14.2...v5.14.3) (2025-01-24)
 
 
