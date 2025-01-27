@@ -76,25 +76,20 @@ export const ConsumptionTemplatesStandalone = () => {
 
   const { workflow, connectionReferences } = useMemo(() => getDataForConsumption(workflowAndArtifactsData), [workflowAndArtifactsData]);
 
-  const isEmptyWorkflow = useMemo(() => Object.keys((workflow?.definition as any)?.triggers ?? {}).length === 0, [workflow]);
-
-  const services = useMemo(
-    () => getServices(workflowId!, workflow as any, tenantId, objectId, canonicalLocation, language, onBlankWorkflowClick),
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    [workflowId, workflow, tenantId, canonicalLocation, language]
-  );
+  const isWorkflowEmpty = useMemo(() => Object.keys((workflow?.definition as any)?.triggers ?? {}).length === 0, [workflow]);
 
   const onBlankWorkflowClick = async () => {
-    if (!workflowAndArtifactsData || !isEmptyWorkflow) {
+    if (!workflowAndArtifactsData) {
       return;
     }
 
+    if (isWorkflowEmpty) {
+      alert('Workflow is empty, navigate to designer blade');
+    }
+
     const workflowToSave = {
-      // ...workflow,
       definition: {
         ...workflow?.definition,
-        // schema: "https://schema.management.azure.com/providers/Microsoft.Logic/schemas/2016-06-01/workflowdefinition.json#",
-        // contentVersion: "1.0.0.0",
         triggers: {},
         actions: {},
         outputs: {},
@@ -175,6 +170,12 @@ export const ConsumptionTemplatesStandalone = () => {
       console.log('Select App Id first!');
     }
   };
+
+  const services = useMemo(
+    () => getServices(workflowId!, workflow as any, tenantId, objectId, canonicalLocation, language, onBlankWorkflowClick),
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [workflowId, workflow, tenantId, canonicalLocation, language]
+  );
 
   const resourceDetails = new ArmParser(appId ?? '');
 

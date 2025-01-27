@@ -15,7 +15,7 @@ export class BaseTemplateService implements ITemplateService {
 
   public openBladeAfterCreate = (workflowName: string | undefined): void => this.options.openBladeAfterCreate(workflowName);
 
-  public onAddBlankWorkflow = (): void | Promise<void> => this.options.onAddBlankWorkflow();
+  public onAddBlankWorkflow = async (): Promise<void> => this.options.onAddBlankWorkflow();
 
   public getCustomResource = async (resourcePath: string): Promise<any> => this.options?.getCustomResource?.(resourcePath);
 }
