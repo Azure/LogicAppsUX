@@ -185,7 +185,7 @@ export const DesignerContextualMenu = () => {
         title={title}
         setOpen={(o) => setOpen(o)}
       />
-      {showCopyCallout ? <CopyTooltip location={menuData?.location} hideTooltip={clearCopyCallout} /> : null}
+      {showCopyCallout ? <CopyTooltip id={nodeId} location={menuData?.location} hideTooltip={clearCopyCallout} /> : null}
     </>
   );
 };

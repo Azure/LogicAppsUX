@@ -336,7 +336,7 @@ const DefaultNode = ({ targetPosition = Position.Top, sourcePosition = Position.
           isLoadingDynamicData={isLoadingDynamicData}
           nodeIndex={nodeIndex}
         />
-        {showCopyCallout ? <CopyTooltip targetRef={ref} hideTooltip={clearCopyTooltip} /> : null}
+        {showCopyCallout ? <CopyTooltip id={id} targetRef={ref} hideTooltip={clearCopyTooltip} /> : null}
         <Handle className="node-handle bottom" type="source" position={sourcePosition} isConnectable={false} />
       </div>
       {showLeafComponents ? (
