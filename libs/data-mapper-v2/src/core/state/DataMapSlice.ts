@@ -472,16 +472,29 @@ export const dataMapSlice = createSlice({
       state.curDataMapOperation = newOp;
     },
     deleteConnectionFromFunctionMenu: (state, action: PayloadAction<{ inputIndex: number; targetId: string }>) => {
-      const newConnections = { ...state.curDataMapOperation.dataMapConnections };
-      const inputValueToRemove = newConnections[action.payload.targetId].inputs[action.payload.inputIndex];
-      if (isEmptyConnection(inputValueToRemove)) {
-        return;
+      const newConnections = {
+        ...state.curDataMapOperation.dataMapConnections,
+      };
+      const { inputIndex, targetId } = action.payload;
+      const inputs = newConnections[targetId].inputs;
+      const inputValueToRemove = inputs[inputIndex];
+      if (!isEmptyConnection(inputValueToRemove)) {
+        const sourceIdToRemove = isCustomValueConnection(inputValueToRemove) ? inputValueToRemove.value : inputValueToRemove.reactFlowKey;
+        deleteConnectionFromConnections(newConnections, sourceIdToRemove, targetId, undefined);
       }
-      const sourceIdToRemove = isCustomValueConnection(inputValueToRemove) ? inputValueToRemove.value : inputValueToRemove.reactFlowKey;
-      deleteConnectionFromConnections(newConnections, sourceIdToRemove, action.payload.targetId, undefined);
+
+      // Remove the input completely once it has been emptied
+      newConnections[targetId].inputs = [...inputs.slice(0, inputIndex), ...inputs.slice(inputIndex + 1)];
+
       doDataMapOperation(
         state,
-        { ...state, curDataMapOperation: { ...state.curDataMapOperation, dataMapConnections: newConnections } },
+        {
+          ...state,
+          curDataMapOperation: {
+            ...state.curDataMapOperation,
+            dataMapConnections: newConnections,
+          },
+        },
         'Delete connection from function menu'
       );
     },
@@ -733,9 +746,10 @@ export const deleteConnectionFromConnections = (
   if (connections[inputKey] !== undefined) {
     connections[inputKey].outputs = connections[inputKey].outputs.filter((output) => output.reactFlowKey !== outputKey);
   }
-  const outputNode = connections[outputKey].self.node;
-  let outputNodeInputs = connections[outputKey].inputs;
-  if (isFunctionData(outputNode) && outputNode?.maxNumberOfInputs === UnboundedInput) {
+  const outputNode = connections[outputKey]?.self?.node;
+  let outputNodeInputs = connections[outputKey]?.inputs ?? [];
+
+  if (outputNode && isFunctionData(outputNode) && outputNode?.maxNumberOfInputs === UnboundedInput) {
     outputNodeInputs.forEach((input, inputIndex) => {
       if (isNodeConnection(input) && input.reactFlowKey === inputKey) {
         if (!port || (port && generateInputHandleId(outputNode.inputs[inputIndex].name, inputIndex) === port)) {

@@ -1,4 +1,4 @@
-import { Badge, Button, Caption1, Caption2, Text } from '@fluentui/react-components';
+import { Badge, Button, Caption1, Text } from '@fluentui/react-components';
 import { AddRegular, DeleteRegular } from '@fluentui/react-icons';
 import { useDispatch, useSelector } from 'react-redux';
 import { UnboundedInput } from '../../../constants/FunctionConstants';
@@ -14,7 +14,6 @@ import type { ConnectionDictionary, NodeConnection, CustomValueConnection, Input
 import { getInputName, getInputValue } from '../../../utils/Function.Utils';
 import type { InputOptionProps } from '../inputDropdown/InputDropdown';
 import { InputDropdown } from '../inputDropdown/InputDropdown';
-import { useStyles } from './styles';
 import { isSchemaNodeExtended } from '../../../utils';
 import {
   connectionDoesExist,
@@ -25,8 +24,10 @@ import {
 import { SchemaType, type SchemaNodeDictionary } from '@microsoft/logic-apps-shared';
 import DraggableList from 'react-draggable-list';
 import InputListWrapper, { type TemplateItemProps, type CommonProps } from './InputList';
-import { useCallback, useMemo } from 'react';
+import { useCallback, useMemo, useRef } from 'react';
 import { useIntl } from 'react-intl';
+import { InputCustomInfoLabel } from './inputCustomInfoLabel';
+import { useStyles } from './styles';
 
 export const InputTabContents = (props: {
   func: FunctionData;
@@ -39,6 +40,11 @@ export const InputTabContents = (props: {
         defaultMessage: 'Accepted types: ',
         id: 'ZgyD93',
         description: 'Accepted types',
+      }),
+      VALUE: intl.formatMessage({
+        defaultMessage: 'Value',
+        id: 'ES5vsI',
+        description: 'Value',
       }),
     }),
     [intl]
@@ -98,42 +104,50 @@ export const InputTabContents = (props: {
       };
 
       return (
-        <div className={styles.boundedInputRow} key={index}>
-          <div className={styles.boundedInputTopRow}>
-            <div className={styles.inputNameDiv}>
-              <Caption1 className={styles.inputName}>{input.name}</Caption1>
-              <Caption2>{input.tooltip ?? input.placeHolder ?? ''}</Caption2>
+        <div className={styles.row} key={index}>
+          <div className={styles.header}>
+            <div className={styles.titleContainer}>
+              <div>
+                <Caption1 className={styles.titleText}>
+                  {input.name ?? resources.VALUE}
+                  <Text className={styles.titleRequiredLabelText}>{input.isOptional ? '' : '*'}</Text>
+                </Caption1>
+                <InputCustomInfoLabel />
+              </div>
+              <Text className={styles.titleText}>
+                <span className={styles.titleLabelText}>{resources.ACCEPTED_TYPES}</span>
+                {input.allowedTypes}
+              </Text>
             </div>
-            <Caption2 className={styles.allowedTypesComponent}>
-              <Text className={styles.typesParent}>{resources.ACCEPTED_TYPES}</Text>
-              {input.allowedTypes}
-            </Caption2>
+            <div className={styles.descriptionContainer}>
+              <Text className={styles.descriptionText}>{input.tooltip ?? input.placeHolder ?? ''}</Text>
+            </div>
           </div>
-          <div>
-            <span className={styles.inputDropdownWrapper}>
-              <InputDropdown
-                index={index}
-                schemaListType={SchemaType.Source}
-                functionId={props.functionKey}
-                currentNode={props.func}
-                inputName={getInputName(inputConnection, connections)}
-                inputValue={getInputValue(inputConnection)}
-                validateAndCreateConnection={validateAndCreateConnection}
-              />
-            </span>
-            <span className={styles.badgeWrapper}>
+          <div className={styles.body}>
+            <div className={styles.formControlWrapper}>
+              <span className={styles.formControl}>
+                <InputDropdown
+                  index={index}
+                  schemaListType={SchemaType.Source}
+                  functionId={props.functionKey}
+                  currentNode={props.func}
+                  inputName={getInputName(inputConnection, connections)}
+                  inputValue={getInputValue(inputConnection)}
+                  validateAndCreateConnection={validateAndCreateConnection}
+                />
+              </span>
               {inputType && (
                 <Badge appearance="filled" color="informative">
                   {inputType}
                 </Badge>
               )}
-            </span>
-            <Button
-              className={styles.listButton}
-              appearance="transparent"
-              icon={<DeleteRegular />}
-              onClick={() => removeConnection(index)}
-            />
+              <Button
+                className={styles.controlButton}
+                appearance="transparent"
+                icon={<DeleteRegular />}
+                onClick={() => removeConnection(index)}
+              />
+            </div>
           </div>
         </div>
       );
@@ -158,6 +172,7 @@ const UnlimitedInputs = (props: {
   const styles = useStyles();
   const dispatch = useDispatch();
   const intl = useIntl();
+  const containerRef = useRef<HTMLDivElement | null>(null);
 
   const functionConnection = useMemo(() => props.connections[props.functionKey], [props.connections, props.functionKey]);
 
@@ -177,6 +192,11 @@ const UnlimitedInputs = (props: {
         defaultMessage: 'Add Input',
         id: 'wx/ZQP',
         description: 'Add Input',
+      }),
+      VALUE: intl.formatMessage({
+        defaultMessage: 'Value',
+        id: 'ES5vsI',
+        description: 'Value',
       }),
     }),
     [intl]
@@ -199,43 +219,55 @@ const UnlimitedInputs = (props: {
   );
 
   return (
-    <div>
-      <div>
-        <span className={styles.unlimitedInputHeaderCell} key="input-name">
-          <Caption1>{`${inputsFromManifest[0].name}${inputsFromManifest[0].isOptional ? ` (${stringResources.OPTIONAL})` : ''}`}</Caption1>
-        </span>
-        <span className={styles.unlimitedInputHeaderCell} key="input-types">
-          <Caption2>
-            <Text className={styles.typesParent}>{stringResources.ACCEPT_TYPES}</Text>
+    <div className={styles.row}>
+      <div className={styles.header}>
+        <div className={styles.titleContainer}>
+          <div>
+            <Caption1 className={styles.titleText}>
+              {inputsFromManifest[0].name ?? stringResources.VALUE}
+              <Text className={styles.titleRequiredLabelText}>{inputsFromManifest[0].isOptional ? '' : '*'}</Text>
+            </Caption1>
+            <InputCustomInfoLabel />
+          </div>
+          <Text className={styles.titleText}>
+            <span className={styles.titleLabelText}>{stringResources.ACCEPT_TYPES}</span>
             {inputsFromManifest[0].allowedTypes}
-          </Caption2>
-        </span>
+          </Text>
+        </div>
+        <div className={styles.descriptionContainer}>
+          <Text className={styles.descriptionText}>{inputsFromManifest[0].tooltip ?? inputsFromManifest[0].placeHolder ?? ''}</Text>
+        </div>
       </div>
-      <DraggableList<TemplateItemProps, CommonProps, any>
-        list={Object.entries(functionConnection.inputs).map((input, index) => ({
-          input: input[1],
-          index,
-        }))}
-        commonProps={{
-          functionKey: props.functionKey,
-          data: props.func,
-          inputsFromManifest,
-          connections: props.connections,
-          schemaType: SchemaType.Source,
-          draggable: true,
-        }}
-        onMoveEnd={onDragMoveEnd}
-        itemKey={'index'}
-        template={InputListWrapper}
-      />
-      <Button
-        icon={<AddRegular className={styles.addIcon} />}
-        onClick={() => addUnboundedInputSlot()}
-        className={styles.addButton}
-        appearance="transparent"
-      >
-        <Caption1>{stringResources.ADD_INPUT}</Caption1>
-      </Button>
+      <div className={styles.body} ref={containerRef}>
+        <DraggableList<TemplateItemProps, CommonProps, any>
+          list={Object.entries(functionConnection.inputs).map((input, index) => ({
+            input: input[1],
+            index,
+          }))}
+          commonProps={{
+            functionKey: props.functionKey,
+            data: props.func,
+            inputsFromManifest,
+            connections: props.connections,
+            schemaType: SchemaType.Source,
+            draggable: true,
+          }}
+          onMoveEnd={onDragMoveEnd}
+          itemKey={'index'}
+          template={InputListWrapper}
+          container={() => containerRef?.current}
+        />
+        <div className={styles.formControlDescription}>
+          <Button
+            icon={<AddRegular className={styles.addIcon} />}
+            onClick={() => addUnboundedInputSlot()}
+            className={styles.addButton}
+            appearance="subtle"
+          >
+            <Caption1>{stringResources.ADD_INPUT}</Caption1>
+          </Button>
+        </div>
+      </div>
     </div>
   );
 };

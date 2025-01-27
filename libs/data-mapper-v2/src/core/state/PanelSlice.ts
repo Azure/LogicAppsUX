@@ -10,6 +10,7 @@ export const ConfigPanelView = {
   UpdateSchema: 'updateSchema',
 } as const;
 export type ConfigPanelView = (typeof ConfigPanelView)[keyof typeof ConfigPanelView];
+export type MapCheckTabType = 'error' | 'warning';
 
 export type TestPanelState = {
   isOpen: boolean;
@@ -24,6 +25,11 @@ export type FunctionPanelState = {
   isOpen: boolean;
 };
 
+export type MapCheckPanelState = {
+  isOpen: boolean;
+  selectedTab: MapCheckTabType;
+};
+
 export type CodeViewState = {
   isOpen: boolean;
 };
@@ -34,6 +40,7 @@ export interface PanelState {
   testPanel: TestPanelState;
   codeViewPanel: CodeViewState;
   functionPanel: FunctionPanelState;
+  mapCheckerPanel: MapCheckPanelState;
 }
 
 export interface TestMapOutput {
@@ -53,6 +60,10 @@ const initialState: PanelState = {
   functionPanel: {
     isOpen: true,
   },
+  mapCheckerPanel: {
+    isOpen: false,
+    selectedTab: 'error',
+  },
 };
 
 export const panelSlice = createSlice({
@@ -65,11 +76,24 @@ export const panelSlice = createSlice({
       state.currentPanelView = ConfigPanelView.DefaultConfig;
     },
 
+    toggleMapChecker: (state) => {
+      const newState = !state.mapCheckerPanel.isOpen;
+
+      if (newState) {
+        state.codeViewPanel.isOpen = false;
+        state.testPanel.isOpen = false;
+        state.functionPanel.isOpen = false;
+      }
+
+      state.mapCheckerPanel.isOpen = newState;
+    },
+
     toggleCodeView: (state) => {
       const newState = !state.codeViewPanel.isOpen;
 
       // Close other panels if code view panel is opened
       if (newState) {
+        state.mapCheckerPanel.isOpen = false;
         state.testPanel.isOpen = false;
         state.functionPanel.isOpen = false;
       }
@@ -82,6 +106,7 @@ export const panelSlice = createSlice({
 
       // Close other panels if test panel is opened
       if (newState) {
+        state.mapCheckerPanel.isOpen = false;
         state.codeViewPanel.isOpen = false;
         state.functionPanel.isOpen = false;
       }
@@ -94,6 +119,7 @@ export const panelSlice = createSlice({
 
       // Close other panels if function panel is opened
       if (newState) {
+        state.mapCheckerPanel.isOpen = false;
         state.codeViewPanel.isOpen = false;
         state.testPanel.isOpen = false;
       }
@@ -142,6 +168,10 @@ export const panelSlice = createSlice({
     setTestFile: (state, action: PayloadAction<SchemaFile>) => {
       state.testPanel.selectedFile = action.payload;
     },
+
+    setSelectedMapCheckerTab: (state, action: PayloadAction<MapCheckTabType>) => {
+      state.mapCheckerPanel.selectedTab = action.payload;
+    },
   },
 });
 
@@ -159,6 +189,8 @@ export const {
   updateTestInput,
   updateTestOutput,
   toggleFunctionPanel,
+  toggleMapChecker,
+  setSelectedMapCheckerTab,
 } = panelSlice.actions;
 
 export default panelSlice.reducer;
