@@ -21,6 +21,16 @@ body:
 
         The more information you fill in, the better we can help you.
 
+ - type: dropdown
+    id: dataMapperType
+    attributes:
+      label: Are you using new Data Mapper ?
+      options:
+        - Yes (Please mention in the description if the issue is repro'ble in older version too)
+        - No
+    validations:
+      required: true
+
   - type: textarea
     id: description
     attributes:
