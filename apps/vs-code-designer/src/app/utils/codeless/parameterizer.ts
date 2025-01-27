@@ -112,8 +112,7 @@ function getParameterizedConnectionReferenceModel(
   parametersObject: any,
   settingsRecord: Record<string, string>
 ): ConnectionReferenceModel {
-  const isCustomConnector = connection.api.id.includes('customApis');
-  parameterizeManagedApiId(connection, isCustomConnector);
+  parameterizeManagedApiId(connection, settingsRecord);
   parameterizeManagedConnectionId(connection);
   parameterizeManagedConnectionRuntimeUrl(connection, referenceKey, parametersObject, settingsRecord);
   parameterizeManagedConnectionAuthentication(connection, referenceKey, parametersObject);
@@ -156,10 +155,14 @@ function getParameterizedAPIManagementConnectionModel(
   return connection;
 }
 
-function parameterizeManagedApiId(connection: ConnectionReferenceModel, isCustomConnector: boolean): void {
+function parameterizeManagedApiId(connection: ConnectionReferenceModel, settingsRecord: Record<string, string>): void {
   const segments = connection.api.id.split(DELIMITER);
+  const isCustomConnector = connection.api.id.includes('customApis');
+
   segments[SUBSCRIPTION_INDEX] = getAppSettingReference(workflowSubscriptionIdKey, true);
+
   if (isCustomConnector) {
+    settingsRecord[customConnectorResourceGroupNameKey] = segments[MANAGED_CONNECTION_CUSTOM_CONNECTOR_RESOURCE_GROUP];
     segments[MANAGED_CONNECTION_CUSTOM_CONNECTOR_RESOURCE_GROUP] = getAppSettingReference(customConnectorResourceGroupNameKey, true);
   } else {
     segments[MANAGED_API_LOCATION_INDEX] = getAppSettingReference(workflowLocationKey, true);
