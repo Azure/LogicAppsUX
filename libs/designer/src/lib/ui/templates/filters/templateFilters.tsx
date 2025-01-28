@@ -207,6 +207,6 @@ export const TemplateFilters = ({ detailFilters }: TemplateFiltersProps) => {
 };
 
 export const ConnectorName = ({ data }: { data: any }) => {
-  const { data: connector, isLoading } = useConnector(data.key);
+  const { data: connector, isLoading } = useConnector(data.key, /* enabled */ true, /* getCachedData */ true);
   return <Text>{isLoading ? data.key.split('/').slice(-1)[0] : connector?.properties.displayName}</Text>;
 };

@@ -249,6 +249,10 @@ export abstract class BaseOperationManifestService implements IOperationManifest
     return false;
   }
 
+  getOperation(_connectorId: string, _operationId: string, _useCachedData?: boolean): Promise<any> {
+    throw new UnsupportedException('getOperation not implemented for this service');
+  }
+
   abstract getOperationInfo(definition: any, isTrigger: boolean): Promise<OperationInfo>;
 
   abstract getOperationManifest(_connectorId: string, _operationId: string): Promise<OperationManifest>;

@@ -118,7 +118,7 @@ export class ConsumptionOperationManifestService extends BaseOperationManifestSe
       };
 
       return operationManifest;
-    } catch (error) {
+    } catch {
       return { properties: {} } as any;
     }
   }
