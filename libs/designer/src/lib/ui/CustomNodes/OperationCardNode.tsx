@@ -305,38 +305,38 @@ const DefaultNode = ({ targetPosition = Position.Top, sourcePosition = Position.
     <>
       <div className="nopan" ref={ref as any}>
         <Handle className="node-handle top" type="target" position={targetPosition} isConnectable={false} />
-          <Card
-            active={isMonitoringView ? !isNullOrUndefined(runData?.status) : true}
-            title={label}
-            icon={iconUri}
-            draggable={!readOnly && !isTrigger}
-            brandColor={brandColor}
-            id={id}
-            connectionRequired={isConnectionRequired}
-            connectionDisplayName={connectionResult.isLoading ? '...' : connectionResult.result}
-            connectorName={connectorName?.result}
-            commentBox={comment}
-            drag={drag}
-            dragPreview={dragPreview}
-            errorMessage={errorMessage}
-            errorLevel={errorLevel}
-            isDragging={isDragging}
-            isLoading={isLoading}
-            isMonitoringView={isMonitoringView}
-            runData={runData}
-            readOnly={readOnly}
-            onClick={nodeClick}
-            onContextMenu={onContextMenu}
-            onDeleteClick={deleteClick}
-            onCopyClick={copyClick}
-            selectionMode={selected ? 'selected' : isPinned ? 'pinned' : false}
-            setFocus={shouldFocus}
-            staticResultsEnabled={!!staticResults}
-            isSecureInputsOutputs={isSecureInputsOutputs}
-            isLoadingDynamicData={isLoadingDynamicData}
-            nodeIndex={nodeIndex}
-          />
-        {showCopyCallout ? <CopyTooltip targetRef={ref} hideTooltip={clearCopyTooltip} /> : null}
+        <Card
+          active={isMonitoringView ? !isNullOrUndefined(runData?.status) : true}
+          title={label}
+          icon={iconUri}
+          draggable={!readOnly && !isTrigger}
+          brandColor={brandColor}
+          id={id}
+          connectionRequired={isConnectionRequired}
+          connectionDisplayName={connectionResult.isLoading ? '...' : connectionResult.result}
+          connectorName={connectorName?.result}
+          commentBox={comment}
+          drag={drag}
+          dragPreview={dragPreview}
+          errorMessage={errorMessage}
+          errorLevel={errorLevel}
+          isDragging={isDragging}
+          isLoading={isLoading}
+          isMonitoringView={isMonitoringView}
+          runData={runData}
+          readOnly={readOnly}
+          onClick={nodeClick}
+          onContextMenu={onContextMenu}
+          onDeleteClick={deleteClick}
+          onCopyClick={copyClick}
+          selectionMode={selected ? 'selected' : isPinned ? 'pinned' : false}
+          setFocus={shouldFocus}
+          staticResultsEnabled={!!staticResults}
+          isSecureInputsOutputs={isSecureInputsOutputs}
+          isLoadingDynamicData={isLoadingDynamicData}
+          nodeIndex={nodeIndex}
+        />
+        {showCopyCallout ? <CopyTooltip id={id} targetRef={ref} hideTooltip={clearCopyTooltip} /> : null}
         <Handle className="node-handle bottom" type="source" position={sourcePosition} isConnectable={false} />
       </div>
       {showLeafComponents ? (

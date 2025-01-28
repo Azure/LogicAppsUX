@@ -21,7 +21,7 @@ export const EditorCommandBar = (_props: EditorCommandBarProps) => {
   const intl = useIntl();
   const dispatch = useDispatch<AppDispatch>();
 
-  const { isDirty, sourceInEditState, targetInEditState } = useSelector((state: RootState) => state.dataMap.present);
+  const { isDirty, sourceInEditState, targetInEditState, isTestDisabledForOS } = useSelector((state: RootState) => state.dataMap.present);
   const undoStack = useSelector((state: RootState) => state.dataMap.past);
   const isCodeViewOpen = useSelector((state: RootState) => state.panel.codeViewPanel.isOpen);
   const { sourceSchema, targetSchema } = useSelector((state: RootState) => state.dataMap.present.curDataMapOperation);
@@ -160,8 +160,8 @@ export const EditorCommandBar = (_props: EditorCommandBarProps) => {
         description: 'Button text for discard the unsaved changes',
       }),
       OPEN_TEST_PANEL: intl.formatMessage({
-        defaultMessage: 'Open Test panel',
-        id: 'nr6bPd',
+        defaultMessage: 'Open test panel',
+        id: 'xhBvXj',
         description: 'Button text for opening test panel',
       }),
       VIEW_CODE: intl.formatMessage({
@@ -170,14 +170,19 @@ export const EditorCommandBar = (_props: EditorCommandBarProps) => {
         description: 'Button for View Code',
       }),
       VIEW_MAP_CHECKER: intl.formatMessage({
-        defaultMessage: 'Map errors',
-        id: '1QktJw',
-        description: 'Button to see map errors',
+        defaultMessage: 'View issues',
+        id: 'Ae8T94',
+        description: 'Button to see issues',
       }),
       DISABLED_TEST: intl.formatMessage({
         defaultMessage: 'Please save the map before testing',
         id: 'wTaSTp',
         description: 'Tooltip for disabled test button',
+      }),
+      DISABLED_TEST_FOR_OS: intl.formatMessage({
+        defaultMessage: 'Test is not supported for your current operating system',
+        id: '2yCDJd',
+        description: 'Tooltip for disabled test button for the os',
       }),
     }),
     [intl]
@@ -190,11 +195,11 @@ export const EditorCommandBar = (_props: EditorCommandBarProps) => {
       save: !isDirty || sourceInEditState || targetInEditState,
       undo: undoStack.length === 0,
       discard: !isDirty,
-      test: sourceInEditState || targetInEditState || !xsltFilename,
+      test: sourceInEditState || targetInEditState || !xsltFilename || isTestDisabledForOS,
       codeView: sourceInEditState || targetInEditState,
       mapChecker: sourceInEditState || targetInEditState,
     }),
-    [isDirty, undoStack.length, sourceInEditState, targetInEditState, xsltFilename]
+    [isDirty, undoStack.length, sourceInEditState, targetInEditState, xsltFilename, isTestDisabledForOS]
   );
 
   return (
@@ -222,7 +227,7 @@ export const EditorCommandBar = (_props: EditorCommandBarProps) => {
             aria-label={Resources.OPEN_TEST_PANEL}
             icon={<PlayRegular color={disabledState.test ? undefined : tokens.colorPaletteBlueBorderActive} />}
             disabled={disabledState.test}
-            title={disabledState.test ? Resources.DISABLED_TEST : ''}
+            title={disabledState.test ? (isTestDisabledForOS ? Resources.DISABLED_TEST_FOR_OS : Resources.DISABLED_TEST) : ''}
             onClick={onTestClick}
           >
             {Resources.OPEN_TEST_PANEL}
