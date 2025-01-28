@@ -7,7 +7,6 @@ export interface SchemaFile {
 }
 
 export interface IDataMapperFileService {
-  
   /**
    * Opens dialog in VSCode to select a file.
    * @arg {SchemaType} schemaType - used so that we know which schema to use as Source/Target when file path is returned.
@@ -55,6 +54,8 @@ export interface IDataMapperFileService {
   addSchemaFromFile(selectedSchemaFile: SchemaFile): void;
 
   sendNotification(title: string, text: string, level: number): void;
+
+  isTestDisabledForOS(): void;
 }
 
 let service: IDataMapperFileService;

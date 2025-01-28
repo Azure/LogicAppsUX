@@ -3,7 +3,7 @@ import type { FunctionData } from '../models/Function';
 import { convertSchemaToSchemaExtended } from '../utils/Schema.Utils';
 import { DataMapperWrappedContext } from './DataMapperDesignerContext';
 import { changeTheme } from './state/AppSlice';
-import { setInitialDataMap, setInitialSchema, setXsltContent, setXsltFilename } from './state/DataMapSlice';
+import { changeIsTestDisabledForOS, setInitialDataMap, setInitialSchema, setXsltContent, setXsltFilename } from './state/DataMapSlice';
 import { loadCustomXsltFilePaths, loadFunctions } from './state/FunctionSlice';
 import { setAvailableSchemas } from './state/SchemaSlice';
 import type { AppDispatch } from './state/Store';
@@ -27,6 +27,7 @@ export interface DataMapDataProviderProps {
   fetchedFunctions?: FunctionData[];
   theme?: ThemeType;
   children?: React.ReactNode;
+  isTestDisabledForOS?: boolean;
 }
 
 const DataProviderInner = ({
@@ -39,6 +40,7 @@ const DataProviderInner = ({
   customXsltPaths,
   mapDefinition,
   dataMapMetadata,
+  isTestDisabledForOS,
   theme = ThemeType.Light,
   children,
 }: DataMapDataProviderProps) => {
@@ -116,6 +118,10 @@ const DataProviderInner = ({
       dispatch(loadCustomXsltFilePaths(customXsltPaths ?? []));
     }
   }, [dispatch, customXsltPaths]);
+
+  useEffect(() => {
+    dispatch(changeIsTestDisabledForOS(!!isTestDisabledForOS));
+  }, [dispatch, isTestDisabledForOS]);
 
   return <>{children}</>;
 };

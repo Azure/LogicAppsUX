@@ -42,6 +42,7 @@ export interface DataMapState {
   targetInEditState: boolean;
   sourceNodeConnectionBeingDrawnFromId?: string;
   lastAction: string;
+  isTestDisabledForOS?: boolean;
 }
 
 interface HoverState {
@@ -654,6 +655,9 @@ export const dataMapSlice = createSlice({
         };
       }
     },
+    changeIsTestDisabledForOS: (state, action: PayloadAction<boolean>) => {
+      state.isTestDisabledForOS = action.payload;
+    },
   },
 });
 
@@ -682,6 +686,7 @@ export const {
   updateCanvasDimensions,
   updateFunctionConnectionInputs,
   updateTreeData,
+  changeIsTestDisabledForOS,
 } = dataMapSlice.actions;
 
 export default dataMapSlice.reducer;
