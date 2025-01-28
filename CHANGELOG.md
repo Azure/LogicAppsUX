@@ -1,4 +1,22 @@
 # Logic Apps Designer
+## [5.30.0](https://github.com/Azure/LogicAppsUX/compare/v5.29.0...v5.30.0) (2025-01-28)
+
+
+### Features
+
+* **vscode:** Logic App and Workflows As Menu Items ([#6310](https://github.com/Azure/LogicAppsUX/issues/6310)) ([b304e4f](https://github.com/Azure/LogicAppsUX/commit/b304e4fac1501874bcc53052ea15c98f70f94723))
+
+
+### Bug Fixes
+
+* **Data Mapper:** Add subtitle for error/warning cards ([#6464](https://github.com/Azure/LogicAppsUX/issues/6464)) ([d6ca825](https://github.com/Azure/LogicAppsUX/commit/d6ca8251007d15c7cc7bd0c4ae2010c219f499f1))
+* **Data Mapper:** Disable test for Mac systems ([#6482](https://github.com/Azure/LogicAppsUX/issues/6482)) ([4c13f96](https://github.com/Azure/LogicAppsUX/commit/4c13f96d2669771d66f6ad7bb912e596f033be83))
+* **Data Mapper:** Fix re-sizing if the screen changes + add "Preview" keyword ([#6483](https://github.com/Azure/LogicAppsUX/issues/6483)) ([641cd95](https://github.com/Azure/LogicAppsUX/commit/641cd956022d9a5664d871a5854a3f5e7d3d8a90))
+* **designer:** Hack for dataverse connector incorrect metadata in swagger ([#6467](https://github.com/Azure/LogicAppsUX/issues/6467)) ([07cb8c8](https://github.com/Azure/LogicAppsUX/commit/07cb8c848393de68b767257b10bae9216ff8df19))
+* **designer:** Render copied tooltip properly ([#6463](https://github.com/Azure/LogicAppsUX/issues/6463)) ([d32e904](https://github.com/Azure/LogicAppsUX/commit/d32e904a9d4ea1517b596134b739c59c553b3583))
+* **vscode:** Filter locations for new resources ([#6471](https://github.com/Azure/LogicAppsUX/issues/6471)) ([8945f15](https://github.com/Azure/LogicAppsUX/commit/8945f1519d9894de258a27ceb8d84634a55b4af5))
+* **vscode:** Remove extra encapsulation in error in API call ([#6452](https://github.com/Azure/LogicAppsUX/issues/6452)) ([e249674](https://github.com/Azure/LogicAppsUX/commit/e2496744f948a80b8b1818015702bfcfff950048))
+
 ## [5.29.0](https://github.com/Azure/LogicAppsUX/compare/v5.28.0...v5.29.0) (2025-01-23)
 
 
