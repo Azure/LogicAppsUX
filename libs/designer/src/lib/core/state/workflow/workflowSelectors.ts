@@ -11,6 +11,7 @@ import { useSelector } from 'react-redux';
 import Queue from 'yocto-queue';
 import type {} from 'reselect';
 import type {} from '@tanstack/react-query';
+import { getCollapsedGraph } from './helper';
 
 export const getWorkflowState = (state: RootState): WorkflowState => state.workflow;
 
@@ -45,6 +46,7 @@ export const getRootWorkflowGraphForLayout = createSelector(getWorkflowState, (d
   }
 
   if (Object.keys(collapsedIds).length === 0 && Object.keys(collapsedActionsIds).length === 0) {
+    console.log('charlie', rootNode);
     return rootNode;
   }
 
@@ -64,51 +66,6 @@ export const getRootWorkflowGraphForLayout = createSelector(getWorkflowState, (d
   console.log('charlie', newGraph);
   return newGraph;
 });
-
-const getCollapsedGraph = (collapsedIds: Record<string, boolean>, rootNode: WorkflowNode): WorkflowNode => {
-  if (!rootNode || !rootNode.children || !rootNode.edges) {
-    return rootNode;
-  }
-  // Create a set of IDs to remove, starting with the collapsed IDs
-  const idsToRemove = new Set<string>(Object.keys(collapsedIds));
-
-  // Iteratively find downstream nodes to remove based on edges
-  let hasChanges = true;
-  while (hasChanges) {
-    hasChanges = false;
-
-    // Find edges where the source or target is in idsToRemove
-    for (const edge of rootNode.edges) {
-      if (idsToRemove.has(edge.source) && !idsToRemove.has(edge.target)) {
-        idsToRemove.add(edge.target);
-        hasChanges = true;
-      }
-    }
-  }
-
-  // Filter edges to exclude those whose source is in collapsedIds and target is downstream
-  const filteredEdges = rootNode.edges.filter((edge) => !(idsToRemove.has(edge.source) && idsToRemove.has(edge.target)));
-
-  // Process children
-  const filteredChildren = rootNode.children
-    .map((child) => {
-      if (idsToRemove.has(child.id)) {
-        // If the child is in collapsedIds, update its type to "COLLAPSED_NODE"
-        if (collapsedIds[child.id]) {
-          return { ...child, type: 'COLLAPSED_NODE' };
-        }
-        return null; // Remove nodes downstream of collapsedIds
-      }
-      return child; // Keep unaffected nodes as is
-    })
-    .filter(Boolean) as typeof rootNode.children;
-
-  return {
-    ...rootNode,
-    children: filteredChildren, // Updated children
-    edges: filteredEdges, // Updated edges
-  };
-};
 
 const nonfilteredNodeTypes = [WORKFLOW_NODE_TYPES.SCOPE_CARD_NODE, WORKFLOW_NODE_TYPES.SUBGRAPH_CARD_NODE];
 const filterOutGraphChildren = (children: WorkflowNode[]) => children?.filter((child) => nonfilteredNodeTypes.includes(child.type));
