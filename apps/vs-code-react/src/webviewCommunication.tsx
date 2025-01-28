@@ -16,6 +16,7 @@ import type {
   ReceiveCallbackMessage,
   GetDataMapperVersionMessage,
   ShowAvailableSchemasMessageV2,
+  GetTestFeatureEnablementStatus,
 } from './run-service';
 import {
   changeCustomXsltPathList,
@@ -32,6 +33,7 @@ import {
 import {
   changeCustomXsltPathList as changeCustomXsltPathListV2,
   changeDataMapMetadata as changeDataMapMetadataV2,
+  changeIsTestDisabledForOS,
   changeMapDefinition as changeMapDefinitionV2,
   changeRuntimePort as changeRuntimePortV2,
   changeSchemaTreeList,
@@ -67,7 +69,8 @@ type DataMapperMessageType =
   | SetXsltDataMessage
   | SetRuntimePortMessage
   | GetConfigurationSettingMessage
-  | GetDataMapperVersionMessage;
+  | GetDataMapperVersionMessage
+  | GetTestFeatureEnablementStatus;
 type WorkflowMessageType = UpdateAccessTokenMessage | UpdateExportPathMessage | AddStatusMessage | SetFinalStatusMessage;
 type MessageType = InjectValuesMessage | DesignerMessageType | DataMapperMessageType | WorkflowMessageType;
 
@@ -146,6 +149,10 @@ export const WebViewCommunication: React.FC<{ children: ReactNode }> = ({ childr
             }
             case ExtensionCommand.getConfigurationSetting: {
               dispatch(changeUseExpandedFunctionCardsV2(message.data));
+              break;
+            }
+            case ExtensionCommand.isTestDisabledForOS: {
+              dispatch(changeIsTestDisabledForOS(message.data));
               break;
             }
             default:
