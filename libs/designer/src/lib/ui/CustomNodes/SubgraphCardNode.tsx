@@ -10,7 +10,6 @@ import { useIsNodePinnedToOperationPanel, useIsNodeSelectedInOperationPanel } fr
 import { changePanelNode } from '../../core/state/panel/panelSlice';
 import {
   useActionMetadata,
-  useIsActionCollapsed,
   useIsGraphCollapsed,
   useIsLeafNode,
   useNewSwitchCaseId,
@@ -51,7 +50,6 @@ const SubgraphCardNode = ({ targetPosition = Position.Top, sourcePosition = Posi
   const parentRunId = useParentRunId(subgraphId);
   const parentRunData = useRunData(parentRunId ?? '');
   const title = useNodeDisplayName(subgraphId);
-  const isNodeCollapsed = useIsActionCollapsed(subgraphId);
 
   const isAddCase = metadata?.subgraphType === SUBGRAPH_TYPES.SWITCH_ADD_CASE;
 
@@ -133,9 +131,7 @@ const SubgraphCardNode = ({ targetPosition = Position.Top, sourcePosition = Posi
 
   const nodeIndex = useNodeIndex(subgraphId);
 
-  return isNodeCollapsed ? (
-    <p>COLLAPSED</p>
-  ) : (
+  return (
     <div>
       <div style={{ display: 'flex', alignItems: 'center' }}>
         <div style={{ position: 'relative' }}>

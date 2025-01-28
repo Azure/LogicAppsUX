@@ -45,58 +45,7 @@ export const getRootWorkflowGraphForLayout = createSelector(getWorkflowState, (d
   }
 
   if (Object.keys(collapsedActionsIds).length !== 0) {
-    // const newGraph = {
-    //   ...rootNode,
-    //   children: reduceCollapsed((node: WorkflowNode) => getRecordEntry(collapsedActionsIds, node.id))(rootNode.children ?? []),
-    // };
-    console.log(rootNode);
-    const test = updateGraphCollapse(collapsedActionsIds, rootNode);
-    const test2 = {
-      id: 'root',
-      children: [
-        {
-          id: 'manual',
-          width: 200,
-          height: 42,
-          type: 'OPERATION_NODE',
-        },
-        {
-          id: 'Initialize_ArrayVariable',
-          width: 200,
-          height: 42,
-          type: 'COLLAPSED_NODE',
-        },
-      ],
-      edges: [
-        {
-          id: 'manual-Initialize_ArrayVariable',
-          source: 'manual',
-          target: 'Initialize_ArrayVariable',
-          type: 'BUTTON_EDGE',
-        },
-        {
-          id: 'Initialize_ArrayVariable-Parse_JSON',
-          source: 'Initialize_ArrayVariable',
-          target: 'Parse_JSON',
-          type: 'BUTTON_EDGE',
-        },
-        {
-          id: 'Parse_JSON-Filter_array',
-          source: 'Parse_JSON',
-          target: 'Filter_array',
-          type: 'BUTTON_EDGE',
-        },
-        {
-          id: 'Filter_array-HTTP',
-          source: 'Filter_array',
-          target: 'HTTP',
-          type: 'BUTTON_EDGE',
-        },
-      ],
-      type: 'GRAPH_NODE',
-    };
-    console.log('charlie', test, test2);
-    return test;
+    return getCollapsedGraph(collapsedActionsIds, rootNode);
   }
   if (Object.keys(collapsedIds).length === 0) {
     return rootNode;
@@ -110,7 +59,7 @@ export const getRootWorkflowGraphForLayout = createSelector(getWorkflowState, (d
   return newGraph;
 });
 
-const updateGraphCollapse = (collapsedIds: Record<string, boolean>, rootNode: WorkflowNode): WorkflowNode => {
+const getCollapsedGraph = (collapsedIds: Record<string, boolean>, rootNode: WorkflowNode): WorkflowNode => {
   if (!rootNode || !rootNode.children || !rootNode.edges) {
     return rootNode;
   }
