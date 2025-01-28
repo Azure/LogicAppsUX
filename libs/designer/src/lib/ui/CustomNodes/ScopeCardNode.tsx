@@ -26,7 +26,6 @@ import {
   useParentRunId,
   useNodeDescription,
   useShouldNodeFocus,
-  useIsActionCollapsed,
 } from '../../core/state/workflow/workflowSelectors';
 import { setRepetitionRunData, toggleCollapsedGraphId } from '../../core/state/workflow/workflowSlice';
 import type { AppDispatch } from '../../core/store';
@@ -73,8 +72,6 @@ const ScopeCardNode = ({ data, targetPosition = Position.Top, sourcePosition = P
   );
   const rootRef = useRef<HTMLDivElement | null>(null);
 
-  const isNodeCollapsed = useIsActionCollapsed(scopeId);
-
   const getRunRepetition = useCallback(() => {
     if (parentRunData?.status === constants.FLOW_STATUS.SKIPPED) {
       return {
@@ -102,6 +99,7 @@ const ScopeCardNode = ({ data, targetPosition = Position.Top, sourcePosition = P
       return data;
     },
     {
+      initialData: null,
       refetchOnWindowFocus: false,
       refetchOnReconnect: false,
       refetchOnMount: false,
@@ -305,9 +303,7 @@ const ScopeCardNode = ({ data, targetPosition = Position.Top, sourcePosition = P
   const isFooter = id.endsWith('#footer');
   const showEmptyGraphComponents = isLeaf && !graphCollapsed && !isFooter;
 
-  return isNodeCollapsed ? (
-    <p>COLLAPSED</p>
-  ) : (
+  return (
     <>
       <div className="msla-scope-card nopan" ref={ref as any}>
         <div ref={rootRef}>

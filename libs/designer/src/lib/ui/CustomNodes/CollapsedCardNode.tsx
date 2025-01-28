@@ -1,23 +1,38 @@
-/* eslint-disable @typescript-eslint/no-empty-function */
-import { useIsNodeSelectedInOperationPanel } from '../../core/state/panel/panelSelectors';
-import { GraphContainer } from '@microsoft/designer-ui';
-import { memo } from 'react';
+import { CollapsedCard } from '@microsoft/designer-ui';
+import { memo, useCallback } from 'react';
 import { Handle, Position, type NodeProps } from '@xyflow/react';
-import { css } from '@fluentui/react';
+import { setNodeContextMenuData } from '../../core/state/designerView/designerViewSlice';
+import type { AppDispatch } from '../../core';
+import { useDispatch } from 'react-redux';
 
 const CollapsedNode = ({ targetPosition = Position.Top, sourcePosition = Position.Bottom, id }: NodeProps) => {
-  const selected = useIsNodeSelectedInOperationPanel(id);
+  const dispatch = useDispatch<AppDispatch>();
+
+  const onContextMenu = useCallback(
+    (e: React.MouseEvent) => {
+      e.preventDefault();
+      dispatch(
+        setNodeContextMenuData({
+          nodeId: id,
+          location: {
+            x: e.clientX,
+            y: e.clientY,
+          },
+        })
+      );
+    },
+    [dispatch, id]
+  );
 
   return (
     <div
-      className={css('msla-graph-container-wrapper')}
       style={{
-        width: 100,
+        width: 200,
         height: 100,
       }}
     >
       <Handle className="node-handle top" type="target" position={targetPosition} isConnectable={false} />
-      <GraphContainer active={true} selected={selected} />
+      <CollapsedCard id="testId" onContextMenu={onContextMenu} />
       <Handle className="node-handle bottom" type="source" position={sourcePosition} isConnectable={false} />
     </div>
   );

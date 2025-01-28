@@ -49,69 +49,54 @@ export const getRootWorkflowGraphForLayout = createSelector(getWorkflowState, (d
     //   ...rootNode,
     //   children: reduceCollapsed((node: WorkflowNode) => getRecordEntry(collapsedActionsIds, node.id))(rootNode.children ?? []),
     // };
-    console.log('charlie', rootNode);
-    return {
-      "id": "root",
-      "children": [
-          {
-              "id": "manual",
-              "width": 200,
-              "height": 42,
-              "type": "OPERATION_NODE"
-          },
-          {
-              "id": "Initialize_ArrayVariable",
-              "width": 200,
-              "height": 42,
-              "type": "COLLAPSE_NODE"
-          },
-          {
-              "id": "Parse_JSON",
-              "width": 200,
-              "height": 42,
-              "type": "OPERATION_NODE"
-          },
-          {
-              "id": "Filter_array",
-              "width": 200,
-              "height": 42,
-              "type": "OPERATION_NODE"
-          },
-          {
-              "id": "HTTP",
-              "width": 200,
-              "height": 42,
-              "type": "OPERATION_NODE"
-          }
+    console.log(rootNode);
+    const test = updateGraphCollapse(collapsedActionsIds, rootNode);
+    const test2 = {
+      id: 'root',
+      children: [
+        {
+          id: 'manual',
+          width: 200,
+          height: 42,
+          type: 'OPERATION_NODE',
+        },
+        {
+          id: 'Initialize_ArrayVariable',
+          width: 200,
+          height: 42,
+          type: 'COLLAPSED_NODE',
+        },
       ],
-      "edges": [
-          {
-              "id": "manual-Initialize_ArrayVariable",
-              "source": "manual",
-              "target": "Initialize_ArrayVariable",
-              "type": "BUTTON_EDGE"
-          },
-          {
-              "id": "Initialize_ArrayVariable-Parse_JSON",
-              "source": "Initialize_ArrayVariable",
-              "target": "Parse_JSON",
-              "type": "BUTTON_EDGE"
-          },
-          {
-              "id": "Parse_JSON-Filter_array",
-              "source": "Parse_JSON",
-              "target": "Filter_array",
-              "type": "BUTTON_EDGE"
-          },
-          {
-              "id": "Filter_array-HTTP",
-              "source": "Filter_array",
-              "target": "HTTP",
-              "type": "BUTTON_EDGE"
-          }
+      edges: [
+        {
+          id: 'manual-Initialize_ArrayVariable',
+          source: 'manual',
+          target: 'Initialize_ArrayVariable',
+          type: 'BUTTON_EDGE',
+        },
+        {
+          id: 'Initialize_ArrayVariable-Parse_JSON',
+          source: 'Initialize_ArrayVariable',
+          target: 'Parse_JSON',
+          type: 'BUTTON_EDGE',
+        },
+        {
+          id: 'Parse_JSON-Filter_array',
+          source: 'Parse_JSON',
+          target: 'Filter_array',
+          type: 'BUTTON_EDGE',
+        },
+        {
+          id: 'Filter_array-HTTP',
+          source: 'Filter_array',
+          target: 'HTTP',
+          type: 'BUTTON_EDGE',
+        },
       ],
-      "type": "GRAPH_NODE"
-  };
+      type: 'GRAPH_NODE',
+    };
+    console.log('charlie', test, test2);
+    return test;
   }
   if (Object.keys(collapsedIds).length === 0) {
     return rootNode;
@@ -124,6 +109,51 @@ export const getRootWorkflowGraphForLayout = createSelector(getWorkflowState, (d
 
   return newGraph;
 });
+
+const updateGraphCollapse = (collapsedIds: Record<string, boolean>, rootNode: WorkflowNode): WorkflowNode => {
+  if (!rootNode || !rootNode.children || !rootNode.edges) {
+    return rootNode;
+  }
+  // Create a set of IDs to remove, starting with the collapsed IDs
+  const idsToRemove = new Set<string>(Object.keys(collapsedIds));
+
+  // Iteratively find downstream nodes to remove based on edges
+  let hasChanges = true;
+  while (hasChanges) {
+    hasChanges = false;
+
+    // Find edges where the source or target is in idsToRemove
+    for (const edge of rootNode.edges) {
+      if (idsToRemove.has(edge.source) && !idsToRemove.has(edge.target)) {
+        idsToRemove.add(edge.target);
+        hasChanges = true;
+      }
+    }
+  }
+
+  // Filter edges to exclude those whose source is in collapsedIds and target is downstream
+  const filteredEdges = rootNode.edges.filter((edge) => !(idsToRemove.has(edge.source) && idsToRemove.has(edge.target)));
+
+  // Process children
+  const filteredChildren = rootNode.children
+    .map((child) => {
+      if (idsToRemove.has(child.id)) {
+        // If the child is in collapsedIds, update its type to "COLLAPSED_NODE"
+        if (collapsedIds[child.id]) {
+          return { ...child, type: 'COLLAPSED_NODE' };
+        }
+        return null; // Remove nodes downstream of collapsedIds
+      }
+      return child; // Keep unaffected nodes as is
+    })
+    .filter(Boolean) as typeof rootNode.children;
+
+  return {
+    ...rootNode,
+    children: filteredChildren, // Updated children
+    edges: filteredEdges, // Updated edges
+  };
+};
 
 const nonfilteredNodeTypes = [WORKFLOW_NODE_TYPES.SCOPE_CARD_NODE, WORKFLOW_NODE_TYPES.SUBGRAPH_CARD_NODE];
 const filterOutGraphChildren = (children: WorkflowNode[]) => children?.filter((child) => nonfilteredNodeTypes.includes(child.type));
