@@ -21,7 +21,7 @@ export const EditorCommandBar = (_props: EditorCommandBarProps) => {
   const intl = useIntl();
   const dispatch = useDispatch<AppDispatch>();
 
-  const { isDirty, sourceInEditState, targetInEditState } = useSelector((state: RootState) => state.dataMap.present);
+  const { isDirty, sourceInEditState, targetInEditState, isTestDisabledForOS } = useSelector((state: RootState) => state.dataMap.present);
   const undoStack = useSelector((state: RootState) => state.dataMap.past);
   const isCodeViewOpen = useSelector((state: RootState) => state.panel.codeViewPanel.isOpen);
   const { sourceSchema, targetSchema } = useSelector((state: RootState) => state.dataMap.present.curDataMapOperation);
@@ -179,6 +179,11 @@ export const EditorCommandBar = (_props: EditorCommandBarProps) => {
         id: 'wTaSTp',
         description: 'Tooltip for disabled test button',
       }),
+      DISABLED_TEST_FOR_OS: intl.formatMessage({
+        defaultMessage: 'Test is not supported for your current operating system',
+        id: '2yCDJd',
+        description: 'Tooltip for disabled test button for the os',
+      }),
     }),
     [intl]
   );
@@ -190,11 +195,11 @@ export const EditorCommandBar = (_props: EditorCommandBarProps) => {
       save: !isDirty || sourceInEditState || targetInEditState,
       undo: undoStack.length === 0,
       discard: !isDirty,
-      test: sourceInEditState || targetInEditState || !xsltFilename,
+      test: sourceInEditState || targetInEditState || !xsltFilename || isTestDisabledForOS,
       codeView: sourceInEditState || targetInEditState,
       mapChecker: sourceInEditState || targetInEditState,
     }),
-    [isDirty, undoStack.length, sourceInEditState, targetInEditState, xsltFilename]
+    [isDirty, undoStack.length, sourceInEditState, targetInEditState, xsltFilename, isTestDisabledForOS]
   );
 
   return (
@@ -222,7 +227,7 @@ export const EditorCommandBar = (_props: EditorCommandBarProps) => {
             aria-label={Resources.OPEN_TEST_PANEL}
             icon={<PlayRegular color={disabledState.test ? undefined : tokens.colorPaletteBlueBorderActive} />}
             disabled={disabledState.test}
-            title={disabledState.test ? Resources.DISABLED_TEST : ''}
+            title={disabledState.test ? (isTestDisabledForOS ? Resources.DISABLED_TEST_FOR_OS : Resources.DISABLED_TEST) : ''}
             onClick={onTestClick}
           >
             {Resources.OPEN_TEST_PANEL}
