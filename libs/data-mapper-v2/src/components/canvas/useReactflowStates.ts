@@ -183,6 +183,7 @@ const useReactFlowStates = (props: ReactFlowStatesProps) => {
   // Update position if canvas size changes
   useEffect(() => {
     const changes: Record<string, NodeChange> = {};
+    console.log('Height: ', newHeight, '   ;;  Width: ', newWidth, '  ;; Nodes: ', nodes);
     if (newWidth !== undefined && newHeight !== undefined) {
       const currentSourceNode = nodes.find((node) => node.id === NodeIds.source);
       const currentTargetNode = nodes.find((node) => node.id === NodeIds.target);
@@ -213,6 +214,8 @@ const useReactFlowStates = (props: ReactFlowStatesProps) => {
           changes[NodeIds.source] = {
             type: 'dimensions',
             id: NodeIds.source,
+            resizing: true,
+            setAttributes: true,
             dimensions,
           };
         }
@@ -245,6 +248,8 @@ const useReactFlowStates = (props: ReactFlowStatesProps) => {
           changes[NodeIds.target] = {
             type: 'dimensions',
             id: NodeIds.target,
+            resizing: true,
+            setAttributes: true,
             dimensions,
           };
         }
