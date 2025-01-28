@@ -1,5 +1,13 @@
 import { describe, it, expect } from 'vitest';
-import { mapJsonTypeToCSharp, transformParameters } from '../../commands/workflows/unitTest/saveBlankUnitTest';
+import {
+  buildClassDefinition,
+  generateClassCode,
+  generateCSharpClasses,
+  isMockable,
+  mapJsonTypeToCSharp,
+  parseUnitTestOutputs,
+  transformParameters,
+} from '../../commands/workflows/unitTest/saveBlankUnitTest';
 
 describe('transformParameters', () => {
   it('should clean keys and retain only allowed fields', () => {
@@ -166,5 +174,142 @@ describe('mapJsonTypeToCSharp', () => {
   it('should map an unknown type to "JObject"', () => {
     const result = mapJsonTypeToCSharp('unknownType');
     expect(result).toBe('JObject');
+  });
+});
+
+// Mock data for tests
+const mockUnitTestDefinition = {
+  operationInfo: {
+    operation1: { type: 'Http' },
+    operation2: { type: 'Manual' },
+  },
+  outputParameters: {
+    operation1: {
+      outputs: {
+        'outputs.$.key1': { type: 'string', description: 'Key 1 description' },
+        'outputs.$.key2': { type: 'integer', description: 'Key 2 description' },
+      },
+    },
+    operation2: {
+      outputs: {
+        'outputs.$.key3': { type: 'boolean', description: 'Key 3 description' },
+      },
+    },
+  },
+};
+
+describe('parseUnitTestOutputs', () => {
+  it('should parse and transform output parameters correctly', async () => {
+    const result = await parseUnitTestOutputs(mockUnitTestDefinition);
+
+    expect(result.operationInfo).toEqual(mockUnitTestDefinition.operationInfo);
+    expect(result.outputParameters.operation1.outputs).toEqual({
+      Key1: { type: 'string', description: 'Key 1 description' },
+      Key2: { type: 'integer', description: 'Key 2 description' },
+    });
+    expect(result.outputParameters.operation2.outputs).toEqual({
+      Key3: { type: 'boolean', description: 'Key 3 description' },
+    });
+  });
+});
+
+describe('isMockable', () => {
+  it('should return true for mockable action types', () => {
+    expect(isMockable('Http', false)).toBe(true); // Mockable action
+    expect(isMockable('ApiManagement', false)).toBe(true); // Mockable action
+    expect(isMockable('Manual', true)).toBe(true); // Mockable trigger
+  });
+
+  it('should return false for non-mockable action types', () => {
+    expect(isMockable('NonMockableType', false)).toBe(false);
+    expect(isMockable('AnotherType', true)).toBe(false);
+  });
+});
+
+describe('transformParameters', () => {
+  it('should clean keys and keep only allowed fields', () => {
+    const params = {
+      'outputs.$.key1': { type: 'string', description: 'Key 1 description', extraField: 'ignored' },
+      'body.$.key2': { type: 'integer', title: 'Key 2 title' },
+    };
+    const transformed = transformParameters(params);
+
+    expect(transformed).toEqual({
+      Key1: { type: 'string', description: 'Key 1 description' },
+      Body: {
+        Key2: { type: 'integer', title: 'Key 2 title' },
+      },
+    });
+  });
+});
+
+describe('buildClassDefinition', () => {
+  it('should build a class definition for an object', () => {
+    const classDef = buildClassDefinition('RootClass', {
+      type: 'object',
+      key1: { type: 'string', description: 'Key 1 description' },
+      nested: {
+        type: 'object',
+        nestedKey: { type: 'boolean', description: 'Nested key description' },
+      },
+    });
+
+    expect(classDef).toEqual({
+      className: 'RootClass',
+      description: null,
+      properties: [
+        { propertyName: 'Key1', propertyType: 'string', description: 'Key 1 description', isObject: false },
+        { propertyName: 'Nested', propertyType: 'RootClassNested', description: null, isObject: true },
+      ],
+      children: [
+        {
+          className: 'RootClassNested',
+          description: null,
+          properties: [{ propertyName: 'NestedKey', propertyType: 'bool', description: 'Nested key description', isObject: false }],
+          children: [],
+        },
+      ],
+    });
+  });
+});
+
+describe('generateCSharpClasses', () => {
+  it('should generate C# class code from a class definition', () => {
+    const classCode = generateCSharpClasses('NamespaceName', 'RootClass', {
+      type: 'object',
+      key1: { type: 'string', description: 'Key 1 description' },
+    });
+
+    expect(classCode).toContain('public class RootClass');
+    expect(classCode).toContain('public string Key1 { get; set; }');
+  });
+});
+
+describe('generateClassCode', () => {
+  it('should generate a C# class string for a class definition', () => {
+    const classDef = {
+      className: 'TestClass',
+      description: 'A test class',
+      properties: [
+        { propertyName: 'Property1', propertyType: 'string', description: 'A string property', isObject: false },
+        { propertyName: 'Property2', propertyType: 'int', description: 'An integer property', isObject: false },
+      ],
+      children: [],
+    };
+
+    const classCode = generateClassCode(classDef);
+    expect(classCode).toContain('public class TestClass');
+    expect(classCode).toContain('public string Property1 { get; set; }');
+    expect(classCode).toContain('public int Property2 { get; set; }');
+  });
+});
+
+describe('mapJsonTypeToCSharp', () => {
+  it('should map JSON types to corresponding C# types', () => {
+    expect(mapJsonTypeToCSharp('string')).toBe('string');
+    expect(mapJsonTypeToCSharp('integer')).toBe('int');
+    expect(mapJsonTypeToCSharp('boolean')).toBe('bool');
+    expect(mapJsonTypeToCSharp('array')).toBe('List<object>');
+    expect(mapJsonTypeToCSharp('object')).toBe('JObject');
   });
 });

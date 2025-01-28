@@ -90,7 +90,7 @@ export async function saveBlankUnitTest(
  * @returns {Promise<{ operationInfo: any; outputParameters: Record<string, any>; }>}
  * - A Promise that resolves to a structured object containing operation info and transformed output parameters.
  */
-async function parseUnitTestOutputs(unitTestDefinition: any): Promise<{
+export async function parseUnitTestOutputs(unitTestDefinition: any): Promise<{
   operationInfo: any;
   outputParameters: Record<string, any>;
 }> {
@@ -247,7 +247,7 @@ const mockableTriggerTypes = new Set<string>(['HttpWebhook', 'Request', 'Manual'
  * @param isTrigger - Whether the operation is a trigger.
  * @returns True if the operation is mockable, false otherwise.
  */
-function isMockable(type: string, isTrigger: boolean): boolean {
+export function isMockable(type: string, isTrigger: boolean): boolean {
   return isTrigger ? mockableTriggerTypes.has(type) : mockableActionTypes.has(type);
 }
 
@@ -316,16 +316,28 @@ export async function processAndWriteMockableOperations(
   unitTestFolderPath: string,
   logicAppName: string
 ): Promise<void> {
+  // Keep track of all operation IDs we've processed to avoid duplicates
+  const processedOperationIds = new Set<string>();
+
   for (const operationName in operationInfo) {
     const operation = operationInfo[operationName];
     const type = operation.type;
+
+    //edge cases where operationId might be absent
+    const operationId = operation.operationId ?? operationName;
+
+    // If we've already processed this operation ID, skip to the next
+    if (processedOperationIds.has(operationId)) {
+      continue;
+    }
+    processedOperationIds.add(operationId);
 
     // For triggers, check if it's one of these types:
     const isTrigger = ['HttpWebhook', 'Request', 'Manual', 'ApiConnectionWebhook'].includes(type);
 
     // Only proceed if this operation type is mockable
     if (isMockable(type, isTrigger)) {
-      const cleanedOperationName = removeInvalidCharacters(operationName);
+      const cleanedOperationName = removeInvalidCharacters(operationId);
       const className = toPascalCase(cleanedOperationName);
 
       // Transform the output parameters for this operation
@@ -354,7 +366,7 @@ export async function processAndWriteMockableOperations(
  * @param {any} outputs - The outputs object containing properties to include in the class.
  * @returns {string} - The generated C# class definition.
  */
-function generateCSharpClasses(namespaceName: string, rootClassName: string, data: any): string {
+export function generateCSharpClasses(namespaceName: string, rootClassName: string, data: any): string {
   // 1) Build a root class definition (the entire data is assumed to be an object).
   //    If data isn't type "object", you might want special handling, but typically
   //    transformParameters() yields an object at the top level.
@@ -410,7 +422,7 @@ function generateCSharpClasses(namespaceName: string, rootClassName: string, dat
  * @param {ClassDefinition} classDef - The definition of the class to generate.
  * @returns {string} - The C# code for this class (including any nested classes), as a string.
  */
-function generateClassCode(classDef: ClassDefinition): string {
+export function generateClassCode(classDef: ClassDefinition): string {
   const sb: string[] = [];
 
   // Optionally, include a class-level doc-comment if the classDef has a description
@@ -508,7 +520,7 @@ interface PropertyDefinition {
  * @param {any}    node      - The node in the JSON structure containing .type, .description, and subfields.
  * @returns {ClassDefinition} - A class definition describing the current node and its children.
  */
-function buildClassDefinition(className: string, node: any): ClassDefinition {
+export function buildClassDefinition(className: string, node: any): ClassDefinition {
   // If there's a top-level "description" for the object, store it here:
   const classDescription = node.description ? String(node.description) : null;
 
