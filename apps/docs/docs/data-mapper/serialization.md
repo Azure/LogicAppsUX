@@ -13,3 +13,5 @@ The process of converting the format used to represent the visual map canvas to 
 
 ### applyValueAtPath
 - goes from the target connection passed, and using 'pathToRoot', adding all loops and conditionals to the path
+- modifies var mapDefinition
+- still unordered at this point

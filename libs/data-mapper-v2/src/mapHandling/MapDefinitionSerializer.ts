@@ -77,6 +77,7 @@ export const createYamlFromMap = (mapDefinition: MapDefinitionEntry, targetSchem
     .dump(mapDefinition, {
       replacer: yamlReplacer,
       noRefs: true,
+      noArrayIndent: true,
       sortKeys: (keyA, keyB) => sortMapDefinition(keyA, keyB, targetSchemaSortArray, mapDefinition), // danielle pass map definition here to sort
     })
     .replaceAll(/'"|"'/g, '"');

@@ -26,9 +26,6 @@ import {
   playgroundTargetSchema,
 } from '../../__mocks__/schemas';
 import { describe, vi, beforeEach, afterEach, beforeAll, afterAll, it, test, expect } from 'vitest';
-import { AddRegular } from '@fluentui/react-icons';
-import { SchemaDefinition } from 'js-yaml';
-import { create } from 'domain';
 import { createSchemaToSchemaNodeConnection } from './MapHandlingTestUtilis';
 describe('mapDefinitions/MapDefinitionSerializer', () => {
   describe('XML to XML', () => {
