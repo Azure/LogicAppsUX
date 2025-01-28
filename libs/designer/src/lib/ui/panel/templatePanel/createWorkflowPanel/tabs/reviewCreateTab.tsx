@@ -158,7 +158,7 @@ export const reviewCreateTab = (
     errorMessage,
     isPrimaryButtonDisabled,
     previousTabId,
-    templateNameLocked,
+    isTemplateNameLocked,
   }: {
     errorMessage: string | undefined;
     isPrimaryButtonDisabled: boolean;
@@ -215,6 +215,6 @@ export const reviewCreateTab = (
         }
       }
     },
-    secondaryButtonDisabled: isCreating || (!previousTabId && templateNameLocked),
+    secondaryButtonDisabled: isCreating || (!previousTabId && isTemplateNameLocked),
   },
 });

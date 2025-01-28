@@ -32,7 +32,7 @@ export const useCreateWorkflowPanelTabs = ({
     existingWorkflowName,
     selectedTabId,
     templateName,
-    templateNameLocked,
+    isTemplateNameLocked,
     workflowAppName,
     isConsumption,
     parameterDefinitions,
@@ -46,7 +46,7 @@ export const useCreateWorkflowPanelTabs = ({
     isConsumption: state.workflow.isConsumption,
     selectedTabId: state.panel.selectedTabId,
     templateName: state.template.templateName,
-    templateNameLocked: state.template.templateNameLocked,
+    isTemplateNameLocked: state.template.isTemplateNameLocked,
     parameterDefinitions: state.template.parameterDefinitions,
     errors: state.template.errors,
     templateConnections: state.template.connections,
@@ -166,10 +166,10 @@ export const useCreateWorkflowPanelTabs = ({
             : Constants.TEMPLATE_PANEL_TAB_NAMES.REVIEW_AND_CREATE,
         hasError: Object.values(workflows).some((workflowData) => workflowData.errors.kind || workflowData.errors.workflow),
         isCreating,
-        templateNameLocked,
+        isTemplateNameLocked,
       }),
     }),
-    [intl, dispatch, isMultiWorkflowTemplate, connectionsExist, parametersExist, workflows, isCreating, templateNameLocked]
+    [intl, dispatch, isMultiWorkflowTemplate, connectionsExist, parametersExist, workflows, isCreating, isTemplateNameLocked]
   );
 
   const connectionsTabItem = useMemo(
@@ -180,10 +180,10 @@ export const useCreateWorkflowPanelTabs = ({
         nextTabId: parametersExist ? Constants.TEMPLATE_PANEL_TAB_NAMES.PARAMETERS : Constants.TEMPLATE_PANEL_TAB_NAMES.REVIEW_AND_CREATE,
         hasError: !!connectionsError,
         isCreating,
-        templateNameLocked,
+        isTemplateNameLocked,
       }),
     }),
-    [intl, dispatch, isMultiWorkflowTemplate, isConsumption, isCreating, connectionsError, parametersExist]
+    [intl, dispatch, isMultiWorkflowTemplate, isConsumption, isCreating, connectionsError, parametersExist, isTemplateNameLocked]
   );
 
   const parametersTabItem = useMemo(
@@ -197,10 +197,19 @@ export const useCreateWorkflowPanelTabs = ({
             : Constants.TEMPLATE_PANEL_TAB_NAMES.BASIC,
         hasError: hasParametersValidationErrors,
         isCreating,
-        templateNameLocked,
+        isTemplateNameLocked,
       }),
     }),
-    [intl, dispatch, isMultiWorkflowTemplate, isConsumption, isCreating, hasParametersValidationErrors, connectionsExist]
+    [
+      intl,
+      dispatch,
+      isMultiWorkflowTemplate,
+      isConsumption,
+      isCreating,
+      hasParametersValidationErrors,
+      connectionsExist,
+      isTemplateNameLocked,
+    ]
   );
 
   const reviewCreateTabItem = useMemo(
@@ -218,7 +227,7 @@ export const useCreateWorkflowPanelTabs = ({
             : isConsumption
               ? undefined
               : Constants.TEMPLATE_PANEL_TAB_NAMES.BASIC,
-        templateNameLocked,
+        isTemplateNameLocked,
       }),
     }),
     [
@@ -234,6 +243,7 @@ export const useCreateWorkflowPanelTabs = ({
       hasParametersValidationErrors,
       parametersExist,
       connectionsExist,
+      isTemplateNameLocked,
     ]
   );
 

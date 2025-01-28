@@ -20,7 +20,7 @@ export interface CreateWorkflowTabProps {
   nextTabId?: string;
   hasError: boolean;
   shouldClearDetails: boolean;
-  templateNameLocked?: boolean;
+  isTemplateNameLocked?: boolean;
 }
 
 export interface CreateWorkflowPanelProps {
@@ -38,12 +38,12 @@ export const CreateWorkflowPanel = ({ createWorkflow, onClose, clearDetailsOnClo
   const dispatch = useDispatch<AppDispatch>();
   const intl = useIntl();
   const { refetch: refetchWorkflowNames } = useExistingWorkflowNames();
-  const { selectedTabId, manifest, isOpen, currentPanelView, templateNameLocked } = useSelector((state: RootState) => ({
+  const { selectedTabId, manifest, isOpen, currentPanelView, isTemplateNameLocked } = useSelector((state: RootState) => ({
     selectedTabId: state.panel.selectedTabId,
     manifest: state.template.manifest,
     isOpen: state.panel.isOpen,
     currentPanelView: state.panel.currentPanelView,
-    templateNameLocked: state.template.templateNameLocked,
+    isTemplateNameLocked: state.template.isTemplateNameLocked,
   }));
   const isMultiWorkflow = useMemo(() => !!manifest && isMultiWorkflowTemplate(manifest), [manifest]);
 
@@ -71,7 +71,7 @@ export const CreateWorkflowPanel = ({ createWorkflow, onClose, clearDetailsOnClo
   };
 
   const dismissPanel = useCallback(() => {
-    if (templateNameLocked) {
+    if (isTemplateNameLocked) {
       return;
     }
 
@@ -82,7 +82,7 @@ export const CreateWorkflowPanel = ({ createWorkflow, onClose, clearDetailsOnClo
     }
 
     onClose?.();
-  }, [clearDetailsOnClose, dispatch, onClose]);
+  }, [isTemplateNameLocked, clearDetailsOnClose, dispatch, onClose]);
 
   const onRenderHeaderContent = useCallback(
     () => (
@@ -109,7 +109,7 @@ export const CreateWorkflowPanel = ({ createWorkflow, onClose, clearDetailsOnClo
       customWidth={'50%'}
       isOpen={isOpen && currentPanelView === TemplatePanelView.CreateWorkflow}
       onDismiss={dismissPanel}
-      hasCloseButton={!templateNameLocked}
+      hasCloseButton={!isTemplateNameLocked}
       onRenderHeader={onRenderHeaderContent}
       onRenderFooterContent={onRenderFooterContent}
       layerProps={layerProps}

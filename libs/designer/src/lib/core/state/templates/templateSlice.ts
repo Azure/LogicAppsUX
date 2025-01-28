@@ -5,7 +5,7 @@ import { getCurrentWorkflowNames, validateConnectionsValue, validateParameterVal
 import { initializeTemplateServices, loadTemplate, validateWorkflowName, type TemplatePayload } from '../../actions/bjsworkflow/templates';
 
 export interface TemplateState extends TemplatePayload {
-  templateNameLocked?: boolean;
+  isTemplateNameLocked?: boolean;
   templateName?: string;
   servicesInitialized: boolean;
 }
@@ -31,7 +31,7 @@ export const templateSlice = createSlice({
     },
     lockTemplate: (state, action: PayloadAction<string>) => {
       state.templateName = action.payload;
-      state.templateNameLocked = true;
+      state.isTemplateNameLocked = true;
     },
     updateWorkflowName: (state, action: PayloadAction<{ id: string; name: string | undefined }>) => {
       const { id, name } = action.payload;
