@@ -191,14 +191,14 @@ export const BlankWorkflowTemplateCard = () => {
     }),
   };
 
-  const onBlankWorkflowClick = () => {
+  const onBlankWorkflowClick = async () => {
     LoggerService().log({
       level: LogEntryLevel.Trace,
       area: 'Templates.TemplateCard.Blank',
       message: 'Blank workflow is selected',
       args: [workflowAppName],
     });
-    TemplateService()?.onAddBlankWorkflow();
+    await TemplateService()?.onAddBlankWorkflow();
   };
 
   return (
