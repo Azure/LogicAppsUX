@@ -213,6 +213,8 @@ const useReactFlowStates = (props: ReactFlowStatesProps) => {
           changes[NodeIds.source] = {
             type: 'dimensions',
             id: NodeIds.source,
+            resizing: true,
+            setAttributes: true,
             dimensions,
           };
         }
@@ -245,6 +247,8 @@ const useReactFlowStates = (props: ReactFlowStatesProps) => {
           changes[NodeIds.target] = {
             type: 'dimensions',
             id: NodeIds.target,
+            resizing: true,
+            setAttributes: true,
             dimensions,
           };
         }
