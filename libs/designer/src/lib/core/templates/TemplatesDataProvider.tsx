@@ -45,9 +45,7 @@ const DataProviderInner = ({
   children,
 }: TemplatesDataProviderProps) => {
   const dispatch = useDispatch<AppDispatch>();
-  const { githubTemplateNames, filteredTemplateNames, availableTemplates, customTemplateNames, filters } = useSelector(
-    (state: RootState) => state?.manifest
-  );
+  const { githubTemplateNames, availableTemplates, filters } = useSelector((state: RootState) => state?.manifest);
   const { isTemplateNameLocked } = useSelector((state: RootState) => state.template);
 
   useEffect(() => {
@@ -86,20 +84,18 @@ const DataProviderInner = ({
   }, [dispatch, existingWorkflowName]);
 
   useEffect(() => {
-    if (viewTemplate?.templateName && filteredTemplateNames?.includes(viewTemplate.templateName) && !isTemplateNameLocked) {
+    if (viewTemplate?.templateName && githubTemplateNames?.includes(viewTemplate.templateName) && !isTemplateNameLocked) {
       const templateManifest = availableTemplates?.[viewTemplate.templateName];
       if (templateManifest) {
         dispatch(lockTemplate(viewTemplate.templateName));
-        dispatch(
-          loadTemplate({ preLoadedManifest: templateManifest, isCustomTemplate: customTemplateNames?.includes(viewTemplate.templateName) })
-        );
+        dispatch(loadTemplate({ preLoadedManifest: templateManifest, isCustomTemplate: false }));
 
         if (Object.keys(templateManifest?.workflows ?? {}).length === 0) {
           dispatch(openCreateWorkflowPanelView());
         }
       }
     }
-  }, [dispatch, availableTemplates, viewTemplate, isTemplateNameLocked, filteredTemplateNames, customTemplateNames]);
+  }, [dispatch, availableTemplates, viewTemplate, isTemplateNameLocked, githubTemplateNames]);
 
   return <>{children}</>;
 };
