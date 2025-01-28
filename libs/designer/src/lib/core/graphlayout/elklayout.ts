@@ -216,7 +216,6 @@ export const useLayout = (): [Node[], Edge[], number[]] => {
             area: 'useLayout',
             error: err,
             message: `${err?.message} - ${graphAsString}`,
-            traceId: traceId,
           });
         });
     },
