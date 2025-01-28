@@ -3,7 +3,7 @@ import { FontSizes } from '@fluentui/theme';
 import { useCardKeyboardInteraction } from '../card/hooks';
 import { useIntl } from 'react-intl';
 
-interface NodeCollapseToggleProps {
+export interface NodeCollapseToggleProps {
   disabled?: boolean;
   collapsed?: boolean;
   onSmallCard?: boolean;
