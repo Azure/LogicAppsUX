@@ -19,8 +19,10 @@ import {
 import { useAreServicesInitialized } from '../state/templates/templateselectors';
 import type { ConnectionReferences } from '../../common/models/workflow';
 import { getFilteredTemplates } from './utils/helper';
-import { initializeTemplateServices } from '../actions/bjsworkflow/templates';
+import { initializeTemplateServices, loadTemplate } from '../actions/bjsworkflow/templates';
 import type { Template } from '@microsoft/logic-apps-shared';
+import { lockTemplate } from '../state/templates/templateSlice';
+import { openCreateWorkflowPanelView } from '../state/templates/panelSlice';
 
 export interface TemplatesDataProviderProps {
   isConsumption: boolean | undefined;
@@ -29,12 +31,24 @@ export interface TemplatesDataProviderProps {
   services: TemplateServiceOptions;
   connectionReferences: ConnectionReferences;
   customTemplates?: Record<string, Template.Manifest>;
+  viewTemplate?: {
+    templateName: string;
+  };
   children?: React.ReactNode;
 }
 
-const DataProviderInner = ({ customTemplates, isConsumption, existingWorkflowName, children }: TemplatesDataProviderProps) => {
+const DataProviderInner = ({
+  customTemplates,
+  isConsumption,
+  existingWorkflowName,
+  viewTemplate,
+  children,
+}: TemplatesDataProviderProps) => {
   const dispatch = useDispatch<AppDispatch>();
-  const { githubTemplateNames, availableTemplates, filters } = useSelector((state: RootState) => state?.manifest);
+  const { githubTemplateNames, filteredTemplateNames, availableTemplates, customTemplateNames, filters } = useSelector(
+    (state: RootState) => state?.manifest
+  );
+  const { isTemplateNameLocked } = useSelector((state: RootState) => state.template);
 
   useEffect(() => {
     dispatch(loadGithubManifestNames());
@@ -70,6 +84,22 @@ const DataProviderInner = ({ customTemplates, isConsumption, existingWorkflowNam
       dispatch(setExistingWorkflowName(existingWorkflowName));
     }
   }, [dispatch, existingWorkflowName]);
+
+  useEffect(() => {
+    if (viewTemplate?.templateName && filteredTemplateNames?.includes(viewTemplate.templateName) && !isTemplateNameLocked) {
+      const templateManifest = availableTemplates?.[viewTemplate.templateName];
+      if (templateManifest) {
+        dispatch(lockTemplate(viewTemplate.templateName));
+        dispatch(
+          loadTemplate({ preLoadedManifest: templateManifest, isCustomTemplate: customTemplateNames?.includes(viewTemplate.templateName) })
+        );
+
+        if (Object.keys(templateManifest?.workflows ?? {}).length === 0) {
+          dispatch(openCreateWorkflowPanelView());
+        }
+      }
+    }
+  }, [dispatch, availableTemplates, viewTemplate, isTemplateNameLocked, filteredTemplateNames, customTemplateNames]);
 
   return <>{children}</>;
 };

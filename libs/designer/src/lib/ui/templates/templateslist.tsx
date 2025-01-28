@@ -5,45 +5,23 @@ import { EmptySearch, Pager } from '@microsoft/designer-ui';
 import { Text } from '@fluentui/react-components';
 import { useIntl } from 'react-intl';
 import { TemplateFilters } from './filters/templateFilters';
-import { useEffect, useState } from 'react';
+import { useEffect } from 'react';
 import { setLayerHostSelector } from '@fluentui/react';
 import type { TemplatesDesignerProps } from './TemplatesDesigner';
 import { setPageNum, templatesCountPerPage } from '../../core/state/templates/manifestSlice';
 import { QuickViewPanel } from '../panel/templatePanel/quickViewPanel/quickViewPanel';
 import { CreateWorkflowPanel } from '../panel/templatePanel/createWorkflowPanel/createWorkflowPanel';
-import { lockTemplate } from '../../core/state/templates/templateSlice';
-import { openCreateWorkflowPanelView } from '../../core/state/templates/panelSlice';
-import { loadTemplate } from '../../core/actions/bjsworkflow/templates';
 
-export const TemplatesList = ({ detailFilters, createWorkflowCall, viewTemplate }: TemplatesDesignerProps) => {
+export const TemplatesList = ({ detailFilters, createWorkflowCall }: TemplatesDesignerProps) => {
   useEffect(() => setLayerHostSelector('#msla-layer-host'), []);
   const intl = useIntl();
   const dispatch = useDispatch<AppDispatch>();
-
-  const [locked, setLocked] = useState(false);
-
   const { templateName, workflows } = useSelector((state: RootState) => state.template);
   const {
-    availableTemplates,
     filteredTemplateNames,
     filters: { pageNum, detailFilters: appliedDetailFilters },
   } = useSelector((state: RootState) => state.manifest);
   const selectedTabId = appliedDetailFilters?.Type?.[0]?.value;
-
-  useEffect(() => {
-    if (viewTemplate?.templateName && filteredTemplateNames?.includes(viewTemplate.templateName)) {
-      const templateManifest = availableTemplates?.[viewTemplate.templateName];
-      if (templateManifest && !locked) {
-        setLocked(true);
-        dispatch(lockTemplate(viewTemplate.templateName));
-        dispatch(loadTemplate({ preLoadedManifest: templateManifest }));
-
-        if (Object.keys(templateManifest?.workflows ?? {}).length === 0) {
-          dispatch(openCreateWorkflowPanelView());
-        }
-      }
-    }
-  }, [dispatch, availableTemplates, viewTemplate, filteredTemplateNames]);
 
   const intlText = {
     NO_RESULTS: intl.formatMessage({

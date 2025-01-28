@@ -22,7 +22,7 @@ export interface TemplatesDesignerProps {
   detailFilters: TemplateDetailFilterType;
   createWorkflowCall: CreateWorkflowHandler;
   viewTemplate?: {
-    templateName?: string;
+    templateName: string;
   };
 }
 
