@@ -1,0 +1,57 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`lib/nodeCollapseToggle > should render collapsed 1`] = `
+<StyledTooltipHostBase
+  content="Expand"
+  directionalHint={12}
+>
+  <button
+    aria-label="Expand"
+    className="msla-collapse-toggle"
+    data-automation-id="nodeId-collapse-toggle"
+    disabled={false}
+    onClick={[Function]}
+    onKeyDown={[Function]}
+    onKeyUp={[Function]}
+  >
+    <Memo(Icon)
+      iconName="ChevronDown"
+      styles={
+        {
+          "root": {
+            "fontSize": "12px",
+          },
+        }
+      }
+    />
+  </button>
+</StyledTooltipHostBase>
+`;
+
+exports[`lib/nodeCollapseToggle > should render expanded 1`] = `
+<StyledTooltipHostBase
+  content="Collapse"
+  directionalHint={12}
+>
+  <button
+    aria-label="Collapse"
+    className="msla-collapse-toggle"
+    data-automation-id="nodeId-collapse-toggle"
+    disabled={false}
+    onClick={[Function]}
+    onKeyDown={[Function]}
+    onKeyUp={[Function]}
+  >
+    <Memo(Icon)
+      iconName="ChevronUp"
+      styles={
+        {
+          "root": {
+            "fontSize": "12px",
+          },
+        }
+      }
+    />
+  </button>
+</StyledTooltipHostBase>
+`;

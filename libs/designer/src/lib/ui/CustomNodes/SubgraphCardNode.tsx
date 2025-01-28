@@ -79,9 +79,12 @@ const SubgraphCardNode = ({ targetPosition = Position.Top, sourcePosition = Posi
   );
 
   const graphCollapsed = useIsGraphCollapsed(subgraphId);
-  const handleGraphCollapse = useCallback(() => {
-    dispatch(toggleCollapsedGraphId(subgraphId));
-  }, [dispatch, subgraphId]);
+  const handleGraphCollapse = useCallback(
+    (includeNested?: boolean) => {
+      dispatch(toggleCollapsedGraphId({ id: subgraphId, includeNested }));
+    },
+    [dispatch, subgraphId]
+  );
 
   const showEmptyGraphComponents = isLeaf && !graphCollapsed && !isAddCase;
 

@@ -17,7 +17,7 @@ interface SubgraphCardProps {
   title: string;
   subgraphType: SubgraphType;
   collapsed?: boolean;
-  handleCollapse?: () => void;
+  handleCollapse?: (includeNested?: boolean) => void;
   selectionMode?: CardProps['selectionMode'];
   readOnly?: boolean;
   onClick?(id?: string): void;
@@ -179,7 +179,8 @@ export const SubgraphCard: React.FC<SubgraphCardProps> = ({
           aria-label={cardAltText}
           className={css('msla-subgraph-card', data.size)}
           style={colorVars}
-          onClick={handleCollapse}
+          onClick={(e) => handleCollapse?.(e.shiftKey)}
+          onContextMenu={onContextMenu}
           onKeyDown={collapseKeyboardInteraction.keyUp}
           onKeyUp={collapseKeyboardInteraction.keyDown}
           data-automation-id={`${id}-collapse-toggle-small`}

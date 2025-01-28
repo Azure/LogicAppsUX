@@ -155,9 +155,12 @@ const ScopeCardNode = ({ data, targetPosition = Position.Top, sourcePosition = P
   }, [dispatch, scopeId]);
 
   const graphCollapsed = useIsGraphCollapsed(scopeId);
-  const handleGraphCollapse = useCallback(() => {
-    dispatch(toggleCollapsedGraphId(scopeId));
-  }, [dispatch, scopeId]);
+  const handleGraphCollapse = useCallback(
+    (includeNested?: boolean) => {
+      dispatch(toggleCollapsedGraphId({ id: scopeId, includeNested }));
+    },
+    [dispatch, scopeId]
+  );
 
   const deleteClick = useCallback(() => {
     dispatch(setShowDeleteModalNodeId(scopeId));
