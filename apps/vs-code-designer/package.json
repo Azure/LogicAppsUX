@@ -40,7 +40,11 @@
     "uuid": "^10.0.0",
     "vscode-nls": "^5.2.0",
     "xml2js": "0.6.2",
-    "yargs-parser": "21.1.1"
+    "yargs-parser": "21.1.1",
+    "@types/chai": "^4.3.16",
+    "chai": "^4.5.0",
+    "mocha": "^11.1.0",
+    "vscode-extension-tester": "^8.11.0"
   },
   "private": true,
   "scripts": {
@@ -50,6 +54,8 @@
     "vscode:designer:pack:step1": "cd ./dist && npm install",
     "vscode:designer:pack:step2": "cd ./dist && vsce package",
     "lint": "eslint . --ext ts,tsx --report-unused-disable-directives --max-warnings 0",
-    "test:extension-unit": "vitest run --retry=3"
+    "test:extension-unit": "vitest run --retry=3",
+    "e2e-setup": "extest get-chromedriver",
+    "ui-test": "extest run-tests dist/e2e/*.test.js"
   }
 }
