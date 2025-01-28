@@ -1,4 +1,4 @@
-import { dataMapperVersionSetting, defaultDataMapperVersion, extensionCommand, Platform } from '../../../constants';
+import { dataMapperVersionSetting, defaultDataMapperVersion, extensionCommand, Platform, vscodeFolderName } from '../../../constants';
 import { ext } from '../../../extensionVariables';
 import { localize } from '../../../localize';
 import { getWebViewHTML } from '../../utils/codeless/getWebViewHTML';
@@ -537,9 +537,9 @@ export default class DataMapperPanel {
     const projectPath = ext.logicAppWorkspace;
     let vscodeFolderPath = '';
     if (this.dataMapVersion === 2) {
-      vscodeFolderPath = path.join(projectPath, '.vscode', `${this.dataMapName}DataMapMetadata-v2.json`);
+      vscodeFolderPath = path.join(projectPath, vscodeFolderName, `${this.dataMapName}DataMapMetadata-v2.json`);
     } else {
-      vscodeFolderPath = path.join(projectPath, '.vscode', `${this.dataMapName}DataMapMetadata.json`);
+      vscodeFolderPath = path.join(projectPath, vscodeFolderName, `${this.dataMapName}DataMapMetadata.json`);
     }
     return vscodeFolderPath;
   }

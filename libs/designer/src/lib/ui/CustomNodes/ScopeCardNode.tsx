@@ -334,7 +334,7 @@ const ScopeCardNode = ({ data, targetPosition = Position.Top, sourcePosition = P
             setFocus={shouldFocus}
             nodeIndex={nodeIndex}
           />
-          {showCopyCallout ? <CopyTooltip targetRef={rootRef} hideTooltip={clearCopyCallout} /> : null}
+          {showCopyCallout ? <CopyTooltip id={scopeId} targetRef={rootRef} hideTooltip={clearCopyCallout} /> : null}
           {normalizedType === constants.NODE.TYPE.FOREACH && isMonitoringView ? renderLoopsPager : null}
           <Handle className="node-handle bottom" type="source" position={sourcePosition} isConnectable={false} />
         </div>
