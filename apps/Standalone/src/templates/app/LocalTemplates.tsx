@@ -205,7 +205,8 @@ const getServices = (isConsumption: boolean, getLocalResource: (resourcePath: st
           window.alert('Open blade after create, consumption creation is complete');
         },
         onAddBlankWorkflow: async () => {
-          console.log('On add blank workflow click');
+          await new Promise((resolve) => setTimeout(resolve, 1000));
+          window.alert('On Blank Workflow Click');
         },
         getCustomResource: getLocalResource,
       })
@@ -221,7 +222,7 @@ const getServices = (isConsumption: boolean, getLocalResource: (resourcePath: st
           window.alert(`Open blade after create, workflowName is: ${workflowName}`);
         },
         onAddBlankWorkflow: () => {
-          console.log('On add blank workflow click');
+          window.alert('On Blank Workflow Click');
         },
         getCustomResource: getLocalResource,
       });
