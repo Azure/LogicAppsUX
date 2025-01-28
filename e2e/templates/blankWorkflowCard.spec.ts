@@ -13,7 +13,6 @@ test.describe(
       await page.getByText('Blank workflow', { exact: true }).click();
 
       page.once('dialog', (dialog) => {
-        console.log(`Dialog message: ${dialog.message()}`);
         expect(dialog.message()).toBe('On Blank Workflow Click');
 
         dialog.dismiss().catch(() => {});
@@ -28,7 +27,6 @@ test.describe(
       await page.getByText('Blank workflow', { exact: true }).click();
 
       page.once('dialog', (dialog) => {
-        console.log(`Dialog message: ${dialog.message()}`);
         expect(dialog.message()).toBe('On Blank Workflow Click');
 
         dialog.dismiss().catch(() => {});
