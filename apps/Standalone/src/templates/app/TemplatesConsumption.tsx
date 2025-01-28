@@ -244,6 +244,7 @@ export const TemplatesConsumption = () => {
               },
             }}
             createWorkflowCall={createWorkflowCall}
+            isWorkflowEmpty={isWorkflowEmpty}
           />
         </div>
       </TemplatesDataProvider>
