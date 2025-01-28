@@ -7,7 +7,7 @@ interface NodeCollapseToggleProps {
   disabled?: boolean;
   collapsed?: boolean;
   onSmallCard?: boolean;
-  handleCollapse?: () => void;
+  handleCollapse?: (includeNested?: boolean) => void;
   tabIndex?: number;
   id: string;
 }
@@ -39,7 +39,7 @@ const NodeCollapseToggle = (props: NodeCollapseToggleProps) => {
         aria-label={toggleText}
         disabled={disabled}
         className={css('msla-collapse-toggle', disabled && 'disabled', onSmallCard && 'small')}
-        onClick={handleCollapse}
+        onClick={(e) => handleCollapse?.(e.shiftKey)}
         onKeyDown={keyboardInteraction.keyDown}
         onKeyUp={keyboardInteraction.keyUp}
         tabIndex={disabled ? -1 : tabIndex}
