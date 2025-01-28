@@ -6,7 +6,7 @@ import { store as dataMapperStore } from './dataMapperV1/state/Store';
 import { store as templateStore } from './templates/state/Store';
 import { DataMapperStandaloneDesignerV1 } from './dataMapperV1/app/DataMapperStandaloneDesignerV1';
 import { DataMapperStandaloneDesignerV2 } from './dataMapperV1/app/DataMapperStandaloneDesignerV2';
-import { TemplatesWrapper } from './templates/app/TemplatesDesignerShell';
+import { TemplatesWrapper } from './templates/app/TemplatesShell';
 
 export const App = () => {
   return (
