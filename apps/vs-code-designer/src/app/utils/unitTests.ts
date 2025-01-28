@@ -535,3 +535,12 @@ export async function ensureCsprojAndNugetFiles(testsDirectory: string, logicApp
   }
   await createNugetConfigFile(nugetConfigFilePath);
 }
+
+/**
+ * Removes invalid characters (e.g., (), -, etc.) from a string.
+ * @param {string} str - The input string.
+ * @returns {string} - The cleaned string with invalid characters removed.
+ */
+export function removeInvalidCharacters(str: string): string {
+  return str.replace(/[^a-zA-Z0-9_]/g, '');
+}

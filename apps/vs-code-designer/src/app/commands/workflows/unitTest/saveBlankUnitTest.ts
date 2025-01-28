@@ -12,6 +12,7 @@ import {
   logSuccess,
   logTelemetry,
   promptForUnitTestName,
+  removeInvalidCharacters,
   selectWorkflowNode,
 } from '../../../utils/unitTests';
 import { tryGetLogicAppProjectRoot } from '../../../utils/verifyIsProject';
@@ -324,7 +325,8 @@ export async function processAndWriteMockableOperations(
 
     // Only proceed if this operation type is mockable
     if (isMockable(type, isTrigger)) {
-      const className = toPascalCase(operationName);
+      const cleanedOperationName = removeInvalidCharacters(operationName);
+      const className = toPascalCase(cleanedOperationName);
 
       // Transform the output parameters for this operation
       const outputs = transformParameters(outputParameters[operationName]?.outputs || {});
