@@ -24,15 +24,17 @@ const CollapsedNode = ({ targetPosition = Position.Top, sourcePosition = Positio
     [dispatch, id]
   );
 
+  const actionCount = 4;
+
   return (
     <div
       style={{
         width: 200,
-        height: 100,
+        height: 75,
       }}
     >
       <Handle className="node-handle top" type="target" position={targetPosition} isConnectable={false} />
-      <CollapsedCard id="testId" onContextMenu={onContextMenu} />
+      <CollapsedCard id="testId" onContextMenu={onContextMenu} actionCount={actionCount} />
       <Handle className="node-handle bottom" type="source" position={sourcePosition} isConnectable={false} />
     </div>
   );

@@ -44,18 +44,24 @@ export const getRootWorkflowGraphForLayout = createSelector(getWorkflowState, (d
     return undefined;
   }
 
-  if (Object.keys(collapsedActionsIds).length !== 0) {
-    return getCollapsedGraph(collapsedActionsIds, rootNode);
-  }
-  if (Object.keys(collapsedIds).length === 0) {
+  if (Object.keys(collapsedIds).length === 0 && Object.keys(collapsedActionsIds).length === 0) {
     return rootNode;
   }
 
-  const newGraph = {
-    ...rootNode,
-    children: reduceCollapsed((node: WorkflowNode) => getRecordEntry(collapsedIds, node.id))(rootNode.children ?? []),
-  };
+  let newGraph = rootNode;
 
+  if (Object.keys(collapsedActionsIds).length !== 0) {
+    newGraph = getCollapsedGraph(collapsedActionsIds, newGraph);
+  }
+
+  if (Object.keys(collapsedIds).length !== 0) {
+    newGraph = {
+      ...newGraph,
+      children: reduceCollapsed((node: WorkflowNode) => getRecordEntry(collapsedIds, node.id))(newGraph.children ?? []),
+    };
+  }
+
+  console.log('charlie', newGraph);
   return newGraph;
 });
 
