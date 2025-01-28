@@ -221,7 +221,7 @@ const getServices = (isConsumption: boolean, getLocalResource: (resourcePath: st
         openBladeAfterCreate: (workflowName: string | undefined) => {
           window.alert(`Open blade after create, workflowName is: ${workflowName}`);
         },
-        onAddBlankWorkflow: () => {
+        onAddBlankWorkflow: async () => {
           window.alert('On Blank Workflow Click');
         },
         getCustomResource: getLocalResource,

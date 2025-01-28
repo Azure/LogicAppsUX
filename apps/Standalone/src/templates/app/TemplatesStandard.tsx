@@ -344,7 +344,7 @@ const getServices = (
     openBladeAfterCreate: (workflowName: string | undefined) => {
       window.alert(`Open blade after create, workflowName is: ${workflowName}`);
     },
-    onAddBlankWorkflow: () => {
+    onAddBlankWorkflow: async () => {
       console.log('On add blank workflow click');
     },
   });
