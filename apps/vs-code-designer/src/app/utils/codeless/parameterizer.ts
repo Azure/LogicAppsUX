@@ -1,4 +1,9 @@
-import { workflowLocationKey, workflowSubscriptionIdKey, workflowResourceGroupNameKey } from '../../../constants';
+import {
+  workflowLocationKey,
+  workflowSubscriptionIdKey,
+  workflowResourceGroupNameKey,
+  customConnectorResourceGroupNameKey,
+} from '../../../constants';
 import { isEmptyString } from '@microsoft/logic-apps-shared';
 import type {
   ConnectionReferenceModel,
@@ -17,6 +22,7 @@ const SUBSCRIPTION_INDEX = 2;
  */
 const MANAGED_API_LOCATION_INDEX = 6;
 const MANAGED_CONNECTION_RESOURCE_GROUP_INDEX = 4;
+const MANAGED_CONNECTION_CUSTOM_CONNECTOR_RESOURCE_GROUP = 4;
 
 /**
  * Function Connection Constants
@@ -106,7 +112,7 @@ function getParameterizedConnectionReferenceModel(
   parametersObject: any,
   settingsRecord: Record<string, string>
 ): ConnectionReferenceModel {
-  parameterizeManagedApiId(connection);
+  parameterizeManagedApiId(connection, settingsRecord);
   parameterizeManagedConnectionId(connection);
   parameterizeManagedConnectionRuntimeUrl(connection, referenceKey, parametersObject, settingsRecord);
   parameterizeManagedConnectionAuthentication(connection, referenceKey, parametersObject);
@@ -149,10 +155,18 @@ function getParameterizedAPIManagementConnectionModel(
   return connection;
 }
 
-function parameterizeManagedApiId(connection: ConnectionReferenceModel): void {
+function parameterizeManagedApiId(connection: ConnectionReferenceModel, settingsRecord: Record<string, string>): void {
   const segments = connection.api.id.split(DELIMITER);
+  const isCustomConnector = connection.api.id.includes('customApis');
+
   segments[SUBSCRIPTION_INDEX] = getAppSettingReference(workflowSubscriptionIdKey, true);
-  segments[MANAGED_API_LOCATION_INDEX] = getAppSettingReference(workflowLocationKey, true);
+
+  if (isCustomConnector) {
+    settingsRecord[customConnectorResourceGroupNameKey] = segments[MANAGED_CONNECTION_CUSTOM_CONNECTOR_RESOURCE_GROUP];
+    segments[MANAGED_CONNECTION_CUSTOM_CONNECTOR_RESOURCE_GROUP] = getAppSettingReference(customConnectorResourceGroupNameKey, true);
+  } else {
+    segments[MANAGED_API_LOCATION_INDEX] = getAppSettingReference(workflowLocationKey, true);
+  }
 
   connection.api.id = segments.join(DELIMITER);
 }
