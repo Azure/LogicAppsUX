@@ -180,6 +180,7 @@ export const SubgraphCard: React.FC<SubgraphCardProps> = ({
           className={css('msla-subgraph-card', data.size)}
           style={colorVars}
           onClick={(e) => handleCollapse?.(e.shiftKey)}
+          onContextMenu={onContextMenu}
           onKeyDown={collapseKeyboardInteraction.keyUp}
           onKeyUp={collapseKeyboardInteraction.keyDown}
           data-automation-id={`${id}-collapse-toggle-small`}
