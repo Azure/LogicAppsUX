@@ -117,7 +117,7 @@ export abstract class InitVSCodeStepBase extends AzureWizardExecuteStep<IProject
       if (!isPathEqual(cwd, '.')) {
         task.options = task.options || {};
         // always use posix for debug config
-        task.options.cwd = path.posix.join('${workspaceFolder}', cwd);
+        task.options.cwd = path.posix.join('${workspaceFolder}');
       }
     }
 

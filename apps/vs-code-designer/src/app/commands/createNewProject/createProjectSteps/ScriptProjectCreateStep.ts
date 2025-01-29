@@ -14,7 +14,6 @@ import {
   logicAppKind,
   vscodeFolderName,
   workerRuntimeKey,
-  workflowSubscriptionIdKey,
 } from '../../../../constants';
 import { addDefaultBundle } from '../../../utils/bundleFeed';
 import { confirmOverwriteFile, writeFormattedJson } from '../../../utils/fs';
@@ -44,7 +43,6 @@ export class ScriptProjectCreateStep extends ProjectCreateStepBase {
     IsEncrypted: false,
     Values: {
       [azureWebJobsStorageKey]: localEmulatorConnectionString,
-      [workflowSubscriptionIdKey]: '',
       [workerRuntimeKey]: 'node',
       [appKindSetting]: logicAppKind,
     },
