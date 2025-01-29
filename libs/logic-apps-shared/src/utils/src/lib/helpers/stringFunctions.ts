@@ -91,6 +91,7 @@ export const escapeString = (input: string): string => {
 
 /**
  * Converts a string to PascalCase.
+ * Assumes the input string has been cleaned of invalid characters.
  * @param {string} str - The input string.
  * @returns {string} - The PascalCase version of the string.
  */

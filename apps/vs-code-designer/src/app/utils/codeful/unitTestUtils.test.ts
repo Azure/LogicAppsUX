@@ -1,5 +1,5 @@
 import { describe, it, expect, vi } from 'vitest';
-import { extractAndValidateRunId, validateRunId } from '../unitTests';
+import { extractAndValidateRunId, removeInvalidCharacters, validateRunId } from '../unitTests';
 
 // Mock the vscode-nls module
 vi.mock('vscode-nls', () => ({
@@ -49,5 +49,31 @@ describe('validateRunId', () => {
   it('should throw an error for an empty runId', async () => {
     const runId = '';
     await expect(validateRunId(runId)).rejects.toThrowError('Invalid runId format.');
+  });
+});
+
+describe('removeInvalidCharacters', () => {
+  it('should remove invalid characters from a string', () => {
+    const input = 'example-string(123)';
+    const result = removeInvalidCharacters(input);
+    expect(result).toBe('examplestring123');
+  });
+
+  it('should handle strings with only valid characters', () => {
+    const input = 'ValidString123';
+    const result = removeInvalidCharacters(input);
+    expect(result).toBe('ValidString123');
+  });
+
+  it('should return an empty string if input contains only invalid characters', () => {
+    const input = '!@#$%^&*()';
+    const result = removeInvalidCharacters(input);
+    expect(result).toBe('');
+  });
+
+  it('should handle empty input strings', () => {
+    const input = '';
+    const result = removeInvalidCharacters(input);
+    expect(result).toBe('');
   });
 });
