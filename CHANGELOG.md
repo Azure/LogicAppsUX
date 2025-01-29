@@ -1,4 +1,19 @@
 # Logic Apps Designer
+## [5.31.0](https://github.com/Azure/LogicAppsUX/compare/v5.30.0...v5.31.0) (2025-01-29)
+
+
+### Features
+
+* **Designer:** Nested Collapse ([#6494](https://github.com/Azure/LogicAppsUX/issues/6494)) ([7af3a7b](https://github.com/Azure/LogicAppsUX/commit/7af3a7b4eacf8a514007ca4332208609cdc53925))
+* **Templates:** Support Blank Workflow Creation for Templates ([#6481](https://github.com/Azure/LogicAppsUX/issues/6481)) ([7b7e100](https://github.com/Azure/LogicAppsUX/commit/7b7e1009a5886696570a0ce62c702206decac0b8))
+
+
+### Bug Fixes
+
+* **Data Mapper:** Add updateDragList for remove/add and fix custom value shown ([#6502](https://github.com/Azure/LogicAppsUX/issues/6502)) ([b92566f](https://github.com/Azure/LogicAppsUX/commit/b92566f580c910ce11c6d263e7bd452aec6dfc0a))
+* **Data Mapper:** Remove the intermediary list drag effect + refactor to remove additional component ([#6500](https://github.com/Azure/LogicAppsUX/issues/6500)) ([edafd31](https://github.com/Azure/LogicAppsUX/commit/edafd3166e81881e62235365972dbe69ab3d2349))
+* **vscode:** Update connection parameterization for custom connectors ([#6480](https://github.com/Azure/LogicAppsUX/issues/6480)) ([ac71a04](https://github.com/Azure/LogicAppsUX/commit/ac71a04632ffa51927d1c96c248042abfcf4da80))
+
 ## [5.30.0](https://github.com/Azure/LogicAppsUX/compare/v5.29.0...v5.30.0) (2025-01-28)
 
 
