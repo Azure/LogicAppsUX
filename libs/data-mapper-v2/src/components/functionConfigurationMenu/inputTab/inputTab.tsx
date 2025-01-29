@@ -24,7 +24,7 @@ import {
 import { SchemaType, type SchemaNodeDictionary } from '@microsoft/logic-apps-shared';
 import DraggableList from 'react-draggable-list';
 import InputListWrapper, { type TemplateItemProps, type CommonProps } from './InputList';
-import { useCallback, useMemo, useRef } from 'react';
+import { useCallback, useMemo, useRef, useState } from 'react';
 import { useIntl } from 'react-intl';
 import { InputCustomInfoLabel } from './inputCustomInfoLabel';
 import { useStyles } from './styles';
@@ -38,6 +38,24 @@ export const InputTabContents = (props: {
   const containerRef = useRef<HTMLDivElement | null>(null);
   const styles = useStyles();
   const dispatch = useDispatch();
+  const connectionDictionary = useSelector((state: RootState) => state.dataMap.present.curDataMapOperation.dataMapConnections);
+  const sourceSchemaDictionary = useSelector((state: RootState) => state.dataMap.present.curDataMapOperation.flattenedSourceSchema);
+  const functionNodeDictionary = useSelector((state: RootState) => state.dataMap.present.curDataMapOperation.functionNodes);
+
+  const connections = useSelector((state: RootState) => state.dataMap.present.curDataMapOperation.dataMapConnections);
+
+  const inputsFromManifest = useMemo(() => func.inputs, [func.inputs]);
+  const functionConnection = useMemo(() => connections[functionKey], [connections, functionKey]);
+
+  const [listItems, setListItems] = useState<TemplateItemProps[]>(
+    Object.entries(functionConnection.inputs).map(
+      (input, index) =>
+        ({
+          input: input[1],
+          index,
+        }) as TemplateItemProps
+    )
+  );
 
   const resources = useMemo(
     () => ({
@@ -64,14 +82,6 @@ export const InputTabContents = (props: {
     }),
     [intl]
   );
-  const connectionDictionary = useSelector((state: RootState) => state.dataMap.present.curDataMapOperation.dataMapConnections);
-  const sourceSchemaDictionary = useSelector((state: RootState) => state.dataMap.present.curDataMapOperation.flattenedSourceSchema);
-  const functionNodeDictionary = useSelector((state: RootState) => state.dataMap.present.curDataMapOperation.functionNodes);
-
-  const connections = useSelector((state: RootState) => state.dataMap.present.curDataMapOperation.dataMapConnections);
-
-  const inputsFromManifest = useMemo(() => func.inputs, [func.inputs]);
-  const functionConnection = useMemo(() => connections[functionKey], [connections, functionKey]);
 
   const addUnboundedInputSlot = useCallback(() => {
     dispatch(createInputSlotForUnboundedInput(functionKey));
@@ -79,10 +89,12 @@ export const InputTabContents = (props: {
 
   const onDragMoveEnd = useCallback(
     (newList: readonly TemplateItemProps[], _movedItem: TemplateItemProps, _oldIndex: number, _newIndex: number) => {
+      const updatedList = [...newList];
+      setListItems(updatedList);
       dispatch(
         updateFunctionConnectionInputs({
           functionKey: functionKey,
-          inputs: newList.map((item) => item.input),
+          inputs: updatedList.map((item) => item.input),
         })
       );
     },
@@ -205,10 +217,7 @@ export const InputTabContents = (props: {
           </div>
           <div className={styles.body} ref={containerRef}>
             <DraggableList<TemplateItemProps, CommonProps, any>
-              list={Object.entries(functionConnection.inputs).map((input, index) => ({
-                input: input[1],
-                index,
-              }))}
+              list={listItems}
               commonProps={{
                 functionKey: props.functionKey,
                 data: props.func,
@@ -220,7 +229,6 @@ export const InputTabContents = (props: {
               onMoveEnd={onDragMoveEnd}
               itemKey={'index'}
               template={InputListWrapper}
-              container={() => containerRef?.current}
             />
             <div className={styles.formControlDescription}>
               <Button
