@@ -4,7 +4,7 @@ import { InitConnectionService, InitOperationManifestService } from '@microsoft/
 import { expect, describe, test, afterEach, vitest } from 'vitest';
 import * as ConnectorQueries from '../../../queries/connector';
 import { getReactQueryClient } from '../../../ReactQueryProvider';
-import { testSwagger } from './mockdata.spec';
+import { testSwagger } from './mocks';
 
 describe('DynamicData', () => {
   describe('getDynamicInputsFromSchema', () => {
