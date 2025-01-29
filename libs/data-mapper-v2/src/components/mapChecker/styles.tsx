@@ -49,6 +49,7 @@ export const useMapCheckerItemStyles = makeStyles({
     color: tokens.colorNeutralForegroundDisabled,
     fontSize: '10px',
     wordBreak: 'break-word',
+    overflowWrap: 'anywhere',
   },
 });
 
