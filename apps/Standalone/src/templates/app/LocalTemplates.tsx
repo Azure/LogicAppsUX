@@ -28,7 +28,7 @@ const loadLocalTemplateFromResourcePath = async (resourcePath: string, artifactT
 
 const localTemplateManifestPaths = ['BasicWorkflowOnly', 'SimpleConnectionParameter', 'SimpleAccelerator'];
 
-export const LocalTemplatesStandalone = () => {
+export const LocalTemplates = () => {
   const theme = useSelector((state: RootState) => state.workflowLoader.theme);
   const { hostingPlan } = useSelector((state: RootState) => state.workflowLoader);
   const { data: localManifests } = useQuery(
@@ -204,8 +204,9 @@ const getServices = (isConsumption: boolean, getLocalResource: (resourcePath: st
         openBladeAfterCreate: (_workflowName: string | undefined) => {
           window.alert('Open blade after create, consumption creation is complete');
         },
-        onAddBlankWorkflow: () => {
-          console.log('On add blank workflow click');
+        onAddBlankWorkflow: async () => {
+          await new Promise((resolve) => setTimeout(resolve, 1000));
+          window.alert('On Blank Workflow Click');
         },
         getCustomResource: getLocalResource,
       })
@@ -220,8 +221,8 @@ const getServices = (isConsumption: boolean, getLocalResource: (resourcePath: st
         openBladeAfterCreate: (workflowName: string | undefined) => {
           window.alert(`Open blade after create, workflowName is: ${workflowName}`);
         },
-        onAddBlankWorkflow: () => {
-          console.log('On add blank workflow click');
+        onAddBlankWorkflow: async () => {
+          window.alert('On Blank Workflow Click');
         },
         getCustomResource: getLocalResource,
       });

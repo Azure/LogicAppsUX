@@ -12,6 +12,7 @@ export interface WorkflowLoadingState {
   hostingPlan: HostingPlanTypes;
   isLocal: boolean;
   theme: ThemeType;
+  language: string;
 }
 
 const initialState: WorkflowLoadingState = {
@@ -19,6 +20,7 @@ const initialState: WorkflowLoadingState = {
   hostingPlan: 'standard',
   isLocal: false,
   theme: ThemeType.Light,
+  language: 'en',
 };
 
 export const workflowLoaderSlice = createSlice({
@@ -42,6 +44,9 @@ export const workflowLoaderSlice = createSlice({
       state.workflowName = undefined;
       state.runId = undefined;
       state.resourcePath = '';
+    },
+    setLanguage: (state, action: PayloadAction<string | undefined>) => {
+      state.language = action.payload ?? 'en';
     },
     setIsLocalSelected: (state, action: PayloadAction<boolean>) => {
       state.isLocal = action.payload;
