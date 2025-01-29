@@ -24,6 +24,7 @@ import {
   getJSONValueFromString,
   getParameterFromName,
   loadParameterValuesFromDefault,
+  parameterHasValue,
   parameterValueToString,
   shouldEncodeParameterValueForOperationBasedOnMetadata,
   toParameterInfoMap,
@@ -496,6 +497,7 @@ function getParametersForDynamicInvoke(
 ): SerializedParameter[] {
   const intl = getIntl();
   const operationParameters: SerializedParameter[] = [];
+  const inputsToAdd = { ...(operationInputs ?? {}) };
 
   // Get app settings from query client
   const queryClient = getReactQueryClient();
@@ -504,6 +506,8 @@ function getParametersForDynamicInvoke(
   for (const [parameterName, parameter] of Object.entries(referenceParameters ?? {})) {
     const referenceParameterName = (parameter?.parameterReference ?? parameter?.parameter ?? 'undefined') as string;
     const operationParameter = operationInputs?.[parameterName];
+    delete inputsToAdd[parameterName];
+
     if (referenceParameterName === 'undefined') {
       if (!operationParameter) {
         continue;
@@ -554,6 +558,19 @@ function getParametersForDynamicInvoke(
         value: getJSONValueFromString(
           parameterValueToString(referencedParameter, false /* isDefinitionValue */, idReplacements, shouldEncodeBasedOnMetadata),
           referencedParameter.type
+        ),
+      });
+    }
+  }
+
+  for (const [parameterName, parameter] of Object.entries(inputsToAdd)) {
+    if (parameterHasValue(parameter)) {
+      operationParameters.push({
+        ...parameter,
+        parameterName,
+        value: getJSONValueFromString(
+          parameterValueToString(parameter, false /* isDefinitionValue */, idReplacements, shouldEncodeBasedOnMetadata),
+          parameter.type
         ),
       });
     }

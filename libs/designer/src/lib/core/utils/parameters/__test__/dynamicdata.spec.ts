@@ -1,6 +1,10 @@
-import { getDynamicInputsFromSchema, getDynamicOutputsFromSchema } from '../dynamicdata';
-import { InitOperationManifestService } from '@microsoft/logic-apps-shared';
-import { expect, describe, test } from 'vitest';
+import { DynamicLoadStatus } from '@microsoft/designer-ui';
+import { getDynamicInputsFromSchema, getDynamicOutputsFromSchema, getDynamicValues } from '../dynamicdata';
+import { InitConnectionService, InitOperationManifestService } from '@microsoft/logic-apps-shared';
+import { expect, describe, test, afterEach, vitest } from 'vitest';
+import * as ConnectorQueries from '../../../queries/connector';
+import { getReactQueryClient } from '../../../ReactQueryProvider';
+import { testSwagger } from './mocks';
 
 describe('DynamicData', () => {
   describe('getDynamicInputsFromSchema', () => {
@@ -254,6 +258,70 @@ describe('DynamicData', () => {
           alias: 'body/value',
           type: 'array',
         })
+      );
+    });
+  });
+
+  describe('getDynamicValues', () => {
+    afterEach(() => {
+      vitest.clearAllMocks();
+      vitest.resetAllMocks();
+      vitest.resetModules();
+      vitest.restoreAllMocks();
+
+      getReactQueryClient().clear();
+    });
+
+    const dependencyInfo = {
+      definition: {
+        type: 'LegacyDynamicValues',
+        extension: {
+          operationId: 'GetLibraries',
+          'value-collection': 'data',
+          'value-title': 'display_name',
+          'value-path': 'id',
+        },
+      },
+      dependencyType: 'ListValues',
+      dependentParameters: {},
+      parameter: {
+        key: 'body.$.libraryId',
+        name: 'libraryId',
+        required: true,
+        type: 'string',
+      },
+    } as any;
+    const nodeInputs = {
+      dynamicLoadStatus: DynamicLoadStatus.NOTSTARTED,
+      parameterGroups: { default: { id: 'default', parameters: [], rawInputs: [] } },
+    };
+    const operationInfo = { connectorId: '/connectionProviders/test', operationId: 'test', type: 'apiconnection' };
+    const connectionReference = { connection: { id: 'test' }, api: { id: operationInfo.connectorId } };
+
+    const connectionService: any = {
+      getSwaggerFromConnector: () => Promise.resolve(testSwagger),
+      getConnector: () => Promise.resolve({ id: operationInfo.connectorId }),
+      getConnections: () => Promise.resolve([{ id: connectionReference.connection.id }]),
+    };
+    test('should make dynamic calls with non referenced default parameters in dynamic operation', async () => {
+      InitConnectionService(connectionService);
+      const spy = vitest.spyOn(ConnectorQueries, 'getLegacyDynamicValues').mockResolvedValueOnce([{ value: 'test', displayName: 'test' }]);
+
+      await getDynamicValues(dependencyInfo, nodeInputs, operationInfo, connectionReference, {}, {});
+      expect(spy).toHaveBeenCalledOnce();
+      expect(spy).toHaveBeenCalledWith(
+        connectionReference.connection.id,
+        operationInfo.connectorId,
+        expect.objectContaining({
+          method: 'get',
+          headers: {
+            'x-im-connector-id': 'imanage-work-for-admins',
+          },
+          path: '/getLibraries',
+        }),
+        expect.objectContaining(dependencyInfo.definition.extension),
+        '',
+        undefined
       );
     });
   });
