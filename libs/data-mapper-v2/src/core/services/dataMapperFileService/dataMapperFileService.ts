@@ -54,6 +54,8 @@ export interface IDataMapperFileService {
   addSchemaFromFile(selectedSchemaFile: SchemaFile): void;
 
   sendNotification(title: string, text: string, level: number): void;
+
+  isTestDisabledForOS(): void;
 }
 
 let service: IDataMapperFileService;

@@ -225,7 +225,7 @@ export const functionDropDownItemText = (key: string, node: FunctionData, connec
         }
 
         if (isCustomValueConnection(input)) {
-          return input;
+          return input.value;
         }
 
         if (input.node && isFunctionData(input.node)) {

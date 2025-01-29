@@ -28,6 +28,14 @@ export const MapCheckerItem = ({ title, description, severity, _onClick, reactFl
     return splitIds.length > 0 ? splitIds[splitIds.length - 1] : defaultTitle;
   }, [data?.functionName, intl, reactFlowId, title.message, title.value]);
 
+  const pathText = useMemo(() => {
+    if (isFunctionNode(reactFlowId)) {
+      return '';
+    }
+
+    return getTreeNodeId(reactFlowId);
+  }, [reactFlowId]);
+
   const resources = useMemo(
     () => ({
       Source: intl.formatMessage({
@@ -76,6 +84,7 @@ export const MapCheckerItem = ({ title, description, severity, _onClick, reactFl
         </div>
       </Stack>
       <Text className={styles.message}>{intl.formatMessage(description.message, description.value)}</Text>
+      <Text className={styles.subtitleText}>{pathText}</Text>
     </div>
   );
 };
