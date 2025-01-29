@@ -337,8 +337,12 @@ export async function processAndWriteMockableOperations(
 
     // Only proceed if this operation type is mockable
     if (isMockable(type, isTrigger)) {
-      const cleanedOperationName = removeInvalidCharacters(operationId);
-      const className = toPascalCase(cleanedOperationName);
+      // Set opreationName as className
+      const cleanedOperationName = removeInvalidCharacters(operationName);
+      let className = toPascalCase(cleanedOperationName);
+
+      // Append appropriate suffix based on whether it's a trigger
+      className += isTrigger ? 'TriggerOutput' : 'ActionOutput';
 
       // Transform the output parameters for this operation
       const outputs = transformParameters(outputParameters[operationName]?.outputs || {});
