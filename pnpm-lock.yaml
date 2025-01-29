@@ -92,7 +92,7 @@ importers:
         version: 4.2.1(vite@5.4.11(@types/node@20.12.7)(less@4.2.0)(terser@5.30.2))
       '@vitest/coverage-istanbul':
         specifier: ^2.1.2
-        version: 2.1.3(vitest@2.1.3(@types/node@20.12.7)(@vitest/ui@2.1.3)(jsdom@24.0.0)(less@4.2.0)(terser@5.30.2))
+        version: 2.1.3(vitest@2.1.3)
       '@vitest/ui':
         specifier: ^2.1.2
         version: 2.1.3(vitest@2.1.3)
@@ -781,7 +781,7 @@ importers:
         version: 22.0.0(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       '@reduxjs/toolkit':
         specifier: 1.8.5
-        version: 1.8.5(react-redux@8.0.2(@types/react-dom@18.3.0)(@types/react@18.3.0)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(redux@5.0.1))(react@18.3.1)
+        version: 1.8.5(react-redux@8.0.2(@types/react-dom@18.3.0)(@types/react@18.3.0)(react-dom@18.2.0(react@18.2.0))(react@18.2.0)(redux@5.0.1))(react@18.2.0)
       '@tanstack/react-query':
         specifier: 4.36.1
         version: 4.36.1(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
@@ -838,7 +838,11 @@ importers:
         version: 6.3.0(react@18.3.1)(typescript@4.9.5)
       react-redux:
         specifier: 8.0.2
+<<<<<<< HEAD
         version: 8.0.2(@types/react-dom@18.3.0)(@types/react@18.3.0)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(redux@5.0.1)
+=======
+        version: 8.0.2(@types/react-dom@18.3.0)(@types/react@18.3.0)(react-dom@18.2.0(react@18.2.0))(react@18.2.0)(redux@5.0.1)
+>>>>>>> main
       react-virtualized-tree:
         specifier: ^3.4.1
         version: 3.4.1(react-dom@18.3.1(react@18.3.1))(react-virtualized@9.22.5(react-dom@18.3.1(react@18.3.1))(react@18.3.1))(react@18.3.1)
@@ -1160,6 +1164,12 @@ importers:
       axios:
         specifier: ^1.7.7
         version: 1.7.7(debug@4.3.4)
+      react:
+        specifier: ^16.4.0 || ^17.0.0 || ^18.0.0
+        version: 18.3.1
+      react-dom:
+        specifier: ^16.4.0 || ^17.0.0 || ^18.0.0
+        version: 18.3.1(react@18.3.1)
       react-intl:
         specifier: 6.3.0
         version: 6.3.0(react@18.3.1)(typescript@4.9.5)
@@ -21437,7 +21447,7 @@ snapshots:
     transitivePeerDependencies:
       - supports-color
 
-  '@vitest/coverage-istanbul@2.1.3(vitest@2.1.3(@types/node@20.12.7)(@vitest/ui@2.1.3)(jsdom@24.0.0)(less@4.2.0)(terser@5.30.2))':
+  '@vitest/coverage-istanbul@2.1.3(vitest@2.1.3)':
     dependencies:
       '@istanbuljs/schema': 0.1.3
       debug: 4.3.7
@@ -26801,7 +26811,7 @@ snapshots:
   pascal-case@3.1.2:
     dependencies:
       no-case: 3.0.4
-      tslib: 2.7.0
+      tslib: 2.4.0
 
   path-browserify@1.0.1: {}
 

@@ -1,10 +1,9 @@
+import { shouldEncodeParameterValueForOperationBasedOnMetadata } from '../../../core/utils/parameters/helper';
 import constants from '../../../common/constants';
 import type { AppDispatch, RootState } from '../../../core';
 import { clearPanel, collapsePanel, updateParameterValidation, validateParameter } from '../../../core';
-import { renameCustomCode } from '../../../core/state/customcode/customcodeSlice';
 import { useReadOnly, useSuppressDefaultNodeSelectFunctionality } from '../../../core/state/designerOptions/designerOptionsSelectors';
 import { setShowDeleteModalNodeId } from '../../../core/state/designerView/designerViewSlice';
-import { updateParameterEditorViewModel } from '../../../core/state/operation/operationMetadataSlice';
 import {
   useIsPanelCollapsed,
   useOperationPanelPinnedNodeId,
@@ -15,21 +14,18 @@ import { useUndoRedoClickToggle } from '../../../core/state/undoRedo/undoRedoSel
 import { useActionMetadata, useRunData, useRunInstance } from '../../../core/state/workflow/workflowSelectors';
 import { replaceId, setNodeDescription } from '../../../core/state/workflow/workflowSlice';
 import { isOperationNameValid, isRootNodeInGraph } from '../../../core/utils/graph';
-import { getCustomCodeFileName, getParameterFromName, ParameterGroupKeys } from '../../../core/utils/parameters/helper';
 import { CommentMenuItem } from '../../menuItems/commentMenuItem';
 import { DeleteMenuItem } from '../../menuItems/deleteMenuItem';
 import { PinMenuItem } from '../../menuItems/pinMenuItem';
 import { usePanelNodeData } from './usePanelNodeData';
 import type { CommonPanelProps, PageActionTelemetryData } from '@microsoft/designer-ui';
-import { isCustomCode, PanelContainer, PanelScope } from '@microsoft/designer-ui';
+import { PanelContainer, PanelScope } from '@microsoft/designer-ui';
 import {
   equals,
   getObjectPropertyValue,
   HostService,
   isNullOrEmpty,
   isNullOrUndefined,
-  replaceWhiteSpaceWithUnderscore,
-  splitFileName,
   SUBGRAPH_TYPES,
   WorkflowService,
 } from '@microsoft/logic-apps-shared';
@@ -48,10 +44,11 @@ export const NodeDetailsPanel = (props: CommonPanelProps): JSX.Element => {
   const selectedNode = useOperationPanelSelectedNodeId();
 
   const runData = useRunData(selectedNode);
-  const { isTriggerNode, nodesMetadata, idReplacements } = useSelector((state: RootState) => ({
+  const { isTriggerNode, nodesMetadata, idReplacements, operationInfo } = useSelector((state: RootState) => ({
     isTriggerNode: isRootNodeInGraph(selectedNode, 'root', state.workflow.nodesMetadata),
     nodesMetadata: state.workflow.nodesMetadata,
     idReplacements: state.workflow.idReplacements,
+    operationInfo: state.operations.operationInfo[selectedNode],
   }));
 
   const [overrideWidth, setOverrideWidth] = useState<string | undefined>();
@@ -135,43 +132,6 @@ export const NodeDetailsPanel = (props: CommonPanelProps): JSX.Element => {
 
   const handleTitleUpdate = (originalId: string, newId: string) => {
     dispatch(replaceId({ originalId, newId }));
-  };
-
-  // if is customcode file, on blur title,
-  // delete the existing custom code file name and upload the new file with updated name
-  const onTitleBlur = (prevTitle: string) => {
-    const parameter = getParameterFromName(inputs, constants.DEFAULT_CUSTOM_CODE_INPUT);
-    if (parameter && isCustomCode(parameter?.editor, parameter?.editorOptions?.language)) {
-      const newFileName = getCustomCodeFileName(selectedNode, inputs, idReplacements);
-      const [, fileExtension] = splitFileName(newFileName);
-      const oldFileName = replaceWhiteSpaceWithUnderscore(prevTitle) + fileExtension;
-      if (newFileName === oldFileName) {
-        return;
-      }
-      // update the view model with the latest file name
-      dispatch(
-        updateParameterEditorViewModel({
-          nodeId: selectedNode,
-          groupId: ParameterGroupKeys.DEFAULT,
-          parameterId: parameter.id,
-          editorViewModel: {
-            ...(parameter.editorViewModel ?? {}),
-            customCodeData: {
-              ...(parameter.editorViewModel?.customCodeData ?? {}),
-              fileName: newFileName,
-            },
-          },
-        })
-      );
-
-      dispatch(
-        renameCustomCode({
-          nodeId: selectedNode,
-          newFileName,
-          oldFileName,
-        })
-      );
-    }
   };
 
   const onCommentChange = (nodeId: string, newDescription?: string) => {
@@ -268,7 +228,12 @@ export const NodeDetailsPanel = (props: CommonPanelProps): JSX.Element => {
         if (!collapsed) {
           Object.keys(inputs?.parameterGroups ?? {}).forEach((parameterGroup) => {
             inputs.parameterGroups[parameterGroup].parameters.forEach((parameter: any) => {
-              const validationErrors = validateParameter(parameter, parameter.value);
+              const validationErrors = validateParameter(
+                parameter,
+                parameter.value,
+                /* shouldValidateUnknownParameterAsError */ undefined,
+                shouldEncodeParameterValueForOperationBasedOnMetadata(operationInfo)
+              );
               dispatch(
                 updateParameterValidation({
                   nodeId: selectedNode,
@@ -285,7 +250,6 @@ export const NodeDetailsPanel = (props: CommonPanelProps): JSX.Element => {
       trackEvent={handleTrackEvent}
       onCommentChange={onCommentChange}
       onTitleChange={onTitleChange}
-      onTitleBlur={onTitleBlur}
       handleTitleUpdate={handleTitleUpdate}
       setOverrideWidth={setOverrideWidth}
     />

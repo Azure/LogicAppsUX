@@ -135,7 +135,7 @@ export const ConnectorWithDetails = ({ connectorId, kind }: Template.Connection)
             size={SpinnerSize.xSmall}
           />
         ) : (
-          <div className="msla-template-connector-name">{connector.properties.displayName}</div>
+          <div className="msla-template-connector-name">{connector.properties?.displayName}</div>
         )}
         <div className="msla-template-connector-type">
           <Text style={textStyles.connectorSubDetails} className="msla-template-card-tag">
@@ -183,7 +183,7 @@ export const ConnectorConnectionStatus = ({
         </div>
       ) : (
         <Text className="msla-templates-tab-review-section-details-title">
-          {connector?.properties.displayName} ({connectionKey})
+          {connector?.properties?.displayName} ({connectionKey})
         </Text>
       )}
       <Text className="msla-templates-tab-review-section-details-value">{hasConnection ? texts.connected : texts.notConnected}</Text>

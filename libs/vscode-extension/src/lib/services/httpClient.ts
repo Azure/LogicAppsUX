@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-empty-function */
 import type { HttpRequestOptions, IHttpClient } from '@microsoft/logic-apps-shared';
 import { HTTP_METHODS } from '@microsoft/logic-apps-shared';
 import axios from 'axios';
@@ -52,7 +51,7 @@ export class HttpClient implements IHttpClient {
       headers: {
         ...this._extraHeaders,
         ...options.headers,
-        Authorization: `${isArmId ? this._accessToken : ''} `,
+        Authorization: `${isArmId ? this._accessToken : ''}`,
         'Content-Type': 'application/json',
       },
       data: options.content,
@@ -81,7 +80,7 @@ export class HttpClient implements IHttpClient {
       headers: {
         ...this._extraHeaders,
         ...options.headers,
-        Authorization: `${isArmId ? this._accessToken : ''} `,
+        Authorization: `${isArmId ? this._accessToken : ''}`,
         'Content-Type': 'application/json',
       },
       data: options.content,
@@ -91,7 +90,7 @@ export class HttpClient implements IHttpClient {
       ...request,
       method: HTTP_METHODS.PUT,
     }).catch((error) => {
-      return { status: error.response.status, data: error.response.data };
+      return { status: error.response.status, ...error.response.data };
     });
     if (!isSuccessResponse(responseData.status)) {
       return Promise.reject(responseData);
@@ -109,7 +108,7 @@ export class HttpClient implements IHttpClient {
       headers: {
         ...this._extraHeaders,
         ...options.headers,
-        Authorization: `${this._accessToken} `,
+        Authorization: `${this._accessToken}`,
       },
     };
     const responseData = await axios({

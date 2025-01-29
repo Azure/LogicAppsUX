@@ -19,6 +19,7 @@ export const extensionsFileName = 'extensions.json';
 export const vscodeFolderName = '.vscode';
 export const workflowFileName = 'workflow.json';
 export const funcIgnoreFileName = '.funcignore';
+export const powershellRequirementsFileName = 'requirements.psd1';
 
 // Directories names
 export const deploymentsDirectory = 'deployments';
@@ -63,6 +64,7 @@ export const nodeJsDependencyName = 'NodeJs';
 // Workflow
 export const workflowLocationKey = 'WORKFLOWS_LOCATION_NAME';
 export const workflowResourceGroupNameKey = 'WORKFLOWS_RESOURCE_GROUP_NAME';
+export const customConnectorResourceGroupNameKey = 'CUSTOM_CONNECTOR_RESOURCE_GROUP_NAME';
 export const workflowSubscriptionIdKey = 'WORKFLOWS_SUBSCRIPTION_ID';
 export const workflowTenantIdKey = 'WORKFLOWS_TENANT_ID';
 export const workflowManagementBaseURIKey = 'WORKFLOWS_MANAGEMENT_BASE_URI';
@@ -167,6 +169,7 @@ export const extensionCommand = {
   dataMapSetSupportedDataMapDefinitionFileExts: 'azureLogicAppsStandard.dataMap.setSupportedDataMapDefinitionFileExts',
   dataMapSetSupportedSchemaFileExts: 'azureLogicAppsStandard.dataMap.setSupportedSchemaFileExts',
   dataMapSetSupportedFileExts: 'azureLogicAppsStandard.dataMap.setSupportedFileExts',
+  dataMapSetDmFolders: 'azureLogicAppsStandard.dataMap.setDmFolders',
   dataMapSaveMapDefinition: 'azureLogicAppsStandard.dataMap.saveMapDefinition',
   dataMapSaveMapXslt: 'azureLogicAppsStandard.dataMap.saveMapXslt',
   vscodeOpenFolder: 'vscode.openFolder',

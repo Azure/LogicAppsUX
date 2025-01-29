@@ -36,14 +36,16 @@ const cardStyles: IDocumentCardStyles = {
 export const TemplateCard = ({ templateName }: TemplateCardProps) => {
   const dispatch = useDispatch<AppDispatch>();
   const intl = useIntl();
-  const { templates, subscriptionId, workflowAppName, location } = useSelector((state: RootState) => ({
+  const { templates, subscriptionId, workflowAppName, location, customTemplateNames } = useSelector((state: RootState) => ({
     templates: state.manifest.availableTemplates,
     subscriptionId: state.workflow.subscriptionId,
     workflowAppName: state.workflow.workflowAppName,
     location: state.workflow.location,
+    customTemplateNames: state.manifest.customTemplateNames,
   }));
   const templateManifest = templates?.[templateName];
   const isMultiWorkflow = useMemo(() => templateManifest && isMultiWorkflowTemplate(templateManifest), [templateManifest]);
+  const isCustomTemplate = useMemo(() => customTemplateNames?.includes(templateName), [customTemplateNames, templateName]);
 
   const intlText = {
     TEMPLATE_LOADING: intl.formatMessage({ defaultMessage: 'Loading....', description: 'Loading text', id: 'cZ60Tk' }),
@@ -72,7 +74,7 @@ export const TemplateCard = ({ templateName }: TemplateCardProps) => {
       args: [templateName, workflowAppName, `isMultiWorkflowTemplate:${isMultiWorkflow}`],
     });
     dispatch(changeCurrentTemplateName(templateName));
-    dispatch(loadTemplate(templateManifest));
+    dispatch(loadTemplate({ preLoadedManifest: templateManifest, isCustomTemplate }));
 
     if (Object.keys(templateManifest?.workflows ?? {}).length === 0) {
       dispatch(openQuickViewPanelView());
@@ -189,14 +191,14 @@ export const BlankWorkflowTemplateCard = () => {
     }),
   };
 
-  const onBlankWorkflowClick = () => {
+  const onBlankWorkflowClick = async () => {
     LoggerService().log({
       level: LogEntryLevel.Trace,
       area: 'Templates.TemplateCard.Blank',
       message: 'Blank workflow is selected',
       args: [workflowAppName],
     });
-    TemplateService()?.onAddBlankWorkflow();
+    await TemplateService()?.onAddBlankWorkflow();
   };
 
   return (

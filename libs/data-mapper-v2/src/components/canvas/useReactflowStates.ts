@@ -213,6 +213,8 @@ const useReactFlowStates = (props: ReactFlowStatesProps) => {
           changes[NodeIds.source] = {
             type: 'dimensions',
             id: NodeIds.source,
+            resizing: true,
+            setAttributes: true,
             dimensions,
           };
         }
@@ -223,6 +225,11 @@ const useReactFlowStates = (props: ReactFlowStatesProps) => {
             id: NodeIds.source,
             type: 'schemaPanel',
             data: {},
+            draggable: false,
+            selectable: false,
+            deletable: false,
+            dragging: false,
+            selected: false,
             position: newSourceNodePosition,
             ...dimensions,
           },
@@ -240,6 +247,8 @@ const useReactFlowStates = (props: ReactFlowStatesProps) => {
           changes[NodeIds.target] = {
             type: 'dimensions',
             id: NodeIds.target,
+            resizing: true,
+            setAttributes: true,
             dimensions,
           };
         }
@@ -249,6 +258,11 @@ const useReactFlowStates = (props: ReactFlowStatesProps) => {
           item: {
             id: NodeIds.target,
             type: 'schemaPanel',
+            draggable: false,
+            selectable: false,
+            deletable: false,
+            dragging: false,
+            selected: false,
             data: {},
             position: newTargetNodePosition,
             ...dimensions,

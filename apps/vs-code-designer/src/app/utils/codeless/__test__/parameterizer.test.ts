@@ -6,20 +6,14 @@ import type {
 } from '@microsoft/vscode-extension-logic-apps';
 import { describe, it, expect } from 'vitest';
 
-describe('parameterizeConnection', () => {
-  it('should expose a parameterizeConnection', () => {
-    expect(parameterizeConnection).toBeDefined();
-  });
-});
-
 describe('parameterizeConnection for ConnectionReferenceModel', () => {
   it('should parameterize Connection Reference', () => {
     let connection: ConnectionReferenceModel = {
       api: {
-        id: '/subscriptions/346751b2-0de1-405c-ad29-acb7ba73797f/providers/Microsoft.Web/locations/eastus2/managedApis/applicationinsights',
+        id: '/subscriptions/subscription-test-id/providers/Microsoft.Web/locations/eastus2/managedApis/applicationinsights',
       },
       connection: {
-        id: '/subscriptions/346751b2-0de1-405c-ad29-acb7ba73797f/resourceGroups/vs-code-debug/providers/Microsoft.Web/connections/applicationinsights',
+        id: '/subscriptions/subscription-test-id/resourceGroups/vs-code-debug/providers/Microsoft.Web/connections/applicationinsights',
       },
       connectionRuntimeUrl: 'https://common.logic-centralus.azure-apihub.net/apim/applicationinsights/12345/',
       authentication: {
@@ -51,8 +45,50 @@ describe('parameterizeConnection for ConnectionReferenceModel', () => {
     expect(connection.authentication).toBe(expected.authentication);
     expect(Object.keys(parameters).length).toBe(2);
     expect(Object.keys(settings).length).toBe(1);
-    expect(parameters['applicationinsights-ConnectionRuntimeUrl']).not.toBeUndefined();
-    expect(parameters['applicationinsights-Authentication']).not.toBeUndefined();
+    expect(parameters['applicationinsights-ConnectionRuntimeUrl']).toBeDefined();
+    expect(parameters['applicationinsights-Authentication']).toBeDefined();
+  });
+
+  it('should parameterize Connection Reference for custom connector', () => {
+    let connection: ConnectionReferenceModel = {
+      api: {
+        id: '/subscriptions/subscription-test-id/resourceGroups/vs-code-debug-connector/providers/Microsoft.Web/customApis/customconnector',
+      },
+      connection: {
+        id: '/subscriptions/subscription-test-id/resourceGroups/vs-code-debug/providers/Microsoft.Web/connections/customconnector',
+      },
+      connectionRuntimeUrl: 'https://common.logic-centralus.azure-apihub.net/apim/customconnector/12345/',
+      authentication: {
+        type: 'ManagedServiceIdentity',
+      },
+    };
+
+    const parameters: any = {};
+    const settings: Record<string, string> = {};
+    connection = parameterizeConnection(connection, 'customconnector', parameters, settings) as ConnectionReferenceModel;
+
+    const expected = {
+      api: {
+        id: "/subscriptions/@{appsetting('WORKFLOWS_SUBSCRIPTION_ID')}/resourceGroups/@{appsetting('CUSTOM_CONNECTOR_RESOURCE_GROUP_NAME')}/providers/Microsoft.Web/customApis/customconnector",
+      },
+      connection: {
+        id: "/subscriptions/@{appsetting('WORKFLOWS_SUBSCRIPTION_ID')}/resourceGroups/@{appsetting('WORKFLOWS_RESOURCE_GROUP_NAME')}/providers/Microsoft.Web/connections/customconnector",
+      },
+      connectionRuntimeUrl: "@parameters('customconnector-ConnectionRuntimeUrl')",
+      authentication: "@parameters('customconnector-Authentication')",
+      connectionProperties: null,
+    };
+
+    expect(connection.api.id).toBe(expected.api.id);
+    expect(connection.connection.id).toBe(expected.connection.id);
+    expect(connection.connectionRuntimeUrl).toBe(expected.connectionRuntimeUrl);
+    expect(connection.authentication).toBe(expected.authentication);
+    expect(Object.keys(parameters).length).toBe(2);
+    expect(Object.keys(settings).length).toBe(2);
+    expect(settings['CUSTOM_CONNECTOR_RESOURCE_GROUP_NAME']).toBeDefined();
+    expect(settings['CUSTOM_CONNECTOR_RESOURCE_GROUP_NAME']).toEqual('vs-code-debug-connector');
+    expect(parameters['customconnector-ConnectionRuntimeUrl']).toBeDefined();
+    expect(parameters['customconnector-Authentication']).toBeDefined();
   });
 });
 
@@ -60,7 +96,7 @@ describe('parameterizeConnection for FunctionConnectionModel', () => {
   it('should parameterize Connection Reference', () => {
     let connection: FunctionConnectionModel = {
       function: {
-        id: '/subscriptions/346751b2-0de1-405c-ad29-acb7ba73797f/resourceGroups/vs-code-debug/providers/Microsoft.Web/sites/vscodesite/functions/HttpTrigger',
+        id: '/subscriptions/subscription-test-id/resourceGroups/vs-code-debug/providers/Microsoft.Web/sites/vscodesite/functions/HttpTrigger',
       },
       triggerUrl: 'https://vscodesite.azurewebsites.net/api/httptrigger',
       authentication: {
@@ -93,9 +129,9 @@ describe('parameterizeConnection for FunctionConnectionModel', () => {
     expect(connection.authentication).toStrictEqual(expected.authentication);
     expect(Object.keys(parameters).length).toBe(3);
     expect(Object.keys(settings).length).toBe(0);
-    expect(parameters['azureFunctionOperation-ResourceGroup']).not.toBeUndefined();
-    expect(parameters['azureFunctionOperation-SiteName']).not.toBeUndefined();
-    expect(parameters['azureFunctionOperation-TriggerUrl']).not.toBeUndefined();
+    expect(parameters['azureFunctionOperation-ResourceGroup']).toBeDefined();
+    expect(parameters['azureFunctionOperation-SiteName']).toBeDefined();
+    expect(parameters['azureFunctionOperation-TriggerUrl']).toBeDefined();
   });
 });
 
@@ -103,7 +139,7 @@ describe('parameterizeConnection for APIManagementConnectionModel', () => {
   it('should parameterize Connection Reference', () => {
     let connection: APIManagementConnectionModel = {
       apiId:
-        '/subscriptions/346751b2-0de1-405c-ad29-acb7ba73797f/resourceGroups/vs-code-debug/providers/Microsoft.ApiManagement/service/vscodeservicename/apis/echo-api',
+        '/subscriptions/subscription-test-id/resourceGroups/vs-code-debug/providers/Microsoft.ApiManagement/service/vscodeservicename/apis/echo-api',
       baseUrl: "@parameters('apiManagementOperation-BaseUrl')",
       subscriptionKey: "@appsetting('apiManagementOperation_SubscriptionKey')",
       displayName: 'api01',
@@ -126,8 +162,8 @@ describe('parameterizeConnection for APIManagementConnectionModel', () => {
     expect(connection.subscriptionKey).toBe(expected.subscriptionKey);
     expect(Object.keys(parameters).length).toBe(3);
     expect(Object.keys(settings).length).toBe(0);
-    expect(parameters['apiManagementOperation-ResourceGroup']).not.toBeUndefined();
-    expect(parameters['apiManagementOperation-ServiceName']).not.toBeUndefined();
-    expect(parameters['apiManagementOperation-BaseUrl']).not.toBeUndefined();
+    expect(parameters['apiManagementOperation-ResourceGroup']).toBeDefined();
+    expect(parameters['apiManagementOperation-ServiceName']).toBeDefined();
+    expect(parameters['apiManagementOperation-BaseUrl']).toBeDefined();
   });
 });

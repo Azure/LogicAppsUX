@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */
 import type { EventHandler } from '../../../eventhandler';
 import { useId } from '../../../useId';
 import { SimpleDictionaryItem } from './simpledictionaryitem';

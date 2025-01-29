@@ -1,7 +1,11 @@
 import { LogicAppResolver } from './LogicAppResolver';
 import { runPostWorkflowCreateStepsFromCache } from './app/commands/createCodeless/createCodelessSteps/WorkflowCreateStepBase';
 import { runPostExtractStepsFromCache } from './app/commands/createNewCodeProject/CodeProjectBase/ProcessPackageStep';
-import { supportedDataMapDefinitionFileExts, supportedSchemaFileExts } from './app/commands/dataMapper/extensionConfig';
+import {
+  supportedDataMapDefinitionFileExts,
+  supportedDataMapperFolders,
+  supportedSchemaFileExts,
+} from './app/commands/dataMapper/extensionConfig';
 import { promptParameterizeConnections } from './app/commands/parameterizeConnections';
 import { registerCommands } from './app/commands/registerCommands';
 import { getResourceGroupsApi } from './app/resourcesExtension/getExtensionApi';
@@ -27,6 +31,7 @@ import {
 } from '@microsoft/vscode-azext-utils';
 import type { IActionContext } from '@microsoft/vscode-azext-utils';
 import * as vscode from 'vscode';
+import { ConvertToWorkspace } from './app/commands/createNewCodeProject/CodeProjectBase/ConvertToWorkspace';
 import TelemetryReporter from '@vscode/extension-telemetry';
 
 const perfStats = {
@@ -37,6 +42,7 @@ const perfStats = {
 const telemetryString = 'setInGitHubBuild';
 
 export async function activate(context: vscode.ExtensionContext) {
+  // Data Mapper context
   vscode.commands.executeCommand(
     'setContext',
     extensionCommand.dataMapSetSupportedDataMapDefinitionFileExts,
@@ -47,6 +53,7 @@ export async function activate(context: vscode.ExtensionContext) {
     ...supportedDataMapDefinitionFileExts,
     ...supportedSchemaFileExts,
   ]);
+  vscode.commands.executeCommand('setContext', extensionCommand.dataMapSetDmFolders, supportedDataMapperFolders);
 
   ext.context = context;
   ext.telemetryReporter = new TelemetryReporter(telemetryString);
@@ -62,6 +69,10 @@ export async function activate(context: vscode.ExtensionContext) {
 
     runPostWorkflowCreateStepsFromCache();
     runPostExtractStepsFromCache();
+
+    if (vscode.workspace.workspaceFolders && vscode.workspace.workspaceFolders.length > 0) {
+      await ConvertToWorkspace(activateContext);
+    }
 
     try {
       await downloadExtensionBundle(activateContext);

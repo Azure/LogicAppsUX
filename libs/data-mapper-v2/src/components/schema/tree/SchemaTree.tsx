@@ -33,25 +33,22 @@ export const SchemaTree = (props: SchemaTreeProps) => {
     searchTerm,
   } = props;
 
-  const { panelNodeId, openKeys, isSourceSchema } = useSchema({ id });
+  const { panelNodeId, openKeys, isSourceSchema, schemaTreeData } = useSchema({
+    id,
+  });
   const { height: currentHeight } = useSelector(
     (state: RootState) => state.dataMap.present.curDataMapOperation.loadedMapMetadata?.canvasRect ?? emptyCanvasRect
   );
-  const { nodesForScroll, sourceSchemaTreeData, targetSchemaTreeData } = useSelector(
-    (state: RootState) => state.dataMap.present.curDataMapOperation
-  );
+  const { nodesForScroll } = useSelector((state: RootState) => state.dataMap.present.curDataMapOperation);
   const updateNodeInternals = useUpdateNodeInternals();
 
   const updateVisibleNodes = useCallback(() => {
     const startIndex = treeRef?.current?.visibleStartIndex ?? -1;
     const endIndex = treeRef?.current?.visibleStopIndex ?? -1;
+    const visibleNodes = (treeRef?.current?.visibleNodes ?? []).map((node) => node.data);
     if (startIndex === -1 || endIndex === -1) {
       return;
     }
-    const visibleNodes =
-      treeRef?.current?.visibleNodes
-        .filter((data) => data.rowIndex !== null && data.rowIndex >= startIndex && data.rowIndex <= endIndex)
-        .map((node) => node.data) ?? [];
 
     const isVisibleNodesUpdated = (newNodes: SchemaNodeExtended[], currentNodes: SchemaNodeExtended[]) => {
       const nodeSet = new Set<string>();
@@ -66,8 +63,6 @@ export const SchemaTree = (props: SchemaTreeProps) => {
       }
       return false;
     };
-
-    const schemaTreeData = isSourceSchema ? sourceSchemaTreeData : targetSchemaTreeData;
 
     if (
       (isSourceSchema && isVisibleNodesUpdated(visibleNodes, schemaTreeData.visibleNodes)) ||
@@ -90,8 +85,7 @@ export const SchemaTree = (props: SchemaTreeProps) => {
   }, [
     dispatch,
     id,
-    sourceSchemaTreeData,
-    targetSchemaTreeData,
+    schemaTreeData,
     isSourceSchema,
     treeRef,
     treeRef?.current,
@@ -114,8 +108,9 @@ export const SchemaTree = (props: SchemaTreeProps) => {
           isExpanded: !openKeys[id],
         })
       );
+      updateNodeInternals(panelNodeId);
     },
-    [openKeys, dispatch, isSourceSchema]
+    [openKeys, dispatch, isSourceSchema, panelNodeId, updateNodeInternals]
   );
 
   useEffect(() => {
@@ -124,7 +119,16 @@ export const SchemaTree = (props: SchemaTreeProps) => {
 
   useEffect(() => {
     updateNodeInternals(panelNodeId);
-  }, [panelNodeId, schemaTreeRoot, flattenedSchemaMap, currentHeight, updateNodeInternals, openKeys]);
+  }, [
+    panelNodeId,
+    schemaTreeRoot,
+    flattenedSchemaMap,
+    currentHeight,
+    updateNodeInternals,
+    openKeys,
+    searchTerm,
+    schemaTreeData.visibleNodes,
+  ]);
 
   return (
     <div ref={ref} className={mergeClasses(styles.root, isSourceSchema ? styles.sourceSchemaRoot : styles.targetScehmaRoot)}>
@@ -138,7 +142,7 @@ export const SchemaTree = (props: SchemaTreeProps) => {
                   position={Position.Right}
                   type="source"
                   className={handleStyles.hidden}
-                  style={{ top: '87px', right: '4px' }}
+                  style={{ top: '0px', right: '18px' }}
                 />
               )}
               {currentHeight !== undefined && nodesForScroll['bottom-left'] && (
@@ -147,7 +151,7 @@ export const SchemaTree = (props: SchemaTreeProps) => {
                   position={Position.Right}
                   type="source"
                   className={handleStyles.hidden}
-                  style={{ top: `${currentHeight}px`, right: '4px' }}
+                  style={{ top: `${currentHeight}px`, right: '18px' }}
                 />
               )}
             </>
@@ -159,7 +163,7 @@ export const SchemaTree = (props: SchemaTreeProps) => {
                   position={Position.Left}
                   type="target"
                   className={handleStyles.hidden}
-                  style={{ top: '0px', left: '8px' }}
+                  style={{ top: '0px', left: '18px' }}
                 />
               )}
               {currentHeight !== undefined && nodesForScroll['bottom-right'] && (
@@ -168,7 +172,7 @@ export const SchemaTree = (props: SchemaTreeProps) => {
                   position={Position.Left}
                   type="target"
                   className={handleStyles.hidden}
-                  style={{ top: `${currentHeight}px`, left: '8px' }}
+                  style={{ top: `${currentHeight}px`, left: '18px' }}
                 />
               )}
             </>

@@ -3,16 +3,17 @@ import { FontSizes } from '@fluentui/theme';
 import { useCardKeyboardInteraction } from '../card/hooks';
 import { useIntl } from 'react-intl';
 
-interface NodeCollapseToggleProps {
+export interface NodeCollapseToggleProps {
   disabled?: boolean;
   collapsed?: boolean;
   onSmallCard?: boolean;
-  handleCollapse?: () => void;
+  handleCollapse?: (includeNested?: boolean) => void;
   tabIndex?: number;
+  id: string;
 }
 
 const NodeCollapseToggle = (props: NodeCollapseToggleProps) => {
-  const { disabled = false, collapsed = false, onSmallCard = false, handleCollapse, tabIndex } = props;
+  const { disabled = false, collapsed = false, onSmallCard = false, handleCollapse, tabIndex, id } = props;
 
   const intl = useIntl();
   const EXPAND_TEXT = intl.formatMessage({
@@ -38,10 +39,11 @@ const NodeCollapseToggle = (props: NodeCollapseToggleProps) => {
         aria-label={toggleText}
         disabled={disabled}
         className={css('msla-collapse-toggle', disabled && 'disabled', onSmallCard && 'small')}
-        onClick={handleCollapse}
+        onClick={(e) => handleCollapse?.(e.shiftKey)}
         onKeyDown={keyboardInteraction.keyDown}
         onKeyUp={keyboardInteraction.keyUp}
         tabIndex={disabled ? -1 : tabIndex}
+        data-automation-id={`${id}-collapse-toggle`}
       >
         <Icon iconName={iconName} styles={{ root: { fontSize: FontSizes.small } }} />
       </button>

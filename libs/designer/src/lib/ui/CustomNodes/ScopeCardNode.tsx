@@ -99,6 +99,7 @@ const ScopeCardNode = ({ data, targetPosition = Position.Top, sourcePosition = P
       return data;
     },
     {
+      initialData: null,
       refetchOnWindowFocus: false,
       refetchOnReconnect: false,
       refetchOnMount: false,
@@ -154,9 +155,12 @@ const ScopeCardNode = ({ data, targetPosition = Position.Top, sourcePosition = P
   }, [dispatch, scopeId]);
 
   const graphCollapsed = useIsGraphCollapsed(scopeId);
-  const handleGraphCollapse = useCallback(() => {
-    dispatch(toggleCollapsedGraphId(scopeId));
-  }, [dispatch, scopeId]);
+  const handleGraphCollapse = useCallback(
+    (includeNested?: boolean) => {
+      dispatch(toggleCollapsedGraphId({ id: scopeId, includeNested }));
+    },
+    [dispatch, scopeId]
+  );
 
   const deleteClick = useCallback(() => {
     dispatch(setShowDeleteModalNodeId(scopeId));
@@ -333,12 +337,16 @@ const ScopeCardNode = ({ data, targetPosition = Position.Top, sourcePosition = P
             setFocus={shouldFocus}
             nodeIndex={nodeIndex}
           />
-          {showCopyCallout ? <CopyTooltip targetRef={rootRef} hideTooltip={clearCopyCallout} /> : null}
+          {showCopyCallout ? <CopyTooltip id={scopeId} targetRef={rootRef} hideTooltip={clearCopyCallout} /> : null}
           {normalizedType === constants.NODE.TYPE.FOREACH && isMonitoringView ? renderLoopsPager : null}
           <Handle className="node-handle bottom" type="source" position={sourcePosition} isConnectable={false} />
         </div>
       </div>
-      {graphCollapsed && !isFooter ? <p className="no-actions-text">{collapsedText}</p> : null}
+      {graphCollapsed && !isFooter ? (
+        <p className="no-actions-text" data-automation-id={`scope-${id}-no-actions`}>
+          {collapsedText}
+        </p>
+      ) : null}
       {showEmptyGraphComponents ? (
         readOnly ? (
           <p className="no-actions-text">No Actions</p>

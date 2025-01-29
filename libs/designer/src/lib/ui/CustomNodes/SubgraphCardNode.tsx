@@ -79,9 +79,12 @@ const SubgraphCardNode = ({ targetPosition = Position.Top, sourcePosition = Posi
   );
 
   const graphCollapsed = useIsGraphCollapsed(subgraphId);
-  const handleGraphCollapse = useCallback(() => {
-    dispatch(toggleCollapsedGraphId(subgraphId));
-  }, [dispatch, subgraphId]);
+  const handleGraphCollapse = useCallback(
+    (includeNested?: boolean) => {
+      dispatch(toggleCollapsedGraphId({ id: subgraphId, includeNested }));
+    },
+    [dispatch, subgraphId]
+  );
 
   const showEmptyGraphComponents = isLeaf && !graphCollapsed && !isAddCase;
 
@@ -163,7 +166,11 @@ const SubgraphCardNode = ({ targetPosition = Position.Top, sourcePosition = Posi
           <Handle className="node-handle bottom" type="source" position={sourcePosition} isConnectable={false} />
         </div>
       </div>
-      {graphCollapsed ? <p className="no-actions-text">{collapsedText}</p> : null}
+      {graphCollapsed ? (
+        <p className="no-actions-text" data-automation-id={`subgraph-${id}-no-actions`}>
+          {collapsedText}
+        </p>
+      ) : null}
       {showEmptyGraphComponents ? (
         readOnly ? (
           <p className="no-actions-text">No Actions</p>
