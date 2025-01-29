@@ -66,11 +66,16 @@ export async function saveBlankUnitTest(
     ext.outputChannel.appendLog(localize('unitTestNameEntered', `Unit test name entered: ${unitTestName}`));
 
     // Retrieve unitTestFolderPath and logic app name from helper
-    const { unitTestFolderPath, logicAppName } = getUnitTestPaths(projectPath, workflowName, unitTestName);
+    //const { unitTestFolderPath, logicAppName } = getUnitTestPaths(projectPath, workflowName, unitTestName);
+    const { unitTestFolderPath, logicAppName, workflowFolderPath } = getUnitTestPaths(projectPath, workflowName, unitTestName);
+
     await fs.ensureDir(unitTestFolderPath!);
+    await fs.ensureDir(workflowFolderPath);
 
     // Process mockable operations and write C# classes
-    await processAndWriteMockableOperations(operationInfo, outputParameters, unitTestFolderPath!, logicAppName);
+    //await processAndWriteMockableOperations(operationInfo, outputParameters, unitTestFolderPath!, logicAppName);
+    await processAndWriteMockableOperations(operationInfo, outputParameters, workflowFolderPath, logicAppName);
+
     logTelemetry(context, { workflowName, unitTestName });
 
     // Save the unit test
@@ -307,17 +312,21 @@ export function transformParameters(params: any): any {
  * and writes C# class definitions to .cs files.
  * @param operationInfo - The operation info object.
  * @param outputParameters - The output parameters object.
- * @param unitTestFolderPath - The directory where the .cs files will be saved.
+ * @param workflowFolderPath - The directory where the .cs files will be saved.
  * @param logicAppName - The name of the Logic App to use as the namespace.
  */
 export async function processAndWriteMockableOperations(
   operationInfo: any,
   outputParameters: any,
-  unitTestFolderPath: string,
+  workflowFolderPath: string,
   logicAppName: string
 ): Promise<void> {
   // Keep track of all operation IDs we've processed to avoid duplicates
   const processedOperationIds = new Set<string>();
+
+  // Create or verify the "MockOutputs" folder inside the workflow folder
+  const mockOutputsFolderPath = path.join(workflowFolderPath, 'MockOutputs');
+  await fs.ensureDir(mockOutputsFolderPath);
 
   for (const operationName in operationInfo) {
     const operation = operationInfo[operationName];
@@ -354,7 +363,9 @@ export async function processAndWriteMockableOperations(
       const classContent = generateCSharpClasses(sanitizedLogicAppName, className, outputs);
 
       // Write the .cs file
-      const filePath = path.join(unitTestFolderPath, `${className}.cs`);
+      //const filePath = path.join(workflowFolderPath, `${className}.cs`);
+      const filePath = path.join(mockOutputsFolderPath, `${className}.cs`);
+
       await fs.writeFile(filePath, classContent, 'utf-8');
 
       // Log to output channel
