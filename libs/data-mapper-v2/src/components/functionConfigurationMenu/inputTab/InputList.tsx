@@ -22,6 +22,7 @@ export type CommonProps = {
   connections: ConnectionDictionary;
   schemaType: SchemaType;
   draggable: boolean;
+  updateListItems: (index: number, item?: TemplateItemProps) => void;
 };
 
 export type TemplateItemProps = { input: InputConnection; index: number };
@@ -52,24 +53,26 @@ export const InputList = (props: InputListProps) => {
     commonProps,
     dragHandleProps,
   } = props;
-  const { functionKey, data, inputsFromManifest, connections, schemaType } = commonProps;
+  const { functionKey, data, inputsFromManifest, connections, schemaType, updateListItems } = commonProps;
 
   const inputName = useMemo(() => getInputName(input, connections), [connections, input]);
   const inputValue = useMemo(() => getInputValue(input), [input]);
   const inputType = useMemo(() => getInputTypeFromNode(input), [input]);
   const removeUnboundedInput = useCallback(() => {
     const targetNodeReactFlowKey = functionKey;
+    updateListItems(index);
     dispatch(
       deleteConnectionFromFunctionMenu({
         targetId: targetNodeReactFlowKey,
         inputIndex: index,
       })
     );
-  }, [dispatch, functionKey, index]);
+  }, [dispatch, functionKey, index, updateListItems]);
 
   const updateInput = useCallback(
     (newValue: InputConnection) => {
       const targetNodeReactFlowKey = functionKey;
+      updateListItems(index, { input: newValue, index });
       dispatch(
         setConnectionInput({
           targetNode: data,
@@ -79,7 +82,7 @@ export const InputList = (props: InputListProps) => {
         })
       );
     },
-    [data, dispatch, functionKey, index]
+    [data, dispatch, functionKey, index, updateListItems]
   );
 
   const validateAndCreateConnection = useCallback(
