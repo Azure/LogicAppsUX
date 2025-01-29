@@ -61,7 +61,7 @@ export abstract class InitVSCodeStepBase extends AzureWizardExecuteStep<IProject
 
   protected getDebugConfiguration(version: FuncVersion): DebugConfiguration {
     return {
-      name: localize('attachToNetFunc', 'Attach to .NET Functions'),
+      name: localize('attachToNetFunc', 'Run/Debug logic app'),
       type: version === FuncVersion.v1 ? 'clr' : 'coreclr',
       request: 'attach',
       processId: `\${command:${extensionCommand.pickProcess}}`,
