@@ -18,6 +18,7 @@ import { isSchemaNodeExtended } from '../../../utils';
 import {
   connectionDoesExist,
   createCustomInputConnection,
+  createNewEmptyConnection,
   isNodeConnection,
   newConnectionWillHaveCircularLogic,
 } from '../../../utils/Connection.Utils';
@@ -34,29 +35,6 @@ export const InputTabContents = (props: {
   functionKey: string;
 }) => {
   const intl = useIntl();
-  const { func, functionKey } = props;
-  const containerRef = useRef<HTMLDivElement | null>(null);
-  const styles = useStyles();
-  const dispatch = useDispatch();
-  const connectionDictionary = useSelector((state: RootState) => state.dataMap.present.curDataMapOperation.dataMapConnections);
-  const sourceSchemaDictionary = useSelector((state: RootState) => state.dataMap.present.curDataMapOperation.flattenedSourceSchema);
-  const functionNodeDictionary = useSelector((state: RootState) => state.dataMap.present.curDataMapOperation.functionNodes);
-
-  const connections = useSelector((state: RootState) => state.dataMap.present.curDataMapOperation.dataMapConnections);
-
-  const inputsFromManifest = useMemo(() => func.inputs, [func.inputs]);
-  const functionConnection = useMemo(() => connections[functionKey], [connections, functionKey]);
-
-  const [listItems, setListItems] = useState<TemplateItemProps[]>(
-    Object.entries(functionConnection.inputs).map(
-      (input, index) =>
-        ({
-          input: input[1],
-          index,
-        }) as TemplateItemProps
-    )
-  );
-
   const resources = useMemo(
     () => ({
       ACCEPTED_TYPES: intl.formatMessage({
@@ -83,7 +61,31 @@ export const InputTabContents = (props: {
     [intl]
   );
 
+  const { func, functionKey } = props;
+  const containerRef = useRef<HTMLDivElement | null>(null);
+  const styles = useStyles();
+  const dispatch = useDispatch();
+  const connectionDictionary = useSelector((state: RootState) => state.dataMap.present.curDataMapOperation.dataMapConnections);
+  const sourceSchemaDictionary = useSelector((state: RootState) => state.dataMap.present.curDataMapOperation.flattenedSourceSchema);
+  const functionNodeDictionary = useSelector((state: RootState) => state.dataMap.present.curDataMapOperation.functionNodes);
+
+  const connections = useSelector((state: RootState) => state.dataMap.present.curDataMapOperation.dataMapConnections);
+
+  const inputsFromManifest = useMemo(() => func.inputs, [func.inputs]);
+  const functionConnection = useMemo(() => connections[functionKey], [connections, functionKey]);
+
+  const [listItems, setListItems] = useState<TemplateItemProps[]>(
+    Object.entries(functionConnection.inputs).map(
+      (input, index) =>
+        ({
+          input: input[1],
+          index,
+        }) as TemplateItemProps
+    )
+  );
+
   const addUnboundedInputSlot = useCallback(() => {
+    setListItems((prev) => [...prev, { input: createNewEmptyConnection(), index: prev.length }]);
     dispatch(createInputSlotForUnboundedInput(functionKey));
   }, [dispatch, functionKey]);
 
@@ -99,6 +101,23 @@ export const InputTabContents = (props: {
       );
     },
     [dispatch, functionKey]
+  );
+
+  const update = useCallback(
+    (index: number, item?: TemplateItemProps) => {
+      if (item) {
+        if (listItems.length >= index) {
+          const updatedList = [...listItems];
+          updatedList[index] = item;
+          setListItems(updatedList);
+        } else {
+          setListItems([...listItems, { input: item.input, index: listItems.length }]);
+        }
+      } else {
+        setListItems((prev) => prev.filter((item) => item.index !== index));
+      }
+    },
+    [listItems, setListItems]
   );
 
   return (
@@ -225,6 +244,7 @@ export const InputTabContents = (props: {
                 connections: connections,
                 schemaType: SchemaType.Source,
                 draggable: true,
+                updateListItems: update,
               }}
               onMoveEnd={onDragMoveEnd}
               itemKey={'index'}
