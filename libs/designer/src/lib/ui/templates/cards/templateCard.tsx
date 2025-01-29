@@ -190,9 +190,9 @@ export const BlankWorkflowTemplateCard = ({ isWorkflowEmpty }: { isWorkflowEmpty
       id: 'kcWgxU',
     }),
     REPLACE_WITH_BLANK_WORKFLOW: intl.formatMessage({
-      defaultMessage: 'Start with a blank workflow to build your integration process from scratch.',
-      description: 'Label text for the card that lets users start from a blank workflow',
-      id: 'nN1ezT',
+      defaultMessage: 'Replace your existing workflow with an empty workflow to rebuild your integration solution.',
+      description: 'Label text for the card that lets users replace the current workflow with blank workflow',
+      id: 'boxBWI',
     }),
   };
 
