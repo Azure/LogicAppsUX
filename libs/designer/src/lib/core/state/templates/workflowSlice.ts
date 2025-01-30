@@ -8,7 +8,7 @@ export interface ResourceDetails {
   subscriptionId: string;
   resourceGroup: string;
   location: string;
-  workflowAppName: string;
+  workflowAppName?: string;
 }
 
 export interface ConnectionMapping {
@@ -22,7 +22,7 @@ export interface WorkflowState {
   subscriptionId: string;
   resourceGroup: string;
   location: string;
-  workflowAppName: string;
+  workflowAppName?: string;
   connections: ConnectionMapping;
 }
 
@@ -31,7 +31,6 @@ const initialState: WorkflowState = {
   subscriptionId: '',
   resourceGroup: '',
   location: '',
-  workflowAppName: '',
   connections: {
     references: {},
     mapping: {},
