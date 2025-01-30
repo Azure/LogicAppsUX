@@ -20,66 +20,29 @@ import {
 } from '../../designer/app/AzureLogicAppsDesigner/Services/WorkflowAndArtifacts';
 import { ArmParser } from '../../designer/app/AzureLogicAppsDesigner/Utilities/ArmParser';
 import { StandaloneOAuthService } from '../../designer/app/AzureLogicAppsDesigner/Services/OAuthService';
-import { WorkflowUtility } from '../../designer/app/AzureLogicAppsDesigner/Utilities/Workflow';
+import { getDataForConsumption, WorkflowUtility } from '../../designer/app/AzureLogicAppsDesigner/Utilities/Workflow';
 import { HttpClient } from '../../designer/app/AzureLogicAppsDesigner/Services/HttpClient';
 import type { Template, LogicAppsV2 } from '@microsoft/logic-apps-shared';
 import type { ConnectionMapping } from '@microsoft/logic-apps-designer/src/lib/core/state/templates/workflowSlice';
 import { parseWorkflowParameterValue } from '@microsoft/logic-apps-designer';
 import { BaseTemplateService } from '@microsoft/logic-apps-shared';
 
-const getDataForConsumption = (data: any) => {
-  const properties = data?.properties as any;
-
-  const definition = removeProperties(properties?.definition, ['parameters']);
-  const connections =
-    (isOpenApiSchemaVersion(definition) ? properties?.connectionReferences : properties?.parameters?.$connections?.value) ?? {};
-
-  const workflow = { definition, connections };
-  const connectionReferences = formatConnectionReferencesForConsumption(connections);
-
-  return { workflow, connectionReferences };
-};
-
-const formatConnectionReferencesForConsumption = (connectionReferences: Record<string, any>): any => {
-  return Object.fromEntries(
-    Object.entries(connectionReferences).map(([key, value]) => [key, formatConnectionReferenceForConsumption(value)])
-  );
-};
-
-const formatConnectionReferenceForConsumption = (connectionReference: any): any => {
-  const connectionReferenceCopy = { ...connectionReference };
-  connectionReferenceCopy.connection = connectionReference.connection ?? { id: connectionReference.connectionId };
-  delete connectionReferenceCopy.connectionId;
-  connectionReferenceCopy.api = connectionReference.api ?? { id: connectionReference.id };
-  delete connectionReferenceCopy.id;
-  return connectionReferenceCopy;
-};
-
-const removeProperties = (obj: any = {}, props: string[] = []): object => {
-  return Object.fromEntries(Object.entries(obj).filter(([key]) => !props.includes(key)));
-};
-
 const workflowIdentifier = '#workflowname#';
 
 export const TemplatesConsumption = () => {
   const theme = useSelector((state: RootState) => state.workflowLoader.theme);
-  const {
-    appId,
-    workflowName: existingWorkflowName,
-    resourcePath: workflowId,
-    language,
-  } = useSelector((state: RootState) => state.workflowLoader);
-  const { data: workflowAndArtifactsData } = useWorkflowAndArtifactsConsumption(workflowId!);
+  const { resourcePath: workflowId, language } = useSelector((state: RootState) => state.workflowLoader);
+  const { data: workflowData } = useWorkflowAndArtifactsConsumption(workflowId!);
   const { data: tenantId } = useCurrentTenantId();
   const { data: objectId } = useCurrentObjectId();
-  const canonicalLocation = WorkflowUtility.convertToCanonicalFormat(workflowAndArtifactsData?.location ?? '');
+  const canonicalLocation = WorkflowUtility.convertToCanonicalFormat(workflowData?.location ?? '');
 
-  const { workflow, connectionReferences } = useMemo(() => getDataForConsumption(workflowAndArtifactsData), [workflowAndArtifactsData]);
+  const { workflow, connectionReferences } = useMemo(() => getDataForConsumption(workflowData), [workflowData]);
 
   const isWorkflowEmpty = useMemo(() => Object.keys((workflow?.definition as any)?.triggers ?? {}).length === 0, [workflow]);
 
   const onBlankWorkflowClick = async () => {
-    if (!workflowAndArtifactsData) {
+    if (!workflowData) {
       return;
     }
 
@@ -98,7 +61,7 @@ export const TemplatesConsumption = () => {
       parameters: {},
     };
 
-    await saveWorkflowConsumption(workflowAndArtifactsData, workflowToSave, () => {}, { throwError: true });
+    await saveWorkflowConsumption(workflowData, workflowToSave, () => {}, { throwError: true });
     alert('Workflow overwrote successfully!');
   };
 
@@ -107,7 +70,7 @@ export const TemplatesConsumption = () => {
     connectionsMapping: ConnectionMapping,
     parametersData: Record<string, Template.ParameterDefinition>
   ) => {
-    if (appId) {
+    if (workflowId) {
       const uniqueIdentifier = '';
 
       let sanitizedWorkflowDefinition = JSON.stringify(workflows[0].definition);
@@ -175,9 +138,9 @@ export const TemplatesConsumption = () => {
     [workflowId, workflow, tenantId, canonicalLocation, language]
   );
 
-  const resourceDetails = new ArmParser(appId ?? '');
+  const resourceDetails = new ArmParser(workflowId ?? '');
 
-  if (!workflowAndArtifactsData) {
+  if (!workflowData) {
     return null;
   }
   return (
@@ -187,12 +150,10 @@ export const TemplatesConsumption = () => {
           subscriptionId: resourceDetails.subscriptionId,
           resourceGroup: resourceDetails.resourceGroup,
           location: canonicalLocation,
-          workflowAppName: workflowAndArtifactsData.name,
         }}
         connectionReferences={connectionReferences}
         services={services}
         isConsumption={true}
-        existingWorkflowName={existingWorkflowName}
       >
         <div
           style={{
