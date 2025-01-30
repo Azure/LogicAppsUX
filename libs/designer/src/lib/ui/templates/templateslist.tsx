@@ -16,7 +16,6 @@ export const TemplatesList = ({ detailFilters, createWorkflowCall, isWorkflowEmp
   useEffect(() => setLayerHostSelector('#msla-layer-host'), []);
   const intl = useIntl();
   const dispatch = useDispatch<AppDispatch>();
-
   const { templateName, workflows } = useSelector((state: RootState) => state.template);
   const {
     filteredTemplateNames,
