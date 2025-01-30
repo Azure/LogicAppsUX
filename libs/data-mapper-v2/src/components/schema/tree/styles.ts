@@ -43,6 +43,7 @@ export const useTreeNodeStyles = makeStyles({
     width: '-webkit-fill-available',
     height: '100%',
     zIndex: 998,
+    overflowWrap: 'anywhere',
     backgroundColor: 'inherit',
     ':hover': {
       backgroundColor: '#D5E4FF',
