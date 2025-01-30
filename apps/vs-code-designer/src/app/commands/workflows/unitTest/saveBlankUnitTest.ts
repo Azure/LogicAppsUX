@@ -18,7 +18,7 @@ import {
 import { tryGetLogicAppProjectRoot } from '../../../utils/verifyIsProject';
 import { ensureDirectoryInWorkspace, getWorkflowNode, getWorkspaceFolder, isMultiRootWorkspace } from '../../../utils/workspace';
 import type { IAzureConnectorsContext } from '../azureConnectorWizard';
-import { type IActionContext, callWithTelemetryAndErrorHandling } from '@microsoft/vscode-azext-utils';
+import { type IActionContext, callWithTelemetryAndErrorHandling, parseError } from '@microsoft/vscode-azext-utils';
 import * as path from 'path';
 import * as vscode from 'vscode';
 import * as fs from 'fs-extra';
@@ -26,7 +26,7 @@ import { ext } from '../../../../extensionVariables';
 import { toPascalCase } from '@microsoft/logic-apps-shared';
 
 /**
- * Creates a unit test for a Logic App workflow (codeful only).
+ * Creates a unit test for a Logic App workflow (codeful only), with telemetry logging and error handling.
  * @param {IAzureConnectorsContext} context - The context object for Azure Connectors.
  * @param {vscode.Uri | undefined} node - The URI of the workflow node, if available.
  * @param {any} unitTestDefinition - The definition of the unit test.
@@ -37,45 +37,65 @@ export async function saveBlankUnitTest(
   node: vscode.Uri | undefined,
   unitTestDefinition: any
 ): Promise<void> {
+  // Initialize telemetry properties
+  Object.assign(context.telemetry.properties, {
+    workspaceLocated: 'false',
+    projectRootLocated: 'false',
+    workflowNodeSelected: 'false',
+    multiRootWorkspaceChecked: 'false',
+    unitTestNamePrompted: 'false',
+    directoriesEnsured: 'false',
+    csFileCreated: 'false',
+    csprojUpdated: 'false',
+    workspaceUpdated: 'false',
+  });
+
   try {
     // Get workspace and project root
     const workspaceFolder = await getWorkspaceFolder(context);
     const projectPath = await tryGetLogicAppProjectRoot(context, workspaceFolder);
+    context.telemetry.properties.workspaceLocated = 'true';
+    context.telemetry.properties.projectRootLocated = 'true';
 
-    // Get raw parsed outputs
+    // Get parsed outputs
     await parseUnitTestOutputs(unitTestDefinition);
     const operationInfo = unitTestDefinition['operationInfo'];
     const outputParameters = unitTestDefinition['outputParameters'];
 
     // Determine workflow node
     const workflowNode = node ? (getWorkflowNode(node) as vscode.Uri) : await selectWorkflowNode(context, projectPath);
+    context.telemetry.properties.workflowNodeSelected = 'true';
     const workflowName = path.basename(path.dirname(workflowNode.fsPath));
 
     // Check if in a multi-root workspace
     if (!isMultiRootWorkspace()) {
+      context.telemetry.properties.multiRootWorkspaceChecked = 'false';
       const message = localize(
         'expectedWorkspace',
-        'A multi-root workspace must be open to create unit tests. Please navigate to the Logic Apps extension in Visual Studio Code and use the "Create New Logic App Workspace" command to initialize and open a valid workspace.'
+        'A multi-root workspace must be open to create unit tests. Please use the "Create New Logic App Workspace" command.'
       );
       ext.outputChannel.appendLog(message);
       throw new Error(message);
     }
+    context.telemetry.properties.multiRootWorkspaceChecked = 'true';
 
     // Prompt for unit test name
     const unitTestName = await promptForUnitTestName(context, projectPath, workflowName);
+    context.telemetry.properties.unitTestNamePrompted = 'true';
     ext.outputChannel.appendLog(localize('unitTestNameEntered', `Unit test name entered: ${unitTestName}`));
 
-    // Retrieve unitTestFolderPath and logic app name from helper
-    //const { unitTestFolderPath, logicAppName } = getUnitTestPaths(projectPath, workflowName, unitTestName);
+    // Retrieve necessary paths
     const { unitTestFolderPath, logicAppName, workflowFolderPath } = getUnitTestPaths(projectPath, workflowName, unitTestName);
 
-    await fs.ensureDir(unitTestFolderPath!);
+    // Ensure required directories exist
+    await fs.ensureDir(unitTestFolderPath);
     await fs.ensureDir(workflowFolderPath);
+    context.telemetry.properties.directoriesEnsured = 'true';
 
-    // Process mockable operations and write C# classes
-    //await processAndWriteMockableOperations(operationInfo, outputParameters, unitTestFolderPath!, logicAppName);
+    // Process operations and write C# classes
     await processAndWriteMockableOperations(operationInfo, outputParameters, workflowFolderPath, logicAppName);
 
+    // Log telemetry before proceeding
     logTelemetry(context, { workflowName, unitTestName });
 
     // Save the unit test
@@ -85,6 +105,8 @@ export async function saveBlankUnitTest(
     });
   } catch (error) {
     // Handle errors using the helper function
+    context.telemetry.properties.unitTestGenerationStatus = 'Failed';
+    context.telemetry.properties.errorMessage = parseError(error).message;
     handleError(context, error, 'saveBlankUnitTest');
   }
 }
