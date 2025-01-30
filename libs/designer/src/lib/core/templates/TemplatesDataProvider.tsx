@@ -24,7 +24,7 @@ import type { Template } from '@microsoft/logic-apps-shared';
 
 export interface TemplatesDataProviderProps {
   isConsumption: boolean | undefined;
-  existingWorkflowName: string | undefined;
+  existingWorkflowName?: string;
   resourceDetails: ResourceDetails;
   services: TemplateServiceOptions;
   connectionReferences: ConnectionReferences;

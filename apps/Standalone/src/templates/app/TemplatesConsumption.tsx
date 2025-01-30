@@ -1,5 +1,10 @@
 import { useMemo } from 'react';
-import { isOpenApiSchemaVersion, TemplatesDataProvider, type WorkflowParameter } from '@microsoft/logic-apps-designer';
+import {
+  type ConnectionReferences,
+  isOpenApiSchemaVersion,
+  TemplatesDataProvider,
+  type WorkflowParameter,
+} from '@microsoft/logic-apps-designer';
 import type { RootState } from '../state/Store';
 import { TemplatesDesigner, TemplatesDesignerProvider } from '@microsoft/logic-apps-designer';
 import { useSelector } from 'react-redux';
@@ -20,66 +25,29 @@ import {
 } from '../../designer/app/AzureLogicAppsDesigner/Services/WorkflowAndArtifacts';
 import { ArmParser } from '../../designer/app/AzureLogicAppsDesigner/Utilities/ArmParser';
 import { StandaloneOAuthService } from '../../designer/app/AzureLogicAppsDesigner/Services/OAuthService';
-import { WorkflowUtility } from '../../designer/app/AzureLogicAppsDesigner/Utilities/Workflow';
+import { getDataForConsumption, WorkflowUtility } from '../../designer/app/AzureLogicAppsDesigner/Utilities/Workflow';
 import { HttpClient } from '../../designer/app/AzureLogicAppsDesigner/Services/HttpClient';
 import type { Template, LogicAppsV2 } from '@microsoft/logic-apps-shared';
 import type { ConnectionMapping } from '@microsoft/logic-apps-designer/src/lib/core/state/templates/workflowSlice';
 import { parseWorkflowParameterValue } from '@microsoft/logic-apps-designer';
 import { BaseTemplateService } from '@microsoft/logic-apps-shared';
 
-const getDataForConsumption = (data: any) => {
-  const properties = data?.properties as any;
-
-  const definition = removeProperties(properties?.definition, ['parameters']);
-  const connections =
-    (isOpenApiSchemaVersion(definition) ? properties?.connectionReferences : properties?.parameters?.$connections?.value) ?? {};
-
-  const workflow = { definition, connections };
-  const connectionReferences = formatConnectionReferencesForConsumption(connections);
-
-  return { workflow, connectionReferences };
-};
-
-const formatConnectionReferencesForConsumption = (connectionReferences: Record<string, any>): any => {
-  return Object.fromEntries(
-    Object.entries(connectionReferences).map(([key, value]) => [key, formatConnectionReferenceForConsumption(value)])
-  );
-};
-
-const formatConnectionReferenceForConsumption = (connectionReference: any): any => {
-  const connectionReferenceCopy = { ...connectionReference };
-  connectionReferenceCopy.connection = connectionReference.connection ?? { id: connectionReference.connectionId };
-  delete connectionReferenceCopy.connectionId;
-  connectionReferenceCopy.api = connectionReference.api ?? { id: connectionReference.id };
-  delete connectionReferenceCopy.id;
-  return connectionReferenceCopy;
-};
-
-const removeProperties = (obj: any = {}, props: string[] = []): object => {
-  return Object.fromEntries(Object.entries(obj).filter(([key]) => !props.includes(key)));
-};
-
 const workflowIdentifier = '#workflowname#';
 
 export const TemplatesConsumption = () => {
   const theme = useSelector((state: RootState) => state.workflowLoader.theme);
-  const {
-    appId,
-    workflowName: existingWorkflowName,
-    resourcePath: workflowId,
-    language,
-  } = useSelector((state: RootState) => state.workflowLoader);
-  const { data: workflowAndArtifactsData } = useWorkflowAndArtifactsConsumption(workflowId!);
+  const { resourcePath: workflowId, language } = useSelector((state: RootState) => state.workflowLoader);
+  const { data: workflowData } = useWorkflowAndArtifactsConsumption(workflowId!);
   const { data: tenantId } = useCurrentTenantId();
   const { data: objectId } = useCurrentObjectId();
-  const canonicalLocation = WorkflowUtility.convertToCanonicalFormat(workflowAndArtifactsData?.location ?? '');
+  const canonicalLocation = WorkflowUtility.convertToCanonicalFormat(workflowData?.location ?? '');
 
-  const { workflow, connectionReferences } = useMemo(() => getDataForConsumption(workflowAndArtifactsData), [workflowAndArtifactsData]);
+  const { workflow, connectionReferences } = useMemo(() => getDataForConsumption(workflowData), [workflowData]);
 
   const isWorkflowEmpty = useMemo(() => Object.keys((workflow?.definition as any)?.triggers ?? {}).length === 0, [workflow]);
 
   const onBlankWorkflowClick = async () => {
-    if (!workflowAndArtifactsData) {
+    if (!workflowData) {
       return;
     }
 
@@ -98,27 +66,25 @@ export const TemplatesConsumption = () => {
       parameters: {},
     };
 
-    await saveWorkflowConsumption(workflowAndArtifactsData, workflowToSave, () => {}, { throwError: true });
+    await saveWorkflowConsumption(workflowData, workflowToSave, () => {}, { throwError: true });
     alert('Workflow overwrote successfully!');
   };
 
   const createWorkflowCall = async (
-    workflows: { name: string | undefined; kind: string | undefined; definition: LogicAppsV2.WorkflowDefinition }[],
+    workflows: { definition: LogicAppsV2.WorkflowDefinition }[],
     connectionsMapping: ConnectionMapping,
     parametersData: Record<string, Template.ParameterDefinition>
   ) => {
-    if (appId) {
-      const uniqueIdentifier = '';
-
+    if (workflowId) {
       let sanitizedWorkflowDefinition = JSON.stringify(workflows[0].definition);
-      const sanitizedParameterData: Record<string, WorkflowParameter> = {};
+      const parameters: Record<string, WorkflowParameter> = {};
       // Sanitizing parameter name & body
       Object.keys(parametersData).forEach((key) => {
         const parameter = parametersData[key];
-        const sanitizedParameterName = replaceWithWorkflowName(parameter.name, uniqueIdentifier);
-        sanitizedParameterData[sanitizedParameterName] = {
+        const sanitizedParameterName = replaceWorkflowIdentifier(parameter.name);
+        parameters[sanitizedParameterName] = {
           type: parameter.type,
-          defaultValue: parseWorkflowParameterValue(parameter.type, parameter?.value ?? parameter?.default),
+          value: parseWorkflowParameterValue(parameter.type, parameter?.value ?? parameter?.default),
         };
         sanitizedWorkflowDefinition = replaceAllStringInWorkflowDefinition(
           sanitizedWorkflowDefinition,
@@ -127,45 +93,23 @@ export const TemplatesConsumption = () => {
         );
       });
 
-      //TODO: update workflows with connections mapping names
+      const { references, stringifiedDefinition: updatedStringifiedDefinition } = updateConnectionsDataWithNewConnections(
+        connectionsMapping,
+        sanitizedWorkflowDefinition
+      );
 
-      const updatedConnectionReferences = Object.values(connectionsMapping).reduce((acc, group) => {
-        for (const key in group) {
-          acc[key] = group[key];
-        }
-        return acc;
-      }, {});
-
-      const workflowDefinition = JSON.parse(sanitizedWorkflowDefinition);
+      const workflowDefinition = JSON.parse(updatedStringifiedDefinition);
       const workflowToSave: any = {
         definition: workflowDefinition,
-        parameters: sanitizedParameterData,
-        connectionReferences: updatedConnectionReferences,
+        parameters,
+        connections: references,
       };
-
-      const newConnectionsObj: Record<string, any> = {};
-      if (Object.keys(updatedConnectionReferences ?? {}).length) {
-        await Promise.all(
-          Object.keys(updatedConnectionReferences).map(async (referenceKey) => {
-            const reference = updatedConnectionReferences[referenceKey];
-            const { api, connection, connectionProperties, connectionRuntimeUrl } = reference;
-            newConnectionsObj[referenceKey] = {
-              api,
-              connection,
-              connectionId: isOpenApiSchemaVersion(workflowDefinition) ? undefined : connection.id,
-              connectionProperties,
-              connectionRuntimeUrl,
-            };
-          })
-        );
-      }
-      workflowToSave.connections = newConnectionsObj;
 
       const workflowArtifacts = await getWorkflowAndArtifactsConsumption(workflowId!);
       await saveWorkflowConsumption(workflowArtifacts, workflowToSave, () => {}, { throwError: true });
       alert('Workflow saved successfully!');
     } else {
-      console.log('Select App Id first!');
+      console.log('Select Logic App first!');
     }
   };
 
@@ -175,9 +119,9 @@ export const TemplatesConsumption = () => {
     [workflowId, workflow, tenantId, canonicalLocation, language]
   );
 
-  const resourceDetails = new ArmParser(appId ?? '');
+  const resourceDetails = new ArmParser(workflowId ?? '');
 
-  if (!workflowAndArtifactsData) {
+  if (!workflowData) {
     return null;
   }
   return (
@@ -187,12 +131,10 @@ export const TemplatesConsumption = () => {
           subscriptionId: resourceDetails.subscriptionId,
           resourceGroup: resourceDetails.resourceGroup,
           location: canonicalLocation,
-          workflowAppName: workflowAndArtifactsData.name,
         }}
         connectionReferences={connectionReferences}
         services={services}
         isConsumption={true}
-        existingWorkflowName={existingWorkflowName}
       >
         <div
           style={{
@@ -330,7 +272,43 @@ const getServices = (
   };
 };
 
-const replaceWithWorkflowName = (content: string, workflowName: string) => content.replaceAll(workflowIdentifier, workflowName);
+const updateConnectionsDataWithNewConnections = (
+  connections: ConnectionMapping,
+  stringifiedDefinition: string
+): { references: ConnectionReferences; stringifiedDefinition: string } => {
+  const { references, mapping } = connections;
+  let updatedDefinition = stringifiedDefinition;
+
+  for (const connectionKey of Object.keys(mapping)) {
+    const referenceKey = mapping[connectionKey];
+    if (connectionKey === referenceKey) {
+      updatedDefinition = replaceAllStringInWorkflowDefinition(updatedDefinition, referenceKey, replaceWorkflowIdentifier(referenceKey));
+    } else {
+      updatedDefinition = replaceAllStringInWorkflowDefinition(updatedDefinition, connectionKey, referenceKey);
+    }
+  }
+
+  const newConnectionsObj: Record<string, any> = {};
+  for (const referenceKey of Object.keys(references)) {
+    const reference = references[referenceKey];
+
+    const { api, connection, connectionProperties, connectionRuntimeUrl } = reference;
+    newConnectionsObj[replaceWorkflowIdentifier(referenceKey)] = {
+      api,
+      connection,
+      connectionId: isOpenApiSchemaVersion(JSON.parse(stringifiedDefinition)) ? undefined : connection.id,
+      connectionProperties,
+      connectionRuntimeUrl,
+    };
+  }
+
+  return {
+    references: newConnectionsObj,
+    stringifiedDefinition: updatedDefinition,
+  };
+};
+
+const replaceWorkflowIdentifier = (content: string) => content.replaceAll(workflowIdentifier, 'template');
 
 const replaceAllStringInWorkflowDefinition = (workflowDefinition: string, oldString: string, newString: string) => {
   return workflowDefinition.replaceAll(oldString, newString);

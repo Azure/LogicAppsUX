@@ -35,10 +35,13 @@ export const TemplateFilters = ({ detailFilters }: TemplateFiltersProps) => {
     location: state.workflow.location,
   }));
   const allTemplatesUniqueConnectorIds = useMemo(() => {
-    const allConnections = Object.values(availableTemplates).flatMap((template) => Object.values(template.connections));
+    const skuTemplates = Object.values(availableTemplates).filter((templateManifest) =>
+      templateManifest.skus.includes(isConsumption ? 'consumption' : 'standard')
+    );
+    const allConnections = Object.values(skuTemplates).flatMap((template) => Object.values(template.connections));
     const uniqueConnectorsFromConnections = getUniqueConnectorsFromConnections(allConnections, subscriptionId, location);
     return uniqueConnectorsFromConnections.map((connector) => connector.connectorId);
-  }, [availableTemplates, location, subscriptionId]);
+  }, [availableTemplates, isConsumption, location, subscriptionId]);
   const { data: allUniqueConnectorsEntries } = useConnectors(allTemplatesUniqueConnectorIds);
   const selectedTabId = appliedDetailFilters?.Type?.[0]?.value ?? templateDefaultTabKey;
 

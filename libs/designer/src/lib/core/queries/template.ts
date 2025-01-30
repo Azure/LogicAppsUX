@@ -3,6 +3,6 @@ import { useQuery } from '@tanstack/react-query';
 
 export const useExistingWorkflowNames = () => {
   return useQuery(['getExistingWorkflowNames'], async () => {
-    return await TemplateService()?.getExistingWorkflowNames?.();
+    return (await TemplateService()?.getExistingWorkflowNames?.()) ?? [];
   });
 };
