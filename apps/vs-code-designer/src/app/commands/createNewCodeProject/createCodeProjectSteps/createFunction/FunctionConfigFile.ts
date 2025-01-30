@@ -71,7 +71,7 @@ export class FunctionConfigFile extends AzureWizardPromptStep<IProjectWizardCont
       version: '0.2.0',
       configurations: [
         {
-          name: 'Attach to .NET Functions',
+          name: 'Run/Debug logic app',
           type: 'clr',
           request: 'attach',
           processName: 'Microsoft.Azure.Workflows.Functions.CustomCodeNetFxWorker.exe',
