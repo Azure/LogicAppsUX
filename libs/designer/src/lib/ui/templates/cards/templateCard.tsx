@@ -173,7 +173,7 @@ export const TemplateCard = ({ templateName }: TemplateCardProps) => {
   );
 };
 
-export const BlankWorkflowTemplateCard = () => {
+export const BlankWorkflowTemplateCard = ({ isWorkflowEmpty }: { isWorkflowEmpty: boolean }) => {
   const intl = useIntl();
 
   const workflowAppName = useSelector((state: RootState) => state.workflow.workflowAppName);
@@ -185,9 +185,14 @@ export const BlankWorkflowTemplateCard = () => {
       id: 'pykp8c',
     }),
     BLANK_WORKFLOW_DESCRIPTION: intl.formatMessage({
-      defaultMessage: 'Start with a blank workflow to build your integration process from scratch.',
+      defaultMessage: 'Start with an empty workflow to build your integration solution.',
       description: 'Label text for the card that lets users start from a blank workflow',
-      id: 'nN1ezT',
+      id: 'kcWgxU',
+    }),
+    REPLACE_WITH_BLANK_WORKFLOW: intl.formatMessage({
+      defaultMessage: 'Replace your existing workflow with an empty workflow to rebuild your integration solution.',
+      description: 'Label text for the card that lets users replace the current workflow with blank workflow',
+      id: 'boxBWI',
     }),
   };
 
@@ -214,7 +219,7 @@ export const BlankWorkflowTemplateCard = () => {
           {intlText.BLANK_WORKFLOW}
         </Text>
         <Text size={400} align="center" className="msla-blank-template-card-description">
-          {intlText.BLANK_WORKFLOW_DESCRIPTION}
+          {isWorkflowEmpty ? intlText.BLANK_WORKFLOW_DESCRIPTION : intlText.REPLACE_WITH_BLANK_WORKFLOW}
         </Text>
       </div>
     </DocumentCard>

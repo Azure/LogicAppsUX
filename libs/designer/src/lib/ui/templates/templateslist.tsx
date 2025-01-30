@@ -12,7 +12,7 @@ import { setPageNum, templatesCountPerPage } from '../../core/state/templates/ma
 import { QuickViewPanel } from '../panel/templatePanel/quickViewPanel/quickViewPanel';
 import { CreateWorkflowPanel } from '../panel/templatePanel/createWorkflowPanel/createWorkflowPanel';
 
-export const TemplatesList = ({ detailFilters, createWorkflowCall }: TemplatesDesignerProps) => {
+export const TemplatesList = ({ detailFilters, createWorkflowCall, isWorkflowEmpty = true }: TemplatesDesignerProps) => {
   useEffect(() => setLayerHostSelector('#msla-layer-host'), []);
   const intl = useIntl();
   const dispatch = useDispatch<AppDispatch>();
@@ -49,7 +49,7 @@ export const TemplatesList = ({ detailFilters, createWorkflowCall }: TemplatesDe
       {filteredTemplateNames && filteredTemplateNames?.length > 0 ? (
         <div>
           <div className="msla-templates-list">
-            {selectedTabId !== 'Accelerator' && <BlankWorkflowTemplateCard />}
+            {selectedTabId !== 'Accelerator' && <BlankWorkflowTemplateCard isWorkflowEmpty={isWorkflowEmpty} />}
             {filteredTemplateNames.slice(startingIndex, endingIndex).map((templateName: string) => (
               <TemplateCard key={templateName} templateName={templateName} />
             ))}
