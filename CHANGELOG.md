@@ -1,4 +1,17 @@
 # Logic Apps Designer
+### [5.14.5](https://github.com/Azure/LogicAppsUX/compare/v5.14.4...v5.14.5) (2025-01-30)
+
+
+### Features
+
+* **Data Mapper:** Cherry-pick Data Mapper changes ([#6503](https://github.com/Azure/LogicAppsUX/issues/6503)) ([7803f61](https://github.com/Azure/LogicAppsUX/commit/7803f614bd148a41d8c4b47abd7c833b74b17c4b)), closes [#6476](https://github.com/Azure/LogicAppsUX/issues/6476) [#6483](https://github.com/Azure/LogicAppsUX/issues/6483) [#6500](https://github.com/Azure/LogicAppsUX/issues/6500) [#6502](https://github.com/Azure/LogicAppsUX/issues/6502)
+
+
+### Bug Fixes
+
+* **Data Mapper:** Update overflow for node and error panel ([#6509](https://github.com/Azure/LogicAppsUX/issues/6509)) ([#6510](https://github.com/Azure/LogicAppsUX/issues/6510)) ([a52b5b7](https://github.com/Azure/LogicAppsUX/commit/a52b5b7584b99f49b8441367c7fa5e9ce1be8360))
+* **vscode:** Update connection parameterization for custom connector ([#6495](https://github.com/Azure/LogicAppsUX/issues/6495)) ([8d49602](https://github.com/Azure/LogicAppsUX/commit/8d49602cfd2dd05d64582a8b9f56d0d31a5e600c)), closes [#6480](https://github.com/Azure/LogicAppsUX/issues/6480)
+
 ### [5.14.4](https://github.com/Azure/LogicAppsUX/compare/v5.14.3...v5.14.4) (2025-01-27)
 
 
