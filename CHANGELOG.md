@@ -1,4 +1,19 @@
 # Logic Apps Designer
+## [5.32.0](https://github.com/Azure/LogicAppsUX/compare/v5.31.0...v5.32.0) (2025-01-30)
+
+
+### Features
+
+* **Templates:** Blank workflow card content change on existing workflow ([#6507](https://github.com/Azure/LogicAppsUX/issues/6507)) ([480b0f2](https://github.com/Azure/LogicAppsUX/commit/480b0f230b0af542f761f91f0e4b59f4a359567e))
+* **templates:** Updating consumption workflow save with connections and parameters ([#6512](https://github.com/Azure/LogicAppsUX/issues/6512)) ([1608535](https://github.com/Azure/LogicAppsUX/commit/160853546dfa8f75cc2e74f6ffa126247eb825dd))
+
+
+### Bug Fixes
+
+* **Data Mapper:** Update overflow for node and error panel ([#6509](https://github.com/Azure/LogicAppsUX/issues/6509)) ([3328fa2](https://github.com/Azure/LogicAppsUX/commit/3328fa290e8db1a65c813c72c28f77828904dfbe))
+* **designer:** Using dynamic operation constant parameters in legacy dynamic calls ([#6501](https://github.com/Azure/LogicAppsUX/issues/6501)) ([9995e7f](https://github.com/Azure/LogicAppsUX/commit/9995e7f9e7a69f5725acb836237709718506d138))
+* **vscode:** Remove cwd from workspace path ([#6508](https://github.com/Azure/LogicAppsUX/issues/6508)) ([a14dc0d](https://github.com/Azure/LogicAppsUX/commit/a14dc0d1e1208c6091d585b75a1df0f2aa197e60))
+
 ## [5.31.0](https://github.com/Azure/LogicAppsUX/compare/v5.30.0...v5.31.0) (2025-01-29)
 
 
