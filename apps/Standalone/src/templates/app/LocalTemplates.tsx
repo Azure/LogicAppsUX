@@ -67,6 +67,7 @@ export const LocalTemplates = () => {
         connectionReferences={{}}
         services={services}
         isConsumption={isConsumption}
+        isCreateView={true}
         customTemplates={localManifests}
         existingWorkflowName={undefined}
       >

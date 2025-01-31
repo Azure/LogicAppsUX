@@ -135,6 +135,7 @@ export const TemplatesConsumption = () => {
         connectionReferences={connectionReferences}
         services={services}
         isConsumption={true}
+        isCreateView={false}
       >
         <div
           style={{
@@ -173,14 +174,6 @@ export const TemplatesConsumption = () => {
                   {
                     value: 'Automation',
                     displayName: 'Automation',
-                  },
-                  {
-                    value: 'BizTalk Migration',
-                    displayName: 'BizTalk Migration',
-                  },
-                  {
-                    value: 'Mainframe Modernization',
-                    displayName: 'Mainframe Modernization',
                   },
                 ],
               },
@@ -277,10 +270,12 @@ const updateConnectionsDataWithNewConnections = (
   stringifiedDefinition: string
 ): { references: ConnectionReferences; stringifiedDefinition: string } => {
   const { references, mapping } = connections;
+  const referencesToAdd: ConnectionReferences = {};
   let updatedDefinition = stringifiedDefinition;
 
   for (const connectionKey of Object.keys(mapping)) {
     const referenceKey = mapping[connectionKey];
+    referencesToAdd[referenceKey] = references[referenceKey];
     if (connectionKey === referenceKey) {
       updatedDefinition = replaceAllStringInWorkflowDefinition(updatedDefinition, referenceKey, replaceWorkflowIdentifier(referenceKey));
     } else {
@@ -289,8 +284,8 @@ const updateConnectionsDataWithNewConnections = (
   }
 
   const newConnectionsObj: Record<string, any> = {};
-  for (const referenceKey of Object.keys(references)) {
-    const reference = references[referenceKey];
+  for (const referenceKey of Object.keys(referencesToAdd)) {
+    const reference = referencesToAdd[referenceKey];
 
     const { api, connection, connectionProperties, connectionRuntimeUrl } = reference;
     newConnectionsObj[replaceWorkflowIdentifier(referenceKey)] = {
