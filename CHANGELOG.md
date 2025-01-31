@@ -1,4 +1,13 @@
 # Logic Apps Designer
+### [5.18.3](https://github.com/Azure/LogicAppsUX/compare/v5.18.2...v5.18.3) (2025-01-31)
+
+
+### Bug Fixes
+
+* **designer:** Correctly add inactive class for subgraph cards  ([#6491](https://github.com/Azure/LogicAppsUX/issues/6491)) ([c32e631](https://github.com/Azure/LogicAppsUX/commit/c32e63136d2a4bdcc774a4f2197848a35100cc95)), closes [#6408](https://github.com/Azure/LogicAppsUX/issues/6408)
+* **designer:** Custom connection cache and error thrown on extended text node ([#6505](https://github.com/Azure/LogicAppsUX/issues/6505)) ([cf39511](https://github.com/Azure/LogicAppsUX/commit/cf395117ca00148e41e8ce1b4fd7fc2f2c98c0f1)), closes [#6370](https://github.com/Azure/LogicAppsUX/issues/6370) [#6425](https://github.com/Azure/LogicAppsUX/issues/6425)
+* **vscode:** Update connection parameterization for custom connectors ([#6496](https://github.com/Azure/LogicAppsUX/issues/6496)) ([020416a](https://github.com/Azure/LogicAppsUX/commit/020416a2891ae3a2cb8fecb89400f9afe6070d05)), closes [#6480](https://github.com/Azure/LogicAppsUX/issues/6480)
+
 ### [5.18.2](https://github.com/Azure/LogicAppsUX/compare/v5.18.1...v5.18.2) (2025-01-24)
 
 
