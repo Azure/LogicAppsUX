@@ -1,4 +1,11 @@
 # Logic Apps Designer
+## [5.35.0](https://github.com/Azure/LogicAppsUX/compare/v5.34.0...v5.35.0) (2025-01-31)
+
+
+### Features
+
+* **templates:** Add create/update context in templates to show appropriate title texts ([#6521](https://github.com/Azure/LogicAppsUX/issues/6521)) ([367f40f](https://github.com/Azure/LogicAppsUX/commit/367f40ff2fa6daf2019b44da9cca5ac6992bafaf))
+
 ## [5.34.0](https://github.com/Azure/LogicAppsUX/compare/v5.33.0...v5.34.0) (2025-01-31)
 
 
