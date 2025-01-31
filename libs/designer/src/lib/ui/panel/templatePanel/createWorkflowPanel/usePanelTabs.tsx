@@ -38,6 +38,7 @@ export const useCreateWorkflowPanelTabs = ({
     errors: { parameters: parameterErrors, connections: connectionsError },
     templateConnections,
     workflows,
+    isCreateView,
   } = useSelector((state: RootState) => ({
     existingWorkflowName: state.workflow.existingWorkflowName,
     connections: state.workflow.connections,
@@ -49,6 +50,7 @@ export const useCreateWorkflowPanelTabs = ({
     errors: state.template.errors,
     templateConnections: state.template.connections,
     workflows: state.template.workflows,
+    isCreateView: state.workflow.isCreateView,
   }));
 
   const [errorMessage, setErrorMessage] = useState<string | undefined>(undefined);
@@ -203,6 +205,7 @@ export const useCreateWorkflowPanelTabs = ({
       ...reviewCreateTab(intl, dispatch, createWorkflowFromTemplate, {
         shouldClearDetails: !isMultiWorkflowTemplate,
         isCreating,
+        isCreateView,
         errorMessage,
         hasError: false,
         isPrimaryButtonDisabled: nameStateTabItem.hasError || !!connectionsError || hasParametersValidationErrors,
@@ -220,14 +223,15 @@ export const useCreateWorkflowPanelTabs = ({
       dispatch,
       createWorkflowFromTemplate,
       isMultiWorkflowTemplate,
-      isConsumption,
       isCreating,
+      isCreateView,
       errorMessage,
       nameStateTabItem.hasError,
       connectionsError,
       hasParametersValidationErrors,
       parametersExist,
       connectionsExist,
+      isConsumption,
     ]
   );
 

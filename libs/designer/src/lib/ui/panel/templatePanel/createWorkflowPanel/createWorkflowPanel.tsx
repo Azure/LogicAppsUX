@@ -37,10 +37,11 @@ export const CreateWorkflowPanel = ({ createWorkflow, onClose, clearDetailsOnClo
   const dispatch = useDispatch<AppDispatch>();
   const intl = useIntl();
   const { refetch: refetchWorkflowNames } = useExistingWorkflowNames();
-  const { selectedTabId, manifest, isOpen, currentPanelView } = useSelector((state: RootState) => ({
+  const { selectedTabId, manifest, isOpen, isCreateView, currentPanelView } = useSelector((state: RootState) => ({
     selectedTabId: state.panel.selectedTabId,
     manifest: state.template.manifest,
     isOpen: state.panel.isOpen,
+    isCreateView: state.workflow.isCreateView,
     currentPanelView: state.panel.currentPanelView,
   }));
   const isMultiWorkflow = useMemo(() => !!manifest && isMultiWorkflowTemplate(manifest), [manifest]);
@@ -55,6 +56,11 @@ export const CreateWorkflowPanel = ({ createWorkflow, onClose, clearDetailsOnClo
       defaultMessage: 'Create workflows from template',
       id: '5pSOjg',
       description: 'Panel header title for creating workflows',
+    }),
+    updatedWorkflowTitle: intl.formatMessage({
+      defaultMessage: 'Update workflow from template',
+      id: '5zW+oj',
+      description: 'Panel header title for updating the workflow',
     }),
   };
 
@@ -81,12 +87,19 @@ export const CreateWorkflowPanel = ({ createWorkflow, onClose, clearDetailsOnClo
   const onRenderHeaderContent = useCallback(
     () => (
       <CreateWorkflowPanelHeader
-        headerTitle={isMultiWorkflow ? resources.multiWorkflowCreateTitle : undefined}
+        headerTitle={isMultiWorkflow ? resources.multiWorkflowCreateTitle : isCreateView ? undefined : resources.updatedWorkflowTitle}
         title={manifest?.title ?? ''}
         description={manifest?.description ?? ''}
       />
     ),
-    [resources.multiWorkflowCreateTitle, isMultiWorkflow, manifest]
+    [
+      isMultiWorkflow,
+      resources.multiWorkflowCreateTitle,
+      resources.updatedWorkflowTitle,
+      isCreateView,
+      manifest?.title,
+      manifest?.description,
+    ]
   );
 
   const selectedTabProps = selectedTabId ? panelTabs?.find((tab) => tab.id === selectedTabId) : panelTabs[0];

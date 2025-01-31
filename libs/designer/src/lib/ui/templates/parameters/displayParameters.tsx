@@ -136,6 +136,8 @@ export const DisplayParameters = () => {
         return (
           <TextField
             className="msla-templates-parameters-values"
+            data-testid="msla-templates-parameter-value"
+            id="msla-templates-parameter-value"
             aria-label={item.value}
             value={item.value}
             onChange={(_event, newValue) => {
