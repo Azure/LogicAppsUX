@@ -1,4 +1,11 @@
 # Logic Apps Designer
+## [5.34.0](https://github.com/Azure/LogicAppsUX/compare/v5.33.0...v5.34.0) (2025-01-31)
+
+
+### Bug Fixes
+
+* **Data Mapper:** Filter empty/null messages ([#6520](https://github.com/Azure/LogicAppsUX/issues/6520)) ([96ce56f](https://github.com/Azure/LogicAppsUX/commit/96ce56fdd3b2f84066e223acfea4505b655c0c31))
+
 ## [5.33.0](https://github.com/Azure/LogicAppsUX/compare/v5.32.0...v5.33.0) (2025-01-30)
 
 ## [5.32.0](https://github.com/Azure/LogicAppsUX/compare/v5.31.0...v5.32.0) (2025-01-30)
