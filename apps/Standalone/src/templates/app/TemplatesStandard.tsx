@@ -212,6 +212,7 @@ export const TemplatesStandard = () => {
         connectionReferences={connectionReferences}
         services={services}
         isConsumption={false}
+        isCreateView={true}
         existingWorkflowName={existingWorkflowName}
       >
         <div
