@@ -1,4 +1,5 @@
 /* eslint-disable no-param-reassign */
+import { keyBy } from 'lodash';
 import { mapDefinitionVersion, mapNodeParams, reservedMapDefinitionKeys } from '../constants/MapDefinitionConstants';
 import { sourcePrefix, targetPrefix } from '../constants/ReactFlowConstants';
 import type { Connection, ConnectionDictionary, NodeConnection, InputConnection } from '../models/Connection';
@@ -21,9 +22,10 @@ import {
 import { formatDirectAccess, getIndexValueForCurrentConnection, isFunctionData } from '../utils/Function.Utils';
 import { addTargetReactFlowPrefix } from '../utils/ReactFlow.Util';
 import { isObjectType, isSchemaNodeExtended } from '../utils/Schema.Utils';
-import type { MapDefinitionEntry, PathItem, SchemaExtended, SchemaNodeExtended } from '@microsoft/logic-apps-shared';
+import type { MapDefinitionEntry, MapDefinitionEntryV2, PathItem, SchemaExtended, SchemaNodeExtended } from '@microsoft/logic-apps-shared';
 import { extend, SchemaNodeProperty } from '@microsoft/logic-apps-shared';
 import yaml from 'js-yaml';
+import { connect } from 'http2';
 
 interface OutputPathItem {
   key: string;
@@ -55,16 +57,37 @@ export const convertToMapDefinition = (
   //const invalidFunctionNodes = invalidFunctions(connections);
   if (sourceSchema && targetSchema) {
     const mapDefinition: MapDefinitionEntry = {};
+    const mapDefinitionv2: MapDefinitionEntryV2 = new Map();
 
     if (generateHeader) {
       generateMapDefinitionHeader(mapDefinition, sourceSchema, targetSchema);
     }
 
-    generateMapDefinitionBody(mapDefinition, connections);
+    generateMapDefinitionBody(mapDefinition, connections, targetSchemaSortArray, mapDefinitionv2);
 
     // Custom values directly on target nodes need to have extra single quotes stripped out
     const map = createYamlFromMap(mapDefinition, targetSchemaSortArray);
-
+    // const testMap = 
+    // `$version: 1
+    // $input: XML
+    // $output: XML
+    // $sourceSchema: Source.xsd
+    // $targetSchema: Target.xsd
+    // $sourceNamespaces:
+    // ns0: http://tempuri.org/source.xsd
+    // xs: http://www.w3.org/2001/XMLSchema
+    // $targetNamespaces:
+    //   ns0: http://tempuri.org/Target.xsd
+    //   td: http://tempuri.org/TypeDefinition.xsd
+    //   xs: http://www.w3.org/2001/XMLSchema
+    // ns0:Root:
+    //   DirectTranslation:
+    //     Employee:
+    //       $if(/ns0:Root/DirectTranslation/EmployeeID):
+    //         ID: /ns0:Root/DirectTranslation/EmployeeName
+    //       FullName: /ns0:PersonOrigin/LastName
+    //       $if(/ns0:Root/DirectTranslation/EmployeeID):
+    //         Age: /ns0:PersonOrigin/LastName`
     return { isSuccess: true, definition: map };
   }
 
@@ -84,9 +107,20 @@ export const createYamlFromMap = (mapDefinition: MapDefinitionEntry, targetSchem
   return map;
 };
 
-const yamlReplacer = (key: string, value: any) => {
+const yamlReplacer = (key: string, value: any) => { // this function can be used to set/replace the value but not the key
+  const valueType = typeof value;
+  console.log(valueType)
+  if (typeof value === 'object') {
+    // iterate through and remove- nope because must return an object
+  }
   if (typeof value === 'string' && key === reservedMapDefinitionKeys.version) {
     return Number.parseFloat(value);
+  }
+
+  //JSON.stringify
+
+  if (key === 'Name1') {
+    return { 'Name': value }
   }
 
   return value;
@@ -123,25 +157,41 @@ const getConnectionsToTargetNodes = (connections: ConnectionDictionary) => {
   });
 };
 
+export const sortConnectionsToTargetNodes = (targetSchemaConnections: [string, Connection][], targetSchemaSortArray: string[]) => {
+  const targetSchemaSortMap = new Map<string, number>();
+  targetSchemaSortArray.forEach((node, index) => {
+    targetSchemaSortMap.set(addTargetReactFlowPrefix(node), index);
+  });
+  const sortedTargetSchemaConnections = targetSchemaConnections.sort(([keyA, _connectionA], [keyBy, _connectionB]) => {
+    const aIndex = targetSchemaSortMap.get(keyA);
+    const bIndex = targetSchemaSortMap.get(keyBy);
+    if (aIndex && bIndex && aIndex > bIndex) {
+      return 1;
+    }
+    else return -1;
+  })
+  return sortedTargetSchemaConnections;
+}
+
 // Exported for testing purposes
-export const generateMapDefinitionBody = (mapDefinition: MapDefinitionEntry, connections: ConnectionDictionary): void => {
+export const generateMapDefinitionBody = (mapDefinition: MapDefinitionEntry, connections: ConnectionDictionary, targetSchemaSortArray: string[], mapDefinitionv2: MapDefinitionEntryV2): void => {
   // Filter to just the target node connections, all the rest will be picked up be traversing up the chain
   const targetSchemaConnections = getConnectionsToTargetNodes(connections);
+  const sortedTargetSchemaConnections = sortConnectionsToTargetNodes(targetSchemaConnections, targetSchemaSortArray);
 
-  targetSchemaConnections.forEach(([_key, connection]) => {
+  sortedTargetSchemaConnections.forEach(([_key, connection]) => {
     const inputs = connection?.inputs;
     inputs.forEach((input) => {
       const selfNode = connection.self.node;
       if (input && isSchemaNodeExtended(selfNode)) {
-        const pathToCreate = createNewPathItems(input, selfNode, connections);
-        applyValueAtPath(mapDefinition, pathToCreate);
+        createNewPathItems(input, selfNode, connections, mapDefinitionv2);
       }
     });
   });
 };
 
 const createSourcePath = (
-  newPath: OutputPathItem[],
+  newPath: MapDefinitionEntryV2,
   isFinalPath: boolean,
   pathItem: PathItem,
   connections: ConnectionDictionary,
@@ -177,7 +227,7 @@ const createSourcePath = (
 
     // Still have objects to traverse down
   }
-  newPath.push({ key: pathItem.qName.startsWith('@') ? `$${pathItem.qName}` : pathItem.qName });
+  // newPath.set({ key: pathItem.qName.startsWith('@') ? `$${pathItem.qName}` : pathItem.qName }); danielle look into this
   return '';
 };
 
@@ -197,33 +247,56 @@ const getPathForSrcSchemaNode = (sourceNode: NodeConnection, formattedLmlSnippet
   return res;
 };
 
-const createNewPathItems = (input: InputConnection, targetNode: SchemaNodeExtended, connections: ConnectionDictionary) => {
-  const newPath: OutputPathItem[] = [];
+export const createNewPathItems = (input: InputConnection, targetNode: SchemaNodeExtended, connections: ConnectionDictionary, mapDefinitionv2: MapDefinitionEntryV2) => {
   const isTargetObjectType = targetNode.nodeProperties.some((property) => property === SchemaNodeProperty.Complex);
 
   // build the target section of the yml starting with 'root' going down to the target node
   const lastLoop = { loop: '' };
+
+  let currentNode = mapDefinitionv2;
   targetNode.pathToRoot.forEach((targetPath, _index, pathToRoot) => {
-    const connectionsIntoCurrentTargetPath = connections[addTargetReactFlowPrefix(targetPath.key)];
+    if (typeof currentNode === 'string') {
+      return;
+    }
+    if (!currentNode.get(targetPath.qName)) {
+      currentNode.set(targetPath.qName, new Map());
+    }   
+
+    const node = currentNode.get(targetPath.qName);
+    if(node !== undefined) {
+      currentNode = node;
+    }
+
+    // danielle next account for for and if
+  
+  });
+
+  const targetPath = targetNode.pathToRoot[targetNode.pathToRoot.length - 1];
+  const newPath = currentNode;
+  if (typeof newPath === 'string') {
+    return; // danielle revisit
+  }
+
+  const connectionsIntoCurrentTargetPath = connections[addTargetReactFlowPrefix(targetPath.key)];
 
     // If there is no rootTargetConnection that means there is a looping node in the source structure, but we aren't using it
     // Probably used for direct index access
     if (targetPath.repeating && connectionsIntoCurrentTargetPath) {
       // Looping schema node
-      addLoopingForToNewPathItems(targetPath, connectionsIntoCurrentTargetPath, connections, newPath, lastLoop);
+      //addLoopingForToNewPathItems(targetPath, connectionsIntoCurrentTargetPath, connections, newPath, lastLoop);
     } else {
       if (connectionsIntoCurrentTargetPath) {
         // Conditionals
         const rootSourceNodes = connectionsIntoCurrentTargetPath.inputs[0];
         const sourceNode = rootSourceNodes;
         if (sourceNode && isNodeConnection(sourceNode) && sourceNode.node.key.startsWith(ifPseudoFunctionKey)) {
-          addConditionalToNewPathItems(connections[sourceNode.reactFlowKey], connections, newPath);
+          //addConditionalToNewPathItems(connections[sourceNode.reactFlowKey], connections, newPath);
         }
       }
 
       const isFinalPath = targetNode.key === targetPath.key;
 
-      let formattedLmlSnippetForSource = createSourcePath(newPath, isFinalPath, targetPath, connections, input, pathToRoot);
+      let formattedLmlSnippetForSource = createSourcePath(newPath, isFinalPath, targetPath, connections, input, targetNode.pathToRoot);
 
       if (formattedLmlSnippetForSource === undefined) {
         return;
@@ -233,68 +306,158 @@ const createNewPathItems = (input: InputConnection, targetNode: SchemaNodeExtend
       if (isFinalPath) {
         const connectionsToTarget = connections[addTargetReactFlowPrefix(targetPath.key)];
         const inputNode = connectionsToTarget.inputs[0];
-        if (inputNode && isNodeConnection(inputNode)) {
-          if (isFunctionData(inputNode.node)) {
-            const valueToTrim = getSrcPathRelativeToLoop(newPath);
+        // if (inputNode && isNodeConnection(inputNode)) {
+        //   if (isFunctionData(inputNode.node)) {
+        //     const valueToTrim = getSrcPathRelativeToLoop(newPath);
 
-            if (valueToTrim) {
-              // Need local variables for functions
-              if (formattedLmlSnippetForSource === valueToTrim) {
-                formattedLmlSnippetForSource = '';
-              } else {
-                formattedLmlSnippetForSource = formattedLmlSnippetForSource.replaceAll(`${valueToTrim}/`, '');
+        //     if (valueToTrim) {
+        //       // Need local variables for functions
+        //       if (formattedLmlSnippetForSource === valueToTrim) {
+        //         formattedLmlSnippetForSource = '';
+        //       } else {
+        //         formattedLmlSnippetForSource = formattedLmlSnippetForSource.replaceAll(`${valueToTrim}/`, '');
 
-                // Handle dot access
-                if (!formattedLmlSnippetForSource.includes('[') && !formattedLmlSnippetForSource.includes(']')) {
-                  formattedLmlSnippetForSource = formattedLmlSnippetForSource.replaceAll(`${valueToTrim}`, '.');
-                }
-              }
-            }
-          } else {
-            // Need local variables for non-functions
-            const valueToTrim = getPathForSrcSchemaNode(inputNode, formattedLmlSnippetForSource);
-            if (
-              formattedLmlSnippetForSource === inputNode.node.key &&
-              inputNode.node.nodeProperties.includes(SchemaNodeProperty.Repeating)
-            ) {
-              formattedLmlSnippetForSource = '.';
-            } else if (valueToTrim) {
-              // account for source elements at different level of loop
-              let backoutValue = '';
-              if (valueToTrim !== lastLoop.loop && !valueToTrim.includes('/*')) {
-                // second condition is temporary fix for json arrays
-                const loopDifference = lastLoop.loop.replace(valueToTrim || ' ', '');
-                for (const i of loopDifference) {
-                  if (i === '/') {
-                    backoutValue += '../';
-                  }
-                }
-              }
-              formattedLmlSnippetForSource = backoutValue + formattedLmlSnippetForSource.replace(`${valueToTrim}/`, '');
-            }
+        //         // Handle dot access
+        //         if (!formattedLmlSnippetForSource.includes('[') && !formattedLmlSnippetForSource.includes(']')) {
+        //           formattedLmlSnippetForSource = formattedLmlSnippetForSource.replaceAll(`${valueToTrim}`, '.');
+        //         }
+        //       }
+        //     }
+        //   } else {
+        //     // Need local variables for non-functions
+        //     const valueToTrim = getPathForSrcSchemaNode(inputNode, formattedLmlSnippetForSource);
+        //     if (
+        //       formattedLmlSnippetForSource === inputNode.node.key &&
+        //       inputNode.node.nodeProperties.includes(SchemaNodeProperty.Repeating)
+        //     ) {
+        //       formattedLmlSnippetForSource = '.';
+        //     } else if (valueToTrim) {
+        //       // account for source elements at different level of loop
+        //       let backoutValue = '';
+        //       if (valueToTrim !== lastLoop.loop && !valueToTrim.includes('/*')) {
+        //         // second condition is temporary fix for json arrays
+        //         const loopDifference = lastLoop.loop.replace(valueToTrim || ' ', '');
+        //         for (const i of loopDifference) {
+        //           if (i === '/') {
+        //             backoutValue += '../';
+        //           }
+        //         }
+        //       }
+        //       formattedLmlSnippetForSource = backoutValue + formattedLmlSnippetForSource.replace(`${valueToTrim}/`, '');
+        //     }
 
-            formattedLmlSnippetForSource = formattedLmlSnippetForSource.startsWith('@')
-              ? `./${formattedLmlSnippetForSource}`
-              : formattedLmlSnippetForSource;
-          }
-        }
+        //     formattedLmlSnippetForSource = formattedLmlSnippetForSource.startsWith('@')
+        //       ? `./${formattedLmlSnippetForSource}`
+        //       : formattedLmlSnippetForSource;
+        //   }
+        // }
 
         if (isTargetObjectType) {
           // $Value
-          newPath.push({ key: targetPath.qName.startsWith('@') ? `$${targetPath.qName}` : targetPath.qName });
-          newPath.push({ key: mapNodeParams.value, value: formattedLmlSnippetForSource });
+          //newPath.set({ key: targetPath.qName.startsWith('@') ? `$${targetPath.qName}` : targetPath.qName });
+          // newPath.push({ key: mapNodeParams.value, value: formattedLmlSnippetForSource });
         } else {
           // Standard property to value
-          newPath.push({
-            key: targetPath.qName.startsWith('@') ? `$${targetPath.qName}` : targetPath.qName,
-            value: formattedLmlSnippetForSource && !isObjectType(targetNode.type) ? formattedLmlSnippetForSource : undefined,
-          });
+          newPath.set(
+             targetPath.qName.startsWith('@') ? `$${targetPath.qName}` : targetPath.qName,
+            formattedLmlSnippetForSource && !isObjectType(targetNode.type) ? formattedLmlSnippetForSource : "", // danielle do not allow empty here
+          );
         }
       }
     }
-  });
 
-  return newPath;
+  // targetNode.pathToRoot.forEach((targetPath, _index, pathToRoot) => {
+  //   const connectionsIntoCurrentTargetPath = connections[addTargetReactFlowPrefix(targetPath.key)];
+
+  //   // If there is no rootTargetConnection that means there is a looping node in the source structure, but we aren't using it
+  //   // Probably used for direct index access
+  //   if (targetPath.repeating && connectionsIntoCurrentTargetPath) {
+  //     // Looping schema node
+  //     addLoopingForToNewPathItems(targetPath, connectionsIntoCurrentTargetPath, connections, newPath, lastLoop);
+  //   } else {
+  //     if (connectionsIntoCurrentTargetPath) {
+  //       // Conditionals
+  //       const rootSourceNodes = connectionsIntoCurrentTargetPath.inputs[0];
+  //       const sourceNode = rootSourceNodes;
+  //       if (sourceNode && isNodeConnection(sourceNode) && sourceNode.node.key.startsWith(ifPseudoFunctionKey)) {
+  //         addConditionalToNewPathItems(connections[sourceNode.reactFlowKey], connections, newPath);
+  //       }
+  //     }
+
+  //     const isFinalPath = targetNode.key === targetPath.key;
+
+  //     let formattedLmlSnippetForSource = createSourcePath(newPath, isFinalPath, targetPath, connections, input, pathToRoot);
+
+  //     if (formattedLmlSnippetForSource === undefined) {
+  //       return;
+  //     }
+
+  //     // construct source side of LML for connection
+  //     if (isFinalPath) {
+  //       const connectionsToTarget = connections[addTargetReactFlowPrefix(targetPath.key)];
+  //       const inputNode = connectionsToTarget.inputs[0];
+  //       if (inputNode && isNodeConnection(inputNode)) {
+  //         if (isFunctionData(inputNode.node)) {
+  //           const valueToTrim = getSrcPathRelativeToLoop(newPath);
+
+  //           if (valueToTrim) {
+  //             // Need local variables for functions
+  //             if (formattedLmlSnippetForSource === valueToTrim) {
+  //               formattedLmlSnippetForSource = '';
+  //             } else {
+  //               formattedLmlSnippetForSource = formattedLmlSnippetForSource.replaceAll(`${valueToTrim}/`, '');
+
+  //               // Handle dot access
+  //               if (!formattedLmlSnippetForSource.includes('[') && !formattedLmlSnippetForSource.includes(']')) {
+  //                 formattedLmlSnippetForSource = formattedLmlSnippetForSource.replaceAll(`${valueToTrim}`, '.');
+  //               }
+  //             }
+  //           }
+  //         } else {
+  //           // Need local variables for non-functions
+  //           const valueToTrim = getPathForSrcSchemaNode(inputNode, formattedLmlSnippetForSource);
+  //           if (
+  //             formattedLmlSnippetForSource === inputNode.node.key &&
+  //             inputNode.node.nodeProperties.includes(SchemaNodeProperty.Repeating)
+  //           ) {
+  //             formattedLmlSnippetForSource = '.';
+  //           } else if (valueToTrim) {
+  //             // account for source elements at different level of loop
+  //             let backoutValue = '';
+  //             if (valueToTrim !== lastLoop.loop && !valueToTrim.includes('/*')) {
+  //               // second condition is temporary fix for json arrays
+  //               const loopDifference = lastLoop.loop.replace(valueToTrim || ' ', '');
+  //               for (const i of loopDifference) {
+  //                 if (i === '/') {
+  //                   backoutValue += '../';
+  //                 }
+  //               }
+  //             }
+  //             formattedLmlSnippetForSource = backoutValue + formattedLmlSnippetForSource.replace(`${valueToTrim}/`, '');
+  //           }
+
+  //           formattedLmlSnippetForSource = formattedLmlSnippetForSource.startsWith('@')
+  //             ? `./${formattedLmlSnippetForSource}`
+  //             : formattedLmlSnippetForSource;
+  //         }
+  //       }
+
+  //       if (isTargetObjectType) {
+  //         // $Value
+  //         newPath.push({ key: targetPath.qName.startsWith('@') ? `$${targetPath.qName}` : targetPath.qName });
+  //         newPath.push({ key: mapNodeParams.value, value: formattedLmlSnippetForSource });
+  //       } else {
+  //         // Standard property to value
+  //         newPath.push({
+  //           key: targetPath.qName.startsWith('@') ? `$${targetPath.qName}` : targetPath.qName,
+  //           value: formattedLmlSnippetForSource && !isObjectType(targetNode.type) ? formattedLmlSnippetForSource : undefined,
+  //         });
+  //       }
+  //     }
+  //   }
+  // });
+
+  return mapDefinitionv2;
 };
 
 const addConditionalToNewPathItems = (ifConnection: Connection, connections: ConnectionDictionary, newPath: OutputPathItem[]) => {
@@ -450,7 +613,7 @@ const addLoopingForToNewPathItems = (
   }
 };
 
-const applyValueAtPath = (mapDefinition: MapDefinitionEntry, path: OutputPathItem[]) => {
+export const applyValueAtPath = (mapDefinition: MapDefinitionEntry, path: OutputPathItem[]) => {
   path.every((pathItem, pathIndex) => {
     if (pathItem.arrayIndex !== undefined) {
       // When dealing with the map definition we need to access the previous path item, instead of the current
@@ -488,18 +651,18 @@ const applyValueAtPath = (mapDefinition: MapDefinitionEntry, path: OutputPathIte
     return true;
   });
 };
-
-const findKeyInMap = (mapDefinition: MapDefinitionEntry, key: string): string | undefined => {
-  if (mapDefinition[key]) {
+export const findKeyInMap = (mapSegment: MapDefinitionEntry, key: string): string | undefined => {
+  if (mapSegment[key]) {
     return key;
   }
 
-  const keys = Object.keys(mapDefinition);
+  const keys = Object.keys(mapSegment);
   for (const currentKey of keys) {
-    if (typeof mapDefinition[currentKey] === 'object') {
-      const foundKey = findKeyInMap(mapDefinition[currentKey] as MapDefinitionEntry, key);
+    if (typeof mapSegment[currentKey] === 'object') {
+      const valueAtCurrentKey = mapSegment[currentKey];
+      const foundKey = findKeyInMap(mapSegment[currentKey] as MapDefinitionEntry, key);
       if (foundKey) {
-        const childKey = Object.keys((mapDefinition[currentKey] as MapDefinitionEntry)[foundKey])[0];
+        const childKey = Object.keys((mapSegment[currentKey] as MapDefinitionEntry)[foundKey])[0]; // danielle this type cast probably broke 
         return childKey;
       }
     }

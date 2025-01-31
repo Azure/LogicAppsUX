@@ -4,6 +4,8 @@ export type MapDefinitionEntry = {
   [key: string]: MapDefinitionEntry | string | MapDefinitionEntry[];
 };
 
+export type MapDefinitionEntryV2 = Map<string, MapDefinitionEntryV2 | string> | string;
+
 export interface FunctionPositionMetadata {
   targetKey: string;
   position: XYPosition;
