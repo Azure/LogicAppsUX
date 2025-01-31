@@ -358,7 +358,7 @@ describe('mapDefinitions/MapDefinitionSerializer', () => {
           input: createNodeConnection(sourceNode.children[1], addReactFlowPrefix(sourceNode.children[1].key, SchemaType.Source)),
         });
 
-        generateMapDefinitionBody(mapDefinition, connections);
+        generateMapDefinitionBody(mapDefinition, connections,);
 
         expect(Object.keys(mapDefinition).length).toEqual(1);
         const rootChildren = Object.entries(mapDefinition['ns0:Root']);

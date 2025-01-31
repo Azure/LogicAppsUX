@@ -7,8 +7,9 @@ export type MapDefinitionEntry = {
 export type MapDefinitionEntryV2 = MapDefinitionObject[] | string;
 
 export type MapDefinitionObject = {
-   [key: string]: MapDefinitionObject[] | string,
-    childNode?: string
+   key: string;
+   value: string | MapDefinitionObject[];
+   childNode?: string
   };
 
 export interface FunctionPositionMetadata {

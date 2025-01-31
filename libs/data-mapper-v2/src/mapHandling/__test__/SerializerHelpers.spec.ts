@@ -17,9 +17,18 @@ import {
   findKeyInMap,
   sortConnectionsToTargetNodes,
 } from "../MapDefinitionSerializer";
-import { MapDefinitionEntry, MapDefinitionEntryV2, SchemaNode, SchemaNodeExtended } from "@microsoft/logic-apps-shared";
+import {
+  MapDefinitionEntry,
+  MapDefinitionEntryV2,
+  SchemaNode,
+  SchemaNodeExtended,
+} from "@microsoft/logic-apps-shared";
 import YAML from "yaml";
-import { Connection, ConnectionDictionary, InputConnection } from "../../models/Connection";
+import {
+  Connection,
+  ConnectionDictionary,
+  InputConnection,
+} from "../../models/Connection";
 
 describe("serialization helpers", () => {
   describe("createYamlFromMap", () => {
@@ -164,21 +173,264 @@ describe("serialization helpers", () => {
     });
   });
   describe("createNewPathItems", () => {
-    it ('creates new path item', () => {
-        const result: MapDefinitionEntryV2 = [];
-        createNewPathItems(input, schemaNode, connections, result);
-        console.log(result)
-        const yamlStr = createYamlFromMapV2(result)
-        console.log(yamlStr)
-    })
+    it("creates new path item", () => {
+      const result: MapDefinitionEntryV2 = [];
+      createNewPathItems(input, schemaNode, connectionsSimple, result);
+      console.log(result);
+      expect(result).toEqual([
+        {
+          key: "ns0:Root",
+          value: [
+            {
+              key: "DirectTranslation",
+              value: [
+                {
+                  key: "Employee",
+                  value: [
+                    {
+                      key: "ID",
+                      value: "/ns0:Root/DirectTranslation/EmployeeID",
+                    },
+                  ],
+                },
+              ],
+            },
+          ],
+        },
+      ]);
+      const yamlStr = createYamlFromMapV2(result);
+      console.log(yamlStr);
+    });
   });
 });
 
-const input: InputConnection = {"isDefined":true,"isCustom":false,"node":{"key":"/ns0:Root/DirectTranslation/EmployeeID","name":"EmployeeID","type":"Decimal","properties":"None","qName":"EmployeeID","parentKey":"/ns0:Root/DirectTranslation","nodeProperties":["None"],"children":[],"pathToRoot":[{"key":"/ns0:Root","name":"Root","qName":"ns0:Root","repeating":false},{"key":"/ns0:Root/DirectTranslation","name":"DirectTranslation","qName":"DirectTranslation","repeating":false},{"key":"/ns0:Root/DirectTranslation/EmployeeID","name":"EmployeeID","qName":"EmployeeID","repeating":false}]},"reactFlowKey":"source-/ns0:Root/DirectTranslation/EmployeeID"}
+const input: InputConnection = {
+  isDefined: true,
+  isCustom: false,
+  node: {
+    key: "/ns0:Root/DirectTranslation/EmployeeID",
+    name: "EmployeeID",
+    type: "Decimal",
+    properties: "None",
+    qName: "EmployeeID",
+    parentKey: "/ns0:Root/DirectTranslation",
+    nodeProperties: ["None"],
+    children: [],
+    pathToRoot: [
+      { key: "/ns0:Root", name: "Root", qName: "ns0:Root", repeating: false },
+      {
+        key: "/ns0:Root/DirectTranslation",
+        name: "DirectTranslation",
+        qName: "DirectTranslation",
+        repeating: false,
+      },
+      {
+        key: "/ns0:Root/DirectTranslation/EmployeeID",
+        name: "EmployeeID",
+        qName: "EmployeeID",
+        repeating: false,
+      },
+    ],
+  },
+  reactFlowKey: "source-/ns0:Root/DirectTranslation/EmployeeID",
+};
 
-const schemaNode: SchemaNodeExtended = {"key":"/ns0:Root/DirectTranslation/Employee/ID","name":"ID","type":"Decimal","properties":"None","qName":"ID","parentKey":"/ns0:Root/DirectTranslation/Employee","nodeProperties":["None"],"children":[],"pathToRoot":[{"key":"/ns0:Root","name":"Root","qName":"ns0:Root","repeating":false},{"key":"/ns0:Root/DirectTranslation","name":"DirectTranslation","qName":"DirectTranslation","repeating":false},{"key":"/ns0:Root/DirectTranslation/Employee","name":"Employee","qName":"Employee","repeating":false},{"key":"/ns0:Root/DirectTranslation/Employee/ID","name":"ID","qName":"ID","repeating":false}]}
+const schemaNode: SchemaNodeExtended = {
+  key: "/ns0:Root/DirectTranslation/Employee/ID",
+  name: "ID",
+  type: "Decimal",
+  properties: "None",
+  qName: "ID",
+  parentKey: "/ns0:Root/DirectTranslation/Employee",
+  nodeProperties: ["None"],
+  children: [],
+  pathToRoot: [
+    { key: "/ns0:Root", name: "Root", qName: "ns0:Root", repeating: false },
+    {
+      key: "/ns0:Root/DirectTranslation",
+      name: "DirectTranslation",
+      qName: "DirectTranslation",
+      repeating: false,
+    },
+    {
+      key: "/ns0:Root/DirectTranslation/Employee",
+      name: "Employee",
+      qName: "Employee",
+      repeating: false,
+    },
+    {
+      key: "/ns0:Root/DirectTranslation/Employee/ID",
+      name: "ID",
+      qName: "ID",
+      repeating: false,
+    },
+  ],
+};
 
-const connections: ConnectionDictionary = {"target-/ns0:Root/DirectTranslation/Employee/ID":{"self":{"node":{"key":"/ns0:Root/DirectTranslation/Employee/ID","name":"ID","type":"Decimal","properties":"None","qName":"ID","parentKey":"/ns0:Root/DirectTranslation/Employee","nodeProperties":["None"],"children":[],"pathToRoot":[{"key":"/ns0:Root","name":"Root","qName":"ns0:Root","repeating":false},{"key":"/ns0:Root/DirectTranslation","name":"DirectTranslation","qName":"DirectTranslation","repeating":false},{"key":"/ns0:Root/DirectTranslation/Employee","name":"Employee","qName":"Employee","repeating":false},{"key":"/ns0:Root/DirectTranslation/Employee/ID","name":"ID","qName":"ID","repeating":false}]},"reactFlowKey":"target-/ns0:Root/DirectTranslation/Employee/ID","isDefined":true,"isCustom":false},"inputs":[{"isDefined":true,"isCustom":false,"node":{"key":"/ns0:Root/DirectTranslation/EmployeeID","name":"EmployeeID","type":"Decimal","properties":"None","qName":"EmployeeID","parentKey":"/ns0:Root/DirectTranslation","nodeProperties":["None"],"children":[],"pathToRoot":[{"key":"/ns0:Root","name":"Root","qName":"ns0:Root","repeating":false},{"key":"/ns0:Root/DirectTranslation","name":"DirectTranslation","qName":"DirectTranslation","repeating":false},{"key":"/ns0:Root/DirectTranslation/EmployeeID","name":"EmployeeID","qName":"EmployeeID","repeating":false}]},"reactFlowKey":"source-/ns0:Root/DirectTranslation/EmployeeID"}],"outputs":[]},"source-/ns0:Root/DirectTranslation/EmployeeID":{"self":{"node":{"key":"/ns0:Root/DirectTranslation/EmployeeID","name":"EmployeeID","type":"Decimal","properties":"None","qName":"EmployeeID","parentKey":"/ns0:Root/DirectTranslation","nodeProperties":["None"],"children":[],"pathToRoot":[{"key":"/ns0:Root","name":"Root","qName":"ns0:Root","repeating":false},{"key":"/ns0:Root/DirectTranslation","name":"DirectTranslation","qName":"DirectTranslation","repeating":false},{"key":"/ns0:Root/DirectTranslation/EmployeeID","name":"EmployeeID","qName":"EmployeeID","repeating":false}]},"reactFlowKey":"source-/ns0:Root/DirectTranslation/EmployeeID","isDefined":true,"isCustom":false},"inputs":[{"isDefined":false,"isCustom":false}],"outputs":[{"node":{"key":"/ns0:Root/DirectTranslation/Employee/ID","name":"ID","type":"Decimal","properties":"None","qName":"ID","parentKey":"/ns0:Root/DirectTranslation/Employee","nodeProperties":["None"],"children":[],"pathToRoot":[{"key":"/ns0:Root","name":"Root","qName":"ns0:Root","repeating":false},{"key":"/ns0:Root/DirectTranslation","name":"DirectTranslation","qName":"DirectTranslation","repeating":false},{"key":"/ns0:Root/DirectTranslation/Employee","name":"Employee","qName":"Employee","repeating":false},{"key":"/ns0:Root/DirectTranslation/Employee/ID","name":"ID","qName":"ID","repeating":false}]},"reactFlowKey":"target-/ns0:Root/DirectTranslation/Employee/ID","isCustom":false,"isDefined":true}]}}
+const connectionsSimple: ConnectionDictionary = {
+  "target-/ns0:Root/DirectTranslation/Employee/ID": {
+    self: {
+      node: {
+        key: "/ns0:Root/DirectTranslation/Employee/ID",
+        name: "ID",
+        type: "Decimal",
+        properties: "None",
+        qName: "ID",
+        parentKey: "/ns0:Root/DirectTranslation/Employee",
+        nodeProperties: ["None"],
+        children: [],
+        pathToRoot: [
+          {
+            key: "/ns0:Root",
+            name: "Root",
+            qName: "ns0:Root",
+            repeating: false,
+          },
+          {
+            key: "/ns0:Root/DirectTranslation",
+            name: "DirectTranslation",
+            qName: "DirectTranslation",
+            repeating: false,
+          },
+          {
+            key: "/ns0:Root/DirectTranslation/Employee",
+            name: "Employee",
+            qName: "Employee",
+            repeating: false,
+          },
+          {
+            key: "/ns0:Root/DirectTranslation/Employee/ID",
+            name: "ID",
+            qName: "ID",
+            repeating: false,
+          },
+        ],
+      },
+      reactFlowKey: "target-/ns0:Root/DirectTranslation/Employee/ID",
+      isDefined: true,
+      isCustom: false,
+    },
+    inputs: [
+      {
+        isDefined: true,
+        isCustom: false,
+        node: {
+          key: "/ns0:Root/DirectTranslation/EmployeeID",
+          name: "EmployeeID",
+          type: "Decimal",
+          properties: "None",
+          qName: "EmployeeID",
+          parentKey: "/ns0:Root/DirectTranslation",
+          nodeProperties: ["None"],
+          children: [],
+          pathToRoot: [
+            {
+              key: "/ns0:Root",
+              name: "Root",
+              qName: "ns0:Root",
+              repeating: false,
+            },
+            {
+              key: "/ns0:Root/DirectTranslation",
+              name: "DirectTranslation",
+              qName: "DirectTranslation",
+              repeating: false,
+            },
+            {
+              key: "/ns0:Root/DirectTranslation/EmployeeID",
+              name: "EmployeeID",
+              qName: "EmployeeID",
+              repeating: false,
+            },
+          ],
+        },
+        reactFlowKey: "source-/ns0:Root/DirectTranslation/EmployeeID",
+      },
+    ],
+    outputs: [],
+  },
+  "source-/ns0:Root/DirectTranslation/EmployeeID": {
+    self: {
+      node: {
+        key: "/ns0:Root/DirectTranslation/EmployeeID",
+        name: "EmployeeID",
+        type: "Decimal",
+        properties: "None",
+        qName: "EmployeeID",
+        parentKey: "/ns0:Root/DirectTranslation",
+        nodeProperties: ["None"],
+        children: [],
+        pathToRoot: [
+          {
+            key: "/ns0:Root",
+            name: "Root",
+            qName: "ns0:Root",
+            repeating: false,
+          },
+          {
+            key: "/ns0:Root/DirectTranslation",
+            name: "DirectTranslation",
+            qName: "DirectTranslation",
+            repeating: false,
+          },
+          {
+            key: "/ns0:Root/DirectTranslation/EmployeeID",
+            name: "EmployeeID",
+            qName: "EmployeeID",
+            repeating: false,
+          },
+        ],
+      },
+      reactFlowKey: "source-/ns0:Root/DirectTranslation/EmployeeID",
+      isDefined: true,
+      isCustom: false,
+    },
+    inputs: [{ isDefined: false, isCustom: false }],
+    outputs: [
+      {
+        node: {
+          key: "/ns0:Root/DirectTranslation/Employee/ID",
+          name: "ID",
+          type: "Decimal",
+          properties: "None",
+          qName: "ID",
+          parentKey: "/ns0:Root/DirectTranslation/Employee",
+          nodeProperties: ["None"],
+          children: [],
+          pathToRoot: [
+            {
+              key: "/ns0:Root",
+              name: "Root",
+              qName: "ns0:Root",
+              repeating: false,
+            },
+            {
+              key: "/ns0:Root/DirectTranslation",
+              name: "DirectTranslation",
+              qName: "DirectTranslation",
+              repeating: false,
+            },
+            {
+              key: "/ns0:Root/DirectTranslation/Employee",
+              name: "Employee",
+              qName: "Employee",
+              repeating: false,
+            },
+            {
+              key: "/ns0:Root/DirectTranslation/Employee/ID",
+              name: "ID",
+              qName: "ID",
+              repeating: false,
+            },
+          ],
+        },
+        reactFlowKey: "target-/ns0:Root/DirectTranslation/Employee/ID",
+        isCustom: false,
+        isDefined: true,
+      },
+    ],
+  },
+};
 
 const partialTargetSchemaConnections = [
   ["target-/ns0:Root/DirectTranslation/Employee", {}],
@@ -271,4 +523,3 @@ const targetSchemaSortArray = [
   "/ns0:Root/NameValueTransforms/PO_Status/Product/OrderStatusQuantity/GlobalOrderQuantityTypeCode",
   "/ns0:Root/NameValueTransforms/PO_Status/Product/OrderStatusQuantity/ProductQuantity",
 ];
-
