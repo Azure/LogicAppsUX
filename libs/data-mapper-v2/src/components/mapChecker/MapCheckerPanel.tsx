@@ -77,18 +77,20 @@ export const MapCheckerPanel = () => {
   );
 
   const mapMapCheckerContentToElements = (elements: MapCheckerMessage[], severity: MapCheckerItemSeverity) => {
-    return elements.map((item, index) => {
-      return (
-        <MapCheckerItem
-          key={index}
-          title={item.title}
-          description={item.description}
-          severity={severity}
-          reactFlowId={item.reactFlowId}
-          data={item.data}
-        />
-      );
-    });
+    return elements
+      .filter((item) => !!item.description?.message?.defaultMessage)
+      .map((item, index) => {
+        return (
+          <MapCheckerItem
+            key={index}
+            title={item.title}
+            description={item.description}
+            severity={severity}
+            reactFlowId={item.reactFlowId}
+            data={item.data}
+          />
+        );
+      });
   };
 
   const errorContent = useMemo(() => {

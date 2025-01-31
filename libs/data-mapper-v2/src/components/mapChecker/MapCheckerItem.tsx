@@ -83,7 +83,7 @@ export const MapCheckerItem = ({ title, description, severity, _onClick, reactFl
           </Badge>
         </div>
       </Stack>
-      <Text className={styles.message}>{intl.formatMessage(description.message, description.value)}</Text>
+      <Text className={styles.message}>{intl.formatMessage(description.message, description.value ?? '')}</Text>
       <Text className={styles.subtitleText}>{pathText}</Text>
     </div>
   );
