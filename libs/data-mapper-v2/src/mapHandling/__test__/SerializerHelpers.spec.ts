@@ -13,6 +13,7 @@ import {
   applyValueAtPath,
   createNewPathItems,
   createYamlFromMap,
+  createYamlFromMapV2,
   findKeyInMap,
   sortConnectionsToTargetNodes,
 } from "../MapDefinitionSerializer";
@@ -164,9 +165,11 @@ describe("serialization helpers", () => {
   });
   describe("createNewPathItems", () => {
     it ('creates new path item', () => {
-        const result: MapDefinitionEntryV2 = new Map();
+        const result: MapDefinitionEntryV2 = [];
         createNewPathItems(input, schemaNode, connections, result);
         console.log(result)
+        const yamlStr = createYamlFromMapV2(result)
+        console.log(yamlStr)
     })
   });
 });

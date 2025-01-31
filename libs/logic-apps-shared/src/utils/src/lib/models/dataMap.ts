@@ -4,7 +4,12 @@ export type MapDefinitionEntry = {
   [key: string]: MapDefinitionEntry | string | MapDefinitionEntry[];
 };
 
-export type MapDefinitionEntryV2 = Map<string, MapDefinitionEntryV2 | string> | string;
+export type MapDefinitionEntryV2 = MapDefinitionObject[] | string;
+
+export type MapDefinitionObject = {
+   [key: string]: MapDefinitionObject[] | string,
+    childNode?: string
+  };
 
 export interface FunctionPositionMetadata {
   targetKey: string;

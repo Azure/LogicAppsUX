@@ -22,10 +22,10 @@ import {
 import { formatDirectAccess, getIndexValueForCurrentConnection, isFunctionData } from '../utils/Function.Utils';
 import { addTargetReactFlowPrefix } from '../utils/ReactFlow.Util';
 import { isObjectType, isSchemaNodeExtended } from '../utils/Schema.Utils';
-import type { MapDefinitionEntry, MapDefinitionEntryV2, PathItem, SchemaExtended, SchemaNodeExtended } from '@microsoft/logic-apps-shared';
+import type { MapDefinitionEntry, MapDefinitionEntryV2, MapDefinitionObject, PathItem, SchemaExtended, SchemaNodeExtended } from '@microsoft/logic-apps-shared';
 import { extend, SchemaNodeProperty } from '@microsoft/logic-apps-shared';
 import yaml from 'js-yaml';
-import { connect } from 'http2';
+import YAML from 'yaml';
 
 interface OutputPathItem {
   key: string;
@@ -57,7 +57,7 @@ export const convertToMapDefinition = (
   //const invalidFunctionNodes = invalidFunctions(connections);
   if (sourceSchema && targetSchema) {
     const mapDefinition: MapDefinitionEntry = {};
-    const mapDefinitionv2: MapDefinitionEntryV2 = new Map();
+    const mapDefinitionv2: MapDefinitionEntryV2 = new Set();
 
     if (generateHeader) {
       generateMapDefinitionHeader(mapDefinition, sourceSchema, targetSchema);
@@ -67,6 +67,7 @@ export const convertToMapDefinition = (
 
     // Custom values directly on target nodes need to have extra single quotes stripped out
     const map = createYamlFromMap(mapDefinition, targetSchemaSortArray);
+    const map2 = createYamlFromMapV2(mapDefinitionv2)
     // const testMap = 
     // `$version: 1
     // $input: XML
@@ -88,11 +89,19 @@ export const convertToMapDefinition = (
     //       FullName: /ns0:PersonOrigin/LastName
     //       $if(/ns0:Root/DirectTranslation/EmployeeID):
     //         Age: /ns0:PersonOrigin/LastName`
-    return { isSuccess: true, definition: map };
+    console.log(map2)
+    return { isSuccess: true, definition: map2 };
   }
 
   return { isSuccess: false, errorNodes: [] };
 };
+
+export const createYamlFromMapV2 = (mapDefinition: MapDefinitionEntryV2) => {
+  const map = YAML.stringify(mapDefinition, {
+  });
+  map.replaceAll("- ", " ");
+  return map;
+}
 
 export const createYamlFromMap = (mapDefinition: MapDefinitionEntry, targetSchemaSortArray: string[]) => {
   // Custom values directly on target nodes need to have extra single quotes stripped out
@@ -258,13 +267,15 @@ export const createNewPathItems = (input: InputConnection, targetNode: SchemaNod
     if (typeof currentNode === 'string') {
       return;
     }
-    if (!currentNode.get(targetPath.qName)) {
-      currentNode.set(targetPath.qName, new Map());
+    if (currentNode && !currentNode.find(node => node[targetPath.qName] !== undefined)) {
+      currentNode.push({[targetPath.qName]: []});
     }   
 
-    const node = currentNode.get(targetPath.qName);
+    const node = currentNode ? currentNode.find(node => node[targetPath.qName] !== undefined) : undefined;
     if(node !== undefined) {
-      currentNode = node;
+      currentNode = node[targetPath.qName] as MapDefinitionEntryV2;
+    } else {
+      return;
     }
 
     // danielle next account for for and if
@@ -290,7 +301,7 @@ export const createNewPathItems = (input: InputConnection, targetNode: SchemaNod
         const rootSourceNodes = connectionsIntoCurrentTargetPath.inputs[0];
         const sourceNode = rootSourceNodes;
         if (sourceNode && isNodeConnection(sourceNode) && sourceNode.node.key.startsWith(ifPseudoFunctionKey)) {
-          //addConditionalToNewPathItems(connections[sourceNode.reactFlowKey], connections, newPath);
+          newPath.push(addConditionalToNewPathItems(connections[sourceNode.reactFlowKey], connections));
         }
       }
 
@@ -358,122 +369,30 @@ export const createNewPathItems = (input: InputConnection, targetNode: SchemaNod
           // newPath.push({ key: mapNodeParams.value, value: formattedLmlSnippetForSource });
         } else {
           // Standard property to value
-          newPath.set(
-             targetPath.qName.startsWith('@') ? `$${targetPath.qName}` : targetPath.qName,
-            formattedLmlSnippetForSource && !isObjectType(targetNode.type) ? formattedLmlSnippetForSource : "", // danielle do not allow empty here
-          );
+          const newValue = {[(targetPath.qName.startsWith('@') ? `$${targetPath.qName}` : targetPath.qName)]: formattedLmlSnippetForSource && !isObjectType(targetNode.type) ? formattedLmlSnippetForSource : "" // danielle do not allow empty here
+        }
+          newPath.push(newValue);
         }
       }
     }
 
-  // targetNode.pathToRoot.forEach((targetPath, _index, pathToRoot) => {
-  //   const connectionsIntoCurrentTargetPath = connections[addTargetReactFlowPrefix(targetPath.key)];
-
-  //   // If there is no rootTargetConnection that means there is a looping node in the source structure, but we aren't using it
-  //   // Probably used for direct index access
-  //   if (targetPath.repeating && connectionsIntoCurrentTargetPath) {
-  //     // Looping schema node
-  //     addLoopingForToNewPathItems(targetPath, connectionsIntoCurrentTargetPath, connections, newPath, lastLoop);
-  //   } else {
-  //     if (connectionsIntoCurrentTargetPath) {
-  //       // Conditionals
-  //       const rootSourceNodes = connectionsIntoCurrentTargetPath.inputs[0];
-  //       const sourceNode = rootSourceNodes;
-  //       if (sourceNode && isNodeConnection(sourceNode) && sourceNode.node.key.startsWith(ifPseudoFunctionKey)) {
-  //         addConditionalToNewPathItems(connections[sourceNode.reactFlowKey], connections, newPath);
-  //       }
-  //     }
-
-  //     const isFinalPath = targetNode.key === targetPath.key;
-
-  //     let formattedLmlSnippetForSource = createSourcePath(newPath, isFinalPath, targetPath, connections, input, pathToRoot);
-
-  //     if (formattedLmlSnippetForSource === undefined) {
-  //       return;
-  //     }
-
-  //     // construct source side of LML for connection
-  //     if (isFinalPath) {
-  //       const connectionsToTarget = connections[addTargetReactFlowPrefix(targetPath.key)];
-  //       const inputNode = connectionsToTarget.inputs[0];
-  //       if (inputNode && isNodeConnection(inputNode)) {
-  //         if (isFunctionData(inputNode.node)) {
-  //           const valueToTrim = getSrcPathRelativeToLoop(newPath);
-
-  //           if (valueToTrim) {
-  //             // Need local variables for functions
-  //             if (formattedLmlSnippetForSource === valueToTrim) {
-  //               formattedLmlSnippetForSource = '';
-  //             } else {
-  //               formattedLmlSnippetForSource = formattedLmlSnippetForSource.replaceAll(`${valueToTrim}/`, '');
-
-  //               // Handle dot access
-  //               if (!formattedLmlSnippetForSource.includes('[') && !formattedLmlSnippetForSource.includes(']')) {
-  //                 formattedLmlSnippetForSource = formattedLmlSnippetForSource.replaceAll(`${valueToTrim}`, '.');
-  //               }
-  //             }
-  //           }
-  //         } else {
-  //           // Need local variables for non-functions
-  //           const valueToTrim = getPathForSrcSchemaNode(inputNode, formattedLmlSnippetForSource);
-  //           if (
-  //             formattedLmlSnippetForSource === inputNode.node.key &&
-  //             inputNode.node.nodeProperties.includes(SchemaNodeProperty.Repeating)
-  //           ) {
-  //             formattedLmlSnippetForSource = '.';
-  //           } else if (valueToTrim) {
-  //             // account for source elements at different level of loop
-  //             let backoutValue = '';
-  //             if (valueToTrim !== lastLoop.loop && !valueToTrim.includes('/*')) {
-  //               // second condition is temporary fix for json arrays
-  //               const loopDifference = lastLoop.loop.replace(valueToTrim || ' ', '');
-  //               for (const i of loopDifference) {
-  //                 if (i === '/') {
-  //                   backoutValue += '../';
-  //                 }
-  //               }
-  //             }
-  //             formattedLmlSnippetForSource = backoutValue + formattedLmlSnippetForSource.replace(`${valueToTrim}/`, '');
-  //           }
-
-  //           formattedLmlSnippetForSource = formattedLmlSnippetForSource.startsWith('@')
-  //             ? `./${formattedLmlSnippetForSource}`
-  //             : formattedLmlSnippetForSource;
-  //         }
-  //       }
-
-  //       if (isTargetObjectType) {
-  //         // $Value
-  //         newPath.push({ key: targetPath.qName.startsWith('@') ? `$${targetPath.qName}` : targetPath.qName });
-  //         newPath.push({ key: mapNodeParams.value, value: formattedLmlSnippetForSource });
-  //       } else {
-  //         // Standard property to value
-  //         newPath.push({
-  //           key: targetPath.qName.startsWith('@') ? `$${targetPath.qName}` : targetPath.qName,
-  //           value: formattedLmlSnippetForSource && !isObjectType(targetNode.type) ? formattedLmlSnippetForSource : undefined,
-  //         });
-  //       }
-  //     }
-  //   }
-  // });
-
   return mapDefinitionv2;
 };
 
-const addConditionalToNewPathItems = (ifConnection: Connection, connections: ConnectionDictionary, newPath: OutputPathItem[]) => {
+const addConditionalToNewPathItems = (ifConnection: Connection, connections: ConnectionDictionary): MapDefinitionObject => {
   const values = collectConditionalValues(ifConnection, connections);
 
   // Handle relative paths for (potentially nested) loops
-  let valueToTrim = '';
-  newPath.forEach((pathItem) => {
-    if (pathItem.key.startsWith(mapNodeParams.for)) {
-      valueToTrim += `${getSourceKeyOfLastLoop(pathItem.key)}/`;
-    }
-  });
-  const ifContents = values[0].replaceAll(valueToTrim, '');
+  // let valueToTrim = '';
+  // newPath.forEach((pathItem) => {
+  //   if (pathItem.key.startsWith(mapNodeParams.for)) {
+  //     valueToTrim += `${getSourceKeyOfLastLoop(pathItem.key)}/`;
+  //   }
+  // });
+  const ifContents = values[0] //.replaceAll(valueToTrim, '');
 
   // If entry
-  newPath.push({ key: `${mapNodeParams.if}(${ifContents})` });
+  return {[`${mapNodeParams.if}(${ifContents})`]: [] };
 };
 
 const addLoopingForToNewPathItems = (
