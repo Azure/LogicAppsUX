@@ -28,6 +28,7 @@ export interface TemplatesDataProviderProps {
   customTemplates?: Record<string, Template.Manifest>;
   viewTemplate?: {
     templateName: string;
+    parameters?: Record<string, string>;
   };
   children?: React.ReactNode;
 }
@@ -67,7 +68,7 @@ const DataProviderInner = ({ customTemplates, isConsumption, children, viewTempl
       const templateManifest = availableTemplates?.[viewTemplate.templateName];
       if (templateManifest) {
         dispatch(lockTemplate(viewTemplate.templateName));
-        dispatch(loadTemplate({ preLoadedManifest: templateManifest, isCustomTemplate: false }));
+        dispatch(loadTemplate({ preLoadedManifest: templateManifest, isCustomTemplate: false, parameters: viewTemplate.parameters }));
 
         if (Object.keys(templateManifest?.workflows ?? {}).length === 0) {
           dispatch(openCreateWorkflowPanelView());

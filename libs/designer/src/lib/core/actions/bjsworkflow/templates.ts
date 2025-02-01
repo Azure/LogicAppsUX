@@ -126,14 +126,28 @@ export const initializeTemplateServices = createAsyncThunk(
 export const loadTemplate = createAsyncThunk(
   'loadTemplate',
   async (
-    { preLoadedManifest, isCustomTemplate = false }: { preLoadedManifest: Template.Manifest | undefined; isCustomTemplate?: boolean },
+    {
+      preLoadedManifest,
+      isCustomTemplate = false,
+      parameters,
+    }: { preLoadedManifest: Template.Manifest | undefined; isCustomTemplate?: boolean; parameters?: Record<string, string> },
     thunkAPI
   ) => {
     const currentState: RootState = thunkAPI.getState() as RootState;
     const currentTemplateResourcePath = currentState.template.templateName;
 
     if (currentTemplateResourcePath) {
-      return await loadTemplateFromResourcePath(currentTemplateResourcePath, preLoadedManifest, isCustomTemplate);
+      const template = await loadTemplateFromResourcePath(currentTemplateResourcePath, preLoadedManifest, isCustomTemplate);
+
+      if (parameters) {
+        Object.keys(parameters).forEach((key) => {
+          if (template.parameterDefinitions[key]) {
+            template.parameterDefinitions[key].value = parameters[key];
+          }
+        });
+      }
+
+      return template;
     }
 
     return undefined;
