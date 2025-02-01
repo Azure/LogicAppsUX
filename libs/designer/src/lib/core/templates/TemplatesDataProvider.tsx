@@ -32,7 +32,7 @@ export interface TemplatesDataProviderProps {
   children?: React.ReactNode;
 }
 
-const DataProviderInner = ({ customTemplates, isConsumption, children }: TemplatesDataProviderProps) => {
+const DataProviderInner = ({ customTemplates, isConsumption, children, viewTemplate }: TemplatesDataProviderProps) => {
   const dispatch = useDispatch<AppDispatch>();
   const { githubTemplateNames, availableTemplates, filters } = useSelector((state: RootState) => state?.manifest);
   const { isTemplateNameLocked } = useSelector((state: RootState) => state.template);
@@ -61,17 +61,6 @@ const DataProviderInner = ({ customTemplates, isConsumption, children }: Templat
     const filteredTemplateNames = getFilteredTemplates(availableTemplates, filters, !!isConsumption);
     dispatch(setFilteredTemplateNames(filteredTemplateNames));
   }, [dispatch, availableTemplates, filters, isConsumption]);
-
-
-  useEffect(() => {
-    dispatch(setConsumption(!!isConsumption));
-  }, [dispatch, isConsumption]);
-
-  useEffect(() => {
-    if (existingWorkflowName) {
-      dispatch(setExistingWorkflowName(existingWorkflowName));
-    }
-  }, [dispatch, existingWorkflowName]);
 
   useEffect(() => {
     if (viewTemplate?.templateName && githubTemplateNames?.includes(viewTemplate.templateName) && !isTemplateNameLocked) {
