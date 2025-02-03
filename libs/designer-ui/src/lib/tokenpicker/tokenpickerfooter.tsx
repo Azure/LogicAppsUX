@@ -18,6 +18,7 @@ import {
   ScannerException,
   guid,
   isCopilotServiceEnabled,
+  unescapeString,
 } from '@microsoft/logic-apps-shared';
 import type { Expression, TokenGroup, Token as TokenGroupToken } from '@microsoft/logic-apps-shared';
 import type { LexicalEditor, NodeKey } from 'lexical';
@@ -112,8 +113,9 @@ export function TokenPickerFooter({
 
   const onUpdateOrAddClicked = () => {
     let currExpression: Expression | null = null;
+    const unescapedExpressionValue = unescapeString(expression.value);
     try {
-      currExpression = ExpressionParser.parseExpression(expression.value);
+      currExpression = ExpressionParser.parseExpression(unescapedExpressionValue);
     } catch (ex) {
       if (ex instanceof ScannerException && (ex as any).message === ExpressionExceptionCode.MISUSED_DOUBLE_QUOTES) {
         // if the expression contains misused double quotes, we'll show a different error message
@@ -149,18 +151,18 @@ export function TokenPickerFooter({
         icon: FxIcon,
         title: getExpressionTokenTitle(currExpression),
         key: guid(),
-        value: expression.value,
+        value: unescapedExpressionValue,
       };
 
       // if the expression is already in the expression editor, we'll update the token node
       if (expressionToBeUpdated) {
         editor?.dispatchCommand(UPDATE_TOKEN_NODE, {
-          updatedValue: expression.value,
+          updatedValue: unescapedExpressionValue,
           updatedTitle: token.title,
           updatedData: {
             id: guid(),
             type: ValueSegmentType.TOKEN,
-            value: expression.value,
+            value: unescapedExpressionValue,
             token,
           },
           nodeKey: expressionToBeUpdated,
@@ -174,7 +176,7 @@ export function TokenPickerFooter({
           title: token.title,
           icon: token.icon,
           value: token.value,
-          data: { id: guid(), type: ValueSegmentType.TOKEN, value: expression.value, token },
+          data: { id: guid(), type: ValueSegmentType.TOKEN, value: unescapedExpressionValue, token },
         });
       }
     }
