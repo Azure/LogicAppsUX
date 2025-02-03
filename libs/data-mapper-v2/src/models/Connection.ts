@@ -23,9 +23,11 @@ export interface CustomValueConnection {
   isDefined: true;
   isCustom: true;
   value: string;
+  customId?: string;
 }
 
 export interface EmptyConnection {
   isDefined: false;
   isCustom: false;
+  customId?: string;
 }

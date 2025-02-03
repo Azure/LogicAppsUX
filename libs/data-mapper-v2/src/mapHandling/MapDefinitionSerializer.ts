@@ -69,12 +69,11 @@ export const convertToMapDefinition = (
     const rootNode = mapDefinitionBody[rootNodeKey];
     convertToArray(rootNode, newArrPath);
     console.log(newArrPath);
-    mapDefinitionBody[rootNodeKey] = newArrPath;
+    mapDefinition[rootNodeKey] = newArrPath;
 
     // Custom values directly on target nodes need to have extra single quotes stripped out
     const map = createYamlFromMap(mapDefinition, targetSchemaSortArray);
-    const mapBody = createYamlFromMap(mapDefinitionBody, targetSchemaSortArray);
-    const conc = map + mapBody;
+    const conc = map;
 
     return { isSuccess: true, definition: conc };
   }
@@ -96,14 +95,14 @@ export const createYamlFromMap = (mapDefinition: MapDefinitionEntry, targetSchem
   return map;
 };
 
-const yamlReplacer = (key: string, value: any) => {
+const yamlReplacer = (key: string, value: MapDefinitionValue) => {
   if (typeof value === 'string' && key === reservedMapDefinitionKeys.version) {
     return Number.parseFloat(value);
   }
 
   if (Array.isArray(value)) {
     const modifiedArr = value.map((item) => {
-      const newItem: Object = {};
+      const newItem: MapDefinitionEntry = {};
       const key = Object.keys(item)[0];
       if (key.length > 36 && isAGuid(key.substring(key.length - 36, key.length))) {
         const newKey = key.substring(0, key.length - 37);
@@ -361,8 +360,14 @@ const addConditionalToNewPathItems = (ifConnection: Connection, connections: Con
   });
   const ifContents = values[0].replaceAll(valueToTrim, '');
 
+  const inputConnection = ifConnection.inputs[0];
+  //if (!inputConnection.customId) {
+    inputConnection.customId = generatePostfix();
+  //}
+  // danielle add logic to separate these if they are not adjacent
+
   // If entry
-  newPath.push({ key: `${mapNodeParams.if}(${ifContents})${generatePostfix()}` });
+  newPath.push({ key: `${mapNodeParams.if}(${ifContents})${inputConnection.customId}`});
 };
 
 const addLoopingForToNewPathItems = (
@@ -415,16 +420,20 @@ const addLoopingForToNewPathItems = (
             (connection) => connection.node.key === indexPseudoFunctionKey
           );
 
+          if (sourceSchemaNodeConnection.customId === undefined) {
+            sourceSchemaNodeConnection.customId = generatePostfix();
+          }
+
           if (indexFunctions.length > 0) {
             const indexConnection = connections[indexFunctions[0].reactFlowKey];
             const inputConnection = indexConnection.inputs[0];
             const inputKey = isNodeConnection(inputConnection) && inputConnection.node.key;
 
-            loopValue = `${mapNodeParams.for}(${inputKey}, ${getIndexValueForCurrentConnection(indexConnection, connections)})`;
+            loopValue = `${mapNodeParams.for}(${inputKey}, ${getIndexValueForCurrentConnection(indexConnection, connections)})${sourceSchemaNodeConnection.customId}`;
           } else {
             loopValue = `${
               mapNodeParams.for
-            }(${sourceSchemaNodeReactFlowKey.replace(sourcePrefix, "")}${generatePostfix()})`;
+            }(${sourceSchemaNodeReactFlowKey.replace(sourcePrefix, "")}${sourceSchemaNodeConnection.customId})`;
           }
 
           // For entry
@@ -445,6 +454,13 @@ const addLoopingForToNewPathItems = (
               currentSourceLoop.loop
             );
 
+            let postfix = generatePostfix();
+            if (!functionConnection.inputs[0].customId) {
+              functionConnection.inputs[0].customId = postfix;
+            } else {
+              postfix = functionConnection.inputs[0].customId;
+            }
+
             newPath.forEach((pathItem) => {
               const extractedScope = extractScopeFromLoop(pathItem.key);
 
@@ -457,9 +473,9 @@ const addLoopingForToNewPathItems = (
               loopValue = `${mapNodeParams.for}(${sequenceValueResult.sequenceValue}, ${getIndexValueForCurrentConnection(
                 functionConnection,
                 connections
-              )})`;
+              )})${postfix}`;
             } else {
-              loopValue = `${mapNodeParams.for}(${sequenceValueResult.sequenceValue}${generatePostfix()})`;
+              loopValue = `${mapNodeParams.for}(${sequenceValueResult.sequenceValue})${postfix}`;
             }
 
             currentSourceLoop.loop = sequenceValueResult.rootLoop;
@@ -564,7 +580,7 @@ const findKeyInMap = (mapDefinition: MapDefinitionEntry, key: string): string | 
     if (typeof mapDefinition[currentKey] === 'object') {
       const foundKey = findKeyInMap(mapDefinition[currentKey] as MapDefinitionEntry, key);
       if (foundKey) {
-        if (mapDefinition[currentKey] && Object.keys((mapDefinition[currentKey] as MapDefinitionEntry)[foundKey])) {
+        if (mapDefinition[currentKey] && (mapDefinition[currentKey] as MapDefinitionEntry)[foundKey]) {
           const childKey = Object.keys((mapDefinition[currentKey] as MapDefinitionEntry)[foundKey])[0];
           if (!childKey) {
             return foundKey;
@@ -576,6 +592,7 @@ const findKeyInMap = (mapDefinition: MapDefinitionEntry, key: string): string | 
     }
   }
 
+  console.log('not found');
   return undefined;
 };
 
