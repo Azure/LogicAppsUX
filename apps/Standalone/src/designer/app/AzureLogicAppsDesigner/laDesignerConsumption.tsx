@@ -2,7 +2,6 @@ import { environment } from '../../../environments/environment';
 import type { AppDispatch, RootState } from '../../state/store';
 import { changeRunId, setIsChatBotEnabled, setMonitoringView, setReadOnly, setRunHistoryEnabled } from '../../state/workflowLoadingSlice';
 import { DesignerCommandBar } from './DesignerCommandBar';
-import type { ParametersData } from './Models/Workflow';
 import { ChildWorkflowService } from './Services/ChildWorkflow';
 import { HttpClient } from './Services/HttpClient';
 import { StandaloneOAuthService } from './Services/OAuthService';
@@ -16,7 +15,7 @@ import {
   validateWorkflowConsumption,
 } from './Services/WorkflowAndArtifacts';
 import { ArmParser } from './Utilities/ArmParser';
-import { WorkflowUtility } from './Utilities/Workflow';
+import { getDataForConsumption, WorkflowUtility } from './Utilities/Workflow';
 import { Chatbot } from '@microsoft/logic-apps-chatbot';
 import type { ContentType } from '@microsoft/logic-apps-shared';
 import {
@@ -583,49 +582,6 @@ const getDesignerServices = (
     customCodeService,
     userPreferenceService: new BaseUserPreferenceService(),
   };
-};
-
-const getDataForConsumption = (data: any) => {
-  const properties = data?.properties as any;
-
-  const definition = removeProperties(properties?.definition, ['parameters']);
-  const connections =
-    (isOpenApiSchemaVersion(definition) ? properties?.connectionReferences : properties?.parameters?.$connections?.value) ?? {};
-
-  const workflow = { definition, connections };
-  const connectionReferences = formatConnectionReferencesForConsumption(connections);
-  const parameters: ParametersData = formatWorkflowParametersForConsumption(properties);
-
-  return { workflow, connectionReferences, parameters };
-};
-
-const removeProperties = (obj: any = {}, props: string[] = []): object => {
-  return Object.fromEntries(Object.entries(obj).filter(([key]) => !props.includes(key)));
-};
-
-const formatConnectionReferencesForConsumption = (connectionReferences: Record<string, any>): any => {
-  return Object.fromEntries(
-    Object.entries(connectionReferences).map(([key, value]) => [key, formatConnectionReferenceForConsumption(value)])
-  );
-};
-
-const formatConnectionReferenceForConsumption = (connectionReference: any): any => {
-  const connectionReferenceCopy = { ...connectionReference };
-  connectionReferenceCopy.connection = connectionReference.connection ?? { id: connectionReference.connectionId };
-  delete connectionReferenceCopy.connectionId;
-  connectionReferenceCopy.api = connectionReference.api ?? { id: connectionReference.id };
-  delete connectionReferenceCopy.id;
-  return connectionReferenceCopy;
-};
-
-const formatWorkflowParametersForConsumption = (properties: any): ParametersData => {
-  const parameters = removeProperties(properties?.definition?.parameters, ['$connections']) as ParametersData;
-  Object.entries(properties?.parameters ?? {}).forEach(([key, parameter]: [key: string, parameter: any]) => {
-    if (parameters[key]) {
-      parameters[key].value = parameter?.value;
-    }
-  });
-  return parameters;
 };
 
 export default DesignerEditorConsumption;

@@ -488,6 +488,8 @@ const applyValueAtPath = (mapDefinition: MapDefinitionEntry, path: OutputPathIte
   });
 };
 
+// this gets the first child of 'if' or 'for' to determine order
+// key always starts with 'if' or 'for'
 const findKeyInMap = (mapDefinition: MapDefinitionEntry, key: string): string | undefined => {
   if (mapDefinition[key]) {
     return key;
@@ -498,9 +500,15 @@ const findKeyInMap = (mapDefinition: MapDefinitionEntry, key: string): string | 
     if (typeof mapDefinition[currentKey] === 'object') {
       const foundKey = findKeyInMap(mapDefinition[currentKey] as MapDefinitionEntry, key);
       if (foundKey) {
-        const childKey = Object.keys((mapDefinition[currentKey] as MapDefinitionEntry)[foundKey])[0];
-        return childKey;
+        if (mapDefinition[currentKey] && Object.keys((mapDefinition[currentKey] as MapDefinitionEntry)[foundKey])) {
+          const childKey = Object.keys((mapDefinition[currentKey] as MapDefinitionEntry)[foundKey])[0];
+          if (!childKey) {
+            return foundKey;
+          }
+          return childKey;
+        }
       }
+      return foundKey;
     }
   }
 

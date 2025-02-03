@@ -11,7 +11,7 @@ export const useStyles = makeStyles({
   root: {
     width: '400px',
     backgroundColor: '#fff',
-    paddingLeft: '10px',
+    paddingLeft: '15px',
     paddingRight: '5px',
   },
   closeButton: {
