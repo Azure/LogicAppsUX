@@ -55,6 +55,7 @@ const sourceSchemaFileOptions: SchemaFileData[] = [
   { filename: 'ComprehensiveSourceSchema.json', schemaFormat: SchemaFileFormat.XML },
   { filename: 'SourceSchemaJson.json', schemaFormat: SchemaFileFormat.JSON },
   { filename: 'ProjectRequest.json', schemaFormat: SchemaFileFormat.XML },
+  { filename: 'x12.json', schemaFormat: SchemaFileFormat.XML },
 ];
 const targetSchemaFileOptions: SchemaFileData[] = [
   { filename: 'PlaygroundTargetSchema.json', schemaFormat: SchemaFileFormat.XML },
@@ -62,6 +63,7 @@ const targetSchemaFileOptions: SchemaFileData[] = [
   { filename: 'ComprehensiveTargetSchema.json', schemaFormat: SchemaFileFormat.XML },
   { filename: 'TargetSchemaJson.json', schemaFormat: SchemaFileFormat.JSON },
   { filename: 'OebsProjectRequest.json', schemaFormat: SchemaFileFormat.XML },
+  { filename: 'x12.json', schemaFormat: SchemaFileFormat.XML },
 ];
 const mapSchemaFileOptionsToDropdownOptions = (schemaFileData: SchemaFileData[]) =>
   schemaFileData.map<IDropdownOption>((schemaOpt) => ({

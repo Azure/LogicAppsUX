@@ -142,7 +142,9 @@ const getConnectionsToTargetNodes = (connections: ConnectionDictionary) => {
   return Object.entries(connections).filter(([key, connection]) => {
     const selfNode = connection.self.node;
     if (key.startsWith(targetPrefix) && isSchemaNodeExtended(selfNode)) {
-      return selfNode.nodeProperties.every((property) => property !== SchemaNodeProperty.Repeating);
+      const isNotRepeating = selfNode.nodeProperties.every((property) => property !== SchemaNodeProperty.Repeating);
+      const isEmptyConnectionNode = isEmptyConnection(connection.inputs[0]);
+      return isNotRepeating && !isEmptyConnectionNode;
     }
     return false;
   });
@@ -592,7 +594,6 @@ const findKeyInMap = (mapDefinition: MapDefinitionEntry, key: string): string | 
     }
   }
 
-  console.log('not found');
   return undefined;
 };
 
