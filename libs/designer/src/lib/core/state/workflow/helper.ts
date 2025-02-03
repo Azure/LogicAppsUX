@@ -1,74 +1,100 @@
-import type { WorkflowNodeType } from '@microsoft/logic-apps-shared';
 import type { WorkflowNode } from '../../../core/parsers/models/workflowNode';
 
-export const getCollapsedGraph = (
-  collapsedIds: Record<string, boolean>,
-  rootNode: WorkflowNode,
-  isUnderCollapsed = false // New parameter to track if we're under a collapsed node
-): WorkflowNode => {
-  // Handle base case
-  if (!rootNode || !rootNode.children || !rootNode.edges) {
-    return rootNode;
+/**
+ * Recursively clones a node while pruning (removing) any nodes that are in the nodesToRemove set.
+ * Also, if the node’s id is in collapsedIds, its type is set to "COLLAPSED_NODE" and its children are not cloned.
+ * @param {Object} node - The current node to clone and prune.
+ * @param {Set} nodesToRemove - Set of node ids that should be removed.
+ * @param {Object} collapsedIds - An object whose keys are node ids to be collapsed.
+ * @returns {Object|null} - A new node object with pruned children/edges, or null if this node is removed.
+ */
+function pruneTree(node: WorkflowNode, nodesToRemove: Set<any>, collapsedIds: Record<string, any>): WorkflowNode | null {
+  // If the current node is marked for removal, return null so it will be filtered out.
+  if (nodesToRemove.has(node.id)) {
+    return null;
   }
 
-  // Create a set of IDs to remove, starting with the collapsed IDs
-  const idsToRemove = new Set<string>(Object.keys(collapsedIds));
+  // Create a shallow clone of the node (to avoid mutating the original).
+  // We make sure to clone children and edges separately.
+  const newNode = { ...node };
 
-  // Iteratively find downstream nodes to remove based on edges
-  let hasChanges = true;
-  while (hasChanges) {
-    hasChanges = false;
+  // If the current node is one that should be collapsed,
+  // update its type to "COLLAPSED_NODE" and remove its children and edges.
+  if (collapsedIds[node.id]) {
+    newNode.type = 'COLLAPSED_NODE';
+    // Remove any children or edges, as the node is now collapsed.
+    delete newNode.children;
+    delete newNode.edges;
+    return newNode;
+  }
 
-    // Find edges where the source or target is in idsToRemove
-    for (const edge of rootNode.edges) {
-      if (idsToRemove.has(edge.source) && !idsToRemove.has(edge.target)) {
-        idsToRemove.add(edge.target);
-        hasChanges = true;
-      }
+  // Otherwise, process children (if they exist) by recursively cloning and pruning.
+  if (Array.isArray(node.children)) {
+    newNode.children = node.children.map((child) => pruneTree(child, nodesToRemove, collapsedIds)).filter((child) => child !== null);
+  }
+
+  // Filter out any edges that reference nodes that have been removed.
+  if (Array.isArray(node.edges)) {
+    newNode.edges = node.edges.filter((edge) => {
+      return !nodesToRemove.has(edge.source) && !nodesToRemove.has(edge.target);
+    });
+  }
+
+  return newNode;
+}
+
+/**
+ * Collapses the flow tree based on the given collapsedIds.
+ * Nodes that are marked for collapsing will have their downstream nodes removed
+ * and their type updated to "COLLAPSED_NODE".
+ *
+ * @param {Object} tree - The full tree structure.
+ * @param {Object} collapsedIds - An object whose keys are node ids to collapse.
+ * @return {Object} - A new tree with collapsed (downstream) nodes removed and collapsed nodes updated.
+ */
+export function collapseFlowTree(tree: WorkflowNode, collapsedIds: Record<string, any>): WorkflowNode {
+  // 1. Build a lookup for nodes and an edge graph mapping source -> [target, ...]
+  const nodeMap: Record<string, any> = {};
+  const edgeGraph: Record<string, any> = {}; // e.g., { "Initialize_variable": ["Delay", ...], ... }
+
+  function traverseForMapping(node: WorkflowNode) {
+    nodeMap[node.id] = node;
+
+    if (node.edges && Array.isArray(node.edges)) {
+      node.edges.forEach((edge) => {
+        if (!edgeGraph[edge.source]) {
+          edgeGraph[edge.source] = [];
+        }
+        edgeGraph[edge.source].push(edge.target);
+      });
+    }
+    if (node.children && Array.isArray(node.children)) {
+      node.children.forEach((child) => traverseForMapping(child));
+    }
+  }
+  traverseForMapping(tree);
+
+  // 2. Find all nodes that should be removed.
+  const nodesToRemove = new Set();
+
+  // Recursively traverse downstream from a given node id.
+  function markDownstream(nodeId: string) {
+    if (edgeGraph[nodeId]) {
+      edgeGraph[nodeId].forEach((targetId: any) => {
+        if (!nodesToRemove.has(targetId)) {
+          nodesToRemove.add(targetId);
+          markDownstream(targetId);
+        }
+      });
     }
   }
 
-  // Filter edges to exclude those connecting removed nodes
-  const filteredEdges = rootNode.edges.filter((edge) => !(idsToRemove.has(edge.source) && idsToRemove.has(edge.target)));
+  // For every collapsed node, mark its downstream nodes.
+  Object.keys(collapsedIds).forEach((collapsedId) => {
+    markDownstream(collapsedId);
+  });
 
-  // Process children recursively
-  const processChildren = (children: WorkflowNode[], parentIsCollapsed: boolean): WorkflowNode[] => {
-    return children
-      .map((child) => {
-        // If the child is marked for removal
-        if (idsToRemove.has(child.id)) {
-          // If it's directly in collapsedIds
-          if (collapsedIds[child.id]) {
-            // If parent is already collapsed, remove this collapsed child
-            if (parentIsCollapsed) {
-              return null;
-            }
-            return {
-              ...child,
-              type: 'COLLAPSED_NODE' as WorkflowNodeType,
-              // Process children with parentIsCollapsed set to true
-              children: processChildren(child.children ?? [], true),
-              edges: (child.edges ?? []).filter((edge) => !(idsToRemove.has(edge.source) && idsToRemove.has(edge.target))),
-            };
-          }
-          // If it's downstream of a collapsed node, remove it
-          return null;
-        }
-
-        // If not marked for removal, process normally
-        return {
-          ...child,
-          children: processChildren(child.children ?? [], parentIsCollapsed),
-          edges: (child.edges ?? []).filter((edge) => !(idsToRemove.has(edge.source) && idsToRemove.has(edge.target))),
-        };
-      })
-      .filter((node) => node !== null);
-  };
-
-  // Create the final result
-  return {
-    ...rootNode,
-    children: processChildren(rootNode.children, isUnderCollapsed),
-    edges: filteredEdges,
-  };
-};
+  // 3. Instead of modifying the tree in place, clone and prune it.
+  const prunedTree = pruneTree(tree, nodesToRemove, collapsedIds);
+  return prunedTree as WorkflowNode;
+}
