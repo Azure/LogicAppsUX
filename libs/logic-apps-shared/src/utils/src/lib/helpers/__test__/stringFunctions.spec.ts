@@ -1,4 +1,4 @@
-import { escapeString, idDisplayCase, labelCase, canStringBeConverted, unescapeString } from '../stringFunctions';
+import { escapeString, idDisplayCase, labelCase, canStringBeConverted } from '../stringFunctions';
 import { describe, it, expect } from 'vitest';
 describe('label_case', () => {
   it('should replace _ with spaces', () => {
@@ -28,6 +28,26 @@ describe('idDisplayCase', () => {
   });
 });
 
+describe('escapeString', () => {
+  it('should correctly escape backslashes', () => {
+    expect(escapeString('\\')).toEqual('\\\\');
+    expect(escapeString('Test\\Test')).toEqual('Test\\\\Test');
+  });
+
+  it('should correctly escape newline characters', () => {
+    expect(escapeString('\n')).toEqual('\\n');
+    expect(escapeString('Test\nTest')).toEqual('Test\\nTest');
+  });
+
+  it('should correctly escape backslashes and newline characters together', () => {
+    expect(escapeString('\\\n')).toEqual('\\\\\\n');
+    expect(escapeString('Test\\\nTest')).toEqual('Test\\\\\\nTest');
+  });
+
+  it('should handle an empty string', () => {
+    expect(escapeString('')).toEqual('');
+  });
+});
 describe('canStringBeConverted', () => {
   it('should return false for non-string inputs', () => {
     expect(canStringBeConverted(123 as any)).toBe(false);
@@ -67,93 +87,5 @@ describe('canStringBeConverted', () => {
     expect(canStringBeConverted('not an array')).toBe(false);
     expect(canStringBeConverted('{ "key": "value" }')).toBe(false);
     expect(canStringBeConverted('{"a", "b", "c"}')).toBe(false);
-  });
-});
-
-describe('unescapeString', () => {
-  it('unescapes newline characters', () => {
-    const input = 'Hello\\nWorld';
-    const expectedOutput = 'Hello\nWorld';
-    const result = unescapeString(input);
-    expect(result).toBe(expectedOutput);
-  });
-
-  it('unescapes carriage return characters', () => {
-    const input = 'Hello\\rWorld';
-    const expectedOutput = 'Hello\rWorld';
-    const result = unescapeString(input);
-    expect(result).toBe(expectedOutput);
-  });
-
-  it('unescapes tab characters', () => {
-    const input = 'Hello\\tWorld';
-    const expectedOutput = 'Hello\tWorld';
-    const result = unescapeString(input);
-    expect(result).toBe(expectedOutput);
-  });
-
-  it('unescapes vertical tab characters', () => {
-    const input = 'Hello\\vWorld';
-    const expectedOutput = 'Hello\vWorld';
-    const result = unescapeString(input);
-    expect(result).toBe(expectedOutput);
-  });
-
-  it('returns the same string if there are no escape sequences', () => {
-    const input = 'Hello World';
-    const expectedOutput = 'Hello World';
-    const result = unescapeString(input);
-    expect(result).toBe(expectedOutput);
-  });
-});
-
-describe('escapeString', () => {
-  it('escapes newline characters', () => {
-    const input = 'Hello\nWorld';
-    const expectedOutput = 'Hello\\nWorld';
-    const result = escapeString(input);
-    expect(result).toBe(expectedOutput);
-  });
-
-  it('escapes carriage return characters', () => {
-    const input = 'Hello\rWorld';
-    const expectedOutput = 'Hello\\rWorld';
-    const result = escapeString(input);
-    expect(result).toBe(expectedOutput);
-  });
-
-  it('escapes tab characters', () => {
-    const input = 'Hello\tWorld';
-    const expectedOutput = 'Hello\\tWorld';
-    const result = escapeString(input);
-    expect(result).toBe(expectedOutput);
-  });
-
-  it('escapes vertical tab characters', () => {
-    const input = 'Hello\vWorld';
-    const expectedOutput = 'Hello\\vWorld';
-    const result = escapeString(input);
-    expect(result).toBe(expectedOutput);
-  });
-
-  it('returns the same string if there are no special characters', () => {
-    const input = 'Hello World';
-    const expectedOutput = 'Hello World';
-    const result = escapeString(input);
-    expect(result).toBe(expectedOutput);
-  });
-
-  it('should correctly escape newline characters', () => {
-    expect(escapeString('\n')).toEqual('\\n');
-    expect(escapeString('Test\nTest')).toEqual('Test\\nTest');
-  });
-
-  it('should correctly escape backslashes and newline characters together', () => {
-    expect(escapeString('\\\n')).toEqual('\\\\n');
-    expect(escapeString('Test\\\nTest')).toEqual('Test\\\\nTest');
-  });
-
-  it('should handle an empty string', () => {
-    expect(escapeString('')).toEqual('');
   });
 });

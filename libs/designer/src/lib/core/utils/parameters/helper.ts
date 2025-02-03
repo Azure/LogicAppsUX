@@ -117,7 +117,6 @@ import {
   isBodySegment,
   canStringBeConverted,
   splitAtIndex,
-  unescapeString,
 } from '@microsoft/logic-apps-shared';
 import type {
   AuthProps,
@@ -788,8 +787,8 @@ function toAuthenticationViewModel(value: any): { type: AuthenticationType; auth
           type: value.type,
           authenticationValue: {
             basic: {
-              basicUsername: loadParameterValueFromString(value.username, { parameterType: constants.SWAGGER.TYPE.STRING }),
-              basicPassword: loadParameterValueFromString(value.password, { parameterType: constants.SWAGGER.TYPE.STRING }),
+              basicUsername: loadParameterValueFromString(value.username),
+              basicPassword: loadParameterValueFromString(value.password),
             },
           },
         };
@@ -798,8 +797,8 @@ function toAuthenticationViewModel(value: any): { type: AuthenticationType; auth
           type: value.type,
           authenticationValue: {
             clientCertificate: {
-              clientCertificatePfx: loadParameterValueFromString(value.pfx, { parameterType: constants.SWAGGER.TYPE.STRING }),
-              clientCertificatePassword: loadParameterValueFromString(value.password, { parameterType: constants.SWAGGER.TYPE.STRING }),
+              clientCertificatePfx: loadParameterValueFromString(value.pfx),
+              clientCertificatePassword: loadParameterValueFromString(value.password),
             },
           },
         };
@@ -809,14 +808,14 @@ function toAuthenticationViewModel(value: any): { type: AuthenticationType; auth
           type: value.type,
           authenticationValue: {
             aadOAuth: {
-              oauthTenant: loadParameterValueFromString(value.tenant, { parameterType: constants.SWAGGER.TYPE.STRING }),
-              oauthAudience: loadParameterValueFromString(value.audience, { parameterType: constants.SWAGGER.TYPE.STRING }),
-              oauthAuthority: loadParameterValueFromString(value.authority, { parameterType: constants.SWAGGER.TYPE.STRING }),
-              oauthClientId: loadParameterValueFromString(value.clientId, { parameterType: constants.SWAGGER.TYPE.STRING }),
+              oauthTenant: loadParameterValueFromString(value.tenant),
+              oauthAudience: loadParameterValueFromString(value.audience),
+              oauthAuthority: loadParameterValueFromString(value.authority),
+              oauthClientId: loadParameterValueFromString(value.clientId),
               oauthType: loadOauthType(value),
-              oauthTypeSecret: loadParameterValueFromString(value.secret, { parameterType: constants.SWAGGER.TYPE.STRING }),
-              oauthTypeCertificatePfx: loadParameterValueFromString(value.pfx, { parameterType: constants.SWAGGER.TYPE.STRING }),
-              oauthTypeCertificatePassword: loadParameterValueFromString(value.password, { parameterType: constants.SWAGGER.TYPE.STRING }),
+              oauthTypeSecret: loadParameterValueFromString(value.secret),
+              oauthTypeCertificatePfx: loadParameterValueFromString(value.pfx),
+              oauthTypeCertificatePassword: loadParameterValueFromString(value.password),
             },
           },
         };
@@ -836,7 +835,7 @@ function toAuthenticationViewModel(value: any): { type: AuthenticationType; auth
           type: value.type,
           authenticationValue: {
             msi: {
-              msiAudience: loadParameterValueFromString(value.audience, { parameterType: constants.SWAGGER.TYPE.STRING }),
+              msiAudience: loadParameterValueFromString(value.audience),
               msiIdentity: value.identity,
             },
           },
@@ -955,7 +954,7 @@ export function convertToTokenExpression(value: any): string {
   return value.toString();
 }
 
-export function convertToValueSegments(value: any, shouldUncast: boolean, parameterType?: string): ValueSegment[] {
+export function convertToValueSegments(value: any, shouldUncast: boolean, parameterType: string): ValueSegment[] {
   try {
     const convertor = new ValueSegmentConvertor({
       shouldUncast,
@@ -3618,7 +3617,6 @@ export function parameterValueToJSONString(parameterValue: ValueSegment[], apply
     let tokenExpression: string = expression.value;
 
     if (isTokenValueSegment(expression)) {
-      const stringifiedTokenExpression = tokenExpression;
       // Note: Stringify the token expression to escape double quotes and other characters which must be escaped in JSON.
       if (shouldInterpolate) {
         if (applyCasting) {
@@ -3631,15 +3629,20 @@ export function parameterValueToJSONString(parameterValue: ValueSegment[], apply
           );
         }
 
+        const stringifiedTokenExpression = JSON.stringify(tokenExpression).slice(1, -1);
         tokenExpression = `@{${stringifiedTokenExpression}}`;
       } else {
         // Add quotes around tokens. Tokens directly after a literal need a leading quote, and those before another literal need an ending quote.
         const lastExpressionWasLiteral = i > 0 && updatedParameterValue[i - 1].type !== ValueSegmentType.TOKEN;
         const nextExpressionIsLiteral =
           i < updatedParameterValue.length - 1 && updatedParameterValue[i + 1].type !== ValueSegmentType.TOKEN;
+
+        const stringifiedTokenExpression = JSON.stringify(tokenExpression).slice(1, -1);
         tokenExpression = `@${stringifiedTokenExpression}`;
-        tokenExpression = lastExpressionWasLiteral ? `"${tokenExpression}` : tokenExpression;
-        tokenExpression = nextExpressionIsLiteral ? `${tokenExpression}"` : `${tokenExpression}`;
+        // eslint-disable-next-line no-useless-escape
+        tokenExpression = lastExpressionWasLiteral ? `\"${tokenExpression}` : tokenExpression;
+        // eslint-disable-next-line no-useless-escape
+        tokenExpression = nextExpressionIsLiteral ? `${tokenExpression}\"` : `${tokenExpression}`;
       }
 
       parameterValueString += tokenExpression;
@@ -3767,14 +3770,13 @@ function parameterValueToStringWithoutCasting(value: ValueSegment[], forValidati
   const shouldInterpolateTokens = (value.length > 1 || shouldInterpolateSingleToken) && value.some(isTokenValueSegment);
 
   return value
-    .map((segment) => {
-      const { value: segmentValue } = segment;
-      if (isTokenValueSegment(segment)) {
-        const token = forValidation ? segmentValue || null : unescapeString(segmentValue);
-        return shouldInterpolateTokens ? `@{${token}}` : `@${token}`;
+    .map((expression) => {
+      let expressionValue = forValidation ? expression.value || null : expression.value;
+      if (isTokenValueSegment(expression)) {
+        expressionValue = shouldInterpolateTokens ? `@{${expressionValue}}` : `@${expressionValue}`;
       }
 
-      return forValidation ? segmentValue || null : segmentValue;
+      return expressionValue;
     })
     .join('');
 }
