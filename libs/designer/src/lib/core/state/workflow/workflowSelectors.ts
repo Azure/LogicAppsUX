@@ -11,7 +11,6 @@ import { useSelector } from 'react-redux';
 import Queue from 'yocto-queue';
 import type {} from 'reselect';
 import type {} from '@tanstack/react-query';
-import { getCollapsedGraph } from './helper';
 
 export const getWorkflowState = (state: RootState): WorkflowState => state.workflow;
 
@@ -44,16 +43,21 @@ export const getRootWorkflowGraphForLayout = createSelector(getWorkflowState, (d
   if (!rootNode) {
     return undefined;
   }
+  console.log('charlie', rootNode, collapsedIds);
 
   if (Object.keys(collapsedIds).length === 0 && Object.keys(collapsedActionsIds).length === 0) {
-    console.log('charlie', rootNode);
     return rootNode;
   }
 
   let newGraph = rootNode;
 
   if (Object.keys(collapsedActionsIds).length !== 0) {
-    newGraph = getCollapsedGraph(collapsedActionsIds, newGraph);
+    try {
+      newGraph = collapseFlowTree(newGraph, collapsedActionsIds) as any;
+    } catch (e) {
+      console.error('Error collapsing graph', e);
+      newGraph = rootNode;
+    }
   }
 
   if (Object.keys(collapsedIds).length !== 0) {
@@ -63,7 +67,6 @@ export const getRootWorkflowGraphForLayout = createSelector(getWorkflowState, (d
     };
   }
 
-  console.log('charlie', newGraph);
   return newGraph;
 });
 
@@ -338,3 +341,84 @@ export const useRootTriggerId = (): string =>
       return '';
     })
   );
+
+/**
+ * Recursively clones a node while pruning (removing) any nodes that are in the nodesToRemove set.
+ * Also filters out any edges that reference removed nodes.
+ * @param {Object} node - The current node to clone and prune.
+ * @param {Set} nodesToRemove - Set of node ids that should be removed.
+ * @returns {Object|null} - A new node object with pruned children/edges, or null if this node is removed.
+ */
+function cloneAndPruneTree(node: WorkflowNode, nodesToRemove: Record<string, any>) {
+  // If the current node is marked for removal, return null so it will be filtered out.
+  if (nodesToRemove.has(node.id)) {
+    return null;
+  }
+
+  // Create a shallow clone of the node (to avoid mutating the original).
+  // We make sure to clone children and edges separately.
+  const newNode = { ...node };
+
+  // Clone and filter children if they exist.
+  if (Array.isArray(node.children)) {
+    newNode.children = node.children.map((child) => cloneAndPruneTree(child, nodesToRemove)).filter((child) => child !== null);
+  }
+
+  // Clone and filter edges if they exist.
+  if (Array.isArray(node.edges)) {
+    newNode.edges = node.edges.filter((edge) => {
+      return !nodesToRemove.has(edge.source) && !nodesToRemove.has(edge.target);
+    });
+  }
+
+  return newNode;
+}
+
+/**
+ * Collapses the flow tree based on the given collapsedIds.
+ * @param {Object} tree - The full tree structure.
+ * @param {Object} collapsedIds - An object whose keys are node ids to collapse.
+ * @return {Object} - A new tree with collapsed (downstream) nodes removed.
+ */
+function collapseFlowTree(tree: WorkflowNode, collapsedIds: Record<string, any>) {
+  // 1. Build a lookup for nodes and an edge graph mapping source -> [target, ...]
+  const nodeMap: Record<string, any> = {};
+  const edgeGraph: Record<string, any> = {};
+
+  function traverseForMapping(node: WorkflowNode) {
+    nodeMap[node.id] = node;
+
+    if (node.edges && Array.isArray(node.edges)) {
+      node.edges.forEach((edge) => {
+        if (!edgeGraph[edge.source]) {
+          edgeGraph[edge.source] = [];
+        }
+        edgeGraph[edge.source].push(edge.target);
+      });
+    }
+    if (node.children && Array.isArray(node.children)) {
+      node.children.forEach((child) => traverseForMapping(child));
+    }
+  }
+  traverseForMapping(tree);
+
+  // 2. Find all nodes that should be removed.
+  const nodesToRemove = new Set();
+
+  function markDownstream(nodeId: string) {
+    if (edgeGraph[nodeId]) {
+      edgeGraph[nodeId].forEach((targetId: any) => {
+        if (!nodesToRemove.has(targetId)) {
+          nodesToRemove.add(targetId);
+          markDownstream(targetId);
+        }
+      });
+    }
+  }
+  Object.keys(collapsedIds).forEach((collapsedId) => {
+    markDownstream(collapsedId);
+  });
+
+  // 3. Instead of modifying the tree in place, clone and prune it.
+  return cloneAndPruneTree(tree, nodesToRemove);
+}
