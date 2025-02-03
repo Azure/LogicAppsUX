@@ -1,9 +1,10 @@
 import { describe, it, expect } from 'vitest';
-import { clearWorkflowDetails, setConsumption, setExistingWorkflowName, workflowSlice } from '../workflowSlice';
+import { clearWorkflowDetails, setInitialData, workflowSlice } from '../workflowSlice';
 describe('workflow slice reducers', () => {
   it('update state call tests', async () => {
     const initialState = {
       isConsumption: false,
+      isCreateView: false,
       subscriptionId: '',
       resourceGroup: '',
       workflowAppName: '',
@@ -14,18 +15,17 @@ describe('workflow slice reducers', () => {
       },
     };
 
-    const state1 = workflowSlice.reducer(initialState, setExistingWorkflowName('workflowName'));
+    const state1 = workflowSlice.reducer(
+      initialState,
+      setInitialData({
+        existingWorkflowName: 'workflowName',
+        isConsumption: false,
+      } as any)
+    );
     expect(state1.existingWorkflowName).toEqual('workflowName');
+    expect(state1.isConsumption).toEqual(false);
 
     const state2 = workflowSlice.reducer(initialState, clearWorkflowDetails());
     expect(state2.existingWorkflowName).toEqual(undefined);
-
-    const state3 = workflowSlice.reducer(initialState, setConsumption(false));
-    expect(state3.isConsumption).toEqual(false);
-    expect(state3.existingWorkflowName).toEqual(undefined);
-
-    const state4 = workflowSlice.reducer(initialState, setConsumption(true));
-    expect(state4.isConsumption).toEqual(true);
-    expect(state4.existingWorkflowName).toEqual(undefined);
   });
 });

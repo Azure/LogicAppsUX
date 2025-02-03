@@ -12,7 +12,7 @@ import {
 } from '@microsoft/logic-apps-shared';
 
 import { useNodeContextMenuData } from '../../../core/state/designerView/designerViewSelectors';
-import { DeleteMenuItem, CopyMenuItem, ResubmitMenuItem, CollapseMenuItem } from '../../../ui/menuItems';
+import { DeleteMenuItem, CopyMenuItem, ResubmitMenuItem, ExpandCollapseMenuItem, CollapseMenuItem } from '../../../ui/menuItems';
 import { PinMenuItem } from '../../../ui/menuItems/pinMenuItem';
 import { RunAfterMenuItem } from '../../../ui/menuItems/runAfterMenuItem';
 import { useOperationInfo, type AppDispatch, type RootState } from '../../../core';
@@ -192,14 +192,25 @@ export const DesignerContextualMenu = () => {
     [deleteClick, metadata?.subgraphType]
   );
 
+  const graphMenuItems: JSX.Element[] = useMemo(() => [<ExpandCollapseMenuItem key={'expand-collapse'} nodeId={nodeId} />], [nodeId]);
+
   const menuItems = useMemo(() => {
-    // Do-Until is a special case, we show normal action context menu items
+    const items: JSX.Element[] = [];
     if (metadata?.subgraphType === SUBGRAPH_TYPES.UNTIL_DO) {
-      return actionContextMenuItems;
+      // Do-Until is a special case, we show normal action context menu items
+      items.push(...actionContextMenuItems);
+    } else {
+      // For all other subgraph types, we show the subgraph context menu items
+      items.push(...(metadata?.subgraphType ? subgraphMenuItems : actionContextMenuItems));
     }
-    // For all other subgraph types, we show the subgraph context menu items
-    return metadata?.subgraphType ? subgraphMenuItems : actionContextMenuItems;
-  }, [metadata, subgraphMenuItems, actionContextMenuItems]);
+
+    if (metadata?.subgraphType || isScopeNode) {
+      // For subgraphs and scope nodes, we show graph context menu items
+      items.push(...graphMenuItems);
+    }
+
+    return items;
+  }, [metadata?.subgraphType, isScopeNode, actionContextMenuItems, subgraphMenuItems, graphMenuItems]);
 
   return (
     <>

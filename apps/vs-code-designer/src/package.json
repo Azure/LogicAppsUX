@@ -1,7 +1,7 @@
 {
   "name": "vscode-azurelogicapps",
   "displayName": "Azure Logic Apps (Standard)",
-  "version": "5.29.0",
+  "version": "5.35.0",
   "aiKey": "setInGitHubBuild",
   "repository": "https://github.com/Azure/LogicAppsUX",
   "main": "main.js",
@@ -651,7 +651,7 @@
           "command": "azureLogicAppsStandard.createCodeless",
           "when": "explorerResourceIsRoot == true",
           "group": "zzz_LogicApptools@1"
-        },        
+        },
         {
           "command": "azureLogicAppsStandard.openOverview",
           "when": "resourceFilename==workflow.json",
@@ -781,7 +781,7 @@
             "description": "The default version of Data Mapper to use when performing operations like \"Create data map\".",
             "enumDescriptions": [
               "Version 1",
-              "Version 2 (Beta)"
+              "Version 2 (Preview)"
             ],
             "default": 1
           },

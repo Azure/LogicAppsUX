@@ -18,13 +18,14 @@ import { isSchemaNodeExtended } from '../../../utils';
 import {
   connectionDoesExist,
   createCustomInputConnection,
+  createNewEmptyConnection,
   isNodeConnection,
   newConnectionWillHaveCircularLogic,
 } from '../../../utils/Connection.Utils';
 import { SchemaType, type SchemaNodeDictionary } from '@microsoft/logic-apps-shared';
 import DraggableList from 'react-draggable-list';
 import InputListWrapper, { type TemplateItemProps, type CommonProps } from './InputList';
-import { useCallback, useMemo, useRef } from 'react';
+import { useCallback, useMemo, useRef, useState } from 'react';
 import { useIntl } from 'react-intl';
 import { InputCustomInfoLabel } from './inputCustomInfoLabel';
 import { useStyles } from './styles';
@@ -46,143 +47,6 @@ export const InputTabContents = (props: {
         id: 'ES5vsI',
         description: 'Value',
       }),
-    }),
-    [intl]
-  );
-  const connectionDictionary = useSelector((state: RootState) => state.dataMap.present.curDataMapOperation.dataMapConnections);
-  const sourceSchemaDictionary = useSelector((state: RootState) => state.dataMap.present.curDataMapOperation.flattenedSourceSchema);
-  const functionNodeDictionary = useSelector((state: RootState) => state.dataMap.present.curDataMapOperation.functionNodes);
-  const styles = useStyles();
-  const dispatch = useDispatch();
-
-  const connections = useSelector((state: RootState) => state.dataMap.present.curDataMapOperation.dataMapConnections);
-
-  let table: JSX.Element;
-  const functionConnection = connections[props.functionKey];
-
-  if (props.func.maxNumberOfInputs !== UnboundedInput) {
-    const tableContents = props.func.inputs.map((input, index) => {
-      const inputConnection = functionConnection && functionConnection.inputs[index] ? functionConnection.inputs[index] : undefined;
-
-      const inputType = getInputTypeFromNode(inputConnection);
-
-      const updateInput = (newValue: InputConnection) => {
-        const targetNodeReactFlowKey = props.functionKey;
-        dispatch(
-          setConnectionInput({
-            targetNode: props.func,
-            targetNodeReactFlowKey,
-            inputIndex: index,
-            input: newValue,
-          })
-        );
-      };
-      const validateAndCreateConnection = (optionValue: string | undefined, option: InputOptionProps | undefined) => {
-        if (optionValue) {
-          const input = validateAndCreateConnectionInput(
-            optionValue,
-            option,
-            connectionDictionary,
-            props.func,
-            functionNodeDictionary,
-            sourceSchemaDictionary
-          );
-          if (input) {
-            updateInput(input);
-          }
-        }
-      };
-
-      const removeConnection = (inputIndex: number) => {
-        const targetNodeReactFlowKey = props.functionKey;
-        dispatch(
-          deleteConnectionFromFunctionMenu({
-            inputIndex,
-            targetId: targetNodeReactFlowKey,
-          })
-        );
-      };
-
-      return (
-        <div className={styles.row} key={index}>
-          <div className={styles.header}>
-            <div className={styles.titleContainer}>
-              <div>
-                <Caption1 className={styles.titleText}>
-                  {input.name ?? resources.VALUE}
-                  <Text className={styles.titleRequiredLabelText}>{input.isOptional ? '' : '*'}</Text>
-                </Caption1>
-                <InputCustomInfoLabel />
-              </div>
-              <Text className={styles.titleText}>
-                <span className={styles.titleLabelText}>{resources.ACCEPTED_TYPES}</span>
-                {input.allowedTypes}
-              </Text>
-            </div>
-            <div className={styles.descriptionContainer}>
-              <Text className={styles.descriptionText}>{input.tooltip ?? input.placeHolder ?? ''}</Text>
-            </div>
-          </div>
-          <div className={styles.body}>
-            <div className={styles.formControlWrapper}>
-              <span className={styles.formControl}>
-                <InputDropdown
-                  index={index}
-                  schemaListType={SchemaType.Source}
-                  functionId={props.functionKey}
-                  currentNode={props.func}
-                  inputName={getInputName(inputConnection, connections)}
-                  inputValue={getInputValue(inputConnection)}
-                  validateAndCreateConnection={validateAndCreateConnection}
-                />
-              </span>
-              {inputType && (
-                <Badge appearance="filled" color="informative">
-                  {inputType}
-                </Badge>
-              )}
-              <Button
-                className={styles.controlButton}
-                appearance="transparent"
-                icon={<DeleteRegular />}
-                onClick={() => removeConnection(index)}
-              />
-            </div>
-          </div>
-        </div>
-      );
-    });
-    table = <div>{tableContents}</div>;
-  } else {
-    table = <UnlimitedInputs func={props.func} functionKey={props.functionKey} connections={connections} />;
-  }
-  return (
-    <div>
-      <div>{table}</div>
-    </div>
-  );
-};
-
-const UnlimitedInputs = (props: {
-  func: FunctionData;
-  functionKey: string;
-  connections: ConnectionDictionary;
-}) => {
-  const inputsFromManifest = props.func.inputs;
-  const styles = useStyles();
-  const dispatch = useDispatch();
-  const intl = useIntl();
-  const containerRef = useRef<HTMLDivElement | null>(null);
-
-  const functionConnection = useMemo(() => props.connections[props.functionKey], [props.connections, props.functionKey]);
-
-  const stringResources = useMemo(
-    () => ({
-      ACCEPT_TYPES: intl.formatMessage({
-        defaultMessage: 'Accepted types: ',
-        id: 'ZgyD93',
-        description: 'Accepted types',
-      }),
       OPTIONAL: intl.formatMessage({
         defaultMessage: 'optional',
         id: '6eDY1H',
@@ -193,81 +57,212 @@ const UnlimitedInputs = (props: {
         id: 'wx/ZQP',
         description: 'Add Input',
       }),
-      VALUE: intl.formatMessage({
-        defaultMessage: 'Value',
-        id: 'ES5vsI',
-        description: 'Value',
-      }),
     }),
     [intl]
   );
 
+  const { func, functionKey } = props;
+  const containerRef = useRef<HTMLDivElement | null>(null);
+  const styles = useStyles();
+  const dispatch = useDispatch();
+  const connectionDictionary = useSelector((state: RootState) => state.dataMap.present.curDataMapOperation.dataMapConnections);
+  const sourceSchemaDictionary = useSelector((state: RootState) => state.dataMap.present.curDataMapOperation.flattenedSourceSchema);
+  const functionNodeDictionary = useSelector((state: RootState) => state.dataMap.present.curDataMapOperation.functionNodes);
+
+  const connections = useSelector((state: RootState) => state.dataMap.present.curDataMapOperation.dataMapConnections);
+
+  const inputsFromManifest = useMemo(() => func.inputs, [func.inputs]);
+  const functionConnection = useMemo(() => connections[functionKey], [connections, functionKey]);
+
+  const [listItems, setListItems] = useState<TemplateItemProps[]>(
+    Object.entries(functionConnection.inputs).map(
+      (input, index) =>
+        ({
+          input: input[1],
+          index,
+        }) as TemplateItemProps
+    )
+  );
+
   const addUnboundedInputSlot = useCallback(() => {
-    dispatch(createInputSlotForUnboundedInput(props.functionKey));
-  }, [dispatch, props.functionKey]);
+    setListItems((prev) => [...prev, { input: createNewEmptyConnection(), index: prev.length }]);
+    dispatch(createInputSlotForUnboundedInput(functionKey));
+  }, [dispatch, functionKey]);
 
   const onDragMoveEnd = useCallback(
     (newList: readonly TemplateItemProps[], _movedItem: TemplateItemProps, _oldIndex: number, _newIndex: number) => {
+      const updatedList = [...newList];
+      setListItems(updatedList);
       dispatch(
         updateFunctionConnectionInputs({
-          functionKey: props.functionKey,
-          inputs: newList.map((item) => item.input),
+          functionKey: functionKey,
+          inputs: updatedList.map((item) => item.input),
         })
       );
     },
-    [dispatch, props.functionKey]
+    [dispatch, functionKey]
+  );
+
+  const update = useCallback(
+    (index: number, item?: TemplateItemProps) => {
+      if (item) {
+        if (listItems.length >= index) {
+          const updatedList = [...listItems];
+          updatedList[index] = item;
+          setListItems(updatedList);
+        } else {
+          setListItems([...listItems, { input: item.input, index: listItems.length }]);
+        }
+      } else {
+        setListItems((prev) => prev.filter((item) => item.index !== index));
+      }
+    },
+    [listItems, setListItems]
   );
 
   return (
-    <div className={styles.row}>
-      <div className={styles.header}>
-        <div className={styles.titleContainer}>
-          <div>
-            <Caption1 className={styles.titleText}>
-              {inputsFromManifest[0].name ?? stringResources.VALUE}
-              <Text className={styles.titleRequiredLabelText}>{inputsFromManifest[0].isOptional ? '' : '*'}</Text>
-            </Caption1>
-            <InputCustomInfoLabel />
+    <div>
+      {func.maxNumberOfInputs !== UnboundedInput ? (
+        props.func.inputs.map((input, index) => {
+          const inputConnection = functionConnection && functionConnection.inputs[index] ? functionConnection.inputs[index] : undefined;
+
+          const inputType = getInputTypeFromNode(inputConnection);
+
+          const updateInput = (newValue: InputConnection) => {
+            const targetNodeReactFlowKey = functionKey;
+            dispatch(
+              setConnectionInput({
+                targetNode: props.func,
+                targetNodeReactFlowKey,
+                inputIndex: index,
+                input: newValue,
+              })
+            );
+          };
+          const validateAndCreateConnection = (optionValue: string | undefined, option: InputOptionProps | undefined) => {
+            if (optionValue) {
+              const input = validateAndCreateConnectionInput(
+                optionValue,
+                option,
+                connectionDictionary,
+                props.func,
+                functionNodeDictionary,
+                sourceSchemaDictionary
+              );
+              if (input) {
+                updateInput(input);
+              }
+            }
+          };
+
+          const removeConnection = (inputIndex: number) => {
+            const targetNodeReactFlowKey = props.functionKey;
+            dispatch(
+              deleteConnectionFromFunctionMenu({
+                inputIndex,
+                targetId: targetNodeReactFlowKey,
+              })
+            );
+          };
+
+          return (
+            <div className={styles.row} key={index}>
+              <div className={styles.header}>
+                <div className={styles.titleContainer}>
+                  <div>
+                    <Caption1 className={styles.titleText}>
+                      {input.name ?? resources.VALUE}
+                      <Text className={styles.titleRequiredLabelText}>{input.isOptional ? '' : '*'}</Text>
+                    </Caption1>
+                    <InputCustomInfoLabel />
+                  </div>
+                  <Text className={styles.titleText}>
+                    <span className={styles.titleLabelText}>{resources.ACCEPTED_TYPES}</span>
+                    {input.allowedTypes}
+                  </Text>
+                </div>
+                <div className={styles.descriptionContainer}>
+                  <Text className={styles.descriptionText}>{input.tooltip ?? input.placeHolder ?? ''}</Text>
+                </div>
+              </div>
+              <div className={styles.body}>
+                <div className={styles.formControlWrapper}>
+                  <span className={styles.formControl}>
+                    <InputDropdown
+                      index={index}
+                      schemaListType={SchemaType.Source}
+                      functionId={props.functionKey}
+                      currentNode={props.func}
+                      inputName={getInputName(inputConnection, connections)}
+                      inputValue={getInputValue(inputConnection)}
+                      validateAndCreateConnection={validateAndCreateConnection}
+                    />
+                  </span>
+                  {inputType && (
+                    <Badge appearance="filled" color="informative">
+                      {inputType}
+                    </Badge>
+                  )}
+                  <Button
+                    className={styles.controlButton}
+                    appearance="transparent"
+                    icon={<DeleteRegular />}
+                    onClick={() => removeConnection(index)}
+                  />
+                </div>
+              </div>
+            </div>
+          );
+        })
+      ) : (
+        <div className={styles.row}>
+          <div className={styles.header}>
+            <div className={styles.titleContainer}>
+              <div>
+                <Caption1 className={styles.titleText}>
+                  {inputsFromManifest[0].name ?? resources.VALUE}
+                  <Text className={styles.titleRequiredLabelText}>{inputsFromManifest[0].isOptional ? '' : '*'}</Text>
+                </Caption1>
+                <InputCustomInfoLabel />
+              </div>
+              <Text className={styles.titleText}>
+                <span className={styles.titleLabelText}>{resources.ACCEPTED_TYPES}</span>
+                {inputsFromManifest[0].allowedTypes}
+              </Text>
+            </div>
+            <div className={styles.descriptionContainer}>
+              <Text className={styles.descriptionText}>{inputsFromManifest[0].tooltip ?? inputsFromManifest[0].placeHolder ?? ''}</Text>
+            </div>
           </div>
-          <Text className={styles.titleText}>
-            <span className={styles.titleLabelText}>{stringResources.ACCEPT_TYPES}</span>
-            {inputsFromManifest[0].allowedTypes}
-          </Text>
+          <div className={styles.body} ref={containerRef}>
+            <DraggableList<TemplateItemProps, CommonProps, any>
+              list={listItems}
+              commonProps={{
+                functionKey: props.functionKey,
+                data: props.func,
+                inputsFromManifest,
+                connections: connections,
+                schemaType: SchemaType.Source,
+                draggable: true,
+                updateListItems: update,
+              }}
+              onMoveEnd={onDragMoveEnd}
+              itemKey={'index'}
+              template={InputListWrapper}
+            />
+            <div className={styles.formControlDescription}>
+              <Button
+                icon={<AddRegular className={styles.addIcon} />}
+                onClick={() => addUnboundedInputSlot()}
+                className={styles.addButton}
+                appearance="subtle"
+              >
+                <Caption1>{resources.ADD_INPUT}</Caption1>
+              </Button>
+            </div>
+          </div>
         </div>
-        <div className={styles.descriptionContainer}>
-          <Text className={styles.descriptionText}>{inputsFromManifest[0].tooltip ?? inputsFromManifest[0].placeHolder ?? ''}</Text>
-        </div>
-      </div>
-      <div className={styles.body} ref={containerRef}>
-        <DraggableList<TemplateItemProps, CommonProps, any>
-          list={Object.entries(functionConnection.inputs).map((input, index) => ({
-            input: input[1],
-            index,
-          }))}
-          commonProps={{
-            functionKey: props.functionKey,
-            data: props.func,
-            inputsFromManifest,
-            connections: props.connections,
-            schemaType: SchemaType.Source,
-            draggable: true,
-          }}
-          onMoveEnd={onDragMoveEnd}
-          itemKey={'index'}
-          template={InputListWrapper}
-          container={() => containerRef?.current}
-        />
-        <div className={styles.formControlDescription}>
-          <Button
-            icon={<AddRegular className={styles.addIcon} />}
-            onClick={() => addUnboundedInputSlot()}
-            className={styles.addButton}
-            appearance="subtle"
-          >
-            <Caption1>{stringResources.ADD_INPUT}</Caption1>
-          </Button>
-        </div>
-      </div>
+      )}
     </div>
   );
 };
