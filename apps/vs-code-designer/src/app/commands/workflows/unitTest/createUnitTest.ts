@@ -4,6 +4,7 @@
  *--------------------------------------------------------------------------------------------*/
 
 import { localize } from '../../../../localize';
+import { ConvertToWorkspace } from '../../createNewCodeProject/CodeProjectBase/ConvertToWorkspace';
 import {
   createCsFile,
   ensureCsprojAndNugetFiles,
@@ -15,7 +16,7 @@ import {
   selectWorkflowNode,
 } from '../../../utils/unitTests';
 import { tryGetLogicAppProjectRoot } from '../../../utils/verifyIsProject';
-import { ensureDirectoryInWorkspace, getWorkflowNode, getWorkspaceFolder, isMultiRootWorkspace } from '../../../utils/workspace';
+import { ensureDirectoryInWorkspace, getWorkflowNode, getWorkspaceFolder } from '../../../utils/workspace';
 import type { IAzureConnectorsContext } from '../azureConnectorWizard';
 import { type IActionContext, callWithTelemetryAndErrorHandling } from '@microsoft/vscode-azext-utils';
 import * as path from 'path';
@@ -45,14 +46,11 @@ export async function createUnitTest(context: IAzureConnectorsContext, node: vsc
     // Determine workflow node
     const workflowNode = node ? (getWorkflowNode(node) as vscode.Uri) : await selectWorkflowNode(context, projectPath);
 
-    // Check if in a multi-root workspace
-    if (!isMultiRootWorkspace()) {
-      const message = localize(
-        'expectedWorkspace',
-        'A multi-root workspace must be open to create unit tests. Please navigate to the Logic Apps extension in Visual Studio Code and use the "Create New Logic App Workspace" command to initialize and open a valid workspace.'
+    if (!(await ConvertToWorkspace(context))) {
+      ext.outputChannel.appendLog(
+        localize('createUnitTestCancelled', 'Exiting unit test creation, a workspace is required to create unit tests.')
       );
-      ext.outputChannel.appendLog(message);
-      throw new Error(message);
+      return;
     }
 
     // Get workflow name and prompt for unit test name
