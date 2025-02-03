@@ -16,6 +16,7 @@ export interface NodeConnection {
   node: SchemaNodeExtended | FunctionData;
   reactFlowKey: string;
   isRepeating?: boolean;
+  customId?: string;
 }
 
 export interface CustomValueConnection {
