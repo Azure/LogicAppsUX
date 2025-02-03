@@ -30,6 +30,10 @@ export const splitFileName = (fileName: string) => {
   return [fileName.slice(0, splitFileName), fileName.slice(splitFileName)];
 };
 
+export const escapeString = (s: string): string => {
+  return s.replace(/\\/g, '\\\\').replace(/\n/g, '\\n');
+};
+
 export const canStringBeConverted = (s: string): boolean => {
   if (typeof s !== 'string' || s.trim() === '') {
     return false;
@@ -52,38 +56,4 @@ export const createIdCopy = (id: string) => `${id}-copy`;
 
 export const cleanResourceId = (resourceId?: string): string => {
   return resourceId?.startsWith('/') ? resourceId : `/${resourceId}`;
-};
-
-export const unescapeString = (input: string): string => {
-  return input.replace(/\\([nrtv])/g, (_match, char) => {
-    switch (char) {
-      case 'n':
-        return '\n';
-      case 'r':
-        return '\r';
-      case 't':
-        return '\t';
-      case 'v':
-        return '\v';
-      default:
-        return char;
-    }
-  });
-};
-
-export const escapeString = (input: string): string => {
-  return input.replace(/[\n\r\t\v]/g, (char) => {
-    switch (char) {
-      case '\n':
-        return '\\n';
-      case '\r':
-        return '\\r';
-      case '\t':
-        return '\\t';
-      case '\v':
-        return '\\v';
-      default:
-        return char;
-    }
-  });
 };

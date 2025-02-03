@@ -3,7 +3,7 @@ import { isEmpty } from '../../../dictionary/expandeddictionary';
 import type { ValueSegment } from '../../models/parameter';
 import { createLiteralValueSegment, insertQutationForStringType } from './helper';
 import { convertSegmentsToString } from './parsesegments';
-import { escapeString } from '@microsoft/logic-apps-shared';
+import { isNumber, isBoolean, escapeString } from '@microsoft/logic-apps-shared';
 
 export interface KeyValueItem {
   id: string;
@@ -24,7 +24,7 @@ export const convertKeyValueItemToSegments = (items: KeyValueItem[], keyType?: s
 
   for (let index = 0; index < itemsToConvert.length; index++) {
     const { key, value } = itemsToConvert[index];
-
+    // todo: we should have some way of handle formatting better
     const convertedKeyType = convertValueType(key, keyType);
     const updatedKey = key.map((segment) => {
       return {
@@ -41,7 +41,6 @@ export const convertKeyValueItemToSegments = (items: KeyValueItem[], keyType?: s
       };
     });
 
-    // wrap key and value with quotation marks if they are string type
     insertQutationForStringType(parsedItems, convertedKeyType);
     parsedItems.push(...updatedKey);
     insertQutationForStringType(parsedItems, convertedKeyType);
@@ -61,17 +60,8 @@ export const convertValueType = (value: ValueSegment[], type?: string): string |
     return type;
   }
   const stringSegments = convertSegmentsToString(value).trim();
-  if (isNonString(stringSegments)) {
-    return type;
-  }
-  return constants.SWAGGER.TYPE.STRING;
-};
+  const isExpressionOrObject = (stringSegments.startsWith('@{') || stringSegments.startsWith('{')) && stringSegments.endsWith('}');
+  const isKnownType = isExpressionOrObject || isNumber(stringSegments) || isBoolean(stringSegments) || /^\[.*\]$/.test(stringSegments);
 
-const isNonString = (value: string): boolean => {
-  try {
-    const parsedValue = JSON.parse(value);
-    return parsedValue === null || Array.isArray(parsedValue) || typeof parsedValue !== 'string';
-  } catch {
-    return false;
-  }
+  return isKnownType ? type : constants.SWAGGER.TYPE.STRING;
 };
