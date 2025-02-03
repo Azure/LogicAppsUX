@@ -444,16 +444,10 @@ const validateFloatingActionMenuOutputsEditor = (editorViewModel: FloatingAction
 };
 
 function shouldValidateJSON(expressions: ValueSegment[]): boolean {
-  const shouldValidate = true;
-
-  if (shouldValidate && expressions.length) {
-    const firstSegmentValue = expressions[0].token?.value;
-    if (firstSegmentValue) {
-      return startsWith(firstSegmentValue, '@@') || startsWith(firstSegmentValue, '@{') || !startsWith(firstSegmentValue, '@');
-    }
-  }
-
-  return shouldValidate;
+  const firstSegmentValue = expressions[0]?.token?.value;
+  return firstSegmentValue
+    ? firstSegmentValue.startsWith('@@') || firstSegmentValue.startsWith('@{') || !firstSegmentValue.startsWith('@')
+    : true;
 }
 
 export function parameterHasOnlyTokenBinding(parameterValue: ValueSegment[]): boolean {
