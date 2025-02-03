@@ -15,6 +15,7 @@ import {
   createYamlFromMap,
   createYamlFromMapV2,
   findKeyInMap,
+  findNodeInMapTreeRec,
   sortConnectionsToTargetNodes,
 } from "../MapDefinitionSerializer";
 import {
@@ -200,6 +201,30 @@ describe("serialization helpers", () => {
       ]);
       const yamlStr = createYamlFromMapV2(result);
       console.log(yamlStr);
+    });
+  });
+
+  describe("findNodeInMapTreeRec", () => {
+    it("finds node under loop", () => {
+      const loop = [
+        {
+          key: "ns0:Root",
+          value: [
+            {
+              key: "Looping",
+              value: [
+                {
+                  key: "$for(/ns0:Root/Looping/Employee)",
+                  value: [{ key: "Person", value: "" }],
+                }
+              ],
+            },
+          ],
+        },
+      ];
+      const qName = "Person";
+      const node = findNodeInMapTreeRec(loop as MapDefinitionEntryV2, qName);
+      console.log(node);
     });
   });
 });
@@ -440,7 +465,7 @@ const partialTargetSchemaConnections = [
   ["target-/ns0:Root/CumulativeExpression/PopulationSummary/State/Name", {}],
 ];
 
-const targetSchemaSortArray = [
+export const targetSchemaSortArray = [
   "/ns0:Root",
   "/ns0:Root/DirectTranslation",
   "/ns0:Root/DirectTranslation/Employee",

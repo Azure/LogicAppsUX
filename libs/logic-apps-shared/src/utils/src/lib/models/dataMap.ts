@@ -4,7 +4,7 @@ export type MapDefinitionEntry = {
   [key: string]: MapDefinitionEntry | string | MapDefinitionEntry[];
 };
 
-export type MapDefinitionEntryV2 = MapDefinitionObject[] | string;
+export type MapDefinitionEntryV2 = MapDefinitionObject[];
 
 export type MapDefinitionObject = {
    key: string;

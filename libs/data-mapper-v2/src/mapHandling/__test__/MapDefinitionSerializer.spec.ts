@@ -11,7 +11,7 @@ import {
 import { addReactFlowPrefix, createReactFlowFunctionKey } from '../../utils/ReactFlow.Util';
 import { convertSchemaToSchemaExtended } from '../../utils/Schema.Utils';
 import { createYamlFromMap, generateMapDefinitionBody, generateMapDefinitionHeader } from '../MapDefinitionSerializer';
-import type { MapDefinitionEntry, Schema, SchemaExtended, SchemaNodeExtended } from '@microsoft/logic-apps-shared';
+import type { MapDefinitionEntry, MapDefinitionEntryV2, Schema, SchemaExtended, SchemaNodeExtended } from '@microsoft/logic-apps-shared';
 import { SchemaFileFormat, SchemaType, extend } from '@microsoft/logic-apps-shared';
 import {
   deepNestedSequenceAndObject,
@@ -27,6 +27,7 @@ import {
 } from '../../__mocks__/schemas';
 import { describe, vi, beforeEach, afterEach, beforeAll, afterAll, it, test, expect } from 'vitest';
 import { createSchemaToSchemaNodeConnection } from './MapHandlingTestUtilis';
+import { targetSchemaSortArray } from './SerializerHelpers.spec';
 describe('mapDefinitions/MapDefinitionSerializer', () => {
   describe('XML to XML', () => {
     describe('generateMapDefinitionHeader', () => {
@@ -511,7 +512,12 @@ describe('mapDefinitions/MapDefinitionSerializer', () => {
           input: createNodeConnection(sourceEmployeeRepeatingNode, addReactFlowPrefix(sourceEmployeeRepeatingNode.key, SchemaType.Source)),
         });
 
-        generateMapDefinitionBody(mapDefinition, connections);
+        const outputMap: MapDefinitionEntryV2 = [];
+
+        generateMapDefinitionBody(mapDefinition, connections, targetSchemaSortArray, outputMap);
+
+        // new way
+        expect(JSON.stringify(outputMap)).toEqual('[{"key":"ns0:Root","value":[{"key":"Looping","value":[{"key":"$for(/ns0:Root/Looping/Employee)","value":"Person"},{"key":"Person","value":[{"key":"Name","value":"/ns0:Root/Looping/Employee/Name"},{"key":"Address","value":"/ns0:Root/Looping/Employee/TelephoneNumber"}]}]}]}]');
 
         expect(Object.keys(mapDefinition).length).toEqual(1);
         const rootChildren = Object.entries(mapDefinition['ns0:Root']);

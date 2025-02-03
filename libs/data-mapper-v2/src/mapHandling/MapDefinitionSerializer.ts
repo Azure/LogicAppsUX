@@ -201,9 +201,7 @@ const getConnectionsToTargetNodes = (connections: ConnectionDictionary) => {
   return Object.entries(connections).filter(([key, connection]) => {
     const selfNode = connection.self.node;
     if (key.startsWith(targetPrefix) && isSchemaNodeExtended(selfNode)) {
-      return selfNode.nodeProperties.every(
-        (property) => property !== SchemaNodeProperty.Repeating
-      );
+      return selfNode;
     }
     return false;
   });
@@ -338,6 +336,34 @@ const createEmptyObj = (key: string) => {
   return { key: key, value: [] };
 };
 
+const keyIsConditionalOrLoop = (key: string) => {
+  return key.startsWith(mapNodeParams.for) ||
+  key.startsWith(mapNodeParams.if)
+}
+
+export const findNodeInMapTreeRec = (parentNode: MapDefinitionEntryV2, key: string) => {
+  let match: MapDefinitionObject | undefined;
+
+  if (Array.isArray(parentNode)) {
+    const matchingImmediateChildOfParent = findNodeForKey(parentNode, key);
+    if (matchingImmediateChildOfParent) {
+      return matchingImmediateChildOfParent;
+    } else (
+      parentNode.forEach(child => { // will only happen in loop case
+        if (keyIsConditionalOrLoop(child.key)) {
+          if (Array.isArray(child.value)) {
+            const possibleMatch = findNodeInMapTreeRec(child.value, key);
+            if (possibleMatch) {
+              match = possibleMatch;
+            }
+          }
+        }
+      })
+    )
+  }
+  return match;
+}
+
 export const createNewPathItems = (
   input: InputConnection,
   targetNode: SchemaNodeExtended,
@@ -353,46 +379,28 @@ export const createNewPathItems = (
 
   let currentNode = mapDefinitionv2;
   targetNode.pathToRoot.forEach((targetPath, _index, pathToRoot) => {
-    if (typeof currentNode === "string") {
+    if (typeof currentNode === "string") {  // should not happen, added for type safety
       return;
     }
 
     // do not add actual target node in case we need to add 'for' or 'if'
     if (targetNode.key === targetPath.key)  {
+      
       return;
     }
 
-    // add node to the tree as needed, otherwise continue down the tree
+    let foundChildNode: MapDefinitionObject | undefined;
     if (currentNode) {
-      const child = currentNode.find(
-        (child) => child.childNode === targetPath.qName
-      );
-      if (!findNodeForKey(currentNode, targetPath.qName)) {
-        currentNode.push(createEmptyObj(targetPath.qName));
-        const node = currentNode
-          ? findNodeForKey(currentNode, targetPath.qName)
-          : undefined;
-
-        if (node !== undefined) {
-          currentNode = node.value as MapDefinitionEntryV2;
-        } else {
-          return;
-        }
-      } else if (child) {
-        currentNode = child.value as MapDefinitionEntryV2;
-      } else {
-        const node = currentNode
-          ? findNodeForKey(currentNode, targetPath.qName)
-          : undefined;
-
-        if (node !== undefined) {
-          currentNode = node.value as MapDefinitionEntryV2;
-        } else {
-          return;
-        }
-      }
+      foundChildNode = findNodeInMapTreeRec(currentNode, targetPath.qName);
     }
-    // danielle next account for for and if
+
+    if (foundChildNode) {
+      currentNode = foundChildNode.value as MapDefinitionEntryV2; // danielle fix type
+    } else { // if we cannot find the parent, add it to the tree (looping and conditional checks not necessary (these will already be added by previous connecitons)
+      const newEmptyNode = createEmptyObj(targetPath.qName);
+      currentNode.push(newEmptyNode); 
+      currentNode = newEmptyNode.value;
+    }
   });
 
   const targetPath = targetNode.pathToRoot[targetNode.pathToRoot.length - 1];
@@ -408,7 +416,9 @@ export const createNewPathItems = (
   // Probably used for direct index access
   if (targetPath.repeating && connectionsIntoCurrentTargetPath) {
     // Looping schema node
-    //addLoopingForToNewPathItems(targetPath, connectionsIntoCurrentTargetPath, connections, newPath, lastLoop);
+    addLoopingForToNewPathItems(targetPath, connectionsIntoCurrentTargetPath, connections, newPath, lastLoop);
+    newPath = newPath[0].value as MapDefinitionObject[];
+    return;
   } else if (connectionsIntoCurrentTargetPath) {
       // Conditionals
       const rootSourceNodes = connectionsIntoCurrentTargetPath.inputs[0];
@@ -422,10 +432,10 @@ export const createNewPathItems = (
           addConditionalToNewPathItems(
             connections[sourceNode.reactFlowKey],
             connections,
-            targetNode.qName
+            newPath
           );
-        newPath.push(conditional);
-        newPath = conditional.value;
+        //newPath.push(conditional);
+        //newPath = conditional.value;
         if (typeof newPath === "string") {
           return; // danielle revisit
         }
@@ -523,32 +533,31 @@ export const createNewPathItems = (
 const addConditionalToNewPathItems = (
   ifConnection: Connection,
   connections: ConnectionDictionary,
-  nodeKey: string
-): MapDefinitionObject => {
+  newPath: MapDefinitionEntryV2
+) => {
   const values = collectConditionalValues(ifConnection, connections);
 
   // Handle relative paths for (potentially nested) loops
-  // let valueToTrim = '';
-  // newPath.forEach((pathItem) => {
-  //   if (pathItem.key.startsWith(mapNodeParams.for)) {
-  //     valueToTrim += `${getSourceKeyOfLastLoop(pathItem.key)}/`;
-  //   }
-  // });
-  const ifContents = values[0]; //.replaceAll(valueToTrim, '');
+  let valueToTrim = '';
+  newPath.forEach((pathItem) => {
+    if (pathItem.key.startsWith(mapNodeParams.for)) {
+      valueToTrim += `${getSourceKeyOfLastLoop(pathItem.key)}/`;
+    }
+  });
+  const ifContents = values[0].replaceAll(valueToTrim, '');
 
   // If entry
-  return {
+  newPath.push({
     key: `${mapNodeParams.if}(${ifContents})`,
-    value: [],
-    childNode: nodeKey,
-  };
+    value: '',
+  });
 };
 
 const addLoopingForToNewPathItems = (
   pathItem: PathItem,
   rootTargetConnection: Connection,
   connections: ConnectionDictionary,
-  newPath: OutputPathItem[],
+  newPath: MapDefinitionEntryV2,
   currentSourceLoop: { loop: string }
 ) => {
   const rootSourceNodes = [...rootTargetConnection.inputs];
@@ -580,8 +589,8 @@ const addLoopingForToNewPathItems = (
   });
 
   let prevPathItemWasConditional = false;
+  let loopSourceKey = "";
   rootSourceNodes.forEach((sourceNode) => {
-    let loopValue = "";
 
     if (sourceNode && isNodeConnection(sourceNode)) {
       if (isFunctionData(sourceNode.node)) {
@@ -606,20 +615,20 @@ const addLoopingForToNewPathItems = (
             const inputKey =
               isNodeConnection(inputConnection) && inputConnection.node.key;
 
-            loopValue = `${
+            loopSourceKey = `${
               mapNodeParams.for
             }(${inputKey}, ${getIndexValueForCurrentConnection(
               indexConnection,
               connections
             )})`;
           } else {
-            loopValue = `${
+            loopSourceKey = `${
               mapNodeParams.for
             }(${sourceSchemaNodeReactFlowKey.replace(sourcePrefix, "")})`;
           }
 
           // For entry
-          newPath.push({ key: loopValue });
+          newPath.push({ key: loopSourceKey, value: [] });
 
           addConditionalToNewPathItems(
             connections[sourceNode.reactFlowKey],
@@ -653,20 +662,20 @@ const addLoopingForToNewPathItems = (
             });
 
             if (sequenceValueResult.hasIndex) {
-              loopValue = `${mapNodeParams.for}(${
+              loopSourceKey = `${mapNodeParams.for}(${
                 sequenceValueResult.sequenceValue
               }, ${getIndexValueForCurrentConnection(
                 functionConnection,
                 connections
               )})`;
             } else {
-              loopValue = `${mapNodeParams.for}(${sequenceValueResult.sequenceValue})`;
+              loopSourceKey = `${mapNodeParams.for}(${sequenceValueResult.sequenceValue})`;
             }
 
             currentSourceLoop.loop = sequenceValueResult.rootLoop;
 
             // For entry
-            newPath.push({ key: loopValue });
+            newPath.push({ key: loopSourceKey, value: [] });
           }
 
           prevPathItemWasConditional = false;
@@ -674,25 +683,25 @@ const addLoopingForToNewPathItems = (
       } else {
         // Normal loop
         if (!prevPathItemWasConditional) {
-          loopValue = sourceNode.node.key;
+          loopSourceKey = sourceNode.node.key;
           const valueToTrim = findLast(
             sourceNode.node.pathToRoot,
-            (pathItem) => pathItem.repeating && pathItem.key !== loopValue
+            (pathItem) => pathItem.repeating && pathItem.key !== loopSourceKey
           )?.key;
           if (valueToTrim) {
-            loopValue = loopValue.replace(`${valueToTrim}/`, "");
+            loopSourceKey = loopSourceKey.replace(`${valueToTrim}/`, "");
           }
 
-          loopValue = `${mapNodeParams.for}(${loopValue})`;
+          loopSourceKey = `${mapNodeParams.for}(${loopSourceKey})`;
 
           // For entry
-          newPath.push({ key: loopValue });
           currentSourceLoop.loop = sourceNode.node.key;
         }
 
         prevPathItemWasConditional = false;
       }
     }
+    
   });
 
   const selfNode = rootTargetConnection.self.node;
@@ -706,14 +715,16 @@ const addLoopingForToNewPathItems = (
       (prop) => prop === SchemaNodeProperty.ArrayItem
     )
   ) {
-    newPath.push({
-      key: pathItem.qName.startsWith("@")
-        ? `$${pathItem.qName}`
-        : pathItem.qName,
-      arrayIndex: isSchemaNodeExtended(selfNode)
-        ? selfNode.arrayItemIndex
-        : undefined,
-    });
+    const loopObj = {
+      key: loopSourceKey,
+      value: pathItem.qName.startsWith("@")
+      ? `$${pathItem.qName}`
+      : pathItem.qName,
+    arrayIndex: isSchemaNodeExtended(selfNode)
+      ? selfNode.arrayItemIndex
+      : undefined,
+    }
+    newPath.push(loopObj);
   }
 };
 
