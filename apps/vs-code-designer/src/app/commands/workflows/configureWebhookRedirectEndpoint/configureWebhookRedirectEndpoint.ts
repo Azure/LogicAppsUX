@@ -22,7 +22,7 @@ export async function configureWebhookRedirectEndpoint(context: IActionContext, 
     workspaceFolder = await getWorkspaceFolder(context);
   }
 
-  const workspacePath = workspaceFolder.uri.fsPath;
+  const workspacePath = workspaceFolder?.uri?.fsPath;
   const projectPath = (await tryGetLogicAppProjectRoot(context, workspacePath)) || workspacePath;
   const localSettings: ILocalSettingsJson = await getLocalSettingsJson(context, path.join(projectPath, localSettingsFileName));
   const redirectEndpoint: string = localSettings.Values[webhookRedirectHostUri] || '';

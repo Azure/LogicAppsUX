@@ -5,7 +5,7 @@
 import { extensionBundleId, hostFileName, extensionCommand } from '../../constants';
 import { localize } from '../../localize';
 import { getWorkspaceSetting, updateWorkspaceSetting } from './vsCodeConfig/settings';
-import { isString } from '@microsoft/logic-apps-shared';
+import { isNullOrUndefined, isString } from '@microsoft/logic-apps-shared';
 import type { IActionContext, IAzureQuickPickItem } from '@microsoft/vscode-azext-utils';
 import * as fse from 'fs-extra';
 import * as path from 'path';
@@ -57,7 +57,10 @@ export async function isLogicAppProject(folderPath: string): Promise<boolean> {
  * Checks root folder and subFolders one level down
  * If any logic app projects are found return true.
  */
-export async function isLogicAppProjectInRoot(workspaceFolder: WorkspaceFolder | string): Promise<boolean | undefined> {
+export async function isLogicAppProjectInRoot(workspaceFolder: WorkspaceFolder | string | undefined): Promise<boolean | undefined> {
+  if (isNullOrUndefined(workspaceFolder)) {
+    return false;
+  }
   const subpath: string | undefined = getWorkspaceSetting(projectSubpathKey, workspaceFolder);
   const folderPath = isString(workspaceFolder) ? workspaceFolder : workspaceFolder.uri.fsPath;
   if (!subpath) {
@@ -93,9 +96,12 @@ export async function isLogicAppProjectInRoot(workspaceFolder: WorkspaceFolder |
  */
 export async function tryGetLogicAppProjectRoot(
   context: IActionContext,
-  workspaceFolder: WorkspaceFolder | string,
+  workspaceFolder: WorkspaceFolder | string | undefined,
   suppressPrompt = false
 ): Promise<string | undefined> {
+  if (isNullOrUndefined(workspaceFolder)) {
+    return undefined;
+  }
   let subpath: string | undefined = getWorkspaceSetting(projectSubpathKey, workspaceFolder);
   const folderPath = isString(workspaceFolder) ? workspaceFolder : workspaceFolder.uri.fsPath;
   if (!subpath) {

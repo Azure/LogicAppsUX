@@ -18,7 +18,8 @@ export const createNewDataMapCmd = async (context: IActionContext) => {
       context,
       localize('openLogicAppsProject', 'You must have a logic apps project open to use the Data Mapper.')
     );
-    const projectPath: string | undefined = await verifyAndPromptToCreateProject(context, workspaceFolder.uri.fsPath);
+    const projectPath: string | undefined =
+      !isNullOrUndefined(workspaceFolder) && (await verifyAndPromptToCreateProject(context, workspaceFolder?.uri?.fsPath));
     if (!projectPath) {
       return;
     }
@@ -35,7 +36,8 @@ export const loadDataMapFileCmd = async (context: IActionContext, uri: Uri) => {
       context,
       localize('openLogicAppsProject', 'You must have a logic apps project open to use the Data Mapper.')
     );
-    const projectPath: string | undefined = await verifyAndPromptToCreateProject(context, workspaceFolder.uri.fsPath);
+    const projectPath: string | undefined =
+      !isNullOrUndefined(workspaceFolder) && (await verifyAndPromptToCreateProject(context, workspaceFolder?.uri?.fsPath));
     if (!projectPath) {
       return;
     }

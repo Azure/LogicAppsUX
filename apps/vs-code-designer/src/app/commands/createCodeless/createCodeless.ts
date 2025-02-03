@@ -10,7 +10,7 @@ import { getWorkspaceSetting } from '../../utils/vsCodeConfig/settings';
 import { verifyInitForVSCode } from '../../utils/vsCodeConfig/verifyInitForVSCode';
 import { getContainingWorkspace, getWorkspaceFolder } from '../../utils/workspace';
 import { WorkflowStateTypeStep } from './createCodelessSteps/WorkflowStateTypeStep';
-import { isString } from '@microsoft/logic-apps-shared';
+import { isNullOrUndefined, isString } from '@microsoft/logic-apps-shared';
 import type { IActionContext } from '@microsoft/vscode-azext-utils';
 import { AzureWizard } from '@microsoft/vscode-azext-utils';
 import type { IFunctionWizardContext, FuncVersion } from '@microsoft/vscode-extension-logic-apps';
@@ -32,7 +32,11 @@ export async function createCodeless(
   workspacePath = isString(workspacePath) ? workspacePath : undefined;
   if (workspacePath === undefined) {
     workspaceFolder = await getWorkspaceFolder(context);
-    workspacePath = isString(workspaceFolder) ? workspaceFolder : workspaceFolder.uri.fsPath;
+    workspacePath = isNullOrUndefined(workspaceFolder)
+      ? undefined
+      : isString(workspaceFolder)
+        ? workspaceFolder
+        : workspaceFolder.uri.fsPath;
   } else {
     workspaceFolder = getContainingWorkspace(workspacePath);
   }
