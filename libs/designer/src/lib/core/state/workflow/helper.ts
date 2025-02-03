@@ -95,6 +95,5 @@ export function collapseFlowTree(tree: WorkflowNode, collapsedIds: Record<string
   });
 
   // 3. Instead of modifying the tree in place, clone and prune it.
-  const prunedTree = pruneTree(tree, nodesToRemove, collapsedIds);
-  return prunedTree as WorkflowNode;
+  return pruneTree(tree, nodesToRemove, collapsedIds) as WorkflowNode;
 }

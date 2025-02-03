@@ -21,7 +21,13 @@ import { useOperationPanelPinnedNodeId } from '../../../core/state/panel/panelSe
 import { changePanelNode, setSelectedPanelActiveTab, setPinnedNode, setSelectedNodeId } from '../../../core/state/panel/panelSlice';
 import { RUN_AFTER_PANEL_TAB } from '../../../ui/CustomNodes/constants';
 import { shouldDisplayRunAfter } from '../../../ui/CustomNodes/helpers';
-import { useNodeDisplayName, useNodeMetadata, useRunData, useRunInstance } from '../../../core/state/workflow/workflowSelectors';
+import {
+  useIsActionCollapsed,
+  useNodeDisplayName,
+  useNodeMetadata,
+  useRunData,
+  useRunInstance,
+} from '../../../core/state/workflow/workflowSelectors';
 import {
   useSuppressDefaultNodeSelectFunctionality,
   useNodeSelectAdditionalCallback,
@@ -36,6 +42,8 @@ import { toggleCollapsedActionId } from '../../../core/state/workflow/workflowSl
 export const DesignerContextualMenu = () => {
   const menuData = useNodeContextMenuData();
   const nodeId = useMemo(() => menuData?.nodeId ?? '', [menuData?.nodeId]);
+  const isNodeCollapsed = useIsActionCollapsed(nodeId);
+
   const title = useNodeDisplayName(nodeId);
 
   const [open, setOpen] = useState<boolean>(false);
@@ -116,8 +124,18 @@ export const DesignerContextualMenu = () => {
     }));
   };
 
-  const actionContextMenuOptions: DropdownMenuCustomNode[] = useMemo(
-    () => [
+  const actionContextMenuOptions: DropdownMenuCustomNode[] = useMemo(() => {
+    isNodeCollapsed;
+
+    const collapseActionOption = {
+      priority: NodeMenuPriorities.Collapse,
+      renderCustomComponent: () => (isTrigger ? null : <CollapseMenuItem key={'collapse'} nodeId={nodeId} onClick={collapseClick} />),
+    };
+    if (isNodeCollapsed) {
+      return [collapseActionOption];
+    }
+
+    return [
       ...(isUiInteractionsServiceEnabled()
         ? transformMenuItems(UiInteractionsService().getNodeContextMenuItems?.({ graphId: metadata?.graphId, nodeId: nodeId }) ?? [])
         : []),
@@ -143,26 +161,23 @@ export const DesignerContextualMenu = () => {
             },
           ]
         : []),
-      {
-        priority: NodeMenuPriorities.Collapse,
-        renderCustomComponent: () => (isTrigger ? null : <CollapseMenuItem key={'collapse'} nodeId={nodeId} onClick={collapseClick} />),
-      },
-    ],
-    [
-      metadata?.graphId,
-      nodeId,
-      runData?.canResubmit,
-      runAfter,
-      deleteClick,
-      isTrigger,
-      isScopeNode,
-      copyClick,
-      pinClick,
-      resubmitClick,
-      runAfterClick,
-      collapseClick,
-    ]
-  );
+      collapseActionOption,
+    ];
+  }, [
+    metadata?.graphId,
+    nodeId,
+    runData?.canResubmit,
+    runAfter,
+    deleteClick,
+    isTrigger,
+    isScopeNode,
+    copyClick,
+    pinClick,
+    resubmitClick,
+    runAfterClick,
+    collapseClick,
+    isNodeCollapsed,
+  ]);
 
   const actionContextMenuItems: JSX.Element[] = actionContextMenuOptions
     .sort((a, b) => (a?.priority ?? NodeMenuPriorities.Default) - (b?.priority ?? NodeMenuPriorities.Default))
