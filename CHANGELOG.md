@@ -1,4 +1,11 @@
 # Logic Apps Designer
+## [5.36.0](https://github.com/Azure/LogicAppsUX/compare/v5.35.0...v5.36.0) (2025-02-04)
+
+
+### Bug Fixes
+
+* **Data Mapper:** fixed missing connection ([#6527](https://github.com/Azure/LogicAppsUX/issues/6527)) ([d7e9bb4](https://github.com/Azure/LogicAppsUX/commit/d7e9bb4ba2b92de3dd4a3d622caed5410a0c6ad1))
+
 ## [5.35.0](https://github.com/Azure/LogicAppsUX/compare/v5.34.0...v5.35.0) (2025-01-31)
 
 
