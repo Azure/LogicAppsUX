@@ -11,6 +11,7 @@ import {
   type SchemaNodeExtended,
 } from '@microsoft/logic-apps-shared';
 import {
+  adjacentLoopsSchema,
   comprehensiveSourceSchema,
   comprehensiveTargetSchema,
   customerSchema,
@@ -749,6 +750,28 @@ describe('mapDefinitions/MapDefinitionDeserializer', () => {
         expect(resultEntries[3][0]).toEqual('target-/ns0:Root/Looping/Person/Name');
         expect(resultEntries[3][1]).toBeTruthy();
       });
+
+      it ('loop adjacent connection', () => {
+        simpleMap['ns0:Root'] = {
+            '6746506B-6072-41DE-8B64-81CE6E7AF9DC-$for(/ns0:Root/FirstLoop)': {
+              FirstLoop: {
+                Name: 'Name',
+              },
+            },
+            'B6B8E621-77A3-457B-9F09-6AA224F005DF-$for(/ns0:Root/FirstLoop)': {
+              SecondLoop: {
+                Number: 'Name',
+              },
+          },
+        };
+
+        const extendedAdjSchema = convertSchemaToSchemaExtended(adjacentLoopsSchema as any as DataMapSchema);
+
+        const mapDefinitionDeserializer = new MapDefinitionDeserializer(simpleMap, extendedAdjSchema, extendedAdjSchema, functionMock);
+        const result = mapDefinitionDeserializer.convertFromMapDefinition();
+        const resultEntries = Object.entries(result);
+        resultEntries.sort();
+      })
 
       it('creates a loop connection with two functions below it', () => {
         simpleMap['ns0:Root'] = {

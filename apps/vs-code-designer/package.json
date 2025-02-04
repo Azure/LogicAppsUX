@@ -20,8 +20,8 @@
     "@types/fs-extra": "^11.0.4",
     "@types/vscode": "1.76.0",
     "@types/vscode-webview": "1.57.1",
-    "@vscode/test-electron": "2.3.0",
     "@vscode/extension-telemetry": "^0.9.8",
+    "@vscode/test-electron": "2.3.0",
     "@vscode/vsce": "^3.1.1",
     "adm-zip": "^0.5.10",
     "axios": "^1.7.7",
@@ -51,5 +51,9 @@
     "vscode:designer:pack:step2": "cd ./dist && vsce package",
     "lint": "eslint . --ext ts,tsx --report-unused-disable-directives --max-warnings 0",
     "test:extension-unit": "vitest run --retry=3"
+  },
+  "dependencies": {
+    "yaml": "^2.7.0",
+    "yaml-types": "^0.4.0"
   }
 }

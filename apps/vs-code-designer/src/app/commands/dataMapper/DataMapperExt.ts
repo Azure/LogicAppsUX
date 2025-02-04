@@ -2,12 +2,12 @@ import { ext } from '../../../extensionVariables';
 import DataMapperPanel from './DataMapperPanel';
 import { startBackendRuntime } from './FxWorkflowRuntime';
 import { webviewType } from './extensionConfig';
-import type { MapDefinitionEntry } from '@microsoft/logic-apps-shared';
+import { guid, type MapDefinitionEntry } from '@microsoft/logic-apps-shared';
 import type { IActionContext } from '@microsoft/vscode-azext-utils';
 import type { MapDefinitionData } from '@microsoft/vscode-extension-logic-apps';
 import * as path from 'path';
 import { Uri, ViewColumn, window } from 'vscode';
-import * as yaml from 'js-yaml';
+import { parse } from 'yaml';
 import { localize } from '../../../localize';
 
 export default class DataMapperExt {
@@ -70,8 +70,25 @@ export default class DataMapperExt {
     if (mapDefinitionString) {
       try {
         // Add extra escapes around custom string values, so that we don't lose which ones are which
-        const modifiedMapDefinitionString = mapDefinitionString.replaceAll('"', `\\"`);
-        const mapDefinition = yaml.load(modifiedMapDefinitionString) as MapDefinitionEntry;
+        let modifiedMapDefinitionString = mapDefinitionString.replaceAll('"', `\\"`);
+        modifiedMapDefinitionString = modifiedMapDefinitionString.replaceAll(`$for`, () => `${guid()}-$for`);
+        modifiedMapDefinitionString = modifiedMapDefinitionString.replaceAll(`$if`, () => `${guid()}-$if`);
+
+        // const reviver = (key: string, value: MapDefinitionEntry) => {
+        //   if (typeof value === 'object') {
+        //     Object.entries(value).forEach((elem) =>  {
+        //       const key = elem[0];
+        //       if (key.startsWith('$for') || key.startsWith('$if')) {
+        //         value[`${guid()}-${key}`] = elem[1];
+        //         delete value[key];
+        //       }
+        //     });
+        //   }
+
+        //   return value;
+        // }
+
+        const mapDefinition = parse(modifiedMapDefinitionString,  { strict: false, uniqueKeys: false}) as MapDefinitionEntry;
         // Now that we've parsed the yml, remove the extra escaped quotes to restore the values
         DataMapperExt.fixMapDefinitionCustomValues(mapDefinition);
         return mapDefinition;
