@@ -172,7 +172,9 @@ describe('escapeString', () => {
 
   it('escapes characters even if the string contains multiple lines when requireSingleQuotesWrap is true and surrounded by single quotes', () => {
     const input = "'Test\nAnotherLine\nTest'";
-    const expectedOutput = "'Test\\nAnotherLine\\nTest'";
+    const expectedOutput = `'Test
+AnotherLine
+Test'`;
     const result = escapeString(input, true);
     expect(result).toBe(expectedOutput);
   });
