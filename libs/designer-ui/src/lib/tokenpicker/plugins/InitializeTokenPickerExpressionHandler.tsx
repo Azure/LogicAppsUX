@@ -5,22 +5,22 @@ import type { LexicalCommand, NodeKey } from 'lexical';
 import { $getRoot, COMMAND_PRIORITY_EDITOR, createCommand } from 'lexical';
 import { useEffect } from 'react';
 
-export const UPDATE_TOKENPICKER_EXPRESSION: LexicalCommand<string> = createCommand();
+export const INITIALIZE_TOKENPICKER_EXPRESSION: LexicalCommand<string> = createCommand();
 
 interface TokenPickerHandlerProps {
-  handleUpdateExpressionToken?: (s: string, n: NodeKey) => void;
+  handleInitializeExpression?: (s: string, n: NodeKey) => void;
 }
 
-export default function TokenPickerHandler({ handleUpdateExpressionToken }: TokenPickerHandlerProps): null {
+export default function TokenPickerHandler({ handleInitializeExpression }: TokenPickerHandlerProps): null {
   const [editor] = useLexicalComposerContext();
 
   useEffect(() => {
     return editor.registerCommand<string>(
-      UPDATE_TOKENPICKER_EXPRESSION,
+      INITIALIZE_TOKENPICKER_EXPRESSION,
       (payload: string) => {
         const node = findChildNode($getRoot(), payload, TokenType.FX);
         if (node?.token?.tokenType === TokenType.FX) {
-          handleUpdateExpressionToken?.(node?.value ?? '', payload);
+          handleInitializeExpression?.(node?.value ?? '', payload);
         } else {
           editor.focus();
         }
@@ -28,6 +28,6 @@ export default function TokenPickerHandler({ handleUpdateExpressionToken }: Toke
       },
       COMMAND_PRIORITY_EDITOR
     );
-  }, [editor, handleUpdateExpressionToken]);
+  }, [editor, handleInitializeExpression]);
   return null;
 }
