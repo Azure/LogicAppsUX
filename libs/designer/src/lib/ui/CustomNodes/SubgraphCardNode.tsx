@@ -135,8 +135,6 @@ const SubgraphCardNode = ({ targetPosition = Position.Top, sourcePosition = Posi
 
   const nodeIndex = useNodeIndex(subgraphId);
 
-  console.log('charlie', metadata);
-
   return (
     <div>
       <div style={{ display: 'flex', alignItems: 'center' }}>
