@@ -1,4 +1,11 @@
 # Logic Apps Designer
+### [5.35.1](https://github.com/Azure/LogicAppsUX/compare/v5.35.0...v5.35.1) (2025-02-04)
+
+
+### Bug Fixes
+
+* **Designer:** hotfix/5.35 - Expression fix ([#6544](https://github.com/Azure/LogicAppsUX/issues/6544)) ([416af65](https://github.com/Azure/LogicAppsUX/commit/416af6549222307ef4cbc386ca5ae16f6fc75a82)), closes [#6539](https://github.com/Azure/LogicAppsUX/issues/6539) [#6131](https://github.com/Azure/LogicAppsUX/issues/6131) [#6131](https://github.com/Azure/LogicAppsUX/issues/6131) [#6131](https://github.com/Azure/LogicAppsUX/issues/6131) [#6131](https://github.com/Azure/LogicAppsUX/issues/6131)
+
 ## [5.35.0](https://github.com/Azure/LogicAppsUX/compare/v5.34.0...v5.35.0) (2025-01-31)
 
 
