@@ -23,10 +23,10 @@ import {
   parseUnitTestOutputs,
   processAndWriteMockableOperations,
   transformParameters,
-} from '../../commands/workflows/unitTest/saveBlankUnitTest';
-import type { IAzureConnectorsContext } from '../../commands/workflows/azureConnectorWizard';
-import { logTelemetry } from '../unitTests';
-import { ext } from '../../../extensionVariables';
+} from '../../../commands/workflows/unitTest/saveBlankUnitTest';
+import type { IAzureConnectorsContext } from '../../../commands/workflows/azureConnectorWizard';
+import { logTelemetry } from '../../unitTests';
+import { ext } from '../../../../extensionVariables';
 import * as fs from 'fs-extra';
 import * as path from 'path';
 
