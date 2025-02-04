@@ -84,6 +84,9 @@ export const sortConnectionsToTargetNodes = (
   targetSchemaConnections: [string, Connection][],
   targetSchemaSortArray: string[]
 ) => {
+  if (targetSchemaSortArray.length === 0) {
+    return targetSchemaConnections;
+  }
   const targetSchemaSortMap = new Map<string, number>();
   targetSchemaSortArray.forEach((node, index) => {
     targetSchemaSortMap.set(addTargetReactFlowPrefix(node), index);
@@ -176,7 +179,7 @@ const getConnectionsToTargetNodes = (connections: ConnectionDictionary) => {
 export const generateMapDefinitionBody = (
   mapDefinition: MapDefinitionEntry,
   connections: ConnectionDictionary,
-  targetSchemaSortArray: string[]
+  targetSchemaSortArray: string[] = []
 ): void => {
   // Filter to just the target node connections, all the rest will be picked up be traversing up the chain
   const targetSchemaConnections = getConnectionsToTargetNodes(connections);
