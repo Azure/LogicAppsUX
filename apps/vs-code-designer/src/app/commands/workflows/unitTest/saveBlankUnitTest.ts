@@ -329,12 +329,21 @@ const mockableTriggerTypes = new Set<string>(['HttpWebhook', 'Request', 'Manual'
 
 /**
  * Determines if a given operation type (and whether it is a trigger or not) can be mocked.
+ * The check is performed in a case-insensitive manner.
  * @param type - The operation type.
  * @param isTrigger - Whether the operation is a trigger.
  * @returns True if the operation is mockable, false otherwise.
  */
 export function isMockable(type: string, isTrigger: boolean): boolean {
-  return isTrigger ? mockableTriggerTypes.has(type) : mockableActionTypes.has(type);
+  // Normalize the input type to lower case
+  const normalizedType = type.toLowerCase();
+
+  if (isTrigger) {
+    // Check each trigger type in the set in a case-insensitive manner
+    return Array.from(mockableTriggerTypes).some((triggerType) => triggerType.toLowerCase() === normalizedType);
+  }
+  // Check each action type in the set in a case-insensitive manner
+  return Array.from(mockableActionTypes).some((actionType) => actionType.toLowerCase() === normalizedType);
 }
 
 /**
@@ -473,26 +482,12 @@ export function generateCSharpClasses(namespaceName: string, rootClassName: stri
   });
 
   // Add `Name` and `Status` properties to the root class
-  rootDef.properties.push(
-    {
-      propertyName: 'Name',
-      propertyType: 'string',
-      description: 'The name of the object.',
-      isObject: false,
-    },
-    {
-      propertyName: 'Status',
-      propertyType: 'string',
-      description: 'The execution status of the object. Example: "Succeeded".',
-      isObject: false,
-    },
-    {
-      propertyName: 'StatusCode',
-      propertyType: 'int',
-      description: 'The HTTP status code returned by the action. Example: 200 for success.',
-      isObject: false,
-    }
-  );
+  rootDef.properties.push({
+    propertyName: 'StatusCode',
+    propertyType: 'int',
+    description: 'The HTTP status code returned by the action. Example: 200 for success.',
+    isObject: false,
+  });
 
   const adjustedNamespace = `${namespaceName}.Tests.Mocks`;
 
