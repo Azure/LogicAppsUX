@@ -36,7 +36,7 @@ const dateOptions: FormatDateOptions = {
   hour12: true,
 };
 
-export const RunHistory: React.FC<RunHistoryProps> = ({ items, loading = false, onOpenRun, supportsUnitTest, onCreateUnitTest }) => {
+export const RunHistory: React.FC<RunHistoryProps> = ({ items, loading = false, onOpenRun, onCreateUnitTest }) => {
   const intl = useIntl();
   const [useUTC, setUseUTC] = useState(false);
 
@@ -123,10 +123,7 @@ export const RunHistory: React.FC<RunHistoryProps> = ({ items, loading = false, 
     },
   ];
 
-  const contextMenuOptions = [
-    { key: ContextMenuKeys.SHOW_RUN, name: Resources.SHOW_RUN },
-    ...(supportsUnitTest ? [{ key: ContextMenuKeys.CREATE_UNIT_TEST, name: Resources.CREATE_UNIT_TEST }] : []),
-  ];
+  const contextMenuOptions = [{ key: ContextMenuKeys.SHOW_RUN, name: Resources.SHOW_RUN }];
 
   const handleRenderItemColumn = (item: RunDisplayItem, _?: number, column?: IColumn): React.ReactNode | undefined => {
     switch (column?.key) {

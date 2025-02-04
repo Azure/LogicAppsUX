@@ -13,6 +13,7 @@ import * as vscode from 'vscode';
 import { getWorkflowsInLocalProject } from './codeless/common';
 import { ext } from '../../extensionVariables';
 import type { IAzureConnectorsContext } from '../commands/workflows/azureConnectorWizard';
+import axios from 'axios';
 
 /**
  * Saves the unit test definition for a workflow.
@@ -543,4 +544,33 @@ export async function ensureCsprojAndNugetFiles(testsDirectory: string, logicApp
  */
 export function removeInvalidCharacters(str: string): string {
   return str.replace(/[^a-zA-Z0-9_]/g, '');
+}
+
+/**
+ * Parses an error (particularly from Axios) before setting a final errorMessage.
+ * @param error - The error to parse.
+ * @returns {string} - A user-friendly error string.
+ */
+export function parseErrorBeforeTelemetry(error: any): string {
+  let errorMessage = '';
+
+  // eslint-disable-next-line import/no-named-as-default-member
+  if (axios.isAxiosError(error) && error.response?.data) {
+    try {
+      const responseData = JSON.parse(new TextDecoder().decode(error.response.data));
+      const { message = '', code = '' } = responseData?.error ?? {};
+      errorMessage = localize('apiError', `API Error: ${code} - ${message}`);
+      ext.outputChannel.appendLog(errorMessage);
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    } catch (parseError) {
+      // If we fail to parse, fall back to the original error
+      errorMessage = error.message;
+    }
+  } else if (error instanceof Error) {
+    errorMessage = error.message;
+  } else {
+    // Fallback for non-Error types
+    errorMessage = String(error);
+  }
+  return errorMessage;
 }
