@@ -117,7 +117,6 @@ import {
   isBodySegment,
   canStringBeConverted,
   splitAtIndex,
-  unescapeString,
 } from '@microsoft/logic-apps-shared';
 import type {
   AuthProps,
@@ -3791,14 +3790,13 @@ function parameterValueToStringWithoutCasting(value: ValueSegment[], forValidati
   const shouldInterpolateTokens = (value.length > 1 || shouldInterpolateSingleToken) && value.some(isTokenValueSegment);
 
   return value
-    .map((segment) => {
-      const { value: segmentValue } = segment;
-      if (isTokenValueSegment(segment)) {
-        const token = forValidation ? segmentValue || null : unescapeString(segmentValue);
-        return shouldInterpolateTokens ? `@{${token}}` : `@${token}`;
+    .map((expression) => {
+      let expressionValue = forValidation ? expression.value || null : expression.value;
+      if (isTokenValueSegment(expression)) {
+        expressionValue = shouldInterpolateTokens ? `@{${expressionValue}}` : `@${expressionValue}`;
       }
 
-      return forValidation ? segmentValue || null : segmentValue;
+      return expressionValue;
     })
     .join('');
 }

@@ -1,6 +1,6 @@
 import test, { expect } from '@playwright/test';
-import { GoToMockWorkflow } from './utils/GoToWorkflow';
-import { getSerializedWorkflowFromState } from './utils/designerFunctions';
+import { GoToMockWorkflow } from '../utils/GoToWorkflow';
+import { getSerializedWorkflowFromState } from '../utils/designerFunctions';
 
 test.describe(
   'Token Removal Tests',
