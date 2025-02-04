@@ -63,12 +63,11 @@ export const convertToMapDefinition = (
     }
 
     const mapDefinitionBody: MapDefinitionEntry = {};
-    generateMapDefinitionBody(mapDefinitionBody, connectionsCopy);
+    generateMapDefinitionBody(mapDefinitionBody, connectionsCopy, targetSchemaSortArray);
 
     const newArrPath: MapDefinitionEntry[] = [];
     const rootNode = mapDefinitionBody[rootNodeKey];
     convertToArray(rootNode, newArrPath);
-    console.log(newArrPath);
     mapDefinition[rootNodeKey] = newArrPath;
 
     // Custom values directly on target nodes need to have extra single quotes stripped out
@@ -81,6 +80,26 @@ export const convertToMapDefinition = (
   return { isSuccess: false, errorNodes: [] };
 };
 
+export const sortConnectionsToTargetNodes = (
+  targetSchemaConnections: [string, Connection][],
+  targetSchemaSortArray: string[]
+) => {
+  const targetSchemaSortMap = new Map<string, number>();
+  targetSchemaSortArray.forEach((node, index) => {
+    targetSchemaSortMap.set(addTargetReactFlowPrefix(node), index);
+  });
+  const sortedTargetSchemaConnections = targetSchemaConnections.sort(
+    ([keyA, _connectionA], [keyBy, _connectionB]) => {
+      const aIndex = targetSchemaSortMap.get(keyA);
+      const bIndex = targetSchemaSortMap.get(keyBy);
+      if (aIndex && bIndex && aIndex > bIndex) {
+        return 1;
+      } else return -1;
+    }
+  );
+  return sortedTargetSchemaConnections;
+};
+
 export const createYamlFromMap = (mapDefinition: MapDefinitionEntry, targetSchemaSortArray: string[]) => {
   // Custom values directly on target nodes need to have extra single quotes stripped out
   const map = yaml
@@ -88,7 +107,10 @@ export const createYamlFromMap = (mapDefinition: MapDefinitionEntry, targetSchem
       replacer: yamlReplacer,
       noRefs: true,
       noArrayIndent: true,
-      sortKeys: (keyA, keyB) => sortMapDefinition(keyA, keyB, targetSchemaSortArray, mapDefinition), // danielle pass map definition here to sort
+      sortKeys: (keyA, keyB) => {
+        console.log(keyA)
+        console.log(keyB)
+        return sortMapDefinition(keyA, keyB, targetSchemaSortArray, mapDefinition)}, // danielle pass map definition here to sort
     })
     .replaceAll(/'"|"'/g, '"')
     .replaceAll('- ', '  ');
@@ -154,11 +176,16 @@ const getConnectionsToTargetNodes = (connections: ConnectionDictionary) => {
 export const generateMapDefinitionBody = (
   mapDefinition: MapDefinitionEntry,
   connections: ConnectionDictionary,
+  targetSchemaSortArray: string[]
 ): void => {
   // Filter to just the target node connections, all the rest will be picked up be traversing up the chain
   const targetSchemaConnections = getConnectionsToTargetNodes(connections);
+  const sortedTargetSchemaConnections = sortConnectionsToTargetNodes(
+    targetSchemaConnections,
+    targetSchemaSortArray
+  );
 
-  targetSchemaConnections.forEach(([_key, connection]) => {
+  sortedTargetSchemaConnections.forEach(([_key, connection]) => {
     const inputs = connection?.inputs;
     inputs.forEach((input) => {
       const selfNode = connection.self.node;
@@ -170,7 +197,7 @@ export const generateMapDefinitionBody = (
   });
 };
 
-const convertToArray = (mapPartial: MapDefinitionValue, newMapArray: MapDefinitionEntry[]): MapDefinitionEntry[] | string => {
+export const convertToArray = (mapPartial: MapDefinitionValue, newMapArray: MapDefinitionEntry[]): MapDefinitionEntry[] | string => {
   if (typeof mapPartial === 'string') {
     return mapPartial;
   }

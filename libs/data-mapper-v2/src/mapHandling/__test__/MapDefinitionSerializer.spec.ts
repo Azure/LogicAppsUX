@@ -10,7 +10,7 @@ import {
 } from '../../utils/Connection.Utils';
 import { addReactFlowPrefix, createReactFlowFunctionKey } from '../../utils/ReactFlow.Util';
 import { convertSchemaToSchemaExtended } from '../../utils/Schema.Utils';
-import { createYamlFromMap, generateMapDefinitionBody, generateMapDefinitionHeader } from '../MapDefinitionSerializer';
+import { convertToArray, createYamlFromMap, generateMapDefinitionBody, generateMapDefinitionHeader } from '../MapDefinitionSerializer';
 import type { MapDefinitionEntry, Schema, SchemaExtended, SchemaNodeExtended } from '@microsoft/logic-apps-shared';
 import { SchemaFileFormat, SchemaType, extend } from '@microsoft/logic-apps-shared';
 import {
@@ -301,8 +301,17 @@ describe('mapDefinitions/MapDefinitionSerializer', () => {
           '/ns0:TargetPlaygroundRoot/ItsComplicated',
         ];
 
-        generateMapDefinitionBody(mapDefinition, connections);
-        const mapstr = createYamlFromMap(mapDefinition, targetSchemaSortArray);
+        generateMapDefinitionBody(mapDefinition, connections, targetSchemaSortArray);
+
+        const newArrPath: MapDefinitionEntry[] = [];
+        const rootNodeKey = targetRoot.qName;
+        const rootNode = mapDefinition[targetRoot.qName];
+        convertToArray(rootNode, newArrPath);
+        mapDefinition['testVal'] = 'test'; // temporary as we need two values for sort to work
+        mapDefinition[rootNodeKey] = newArrPath;
+
+        let mapstr = createYamlFromMap(mapDefinition, targetSchemaSortArray);
+        mapstr = mapstr.replace('testVal: test\n','')
 
         expect(mapstr).toEqual(
           'ns0:TargetPlaygroundRoot:\n  DecimalNumCoffeesOhAndAlsoThisNameWillBeReallyLongForTesting: /ns0:SourcePlaygroundRoot/Birthday\n  $if(/ns0:SourcePlaygroundRoot/UserID):\n    RobotSpeak: /ns0:SourcePlaygroundRoot/Birthday\n'
@@ -372,16 +381,16 @@ describe('mapDefinitions/MapDefinitionSerializer', () => {
         const conditionalMappingObject = (mapDefinition['ns0:Root'] as MapDefinitionEntry)['ConditionalMapping'] as MapDefinitionEntry;
         const conditionalMappingChildren = Object.entries(conditionalMappingObject);
         expect(conditionalMappingChildren.length).toEqual(2);
-        expect(conditionalMappingChildren[0][0]).toEqual(
+        expect(conditionalMappingChildren[0][0].startsWith(
           '$if(is-greater-than(/ns0:Root/ConditionalMapping/ItemPrice, /ns0:Root/ConditionalMapping/ItemQuantity))'
-        );
+        )).toBeTruthy();
         expect(conditionalMappingChildren[0][1]).not.toBe('string');
         expect(conditionalMappingChildren[1][0]).toEqual('ItemQuantity');
         expect(conditionalMappingChildren[1][1]).toEqual('/ns0:Root/ConditionalMapping/ItemQuantity');
 
-        const ifObject = conditionalMappingObject[
-          '$if(is-greater-than(/ns0:Root/ConditionalMapping/ItemPrice, /ns0:Root/ConditionalMapping/ItemQuantity))'
-        ] as MapDefinitionEntry;
+        const ifObject = conditionalMappingObject[Object.keys(conditionalMappingObject).find(key =>
+          key.startsWith('$if(is-greater-than(/ns0:Root/ConditionalMapping/ItemPrice, /ns0:Root/ConditionalMapping/ItemQuantity))')
+        ) ?? ''] as any as MapDefinitionEntry;
         const ifChildren = Object.entries(ifObject);
         expect(ifChildren.length).toEqual(1);
         expect(ifChildren[0][0]).toEqual('ItemPrice');
@@ -451,9 +460,9 @@ describe('mapDefinitions/MapDefinitionSerializer', () => {
         expect(Object.keys(mapDefinition).length).toEqual(1);
         const rootChildren = Object.entries(mapDefinition['ns0:Root']);
         expect(rootChildren.length).toEqual(1);
-        expect(rootChildren[0][0]).toEqual(
+        expect(rootChildren[0][0].startsWith(
           '$if(is-greater-than(/ns0:Root/ConditionalMapping/ItemPrice, /ns0:Root/ConditionalMapping/ItemQuantity))'
-        );
+        )).toBeTruthy();
         expect(rootChildren[0][1]).not.toBe('string');
 
         const ifObject = (mapDefinition['ns0:Root'] as MapDefinitionEntry)[
@@ -525,10 +534,10 @@ describe('mapDefinitions/MapDefinitionSerializer', () => {
         const loopObject = (mapDefinition['ns0:Root'] as MapDefinitionEntry)['Looping'] as MapDefinitionEntry;
         const loopingEntries = Object.entries(loopObject);
         expect(loopingEntries.length).toEqual(1);
-        expect(loopingEntries[0][0]).toEqual('$for(/ns0:Root/Looping/Employee)');
+        expect(loopingEntries[0][0].startsWith('$for(/ns0:Root/Looping/Employee)')).toBeTruthy();
         expect(loopingEntries[0][1]).not.toBe('string');
 
-        const employeeForObject = loopObject['$for(/ns0:Root/Looping/Employee)'] as MapDefinitionEntry;
+        const employeeForObject = loopingEntries[0][1] as MapDefinitionEntry;
         const employeeForLoopEntries = Object.entries(employeeForObject);
         expect(employeeForLoopEntries.length).toEqual(1);
         expect(employeeForLoopEntries[0][0]).toEqual('Person');
@@ -592,10 +601,11 @@ describe('mapDefinitions/MapDefinitionSerializer', () => {
         const weatherSummaryObject = loopingObject['WeatherSummary'] as MapDefinitionEntry;
         const weatherSummaryEntries = Object.entries(weatherSummaryObject);
         expect(weatherSummaryEntries.length).toEqual(1);
-        expect(weatherSummaryEntries[0][0]).toEqual('$for(/ns0:Root/LoopingWithIndex/WeatherReport)');
+        expect(weatherSummaryEntries[0][0].startsWith(('$for(/ns0:Root/LoopingWithIndex/WeatherReport)'))).toBeTruthy();
         expect(weatherSummaryEntries[0][1]).not.toBe('string');
 
-        const dayForObject = weatherSummaryObject['$for(/ns0:Root/LoopingWithIndex/WeatherReport)'] as MapDefinitionEntry;
+        const forDay = weatherSummaryEntries.find(entry => entry[0].startsWith('$for(/ns0:Root/LoopingWithIndex/WeatherReport)')) as [string, MapDefinitionEntry];
+        const dayForObject = forDay[1] as MapDefinitionEntry;
         const dayForObjectLoopEntries = Object.entries(dayForObject);
         expect(dayForObjectLoopEntries.length).toEqual(1);
         expect(dayForObjectLoopEntries[0][0]).toEqual('Day');
@@ -715,10 +725,11 @@ describe('mapDefinitions/MapDefinitionSerializer', () => {
         const manyToManyObject = loopingObject['ManyToMany'] as MapDefinitionEntry;
         const manyToManyEntries = Object.entries(manyToManyObject);
         expect(manyToManyEntries.length).toEqual(1);
-        expect(manyToManyEntries[0][0]).toEqual('$for(/ns0:SourceSchemaRoot/Looping/ManyToMany/Simple)');
+        expect(manyToManyEntries[0][0].startsWith('$for(/ns0:SourceSchemaRoot/Looping/ManyToMany/Simple)')).toBeTruthy();
         expect(manyToManyEntries[0][1]).not.toBe('string');
 
-        const yearForObject = manyToManyObject['$for(/ns0:SourceSchemaRoot/Looping/ManyToMany/Simple)'] as MapDefinitionEntry;
+        const yearFor = manyToManyEntries.find(entry => entry[0].startsWith('$for(/ns0:SourceSchemaRoot/Looping/ManyToMany/Simple)')) as [string, MapDefinitionEntry];
+        const yearForObject = yearFor[1] as MapDefinitionEntry;
         const yearForLoopEntries = Object.entries(yearForObject);
         expect(yearForLoopEntries.length).toEqual(1);
         expect(yearForLoopEntries[0][0]).toEqual('Simple');
@@ -727,10 +738,11 @@ describe('mapDefinitions/MapDefinitionSerializer', () => {
         const simpleObject = yearForObject['Simple'] as MapDefinitionEntry;
         const yearEntries = Object.entries(simpleObject);
         expect(yearEntries.length).toEqual(1);
-        expect(yearEntries[0][0]).toEqual('$for(SourceSimpleChild)');
+        expect(yearEntries[0][0].startsWith('$for(SourceSimpleChild)')).toBeTruthy();
         expect(yearEntries[0][1]).not.toBe('string');
 
-        const monthForObject = simpleObject['$for(SourceSimpleChild)'] as MapDefinitionEntry;
+        const monthFor = yearEntries.find(entry => entry[0].startsWith('$for(SourceSimpleChild)')) as [string, MapDefinitionEntry];
+        const monthForObject = monthFor[1] as MapDefinitionEntry;
         const monthForLoopEntries = Object.entries(monthForObject);
         expect(monthForLoopEntries.length).toEqual(1);
         expect(monthForLoopEntries[0][0]).toEqual('SimpleChild');
@@ -739,10 +751,11 @@ describe('mapDefinitions/MapDefinitionSerializer', () => {
         const simpleChildObject = monthForObject['SimpleChild'] as MapDefinitionEntry;
         const monthEntries = Object.entries(simpleChildObject);
         expect(monthEntries.length).toEqual(1);
-        expect(monthEntries[0][0]).toEqual('$for(SourceSimpleChildChild)');
+        expect(monthEntries[0][0].startsWith('$for(SourceSimpleChildChild)')).toBeTruthy();
         expect(monthEntries[0][1]).not.toBe('string');
 
-        const dayForObject = simpleChildObject['$for(SourceSimpleChildChild)'] as MapDefinitionEntry;
+        const dayFor = monthEntries.find(entry => entry[0].startsWith('$for(SourceSimpleChildChild)')) as [string, MapDefinitionEntry];
+        const dayForObject = dayFor[1] as MapDefinitionEntry;
         const dayForLoopEntries = Object.entries(dayForObject);
         expect(dayForLoopEntries.length).toEqual(1);
         expect(dayForLoopEntries[0][0]).toEqual('SimpleChildChild');
@@ -842,9 +855,10 @@ describe('mapDefinitions/MapDefinitionSerializer', () => {
         generateMapDefinitionBody(mapDefinition, connections);
         const root = mapDefinition['ns0:Root'] as MapDefinitionEntry;
         const looping = root['Looping'] as MapDefinitionEntry;
-        const book = looping['$for(/ns0:bookstore/ns0:book)'] as MapDefinitionEntry;
-        const book2 = book['$for(ns0:book2)'] as MapDefinitionEntry;
-        const book3 = book2['$for(ns0:book3)'] as MapDefinitionEntry;
+
+        const book = (Object.entries(looping).find(entry => entry[0].startsWith('$for')) as [string, MapDefinitionEntry])[1];
+        const book2 = (Object.entries(book).find(entry => entry[0].startsWith('$for')) as [string, MapDefinitionEntry])[1];
+        const book3 = (Object.entries(book2).find(entry => entry[0].startsWith('$for')) as [string, MapDefinitionEntry])[1];
         const person = book3['Person'] as MapDefinitionEntry;
         const address = person['Address'];
         const name = person['Name'];
@@ -947,22 +961,22 @@ describe('mapDefinitions/MapDefinitionSerializer', () => {
         const manyToOneObject = loopingObject['ManyToOne'] as MapDefinitionEntry;
         const manyToOneEntries = Object.entries(manyToOneObject);
         expect(manyToOneEntries.length).toEqual(1);
-        expect(manyToOneEntries[0][0]).toEqual('$for(/ns0:SourceSchemaRoot/Looping/ManyToOne/Simple)');
+        expect(manyToOneEntries[0][0].startsWith('$for(/ns0:SourceSchemaRoot/Looping/ManyToOne/Simple)')).toBeTruthy();
         expect(manyToOneEntries[0][1]).not.toBe('string');
 
-        const yearForObject = manyToOneObject['$for(/ns0:SourceSchemaRoot/Looping/ManyToOne/Simple)'] as MapDefinitionEntry;
+        const yearForObject = manyToOneEntries[0][1] as MapDefinitionEntry;
         const yearForLoopEntries = Object.entries(yearForObject);
         expect(yearForLoopEntries.length).toEqual(1);
-        expect(yearForLoopEntries[0][0]).toEqual('$for(SourceSimpleChild)');
+        expect(yearForLoopEntries[0][0].startsWith('$for(SourceSimpleChild)')).toBeTruthy();
         expect(yearForLoopEntries[0][1]).not.toBe('string');
 
-        const monthForObject = yearForObject['$for(SourceSimpleChild)'] as MapDefinitionEntry;
+        const monthForObject = yearForLoopEntries[0][1] as MapDefinitionEntry;
         const monthForLoopEntries = Object.entries(monthForObject);
         expect(monthForLoopEntries.length).toEqual(1);
-        expect(monthForLoopEntries[0][0]).toEqual('$for(SourceSimpleChildChild)');
+        expect(monthForLoopEntries[0][0].startsWith('$for(SourceSimpleChildChild)')).toBeTruthy();
         expect(monthForLoopEntries[0][1]).not.toBe('string');
 
-        const dayForObject = monthForObject['$for(SourceSimpleChildChild)'] as MapDefinitionEntry;
+        const dayForObject = monthForLoopEntries[0][1] as MapDefinitionEntry;
         const dayForLoopEntries = Object.entries(dayForObject);
         expect(dayForLoopEntries.length).toEqual(1);
         expect(dayForLoopEntries[0][0]).toEqual('Simple');
@@ -1031,13 +1045,15 @@ describe('mapDefinitions/MapDefinitionSerializer', () => {
         expect(rootChildren[0][0]).toEqual('Looping');
         expect(rootChildren[0][1]).not.toBe('string');
 
+
         const loopObject = (mapDefinition['ns0:Root'] as MapDefinitionEntry)['Looping'] as MapDefinitionEntry;
         const loopingEntries = Object.entries(loopObject);
+        loopingEntries[0][0] = loopingEntries[0][0].substring(0, 32); // remove ID for test
         expect(loopingEntries.length).toEqual(1);
         expect(loopingEntries[0][0]).toEqual('$for(/ns0:Root/Looping/Employee)');
         expect(loopingEntries[0][1]).not.toBe('string');
 
-        const employeeForObject = loopObject['$for(/ns0:Root/Looping/Employee)'] as MapDefinitionEntry;
+        const employeeForObject = loopingEntries[0][1] as MapDefinitionEntry;
         const employeeForLoopEntries = Object.entries(employeeForObject);
         expect(employeeForLoopEntries.length).toEqual(1);
         expect(employeeForLoopEntries[0][0]).toEqual('Person');
@@ -1104,10 +1120,10 @@ describe('mapDefinitions/MapDefinitionSerializer', () => {
         const loopObject = (mapDefinition['ns0:Root'] as MapDefinitionEntry)['Looping'] as MapDefinitionEntry;
         const loopingEntries = Object.entries(loopObject);
         expect(loopingEntries.length).toEqual(1);
-        expect(loopingEntries[0][0]).toEqual('$for(/ns0:Root/Looping/Employee, $a)');
+        expect(loopingEntries[0][0].startsWith('$for(/ns0:Root/Looping/Employee, $a)')).toBeTruthy();
         expect(loopingEntries[0][1]).not.toBe('string');
 
-        const employeeForObject = loopObject['$for(/ns0:Root/Looping/Employee, $a)'] as MapDefinitionEntry;
+        const employeeForObject = loopingEntries[0][1] as MapDefinitionEntry;
         const employeeForLoopEntries = Object.entries(employeeForObject);
         expect(employeeForLoopEntries.length).toEqual(1);
         expect(employeeForLoopEntries[0][0]).toEqual('Person');
@@ -1167,10 +1183,10 @@ describe('mapDefinitions/MapDefinitionSerializer', () => {
         const loopObject = (mapDefinition['ns0:Root'] as MapDefinitionEntry)['Looping'] as MapDefinitionEntry;
         const loopingEntries = Object.entries(loopObject);
         expect(loopingEntries.length).toEqual(1);
-        expect(loopingEntries[0][0]).toEqual('$for(/ns0:Root/Looping/Employee, $a)');
+        expect(loopingEntries[0][0].startsWith(('$for(/ns0:Root/Looping/Employee, $a)'))).toBeTruthy();
         expect(loopingEntries[0][1]).not.toBe('string');
 
-        const employeeForObject = loopObject['$for(/ns0:Root/Looping/Employee, $a)'] as MapDefinitionEntry;
+        const employeeForObject = loopingEntries[0][1] as MapDefinitionEntry;
         const employeeForLoopEntries = Object.entries(employeeForObject);
         expect(employeeForLoopEntries.length).toEqual(1);
         expect(employeeForLoopEntries[0][0]).toEqual('Person');
@@ -1235,10 +1251,10 @@ describe('mapDefinitions/MapDefinitionSerializer', () => {
         const loopObject = (mapDefinition['ns0:Root'] as MapDefinitionEntry)['Looping'] as MapDefinitionEntry;
         const loopingEntries = Object.entries(loopObject);
         expect(loopingEntries.length).toEqual(1);
-        expect(loopingEntries[0][0]).toEqual('$for(sort(/ns0:Root/Looping/Employee, TelephoneNumber))');
+        expect(loopingEntries[0][0].startsWith('$for(sort(/ns0:Root/Looping/Employee, TelephoneNumber))')).toBeTruthy();
         expect(loopingEntries[0][1]).not.toBe('string');
 
-        const employeeForObject = loopObject['$for(sort(/ns0:Root/Looping/Employee, TelephoneNumber))'] as MapDefinitionEntry;
+        const employeeForObject = loopingEntries[0][1] as MapDefinitionEntry;
         const employeeForLoopEntries = Object.entries(employeeForObject);
         expect(employeeForLoopEntries.length).toEqual(1);
         expect(employeeForLoopEntries[0][0]).toEqual('Person');
@@ -1305,14 +1321,14 @@ describe('mapDefinitions/MapDefinitionSerializer', () => {
         ] as MapDefinitionEntry;
         const loopingEntries = Object.entries(parentLoopObject);
         expect(loopingEntries.length).toEqual(1);
-        expect(loopingEntries[0][0]).toEqual('$for(/ns0:Root/NameValueTransforms/Catalog/Product)');
+        expect(loopingEntries[0][0].startsWith('$for(/ns0:Root/NameValueTransforms/Catalog/Product)')).toBeTruthy();
 
         const product = loopingEntries[0][1] as MapDefinitionEntry;
 
         expect(loopingEntries[0][1]).not.toBe('string');
-        expect(Object.keys(product['Product'])[0]).toEqual('$for(reverse(Field))');
+        expect(Object.keys(product['Product'])[0].startsWith('$for(reverse(Field))')).toBeTruthy();
 
-        const orderStatusQuantity = (product['Product'] as MapDefinitionEntry)['$for(reverse(Field))'] as MapDefinitionEntry;
+        const orderStatusQuantity = Object.entries(product['Product'] as MapDefinitionEntry)[0][1] as MapDefinitionEntry;
 
         expect(orderStatusQuantity['OrderStatusQuantity']['ProductQuantity']).toEqual('Name');
       });
@@ -1467,10 +1483,10 @@ describe('mapDefinitions/MapDefinitionSerializer', () => {
         const loopObject = (mapDefinition['ns0:Root'] as MapDefinitionEntry)['Looping'] as MapDefinitionEntry;
         const loopingEntries = Object.entries(loopObject);
         expect(loopingEntries.length).toEqual(1);
-        expect(loopingEntries[0][0]).toEqual('$for(sort(/ns0:Root/Looping/Employee, TelephoneNumber), $a)');
+        expect(loopingEntries[0][0].startsWith('$for(sort(/ns0:Root/Looping/Employee, TelephoneNumber), $a)')).toBeTruthy();
         expect(loopingEntries[0][1]).not.toBe('string');
 
-        const employeeForObject = loopObject['$for(sort(/ns0:Root/Looping/Employee, TelephoneNumber), $a)'] as MapDefinitionEntry;
+        const employeeForObject = loopingEntries[0][1] as MapDefinitionEntry;
         const employeeForLoopEntries = Object.entries(employeeForObject);
         expect(employeeForLoopEntries.length).toEqual(1);
         expect(employeeForLoopEntries[0][0]).toEqual('Person');
@@ -1557,12 +1573,10 @@ describe('mapDefinitions/MapDefinitionSerializer', () => {
         const loopObject = (mapDefinition['ns0:Root'] as MapDefinitionEntry)['Looping'] as MapDefinitionEntry;
         const loopingEntries = Object.entries(loopObject);
         expect(loopingEntries.length).toEqual(1);
-        expect(loopingEntries[0][0]).toEqual('$for(sort(sort(/ns0:Root/Looping/Employee, TelephoneNumber), Name), $a)');
+        expect(loopingEntries[0][0].startsWith('$for(sort(sort(/ns0:Root/Looping/Employee, TelephoneNumber), Name), $a)')).toBeTruthy();
         expect(loopingEntries[0][1]).not.toBe('string');
 
-        const employeeForObject = loopObject[
-          '$for(sort(sort(/ns0:Root/Looping/Employee, TelephoneNumber), Name), $a)'
-        ] as MapDefinitionEntry;
+        const employeeForObject = loopingEntries[0][1] as MapDefinitionEntry;
         const employeeForLoopEntries = Object.entries(employeeForObject);
         expect(employeeForLoopEntries.length).toEqual(1);
         expect(employeeForLoopEntries[0][0]).toEqual('Person');
@@ -1641,10 +1655,10 @@ describe('mapDefinitions/MapDefinitionSerializer', () => {
         const loopObject = (mapDefinition['ns0:Root'] as MapDefinitionEntry)['Looping'] as MapDefinitionEntry;
         const loopingEntries = Object.entries(loopObject);
         expect(loopingEntries.length).toEqual(1);
-        expect(loopingEntries[0][0]).toEqual('$for(/ns0:Root/Looping/Employee, $a)');
+        expect(loopingEntries[0][0].startsWith('$for(/ns0:Root/Looping/Employee, $a)')).toBeTruthy();
         expect(loopingEntries[0][1]).not.toBe('string');
 
-        const employeeForObject = loopObject['$for(/ns0:Root/Looping/Employee, $a)'] as MapDefinitionEntry;
+        const employeeForObject = loopingEntries[0][1] as MapDefinitionEntry;
         const employeeForLoopEntries = Object.entries(employeeForObject);
         expect(employeeForLoopEntries.length).toEqual(1);
         expect(employeeForLoopEntries[0][0]).toEqual('Person');
@@ -1747,22 +1761,22 @@ describe('mapDefinitions/MapDefinitionSerializer', () => {
         const manyToOneObject = loopingObject['ManyToOne'] as MapDefinitionEntry;
         const manyToOneEntries = Object.entries(manyToOneObject);
         expect(manyToOneEntries.length).toEqual(1);
-        expect(manyToOneEntries[0][0]).toEqual('$for(/ns0:SourceSchemaRoot/Looping/ManyToOne/Index, $a)');
+        expect(manyToOneEntries[0][0].startsWith('$for(/ns0:SourceSchemaRoot/Looping/ManyToOne/Index, $a)')).toBeTruthy();
         expect(manyToOneEntries[0][1]).not.toBe('string');
 
-        const yearForObject = manyToOneObject['$for(/ns0:SourceSchemaRoot/Looping/ManyToOne/Index, $a)'] as MapDefinitionEntry;
+        const yearForObject = manyToOneEntries[0][1] as MapDefinitionEntry;
         const yearForLoopEntries = Object.entries(yearForObject);
         expect(yearForLoopEntries.length).toEqual(1);
-        expect(yearForLoopEntries[0][0]).toEqual('$for(SourceIndexChild, $b)');
+        expect(yearForLoopEntries[0][0].startsWith('$for(SourceIndexChild, $b)')).toBeTruthy();
         expect(yearForLoopEntries[0][1]).not.toBe('string');
 
-        const monthForObject = yearForObject['$for(SourceIndexChild, $b)'] as MapDefinitionEntry;
+        const monthForObject = yearForLoopEntries[0][1] as MapDefinitionEntry;
         const monthForLoopEntries = Object.entries(monthForObject);
         expect(monthForLoopEntries.length).toEqual(1);
-        expect(monthForLoopEntries[0][0]).toEqual('$for(SourceIndexChildChild, $c)');
+        expect(monthForLoopEntries[0][0].startsWith('$for(SourceIndexChildChild, $c)')).toBeTruthy();
         expect(monthForLoopEntries[0][1]).not.toBe('string');
 
-        const dayForObject = monthForObject['$for(SourceIndexChildChild, $c)'] as MapDefinitionEntry;
+        const dayForObject = monthForLoopEntries[0][1] as MapDefinitionEntry;
         const dayForLoopEntries = Object.entries(dayForObject);
         expect(dayForLoopEntries.length).toEqual(1);
         expect(dayForLoopEntries[0][0]).toEqual('Index');
@@ -1846,10 +1860,10 @@ describe('mapDefinitions/MapDefinitionSerializer', () => {
         const conditionalLoopingObject = (mapDefinition['ns0:Root'] as MapDefinitionEntry)['ConditionalLooping'] as MapDefinitionEntry;
         const conditionalLoopingChildren = Object.entries(conditionalLoopingObject);
         expect(conditionalLoopingChildren.length).toEqual(1);
-        expect(conditionalLoopingChildren[0][0]).toEqual('$for(/ns0:Root/ConditionalLooping/FlatterCatalog/ns0:Product)');
+        expect(conditionalLoopingChildren[0][0].startsWith('$for(/ns0:Root/ConditionalLooping/FlatterCatalog/ns0:Product)')).toBeTruthy();
         expect(conditionalLoopingChildren[0][1]).not.toBe('string');
 
-        const forObject = conditionalLoopingObject['$for(/ns0:Root/ConditionalLooping/FlatterCatalog/ns0:Product)'] as MapDefinitionEntry;
+        const forObject = conditionalLoopingChildren[0][1] as MapDefinitionEntry;
         const forChildren = Object.entries(forObject);
         expect(forChildren.length).toEqual(1);
         expect(forChildren[0][0]).toEqual('CategorizedCatalog');
@@ -1858,10 +1872,10 @@ describe('mapDefinitions/MapDefinitionSerializer', () => {
         const categorizedCatalogObject = forObject['CategorizedCatalog'] as MapDefinitionEntry;
         const categorizedCatalogChildren = Object.entries(categorizedCatalogObject);
         expect(categorizedCatalogChildren.length).toEqual(1);
-        expect(categorizedCatalogChildren[0][0]).toEqual('$if(is-greater-than(Name, SKU))');
+        expect(categorizedCatalogChildren[0][0].startsWith('$if(is-greater-than(Name, SKU))')).toBeTruthy();
         expect(categorizedCatalogChildren[0][1]).not.toBe('string');
 
-        const ifObject = categorizedCatalogObject['$if(is-greater-than(Name, SKU))'] as MapDefinitionEntry;
+        const ifObject = categorizedCatalogChildren[0][1] as MapDefinitionEntry;
         const ifChildren = Object.entries(ifObject);
         expect(ifChildren.length).toEqual(1);
         expect(ifChildren[0][0]).toEqual('PetProduct');
@@ -1966,16 +1980,16 @@ describe('mapDefinitions/MapDefinitionSerializer', () => {
         const weatherSummaryObject = loopingWithIndexObject['WeatherSummary'] as MapDefinitionEntry;
         const weatherSummaryChildren = Object.entries(weatherSummaryObject);
         expect(weatherSummaryChildren.length).toEqual(1);
-        expect(weatherSummaryChildren[0][0]).toEqual('$for(/ns0:Root/LoopingWithIndex/WeatherReport, $a)');
+        expect(weatherSummaryChildren[0][0].startsWith('$for(/ns0:Root/LoopingWithIndex/WeatherReport, $a)')).toBeTruthy();
         expect(weatherSummaryChildren[0][1]).not.toBe('string');
 
-        const forObject = weatherSummaryObject['$for(/ns0:Root/LoopingWithIndex/WeatherReport, $a)'] as MapDefinitionEntry;
+        const forObject = weatherSummaryChildren[0][1] as MapDefinitionEntry;
         const forChildren = Object.entries(forObject);
         expect(forChildren.length).toEqual(1);
-        expect(forChildren[0][0]).toEqual('$if(is-greater-than($a, 10))');
+        expect(forChildren[0][0].startsWith('$if(is-greater-than($a, 10))')).toBeTruthy();
         expect(forChildren[0][1]).not.toBe('string');
 
-        const ifObject = forObject['$if(is-greater-than($a, 10))'] as MapDefinitionEntry;
+        const ifObject = forChildren[0][1] as MapDefinitionEntry;
         const ifChildren = Object.entries(ifObject);
         expect(ifChildren.length).toEqual(1);
         expect(ifChildren[0][0]).toEqual('Day');
@@ -2183,16 +2197,16 @@ describe('mapDefinitions/MapDefinitionSerializer', () => {
         const weatherSummaryObject = loopingWithIndexObject['WeatherSummary'] as MapDefinitionEntry;
         const weatherSummaryChildren = Object.entries(weatherSummaryObject);
         expect(weatherSummaryChildren.length).toEqual(1);
-        expect(weatherSummaryChildren[0][0]).toEqual('$for(/ns0:Root/LoopingWithIndex/WeatherReport, $a)');
+        expect(weatherSummaryChildren[0][0].startsWith('$for(/ns0:Root/LoopingWithIndex/WeatherReport, $a)')).toBeTruthy();
         expect(weatherSummaryChildren[0][1]).not.toBe('string');
 
-        const forObject = weatherSummaryObject['$for(/ns0:Root/LoopingWithIndex/WeatherReport, $a)'] as MapDefinitionEntry;
+        const forObject = weatherSummaryChildren[0][1] as MapDefinitionEntry;
         const forChildren = Object.entries(forObject);
         expect(forChildren.length).toEqual(1);
-        expect(forChildren[0][0]).toEqual('$if(is-greater-than($a, 2))');
+        expect(forChildren[0][0].startsWith('$if(is-greater-than($a, 2))')).toBeTruthy();
         expect(forChildren[0][1]).not.toBe('string');
 
-        const ifObject = forObject['$if(is-greater-than($a, 2))'] as MapDefinitionEntry;
+        const ifObject = forChildren[0][1] as MapDefinitionEntry;
         const ifChildren = Object.entries(ifObject);
         expect(ifChildren.length).toEqual(1);
         expect(ifChildren[0][0]).toEqual('Day');
@@ -2318,16 +2332,16 @@ describe('mapDefinitions/MapDefinitionSerializer', () => {
         const weatherSummaryObject = loopingWithIndexObject['WeatherSummary'] as MapDefinitionEntry;
         const weatherSummaryChildren = Object.entries(weatherSummaryObject);
         expect(weatherSummaryChildren.length).toEqual(1);
-        expect(weatherSummaryChildren[0][0]).toEqual('$for(/ns0:Root/LoopingWithIndex/WeatherReport, $a)');
+        expect(weatherSummaryChildren[0][0].startsWith('$for(/ns0:Root/LoopingWithIndex/WeatherReport, $a)')).toBeTruthy();
         expect(weatherSummaryChildren[0][1]).not.toBe('string');
 
-        const forObject = weatherSummaryObject['$for(/ns0:Root/LoopingWithIndex/WeatherReport, $a)'] as MapDefinitionEntry;
+        const forObject = weatherSummaryChildren[0][1] as MapDefinitionEntry;
         const forChildren = Object.entries(forObject);
         expect(forChildren.length).toEqual(1);
-        expect(forChildren[0][0]).toEqual('$if(is-greater-than($a, 2))');
+        expect(forChildren[0][0].startsWith('$if(is-greater-than($a, 2))')).toBeTruthy();
         expect(forChildren[0][1]).not.toBe('string');
 
-        const ifObject = forObject['$if(is-greater-than($a, 2))'] as MapDefinitionEntry;
+        const ifObject = forChildren[0][1] as MapDefinitionEntry;
         const ifChildren = Object.entries(ifObject);
         expect(ifChildren.length).toEqual(1);
         expect(ifChildren[0][0]).toEqual('Day');
