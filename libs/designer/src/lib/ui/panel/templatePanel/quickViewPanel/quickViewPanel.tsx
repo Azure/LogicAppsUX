@@ -27,21 +27,27 @@ const layerProps = {
 export const QuickViewPanel = ({ onClose, showCreate, workflowId, clearDetailsOnClose = true }: QuickViewPanelProps) => {
   const dispatch = useDispatch<AppDispatch>();
   const intl = useIntl();
-  const { templateName, workflowAppName, isOpen, currentPanelView } = useSelector((state: RootState) => ({
+  const { templateName, workflowAppName, isOpen, currentPanelView, isTemplateNameLocked } = useSelector((state: RootState) => ({
     templateName: state.template.templateName,
     workflowAppName: state.workflow.workflowAppName,
     isOpen: state.panel.isOpen,
     currentPanelView: state.panel.currentPanelView,
+    isTemplateNameLocked: state.template.isTemplateNameLocked,
   }));
   const { manifest } = useWorkflowTemplate(workflowId);
   const panelTabs = getQuickViewTabs(intl, dispatch, workflowId, clearDetailsOnClose, {
     templateId: templateName ?? '',
     workflowAppName,
     isMultiWorkflow: false,
+    isTemplateNameLocked,
   });
   const [selectedTabId, setSelectedTabId] = useState<string>(panelTabs[0]?.id);
 
   const dismissPanel = useCallback(() => {
+    if (isTemplateNameLocked) {
+      return;
+    }
+
     dispatch(closePanel());
 
     if (clearDetailsOnClose) {
@@ -49,7 +55,7 @@ export const QuickViewPanel = ({ onClose, showCreate, workflowId, clearDetailsOn
     }
 
     onClose?.();
-  }, [clearDetailsOnClose, dispatch, onClose]);
+  }, [isTemplateNameLocked, clearDetailsOnClose, dispatch, onClose]);
 
   const onRenderHeaderContent = useCallback(
     () => (
@@ -86,7 +92,7 @@ export const QuickViewPanel = ({ onClose, showCreate, workflowId, clearDetailsOn
       customWidth={'50%'}
       isOpen={isOpen && currentPanelView === TemplatePanelView.QuickView}
       onDismiss={dismissPanel}
-      hasCloseButton={true}
+      hasCloseButton={!isTemplateNameLocked}
       onRenderHeader={onRenderHeaderContent}
       onRenderFooterContent={onRenderFooterContent}
       layerProps={layerProps}

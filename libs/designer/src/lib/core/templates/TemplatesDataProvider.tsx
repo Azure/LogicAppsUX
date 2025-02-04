@@ -16,7 +16,7 @@ import { getFilteredTemplates } from './utils/helper';
 import { initializeTemplateServices, loadTemplate } from '../actions/bjsworkflow/templates';
 import type { Template } from '@microsoft/logic-apps-shared';
 import { lockTemplate } from '../state/templates/templateSlice';
-import { openCreateWorkflowPanelView } from '../state/templates/panelSlice';
+import { openQuickViewPanelView } from '../state/templates/panelSlice';
 
 export interface TemplatesDataProviderProps {
   isConsumption: boolean | undefined;
@@ -71,7 +71,7 @@ const DataProviderInner = ({ customTemplates, isConsumption, children, viewTempl
         dispatch(loadTemplate({ preLoadedManifest: templateManifest, isCustomTemplate: false, parameters: viewTemplate.parameters }));
 
         if (Object.keys(templateManifest?.workflows ?? {}).length === 0) {
-          dispatch(openCreateWorkflowPanelView());
+          dispatch(openQuickViewPanelView());
         }
       }
     }
