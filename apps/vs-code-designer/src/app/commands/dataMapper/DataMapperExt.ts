@@ -71,8 +71,8 @@ export default class DataMapperExt {
       try {
         // Add extra escapes around custom string values, so that we don't lose which ones are which
         let modifiedMapDefinitionString = mapDefinitionString.replaceAll('"', `\\"`);
-        modifiedMapDefinitionString = modifiedMapDefinitionString.replaceAll(`$for`, () => `${guid()}-$for`);
-        modifiedMapDefinitionString = modifiedMapDefinitionString.replaceAll(`$if`, () => `${guid()}-$if`);
+        // modifiedMapDefinitionString = modifiedMapDefinitionString.replaceAll(`$for`, () => `${guid()}-$for`);
+        // modifiedMapDefinitionString = modifiedMapDefinitionString.replaceAll(`$if`, () => `${guid()}-$if`);
 
         // const reviver = (key: string, value: MapDefinitionEntry) => {
         //   if (typeof value === 'object') {
