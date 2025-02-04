@@ -52,12 +52,7 @@ export const getRootWorkflowGraphForLayout = createSelector(getWorkflowState, (d
   let newGraph = rootNode;
 
   if (Object.keys(collapsedActionsIds).length !== 0) {
-    try {
-      newGraph = collapseFlowTree(newGraph, collapsedActionsIds) as any;
-    } catch (e) {
-      console.error('Error collapsing graph', e);
-      newGraph = rootNode;
-    }
+    newGraph = collapseFlowTree(newGraph, collapsedActionsIds);
   }
 
   if (Object.keys(collapsedIds).length !== 0) {

@@ -8,7 +8,7 @@ import type { WorkflowNode } from '../../../core/parsers/models/workflowNode';
  * @param {Object} collapsedIds - An object whose keys are node ids to be collapsed.
  * @returns {Object|null} - A new node object with pruned children/edges, or null if this node is removed.
  */
-function pruneTree(node: WorkflowNode, nodesToRemove: Set<any>, collapsedIds: Record<string, any>): WorkflowNode | null {
+const pruneTree = (node: WorkflowNode, nodesToRemove: Set<string>, collapsedIds: Record<string, any>): WorkflowNode | null => {
   // If the current node is marked for removal, return null so it will be filtered out.
   if (nodesToRemove.has(node.id)) {
     return null;
@@ -30,7 +30,9 @@ function pruneTree(node: WorkflowNode, nodesToRemove: Set<any>, collapsedIds: Re
 
   // Otherwise, process children (if they exist) by recursively cloning and pruning.
   if (Array.isArray(node.children)) {
-    newNode.children = node.children.map((child) => pruneTree(child, nodesToRemove, collapsedIds)).filter((child) => child !== null);
+    newNode.children = node.children
+      .map((child) => pruneTree(child, nodesToRemove, collapsedIds))
+      .filter((child) => child !== null) as WorkflowNode[];
   }
 
   // Filter out any edges that reference nodes that have been removed.
@@ -41,7 +43,34 @@ function pruneTree(node: WorkflowNode, nodesToRemove: Set<any>, collapsedIds: Re
   }
 
   return newNode;
-}
+};
+
+const traverseForMapping = (node: WorkflowNode, nodeMap: Record<string, any>, edgeGraph: Record<string, any>) => {
+  nodeMap[node.id] = node;
+
+  if (node.edges && Array.isArray(node.edges)) {
+    node.edges.forEach((edge) => {
+      if (!edgeGraph[edge.source]) {
+        edgeGraph[edge.source] = [];
+      }
+      edgeGraph[edge.source].push(edge.target);
+    });
+  }
+  if (node.children && Array.isArray(node.children)) {
+    node.children.forEach((child) => traverseForMapping(child, nodeMap, edgeGraph));
+  }
+};
+
+const markDownstream = (nodeId: string, edgeGraph: Record<string, any>, nodesToRemove: Set<string>) => {
+  if (edgeGraph[nodeId]) {
+    edgeGraph[nodeId].forEach((targetId: any) => {
+      if (!nodesToRemove.has(targetId)) {
+        nodesToRemove.add(targetId);
+        markDownstream(targetId, edgeGraph, nodesToRemove);
+      }
+    });
+  }
+};
 
 /**
  * Collapses the flow tree based on the given collapsedIds.
@@ -52,48 +81,22 @@ function pruneTree(node: WorkflowNode, nodesToRemove: Set<any>, collapsedIds: Re
  * @param {Object} collapsedIds - An object whose keys are node ids to collapse.
  * @return {Object} - A new tree with collapsed (downstream) nodes removed and collapsed nodes updated.
  */
-export function collapseFlowTree(tree: WorkflowNode, collapsedIds: Record<string, any>): WorkflowNode {
-  // 1. Build a lookup for nodes and an edge graph mapping source -> [target, ...]
+export const collapseFlowTree = (tree: WorkflowNode, collapsedIds: Record<string, any>): WorkflowNode => {
+  // Build a lookup for nodes and an edge graph mapping source // e.g., { "Initialize_variable": ["Delay", ...], ... }
   const nodeMap: Record<string, any> = {};
-  const edgeGraph: Record<string, any> = {}; // e.g., { "Initialize_variable": ["Delay", ...], ... }
+  const edgeGraph: Record<string, any> = {};
 
-  function traverseForMapping(node: WorkflowNode) {
-    nodeMap[node.id] = node;
+  traverseForMapping(tree, nodeMap, edgeGraph);
 
-    if (node.edges && Array.isArray(node.edges)) {
-      node.edges.forEach((edge) => {
-        if (!edgeGraph[edge.source]) {
-          edgeGraph[edge.source] = [];
-        }
-        edgeGraph[edge.source].push(edge.target);
-      });
-    }
-    if (node.children && Array.isArray(node.children)) {
-      node.children.forEach((child) => traverseForMapping(child));
-    }
-  }
-  traverseForMapping(tree);
-
-  // 2. Find all nodes that should be removed.
-  const nodesToRemove = new Set();
+  // Find all nodes that should be removed.
+  const nodesToRemove = new Set<string>();
 
   // Recursively traverse downstream from a given node id.
-  function markDownstream(nodeId: string) {
-    if (edgeGraph[nodeId]) {
-      edgeGraph[nodeId].forEach((targetId: any) => {
-        if (!nodesToRemove.has(targetId)) {
-          nodesToRemove.add(targetId);
-          markDownstream(targetId);
-        }
-      });
-    }
-  }
-
   // For every collapsed node, mark its downstream nodes.
   Object.keys(collapsedIds).forEach((collapsedId) => {
-    markDownstream(collapsedId);
+    markDownstream(collapsedId, edgeGraph, nodesToRemove);
   });
 
-  // 3. Instead of modifying the tree in place, clone and prune it.
+  // Instead of modifying the tree in place, clone and prune it.
   return pruneTree(tree, nodesToRemove, collapsedIds) as WorkflowNode;
-}
+};
