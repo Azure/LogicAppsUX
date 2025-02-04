@@ -3,7 +3,13 @@ import type { AppDispatch } from '../../../core';
 import { useActionMetadata, useNodeMetadata, useRunInstance } from '../../../core/state/workflow/workflowSelectors';
 import { setRunIndex } from '../../../core/state/workflow/workflowSlice';
 import { getForeachItemsCount } from './helper';
-import { RunService, FindPreviousAndNextPage, isNullOrUndefined, type LogicAppsV2 } from '@microsoft/logic-apps-shared';
+import {
+  RunService,
+  FindPreviousAndNextPage,
+  isNullOrUndefined,
+  type LogicAppsV2,
+  replaceWhiteSpaceWithUnderscore,
+} from '@microsoft/logic-apps-shared';
 import type { PageChangeEventArgs, PageChangeEventHandler } from '@microsoft/designer-ui';
 import { Pager } from '@microsoft/designer-ui';
 import { useCallback, useMemo } from 'react';
@@ -102,14 +108,16 @@ export const LoopsPager = ({ metadata, scopeId, collapsed }: LoopsPagerProps) =>
   }
 
   return isLoading ? null : (
-    <Pager
-      current={currentPage + 1}
-      onChange={onPagerChange}
-      max={forEachItemsCount}
-      maxLength={forEachItemsCount.toString().length + 1}
-      min={1}
-      readonlyPagerInput={false}
-      failedIterationProps={failedIterationProps}
-    />
+    <div data-automation-id={`msla-pager-v2-${replaceWhiteSpaceWithUnderscore(scopeId)}`}>
+      <Pager
+        current={currentPage + 1}
+        onChange={onPagerChange}
+        max={forEachItemsCount}
+        maxLength={forEachItemsCount.toString().length + 1}
+        min={1}
+        readonlyPagerInput={false}
+        failedIterationProps={failedIterationProps}
+      />
+    </div>
   );
 };
