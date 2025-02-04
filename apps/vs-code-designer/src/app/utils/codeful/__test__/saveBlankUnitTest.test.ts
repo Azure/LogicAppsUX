@@ -419,7 +419,7 @@ describe('logTelemetry function', () => {
 // Use a fixture folder for testing instead of a hard-coded fake path.
 // In this example, we assume you have a folder named TestFiles in your repository (e.g.,
 // apps/vs-code-designer/src/app/utils/codeful/TestFiles) that contains workflow.json.
-const projectPath = path.join(__dirname, '../../../TestFiles');
+const projectPath = path.join(__dirname, '../../../__mocks__');
 // Since in this fixture projectPath already points to the workflow folder,
 // we do not join it with workflowName.
 const fakeLogicAppName = 'MyLogicApp';
