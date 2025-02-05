@@ -171,7 +171,8 @@ export const reviewCreateTab = (
     errorMessage: string | undefined;
     isPrimaryButtonDisabled: boolean;
     isCreateView: boolean;
-  } & CreateWorkflowTabProps
+  } & CreateWorkflowTabProps,
+  onClose?: () => void
 ): TemplatePanelTab => ({
   id: constants.TEMPLATE_PANEL_TAB_NAMES.REVIEW_AND_CREATE,
   title: isCreateView
@@ -240,6 +241,8 @@ export const reviewCreateTab = (
         if (shouldClearDetails) {
           dispatch(clearTemplateDetails());
         }
+
+        onClose?.();
       }
     },
     secondaryButtonDisabled: isCreating,

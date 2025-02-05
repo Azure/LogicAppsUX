@@ -9,7 +9,7 @@ const initialPageNum = 0;
 
 interface ContentInfo<T> {
   value: T;
-  canOverride?: boolean;
+  isEditable?: boolean;
 }
 
 export interface ViewTemplateDetails {

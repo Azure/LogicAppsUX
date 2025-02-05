@@ -131,7 +131,7 @@ export const summaryTab = (
   workflowId: string,
   clearDetailsOnClose: boolean,
   { templateId, workflowAppName, isMultiWorkflow }: Template.TemplateContext,
-  onSecondaryButtonClick?: () => void
+  onClose?: () => void
 ): TemplatePanelTab => ({
   id: constants.TEMPLATE_PANEL_TAB_NAMES.OVERVIEW,
   title: intl.formatMessage({
@@ -166,7 +166,7 @@ export const summaryTab = (
       if (clearDetailsOnClose) {
         dispatch(clearTemplateDetails());
       }
-      onSecondaryButtonClick?.();
+      onClose?.();
     },
   },
 });

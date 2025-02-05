@@ -44,11 +44,18 @@ export const QuickViewPanel = ({
     shouldCloseByDefault: !state.manifest.viewTemplateDetails,
   }));
   const { manifest } = useWorkflowTemplate(workflowId);
-  const panelTabs = getQuickViewTabs(intl, dispatch, workflowId, clearDetailsOnClose, {
-    templateId: templateName ?? '',
-    workflowAppName,
-    isMultiWorkflow: false,
-  });
+  const panelTabs = getQuickViewTabs(
+    intl,
+    dispatch,
+    workflowId,
+    clearDetailsOnClose,
+    {
+      templateId: templateName ?? '',
+      workflowAppName,
+      isMultiWorkflow: false,
+    },
+    onClose
+  );
   const [selectedTabId, setSelectedTabId] = useState<string>(panelTabs[0]?.id);
 
   const dismissPanel = useCallback(() => {
@@ -97,7 +104,7 @@ export const QuickViewPanel = ({
   return (
     <Panel
       styles={{ main: { padding: '0 20px', zIndex: 1000 }, content: { paddingLeft: '0px' } }}
-      isLightDismiss
+      isLightDismiss={shouldCloseByDefault}
       type={PanelType.custom}
       customWidth={panelWidth}
       isOpen={isOpen && currentPanelView === TemplatePanelView.QuickView}

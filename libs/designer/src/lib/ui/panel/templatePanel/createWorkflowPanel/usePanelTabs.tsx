@@ -23,6 +23,7 @@ import { closePanel } from '../../../../core/state/templates/panelSlice';
 export const useCreateWorkflowPanelTabs = ({
   isMultiWorkflowTemplate,
   createWorkflow,
+  onClosePanel,
   showCloseButton = true,
 }: {
   createWorkflow: CreateWorkflowHandler;
@@ -162,66 +163,87 @@ export const useCreateWorkflowPanelTabs = ({
   });
 
   const nameStateTabItem = useMemo(() => {
-    const tab = basicsTab(intl, dispatch, {
-      shouldClearDetails: !isMultiWorkflowTemplate,
-      nextTabId: connectionsExist
-        ? Constants.TEMPLATE_PANEL_TAB_NAMES.CONNECTIONS
-        : parametersExist
-          ? Constants.TEMPLATE_PANEL_TAB_NAMES.PARAMETERS
-          : Constants.TEMPLATE_PANEL_TAB_NAMES.REVIEW_AND_CREATE,
-      hasError: Object.values(workflows).some((workflowData) => workflowData.errors.kind || workflowData.errors.workflow),
-      isCreating,
-    });
+    const tab = basicsTab(
+      intl,
+      dispatch,
+      {
+        shouldClearDetails: !isMultiWorkflowTemplate,
+        nextTabId: connectionsExist
+          ? Constants.TEMPLATE_PANEL_TAB_NAMES.CONNECTIONS
+          : parametersExist
+            ? Constants.TEMPLATE_PANEL_TAB_NAMES.PARAMETERS
+            : Constants.TEMPLATE_PANEL_TAB_NAMES.REVIEW_AND_CREATE,
+        hasError: Object.values(workflows).some((workflowData) => workflowData.errors.kind || workflowData.errors.workflow),
+        isCreating,
+      },
+      onClosePanel
+    );
     tab.footerContent.secondaryButtonDisabled = !showCloseButton;
     return tab;
-  }, [intl, dispatch, isMultiWorkflowTemplate, connectionsExist, parametersExist, workflows, isCreating, showCloseButton]);
+  }, [intl, dispatch, isMultiWorkflowTemplate, connectionsExist, parametersExist, workflows, isCreating, onClosePanel, showCloseButton]);
 
   const connectionsTabItem = useMemo(
     () => ({
-      ...connectionsTab(intl, dispatch, {
-        shouldClearDetails: !isMultiWorkflowTemplate,
-        previousTabId: isConsumption ? undefined : Constants.TEMPLATE_PANEL_TAB_NAMES.BASIC,
-        nextTabId: parametersExist ? Constants.TEMPLATE_PANEL_TAB_NAMES.PARAMETERS : Constants.TEMPLATE_PANEL_TAB_NAMES.REVIEW_AND_CREATE,
-        hasError: !!connectionsError,
-        isCreating,
-      }),
+      ...connectionsTab(
+        intl,
+        dispatch,
+        {
+          shouldClearDetails: !isMultiWorkflowTemplate,
+          previousTabId: isConsumption ? undefined : Constants.TEMPLATE_PANEL_TAB_NAMES.BASIC,
+          nextTabId: parametersExist ? Constants.TEMPLATE_PANEL_TAB_NAMES.PARAMETERS : Constants.TEMPLATE_PANEL_TAB_NAMES.REVIEW_AND_CREATE,
+          hasError: !!connectionsError,
+          isCreating,
+        },
+        onClosePanel
+      ),
     }),
-    [intl, dispatch, isMultiWorkflowTemplate, isConsumption, isCreating, connectionsError, parametersExist]
+    [intl, dispatch, isMultiWorkflowTemplate, isConsumption, parametersExist, connectionsError, isCreating, onClosePanel]
   );
 
   const parametersTabItem = useMemo(
     () => ({
-      ...parametersTab(intl, dispatch, {
-        shouldClearDetails: !isMultiWorkflowTemplate,
-        previousTabId: connectionsExist
-          ? Constants.TEMPLATE_PANEL_TAB_NAMES.CONNECTIONS
-          : isConsumption
-            ? undefined
-            : Constants.TEMPLATE_PANEL_TAB_NAMES.BASIC,
-        hasError: hasParametersValidationErrors,
-        isCreating,
-      }),
-    }),
-    [intl, dispatch, isMultiWorkflowTemplate, isConsumption, isCreating, hasParametersValidationErrors, connectionsExist]
-  );
-
-  const reviewCreateTabItem = useMemo(
-    () => ({
-      ...reviewCreateTab(intl, dispatch, createWorkflowFromTemplate, {
-        shouldClearDetails: !isMultiWorkflowTemplate,
-        isCreating,
-        isCreateView,
-        errorMessage,
-        hasError: false,
-        isPrimaryButtonDisabled: nameStateTabItem.hasError || !!connectionsError || hasParametersValidationErrors,
-        previousTabId: parametersExist
-          ? Constants.TEMPLATE_PANEL_TAB_NAMES.PARAMETERS
-          : connectionsExist
+      ...parametersTab(
+        intl,
+        dispatch,
+        {
+          shouldClearDetails: !isMultiWorkflowTemplate,
+          previousTabId: connectionsExist
             ? Constants.TEMPLATE_PANEL_TAB_NAMES.CONNECTIONS
             : isConsumption
               ? undefined
               : Constants.TEMPLATE_PANEL_TAB_NAMES.BASIC,
-      }),
+          hasError: hasParametersValidationErrors,
+          isCreating,
+        },
+        onClosePanel
+      ),
+    }),
+    [intl, dispatch, isMultiWorkflowTemplate, connectionsExist, isConsumption, hasParametersValidationErrors, isCreating, onClosePanel]
+  );
+
+  const reviewCreateTabItem = useMemo(
+    () => ({
+      ...reviewCreateTab(
+        intl,
+        dispatch,
+        createWorkflowFromTemplate,
+        {
+          shouldClearDetails: !isMultiWorkflowTemplate,
+          isCreating,
+          isCreateView,
+          errorMessage,
+          hasError: false,
+          isPrimaryButtonDisabled: nameStateTabItem.hasError || !!connectionsError || hasParametersValidationErrors,
+          previousTabId: parametersExist
+            ? Constants.TEMPLATE_PANEL_TAB_NAMES.PARAMETERS
+            : connectionsExist
+              ? Constants.TEMPLATE_PANEL_TAB_NAMES.CONNECTIONS
+              : isConsumption
+                ? undefined
+                : Constants.TEMPLATE_PANEL_TAB_NAMES.BASIC,
+        },
+        onClosePanel
+      ),
     }),
     [
       intl,
@@ -237,6 +259,7 @@ export const useCreateWorkflowPanelTabs = ({
       parametersExist,
       connectionsExist,
       isConsumption,
+      onClosePanel,
     ]
   );
 

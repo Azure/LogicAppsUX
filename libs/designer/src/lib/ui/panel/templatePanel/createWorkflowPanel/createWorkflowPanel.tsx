@@ -59,6 +59,7 @@ export const CreateWorkflowPanel = ({
     isMultiWorkflowTemplate: isMultiWorkflow,
     createWorkflow: createWorkflow ?? (() => Promise.resolve()),
     showCloseButton,
+    onClosePanel: onClose,
   });
 
   const resources = {
@@ -121,7 +122,7 @@ export const CreateWorkflowPanel = ({
   return (
     <Panel
       styles={{ main: { padding: '0 20px', zIndex: 1000 }, content: { paddingLeft: '0px' } }}
-      isLightDismiss
+      isLightDismiss={shouldCloseByDefault}
       type={PanelType.custom}
       customWidth={panelWidth}
       isOpen={isOpen && currentPanelView === TemplatePanelView.CreateWorkflow}

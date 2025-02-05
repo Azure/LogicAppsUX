@@ -71,15 +71,6 @@ export const TemplatesDataProvider = (props: TemplatesDataProviderProps) => {
       dispatch(initializeTemplateServices(props.services));
     }
 
-    if (props.viewTemplate) {
-      dispatch(changeCurrentTemplateName(props.viewTemplate.id));
-      dispatch(setViewTemplateDetails(props.viewTemplate));
-    }
-
-    if (props.customTemplates) {
-      dispatch(setCustomTemplates(props.customTemplates));
-    }
-
     dispatch(
       setInitialData({
         existingWorkflowName: props.existingWorkflowName,
@@ -104,6 +95,19 @@ export const TemplatesDataProvider = (props: TemplatesDataProviderProps) => {
     props.viewTemplate,
     props.customTemplates,
   ]);
+
+  useEffect(() => {
+    if (props.viewTemplate) {
+      dispatch(changeCurrentTemplateName(props.viewTemplate.id));
+      dispatch(setViewTemplateDetails(props.viewTemplate));
+    }
+  }, [dispatch, props.viewTemplate]);
+
+  useEffect(() => {
+    if (props.customTemplates) {
+      dispatch(setCustomTemplates(props.customTemplates));
+    }
+  }, [dispatch, props.customTemplates]);
 
   if (!servicesInitialized) {
     return null;
