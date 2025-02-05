@@ -23,7 +23,13 @@ import { closePanel } from '../../../../core/state/templates/panelSlice';
 export const useCreateWorkflowPanelTabs = ({
   isMultiWorkflowTemplate,
   createWorkflow,
-}: { createWorkflow: CreateWorkflowHandler; isMultiWorkflowTemplate: boolean }): TemplatePanelTab[] => {
+  showCloseButton = true,
+}: {
+  createWorkflow: CreateWorkflowHandler;
+  isMultiWorkflowTemplate: boolean;
+  showCloseButton?: boolean;
+  onClosePanel?: () => void;
+}): TemplatePanelTab[] => {
   const intl = useIntl();
   const dispatch = useDispatch<AppDispatch>();
   const { data: existingWorkflowNames } = useExistingWorkflowNames();
@@ -155,21 +161,20 @@ export const useCreateWorkflowPanelTabs = ({
     }
   });
 
-  const nameStateTabItem = useMemo(
-    () => ({
-      ...basicsTab(intl, dispatch, {
-        shouldClearDetails: !isMultiWorkflowTemplate,
-        nextTabId: connectionsExist
-          ? Constants.TEMPLATE_PANEL_TAB_NAMES.CONNECTIONS
-          : parametersExist
-            ? Constants.TEMPLATE_PANEL_TAB_NAMES.PARAMETERS
-            : Constants.TEMPLATE_PANEL_TAB_NAMES.REVIEW_AND_CREATE,
-        hasError: Object.values(workflows).some((workflowData) => workflowData.errors.kind || workflowData.errors.workflow),
-        isCreating,
-      }),
-    }),
-    [intl, dispatch, isMultiWorkflowTemplate, connectionsExist, parametersExist, workflows, isCreating]
-  );
+  const nameStateTabItem = useMemo(() => {
+    const tab = basicsTab(intl, dispatch, {
+      shouldClearDetails: !isMultiWorkflowTemplate,
+      nextTabId: connectionsExist
+        ? Constants.TEMPLATE_PANEL_TAB_NAMES.CONNECTIONS
+        : parametersExist
+          ? Constants.TEMPLATE_PANEL_TAB_NAMES.PARAMETERS
+          : Constants.TEMPLATE_PANEL_TAB_NAMES.REVIEW_AND_CREATE,
+      hasError: Object.values(workflows).some((workflowData) => workflowData.errors.kind || workflowData.errors.workflow),
+      isCreating,
+    });
+    tab.footerContent.secondaryButtonDisabled = !showCloseButton;
+    return tab;
+  }, [intl, dispatch, isMultiWorkflowTemplate, connectionsExist, parametersExist, workflows, isCreating, showCloseButton]);
 
   const connectionsTabItem = useMemo(
     () => ({

@@ -25,6 +25,8 @@ export interface CreateWorkflowTabProps {
 export interface CreateWorkflowPanelProps {
   createWorkflow?: CreateWorkflowHandler;
   clearDetailsOnClose?: boolean;
+  panelWidth?: string;
+  showCloseButton?: boolean;
   onClose?: () => void;
 }
 
@@ -33,22 +35,30 @@ const layerProps = {
   eventBubblingEnabled: true,
 };
 
-export const CreateWorkflowPanel = ({ createWorkflow, onClose, clearDetailsOnClose = true }: CreateWorkflowPanelProps) => {
+export const CreateWorkflowPanel = ({
+  createWorkflow,
+  onClose,
+  panelWidth = '50%',
+  clearDetailsOnClose = true,
+  showCloseButton = true,
+}: CreateWorkflowPanelProps) => {
   const dispatch = useDispatch<AppDispatch>();
   const intl = useIntl();
   const { refetch: refetchWorkflowNames } = useExistingWorkflowNames();
-  const { selectedTabId, manifest, isOpen, isCreateView, currentPanelView } = useSelector((state: RootState) => ({
+  const { selectedTabId, manifest, isOpen, isCreateView, currentPanelView, shouldCloseByDefault } = useSelector((state: RootState) => ({
     selectedTabId: state.panel.selectedTabId,
     manifest: state.template.manifest,
     isOpen: state.panel.isOpen,
     isCreateView: state.workflow.isCreateView,
     currentPanelView: state.panel.currentPanelView,
+    shouldCloseByDefault: !state.manifest.viewTemplateDetails,
   }));
   const isMultiWorkflow = useMemo(() => !!manifest && isMultiWorkflowTemplate(manifest), [manifest]);
 
   const panelTabs: TemplatePanelTab[] = useCreateWorkflowPanelTabs({
     isMultiWorkflowTemplate: isMultiWorkflow,
     createWorkflow: createWorkflow ?? (() => Promise.resolve()),
+    showCloseButton,
   });
 
   const resources = {
@@ -113,10 +123,10 @@ export const CreateWorkflowPanel = ({ createWorkflow, onClose, clearDetailsOnClo
       styles={{ main: { padding: '0 20px', zIndex: 1000 }, content: { paddingLeft: '0px' } }}
       isLightDismiss
       type={PanelType.custom}
-      customWidth={'50%'}
+      customWidth={panelWidth}
       isOpen={isOpen && currentPanelView === TemplatePanelView.CreateWorkflow}
-      onDismiss={dismissPanel}
-      hasCloseButton={true}
+      onDismiss={shouldCloseByDefault ? dismissPanel : undefined}
+      hasCloseButton={shouldCloseByDefault}
       onRenderHeader={onRenderHeaderContent}
       onRenderFooterContent={onRenderFooterContent}
       layerProps={layerProps}

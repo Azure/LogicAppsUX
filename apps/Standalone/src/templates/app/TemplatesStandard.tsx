@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useMemo } from 'react';
-import { TemplatesDataProvider, templateStore } from '@microsoft/logic-apps-designer';
+import { TemplatesDataProvider, templateStore, TemplatesView } from '@microsoft/logic-apps-designer';
 import { environment } from '../../environments/environment';
 import type { RootState } from '../state/Store';
 import { TemplatesDesigner, TemplatesDesignerProvider } from '@microsoft/logic-apps-designer';
@@ -47,7 +47,10 @@ interface StringifiedWorkflow {
 
 const workflowIdentifier = '#workflowname#';
 export const TemplatesStandard = () => {
-  const theme = useSelector((state: RootState) => state.workflowLoader.theme);
+  const { theme, templatesView } = useSelector((state: RootState) => ({
+    theme: state.workflowLoader.theme,
+    templatesView: state.workflowLoader.templatesView,
+  }));
   const { appId, hostingPlan, workflowName: existingWorkflowName } = useSelector((state: RootState) => state.workflowLoader);
   const { data: workflowAppData } = useWorkflowApp(appId as string, hostingPlan);
   const canonicalLocation = WorkflowUtility.convertToCanonicalFormat(workflowAppData?.location ?? '');
@@ -72,6 +75,7 @@ export const TemplatesStandard = () => {
   }, [originalConnectionsData, setConnectionsData]);
 
   const connectionReferences = useMemo(() => WorkflowUtility.convertConnectionsDataToReferences(connectionsData()), [connectionsData]);
+  const isSingleTemplateView = useMemo(() => templatesView !== 'gallery', [templatesView]);
 
   const createWorkflowCall = async (
     workflows: { name: string | undefined; kind: string | undefined; definition: LogicAppsV2.WorkflowDefinition }[],
@@ -214,58 +218,63 @@ export const TemplatesStandard = () => {
         isConsumption={false}
         isCreateView={true}
         existingWorkflowName={existingWorkflowName}
+        viewTemplate={isSingleTemplateView ? { id: templatesView } : undefined}
       >
         <div
           style={{
             margin: '20px',
           }}
         >
-          <TemplatesDesigner
-            detailFilters={{
-              Category: {
-                displayName: 'Categories',
-                items: [
-                  {
-                    value: 'Design Patterns',
-                    displayName: 'Design Patterns',
-                  },
-                  {
-                    value: 'AI',
-                    displayName: 'AI',
-                  },
-                  {
-                    value: 'B2B',
-                    displayName: 'B2B',
-                  },
-                  {
-                    value: 'EDI',
-                    displayName: 'EDI',
-                  },
-                  {
-                    value: 'Approval',
-                    displayName: 'Approval',
-                  },
-                  {
-                    value: 'RAG',
-                    displayName: 'RAG',
-                  },
-                  {
-                    value: 'Automation',
-                    displayName: 'Automation',
-                  },
-                  {
-                    value: 'BizTalk Migration',
-                    displayName: 'BizTalk Migration',
-                  },
-                  {
-                    value: 'Mainframe Modernization',
-                    displayName: 'Mainframe Modernization',
-                  },
-                ],
-              },
-            }}
-            createWorkflowCall={createWorkflowCall}
-          />
+          {isSingleTemplateView ? (
+            <TemplatesView createWorkflow={createWorkflowCall} panelWidth={'98%'} showCloseButton={true} />
+          ) : (
+            <TemplatesDesigner
+              createWorkflowCall={createWorkflowCall}
+              detailFilters={{
+                Category: {
+                  displayName: 'Categories',
+                  items: [
+                    {
+                      value: 'Design Patterns',
+                      displayName: 'Design Patterns',
+                    },
+                    {
+                      value: 'AI',
+                      displayName: 'AI',
+                    },
+                    {
+                      value: 'B2B',
+                      displayName: 'B2B',
+                    },
+                    {
+                      value: 'EDI',
+                      displayName: 'EDI',
+                    },
+                    {
+                      value: 'Approval',
+                      displayName: 'Approval',
+                    },
+                    {
+                      value: 'RAG',
+                      displayName: 'RAG',
+                    },
+                    {
+                      value: 'Automation',
+                      displayName: 'Automation',
+                    },
+                    {
+                      value: 'BizTalk Migration',
+                      displayName: 'BizTalk Migration',
+                    },
+                    {
+                      value: 'Mainframe Modernization',
+                      displayName: 'Mainframe Modernization',
+                    },
+                  ],
+                },
+              }}
+            />
+          )}
         </div>
       </TemplatesDataProvider>
     </TemplatesDesignerProvider>
