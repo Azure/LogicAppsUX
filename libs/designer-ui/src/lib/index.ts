@@ -7,7 +7,7 @@ export * from './azureResourcePicker';
 export * from './card';
 export * from './card/scopeCard';
 export * from './card/subgraphCard';
-export * from './card/collapsedCard/index';
+export * from './card/collapsedCard';
 export * from './card/cardcontextmenu';
 export * from './card/graphContainer';
 export * from './card/types';

@@ -49,10 +49,10 @@ const CollapsedNode = ({ targetPosition = Position.Top, sourcePosition = Positio
     >
       <Handle className="node-handle top" type="target" position={targetPosition} isConnectable={false} />
       <CollapsedCard
-        operationVisuals={actionVisuals}
-        id="testId"
+        id={id}
         actionCount={actionCount}
         onContextMenu={onContextMenu}
+        operationVisuals={actionVisuals}
         isExpanding={isNullOrUndefined(isNodeCollapsed)}
       />
       <Handle className="node-handle bottom" type="source" position={sourcePosition} isConnectable={false} />

@@ -10,7 +10,10 @@ interface CollapsedCardProps {
   actionCount: number;
   isExpanding: boolean;
   onContextMenu?: MouseEventHandler<HTMLElement>;
-  operationVisuals?: any;
+  operationVisuals?: Array<{
+    iconUri: string;
+    brandColor: string;
+  }>;
 }
 
 export const CollapsedCard: React.FC<CollapsedCardProps> = memo(({ id, onContextMenu, actionCount, isExpanding, operationVisuals }) => {
@@ -33,19 +36,19 @@ export const CollapsedCard: React.FC<CollapsedCardProps> = memo(({ id, onContext
 
   return (
     <div
-      id={id}
+      id={`msla-collapsed-card-${id}`}
+      data-automation-id={`msla-collapsed-card-${id}`}
       onContextMenu={onContextMenu}
-      className={css('msla-graph-container')}
-      style={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}
+      className={css('msla-collapsed-card')}
     >
       {isExpanding ? (
-        <Text className="no-actions-text" style={{ display: 'flex', justifyContent: 'center' }} data-automation-id={`collapsed-text-${id}`}>
+        <Text className="no-actions-text" align="center" data-automation-id={`collapsed-text-${id}`}>
           {expandingString}
         </Text>
       ) : (
         <>
-          {(operationVisuals ?? []).map((operationVisual: any, index: any) => {
-            return <img key={index} style={{ width: '24px', height: '24px', margin: '3px' }} src={operationVisual.iconUri} alt="" />;
+          {(operationVisuals ?? []).map((operationVisual, index: number) => {
+            return <img key={index} className="msla-collapsed-card__icon" src={operationVisual.iconUri} alt="" />;
           })}
           {actionCount <= 0 ? null : <Text data-automation-id={`collapsed-text-${id}`}>{actionString}</Text>}
         </>
