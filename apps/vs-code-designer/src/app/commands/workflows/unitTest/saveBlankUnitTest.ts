@@ -481,11 +481,10 @@ export function generateCSharpClasses(namespaceName: string, rootClassName: stri
     ...data, // Merge the data (including "description", subfields, etc.)
   });
 
-  // Add `Name` and `Status` properties to the root class
   rootDef.properties.push({
     propertyName: 'StatusCode',
-    propertyType: 'int',
-    description: 'The HTTP status code returned by the action. Example: 200 for success.',
+    propertyType: 'HttpStatusCode', // Use the System.Net enum
+    description: 'The HTTP status code returned by the action. Example: HttpStatusCode.OK for success.',
     isObject: false,
   });
 
@@ -497,6 +496,7 @@ export function generateCSharpClasses(namespaceName: string, rootClassName: stri
   const finalCode = [
     'using Newtonsoft.Json.Linq;',
     'using System.Collections.Generic;',
+    'using System.Net;',
     '',
     `namespace ${adjustedNamespace}`,
     '{',
@@ -562,9 +562,12 @@ export function generateClassCode(classDef: ClassDefinition): string {
     else if (prop.propertyType.startsWith('List<')) {
       sb.push(`            ${prop.propertyName} = new ${prop.propertyType}();`);
     }
-    // If it's an int or double
+    // If it's an int
     else if (prop.propertyType === 'int') {
-      sb.push(`            ${prop.propertyName} = 200;`);
+      sb.push(`            ${prop.propertyName} = 0;`);
+    } else if (prop.propertyType === 'HttpStatusCode') {
+      // Use HttpStatusCode.OK by default
+      sb.push(`            ${prop.propertyName} = HttpStatusCode.OK;`);
     }
   }
 
