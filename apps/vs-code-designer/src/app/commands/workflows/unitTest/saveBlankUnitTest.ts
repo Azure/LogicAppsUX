@@ -22,6 +22,7 @@ import { type IActionContext, callWithTelemetryAndErrorHandling } from '@microso
 import * as path from 'path';
 import * as vscode from 'vscode';
 import * as fs from 'fs-extra';
+import axios from 'axios';
 import { ext } from '../../../../extensionVariables';
 import { toPascalCase } from '@microsoft/logic-apps-shared';
 
@@ -234,21 +235,64 @@ async function generateBlankCodefulUnitTest(
 /**
  * Set of action types that can be mocked.
  */
-const mockableActionTypes = new Set<string>(['Http', 'InvokeFunction', 'Function', 'ServiceProvider', 'ApiManagement', 'ApiConnection']);
+const mockableOperationTypes = new Set<string>();
 
 /**
- * Set of trigger types that can be mocked.
+ * Retrieves the mockable operation types from the runtime API and stores them in a set.
  */
-const mockableTriggerTypes = new Set<string>(['HttpWebhook', 'Request', 'Manual', 'ApiConnectionWebhook', 'ServiceProvider']);
+async function getMockableOperationTypes(): Promise<void> {
+  if (!ext.designTimePort) {
+    throw new Error(localize('workflowRuntimeNotRunning', 'Workflow runtime is not running. Start the runtime and try again.'));
+  }
+
+  const baseUrl = `http://localhost:${ext.designTimePort}`;
+  const apiUrl = `${baseUrl}/runtime/webhooks/workflow/api/management/listMockableOperations`;
+
+  ext.outputChannel.appendLog(localize('apiUrl', `Calling API URL: ${apiUrl}`));
+
+  // Log API details and initiate call
+  ext.outputChannel.appendLog(localize('initiatingApiCall', 'Initiating List Mockable Operations API call...'));
+
+  try {
+    const response = await axios.get(apiUrl);
+
+    ext.outputChannel.appendLog(localize('apiCallSuccessful', 'API call successful, processing response...'));
+
+    const resContentType = response.headers['content-type'];
+    if (!resContentType.includes('application/json')) {
+      throw new Error(localize('invalidResponseType', 'Expected json response but received {0}', resContentType));
+    }
+
+    response.data.forEach((mockableOperation: string) => mockableOperationTypes.add(mockableOperation.toUpperCase()));
+  } catch (apiError: any) {
+    // eslint-disable-next-line import/no-named-as-default-member
+    if (axios.isAxiosError(apiError)) {
+      ext.outputChannel.appendLog(
+        localize(
+          'apiCallFailed',
+          'API call failed with status: {0}, message: {1}, response: {2}',
+          apiError.response?.status,
+          apiError.response?.statusText,
+          JSON.stringify(apiError.response?.data || {})
+        )
+      );
+    }
+
+    throw apiError;
+  }
+}
 
 /**
- * Determines if a given operation type (and whether it is a trigger or not) can be mocked.
+ * Determines if a given operation type can be mocked.
  * @param type - The operation type.
- * @param isTrigger - Whether the operation is a trigger.
  * @returns True if the operation is mockable, false otherwise.
  */
-export function isMockable(type: string, isTrigger: boolean): boolean {
-  return isTrigger ? mockableTriggerTypes.has(type) : mockableActionTypes.has(type);
+export async function isMockable(type: string): Promise<boolean> {
+  if (mockableOperationTypes.size === 0) {
+    await getMockableOperationTypes();
+  }
+
+  return mockableOperationTypes.has(type.toUpperCase());
 }
 
 /**
@@ -332,11 +376,8 @@ export async function processAndWriteMockableOperations(
     }
     processedOperationIds.add(operationId);
 
-    // For triggers, check if it's one of these types:
-    const isTrigger = ['HttpWebhook', 'Request', 'Manual', 'ApiConnectionWebhook'].includes(type);
-
     // Only proceed if this operation type is mockable
-    if (isMockable(type, isTrigger)) {
+    if (await isMockable(type)) {
       const cleanedOperationName = removeInvalidCharacters(operationId);
       const className = toPascalCase(cleanedOperationName);
 
