@@ -1,0 +1,51 @@
+{
+    "definition": {
+      "$schema": "https://schema.management.azure.com/providers/Microsoft.Logic/schemas/2016-06-01/workflowdefinition.json#",
+      "actions": {
+        "Initialize_variable": {
+          "type": "InitializeVariable",
+          "inputs": {
+            "variables": [
+              {
+                "name": "one",
+                "type": "integer",
+                "value": 1
+              }
+            ]
+          },
+          "runAfter": {}
+        },
+        "Until": {
+          "type": "Until",
+          "expression": "@equals(variables('one'),10)",
+          "limit": {
+            "count": 60,
+            "timeout": "PT1H"
+          },
+          "actions": {
+            "Increment_variable": {
+              "type": "IncrementVariable",
+              "inputs": {
+                "name": "one",
+                "value": 1
+              }
+            }
+          },
+          "runAfter": {
+            "Initialize_variable": [
+              "SUCCEEDED"
+            ]
+          }
+        }
+      },
+      "contentVersion": "1.0.0.0",
+      "outputs": {},
+      "triggers": {
+        "When_a_HTTP_request_is_received": {
+          "type": "Request",
+          "kind": "Http"
+        }
+      }
+    },
+    "kind": "Stateful"
+  }
