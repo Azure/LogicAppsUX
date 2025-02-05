@@ -3,7 +3,13 @@ import type { AppDispatch } from '../../../core';
 import { useActionMetadata, useNodeMetadata, useRunInstance } from '../../../core/state/workflow/workflowSelectors';
 import { setRunIndex } from '../../../core/state/workflow/workflowSlice';
 import { getForeachItemsCount } from './helper';
-import { RunService, FindPreviousAndNextPage, isNullOrUndefined, type LogicAppsV2 } from '@microsoft/logic-apps-shared';
+import {
+  RunService,
+  FindPreviousAndNextPage,
+  isNullOrUndefined,
+  type LogicAppsV2,
+  replaceWhiteSpaceWithUnderscore,
+} from '@microsoft/logic-apps-shared';
 import type { PageChangeEventArgs, PageChangeEventHandler } from '@microsoft/designer-ui';
 import { Pager } from '@microsoft/designer-ui';
 import { useCallback, useMemo } from 'react';
@@ -33,8 +39,14 @@ export const LoopsPager = ({ metadata, scopeId, collapsed }: LoopsPagerProps) =>
   } = useQuery<any>(
     ['runRepetitions', { nodeId: scopeId, runId: runInstance?.id }],
     async () => {
-      const { value } = await RunService().getScopeRepetitions({ nodeId: scopeId, runId: runInstance?.id }, constants.FLOW_STATUS.FAILED);
-      const _failedRepetitions: number[] = value.reduce((acc: number[], current: LogicAppsV2.RunRepetition) => {
+      let failedRunRepetitions: LogicAppsV2.RunRepetition[] = [];
+      try {
+        const { value } = await RunService().getScopeRepetitions({ nodeId: scopeId, runId: runInstance?.id }, constants.FLOW_STATUS.FAILED);
+        failedRunRepetitions = value;
+      } catch {
+        failedRunRepetitions = [];
+      }
+      const _failedRepetitions: number[] = failedRunRepetitions.reduce((acc: number[], current: LogicAppsV2.RunRepetition) => {
         const scopeObject = current.properties?.repetitionIndexes?.find((item) => item.scopeName === scopeId);
         const indexOfFail = isNullOrUndefined(scopeObject) ? undefined : scopeObject.itemIndex;
         acc.push(indexOfFail ?? []);
@@ -46,7 +58,7 @@ export const LoopsPager = ({ metadata, scopeId, collapsed }: LoopsPagerProps) =>
       refetchOnWindowFocus: false,
       refetchOnMount: false,
       refetchOnReconnect: false,
-      enabled: normalizedType === constants.NODE.TYPE.FOREACH,
+      enabled: normalizedType === constants.NODE.TYPE.FOREACH || normalizedType === constants.NODE.TYPE.UNTIL,
     }
   );
 
@@ -96,14 +108,16 @@ export const LoopsPager = ({ metadata, scopeId, collapsed }: LoopsPagerProps) =>
   }
 
   return isLoading ? null : (
-    <Pager
-      current={currentPage + 1}
-      onChange={onPagerChange}
-      max={forEachItemsCount}
-      maxLength={forEachItemsCount.toString().length + 1}
-      min={1}
-      readonlyPagerInput={false}
-      failedIterationProps={failedIterationProps}
-    />
+    <div data-automation-id={`msla-pager-v2-${replaceWhiteSpaceWithUnderscore(scopeId)}`}>
+      <Pager
+        current={currentPage + 1}
+        onChange={onPagerChange}
+        max={forEachItemsCount}
+        maxLength={forEachItemsCount.toString().length + 1}
+        min={1}
+        readonlyPagerInput={false}
+        failedIterationProps={failedIterationProps}
+      />
+    </div>
   );
 };

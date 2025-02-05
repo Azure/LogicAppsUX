@@ -1,0 +1,161 @@
+{
+    "properties": {
+        "waitEndTime": "2025-02-04T17:44:56.6396086Z",
+        "startTime": "2025-02-04T17:44:56.6396086Z",
+        "endTime": "2025-02-04T17:45:09.6484667Z",
+        "status": "Succeeded",
+        "correlation": {
+            "clientTrackingId": "08584629157889890322247822477CU00"
+        },
+        "workflow": {
+            "properties": {
+                "createdTime": "2025-02-04T17:43:03.1167222Z",
+                "changedTime": "2025-02-04T17:44:47.7981262Z",
+                "version": "08584629157982535659",
+                "definition": {
+                    "$schema": "https://schema.management.azure.com/providers/Microsoft.Logic/schemas/2016-06-01/workflowdefinition.json#",
+                    "contentVersion": "1.0.0.0",
+                    "parameters": {
+                        "resourceGroup": {
+                            "type": "String"
+                        },
+                        "subscriptionId": {
+                            "type": "String"
+                        },
+                        "resourceName": {
+                            "type": "String"
+                        }
+                    },
+                    "triggers": {
+                        "When_a_HTTP_request_is_received": {
+                            "type": "Request",
+                            "kind": "Http"
+                        }
+                    },
+                    "actions": {
+                        "Initialize_variable": {
+                            "runAfter": {},
+                            "type": "InitializeVariable",
+                            "inputs": {
+                                "variables": [
+                                    {
+                                        "name": "one",
+                                        "type": "integer",
+                                        "value": 1
+                                    }
+                                ]
+                            }
+                        },
+                        "Until": {
+                            "actions": {
+                                "Increment_variable": {
+                                    "type": "IncrementVariable",
+                                    "inputs": {
+                                        "name": "one",
+                                        "value": 1
+                                    }
+                                }
+                            },
+                            "runAfter": {
+                                "Initialize_variable": [
+                                    "Succeeded"
+                                ]
+                            },
+                            "expression": "@equals(variables('one'),10)",
+                            "limit": {
+                                "count": 60,
+                                "timeout": "PT1H"
+                            },
+                            "type": "Until"
+                        }
+                    },
+                    "outputs": {}
+                },
+                "parameters": {
+                    "resourceGroup": {
+                        "type": "String",
+                        "value": "cleanupservice"
+                    },
+                    "subscriptionId": {
+                        "type": "String",
+                        "value": "dasdmasda"
+                    },
+                    "resourceName": {
+                        "type": "String",
+                        "value": "sadasdas"
+                    }
+                },
+                "endpointsConfiguration": {},
+                "runtimeConfiguration": {
+                    "lifetime": {
+                        "unit": "Day",
+                        "count": 90
+                    },
+                    "operationOptions": "None"
+                }
+            },
+            "id": "/workflows/WhileLoop/versions/08584629157982535659",
+            "name": "08584629157982535659",
+            "type": "workflows/versions"
+        },
+        "trigger": {
+            "name": "When_a_HTTP_request_is_received",
+            "outputsLink": {
+                "uri": "testLink",
+                "contentSize": 4375
+            },
+            "startTime": "2025-02-04T17:44:56.5051872Z",
+            "endTime": "2025-02-04T17:44:56.5051872Z",
+            "originHistoryName": "08584629157889890322247822477CU00",
+            "correlation": {
+                "clientTrackingId": "08584629157889890322247822477CU00"
+            },
+            "status": "Succeeded"
+        },
+        "actions": {
+            "Increment_variable": {
+                "repetitionCount": 9,
+                "canResubmit": false,
+                "startTime": "2025-02-04T17:45:09.4431018Z",
+                "endTime": "2025-02-04T17:45:09.5877863Z",
+                "correlation": {
+                    "actionTrackingId": "b8d5d722-10eb-42fd-b9f7-fcd5d592d33a",
+                    "clientTrackingId": "08584629157889890322247822477CU00"
+                },
+                "status": "Succeeded",
+                "code": "NotSpecified"
+            },
+            "Initialize_variable": {
+                "inputsLink": {
+                    "uri": "testLink",
+                    "contentSize": 57
+                },
+                "canResubmit": true,
+                "startTime": "2025-02-04T17:44:58.9789633Z",
+                "endTime": "2025-02-04T17:44:59.9031445Z",
+                "correlation": {
+                    "actionTrackingId": "a34d3b47-b795-44fb-bbb6-1eeed5cb5d0d",
+                    "clientTrackingId": "08584629157889890322247822477CU00"
+                },
+                "status": "Succeeded",
+                "code": "NotSpecified"
+            },
+            "Until": {
+                "iterationCount": 9,
+                "canResubmit": false,
+                "startTime": "2025-02-04T17:45:00.0222385Z",
+                "endTime": "2025-02-04T17:45:09.6183066Z",
+                "correlation": {
+                    "actionTrackingId": "cb252e8f-e114-45bf-899c-b9e9abb02db5",
+                    "clientTrackingId": "08584629157889890322247822477CU00"
+                },
+                "status": "Succeeded",
+                "code": "NotSpecified"
+            }
+        },
+        "outputs": {}
+    },
+    "id": "/workflows/WhileLoop/runs/08584629157889890322247822477CU00",
+    "name": "08584629157889890322247822477CU00",
+    "type": "workflows/runs"
+}

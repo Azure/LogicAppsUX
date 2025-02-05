@@ -1,5 +1,5 @@
 import { test, expect } from '@playwright/test';
-import { GoToMockWorkflow, LoadRunFile } from './utils/GoToWorkflow';
+import { GoToMockWorkflow, LoadRunFile } from '../utils/GoToWorkflow';
 
 test.describe(
   'Monitoring view tests sanity check',
