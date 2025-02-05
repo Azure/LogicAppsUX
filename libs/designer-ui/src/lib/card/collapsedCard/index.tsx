@@ -4,6 +4,7 @@ import type { MouseEventHandler } from 'react';
 import { memo } from 'react';
 import { useIntl } from 'react-intl';
 import { Text } from '@fluentui/react-components';
+import { replaceWhiteSpaceWithUnderscore } from '@microsoft/logic-apps-shared';
 
 interface CollapsedCardProps {
   id: string;
@@ -45,15 +46,17 @@ export const CollapsedCard: React.FC<CollapsedCardProps> = memo(({ id, onContext
     description: 'This is the text that is displayed when the user is expanding collapsed actions',
   });
 
+  const operationId = replaceWhiteSpaceWithUnderscore(id);
+
   return (
     <div
-      id={`msla-collapsed-card-${id}`}
-      data-automation-id={`msla-collapsed-card-${id}`}
+      id={`msla-collapsed-card-${operationId}`}
+      data-automation-id={`msla-collapsed-card-${operationId}`}
       onContextMenu={onContextMenu}
       className={css('msla-collapsed-card')}
     >
       {isExpanding ? (
-        <Text className="no-actions-text" align="center" data-automation-id={`collapsed-text-${id}`}>
+        <Text className="no-actions-text" align="center" data-automation-id={`collapsed-text-${operationId}`}>
           {expandingString}
         </Text>
       ) : (
@@ -69,7 +72,7 @@ export const CollapsedCard: React.FC<CollapsedCardProps> = memo(({ id, onContext
               />
             );
           })}
-          {actionCount <= 0 ? null : <Text data-automation-id={`collapsed-text-${id}`}>{actionString}</Text>}
+          {actionCount <= 0 ? null : <Text data-automation-id={`collapsed-text-${operationId}`}>{actionString}</Text>}
         </div>
       )}
     </div>
