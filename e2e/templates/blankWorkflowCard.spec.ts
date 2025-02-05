@@ -11,6 +11,10 @@ test.describe(
       await page.goto('/templates');
       await GoToMockTemplatesGallery(page);
       await page.getByText('Blank workflow', { exact: true }).click();
+      await expect(page.getByText('Start with an empty workflow to build your integration solution.', { exact: true })).toBeVisible();
+      await expect(
+        page.getByText('Replace your existing workflow with an empty workflow to rebuild your integration solution.', { exact: true })
+      ).not.toBeVisible();
 
       page.once('dialog', (dialog) => {
         expect(dialog.message()).toBe('On Blank Workflow Click');
@@ -25,6 +29,10 @@ test.describe(
       await GoToMockTemplatesGallery(page);
       await page.getByText('Consumption', { exact: true }).click();
       await page.getByText('Blank workflow', { exact: true }).click();
+      await expect(page.getByText('Start with an empty workflow to build your integration solution.', { exact: true })).toBeVisible();
+      await expect(
+        page.getByText('Replace your existing workflow with an empty workflow to rebuild your integration solution.', { exact: true })
+      ).not.toBeVisible();
 
       page.once('dialog', (dialog) => {
         expect(dialog.message()).toBe('On Blank Workflow Click');

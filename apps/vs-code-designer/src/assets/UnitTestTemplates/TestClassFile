@@ -13,7 +13,7 @@ using Newtonsoft.Json.Linq;
 namespace <%= LogicAppName %>.Tests
 {
     /// <summary>
-    ///  The unit test class.
+    /// The unit test class.
     /// </summary>
     [TestClass]
     public class <%= UnitTestName %>
@@ -48,7 +48,7 @@ namespace <%= LogicAppName %>.Tests
         /// </summary>
         private readonly string mockDataPath;
 
-         /// <summary>
+        /// <summary>
         /// Initializes a new instance of the class named <see cref="<%= UnitTestName %>" />.
         /// </summary>
         public <%= UnitTestName %>()
@@ -102,7 +102,7 @@ namespace <%= LogicAppName %>.Tests
             // Generate mock action and trigger data.
             var mockData = this.GetTestMockDefinition();
             var sampleActionMock = mockData.ActionMocks.FirstOrDefault();
-            mockData.ActionMocks[sampleActionMock.Key] = new ActionMock(name: sampleActionMock.Key, status: TestWorkflowStatus.Succeeded, onGetActionOutputsCallback: this.MockActionOutputCallback);
+            mockData.ActionMocks[sampleActionMock.Key] = new ActionMock(name: sampleActionMock.Key, onGetActionOutputsCallback: this.MockActionOutputCallback);
 
             // ACT
             // Create an instance of UnitTestExecutor, and run the workflow with the mock data.
@@ -159,25 +159,33 @@ namespace <%= LogicAppName %>.Tests
 
         /// <summary>
         /// The callback method to dynamically generate mocked data for the action named 'actionName'.
-        /// You can modify this method to return different mock outputs based on the test scenario.
+        /// You can modify this method to return different mock status, outputs, and error based on the test scenario.
         /// </summary>
         /// <param name="context">The test execution context that contains information about the current test run.</param>
-        public JToken MockActionOutputCallback(TestExecutionContext context)
+        public MockData MockActionOutputCallback(TestExecutionContext context)
         {
             // Sample mock data 1: Replace <your-test-JSON-value> with the appropriate mock data for the test.
-            // return JObject.Parse(@"
+            // return new MockData
             // {
-            //     'statusCode': '200',
-            //     'body': {
-            //         <your-test-JSON-value>
-            //     }
-            // }");
+            //     Status = TestWorkflowStatus.Succeeded,
+            //     Outputs = JObject.Parse(@"
+            //     {
+            //         'statusCode': '200',
+            //         'body': {
+            //             <your-test-JSON-value>
+            //         }
+            //     }")
+            // };
 
             // Sample mock data 2: Modify the existing mocked data dynamically for "actionName".
             var mockData = this.GetTestMockDefinition();
-            var modifiedMockOutput = mockData.ActionMocks["actionName"].Outputs;
-            modifiedMockOutput["your-property-name"] = "your-property-value";
-            return modifiedMockOutput;
+            var modifiedActionMockData = mockData.ActionMocks["actionName"];
+            modifiedActionMockData.Outputs["your-property-name"] = "your-property-value";
+            return new MockData
+            {
+                Status = modifiedActionMockData.Status,
+                Outputs = modifiedActionMockData.Outputs
+            }
         }
 
         #endregion

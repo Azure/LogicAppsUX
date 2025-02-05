@@ -18,7 +18,7 @@ import {
 import { tryGetLogicAppProjectRoot } from '../../../utils/verifyIsProject';
 import { ensureDirectoryInWorkspace, getWorkflowNode, getWorkspaceFolder, isMultiRootWorkspace } from '../../../utils/workspace';
 import type { IAzureConnectorsContext } from '../azureConnectorWizard';
-import { type IActionContext, callWithTelemetryAndErrorHandling } from '@microsoft/vscode-azext-utils';
+import { type IActionContext, callWithTelemetryAndErrorHandling, parseError } from '@microsoft/vscode-azext-utils';
 import * as path from 'path';
 import * as vscode from 'vscode';
 import * as fs from 'fs-extra';
@@ -27,7 +27,7 @@ import { ext } from '../../../../extensionVariables';
 import { toPascalCase } from '@microsoft/logic-apps-shared';
 
 /**
- * Creates a unit test for a Logic App workflow (codeful only).
+ * Creates a unit test for a Logic App workflow (codeful only), with telemetry logging and error handling.
  * @param {IAzureConnectorsContext} context - The context object for Azure Connectors.
  * @param {vscode.Uri | undefined} node - The URI of the workflow node, if available.
  * @param {any} unitTestDefinition - The definition of the unit test.
@@ -38,40 +38,104 @@ export async function saveBlankUnitTest(
   node: vscode.Uri | undefined,
   unitTestDefinition: any
 ): Promise<void> {
+  const startTime = Date.now();
+
+  // Initialize telemetry properties
+  logTelemetry(context, {
+    workspaceLocated: 'false',
+    projectRootLocated: 'false',
+    workflowNodeSelected: 'false',
+    multiRootWorkspaceValid: 'false',
+    unitTestNamePrompted: 'false',
+    directoriesEnsured: 'false',
+    csFileCreated: 'false',
+    csprojUpdated: 'false',
+    workspaceUpdated: 'false',
+    unitTestDefinitionParsed: 'false',
+    operationInfoExists: 'false',
+    outputParametersExists: 'false',
+    workflowNodePath: '',
+    workflowFolderPathResolved: 'false',
+    mockOutputsFolderPathCreated: 'false',
+    mockableOperationsFound: '0',
+    mockableOperationsProcessed: '0',
+    mockableTriggersProcessed: '0',
+    csFilesGenerated: '0',
+    csFileGenerationFailures: '0',
+    workspaceUpdatedStatus: 'false',
+    workspaceUpdateFailureReason: '',
+    unitTestSaveStatus: 'InProgress',
+    unitTestSaveFailureReason: '',
+  });
+
   try {
     // Get workspace and project root
     const workspaceFolder = await getWorkspaceFolder(context);
     const projectPath = await tryGetLogicAppProjectRoot(context, workspaceFolder);
 
-    // Get raw parsed outputs
+    logTelemetry(context, {
+      workspaceLocated: 'true',
+      projectRootLocated: 'true',
+    });
+
+    // Get parsed outputs
     await parseUnitTestOutputs(unitTestDefinition);
     const operationInfo = unitTestDefinition['operationInfo'];
     const outputParameters = unitTestDefinition['outputParameters'];
 
+    logTelemetry(context, {
+      operationInfoExists: operationInfo ? 'true' : 'false',
+      outputParametersExists: outputParameters ? 'true' : 'false',
+    });
+
     // Determine workflow node
     const workflowNode = node ? (getWorkflowNode(node) as vscode.Uri) : await selectWorkflowNode(context, projectPath);
+    logTelemetry(context, {
+      workflowNodeSelected: 'true',
+      workflowNodePath: workflowNode ? workflowNode.fsPath : '',
+    });
+
     const workflowName = path.basename(path.dirname(workflowNode.fsPath));
 
     // Check if in a multi-root workspace
     if (!isMultiRootWorkspace()) {
+      logTelemetry(context, {
+        multiRootWorkspaceValid: 'false',
+      });
       const message = localize(
         'expectedWorkspace',
-        'A multi-root workspace must be open to create unit tests. Please navigate to the Logic Apps extension in Visual Studio Code and use the "Create New Logic App Workspace" command to initialize and open a valid workspace.'
+        'A multi-root workspace must be open to create unit tests. Please use the "Create New Logic App Workspace" command.'
       );
       ext.outputChannel.appendLog(message);
       throw new Error(message);
     }
 
+    logTelemetry(context, {
+      multiRootWorkspaceValid: 'true',
+    });
+
     // Prompt for unit test name
     const unitTestName = await promptForUnitTestName(context, projectPath, workflowName);
+    logTelemetry(context, {
+      unitTestNamePrompted: 'true',
+    });
     ext.outputChannel.appendLog(localize('unitTestNameEntered', `Unit test name entered: ${unitTestName}`));
 
-    // Retrieve unitTestFolderPath and logic app name from helper
-    const { unitTestFolderPath, logicAppName } = getUnitTestPaths(projectPath, workflowName, unitTestName);
-    await fs.ensureDir(unitTestFolderPath!);
+    // Retrieve necessary paths
+    const { unitTestFolderPath, logicAppName, workflowFolderPath } = getUnitTestPaths(projectPath, workflowName, unitTestName);
+    // Indicate that we resolved the folder path
+    logTelemetry(context, {
+      workflowFolderPathResolved: workflowFolderPath ? 'true' : 'false',
+    });
 
-    // Process mockable operations and write C# classes
-    await processAndWriteMockableOperations(operationInfo, outputParameters, unitTestFolderPath!, logicAppName);
+    // Ensure required directories exist
+    await fs.ensureDir(unitTestFolderPath);
+    await fs.ensureDir(workflowFolderPath);
+
+    // Process operations and write C# classes
+    await processAndWriteMockableOperations(operationInfo, outputParameters, workflowFolderPath, logicAppName);
+
+    // Log telemetry before proceeding
     logTelemetry(context, { workflowName, unitTestName });
 
     // Save the unit test
@@ -79,8 +143,17 @@ export async function saveBlankUnitTest(
       Object.assign(telemetryContext, context);
       await generateBlankCodefulUnitTest(context, projectPath, workflowName, unitTestName);
     });
+
+    logTelemetry(context, {
+      unitTestSaveStatus: 'Success',
+      unitTestProcessingTimeMs: (Date.now() - startTime).toString(),
+    });
   } catch (error) {
     // Handle errors using the helper function
+    logTelemetry(context, {
+      unitTestGenerationStatus: 'Failed',
+      errorMessage: parseError(error).message,
+    });
     handleError(context, error, 'saveBlankUnitTest');
   }
 }
@@ -207,21 +280,34 @@ async function generateBlankCodefulUnitTest(
     // Create the .cs file for the unit test
     ext.outputChannel.appendLog(localize('creatingCsFile', 'Creating .cs file for unit test...'));
     await createCsFile(unitTestFolderPath!, unitTestName, workflowName, logicAppName);
+    logTelemetry(context, { csFileCreated: 'true' });
 
     // Ensure .csproj and NuGet files exist
     ext.outputChannel.appendLog(localize('ensuringCsproj', 'Ensuring .csproj and NuGet configuration files exist...'));
     await ensureCsprojAndNugetFiles(testsDirectory, logicAppFolderPath, logicAppName);
+    logTelemetry(context, { csprojValid: 'true' });
     ext.outputChannel.appendLog(localize('csprojEnsured', 'Ensured .csproj and NuGet configuration files.'));
 
     // Add testsDirectory to workspace if not already included
     ext.outputChannel.appendLog(localize('checkingWorkspace', 'Checking if tests directory is already part of the workspace...'));
-    await ensureDirectoryInWorkspace(testsDirectory);
-    ext.outputChannel.appendLog(localize('workspaceUpdated', 'Tests directory added to workspace if not already included.'));
-
+    try {
+      await ensureDirectoryInWorkspace(testsDirectory);
+      ext.outputChannel.appendLog(localize('workspaceUpdated', 'Tests directory added to workspace if not already included.'));
+      logTelemetry(context, {
+        workspaceUpdatedStatus: 'true',
+      });
+    } catch (workspaceError) {
+      const reason = parseError(workspaceError).message;
+      logTelemetry(context, {
+        workspaceUpdated: 'false',
+        workspaceUpdatedStatus: 'false',
+        workspaceUpdateFailureReason: reason,
+      });
+      throw workspaceError;
+    }
     vscode.window.showInformationMessage(
       localize('info.generateCodefulUnitTest', 'Generated unit test "{0}" in "{1}"', unitTestName, unitTestFolderPath)
     );
-
     // Log success and notify the user
     const successMessage = localize('info.generateCodefulUnitTest', 'Generated unit test "{0}" in "{1}"', unitTestName, unitTestFolderPath);
     logSuccess(context, 'unitTestGenerationStatus', successMessage);
@@ -284,6 +370,7 @@ async function getMockableOperationTypes(): Promise<void> {
 
 /**
  * Determines if a given operation type can be mocked.
+ * The check is performed in a case-insensitive manner.
  * @param type - The operation type.
  * @returns True if the operation is mockable, false otherwise.
  */
@@ -351,17 +438,21 @@ export function transformParameters(params: any): any {
  * and writes C# class definitions to .cs files.
  * @param operationInfo - The operation info object.
  * @param outputParameters - The output parameters object.
- * @param unitTestFolderPath - The directory where the .cs files will be saved.
+ * @param workflowFolderPath - The directory where the .cs files will be saved.
  * @param logicAppName - The name of the Logic App to use as the namespace.
  */
 export async function processAndWriteMockableOperations(
   operationInfo: any,
   outputParameters: any,
-  unitTestFolderPath: string,
+  workflowFolderPath: string,
   logicAppName: string
 ): Promise<void> {
   // Keep track of all operation IDs we've processed to avoid duplicates
   const processedOperationIds = new Set<string>();
+
+  // Create or verify the "MockOutputs" folder inside the workflow folder
+  const mockOutputsFolderPath = path.join(workflowFolderPath, 'MockOutputs');
+  await fs.ensureDir(mockOutputsFolderPath);
 
   for (const operationName in operationInfo) {
     const operation = operationInfo[operationName];
@@ -376,10 +467,17 @@ export async function processAndWriteMockableOperations(
     }
     processedOperationIds.add(operationId);
 
+    // TODO: These should be retrieved from API as well, listMockableOperations doesn't differentiate between triggers and actions
+    // For triggers, check if it's one of these types:
+    const isTrigger = ['HTTPWEBHOOK', 'REQUEST', 'MANUAL', 'APICONNECTIONWEBHOOK'].includes(type.toUpperCase());
+
     // Only proceed if this operation type is mockable
     if (await isMockable(type)) {
       const cleanedOperationName = removeInvalidCharacters(operationId);
-      const className = toPascalCase(cleanedOperationName);
+      let className = toPascalCase(cleanedOperationName);
+
+      // Append appropriate suffix based on whether it's a trigger
+      className += isTrigger ? 'TriggerOutput' : 'ActionOutput';
 
       // Transform the output parameters for this operation
       const outputs = transformParameters(outputParameters[operationName]?.outputs || {});
@@ -391,7 +489,9 @@ export async function processAndWriteMockableOperations(
       const classContent = generateCSharpClasses(sanitizedLogicAppName, className, outputs);
 
       // Write the .cs file
-      const filePath = path.join(unitTestFolderPath, `${className}.cs`);
+      //const filePath = path.join(workflowFolderPath, `${className}.cs`);
+      const filePath = path.join(mockOutputsFolderPath, `${className}.cs`);
+
       await fs.writeFile(filePath, classContent, 'utf-8');
 
       // Log to output channel
@@ -408,9 +508,9 @@ export async function processAndWriteMockableOperations(
  * @returns {string} - The generated C# class definition.
  */
 export function generateCSharpClasses(namespaceName: string, rootClassName: string, data: any): string {
-  // 1) Build a root class definition (the entire data is assumed to be an object).
-  //    If data isn't type "object", you might want special handling, but typically
-  //    transformParameters() yields an object at the top level.
+  // Build a root class definition (the entire data is assumed to be an object).
+  // If data isn't type "object", you might want special handling, but typically
+  // transformParameters() yields an object at the top level.
 
   const rootDef = buildClassDefinition(rootClassName, {
     type: 'object',
@@ -418,26 +518,12 @@ export function generateCSharpClasses(namespaceName: string, rootClassName: stri
   });
 
   // Add `Name` and `Status` properties to the root class
-  rootDef.properties.push(
-    {
-      propertyName: 'Name',
-      propertyType: 'string',
-      description: 'The name of the object.',
-      isObject: false,
-    },
-    {
-      propertyName: 'Status',
-      propertyType: 'string',
-      description: 'The execution status of the object. Example: "Succeeded".',
-      isObject: false,
-    },
-    {
-      propertyName: 'StatusCode',
-      propertyType: 'int',
-      description: 'The HTTP status code returned by the action. Example: 200 for success.',
-      isObject: false,
-    }
-  );
+  rootDef.properties.push({
+    propertyName: 'StatusCode',
+    propertyType: 'int',
+    description: 'The HTTP status code returned by the action. Example: 200 for success.',
+    isObject: false,
+  });
 
   const adjustedNamespace = `${namespaceName}.Tests.Mocks`;
 
@@ -562,13 +648,10 @@ interface PropertyDefinition {
  * @returns {ClassDefinition} - A class definition describing the current node and its children.
  */
 export function buildClassDefinition(className: string, node: any): ClassDefinition {
-  // If there's a top-level "description" for the object, store it here:
+  // If there's a top-level "description" for the object
   const classDescription = node.description ? String(node.description) : null;
 
-  // We'll collect property info for the current class.
-
-  //function buildClassDefinition(className: string, node: any, isRoot: boolean): ClassDefinition {
-
+  // We'll collect property info for the current class
   const properties: PropertyDefinition[] = [];
 
   // We'll collect child classes if we see nested objects (type: "object").

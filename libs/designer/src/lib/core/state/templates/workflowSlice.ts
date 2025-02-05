@@ -8,7 +8,7 @@ export interface ResourceDetails {
   subscriptionId: string;
   resourceGroup: string;
   location: string;
-  workflowAppName: string;
+  workflowAppName?: string;
 }
 
 export interface ConnectionMapping {
@@ -19,48 +19,58 @@ export interface ConnectionMapping {
 export interface WorkflowState {
   existingWorkflowName?: string;
   isConsumption: boolean;
+  isCreateView: boolean;
   subscriptionId: string;
   resourceGroup: string;
   location: string;
-  workflowAppName: string;
+  workflowAppName?: string;
   connections: ConnectionMapping;
 }
 
 const initialState: WorkflowState = {
   isConsumption: false,
+  isCreateView: true,
   subscriptionId: '',
   resourceGroup: '',
   location: '',
-  workflowAppName: '',
   connections: {
     references: {},
     mapping: {},
   },
 };
 
+interface InitialWorkflowState {
+  existingWorkflowName?: string;
+  isConsumption: boolean;
+  subscriptionId: string;
+  resourceGroup: string;
+  location: string;
+  workflowAppName?: string;
+  references: ConnectionReferences;
+  isCreateView: boolean;
+}
+
 export const workflowSlice = createSlice({
   name: 'workflow',
   initialState,
   reducers: {
-    setExistingWorkflowName: (state, action: PayloadAction<string>) => {
-      state.existingWorkflowName = action.payload;
-    },
-    setResourceDetails: (state, action: PayloadAction<ResourceDetails>) => {
-      state.subscriptionId = action.payload.subscriptionId;
-      state.resourceGroup = action.payload.resourceGroup;
-      state.location = action.payload.location;
-      state.workflowAppName = action.payload.workflowAppName;
+    setInitialData: (state, action: PayloadAction<InitialWorkflowState>) => {
+      const { existingWorkflowName, isConsumption, subscriptionId, resourceGroup, location, workflowAppName, references, isCreateView } =
+        action.payload;
+      if (existingWorkflowName) {
+        state.existingWorkflowName = existingWorkflowName;
+      }
+
+      state.isConsumption = !!isConsumption;
+      state.subscriptionId = subscriptionId;
+      state.resourceGroup = resourceGroup;
+      state.location = location;
+      state.workflowAppName = workflowAppName;
+      state.connections.references = references;
+      state.isCreateView = isCreateView;
     },
     clearWorkflowDetails: (state) => {
       state.existingWorkflowName = undefined;
-    },
-    setConsumption: (state, action: PayloadAction<boolean>) => {
-      state.isConsumption = action.payload;
-      state.existingWorkflowName = undefined;
-    },
-    initializeConnectionReferences: (state, action: PayloadAction<ConnectionReferences>) => {
-      const references = action.payload;
-      state.connections.references = references;
     },
     changeConnectionMapping: (state, action: PayloadAction<UpdateConnectionPayload & { connectionKey: string }>) => {
       const {
@@ -91,12 +101,5 @@ export const workflowSlice = createSlice({
   },
 });
 
-export const {
-  setExistingWorkflowName,
-  setResourceDetails,
-  clearWorkflowDetails,
-  setConsumption,
-  initializeConnectionReferences,
-  changeConnectionMapping,
-} = workflowSlice.actions;
+export const { clearWorkflowDetails, setInitialData, changeConnectionMapping } = workflowSlice.actions;
 export default workflowSlice.reducer;
