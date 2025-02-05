@@ -51,6 +51,12 @@ const fileOptions = [
   { key: 'WorkflowParametersHeader', text: 'Workflow Parameters', itemType: DropdownMenuItemType.Header },
   { key: 'StandardWorkflowParameters.json', text: 'Standard Workflow Parameters' },
   { key: 'ConsumptionWorkflowParameters.json', text: 'Consumption Workflow Parameters' },
+
+  // Monitoring View scenarios
+  { key: 'divider_5', text: '-', itemType: DropdownMenuItemType.Divider },
+  { key: 'MonitoringViewHeader', text: 'Monitoring view scenarios', itemType: DropdownMenuItemType.Header },
+  { key: 'MonitoringViewConditional.json', text: 'Monitoring view conditional' },
+  { key: 'LoopsPager.json', text: 'Loops pager' },
 ];
 
 export const LocalLogicAppSelector: React.FC = () => {
