@@ -6,7 +6,7 @@ import type { ExpressionEditorEvent } from '../expressioneditor';
 import { ExpressionEditor } from '../expressioneditor';
 import { PanelSize } from '../panel/panelUtil';
 import type { TokenGroup } from '@microsoft/logic-apps-shared';
-import TokenPickerHandler from './plugins/TokenPickerHandler';
+import TokenPickerHandler from './plugins/InitializeTokenPickerExpressionHandler';
 import UpdateTokenNode from './plugins/UpdateTokenNode';
 import { TokenPickerFooter } from './tokenpickerfooter';
 import { TokenPickerHeader } from './tokenpickerheader';
@@ -22,7 +22,7 @@ import { useIntl } from 'react-intl';
 import { Button } from '@fluentui/react-components';
 import copilotLogo from './images/copilotLogo.svg';
 import { Nl2fExpressionAssistant } from './nl2fExpressionAssistant';
-import { isCopilotServiceEnabled } from '@microsoft/logic-apps-shared';
+import { escapeString, isCopilotServiceEnabled } from '@microsoft/logic-apps-shared';
 
 export const TokenPickerMode = {
   TOKEN: 'token',
@@ -164,16 +164,17 @@ export function TokenPicker({
     }
   }, [anchorKey, editor, windowDimensions.height]);
 
-  const handleUpdateExpressionToken = (s: string, n: NodeKey) => {
-    setExpression({ value: s, selectionStart: 0, selectionEnd: 0 });
+  const handleInitializeExpression = (s: string, n: NodeKey) => {
+    const escapedString = escapeString(s, /*requireSingleQuotesWrap*/ true);
+    setExpression({ value: escapedString, selectionStart: 0, selectionEnd: 0 });
     setSelectedMode(TokenPickerMode.EXPRESSION);
     setExpressionToBeUpdated(n);
 
     setTimeout(() => {
       expressionEditorRef.current?.setSelection({
-        startLineNumber: s.length + 1,
+        startLineNumber: escapedString.length + 1,
         startColumn: 1,
-        endLineNumber: s.length + 1,
+        endLineNumber: escapedString.length + 1,
         endColumn: 1,
       });
       expressionEditorRef.current?.focus();
@@ -415,7 +416,7 @@ export function TokenPicker({
           </div>
         </div>
       </Callout>
-      {tokenClickedCallback ? null : <TokenPickerHandler handleUpdateExpressionToken={handleUpdateExpressionToken} />}
+      {tokenClickedCallback ? null : <TokenPickerHandler handleInitializeExpression={handleInitializeExpression} />}
       {tokenClickedCallback ? null : <UpdateTokenNode />}
     </>
   );
