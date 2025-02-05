@@ -26,6 +26,7 @@ exports[`CollapsedCard > should render non-expanding state with operation visual
   >
     <div
       aria-label="Collapsed card with 6 actions"
+      style="display: flex; align-items: center;"
     >
       <img
         alt=""
@@ -59,6 +60,7 @@ exports[`CollapsedCard > should render non-expanding state without action text w
   >
     <div
       aria-label="Collapsed card with 3 actions"
+      style="display: flex; align-items: center;"
     >
       <img
         alt=""

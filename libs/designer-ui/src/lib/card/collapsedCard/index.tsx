@@ -57,7 +57,7 @@ export const CollapsedCard: React.FC<CollapsedCardProps> = memo(({ id, onContext
           {expandingString}
         </Text>
       ) : (
-        <div aria-label={ariaLabelIcons}>
+        <div aria-label={ariaLabelIcons} style={{ display: 'flex', alignItems: 'center' }}>
           {(operationVisuals ?? []).map((operationVisual, index: number) => {
             return (
               <img
