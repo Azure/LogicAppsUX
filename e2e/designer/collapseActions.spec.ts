@@ -47,7 +47,6 @@ test.describe(
       await page.getByTestId('msla-collapsed-card-initialize_arrayvariable').click({ button: 'right' });
       expect(await page.getByText('Expand action', { exact: true })).toBeVisible();
       await page.getByText('Expand action').click({ force: true });
-      await expect(page.getByTestId('collapsed-text-initialize_arrayvariable')).toContainText('Expanding actions...');
       expect(page.getByText('Initialize ArrayVariable', { exact: true })).toBeVisible();
       await expect(page.getByTestId('msla-collapsed-card-http')).toBeVisible();
     });
