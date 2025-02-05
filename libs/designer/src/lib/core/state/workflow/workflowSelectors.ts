@@ -52,7 +52,7 @@ export const getRootWorkflowGraphForLayout = createSelector(getWorkflowState, (d
   let newGraph = rootNode;
 
   if (Object.keys(collapsedActionsIds).length !== 0) {
-    newGraph = collapseFlowTree(newGraph, collapsedActionsIds);
+    newGraph = collapseFlowTree(newGraph, collapsedActionsIds).graph;
   }
 
   if (Object.keys(collapsedIds).length !== 0) {
@@ -64,6 +64,19 @@ export const getRootWorkflowGraphForLayout = createSelector(getWorkflowState, (d
 
   return newGraph;
 });
+
+export const useCollapsedMapping = () =>
+  useSelector(
+    createSelector(getWorkflowState, (state: WorkflowState) => {
+      const rootNode = state.graph;
+      const collapsedActionsIds = state.collapsedActionIds;
+      if (!rootNode) {
+        return {};
+      }
+
+      return collapseFlowTree(rootNode, collapsedActionsIds).collapsedMapping;
+    })
+  );
 
 const nonfilteredNodeTypes = [WORKFLOW_NODE_TYPES.SCOPE_CARD_NODE, WORKFLOW_NODE_TYPES.SUBGRAPH_CARD_NODE];
 const filterOutGraphChildren = (children: WorkflowNode[]) => children?.filter((child) => nonfilteredNodeTypes.includes(child.type));
