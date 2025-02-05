@@ -510,11 +510,39 @@ describe('mapDefinitions/MapDefinitionDeserializer', () => {
         expect((resultEntries[7][1].inputs[0] as ConnectionUnit).reactFlowKey).toEqual('source-/ns0:Root/ConditionalMapping/ItemPrice');
       });
 
+
+      it('creates conditional connections under one object', () => {
+        simpleMap['ns0:Root'] = {
+          ConditionalMapping:
+   { '6746506B-6072-41DE-8B64-81CE6E7AF9DD-$if(/ns0:Root/DirectTranslation/EmployeeID)':
+     { ItemPrice: '/ns0:Root/DirectTranslation/EmployeeName'},
+    ItemQuantity: '/ns0:Root/DirectTranslation/EmployeeID',
+    '6746506B-6072-41DE-8B64-81CE6E7AF9DG-$if(/ns0:Root/DirectTranslation/EmployeeID)':
+      {ItemDiscount: '/ns0:Root/DirectTranslation/EmployeeName'}
+   }
+        };
+
+        const mapDefinitionDeserializer = new MapDefinitionDeserializer(simpleMap, extendedSource, extendedTarget, functionMock);
+        const result = mapDefinitionDeserializer.convertFromMapDefinition();
+        const resultEntries = Object.entries(result);
+        resultEntries.sort();
+
+        const firstIf = getConnectionsForFlowId(result, '$if(/ns0:Root/DirectTranslation/EmployeeID)');
+        expect(firstIf).toBeDefined();
+        expect(firstIf.outputs[0].reactFlowKey).toEqual('target-/ns0:Root/FirstLoop');
+        // expect(firstLoopConnection.outputs[1].reactFlowKey).toEqual('target-/ns0:Root/SecondLoop');
+
+        const name = getConnectionsForFlowId(result, 'source-/ns0:Root/FirstLoop/Name');
+        expect(name).toBeDefined();
+        expect(name.outputs[0].reactFlowKey).toEqual('target-/ns0:Root/FirstLoop/Name');
+        expect(name.outputs[1].reactFlowKey).toEqual('target-/ns0:Root/SecondLoop/Number');
+      });
+
       it('creates a conditional property connection with function', () => {
         simpleMap['ns0:Root'] = {
           ConditionalMapping: {
             ItemPrice: '/ns0:Root/ConditionalMapping/ItemPrice',
-            '$if(is-greater-than(multiply(/ns0:Root/ConditionalMapping/ItemPrice, /ns0:Root/ConditionalMapping/ItemQuantity), 200))': {
+            '6746506B-6072-41DE-8B64-81CE6E7AF9DD-$if(is-greater-than(multiply(/ns0:Root/ConditionalMapping/ItemPrice, /ns0:Root/ConditionalMapping/ItemQuantity), 200))': {
               ItemDiscount: 'multiply(/ns0:Root/ConditionalMapping/ItemPrice, /ns0:Root/ConditionalMapping/ItemQuantity, 0.05)',
             },
           },
@@ -952,7 +980,7 @@ describe('mapDefinitions/MapDefinitionDeserializer', () => {
           ConditionalLooping: {
             '$for(/ns0:Root/ConditionalLooping/FlatterCatalog/ns0:Product)': {
               CategorizedCatalog: {
-                '$if(is-equal(substring(SKU, 1, 2), "1"))': {
+                '6746506B-6072-41DE-8B64-81CE6E7AF9DD-$if(is-equal(substring(SKU, 1, 2), "1"))': {
                   PetProduct: {
                     Name: 'Name',
                   },

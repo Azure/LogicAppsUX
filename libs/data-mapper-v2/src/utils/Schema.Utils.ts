@@ -128,7 +128,7 @@ export const flattenSchemaNodeMap = (schemaNode: SchemaNodeExtended): Record<str
 export const isLeafNode = (schemaNode: SchemaNodeExtended): boolean => schemaNode.children.length < 1;
 
 export const removeGuidFromKey = (key: string) => {
-  return isAGuid(key.substring(guidLength)) ? key.substring(guidLength + 1) : key;
+  return isAGuid(key.substring(0,guidLength)) ? key.substring(guidLength + 1) : key;
 }
 
 /**
