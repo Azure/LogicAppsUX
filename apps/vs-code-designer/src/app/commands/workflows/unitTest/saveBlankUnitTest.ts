@@ -473,7 +473,7 @@ export async function processAndWriteMockableOperations(
 
     // Only proceed if this operation type is mockable
     if (await isMockable(type)) {
-      const cleanedOperationName = removeInvalidCharacters(operationId);
+      const cleanedOperationName = removeInvalidCharacters(operationName);
       let className = toPascalCase(cleanedOperationName);
 
       // Append appropriate suffix based on whether it's a trigger
