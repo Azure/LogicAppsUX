@@ -776,14 +776,14 @@ describe('mapDefinitions/MapDefinitionDeserializer', () => {
 
       it ('loop adjacent connection with child', () => {
         simpleMap['ns0:Root'] = {
-          '$for(/ns0:Root/Nested)': {
+          '6746506B-6072-41DE-8B64-81CE6E7AF9DD-$for(/ns0:Root/Nested)': {
             Nested: {
-              '$for(A)': {
+              '6746506B-6072-41DE-8B64-81CE6E7AF999-$for(A)': {
                 A: {
                   Name: 'Name',
                 }
               },
-              '$for(B)': {
+              '7646506B-6072-41DE-8B64-81CE6E7AF99-$for(A)': {
                 B: {
                   Name: 'Name',
                 }

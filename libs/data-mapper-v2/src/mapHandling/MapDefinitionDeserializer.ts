@@ -493,8 +493,16 @@ export class MapDefinitionDeserializer {
 
   private getAbsoluteLoopKey = (key: string): string => {
     if (!key.includes(this._sourceSchema.schemaTreeRoot.key)) {
-      const lastLoop = this._loop.length > 0 ? this.getLowestLoop().key : '';
-      return `${lastLoop}/${key}`;
+      let foundKey: string = '';
+      this._loop.forEach((loop) => {
+        const possibleKey = `${loop.key}/${key}`
+        if (this._sourceSchemaFlattened[`${addSourceReactFlowPrefix(possibleKey)}`]) {
+          foundKey =`${loop.key}/${key}`;
+        }
+      })
+      if (foundKey !== '') {
+        return foundKey;
+      }
     }
     return key;
   };
