@@ -1,7 +1,7 @@
 {
   "name": "vscode-azurelogicapps",
   "displayName": "Azure Logic Apps (Standard)",
-  "version": "5.28.0",
+  "version": "5.35.0",
   "aiKey": "setInGitHubBuild",
   "repository": "https://github.com/Azure/LogicAppsUX",
   "main": "main.js",
@@ -376,16 +376,8 @@
     "menus": {
       "azureLogicAppsStandard.submenus.workspaceActions": [
         {
-          "command": "azureLogicAppsStandard.createNewProject",
-          "group": "1_create@1"
-        },
-        {
           "command": "azureLogicAppsStandard.createNewCodeProject",
           "group": "1_create@2"
-        },
-        {
-          "command": "azureLogicAppsStandard.createCodeless",
-          "group": "1_create@3"
         },
         {
           "command": "azureLogicAppsStandard.deploy",
@@ -651,6 +643,16 @@
           "group": "zzz_LogicApptools@1"
         },
         {
+          "command": "azureLogicAppsStandard.createNewProject",
+          "when": "explorerResourceIsRoot == true",
+          "group": "zzz_LogicApptools@1"
+        },
+        {
+          "command": "azureLogicAppsStandard.createCodeless",
+          "when": "explorerResourceIsRoot == true",
+          "group": "zzz_LogicApptools@1"
+        },
+        {
           "command": "azureLogicAppsStandard.openOverview",
           "when": "resourceFilename==workflow.json",
           "group": "navigation@1"
@@ -728,6 +730,10 @@
         {
           "command": "azureLogicAppsStandard.generateDeploymentScripts",
           "when": "never"
+        },
+        {
+          "command": "azureLogicAppsStandard.createNewProject",
+          "when": "never"
         }
       ]
     },
@@ -775,7 +781,7 @@
             "description": "The default version of Data Mapper to use when performing operations like \"Create data map\".",
             "enumDescriptions": [
               "Version 1",
-              "Version 2 (Beta)"
+              "Version 2 (Preview)"
             ],
             "default": 1
           },

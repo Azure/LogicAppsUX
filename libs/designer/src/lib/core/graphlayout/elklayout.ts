@@ -2,14 +2,7 @@ import type { WorkflowNode } from '../parsers/models/workflowNode';
 import { isWorkflowNode } from '../parsers/models/workflowNode';
 import { useReadOnly } from '../state/designerOptions/designerOptionsSelectors';
 import { getRootWorkflowGraphForLayout } from '../state/workflow/workflowSelectors';
-import {
-  LogEntryLevel,
-  LoggerService,
-  Status,
-  useThrottledEffect,
-  WORKFLOW_NODE_TYPES,
-  WORKFLOW_EDGE_TYPES,
-} from '@microsoft/logic-apps-shared';
+import { LogEntryLevel, LoggerService, useThrottledEffect, WORKFLOW_NODE_TYPES, WORKFLOW_EDGE_TYPES } from '@microsoft/logic-apps-shared';
 import type { ElkExtendedEdge, ElkNode } from 'elkjs/lib/elk.bundled';
 import ELK from 'elkjs/lib/elk.bundled';
 import { useState } from 'react';
@@ -209,19 +202,12 @@ export const useLayout = (): [Node[], Edge[], number[]] => {
         return;
       }
       const elkGraph: ElkNode = convertWorkflowGraphToElkGraph(workflowGraph);
-      const traceId = LoggerService().startTrace({
-        action: 'useLayout',
-        actionModifier: 'run Elk Layout',
-        name: 'Elk Layout',
-        source: 'elklayout.ts',
-      });
       elkLayout(elkGraph, readOnly)
         .then((g) => {
           const [n, e, s] = convertElkGraphToReactFlow(g);
           setReactFlowNodes(n);
           setReactFlowEdges(e);
           setReactFlowSize(s);
-          LoggerService().endTrace(traceId, { status: Status.Success });
         })
         .catch((err) => {
           const graphAsString = JSON.stringify(elkGraph);
@@ -230,9 +216,7 @@ export const useLayout = (): [Node[], Edge[], number[]] => {
             area: 'useLayout',
             error: err,
             message: `${err?.message} - ${graphAsString}`,
-            traceId: traceId,
           });
-          LoggerService().endTrace(traceId, { status: Status.Failure });
         });
     },
     [readOnly, workflowGraph],

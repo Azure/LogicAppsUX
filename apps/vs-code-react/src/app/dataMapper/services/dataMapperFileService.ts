@@ -10,12 +10,18 @@ export class DataMapperFileService implements IDataMapperFileService {
     this.sendMsgToVsix = sendMsgToVsix;
   }
 
+  public isTestDisabledForOS = () => {
+    this.sendMsgToVsix({
+      command: ExtensionCommand.isTestDisabledForOS,
+    });
+  };
+
   public getSchemaFromFile = (schemaType: SchemaType) => {
     this.sendMsgToVsix({
       command: ExtensionCommand.addSchemaFromFile,
-      data: schemaType 
+      data: schemaType,
     });
-  }
+  };
 
   public saveMapDefinitionCall = (dataMapDefinition: string, mapMetadata: string) => {
     this.sendMsgToVsix({

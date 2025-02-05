@@ -86,8 +86,12 @@ export const unescapeString = (input: string): string => {
   });
 };
 
-export const escapeString = (input: string): string => {
-  return input.replace(/[\n\r\t\v]/g, (char) => {
+export const escapeString = (input: string, requireSingleQuotesWrap?: boolean): string => {
+  if (requireSingleQuotesWrap && !/'.*[\n\r\t\v].*'/.test(input)) {
+    return input;
+  }
+
+  return input?.replace(/[\n\r\t\v]/g, (char) => {
     switch (char) {
       case '\n':
         return '\\n';

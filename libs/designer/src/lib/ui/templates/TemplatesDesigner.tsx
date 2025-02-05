@@ -19,6 +19,7 @@ export type CreateWorkflowHandler = (
 ) => Promise<void>;
 export interface TemplatesDesignerProps {
   detailFilters: TemplateDetailFilterType;
+  isWorkflowEmpty?: boolean;
   createWorkflowCall: CreateWorkflowHandler;
 }
 

@@ -15,6 +15,7 @@ import {
   getEncodeValue,
   getJSONValueFromString,
   parameterValueToString,
+  shouldEncodeParameterValueForOperationBasedOnMetadata,
 } from '../../utils/parameters/helper';
 import { buildOperationDetailsFromControls, serializeFormData } from '../../utils/swagger/inputsbuilder';
 import type { Settings } from './settings';
@@ -392,7 +393,12 @@ const getOperationInputsToSerialize = (rootState: RootState, operationId: string
   const idReplacements = rootState.workflow.idReplacements;
   return getOperationInputParameters(rootState, operationId).map((input) => ({
     ...input,
-    value: parameterValueToString(input, true /* isDefinitionValue */, idReplacements),
+    value: parameterValueToString(
+      input,
+      true /* isDefinitionValue */,
+      idReplacements,
+      shouldEncodeParameterValueForOperationBasedOnMetadata(rootState.operations.operationInfo[operationId] ?? {})
+    ),
   }));
 };
 
