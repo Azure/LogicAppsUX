@@ -1,4 +1,11 @@
 # Logic Apps Designer
+### [5.35.2](https://github.com/Azure/LogicAppsUX/compare/v5.35.1...v5.35.2) (2025-02-05)
+
+
+### Bug Fixes
+
+* **designer:** Loop pager visibility in do-until action ([#6551](https://github.com/Azure/LogicAppsUX/issues/6551)) ([f1bbbef](https://github.com/Azure/LogicAppsUX/commit/f1bbbef392a40471627a57d531686579915f0438)), closes [#6548](https://github.com/Azure/LogicAppsUX/issues/6548)
+
 ### [5.35.1](https://github.com/Azure/LogicAppsUX/compare/v5.35.0...v5.35.1) (2025-02-04)
 
 
