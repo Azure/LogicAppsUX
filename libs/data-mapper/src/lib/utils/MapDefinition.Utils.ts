@@ -1,5 +1,5 @@
-import type { MapDefinitionEntry } from '@microsoft/logic-apps-shared';
-import * as yaml from 'js-yaml';
+import { guid, type MapDefinitionEntry } from '@microsoft/logic-apps-shared';
+import { parse } from 'yaml';
 
 /*
   Note: This method is copied into the commands.ts file in the vs-code-data-mapper package
@@ -9,8 +9,10 @@ import * as yaml from 'js-yaml';
 export const loadMapDefinition = (mapDefinitionString: string | undefined): MapDefinitionEntry => {
   if (mapDefinitionString) {
     // Add extra escapes around custom string values, so that we don't lose which ones are which
-    const modifiedMapDefinitionString = mapDefinitionString.replaceAll('"', `\\"`);
-    const mapDefinition = yaml.load(modifiedMapDefinitionString) as MapDefinitionEntry;
+    let modifiedMapDefinitionString = mapDefinitionString.replaceAll('"', `\\"`);
+    modifiedMapDefinitionString = modifiedMapDefinitionString.replaceAll(`$for`, () => `${guid()}-$for`);
+    modifiedMapDefinitionString = modifiedMapDefinitionString.replaceAll(`$if`, () => `${guid()}-$if`);
+    const mapDefinition = parse(modifiedMapDefinitionString,  { strict: false, uniqueKeys: false}) as MapDefinitionEntry;
 
     // Now that we've parsed the yml, remove the extra escaped quotes to restore the values
     fixMapDefinitionCustomValues(mapDefinition);

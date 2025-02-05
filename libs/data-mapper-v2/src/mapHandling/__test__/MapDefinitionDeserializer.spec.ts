@@ -1,5 +1,5 @@
 import { directAccessPseudoFunctionKey, functionMock, ifPseudoFunctionKey, indexPseudoFunctionKey } from '../../models';
-import type { Connection, ConnectionUnit, CustomValueConnection } from '../../models/Connection';
+import type { Connection, ConnectionDictionary, ConnectionUnit, CustomValueConnection } from '../../models/Connection';
 import { convertSchemaToSchemaExtended } from '../../utils/Schema.Utils';
 import { MapDefinitionDeserializer, getLoopTargetNodeWithJson } from '../MapDefinitionDeserializer';
 import {
@@ -23,6 +23,7 @@ import {
 } from '../../__mocks__/schemas';
 import { describe, vi, beforeEach, afterEach, beforeAll, afterAll, it, test, expect } from 'vitest';
 import { isCustomValueConnection } from '../../utils/Connection.Utils';
+import { N } from 'vitest/dist/chunks/reporters.C4ZHgdxQ.js';
 
 describe('mapDefinitions/MapDefinitionDeserializer', () => {
   describe('XML', () => {
@@ -429,6 +430,28 @@ describe('mapDefinitions/MapDefinitionDeserializer', () => {
         expect((resultEntries[0][1].inputs[1] as ConnectionUnit).reactFlowKey).toEqual('source-/ns0:Root/ConditionalMapping/ItemPrice');
       });
 
+      it('creates two conditionals under the same object', () => {
+        simpleMap['ns0:Root'] = {
+          ConditionalMapping: {
+            '$if(/ns0:Root/ConditionalMapping/ItemQuantity)': {
+              ItemDiscount: '/ns0:Root/ConditionalMapping/ItemPrice',
+            },
+          },
+        };
+
+        const mapDefinitionDeserializer = new MapDefinitionDeserializer(simpleMap, extendedSource, extendedTarget, functionMock);
+        const result = mapDefinitionDeserializer.convertFromMapDefinition();
+        const resultEntries = Object.entries(result);
+        resultEntries.sort();
+
+        expect(resultEntries.length).toEqual(4);
+
+        expect(resultEntries[0][0]).toContain(ifPseudoFunctionKey);
+        expect(resultEntries[0][1].outputs[0].reactFlowKey).toEqual('target-/ns0:Root/ConditionalMapping/ItemDiscount');
+        expect((resultEntries[0][1].inputs[0] as ConnectionUnit).reactFlowKey).toEqual('source-/ns0:Root/ConditionalMapping/ItemQuantity');
+        expect((resultEntries[0][1].inputs[1] as ConnectionUnit).reactFlowKey).toEqual('source-/ns0:Root/ConditionalMapping/ItemPrice');
+      });
+
       it('creates a conditional property connection with function', () => {
         simpleMap['ns0:Root'] = {
           ConditionalMapping: {
@@ -751,6 +774,46 @@ describe('mapDefinitions/MapDefinitionDeserializer', () => {
         expect(resultEntries[3][1]).toBeTruthy();
       });
 
+      it ('loop adjacent connection with child', () => {
+        simpleMap['ns0:Root'] = {
+          '$for(/ns0:Root/Nested)': {
+            Nested: {
+              '$for(A)': {
+                A: {
+                  Name: 'Name',
+                }
+              },
+              '$for(B)': {
+                B: {
+                  Name: 'Name',
+                }
+              }
+            }
+          }
+        };
+
+        const extendedAdjSchema = convertSchemaToSchemaExtended(adjacentLoopsSchema as any as DataMapSchema);
+
+        const mapDefinitionDeserializer = new MapDefinitionDeserializer(simpleMap, extendedAdjSchema, extendedAdjSchema, functionMock);
+        const result = mapDefinitionDeserializer.convertFromMapDefinition();
+        const resultEntries = Object.entries(result);
+        resultEntries.sort();
+
+        const firstLoopConnection = getConnectionsForFlowId(result, 'source-/ns0:Root/Nested');
+        expect(firstLoopConnection).toBeDefined();
+        expect(firstLoopConnection.outputs[0].reactFlowKey).toEqual('target-/ns0:Root/Nested');
+
+        const a = getConnectionsForFlowId(result, 'source-/ns0:Root/Nested/A');
+        expect(a).toBeDefined();
+        expect(a.outputs[0].reactFlowKey).toEqual('target-/ns0:Root/Nested/A');
+        const aName = getConnectionsForFlowId(result, 'source-/ns0:Root/Nested/A/Name');
+        expect(aName).toBeDefined();
+        expect(aName.outputs[0].reactFlowKey).toEqual('target-/ns0:Root/Nested/A/Name');
+        expect(a.outputs[1].reactFlowKey).toEqual('target-/ns0:Root/Nested/B');
+        expect(aName.outputs[1].reactFlowKey).toEqual('target-/ns0:Root/Nested/B/Name');
+
+      })
+
       it ('loop adjacent connection', () => {
         simpleMap['ns0:Root'] = {
             '6746506B-6072-41DE-8B64-81CE6E7AF9DC-$for(/ns0:Root/FirstLoop)': {
@@ -771,7 +834,21 @@ describe('mapDefinitions/MapDefinitionDeserializer', () => {
         const result = mapDefinitionDeserializer.convertFromMapDefinition();
         const resultEntries = Object.entries(result);
         resultEntries.sort();
+
+        const firstLoopConnection = getConnectionsForFlowId(result, 'source-/ns0:Root/FirstLoop');
+        expect(firstLoopConnection).toBeDefined();
+        expect(firstLoopConnection.outputs[0].reactFlowKey).toEqual('target-/ns0:Root/FirstLoop');
+        expect(firstLoopConnection.outputs[1].reactFlowKey).toEqual('target-/ns0:Root/SecondLoop');
+
+        const name = getConnectionsForFlowId(result, 'source-/ns0:Root/FirstLoop/Name');
+        expect(name).toBeDefined();
+        expect(name.outputs[0].reactFlowKey).toEqual('target-/ns0:Root/FirstLoop/Name');
+        expect(name.outputs[1].reactFlowKey).toEqual('target-/ns0:Root/SecondLoop/Number');
       })
+
+      const getConnectionsForFlowId = (definition: ConnectionDictionary, id: string) => {
+        return definition[id];
+      }
 
       it('creates a loop connection with two functions below it', () => {
         simpleMap['ns0:Root'] = {

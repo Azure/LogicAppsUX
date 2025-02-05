@@ -47,6 +47,51 @@
           ],
           "qName": "SecondLoop",
           "parentKey": "/ns0:Root"
+        },
+        {
+          "key": "/ns0:Root/Nested",
+          "name": "Nested",
+          "type": "Complex",
+          "properties": "Repeating",
+          "children": [
+            {
+              "key": "/ns0:Root/Nested/A",
+              "name": "A",
+              "type": "Complex",
+              "properties": "Repeating",
+              "parentKey": "/ns0:Root/Nested",
+              "children": [
+                {
+                  "key": "/ns0:Root/Nested/A/Name",
+                  "name": "Name",
+                  "type": "Decimal",
+                  "properties": "None",
+                  "qName": "Name",
+                  "parentKey": "/ns0:Root/Nested/A"
+                }
+              ]
+              
+            },            {
+              "key": "/ns0:Root/Nested/B",
+              "name": "B",
+              "type": "Complex",
+              "properties": "Repeating",
+              "qName": "B",
+              "parentKey": "/ns0:Root/Nested",
+              "children": [
+                {
+                  "key": "/ns0:Root/Nested/B/Name",
+                  "name": "Name",
+                  "type": "Decimal",
+                  "properties": "None",
+                  "qName": "Name",
+                  "parentKey": "/ns0:Root/Nested/B"
+                }
+              ]
+            }
+          ],
+          "qName": "Nested",
+          "parentKey": "/ns0:Root"
         }
       ],
       "qName": "ns0:Root"

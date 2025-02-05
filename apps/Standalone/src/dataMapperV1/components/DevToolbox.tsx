@@ -1,4 +1,4 @@
-import { comprehensiveMapDefinition, fullTranscriptMapDefinitionString, transcriptJsonMapDefinitionString } from '../mapDefinitions';
+import { comprehensiveMapDefinition, fullTranscriptMapDefinitionString, transcriptJsonMapDefinitionString, x12MapDefinitionString } from '../mapDefinitions';
 import { testMetadata } from '../mapMetadata';
 import { LoadingMethod, dataMapDataLoaderSlice, loadDataMap } from '../state/DataMapDataLoader';
 import { loadSourceSchema, loadTargetSchema, schemaDataLoaderSlice } from '../state/SchemaDataLoader';
@@ -42,7 +42,11 @@ const mapDefinitionDropdownOptions: MapDefDropdownOption[] = [
     key: 'jsonTranscriptMapDefinition',
     text: 'JSON Transcript',
     data: { mapDefinitionString: transcriptJsonMapDefinitionString, associatedSchemaIdx: 3 },
-  },
+  },{
+    key: 'x12MapDefinition',
+    text: 'X12',
+    data: { mapDefinitionString: x12MapDefinitionString, associatedSchemaIdx: 5 },
+  }
 ];
 
 interface SchemaFileData {

@@ -16,9 +16,9 @@ import {
 import { isFunctionData } from '../utils/Function.Utils';
 import { DeserializationError, MapCheckerItemSeverity, MapIssueType, type MapIssue } from '../utils/MapChecker.Utils';
 import { addSourceReactFlowPrefix, addTargetReactFlowPrefix, createReactFlowFunctionKey } from '../utils/ReactFlow.Util';
-import { findNodeForKey, flattenSchemaIntoDictionary, isSchemaNodeExtended } from '../utils/Schema.Utils';
+import { findNodeForKey, flattenSchemaIntoDictionary, isSchemaNodeExtended, removeGuidFromKey } from '../utils/Schema.Utils';
 import type { MapDefinitionEntry, SchemaExtended, SchemaNodeDictionary, SchemaNodeExtended } from '@microsoft/logic-apps-shared';
-import { SchemaNodeProperty, SchemaType } from '@microsoft/logic-apps-shared';
+import { guidLength, isAGuid, SchemaNodeProperty, SchemaType } from '@microsoft/logic-apps-shared';
 
 interface LoopMetadata {
   needsConnection: boolean;
@@ -415,7 +415,8 @@ export class MapDefinitionDeserializer {
     rightSideStringOrObject: string | object,
     connections: ConnectionDictionary
   ) => {
-    const tokens = separateFunctions(leftSideKey);
+    const leftSideKeyNoGuid = removeGuidFromKey(leftSideKey);
+    const tokens = separateFunctions(leftSideKeyNoGuid);
     const forOrIfObj = createSchemaNodeOrFunction(tokens);
     if ((forOrIfObj.term as ParseFunc).name === DReservedToken.if) {
       if (parentTargetNode) {
