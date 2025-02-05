@@ -20,7 +20,12 @@ export const useOperationVisuals = (nodeId: string) =>
 export const useOperationsVisuals = (nodesId: string[]) =>
   useSelector(
     createSelector(getOperationState, (state) => {
-      return nodesId.map((nodeId) => getRecordEntry(state.operationMetadata, nodeId) ?? { brandColor: '', iconUri: '' });
+      return nodesId.map((nodeId) => {
+        return {
+          ...(getRecordEntry(state.operationMetadata, nodeId) ?? { brandColor: '', iconUri: '' }),
+          id: nodeId,
+        };
+      });
     })
   );
 

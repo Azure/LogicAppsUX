@@ -11,6 +11,7 @@ interface CollapsedCardProps {
   isExpanding: boolean;
   onContextMenu?: MouseEventHandler<HTMLElement>;
   operationVisuals?: Array<{
+    id: string;
     iconUri: string;
     brandColor: string;
   }>;
@@ -30,11 +31,12 @@ export const CollapsedCard: React.FC<CollapsedCardProps> = memo(({ id, onContext
 
   const ariaLabelIcons = intl.formatMessage(
     {
-      defaultMessage: 'Collapsed card with {actionCount} actions',
-      id: 'Z2Pi/A',
+      defaultMessage:
+        '{actionCount, plural, one {Collapsed card with # action} =0 {Collapsed card with 0 Actions} other {Collapsed card with # actions}}',
+      id: 'NNCFBV',
       description: 'Accessibility label for collapsed card with action count',
     },
-    { actionCount }
+    { actionCount: actionCount + 3 }
   );
 
   const expandingString = intl.formatMessage({
@@ -57,7 +59,15 @@ export const CollapsedCard: React.FC<CollapsedCardProps> = memo(({ id, onContext
       ) : (
         <div aria-label={ariaLabelIcons}>
           {(operationVisuals ?? []).map((operationVisual, index: number) => {
-            return <img key={index} className="msla-collapsed-card__icon" src={operationVisual.iconUri} alt="" />;
+            return (
+              <img
+                key={index}
+                className="msla-collapsed-card__icon"
+                src={operationVisual.iconUri}
+                aria-label={`${operationVisual.id} operation icon`}
+                alt=""
+              />
+            );
           })}
           {actionCount <= 0 ? null : <Text data-automation-id={`collapsed-text-${id}`}>{actionString}</Text>}
         </div>
