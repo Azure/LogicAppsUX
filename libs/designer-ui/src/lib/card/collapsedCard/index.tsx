@@ -28,6 +28,15 @@ export const CollapsedCard: React.FC<CollapsedCardProps> = memo(({ id, onContext
     { actionCount }
   );
 
+  const ariaLabelIcons = intl.formatMessage(
+    {
+      defaultMessage: 'Collapsed card with {actionCount} actions',
+      id: 'Z2Pi/A',
+      description: 'Accessibility label for collapsed card with action count',
+    },
+    { actionCount }
+  );
+
   const expandingString = intl.formatMessage({
     defaultMessage: 'Expanding actions...',
     id: 'LuIkbo',
@@ -46,12 +55,12 @@ export const CollapsedCard: React.FC<CollapsedCardProps> = memo(({ id, onContext
           {expandingString}
         </Text>
       ) : (
-        <>
+        <div aria-label={ariaLabelIcons}>
           {(operationVisuals ?? []).map((operationVisual, index: number) => {
             return <img key={index} className="msla-collapsed-card__icon" src={operationVisual.iconUri} alt="" />;
           })}
           {actionCount <= 0 ? null : <Text data-automation-id={`collapsed-text-${id}`}>{actionString}</Text>}
-        </>
+        </div>
       )}
     </div>
   );
