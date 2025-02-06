@@ -16,7 +16,7 @@ import {
 import { isFunctionData } from '../utils/Function.Utils';
 import { DeserializationError, MapCheckerItemSeverity, MapIssueType, type MapIssue } from '../utils/MapChecker.Utils';
 import { addSourceReactFlowPrefix, addTargetReactFlowPrefix, createReactFlowFunctionKey } from '../utils/ReactFlow.Util';
-import { findNodeForKey, flattenSchemaIntoDictionary, isSchemaNodeExtended } from '../utils/Schema.Utils';
+import { findNodeForKey, flattenSchemaIntoDictionary, isSchemaNodeExtended, removeGuidFromKey } from '../utils/Schema.Utils';
 import type { MapDefinitionEntry, SchemaExtended, SchemaNodeDictionary, SchemaNodeExtended } from '@microsoft/logic-apps-shared';
 import { SchemaNodeProperty, SchemaType } from '@microsoft/logic-apps-shared';
 
@@ -198,32 +198,40 @@ export class MapDefinitionDeserializer {
       if (this._createdFunctions[metadataString]) {
         funcKey = this._createdFunctions[metadataString];
         if (connections[funcKey]) {
+          // function alread exists so no need to recreate
           func = connections[funcKey].self.node as FunctionData;
-        } else {
-          const issueType = MapIssueType.FunctionNotFound;
-          const error: MapIssue = {
-            issueType: issueType,
-            severity: MapCheckerItemSeverity.Warning,
-            reactFlowId: funcKey,
-          };
-          throw new DeserializationError(issueType, error);
+          // function to target
+          if (targetNode !== undefined) {
+            applyConnectionValue(connections, {
+              targetNode: targetNode,
+              targetNodeReactFlowKey: this.getTargetKey(targetNode),
+              findInputSlot: true,
+              input: createNodeConnection(func, funcKey),
+            });
+          }
+          return;
         }
+        const issueType = MapIssueType.FunctionNotFound;
+        const error: MapIssue = {
+          issueType: issueType,
+          severity: MapCheckerItemSeverity.Warning,
+          reactFlowId: funcKey,
+        };
+        throw new DeserializationError(issueType, error);
       }
       // get function node
-      else {
-        func = {
-          ...getSourceNode(
-            functionMetadata.name,
-            this._sourceSchema,
-            functionMetadata.name.length + 1,
-            this._functionsMetadata,
-            this._createdFunctions
-          ),
-        } as FunctionData;
-        funcKey = createReactFlowFunctionKey(func);
-        func.key = funcKey;
-        this._createdFunctions[metadataString] = funcKey;
-      }
+      func = {
+        ...getSourceNode(
+          functionMetadata.name,
+          this._sourceSchema,
+          functionMetadata.name.length + 1,
+          this._functionsMetadata,
+          this._createdFunctions
+        ),
+      } as FunctionData;
+      funcKey = createReactFlowFunctionKey(func);
+      func.key = funcKey;
+      this._createdFunctions[metadataString] = funcKey;
 
       // function to target
       if (targetNode !== undefined) {
@@ -415,9 +423,10 @@ export class MapDefinitionDeserializer {
     rightSideStringOrObject: string | object,
     connections: ConnectionDictionary
   ) => {
-    const tokens = separateFunctions(leftSideKey);
+    const leftSideKeyNoGuid = removeGuidFromKey(leftSideKey);
+    const tokens = separateFunctions(leftSideKeyNoGuid);
     const forOrIfObj = createSchemaNodeOrFunction(tokens);
-    if ((forOrIfObj.term as ParseFunc).name === DReservedToken.if) {
+    if ((forOrIfObj.term as ParseFunc).name.includes(DReservedToken.if)) {
       if (parentTargetNode) {
         this.handleIfFunction(forOrIfObj.term as ParseFunc, connections);
       }
@@ -492,8 +501,16 @@ export class MapDefinitionDeserializer {
 
   private getAbsoluteLoopKey = (key: string): string => {
     if (!key.includes(this._sourceSchema.schemaTreeRoot.key)) {
-      const lastLoop = this._loop.length > 0 ? this.getLowestLoop().key : '';
-      return `${lastLoop}/${key}`;
+      let foundKey = '';
+      this._loop.forEach((loop) => {
+        const possibleKey = `${loop.key}/${key}`;
+        if (this._sourceSchemaFlattened[`${addSourceReactFlowPrefix(possibleKey)}`]) {
+          foundKey = `${loop.key}/${key}`;
+        }
+      });
+      if (foundKey !== '') {
+        return foundKey;
+      }
     }
     return key;
   };
