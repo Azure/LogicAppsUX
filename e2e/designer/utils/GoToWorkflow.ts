@@ -19,3 +19,12 @@ export const GoToMockWorkflow = async (page: Page, workflowName: string) => {
   await page.getByRole('button', { name: 'Toolbox' }).click();
   await page.getByLabel('fit view').click({ force: true });
 };
+
+export const LoadRunFile = async (page: Page, runName: string) => {
+  await page.getByRole('button', { name: 'Toolbox' }).click();
+  await page.getByRole('heading', { name: '▼ Context Settings' }).click();
+  await page.getByText('Monitoring View', { exact: true }).click();
+  await page.getByText('Select a run file to load').click();
+  await page.getByRole('option', { name: runName, exact: true }).click();
+  await page.getByRole('button', { name: 'Toolbox' }).click();
+};
