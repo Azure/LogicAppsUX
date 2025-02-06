@@ -58,7 +58,7 @@
     "typescript-eslint": "7.7.0",
     "vite-plugin-mkcert": "^1.17.5",
     "vite-plugin-node-polyfills": "^0.21.0",
-    "vitest": "^2.1.2"
+    "vitest": "^2.1.9"
   },
   "engines": {
     "node": ">=18",
