@@ -128,9 +128,17 @@ export const DesignerCommandBar: React.FC<DesignerCommandBarProps> = ({
   };
 
   const onCreateUnitTest = async () => {
+    const designerState = DesignerStore.getState();
+    const definition = await getNodeOutputOperations(designerState);
+    vscode.postMessage({
+      command: ExtensionCommand.logTelemetry,
+      data: { name: 'CreateUnitTest', timestamp: Date.now(), definition: definition },
+    });
+
     vscode.postMessage({
       command: ExtensionCommand.createUnitTest,
       runId: runId,
+      definition: definition,
     });
   };
 
