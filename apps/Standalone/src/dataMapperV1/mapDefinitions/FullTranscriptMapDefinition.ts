@@ -1,4 +1,5 @@
-﻿export const fullTranscriptMapDefinitionString = `$version: 1
+﻿export const fullTranscriptMapDefinitionString = `
+$version: 1
 $input: XML
 $output: XML
 $sourceSchema: Source.xsd
@@ -11,12 +12,14 @@ $targetNamespaces:
   td: http://tempuri.org/TypeDefinition.xsd
   xs: http://www.w3.org/2001/XMLSchema
 ns0:Root:
-  DirectTranslation:
-    Employee:
-      ID: >-
-        string(is-string(/ns0:Root/DirectTranslation/EmployeeID,
-        /ns0:Root/DirectTranslation/EmployeeID))
-      Name: >-
-        string(is-string(/ns0:Root/DirectTranslation/EmployeeID,
-        /ns0:Root/DirectTranslation/EmployeeID))
+  Looping:
+    $for(/ns0:Root/Looping/Employee):
+      Person:
+        $if(is-string(TelephoneNumber)):
+          Name: Name
+        $if(is-string(TelephoneNumber)):
+          Address: Name
+        Other: Salary
+        $if(is-string(TelephoneNumber)):
+          Publisher: Name
 `;

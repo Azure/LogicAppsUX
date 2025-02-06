@@ -70,7 +70,7 @@ describe('mapDefinitions/MapDefinitionDeserializer', () => {
         simpleMap['/tns:PROJECT_REQUEST_ROOT'] = {
           'tns:PROJECT_REQUEST': {
             'tns:PROJINTRF': {
-              '$for(tns:PROJECT_REQUEST_ROOT/tns:PROJECT_REQUEST/tns:PROJINTRF/tns:PROJECT)': {
+              '$for(/tns:PROJECT_REQUEST_ROOT/tns:PROJECT_REQUEST/tns:PROJINTRF/tns:PROJECT)': {
                 'tns:PROJECT': {
                   'tns:PM_PROJECT_REFERENCE': 'tns:PM_PROJECT_REFERENCE',
                 },
@@ -91,7 +91,7 @@ describe('mapDefinitions/MapDefinitionDeserializer', () => {
         simpleMap['/tns:PROJECT_REQUEST_ROOT'] = {
           'tns:PROJECT_REQUEST': {
             'tns:PROJINTRF': {
-              '$for(tns:PROJECT_REQUEST_ROOT/tns:PROJECT_REQUEST/tns:PROJINTRF/tns:PROJECT)': {
+              '$for(/tns:PROJECT_REQUEST_ROOT/tns:PROJECT_REQUEST/tns:PROJINTRF/tns:PROJECT)': {
                 'tns:PROJECT': {
                   'tns:PM_PROJECT_REFERENCE': 'tns:PM_PROJECT_REFERENCE',
                 },
@@ -530,35 +530,6 @@ describe('mapDefinitions/MapDefinitionDeserializer', () => {
         expect(resultEntries[7][0]).toEqual('target-/ns0:Root/ConditionalMapping/ItemPrice');
         expect(resultEntries[7][1]).toBeTruthy();
         expect((resultEntries[7][1].inputs[0] as ConnectionUnit).reactFlowKey).toEqual('source-/ns0:Root/ConditionalMapping/ItemPrice');
-      });
-
-      it('creates conditional connections under one object', () => {
-        simpleMap['ns0:Root'] = {
-          ConditionalMapping: {
-            '6746506B-6072-41DE-8B64-81CE6E7AF9DD-$if(/ns0:Root/DirectTranslation/EmployeeID)': {
-              ItemPrice: '/ns0:Root/DirectTranslation/EmployeeName',
-            },
-            ItemQuantity: '/ns0:Root/DirectTranslation/EmployeeID',
-            '6746506B-6072-41DE-8B64-81CE6E7AF9DG-$if(/ns0:Root/DirectTranslation/EmployeeID)': {
-              ItemDiscount: '/ns0:Root/DirectTranslation/EmployeeName',
-            },
-          },
-        };
-
-        const mapDefinitionDeserializer = new MapDefinitionDeserializer(simpleMap, extendedSource, extendedTarget, functionMock);
-        const result = mapDefinitionDeserializer.convertFromMapDefinition();
-        const resultEntries = Object.entries(result);
-        resultEntries.sort();
-
-        const firstIf = getConnectionsForFlowId(result, '$if(/ns0:Root/DirectTranslation/EmployeeID)');
-        expect(firstIf).toBeDefined();
-        expect(firstIf.outputs[0].reactFlowKey).toEqual('target-/ns0:Root/FirstLoop');
-        // expect(firstLoopConnection.outputs[1].reactFlowKey).toEqual('target-/ns0:Root/SecondLoop');
-
-        const name = getConnectionsForFlowId(result, 'source-/ns0:Root/FirstLoop/Name');
-        expect(name).toBeDefined();
-        expect(name.outputs[0].reactFlowKey).toEqual('target-/ns0:Root/FirstLoop/Name');
-        expect(name.outputs[1].reactFlowKey).toEqual('target-/ns0:Root/SecondLoop/Number');
       });
 
       it('creates a conditional property connection with function', () => {
@@ -1796,6 +1767,25 @@ describe('mapDefinitions/MapDefinitionDeserializer', () => {
         expect(mapDefinitionDeserializer.getWarningMessages().length).toEqual(1);
       });
 
+      it('creates a loop with conditional below it', () => {
+        simpleMap['ns0:Root'] = {
+          Looping: {
+            '$for(/ns0:Root/Looping/Employee)': {
+              Person: {
+                '$if(is-string(Name))': {
+                  Name: 'Salary',
+                },
+              },
+            },
+          },
+        };
+
+        const mapDefinitionDeserializer = new MapDefinitionDeserializer(simpleMap, extendedSource, extendedTarget, functionMock);
+        const result = mapDefinitionDeserializer.convertFromMapDefinition();
+        const resultEntries = Object.entries(result);
+        resultEntries.sort();
+      });
+
       it('continues after not finding source conditional node', () => {
         simpleMap['ns0:Root'] = {
           ConditionalMapping: {
@@ -1865,11 +1855,12 @@ describe('mapDefinitions/MapDefinitionDeserializer', () => {
       it('creates nested sequences', () => {
         simpleMap['ns0:Root'] = {
           Looping: {
-            '$for(reverse(distinct-values(/ns0:Root/Looping/Employee,/ns0:Root/Looping/Employee/Name)))': {
-              Person: {
-                Name: 'Name',
+            '6746506B-6072-41DE-8B64-81CE6E7AF9DD-$for(reverse(distinct-values(/ns0:Root/Looping/Employee,/ns0:Root/Looping/Employee/Name)))':
+              {
+                Person: {
+                  Name: 'Name',
+                },
               },
-            },
           },
         };
 

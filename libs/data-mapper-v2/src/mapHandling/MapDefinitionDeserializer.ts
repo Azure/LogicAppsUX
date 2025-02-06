@@ -426,7 +426,7 @@ export class MapDefinitionDeserializer {
     const leftSideKeyNoGuid = removeGuidFromKey(leftSideKey);
     const tokens = separateFunctions(leftSideKeyNoGuid);
     const forOrIfObj = createSchemaNodeOrFunction(tokens);
-    if ((forOrIfObj.term as ParseFunc).name === DReservedToken.if) {
+    if ((forOrIfObj.term as ParseFunc).name.includes(DReservedToken.if)) {
       if (parentTargetNode) {
         this.handleIfFunction(forOrIfObj.term as ParseFunc, connections);
       }
