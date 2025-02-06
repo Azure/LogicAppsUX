@@ -226,7 +226,7 @@ export const TemplatesStandard = () => {
           }}
         >
           {isSingleTemplateView ? (
-            <TemplatesView createWorkflow={createWorkflowCall} showCloseButton={true} onClose={() => window.alert('Template is closed')} />
+            <TemplatesView createWorkflow={createWorkflowCall} showCloseButton={true} onClose={() => window.alert('Template is closing')} />
           ) : (
             <TemplatesDesigner
               createWorkflowCall={createWorkflowCall}

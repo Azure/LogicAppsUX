@@ -82,7 +82,7 @@ export const LocalTemplates = () => {
           }}
         >
           {isSingleTemplateView ? (
-            <TemplatesView createWorkflow={createWorkflowCall} showCloseButton={true} />
+            <TemplatesView createWorkflow={createWorkflowCall} showCloseButton={false} />
           ) : (
             <TemplatesDesigner
               detailFilters={{
