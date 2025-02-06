@@ -167,12 +167,13 @@ export const reviewCreateTab = (
     errorMessage,
     isPrimaryButtonDisabled,
     previousTabId,
+    onClosePanel,
+    showCloseButton = true,
   }: {
     errorMessage: string | undefined;
     isPrimaryButtonDisabled: boolean;
     isCreateView: boolean;
-  } & CreateWorkflowTabProps,
-  onClose?: () => void
+  } & CreateWorkflowTabProps
 ): TemplatePanelTab => ({
   id: constants.TEMPLATE_PANEL_TAB_NAMES.REVIEW_AND_CREATE,
   title: isCreateView
@@ -242,9 +243,9 @@ export const reviewCreateTab = (
           dispatch(clearTemplateDetails());
         }
 
-        onClose?.();
+        onClosePanel?.();
       }
     },
-    secondaryButtonDisabled: isCreating,
+    secondaryButtonDisabled: (!previousTabId && !showCloseButton) || isCreating,
   },
 });

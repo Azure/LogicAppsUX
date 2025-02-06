@@ -17,8 +17,7 @@ export const ConnectionsPanel: React.FC = () => {
 export const connectionsTab = (
   intl: IntlShape,
   dispatch: AppDispatch,
-  { shouldClearDetails, previousTabId, isCreating, nextTabId, hasError }: CreateWorkflowTabProps,
-  onClose?: () => void
+  { shouldClearDetails, previousTabId, isCreating, nextTabId, hasError, showCloseButton = true, onClosePanel }: CreateWorkflowTabProps
 ): TemplatePanelTab => ({
   id: constants.TEMPLATE_PANEL_TAB_NAMES.CONNECTIONS,
   title: intl.formatMessage({
@@ -63,9 +62,9 @@ export const connectionsTab = (
           dispatch(clearTemplateDetails());
         }
 
-        onClose?.();
+        onClosePanel?.();
       }
     },
-    secondaryButtonDisabled: isCreating,
+    secondaryButtonDisabled: (!previousTabId && !showCloseButton) || isCreating,
   },
 });

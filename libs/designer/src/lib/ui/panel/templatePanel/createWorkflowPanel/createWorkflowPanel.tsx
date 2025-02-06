@@ -20,6 +20,8 @@ export interface CreateWorkflowTabProps {
   nextTabId?: string;
   hasError: boolean;
   shouldClearDetails: boolean;
+  showCloseButton?: boolean;
+  onClosePanel?: () => void;
 }
 
 export interface CreateWorkflowPanelProps {
