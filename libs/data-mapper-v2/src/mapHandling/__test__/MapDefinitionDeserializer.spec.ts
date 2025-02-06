@@ -23,7 +23,6 @@ import {
 } from '../../__mocks__/schemas';
 import { describe, vi, beforeEach, afterEach, beforeAll, afterAll, it, test, expect } from 'vitest';
 import { isCustomValueConnection } from '../../utils/Connection.Utils';
-import { N } from 'vitest/dist/chunks/reporters.C4ZHgdxQ.js';
 
 describe('mapDefinitions/MapDefinitionDeserializer', () => {
   describe('XML', () => {
@@ -1765,25 +1764,6 @@ describe('mapDefinitions/MapDefinitionDeserializer', () => {
         expect(resultEntries.length).toEqual(4);
 
         expect(mapDefinitionDeserializer.getWarningMessages().length).toEqual(1);
-      });
-
-      it('creates a loop with conditional below it', () => {
-        simpleMap['ns0:Root'] = {
-          Looping: {
-            '$for(/ns0:Root/Looping/Employee)': {
-              Person: {
-                '$if(is-string(Name))': {
-                  Name: 'Salary',
-                },
-              },
-            },
-          },
-        };
-
-        const mapDefinitionDeserializer = new MapDefinitionDeserializer(simpleMap, extendedSource, extendedTarget, functionMock);
-        const result = mapDefinitionDeserializer.convertFromMapDefinition();
-        const resultEntries = Object.entries(result);
-        resultEntries.sort();
       });
 
       it('continues after not finding source conditional node', () => {

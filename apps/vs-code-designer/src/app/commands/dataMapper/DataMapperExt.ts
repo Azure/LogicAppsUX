@@ -71,24 +71,10 @@ export default class DataMapperExt {
       try {
         // Add extra escapes around custom string values, so that we don't lose which ones are which
         let modifiedMapDefinitionString = mapDefinitionString.replaceAll('"', `\\"`);
-        modifiedMapDefinitionString = modifiedMapDefinitionString.replaceAll(`$for`, () => `${guid()}-$for`);
-        modifiedMapDefinitionString = modifiedMapDefinitionString.replaceAll(`$if`, () => `${guid()}-$if`);
+        modifiedMapDefinitionString = modifiedMapDefinitionString.replaceAll('$for', () => `${guid()}-$for`);
+        modifiedMapDefinitionString = modifiedMapDefinitionString.replaceAll('$if', () => `${guid()}-$if`);
 
-        // const reviver = (key: string, value: MapDefinitionEntry) => {
-        //   if (typeof value === 'object') {
-        //     Object.entries(value).forEach((elem) =>  {
-        //       const key = elem[0];
-        //       if (key.startsWith('$for') || key.startsWith('$if')) {
-        //         value[`${guid()}-${key}`] = elem[1];
-        //         delete value[key];
-        //       }
-        //     });
-        //   }
-
-        //   return value;
-        // }
-
-        const mapDefinition = parse(modifiedMapDefinitionString,  { strict: false, uniqueKeys: false}) as MapDefinitionEntry;
+        const mapDefinition = parse(modifiedMapDefinitionString, { strict: false, uniqueKeys: false }) as MapDefinitionEntry;
         // Now that we've parsed the yml, remove the extra escaped quotes to restore the values
         DataMapperExt.fixMapDefinitionCustomValues(mapDefinition);
         return mapDefinition;

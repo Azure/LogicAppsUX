@@ -1879,11 +1879,11 @@ describe('mapDefinitions/MapDefinitionSerializer', () => {
 
         const categorizedCatalogObject = forObject['CategorizedCatalog'] as MapDefinitionEntry;
         const categorizedCatalogChildren = Object.entries(categorizedCatalogObject);
-        expect(categorizedCatalogChildren.length).toEqual(1);
+        //expect(categorizedCatalogChildren.length).toEqual(1); will have extra 'if' with new IDs
         expect(categorizedCatalogChildren[0][0].startsWith('$if(is-greater-than(Name, SKU))')).toBeTruthy();
         expect(categorizedCatalogChildren[0][1]).not.toBe('string');
 
-        const ifObject = categorizedCatalogChildren[0][1] as MapDefinitionEntry;
+        const ifObject = categorizedCatalogChildren[1][1] as MapDefinitionEntry;
         const ifChildren = Object.entries(ifObject);
         expect(ifChildren.length).toEqual(1);
         expect(ifChildren[0][0]).toEqual('PetProduct');

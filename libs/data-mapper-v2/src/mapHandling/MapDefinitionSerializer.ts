@@ -55,7 +55,7 @@ export const convertToMapDefinition = (
   //const invalidFunctionNodes = invalidFunctions(connections);
   if (sourceSchema && targetSchema) {
     const mapDefinition: MapDefinitionEntry = {};
-    const connectionsCopy = structuredClone(connections)
+    const connectionsCopy = structuredClone(connections);
     const rootNodeKey = targetSchema.schemaTreeRoot.qName;
 
     if (generateHeader) {
@@ -80,10 +80,7 @@ export const convertToMapDefinition = (
   return { isSuccess: false, errorNodes: [] };
 };
 
-export const sortConnectionsToTargetNodes = (
-  targetSchemaConnections: [string, Connection][],
-  targetSchemaSortArray: string[]
-) => {
+export const sortConnectionsToTargetNodes = (targetSchemaConnections: [string, Connection][], targetSchemaSortArray: string[]) => {
   if (targetSchemaSortArray.length === 0) {
     return targetSchemaConnections;
   }
@@ -91,15 +88,14 @@ export const sortConnectionsToTargetNodes = (
   targetSchemaSortArray.forEach((node, index) => {
     targetSchemaSortMap.set(addTargetReactFlowPrefix(node), index);
   });
-  const sortedTargetSchemaConnections = targetSchemaConnections.sort(
-    ([keyA, _connectionA], [keyBy, _connectionB]) => {
-      const aIndex = targetSchemaSortMap.get(keyA);
-      const bIndex = targetSchemaSortMap.get(keyBy);
-      if (aIndex && bIndex && aIndex > bIndex) {
-        return 1;
-      } else return -1;
+  const sortedTargetSchemaConnections = targetSchemaConnections.sort(([keyA, _connectionA], [keyBy, _connectionB]) => {
+    const aIndex = targetSchemaSortMap.get(keyA);
+    const bIndex = targetSchemaSortMap.get(keyBy);
+    if (aIndex && bIndex && aIndex > bIndex) {
+      return 1;
     }
-  );
+    return -1;
+  });
   return sortedTargetSchemaConnections;
 };
 
@@ -111,9 +107,10 @@ export const createYamlFromMap = (mapDefinition: MapDefinitionEntry, targetSchem
       noRefs: true,
       noArrayIndent: true,
       sortKeys: (keyA, keyB) => {
-        console.log(keyA)
-        console.log(keyB)
-        return sortMapDefinition(keyA, keyB, targetSchemaSortArray, mapDefinition)}, // danielle pass map definition here to sort
+        console.log(keyA);
+        console.log(keyB);
+        return sortMapDefinition(keyA, keyB, targetSchemaSortArray, mapDefinition);
+      }, // danielle pass map definition here to sort
     })
     .replaceAll(/'"|"'/g, '"')
     .replaceAll('- ', '  ');
@@ -183,10 +180,7 @@ export const generateMapDefinitionBody = (
 ): void => {
   // Filter to just the target node connections, all the rest will be picked up be traversing up the chain
   const targetSchemaConnections = getConnectionsToTargetNodes(connections);
-  const sortedTargetSchemaConnections = sortConnectionsToTargetNodes(
-    targetSchemaConnections,
-    targetSchemaSortArray
-  );
+  const sortedTargetSchemaConnections = sortConnectionsToTargetNodes(targetSchemaConnections, targetSchemaSortArray);
 
   sortedTargetSchemaConnections.forEach(([_key, connection]) => {
     const inputs = connection?.inputs;
@@ -393,13 +387,10 @@ const addConditionalToNewPathItems = (ifConnection: Connection, connections: Con
   const ifContents = values[0].replaceAll(valueToTrim, '');
 
   const inputConnection = ifConnection.inputs[0];
-  //if (!inputConnection.customId) {
-    inputConnection.customId = generatePostfix();
-  //}
-  // danielle add logic to separate these if they are not adjacent
+  inputConnection.customId = generatePostfix();
 
   // If entry
-  newPath.push({ key: `${mapNodeParams.if}(${ifContents})${inputConnection.customId}`});
+  newPath.push({ key: `${mapNodeParams.if}(${ifContents})${inputConnection.customId}` });
 };
 
 const addLoopingForToNewPathItems = (
@@ -465,7 +456,7 @@ const addLoopingForToNewPathItems = (
           } else {
             loopValue = `${
               mapNodeParams.for
-            }(${sourceSchemaNodeReactFlowKey.replace(sourcePrefix, "")}${sourceSchemaNodeConnection.customId})`;
+            }(${sourceSchemaNodeReactFlowKey.replace(sourcePrefix, '')}${sourceSchemaNodeConnection.customId})`;
           }
 
           // For entry
@@ -487,10 +478,10 @@ const addLoopingForToNewPathItems = (
             );
 
             let postfix = generatePostfix();
-            if (!functionConnection.inputs[0].customId) {
-              functionConnection.inputs[0].customId = postfix;
-            } else {
+            if (functionConnection.inputs[0].customId) {
               postfix = functionConnection.inputs[0].customId;
+            } else {
+              functionConnection.inputs[0].customId = postfix;
             }
 
             newPath.forEach((pathItem) => {
@@ -585,7 +576,7 @@ const applyValueAtPath = (mapDefinition: MapDefinitionEntry, path: OutputPathIte
       mapDefinition[pathItem.key] = {};
     }
 
-    let nextKey = pathItem.key;
+    const nextKey = pathItem.key;
     if (pathItem.value) {
       mapDefinition[pathItem.key] = pathItem.value;
     }

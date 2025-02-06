@@ -12,14 +12,10 @@ $targetNamespaces:
   td: http://tempuri.org/TypeDefinition.xsd
   xs: http://www.w3.org/2001/XMLSchema
 ns0:Root:
-  Looping:
-    $for(/ns0:Root/Looping/Employee):
-      Person:
-        $if(is-string(TelephoneNumber)):
-          Name: Name
-        $if(is-string(TelephoneNumber)):
-          Address: Name
-        Other: Salary
-        $if(is-string(TelephoneNumber)):
-          Publisher: Name
+  ConditionalLooping:
+    $for(/ns0:Root/ConditionalLooping/FlatterCatalog/ns0:Product):
+      CategorizedCatalog:
+        PetProduct:
+          $if(is-greater-than(Name, SKU)):
+            Name: Name
 `;
