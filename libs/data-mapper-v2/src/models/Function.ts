@@ -138,6 +138,24 @@ export const pseudoFunctions: FunctionData[] = [indexPseudoFunction, ifPseudoFun
 // Used in Standalone when the function host isn't running, or for testing
 export const functionMock: FunctionData[] = [
   {
+    key: 'IsString',
+    maxNumberOfInputs: 1,
+    functionName: 'is-string',
+    outputValueType: 'Any',
+    inputs: [
+      {
+        name: 'Source value',
+        allowedTypes: ['Any'],
+        isOptional: false,
+        allowCustomInput: true,
+        placeHolder: 'The value to check.',
+      },
+    ],
+    displayName: 'Is String',
+    category: 'Logical',
+    description: 'Returns true or false based on whether the specified value is a string.',
+  },
+  {
     key: 'Maximum',
     maxNumberOfInputs: 2,
     functionName: 'max',

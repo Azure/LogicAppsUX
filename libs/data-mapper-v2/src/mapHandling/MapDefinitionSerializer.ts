@@ -21,8 +21,8 @@ import {
 import { formatDirectAccess, getIndexValueForCurrentConnection, isFunctionData } from '../utils/Function.Utils';
 import { addTargetReactFlowPrefix } from '../utils/ReactFlow.Util';
 import { isObjectType, isSchemaNodeExtended } from '../utils/Schema.Utils';
-import type { MapDefinitionEntry, PathItem, SchemaExtended, SchemaNodeExtended } from '@microsoft/logic-apps-shared';
-import { extend, SchemaNodeProperty } from '@microsoft/logic-apps-shared';
+import type { MapDefinitionEntry, MapDefinitionValue, PathItem, SchemaExtended, SchemaNodeExtended } from '@microsoft/logic-apps-shared';
+import { extend, guid, isAGuid, SchemaNodeProperty } from '@microsoft/logic-apps-shared';
 import yaml from 'js-yaml';
 
 interface OutputPathItem {
@@ -55,20 +55,48 @@ export const convertToMapDefinition = (
   //const invalidFunctionNodes = invalidFunctions(connections);
   if (sourceSchema && targetSchema) {
     const mapDefinition: MapDefinitionEntry = {};
+    const connectionsCopy = structuredClone(connections);
+    const rootNodeKey = targetSchema.schemaTreeRoot.qName;
 
     if (generateHeader) {
       generateMapDefinitionHeader(mapDefinition, sourceSchema, targetSchema);
     }
 
-    generateMapDefinitionBody(mapDefinition, connections);
+    const mapDefinitionBody: MapDefinitionEntry = {};
+    generateMapDefinitionBody(mapDefinitionBody, connectionsCopy, targetSchemaSortArray);
+
+    const newArrPath: MapDefinitionEntry[] = [];
+    const rootNode = mapDefinitionBody[rootNodeKey];
+    convertToArray(rootNode, newArrPath);
+    mapDefinition[rootNodeKey] = newArrPath;
 
     // Custom values directly on target nodes need to have extra single quotes stripped out
     const map = createYamlFromMap(mapDefinition, targetSchemaSortArray);
+    const conc = map;
 
-    return { isSuccess: true, definition: map };
+    return { isSuccess: true, definition: conc };
   }
 
   return { isSuccess: false, errorNodes: [] };
+};
+
+export const sortConnectionsToTargetNodes = (targetSchemaConnections: [string, Connection][], targetSchemaSortArray: string[]) => {
+  if (targetSchemaSortArray.length === 0) {
+    return targetSchemaConnections;
+  }
+  const targetSchemaSortMap = new Map<string, number>();
+  targetSchemaSortArray.forEach((node, index) => {
+    targetSchemaSortMap.set(addTargetReactFlowPrefix(node), index);
+  });
+  const sortedTargetSchemaConnections = targetSchemaConnections.sort(([keyA, _connectionA], [keyBy, _connectionB]) => {
+    const aIndex = targetSchemaSortMap.get(keyA);
+    const bIndex = targetSchemaSortMap.get(keyBy);
+    if (aIndex && bIndex && aIndex > bIndex) {
+      return 1;
+    }
+    return -1;
+  });
+  return sortedTargetSchemaConnections;
 };
 
 export const createYamlFromMap = (mapDefinition: MapDefinitionEntry, targetSchemaSortArray: string[]) => {
@@ -77,15 +105,35 @@ export const createYamlFromMap = (mapDefinition: MapDefinitionEntry, targetSchem
     .dump(mapDefinition, {
       replacer: yamlReplacer,
       noRefs: true,
-      sortKeys: (keyA, keyB) => sortMapDefinition(keyA, keyB, targetSchemaSortArray, mapDefinition), // danielle pass map definition here to sort
+      noArrayIndent: true,
+      sortKeys: (keyA, keyB) => {
+        console.log(keyA);
+        console.log(keyB);
+        return sortMapDefinition(keyA, keyB, targetSchemaSortArray, mapDefinition);
+      }, // danielle pass map definition here to sort
     })
-    .replaceAll(/'"|"'/g, '"');
+    .replaceAll(/'"|"'/g, '"')
+    .replaceAll('- ', '  ');
   return map;
 };
 
-const yamlReplacer = (key: string, value: any) => {
+const yamlReplacer = (key: string, value: MapDefinitionValue) => {
   if (typeof value === 'string' && key === reservedMapDefinitionKeys.version) {
     return Number.parseFloat(value);
+  }
+
+  if (Array.isArray(value)) {
+    const modifiedArr = value.map((item) => {
+      const newItem: MapDefinitionEntry = {};
+      const key = Object.keys(item)[0];
+      if (key.length > 36 && isAGuid(key.substring(key.length - 36, key.length))) {
+        const newKey = key.substring(0, key.length - 37);
+        newItem[newKey] = item[key];
+        return newItem;
+      }
+      return item;
+    });
+    return modifiedArr;
   }
 
   return value;
@@ -116,18 +164,25 @@ const getConnectionsToTargetNodes = (connections: ConnectionDictionary) => {
   return Object.entries(connections).filter(([key, connection]) => {
     const selfNode = connection.self.node;
     if (key.startsWith(targetPrefix) && isSchemaNodeExtended(selfNode)) {
-      return selfNode.nodeProperties.every((property) => property !== SchemaNodeProperty.Repeating);
+      const isNotRepeating = selfNode.nodeProperties.every((property) => property !== SchemaNodeProperty.Repeating);
+      const isEmptyConnectionNode = isEmptyConnection(connection.inputs[0]);
+      return isNotRepeating && !isEmptyConnectionNode;
     }
     return false;
   });
 };
 
 // Exported for testing purposes
-export const generateMapDefinitionBody = (mapDefinition: MapDefinitionEntry, connections: ConnectionDictionary): void => {
+export const generateMapDefinitionBody = (
+  mapDefinition: MapDefinitionEntry,
+  connections: ConnectionDictionary,
+  targetSchemaSortArray: string[] = []
+): void => {
   // Filter to just the target node connections, all the rest will be picked up be traversing up the chain
   const targetSchemaConnections = getConnectionsToTargetNodes(connections);
+  const sortedTargetSchemaConnections = sortConnectionsToTargetNodes(targetSchemaConnections, targetSchemaSortArray);
 
-  targetSchemaConnections.forEach(([_key, connection]) => {
+  sortedTargetSchemaConnections.forEach(([_key, connection]) => {
     const inputs = connection?.inputs;
     inputs.forEach((input) => {
       const selfNode = connection.self.node;
@@ -137,6 +192,22 @@ export const generateMapDefinitionBody = (mapDefinition: MapDefinitionEntry, con
       }
     });
   });
+};
+
+export const convertToArray = (mapPartial: MapDefinitionValue, newMapArray: MapDefinitionEntry[]): MapDefinitionEntry[] | string => {
+  if (typeof mapPartial === 'string') {
+    return mapPartial;
+  }
+  if (!Array.isArray(mapPartial)) {
+    Object.keys(mapPartial).forEach((key) => {
+      const child = mapPartial[key];
+      if (child) {
+        newMapArray.push({ [key]: convertToArray(child, []) });
+      }
+    });
+  }
+
+  return newMapArray;
 };
 
 const createSourcePath = (
@@ -176,7 +247,9 @@ const createSourcePath = (
 
     // Still have objects to traverse down
   }
-  newPath.push({ key: pathItem.qName.startsWith('@') ? `$${pathItem.qName}` : pathItem.qName });
+  newPath.push({
+    key: pathItem.qName.startsWith('@') ? `$${pathItem.qName}` : pathItem.qName,
+  });
   return '';
 };
 
@@ -280,8 +353,13 @@ const createNewPathItems = (input: InputConnection, targetNode: SchemaNodeExtend
 
         if (isTargetObjectType) {
           // $Value
-          newPath.push({ key: targetPath.qName.startsWith('@') ? `$${targetPath.qName}` : targetPath.qName });
-          newPath.push({ key: mapNodeParams.value, value: formattedLmlSnippetForSource });
+          newPath.push({
+            key: targetPath.qName.startsWith('@') ? `$${targetPath.qName}` : targetPath.qName,
+          });
+          newPath.push({
+            key: mapNodeParams.value,
+            value: formattedLmlSnippetForSource,
+          });
         } else {
           // Standard property to value
           newPath.push({
@@ -308,8 +386,11 @@ const addConditionalToNewPathItems = (ifConnection: Connection, connections: Con
   });
   const ifContents = values[0].replaceAll(valueToTrim, '');
 
+  const inputConnection = ifConnection.inputs[0];
+  inputConnection.customId = generatePostfix();
+
   // If entry
-  newPath.push({ key: `${mapNodeParams.if}(${ifContents})` });
+  newPath.push({ key: `${mapNodeParams.if}(${ifContents})${inputConnection.customId}` });
 };
 
 const addLoopingForToNewPathItems = (
@@ -362,14 +443,20 @@ const addLoopingForToNewPathItems = (
             (connection) => connection.node.key === indexPseudoFunctionKey
           );
 
+          if (sourceSchemaNodeConnection.customId === undefined) {
+            sourceSchemaNodeConnection.customId = generatePostfix();
+          }
+
           if (indexFunctions.length > 0) {
             const indexConnection = connections[indexFunctions[0].reactFlowKey];
             const inputConnection = indexConnection.inputs[0];
             const inputKey = isNodeConnection(inputConnection) && inputConnection.node.key;
 
-            loopValue = `${mapNodeParams.for}(${inputKey}, ${getIndexValueForCurrentConnection(indexConnection, connections)})`;
+            loopValue = `${mapNodeParams.for}(${inputKey}, ${getIndexValueForCurrentConnection(indexConnection, connections)})${sourceSchemaNodeConnection.customId}`;
           } else {
-            loopValue = `${mapNodeParams.for}(${sourceSchemaNodeReactFlowKey.replace(sourcePrefix, '')})`;
+            loopValue = `${
+              mapNodeParams.for
+            }(${sourceSchemaNodeReactFlowKey.replace(sourcePrefix, '')}${sourceSchemaNodeConnection.customId})`;
           }
 
           // For entry
@@ -390,6 +477,13 @@ const addLoopingForToNewPathItems = (
               currentSourceLoop.loop
             );
 
+            let postfix = generatePostfix();
+            if (functionConnection.inputs[0].customId) {
+              postfix = functionConnection.inputs[0].customId;
+            } else {
+              functionConnection.inputs[0].customId = postfix;
+            }
+
             newPath.forEach((pathItem) => {
               const extractedScope = extractScopeFromLoop(pathItem.key);
 
@@ -402,9 +496,9 @@ const addLoopingForToNewPathItems = (
               loopValue = `${mapNodeParams.for}(${sequenceValueResult.sequenceValue}, ${getIndexValueForCurrentConnection(
                 functionConnection,
                 connections
-              )})`;
+              )})${postfix}`;
             } else {
-              loopValue = `${mapNodeParams.for}(${sequenceValueResult.sequenceValue})`;
+              loopValue = `${mapNodeParams.for}(${sequenceValueResult.sequenceValue})${postfix}`;
             }
 
             currentSourceLoop.loop = sequenceValueResult.rootLoop;
@@ -419,12 +513,15 @@ const addLoopingForToNewPathItems = (
         // Normal loop
         if (!prevPathItemWasConditional) {
           loopValue = sourceNode.node.key;
+          if (!sourceNode.customId) {
+            sourceNode.customId = generatePostfix();
+          }
           const valueToTrim = findLast(sourceNode.node.pathToRoot, (pathItem) => pathItem.repeating && pathItem.key !== loopValue)?.key;
           if (valueToTrim) {
             loopValue = loopValue.replace(`${valueToTrim}/`, '');
           }
 
-          loopValue = `${mapNodeParams.for}(${loopValue})`;
+          loopValue = `${mapNodeParams.for}(${loopValue})${sourceNode.customId}`;
 
           // For entry
           newPath.push({ key: loopValue });
@@ -449,6 +546,10 @@ const addLoopingForToNewPathItems = (
   }
 };
 
+const generatePostfix = () => {
+  return `-${guid()}`;
+};
+
 const applyValueAtPath = (mapDefinition: MapDefinitionEntry, path: OutputPathItem[]) => {
   path.every((pathItem, pathIndex) => {
     if (pathItem.arrayIndex !== undefined) {
@@ -470,10 +571,12 @@ const applyValueAtPath = (mapDefinition: MapDefinitionEntry, path: OutputPathIte
       // Return false to break loop
       return false;
     }
+
     if (!mapDefinition[pathItem.key]) {
       mapDefinition[pathItem.key] = {};
     }
 
+    const nextKey = pathItem.key;
     if (pathItem.value) {
       mapDefinition[pathItem.key] = pathItem.value;
     }
@@ -481,7 +584,7 @@ const applyValueAtPath = (mapDefinition: MapDefinitionEntry, path: OutputPathIte
     // Look ahead to see if we need to stay in our current location
     const nextPathItem = path[pathIndex + 1];
     if (!nextPathItem || nextPathItem.arrayIndex === undefined) {
-      mapDefinition = mapDefinition[pathItem.key] as MapDefinitionEntry;
+      mapDefinition = mapDefinition[nextKey] as MapDefinitionEntry;
     }
 
     return true;
@@ -500,7 +603,7 @@ const findKeyInMap = (mapDefinition: MapDefinitionEntry, key: string): string | 
     if (typeof mapDefinition[currentKey] === 'object') {
       const foundKey = findKeyInMap(mapDefinition[currentKey] as MapDefinitionEntry, key);
       if (foundKey) {
-        if (mapDefinition[currentKey] && Object.keys((mapDefinition[currentKey] as MapDefinitionEntry)[foundKey])) {
+        if (mapDefinition[currentKey] && (mapDefinition[currentKey] as MapDefinitionEntry)[foundKey]) {
           const childKey = Object.keys((mapDefinition[currentKey] as MapDefinitionEntry)[foundKey])[0];
           if (!childKey) {
             return foundKey;

@@ -20,8 +20,8 @@
     "@types/fs-extra": "^11.0.4",
     "@types/vscode": "1.76.0",
     "@types/vscode-webview": "1.57.1",
-    "@vscode/test-electron": "2.3.0",
     "@vscode/extension-telemetry": "^0.9.8",
+    "@vscode/test-electron": "2.3.0",
     "@vscode/vsce": "^3.1.1",
     "adm-zip": "^0.5.10",
     "axios": "^1.7.7",
@@ -40,7 +40,9 @@
     "uuid": "^10.0.0",
     "vscode-nls": "^5.2.0",
     "xml2js": "0.6.2",
-    "yargs-parser": "21.1.1"
+    "yargs-parser": "21.1.1",
+    "yaml": "^2.7.0",
+    "yaml-types": "^0.4.0"
   },
   "private": true,
   "scripts": {

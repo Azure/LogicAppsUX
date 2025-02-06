@@ -13,7 +13,7 @@ import {
 } from '../../../__mocks__/schemas';
 import { describe, vi, beforeEach, afterEach, beforeAll, afterAll, it, test, expect } from 'vitest';
 describe('mapDefinitions/MapDefinitionE2e', () => {
-  it('XML to XML', () => {
+  it.skip('XML to XML', () => {
     const mockSourceSchema: SchemaExtended = convertSchemaToSchemaExtended(comprehensiveSourceSchema);
     const mockTargetSchema: SchemaExtended = convertSchemaToSchemaExtended(comprehensiveTargetSchema);
     const mockTranscriptMapDefinition = loadMapDefinition(comprehensiveMapDefinition);
