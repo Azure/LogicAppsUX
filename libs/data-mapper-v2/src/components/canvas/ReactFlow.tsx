@@ -17,7 +17,7 @@ import { splitEdgeId } from '../../utils/Edge.Utils';
 import useAutoLayout from '../../ui/hooks/useAutoLayout';
 import EdgePopOver from './EdgePopOver';
 import CanvasNode from '../common/reactflow/CanvasNode';
-import { isFunctionNode } from '../../utils/ReactFlow.Util';
+import { isFunctionNode, panelWidth } from '../../utils/ReactFlow.Util';
 import useReactFlowStates from './useReactflowStates';
 import mapPlaceholder from '../../images/map-placeholder.svg';
 import { useSchemasButNoConnections } from '../../core/state/selectors/selectors';
@@ -157,10 +157,26 @@ export const ReactFlowWrapper = ({ setIsMapStateDirty }: DMReactFlowProps) => {
   );
 
   const onNodeDrag: OnNodeDrag = useCallback(
-    (_event, node, _nodes) => {
-      dispatch(updateFunctionPosition({ id: node.id, position: node.position }));
+    (_event, node, _updatedNodes) => {
+      const xPosition = node.position.x;
+      const nodeWidth = reactFlowInstance.getInternalNode(node.id)?.measured.width;
+
+      dispatch(
+        updateFunctionPosition({
+          id: node.id,
+          position: {
+            x:
+              xPosition < panelWidth
+                ? panelWidth
+                : newWidth !== undefined && nodeWidth !== undefined && xPosition + nodeWidth > newWidth - panelWidth
+                  ? newWidth - panelWidth - nodeWidth
+                  : xPosition,
+            y: node.position.y,
+          },
+        })
+      );
     },
-    [dispatch]
+    [dispatch, newWidth, reactFlowInstance]
   );
 
   const onEdgeContextMenu = useCallback(
