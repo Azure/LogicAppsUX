@@ -28,7 +28,7 @@ async function getBundleFeed(context: IActionContext, bundleMetadata: IBundleMet
   if (!envVarUri && bundleId === extensionBundleId) {
     url = 'https://aka.ms/AAqvc78';
   } else {
-    const baseUrl: string = envVarUri || 'https://functionscdn.azureedge.net/public';
+    const baseUrl: string = envVarUri || 'https://cdn.functions.azure.com/public';
     url = `${baseUrl}/ExtensionBundles/${bundleId}/index-v2.json`;
   }
 
@@ -43,7 +43,7 @@ async function getBundleFeed(context: IActionContext, bundleMetadata: IBundleMet
  */
 async function getWorkflowBundleFeed(context: IActionContext): Promise<IBundleFeed> {
   const envVarUri: string | undefined = process.env.FUNCTIONS_EXTENSIONBUNDLE_SOURCE_URI;
-  const baseUrl: string = envVarUri || 'https://functionscdn.azureedge.net/public';
+  const baseUrl: string = envVarUri || 'https://cdn.functions.azure.com/public';
   const url = `${baseUrl}/ExtensionBundles/${extensionBundleId}/index-v2.json`;
 
   return getJsonFeed(context, url);
@@ -67,7 +67,7 @@ async function getBundleDependencyFeed(
       ?.FUNCTIONS_EXTENSIONBUNDLE_SOURCE_URI;
   }
 
-  const baseUrl: string = envVarUri || 'https://functionscdn.azureedge.net/public';
+  const baseUrl: string = envVarUri || 'https://cdn.functions.azure.com/public';
   const url = `${baseUrl}/ExtensionBundles/${bundleId}/dependency.json`;
   return getJsonFeed(context, url);
 }
@@ -124,7 +124,7 @@ async function getExtensionBundleZip(context: IActionContext, extensionVersion: 
     envVarUri = (await getLocalSettingsJson(context, path.join(projectPath, localSettingsFileName)))?.Values
       ?.FUNCTIONS_EXTENSIONBUNDLE_SOURCE_URI;
   }
-  const baseUrl: string = envVarUri || 'https://functionscdn.azureedge.net/public';
+  const baseUrl: string = envVarUri || 'https://cdn.functions.azure.com/public';
   const url = `${baseUrl}/ExtensionBundles/${extensionBundleId}/${extensionVersion}/${extensionBundleId}.${extensionVersion}_any-any.zip`;
 
   return url;
