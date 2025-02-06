@@ -167,6 +167,8 @@ export const reviewCreateTab = (
     errorMessage,
     isPrimaryButtonDisabled,
     previousTabId,
+    onClosePanel,
+    showCloseButton = true,
   }: {
     errorMessage: string | undefined;
     isPrimaryButtonDisabled: boolean;
@@ -240,8 +242,10 @@ export const reviewCreateTab = (
         if (shouldClearDetails) {
           dispatch(clearTemplateDetails());
         }
+
+        onClosePanel?.();
       }
     },
-    secondaryButtonDisabled: isCreating,
+    secondaryButtonDisabled: (!previousTabId && !showCloseButton) || isCreating,
   },
 });

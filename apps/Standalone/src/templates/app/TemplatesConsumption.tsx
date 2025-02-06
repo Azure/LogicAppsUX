@@ -3,10 +3,11 @@ import {
   type ConnectionReferences,
   isOpenApiSchemaVersion,
   TemplatesDataProvider,
+  TemplatesDesigner,
   type WorkflowParameter,
 } from '@microsoft/logic-apps-designer';
 import type { RootState } from '../state/Store';
-import { TemplatesDesigner, TemplatesDesignerProvider } from '@microsoft/logic-apps-designer';
+import { TemplatesView, TemplatesDesignerProvider } from '@microsoft/logic-apps-designer';
 import { useSelector } from 'react-redux';
 import {
   BaseGatewayService,
@@ -35,7 +36,10 @@ import { BaseTemplateService } from '@microsoft/logic-apps-shared';
 const workflowIdentifier = '#workflowname#';
 
 export const TemplatesConsumption = () => {
-  const theme = useSelector((state: RootState) => state.workflowLoader.theme);
+  const { theme, templatesView } = useSelector((state: RootState) => ({
+    theme: state.workflowLoader.theme,
+    templatesView: state.workflowLoader.templatesView,
+  }));
   const { resourcePath: workflowId, language } = useSelector((state: RootState) => state.workflowLoader);
   const { data: workflowData } = useWorkflowAndArtifactsConsumption(workflowId!);
   const { data: tenantId } = useCurrentTenantId();
@@ -43,6 +47,7 @@ export const TemplatesConsumption = () => {
   const canonicalLocation = WorkflowUtility.convertToCanonicalFormat(workflowData?.location ?? '');
 
   const { workflow, connectionReferences } = useMemo(() => getDataForConsumption(workflowData), [workflowData]);
+  const isSingleTemplateView = useMemo(() => templatesView !== 'gallery', [templatesView]);
 
   const isWorkflowEmpty = useMemo(() => Object.keys((workflow?.definition as any)?.triggers ?? {}).length === 0, [workflow]);
 
@@ -136,51 +141,56 @@ export const TemplatesConsumption = () => {
         services={services}
         isConsumption={true}
         isCreateView={false}
+        viewTemplate={isSingleTemplateView ? { id: templatesView } : undefined}
       >
         <div
           style={{
             margin: '20px',
           }}
         >
-          <TemplatesDesigner
-            detailFilters={{
-              Category: {
-                displayName: 'Categories',
-                items: [
-                  {
-                    value: 'Design Patterns',
-                    displayName: 'Design Patterns',
-                  },
-                  {
-                    value: 'AI',
-                    displayName: 'AI',
-                  },
-                  {
-                    value: 'B2B',
-                    displayName: 'B2B',
-                  },
-                  {
-                    value: 'EDI',
-                    displayName: 'EDI',
-                  },
-                  {
-                    value: 'Approval',
-                    displayName: 'Approval',
-                  },
-                  {
-                    value: 'RAG',
-                    displayName: 'RAG',
-                  },
-                  {
-                    value: 'Automation',
-                    displayName: 'Automation',
-                  },
-                ],
-              },
-            }}
-            createWorkflowCall={createWorkflowCall}
-            isWorkflowEmpty={isWorkflowEmpty}
-          />
+          {isSingleTemplateView ? (
+            <TemplatesView createWorkflow={createWorkflowCall} showCloseButton={true} onClose={() => window.alert('Template is closing')} />
+          ) : (
+            <TemplatesDesigner
+              createWorkflowCall={createWorkflowCall}
+              detailFilters={{
+                Category: {
+                  displayName: 'Categories',
+                  items: [
+                    {
+                      value: 'Design Patterns',
+                      displayName: 'Design Patterns',
+                    },
+                    {
+                      value: 'AI',
+                      displayName: 'AI',
+                    },
+                    {
+                      value: 'B2B',
+                      displayName: 'B2B',
+                    },
+                    {
+                      value: 'EDI',
+                      displayName: 'EDI',
+                    },
+                    {
+                      value: 'Approval',
+                      displayName: 'Approval',
+                    },
+                    {
+                      value: 'RAG',
+                      displayName: 'RAG',
+                    },
+                    {
+                      value: 'Automation',
+                      displayName: 'Automation',
+                    },
+                  ],
+                },
+              }}
+              isWorkflowEmpty={isWorkflowEmpty}
+            />
+          )}
         </div>
       </TemplatesDataProvider>
     </TemplatesDesignerProvider>

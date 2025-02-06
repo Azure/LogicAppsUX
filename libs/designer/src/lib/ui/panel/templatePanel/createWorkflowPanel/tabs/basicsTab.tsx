@@ -17,7 +17,7 @@ export const WorkflowBasics = () => {
 export const basicsTab = (
   intl: IntlShape,
   dispatch: AppDispatch,
-  { shouldClearDetails, isCreating, nextTabId, hasError }: CreateWorkflowTabProps
+  { shouldClearDetails, isCreating, nextTabId, hasError, onClosePanel, showCloseButton = true }: CreateWorkflowTabProps
 ): TemplatePanelTab => ({
   id: constants.TEMPLATE_PANEL_TAB_NAMES.BASIC,
   title: intl.formatMessage({
@@ -47,7 +47,9 @@ export const basicsTab = (
       if (shouldClearDetails) {
         dispatch(clearTemplateDetails());
       }
+
+      onClosePanel?.();
     },
-    secondaryButtonDisabled: isCreating,
+    secondaryButtonDisabled: !showCloseButton || isCreating,
   },
 });

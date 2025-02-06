@@ -13,6 +13,7 @@ export interface WorkflowLoadingState {
   isLocal: boolean;
   theme: ThemeType;
   language: string;
+  templatesView: string;
 }
 
 const initialState: WorkflowLoadingState = {
@@ -21,6 +22,7 @@ const initialState: WorkflowLoadingState = {
   isLocal: false,
   theme: ThemeType.Light,
   language: 'en',
+  templatesView: 'gallery',
 };
 
 export const workflowLoaderSlice = createSlice({
@@ -32,6 +34,9 @@ export const workflowLoaderSlice = createSlice({
     },
     setWorkflowName: (state, action: PayloadAction<string>) => {
       state.workflowName = action.payload;
+    },
+    setTemplatesView: (state, action: PayloadAction<string>) => {
+      state.templatesView = action.payload;
     },
     changeRunId: (state, action: PayloadAction<string>) => {
       state.runId = action.payload;

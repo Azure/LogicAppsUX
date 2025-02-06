@@ -20,16 +20,25 @@ const themeDropdownOptions = [
   { key: ThemeType.Light, text: 'Light' },
   { key: ThemeType.Dark, text: 'Dark' },
 ];
+const templatesViewOptions = [{ key: 'gallery', text: 'Gallery' }];
 
-export const DevToolbox = () => {
+export const DevToolbox = ({ templatesList = [] }: { templatesList?: { key: string; text: string }[] }) => {
   const dispatch = useDispatch<AppDispatch>();
 
-  const { theme } = useSelector((state: RootState) => state.workflowLoader);
+  const { theme, templatesView } = useSelector((state: RootState) => state.workflowLoader);
   const isLightMode = theme === ThemeType.Light;
 
   const changeThemeCB = useCallback(
     (_: unknown, item: IDropdownOption | undefined) => {
       dispatch(workflowLoaderSlice.actions.changeTheme((item?.key as ThemeType) ?? ''));
+    },
+    [dispatch]
+  );
+
+  const changeTemplatesView = useCallback(
+    (_: unknown, item: IDropdownOption | undefined) => {
+      const selectedKey = (item?.key as string) ?? '';
+      dispatch(workflowLoaderSlice.actions.setTemplatesView(selectedKey));
     },
     [dispatch]
   );
@@ -56,9 +65,17 @@ export const DevToolbox = () => {
                       options={themeDropdownOptions}
                       style={{ marginBottom: '12px' }}
                     />
+                    <Dropdown
+                      label="Templates View"
+                      selectedKey={templatesView}
+                      onChange={changeTemplatesView}
+                      placeholder="Select templates view"
+                      options={[...templatesViewOptions, ...templatesList]}
+                      style={{ marginBottom: '12px' }}
+                    />
                   </StackItem>
                   <StackItem style={{ width: '100%' }}>
-                    <SourceSettings showHistoryButton={false} />
+                    <SourceSettings showHistoryButton={false} showHybridPlan={false} />
                   </StackItem>
                   <StackItem style={{ width: '100%' }}>
                     {isConsumption ? <AzureConsumptionLogicAppSelector /> : <AzureStandardLogicAppSelector />}

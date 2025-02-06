@@ -3,11 +3,13 @@ import type React from 'react';
 import { useContext, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import type { AppDispatch, RootState } from '../state/templates/store';
+import type { ViewTemplateDetails } from '../state/templates/manifestSlice';
 import {
   loadGithubManifestNames,
   loadGithubManifests,
   setCustomTemplates,
   setFilteredTemplateNames,
+  setViewTemplateDetails,
 } from '../state/templates/manifestSlice';
 import { type ResourceDetails, setInitialData } from '../state/templates/workflowSlice';
 import { useAreServicesInitialized } from '../state/templates/templateselectors';
@@ -15,6 +17,7 @@ import type { ConnectionReferences } from '../../common/models/workflow';
 import { getFilteredTemplates } from './utils/helper';
 import { initializeTemplateServices } from '../actions/bjsworkflow/templates';
 import type { Template } from '@microsoft/logic-apps-shared';
+import { changeCurrentTemplateName } from '../state/templates/templateSlice';
 
 export interface TemplatesDataProviderProps {
   isConsumption: boolean | undefined;
@@ -24,10 +27,11 @@ export interface TemplatesDataProviderProps {
   services: TemplateServiceOptions;
   connectionReferences: ConnectionReferences;
   customTemplates?: Record<string, Template.Manifest>;
+  viewTemplate?: ViewTemplateDetails;
   children?: React.ReactNode;
 }
 
-const DataProviderInner = ({ customTemplates, isConsumption, children }: TemplatesDataProviderProps) => {
+const DataProviderInner = ({ isConsumption, children }: TemplatesDataProviderProps) => {
   const dispatch = useDispatch<AppDispatch>();
   const { githubTemplateNames, availableTemplates, filters } = useSelector((state: RootState) => state?.manifest);
 
@@ -40,12 +44,6 @@ const DataProviderInner = ({ customTemplates, isConsumption, children }: Templat
       dispatch(loadGithubManifests());
     }
   }, [dispatch, githubTemplateNames]);
-
-  useEffect(() => {
-    if (customTemplates) {
-      dispatch(setCustomTemplates(customTemplates));
-    }
-  }, [dispatch, customTemplates]);
 
   useEffect(() => {
     if (!availableTemplates) {
@@ -94,11 +92,26 @@ export const TemplatesDataProvider = (props: TemplatesDataProviderProps) => {
     props.existingWorkflowName,
     props.isConsumption,
     props.isCreateView,
+    props.viewTemplate,
+    props.customTemplates,
   ]);
+
+  useEffect(() => {
+    if (props.viewTemplate) {
+      dispatch(changeCurrentTemplateName(props.viewTemplate.id));
+      dispatch(setViewTemplateDetails(props.viewTemplate));
+    }
+  }, [dispatch, props.viewTemplate]);
+
+  useEffect(() => {
+    if (props.customTemplates) {
+      dispatch(setCustomTemplates(props.customTemplates));
+    }
+  }, [dispatch, props.customTemplates]);
 
   if (!servicesInitialized) {
     return null;
   }
 
-  return <DataProviderInner {...props} />;
+  return props.viewTemplate ? <>{props.children}</> : <DataProviderInner {...props} />;
 };

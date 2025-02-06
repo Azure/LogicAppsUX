@@ -10,7 +10,8 @@ import { useDispatch } from 'react-redux';
 const SourceSettings = ({
   showEnvironment = true,
   showHistoryButton = true,
-}: { showEnvironment?: boolean; showHistoryButton?: boolean }) => {
+  showHybridPlan = true,
+}: { showEnvironment?: boolean; showHistoryButton?: boolean; showHybridPlan?: boolean }) => {
   const isLocal = useIsLocal();
   const hostingPlan = useHostingPlan();
   const dispatch = useDispatch<AppDispatch>();
@@ -24,6 +25,13 @@ const SourceSettings = ({
       dispatch(setIsLocalSelected(true));
     }
   }, [armToken, dispatch, showEnvironment]);
+  const planOptions = [
+    { key: 'standard', text: 'Standard' },
+    { key: 'consumption', text: 'Consumption' },
+  ];
+  if (showHybridPlan) {
+    planOptions.push({ key: 'hybrid', text: 'Hybrid' });
+  }
 
   return (
     <div style={{ display: 'flex', gap: '24px' }}>
@@ -40,11 +48,7 @@ const SourceSettings = ({
       ) : null}
       <ChoiceGroup
         label="Plan"
-        options={[
-          { key: 'standard', text: 'Standard' },
-          { key: 'consumption', text: 'Consumption' },
-          { key: 'hybrid', text: 'Hybrid' },
-        ]}
+        options={planOptions}
         onChange={(_, option) => dispatch(setHostingPlan((option?.key as HostingPlanTypes) || 'standard'))}
         selectedKey={hostingPlan}
       />
