@@ -9,3 +9,4 @@ export { default as playgroundTargetSchema } from './PlaygroundTargetSchema.json
 export { default as deepNestedSequenceAndObject } from './DeepNestedSequenceAndObj.json';
 export { default as customerSchema } from './customerSchema.json';
 export { default as overlappingLoopsSchema } from './OverlappingLoopsSourceSchema.json';
+export { default as adjacentLoopsSchema } from './adjacentLoopTest.json';
