@@ -255,7 +255,7 @@ const loadWorkflowTemplateFromManifest = async (
   templatePath: string,
   manifest: Template.Manifest | undefined,
   isCustomTemplate: boolean,
-  viewTemplateData?: Template.ViewTemplateDetails
+  viewTemplateData: Template.ViewTemplateDetails | undefined
 ): Promise<
   | {
       workflow: WorkflowTemplateData;
@@ -273,14 +273,9 @@ const loadWorkflowTemplateFromManifest = async (
         ...parameter,
         value: viewTemplateParameterData ? viewTemplateParameterData.value : parameter.default,
         associatedWorkflows: [templateManifest.title],
-        isEditable: viewTemplateParameterData?.isEditable,
       };
       return result;
     }, {});
-
-    if (viewTemplateData?.basicsOverride?.[workflowId]?.name?.isEditable === false) {
-      templateManifest.kinds = [viewTemplateData?.basicsOverride?.[workflowId]?.name?.value as Template.WorkflowKindType];
-    }
 
     return {
       workflow: {

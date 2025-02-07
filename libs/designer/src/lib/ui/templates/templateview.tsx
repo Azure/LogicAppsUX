@@ -26,7 +26,7 @@ export const TemplatesView = (props: TemplateViewProps) => {
     templateName: state.template.templateName,
     allTemplates: state.manifest.availableTemplates,
     customTemplateNames: state.manifest.customTemplateNames,
-    viewTemplateDetails: state.manifest.viewTemplateDetails,
+    viewTemplateDetails: state.template.viewTemplateDetails,
     manifest: state.template.manifest,
   }));
 

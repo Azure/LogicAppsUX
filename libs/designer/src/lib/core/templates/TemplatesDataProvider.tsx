@@ -8,7 +8,6 @@ import {
   loadGithubManifests,
   setCustomTemplates,
   setFilteredTemplateNames,
-  setViewTemplateDetails,
 } from '../state/templates/manifestSlice';
 import { type ResourceDetails, setInitialData } from '../state/templates/workflowSlice';
 import { useAreServicesInitialized } from '../state/templates/templateselectors';
@@ -16,7 +15,7 @@ import type { ConnectionReferences } from '../../common/models/workflow';
 import { getFilteredTemplates } from './utils/helper';
 import { initializeTemplateServices } from '../actions/bjsworkflow/templates';
 import type { Template } from '@microsoft/logic-apps-shared';
-import { changeCurrentTemplateName } from '../state/templates/templateSlice';
+import { setViewTemplateDetails } from '../state/templates/templateSlice';
 
 export interface TemplatesDataProviderProps {
   isConsumption: boolean | undefined;
@@ -95,7 +94,6 @@ export const TemplatesDataProvider = (props: TemplatesDataProviderProps) => {
 
   useEffect(() => {
     if (props.viewTemplate) {
-      dispatch(changeCurrentTemplateName(props.viewTemplate.id));
       dispatch(setViewTemplateDetails(props.viewTemplate));
     }
   }, [dispatch, props.viewTemplate]);

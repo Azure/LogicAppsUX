@@ -53,7 +53,7 @@ export const CreateWorkflowPanel = ({
     isOpen: state.panel.isOpen,
     isCreateView: state.workflow.isCreateView,
     currentPanelView: state.panel.currentPanelView,
-    shouldCloseByDefault: !state.manifest.viewTemplateDetails,
+    shouldCloseByDefault: !state.template.viewTemplateDetails,
   }));
   const isMultiWorkflow = useMemo(() => !!manifest && isMultiWorkflowTemplate(manifest), [manifest]);
 

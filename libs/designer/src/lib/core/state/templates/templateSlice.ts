@@ -7,6 +7,7 @@ import { initializeTemplateServices, loadTemplate, validateWorkflowName, type Te
 export interface TemplateState extends TemplatePayload {
   templateName?: string;
   servicesInitialized: boolean;
+  viewTemplateDetails?: Template.ViewTemplateDetails;
 }
 
 const initialState: TemplateState = {
@@ -27,6 +28,11 @@ export const templateSlice = createSlice({
   reducers: {
     changeCurrentTemplateName: (state, action: PayloadAction<string>) => {
       state.templateName = action.payload;
+      state.viewTemplateDetails = undefined;
+    },
+    setViewTemplateDetails: (state, action: PayloadAction<Template.ViewTemplateDetails>) => {
+      state.templateName = action.payload.id;
+      state.viewTemplateDetails = action.payload;
     },
     updateWorkflowName: (state, action: PayloadAction<{ id: string; name: string | undefined }>) => {
       const { id, name } = action.payload;
@@ -148,6 +154,7 @@ export const templateSlice = createSlice({
 
 export const {
   changeCurrentTemplateName,
+  setViewTemplateDetails,
   updateWorkflowName,
   updateKind,
   validateWorkflowsBasicInfo,
