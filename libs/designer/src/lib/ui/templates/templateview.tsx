@@ -22,10 +22,11 @@ export const TemplatesView = (props: TemplateViewProps) => {
   const { showCloseButton, panelWidth, createWorkflow, onClose } = props;
   const dispatch = useDispatch<AppDispatch>();
   const intl = useIntl();
-  const { templateName, manifest, allTemplates, customTemplateNames } = useSelector((state: RootState) => ({
+  const { templateName, manifest, allTemplates, customTemplateNames, viewTemplateDetails } = useSelector((state: RootState) => ({
     templateName: state.template.templateName,
     allTemplates: state.manifest.availableTemplates,
     customTemplateNames: state.manifest.customTemplateNames,
+    viewTemplateDetails: state.manifest.viewTemplateDetails,
     manifest: state.template.manifest,
   }));
 
@@ -37,9 +38,9 @@ export const TemplatesView = (props: TemplateViewProps) => {
 
   useEffect(() => {
     if (templateName) {
-      dispatch(loadTemplate({ preLoadedManifest: customTemplateManifest, isCustomTemplate }));
+      dispatch(loadTemplate({ preLoadedManifest: customTemplateManifest, isCustomTemplate, viewTemplateDetails }));
     }
-  }, [customTemplateManifest, dispatch, isCustomTemplate, templateName]);
+  }, [customTemplateManifest, dispatch, isCustomTemplate, viewTemplateDetails, templateName]);
 
   if (!manifest) {
     return templateName ? (

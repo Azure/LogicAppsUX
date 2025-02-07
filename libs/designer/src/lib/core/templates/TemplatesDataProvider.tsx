@@ -3,7 +3,6 @@ import type React from 'react';
 import { useContext, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import type { AppDispatch, RootState } from '../state/templates/store';
-import type { ViewTemplateDetails } from '../state/templates/manifestSlice';
 import {
   loadGithubManifestNames,
   loadGithubManifests,
@@ -27,7 +26,7 @@ export interface TemplatesDataProviderProps {
   services: TemplateServiceOptions;
   connectionReferences: ConnectionReferences;
   customTemplates?: Record<string, Template.Manifest>;
-  viewTemplate?: ViewTemplateDetails;
+  viewTemplate?: Template.ViewTemplateDetails;
   children?: React.ReactNode;
 }
 

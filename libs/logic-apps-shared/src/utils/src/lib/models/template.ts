@@ -45,6 +45,7 @@ export interface Parameter {
 
 export interface ParameterDefinition extends Parameter {
   associatedWorkflows?: string[];
+  isEditable?: boolean;
 }
 
 export interface Connection {
@@ -56,4 +57,21 @@ export interface TemplateContext {
   templateId: string;
   workflowAppName?: string;
   isMultiWorkflow: boolean;
+}
+
+interface ContentInfo<T> {
+  value: T;
+  isEditable?: boolean;
+}
+
+export interface ViewTemplateDetails {
+  id: string;
+  basicsOverride?: Record<
+    string,
+    {
+      name?: ContentInfo<string>;
+      kind?: ContentInfo<string>;
+    }
+  >;
+  parametersOverride?: Record<string, ContentInfo<any>>;
 }

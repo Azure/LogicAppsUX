@@ -2,7 +2,6 @@ import {
   BaseExperimentationService,
   DevLogger,
   getIntl,
-  guid,
   type ILoggerService,
   InitApiManagementService,
   InitAppServiceService,
@@ -126,14 +125,19 @@ export const initializeTemplateServices = createAsyncThunk(
 export const loadTemplate = createAsyncThunk(
   'loadTemplate',
   async (
-    { preLoadedManifest, isCustomTemplate = false }: { preLoadedManifest: Template.Manifest | undefined; isCustomTemplate?: boolean },
+    {
+      preLoadedManifest,
+      viewTemplateDetails,
+      isCustomTemplate = false,
+    }: { preLoadedManifest: Template.Manifest | undefined; viewTemplateDetails?: Template.ViewTemplateDetails; isCustomTemplate?: boolean },
     thunkAPI
   ) => {
     const currentState: RootState = thunkAPI.getState() as RootState;
-    const currentTemplateResourcePath = currentState.template.templateName;
+    const currentTemplateName = currentState.template.templateName;
+    const viewTemplateData = currentTemplateName === viewTemplateDetails?.id ? viewTemplateDetails : undefined;
 
-    if (currentTemplateResourcePath) {
-      return await loadTemplateFromResourcePath(currentTemplateResourcePath, preLoadedManifest, isCustomTemplate);
+    if (currentTemplateName) {
+      return await loadTemplateFromResourcePath(currentTemplateName, preLoadedManifest, isCustomTemplate, viewTemplateData);
     }
 
     return undefined;
@@ -174,7 +178,8 @@ export const validateWorkflowName = (workflowName: string | undefined, existingW
 const loadTemplateFromResourcePath = async (
   templateName: string,
   manifest: Template.Manifest | undefined,
-  isCustomTemplate: boolean
+  isCustomTemplate: boolean,
+  viewTemplateData?: Template.ViewTemplateDetails
 ): Promise<TemplatePayload> => {
   const templateManifest: Template.Manifest =
     manifest ?? (await import(`./../../templates/templateFiles/${templateName}/manifest.json`)).default;
@@ -198,7 +203,8 @@ const loadTemplateFromResourcePath = async (
         workflowPath,
         `${templateName}/${workflowPath}`,
         /* manifest */ undefined,
-        isCustomTemplate
+        isCustomTemplate,
+        viewTemplateData
       );
       if (workflowData) {
         workflowData.workflow.workflowName = workflows[workflowPath].name;
@@ -229,8 +235,9 @@ const loadTemplateFromResourcePath = async (
       }
     }
   } else {
-    const workflowId = guid();
-    const workflowData = await loadWorkflowTemplateFromManifest(workflowId, templateName, manifest, isCustomTemplate);
+    const workflowId = templateName;
+    const workflowData = await loadWorkflowTemplateFromManifest(workflowId, templateName, manifest, isCustomTemplate, viewTemplateData);
+
     if (workflowData) {
       data.workflows = {
         [workflowId]: workflowData.workflow,
@@ -247,7 +254,8 @@ const loadWorkflowTemplateFromManifest = async (
   workflowId: string,
   templatePath: string,
   manifest: Template.Manifest | undefined,
-  isCustomTemplate: boolean
+  isCustomTemplate: boolean,
+  viewTemplateData?: Template.ViewTemplateDetails
 ): Promise<
   | {
       workflow: WorkflowTemplateData;
@@ -259,21 +267,30 @@ const loadWorkflowTemplateFromManifest = async (
   try {
     const { templateManifest, templateWorkflowDefinition } = await getWorkflowAndManifest(templatePath, manifest, isCustomTemplate);
     const parameterDefinitions = templateManifest.parameters?.reduce((result: Record<string, Template.ParameterDefinition>, parameter) => {
+      const viewTemplateParameterData = viewTemplateData?.parametersOverride?.[parameter.name];
+
       result[parameter.name] = {
         ...parameter,
-        value: parameter.default,
+        value: viewTemplateParameterData ? viewTemplateParameterData.value : parameter.default,
         associatedWorkflows: [templateManifest.title],
+        isEditable: viewTemplateParameterData?.isEditable,
       };
       return result;
     }, {});
+
+    if (viewTemplateData?.basicsOverride?.[workflowId]?.name?.isEditable === false) {
+      templateManifest.kinds = [viewTemplateData?.basicsOverride?.[workflowId]?.name?.value as Template.WorkflowKindType];
+    }
 
     return {
       workflow: {
         id: workflowId,
         workflowDefinition: (templateWorkflowDefinition as any)?.default ?? templateWorkflowDefinition,
         manifest: templateManifest,
-        workflowName: '',
-        kind: templateManifest.kinds?.length ? templateManifest.kinds[0] : 'stateful',
+        workflowName: viewTemplateData?.basicsOverride?.[workflowId]?.name?.value ?? '',
+        kind:
+          viewTemplateData?.basicsOverride?.[workflowId]?.kind?.value ??
+          (templateManifest.kinds?.length ? templateManifest.kinds[0] : 'stateful'),
         images: templateManifest.images,
         connectionKeys: Object.keys(templateManifest.connections),
         errors: {

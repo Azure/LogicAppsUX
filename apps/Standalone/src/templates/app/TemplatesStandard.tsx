@@ -218,7 +218,23 @@ export const TemplatesStandard = () => {
         isConsumption={false}
         isCreateView={true}
         existingWorkflowName={existingWorkflowName}
-        viewTemplate={isSingleTemplateView ? { id: templatesView } : undefined}
+        viewTemplate={
+          isSingleTemplateView
+            ? {
+                id: templatesView,
+                parametersOverride: {
+                  'odataTopDefault_#workflowname#': { value: '0', isEditable: false },
+                  'sharepoint-site-name_#workflowname#': { value: 'overriden-empty' },
+                },
+                basicsOverride: {
+                  [`${templatesView}`]: {
+                    name: { value: 'overriden-name', isEditable: false },
+                    kind: { value: 'stateful', isEditable: false },
+                  },
+                },
+              }
+            : undefined
+        }
       >
         <div
           style={{
