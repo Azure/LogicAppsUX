@@ -12,7 +12,7 @@ import { addReactFlowPrefix, createReactFlowFunctionKey } from '../../utils/Reac
 import { convertSchemaToSchemaExtended } from '../../utils/Schema.Utils';
 import { convertToArray, createYamlFromMap, generateMapDefinitionBody, generateMapDefinitionHeader } from '../MapDefinitionSerializer';
 import type { MapDefinitionEntry, Schema, SchemaExtended, SchemaNodeExtended } from '@microsoft/logic-apps-shared';
-import { SchemaFileFormat, SchemaType, extend } from '@microsoft/logic-apps-shared';
+import { SchemaFileFormat, SchemaType, extend, map } from '@microsoft/logic-apps-shared';
 import {
   deepNestedSequenceAndObject,
   comprehensiveSourceSchema,
@@ -24,6 +24,7 @@ import {
   overlappingLoopsSchema,
   playgroundSourceSchema,
   playgroundTargetSchema,
+  x12Schema,
 } from '../../__mocks__/schemas';
 import { describe, vi, beforeEach, afterEach, beforeAll, afterAll, it, test, expect } from 'vitest';
 import { createSchemaToSchemaNodeConnection } from './MapHandlingTestUtilis';
@@ -2084,6 +2085,42 @@ describe('mapDefinitions/MapDefinitionSerializer', () => {
         expect(dayChildren.length).toEqual(1);
         expect(dayChildren[0][0]).toEqual('Pressure');
         expect(dayChildren[0][1]).toEqual('/ns0:Root/LoopingWithIndex/WeatherReport[1]/@Pressure');
+      });
+
+      it('a loop with a repeating parent that is not connected', () => {
+        const x12SchemaMock: Schema = x12Schema;
+
+        const extendedX12Schema: SchemaExtended = convertSchemaToSchemaExtended(x12SchemaMock);
+        const mapDefinition: MapDefinitionEntry = {};
+        const connections: ConnectionDictionary = {};
+
+        const hlSLoopSrc = extendedX12Schema.schemaTreeRoot.children.find((child) => child.name === 'HL-SLoop') as SchemaNodeExtended;
+        const hlSrc = hlSLoopSrc.children[0];
+        const hlSrcChild = hlSrc.children[0];
+
+        const hlSLoopTgt = { ...hlSLoopSrc };
+        const hlTgt = hlSLoopTgt.children[0];
+        const hlTgtChild = hlTgt.children[0];
+
+        applyConnectionValue(connections, {
+          targetNode: hlTgtChild,
+          targetNodeReactFlowKey: addReactFlowPrefix(hlTgtChild.key, SchemaType.Target),
+          findInputSlot: true,
+          input: createNodeConnection(hlSrcChild, addReactFlowPrefix(hlSrcChild.key, SchemaType.Source)),
+        });
+
+        applyConnectionValue(connections, {
+          targetNode: hlTgt,
+          targetNodeReactFlowKey: addReactFlowPrefix(hlTgt.key, SchemaType.Target),
+          findInputSlot: true,
+          input: createNodeConnection(hlSrc, addReactFlowPrefix(hlSrc.key, SchemaType.Source)),
+        });
+
+        generateMapDefinitionBody(mapDefinition, connections);
+
+        expect(
+          Object.entries(mapDefinition['ns0:X12_00401_856']['ns0:HL-SLoop'])[0][0].includes('$for(/ns0:X12_00401_856/ns0:HL-SLoop/ns0:HL')
+        );
       });
 
       it('an index loop, a conditional and direct index access', () => {
