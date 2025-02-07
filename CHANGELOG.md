@@ -1,4 +1,12 @@
 # Logic Apps Designer
+### [5.18.4](https://github.com/Azure/LogicAppsUX/compare/v5.18.3...v5.18.4) (2025-02-04)
+
+
+### Bug Fixes
+
+* **designer:** Error Being thrown On Extended Text Node ([#6493](https://github.com/Azure/LogicAppsUX/issues/6493)) ([feff434](https://github.com/Azure/LogicAppsUX/commit/feff434012c37d7525284d16b3c5aa76fbf9b602)), closes [#6370](https://github.com/Azure/LogicAppsUX/issues/6370)
+* **Designer:** hotfix/5.18 - Expression fix ([#6543](https://github.com/Azure/LogicAppsUX/issues/6543)) ([f0795e5](https://github.com/Azure/LogicAppsUX/commit/f0795e597f5a8e1d4ab133a08b3185597d3cd916)), closes [#6539](https://github.com/Azure/LogicAppsUX/issues/6539) [#6131](https://github.com/Azure/LogicAppsUX/issues/6131) [#6131](https://github.com/Azure/LogicAppsUX/issues/6131) [#6131](https://github.com/Azure/LogicAppsUX/issues/6131) [#6131](https://github.com/Azure/LogicAppsUX/issues/6131)
+
 ### [5.18.3](https://github.com/Azure/LogicAppsUX/compare/v5.18.2...v5.18.3) (2025-01-31)
 
 
