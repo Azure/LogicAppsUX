@@ -225,9 +225,15 @@ export const TemplatesStandard = () => {
                 parametersOverride: {
                   'odataTopDefault_#workflowname#': { value: '0', isEditable: false },
                   'sharepoint-site-name_#workflowname#': { value: 'overriden-empty' },
+                  'TeamsChannelID_#workflowname#': { value: 'overriden-default', isEditable: false },
+                  'TeamsTeamID_#workflowname#': { value: 'overriden-default-editable' },
                 },
                 basicsOverride: {
-                  [`${templatesView}`]: {
+                  [templatesView]: {
+                    name: { value: 'overriden-name', isEditable: false },
+                    kind: { value: 'stateful', isEditable: false },
+                  },
+                  ['ingest-index-ai-sharepoint-rag']: {
                     name: { value: 'overriden-name', isEditable: false },
                     kind: { value: 'stateful', isEditable: false },
                   },

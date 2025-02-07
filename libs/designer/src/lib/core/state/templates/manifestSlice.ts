@@ -20,7 +20,6 @@ export interface ManifestState {
     connectors: FilterObject[] | undefined;
     detailFilters: Record<string, FilterObject[]>;
   };
-  viewTemplateDetails?: Template.ViewTemplateDetails;
 }
 
 type ManifestName = string;
@@ -118,9 +117,6 @@ export const manifestSlice = createSlice({
       state.filters.detailFilters = currentDetailFilters;
       state.filters.pageNum = initialPageNum;
     },
-    setViewTemplateDetails: (state, action: PayloadAction<Template.ViewTemplateDetails>) => {
-      state.viewTemplateDetails = action.payload;
-    },
   },
   extraReducers: (builder) => {
     builder.addCase(loadGithubManifestNames.fulfilled, (state, action) => {
@@ -155,7 +151,6 @@ export const {
   setSortKey,
   setConnectorsFilters,
   setDetailsFilters,
-  setViewTemplateDetails,
 } = manifestSlice.actions;
 export default manifestSlice.reducer;
 
