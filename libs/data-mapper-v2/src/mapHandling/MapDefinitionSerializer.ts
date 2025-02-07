@@ -9,6 +9,7 @@ import {
   isNodeConnection,
   isCustomValueConnection,
   isEmptyConnection,
+  connectionDoesExist,
 } from '../utils/Connection.Utils';
 import {
   collectConditionalValues,
@@ -19,7 +20,7 @@ import {
   getSourceKeyOfLastLoop,
 } from '../utils/DataMap.Utils';
 import { formatDirectAccess, getIndexValueForCurrentConnection, isFunctionData } from '../utils/Function.Utils';
-import { addTargetReactFlowPrefix } from '../utils/ReactFlow.Util';
+import { addSourceReactFlowPrefix, addTargetReactFlowPrefix } from '../utils/ReactFlow.Util';
 import { isObjectType, isSchemaNodeExtended } from '../utils/Schema.Utils';
 import type { MapDefinitionEntry, MapDefinitionValue, PathItem, SchemaExtended, SchemaNodeExtended } from '@microsoft/logic-apps-shared';
 import { extend, guid, isAGuid, SchemaNodeProperty } from '@microsoft/logic-apps-shared';
@@ -390,7 +391,9 @@ const addConditionalToNewPathItems = (ifConnection: Connection, connections: Con
   inputConnection.customId = generatePostfix();
 
   // If entry
-  newPath.push({ key: `${mapNodeParams.if}(${ifContents})${inputConnection.customId}` });
+  newPath.push({
+    key: `${mapNodeParams.if}(${ifContents})${inputConnection.customId}`,
+  });
 };
 
 const addLoopingForToNewPathItems = (
@@ -452,11 +455,14 @@ const addLoopingForToNewPathItems = (
             const inputConnection = indexConnection.inputs[0];
             const inputKey = isNodeConnection(inputConnection) && inputConnection.node.key;
 
-            loopValue = `${mapNodeParams.for}(${inputKey}, ${getIndexValueForCurrentConnection(indexConnection, connections)})${sourceSchemaNodeConnection.customId}`;
+            loopValue = `${mapNodeParams.for}(${inputKey}, ${getIndexValueForCurrentConnection(
+              indexConnection,
+              connections
+            )})${sourceSchemaNodeConnection.customId}`;
           } else {
-            loopValue = `${
-              mapNodeParams.for
-            }(${sourceSchemaNodeReactFlowKey.replace(sourcePrefix, '')}${sourceSchemaNodeConnection.customId})`;
+            loopValue = `${mapNodeParams.for}(${sourceSchemaNodeReactFlowKey.replace(sourcePrefix, '')}${
+              sourceSchemaNodeConnection.customId
+            })`;
           }
 
           // For entry
@@ -516,9 +522,15 @@ const addLoopingForToNewPathItems = (
           if (!sourceNode.customId) {
             sourceNode.customId = generatePostfix();
           }
-          const valueToTrim = findLast(sourceNode.node.pathToRoot, (pathItem) => pathItem.repeating && pathItem.key !== loopValue)?.key;
-          if (valueToTrim) {
-            loopValue = loopValue.replace(`${valueToTrim}/`, '');
+          const parentConnection = findLast(sourceNode.node.pathToRoot, (pathItem) => {
+            const isRepeating = pathItem.repeating && pathItem.key !== loopValue;
+            const lowestParentConnections = connections[addSourceReactFlowPrefix(pathItem.key)];
+            const isConnected =
+              lowestParentConnections && lowestParentConnections.outputs[0] && connectionDoesExist(lowestParentConnections.outputs[0]);
+            return isRepeating && isConnected;
+          })?.key;
+          if (parentConnection) {
+            loopValue = loopValue.replace(`${parentConnection}/`, '');
           }
 
           loopValue = `${mapNodeParams.for}(${loopValue})${sourceNode.customId}`;
