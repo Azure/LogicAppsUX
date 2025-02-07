@@ -10,3 +10,4 @@ export { default as deepNestedSequenceAndObject } from './DeepNestedSequenceAndO
 export { default as customerSchema } from './customerSchema.json';
 export { default as overlappingLoopsSchema } from './OverlappingLoopsSourceSchema.json';
 export { default as adjacentLoopsSchema } from './adjacentLoopTest.json';
+export { default as x12Schema } from './X12Schema.json';
