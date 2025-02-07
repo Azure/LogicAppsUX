@@ -1,4 +1,11 @@
 # Logic Apps Designer
+### [5.18.5](https://github.com/Azure/LogicAppsUX/compare/v5.18.4...v5.18.5) (2025-02-07)
+
+
+### Bug Fixes
+
+* **Designer:** hotfix/5.18 - Fixed issues with loop component memoization ([#6568](https://github.com/Azure/LogicAppsUX/issues/6568)) ([06e3cfc](https://github.com/Azure/LogicAppsUX/commit/06e3cfc444e252e06c69c00c35ea8ded1e173a50))
+
 ### [5.18.4](https://github.com/Azure/LogicAppsUX/compare/v5.18.3...v5.18.4) (2025-02-04)
 
 
