@@ -87,13 +87,11 @@ export const TemplatesDataProvider = (props: TemplatesDataProviderProps) => {
     dispatch,
     servicesInitialized,
     props.services,
-    props.resourceDetails,
-    props.connectionReferences,
     props.existingWorkflowName,
     props.isConsumption,
+    props.resourceDetails,
+    props.connectionReferences,
     props.isCreateView,
-    props.viewTemplate,
-    props.customTemplates,
   ]);
 
   useEffect(() => {
