@@ -1,4 +1,11 @@
 # Logic Apps Designer
+### [5.14.6](https://github.com/Azure/LogicAppsUX/compare/v5.14.5...v5.14.6) (2025-02-03)
+
+
+### Bug Fixes
+
+* **designer:** revert No longer escapes characters in token expressions ([#6535](https://github.com/Azure/LogicAppsUX/issues/6535)) ([e40035e](https://github.com/Azure/LogicAppsUX/commit/e40035e44dee51c5a936539ebddb0f99d3ec783c)), closes [#6131](https://github.com/Azure/LogicAppsUX/issues/6131)
+
 ### [5.14.5](https://github.com/Azure/LogicAppsUX/compare/v5.14.4...v5.14.5) (2025-01-30)
 
 
