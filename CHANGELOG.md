@@ -1,4 +1,11 @@
 # Logic Apps Designer
+## [5.38.0](https://github.com/Azure/LogicAppsUX/compare/v5.37.0...v5.38.0) (2025-02-07)
+
+
+### Bug Fixes
+
+* **Data Mapper:** Serialization scenario where repeating parents are not connected ([#6571](https://github.com/Azure/LogicAppsUX/issues/6571)) ([e09aae3](https://github.com/Azure/LogicAppsUX/commit/e09aae3ba927a788dcbd6649441fafdad0da2210))
+
 ## [5.37.0](https://github.com/Azure/LogicAppsUX/compare/v5.35.0...v5.37.0) (2025-02-06)
 
 
