@@ -2118,7 +2118,9 @@ describe('mapDefinitions/MapDefinitionSerializer', () => {
 
         generateMapDefinitionBody(mapDefinition, connections);
 
-        console.log(mapDefinition);
+        expect(
+          Object.entries(mapDefinition['ns0:X12_00401_856']['ns0:HL-SLoop'])[0][0].includes('$for(/ns0:X12_00401_856/ns0:HL-SLoop/ns0:HL')
+        );
       });
 
       it('an index loop, a conditional and direct index access', () => {
