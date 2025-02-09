@@ -9,7 +9,7 @@ import {
   createNodeConnection,
 } from '../../utils/Connection.Utils';
 import { addReactFlowPrefix, createReactFlowFunctionKey } from '../../utils/ReactFlow.Util';
-import { convertSchemaToSchemaExtended } from '../../utils/Schema.Utils';
+import { convertSchemaToSchemaExtended, flattenSchemaIntoDictionary } from '../../utils/Schema.Utils';
 import { convertToArray, createYamlFromMap, generateMapDefinitionBody, generateMapDefinitionHeader } from '../MapDefinitionSerializer';
 import type { MapDefinitionEntry, Schema, SchemaExtended, SchemaNodeExtended } from '@microsoft/logic-apps-shared';
 import { SchemaFileFormat, SchemaType, extend, map } from '@microsoft/logic-apps-shared';
@@ -25,6 +25,7 @@ import {
   playgroundSourceSchema,
   playgroundTargetSchema,
   x12Schema,
+  cannonicalRequest,
 } from '../../__mocks__/schemas';
 import { describe, vi, beforeEach, afterEach, beforeAll, afterAll, it, test, expect } from 'vitest';
 import { createSchemaToSchemaNodeConnection } from './MapHandlingTestUtilis';
@@ -1895,6 +1896,29 @@ describe('mapDefinitions/MapDefinitionSerializer', () => {
         expect(petProductChildren.length).toEqual(1);
         expect(petProductChildren[0][0]).toEqual('Name');
         expect(petProductChildren[0][1]).toEqual('Name');
+      });
+
+      it('repeating element of non-object type', () => {
+        const extendedCannonicalRequest = convertSchemaToSchemaExtended(cannonicalRequest as Schema);
+        const flattenedExtendedCannonicalRequestSrc = flattenSchemaIntoDictionary(extendedCannonicalRequest, SchemaType.Source);
+        const flattenedExtendedCannonicalRequestTgt = flattenSchemaIntoDictionary(extendedCannonicalRequest, SchemaType.Target);
+
+        const repeatingSrcNode = flattenedExtendedCannonicalRequestSrc['source-/ns0:CanonicalRequest/Body/IPLAN/Framed-Route'];
+        const repeatingTgtNode = flattenedExtendedCannonicalRequestTgt['target-/ns0:CanonicalRequest/Body/IPLAN/Framed-Route'];
+
+        const mapDefinition: MapDefinitionEntry = {};
+        const connections: ConnectionDictionary = {};
+
+        // apply connection
+        applyConnectionValue(connections, {
+          targetNode: repeatingTgtNode,
+          targetNodeReactFlowKey: addReactFlowPrefix(repeatingTgtNode.key, SchemaType.Target),
+          findInputSlot: true,
+          input: createNodeConnection(repeatingSrcNode, addReactFlowPrefix(repeatingSrcNode.key, SchemaType.Source)),
+        });
+
+        generateMapDefinitionBody(mapDefinition, connections);
+        console.log(mapDefinition);
       });
 
       it('an index and a conditional looping', () => {

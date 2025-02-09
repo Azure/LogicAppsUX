@@ -1,0 +1,437 @@
+{
+    "name": "CanonicalRequest.xsd",
+    "type": "XML",
+    "targetNamespace": "http://CanonicalDataModelPattern.CanonicalRequest",
+    "namespaces": {
+        "ns0": "http://CanonicalDataModelPattern.CanonicalRequest",
+        "b": "http://schemas.microsoft.com/BizTalk/2003",
+        "xs": "http://www.w3.org/2001/XMLSchema"
+    },
+    "schemaTreeRoot": {
+        "key": "/ns0:CanonicalRequest",
+        "name": "CanonicalRequest",
+        "type": "Complex",
+        "properties": "None",
+        "children": [
+            {
+                "key": "/ns0:CanonicalRequest/Header",
+                "name": "Header",
+                "type": "Complex",
+                "properties": "None",
+                "children": [
+                    {
+                        "key": "/ns0:CanonicalRequest/Header/ProcessId",
+                        "name": "ProcessId",
+                        "type": "String",
+                        "properties": "None",
+                        "qName": "ProcessId"
+                    },
+                    {
+                        "key": "/ns0:CanonicalRequest/Header/OperationType",
+                        "name": "OperationType",
+                        "type": "String",
+                        "properties": "None",
+                        "qName": "OperationType"
+                    }
+                ],
+                "qName": "Header"
+            },
+            {
+                "key": "/ns0:CanonicalRequest/Body",
+                "name": "Body",
+                "type": "Complex",
+                "properties": "None",
+                "children": [
+                    {
+                        "key": "/ns0:CanonicalRequest/Body/Username",
+                        "name": "Username",
+                        "type": "String",
+                        "properties": "None",
+                        "qName": "Username"
+                    },
+                    {
+                        "key": "/ns0:CanonicalRequest/Body/Password",
+                        "name": "Password",
+                        "type": "String",
+                        "properties": "Optional",
+                        "qName": "Password"
+                    },
+                    {
+                        "key": "/ns0:CanonicalRequest/Body/Service-Type",
+                        "name": "Service-Type",
+                        "type": "String",
+                        "properties": "Optional",
+                        "qName": "Service-Type"
+                    },
+                    {
+                        "key": "/ns0:CanonicalRequest/Body/Framed-Protocol",
+                        "name": "Framed-Protocol",
+                        "type": "String",
+                        "properties": "Optional",
+                        "qName": "Framed-Protocol"
+                    },
+                    {
+                        "key": "/ns0:CanonicalRequest/Body/Framed-Pool",
+                        "name": "Framed-Pool",
+                        "type": "String",
+                        "properties": "Optional",
+                        "qName": "Framed-Pool"
+                    },
+                    {
+                        "key": "/ns0:CanonicalRequest/Body/Shasta-VPN-Name",
+                        "name": "Shasta-VPN-Name",
+                        "type": "String",
+                        "properties": "Optional",
+                        "qName": "Shasta-VPN-Name"
+                    },
+                    {
+                        "key": "/ns0:CanonicalRequest/Body/Framed-IP-Address",
+                        "name": "Framed-IP-Address",
+                        "type": "String",
+                        "properties": "Optional",
+                        "qName": "Framed-IP-Address"
+                    },
+                    {
+                        "key": "/ns0:CanonicalRequest/Body/Framed-IP-Netmask",
+                        "name": "Framed-IP-Netmask",
+                        "type": "String",
+                        "properties": "Optional",
+                        "qName": "Framed-IP-Netmask"
+                    },
+                    {
+                        "key": "/ns0:CanonicalRequest/Body/IPLAN",
+                        "name": "IPLAN",
+                        "type": "Complex",
+                        "properties": "Optional",
+                        "children": [
+                            {
+                                "key": "/ns0:CanonicalRequest/Body/IPLAN/Framed-Route",
+                                "name": "Framed-Route",
+                                "type": "String",
+                                "properties": "Optional, Repeating",
+                                "qName": "Framed-Route"
+                            }
+                        ],
+                        "qName": "IPLAN"
+                    },
+                    {
+                        "key": "/ns0:CanonicalRequest/Body/Shasta-Service-Profile",
+                        "name": "Shasta-Service-Profile",
+                        "type": "String",
+                        "properties": "Optional",
+                        "qName": "Shasta-Service-Profile"
+                    },
+                    {
+                        "key": "/ns0:CanonicalRequest/Body/Unisphere-Virtual-Router",
+                        "name": "Unisphere-Virtual-Router",
+                        "type": "String",
+                        "properties": "Optional",
+                        "qName": "Unisphere-Virtual-Router"
+                    },
+                    {
+                        "key": "/ns0:CanonicalRequest/Body/Unisphere-Ingress-Policy-Name",
+                        "name": "Unisphere-Ingress-Policy-Name",
+                        "type": "String",
+                        "properties": "Optional",
+                        "qName": "Unisphere-Ingress-Policy-Name"
+                    },
+                    {
+                        "key": "/ns0:CanonicalRequest/Body/Unisphere-Init-CLI-Access-Level",
+                        "name": "Unisphere-Init-CLI-Access-Level",
+                        "type": "String",
+                        "properties": "Optional",
+                        "qName": "Unisphere-Init-CLI-Access-Level"
+                    },
+                    {
+                        "key": "/ns0:CanonicalRequest/Body/Unisphere-Local-Address-Pool",
+                        "name": "Unisphere-Local-Address-Pool",
+                        "type": "String",
+                        "properties": "Optional",
+                        "qName": "Unisphere-Local-Address-Pool"
+                    },
+                    {
+                        "key": "/ns0:CanonicalRequest/Body/Unisphere-Ingress-Statistics",
+                        "name": "Unisphere-Ingress-Statistics",
+                        "type": "String",
+                        "properties": "Optional",
+                        "qName": "Unisphere-Ingress-Statistics"
+                    },
+                    {
+                        "key": "/ns0:CanonicalRequest/Body/Unisphere-Primary-Dns",
+                        "name": "Unisphere-Primary-Dns",
+                        "type": "String",
+                        "properties": "Optional",
+                        "qName": "Unisphere-Primary-Dns"
+                    },
+                    {
+                        "key": "/ns0:CanonicalRequest/Body/Unisphere-Secondary-Dns",
+                        "name": "Unisphere-Secondary-Dns",
+                        "type": "String",
+                        "properties": "Optional",
+                        "qName": "Unisphere-Secondary-Dns"
+                    },
+                    {
+                        "key": "/ns0:CanonicalRequest/Body/Unisphere-Qos-Profile-Name",
+                        "name": "Unisphere-Qos-Profile-Name",
+                        "type": "String",
+                        "properties": "Optional",
+                        "qName": "Unisphere-Qos-Profile-Name"
+                    },
+                    {
+                        "key": "/ns0:CanonicalRequest/Body/Unisphere-Egress-Policy-Name",
+                        "name": "Unisphere-Egress-Policy-Name",
+                        "type": "String",
+                        "properties": "Optional",
+                        "qName": "Unisphere-Egress-Policy-Name"
+                    },
+                    {
+                        "key": "/ns0:CanonicalRequest/Body/Unisphere-Egress-Statistics",
+                        "name": "Unisphere-Egress-Statistics",
+                        "type": "String",
+                        "properties": "Optional",
+                        "qName": "Unisphere-Egress-Statistics"
+                    },
+                    {
+                        "key": "/ns0:CanonicalRequest/Body/Unisphere-IpV6-Virtual-Router",
+                        "name": "Unisphere-IpV6-Virtual-Router",
+                        "type": "String",
+                        "properties": "Optional",
+                        "qName": "Unisphere-IpV6-Virtual-Router"
+                    },
+                    {
+                        "key": "/ns0:CanonicalRequest/Body/Shasta-IPSec-Split-Tunnel",
+                        "name": "Shasta-IPSec-Split-Tunnel",
+                        "type": "String",
+                        "properties": "Optional",
+                        "qName": "Shasta-IPSec-Split-Tunnel"
+                    },
+                    {
+                        "key": "/ns0:CanonicalRequest/Body/Idle-Timeout",
+                        "name": "Idle-Timeout",
+                        "type": "String",
+                        "properties": "Optional",
+                        "qName": "Idle-Timeout"
+                    },
+                    {
+                        "key": "/ns0:CanonicalRequest/Body/Session-Timeout",
+                        "name": "Session-Timeout",
+                        "type": "String",
+                        "properties": "Optional",
+                        "qName": "Session-Timeout"
+                    },
+                    {
+                        "key": "/ns0:CanonicalRequest/Body/Tunnel-Type",
+                        "name": "Tunnel-Type",
+                        "type": "String",
+                        "properties": "Optional, Repeating",
+                        "qName": "Tunnel-Type"
+                    },
+                    {
+                        "key": "/ns0:CanonicalRequest/Body/Tunnel-Medium-Type",
+                        "name": "Tunnel-Medium-Type",
+                        "type": "String",
+                        "properties": "Optional, Repeating",
+                        "qName": "Tunnel-Medium-Type"
+                    },
+                    {
+                        "key": "/ns0:CanonicalRequest/Body/Tunnel-Server-Endpoint",
+                        "name": "Tunnel-Server-Endpoint",
+                        "type": "String",
+                        "properties": "Optional, Repeating",
+                        "qName": "Tunnel-Server-Endpoint"
+                    },
+                    {
+                        "key": "/ns0:CanonicalRequest/Body/Called-Station-Id",
+                        "name": "Called-Station-Id",
+                        "type": "String",
+                        "properties": "Optional",
+                        "qName": "Called-Station-Id"
+                    },
+                    {
+                        "key": "/ns0:CanonicalRequest/Body/Framed-MTU",
+                        "name": "Framed-MTU",
+                        "type": "String",
+                        "properties": "Optional",
+                        "qName": "Framed-MTU"
+                    },
+                    {
+                        "key": "/ns0:CanonicalRequest/Body/Framed-IPv6-Route",
+                        "name": "Framed-IPv6-Route",
+                        "type": "String",
+                        "properties": "Optional",
+                        "qName": "Framed-IPv6-Route"
+                    },
+                    {
+                        "key": "/ns0:CanonicalRequest/Body/Framed-IPv6-Pool",
+                        "name": "Framed-IPv6-Pool",
+                        "type": "String",
+                        "properties": "Optional",
+                        "qName": "Framed-IPv6-Pool"
+                    },
+                    {
+                        "key": "/ns0:CanonicalRequest/Body/Framed-IPv6-Prefix",
+                        "name": "Framed-IPv6-Prefix",
+                        "type": "String",
+                        "properties": "Optional",
+                        "qName": "Framed-IPv6-Prefix"
+                    },
+                    {
+                        "key": "/ns0:CanonicalRequest/Body/Ascend-Client-Primary-DNS",
+                        "name": "Ascend-Client-Primary-DNS",
+                        "type": "String",
+                        "properties": "Optional",
+                        "qName": "Ascend-Client-Primary-DNS"
+                    },
+                    {
+                        "key": "/ns0:CanonicalRequest/Body/Ascend-Client-Secondary-DNS",
+                        "name": "Ascend-Client-Secondary-DNS",
+                        "type": "String",
+                        "properties": "Optional",
+                        "qName": "Ascend-Client-Secondary-DNS"
+                    },
+                    {
+                        "key": "/ns0:CanonicalRequest/Body/Cisco-Account-Info",
+                        "name": "Cisco-Account-Info",
+                        "type": "String",
+                        "properties": "Optional",
+                        "qName": "Cisco-Account-Info"
+                    },
+                    {
+                        "key": "/ns0:CanonicalRequest/Body/CiscoAvpairs",
+                        "name": "CiscoAvpairs",
+                        "type": "Complex",
+                        "properties": "Optional",
+                        "children": [
+                            {
+                                "key": "/ns0:CanonicalRequest/Body/CiscoAvpairs/Cisco-Avpair",
+                                "name": "Cisco-Avpair",
+                                "type": "String",
+                                "properties": "Optional, Repeating",
+                                "qName": "Cisco-Avpair"
+                            }
+                        ],
+                        "qName": "CiscoAvpairs"
+                    },
+                    {
+                        "key": "/ns0:CanonicalRequest/Body/Simultaneous-Use",
+                        "name": "Simultaneous-Use",
+                        "type": "String",
+                        "properties": "Optional",
+                        "qName": "Simultaneous-Use"
+                    },
+                    {
+                        "key": "/ns0:CanonicalRequest/Body/Port-Limit",
+                        "name": "Port-Limit",
+                        "type": "String",
+                        "properties": "Optional",
+                        "qName": "Port-Limit"
+                    },
+                    {
+                        "key": "/ns0:CanonicalRequest/Body/Access-Type",
+                        "name": "Access-Type",
+                        "type": "String",
+                        "properties": "Optional",
+                        "qName": "Access-Type"
+                    },
+                    {
+                        "key": "/ns0:CanonicalRequest/Body/Fortinet-Vdom-Name",
+                        "name": "Fortinet-Vdom-Name",
+                        "type": "String",
+                        "properties": "Optional",
+                        "qName": "Fortinet-Vdom-Name"
+                    },
+                    {
+                        "key": "/ns0:CanonicalRequest/Body/Tunnel-Assignment-ID",
+                        "name": "Tunnel-Assignment-ID",
+                        "type": "String",
+                        "properties": "Optional, Repeating",
+                        "qName": "Tunnel-Assignment-ID"
+                    },
+                    {
+                        "key": "/ns0:CanonicalRequest/Body/Tunnel-Password",
+                        "name": "Tunnel-Password",
+                        "type": "String",
+                        "properties": "Optional, Repeating",
+                        "qName": "Tunnel-Password"
+                    },
+                    {
+                        "key": "/ns0:CanonicalRequest/Body/Tunnel-Preference",
+                        "name": "Tunnel-Preference",
+                        "type": "String",
+                        "properties": "Optional, Repeating",
+                        "qName": "Tunnel-Preference"
+                    },
+                    {
+                        "key": "/ns0:CanonicalRequest/Body/Framed-Netmask",
+                        "name": "Framed-Netmask",
+                        "type": "String",
+                        "properties": "Optional",
+                        "qName": "Framed-Netmask"
+                    },
+                    {
+                        "key": "/ns0:CanonicalRequest/Body/Unisphere-Policy-Name",
+                        "name": "Unisphere-Policy-Name",
+                        "type": "String",
+                        "properties": "Optional",
+                        "qName": "Unisphere-Policy-Name"
+                    },
+                    {
+                        "key": "/ns0:CanonicalRequest/Body/Calling-Station-Id",
+                        "name": "Calling-Station-Id",
+                        "type": "String",
+                        "properties": "Optional",
+                        "qName": "Calling-Station-Id"
+                    },
+                    {
+                        "key": "/ns0:CanonicalRequest/Body/User-Wifi",
+                        "name": "User-Wifi",
+                        "type": "String",
+                        "properties": "Optional",
+                        "qName": "User-Wifi"
+                    },
+                    {
+                        "key": "/ns0:CanonicalRequest/Body/Acct-Interim-Interval",
+                        "name": "Acct-Interim-Interval",
+                        "type": "String",
+                        "properties": "Optional",
+                        "qName": "Acct-Interim-Interval"
+                    },
+                    {
+                        "key": "/ns0:CanonicalRequest/Body/Properties",
+                        "name": "Properties",
+                        "type": "Complex",
+                        "properties": "Optional",
+                        "children": [
+                            {
+                                "key": "/ns0:CanonicalRequest/Body/Properties/RadiusProperties",
+                                "name": "RadiusProperties",
+                                "type": "Complex",
+                                "properties": "Repeating",
+                                "children": [
+                                    {
+                                        "key": "/ns0:CanonicalRequest/Body/Properties/RadiusProperties/FieldName",
+                                        "name": "FieldName",
+                                        "type": "String",
+                                        "properties": "None",
+                                        "qName": "FieldName"
+                                    },
+                                    {
+                                        "key": "/ns0:CanonicalRequest/Body/Properties/RadiusProperties/FieldValue",
+                                        "name": "FieldValue",
+                                        "type": "String",
+                                        "properties": "None",
+                                        "qName": "FieldValue"
+                                    }
+                                ],
+                                "qName": "RadiusProperties"
+                            }
+                        ],
+                        "qName": "Properties"
+                    }
+                ],
+                "qName": "Body"
+            }
+        ],
+        "qName": "ns0:CanonicalRequest"
+    }
+}

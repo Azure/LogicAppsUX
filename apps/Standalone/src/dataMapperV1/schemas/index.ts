@@ -10,3 +10,4 @@ export { default as deepNestedSequenceAndObject } from './DeepNestedSequenceAndO
 export { default as projectRequest } from './ProjectRequest.json';
 export { default as oebsProjectRequest } from './OebsProjectRequest.json';
 export { default as x12 } from './x12.json';
+export { default as cannonicalRequest } from './CannonicalRequest.json';

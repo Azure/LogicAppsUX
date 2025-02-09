@@ -1,4 +1,9 @@
-import { comprehensiveMapDefinition, fullTranscriptMapDefinitionString, transcriptJsonMapDefinitionString, x12MapDefinitionString } from '../mapDefinitions';
+import {
+  comprehensiveMapDefinition,
+  fullTranscriptMapDefinitionString,
+  transcriptJsonMapDefinitionString,
+  x12MapDefinitionString,
+} from '../mapDefinitions';
 import { testMetadata } from '../mapMetadata';
 import { LoadingMethod, dataMapDataLoaderSlice, loadDataMap } from '../state/DataMapDataLoader';
 import { loadSourceSchema, loadTargetSchema, schemaDataLoaderSlice } from '../state/SchemaDataLoader';
@@ -42,11 +47,12 @@ const mapDefinitionDropdownOptions: MapDefDropdownOption[] = [
     key: 'jsonTranscriptMapDefinition',
     text: 'JSON Transcript',
     data: { mapDefinitionString: transcriptJsonMapDefinitionString, associatedSchemaIdx: 3 },
-  },{
+  },
+  {
     key: 'x12MapDefinition',
     text: 'X12',
     data: { mapDefinitionString: x12MapDefinitionString, associatedSchemaIdx: 5 },
-  }
+  },
 ];
 
 interface SchemaFileData {
@@ -60,6 +66,7 @@ const sourceSchemaFileOptions: SchemaFileData[] = [
   { filename: 'SourceSchemaJson.json', schemaFormat: SchemaFileFormat.JSON },
   { filename: 'ProjectRequest.json', schemaFormat: SchemaFileFormat.XML },
   { filename: 'x12.json', schemaFormat: SchemaFileFormat.XML },
+  { filename: 'CannonicalRequest.json', schemaFormat: SchemaFileFormat.XML },
 ];
 const targetSchemaFileOptions: SchemaFileData[] = [
   { filename: 'PlaygroundTargetSchema.json', schemaFormat: SchemaFileFormat.XML },
@@ -68,6 +75,7 @@ const targetSchemaFileOptions: SchemaFileData[] = [
   { filename: 'TargetSchemaJson.json', schemaFormat: SchemaFileFormat.JSON },
   { filename: 'OebsProjectRequest.json', schemaFormat: SchemaFileFormat.XML },
   { filename: 'x12.json', schemaFormat: SchemaFileFormat.XML },
+  { filename: 'CannonicalRequest.json', schemaFormat: SchemaFileFormat.XML },
 ];
 const mapSchemaFileOptionsToDropdownOptions = (schemaFileData: SchemaFileData[]) =>
   schemaFileData.map<IDropdownOption>((schemaOpt) => ({
