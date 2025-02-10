@@ -19,7 +19,6 @@ export const SingleWorkflowBasics = ({ workflowId }: { workflowId: string }) => 
     errors: { workflow: workflowError, kind: kindError },
     kind,
     isKindEditable,
-    manifest,
   } = useWorkflowTemplate(workflowId);
   const { existingWorkflowName } = useSelector((state: RootState) => state.workflow);
   const { data: existingWorkflowNames } = useExistingWorkflowNames();
@@ -169,7 +168,7 @@ export const SingleWorkflowBasics = ({ workflowId }: { workflowId: string }) => 
             }
           }}
           selectedKey={kind}
-          disabled={manifest?.kinds?.length === 1 || isKindEditable === false}
+          disabled={isKindEditable === false}
         />
       </div>
       {kindError && <Text className="msla-templates-tab-stateType-error-message">{kindError}</Text>}

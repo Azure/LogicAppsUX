@@ -275,10 +275,12 @@ const loadWorkflowTemplateFromManifest = async (
         ...parameter,
         value: viewTemplateParameterData ? viewTemplateParameterData.value : parameter.default,
         associatedWorkflows: [templateManifest.title],
-        isEditable: viewTemplateParameterData?.isEditable,
+        isEditable: viewTemplateParameterData?.isEditable ?? true,
       };
       return result;
     }, {});
+
+    const viewTemplateKind = viewTemplateData?.basicsOverride?.[workflowId]?.kind?.value;
 
     return {
       workflow: {
@@ -286,11 +288,14 @@ const loadWorkflowTemplateFromManifest = async (
         workflowDefinition: (templateWorkflowDefinition as any)?.default ?? templateWorkflowDefinition,
         manifest: templateManifest,
         workflowName: viewTemplateData?.basicsOverride?.[workflowId]?.name?.value ?? '',
-        isWorkflowNameEditable: viewTemplateData?.basicsOverride?.[workflowId]?.name?.isEditable,
+        isWorkflowNameEditable: viewTemplateData?.basicsOverride?.[workflowId]?.name?.isEditable ?? true,
         kind:
-          viewTemplateData?.basicsOverride?.[workflowId]?.kind?.value ??
-          (templateManifest.kinds?.length ? templateManifest.kinds[0] : 'stateful'),
-        isKindEditable: viewTemplateData?.basicsOverride?.[workflowId]?.kind?.isEditable,
+          viewTemplateKind && templateManifest.kinds?.includes(viewTemplateKind)
+            ? viewTemplateKind
+            : templateManifest.kinds?.length
+              ? templateManifest.kinds[0]
+              : 'stateful',
+        isKindEditable: templateManifest?.kinds?.length !== 1 || (viewTemplateData?.basicsOverride?.[workflowId]?.kind?.isEditable ?? true),
         images: templateManifest.images,
         connectionKeys: Object.keys(templateManifest.connections),
         errors: {

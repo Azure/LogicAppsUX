@@ -214,7 +214,7 @@ export const MultiWorkflowBasics = () => {
           <Dropdown
             aria-label={item.kind}
             className="msla-templates-basics-state"
-            disabled={item.allowedKinds.length === 1 || !item?.isKindEditable}
+            disabled={!item?.isKindEditable}
             options={item.allowedKinds}
             selectedKey={item.kind}
             onChange={(_event, option) => handleWorkflowKindChange(item, option?.key as string)}
