@@ -130,10 +130,6 @@ export async function saveBlankUnitTest(
     // Ensure required directories exist
     await fs.ensureDir(unitTestFolderPath);
     await fs.ensureDir(workflowFolderPath);
-
-    // Process operations and write C# classes
-    //await processAndWriteMockableOperations(operationInfo, outputParameters, workflowFolderPath, logicAppName);
-
     await processUnitTestDefinition(unitTestDefinition, workflowFolderPath, logicAppName);
 
     // Log telemetry before proceeding

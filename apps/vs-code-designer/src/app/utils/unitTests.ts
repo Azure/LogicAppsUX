@@ -460,7 +460,6 @@ export function getUnitTestPaths(
 } {
   const testsDirectoryUri = getTestsDirectory(projectPath);
   const testsDirectory = testsDirectoryUri.fsPath;
-  // This logic for deriving logicAppName matches what generateBlankCodefulUnitTest currently uses
   const logicAppName = path.basename(path.dirname(path.join(projectPath, workflowName)));
   const logicAppFolderPath = path.join(testsDirectory, logicAppName);
   const workflowFolderPath = path.join(logicAppFolderPath, workflowName);
@@ -742,7 +741,6 @@ export function buildClassDefinition(className: string, node: any): ClassDefinit
   const children: ClassDefinition[] = [];
 
   // If this node is an object, it may have sub-fields we need to parse as properties.
-  // We'll look for every key on the node that isn't "type" or "description" to generate properties.
   if (node.type === 'object') {
     // Create a combined array of keys we need to skip
     const skipKeys = ['type', 'title', 'description', 'format', 'headers', 'queries', 'tags', 'relativePathParameters'];
@@ -818,59 +816,64 @@ export function mapJsonTypeToCSharp(jsonType: string): string {
       return 'JObject';
   }
 }
-
 /**
- * Recursively builds a single C# class string from a ClassDefinition,
- * plus any child classes it might have.
- *
+ * Recursively builds a single C# class string from a ClassDefinition and any child classes it might have.
  * @param {ClassDefinition} classDef - The definition of the class to generate.
  * @returns {string} - The C# code for this class (including any nested classes), as a string.
  */
 export function generateClassCode(classDef: ClassDefinition): string {
   const sb: string[] = [];
+
   if (classDef.description) {
-    sb.push('    /// <summary>');
-    sb.push(`    /// ${classDef.description}`);
-    sb.push('    /// </summary>');
+    sb.push('/// <summary>');
+    sb.push(`/// ${classDef.description}`);
+    sb.push('/// </summary>');
   }
-  sb.push(`    public class ${classDef.className}`);
-  sb.push('    {');
+
+  sb.push(`public class ${classDef.className}`);
+  sb.push('{');
+
   for (const prop of classDef.properties) {
     if (prop.description) {
-      sb.push('        /// <summary>');
-      sb.push(`        /// ${prop.description}`);
-      sb.push('        /// </summary>');
+      sb.push('    /// <summary>');
+      sb.push(`    /// ${prop.description}`);
+      sb.push('    /// </summary>');
     }
-    sb.push(`        public ${prop.propertyType} ${prop.propertyName} { get; set; }`);
+    sb.push(`    public ${prop.propertyType} ${prop.propertyName} { get; set; }`);
     sb.push('');
   }
-  sb.push('        /// <summary>');
-  sb.push(`        /// Initializes a new instance of the <see cref="${classDef.className}"/> class.`);
-  sb.push('        /// </summary>');
-  sb.push(`        public ${classDef.className}()`);
-  sb.push('        {');
+
+  sb.push('    /// <summary>');
+  sb.push(`    /// Initializes a new instance of the <see cref="${classDef.className}"/> class.`);
+  sb.push('    /// </summary>');
+  sb.push(`    public ${classDef.className}()`);
+  sb.push('    {');
+
   for (const prop of classDef.properties) {
     if (prop.propertyType === 'string') {
-      sb.push(`            ${prop.propertyName} = string.Empty;`);
+      sb.push(`        ${prop.propertyName} = string.Empty;`);
     } else if (prop.isObject) {
-      sb.push(`            ${prop.propertyName} = new ${prop.propertyType}();`);
+      sb.push(`        ${prop.propertyName} = new ${prop.propertyType}();`);
     } else if (prop.propertyType === 'JObject') {
-      sb.push(`            ${prop.propertyName} = new JObject();`);
+      sb.push(`        ${prop.propertyName} = new JObject();`);
     } else if (prop.propertyType.startsWith('List<')) {
-      sb.push(`            ${prop.propertyName} = new ${prop.propertyType}();`);
+      sb.push(`        ${prop.propertyName} = new ${prop.propertyType}();`);
     } else if (prop.propertyType === 'int') {
-      sb.push(`            ${prop.propertyName} = 0;`);
+      sb.push(`        ${prop.propertyName} = 0;`);
     } else if (prop.propertyType === 'HttpStatusCode') {
-      sb.push(`            ${prop.propertyName} = HttpStatusCode.OK;`);
+      sb.push(`        ${prop.propertyName} = HttpStatusCode.OK;`);
     }
   }
-  sb.push('        }');
-  sb.push('');
+
   sb.push('    }');
   sb.push('');
+  sb.push('}');
+  sb.push('');
+
   for (const child of classDef.children) {
     sb.push(generateClassCode(child));
   }
+
   return sb.join('\n');
 }
 
@@ -943,7 +946,6 @@ export async function processAndWriteMockableOperations(
       const classContent = generateCSharpClasses(sanitizedLogicAppName, className, outputs);
 
       // Write the .cs file
-      //const filePath = path.join(workflowFolderPath, `${className}.cs`);
       const filePath = path.join(mockOutputsFolderPath, `${className}.cs`);
 
       await fs.writeFile(filePath, classContent, 'utf-8');
@@ -980,9 +982,9 @@ export function generateCSharpClasses(namespaceName: string, rootClassName: stri
 
   const adjustedNamespace = `${namespaceName}.Tests.Mocks`;
 
-  // 2) Generate the code for the root class (this also recursively generates nested classes).
+  // Generate the code for the root class (this also recursively generates nested classes).
   const classCode = generateClassCode(rootDef);
-  // 3) Wrap it all in the needed "using" statements + namespace.
+  // rap it all in the needed "using" statements + namespace.
   const finalCode = [
     'using Newtonsoft.Json.Linq;',
     'using System.Collections.Generic;',

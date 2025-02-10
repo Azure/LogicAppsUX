@@ -13,6 +13,7 @@ import {
   handleError,
   logTelemetry,
   parseErrorBeforeTelemetry,
+  parseUnitTestOutputs,
   processUnitTestDefinition,
   promptForUnitTestName,
   selectWorkflowNode,
@@ -115,6 +116,15 @@ async function generateUnitTestFromRun(
     csprojFileCreated: 'false',
     nugetConfigFileCreated: 'false',
     testsFolderAddedToWorkspace: 'false',
+  });
+
+  await parseUnitTestOutputs(unitTestDefinition);
+  const operationInfo = unitTestDefinition['operationInfo'];
+  const outputParameters = unitTestDefinition['outputParameters'];
+
+  logTelemetry(context, {
+    operationInfoExists: operationInfo ? 'true' : 'false',
+    outputParametersExists: outputParameters ? 'true' : 'false',
   });
 
   const startTime = Date.now();
