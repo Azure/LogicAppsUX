@@ -328,35 +328,25 @@ const mockableOperationTypes = new Set<string>();
  */
 async function getMockableOperationTypes(): Promise<void> {
   if (!ext.designTimePort) {
-    throw new Error(localize('workflowRuntimeNotRunning', 'Workflow runtime is not running. Start the runtime and try again.'));
+    throw new Error(
+      localize('errorStandardResourcesApi', 'Design time port is undefined. Please retry once Azure Functions Core Tools has started.')
+    );
   }
 
   const baseUrl = `http://localhost:${ext.designTimePort}`;
-  const apiUrl = `${baseUrl}/runtime/webhooks/workflow/api/management/listMockableOperations`;
-
-  ext.outputChannel.appendLog(localize('apiUrl', `Calling API URL: ${apiUrl}`));
-
-  // Log API details and initiate call
-  ext.outputChannel.appendLog(localize('initiatingApiCall', 'Initiating List Mockable Operations API call...'));
+  const listMockableOperationsUrl = `${baseUrl}/runtime/webhooks/workflow/api/management/listMockableOperations`;
+  ext.outputChannel.appendLog(localize('listMockableOperations', `Fetching unit test mockable operations at ${listMockableOperationsUrl}`));
 
   try {
-    const response = await axios.get(apiUrl);
-
-    ext.outputChannel.appendLog(localize('apiCallSuccessful', 'API call successful, processing response...'));
-
-    const resContentType = response.headers['content-type'];
-    if (!resContentType.includes('application/json')) {
-      throw new Error(localize('invalidResponseType', 'Expected json response but received {0}', resContentType));
-    }
+    const response = await axios.get(listMockableOperationsUrl);
 
     response.data.forEach((mockableOperation: string) => mockableOperationTypes.add(mockableOperation.toUpperCase()));
   } catch (apiError: any) {
-    // eslint-disable-next-line import/no-named-as-default-member
     if (axios.isAxiosError(apiError)) {
       ext.outputChannel.appendLog(
         localize(
-          'apiCallFailed',
-          'API call failed with status: {0}, message: {1}, response: {2}',
+          'errorListMockableOperationsFailed',
+          `Request to ${listMockableOperationsUrl} failed with status: {0}, message: {1}, response: {2}`,
           apiError.response?.status,
           apiError.response?.statusText,
           JSON.stringify(apiError.response?.data || {})
