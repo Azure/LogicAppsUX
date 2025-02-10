@@ -16,6 +16,7 @@ import { getFilteredTemplates } from './utils/helper';
 import { initializeTemplateServices } from '../actions/bjsworkflow/templates';
 import type { Template } from '@microsoft/logic-apps-shared';
 import { setViewTemplateDetails } from '../state/templates/templateOptionsSlice';
+import { changeCurrentTemplateName } from '../state/templates/templateSlice';
 
 export interface TemplatesDataProviderProps {
   isConsumption: boolean | undefined;
@@ -94,6 +95,7 @@ export const TemplatesDataProvider = (props: TemplatesDataProviderProps) => {
 
   useEffect(() => {
     if (props.viewTemplate) {
+      dispatch(changeCurrentTemplateName(props.viewTemplate.id));
       dispatch(setViewTemplateDetails(props.viewTemplate));
     }
   }, [dispatch, props.viewTemplate]);

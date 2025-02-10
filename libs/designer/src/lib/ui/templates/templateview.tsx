@@ -37,10 +37,11 @@ export const TemplatesView = (props: TemplateViewProps) => {
   );
 
   useEffect(() => {
+    console.log('---', templateName, viewTemplateDetails, allTemplates, customTemplateManifest);
     if (templateName) {
       dispatch(loadTemplate({ preLoadedManifest: customTemplateManifest, isCustomTemplate, viewTemplateDetails }));
     }
-  }, [customTemplateManifest, dispatch, isCustomTemplate, viewTemplateDetails, templateName]);
+  }, [customTemplateManifest, dispatch, isCustomTemplate, viewTemplateDetails, templateName, allTemplates]);
 
   if (!manifest) {
     return templateName ? (
