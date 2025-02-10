@@ -18,7 +18,7 @@
     "@typescript-eslint/eslint-plugin": "^8.15.0",
     "@vitejs/plugin-react": "^4.2.1",
     "@vitest/coverage-istanbul": "^2.1.2",
-    "@vitest/ui": "^2.1.2",
+    "@vitest/ui": "^3.0.5",
     "@xyflow/system": "^0.0.37",
     "D": "^1.0.0",
     "archiver": "^7.0.1",
@@ -128,7 +128,10 @@
       "send@<0.19.0": ">=0.19.0",
       "serve-static@<1.16.0": ">=1.16.0",
       "express@<4.20.0": ">=4.20.0",
-      "cross-spawn@>=7.0.0 <7.0.5": ">=7.0.5"
+      "cross-spawn@>=7.0.0 <7.0.5": ">=7.0.5",
+      "nanoid@<3.3.8": ">=3.3.8",
+      "vite@>=5.0.0 <=5.4.11": ">=5.4.12",
+      "path-to-regexp@<0.1.12": ">=0.1.12"
     }
   }
 }
