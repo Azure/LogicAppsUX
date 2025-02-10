@@ -16,16 +16,6 @@ export const useWorkflowTemplate = (workflowId: string): WorkflowTemplateData =>
   });
 };
 
-export const useViewTemplateBasicsEditable = (workflowId: string) => {
-  return useSelector((state: RootState) => {
-    const basicsOverrideDetails = state.template.viewTemplateDetails?.basicsOverride?.[workflowId];
-    return {
-      isNameEditable: basicsOverrideDetails?.name?.isEditable ?? true,
-      isKindEditable: basicsOverrideDetails?.kind?.isEditable ?? true,
-    };
-  });
-};
-
 export const useDefaultWorkflowTemplate = (): WorkflowTemplateData => {
   return useSelector((state: RootState) => {
     const workflows = state.template.workflows ?? {};

@@ -140,6 +140,7 @@ export const DisplayParameters = () => {
             id="msla-templates-parameter-value"
             aria-label={item.value}
             value={item.value}
+            disabled={item.isEditable === false}
             onChange={(_event, newValue) => {
               handleParameterValueChange(item, newValue ?? '');
             }}

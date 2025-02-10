@@ -45,6 +45,7 @@ export interface Parameter {
 
 export interface ParameterDefinition extends Parameter {
   associatedWorkflows?: string[];
+  isEditable?: boolean;
 }
 
 export interface Connection {
@@ -69,7 +70,7 @@ export interface ViewTemplateDetails {
     string,
     {
       name?: ContentInfo<string>;
-      kind?: ContentInfo<string>;
+      kind?: ContentInfo<WorkflowKindType>;
     }
   >;
   parametersOverride?: Record<string, ContentInfo<any>>;

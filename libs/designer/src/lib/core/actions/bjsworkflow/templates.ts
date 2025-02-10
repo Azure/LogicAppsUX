@@ -32,7 +32,9 @@ export interface WorkflowTemplateData {
   workflowDefinition: LogicAppsV2.WorkflowDefinition;
   manifest: Template.Manifest;
   workflowName: string | undefined;
+  isWorkflowNameEditable?: boolean;
   kind: string | undefined;
+  isKindEditable?: boolean;
   images?: Record<string, string>;
   connectionKeys: string[];
   errors: {
@@ -273,6 +275,7 @@ const loadWorkflowTemplateFromManifest = async (
         ...parameter,
         value: viewTemplateParameterData ? viewTemplateParameterData.value : parameter.default,
         associatedWorkflows: [templateManifest.title],
+        isEditable: viewTemplateParameterData?.isEditable,
       };
       return result;
     }, {});
@@ -283,9 +286,11 @@ const loadWorkflowTemplateFromManifest = async (
         workflowDefinition: (templateWorkflowDefinition as any)?.default ?? templateWorkflowDefinition,
         manifest: templateManifest,
         workflowName: viewTemplateData?.basicsOverride?.[workflowId]?.name?.value ?? '',
+        isWorkflowNameEditable: viewTemplateData?.basicsOverride?.[workflowId]?.name?.isEditable,
         kind:
           viewTemplateData?.basicsOverride?.[workflowId]?.kind?.value ??
           (templateManifest.kinds?.length ? templateManifest.kinds[0] : 'stateful'),
+        isKindEditable: viewTemplateData?.basicsOverride?.[workflowId]?.kind?.isEditable,
         images: templateManifest.images,
         connectionKeys: Object.keys(templateManifest.connections),
         errors: {
