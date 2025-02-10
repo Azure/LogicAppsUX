@@ -235,12 +235,17 @@ const loadTemplateFromResourcePath = async (
       }
     }
   } else {
-    const workflowId = templateName;
-    const workflowData = await loadWorkflowTemplateFromManifest(workflowId, templateName, manifest, isCustomTemplate, viewTemplateData);
+    const workflowData = await loadWorkflowTemplateFromManifest(
+      /* workflowId */ templateName,
+      templateName,
+      manifest,
+      isCustomTemplate,
+      viewTemplateData
+    );
 
     if (workflowData) {
       data.workflows = {
-        [workflowId]: workflowData.workflow,
+        [templateName]: workflowData.workflow,
       };
       data.parameterDefinitions = workflowData.parameterDefinitions;
       data.connections = workflowData.connections;
