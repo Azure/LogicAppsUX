@@ -15,7 +15,7 @@ import type { ConnectionReferences } from '../../common/models/workflow';
 import { getFilteredTemplates } from './utils/helper';
 import { initializeTemplateServices } from '../actions/bjsworkflow/templates';
 import type { Template } from '@microsoft/logic-apps-shared';
-import { setViewTemplateDetails } from '../state/templates/templateSlice';
+import { setViewTemplateDetails } from '../state/templates/templateOptionsSlice';
 
 export interface TemplatesDataProviderProps {
   isConsumption: boolean | undefined;

@@ -2,12 +2,10 @@ import { getIntl, getRecordEntry, type Template } from '@microsoft/logic-apps-sh
 import type { PayloadAction } from '@reduxjs/toolkit';
 import { createSlice } from '@reduxjs/toolkit';
 import { getCurrentWorkflowNames, validateConnectionsValue, validateParameterValue } from '../../templates/utils/helper';
-import { initializeTemplateServices, loadTemplate, validateWorkflowName, type TemplatePayload } from '../../actions/bjsworkflow/templates';
+import { loadTemplate, validateWorkflowName, type TemplatePayload } from '../../actions/bjsworkflow/templates';
 
 export interface TemplateState extends TemplatePayload {
   templateName?: string;
-  servicesInitialized: boolean;
-  viewTemplateDetails?: Template.ViewTemplateDetails;
 }
 
 const initialState: TemplateState = {
@@ -15,7 +13,6 @@ const initialState: TemplateState = {
   workflows: {},
   parameterDefinitions: {},
   connections: {},
-  servicesInitialized: false,
   errors: {
     parameters: {},
     connections: undefined,
@@ -28,11 +25,6 @@ export const templateSlice = createSlice({
   reducers: {
     changeCurrentTemplateName: (state, action: PayloadAction<string>) => {
       state.templateName = action.payload;
-      state.viewTemplateDetails = undefined;
-    },
-    setViewTemplateDetails: (state, action: PayloadAction<Template.ViewTemplateDetails>) => {
-      state.templateName = action.payload.id;
-      state.viewTemplateDetails = action.payload;
     },
     updateWorkflowName: (state, action: PayloadAction<{ id: string; name: string | undefined }>) => {
       const { id, name } = action.payload;
@@ -145,16 +137,11 @@ export const templateSlice = createSlice({
         connections: undefined,
       };
     });
-
-    builder.addCase(initializeTemplateServices.fulfilled, (state, action) => {
-      state.servicesInitialized = action.payload;
-    });
   },
 });
 
 export const {
   changeCurrentTemplateName,
-  setViewTemplateDetails,
   updateWorkflowName,
   updateKind,
   validateWorkflowsBasicInfo,

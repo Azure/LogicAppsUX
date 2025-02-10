@@ -7,7 +7,7 @@ import { Link, Text } from '@fluentui/react-components';
 import { useCallback, useMemo } from 'react';
 import { useExistingWorkflowNames } from '../../../core/queries/template';
 import { Open16Regular } from '@fluentui/react-icons';
-import { useWorkflowTemplate } from '../../../core/state/templates/templateselectors';
+import { useWorkflowBasicsEditable, useWorkflowTemplate } from '../../../core/state/templates/templateselectors';
 import { validateWorkflowName } from '../../../core/actions/bjsworkflow/templates';
 import { useFunctionalState } from '@react-hookz/web';
 
@@ -15,11 +15,11 @@ export const SingleWorkflowBasics = ({ workflowId }: { workflowId: string }) => 
   const dispatch = useDispatch<AppDispatch>();
   const {
     workflowName,
-    isWorkflowNameEditable,
     errors: { workflow: workflowError, kind: kindError },
     kind,
-    isKindEditable,
+    manifest,
   } = useWorkflowTemplate(workflowId);
+  const { isNameEditable, isKindEditable } = useWorkflowBasicsEditable(workflowId);
   const { existingWorkflowName } = useSelector((state: RootState) => state.workflow);
   const { data: existingWorkflowNames } = useExistingWorkflowNames();
   const [name, setName] = useFunctionalState(existingWorkflowName ?? workflowName);
@@ -129,7 +129,7 @@ export const SingleWorkflowBasics = ({ workflowId }: { workflowId: string }) => 
           setName(newValue);
           dispatch(updateWorkflowName({ id: workflowId, name: newValue }));
         }}
-        disabled={!!existingWorkflowName || isWorkflowNameEditable === false}
+        disabled={!!existingWorkflowName || !isNameEditable}
         onBlur={() => {
           const validationError = validateWorkflowName(name(), existingWorkflowNames ?? []);
           dispatch(updateWorkflowNameValidationError({ id: workflowId, error: validationError }));
@@ -168,7 +168,7 @@ export const SingleWorkflowBasics = ({ workflowId }: { workflowId: string }) => 
             }
           }}
           selectedKey={kind}
-          disabled={isKindEditable === false}
+          disabled={manifest?.kinds?.length === 1 || !isKindEditable}
         />
       </div>
       {kindError && <Text className="msla-templates-tab-stateType-error-message">{kindError}</Text>}

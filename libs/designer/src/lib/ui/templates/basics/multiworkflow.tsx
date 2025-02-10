@@ -32,6 +32,7 @@ interface WorkflowItem {
 export const MultiWorkflowBasics = () => {
   const dispatch = useDispatch<AppDispatch>();
   const { workflows } = useSelector((state: RootState) => state.template);
+  const workflowBasics = useSelector((state: RootState) => state.templateOptions.viewTemplateDetails?.basicsOverride);
   const { data: existingWorkflowNames } = useExistingWorkflowNames();
 
   const intl = useIntl();
@@ -81,9 +82,9 @@ export const MultiWorkflowBasics = () => {
     Object.values(workflows).map((workflow) => ({
       id: workflow.id,
       name: workflow.workflowName,
-      isNameEditable: workflow?.isWorkflowNameEditable ?? true,
+      isNameEditable: workflowBasics?.[workflow.id]?.name?.isEditable ?? true,
       kind: workflow.kind ?? (workflow.manifest.kinds?.length ? workflow.manifest.kinds[0] : WorkflowKind.STATEFUL),
-      isKindEditable: workflow?.isKindEditable ?? true,
+      isKindEditable: workflowBasics?.[workflow.id]?.kind?.isEditable ?? true,
       allowedKinds: workflow.manifest.kinds?.length
         ? workflow.manifest.kinds.map((kind) => ({
             key: kind,
