@@ -12,8 +12,8 @@ const initialState: TemplateOptionsState = {
   servicesInitialized: false,
 };
 
-export const templateSlice = createSlice({
-  name: 'template',
+export const templateOptionsSlice = createSlice({
+  name: 'templateOptions',
   initialState,
   reducers: {
     setViewTemplateDetails: (state, action: PayloadAction<Template.ViewTemplateDetails>) => {
@@ -27,5 +27,5 @@ export const templateSlice = createSlice({
   },
 });
 
-export const { setViewTemplateDetails } = templateSlice.actions;
-export default templateSlice.reducer;
+export const { setViewTemplateDetails } = templateOptionsSlice.actions;
+export default templateOptionsSlice.reducer;

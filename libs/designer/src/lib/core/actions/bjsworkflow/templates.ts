@@ -267,17 +267,15 @@ const loadWorkflowTemplateFromManifest = async (
   try {
     const { templateManifest, templateWorkflowDefinition } = await getWorkflowAndManifest(templatePath, manifest, isCustomTemplate);
     const parameterDefinitions = templateManifest.parameters?.reduce((result: Record<string, Template.ParameterDefinition>, parameter) => {
-      const viewTemplateParameterData = viewTemplateData?.parametersOverride?.[parameter.name];
-
       result[parameter.name] = {
         ...parameter,
-        value: viewTemplateParameterData ? viewTemplateParameterData.value : parameter.default,
+        value: viewTemplateData?.parametersOverride?.[parameter.name]?.value ?? parameter.default,
         associatedWorkflows: [templateManifest.title],
       };
       return result;
     }, {});
 
-    const overridenKind = viewTemplateData?.basicsOverride?.[workflowId]?.kind?.value;
+    const overrideKind = viewTemplateData?.basicsOverride?.[workflowId]?.kind?.value;
 
     return {
       workflow: {
@@ -286,8 +284,8 @@ const loadWorkflowTemplateFromManifest = async (
         manifest: templateManifest,
         workflowName: viewTemplateData?.basicsOverride?.[workflowId]?.name?.value ?? '',
         kind:
-          overridenKind && templateManifest.kinds?.includes(overridenKind)
-            ? overridenKind
+          overrideKind && templateManifest.kinds?.includes(overrideKind)
+            ? overrideKind
             : templateManifest.kinds?.length
               ? templateManifest.kinds[0]
               : 'stateful',
