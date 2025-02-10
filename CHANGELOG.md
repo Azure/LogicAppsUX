@@ -1,4 +1,11 @@
 # Logic Apps Designer
+### [5.14.7](https://github.com/Azure/LogicAppsUX/compare/v5.14.6...v5.14.7) (2025-02-10)
+
+
+### Bug Fixes
+
+* **Data Mapper:** serialization and error message fix ([#6532](https://github.com/Azure/LogicAppsUX/issues/6532)) ([674f241](https://github.com/Azure/LogicAppsUX/commit/674f2414af8884078ada734ffd8d112206941983)), closes [#6527](https://github.com/Azure/LogicAppsUX/issues/6527) [#6520](https://github.com/Azure/LogicAppsUX/issues/6520)
+
 ### [5.14.6](https://github.com/Azure/LogicAppsUX/compare/v5.14.5...v5.14.6) (2025-02-03)
 
 
