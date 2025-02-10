@@ -18,7 +18,7 @@ export const DesignerWrapper = () => {
   const hostingPlan = useHostingPlan();
 
   return (
-    <ReactQueryProvider>
+    <ReactQueryProvider persistEnabled>
       <LoadWhenArmTokenIsLoaded>
         <div style={{ height: '100vh' }}>
           <SettingsBox />

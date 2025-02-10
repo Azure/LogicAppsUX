@@ -20,6 +20,7 @@
     "lodash.frompairs": "4.0.1",
     "lodash.isequal": "4.5.0",
     "lodash.merge": "4.6.2",
+    "lz-string": "^1.5.0",
     "monaco-editor": "0.44.0",
     "pako": "2.1.0",
     "react-dnd": "16.0.1",
@@ -63,8 +64,10 @@
   "main": "src/index.ts",
   "module": "src/index.ts",
   "peerDependencies": {
+    "@tanstack/query-sync-storage-persister": "4.36.1",
     "@tanstack/react-query": "4.36.1",
     "@tanstack/react-query-devtools": "4.36.1",
+    "@tanstack/react-query-persist-client": "4.36.1",
     "react": "^16.4.0 || ^17.0.0 || ^18.0.0",
     "react-dom": "^16.4.0 || ^17.0.0 || ^18.0.0"
   },
