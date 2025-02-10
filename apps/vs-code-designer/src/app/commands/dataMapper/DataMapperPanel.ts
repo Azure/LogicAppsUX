@@ -353,7 +353,7 @@ export default class DataMapperPanel {
         const selectedFile = files[0];
 
         const pathToWorkspaceSchemaFolder = path.join(ext.logicAppWorkspace, schemasPath);
-        const primarySchemaFullPath = selectedFile.path;
+        const primarySchemaFullPath = selectedFile.fsPath;
         const pathToContainingFolder = path.dirname(primarySchemaFullPath);
         const primarySchemaFileName = path.basename(primarySchemaFullPath);
 
