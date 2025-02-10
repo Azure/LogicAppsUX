@@ -227,6 +227,8 @@ export const TemplatesStandard = () => {
                   'sharepoint-site-name_#workflowname#': { value: 'overriden-empty' },
                   'TeamsChannelID_#workflowname#': { value: 'overriden-default', isEditable: false },
                   'TeamsTeamID_#workflowname#': { value: 'overriden-default-editable' },
+                  'OpenAIEmbeddingModel_#workflowname#': { value: 'overriden-default-editable' },
+                  'SharepointSiteAddress_#workflowname#': { value: 'overriden-default-non-editable', isEditable: false },
                 },
                 basicsOverride: {
                   [templatesView]: {

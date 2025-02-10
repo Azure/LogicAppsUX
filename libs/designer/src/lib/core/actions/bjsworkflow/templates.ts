@@ -295,7 +295,7 @@ const loadWorkflowTemplateFromManifest = async (
             : templateManifest.kinds?.length
               ? templateManifest.kinds[0]
               : 'stateful',
-        isKindEditable: templateManifest?.kinds?.length !== 1 || (viewTemplateData?.basicsOverride?.[workflowId]?.kind?.isEditable ?? true),
+        isKindEditable: templateManifest?.kinds?.length !== 1 && (viewTemplateData?.basicsOverride?.[workflowId]?.kind?.isEditable ?? true),
         images: templateManifest.images,
         connectionKeys: Object.keys(templateManifest.connections),
         errors: {
