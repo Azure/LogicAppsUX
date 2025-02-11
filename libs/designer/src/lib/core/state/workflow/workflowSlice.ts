@@ -263,6 +263,9 @@ export const workflowSlice = createSlice({
     clearFocusNode: (state: WorkflowState) => {
       state.focusedCanvasNodeId = undefined;
     },
+    clearFocusCollapsedNode: (state: WorkflowState) => {
+      state.focusCollapsedNodeId = undefined;
+    },
     updateNodeSizes: (state: WorkflowState, action: PayloadAction<NodeChange[]>) => {
       const dimensionChanges = action.payload.filter((x) => x.type === 'dimensions');
       if (!state.graph) {
@@ -353,6 +356,7 @@ export const workflowSlice = createSlice({
       } else {
         state.collapsedActionIds[action.payload] = true;
       }
+      state.focusCollapsedNodeId = action.payload;
 
       LoggerService().log({
         level: LogEntryLevel.Verbose,
@@ -634,6 +638,7 @@ export const {
   setIsWorkflowDirty,
   setHostErrorMessages,
   toggleCollapsedActionId,
+  clearFocusCollapsedNode,
 } = workflowSlice.actions;
 
 export default workflowSlice.reducer;

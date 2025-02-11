@@ -1,10 +1,10 @@
 import { CollapsedCard } from '@microsoft/designer-ui';
-import { memo, useCallback, useMemo } from 'react';
+import { memo, useCallback, useEffect, useMemo } from 'react';
 import { Handle, Position, type NodeProps } from '@xyflow/react';
 import { setNodeContextMenuData } from '../../core/state/designerView/designerViewSlice';
-import type { AppDispatch } from '../../core';
-import { useDispatch } from 'react-redux';
-import { useCollapsedMapping, useIsActionCollapsed } from '../../core/state/workflow/workflowSelectors';
+import { setFocusNode, type AppDispatch, type RootState } from '../../core';
+import { useDispatch, useSelector } from 'react-redux';
+import { useCollapsedMapping, useIsActionCollapsed, useShouldNodeFocus } from '../../core/state/workflow/workflowSelectors';
 import { isNullOrUndefined } from '@microsoft/logic-apps-shared';
 import { useOperationsVisuals } from '../../core/state/operation/operationSelector';
 
@@ -12,6 +12,8 @@ const CollapsedNode = ({ targetPosition = Position.Top, sourcePosition = Positio
   const dispatch = useDispatch<AppDispatch>();
   const collapsedMapping = useCollapsedMapping();
   const isNodeCollapsed = useIsActionCollapsed(id);
+  const focusNodeId = useSelector((state: RootState) => state.workflow.focusCollapsedNodeId);
+  const shouldFocus = useShouldNodeFocus(id);
 
   const actionCount = useMemo(() => {
     const collapsedNode = collapsedMapping[id];
@@ -23,6 +25,12 @@ const CollapsedNode = ({ targetPosition = Position.Top, sourcePosition = Positio
   }, [collapsedMapping, id]);
 
   const actionVisuals = useOperationsVisuals(collapsedActions);
+
+  useEffect(() => {
+    if (id === focusNodeId) {
+      dispatch(setFocusNode(id));
+    }
+  }, [dispatch, focusNodeId, id]);
 
   const onContextMenu = useCallback(
     (e: React.MouseEvent) => {
@@ -54,6 +62,7 @@ const CollapsedNode = ({ targetPosition = Position.Top, sourcePosition = Positio
         onContextMenu={onContextMenu}
         operationVisuals={actionVisuals}
         isExpanding={isNullOrUndefined(isNodeCollapsed)}
+        setFocus={shouldFocus}
       />
       <Handle className="node-handle bottom" type="source" position={sourcePosition} isConnectable={false} />
     </div>
