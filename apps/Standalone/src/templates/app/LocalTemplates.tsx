@@ -72,9 +72,30 @@ export const LocalTemplates = () => {
         services={services}
         isConsumption={isConsumption}
         isCreateView={!isConsumption}
-        viewTemplate={isSingleTemplateView ? { id: templatesView } : undefined}
         customTemplates={localManifests}
         existingWorkflowName={undefined}
+        viewTemplate={
+          isSingleTemplateView
+            ? {
+                id: templatesView,
+                parametersOverride: {
+                  'OpenAIEmbeddingModel_#workflowname#': { value: 'overriden-default-editable' },
+                  'OpenAIChatModel_#workflowname#': { value: 'overriden-default-non-editable', isEditable: false },
+                  'LogicMessage_#workflowname#': { value: 'overriden-default-non-editable', isEditable: false },
+                },
+                basicsOverride: {
+                  ['SimpleParametersOnly']: {
+                    name: { value: 'overriden-name', isEditable: false },
+                    kind: { value: 'stateful', isEditable: false },
+                  },
+                  ['Workflow1']: {
+                    name: { value: 'overriden-name', isEditable: false },
+                    kind: { value: 'stateful', isEditable: false },
+                  },
+                },
+              }
+            : undefined
+        }
       >
         <div
           style={{

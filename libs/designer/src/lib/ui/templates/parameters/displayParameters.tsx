@@ -137,8 +137,8 @@ export const DisplayParameters = () => {
         return (
           <TextField
             className="msla-templates-parameters-values"
-            data-testid="msla-templates-parameter-value"
-            id="msla-templates-parameter-value"
+            data-testid={`msla-templates-parameter-value-${item.name}`}
+            id={`msla-templates-parameter-value-${item.name}`}
             aria-label={item.value}
             value={item.value}
             disabled={parametersOverride?.[item.name]?.isEditable === false}
