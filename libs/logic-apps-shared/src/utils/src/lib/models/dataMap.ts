@@ -1,8 +1,10 @@
 import type { Rect, XYPosition } from '@xyflow/react';
 
 export type MapDefinitionEntry = {
-  [key: string]: MapDefinitionEntry | string | MapDefinitionEntry[];
+  [key: string]: MapDefinitionValue;
 };
+
+export type MapDefinitionValue = string | MapDefinitionEntry | MapDefinitionEntry[];
 
 export interface FunctionPositionMetadata {
   targetKey: string;

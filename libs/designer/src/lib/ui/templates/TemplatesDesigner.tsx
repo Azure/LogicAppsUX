@@ -17,6 +17,7 @@ export type CreateWorkflowHandler = (
   connectionsMapping: ConnectionMapping,
   parametersData: Record<string, Template.ParameterDefinition>
 ) => Promise<void>;
+
 export interface TemplatesDesignerProps {
   detailFilters: TemplateDetailFilterType;
   isWorkflowEmpty?: boolean;
