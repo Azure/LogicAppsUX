@@ -18,12 +18,17 @@ test.describe(
       expect(await page.getByRole('tab', { name: 'Summary' })).toBeVisible();
       await page.getByRole('button', { name: 'Use this template' }).click();
 
+      expect(await page.locator('[data-testid="msla-templates-workflowName"]').isDisabled()).toBeTruthy();
+      await expect(await page.locator('[data-testid="msla-templates-workflowName"]')).toHaveValue('overriden-name');
+      await expect(page.getByRole('radio', { name: 'Stateful' })).toBeDisabled();
+
       await expect(page.getByText('Create a new workflow from template', {})).toBeVisible();
       expect(await page.getByRole('button', { name: 'Close' }).isDisabled()).toBeTruthy();
       await page.getByRole('tab', { name: 'Review + create' }).click();
-      await expect(page.getByText('----', { exact: true })).toBeVisible();
+      await expect(page.getByText('----', { exact: true })).not.toBeVisible();
+      await expect(page.getByText('overriden-name', { exact: true })).toBeVisible();
       await expect(page.getByText('Stateful', { exact: true })).toBeVisible();
-      expect(await page.getByRole('button', { name: 'Create' }).isDisabled()).toBeTruthy();
+      expect(await page.getByRole('button', { name: 'Create' }).isDisabled()).toBeFalsy();
     });
 
     test('Create panels should have overriden data from viewTemplate params provided', async ({ page }) => {

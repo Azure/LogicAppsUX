@@ -84,7 +84,7 @@ export const LocalTemplates = () => {
                   'LogicMessage_#workflowname#': { value: 'overriden-default-non-editable', isEditable: false },
                 },
                 basicsOverride: {
-                  ['SimpleParametersOnly']: {
+                  ['default']: {
                     name: { value: 'overriden-name', isEditable: false },
                     kind: { value: 'stateful', isEditable: false },
                   },
