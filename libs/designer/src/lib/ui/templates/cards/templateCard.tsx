@@ -173,7 +173,7 @@ export const TemplateCard = ({ templateName }: TemplateCardProps) => {
   );
 };
 
-export const BlankWorkflowTemplateCard = () => {
+export const BlankWorkflowTemplateCard = ({ isWorkflowEmpty }: { isWorkflowEmpty: boolean }) => {
   const intl = useIntl();
 
   const workflowAppName = useSelector((state: RootState) => state.workflow.workflowAppName);
@@ -219,7 +219,7 @@ export const BlankWorkflowTemplateCard = () => {
           {intlText.BLANK_WORKFLOW}
         </Text>
         <Text size={400} align="center" className="msla-blank-template-card-description">
-          {intlText.BLANK_WORKFLOW_DESCRIPTION}
+          {isWorkflowEmpty ? intlText.BLANK_WORKFLOW_DESCRIPTION : intlText.REPLACE_WITH_BLANK_WORKFLOW}
         </Text>
       </div>
     </DocumentCard>

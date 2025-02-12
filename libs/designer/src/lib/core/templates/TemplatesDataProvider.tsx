@@ -6,12 +6,12 @@ import type { AppDispatch, RootState } from '../state/templates/store';
 import type { ViewTemplateDetails } from '../state/templates/manifestSlice';
 import {
   loadGithubManifestNames,
-  loadManifests,
+  loadGithubManifests,
   setCustomTemplates,
   setFilteredTemplateNames,
   setViewTemplateDetails,
   templatesCountPerPage,
-  lazyLoadManifests,
+  lazyLoadGithubManifests,
 } from '../state/templates/manifestSlice';
 import { type ResourceDetails, setInitialData } from '../state/templates/workflowSlice';
 import { useAreServicesInitialized } from '../state/templates/templateselectors';
@@ -43,13 +43,12 @@ const DataProviderInner = ({ isConsumption, children }: TemplatesDataProviderPro
 
   useEffect(() => {
     if (githubTemplateNames) {
-      dispatch(loadManifests(templatesCountPerPage));
+      dispatch(loadGithubManifests(templatesCountPerPage));
 
       if (githubTemplateNames.length > templatesCountPerPage) {
-        dispatch(lazyLoadManifests(templatesCountPerPage));
+        dispatch(lazyLoadGithubManifests(templatesCountPerPage));
       }
     }
-    
   }, [dispatch, githubTemplateNames]);
 
   useEffect(() => {

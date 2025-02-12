@@ -1,17 +1,20 @@
 import type { AppDispatch, RootState } from '../../core/state/templates/store';
 import { useDispatch, useSelector } from 'react-redux';
 import { BlankWorkflowTemplateCard, TemplateCard } from './cards/templateCard';
-import { Pager } from '@microsoft/designer-ui';
+import { EmptySearch, Pager } from '@microsoft/designer-ui';
 import { TemplateFilters, templateDefaultTabKey } from './filters/templateFilters';
 import { useEffect } from 'react';
 import { setLayerHostSelector } from '@fluentui/react';
+import { Text } from '@fluentui/react-components';
 import type { CreateWorkflowHandler, TemplatesDesignerProps } from './TemplatesDesigner';
 import { setPageNum, templatesCountPerPage } from '../../core/state/templates/manifestSlice';
 import { QuickViewPanel } from '../panel/templatePanel/quickViewPanel/quickViewPanel';
 import { CreateWorkflowPanel } from '../panel/templatePanel/createWorkflowPanel/createWorkflowPanel';
+import { useIntl } from 'react-intl';
 
-export const TemplatesList = ({ detailFilters, createWorkflowCall }: TemplatesDesignerProps) => {
+export const TemplatesList = ({ detailFilters, createWorkflowCall, isWorkflowEmpty = true }: TemplatesDesignerProps) => {
   useEffect(() => setLayerHostSelector('#msla-layer-host'), []);
+  const intl = useIntl();
   const dispatch = useDispatch<AppDispatch>();
 
   const {
@@ -24,6 +27,19 @@ export const TemplatesList = ({ detailFilters, createWorkflowCall }: TemplatesDe
   const endingIndex = startingIndex + templatesCountPerPage;
   const lastPage = Math.ceil((filteredTemplateNames?.length ?? 0) / templatesCountPerPage);
 
+  const intlText = {
+    NO_RESULTS: intl.formatMessage({
+      defaultMessage: "Can't find any search results",
+      id: 'iCni1C',
+      description: 'Accessbility text to indicate no search results found',
+    }),
+    TRY_DIFFERENT: intl.formatMessage({
+      defaultMessage: 'Try a different search term or remove filters',
+      id: 'yKNKV/',
+      description: 'Accessbility text to indicate to try different search term or remove filters',
+    }),
+  };
+
   return (
     <>
       <TemplateFilters detailFilters={detailFilters} />
@@ -31,7 +47,7 @@ export const TemplatesList = ({ detailFilters, createWorkflowCall }: TemplatesDe
 
       <div>
         <div className="msla-templates-list">
-        {selectedTabId === templateDefaultTabKey && <BlankWorkflowTemplateCard />}
+          {selectedTabId === templateDefaultTabKey && <BlankWorkflowTemplateCard isWorkflowEmpty={isWorkflowEmpty} />}
           {filteredTemplateNames === undefined ? (
             <>
               {[1, 2, 3, 4].map((i) => (
@@ -61,7 +77,15 @@ export const TemplatesList = ({ detailFilters, createWorkflowCall }: TemplatesDe
           />
         )}
       </div>
-
+      {filteredTemplateNames?.length === 0 ? (
+        <div className="msla-templates-empty-list">
+          <EmptySearch />
+          <Text size={500} weight="semibold" align="start" className="msla-template-empty-list-title">
+            {intlText.NO_RESULTS}
+          </Text>
+          <Text>{intlText.TRY_DIFFERENT}</Text>
+        </div>
+      ) : null}
       <WorkflowView createWorkflowCall={createWorkflowCall} />
       <div
         id={'msla-layer-host'}

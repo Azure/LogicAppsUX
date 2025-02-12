@@ -3,7 +3,7 @@ import type { PayloadAction } from '@reduxjs/toolkit';
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
 import type { RootState } from './store';
 import type { FilterObject } from '@microsoft/designer-ui';
-import { loadGithubManifests } from '../../actions/bjsworkflow/templates';
+import { loadManifestsFromPaths } from '../../actions/bjsworkflow/templates';
 
 export const templatesCountPerPage = 25;
 const initialPageNum = 0;
@@ -58,18 +58,18 @@ export const loadGithubManifestNames = createAsyncThunk('manifest/loadGithubMani
   return githubManifestNames ?? [];
 });
 
-export const loadManifests = createAsyncThunk('manifest/loadManifests', async (count: number, thunkAPI) => {
+export const loadGithubManifests = createAsyncThunk('manifest/loadGithubManifests', async (count: number, thunkAPI) => {
   const currentState: RootState = thunkAPI.getState() as RootState;
   const manifestResourcePaths = currentState.manifest.availableTemplateNames ?? [];
 
-  return loadGithubManifests(manifestResourcePaths.slice(0, count));
+  return loadManifestsFromPaths(manifestResourcePaths.slice(0, count));
 });
 
-export const lazyLoadManifests = createAsyncThunk('manifest/lazyLoadManifests', async (startIndex: number, thunkAPI) => {
+export const lazyLoadGithubManifests = createAsyncThunk('manifest/lazyLoadGithubManifests', async (startIndex: number, thunkAPI) => {
   const currentState: RootState = thunkAPI.getState() as RootState;
   const manifestResourcePaths = currentState.manifest.availableTemplateNames ?? [];
 
-  return loadGithubManifests(manifestResourcePaths.slice(startIndex));
+  return loadManifestsFromPaths(manifestResourcePaths.slice(startIndex));
 });
 
 export const manifestSlice = createSlice({
@@ -145,16 +145,16 @@ export const manifestSlice = createSlice({
       state.githubTemplateNames = [];
     });
 
-    builder.addCase(loadManifests.fulfilled, (state, action) => {
+    builder.addCase(loadGithubManifests.fulfilled, (state, action) => {
       state.availableTemplates = { ...state.availableTemplates, ...(action.payload ?? {}) };
     });
 
-    builder.addCase(loadManifests.rejected, (state) => {
+    builder.addCase(loadGithubManifests.rejected, (state) => {
       // TODO some way of handling error
       state.availableTemplates = undefined;
     });
 
-    builder.addCase(lazyLoadManifests.fulfilled, (state, action) => {
+    builder.addCase(lazyLoadGithubManifests.fulfilled, (state, action) => {
       state.availableTemplates = { ...state.availableTemplates, ...(action.payload ?? {}) };
     });
   },

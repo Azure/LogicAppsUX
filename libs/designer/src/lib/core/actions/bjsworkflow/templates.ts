@@ -123,7 +123,7 @@ export const initializeTemplateServices = createAsyncThunk(
   }
 );
 
-export const loadGithubManifests = async (resourcePaths: string[]) => {
+export const loadManifestsFromPaths = async (resourcePaths: string[]) => {
   try {
     const manifestPromises = resourcePaths.map(async (resourcePath) => {
       return import(`./../../templates/templateFiles/${resourcePath}/manifest.json`);
