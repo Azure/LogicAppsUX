@@ -1,5 +1,4 @@
 /* eslint-disable react/display-name */
-import { css } from '@fluentui/react';
 import type { MouseEventHandler } from 'react';
 import { memo, useEffect, useRef } from 'react';
 import { useIntl } from 'react-intl';
@@ -17,10 +16,11 @@ interface CollapsedCardProps {
     brandColor: string;
   }>;
   setFocus?: boolean;
+  nodeIndex?: number;
 }
 
 export const CollapsedCard: React.FC<CollapsedCardProps> = memo(
-  ({ id, onContextMenu, actionCount, isExpanding, operationVisuals, setFocus }) => {
+  ({ id, onContextMenu, actionCount, isExpanding, operationVisuals, setFocus, nodeIndex }) => {
     const intl = useIntl();
     const focusRef = useRef<HTMLElement | null>(null);
     const restoreFocusTargetAttribute = useRestoreFocusTarget();
@@ -40,7 +40,7 @@ export const CollapsedCard: React.FC<CollapsedCardProps> = memo(
       { actionCount }
     );
 
-    const ariaLabelIcons = intl.formatMessage(
+    const ariaLabelCollapsed = intl.formatMessage(
       {
         defaultMessage:
           '{actionCount, plural, one {Collapsed card with # action} =0 {Collapsed card with 0 Actions} other {Collapsed card with # actions}}',
@@ -67,14 +67,16 @@ export const CollapsedCard: React.FC<CollapsedCardProps> = memo(
         id={`msla-collapsed-card-${operationId}`}
         data-automation-id={`msla-collapsed-card-${operationId}`}
         onContextMenu={onContextMenu}
-        className={css('msla-collapsed-card')}
+        className="msla-collapsed-card"
+        aria-label={ariaLabelCollapsed}
+        tabIndex={nodeIndex}
       >
         {isExpanding ? (
           <Text className="no-actions-text" align="center" data-automation-id={`collapsed-text-${operationId}`}>
             {expandingString}
           </Text>
         ) : (
-          <div aria-label={ariaLabelIcons} style={{ display: 'flex', alignItems: 'center' }}>
+          <div style={{ display: 'flex', alignItems: 'center' }}>
             {(operationVisuals ?? []).map((operationVisual, index: number) => {
               return (
                 <img

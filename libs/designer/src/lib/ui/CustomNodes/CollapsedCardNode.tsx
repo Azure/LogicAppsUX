@@ -5,7 +5,7 @@ import { setNodeContextMenuData } from '../../core/state/designerView/designerVi
 import { setFocusNode, type AppDispatch, type RootState } from '../../core';
 import { useDispatch, useSelector } from 'react-redux';
 import { useCollapsedMapping, useIsActionCollapsed, useShouldNodeFocus } from '../../core/state/workflow/workflowSelectors';
-import { isNullOrUndefined } from '@microsoft/logic-apps-shared';
+import { isNullOrUndefined, useNodeIndex } from '@microsoft/logic-apps-shared';
 import { useOperationsVisuals } from '../../core/state/operation/operationSelector';
 
 const CollapsedNode = ({ targetPosition = Position.Top, sourcePosition = Position.Bottom, id }: NodeProps) => {
@@ -14,6 +14,7 @@ const CollapsedNode = ({ targetPosition = Position.Top, sourcePosition = Positio
   const isNodeCollapsed = useIsActionCollapsed(id);
   const focusNodeId = useSelector((state: RootState) => state.workflow.focusCollapsedNodeId);
   const shouldFocus = useShouldNodeFocus(id);
+  const nodeIndex = useNodeIndex(id);
 
   const actionCount = useMemo(() => {
     const collapsedNode = collapsedMapping[id];
@@ -63,6 +64,7 @@ const CollapsedNode = ({ targetPosition = Position.Top, sourcePosition = Positio
         operationVisuals={actionVisuals}
         isExpanding={isNullOrUndefined(isNodeCollapsed)}
         setFocus={shouldFocus}
+        nodeIndex={nodeIndex}
       />
       <Handle className="node-handle bottom" type="source" position={sourcePosition} isConnectable={false} />
     </div>

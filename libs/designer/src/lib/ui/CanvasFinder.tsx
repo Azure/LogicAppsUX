@@ -43,7 +43,6 @@ export const CanvasFinder = () => {
 
   // Center the canvas on the focused node when set
   const setCanvasCenterToFocus = useCallback(() => {
-    console.log('charlie onsetCanvascenter', focusNode);
     if (!focusNode) {
       return;
     }
