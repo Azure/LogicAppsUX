@@ -17,7 +17,7 @@ interface SubgraphCardProps {
   title: string;
   subgraphType: SubgraphType;
   collapsed?: boolean;
-  handleCollapse?: () => void;
+  handleCollapse?: (includeNested?: boolean) => void;
   selectionMode?: CardProps['selectionMode'];
   readOnly?: boolean;
   onClick?(id?: string): void;
@@ -166,7 +166,7 @@ export const SubgraphCard: React.FC<SubgraphCardProps> = ({
           <div className="msla-subgraph-title-text">{data.title}</div>
           {errorMessage ? <ErrorBanner errorLevel={errorLevel} errorMessage={errorMessage} /> : null}
         </button>
-        <NodeCollapseToggle collapsed={collapsed} handleCollapse={handleCollapse} tabIndex={nodeIndex} />
+        <NodeCollapseToggle id={id} collapsed={collapsed} handleCollapse={handleCollapse} tabIndex={nodeIndex} />
       </div>
     );
   }
@@ -179,13 +179,15 @@ export const SubgraphCard: React.FC<SubgraphCardProps> = ({
           aria-label={cardAltText}
           className={css('msla-subgraph-card', data.size)}
           style={colorVars}
-          onClick={handleCollapse}
+          onClick={(e) => handleCollapse?.(e.shiftKey)}
+          onContextMenu={onContextMenu}
           onKeyDown={collapseKeyboardInteraction.keyUp}
           onKeyUp={collapseKeyboardInteraction.keyDown}
+          data-automation-id={`${id}-collapse-toggle-small`}
         >
           <div className={css('msla-selection-box', 'white-outline', selectionMode)} tabIndex={-1} />
           <div className="msla-subgraph-title msla-subgraph-title-text">{data.title}</div>
-          <NodeCollapseToggle disabled collapsed={collapsed} onSmallCard />
+          <NodeCollapseToggle id={id} disabled collapsed={collapsed} onSmallCard />
         </div>
       </div>
     );

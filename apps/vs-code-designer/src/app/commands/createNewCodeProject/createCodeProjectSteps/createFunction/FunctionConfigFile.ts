@@ -2,7 +2,7 @@
  *  Copyright (c) Microsoft Corporation. All rights reserved.
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
-import { dotnetExtensionId, functionsExtensionId } from '../../../../../constants';
+import { dotnetExtensionId, functionsExtensionId, vscodeFolderName } from '../../../../../constants';
 import { AzureWizardPromptStep } from '@microsoft/vscode-azext-utils';
 import type { IProjectWizardContext } from '@microsoft/vscode-extension-logic-apps';
 import * as fs from 'fs-extra';
@@ -24,7 +24,7 @@ export class FunctionConfigFile extends AzureWizardPromptStep<IProjectWizardCont
 
     // Create the necessary files and folders for Visual Studio Code under the logic app folder path.
     await fs.ensureDir(folderPath);
-    const vscodePath: string = path.join(folderPath, '.vscode');
+    const vscodePath: string = path.join(folderPath, vscodeFolderName);
     await fs.ensureDir(vscodePath);
 
     // Generate the extensions.json file
@@ -71,7 +71,7 @@ export class FunctionConfigFile extends AzureWizardPromptStep<IProjectWizardCont
       version: '0.2.0',
       configurations: [
         {
-          name: 'Attach to .NET Functions',
+          name: 'Run/Debug logic app',
           type: 'clr',
           request: 'attach',
           processName: 'Microsoft.Azure.Workflows.Functions.CustomCodeNetFxWorker.exe',

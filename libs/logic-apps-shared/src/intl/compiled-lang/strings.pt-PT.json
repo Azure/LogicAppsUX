@@ -11,12 +11,6 @@
       "value": "Aviso: o tipo de nó de entrada não corresponde ao tipo do nó de esquema."
     }
   ],
-  "+0ua83": [
-    {
-      "type": 0,
-      "value": "Parameters"
-    }
-  ],
   "+0yxlR": [
     {
       "type": 0,
@@ -80,7 +74,7 @@
   "+M7bC6": [
     {
       "type": 0,
-      "value": "Succeeded with retries"
+      "value": "Êxito após novas tentativas"
     }
   ],
   "+R90eK": [
@@ -521,6 +515,12 @@
       "value": "."
     }
   ],
+  "0a4IGE": [
+    {
+      "type": 0,
+      "value": "Refresh"
+    }
+  ],
   "0i/6TR": [
     {
       "type": 0,
@@ -660,7 +660,7 @@
   "1QktJw": [
     {
       "type": 0,
-      "value": "Map errors"
+      "value": "Erros de mapa"
     }
   ],
   "1Xke9D": [
@@ -739,6 +739,12 @@
     {
       "type": 0,
       "value": "Introduza um URI válido."
+    }
+  ],
+  "1tmN2o": [
+    {
+      "type": 0,
+      "value": "Workflow version"
     }
   ],
   "1uGBLP": [
@@ -1319,6 +1325,12 @@
       "value": "Histórico de repetições"
     }
   ],
+  "4rdY7D": [
+    {
+      "type": 0,
+      "value": "Run ID"
+    }
+  ],
   "4vcnOA": [
     {
       "type": 0,
@@ -1374,7 +1386,7 @@
   "5DkTf5": [
     {
       "type": 0,
-      "value": "Target schema node not found for node key '"
+      "value": "Nó de esquema de destino não encontrado para a chave de nó '"
     },
     {
       "type": 1,
@@ -1846,7 +1858,7 @@
   "7X4UA/": [
     {
       "type": 0,
-      "value": "Waiting"
+      "value": "Em espera"
     }
   ],
   "7ZF1Hr": [
@@ -2250,7 +2262,7 @@
   "9dd0/m": [
     {
       "type": 0,
-      "value": "Running"
+      "value": "Em execução"
     }
   ],
   "9djnqI": [
@@ -2287,6 +2299,12 @@
     {
       "type": 0,
       "value": "Para obter informações mais detalhadas, pode consultar os seguintes recursos"
+    }
+  ],
+  "A5/IqS": [
+    {
+      "type": 0,
+      "value": "Run identifier"
     }
   ],
   "A5/UwX": [
@@ -2349,6 +2367,16 @@
     {
       "type": 0,
       "value": "Principal de serviço"
+    }
+  ],
+  "AMMfbt": [
+    {
+      "type": 1,
+      "value": "count"
+    },
+    {
+      "type": 0,
+      "value": " Second"
     }
   ],
   "APKdYG": [
@@ -2677,7 +2705,7 @@
   "Bwqlxd": [
     {
       "type": 0,
-      "value": "Key not found '"
+      "value": "Chave não encontrada “"
     },
     {
       "type": 1,
@@ -2685,7 +2713,7 @@
     },
     {
       "type": 0,
-      "value": "'"
+      "value": "”"
     }
   ],
   "BxITRH": [
@@ -3000,6 +3028,12 @@
     {
       "type": 0,
       "value": "Tipo de acionador"
+    }
+  ],
+  "DeM/yz": [
+    {
+      "type": 0,
+      "value": "Start time"
     }
   ],
   "DfXxoX": [
@@ -3317,7 +3351,7 @@
   "FPBmrA": [
     {
       "type": 0,
-      "value": "Source schema node not found for node key '"
+      "value": "O nó de esquema de origem não foi encontrado para a chave de nó '"
     },
     {
       "type": 1,
@@ -3550,7 +3584,7 @@
   "GiR7ll": [
     {
       "type": 0,
-      "value": "Function not found- '"
+      "value": "Função não encontrada- '"
     },
     {
       "type": 1,
@@ -3975,6 +4009,12 @@
       "value": "Criar grupo"
     }
   ],
+  "J8G55j": [
+    {
+      "type": 0,
+      "value": "Search by run identifier"
+    }
+  ],
   "J9wWry": [
     {
       "type": 0,
@@ -4168,7 +4208,7 @@
   "KWeLBB": [
     {
       "type": 0,
-      "value": "Closing..."
+      "value": "A fechar..."
     }
   ],
   "KX1poC": [
@@ -4291,7 +4331,7 @@
   "LBlM+D": [
     {
       "type": 0,
-      "value": "Not specified"
+      "value": "Não especificado"
     }
   ],
   "LCRHQ9": [
@@ -5051,7 +5091,7 @@
   "PEJ+e4": [
     {
       "type": 0,
-      "value": "Error loading data map"
+      "value": "Erro ao carregar mapa de dados"
     }
   ],
   "PNk3n4": [
@@ -5286,6 +5326,12 @@
     {
       "type": 0,
       "value": "Ecrã inteiro"
+    }
+  ],
+  "QT4IaP": [
+    {
+      "type": 0,
+      "value": "Filtered!"
     }
   ],
   "QVtqAn": [
@@ -5663,6 +5709,12 @@
       "value": "As saídas não devem ser fornecidas quando o estado é “Falhado”"
     }
   ],
+  "SbHBIZ": [
+    {
+      "type": 0,
+      "value": "No runs found"
+    }
+  ],
   "SgiTAh": [
     {
       "type": 0,
@@ -5693,6 +5745,12 @@
       "value": "Concluído"
     }
   ],
+  "SwWaHa": [
+    {
+      "type": 0,
+      "value": "Enter a valid run identifier"
+    }
+  ],
   "Sy4cFC": [
     {
       "type": 0,
@@ -5709,6 +5767,12 @@
     {
       "type": 0,
       "value": "Testar"
+    }
+  ],
+  "T/7b2y": [
+    {
+      "type": 0,
+      "value": "Duration"
     }
   ],
   "TDfQzn": [
@@ -6428,7 +6492,7 @@
   "WbIGAh": [
     {
       "type": 0,
-      "value": "Succeeded"
+      "value": "Com êxito"
     }
   ],
   "Wc77aJ": [
@@ -6743,12 +6807,6 @@
     {
       "type": 0,
       "value": "Limite o Logic Apps para não incluir cabeçalhos de metadados do fluxo de trabalho na resposta."
-    }
-  ],
-  "XtVOMn": [
-    {
-      "type": 0,
-      "value": "Something went wrong"
     }
   ],
   "XtuP5e": [
@@ -7117,6 +7175,16 @@
       "value": "Fechar"
     }
   ],
+  "ZgU5eu": [
+    {
+      "type": 1,
+      "value": "count"
+    },
+    {
+      "type": 0,
+      "value": " Day"
+    }
+  ],
   "ZgyD93": [
     {
       "type": 0,
@@ -7139,12 +7207,6 @@
     {
       "type": 0,
       "value": "Saiba mais sobre conteúdos dinâmicos."
-    }
-  ],
-  "ZvAp7m": [
-    {
-      "type": 0,
-      "value": "Save"
     }
   ],
   "ZyDq4/": [
@@ -7193,6 +7255,12 @@
     {
       "type": 0,
       "value": "O intervalo máximo da política de repetição é inválido. Tem de corresponder ao formato de duração ISO 8601"
+    }
+  ],
+  "aKf/r+": [
+    {
+      "type": 0,
+      "value": "Specified run identifier not found"
     }
   ],
   "aP1wk9": [
@@ -7270,7 +7338,7 @@
   "auci7r": [
     {
       "type": 0,
-      "value": "Enter a valid comma-separated string."
+      "value": "Introduza uma cadeia separada por vírgulas válida."
     }
   ],
   "aurgrg": [
@@ -7363,6 +7431,12 @@
     {
       "type": 0,
       "value": "Esta operação contém um token que não existe no fluxo de trabalho atual."
+    }
+  ],
+  "bPyWVY": [
+    {
+      "type": 0,
+      "value": "Failed to load runs"
     }
   ],
   "bTrk+S": [
@@ -7633,6 +7707,12 @@
       "value": "Transferir (Alt ou Opção + selecionar)"
     }
   ],
+  "d9RCuq": [
+    {
+      "type": 0,
+      "value": "Workflow run status"
+    }
+  ],
   "dBWIjR": [
     {
       "type": 0,
@@ -7839,6 +7919,12 @@
       "value": "Edite este fluxo para"
     }
   ],
+  "eLQPek": [
+    {
+      "type": 0,
+      "value": "Status"
+    }
+  ],
   "eLthgv": [
     {
       "type": 0,
@@ -7944,7 +8030,7 @@
   "eofB85": [
     {
       "type": 0,
-      "value": "Timed out"
+      "value": "Tempo limite excedido"
     }
   ],
   "epOMnV": [
@@ -7956,7 +8042,7 @@
   "epi+zR": [
     {
       "type": 0,
-      "value": "Close map checker"
+      "value": "Fechar verificador de mapa"
     }
   ],
   "er6O+w": [
@@ -8075,12 +8161,6 @@
       "value": "(UTC-05:00) Haiti"
     }
   ],
-  "fZJWBR": [
-    {
-      "type": 0,
-      "value": "Loading designer"
-    }
-  ],
   "faUrud": [
     {
       "type": 0,
@@ -8109,6 +8189,16 @@
     {
       "type": 0,
       "value": "(UTC+08:00) Pequim, Chongqing, Hong Kong, Urumqi"
+    }
+  ],
+  "ft8BH8": [
+    {
+      "type": 1,
+      "value": "count"
+    },
+    {
+      "type": 0,
+      "value": " Seconds"
     }
   ],
   "fvGvnA": [
@@ -8450,6 +8540,16 @@
     {
       "type": 0,
       "value": "Não é disto que estou à procura"
+    }
+  ],
+  "hesDPs": [
+    {
+      "type": 1,
+      "value": "count"
+    },
+    {
+      "type": 0,
+      "value": " Milliseconds"
     }
   ],
   "hihfHd": [
@@ -9029,7 +9129,7 @@
   "kfmLTY": [
     {
       "type": 0,
-      "value": "Function '"
+      "value": "Faltam entradas necessárias no '"
     },
     {
       "type": 1,
@@ -9037,7 +9137,7 @@
     },
     {
       "type": 0,
-      "value": "' is missing required inputs"
+      "value": "' de função"
     }
   ],
   "klY9UN": [
@@ -9439,6 +9539,16 @@
       "value": "Obrigatório. A cadeia a converter em minúsculas. Se um caráter na cadeia não tiver um equivalente em minúsculas, o caráter é incluído inalterado na cadeia devolvida."
     }
   ],
+  "maP1K/": [
+    {
+      "type": 1,
+      "value": "count"
+    },
+    {
+      "type": 0,
+      "value": " Minutes"
+    }
+  ],
   "mb1XDD": [
     {
       "type": 0,
@@ -9811,6 +9921,16 @@
       "value": "Obrigatório. O URI de dados a descodificar para uma representação binária."
     }
   ],
+  "oBAL2F": [
+    {
+      "type": 1,
+      "value": "count"
+    },
+    {
+      "type": 0,
+      "value": " Days"
+    }
+  ],
   "oDHXKh": [
     {
       "type": 0,
@@ -9895,10 +10015,14 @@
       "value": "Corpo de resposta"
     }
   ],
-  "ohOaXj": [
+  "og5JOA": [
+    {
+      "type": 1,
+      "value": "count"
+    },
     {
       "type": 0,
-      "value": "Errors"
+      "value": " Millisecond"
     }
   ],
   "ohpbkw": [
@@ -10461,7 +10585,7 @@
   "rwrlsB": [
     {
       "type": 0,
-      "value": "Map Issues"
+      "value": "Problemas do Mapa"
     }
   ],
   "rxIJfD": [
@@ -10530,16 +10654,20 @@
       "value": "Cancelar a criação de uma ligação"
     }
   ],
+  "sJQee6": [
+    {
+      "type": 1,
+      "value": "count"
+    },
+    {
+      "type": 0,
+      "value": " Hours"
+    }
+  ],
   "sKy720": [
     {
       "type": 0,
       "value": "Tem de fornecer um valor para o nome do fluxo de trabalho."
-    }
-  ],
-  "sOnphB": [
-    {
-      "type": 0,
-      "value": "Resubmit"
     }
   ],
   "sRpETS": [
@@ -11270,6 +11398,12 @@
       "value": "Para criar e utilizar uma ligação à API, tem de ter uma identidade gerida configurada nesta aplicação lógica."
     }
   ],
+  "vhwaYb": [
+    {
+      "type": 0,
+      "value": "Moldar toda a cadeia de valor personalizado e os valores DateTime em aspas duplas. Por exemplo, \"abc\"."
+    }
+  ],
   "viee6C": [
     {
       "type": 0,
@@ -11332,6 +11466,12 @@
       "value": "Contém um valor duplicado"
     }
   ],
+  "vzXXFP": [
+    {
+      "type": 0,
+      "value": "Workflow version"
+    }
+  ],
   "w+7aGo": [
     {
       "type": 0,
@@ -11366,6 +11506,16 @@
     {
       "type": 0,
       "value": "Fechar"
+    }
+  ],
+  "wAg9+z": [
+    {
+      "type": 1,
+      "value": "count"
+    },
+    {
+      "type": 0,
+      "value": " Hour"
     }
   ],
   "wBBu4g": [
@@ -11692,6 +11842,16 @@
     {
       "type": 0,
       "value": "Devolve o caminho de um URI. Se o caminho não for especificado, devolve \"/\""
+    }
+  ],
+  "xfXUGz": [
+    {
+      "type": 1,
+      "value": "count"
+    },
+    {
+      "type": 0,
+      "value": " Minute"
     }
   ],
   "xi2tn6": [

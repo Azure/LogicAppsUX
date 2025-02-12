@@ -7,10 +7,11 @@ import { useIntl } from 'react-intl';
 import { getConnectorAllCategories } from '@microsoft/designer-ui';
 import { useConnectionsForConnector } from '../../../core/queries/connections';
 import { getConnectorResources } from '../../../core/templates/utils/helper';
-import { useEffect } from 'react';
+import { useEffect, useMemo } from 'react';
 import type { ConnectorInfo } from '../../../core/templates/utils/queries';
 import { useConnectorInfo } from '../../../core/templates/utils/queries';
 import { Tooltip } from '@fluentui/react-components';
+import { isConnectionValid } from '../../../core/utils/connectors/connections';
 
 export const ConnectorIcon = ({
   connectorId,
@@ -103,6 +104,7 @@ const textStyles = {
 export const ConnectorWithDetails = ({ connectorId, kind }: Template.Connection) => {
   const { data: connector, isLoading, isError } = useConnector(connectorId, /* enabled */ true, /* getCachedData */ true);
   const { data: connections, isLoading: isConnectionsLoading } = useConnectionsForConnector(connectorId, /* shouldNotRefetch */ true);
+  const connectorConnections = useMemo(() => connections?.filter(isConnectionValid), [connections]);
   const intl = useIntl();
 
   if (!connector) {
@@ -135,7 +137,7 @@ export const ConnectorWithDetails = ({ connectorId, kind }: Template.Connection)
             size={SpinnerSize.xSmall}
           />
         ) : (
-          <div className="msla-template-connector-name">{connector.properties.displayName}</div>
+          <div className="msla-template-connector-name">{connector.properties?.displayName}</div>
         )}
         <div className="msla-template-connector-type">
           <Text style={textStyles.connectorSubDetails} className="msla-template-card-tag">
@@ -149,7 +151,7 @@ export const ConnectorWithDetails = ({ connectorId, kind }: Template.Connection)
               shimmerElements={[{ type: ShimmerElementType.line, height: 10, verticalAlign: 'bottom', width: '100%' }]}
               size={SpinnerSize.xSmall}
             />
-          ) : (connections ?? []).length > 0 ? (
+          ) : (connectorConnections ?? []).length > 0 ? (
             <Text style={{ ...textStyles.connectorSubDetails, color: '#50821b' }}>{text.connected}</Text>
           ) : (
             <Text style={textStyles.connectorSubDetails} className="msla-template-card-tag">
@@ -183,7 +185,7 @@ export const ConnectorConnectionStatus = ({
         </div>
       ) : (
         <Text className="msla-templates-tab-review-section-details-title">
-          {connector?.properties.displayName} ({connectionKey})
+          {connector?.properties?.displayName} ({connectionKey})
         </Text>
       )}
       <Text className="msla-templates-tab-review-section-details-value">{hasConnection ? texts.connected : texts.notConnected}</Text>

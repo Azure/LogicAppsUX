@@ -22,6 +22,7 @@ export type CommonProps = {
   connections: ConnectionDictionary;
   schemaType: SchemaType;
   draggable: boolean;
+  updateListItems: (index: number, item?: TemplateItemProps) => void;
 };
 
 export type TemplateItemProps = { input: InputConnection; index: number };
@@ -42,7 +43,7 @@ type CustomListItemProps = {
   key: string;
 };
 
-const InputList = (props: InputListProps) => {
+export const InputList = (props: InputListProps) => {
   const connectionDictionary = useSelector((state: RootState) => state.dataMap.present.curDataMapOperation.dataMapConnections);
   const sourceSchemaDictionary = useSelector((state: RootState) => state.dataMap.present.curDataMapOperation.flattenedSourceSchema);
   const functionNodeDictionary = useSelector((state: RootState) => state.dataMap.present.curDataMapOperation.functionNodes);
@@ -52,24 +53,26 @@ const InputList = (props: InputListProps) => {
     commonProps,
     dragHandleProps,
   } = props;
-  const { functionKey, data, inputsFromManifest, connections, schemaType } = commonProps;
+  const { functionKey, data, inputsFromManifest, connections, schemaType, updateListItems } = commonProps;
 
   const inputName = useMemo(() => getInputName(input, connections), [connections, input]);
   const inputValue = useMemo(() => getInputValue(input), [input]);
   const inputType = useMemo(() => getInputTypeFromNode(input), [input]);
   const removeUnboundedInput = useCallback(() => {
     const targetNodeReactFlowKey = functionKey;
+    updateListItems(index);
     dispatch(
       deleteConnectionFromFunctionMenu({
         targetId: targetNodeReactFlowKey,
         inputIndex: index,
       })
     );
-  }, [dispatch, functionKey, index]);
+  }, [dispatch, functionKey, index, updateListItems]);
 
   const updateInput = useCallback(
     (newValue: InputConnection) => {
       const targetNodeReactFlowKey = functionKey;
+      updateListItems(index, { input: newValue, index });
       dispatch(
         setConnectionInput({
           targetNode: data,
@@ -79,7 +82,7 @@ const InputList = (props: InputListProps) => {
         })
       );
     },
-    [data, dispatch, functionKey, index]
+    [data, dispatch, functionKey, index, updateListItems]
   );
 
   const validateAndCreateConnection = useCallback(
@@ -138,9 +141,9 @@ export const CustomListItem = (props: CustomListItemProps) => {
   } = props;
 
   return (
-    <ListItem key={`input-${name}`}>
-      <div className={styles.draggableListItem}>
-        <span className={styles.inputDropdown}>
+    <ListItem key={`input-${name}`} className={styles.draggableListItem}>
+      <div className={styles.draggableListContainer}>
+        <span className={styles.formControl}>
           <InputDropdown
             inputAllowsCustomValues={customValueAllowed}
             index={index}
@@ -152,14 +155,12 @@ export const CustomListItem = (props: CustomListItemProps) => {
             validateAndCreateConnection={validateAndCreateConnection}
           />
         </span>
-        <span className={styles.listButtons}>
-          <span className={styles.badgeWrapper}>
-            {type && (
-              <Badge appearance="filled" color="informative">
-                {type}
-              </Badge>
-            )}
-          </span>
+        {type && (
+          <Badge appearance="filled" color="informative">
+            {type}
+          </Badge>
+        )}
+        <span>
           <Button className={styles.listButton} appearance="transparent" icon={<DeleteRegular />} onClick={remove} />
           {draggable && dragHandleProps && (
             <Button className={styles.listButton} appearance="transparent" icon={<ReOrderRegular />} {...dragHandleProps} />

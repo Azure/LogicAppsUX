@@ -11,12 +11,6 @@
       "value": "Предупреждение. Тип входного узла не совпадает с типом узла схемы"
     }
   ],
-  "+0ua83": [
-    {
-      "type": 0,
-      "value": "Parameters"
-    }
-  ],
   "+0yxlR": [
     {
       "type": 0,
@@ -80,7 +74,7 @@
   "+M7bC6": [
     {
       "type": 0,
-      "value": "Succeeded with retries"
+      "value": "Выполнено после нескольких попыток"
     }
   ],
   "+R90eK": [
@@ -521,6 +515,12 @@
       "value": " результатов."
     }
   ],
+  "0a4IGE": [
+    {
+      "type": 0,
+      "value": "Refresh"
+    }
+  ],
   "0i/6TR": [
     {
       "type": 0,
@@ -660,7 +660,7 @@
   "1QktJw": [
     {
       "type": 0,
-      "value": "Map errors"
+      "value": "Ошибки сопоставления"
     }
   ],
   "1Xke9D": [
@@ -739,6 +739,12 @@
     {
       "type": 0,
       "value": "Введите допустимый URI."
+    }
+  ],
+  "1tmN2o": [
+    {
+      "type": 0,
+      "value": "Workflow version"
     }
   ],
   "1uGBLP": [
@@ -1323,6 +1329,12 @@
       "value": "Журнал повторов"
     }
   ],
+  "4rdY7D": [
+    {
+      "type": 0,
+      "value": "Run ID"
+    }
+  ],
   "4vcnOA": [
     {
       "type": 0,
@@ -1378,7 +1390,7 @@
   "5DkTf5": [
     {
       "type": 0,
-      "value": "Target schema node not found for node key '"
+      "value": "Не найден целевой узел схемы для ключа узла '"
     },
     {
       "type": 1,
@@ -1850,7 +1862,7 @@
   "7X4UA/": [
     {
       "type": 0,
-      "value": "Waiting"
+      "value": "Ожидание"
     }
   ],
   "7ZF1Hr": [
@@ -2254,7 +2266,7 @@
   "9dd0/m": [
     {
       "type": 0,
-      "value": "Running"
+      "value": "Выполняется"
     }
   ],
   "9djnqI": [
@@ -2291,6 +2303,12 @@
     {
       "type": 0,
       "value": "Более детальные сведения см. на следующих ресурсах:"
+    }
+  ],
+  "A5/IqS": [
+    {
+      "type": 0,
+      "value": "Run identifier"
     }
   ],
   "A5/UwX": [
@@ -2353,6 +2371,16 @@
     {
       "type": 0,
       "value": "Субъект-служба"
+    }
+  ],
+  "AMMfbt": [
+    {
+      "type": 1,
+      "value": "count"
+    },
+    {
+      "type": 0,
+      "value": " Second"
     }
   ],
   "APKdYG": [
@@ -2692,7 +2720,7 @@
   "Bwqlxd": [
     {
       "type": 0,
-      "value": "Key not found '"
+      "value": "Ключ не найден '"
     },
     {
       "type": 1,
@@ -3017,6 +3045,12 @@
       "value": "Тип триггера"
     }
   ],
+  "DeM/yz": [
+    {
+      "type": 0,
+      "value": "Start time"
+    }
+  ],
   "DfXxoX": [
     {
       "type": 0,
@@ -3332,7 +3366,7 @@
   "FPBmrA": [
     {
       "type": 0,
-      "value": "Source schema node not found for node key '"
+      "value": "Узел исходной схемы не найден для ключа '"
     },
     {
       "type": 1,
@@ -3576,7 +3610,7 @@
   "GiR7ll": [
     {
       "type": 0,
-      "value": "Function not found- '"
+      "value": "Функция не найдена'"
     },
     {
       "type": 1,
@@ -4001,6 +4035,12 @@
       "value": "Создать группу"
     }
   ],
+  "J8G55j": [
+    {
+      "type": 0,
+      "value": "Search by run identifier"
+    }
+  ],
   "J9wWry": [
     {
       "type": 0,
@@ -4194,7 +4234,7 @@
   "KWeLBB": [
     {
       "type": 0,
-      "value": "Closing..."
+      "value": "Идет закрытие..."
     }
   ],
   "KX1poC": [
@@ -4328,7 +4368,7 @@
   "LBlM+D": [
     {
       "type": 0,
-      "value": "Not specified"
+      "value": "Не указано"
     }
   ],
   "LCRHQ9": [
@@ -5088,7 +5128,7 @@
   "PEJ+e4": [
     {
       "type": 0,
-      "value": "Error loading data map"
+      "value": "Ошибка при загрузке карты данных"
     }
   ],
   "PNk3n4": [
@@ -5323,6 +5363,12 @@
     {
       "type": 0,
       "value": "Во весь экран"
+    }
+  ],
+  "QT4IaP": [
+    {
+      "type": 0,
+      "value": "Filtered!"
     }
   ],
   "QVtqAn": [
@@ -5711,6 +5757,12 @@
       "value": "При состоянии \"Сбой\" не должны выводиться выходные данные"
     }
   ],
+  "SbHBIZ": [
+    {
+      "type": 0,
+      "value": "No runs found"
+    }
+  ],
   "SgiTAh": [
     {
       "type": 0,
@@ -5741,6 +5793,12 @@
       "value": "Готово"
     }
   ],
+  "SwWaHa": [
+    {
+      "type": 0,
+      "value": "Enter a valid run identifier"
+    }
+  ],
   "Sy4cFC": [
     {
       "type": 0,
@@ -5757,6 +5815,12 @@
     {
       "type": 0,
       "value": "Тест"
+    }
+  ],
+  "T/7b2y": [
+    {
+      "type": 0,
+      "value": "Duration"
     }
   ],
   "TDfQzn": [
@@ -6476,7 +6540,7 @@
   "WbIGAh": [
     {
       "type": 0,
-      "value": "Succeeded"
+      "value": "Успешно выполнено"
     }
   ],
   "Wc77aJ": [
@@ -6791,12 +6855,6 @@
     {
       "type": 0,
       "value": "Запрет на включение в ответ заголовков метаданных по рабочим процессам в Logic Apps."
-    }
-  ],
-  "XtVOMn": [
-    {
-      "type": 0,
-      "value": "Something went wrong"
     }
   ],
   "XtuP5e": [
@@ -7165,6 +7223,16 @@
       "value": "Закрыть"
     }
   ],
+  "ZgU5eu": [
+    {
+      "type": 1,
+      "value": "count"
+    },
+    {
+      "type": 0,
+      "value": " Day"
+    }
+  ],
   "ZgyD93": [
     {
       "type": 0,
@@ -7187,12 +7255,6 @@
     {
       "type": 0,
       "value": "Дополнительные сведения о динамическом содержимом."
-    }
-  ],
-  "ZvAp7m": [
-    {
-      "type": 0,
-      "value": "Save"
     }
   ],
   "ZyDq4/": [
@@ -7241,6 +7303,12 @@
     {
       "type": 0,
       "value": "Недопустимый максимальный интервал политики повтора. Необходимо указать длительность в формате ISO 8601."
+    }
+  ],
+  "aKf/r+": [
+    {
+      "type": 0,
+      "value": "Specified run identifier not found"
     }
   ],
   "aP1wk9": [
@@ -7318,7 +7386,7 @@
   "auci7r": [
     {
       "type": 0,
-      "value": "Enter a valid comma-separated string."
+      "value": "Введите допустимую строку с разделителями-запятыми."
     }
   ],
   "aurgrg": [
@@ -7411,6 +7479,12 @@
     {
       "type": 0,
       "value": "Эта операция содержит токен, который не существует в текущем рабочем процессе."
+    }
+  ],
+  "bPyWVY": [
+    {
+      "type": 0,
+      "value": "Failed to load runs"
     }
   ],
   "bTrk+S": [
@@ -7681,6 +7755,12 @@
       "value": "Скачать (ALT или Option + выбор)"
     }
   ],
+  "d9RCuq": [
+    {
+      "type": 0,
+      "value": "Workflow run status"
+    }
+  ],
   "dBWIjR": [
     {
       "type": 0,
@@ -7887,6 +7967,12 @@
       "value": "Изменить этот поток на"
     }
   ],
+  "eLQPek": [
+    {
+      "type": 0,
+      "value": "Status"
+    }
+  ],
   "eLthgv": [
     {
       "type": 0,
@@ -7992,7 +8078,7 @@
   "eofB85": [
     {
       "type": 0,
-      "value": "Timed out"
+      "value": "Время ожидания истекло"
     }
   ],
   "epOMnV": [
@@ -8004,7 +8090,7 @@
   "epi+zR": [
     {
       "type": 0,
-      "value": "Close map checker"
+      "value": "Закрыть проверку карты"
     }
   ],
   "er6O+w": [
@@ -8123,12 +8209,6 @@
       "value": "(UTC-05:00) Гаити"
     }
   ],
-  "fZJWBR": [
-    {
-      "type": 0,
-      "value": "Loading designer"
-    }
-  ],
   "faUrud": [
     {
       "type": 0,
@@ -8157,6 +8237,16 @@
     {
       "type": 0,
       "value": "(UTC+08:00) Пекин, Чунцин, Гонконг, Урумчи"
+    }
+  ],
+  "ft8BH8": [
+    {
+      "type": 1,
+      "value": "count"
+    },
+    {
+      "type": 0,
+      "value": " Seconds"
     }
   ],
   "fvGvnA": [
@@ -8509,6 +8599,16 @@
     {
       "type": 0,
       "value": "Это не то, что мне нужно"
+    }
+  ],
+  "hesDPs": [
+    {
+      "type": 1,
+      "value": "count"
+    },
+    {
+      "type": 0,
+      "value": " Milliseconds"
     }
   ],
   "hihfHd": [
@@ -9088,7 +9188,7 @@
   "kfmLTY": [
     {
       "type": 0,
-      "value": "Function '"
+      "value": "В '"
     },
     {
       "type": 1,
@@ -9096,7 +9196,7 @@
     },
     {
       "type": 0,
-      "value": "' is missing required inputs"
+      "value": "' функции отсутствуют необходимые входные данные"
     }
   ],
   "klY9UN": [
@@ -9513,6 +9613,16 @@
       "value": "Обязательное поле. Строка, которую необходимо преобразовать в нижний регистр. Если у символа в строке нет соответствующего символа в нижнем регистре, этот символ включается в результирующую строку без изменения."
     }
   ],
+  "maP1K/": [
+    {
+      "type": 1,
+      "value": "count"
+    },
+    {
+      "type": 0,
+      "value": " Minutes"
+    }
+  ],
   "mb1XDD": [
     {
       "type": 0,
@@ -9885,6 +9995,16 @@
       "value": "Требуется. dataURI для декодирования в двоичное представление."
     }
   ],
+  "oBAL2F": [
+    {
+      "type": 1,
+      "value": "count"
+    },
+    {
+      "type": 0,
+      "value": " Days"
+    }
+  ],
   "oDHXKh": [
     {
       "type": 0,
@@ -9969,10 +10089,14 @@
       "value": "Текст отклика"
     }
   ],
-  "ohOaXj": [
+  "og5JOA": [
+    {
+      "type": 1,
+      "value": "count"
+    },
     {
       "type": 0,
-      "value": "Errors"
+      "value": " Millisecond"
     }
   ],
   "ohpbkw": [
@@ -10546,7 +10670,7 @@
   "rwrlsB": [
     {
       "type": 0,
-      "value": "Map Issues"
+      "value": "Проблемы сопоставления"
     }
   ],
   "rxIJfD": [
@@ -10615,16 +10739,20 @@
       "value": "Отменить создание подключения"
     }
   ],
+  "sJQee6": [
+    {
+      "type": 1,
+      "value": "count"
+    },
+    {
+      "type": 0,
+      "value": " Hours"
+    }
+  ],
   "sKy720": [
     {
       "type": 0,
       "value": "Необходимо указать значение для имени рабочего процесса."
-    }
-  ],
-  "sOnphB": [
-    {
-      "type": 0,
-      "value": "Resubmit"
     }
   ],
   "sRpETS": [
@@ -11355,6 +11483,12 @@
       "value": "Для создания и использования подключения к API в приложении логики должно быть настроено управляемое удостоверение."
     }
   ],
+  "vhwaYb": [
+    {
+      "type": 0,
+      "value": "Переносить все строки настраиваемых значений и значения DateTime в двойные кавычки. Например, \"abc\"."
+    }
+  ],
   "viee6C": [
     {
       "type": 0,
@@ -11417,6 +11551,12 @@
       "value": "Содержится дубликат значения"
     }
   ],
+  "vzXXFP": [
+    {
+      "type": 0,
+      "value": "Workflow version"
+    }
+  ],
   "w+7aGo": [
     {
       "type": 0,
@@ -11451,6 +11591,16 @@
     {
       "type": 0,
       "value": "Свернуть"
+    }
+  ],
+  "wAg9+z": [
+    {
+      "type": 1,
+      "value": "count"
+    },
+    {
+      "type": 0,
+      "value": " Hour"
     }
   ],
   "wBBu4g": [
@@ -11777,6 +11927,16 @@
     {
       "type": 0,
       "value": "Возвращает путь из URI. Если путь не указан, возвращает \"/\""
+    }
+  ],
+  "xfXUGz": [
+    {
+      "type": 1,
+      "value": "count"
+    },
+    {
+      "type": 0,
+      "value": " Minute"
     }
   ],
   "xi2tn6": [

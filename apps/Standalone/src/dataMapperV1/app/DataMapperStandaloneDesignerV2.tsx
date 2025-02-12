@@ -50,6 +50,10 @@ class DataMapperFileService implements IDataMapperFileService {
     this.verbose = verbose;
   }
 
+  public sendNotification(title: string, text: string, level: number) {
+    console.log(`Notification: ${title}, data: ${text}, level: ${level}`);
+  }
+
   public saveMapDefinitionCall = (dataMapDefinition: string, mapMetadata: string) => {
     if (this.verbose) {
       console.log('Saved definition: ', dataMapDefinition);

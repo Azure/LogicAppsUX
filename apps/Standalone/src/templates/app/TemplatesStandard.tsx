@@ -1,10 +1,8 @@
-import { useCallback, useEffect, useMemo, type ReactNode } from 'react';
-import { isOpenApiSchemaVersion, TemplatesDataProvider, templateStore, type WorkflowParameter } from '@microsoft/logic-apps-designer';
-import { environment, loadToken } from '../../environments/environment';
-import { DevToolbox } from '../components/DevToolbox';
+import { useCallback, useEffect, useMemo } from 'react';
+import { TemplatesDataProvider, templateStore, TemplatesView } from '@microsoft/logic-apps-designer';
+import { environment } from '../../environments/environment';
 import type { RootState } from '../state/Store';
 import { TemplatesDesigner, TemplatesDesignerProvider } from '@microsoft/logic-apps-designer';
-import { useQuery } from '@tanstack/react-query';
 import { useSelector } from 'react-redux';
 import {
   BaseGatewayService,
@@ -16,14 +14,11 @@ import {
   isArmResourceId,
   optional,
   StandardOperationManifestService,
-  ConsumptionConnectionService,
   guid,
   setObjectPropertyValue,
 } from '@microsoft/logic-apps-shared';
 import {
   getConnectionStandard,
-  getWorkflowAndArtifactsConsumption,
-  saveWorkflowConsumption,
   useAppSettings,
   useConnectionsData,
   useCurrentObjectId,
@@ -40,9 +35,8 @@ import type { Template, LogicAppsV2, IWorkflowService } from '@microsoft/logic-a
 import { saveWorkflowStandard } from '../../designer/app/AzureLogicAppsDesigner/Services/WorkflowAndArtifacts';
 import type { ParametersData } from '../../designer/app/AzureLogicAppsDesigner/Models/Workflow';
 import axios from 'axios';
-import type { ConnectionMapping } from '../../../../../libs/designer/src/lib/core/state/templates/workflowSlice';
+import type { ConnectionMapping } from '@microsoft/logic-apps-designer/src/lib/core/state/templates/workflowSlice';
 import { parseWorkflowParameterValue } from '@microsoft/logic-apps-designer';
-import { BaseTemplateService } from '@microsoft/logic-apps-shared';
 import { useFunctionalState } from '@react-hookz/web';
 
 interface StringifiedWorkflow {
@@ -52,18 +46,12 @@ interface StringifiedWorkflow {
 }
 
 const workflowIdentifier = '#workflowname#';
-const LoadWhenArmTokenIsLoaded = ({ children }: { children: ReactNode }) => {
-  const { isLoading } = useQuery(['armToken'], loadToken);
-  return isLoading ? null : <>{children}</>;
-};
-export const TemplatesStandaloneDesigner = () => {
-  const theme = useSelector((state: RootState) => state.workflowLoader.theme);
-  const {
-    appId,
-    hostingPlan,
-    workflowName: existingWorkflowName,
-    resourcePath: workflowId,
-  } = useSelector((state: RootState) => state.workflowLoader);
+export const TemplatesStandard = () => {
+  const { theme, templatesView } = useSelector((state: RootState) => ({
+    theme: state.workflowLoader.theme,
+    templatesView: state.workflowLoader.templatesView,
+  }));
+  const { appId, hostingPlan, workflowName: existingWorkflowName } = useSelector((state: RootState) => state.workflowLoader);
   const { data: workflowAppData } = useWorkflowApp(appId as string, hostingPlan);
   const canonicalLocation = useMemo(
     () => WorkflowUtility.convertToCanonicalFormat(workflowAppData?.location ?? 'westus'),
@@ -73,7 +61,6 @@ export const TemplatesStandaloneDesigner = () => {
   const { data: objectId } = useCurrentObjectId();
   const { data: originalConnectionsData } = useConnectionsData(appId);
   const { data: originalSettingsData } = useAppSettings(appId as string);
-  const isConsumption = hostingPlan === 'consumption';
 
   const [connectionsData, setConnectionsData] = useFunctionalState(originalConnectionsData);
   const [settingsData, setSettingsData] = useFunctionalState(originalSettingsData);
@@ -91,6 +78,7 @@ export const TemplatesStandaloneDesigner = () => {
   }, [originalConnectionsData, setConnectionsData]);
 
   const connectionReferences = useMemo(() => WorkflowUtility.convertConnectionsDataToReferences(connectionsData()), [connectionsData]);
+  const isSingleTemplateView = useMemo(() => templatesView !== 'gallery', [templatesView]);
 
   const createWorkflowCall = async (
     workflows: { name: string | undefined; kind: string | undefined; definition: LogicAppsV2.WorkflowDefinition }[],
@@ -185,80 +173,6 @@ export const TemplatesStandaloneDesigner = () => {
           () => {},
           { skipValidation: true, throwError: true }
         );
-      } else if (hostingPlan === 'consumption') {
-        const uniqueIdentifier = '';
-
-        let sanitizedWorkflowDefinition = JSON.stringify(workflows[0].definition);
-        const sanitizedParameterData: Record<string, WorkflowParameter> = {};
-        // Sanitizing parameter name & body
-        Object.keys(parametersData).forEach((key) => {
-          const parameter = parametersData[key];
-          const sanitizedParameterName = replaceWithWorkflowName(parameter.name, uniqueIdentifier);
-          sanitizedParameterData[sanitizedParameterName] = {
-            // name: parameter.name,
-            type: parameter.type,
-            defaultValue: parseWorkflowParameterValue(parameter.type, parameter?.value ?? parameter?.default),
-            // allowedValues: parameter.allowedValues,
-          };
-          sanitizedWorkflowDefinition = replaceAllStringInWorkflowDefinition(
-            sanitizedWorkflowDefinition,
-            `parameters('${parameter.name}')`,
-            `parameters('${sanitizedParameterName}')`
-          );
-        });
-
-        const { connectionsData: updatedConnectionsData, workflowsJsonString: updatedWorkflowsJsonString } =
-          await updateConnectionsDataWithNewConnections(
-            connectionsData(),
-            settingsData()?.properties,
-            connectionsMapping,
-            [
-              {
-                name: '',
-                kind: '',
-                definition: sanitizedWorkflowDefinition,
-              },
-            ],
-            uniqueIdentifier
-          );
-
-        sanitizedWorkflowDefinition = updatedWorkflowsJsonString[0].definition;
-
-        const updatedConnectionReferences = Object.values(updatedConnectionsData).reduce((acc, group) => {
-          for (const key in group) {
-            acc[key] = group[key];
-          }
-          return acc;
-        }, {});
-
-        const workflowDefinition = JSON.parse(sanitizedWorkflowDefinition);
-        const workflowToSave: any = {
-          definition: workflowDefinition,
-          parameters: sanitizedParameterData,
-          connectionReferences: updatedConnectionReferences,
-        };
-
-        const newConnectionsObj: Record<string, any> = {};
-        if (Object.keys(updatedConnectionReferences ?? {}).length) {
-          await Promise.all(
-            Object.keys(updatedConnectionReferences).map(async (referenceKey) => {
-              const reference = updatedConnectionReferences[referenceKey];
-              const { api, connection, connectionProperties, connectionRuntimeUrl } = reference;
-              newConnectionsObj[referenceKey] = {
-                api,
-                connection,
-                connectionId: isOpenApiSchemaVersion(workflowDefinition) ? undefined : connection.id,
-                connectionProperties,
-                connectionRuntimeUrl,
-              };
-            })
-          );
-        }
-        workflowToSave.connections = newConnectionsObj;
-
-        const workflowArtifacts = await getWorkflowAndArtifactsConsumption(workflowId!);
-        await saveWorkflowConsumption(workflowArtifacts, workflowToSave, () => {}, { throwError: true });
-        alert('Workflow saved successfully!');
       } else {
         console.log('Hosting plan is not ready yet!');
       }
@@ -278,8 +192,7 @@ export const TemplatesStandaloneDesigner = () => {
   const services = useMemo(
     () =>
       getServices(
-        appId ?? '',
-        isConsumption,
+        appId as string,
         connectionsData() ?? {},
         workflowAppData as WorkflowApp,
         addConnectionDataInternal,
@@ -291,79 +204,84 @@ export const TemplatesStandaloneDesigner = () => {
     [connectionsData, settingsData, workflowAppData, tenantId, canonicalLocation, appId]
   );
   const resourceDetails = new ArmParser(appId ?? '');
+
+  if (!appId) {
+    return null;
+  }
   return (
-    <LoadWhenArmTokenIsLoaded>
-      <DevToolbox />
-      {appId ? (
-        <TemplatesDesignerProvider locale="en-US" theme={theme}>
-          <TemplatesDataProvider
-            resourceDetails={{
-              subscriptionId: resourceDetails.subscriptionId,
-              resourceGroup: resourceDetails.resourceGroup,
-              location: canonicalLocation,
-              workflowAppName: resourceDetails.resourceName,
-            }}
-            connectionReferences={connectionReferences}
-            services={services}
-            isConsumption={isConsumption}
-            existingWorkflowName={existingWorkflowName}
-          >
-            <div
-              style={{
-                margin: '20px',
+    <TemplatesDesignerProvider locale="en-US" theme={theme}>
+      <TemplatesDataProvider
+        resourceDetails={{
+          subscriptionId: resourceDetails.subscriptionId,
+          resourceGroup: resourceDetails.resourceGroup,
+          location: canonicalLocation,
+          workflowAppName: resourceDetails.resourceName,
+        }}
+        connectionReferences={connectionReferences}
+        services={services}
+        isConsumption={false}
+        isCreateView={true}
+        existingWorkflowName={existingWorkflowName}
+        viewTemplate={isSingleTemplateView ? { id: templatesView } : undefined}
+      >
+        <div
+          style={{
+            margin: '20px',
+          }}
+        >
+          {isSingleTemplateView ? (
+            <TemplatesView createWorkflow={createWorkflowCall} showCloseButton={true} onClose={() => window.alert('Template is closing')} />
+          ) : (
+            <TemplatesDesigner
+              createWorkflowCall={createWorkflowCall}
+              detailFilters={{
+                Category: {
+                  displayName: 'Categories',
+                  items: [
+                    {
+                      value: 'Design Patterns',
+                      displayName: 'Design Patterns',
+                    },
+                    {
+                      value: 'AI',
+                      displayName: 'AI',
+                    },
+                    {
+                      value: 'B2B',
+                      displayName: 'B2B',
+                    },
+                    {
+                      value: 'EDI',
+                      displayName: 'EDI',
+                    },
+                    {
+                      value: 'Approval',
+                      displayName: 'Approval',
+                    },
+                    {
+                      value: 'RAG',
+                      displayName: 'RAG',
+                    },
+                    {
+                      value: 'Automation',
+                      displayName: 'Automation',
+                    },
+                    {
+                      value: 'BizTalk Migration',
+                      displayName: 'BizTalk Migration',
+                    },
+                    {
+                      value: 'Mainframe Modernization',
+                      displayName: 'Mainframe Modernization',
+                    },
+                  ],
+                },
               }}
-            >
-              <TemplatesDesigner
-                detailFilters={{
-                  Category: {
-                    displayName: 'Categories',
-                    items: [
-                      {
-                        value: 'Design Patterns',
-                        displayName: 'Design Patterns',
-                      },
-                      {
-                        value: 'AI',
-                        displayName: 'AI',
-                      },
-                      {
-                        value: 'B2B',
-                        displayName: 'B2B',
-                      },
-                      {
-                        value: 'EDI',
-                        displayName: 'EDI',
-                      },
-                      {
-                        value: 'Approval',
-                        displayName: 'Approval',
-                      },
-                      {
-                        value: 'RAG',
-                        displayName: 'RAG',
-                      },
-                      {
-                        value: 'Automation',
-                        displayName: 'Automation',
-                      },
-                      {
-                        value: 'BizTalk Migration',
-                        displayName: 'BizTalk Migration',
-                      },
-                      {
-                        value: 'Mainframe Modernization',
-                        displayName: 'Mainframe Modernization',
-                      },
-                    ],
-                  },
-                }}
-                createWorkflowCall={createWorkflowCall}
-              />
-            </div>
-          </TemplatesDataProvider>
-        </TemplatesDesignerProvider>
-      ) : null}
-    </LoadWhenArmTokenIsLoaded>
+            />
+          )}
+        </div>
+      </TemplatesDataProvider>
+    </TemplatesDesignerProvider>
   );
 };
 
@@ -372,7 +290,6 @@ const httpClient = new HttpClient();
 
 const getServices = (
   siteResourceId: string,
-  isConsumption: boolean,
   connectionsData: ConnectionsData,
   workflowApp: WorkflowApp | undefined,
   addConnection: (data: ConnectionAndAppSetting) => Promise<void>,
@@ -386,31 +303,21 @@ const getServices = (
 
   const defaultServiceParams = { baseUrl, httpClient, apiVersion };
 
-  const connectionService = isConsumption
-    ? new ConsumptionConnectionService({
-        apiVersion: '2018-07-01-preview',
-        baseUrl: armUrl,
-        subscriptionId,
-        resourceGroup,
-        location,
-        tenantId,
-        httpClient,
-      })
-    : new StandardConnectionService({
-        ...defaultServiceParams,
-        apiHubServiceDetails: {
-          apiVersion: '2018-07-01-preview',
-          baseUrl: armUrl,
-          subscriptionId,
-          resourceGroup,
-          location,
-          tenantId,
-          httpClient,
-        },
-        workflowAppDetails: { appName: resourceName, identity: workflowApp?.identity as any },
-        readConnections: () => Promise.resolve(connectionsData),
-        writeConnection: addConnection as any,
-      });
+  const connectionService = new StandardConnectionService({
+    ...defaultServiceParams,
+    apiHubServiceDetails: {
+      apiVersion: '2018-07-01-preview',
+      baseUrl: armUrl,
+      subscriptionId,
+      resourceGroup,
+      location,
+      tenantId,
+      httpClient,
+    },
+    workflowAppDetails: { appName: resourceName, identity: workflowApp?.identity as any },
+    readConnections: () => Promise.resolve(connectionsData),
+    writeConnection: addConnection as any,
+  });
   const gatewayService = new BaseGatewayService({
     baseUrl: armUrl,
     httpClient,
@@ -439,30 +346,21 @@ const getServices = (
     getAppIdentity: () => workflowApp?.identity as any,
   };
 
-  const templateService = isConsumption
-    ? new BaseTemplateService({
-        openBladeAfterCreate: (_workflowName: string | undefined) => {
-          window.alert('Open blade after create, consumption creation is complete');
-        },
-        onAddBlankWorkflow: () => {
-          console.log('On add blank workflow click');
-        },
-      })
-    : new StandardTemplateService({
-        baseUrl: armUrl,
-        appId: siteResourceId,
-        httpClient,
-        apiVersions: {
-          subscription: apiVersion,
-          gateway: '2018-11-01',
-        },
-        openBladeAfterCreate: (workflowName: string | undefined) => {
-          window.alert(`Open blade after create, workflowName is: ${workflowName}`);
-        },
-        onAddBlankWorkflow: () => {
-          console.log('On add blank workflow click');
-        },
-      });
+  const templateService = new StandardTemplateService({
+    baseUrl: armUrl,
+    appId: siteResourceId,
+    httpClient,
+    apiVersions: {
+      subscription: apiVersion,
+      gateway: '2018-11-01',
+    },
+    openBladeAfterCreate: (workflowName: string | undefined) => {
+      window.alert(`Open blade after create, workflowName is: ${workflowName}`);
+    },
+    onAddBlankWorkflow: async () => {
+      console.log('On add blank workflow click');
+    },
+  });
 
   return {
     connectionService,

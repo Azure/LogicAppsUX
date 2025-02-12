@@ -1,9 +1,9 @@
-import { useCallback, useRef } from 'react';
 import { useStyles } from './styles';
 import { StackShim } from '@fluentui/react-migration-v8-v9';
-import { Button, Caption2, Input, Radio, RadioGroup, Text, type RadioGroupOnChangeData } from '@fluentui/react-components';
+import { Button, Caption2, InfoLabel, Input, Radio, RadioGroup, Text, type RadioGroupOnChangeData } from '@fluentui/react-components';
 import type { IFileSysTreeItem } from '@microsoft/logic-apps-shared';
 import { DropdownTree } from '../DropdownTree';
+import { useIntl } from 'react-intl';
 
 type U = {
   text: string;
@@ -17,9 +17,8 @@ export type FileSelectorProps<T> = {
   options?: Record<string, T>;
   errorMessage?: string;
   upload: {
-    onUpload: (files?: FileList) => void;
+    onUploadClick: () => void;
     uploadButtonText: string;
-    acceptedExtensions?: string;
     inputPlaceholder?: string;
     fileName?: string;
   };
@@ -38,20 +37,19 @@ const FileSelector = <T extends U>(props: FileSelectorProps<T>) => {
     selectedKey,
     options = {},
     onOptionChange,
-    upload: { onUpload, acceptedExtensions, uploadButtonText, inputPlaceholder, fileName },
+    upload: { onUploadClick, uploadButtonText, inputPlaceholder, fileName },
     cancel,
     existing: { onSelect },
     errorMessage,
   } = props;
-  const uploadFileRef = useRef<HTMLInputElement>(null);
   const styles = useStyles();
+  const intl = useIntl();
 
-  const onInput = useCallback(
-    (event: React.FormEvent<HTMLInputElement>) => {
-      onUpload(event.currentTarget.files ?? undefined);
-    },
-    [onUpload]
-  );
+  const addNewInfo = intl.formatMessage({
+    defaultMessage: 'Copy schema and its imports from the file system to your Logic App.',
+    id: 'nRCTkX',
+    description: 'Add new option',
+  });
 
   return (
     <div className={styles.root}>
@@ -68,20 +66,16 @@ const FileSelector = <T extends U>(props: FileSelectorProps<T>) => {
               key={key}
               label={
                 <div>
-                  <Text>{options[key].text}</Text>
+                  <Text>
+                    {options[key].text}
+                    {selectedKey === key && key === 'upload-new' ? <InfoLabel info={<div>{addNewInfo}</div>} /> : null}
+                  </Text>
                   <br />
                   {selectedKey === key && key === 'upload-new' ? (
                     <div className={styles.uploadInputRoot}>
-                      <input type="file" ref={uploadFileRef} onInput={onInput} accept={acceptedExtensions} hidden />
                       <StackShim horizontal>
                         <Input size="small" value={fileName} placeholder={inputPlaceholder} readOnly />
-                        <Button
-                          size="small"
-                          shape="square"
-                          appearance="primary"
-                          onClick={() => uploadFileRef.current?.click()}
-                          style={{ marginLeft: 8 }}
-                        >
+                        <Button size="small" shape="square" appearance="primary" onClick={() => onUploadClick()} style={{ marginLeft: 8 }}>
                           {uploadButtonText}
                         </Button>
                       </StackShim>

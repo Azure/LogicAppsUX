@@ -103,7 +103,8 @@ export const collectSequenceValue = (
   node: FunctionData,
   currentConnection: Connection,
   connections: ConnectionDictionary,
-  shouldLocalizePaths: boolean
+  shouldLocalizePaths: boolean,
+  parentLoopPath: string
 ): SequenceValueResult => {
   // Special case where the index is used directly
   const result: SequenceValueResult = {
@@ -128,6 +129,11 @@ export const collectSequenceValue = (
 
   if (valueToTrim) {
     result.rootLoop = valueToTrim;
+  }
+
+  if (parentLoopPath !== '' && valueToTrim.includes(parentLoopPath)) {
+    const relativePath = valueToTrim.replace(`${parentLoopPath}/`, '');
+    localizedInputValues[0] = relativePath;
   }
 
   // Special case for conditionals

@@ -49,7 +49,7 @@ import { DropZone } from '../connections/dropzone';
 import { MessageBarType } from '@fluentui/react';
 import { isNullOrUndefined, RunService, useNodeIndex } from '@microsoft/logic-apps-shared';
 import { Card } from '@microsoft/designer-ui';
-import { memo, useCallback, useEffect, useMemo, useState } from 'react';
+import { memo, useCallback, useMemo, useState } from 'react';
 import { useDrag } from 'react-dnd';
 import { useIntl } from 'react-intl';
 import { useQuery } from '@tanstack/react-query';
@@ -76,15 +76,17 @@ const DefaultNode = ({ targetPosition = Position.Top, sourcePosition = Position.
   const parentRunId = useParentRunId(id);
   const parentRunData = useRunData(parentRunId ?? '');
   const nodesMetaData = useNodesMetadata();
-  const repetitionName = getRepetitionName(parentRunIndex, id, nodesMetaData, operationsInfo);
+  const repetitionName = useMemo(
+    () => getRepetitionName(parentRunIndex, id, nodesMetaData, operationsInfo),
+    [id, nodesMetaData, operationsInfo, parentRunIndex]
+  );
   const isSecureInputsOutputs = useSecureInputsOutputs(id);
-  const { status: statusRun, error: errorRun, code: codeRun } = runData ?? {};
   const isLoadingDynamicData = useIsNodeLoadingDynamicData(id);
 
   const suppressDefaultNodeSelect = useSuppressDefaultNodeSelectFunctionality();
   const nodeSelectCallbackOverride = useNodeSelectAdditionalCallback();
 
-  const getRunRepetition = () => {
+  const getRunRepetition = useCallback(() => {
     if (parentRunData?.status === constants.FLOW_STATUS.SKIPPED) {
       return {
         properties: {
@@ -99,22 +101,25 @@ const DefaultNode = ({ targetPosition = Position.Top, sourcePosition = Position.
       };
     }
     return RunService().getRepetition({ nodeId: id, runId: runInstance?.id }, repetitionName);
-  };
+  }, [id, parentRunData?.status, repetitionName, runInstance?.id]);
 
-  const { isFetching: isRepetitionLoading, data: repetitionData } = useQuery<any>(
+  const { isFetching: isRepetitionLoading } = useQuery<any>(
     ['runInstance', { nodeId: id, runId: runInstance?.id, repetitionName, parentStatus: parentRunData?.status, parentRunIndex }],
-    getRunRepetition,
+    async () => {
+      const data = await getRunRepetition();
+      if (!isNullOrUndefined(data)) {
+        dispatch(setRepetitionRunData({ nodeId: id, runData: data.properties as any }));
+      }
+      return data;
+    },
     {
       refetchOnWindowFocus: false,
+      refetchOnReconnect: false,
+      refetchOnMount: false,
+      retryOnMount: false,
       enabled: !!isMonitoringView && parentRunIndex !== undefined,
     }
   );
-
-  useEffect(() => {
-    if (!isNullOrUndefined(repetitionData)) {
-      dispatch(setRepetitionRunData({ nodeId: id, runData: repetitionData.properties as any }));
-    }
-  }, [dispatch, id, repetitionData, runInstance?.id]);
 
   const { dependencies, loopSources } = useTokenDependencies(id);
 
@@ -274,6 +279,7 @@ const DefaultNode = ({ targetPosition = Position.Top, sourcePosition = Position.
     }
 
     if (isMonitoringView) {
+      const { status: statusRun, error: errorRun, code: codeRun } = runData ?? {};
       return getMonitoringError(errorRun, statusRun, codeRun);
     }
 
@@ -283,13 +289,11 @@ const DefaultNode = ({ targetPosition = Position.Top, sourcePosition = Position.
     isOperationQueryError,
     settingValidationErrors?.length,
     parameterValidationErrors?.length,
-    isMonitoringView,
     opManifestErrorText,
     settingValidationErrorText,
     parameterValidationErrorText,
-    errorRun,
-    statusRun,
-    codeRun,
+    isMonitoringView,
+    runData,
   ]);
 
   const shouldFocus = useShouldNodeFocus(id);
@@ -302,7 +306,7 @@ const DefaultNode = ({ targetPosition = Position.Top, sourcePosition = Position.
       <div className="nopan" ref={ref as any}>
         <Handle className="node-handle top" type="target" position={targetPosition} isConnectable={false} />
         <Card
-          active={isMonitoringView ? !isNullOrUndefined(runData?.status) :true}
+          active={isMonitoringView ? !isNullOrUndefined(runData?.status) : true}
           title={label}
           icon={iconUri}
           draggable={!readOnly && !isTrigger}
@@ -332,7 +336,7 @@ const DefaultNode = ({ targetPosition = Position.Top, sourcePosition = Position.
           isLoadingDynamicData={isLoadingDynamicData}
           nodeIndex={nodeIndex}
         />
-        {showCopyCallout ? <CopyTooltip targetRef={ref} hideTooltip={clearCopyTooltip} /> : null}
+        {showCopyCallout ? <CopyTooltip id={id} targetRef={ref} hideTooltip={clearCopyTooltip} /> : null}
         <Handle className="node-handle bottom" type="source" position={sourcePosition} isConnectable={false} />
       </div>
       {showLeafComponents ? (

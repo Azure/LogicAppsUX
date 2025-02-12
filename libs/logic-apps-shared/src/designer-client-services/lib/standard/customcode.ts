@@ -1,3 +1,4 @@
+import { validateRequiredServiceArguments } from '../../../utils/src/lib/helpers/functions';
 import type { ICustomCodeService, UploadCustomCodeAppFilePayload, UploadCustomCodePayload } from '../customcode';
 import type { IHttpClient } from '../httpClient';
 
@@ -14,27 +15,7 @@ export interface CustomCodeServiceOptions {
 export class StandardCustomCodeService implements ICustomCodeService {
   constructor(public readonly options: CustomCodeServiceOptions) {
     const { apiVersion, baseUrl, subscriptionId, resourceGroup, appName, workflowName, httpClient } = this.options;
-    if (!apiVersion) {
-      throw new Error('apiVersion required');
-    }
-    if (!baseUrl) {
-      throw new Error('baseUrl required');
-    }
-    if (!subscriptionId) {
-      throw new Error('subscriptionId required');
-    }
-    if (!resourceGroup) {
-      throw new Error('resourceGroup required');
-    }
-    if (!appName) {
-      throw new Error('appName required');
-    }
-    if (!workflowName) {
-      throw new Error('workflowName required');
-    }
-    if (!httpClient) {
-      throw new Error('httpClient required');
-    }
+    validateRequiredServiceArguments({ apiVersion, baseUrl, subscriptionId, resourceGroup, appName, workflowName, httpClient });
   }
 
   async uploadCustomCodeAppFile({ fileName, fileData }: UploadCustomCodeAppFilePayload): Promise<void> {
@@ -70,6 +51,7 @@ export class StandardCustomCodeService implements ICustomCodeService {
 
   async uploadCustomCode({ fileData, fileName, fileExtension }: UploadCustomCodePayload): Promise<void> {
     const { apiVersion, baseUrl, subscriptionId, resourceGroup, appName, workflowName, httpClient } = this.options;
+
     const contentType = fileExtension.substring(fileExtension.indexOf('.') + 1) ?? 'plain/text';
     const uri = `${baseUrl}/subscriptions/${subscriptionId}/resourceGroups/${resourceGroup}/providers/Microsoft.Web/sites/${appName}/hostruntime/admin/vfs/${workflowName}/${fileName}`;
 
@@ -100,6 +82,7 @@ export class StandardCustomCodeService implements ICustomCodeService {
 
   async deleteCustomCode(fileName: string): Promise<void> {
     const { apiVersion, baseUrl, subscriptionId, resourceGroup, appName, workflowName, httpClient } = this.options;
+
     const uri = `${baseUrl}/subscriptions/${subscriptionId}/resourceGroups/${resourceGroup}/providers/Microsoft.Web/sites/${appName}/hostruntime/admin/vfs/${workflowName}/${fileName}`;
     const headers: Record<string, string | string[]> = {
       'If-Match': ['*'],

@@ -11,12 +11,6 @@
       "value": "Warnung: Der Eingabeknotentyp stimmt nicht mit dem Typ des Schemaknotens überein."
     }
   ],
-  "+0ua83": [
-    {
-      "type": 0,
-      "value": "Parameters"
-    }
-  ],
   "+0yxlR": [
     {
       "type": 0,
@@ -80,7 +74,7 @@
   "+M7bC6": [
     {
       "type": 0,
-      "value": "Succeeded with retries"
+      "value": "Erfolgreich mit Wiederholungen"
     }
   ],
   "+R90eK": [
@@ -529,6 +523,12 @@
       "value": " Ergebnissen angezeigt."
     }
   ],
+  "0a4IGE": [
+    {
+      "type": 0,
+      "value": "Refresh"
+    }
+  ],
   "0i/6TR": [
     {
       "type": 0,
@@ -747,6 +747,12 @@
     {
       "type": 0,
       "value": "Geben Sie eine gültige URI ein."
+    }
+  ],
+  "1tmN2o": [
+    {
+      "type": 0,
+      "value": "Workflow version"
     }
   ],
   "1uGBLP": [
@@ -1339,6 +1345,12 @@
       "value": "Wiederholungsverlauf"
     }
   ],
+  "4rdY7D": [
+    {
+      "type": 0,
+      "value": "Run ID"
+    }
+  ],
   "4vcnOA": [
     {
       "type": 0,
@@ -1866,7 +1878,7 @@
   "7X4UA/": [
     {
       "type": 0,
-      "value": "Waiting"
+      "value": "Warten"
     }
   ],
   "7ZF1Hr": [
@@ -2274,7 +2286,7 @@
   "9dd0/m": [
     {
       "type": 0,
-      "value": "Running"
+      "value": "Wird ausgeführt"
     }
   ],
   "9djnqI": [
@@ -2311,6 +2323,12 @@
     {
       "type": 0,
       "value": "Ausführlichere Informationen finden Sie in den folgenden Ressourcen:"
+    }
+  ],
+  "A5/IqS": [
+    {
+      "type": 0,
+      "value": "Run identifier"
     }
   ],
   "A5/UwX": [
@@ -2373,6 +2391,16 @@
     {
       "type": 0,
       "value": "Dienstprinzipal"
+    }
+  ],
+  "AMMfbt": [
+    {
+      "type": 1,
+      "value": "count"
+    },
+    {
+      "type": 0,
+      "value": " Second"
     }
   ],
   "APKdYG": [
@@ -2690,7 +2718,7 @@
   "Bwqlxd": [
     {
       "type": 0,
-      "value": "Key not found '"
+      "value": "Der Schlüssel „"
     },
     {
       "type": 1,
@@ -2698,7 +2726,7 @@
     },
     {
       "type": 0,
-      "value": "'"
+      "value": "“ wurde nicht gefunden."
     }
   ],
   "BxITRH": [
@@ -3021,6 +3049,12 @@
     {
       "type": 0,
       "value": "Triggertyp"
+    }
+  ],
+  "DeM/yz": [
+    {
+      "type": 0,
+      "value": "Start time"
     }
   ],
   "DfXxoX": [
@@ -3989,6 +4023,12 @@
       "value": "Gruppe erstellen"
     }
   ],
+  "J8G55j": [
+    {
+      "type": 0,
+      "value": "Search by run identifier"
+    }
+  ],
   "J9wWry": [
     {
       "type": 0,
@@ -4182,7 +4222,7 @@
   "KWeLBB": [
     {
       "type": 0,
-      "value": "Closing..."
+      "value": "Wird geschlossen..."
     }
   ],
   "KX1poC": [
@@ -4294,7 +4334,7 @@
   "LBlM+D": [
     {
       "type": 0,
-      "value": "Not specified"
+      "value": "Nicht angegeben"
     }
   ],
   "LCRHQ9": [
@@ -5303,6 +5343,12 @@
       "value": "Vollbild"
     }
   ],
+  "QT4IaP": [
+    {
+      "type": 0,
+      "value": "Filtered!"
+    }
+  ],
   "QVtqAn": [
     {
       "type": 0,
@@ -5671,6 +5717,12 @@
       "value": "Ausgaben sollten nicht angegeben werden, wenn der Status „Fehlerhaft“ lautet"
     }
   ],
+  "SbHBIZ": [
+    {
+      "type": 0,
+      "value": "No runs found"
+    }
+  ],
   "SgiTAh": [
     {
       "type": 0,
@@ -5701,6 +5753,12 @@
       "value": "Fertig"
     }
   ],
+  "SwWaHa": [
+    {
+      "type": 0,
+      "value": "Enter a valid run identifier"
+    }
+  ],
   "Sy4cFC": [
     {
       "type": 0,
@@ -5717,6 +5775,12 @@
     {
       "type": 0,
       "value": "Test"
+    }
+  ],
+  "T/7b2y": [
+    {
+      "type": 0,
+      "value": "Duration"
     }
   ],
   "TDfQzn": [
@@ -6436,7 +6500,7 @@
   "WbIGAh": [
     {
       "type": 0,
-      "value": "Succeeded"
+      "value": "Erfolgreich"
     }
   ],
   "Wc77aJ": [
@@ -6751,12 +6815,6 @@
     {
       "type": 0,
       "value": "Durch diese Einstellung schließen Logik-Apps keine Workflow-Metadatenheader in der Antwort ein."
-    }
-  ],
-  "XtVOMn": [
-    {
-      "type": 0,
-      "value": "Something went wrong"
     }
   ],
   "XtuP5e": [
@@ -7125,6 +7183,16 @@
       "value": "Schließen"
     }
   ],
+  "ZgU5eu": [
+    {
+      "type": 1,
+      "value": "count"
+    },
+    {
+      "type": 0,
+      "value": " Day"
+    }
+  ],
   "ZgyD93": [
     {
       "type": 0,
@@ -7147,12 +7215,6 @@
     {
       "type": 0,
       "value": "Erfahren Sie mehr über dynamische Inhalte."
-    }
-  ],
-  "ZvAp7m": [
-    {
-      "type": 0,
-      "value": "Save"
     }
   ],
   "ZyDq4/": [
@@ -7201,6 +7263,12 @@
     {
       "type": 0,
       "value": "Das maximale Wiederholungsrichtlinienintervall ist ungültig. Es muss dem ISO 8601-Dauerformat entsprechen."
+    }
+  ],
+  "aKf/r+": [
+    {
+      "type": 0,
+      "value": "Specified run identifier not found"
     }
   ],
   "aP1wk9": [
@@ -7371,6 +7439,12 @@
     {
       "type": 0,
       "value": "Dieser Vorgang enthält ein Token, das im aktuellen Workflow nicht vorhanden ist."
+    }
+  ],
+  "bPyWVY": [
+    {
+      "type": 0,
+      "value": "Failed to load runs"
     }
   ],
   "bTrk+S": [
@@ -7641,6 +7715,12 @@
       "value": "Herunterladen (ALT oder Option + Auswählen)"
     }
   ],
+  "d9RCuq": [
+    {
+      "type": 0,
+      "value": "Workflow run status"
+    }
+  ],
   "dBWIjR": [
     {
       "type": 0,
@@ -7847,6 +7927,12 @@
       "value": "Diesen Flow bearbeiten in"
     }
   ],
+  "eLQPek": [
+    {
+      "type": 0,
+      "value": "Status"
+    }
+  ],
   "eLthgv": [
     {
       "type": 0,
@@ -7952,7 +8038,7 @@
   "eofB85": [
     {
       "type": 0,
-      "value": "Timed out"
+      "value": "Zeitüberschreitung"
     }
   ],
   "epOMnV": [
@@ -8083,12 +8169,6 @@
       "value": "(UTC-05:00) Haiti"
     }
   ],
-  "fZJWBR": [
-    {
-      "type": 0,
-      "value": "Loading designer"
-    }
-  ],
   "faUrud": [
     {
       "type": 0,
@@ -8117,6 +8197,16 @@
     {
       "type": 0,
       "value": "(UTC+08:00) Beijing (Peking), Chongqing, Hongkong (SAR), Urumqi"
+    }
+  ],
+  "ft8BH8": [
+    {
+      "type": 1,
+      "value": "count"
+    },
+    {
+      "type": 0,
+      "value": " Seconds"
     }
   ],
   "fvGvnA": [
@@ -8447,6 +8537,16 @@
     {
       "type": 0,
       "value": "Dies ist nicht das, wonach ich suche"
+    }
+  ],
+  "hesDPs": [
+    {
+      "type": 1,
+      "value": "count"
+    },
+    {
+      "type": 0,
+      "value": " Milliseconds"
     }
   ],
   "hihfHd": [
@@ -9425,6 +9525,16 @@
       "value": "Erforderlich. Die Zeichenfolge, die in Kleinbuchstaben konvertiert werden soll. Wenn für ein Zeichen in der Zeichenfolge keine Entsprechung in Kleinbuchstaben vorhanden ist, wird das Zeichen unverändert in die zurückgegebene Zeichenfolge übernommen."
     }
   ],
+  "maP1K/": [
+    {
+      "type": 1,
+      "value": "count"
+    },
+    {
+      "type": 0,
+      "value": " Minutes"
+    }
+  ],
   "mb1XDD": [
     {
       "type": 0,
@@ -9801,6 +9911,16 @@
       "value": "Erforderlich. Der dataURI, der in die Binärdarstellung decodiert werden soll."
     }
   ],
+  "oBAL2F": [
+    {
+      "type": 1,
+      "value": "count"
+    },
+    {
+      "type": 0,
+      "value": " Days"
+    }
+  ],
   "oDHXKh": [
     {
       "type": 0,
@@ -9885,10 +10005,14 @@
       "value": "Antworttext"
     }
   ],
-  "ohOaXj": [
+  "og5JOA": [
+    {
+      "type": 1,
+      "value": "count"
+    },
     {
       "type": 0,
-      "value": "Errors"
+      "value": " Millisecond"
     }
   ],
   "ohpbkw": [
@@ -10509,16 +10633,20 @@
       "value": "Erstellen einer Verbindung abbrechen"
     }
   ],
+  "sJQee6": [
+    {
+      "type": 1,
+      "value": "count"
+    },
+    {
+      "type": 0,
+      "value": " Hours"
+    }
+  ],
   "sKy720": [
     {
       "type": 0,
       "value": "Für den Workflownamen muss ein Wert angegeben werden."
-    }
-  ],
-  "sOnphB": [
-    {
-      "type": 0,
-      "value": "Resubmit"
     }
   ],
   "sRpETS": [
@@ -11249,6 +11377,12 @@
       "value": "Zum Erstellen und Verwenden einer API-Verbindung muss eine verwaltete Identität für diese Logik-App konfiguriert sein."
     }
   ],
+  "vhwaYb": [
+    {
+      "type": 0,
+      "value": "Alle benutzerdefinierten Wertzeichenfolgen und DateTime-Werte in doppelte Anführungszeichen umbrechen. Beispiel: \"abc\"."
+    }
+  ],
   "viee6C": [
     {
       "type": 0,
@@ -11311,6 +11445,12 @@
       "value": "Dies enthält einen doppelten Wert."
     }
   ],
+  "vzXXFP": [
+    {
+      "type": 0,
+      "value": "Workflow version"
+    }
+  ],
   "w+7aGo": [
     {
       "type": 0,
@@ -11345,6 +11485,16 @@
     {
       "type": 0,
       "value": "Zuklappen"
+    }
+  ],
+  "wAg9+z": [
+    {
+      "type": 1,
+      "value": "count"
+    },
+    {
+      "type": 0,
+      "value": " Hour"
     }
   ],
   "wBBu4g": [
@@ -11671,6 +11821,16 @@
     {
       "type": 0,
       "value": "Gibt den Pfad aus einem URI zurück. Falls der Pfad nicht angegeben ist, wird \"/\" zurückgegeben."
+    }
+  ],
+  "xfXUGz": [
+    {
+      "type": 1,
+      "value": "count"
+    },
+    {
+      "type": 0,
+      "value": " Minute"
     }
   ],
   "xi2tn6": [

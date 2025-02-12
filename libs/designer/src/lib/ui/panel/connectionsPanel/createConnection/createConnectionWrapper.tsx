@@ -185,10 +185,16 @@ export const CreateConnectionInternal = (props: {
   const queryClient = useQueryClient();
   const updateNewConnectionInCache = useCallback(
     async (newConnection: Connection) => {
-      return queryClient.setQueryData<Connection[]>(
-        ['connections', connector?.id?.toLowerCase()],
-        (oldConnections: Connection[] | undefined) => [...(oldConnections ?? []), newConnection]
-      );
+      // Update all connections cache (Used for custom connectors)
+      queryClient.setQueryData<Connection[]>(['allConnections'], (oldConnections: Connection[] | undefined) => [
+        ...(oldConnections ?? []),
+        newConnection,
+      ]);
+      // Update connector specific cache (Used for everything else)
+      queryClient.setQueryData<Connection[]>(['connections', connector?.id?.toLowerCase()], (oldConnections: Connection[] | undefined) => [
+        ...(oldConnections ?? []),
+        newConnection,
+      ]);
     },
     [connector?.id, queryClient]
   );

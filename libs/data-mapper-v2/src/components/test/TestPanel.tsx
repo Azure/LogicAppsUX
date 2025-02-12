@@ -1,6 +1,6 @@
-import { useCallback, useMemo } from 'react';
+import { useCallback, useMemo, useState } from 'react';
 import { useIntl } from 'react-intl';
-import { Button } from '@fluentui/react-components';
+import { Button, Spinner } from '@fluentui/react-components';
 import { useSelector, useDispatch } from 'react-redux';
 import type { RootState, AppDispatch } from '../../core/state/Store';
 import { Panel } from '../common/panel/Panel';
@@ -17,6 +17,7 @@ export const TestPanel = (_props: TestPanelProps) => {
   const intl = useIntl();
   const styles = useStyles();
   const dispatch = useDispatch<AppDispatch>();
+  const [loading, setLoading] = useState(false);
   const { testMapInput, isOpen } = useSelector((state: RootState) => state.panel.testPanel);
   const xsltFilename = useSelector((state: RootState) => state.dataMap.present.curDataMapOperation.xsltFilename);
 
@@ -53,6 +54,9 @@ export const TestPanel = (_props: TestPanelProps) => {
   const onTestClick = useCallback(() => {
     if (!!xsltFilename && !!testMapInput) {
       const attempt = guid();
+      setLoading(true);
+      // Clear out test output
+      dispatch(updateTestOutput({}));
 
       testDataMap(xsltFilename, testMapInput)
         .then((response) => {
@@ -74,6 +78,8 @@ export const TestPanel = (_props: TestPanelProps) => {
               },
             ],
           });
+
+          setLoading(false);
         })
         .catch((error: Error) => {
           LoggerService().log({
@@ -92,6 +98,8 @@ export const TestPanel = (_props: TestPanelProps) => {
               error: error,
             })
           );
+
+          setLoading(false);
         });
     }
   }, [testMapInput, xsltFilename, dispatch]);
@@ -106,11 +114,11 @@ export const TestPanel = (_props: TestPanelProps) => {
         rightAction: <PanelXButton onCloseClick={onCloseClick} ariaLabel={resources.CLOSE_TEST_MAP} />,
         size: 500,
       }}
-      body={<TestPanelBody />}
+      body={<TestPanelBody loading={loading} />}
       footer={
         <div>
-          <Button appearance="primary" onClick={onTestClick} disabled={!testMapInput}>
-            {resources.TEST}
+          <Button appearance="primary" onClick={onTestClick} disabled={!testMapInput || loading}>
+            {loading ? <Spinner size={'small'}>{resources.TEST}</Spinner> : resources.TEST}
           </Button>
           <Button appearance="secondary" onClick={onCloseClick} className={styles.closeButton}>
             {resources.CLOSE}

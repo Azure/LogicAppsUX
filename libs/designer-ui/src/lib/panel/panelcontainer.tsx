@@ -6,12 +6,12 @@ import {
   MessageBar,
   MessageBarBody,
   Text,
-  OverlayDrawer,
+  Drawer,
   Spinner,
   MessageBarTitle,
 } from '@fluentui/react-components';
 import { ChevronDoubleRightFilled } from '@fluentui/react-icons';
-import { useCallback, useEffect, useRef } from 'react';
+import { useCallback } from 'react';
 import { useIntl } from 'react-intl';
 import { EmptyContent } from '../card/emptycontent';
 import type { PageActionTelemetryData } from '../telemetry/models';
@@ -42,7 +42,6 @@ export type PanelContainerProps = {
   toggleCollapse: () => void;
   onCommentChange: (nodeId: string, panelCommentChangeEvent?: string) => void;
   onTitleChange: TitleChangeHandler;
-  onTitleBlur?: (prevTitle: string) => void;
   handleTitleUpdate: (originalId: string, newId: string) => void;
   setOverrideWidth?: (width: string | undefined) => void;
   canShowLogicAppRun?: boolean;
@@ -67,7 +66,6 @@ export const PanelContainer = ({
   trackEvent,
   onCommentChange,
   onTitleChange,
-  onTitleBlur,
   handleTitleUpdate,
   setOverrideWidth,
   overrideWidth,
@@ -77,9 +75,6 @@ export const PanelContainer = ({
   showLogicAppRun,
 }: PanelContainerProps) => {
   const intl = useIntl();
-
-  const selectedElementRef = useRef<HTMLElement | null>(null);
-
   const canResize = !!(isResizeable && setOverrideWidth);
   const isEmptyPane = noNodeSelected && panelScope === PanelScope.CardLevel;
   const isRight = panelLocation === PanelLocation.Right;
@@ -89,14 +84,6 @@ export const PanelContainer = ({
   const drawerWidth = isCollapsed
     ? PanelSize.Auto
     : ((canResize ? overrideWidth : undefined) ?? (pinnedNodeIfDifferent ? PanelSize.DualView : PanelSize.Medium));
-
-  useEffect(() => {
-    selectedElementRef.current = node?.nodeId ? document.getElementById(`msla-node-${node.nodeId}`) : null;
-  }, [node?.nodeId]);
-
-  useEffect(() => {
-    selectedElementRef.current?.focus();
-  }, [isCollapsed]);
 
   const renderHeader = useCallback(
     (headerNode: PanelNodeData): JSX.Element => {
@@ -125,7 +112,6 @@ export const PanelContainer = ({
           toggleCollapse={toggleCollapse}
           onTitleChange={onTitleChange}
           handleTitleUpdate={handleTitleUpdate}
-          onTitleBlur={onTitleBlur}
         />
       );
     },
@@ -146,7 +132,6 @@ export const PanelContainer = ({
       showLogicAppRun,
       toggleCollapse,
       onTitleChange,
-      onTitleBlur,
       handleTitleUpdate,
       resubmitOperation,
       onCommentChange,
@@ -213,7 +198,7 @@ export const PanelContainer = ({
   }
 
   return (
-    <OverlayDrawer
+    <Drawer
       aria-label={panelLabel}
       className="msla-panel-container"
       modalType="non-modal"
@@ -223,7 +208,7 @@ export const PanelContainer = ({
       }}
       open={true}
       position={isRight ? 'end' : 'start'}
-      style={{ position: 'absolute', maxWidth: '100%', width: drawerWidth }}
+      style={{ position: 'relative', maxWidth: '100%', width: drawerWidth, height: '100%' }}
     >
       {isEmptyPane || isCollapsed ? (
         <Button
@@ -261,6 +246,6 @@ export const PanelContainer = ({
           {canResize ? <PanelResizer minWidth={minWidth} updatePanelWidth={setOverrideWidth} /> : null}
         </>
       )}
-    </OverlayDrawer>
+    </Drawer>
   );
 };

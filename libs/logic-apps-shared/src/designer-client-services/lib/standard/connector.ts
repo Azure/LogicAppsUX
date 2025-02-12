@@ -1,5 +1,6 @@
 import type { OpenAPIV2 } from '../../../utils/src';
-import { ArgumentException, isArmResourceId, UnsupportedException } from '../../../utils/src';
+import { isArmResourceId, UnsupportedException } from '../../../utils/src';
+import { validateRequiredServiceArguments } from '../../../utils/src/lib/helpers/functions';
 import type { BaseConnectorServiceOptions } from '../base';
 import { BaseConnectorService } from '../base';
 import type { ListDynamicValue, ManagedIdentityRequestProperties, TreeDynamicExtension, TreeDynamicValue } from '../connector';
@@ -20,15 +21,7 @@ export class StandardConnectorService extends BaseConnectorService {
       apiVersion: options.apiHubServiceDetails?.apiVersion ?? options.apiVersion,
     });
     const { apiVersion, baseUrl, getConfiguration } = options;
-    if (!apiVersion) {
-      throw new ArgumentException('apiVersion required');
-    }
-    if (!baseUrl) {
-      throw new ArgumentException('baseUrl required');
-    }
-    if (!getConfiguration) {
-      throw new ArgumentException('getConfiguration required');
-    }
+    validateRequiredServiceArguments({ apiVersion, baseUrl, getConfiguration });
   }
 
   async getLegacyDynamicContent(

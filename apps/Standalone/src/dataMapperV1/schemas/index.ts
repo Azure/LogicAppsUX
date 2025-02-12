@@ -9,3 +9,4 @@ export { default as playgroundTargetSchema } from './PlaygroundTargetSchema.json
 export { default as deepNestedSequenceAndObject } from './DeepNestedSequenceAndObj.json';
 export { default as projectRequest } from './ProjectRequest.json';
 export { default as oebsProjectRequest } from './OebsProjectRequest.json';
+export { default as x12 } from './x12.json';

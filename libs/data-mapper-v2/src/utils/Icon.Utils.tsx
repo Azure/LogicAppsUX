@@ -98,7 +98,7 @@ import { tokens } from '@fluentui/react-components';
 
 type iconSize = 16 | 24;
 
-const mapCheckerIconStyle = { minHeight: '20px', minWidth: '20px' };
+const mapCheckerIconStyle = { minHeight: '16px', minWidth: '16px' };
 
 export const iconForMapCheckerSeverity = (severity: MapCheckerItemSeverity) => {
   switch (severity) {

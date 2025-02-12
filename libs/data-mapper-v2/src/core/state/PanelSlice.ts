@@ -10,6 +10,7 @@ export const ConfigPanelView = {
   UpdateSchema: 'updateSchema',
 } as const;
 export type ConfigPanelView = (typeof ConfigPanelView)[keyof typeof ConfigPanelView];
+export type MapCheckTabType = 'error' | 'warning';
 
 export type TestPanelState = {
   isOpen: boolean;
@@ -24,6 +25,11 @@ export type FunctionPanelState = {
   isOpen: boolean;
 };
 
+export type MapCheckPanelState = {
+  isOpen: boolean;
+  selectedTab: MapCheckTabType;
+};
+
 export type CodeViewState = {
   isOpen: boolean;
 };
@@ -34,7 +40,7 @@ export interface PanelState {
   testPanel: TestPanelState;
   codeViewPanel: CodeViewState;
   functionPanel: FunctionPanelState;
-  mapCheckerPanel: FunctionPanelState;
+  mapCheckerPanel: MapCheckPanelState;
 }
 
 export interface TestMapOutput {
@@ -56,6 +62,7 @@ const initialState: PanelState = {
   },
   mapCheckerPanel: {
     isOpen: false,
+    selectedTab: 'error',
   },
 };
 
@@ -161,6 +168,10 @@ export const panelSlice = createSlice({
     setTestFile: (state, action: PayloadAction<SchemaFile>) => {
       state.testPanel.selectedFile = action.payload;
     },
+
+    setSelectedMapCheckerTab: (state, action: PayloadAction<MapCheckTabType>) => {
+      state.mapCheckerPanel.selectedTab = action.payload;
+    },
   },
 });
 
@@ -179,6 +190,7 @@ export const {
   updateTestOutput,
   toggleFunctionPanel,
   toggleMapChecker,
+  setSelectedMapCheckerTab,
 } = panelSlice.actions;
 
 export default panelSlice.reducer;

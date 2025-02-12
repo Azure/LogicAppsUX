@@ -123,7 +123,7 @@ export class SubscriptionTreeItem extends SubscriptionTreeItemBase {
 
     promptSteps.push(new SiteNameStep());
 
-    const locations = await getWebLocations(wizardContext);
+    const locations = await getWebLocations({ ...wizardContext, newPlanSku: wizardContext.newPlanSku ?? { tier: 'ElasticPremium' } });
     CustomLocationListStep.setLocationSubset(wizardContext, Promise.resolve(locations), 'microsoft.resources');
     CustomLocationListStep.addStep(context as any, promptSteps);
     promptSteps.push(new LogicAppHostingPlanStep());
@@ -252,7 +252,6 @@ async function setRegionsTask(context: ILogicAppWizardContext): Promise<void> {
   since no new orgDomain is added for WorkflowStandard we will overwrite here so it filters region correctly. */
   const originalPlan = context.newPlanSku ? { ...context.newPlanSku } : undefined;
 
-  context.newPlanSku = { tier: 'ElasticPremium' };
   context.newPlanSku = originalPlan;
 }
 

@@ -2,7 +2,7 @@ import { equals, type ITreeFile, type IFileSysTreeItem, type SchemaNodeExtended,
 import { useCallback, useEffect, useMemo } from 'react';
 import { useIntl } from 'react-intl';
 import { usePanelBodyStyles } from './styles';
-import type { FileWithVsCodePath, SchemaFile } from '../../models/Schema';
+import type { SchemaFile } from '../../models/Schema';
 import FileSelector, { type FileSelectorOption } from '../common/selector/FileSelector';
 import { useSelector } from 'react-redux';
 import type { RootState } from '../../core/state/Store';
@@ -106,28 +106,9 @@ export const SchemaPanelBody = ({
     [setSelectedSchemaFile, schemaType]
   );
 
-  const onUpload = useCallback(
-    (files?: FileList) => {
-      if (!files) {
-        console.error('Files array is empty');
-        return;
-      }
-
-      const schemaFile = files[0] as FileWithVsCodePath;
-      if (!schemaFile.path) {
-        console.log('Path property is missing from file (should only occur in browser/standalone)');
-      } else if (schemaFile) {
-        setSelectedSchemaFile({
-          name: schemaFile.name,
-          path: schemaFile.path,
-          type: schemaType,
-        });
-      } else {
-        console.error('Missing schemaType');
-      }
-    },
-    [schemaType, setSelectedSchemaFile]
-  );
+  const onUpload = useCallback(() => {
+    DataMapperFileService().getSchemaFromFile(schemaType);
+  }, [schemaType]);
 
   const onCancel = useCallback(() => {
     toggleEditState(false);
@@ -146,9 +127,8 @@ export const SchemaPanelBody = ({
           upload={{
             uploadButtonText: stringResources.BROWSE,
             inputPlaceholder: stringResources.BROWSE_MESSAGE,
-            acceptedExtensions: '.xsd, .json',
             fileName: selectedSchemaFile?.name,
-            onUpload: onUpload,
+            onUploadClick: onUpload,
           }}
           existing={{
             fileList: availableSchemaList,

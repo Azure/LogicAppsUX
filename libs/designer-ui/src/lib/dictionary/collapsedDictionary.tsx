@@ -18,6 +18,7 @@ export type CollapsedDictionaryProps = {
   onBlur?: () => void;
   getTokenPicker: GetTokenPickerHandler;
   tokenMapping?: Record<string, ValueSegment>;
+  labelId?: string;
   loadParameterValueFromString?: loadParameterValueFromStringHandler;
 };
 

@@ -1,6 +1,6 @@
 import test, { expect } from '@playwright/test';
-import { GoToMockWorkflow } from './utils/GoToWorkflow';
-import { getSerializedWorkflowFromState } from './utils/designerFunctions';
+import { GoToMockWorkflow } from '../utils/GoToWorkflow';
+import { getSerializedWorkflowFromState } from '../utils/designerFunctions';
 
 test.describe(
   'Token Removal Tests',
@@ -69,7 +69,7 @@ test.describe(
       expect(JSON.stringify(serializedNew)).not.toContain("@{triggerBody()?['string']}");
     });
 
-    test.skip('Tokens should be removed from parameters when workflow parameter is deleted', async ({ page }) => {
+    test('Tokens should be removed from parameters when workflow parameter is deleted', async ({ page }) => {
       await page.goto('/');
 
       await GoToMockWorkflow(page, 'Panel');
@@ -78,7 +78,7 @@ test.describe(
         "@{triggerBody()?['string']}@{variables('ArrayVariable')}@{parameters('EILCO Admin Nominations-OCSA List (cr773_EILCOAdminNominations_OCSA_L2)')}"
       );
       await page.getByRole('button', { name: 'Workflow Parameters' }).click();
-      await page.getByTestId('parameter-edit-icon-button').click();
+      await page.getByLabel('Edit Parameter').click();
       await page.getByLabel('Delete Parameter').click();
       await page
         .locator('div')
@@ -96,7 +96,7 @@ test.describe(
         "@{parameters('EILCO Admin Nominations-OCSA List (cr773_EILCOAdminNominations_OCSA_L2)')}"
       );
     });
-    test.skip('Output should be correct when multiple tokens get removed by removing source', async ({ page }) => {
+    test('Output should be correct when multiple tokens get removed by removing source', async ({ page }) => {
       await page.goto('/');
 
       await GoToMockWorkflow(page, 'Panel');
@@ -105,7 +105,7 @@ test.describe(
         "@{triggerBody()?['string']}@{variables('ArrayVariable')}@{parameters('EILCO Admin Nominations-OCSA List (cr773_EILCOAdminNominations_OCSA_L2)')}"
       );
       await page.getByRole('button', { name: 'Workflow Parameters' }).click();
-      await page.getByTestId('parameter-edit-icon-button').click();
+      await page.getByLabel('Edit Parameter').click();
       await page.getByLabel('Delete Parameter').click();
       await page
         .locator('div')

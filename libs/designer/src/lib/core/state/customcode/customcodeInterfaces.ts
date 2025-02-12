@@ -12,6 +12,7 @@ export interface AddCustomCodePayload {
   fileData: string;
   fileExtension: string;
   fileName: string;
+  oleFileName?: string;
 }
 
 export interface DeleteCustomCodePayload {
@@ -20,7 +21,6 @@ export interface DeleteCustomCodePayload {
 }
 
 export interface RenameCustomCodePayload {
-  nodeId: string;
   oldFileName: string;
   newFileName: string;
 }

@@ -329,7 +329,7 @@ export const operationMetadataSlice = createSlice({
 
           const outputParameters = getRecordEntry(state.outputParameters, nodeId);
           if (outputParameters) {
-            outputParameters.outputs = filterRecord(outputParameters.outputs, (key, value) => !value.isDynamic);
+            outputParameters.outputs = filterRecord(outputParameters.outputs, (_key, value) => !value.isDynamic);
           }
         }
       }

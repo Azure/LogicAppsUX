@@ -23,6 +23,7 @@ import {
   parameterValueToString,
   shouldIncludeSelfForRepetitionReference,
   getCustomCodeFilesWithData,
+  shouldEncodeParameterValueForOperationBasedOnMetadata,
 } from './parameters/helper';
 import { isTokenValueSegment } from './parameters/segment';
 import { TokenSegmentConvertor } from './parameters/tokensegment';
@@ -500,7 +501,12 @@ const getRepetitionReference = async (
     const parameter = parameterName ? getParameterFromName(nodeInputs, parameterName) : undefined;
     if (parameter) {
       const repetitionValue = getJSONValueFromString(
-        parameterValueToString(parameter, /* isDefinitionValue */ true, idReplacements),
+        parameterValueToString(
+          parameter,
+          /* isDefinitionValue */ true,
+          idReplacements,
+          shouldEncodeParameterValueForOperationBasedOnMetadata(operationInfo)
+        ),
         parameter.type
       );
       return {

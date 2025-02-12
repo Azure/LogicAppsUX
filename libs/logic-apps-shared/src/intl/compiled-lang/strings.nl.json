@@ -11,12 +11,6 @@
       "value": "Waarschuwing: Het type invoerknooppunt komt niet overeen met het type van het schemaknooppunt"
     }
   ],
-  "+0ua83": [
-    {
-      "type": 0,
-      "value": "Parameters"
-    }
-  ],
   "+0yxlR": [
     {
       "type": 0,
@@ -80,7 +74,7 @@
   "+M7bC6": [
     {
       "type": 0,
-      "value": "Succeeded with retries"
+      "value": "Voltooid met nieuwe pogingen"
     }
   ],
   "+R90eK": [
@@ -517,6 +511,12 @@
       "value": " resultaten worden weergegeven."
     }
   ],
+  "0a4IGE": [
+    {
+      "type": 0,
+      "value": "Refresh"
+    }
+  ],
   "0i/6TR": [
     {
       "type": 0,
@@ -656,7 +656,7 @@
   "1QktJw": [
     {
       "type": 0,
-      "value": "Map errors"
+      "value": "Toewijzingsfouten"
     }
   ],
   "1Xke9D": [
@@ -735,6 +735,12 @@
     {
       "type": 0,
       "value": "Voer een geldige URI in."
+    }
+  ],
+  "1tmN2o": [
+    {
+      "type": 0,
+      "value": "Workflow version"
     }
   ],
   "1uGBLP": [
@@ -1315,6 +1321,12 @@
       "value": "Geschiedenis voor opnieuw proberen"
     }
   ],
+  "4rdY7D": [
+    {
+      "type": 0,
+      "value": "Run ID"
+    }
+  ],
   "4vcnOA": [
     {
       "type": 0,
@@ -1370,7 +1382,7 @@
   "5DkTf5": [
     {
       "type": 0,
-      "value": "Target schema node not found for node key '"
+      "value": "Kan het doelschemaknooppunt niet vinden voor de knooppuntsleutel '"
     },
     {
       "type": 1,
@@ -1842,7 +1854,7 @@
   "7X4UA/": [
     {
       "type": 0,
-      "value": "Waiting"
+      "value": "Wachten..."
     }
   ],
   "7ZF1Hr": [
@@ -2242,7 +2254,7 @@
   "9dd0/m": [
     {
       "type": 0,
-      "value": "Running"
+      "value": "Actief"
     }
   ],
   "9djnqI": [
@@ -2279,6 +2291,12 @@
     {
       "type": 0,
       "value": "Raadpleeg de volgende bronnen voor meer gedetailleerde informatie"
+    }
+  ],
+  "A5/IqS": [
+    {
+      "type": 0,
+      "value": "Run identifier"
     }
   ],
   "A5/UwX": [
@@ -2337,6 +2355,16 @@
     {
       "type": 0,
       "value": "Service-principal"
+    }
+  ],
+  "AMMfbt": [
+    {
+      "type": 1,
+      "value": "count"
+    },
+    {
+      "type": 0,
+      "value": " Second"
     }
   ],
   "APKdYG": [
@@ -2650,7 +2678,7 @@
   "Bwqlxd": [
     {
       "type": 0,
-      "value": "Key not found '"
+      "value": "Kan sleutel '"
     },
     {
       "type": 1,
@@ -2658,7 +2686,7 @@
     },
     {
       "type": 0,
-      "value": "'"
+      "value": "' niet vinden"
     }
   ],
   "BxITRH": [
@@ -2973,6 +3001,12 @@
     {
       "type": 0,
       "value": "Triggertype"
+    }
+  ],
+  "DeM/yz": [
+    {
+      "type": 0,
+      "value": "Start time"
     }
   ],
   "DfXxoX": [
@@ -3290,7 +3324,7 @@
   "FPBmrA": [
     {
       "type": 0,
-      "value": "Source schema node not found for node key '"
+      "value": "Bronschemaknooppunt niet gevonden voor knooppuntsleutel '"
     },
     {
       "type": 1,
@@ -3512,7 +3546,7 @@
   "GiR7ll": [
     {
       "type": 0,
-      "value": "Function not found- '"
+      "value": "Functie niet gevonden- '"
     },
     {
       "type": 1,
@@ -3937,6 +3971,12 @@
       "value": "Groep maken"
     }
   ],
+  "J8G55j": [
+    {
+      "type": 0,
+      "value": "Search by run identifier"
+    }
+  ],
   "J9wWry": [
     {
       "type": 0,
@@ -4130,7 +4170,7 @@
   "KWeLBB": [
     {
       "type": 0,
-      "value": "Closing..."
+      "value": "Sluiten..."
     }
   ],
   "KX1poC": [
@@ -4242,7 +4282,7 @@
   "LBlM+D": [
     {
       "type": 0,
-      "value": "Not specified"
+      "value": "Niet opgegeven"
     }
   ],
   "LCRHQ9": [
@@ -4998,7 +5038,7 @@
   "PEJ+e4": [
     {
       "type": 0,
-      "value": "Error loading data map"
+      "value": "Fout bij het laden van gegevenstoewijzing"
     }
   ],
   "PNk3n4": [
@@ -5237,6 +5277,12 @@
     {
       "type": 0,
       "value": "Volledig scherm"
+    }
+  ],
+  "QT4IaP": [
+    {
+      "type": 0,
+      "value": "Filtered!"
     }
   ],
   "QVtqAn": [
@@ -5599,6 +5645,12 @@
       "value": "Uitvoer mag niet worden opgegeven wanneer de status Mislukt is"
     }
   ],
+  "SbHBIZ": [
+    {
+      "type": 0,
+      "value": "No runs found"
+    }
+  ],
   "SgiTAh": [
     {
       "type": 0,
@@ -5629,6 +5681,12 @@
       "value": "Gereed"
     }
   ],
+  "SwWaHa": [
+    {
+      "type": 0,
+      "value": "Enter a valid run identifier"
+    }
+  ],
   "Sy4cFC": [
     {
       "type": 0,
@@ -5645,6 +5703,12 @@
     {
       "type": 0,
       "value": "Testen"
+    }
+  ],
+  "T/7b2y": [
+    {
+      "type": 0,
+      "value": "Duration"
     }
   ],
   "TDfQzn": [
@@ -6364,7 +6428,7 @@
   "WbIGAh": [
     {
       "type": 0,
-      "value": "Succeeded"
+      "value": "Geslaagd"
     }
   ],
   "Wc77aJ": [
@@ -6679,12 +6743,6 @@
     {
       "type": 0,
       "value": "Een beperking voor Logic Apps instellen om te voorkomen dat het antwoord metagegevens van de werkstroom bevat."
-    }
-  ],
-  "XtVOMn": [
-    {
-      "type": 0,
-      "value": "Something went wrong"
     }
   ],
   "XtuP5e": [
@@ -7049,6 +7107,16 @@
       "value": "Sluiten"
     }
   ],
+  "ZgU5eu": [
+    {
+      "type": 1,
+      "value": "count"
+    },
+    {
+      "type": 0,
+      "value": " Day"
+    }
+  ],
   "ZgyD93": [
     {
       "type": 0,
@@ -7071,12 +7139,6 @@
     {
       "type": 0,
       "value": "Meer informatie over dynamische inhoud"
-    }
-  ],
-  "ZvAp7m": [
-    {
-      "type": 0,
-      "value": "Save"
     }
   ],
   "ZyDq4/": [
@@ -7125,6 +7187,12 @@
     {
       "type": 0,
       "value": "Het maximuminterval voor het beleid voor opnieuw proberen is ongeldig, het moet overeenkomen met de ISO 8601-notatie voor duur"
+    }
+  ],
+  "aKf/r+": [
+    {
+      "type": 0,
+      "value": "Specified run identifier not found"
     }
   ],
   "aP1wk9": [
@@ -7202,7 +7270,7 @@
   "auci7r": [
     {
       "type": 0,
-      "value": "Enter a valid comma-separated string."
+      "value": "Voer een geldige door komma's gescheiden tekenreeks in."
     }
   ],
   "aurgrg": [
@@ -7295,6 +7363,12 @@
     {
       "type": 0,
       "value": "Deze bewerking bevat een token dat niet bestaat in de huidige werkstroom."
+    }
+  ],
+  "bPyWVY": [
+    {
+      "type": 0,
+      "value": "Failed to load runs"
     }
   ],
   "bTrk+S": [
@@ -7565,6 +7639,12 @@
       "value": "Downloaden (Alt of Option + select)"
     }
   ],
+  "d9RCuq": [
+    {
+      "type": 0,
+      "value": "Workflow run status"
+    }
+  ],
   "dBWIjR": [
     {
       "type": 0,
@@ -7771,6 +7851,12 @@
       "value": "Deze stroom bewerken om"
     }
   ],
+  "eLQPek": [
+    {
+      "type": 0,
+      "value": "Status"
+    }
+  ],
   "eLthgv": [
     {
       "type": 0,
@@ -7876,7 +7962,7 @@
   "eofB85": [
     {
       "type": 0,
-      "value": "Timed out"
+      "value": "Er is een time-out opgetreden"
     }
   ],
   "epOMnV": [
@@ -7888,7 +7974,7 @@
   "epi+zR": [
     {
       "type": 0,
-      "value": "Close map checker"
+      "value": "Kaartcontrole sluiten"
     }
   ],
   "er6O+w": [
@@ -8007,12 +8093,6 @@
       "value": "(UTC-05:00) Haïti"
     }
   ],
-  "fZJWBR": [
-    {
-      "type": 0,
-      "value": "Loading designer"
-    }
-  ],
   "faUrud": [
     {
       "type": 0,
@@ -8041,6 +8121,16 @@
     {
       "type": 0,
       "value": "(UTC+08:00) Beijing, Chongqing, Hongkong SAR, Urumqi"
+    }
+  ],
+  "ft8BH8": [
+    {
+      "type": 1,
+      "value": "count"
+    },
+    {
+      "type": 0,
+      "value": " Seconds"
     }
   ],
   "fvGvnA": [
@@ -8371,6 +8461,16 @@
     {
       "type": 0,
       "value": "Dit is niet wat ik zoek"
+    }
+  ],
+  "hesDPs": [
+    {
+      "type": 1,
+      "value": "count"
+    },
+    {
+      "type": 0,
+      "value": " Milliseconds"
     }
   ],
   "hihfHd": [
@@ -8950,7 +9050,7 @@
   "kfmLTY": [
     {
       "type": 0,
-      "value": "Function '"
+      "value": "Er ontbreken vereiste invoerwaarden voor de functie '"
     },
     {
       "type": 1,
@@ -8958,7 +9058,7 @@
     },
     {
       "type": 0,
-      "value": "' is missing required inputs"
+      "value": "'"
     }
   ],
   "klY9UN": [
@@ -9349,6 +9449,16 @@
       "value": "Vereist. De tekenreeks die moet worden geconverteerd naar kleine letters. Als een teken in de tekenreeks geen equivalent voor kleine letters heeft, wordt het teken ongewijzigd opgenomen in de geretourneerde tekenreeks."
     }
   ],
+  "maP1K/": [
+    {
+      "type": 1,
+      "value": "count"
+    },
+    {
+      "type": 0,
+      "value": " Minutes"
+    }
+  ],
   "mb1XDD": [
     {
       "type": 0,
@@ -9721,6 +9831,16 @@
       "value": "Vereist. De gegevens-URI die moet worden gedecodeerd naar een binaire indeling."
     }
   ],
+  "oBAL2F": [
+    {
+      "type": 1,
+      "value": "count"
+    },
+    {
+      "type": 0,
+      "value": " Days"
+    }
+  ],
   "oDHXKh": [
     {
       "type": 0,
@@ -9805,10 +9925,14 @@
       "value": "Hoofdtekst van de reactie"
     }
   ],
-  "ohOaXj": [
+  "og5JOA": [
+    {
+      "type": 1,
+      "value": "count"
+    },
     {
       "type": 0,
-      "value": "Errors"
+      "value": " Millisecond"
     }
   ],
   "ohpbkw": [
@@ -10356,7 +10480,7 @@
   "rwrlsB": [
     {
       "type": 0,
-      "value": "Map Issues"
+      "value": "Kaartproblemen"
     }
   ],
   "rxIJfD": [
@@ -10425,16 +10549,20 @@
       "value": "Het maken van een verbinding annuleren"
     }
   ],
+  "sJQee6": [
+    {
+      "type": 1,
+      "value": "count"
+    },
+    {
+      "type": 0,
+      "value": " Hours"
+    }
+  ],
   "sKy720": [
     {
       "type": 0,
       "value": "U moet een waarde opgeven voor de werkstroomnaam."
-    }
-  ],
-  "sOnphB": [
-    {
-      "type": 0,
-      "value": "Resubmit"
     }
   ],
   "sRpETS": [
@@ -11157,6 +11285,12 @@
       "value": "Als u een API-verbinding wilt maken en gebruiken, moet u een beheerde identiteit hebben geconfigureerd voor deze logische app."
     }
   ],
+  "vhwaYb": [
+    {
+      "type": 0,
+      "value": "Alle aangepaste waardereeks- en DateTime-waarden in dubbele aanhalingstekens teruglopen. Bijvoorbeeld abc."
+    }
+  ],
   "viee6C": [
     {
       "type": 0,
@@ -11219,6 +11353,12 @@
       "value": "Deze bevat een dubbele waarde"
     }
   ],
+  "vzXXFP": [
+    {
+      "type": 0,
+      "value": "Workflow version"
+    }
+  ],
   "w+7aGo": [
     {
       "type": 0,
@@ -11253,6 +11393,16 @@
     {
       "type": 0,
       "value": "Samenvouwen"
+    }
+  ],
+  "wAg9+z": [
+    {
+      "type": 1,
+      "value": "count"
+    },
+    {
+      "type": 0,
+      "value": " Hour"
     }
   ],
   "wBBu4g": [
@@ -11579,6 +11729,16 @@
     {
       "type": 0,
       "value": "Hiermee wordt het pad van een URI geretourneerd. Als het pad niet is opgegeven, wordt / geretourneerd"
+    }
+  ],
+  "xfXUGz": [
+    {
+      "type": 1,
+      "value": "count"
+    },
+    {
+      "type": 0,
+      "value": " Minute"
     }
   ],
   "xi2tn6": [

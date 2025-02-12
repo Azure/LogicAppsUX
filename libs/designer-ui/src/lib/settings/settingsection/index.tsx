@@ -29,5 +29,4 @@ export interface SettingProps {
   readOnly?: boolean;
   ariaLabel?: string;
   customLabel?: JSX.Element;
-  nodeTitle?: string;
 }

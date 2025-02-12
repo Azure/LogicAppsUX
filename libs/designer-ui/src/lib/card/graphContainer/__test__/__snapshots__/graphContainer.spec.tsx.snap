@@ -1,0 +1,29 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`GraphContainer component > renders with active prop set to false 1`] = `
+<div
+  className="msla-graph-container msla-card-inactive"
+  data-automation-id="msla-graph-container-undefined"
+/>
+`;
+
+exports[`GraphContainer component > renders with default props 1`] = `
+<div
+  className="msla-graph-container"
+  data-automation-id="msla-graph-container-undefined"
+/>
+`;
+
+exports[`GraphContainer component > renders with selected and active props 1`] = `
+<div
+  className="msla-graph-container selected msla-card-inactive"
+  data-automation-id="msla-graph-container-undefined"
+/>
+`;
+
+exports[`GraphContainer component > renders with selected prop 1`] = `
+<div
+  className="msla-graph-container selected"
+  data-automation-id="msla-graph-container-undefined"
+/>
+`;

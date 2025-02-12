@@ -11,12 +11,6 @@
       "value": "警告: 输入节点类型与架构节点的类型不匹配"
     }
   ],
-  "+0ua83": [
-    {
-      "type": 0,
-      "value": "Parameters"
-    }
-  ],
   "+0yxlR": [
     {
       "type": 0,
@@ -80,7 +74,7 @@
   "+M7bC6": [
     {
       "type": 0,
-      "value": "Succeeded with retries"
+      "value": "重试成功"
     }
   ],
   "+R90eK": [
@@ -525,6 +519,12 @@
       "value": " 结果。"
     }
   ],
+  "0a4IGE": [
+    {
+      "type": 0,
+      "value": "Refresh"
+    }
+  ],
   "0i/6TR": [
     {
       "type": 0,
@@ -664,7 +664,7 @@
   "1QktJw": [
     {
       "type": 0,
-      "value": "Map errors"
+      "value": "映射错误"
     }
   ],
   "1Xke9D": [
@@ -743,6 +743,12 @@
     {
       "type": 0,
       "value": "输入有效的 URI。"
+    }
+  ],
+  "1tmN2o": [
+    {
+      "type": 0,
+      "value": "Workflow version"
     }
   ],
   "1uGBLP": [
@@ -1331,6 +1337,12 @@
       "value": "重试历史记录"
     }
   ],
+  "4rdY7D": [
+    {
+      "type": 0,
+      "value": "Run ID"
+    }
+  ],
   "4vcnOA": [
     {
       "type": 0,
@@ -1386,7 +1398,7 @@
   "5DkTf5": [
     {
       "type": 0,
-      "value": "Target schema node not found for node key '"
+      "value": "找不到节点密钥 '"
     },
     {
       "type": 1,
@@ -1394,7 +1406,7 @@
     },
     {
       "type": 0,
-      "value": "'"
+      "value": "' 的目标架构节点"
     }
   ],
   "5J9jne": [
@@ -1858,7 +1870,7 @@
   "7X4UA/": [
     {
       "type": 0,
-      "value": "Waiting"
+      "value": "正在等待"
     }
   ],
   "7ZF1Hr": [
@@ -2262,7 +2274,7 @@
   "9dd0/m": [
     {
       "type": 0,
-      "value": "Running"
+      "value": "正在运行"
     }
   ],
   "9djnqI": [
@@ -2299,6 +2311,12 @@
     {
       "type": 0,
       "value": "有关更多详细信息，可以参阅以下资源"
+    }
+  ],
+  "A5/IqS": [
+    {
+      "type": 0,
+      "value": "Run identifier"
     }
   ],
   "A5/UwX": [
@@ -2361,6 +2379,16 @@
     {
       "type": 0,
       "value": "服务主体"
+    }
+  ],
+  "AMMfbt": [
+    {
+      "type": 1,
+      "value": "count"
+    },
+    {
+      "type": 0,
+      "value": " Second"
     }
   ],
   "APKdYG": [
@@ -2667,7 +2695,7 @@
   "Bwqlxd": [
     {
       "type": 0,
-      "value": "Key not found '"
+      "value": "找不到密钥 '"
     },
     {
       "type": 1,
@@ -2996,6 +3024,12 @@
       "value": "触发器类型"
     }
   ],
+  "DeM/yz": [
+    {
+      "type": 0,
+      "value": "Start time"
+    }
+  ],
   "DfXxoX": [
     {
       "type": 0,
@@ -3311,7 +3345,7 @@
   "FPBmrA": [
     {
       "type": 0,
-      "value": "Source schema node not found for node key '"
+      "value": "找不到节点密钥 '"
     },
     {
       "type": 1,
@@ -3319,7 +3353,7 @@
     },
     {
       "type": 0,
-      "value": "'"
+      "value": "' 的源架构节点"
     }
   ],
   "FT3jt6": [
@@ -3522,7 +3556,7 @@
   "GiR7ll": [
     {
       "type": 0,
-      "value": "Function not found- '"
+      "value": "找不到函数- '"
     },
     {
       "type": 1,
@@ -3947,6 +3981,12 @@
       "value": "创建组"
     }
   ],
+  "J8G55j": [
+    {
+      "type": 0,
+      "value": "Search by run identifier"
+    }
+  ],
   "J9wWry": [
     {
       "type": 0,
@@ -4140,7 +4180,7 @@
   "KWeLBB": [
     {
       "type": 0,
-      "value": "Closing..."
+      "value": "正在关闭..."
     }
   ],
   "KX1poC": [
@@ -4241,7 +4281,7 @@
   "LBlM+D": [
     {
       "type": 0,
-      "value": "Not specified"
+      "value": "未指定"
     }
   ],
   "LCRHQ9": [
@@ -5001,7 +5041,7 @@
   "PEJ+e4": [
     {
       "type": 0,
-      "value": "Error loading data map"
+      "value": "加载数据映射时出错"
     }
   ],
   "PNk3n4": [
@@ -5240,6 +5280,12 @@
     {
       "type": 0,
       "value": "全屏"
+    }
+  ],
+  "QT4IaP": [
+    {
+      "type": 0,
+      "value": "Filtered!"
     }
   ],
   "QVtqAn": [
@@ -5599,6 +5645,12 @@
       "value": "当状态为“失败”时不应提供输出"
     }
   ],
+  "SbHBIZ": [
+    {
+      "type": 0,
+      "value": "No runs found"
+    }
+  ],
   "SgiTAh": [
     {
       "type": 0,
@@ -5629,6 +5681,12 @@
       "value": "完成"
     }
   ],
+  "SwWaHa": [
+    {
+      "type": 0,
+      "value": "Enter a valid run identifier"
+    }
+  ],
   "Sy4cFC": [
     {
       "type": 0,
@@ -5645,6 +5703,12 @@
     {
       "type": 0,
       "value": "测试"
+    }
+  ],
+  "T/7b2y": [
+    {
+      "type": 0,
+      "value": "Duration"
     }
   ],
   "TDfQzn": [
@@ -6368,7 +6432,7 @@
   "WbIGAh": [
     {
       "type": 0,
-      "value": "Succeeded"
+      "value": "成功"
     }
   ],
   "Wc77aJ": [
@@ -6683,12 +6747,6 @@
     {
       "type": 0,
       "value": "限制逻辑应用，使其不在响应中包含工作流元数据标头。"
-    }
-  ],
-  "XtVOMn": [
-    {
-      "type": 0,
-      "value": "Something went wrong"
     }
   ],
   "XtuP5e": [
@@ -7057,6 +7115,16 @@
       "value": "关闭"
     }
   ],
+  "ZgU5eu": [
+    {
+      "type": 1,
+      "value": "count"
+    },
+    {
+      "type": 0,
+      "value": " Day"
+    }
+  ],
   "ZgyD93": [
     {
       "type": 0,
@@ -7079,12 +7147,6 @@
     {
       "type": 0,
       "value": "详细了解动态内容。"
-    }
-  ],
-  "ZvAp7m": [
-    {
-      "type": 0,
-      "value": "Save"
     }
   ],
   "ZyDq4/": [
@@ -7133,6 +7195,12 @@
     {
       "type": 0,
       "value": "重试策略最大间隔无效，必须与 ISO 8601 持续时间格式匹配"
+    }
+  ],
+  "aKf/r+": [
+    {
+      "type": 0,
+      "value": "Specified run identifier not found"
     }
   ],
   "aP1wk9": [
@@ -7210,7 +7278,7 @@
   "auci7r": [
     {
       "type": 0,
-      "value": "Enter a valid comma-separated string."
+      "value": "输入有效的逗号分隔字符串。"
     }
   ],
   "aurgrg": [
@@ -7303,6 +7371,12 @@
     {
       "type": 0,
       "value": "此操作包含当前工作流中不存在的令牌。"
+    }
+  ],
+  "bPyWVY": [
+    {
+      "type": 0,
+      "value": "Failed to load runs"
     }
   ],
   "bTrk+S": [
@@ -7573,6 +7647,12 @@
       "value": "下载(Alt 或 Option + select)"
     }
   ],
+  "d9RCuq": [
+    {
+      "type": 0,
+      "value": "Workflow run status"
+    }
+  ],
   "dBWIjR": [
     {
       "type": 0,
@@ -7779,6 +7859,12 @@
       "value": "将此流编辑到"
     }
   ],
+  "eLQPek": [
+    {
+      "type": 0,
+      "value": "Status"
+    }
+  ],
   "eLthgv": [
     {
       "type": 0,
@@ -7884,7 +7970,7 @@
   "eofB85": [
     {
       "type": 0,
-      "value": "Timed out"
+      "value": "已超时"
     }
   ],
   "epOMnV": [
@@ -7896,7 +7982,7 @@
   "epi+zR": [
     {
       "type": 0,
-      "value": "Close map checker"
+      "value": "关闭地图检查器"
     }
   ],
   "er6O+w": [
@@ -8015,12 +8101,6 @@
       "value": "(UTC-05:00)海地"
     }
   ],
-  "fZJWBR": [
-    {
-      "type": 0,
-      "value": "Loading designer"
-    }
-  ],
   "faUrud": [
     {
       "type": 0,
@@ -8049,6 +8129,16 @@
     {
       "type": 0,
       "value": "(UTC+08:00)北京，重庆，香港特別行政区，乌鲁木齐"
+    }
+  ],
+  "ft8BH8": [
+    {
+      "type": 1,
+      "value": "count"
+    },
+    {
+      "type": 0,
+      "value": " Seconds"
     }
   ],
   "fvGvnA": [
@@ -8368,6 +8458,16 @@
     {
       "type": 0,
       "value": "这不是我要查找的内容"
+    }
+  ],
+  "hesDPs": [
+    {
+      "type": 1,
+      "value": "count"
+    },
+    {
+      "type": 0,
+      "value": " Milliseconds"
     }
   ],
   "hihfHd": [
@@ -8951,7 +9051,7 @@
   "kfmLTY": [
     {
       "type": 0,
-      "value": "Function '"
+      "value": "函数 '"
     },
     {
       "type": 1,
@@ -8959,7 +9059,7 @@
     },
     {
       "type": 0,
-      "value": "' is missing required inputs"
+      "value": "' 缺少必需的输入"
     }
   ],
   "klY9UN": [
@@ -9343,6 +9443,16 @@
       "value": "必需。要转换为小写的字符串。如果字符串中的某字符没有小写等效项，则该字符在返回的字符串中保持不变。"
     }
   ],
+  "maP1K/": [
+    {
+      "type": 1,
+      "value": "count"
+    },
+    {
+      "type": 0,
+      "value": " Minutes"
+    }
+  ],
   "mb1XDD": [
     {
       "type": 0,
@@ -9723,6 +9833,16 @@
       "value": "必需。要解码为二进制表示形式的 dataURI。"
     }
   ],
+  "oBAL2F": [
+    {
+      "type": 1,
+      "value": "count"
+    },
+    {
+      "type": 0,
+      "value": " Days"
+    }
+  ],
   "oDHXKh": [
     {
       "type": 0,
@@ -9807,10 +9927,14 @@
       "value": "响应正文"
     }
   ],
-  "ohOaXj": [
+  "og5JOA": [
+    {
+      "type": 1,
+      "value": "count"
+    },
     {
       "type": 0,
-      "value": "Errors"
+      "value": " Millisecond"
     }
   ],
   "ohpbkw": [
@@ -10351,7 +10475,7 @@
   "rwrlsB": [
     {
       "type": 0,
-      "value": "Map Issues"
+      "value": "映射问题"
     }
   ],
   "rxIJfD": [
@@ -10420,16 +10544,20 @@
       "value": "取消创建连接"
     }
   ],
+  "sJQee6": [
+    {
+      "type": 1,
+      "value": "count"
+    },
+    {
+      "type": 0,
+      "value": " Hours"
+    }
+  ],
   "sKy720": [
     {
       "type": 0,
       "value": "必须为工作流名称提供值。"
-    }
-  ],
-  "sOnphB": [
-    {
-      "type": 0,
-      "value": "Resubmit"
     }
   ],
   "sRpETS": [
@@ -11156,6 +11284,12 @@
       "value": "要创建和使用 API 连接，必须在此逻辑应用上配置托管标识。"
     }
   ],
+  "vhwaYb": [
+    {
+      "type": 0,
+      "value": "用双引号包装所有自定义值字符串和 DateTime 值。例如，“abc”。"
+    }
+  ],
   "viee6C": [
     {
       "type": 0,
@@ -11218,6 +11352,12 @@
       "value": "这包含重复的值"
     }
   ],
+  "vzXXFP": [
+    {
+      "type": 0,
+      "value": "Workflow version"
+    }
+  ],
   "w+7aGo": [
     {
       "type": 0,
@@ -11252,6 +11392,16 @@
     {
       "type": 0,
       "value": "折叠"
+    }
+  ],
+  "wAg9+z": [
+    {
+      "type": 1,
+      "value": "count"
+    },
+    {
+      "type": 0,
+      "value": " Hour"
     }
   ],
   "wBBu4g": [
@@ -11578,6 +11728,16 @@
     {
       "type": 0,
       "value": "返回 URI 的路径。如果未指定路径，则返回 \"/\""
+    }
+  ],
+  "xfXUGz": [
+    {
+      "type": 1,
+      "value": "count"
+    },
+    {
+      "type": 0,
+      "value": " Minute"
     }
   ],
   "xi2tn6": [

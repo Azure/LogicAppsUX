@@ -87,11 +87,7 @@ export const ScopeCard: React.FC<ScopeCardProps> = ({
           draggable={draggable}
           style={colorVars}
           onContextMenu={onContextMenu}
-          className={css(
-            'msla-scope-v2--header msla-scope-card-wrapper',
-            !active && 'msla-card-inactive',
-          )}
-          
+          className={css('msla-scope-v2--header msla-scope-card-wrapper', !active && 'msla-card-inactive')}
         >
           {isMonitoringView && active ? (
             <StatusPill
@@ -123,7 +119,7 @@ export const ScopeCard: React.FC<ScopeCardProps> = ({
               </div>
               {errorMessage ? <ErrorBanner errorLevel={errorLevel} errorMessage={errorMessage} /> : null}
             </button>
-            <NodeCollapseToggle collapsed={collapsed} handleCollapse={handleCollapse} tabIndex={nodeIndex} />
+            <NodeCollapseToggle id={id} collapsed={collapsed} handleCollapse={handleCollapse} tabIndex={nodeIndex} />
           </div>
           {badges.length > 0 && (
             <div className="msla-card-v2-footer" onClick={handleClick}>

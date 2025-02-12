@@ -120,8 +120,8 @@ export const SingleWorkflowBasics = ({ workflowId }: { workflowId: string }) => 
       <Text className="msla-templates-tab-label-description">{intlText.WORKFLOW_NAME_DESCRIPTION}</Text>
       <TextField
         className="msla-templates-tab-textField"
-        data-testid={'workflowName'}
-        id={'workflowName'}
+        data-testid={'msla-templates-workflowName'}
+        id={'msla-templates-workflowName'}
         ariaLabel={intlText.WORKFLOW_NAME}
         value={name()}
         onChange={(_event: React.FormEvent<HTMLInputElement | HTMLTextAreaElement>, newValue?: string) => {

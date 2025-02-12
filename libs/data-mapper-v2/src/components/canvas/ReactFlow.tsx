@@ -1,5 +1,5 @@
 import type { AppDispatch, RootState } from '../../core/state/Store';
-import { useEffect, useRef, useCallback, useState, type MouseEvent } from 'react';
+import { useEffect, useRef, useCallback, useState, type MouseEvent, useMemo } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import type { Connection, Edge, ConnectionLineComponent, NodeTypes, OnNodeDrag, IsValidConnection } from '@xyflow/react';
 import { PanOnScrollMode, ReactFlow, useReactFlow } from '@xyflow/react';
@@ -17,8 +17,11 @@ import { splitEdgeId } from '../../utils/Edge.Utils';
 import useAutoLayout from '../../ui/hooks/useAutoLayout';
 import EdgePopOver from './EdgePopOver';
 import CanvasNode from '../common/reactflow/CanvasNode';
-import { isFunctionNode } from '../../utils/ReactFlow.Util';
+import { isFunctionNode, panelWidth } from '../../utils/ReactFlow.Util';
 import useReactFlowStates from './useReactflowStates';
+import mapPlaceholder from '../../images/map-placeholder.svg';
+import { useSchemasButNoConnections } from '../../core/state/selectors/selectors';
+import { useIntl } from 'react-intl';
 interface DMReactFlowProps {
   setIsMapStateDirty?: (isMapStateDirty: boolean) => void;
 }
@@ -36,8 +39,10 @@ const edgeTypes = {
 export const ReactFlowWrapper = ({ setIsMapStateDirty }: DMReactFlowProps) => {
   const styles = useStyles();
   const reactFlowInstance = useReactFlow();
+  const showPlaceholder = useSchemasButNoConnections();
   const ref = useRef<HTMLDivElement>(null);
   const dispatch = useDispatch<AppDispatch>();
+  const intl = useIntl();
   const { width: newWidth = undefined, height: newHeight = undefined } = useResizeObserver<HTMLDivElement>({
     ref,
   });
@@ -52,6 +57,17 @@ export const ReactFlowWrapper = ({ setIsMapStateDirty }: DMReactFlowProps) => {
   useAutoLayout();
 
   const isMapStateDirty = useSelector((state: RootState) => state.dataMap.present.isDirty);
+
+  const stringResources = useMemo(
+    () => ({
+      DEFAULT_PLACEHOLDER: intl.formatMessage({
+        defaultMessage: 'Drag and connect nodes to transform',
+        id: 'QHdKnm',
+        description: 'default placeholder text',
+      }),
+    }),
+    [intl]
+  );
 
   const onEdgeConnect = useCallback(
     (connection: Connection) => {
@@ -141,10 +157,26 @@ export const ReactFlowWrapper = ({ setIsMapStateDirty }: DMReactFlowProps) => {
   );
 
   const onNodeDrag: OnNodeDrag = useCallback(
-    (_event, node, _nodes) => {
-      dispatch(updateFunctionPosition({ id: node.id, position: node.position }));
+    (_event, node, _updatedNodes) => {
+      const xPosition = node.position.x;
+      const nodeWidth = reactFlowInstance.getInternalNode(node.id)?.measured.width;
+
+      dispatch(
+        updateFunctionPosition({
+          id: node.id,
+          position: {
+            x:
+              xPosition < panelWidth
+                ? panelWidth
+                : newWidth !== undefined && nodeWidth !== undefined && xPosition + nodeWidth > newWidth - panelWidth
+                  ? newWidth - panelWidth - nodeWidth
+                  : xPosition,
+            y: node.position.y,
+          },
+        })
+      );
     },
-    [dispatch]
+    [dispatch, newWidth, reactFlowInstance]
   );
 
   const onEdgeContextMenu = useCallback(
@@ -234,7 +266,16 @@ export const ReactFlowWrapper = ({ setIsMapStateDirty }: DMReactFlowProps) => {
             [0, 0],
             [ref.current.getBoundingClientRect().width, ref.current.getBoundingClientRect().height],
           ]}
-        />
+        >
+          {showPlaceholder && (
+            <div className={styles.background}>
+              <div className={styles.placeholderContainer}>
+                <div className={styles.placeholderText}>{stringResources.DEFAULT_PLACEHOLDER}</div>
+                <img src={mapPlaceholder} alt="placeholder" className={styles.placeholderImage} />
+              </div>
+            </div>
+          )}
+        </ReactFlow>
       ) : null}
       {edgePopoverBounds && <EdgePopOver {...edgePopoverBounds} />}
     </div>

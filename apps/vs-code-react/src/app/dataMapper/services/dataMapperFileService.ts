@@ -10,6 +10,19 @@ export class DataMapperFileService implements IDataMapperFileService {
     this.sendMsgToVsix = sendMsgToVsix;
   }
 
+  public isTestDisabledForOS = () => {
+    this.sendMsgToVsix({
+      command: ExtensionCommand.isTestDisabledForOS,
+    });
+  };
+
+  public getSchemaFromFile = (schemaType: SchemaType) => {
+    this.sendMsgToVsix({
+      command: ExtensionCommand.addSchemaFromFile,
+      data: schemaType,
+    });
+  };
+
   public saveMapDefinitionCall = (dataMapDefinition: string, mapMetadata: string) => {
     this.sendMsgToVsix({
       command: ExtensionCommand.saveDataMapDefinition,
@@ -50,7 +63,17 @@ export class DataMapperFileService implements IDataMapperFileService {
   public addSchemaFromFile = (selectedSchemaFile: SchemaFile) => {
     this.sendMsgToVsix({
       command: ExtensionCommand.addSchemaFromFile,
-      data: { path: selectedSchemaFile.path, type: selectedSchemaFile.type as SchemaType },
+      data: {
+        path: selectedSchemaFile.path,
+        type: selectedSchemaFile.type as SchemaType,
+      },
     });
   };
+
+  public sendNotification(title: string, text: string, level: number) {
+    this.sendMsgToVsix({
+      command: ExtensionCommand.sendNotification,
+      data: { title, text, level },
+    });
+  }
 }

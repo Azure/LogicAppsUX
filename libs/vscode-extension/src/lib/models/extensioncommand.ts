@@ -43,6 +43,8 @@ export const ExtensionCommand = {
   webviewRscLoadError: 'webviewRscLoadError',
   openRelativeLink: 'openRelativeLink',
   logTelemetry: 'logTelemetry',
+  sendNotification: 'sendNotification',
+  isTestDisabledForOS: 'isTestDisabledForOS',
 } as const;
 export type ExtensionCommand = (typeof ExtensionCommand)[keyof typeof ExtensionCommand];
 

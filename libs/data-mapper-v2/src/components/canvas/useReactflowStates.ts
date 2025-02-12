@@ -2,7 +2,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import type { AppDispatch, RootState } from '../../core/state/Store';
 import { applyEdgeChanges, type EdgeChange, type Edge, type Node, type NodeChange, applyNodeChanges, type XYPosition } from '@xyflow/react';
 import { useEffect, useMemo, useState } from 'react';
-import { convertWholeDataMapToLayoutTree, isFunctionNode, panelWidth } from '../../utils/ReactFlow.Util';
+import { convertWholeDataMapToLayoutTree, isFunctionNode, panelWidth, panelWidthWithoutHandles } from '../../utils/ReactFlow.Util';
 import { createEdgeId } from '../../utils/Edge.Utils';
 import { getFunctionNode } from '../../utils/Function.Utils';
 import { emptyCanvasRect } from '@microsoft/logic-apps-shared';
@@ -193,8 +193,13 @@ const useReactFlowStates = (props: ReactFlowStatesProps) => {
       };
 
       const newTargetNodePosition = {
-        x: newWidth - panelWidth,
+        x: newWidth - panelWidthWithoutHandles,
         y: 0,
+      };
+
+      const dimensions = {
+        width: panelWidth,
+        height: newHeight,
       };
 
       if (currentSourceNode) {
@@ -204,6 +209,14 @@ const useReactFlowStates = (props: ReactFlowStatesProps) => {
             id: NodeIds.source,
             position: newSourceNodePosition,
           };
+        } else if (currentSourceNode.width !== panelWidth || currentSourceNode.height !== newHeight) {
+          changes[NodeIds.source] = {
+            type: 'dimensions',
+            id: NodeIds.source,
+            resizing: true,
+            setAttributes: true,
+            dimensions,
+          };
         }
       } else {
         changes[NodeIds.source] = {
@@ -212,7 +225,13 @@ const useReactFlowStates = (props: ReactFlowStatesProps) => {
             id: NodeIds.source,
             type: 'schemaPanel',
             data: {},
+            draggable: false,
+            selectable: false,
+            deletable: false,
+            dragging: false,
+            selected: false,
             position: newSourceNodePosition,
+            ...dimensions,
           },
         };
       }
@@ -224,6 +243,14 @@ const useReactFlowStates = (props: ReactFlowStatesProps) => {
             id: NodeIds.target,
             position: newTargetNodePosition,
           };
+        } else if (currentTargetNode.width !== panelWidth || currentTargetNode.height !== newHeight) {
+          changes[NodeIds.target] = {
+            type: 'dimensions',
+            id: NodeIds.target,
+            resizing: true,
+            setAttributes: true,
+            dimensions,
+          };
         }
       } else {
         changes[NodeIds.target] = {
@@ -231,8 +258,14 @@ const useReactFlowStates = (props: ReactFlowStatesProps) => {
           item: {
             id: NodeIds.target,
             type: 'schemaPanel',
+            draggable: false,
+            selectable: false,
+            deletable: false,
+            dragging: false,
+            selected: false,
             data: {},
             position: newTargetNodePosition,
+            ...dimensions,
           },
         };
       }

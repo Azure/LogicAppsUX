@@ -1,4 +1,11 @@
-import { type HorizontalSpacingTokens, type Theme, webDarkTheme, webLightTheme, themeToTokensObject } from '@fluentui/react-components';
+import {
+  type HorizontalSpacingTokens,
+  type Theme,
+  webDarkTheme,
+  webLightTheme,
+  themeToTokensObject,
+  tokens,
+} from '@fluentui/react-components';
 
 interface ExtendedTheme extends Theme {
   [key: string]: any;
@@ -19,13 +26,14 @@ const spacingOverrides: HorizontalSpacingTokens = {
 };
 
 const fnColors = {
-  colorFnCategoryCollection: '#ae8c00',
-  colorFnCategoryDateTime: '#4f6bed',
-  colorFnCategoryLogical: '#038387',
-  colorFnCategoryMath: '#004e8c',
-  colorFnCategoryString: '#e43ba6',
-  colorFnCategoryUtility: '#8764b8',
-  colorFnCategoryConversion: '#814e29',
+  colorFnCategoryCollection: tokens.colorPaletteNavyForeground2,
+  colorFnCategoryConversion: tokens.colorPaletteBlueBorderActive,
+  colorFnCategoryDateTime: tokens.colorPaletteLightTealBorderActive,
+  colorFnCategoryLogical: '#F6CA30',
+  colorFnCategoryMath: tokens.colorPaletteMarigoldBorder2,
+  colorFnCategoryString: tokens.colorPaletteDarkOrangeForeground3,
+  colorFnCategoryUtility: tokens.colorPaletteMagentaBorderActive,
+  colorFnCategoryCustom: tokens.colorPaletteDarkGreenBackground2,
 };
 
 const extendedWebLightTheme: ExtendedTheme = {

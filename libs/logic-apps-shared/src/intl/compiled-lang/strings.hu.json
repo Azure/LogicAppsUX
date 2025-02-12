@@ -11,12 +11,6 @@
       "value": "Figyelmeztetés: a bemeneti csomópont típusa nem felel meg a sémacsomópont típusának"
     }
   ],
-  "+0ua83": [
-    {
-      "type": 0,
-      "value": "Parameters"
-    }
-  ],
   "+0yxlR": [
     {
       "type": 0,
@@ -80,7 +74,7 @@
   "+M7bC6": [
     {
       "type": 0,
-      "value": "Succeeded with retries"
+      "value": "Újrapróbálkozásokkal sikeres"
     }
   ],
   "+R90eK": [
@@ -525,6 +519,12 @@
       "value": " megjelenítése."
     }
   ],
+  "0a4IGE": [
+    {
+      "type": 0,
+      "value": "Refresh"
+    }
+  ],
   "0i/6TR": [
     {
       "type": 0,
@@ -743,6 +743,12 @@
     {
       "type": 0,
       "value": "Érvényes URI-t adjon meg."
+    }
+  ],
+  "1tmN2o": [
+    {
+      "type": 0,
+      "value": "Workflow version"
     }
   ],
   "1uGBLP": [
@@ -1327,6 +1333,12 @@
       "value": "Újrapróbálkozási előzmények"
     }
   ],
+  "4rdY7D": [
+    {
+      "type": 0,
+      "value": "Run ID"
+    }
+  ],
   "4vcnOA": [
     {
       "type": 0,
@@ -1846,7 +1858,7 @@
   "7X4UA/": [
     {
       "type": 0,
-      "value": "Waiting"
+      "value": "Várakozás"
     }
   ],
   "7ZF1Hr": [
@@ -2250,7 +2262,7 @@
   "9dd0/m": [
     {
       "type": 0,
-      "value": "Running"
+      "value": "Fut"
     }
   ],
   "9djnqI": [
@@ -2287,6 +2299,12 @@
     {
       "type": 0,
       "value": "Részletesebb információért tekintse meg az alábbi erőforrásokat."
+    }
+  ],
+  "A5/IqS": [
+    {
+      "type": 0,
+      "value": "Run identifier"
     }
   ],
   "A5/UwX": [
@@ -2349,6 +2367,16 @@
     {
       "type": 0,
       "value": "Szolgáltatásnév"
+    }
+  ],
+  "AMMfbt": [
+    {
+      "type": 1,
+      "value": "count"
+    },
+    {
+      "type": 0,
+      "value": " Second"
     }
   ],
   "APKdYG": [
@@ -2666,7 +2694,7 @@
   "Bwqlxd": [
     {
       "type": 0,
-      "value": "Key not found '"
+      "value": "Nem található „"
     },
     {
       "type": 1,
@@ -2674,7 +2702,7 @@
     },
     {
       "type": 0,
-      "value": "'"
+      "value": "” kulcs"
     }
   ],
   "BxITRH": [
@@ -2993,6 +3021,12 @@
     {
       "type": 0,
       "value": "Eseményindító típusa"
+    }
+  ],
+  "DeM/yz": [
+    {
+      "type": 0,
+      "value": "Start time"
     }
   ],
   "DfXxoX": [
@@ -3953,6 +3987,12 @@
       "value": "Csoport létrehozása"
     }
   ],
+  "J8G55j": [
+    {
+      "type": 0,
+      "value": "Search by run identifier"
+    }
+  ],
   "J9wWry": [
     {
       "type": 0,
@@ -4146,7 +4186,7 @@
   "KWeLBB": [
     {
       "type": 0,
-      "value": "Closing..."
+      "value": "Bezárás..."
     }
   ],
   "KX1poC": [
@@ -4258,7 +4298,7 @@
   "LBlM+D": [
     {
       "type": 0,
-      "value": "Not specified"
+      "value": "Nincs megadva"
     }
   ],
   "LCRHQ9": [
@@ -5259,6 +5299,12 @@
       "value": "Teljes képernyő"
     }
   ],
+  "QT4IaP": [
+    {
+      "type": 0,
+      "value": "Filtered!"
+    }
+  ],
   "QVtqAn": [
     {
       "type": 0,
@@ -5627,6 +5673,12 @@
       "value": "A kimeneteket nem szabad megadni, ha az állapot „Sikertelen”"
     }
   ],
+  "SbHBIZ": [
+    {
+      "type": 0,
+      "value": "No runs found"
+    }
+  ],
   "SgiTAh": [
     {
       "type": 0,
@@ -5657,6 +5709,12 @@
       "value": "Kész"
     }
   ],
+  "SwWaHa": [
+    {
+      "type": 0,
+      "value": "Enter a valid run identifier"
+    }
+  ],
   "Sy4cFC": [
     {
       "type": 0,
@@ -5673,6 +5731,12 @@
     {
       "type": 0,
       "value": "Tesztelés"
+    }
+  ],
+  "T/7b2y": [
+    {
+      "type": 0,
+      "value": "Duration"
     }
   ],
   "TDfQzn": [
@@ -6372,7 +6436,7 @@
   "WbIGAh": [
     {
       "type": 0,
-      "value": "Succeeded"
+      "value": "Sikerült"
     }
   ],
   "Wc77aJ": [
@@ -6687,12 +6751,6 @@
     {
       "type": 0,
       "value": "A munkafolyamat-metaadatokat tartalmazó fejlécek a Logic Apps-válaszban való megjelenítésének letiltása."
-    }
-  ],
-  "XtVOMn": [
-    {
-      "type": 0,
-      "value": "Something went wrong"
     }
   ],
   "XtuP5e": [
@@ -7057,6 +7115,16 @@
       "value": "Bezárás"
     }
   ],
+  "ZgU5eu": [
+    {
+      "type": 1,
+      "value": "count"
+    },
+    {
+      "type": 0,
+      "value": " Day"
+    }
+  ],
   "ZgyD93": [
     {
       "type": 0,
@@ -7079,12 +7147,6 @@
     {
       "type": 0,
       "value": "További információ a dinamikus tartalmakról."
-    }
-  ],
-  "ZvAp7m": [
-    {
-      "type": 0,
-      "value": "Save"
     }
   ],
   "ZyDq4/": [
@@ -7133,6 +7195,12 @@
     {
       "type": 0,
       "value": "Az újrapróbálkozási szabályzat maximális időköze érvénytelen, meg kell felelnie az ISO 8601 időtartam-formátumnak"
+    }
+  ],
+  "aKf/r+": [
+    {
+      "type": 0,
+      "value": "Specified run identifier not found"
     }
   ],
   "aP1wk9": [
@@ -7303,6 +7371,12 @@
     {
       "type": 0,
       "value": "Ez a művelet olyan jogkivonatot tartalmaz, amely nem létezik az aktuális munkafolyamatban."
+    }
+  ],
+  "bPyWVY": [
+    {
+      "type": 0,
+      "value": "Failed to load runs"
     }
   ],
   "bTrk+S": [
@@ -7573,6 +7647,12 @@
       "value": "Letöltés (Alt vagy Option + kiválasztás)"
     }
   ],
+  "d9RCuq": [
+    {
+      "type": 0,
+      "value": "Workflow run status"
+    }
+  ],
   "dBWIjR": [
     {
       "type": 0,
@@ -7779,6 +7859,12 @@
       "value": "A folyamat szerkesztése a következőre:"
     }
   ],
+  "eLQPek": [
+    {
+      "type": 0,
+      "value": "Status"
+    }
+  ],
   "eLthgv": [
     {
       "type": 0,
@@ -7884,7 +7970,7 @@
   "eofB85": [
     {
       "type": 0,
-      "value": "Timed out"
+      "value": "Lejárt az időkorlát"
     }
   ],
   "epOMnV": [
@@ -8015,12 +8101,6 @@
       "value": "(UTC-05:00) Haiti"
     }
   ],
-  "fZJWBR": [
-    {
-      "type": 0,
-      "value": "Loading designer"
-    }
-  ],
   "faUrud": [
     {
       "type": 0,
@@ -8049,6 +8129,16 @@
     {
       "type": 0,
       "value": "(UTC+08:00) Peking, Csungking, Hongkong, Ürümcsi"
+    }
+  ],
+  "ft8BH8": [
+    {
+      "type": 1,
+      "value": "count"
+    },
+    {
+      "type": 0,
+      "value": " Seconds"
     }
   ],
   "fvGvnA": [
@@ -8379,6 +8469,16 @@
     {
       "type": 0,
       "value": "Nem ezt keresem"
+    }
+  ],
+  "hesDPs": [
+    {
+      "type": 1,
+      "value": "count"
+    },
+    {
+      "type": 0,
+      "value": " Milliseconds"
     }
   ],
   "hihfHd": [
@@ -9357,6 +9457,16 @@
       "value": "Kötelező megadni. A kisbetűssé alakítandó sztring. A sztring azon karakterei, melyeknek nincs kisbetűs megfelelője, változatlanul fognak szerepelni a visszaadott sztringben."
     }
   ],
+  "maP1K/": [
+    {
+      "type": 1,
+      "value": "count"
+    },
+    {
+      "type": 0,
+      "value": " Minutes"
+    }
+  ],
   "mb1XDD": [
     {
       "type": 0,
@@ -9729,6 +9839,16 @@
       "value": "Kötelező megadni. A bináris ábrázolásúként dekódolandó adat-URI."
     }
   ],
+  "oBAL2F": [
+    {
+      "type": 1,
+      "value": "count"
+    },
+    {
+      "type": 0,
+      "value": " Days"
+    }
+  ],
   "oDHXKh": [
     {
       "type": 0,
@@ -9813,10 +9933,14 @@
       "value": "Választörzs"
     }
   ],
-  "ohOaXj": [
+  "og5JOA": [
+    {
+      "type": 1,
+      "value": "count"
+    },
     {
       "type": 0,
-      "value": "Errors"
+      "value": " Millisecond"
     }
   ],
   "ohpbkw": [
@@ -10437,16 +10561,20 @@
       "value": "Kapcsolat létrehozásának megszakítása"
     }
   ],
+  "sJQee6": [
+    {
+      "type": 1,
+      "value": "count"
+    },
+    {
+      "type": 0,
+      "value": " Hours"
+    }
+  ],
   "sKy720": [
     {
       "type": 0,
       "value": "A munkafolyamat nevének értékét kötelező megadni."
-    }
-  ],
-  "sOnphB": [
-    {
-      "type": 0,
-      "value": "Resubmit"
     }
   ],
   "sRpETS": [
@@ -11173,6 +11301,12 @@
       "value": "API-kapcsolat létrehozásához és használatához konfigurálni kell egy felügyelt identitást ebben a logikai alkalmazásban."
     }
   ],
+  "vhwaYb": [
+    {
+      "type": 0,
+      "value": "Az összes egyéni érték sztringjének és DateTime értékének tördelése dupla idézőjelek között. Például: \"abc\"."
+    }
+  ],
   "viee6C": [
     {
       "type": 0,
@@ -11235,6 +11369,12 @@
       "value": "Ez ismétlődő értéket tartalmaz"
     }
   ],
+  "vzXXFP": [
+    {
+      "type": 0,
+      "value": "Workflow version"
+    }
+  ],
   "w+7aGo": [
     {
       "type": 0,
@@ -11269,6 +11409,16 @@
     {
       "type": 0,
       "value": "Összecsukás"
+    }
+  ],
+  "wAg9+z": [
+    {
+      "type": 1,
+      "value": "count"
+    },
+    {
+      "type": 0,
+      "value": " Hour"
     }
   ],
   "wBBu4g": [
@@ -11595,6 +11745,16 @@
     {
       "type": 0,
       "value": "Az elérési út visszaadása egy URI azonosítóból. Ha nincs megadva elérési út, „/” visszaadása"
+    }
+  ],
+  "xfXUGz": [
+    {
+      "type": 1,
+      "value": "count"
+    },
+    {
+      "type": 0,
+      "value": " Minute"
     }
   ],
   "xi2tn6": [

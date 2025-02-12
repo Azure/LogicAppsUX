@@ -11,12 +11,6 @@
       "value": "Avviso: il tipo del nodo di input non corrisponde al tipo di nodo dello schema."
     }
   ],
-  "+0ua83": [
-    {
-      "type": 0,
-      "value": "Parameters"
-    }
-  ],
   "+0yxlR": [
     {
       "type": 0,
@@ -80,7 +74,7 @@
   "+M7bC6": [
     {
       "type": 0,
-      "value": "Succeeded with retries"
+      "value": "Operazione riuscita in più tentativi"
     }
   ],
   "+R90eK": [
@@ -521,6 +515,12 @@
       "value": "."
     }
   ],
+  "0a4IGE": [
+    {
+      "type": 0,
+      "value": "Refresh"
+    }
+  ],
   "0i/6TR": [
     {
       "type": 0,
@@ -660,7 +660,7 @@
   "1QktJw": [
     {
       "type": 0,
-      "value": "Map errors"
+      "value": "Errori mappa"
     }
   ],
   "1Xke9D": [
@@ -739,6 +739,12 @@
     {
       "type": 0,
       "value": "Immetti un URI valido."
+    }
+  ],
+  "1tmN2o": [
+    {
+      "type": 0,
+      "value": "Workflow version"
     }
   ],
   "1uGBLP": [
@@ -1311,6 +1317,12 @@
       "value": "Cronologia tentativi"
     }
   ],
+  "4rdY7D": [
+    {
+      "type": 0,
+      "value": "Run ID"
+    }
+  ],
   "4vcnOA": [
     {
       "type": 0,
@@ -1366,7 +1378,7 @@
   "5DkTf5": [
     {
       "type": 0,
-      "value": "Target schema node not found for node key '"
+      "value": "Nodo dello schema di destinazione non trovato per la chiave del nodo '"
     },
     {
       "type": 1,
@@ -1838,7 +1850,7 @@
   "7X4UA/": [
     {
       "type": 0,
-      "value": "Waiting"
+      "value": "In attesa"
     }
   ],
   "7ZF1Hr": [
@@ -2242,7 +2254,7 @@
   "9dd0/m": [
     {
       "type": 0,
-      "value": "Running"
+      "value": "In esecuzione"
     }
   ],
   "9djnqI": [
@@ -2279,6 +2291,12 @@
     {
       "type": 0,
       "value": "Per informazioni più dettagliate, è possibile fare riferimento alle risorse seguenti"
+    }
+  ],
+  "A5/IqS": [
+    {
+      "type": 0,
+      "value": "Run identifier"
     }
   ],
   "A5/UwX": [
@@ -2341,6 +2359,16 @@
     {
       "type": 0,
       "value": "Entità servizio"
+    }
+  ],
+  "AMMfbt": [
+    {
+      "type": 1,
+      "value": "count"
+    },
+    {
+      "type": 0,
+      "value": " Second"
     }
   ],
   "APKdYG": [
@@ -2669,7 +2697,7 @@
   "Bwqlxd": [
     {
       "type": 0,
-      "value": "Key not found '"
+      "value": "Chiave non trovata '"
     },
     {
       "type": 1,
@@ -2984,6 +3012,12 @@
     {
       "type": 0,
       "value": "Tipo di trigger"
+    }
+  ],
+  "DeM/yz": [
+    {
+      "type": 0,
+      "value": "Start time"
     }
   ],
   "DfXxoX": [
@@ -3301,7 +3335,7 @@
   "FPBmrA": [
     {
       "type": 0,
-      "value": "Source schema node not found for node key '"
+      "value": "Nodo dello schema di origine non trovato per la chiave del nodo '"
     },
     {
       "type": 1,
@@ -3534,7 +3568,7 @@
   "GiR7ll": [
     {
       "type": 0,
-      "value": "Function not found- '"
+      "value": "Funzione non trovata- '"
     },
     {
       "type": 1,
@@ -3959,6 +3993,12 @@
       "value": "Imposta come gruppo"
     }
   ],
+  "J8G55j": [
+    {
+      "type": 0,
+      "value": "Search by run identifier"
+    }
+  ],
   "J9wWry": [
     {
       "type": 0,
@@ -4152,7 +4192,7 @@
   "KWeLBB": [
     {
       "type": 0,
-      "value": "Closing..."
+      "value": "Chiusura in corso..."
     }
   ],
   "KX1poC": [
@@ -4275,7 +4315,7 @@
   "LBlM+D": [
     {
       "type": 0,
-      "value": "Not specified"
+      "value": "Non specificato"
     }
   ],
   "LCRHQ9": [
@@ -5043,7 +5083,7 @@
   "PEJ+e4": [
     {
       "type": 0,
-      "value": "Error loading data map"
+      "value": "Errore durante il caricamento della mappa dati"
     }
   ],
   "PNk3n4": [
@@ -5278,6 +5318,12 @@
     {
       "type": 0,
       "value": "A schermo intero"
+    }
+  ],
+  "QT4IaP": [
+    {
+      "type": 0,
+      "value": "Filtered!"
     }
   ],
   "QVtqAn": [
@@ -5655,6 +5701,12 @@
       "value": "Non specificare gli output quando lo stato è \"Non riuscito\""
     }
   ],
+  "SbHBIZ": [
+    {
+      "type": 0,
+      "value": "No runs found"
+    }
+  ],
   "SgiTAh": [
     {
       "type": 0,
@@ -5685,6 +5737,12 @@
       "value": "Fine"
     }
   ],
+  "SwWaHa": [
+    {
+      "type": 0,
+      "value": "Enter a valid run identifier"
+    }
+  ],
   "Sy4cFC": [
     {
       "type": 0,
@@ -5701,6 +5759,12 @@
     {
       "type": 0,
       "value": "Test"
+    }
+  ],
+  "T/7b2y": [
+    {
+      "type": 0,
+      "value": "Duration"
     }
   ],
   "TDfQzn": [
@@ -6420,7 +6484,7 @@
   "WbIGAh": [
     {
       "type": 0,
-      "value": "Succeeded"
+      "value": "Operazione completata"
     }
   ],
   "Wc77aJ": [
@@ -6735,12 +6799,6 @@
     {
       "type": 0,
       "value": "Limita le app per la logica per non includere le intestazioni dei metadati del flusso di lavoro nella risposta."
-    }
-  ],
-  "XtVOMn": [
-    {
-      "type": 0,
-      "value": "Something went wrong"
     }
   ],
   "XtuP5e": [
@@ -7109,6 +7167,16 @@
       "value": "Chiudi"
     }
   ],
+  "ZgU5eu": [
+    {
+      "type": 1,
+      "value": "count"
+    },
+    {
+      "type": 0,
+      "value": " Day"
+    }
+  ],
   "ZgyD93": [
     {
       "type": 0,
@@ -7131,12 +7199,6 @@
     {
       "type": 0,
       "value": "Altre informazioni sul contenuto dinamico."
-    }
-  ],
-  "ZvAp7m": [
-    {
-      "type": 0,
-      "value": "Save"
     }
   ],
   "ZyDq4/": [
@@ -7185,6 +7247,12 @@
     {
       "type": 0,
       "value": "L'intervallo massimo tra i criteri di ripetizione dei tentativi non è valido. Deve corrispondere al formato di durata ISO 8601"
+    }
+  ],
+  "aKf/r+": [
+    {
+      "type": 0,
+      "value": "Specified run identifier not found"
     }
   ],
   "aP1wk9": [
@@ -7262,7 +7330,7 @@
   "auci7r": [
     {
       "type": 0,
-      "value": "Enter a valid comma-separated string."
+      "value": "Immettere una stringa con valori delimitati da virgole valida."
     }
   ],
   "aurgrg": [
@@ -7355,6 +7423,12 @@
     {
       "type": 0,
       "value": "Questa operazione contiene un token che non esiste nel flusso di lavoro corrente."
+    }
+  ],
+  "bPyWVY": [
+    {
+      "type": 0,
+      "value": "Failed to load runs"
     }
   ],
   "bTrk+S": [
@@ -7625,6 +7699,12 @@
       "value": "Scarica (ALT o OPZIONE + selezione)"
     }
   ],
+  "d9RCuq": [
+    {
+      "type": 0,
+      "value": "Workflow run status"
+    }
+  ],
   "dBWIjR": [
     {
       "type": 0,
@@ -7831,6 +7911,12 @@
       "value": "Modifica questo flusso in"
     }
   ],
+  "eLQPek": [
+    {
+      "type": 0,
+      "value": "Status"
+    }
+  ],
   "eLthgv": [
     {
       "type": 0,
@@ -7936,7 +8022,7 @@
   "eofB85": [
     {
       "type": 0,
-      "value": "Timed out"
+      "value": "Timeout"
     }
   ],
   "epOMnV": [
@@ -7948,7 +8034,7 @@
   "epi+zR": [
     {
       "type": 0,
-      "value": "Close map checker"
+      "value": "Chiudi controllo mappa"
     }
   ],
   "er6O+w": [
@@ -8067,12 +8153,6 @@
       "value": "(UTC-05:00) Haiti"
     }
   ],
-  "fZJWBR": [
-    {
-      "type": 0,
-      "value": "Loading designer"
-    }
-  ],
   "faUrud": [
     {
       "type": 0,
@@ -8101,6 +8181,16 @@
     {
       "type": 0,
       "value": "(UTC + 8.00 h) Pechino, Chongqing, Hong Kong, Urumqi"
+    }
+  ],
+  "ft8BH8": [
+    {
+      "type": 1,
+      "value": "count"
+    },
+    {
+      "type": 0,
+      "value": " Seconds"
     }
   ],
   "fvGvnA": [
@@ -8442,6 +8532,16 @@
     {
       "type": 0,
       "value": "Non è quello che sto cercando"
+    }
+  ],
+  "hesDPs": [
+    {
+      "type": 1,
+      "value": "count"
+    },
+    {
+      "type": 0,
+      "value": " Milliseconds"
     }
   ],
   "hihfHd": [
@@ -9021,7 +9121,7 @@
   "kfmLTY": [
     {
       "type": 0,
-      "value": "Function '"
+      "value": "Input obbligatori mancanti nella '"
     },
     {
       "type": 1,
@@ -9029,7 +9129,7 @@
     },
     {
       "type": 0,
-      "value": "' is missing required inputs"
+      "value": "' della funzione"
     }
   ],
   "klY9UN": [
@@ -9431,6 +9531,16 @@
       "value": "Obbligatorio. Stringa da convertire in lettere minuscole. Se un carattere nella stringa non ha un equivalente in lettere minuscole, il carattere verrà riportato invariato nella stringa restituita."
     }
   ],
+  "maP1K/": [
+    {
+      "type": 1,
+      "value": "count"
+    },
+    {
+      "type": 0,
+      "value": " Minutes"
+    }
+  ],
   "mb1XDD": [
     {
       "type": 0,
@@ -9799,6 +9909,16 @@
       "value": "Obbligatorio. URI di dati da codificare in una rappresentazione binaria."
     }
   ],
+  "oBAL2F": [
+    {
+      "type": 1,
+      "value": "count"
+    },
+    {
+      "type": 0,
+      "value": " Days"
+    }
+  ],
   "oDHXKh": [
     {
       "type": 0,
@@ -9883,10 +10003,14 @@
       "value": "Corpo della risposta"
     }
   ],
-  "ohOaXj": [
+  "og5JOA": [
+    {
+      "type": 1,
+      "value": "count"
+    },
     {
       "type": 0,
-      "value": "Errors"
+      "value": " Millisecond"
     }
   ],
   "ohpbkw": [
@@ -10449,7 +10573,7 @@
   "rwrlsB": [
     {
       "type": 0,
-      "value": "Map Issues"
+      "value": "Problemi mappa"
     }
   ],
   "rxIJfD": [
@@ -10518,16 +10642,20 @@
       "value": "Annulla la creazione di una connessione"
     }
   ],
+  "sJQee6": [
+    {
+      "type": 1,
+      "value": "count"
+    },
+    {
+      "type": 0,
+      "value": " Hours"
+    }
+  ],
   "sKy720": [
     {
       "type": 0,
       "value": "È necessario specificare il valore per il nome del flusso di lavoro."
-    }
-  ],
-  "sOnphB": [
-    {
-      "type": 0,
-      "value": "Resubmit"
     }
   ],
   "sRpETS": [
@@ -11258,6 +11386,12 @@
       "value": "Per creare e usare una connessione API, è necessario configurare un'identità gestita in questa app per la logica."
     }
   ],
+  "vhwaYb": [
+    {
+      "type": 0,
+      "value": "Esegue il wrapping di tutti i valori stringa valore personalizzato e DateTime tra virgolette doppie. Ad esempio, \"abc\"."
+    }
+  ],
   "viee6C": [
     {
       "type": 0,
@@ -11320,6 +11454,12 @@
       "value": "Contiene un valore duplicato"
     }
   ],
+  "vzXXFP": [
+    {
+      "type": 0,
+      "value": "Workflow version"
+    }
+  ],
   "w+7aGo": [
     {
       "type": 0,
@@ -11354,6 +11494,16 @@
     {
       "type": 0,
       "value": "Comprimi"
+    }
+  ],
+  "wAg9+z": [
+    {
+      "type": 1,
+      "value": "count"
+    },
+    {
+      "type": 0,
+      "value": " Hour"
     }
   ],
   "wBBu4g": [
@@ -11680,6 +11830,16 @@
     {
       "type": 0,
       "value": "Restituisce il percorso da un URI. Se il percorso non è specificato, restituisce '/'"
+    }
+  ],
+  "xfXUGz": [
+    {
+      "type": 1,
+      "value": "count"
+    },
+    {
+      "type": 0,
+      "value": " Minute"
     }
   ],
   "xi2tn6": [

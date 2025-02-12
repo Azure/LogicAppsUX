@@ -112,7 +112,13 @@ export const ExpressionsEditor = ({
   return (
     <>
       {expressions.length < (defaultProps.maximumExpressions ?? 10) ? (
-        <ActionButton disabled={readOnly} iconProps={addIconProps} text={addCondition} onClick={handleAddClick} />
+        <ActionButton
+          disabled={readOnly}
+          iconProps={addIconProps}
+          text={addCondition}
+          onClick={handleAddClick}
+          aria-label={`${ariaLabel} ${addCondition}`}
+        />
       ) : null}
       <Expressions ariaLabel={ariaLabel} expressions={expressions} readOnly={readOnly} onChange={handleChange} onDelete={handleDelete} />
     </>

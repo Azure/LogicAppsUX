@@ -1,4 +1,4 @@
-import { dataMapperVersionSetting, defaultDataMapperVersion, extensionCommand } from '../../../constants';
+import { dataMapperVersionSetting, defaultDataMapperVersion, extensionCommand, Platform, vscodeFolderName } from '../../../constants';
 import { ext } from '../../../extensionVariables';
 import { localize } from '../../../localize';
 import { getWebViewHTML } from '../../utils/codeless/getWebViewHTML';
@@ -13,6 +13,7 @@ import {
   supportedSchemaFileExts,
   supportedCustomXsltFileExts,
 } from './extensionConfig';
+import { LogEntryLevel } from '@microsoft/logic-apps-shared';
 import type { SchemaType, MapMetadata, IFileSysTreeItem } from '@microsoft/logic-apps-shared';
 import type { IActionContext } from '@microsoft/vscode-azext-utils';
 import { callWithTelemetryAndErrorHandlingSync } from '@microsoft/vscode-azext-utils';
@@ -31,6 +32,7 @@ import * as path from 'path';
 import type { WebviewPanel } from 'vscode';
 import { RelativePattern, window, workspace } from 'vscode';
 import * as vscode from 'vscode';
+import { copyOverImportedSchemas } from './DataMapperPanelUtils';
 
 export default class DataMapperPanel {
   public panel: WebviewPanel;
@@ -80,6 +82,8 @@ export default class DataMapperPanel {
       null,
       ext.context.subscriptions
     );
+
+    this.isTestDisabledForOS();
   }
 
   private watchFolderForChanges(folderPath: string, fileExtensions: string[], fn: () => void) {
@@ -115,7 +119,10 @@ export default class DataMapperPanel {
       }
       case ExtensionCommand.webviewLoaded: {
         // Send runtime port to webview
-        this.sendMsgToWebview({ command: ExtensionCommand.setRuntimePort, data: `${ext.designTimePort}` });
+        this.sendMsgToWebview({
+          command: ExtensionCommand.setRuntimePort,
+          data: `${ext.designTimePort}`,
+        });
 
         // If loading a data map, handle that + xslt filename
         this.handleLoadMapDefinitionIfAny();
@@ -128,7 +135,7 @@ export default class DataMapperPanel {
         break;
       }
       case ExtensionCommand.addSchemaFromFile: {
-        this.addSchemaFromFile(msg.data.path, msg.data.type);
+        this.addSchemaFromFile(msg.data);
         break;
       }
       case ExtensionCommand.readLocalSchemaFileOptions: {
@@ -175,7 +182,18 @@ export default class DataMapperPanel {
         ext.telemetryReporter.sendTelemetryEvent(eventName, { ...msg.data });
         break;
       }
+      case ExtensionCommand.sendNotification: {
+        this.sendNotification(msg.data.title, msg.data.text, msg.data.level);
+        break;
+      }
     }
+  }
+
+  public isTestDisabledForOS() {
+    this.sendMsgToWebview({
+      command: ExtensionCommand.isTestDisabledForOS,
+      data: process.platform === Platform.mac,
+    });
   }
 
   public updateWebviewPanelTitle() {
@@ -272,6 +290,28 @@ export default class DataMapperPanel {
     }
   }
 
+  public sendNotification(title: string, text: string, level: number) {
+    const msg = localize(title, text);
+    switch (level) {
+      case LogEntryLevel.Error: {
+        ext.showError(msg);
+        break;
+      }
+      case LogEntryLevel.Warning: {
+        ext.showWarning(msg);
+        break;
+      }
+      case LogEntryLevel.Verbose: {
+        ext.showInformation(msg);
+        break;
+      }
+      default: {
+        ext.log(msg);
+        break;
+      }
+    }
+  }
+
   private getFilesForPath(
     folderPath: string,
     command: typeof ExtensionCommand.showAvailableSchemas | typeof ExtensionCommand.getAvailableCustomXsltPaths,
@@ -302,51 +342,40 @@ export default class DataMapperPanel {
     });
   }
 
-  public addSchemaFromFile(filePath: string, schemaType: SchemaType) {
+  public addSchemaFromFile(schemaType: SchemaType) {
     callWithTelemetryAndErrorHandlingSync(extensionCommand.dataMapAddSchemaFromFile, (_context: IActionContext) => {
-      fs.readFile(filePath, 'utf8').then((text: string) => {
-        const primarySchemaFileName = path.basename(filePath); // Ex: inpSchema.xsd
-        const expectedPrimarySchemaPath = path.join(ext.logicAppWorkspace, schemasPath, primarySchemaFileName);
-
-        // Examine the loaded text for the 'schemaLocation' attribute to auto-load in any dependencies too
-        // NOTE: We only check in the same directory as the primary schema file (also, it doesn't attempt to deal with complicated paths/URLs, just filenames)
-        const schemaFileDependencies = [...text.matchAll(/schemaLocation="[A-Za-z.]*"/g)].map((schemaFileAttributeMatch) => {
-          // Trim down to just the filename
-          return schemaFileAttributeMatch[0].split('"')[1];
-        });
-
-        schemaFileDependencies.forEach((schemaFile) => {
-          const schemaFilePath = path.join(path.dirname(filePath), schemaFile);
-
-          // Check that the schema file dependency exists in the same directory as the primary schema file
-          if (!fileExistsSync(schemaFilePath)) {
-            ext.showError(
-              localize(
-                'SchemaLoadingError',
-                `Schema loading error: couldn't find schema file dependency 
-              "{0}" in the same directory as "{1}". "{1}" will still be copied to the Schemas folder.`,
-                schemaFile,
-                primarySchemaFileName
-              )
-            );
-            return;
-          }
-
-          // Check that the schema file dependency doesn't already exist in the Schemas folder
-          const expectedSchemaFilePath = path.join(ext.logicAppWorkspace, schemasPath, schemaFile);
-          if (!fileExistsSync(expectedSchemaFilePath)) {
-            copyFileSync(schemaFilePath, expectedSchemaFilePath);
-          }
-        });
-
-        // Check if in Artifacts/Schemas, and if not, create it and send it to DM for API call
-        if (!fileExistsSync(expectedPrimarySchemaPath)) {
-          copyFileSync(filePath, expectedPrimarySchemaPath);
+      const fileSelectOptions: vscode.OpenDialogOptions = {
+        filters: { Schemas: ['xsd', 'json'] },
+        canSelectMany: false,
+      };
+      window.showOpenDialog(fileSelectOptions).then((files) => {
+        if (!files[0]) {
+          return;
         }
+        const selectedFile = files[0];
 
-        this.sendMsgToWebview({
-          command: ExtensionCommand.fetchSchema,
-          data: { fileName: primarySchemaFileName, type: schemaType as SchemaType },
+        const pathToWorkspaceSchemaFolder = path.join(ext.logicAppWorkspace, schemasPath);
+        const primarySchemaFullPath = selectedFile.fsPath;
+        const pathToContainingFolder = path.dirname(primarySchemaFullPath);
+        const primarySchemaFileName = path.basename(primarySchemaFullPath);
+
+        workspace.fs.readFile(selectedFile).then((fileContents) => {
+          const text = Buffer.from(fileContents).toString('utf-8');
+
+          copyOverImportedSchemas(text, primarySchemaFileName, pathToContainingFolder, pathToWorkspaceSchemaFolder, ext);
+
+          const newPath = path.join(pathToWorkspaceSchemaFolder, primarySchemaFileName);
+          if (!fileExistsSync(newPath)) {
+            copyFileSync(primarySchemaFullPath, newPath);
+          }
+
+          this.sendMsgToWebview({
+            command: ExtensionCommand.fetchSchema,
+            data: {
+              fileName: primarySchemaFileName,
+              type: schemaType as SchemaType,
+            },
+          });
         });
       });
     });
@@ -508,9 +537,9 @@ export default class DataMapperPanel {
     const projectPath = ext.logicAppWorkspace;
     let vscodeFolderPath = '';
     if (this.dataMapVersion === 2) {
-      vscodeFolderPath = path.join(projectPath, '.vscode', `${this.dataMapName}DataMapMetadata-v2.json`);
+      vscodeFolderPath = path.join(projectPath, vscodeFolderName, `${this.dataMapName}DataMapMetadata-v2.json`);
     } else {
-      vscodeFolderPath = path.join(projectPath, '.vscode', `${this.dataMapName}DataMapMetadata.json`);
+      vscodeFolderPath = path.join(projectPath, vscodeFolderName, `${this.dataMapName}DataMapMetadata.json`);
     }
     return vscodeFolderPath;
   }

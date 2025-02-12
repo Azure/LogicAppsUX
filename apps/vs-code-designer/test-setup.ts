@@ -10,7 +10,6 @@ vi.mock('@microsoft/vscode-azext-azureutils', () => ({
 }));
 
 vi.mock('@microsoft/vscode-azext-azureauth', () => ({
-  // Mock any methods or exports used by your code from `@microsoft/vscode-azext-azureauth`
   getSessionFromVSCode: vi.fn(() => Promise.resolve({})), // example of a mocked function
 }));
 
@@ -22,5 +21,23 @@ vi.mock('@microsoft/vscode-azext-utils', () => {
     AzureWizardPromptStep: vi.fn().mockImplementation(() => {
       return {};
     }),
+    nonNullProp: vi.fn(),
+    nonNullValue: vi.fn(),
   };
 });
+
+vi.mock('fs', () => ({
+  existsSync: vi.fn(),
+  mkdirSync: vi.fn(),
+  chmodSync: vi.fn(),
+  createWriteStream: vi.fn(),
+}));
+
+vi.mock('axios');
+
+vi.mock('vscode', () => ({
+  window: {},
+  workspace: {
+    workspaceFolders: [],
+  },
+}));

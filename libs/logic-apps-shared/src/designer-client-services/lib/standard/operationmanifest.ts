@@ -138,7 +138,7 @@ export class StandardOperationManifestService extends BaseOperationManifestServi
       };
 
       return operationManifest;
-    } catch {
+    } catch (_error) {
       return { properties: {} } as any;
     }
   }

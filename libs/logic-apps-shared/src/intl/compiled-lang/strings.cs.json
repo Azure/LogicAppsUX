@@ -11,12 +11,6 @@
       "value": "Upozornění: Typ vstupního uzlu neodpovídá typu uzlu schématu."
     }
   ],
-  "+0ua83": [
-    {
-      "type": 0,
-      "value": "Parameters"
-    }
-  ],
   "+0yxlR": [
     {
       "type": 0,
@@ -80,7 +74,7 @@
   "+M7bC6": [
     {
       "type": 0,
-      "value": "Succeeded with retries"
+      "value": "Proběhlo úspěšně s opakováním pokusů"
     }
   ],
   "+R90eK": [
@@ -525,6 +519,12 @@
       "value": "."
     }
   ],
+  "0a4IGE": [
+    {
+      "type": 0,
+      "value": "Refresh"
+    }
+  ],
   "0i/6TR": [
     {
       "type": 0,
@@ -743,6 +743,12 @@
     {
       "type": 0,
       "value": "Zadejte platný identifikátor URI."
+    }
+  ],
+  "1tmN2o": [
+    {
+      "type": 0,
+      "value": "Workflow version"
     }
   ],
   "1uGBLP": [
@@ -1327,6 +1333,12 @@
       "value": "Historie opakování pokusů"
     }
   ],
+  "4rdY7D": [
+    {
+      "type": 0,
+      "value": "Run ID"
+    }
+  ],
   "4vcnOA": [
     {
       "type": 0,
@@ -1854,7 +1866,7 @@
   "7X4UA/": [
     {
       "type": 0,
-      "value": "Waiting"
+      "value": "Čekání"
     }
   ],
   "7ZF1Hr": [
@@ -2258,7 +2270,7 @@
   "9dd0/m": [
     {
       "type": 0,
-      "value": "Running"
+      "value": "Spuštěno"
     }
   ],
   "9djnqI": [
@@ -2295,6 +2307,12 @@
     {
       "type": 0,
       "value": "Podrobnější informace najdete v následujících zdrojích informací."
+    }
+  ],
+  "A5/IqS": [
+    {
+      "type": 0,
+      "value": "Run identifier"
     }
   ],
   "A5/UwX": [
@@ -2357,6 +2375,16 @@
     {
       "type": 0,
       "value": "Instanční objekt"
+    }
+  ],
+  "AMMfbt": [
+    {
+      "type": 1,
+      "value": "count"
+    },
+    {
+      "type": 0,
+      "value": " Second"
     }
   ],
   "APKdYG": [
@@ -2696,7 +2724,7 @@
   "Bwqlxd": [
     {
       "type": 0,
-      "value": "Key not found '"
+      "value": "Klíč "
     },
     {
       "type": 1,
@@ -2704,7 +2732,7 @@
     },
     {
       "type": 0,
-      "value": "'"
+      "value": " se nenašel"
     }
   ],
   "BxITRH": [
@@ -3019,6 +3047,12 @@
     {
       "type": 0,
       "value": "Typ aktivační události"
+    }
+  ],
+  "DeM/yz": [
+    {
+      "type": 0,
+      "value": "Start time"
     }
   ],
   "DfXxoX": [
@@ -3997,6 +4031,12 @@
       "value": "Vytvořit skupinu"
     }
   ],
+  "J8G55j": [
+    {
+      "type": 0,
+      "value": "Search by run identifier"
+    }
+  ],
   "J9wWry": [
     {
       "type": 0,
@@ -4190,7 +4230,7 @@
   "KWeLBB": [
     {
       "type": 0,
-      "value": "Closing..."
+      "value": "Zavírání…"
     }
   ],
   "KX1poC": [
@@ -4324,7 +4364,7 @@
   "LBlM+D": [
     {
       "type": 0,
-      "value": "Not specified"
+      "value": "Neuvedeno"
     }
   ],
   "LCRHQ9": [
@@ -5321,6 +5361,12 @@
       "value": "Na celou obrazovku"
     }
   ],
+  "QT4IaP": [
+    {
+      "type": 0,
+      "value": "Filtered!"
+    }
+  ],
   "QVtqAn": [
     {
       "type": 0,
@@ -5707,6 +5753,12 @@
       "value": "Pokud je stav „Neúspěšné“, neměly by se uvádět výstupy."
     }
   ],
+  "SbHBIZ": [
+    {
+      "type": 0,
+      "value": "No runs found"
+    }
+  ],
   "SgiTAh": [
     {
       "type": 0,
@@ -5737,6 +5789,12 @@
       "value": "Hotovo"
     }
   ],
+  "SwWaHa": [
+    {
+      "type": 0,
+      "value": "Enter a valid run identifier"
+    }
+  ],
   "Sy4cFC": [
     {
       "type": 0,
@@ -5753,6 +5811,12 @@
     {
       "type": 0,
       "value": "Test"
+    }
+  ],
+  "T/7b2y": [
+    {
+      "type": 0,
+      "value": "Duration"
     }
   ],
   "TDfQzn": [
@@ -6472,7 +6536,7 @@
   "WbIGAh": [
     {
       "type": 0,
-      "value": "Succeeded"
+      "value": "Úspěšné"
     }
   ],
   "Wc77aJ": [
@@ -6787,12 +6851,6 @@
     {
       "type": 0,
       "value": "Omezí aplikace Logic Apps tak, aby do odpovědi nezahrnovaly hlavičky metadat pracovních postupů."
-    }
-  ],
-  "XtVOMn": [
-    {
-      "type": 0,
-      "value": "Something went wrong"
     }
   ],
   "XtuP5e": [
@@ -7157,6 +7215,16 @@
       "value": "Zavřít"
     }
   ],
+  "ZgU5eu": [
+    {
+      "type": 1,
+      "value": "count"
+    },
+    {
+      "type": 0,
+      "value": " Day"
+    }
+  ],
   "ZgyD93": [
     {
       "type": 0,
@@ -7179,12 +7247,6 @@
     {
       "type": 0,
       "value": "Další informace o dynamickém obsahu"
-    }
-  ],
-  "ZvAp7m": [
-    {
-      "type": 0,
-      "value": "Save"
     }
   ],
   "ZyDq4/": [
@@ -7233,6 +7295,12 @@
     {
       "type": 0,
       "value": "Maximální interval zásady opakování je neplatný, musí odpovídat formátu doby trvání ISO 8601"
+    }
+  ],
+  "aKf/r+": [
+    {
+      "type": 0,
+      "value": "Specified run identifier not found"
     }
   ],
   "aP1wk9": [
@@ -7407,6 +7475,12 @@
     {
       "type": 0,
       "value": "Tato operace obsahuje token, který v aktuálním pracovním postupu neexistuje."
+    }
+  ],
+  "bPyWVY": [
+    {
+      "type": 0,
+      "value": "Failed to load runs"
     }
   ],
   "bTrk+S": [
@@ -7677,6 +7751,12 @@
       "value": "Stáhnout (Alt nebo Option + select)"
     }
   ],
+  "d9RCuq": [
+    {
+      "type": 0,
+      "value": "Workflow run status"
+    }
+  ],
   "dBWIjR": [
     {
       "type": 0,
@@ -7883,6 +7963,12 @@
       "value": "Upravit tento tok do"
     }
   ],
+  "eLQPek": [
+    {
+      "type": 0,
+      "value": "Status"
+    }
+  ],
   "eLthgv": [
     {
       "type": 0,
@@ -7988,7 +8074,7 @@
   "eofB85": [
     {
       "type": 0,
-      "value": "Timed out"
+      "value": "Vypršel časový limit."
     }
   ],
   "epOMnV": [
@@ -8119,12 +8205,6 @@
       "value": "(UTC-05:00) Haiti"
     }
   ],
-  "fZJWBR": [
-    {
-      "type": 0,
-      "value": "Loading designer"
-    }
-  ],
   "faUrud": [
     {
       "type": 0,
@@ -8153,6 +8233,16 @@
     {
       "type": 0,
       "value": "(UTC+08:00) Peking, Čchung-čching, Hongkong, Urumqi"
+    }
+  ],
+  "ft8BH8": [
+    {
+      "type": 1,
+      "value": "count"
+    },
+    {
+      "type": 0,
+      "value": " Seconds"
     }
   ],
   "fvGvnA": [
@@ -8505,6 +8595,16 @@
     {
       "type": 0,
       "value": "Toto nehledám"
+    }
+  ],
+  "hesDPs": [
+    {
+      "type": 1,
+      "value": "count"
+    },
+    {
+      "type": 0,
+      "value": " Milliseconds"
     }
   ],
   "hihfHd": [
@@ -9509,6 +9609,16 @@
       "value": "Vyžadováno. Řetězec, který se má převést na malá písmena. Pokud některý znak v řetězci nemá odpovídající znak malé abecedy, zůstane ve vráceném řetězci beze změny."
     }
   ],
+  "maP1K/": [
+    {
+      "type": 1,
+      "value": "count"
+    },
+    {
+      "type": 0,
+      "value": " Minutes"
+    }
+  ],
   "mb1XDD": [
     {
       "type": 0,
@@ -9881,6 +9991,16 @@
       "value": "Povinný parametr. Identifikátor URI dat, který se má dekódovat do binárního formátu."
     }
   ],
+  "oBAL2F": [
+    {
+      "type": 1,
+      "value": "count"
+    },
+    {
+      "type": 0,
+      "value": " Days"
+    }
+  ],
   "oDHXKh": [
     {
       "type": 0,
@@ -9965,10 +10085,14 @@
       "value": "Text odpovědi"
     }
   ],
-  "ohOaXj": [
+  "og5JOA": [
+    {
+      "type": 1,
+      "value": "count"
+    },
     {
       "type": 0,
-      "value": "Errors"
+      "value": " Millisecond"
     }
   ],
   "ohpbkw": [
@@ -10611,16 +10735,20 @@
       "value": "Zrušit vytváření připojení"
     }
   ],
+  "sJQee6": [
+    {
+      "type": 1,
+      "value": "count"
+    },
+    {
+      "type": 0,
+      "value": " Hours"
+    }
+  ],
   "sKy720": [
     {
       "type": 0,
       "value": "Je nutné zadat hodnotu pro název pracovního postupu."
-    }
-  ],
-  "sOnphB": [
-    {
-      "type": 0,
-      "value": "Resubmit"
     }
   ],
   "sRpETS": [
@@ -11343,6 +11471,12 @@
       "value": "Pokud chcete vytvořit a použít připojení rozhraní API, musíte mít v této aplikaci logiky nakonfigurovanou spravovanou identitu."
     }
   ],
+  "vhwaYb": [
+    {
+      "type": 0,
+      "value": "Zalomí všechny vlastní hodnoty řetězce a hodnoty DateTime do dvojitých uvozovek. Příklad: abc"
+    }
+  ],
   "viee6C": [
     {
       "type": 0,
@@ -11405,6 +11539,12 @@
       "value": "Toto pole obsahuje duplicitní hodnotu"
     }
   ],
+  "vzXXFP": [
+    {
+      "type": 0,
+      "value": "Workflow version"
+    }
+  ],
   "w+7aGo": [
     {
       "type": 0,
@@ -11439,6 +11579,16 @@
     {
       "type": 0,
       "value": "Sbalit"
+    }
+  ],
+  "wAg9+z": [
+    {
+      "type": 1,
+      "value": "count"
+    },
+    {
+      "type": 0,
+      "value": " Hour"
     }
   ],
   "wBBu4g": [
@@ -11765,6 +11915,16 @@
     {
       "type": 0,
       "value": "Vrátí cestu z identifikátoru URI. Pokud se cesta nezadá, vrátí /."
+    }
+  ],
+  "xfXUGz": [
+    {
+      "type": 1,
+      "value": "count"
+    },
+    {
+      "type": 0,
+      "value": " Minute"
     }
   ],
   "xi2tn6": [

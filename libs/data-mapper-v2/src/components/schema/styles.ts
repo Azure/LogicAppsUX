@@ -1,10 +1,10 @@
 import { makeStyles } from '@fluentui/react-components';
-import { panelWidth } from '../../utils/ReactFlow.Util';
+import { panelWidth, panelWidthWithoutHandles } from '../../utils/ReactFlow.Util';
 
 export const useStyles = makeStyles({
   root: {
     width: `${panelWidth}px`,
-    height: '100vh',
+    height: '100%',
   },
   targetScehmaRoot: {
     display: 'flex',
@@ -14,7 +14,7 @@ export const useStyles = makeStyles({
 
 export const usePanelStyles = makeStyles({
   root: {
-    width: '300px',
+    width: `${panelWidthWithoutHandles}px`,
     height: '100%',
     overflow: 'visible',
   },
@@ -37,7 +37,7 @@ export const usePanelStyles = makeStyles({
   },
   targetSchemaBody: {
     position: 'relative',
-    left: '-7px',
+    left: '-16px',
   },
 });
 

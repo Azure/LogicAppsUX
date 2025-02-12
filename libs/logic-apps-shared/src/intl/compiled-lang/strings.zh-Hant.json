@@ -11,12 +11,6 @@
       "value": "警告: 輸入節點類型不符合結構描述節點的類型"
     }
   ],
-  "+0ua83": [
-    {
-      "type": 0,
-      "value": "Parameters"
-    }
-  ],
   "+0yxlR": [
     {
       "type": 0,
@@ -80,7 +74,7 @@
   "+M7bC6": [
     {
       "type": 0,
-      "value": "Succeeded with retries"
+      "value": "重試後成功"
     }
   ],
   "+R90eK": [
@@ -525,6 +519,12 @@
       "value": " 結果。"
     }
   ],
+  "0a4IGE": [
+    {
+      "type": 0,
+      "value": "Refresh"
+    }
+  ],
   "0i/6TR": [
     {
       "type": 0,
@@ -664,7 +664,7 @@
   "1QktJw": [
     {
       "type": 0,
-      "value": "Map errors"
+      "value": "對應錯誤"
     }
   ],
   "1Xke9D": [
@@ -743,6 +743,12 @@
     {
       "type": 0,
       "value": "請輸入有效的 URI。"
+    }
+  ],
+  "1tmN2o": [
+    {
+      "type": 0,
+      "value": "Workflow version"
     }
   ],
   "1uGBLP": [
@@ -1327,6 +1333,12 @@
       "value": "重試歷程記錄"
     }
   ],
+  "4rdY7D": [
+    {
+      "type": 0,
+      "value": "Run ID"
+    }
+  ],
   "4vcnOA": [
     {
       "type": 0,
@@ -1382,7 +1394,7 @@
   "5DkTf5": [
     {
       "type": 0,
-      "value": "Target schema node not found for node key '"
+      "value": "找不到節點索引鍵 '"
     },
     {
       "type": 1,
@@ -1390,7 +1402,7 @@
     },
     {
       "type": 0,
-      "value": "'"
+      "value": "' 的目標架構節點"
     }
   ],
   "5J9jne": [
@@ -1854,7 +1866,7 @@
   "7X4UA/": [
     {
       "type": 0,
-      "value": "Waiting"
+      "value": "等待中"
     }
   ],
   "7ZF1Hr": [
@@ -2258,7 +2270,7 @@
   "9dd0/m": [
     {
       "type": 0,
-      "value": "Running"
+      "value": "正在執行"
     }
   ],
   "9djnqI": [
@@ -2295,6 +2307,12 @@
     {
       "type": 0,
       "value": "如需詳細資訊，請參閱下列資源"
+    }
+  ],
+  "A5/IqS": [
+    {
+      "type": 0,
+      "value": "Run identifier"
     }
   ],
   "A5/UwX": [
@@ -2357,6 +2375,16 @@
     {
       "type": 0,
       "value": "服務主體"
+    }
+  ],
+  "AMMfbt": [
+    {
+      "type": 1,
+      "value": "count"
+    },
+    {
+      "type": 0,
+      "value": " Second"
     }
   ],
   "APKdYG": [
@@ -2663,7 +2691,7 @@
   "Bwqlxd": [
     {
       "type": 0,
-      "value": "Key not found '"
+      "value": "找不到金鑰 '"
     },
     {
       "type": 1,
@@ -2992,6 +3020,12 @@
       "value": "觸發程序類型"
     }
   ],
+  "DeM/yz": [
+    {
+      "type": 0,
+      "value": "Start time"
+    }
+  ],
   "DfXxoX": [
     {
       "type": 0,
@@ -3307,7 +3341,7 @@
   "FPBmrA": [
     {
       "type": 0,
-      "value": "Source schema node not found for node key '"
+      "value": "找不到節點索引鍵 '"
     },
     {
       "type": 1,
@@ -3315,7 +3349,7 @@
     },
     {
       "type": 0,
-      "value": "'"
+      "value": "' 的來源架構節點"
     }
   ],
   "FT3jt6": [
@@ -3518,7 +3552,7 @@
   "GiR7ll": [
     {
       "type": 0,
-      "value": "Function not found- '"
+      "value": "找不到函數- '"
     },
     {
       "type": 1,
@@ -3943,6 +3977,12 @@
       "value": "設定群組"
     }
   ],
+  "J8G55j": [
+    {
+      "type": 0,
+      "value": "Search by run identifier"
+    }
+  ],
   "J9wWry": [
     {
       "type": 0,
@@ -4136,7 +4176,7 @@
   "KWeLBB": [
     {
       "type": 0,
-      "value": "Closing..."
+      "value": "正在關閉..."
     }
   ],
   "KX1poC": [
@@ -4237,7 +4277,7 @@
   "LBlM+D": [
     {
       "type": 0,
-      "value": "Not specified"
+      "value": "未指定"
     }
   ],
   "LCRHQ9": [
@@ -4997,7 +5037,7 @@
   "PEJ+e4": [
     {
       "type": 0,
-      "value": "Error loading data map"
+      "value": "載入數據對應時發生錯誤"
     }
   ],
   "PNk3n4": [
@@ -5240,6 +5280,12 @@
     {
       "type": 0,
       "value": "全螢幕"
+    }
+  ],
+  "QT4IaP": [
+    {
+      "type": 0,
+      "value": "Filtered!"
     }
   ],
   "QVtqAn": [
@@ -5599,6 +5645,12 @@
       "value": "當狀態為 [失敗] 時，不應提供輸出"
     }
   ],
+  "SbHBIZ": [
+    {
+      "type": 0,
+      "value": "No runs found"
+    }
+  ],
   "SgiTAh": [
     {
       "type": 0,
@@ -5629,6 +5681,12 @@
       "value": "完成"
     }
   ],
+  "SwWaHa": [
+    {
+      "type": 0,
+      "value": "Enter a valid run identifier"
+    }
+  ],
   "Sy4cFC": [
     {
       "type": 0,
@@ -5645,6 +5703,12 @@
     {
       "type": 0,
       "value": "測試"
+    }
+  ],
+  "T/7b2y": [
+    {
+      "type": 0,
+      "value": "Duration"
     }
   ],
   "TDfQzn": [
@@ -6368,7 +6432,7 @@
   "WbIGAh": [
     {
       "type": 0,
-      "value": "Succeeded"
+      "value": "成功"
     }
   ],
   "Wc77aJ": [
@@ -6683,12 +6747,6 @@
     {
       "type": 0,
       "value": "限制 Logic Apps 不要在回應中包含工作流程中繼資料標頭。"
-    }
-  ],
-  "XtVOMn": [
-    {
-      "type": 0,
-      "value": "Something went wrong"
     }
   ],
   "XtuP5e": [
@@ -7057,6 +7115,16 @@
       "value": "關閉"
     }
   ],
+  "ZgU5eu": [
+    {
+      "type": 1,
+      "value": "count"
+    },
+    {
+      "type": 0,
+      "value": " Day"
+    }
+  ],
   "ZgyD93": [
     {
       "type": 0,
@@ -7079,12 +7147,6 @@
     {
       "type": 0,
       "value": "深入了解動態內容。"
-    }
-  ],
-  "ZvAp7m": [
-    {
-      "type": 0,
-      "value": "Save"
     }
   ],
   "ZyDq4/": [
@@ -7133,6 +7195,12 @@
     {
       "type": 0,
       "value": "重試原則最大間隔無效，必須符合 ISO 8601 持續時間格式"
+    }
+  ],
+  "aKf/r+": [
+    {
+      "type": 0,
+      "value": "Specified run identifier not found"
     }
   ],
   "aP1wk9": [
@@ -7210,7 +7278,7 @@
   "auci7r": [
     {
       "type": 0,
-      "value": "Enter a valid comma-separated string."
+      "value": "請輸入以逗號分隔的有效字串。"
     }
   ],
   "aurgrg": [
@@ -7295,6 +7363,12 @@
     {
       "type": 0,
       "value": "此作業包含不存在於目前工作流程中的令牌。"
+    }
+  ],
+  "bPyWVY": [
+    {
+      "type": 0,
+      "value": "Failed to load runs"
     }
   ],
   "bTrk+S": [
@@ -7565,6 +7639,12 @@
       "value": "下載 (Alt 或 Option + 選取)"
     }
   ],
+  "d9RCuq": [
+    {
+      "type": 0,
+      "value": "Workflow run status"
+    }
+  ],
   "dBWIjR": [
     {
       "type": 0,
@@ -7771,6 +7851,12 @@
       "value": "編輯此流程至"
     }
   ],
+  "eLQPek": [
+    {
+      "type": 0,
+      "value": "Status"
+    }
+  ],
   "eLthgv": [
     {
       "type": 0,
@@ -7876,7 +7962,7 @@
   "eofB85": [
     {
       "type": 0,
-      "value": "Timed out"
+      "value": "逾時"
     }
   ],
   "epOMnV": [
@@ -7888,7 +7974,7 @@
   "epi+zR": [
     {
       "type": 0,
-      "value": "Close map checker"
+      "value": "關閉地圖檢查器"
     }
   ],
   "er6O+w": [
@@ -8007,12 +8093,6 @@
       "value": "(UTC-05:00) 海地"
     }
   ],
-  "fZJWBR": [
-    {
-      "type": 0,
-      "value": "Loading designer"
-    }
-  ],
   "faUrud": [
     {
       "type": 0,
@@ -8041,6 +8121,16 @@
     {
       "type": 0,
       "value": "(UTC+08:00) 北京，重慶，香港特別行政區，烏魯木齊"
+    }
+  ],
+  "ft8BH8": [
+    {
+      "type": 1,
+      "value": "count"
+    },
+    {
+      "type": 0,
+      "value": " Seconds"
     }
   ],
   "fvGvnA": [
@@ -8360,6 +8450,16 @@
     {
       "type": 0,
       "value": "這不是我要尋找的"
+    }
+  ],
+  "hesDPs": [
+    {
+      "type": 1,
+      "value": "count"
+    },
+    {
+      "type": 0,
+      "value": " Milliseconds"
     }
   ],
   "hihfHd": [
@@ -8939,7 +9039,7 @@
   "kfmLTY": [
     {
       "type": 0,
-      "value": "Function '"
+      "value": "函數 '"
     },
     {
       "type": 1,
@@ -8947,7 +9047,7 @@
     },
     {
       "type": 0,
-      "value": "' is missing required inputs"
+      "value": "' 遺失必要的輸入"
     }
   ],
   "klY9UN": [
@@ -9317,6 +9417,16 @@
     {
       "type": 0,
       "value": "必要。要轉換為小寫的字串。若字串中的字元無對等的小寫字元，則該字元會原封不動包含在傳回的字串中。"
+    }
+  ],
+  "maP1K/": [
+    {
+      "type": 1,
+      "value": "count"
+    },
+    {
+      "type": 0,
+      "value": " Minutes"
     }
   ],
   "mb1XDD": [
@@ -9691,6 +9801,16 @@
       "value": "必要。要解碼成二進位表示法的 dataURI。"
     }
   ],
+  "oBAL2F": [
+    {
+      "type": 1,
+      "value": "count"
+    },
+    {
+      "type": 0,
+      "value": " Days"
+    }
+  ],
   "oDHXKh": [
     {
       "type": 0,
@@ -9775,10 +9895,14 @@
       "value": "回應本文"
     }
   ],
-  "ohOaXj": [
+  "og5JOA": [
+    {
+      "type": 1,
+      "value": "count"
+    },
     {
       "type": 0,
-      "value": "Errors"
+      "value": " Millisecond"
     }
   ],
   "ohpbkw": [
@@ -10319,7 +10443,7 @@
   "rwrlsB": [
     {
       "type": 0,
-      "value": "Map Issues"
+      "value": "對應問題"
     }
   ],
   "rxIJfD": [
@@ -10388,16 +10512,20 @@
       "value": "取消建立連線"
     }
   ],
+  "sJQee6": [
+    {
+      "type": 1,
+      "value": "count"
+    },
+    {
+      "type": 0,
+      "value": " Hours"
+    }
+  ],
   "sKy720": [
     {
       "type": 0,
       "value": "必須提供工作流程名稱的值。"
-    }
-  ],
-  "sOnphB": [
-    {
-      "type": 0,
-      "value": "Resubmit"
     }
   ],
   "sRpETS": [
@@ -11128,6 +11256,12 @@
       "value": "若要建立及使用 API 連線，您必須在此邏輯應用程式上設定受控識別。"
     }
   ],
+  "vhwaYb": [
+    {
+      "type": 0,
+      "value": "將所有自定義值字串和 DateTime 值以雙引號括住。例如，“abc”。"
+    }
+  ],
   "viee6C": [
     {
       "type": 0,
@@ -11190,6 +11324,12 @@
       "value": "這包含重複的值"
     }
   ],
+  "vzXXFP": [
+    {
+      "type": 0,
+      "value": "Workflow version"
+    }
+  ],
   "w+7aGo": [
     {
       "type": 0,
@@ -11224,6 +11364,16 @@
     {
       "type": 0,
       "value": "摺疊"
+    }
+  ],
+  "wAg9+z": [
+    {
+      "type": 1,
+      "value": "count"
+    },
+    {
+      "type": 0,
+      "value": " Hour"
     }
   ],
   "wBBu4g": [
@@ -11550,6 +11700,16 @@
     {
       "type": 0,
       "value": "傳回 URI 的路徑。若未指定路徑，會傳回 '/'"
+    }
+  ],
+  "xfXUGz": [
+    {
+      "type": 1,
+      "value": "count"
+    },
+    {
+      "type": 0,
+      "value": " Minute"
     }
   ],
   "xi2tn6": [

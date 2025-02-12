@@ -11,12 +11,6 @@
       "value": "Advertencia: el tipo de nodo de entrada no coincide con el tipo del nodo de esquema"
     }
   ],
-  "+0ua83": [
-    {
-      "type": 0,
-      "value": "Parameters"
-    }
-  ],
   "+0yxlR": [
     {
       "type": 0,
@@ -80,7 +74,7 @@
   "+M7bC6": [
     {
       "type": 0,
-      "value": "Succeeded with retries"
+      "value": "Correcto con reintentos"
     }
   ],
   "+R90eK": [
@@ -521,6 +515,12 @@
       "value": " resultados."
     }
   ],
+  "0a4IGE": [
+    {
+      "type": 0,
+      "value": "Refresh"
+    }
+  ],
   "0i/6TR": [
     {
       "type": 0,
@@ -739,6 +739,12 @@
     {
       "type": 0,
       "value": "Escriba un URI válido."
+    }
+  ],
+  "1tmN2o": [
+    {
+      "type": 0,
+      "value": "Workflow version"
     }
   ],
   "1uGBLP": [
@@ -1319,6 +1325,12 @@
       "value": "Historial de reintentos"
     }
   ],
+  "4rdY7D": [
+    {
+      "type": 0,
+      "value": "Run ID"
+    }
+  ],
   "4vcnOA": [
     {
       "type": 0,
@@ -1846,7 +1858,7 @@
   "7X4UA/": [
     {
       "type": 0,
-      "value": "Waiting"
+      "value": "Esperando"
     }
   ],
   "7ZF1Hr": [
@@ -2250,7 +2262,7 @@
   "9dd0/m": [
     {
       "type": 0,
-      "value": "Running"
+      "value": "En ejecución"
     }
   ],
   "9djnqI": [
@@ -2287,6 +2299,12 @@
     {
       "type": 0,
       "value": "Para obtener información más detallada, puede consultar los siguientes recursos"
+    }
+  ],
+  "A5/IqS": [
+    {
+      "type": 0,
+      "value": "Run identifier"
     }
   ],
   "A5/UwX": [
@@ -2349,6 +2367,16 @@
     {
       "type": 0,
       "value": "Entidad de servicio"
+    }
+  ],
+  "AMMfbt": [
+    {
+      "type": 1,
+      "value": "count"
+    },
+    {
+      "type": 0,
+      "value": " Second"
     }
   ],
   "APKdYG": [
@@ -3000,6 +3028,12 @@
     {
       "type": 0,
       "value": "Tipo de desencadenador"
+    }
+  ],
+  "DeM/yz": [
+    {
+      "type": 0,
+      "value": "Start time"
     }
   ],
   "DfXxoX": [
@@ -3975,6 +4009,12 @@
       "value": "Crear grupo"
     }
   ],
+  "J8G55j": [
+    {
+      "type": 0,
+      "value": "Search by run identifier"
+    }
+  ],
   "J9wWry": [
     {
       "type": 0,
@@ -4168,7 +4208,7 @@
   "KWeLBB": [
     {
       "type": 0,
-      "value": "Closing..."
+      "value": "Cerrando..."
     }
   ],
   "KX1poC": [
@@ -4291,7 +4331,7 @@
   "LBlM+D": [
     {
       "type": 0,
-      "value": "Not specified"
+      "value": "Sin especificar"
     }
   ],
   "LCRHQ9": [
@@ -5288,6 +5328,12 @@
       "value": "Pantalla completa"
     }
   ],
+  "QT4IaP": [
+    {
+      "type": 0,
+      "value": "Filtered!"
+    }
+  ],
   "QVtqAn": [
     {
       "type": 0,
@@ -5663,6 +5709,12 @@
       "value": "No se deben proporcionar salidas cuando el estado es \"Error\""
     }
   ],
+  "SbHBIZ": [
+    {
+      "type": 0,
+      "value": "No runs found"
+    }
+  ],
   "SgiTAh": [
     {
       "type": 0,
@@ -5693,6 +5745,12 @@
       "value": "Listo"
     }
   ],
+  "SwWaHa": [
+    {
+      "type": 0,
+      "value": "Enter a valid run identifier"
+    }
+  ],
   "Sy4cFC": [
     {
       "type": 0,
@@ -5709,6 +5767,12 @@
     {
       "type": 0,
       "value": "Probar"
+    }
+  ],
+  "T/7b2y": [
+    {
+      "type": 0,
+      "value": "Duration"
     }
   ],
   "TDfQzn": [
@@ -6428,7 +6492,7 @@
   "WbIGAh": [
     {
       "type": 0,
-      "value": "Succeeded"
+      "value": "Se realizó correctamente"
     }
   ],
   "Wc77aJ": [
@@ -6743,12 +6807,6 @@
     {
       "type": 0,
       "value": "Limita Logic Apps para que no incluya encabezados de metadatos de flujo de trabajo en la respuesta."
-    }
-  ],
-  "XtVOMn": [
-    {
-      "type": 0,
-      "value": "Something went wrong"
     }
   ],
   "XtuP5e": [
@@ -7117,6 +7175,16 @@
       "value": "Cerrar"
     }
   ],
+  "ZgU5eu": [
+    {
+      "type": 1,
+      "value": "count"
+    },
+    {
+      "type": 0,
+      "value": " Day"
+    }
+  ],
   "ZgyD93": [
     {
       "type": 0,
@@ -7139,12 +7207,6 @@
     {
       "type": 0,
       "value": "Más información acerca del contenido dinámico"
-    }
-  ],
-  "ZvAp7m": [
-    {
-      "type": 0,
-      "value": "Save"
     }
   ],
   "ZyDq4/": [
@@ -7193,6 +7255,12 @@
     {
       "type": 0,
       "value": "El intervalo máximo de la directiva de reintentos no es válido, debe coincidir con el formato de duración ISO 8601"
+    }
+  ],
+  "aKf/r+": [
+    {
+      "type": 0,
+      "value": "Specified run identifier not found"
     }
   ],
   "aP1wk9": [
@@ -7363,6 +7431,12 @@
     {
       "type": 0,
       "value": "Esta operación contiene un token que no existe en el flujo de trabajo actual."
+    }
+  ],
+  "bPyWVY": [
+    {
+      "type": 0,
+      "value": "Failed to load runs"
     }
   ],
   "bTrk+S": [
@@ -7633,6 +7707,12 @@
       "value": "Descargar (Alt u Opción + seleccionar)"
     }
   ],
+  "d9RCuq": [
+    {
+      "type": 0,
+      "value": "Workflow run status"
+    }
+  ],
   "dBWIjR": [
     {
       "type": 0,
@@ -7839,6 +7919,12 @@
       "value": "Editar este flujo en"
     }
   ],
+  "eLQPek": [
+    {
+      "type": 0,
+      "value": "Status"
+    }
+  ],
   "eLthgv": [
     {
       "type": 0,
@@ -7944,7 +8030,7 @@
   "eofB85": [
     {
       "type": 0,
-      "value": "Timed out"
+      "value": "Se agotó el tiempo de espera"
     }
   ],
   "epOMnV": [
@@ -8075,12 +8161,6 @@
       "value": "(UTC-05:00) Haití"
     }
   ],
-  "fZJWBR": [
-    {
-      "type": 0,
-      "value": "Loading designer"
-    }
-  ],
   "faUrud": [
     {
       "type": 0,
@@ -8109,6 +8189,16 @@
     {
       "type": 0,
       "value": "(UTC+08:00) Beijing, Chongqing, Hong Kong, Urumqi"
+    }
+  ],
+  "ft8BH8": [
+    {
+      "type": 1,
+      "value": "count"
+    },
+    {
+      "type": 0,
+      "value": " Seconds"
     }
   ],
   "fvGvnA": [
@@ -8450,6 +8540,16 @@
     {
       "type": 0,
       "value": "Esto no es lo que estoy buscando"
+    }
+  ],
+  "hesDPs": [
+    {
+      "type": 1,
+      "value": "count"
+    },
+    {
+      "type": 0,
+      "value": " Milliseconds"
     }
   ],
   "hihfHd": [
@@ -9431,6 +9531,16 @@
       "value": "Obligatorio. La cadena que se convertirá en minúsculas. Si un carácter de la cadena no tiene un equivalente en minúsculas, este carácter se incluye sin cambios en la cadena que se devuelve."
     }
   ],
+  "maP1K/": [
+    {
+      "type": 1,
+      "value": "count"
+    },
+    {
+      "type": 0,
+      "value": " Minutes"
+    }
+  ],
   "mb1XDD": [
     {
       "type": 0,
@@ -9803,6 +9913,16 @@
       "value": "Obligatorio. El URI de datos que se decodificará en una representación binaria."
     }
   ],
+  "oBAL2F": [
+    {
+      "type": 1,
+      "value": "count"
+    },
+    {
+      "type": 0,
+      "value": " Days"
+    }
+  ],
   "oDHXKh": [
     {
       "type": 0,
@@ -9887,10 +10007,14 @@
       "value": "Cuerpo de la respuesta"
     }
   ],
-  "ohOaXj": [
+  "og5JOA": [
+    {
+      "type": 1,
+      "value": "count"
+    },
     {
       "type": 0,
-      "value": "Errors"
+      "value": " Millisecond"
     }
   ],
   "ohpbkw": [
@@ -10522,16 +10646,20 @@
       "value": "Cancelar la creación de una conexión"
     }
   ],
+  "sJQee6": [
+    {
+      "type": 1,
+      "value": "count"
+    },
+    {
+      "type": 0,
+      "value": " Hours"
+    }
+  ],
   "sKy720": [
     {
       "type": 0,
       "value": "Debe proporcionar un valor para el nombre del flujo de trabajo."
-    }
-  ],
-  "sOnphB": [
-    {
-      "type": 0,
-      "value": "Resubmit"
     }
   ],
   "sRpETS": [
@@ -11262,6 +11390,12 @@
       "value": "Para crear y usar una conexión API, debe tener una identidad administrada configurada en esta aplicación lógica."
     }
   ],
+  "vhwaYb": [
+    {
+      "type": 0,
+      "value": "Ajuste todos los valores DateTime y cadena de valor personalizado entre comillas dobles. Por ejemplo, \"abc\"."
+    }
+  ],
   "viee6C": [
     {
       "type": 0,
@@ -11324,6 +11458,12 @@
       "value": "Contiene un valor duplicado"
     }
   ],
+  "vzXXFP": [
+    {
+      "type": 0,
+      "value": "Workflow version"
+    }
+  ],
   "w+7aGo": [
     {
       "type": 0,
@@ -11358,6 +11498,16 @@
     {
       "type": 0,
       "value": "Contraer"
+    }
+  ],
+  "wAg9+z": [
+    {
+      "type": 1,
+      "value": "count"
+    },
+    {
+      "type": 0,
+      "value": " Hour"
     }
   ],
   "wBBu4g": [
@@ -11684,6 +11834,16 @@
     {
       "type": 0,
       "value": "Devuelve la ruta de acceso de un URI. Si no se especifica la ruta de acceso, devuelve \"/\"."
+    }
+  ],
+  "xfXUGz": [
+    {
+      "type": 1,
+      "value": "count"
+    },
+    {
+      "type": 0,
+      "value": " Minute"
     }
   ],
   "xi2tn6": [

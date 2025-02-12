@@ -1,7 +1,7 @@
 {
   "name": "vscode-azurelogicapps",
   "displayName": "Azure Logic Apps (Standard)",
-  "version": "50.2.12",
+  "version": "5.38.0",
   "aiKey": "setInGitHubBuild",
   "repository": "https://github.com/Azure/LogicAppsUX",
   "main": "main.js",
@@ -333,12 +333,14 @@
       },
       {
         "command": "azureLogicAppsStandard.dataMap.createNewDataMap",
-        "title": "Data Mapper: Create data map",
+        "title": "Create Data Map",
+        "category": "Azure Logic Apps",
         "icon": "$(add)"
       },
       {
         "command": "azureLogicAppsStandard.dataMap.loadDataMapFile",
-        "title": "Data Mapper: Load existing data map"
+        "title": "Data Mapper: Load existing data map",
+        "when": "resourceExtname in azureLogicAppsStandard.dataMap.setSupportedDataMapDefinitionFileExts"
       },
       {
         "command": "azureLogicAppsStandard.parameterizeConnections",
@@ -355,10 +357,6 @@
           "dark": "assets/logicapp.png"
         },
         "label": "Azure Logic Apps"
-      },
-      {
-        "id": "azureLogicAppsStandard.dataMapperMenu",
-        "label": "Data Mapper"
       }
     ],
     "views": {
@@ -378,16 +376,8 @@
     "menus": {
       "azureLogicAppsStandard.submenus.workspaceActions": [
         {
-          "command": "azureLogicAppsStandard.createNewProject",
-          "group": "1_create@1"
-        },
-        {
           "command": "azureLogicAppsStandard.createNewCodeProject",
           "group": "1_create@2"
-        },
-        {
-          "command": "azureLogicAppsStandard.createCodeless",
-          "group": "1_create@3"
         },
         {
           "command": "azureLogicAppsStandard.deploy",
@@ -638,12 +628,27 @@
       ],
       "explorer/context": [
         {
+          "command": "azureLogicAppsStandard.dataMap.createNewDataMap",
+          "when": "resourceFilename in azureLogicAppsStandard.dataMap.setDmFolders",
+          "group": "navigation"
+        },
+        {
           "command": "azureLogicAppsStandard.deploy",
           "when": "explorerResourceIsFolder == true",
           "group": "zzz_LogicApptools@1"
         },
         {
           "command": "azureLogicAppsStandard.generateDeploymentScripts",
+          "when": "explorerResourceIsRoot == true",
+          "group": "zzz_LogicApptools@1"
+        },
+        {
+          "command": "azureLogicAppsStandard.createNewProject",
+          "when": "explorerResourceIsRoot == true",
+          "group": "zzz_LogicApptools@1"
+        },
+        {
+          "command": "azureLogicAppsStandard.createCodeless",
           "when": "explorerResourceIsRoot == true",
           "group": "zzz_LogicApptools@1"
         },
@@ -688,9 +693,9 @@
           "group": "navigation@2"
         },
         {
-          "submenu": "azureLogicAppsStandard.dataMapperMenu",
+          "command": "azureLogicAppsStandard.dataMap.loadDataMapFile",
           "group": "navigation",
-          "when": "resourceExtname in azureLogicAppsStandard.dataMap.setSupportedFileExts"
+          "when": "resourceExtname in azureLogicAppsStandard.dataMap.setSupportedDataMapDefinitionFileExts"
         }
       ],
       "commandPalette": [
@@ -725,13 +730,10 @@
         {
           "command": "azureLogicAppsStandard.generateDeploymentScripts",
           "when": "never"
-        }
-      ],
-      "azureLogicAppsStandard.dataMapperMenu": [
+        },
         {
-          "command": "azureLogicAppsStandard.dataMap.loadDataMapFile",
-          "group": "navigation",
-          "when": "resourceExtname in azureLogicAppsStandard.dataMap.setSupportedDataMapDefinitionFileExts"
+          "command": "azureLogicAppsStandard.createNewProject",
+          "when": "never"
         }
       ]
     },
@@ -779,7 +781,7 @@
             "description": "The default version of Data Mapper to use when performing operations like \"Create data map\".",
             "enumDescriptions": [
               "Version 1",
-              "Version 2 (Beta)"
+              "Version 2 (Preview)"
             ],
             "default": 1
           },

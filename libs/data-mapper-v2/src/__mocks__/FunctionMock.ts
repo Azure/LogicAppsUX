@@ -21,6 +21,27 @@ export const addFunction: FunctionData = {
   description: 'Returns the result from adding two or more numbers.',
 };
 
+export const reverseFunction: FunctionData = {
+  key: 'Reverse',
+  maxNumberOfInputs: 1,
+  functionName: 'reverse',
+  outputValueType: 'Any',
+  inputs: [
+    {
+      name: 'Collection',
+      allowedTypes: ['Any'],
+      isOptional: false,
+      allowCustomInput: true,
+      tooltip: 'The sequence or collection of items to reverse.',
+      placeHolder: 'Input collection',
+    },
+  ],
+  displayName: 'Reverse',
+  category: 'Collection',
+  description: 'Reverses the order of items in a sequence or collection.',
+  tooltip: 'Reverses the order of items in a sequence or collection.',
+};
+
 export const minFunction: FunctionData = {
   key: 'Minimum',
   maxNumberOfInputs: 2,

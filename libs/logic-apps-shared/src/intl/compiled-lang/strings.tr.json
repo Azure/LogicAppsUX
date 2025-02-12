@@ -11,12 +11,6 @@
       "value": "Uyarı: Giriş düğümü türü şema düğümünün türüyle eşleşmiyor"
     }
   ],
-  "+0ua83": [
-    {
-      "type": 0,
-      "value": "Parameters"
-    }
-  ],
   "+0yxlR": [
     {
       "type": 0,
@@ -80,7 +74,7 @@
   "+M7bC6": [
     {
       "type": 0,
-      "value": "Succeeded with retries"
+      "value": "Yeniden denemelerle başarılı oldu"
     }
   ],
   "+R90eK": [
@@ -521,6 +515,12 @@
       "value": " gösteriliyor."
     }
   ],
+  "0a4IGE": [
+    {
+      "type": 0,
+      "value": "Refresh"
+    }
+  ],
   "0i/6TR": [
     {
       "type": 0,
@@ -660,7 +660,7 @@
   "1QktJw": [
     {
       "type": 0,
-      "value": "Map errors"
+      "value": "Eşleme hataları"
     }
   ],
   "1Xke9D": [
@@ -739,6 +739,12 @@
     {
       "type": 0,
       "value": "Geçerli bir URI girin."
+    }
+  ],
+  "1tmN2o": [
+    {
+      "type": 0,
+      "value": "Workflow version"
     }
   ],
   "1uGBLP": [
@@ -1311,6 +1317,12 @@
       "value": "Yeniden deneme geçmişi"
     }
   ],
+  "4rdY7D": [
+    {
+      "type": 0,
+      "value": "Run ID"
+    }
+  ],
   "4vcnOA": [
     {
       "type": 0,
@@ -1366,7 +1378,7 @@
   "5DkTf5": [
     {
       "type": 0,
-      "value": "Target schema node not found for node key '"
+      "value": "Düğüm anahtarı kimliği için hedef şema '"
     },
     {
       "type": 1,
@@ -1838,7 +1850,7 @@
   "7X4UA/": [
     {
       "type": 0,
-      "value": "Waiting"
+      "value": "Bekliyor"
     }
   ],
   "7ZF1Hr": [
@@ -2242,7 +2254,7 @@
   "9dd0/m": [
     {
       "type": 0,
-      "value": "Running"
+      "value": "Çalışıyor"
     }
   ],
   "9djnqI": [
@@ -2279,6 +2291,12 @@
     {
       "type": 0,
       "value": "Daha ayrıntılı bilgi için aşağıdaki kaynaklara başvurabilirsiniz:"
+    }
+  ],
+  "A5/IqS": [
+    {
+      "type": 0,
+      "value": "Run identifier"
     }
   ],
   "A5/UwX": [
@@ -2341,6 +2359,16 @@
     {
       "type": 0,
       "value": "Hizmet sorumlusu"
+    }
+  ],
+  "AMMfbt": [
+    {
+      "type": 1,
+      "value": "count"
+    },
+    {
+      "type": 0,
+      "value": " Second"
     }
   ],
   "APKdYG": [
@@ -2658,7 +2686,7 @@
   "Bwqlxd": [
     {
       "type": 0,
-      "value": "Key not found '"
+      "value": "Anahtar bulunamadı '"
     },
     {
       "type": 1,
@@ -2987,6 +3015,12 @@
       "value": "Tetikleyici türü"
     }
   ],
+  "DeM/yz": [
+    {
+      "type": 0,
+      "value": "Start time"
+    }
+  ],
   "DfXxoX": [
     {
       "type": 0,
@@ -3298,7 +3332,7 @@
   "FPBmrA": [
     {
       "type": 0,
-      "value": "Source schema node not found for node key '"
+      "value": "Düğüm anahtarı yapılandırması için kaynak şema '"
     },
     {
       "type": 1,
@@ -3520,7 +3554,7 @@
   "GiR7ll": [
     {
       "type": 0,
-      "value": "Function not found- '"
+      "value": "İşlev bulunamadı- '"
     },
     {
       "type": 1,
@@ -3945,6 +3979,12 @@
       "value": "Grup oluştur"
     }
   ],
+  "J8G55j": [
+    {
+      "type": 0,
+      "value": "Search by run identifier"
+    }
+  ],
   "J9wWry": [
     {
       "type": 0,
@@ -4138,7 +4178,7 @@
   "KWeLBB": [
     {
       "type": 0,
-      "value": "Closing..."
+      "value": "Kapatılıyor..."
     }
   ],
   "KX1poC": [
@@ -4250,7 +4290,7 @@
   "LBlM+D": [
     {
       "type": 0,
-      "value": "Not specified"
+      "value": "Belirtilmedi"
     }
   ],
   "LCRHQ9": [
@@ -5014,7 +5054,7 @@
   "PEJ+e4": [
     {
       "type": 0,
-      "value": "Error loading data map"
+      "value": "Veri eşlemesi yüklenirken hata oluştu"
     }
   ],
   "PNk3n4": [
@@ -5249,6 +5289,12 @@
     {
       "type": 0,
       "value": "Tam ekran"
+    }
+  ],
+  "QT4IaP": [
+    {
+      "type": 0,
+      "value": "Filtered!"
     }
   ],
   "QVtqAn": [
@@ -5619,6 +5665,12 @@
       "value": "Durum “Başarısız” olduğunda çıkışlar gösterilmemelidir"
     }
   ],
+  "SbHBIZ": [
+    {
+      "type": 0,
+      "value": "No runs found"
+    }
+  ],
   "SgiTAh": [
     {
       "type": 0,
@@ -5649,6 +5701,12 @@
       "value": "Bitti"
     }
   ],
+  "SwWaHa": [
+    {
+      "type": 0,
+      "value": "Enter a valid run identifier"
+    }
+  ],
   "Sy4cFC": [
     {
       "type": 0,
@@ -5665,6 +5723,12 @@
     {
       "type": 0,
       "value": "Test et"
+    }
+  ],
+  "T/7b2y": [
+    {
+      "type": 0,
+      "value": "Duration"
     }
   ],
   "TDfQzn": [
@@ -6380,7 +6444,7 @@
   "WbIGAh": [
     {
       "type": 0,
-      "value": "Succeeded"
+      "value": "Başarılı"
     }
   ],
   "Wc77aJ": [
@@ -6695,12 +6759,6 @@
     {
       "type": 0,
       "value": "Logic Apps'i yanıtta iş akışı meta veri üst bilgileri eklememek için sınırlandırın."
-    }
-  ],
-  "XtVOMn": [
-    {
-      "type": 0,
-      "value": "Something went wrong"
     }
   ],
   "XtuP5e": [
@@ -7069,6 +7127,16 @@
       "value": "Kapat"
     }
   ],
+  "ZgU5eu": [
+    {
+      "type": 1,
+      "value": "count"
+    },
+    {
+      "type": 0,
+      "value": " Day"
+    }
+  ],
   "ZgyD93": [
     {
       "type": 0,
@@ -7091,12 +7159,6 @@
     {
       "type": 0,
       "value": "Dinamik içerikler hakkında daha fazla bilgi edinin."
-    }
-  ],
-  "ZvAp7m": [
-    {
-      "type": 0,
-      "value": "Save"
     }
   ],
   "ZyDq4/": [
@@ -7145,6 +7207,12 @@
     {
       "type": 0,
       "value": "Yeniden deneme ilkesi maksimum aralığı geçersiz, ISO 8601 süre biçimiyle eşleşmelidir"
+    }
+  ],
+  "aKf/r+": [
+    {
+      "type": 0,
+      "value": "Specified run identifier not found"
     }
   ],
   "aP1wk9": [
@@ -7222,7 +7290,7 @@
   "auci7r": [
     {
       "type": 0,
-      "value": "Enter a valid comma-separated string."
+      "value": "Virgülle ayrılmış geçerli bir dize girin."
     }
   ],
   "aurgrg": [
@@ -7315,6 +7383,12 @@
     {
       "type": 0,
       "value": "Bu işlem, geçerli iş akışında mevcut olmayan bir belirteç içeriyor."
+    }
+  ],
+  "bPyWVY": [
+    {
+      "type": 0,
+      "value": "Failed to load runs"
     }
   ],
   "bTrk+S": [
@@ -7585,6 +7659,12 @@
       "value": "İndir (Alt veya Option tuşu + seç)"
     }
   ],
+  "d9RCuq": [
+    {
+      "type": 0,
+      "value": "Workflow run status"
+    }
+  ],
   "dBWIjR": [
     {
       "type": 0,
@@ -7787,6 +7867,12 @@
       "value": "Bu akışı şunun için düzenleyin:"
     }
   ],
+  "eLQPek": [
+    {
+      "type": 0,
+      "value": "Status"
+    }
+  ],
   "eLthgv": [
     {
       "type": 0,
@@ -7892,7 +7978,7 @@
   "eofB85": [
     {
       "type": 0,
-      "value": "Timed out"
+      "value": "Zaman aşımına uğradı"
     }
   ],
   "epOMnV": [
@@ -7904,7 +7990,7 @@
   "epi+zR": [
     {
       "type": 0,
-      "value": "Close map checker"
+      "value": "Harita denetleyicisini kapat"
     }
   ],
   "er6O+w": [
@@ -8023,12 +8109,6 @@
       "value": "(UTC-05:00) Haiti"
     }
   ],
-  "fZJWBR": [
-    {
-      "type": 0,
-      "value": "Loading designer"
-    }
-  ],
   "faUrud": [
     {
       "type": 0,
@@ -8057,6 +8137,16 @@
     {
       "type": 0,
       "value": "(UTC+08:00) Pekin, Çongçing, Hong Kong, Urumçi"
+    }
+  ],
+  "ft8BH8": [
+    {
+      "type": 1,
+      "value": "count"
+    },
+    {
+      "type": 0,
+      "value": " Seconds"
     }
   ],
   "fvGvnA": [
@@ -8387,6 +8477,16 @@
     {
       "type": 0,
       "value": "Aradığım şey bu değil"
+    }
+  ],
+  "hesDPs": [
+    {
+      "type": 1,
+      "value": "count"
+    },
+    {
+      "type": 0,
+      "value": " Milliseconds"
     }
   ],
   "hihfHd": [
@@ -8962,7 +9062,7 @@
   "kfmLTY": [
     {
       "type": 0,
-      "value": "Function '"
+      "value": "İşlev '"
     },
     {
       "type": 1,
@@ -8970,7 +9070,7 @@
     },
     {
       "type": 0,
-      "value": "' is missing required inputs"
+      "value": "' gerekli girişler eksik"
     }
   ],
   "klY9UN": [
@@ -9361,6 +9461,16 @@
       "value": "Gerekli. Küçük harfe dönüştürülecek dize. Dizedeki bir karakterin küçük harf eşdeğeri yoksa, karakter, döndürülen dizeye değiştirilmeden eklenir."
     }
   ],
+  "maP1K/": [
+    {
+      "type": 1,
+      "value": "count"
+    },
+    {
+      "type": 0,
+      "value": " Minutes"
+    }
+  ],
   "mb1XDD": [
     {
       "type": 0,
@@ -9733,6 +9843,16 @@
       "value": "Gerekli. İkili gösterim olarak kodu çözülecek dataURI."
     }
   ],
+  "oBAL2F": [
+    {
+      "type": 1,
+      "value": "count"
+    },
+    {
+      "type": 0,
+      "value": " Days"
+    }
+  ],
   "oDHXKh": [
     {
       "type": 0,
@@ -9817,10 +9937,14 @@
       "value": "Yanıt gövdesi"
     }
   ],
-  "ohOaXj": [
+  "og5JOA": [
+    {
+      "type": 1,
+      "value": "count"
+    },
     {
       "type": 0,
-      "value": "Errors"
+      "value": " Millisecond"
     }
   ],
   "ohpbkw": [
@@ -10368,7 +10492,7 @@
   "rwrlsB": [
     {
       "type": 0,
-      "value": "Map Issues"
+      "value": "Harita Sorunları"
     }
   ],
   "rxIJfD": [
@@ -10437,16 +10561,20 @@
       "value": "Bağlantı oluşturmayı iptal et"
     }
   ],
+  "sJQee6": [
+    {
+      "type": 1,
+      "value": "count"
+    },
+    {
+      "type": 0,
+      "value": " Hours"
+    }
+  ],
   "sKy720": [
     {
       "type": 0,
       "value": "İş akışı adı için değer sağlandı."
-    }
-  ],
-  "sOnphB": [
-    {
-      "type": 0,
-      "value": "Resubmit"
     }
   ],
   "sRpETS": [
@@ -11177,6 +11305,12 @@
       "value": "Bir API bağlantısı oluşturmak ve kullanmak için bu mantıksal uygulamada yapılandırılmış bir yönetilen kimliğe sahip olmanız gerekir."
     }
   ],
+  "vhwaYb": [
+    {
+      "type": 0,
+      "value": "Tüm özel değer dizesini ve DateTime değerlerini çift tırnak içine alın. Örneğin, \"abc\"."
+    }
+  ],
   "viee6C": [
     {
       "type": 0,
@@ -11235,6 +11369,12 @@
       "value": "Bu yinelenen bir değer içeriyor"
     }
   ],
+  "vzXXFP": [
+    {
+      "type": 0,
+      "value": "Workflow version"
+    }
+  ],
   "w+7aGo": [
     {
       "type": 0,
@@ -11269,6 +11409,16 @@
     {
       "type": 0,
       "value": "Daralt"
+    }
+  ],
+  "wAg9+z": [
+    {
+      "type": 1,
+      "value": "count"
+    },
+    {
+      "type": 0,
+      "value": " Hour"
     }
   ],
   "wBBu4g": [
@@ -11595,6 +11745,16 @@
     {
       "type": 0,
       "value": "Bir URI'den yolu döndürür. Yol belirtilmezse, '/' döndürür"
+    }
+  ],
+  "xfXUGz": [
+    {
+      "type": 1,
+      "value": "count"
+    },
+    {
+      "type": 0,
+      "value": " Minute"
     }
   ],
   "xi2tn6": [

@@ -34,6 +34,7 @@ import * as path from 'path';
 import * as vscode from 'vscode';
 import * as fs from 'fs';
 import { v4 as uuidv4 } from 'uuid';
+import { ConvertToWorkspace } from '../createNewCodeProject/CodeProjectBase/ConvertToWorkspace';
 
 export async function generateDeploymentScripts(context: IActionContext): Promise<void> {
   try {
@@ -48,6 +49,10 @@ export async function generateDeploymentScripts(context: IActionContext): Promis
     const connectionsData: ConnectionsData = isEmptyString(connectionsJson) ? {} : JSON.parse(connectionsJson);
     const isParameterized = await isConnectionsParameterized(connectionsData);
     const workflowFiles = getWorkflowFilePaths(projectPath);
+    if (!(await ConvertToWorkspace(context))) {
+      ext.outputChannel.appendLog(localize('exitScriptGen', 'Exiting script generation...'));
+      return;
+    }
 
     if (!isParameterized) {
       const message = localize(
@@ -60,6 +65,7 @@ export async function generateDeploymentScripts(context: IActionContext): Promis
         context.telemetry.properties.parameterizeConnectionsInDeploymentScripts = 'true';
       } else {
         context.telemetry.properties.parameterizeConnectionsInDeploymentScripts = 'false';
+        ext.outputChannel.appendLog(localize('exitScriptGen', 'Exiting script generation...'));
         return;
       }
     }

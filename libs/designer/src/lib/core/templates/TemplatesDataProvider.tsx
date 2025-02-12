@@ -3,53 +3,54 @@ import type React from 'react';
 import { useContext, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import type { AppDispatch, RootState } from '../state/templates/store';
+import type { ViewTemplateDetails } from '../state/templates/manifestSlice';
 import {
-  lazyLoadManifests,
-  loadManifestNames,
+  loadGithubManifestNames,
   loadManifests,
+  setCustomTemplates,
   setFilteredTemplateNames,
+  setViewTemplateDetails,
   templatesCountPerPage,
+  lazyLoadManifests,
 } from '../state/templates/manifestSlice';
-import {
-  type ResourceDetails,
-  setConsumption,
-  setExistingWorkflowName,
-  setResourceDetails,
-  initializeConnectionReferences,
-} from '../state/templates/workflowSlice';
+import { type ResourceDetails, setInitialData } from '../state/templates/workflowSlice';
 import { useAreServicesInitialized } from '../state/templates/templateselectors';
 import type { ConnectionReferences } from '../../common/models/workflow';
 import { getFilteredTemplates } from './utils/helper';
 import { initializeTemplateServices } from '../actions/bjsworkflow/templates';
+import type { Template } from '@microsoft/logic-apps-shared';
+import { changeCurrentTemplateName } from '../state/templates/templateSlice';
 
 export interface TemplatesDataProviderProps {
   isConsumption: boolean | undefined;
-  existingWorkflowName: string | undefined;
+  isCreateView: boolean;
+  existingWorkflowName?: string;
   resourceDetails: ResourceDetails;
   services: TemplateServiceOptions;
   connectionReferences: ConnectionReferences;
+  customTemplates?: Record<string, Template.Manifest>;
+  viewTemplate?: ViewTemplateDetails;
   children?: React.ReactNode;
 }
 
 const DataProviderInner = ({ isConsumption, children }: TemplatesDataProviderProps) => {
   const dispatch = useDispatch<AppDispatch>();
-  const { availableTemplateNames, availableTemplates, filters } = useSelector((state: RootState) => state?.manifest);
+  const { githubTemplateNames, availableTemplates, filters } = useSelector((state: RootState) => state?.manifest);
 
   useEffect(() => {
-    if (!availableTemplateNames) {
-      dispatch(loadManifestNames());
-    }
-  }, [dispatch, availableTemplateNames]);
+    dispatch(loadGithubManifestNames());
+  }, [dispatch]);
 
   useEffect(() => {
-    if (availableTemplateNames) {
+    if (githubTemplateNames) {
       dispatch(loadManifests(templatesCountPerPage));
 
-      if (availableTemplateNames.length > templatesCountPerPage) {
+      if (githubTemplateNames.length > templatesCountPerPage) {
         dispatch(lazyLoadManifests(templatesCountPerPage));
       }
     }
-  }, [dispatch, availableTemplateNames]);
+    
+  }, [dispatch, githubTemplateNames]);
 
   useEffect(() => {
     if (!availableTemplates) {
@@ -77,13 +78,18 @@ export const TemplatesDataProvider = (props: TemplatesDataProviderProps) => {
       dispatch(initializeTemplateServices(props.services));
     }
 
-    dispatch(setResourceDetails(props.resourceDetails));
-    dispatch(initializeConnectionReferences(props.connectionReferences));
-    dispatch(setConsumption(!!props.isConsumption));
-
-    if (props.existingWorkflowName) {
-      dispatch(setExistingWorkflowName(props.existingWorkflowName));
-    }
+    dispatch(
+      setInitialData({
+        existingWorkflowName: props.existingWorkflowName,
+        isConsumption: !!props.isConsumption,
+        subscriptionId: props.resourceDetails.subscriptionId,
+        resourceGroup: props.resourceDetails.resourceGroup,
+        location: props.resourceDetails.location,
+        workflowAppName: props.resourceDetails.workflowAppName,
+        references: props.connectionReferences,
+        isCreateView: props.isCreateView,
+      })
+    );
   }, [
     dispatch,
     servicesInitialized,
@@ -92,11 +98,27 @@ export const TemplatesDataProvider = (props: TemplatesDataProviderProps) => {
     props.connectionReferences,
     props.existingWorkflowName,
     props.isConsumption,
+    props.isCreateView,
+    props.viewTemplate,
+    props.customTemplates,
   ]);
+
+  useEffect(() => {
+    if (props.viewTemplate) {
+      dispatch(changeCurrentTemplateName(props.viewTemplate.id));
+      dispatch(setViewTemplateDetails(props.viewTemplate));
+    }
+  }, [dispatch, props.viewTemplate]);
+
+  useEffect(() => {
+    if (props.customTemplates) {
+      dispatch(setCustomTemplates(props.customTemplates));
+    }
+  }, [dispatch, props.customTemplates]);
 
   if (!servicesInitialized) {
     return null;
   }
 
-  return <DataProviderInner {...props} />;
+  return props.viewTemplate ? <>{props.children}</> : <DataProviderInner {...props} />;
 };

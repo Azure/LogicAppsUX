@@ -1,7 +1,6 @@
 import {
   Dropdown,
   type IDropdownOption,
-  type IDropdownProps,
   type ISelectableOption,
   SearchBox,
   SelectableOptionMenuItemType,
@@ -9,7 +8,6 @@ import {
 import { useMemo, useState } from 'react';
 import { useIntl } from 'react-intl';
 import Fuse from 'fuse.js';
-import { Spinner } from '@fluentui/react-components';
 
 export interface FilterObject {
   value: string;
@@ -25,7 +23,6 @@ interface TemplatesFilterDropdownProps {
   items: FilterObject[];
   onRenderItem?: (item: ISelectableOption) => JSX.Element;
   onApplyButtonClick: (_filterItems: FilterObject[] | undefined) => void;
-  isLoadingContent?: boolean;
   isSearchable?: boolean;
 }
 
@@ -37,7 +34,6 @@ export const TemplatesFilterDropdown = ({
   onApplyButtonClick,
   onRenderItem,
   isSearchable = false,
-  isLoadingContent = false,
 }: TemplatesFilterDropdownProps) => {
   const intl = useIntl();
   const [displayItems, setDisplayItems] = useState<InternalFilterObject[]>(items);
@@ -116,13 +112,6 @@ export const TemplatesFilterDropdown = ({
     return onRenderItem && option.key !== allOptionId ? onRenderItem(option) : (defaultRender?.(option) ?? null);
   };
 
-  const onRenderCaretDown = (
-    _?: IDropdownProps | undefined,
-    defaultRender?: ((props?: IDropdownProps | undefined) => JSX.Element | null) | undefined
-  ) => {
-    return isLoadingContent ? <Spinner size="extra-tiny" style={{ marginTop: '3px' }} /> : (defaultRender?.() ?? null);
-  };
-
   return (
     <Dropdown
       className="msla-templates-filter-dropdown"
@@ -130,7 +119,6 @@ export const TemplatesFilterDropdown = ({
         gapSpace: 10,
         calloutMaxHeight: 400,
       }}
-      onRenderCaretDown={onRenderCaretDown}
       multiSelect
       options={dropdownOptions}
       label={filterName}

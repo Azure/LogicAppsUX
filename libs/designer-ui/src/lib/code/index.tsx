@@ -1,6 +1,6 @@
 import constants from '../constants';
 import type { ValueSegment } from '../editor';
-import type { BaseEditorProps } from '../editor/base';
+import type { BaseEditorProps, FileNameChangeHandler } from '../editor/base';
 import TokenPickerButtonLegacy from '../editor/base/plugins/TokenPickerButtonLegacy';
 import { createLiteralValueSegment, notEqual } from '../editor/base/utils/helper';
 import type { EditorContentChangedEventArgs } from '../editor/monaco';
@@ -12,10 +12,11 @@ import type { EditorLanguage } from '@microsoft/logic-apps-shared';
 import { getFileExtensionName } from '@microsoft/logic-apps-shared';
 import { useFunctionalState } from '@react-hookz/web';
 import type { editor, IRange } from 'monaco-editor';
-import { useEffect, useMemo, useRef, useState } from 'react';
+import { useMemo, useRef, useState } from 'react';
 import { useIntl } from 'react-intl';
 import { Button, MessageBar, MessageBarActions, MessageBarBody } from '@fluentui/react-components';
 import { DismissRegular } from '@fluentui/react-icons';
+import EditableFileName from './EditableFileName';
 
 const customCodeIconStyle = {
   root: {
@@ -28,7 +29,8 @@ const customCodeIconStyle = {
 export interface CodeEditorProps extends BaseEditorProps {
   language: EditorLanguage;
   customCodeEditor?: boolean;
-  nodeTitle?: string;
+  originalFileName: string;
+  onFileNameChange?: FileNameChangeHandler;
 }
 
 export function CodeEditor({
@@ -39,9 +41,11 @@ export function CodeEditor({
   onFocus,
   getTokenPicker,
   label,
-  nodeTitle,
+  originalFileName = '',
   customCodeEditor,
+  onFileNameChange,
 }: CodeEditorProps): JSX.Element {
+  console.log(initialValue);
   const intl = useIntl();
   const codeEditorRef = useRef<editor.IStandaloneCodeEditor | null>(null);
   const editorId = useId('msla-tokenpicker-callout-location');
@@ -51,15 +55,28 @@ export function CodeEditor({
   const [showTokenPickerButton, setShowTokenPickerButton] = useState(false);
   const [getInTokenPicker, setInTokenPicker] = useFunctionalState(false);
   const [showMessageBar, setShowMessageBar] = useState(true);
-  const [getFileName, setFileName] = useFunctionalState('');
+  const [getFileName, setFileName] = useFunctionalState(originalFileName);
+
+  const handleFileNameChange = (fileName: string) => {
+    setFileName(fileName);
+    if (originalFileName !== fileName) {
+      onFileNameChange?.(originalFileName, fileName);
+      onChange?.({
+        value: [createLiteralValueSegment(fileName)],
+        viewModel: {
+          customCodeData: {
+            fileData: getCurrentValue(),
+            fileExtension: getFileExtensionName(language),
+            fileName,
+          },
+        },
+      });
+    }
+  };
 
   const fileExtensionName = useMemo(() => {
     return getFileExtensionName(language);
   }, [language]);
-
-  useEffect(() => {
-    setFileName(nodeTitle + fileExtensionName);
-  }, [nodeTitle, fileExtensionName, setFileName]);
 
   const handleContentChanged = (e: EditorContentChangedEventArgs): void => {
     if (e.value !== undefined) {
@@ -157,7 +174,7 @@ export function CodeEditor({
       {customCodeEditor ? (
         <div className="msla-custom-code-editor-file">
           <Icon iconName="FileCode" styles={customCodeIconStyle} />
-          <div className="msla-custom-code-editor-fileName">{getFileName()}</div>
+          <EditableFileName fileExtension={fileExtensionName} initialFileName={getFileName()} handleFileNameChange={handleFileNameChange} />
         </div>
       ) : null}
       <MonacoEditor

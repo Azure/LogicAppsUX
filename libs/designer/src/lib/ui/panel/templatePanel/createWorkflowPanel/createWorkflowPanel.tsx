@@ -20,11 +20,15 @@ export interface CreateWorkflowTabProps {
   nextTabId?: string;
   hasError: boolean;
   shouldClearDetails: boolean;
+  showCloseButton?: boolean;
+  onClosePanel?: () => void;
 }
 
 export interface CreateWorkflowPanelProps {
   createWorkflow?: CreateWorkflowHandler;
   clearDetailsOnClose?: boolean;
+  panelWidth?: string;
+  showCloseButton?: boolean;
   onClose?: () => void;
 }
 
@@ -33,21 +37,31 @@ const layerProps = {
   eventBubblingEnabled: true,
 };
 
-export const CreateWorkflowPanel = ({ createWorkflow, onClose, clearDetailsOnClose = true }: CreateWorkflowPanelProps) => {
+export const CreateWorkflowPanel = ({
+  createWorkflow,
+  onClose,
+  panelWidth = '50%',
+  clearDetailsOnClose = true,
+  showCloseButton = true,
+}: CreateWorkflowPanelProps) => {
   const dispatch = useDispatch<AppDispatch>();
   const intl = useIntl();
   const { refetch: refetchWorkflowNames } = useExistingWorkflowNames();
-  const { selectedTabId, manifest, isOpen, currentPanelView } = useSelector((state: RootState) => ({
+  const { selectedTabId, manifest, isOpen, isCreateView, currentPanelView, shouldCloseByDefault } = useSelector((state: RootState) => ({
     selectedTabId: state.panel.selectedTabId,
     manifest: state.template.manifest,
     isOpen: state.panel.isOpen,
+    isCreateView: state.workflow.isCreateView,
     currentPanelView: state.panel.currentPanelView,
+    shouldCloseByDefault: !state.manifest.viewTemplateDetails,
   }));
   const isMultiWorkflow = useMemo(() => !!manifest && isMultiWorkflowTemplate(manifest), [manifest]);
 
   const panelTabs: TemplatePanelTab[] = useCreateWorkflowPanelTabs({
     isMultiWorkflowTemplate: isMultiWorkflow,
     createWorkflow: createWorkflow ?? (() => Promise.resolve()),
+    showCloseButton,
+    onClosePanel: onClose,
   });
 
   const resources = {
@@ -55,6 +69,11 @@ export const CreateWorkflowPanel = ({ createWorkflow, onClose, clearDetailsOnClo
       defaultMessage: 'Create workflows from template',
       id: '5pSOjg',
       description: 'Panel header title for creating workflows',
+    }),
+    updatedWorkflowTitle: intl.formatMessage({
+      defaultMessage: 'Update workflow from template',
+      id: '5zW+oj',
+      description: 'Panel header title for updating the workflow',
     }),
   };
 
@@ -81,12 +100,19 @@ export const CreateWorkflowPanel = ({ createWorkflow, onClose, clearDetailsOnClo
   const onRenderHeaderContent = useCallback(
     () => (
       <CreateWorkflowPanelHeader
-        headerTitle={isMultiWorkflow ? resources.multiWorkflowCreateTitle : undefined}
+        headerTitle={isMultiWorkflow ? resources.multiWorkflowCreateTitle : isCreateView ? undefined : resources.updatedWorkflowTitle}
         title={manifest?.title ?? ''}
         description={manifest?.description ?? ''}
       />
     ),
-    [resources.multiWorkflowCreateTitle, isMultiWorkflow, manifest]
+    [
+      isMultiWorkflow,
+      resources.multiWorkflowCreateTitle,
+      resources.updatedWorkflowTitle,
+      isCreateView,
+      manifest?.title,
+      manifest?.description,
+    ]
   );
 
   const selectedTabProps = selectedTabId ? panelTabs?.find((tab) => tab.id === selectedTabId) : panelTabs[0];
@@ -98,12 +124,12 @@ export const CreateWorkflowPanel = ({ createWorkflow, onClose, clearDetailsOnClo
   return (
     <Panel
       styles={{ main: { padding: '0 20px', zIndex: 1000 }, content: { paddingLeft: '0px' } }}
-      isLightDismiss
+      isLightDismiss={shouldCloseByDefault}
       type={PanelType.custom}
-      customWidth={'50%'}
+      customWidth={panelWidth}
       isOpen={isOpen && currentPanelView === TemplatePanelView.CreateWorkflow}
-      onDismiss={dismissPanel}
-      hasCloseButton={true}
+      onDismiss={shouldCloseByDefault ? dismissPanel : undefined}
+      hasCloseButton={shouldCloseByDefault}
       onRenderHeader={onRenderHeaderContent}
       onRenderFooterContent={onRenderFooterContent}
       layerProps={layerProps}

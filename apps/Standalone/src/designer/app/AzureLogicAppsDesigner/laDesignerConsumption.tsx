@@ -1,8 +1,7 @@
 import { environment } from '../../../environments/environment';
 import type { AppDispatch, RootState } from '../../state/store';
-import { setIsChatBotEnabled } from '../../state/workflowLoadingSlice';
+import { changeRunId, setIsChatBotEnabled, setMonitoringView, setReadOnly, setRunHistoryEnabled } from '../../state/workflowLoadingSlice';
 import { DesignerCommandBar } from './DesignerCommandBar';
-import type { ParametersData } from './Models/Workflow';
 import { ChildWorkflowService } from './Services/ChildWorkflow';
 import { HttpClient } from './Services/HttpClient';
 import { StandaloneOAuthService } from './Services/OAuthService';
@@ -16,9 +15,9 @@ import {
   validateWorkflowConsumption,
 } from './Services/WorkflowAndArtifacts';
 import { ArmParser } from './Utilities/ArmParser';
-import { WorkflowUtility } from './Utilities/Workflow';
+import { getDataForConsumption, WorkflowUtility } from './Utilities/Workflow';
 import { Chatbot } from '@microsoft/logic-apps-chatbot';
-import type { ContentType, LogicAppsV2 } from '@microsoft/logic-apps-shared';
+import type { ContentType } from '@microsoft/logic-apps-shared';
 import {
   BaseApiManagementService,
   BaseAppServiceService,
@@ -47,9 +46,10 @@ import {
   store as DesignerStore,
   getSKUDefaultHostOptions,
   Constants,
+  RunHistoryPanel,
 } from '@microsoft/logic-apps-designer';
 import { useDispatch, useSelector } from 'react-redux';
-import { useEffect, useMemo, useRef, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import CodeViewEditor from './CodeView';
 
 const apiVersion = '2020-06-01';
@@ -69,6 +69,7 @@ const DesignerEditorConsumption = () => {
     runId,
     appId,
     showChatBot,
+    showRunHistory,
     hostOptions,
     showConnectionsPanel,
     suppressDefaultNodeSelect,
@@ -96,20 +97,20 @@ const DesignerEditorConsumption = () => {
     parameters,
   } = useMemo(() => getDataForConsumption(workflowAndArtifactsData), [workflowAndArtifactsData]);
 
+  const { data: runInstanceData } = useRunInstanceConsumption(workflowName, appId, runId);
   const [runWorkflow, setRunWorkflow] = useState<any>();
 
-  const onRunInstanceSuccess = async (runDefinition: LogicAppsV2.RunInstanceDefinition) => {
-    if (isMonitoringView) {
-      const standardAppInstance = {
-        ...workflow,
-        definition: runDefinition.properties.workflow.properties.definition,
+  useEffect(() => {
+    if (runInstanceData && isMonitoringView) {
+      const appInstance = {
+        ...baseWorkflow,
+        definition: runInstanceData.properties.workflow.properties.definition,
       };
-      setRunWorkflow(standardAppInstance);
+      setRunWorkflow(appInstance);
     }
-  };
-  const { data: runInstanceData } = useRunInstanceConsumption(workflowName, onRunInstanceSuccess, appId, runId);
+  }, [runInstanceData, baseWorkflow, isMonitoringView]);
 
-  const workflow = runWorkflow ?? baseWorkflow;
+  const workflow = useMemo(() => runWorkflow ?? baseWorkflow, [runWorkflow, baseWorkflow]);
 
   const [definition, setDefinition] = useState(workflow.definition);
   const [workflowDefinitionId, setWorkflowDefinitionId] = useState(guid());
@@ -147,6 +148,22 @@ const DesignerEditorConsumption = () => {
       root.style.overflow = 'hidden';
     }
   }, []);
+
+  // RUN HISTORY
+  const toggleMonitoringView = useCallback(() => {
+    dispatch(setMonitoringView(!isMonitoringView));
+    dispatch(setReadOnly(!isMonitoringView));
+    dispatch(setRunHistoryEnabled(!isMonitoringView));
+    if (runId) {
+      dispatch(changeRunId(undefined));
+    }
+  }, [dispatch, isMonitoringView, runId]);
+  const onRunSelected = useCallback(
+    (runId: string) => {
+      dispatch(changeRunId(runId));
+    },
+    [dispatch]
+  );
 
   if (!definition || isWorkflowAndArtifactsLoading) {
     return <></>;
@@ -280,23 +297,12 @@ const DesignerEditorConsumption = () => {
             workflowId={workflowDefinitionId}
             runInstance={runInstanceData}
           >
-            <div style={{ display: 'flex', flexDirection: 'column', height: 'inherit', width: 'inherit' }}>
-              <DesignerCommandBar
-                id={workflowId}
-                saveWorkflow={saveWorkflowFromDesigner}
-                discard={discardAllChanges}
-                location={canonicalLocation}
-                isReadOnly={readOnly}
-                isDarkMode={isDarkMode}
-                isDesignerView={designerView}
-                showConnectionsPanel={showConnectionsPanel}
-                enableCopilot={() => {
-                  dispatch(setIsChatBotEnabled(!showChatBot));
-                }}
-                switchViews={handleSwitchView}
-                saveWorkflowFromCode={saveWorkflowFromCode}
+            <div style={{ display: 'flex', height: 'inherit' }}>
+              <RunHistoryPanel
+                collapsed={!showRunHistory}
+                onClose={() => dispatch(setRunHistoryEnabled(false))}
+                onRunSelected={onRunSelected}
               />
-              {designerView ? <Designer /> : <CodeViewEditor ref={codeEditorRef} isConsumption />}
               {showChatBot ? (
                 <Chatbot
                   getUpdatedWorkflow={getUpdatedWorkflow}
@@ -307,6 +313,30 @@ const DesignerEditorConsumption = () => {
                   getAuthToken={getAuthToken}
                 />
               ) : null}
+              <div style={{ display: 'flex', flexDirection: 'column', height: 'inherit', flexGrow: 1, maxWidth: '100%' }}>
+                <DesignerCommandBar
+                  id={workflowId}
+                  saveWorkflow={saveWorkflowFromDesigner}
+                  discard={discardAllChanges}
+                  location={canonicalLocation}
+                  isReadOnly={readOnly}
+                  isDarkMode={isDarkMode}
+                  isDesignerView={designerView}
+                  isMonitoringView={isMonitoringView}
+                  showConnectionsPanel={showConnectionsPanel}
+                  enableCopilot={() => dispatch(setIsChatBotEnabled(!showChatBot))}
+                  toggleMonitoringView={toggleMonitoringView}
+                  showRunHistory={showRunHistory}
+                  toggleRunHistory={() => dispatch(setRunHistoryEnabled(!showRunHistory))}
+                  selectRun={(runId: string) => {
+                    toggleMonitoringView();
+                    dispatch(changeRunId(runId));
+                  }}
+                  switchViews={handleSwitchView}
+                  saveWorkflowFromCode={saveWorkflowFromCode}
+                />
+                {designerView ? <Designer /> : <CodeViewEditor ref={codeEditorRef} isConsumption />}
+              </div>
             </div>
           </BJSWorkflowProvider>
         ) : null}
@@ -551,49 +581,6 @@ const getDesignerServices = (
     customCodeService,
     userPreferenceService: new BaseUserPreferenceService(),
   };
-};
-
-const getDataForConsumption = (data: any) => {
-  const properties = data?.properties as any;
-
-  const definition = removeProperties(properties?.definition, ['parameters']);
-  const connections =
-    (isOpenApiSchemaVersion(definition) ? properties?.connectionReferences : properties?.parameters?.$connections?.value) ?? {};
-
-  const workflow = { definition, connections };
-  const connectionReferences = formatConnectionReferencesForConsumption(connections);
-  const parameters: ParametersData = formatWorkflowParametersForConsumption(properties);
-
-  return { workflow, connectionReferences, parameters };
-};
-
-const removeProperties = (obj: any = {}, props: string[] = []): object => {
-  return Object.fromEntries(Object.entries(obj).filter(([key]) => !props.includes(key)));
-};
-
-const formatConnectionReferencesForConsumption = (connectionReferences: Record<string, any>): any => {
-  return Object.fromEntries(
-    Object.entries(connectionReferences).map(([key, value]) => [key, formatConnectionReferenceForConsumption(value)])
-  );
-};
-
-const formatConnectionReferenceForConsumption = (connectionReference: any): any => {
-  const connectionReferenceCopy = { ...connectionReference };
-  connectionReferenceCopy.connection = connectionReference.connection ?? { id: connectionReference.connectionId };
-  delete connectionReferenceCopy.connectionId;
-  connectionReferenceCopy.api = connectionReference.api ?? { id: connectionReference.id };
-  delete connectionReferenceCopy.id;
-  return connectionReferenceCopy;
-};
-
-const formatWorkflowParametersForConsumption = (properties: any): ParametersData => {
-  const parameters = removeProperties(properties?.definition?.parameters, ['$connections']) as ParametersData;
-  Object.entries(properties?.parameters ?? {}).forEach(([key, parameter]: [key: string, parameter: any]) => {
-    if (parameters[key]) {
-      parameters[key].value = parameter?.value;
-    }
-  });
-  return parameters;
 };
 
 export default DesignerEditorConsumption;

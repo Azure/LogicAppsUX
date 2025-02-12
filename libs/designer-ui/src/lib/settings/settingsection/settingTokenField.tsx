@@ -12,6 +12,7 @@ import type {
   CallbackHandler,
   CastHandler,
   ChangeHandler,
+  FileNameChangeHandler,
   GetTokenPickerHandler,
   loadParameterValueFromStringHandler,
 } from '../../editor/base';
@@ -63,6 +64,7 @@ export interface SettingTokenFieldProps extends SettingProps {
   onValueChange?: ChangeHandler;
   onComboboxMenuOpen?: CallbackHandler;
   onCastParameter: CastHandler;
+  onFileNameChange?: FileNameChangeHandler;
   pickerCallbacks?: PickerCallbackHandlers;
   tokenpickerButtonProps?: TokenPickerButtonEditorProps;
   getTokenPicker: GetTokenPickerHandler;
@@ -94,7 +96,6 @@ export const SettingTokenField = ({ ...props }: SettingTokenFieldProps) => {
 export type TokenFieldProps = SettingTokenFieldProps & { labelId: string };
 
 export const TokenField = ({
-  nodeTitle,
   editor,
   editorOptions,
   editorViewModel,
@@ -115,6 +116,7 @@ export const TokenField = ({
   onComboboxMenuOpen,
   hideValidationErrors,
   onCastParameter,
+  onFileNameChange,
   getTokenPicker,
   suppressCastingForSerialize,
   required,
@@ -187,25 +189,28 @@ export const TokenField = ({
       );
 
     case constants.PARAMETER.EDITOR.CODE: {
-      const customCodeEditor = isCustomCode(editor, editorOptions?.language);
-      let customCodeData = editorViewModel?.customCodeData?.fileData ?? '';
-      if (typeof customCodeData !== 'string') {
-        customCodeData = JSON.stringify(customCodeData);
-      }
-      const initialValue = editorOptions?.language && customCodeEditor ? [createLiteralValueSegment(customCodeData)] : value;
-      const language = editorOptions.language ?? EditorLanguage.javascript;
+      const { language = EditorLanguage.javascript } = editorOptions || {};
+      const customCodeEditor = isCustomCode(editor, language);
+      const customCodeData = (() => {
+        const data = editorViewModel?.customCodeData?.fileData ?? '';
+        return typeof data === 'string' ? data : JSON.stringify(data);
+      })();
+      const fileName = editorViewModel?.customCodeData?.fileName;
+
+      const initialValue = customCodeEditor ? [createLiteralValueSegment(customCodeData)] : value;
 
       return (
         <CodeEditor
+          originalFileName={fileName}
           labelId={labelId}
           initialValue={initialValue}
           getTokenPicker={getTokenPicker}
+          onFileNameChange={onFileNameChange}
           language={language}
           onChange={onValueChange}
           readonly={readOnly}
           placeholder={placeholder}
           customCodeEditor={customCodeEditor}
-          nodeTitle={nodeTitle}
         />
       );
     }

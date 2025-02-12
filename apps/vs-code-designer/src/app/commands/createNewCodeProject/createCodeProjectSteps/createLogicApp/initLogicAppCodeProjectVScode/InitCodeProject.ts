@@ -15,6 +15,7 @@ import {
   extensionsFileName,
   extensionCommand,
   logicAppsStandardExtensionId,
+  vscodeFolderName,
 } from '../../../../../../constants';
 import { ext } from '../../../../../../extensionVariables';
 import { localize } from '../../../../../../localize';
@@ -89,7 +90,7 @@ export abstract class InitCodeProject extends AzureWizardExecuteStep<IProjectWiz
 
     // Create the necessary files and folders for Visual Studio Code under the logic app folder path.
     await fse.ensureDir(logicAppFolderPath);
-    const vscodePath: string = path.join(logicAppFolderPath, '.vscode');
+    const vscodePath: string = path.join(logicAppFolderPath, vscodeFolderName);
     await fse.ensureDir(vscodePath);
 
     // Write the necessary Visual Studio Code configuration files.
@@ -116,7 +117,7 @@ export abstract class InitCodeProject extends AzureWizardExecuteStep<IProjectWiz
    * @param context The project wizard context.
    **/
   public async overwriteTasksJson(context: IProjectWizardContext): Promise<void> {
-    const tasksJsonPath: string = path.join(context.projectPath, '.vscode', 'Tasks.json');
+    const tasksJsonPath: string = path.join(context.projectPath, vscodeFolderName, 'Tasks.json');
     const tasksJsonContent = `{
         "version": "2.0.0",
         "tasks": [

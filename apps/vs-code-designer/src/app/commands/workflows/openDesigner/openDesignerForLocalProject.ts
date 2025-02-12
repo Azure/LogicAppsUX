@@ -14,9 +14,12 @@ import {
   addConnectionData,
   getConnectionsAndSettingsToUpdate,
   getConnectionsFromFile,
+  getCustomCodeFromFiles,
+  getCustomCodeToUpdate,
   getLogicAppProjectRoot,
   getParametersFromFile,
   saveConnectionReferences,
+  saveCustomCodeStandard,
 } from '../../../utils/codeless/connection';
 import { saveWorkflowParameter } from '../../../utils/codeless/parameter';
 import { startDesignTimeApi } from '../../../utils/codeless/startDesignTimeApi';
@@ -47,7 +50,8 @@ export default class OpenDesignerForLocalProject extends OpenDesignerBase {
 
   constructor(context: IActionContext, node: Uri) {
     const workflowName = path.basename(path.dirname(node.fsPath));
-    const panelName = `${workspace.name}-${workflowName}`;
+    const logicAppName = path.basename(path.dirname(path.dirname(node.fsPath)));
+    const panelName = `${workspace.name}-${logicAppName}-${workflowName}`;
     const panelGroupKey = ext.webViewKey.designerLocal;
 
     super(context, workflowName, panelName, workflowAppApiVersion, panelGroupKey, false, true, false);
@@ -251,14 +255,14 @@ export default class OpenDesignerForLocalProject extends OpenDesignerBase {
 
     await window.withProgress(options, async () => {
       try {
-        const { definition, connectionReferences, parameters } = workflowToSave;
+        const { definition, connectionReferences, parameters, customCodeData } = workflowToSave;
         const definitionToSave: any = definition;
         const parametersFromDefinition = parameters;
+        const projectPath = await getLogicAppProjectRoot(this.context, filePath);
 
         workflow.definition = definitionToSave;
 
         if (connectionReferences) {
-          const projectPath = await getLogicAppProjectRoot(this.context, filePath);
           const connectionsAndSettingsToUpdate = await getConnectionsAndSettingsToUpdate(
             this.context,
             projectPath,
@@ -269,6 +273,11 @@ export default class OpenDesignerForLocalProject extends OpenDesignerBase {
           );
 
           await saveConnectionReferences(this.context, projectPath, connectionsAndSettingsToUpdate);
+        }
+
+        if (customCodeData) {
+          const customCodeToUpdate = await getCustomCodeToUpdate(this.context, filePath, customCodeData);
+          await saveCustomCodeStandard(filePath, customCodeToUpdate);
         }
 
         if (parametersFromDefinition) {
@@ -417,6 +426,9 @@ export default class OpenDesignerForLocalProject extends OpenDesignerBase {
     const connectionsData: string = await getConnectionsFromFile(this.context, this.workflowFilePath);
     const projectPath: string | undefined = await getLogicAppProjectRoot(this.context, this.workflowFilePath);
     const parametersData: Record<string, Parameter> = await getParametersFromFile(this.context, this.workflowFilePath);
+    const customCodeData: Record<string, string> = await getCustomCodeFromFiles(this.workflowFilePath);
+    const workflowDetails = await getManualWorkflowsInLocalProject(projectPath, this.workflowName);
+    const artifacts = await getArtifactsInLocalProject(projectPath);
     let localSettings: Record<string, string>;
     let azureDetails: AzureConnectorDetails;
 
@@ -432,14 +444,15 @@ export default class OpenDesignerForLocalProject extends OpenDesignerBase {
       appSettingNames: Object.keys(localSettings),
       standardApp: getStandardAppData(this.workflowName, workflowContent),
       connectionsData,
+      customCodeData,
       parametersData,
       localSettings,
       azureDetails,
       accessToken: azureDetails.accessToken,
       workflowContent,
-      workflowDetails: await getManualWorkflowsInLocalProject(projectPath, this.workflowName),
+      workflowDetails,
       workflowName: this.workflowName,
-      artifacts: await getArtifactsInLocalProject(projectPath),
+      artifacts,
       schemaArtifacts: this.schemaArtifacts,
       mapArtifacts: this.mapArtifacts,
     };

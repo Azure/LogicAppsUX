@@ -15,6 +15,7 @@ export const Artifact = {
   ConnectionsFile: 'connections.json',
   ParametersFile: 'parameters.json',
   WorkflowFile: 'workflow.json',
+  HostFile: 'host.json',
 } as const;
 
 export interface ArtifactProperties {
@@ -105,7 +106,7 @@ export interface ConnectionsData {
 }
 
 // eslint-disable-next-line @typescript-eslint/no-empty-interface
-export interface ParametersData extends Record<string, Parameter> {}
+export type ParametersData = Record<string, Parameter>;
 
 export interface Parameter {
   name?: string;

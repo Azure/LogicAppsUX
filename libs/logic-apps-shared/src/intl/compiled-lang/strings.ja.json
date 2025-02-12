@@ -11,12 +11,6 @@
       "value": "警告: 入力ノードの種類がスキーマ ノードの種類と一致しません"
     }
   ],
-  "+0ua83": [
-    {
-      "type": 0,
-      "value": "Parameters"
-    }
-  ],
   "+0yxlR": [
     {
       "type": 0,
@@ -80,7 +74,7 @@
   "+M7bC6": [
     {
       "type": 0,
-      "value": "Succeeded with retries"
+      "value": "再試行により成功"
     }
   ],
   "+R90eK": [
@@ -517,6 +511,12 @@
       "value": "。"
     }
   ],
+  "0a4IGE": [
+    {
+      "type": 0,
+      "value": "Refresh"
+    }
+  ],
   "0i/6TR": [
     {
       "type": 0,
@@ -735,6 +735,12 @@
     {
       "type": 0,
       "value": "有効な URI を入力してください。"
+    }
+  ],
+  "1tmN2o": [
+    {
+      "type": 0,
+      "value": "Workflow version"
     }
   ],
   "1uGBLP": [
@@ -1307,6 +1313,12 @@
       "value": "再試行の履歴"
     }
   ],
+  "4rdY7D": [
+    {
+      "type": 0,
+      "value": "Run ID"
+    }
+  ],
   "4vcnOA": [
     {
       "type": 0,
@@ -1834,7 +1846,7 @@
   "7X4UA/": [
     {
       "type": 0,
-      "value": "Waiting"
+      "value": "待機中"
     }
   ],
   "7ZF1Hr": [
@@ -2238,7 +2250,7 @@
   "9dd0/m": [
     {
       "type": 0,
-      "value": "Running"
+      "value": "実行中"
     }
   ],
   "9djnqI": [
@@ -2275,6 +2287,12 @@
     {
       "type": 0,
       "value": "さらに詳細な情報については、次のリソースを参照してください。"
+    }
+  ],
+  "A5/IqS": [
+    {
+      "type": 0,
+      "value": "Run identifier"
     }
   ],
   "A5/UwX": [
@@ -2337,6 +2355,16 @@
     {
       "type": 0,
       "value": "サービス プリンシパル"
+    }
+  ],
+  "AMMfbt": [
+    {
+      "type": 1,
+      "value": "count"
+    },
+    {
+      "type": 0,
+      "value": " Second"
     }
   ],
   "APKdYG": [
@@ -2966,6 +2994,12 @@
     {
       "type": 0,
       "value": "トリガーの種類"
+    }
+  ],
+  "DeM/yz": [
+    {
+      "type": 0,
+      "value": "Start time"
     }
   ],
   "DfXxoX": [
@@ -3911,6 +3945,12 @@
       "value": "グループの作成"
     }
   ],
+  "J8G55j": [
+    {
+      "type": 0,
+      "value": "Search by run identifier"
+    }
+  ],
   "J9wWry": [
     {
       "type": 0,
@@ -4104,7 +4144,7 @@
   "KWeLBB": [
     {
       "type": 0,
-      "value": "Closing..."
+      "value": "閉じています..."
     }
   ],
   "KX1poC": [
@@ -4205,7 +4245,7 @@
   "LBlM+D": [
     {
       "type": 0,
-      "value": "Not specified"
+      "value": "指定なし"
     }
   ],
   "LCRHQ9": [
@@ -5206,6 +5246,12 @@
       "value": "全画面表示"
     }
   ],
+  "QT4IaP": [
+    {
+      "type": 0,
+      "value": "Filtered!"
+    }
+  ],
   "QVtqAn": [
     {
       "type": 0,
@@ -5563,6 +5609,12 @@
       "value": "状態が \"失敗\" の場合には、出力を提供しないでください"
     }
   ],
+  "SbHBIZ": [
+    {
+      "type": 0,
+      "value": "No runs found"
+    }
+  ],
   "SgiTAh": [
     {
       "type": 0,
@@ -5593,6 +5645,12 @@
       "value": "完了"
     }
   ],
+  "SwWaHa": [
+    {
+      "type": 0,
+      "value": "Enter a valid run identifier"
+    }
+  ],
   "Sy4cFC": [
     {
       "type": 0,
@@ -5609,6 +5667,12 @@
     {
       "type": 0,
       "value": "テスト"
+    }
+  ],
+  "T/7b2y": [
+    {
+      "type": 0,
+      "value": "Duration"
     }
   ],
   "TDfQzn": [
@@ -6320,7 +6384,7 @@
   "WbIGAh": [
     {
       "type": 0,
-      "value": "Succeeded"
+      "value": "成功"
     }
   ],
   "Wc77aJ": [
@@ -6635,12 +6699,6 @@
     {
       "type": 0,
       "value": "応答にワークフロー メタデータ ヘッダーを含めないように Logic Apps を制限します。"
-    }
-  ],
-  "XtVOMn": [
-    {
-      "type": 0,
-      "value": "Something went wrong"
     }
   ],
   "XtuP5e": [
@@ -7009,6 +7067,16 @@
       "value": "閉じる"
     }
   ],
+  "ZgU5eu": [
+    {
+      "type": 1,
+      "value": "count"
+    },
+    {
+      "type": 0,
+      "value": " Day"
+    }
+  ],
   "ZgyD93": [
     {
       "type": 0,
@@ -7031,12 +7099,6 @@
     {
       "type": 0,
       "value": "動的コンテンツの詳細情報。"
-    }
-  ],
-  "ZvAp7m": [
-    {
-      "type": 0,
-      "value": "Save"
     }
   ],
   "ZyDq4/": [
@@ -7085,6 +7147,12 @@
     {
       "type": 0,
       "value": "再試行ポリシーの最大間隔が無効です。ISO 8601 の期間の形式と一致する必要があります"
+    }
+  ],
+  "aKf/r+": [
+    {
+      "type": 0,
+      "value": "Specified run identifier not found"
     }
   ],
   "aP1wk9": [
@@ -7255,6 +7323,12 @@
     {
       "type": 0,
       "value": "この操作には、現在のワークフローに存在しないトークンが含まれています。"
+    }
+  ],
+  "bPyWVY": [
+    {
+      "type": 0,
+      "value": "Failed to load runs"
     }
   ],
   "bTrk+S": [
@@ -7525,6 +7599,12 @@
       "value": "ダウンロード (Alt または Option + 選択)"
     }
   ],
+  "d9RCuq": [
+    {
+      "type": 0,
+      "value": "Workflow run status"
+    }
+  ],
   "dBWIjR": [
     {
       "type": 0,
@@ -7727,6 +7807,12 @@
       "value": "このフローを次のものに編集してください"
     }
   ],
+  "eLQPek": [
+    {
+      "type": 0,
+      "value": "Status"
+    }
+  ],
   "eLthgv": [
     {
       "type": 0,
@@ -7832,7 +7918,7 @@
   "eofB85": [
     {
       "type": 0,
-      "value": "Timed out"
+      "value": "タイムアウト"
     }
   ],
   "epOMnV": [
@@ -7963,12 +8049,6 @@
       "value": "(UTC-05:00) ハイチ"
     }
   ],
-  "fZJWBR": [
-    {
-      "type": 0,
-      "value": "Loading designer"
-    }
-  ],
   "faUrud": [
     {
       "type": 0,
@@ -7997,6 +8077,16 @@
     {
       "type": 0,
       "value": "(UTC+08:00) 北京、重慶、香港特別行政区、ウルムチ"
+    }
+  ],
+  "ft8BH8": [
+    {
+      "type": 1,
+      "value": "count"
+    },
+    {
+      "type": 0,
+      "value": " Seconds"
     }
   ],
   "fvGvnA": [
@@ -8316,6 +8406,16 @@
     {
       "type": 0,
       "value": "これは私が探しているものではありません"
+    }
+  ],
+  "hesDPs": [
+    {
+      "type": 1,
+      "value": "count"
+    },
+    {
+      "type": 0,
+      "value": " Milliseconds"
     }
   ],
   "hihfHd": [
@@ -9271,6 +9371,16 @@
       "value": "必須。小文字に変換する文字列。文字列に含まれる文字に小文字に相当するものがない場合、その文字は変更されないまま、返される文字列に含まれます。"
     }
   ],
+  "maP1K/": [
+    {
+      "type": 1,
+      "value": "count"
+    },
+    {
+      "type": 0,
+      "value": " Minutes"
+    }
+  ],
   "mb1XDD": [
     {
       "type": 0,
@@ -9643,6 +9753,16 @@
       "value": "必須。バイナリ表現にデコードする dataURI。"
     }
   ],
+  "oBAL2F": [
+    {
+      "type": 1,
+      "value": "count"
+    },
+    {
+      "type": 0,
+      "value": " Days"
+    }
+  ],
   "oDHXKh": [
     {
       "type": 0,
@@ -9727,10 +9847,14 @@
       "value": "応答本文"
     }
   ],
-  "ohOaXj": [
+  "og5JOA": [
+    {
+      "type": 1,
+      "value": "count"
+    },
     {
       "type": 0,
-      "value": "Errors"
+      "value": " Millisecond"
     }
   ],
   "ohpbkw": [
@@ -10336,16 +10460,20 @@
       "value": "接続の作成を取り消します"
     }
   ],
+  "sJQee6": [
+    {
+      "type": 1,
+      "value": "count"
+    },
+    {
+      "type": 0,
+      "value": " Hours"
+    }
+  ],
   "sKy720": [
     {
       "type": 0,
       "value": "ワークフロー名の値を指定する必要があります。"
-    }
-  ],
-  "sOnphB": [
-    {
-      "type": 0,
-      "value": "Resubmit"
     }
   ],
   "sRpETS": [
@@ -11072,6 +11200,12 @@
       "value": "API 接続を作成して使用するには、このロジック アプリ上で構成したマネージド ID が必要です。"
     }
   ],
+  "vhwaYb": [
+    {
+      "type": 0,
+      "value": "すべてのカスタム値文字列と DateTime 値を二重引用符で囲みます。例: \"abc\"。"
+    }
+  ],
   "viee6C": [
     {
       "type": 0,
@@ -11130,6 +11264,12 @@
       "value": "重複する値が含まれています"
     }
   ],
+  "vzXXFP": [
+    {
+      "type": 0,
+      "value": "Workflow version"
+    }
+  ],
   "w+7aGo": [
     {
       "type": 0,
@@ -11164,6 +11304,16 @@
     {
       "type": 0,
       "value": "折りたたむ"
+    }
+  ],
+  "wAg9+z": [
+    {
+      "type": 1,
+      "value": "count"
+    },
+    {
+      "type": 0,
+      "value": " Hour"
     }
   ],
   "wBBu4g": [
@@ -11490,6 +11640,16 @@
     {
       "type": 0,
       "value": "URI からパスを返します。パスが指定されていない場合は、'/' を返します"
+    }
+  ],
+  "xfXUGz": [
+    {
+      "type": 1,
+      "value": "count"
+    },
+    {
+      "type": 0,
+      "value": " Minute"
     }
   ],
   "xi2tn6": [

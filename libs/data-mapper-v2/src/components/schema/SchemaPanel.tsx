@@ -27,7 +27,7 @@ export interface ConfigPanelProps {
 
 export const SchemaPanel = ({ id }: ConfigPanelProps) => {
   const dispatch = useDispatch<AppDispatch>();
-  const { isSourceSchema, schemaType, toggleEditState } = useSchema({ id });
+  const { isSourceSchema, schemaType, toggleEditState, schemaFile } = useSchema({ id });
   const intl = useIntl();
   const panelStyles = usePanelStyles();
   const styles = useStyles();
@@ -108,9 +108,9 @@ export const SchemaPanel = ({ id }: ConfigPanelProps) => {
         description: 'Destination',
       }),
       SEARCH_PROPERTIES: intl.formatMessage({
-        defaultMessage: 'Search properties',
-        id: 'BnkCwH',
-        description: 'Seach source or target properties',
+        defaultMessage: 'Search nodes',
+        id: 'pJJ3x8',
+        description: 'Seach source or target nodes',
       }),
       EDIT_SCHEMA: intl.formatMessage({
         defaultMessage: 'Edit schema',
@@ -154,7 +154,7 @@ export const SchemaPanel = ({ id }: ConfigPanelProps) => {
         isOpen={!!currentPanelView}
         title={{
           text: isSourceSchema ? stringResources.SOURCE : stringResources.DESTINATION,
-          subTitleText: selectedSchemaFile?.name,
+          subTitleText: selectedSchemaFile?.name ?? schemaFile ?? '',
           rightAction: scehmaInEditState ? null : (
             <Button
               appearance="transparent"

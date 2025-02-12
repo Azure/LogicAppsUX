@@ -37,13 +37,15 @@ const cardStyles: IDocumentCardStyles = {
 export const TemplateCard = ({ templateName }: TemplateCardProps) => {
   const dispatch = useDispatch<AppDispatch>();
   const intl = useIntl();
-  const { templateManifest, workflowAppName, subscriptionId, location } = useSelector((state: RootState) => ({
+  const { templateManifest, workflowAppName, subscriptionId, location, customTemplateNames } = useSelector((state: RootState) => ({
     templateManifest: state.manifest.availableTemplates?.[templateName],
     subscriptionId: state.workflow.subscriptionId,
     workflowAppName: state.workflow.workflowAppName,
     location: state.workflow.location,
+    customTemplateNames: state.manifest.customTemplateNames,
   }));
   const isMultiWorkflow = useMemo(() => templateManifest && isMultiWorkflowTemplate(templateManifest), [templateManifest]);
+  const isCustomTemplate = useMemo(() => customTemplateNames?.includes(templateName), [customTemplateNames, templateName]);
 
   const intlText = {
     TEMPLATE_LOADING: intl.formatMessage({ defaultMessage: 'Loading....', description: 'Loading text', id: 'cZ60Tk' }),
@@ -72,7 +74,7 @@ export const TemplateCard = ({ templateName }: TemplateCardProps) => {
       args: [templateName, workflowAppName, `isMultiWorkflowTemplate:${isMultiWorkflow}`],
     });
     dispatch(changeCurrentTemplateName(templateName));
-    dispatch(loadTemplate(templateManifest));
+    dispatch(loadTemplate({ preLoadedManifest: templateManifest, isCustomTemplate }));
 
     if (Object.keys(templateManifest?.workflows ?? {}).length === 0) {
       dispatch(openQuickViewPanelView());
@@ -183,20 +185,25 @@ export const BlankWorkflowTemplateCard = () => {
       id: 'pykp8c',
     }),
     BLANK_WORKFLOW_DESCRIPTION: intl.formatMessage({
-      defaultMessage: 'Start with a blank workflow to build your integration process from scratch.',
+      defaultMessage: 'Start with an empty workflow to build your integration solution.',
       description: 'Label text for the card that lets users start from a blank workflow',
-      id: 'nN1ezT',
+      id: 'kcWgxU',
+    }),
+    REPLACE_WITH_BLANK_WORKFLOW: intl.formatMessage({
+      defaultMessage: 'Replace your existing workflow with an empty workflow to rebuild your integration solution.',
+      description: 'Label text for the card that lets users replace the current workflow with blank workflow',
+      id: 'boxBWI',
     }),
   };
 
-  const onBlankWorkflowClick = () => {
+  const onBlankWorkflowClick = async () => {
     LoggerService().log({
       level: LogEntryLevel.Trace,
       area: 'Templates.TemplateCard.Blank',
       message: 'Blank workflow is selected',
       args: [workflowAppName],
     });
-    TemplateService()?.onAddBlankWorkflow();
+    await TemplateService()?.onAddBlankWorkflow();
   };
 
   return (

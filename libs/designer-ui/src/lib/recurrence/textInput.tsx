@@ -151,6 +151,9 @@ export const MinuteTextInput = ({
 
 const convertStringToNumberArray = (value: string): number[] => {
   let newValue = value;
+  if (!newValue.trim()) {
+    return [];
+  }
   if (newValue.startsWith('[') && newValue.endsWith(']')) {
     newValue = newValue.replace(/^\[|\]$/g, '');
   }

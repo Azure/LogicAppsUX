@@ -4,13 +4,13 @@ import type { IRunService } from '../run';
 import type { CallbackInfo } from '../callbackInfo';
 import type { ContentLink, Runs, ArmResources, Run, LogicAppsV2 } from '../../../utils/src';
 import {
-  ArgumentException,
   isCallbackInfoWithRelativePath,
   HTTP_METHODS,
   getCallbackUrl,
   getRecordEntry,
   UnsupportedException,
   isNullOrUndefined,
+  validateRequiredServiceArguments,
 } from '../../../utils/src';
 import { isHybridLogicApp } from './hybrid';
 import { LogEntryLevel } from '../logging/logEntry';
@@ -31,12 +31,8 @@ export class StandardRunService implements IRunService {
 
   constructor(public readonly options: RunServiceOptions) {
     const { apiVersion, baseUrl, isDev } = options;
-    if (!baseUrl) {
-      throw new ArgumentException('baseUrl required');
-    }
-    if (!apiVersion) {
-      throw new ArgumentException('apiVersion required');
-    }
+    validateRequiredServiceArguments({ apiVersion, baseUrl });
+
     this._isDev = isDev || false;
   }
 
@@ -117,12 +113,12 @@ export class StandardRunService implements IRunService {
    */
   async getRun(runId: string): Promise<Run> {
     const { apiVersion, baseUrl, httpClient, workflowName } = this.options;
-
-    let uri = `${baseUrl}/workflows/${workflowName}/runs/${runId}?api-version=${apiVersion}&$expand=properties/actions,workflow/properties`;
+    const onlyRunId = runId.split('/')?.at(-1);
+    let uri = `${baseUrl}/workflows/${workflowName}/runs/${onlyRunId}?api-version=${apiVersion}&$expand=properties/actions,workflow/properties`;
 
     try {
       if (isHybridLogicApp(uri)) {
-        uri = `${baseUrl}/workflows/${workflowName}/runs/${runId}?$expand=properties/actions,workflow/properties`;
+        uri = `${baseUrl}/workflows/${workflowName}/runs/${onlyRunId}?$expand=properties/actions,workflow/properties`;
 
         const { uri: newUri, headerPath } = StandardRunService.getProxyUrl(uri);
         const response = await httpClient.post<Run, undefined>({

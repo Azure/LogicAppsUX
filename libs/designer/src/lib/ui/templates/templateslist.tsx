@@ -2,7 +2,7 @@ import type { AppDispatch, RootState } from '../../core/state/templates/store';
 import { useDispatch, useSelector } from 'react-redux';
 import { BlankWorkflowTemplateCard, TemplateCard } from './cards/templateCard';
 import { Pager } from '@microsoft/designer-ui';
-import { TemplateFilters } from './filters/templateFilters';
+import { TemplateFilters, templateDefaultTabKey } from './filters/templateFilters';
 import { useEffect } from 'react';
 import { setLayerHostSelector } from '@fluentui/react';
 import type { CreateWorkflowHandler, TemplatesDesignerProps } from './TemplatesDesigner';
@@ -16,8 +16,9 @@ export const TemplatesList = ({ detailFilters, createWorkflowCall }: TemplatesDe
 
   const {
     filteredTemplateNames,
-    filters: { pageNum },
+    filters: { pageNum, detailFilters: appliedDetailFilters },
   } = useSelector((state: RootState) => state.manifest);
+  const selectedTabId = appliedDetailFilters?.Type?.[0]?.value;
 
   const startingIndex = pageNum * templatesCountPerPage;
   const endingIndex = startingIndex + templatesCountPerPage;
@@ -30,7 +31,7 @@ export const TemplatesList = ({ detailFilters, createWorkflowCall }: TemplatesDe
 
       <div>
         <div className="msla-templates-list">
-          <BlankWorkflowTemplateCard />
+        {selectedTabId === templateDefaultTabKey && <BlankWorkflowTemplateCard />}
           {filteredTemplateNames === undefined ? (
             <>
               {[1, 2, 3, 4].map((i) => (

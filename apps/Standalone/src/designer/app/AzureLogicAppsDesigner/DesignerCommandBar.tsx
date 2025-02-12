@@ -3,7 +3,14 @@ import { Badge, Spinner } from '@fluentui/react-components';
 import type { ICommandBarItemProps } from '@fluentui/react/lib/CommandBar';
 import { CommandBar } from '@fluentui/react/lib/CommandBar';
 import type { ILoggerService } from '@microsoft/logic-apps-shared';
-import { LogEntryLevel, LoggerService, isNullOrEmpty, RUN_AFTER_COLORS, ChatbotService } from '@microsoft/logic-apps-shared';
+import {
+  LogEntryLevel,
+  LoggerService,
+  isNullOrEmpty,
+  RUN_AFTER_COLORS,
+  ChatbotService,
+  WorkflowService,
+} from '@microsoft/logic-apps-shared';
 import type { AppDispatch, CustomCodeFileNameMapping, RootState, Workflow } from '@microsoft/logic-apps-designer';
 import {
   store as DesignerStore,
@@ -28,14 +35,16 @@ import {
   getDocumentationMetadata,
   resetDesignerView,
   useNodesAndDynamicDataInitialized,
+  getRun,
+  downloadDocumentAsFile,
 } from '@microsoft/logic-apps-designer';
-import { useMemo } from 'react';
+import { useCallback, useMemo, useState } from 'react';
 import { useMutation } from '@tanstack/react-query';
 import { useDispatch, useSelector } from 'react-redux';
 import LogicAppsIcon from '../../../assets/logicapp.svg';
 import { environment } from '../../../environments/environment';
 import { isSuccessResponse } from './Services/HttpClient';
-import { downloadDocumentAsFile } from '@microsoft/logic-apps-designer';
+import axios from 'axios';
 
 const iconClass = mergeStyles({
   fontSize: 16,
@@ -50,14 +59,20 @@ const classNames = mergeStyleSets({
 });
 
 export const DesignerCommandBar = ({
+  id,
   discard,
   saveWorkflow,
   isDesignerView,
+  isMonitoringView,
   isDarkMode,
   showConnectionsPanel,
+  showRunHistory,
+  toggleRunHistory,
   enableCopilot,
   switchViews,
   saveWorkflowFromCode,
+  toggleMonitoringView,
+  selectRun,
 }: {
   id: string;
   location: string;
@@ -65,12 +80,17 @@ export const DesignerCommandBar = ({
   discard: () => unknown;
   saveWorkflow: (workflow: Workflow, customCodeData: CustomCodeFileNameMapping | undefined, clearDirtyState: () => void) => Promise<void>;
   isDesignerView?: boolean;
+  isMonitoringView?: boolean;
   isDarkMode: boolean;
   showConnectionsPanel?: boolean;
+  showRunHistory?: boolean;
+  toggleRunHistory: () => void;
   enableCopilot?: () => void;
   loggerService?: ILoggerService;
   switchViews: () => void;
   saveWorkflowFromCode: (clearDirtyState: () => void) => void;
+  toggleMonitoringView: () => void;
+  selectRun?: (runId: string) => void;
 }) => {
   const dispatch = useDispatch<AppDispatch>();
   const isCopilotReady = useNodesInitialized();
@@ -131,6 +151,24 @@ export const DesignerCommandBar = ({
     downloadDocumentAsFile(queryResponse);
   });
 
+  const [runLoading, setRunLoading] = useState(false);
+  const runWorkflow = useCallback(async () => {
+    setRunLoading(true);
+    const designerState = DesignerStore.getState();
+    const serializedWorkflow = await serializeBJSWorkflow(designerState, {
+      skipValidation: false,
+      ignoreNonCriticalErrors: true,
+    });
+    const triggerId = Object.keys(serializedWorkflow.definition?.triggers ?? {})?.[0];
+    const callbackInfo = await WorkflowService().getCallbackUrl(triggerId);
+    const result = await axios.create().request({
+      method: callbackInfo.method,
+      url: callbackInfo.value,
+    });
+    setRunLoading(false);
+    return result;
+  }, []);
+
   const designerIsDirty = useIsDesignerDirty();
   const isInitialized = useNodesAndDynamicDataInitialized();
 
@@ -158,8 +196,78 @@ export const DesignerCommandBar = ({
   const isUndoDisabled = !useCanUndo();
   const isRedoDisabled = !useCanRedo();
 
-  const items: ICommandBarItemProps[] = useMemo(
+  const baseStartItems: ICommandBarItemProps[] = useMemo(
     () => [
+      ...(showRunHistory
+        ? []
+        : [
+            {
+              key: 'runHistory',
+              text: 'Run History',
+              iconProps: { iconName: 'History' },
+              onClick: () => {
+                if (!isMonitoringView) {
+                  toggleMonitoringView();
+                }
+                toggleRunHistory();
+              },
+            },
+          ]),
+    ],
+    [showRunHistory, isMonitoringView, toggleMonitoringView, toggleRunHistory]
+  );
+
+  const baseEndItems: ICommandBarItemProps[] = useMemo(
+    () => [
+      {
+        key: 'fileABug',
+        text: 'File a bug',
+        iconProps: { iconName: 'Bug' },
+        onClick: () => {
+          window.open('https://github.com/Azure/logic_apps_designer/issues/new', '_blank');
+        },
+      },
+    ],
+    []
+  );
+
+  const monitoringItems: ICommandBarItemProps[] = useMemo(
+    () => [
+      ...baseStartItems,
+      {
+        key: 'edit',
+        text: 'Edit',
+        iconProps: { iconName: 'Edit' },
+        onClick: () => {
+          toggleMonitoringView();
+        },
+      },
+      ...baseEndItems,
+    ],
+    [baseStartItems, baseEndItems, toggleMonitoringView]
+  );
+
+  const editorItems: ICommandBarItemProps[] = useMemo(
+    () => [
+      ...baseStartItems,
+      {
+        key: 'run',
+        text: 'Run',
+        disabled: !isDesignerView || runLoading,
+        iconProps: { iconName: 'Play' },
+        onClick: () => {
+          const asyncOnClick = async () => {
+            const result = await runWorkflow();
+            const runId = result.headers?.['x-ms-workflow-run-id'];
+            const fullRunId = `${id}/runs/${runId}`;
+            if (fullRunId) {
+              await getRun(fullRunId);
+              selectRun?.(runId);
+            }
+          };
+          asyncOnClick();
+        },
+      },
       {
         key: 'save',
         text: 'Save',
@@ -172,7 +280,11 @@ export const DesignerCommandBar = ({
           );
         },
         onClick: () => {
-          isDesignerView ? saveWorkflowMutate() : saveWorkflowFromCode(() => dispatch(resetDesignerDirtyState(undefined)));
+          if (isDesignerView) {
+            saveWorkflowMutate();
+          } else {
+            saveWorkflowFromCode(() => dispatch(resetDesignerDirtyState(undefined)));
+          }
         },
       },
       {
@@ -257,14 +369,6 @@ export const DesignerCommandBar = ({
         },
       },
       {
-        key: 'fileABug',
-        text: 'File a bug',
-        iconProps: { iconName: 'Bug' },
-        onClick: () => {
-          window.open('https://github.com/Azure/logic_apps_designer/issues/new', '_blank');
-        },
-      },
-      {
         key: 'Undo',
         text: 'Undo',
         iconProps: { iconName: 'Undo' },
@@ -278,8 +382,13 @@ export const DesignerCommandBar = ({
         onClick: () => dispatch(onRedoClick()),
         disabled: isRedoDisabled,
       },
+      ...baseEndItems,
     ],
     [
+      id,
+      runLoading,
+      selectRun,
+      runWorkflow,
       saveIsDisabled,
       isSaving,
       isDesignerView,
@@ -299,6 +408,8 @@ export const DesignerCommandBar = ({
       enableCopilot,
       isDownloadingDocument,
       downloadDocument,
+      baseEndItems,
+      baseStartItems,
     ]
   );
 
@@ -306,7 +417,7 @@ export const DesignerCommandBar = ({
     <>
       <div
         style={{
-          position: 'absolute',
+          position: 'relative',
           top: '60px',
           left: '20px',
           display: 'flex',
@@ -317,7 +428,7 @@ export const DesignerCommandBar = ({
         {!isInitialized && <Spinner size={'extra-small'} label={'Loading dynamic data...'} />}
       </div>
       <CommandBar
-        items={items}
+        items={isMonitoringView ? monitoringItems : editorItems}
         ariaLabel="Use left and right arrow keys to navigate between commands"
         styles={{
           root: {

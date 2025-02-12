@@ -22,7 +22,7 @@ export interface TemplateFiltersProps {
   detailFilters: TemplateDetailFilterType;
 }
 
-const templateDefaultTabKey = 'all';
+export const templateDefaultTabKey = 'all';
 
 export const TemplateFilters = ({ detailFilters }: TemplateFiltersProps) => {
   const dispatch = useDispatch<AppDispatch>();
@@ -35,11 +35,13 @@ export const TemplateFilters = ({ detailFilters }: TemplateFiltersProps) => {
     location: state.workflow.location,
   }));
   const allTemplatesUniqueConnectorIds = useMemo(() => {
-    const allConnections = Object.values(availableTemplates).flatMap((template) => Object.values(template.connections));
+    const skuTemplates = Object.values(availableTemplates).filter((templateManifest) =>
+      templateManifest.skus.includes(isConsumption ? 'consumption' : 'standard')
+    );
+    const allConnections = Object.values(skuTemplates).flatMap((template) => Object.values(template.connections));
     const uniqueConnectorsFromConnections = getUniqueConnectorsFromConnections(allConnections, subscriptionId, location);
     return uniqueConnectorsFromConnections.map((connector) => connector.connectorId);
-  }, [availableTemplates, location, subscriptionId]);
-  //const { data: allUniqueConnectorsEntries, isLoading: connectorsAreLoading } = useConnectors(allTemplatesUniqueConnectorIds);
+  }, [availableTemplates, isConsumption, location, subscriptionId]);
   const selectedTabId = appliedDetailFilters?.Type?.[0]?.value ?? templateDefaultTabKey;
 
   const intlText = {
@@ -156,12 +158,7 @@ export const TemplateFilters = ({ detailFilters }: TemplateFiltersProps) => {
               value: connectorId,
               displayName: connectorId.split('/').slice(-1)[0],
             }))}
-            //items={(allUniqueConnectorsEntries ?? []).map(connector => ({
-            //value: connector.id,
-            //displayName: connector.properties?.displayName,
-            //}))}
             onRenderItem={(item) => <ConnectorName data={item} />}
-            //isLoadingContent={connectorsAreLoading}
             onApplyButtonClick={(filterItems) => {
               dispatch(setConnectorsFilters(filterItems));
             }}

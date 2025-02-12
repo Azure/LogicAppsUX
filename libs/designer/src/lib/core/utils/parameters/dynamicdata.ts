@@ -24,7 +24,9 @@ import {
   getJSONValueFromString,
   getParameterFromName,
   loadParameterValuesFromDefault,
+  parameterHasValue,
   parameterValueToString,
+  shouldEncodeParameterValueForOperationBasedOnMetadata,
   toParameterInfoMap,
   tryConvertStringToExpression,
 } from './helper';
@@ -100,9 +102,16 @@ export async function getDynamicValues(
   workflowParameters: Record<string, WorkflowParameterDefinition>
 ): Promise<ListDynamicValue[]> {
   const { definition } = dependencyInfo;
+  const shouldEncodeBasedOnMetadata = shouldEncodeParameterValueForOperationBasedOnMetadata(operationInfo);
   if (isDynamicListExtension(definition)) {
     const { dynamicState, parameters } = definition.extension;
-    const operationParameters = getParameterValuesForDynamicInvoke(parameters, nodeInputs, idReplacements, workflowParameters);
+    const operationParameters = getParameterValuesForDynamicInvoke(
+      parameters,
+      nodeInputs,
+      idReplacements,
+      workflowParameters,
+      shouldEncodeBasedOnMetadata
+    );
 
     return getListDynamicValues(
       connectionReference?.connection.id,
@@ -123,7 +132,8 @@ export async function getDynamicValues(
       parameters,
       nodeInputs,
       idReplacements,
-      workflowParameters
+      workflowParameters,
+      shouldEncodeBasedOnMetadata
     );
     const managedIdentityRequestProperties = await getManagedIdentityRequestProperties(
       connector,
@@ -160,10 +170,17 @@ export async function getDynamicSchema(
     summary: parameter?.schema?.summary,
     name: parameter?.schema?.name,
   };
+  const shouldEncodeBasedOnMetadata = shouldEncodeParameterValueForOperationBasedOnMetadata(operationInfo);
   try {
     if (isDynamicPropertiesExtension(definition)) {
       const { dynamicState, parameters } = definition.extension;
-      const operationParameters = getParameterValuesForDynamicInvoke(parameters, nodeInputs, idReplacements, workflowParameters);
+      const operationParameters = getParameterValuesForDynamicInvoke(
+        parameters,
+        nodeInputs,
+        idReplacements,
+        workflowParameters,
+        shouldEncodeBasedOnMetadata
+      );
       let schema: OpenAPIV2.SchemaObject;
       switch (dynamicState?.extension?.builtInOperation) {
         case 'getVariableSchema': {
@@ -207,7 +224,8 @@ export async function getDynamicSchema(
       parameters,
       nodeInputs,
       idReplacements,
-      workflowParameters
+      workflowParameters,
+      shouldEncodeBasedOnMetadata
     );
     const connectionId = (connectionReference as ConnectionReference).connection.id;
     const managedIdentityRequestProperties = await getManagedIdentityRequestProperties(
@@ -347,6 +365,7 @@ export async function getFolderItems(
   workflowParameters: Record<string, WorkflowParameterDefinition>
 ): Promise<TreeDynamicValue[]> {
   const { definition, filePickerInfo } = dependencyInfo;
+  const shouldEncodeBasedOnMetadata = shouldEncodeParameterValueForOperationBasedOnMetadata(operationInfo);
 
   if (isLegacyDynamicValuesTreeExtension(definition) && filePickerInfo) {
     const { open, browse } = filePickerInfo;
@@ -373,7 +392,8 @@ export async function getFolderItems(
       parameters,
       nodeInputs,
       idReplacements,
-      workflowParameters
+      workflowParameters,
+      shouldEncodeBasedOnMetadata
     );
     const managedIdentityRequestProperties = await getManagedIdentityRequestProperties(
       connector,
@@ -393,7 +413,8 @@ export async function getFolderItems(
       parameters as DynamicParameters,
       nodeInputs,
       idReplacements,
-      workflowParameters
+      workflowParameters,
+      shouldEncodeBasedOnMetadata
     );
 
     const dynamicExtension = {
@@ -411,10 +432,18 @@ function getParameterValuesForDynamicInvoke(
   referenceParameters: DynamicParameters,
   nodeInputs: NodeInputs,
   idReplacements: Record<string, string>,
-  workflowParameters: Record<string, WorkflowParameterDefinition>
+  workflowParameters: Record<string, WorkflowParameterDefinition>,
+  shouldEncodeBasedOnMetadata = true
 ): Record<string, any> {
   const retVal: Record<string, any> = {};
-  const iter = getParametersForDynamicInvoke(referenceParameters, nodeInputs, idReplacements, workflowParameters);
+  const iter = getParametersForDynamicInvoke(
+    referenceParameters,
+    nodeInputs,
+    idReplacements,
+    workflowParameters,
+    /* operationInputs */ undefined,
+    shouldEncodeBasedOnMetadata
+  );
   for (const parameter of iter) {
     retVal[parameter.parameterName] = parameter.value;
   }
@@ -427,7 +456,8 @@ function getParameterValuesForLegacyDynamicOperation(
   parameters: Record<string, any>,
   nodeInputs: NodeInputs,
   idReplacements: Record<string, string>,
-  workflowParameters: Record<string, WorkflowParameterDefinition>
+  workflowParameters: Record<string, WorkflowParameterDefinition>,
+  shouldEncodeBasedOnMetadata = true
 ): Record<string, any> {
   const operation = swagger.getOperationByOperationId(operationId);
   if (!operation) {
@@ -441,7 +471,14 @@ function getParameterValuesForLegacyDynamicOperation(
     ),
     'parameterName'
   );
-  const operationParameters = getParametersForDynamicInvoke(parameters, nodeInputs, idReplacements, workflowParameters, operationInputs);
+  const operationParameters = getParametersForDynamicInvoke(
+    parameters,
+    nodeInputs,
+    idReplacements,
+    workflowParameters,
+    operationInputs,
+    shouldEncodeBasedOnMetadata
+  );
   return buildOperationDetailsFromControls(
     operationParameters,
     removeConnectionPrefix(path ?? ''),
@@ -455,10 +492,12 @@ function getParametersForDynamicInvoke(
   nodeInputs: NodeInputs,
   idReplacements: Record<string, string>,
   workflowParameters: Record<string, WorkflowParameterDefinition>,
-  operationInputs?: Record<string, ParameterInfo>
+  operationInputs?: Record<string, ParameterInfo>,
+  shouldEncodeBasedOnMetadata = true
 ): SerializedParameter[] {
   const intl = getIntl();
   const operationParameters: SerializedParameter[] = [];
+  const inputsToAdd = { ...(operationInputs ?? {}) };
 
   // Get app settings from query client
   const queryClient = getReactQueryClient();
@@ -467,6 +506,8 @@ function getParametersForDynamicInvoke(
   for (const [parameterName, parameter] of Object.entries(referenceParameters ?? {})) {
     const referenceParameterName = (parameter?.parameterReference ?? parameter?.parameter ?? 'undefined') as string;
     const operationParameter = operationInputs?.[parameterName];
+    delete inputsToAdd[parameterName];
+
     if (referenceParameterName === 'undefined') {
       if (!operationParameter) {
         continue;
@@ -515,8 +556,21 @@ function getParametersForDynamicInvoke(
         ...(operationParameter ?? referencedParameter),
         parameterName,
         value: getJSONValueFromString(
-          parameterValueToString(referencedParameter, false /* isDefinitionValue */, idReplacements),
+          parameterValueToString(referencedParameter, false /* isDefinitionValue */, idReplacements, shouldEncodeBasedOnMetadata),
           referencedParameter.type
+        ),
+      });
+    }
+  }
+
+  for (const [parameterName, parameter] of Object.entries(inputsToAdd)) {
+    if (parameterHasValue(parameter)) {
+      operationParameters.push({
+        ...parameter,
+        parameterName,
+        value: getJSONValueFromString(
+          parameterValueToString(parameter, false /* isDefinitionValue */, idReplacements, shouldEncodeBasedOnMetadata),
+          parameter.type
         ),
       });
     }

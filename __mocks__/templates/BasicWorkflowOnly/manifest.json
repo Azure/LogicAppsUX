@@ -1,0 +1,41 @@
+{
+  "title": "[Mock] Basic Workflow Only Template",
+  "description": "This is a simple workflow only template description",
+  "tags": [
+    "Basic Workflow Only",
+    "try catch"
+  ],
+  "skus": [
+    "consumption",
+    "standard"
+  ],
+  "kinds": [
+    "stateful",
+    "stateless"
+  ],
+  "detailsDescription": "This is a basic workflow only template details description \n- point 1 \n- point 2.",
+  "details": {
+    "By": "Microsoft",
+    "Type": "Workflow",
+    "Trigger": "Request",
+    "Category": "Mock"
+  },
+  "artifacts": [
+    {
+      "type": "workflow",
+      "file": "workflow.json"
+    }
+  ],
+  "images": {
+    "light": "/templates/BasicWorkflowOnly/workflow-light.png",
+    "dark": "/templates/BasicWorkflowOnly/workflow-dark.png"
+  },
+  "parameters": [],
+  "connections": {},
+  "featuredOperations": [
+    {
+      "type": "Scope"
+    }
+  ],
+  "sourceCodeUrl": "/sourceCode"
+}

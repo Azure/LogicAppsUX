@@ -61,7 +61,7 @@ export abstract class InitVSCodeStepBase extends AzureWizardExecuteStep<IProject
 
   protected getDebugConfiguration(version: FuncVersion): DebugConfiguration {
     return {
-      name: localize('attachToNetFunc', 'Attach to .NET Functions'),
+      name: localize('attachToNetFunc', 'Run/Debug logic app'),
       type: version === FuncVersion.v1 ? 'clr' : 'coreclr',
       request: 'attach',
       processId: `\${command:${extensionCommand.pickProcess}}`,
@@ -81,7 +81,7 @@ export abstract class InitVSCodeStepBase extends AzureWizardExecuteStep<IProject
 
     context.telemetry.properties.isProjectInSubDir = String(isSubpath(context.workspacePath, context.projectPath));
 
-    const vscodePath: string = path.join(context.workspacePath, vscodeFolderName);
+    const vscodePath: string = path.join(context.projectPath, vscodeFolderName);
     await fse.ensureDir(vscodePath);
     await this.writeTasksJson(context, vscodePath);
     await this.writeLaunchJson(context, context.workspaceFolder, vscodePath, version);
@@ -117,7 +117,7 @@ export abstract class InitVSCodeStepBase extends AzureWizardExecuteStep<IProject
       if (!isPathEqual(cwd, '.')) {
         task.options = task.options || {};
         // always use posix for debug config
-        task.options.cwd = path.posix.join('${workspaceFolder}', cwd);
+        task.options.cwd = path.posix.join('${workspaceFolder}');
       }
     }
 

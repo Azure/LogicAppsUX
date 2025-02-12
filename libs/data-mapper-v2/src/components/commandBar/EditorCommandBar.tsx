@@ -1,19 +1,7 @@
 import { WarningModalState, openDiscardWarningModal } from '../../core/state/ModalSlice';
 import type { AppDispatch, RootState } from '../../core/state/Store';
-import {
-  Toolbar,
-  ToolbarButton,
-  ToolbarGroup,
-  Switch,
-  tokens,
-  useId,
-  useToastController,
-  Toast,
-  ToastTitle,
-  Toaster,
-  ToastBody,
-} from '@fluentui/react-components';
-import { Dismiss20Regular, OpenFilled, Save20Regular } from '@fluentui/react-icons';
+import { Toolbar, ToolbarButton, ToolbarGroup, Switch, tokens, useId, Toaster } from '@fluentui/react-components';
+import { Dismiss20Regular, PlayRegular, Save20Regular, TextGrammarErrorRegular } from '@fluentui/react-icons';
 import { useCallback, useEffect, useMemo } from 'react';
 import { useIntl } from 'react-intl';
 import { useDispatch, useSelector } from 'react-redux';
@@ -33,7 +21,7 @@ export const EditorCommandBar = (_props: EditorCommandBarProps) => {
   const intl = useIntl();
   const dispatch = useDispatch<AppDispatch>();
 
-  const { isDirty, sourceInEditState, targetInEditState } = useSelector((state: RootState) => state.dataMap.present);
+  const { isDirty, sourceInEditState, targetInEditState, isTestDisabledForOS } = useSelector((state: RootState) => state.dataMap.present);
   const undoStack = useSelector((state: RootState) => state.dataMap.past);
   const isCodeViewOpen = useSelector((state: RootState) => state.panel.codeViewPanel.isOpen);
   const { sourceSchema, targetSchema } = useSelector((state: RootState) => state.dataMap.present.curDataMapOperation);
@@ -41,7 +29,6 @@ export const EditorCommandBar = (_props: EditorCommandBarProps) => {
   const xsltFilename = useSelector((state: RootState) => state.dataMap.present.curDataMapOperation.xsltFilename);
 
   const toasterId = useId('toaster');
-  const { dispatchToast } = useToastController(toasterId);
 
   const currentConnections = useSelector((state: RootState) => state.dataMap.present.curDataMapOperation.dataMapConnections);
   const functions = useSelector((state: RootState) => state.dataMap.present.curDataMapOperation.functionNodes);
@@ -115,7 +102,6 @@ export const EditorCommandBar = (_props: EditorCommandBarProps) => {
       generateDataMapXslt(dataMapDefinition.definition)
         .then((xsltStr) => {
           DataMapperFileService().saveXsltCall(xsltStr);
-
           LoggerService().log({
             level: LogEntryLevel.Verbose,
             area: `${LogCategory.DataMapperDesigner}/onGenerateClick`,
@@ -128,33 +114,12 @@ export const EditorCommandBar = (_props: EditorCommandBarProps) => {
             area: `${LogCategory.DataMapperDesigner}/onGenerateClick`,
             message: JSON.stringify(error),
           });
-          dispatchToast(
-            <Toast>
-              <ToastTitle>{failedXsltMessage}</ToastTitle>
-              <ToastBody>{error.message} </ToastBody>
-            </Toast>,
-            { intent: 'error' }
-          );
+          DataMapperFileService().sendNotification(failedXsltMessage, error.message, LogEntryLevel.Error);
         });
     } else {
-      dispatchToast(
-        <Toast>
-          <ToastTitle>{failedXsltMessage}</ToastTitle>
-        </Toast>,
-        { intent: 'error' }
-      );
+      DataMapperFileService().sendNotification(failedXsltMessage, '', LogEntryLevel.Error);
     }
-  }, [
-    currentConnections,
-    functions,
-    dataMapDefinition,
-    sourceSchema,
-    targetSchema,
-    dispatch,
-    canvasRect,
-    failedXsltMessage,
-    dispatchToast,
-  ]);
+  }, [currentConnections, functions, dataMapDefinition, sourceSchema, targetSchema, dispatch, canvasRect, failedXsltMessage]);
 
   const triggerDiscardWarningModal = useCallback(() => {
     dispatch(openDiscardWarningModal());
@@ -195,8 +160,8 @@ export const EditorCommandBar = (_props: EditorCommandBarProps) => {
         description: 'Button text for discard the unsaved changes',
       }),
       OPEN_TEST_PANEL: intl.formatMessage({
-        defaultMessage: 'Open Test panel',
-        id: 'nr6bPd',
+        defaultMessage: 'Open test panel',
+        id: 'xhBvXj',
         description: 'Button text for opening test panel',
       }),
       VIEW_CODE: intl.formatMessage({
@@ -205,14 +170,19 @@ export const EditorCommandBar = (_props: EditorCommandBarProps) => {
         description: 'Button for View Code',
       }),
       VIEW_MAP_CHECKER: intl.formatMessage({
-        defaultMessage: 'Map errors',
-        id: '1QktJw',
-        description: 'Button to see map errors',
+        defaultMessage: 'View issues',
+        id: 'Ae8T94',
+        description: 'Button to see issues',
       }),
       DISABLED_TEST: intl.formatMessage({
         defaultMessage: 'Please save the map before testing',
         id: 'wTaSTp',
         description: 'Tooltip for disabled test button',
+      }),
+      DISABLED_TEST_FOR_OS: intl.formatMessage({
+        defaultMessage: 'Test is not supported for your current operating system',
+        id: '2yCDJd',
+        description: 'Tooltip for disabled test button for the os',
       }),
     }),
     [intl]
@@ -225,11 +195,11 @@ export const EditorCommandBar = (_props: EditorCommandBarProps) => {
       save: !isDirty || sourceInEditState || targetInEditState,
       undo: undoStack.length === 0,
       discard: !isDirty,
-      test: sourceInEditState || targetInEditState || !xsltFilename,
+      test: sourceInEditState || targetInEditState || !xsltFilename || isTestDisabledForOS,
       codeView: sourceInEditState || targetInEditState,
       mapChecker: sourceInEditState || targetInEditState,
     }),
-    [isDirty, undoStack.length, sourceInEditState, targetInEditState, xsltFilename]
+    [isDirty, undoStack.length, sourceInEditState, targetInEditState, xsltFilename, isTestDisabledForOS]
   );
 
   return (
@@ -255,9 +225,9 @@ export const EditorCommandBar = (_props: EditorCommandBarProps) => {
           </ToolbarButton>
           <ToolbarButton
             aria-label={Resources.OPEN_TEST_PANEL}
-            icon={<OpenFilled color={disabledState.test ? undefined : tokens.colorPaletteBlueBorderActive} />}
+            icon={<PlayRegular color={disabledState.test ? undefined : tokens.colorPaletteBlueBorderActive} />}
             disabled={disabledState.test}
-            title={disabledState.test ? Resources.DISABLED_TEST : ''}
+            title={disabledState.test ? (isTestDisabledForOS ? Resources.DISABLED_TEST_FOR_OS : Resources.DISABLED_TEST) : ''}
             onClick={onTestClick}
           >
             {Resources.OPEN_TEST_PANEL}
@@ -266,7 +236,7 @@ export const EditorCommandBar = (_props: EditorCommandBarProps) => {
         <ToolbarGroup className={toolbarStyles.toolbarGroup}>
           <ToolbarButton
             disabled={disabledState.mapChecker}
-            icon={<OpenFilled color={disabledState.mapChecker ? undefined : tokens.colorPaletteBlueBorderActive} />}
+            icon={<TextGrammarErrorRegular color={disabledState.mapChecker ? undefined : tokens.colorPaletteBlueBorderActive} />}
             onClick={onMapCheckerClick}
           >
             {Resources.VIEW_MAP_CHECKER}

@@ -26,6 +26,7 @@ import { LogEntryLevel, Status } from '../logging/logEntry';
 import type { IOAuthPopup } from '../oAuth';
 import { OAuthService } from '../oAuth';
 import { getHybridAppBaseRelativeUrl, isHybridLogicApp } from './hybrid';
+import { validateRequiredServiceArguments } from '../../../utils/src/lib/helpers/functions';
 
 interface ConnectionAcl {
   id: string;
@@ -125,6 +126,8 @@ export class StandardConnectionService extends BaseConnectionService implements 
   constructor(private readonly _options: StandardConnectionServiceOptions) {
     super(_options.apiHubServiceDetails);
     const { apiHubServiceDetails, readConnections } = _options;
+    validateRequiredServiceArguments({ readConnections, apiHubServiceDetails });
+
     if (!readConnections) {
       throw new ArgumentException('readConnections required');
     }

@@ -11,12 +11,6 @@
       "value": "Varning! Indatanodens typ matchar inte typ av schemanod"
     }
   ],
-  "+0ua83": [
-    {
-      "type": 0,
-      "value": "Parameters"
-    }
-  ],
   "+0yxlR": [
     {
       "type": 0,
@@ -80,7 +74,7 @@
   "+M7bC6": [
     {
       "type": 0,
-      "value": "Succeeded with retries"
+      "value": "Lyckades med återförsök"
     }
   ],
   "+R90eK": [
@@ -525,6 +519,12 @@
       "value": " resultat."
     }
   ],
+  "0a4IGE": [
+    {
+      "type": 0,
+      "value": "Refresh"
+    }
+  ],
   "0i/6TR": [
     {
       "type": 0,
@@ -664,7 +664,7 @@
   "1QktJw": [
     {
       "type": 0,
-      "value": "Map errors"
+      "value": "Mappningsfel"
     }
   ],
   "1Xke9D": [
@@ -743,6 +743,12 @@
     {
       "type": 0,
       "value": "Ange en giltig URI."
+    }
+  ],
+  "1tmN2o": [
+    {
+      "type": 0,
+      "value": "Workflow version"
     }
   ],
   "1uGBLP": [
@@ -1319,6 +1325,12 @@
       "value": "Återförsökshistorik"
     }
   ],
+  "4rdY7D": [
+    {
+      "type": 0,
+      "value": "Run ID"
+    }
+  ],
   "4vcnOA": [
     {
       "type": 0,
@@ -1374,7 +1386,7 @@
   "5DkTf5": [
     {
       "type": 0,
-      "value": "Target schema node not found for node key '"
+      "value": "Det gick inte att hitta målschemanoden för nodnyckeln '"
     },
     {
       "type": 1,
@@ -1846,7 +1858,7 @@
   "7X4UA/": [
     {
       "type": 0,
-      "value": "Waiting"
+      "value": "Väntar"
     }
   ],
   "7ZF1Hr": [
@@ -2250,7 +2262,7 @@
   "9dd0/m": [
     {
       "type": 0,
-      "value": "Running"
+      "value": "Körs"
     }
   ],
   "9djnqI": [
@@ -2287,6 +2299,12 @@
     {
       "type": 0,
       "value": "Mer detaljerad information hittar du i följande resurser"
+    }
+  ],
+  "A5/IqS": [
+    {
+      "type": 0,
+      "value": "Run identifier"
     }
   ],
   "A5/UwX": [
@@ -2345,6 +2363,16 @@
     {
       "type": 0,
       "value": "Tjänstens huvudnamn"
+    }
+  ],
+  "AMMfbt": [
+    {
+      "type": 1,
+      "value": "count"
+    },
+    {
+      "type": 0,
+      "value": " Second"
     }
   ],
   "APKdYG": [
@@ -2658,15 +2686,11 @@
   "Bwqlxd": [
     {
       "type": 0,
-      "value": "Key not found '"
+      "value": "Nyckeln hittades inte "
     },
     {
       "type": 1,
       "value": "nodeKey"
-    },
-    {
-      "type": 0,
-      "value": "'"
     }
   ],
   "BxITRH": [
@@ -2977,6 +3001,12 @@
     {
       "type": 0,
       "value": "Typ av utlösare"
+    }
+  ],
+  "DeM/yz": [
+    {
+      "type": 0,
+      "value": "Start time"
     }
   ],
   "DfXxoX": [
@@ -3294,7 +3324,7 @@
   "FPBmrA": [
     {
       "type": 0,
-      "value": "Source schema node not found for node key '"
+      "value": "Det gick inte att hitta källschemanoden för nodnyckeln '"
     },
     {
       "type": 1,
@@ -3516,7 +3546,7 @@
   "GiR7ll": [
     {
       "type": 0,
-      "value": "Function not found- '"
+      "value": "Funktionen hittades inte- '"
     },
     {
       "type": 1,
@@ -3941,6 +3971,12 @@
       "value": "Skapa grupp"
     }
   ],
+  "J8G55j": [
+    {
+      "type": 0,
+      "value": "Search by run identifier"
+    }
+  ],
   "J9wWry": [
     {
       "type": 0,
@@ -4134,7 +4170,7 @@
   "KWeLBB": [
     {
       "type": 0,
-      "value": "Closing..."
+      "value": "Stänger..."
     }
   ],
   "KX1poC": [
@@ -4246,7 +4282,7 @@
   "LBlM+D": [
     {
       "type": 0,
-      "value": "Not specified"
+      "value": "Inte angivet"
     }
   ],
   "LCRHQ9": [
@@ -5002,7 +5038,7 @@
   "PEJ+e4": [
     {
       "type": 0,
-      "value": "Error loading data map"
+      "value": "Fel vid inläsning av datamappning"
     }
   ],
   "PNk3n4": [
@@ -5237,6 +5273,12 @@
     {
       "type": 0,
       "value": "Helskärm"
+    }
+  ],
+  "QT4IaP": [
+    {
+      "type": 0,
+      "value": "Filtered!"
     }
   ],
   "QVtqAn": [
@@ -5599,6 +5641,12 @@
       "value": "Utdata ska inte tillhandahållas när statusen är Misslyckades"
     }
   ],
+  "SbHBIZ": [
+    {
+      "type": 0,
+      "value": "No runs found"
+    }
+  ],
   "SgiTAh": [
     {
       "type": 0,
@@ -5629,6 +5677,12 @@
       "value": "Klart"
     }
   ],
+  "SwWaHa": [
+    {
+      "type": 0,
+      "value": "Enter a valid run identifier"
+    }
+  ],
   "Sy4cFC": [
     {
       "type": 0,
@@ -5645,6 +5699,12 @@
     {
       "type": 0,
       "value": "Test"
+    }
+  ],
+  "T/7b2y": [
+    {
+      "type": 0,
+      "value": "Duration"
     }
   ],
   "TDfQzn": [
@@ -6360,7 +6420,7 @@
   "WbIGAh": [
     {
       "type": 0,
-      "value": "Succeeded"
+      "value": "Slutfört"
     }
   ],
   "Wc77aJ": [
@@ -6675,12 +6735,6 @@
     {
       "type": 0,
       "value": "Begränsa Logic Apps så att rubriker för arbetsflödesmetadata inte inkluderas i svaret."
-    }
-  ],
-  "XtVOMn": [
-    {
-      "type": 0,
-      "value": "Something went wrong"
     }
   ],
   "XtuP5e": [
@@ -7045,6 +7099,16 @@
       "value": "Stäng"
     }
   ],
+  "ZgU5eu": [
+    {
+      "type": 1,
+      "value": "count"
+    },
+    {
+      "type": 0,
+      "value": " Day"
+    }
+  ],
   "ZgyD93": [
     {
       "type": 0,
@@ -7067,12 +7131,6 @@
     {
       "type": 0,
       "value": "Läs mer om dynamiskt innehåll."
-    }
-  ],
-  "ZvAp7m": [
-    {
-      "type": 0,
-      "value": "Save"
     }
   ],
   "ZyDq4/": [
@@ -7121,6 +7179,12 @@
     {
       "type": 0,
       "value": "Det högsta intervallet i principen om återförsök är ogiltigt. Det måste matcha varaktighetsformatet ISO 8601"
+    }
+  ],
+  "aKf/r+": [
+    {
+      "type": 0,
+      "value": "Specified run identifier not found"
     }
   ],
   "aP1wk9": [
@@ -7198,7 +7262,7 @@
   "auci7r": [
     {
       "type": 0,
-      "value": "Enter a valid comma-separated string."
+      "value": "Ange en giltig kommaavgränsad sträng."
     }
   ],
   "aurgrg": [
@@ -7291,6 +7355,12 @@
     {
       "type": 0,
       "value": "Den här åtgärden innehåller en token som inte finns i det aktuella arbetsflödet."
+    }
+  ],
+  "bPyWVY": [
+    {
+      "type": 0,
+      "value": "Failed to load runs"
     }
   ],
   "bTrk+S": [
@@ -7561,6 +7631,12 @@
       "value": "Ladda ned (Alt eller Alternativ + välj)"
     }
   ],
+  "d9RCuq": [
+    {
+      "type": 0,
+      "value": "Workflow run status"
+    }
+  ],
   "dBWIjR": [
     {
       "type": 0,
@@ -7767,6 +7843,12 @@
       "value": "Redigera det här flödet till"
     }
   ],
+  "eLQPek": [
+    {
+      "type": 0,
+      "value": "Status"
+    }
+  ],
   "eLthgv": [
     {
       "type": 0,
@@ -7872,7 +7954,7 @@
   "eofB85": [
     {
       "type": 0,
-      "value": "Timed out"
+      "value": "Tidsgräns uppnådd"
     }
   ],
   "epOMnV": [
@@ -7884,7 +7966,7 @@
   "epi+zR": [
     {
       "type": 0,
-      "value": "Close map checker"
+      "value": "Stäng kartkontrollen"
     }
   ],
   "er6O+w": [
@@ -8003,12 +8085,6 @@
       "value": "(UTC-05:00) Haiti"
     }
   ],
-  "fZJWBR": [
-    {
-      "type": 0,
-      "value": "Loading designer"
-    }
-  ],
   "faUrud": [
     {
       "type": 0,
@@ -8037,6 +8113,16 @@
     {
       "type": 0,
       "value": "(UTC+08:00) Beijing, Chongqing, Hongkong SAR, Urumqi"
+    }
+  ],
+  "ft8BH8": [
+    {
+      "type": 1,
+      "value": "count"
+    },
+    {
+      "type": 0,
+      "value": " Seconds"
     }
   ],
   "fvGvnA": [
@@ -8367,6 +8453,16 @@
     {
       "type": 0,
       "value": "Det här är inte vad jag letar efter"
+    }
+  ],
+  "hesDPs": [
+    {
+      "type": 1,
+      "value": "count"
+    },
+    {
+      "type": 0,
+      "value": " Milliseconds"
     }
   ],
   "hihfHd": [
@@ -8946,7 +9042,7 @@
   "kfmLTY": [
     {
       "type": 0,
-      "value": "Function '"
+      "value": "Funktionen '"
     },
     {
       "type": 1,
@@ -8954,7 +9050,7 @@
     },
     {
       "type": 0,
-      "value": "' is missing required inputs"
+      "value": "' saknar nödvändiga indata"
     }
   ],
   "klY9UN": [
@@ -9345,6 +9441,16 @@
       "value": "Obligatoriskt. Den sträng som ska konverteras till gemener. Om ett tecken i strängen inte har någon gemen motsvarighet, så inkluderas tecknet oförändrat i den returnerade strängen."
     }
   ],
+  "maP1K/": [
+    {
+      "type": 1,
+      "value": "count"
+    },
+    {
+      "type": 0,
+      "value": " Minutes"
+    }
+  ],
   "mb1XDD": [
     {
       "type": 0,
@@ -9717,6 +9823,16 @@
       "value": "Krävs. dataURI att avkoda till binär representation."
     }
   ],
+  "oBAL2F": [
+    {
+      "type": 1,
+      "value": "count"
+    },
+    {
+      "type": 0,
+      "value": " Days"
+    }
+  ],
   "oDHXKh": [
     {
       "type": 0,
@@ -9801,10 +9917,14 @@
       "value": "Svarstext"
     }
   ],
-  "ohOaXj": [
+  "og5JOA": [
+    {
+      "type": 1,
+      "value": "count"
+    },
     {
       "type": 0,
-      "value": "Errors"
+      "value": " Millisecond"
     }
   ],
   "ohpbkw": [
@@ -10352,7 +10472,7 @@
   "rwrlsB": [
     {
       "type": 0,
-      "value": "Map Issues"
+      "value": "Kartproblem"
     }
   ],
   "rxIJfD": [
@@ -10421,16 +10541,20 @@
       "value": "Avbryt skapande av en anslutning"
     }
   ],
+  "sJQee6": [
+    {
+      "type": 1,
+      "value": "count"
+    },
+    {
+      "type": 0,
+      "value": " Hours"
+    }
+  ],
   "sKy720": [
     {
       "type": 0,
       "value": "Du måste ange ett värde för arbetsflödesnamnet."
-    }
-  ],
-  "sOnphB": [
-    {
-      "type": 0,
-      "value": "Resubmit"
     }
   ],
   "sRpETS": [
@@ -11157,6 +11281,12 @@
       "value": "Om du vill skapa och använda en API-anslutning måste du ha konfigurerat en hanterad identitet på den här logikappen."
     }
   ],
+  "vhwaYb": [
+    {
+      "type": 0,
+      "value": "Radbryt alla anpassade värdesträngar och DateTime-värden inom dubbla citattecken. Till exempel \"abc\"."
+    }
+  ],
   "viee6C": [
     {
       "type": 0,
@@ -11219,6 +11349,12 @@
       "value": "Det här innehåller ett dubblettvärde"
     }
   ],
+  "vzXXFP": [
+    {
+      "type": 0,
+      "value": "Workflow version"
+    }
+  ],
   "w+7aGo": [
     {
       "type": 0,
@@ -11253,6 +11389,16 @@
     {
       "type": 0,
       "value": "Dölj"
+    }
+  ],
+  "wAg9+z": [
+    {
+      "type": 1,
+      "value": "count"
+    },
+    {
+      "type": 0,
+      "value": " Hour"
     }
   ],
   "wBBu4g": [
@@ -11579,6 +11725,16 @@
     {
       "type": 0,
       "value": "Returnerar sökvägen från en URI. Om sökvägen inte anges, returneras /"
+    }
+  ],
+  "xfXUGz": [
+    {
+      "type": 1,
+      "value": "count"
+    },
+    {
+      "type": 0,
+      "value": " Minute"
     }
   ],
   "xi2tn6": [

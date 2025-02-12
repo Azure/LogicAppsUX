@@ -1,3 +1,4 @@
+import { ArgumentException } from '../../exception';
 import {
   addPrefix,
   aggregate,
@@ -47,6 +48,7 @@ import {
   FindPreviousAndNextPage,
   sortRecord,
   splitAtIndex,
+  validateRequiredServiceArguments,
 } from './../functions';
 import { describe, vi, beforeEach, afterEach, beforeAll, afterAll, it, test, expect } from 'vitest';
 describe('lib/helpers/functions', () => {
@@ -1473,6 +1475,76 @@ describe('lib/helpers/functions', () => {
       const index = str.length;
       const result = splitAtIndex(str, index);
       expect(result).toEqual(['hello', '']);
+    });
+  });
+
+  describe('validateRequiredServiceArguments', () => {
+    // Mock inputs
+    const apiVersion = '2021-01-01';
+    const baseUrl = 'https://example.com';
+    const subscriptionId = 'sub123';
+    const resourceGroup = 'rg123';
+    const appName = 'app123';
+    const workflowName = 'workflow123';
+    const httpClient = {};
+
+    it('should pass when all fields are provided', () => {
+      expect(() =>
+        validateRequiredServiceArguments({
+          apiVersion,
+          baseUrl,
+          subscriptionId,
+          resourceGroup,
+          appName,
+          workflowName,
+          httpClient,
+        })
+      ).not.toThrow();
+    });
+
+    it('should throw an error if a required field is null', () => {
+      expect(() =>
+        validateRequiredServiceArguments({
+          apiVersion: null,
+          baseUrl,
+          subscriptionId,
+          resourceGroup,
+          appName,
+          workflowName,
+          httpClient,
+        })
+      ).toThrowError(ArgumentException);
+    });
+
+    it('should throw an error if a required field is undefined', () => {
+      expect(() =>
+        validateRequiredServiceArguments({
+          apiVersion,
+          baseUrl: undefined,
+          subscriptionId,
+          resourceGroup,
+          appName,
+          workflowName,
+          httpClient,
+        })
+      ).toThrowError(ArgumentException);
+    });
+
+    it('should include the field name in the error message', () => {
+      try {
+        validateRequiredServiceArguments({
+          apiVersion,
+          baseUrl: undefined,
+          subscriptionId,
+          resourceGroup,
+          appName,
+          workflowName,
+          httpClient,
+        });
+      } catch (e) {
+        expect(e).toBeInstanceOf(ArgumentException);
+        expect(e.message).toBe('baseUrl is required');
+      }
     });
   });
 });

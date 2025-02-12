@@ -302,6 +302,7 @@ export const WorkflowparameterField = ({
         {getFieldBooleanValue(isEditable, NAME_KEY) ? (
           <TextField
             data-testid={parameterDetails.name}
+            data-automation-id={parameterDetails.name}
             styles={textFieldStyles}
             id={parameterDetails.name}
             ariaLabel={nameTitle}
@@ -325,6 +326,7 @@ export const WorkflowparameterField = ({
         {getFieldBooleanValue(isEditable, TYPE_KEY) ? (
           <Dropdown
             data-testid={parameterDetails.type}
+            data-automation-id={parameterDetails.type}
             id={parameterDetails.type}
             ariaLabel={typeTitle}
             options={typeOptions}
@@ -355,6 +357,7 @@ export const WorkflowparameterField = ({
             {isEditable ? (
               <TextField
                 data-testid={parameterDetails.defaultValue}
+                data-automation-id={parameterDetails.defaultValue}
                 id={parameterDetails.defaultValue}
                 ariaLabel={defaultValueTitle}
                 placeholder={defaultValueDescription}
@@ -375,6 +378,7 @@ export const WorkflowparameterField = ({
             {getFieldBooleanValue(isEditable, VALUE_KEY) ? (
               <TextField
                 data-testid={parameterDetails.value}
+                data-automation-id={parameterDetails.value}
                 id={parameterDetails.value}
                 ariaLabel={valueTitle}
                 value={value}
@@ -398,6 +402,7 @@ export const WorkflowparameterField = ({
           {getFieldBooleanValue(isEditable, VALUE_KEY) ? (
             <TextField
               data-testid={parameterDetails.value}
+              data-automation-id={parameterDetails.value}
               id={parameterDetails.value}
               ariaLabel={valueTitle}
               placeholder={valueDescription}

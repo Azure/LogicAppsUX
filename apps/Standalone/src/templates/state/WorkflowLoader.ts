@@ -10,13 +10,19 @@ export interface WorkflowLoadingState {
   workflowName?: string;
   runId?: string;
   hostingPlan: HostingPlanTypes;
+  isLocal: boolean;
   theme: ThemeType;
+  language: string;
+  templatesView: string;
 }
 
 const initialState: WorkflowLoadingState = {
   appId: undefined,
   hostingPlan: 'standard',
+  isLocal: false,
   theme: ThemeType.Light,
+  language: 'en',
+  templatesView: 'gallery',
 };
 
 export const workflowLoaderSlice = createSlice({
@@ -29,6 +35,9 @@ export const workflowLoaderSlice = createSlice({
     setWorkflowName: (state, action: PayloadAction<string>) => {
       state.workflowName = action.payload;
     },
+    setTemplatesView: (state, action: PayloadAction<string>) => {
+      state.templatesView = action.payload;
+    },
     changeRunId: (state, action: PayloadAction<string>) => {
       state.runId = action.payload;
     },
@@ -39,6 +48,15 @@ export const workflowLoaderSlice = createSlice({
       state.appId = undefined;
       state.workflowName = undefined;
       state.runId = undefined;
+      state.resourcePath = '';
+    },
+    setLanguage: (state, action: PayloadAction<string | undefined>) => {
+      state.language = action.payload ?? 'en';
+    },
+    setIsLocalSelected: (state, action: PayloadAction<boolean>) => {
+      state.isLocal = action.payload;
+      state.appId = undefined;
+      state.workflowName = undefined;
       state.resourcePath = '';
     },
     setHostingPlan: (state, action: PayloadAction<HostingPlanTypes>) => {

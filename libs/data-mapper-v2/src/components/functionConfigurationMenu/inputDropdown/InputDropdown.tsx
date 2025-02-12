@@ -283,7 +283,7 @@ export const InputDropdown = ({
     setCustomValue(value);
   };
 
-  const selectCustomValueOnClose: ComboboxProps['onOpenChange'] = (event, data) => {
+  const selectCustomValueOnClose: ComboboxProps['onOpenChange'] = (_event, data) => {
     if (data.open === false) {
       const matchingOption = customValue && matchingOptions.some((option) => option.text === customValue);
       if (!matchingOption && customValue && customValue !== value) {
@@ -317,7 +317,7 @@ export const InputDropdown = ({
           </Option>
         )}
       </Combobox>
-      <Caption2>{typeValidationMessage}</Caption2>
+      <Caption2 className={styles.validationWarningmessage}>{typeValidationMessage}</Caption2>
     </Stack>
   );
 };
