@@ -271,7 +271,7 @@ const loadWorkflowTemplateFromManifest = async (
     const parameterDefinitions = templateManifest.parameters?.reduce((result: Record<string, Template.ParameterDefinition>, parameter) => {
       result[parameter.name] = {
         ...parameter,
-        value: viewTemplateData?.parametersOverride?.[parameter.name]?.value ?? parameter.default,
+        value: viewTemplateData?.parametersOverride?.[parameter.name]?.value?.toString() ?? parameter.default,
         associatedWorkflows: [templateManifest.title],
       };
       return result;
