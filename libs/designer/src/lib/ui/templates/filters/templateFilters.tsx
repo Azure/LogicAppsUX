@@ -22,7 +22,7 @@ export interface TemplateFiltersProps {
   detailFilters: TemplateDetailFilterType;
 }
 
-export const templateDefaultTabKey = 'all';
+const templateDefaultTabKey = 'all';
 
 export const TemplateFilters = ({ detailFilters }: TemplateFiltersProps) => {
   const dispatch = useDispatch<AppDispatch>();

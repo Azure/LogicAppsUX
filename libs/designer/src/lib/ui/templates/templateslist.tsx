@@ -2,7 +2,7 @@ import type { AppDispatch, RootState } from '../../core/state/templates/store';
 import { useDispatch, useSelector } from 'react-redux';
 import { BlankWorkflowTemplateCard, TemplateCard } from './cards/templateCard';
 import { EmptySearch, Pager } from '@microsoft/designer-ui';
-import { TemplateFilters, templateDefaultTabKey } from './filters/templateFilters';
+import { TemplateFilters } from './filters/templateFilters';
 import { useEffect } from 'react';
 import { setLayerHostSelector } from '@fluentui/react';
 import { Text } from '@fluentui/react-components';
@@ -47,7 +47,7 @@ export const TemplatesList = ({ detailFilters, createWorkflowCall, isWorkflowEmp
 
       <div>
         <div className="msla-templates-list">
-          {selectedTabId === templateDefaultTabKey && <BlankWorkflowTemplateCard isWorkflowEmpty={isWorkflowEmpty} />}
+          {selectedTabId !== 'Accelerator' && <BlankWorkflowTemplateCard isWorkflowEmpty={isWorkflowEmpty} />}
           {filteredTemplateNames === undefined ? (
             <>
               {[1, 2, 3, 4].map((i) => (
