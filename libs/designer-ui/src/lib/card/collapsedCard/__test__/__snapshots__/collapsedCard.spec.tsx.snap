@@ -3,8 +3,10 @@
 exports[`CollapsedCard > should render expanding state correctly 1`] = `
 <div>
   <div
+    aria-label="Collapsed card with 8 actions"
     class="msla-collapsed-card"
     data-automation-id="msla-collapsed-card-test-id"
+    data-tabster="{"restorer":{"type":1}}"
     id="msla-collapsed-card-test-id"
   >
     <span
@@ -20,12 +22,13 @@ exports[`CollapsedCard > should render expanding state correctly 1`] = `
 exports[`CollapsedCard > should render non-expanding state with operation visuals and action text when actionCount > 0 1`] = `
 <div>
   <div
+    aria-label="Collapsed card with 6 actions"
     class="msla-collapsed-card"
     data-automation-id="msla-collapsed-card-test-id"
+    data-tabster="{"restorer":{"type":1}}"
     id="msla-collapsed-card-test-id"
   >
     <div
-      aria-label="Collapsed card with 6 actions"
       style="display: flex; align-items: center;"
     >
       <img
@@ -54,12 +57,13 @@ exports[`CollapsedCard > should render non-expanding state with operation visual
 exports[`CollapsedCard > should render non-expanding state without action text when actionCount <= 0 1`] = `
 <div>
   <div
+    aria-label="Collapsed card with 3 actions"
     class="msla-collapsed-card"
     data-automation-id="msla-collapsed-card-test-id"
+    data-tabster="{"restorer":{"type":1}}"
     id="msla-collapsed-card-test-id"
   >
     <div
-      aria-label="Collapsed card with 3 actions"
       style="display: flex; align-items: center;"
     >
       <img

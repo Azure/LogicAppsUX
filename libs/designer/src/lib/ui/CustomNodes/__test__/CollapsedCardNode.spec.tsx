@@ -2,16 +2,16 @@ import React from 'react';
 import renderer from 'react-test-renderer';
 import CollapsedNode from '../CollapsedCardNode';
 import { vi, beforeEach, describe, Mock, it, expect } from 'vitest';
-import { useCollapsedMapping, useIsActionCollapsed } from '../../../core/state/workflow/workflowSelectors';
+import { useCollapsedMapping, useIsActionCollapsed, useShouldNodeFocus } from '../../../core/state/workflow/workflowSelectors';
 import { NodeProps } from '@xyflow/react';
 import { useOperationsVisuals } from '../../../core/state/operation/operationSelector';
 import { render, screen, fireEvent } from '@testing-library/react';
 
 const mockDispatch = vi.fn();
 
-// Mock react-redux useDispatch
 vi.mock('react-redux', () => ({
   useDispatch: () => mockDispatch,
+  useSelector: vi.fn(),
 }));
 
 vi.mock('../../../core/state/operation/operationSelector', () => ({
@@ -21,6 +21,12 @@ vi.mock('../../../core/state/operation/operationSelector', () => ({
 vi.mock('../../../core/state/workflow/workflowSelectors', () => ({
   useCollapsedMapping: vi.fn(),
   useIsActionCollapsed: vi.fn(),
+  useShouldNodeFocus: vi.fn(),
+}));
+
+vi.mock('@microsoft/logic-apps-shared', async (importOriginal) => ({
+  ...((await importOriginal()) as object),
+  useNodeIndex: () => 1,
 }));
 
 vi.mock(import('../../connections/dropzone'), async (importOriginal) => {
