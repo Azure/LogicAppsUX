@@ -125,15 +125,12 @@ export const initializeTemplateServices = createAsyncThunk(
 export const loadTemplate = createAsyncThunk(
   'loadTemplate',
   async (
-    {
-      preLoadedManifest,
-      viewTemplateDetails,
-      isCustomTemplate = false,
-    }: { preLoadedManifest: Template.Manifest | undefined; viewTemplateDetails?: Template.ViewTemplateDetails; isCustomTemplate?: boolean },
+    { preLoadedManifest, isCustomTemplate = false }: { preLoadedManifest: Template.Manifest | undefined; isCustomTemplate?: boolean },
     thunkAPI
   ) => {
     const currentState: RootState = thunkAPI.getState() as RootState;
     const currentTemplateName = currentState.template.templateName;
+    const viewTemplateDetails = currentState.templateOptions.viewTemplateDetails;
     const viewTemplateData = currentTemplateName === viewTemplateDetails?.id ? viewTemplateDetails : undefined;
 
     if (currentTemplateName) {
@@ -280,7 +277,7 @@ const loadWorkflowTemplateFromManifest = async (
       return result;
     }, {});
 
-    const overrideKind = viewTemplateData?.basicsOverride?.[workflowId]?.kind?.value;
+    const overridenKind = viewTemplateData?.basicsOverride?.[workflowId]?.kind?.value;
 
     return {
       workflow: {
@@ -289,8 +286,8 @@ const loadWorkflowTemplateFromManifest = async (
         manifest: templateManifest,
         workflowName: viewTemplateData?.basicsOverride?.[workflowId]?.name?.value ?? '',
         kind:
-          overrideKind && templateManifest.kinds?.includes(overrideKind)
-            ? overrideKind
+          overridenKind && templateManifest.kinds?.includes(overridenKind)
+            ? overridenKind
             : templateManifest.kinds?.length
               ? templateManifest.kinds[0]
               : 'stateful',
