@@ -1,4 +1,11 @@
 # Logic Apps Designer
+## [5.40.0](https://github.com/Azure/LogicAppsUX/compare/v5.39.0...v5.40.0) (2025-02-13)
+
+
+### Features
+
+* **templates:** Adding some performance related changes for standard templates ([#6589](https://github.com/Azure/LogicAppsUX/issues/6589)) ([4c2bdfb](https://github.com/Azure/LogicAppsUX/commit/4c2bdfb92d4480577713f9570ff5b844953f2160))
+
 ## [5.39.0](https://github.com/Azure/LogicAppsUX/compare/v5.38.0...v5.39.0) (2025-02-13)
 
 
