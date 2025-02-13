@@ -9,13 +9,14 @@ import {
   funcIgnoreFileName,
   gitignoreFileName,
   hostFileName,
+  localEmulatorConnectionString,
   localSettingsFileName,
   logicAppKind,
+  vscodeFolderName,
   workerRuntimeKey,
 } from '../../../../constants';
 import { addDefaultBundle } from '../../../utils/bundleFeed';
 import { confirmOverwriteFile, writeFormattedJson } from '../../../utils/fs';
-import { getFunctionsWorkerRuntime } from '../../../utils/vsCodeConfig/settings';
 import { ProjectCreateStepBase } from './ProjectCreateStepBase';
 import { nonNullProp } from '@microsoft/vscode-azext-utils';
 import type { IActionContext } from '@microsoft/vscode-azext-utils';
@@ -33,11 +34,19 @@ export class ScriptProjectCreateStep extends ProjectCreateStepBase {
     '__queuestorage__',
     '__azurite_db*__.json',
     '.git*',
-    '.vscode',
+    vscodeFolderName,
     localSettingsFileName,
     'test',
     '.debug',
   ];
+  protected localSettingsJson: ILocalSettingsJson = {
+    IsEncrypted: false,
+    Values: {
+      [azureWebJobsStorageKey]: localEmulatorConnectionString,
+      [workerRuntimeKey]: 'node',
+      [appKindSetting]: logicAppKind,
+    },
+  };
   protected gitignore = '';
   protected supportsManagedDependencies = false;
 
@@ -55,33 +64,11 @@ export class ScriptProjectCreateStep extends ProjectCreateStepBase {
 
     const localSettingsJsonPath: string = path.join(context.projectPath, localSettingsFileName);
     if (await confirmOverwriteFile(context, localSettingsJsonPath)) {
-      const localSettingsJson: ILocalSettingsJson = {
-        IsEncrypted: false,
-        Values: {
-          [azureWebJobsStorageKey]: '',
-          [appKindSetting]: logicAppKind,
-          [ProjectDirectoryPath]: path.join(context.projectPath),
-        },
-      };
-
-      const functionsWorkerRuntime: string | undefined = getFunctionsWorkerRuntime(context.language);
-      if (functionsWorkerRuntime) {
-        // tslint:disable-next-line:no-non-null-assertion
-        localSettingsJson.Values[workerRuntimeKey] = functionsWorkerRuntime;
-      }
-
-      await writeFormattedJson(localSettingsJsonPath, localSettingsJson);
+      this.localSettingsJson.Values[ProjectDirectoryPath] = path.join(context.projectPath);
+      await writeFormattedJson(localSettingsJsonPath, this.localSettingsJson);
     }
 
-    // Determine the base directory for the .gitignore file.
-    // If 'isWorkspaceWithFunctions' is explicitly false (neither true nor null),
-    // use the parent directory of 'workspacePath'. Otherwise, use 'projectPath'.
-    const baseDirectory =
-      !context.isWorkspaceWithFunctions && context.isWorkspaceWithFunctions !== null
-        ? path.dirname(context.workspacePath)
-        : context.projectPath;
-    const gitignorePath = path.join(baseDirectory, gitignoreFileName);
-
+    const gitignorePath = path.join(context.projectPath, gitignoreFileName);
     if (await confirmOverwriteFile(context, gitignorePath)) {
       await fse.writeFile(gitignorePath, this.gitignore.concat(getGitIgnoreContent()));
     }

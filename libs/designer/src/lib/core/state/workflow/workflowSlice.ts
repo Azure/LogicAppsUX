@@ -302,11 +302,41 @@ export const workflowSlice = createSlice({
     collapseGraphsToShowNode: (state: WorkflowState, action: PayloadAction<string>) => {
       state.collapsedGraphIds = getParentsUncollapseFromGraphState(state, action.payload);
     },
-    toggleCollapsedGraphId: (state: WorkflowState, action: PayloadAction<string>) => {
-      if (getRecordEntry(state.collapsedGraphIds, action.payload) === true) {
-        delete state.collapsedGraphIds[action.payload];
+    toggleCollapsedGraphId: (state: WorkflowState, action: PayloadAction<{ id: string; includeNested?: boolean }>) => {
+      const expanding = getRecordEntry(state.collapsedGraphIds, action.payload.id) === true;
+      if (expanding) {
+        delete state.collapsedGraphIds[action.payload.id];
       } else {
-        state.collapsedGraphIds[action.payload] = true;
+        state.collapsedGraphIds[action.payload.id] = true;
+      }
+
+      // Iterate over all graph children and set them to the same state
+      if (action.payload.includeNested) {
+        const graph = getWorkflowNodeFromGraphState(state, action.payload.id);
+        if (!graph) {
+          return;
+        }
+        const nestedGraphIds: string[] = [];
+        const stack: WorkflowNode[] = [graph];
+        while (stack.length) {
+          const node = stack.shift();
+          if (node?.children) {
+            for (const child of node.children) {
+              if (child.type === WORKFLOW_NODE_TYPES.GRAPH_NODE || child.type === WORKFLOW_NODE_TYPES.SUBGRAPH_NODE) {
+                nestedGraphIds.push(child.id);
+                stack.push(child);
+              }
+            }
+          }
+        }
+        for (const id of nestedGraphIds) {
+          const collapsed = getRecordEntry(state.collapsedGraphIds, id) === true;
+          if (expanding && collapsed) {
+            delete state.collapsedGraphIds[id];
+          } else if (!expanding && !collapsed) {
+            state.collapsedGraphIds[id] = true;
+          }
+        }
       }
 
       LoggerService().log({

@@ -1,6 +1,6 @@
 {
   "name": "@microsoft/logic-apps-data-mapper",
-  "version": "5.28.0",
+  "version": "5.40.0",
   "dependencies": {
     "@fluentui/azure-themes": "8.5.70",
     "@fluentui/react": "8.110.2",
@@ -27,7 +27,9 @@
     "react-redux": "8.0.2",
     "reactflow": "^11.11.4",
     "redux-thunk": "2.4.2",
-    "redux-undo": "1.1.0"
+    "redux-undo": "1.1.0",
+    "yaml": "^2.7.0",
+    "yaml-types": "^0.4.0"
   },
   "devDependencies": {
     "@types/js-yaml": "^4.0.9",

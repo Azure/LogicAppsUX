@@ -1,6 +1,6 @@
 import type { UseQueryResult } from '@tanstack/react-query';
 import { useQuery } from '@tanstack/react-query';
-import { getConnector, getOperationManifest } from '../../queries/operation';
+import { getConnector, getOperation } from '../../queries/operation';
 
 export interface ConnectorInfo {
   id: string;
@@ -11,6 +11,7 @@ export interface ConnectorInfo {
 export const useConnectorInfo = (
   connectorId: string | undefined,
   operationId: string | undefined,
+  useCachedData = false,
   enabled = true
 ): UseQueryResult<ConnectorInfo | undefined, unknown> => {
   return useQuery(
@@ -20,15 +21,19 @@ export const useConnectorInfo = (
         return null;
       }
       if (operationId) {
-        const { properties } = await getOperationManifest({ connectorId, operationId });
-        return {
-          id: connectorId,
-          displayName: properties?.connector?.properties?.displayName,
-          iconUrl: properties?.iconUri,
-        };
+        try {
+          const { properties } = await getOperation({ connectorId, operationId }, useCachedData);
+          return {
+            id: connectorId,
+            displayName: properties?.connector?.properties?.displayName,
+            iconUrl: properties?.iconUri,
+          };
+        } catch {
+          /* empty */
+        }
       }
 
-      const { properties } = await getConnector(connectorId);
+      const { properties } = await getConnector(connectorId, useCachedData);
       return {
         id: connectorId,
         displayName: properties?.displayName,

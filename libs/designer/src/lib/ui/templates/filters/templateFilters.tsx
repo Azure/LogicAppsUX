@@ -6,7 +6,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { setConnectorsFilters, setDetailsFilters, setKeywordFilter, setSortKey } from '../../../core/state/templates/manifestSlice';
 import { useMemo } from 'react';
 import { getUniqueConnectorsFromConnections } from '../../../core/templates/utils/helper';
-import { useConnectors } from '../../../core/state/connection/connectionSelector';
+import { useConnector } from '../../../core/state/connection/connectionSelector';
 import { Tab, TabList } from '@fluentui/react-components';
 import type { SelectTabData, SelectTabEvent } from '@fluentui/react-components';
 
@@ -35,11 +35,13 @@ export const TemplateFilters = ({ detailFilters }: TemplateFiltersProps) => {
     location: state.workflow.location,
   }));
   const allTemplatesUniqueConnectorIds = useMemo(() => {
-    const allConnections = Object.values(availableTemplates).flatMap((template) => Object.values(template.connections));
+    const skuTemplates = Object.values(availableTemplates).filter((templateManifest) =>
+      templateManifest.skus.includes(isConsumption ? 'consumption' : 'standard')
+    );
+    const allConnections = Object.values(skuTemplates).flatMap((template) => Object.values(template.connections));
     const uniqueConnectorsFromConnections = getUniqueConnectorsFromConnections(allConnections, subscriptionId, location);
     return uniqueConnectorsFromConnections.map((connector) => connector.connectorId);
-  }, [availableTemplates, location, subscriptionId]);
-  const { data: allUniqueConnectorsEntries } = useConnectors(allTemplatesUniqueConnectorIds);
+  }, [availableTemplates, isConsumption, location, subscriptionId]);
   const selectedTabId = appliedDetailFilters?.Type?.[0]?.value ?? templateDefaultTabKey;
 
   const intlText = {
@@ -96,7 +98,7 @@ export const TemplateFilters = ({ detailFilters }: TemplateFiltersProps) => {
       },
     ];
 
-    if (!isConsumption) {
+    if (!isConsumption && !!availableTemplates) {
       basicTabs.push({
         value: 'Workflow',
         displayName: intl.formatMessage({
@@ -115,7 +117,7 @@ export const TemplateFilters = ({ detailFilters }: TemplateFiltersProps) => {
       });
     }
     return basicTabs;
-  }, [isConsumption, intl]);
+  }, [intl, isConsumption, availableTemplates]);
 
   const onTabSelected = (e?: SelectTabEvent, data?: SelectTabData): void => {
     if (data) {
@@ -149,13 +151,14 @@ export const TemplateFilters = ({ detailFilters }: TemplateFiltersProps) => {
         />
       </div>
       <div className="msla-templates-filters-dropdowns">
-        {allUniqueConnectorsEntries && allUniqueConnectorsEntries.length > 0 && (
+        {allTemplatesUniqueConnectorIds && allTemplatesUniqueConnectorIds.length > 0 && (
           <TemplatesFilterDropdown
             filterName={intlText.CONNECTORS}
-            items={allUniqueConnectorsEntries?.map(([connectorId, connector]) => ({
+            items={allTemplatesUniqueConnectorIds?.map((connectorId) => ({
               value: connectorId,
-              displayName: connector.properties?.displayName,
+              displayName: connectorId.split('/').slice(-1)[0],
             }))}
+            onRenderItem={(item) => <ConnectorName data={item} />}
             onApplyButtonClick={(filterItems) => {
               dispatch(setConnectorsFilters(filterItems));
             }}
@@ -198,4 +201,9 @@ export const TemplateFilters = ({ detailFilters }: TemplateFiltersProps) => {
       </div>
     </div>
   );
+};
+
+export const ConnectorName = ({ data }: { data: any }) => {
+  const { data: connector, isLoading } = useConnector(data.key, /* enabled */ true, /* getCachedData */ true);
+  return <Text>{isLoading ? data.key.split('/').slice(-1)[0] : connector?.properties.displayName}</Text>;
 };

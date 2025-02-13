@@ -64,6 +64,7 @@ export const nodeJsDependencyName = 'NodeJs';
 // Workflow
 export const workflowLocationKey = 'WORKFLOWS_LOCATION_NAME';
 export const workflowResourceGroupNameKey = 'WORKFLOWS_RESOURCE_GROUP_NAME';
+export const customConnectorResourceGroupNameKey = 'CUSTOM_CONNECTOR_RESOURCE_GROUP_NAME';
 export const workflowSubscriptionIdKey = 'WORKFLOWS_SUBSCRIPTION_ID';
 export const workflowTenantIdKey = 'WORKFLOWS_TENANT_ID';
 export const workflowManagementBaseURIKey = 'WORKFLOWS_MANAGEMENT_BASE_URI';

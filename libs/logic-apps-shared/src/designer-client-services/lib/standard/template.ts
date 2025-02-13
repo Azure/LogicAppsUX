@@ -39,7 +39,7 @@ export class StandardTemplateService extends BaseTemplateService {
       });
 
       return responseData?.value?.map((workflow: any) => workflow.name.split('/')[1]) ?? [];
-    } catch (error: any) {
+    } catch (_error: any) {
       return [];
     }
   }

@@ -19,6 +19,7 @@ export const useMapCheckerItemStyles = makeStyles({
   message: {
     fontSize: '11px',
     wordBreak: 'break-word',
+    rowGap: '3px',
   },
   badge: {
     display: 'block',
@@ -42,12 +43,20 @@ export const useMapCheckerItemStyles = makeStyles({
   warningBadge: {
     backgroundColor: '#fef0e7',
   },
+  subtitleText: {
+    marginTop: '5px',
+    display: 'block',
+    color: tokens.colorNeutralForegroundDisabled,
+    fontSize: '10px',
+    wordBreak: 'break-word',
+    overflowWrap: 'anywhere',
+  },
 });
 
 export const useStyles = makeStyles({
   root: {
     width: '300px',
-    paddingLeft: '10px',
+    paddingLeft: '15px',
   },
   title: {
     fontSize: '16px',

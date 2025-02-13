@@ -21,6 +21,16 @@ body:
 
         The more information you fill in, the better we can help you.
 
+  - type: dropdown
+    id: dataMapperType
+    attributes:
+      label: Which Data Mapper Version are you using ?
+      options:
+          - v1
+          - v2
+    validations:
+      required: true
+
   - type: textarea
     id: description
     attributes:
@@ -32,6 +42,7 @@ body:
         2. Click on '....'
         3. Connect nodes and add functions
         4. See error
+        5. Please mention if the issue can be reproduced in both Versions of Data Mapper
     validations:
       required: true
 

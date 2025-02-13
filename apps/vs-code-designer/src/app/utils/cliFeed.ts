@@ -43,6 +43,6 @@ export async function getRelease(context: IActionContext, templateVersion: strin
  * @returns {Promise<ICliFeed>} Releases feed.
  */
 async function getCliFeed(context: IActionContext): Promise<ICliFeed> {
-  const funcCliFeedV4Url = 'https://aka.ms/V00v5v';
+  const funcCliFeedV4Url = 'https://aka.ms/AAubevt';
   return getJsonFeed(context, funcCliFeedV4Url);
 }
