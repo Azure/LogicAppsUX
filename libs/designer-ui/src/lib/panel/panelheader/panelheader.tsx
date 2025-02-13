@@ -11,7 +11,6 @@ import {
   MenuTrigger,
   MessageBar,
   MessageBarBody,
-  MessageBarTitle,
   Spinner,
   Tooltip,
   useRestoreFocusTarget,
@@ -57,7 +56,7 @@ export interface PanelHeaderProps {
   handleTitleUpdate: (originalId: string, newId: string) => void;
   canShowLogicAppRun?: boolean;
   showLogicAppRun?: () => void;
-  showTriggerWarning?: boolean;
+  showTriggerInfo?: boolean;
 }
 
 const DismissIcon = bundleIcon(ChevronDoubleRightFilled, ChevronDoubleRightRegular);
@@ -159,7 +158,7 @@ export const PanelHeader = (props: PanelHeaderProps): JSX.Element => {
     handleTitleUpdate,
     canShowLogicAppRun,
     showLogicAppRun,
-    showTriggerWarning,
+    showTriggerInfo,
   } = props;
 
   const { comment, displayName: title, iconUri: cardIcon, isError, isLoading, nodeId } = nodeData;
@@ -184,17 +183,18 @@ export const PanelHeader = (props: PanelHeaderProps): JSX.Element => {
     description: 'Show Logic App run details text',
   });
 
-  const triggerNameUpdateTitle = intl.formatMessage({
-    defaultMessage: 'Trigger name update',
-    id: '4EREGY',
-    description: 'Text for the trigger name update',
-  });
-
-  const triggerNameUpdateText = intl.formatMessage({
-    defaultMessage: 'Trigger name update',
-    id: '4EREGY',
-    description: 'Text for the trigger name update',
-  });
+  const triggerInfoMessageBar = {
+    text: intl.formatMessage({
+      defaultMessage: 'Updating the trigger name will change the callback URL on save',
+      id: 'XeDHP5',
+      description: 'Trigger name update information message',
+    }),
+    ariaLabel: intl.formatMessage({
+      defaultMessage: 'Trigger name update message information bar',
+      id: 'u7pNIX',
+      description: 'Accessible label for trigger name update information',
+    }),
+  };
 
   const isRight = headerLocation === PanelLocation.Right;
   const noNodeOnCardLevel = noNodeSelected && panelScope === PanelScope.CardLevel;
@@ -250,13 +250,15 @@ export const PanelHeader = (props: PanelHeaderProps): JSX.Element => {
           </>
         ) : null}
       </div>
-      {showTriggerWarning ? (
-        <div className="msla-panel-header-buttons">
-          <MessageBar>
-            <MessageBarBody>
-              <MessageBarTitle>{triggerNameUpdateTitle}</MessageBarTitle>
-              {triggerNameUpdateText}
-            </MessageBarBody>
+      {showTriggerInfo ? (
+        <div className="msla-panel-header-messages">
+          <MessageBar
+            aria-label={triggerInfoMessageBar.ariaLabel}
+            layout="multiline"
+            data-automation-id="msla-panel-header-trigger-info"
+            data-testid="msla-panel-header-trigger-info"
+          >
+            <MessageBarBody>{triggerInfoMessageBar.text}</MessageBarBody>
           </MessageBar>
         </div>
       ) : null}
@@ -269,27 +271,29 @@ export const PanelHeader = (props: PanelHeaderProps): JSX.Element => {
           commentChange={commentChange}
         />
       ) : null}
-      <div className="msla-panel-header-buttons">
-        {canResubmit ? (
-          <Button
-            className="msla-panel-header-buttons__button"
-            icon={<Icon iconName="PlaybackRate1x" />}
-            onClick={() => resubmitOperation?.()}
-          >
-            {resubmitButtonText}
-          </Button>
-        ) : null}
-        {canShowLogicAppRun ? (
-          <Button
-            iconPosition="after"
-            className="msla-panel-header-buttons__button"
-            icon={<Icon iconName="ChevronRight" />}
-            onClick={() => showLogicAppRun?.()}
-          >
-            {showLogicAppRunText}
-          </Button>
-        ) : null}
-      </div>
+      {canResubmit || canShowLogicAppRun ? (
+        <div className="msla-panel-header-buttons">
+          {canResubmit ? (
+            <Button
+              className="msla-panel-header-buttons__button"
+              icon={<Icon iconName="PlaybackRate1x" />}
+              onClick={() => resubmitOperation?.()}
+            >
+              {resubmitButtonText}
+            </Button>
+          ) : null}
+          {canShowLogicAppRun ? (
+            <Button
+              iconPosition="after"
+              className="msla-panel-header-buttons__button"
+              icon={<Icon iconName="ChevronRight" />}
+              onClick={() => showLogicAppRun?.()}
+            >
+              {showLogicAppRunText}
+            </Button>
+          ) : null}
+        </div>
+      ) : null}
     </>
   );
 };

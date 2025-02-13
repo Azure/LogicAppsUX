@@ -44,7 +44,7 @@ export const NodeDetailsPanel = (props: CommonPanelProps): JSX.Element => {
   const selectedNode = useOperationPanelSelectedNodeId();
 
   const runData = useRunData(selectedNode);
-  const { isTriggerNode, nodesMetadata, idReplacements, operationInfo, showTriggerWarning } = useSelector((state: RootState) => {
+  const { isTriggerNode, nodesMetadata, idReplacements, operationInfo, showTriggerInfo } = useSelector((state: RootState) => {
     const isTrigger = isRootNodeInGraph(selectedNode, 'root', state.workflow.nodesMetadata);
     const operationInfo = state.operations.operationInfo[selectedNode];
     return {
@@ -52,7 +52,7 @@ export const NodeDetailsPanel = (props: CommonPanelProps): JSX.Element => {
       nodesMetadata: state.workflow.nodesMetadata,
       idReplacements: state.workflow.idReplacements,
       operationInfo,
-      showTriggerWarning: isTrigger && operationInfo.type === constants.SERIALIZED_TYPE.REQUEST,
+      showTriggerInfo: isTrigger && operationInfo.type === constants.SERIALIZED_TYPE.REQUEST,
     };
   });
 
@@ -252,7 +252,7 @@ export const NodeDetailsPanel = (props: CommonPanelProps): JSX.Element => {
         }
         togglePanel();
       }}
-      showTriggerWarning={showTriggerWarning}
+      showTriggerInfo={showTriggerInfo && !readOnly}
       trackEvent={handleTrackEvent}
       onCommentChange={onCommentChange}
       onTitleChange={onTitleChange}

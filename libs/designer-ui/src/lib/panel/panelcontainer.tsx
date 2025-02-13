@@ -46,7 +46,7 @@ export type PanelContainerProps = {
   setOverrideWidth?: (width: string | undefined) => void;
   canShowLogicAppRun?: boolean;
   showLogicAppRun?: () => void;
-  showTriggerWarning?: boolean;
+  showTriggerInfo?: boolean;
 } & CommonPanelProps;
 
 export const PanelContainer = ({
@@ -74,7 +74,7 @@ export const PanelContainer = ({
   mountNode,
   canShowLogicAppRun,
   showLogicAppRun,
-  showTriggerWarning,
+  showTriggerInfo,
 }: PanelContainerProps) => {
   const intl = useIntl();
   const canResize = !!(isResizeable && setOverrideWidth);
@@ -114,7 +114,7 @@ export const PanelContainer = ({
           toggleCollapse={toggleCollapse}
           onTitleChange={onTitleChange}
           handleTitleUpdate={handleTitleUpdate}
-          showTriggerWarning={showTriggerWarning}
+          showTriggerInfo={showTriggerInfo}
         />
       );
     },
@@ -138,7 +138,7 @@ export const PanelContainer = ({
       handleTitleUpdate,
       resubmitOperation,
       onCommentChange,
-      showTriggerWarning,
+      showTriggerInfo,
     ]
   );
 
