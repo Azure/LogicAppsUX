@@ -4,7 +4,7 @@ import { createSlice } from '@reduxjs/toolkit';
 import { getCurrentWorkflowNames, validateConnectionsValue, validateParameterValue } from '../../templates/utils/helper';
 import { initializeTemplateServices, loadTemplate, validateWorkflowName, type TemplatePayload } from '../../actions/bjsworkflow/templates';
 
-export interface TemplateState extends TemplatePayload {
+interface TemplateState extends TemplatePayload {
   templateName?: string;
   servicesInitialized: boolean;
 }
@@ -88,6 +88,9 @@ export const templateSlice = createSlice({
       };
       state.errors.parameters[name] = validationError;
     },
+    updateTemplateParameterDefinitions: (state, action: PayloadAction<Record<string, Template.ParameterDefinition>>) => {
+      state.parameterDefinitions = { ...state.parameterDefinitions, ...action.payload };
+    },
     validateParameters: (state) => {
       const parametersDefinition = { ...state.parameterDefinitions };
       const parametersValidationErrors = { ...state.errors.parameters };
@@ -156,5 +159,6 @@ export const {
   validateConnections,
   clearTemplateDetails,
   updateWorkflowNameValidationError,
+  updateTemplateParameterDefinitions,
 } = templateSlice.actions;
 export default templateSlice.reducer;

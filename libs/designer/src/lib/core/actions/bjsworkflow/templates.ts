@@ -2,7 +2,6 @@ import {
   BaseExperimentationService,
   DevLogger,
   getIntl,
-  guid,
   type ILoggerService,
   InitApiManagementService,
   InitAppServiceService,
@@ -27,6 +26,9 @@ import {
 import { createAsyncThunk } from '@reduxjs/toolkit';
 import type { RootState } from '../../state/templates/store';
 import type { TemplateServiceOptions } from '../../templates/TemplatesDesignerContext';
+import { initializeParametersMetadata } from 'lib/core/templates/utils/parametershelper';
+import { initializeNodeOperationInputsData } from 'lib/core/state/operation/operationMetadataSlice';
+import { updateTemplateParameterDefinitions } from 'lib/core/state/templates/templateSlice';
 
 export interface WorkflowTemplateData {
   id: string;
@@ -52,6 +54,26 @@ export interface TemplatePayload {
     connections: string | undefined;
   };
 }
+
+export const initializeWorkflowMetadata = createAsyncThunk(
+  'initializeWorkflowMetadata',
+  async (_, { getState, dispatch }): Promise<void> => {
+    const currentState: RootState = getState() as RootState;
+    const { workflows, parameterDefinitions, connections } = currentState.template;
+    const { subscriptionId, location } = currentState.workflow;
+    const { inputsPayload, parameterDefinitions: templateParametersToOverride } = await initializeParametersMetadata(
+      workflows,
+      parameterDefinitions,
+      connections,
+      { subscriptionId, location }
+    );
+
+    if (inputsPayload.length) {
+      dispatch(initializeNodeOperationInputsData(inputsPayload));
+      dispatch(updateTemplateParameterDefinitions(templateParametersToOverride));
+    }
+  }
+);
 
 export const isMultiWorkflowTemplate = (manifest: Template.Manifest): boolean => {
   return !!manifest.workflows && Object.keys(manifest.workflows).length > 0;
@@ -133,7 +155,7 @@ export const loadTemplate = createAsyncThunk(
     const currentTemplateResourcePath = currentState.template.templateName;
 
     if (currentTemplateResourcePath) {
-      return await loadTemplateFromResourcePath(currentTemplateResourcePath, preLoadedManifest, isCustomTemplate);
+      return loadTemplateFromResourcePath(currentTemplateResourcePath, preLoadedManifest, isCustomTemplate);
     }
 
     return undefined;
@@ -229,7 +251,7 @@ const loadTemplateFromResourcePath = async (
       }
     }
   } else {
-    const workflowId = guid();
+    const workflowId = 'default'; // This would change to the folder path which contains workflow manifest once we restructure.
     const workflowData = await loadWorkflowTemplateFromManifest(workflowId, templateName, manifest, isCustomTemplate);
     if (workflowData) {
       data.workflows = {

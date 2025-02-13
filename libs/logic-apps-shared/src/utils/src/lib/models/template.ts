@@ -41,10 +41,20 @@ export interface Parameter {
   displayName: string;
   value?: any;
   allowedValues?: { value: any; displayName: string }[];
+  dynamicData?: {
+    type: 'picker' | 'list';
+    workflow: string;
+    operation: string;
+    connection: string;
+  };
 }
 
 export interface ParameterDefinition extends Parameter {
   associatedWorkflows?: string[];
+  associatedOperationParameter?: {
+    operationId: string;
+    parameterKey: string;
+  };
 }
 
 export interface Connection {

@@ -4,12 +4,14 @@ import workflowReducer from './workflowSlice';
 import templateReducer from './templateSlice';
 import manifestReducer from './manifestSlice';
 import panelReducer from './panelSlice';
+import operationReducer from '../operation/operationMetadataSlice';
 
 const rootReducer = combineReducers({
   workflow: workflowReducer,
   template: templateReducer,
   manifest: manifestReducer,
   panel: panelReducer,
+  operation: operationReducer,
 });
 
 export const setupStore = (preloadedState?: Partial<RootState>) => {
