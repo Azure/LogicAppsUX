@@ -26,9 +26,9 @@ import {
 import { createAsyncThunk } from '@reduxjs/toolkit';
 import type { RootState } from '../../state/templates/store';
 import type { TemplateServiceOptions } from '../../templates/TemplatesDesignerContext';
-import { initializeParametersMetadata } from 'lib/core/templates/utils/parametershelper';
-import { initializeNodeOperationInputsData } from 'lib/core/state/operation/operationMetadataSlice';
-import { updateTemplateParameterDefinitions } from 'lib/core/state/templates/templateSlice';
+import { initializeParametersMetadata } from '../../templates/utils/parametershelper';
+import { initializeNodeOperationInputsData } from '../../state/operation/operationMetadataSlice';
+import { updateTemplateParameterDefinitions } from '../../state/templates/templateSlice';
 
 export interface WorkflowTemplateData {
   id: string;
