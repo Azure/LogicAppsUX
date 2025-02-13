@@ -1,4 +1,11 @@
 # Logic Apps Designer
+## [5.39.0](https://github.com/Azure/LogicAppsUX/compare/v5.38.0...v5.39.0) (2025-02-13)
+
+
+### Features
+
+* **Templates:** Support ViewTemplate data Override ([#6575](https://github.com/Azure/LogicAppsUX/issues/6575)) ([a37aa76](https://github.com/Azure/LogicAppsUX/commit/a37aa769239dd2eb221f98a847c6cf871f35e7a7))
+
 ## [5.38.0](https://github.com/Azure/LogicAppsUX/compare/v5.37.0...v5.38.0) (2025-02-07)
 
 
