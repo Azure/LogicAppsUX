@@ -44,7 +44,7 @@ export const TemplatesConsumption = () => {
   const { data: workflowData } = useWorkflowAndArtifactsConsumption(workflowId!);
   const { data: tenantId } = useCurrentTenantId();
   const { data: objectId } = useCurrentObjectId();
-  const canonicalLocation = WorkflowUtility.convertToCanonicalFormat(workflowData?.location ?? '');
+  const canonicalLocation = WorkflowUtility.convertToCanonicalFormat(workflowData?.location ?? 'westus');
 
   const { workflow, connectionReferences } = useMemo(() => getDataForConsumption(workflowData), [workflowData]);
   const isSingleTemplateView = useMemo(() => templatesView !== 'gallery', [templatesView]);

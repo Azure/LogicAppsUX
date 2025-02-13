@@ -122,6 +122,28 @@ export const initializeTemplateServices = createAsyncThunk(
   }
 );
 
+export const loadManifestsFromPaths = async (resourcePaths: string[]) => {
+  try {
+    const manifestPromises = resourcePaths.map(async (resourcePath) => {
+      return import(`./../../templates/templateFiles/${resourcePath}/manifest.json`);
+    });
+    const manifestsArray = await Promise.all(manifestPromises);
+    return manifestsArray.reduce((result: Record<string, Template.Manifest>, manifestFile: any, index: number) => {
+      const manifest = manifestFile.default;
+      result[resourcePaths[index]] = manifest;
+      return result;
+    }, {});
+  } catch (error) {
+    LoggerService().log({
+      level: LogEntryLevel.Error,
+      area: 'Templates.loadGithubManifests',
+      message: `Error loading manifests: ${error}`,
+      error: error instanceof Error ? error : undefined,
+    });
+    return undefined;
+  }
+};
+
 export const loadTemplate = createAsyncThunk(
   'loadTemplate',
   async (
@@ -134,7 +156,7 @@ export const loadTemplate = createAsyncThunk(
     const viewTemplateData = currentTemplateName === viewTemplateDetails?.id ? viewTemplateDetails : undefined;
 
     if (currentTemplateName) {
-      return await loadTemplateFromResourcePath(currentTemplateName, preLoadedManifest, isCustomTemplate, viewTemplateData);
+      return loadTemplateFromResourcePath(currentTemplateName, preLoadedManifest, isCustomTemplate, viewTemplateData);
     }
 
     return undefined;

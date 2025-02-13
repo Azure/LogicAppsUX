@@ -8,6 +8,8 @@ import {
   loadGithubManifests,
   setCustomTemplates,
   setFilteredTemplateNames,
+  templatesCountPerPage,
+  lazyLoadGithubManifests,
 } from '../state/templates/manifestSlice';
 import { type ResourceDetails, setInitialData } from '../state/templates/workflowSlice';
 import { useAreServicesInitialized } from '../state/templates/templateselectors';
@@ -40,7 +42,11 @@ const DataProviderInner = ({ isConsumption, children }: TemplatesDataProviderPro
 
   useEffect(() => {
     if (githubTemplateNames) {
-      dispatch(loadGithubManifests());
+      dispatch(loadGithubManifests(templatesCountPerPage));
+
+      if (githubTemplateNames.length > templatesCountPerPage) {
+        dispatch(lazyLoadGithubManifests(templatesCountPerPage));
+      }
     }
   }, [dispatch, githubTemplateNames]);
 
