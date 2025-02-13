@@ -25,10 +25,10 @@ test.describe(
       await GoToMockWorkflow(page, 'Panel');
 
       // Collapse last action
-      await page.getByText('HTTP', { exact: true }).click({ button: 'right' });
-      expect(await page.getByText('Collapse action', { exact: true })).toBeVisible();
+      await page.getByText('Filter array', { exact: true }).click({ button: 'right' });
+      expect(await page.getByText('Filter array', { exact: true })).toBeVisible();
       await page.getByText('Collapse action').click({ force: true });
-      await expect(page.getByTestId('msla-collapsed-card-http')).toBeVisible();
+      await expect(page.getByTestId('msla-collapsed-card-filter_array')).toBeVisible();
       await expect(page.getByLabel('HTTP operation icon')).toBeVisible();
       await expect(page.getByTestId('collapsed-text-http')).not.toBeVisible();
 
@@ -48,7 +48,7 @@ test.describe(
       expect(await page.getByText('Expand action', { exact: true })).toBeVisible();
       await page.getByText('Expand action').click({ force: true });
       expect(page.getByText('Initialize ArrayVariable', { exact: true })).toBeVisible();
-      await expect(page.getByTestId('msla-collapsed-card-http')).toBeVisible();
+      await expect(page.getByTestId('msla-collapsed-card-filter_array')).toBeVisible();
     });
 
     test('Should collapse actions within scope', async ({ page }) => {
