@@ -17,6 +17,18 @@ export const useOperationVisuals = (nodeId: string) =>
     createSelector(getOperationState, (state) => getRecordEntry(state.operationMetadata, nodeId) ?? { brandColor: '', iconUri: '' })
   );
 
+export const useOperationsVisuals = (nodesId: string[]) =>
+  useSelector(
+    createSelector(getOperationState, (state) => {
+      return nodesId.map((nodeId) => {
+        return {
+          ...(getRecordEntry(state.operationMetadata, nodeId) ?? { brandColor: '', iconUri: '' }),
+          id: nodeId,
+        };
+      });
+    })
+  );
+
 export const getNodeOperationData = (state: OperationMetadataState, nodeId: string) => {
   return {
     nodeInputs: getRecordEntry(state.inputParameters, nodeId),

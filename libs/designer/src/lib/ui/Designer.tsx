@@ -13,6 +13,7 @@ import GraphNode from './CustomNodes/GraphContainerNode';
 import HiddenNode from './CustomNodes/HiddenNode';
 import OperationNode from './CustomNodes/OperationCardNode';
 import PlaceholderNode from './CustomNodes/PlaceholderNode';
+import CollapsedNode from './CustomNodes/CollapsedCardNode';
 import ScopeCardNode from './CustomNodes/ScopeCardNode';
 import SubgraphCardNode from './CustomNodes/SubgraphCardNode';
 import Minimap from './Minimap';
@@ -60,6 +61,7 @@ const nodeTypes: NodeTypesObj = {
   SUBGRAPH_CARD_NODE: SubgraphCardNode,
   HIDDEN_NODE: HiddenNode,
   PLACEHOLDER_NODE: PlaceholderNode,
+  COLLAPSED_NODE: CollapsedNode,
 };
 
 const edgeTypes = {

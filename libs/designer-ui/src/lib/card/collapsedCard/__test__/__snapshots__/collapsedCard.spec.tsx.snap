@@ -1,0 +1,78 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`CollapsedCard > should render expanding state correctly 1`] = `
+<div>
+  <div
+    aria-label="Collapsed card with 8 actions"
+    class="msla-collapsed-card"
+    data-automation-id="msla-collapsed-card-test-id"
+    data-tabster="{"restorer":{"type":1}}"
+    id="msla-collapsed-card-test-id"
+  >
+    <span
+      class="fui-Text no-actions-text ___neksqk0_k30lwu0 fk6fouc fkhj508 f1i3iumi figsok6 f17mccla f1w7gpdv f6juhto f1gl81tg f2jf649"
+      data-automation-id="collapsed-text-test-id"
+    >
+      Expanding actions...
+    </span>
+  </div>
+</div>
+`;
+
+exports[`CollapsedCard > should render non-expanding state with operation visuals and action text when actionCount > 0 1`] = `
+<div>
+  <div
+    aria-label="Collapsed card with 6 actions"
+    class="msla-collapsed-card"
+    data-automation-id="msla-collapsed-card-test-id"
+    data-tabster="{"restorer":{"type":1}}"
+    id="msla-collapsed-card-test-id"
+  >
+    <div
+      style="display: flex; align-items: center;"
+    >
+      <img
+        alt=""
+        aria-label="op1 operation icon"
+        class="msla-collapsed-card__icon"
+        src="http://example.com/icon1.png"
+      />
+      <img
+        alt=""
+        aria-label="op2 operation icon"
+        class="msla-collapsed-card__icon"
+        src="http://example.com/icon2.png"
+      />
+      <span
+        class="fui-Text ___c56hd20_1xy0w11 fk6fouc fkhj508 f1i3iumi figsok6 fpgzoln f1w7gpdv f6juhto f1gl81tg f2jf649"
+        data-automation-id="collapsed-text-test-id"
+      >
+        + 3
+      </span>
+    </div>
+  </div>
+</div>
+`;
+
+exports[`CollapsedCard > should render non-expanding state without action text when actionCount <= 0 1`] = `
+<div>
+  <div
+    aria-label="Collapsed card with 3 actions"
+    class="msla-collapsed-card"
+    data-automation-id="msla-collapsed-card-test-id"
+    data-tabster="{"restorer":{"type":1}}"
+    id="msla-collapsed-card-test-id"
+  >
+    <div
+      style="display: flex; align-items: center;"
+    >
+      <img
+        alt=""
+        aria-label="op1 operation icon"
+        class="msla-collapsed-card__icon"
+        src="http://example.com/icon1.png"
+      />
+    </div>
+  </div>
+</div>
+`;

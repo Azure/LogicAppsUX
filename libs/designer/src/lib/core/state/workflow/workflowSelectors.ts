@@ -11,6 +11,7 @@ import { useSelector } from 'react-redux';
 import Queue from 'yocto-queue';
 import type {} from 'reselect';
 import type {} from '@tanstack/react-query';
+import { collapseFlowTree } from './helper';
 
 export const getWorkflowState = (state: RootState): WorkflowState => state.workflow;
 
@@ -39,18 +40,43 @@ export const useIsWorkflowDirty = () => useSelector(createSelector(getWorkflowSt
 export const getRootWorkflowGraphForLayout = createSelector(getWorkflowState, (data) => {
   const rootNode = data.graph;
   const collapsedIds = data.collapsedGraphIds;
-  if (Object.keys(collapsedIds).length === 0) {
-    return rootNode;
-  }
+  const collapsedActionsIds = data.collapsedActionIds;
   if (!rootNode) {
     return undefined;
   }
-  const newGraph = {
-    ...rootNode,
-    children: reduceCollapsed((node: WorkflowNode) => getRecordEntry(collapsedIds, node.id))(rootNode.children ?? []),
-  };
+
+  if (Object.keys(collapsedIds).length === 0 && Object.keys(collapsedActionsIds).length === 0) {
+    return rootNode;
+  }
+
+  let newGraph = rootNode;
+
+  if (Object.keys(collapsedActionsIds).length !== 0) {
+    newGraph = collapseFlowTree(newGraph, collapsedActionsIds).graph;
+  }
+
+  if (Object.keys(collapsedIds).length !== 0) {
+    newGraph = {
+      ...newGraph,
+      children: reduceCollapsed((node: WorkflowNode) => getRecordEntry(collapsedIds, node.id))(newGraph.children ?? []),
+    };
+  }
+
   return newGraph;
 });
+
+export const useCollapsedMapping = () =>
+  useSelector(
+    createSelector(getWorkflowState, (state: WorkflowState) => {
+      const rootNode = state.graph;
+      const collapsedActionsIds = state.collapsedActionIds;
+      if (!rootNode) {
+        return {};
+      }
+
+      return collapseFlowTree(rootNode, collapsedActionsIds).collapsedMapping;
+    })
+  );
 
 const nonfilteredNodeTypes = [WORKFLOW_NODE_TYPES.SCOPE_CARD_NODE, WORKFLOW_NODE_TYPES.SUBGRAPH_CARD_NODE];
 const filterOutGraphChildren = (children: WorkflowNode[]) => children?.filter((child) => nonfilteredNodeTypes.includes(child.type));
@@ -77,6 +103,9 @@ const reduceCollapsed =
 
 export const useIsGraphCollapsed = (graphId: string): boolean =>
   useSelector(createSelector(getWorkflowState, (state: WorkflowState): boolean => state.collapsedGraphIds?.[graphId]));
+
+export const useIsActionCollapsed = (actionId: string): boolean =>
+  useSelector(createSelector(getWorkflowState, (state: WorkflowState): boolean => state.collapsedActionIds?.[actionId]));
 
 export const useGetSwitchParentId = (nodeId: string): string | undefined => {
   return useSelector(

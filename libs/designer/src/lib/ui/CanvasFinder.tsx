@@ -3,10 +3,9 @@ import { useSelector, useDispatch } from 'react-redux';
 import { useInternalNode, useNodes, useReactFlow } from '@xyflow/react';
 
 import { useIsGraphEmpty } from '../core/state/workflow/workflowSelectors';
-import { clearFocusNode } from '../core/state/workflow/workflowSlice';
+import { clearFocusCollapsedNode, clearFocusNode } from '../core/state/workflow/workflowSlice';
 import { DEFAULT_NODE_SIZE } from '../core/utils/graph';
 import type { RootState, AppDispatch } from '../core';
-
 
 export const CanvasFinder = () => {
   const focusNodeId = useSelector((state: RootState) => state.workflow.focusedCanvasNodeId);
@@ -48,7 +47,7 @@ export const CanvasFinder = () => {
       return;
     }
 
-    let xRawPos = focusNode?.internals.positionAbsolute?.x ?? 0;
+    const xRawPos = focusNode?.internals.positionAbsolute?.x ?? 0;
     const yRawPos = focusNode?.internals.positionAbsolute?.y ?? 0;
 
     const xTarget = xRawPos + (focusNode?.measured?.width ?? DEFAULT_NODE_SIZE.width) / 2; // Center X on node midpoint
@@ -56,10 +55,11 @@ export const CanvasFinder = () => {
 
     setCenter(xTarget, yTarget, {
       zoom: getZoom(),
-      duration: 500,
+      duration: 350,
     });
 
     dispatch(clearFocusNode());
+    dispatch(clearFocusCollapsedNode());
   }, [focusNode, setCenter, getZoom, dispatch]);
 
   useEffect(() => {
