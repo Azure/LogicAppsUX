@@ -687,22 +687,6 @@ export function transformParameters(params: any): any {
 }
 
 /**
- * Determines if a given operation type (and whether it is a trigger) can be mocked.
- * @param type - The operation type.
- * @param isTrigger - Whether the operation is a trigger.
- * @returns True if the operation is mockable.
- */
-export function isMockable(type: string, isTrigger: boolean): boolean {
-  const mockableActionTypes = new Set<string>(['Http', 'InvokeFunction', 'Function', 'ServiceProvider', 'ApiManagement', 'ApiConnection']);
-  const mockableTriggerTypes = new Set<string>(['HttpWebhook', 'Request', 'Manual', 'ApiConnectionWebhook', 'ServiceProvider']);
-  const normalizedType = type.toLowerCase();
-  if (isTrigger) {
-    return Array.from(mockableTriggerTypes).some((triggerType) => triggerType.toLowerCase() === normalizedType);
-  }
-  return Array.from(mockableActionTypes).some((actionType) => actionType.toLowerCase() === normalizedType);
-}
-
-/**
  * Represents the metadata for generating a single C# class.
  * Will store the class name, a doc-comment, properties, and child class definitions.
  */
@@ -927,39 +911,36 @@ export async function processAndWriteMockableOperations(
     const operation = operationInfo[operationName];
     const type = operation.type;
 
-    //edge cases where operationId might be absent
+    // Edge case: if operationId is absent, use the operation name
     const operationId = operation.operationId ?? operationName;
-
-    // If we've already processed this operation ID, skip to the next
     if (processedOperationIds.has(operationId)) {
       continue;
     }
     processedOperationIds.add(operationId);
 
-    // For triggers, check if it's one of these types:
-    const isTrigger = ['HttpWebhook', 'Request', 'Manual', 'ApiConnectionWebhook'].includes(type);
+    // Determine if this is a trigger by comparing in uppercase
+    const isTrigger = ['HTTPWEBHOOK', 'REQUEST', 'MANUAL', 'APICONNECTIONWEBHOOK'].includes(type.toUpperCase());
 
-    // Only proceed if this operation type is mockable
-    if (isMockable(type, isTrigger)) {
-      // Set opreationName as className
+    // Only proceed if this operation type is mockable (using the new async isMockable)
+    if (await isMockable(type)) {
+      // Set operationName as className
       const cleanedOperationName = removeInvalidCharacters(operationName);
       let className = toPascalCase(cleanedOperationName);
 
-      // Append appropriate suffix based on whether it's a trigger
+      // Append suffix based on whether it's a trigger
       className += isTrigger ? 'TriggerOutput' : 'ActionOutput';
 
       // Transform the output parameters for this operation
       const outputs = transformParameters(outputParameters[operationName]?.outputs || {});
 
-      // Replace char in namepsace var to compile c# file
+      // Sanitize logic app name for namespace (replace '-' with '_')
       const sanitizedLogicAppName = logicAppName.replace(/-/g, '_');
 
-      // Generate C# class content (assuming generateCSharpClasses returns a string)
+      // Generate C# class content
       const classContent = generateCSharpClasses(sanitizedLogicAppName, className, outputs);
 
       // Write the .cs file
       const filePath = path.join(mockOutputsFolderPath, `${className}.cs`);
-
       await fs.writeFile(filePath, classContent, 'utf-8');
 
       // Log to output channel
@@ -1008,4 +989,72 @@ export function generateCSharpClasses(namespaceName: string, rootClassName: stri
     '}',
   ].join('\n');
   return finalCode;
+}
+
+// Static sets for mockable operation types
+const mockableActionTypes = new Set<string>(['Http', 'InvokeFunction', 'Function', 'ServiceProvider', 'ApiManagement', 'ApiConnection']);
+
+const mockableTriggerTypes = new Set<string>(['HTTPWEBHOOK', 'REQUEST', 'MANUAL', 'APICONNECTIONWEBHOOK']);
+
+// This set will be populated from the runtime API
+const mockableOperationTypes = new Set<string>();
+
+/**
+ * Retrieves the mockable operation types from the runtime API and populates the set.
+ * Throws an error if the design time port is undefined or if the request fails.
+ */
+export async function getMockableOperationTypes(): Promise<void> {
+  if (!ext.designTimePort) {
+    throw new Error(
+      localize('errorStandardResourcesApi', 'Design time port is undefined. Please retry once Azure Functions Core Tools has started.')
+    );
+  }
+  const baseUrl = `http://localhost:${ext.designTimePort}`;
+  const listMockableOperationsUrl = `${baseUrl}/runtime/webhooks/workflow/api/management/listMockableOperations`;
+  ext.outputChannel.appendLog(localize('listMockableOperations', `Fetching unit test mockable operations at ${listMockableOperationsUrl}`));
+  try {
+    const response = await axios.get(listMockableOperationsUrl);
+    response.data.forEach((mockableOperation: string) => mockableOperationTypes.add(mockableOperation.toUpperCase()));
+  } catch (apiError: any) {
+    if (axios.isAxiosError(apiError)) {
+      ext.outputChannel.appendLog(
+        localize(
+          'errorListMockableOperationsFailed',
+          `Request to ${listMockableOperationsUrl} failed with status: {0}, message: {1}, response: {2}`,
+          apiError.response?.status,
+          apiError.response?.statusText,
+          JSON.stringify(apiError.response?.data || {})
+        )
+      );
+    }
+    throw apiError;
+  }
+}
+
+/**
+ * Determines if a given operation type can be mocked.
+ * This asynchronous function first ensures that runtime mockable operations are fetched,
+ * then checks if the provided type exists (in a case-insensitive manner) in the runtime set,
+ * or in the static action/trigger sets.
+ * @param type - The operation type.
+ * @returns A Promise that resolves to true if the operation is mockable, false otherwise.
+ */
+export async function isMockable(type: string): Promise<boolean> {
+  if (mockableOperationTypes.size === 0) {
+    await getMockableOperationTypes();
+  }
+  const normalizedType = type.toUpperCase();
+
+  // First, check if the runtime API indicates this type is mockable
+  if (mockableOperationTypes.has(normalizedType)) {
+    return true;
+  }
+  // Otherwise, check the static sets (action and trigger types)
+  if (Array.from(mockableActionTypes).some((t) => t.toUpperCase() === normalizedType)) {
+    return true;
+  }
+  if (Array.from(mockableTriggerTypes).some((t) => t.toUpperCase() === normalizedType)) {
+    return true;
+  }
+  return false;
 }
