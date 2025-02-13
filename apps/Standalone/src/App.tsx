@@ -52,7 +52,7 @@ const DataMapperV2 = () => {
 const TemplatesStandalone = () => {
   return (
     <Provider store={templateStore}>
-      <ReactQueryProvider persistEnabled>
+      <ReactQueryProvider>
         <TemplatesDesignerWrapper />
       </ReactQueryProvider>
     </Provider>

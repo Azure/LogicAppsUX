@@ -9,6 +9,7 @@ interface ReactQueryProviderProps {
   children: React.ReactNode;
   persistEnabled?: boolean;
   persistKeyWhitelist?: string[];
+  resetPersistCache?: boolean;
 }
 
 const defaultCacheTime = 1000 * 60 * 60 * 24; // 24 hours
@@ -69,6 +70,7 @@ export const ReactQueryProvider = (props: ReactQueryProviderProps) => {
       client={reactQueryClient}
       persistOptions={{
         persister,
+        buster: props.resetPersistCache ? Date.now().toString() : undefined,
         dehydrateOptions: {
           shouldDehydrateQuery: (query) => {
             const queryKeyWhitelist: string[] = [...queryKeyDefaultWhitelist, ...(props?.persistKeyWhitelist ?? [])];
