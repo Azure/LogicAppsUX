@@ -3,7 +3,7 @@ import type { RootState } from './store';
 import type { WorkflowTemplateData } from '../../actions/bjsworkflow/templates';
 
 export const useAreServicesInitialized = () => {
-  return useSelector((state: RootState) => state.template.servicesInitialized ?? false);
+  return useSelector((state: RootState) => state.templateOptions.servicesInitialized ?? false);
 };
 
 export const useTemplateWorkflows = () => {
@@ -13,6 +13,15 @@ export const useTemplateWorkflows = () => {
 export const useWorkflowTemplate = (workflowId: string): WorkflowTemplateData => {
   return useSelector((state: RootState) => {
     return state.template.workflows[workflowId];
+  });
+};
+
+export const useWorkflowBasicsEditable = (workflowId: string) => {
+  return useSelector((state: RootState) => {
+    return {
+      isNameEditable: state.templateOptions.viewTemplateDetails?.basicsOverride?.[workflowId]?.name?.isEditable ?? true,
+      isKindEditable: state.templateOptions.viewTemplateDetails?.basicsOverride?.[workflowId]?.kind?.isEditable ?? true,
+    };
   });
 };
 
