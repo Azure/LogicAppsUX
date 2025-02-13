@@ -732,7 +732,19 @@ export interface PropertyDefinition {
  */
 export function buildClassDefinition(className: string, node: any): ClassDefinition {
   // If there's a top-level "description" for the object
-  const classDescription = node.description ? String(node.description) : null;
+  let classDescription: string | null = node.description ? String(node.description) : null;
+  if (!classDescription) {
+    if (node.type === 'object') {
+      const skipKeys = ['type', 'title', 'description', 'format', 'headers', 'queries', 'tags', 'relativePathParameters'];
+      const propertyNames = Object.keys(node).filter((key) => !skipKeys.includes(key));
+      classDescription =
+        propertyNames.length > 0
+          ? `Class for ${className} representing an object with properties.`
+          : `Class for ${className} representing an empty object.`;
+    } else {
+      classDescription = `Class for ${className} representing a ${node.type} value.`;
+    }
+  }
 
   // We'll collect property info for the current class
   const properties: PropertyDefinition[] = [];
