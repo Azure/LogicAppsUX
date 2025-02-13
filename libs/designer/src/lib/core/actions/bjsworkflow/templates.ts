@@ -2,7 +2,6 @@ import {
   BaseExperimentationService,
   DevLogger,
   getIntl,
-  guid,
   type ILoggerService,
   InitApiManagementService,
   InitAppServiceService,
@@ -130,10 +129,12 @@ export const loadTemplate = createAsyncThunk(
     thunkAPI
   ) => {
     const currentState: RootState = thunkAPI.getState() as RootState;
-    const currentTemplateResourcePath = currentState.template.templateName;
+    const currentTemplateName = currentState.template.templateName;
+    const viewTemplateDetails = currentState.templateOptions.viewTemplateDetails;
+    const viewTemplateData = currentTemplateName === viewTemplateDetails?.id ? viewTemplateDetails : undefined;
 
-    if (currentTemplateResourcePath) {
-      return await loadTemplateFromResourcePath(currentTemplateResourcePath, preLoadedManifest, isCustomTemplate);
+    if (currentTemplateName) {
+      return await loadTemplateFromResourcePath(currentTemplateName, preLoadedManifest, isCustomTemplate, viewTemplateData);
     }
 
     return undefined;
@@ -174,7 +175,8 @@ export const validateWorkflowName = (workflowName: string | undefined, existingW
 const loadTemplateFromResourcePath = async (
   templateName: string,
   manifest: Template.Manifest | undefined,
-  isCustomTemplate: boolean
+  isCustomTemplate: boolean,
+  viewTemplateData?: Template.ViewTemplateDetails
 ): Promise<TemplatePayload> => {
   const templateManifest: Template.Manifest =
     manifest ?? (await import(`./../../templates/templateFiles/${templateName}/manifest.json`)).default;
@@ -198,7 +200,8 @@ const loadTemplateFromResourcePath = async (
         workflowPath,
         `${templateName}/${workflowPath}`,
         /* manifest */ undefined,
-        isCustomTemplate
+        isCustomTemplate,
+        viewTemplateData
       );
       if (workflowData) {
         workflowData.workflow.workflowName = workflows[workflowPath].name;
@@ -229,8 +232,9 @@ const loadTemplateFromResourcePath = async (
       }
     }
   } else {
-    const workflowId = guid();
-    const workflowData = await loadWorkflowTemplateFromManifest(workflowId, templateName, manifest, isCustomTemplate);
+    const workflowId = 'default';
+    const workflowData = await loadWorkflowTemplateFromManifest(workflowId, templateName, manifest, isCustomTemplate, viewTemplateData);
+
     if (workflowData) {
       data.workflows = {
         [workflowId]: workflowData.workflow,
@@ -247,7 +251,8 @@ const loadWorkflowTemplateFromManifest = async (
   workflowId: string,
   templatePath: string,
   manifest: Template.Manifest | undefined,
-  isCustomTemplate: boolean
+  isCustomTemplate: boolean,
+  viewTemplateData: Template.ViewTemplateDetails | undefined
 ): Promise<
   | {
       workflow: WorkflowTemplateData;
@@ -261,19 +266,26 @@ const loadWorkflowTemplateFromManifest = async (
     const parameterDefinitions = templateManifest.parameters?.reduce((result: Record<string, Template.ParameterDefinition>, parameter) => {
       result[parameter.name] = {
         ...parameter,
-        value: parameter.default,
+        value: viewTemplateData?.parametersOverride?.[parameter.name]?.value?.toString() ?? parameter.default,
         associatedWorkflows: [templateManifest.title],
       };
       return result;
     }, {});
+
+    const overridenKind = viewTemplateData?.basicsOverride?.[workflowId]?.kind?.value;
 
     return {
       workflow: {
         id: workflowId,
         workflowDefinition: (templateWorkflowDefinition as any)?.default ?? templateWorkflowDefinition,
         manifest: templateManifest,
-        workflowName: '',
-        kind: templateManifest.kinds?.length ? templateManifest.kinds[0] : 'stateful',
+        workflowName: viewTemplateData?.basicsOverride?.[workflowId]?.name?.value ?? '',
+        kind:
+          overridenKind && templateManifest.kinds?.includes(overridenKind)
+            ? overridenKind
+            : templateManifest.kinds?.length
+              ? templateManifest.kinds[0]
+              : 'stateful',
         images: templateManifest.images,
         connectionKeys: Object.keys(templateManifest.connections),
         errors: {

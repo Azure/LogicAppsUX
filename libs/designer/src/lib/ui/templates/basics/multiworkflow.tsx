@@ -15,7 +15,9 @@ import { getCurrentWorkflowNames } from '../../../core/templates/utils/helper';
 interface WorkflowItem {
   id: string;
   name?: string;
+  isNameEditable?: boolean;
   kind?: string;
+  isKindEditable?: boolean;
   allowedKinds: {
     key: string;
     text: string;
@@ -29,7 +31,8 @@ interface WorkflowItem {
 
 export const MultiWorkflowBasics = () => {
   const dispatch = useDispatch<AppDispatch>();
-  const workflows = useSelector((state: RootState) => state.template.workflows);
+  const { workflows } = useSelector((state: RootState) => state.template);
+  const basicsOverrideByWorkflow = useSelector((state: RootState) => state.templateOptions.viewTemplateDetails?.basicsOverride);
   const { data: existingWorkflowNames } = useExistingWorkflowNames();
 
   const intl = useIntl();
@@ -79,7 +82,9 @@ export const MultiWorkflowBasics = () => {
     Object.values(workflows).map((workflow) => ({
       id: workflow.id,
       name: workflow.workflowName,
+      isNameEditable: basicsOverrideByWorkflow?.[workflow.id]?.name?.isEditable ?? true,
       kind: workflow.kind ?? (workflow.manifest.kinds?.length ? workflow.manifest.kinds[0] : WorkflowKind.STATEFUL),
+      isKindEditable: basicsOverrideByWorkflow?.[workflow.id]?.kind?.isEditable ?? true,
       allowedKinds: workflow.manifest.kinds?.length
         ? workflow.manifest.kinds.map((kind) => ({
             key: kind,
@@ -197,6 +202,7 @@ export const MultiWorkflowBasics = () => {
           <TextField
             aria-label={item.name}
             className="msla-templates-basics-name"
+            disabled={!item?.isNameEditable}
             value={item.name}
             onChange={(_event, newValue) => handleWorkflowNameChange(item, newValue)}
             onBlur={() => handleWorkflowNameBlur(item)}
@@ -209,7 +215,7 @@ export const MultiWorkflowBasics = () => {
           <Dropdown
             aria-label={item.kind}
             className="msla-templates-basics-state"
-            disabled={item.allowedKinds.length === 1}
+            disabled={!item?.isKindEditable}
             options={item.allowedKinds}
             selectedKey={item.kind}
             onChange={(_event, option) => handleWorkflowKindChange(item, option?.key as string)}

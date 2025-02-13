@@ -41,7 +41,7 @@ export const QuickViewPanel = ({
     workflowAppName: state.workflow.workflowAppName,
     isOpen: state.panel.isOpen,
     currentPanelView: state.panel.currentPanelView,
-    shouldCloseByDefault: !state.manifest.viewTemplateDetails,
+    shouldCloseByDefault: !state.templateOptions.viewTemplateDetails,
   }));
   const { manifest } = useWorkflowTemplate(workflowId);
   const panelTabs = getQuickViewTabs(

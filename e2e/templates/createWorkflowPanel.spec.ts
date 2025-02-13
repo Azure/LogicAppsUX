@@ -57,7 +57,7 @@ test.describe(
       expect(await page.getByRole('button', { name: 'update' }).isDisabled()).toBeTruthy();
 
       await page.getByRole('tab', { name: 'Parameters' }).click();
-      await page.locator('[data-testid="msla-templates-parameter-value"]').fill(parameterValue);
+      await page.locator('[data-testid="msla-templates-parameter-value-LogicMessage_#workflowname#"]').fill(parameterValue);
       await page.getByRole('button', { name: 'Next' }).click();
 
       await expect(page.getByText('----', { exact: true })).not.toBeVisible();
