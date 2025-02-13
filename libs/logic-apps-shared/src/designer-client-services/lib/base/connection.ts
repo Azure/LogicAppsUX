@@ -93,7 +93,7 @@ export abstract class BaseConnectionService implements IConnectionService {
     return new SwaggerParser(swaggerDoc);
   }
 
-  abstract getConnector(connectorId: string): Promise<Connector>;
+  abstract getConnector(connectorId: string, getCached?: boolean): Promise<Connector>;
 
   async getConnection(connectionId: string): Promise<Connection> {
     if (isArmResourceId(connectionId)) {

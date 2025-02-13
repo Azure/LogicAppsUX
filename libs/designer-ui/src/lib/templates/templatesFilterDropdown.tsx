@@ -1,4 +1,10 @@
-import { Dropdown, type IDropdownOption, type ISelectableOption, SearchBox, SelectableOptionMenuItemType } from '@fluentui/react';
+import {
+  Dropdown,
+  type IDropdownOption,
+  type ISelectableOption,
+  SearchBox,
+  SelectableOptionMenuItemType,
+} from '@fluentui/react';
 import { useMemo, useState } from 'react';
 import { useIntl } from 'react-intl';
 import Fuse from 'fuse.js';
@@ -15,13 +21,20 @@ interface InternalFilterObject extends FilterObject {
 interface TemplatesFilterDropdownProps {
   filterName: string;
   items: FilterObject[];
+  onRenderItem?: (item: ISelectableOption) => JSX.Element;
   onApplyButtonClick: (_filterItems: FilterObject[] | undefined) => void;
   isSearchable?: boolean;
 }
 
 const allOptionId = 'all';
 
-export const TemplatesFilterDropdown = ({ filterName, items, onApplyButtonClick, isSearchable = false }: TemplatesFilterDropdownProps) => {
+export const TemplatesFilterDropdown = ({
+  filterName,
+  items,
+  onApplyButtonClick,
+  onRenderItem,
+  isSearchable = false,
+}: TemplatesFilterDropdownProps) => {
   const intl = useIntl();
   const [displayItems, setDisplayItems] = useState<InternalFilterObject[]>(items);
   const [selectedItems, setSelectedItems] = useState<InternalFilterObject[] | undefined>();
@@ -96,7 +109,7 @@ export const TemplatesFilterDropdown = ({ filterName, items, onApplyButtonClick,
         />
       );
     }
-    return defaultRender?.(option) ?? null;
+    return onRenderItem && option.key !== allOptionId ? onRenderItem(option) : (defaultRender?.(option) ?? null);
   };
 
   return (

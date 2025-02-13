@@ -1,8 +1,9 @@
-import { LogEntryLevel, LoggerService, type Template } from '@microsoft/logic-apps-shared';
+import type { Template } from '@microsoft/logic-apps-shared';
 import type { PayloadAction } from '@reduxjs/toolkit';
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
 import type { RootState } from './store';
 import type { FilterObject } from '@microsoft/designer-ui';
+import { loadManifestsFromPaths } from '../../actions/bjsworkflow/templates';
 
 export const templatesCountPerPage = 25;
 const initialPageNum = 0;
@@ -39,25 +40,18 @@ export const loadGithubManifestNames = createAsyncThunk('manifest/loadGithubMani
   return githubManifestNames ?? [];
 });
 
-export const loadGithubManifests = createAsyncThunk('manifest/loadManifests', async (_, thunkAPI) => {
+export const loadGithubManifests = createAsyncThunk('manifest/loadGithubManifests', async (count: number, thunkAPI) => {
   const currentState: RootState = thunkAPI.getState() as RootState;
   const manifestResourcePaths = currentState.manifest.availableTemplateNames ?? [];
 
-  try {
-    const manifestPromises = manifestResourcePaths.map((resourcePath) =>
-      loadManifestsFromGithub(resourcePath).then((response) => [resourcePath, response])
-    );
-    const manifestsArray = await Promise.all(manifestPromises);
-    return Object.fromEntries(manifestsArray);
-  } catch (error) {
-    LoggerService().log({
-      level: LogEntryLevel.Error,
-      area: 'Templates.loadGithubManifests',
-      message: `Error loading manifests: ${error}`,
-      error: error instanceof Error ? error : undefined,
-    });
-    return undefined;
-  }
+  return loadManifestsFromPaths(manifestResourcePaths.slice(0, count));
+});
+
+export const lazyLoadGithubManifests = createAsyncThunk('manifest/lazyLoadGithubManifests', async (startIndex: number, thunkAPI) => {
+  const currentState: RootState = thunkAPI.getState() as RootState;
+  const manifestResourcePaths = currentState.manifest.availableTemplateNames ?? [];
+
+  return loadManifestsFromPaths(manifestResourcePaths.slice(startIndex));
 });
 
 export const manifestSlice = createSlice({
@@ -138,6 +132,10 @@ export const manifestSlice = createSlice({
       // TODO some way of handling error
       state.availableTemplates = undefined;
     });
+
+    builder.addCase(lazyLoadGithubManifests.fulfilled, (state, action) => {
+      state.availableTemplates = { ...state.availableTemplates, ...(action.payload ?? {}) };
+    });
   },
 });
 
@@ -161,8 +159,4 @@ const loadManifestNamesFromGithub = async (): Promise<ManifestName[] | undefined
     console.error(ex);
     return undefined;
   }
-};
-
-const loadManifestsFromGithub = async (resourcePath: string): Promise<Template.Manifest> => {
-  return (await import(`./../../templates/templateFiles/${resourcePath}/manifest.json`))?.default as Template.Manifest;
 };

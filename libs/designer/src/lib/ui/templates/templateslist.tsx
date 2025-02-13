@@ -2,27 +2,30 @@ import type { AppDispatch, RootState } from '../../core/state/templates/store';
 import { useDispatch, useSelector } from 'react-redux';
 import { BlankWorkflowTemplateCard, TemplateCard } from './cards/templateCard';
 import { EmptySearch, Pager } from '@microsoft/designer-ui';
-import { Text } from '@fluentui/react-components';
-import { useIntl } from 'react-intl';
 import { TemplateFilters } from './filters/templateFilters';
 import { useEffect } from 'react';
 import { setLayerHostSelector } from '@fluentui/react';
-import type { TemplatesDesignerProps } from './TemplatesDesigner';
+import { Text } from '@fluentui/react-components';
+import type { CreateWorkflowHandler, TemplatesDesignerProps } from './TemplatesDesigner';
 import { setPageNum, templatesCountPerPage } from '../../core/state/templates/manifestSlice';
 import { QuickViewPanel } from '../panel/templatePanel/quickViewPanel/quickViewPanel';
 import { CreateWorkflowPanel } from '../panel/templatePanel/createWorkflowPanel/createWorkflowPanel';
+import { useIntl } from 'react-intl';
 
 export const TemplatesList = ({ detailFilters, createWorkflowCall, isWorkflowEmpty = true }: TemplatesDesignerProps) => {
   useEffect(() => setLayerHostSelector('#msla-layer-host'), []);
   const intl = useIntl();
   const dispatch = useDispatch<AppDispatch>();
 
-  const { templateName, workflows } = useSelector((state: RootState) => state.template);
   const {
     filteredTemplateNames,
     filters: { pageNum, detailFilters: appliedDetailFilters },
   } = useSelector((state: RootState) => state.manifest);
   const selectedTabId = appliedDetailFilters?.Type?.[0]?.value;
+
+  const startingIndex = pageNum * templatesCountPerPage;
+  const endingIndex = startingIndex + templatesCountPerPage;
+  const lastPage = Math.ceil((filteredTemplateNames?.length ?? 0) / templatesCountPerPage);
 
   const intlText = {
     NO_RESULTS: intl.formatMessage({
@@ -37,23 +40,29 @@ export const TemplatesList = ({ detailFilters, createWorkflowCall, isWorkflowEmp
     }),
   };
 
-  const startingIndex = pageNum * templatesCountPerPage;
-  const endingIndex = startingIndex + templatesCountPerPage;
-  const lastPage = Math.ceil((filteredTemplateNames?.length ?? 0) / templatesCountPerPage);
-
   return (
     <>
       <TemplateFilters detailFilters={detailFilters} />
       <br />
 
-      {filteredTemplateNames && filteredTemplateNames?.length > 0 ? (
-        <div>
-          <div className="msla-templates-list">
-            {selectedTabId !== 'Accelerator' && <BlankWorkflowTemplateCard isWorkflowEmpty={isWorkflowEmpty} />}
-            {filteredTemplateNames.slice(startingIndex, endingIndex).map((templateName: string) => (
-              <TemplateCard key={templateName} templateName={templateName} />
-            ))}
-          </div>
+      <div>
+        <div className="msla-templates-list">
+          {selectedTabId !== 'Accelerator' && <BlankWorkflowTemplateCard isWorkflowEmpty={isWorkflowEmpty} />}
+          {filteredTemplateNames === undefined ? (
+            <>
+              {[1, 2, 3, 4].map((i) => (
+                <TemplateCard key={i} templateName={''} />
+              ))}
+            </>
+          ) : filteredTemplateNames?.length > 0 ? (
+            <>
+              {filteredTemplateNames.slice(startingIndex, endingIndex).map((templateName: string) => (
+                <TemplateCard key={templateName} templateName={templateName} />
+              ))}
+            </>
+          ) : null}
+        </div>
+        {filteredTemplateNames?.length && filteredTemplateNames.length > 0 && (
           <Pager
             current={pageNum + 1}
             max={lastPage}
@@ -66,8 +75,9 @@ export const TemplatesList = ({ detailFilters, createWorkflowCall, isWorkflowEmp
             }}
             onChange={(page) => dispatch(setPageNum(page.value - 1))}
           />
-        </div>
-      ) : (
+        )}
+      </div>
+      {filteredTemplateNames?.length === 0 ? (
         <div className="msla-templates-empty-list">
           <EmptySearch />
           <Text size={500} weight="semibold" align="start" className="msla-template-empty-list-title">
@@ -75,15 +85,8 @@ export const TemplatesList = ({ detailFilters, createWorkflowCall, isWorkflowEmp
           </Text>
           <Text>{intlText.TRY_DIFFERENT}</Text>
         </div>
-      )}
-
-      {templateName === undefined || Object.keys(workflows).length !== 1 ? null : (
-        <>
-          <QuickViewPanel showCreate={true} workflowId={Object.keys(workflows)[0]} />
-          <CreateWorkflowPanel createWorkflow={createWorkflowCall} />
-        </>
-      )}
-
+      ) : null}
+      <WorkflowView createWorkflowCall={createWorkflowCall} />
       <div
         id={'msla-layer-host'}
         style={{
@@ -92,6 +95,17 @@ export const TemplatesList = ({ detailFilters, createWorkflowCall, isWorkflowEmp
           visibility: 'hidden',
         }}
       />
+    </>
+  );
+};
+
+const WorkflowView = ({ createWorkflowCall }: { createWorkflowCall: CreateWorkflowHandler }) => {
+  const { templateName, workflows } = useSelector((state: RootState) => state.template);
+
+  return templateName === undefined || Object.keys(workflows).length !== 1 ? null : (
+    <>
+      <QuickViewPanel showCreate={true} workflowId={Object.keys(workflows)[0]} />
+      <CreateWorkflowPanel createWorkflow={createWorkflowCall} />
     </>
   );
 };

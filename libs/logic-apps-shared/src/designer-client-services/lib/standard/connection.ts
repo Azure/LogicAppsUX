@@ -113,6 +113,7 @@ export interface StandardConnectionServiceOptions {
   readConnections: ReadConnectionsFunc;
   writeConnection?: WriteConnectionFunc;
   connectionCreationClients?: Record<string, ConnectionCreationClient>;
+  getCachedConnector?: (connectorId: string) => Promise<Connector>;
 }
 
 type CreateConnectionFunc = (connectionInfo: ConnectionCreationInfo, connectionName: string) => Promise<ConnectionCreationInfo>;
@@ -137,7 +138,16 @@ export class StandardConnectionService extends BaseConnectionService implements 
     this._vVersion = 'V2';
   }
 
-  async getConnector(connectorId: string): Promise<Connector> {
+  async getConnector(connectorId: string, getCached = false): Promise<Connector> {
+    let connector: Connector | undefined;
+    if (getCached && this._options.getCachedConnector) {
+      connector = await this._options.getCachedConnector(connectorId);
+
+      if (connector) {
+        return connector;
+      }
+    }
+
     if (!isArmResourceId(connectorId)) {
       const { apiVersion, baseUrl, httpClient } = this._options;
 

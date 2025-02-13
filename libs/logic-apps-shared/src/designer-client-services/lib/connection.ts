@@ -37,7 +37,7 @@ export interface CreateConnectionResult {
 }
 
 export interface IConnectionService {
-  getConnector(connectorId: string): Promise<Connector>;
+  getConnector(connectorId: string, getCached?: boolean): Promise<Connector>;
   getSwaggerFromConnector(connectorId: string): Promise<OpenAPIV2.Document>;
   getSwaggerFromUri(uri: string): Promise<OpenAPIV2.Document>;
   getConnection(connectionId: string): Promise<Connection>;

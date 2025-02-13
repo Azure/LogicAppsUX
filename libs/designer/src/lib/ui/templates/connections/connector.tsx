@@ -23,14 +23,14 @@ export const ConnectorIcon = ({
   operationId?: string;
   styles?: IStyleFunctionOrObject<IImageStyleProps, IImageStyles>;
 }) => {
-  const { data: connector, isLoading, isError } = useConnectorInfo(connectorId, operationId);
+  const { data: connector, isLoading, isError } = useConnectorInfo(connectorId, operationId, /* useCachedData */ true);
   if (!connector) {
     return isLoading ? <Spinner size={SpinnerSize.small} /> : isError ? <Icon iconName="Error" /> : <Icon iconName="Unknown" />;
   }
 
   const wrappedIcon = (
     <div className={classes['root']}>
-      <img className={classes['icon']} src={connector?.iconUrl} alt={connector?.displayName ?? connector?.id?.split('/')?.slice(-1)} />
+      <img className={classes['icon']} src={connector?.iconUrl} alt={connector?.displayName ?? connector?.id?.split('/')?.slice(-1)[0]} />
     </div>
   );
 
@@ -58,7 +58,7 @@ export const ConnectorIconWithName = ({
   showProgress?: boolean;
   onConnectorLoaded?: (connector: ConnectorInfo) => void;
 }) => {
-  const { data: connector, isLoading } = useConnectorInfo(connectorId, operationId);
+  const { data: connector, isLoading } = useConnectorInfo(connectorId, operationId, /* useCachedData */ true);
 
   useEffect(() => {
     if (onConnectorLoaded && connector) {
@@ -102,7 +102,7 @@ const textStyles = {
 };
 
 export const ConnectorWithDetails = ({ connectorId, kind }: Template.Connection) => {
-  const { data: connector, isLoading, isError } = useConnector(connectorId);
+  const { data: connector, isLoading, isError } = useConnector(connectorId, /* enabled */ true, /* getCachedData */ true);
   const { data: connections, isLoading: isConnectionsLoading } = useConnectionsForConnector(connectorId, /* shouldNotRefetch */ true);
   const connectorConnections = useMemo(() => connections?.filter(isConnectionValid), [connections]);
   const intl = useIntl();
@@ -170,7 +170,7 @@ export const ConnectorConnectionStatus = ({
   hasConnection,
   intl,
 }: { connectorId: string; connectionKey: string; hasConnection: boolean; intl: IntlShape }) => {
-  const { data: connector, isLoading } = useConnector(connectorId);
+  const { data: connector, isLoading } = useConnector(connectorId, /* enabled */ true, /* getCachedData */ true);
   const texts = getConnectorResources(intl);
 
   return (

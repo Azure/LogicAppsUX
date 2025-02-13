@@ -20,14 +20,14 @@ import { useQuery } from '@tanstack/react-query';
 import { useSelector } from 'react-redux';
 import type { ConnectionsStoreState } from './connectionSlice';
 
-export const useConnector = (connectorId?: string, enabled = true): UseQueryResult<Connector | undefined, unknown> =>
+export const useConnector = (connectorId?: string, enabled = true, useCachedData = false): UseQueryResult<Connector | undefined, unknown> =>
   useQuery(
     ['connector', { connectorId: connectorId?.toLowerCase() }],
     async () => {
       if (!connectorId) {
         return null;
       }
-      return ConnectionService().getConnector(connectorId);
+      return ConnectionService().getConnector(connectorId, useCachedData);
     },
     {
       enabled: !!connectorId && enabled,
@@ -38,14 +38,15 @@ export const useConnector = (connectorId?: string, enabled = true): UseQueryResu
     }
   );
 
-export const useConnectors = (connectorIds?: string[]): UseQueryResult<[string, Connector][] | undefined, unknown> =>
+export const useConnectors = (connectorIds?: string[]) =>
   useQuery(
     ['connectors', connectorIds],
     async () => {
       if (!connectorIds) {
         return null;
       }
-      return await Promise.all(connectorIds.map(async (connectorId) => [connectorId, await ConnectionService().getConnector(connectorId)]));
+      const data = connectorIds.map((connectorId) => ConnectionService().getConnector(connectorId));
+      return Promise.all(data);
     },
     {
       enabled: !!connectorIds,
