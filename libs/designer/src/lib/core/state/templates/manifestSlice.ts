@@ -8,23 +8,6 @@ import { loadManifestsFromPaths } from '../../actions/bjsworkflow/templates';
 export const templatesCountPerPage = 25;
 const initialPageNum = 0;
 
-interface ContentInfo<T> {
-  value: T;
-  isEditable?: boolean;
-}
-
-export interface ViewTemplateDetails {
-  id: string;
-  basicsOverride?: Record<
-    string,
-    {
-      name?: ContentInfo<string>;
-      kind?: ContentInfo<string>;
-    }
-  >;
-  parametersOverride?: Record<string, ContentInfo<any>>;
-}
-
 export interface ManifestState {
   availableTemplateNames?: ManifestName[];
   filteredTemplateNames?: ManifestName[];
@@ -38,7 +21,6 @@ export interface ManifestState {
     connectors: FilterObject[] | undefined;
     detailFilters: Record<string, FilterObject[]>;
   };
-  viewTemplateDetails?: ViewTemplateDetails;
 }
 
 type ManifestName = string;
@@ -129,9 +111,6 @@ export const manifestSlice = createSlice({
       state.filters.detailFilters = currentDetailFilters;
       state.filters.pageNum = initialPageNum;
     },
-    setViewTemplateDetails: (state, action: PayloadAction<ViewTemplateDetails>) => {
-      state.viewTemplateDetails = action.payload;
-    },
   },
   extraReducers: (builder) => {
     builder.addCase(loadGithubManifestNames.fulfilled, (state, action) => {
@@ -170,7 +149,6 @@ export const {
   setSortKey,
   setConnectorsFilters,
   setDetailsFilters,
-  setViewTemplateDetails,
 } = manifestSlice.actions;
 export default manifestSlice.reducer;
 

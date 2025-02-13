@@ -3,13 +3,11 @@ import type React from 'react';
 import { useContext, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import type { AppDispatch, RootState } from '../state/templates/store';
-import type { ViewTemplateDetails } from '../state/templates/manifestSlice';
 import {
   loadGithubManifestNames,
   loadGithubManifests,
   setCustomTemplates,
   setFilteredTemplateNames,
-  setViewTemplateDetails,
   templatesCountPerPage,
   lazyLoadGithubManifests,
 } from '../state/templates/manifestSlice';
@@ -19,6 +17,7 @@ import type { ConnectionReferences } from '../../common/models/workflow';
 import { getFilteredTemplates } from './utils/helper';
 import { initializeTemplateServices } from '../actions/bjsworkflow/templates';
 import type { Template } from '@microsoft/logic-apps-shared';
+import { setViewTemplateDetails } from '../state/templates/templateOptionsSlice';
 import { changeCurrentTemplateName } from '../state/templates/templateSlice';
 
 export interface TemplatesDataProviderProps {
@@ -29,7 +28,7 @@ export interface TemplatesDataProviderProps {
   services: TemplateServiceOptions;
   connectionReferences: ConnectionReferences;
   customTemplates?: Record<string, Template.Manifest>;
-  viewTemplate?: ViewTemplateDetails;
+  viewTemplate?: Template.ViewTemplateDetails;
   children?: React.ReactNode;
 }
 
@@ -93,13 +92,11 @@ export const TemplatesDataProvider = (props: TemplatesDataProviderProps) => {
     dispatch,
     servicesInitialized,
     props.services,
-    props.resourceDetails,
-    props.connectionReferences,
     props.existingWorkflowName,
     props.isConsumption,
+    props.resourceDetails,
+    props.connectionReferences,
     props.isCreateView,
-    props.viewTemplate,
-    props.customTemplates,
   ]);
 
   useEffect(() => {
