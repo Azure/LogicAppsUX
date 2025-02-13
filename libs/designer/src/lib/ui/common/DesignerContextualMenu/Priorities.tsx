@@ -4,5 +4,6 @@ export const NodeMenuPriorities = {
   Pin: 3000,
   Resubmit: 4000,
   RunAfter: 5000,
-  Default: 6000,
+  Collapse: 6000,
+  Default: 7000,
 };

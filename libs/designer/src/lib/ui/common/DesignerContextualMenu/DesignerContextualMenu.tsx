@@ -12,7 +12,7 @@ import {
 } from '@microsoft/logic-apps-shared';
 
 import { useNodeContextMenuData } from '../../../core/state/designerView/designerViewSelectors';
-import { DeleteMenuItem, CopyMenuItem, ResubmitMenuItem, ExpandCollapseMenuItem } from '../../../ui/menuItems';
+import { DeleteMenuItem, CopyMenuItem, ResubmitMenuItem, ExpandCollapseMenuItem, CollapseMenuItem } from '../../../ui/menuItems';
 import { PinMenuItem } from '../../../ui/menuItems/pinMenuItem';
 import { RunAfterMenuItem } from '../../../ui/menuItems/runAfterMenuItem';
 import { useOperationInfo, type AppDispatch, type RootState } from '../../../core';
@@ -21,7 +21,13 @@ import { useOperationPanelPinnedNodeId } from '../../../core/state/panel/panelSe
 import { changePanelNode, setSelectedPanelActiveTab, setPinnedNode, setSelectedNodeId } from '../../../core/state/panel/panelSlice';
 import { RUN_AFTER_PANEL_TAB } from '../../../ui/CustomNodes/constants';
 import { shouldDisplayRunAfter } from '../../../ui/CustomNodes/helpers';
-import { useNodeDisplayName, useNodeMetadata, useRunData, useRunInstance } from '../../../core/state/workflow/workflowSelectors';
+import {
+  useIsActionCollapsed,
+  useNodeDisplayName,
+  useNodeMetadata,
+  useRunData,
+  useRunInstance,
+} from '../../../core/state/workflow/workflowSelectors';
 import {
   useSuppressDefaultNodeSelectFunctionality,
   useNodeSelectAdditionalCallback,
@@ -31,10 +37,13 @@ import { CopyTooltip } from './CopyTooltip';
 import { CustomMenu } from '../EdgeContextualMenu/customMenu';
 import { NodeMenuPriorities } from './Priorities';
 import type { DropdownMenuCustomNode } from '@microsoft/logic-apps-shared/src/utils/src/lib/models/dropdownMenuCustomNode';
+import { toggleCollapsedActionId } from '../../../core/state/workflow/workflowSlice';
 
 export const DesignerContextualMenu = () => {
   const menuData = useNodeContextMenuData();
   const nodeId = useMemo(() => menuData?.nodeId ?? '', [menuData?.nodeId]);
+  const isNodeCollapsed = useIsActionCollapsed(nodeId);
+
   const title = useNodeDisplayName(nodeId);
 
   const [open, setOpen] = useState<boolean>(false);
@@ -80,6 +89,10 @@ export const DesignerContextualMenu = () => {
     );
   }, [dispatch, nodeId, pinnedNodeId]);
 
+  const collapseClick = useCallback(() => {
+    dispatch(toggleCollapsedActionId(nodeId));
+  }, [nodeId, dispatch]);
+
   const operationFromWorkflow = getRecordEntry(rootState.workflow.operations, nodeId) as LogicAppsV2.OperationDefinition;
   const metadata = useNodeMetadata(nodeId);
   const isTrigger = useMemo(() => metadata?.graphId === 'root' && metadata?.isRoot, [metadata]);
@@ -111,8 +124,18 @@ export const DesignerContextualMenu = () => {
     }));
   };
 
-  const actionContextMenuOptions: DropdownMenuCustomNode[] = useMemo(
-    () => [
+  const actionContextMenuOptions: DropdownMenuCustomNode[] = useMemo(() => {
+    isNodeCollapsed;
+
+    const collapseActionOption = {
+      priority: NodeMenuPriorities.Collapse,
+      renderCustomComponent: () => (isTrigger ? null : <CollapseMenuItem key={'collapse'} nodeId={nodeId} onClick={collapseClick} />),
+    };
+    if (isNodeCollapsed) {
+      return [collapseActionOption];
+    }
+
+    return [
       ...(isUiInteractionsServiceEnabled()
         ? transformMenuItems(UiInteractionsService().getNodeContextMenuItems?.({ graphId: metadata?.graphId, nodeId: nodeId }) ?? [])
         : []),
@@ -138,21 +161,23 @@ export const DesignerContextualMenu = () => {
             },
           ]
         : []),
-    ],
-    [
-      metadata?.graphId,
-      nodeId,
-      runData?.canResubmit,
-      runAfter,
-      deleteClick,
-      isTrigger,
-      isScopeNode,
-      copyClick,
-      pinClick,
-      resubmitClick,
-      runAfterClick,
-    ]
-  );
+      collapseActionOption,
+    ];
+  }, [
+    metadata?.graphId,
+    nodeId,
+    runData?.canResubmit,
+    runAfter,
+    deleteClick,
+    isTrigger,
+    isScopeNode,
+    copyClick,
+    pinClick,
+    resubmitClick,
+    runAfterClick,
+    collapseClick,
+    isNodeCollapsed,
+  ]);
 
   const actionContextMenuItems: JSX.Element[] = actionContextMenuOptions
     .sort((a, b) => (a?.priority ?? NodeMenuPriorities.Default) - (b?.priority ?? NodeMenuPriorities.Default))

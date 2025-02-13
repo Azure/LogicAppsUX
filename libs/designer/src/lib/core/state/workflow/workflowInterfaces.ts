@@ -40,6 +40,8 @@ export interface WorkflowState {
   focusedCanvasNodeId?: string;
   nodesMetadata: NodesMetadata;
   collapsedGraphIds: Record<string, boolean>;
+  collapsedActionIds: Record<string, boolean>;
+  focusCollapsedNodeId?: string;
   edgeIdsBySource: Record<string, string[]>;
   idReplacements: Record<string, string>;
   newlyAddedOperations: Record<string, string>;
