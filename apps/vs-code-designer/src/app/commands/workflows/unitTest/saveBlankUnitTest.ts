@@ -326,7 +326,7 @@ const mockableOperationTypes = new Set<string>();
 /**
  * Retrieves the mockable operation types from the runtime API and stores them in a set.
  */
-async function getMockableOperationTypes(): Promise<void> {
+export async function getMockableOperationTypes(): Promise<void> {
   if (!ext.designTimePort) {
     throw new Error(
       localize('errorStandardResourcesApi', 'Design time port is undefined. Please retry once Azure Functions Core Tools has started.')

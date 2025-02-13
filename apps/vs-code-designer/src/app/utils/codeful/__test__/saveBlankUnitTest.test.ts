@@ -13,6 +13,14 @@ vi.mock('fs-extra', () => ({
   ensureDir: vi.fn(() => Promise.resolve()), // Mocking ensureDir to avoid directory creation.
 }));
 
+vi.mock('axios');
+
+// Setup a dummy implementation for ext.outputChannel.appendLog to avoid side-effects during testing
+beforeEach(() => {
+  ext.designTimePort = 1234;
+  ext.outputChannel = { appendLog: vi.fn() } as any;
+});
+
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 import {
   buildClassDefinition,
@@ -23,12 +31,14 @@ import {
   parseUnitTestOutputs,
   processAndWriteMockableOperations,
   transformParameters,
+  getMockableOperationTypes,
 } from '../../../commands/workflows/unitTest/saveBlankUnitTest';
 import type { IAzureConnectorsContext } from '../../../commands/workflows/azureConnectorWizard';
 import { logTelemetry } from '../../unitTests';
 import { ext } from '../../../../extensionVariables';
 import * as fs from 'fs-extra';
 import * as path from 'path';
+import axios from 'axios';
 
 //
 // --- transformParameters tests ---
@@ -264,18 +274,75 @@ describe('parseUnitTestOutputs', () => {
 });
 
 //
+// --- getMockableOperationTypes tests ---
+//
+describe('getMockableOperationTypes', () => {
+  it('should populate mockableOperationTypes and isMockable returns true for returned types', async () => {
+    (axios.get as any).mockResolvedValueOnce({
+      data: [
+        'ApiApp',
+        'ApiConnection',
+        'ApiConnectionWebhook',
+        'ApiManagement',
+        'HttpWebhook',
+        'OpenApiConnection',
+        'OpenApiConnectionWebhook',
+        'Http',
+        'ServiceProvider',
+        'Request',
+        'Manual',
+      ],
+    });
+
+    await getMockableOperationTypes();
+
+    expect(await isMockable('http')).toBe(true);
+    expect(await isMockable('manual')).toBe(true);
+    expect(await isMockable('NonExistentType')).toBe(false);
+  });
+
+  it('should throw an error if designTimePort is undefined', async () => {
+    ext.designTimePort = undefined;
+    await expect(getMockableOperationTypes()).rejects.toThrow();
+    ext.designTimePort = 1234;
+  });
+
+  it('should log an error when axios.get request fails', async () => {
+    const error = new Error('Network Error');
+    (axios.get as any).mockRejectedValueOnce(error);
+    await expect(getMockableOperationTypes()).rejects.toThrow('Network Error');
+  });
+});
+
+//
 // --- isMockable tests ---
 //
 describe('isMockable', () => {
-  it('should return true for mockable action types', () => {
-    expect(isMockable('Http', false)).toBe(true);
-    expect(isMockable('ApiManagement', false)).toBe(true);
-    expect(isMockable('Manual', true)).toBe(true);
+  (axios.get as any).mockResolvedValueOnce({
+    data: [
+      'ApiApp',
+      'ApiConnection',
+      'ApiConnectionWebhook',
+      'ApiManagement',
+      'HttpWebhook',
+      'OpenApiConnection',
+      'OpenApiConnectionWebhook',
+      'Http',
+      'ServiceProvider',
+      'Request',
+      'Manual',
+    ],
   });
 
-  it('should return false for non-mockable action types', () => {
-    expect(isMockable('NonMockableType', false)).toBe(false);
-    expect(isMockable('AnotherType', true)).toBe(false);
+  it('should return true for mockable action types', async () => {
+    expect(await isMockable('Http')).toBe(true);
+    expect(await isMockable('ApiManagement')).toBe(true);
+    expect(await isMockable('Manual')).toBe(true);
+  });
+
+  it('should return false for non-mockable action types', async () => {
+    expect(await isMockable('NonMockableType')).toBe(false);
+    expect(await isMockable('AnotherType')).toBe(false);
   });
 });
 
