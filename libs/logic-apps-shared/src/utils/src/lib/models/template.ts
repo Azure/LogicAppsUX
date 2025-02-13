@@ -57,3 +57,20 @@ export interface TemplateContext {
   workflowAppName?: string;
   isMultiWorkflow: boolean;
 }
+
+interface ContentInfo<T> {
+  value: T;
+  isEditable?: boolean;
+}
+
+export interface ViewTemplateDetails {
+  id: string;
+  basicsOverride?: Record<
+    string,
+    {
+      name?: ContentInfo<string>;
+      kind?: ContentInfo<WorkflowKindType>;
+    }
+  >;
+  parametersOverride?: Record<string, ContentInfo<any>>;
+}

@@ -6,7 +6,7 @@ export default defineConfig({
   treeshake: true,
   outDir: 'build/lib',
   sourcemap: 'inline',
-  minify: false,
+  minify: true,
   clean: true,
   // dts: true,
   splitting: false,
