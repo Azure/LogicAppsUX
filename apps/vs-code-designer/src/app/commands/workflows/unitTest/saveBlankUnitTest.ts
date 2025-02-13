@@ -22,6 +22,7 @@ import { type IActionContext, callWithTelemetryAndErrorHandling, parseError } fr
 import * as path from 'path';
 import * as vscode from 'vscode';
 import * as fs from 'fs-extra';
+import axios from 'axios';
 import { ext } from '../../../../extensionVariables';
 import { toPascalCase } from '@microsoft/logic-apps-shared';
 
@@ -320,30 +321,55 @@ async function generateBlankCodefulUnitTest(
 /**
  * Set of action types that can be mocked.
  */
-const mockableActionTypes = new Set<string>(['Http', 'InvokeFunction', 'Function', 'ServiceProvider', 'ApiManagement', 'ApiConnection']);
+const mockableOperationTypes = new Set<string>();
 
 /**
- * Set of trigger types that can be mocked.
+ * Retrieves the mockable operation types from the runtime API and stores them in a set.
  */
-const mockableTriggerTypes = new Set<string>(['HttpWebhook', 'Request', 'Manual', 'ApiConnectionWebhook', 'ServiceProvider']);
+export async function getMockableOperationTypes(): Promise<void> {
+  if (!ext.designTimePort) {
+    throw new Error(
+      localize('errorStandardResourcesApi', 'Design time port is undefined. Please retry once Azure Functions Core Tools has started.')
+    );
+  }
+
+  const baseUrl = `http://localhost:${ext.designTimePort}`;
+  const listMockableOperationsUrl = `${baseUrl}/runtime/webhooks/workflow/api/management/listMockableOperations`;
+  ext.outputChannel.appendLog(localize('listMockableOperations', `Fetching unit test mockable operations at ${listMockableOperationsUrl}`));
+
+  try {
+    const response = await axios.get(listMockableOperationsUrl);
+
+    response.data.forEach((mockableOperation: string) => mockableOperationTypes.add(mockableOperation.toUpperCase()));
+  } catch (apiError: any) {
+    if (axios.isAxiosError(apiError)) {
+      ext.outputChannel.appendLog(
+        localize(
+          'errorListMockableOperationsFailed',
+          `Request to ${listMockableOperationsUrl} failed with status: {0}, message: {1}, response: {2}`,
+          apiError.response?.status,
+          apiError.response?.statusText,
+          JSON.stringify(apiError.response?.data || {})
+        )
+      );
+    }
+
+    throw apiError;
+  }
+}
 
 /**
- * Determines if a given operation type (and whether it is a trigger or not) can be mocked.
+ * Determines if a given operation type can be mocked.
  * The check is performed in a case-insensitive manner.
  * @param type - The operation type.
- * @param isTrigger - Whether the operation is a trigger.
  * @returns True if the operation is mockable, false otherwise.
  */
-export function isMockable(type: string, isTrigger: boolean): boolean {
-  // Normalize the input type to lower case
-  const normalizedType = type.toLowerCase();
-
-  if (isTrigger) {
-    // Check each trigger type in the set in a case-insensitive manner
-    return Array.from(mockableTriggerTypes).some((triggerType) => triggerType.toLowerCase() === normalizedType);
+export async function isMockable(type: string): Promise<boolean> {
+  if (mockableOperationTypes.size === 0) {
+    await getMockableOperationTypes();
   }
-  // Check each action type in the set in a case-insensitive manner
-  return Array.from(mockableActionTypes).some((actionType) => actionType.toLowerCase() === normalizedType);
+
+  return mockableOperationTypes.has(type.toUpperCase());
 }
 
 /**
@@ -431,12 +457,12 @@ export async function processAndWriteMockableOperations(
     }
     processedOperationIds.add(operationId);
 
+    // TODO: These should be retrieved from API as well, listMockableOperations doesn't differentiate between triggers and actions
     // For triggers, check if it's one of these types:
-    const isTrigger = ['HttpWebhook', 'Request', 'Manual', 'ApiConnectionWebhook'].includes(type);
+    const isTrigger = ['HTTPWEBHOOK', 'REQUEST', 'MANUAL', 'APICONNECTIONWEBHOOK'].includes(type.toUpperCase());
 
     // Only proceed if this operation type is mockable
-    if (isMockable(type, isTrigger)) {
-      // Set opreationName as className
+    if (await isMockable(type)) {
       const cleanedOperationName = removeInvalidCharacters(operationName);
       let className = toPascalCase(cleanedOperationName);
 
