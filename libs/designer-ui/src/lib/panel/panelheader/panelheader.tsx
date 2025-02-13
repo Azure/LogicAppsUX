@@ -3,7 +3,19 @@ import type { PanelNodeData } from '../types';
 import { PanelHeaderComment } from './panelheadercomment';
 import type { TitleChangeHandler } from './panelheadertitle';
 import { PanelHeaderTitle } from './panelheadertitle';
-import { Button, Menu, MenuList, MenuPopover, MenuTrigger, Spinner, Tooltip, useRestoreFocusTarget } from '@fluentui/react-components';
+import {
+  Button,
+  Menu,
+  MenuList,
+  MenuPopover,
+  MenuTrigger,
+  MessageBar,
+  MessageBarBody,
+  MessageBarTitle,
+  Spinner,
+  Tooltip,
+  useRestoreFocusTarget,
+} from '@fluentui/react-components';
 import {
   bundleIcon,
   ChevronDoubleRightFilled,
@@ -45,6 +57,7 @@ export interface PanelHeaderProps {
   handleTitleUpdate: (originalId: string, newId: string) => void;
   canShowLogicAppRun?: boolean;
   showLogicAppRun?: () => void;
+  showTriggerWarning?: boolean;
 }
 
 const DismissIcon = bundleIcon(ChevronDoubleRightFilled, ChevronDoubleRightRegular);
@@ -146,6 +159,7 @@ export const PanelHeader = (props: PanelHeaderProps): JSX.Element => {
     handleTitleUpdate,
     canShowLogicAppRun,
     showLogicAppRun,
+    showTriggerWarning,
   } = props;
 
   const { comment, displayName: title, iconUri: cardIcon, isError, isLoading, nodeId } = nodeData;
@@ -168,6 +182,18 @@ export const PanelHeader = (props: PanelHeaderProps): JSX.Element => {
     defaultMessage: 'Show Logic App run details',
     id: 'y6aoMi',
     description: 'Show Logic App run details text',
+  });
+
+  const triggerNameUpdateTitle = intl.formatMessage({
+    defaultMessage: 'Trigger name update',
+    id: '4EREGY',
+    description: 'Text for the trigger name update',
+  });
+
+  const triggerNameUpdateText = intl.formatMessage({
+    defaultMessage: 'Trigger name update',
+    id: '4EREGY',
+    description: 'Text for the trigger name update',
   });
 
   const isRight = headerLocation === PanelLocation.Right;
@@ -224,6 +250,16 @@ export const PanelHeader = (props: PanelHeaderProps): JSX.Element => {
           </>
         ) : null}
       </div>
+      {showTriggerWarning ? (
+        <div className="msla-panel-header-buttons">
+          <MessageBar>
+            <MessageBarBody>
+              <MessageBarTitle>{triggerNameUpdateTitle}</MessageBarTitle>
+              {triggerNameUpdateText}
+            </MessageBarBody>
+          </MessageBar>
+        </div>
+      ) : null}
       {!isNullOrUndefined(comment) && !noNodeOnCardLevel && !isCollapsed ? (
         <PanelHeaderComment
           comment={comment}
