@@ -1,9 +1,9 @@
-name: Pull Request Labels
+name: Risk Label Present
 on:
   pull_request:
     types: [opened, labeled, unlabeled, synchronize]
 jobs:
-  label:
+  check:
     runs-on: ubuntu-latest
     permissions:
       issues: write
