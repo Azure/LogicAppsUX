@@ -760,6 +760,9 @@ const getDesignerServices = (
       const workflowId: string = response.headers['x-ms-workflow-run-id'];
       dispatch(changeRunId(workflowId));
     },
+    notifyCallbackUrlUpdate: (triggerName, newTriggerId) => {
+      alert(`Callback URL updated for ${triggerName} to ${newTriggerId}`);
+    },
   };
 
   const hostService: IHostService = {
