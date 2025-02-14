@@ -1,4 +1,17 @@
 # Logic Apps Designer
+## [5.41.0](https://github.com/Azure/LogicAppsUX/compare/v5.40.0...v5.41.0) (2025-02-14)
+
+
+### Features
+
+* **designer:** Introduce collapse node route ([#6534](https://github.com/Azure/LogicAppsUX/issues/6534)) ([2dee3a3](https://github.com/Azure/LogicAppsUX/commit/2dee3a3187204de3c5ad8fec578d2072e01ca006))
+* **Designer:** Local caching of manifests / connectors / swaggers ([#6583](https://github.com/Azure/LogicAppsUX/issues/6583)) ([d5b759d](https://github.com/Azure/LogicAppsUX/commit/d5b759d06259d7ab6035b4cd97229c896af89a98))
+
+
+### Bug Fixes
+
+* **Data Mapper:** extra '/' added to custom values on for/if ([#6599](https://github.com/Azure/LogicAppsUX/issues/6599)) ([cacb1d8](https://github.com/Azure/LogicAppsUX/commit/cacb1d8212fe9fb7bf7424ed07f014c83677530d))
+
 ## [5.40.0](https://github.com/Azure/LogicAppsUX/compare/v5.39.0...v5.40.0) (2025-02-13)
 
 
