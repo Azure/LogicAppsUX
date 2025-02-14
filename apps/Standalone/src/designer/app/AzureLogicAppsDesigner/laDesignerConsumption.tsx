@@ -520,6 +520,9 @@ const getDesignerServices = (
         ? 'https://schema.management.azure.com/providers/Microsoft.Logic/schemas/2023-01-31-preview/workflowdefinition.json#'
         : undefined;
     },
+    notifyCallbackUrlUpdate: (triggerName: string, newTriggerId: string) => {
+      alert(`Callback URL updated for ${triggerName} to ${newTriggerId}`);
+    },
   };
 
   const functionService = new BaseFunctionService({
