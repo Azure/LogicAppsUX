@@ -33,6 +33,11 @@ export interface IWorkflowService {
   getCallbackUrl(triggerName: string): Promise<CallbackInfo>;
 
   /**
+   * Notifies for callback URL updates.
+   */
+  notifyCallbackUrlUpdate?(triggerName: string, newTriggerId: string): void;
+
+  /**
    * Gets managed identity associated with workflow app.
    */
   getAppIdentity?(): ManagedIdentity | undefined;

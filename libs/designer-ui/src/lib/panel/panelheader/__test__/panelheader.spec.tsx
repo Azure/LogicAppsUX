@@ -94,7 +94,7 @@ describe('lib/panel/panelHeader/main', () => {
     };
     shallow.render(<PanelHeader {...props} />);
     const panelHeader = shallow.getRenderOutput().props.children[0];
-    const comment = shallow.getRenderOutput().props.children[1];
+    const comment = shallow.getRenderOutput().props.children[2];
     expect(panelHeader.props.className).toBe('msla-panel-header');
 
     const [, fragment]: any[] = React.Children.toArray(panelHeader.props.children);
@@ -120,6 +120,15 @@ describe('lib/panel/panelHeader/main', () => {
 
   it('should render with panel header buttons', () => {
     const panelHeader = renderer.create(<PanelHeader {...minimalWithButtons} />).toJSON();
+    expect(panelHeader).toMatchSnapshot();
+  });
+
+  it('should render with panel header trigger info message', () => {
+    const props = {
+      ...minimalWithButtons,
+      showTriggerInfo: true,
+    };
+    const panelHeader = renderer.create(<PanelHeader {...props} />).toJSON();
     expect(panelHeader).toMatchSnapshot();
   });
 });
