@@ -32,7 +32,7 @@ import {
   processAndWriteMockableOperations,
   transformParameters,
   getMockableOperationTypes,
-} from '../../../commands/workflows/unitTest/saveBlankUnitTest';
+} from '../../../utils/unitTests.ts';
 import type { IAzureConnectorsContext } from '../../../commands/workflows/azureConnectorWizard';
 import { logTelemetry } from '../../unitTests';
 import { ext } from '../../../../extensionVariables';
@@ -362,7 +362,7 @@ describe('buildClassDefinition', () => {
 
     expect(classDef).toEqual({
       className: 'RootClass',
-      description: null,
+      description: 'Class for RootClass representing an object with properties.',
       properties: [
         {
           propertyName: 'Key1',
@@ -380,7 +380,7 @@ describe('buildClassDefinition', () => {
       children: [
         {
           className: 'RootClassNested',
-          description: null,
+          description: 'Class for RootClassNested representing an object with properties.',
           properties: [
             {
               propertyName: 'NestedKey',
