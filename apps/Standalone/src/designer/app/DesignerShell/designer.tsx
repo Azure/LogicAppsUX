@@ -1,7 +1,7 @@
 import type { ReactNode } from 'react';
 import { loadToken } from '../../../environments/environment';
 import { SettingsBox } from '../../components/settings_box';
-import { useHostingPlan, useIsLocal, useResourcePath } from '../../state/workflowLoadingSelectors';
+import { useHostingPlan, useIsLocal, useQueryCachePersist, useResourcePath } from '../../state/workflowLoadingSelectors';
 import LogicAppsDesignerStandard from '../AzureLogicAppsDesigner/laDesigner';
 import LogicAppsDesignerConsumption from '../AzureLogicAppsDesigner/laDesignerConsumption';
 import { LocalDesigner } from '../LocalDesigner/localDesigner';
@@ -16,9 +16,10 @@ export const DesignerWrapper = () => {
   const resourcePath = useResourcePath();
   const isLocal = useIsLocal();
   const hostingPlan = useHostingPlan();
+  const queryCachePersist = useQueryCachePersist();
 
   return (
-    <ReactQueryProvider>
+    <ReactQueryProvider persistEnabled={queryCachePersist}>
       <LoadWhenArmTokenIsLoaded>
         <div style={{ height: '100vh' }}>
           <SettingsBox />

@@ -38,6 +38,7 @@ export interface WorkflowLoadingState {
   };
   showPerformanceDebug?: boolean;
   runFiles: any[];
+  queryCachePersist?: boolean;
 }
 
 const initialState: WorkflowLoadingState = {
@@ -65,6 +66,7 @@ const initialState: WorkflowLoadingState = {
   },
   showPerformanceDebug: false,
   runFiles: [],
+  queryCachePersist: false,
 };
 
 type WorkflowPayload = {
@@ -209,6 +211,9 @@ export const workflowLoadingSlice = createSlice({
     setStringOverrides: (state, action: PayloadAction<Record<string, string> | undefined>) => {
       state.hostOptions.stringOverrides = action.payload;
     },
+    setQueryCachePersist: (state, action: PayloadAction<boolean>) => {
+      state.queryCachePersist = action.payload;
+    },
   },
   extraReducers: (builder) => {
     builder.addCase(loadWorkflow.fulfilled, (state, action: PayloadAction<WorkflowPayload | null>) => {
@@ -257,6 +262,7 @@ export const {
   setHostOptions,
   setShowPerformanceDebug,
   setStringOverrides,
+  setQueryCachePersist,
 } = workflowLoadingSlice.actions;
 
 export default workflowLoadingSlice.reducer;

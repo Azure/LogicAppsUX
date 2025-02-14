@@ -15,7 +15,7 @@ const StatusIndicator = (props: { status: string }) => {
       case 'Resuming':
         return <Spinner size={'extra-tiny'} />;
       default:
-        return undefined;
+        return null;
     }
   }, [props.status]);
 

@@ -10,9 +10,9 @@ export const loadMapDefinition = (mapDefinitionString: string | undefined): MapD
   if (mapDefinitionString) {
     // Add extra escapes around custom string values, so that we don't lose which ones are which
     let modifiedMapDefinitionString = mapDefinitionString.replaceAll('"', `\\"`);
-    modifiedMapDefinitionString = modifiedMapDefinitionString.replaceAll(`$for`, () => `${guid()}-$for`);
-    modifiedMapDefinitionString = modifiedMapDefinitionString.replaceAll(`$if`, () => `${guid()}-$if`);
-    const mapDefinition = parse(modifiedMapDefinitionString,  { strict: false, uniqueKeys: false}) as MapDefinitionEntry;
+    modifiedMapDefinitionString = modifiedMapDefinitionString.replaceAll('$for', () => `${guid()}-$for`);
+    modifiedMapDefinitionString = modifiedMapDefinitionString.replaceAll('$if', () => `${guid()}-$if`);
+    const mapDefinition = parse(modifiedMapDefinitionString, { strict: false, uniqueKeys: false }) as MapDefinitionEntry;
 
     // Now that we've parsed the yml, remove the extra escaped quotes to restore the values
     fixMapDefinitionCustomValues(mapDefinition);

@@ -1,10 +1,4 @@
-import {
-  Dropdown,
-  type IDropdownOption,
-  type ISelectableOption,
-  SearchBox,
-  SelectableOptionMenuItemType,
-} from '@fluentui/react';
+import { Dropdown, type IDropdownOption, type ISelectableOption, SearchBox, SelectableOptionMenuItemType } from '@fluentui/react';
 import { useMemo, useState } from 'react';
 import { useIntl } from 'react-intl';
 import Fuse from 'fuse.js';

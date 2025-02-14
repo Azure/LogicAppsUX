@@ -10,7 +10,16 @@ import type {
   SchemaNodeDictionary,
   SchemaNodeExtended,
 } from '@microsoft/logic-apps-shared';
-import { guid, guidLength, isAGuid, LogEntryLevel, LoggerService, NormalizedDataType, SchemaNodeProperty, SchemaType } from '@microsoft/logic-apps-shared';
+import {
+  guid,
+  guidLength,
+  isAGuid,
+  LogEntryLevel,
+  LoggerService,
+  NormalizedDataType,
+  SchemaNodeProperty,
+  SchemaType,
+} from '@microsoft/logic-apps-shared';
 import { addReactFlowPrefix } from './ReactFlow.Util';
 import type { Node } from '@xyflow/react';
 
@@ -128,8 +137,8 @@ export const flattenSchemaNodeMap = (schemaNode: SchemaNodeExtended): Record<str
 export const isLeafNode = (schemaNode: SchemaNodeExtended): boolean => schemaNode.children.length < 1;
 
 export const removeGuidFromKey = (key: string) => {
-  return isAGuid(key.substring(0,guidLength)) ? key.substring(guidLength + 1) : key;
-}
+  return isAGuid(key.substring(0, guidLength)) ? key.substring(guidLength + 1) : key;
+};
 
 /**
  * Finds a node for a key, searching within a given schema structure

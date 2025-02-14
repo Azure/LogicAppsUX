@@ -72,3 +72,7 @@ export const useRunFiles = () => {
 export const useRunInstance = () => {
   return useSelector((state: RootState) => state.workflowLoader.runInstance);
 };
+
+export const useQueryCachePersist = () => {
+  return useSelector((state: RootState) => state.workflowLoader.queryCachePersist);
+};
