@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useMemo } from 'react';
-import { TemplatesDataProvider, templateStore } from '@microsoft/logic-apps-designer';
+import { TemplatesDataProvider, templateStore, TemplatesView } from '@microsoft/logic-apps-designer';
 import { environment } from '../../environments/environment';
 import type { RootState } from '../state/Store';
 import { TemplatesDesigner, TemplatesDesignerProvider } from '@microsoft/logic-apps-designer';
@@ -47,10 +47,16 @@ interface StringifiedWorkflow {
 
 const workflowIdentifier = '#workflowname#';
 export const TemplatesStandard = () => {
-  const theme = useSelector((state: RootState) => state.workflowLoader.theme);
+  const { theme, templatesView } = useSelector((state: RootState) => ({
+    theme: state.workflowLoader.theme,
+    templatesView: state.workflowLoader.templatesView,
+  }));
   const { appId, hostingPlan, workflowName: existingWorkflowName } = useSelector((state: RootState) => state.workflowLoader);
   const { data: workflowAppData } = useWorkflowApp(appId as string, hostingPlan);
-  const canonicalLocation = WorkflowUtility.convertToCanonicalFormat(workflowAppData?.location ?? '');
+  const canonicalLocation = useMemo(
+    () => WorkflowUtility.convertToCanonicalFormat(workflowAppData?.location ?? 'westus'),
+    [workflowAppData]
+  );
   const { data: tenantId } = useCurrentTenantId();
   const { data: objectId } = useCurrentObjectId();
   const { data: originalConnectionsData } = useConnectionsData(appId);
@@ -72,6 +78,7 @@ export const TemplatesStandard = () => {
   }, [originalConnectionsData, setConnectionsData]);
 
   const connectionReferences = useMemo(() => WorkflowUtility.convertConnectionsDataToReferences(connectionsData()), [connectionsData]);
+  const isSingleTemplateView = useMemo(() => templatesView !== 'gallery', [templatesView]);
 
   const createWorkflowCall = async (
     workflows: { name: string | undefined; kind: string | undefined; definition: LogicAppsV2.WorkflowDefinition }[],
@@ -185,6 +192,7 @@ export const TemplatesStandard = () => {
   const services = useMemo(
     () =>
       getServices(
+        appId as string,
         connectionsData() ?? {},
         workflowAppData as WorkflowApp,
         addConnectionDataInternal,
@@ -193,11 +201,11 @@ export const TemplatesStandard = () => {
         canonicalLocation
       ),
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    [connectionsData, settingsData, workflowAppData, tenantId, canonicalLocation]
+    [connectionsData, settingsData, workflowAppData, tenantId, canonicalLocation, appId]
   );
   const resourceDetails = new ArmParser(appId ?? '');
 
-  if (!workflowAppData) {
+  if (!appId) {
     return null;
   }
   return (
@@ -207,65 +215,94 @@ export const TemplatesStandard = () => {
           subscriptionId: resourceDetails.subscriptionId,
           resourceGroup: resourceDetails.resourceGroup,
           location: canonicalLocation,
-          workflowAppName: workflowAppData.name as string,
+          workflowAppName: resourceDetails.resourceName,
         }}
         connectionReferences={connectionReferences}
         services={services}
         isConsumption={false}
         isCreateView={true}
         existingWorkflowName={existingWorkflowName}
+        viewTemplate={
+          isSingleTemplateView
+            ? {
+                id: templatesView,
+                parametersOverride: {
+                  'odataTopDefault_#workflowname#': { value: 0, isEditable: false },
+                  'sharepoint-site-name_#workflowname#': { value: 'overriden-empty' },
+                  'TeamsChannelID_#workflowname#': { value: 'overriden-default', isEditable: false },
+                  'TeamsTeamID_#workflowname#': { value: 'overriden-default-editable' },
+                  'OpenAIEmbeddingModel_#workflowname#': { value: 'overriden-default-editable' },
+                  'SharepointSiteAddress_#workflowname#': { value: 'overriden-default-non-editable', isEditable: false },
+                },
+                basicsOverride: {
+                  [templatesView]: {
+                    name: { value: 'overriden-name', isEditable: false },
+                    kind: { value: 'stateful', isEditable: false },
+                  },
+                  ['ingest-index-ai-sharepoint-rag']: {
+                    name: { value: 'overriden-name', isEditable: false },
+                    kind: { value: 'stateful', isEditable: false },
+                  },
+                },
+              }
+            : undefined
+        }
       >
         <div
           style={{
             margin: '20px',
           }}
         >
-          <TemplatesDesigner
-            detailFilters={{
-              Category: {
-                displayName: 'Categories',
-                items: [
-                  {
-                    value: 'Design Patterns',
-                    displayName: 'Design Patterns',
-                  },
-                  {
-                    value: 'AI',
-                    displayName: 'AI',
-                  },
-                  {
-                    value: 'B2B',
-                    displayName: 'B2B',
-                  },
-                  {
-                    value: 'EDI',
-                    displayName: 'EDI',
-                  },
-                  {
-                    value: 'Approval',
-                    displayName: 'Approval',
-                  },
-                  {
-                    value: 'RAG',
-                    displayName: 'RAG',
-                  },
-                  {
-                    value: 'Automation',
-                    displayName: 'Automation',
-                  },
-                  {
-                    value: 'BizTalk Migration',
-                    displayName: 'BizTalk Migration',
-                  },
-                  {
-                    value: 'Mainframe Modernization',
-                    displayName: 'Mainframe Modernization',
-                  },
-                ],
-              },
-            }}
-            createWorkflowCall={createWorkflowCall}
-          />
+          {isSingleTemplateView ? (
+            <TemplatesView createWorkflow={createWorkflowCall} showCloseButton={true} onClose={() => window.alert('Template is closing')} />
+          ) : (
+            <TemplatesDesigner
+              createWorkflowCall={createWorkflowCall}
+              detailFilters={{
+                Category: {
+                  displayName: 'Categories',
+                  items: [
+                    {
+                      value: 'Design Patterns',
+                      displayName: 'Design Patterns',
+                    },
+                    {
+                      value: 'AI',
+                      displayName: 'AI',
+                    },
+                    {
+                      value: 'B2B',
+                      displayName: 'B2B',
+                    },
+                    {
+                      value: 'EDI',
+                      displayName: 'EDI',
+                    },
+                    {
+                      value: 'Approval',
+                      displayName: 'Approval',
+                    },
+                    {
+                      value: 'RAG',
+                      displayName: 'RAG',
+                    },
+                    {
+                      value: 'Automation',
+                      displayName: 'Automation',
+                    },
+                    {
+                      value: 'BizTalk Migration',
+                      displayName: 'BizTalk Migration',
+                    },
+                    {
+                      value: 'Mainframe Modernization',
+                      displayName: 'Mainframe Modernization',
+                    },
+                  ],
+                },
+              }}
+            />
+          )}
         </div>
       </TemplatesDataProvider>
     </TemplatesDesignerProvider>
@@ -276,6 +313,7 @@ const apiVersion = '2020-06-01';
 const httpClient = new HttpClient();
 
 const getServices = (
+  siteResourceId: string,
   connectionsData: ConnectionsData,
   workflowApp: WorkflowApp | undefined,
   addConnection: (data: ConnectionAndAppSetting) => Promise<void>,
@@ -283,11 +321,9 @@ const getServices = (
   objectId: string | undefined,
   location: string
 ): any => {
-  const siteResourceId = workflowApp?.id;
   const armUrl = 'https://management.azure.com';
   const baseUrl = `${armUrl}${siteResourceId}/hostruntime/runtime/webhooks/workflow/api/management`;
-  const appName = workflowApp?.name ?? '';
-  const { subscriptionId, resourceGroup } = new ArmParser(siteResourceId ?? '');
+  const { subscriptionId, resourceGroup, resourceName } = new ArmParser(siteResourceId ?? '');
 
   const defaultServiceParams = { baseUrl, httpClient, apiVersion };
 
@@ -302,7 +338,7 @@ const getServices = (
       tenantId,
       httpClient,
     },
-    workflowAppDetails: { appName, identity: workflowApp?.identity as any },
+    workflowAppDetails: { appName: resourceName, identity: workflowApp?.identity as any },
     readConnections: () => Promise.resolve(connectionsData),
     writeConnection: addConnection as any,
   });

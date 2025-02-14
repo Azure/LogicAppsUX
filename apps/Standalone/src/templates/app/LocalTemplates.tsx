@@ -1,5 +1,5 @@
 import { useMemo } from 'react';
-import { TemplatesDataProvider } from '@microsoft/logic-apps-designer';
+import { TemplatesDataProvider, TemplatesView } from '@microsoft/logic-apps-designer';
 import type { RootState } from '../state/Store';
 import { TemplatesDesigner, TemplatesDesignerProvider } from '@microsoft/logic-apps-designer';
 import { useSelector } from 'react-redux';
@@ -29,7 +29,10 @@ const loadLocalTemplateFromResourcePath = async (resourcePath: string, artifactT
 const localTemplateManifestPaths = ['BasicWorkflowOnly', 'SimpleConnectionParameter', 'SimpleAccelerator', 'SimpleParametersOnly'];
 
 export const LocalTemplates = () => {
-  const theme = useSelector((state: RootState) => state.workflowLoader.theme);
+  const { theme, templatesView } = useSelector((state: RootState) => ({
+    theme: state.workflowLoader.theme,
+    templatesView: state.workflowLoader.templatesView,
+  }));
   const { hostingPlan } = useSelector((state: RootState) => state.workflowLoader);
   const { data: localManifests } = useQuery(
     ['getLocalTemplates'],
@@ -54,6 +57,7 @@ export const LocalTemplates = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
     [isConsumption]
   );
+  const isSingleTemplateView = useMemo(() => templatesView !== 'gallery', [templatesView]);
 
   return (
     <TemplatesDesignerProvider locale="en-US" theme={theme}>
@@ -70,62 +74,88 @@ export const LocalTemplates = () => {
         isCreateView={!isConsumption}
         customTemplates={localManifests}
         existingWorkflowName={undefined}
+        viewTemplate={
+          isSingleTemplateView
+            ? {
+                id: templatesView,
+                parametersOverride: {
+                  'OpenAIEmbeddingModel_#workflowname#': { value: 'overriden-default-editable' },
+                  'OpenAIChatModel_#workflowname#': { value: 'overriden-default-non-editable', isEditable: false },
+                  'LogicMessage_#workflowname#': { value: 'overriden-default-non-editable', isEditable: false },
+                },
+                basicsOverride: {
+                  ['default']: {
+                    name: { value: 'overriden-name', isEditable: false },
+                    kind: { value: 'stateful', isEditable: false },
+                  },
+                  ['Workflow1']: {
+                    name: { value: 'overriden-name', isEditable: false },
+                    kind: { value: 'stateful', isEditable: false },
+                  },
+                },
+              }
+            : undefined
+        }
       >
         <div
           style={{
             margin: '20px',
           }}
         >
-          <TemplatesDesigner
-            detailFilters={{
-              Category: {
-                displayName: 'Categories',
-                items: [
-                  {
-                    value: 'Mock',
-                    displayName: 'Mock',
-                  },
-                  {
-                    value: 'Design Patterns',
-                    displayName: 'Design Patterns',
-                  },
-                  {
-                    value: 'AI',
-                    displayName: 'AI',
-                  },
-                  {
-                    value: 'B2B',
-                    displayName: 'B2B',
-                  },
-                  {
-                    value: 'EDI',
-                    displayName: 'EDI',
-                  },
-                  {
-                    value: 'Approval',
-                    displayName: 'Approval',
-                  },
-                  {
-                    value: 'RAG',
-                    displayName: 'RAG',
-                  },
-                  {
-                    value: 'Automation',
-                    displayName: 'Automation',
-                  },
-                  {
-                    value: 'BizTalk Migration',
-                    displayName: 'BizTalk Migration',
-                  },
-                  {
-                    value: 'Mainframe Modernization',
-                    displayName: 'Mainframe Modernization',
-                  },
-                ],
-              },
-            }}
-            createWorkflowCall={createWorkflowCall}
-          />
+          {isSingleTemplateView ? (
+            <TemplatesView createWorkflow={createWorkflowCall} showCloseButton={false} />
+          ) : (
+            <TemplatesDesigner
+              detailFilters={{
+                Category: {
+                  displayName: 'Categories',
+                  items: [
+                    {
+                      value: 'Mock',
+                      displayName: 'Mock',
+                    },
+                    {
+                      value: 'Design Patterns',
+                      displayName: 'Design Patterns',
+                    },
+                    {
+                      value: 'AI',
+                      displayName: 'AI',
+                    },
+                    {
+                      value: 'B2B',
+                      displayName: 'B2B',
+                    },
+                    {
+                      value: 'EDI',
+                      displayName: 'EDI',
+                    },
+                    {
+                      value: 'Approval',
+                      displayName: 'Approval',
+                    },
+                    {
+                      value: 'RAG',
+                      displayName: 'RAG',
+                    },
+                    {
+                      value: 'Automation',
+                      displayName: 'Automation',
+                    },
+                    {
+                      value: 'BizTalk Migration',
+                      displayName: 'BizTalk Migration',
+                    },
+                    {
+                      value: 'Mainframe Modernization',
+                      displayName: 'Mainframe Modernization',
+                    },
+                  ],
+                },
+              }}
+              createWorkflowCall={createWorkflowCall}
+            />
+          )}
         </div>
       </TemplatesDataProvider>
     </TemplatesDesignerProvider>

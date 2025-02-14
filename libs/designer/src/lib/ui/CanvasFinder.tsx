@@ -3,7 +3,7 @@ import { useSelector, useDispatch } from 'react-redux';
 import { useInternalNode, useNodes, useReactFlow } from '@xyflow/react';
 
 import { useIsGraphEmpty } from '../core/state/workflow/workflowSelectors';
-import { clearFocusNode } from '../core/state/workflow/workflowSlice';
+import { clearFocusCollapsedNode, clearFocusNode } from '../core/state/workflow/workflowSlice';
 import { DEFAULT_NODE_SIZE } from '../core/utils/graph';
 import type { RootState, AppDispatch } from '../core';
 
@@ -55,10 +55,11 @@ export const CanvasFinder = () => {
 
     setCenter(xTarget, yTarget, {
       zoom: getZoom(),
-      duration: 500,
+      duration: 350,
     });
 
     dispatch(clearFocusNode());
+    dispatch(clearFocusCollapsedNode());
   }, [focusNode, setCenter, getZoom, dispatch]);
 
   useEffect(() => {

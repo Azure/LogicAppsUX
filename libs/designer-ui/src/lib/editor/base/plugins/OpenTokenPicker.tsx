@@ -1,5 +1,5 @@
 import { TokenPickerMode } from '../../../tokenpicker';
-import { UPDATE_TOKENPICKER_EXPRESSION } from '../../../tokenpicker/plugins/TokenPickerHandler';
+import { INITIALIZE_TOKENPICKER_EXPRESSION } from '../../../tokenpicker/plugins/InitializeTokenPickerExpressionHandler';
 import { TokenType } from '../../models/parameter';
 import { findChildNode } from '../utils/helper';
 import { useLexicalComposerContext } from '@lexical/react/LexicalComposerContext';
@@ -24,7 +24,7 @@ export default function OpenTokenPicker({ openTokenPicker }: OpenTokenPickerProp
         if (node?.token?.tokenType === TokenType.FX) {
           openTokenPicker(TokenPickerMode.EXPRESSION);
           setTimeout(() => {
-            editor.dispatchCommand(UPDATE_TOKENPICKER_EXPRESSION, payload);
+            editor.dispatchCommand(INITIALIZE_TOKENPICKER_EXPRESSION, payload);
           }, 50);
         }
         return true;
