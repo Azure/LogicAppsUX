@@ -2,13 +2,12 @@ using System;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
-using Microsoft.Azure.Workflows.Common.ErrorResponses;
+using Microsoft.Azure.Workflows.Common;
 using Microsoft.Azure.Workflows.UnitTesting;
 using Microsoft.Azure.Workflows.UnitTesting.Definitions;
 using Microsoft.Azure.Workflows.UnitTesting.ErrorResponses;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
 
 namespace <%= LogicAppName %>.Tests
 {
