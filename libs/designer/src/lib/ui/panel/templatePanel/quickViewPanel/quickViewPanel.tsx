@@ -16,6 +16,8 @@ export interface QuickViewPanelProps {
   showCreate: boolean;
   workflowId: string;
   clearDetailsOnClose?: boolean;
+  panelWidth?: string;
+  showCloseButton?: boolean;
   onClose?: () => void;
 }
 
@@ -24,21 +26,36 @@ const layerProps = {
   eventBubblingEnabled: true,
 };
 
-export const QuickViewPanel = ({ onClose, showCreate, workflowId, clearDetailsOnClose = true }: QuickViewPanelProps) => {
+export const QuickViewPanel = ({
+  onClose,
+  showCreate,
+  workflowId,
+  panelWidth = '50%',
+  showCloseButton = true,
+  clearDetailsOnClose = true,
+}: QuickViewPanelProps) => {
   const dispatch = useDispatch<AppDispatch>();
   const intl = useIntl();
-  const { templateName, workflowAppName, isOpen, currentPanelView } = useSelector((state: RootState) => ({
+  const { templateName, workflowAppName, isOpen, currentPanelView, shouldCloseByDefault } = useSelector((state: RootState) => ({
     templateName: state.template.templateName,
     workflowAppName: state.workflow.workflowAppName,
     isOpen: state.panel.isOpen,
     currentPanelView: state.panel.currentPanelView,
+    shouldCloseByDefault: !state.templateOptions.viewTemplateDetails,
   }));
   const { manifest } = useWorkflowTemplate(workflowId);
-  const panelTabs = getQuickViewTabs(intl, dispatch, workflowId, clearDetailsOnClose, {
-    templateId: templateName ?? '',
-    workflowAppName,
-    isMultiWorkflow: false,
-  });
+  const panelTabs = getQuickViewTabs(
+    intl,
+    dispatch,
+    workflowId,
+    clearDetailsOnClose,
+    {
+      templateId: templateName ?? '',
+      workflowAppName,
+      isMultiWorkflow: false,
+    },
+    onClose
+  );
   const [selectedTabId, setSelectedTabId] = useState<string>(panelTabs[0]?.id);
 
   const dismissPanel = useCallback(() => {
@@ -66,8 +83,14 @@ export const QuickViewPanel = ({ onClose, showCreate, workflowId, clearDetailsOn
   const selectedTabProps = selectedTabId ? panelTabs?.find((tab) => tab.id === selectedTabId) : panelTabs[0];
   const onRenderFooterContent = useCallback(
     () =>
-      selectedTabProps?.footerContent ? <TemplatesPanelFooter showPrimaryButton={showCreate} {...selectedTabProps?.footerContent} /> : null,
-    [selectedTabProps?.footerContent, showCreate]
+      selectedTabProps?.footerContent ? (
+        <TemplatesPanelFooter
+          showPrimaryButton={showCreate}
+          secondaryButtonDisabled={!showCloseButton}
+          {...selectedTabProps?.footerContent}
+        />
+      ) : null,
+    [selectedTabProps?.footerContent, showCloseButton, showCreate]
   );
 
   if (!manifest) {
@@ -81,12 +104,12 @@ export const QuickViewPanel = ({ onClose, showCreate, workflowId, clearDetailsOn
   return (
     <Panel
       styles={{ main: { padding: '0 20px', zIndex: 1000 }, content: { paddingLeft: '0px' } }}
-      isLightDismiss
-      type={PanelType.medium}
-      customWidth={'50%'}
+      isLightDismiss={shouldCloseByDefault}
+      type={PanelType.custom}
+      customWidth={panelWidth}
       isOpen={isOpen && currentPanelView === TemplatePanelView.QuickView}
-      onDismiss={dismissPanel}
-      hasCloseButton={true}
+      onDismiss={shouldCloseByDefault ? dismissPanel : undefined}
+      hasCloseButton={shouldCloseByDefault}
       onRenderHeader={onRenderHeaderContent}
       onRenderFooterContent={onRenderFooterContent}
       layerProps={layerProps}

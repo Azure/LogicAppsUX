@@ -487,18 +487,6 @@ export const DesignerCommandBar = ({
 
   return (
     <>
-      <div
-        style={{
-          position: 'relative',
-          top: '60px',
-          left: '20px',
-          display: 'flex',
-          flexDirection: 'column',
-          gap: '8px',
-        }}
-      >
-        {!isInitialized && <Spinner size={'extra-small'} label={'Loading dynamic data...'} />}
-      </div>
       <CommandBar
         items={isMonitoringView ? monitoringItems : editorItems}
         ariaLabel="Use left and right arrow keys to navigate between commands"
@@ -510,6 +498,19 @@ export const DesignerCommandBar = ({
           },
         }}
       />
+      <div
+        style={{
+          position: 'relative',
+          top: '60px',
+          left: '20px',
+          display: 'flex',
+          flexDirection: 'column',
+          gap: '8px',
+          height: '0px',
+        }}
+      >
+        {!isInitialized && <Spinner size={'extra-small'} label={'Loading dynamic data...'} />}
+      </div>
     </>
   );
 };

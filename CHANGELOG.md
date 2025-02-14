@@ -1,4 +1,55 @@
 # Logic Apps Designer
+## [5.41.0](https://github.com/Azure/LogicAppsUX/compare/v5.40.0...v5.41.0) (2025-02-14)
+
+
+### Features
+
+* **designer:** Introduce collapse node route ([#6534](https://github.com/Azure/LogicAppsUX/issues/6534)) ([2dee3a3](https://github.com/Azure/LogicAppsUX/commit/2dee3a3187204de3c5ad8fec578d2072e01ca006))
+* **Designer:** Local caching of manifests / connectors / swaggers ([#6583](https://github.com/Azure/LogicAppsUX/issues/6583)) ([d5b759d](https://github.com/Azure/LogicAppsUX/commit/d5b759d06259d7ab6035b4cd97229c896af89a98))
+
+
+### Bug Fixes
+
+* **Data Mapper:** extra '/' added to custom values on for/if ([#6599](https://github.com/Azure/LogicAppsUX/issues/6599)) ([cacb1d8](https://github.com/Azure/LogicAppsUX/commit/cacb1d8212fe9fb7bf7424ed07f014c83677530d))
+
+## [5.40.0](https://github.com/Azure/LogicAppsUX/compare/v5.39.0...v5.40.0) (2025-02-13)
+
+
+### Features
+
+* **templates:** Adding some performance related changes for standard templates ([#6589](https://github.com/Azure/LogicAppsUX/issues/6589)) ([4c2bdfb](https://github.com/Azure/LogicAppsUX/commit/4c2bdfb92d4480577713f9570ff5b844953f2160))
+
+## [5.39.0](https://github.com/Azure/LogicAppsUX/compare/v5.38.0...v5.39.0) (2025-02-13)
+
+
+### Features
+
+* **Templates:** Support ViewTemplate data Override ([#6575](https://github.com/Azure/LogicAppsUX/issues/6575)) ([a37aa76](https://github.com/Azure/LogicAppsUX/commit/a37aa769239dd2eb221f98a847c6cf871f35e7a7))
+
+## [5.38.0](https://github.com/Azure/LogicAppsUX/compare/v5.37.0...v5.38.0) (2025-02-07)
+
+
+### Bug Fixes
+
+* **Data Mapper:** Serialization scenario where repeating parents are not connected ([#6571](https://github.com/Azure/LogicAppsUX/issues/6571)) ([e09aae3](https://github.com/Azure/LogicAppsUX/commit/e09aae3ba927a788dcbd6649441fafdad0da2210))
+
+## [5.37.0](https://github.com/Azure/LogicAppsUX/compare/v5.35.0...v5.37.0) (2025-02-06)
+
+
+### Features
+
+* **Data Mapper:** Able to connect 'if' and 'for' connections with duplicate keys ([#6552](https://github.com/Azure/LogicAppsUX/issues/6552)) ([ef0a011](https://github.com/Azure/LogicAppsUX/commit/ef0a011f98ccd93676a96a701eb113d621514144))
+* **templates:** Adding TemplateView component to view single template without gallery ([#6554](https://github.com/Azure/LogicAppsUX/issues/6554)) ([734c2c5](https://github.com/Azure/LogicAppsUX/commit/734c2c5b65a9eb8c4d4c2d3accc42f3c02f6a078))
+
+
+### Bug Fixes
+
+* **Data Mapper:** fixed missing connection ([#6527](https://github.com/Azure/LogicAppsUX/issues/6527)) ([d7e9bb4](https://github.com/Azure/LogicAppsUX/commit/d7e9bb4ba2b92de3dd4a3d622caed5410a0c6ad1))
+* **Data Mapper:** Prevent drag over the schema panels ([#6556](https://github.com/Azure/LogicAppsUX/issues/6556)) ([2817d2c](https://github.com/Azure/LogicAppsUX/commit/2817d2ca01d06b4f8968ea0c5945e9658aa24c4e))
+* **designer:** Changing where expressions are being escaped ([#6539](https://github.com/Azure/LogicAppsUX/issues/6539)) ([a43c285](https://github.com/Azure/LogicAppsUX/commit/a43c285ff8186428f2cc9906ab92dd9f15682db5)), closes [#6131](https://github.com/Azure/LogicAppsUX/issues/6131) [#6131](https://github.com/Azure/LogicAppsUX/issues/6131) [#6131](https://github.com/Azure/LogicAppsUX/issues/6131) [#6131](https://github.com/Azure/LogicAppsUX/issues/6131)
+* **designer:** Loop pager visibility in do-until action ([#6548](https://github.com/Azure/LogicAppsUX/issues/6548)) ([940e352](https://github.com/Azure/LogicAppsUX/commit/940e352d21fd8da36d929c73fed54bd4543d3272))
+* **vscode:** Handle extension initialization when there aren't logic apps projects ([#6536](https://github.com/Azure/LogicAppsUX/issues/6536)) ([51a9a5a](https://github.com/Azure/LogicAppsUX/commit/51a9a5ad0d6cd1deea357f59fed8c8a72932aa8e))
+
 ## [5.35.0](https://github.com/Azure/LogicAppsUX/compare/v5.34.0...v5.35.0) (2025-01-31)
 
 

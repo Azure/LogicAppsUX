@@ -43,8 +43,7 @@ export const canStringBeConverted = (s: string): boolean => {
   try {
     const parsed = JSON.parse(s);
     return Array.isArray(parsed);
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  } catch (e) {
+  } catch (_e) {
     return false;
   }
 };
@@ -72,8 +71,12 @@ export const unescapeString = (input: string): string => {
   });
 };
 
-export const escapeString = (input: string): string => {
-  return input.replace(/[\n\r\t\v]/g, (char) => {
+export const escapeString = (input: string, requireSingleQuotesWrap?: boolean): string => {
+  if (requireSingleQuotesWrap && !/'.*[\n\r\t\v].*'/.test(input)) {
+    return input;
+  }
+
+  return input?.replace(/[\n\r\t\v]/g, (char) => {
     switch (char) {
       case '\n':
         return '\\n';

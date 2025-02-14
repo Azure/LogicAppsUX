@@ -37,6 +37,9 @@ vi.mock('axios');
 
 vi.mock('vscode', () => ({
   window: {},
+  workspace: {
+    workspaceFolders: [],
+  },
 }));
 
 vi.mock('vscode', () => ({

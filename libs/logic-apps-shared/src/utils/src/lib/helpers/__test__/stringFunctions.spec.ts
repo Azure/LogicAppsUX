@@ -156,6 +156,48 @@ describe('escapeString', () => {
   it('should handle an empty string', () => {
     expect(escapeString('')).toEqual('');
   });
+
+  it('does not escape characters if requireSingleQuotesWrap is true and there are no surrounding single quotes', () => {
+    const input = 'Test\nTest';
+    const result = escapeString(input, true);
+    expect(result).toBe(input); // No change, since it's not surrounded by single quotes
+  });
+
+  it('escapes characters if requireSingleQuotesWrap is true and the string is surrounded by single quotes', () => {
+    const input = "'Test\nTest'";
+    const expectedOutput = "'Test\\nTest'";
+    const result = escapeString(input, true);
+    expect(result).toBe(expectedOutput); // Should escape \n
+  });
+
+  it('escapes characters even if the string contains multiple lines when requireSingleQuotesWrap is true and surrounded by single quotes', () => {
+    const input = "'Test\nAnotherLine\nTest'";
+    const expectedOutput = `'Test
+AnotherLine
+Test'`;
+    const result = escapeString(input, true);
+    expect(result).toBe(expectedOutput);
+  });
+
+  it('does not escape characters if requireSingleQuotesWrap is true and string is not surrounded by single quotes', () => {
+    const input = 'Test\nTest';
+    const result = escapeString(input, true);
+    expect(result).toBe(input); // No change, since it's not surrounded by single quotes
+  });
+
+  it('escapes characters when requireSingleQuotesWrap is false regardless of surrounding quotes', () => {
+    const input = "'Test\nTest'";
+    const expectedOutput = "'Test\\nTest'";
+    const result = escapeString(input, false);
+    expect(result).toBe(expectedOutput);
+  });
+
+  it('escapes characters when requireSingleQuotesWrap is undefined regardless of surrounding quotes', () => {
+    const input = "'Test\nTest'";
+    const expectedOutput = "'Test\\nTest'";
+    const result = escapeString(input);
+    expect(result).toBe(expectedOutput);
+  });
 });
 
 describe('toPascalCase', () => {

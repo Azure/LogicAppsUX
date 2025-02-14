@@ -8,14 +8,23 @@ import { LogEntryLevel, Status } from '../logging/logEntry';
 import type { IOAuthPopup } from '../oAuth';
 import { OAuthService } from '../oAuth';
 
+export interface ConsumptionConnectionServiceOptions extends BaseConnectionServiceOptions {
+  getCachedConnector?: (connectorId: string) => Promise<Connector>;
+}
+
 export class ConsumptionConnectionService extends BaseConnectionService {
-  constructor(options: BaseConnectionServiceOptions) {
-    super(options);
+  constructor(private readonly _options: ConsumptionConnectionServiceOptions) {
+    super(_options);
     this._vVersion = 'V1';
   }
 
-  async getConnector(connectorId: string): Promise<Connector> {
-    return this._getAzureConnector(connectorId);
+  async getConnector(connectorId: string, getCached = false): Promise<Connector> {
+    let connector: Connector | undefined;
+    if (getCached && this._options.getCachedConnector) {
+      connector = await this._options.getCachedConnector(connectorId);
+    }
+
+    return connector ?? this._getAzureConnector(connectorId);
   }
 
   override async getConnections(connectorId?: string, queryClient?: QueryClient): Promise<Connection[]> {
@@ -100,7 +109,7 @@ export class ConsumptionConnectionService extends BaseConnectionService {
     } catch (error: any) {
       try {
         this.deleteConnection(connectionId);
-      } catch (e) {
+      } catch {
         // Ignore error, there may or may not be a connection to delete
       }
       const errorMessage = `Failed to create OAuth connection: ${this.tryParseErrorMessage(error)}`;
