@@ -358,3 +358,8 @@ export const AdvancedOptionsTypes = {
   exportCustomApiActionsToAPIManagementActions: 'exportCustomApiActionsToAPIManagementActions',
 };
 export type AdvancedOptionsTypes = (typeof AdvancedOptionsTypes)[keyof typeof AdvancedOptionsTypes];
+
+export interface GetTestFeatureEnablementStatus {
+  command: typeof ExtensionCommand.isTestDisabledForOS;
+  data: boolean;
+}

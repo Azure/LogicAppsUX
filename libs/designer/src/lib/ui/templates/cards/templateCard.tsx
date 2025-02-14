@@ -4,7 +4,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { Text } from '@fluentui/react-components';
 import { openQuickViewPanelView } from '../../../core/state/templates/panelSlice';
 import type { IContextualMenuItem, IContextualMenuProps, IDocumentCardStyles } from '@fluentui/react';
-import { DocumentCard, IconButton, Image } from '@fluentui/react';
+import { DocumentCard, IconButton, Image, Shimmer, ShimmerElementType } from '@fluentui/react';
 import { ConnectorIcon, ConnectorIconWithName } from '../connections/connector';
 import type { Manifest } from '@microsoft/logic-apps-shared/src/utils/src/lib/models/template';
 import { getUniqueConnectors } from '../../../core/templates/utils/helper';
@@ -25,9 +25,10 @@ import { useMemo } from 'react';
 
 interface TemplateCardProps {
   templateName: string;
+  isPlaceholder?: boolean;
 }
 
-const maxConnectorsToShow = 5;
+export const maxConnectorsToShow = 5;
 
 const cardStyles: IDocumentCardStyles = {
   root: { display: 'inline-block', maxWidth: 1000 },
@@ -36,14 +37,13 @@ const cardStyles: IDocumentCardStyles = {
 export const TemplateCard = ({ templateName }: TemplateCardProps) => {
   const dispatch = useDispatch<AppDispatch>();
   const intl = useIntl();
-  const { templates, subscriptionId, workflowAppName, location, customTemplateNames } = useSelector((state: RootState) => ({
-    templates: state.manifest.availableTemplates,
+  const { templateManifest, workflowAppName, subscriptionId, location, customTemplateNames } = useSelector((state: RootState) => ({
+    templateManifest: state.manifest.availableTemplates?.[templateName],
     subscriptionId: state.workflow.subscriptionId,
     workflowAppName: state.workflow.workflowAppName,
     location: state.workflow.location,
     customTemplateNames: state.manifest.customTemplateNames,
   }));
-  const templateManifest = templates?.[templateName];
   const isMultiWorkflow = useMemo(() => templateManifest && isMultiWorkflowTemplate(templateManifest), [templateManifest]);
   const isCustomTemplate = useMemo(() => customTemplateNames?.includes(templateName), [customTemplateNames, templateName]);
 
@@ -82,7 +82,7 @@ export const TemplateCard = ({ templateName }: TemplateCardProps) => {
   };
 
   if (!templateManifest) {
-    return <DocumentCard className="msla-template-card-wrapper">{intlText.TEMPLATE_LOADING}</DocumentCard>;
+    return <LoadingTemplateCard />;
   }
 
   const { title, details, featuredOperations, connections } = templateManifest as Manifest;
@@ -173,7 +173,7 @@ export const TemplateCard = ({ templateName }: TemplateCardProps) => {
   );
 };
 
-export const BlankWorkflowTemplateCard = () => {
+export const BlankWorkflowTemplateCard = ({ isWorkflowEmpty }: { isWorkflowEmpty: boolean }) => {
   const intl = useIntl();
 
   const workflowAppName = useSelector((state: RootState) => state.workflow.workflowAppName);
@@ -185,20 +185,25 @@ export const BlankWorkflowTemplateCard = () => {
       id: 'pykp8c',
     }),
     BLANK_WORKFLOW_DESCRIPTION: intl.formatMessage({
-      defaultMessage: 'Start with a blank workflow to build your integration process from scratch.',
+      defaultMessage: 'Start with an empty workflow to build your integration solution.',
       description: 'Label text for the card that lets users start from a blank workflow',
-      id: 'nN1ezT',
+      id: 'kcWgxU',
+    }),
+    REPLACE_WITH_BLANK_WORKFLOW: intl.formatMessage({
+      defaultMessage: 'Replace your existing workflow with an empty workflow to rebuild your integration solution.',
+      description: 'Label text for the card that lets users replace the current workflow with blank workflow',
+      id: 'boxBWI',
     }),
   };
 
-  const onBlankWorkflowClick = () => {
+  const onBlankWorkflowClick = async () => {
     LoggerService().log({
       level: LogEntryLevel.Trace,
       area: 'Templates.TemplateCard.Blank',
       message: 'Blank workflow is selected',
       args: [workflowAppName],
     });
-    TemplateService()?.onAddBlankWorkflow();
+    await TemplateService()?.onAddBlankWorkflow();
   };
 
   return (
@@ -214,14 +219,48 @@ export const BlankWorkflowTemplateCard = () => {
           {intlText.BLANK_WORKFLOW}
         </Text>
         <Text size={400} align="center" className="msla-blank-template-card-description">
-          {intlText.BLANK_WORKFLOW_DESCRIPTION}
+          {isWorkflowEmpty ? intlText.BLANK_WORKFLOW_DESCRIPTION : intlText.REPLACE_WITH_BLANK_WORKFLOW}
         </Text>
       </div>
     </DocumentCard>
   );
 };
 
-const getFeaturedConnectors = (operationInfos: { type: string; kind?: string }[] = []): OperationInfo[] => {
+const LoadingTemplateCard = () => {
+  return (
+    <DocumentCard className="msla-template-card-wrapper" styles={cardStyles}>
+      <div className="msla-template-card-authored-wrapper">
+        <div className="msla-template-card-authored">
+          <Shimmer style={{ width: '100%' }} width={'100%'} />
+        </div>
+      </div>
+
+      <div className="msla-template-card-body">
+        <div className="msla-template-card-title-wrapper">
+          <br />
+          <Shimmer width={'100%'} />
+          <br />
+          <Shimmer width={'70%'} />
+        </div>
+        <div className="msla-template-card-footer">
+          <div className="msla-template-card-connectors-list">
+            <Shimmer
+              shimmerElements={[
+                { type: ShimmerElementType.circle },
+                { type: ShimmerElementType.gap },
+                { type: ShimmerElementType.circle },
+                { type: ShimmerElementType.gap },
+                { type: ShimmerElementType.circle },
+              ]}
+            />
+          </div>
+        </div>
+      </div>
+    </DocumentCard>
+  );
+};
+
+export const getFeaturedConnectors = (operationInfos: { type: string; kind?: string }[] = []): OperationInfo[] => {
   return operationInfos
     .map((info) => {
       if (isBuiltInOperation(info)) {

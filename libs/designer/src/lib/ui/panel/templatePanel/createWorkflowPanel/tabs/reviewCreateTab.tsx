@@ -21,6 +21,7 @@ export const ReviewCreatePanel = () => {
     subscriptionId,
     location,
     isConsumption,
+    isCreateView,
   } = useSelector((state: RootState) => state.workflow);
 
   const intlText = {
@@ -64,9 +65,14 @@ export const ReviewCreatePanel = () => {
       id: 'cNXS5n',
       description: 'Dropdown option for stateless type',
     }),
-    NO_CONFIG: intl.formatMessage({
-      defaultMessage: 'Select Create to start a new workflow based on this template, no configuration required.',
-      id: '1vqDeQ',
+    CREATE_VIEW_NO_CONFIG: intl.formatMessage({
+      defaultMessage: 'Select Create to create a new workflow based on this template, no configuration required.',
+      id: 'uOU0lL',
+      description: 'Accessibility label for no configuration required',
+    }),
+    UPDATE_VIEW_NO_CONFIG: intl.formatMessage({
+      defaultMessage: 'Select Update to update this workflow based on this template, no configuration required.',
+      id: 'OaUode',
       description: 'Accessibility label for no configuration required',
     }),
   };
@@ -106,7 +112,9 @@ export const ReviewCreatePanel = () => {
 
       {isConsumption && !Object.keys(connections).length && !Object.keys(parameterDefinitions).length ? (
         <div className="msla-templates-empty-review-tab">
-          <Text className="msla-templates-tab-review-section-details-value">{intlText.NO_CONFIG}</Text>
+          <Text className="msla-templates-tab-review-section-details-value">
+            {isCreateView ? intlText.CREATE_VIEW_NO_CONFIG : intlText.UPDATE_VIEW_NO_CONFIG}
+          </Text>
         </div>
       ) : null}
 
@@ -155,27 +163,43 @@ export const reviewCreateTab = (
   {
     shouldClearDetails,
     isCreating,
+    isCreateView,
     errorMessage,
     isPrimaryButtonDisabled,
     previousTabId,
+    onClosePanel,
+    showCloseButton = true,
   }: {
     errorMessage: string | undefined;
     isPrimaryButtonDisabled: boolean;
+    isCreateView: boolean;
   } & CreateWorkflowTabProps
 ): TemplatePanelTab => ({
   id: constants.TEMPLATE_PANEL_TAB_NAMES.REVIEW_AND_CREATE,
-  title: intl.formatMessage({
-    defaultMessage: 'Review + create',
-    id: 'JQBEOg',
-    description: 'The tab label for the monitoring review and create tab on the create workflow panel',
-  }),
+  title: isCreateView
+    ? intl.formatMessage({
+        defaultMessage: 'Review + create',
+        id: 'JQBEOg',
+        description: 'The tab label for the monitoring review and create tab on the create workflow panel',
+      })
+    : intl.formatMessage({
+        defaultMessage: 'Review + update',
+        id: 'ak6eFQ',
+        description: 'The tab label for the review and update tab on the update workflow panel',
+      }),
   description: errorMessage ? (
     <MessageBar messageBarType={MessageBarType.error}>{errorMessage}</MessageBar>
-  ) : (
+  ) : isCreateView ? (
     intl.formatMessage({
       defaultMessage: 'Review your settings, ensure everything is correctly set up, and create your workflow.',
       id: 'xDHpeS',
       description: 'An accessibility label that describes the objective of review and create tab',
+    })
+  ) : (
+    intl.formatMessage({
+      defaultMessage: 'Review your settings, ensure everything is correctly set up, and update your workflow.',
+      id: 'RHsEea',
+      description: 'An accessibility label that describes the objective of review and update tab',
     })
   ),
   hasError: false,
@@ -183,11 +207,17 @@ export const reviewCreateTab = (
   footerContent: {
     primaryButtonText: isCreating ? (
       <Spinner size={SpinnerSize.xSmall} />
-    ) : (
+    ) : isCreateView ? (
       intl.formatMessage({
         defaultMessage: 'Create',
         id: '/qrBuJ',
         description: 'Button text for creating the workflow',
+      })
+    ) : (
+      intl.formatMessage({
+        defaultMessage: 'Update',
+        id: 'thnhGU',
+        description: 'Button text for updating the workflow',
       })
     ),
     primaryButtonOnClick: onCreateClick,
@@ -212,8 +242,10 @@ export const reviewCreateTab = (
         if (shouldClearDetails) {
           dispatch(clearTemplateDetails());
         }
+
+        onClosePanel?.();
       }
     },
-    secondaryButtonDisabled: isCreating,
+    secondaryButtonDisabled: (!previousTabId && !showCloseButton) || isCreating,
   },
 });

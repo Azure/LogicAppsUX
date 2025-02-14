@@ -17,6 +17,7 @@ export const DisplayParameters = () => {
     parameterDefinitions,
     errors: { parameters: parameterErrors },
   } = useSelector((state: RootState) => state.template);
+  const parametersOverride = useSelector((state: RootState) => state.templateOptions.viewTemplateDetails?.parametersOverride);
   const isSingleWorkflow = useMemo(() => Object.keys(workflows).length === 1, [workflows]);
 
   const resources = {
@@ -136,8 +137,11 @@ export const DisplayParameters = () => {
         return (
           <TextField
             className="msla-templates-parameters-values"
+            data-testid={`msla-templates-parameter-value-${item.name}`}
+            id={`msla-templates-parameter-value-${item.name}`}
             aria-label={item.value}
             value={item.value}
+            disabled={parametersOverride?.[item.name]?.isEditable === false}
             onChange={(_event, newValue) => {
               handleParameterValueChange(item, newValue ?? '');
             }}

@@ -118,8 +118,23 @@ export class ConsumptionOperationManifestService extends BaseOperationManifestSe
       };
 
       return operationManifest;
-    } catch (error) {
+    } catch {
       return { properties: {} } as any;
+    }
+  }
+
+  override async getOperation(_connectorId: string, operationId: string, _useCachedData = false): Promise<any> {
+    const supportedManifest = supportedConsumptionManifestObjects.get(operationId);
+
+    if (supportedManifest) {
+      return {
+        properties: {
+          connector: { properties: { displayName: supportedManifest.properties.connector?.properties.displayName } },
+          brandColor: supportedManifest.properties.brandColor,
+          description: supportedManifest.properties.description,
+          iconUri: supportedManifest.properties.iconUri,
+        },
+      };
     }
   }
 }

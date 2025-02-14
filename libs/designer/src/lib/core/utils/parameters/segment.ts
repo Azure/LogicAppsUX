@@ -18,7 +18,6 @@ import {
   isNullOrUndefined,
   startsWith,
   UnsupportedException,
-  escapeString,
 } from '@microsoft/logic-apps-shared';
 
 /**
@@ -188,11 +187,10 @@ export class ValueSegmentConvertor {
       return dynamicContentTokenSegment;
     }
     // Note: We need to get the expression value if this is a sub expression resulted from uncasting.
-    const value = escapeString(
+    const value =
       expression.startPosition === 0
         ? expression.expression
-        : expression.expression.substring(expression.startPosition, expression.endPosition)
-    );
+        : expression.expression.substring(expression.startPosition, expression.endPosition);
     return this._createExpressionTokenValueSegment(value, expression);
   }
 

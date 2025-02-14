@@ -1,4 +1,4 @@
-import { dataMapperVersionSetting, defaultDataMapperVersion, extensionCommand, vscodeFolderName } from '../../../constants';
+import { dataMapperVersionSetting, defaultDataMapperVersion, extensionCommand, Platform, vscodeFolderName } from '../../../constants';
 import { ext } from '../../../extensionVariables';
 import { localize } from '../../../localize';
 import { getWebViewHTML } from '../../utils/codeless/getWebViewHTML';
@@ -82,6 +82,8 @@ export default class DataMapperPanel {
       null,
       ext.context.subscriptions
     );
+
+    this.isTestDisabledForOS();
   }
 
   private watchFolderForChanges(folderPath: string, fileExtensions: string[], fn: () => void) {
@@ -185,6 +187,13 @@ export default class DataMapperPanel {
         break;
       }
     }
+  }
+
+  public isTestDisabledForOS() {
+    this.sendMsgToWebview({
+      command: ExtensionCommand.isTestDisabledForOS,
+      data: process.platform === Platform.mac,
+    });
   }
 
   public updateWebviewPanelTitle() {
@@ -346,7 +355,7 @@ export default class DataMapperPanel {
         const selectedFile = files[0];
 
         const pathToWorkspaceSchemaFolder = path.join(ext.logicAppWorkspace, schemasPath);
-        const primarySchemaFullPath = selectedFile.path;
+        const primarySchemaFullPath = selectedFile.fsPath;
         const pathToContainingFolder = path.dirname(primarySchemaFullPath);
         const primarySchemaFileName = path.basename(primarySchemaFullPath);
 

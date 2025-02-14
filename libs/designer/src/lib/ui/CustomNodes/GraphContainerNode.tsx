@@ -21,10 +21,8 @@ const GraphContainerNode = ({ targetPosition = Position.Top, sourcePosition = Po
   const hasFooter = nodeMetadata?.subgraphType === SUBGRAPH_TYPES.UNTIL_DO;
   const graphContainerId = isSubgraphContainer ? removeIdTag(id) : id;
   const parentRunId = useParentRunId(graphContainerId);
-  const runData = useRunData(isSubgraphContainer ? (parentRunId ?? '') : graphContainerId);
-
+  const runData = useRunData(isSubgraphContainer ? (parentRunId ?? graphContainerId) : graphContainerId);
   const nodeSize = useNodeSize(id);
-
   const nodeLeafIndex = useNodeLeafIndex(id);
 
   return (
