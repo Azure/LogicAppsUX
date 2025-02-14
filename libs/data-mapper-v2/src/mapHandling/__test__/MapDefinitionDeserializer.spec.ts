@@ -407,6 +407,24 @@ describe('mapDefinitions/MapDefinitionDeserializer', () => {
         expect(count2Input).toEqual('source-/ns0:Root/CumulativeExpression/Population/State/County/Person/Sex/Female');
       });
 
+      it('creates conditional property connection with a function and custom value', () => {
+        // tests issue where custom values were being loaded with extra '/'; only stripped this in vs-code-designer for target side!
+        simpleMap['ns0:Root'] = {
+          ConditionalMapping: {
+            '6746506B-6072-41DE-8B64-81CE6E7AF9DD-$if(is-string(\\"USA\\"))': {
+              ItemDiscount: '/ns0:Root/ConditionalMapping/ItemPrice',
+            },
+          },
+        };
+
+        const mapDefinitionDeserializer = new MapDefinitionDeserializer(simpleMap, extendedSource, extendedTarget, functionMock);
+        const result = mapDefinitionDeserializer.convertFromMapDefinition();
+        const resultEntries = Object.entries(result);
+        resultEntries.sort();
+
+        expect((resultEntries[0][1].inputs[0] as CustomValueConnection).value).toEqual('"USA"'); // ensures extra connections aren't made
+      });
+
       it('creates a simple conditional property connection with a function', () => {
         // tests issue with input connections to function being re-created
         simpleMap['ns0:Root'] = {
