@@ -461,7 +461,6 @@ export const updateCallbackUrl = async (rootState: RootState, dispatch: Dispatch
   const operationInfo = rootState.operations.operationInfo[trigger];
   const nodeInputs = clone(rootState.operations.inputParameters[trigger]);
   const updatedParameter = await updateCallbackUrlInInputs(trigger, operationInfo, nodeInputs);
-
   if (updatedParameter) {
     notifyForCallbackUrlUpdate(rootState, trigger);
     dispatch(

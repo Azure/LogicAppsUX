@@ -1,20 +1,26 @@
 import { InitOperationManifestService } from '@microsoft/logic-apps-shared';
-import { getInputParametersFromManifest } from '../initialize';
+import * as initialize from '../initialize';
 import {
   mockGetMyOffice365ProfileOpenApiManifest,
   mockPostTeamsAdaptiveCardOpenApiManifest,
   mockSendAnOfficeOutlookEmailOpenApiManifest,
 } from './initialize.mocks';
-import { describe, vi, beforeEach, afterEach, beforeAll, afterAll, it, test, expect } from 'vitest';
+import { describe, test, expect, beforeAll, vi, beforeEach, Mock } from 'vitest';
+import { updateNodeParameters } from '../../../state/operation/operationMetadataSlice';
+import * as graphModule from '../../../utils/graph';
+import { ParameterInfo } from '@microsoft/designer-ui';
+
 describe('bjsworkflow initialize', () => {
   describe('getInputParametersFromManifest', () => {
     beforeAll(() => {
-      InitOperationManifestService({
+      const operationManifestService = {
         isSupported: () => true,
         isAliasingSupported: () => true,
         getOperationInfo: () => Promise.resolve({} as any),
         getOperationManifest: () => Promise.resolve({} as any),
-      });
+        getOperation: () => Promise.resolve({} as any),
+      };
+      InitOperationManifestService(operationManifestService);
     });
 
     test('works for an OpenAPI operation with input parameters and values', () => {
@@ -40,7 +46,7 @@ describe('bjsworkflow initialize', () => {
         },
       };
 
-      const inputParameters = getInputParametersFromManifest(
+      const inputParameters = initialize.getInputParametersFromManifest(
         'Send_an_email',
         { type: 'OpenApiConnection', operationId: 'SendEmailV2', connectorId: '/providers/Microsoft.PowerApps/apis/shared_office365' },
         mockSendAnOfficeOutlookEmailOpenApiManifest,
@@ -81,7 +87,7 @@ describe('bjsworkflow initialize', () => {
         },
       };
 
-      const inputParameters = getInputParametersFromManifest(
+      const inputParameters = initialize.getInputParametersFromManifest(
         'Post_an_adaptive_card',
         {
           type: 'OpenApiConnectionWebhook',
@@ -118,7 +124,7 @@ describe('bjsworkflow initialize', () => {
         },
       };
 
-      const inputParameters = getInputParametersFromManifest(
+      const inputParameters = initialize.getInputParametersFromManifest(
         'Get_my_profile',
         {
           type: 'OpenApiConnection',
@@ -133,6 +139,69 @@ describe('bjsworkflow initialize', () => {
 
       expect(inputParameters.inputs.parameterGroups.default.parameters.length).toBe(1);
       expect(inputParameters.inputs.parameterGroups.default.parameters[0].value[0].value).toBe('');
+    });
+  });
+  describe('updateCallbackUrl', () => {
+    const fakeTriggerId = 'trigger1';
+    const fakeOperation = { operationId: 'dummy' };
+    const fakeInputs = { someInput: 'dummy' };
+
+    // Create a fake root state with the minimal required structure.
+    const createFakeRootState = () => ({
+      workflow: {}, // getTriggerNodeId is stubbed to return fakeTriggerId.
+      operations: {
+        operationInfo: {
+          [fakeTriggerId]: fakeOperation,
+        },
+        inputParameters: {
+          [fakeTriggerId]: fakeInputs,
+        },
+      },
+    });
+
+    let dispatch: ReturnType<typeof vi.fn>;
+
+    beforeEach(() => {
+      dispatch = vi.fn();
+      vi.restoreAllMocks();
+      // Stub getTriggerNodeId to always return our fake trigger id.
+      vi.spyOn(graphModule, 'getTriggerNodeId').mockReturnValue(fakeTriggerId);
+    });
+
+    test('should dispatch updateNodeParameters when updateCallbackUrlInInputs returns a parameter', async () => {
+      const fakeUpdatedParameter = { id: 'param1', value: [{ value: 'http://callback.url' }] } as ParameterInfo;
+      const fakeCallbackUpdater = vi.fn().mockResolvedValue(fakeUpdatedParameter);
+
+      // Stub updateCallbackUrlInInputs to resolve with a fake parameter.
+      vi.spyOn(initialize, 'updateCallbackUrlInInputs').mockImplementation(fakeCallbackUpdater);
+      const fakeRootState = createFakeRootState();
+
+      await initialize.updateCallbackUrl(fakeRootState as any, dispatch);
+
+      expect(dispatch).toHaveBeenCalledTimes(1);
+      expect(dispatch).toHaveBeenCalledWith(
+        updateNodeParameters({
+          nodeId: fakeTriggerId,
+          parameters: [
+            {
+              groupId: 'default',
+              parameterId: fakeUpdatedParameter.id,
+              propertiesToUpdate: fakeUpdatedParameter,
+            },
+          ],
+        })
+      );
+    });
+
+    test('should not dispatch updateNodeParameters when updateCallbackUrlInInputs returns undefined', async () => {
+      // Stub updateCallbackUrlInInputs to resolve with undefined.
+      vi.spyOn(initialize, 'updateCallbackUrlInInputs').mockImplementation(async () => undefined);
+
+      const fakeRootState = createFakeRootState();
+
+      await initialize.updateCallbackUrl(fakeRootState as any, dispatch);
+
+      expect(dispatch).not.toHaveBeenCalled();
     });
   });
 });
