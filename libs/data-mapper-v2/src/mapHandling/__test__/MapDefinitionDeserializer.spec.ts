@@ -422,7 +422,7 @@ describe('mapDefinitions/MapDefinitionDeserializer', () => {
         const resultEntries = Object.entries(result);
         resultEntries.sort();
 
-        expect((resultEntries[0][1].inputs[0] as CustomValueConnection).value).toEqual('USA'); // ensures extra connections aren't made
+        expect((resultEntries[0][1].inputs[0] as CustomValueConnection).value).toEqual('"USA"'); // ensures extra connections aren't made
       });
 
       it('creates a simple conditional property connection with a function', () => {
