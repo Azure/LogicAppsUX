@@ -463,12 +463,20 @@ export const updateCallbackUrl = async (rootState: RootState, dispatch: Dispatch
   const updatedParameter = await updateCallbackUrlInInputs(trigger, operationInfo, nodeInputs);
 
   if (updatedParameter) {
+    checkForCallbackUrlUpdate(rootState, trigger);
     dispatch(
       updateNodeParameters({
         nodeId: trigger,
         parameters: [{ groupId: ParameterGroupKeys.DEFAULT, parameterId: updatedParameter.id, propertiesToUpdate: updatedParameter }],
       })
     );
+  }
+};
+
+const checkForCallbackUrlUpdate = (rootState: RootState, trigger: string) => {
+  const idReplacements = rootState.workflow.idReplacements;
+  if (idReplacements[trigger]) {
+    alert('NEW CALLBACK URL: ');
   }
 };
 
