@@ -423,7 +423,8 @@ export class MapDefinitionDeserializer {
     rightSideStringOrObject: string | object,
     connections: ConnectionDictionary
   ) => {
-    const leftSideKeyNoGuid = removeGuidFromKey(leftSideKey);
+    const leftSideKeyFormatted = leftSideKey.replaceAll('\\"', '"');
+    const leftSideKeyNoGuid = removeGuidFromKey(leftSideKeyFormatted);
     const tokens = separateFunctions(leftSideKeyNoGuid);
     const forOrIfObj = createSchemaNodeOrFunction(tokens);
     if ((forOrIfObj.term as ParseFunc).name.includes(DReservedToken.if)) {
