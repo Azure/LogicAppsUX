@@ -1,0 +1,58 @@
+using Microsoft.Azure.Workflows.UnitTesting;
+using Microsoft.Extensions.Configuration;
+using System;
+using System.IO;
+
+namespace UnitTestPublicPreview.Tests
+{
+    public class TestExecutor
+    {                
+        /// <summary>
+        /// The root directory.
+        /// </summary>
+        public string rootDirectory;
+        
+        /// <summary>
+        /// The logic app name.
+        /// </summary>
+        public string logicAppName;
+
+        /// <summary>
+        /// The workflow name.
+        /// </summary>
+        public string workflow;
+
+        public TestExecutor(string configPath)
+        {
+            var configuration = new ConfigurationBuilder()
+                .SetBasePath(Directory.GetCurrentDirectory())
+                .AddXmlFile(configPath, optional: false, reloadOnChange: true)
+                .Build();
+
+            this.rootDirectory = configuration["TestSettings:WorkspacePath"];
+            this.logicAppName = configuration["TestSettings:LogicAppName"];
+            this.workflow = configuration["TestSettings:WorkflowName"];
+        }
+
+        #region Unit test executor
+
+        public UnitTestExecutor Create()
+        {
+            // Set the path for workflow-related input files in the workspace and build the full paths to the required JSON files.
+            var workflowDefinitionPath = Path.Combine(this.rootDirectory, this.logicAppName, this.workflow, "workflow.json");
+            var connectionsPath = Path.Combine(this.rootDirectory, this.logicAppName, "connections.json");
+            var parametersPath = Path.Combine(this.rootDirectory, this.logicAppName, "parameters.json");
+            var localSettingsPath = Path.Combine(this.rootDirectory, this.logicAppName, "local.settings.json");
+            
+            return new UnitTestExecutor(
+                workflowFilePath: workflowDefinitionPath,
+                connectionsFilePath: connectionsPath,
+                parametersFilePath: parametersPath,
+                localSettingsFilePath: localSettingsPath
+            );
+        }
+
+        #endregion
+
+    }
+}

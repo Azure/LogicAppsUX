@@ -7,6 +7,8 @@ import { localize } from '../../../../localize';
 import { ConvertToWorkspace } from '../../createNewCodeProject/CodeProjectBase/ConvertToWorkspace';
 import {
   createCsFile,
+  createTestExecutorFile,
+  createTestSettingsConfigFile,
   ensureCsprojAndNugetFiles,
   extractAndValidateRunId,
   getUnitTestPaths,
@@ -189,7 +191,11 @@ async function generateUnitTestFromRun(
 
     const paths = getUnitTestPaths(projectPath, workflowName, unitTestName);
     await fs.ensureDir(paths.unitTestFolderPath);
-    await processUnitTestDefinition(unitTestDefinition, paths.workflowFolderPath, paths.logicAppName);
+    const { foundActionMocks } = await processUnitTestDefinition(unitTestDefinition, paths.logicAppFolderPath, paths.logicAppName);
+    // Create the testSettings.config file for the unit test
+    ext.outputChannel.appendLog(localize('creatingTestSettingsConfig', 'Creating testSettings.config file for unit test...'));
+    await createTestSettingsConfigFile(paths.workflowFolderPath, workflowName, paths.logicAppName);
+    await createTestExecutorFile(paths.logicAppFolderPath, workflowName);
 
     try {
       ext.outputChannel.appendLog(localize('unzippingFiles', `Unzipping Mock.json into: ${paths.unitTestFolderPath}`));
@@ -204,7 +210,10 @@ async function generateUnitTestFromRun(
     }
 
     try {
-      await createCsFile(paths.unitTestFolderPath, unitTestName, workflowName, paths.logicAppName);
+      // Get the first actionMock in foundActionMocks
+      const [actionName, actionOutputClassName] = Object.entries(foundActionMocks)[0] || [];
+
+      await createCsFile(paths.unitTestFolderPath!, unitTestName, workflowName, paths.logicAppName, actionName, actionOutputClassName);
       logTelemetry(context, { csFileCreated: 'true' });
     } catch (csError) {
       const csFileFailReason = parseError(csError).message;
