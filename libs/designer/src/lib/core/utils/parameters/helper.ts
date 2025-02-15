@@ -2182,6 +2182,16 @@ function getDynamicInputsFromDynamicParameter(parameterKey: string, allInputs: N
   return result;
 }
 
+export function getDisplayValueFromPickerSelectedItem(selectedItem: any, parameter: ParameterInfo, dependencies: NodeDependencies): string {
+  const dependency = dependencies.inputs[parameter.parameterKey];
+  return getPropertyValue(selectedItem, dependency.filePickerInfo?.fullTitlePath ?? '');
+}
+
+export function getValueFromPickerSelectedItem(selectedItem: any, parameter: ParameterInfo, dependencies: NodeDependencies): string {
+  const dependency = dependencies.inputs[parameter.parameterKey];
+  return getPropertyValue(selectedItem, dependency.filePickerInfo?.valuePath ?? '');
+}
+
 export async function loadDynamicTreeItemsForParameter(
   nodeId: string,
   groupId: string,
@@ -3786,7 +3796,11 @@ export function remapTokenSegmentValue(
  * @arg {boolean} [forValidation=false]
  * @return {string}
  */
-function parameterValueToStringWithoutCasting(value: ValueSegment[], forValidation = false, shouldInterpolateSingleToken = false): string {
+export function parameterValueToStringWithoutCasting(
+  value: ValueSegment[],
+  forValidation = false,
+  shouldInterpolateSingleToken = false
+): string {
   const shouldInterpolateTokens = (value.length > 1 || shouldInterpolateSingleToken) && value.some(isTokenValueSegment);
 
   return value

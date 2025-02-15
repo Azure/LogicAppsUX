@@ -90,6 +90,7 @@ export const Combobox = ({
   label,
   shouldSort = true,
   isCaseSensitive,
+  basePlugins,
   ...baseEditorProps
 }: ComboboxProps): JSX.Element => {
   const intl = useIntl();
@@ -293,7 +294,7 @@ export const Combobox = ({
             labelId={labelId}
             readonly={baseEditorProps.readonly}
             className="msla-combobox-editor"
-            basePlugins={{ clearEditor: true, autoFocus: canAutoFocus }}
+            basePlugins={{ clearEditor: true, autoFocus: canAutoFocus, ...basePlugins }}
             initialValue={value}
             onBlur={handleBlur}
             getTokenPicker={baseEditorProps.getTokenPicker}
