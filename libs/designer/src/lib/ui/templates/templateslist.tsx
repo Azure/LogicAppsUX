@@ -26,6 +26,7 @@ export const TemplatesList = ({ detailFilters, createWorkflowCall, isWorkflowEmp
 
   useEffect(() => {
     if (manifest) {
+      console.log('Im called');
       dispatch(initializeWorkflowMetadata());
     }
   }, [dispatch, manifest]);

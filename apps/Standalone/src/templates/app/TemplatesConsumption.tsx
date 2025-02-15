@@ -1,6 +1,7 @@
 import { useMemo } from 'react';
 import {
   type ConnectionReferences,
+  getReactQueryClient,
   isOpenApiSchemaVersion,
   TemplatesDataProvider,
   TemplatesDesigner,
@@ -15,6 +16,10 @@ import {
   StandardOperationManifestService,
   ConsumptionConnectionService,
   startsWith,
+  BaseAppServiceService,
+  BaseApiManagementService,
+  BaseFunctionService,
+  ConsumptionConnectorService,
 } from '@microsoft/logic-apps-shared';
 import {
   getWorkflowAndArtifactsConsumption,
@@ -50,6 +55,7 @@ export const TemplatesConsumption = () => {
   const isSingleTemplateView = useMemo(() => templatesView !== 'gallery', [templatesView]);
 
   const isWorkflowEmpty = useMemo(() => Object.keys((workflow?.definition as any)?.triggers ?? {}).length === 0, [workflow]);
+  const queryClient = getReactQueryClient();
 
   const onBlankWorkflowClick = async () => {
     if (!workflowData) {
@@ -119,7 +125,7 @@ export const TemplatesConsumption = () => {
   };
 
   const services = useMemo(
-    () => getServices(workflowId!, workflow as any, tenantId, objectId, canonicalLocation, language, onBlankWorkflowClick),
+    () => getServices(workflowId!, workflow as any, tenantId, objectId, canonicalLocation, language, onBlankWorkflowClick, queryClient),
     // eslint-disable-next-line react-hooks/exhaustive-deps
     [workflowId, workflow, tenantId, canonicalLocation, language]
   );
@@ -207,7 +213,8 @@ const getServices = (
   objectId: string | undefined,
   location: string,
   locale: string | undefined,
-  onBlankWorkflowClick: () => Promise<void>
+  onBlankWorkflowClick: () => Promise<void>,
+  queryClient?: any
 ): any => {
   const baseUrl = 'https://management.azure.com';
   const { subscriptionId, resourceGroup } = new ArmParser(workflowId);
@@ -224,6 +231,69 @@ const getServices = (
     httpClient,
     locale,
   });
+
+  const appServiceService = new BaseAppServiceService({
+    ...defaultServiceParams,
+    apiVersion: '2022-03-01',
+    subscriptionId,
+  });
+
+  const apimService = new BaseApiManagementService({
+    ...defaultServiceParams,
+    apiVersion: '2021-08-01',
+    subscriptionId,
+    includeBasePathInTemplate: true,
+    queryClient,
+  });
+
+  const functionService = new BaseFunctionService({
+    baseUrl,
+    apiVersion,
+    subscriptionId,
+    httpClient,
+  });
+  const connectorService = new ConsumptionConnectorService({
+    ...defaultServiceParams,
+    clientSupportedOperations: [
+      ['/connectionProviders/workflow', 'invokeWorkflow'],
+      ['connectionProviders/xmlOperations', 'xmlValidation'],
+      ['connectionProviders/xmlOperations', 'xmlTransform'],
+      ['connectionProviders/liquidOperations', 'liquidJsonToJson'],
+      ['connectionProviders/liquidOperations', 'liquidJsonToText'],
+      ['connectionProviders/liquidOperations', 'liquidXmlToJson'],
+      ['connectionProviders/liquidOperations', 'liquidXmlToText'],
+      ['connectionProviders/flatFileOperations', 'flatFileDecoding'],
+      ['connectionProviders/flatFileOperations', 'flatFileEncoding'],
+      ['connectionProviders/swiftOperations', 'SwiftDecode'],
+      ['connectionProviders/swiftOperations', 'SwiftEncode'],
+      ['/connectionProviders/apiManagementOperation', 'apiManagement'],
+      ['connectionProviders/http', 'httpswaggeraction'],
+      ['connectionProviders/http', 'httpswaggertrigger'],
+    ].map(([connectorId, operationId]) => ({ connectorId, operationId })),
+    schemaClient: {},
+    valuesClient: {
+      getSwaggerOperations: (args: any) => {
+        const { parameters } = args;
+        return appServiceService.getOperations(parameters.swaggerUrl);
+      },
+      getApimOperations: (args: any) => {
+        const { parameters } = args;
+        const { apiId } = parameters;
+        if (!apiId) {
+          throw new Error('Missing api information to make dynamic operations call');
+        }
+        return apimService.getOperations(apiId);
+      },
+      getSwaggerFunctionOperations: (args: any) => {
+        const { parameters } = args;
+        const functionAppId = parameters.functionAppId;
+        return functionService.getOperations(functionAppId);
+      },
+    },
+    apiVersion: '2018-07-01-preview',
+    workflowReferenceId: workflowId,
+  });
+
   const gatewayService = new BaseGatewayService({
     baseUrl,
     httpClient,
@@ -272,6 +342,10 @@ const getServices = (
     operationManifestService,
     templateService,
     workflowService,
+    apimService,
+    appServiceService,
+    functionService,
+    connectorService,
   };
 };
 

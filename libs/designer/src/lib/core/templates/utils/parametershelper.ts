@@ -8,7 +8,7 @@ import { getOperationInfo, getOperationManifest } from '../../queries/operation'
 import { isRootNodeInGraph } from '../../utils/graph';
 import { getInputParametersFromSwagger, getOperationInfo as getSwaggerOperationInfo } from '../../utils/swagger/operation';
 import type { DependencyInfo, NodeInputs, NodeOperation, NodeOperationInputsData } from '../../state/operation/operationMetadataSlice';
-import { getAllInputParameters } from '../../utils/parameters/helper';
+import { convertToValueSegments } from '../../utils/parameters/helper';
 import type { Token } from '@microsoft/designer-ui';
 import { isParameterToken, isTokenValueSegment } from '../../utils/parameters/segment';
 
@@ -18,6 +18,7 @@ export interface TemplateOperationParametersMetadata {
 }
 
 export const initializeParametersMetadata = async (
+  templateId: string,
   workflows: Record<string, WorkflowTemplateData>,
   parameterDefinitions: Record<string, Template.ParameterDefinition>,
   connections: Record<string, Template.Connection>,
@@ -59,7 +60,7 @@ export const initializeParametersMetadata = async (
       const parametersToInitialize = operationsToInitialize[operationId];
       const isTrigger = isRootNodeInGraph(operationId, 'root', nodesMetadata);
       const operation = operations[operationId];
-      const nodeId = `${workflowId}-${operationId}`;
+      const nodeId = `${templateId}-${workflowId}-${operationId}`;
       const templateConnectionKey = parametersToInitialize[0].dynamicData?.connection as string;
       const connectorId = normalizeConnectorId(
         connections[templateConnectionKey].connectorId,
@@ -77,11 +78,13 @@ export const initializeParametersMetadata = async (
   for (const nodeData of allNodeData) {
     const { id, nodeInputs, nodeOperationInfo, inputDependencies, templateParameters } = nodeData;
 
-    inputsPayload.push({ id, nodeInputs, nodeDependencies: { inputs: inputDependencies, outputs: {} }, operationInfo: nodeOperationInfo });
-
     for (const parameter of templateParameters) {
       const parameterId = parameter.id;
-      const operationParameter = getOperationParameterForTemplateParameter(parameterId, nodeInputs);
+      const operationParameter = getAndUpdateOperationParameterForTemplateParameter(
+        nodeInputs,
+        parameterId,
+        parameter.value ?? parameter.default
+      );
 
       if (operationParameter) {
         delete (parameter as any)['id'];
@@ -89,11 +92,13 @@ export const initializeParametersMetadata = async (
           ...parameter,
           associatedOperationParameter: {
             operationId: id,
-            parameterKey: operationParameter.parameterKey,
+            parameterId: operationParameter.id,
           },
         };
       }
     }
+
+    inputsPayload.push({ id, nodeInputs, nodeDependencies: { inputs: inputDependencies, outputs: {} }, operationInfo: nodeOperationInfo });
   }
 
   return { parameterDefinitions: updatedParameterDefinitions, inputsPayload };
@@ -151,15 +156,40 @@ const initializeOperationDetails = async (
   return undefined;
 };
 
-const getOperationParameterForTemplateParameter = (parameterName: string, nodeInputs: NodeInputs): ParameterInfo | undefined => {
-  const allParameters = getAllInputParameters(nodeInputs);
-  return allParameters.find((parameter) => {
-    const value = parameter.value;
-    return (
-      value.length === 1 &&
-      isTokenValueSegment(value[0]) &&
-      isParameterToken(value[0].token as Token) &&
-      value[0].token?.name === parameterName
-    );
-  });
+const getAndUpdateOperationParameterForTemplateParameter = (
+  nodeInputs: NodeInputs,
+  parameterName: string,
+  parameterValue: any
+): ParameterInfo | undefined => {
+  let result: ParameterInfo | undefined;
+
+  for (const groupKey of Object.keys(nodeInputs.parameterGroups)) {
+    nodeInputs.parameterGroups[groupKey].parameters = nodeInputs.parameterGroups[groupKey].parameters.map((parameter) => {
+      const value = parameter.value;
+      if (
+        value.length === 1 &&
+        isTokenValueSegment(value[0]) &&
+        isParameterToken(value[0].token as Token) &&
+        value[0].token?.name === parameterName
+      ) {
+        parameter.value = convertToValueSegments(parameterValue, !parameter.suppressCasting /* shouldUncast */, parameter.type);
+        result = parameter;
+      }
+
+      return parameter;
+    });
+  }
+
+  return result;
+};
+
+export const updateOperationParameterWithTemplateParameterValue = (parameterId: string, value: any, nodeInputs: NodeInputs): void => {
+  for (const groupKey of Object.keys(nodeInputs.parameterGroups)) {
+    nodeInputs.parameterGroups[groupKey].parameters = nodeInputs.parameterGroups[groupKey].parameters.map((parameter) => {
+      if (parameter.id === parameterId) {
+        parameter.value = convertToValueSegments(value, !parameter.suppressCasting /* shouldUncast */, parameter.type);
+      }
+      return parameter;
+    });
+  }
 };

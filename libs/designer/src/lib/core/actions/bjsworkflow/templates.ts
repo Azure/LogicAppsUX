@@ -7,6 +7,7 @@ import {
   InitAppServiceService,
   InitConnectionParameterEditorService,
   InitConnectionService,
+  InitConnectorService,
   InitExperimentationServiceService,
   InitFunctionService,
   InitGatewayService,
@@ -59,9 +60,10 @@ export const initializeWorkflowMetadata = createAsyncThunk(
   'initializeWorkflowMetadata',
   async (_, { getState, dispatch }): Promise<void> => {
     const currentState: RootState = getState() as RootState;
-    const { workflows, parameterDefinitions, connections } = currentState.template;
+    const { templateName, workflows, parameterDefinitions, connections } = currentState.template;
     const { subscriptionId, location } = currentState.workflow;
     const { inputsPayload, parameterDefinitions: templateParametersToOverride } = await initializeParametersMetadata(
+      templateName as string,
       workflows,
       parameterDefinitions,
       connections,
@@ -84,6 +86,7 @@ export const initializeTemplateServices = createAsyncThunk(
   async ({
     connectionService,
     operationManifestService,
+    connectorService,
     workflowService,
     oAuthService,
     gatewayService,
@@ -110,6 +113,10 @@ export const initializeTemplateServices = createAsyncThunk(
       loggerServices.push(new DevLogger());
     }
     InitLoggerService(loggerServices);
+
+    if (connectorService) {
+      InitConnectorService(connectorService);
+    }
 
     if (gatewayService) {
       InitGatewayService(gatewayService);

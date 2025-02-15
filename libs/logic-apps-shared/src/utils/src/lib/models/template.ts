@@ -35,7 +35,7 @@ export interface Artifact {
 export interface Parameter {
   name: string;
   type: string;
-  default?: string;
+  default?: any;
   description: string;
   required?: boolean;
   displayName: string;
@@ -53,7 +53,7 @@ export interface ParameterDefinition extends Parameter {
   associatedWorkflows?: string[];
   associatedOperationParameter?: {
     operationId: string;
-    parameterKey: string;
+    parameterId: string;
   };
 }
 

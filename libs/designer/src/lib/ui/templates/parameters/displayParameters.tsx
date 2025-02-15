@@ -1,4 +1,4 @@
-import { Callout, css, DetailsList, type IColumn, Label, SelectionMode, TextField } from '@fluentui/react';
+import { Callout, css, DetailsList, type IColumn, Label, SelectionMode } from '@fluentui/react';
 import { Link, Text } from '@fluentui/react-components';
 import { updateTemplateParameterValue } from '../../../core/state/templates/templateSlice';
 import type { AppDispatch, RootState } from '../../../core/state/templates/store';
@@ -8,6 +8,7 @@ import { useFunctionalState } from '@react-hookz/web';
 import { type IntlShape, useIntl } from 'react-intl';
 import { useMemo } from 'react';
 import { useBoolean, useId } from '@fluentui/react-hooks';
+import { ParameterEditor } from './parametereditor';
 
 export const DisplayParameters = () => {
   const dispatch = useDispatch<AppDispatch>();
@@ -110,14 +111,9 @@ export const DisplayParameters = () => {
     setParametersList(newList);
   };
 
-  const handleParameterValueChange = (item: Template.ParameterDefinition, newValue: string) => {
-    updateItemInList({ ...item, value: newValue });
-    dispatch(
-      updateTemplateParameterValue({
-        ...item,
-        value: newValue,
-      })
-    );
+  const handleParameterValueChange = (newItem: Template.ParameterDefinition) => {
+    updateItemInList(newItem);
+    dispatch(updateTemplateParameterValue(newItem));
   };
 
   const onRenderItemColumn = (item: Template.ParameterDefinition, _index: number | undefined, column: IColumn | undefined) => {
@@ -133,19 +129,7 @@ export const DisplayParameters = () => {
         );
 
       case '$value':
-        return (
-          <TextField
-            className="msla-templates-parameters-values"
-            data-testid="msla-templates-parameter-value"
-            id="msla-templates-parameter-value"
-            aria-label={item.value}
-            value={item.value}
-            onChange={(_event, newValue) => {
-              handleParameterValueChange(item, newValue ?? '');
-            }}
-            errorMessage={parameterErrors[item.name]}
-          />
-        );
+        return <ParameterEditor item={item} onChange={handleParameterValueChange} error={parameterErrors[item.name]} />;
 
       default:
         return null;
