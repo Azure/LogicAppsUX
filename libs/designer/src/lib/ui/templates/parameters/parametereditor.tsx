@@ -21,10 +21,11 @@ import { useDispatch, useSelector } from 'react-redux';
 export const ParameterEditor = ({
   item,
   onChange,
+  disabled,
   error,
-}: { item: Template.ParameterDefinition; onChange: (newItem: Template.ParameterDefinition) => void; error?: string }) => {
+}: { item: Template.ParameterDefinition; onChange: (newItem: Template.ParameterDefinition) => void; disabled?: boolean, error?: string }) => {
   const dispatch = useDispatch<AppDispatch>();
-  const { value, dynamicData, displayName, associatedOperationParameter } = item;
+  const { name, value, dynamicData, displayName, associatedOperationParameter } = item;
   const operationId = associatedOperationParameter?.operationId;
   const { dependencies, parameter, nodeInputs, operationInfo } = useSelector((state: RootState) => {
     if (!associatedOperationParameter || !operationId || !state.operation.inputParameters[operationId]) {
@@ -160,10 +161,11 @@ export const ParameterEditor = ({
   return (
     <TextField
       className="msla-templates-parameters-values"
-      data-testid="msla-templates-parameter-value"
-      id="msla-templates-parameter-value"
+      data-testid={`msla-templates-parameter-value-${name}`}
+      id={`msla-templates-parameter-value-${name}`}
       aria-label={value}
       value={value}
+      disabled={disabled}
       onChange={(_event, newValue) => onChange({ ...item, value: newValue ?? '' })}
       errorMessage={error}
     />

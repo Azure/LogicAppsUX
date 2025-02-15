@@ -18,6 +18,7 @@ export const DisplayParameters = () => {
     parameterDefinitions,
     errors: { parameters: parameterErrors },
   } = useSelector((state: RootState) => state.template);
+  const parametersOverride = useSelector((state: RootState) => state.templateOptions.viewTemplateDetails?.parametersOverride);
   const isSingleWorkflow = useMemo(() => Object.keys(workflows).length === 1, [workflows]);
 
   const resources = {
@@ -129,7 +130,7 @@ export const DisplayParameters = () => {
         );
 
       case '$value':
-        return <ParameterEditor item={item} onChange={handleParameterValueChange} error={parameterErrors[item.name]} />;
+        return <ParameterEditor item={item} onChange={handleParameterValueChange} disabled={parametersOverride?.[item.name]?.isEditable === false} error={parameterErrors[item.name]} />;
 
       default:
         return null;

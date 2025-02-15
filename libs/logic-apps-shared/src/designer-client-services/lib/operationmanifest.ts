@@ -36,6 +36,15 @@ export interface IOperationManifestService {
    * @return {Promise<any>}
    */
   getOperationManifest(connectorId: string, operationId: string): Promise<OperationManifest>;
+
+  /**
+   * Gets the operation data for an operation.
+   * @arg {string} connectorId - The connector id.
+   * @arg {string} operationId - The operation id.
+   * @arg {boolean} [useCachedData] - Flag whether to use previously cache data.
+   * @return {Promise<any>}
+   */
+  getOperation(connectorId: string, operationId: string, useCachedData?: boolean): Promise<any>;
 }
 
 let service: IOperationManifestService;

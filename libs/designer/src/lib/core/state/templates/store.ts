@@ -5,6 +5,7 @@ import templateReducer from './templateSlice';
 import manifestReducer from './manifestSlice';
 import panelReducer from './panelSlice';
 import operationReducer from '../operation/operationMetadataSlice';
+import templateOptionsReducer from './templateOptionsSlice';
 
 const rootReducer = combineReducers({
   workflow: workflowReducer,
@@ -12,6 +13,7 @@ const rootReducer = combineReducers({
   manifest: manifestReducer,
   panel: panelReducer,
   operation: operationReducer,
+  templateOptions: templateOptionsReducer,
 });
 
 export const setupStore = (preloadedState?: Partial<RootState>) => {
