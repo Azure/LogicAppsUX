@@ -191,7 +191,12 @@ async function generateUnitTestFromRun(
 
     const paths = getUnitTestPaths(projectPath, workflowName, unitTestName);
     await fs.ensureDir(paths.unitTestFolderPath);
-    const { foundActionMocks } = await processUnitTestDefinition(unitTestDefinition, paths.logicAppFolderPath, paths.logicAppName);
+    const { foundActionMocks, foundTriggerMocks } = await processUnitTestDefinition(
+      unitTestDefinition,
+      paths.workflowFolderPath,
+      workflowName,
+      paths.logicAppName
+    );
     // Create the testSettings.config file for the unit test
     ext.outputChannel.appendLog(localize('creatingTestSettingsConfig', 'Creating testSettings.config file for unit test...'));
     await createTestSettingsConfigFile(paths.workflowFolderPath, workflowName, paths.logicAppName);
@@ -212,8 +217,22 @@ async function generateUnitTestFromRun(
     try {
       // Get the first actionMock in foundActionMocks
       const [actionName, actionOutputClassName] = Object.entries(foundActionMocks)[0] || [];
-
-      await createCsFile(paths.unitTestFolderPath!, unitTestName, workflowName, paths.logicAppName, actionName, actionOutputClassName);
+      // Get the first actionMock in foundActionMocks
+      const [, triggerOutputClassName] = Object.entries(foundTriggerMocks)[0] || [];
+      // Create actionMockClassName by replacing "Output" with "Mock" in actionOutputClassName
+      const actionMockClassName = actionOutputClassName.replace(/(.*)Output$/, '$1Mock');
+      const triggerMockClassName = triggerOutputClassName.replace(/(.*)Output$/, '$1Mock');
+      await createCsFile(
+        paths.unitTestFolderPath!,
+        unitTestName,
+        workflowName,
+        paths.logicAppName,
+        actionName,
+        actionOutputClassName,
+        actionMockClassName,
+        triggerOutputClassName,
+        triggerMockClassName
+      );
       logTelemetry(context, { csFileCreated: 'true' });
     } catch (csError) {
       const csFileFailReason = parseError(csError).message;

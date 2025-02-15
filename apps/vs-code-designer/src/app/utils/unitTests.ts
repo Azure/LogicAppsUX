@@ -332,7 +332,7 @@ export async function createCsprojFile(csprojFilePath: string, logicAppName: str
  */
 export async function updateCsprojFile(csprojFilePath: string, workflowName: string): Promise<void> {
   const itemGroupName = 'UnitTestSettingsConfig';
-  const contentInclude = `${workflowName}/*.config`;
+  const contentInclude = `${workflowName}\\*.config`;
 
   fse.readFile(csprojFilePath, 'utf8', (err, data) => {
     if (err) {
@@ -346,14 +346,13 @@ export async function updateCsprojFile(csprojFilePath: string, workflowName: str
         return;
       }
 
-      const project = result.Project;
-      let itemGroup = project.ItemGroup?.find((group: any) => group.$?.Label === itemGroupName);
+      let itemGroup = result.ItemGroup?.find((group: any) => group.$?.Label === itemGroupName);
 
       if (!itemGroup) {
         // Create a new ItemGroup if it doesn't exist
         itemGroup = { $: { Label: itemGroupName }, Content: [] };
-        project.ItemGroup = project.ItemGroup || [];
-        project.ItemGroup.push(itemGroup);
+        result.ItemGroup = result.ItemGroup || [];
+        result.ItemGroup.push(itemGroup);
         console.log(`Created new ItemGroup with label "${itemGroupName}".`);
       }
 
@@ -363,8 +362,7 @@ export async function updateCsprojFile(csprojFilePath: string, workflowName: str
         console.log(`<Content Include="${contentInclude}" /> already exists in ItemGroup "${itemGroupName}".`);
       } else {
         itemGroup.Content.push({
-          $: { Include: contentInclude },
-          Link: `${workflowName}\\%(RecursiveDir)%(Filename)%(Extension)`,
+          $: { Include: contentInclude, Link: `${workflowName}\\%(RecursiveDir)%(Filename)%(Extension)` },
           CopyToOutputDirectory: 'PreserveNewest',
         });
         console.log(`Added <Content Include="${contentInclude}" Link="${workflowName}\\%(RecursiveDir)%(Filename)%(Extension)">
@@ -372,7 +370,7 @@ export async function updateCsprojFile(csprojFilePath: string, workflowName: str
           </Content> to ItemGroup "${itemGroupName}".`);
 
         const builder = new xml2js.Builder();
-        const updatedXml = builder.buildObject({ Project: project });
+        const updatedXml = builder.buildObject({ Project: result });
 
         fse.writeFile(csprojFilePath, updatedXml, 'utf8', (err) => {
           if (err) {
@@ -396,6 +394,9 @@ export async function updateCsprojFile(csprojFilePath: string, workflowName: str
  * @param {string} logicAppName - The name of the logic app.
  * @param {string} actionName - The name of the action.
  * @param {string} actionOutputClassName - The name of the action output class.
+ * @param {string} actionMockClassName - The name of the action mock class.
+ * @param {string} triggerOutputClassName - The name of the trigger output class.
+ * @param {string} triggerMockClassName - The name of the trigger mock class.
  */
 export async function createCsFile(
   unitTestFolderPath: string,
@@ -403,69 +404,17 @@ export async function createCsFile(
   workflowName: string,
   logicAppName: string,
   actionName: string,
-  actionOutputClassName: string
-): Promise<void> {
-  const templateFolderName = 'UnitTestTemplates';
-  const csTemplateFileName = 'TestClassFile';
-  const templatePath = path.join(__dirname, 'assets', templateFolderName, csTemplateFileName);
-
-  let templateContent = await fse.readFile(templatePath, 'utf-8');
-
-  const sanitizedUnitTestName = unitTestName.replace(/-/g, '_');
-  const sanitizedWorkflowName = workflowName.replace(/-/g, '_');
-  const sanitizedLogicAppName = logicAppName.replace(/-/g, '_');
-
-  templateContent = templateContent.replace(/namespace <%= LogicAppName %>\.Tests/g, `namespace ${sanitizedLogicAppName}.Tests`);
-  templateContent = templateContent.replace(/public class <%= UnitTestName %>/g, `public class ${sanitizedUnitTestName}`);
-  templateContent = templateContent.replace(/<see cref="<%= UnitTestName %>" \/>/g, `<see cref="${sanitizedUnitTestName}" />`);
-  templateContent = templateContent.replace(/public <%= UnitTestName %>\(\)/g, `public ${sanitizedUnitTestName}()`);
-  templateContent = templateContent.replace(
-    /public async Task <%= WorkflowName %>_<%= UnitTestName %>_ExecuteWorkflow/g,
-    `public async Task ${sanitizedWorkflowName}_${sanitizedUnitTestName}_ExecuteWorkflow`
-  );
-
-  templateContent = templateContent
-    .replace(/<%= LogicAppName %>/g, logicAppName)
-    .replace(/<%= WorkflowName %>/g, workflowName)
-    .replace(/<%= UnitTestName %>/g, unitTestName)
-    .replace(/<%= ActionMockName %>/g, actionName)
-    .replace(/<%= ActionMockOutputClassName %>/g, actionOutputClassName)
-    .replace(/<%= UnitTestSubFolder %>/g, unitTestName)
-    .replace(/<%= UnitTestMockJson %>/g, `${unitTestName}-mock.json`);
-
-  const csFilePath = path.join(unitTestFolderPath, `${unitTestName}.cs`);
-  await fse.writeFile(csFilePath, templateContent);
-
-  ext.outputChannel.appendLog(localize('csFileCreated', 'Created .cs file at: {0}', csFilePath));
-}
-
-/**
- * Creates a .cs file in the specified unit test folder using a template.
- * Converts any "-" characters in LogicAppName, WorkflowName, and UnitTestName to "_" only in code-related contexts.
- * @param {string} unitTestFolderPath - The path to the unit test folder.
- * @param {string} csTemplateFileName - The name of the .cs template file.
- * @param {string} unitTestName - The name of the unit test.
- * @param {string} workflowName - The name of the workflow.
- * @param {string} logicAppName - The name of the logic app.
- * @param {string} actionName - The name of the action.
- * @param {string} actionOutputClassName - The name of the action output class.
- * @param {string} actionMockClassName - The name of the action mock class.
- * @param {string} triggerOutputClassName - The name of the trigger output class.
- * @param {string} triggerMockClassName - The name of the trigger mock class.
- */
-export async function createBlankCsFile(
-  unitTestFolderPath: string,
-  csTemplateFileName: string,
-  unitTestName: string,
-  workflowName: string,
-  logicAppName: string,
-  actionName: string,
   actionOutputClassName: string,
   actionMockClassName: string,
   triggerOutputClassName: string,
-  triggerMockClassName: string
+  triggerMockClassName: string,
+  isBlank = false
 ): Promise<void> {
   const templateFolderName = 'UnitTestTemplates';
+  let csTemplateFileName = 'TestClassFile';
+  if (isBlank) {
+    csTemplateFileName = 'TestBlankClassFile';
+  }
   const templatePath = path.join(__dirname, 'assets', templateFolderName, csTemplateFileName);
 
   let templateContent = await fse.readFile(templatePath, 'utf-8');
@@ -512,8 +461,7 @@ export async function createTestExecutorFile(logicAppFolderPath: string, workflo
   const executorTemplateFileName = 'TestExecutorFile';
   const templatePath = path.join(__dirname, 'assets', templateFolderName, executorTemplateFileName);
 
-  const mockOutputsFolderPath = path.join(logicAppFolderPath, 'MockOutputs');
-  const csFilePath = path.join(mockOutputsFolderPath, 'TestExecutor.cs');
+  const csFilePath = path.join(logicAppFolderPath, 'TestExecutor.cs');
 
   if (await fse.pathExists(csFilePath)) {
     ext.outputChannel.appendLog(localize('testExecutorFileExists', 'TestExecutor.cs file already exists at: {0}', csFilePath));
@@ -1014,12 +962,28 @@ export function generateTriggerActionMockClass(mockType: string, mockClassName: 
   sb.push(`    public class ${mockClassName} : ${mockType}`);
   sb.push('    {');
   sb.push('        /// <summary>');
-  sb.push(`        /// Initializes a new instance of the <see cref="${mockClassName}"/> class.`);
+  sb.push(`        /// Creates a mocked instance for  <see cref="${mockClassName}"/> with static outputs.`);
   sb.push('        /// </summary>');
   sb.push(
-    `        public ${mockClassName}(string name = null, TestWorkflowStatus status = TestWorkflowStatus.Succeeded, ${className} output = null)`
+    `        public ${mockClassName}(TestWorkflowStatus status = TestWorkflowStatus.Succeeded, string name = null, ${className} outputs = null)`
   );
-  sb.push(`            : base(name: name, status: status, outputs: output ?? new ${className}())`);
+  sb.push(`            : base(status: status, name: name, outputs: outputs ?? new ${className}())`);
+  sb.push('        {');
+  sb.push('        }');
+  sb.push('');
+  sb.push('        /// <summary>');
+  sb.push(`        /// Creates a mocked instance for  <see cref="${mockClassName}"/> with static error info.`);
+  sb.push('        /// </summary>');
+  sb.push(`        public ${mockClassName}(TestWorkflowStatus status, string name = null, TestErrorInfo error = null)`);
+  sb.push('            : base(status: status, name: name, error: error)');
+  sb.push('        {');
+  sb.push('        }');
+  sb.push('');
+  sb.push('        /// <summary>');
+  sb.push(`        /// Creates a mocked instance for <see cref="${mockClassName}"/> with a callback function for dynamic outputs.`);
+  sb.push('        /// </summary>');
+  sb.push(`        public ${mockClassName}(Func<TestExecutionContext, ${mockClassName}> onGet${mockType}, string name = null)`);
+  sb.push(`            : base(onGet${mockType}: onGet${mockType}, name: name)`);
   sb.push('        {');
   sb.push('        }');
   sb.push('    }');
@@ -1091,18 +1055,20 @@ export function generateClassCode(classDef: ClassDefinition): string {
 /**
  * Processes the unit test definition by parsing outputs and writing C# classes (mock outputs).
  * @param unitTestDefinition - The raw unit test definition.
- * @param logicAppFolderPath - The folder path where the logicApps’ MockOutputs folder resides.
+ * @param workflowFolderPath - The folder path where the workflow folder resides.
+ * @param workflowName - The name of the workflow.
  * @param logicAppName - The Logic App name (used for the namespace).
  */
 export async function processUnitTestDefinition(
   unitTestDefinition: any,
-  logicAppFolderPath: string,
+  workflowFolderPath: string,
+  workflowName: string,
   logicAppName: string
 ): Promise<{ foundActionMocks: Record<string, string>; foundTriggerMocks: Record<string, string> }> {
   await parseUnitTestOutputs(unitTestDefinition);
   const operationInfo = unitTestDefinition['operationInfo'];
   const outputParameters = unitTestDefinition['outputParameters'];
-  return await processAndWriteMockableOperations(operationInfo, outputParameters, logicAppFolderPath, logicAppName);
+  return await processAndWriteMockableOperations(operationInfo, outputParameters, workflowFolderPath, workflowName, logicAppName);
 }
 
 /**
@@ -1110,21 +1076,23 @@ export async function processUnitTestDefinition(
  * and writes C# class definitions to .cs files.
  * @param operationInfo - The operation info object.
  * @param outputParameters - The output parameters object.
- * @param logicAppFolderPath - The path to the logicapp folder within Tests where the .cs files will be saved.
+ * @param workflowFolderPath - The path to the workflow folder where the .cs files will be saved.
+ * @param workflowName - The name of the workflow.
  * @param logicAppName - The name of the Logic App to use as the namespace.
  */
 export async function processAndWriteMockableOperations(
   operationInfo: any,
   outputParameters: any,
-  logicAppFolderPath: string,
+  workflowFolderPath: string,
+  workflowName: string,
   logicAppName: string
 ): Promise<{ foundActionMocks: Record<string, string>; foundTriggerMocks: Record<string, string> }> {
   // Keep track of all operation IDs we've processed to avoid duplicates
   const processedOperationIds = new Set<string>();
 
   // Create or verify the "MockOutputs" folder inside the logicApp folder
-  const mockOutputsFolderPath = path.join(logicAppFolderPath, 'MockOutputs');
-  await fse.ensureDir(mockOutputsFolderPath);
+  const mockOutputsFolderPath = path.join(workflowFolderPath, 'MockOutputs');
+  await fs.ensureDir(mockOutputsFolderPath);
 
   // Dictionaries to store mockable operation names and their corresponding class names
   const foundActionMocks: Record<string, string> = {};
@@ -1166,7 +1134,7 @@ export async function processAndWriteMockableOperations(
       const sanitizedLogicAppName = logicAppName.replace(/-/g, '_');
 
       // Generate C# class content
-      const classContent = generateCSharpClasses(sanitizedLogicAppName, className, mockType, mockClassName, outputs);
+      const classContent = generateCSharpClasses(sanitizedLogicAppName, className, workflowName, mockType, mockClassName, outputs);
 
       // Write the .cs file
       const filePath = path.join(mockOutputsFolderPath, `${className}.cs`);
@@ -1189,6 +1157,7 @@ export async function processAndWriteMockableOperations(
  * Generates a C# class definition as a string.
  * @param {string} logicAppName - The name of the Logic App, used as the namespace.
  * @param {string} className - The name of the class to generate.
+ * @param {string} workflowName - The workflow name the class belongs to.
  * @param {string} mockType - The mockType of the class to generate.
  * @param {string} mockClassName - The mockType of the class to generate.
  * @param {any} outputs - The outputs object containing properties to include in the class.
@@ -1197,6 +1166,7 @@ export async function processAndWriteMockableOperations(
 export function generateCSharpClasses(
   namespaceName: string,
   rootClassName: string,
+  workflowName: string,
   mockType: string,
   mockClassName: string,
   data: any
@@ -1219,17 +1189,19 @@ export function generateCSharpClasses(
     isObject: false,
   });
 
-  const adjustedNamespace = `${namespaceName}.Tests.Mocks`;
+  const adjustedNamespace = `${namespaceName}.Tests.Mocks.${workflowName}`;
 
   const actionTriggerMockClassCode = generateTriggerActionMockClass(mockType, mockClassName, rootClassName);
   // Generate the code for the root class (this also recursively generates nested classes).
   const classCode = generateClassCode(rootDef);
   // rap it all in the needed "using" statements + namespace.
   const finalCode = [
-    'using Newtonsoft.Json.Linq;',
-    'using System.Collections.Generic;',
-    'using System.Net;',
     'using Microsoft.Azure.Workflows.UnitTesting.Definitions;',
+    'using Microsoft.Azure.Workflows.UnitTesting.ErrorResponses;',
+    'using Newtonsoft.Json.Linq;',
+    'using System;',
+    'using System.Net;',
+    'using System.Collections.Generic;',
     '',
     `namespace ${adjustedNamespace}`,
     '{',

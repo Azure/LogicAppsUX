@@ -4,7 +4,7 @@
  *--------------------------------------------------------------------------------------------*/
 import { localize } from '../../../../localize';
 import {
-  createBlankCsFile,
+  createCsFile,
   createTestSettingsConfigFile,
   createTestExecutorFile,
   ensureCsprojAndNugetFiles,
@@ -121,11 +121,7 @@ export async function saveBlankUnitTest(
     ext.outputChannel.appendLog(localize('unitTestNameEntered', `Unit test name entered: ${unitTestName}`));
 
     // Retrieve unitTestFolderPath and logic app name from helper
-    const { unitTestFolderPath, logicAppName, logicAppFolderPath, workflowFolderPath } = getUnitTestPaths(
-      projectPath,
-      workflowName,
-      unitTestName
-    );
+    const { unitTestFolderPath, logicAppName, workflowFolderPath } = getUnitTestPaths(projectPath, workflowName, unitTestName);
 
     // Retrieve necessary paths
     // Indicate that we resolved the folder path
@@ -136,7 +132,12 @@ export async function saveBlankUnitTest(
     // Ensure required directories exist
     await fs.ensureDir(unitTestFolderPath);
     await fs.ensureDir(workflowFolderPath);
-    const { foundActionMocks, foundTriggerMocks } = await processUnitTestDefinition(unitTestDefinition, logicAppFolderPath, logicAppName);
+    const { foundActionMocks, foundTriggerMocks } = await processUnitTestDefinition(
+      unitTestDefinition,
+      workflowFolderPath,
+      workflowName,
+      logicAppName
+    );
 
     // Log telemetry before proceeding
     logTelemetry(context, { workflowName, unitTestName });
@@ -212,9 +213,8 @@ async function generateBlankCodefulUnitTest(
     const triggerMockClassName = triggerOutputClassName.replace(/(.*)Output$/, '$1Mock');
     // Create the .cs file for the unit test
     ext.outputChannel.appendLog(localize('creatingCsFile', 'Creating .cs file for unit test...'));
-    await createBlankCsFile(
+    await createCsFile(
       unitTestFolderPath,
-      'TestClassFile',
       unitTestName,
       workflowName,
       logicAppName,
@@ -222,7 +222,8 @@ async function generateBlankCodefulUnitTest(
       actionOutputClassName,
       actionMockClassName,
       triggerOutputClassName,
-      triggerMockClassName
+      triggerMockClassName,
+      true
     );
     logTelemetry(context, { csFileCreated: 'true' });
 

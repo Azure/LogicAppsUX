@@ -2,7 +2,7 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using Microsoft.Azure.Workflows.UnitTesting.Definitions;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using <%= LogicAppName %>.Tests.Mocks;
+using <%= LogicAppName %>.Tests.Mocks.<%= WorkflowName %>;
 
 namespace <%= LogicAppName %>.Tests
 {
@@ -34,14 +34,14 @@ namespace <%= LogicAppName %>.Tests
             // Generate mock trigger data.
             var triggerMockOutput = new <%= TriggerMockOutputClassName %>();
             triggerMockOutput.Body.Flag = true;
-            var triggerMock = new <%= TriggerMockClassName %>(output: triggerMockOutput);
+            var triggerMock = new <%= TriggerMockClassName %>(outputs: triggerMockOutput);
 
             // Generate mock action data.
             var actionMockOutput = new <%= ActionMockOutputClassName %>();
             // Sample of how to set the properties of the actionMockOutput
             // actionMockOutput.Body.Name = "SampleResource";
             // actionMockOutput.Body.Id = "SampleId";
-            var actionMock = new <%= ActionMockClassName %>(name: "<%= ActionMockName %>", output: actionMockOutput);
+            var actionMock = new <%= ActionMockClassName %>(name: "<%= ActionMockName %>", outputs: actionMockOutput);
 
             // ACT
             // Create an instance of UnitTestExecutor, and run the workflow with the mock data.
@@ -53,7 +53,7 @@ namespace <%= LogicAppName %>.Tests
                 });
             var testRun = await this.TestExecutor
                 .Create()
-                .RunWorkflowAsync(testMock: mockData).ConfigureAwait(continueOnCapturedContext: false);
+                .RunWorkflowAsync(testMock: testMock).ConfigureAwait(continueOnCapturedContext: false);
 
             // ASSERT
             // Verify that the workflow executed successfully, and the status is 'Succeeded'.
@@ -72,16 +72,35 @@ namespace <%= LogicAppName %>.Tests
             // Generate mock trigger data.
             var triggerMockOutput = new <%= TriggerMockOutputClassName %>();
             triggerMockOutput.Body.Flag = true;
-            var triggerMock = new <%= TriggerMockClassName %>(output: triggerMockOutput);
+            var triggerMock = new <%= TriggerMockClassName %>(outputs: triggerMockOutput);
 
-            // Generate mock action data.            
-            var actionMock = new ActionMock(name: "<%= ActionMockName %>", onGetActionDataCallback: MockActionOutputCallback);
+            // Generate mock action data.
+            // OPTION 1 : defining a callback class
+            var actionMock = new <%= ActionMockClassName %>(name: "<%= ActionMockName %>", onGetActionMock: <%= ActionMockClassName %>OutputCallback);
+            // OPTION 2: defining inline using a lambda
+            /*var actionMock = new <%= ActionMockClassName %>(name: "<%= ActionMockName %>", onGetActionMock: (testExecutionContext) =>
+            {
+                return new <%= ActionMockClassName %>(
+                    status: TestWorkflowStatus.Succeeded,
+                    outputs: new <%= ActionMockOutputClassName %> {
+                        // set the desired properties here
+                        // if this acount contains a JObject Body
+                        // Body = "something".ToJObject()
+                    }
+                );
+            });*/
 
             // ACT
             // Create an instance of UnitTestExecutor, and run the workflow with the mock data.
+           var testMock = new TestMockDefinition(
+                triggerMock: triggerMock,
+                actionMocks: new Dictionary<string, ActionMock>()
+                {
+                    {actionMock.Name, actionMock}
+                });
             var testRun = await this.TestExecutor
                 .Create()
-                .RunWorkflowAsync(testMock: mockData).ConfigureAwait(continueOnCapturedContext: false);
+                .RunWorkflowAsync(testMock: testMock).ConfigureAwait(continueOnCapturedContext: false);
 
             // ASSERT
             // Verify that the workflow executed successfully, and the status is 'Succeeded'.
@@ -96,14 +115,17 @@ namespace <%= LogicAppName %>.Tests
         /// You can modify this method to return different mock status, outputs, and error based on the test scenario.
         /// </summary>
         /// <param name="context">The test execution context that contains information about the current test run.</param>
-        public MockData MockActionOutputCallback(TestExecutionContext context)
+        public <%= ActionMockClassName %> <%= ActionMockClassName %>OutputCallback(TestExecutionContext context)
         {
             // Sample mock data : Modify the existing mocked data dynamically for "actionName".
-            var actionMockOutput = new <%= ActionMockClassName %>();
-            // Sample of how to set the properties of the actionMockOutput
-            // actionMockOutput.Body.Name = "SampleResource";
-            // actionMockOutput.Body.Id = "SampleId";
-            return new MockData() { Status = TestWorkflowStatus.Succeeded, Outputs = actionMockOutput};
+            return new <%= ActionMockClassName %>(
+                status: TestWorkflowStatus.Succeeded,
+                outputs: new <%= ActionMockOutputClassName %> {
+                    // set the desired properties here
+                    // if this acount contains a JObject Body
+                    // Body = "something".ToJObject()
+                }
+            );
         }
 
         #endregion
