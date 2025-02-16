@@ -1,6 +1,6 @@
 import type { WorkflowNode } from '../parsers/models/workflowNode';
 import { isWorkflowNode } from '../parsers/models/workflowNode';
-import { useReadOnly } from '../state/designerOptions/designerOptionsSelectors';
+import { useHostOptions, useReadOnly } from '../state/designerOptions/designerOptionsSelectors';
 import { getRootWorkflowGraphForLayout } from '../state/workflow/workflowSelectors';
 import { LogEntryLevel, LoggerService, useThrottledEffect, WORKFLOW_NODE_TYPES, WORKFLOW_EDGE_TYPES } from '@microsoft/logic-apps-shared';
 import type { ElkExtendedEdge, ElkNode } from 'elkjs/lib/elk.bundled';
@@ -55,7 +55,7 @@ const elkLayout = async (graph: ElkNode, readOnly?: boolean) => {
   return layout;
 };
 
-const convertElkGraphToReactFlow = (graph: ElkNode): [Node[], Edge[], number[]] => {
+const convertElkGraphToReactFlow = (graph: ElkNode, indexNodes?: boolean): [Node[], Edge[], number[]] => {
   const nodes: Node[] = [];
   const edges: Edge[] = [];
 
@@ -95,7 +95,7 @@ const convertElkGraphToReactFlow = (graph: ElkNode): [Node[], Edge[], number[]] 
           position: { x: n.x ?? 0, y: n.y ?? 0 },
           data: {
             label: n.id,
-            nodeIndex: nodeIndex++,
+            nodeIndex: indexNodes ? nodeIndex++ : 0,
           },
           parentId: node.id !== 'root' ? node.id : undefined,
           type: n.layoutOptions?.['nodeType'] ?? defaultNodeType,
@@ -127,14 +127,14 @@ const convertElkGraphToReactFlow = (graph: ElkNode): [Node[], Edge[], number[]] 
         if (edgesBySource[n.id]) {
           for (const edge of edgesBySource[n.id]) {
             if (edge.data) {
-              edge.data['edgeIndex'] = nodeIndex++;
+              edge.data['edgeIndex'] = indexNodes ? nodeIndex++ : 0;
             }
             edges.push(edge);
           }
         }
 
         // Add leaf index to the node data
-        nodes[nodeArrayIndex - 1].data['nodeLeafIndex'] = nodeIndex++;
+        nodes[nodeArrayIndex - 1].data['nodeLeafIndex'] = indexNodes ? nodeIndex++ : 0;
       }
     }
   };
@@ -195,6 +195,7 @@ export const useLayout = (): [Node[], Edge[], number[]] => {
   const [reactFlowSize, setReactFlowSize] = useState<number[]>([0, 0]);
   const workflowGraph = useSelector(getRootWorkflowGraphForLayout);
   const readOnly = useReadOnly();
+  const { manualTabIndexing } = useHostOptions();
 
   useThrottledEffect(
     () => {
@@ -204,7 +205,7 @@ export const useLayout = (): [Node[], Edge[], number[]] => {
       const elkGraph: ElkNode = convertWorkflowGraphToElkGraph(workflowGraph);
       elkLayout(elkGraph, readOnly)
         .then((g) => {
-          const [n, e, s] = convertElkGraphToReactFlow(g);
+          const [n, e, s] = convertElkGraphToReactFlow(g, manualTabIndexing);
           setReactFlowNodes(n);
           setReactFlowEdges(e);
           setReactFlowSize(s);
