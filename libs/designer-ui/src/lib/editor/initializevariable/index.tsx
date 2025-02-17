@@ -3,6 +3,7 @@ import type { BaseEditorProps } from '../base';
 import { createEmptyLiteralValueSegment } from '../base/utils/helper';
 import type { ValueSegment } from '../models/parameter';
 import { StringEditor } from '../string';
+import type { InitializeVariableErrors } from './variableEditor';
 import { VariableEditor } from './variableEditor';
 import { Button, MessageBar, MessageBarBody, MessageBarTitle } from '@fluentui/react-components';
 import { useIntl } from 'react-intl';
@@ -17,7 +18,11 @@ export interface InitializeVariableProps {
   value: ValueSegment[];
 }
 
-export const InitializeVariableEditor = ({ initialValue, onChange, ...props }: BaseEditorProps) => {
+export interface InitializeVariableEditorProps extends BaseEditorProps {
+  validationErrors?: InitializeVariableErrors[];
+}
+
+export const InitializeVariableEditor = ({ initialValue, onChange, validationErrors, ...props }: InitializeVariableEditorProps) => {
   const intl = useIntl();
   const [variables, setVariables] = useState<InitializeVariableProps[]>(() => parseVariableEditorSegments(initialValue));
 
@@ -46,7 +51,7 @@ export const InitializeVariableEditor = ({ initialValue, onChange, ...props }: B
 
   const updateVariables = (updatedVariables: InitializeVariableProps[]) => {
     const segments = createVariableEditorSegments(updatedVariables);
-    onChange?.({ value: segments });
+    onChange?.({ value: segments, viewModel: { variables: updatedVariables, hideParameterErrors: true } });
     return updatedVariables;
   };
 
@@ -60,9 +65,9 @@ export const InitializeVariableEditor = ({ initialValue, onChange, ...props }: B
     });
   };
 
-  const handleVariableChange = (value: InitializeVariableProps[], index: number) => {
+  const handleVariableChange = (value: InitializeVariableProps, index: number) => {
     setVariables((prev) => {
-      const updatedVariables = prev.map((v, i) => (i === index ? value[0] : v));
+      const updatedVariables = prev.map((v, i) => (i === index ? value : v));
       return updateVariables(updatedVariables);
     });
   };
@@ -75,8 +80,9 @@ export const InitializeVariableEditor = ({ initialValue, onChange, ...props }: B
           key={index}
           variable={variable}
           onDelete={() => handleDeleteVariable(index)}
-          onVariableChange={(value: InitializeVariableProps[]) => handleVariableChange(value, index)}
+          onVariableChange={(value: InitializeVariableProps) => handleVariableChange(value, index)}
           disableDelete={variables.length === 1}
+          errors={validationErrors?.[index]}
         />
       ))}
 

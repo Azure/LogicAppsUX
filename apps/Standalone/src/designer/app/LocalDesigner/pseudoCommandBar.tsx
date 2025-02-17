@@ -34,7 +34,7 @@ export const PseudoCommandBar = () => {
   const [showSerialization, setShowSeralization] = useState(false);
   const [serializedWorkflow, setSerializedWorkflow] = useState<Workflow>();
   const serializeCallback = () => {
-    serializeWorkflow(state).then((serialized) => setSerializedWorkflow(serialized));
+    serializeWorkflow(state).then((serialized) => setSerializedWorkflow({ ...serialized }));
     setShowSeralization(true);
   };
 

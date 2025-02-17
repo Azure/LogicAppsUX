@@ -40,7 +40,7 @@ export const convertStringToSegments = (
   nodeMap: Map<string, ValueSegment>,
   options?: SegmentParserOptions
 ): ValueSegment[] => {
-  if (!value) {
+  if (value === undefined) {
     return [];
   }
 

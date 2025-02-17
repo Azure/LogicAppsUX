@@ -192,6 +192,7 @@ export default {
     SCHEMA: 'schema',
     STRING: 'string',
     TABLE: 'table',
+    INITIALIZE_VARIABLE: 'initializevariable',
     VARIABLE_NAME: 'variablename',
     HTML: 'html',
     RECURRENCE: 'recurrence',

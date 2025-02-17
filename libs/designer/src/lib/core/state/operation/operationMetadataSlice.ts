@@ -469,9 +469,10 @@ export const operationMetadataSlice = createSlice({
         groupId: string;
         parameterId: string;
         validationErrors: string[] | undefined;
+        editorViewModel?: any; // To update validation on the editor level
       }>
     ) => {
-      const { nodeId, groupId, parameterId, validationErrors } = action.payload;
+      const { nodeId, groupId, parameterId, validationErrors, editorViewModel } = action.payload;
       const inputParameters = getRecordEntry(state.inputParameters, nodeId);
       const parameterGroup = getRecordEntry(inputParameters?.parameterGroups, groupId);
       if (!inputParameters || !parameterGroup) {
@@ -480,6 +481,9 @@ export const operationMetadataSlice = createSlice({
       const index = parameterGroup.parameters.findIndex((parameter) => parameter.id === parameterId);
       if (index > -1) {
         parameterGroup.parameters[index].validationErrors = validationErrors;
+        if (editorViewModel) {
+          parameterGroup.parameters[index].editorViewModel = editorViewModel;
+        }
       }
     },
     removeParameterValidationError: (

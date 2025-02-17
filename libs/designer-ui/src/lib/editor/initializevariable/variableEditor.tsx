@@ -1,5 +1,5 @@
 import { Label } from '../../label';
-import { DropdownEditor, StringEditor, useId } from '../..';
+import { Combobox, DropdownEditor, StringEditor, TrafficLightDot, useId } from '../..';
 import type { DropdownItem } from '../../dropdown';
 import type { BaseEditorProps, ChangeState } from '../base';
 import type { ValueSegment } from '../models/parameter';
@@ -15,9 +15,11 @@ import {
   Delete24Regular,
 } from '@fluentui/react-icons';
 import { useState } from 'react';
-import { isSingleLiteralValueSegment } from '../base/utils/helper';
-import { guid } from '@microsoft/logic-apps-shared';
+import { createEmptyLiteralValueSegment, isSingleLiteralValueSegment } from '../base/utils/helper';
+import { guid, RUN_AFTER_COLORS } from '@microsoft/logic-apps-shared';
 import { VARIABLE_TYPE } from '../../constants';
+import { isEmptySegments } from '../base/utils/parsesegments';
+import { useTheme } from '@fluentui/react';
 
 const DeleteIcon = bundleIcon(Delete24Filled, Delete24Regular);
 const ExpandIcon = bundleIcon(ChevronRight24Filled, ChevronRight24Regular);
@@ -32,17 +34,28 @@ const typeOptions: DropdownItem[] = [
   { key: VARIABLE_TYPE.ARRAY, value: VARIABLE_TYPE.ARRAY, displayName: 'Array' },
 ];
 
+export const VARIABLE_PROPERTIES = {
+  NAME: 'name',
+  TYPE: 'type',
+  VALUE: 'value',
+};
+
 export interface InitializeVariableProps {
   name: ValueSegment[];
   type: ValueSegment[];
   value: ValueSegment[];
 }
 
+export interface InitializeVariableErrors {
+  [key: string]: string;
+}
+
 interface VariableEditorProps extends Partial<BaseEditorProps> {
   variable: InitializeVariableProps;
   disableDelete: boolean;
+  errors?: InitializeVariableErrors;
   onDelete: () => void;
-  onVariableChange: (value: InitializeVariableProps[]) => void;
+  onVariableChange: (value: InitializeVariableProps) => void;
 }
 
 const FieldEditor = ({
@@ -51,23 +64,35 @@ const FieldEditor = ({
   isRequired,
   editor: EditorComponent,
   editorProps,
+  errorMessage,
 }: {
   label: string;
   id: string;
   isRequired: boolean;
   editor: React.ElementType;
   editorProps: Record<string, any>;
+  errorMessage?: string;
 }) => (
   <div className="msla-input-parameter-field">
     <div className="msla-input-parameter-label">
       <Label id={id} isRequiredField={isRequired} text={label} />
     </div>
     <EditorComponent {...editorProps} />
+    {errorMessage ? <div className="msla-input-parameter-error">{errorMessage}</div> : null}
   </div>
 );
 
-export const VariableEditor = ({ variable, onDelete, disableDelete, onVariableChange, ...baseEditorProps }: VariableEditorProps) => {
+export const VariableEditor = ({
+  variable,
+  onDelete,
+  disableDelete,
+  onVariableChange,
+  errors,
+  ...baseEditorProps
+}: VariableEditorProps) => {
   const intl = useIntl();
+  const { isInverted } = useTheme();
+  const themeName = isInverted ? 'dark' : 'light';
   const [expanded, setExpanded] = useState(true);
   const [variableId, setVariableId] = useState<string>(guid());
 
@@ -94,51 +119,63 @@ export const VariableEditor = ({ variable, onDelete, disableDelete, onVariableCh
   });
 
   const handleBlur = (newState: ChangeState, property: string): void => {
-    const newVariable = { ...variable, [property]: newState.value };
-    onVariableChange([newVariable]);
+    const newVariable = { ...variable, [property]: isEmptySegments(newState.value) ? [createEmptyLiteralValueSegment()] : newState.value };
+    onVariableChange(newVariable);
   };
 
   const { name, type, value } = variable;
 
+  const isBooleanType = type[0]?.value === VARIABLE_TYPE.BOOLEAN;
+
   const fields = [
     {
-      label: 'Name',
-      id: useId('Name'),
+      label: VARIABLE_PROPERTIES.NAME,
+      id: useId(VARIABLE_PROPERTIES.NAME),
       isRequired: true,
       editor: StringEditor,
       editorProps: {
         ...baseEditorProps,
-        key: `name-${variableId}`,
+        key: `${VARIABLE_PROPERTIES.NAME}-${variableId}`,
         className: 'msla-setting-token-editor-container',
         initialValue: name,
-        editorBlur: (newState: ChangeState) => handleBlur(newState, 'name'),
+        editorBlur: (newState: ChangeState) => handleBlur(newState, VARIABLE_PROPERTIES.NAME),
         basePlugins: { ...baseEditorProps.basePlugins, tokens: false },
       },
+      errorMessage: errors?.[VARIABLE_PROPERTIES.NAME],
     },
     {
-      label: 'Type',
-      id: useId('Type'),
+      label: VARIABLE_PROPERTIES.TYPE,
+      id: useId(VARIABLE_PROPERTIES.TYPE),
       isRequired: true,
       editor: DropdownEditor,
       editorProps: {
-        key: `type-${variableId}`,
+        key: `${VARIABLE_PROPERTIES.TYPE}-${variableId}`,
         initialValue: type,
         options: typeOptions,
-        onChange: (newState: ChangeState) => handleBlur(newState, 'type'),
+        onChange: (newState: ChangeState) => handleBlur(newState, VARIABLE_PROPERTIES.TYPE),
       },
+      errorMessage: errors?.[VARIABLE_PROPERTIES.TYPE],
     },
     {
-      label: 'Value',
-      id: useId('Value'),
+      label: VARIABLE_PROPERTIES.VALUE,
+      id: useId(VARIABLE_PROPERTIES.VALUE),
       isRequired: false,
-      editor: StringEditor,
+      editor: isBooleanType ? Combobox : StringEditor,
       editorProps: {
         ...baseEditorProps,
         key: `value-${variableId}`,
         className: 'msla-setting-token-editor-container',
         initialValue: value,
-        editorBlur: (newState: ChangeState) => handleBlur(newState, 'value'),
+        editorBlur: (newState: ChangeState) => handleBlur(newState, VARIABLE_PROPERTIES.VALUE),
+        options: isBooleanType
+          ? [
+              { key: 'true', displayName: 'true', value: true },
+              { key: 'false', displayName: 'false', value: false },
+            ]
+          : undefined,
+        onChange: isBooleanType ? (newState: ChangeState) => handleBlur(newState, VARIABLE_PROPERTIES.VALUE) : undefined,
       },
+      errorMessage: errors?.[VARIABLE_PROPERTIES.VALUE],
     },
   ];
 
@@ -157,19 +194,28 @@ export const VariableEditor = ({ variable, onDelete, disableDelete, onVariableCh
             onClick={handleToggleExpand}
             icon={expanded ? <CollapseIcon /> : <ExpandIcon />}
             aria-expanded={expanded}
+            style={{ justifyContent: 'flex-start' }}
           >
             {isSingleLiteralValueSegment(name) && name[0]?.value ? name[0]?.value : newVariableName}
           </Button>
-          {/* {Object.values(props.validationErrors ?? {}).filter((x) => !!x).length > 0 ? (
-            <span className="msla-workflow-parameter-error-dot">
+          {Object.values(errors ?? {}).filter((x) => !!x).length > 0 ? (
+            <span className="msla-initialize-variable-error-dot">
               <TrafficLightDot fill={RUN_AFTER_COLORS[themeName]['FAILED']} />
             </span>
-          ) : null} */}
+          ) : null}
         </div>
         {expanded ? (
           <>
-            {fields.map(({ label, id, isRequired, editor, editorProps }) => (
-              <FieldEditor key={id} label={label} id={id} isRequired={isRequired} editor={editor} editorProps={editorProps} />
+            {fields.map(({ label, id, isRequired, editor, editorProps, errorMessage }) => (
+              <FieldEditor
+                key={id}
+                label={label}
+                id={id}
+                isRequired={isRequired}
+                editor={editor}
+                editorProps={editorProps}
+                errorMessage={errorMessage}
+              />
             ))}
           </>
         ) : null}

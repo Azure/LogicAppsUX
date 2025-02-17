@@ -30,44 +30,6 @@ export const initializeManifest = {
           description: 'Variables',
           'x-ms-editor': 'initializevariable',
         },
-        // name: {
-        //   type: 'string',
-        //   title: 'Name',
-        //   description: 'Enter variable name',
-        //   'x-ms-editor': 'string',
-        // },
-        // type: {
-        //   type: 'string',
-        //   title: 'Type',
-        //   'x-ms-editor': 'dropdown',
-        //   'x-ms-editor-options': {
-        //     options: [
-        //       { value: 'boolean', displayName: 'Boolean' },
-        //       { value: 'integer', displayName: 'Integer' },
-        //       { value: 'float', displayName: 'Float' },
-        //       { value: 'string', displayName: 'String' },
-        //       { value: 'object', displayName: 'Object' },
-        //       { value: 'array', displayName: 'Array' },
-        //     ],
-        //   },
-        //   default: 'boolean',
-        // },
-        // value: {
-        //   title: 'Value',
-        //   description: 'Enter initial value',
-        //   'x-ms-dynamic-properties': {
-        //     dynamicState: {
-        //       extension: {
-        //         builtInOperation: 'getVariableSchema',
-        //       },
-        //       isInput: true,
-        //     },
-        //     parameters: {
-        //       type: { parameterReference: 'type', required: true },
-        //     },
-        //   },
-        //   'x-ms-visibility': 'important',
-        // },
       },
       required: ['variables'],
     },

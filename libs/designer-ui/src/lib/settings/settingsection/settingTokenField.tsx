@@ -370,7 +370,17 @@ export const TokenField = ({
       );
 
     case constants.PARAMETER.EDITOR.INITIALIZE_VARIABLE:
-      return <InitializeVariableEditor initialValue={value} getTokenPicker={getTokenPicker} onChange={onValueChange} />;
+      return (
+        <InitializeVariableEditor
+          initialValue={value}
+          getTokenPicker={getTokenPicker}
+          onChange={(updatedChangeState) => {
+            onValueChange?.(updatedChangeState);
+            hideValidationErrors?.(updatedChangeState);
+          }}
+          validationErrors={editorViewModel.validationErrors}
+        />
+      );
 
     case constants.PARAMETER.EDITOR.RECURRENCE:
       return (
