@@ -1,6 +1,6 @@
 {
   "name": "@microsoft/logic-apps-shared",
-  "version": "5.35.0",
+  "version": "5.41.0",
   "dependencies": {
     "@apidevtools/swagger-parser": "10.0.3",
     "@formatjs/intl": "^2.10.1",
@@ -14,9 +14,9 @@
   },
   "exports": {
     ".": {
+      "types:": "./src/index.ts",
       "import": "./src/index.ts",
-      "default": "./src/index.ts",
-      "types:": "./src/index.ts"
+      "default": "./src/index.ts"
     },
     "./package.json": "./package.json"
   },
@@ -29,6 +29,8 @@
   "module": "src/index.ts",
   "peerDependencies": {
     "@tanstack/react-query": "4.36.1",
+    "@tanstack/react-query-persist-client": "4.36.1",
+    "@tanstack/query-sync-storage-persister": "4.36.1",
     "react": "^16.4.0 || ^17.0.0 || ^18.0.0",
     "react-dom": "^16.4.0 || ^17.0.0 || ^18.0.0"
   },

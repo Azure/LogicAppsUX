@@ -15,11 +15,23 @@ const LoadWhenArmTokenIsLoaded = ({ children }: { children: ReactNode }) => {
 export const TemplatesWrapper = () => {
   const isLocal = useIsLocal();
   const hostingPlan = useHostingPlan();
+  const templateOptions = isLocal
+    ? [
+        { key: 'BasicWorkflowOnly', text: 'Basic Workflow' },
+        { key: 'SimpleParametersOnly', text: 'Simple Parameters' },
+      ]
+    : [
+        { key: 'sync-business-partner-sap-sharepoint-odata', text: 'SAP and Sharepoint' },
+        { key: 'receive-request-send-response', text: 'Request Response' },
+      ];
 
+  if (!isLocal && hostingPlan !== 'consumption') {
+    templateOptions.push({ key: 'accelerator-index-retrieve-ai-sharepoint-aisearch', text: 'AI Sharepoint Accelerator' });
+  }
   return (
     <ReactQueryProvider>
       <LoadWhenArmTokenIsLoaded>
-        <DevToolbox />
+        <DevToolbox templatesList={templateOptions} />
         <div style={{ height: '100vh' }}>
           {isLocal ? <LocalTemplates /> : hostingPlan === 'consumption' ? <TemplatesConsumption /> : <TemplatesStandard />}
         </div>

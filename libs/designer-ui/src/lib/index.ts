@@ -7,6 +7,7 @@ export * from './azureResourcePicker';
 export * from './card';
 export * from './card/addActionCard';
 export * from './card/cardcontextmenu';
+export * from './card/collapsedCard';
 export * from './card/graphContainer';
 export * from './card/hooks';
 export * from './card/images/dynamicsvgs/trafficlightsvgs';
