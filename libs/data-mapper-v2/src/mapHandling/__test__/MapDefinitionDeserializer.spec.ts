@@ -1,5 +1,5 @@
 import { directAccessPseudoFunctionKey, functionMock, ifPseudoFunctionKey, indexPseudoFunctionKey } from '../../models';
-import type { Connection, ConnectionUnit, CustomValueConnection } from '../../models/Connection';
+import type { Connection, ConnectionDictionary, ConnectionUnit, CustomValueConnection } from '../../models/Connection';
 import { convertSchemaToSchemaExtended } from '../../utils/Schema.Utils';
 import { MapDefinitionDeserializer, getLoopTargetNodeWithJson } from '../MapDefinitionDeserializer';
 import {
@@ -11,6 +11,7 @@ import {
   type SchemaNodeExtended,
 } from '@microsoft/logic-apps-shared';
 import {
+  adjacentLoopsSchema,
   comprehensiveSourceSchema,
   comprehensiveTargetSchema,
   customerSchema,
@@ -68,7 +69,7 @@ describe('mapDefinitions/MapDefinitionDeserializer', () => {
         simpleMap['/tns:PROJECT_REQUEST_ROOT'] = {
           'tns:PROJECT_REQUEST': {
             'tns:PROJINTRF': {
-              '$for(tns:PROJECT_REQUEST_ROOT/tns:PROJECT_REQUEST/tns:PROJINTRF/tns:PROJECT)': {
+              '$for(/tns:PROJECT_REQUEST_ROOT/tns:PROJECT_REQUEST/tns:PROJINTRF/tns:PROJECT)': {
                 'tns:PROJECT': {
                   'tns:PM_PROJECT_REFERENCE': 'tns:PM_PROJECT_REFERENCE',
                 },
@@ -89,7 +90,7 @@ describe('mapDefinitions/MapDefinitionDeserializer', () => {
         simpleMap['/tns:PROJECT_REQUEST_ROOT'] = {
           'tns:PROJECT_REQUEST': {
             'tns:PROJINTRF': {
-              '$for(tns:PROJECT_REQUEST_ROOT/tns:PROJECT_REQUEST/tns:PROJINTRF/tns:PROJECT)': {
+              '$for(/tns:PROJECT_REQUEST_ROOT/tns:PROJECT_REQUEST/tns:PROJINTRF/tns:PROJECT)': {
                 'tns:PROJECT': {
                   'tns:PM_PROJECT_REFERENCE': 'tns:PM_PROJECT_REFERENCE',
                 },
@@ -406,7 +407,68 @@ describe('mapDefinitions/MapDefinitionDeserializer', () => {
         expect(count2Input).toEqual('source-/ns0:Root/CumulativeExpression/Population/State/County/Person/Sex/Female');
       });
 
+      it('creates conditional property connection with a function and custom value', () => {
+        // tests issue where custom values were being loaded with extra '/'; only stripped this in vs-code-designer for target side!
+        simpleMap['ns0:Root'] = {
+          ConditionalMapping: {
+            '6746506B-6072-41DE-8B64-81CE6E7AF9DD-$if(is-string(\\"USA\\"))': {
+              ItemDiscount: '/ns0:Root/ConditionalMapping/ItemPrice',
+            },
+          },
+        };
+
+        const mapDefinitionDeserializer = new MapDefinitionDeserializer(simpleMap, extendedSource, extendedTarget, functionMock);
+        const result = mapDefinitionDeserializer.convertFromMapDefinition();
+        const resultEntries = Object.entries(result);
+        resultEntries.sort();
+
+        expect((resultEntries[0][1].inputs[0] as CustomValueConnection).value).toEqual('"USA"'); // ensures extra connections aren't made
+      });
+
+      it('creates a simple conditional property connection with a function', () => {
+        // tests issue with input connections to function being re-created
+        simpleMap['ns0:Root'] = {
+          ConditionalMapping: {
+            '6746506B-6072-41DE-8B64-81CE6E7AF9DD-$if(is-string(/ns0:Root/ConditionalMapping/ItemQuantity))': {
+              ItemDiscount: '/ns0:Root/ConditionalMapping/ItemPrice',
+            },
+            '6746506B-6072-41DE-8B64-81CE6E7AF9DE-$if(is-string(/ns0:Root/ConditionalMapping/ItemQuantity))': {
+              ItemQuantity: '/ns0:Root/ConditionalMapping/ItemPrice',
+            },
+          },
+        };
+
+        const mapDefinitionDeserializer = new MapDefinitionDeserializer(simpleMap, extendedSource, extendedTarget, functionMock);
+        const result = mapDefinitionDeserializer.convertFromMapDefinition();
+        const resultEntries = Object.entries(result);
+        resultEntries.sort();
+
+        expect(resultEntries[0][1].inputs.length).toEqual(1); // ensures extra connections aren't made
+      });
+
       it('creates a simple conditional property connection', () => {
+        simpleMap['ns0:Root'] = {
+          ConditionalMapping: {
+            '$if(/ns0:Root/ConditionalMapping/ItemQuantity)': {
+              ItemDiscount: '/ns0:Root/ConditionalMapping/ItemPrice',
+            },
+          },
+        };
+
+        const mapDefinitionDeserializer = new MapDefinitionDeserializer(simpleMap, extendedSource, extendedTarget, functionMock);
+        const result = mapDefinitionDeserializer.convertFromMapDefinition();
+        const resultEntries = Object.entries(result);
+        resultEntries.sort();
+
+        expect(resultEntries.length).toEqual(4);
+
+        expect(resultEntries[0][0]).toContain(ifPseudoFunctionKey);
+        expect(resultEntries[0][1].outputs[0].reactFlowKey).toEqual('target-/ns0:Root/ConditionalMapping/ItemDiscount');
+        expect((resultEntries[0][1].inputs[0] as ConnectionUnit).reactFlowKey).toEqual('source-/ns0:Root/ConditionalMapping/ItemQuantity');
+        expect((resultEntries[0][1].inputs[1] as ConnectionUnit).reactFlowKey).toEqual('source-/ns0:Root/ConditionalMapping/ItemPrice');
+      });
+
+      it('creates two conditionals under the same object', () => {
         simpleMap['ns0:Root'] = {
           ConditionalMapping: {
             '$if(/ns0:Root/ConditionalMapping/ItemQuantity)': {
@@ -432,9 +494,10 @@ describe('mapDefinitions/MapDefinitionDeserializer', () => {
         simpleMap['ns0:Root'] = {
           ConditionalMapping: {
             ItemPrice: '/ns0:Root/ConditionalMapping/ItemPrice',
-            '$if(is-greater-than(multiply(/ns0:Root/ConditionalMapping/ItemPrice, /ns0:Root/ConditionalMapping/ItemQuantity), 200))': {
-              ItemDiscount: 'multiply(/ns0:Root/ConditionalMapping/ItemPrice, /ns0:Root/ConditionalMapping/ItemQuantity, 0.05)',
-            },
+            '6746506B-6072-41DE-8B64-81CE6E7AF9DD-$if(is-greater-than(multiply(/ns0:Root/ConditionalMapping/ItemPrice, /ns0:Root/ConditionalMapping/ItemQuantity), 200))':
+              {
+                ItemDiscount: 'multiply(/ns0:Root/ConditionalMapping/ItemPrice, /ns0:Root/ConditionalMapping/ItemQuantity, 0.05)',
+              },
           },
         };
 
@@ -490,9 +553,10 @@ describe('mapDefinitions/MapDefinitionDeserializer', () => {
         simpleMap['ns0:Root'] = {
           ConditionalMapping: {
             ItemPrice: '/ns0:Root/ConditionalMapping/ItemPrice',
-            '$if(is-greater-than(multiply(/ns0:Root/ConditionalMapping/ItemPrice, /ns0:Root/ConditionalMapping/ItemQuantity), 200))': {
-              ItemDiscount: 'multiply(/ns0:Root/ConditionalMapping/ItemPrice, /ns0:Root/ConditionalMapping/ItemQuantity, 0.05)',
-            },
+            '6746506B-6072-41DE-8B64-81CE6E7AF9DD-$if(is-greater-than(multiply(/ns0:Root/ConditionalMapping/ItemPrice, /ns0:Root/ConditionalMapping/ItemQuantity), 200))':
+              {
+                ItemDiscount: 'multiply(/ns0:Root/ConditionalMapping/ItemPrice, /ns0:Root/ConditionalMapping/ItemQuantity, 0.05)',
+              },
           },
         };
 
@@ -653,12 +717,13 @@ describe('mapDefinitions/MapDefinitionDeserializer', () => {
 
       it('creates a conditional object connection', () => {
         simpleMap['ns0:Root'] = {
-          '$if(is-greater-than(multiply(/ns0:Root/ConditionalMapping/ItemPrice, /ns0:Root/ConditionalMapping/ItemQuantity), 200))': {
-            ConditionalMapping: {
-              ItemPrice: '/ns0:Root/ConditionalMapping/ItemPrice',
-              ItemDiscount: 'multiply(/ns0:Root/ConditionalMapping/ItemPrice, /ns0:Root/ConditionalMapping/ItemQuantity, 0.05)',
+          '6746506B-6072-41DE-8B64-81CE6E7AF9DD-$if(is-greater-than(multiply(/ns0:Root/ConditionalMapping/ItemPrice, /ns0:Root/ConditionalMapping/ItemQuantity), 200))':
+            {
+              ConditionalMapping: {
+                ItemPrice: '/ns0:Root/ConditionalMapping/ItemPrice',
+                ItemDiscount: 'multiply(/ns0:Root/ConditionalMapping/ItemPrice, /ns0:Root/ConditionalMapping/ItemQuantity, 0.05)',
+              },
             },
-          },
         };
 
         const mapDefinitionDeserializer = new MapDefinitionDeserializer(simpleMap, extendedSource, extendedTarget, functionMock);
@@ -750,10 +815,85 @@ describe('mapDefinitions/MapDefinitionDeserializer', () => {
         expect(resultEntries[3][1]).toBeTruthy();
       });
 
+      it('loop adjacent connection with child', () => {
+        simpleMap['ns0:Root'] = {
+          '6746506B-6072-41DE-8B64-81CE6E7AF9DD-$for(/ns0:Root/Nested)': {
+            Nested: {
+              '6746506B-6072-41DE-8B64-81CE6E7AF999-$for(A)': {
+                A: {
+                  Name: 'Name',
+                },
+              },
+              '7646506B-6072-41DE-8B64-81CE6E7AF99-$for(A)': {
+                B: {
+                  Name: 'Name',
+                },
+              },
+            },
+          },
+        };
+
+        const extendedAdjSchema = convertSchemaToSchemaExtended(adjacentLoopsSchema as any as DataMapSchema);
+
+        const mapDefinitionDeserializer = new MapDefinitionDeserializer(simpleMap, extendedAdjSchema, extendedAdjSchema, functionMock);
+        const result = mapDefinitionDeserializer.convertFromMapDefinition();
+        const resultEntries = Object.entries(result);
+        resultEntries.sort();
+
+        const firstLoopConnection = getConnectionsForFlowId(result, 'source-/ns0:Root/Nested');
+        expect(firstLoopConnection).toBeDefined();
+        expect(firstLoopConnection.outputs[0].reactFlowKey).toEqual('target-/ns0:Root/Nested');
+
+        const a = getConnectionsForFlowId(result, 'source-/ns0:Root/Nested/A');
+        expect(a).toBeDefined();
+        expect(a.outputs[0].reactFlowKey).toEqual('target-/ns0:Root/Nested/A');
+        const aName = getConnectionsForFlowId(result, 'source-/ns0:Root/Nested/A/Name');
+        expect(aName).toBeDefined();
+        expect(aName.outputs[0].reactFlowKey).toEqual('target-/ns0:Root/Nested/A/Name');
+        expect(a.outputs[1].reactFlowKey).toEqual('target-/ns0:Root/Nested/B');
+        expect(aName.outputs[1].reactFlowKey).toEqual('target-/ns0:Root/Nested/B/Name');
+      });
+
+      it('loop adjacent connection', () => {
+        simpleMap['ns0:Root'] = {
+          '6746506B-6072-41DE-8B64-81CE6E7AF9DC-$for(/ns0:Root/FirstLoop)': {
+            FirstLoop: {
+              Name: 'Name',
+            },
+          },
+          'B6B8E621-77A3-457B-9F09-6AA224F005DF-$for(/ns0:Root/FirstLoop)': {
+            SecondLoop: {
+              Number: 'Name',
+            },
+          },
+        };
+
+        const extendedAdjSchema = convertSchemaToSchemaExtended(adjacentLoopsSchema as any as DataMapSchema);
+
+        const mapDefinitionDeserializer = new MapDefinitionDeserializer(simpleMap, extendedAdjSchema, extendedAdjSchema, functionMock);
+        const result = mapDefinitionDeserializer.convertFromMapDefinition();
+        const resultEntries = Object.entries(result);
+        resultEntries.sort();
+
+        const firstLoopConnection = getConnectionsForFlowId(result, 'source-/ns0:Root/FirstLoop');
+        expect(firstLoopConnection).toBeDefined();
+        expect(firstLoopConnection.outputs[0].reactFlowKey).toEqual('target-/ns0:Root/FirstLoop');
+        expect(firstLoopConnection.outputs[1].reactFlowKey).toEqual('target-/ns0:Root/SecondLoop');
+
+        const name = getConnectionsForFlowId(result, 'source-/ns0:Root/FirstLoop/Name');
+        expect(name).toBeDefined();
+        expect(name.outputs[0].reactFlowKey).toEqual('target-/ns0:Root/FirstLoop/Name');
+        expect(name.outputs[1].reactFlowKey).toEqual('target-/ns0:Root/SecondLoop/Number');
+      });
+
+      const getConnectionsForFlowId = (definition: ConnectionDictionary, id: string) => {
+        return definition[id];
+      };
+
       it('creates a loop connection with two functions below it', () => {
         simpleMap['ns0:Root'] = {
           Looping: {
-            '$for(/ns0:Root/Looping/Employee)': {
+            '6746506B-6072-41DE-8B64-81CE6E7AF9DD-$for(/ns0:Root/Looping/Employee)': {
               Person: {
                 Name: 'is-null(TelephoneNumber)',
                 Address: 'is-null(TelephoneNumber)',
@@ -810,7 +950,7 @@ describe('mapDefinitions/MapDefinitionDeserializer', () => {
         simpleMap['ns0:Root'] = {
           Looping: {
             Trips: {
-              '$for(/ns0:Root/Looping/VehicleTrips/Trips, $a)': {
+              '6746506B-6072-41DE-8B64-81CE6E7AF9DD-$for(/ns0:Root/Looping/VehicleTrips/Trips, $a)': {
                 Trip: {
                   VehicleRegistration: '$a',
                 },
@@ -850,9 +990,9 @@ describe('mapDefinitions/MapDefinitionDeserializer', () => {
       it('creates a looping conditional connection', () => {
         simpleMap['ns0:Root'] = {
           ConditionalLooping: {
-            '$for(/ns0:Root/ConditionalLooping/FlatterCatalog/ns0:Product)': {
+            '6746506B-6072-41DE-8B64-81CE6E7AF9DD-$for(/ns0:Root/ConditionalLooping/FlatterCatalog/ns0:Product)': {
               CategorizedCatalog: {
-                '$if(is-equal(substring(SKU, 1, 2), "1"))': {
+                '6746506B-6072-41DE-8B64-81CE6E7AF9DD-$if(is-equal(substring(SKU, 1, 2), "1"))': {
                   PetProduct: {
                     Name: 'Name',
                   },
@@ -1713,11 +1853,12 @@ describe('mapDefinitions/MapDefinitionDeserializer', () => {
       it('creates nested sequences', () => {
         simpleMap['ns0:Root'] = {
           Looping: {
-            '$for(reverse(distinct-values(/ns0:Root/Looping/Employee,/ns0:Root/Looping/Employee/Name)))': {
-              Person: {
-                Name: 'Name',
+            '6746506B-6072-41DE-8B64-81CE6E7AF9DD-$for(reverse(distinct-values(/ns0:Root/Looping/Employee,/ns0:Root/Looping/Employee/Name)))':
+              {
+                Person: {
+                  Name: 'Name',
+                },
               },
-            },
           },
         };
 

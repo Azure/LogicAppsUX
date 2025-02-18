@@ -8,10 +8,10 @@ import { Callout, DirectionalHint, SearchBox, IconButton } from '@fluentui/react
 import { TokenPickerPivot } from '../../tokenpicker/tokenpickerpivot';
 import { useIntl } from 'react-intl';
 import { TokenPickerSection } from '../../tokenpicker/tokenpickersection/tokenpickersection';
-import type { TokenGroup } from '../../tokenpicker/models/token';
 import type { GetValueSegmentHandler } from '../../tokenpicker/tokenpickersection/tokenpickeroption';
 import type { EditorContentChangedEventArgs } from '../../editor/monaco';
 import constants from '../../constants';
+import type { TokenGroup } from '@microsoft/logic-apps-shared';
 
 const buttonStyles: IButtonStyles = {
   root: {
@@ -212,7 +212,7 @@ export function ConditionExpression({
             tokenGroup={(selectedKey === TokenPickerMode.TOKEN ? filteredTokenGroup : tokenGroup) ?? []}
             expressionGroup={expressionGroup ?? []}
             expressionEditorRef={expressionEditorRef}
-            selectedKey={selectedKey}
+            selectedMode={selectedKey}
             searchQuery={searchQuery}
             fullScreen={false}
             expression={expression}

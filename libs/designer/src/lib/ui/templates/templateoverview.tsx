@@ -17,7 +17,17 @@ import { workflowTab } from '../panel/templatePanel/quickViewPanel/tabs/workflow
 import { clearTemplateDetails } from '../../core/state/templates/templateSlice';
 import { CreateWorkflowPanel } from '../panel/templatePanel/createWorkflowPanel/createWorkflowPanel';
 
-export const TemplateOverview = ({ createWorkflow }: { createWorkflow: CreateWorkflowHandler }) => {
+export const TemplateOverview = ({
+  createWorkflow,
+  panelWidth,
+  onClose,
+  showCloseButton = true,
+}: {
+  createWorkflow: CreateWorkflowHandler;
+  panelWidth?: string;
+  showCloseButton?: boolean;
+  onClose?: () => void;
+}) => {
   useEffect(() => setLayerHostSelector('#msla-layer-host'), []);
   const intl = useIntl();
   const dispatch = useDispatch<AppDispatch>();
@@ -58,7 +68,6 @@ export const TemplateOverview = ({ createWorkflow }: { createWorkflow: CreateWor
     dispatch(clearTemplateDetails());
   };
 
-  // TODO: Need to open new create panel for multi workflow here.
   const footerContentProps = workflowTab(
     intl,
     dispatch,
@@ -69,8 +78,10 @@ export const TemplateOverview = ({ createWorkflow }: { createWorkflow: CreateWor
       templateId: templateName ?? '',
       workflowAppName,
       isMultiWorkflow: true,
-    }
+    },
+    onClose
   ).footerContent;
+
   return (
     <>
       <QuickViewPanelHeader
@@ -110,7 +121,7 @@ export const TemplateOverview = ({ createWorkflow }: { createWorkflow: CreateWor
         </div>
       </div>
       <div className="msla-template-overview-footer">
-        <TemplatesPanelFooter showPrimaryButton={true} {...footerContentProps} />
+        <TemplatesPanelFooter showPrimaryButton={true} secondaryButtonDisabled={!showCloseButton} {...footerContentProps} />
       </div>
 
       {selectedWorkflow ? (
@@ -123,7 +134,13 @@ export const TemplateOverview = ({ createWorkflow }: { createWorkflow: CreateWor
       ) : null}
 
       {showCreatePanel ? (
-        <CreateWorkflowPanel createWorkflow={createWorkflow} onClose={() => setShowCreatePanel(false)} clearDetailsOnClose={false} />
+        <CreateWorkflowPanel
+          createWorkflow={createWorkflow}
+          showCloseButton={showCloseButton}
+          panelWidth={panelWidth}
+          onClose={() => setShowCreatePanel(false)}
+          clearDetailsOnClose={false}
+        />
       ) : null}
       <div
         id={'msla-layer-host'}

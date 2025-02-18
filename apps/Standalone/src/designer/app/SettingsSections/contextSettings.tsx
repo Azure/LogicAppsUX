@@ -10,6 +10,7 @@ import {
   useShowPerformanceDebug,
   useSuppressDefaultNodeSelect,
   useStringOverrides,
+  useQueryCachePersist,
 } from '../../state/workflowLoadingSelectors';
 import {
   setDarkMode,
@@ -23,6 +24,7 @@ import {
   setShowPerformanceDebug,
   setSuppressDefaultNodeSelect,
   setStringOverrides,
+  setQueryCachePersist,
 } from '../../state/workflowLoadingSlice';
 import { Checkbox, TextField } from '@fluentui/react';
 import { useCallback } from 'react';
@@ -39,6 +41,7 @@ const ContextSettings = () => {
   const hostOptions = useHostOptions();
   const showPerformanceDebug = useShowPerformanceDebug();
   const showTestStringOverride = useStringOverrides();
+  const queryCachePersist = useQueryCachePersist();
   const dispatch = useDispatch<AppDispatch>();
 
   const changeMonitoringView = useCallback(
@@ -118,6 +121,11 @@ const ContextSettings = () => {
             )
           );
         }}
+      />
+      <Checkbox
+        label="Query Cache Persist"
+        checked={queryCachePersist}
+        onChange={(_, checked) => dispatch(setQueryCachePersist(!!checked))}
       />
       <TextField
         label="Max State History Size"

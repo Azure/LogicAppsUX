@@ -37,10 +37,9 @@ vi.mock('axios');
 
 vi.mock('vscode', () => ({
   window: {},
-}));
-
-vi.mock('vscode', () => ({
-  window: {},
+  workspace: {
+    workspaceFolders: [],
+  },
   EventEmitter: vi.fn().mockImplementation(() => ({
     getUser: vi.fn(),
   })),

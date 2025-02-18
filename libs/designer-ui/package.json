@@ -1,6 +1,6 @@
 {
   "name": "@microsoft/designer-ui",
-  "version": "5.35.0",
+  "version": "5.41.0",
   "dependencies": {
     "@fluentui/react": "8.110.2",
     "@fluentui/react-components": "9.56.0",
@@ -56,6 +56,8 @@
   "peerDependencies": {
     "@tanstack/react-query": "4.36.1",
     "@tanstack/react-query-devtools": "4.36.1",
+    "@tanstack/react-query-persist-client": "4.36.1",
+    "@tanstack/query-sync-storage-persister": "4.36.1",
     "react": "^16.4.0 || ^17.0.0 || ^18.0.0",
     "react-dom": "^16.4.0 || ^17.0.0 || ^18.0.0"
   },

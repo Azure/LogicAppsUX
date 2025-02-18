@@ -1,6 +1,6 @@
 {
   "name": "vscode-react",
-  "version": "5.35.0",
+  "version": "5.41.0",
   "dependencies": {
     "@fluentui/azure-themes": "8.5.70",
     "@fluentui/react": "8.110.2",
@@ -20,6 +20,8 @@
     "react-intl": "6.3.0",
     "@tanstack/react-query": "4.36.1",
     "@tanstack/react-query-devtools": "4.36.1",
+    "@tanstack/react-query-persist-client": "4.36.1",
+    "@tanstack/query-sync-storage-persister": "4.36.1",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "react-redux": "8.0.2",

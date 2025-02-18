@@ -8,6 +8,8 @@ import {
   loadGithubManifests,
   setCustomTemplates,
   setFilteredTemplateNames,
+  templatesCountPerPage,
+  lazyLoadGithubManifests,
 } from '../state/templates/manifestSlice';
 import { type ResourceDetails, setInitialData } from '../state/templates/workflowSlice';
 import { useAreServicesInitialized } from '../state/templates/templateselectors';
@@ -15,6 +17,8 @@ import type { ConnectionReferences } from '../../common/models/workflow';
 import { getFilteredTemplates } from './utils/helper';
 import { initializeTemplateServices } from '../actions/bjsworkflow/templates';
 import type { Template } from '@microsoft/logic-apps-shared';
+import { setViewTemplateDetails } from '../state/templates/templateOptionsSlice';
+import { changeCurrentTemplateName } from '../state/templates/templateSlice';
 
 export interface TemplatesDataProviderProps {
   isConsumption: boolean | undefined;
@@ -24,10 +28,11 @@ export interface TemplatesDataProviderProps {
   services: TemplateServiceOptions;
   connectionReferences: ConnectionReferences;
   customTemplates?: Record<string, Template.Manifest>;
+  viewTemplate?: Template.ViewTemplateDetails;
   children?: React.ReactNode;
 }
 
-const DataProviderInner = ({ customTemplates, isConsumption, children }: TemplatesDataProviderProps) => {
+const DataProviderInner = ({ isConsumption, children }: TemplatesDataProviderProps) => {
   const dispatch = useDispatch<AppDispatch>();
   const { githubTemplateNames, availableTemplates, filters } = useSelector((state: RootState) => state?.manifest);
 
@@ -37,15 +42,13 @@ const DataProviderInner = ({ customTemplates, isConsumption, children }: Templat
 
   useEffect(() => {
     if (githubTemplateNames) {
-      dispatch(loadGithubManifests());
+      dispatch(loadGithubManifests(templatesCountPerPage));
+
+      if (githubTemplateNames.length > templatesCountPerPage) {
+        dispatch(lazyLoadGithubManifests(templatesCountPerPage));
+      }
     }
   }, [dispatch, githubTemplateNames]);
-
-  useEffect(() => {
-    if (customTemplates) {
-      dispatch(setCustomTemplates(customTemplates));
-    }
-  }, [dispatch, customTemplates]);
 
   useEffect(() => {
     if (!availableTemplates) {
@@ -89,16 +92,29 @@ export const TemplatesDataProvider = (props: TemplatesDataProviderProps) => {
     dispatch,
     servicesInitialized,
     props.services,
-    props.resourceDetails,
-    props.connectionReferences,
     props.existingWorkflowName,
     props.isConsumption,
+    props.resourceDetails,
+    props.connectionReferences,
     props.isCreateView,
   ]);
+
+  useEffect(() => {
+    if (props.viewTemplate) {
+      dispatch(changeCurrentTemplateName(props.viewTemplate.id));
+      dispatch(setViewTemplateDetails(props.viewTemplate));
+    }
+  }, [dispatch, props.viewTemplate]);
+
+  useEffect(() => {
+    if (props.customTemplates) {
+      dispatch(setCustomTemplates(props.customTemplates));
+    }
+  }, [dispatch, props.customTemplates]);
 
   if (!servicesInitialized) {
     return null;
   }
 
-  return <DataProviderInner {...props} />;
+  return props.viewTemplate ? <>{props.children}</> : <DataProviderInner {...props} />;
 };
