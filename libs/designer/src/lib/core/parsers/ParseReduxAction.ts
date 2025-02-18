@@ -182,84 +182,87 @@ const combineSequentialInitializeVariables = (definition: LogicAppsV2.WorkflowDe
   if (!definition.actions) {
     return definition;
   }
-
   const actionsCopy = { ...definition.actions };
-  const mergedActions: Record<string, any> = {}; // Store merged actions
-  const actionsToRemove = new Set<string>(); // Track actions to delete
+  const mergedActions: Record<string, any> = {};
+  const actionsToRemove = new Set<string>();
 
-  Object.entries(actionsCopy).forEach(([actionName, action]) => {
-    if (action?.type !== constants.SERIALIZED_TYPE.INITIALIZE_VARIABLE || !action.runAfter) {
-      return;
+  // we'll do a traversal of the actions to find the bottom-most InitializeVariable actions
+  const bottomMostActions = Object.keys(actionsCopy).filter((actionName) => {
+    const action = actionsCopy[actionName];
+    if (action?.type !== constants.SERIALIZED_TYPE.INITIALIZE_VARIABLE) {
+      return false;
     }
 
-    const runAfterKeys = Object.keys(action.runAfter);
-    if (runAfterKeys.length === 1) {
-      const prevActionName = runAfterKeys[0];
+    // Check if this action is used as a runAfter dependency by another InitializeVariable action
+    return !Object.values(actionsCopy).some(
+      (otherAction) =>
+        otherAction.runAfter &&
+        Object.keys(otherAction.runAfter).includes(actionName) &&
+        otherAction.type === constants.SERIALIZED_TYPE.INITIALIZE_VARIABLE
+    );
+  });
+
+  // Only iterate through these actions to ensure we aren't repeating the same sequence
+  bottomMostActions.forEach((bottomActionName) => {
+    let currentName = bottomActionName;
+    let currentAction = actionsCopy[currentName] as LogicAppsV2.InitializeVariableAction;
+
+    const mergedVariables: any[] = [];
+    let trackedProperties: Record<string, any> = {};
+
+    let topMostRunAfter = currentAction.runAfter;
+
+    // DFS upwards each sequence starting from each bottom-most initialize action until we reach the top of the sequence
+    while (
+      currentAction?.type === constants.SERIALIZED_TYPE.INITIALIZE_VARIABLE &&
+      currentAction.runAfter &&
+      Object.keys(currentAction.runAfter).length === 1
+    ) {
+      const prevActionName = Object.keys(currentAction.runAfter)[0];
       const prevAction = actionsCopy[prevActionName];
 
-      // Ensure the previous action is also InitializeVariable
-      if (prevAction?.type === constants.SERIALIZED_TYPE.INITIALIZE_VARIABLE) {
-        // Check if any action (other than our chain) depends on prevAction
-        const isIntermediateUsed = Object.values(actionsCopy).some(
-          (otherAction) => otherAction.runAfter && Object.keys(otherAction.runAfter).includes(prevActionName) && otherAction !== action // Exclude our sequential chain
-        );
-
-        if (!isIntermediateUsed) {
-          const bottomActionName = actionName;
-          const mergedVariables: any[] = [];
-          let trackedProperties: Record<string, any> = {};
-
-          // Traverse the sequential initializeVariables and "collect" variables
-          let currentAction = action as LogicAppsV2.InitializeVariableAction;
-          let currentName = actionName;
-          let topMostRunAfter = currentAction.runAfter;
-
-          while (
-            currentAction?.type === constants.SERIALIZED_TYPE.INITIALIZE_VARIABLE &&
-            currentAction.runAfter &&
-            Object.keys(currentAction.runAfter).length === 1 &&
-            actionsCopy[Object.keys(currentAction.runAfter)[0]]?.type === constants.SERIALIZED_TYPE.INITIALIZE_VARIABLE
-          ) {
-            mergedVariables.push(...currentAction.inputs.variables);
-
-            if (currentAction.trackedProperties) {
-              trackedProperties = { ...trackedProperties, ...currentAction.trackedProperties };
-            }
-
-            actionsToRemove.add(currentName);
-
-            currentName = Object.keys(currentAction.runAfter)[0];
-            currentAction = actionsCopy[currentName] as LogicAppsV2.InitializeVariableAction;
-            topMostRunAfter = currentAction?.runAfter || {};
-          }
-
-          // Push variables from the top-most action (last in loop)
-          if (currentAction?.inputs?.variables) {
-            mergedVariables.push(...currentAction.inputs.variables);
-          }
-          actionsToRemove.add(currentName);
-
-          // Store the merged action under the bottom-most action name, so that subsequent runAfters are preserved
-          // Eric - I had tried to rename the mergedActionName to something that would combine the names of the actions being merged,
-          // but even after updating runAfter references, it was still causing some infinite loop, so I'm just using the bottom-most action name for now
-          mergedActions[bottomActionName] = {
-            type: constants.SERIALIZED_TYPE.INITIALIZE_VARIABLE,
-            inputs: { variables: mergedVariables },
-            runAfter: topMostRunAfter,
-          };
-
-          // Only add trackedProperties if there are any
-          if (Object.keys(trackedProperties).length > 0) {
-            mergedActions[bottomActionName].trackedProperties = trackedProperties;
-          }
-        }
+      if (prevAction?.type !== constants.SERIALIZED_TYPE.INITIALIZE_VARIABLE) {
+        break;
       }
+
+      // Add current action's variables to the start to maintain order of variables
+      mergedVariables.unshift(...currentAction.inputs.variables);
+
+      if (currentAction.trackedProperties) {
+        trackedProperties = { ...trackedProperties, ...currentAction.trackedProperties };
+      }
+
+      // Mark for removal and move upwards
+      actionsToRemove.add(currentName);
+      currentName = prevActionName;
+      currentAction = prevAction as LogicAppsV2.InitializeVariableAction;
+      topMostRunAfter = currentAction.runAfter;
+    }
+
+    // Add the top-most action's variables
+    if (currentAction?.inputs?.variables) {
+      mergedVariables.unshift(...currentAction.inputs.variables);
+    }
+    actionsToRemove.add(currentName);
+
+    // Store the merged action under the bottom-most action name, so that subsequent runAfters are preserved
+    // Eric - I had tried to rename the mergedActionName to something that would combine the names of the actions being merged,
+    // but even after updating runAfter references, it was still causing some infinite loop, so I'm just using the bottom-most action name for now
+    mergedActions[bottomActionName] = {
+      type: constants.SERIALIZED_TYPE.INITIALIZE_VARIABLE,
+      inputs: { variables: mergedVariables },
+      runAfter: topMostRunAfter,
+    };
+
+    // Only add trackedProperties if there are any
+    if (Object.keys(trackedProperties).length > 0) {
+      mergedActions[bottomActionName].trackedProperties = trackedProperties;
     }
   });
 
-  // Remove the already existing merged variables
+  // Remove the original sequential actions
   actionsToRemove.forEach((name) => delete actionsCopy[name]);
 
-  // Merge in newly created merged variables
+  // Merge the new action back into the definition
   return { ...definition, actions: { ...actionsCopy, ...mergedActions } };
 };
