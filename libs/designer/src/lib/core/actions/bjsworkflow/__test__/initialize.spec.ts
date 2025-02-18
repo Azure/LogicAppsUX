@@ -1,20 +1,26 @@
 import { InitOperationManifestService } from '@microsoft/logic-apps-shared';
-import { getInputParametersFromManifest } from '../initialize';
+import * as initialize from '../initialize';
 import {
   mockGetMyOffice365ProfileOpenApiManifest,
   mockPostTeamsAdaptiveCardOpenApiManifest,
   mockSendAnOfficeOutlookEmailOpenApiManifest,
 } from './initialize.mocks';
-import { describe, vi, beforeEach, afterEach, beforeAll, afterAll, it, test, expect } from 'vitest';
+import { describe, test, expect, beforeAll, vi, it, Mock, beforeEach } from 'vitest';
+import { updateNodeParameters } from '../../../state/operation/operationMetadataSlice';
+import * as graphModule from '../../../utils/graph';
+import { ParameterInfo } from '@microsoft/designer-ui';
+
 describe('bjsworkflow initialize', () => {
   describe('getInputParametersFromManifest', () => {
     beforeAll(() => {
-      InitOperationManifestService({
+      const operationManifestService = {
         isSupported: () => true,
         isAliasingSupported: () => true,
         getOperationInfo: () => Promise.resolve({} as any),
         getOperationManifest: () => Promise.resolve({} as any),
-      });
+        getOperation: () => Promise.resolve({} as any),
+      };
+      InitOperationManifestService(operationManifestService);
     });
 
     test('works for an OpenAPI operation with input parameters and values', () => {
@@ -40,7 +46,7 @@ describe('bjsworkflow initialize', () => {
         },
       };
 
-      const inputParameters = getInputParametersFromManifest(
+      const inputParameters = initialize.getInputParametersFromManifest(
         'Send_an_email',
         { type: 'OpenApiConnection', operationId: 'SendEmailV2', connectorId: '/providers/Microsoft.PowerApps/apis/shared_office365' },
         mockSendAnOfficeOutlookEmailOpenApiManifest,
@@ -81,7 +87,7 @@ describe('bjsworkflow initialize', () => {
         },
       };
 
-      const inputParameters = getInputParametersFromManifest(
+      const inputParameters = initialize.getInputParametersFromManifest(
         'Post_an_adaptive_card',
         {
           type: 'OpenApiConnectionWebhook',
@@ -118,7 +124,7 @@ describe('bjsworkflow initialize', () => {
         },
       };
 
-      const inputParameters = getInputParametersFromManifest(
+      const inputParameters = initialize.getInputParametersFromManifest(
         'Get_my_profile',
         {
           type: 'OpenApiConnection',
