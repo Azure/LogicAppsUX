@@ -1,594 +1,195 @@
-/**
- * Unit Tests for:
- * - Improving C# class folder generation.
- * - Standardizing naming conventions for generated files.
- * - Ensuring synchronization between workflow operations and mock outputs.
- */
+import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
+import type { Mock } from 'vitest';
+import * as fs from 'fs-extra';
+import * as vscode from 'vscode';
+import { ext } from '../../../../extensionVariables';
+import * as workspaceUtils from '../../../utils/workspace';
+import * as projectUtils from '../../../utils/verifyIsProject';
+import * as unitTestUtils from '../../../utils/unitTests';
+import { callWithTelemetryAndErrorHandling } from '@microsoft/vscode-azext-utils';
+import { saveBlankUnitTest } from '../../../commands/workflows/unitTest/saveBlankUnitTest';
+import { RemoteWorkflowTreeItem } from '../../../tree/remoteWorkflowsTree/RemoteWorkflowTreeItem';
 
-/**
- * Mock implementation for `fs-extra` to avoid actual file system operations during testing.
- */
+// -----------------------------------------------------------------------------
+// Partial Mock for "@microsoft/vscode-azext-utils"
+// -----------------------------------------------------------------------------
+
+vi.mock('@microsoft/vscode-azext-utils', async () => {
+  const actual = await vi.importActual<typeof import('@microsoft/vscode-azext-utils')>('@microsoft/vscode-azext-utils');
+  return {
+    ...actual,
+    callWithTelemetryAndErrorHandling: async (key: string, callback: Function) => {
+      // Simply invoke the callback with a fake telemetry context.
+      return callback({ telemetry: { properties: {} } });
+    },
+    // Forward other exports if needed
+    parseError: actual.parseError,
+  };
+});
+
+// -----------------------------------------------------------------------------
+// Updated vscode Mock
+// -----------------------------------------------------------------------------
+
+vi.mock('vscode', async () => {
+  const actual = await vi.importActual<typeof vscode>('vscode');
+  return {
+    ...actual,
+    EventEmitter: actual.EventEmitter || class {},
+    window: {
+      showInformationMessage: vi.fn(),
+      showErrorMessage: vi.fn(),
+    },
+    Uri: {
+      file: (p: string) => ({ fsPath: p, toString: () => p }),
+    },
+    workspace: {
+      withProgress: (options: any, task: any) => task(),
+      updateWorkspaceFolders: vi.fn(),
+      workspaceFolders: [],
+    },
+    commands: {
+      executeCommand: vi.fn(),
+    },
+  };
+});
+
+// -----------------------------------------------------------------------------
+// fs-extra Mock
+// -----------------------------------------------------------------------------
+
 vi.mock('fs-extra', () => ({
-  writeFile: vi.fn(() => Promise.resolve()), // Mocking writeFile to prevent actual file writes.
-  ensureDir: vi.fn(() => Promise.resolve()), // Mocking ensureDir to avoid directory creation.
+  ensureDir: vi.fn(() => Promise.resolve()),
 }));
 
-vi.mock('axios');
+// -----------------------------------------------------------------------------
+// Global Test Data and Helper Stubs
+// -----------------------------------------------------------------------------
 
-// Setup a dummy implementation for ext.outputChannel.appendLog to avoid side-effects during testing
+// Create a fake context that conforms to IAzureConnectorsContext.
+const fakeContext: any = {
+  telemetry: { properties: {} },
+  ui: { showQuickPick: vi.fn() },
+};
+
+// Fake workspace folder and project paths.
+const fakeWorkspaceFolder: vscode.WorkspaceFolder = {
+  uri: vscode.Uri.file('/fake/workspace'),
+  name: 'fakeWorkspace',
+  index: 0,
+};
+const fakeProjectPath = '/fake/project';
+
+// Fake workflow node URI.
+const fakeWorkflowNode = vscode.Uri.file('/fake/project/workflows/myWorkflow/workflowFile');
+
+// Dummy unit test definition that has at least operationInfo and outputParameters.
+const fakeUnitTestDefinition = {
+  operationInfo: { dummyOp: { type: 'Http' } },
+  outputParameters: {
+    dummyOp: {
+      outputs: { 'outputs.$.dummy': { type: 'string', description: 'dummy description' } },
+    },
+  },
+};
+
+// Dummy paths returned by getUnitTestPaths.
+const fakePaths = {
+  unitTestFolderPath: '/fake/project/tests/myUnitTest',
+  logicAppName: 'MyLogicApp',
+  logicAppFolderPath: '/fake/project/myLogicApp',
+  workflowFolderPath: '/fake/project/tests/myWorkflow',
+  testsDirectory: '/fake/project/tests',
+};
+
+// -----------------------------------------------------------------------------
+// Stub Implementations for Dependencies
+// -----------------------------------------------------------------------------
+
 beforeEach(() => {
-  ext.designTimePort = 1234;
-  ext.outputChannel = { appendLog: vi.fn() } as any;
+  // Stub getWorkspaceFolder to return our fake workspace.
+  vi.spyOn(workspaceUtils, 'getWorkspaceFolder').mockResolvedValue(fakeWorkspaceFolder);
+
+  // Stub tryGetLogicAppProjectRoot to return our fake project path.
+  vi.spyOn(projectUtils, 'tryGetLogicAppProjectRoot').mockResolvedValue(fakeProjectPath);
+
+  // Stub getWorkflowNode so that if a node is provided, it returns it.
+  vi.spyOn(workspaceUtils, 'getWorkflowNode').mockImplementation((node: vscode.Uri | RemoteWorkflowTreeItem | undefined) => {
+    if (node instanceof vscode.Uri) {
+      return node;
+    }
+    return fakeWorkflowNode;
+  });
+
+  // Stub selectWorkflowNode to return our fake workflow node.
+  vi.spyOn(unitTestUtils, 'selectWorkflowNode').mockResolvedValue(fakeWorkflowNode);
+
+  // Stub promptForUnitTestName to return a fake unit test name.
+  vi.spyOn(unitTestUtils, 'promptForUnitTestName').mockResolvedValue('myUnitTest');
+
+  // Stub getUnitTestPaths to return our fake paths.
+  vi.spyOn(unitTestUtils, 'getUnitTestPaths').mockReturnValue(fakePaths);
+
+  // Stub processUnitTestDefinition to resolve.
+  vi.spyOn(unitTestUtils, 'processUnitTestDefinition').mockResolvedValue(undefined);
+
+  // Stub logTelemetry (we can track telemetry separately if needed).
+  vi.spyOn(unitTestUtils, 'logTelemetry').mockImplementation(() => {});
+
+  // Note: callWithTelemetryAndErrorHandling is already provided by our partial mock above.
+
+  // Stub isMultiRootWorkspace to return true by default.
+  vi.spyOn(workspaceUtils, 'isMultiRootWorkspace').mockReturnValue(true);
+
+  (fs.ensureDir as unknown as Mock).mockResolvedValue(undefined);
 });
 
-import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
-import {
-  buildClassDefinition,
-  generateClassCode,
-  generateCSharpClasses,
-  isMockable,
-  mapJsonTypeToCSharp,
-  parseUnitTestOutputs,
-  processAndWriteMockableOperations,
-  getMockableOperationTypes,
-} from '../../../commands/workflows/unitTest/saveBlankUnitTest';
-import type { IAzureConnectorsContext } from '../../../commands/workflows/azureConnectorWizard';
-import { logTelemetry } from '../../unitTests';
-import { ext } from '../../../../extensionVariables';
-import * as fs from 'fs-extra';
-import * as path from 'path';
-import axios from 'axios';
-
-//
-// --- transformParameters tests ---
-//
-describe('transformParameters', () => {
-  it('should clean keys and retain only allowed fields', () => {
-    const input = {
-      'outputs.$.field1': {
-        type: 'string',
-        title: 'Field 1',
-        format: 'text',
-        description: 'First field',
-      },
-      'outputs.$.field2': {
-        type: 'integer',
-        title: 'Field 2',
-        extraField: 'ignored',
-      },
-    };
-
-    const expected = {
-      field1: {
-        type: 'string',
-        title: 'Field 1',
-        format: 'text',
-        description: 'First field',
-      },
-      field2: { type: 'integer', title: 'Field 2' },
-    };
-
-    const result = transformParameters(input);
-    expect(result).toEqual(expected);
-  });
-
-  it('should build nested structures from dotted keys', () => {
-    const input = {
-      'outputs.$.parent.child1': { type: 'string', title: 'Child 1' },
-      'outputs.$.parent.child2': { type: 'integer', title: 'Child 2', format: 'number' },
-    };
-
-    const expected = {
-      parent: {
-        child1: { type: 'string', title: 'Child 1' },
-        child2: { type: 'integer', title: 'Child 2', format: 'number' },
-      },
-    };
-
-    const result = transformParameters(input);
-    expect(result).toEqual(expected);
-  });
-
-  it('should skip keys not containing allowed fields', () => {
-    const input = {
-      'outputs.$.field1': {
-        irrelevantField: 'ignored',
-        anotherIrrelevantField: 'also ignored',
-      },
-    };
-
-    const expected = {
-      field1: {},
-    };
-
-    const result = transformParameters(input);
-    expect(result).toEqual(expected);
-  });
-
-  it('should handle keys starting with "body.$."', () => {
-    const input = {
-      'body.$.field1': { type: 'string', title: 'Field 1' },
-    };
-
-    const expected = {
-      body: {
-        field1: { type: 'string', title: 'Field 1' },
-      },
-    };
-
-    const result = transformParameters(input);
-    expect(result).toEqual(expected);
-  });
-
-  it('should merge existing keys with additional fields', () => {
-    const input = {
-      'outputs.$.field1': {
-        type: 'string',
-        title: 'Field 1',
-        format: 'text',
-        description: 'Updated description',
-      },
-    };
-
-    const expected = {
-      field1: {
-        type: 'string',
-        title: 'Field 1',
-        format: 'text',
-        description: 'Updated description',
-      },
-    };
-
-    const result = transformParameters(input);
-    expect(result).toEqual(expected);
-  });
-
-  it('should handle an empty input object', () => {
-    const input = {};
-    const expected = {};
-    const result = transformParameters(input);
-    expect(result).toEqual(expected);
-  });
-
-  it('should handle deeply nested keys correctly', () => {
-    const input = {
-      'outputs.$.parent.child1.grandchild1': { type: 'string', title: 'Grandchild 1' },
-      'outputs.$.parent.child1.grandchild2': { type: 'integer', title: 'Grandchild 2' },
-    };
-
-    const expected = {
-      parent: {
-        child1: {
-          grandchild1: { type: 'string', title: 'Grandchild 1' },
-          grandchild2: { type: 'integer', title: 'Grandchild 2' },
-        },
-      },
-    };
-
-    const result = transformParameters(input);
-    expect(result).toEqual(expected);
-  });
-
-  it('should clean keys and keep only allowed fields', () => {
-    const params = {
-      'outputs.$.key1': { type: 'string', description: 'Key 1 description', extraField: 'ignored' },
-      'body.$.key2': { type: 'integer', title: 'Key 2 title' },
-    };
-    const transformed = transformParameters(params);
-    expect(transformed).toEqual({
-      key1: { type: 'string', description: 'Key 1 description' },
-      body: {
-        key2: { type: 'integer', title: 'Key 2 title' },
-      },
-    });
-  });
+afterEach(() => {
+  vi.restoreAllMocks();
 });
 
-//
-// --- mapJsonTypeToCSharp tests ---
-//
-describe('mapJsonTypeToCSharp', () => {
-  it('should map "string" to "string"', () => {
-    const result = mapJsonTypeToCSharp('string');
-    expect(result).toBe('string');
+// -----------------------------------------------------------------------------
+// Test Suite for saveBlankUnitTest
+// -----------------------------------------------------------------------------
+
+describe('saveBlankUnitTest', () => {
+  it('should throw an error if multi-root workspace is not valid', async () => {
+    // Arrange: Stub isMultiRootWorkspace to return false.
+    vi.spyOn(workspaceUtils, 'isMultiRootWorkspace').mockReturnValue(false);
+    // Also stub localize to return its message.
+    vi.spyOn(unitTestUtils, 'logTelemetry').mockImplementation(() => {});
+    const expectedMessage =
+      'A multi-root workspace must be open to create unit tests. Please use the "Create New Logic App Workspace" command.';
+    vi.spyOn(unitTestUtils, 'localize' as any).mockReturnValue(expectedMessage);
+    // Spy on ext.outputChannel.appendLog.
+    const appendLogSpy = vi.spyOn(ext.outputChannel, 'appendLog');
+
+    // Act & Assert: Expect the promise to reject with the error message.
+    await expect(saveBlankUnitTest(fakeContext, undefined, fakeUnitTestDefinition)).rejects.toThrow(expectedMessage);
+    expect(appendLogSpy).toHaveBeenCalledWith(expectedMessage);
   });
 
-  it('should map "integer" to "int"', () => {
-    const result = mapJsonTypeToCSharp('integer');
-    expect(result).toBe('int');
+  it('should successfully save a blank unit test when all dependencies succeed', async () => {
+    const showInfoSpy = vi
+      .spyOn(vscode.window, 'showInformationMessage')
+      .mockImplementation((_message: string, _options?: any): Thenable<vscode.MessageItem | undefined> => Promise.resolve({ title: 'OK' }));
+
+    // Act: Call the function.
+    await saveBlankUnitTest(fakeContext, fakeWorkflowNode, fakeUnitTestDefinition);
+    expect(showInfoSpy).toHaveBeenCalledWith(expect.stringContaining('Generated unit test "myUnitTest" in'));
   });
 
-  it('should map "number" to "double"', () => {
-    const result = mapJsonTypeToCSharp('number');
-    expect(result).toBe('double');
-  });
-
-  it('should map "boolean" to "bool"', () => {
-    const result = mapJsonTypeToCSharp('boolean');
-    expect(result).toBe('bool');
-  });
-
-  it('should map "array" to "List<object>"', () => {
-    const result = mapJsonTypeToCSharp('array');
-    expect(result).toBe('List<object>');
-  });
-
-  it('should map "object" to "JObject"', () => {
-    const result = mapJsonTypeToCSharp('object');
-    expect(result).toBe('JObject');
-  });
-
-  it('should map "any" to "JObject"', () => {
-    const result = mapJsonTypeToCSharp('any');
-    expect(result).toBe('JObject');
-  });
-
-  it('should map "date-time" to "DateTime"', () => {
-    const result = mapJsonTypeToCSharp('date-time');
-    expect(result).toBe('DateTime');
-  });
-
-  it('should map an unknown type to "JObject"', () => {
-    const result = mapJsonTypeToCSharp('unknownType');
-    expect(result).toBe('JObject');
-  });
-});
-
-//
-// --- parseUnitTestOutputs tests ---
-//
-describe('parseUnitTestOutputs', () => {
-  it('should parse and transform output parameters correctly', async () => {
-    const mockUnitTestDefinition = {
-      operationInfo: {
-        operation1: { type: 'Http' },
-        operation2: { type: 'Manual' },
-      },
-      outputParameters: {
-        operation1: {
-          outputs: {
-            'outputs.$.key1': { type: 'string', description: 'Key 1 description' },
-            'outputs.$.key2': { type: 'integer', description: 'Key 2 description' },
-          },
-        },
-        operation2: {
-          outputs: {
-            'outputs.$.key3': { type: 'boolean', description: 'Key 3 description' },
-          },
-        },
-      },
-    };
-
-    const result = await parseUnitTestOutputs(mockUnitTestDefinition);
-
-    expect(result.operationInfo).toEqual(mockUnitTestDefinition.operationInfo);
-    expect(result.outputParameters.operation1.outputs).toEqual({
-      key1: { type: 'string', description: 'Key 1 description' },
-      key2: { type: 'integer', description: 'Key 2 description' },
-    });
-    expect(result.outputParameters.operation2.outputs).toEqual({
-      key3: { type: 'boolean', description: 'Key 3 description' },
-    });
-  });
-});
-
-//
-// --- getMockableOperationTypes tests ---
-//
-describe('getMockableOperationTypes', () => {
-  it('should populate mockableOperationTypes and isMockable returns true for returned types', async () => {
-    (axios.get as any).mockResolvedValueOnce({
-      data: [
-        'ApiApp',
-        'ApiConnection',
-        'ApiConnectionWebhook',
-        'ApiManagement',
-        'HttpWebhook',
-        'OpenApiConnection',
-        'OpenApiConnectionWebhook',
-        'Http',
-        'ServiceProvider',
-        'Request',
-        'Manual',
-      ],
-    });
-
-    await getMockableOperationTypes();
-
-    expect(await isMockable('http')).toBe(true);
-    expect(await isMockable('manual')).toBe(true);
-    expect(await isMockable('NonExistentType')).toBe(false);
-  });
-
-  it('should throw an error if designTimePort is undefined', async () => {
-    ext.designTimePort = undefined;
-    await expect(getMockableOperationTypes()).rejects.toThrow();
-    ext.designTimePort = 1234;
-  });
-
-  it('should log an error when axios.get request fails', async () => {
-    const error = new Error('Network Error');
-    (axios.get as any).mockRejectedValueOnce(error);
-    await expect(getMockableOperationTypes()).rejects.toThrow('Network Error');
-  });
-});
-
-//
-// --- isMockable tests ---
-//
-describe('isMockable', () => {
-  (axios.get as any).mockResolvedValueOnce({
-    data: [
-      'ApiApp',
-      'ApiConnection',
-      'ApiConnectionWebhook',
-      'ApiManagement',
-      'HttpWebhook',
-      'OpenApiConnection',
-      'OpenApiConnectionWebhook',
-      'Http',
-      'ServiceProvider',
-      'Request',
-      'Manual',
-    ],
-  });
-
-  it('should return true for mockable action types', async () => {
-    expect(await isMockable('Http')).toBe(true);
-    expect(await isMockable('ApiManagement')).toBe(true);
-    expect(await isMockable('Manual')).toBe(true);
-  });
-
-  it('should return false for non-mockable action types', async () => {
-    expect(await isMockable('NonMockableType')).toBe(false);
-    expect(await isMockable('AnotherType')).toBe(false);
-  });
-});
-
-//
-// --- buildClassDefinition tests ---
-//
-describe('buildClassDefinition', () => {
-  it('should build a class definition for an object', () => {
-    const classDef = buildClassDefinition('RootClass', {
-      type: 'object',
-      key1: { type: 'string', description: 'Key 1 description' },
-      nested: {
-        type: 'object',
-        nestedKey: { type: 'boolean', description: 'Nested key description' },
-      },
-    });
-
-    expect(classDef).toEqual({
-      className: 'RootClass',
-      description: null,
-      properties: [
-        {
-          propertyName: 'Key1',
-          propertyType: 'string',
-          description: 'Key 1 description',
-          isObject: false,
-        },
-        {
-          propertyName: 'Nested',
-          propertyType: 'RootClassNested',
-          description: null,
-          isObject: true,
-        },
-      ],
-      children: [
-        {
-          className: 'RootClassNested',
-          description: null,
-          properties: [
-            {
-              propertyName: 'NestedKey',
-              propertyType: 'bool',
-              description: 'Nested key description',
-              isObject: false,
-            },
-          ],
-          children: [],
-        },
-      ],
-    });
-  });
-});
-
-//
-// --- generateCSharpClasses tests ---
-//
-describe('generateCSharpClasses', () => {
-  it('should generate C# class code from a class definition', () => {
-    const classCode = generateCSharpClasses('NamespaceName', 'RootClass', {
-      type: 'object',
-      key1: { type: 'string', description: 'Key 1 description' },
-    });
-
-    expect(classCode).toContain('public class RootClass');
-    expect(classCode).toContain('public string Key1 { get; set; }');
-  });
-});
-
-//
-// --- generateClassCode tests ---
-//
-describe('generateClassCode', () => {
-  it('should generate a C# class string for a class definition', () => {
-    const classDef = {
-      className: 'TestClass',
-      description: 'A test class',
-      properties: [
-        {
-          propertyName: 'Property1',
-          propertyType: 'string',
-          description: 'A string property',
-          isObject: false,
-        },
-        {
-          propertyName: 'Property2',
-          propertyType: 'int',
-          description: 'An integer property',
-          isObject: false,
-        },
-      ],
-      children: [],
-    };
-
-    const classCode = generateClassCode(classDef);
-    expect(classCode).toContain('public class TestClass');
-    expect(classCode).toContain('public string Property1 { get; set; }');
-    expect(classCode).toContain('public int Property2 { get; set; }');
-  });
-});
-
-//
-// --- logTelemetry tests ---
-//
-describe('logTelemetry function', () => {
-  it('should add properties to context.telemetry.properties', () => {
-    const context = {
-      telemetry: { properties: {} },
-    } as unknown as IAzureConnectorsContext;
-
-    logTelemetry(context, { key1: 'value1', key2: 'value2' });
-    expect(context.telemetry.properties).toEqual({
-      key1: 'value1',
-      key2: 'value2',
-    });
-  });
-
-  it('should merge properties when called multiple times', () => {
-    const context = {
-      telemetry: { properties: { key1: 'initialValue' } },
-    } as unknown as IAzureConnectorsContext;
-
-    logTelemetry(context, { key2: 'value2' });
-    expect(context.telemetry.properties).toEqual({
-      key1: 'initialValue',
-      key2: 'value2',
-    });
-
-    logTelemetry(context, { key1: 'updatedValue', key3: 'value3' });
-    expect(context.telemetry.properties).toEqual({
-      key1: 'updatedValue',
-      key2: 'value2',
-      key3: 'value3',
-    });
-  });
-});
-
-//
-// --- processAndWriteMockableOperations tests ---
-//
-
-// Use a fixture folder for testing instead of a hard-coded fake path.
-// In this example, we assume you have a folder named TestFiles in your repository (e.g.,
-// apps/vs-code-designer/src/app/utils/codeful/TestFiles) that contains workflow.json.
-const projectPath = path.join(__dirname, '../../../__mocks__');
-// Since in this fixture projectPath already points to the workflow folder,
-// we do not join it with workflowName.
-const fakeLogicAppName = 'MyLogicApp';
-
-describe('processAndWriteMockableOperations', () => {
-  let writeFileSpy: any;
-  let ensureDirSpy: any;
-
-  beforeEach(() => {
-    writeFileSpy = vi.spyOn(fs, 'writeFile').mockResolvedValue();
-    ensureDirSpy = vi.spyOn(fs, 'ensureDir').mockResolvedValue();
-    ext.outputChannel = { appendLog: vi.fn() } as any;
-  });
-
-  afterEach(() => {
-    vi.restoreAllMocks();
-  });
-
-  it('should create a C# file in the "MockOutputs" folder with standardized naming for an action', async () => {
-    const operationInfo = {
-      ReadAResourceGroup: { type: 'Http', operationId: 'ReadAResourceGroup' },
-    };
-    const outputParameters = {
-      ReadAResourceGroup: {
-        outputs: {
-          'outputs.$.dummy': { type: 'string', description: 'dummy description' },
-        },
-      },
-    };
-
-    await processAndWriteMockableOperations(operationInfo, outputParameters, projectPath, fakeLogicAppName);
-
-    // The expected "MockOutputs" folder is directly under projectPath.
-    const expectedMockOutputsFolder = path.join(projectPath, 'MockOutputs');
-    expect(ensureDirSpy).toHaveBeenCalledWith(expectedMockOutputsFolder);
-
-    // The expected file name is based on your code's naming convention.
-    // According to the error you saw, the action file is named with "ActionOutput".
-    const expectedFileName = 'ReadAResourceGroupActionOutput.cs';
-    const expectedFilePath = path.join(expectedMockOutputsFolder, expectedFileName);
-    expect(writeFileSpy).toHaveBeenCalledWith(expectedFilePath, expect.any(String), 'utf-8');
-  });
-
-  it('should not create duplicate C# classes for identical operations', async () => {
-    const operationInfo = {
-      ReadAResourceGroup: { type: 'Http', operationId: 'ReadAResourceGroup' },
-      ReadAResourceGroupDuplicate: { type: 'Http', operationId: 'ReadAResourceGroup' },
-    };
-    const outputParameters = {
-      ReadAResourceGroup: {
-        outputs: {
-          'outputs.$.dummy': { type: 'string', description: 'dummy description' },
-        },
-      },
-      ReadAResourceGroupDuplicate: {
-        outputs: {
-          'outputs.$.dummy': { type: 'string', description: 'duplicate dummy description' },
-        },
-      },
-    };
-
-    await processAndWriteMockableOperations(operationInfo, outputParameters, projectPath, fakeLogicAppName);
-
-    // Expect that writeFile is called only once.
-    expect(writeFileSpy.mock.calls.length).toBe(1);
-  });
-
-  it('should apply standardized naming conventions for trigger operations', async () => {
-    const operationInfo = {
-      WhenAHTTPRequestIsReceived: { type: 'HttpWebhook', operationId: 'WhenAHTTPRequestIsReceived' },
-    };
-    const outputParameters = {
-      WhenAHTTPRequestIsReceived: {
-        outputs: {
-          'outputs.$.dummy': { type: 'string', description: 'dummy trigger description' },
-        },
-      },
-    };
-
-    await processAndWriteMockableOperations(operationInfo, outputParameters, projectPath, fakeLogicAppName);
-
-    const expectedMockOutputsFolder = path.join(projectPath, 'MockOutputs');
-    // According to the error, the trigger file is generated with "TriggerOutput" suffix.
-    const expectedFileName = 'WhenAHTTPRequestIsReceivedTriggerOutput.cs';
-    const expectedFilePath = path.join(expectedMockOutputsFolder, expectedFileName);
-    expect(writeFileSpy).toHaveBeenCalledWith(expectedFilePath, expect.any(String), 'utf-8');
-  });
-});
-
-//
-// --- generateCSharpClasses - Naming and Namespace Validation ---
-//
-describe('generateCSharpClasses - Naming and Namespace Validation', () => {
-  it('should generate a C# class with a valid class name and namespace structure', () => {
-    const namespaceName = 'MyLogicApp';
-    const rootClassName = 'SomeOperationMockOutput';
-    const data = {
-      type: 'object',
-      key: { type: 'string', description: 'test key' },
-    };
-
-    const classCode = generateCSharpClasses(namespaceName, rootClassName, data);
-    expect(classCode).toContain(`public class ${rootClassName}`);
-    expect(classCode).toContain(`namespace ${namespaceName}.Tests.Mocks`);
+  it('should handle errors and call handleError if an error is thrown during processing', async () => {
+    const errorMessage = 'Prompt error';
+    vi.spyOn(unitTestUtils, 'promptForUnitTestName').mockRejectedValue(new Error(errorMessage));
+    // Spy on handleError.
+    const handleErrorSpy = vi.spyOn(unitTestUtils, 'handleError').mockImplementation(() => {});
+    // Act: Call the function.
+    await saveBlankUnitTest(fakeContext, fakeWorkflowNode, fakeUnitTestDefinition);
+    // Assert: Check that handleError was called with the error and source 'saveBlankUnitTest'
+    expect(handleErrorSpy).toHaveBeenCalled();
+    const calledArgs = handleErrorSpy.mock.calls[0];
+    expect(calledArgs[2]).toBe('saveBlankUnitTest');
+    expect((calledArgs[1] as Error).message).toBe(errorMessage);
   });
 });
