@@ -1,7 +1,7 @@
 import type React from 'react';
 import { TextField } from '@fluentui/react';
-import type { ChangeState } from 'lib/editor/base';
 import { useIntl } from 'react-intl';
+import type { ChangeState } from '../../editor/base';
 
 export interface ErrorDetailsProps {
   errorMessage: string;
@@ -12,13 +12,13 @@ export interface ErrorDetailsProps {
 const ErrorDetails: React.FC<ErrorDetailsProps> = ({ errorMessage, errorCode, onMockUpdate }) => {
   const intl = useIntl();
 
-  const handleErrorMessageChange = (_, newValue?: string) => {
+  const handleErrorMessageChange = (_event: any, newValue?: string) => {
     if (newValue !== undefined) {
       onMockUpdate('errorMessage', { value: newValue } as unknown as ChangeState, 'string');
     }
   };
 
-  const handleErrorCodeChange = (_, newValue?: string) => {
+  const handleErrorCodeChange = (_event: any, newValue?: string) => {
     if (newValue !== undefined) {
       onMockUpdate('errorCode', { value: newValue } as unknown as ChangeState, 'string');
     }
