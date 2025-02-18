@@ -17,7 +17,7 @@ test.describe(
 
       // Load run history
       await page.getByRole('menuitem', { name: 'Run History' }).click();
-      await page.waitForTimeout(5000);
+      await page.waitForTimeout(3000);
       await page.getByRole('gridcell', { name: '/18/2025, 3:25:03 PM' }).click();
 
       // Check for outermost foreach
