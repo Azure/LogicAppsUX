@@ -14,13 +14,14 @@ export class RealDataApi {
     this.siteName = process.env.AZURE_SITE_NAME ?? '';
     this.siteId = `/subscriptions/${process.env.AZURE_SUBSCRIPTION_ID}/resourceGroups/${process.env.AZURE_RESOURCE_GROUP}/providers/Microsoft.Web/sites/${this.siteName}`;
   }
-  async goToWorkflow() {
+  async goToWorkflow(workflowName?: string) {
     await this.page.getByPlaceholder('Select an App').click();
     await this.page.getByPlaceholder('Select an App').fill(this.siteName);
     await this.page.getByPlaceholder('Select an App').press('Enter');
     await this.page.getByText('Select a Workflow').click();
-    await this.page.getByRole('option', { name: this.workflowName, exact: true }).click();
+    await this.page.getByRole('option', { name: workflowName ?? this.workflowName, exact: true }).click();
     await this.page.getByRole('button', { name: 'Toolbox' }).click();
+    await this.page.waitForTimeout(2000);
     await this.page.getByLabel('fit view').click({ force: true });
   }
   async saveWorkflow() {

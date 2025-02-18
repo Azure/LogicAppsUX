@@ -365,7 +365,7 @@ export const workflowSlice = createSlice({
         ...runData,
         inputsLink: runData?.inputsLink ?? null,
         outputsLink: runData?.outputsLink ?? null,
-        duration: getDurationStringPanelMode(Date.parse(runData.endTime) - Date.parse(runData.startTime), /* abbreviated */ true),
+        duration: getDurationStringPanelMode(Date.parse(runData?.endTime) - Date.parse(runData?.startTime), /* abbreviated */ true),
       };
       nodeMetadata.runData = nodeRunData as LogicAppsV2.WorkflowRunAction;
     },
