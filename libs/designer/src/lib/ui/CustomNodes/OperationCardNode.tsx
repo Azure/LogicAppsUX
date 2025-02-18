@@ -122,7 +122,7 @@ const DefaultNode = ({ targetPosition = Position.Top, sourcePosition = Position.
     if (!isNullOrUndefined(repetitionRunData)) {
       dispatch(setRepetitionRunData({ nodeId: id, runData: repetitionRunData.properties as LogicAppsV2.WorkflowRunAction }));
     }
-  }, [dispatch, repetitionRunData]);
+  }, [dispatch, repetitionRunData, id]);
 
   const { dependencies, loopSources } = useTokenDependencies(id);
 

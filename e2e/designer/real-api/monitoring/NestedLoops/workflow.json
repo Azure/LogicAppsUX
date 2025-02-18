@@ -1,0 +1,101 @@
+{
+  "definition": {
+      "$schema": "https://schema.management.azure.com/providers/Microsoft.Logic/schemas/2016-06-01/workflowdefinition.json#",
+      "actions": {
+          "Initialize_counter": {
+              "type": "InitializeVariable",
+              "inputs": {
+                  "variables": [
+                      {
+                          "name": "counter",
+                          "type": "integer",
+                          "value": 0
+                      }
+                  ]
+              },
+              "runAfter": {}
+          },
+          "Initialize_increments": {
+              "type": "InitializeVariable",
+              "inputs": {
+                  "variables": [
+                      {
+                          "name": "increments",
+                          "type": "array",
+                          "value": [
+                              1,
+                              2,
+                              4,
+                              8,
+                              -16
+                          ]
+                      }
+                  ]
+              },
+              "runAfter": {
+                  "Initialize_counter": [
+                      "SUCCEEDED"
+                  ]
+              }
+          },
+          "Foreach": {
+              "type": "Foreach",
+              "foreach": "@variables('increments')",
+              "actions": {
+                  "Increment_counter": {
+                      "type": "IncrementVariable",
+                      "inputs": {
+                          "name": "counter",
+                          "value": "@items('Foreach')"
+                      }
+                  },
+                  "Foreach-2": {
+                      "type": "Foreach",
+                      "foreach": "@variables('increments')",
+                      "actions": {
+                          "Increment_counter_2": {
+                              "type": "IncrementVariable",
+                              "inputs": {
+                                  "name": "counter",
+                                  "value": "@items('Foreach')"
+                              }
+                          }
+                      },
+                      "runAfter": {
+                          "Increment_counter": [
+                              "SUCCEEDED"
+                          ]
+                      }
+                  }
+              },
+              "runAfter": {
+                  "Initialize_increments": [
+                      "SUCCEEDED"
+                  ]
+              }
+          },
+          "Response": {
+              "type": "Response",
+              "kind": "http",
+              "inputs": {
+                  "statusCode": 200,
+                  "body": "@variables('counter')"
+              },
+              "runAfter": {
+                  "Foreach": [
+                      "SUCCEEDED"
+                  ]
+              }
+          }
+      },
+      "contentVersion": "1.0.0.0",
+      "outputs": {},
+      "triggers": {
+          "manual": {
+              "type": "Request",
+              "kind": "Http"
+          }
+      }
+  },
+  "kind": "Stateful"
+}
