@@ -5,11 +5,9 @@ test.describe(
     tag: '@real',
   },
   () => {
-    test('Sanity check', async ({ page, browserName, realDataApi }) => {
+    test('Sanity check', async ({ page, realDataApi }) => {
       await page.goto('/');
       await realDataApi.goToWorkflow('NestedLoops');
-
-      console.log(`browserName: ${browserName}`);
 
       // Check workfow loads correctly
       await expect(page.getByLabel('Foreach operation')).toBeVisible();
@@ -25,7 +23,7 @@ test.describe(
       await expect(page.getByTestId('msla-pager-v2-foreach')).toBeVisible();
 
       // Check for inner actions
-      await expect(page.getByTestId('card-Increment counter')).toBeVisible();
+      await expect(page.getByTestId('card-increment_counter')).toBeVisible();
       await expect(page.getByLabel('1.1 seconds. Succeeded')).toContainText('1s');
       await expect(page.getByLabel('11.3 seconds. Succeeded')).toContainText('11s');
 
@@ -38,10 +36,17 @@ test.describe(
       await expect(page.getByLabel('Value', { exact: true }).locator('pre')).toContainText('1');
 
       // Move to next iteration
-      await page.getByTestId('rf__node-Foreach-#scope').getByLabel('Next').click();
+      await page.getByTestId('msla-pager-v2-foreach').getByLabel('Next').click();
       await expect(page.getByLabel('Value', { exact: true }).locator('pre')).toContainText('2');
       await expect(page.getByLabel('0.1 seconds. Succeeded')).toContainText('0.1s');
       await expect(page.getByLabel('13.3 seconds. Succeeded')).toContainText('13s');
+
+      // Move to previous iteration to check state is preserved
+      await page.getByTestId('msla-pager-v2-foreach').getByLabel('Previous').click();
+      await expect(page.getByLabel('Value', { exact: true }).locator('pre')).toContainText('1');
+
+      // Check inner loop to be interactive
+      await page.getByTestId('msla-pager-v2-foreach_2').getByLabel('Next').click();
     });
   }
 );
