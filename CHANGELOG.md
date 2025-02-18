@@ -1,4 +1,11 @@
 # Logic Apps Designer
+### [5.35.3](https://github.com/Azure/LogicAppsUX/compare/v5.35.2...v5.35.3) (2025-02-18)
+
+
+### Bug Fixes
+
+* **Designer:** Fixed nested loop monitoring view issues ([#6624](https://github.com/Azure/LogicAppsUX/issues/6624)) ([#6627](https://github.com/Azure/LogicAppsUX/issues/6627)) ([5124705](https://github.com/Azure/LogicAppsUX/commit/512470553a4840bfa02a19199622d1012dd41826))
+
 ### [5.35.2](https://github.com/Azure/LogicAppsUX/compare/v5.35.1...v5.35.2) (2025-02-05)
 
 
