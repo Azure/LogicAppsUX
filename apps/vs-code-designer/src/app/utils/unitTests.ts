@@ -743,7 +743,8 @@ export async function parseUnitTestOutputs(unitTestDefinition: any): Promise<{
                 ...nestedObject[part],
                 ...Object.keys(rawOutput[rawKey]).reduce((filteredFields, fieldKey) => {
                   if (allowedFields.includes(fieldKey)) {
-                    (filteredFields as Record<string, any>)[fieldKey] = rawOutput[rawKey][fieldKey];
+                    const newFieldKey = fieldKey === 'type' ? 'nestedTypeProperty' : fieldKey;
+                    (filteredFields as Record<string, any>)[newFieldKey] = rawOutput[rawKey][fieldKey];
                   }
                   return filteredFields;
                 }, {}),
@@ -751,7 +752,8 @@ export async function parseUnitTestOutputs(unitTestDefinition: any): Promise<{
             } else {
               nestedObject[part] = Object.keys(rawOutput[rawKey]).reduce((filteredFields, fieldKey) => {
                 if (allowedFields.includes(fieldKey)) {
-                  (filteredFields as Record<string, any>)[fieldKey] = rawOutput[rawKey][fieldKey];
+                  const newFieldKey = fieldKey === 'type' ? 'nestedTypeProperty' : fieldKey;
+                  (filteredFields as Record<string, any>)[newFieldKey] = rawOutput[rawKey][fieldKey];
                 }
                 return filteredFields;
               }, {});
@@ -859,15 +861,15 @@ export function buildClassDefinition(className: string, node: any): ClassDefinit
   // If there's a top-level "description" for the object
   let classDescription: string | null = node.description ? String(node.description) : null;
   if (!classDescription) {
-    if (node.type === 'object') {
-      const skipKeys = ['type', 'title', 'description', 'format', 'headers', 'queries', 'tags', 'relativePathParameters'];
+    if (node.nestedTypeProperty === 'object') {
+      const skipKeys = ['nestedTypeProperty', 'title', 'description', 'format', 'headers', 'queries', 'tags', 'relativePathParameters'];
       const propertyNames = Object.keys(node).filter((key) => !skipKeys.includes(key));
       classDescription =
         propertyNames.length > 0
           ? `Class for ${className} representing an object with properties.`
           : `Class for ${className} representing an empty object.`;
     } else {
-      classDescription = `Class for ${className} representing a ${node.type} value.`;
+      classDescription = `Class for ${className} representing a ${node.nestedTypeProperty} value.`;
     }
   }
 
@@ -878,9 +880,9 @@ export function buildClassDefinition(className: string, node: any): ClassDefinit
   const children: ClassDefinition[] = [];
 
   // If this node is an object, it may have sub-fields we need to parse as properties.
-  if (node.type === 'object') {
+  if (node.nestedTypeProperty === 'object') {
     // Create a combined array of keys we need to skip
-    const skipKeys = ['type', 'title', 'description', 'format', 'headers', 'queries', 'tags', 'relativePathParameters'];
+    const skipKeys = ['nestedTypeProperty', 'title', 'description', 'format', 'headers', 'queries', 'tags', 'relativePathParameters'];
 
     // For each subfield in node (like "id", "location", "properties", etc.)
     for (const key of Object.keys(node)) {
@@ -893,19 +895,22 @@ export function buildClassDefinition(className: string, node: any): ClassDefinit
       const propName = toPascalCase(key);
 
       // Determine the child's C# type
-      let csharpType = mapJsonTypeToCSharp(subNode?.type);
+      let csharpType = mapJsonTypeToCSharp(subNode?.nestedTypeProperty);
       let isObject = false;
 
       // If it's an object, we must generate a nested class.
       // We'll do that recursively, then use the generated child's className for this property type.
-      if (subNode?.type === 'object') {
+      if (subNode?.nestedTypeProperty === 'object') {
         isObject = true;
         const childClassName = className + propName; // e.g. "ActionOutputs" -> "ActionOutputsBody"
         const childDef = buildClassDefinition(childClassName, subNode);
-        children.push(childDef);
 
-        // The property for this sub-node points to the newly created child's class name
-        csharpType = childDef.className;
+        // If there are child properties then use the newly created object, otherwise use JObject
+        if (childDef.properties.length > 0) {
+          children.push(childDef);
+          // The property for this sub-node points to the newly created child's class name
+          csharpType = childDef.className;
+        }
       }
 
       // If it's an array, you might want to look at subNode.items.type to refine the list item type.
@@ -1065,9 +1070,9 @@ export async function processUnitTestDefinition(
   workflowName: string,
   logicAppName: string
 ): Promise<{ foundActionMocks: Record<string, string>; foundTriggerMocks: Record<string, string> }> {
-  await parseUnitTestOutputs(unitTestDefinition);
-  const operationInfo = unitTestDefinition['operationInfo'];
-  const outputParameters = unitTestDefinition['outputParameters'];
+  const parsedOutputs = await parseUnitTestOutputs(unitTestDefinition);
+  const operationInfo = parsedOutputs['operationInfo'];
+  const outputParameters = parsedOutputs['outputParameters'];
   return await processAndWriteMockableOperations(operationInfo, outputParameters, workflowFolderPath, workflowName, logicAppName);
 }
 
@@ -1128,7 +1133,8 @@ export async function processAndWriteMockableOperations(
       mockClassName += isTrigger ? 'TriggerMock' : 'ActionMock';
 
       // Transform the output parameters for this operation
-      const outputs = transformParameters(outputParameters[operationName]?.outputs || {});
+      // const outputs = transformParameters(outputParameters[operationName]?.outputs || {});
+      const outputs = outputParameters[operationName]?.outputs;
 
       // Sanitize logic app name for namespace (replace '-' with '_')
       const sanitizedLogicAppName = logicAppName.replace(/-/g, '_');
@@ -1176,18 +1182,11 @@ export function generateCSharpClasses(
   // transformParameters() yields an object at the top level.
 
   const rootDef = buildClassDefinition(rootClassName, {
-    type: 'object',
+    nestedTypeProperty: 'object',
     ...data, // Merge the data (including "description", subfields, etc.)
   });
 
   rootDef.inheritsFrom = 'MockOutput';
-
-  rootDef.properties.push({
-    propertyName: 'StatusCode',
-    propertyType: 'HttpStatusCode', // Use the System.Net enum
-    description: 'The HTTP status code returned by the action. Example: HttpStatusCode.OK for success.',
-    isObject: false,
-  });
 
   const adjustedNamespace = `${namespaceName}.Tests.Mocks.${workflowName}`;
 
