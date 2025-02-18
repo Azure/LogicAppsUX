@@ -185,8 +185,8 @@ export const PanelHeader = (props: PanelHeaderProps): JSX.Element => {
 
   const triggerInfoMessageBar = {
     text: intl.formatMessage({
-      defaultMessage: 'Updating the trigger name will change the callback URL on save',
-      id: 'XeDHP5',
+      defaultMessage: 'Changes to the trigger name update the callback URL when you save the workflow.',
+      id: '0jNY+o',
       description: 'Trigger name update information message',
     }),
     ariaLabel: intl.formatMessage({

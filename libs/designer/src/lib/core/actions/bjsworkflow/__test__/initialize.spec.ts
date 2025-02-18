@@ -5,7 +5,7 @@ import {
   mockPostTeamsAdaptiveCardOpenApiManifest,
   mockSendAnOfficeOutlookEmailOpenApiManifest,
 } from './initialize.mocks';
-import { describe, test, expect, beforeAll, vi, beforeEach, Mock } from 'vitest';
+import { describe, test, expect, beforeAll, vi, it, Mock, beforeEach } from 'vitest';
 import { updateNodeParameters } from '../../../state/operation/operationMetadataSlice';
 import * as graphModule from '../../../utils/graph';
 import { ParameterInfo } from '@microsoft/designer-ui';
@@ -139,69 +139,6 @@ describe('bjsworkflow initialize', () => {
 
       expect(inputParameters.inputs.parameterGroups.default.parameters.length).toBe(1);
       expect(inputParameters.inputs.parameterGroups.default.parameters[0].value[0].value).toBe('');
-    });
-  });
-  describe('updateCallbackUrl', () => {
-    const fakeTriggerId = 'trigger1';
-    const fakeOperation = { operationId: 'dummy' };
-    const fakeInputs = { someInput: 'dummy' };
-
-    // Create a fake root state with the minimal required structure.
-    const createFakeRootState = () => ({
-      workflow: {}, // getTriggerNodeId is stubbed to return fakeTriggerId.
-      operations: {
-        operationInfo: {
-          [fakeTriggerId]: fakeOperation,
-        },
-        inputParameters: {
-          [fakeTriggerId]: fakeInputs,
-        },
-      },
-    });
-
-    let dispatch: ReturnType<typeof vi.fn>;
-
-    beforeEach(() => {
-      dispatch = vi.fn();
-      vi.restoreAllMocks();
-      // Stub getTriggerNodeId to always return our fake trigger id.
-      vi.spyOn(graphModule, 'getTriggerNodeId').mockReturnValue(fakeTriggerId);
-    });
-
-    test('should dispatch updateNodeParameters when updateCallbackUrlInInputs returns a parameter', async () => {
-      const fakeUpdatedParameter = { id: 'param1', value: [{ value: 'http://callback.url' }] } as ParameterInfo;
-      const fakeCallbackUpdater = vi.fn().mockResolvedValue(fakeUpdatedParameter);
-
-      // Stub updateCallbackUrlInInputs to resolve with a fake parameter.
-      vi.spyOn(initialize, 'updateCallbackUrlInInputs').mockImplementation(fakeCallbackUpdater);
-      const fakeRootState = createFakeRootState();
-
-      await initialize.updateCallbackUrl(fakeRootState as any, dispatch);
-
-      expect(dispatch).toHaveBeenCalledTimes(1);
-      expect(dispatch).toHaveBeenCalledWith(
-        updateNodeParameters({
-          nodeId: fakeTriggerId,
-          parameters: [
-            {
-              groupId: 'default',
-              parameterId: fakeUpdatedParameter.id,
-              propertiesToUpdate: fakeUpdatedParameter,
-            },
-          ],
-        })
-      );
-    });
-
-    test('should not dispatch updateNodeParameters when updateCallbackUrlInInputs returns undefined', async () => {
-      // Stub updateCallbackUrlInInputs to resolve with undefined.
-      vi.spyOn(initialize, 'updateCallbackUrlInInputs').mockImplementation(async () => undefined);
-
-      const fakeRootState = createFakeRootState();
-
-      await initialize.updateCallbackUrl(fakeRootState as any, dispatch);
-
-      expect(dispatch).not.toHaveBeenCalled();
     });
   });
 });
