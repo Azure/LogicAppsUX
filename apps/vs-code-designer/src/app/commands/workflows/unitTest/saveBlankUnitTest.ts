@@ -202,7 +202,7 @@ async function generateBlankCodefulUnitTest(
     // Create the testSettings.config file for the unit test
     ext.outputChannel.appendLog(localize('creatingTestSettingsConfig', 'Creating testSettings.config file for unit test...'));
     await createTestSettingsConfigFile(workflowFolderPath, workflowName, logicAppName);
-    await createTestExecutorFile(logicAppFolderPath, workflowName);
+    await createTestExecutorFile(logicAppFolderPath, logicAppName);
 
     // Get the first actionMock in foundActionMocks
     const [actionName, actionOutputClassName] = Object.entries(foundActionMocks)[0] || [];
