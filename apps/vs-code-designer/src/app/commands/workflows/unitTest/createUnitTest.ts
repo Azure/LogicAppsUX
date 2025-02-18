@@ -16,7 +16,7 @@ import {
   logTelemetry,
   parseErrorBeforeTelemetry,
   parseUnitTestOutputs,
-  processUnitTestDefinition,
+  processAndWriteMockableOperations,
   promptForUnitTestName,
   selectWorkflowNode,
 } from '../../../utils/unitTests';
@@ -53,6 +53,14 @@ export async function createUnitTest(
     // Get workspace folder and project root
     const workspaceFolder = await getWorkspaceFolder(context);
     const projectPath = await tryGetLogicAppProjectRoot(context, workspaceFolder);
+
+    if (!(await ConvertToWorkspace(context))) {
+      ext.outputChannel.appendLog(
+        localize('createUnitTestCancelled', 'Exiting unit test creation, a workspace is required to create unit tests.')
+      );
+      return;
+    }
+
     logTelemetry(context, {
       workspaceLocated: 'true',
       projectRootLocated: 'true',
@@ -63,13 +71,6 @@ export async function createUnitTest(
 
     // Determine workflow node
     const workflowNode = node ? (getWorkflowNode(node) as vscode.Uri) : await selectWorkflowNode(context, projectPath);
-
-    if (!(await ConvertToWorkspace(context))) {
-      ext.outputChannel.appendLog(
-        localize('createUnitTestCancelled', 'Exiting unit test creation, a workspace is required to create unit tests.')
-      );
-      return;
-    }
 
     // Get workflow name and prompt for unit test name
     const workflowName = path.basename(path.dirname(workflowNode.fsPath));
@@ -120,9 +121,10 @@ async function generateUnitTestFromRun(
     testsFolderAddedToWorkspace: 'false',
   });
 
-  await parseUnitTestOutputs(unitTestDefinition);
-  const operationInfo = unitTestDefinition['operationInfo'];
-  const outputParameters = unitTestDefinition['outputParameters'];
+  // Get parsed outputs
+  const parsedOutputs = await parseUnitTestOutputs(unitTestDefinition);
+  const operationInfo = parsedOutputs['operationInfo'];
+  const outputParameters = parsedOutputs['outputParameters'];
 
   logTelemetry(context, {
     operationInfoExists: operationInfo ? 'true' : 'false',
@@ -191,8 +193,9 @@ async function generateUnitTestFromRun(
 
     const paths = getUnitTestPaths(projectPath, workflowName, unitTestName);
     await fs.ensureDir(paths.unitTestFolderPath);
-    const { foundActionMocks, foundTriggerMocks } = await processUnitTestDefinition(
-      unitTestDefinition,
+    const { foundActionMocks, foundTriggerMocks } = await processAndWriteMockableOperations(
+      operationInfo,
+      outputParameters,
       paths.workflowFolderPath,
       workflowName,
       paths.logicAppName

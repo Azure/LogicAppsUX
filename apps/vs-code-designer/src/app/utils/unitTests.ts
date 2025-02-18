@@ -782,53 +782,6 @@ export async function parseUnitTestOutputs(unitTestDefinition: any): Promise<{
 }
 
 /**
- * Transforms the output parameters object by cleaning keys and keeping only certain fields.
- * @param params - The parameters object.
- * @returns A transformed object with cleaned keys and limited fields.
- */
-export function transformParameters(params: any): any {
-  const allowedFields = ['type', 'title', 'format', 'description'];
-  const result: any = {};
-
-  for (const key in params) {
-    if (Object.prototype.hasOwnProperty.call(params, key)) {
-      // Clean up the key.
-      const cleanedKey = key
-        .replace(/^outputs\.\$\./, '') // remove "outputs.$." prefix
-        .replace(/^outputs\.\$$/, '') // remove "outputs.$" prefix
-        .replace(/^body\.\$\./, 'body.') // replace "body.$." prefix with "body."
-        .replace(/^body\.\$$/, 'body'); // replace "body.$" prefix with "body"
-
-      // Split on '.' to build or traverse nested keys.
-      const keys = cleanedKey.split('.');
-      keys.reduce((acc, part, index) => {
-        const isLastPart = index === keys.length - 1;
-
-        if (isLastPart) {
-          if (!acc[part]) {
-            acc[part] = {};
-          }
-
-          const filteredFields = Object.keys(params[key]).reduce((filtered: any, fieldKey) => {
-            if (allowedFields.includes(fieldKey)) {
-              filtered[fieldKey] = params[key][fieldKey];
-            }
-            return filtered;
-          }, {});
-
-          acc[part] = { ...acc[part], ...filteredFields };
-        } else if (!acc[part]) {
-          acc[part] = {};
-        }
-        return acc[part];
-      }, result);
-    }
-  }
-
-  return result;
-}
-
-/**
  * Represents the metadata for generating a single C# class.
  * Will store the class name, a doc-comment, properties, and child class definitions.
  */
@@ -1058,25 +1011,6 @@ export function generateClassCode(classDef: ClassDefinition): string {
 }
 
 /**
- * Processes the unit test definition by parsing outputs and writing C# classes (mock outputs).
- * @param unitTestDefinition - The raw unit test definition.
- * @param workflowFolderPath - The folder path where the workflow folder resides.
- * @param workflowName - The name of the workflow.
- * @param logicAppName - The Logic App name (used for the namespace).
- */
-export async function processUnitTestDefinition(
-  unitTestDefinition: any,
-  workflowFolderPath: string,
-  workflowName: string,
-  logicAppName: string
-): Promise<{ foundActionMocks: Record<string, string>; foundTriggerMocks: Record<string, string> }> {
-  const parsedOutputs = await parseUnitTestOutputs(unitTestDefinition);
-  const operationInfo = parsedOutputs['operationInfo'];
-  const outputParameters = parsedOutputs['outputParameters'];
-  return await processAndWriteMockableOperations(operationInfo, outputParameters, workflowFolderPath, workflowName, logicAppName);
-}
-
-/**
  * Filters mockable operations, transforms their output parameters,
  * and writes C# class definitions to .cs files.
  * @param operationInfo - The operation info object.
@@ -1133,7 +1067,6 @@ export async function processAndWriteMockableOperations(
       mockClassName += isTrigger ? 'TriggerMock' : 'ActionMock';
 
       // Transform the output parameters for this operation
-      // const outputs = transformParameters(outputParameters[operationName]?.outputs || {});
       const outputs = outputParameters[operationName]?.outputs;
 
       // Sanitize logic app name for namespace (replace '-' with '_')

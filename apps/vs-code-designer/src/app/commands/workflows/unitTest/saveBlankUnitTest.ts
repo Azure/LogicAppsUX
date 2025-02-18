@@ -15,9 +15,9 @@ import {
   logSuccess,
   logTelemetry,
   parseUnitTestOutputs,
-  processUnitTestDefinition,
   promptForUnitTestName,
   selectWorkflowNode,
+  processAndWriteMockableOperations,
 } from '../../../utils/unitTests';
 import { tryGetLogicAppProjectRoot } from '../../../utils/verifyIsProject';
 import { ensureDirectoryInWorkspace, getWorkflowNode, getWorkspaceFolder } from '../../../utils/workspace';
@@ -76,15 +76,29 @@ export async function saveBlankUnitTest(
     const workspaceFolder = await getWorkspaceFolder(context);
     const projectPath = await tryGetLogicAppProjectRoot(context, workspaceFolder);
 
+    if (!(await ConvertToWorkspace(context))) {
+      logTelemetry(context, {
+        multiRootWorkspaceValid: 'false',
+      });
+      ext.outputChannel.appendLog(
+        localize('createBlankUnitTestCancelled', 'Exiting blank unit test creation, a workspace is required to create blank unit tests.')
+      );
+      return;
+    }
+
+    logTelemetry(context, {
+      multiRootWorkspaceValid: 'true',
+    });
+
     logTelemetry(context, {
       workspaceLocated: 'true',
       projectRootLocated: 'true',
     });
 
     // Get parsed outputs
-    await parseUnitTestOutputs(unitTestDefinition);
-    const operationInfo = unitTestDefinition['operationInfo'];
-    const outputParameters = unitTestDefinition['outputParameters'];
+    const parsedOutputs = await parseUnitTestOutputs(unitTestDefinition);
+    const operationInfo = parsedOutputs['operationInfo'];
+    const outputParameters = parsedOutputs['outputParameters'];
 
     logTelemetry(context, {
       operationInfoExists: operationInfo ? 'true' : 'false',
@@ -99,19 +113,6 @@ export async function saveBlankUnitTest(
     });
 
     const workflowName = path.basename(path.dirname(workflowNode.fsPath));
-    if (!(await ConvertToWorkspace(context))) {
-      logTelemetry(context, {
-        multiRootWorkspaceValid: 'false',
-      });
-      ext.outputChannel.appendLog(
-        localize('createBlankUnitTestCancelled', 'Exiting blank unit test creation, a workspace is required to create blank unit tests.')
-      );
-      return;
-    }
-
-    logTelemetry(context, {
-      multiRootWorkspaceValid: 'true',
-    });
 
     // Prompt for unit test name
     const unitTestName = await promptForUnitTestName(context, projectPath, workflowName);
@@ -132,8 +133,9 @@ export async function saveBlankUnitTest(
     // Ensure required directories exist
     await fs.ensureDir(unitTestFolderPath);
     await fs.ensureDir(workflowFolderPath);
-    const { foundActionMocks, foundTriggerMocks } = await processUnitTestDefinition(
-      unitTestDefinition,
+    const { foundActionMocks, foundTriggerMocks } = await processAndWriteMockableOperations(
+      operationInfo,
+      outputParameters,
       workflowFolderPath,
       workflowName,
       logicAppName
