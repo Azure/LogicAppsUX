@@ -30,7 +30,6 @@ import {
   mapJsonTypeToCSharp,
   parseUnitTestOutputs,
   processAndWriteMockableOperations,
-  transformParameters,
   getMockableOperationTypes,
 } from '../../../commands/workflows/unitTest/saveBlankUnitTest';
 import type { IAzureConnectorsContext } from '../../../commands/workflows/azureConnectorWizard';
