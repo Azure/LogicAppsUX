@@ -40,10 +40,6 @@ vi.mock('vscode', () => ({
   workspace: {
     workspaceFolders: [],
   },
-}));
-
-vi.mock('vscode', () => ({
-  window: {},
   EventEmitter: vi.fn().mockImplementation(() => ({
     getUser: vi.fn(),
   })),

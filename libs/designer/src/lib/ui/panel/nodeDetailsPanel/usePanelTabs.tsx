@@ -58,10 +58,10 @@ export const usePanelTabs = ({ nodeId }: { nodeId: string }) => {
 
   const mockResultsTabItem = useMemo(
     () => ({
-      ...mockResultsTab(intl),
+      ...mockResultsTab(intl, tabProps),
       visible: isUnitTestView,
     }),
-    [intl, isUnitTestView]
+    [intl, isUnitTestView, tabProps]
   );
 
   const parametersTabItem = useMemo(
