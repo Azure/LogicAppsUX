@@ -761,7 +761,7 @@ const getDesignerServices = (
       dispatch(changeRunId(workflowId));
     },
     notifyCallbackUrlUpdate: (triggerName, newTriggerId) => {
-      alert(`Callback URL updated for ${triggerName} to ${newTriggerId}`);
+      alert(`Callback URL for ${triggerName} trigger updated to ${newTriggerId}`);
     },
   };
 

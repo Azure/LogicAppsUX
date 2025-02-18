@@ -521,7 +521,7 @@ const getDesignerServices = (
         : undefined;
     },
     notifyCallbackUrlUpdate: (triggerName: string, newTriggerId: string) => {
-      alert(`Callback URL updated for ${triggerName} to ${newTriggerId}`);
+      alert(`Callback URL for ${triggerName} trigger updated to ${newTriggerId}`);
     },
   };
 
