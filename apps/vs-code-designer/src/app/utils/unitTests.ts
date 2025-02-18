@@ -454,9 +454,9 @@ export async function createCsFile(
  * Creates a testSettings.config file in the specified unit test folder using a template.
  * Converts any "-" characters in LogicAppName, WorkflowName, and UnitTestName to "_" only in code-related contexts.
  * @param {string} logicAppFolderPath - The path to the logicapp folder within Tests.
- * @param {string} workflowName - The name of the workflow.
+ * @param {string} logicAppName - The name of the logic app.
  */
-export async function createTestExecutorFile(logicAppFolderPath: string, workflowName: string): Promise<void> {
+export async function createTestExecutorFile(logicAppFolderPath: string, logicAppName: string): Promise<void> {
   const templateFolderName = 'UnitTestTemplates';
   const executorTemplateFileName = 'TestExecutorFile';
   const templatePath = path.join(__dirname, 'assets', templateFolderName, executorTemplateFileName);
@@ -469,7 +469,7 @@ export async function createTestExecutorFile(logicAppFolderPath: string, workflo
   }
 
   let templateContent = await fs.readFile(templatePath, 'utf-8');
-  templateContent = templateContent.replace(/<%= LogicAppName %>/g, logicAppName).replace(/<%= WorkflowName %>/g, workflowName);
+  templateContent = templateContent.replace(/<%= LogicAppName %>/g, logicAppName);
 
   await fse.writeFile(csFilePath, templateContent);
   ext.outputChannel.appendLog(localize('createdTestExecutorFile', 'Created TestExecutor.cs file at: {0}', csFilePath));
