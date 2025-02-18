@@ -461,14 +461,25 @@ export const updateCallbackUrl = async (rootState: RootState, dispatch: Dispatch
   const operationInfo = rootState.operations.operationInfo[trigger];
   const nodeInputs = clone(rootState.operations.inputParameters[trigger]);
   const updatedParameter = await updateCallbackUrlInInputs(trigger, operationInfo, nodeInputs);
-
   if (updatedParameter) {
+    notifyForCallbackUrlUpdate(rootState, trigger);
     dispatch(
       updateNodeParameters({
         nodeId: trigger,
         parameters: [{ groupId: ParameterGroupKeys.DEFAULT, parameterId: updatedParameter.id, propertiesToUpdate: updatedParameter }],
       })
     );
+  }
+};
+
+const notifyForCallbackUrlUpdate = (rootState: RootState, trigger: string) => {
+  const idReplacements = rootState.workflow.idReplacements;
+  const newTriggerId = idReplacements[trigger];
+  if (newTriggerId) {
+    const serviceNotifyCallbackUrlUpdate = WorkflowService().notifyCallbackUrlUpdate;
+    if (serviceNotifyCallbackUrlUpdate) {
+      serviceNotifyCallbackUrlUpdate(trigger, newTriggerId);
+    }
   }
 };
 

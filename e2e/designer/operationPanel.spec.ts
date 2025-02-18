@@ -155,5 +155,23 @@ test.describe(
       await expect(page.locator('.msla-panel-layout-selected .msla-setting-section').first()).toBeVisible();
       await expect(page.locator('.msla-panel-layout-pinned .msla-peek')).toBeVisible();
     });
+
+    test('Should only show the panel info message when trigger type is request', async ({ page }) => {
+      await page.goto('/');
+      await GoToMockWorkflow(page, 'Panel');
+
+      // Left-click on 'manual' trigger.
+      await page.getByTestId('card-manual').click();
+
+      // Panel should be open, with 'manual' action.
+      await expect(page.locator('.msla-panel-container-nested .msla-panel-layout-selected')).toBeVisible();
+      await expect(page.locator('.msla-panel-card-header input#manual-title')).toBeVisible();
+      await expect(page.getByTestId('msla-panel-header-trigger-info')).toBeVisible();
+
+      // Left-click on 'Initialize ArrayVariable' node.
+      await page.getByTestId('card-initialize_arrayvariable').click();
+      await expect(page.locator('.msla-panel-card-header input#Initialize_ArrayVariable-title')).toBeVisible();
+      await expect(page.getByTestId('msla-panel-header-trigger-info')).not.toBeVisible();
+    });
   }
 );

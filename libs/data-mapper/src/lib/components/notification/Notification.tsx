@@ -171,8 +171,8 @@ export const Notification = (props: NotificationProps) => {
         { nodeName: msgParam ?? '' }
       ),
       [NotificationTypes.TargetNodeCannotDelete]: intl.formatMessage({
-        defaultMessage: 'Target schema element cannot be deleted.',
-        id: 'Xj0Gr/',
+        defaultMessage: "Target schema element can't be deleted.",
+        id: 'urmf+A',
         description: 'Message informing that target element cannot be removed',
       }),
       [NotificationTypes.FunctionNodePartiallyDeleted]: intl.formatMessage({
