@@ -3,7 +3,7 @@ using Microsoft.Extensions.Configuration;
 using System;
 using System.IO;
 
-namespace UnitTestPublicPreview.Tests
+namespace <%= LogicAppName %>.Tests
 {
     public class TestExecutor
     {                

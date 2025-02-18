@@ -200,7 +200,7 @@ async function generateUnitTestFromRun(
     // Create the testSettings.config file for the unit test
     ext.outputChannel.appendLog(localize('creatingTestSettingsConfig', 'Creating testSettings.config file for unit test...'));
     await createTestSettingsConfigFile(paths.workflowFolderPath, workflowName, paths.logicAppName);
-    await createTestExecutorFile(paths.logicAppFolderPath, workflowName);
+    await createTestExecutorFile(paths.logicAppFolderPath, paths.logicAppName);
 
     try {
       ext.outputChannel.appendLog(localize('unzippingFiles', `Unzipping Mock.json into: ${paths.unitTestFolderPath}`));

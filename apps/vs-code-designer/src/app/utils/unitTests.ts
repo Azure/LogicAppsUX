@@ -468,8 +468,8 @@ export async function createTestExecutorFile(logicAppFolderPath: string, workflo
     return;
   }
 
-  let templateContent = await fse.readFile(templatePath, 'utf-8');
-  templateContent = templateContent.replace(/<%= WorkflowName %>/g, workflowName);
+  let templateContent = await fs.readFile(templatePath, 'utf-8');
+  templateContent = templateContent.replace(/<%= LogicAppName %>/g, logicAppName).replace(/<%= WorkflowName %>/g, workflowName);
 
   await fse.writeFile(csFilePath, templateContent);
   ext.outputChannel.appendLog(localize('createdTestExecutorFile', 'Created TestExecutor.cs file at: {0}', csFilePath));
