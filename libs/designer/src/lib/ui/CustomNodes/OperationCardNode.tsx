@@ -47,9 +47,10 @@ import { setRepetitionRunData } from '../../core/state/workflow/workflowSlice';
 import { getRepetitionName } from '../common/LoopsPager/helper';
 import { DropZone } from '../connections/dropzone';
 import { MessageBarType } from '@fluentui/react';
+import type { LogicAppsV2 } from '@microsoft/logic-apps-shared';
 import { isNullOrUndefined, RunService, useNodeIndex } from '@microsoft/logic-apps-shared';
 import { Card } from '@microsoft/designer-ui';
-import { memo, useCallback, useMemo, useState } from 'react';
+import { memo, useCallback, useEffect, useMemo, useState } from 'react';
 import { useDrag } from 'react-dnd';
 import { useIntl } from 'react-intl';
 import { useQuery } from '@tanstack/react-query';
@@ -103,14 +104,10 @@ const DefaultNode = ({ targetPosition = Position.Top, sourcePosition = Position.
     return RunService().getRepetition({ nodeId: id, runId: runInstance?.id }, repetitionName);
   }, [id, parentRunData?.status, repetitionName, runInstance?.id]);
 
-  const { isFetching: isRepetitionLoading } = useQuery<any>(
+  const { isFetching: isRepetitionFetching, data: repetitionRunData } = useQuery<any>(
     ['runInstance', { nodeId: id, runId: runInstance?.id, repetitionName, parentStatus: parentRunData?.status, parentRunIndex }],
     async () => {
-      const data = await getRunRepetition();
-      if (!isNullOrUndefined(data)) {
-        dispatch(setRepetitionRunData({ nodeId: id, runData: data.properties as any }));
-      }
-      return data;
+      return await getRunRepetition();
     },
     {
       refetchOnWindowFocus: false,
@@ -120,6 +117,12 @@ const DefaultNode = ({ targetPosition = Position.Top, sourcePosition = Position.
       enabled: !!isMonitoringView && parentRunIndex !== undefined,
     }
   );
+
+  useEffect(() => {
+    if (!isNullOrUndefined(repetitionRunData)) {
+      dispatch(setRepetitionRunData({ nodeId: id, runData: repetitionRunData.properties as LogicAppsV2.WorkflowRunAction }));
+    }
+  }, [dispatch, repetitionRunData, id]);
 
   const { dependencies, loopSources } = useTokenDependencies(id);
 
@@ -234,7 +237,7 @@ const DefaultNode = ({ targetPosition = Position.Top, sourcePosition = Position.
 
   const { isFetching: isOperationQueryLoading, isError: isOperationQueryError } = useOperationQuery(id);
 
-  const isLoading = useMemo(() => isRepetitionLoading || isOperationQueryLoading, [isRepetitionLoading, isOperationQueryLoading]);
+  const isLoading = useMemo(() => isRepetitionFetching || isOperationQueryLoading, [isRepetitionFetching, isOperationQueryLoading]);
 
   const opManifestErrorText = intl.formatMessage({
     defaultMessage: 'Error fetching manifest',

@@ -36,7 +36,7 @@ import { MessageBarType } from '@fluentui/react';
 import { RunService, equals, isNullOrUndefined, removeIdTag, useNodeIndex } from '@microsoft/logic-apps-shared';
 import { ScopeCard } from '@microsoft/designer-ui';
 import type { LogicAppsV2 } from '@microsoft/logic-apps-shared';
-import { memo, useCallback, useMemo, useRef, useState } from 'react';
+import { memo, useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useDrag } from 'react-dnd';
 import { useIntl } from 'react-intl';
 import { useQuery } from '@tanstack/react-query';
@@ -72,34 +72,26 @@ const ScopeCardNode = ({ data, targetPosition = Position.Top, sourcePosition = P
   );
   const rootRef = useRef<HTMLDivElement | null>(null);
 
-  const getRunRepetition = useCallback(() => {
-    if (parentRunData?.status === constants.FLOW_STATUS.SKIPPED) {
-      return {
-        properties: {
-          status: constants.FLOW_STATUS.SKIPPED,
-          inputsLink: null,
-          outputsLink: null,
-          startTime: null,
-          endTime: null,
-          trackingId: null,
-          correlation: null,
-        },
-      };
-    }
-    return RunService().getRepetition({ nodeId: scopeId, runId: runInstance?.id }, repetitionName);
-  }, [scopeId, parentRunData?.status, repetitionName, runInstance?.id]);
-
-  const { isLoading: isRepetitionLoading, isRefetching: isRepetitionRefetching } = useQuery<any>(
+  const { isFetching: isRepetitionFetching, data: repetitionRunData } = useQuery<any>(
     ['runInstance', { nodeId: scopeId, runId: runInstance?.id, repetitionName, parentStatus: parentRunData?.status }],
     async () => {
-      const data = await getRunRepetition();
-      if (!isNullOrUndefined(data)) {
-        dispatch(setRepetitionRunData({ nodeId: scopeId, runData: data.properties as LogicAppsV2.WorkflowRunAction }));
+      if (parentRunData?.status === constants.FLOW_STATUS.SKIPPED) {
+        return {
+          properties: {
+            status: constants.FLOW_STATUS.SKIPPED,
+            inputsLink: null,
+            outputsLink: null,
+            startTime: null,
+            endTime: null,
+            trackingId: null,
+            correlation: null,
+          },
+        };
       }
-      return data;
+
+      return await RunService().getRepetition({ nodeId: scopeId, runId: runInstance?.id }, repetitionName);
     },
     {
-      initialData: null,
       refetchOnWindowFocus: false,
       refetchOnReconnect: false,
       refetchOnMount: false,
@@ -107,6 +99,12 @@ const ScopeCardNode = ({ data, targetPosition = Position.Top, sourcePosition = P
       enabled: parentRunIndex !== undefined && !!isMonitoringView,
     }
   );
+
+  useEffect(() => {
+    if (!isNullOrUndefined(repetitionRunData)) {
+      dispatch(setRepetitionRunData({ nodeId: scopeId, runData: repetitionRunData.properties as LogicAppsV2.WorkflowRunAction }));
+    }
+  }, [dispatch, repetitionRunData, scopeId]);
 
   const { dependencies, loopSources } = useTokenDependencies(scopeId);
   const [{ isDragging }, drag, dragPreview] = useDrag(
@@ -200,8 +198,8 @@ const ScopeCardNode = ({ data, targetPosition = Position.Top, sourcePosition = P
   const opQuery = useOperationQuery(scopeId);
 
   const isLoading = useMemo(
-    () => isRepetitionLoading || isRepetitionRefetching || opQuery.isLoading || (!brandColor && !iconUri),
-    [brandColor, iconUri, opQuery.isLoading, isRepetitionLoading, isRepetitionRefetching]
+    () => isRepetitionFetching || opQuery.isLoading || (!brandColor && !iconUri),
+    [brandColor, iconUri, opQuery.isLoading, isRepetitionFetching]
   );
 
   const comment = useMemo(
@@ -269,7 +267,6 @@ const ScopeCardNode = ({ data, targetPosition = Position.Top, sourcePosition = P
     if (metadata?.runData?.status && !equals(metadata.runData.status, 'InProgress')) {
       return <LoopsPager metadata={metadata} scopeId={scopeId} collapsed={graphCollapsed} />;
     }
-
     return null;
   }, [graphCollapsed, metadata, scopeId]);
 
