@@ -10,7 +10,7 @@ Starting with version 5.18.7, the Azure Logic Apps (Standard) extension for Visu
 
 ## Azure Logic Apps - Introducing the Azure Logic Apps Hybrid deployment model (preview)
 
-Starting with version 4.107.2, the Azure Logic Apps (Standard) extension for Visual Studio Code introduces Logic Apps Hybrid Deployment Model, a new feature that empowers our customers with additional flexibility and control. This new offering allows you to build and deploy workflows that run on customer-managed infrastructure, providing you with the option to run Logic Apps on-premises, in a private cloud, or even in a third-party public cloud. For more information, see [Introducing the Logic Apps Hybrid Deployment Model (Public Preview)](https://go.microsoft.com/fwlink/?linkid=2293544).
+Starting with version 4.107.2, the Azure Logic Apps (Standard) extension for Visual Studio Code introduces the Azure Logic Apps Hybrid deployment model, a new feature that gives you more flexibility and control over your infrastructure. This offering lets you build and deploy workflows that run on customer-managed infrastructure, providing you with the option to run Standard logic apps on premises, in a private cloud, or even in a non-Microsoft public cloud. For more information, see [Introducing the Logic Apps Hybrid Deployment Model (Public Preview)](https://go.microsoft.com/fwlink/?linkid=2293544).
 
 ## Azure Logic Apps - Automatic Regeneration of Connection ACL keys
 
