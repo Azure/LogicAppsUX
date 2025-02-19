@@ -165,9 +165,7 @@ export function TokenPicker({
   }, [anchorKey, editor, windowDimensions.height]);
 
   const handleInitializeExpression = (s: string, n: NodeKey) => {
-    console.log(s);
     const escapedString = escapeString(s, /*requireSingleQuotesWrap*/ true);
-    console.log(escapedString);
     setExpression({ value: escapedString, selectionStart: 0, selectionEnd: 0 });
     setSelectedMode(TokenPickerMode.EXPRESSION);
     setExpressionToBeUpdated(n);
