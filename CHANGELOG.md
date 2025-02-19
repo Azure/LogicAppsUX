@@ -1,4 +1,17 @@
 # Logic Apps Designer
+## [5.42.0](https://github.com/Azure/LogicAppsUX/compare/v5.41.0...v5.42.0) (2025-02-19)
+
+
+### Features
+
+* **designer:** Add info message for request trigger type ([#6598](https://github.com/Azure/LogicAppsUX/issues/6598)) ([570f465](https://github.com/Azure/LogicAppsUX/commit/570f465a31ad43392fa6ea97f1e12515e895c4e4))
+* **templates:** Adding support for dynamic list and file/folder picker in template parameters ([#6605](https://github.com/Azure/LogicAppsUX/issues/6605)) ([88f742f](https://github.com/Azure/LogicAppsUX/commit/88f742f131a24a240121ba71c966d03acc4f6154))
+
+
+### Bug Fixes
+
+* **Designer:** Fixed nested loop monitoring view issues ([#6624](https://github.com/Azure/LogicAppsUX/issues/6624)) ([527f4af](https://github.com/Azure/LogicAppsUX/commit/527f4af1a0eb191cb25cd0528c861e95213ba848))
+
 ## [5.41.0](https://github.com/Azure/LogicAppsUX/compare/v5.40.0...v5.41.0) (2025-02-14)
 
 
