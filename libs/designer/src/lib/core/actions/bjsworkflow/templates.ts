@@ -3,13 +3,10 @@ import {
   DevLogger,
   getIntl,
   type ILoggerService,
-  InitApiManagementService,
-  InitAppServiceService,
   InitConnectionParameterEditorService,
   InitConnectionService,
   InitConnectorService,
   InitExperimentationServiceService,
-  InitFunctionService,
   InitGatewayService,
   InitLoggerService,
   InitOAuthService,
@@ -91,9 +88,6 @@ export const initializeTemplateServices = createAsyncThunk(
     oAuthService,
     gatewayService,
     tenantService,
-    apimService,
-    functionService,
-    appServiceService,
     connectionParameterEditorService,
     templateService,
     loggerService,
@@ -123,15 +117,6 @@ export const initializeTemplateServices = createAsyncThunk(
     }
     if (tenantService) {
       InitTenantService(tenantService);
-    }
-    if (apimService) {
-      InitApiManagementService(apimService);
-    }
-    if (functionService) {
-      InitFunctionService(functionService);
-    }
-    if (appServiceService) {
-      InitAppServiceService(appServiceService);
     }
     if (connectionParameterEditorService) {
       InitConnectionParameterEditorService(connectionParameterEditorService);

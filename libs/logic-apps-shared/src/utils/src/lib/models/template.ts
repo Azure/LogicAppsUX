@@ -45,7 +45,7 @@ export interface Parameter {
     type: 'picker' | 'list';
     workflow: string;
     operation: string;
-    connection: string;
+    connection?: string;
   };
 }
 

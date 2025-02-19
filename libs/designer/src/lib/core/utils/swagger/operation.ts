@@ -11,7 +11,7 @@ import type {
   NodeOutputsWithDependencies,
 } from '../../actions/bjsworkflow/operationdeserializer';
 import { getOperationSettings } from '../../actions/bjsworkflow/settings';
-import { getConnectorWithSwagger } from '../../queries/connections';
+import { getConnectorWithSwagger, getSwaggerForConnector } from '../../queries/connections';
 import type { DependencyInfo, NodeInputs, NodeOperation, OutputInfo } from '../../state/operation/operationMetadataSlice';
 import { DynamicLoadStatus, ErrorLevel, initializeOperationInfo, updateErrorDetails } from '../../state/operation/operationMetadataSlice';
 import { addResultSchema } from '../../state/staticresultschema/staticresultsSlice';
@@ -295,7 +295,7 @@ export const getOperationInfo = async (
         connectorId = cleanResourceId(reference.api.id);
       }
 
-      const { parsedSwagger } = await getConnectorWithSwagger(connectorId);
+      const parsedSwagger = await getSwaggerForConnector(connectorId);
       if (!parsedSwagger) {
         throw new Error(`Could not fetch swagger for connector - ${connectorId}`);
       }

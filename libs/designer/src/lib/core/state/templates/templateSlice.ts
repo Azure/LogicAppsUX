@@ -4,7 +4,7 @@ import { createSlice } from '@reduxjs/toolkit';
 import { getCurrentWorkflowNames, validateConnectionsValue, validateParameterValue } from '../../templates/utils/helper';
 import { loadTemplate, validateWorkflowName, type TemplatePayload } from '../../actions/bjsworkflow/templates';
 
-interface TemplateState extends TemplatePayload {
+export interface TemplateState extends TemplatePayload {
   templateName?: string;
 }
 

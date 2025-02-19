@@ -13,7 +13,7 @@ import { useSelector } from 'react-redux';
 import {
   BaseGatewayService,
   BaseTenantService,
-  StandardOperationManifestService,
+  ConsumptionOperationManifestService,
   ConsumptionConnectionService,
   startsWith,
   BaseAppServiceService,
@@ -315,7 +315,12 @@ const getServices = (
     tenantId,
     objectId,
   });
-  const operationManifestService = new StandardOperationManifestService(defaultServiceParams);
+  const operationManifestService = new ConsumptionOperationManifestService({
+    ...defaultServiceParams,
+    apiVersion: '2022-09-01-preview',
+    subscriptionId,
+    location: location || 'location',
+  });
   const workflowService = {
     getCallbackUrl: (triggerName: string) => listCallbackUrl(workflowId, triggerName, true),
     getAppIdentity: () => workflow?.identity,
@@ -342,9 +347,6 @@ const getServices = (
     operationManifestService,
     templateService,
     workflowService,
-    apimService,
-    appServiceService,
-    functionService,
     connectorService,
   };
 };

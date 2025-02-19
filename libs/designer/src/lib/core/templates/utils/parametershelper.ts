@@ -3,7 +3,7 @@ import { normalizeConnectorId, OperationManifestService } from '@microsoft/logic
 import { getCustomSwaggerIfNeeded, getInputParametersFromManifest } from '../../actions/bjsworkflow/initialize';
 import type { WorkflowTemplateData } from '../../actions/bjsworkflow/templates';
 import { Deserialize } from '../../parsers/BJSWorkflow/BJSDeserializer';
-import { getConnectorWithSwagger } from '../../queries/connections';
+import { getSwaggerForConnector } from '../../queries/connections';
 import { getOperationInfo, getOperationManifest } from '../../queries/operation';
 import { isRootNodeInGraph } from '../../utils/graph';
 import { getInputParametersFromSwagger, getOperationInfo as getSwaggerOperationInfo } from '../../utils/swagger/operation';
@@ -61,16 +61,16 @@ export const initializeParametersMetadata = async (
       const isTrigger = isRootNodeInGraph(operationId, 'root', nodesMetadata);
       const operation = operations[operationId];
       const nodeId = `${templateId}-${workflowId}-${operationId}`;
-      const templateConnectionKey = parametersToInitialize[0].dynamicData?.connection as string;
-      const connectorId = normalizeConnectorId(
-        connections[templateConnectionKey].connectorId,
-        resourceDetails.subscriptionId,
-        resourceDetails.location
-      ).toLowerCase();
+      const templateConnectionKey = parametersToInitialize[0].dynamicData?.connection;
+      const connectorId = templateConnectionKey
+        ? normalizeConnectorId(
+            connections[templateConnectionKey].connectorId,
+            resourceDetails.subscriptionId,
+            resourceDetails.location
+          ).toLowerCase()
+        : undefined;
 
-      if (connectorId) {
-        promises.push(initializeOperationDetails(nodeId, operation, connectorId, isTrigger, parametersToInitialize));
-      }
+      promises.push(initializeOperationDetails(nodeId, operation, connectorId, isTrigger, parametersToInitialize));
     }
   }
 
@@ -116,7 +116,7 @@ interface OperationDetails {
 const initializeOperationDetails = async (
   nodeId: string,
   operation: LogicAppsV2.OperationDefinition,
-  connectorId: string,
+  connectorId: string | undefined,
   isTrigger: boolean,
   templateParameters: TemplateParameter[]
 ): Promise<OperationDetails | undefined> => {
@@ -141,7 +141,7 @@ const initializeOperationDetails = async (
   const operationInfo = await getSwaggerOperationInfo(nodeId, operation as LogicAppsV2.ApiConnectionAction, {}, connectorId);
   if (operationInfo) {
     const nodeOperationInfo = { ...operationInfo, type: operation.type, kind: operation.kind };
-    const { parsedSwagger } = await getConnectorWithSwagger(operationInfo.connectorId);
+    const parsedSwagger = await getSwaggerForConnector(operationInfo.connectorId);
 
     const { inputs: nodeInputs, dependencies: inputDependencies } = getInputParametersFromSwagger(
       nodeId,

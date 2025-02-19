@@ -1,7 +1,7 @@
 import type { ComboboxItem } from '../combobox';
 import type { ValueSegment } from '../editor';
 import { EditorCollapseToggle } from '../editor';
-import type { BaseEditorProps, CallbackHandler, CastHandler } from '../editor/base';
+import type { BaseEditorProps, CallbackHandler, CastHandler, GetTokenPickerHandler } from '../editor/base';
 import type { LabelProps } from '../label';
 import { CollapsedArray } from './collapsedarray';
 import { ExpandedComplexArray } from './expandedcomplexarray';
@@ -72,6 +72,7 @@ export interface ArrayEditorProps extends BaseEditorProps {
   onMenuOpen?: CallbackHandler;
   suppressCastingForSerialize?: boolean;
   isRequired?: boolean;
+  getTokenPicker: GetTokenPickerHandler;
 }
 
 export const ArrayEditor: React.FC<ArrayEditorProps> = ({
@@ -88,6 +89,7 @@ export const ArrayEditor: React.FC<ArrayEditorProps> = ({
   dataAutomationId,
   suppressCastingForSerialize,
   isRequired = false,
+  getTokenPicker,
   ...baseEditorProps
 }): JSX.Element => {
   const [collapsed, setCollapsed] = useState<boolean>(initialMode === InitialMode.Array);
@@ -178,6 +180,7 @@ export const ArrayEditor: React.FC<ArrayEditorProps> = ({
           setIsValid={setIsValid}
           onBlur={handleBlur}
           setCollapsedValue={setCollapsedValue}
+          getTokenPicker={getTokenPicker}
         />
       ) : isComplex ? (
         <ExpandedComplexArray
@@ -186,6 +189,7 @@ export const ArrayEditor: React.FC<ArrayEditorProps> = ({
           allItems={items as ComplexArrayItems[]}
           canDeleteLastItem={canDeleteLastItem}
           setItems={updateComplexItems}
+          getTokenPicker={getTokenPicker}
         />
       ) : (
         <ExpandedSimpleArray
@@ -197,6 +201,7 @@ export const ArrayEditor: React.FC<ArrayEditorProps> = ({
           labelProps={labelProps}
           canDeleteLastItem={canDeleteLastItem}
           setItems={updateSimpleItems}
+          getTokenPicker={getTokenPicker}
         />
       )}
       <div className="msla-array-commands">

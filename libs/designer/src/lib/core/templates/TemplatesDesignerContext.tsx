@@ -1,9 +1,6 @@
 import type {
-  IApiManagementService,
-  IAppServiceService,
   IConnectionParameterEditorService,
   IConnectionService,
-  IFunctionService,
   IGatewayService,
   ITenantService,
   ILoggerService,
@@ -30,9 +27,6 @@ export interface TemplateServiceOptions {
   tenantService?: ITenantService;
   loggerService?: ILoggerService;
   oAuthService: IOAuthService;
-  apimService?: IApiManagementService;
-  functionService?: IFunctionService;
-  appServiceService?: IAppServiceService;
   connectionParameterEditorService?: IConnectionParameterEditorService;
   templateService?: ITemplateService;
   uiInteractionsService?: IDesignerUiInteractionsService;

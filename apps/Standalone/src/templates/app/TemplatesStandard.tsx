@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useMemo } from 'react';
-import { TemplatesDataProvider, templateStore, TemplatesView } from '@microsoft/logic-apps-designer';
+import { getReactQueryClient, TemplatesDataProvider, templateStore, TemplatesView } from '@microsoft/logic-apps-designer';
 import { environment } from '../../environments/environment';
 import type { RootState } from '../state/Store';
 import { TemplatesDesigner, TemplatesDesignerProvider } from '@microsoft/logic-apps-designer';
@@ -16,6 +16,9 @@ import {
   StandardOperationManifestService,
   guid,
   setObjectPropertyValue,
+  StandardConnectorService,
+  BaseAppServiceService,
+  BaseApiManagementService,
 } from '@microsoft/logic-apps-shared';
 import {
   getConnectionStandard,
@@ -38,6 +41,9 @@ import axios from 'axios';
 import type { ConnectionMapping } from '@microsoft/logic-apps-designer/src/lib/core/state/templates/workflowSlice';
 import { parseWorkflowParameterValue } from '@microsoft/logic-apps-designer';
 import { useFunctionalState } from '@react-hookz/web';
+import { ArtifactService } from '../../designer/app/AzureLogicAppsDesigner/Services/Artifact';
+import { ChildWorkflowService } from '../../designer/app/AzureLogicAppsDesigner/Services/ChildWorkflow';
+import type { QueryClient } from '@tanstack/react-query';
 
 interface StringifiedWorkflow {
   name: string;
@@ -64,6 +70,7 @@ export const TemplatesStandard = () => {
 
   const [connectionsData, setConnectionsData] = useFunctionalState(originalConnectionsData);
   const [settingsData, setSettingsData] = useFunctionalState(originalSettingsData);
+  const queryClient = getReactQueryClient();
 
   useEffect(() => {
     if (originalSettingsData) {
@@ -189,6 +196,35 @@ export const TemplatesStandard = () => {
     [connectionsData, settingsData]
   );
 
+  const getConnectionConfiguration = useCallback(
+    async (connectionId: string): Promise<any> => {
+      if (!connectionId) {
+        return Promise.resolve();
+      }
+
+      const connectionName = connectionId.split('/').splice(-1)[0];
+      const connectionInfo =
+        connectionsData()?.serviceProviderConnections?.[connectionName] ?? connectionsData()?.apiManagementConnections?.[connectionName];
+
+      if (connectionInfo) {
+        // TODO(psamband): Add new settings in this blade so that we do not resolve all the appsettings in the connectionInfo.
+        const resolvedConnectionInfo = WorkflowUtility.resolveConnectionsReferences(
+          JSON.stringify(connectionInfo),
+          {},
+          settingsData()?.properties
+        );
+        delete resolvedConnectionInfo.displayName;
+
+        return {
+          connection: resolvedConnectionInfo,
+        };
+      }
+
+      return undefined;
+    },
+    [connectionsData, settingsData]
+  );
+
   const services = useMemo(
     () =>
       getServices(
@@ -196,9 +232,12 @@ export const TemplatesStandard = () => {
         connectionsData() ?? {},
         workflowAppData as WorkflowApp,
         addConnectionDataInternal,
+        getConnectionConfiguration,
         tenantId,
         objectId,
-        canonicalLocation
+        canonicalLocation,
+        queryClient,
+        settingsData()?.properties ?? {}
       ),
     // eslint-disable-next-line react-hooks/exhaustive-deps
     [connectionsData, settingsData, workflowAppData, tenantId, canonicalLocation, appId]
@@ -317,15 +356,23 @@ const getServices = (
   connectionsData: ConnectionsData,
   workflowApp: WorkflowApp | undefined,
   addConnection: (data: ConnectionAndAppSetting) => Promise<void>,
+  getConfiguration: (connectionId: string) => Promise<any>,
   tenantId: string | undefined,
   objectId: string | undefined,
-  location: string
+  location: string,
+  queryClient: QueryClient,
+  appSettings: Record<string, string>
 ): any => {
   const armUrl = 'https://management.azure.com';
   const baseUrl = `${armUrl}${siteResourceId}/hostruntime/runtime/webhooks/workflow/api/management`;
   const { subscriptionId, resourceGroup, resourceName } = new ArmParser(siteResourceId ?? '');
 
   const defaultServiceParams = { baseUrl, httpClient, apiVersion };
+  const armServiceParams = {
+    ...defaultServiceParams,
+    baseUrl: armUrl,
+    siteResourceId,
+  };
 
   const connectionService = new StandardConnectionService({
     ...defaultServiceParams,
@@ -365,6 +412,78 @@ const getServices = (
     objectId,
   });
   const operationManifestService = new StandardOperationManifestService(defaultServiceParams);
+
+  const apiManagementService = new BaseApiManagementService({
+    apiVersion: '2021-08-01',
+    baseUrl,
+    subscriptionId,
+    httpClient,
+    queryClient,
+  });
+  const childWorkflowService = new ChildWorkflowService({
+    apiVersion,
+    baseUrl: armUrl,
+    siteResourceId,
+    httpClient,
+    workflowName: 'default',
+  });
+  const artifactService = new ArtifactService({
+    ...armServiceParams,
+    siteResourceId,
+    integrationAccountCallbackUrl: appSettings['WORKFLOW_INTEGRATION_ACCOUNT_CALLBACK_URL'],
+  });
+  const appService = new BaseAppServiceService({
+    baseUrl: armUrl,
+    apiVersion,
+    subscriptionId,
+    httpClient,
+  });
+  const connectorService = new StandardConnectorService({
+    ...defaultServiceParams,
+    clientSupportedOperations: [
+      ['connectionProviders/localWorkflowOperation', 'invokeWorkflow'],
+      ['connectionProviders/xmlOperations', 'xmlValidation'],
+      ['connectionProviders/xmlOperations', 'xmlTransform'],
+      ['connectionProviders/liquidOperations', 'liquidJsonToJson'],
+      ['connectionProviders/liquidOperations', 'liquidJsonToText'],
+      ['connectionProviders/liquidOperations', 'liquidXmlToJson'],
+      ['connectionProviders/liquidOperations', 'liquidXmlToText'],
+      ['connectionProviders/flatFileOperations', 'flatFileDecoding'],
+      ['connectionProviders/flatFileOperations', 'flatFileEncoding'],
+      ['connectionProviders/swiftOperations', 'SwiftDecode'],
+      ['connectionProviders/swiftOperations', 'SwiftEncode'],
+      ['/connectionProviders/apiManagementOperation', 'apiManagement'],
+      ['connectionProviders/http', 'httpswaggeraction'],
+      ['connectionProviders/http', 'httpswaggertrigger'],
+    ].map(([connectorId, operationId]) => ({ connectorId, operationId })),
+    getConfiguration,
+    schemaClient: {},
+    valuesClient: {
+      getWorkflows: () => childWorkflowService.getWorkflowsWithRequestTrigger(),
+      getMapArtifacts: (args: any) => {
+        const { mapType, mapSource } = args.parameters;
+        return artifactService.getMapArtifacts(mapType, mapSource);
+      },
+      getSwaggerOperations: (args: any) => {
+        const { parameters } = args;
+        return appService.getOperations(parameters.swaggerUrl);
+      },
+      getSchemaArtifacts: (args: any) => artifactService.getSchemaArtifacts(args.parameters.schemaSource),
+      getApimOperations: (args: any) => {
+        const { configuration } = args;
+        if (!configuration?.connection?.apiId) {
+          throw new Error('Missing api information to make dynamic call');
+        }
+
+        return apiManagementService.getOperations(configuration?.connection?.apiId);
+      },
+    },
+    apiHubServiceDetails: {
+      apiVersion: '2018-07-01-preview',
+      baseUrl: armUrl,
+    },
+  });
+
   const workflowService: IWorkflowService = {
     getCallbackUrl: () => Promise.resolve({} as any),
     getAppIdentity: () => workflowApp?.identity as any,
@@ -394,6 +513,7 @@ const getServices = (
     operationManifestService,
     templateService,
     workflowService,
+    connectorService,
   };
 };
 
