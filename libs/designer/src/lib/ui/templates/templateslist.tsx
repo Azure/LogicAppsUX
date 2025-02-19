@@ -10,6 +10,7 @@ import type { CreateWorkflowHandler, TemplatesDesignerProps } from './TemplatesD
 import { setPageNum, templatesCountPerPage } from '../../core/state/templates/manifestSlice';
 import { QuickViewPanel } from '../panel/templatePanel/quickViewPanel/quickViewPanel';
 import { CreateWorkflowPanel } from '../panel/templatePanel/createWorkflowPanel/createWorkflowPanel';
+import { initializeWorkflowMetadata } from '../../core/actions/bjsworkflow/templates';
 import { useIntl } from 'react-intl';
 
 export const TemplatesList = ({ detailFilters, createWorkflowCall, isWorkflowEmpty = true }: TemplatesDesignerProps) => {
@@ -17,10 +18,18 @@ export const TemplatesList = ({ detailFilters, createWorkflowCall, isWorkflowEmp
   const intl = useIntl();
   const dispatch = useDispatch<AppDispatch>();
 
+  const { manifest } = useSelector((state: RootState) => state.template);
   const {
     filteredTemplateNames,
     filters: { pageNum, detailFilters: appliedDetailFilters },
   } = useSelector((state: RootState) => state.manifest);
+
+  useEffect(() => {
+    if (manifest) {
+      dispatch(initializeWorkflowMetadata());
+    }
+  }, [dispatch, manifest]);
+
   const selectedTabId = appliedDetailFilters?.Type?.[0]?.value;
 
   const startingIndex = pageNum * templatesCountPerPage;

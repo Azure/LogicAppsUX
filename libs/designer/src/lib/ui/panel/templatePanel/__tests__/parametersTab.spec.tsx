@@ -1,17 +1,24 @@
 import { describe, beforeAll, expect, it, beforeEach } from 'vitest';
 import type { AppStore } from '../../../../core/state/templates/store';
 import { setupStore } from '../../../../core/state/templates/store';
-import type { Template } from '@microsoft/logic-apps-shared';
+import { InitOperationManifestService, type Template } from '@microsoft/logic-apps-shared';
 import { renderWithProviders } from '../../../../__test__/template-test-utils';
 import { screen } from '@testing-library/react';
 import { TemplatePanelView } from '../../../../core/state/templates/panelSlice';
 import constants from '../../../../common/constants';
 import { ParametersPanel } from '../createWorkflowPanel/tabs/parametersTab';
+import { ReactQueryProvider } from '../../../../core/ReactQueryProvider';
+// biome-ignore lint/correctness/noUnusedImports: <explanation>
+import React from 'react';
 
 describe('panel/templatePanel/createWorkflowPanel/parametersTab', () => {
   let store: AppStore;
   let param1: Template.ParameterDefinition;
   let param2: Template.ParameterDefinition;
+  const manifestService = {
+    isSupported: () => true,
+    getOperationManifest: () => Promise.resolve({ properties: { connector: { properties: { displayName: 'connector' } } } }),
+  };
 
   beforeAll(() => {
     param1 = {
@@ -61,10 +68,16 @@ describe('panel/templatePanel/createWorkflowPanel/parametersTab', () => {
       },
     };
     store = setupStore(minimalStoreData);
+    InitOperationManifestService(manifestService as any);
   });
 
   beforeEach(() => {
-    renderWithProviders(<ParametersPanel />, { store });
+    renderWithProviders(
+      <ReactQueryProvider>
+        <ParametersPanel />
+      </ReactQueryProvider>,
+      { store }
+    );
   });
 
   it('Shows Parameters Tab values displayed', async () => {

@@ -35,16 +35,26 @@ export interface Artifact {
 export interface Parameter {
   name: string;
   type: string;
-  default?: string;
+  default?: any;
   description: string;
   required?: boolean;
   displayName: string;
   value?: any;
   allowedValues?: { value: any; displayName: string }[];
+  dynamicData?: {
+    type: 'picker' | 'list';
+    workflow: string;
+    operation: string;
+    connection?: string;
+  };
 }
 
 export interface ParameterDefinition extends Parameter {
   associatedWorkflows?: string[];
+  associatedOperationParameter?: {
+    operationId: string;
+    parameterId: string;
+  };
 }
 
 export interface Connection {

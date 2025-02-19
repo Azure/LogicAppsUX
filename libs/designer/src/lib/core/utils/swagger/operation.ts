@@ -11,7 +11,7 @@ import type {
   NodeOutputsWithDependencies,
 } from '../../actions/bjsworkflow/operationdeserializer';
 import { getOperationSettings } from '../../actions/bjsworkflow/settings';
-import { getConnectorWithSwagger } from '../../queries/connections';
+import { getConnectorWithSwagger, getSwaggerForConnector } from '../../queries/connections';
 import type { DependencyInfo, NodeInputs, NodeOperation, OutputInfo } from '../../state/operation/operationMetadataSlice';
 import { DynamicLoadStatus, ErrorLevel, initializeOperationInfo, updateErrorDetails } from '../../state/operation/operationMetadataSlice';
 import { addResultSchema } from '../../state/staticresultschema/staticresultsSlice';
@@ -276,23 +276,26 @@ export const getOutputParametersFromSwagger = (
   };
 };
 
-const getOperationInfo = async (
+export const getOperationInfo = async (
   nodeId: string,
   operation: LogicAppsV2.ApiConnectionAction,
-  references: ConnectionReferences
+  references: ConnectionReferences,
+  connectorId?: string
 ): Promise<OperationInfo> => {
   const { type } = operation;
   switch (type.toLowerCase()) {
     case Constants.NODE.TYPE.API_CONNECTION:
     case Constants.NODE.TYPE.API_CONNECTION_NOTIFICATION:
     case Constants.NODE.TYPE.API_CONNECTION_WEBHOOK: {
-      const reference = references[getLegacyConnectionReferenceKey(operation) ?? ''];
-      if (!reference || !reference.api || !reference.api.id) {
-        throw new Error(`Incomplete information for operation '${nodeId}'`);
+      if (!connectorId) {
+        const reference = references[getLegacyConnectionReferenceKey(operation) ?? ''];
+        if (!reference || !reference.api || !reference.api.id) {
+          throw new Error(`Incomplete information for operation '${nodeId}'`);
+        }
+        connectorId = cleanResourceId(reference.api.id);
       }
-      const connectorId = cleanResourceId(reference.api.id);
 
-      const { parsedSwagger } = await getConnectorWithSwagger(connectorId);
+      const parsedSwagger = await getSwaggerForConnector(connectorId);
       if (!parsedSwagger) {
         throw new Error(`Could not fetch swagger for connector - ${connectorId}`);
       }

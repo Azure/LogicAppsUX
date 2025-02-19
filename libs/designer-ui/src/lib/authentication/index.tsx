@@ -1,6 +1,6 @@
 import type { ValueSegment } from '../editor';
 import { EditorCollapseToggle } from '../editor';
-import type { BaseEditorProps } from '../editor/base';
+import type { BaseEditorProps, GetTokenPickerHandler } from '../editor/base';
 import { isTokenValueSegment, notEqual } from '../editor/base/utils/helper';
 import type { AuthenticationOAuthType } from './AADOAuth/AADOAuth';
 import { ActiveDirectoryAuthentication } from './AADOAuth/AADOAuth';
@@ -75,6 +75,7 @@ interface AuthenticationEditorProps extends BaseEditorProps {
   type: AuthenticationType;
   options: AuthenticationEditorOptions;
   authenticationValue: AuthProps;
+  getTokenPicker: GetTokenPickerHandler;
 }
 
 export const AuthenticationEditor = ({
