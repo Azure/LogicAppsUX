@@ -30,6 +30,7 @@ import { useIntl } from 'react-intl';
 import { InputCustomInfoLabel } from './inputCustomInfoLabel';
 import { useStyles } from './styles';
 import { InputTextbox } from './inputTextbox';
+import { XsltFilePicker } from './xsltFilePicker';
 
 export const InputTabContents = (props: {
   func: FunctionData;
@@ -156,6 +157,10 @@ export const InputTabContents = (props: {
             }
           };
 
+          const updateCustomInputConnection = (inputStr: string) => {
+            validateAndCreateConnection(inputStr, undefined);
+          };
+
           const removeConnection = (inputIndex: number) => {
             const targetNodeReactFlowKey = props.functionKey;
             dispatch(
@@ -173,12 +178,13 @@ export const InputTabContents = (props: {
                 <InputTextbox
                   input={input}
                   loadedInputValue={getInputValue(inputConnection)}
-                  validateAndCreateConnection={validateAndCreateConnection}
+                  updateCustomInputConnection={updateCustomInputConnection}
                 />
               );
               break;
             }
             case InputFormat.FilePicker: {
+              inputJSX = <XsltFilePicker onFileSelect={updateCustomInputConnection} />;
               break;
             }
             default:

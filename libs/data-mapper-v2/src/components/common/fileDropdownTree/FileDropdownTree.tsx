@@ -7,14 +7,15 @@ import useStyles from '../styles';
 import { useState, useMemo, useCallback, useEffect } from 'react';
 import { isEmptyString } from '@microsoft/logic-apps-shared';
 
-interface DropdownTreeProps {
+export interface FileDropdownTreeProps {
   onItemSelect: (item: IFileSysTreeItem) => void;
   className?: string;
+  placeholder: string;
   fileTree: IFileSysTreeItem[];
   onReopen: () => void;
 }
 
-export const FileDropdownTree = ({ onItemSelect, className, fileTree, onReopen}: DropdownTreeProps) => {
+export const FileDropdownTree = ({ onItemSelect, placeholder, className, fileTree, onReopen }: FileDropdownTreeProps) => {
   const [showDropdownTree, setShowDropdownTree] = useState(false);
   const [searchValue, setSearchValue] = useState('');
 
@@ -25,12 +26,6 @@ export const FileDropdownTree = ({ onItemSelect, className, fileTree, onReopen}:
     // update items when the tree is closed and reopened
     onReopen();
   }, [showDropdownTree, onReopen]);
-
-  const selectSchema = intl.formatMessage({
-    defaultMessage: 'Select schema',
-    id: '3pheF6',
-    description: 'Select schema',
-  });
 
   const search = intl.formatMessage({
     defaultMessage: 'Search',
@@ -66,8 +61,7 @@ export const FileDropdownTree = ({ onItemSelect, className, fileTree, onReopen}:
   }, []);
 
   const filteredItems = useMemo(
-    () =>
-      fileTree.map((item) => filterDropdownItem(item, searchValue)).filter((item) => item !== undefined) as IFileSysTreeItem[],
+    () => fileTree.map((item) => filterDropdownItem(item, searchValue)).filter((item) => item !== undefined) as IFileSysTreeItem[],
     [fileTree, searchValue, filterDropdownItem]
   );
 
@@ -100,8 +94,8 @@ export const FileDropdownTree = ({ onItemSelect, className, fileTree, onReopen}:
           setShowDropdownTree(!showDropdownTree);
         }}
       >
-        <Text className={styles.dropdownInput} defaultValue={selectSchema}>
-          {selectSchema}
+        <Text className={styles.dropdownInput} defaultValue={placeholder}>
+          {placeholder}
         </Text>
         {showDropdownTree ? (
           <ChevronDownRegular className={styles.dropdownChevronIcon} />

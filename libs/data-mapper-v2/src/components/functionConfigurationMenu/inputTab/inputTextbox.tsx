@@ -2,16 +2,15 @@ import { Tooltip, Textarea } from '@fluentui/react-components';
 import { useDebouncedCallback } from '@react-hookz/web';
 import { useState, useEffect } from 'react';
 import { addQuotesToString } from '../../../utils/Function.Utils';
-import type { InputOptionProps } from '../inputDropdown/InputDropdown';
 import type { FunctionInput } from '../../../models';
 
 export type InputTextboxProps = {
   input: FunctionInput;
   loadedInputValue: string | undefined;
-  validateAndCreateConnection: (optionValue: string | undefined, option: InputOptionProps | undefined) => void;
+  updateCustomInputConnection: (optionValue: string) => void;
 };
 
-export const InputTextbox = ({ input, loadedInputValue, validateAndCreateConnection }: InputTextboxProps) => {
+export const InputTextbox = ({ input, loadedInputValue, updateCustomInputConnection }: InputTextboxProps) => {
   const [inputTyped, setInputTyped] = useState<boolean>(false);
 
   const [inputText, setInputText] = useState<string>(loadedInputValue ? loadedInputValue : '');
@@ -25,7 +24,7 @@ export const InputTextbox = ({ input, loadedInputValue, validateAndCreateConnect
   const onCustomTextBoxChange = (value: string) => {
     const formattedValue = addQuotesToString(value);
 
-    validateAndCreateConnection(formattedValue, undefined);
+    updateCustomInputConnection(formattedValue);
   };
 
   const debounceDelay = 300;

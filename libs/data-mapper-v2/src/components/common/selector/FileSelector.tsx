@@ -54,12 +54,18 @@ const SchemaFileSelector = <T extends U>(props: FileSelectorProps<T>) => {
 
   const onDropdownReopen = () => {
     fileService.readCurrentSchemaOptions();
-  }
+  };
 
   const addNewInfo = intl.formatMessage({
     defaultMessage: 'Copy schema and its imports from the file system to your Logic App.',
     id: 'nRCTkX',
     description: 'Add new option',
+  });
+
+  const selectSchema = intl.formatMessage({
+    defaultMessage: 'Select schema',
+    id: '3pheF6',
+    description: 'Select schema',
   });
 
   return (
@@ -93,7 +99,13 @@ const SchemaFileSelector = <T extends U>(props: FileSelectorProps<T>) => {
                     </div>
                   ) : null}
                   {selectedKey === key && key === 'select-existing' ? (
-                    <FileDropdownTree fileTree={availableSchemaTree} onItemSelect={onSelect} className={styles.selectorDropdownRoot} onReopen = {onDropdownReopen} />
+                    <FileDropdownTree
+                      placeholder={selectSchema}
+                      fileTree={availableSchemaTree}
+                      onItemSelect={onSelect}
+                      className={styles.selectorDropdownRoot}
+                      onReopen={onDropdownReopen}
+                    />
                   ) : null}
                 </div>
               }
