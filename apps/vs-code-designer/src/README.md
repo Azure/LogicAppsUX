@@ -6,7 +6,7 @@ In Visual Studio Code, you can use the Azure Logic Apps (Standard) extension to 
 
 ## Azure Logic Apps - Create Standard logic app projects from Azure portal export
 
-Starting with version 5.18.7, the Azure Logic Apps (Standard) extension for Visual Studio Code will provide the ability to create new Logic Apps Standard projects from an application exported from the Azure Portal. For more information, see [Export Logic Apps Standard Application to VS Code](https://go.microsoft.com/fwlink/?linkid=2304930).
+Starting with version 5.18.7, the Azure Logic Apps (Standard) extension for Visual Studio Code provides the capability to create Standard logic app projects from a logic app exported from the Azure portal. For more information, see [Export Standard logic apps from Azure portal to Visual Studio Code](https://go.microsoft.com/fwlink/?linkid=2304930).
 
 ## Azure Logic Apps - Introducing the Logic Apps Hybrid Deployment Model (preview)
 
