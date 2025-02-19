@@ -6,29 +6,25 @@ import type { IFileSysTreeItem } from '@microsoft/logic-apps-shared';
 import useStyles from '../styles';
 import { useState, useMemo, useCallback, useEffect } from 'react';
 import { isEmptyString } from '@microsoft/logic-apps-shared';
-import { DataMapperFileService } from '../../../core';
-import { useSelector } from 'react-redux';
-import type { RootState } from '../../../core/state/Store';
 
 interface DropdownTreeProps {
   onItemSelect: (item: IFileSysTreeItem) => void;
   className?: string;
+  fileTree: IFileSysTreeItem[];
+  onReopen: () => void;
 }
 
-export const FileDropdownTree = ({ onItemSelect, className }: DropdownTreeProps) => {
+export const FileDropdownTree = ({ onItemSelect, className, fileTree, onReopen}: DropdownTreeProps) => {
   const [showDropdownTree, setShowDropdownTree] = useState(false);
   const [searchValue, setSearchValue] = useState('');
-  const availableSchemaList = useSelector((state: RootState) => state.schema.availableSchemas);
-
-  const fileService = DataMapperFileService();
 
   const intl = useIntl();
   const styles = useStyles();
 
   useEffect(() => {
     // update items when the tree is closed and reopened
-    fileService.readCurrentSchemaOptions();
-  }, [showDropdownTree, fileService]);
+    onReopen();
+  }, [showDropdownTree, onReopen]);
 
   const selectSchema = intl.formatMessage({
     defaultMessage: 'Select schema',
@@ -71,8 +67,8 @@ export const FileDropdownTree = ({ onItemSelect, className }: DropdownTreeProps)
 
   const filteredItems = useMemo(
     () =>
-      availableSchemaList.map((item) => filterDropdownItem(item, searchValue)).filter((item) => item !== undefined) as IFileSysTreeItem[],
-    [availableSchemaList, searchValue, filterDropdownItem]
+      fileTree.map((item) => filterDropdownItem(item, searchValue)).filter((item) => item !== undefined) as IFileSysTreeItem[],
+    [fileTree, searchValue, filterDropdownItem]
   );
 
   const displayTree = (item: IFileSysTreeItem): JSX.Element => {

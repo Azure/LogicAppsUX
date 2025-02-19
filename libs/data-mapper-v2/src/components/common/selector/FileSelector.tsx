@@ -2,8 +2,11 @@ import { useStyles } from './styles';
 import { StackShim } from '@fluentui/react-migration-v8-v9';
 import { Button, Caption2, InfoLabel, Input, Radio, RadioGroup, Text, type RadioGroupOnChangeData } from '@fluentui/react-components';
 import type { IFileSysTreeItem } from '@microsoft/logic-apps-shared';
-import { FileDropdownTree } from '../fileDropdownTree/DropdownTree';
+import { FileDropdownTree } from '../fileDropdownTree/FileDropdownTree';
 import { useIntl } from 'react-intl';
+import { useSelector } from 'react-redux';
+import type { RootState } from '../../../core/state/Store';
+import { DataMapperFileService } from '../../../core';
 
 type U = {
   text: string;
@@ -32,7 +35,7 @@ export type FileSelectorProps<T> = {
   };
 };
 
-const FileSelector = <T extends U>(props: FileSelectorProps<T>) => {
+const SchemaFileSelector = <T extends U>(props: FileSelectorProps<T>) => {
   const {
     selectedKey,
     options = {},
@@ -44,6 +47,14 @@ const FileSelector = <T extends U>(props: FileSelectorProps<T>) => {
   } = props;
   const styles = useStyles();
   const intl = useIntl();
+
+  const availableSchemaTree = useSelector((state: RootState) => state.schema.availableSchemas);
+
+  const fileService = DataMapperFileService();
+
+  const onDropdownReopen = () => {
+    fileService.readCurrentSchemaOptions();
+  }
 
   const addNewInfo = intl.formatMessage({
     defaultMessage: 'Copy schema and its imports from the file system to your Logic App.',
@@ -82,7 +93,7 @@ const FileSelector = <T extends U>(props: FileSelectorProps<T>) => {
                     </div>
                   ) : null}
                   {selectedKey === key && key === 'select-existing' ? (
-                    <FileDropdownTree onItemSelect={onSelect} className={styles.selectorDropdownRoot} />
+                    <FileDropdownTree fileTree={availableSchemaTree} onItemSelect={onSelect} className={styles.selectorDropdownRoot} onReopen = {onDropdownReopen} />
                   ) : null}
                 </div>
               }
@@ -102,4 +113,4 @@ const FileSelector = <T extends U>(props: FileSelectorProps<T>) => {
   );
 };
 
-export default FileSelector;
+export default SchemaFileSelector;
