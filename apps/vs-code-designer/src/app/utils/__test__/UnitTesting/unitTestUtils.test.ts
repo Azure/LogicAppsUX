@@ -35,14 +35,14 @@ vi.mock('vscode-nls', () => ({
   loadMessageBundle: vi.fn(() => (key: string, message: string) => message),
 }));
 
-// Mock the extension variables (ext) to spy on logging behavior
-vi.mock('../../../../extensionVariables', () => ({
-  ext: {
-    outputChannel: {
-      appendLog: vi.fn(),
-    },
-  },
-}));
+// // Mock the extension variables (ext) to spy on logging behavior
+// vi.mock('../../../../extensionVariables', () => ({
+//   ext: {
+//     outputChannel: {
+//       appendLog: vi.fn(),
+//     },
+//   },
+// }));
 
 // ============================================================================
 // Global Constants and Test Hooks
