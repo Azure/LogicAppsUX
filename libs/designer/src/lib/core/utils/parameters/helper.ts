@@ -3651,7 +3651,7 @@ export function parameterValueToJSONString(parameterValue: ValueSegment[], apply
     let tokenExpression: string = expression.value;
 
     if (isTokenValueSegment(expression)) {
-      const stringifiedTokenExpression = tokenExpression;
+      const stringifiedTokenExpression = JSON.stringify(tokenExpression).slice(1, -1);
       // Note: Stringify the token expression to escape double quotes and other characters which must be escaped in JSON.
       if (shouldInterpolate) {
         if (applyCasting) {
