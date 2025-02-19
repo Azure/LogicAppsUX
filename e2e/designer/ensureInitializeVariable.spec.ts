@@ -14,39 +14,38 @@ test(
     await page.getByText('Add an action').click();
     await page.getByPlaceholder('Search').click();
     await page.getByPlaceholder('Search').fill('initialize variable');
-    await page.getByLabel('Initialize variable').click();
-    await page.getByRole('paragraph').click();
-    await page.getByLabel('Name*').fill('test');
-    await page.getByPlaceholder('Enter initial value').click();
-    await page.getByRole('option', { name: 'true' }).click();
-    await page.getByText('Boolean').click();
+    await page.getByLabel('Initialize variables').click();
+    await page.getByRole('textbox', { name: 'Enter variable name' }).getByRole('paragraph').click();
+    await page.getByRole('textbox', { name: 'Enter variable name' }).fill('test');
+    await page.getByText('Select variable type').click();
     await page.getByRole('option', { name: 'Integer' }).click();
-    await page.getByTestId('msla-setting-token-editor-stringeditor-value').click();
-    await page.getByTestId('msla-setting-token-editor-stringeditor-value').getByRole('paragraph').fill('test');
+    await page.getByRole('textbox', { name: 'Enter initial value' }).getByRole('paragraph').click();
+    await page.getByRole('textbox', { name: 'Enter initial value' }).fill('test');
     await page
-      .locator('#msla-node-details-panel-Initialize_variable div')
-      .filter({ hasText: 'Name*testAdd dynamic data or' })
+      .locator('#msla-node-details-panel-Initialize_variables div')
+      .filter({ hasText: 'Variables*testname*testAdd' })
       .first()
       .click();
-    await expect(page.getByRole('alert')).toContainText('Enter a valid integer.');
-    await page.getByTestId('msla-setting-token-editor-stringeditor-value').click();
-    await page.getByTestId('msla-setting-token-editor-stringeditor-value').getByRole('paragraph').fill('12');
+    await expect(page.locator('#msla-node-details-panel-Initialize_variables')).toContainText('Value must be a valid integer');
+    await page.getByRole('textbox', { name: 'Enter initial value' }).getByRole('paragraph').click();
+    await page.getByRole('textbox', { name: 'Enter initial value' }).fill('12');
     await page
-      .locator('#msla-node-details-panel-Initialize_variable div')
-      .filter({ hasText: 'Name*testAdd dynamic data or' })
+      .locator('#msla-node-details-panel-Initialize_variables div')
+      .filter({ hasText: 'Variables*testname*testAdd' })
       .first()
       .click();
 
     const serialized: any = await getSerializedWorkflowFromState(page);
-    expect(serialized.definition.actions.Initialize_variable.inputs.variables[0].type).toBe('integer');
-    expect(serialized.definition.actions.Initialize_variable.inputs.variables[0].value).toEqual(12);
+    expect(serialized.definition.actions.Initialize_variables.inputs.variables[0].type).toBe('integer');
+    expect(serialized.definition.actions.Initialize_variables.inputs.variables[0].value).toEqual(12);
 
     await page.getByText('Integer').click();
     await page.getByRole('option', { name: 'Boolean' }).click();
+    await page.getByLabel('Clear custom value').click();
     await page.getByPlaceholder('Enter initial value').click();
     await page.getByRole('option', { name: 'true' }).click();
     const serialized2: any = await getSerializedWorkflowFromState(page);
-    expect(serialized2.definition.actions.Initialize_variable.inputs.variables[0].type).toBe('boolean');
-    expect(serialized2.definition.actions.Initialize_variable.inputs.variables[0].value).toEqual(true);
+    expect(serialized2.definition.actions.Initialize_variables.inputs.variables[0].type).toBe('boolean');
+    expect(serialized2.definition.actions.Initialize_variables.inputs.variables[0].value).toEqual(true);
   }
 );

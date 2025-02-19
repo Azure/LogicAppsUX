@@ -67,13 +67,17 @@ export interface ComboboxItem {
 
 export interface ComboboxProps extends BaseEditorProps {
   options: ComboboxItem[];
+  // Behavior
   isLoading?: boolean;
-  errorDetails?: { message: string };
-  useOption?: boolean;
-  onMenuOpen?: CallbackHandler;
+  multiSelect?: boolean;
   isCaseSensitive?: boolean;
   shouldSort?: boolean;
-  multiSelect?: boolean;
+  useOption?: boolean;
+  // Event Handlers
+  onMenuOpen?: CallbackHandler;
+  // Error Handling
+  errorDetails?: { message: string };
+  // Misc
   serialization?: SerializationOptions;
 }
 
@@ -81,16 +85,16 @@ export const Combobox = ({
   options,
   initialValue,
   isLoading,
-  errorDetails,
+  multiSelect = false,
+  isCaseSensitive,
+  shouldSort = true,
   useOption = true,
   onChange,
   onMenuOpen,
   labelId,
-  multiSelect = false,
-  serialization,
   label,
-  shouldSort = true,
-  isCaseSensitive,
+  errorDetails,
+  serialization,
   ...baseEditorProps
 }: ComboboxProps): JSX.Element => {
   const intl = useIntl();

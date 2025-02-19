@@ -54,26 +54,31 @@ export interface DictionaryCallbackProps {
   index: number;
 }
 export interface BaseEditorProps {
-  className?: string;
-  readonly?: boolean;
-  placeholder?: string;
-  basePlugins?: BasePlugins;
   initialValue: ValueSegment[];
-  children?: React.ReactNode;
-  ariaLabel?: string;
-  labelId?: string;
+  // Appearance
+  className?: string;
+  placeholder?: string;
   label?: string;
-  valueType?: string;
-  tokenPickerButtonProps?: TokenPickerButtonEditorProps;
-  dataAutomationId?: string;
-  tokenMapping?: Record<string, ValueSegment>;
+  labelId?: string;
+  ariaLabel?: string;
+  // Behavior
+  readonly?: boolean;
   isSwitchFromPlaintextBlocked?: boolean;
-  loadParameterValueFromString?: loadParameterValueFromStringHandler;
+  valueType?: string;
+  tokenMapping?: Record<string, ValueSegment>;
+  // Plugins & Extensions
+  basePlugins?: BasePlugins;
+  tokenPickerButtonProps?: TokenPickerButtonEditorProps;
+  // Event Handlers
   onChange?: ChangeHandler;
   onBlur?: () => void;
   onFocus?: () => void;
   getTokenPicker: GetTokenPickerHandler;
   setIsValuePlaintext?: (isValuePlaintext: boolean) => void;
+  loadParameterValueFromString?: loadParameterValueFromStringHandler;
+  // Misc
+  dataAutomationId?: string;
+  children?: React.ReactNode;
 }
 
 export interface BasePlugins {

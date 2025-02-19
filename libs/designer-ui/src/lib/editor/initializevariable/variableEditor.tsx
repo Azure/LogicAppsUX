@@ -118,6 +118,24 @@ export const VariableEditor = ({
     description: 'Heading Title for a Variable Without Name',
   });
 
+  const namePlaceHolder = intl.formatMessage({
+    defaultMessage: 'Enter variable name',
+    id: 'QKC8fv',
+    description: 'Placeholder for variable name',
+  });
+
+  const typePlaceHolder = intl.formatMessage({
+    defaultMessage: 'Select variable type',
+    id: 'Xrd4VK',
+    description: 'Placeholder for variable type',
+  });
+
+  const valuePlaceHolder = intl.formatMessage({
+    defaultMessage: 'Enter initial value',
+    id: 'RlOSrx',
+    description: 'Placeholder for initial value',
+  });
+
   const handleBlur = (newState: ChangeState, property: string): void => {
     const newVariable = { ...variable, [property]: isEmptySegments(newState.value) ? [createEmptyLiteralValueSegment()] : newState.value };
     onVariableChange(newVariable);
@@ -140,6 +158,7 @@ export const VariableEditor = ({
         initialValue: name,
         editorBlur: (newState: ChangeState) => handleBlur(newState, VARIABLE_PROPERTIES.NAME),
         basePlugins: { ...baseEditorProps.basePlugins, tokens: false },
+        placeholder: namePlaceHolder,
       },
       errorMessage: errors?.[VARIABLE_PROPERTIES.NAME],
     },
@@ -153,6 +172,7 @@ export const VariableEditor = ({
         initialValue: type,
         options: typeOptions,
         onChange: (newState: ChangeState) => handleBlur(newState, VARIABLE_PROPERTIES.TYPE),
+        placeholder: typePlaceHolder,
       },
       errorMessage: errors?.[VARIABLE_PROPERTIES.TYPE],
     },
@@ -174,6 +194,7 @@ export const VariableEditor = ({
             ]
           : undefined,
         onChange: isBooleanType ? (newState: ChangeState) => handleBlur(newState, VARIABLE_PROPERTIES.VALUE) : undefined,
+        placeholder: valuePlaceHolder,
       },
       errorMessage: errors?.[VARIABLE_PROPERTIES.VALUE],
     },

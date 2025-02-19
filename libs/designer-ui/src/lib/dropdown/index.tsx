@@ -16,17 +16,21 @@ interface SerializationOptions {
 interface DropdownEditorProps {
   initialValue: ValueSegment[];
   options: DropdownItem[];
-  multiSelect?: boolean;
-  serialization?: SerializationOptions;
-  readonly?: boolean;
+  // Appearance
+  placeholder?: string;
+  label?: string;
   height?: number;
   fontSize?: number;
-  label?: string;
+  // Behavior
+  multiSelect?: boolean;
+  readonly?: boolean;
   isCaseSensitive?: boolean;
-  dataAutomationId?: string;
+  // Event Handlers
   onChange?: ChangeHandler;
-  // to be used if we don't want to convert result to valueSegmentArray
   customOnChangeHandler?: (event: React.FormEvent<HTMLDivElement>, option?: IDropdownOption) => void;
+  // Misc
+  serialization?: SerializationOptions;
+  dataAutomationId?: string;
 }
 
 export interface DropdownItem {
@@ -38,18 +42,19 @@ export interface DropdownItem {
 }
 
 export const DropdownEditor = ({
-  multiSelect = false,
   initialValue,
-  serialization,
-  readonly,
   options,
+  placeholder,
+  label,
   height,
   fontSize,
-  label,
-  dataAutomationId,
+  multiSelect,
+  readonly,
   isCaseSensitive,
   onChange,
   customOnChangeHandler,
+  serialization,
+  dataAutomationId,
 }: DropdownEditorProps): JSX.Element => {
   const [selectedKey, setSelectedKey] = useState<string | undefined>(
     multiSelect ? undefined : getSelectedKey(options, initialValue, isCaseSensitive)
@@ -111,6 +116,7 @@ export const DropdownEditor = ({
         multiSelectDelimiter={serialization?.separator}
         selectedKey={selectedKey}
         selectedKeys={selectedKeys}
+        placeholder={placeholder}
         onChange={(event: React.FormEvent<HTMLDivElement>, option?: IDropdownOption) => {
           customOnChangeHandler?.(event, option);
           multiSelect ? handleOptionMultiSelect(event, option) : handleOptionSelect(event, option);
