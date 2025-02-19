@@ -116,7 +116,6 @@ export function TokenPickerFooter({
     let currExpression: Expression | null = null;
     const unescapedExpressionValue = unescapeString(expression.value);
     try {
-      console.log(unescapedExpressionValue);
       currExpression = ExpressionParser.parseExpression(unescapedExpressionValue);
     } catch (ex) {
       console.log(ex);

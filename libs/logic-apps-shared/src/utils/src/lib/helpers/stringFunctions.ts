@@ -20,18 +20,11 @@ export const normalizeAutomationId = (s: string) => s.replace(/\W/g, '-');
 export const wrapTokenValue = (s: string) => `@{${s}}`;
 
 export const wrapStringifiedTokenSegments = (jsonString: string): string => {
-  // Regex to find standalone tokens after a colon and wrap them in quotes
-  const tokenRegex = /:\s*(@{?[^,}\s]*}?)(?=\s*[},])/g;
+  const tokenRegex = /:\s?(@{?(?:[^,}\s]+}?))/g;
 
-  const sanitizedString = jsonString.replace(tokenRegex, (match, token) => {
-    // if the token isn't already wrapped in quotes, add them
-    if (!/^".*"$/.test(token)) {
-      return `: "${token}"`;
-    }
-    return match;
+  return jsonString.replace(tokenRegex, (match, token) => {
+    return /^".*"$/.test(token) ? match : `: "${token}"`;
   });
-
-  return sanitizedString;
 };
 
 // Some staging locations like `East US (stage)` show sometimes as `eastus(stage)` and sometimes as `eastusstage`

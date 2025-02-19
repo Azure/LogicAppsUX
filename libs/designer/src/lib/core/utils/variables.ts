@@ -2,8 +2,8 @@ import Constants from '../../common/constants';
 import type { NodeInputs } from '../state/operation/operationMetadataSlice';
 import type { NodeTokens, VariableDeclaration } from '../state/tokens/tokensSlice';
 import { ParameterGroupKeys } from './parameters/helper';
-import type { OutputToken as Token } from '@microsoft/designer-ui';
-import { parseVariableEditorSegments, TokenType } from '@microsoft/designer-ui';
+import type { InitializeVariableProps, OutputToken as Token } from '@microsoft/designer-ui';
+import { TokenType } from '@microsoft/designer-ui';
 import { aggregate, getRecordEntry } from '@microsoft/logic-apps-shared';
 
 let variableIcon = '';
@@ -20,8 +20,7 @@ export const getVariableDeclarations = (nodeInputs: NodeInputs): VariableDeclara
     (parameter) => parameter.parameterName === Constants.PARAMETER_NAMES.VARIABLES
   );
 
-  const variables = parseVariableEditorSegments(variableParameter?.value ?? []) ?? [];
-
+  const variables: InitializeVariableProps[] = variableParameter?.editorViewModel?.variables ?? [];
   return variables
     .map((variable) => {
       const name = variable.name?.[0]?.value ?? null;

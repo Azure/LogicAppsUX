@@ -295,17 +295,13 @@ export const Combobox = ({
       {mode === Mode.Custom ? (
         <div className="msla-combobox-editor-container">
           <EditorWrapper
+            {...baseEditorProps}
             labelId={labelId}
             readonly={baseEditorProps.readonly}
             className="msla-combobox-editor"
             basePlugins={{ clearEditor: true, autoFocus: canAutoFocus }}
             initialValue={value}
             onBlur={handleBlur}
-            getTokenPicker={baseEditorProps.getTokenPicker}
-            placeholder={baseEditorProps.placeholder}
-            dataAutomationId={baseEditorProps.dataAutomationId}
-            tokenMapping={baseEditorProps.tokenMapping}
-            loadParameterValueFromString={baseEditorProps.loadParameterValueFromString}
           >
             <EditorChangePlugin setValue={setValue} />
           </EditorWrapper>

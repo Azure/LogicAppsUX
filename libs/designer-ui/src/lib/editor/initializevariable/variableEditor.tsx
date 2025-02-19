@@ -1,5 +1,5 @@
 import { Label } from '../../label';
-import { Combobox, DropdownEditor, StringEditor, TrafficLightDot, useId } from '../..';
+import { Combobox, DropdownEditor, getVariableType, StringEditor, TrafficLightDot, useId } from '../..';
 import type { DropdownItem } from '../../dropdown';
 import type { BaseEditorProps, ChangeState } from '../base';
 import type { ValueSegment } from '../models/parameter';
@@ -144,7 +144,7 @@ export const VariableEditor = ({
   const { name, type, value } = variable;
 
   const isBooleanType = type[0]?.value === VARIABLE_TYPE.BOOLEAN;
-
+  const variableType = getVariableType(type);
   const fields = [
     {
       label: VARIABLE_PROPERTIES.NAME,
@@ -186,6 +186,7 @@ export const VariableEditor = ({
         key: `value-${variableId}`,
         className: 'msla-setting-token-editor-container',
         initialValue: value,
+        valueType: variableType,
         editorBlur: (newState: ChangeState) => handleBlur(newState, VARIABLE_PROPERTIES.VALUE),
         options: isBooleanType
           ? [

@@ -81,6 +81,10 @@ export const createVariableEditorSegments = (variables: InitializeVariableProps[
   return convertStringToSegments(stringifiedVariables, nodeMap, { tokensEnabled: true });
 };
 
+export const getVariableType = (type: ValueSegment[]): string => {
+  return type[0]?.value === VARIABLE_TYPE.FLOAT ? constants.SWAGGER.TYPE.NUMBER : type[0]?.value || constants.SWAGGER.TYPE.ANY;
+};
+
 export const validateVariables = (variables: InitializeVariableProps[]): InitializeVariableErrors[] => {
   const intl = getIntl();
   const errors: InitializeVariableErrors[] = [];
@@ -117,27 +121,30 @@ export const validateVariables = (variables: InitializeVariableProps[]): Initial
         case VARIABLE_TYPE.BOOLEAN:
           if (!(equals(value, 'true') || equals(value, 'false'))) {
             errors[index][VARIABLE_PROPERTIES.VALUE] = intl.formatMessage({
-              defaultMessage: 'Enter a valid boolean.',
-              id: 'Jc8+qu',
-              description: 'Error validation message for invalid booleans',
+              defaultMessage: `''Value'' must be a valid boolean`,
+              id: 'Aw8LkK',
+              description:
+                'Error validation message for invalid booleans. Do not remove the double single quotes around the display name, as it is needed to wrap the placeholder text.',
             });
           }
           break;
         case VARIABLE_TYPE.INTEGER:
           if (!/^-?\d+$/.test(value)) {
             errors[index][VARIABLE_PROPERTIES.VALUE] = intl.formatMessage({
-              defaultMessage: 'Value must be a valid integer',
-              id: '5eZBCP',
-              description: 'Error validation message for invalid integer',
+              defaultMessage: `''Value'' must be a valid integer`,
+              id: 'BWIM2x',
+              description:
+                'Error validation message for invalid integer. Do not remove the double single quotes around the display name, as it is needed to wrap the placeholder text.',
             });
           }
           break;
         case VARIABLE_TYPE.FLOAT:
           if (!/^-?\d+(\.\d+)?$/.test(value)) {
             errors[index][VARIABLE_PROPERTIES.VALUE] = intl.formatMessage({
-              defaultMessage: 'Value must be a valid float',
-              id: 'p1+9vh',
-              description: 'Error validation message for invalid float',
+              defaultMessage: `''Value'' must be a valid float`,
+              id: '9kMtmY',
+              description:
+                'Error validation message for invalid float. Do not remove the double single quotes around the display name, as it is needed to wrap the placeholder text.',
             });
           }
           break;
@@ -157,9 +164,10 @@ export const validateVariables = (variables: InitializeVariableProps[]): Initial
               ],
             });
             errors[index][VARIABLE_PROPERTIES.VALUE] = intl.formatMessage({
-              defaultMessage: 'Value must be a valid JSON object',
-              id: 'CFwJLo',
-              description: 'Error validation message for invalid JSON object',
+              defaultMessage: `''Value'' must be a valid JSON object`,
+              id: 's2ydQX',
+              description:
+                'Error validation message for invalid JSON object. Do not remove the double single quotes around the display name, as it is needed to wrap the placeholder text.',
             });
           }
           break;
@@ -181,9 +189,10 @@ export const validateVariables = (variables: InitializeVariableProps[]): Initial
               ],
             });
             errors[index][VARIABLE_PROPERTIES.VALUE] = intl.formatMessage({
-              defaultMessage: 'Value must be a valid JSON array',
-              id: '1LUndr',
-              description: 'Error validation message for invalid JSON array',
+              defaultMessage: `''Value'' must be a valid JSON array`,
+              id: 'cMvmv5',
+              description:
+                'Error validation message for invalid JSON array. Do not remove the double single quotes around the display name, as it is needed to wrap the placeholder text.',
             });
           }
           break;
