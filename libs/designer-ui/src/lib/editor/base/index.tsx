@@ -23,7 +23,7 @@ import type { TokenPickerButtonEditorProps } from './plugins/tokenpickerbutton';
 import { TokenPickerButton } from './plugins/tokenpickerbutton';
 import { css } from '@fluentui/react';
 import { ContentEditable } from '@lexical/react/LexicalContentEditable';
-import LexicalErrorBoundary from '@lexical/react/LexicalErrorBoundary';
+import { LexicalErrorBoundary } from '@lexical/react/LexicalErrorBoundary';
 import { HistoryPlugin as History } from '@lexical/react/LexicalHistoryPlugin';
 import { PlainTextPlugin } from '@lexical/react/LexicalPlainTextPlugin';
 import { RichTextPlugin } from '@lexical/react/LexicalRichTextPlugin';
@@ -46,7 +46,6 @@ export type GetTokenPickerHandler = (
 
 export type ChangeHandler = (newState: ChangeState, skipStateSave?: boolean) => void;
 export type CallbackHandler = () => void;
-export type FileNameChangeHandler = (originalFileName: string, newFileName: string) => void;
 export type CastHandler = (value: ValueSegment[], type?: string, format?: string, suppressCasting?: boolean) => string;
 export type loadParameterValueFromStringHandler = (value: string) => ValueSegment[];
 

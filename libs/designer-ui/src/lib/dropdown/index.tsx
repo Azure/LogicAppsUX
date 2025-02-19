@@ -62,14 +62,14 @@ export const DropdownEditor = ({
   const dropdownStyles: Partial<IDropdownStyles> = {
     root: {
       minHeight: height ?? '30px',
-      fontSize: fontSize ?? '14px',
+      fontSize: fontSize ?? '15px',
     },
     dropdown: {
       minHeight: height ?? '30px',
     },
     title: {
       height: height ?? '30px',
-      fontSize: fontSize ?? '14px',
+      fontSize: fontSize ?? '15px',
       lineHeight: height ?? '30px',
     },
     caretDownWrapper: {

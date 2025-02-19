@@ -58,6 +58,7 @@ import {
   Constants,
   getSKUDefaultHostOptions,
   RunHistoryPanel,
+  CombineInitializeVariableDialog,
 } from '@microsoft/logic-apps-designer';
 import axios from 'axios';
 import isEqual from 'lodash.isequal';
@@ -445,6 +446,7 @@ const DesignerEditor = () => {
                   saveWorkflowFromCode={saveWorkflowFromCode}
                 />
                 {designerView ? <Designer /> : <CodeViewEditor ref={codeEditorRef} workflowKind={workflow?.kind} />}
+                <CombineInitializeVariableDialog />
               </div>
             </div>
           </BJSWorkflowProvider>

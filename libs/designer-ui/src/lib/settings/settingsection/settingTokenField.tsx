@@ -1,5 +1,6 @@
 import { ArrayEditor } from '../../arrayeditor';
 import { AuthenticationEditor } from '../../authentication';
+import type { FileNameChangeHandler } from '../../code';
 import { CodeEditor } from '../../code';
 import { isCustomCode } from '../../code/util';
 import { Combobox } from '../../combobox';
@@ -12,12 +13,12 @@ import type {
   CallbackHandler,
   CastHandler,
   ChangeHandler,
-  FileNameChangeHandler,
   GetTokenPickerHandler,
   loadParameterValueFromStringHandler,
 } from '../../editor/base';
 import type { TokenPickerButtonEditorProps } from '../../editor/base/plugins/tokenpickerbutton';
 import { createLiteralValueSegment, getDropdownOptionsFromOptions } from '../../editor/base/utils/helper';
+import { InitializeVariableEditor } from '../../editor/initializevariable';
 import { StringEditor } from '../../editor/string';
 import { FloatingActionMenuKind } from '../../floatingactionmenu/constants';
 import { FloatingActionMenuInputs } from '../../floatingactionmenu/floatingactionmenuinputs';
@@ -114,9 +115,9 @@ export const TokenField = ({
   loadParameterValueFromString,
   onValueChange,
   onComboboxMenuOpen,
+  onFileNameChange,
   hideValidationErrors,
   onCastParameter,
-  onFileNameChange,
   getTokenPicker,
   suppressCastingForSerialize,
   required,
@@ -365,6 +366,19 @@ export const TokenField = ({
           getTokenPicker={getTokenPicker}
           onChange={onValueChange}
           dataAutomationId={`msla-setting-token-editor-htmleditor-${labelForAutomationId}`}
+        />
+      );
+
+    case constants.PARAMETER.EDITOR.INITIALIZE_VARIABLE:
+      return (
+        <InitializeVariableEditor
+          initialValue={value}
+          getTokenPicker={getTokenPicker}
+          onChange={(updatedChangeState) => {
+            onValueChange?.(updatedChangeState);
+            hideValidationErrors?.(updatedChangeState);
+          }}
+          validationErrors={editorViewModel.validationErrors}
         />
       );
 

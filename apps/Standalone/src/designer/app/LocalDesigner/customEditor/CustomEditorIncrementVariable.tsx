@@ -1,7 +1,14 @@
 import { createLiteralValueSegment } from '@microsoft/logic-apps-designer';
 import type { IEditorProps } from '@microsoft/logic-apps-shared';
 
-export const IncrementVariableEditor = ({ value, onValueChange, renderDefaultEditor, editor, editorOptions, disabled }: IEditorProps) => {
+export const CustomEditorIncrementVariable = ({
+  value,
+  onValueChange,
+  renderDefaultEditor,
+  editor,
+  editorOptions,
+  disabled,
+}: IEditorProps) => {
   const inputValue = +(value?.[0]?.value ?? 0);
   const onChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     onValueChange?.({

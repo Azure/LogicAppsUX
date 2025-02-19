@@ -1,6 +1,6 @@
 import type { ValueSegment } from '../editor';
 import { ValueSegmentType } from '../editor';
-import type { BaseEditorProps, CallbackHandler, ChangeHandler } from '../editor/base';
+import type { BaseEditorProps, CallbackHandler } from '../editor/base';
 import { EditorWrapper } from '../editor/base/EditorWrapper';
 import { EditorChangePlugin } from '../editor/base/plugins/EditorChange';
 import { createLiteralValueSegment, notEqual } from '../editor/base/utils/helper';
@@ -26,6 +26,8 @@ type Mode = (typeof Mode)[keyof typeof Mode];
 const comboboxStyles: Partial<IComboBoxStyles> = {
   root: {
     minHeight: '30px',
+    paddingLeft: '6px',
+    fontSize: '15px',
   },
   divider: {
     height: '2px',
@@ -73,7 +75,6 @@ export interface ComboboxProps extends BaseEditorProps {
   shouldSort?: boolean;
   multiSelect?: boolean;
   serialization?: SerializationOptions;
-  onChange?: ChangeHandler;
 }
 
 export const Combobox = ({
