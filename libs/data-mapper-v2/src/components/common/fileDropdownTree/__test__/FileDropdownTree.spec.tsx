@@ -45,7 +45,6 @@ describe('FileDropdownTree', async () => {
       readCurrentSchemaOptions: vi.fn(),
     };
     const spySelect = vi.spyOn(mocked, 'readCurrentSchemaOptions');
-    const user = userEvent.setup();
     const availableSchemas: IFileSysTreeItem[] = [
       {
         name: 'Child1.xsd',
@@ -71,6 +70,7 @@ describe('FileDropdownTree', async () => {
     ];
 
     const renderedDropdown = createFileDropdownTree({ fileTree: availableSchemas, onItemSelect: mocked.readCurrentSchemaOptions });
+    const user = userEvent.setup();
     const { rerender } = renderedDropdown;
 
     // opens the dropdown

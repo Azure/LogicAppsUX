@@ -87,7 +87,7 @@ export const FileDropdownTree = ({ onItemSelect, placeholder, className, fileTre
   };
 
   return (
-    <div className={mergeClasses(styles.componentWrapper, className ?? '')}>
+    <div className={mergeClasses(styles.xsltStyles, className ?? '')}>
       <div
         className={styles.dropdownInputWrapper}
         onClick={() => {
