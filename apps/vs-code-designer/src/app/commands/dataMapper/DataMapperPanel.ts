@@ -63,7 +63,7 @@ export default class DataMapperPanel {
     const customXsltFolderWatcher = this.watchFolderForChanges(
       customXsltPath,
       supportedCustomXsltFileExts,
-      this.handleReadAvailableFunctionPaths
+      this.handleReadAvailableCustomXsltPaths
     );
 
     // Handle messages from the webview (Data Mapper component)
@@ -143,7 +143,7 @@ export default class DataMapperPanel {
         break;
       }
       case ExtensionCommand.readLocalCustomXsltFileOptions: {
-        this.handleReadAvailableFunctionPaths();
+        this.handleReadAvailableCustomXsltPaths();
         break;
       }
       case ExtensionCommand.saveDataMapDefinition: {
@@ -283,7 +283,10 @@ export default class DataMapperPanel {
     return this.getFilesForPath(schemasPath, ExtensionCommand.showAvailableSchemas, supportedSchemaFileExts);
   }
 
-  public handleReadAvailableFunctionPaths() {
+  public handleReadAvailableCustomXsltPaths() {
+    if (this.dataMapVersion === 2) {
+      return this.getFilesTreeForPath(customXsltPath, supportedCustomXsltFileExts);
+    }
     const absoluteFolderPath = path.join(ext.logicAppWorkspace, customXsltPath);
     if (fileExistsSync(absoluteFolderPath)) {
       return this.getFilesForPath(customXsltPath, ExtensionCommand.getAvailableCustomXsltPaths, supportedCustomXsltFileExts);

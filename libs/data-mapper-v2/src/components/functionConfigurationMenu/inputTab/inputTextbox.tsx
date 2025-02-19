@@ -1,7 +1,7 @@
 import { Tooltip, Textarea } from '@fluentui/react-components';
 import { useDebouncedCallback } from '@react-hookz/web';
 import { useState, useEffect } from 'react';
-import { addQuotesToString, removeQuotesFromString } from '../../../utils/Function.Utils';
+import { addQuotesToString } from '../../../utils/Function.Utils';
 import type { InputOptionProps } from '../inputDropdown/InputDropdown';
 import type { FunctionInput } from '../../../models';
 
@@ -14,12 +14,11 @@ export type InputTextboxProps = {
 export const InputTextbox = ({ input, loadedInputValue, validateAndCreateConnection }: InputTextboxProps) => {
   const [inputTyped, setInputTyped] = useState<boolean>(false);
 
-  const [inputText, setInputText] = useState<string>(loadedInputValue ? removeQuotesFromString(loadedInputValue) : '');
+  const [inputText, setInputText] = useState<string>(loadedInputValue ? loadedInputValue : '');
 
   useEffect(() => {
     if (loadedInputValue !== undefined && inputText === '' && inputTyped === false) {
-      const formattedValue = removeQuotesFromString(loadedInputValue);
-      setInputText(formattedValue);
+      setInputText(loadedInputValue);
     }
   }, [loadedInputValue, inputText, inputTyped]);
 
@@ -33,7 +32,7 @@ export const InputTextbox = ({ input, loadedInputValue, validateAndCreateConnect
   const onChangeSearchValueDebounced = useDebouncedCallback(onCustomTextBoxChange, [], debounceDelay);
 
   const onChange = (value: string) => {
-    setInputText(removeQuotesFromString(value));
+    setInputText(value);
     setInputTyped(true);
     onChangeSearchValueDebounced(value);
   };

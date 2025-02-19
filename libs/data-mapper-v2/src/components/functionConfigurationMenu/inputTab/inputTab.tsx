@@ -174,13 +174,13 @@ export const InputTabContents = (props: {
                   input={input}
                   loadedInputValue={getInputValue(inputConnection)}
                   validateAndCreateConnection={validateAndCreateConnection}
-                ></InputTextbox>
+                />
               );
               break;
             }
-            // case InputFormat.FilePicker: {
-
-            // }
+            case InputFormat.FilePicker: {
+              break;
+            }
             default:
               inputJSX = (
                 <div className={styles.formControlWrapper}>

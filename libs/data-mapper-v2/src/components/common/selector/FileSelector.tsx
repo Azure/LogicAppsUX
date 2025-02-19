@@ -2,7 +2,7 @@ import { useStyles } from './styles';
 import { StackShim } from '@fluentui/react-migration-v8-v9';
 import { Button, Caption2, InfoLabel, Input, Radio, RadioGroup, Text, type RadioGroupOnChangeData } from '@fluentui/react-components';
 import type { IFileSysTreeItem } from '@microsoft/logic-apps-shared';
-import { DropdownTree } from '../DropdownTree';
+import { FileDropdownTree } from '../fileDropdownTree/DropdownTree';
 import { useIntl } from 'react-intl';
 
 type U = {
@@ -82,7 +82,7 @@ const FileSelector = <T extends U>(props: FileSelectorProps<T>) => {
                     </div>
                   ) : null}
                   {selectedKey === key && key === 'select-existing' ? (
-                    <DropdownTree onItemSelect={onSelect} className={styles.selectorDropdownRoot} />
+                    <FileDropdownTree onItemSelect={onSelect} className={styles.selectorDropdownRoot} />
                   ) : null}
                 </div>
               }

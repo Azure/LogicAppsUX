@@ -3,19 +3,19 @@ import { SearchBox } from '@fluentui/react';
 import { ChevronRightRegular, ChevronDownRegular } from '@fluentui/react-icons';
 import { useIntl } from 'react-intl';
 import type { IFileSysTreeItem } from '@microsoft/logic-apps-shared';
-import useStyles from './styles';
+import useStyles from '../styles';
 import { useState, useMemo, useCallback, useEffect } from 'react';
 import { isEmptyString } from '@microsoft/logic-apps-shared';
-import { DataMapperFileService } from '../../core';
+import { DataMapperFileService } from '../../../core';
 import { useSelector } from 'react-redux';
-import type { RootState } from '../../core/state/Store';
+import type { RootState } from '../../../core/state/Store';
 
 interface DropdownTreeProps {
   onItemSelect: (item: IFileSysTreeItem) => void;
   className?: string;
 }
 
-export const DropdownTree = ({ onItemSelect, className }: DropdownTreeProps) => {
+export const FileDropdownTree = ({ onItemSelect, className }: DropdownTreeProps) => {
   const [showDropdownTree, setShowDropdownTree] = useState(false);
   const [searchValue, setSearchValue] = useState('');
   const availableSchemaList = useSelector((state: RootState) => state.schema.availableSchemas);
