@@ -36,22 +36,6 @@ vi.mock('fs', () => ({
 
 vi.mock('axios');
 
-// vi.mock('vscode', () => ({
-//   window: {},
-//   workspace: {
-//     workspaceFolders: [],
-//   },
-//   Uri: {
-//     file: (p: string) => ({ fsPath: p, toString: () => p }),
-//   },
-//   commands: {
-//     executeCommand: vi.fn(),
-//   },
-//   EventEmitter: vi.fn().mockImplementation(() => ({
-//     getUser: vi.fn(),
-//   })),
-// }));
-
 vi.mock('vscode', () => ({
   window: {
     showInformationMessage: vi.fn(),
