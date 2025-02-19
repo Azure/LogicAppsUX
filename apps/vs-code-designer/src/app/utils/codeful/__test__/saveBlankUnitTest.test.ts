@@ -9,54 +9,7 @@ import * as unitTestUtils from '../../../utils/unitTests';
 import { callWithTelemetryAndErrorHandling } from '@microsoft/vscode-azext-utils';
 import { saveBlankUnitTest } from '../../../commands/workflows/unitTest/saveBlankUnitTest';
 import { RemoteWorkflowTreeItem } from '../../../tree/remoteWorkflowsTree/RemoteWorkflowTreeItem';
-
-// -----------------------------------------------------------------------------
-// Partial Mock for "@microsoft/vscode-azext-utils"
-// -----------------------------------------------------------------------------
-
-vi.mock('@microsoft/vscode-azext-utils', async () => {
-  const actual = await vi.importActual<typeof import('@microsoft/vscode-azext-utils')>('@microsoft/vscode-azext-utils');
-  return {
-    ...actual,
-    callWithTelemetryAndErrorHandling: async (key: string, callback: Function) => {
-      // Simply invoke the callback with a fake telemetry context.
-      return callback({ telemetry: { properties: {} } });
-    },
-    // Forward other exports if needed
-    parseError: actual.parseError,
-  };
-});
-
-// -----------------------------------------------------------------------------
-// Updated vscode Mock
-// -----------------------------------------------------------------------------
-
-vi.mock('vscode', async () => {
-  const actual = await vi.importActual<typeof vscode>('vscode');
-  return {
-    ...actual,
-    EventEmitter: actual.EventEmitter || class {},
-    window: {
-      showInformationMessage: vi.fn(),
-      showErrorMessage: vi.fn(),
-    },
-    Uri: {
-      file: (p: string) => ({ fsPath: p, toString: () => p }),
-    },
-    workspace: {
-      withProgress: (options: any, task: any) => task(),
-      updateWorkspaceFolders: vi.fn(),
-      workspaceFolders: [],
-    },
-    commands: {
-      executeCommand: vi.fn(),
-    },
-  };
-});
-
-// -----------------------------------------------------------------------------
-// fs-extra Mock
-// -----------------------------------------------------------------------------
+import * as localize from '../../../../localize';
 
 vi.mock('fs-extra', () => ({
   ensureDir: vi.fn(() => Promise.resolve()),
@@ -160,7 +113,7 @@ describe('saveBlankUnitTest', () => {
     vi.spyOn(unitTestUtils, 'logTelemetry').mockImplementation(() => {});
     const expectedMessage =
       'A multi-root workspace must be open to create unit tests. Please use the "Create New Logic App Workspace" command.';
-    vi.spyOn(unitTestUtils, 'localize' as any).mockReturnValue(expectedMessage);
+    vi.spyOn(localize, 'localize').mockReturnValue(expectedMessage);
     // Spy on ext.outputChannel.appendLog.
     const appendLogSpy = vi.spyOn(ext.outputChannel, 'appendLog');
 

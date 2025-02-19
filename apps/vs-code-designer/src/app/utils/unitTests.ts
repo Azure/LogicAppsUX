@@ -4,10 +4,9 @@
  *--------------------------------------------------------------------------------------------*/
 import type { UnitTestResult } from '@microsoft/vscode-extension-logic-apps';
 import { nugetFileName, saveUnitTestEvent, testsDirectoryName, unitTestsFileName, workflowFileName } from '../../constants';
-import { localize } from '../../localize';
 import { type IAzureQuickPickItem, type IActionContext, callWithTelemetryAndErrorHandling } from '@microsoft/vscode-azext-utils';
+
 import * as fse from 'fs-extra';
-import * as fs from 'fs-extra';
 import * as path from 'path';
 import * as vscode from 'vscode';
 import { getWorkflowsInLocalProject } from './codeless/common';
@@ -15,6 +14,7 @@ import { ext } from '../../extensionVariables';
 import type { IAzureConnectorsContext } from '../commands/workflows/azureConnectorWizard';
 import axios from 'axios';
 import { toPascalCase } from '@microsoft/logic-apps-shared';
+import { localize } from '../../localize';
 
 /**
  * Saves the unit test definition for a workflow.
@@ -42,11 +42,11 @@ export const saveUnitTestDefinition = async (
       const unitTestsPath = getUnitTestsPath(testsDirectory.fsPath, projectName, workflowName, unitTestName);
       const workflowTestsPath = getWorkflowTestsPath(testsDirectory.fsPath, projectName, workflowName);
 
-      if (!fs.existsSync(workflowTestsPath)) {
-        fs.mkdirSync(workflowTestsPath, { recursive: true });
+      if (!fse.existsSync(workflowTestsPath)) {
+        fse.mkdirSync(workflowTestsPath, { recursive: true });
       }
       try {
-        fs.writeFileSync(unitTestsPath, JSON.stringify(unitTestDefinition, null, 4));
+        fse.writeFileSync(unitTestsPath, JSON.stringify(unitTestDefinition, null, 4));
         await vscode.workspace.updateWorkspaceFolders(
           vscode.workspace.workspaceFolders ? vscode.workspace.workspaceFolders.length : 0,
           null,
@@ -313,9 +313,9 @@ export async function createCsprojFile(csprojFilePath: string, logicAppName: str
   const templateFolderName = 'UnitTestTemplates';
   const csprojTemplateFileName = 'TestProjectFile';
   const templatePath = path.join(__dirname, 'assets', templateFolderName, csprojTemplateFileName);
-  const templateContent = await fs.readFile(templatePath, 'utf-8');
+  const templateContent = await fse.readFile(templatePath, 'utf-8');
   const csprojContent = templateContent.replace(/<%= logicAppName %>/g, logicAppName);
-  await fs.writeFile(csprojFilePath, csprojContent);
+  await fse.writeFile(csprojFilePath, csprojContent);
   ext.outputChannel.appendLog(localize('csprojFileCreated', 'Created .csproj file at: {0}', csprojFilePath));
 }
 
@@ -337,7 +337,7 @@ export async function createCsFile(
   const csTemplateFileName = 'TestClassFile';
   const templatePath = path.join(__dirname, 'assets', templateFolderName, csTemplateFileName);
 
-  let templateContent = await fs.readFile(templatePath, 'utf-8');
+  let templateContent = await fse.readFile(templatePath, 'utf-8');
 
   const sanitizedUnitTestName = unitTestName.replace(/-/g, '_');
   const sanitizedWorkflowName = workflowName.replace(/-/g, '_');
@@ -358,7 +358,7 @@ export async function createCsFile(
     .replace(/<%= UnitTestName %>/g, unitTestName);
 
   const csFilePath = path.join(unitTestFolderPath, `${unitTestName}.cs`);
-  await fs.writeFile(csFilePath, templateContent);
+  await fse.writeFile(csFilePath, templateContent);
 
   ext.outputChannel.appendLog(localize('csFileCreated', 'Created .cs file at: {0}', csFilePath));
 }
@@ -373,8 +373,8 @@ export async function createNugetConfigFile(nugetConfigFilePath: string): Promis
   const nugetConfigTemplateFileName = 'TestNugetConfig';
   const templatePath = path.join(__dirname, 'assets', templateFolderName, nugetConfigTemplateFileName);
 
-  const templateContent = await fs.readFile(templatePath, 'utf-8');
-  await fs.writeFile(nugetConfigFilePath, templateContent);
+  const templateContent = await fse.readFile(templatePath, 'utf-8');
+  await fse.writeFile(nugetConfigFilePath, templateContent);
 
   ext.outputChannel.appendLog(localize('nugetConfigFileCreated', 'Created nuget.config file at: {0}', nugetConfigFilePath));
 }
@@ -522,7 +522,7 @@ export async function ensureCsprojAndNugetFiles(testsDirectory: string, logicApp
   const csprojFilePath = path.join(logicAppFolderPath, `${logicAppName}.csproj`);
   const nugetConfigFilePath = path.join(testsDirectory, nugetFileName);
 
-  if (!(await fs.pathExists(csprojFilePath))) {
+  if (!(await fse.pathExists(csprojFilePath))) {
     ext.outputChannel.appendLog(localize('creatingCsproj', 'Creating .csproj file at: {0}', csprojFilePath));
     await createCsprojFile(csprojFilePath, logicAppName);
     const action = 'Reload Window';
@@ -905,7 +905,7 @@ export async function processAndWriteMockableOperations(
 
   // Create or verify the "MockOutputs" folder inside the workflow folder
   const mockOutputsFolderPath = path.join(workflowFolderPath, 'MockOutputs');
-  await fs.ensureDir(mockOutputsFolderPath);
+  await fse.ensureDir(mockOutputsFolderPath);
 
   for (const operationName in operationInfo) {
     const operation = operationInfo[operationName];
@@ -941,7 +941,7 @@ export async function processAndWriteMockableOperations(
 
       // Write the .cs file
       const filePath = path.join(mockOutputsFolderPath, `${className}.cs`);
-      await fs.writeFile(filePath, classContent, 'utf-8');
+      await fse.writeFile(filePath, classContent, 'utf-8');
 
       // Log to output channel
       ext.outputChannel.appendLog(localize('csFileCreated', 'Created .cs file at: {0}', filePath));

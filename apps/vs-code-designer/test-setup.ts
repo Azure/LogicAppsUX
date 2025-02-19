@@ -5,10 +5,6 @@ import { afterEach, vi } from 'vitest';
 // https://testing-library.com/docs/react-testing-library/api#cleanup
 afterEach(() => cleanup());
 
-vi.mock('@microsoft/vscode-azext-azureutils', () => ({
-  // mock implementation or empty object
-}));
-
 vi.mock('@microsoft/vscode-azext-azureauth', () => ({
   getSessionFromVSCode: vi.fn(() => Promise.resolve({})), // example of a mocked function
 }));
@@ -23,6 +19,11 @@ vi.mock('@microsoft/vscode-azext-utils', () => {
     }),
     nonNullProp: vi.fn(),
     nonNullValue: vi.fn(),
+    callWithTelemetryAndErrorHandling: (key: string, callback: Function) => {
+      // Simply invoke the callback with a fake telemetry context.
+      return callback({ telemetry: { properties: {} } });
+    },
+    parseError: vi.fn(),
   };
 });
 
@@ -35,10 +36,35 @@ vi.mock('fs', () => ({
 
 vi.mock('axios');
 
+// vi.mock('vscode', () => ({
+//   window: {},
+//   workspace: {
+//     workspaceFolders: [],
+//   },
+//   Uri: {
+//     file: (p: string) => ({ fsPath: p, toString: () => p }),
+//   },
+//   commands: {
+//     executeCommand: vi.fn(),
+//   },
+//   EventEmitter: vi.fn().mockImplementation(() => ({
+//     getUser: vi.fn(),
+//   })),
+// }));
+
 vi.mock('vscode', () => ({
-  window: {},
+  window: {
+    showInformationMessage: vi.fn(),
+    showErrorMessage: vi.fn(),
+  },
   workspace: {
     workspaceFolders: [],
+  },
+  Uri: {
+    file: (p: string) => ({ fsPath: p, toString: () => p }),
+  },
+  commands: {
+    executeCommand: vi.fn(),
   },
   EventEmitter: vi.fn().mockImplementation(() => ({
     getUser: vi.fn(),
