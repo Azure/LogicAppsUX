@@ -244,7 +244,7 @@ export const TemplatesStandard = () => {
   );
   const resourceDetails = new ArmParser(appId ?? '');
 
-  if (!appId) {
+  if (!workflowAppData) {
     return null;
   }
   return (
