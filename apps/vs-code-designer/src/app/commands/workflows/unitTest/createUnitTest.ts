@@ -13,6 +13,8 @@ import {
   handleError,
   logTelemetry,
   parseErrorBeforeTelemetry,
+  parseUnitTestOutputs,
+  processUnitTestDefinition,
   promptForUnitTestName,
   selectWorkflowNode,
 } from '../../../utils/unitTests';
@@ -33,9 +35,15 @@ import { unzipLogicAppArtifacts } from '../../../utils/taskUtils';
  * @param {IAzureConnectorsContext} context - The Azure Connectors context.
  * @param {vscode.Uri | undefined} node - Optional URI of the workflow node.
  * @param {string | undefined} runId - Optional run ID.
+ * @param {any} unitTestDefinition - The unit test definition.
  * @returns {Promise<void>} Resolves when the unit test creation process completes.
  */
-export async function createUnitTest(context: IAzureConnectorsContext, node: vscode.Uri | undefined, runId?: string): Promise<void> {
+export async function createUnitTest(
+  context: IAzureConnectorsContext,
+  node: vscode.Uri | undefined,
+  runId?: string,
+  unitTestDefinition?: any
+): Promise<void> {
   try {
     // Validate and extract Run ID
     const validatedRunId = await extractAndValidateRunId(runId);
@@ -73,7 +81,7 @@ export async function createUnitTest(context: IAzureConnectorsContext, node: vsc
     });
     await callWithTelemetryAndErrorHandling('logicApp.createUnitTest', async (telemetryContext: IActionContext) => {
       Object.assign(telemetryContext, context);
-      await generateUnitTestFromRun(context, projectPath, workflowName, unitTestName, validatedRunId);
+      await generateUnitTestFromRun(context, projectPath, workflowName, unitTestName, validatedRunId, unitTestDefinition);
     });
   } catch (error) {
     handleError(context, error, 'createUnitTest');
@@ -88,6 +96,7 @@ export async function createUnitTest(context: IAzureConnectorsContext, node: vsc
  * @param {string} workflowName - Name of the workflow.
  * @param {string} unitTestName - Name of the unit test.
  * @param {string} runId - Run ID.
+ * @param {any} unitTestDefinition - The unit test definition.
  * @returns {Promise<void>} Resolves when the unit test has been generated.
  */
 async function generateUnitTestFromRun(
@@ -95,7 +104,8 @@ async function generateUnitTestFromRun(
   projectPath: string,
   workflowName: string,
   unitTestName: string,
-  runId: string
+  runId: string,
+  unitTestDefinition: any
 ): Promise<void> {
   // Initialize telemetry properties
   Object.assign(context.telemetry.properties, {
@@ -106,6 +116,15 @@ async function generateUnitTestFromRun(
     csprojFileCreated: 'false',
     nugetConfigFileCreated: 'false',
     testsFolderAddedToWorkspace: 'false',
+  });
+
+  await parseUnitTestOutputs(unitTestDefinition);
+  const operationInfo = unitTestDefinition['operationInfo'];
+  const outputParameters = unitTestDefinition['outputParameters'];
+
+  logTelemetry(context, {
+    operationInfoExists: operationInfo ? 'true' : 'false',
+    outputParametersExists: outputParameters ? 'true' : 'false',
   });
 
   const startTime = Date.now();
@@ -170,6 +189,7 @@ async function generateUnitTestFromRun(
 
     const paths = getUnitTestPaths(projectPath, workflowName, unitTestName);
     await fs.ensureDir(paths.unitTestFolderPath);
+    await processUnitTestDefinition(unitTestDefinition, paths.workflowFolderPath, paths.logicAppName);
 
     try {
       ext.outputChannel.appendLog(localize('unzippingFiles', `Unzipping Mock.json into: ${paths.unitTestFolderPath}`));
