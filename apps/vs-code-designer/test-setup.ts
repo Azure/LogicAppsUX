@@ -40,6 +40,10 @@ vi.mock('fs', () => ({
   createWriteStream: vi.fn(),
 }));
 
+vi.mock('fs-extra', () => ({
+  ensureDir: vi.fn(() => Promise.resolve()),
+}));
+
 vi.mock('axios');
 
 vi.mock('vscode', () => ({
@@ -60,22 +64,3 @@ vi.mock('vscode', () => ({
     getUser: vi.fn(),
   })),
 }));
-
-// Mock the extension variables (ext) to spy on logging behavior
-vi.mock('../../../../extensionVariables', () => ({
-  ext: {
-    outputChannel: {
-      appendLog: vi.fn(),
-    },
-  },
-}));
-
-// vi.mock('vscode', () => ({
-//   window: {},
-//   workspace: {
-//     workspaceFolders: [],
-//   },
-//   EventEmitter: vi.fn().mockImplementation(() => ({
-//     getUser: vi.fn(),
-//   })),
-// }));
