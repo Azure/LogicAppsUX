@@ -39,7 +39,7 @@ export const XsltFilePicker = (props: XsltFilePickerProps) => {
 
   const updateInputFromFile = (item: IFileSysTreeItem) => {
     if (item.type === 'file') {
-      props.onFileSelect(item.fullPath);
+      props.onFileSelect(`"${item.fullPath}"`);
     }
   };
 

@@ -37,11 +37,6 @@ export const FileDropdownTree = ({
   const intl = useIntl();
   const styles = useStyles();
 
-  useEffect(() => {
-    // update items when the tree is closed and reopened
-    onReopen();
-  }, [showDropdownTree, onReopen]);
-
   const search = intl.formatMessage({
     defaultMessage: 'Search',
     id: 'toWTrl',
@@ -108,6 +103,7 @@ export const FileDropdownTree = ({
         className={styles.dropdownInputWrapper}
         onClick={() => {
           setShowDropdownTree(!showDropdownTree);
+          onReopen();
         }}
       >
         <Text className={styles.dropdownInput} defaultValue={placeholder}>
