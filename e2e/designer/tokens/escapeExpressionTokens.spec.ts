@@ -42,5 +42,28 @@ test.describe(
         '{ "type": "Http", "inputs": { "uri": "http://test.com", "method": "GET", "body": "@{variables(\'ArrayVariable\')}@{array(split(variables (\'ArrayVariable\'), \'\\n\'))}" }, "runAfter": { "Filter_array": [ "SUCCEEDED" ] }, "runtimeConfiguration": { "contentTransfer": { "transferMode": "Chunked" } }}'
       );
     });
+
+    test('Expressions should maintain behavior of escaped characters in all instances the user views at', async ({ page }) => {
+      await page.goto('/');
+      await GoToMockWorkflow(page, 'Panel');
+      await page.getByLabel('HTTP operation, HTTP connector').click();
+      await page.getByTitle('Enter request content').getByRole('paragraph').click();
+      await page.locator('[data-automation-id="msla-token-picker-entrypoint-button-expression"]').click();
+      const viewLine = page.locator('.view-line').first();
+      await viewLine.click();
+      await viewLine.pressSequentially(`concat('{', '\\"ErrorDetail\\"', ':', '\\"Exchange get failed with exchange id', '-', '\\"}')`);
+      await page.getByRole('tab', { name: 'Dynamic content' }).click();
+      await page.getByRole('button', { name: 'Add', exact: true }).click();
+      await page.getByRole('tab', { name: 'Code view' }).click();
+      await expect(page.getByRole('code')).toContainText(
+        `@{concat('{', '\\"ErrorDetail\\"', ':', '\\"Exchange get failed with exchange id', '-', '\\"}')}`
+      );
+      await page.getByRole('tab', { name: 'Parameters' }).click();
+      await page.getByText('concat(...)').click();
+
+      await expect(page.getByRole('code')).toContainText(
+        `concat('{', '\\"ErrorDetail\\"', ':', '\\"Exchange get failed with exchange id', '-', '\\"}')`
+      );
+    });
   }
 );

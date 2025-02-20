@@ -411,7 +411,7 @@ describe('core/utils/parameters/helper', () => {
       ];
 
       expect(parameterValueToJSONString(parameterValue, /* applyCasting */ false, /* forValidation */ true)).toBe(
-        '{\n  "newUnb3_1": @{xpath(xml(triggerBody()), \'string(/*[local-name()="DynamicsSOCSV"])\')}\n}'
+        '{"newUnb3_1":"@xpath(xml(triggerBody()), \'string(/*[local-name()=\\"DynamicsSOCSV\\"])\')"}'
       );
     });
 
@@ -485,7 +485,7 @@ describe('core/utils/parameters/helper', () => {
       ];
 
       expect(parameterValueToJSONString(parameterValue, /* applyCasting */ false, /* forValidation */ true)).toBe(
-        '{\n  "newUnb3_1": "@{xpath(xml(triggerBody()), \'string(/*[local-name()="DynamicsSOCSV"])\')}"\n}'
+        '{"newUnb3_1":"@{xpath(xml(triggerBody()), \'string(/*[local-name()=\\"DynamicsSOCSV\\"])\')}"}'
       );
     });
 
