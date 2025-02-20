@@ -278,14 +278,14 @@ export default class DataMapperPanel {
 
   public handleReadSchemaFileOptions() {
     if (this.dataMapVersion === 2) {
-      return this.getFilesTreeForPath(schemasPath, supportedSchemaFileExts);
+      return this.getFilesTreeForPath(schemasPath, supportedSchemaFileExts, ExtensionCommand.showAvailableSchemasV2);
     }
     return this.getFilesForPath(schemasPath, ExtensionCommand.showAvailableSchemas, supportedSchemaFileExts);
   }
 
   public handleReadAvailableCustomXsltPaths() {
     if (this.dataMapVersion === 2) {
-      return this.getFilesTreeForPath(customXsltPath, supportedCustomXsltFileExts);
+      return this.getFilesTreeForPath(customXsltPath, supportedCustomXsltFileExts, ExtensionCommand.getAvailableCustomXsltPathsV2);
     }
     const absoluteFolderPath = path.join(ext.logicAppWorkspace, customXsltPath);
     if (fileExistsSync(absoluteFolderPath)) {
@@ -332,14 +332,18 @@ export default class DataMapperPanel {
     });
   }
 
-  private getFilesTreeForPath(folderPath: string, fileTypes: string[]) {
+  private getFilesTreeForPath(
+    folderPath: string,
+    fileTypes: string[],
+    command: typeof ExtensionCommand.showAvailableSchemasV2 | typeof ExtensionCommand.getAvailableCustomXsltPathsV2
+  ) {
     fs.readdir(path.join(ext.logicAppWorkspace, folderPath)).then((result) => {
       const filesToDisplay: IFileSysTreeItem[] = [];
       result.forEach((file) => {
         this.getNestedFileTreePaths(file, '', folderPath, filesToDisplay, fileTypes);
       });
       this.sendMsgToWebview({
-        command: ExtensionCommand.showAvailableSchemasV2,
+        command: command,
         data: filesToDisplay,
       });
     });
