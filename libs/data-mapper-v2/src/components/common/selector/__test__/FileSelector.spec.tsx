@@ -70,5 +70,6 @@ describe('FileDropdownTree', async () => {
     await user.click(renderedDropdown.getByText('Select schema'));
     await user.click(renderedDropdown.getByText('Folder'));
     await user.click(renderedDropdown.getByText(nestedFile.name));
+    expect(props.existing.onSelect).toHaveBeenCalledWith(nestedFile);
   });
 });

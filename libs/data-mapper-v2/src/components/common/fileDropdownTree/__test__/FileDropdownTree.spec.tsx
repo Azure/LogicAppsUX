@@ -30,7 +30,7 @@ describe('FileDropdownTree', async () => {
 
     const renderedDropdown = render(
       <FileDropdownTree
-        placeholder="Schema"
+        placeholder="Select schema"
         fileTree={availableSchemas}
         onItemSelect={mocked.readCurrentSchemaOptions}
         onReopen={vi.fn()}
