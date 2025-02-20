@@ -19,6 +19,7 @@ import {
   connectionDoesExist,
   createCustomInputConnection,
   createNewEmptyConnection,
+  isCustomValueConnection,
   isNodeConnection,
   newConnectionWillHaveCircularLogic,
 } from '../../../utils/Connection.Utils';
@@ -184,7 +185,8 @@ export const InputTabContents = (props: {
               break;
             }
             case InputFormat.FilePicker: {
-              inputJSX = <XsltFilePicker onFileSelect={updateCustomInputConnection} />;
+              const selectedFileNameIfExisting = inputConnection && isCustomValueConnection(inputConnection) ? inputConnection.value : '';
+              inputJSX = <XsltFilePicker selectedFileName={selectedFileNameIfExisting} onFileSelect={updateCustomInputConnection} />;
               break;
             }
             default:

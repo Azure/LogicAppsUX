@@ -4,14 +4,18 @@ import type { RootState } from '../../../core/state/Store';
 import type { IFileSysTreeItem } from '@microsoft/logic-apps-shared';
 import { DataMapperFileService } from '../../../core';
 import { useIntl } from 'react-intl';
+import { useStyles } from './styles';
 
 export type XsltFilePickerProps = {
   onFileSelect: (filePath: string) => void;
+  selectedFileName?: string;
 };
 
 export const XsltFilePicker = (props: XsltFilePickerProps) => {
   const intl = useIntl();
   const customXsltPath = 'DataMapper/Extensions/InlineXslt';
+
+  const style = useStyles();
 
   const xsltFileTree = useSelector((state: RootState) => state.function.customXsltFilePaths);
 
@@ -27,6 +31,12 @@ export const XsltFilePicker = (props: XsltFilePickerProps) => {
     description: 'Path to the function to select',
   });
 
+  const selectFileMessage = intl.formatMessage({
+    defaultMessage: 'Select file',
+    id: 'vAtGzU',
+    description: 'Path to the file to select',
+  });
+
   const updateInputFromFile = (item: IFileSysTreeItem) => {
     if (item.type === 'file') {
       props.onFileSelect(item.fullPath);
@@ -36,11 +46,16 @@ export const XsltFilePicker = (props: XsltFilePickerProps) => {
   const selectXsltMessage = `${relativePathMessage}${customXsltPath}`;
 
   return (
-    <FileDropdownTree
-      placeholder={selectXsltMessage}
-      onReopen={onDropdownReopen}
-      onItemSelect={updateInputFromFile}
-      fileTree={xsltFileTree}
-    />
+    <>
+      <div className={style.descriptionText}>{selectXsltMessage}</div>
+      <FileDropdownTree
+        existingSelectedFile={props.selectedFileName}
+        className={style.xsltStyles}
+        placeholder={selectFileMessage}
+        onReopen={onDropdownReopen}
+        onItemSelect={updateInputFromFile}
+        fileTree={xsltFileTree}
+      />
+    </>
   );
 };

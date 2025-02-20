@@ -12,12 +12,27 @@ export interface FileDropdownTreeProps {
   className?: string;
   placeholder: string;
   fileTree: IFileSysTreeItem[];
+  existingSelectedFile?: string;
   onReopen: () => void;
 }
 
-export const FileDropdownTree = ({ onItemSelect, placeholder, className, fileTree, onReopen }: FileDropdownTreeProps) => {
+export const FileDropdownTree = ({
+  onItemSelect,
+  placeholder,
+  className,
+  fileTree,
+  onReopen,
+  existingSelectedFile,
+}: FileDropdownTreeProps) => {
   const [showDropdownTree, setShowDropdownTree] = useState(false);
   const [searchValue, setSearchValue] = useState('');
+  const [selectedFileName, setSelectedFileName] = useState('');
+
+  useEffect(() => {
+    if (selectedFileName === '' && existingSelectedFile) {
+      setSelectedFileName(existingSelectedFile);
+    }
+  }, [selectedFileName, existingSelectedFile]);
 
   const intl = useIntl();
   const styles = useStyles();
@@ -34,6 +49,7 @@ export const FileDropdownTree = ({ onItemSelect, placeholder, className, fileTre
   });
 
   const onFileNameSelect = (item: IFileSysTreeItem) => {
+    setSelectedFileName(item.name);
     onItemSelect(item);
     setShowDropdownTree(false);
   };
@@ -87,7 +103,7 @@ export const FileDropdownTree = ({ onItemSelect, placeholder, className, fileTre
   };
 
   return (
-    <div className={mergeClasses(styles.xsltStyles, className ?? '')}>
+    <div className={mergeClasses(styles.componentWrapper, className ?? '')}>
       <div
         className={styles.dropdownInputWrapper}
         onClick={() => {
@@ -95,7 +111,7 @@ export const FileDropdownTree = ({ onItemSelect, placeholder, className, fileTre
         }}
       >
         <Text className={styles.dropdownInput} defaultValue={placeholder}>
-          {placeholder}
+          {selectedFileName === '' ? placeholder : selectedFileName}
         </Text>
         {showDropdownTree ? (
           <ChevronDownRegular className={styles.dropdownChevronIcon} />

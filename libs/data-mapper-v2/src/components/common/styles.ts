@@ -4,6 +4,7 @@ const useStyles = makeStyles({
   xsltStyles: {
     display: 'block',
     height: '80px',
+    marginLeft: '30px',
     backgroundColor: tokens.colorNeutralForegroundInverted,
   },
   componentWrapper: {
