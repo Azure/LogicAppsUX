@@ -18,33 +18,6 @@ import {
 } from '../../unitTests';
 
 // ============================================================================
-// Module Mocks
-// ============================================================================
-
-// Mock fs-extra to avoid real file writes/dir creation
-vi.mock('fs-extra', () => ({
-  writeFile: vi.fn(() => Promise.resolve()),
-  ensureDir: vi.fn(() => Promise.resolve()),
-}));
-
-// Mock axios entirely
-vi.mock('axios');
-
-// Mock the vscode-nls module to return predictable messages
-vi.mock('vscode-nls', () => ({
-  loadMessageBundle: vi.fn(() => (key: string, message: string) => message),
-}));
-
-// // Mock the extension variables (ext) to spy on logging behavior
-// vi.mock('../../../../extensionVariables', () => ({
-//   ext: {
-//     outputChannel: {
-//       appendLog: vi.fn(),
-//     },
-//   },
-// }));
-
-// ============================================================================
 // Global Constants and Test Hooks
 // ============================================================================
 
