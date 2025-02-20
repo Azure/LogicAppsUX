@@ -1,3 +1,4 @@
+import type { LogicAppsV2, Template } from '../../utils/src';
 import { AssertionErrorCode, AssertionException } from '../../utils/src';
 
 export interface ITemplateService {
@@ -5,6 +6,10 @@ export interface ITemplateService {
   openBladeAfterCreate: (workflowName: string | undefined) => void;
   onAddBlankWorkflow: () => Promise<void>;
   getCustomResource?: (resourcePath: string, artifactType?: string) => Promise<any> | undefined;
+  getAllTemplateNames: () => Promise<string[]>;
+  getResourceManifest: (resourcePath: string) => Promise<Template.Manifest>;
+  getWorkflowDefinition: (resourcePath: string) => Promise<LogicAppsV2.WorkflowDefinition>;
+  getContentPathUrl: (resourcePath: string) => string;
 }
 
 let service: ITemplateService;

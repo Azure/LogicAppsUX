@@ -490,6 +490,7 @@ const getServices = (
   };
 
   const templateService = new StandardTemplateService({
+    endpoint: 'https://priti-cxf4h5cpcteue4az.b02.azurefd.net',
     baseUrl: armUrl,
     appId: siteResourceId,
     httpClient,

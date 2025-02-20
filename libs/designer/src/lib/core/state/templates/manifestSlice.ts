@@ -1,4 +1,4 @@
-import type { Template } from '@microsoft/logic-apps-shared';
+import { TemplateService, type Template } from '@microsoft/logic-apps-shared';
 import type { PayloadAction } from '@reduxjs/toolkit';
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
 import type { RootState } from './store';
@@ -154,7 +154,7 @@ export default manifestSlice.reducer;
 
 const loadManifestNamesFromGithub = async (): Promise<ManifestName[] | undefined> => {
   try {
-    return (await import('./../../templates/templateFiles/manifest.json'))?.default as ManifestName[];
+    return TemplateService().getAllTemplateNames();
   } catch (ex) {
     console.error(ex);
     return undefined;

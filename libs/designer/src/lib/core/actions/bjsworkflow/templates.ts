@@ -18,8 +18,8 @@ import {
   LogEntryLevel,
   LoggerService,
   type LogicAppsV2,
-  type Template,
   TemplateService,
+  type Template,
 } from '@microsoft/logic-apps-shared';
 import { createAsyncThunk } from '@reduxjs/toolkit';
 import type { RootState } from '../../state/templates/store';
@@ -140,12 +140,12 @@ export const initializeTemplateServices = createAsyncThunk(
 export const loadManifestsFromPaths = async (resourcePaths: string[]) => {
   try {
     const manifestPromises = resourcePaths.map(async (resourcePath) => {
-      return import(`./../../templates/templateFiles/${resourcePath}/manifest.json`);
+      return TemplateService().getResourceManifest(resourcePath);
     });
     const manifestsArray = await Promise.all(manifestPromises);
     return manifestsArray.reduce((result: Record<string, Template.Manifest>, manifestFile: any, index: number) => {
-      const manifest = manifestFile.default;
-      result[resourcePaths[index]] = manifest;
+      //const manifest = manifestFile.default;
+      result[resourcePaths[index]] = manifestFile;
       return result;
     }, {});
   } catch (error) {
@@ -215,8 +215,7 @@ const loadTemplateFromResourcePath = async (
   isCustomTemplate: boolean,
   viewTemplateData?: Template.ViewTemplateDetails
 ): Promise<TemplatePayload> => {
-  const templateManifest: Template.Manifest =
-    manifest ?? (await import(`./../../templates/templateFiles/${templateName}/manifest.json`)).default;
+  const templateManifest: Template.Manifest = manifest ?? (await TemplateService().getResourceManifest(templateName));
 
   const workflows = templateManifest.workflows;
   const isMultiWorkflow = isMultiWorkflowTemplate(templateManifest);
@@ -323,7 +322,10 @@ const loadWorkflowTemplateFromManifest = async (
             : templateManifest.kinds?.length
               ? templateManifest.kinds[0]
               : 'stateful',
-        images: templateManifest.images,
+        images: Object.keys(templateManifest.images).reduce((result: Record<string, string>, key: string) => {
+          result[key] = TemplateService().getContentPathUrl(`${templatePath}/${templateManifest.images[key]}`);
+          return result;
+        }, {}),
         connectionKeys: Object.keys(templateManifest.connections),
         errors: {
           workflow: undefined,
@@ -361,9 +363,8 @@ const getTemplateResourceGivenPath = async (resourcePath: string, artifactType: 
   if (isCustomTemplate) {
     return await TemplateService()?.getCustomResource?.(resourcePath, artifactType);
   }
-  const paths = resourcePath.split('/');
 
-  return paths.length === 2
-    ? (await import(`./../../templates/templateFiles/${paths[0]}/${paths[1]}/${artifactType}.json`)).default
-    : (await import(`./../../templates/templateFiles/${resourcePath}/${artifactType}.json`)).default;
+  return artifactType === 'manifest'
+    ? TemplateService().getResourceManifest(resourcePath)
+    : TemplateService().getWorkflowDefinition(resourcePath);
 };

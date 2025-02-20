@@ -333,6 +333,8 @@ const getServices = (
   };
 
   const templateService = new BaseTemplateService({
+    httpClient,
+    endpoint: 'https://priti-cxf4h5cpcteue4az.b02.azurefd.net',
     openBladeAfterCreate: (_workflowName: string | undefined) => {
       window.alert('Open blade after create, consumption creation is complete');
     },

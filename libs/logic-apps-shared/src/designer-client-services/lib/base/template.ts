@@ -1,6 +1,10 @@
+import type { LogicAppsV2, Template } from '../../../utils/src';
+import type { IHttpClient } from '../httpClient';
 import type { ITemplateService } from '../template';
 
 export interface BaseTemplateServiceOptions {
+  httpClient: IHttpClient;
+  endpoint: string;
   openBladeAfterCreate: (workflowName: string | undefined) => void;
   onAddBlankWorkflow: () => Promise<void>;
   getCustomResource?: (resourcePath: string, artifactType?: string) => Promise<any> | undefined;
@@ -18,4 +22,30 @@ export class BaseTemplateService implements ITemplateService {
   public onAddBlankWorkflow = (): Promise<void> => this.options.onAddBlankWorkflow();
 
   public getCustomResource = (resourcePath: string): Promise<any> | undefined => this.options?.getCustomResource?.(resourcePath);
+
+  public getContentPathUrl: (resourcePath: string) => string = (resourcePath: string) =>
+    `${this.options.endpoint}/templates/${resourcePath}`;
+
+  public getAllTemplateNames = async (): Promise<string[]> => {
+    const response = await this.options.httpClient.get<any>({
+      uri: `${this.options.endpoint}/templates/manifest.json`,
+      headers: { 'Access-Control-Allow-Origin': '*' },
+    });
+
+    return response;
+  };
+
+  public getResourceManifest = async (resourcePath: string): Promise<Template.Manifest> => {
+    return this.options.httpClient.get<any>({
+      uri: `${this.options.endpoint}/templates/${resourcePath}/manifest.json`,
+      headers: { 'Access-Control-Allow-Origin': '*' },
+    });
+  };
+
+  public getWorkflowDefinition = async (resourcePath: string): Promise<LogicAppsV2.WorkflowDefinition> => {
+    return this.options.httpClient.get<any>({
+      uri: `${this.options.endpoint}/templates/${resourcePath}/workflow.json`,
+      headers: { 'Access-Control-Allow-Origin': '*' },
+    });
+  };
 }
