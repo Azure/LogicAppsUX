@@ -436,6 +436,7 @@ export async function createCsFile(
     .replace(/<%= LogicAppName %>/g, logicAppName)
     .replace(/<%= WorkflowName %>/g, workflowName)
     .replace(/<%= UnitTestName %>/g, unitTestName)
+    .replace(/<%= SanitizedWorkflowName %>/g, sanitizedWorkflowName)
     .replace(/<%= ActionMockName %>/g, actionName)
     .replace(/<%= ActionMockOutputClassName %>/g, actionOutputClassName)
     .replace(/<%= ActionMockClassName %>/g, actionMockClassName)
@@ -495,7 +496,7 @@ export async function createTestSettingsConfigFile(unitTestFolderPath: string, w
 
   let templateContent = await fse.readFile(templatePath, 'utf-8');
   templateContent = templateContent
-    .replace(/%WorkspacePath%/g, `../../../${logicAppName}`)
+    .replace(/%WorkspacePath%/g, '../../../../')
     .replace(/%LogicAppName%/g, logicAppName)
     .replace(/%WorkflowName%/g, workflowName);
 
@@ -844,6 +845,11 @@ export function buildClassDefinition(className: string, node: any): ClassDefinit
         continue;
       }
 
+      // Skip keys with special characters
+      if (/[~@]/.test(key)) {
+        continue;
+      }
+
       const subNode = node[key];
       const propName = toPascalCase(key);
 
@@ -866,6 +872,20 @@ export function buildClassDefinition(className: string, node: any): ClassDefinit
         }
       }
 
+      // If it's an array, process the array items
+      if (subNode?.nestedTypeProperty === 'array') {
+        isObject = true;
+        const arrayItemNode = subNode['[*]'];
+        const arrayItemClassName = subNode?.description ? toPascalCase(subNode?.description.replace(/\s+/g, '')) : ''; // Remove spaces from description
+        const arrayItemDef = buildClassDefinition(arrayItemClassName, arrayItemNode);
+
+        // If there are child properties then use the newly created object, otherwise use JObject
+        if (arrayItemDef.properties.length > 0) {
+          children.push(arrayItemDef);
+          // The property for this sub-node points to the newly created child's class name
+          csharpType = `List<${arrayItemDef.className}>`;
+        }
+      }
       // If it's an array, you might want to look at subNode.items.type to refine the list item type.
       // Check if the subNode has a "description" to be used as a doc-comment on the property.
       const subDescription = subNode?.description ? String(subNode.description) : null;
@@ -1121,7 +1141,9 @@ export function generateCSharpClasses(
 
   rootDef.inheritsFrom = 'MockOutput';
 
-  const adjustedNamespace = `${namespaceName}.Tests.Mocks.${workflowName}`;
+  const sanitizedWorkflowName = workflowName.replace(/-/g, '_');
+
+  const adjustedNamespace = `${namespaceName}.Tests.Mocks.${sanitizedWorkflowName}`;
 
   const actionTriggerMockClassCode = generateTriggerActionMockClass(mockType, mockClassName, rootClassName);
   // Generate the code for the root class (this also recursively generates nested classes).

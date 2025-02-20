@@ -8,7 +8,7 @@ using Microsoft.Azure.Workflows.UnitTesting.Definitions;
 using Microsoft.Azure.Workflows.UnitTesting.ErrorResponses;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Newtonsoft.Json;
-using <%= LogicAppName %>.Tests.Mocks.<%= WorkflowName %>;
+using <%= LogicAppName %>.Tests.Mocks.<%= SanitizedWorkflowName %>;
 
 namespace <%= LogicAppName %>.Tests
 {

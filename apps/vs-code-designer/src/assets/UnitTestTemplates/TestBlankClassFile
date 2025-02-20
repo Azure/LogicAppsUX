@@ -2,7 +2,7 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using Microsoft.Azure.Workflows.UnitTesting.Definitions;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using <%= LogicAppName %>.Tests.Mocks.<%= WorkflowName %>;
+using <%= LogicAppName %>.Tests.Mocks.<%= SanitizedWorkflowName %>;
 
 namespace <%= LogicAppName %>.Tests
 {
