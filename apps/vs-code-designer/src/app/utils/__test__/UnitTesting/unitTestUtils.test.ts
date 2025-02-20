@@ -15,6 +15,7 @@ import {
   logTelemetry,
   processAndWriteMockableOperations,
   buildClassDefinition,
+  mapJsonTypeToCSharp,
 } from '../../unitTests';
 
 // ============================================================================
@@ -339,5 +340,18 @@ describe('buildClassDefinition', () => {
         },
       ],
     });
+  });
+});
+
+describe('mapJsonTypeToCSharp', () => {
+  it('should map JSON types to C# types correctly', () => {
+    expect(mapJsonTypeToCSharp('string')).toBe('string');
+    expect(mapJsonTypeToCSharp('string', 'date-time')).toBe('DateTime');
+    expect(mapJsonTypeToCSharp('boolean')).toBe('bool');
+    expect(mapJsonTypeToCSharp('integer')).toBe('int');
+    expect(mapJsonTypeToCSharp('number')).toBe('double');
+    expect(mapJsonTypeToCSharp('object')).toBe('JObject');
+    expect(mapJsonTypeToCSharp('any')).toBe('JObject');
+    expect(mapJsonTypeToCSharp('array')).toBe('List<object>');
   });
 });
