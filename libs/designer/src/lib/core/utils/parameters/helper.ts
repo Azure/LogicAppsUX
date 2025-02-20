@@ -3671,8 +3671,10 @@ export function parameterValueToJSONString(parameterValue: ValueSegment[], apply
         const nextExpressionIsLiteral =
           i < updatedParameterValue.length - 1 && updatedParameterValue[i + 1].type !== ValueSegmentType.TOKEN;
         tokenExpression = `@${stringifiedTokenExpression}`;
-        tokenExpression = lastExpressionWasLiteral ? `"${tokenExpression}` : tokenExpression;
-        tokenExpression = nextExpressionIsLiteral ? `${tokenExpression}"` : `${tokenExpression}`;
+        // eslint-disable-next-line no-useless-escape
+        tokenExpression = lastExpressionWasLiteral ? `\"${tokenExpression}` : tokenExpression;
+        // eslint-disable-next-line no-useless-escape
+        tokenExpression = nextExpressionIsLiteral ? `${tokenExpression}\"` : `${tokenExpression}`;
       }
 
       parameterValueString += tokenExpression;
