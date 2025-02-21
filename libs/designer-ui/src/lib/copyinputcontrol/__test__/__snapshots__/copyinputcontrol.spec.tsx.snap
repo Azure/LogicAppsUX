@@ -16,6 +16,7 @@ exports[`lib/copyinputcontrol > should construct the copyinputcontrol correctly 
         <input
           aria-invalid={false}
           className="ms-TextField-field field-112"
+          data-automation-id="msla-copy-input-control-textbox"
           id="TextField0"
           onBlur={[Function]}
           onChange={[Function]}
@@ -109,6 +110,7 @@ exports[`lib/copyinputcontrol > should set the aria-labelledby attribute 1`] = `
           aria-invalid={false}
           aria-labelledby="aria-labelledby"
           className="ms-TextField-field field-112"
+          data-automation-id="msla-copy-input-control-textbox"
           id="TextField9"
           onBlur={[Function]}
           onChange={[Function]}
