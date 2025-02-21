@@ -376,8 +376,16 @@
     "menus": {
       "azureLogicAppsStandard.submenus.workspaceActions": [
         {
+          "command": "azureLogicAppsStandard.createNewProject",
+          "group": "1_create@1"
+        },
+        {
           "command": "azureLogicAppsStandard.createNewCodeProject",
           "group": "1_create@2"
+        },
+        {
+          "command": "azureLogicAppsStandard.createCodeless",
+          "group": "1_create@3"
         },
         {
           "command": "azureLogicAppsStandard.deploy",
