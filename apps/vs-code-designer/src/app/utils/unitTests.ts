@@ -752,7 +752,7 @@ export function buildClassDefinition(className: string, node: any): ClassDefinit
       const propName = toPascalCase(key);
 
       // Determine the child's C# type
-      let csharpType = mapJsonTypeToCSharp(subNode?.type);
+      let csharpType = mapJsonTypeToCSharp(subNode?.type, subNode?.format);
       let isObject = false;
 
       // If it's an object, we must generate a nested class.
@@ -790,10 +790,10 @@ export function buildClassDefinition(className: string, node: any): ClassDefinit
 /**
  * Maps JSON types to corresponding C# types.
  */
-export function mapJsonTypeToCSharp(jsonType: string): string {
+export function mapJsonTypeToCSharp(jsonType: string, jsonFormat?: string): string {
   switch (jsonType) {
     case 'string':
-      return 'string';
+      return jsonFormat === 'date-time' ? 'DateTime' : 'string';
     case 'integer':
       return 'int';
     case 'number':
@@ -849,6 +849,8 @@ export function generateClassCode(classDef: ClassDefinition): string {
   for (const prop of classDef.properties) {
     if (prop.propertyType === 'string') {
       sb.push(`        this.${prop.propertyName} = string.Empty;`);
+    } else if (prop.propertyType === 'DateTime') {
+      sb.push(`        this.${prop.propertyName} = new DateTime();`);
     } else if (prop.isObject) {
       sb.push(`        this.${prop.propertyName} = new ${prop.propertyType}();`);
     } else if (prop.propertyType === 'JObject') {
@@ -973,19 +975,10 @@ export function generateCSharpClasses(namespaceName: string, rootClassName: stri
   const adjustedNamespace = `${namespaceName}.Tests.Mocks`;
 
   // Generate the code for the root class (this also recursively generates nested classes).
+  const requiredNamespaces = ['Newtonsoft.Json.Linq', 'System.Collections.Generic', 'System.Net', 'System'];
   const classCode = generateClassCode(rootDef);
   // rap it all in the needed "using" statements + namespace.
-  const finalCode = [
-    'using Newtonsoft.Json.Linq;',
-    'using System.Collections.Generic;',
-    'using System.Net;',
-    '',
-    `namespace ${adjustedNamespace}`,
-    '{',
-    classCode,
-    '}',
-  ].join('\n');
-  return finalCode;
+  return [...requiredNamespaces.map((ns) => `using ${ns};`), '', `namespace ${adjustedNamespace}`, '{', classCode, '}'].join('\n');
 }
 
 // Static sets for mockable operation types
