@@ -854,7 +854,7 @@ export function buildClassDefinition(className: string, node: any): ClassDefinit
       const propName = toPascalCase(key);
 
       // Determine the child's C# type
-      let csharpType = mapJsonTypeToCSharp(subNode?.nestedTypeProperty);
+      let csharpType = mapJsonTypeToCSharp(subNode?.nestedTypeProperty, subNode?.format);
       let isObject = false;
 
       // If it's an object, we must generate a nested class.
@@ -909,10 +909,10 @@ export function buildClassDefinition(className: string, node: any): ClassDefinit
 /**
  * Maps JSON types to corresponding C# types.
  */
-export function mapJsonTypeToCSharp(jsonType: string): string {
+export function mapJsonTypeToCSharp(jsonType: string, jsonFormat?: string): string {
   switch (jsonType) {
     case 'string':
-      return 'string';
+      return jsonFormat === 'date-time' ? 'DateTime' : 'string';
     case 'integer':
       return 'int';
     case 'number':
@@ -1004,17 +1004,19 @@ export function generateClassCode(classDef: ClassDefinition): string {
 
   for (const prop of classDef.properties) {
     if (prop.propertyType === 'string') {
-      sb.push(`            ${prop.propertyName} = string.Empty;`);
+      sb.push(`            this.${prop.propertyName} = string.Empty;`);
+    } else if (prop.propertyType === 'DateTime') {
+      sb.push(`            this.${prop.propertyName} = new DateTime();`);
     } else if (prop.isObject) {
-      sb.push(`            ${prop.propertyName} = new ${prop.propertyType}();`);
+      sb.push(`            this.${prop.propertyName} = new ${prop.propertyType}();`);
     } else if (prop.propertyType === 'JObject') {
-      sb.push(`            ${prop.propertyName} = new JObject();`);
+      sb.push(`            this.${prop.propertyName} = new JObject();`);
     } else if (prop.propertyType.startsWith('List<')) {
-      sb.push(`            ${prop.propertyName} = new ${prop.propertyType}();`);
+      sb.push(`            this.${prop.propertyName} = new ${prop.propertyType}();`);
     } else if (prop.propertyType === 'int') {
-      sb.push(`            ${prop.propertyName} = 0;`);
+      sb.push(`            this.${prop.propertyName} = 0;`);
     } else if (prop.propertyType === 'HttpStatusCode') {
-      sb.push(`            ${prop.propertyName} = HttpStatusCode.OK;`);
+      sb.push(`            this.${prop.propertyName} = HttpStatusCode.OK;`);
     }
   }
 
@@ -1051,7 +1053,7 @@ export async function processAndWriteMockableOperations(
 
   // Create or verify the "MockOutputs" folder inside the logicApp folder
   const mockOutputsFolderPath = path.join(workflowFolderPath, 'MockOutputs');
-  await fs.ensureDir(mockOutputsFolderPath);
+  await fse.ensureDir(mockOutputsFolderPath);
 
   // Dictionaries to store mockable operation names and their corresponding class names
   const foundActionMocks: Record<string, string> = {};
@@ -1147,15 +1149,18 @@ export function generateCSharpClasses(
 
   const actionTriggerMockClassCode = generateTriggerActionMockClass(mockType, mockClassName, rootClassName);
   // Generate the code for the root class (this also recursively generates nested classes).
+  const requiredNamespaces = [
+    'Microsoft.Azure.Workflows.UnitTesting.Definitions',
+    'Microsoft.Azure.Workflows.UnitTesting.ErrorResponses',
+    'Newtonsoft.Json.Linq',
+    'System.Collections.Generic',
+    'System.Net',
+    'System',
+  ];
   const classCode = generateClassCode(rootDef);
-  // rap it all in the needed "using" statements + namespace.
-  const finalCode = [
-    'using Microsoft.Azure.Workflows.UnitTesting.Definitions;',
-    'using Microsoft.Azure.Workflows.UnitTesting.ErrorResponses;',
-    'using Newtonsoft.Json.Linq;',
-    'using System;',
-    'using System.Net;',
-    'using System.Collections.Generic;',
+  // wrap it all in the needed "using" statements + namespace.
+  return [
+    ...requiredNamespaces.map((ns) => `using ${ns};`),
     '',
     `namespace ${adjustedNamespace}`,
     '{',
@@ -1163,7 +1168,6 @@ export function generateCSharpClasses(
     classCode,
     '}',
   ].join('\n');
-  return finalCode;
 }
 
 // Static sets for mockable operation types
