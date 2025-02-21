@@ -7,7 +7,6 @@ export interface BaseTemplateServiceOptions {
   endpoint: string;
   openBladeAfterCreate: (workflowName: string | undefined) => void;
   onAddBlankWorkflow: () => Promise<void>;
-  getCustomResource?: (resourcePath: string, artifactType?: string) => Promise<any> | undefined;
   getContentPathUrl?: (templateName: string, resourcePath: string) => string;
 }
 
@@ -22,8 +21,6 @@ export class BaseTemplateService implements ITemplateService {
   public openBladeAfterCreate = (workflowName: string | undefined): void => this.options.openBladeAfterCreate(workflowName);
 
   public onAddBlankWorkflow = (): Promise<void> => this.options.onAddBlankWorkflow();
-
-  public getCustomResource = (resourcePath: string): Promise<any> | undefined => this.options?.getCustomResource?.(resourcePath);
 
   public getContentPathUrl = (templateName: string, resourcePath: string): string => {
     const { endpoint, getContentPathUrl } = this.options;
