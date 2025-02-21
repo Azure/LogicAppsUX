@@ -51,6 +51,7 @@ export interface InitializeVariableErrors {
 }
 
 interface VariableEditorProps extends Partial<BaseEditorProps> {
+  index: number;
   variable: InitializeVariableProps;
   disableDelete: boolean;
   errors?: InitializeVariableErrors;
@@ -61,6 +62,7 @@ interface VariableEditorProps extends Partial<BaseEditorProps> {
 const FieldEditor = ({
   label,
   id,
+  index,
   isRequired,
   editor: EditorComponent,
   editorProps,
@@ -68,6 +70,7 @@ const FieldEditor = ({
 }: {
   label: string;
   id: string;
+  index: number;
   isRequired: boolean;
   editor: React.ElementType;
   editorProps: Record<string, any>;
@@ -77,7 +80,7 @@ const FieldEditor = ({
     <div className="msla-input-parameter-label">
       <Label id={id} isRequiredField={isRequired} text={label} />
     </div>
-    <EditorComponent {...editorProps} />
+    <EditorComponent {...editorProps} labelId={`${label} - ${index}`} />
     {errorMessage ? <div className="msla-input-parameter-error">{errorMessage}</div> : null}
   </div>
 );
@@ -88,6 +91,7 @@ export const VariableEditor = ({
   disableDelete,
   onVariableChange,
   errors,
+  index,
   ...baseEditorProps
 }: VariableEditorProps) => {
   const intl = useIntl();
@@ -231,6 +235,7 @@ export const VariableEditor = ({
             {fields.map(({ label, id, isRequired, editor, editorProps, errorMessage }) => (
               <FieldEditor
                 key={id}
+                index={index}
                 label={label}
                 id={id}
                 isRequired={isRequired}

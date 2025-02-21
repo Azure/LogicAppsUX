@@ -78,6 +78,7 @@ export const InitializeVariableEditor = ({ initialValue, onChange, validationErr
         <VariableEditor
           {...props}
           key={index}
+          index={index}
           variable={variable}
           onDelete={() => handleDeleteVariable(index)}
           onVariableChange={(value: InitializeVariableProps) => handleVariableChange(value, index)}

@@ -15,15 +15,15 @@ import type { ComboboxItem } from '../../../combobox';
  */
 export function createLiteralValueSegment(value: string, segmentId?: string): ValueSegment {
   return {
-    id: segmentId ? segmentId : guid(),
+    id: segmentId ?? guid(),
     type: ValueSegmentType.LITERAL,
     value,
   };
 }
 
-export function createEmptyLiteralValueSegment(): ValueSegment {
+export function createEmptyLiteralValueSegment(segmentId?: string): ValueSegment {
   return {
-    id: guid(),
+    id: segmentId ?? guid(),
     type: ValueSegmentType.LITERAL,
     value: '',
   };

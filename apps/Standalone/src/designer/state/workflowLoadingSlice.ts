@@ -90,7 +90,7 @@ export const loadWorkflow = createAsyncThunk('workflowLoadingState/loadWorkflow'
   const isMonitoringView = currentState.workflowLoader.isMonitoringView;
 
   const runFiles = isMonitoringView && fileName ? await readJsonFiles(fileName) : [];
-
+  console.log(fileName);
   const wf = await import(`../../../../../__mocks__/workflows/${fileName}.json`);
   return {
     workflowDefinition: wf.definition as LogicAppsV2.WorkflowDefinition,
