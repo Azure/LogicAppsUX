@@ -1,6 +1,12 @@
-import { makeStyles } from '@fluentui/react-components';
+import { makeStyles, tokens } from '@fluentui/react-components';
 
 export const useStyles = makeStyles({
+  xsltStyles: {
+    display: 'block',
+    height: '80px',
+    marginLeft: '20px',
+    backgroundColor: tokens.colorNeutralForegroundInverted,
+  },
   row: {
     width: '100%',
     paddingBottom: '18px',

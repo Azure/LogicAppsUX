@@ -19,16 +19,19 @@ import {
   connectionDoesExist,
   createCustomInputConnection,
   createNewEmptyConnection,
+  isCustomValueConnection,
   isNodeConnection,
   newConnectionWillHaveCircularLogic,
 } from '../../../utils/Connection.Utils';
-import { SchemaType, type SchemaNodeDictionary } from '@microsoft/logic-apps-shared';
+import { InputFormat, SchemaType, type SchemaNodeDictionary } from '@microsoft/logic-apps-shared';
 import DraggableList from 'react-draggable-list';
 import InputListWrapper, { type TemplateItemProps, type CommonProps } from './InputList';
 import { useCallback, useMemo, useRef, useState } from 'react';
 import { useIntl } from 'react-intl';
 import { InputCustomInfoLabel } from './inputCustomInfoLabel';
 import { useStyles } from './styles';
+import { InputTextbox } from './inputTextbox';
+import { XsltFilePicker } from './xsltFilePicker';
 
 export const InputTabContents = (props: {
   func: FunctionData;
@@ -155,6 +158,10 @@ export const InputTabContents = (props: {
             }
           };
 
+          const updateCustomInputConnection = (inputStr: string) => {
+            validateAndCreateConnection(inputStr, undefined);
+          };
+
           const removeConnection = (inputIndex: number) => {
             const targetNodeReactFlowKey = props.functionKey;
             dispatch(
@@ -165,27 +172,25 @@ export const InputTabContents = (props: {
             );
           };
 
-          return (
-            <div className={styles.row} key={index}>
-              <div className={styles.header}>
-                <div className={styles.titleContainer}>
-                  <div>
-                    <Caption1 className={styles.titleText}>
-                      {input.name ?? resources.VALUE}
-                      <Text className={styles.titleRequiredLabelText}>{input.isOptional ? '' : '*'}</Text>
-                    </Caption1>
-                    <InputCustomInfoLabel />
-                  </div>
-                  <Text className={styles.titleText}>
-                    <span className={styles.titleLabelText}>{resources.ACCEPTED_TYPES}</span>
-                    {input.allowedTypes}
-                  </Text>
-                </div>
-                <div className={styles.descriptionContainer}>
-                  <Text className={styles.descriptionText}>{input.tooltip ?? input.placeHolder ?? ''}</Text>
-                </div>
-              </div>
-              <div className={styles.body}>
+          let inputJSX: JSX.Element;
+          switch (input.inputEntryType) {
+            case InputFormat.TextBox: {
+              inputJSX = (
+                <InputTextbox
+                  input={input}
+                  loadedInputValue={getInputValue(inputConnection)}
+                  updateCustomInputConnection={updateCustomInputConnection}
+                />
+              );
+              break;
+            }
+            case InputFormat.FilePicker: {
+              const selectedFileNameIfExisting = inputConnection && isCustomValueConnection(inputConnection) ? inputConnection.value : '';
+              inputJSX = <XsltFilePicker selectedFileName={selectedFileNameIfExisting} onFileSelect={updateCustomInputConnection} />;
+              break;
+            }
+            default:
+              inputJSX = (
                 <div className={styles.formControlWrapper}>
                   <span className={styles.formControl}>
                     <InputDropdown
@@ -210,7 +215,30 @@ export const InputTabContents = (props: {
                     onClick={() => removeConnection(index)}
                   />
                 </div>
+              );
+          }
+
+          return (
+            <div className={styles.row} key={index}>
+              <div className={styles.header}>
+                <div className={styles.titleContainer}>
+                  <div>
+                    <Caption1 className={styles.titleText}>
+                      {input.name ?? resources.VALUE}
+                      <Text className={styles.titleRequiredLabelText}>{input.isOptional ? '' : '*'}</Text>
+                    </Caption1>
+                    <InputCustomInfoLabel />
+                  </div>
+                  <Text className={styles.titleText}>
+                    <span className={styles.titleLabelText}>{resources.ACCEPTED_TYPES}</span>
+                    {input.allowedTypes}
+                  </Text>
+                </div>
+                <div className={styles.descriptionContainer}>
+                  <Text className={styles.descriptionText}>{input.tooltip ?? input.placeHolder ?? ''}</Text>
+                </div>
               </div>
+              <div className={styles.body}>{inputJSX}</div>
             </div>
           );
         })

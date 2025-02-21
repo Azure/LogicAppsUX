@@ -1,6 +1,12 @@
 import { makeStyles, shorthands, tokens } from '@fluentui/react-components';
 
 const useStyles = makeStyles({
+  xsltStyles: {
+    display: 'block',
+    height: '80px',
+    marginLeft: '30px',
+    backgroundColor: tokens.colorNeutralForegroundInverted,
+  },
   componentWrapper: {
     display: 'flex',
     justifyContent: 'center',
@@ -8,6 +14,8 @@ const useStyles = makeStyles({
     zIndex: 999,
   },
   treeWrapper: {
+    display: 'block',
+    backgroundColor: tokens.colorNeutralForegroundInverted,
     marginTop: '10px',
   },
   dropdownInputWrapper: {
@@ -29,6 +37,7 @@ const useStyles = makeStyles({
     marginLeft: 'auto',
   },
   dropdownInputValue: {
+    display: 'block',
     alignSelf: 'center',
     maxHeight: '350px',
     marginLeft: '-30px',

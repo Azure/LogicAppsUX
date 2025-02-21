@@ -7,6 +7,7 @@ import {
   Caption1,
   type OpenPopoverEvents,
   type OnOpenChangeData,
+  mergeClasses,
 } from '@fluentui/react-components';
 import { useStyles } from './styles';
 import { DeleteRegular, DismissRegular } from '@fluentui/react-icons';
@@ -19,6 +20,7 @@ import { useIntl } from 'react-intl';
 import { InputTabContents } from './inputTab/inputTab';
 import { OutputTabContents } from './outputTab/outputTab';
 import { guid } from '@microsoft/logic-apps-shared';
+import { isFileDropdownFunction } from '../../utils/Function.Utils';
 
 export interface FunctionConfigurationPopoverProps {
   functionId: string;
@@ -85,9 +87,11 @@ export const FunctionConfigurationPopover = (props: FunctionConfigurationPopover
 
   const onCloseClick = useCallback(() => onOpenChange(), [onOpenChange]);
 
+  const surfaceStyle = isFileDropdownFunction(func) ? mergeClasses(styles.surface, styles.fileDropdownStyle) : styles.surface;
+
   return (
     func && (
-      <PopoverSurface className={styles.surface} data-selectableid={`${functionId}_${guid()}`} onClick={onModalClick}>
+      <PopoverSurface className={surfaceStyle} data-selectableid={`${functionId}_${guid()}`} onClick={onModalClick}>
         <div className={styles.headerRow}>
           <Subtitle2>{func.displayName}</Subtitle2>
           <div className={styles.topRightActions}>

@@ -17,7 +17,7 @@ import { InitDataMapperApiService, defaultDataMapperApiServiceOptions, getFuncti
 import { Theme as ThemeType } from '@microsoft/logic-apps-shared';
 import { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import type { IFileSysTreeItem, MapMetadataV2 } from '@microsoft/logic-apps-shared';
+import type { IFileSysTreeItem, MapMetadataV2, SchemaType } from '@microsoft/logic-apps-shared';
 
 const mockFileItems: IFileSysTreeItem[] = [
   {
@@ -49,6 +49,14 @@ class DataMapperFileService implements IDataMapperFileService {
   constructor(verbose: boolean) {
     this.verbose = verbose;
   }
+
+  public getSchemaFromFile(schemaType: SchemaType): void {
+    console.log(`getSchemaFromFile: ${schemaType}`);
+  }
+
+  public isTestDisabledForOS = () => {
+    return;
+  };
 
   public sendNotification(title: string, text: string, level: number) {
     console.log(`Notification: ${title}, data: ${text}, level: ${level}`);
@@ -82,7 +90,24 @@ class DataMapperFileService implements IDataMapperFileService {
   };
 }
 
-const customXsltPath = ['folder/file.xslt', 'file2.xslt'];
+const customXsltPath: IFileSysTreeItem[] = [
+  {
+    name: 'doMath.xslt',
+    type: 'file',
+    fullPath: 'doMath.xslt',
+  },
+  {
+    name: 'More XSLT',
+    type: 'directory',
+    children: [
+      {
+        name: 'getDateFromSeconds.xslt',
+        type: 'file',
+        fullPath: 'More XSLT/getDateFromSeconds.xslt',
+      },
+    ],
+  },
+];
 
 export const DataMapperStandaloneDesignerV2 = () => {
   const dispatch = useDispatch<AppDispatch>();

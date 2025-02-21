@@ -7,6 +7,7 @@ export const ExtensionCommand = {
   fetchSchema: 'fetchSchema',
   getConfigurationSetting: 'getConfigurationSetting',
   getAvailableCustomXsltPaths: 'getAvailableCustomXsltPaths',
+  getAvailableCustomXsltPathsV2: 'getAvailableCustomXsltPathsV2',
   initialize_frame: 'initialize-frame',
   loadDataMap: 'loadDataMap',
   update_access_token: 'update-access-token',

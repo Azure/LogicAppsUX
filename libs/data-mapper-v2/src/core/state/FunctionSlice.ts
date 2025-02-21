@@ -1,10 +1,11 @@
+import type { IFileSysTreeItem } from '@microsoft/logic-apps-shared';
 import type { FunctionData } from '../../models/Function';
 import type { PayloadAction } from '@reduxjs/toolkit';
 import { createSlice } from '@reduxjs/toolkit';
 
 export interface FunctionState {
   availableFunctions: FunctionData[];
-  customXsltFilePaths: string[];
+  customXsltFilePaths: IFileSysTreeItem[];
 }
 
 export const initialFunctionState: FunctionState = {
@@ -19,7 +20,7 @@ export const functionSlice = createSlice({
     loadFunctions: (state, action: PayloadAction<FunctionData[]>) => {
       state.availableFunctions = action.payload;
     },
-    loadCustomXsltFilePaths: (state, action: PayloadAction<string[]>) => {
+    loadCustomXsltFilePaths: (state, action: PayloadAction<IFileSysTreeItem[]>) => {
       state.customXsltFilePaths = action.payload;
     },
   },

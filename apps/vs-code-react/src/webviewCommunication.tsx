@@ -17,6 +17,7 @@ import type {
   GetDataMapperVersionMessage,
   ShowAvailableSchemasMessageV2,
   GetTestFeatureEnablementStatus,
+  GetAvailableCustomXsltPathsMessageV2,
 } from './run-service';
 import {
   changeCustomXsltPathList,
@@ -66,6 +67,7 @@ type DataMapperMessageType =
   | ShowAvailableSchemasMessage
   | ShowAvailableSchemasMessageV2
   | GetAvailableCustomXsltPathsMessage
+  | GetAvailableCustomXsltPathsMessageV2
   | SetXsltDataMessage
   | SetRuntimePortMessage
   | GetConfigurationSettingMessage
@@ -139,6 +141,10 @@ export const WebViewCommunication: React.FC<{ children: ReactNode }> = ({ childr
               break;
             }
             case ExtensionCommand.getAvailableCustomXsltPaths: {
+              dispatch(changeCustomXsltPathList(message.data));
+              break;
+            }
+            case ExtensionCommand.getAvailableCustomXsltPathsV2: {
               dispatch(changeCustomXsltPathListV2(message.data));
               break;
             }
