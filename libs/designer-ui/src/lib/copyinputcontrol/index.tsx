@@ -58,7 +58,7 @@ export const CopyInputControl = React.forwardRef<Pick<HTMLElement, 'focus' | 'sc
     return (
       <div className="msla-copy-input-control" ref={(container) => (containerRef.current = container)}>
         <TextField
-          data-automation-id="msla-panel-header-card-title"
+          data-automation-id="msla-copy-input-control-textbox"
           aria-labelledby={ariaLabelledBy}
           className="msla-copy-input-control-textbox"
           componentRef={(textField) => (textFieldRef.current = textField)}

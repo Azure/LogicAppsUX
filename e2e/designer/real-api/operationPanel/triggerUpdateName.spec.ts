@@ -1,6 +1,6 @@
 import { expect, test } from '../../fixtures/real-api';
 test.describe(
-  'Nested loops',
+  'Trigger update name',
   {
     tag: '@real',
   },
@@ -16,15 +16,17 @@ test.describe(
       await page.getByLabel('Card title').click();
       await page.getByLabel('Card title').fill(updatedName);
 
-      await expect(page.getByTestId('msla-panel-header-card-title')).toHaveValue('NestedLoops');
+      await expect(page.getByTestId('msla-copy-input-control-textbox')).toHaveValue(/manual/);
 
       await page.getByTestId('card-manual').getByRole('button', { name: 'manual' }).click();
       await realDataApi.saveWorkflow();
-      await realDataApi.verifyWorkflowSaveWithRequest(200, 'test', updatedName);
+      await page.waitForTimeout(4000);
 
-      await page.getByTestId(`card-${updatedName}`).getByRole('button', { name: updatedName }).click();
-      await expect(page.getByRole('textbox', { name: 'URL will be generated after' })).toBeVisible();
-      await expect(page.locator('#Method424')).toContainText('Method');
+      await realDataApi.verifyWorkflowSaveWithRequest(200, 'test', updatedName);
+      await page.getByTestId('card-initialize_counter').getByRole('button', { name: 'Initialize counter' }).click();
+
+      await page.getByTestId('card-manualUpdated').getByRole('button', { name: 'manualUpdated' }).click();
+      await expect(page.getByTestId('msla-panel-header-card-title')).toHaveValue(/manualUpdated/);
 
       await page.getByLabel('Card title').click();
       await page.getByLabel('Card title').fill(initialName);
