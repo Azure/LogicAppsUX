@@ -189,8 +189,8 @@ export const DesignerCommandBar: React.FC<DesignerCommandBarProps> = ({
       description: 'Button text for unit test asssertions',
     }),
     UNIT_TEST_CREATE_BLANK: intl.formatMessage({
-      defaultMessage: 'Create blank unit test (Preview)',
-      id: 'U5O4Tz',
+      defaultMessage: 'Create unit test (Preview)',
+      id: 'xnhcEo',
       description: 'Button test for save blank unit test',
     }),
   };
