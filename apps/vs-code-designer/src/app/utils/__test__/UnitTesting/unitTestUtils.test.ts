@@ -187,6 +187,7 @@ describe('generateCSharpClasses', () => {
     });
     expect(classCode).toContain('public class RootClass');
     expect(classCode).toContain('public string Key1 { get; set; }');
+    expect(classCode).not.toContain('public HttpStatusCode StatusCode');
   });
 });
 
@@ -201,6 +202,7 @@ describe('generateCSharpClasses - Naming and Namespace Validation', () => {
     const classCode = generateCSharpClasses(namespaceName, rootClassName, data);
     expect(classCode).toContain(`public class ${rootClassName}`);
     expect(classCode).toContain(`namespace ${namespaceName}.Tests.Mocks`);
+    expect(classCode).not.toContain('public HttpStatusCode StatusCode');
   });
 });
 
@@ -219,6 +221,7 @@ describe('generateClassCode', () => {
     expect(classCode).toContain('public class TestClass');
     expect(classCode).toContain('public string Property1 { get; set; }');
     expect(classCode).toContain('public int Property2 { get; set; }');
+    expect(classCode).toContain('this.StatusCode = HttpStatusCode.OK;');
   });
 });
 

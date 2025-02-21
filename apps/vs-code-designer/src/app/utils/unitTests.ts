@@ -844,22 +844,23 @@ export function generateClassCode(classDef: ClassDefinition): string {
   sb.push('    /// </summary>');
   sb.push(`    public ${classDef.className}()`);
   sb.push('    {');
+  sb.push('        this.StatusCode = HttpStatusCode.OK;');
 
   for (const prop of classDef.properties) {
     if (prop.propertyType === 'string') {
-      sb.push(`        ${prop.propertyName} = string.Empty;`);
+      sb.push(`        this.${prop.propertyName} = string.Empty;`);
     } else if (prop.propertyType === 'DateTime') {
-      sb.push(`        ${prop.propertyName} = new DateTime();`);
+      sb.push(`        this.${prop.propertyName} = new DateTime();`);
     } else if (prop.isObject) {
-      sb.push(`        ${prop.propertyName} = new ${prop.propertyType}();`);
+      sb.push(`        this.${prop.propertyName} = new ${prop.propertyType}();`);
     } else if (prop.propertyType === 'JObject') {
-      sb.push(`        ${prop.propertyName} = new JObject();`);
+      sb.push(`        this.${prop.propertyName} = new JObject();`);
     } else if (prop.propertyType.startsWith('List<')) {
-      sb.push(`        ${prop.propertyName} = new ${prop.propertyType}();`);
+      sb.push(`        this.${prop.propertyName} = new ${prop.propertyType}();`);
     } else if (prop.propertyType === 'int') {
-      sb.push(`        ${prop.propertyName} = 0;`);
+      sb.push(`        this.${prop.propertyName} = 0;`);
     } else if (prop.propertyType === 'HttpStatusCode') {
-      sb.push(`        ${prop.propertyName} = HttpStatusCode.OK;`);
+      sb.push(`        this.${prop.propertyName} = HttpStatusCode.OK;`);
     }
   }
 
@@ -968,12 +969,8 @@ export function generateCSharpClasses(namespaceName: string, rootClassName: stri
     ...data, // Merge the data (including "description", subfields, etc.)
   });
 
-  rootDef.properties.push({
-    propertyName: 'StatusCode',
-    propertyType: 'HttpStatusCode', // Use the System.Net enum
-    description: 'The HTTP status code returned by the action. Example: HttpStatusCode.OK for success.',
-    isObject: false,
-  });
+  // StatusCode is defined on the base class and not needed in generated classes
+  delete rootDef.properties['StatusCode'];
 
   const adjustedNamespace = `${namespaceName}.Tests.Mocks`;
 
