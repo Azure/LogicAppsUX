@@ -1,4 +1,11 @@
 # Logic Apps Designer
+## [5.43.0](https://github.com/Azure/LogicAppsUX/compare/v5.42.0...v5.43.0) (2025-02-20)
+
+
+### Bug Fixes
+
+* **Designer:** Fixes an issue where '\"'  causing json errors in expressions ([#6636](https://github.com/Azure/LogicAppsUX/issues/6636)) ([ccb46a1](https://github.com/Azure/LogicAppsUX/commit/ccb46a1f652ac4ea8d49ad34e38a16db1d2b7150))
+
 ## [5.42.0](https://github.com/Azure/LogicAppsUX/compare/v5.41.0...v5.42.0) (2025-02-19)
 
 
