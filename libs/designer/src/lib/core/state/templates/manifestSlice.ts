@@ -12,7 +12,6 @@ export interface ManifestState {
   availableTemplateNames?: ManifestName[];
   filteredTemplateNames?: ManifestName[];
   githubTemplateNames?: ManifestName[];
-  customTemplateNames?: ManifestName[];
   availableTemplates?: Record<ManifestName, Template.Manifest>;
   filters: {
     pageNum: number;
@@ -73,14 +72,6 @@ export const manifestSlice = createSlice({
         state.filteredTemplateNames = action.payload;
       }
     },
-    setCustomTemplates: (state, action: PayloadAction<Record<string, Template.Manifest> | undefined>) => {
-      if (action.payload) {
-        const customTemplateNames = Object.keys(action.payload);
-        state.customTemplateNames = customTemplateNames;
-        state.availableTemplateNames = [...(state.githubTemplateNames ?? []), ...customTemplateNames];
-        state.availableTemplates = { ...(state.availableTemplates ?? {}), ...action.payload };
-      }
-    },
     setPageNum: (state, action: PayloadAction<number>) => {
       state.filters.pageNum = action.payload;
     },
@@ -114,13 +105,13 @@ export const manifestSlice = createSlice({
   },
   extraReducers: (builder) => {
     builder.addCase(loadGithubManifestNames.fulfilled, (state, action) => {
-      state.availableTemplateNames = [...action.payload, ...(state.customTemplateNames ?? [])];
+      state.availableTemplateNames = [...action.payload];
       state.githubTemplateNames = action.payload;
     });
 
     builder.addCase(loadGithubManifestNames.rejected, (state) => {
       // TODO change to null for error handling case
-      state.availableTemplateNames = state.customTemplateNames ?? [];
+      state.availableTemplateNames = [];
       state.githubTemplateNames = [];
     });
 
@@ -143,7 +134,6 @@ export const {
   setavailableTemplatesNames,
   setavailableTemplates,
   setFilteredTemplateNames,
-  setCustomTemplates,
   setPageNum,
   setKeywordFilter,
   setSortKey,

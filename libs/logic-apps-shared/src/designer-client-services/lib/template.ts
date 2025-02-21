@@ -9,7 +9,7 @@ export interface ITemplateService {
   getAllTemplateNames: () => Promise<string[]>;
   getResourceManifest: (resourcePath: string) => Promise<Template.Manifest>;
   getWorkflowDefinition: (resourcePath: string) => Promise<LogicAppsV2.WorkflowDefinition>;
-  getContentPathUrl: (resourcePath: string) => string;
+  getContentPathUrl: (templateName: string, resourcePath: string) => string;
 }
 
 let service: ITemplateService;

@@ -6,7 +6,6 @@ import type { AppDispatch, RootState } from '../state/templates/store';
 import {
   loadGithubManifestNames,
   loadGithubManifests,
-  setCustomTemplates,
   setFilteredTemplateNames,
   templatesCountPerPage,
   lazyLoadGithubManifests,
@@ -27,7 +26,6 @@ export interface TemplatesDataProviderProps {
   resourceDetails: ResourceDetails;
   services: TemplateServiceOptions;
   connectionReferences: ConnectionReferences;
-  customTemplates?: Record<string, Template.Manifest>;
   viewTemplate?: Template.ViewTemplateDetails;
   children?: React.ReactNode;
 }
@@ -105,12 +103,6 @@ export const TemplatesDataProvider = (props: TemplatesDataProviderProps) => {
       dispatch(setViewTemplateDetails(props.viewTemplate));
     }
   }, [dispatch, props.viewTemplate]);
-
-  useEffect(() => {
-    if (props.customTemplates) {
-      dispatch(setCustomTemplates(props.customTemplates));
-    }
-  }, [dispatch, props.customTemplates]);
 
   if (!servicesInitialized) {
     return null;
