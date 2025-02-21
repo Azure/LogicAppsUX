@@ -469,7 +469,7 @@ export async function createTestExecutorFile(logicAppFolderPath: string, logicAp
     return;
   }
 
-  let templateContent = await fs.readFile(templatePath, 'utf-8');
+  let templateContent = await fse.readFile(templatePath, 'utf-8');
   templateContent = templateContent.replace(/<%= LogicAppName %>/g, logicAppName);
 
   await fse.writeFile(csFilePath, templateContent);
@@ -802,6 +802,7 @@ export interface PropertyDefinition {
   propertyType: string; // e.g. "string", "int", "Body" (another class), etc.
   description: string | null;
   isObject: boolean; // If true, the propertyType is a nested class name
+  jsonPropertyName: string | null;
 }
 
 /**
@@ -845,13 +846,15 @@ export function buildClassDefinition(className: string, node: any): ClassDefinit
         continue;
       }
 
-      // Skip keys with special characters
-      if (/[~@]/.test(key)) {
-        continue;
-      }
-
       const subNode = node[key];
-      const propName = toPascalCase(key);
+      let propName = toPascalCase(key);
+
+      // Handle special characters
+      let jsonPropertyName = null;
+      if (/[~@]/.test(key)) {
+        jsonPropertyName = key.replace(/~1/g, '.');
+        propName = toPascalCase(subNode?.title.replace(/[^a-zA-Z0-9]/g, ''));
+      }
 
       // Determine the child's C# type
       let csharpType = mapJsonTypeToCSharp(subNode?.nestedTypeProperty);
@@ -894,6 +897,7 @@ export function buildClassDefinition(className: string, node: any): ClassDefinit
         propertyType: csharpType,
         description: subDescription,
         isObject,
+        jsonPropertyName,
       });
     }
   }
@@ -992,6 +996,9 @@ export function generateClassCode(classDef: ClassDefinition): string {
       sb.push(`        /// ${prop.description}`);
       sb.push('        /// </summary>');
     }
+    if (prop.jsonPropertyName) {
+      sb.push(`        [JsonProperty(PropertyName="${prop.jsonPropertyName}")]`);
+    }
     sb.push(`        public ${prop.propertyType} ${prop.propertyName} { get; set; }`);
     sb.push('');
   }
@@ -1051,7 +1058,7 @@ export async function processAndWriteMockableOperations(
 
   // Create or verify the "MockOutputs" folder inside the logicApp folder
   const mockOutputsFolderPath = path.join(workflowFolderPath, 'MockOutputs');
-  await fs.ensureDir(mockOutputsFolderPath);
+  await fse.ensureDir(mockOutputsFolderPath);
 
   // Dictionaries to store mockable operation names and their corresponding class names
   const foundActionMocks: Record<string, string> = {};
@@ -1152,6 +1159,7 @@ export function generateCSharpClasses(
   const finalCode = [
     'using Microsoft.Azure.Workflows.UnitTesting.Definitions;',
     'using Microsoft.Azure.Workflows.UnitTesting.ErrorResponses;',
+    'using Newtonsoft.Json;',
     'using Newtonsoft.Json.Linq;',
     'using System;',
     'using System.Net;',
