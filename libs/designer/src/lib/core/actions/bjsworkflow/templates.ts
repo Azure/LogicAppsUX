@@ -144,7 +144,6 @@ export const loadManifestsFromPaths = async (resourcePaths: string[]) => {
     });
     const manifestsArray = await Promise.all(manifestPromises);
     return manifestsArray.reduce((result: Record<string, Template.Manifest>, manifestFile: any, index: number) => {
-      //const manifest = manifestFile.default;
       result[resourcePaths[index]] = manifestFile;
       return result;
     }, {});
@@ -307,7 +306,7 @@ const loadWorkflowTemplateFromManifest = async (
     return {
       workflow: {
         id: workflowId,
-        workflowDefinition: (templateWorkflowDefinition as any)?.default ?? templateWorkflowDefinition,
+        workflowDefinition: templateWorkflowDefinition,
         manifest: templateManifest,
         workflowName: viewTemplateData?.basicsOverride?.[workflowId]?.name?.value ?? '',
         kind:
