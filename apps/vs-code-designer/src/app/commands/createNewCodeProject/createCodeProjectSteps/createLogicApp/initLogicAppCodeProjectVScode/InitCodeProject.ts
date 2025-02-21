@@ -64,9 +64,9 @@ export abstract class InitCodeProject extends AzureWizardExecuteStep<IProjectWiz
   protected getTaskInputs?(): ITaskInputs[];
   protected getWorkspaceSettings?(): ISettingToAdd[];
 
-  protected getDebugConfiguration(version: FuncVersion): DebugConfiguration {
+  protected getDebugConfiguration(version: FuncVersion, logicAppName: string): DebugConfiguration {
     return {
-      name: localize('attachToNetFunc', 'Attach to logic app'),
+      name: localize('attachToNetFunc', `Attach to logic app ${logicAppName}`),
       type: version === FuncVersion.v1 ? 'clr' : 'coreclr',
       request: 'attach',
       processId: `\${command:${extensionCommand.pickProcess}}`,
@@ -95,7 +95,7 @@ export abstract class InitCodeProject extends AzureWizardExecuteStep<IProjectWiz
 
     // Write the necessary Visual Studio Code configuration files.
     await this.writeTasksJson(context, vscodePath);
-    await this.writeLaunchJson(context, context.workspaceFolder, vscodePath, version);
+    await this.writeLaunchJson(context, context.workspaceFolder, vscodePath, version, context.logicAppName || context.workspaceFolder.name);
     await this.writeSettingsJson(context, vscodePath, language, version);
     await this.writeExtensionsJson(context, vscodePath, language);
 
@@ -260,10 +260,11 @@ export abstract class InitCodeProject extends AzureWizardExecuteStep<IProjectWiz
     context: IActionContext,
     folder: WorkspaceFolder | undefined,
     vscodePath: string,
-    version: FuncVersion
+    version: FuncVersion,
+    logicAppName: string
   ): Promise<void> {
     if (this.getDebugConfiguration) {
-      const newDebugConfig: DebugConfiguration = this.getDebugConfiguration(version);
+      const newDebugConfig: DebugConfiguration = this.getDebugConfiguration(version, logicAppName);
       const versionMismatchError: Error = new Error(
         localize(
           'versionMismatchError',
