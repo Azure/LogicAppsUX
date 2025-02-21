@@ -23,7 +23,7 @@ export interface DataMapDataProviderProps {
   sourceSchema?: DataMapSchema;
   targetSchema?: DataMapSchema;
   availableSchemas?: IFileSysTreeItem[];
-  customXsltPaths?: string[];
+  customXsltPaths?: IFileSysTreeItem[];
   fetchedFunctions?: FunctionData[];
   theme?: ThemeType;
   children?: React.ReactNode;

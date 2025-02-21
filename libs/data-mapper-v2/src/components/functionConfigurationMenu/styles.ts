@@ -11,6 +11,9 @@ export const useStyles = makeStyles({
     paddingRight: '24px',
     overflow: 'scroll',
   },
+  fileDropdownStyle: {
+    overflow: 'visible',
+  },
   detailsButton: {
     paddingLeft: '10px',
   },

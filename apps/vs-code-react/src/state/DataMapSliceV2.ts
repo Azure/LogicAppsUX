@@ -15,7 +15,7 @@ export interface DataMapState {
   targetSchemaFilename?: string;
   targetSchema?: DataMapSchema;
   schemaFileList?: IFileSysTreeItem[];
-  customXsltPathsList?: string[];
+  customXsltPathsList?: IFileSysTreeItem[];
   xsltFilename: string;
   xsltContent: string;
   fetchedFunctions?: FunctionData[];
@@ -70,7 +70,7 @@ export const dataMapSlice = createSlice({
     changeSchemaTreeList: (state, action: PayloadAction<IFileSysTreeItem[]>) => {
       state.schemaFileList = action.payload;
     },
-    changeCustomXsltPathList: (state, action: PayloadAction<string[]>) => {
+    changeCustomXsltPathList: (state, action: PayloadAction<IFileSysTreeItem[]>) => {
       state.customXsltPathsList = action.payload;
     },
     changeFetchedFunctions: (state, action: PayloadAction<FunctionData[]>) => {

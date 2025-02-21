@@ -3,38 +3,39 @@ import { SearchBox } from '@fluentui/react';
 import { ChevronRightRegular, ChevronDownRegular } from '@fluentui/react-icons';
 import { useIntl } from 'react-intl';
 import type { IFileSysTreeItem } from '@microsoft/logic-apps-shared';
-import useStyles from './styles';
+import useStyles from '../styles';
 import { useState, useMemo, useCallback, useEffect } from 'react';
 import { isEmptyString } from '@microsoft/logic-apps-shared';
-import { DataMapperFileService } from '../../core';
-import { useSelector } from 'react-redux';
-import type { RootState } from '../../core/state/Store';
 
-interface DropdownTreeProps {
+export interface FileDropdownTreeProps {
   onItemSelect: (item: IFileSysTreeItem) => void;
   className?: string;
+  placeholder: string;
+  fileTree: IFileSysTreeItem[];
+  existingSelectedFile?: string;
+  onReopen: () => void;
 }
 
-export const DropdownTree = ({ onItemSelect, className }: DropdownTreeProps) => {
+export const FileDropdownTree = ({
+  onItemSelect,
+  placeholder,
+  className,
+  fileTree,
+  onReopen,
+  existingSelectedFile,
+}: FileDropdownTreeProps) => {
   const [showDropdownTree, setShowDropdownTree] = useState(false);
   const [searchValue, setSearchValue] = useState('');
-  const availableSchemaList = useSelector((state: RootState) => state.schema.availableSchemas);
+  const [selectedFileName, setSelectedFileName] = useState('');
 
-  const fileService = DataMapperFileService();
+  useEffect(() => {
+    if (selectedFileName === '' && existingSelectedFile) {
+      setSelectedFileName(existingSelectedFile);
+    }
+  }, [selectedFileName, existingSelectedFile]);
 
   const intl = useIntl();
   const styles = useStyles();
-
-  useEffect(() => {
-    // update items when the tree is closed and reopened
-    fileService.readCurrentSchemaOptions();
-  }, [showDropdownTree, fileService]);
-
-  const selectSchema = intl.formatMessage({
-    defaultMessage: 'Select schema',
-    id: '3pheF6',
-    description: 'Select schema',
-  });
 
   const search = intl.formatMessage({
     defaultMessage: 'Search',
@@ -43,6 +44,7 @@ export const DropdownTree = ({ onItemSelect, className }: DropdownTreeProps) => 
   });
 
   const onFileNameSelect = (item: IFileSysTreeItem) => {
+    setSelectedFileName(item.name);
     onItemSelect(item);
     setShowDropdownTree(false);
   };
@@ -70,9 +72,8 @@ export const DropdownTree = ({ onItemSelect, className }: DropdownTreeProps) => 
   }, []);
 
   const filteredItems = useMemo(
-    () =>
-      availableSchemaList.map((item) => filterDropdownItem(item, searchValue)).filter((item) => item !== undefined) as IFileSysTreeItem[],
-    [availableSchemaList, searchValue, filterDropdownItem]
+    () => fileTree.map((item) => filterDropdownItem(item, searchValue)).filter((item) => item !== undefined) as IFileSysTreeItem[],
+    [fileTree, searchValue, filterDropdownItem]
   );
 
   const displayTree = (item: IFileSysTreeItem): JSX.Element => {
@@ -102,10 +103,11 @@ export const DropdownTree = ({ onItemSelect, className }: DropdownTreeProps) => 
         className={styles.dropdownInputWrapper}
         onClick={() => {
           setShowDropdownTree(!showDropdownTree);
+          onReopen();
         }}
       >
-        <Text className={styles.dropdownInput} defaultValue={selectSchema}>
-          {selectSchema}
+        <Text className={styles.dropdownInput} defaultValue={placeholder}>
+          {selectedFileName === '' ? placeholder : selectedFileName}
         </Text>
         {showDropdownTree ? (
           <ChevronDownRegular className={styles.dropdownChevronIcon} />

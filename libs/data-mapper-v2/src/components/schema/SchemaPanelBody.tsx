@@ -3,7 +3,7 @@ import { useCallback, useEffect, useMemo } from 'react';
 import { useIntl } from 'react-intl';
 import { usePanelBodyStyles } from './styles';
 import type { SchemaFile } from '../../models/Schema';
-import FileSelector, { type FileSelectorOption } from '../common/selector/FileSelector';
+import SchemaFileSelector, { type FileSelectorOption } from '../common/selector/FileSelector';
 import { useSelector } from 'react-redux';
 import type { RootState } from '../../core/state/Store';
 import { DataMapperFileService } from '../../core';
@@ -117,7 +117,7 @@ export const SchemaPanelBody = ({
   return (
     <div className={styles.root}>
       {showScehmaSelection ? (
-        <FileSelector
+        <SchemaFileSelector
           selectedKey={fileSelectorOptions}
           options={{
             'upload-new': { text: stringResources.ADD_NEW },

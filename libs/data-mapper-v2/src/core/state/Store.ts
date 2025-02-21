@@ -9,7 +9,7 @@ import type {} from 'redux-thunk';
 import { configureStore } from '@reduxjs/toolkit';
 import undoable, { includeAction } from 'redux-undo';
 
-const includedActions = [
+export const includedActions = [
   'dataMap/doDataMapOperation',
   'dataMap/makeConnection',
   'dataMap/addFunctionNode',
@@ -33,6 +33,9 @@ export const store = configureStore({
   },
   //middleware: (getDefaultMiddleware) => getDefaultMiddleware({ serializableCheck: false }), // useful for debugging larger schemas, will break gated build
 });
+
+// Infer the `AppStore` from the store itself
+export type AppStore = typeof store;
 
 export type RootState = ReturnType<typeof store.getState>;
 export type AppDispatch = typeof store.dispatch;
