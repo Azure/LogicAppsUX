@@ -180,9 +180,12 @@ describe('parseErrorBeforeTelemetry', () => {
 
 describe('generateCSharpClasses', () => {
   it('should generate C# class code from a class definition', () => {
-    const classCode = generateCSharpClasses('NamespaceName', 'RootClass', {
-      type: 'object',
-      key1: { type: 'string', description: 'Key 1 description' },
+    const workflowName = 'TestWorkflow';
+    const mockType = 'Action';
+    const mockClassName = 'MockClass';
+    const classCode = generateCSharpClasses('NamespaceName', 'RootClass', workflowName, mockType, mockClassName, {
+      nestedTypeProperty: 'object',
+      key1: { nestedTypeProperty: 'string', description: 'Key 1 description' },
     });
     expect(classCode).toContain('public class RootClass');
     expect(classCode).toContain('public string Key1 { get; set; }');
@@ -193,11 +196,14 @@ describe('generateCSharpClasses - Naming and Namespace Validation', () => {
   it('should generate a C# class with a valid class name and namespace structure', () => {
     const namespaceName = 'MyLogicApp';
     const rootClassName = 'SomeOperationMockOutput';
+    const workflowName = 'TestWorkflow';
+    const mockType = 'Action';
+    const mockClassName = 'MockClass';
     const data = {
-      type: 'object',
-      key: { type: 'string', description: 'test key' },
+      nestedTypeProperty: 'object',
+      key: { nestedTypeProperty: 'string', description: 'test key' },
     };
-    const classCode = generateCSharpClasses(namespaceName, rootClassName, data);
+    const classCode = generateCSharpClasses(namespaceName, rootClassName, workflowName, mockType, mockClassName, data);
     expect(classCode).toContain(`public class ${rootClassName}`);
     expect(classCode).toContain(`namespace ${namespaceName}.Tests.Mocks`);
   });
@@ -265,7 +271,7 @@ describe('processAndWriteMockableOperations', () => {
         },
       },
     };
-    await processAndWriteMockableOperations(operationInfo, outputParameters, projectPath, fakeLogicAppName);
+    await processAndWriteMockableOperations(operationInfo, outputParameters, projectPath, 'workflowName', fakeLogicAppName);
     const expectedMockOutputsFolder = path.join(projectPath, 'MockOutputs');
     expect(ensureDirSpy).toHaveBeenCalledWith(expectedMockOutputsFolder);
     const expectedFileName = 'ReadAResourceGroupActionOutput.cs';
@@ -290,7 +296,7 @@ describe('processAndWriteMockableOperations', () => {
         },
       },
     };
-    await processAndWriteMockableOperations(operationInfo, outputParameters, projectPath, fakeLogicAppName);
+    await processAndWriteMockableOperations(operationInfo, outputParameters, projectPath, 'workflowName', fakeLogicAppName);
     expect(writeFileSpy.mock.calls.length).toBe(1);
   });
 
@@ -305,7 +311,7 @@ describe('processAndWriteMockableOperations', () => {
         },
       },
     };
-    await processAndWriteMockableOperations(operationInfo, outputParameters, projectPath, fakeLogicAppName);
+    await processAndWriteMockableOperations(operationInfo, outputParameters, projectPath, 'workflowName', fakeLogicAppName);
     const expectedMockOutputsFolder = path.join(projectPath, 'MockOutputs');
     const expectedFileName = 'WhenAHTTPRequestIsReceivedTriggerOutput.cs';
     const expectedFilePath = path.join(expectedMockOutputsFolder, expectedFileName);
@@ -316,25 +322,39 @@ describe('processAndWriteMockableOperations', () => {
 describe('buildClassDefinition', () => {
   it('should build a class definition for an object', () => {
     const classDef = buildClassDefinition('RootClass', {
-      type: 'object',
-      key1: { type: 'string', description: 'Key 1 description' },
+      nestedTypeProperty: 'object',
+      '@key1~1description': { nestedTypeProperty: 'string', description: 'Key 1 description', title: 'Key 1 Description' },
       nested: {
-        type: 'object',
-        nestedKey: { type: 'boolean', description: 'Nested key description' },
+        nestedTypeProperty: 'object',
+        nestedKey: { nestedTypeProperty: 'boolean', description: 'Nested key description' },
       },
     });
     expect(classDef).toEqual({
       className: 'RootClass',
       description: 'Class for RootClass representing an object with properties.',
       properties: [
-        { propertyName: 'Key1', propertyType: 'string', description: 'Key 1 description', isObject: false },
-        { propertyName: 'Nested', propertyType: 'RootClassNested', description: null, isObject: true },
+        {
+          propertyName: 'Key1Description',
+          propertyType: 'string',
+          description: 'Key 1 description',
+          isObject: false,
+          jsonPropertyName: '@key1.description',
+        },
+        { propertyName: 'Nested', propertyType: 'RootClassNested', description: null, isObject: true, jsonPropertyName: null },
       ],
       children: [
         {
           className: 'RootClassNested',
           description: 'Class for RootClassNested representing an object with properties.',
-          properties: [{ propertyName: 'NestedKey', propertyType: 'bool', description: 'Nested key description', isObject: false }],
+          properties: [
+            {
+              propertyName: 'NestedKey',
+              propertyType: 'bool',
+              description: 'Nested key description',
+              isObject: false,
+              jsonPropertyName: null,
+            },
+          ],
           children: [],
         },
       ],
