@@ -1,4 +1,4 @@
-import type { Template } from '@microsoft/logic-apps-shared';
+import { TemplateService, type Template } from '@microsoft/logic-apps-shared';
 import type { PayloadAction } from '@reduxjs/toolkit';
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
 import type { RootState } from './store';
@@ -12,7 +12,6 @@ export interface ManifestState {
   availableTemplateNames?: ManifestName[];
   filteredTemplateNames?: ManifestName[];
   githubTemplateNames?: ManifestName[];
-  customTemplateNames?: ManifestName[];
   availableTemplates?: Record<ManifestName, Template.Manifest>;
   filters: {
     pageNum: number;
@@ -73,14 +72,6 @@ export const manifestSlice = createSlice({
         state.filteredTemplateNames = action.payload;
       }
     },
-    setCustomTemplates: (state, action: PayloadAction<Record<string, Template.Manifest> | undefined>) => {
-      if (action.payload) {
-        const customTemplateNames = Object.keys(action.payload);
-        state.customTemplateNames = customTemplateNames;
-        state.availableTemplateNames = [...(state.githubTemplateNames ?? []), ...customTemplateNames];
-        state.availableTemplates = { ...(state.availableTemplates ?? {}), ...action.payload };
-      }
-    },
     setPageNum: (state, action: PayloadAction<number>) => {
       state.filters.pageNum = action.payload;
     },
@@ -114,13 +105,13 @@ export const manifestSlice = createSlice({
   },
   extraReducers: (builder) => {
     builder.addCase(loadGithubManifestNames.fulfilled, (state, action) => {
-      state.availableTemplateNames = [...action.payload, ...(state.customTemplateNames ?? [])];
+      state.availableTemplateNames = [...action.payload];
       state.githubTemplateNames = action.payload;
     });
 
     builder.addCase(loadGithubManifestNames.rejected, (state) => {
       // TODO change to null for error handling case
-      state.availableTemplateNames = state.customTemplateNames ?? [];
+      state.availableTemplateNames = [];
       state.githubTemplateNames = [];
     });
 
@@ -143,7 +134,6 @@ export const {
   setavailableTemplatesNames,
   setavailableTemplates,
   setFilteredTemplateNames,
-  setCustomTemplates,
   setPageNum,
   setKeywordFilter,
   setSortKey,
@@ -154,7 +144,7 @@ export default manifestSlice.reducer;
 
 const loadManifestNamesFromGithub = async (): Promise<ManifestName[] | undefined> => {
   try {
-    return (await import('./../../templates/templateFiles/manifest.json'))?.default as ManifestName[];
+    return TemplateService().getAllTemplateNames();
   } catch (ex) {
     console.error(ex);
     return undefined;

@@ -37,15 +37,13 @@ const cardStyles: IDocumentCardStyles = {
 export const TemplateCard = ({ templateName }: TemplateCardProps) => {
   const dispatch = useDispatch<AppDispatch>();
   const intl = useIntl();
-  const { templateManifest, workflowAppName, subscriptionId, location, customTemplateNames } = useSelector((state: RootState) => ({
+  const { templateManifest, workflowAppName, subscriptionId, location } = useSelector((state: RootState) => ({
     templateManifest: state.manifest.availableTemplates?.[templateName],
     subscriptionId: state.workflow.subscriptionId,
     workflowAppName: state.workflow.workflowAppName,
     location: state.workflow.location,
-    customTemplateNames: state.manifest.customTemplateNames,
   }));
   const isMultiWorkflow = useMemo(() => templateManifest && isMultiWorkflowTemplate(templateManifest), [templateManifest]);
-  const isCustomTemplate = useMemo(() => customTemplateNames?.includes(templateName), [customTemplateNames, templateName]);
 
   const intlText = {
     TEMPLATE_LOADING: intl.formatMessage({ defaultMessage: 'Loading....', description: 'Loading text', id: 'cZ60Tk' }),
@@ -74,7 +72,7 @@ export const TemplateCard = ({ templateName }: TemplateCardProps) => {
       args: [templateName, workflowAppName, `isMultiWorkflowTemplate:${isMultiWorkflow}`],
     });
     dispatch(changeCurrentTemplateName(templateName));
-    dispatch(loadTemplate({ preLoadedManifest: templateManifest, isCustomTemplate }));
+    dispatch(loadTemplate({ preLoadedManifest: templateManifest }));
 
     if (Object.keys(templateManifest?.workflows ?? {}).length === 0) {
       dispatch(openQuickViewPanelView());
