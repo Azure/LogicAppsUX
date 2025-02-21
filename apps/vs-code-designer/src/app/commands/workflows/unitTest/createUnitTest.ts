@@ -84,7 +84,7 @@ export async function createUnitTest(
     });
     await callWithTelemetryAndErrorHandling('logicApp.createUnitTest', async (telemetryContext: IActionContext) => {
       Object.assign(telemetryContext, context);
-      await generateUnitTestFromRun(context, projectPath, workflowName, unitTestName, validatedRunId, unitTestDefinition);
+      await generateUnitTestFromRun(context, projectPath, workflowName, unitTestName, validatedRunId, unitTestDefinition, node.fsPath);
     });
   } catch (error) {
     handleError(context, error, 'createUnitTest');
@@ -108,7 +108,8 @@ async function generateUnitTestFromRun(
   workflowName: string,
   unitTestName: string,
   runId: string,
-  unitTestDefinition: any
+  unitTestDefinition: any,
+  workflowPath: string
 ): Promise<void> {
   // Initialize telemetry properties
   Object.assign(context.telemetry.properties, {
@@ -196,6 +197,7 @@ async function generateUnitTestFromRun(
     const { foundActionMocks, foundTriggerMocks } = await processAndWriteMockableOperations(
       operationInfo,
       outputParameters,
+      workflowPath,
       paths.workflowFolderPath,
       workflowName,
       paths.logicAppName
@@ -223,7 +225,7 @@ async function generateUnitTestFromRun(
       // Get the first actionMock in foundActionMocks
       const [, triggerOutputClassName] = Object.entries(foundTriggerMocks)[0] || [];
       // Create actionMockClassName by replacing "Output" with "Mock" in actionOutputClassName
-      const actionMockClassName = actionOutputClassName.replace(/(.*)Output$/, '$1Mock');
+      const actionMockClassName = actionOutputClassName?.replace(/(.*)Output$/, '$1Mock');
       const triggerMockClassName = triggerOutputClassName.replace(/(.*)Output$/, '$1Mock');
       await createCsFile(
         paths.unitTestFolderPath!,

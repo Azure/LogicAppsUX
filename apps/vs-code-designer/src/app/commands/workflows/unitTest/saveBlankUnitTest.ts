@@ -136,6 +136,7 @@ export async function saveBlankUnitTest(
     const { foundActionMocks, foundTriggerMocks } = await processAndWriteMockableOperations(
       operationInfo,
       outputParameters,
+      workflowNode.fsPath,
       workflowFolderPath,
       workflowName,
       logicAppName
@@ -211,7 +212,7 @@ async function generateBlankCodefulUnitTest(
     // Get the first actionMock in foundActionMocks
     const [, triggerOutputClassName] = Object.entries(foundTriggerMocks)[0] || [];
     // Create actionMockClassName by replacing "Output" with "Mock" in actionOutputClassName
-    const actionMockClassName = actionOutputClassName.replace(/(.*)Output$/, '$1Mock');
+    const actionMockClassName = actionOutputClassName?.replace(/(.*)Output$/, '$1Mock');
     const triggerMockClassName = triggerOutputClassName.replace(/(.*)Output$/, '$1Mock');
     // Create the .cs file for the unit test
     ext.outputChannel.appendLog(localize('creatingCsFile', 'Creating .cs file for unit test...'));
