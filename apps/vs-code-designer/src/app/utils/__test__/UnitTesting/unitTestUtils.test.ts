@@ -15,6 +15,7 @@ import {
   logTelemetry,
   processAndWriteMockableOperations,
   buildClassDefinition,
+  mapJsonTypeToCSharp,
 } from '../../unitTests';
 
 // ============================================================================
@@ -187,8 +188,15 @@ describe('generateCSharpClasses', () => {
       nestedTypeProperty: 'object',
       key1: { nestedTypeProperty: 'string', description: 'Key 1 description' },
     });
+
     expect(classCode).toContain('public class RootClass');
+    expect(classCode).toContain('/// Key 1 description');
     expect(classCode).toContain('public string Key1 { get; set; }');
+    expect(classCode).not.toContain('public HttpStatusCode StatusCode');
+
+    expect(classCode).toContain('public RootClass()');
+    expect(classCode).toContain('this.StatusCode = HttpStatusCode.OK;');
+    expect(classCode).toContain('this.Key1 = string.Empty;');
   });
 });
 
@@ -204,8 +212,15 @@ describe('generateCSharpClasses - Naming and Namespace Validation', () => {
       key: { nestedTypeProperty: 'string', description: 'test key' },
     };
     const classCode = generateCSharpClasses(namespaceName, rootClassName, workflowName, mockType, mockClassName, data);
+
+    expect(classCode).toContain('using Newtonsoft.Json.Linq;');
+    expect(classCode).toContain('using System.Collections.Generic;');
+    expect(classCode).toContain('using System.Net;');
+    expect(classCode).toContain('using System;');
+
     expect(classCode).toContain(`public class ${rootClassName}`);
     expect(classCode).toContain(`namespace ${namespaceName}.Tests.Mocks`);
+    expect(classCode).not.toContain('public HttpStatusCode StatusCode');
   });
 });
 
@@ -217,6 +232,7 @@ describe('generateClassCode', () => {
       properties: [
         { propertyName: 'Property1', propertyType: 'string', description: 'A string property', isObject: false },
         { propertyName: 'Property2', propertyType: 'int', description: 'An integer property', isObject: false },
+        { propertyName: 'DTProperty', propertyType: 'DateTime', description: 'A DateTime property', isObject: false },
       ],
       children: [],
     };
@@ -224,6 +240,12 @@ describe('generateClassCode', () => {
     expect(classCode).toContain('public class TestClass');
     expect(classCode).toContain('public string Property1 { get; set; }');
     expect(classCode).toContain('public int Property2 { get; set; }');
+    expect(classCode).toContain('public DateTime DTProperty { get; set; }');
+
+    expect(classCode).toContain('this.StatusCode = HttpStatusCode.OK;');
+    expect(classCode).toContain('this.Property1 = string.Empty;');
+    expect(classCode).toContain('this.Property2 = 0;');
+    expect(classCode).toContain('this.DTProperty = new DateTime();');
   });
 });
 
@@ -327,6 +349,7 @@ describe('buildClassDefinition', () => {
       nested: {
         nestedTypeProperty: 'object',
         nestedKey: { nestedTypeProperty: 'boolean', description: 'Nested key description' },
+        nestedKey2: { nestedTypeProperty: 'string', format: 'date-time', description: 'Nested key 2 description' },
       },
     });
     expect(classDef).toEqual({
@@ -354,10 +377,30 @@ describe('buildClassDefinition', () => {
               isObject: false,
               jsonPropertyName: null,
             },
+            {
+              propertyName: 'NestedKey2',
+              propertyType: 'DateTime',
+              description: 'Nested key 2 description',
+              isObject: false,
+              jsonPropertyName: null,
+            },
           ],
           children: [],
         },
       ],
     });
+  });
+});
+
+describe('mapJsonTypeToCSharp', () => {
+  it('should map JSON types to C# types correctly', () => {
+    expect(mapJsonTypeToCSharp('string')).toBe('string');
+    expect(mapJsonTypeToCSharp('string', 'date-time')).toBe('DateTime');
+    expect(mapJsonTypeToCSharp('boolean')).toBe('bool');
+    expect(mapJsonTypeToCSharp('integer')).toBe('int');
+    expect(mapJsonTypeToCSharp('number')).toBe('double');
+    expect(mapJsonTypeToCSharp('object')).toBe('JObject');
+    expect(mapJsonTypeToCSharp('any')).toBe('JObject');
+    expect(mapJsonTypeToCSharp('array')).toBe('List<object>');
   });
 });
