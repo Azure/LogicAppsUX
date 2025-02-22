@@ -33,7 +33,6 @@ namespace <%= LogicAppName %>.Tests
             // PREPARE Mock
             // Generate mock trigger data.
             var triggerMockOutput = new <%= TriggerMockOutputClassName %>();
-            triggerMockOutput.Body.Flag = true;
             var triggerMock = new <%= TriggerMockClassName %>(outputs: triggerMockOutput);
 
             // Generate mock action data.
@@ -71,7 +70,6 @@ namespace <%= LogicAppName %>.Tests
             // PREPARE
             // Generate mock trigger data.
             var triggerMockOutput = new <%= TriggerMockOutputClassName %>();
-            triggerMockOutput.Body.Flag = true;
             var triggerMock = new <%= TriggerMockClassName %>(outputs: triggerMockOutput);
 
             // Generate mock action data.

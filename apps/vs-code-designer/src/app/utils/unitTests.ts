@@ -411,10 +411,22 @@ export async function createCsFile(
   isBlank = false
 ): Promise<void> {
   const templateFolderName = 'UnitTestTemplates';
-  let csTemplateFileName = 'TestClassFile';
-  if (isBlank) {
-    csTemplateFileName = 'TestBlankClassFile';
+
+  let csTemplateFileName = '';
+  if (actionOutputClassName) {
+    // workflow has actions, use templates with action examples
+    if (isBlank) {
+      csTemplateFileName = 'TestBlankClassFile';
+    } else {
+      csTemplateFileName = 'TestClassFile';
+    }
+  } else if (isBlank) {
+    // workflow has no actions, use templates with trigger examples
+    csTemplateFileName = 'TestBlankClassFileWithoutActions';
+  } else {
+    csTemplateFileName = 'TestClassFileWithoutActions';
   }
+
   const templatePath = path.join(__dirname, 'assets', templateFolderName, csTemplateFileName);
 
   let templateContent = await fse.readFile(templatePath, 'utf-8');
@@ -1045,14 +1057,15 @@ export function generateClassCode(classDef: ClassDefinition): string {
  * and writes C# class definitions to .cs files.
  * @param operationInfo - The operation info object.
  * @param outputParameters - The output parameters object.
- * @param workflowFolderPath - The path to the workflow folder where the .cs files will be saved.
+ * @param workflowTestFolderPath - The path to the workflow folder where the .cs files will be saved.
  * @param workflowName - The name of the workflow.
  * @param logicAppName - The name of the Logic App to use as the namespace.
  */
 export async function processAndWriteMockableOperations(
   operationInfo: any,
   outputParameters: any,
-  workflowFolderPath: string,
+  workflowPath: string,
+  workflowTestFolderPath: string,
   workflowName: string,
   logicAppName: string
 ): Promise<{ foundActionMocks: Record<string, string>; foundTriggerMocks: Record<string, string> }> {
@@ -1060,12 +1073,15 @@ export async function processAndWriteMockableOperations(
   const processedOperationIds = new Set<string>();
 
   // Create or verify the "MockOutputs" folder inside the logicApp folder
-  const mockOutputsFolderPath = path.join(workflowFolderPath, 'MockOutputs');
+  const mockOutputsFolderPath = path.join(workflowTestFolderPath, 'MockOutputs');
   await fse.ensureDir(mockOutputsFolderPath);
 
   // Dictionaries to store mockable operation names and their corresponding class names
   const foundActionMocks: Record<string, string> = {};
   const foundTriggerMocks: Record<string, string> = {};
+
+  const workflowContent = JSON.parse(await fse.readFile(workflowPath, 'utf8'));
+  const triggerName = Object.keys(workflowContent?.definition?.triggers)?.[0] ?? null;
 
   for (const operationName in operationInfo) {
     const operation = operationInfo[operationName];
@@ -1080,8 +1096,7 @@ export async function processAndWriteMockableOperations(
     }
     processedOperationIds.add(operationId);
 
-    // Determine if this is a trigger by comparing in uppercase
-    const isTrigger = ['HTTPWEBHOOK', 'REQUEST', 'MANUAL', 'APICONNECTIONWEBHOOK'].includes(type.toUpperCase());
+    const isTrigger = operationName === triggerName;
 
     // Only proceed if this operation type is mockable (using the new async isMockable)
     if (await isMockable(type)) {
