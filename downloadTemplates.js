@@ -36,13 +36,18 @@ const downloadTemplate = async (path) => {
   for (const artifact of templateManifest.artifacts) {
     await downloadFile(`${path}/${artifact.file}`);
   }
-  templateManifest.images =
-    templateManifest.images.light && templateManifest.images.dark
-      ? {
-          light: `${baseURL}/${path}/${templateManifest.images.light}.png`,
-          dark: `${baseURL}/${path}/${templateManifest.images.dark}.png`,
-        }
-      : undefined;
+
+  if (templateManifest.images.light && templateManifest.images.dark) {
+    await downloadFile(`${path}/${templateManifest.images.light}.png`);
+    await downloadFile(`${path}/${templateManifest.images.dark}.png`);
+    templateManifest.images = {
+      light: `${baseURL}/${path}/${templateManifest.images.light}.png`,
+      dark: `${baseURL}/${path}/${templateManifest.images.dark}.png`,
+    };
+  } else {
+    templateManifest.images = undefined;
+  }
+  
   templateManifest.sourceCodeUrl = `${sourceCodeURL}/${path}/manifest.json`;
   writeFile(`${templatesFolder}/${path}/manifest.json`, JSON.stringify(templateManifest, null, 2), () => {});
 
