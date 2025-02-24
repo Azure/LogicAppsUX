@@ -46,6 +46,7 @@ export const BasicAuthentication = ({ basicProps, setCurrentProps, ...props }: B
         initialValue={basicPassword}
         AuthProperty={AUTHENTICATION_PROPERTIES.BASIC_PASSWORD}
         onBlur={updateBasicPassword}
+        passwordMask={true}
       />
     </div>
   );

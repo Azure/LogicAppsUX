@@ -14,6 +14,7 @@ interface AuthenticationPropertyProps {
   loadParameterValueFromString?: loadParameterValueFromStringHandler;
   getTokenPicker: GetTokenPickerHandler;
   onBlur?: ChangeHandler;
+  passwordMask?: boolean;
 }
 
 export const AuthenticationProperty = ({ initialValue = [], AuthProperty, onBlur, ...props }: AuthenticationPropertyProps): JSX.Element => {
@@ -29,7 +30,7 @@ export const AuthenticationProperty = ({ initialValue = [], AuthProperty, onBlur
           className="msla-authentication-editor-expanded-editor"
           initialValue={initialValue}
           placeholder={AuthProperty.placeHolder}
-          basePlugins={{ tokens: true }}
+          basePlugins={{ tokens: true, passwordMask: props.passwordMask }}
           editorBlur={onBlur}
         />
       </div>
