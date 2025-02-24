@@ -1,6 +1,6 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 import axios from 'axios';
-import * as fs from 'fs-extra';
+import * as fse from 'fs-extra';
 import path from 'path';
 import * as localizeModule from '../../../../localize';
 import { ext } from '../../../../extensionVariables';
@@ -268,10 +268,63 @@ describe('logTelemetry function', () => {
 describe('processAndWriteMockableOperations', () => {
   let writeFileSpy: any;
   let ensureDirSpy: any;
+  let readFileSpy: any;
 
   beforeEach(() => {
-    writeFileSpy = vi.spyOn(fs, 'writeFile').mockResolvedValue();
-    ensureDirSpy = vi.spyOn(fs, 'ensureDir').mockResolvedValue();
+    writeFileSpy = vi.spyOn(fse, 'writeFile').mockResolvedValue();
+    ensureDirSpy = vi.spyOn(fse, 'ensureDir').mockResolvedValue();
+    readFileSpy = vi.spyOn(fse, 'readFile').mockResolvedValue(
+      JSON.stringify({
+        definition: {
+          $schema: 'https://schema.management.azure.com/providers/Microsoft.Logic/schemas/2016-06-01/workflowdefinition.json#',
+          actions: {
+            Complete_the_message_in_a_queue: {
+              type: 'ApiConnection',
+              inputs: {
+                host: {
+                  connection: {
+                    referenceName: 'servicebus',
+                  },
+                },
+                method: 'delete',
+                path: "/@{encodeURIComponent(encodeURIComponent('test'))}/messages/complete",
+                queries: {
+                  lockToken: "@triggerBody()?['LockToken']",
+                  queueType: 'Main',
+                  sessionId: '',
+                },
+              },
+              runAfter: {},
+            },
+          },
+          contentVersion: '1.0.0.0',
+          outputs: {},
+          triggers: {
+            'When_a_http_request_is_received(peek-lock)': {
+              type: 'ApiConnection',
+              inputs: {
+                host: {
+                  connection: {
+                    referenceName: 'servicebus',
+                  },
+                },
+                method: 'get',
+                path: "/@{encodeURIComponent(encodeURIComponent('test'))}/messages/head/peek",
+                queries: {
+                  queueType: 'Main',
+                  sessionId: 'None',
+                },
+              },
+              recurrence: {
+                interval: 3,
+                frequency: 'Minute',
+              },
+            },
+          },
+        },
+        kind: 'Stateful',
+      })
+    );
     ext.outputChannel = { appendLog: vi.fn() } as any;
     // Set designTimePort and stub axios.get so isMockable works without error
     ext.designTimePort = 1234;
@@ -293,7 +346,7 @@ describe('processAndWriteMockableOperations', () => {
         },
       },
     };
-    await processAndWriteMockableOperations(operationInfo, outputParameters, projectPath, 'workflowName', fakeLogicAppName);
+    await processAndWriteMockableOperations(operationInfo, outputParameters, projectPath, projectPath, 'workflowName', fakeLogicAppName);
     const expectedMockOutputsFolder = path.join(projectPath, 'MockOutputs');
     expect(ensureDirSpy).toHaveBeenCalledWith(expectedMockOutputsFolder);
     const expectedFileName = 'ReadAResourceGroupActionOutput.cs';
@@ -318,7 +371,7 @@ describe('processAndWriteMockableOperations', () => {
         },
       },
     };
-    await processAndWriteMockableOperations(operationInfo, outputParameters, projectPath, 'workflowName', fakeLogicAppName);
+    await processAndWriteMockableOperations(operationInfo, outputParameters, projectPath, projectPath, 'workflowName', fakeLogicAppName);
     expect(writeFileSpy.mock.calls.length).toBe(1);
   });
 
@@ -333,7 +386,7 @@ describe('processAndWriteMockableOperations', () => {
         },
       },
     };
-    await processAndWriteMockableOperations(operationInfo, outputParameters, projectPath, 'workflowName', fakeLogicAppName);
+    await processAndWriteMockableOperations(operationInfo, outputParameters, projectPath, projectPath, 'workflowName', fakeLogicAppName);
     const expectedMockOutputsFolder = path.join(projectPath, 'MockOutputs');
     const expectedFileName = 'WhenAHTTPRequestIsReceivedTriggerOutput.cs';
     const expectedFilePath = path.join(expectedMockOutputsFolder, expectedFileName);
