@@ -1,4 +1,18 @@
 # Logic Apps Designer
+## [5.44.0](https://github.com/Azure/LogicAppsUX/compare/v5.43.0...v5.44.0) (2025-02-24)
+
+
+### Features
+
+* **Data Mapper:** custom code ([#6639](https://github.com/Azure/LogicAppsUX/issues/6639)) ([70e754b](https://github.com/Azure/LogicAppsUX/commit/70e754b767c8579a22f92a9af2784e73f83a6feb))
+
+
+### Bug Fixes
+
+* **vscode:** Add workflow and logic app creation back to azure blade ([#6649](https://github.com/Azure/LogicAppsUX/issues/6649)) ([ddb951b](https://github.com/Azure/LogicAppsUX/commit/ddb951b06a5f301059b21dc048bf5dde2e42afe7))
+* **vscode:** Bug with path separator in local tests ([#6641](https://github.com/Azure/LogicAppsUX/issues/6641)) ([e3008a7](https://github.com/Azure/LogicAppsUX/commit/e3008a7627b09eceb53a16fa17e10d16fd55edf5))
+* **vscode:** Create Unique Configuration Names ([#6657](https://github.com/Azure/LogicAppsUX/issues/6657)) ([c5b2e1a](https://github.com/Azure/LogicAppsUX/commit/c5b2e1a349dcc7ad79e29cd159b45248446ba7a1))
+
 ## [5.43.0](https://github.com/Azure/LogicAppsUX/compare/v5.42.0...v5.43.0) (2025-02-20)
 
 
