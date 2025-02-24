@@ -300,7 +300,7 @@ describe('processAndWriteMockableOperations', () => {
           contentVersion: '1.0.0.0',
           outputs: {},
           triggers: {
-            'When_a_http_request_is_received(peek-lock)': {
+            WhenAHTTPRequestIsReceived: {
               type: 'ApiConnection',
               inputs: {
                 host: {
