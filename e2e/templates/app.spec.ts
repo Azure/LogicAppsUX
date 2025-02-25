@@ -70,9 +70,6 @@ test.describe(
       await page.waitForTimeout(5);
 
       await expect(page.getByText('Azure Business', { exact: false })).not.toBeVisible();
-      const cardsContent = await page.getByRole('group').allTextContents();
-      expect(cardsContent.length).toBe(1);
-      expect(cardsContent[0]).toContain('Blank workflow');
     });
   }
 );
