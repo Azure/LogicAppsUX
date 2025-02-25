@@ -1,4 +1,4 @@
-import { useMemo } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { TemplatesDataProvider, TemplatesView } from '@microsoft/logic-apps-designer';
 import type { RootState } from '../state/Store';
 import { TemplatesDesigner, TemplatesDesignerProvider } from '@microsoft/logic-apps-designer';
@@ -13,10 +13,11 @@ import {
   ResourceIdentityType,
   BaseOAuthService,
   ConsumptionOperationManifestService,
+  type Template,
+  type LogicAppsV2,
+  BaseTemplateService,
 } from '@microsoft/logic-apps-shared';
 import { HttpClient } from '../../designer/app/AzureLogicAppsDesigner/Services/HttpClient';
-import { BaseTemplateService } from '@microsoft/logic-apps-shared';
-import { useQuery } from '@tanstack/react-query';
 
 const loadLocalTemplateFromResourcePath = async (resourcePath: string, artifactType = 'manifest') => {
   const paths = resourcePath.split('/');
@@ -33,18 +34,8 @@ export const LocalTemplates = () => {
     theme: state.workflowLoader.theme,
     templatesView: state.workflowLoader.templatesView,
   }));
-  const { hostingPlan } = useSelector((state: RootState) => state.workflowLoader);
-  const { data: localManifests } = useQuery(
-    ['getLocalTemplates'],
-    async () => {
-      const manifestPromises = localTemplateManifestPaths.map((resourcePath) =>
-        loadLocalTemplateFromResourcePath(resourcePath).then((response) => [resourcePath, response])
-      );
-      const manifestsArray = await Promise.all(manifestPromises);
-      return Object.fromEntries(manifestsArray);
-    },
-    { enabled: true }
-  );
+  const { hostingPlan, useEndpoint } = useSelector((state: RootState) => state.workflowLoader);
+  const [reload, setReload] = useState<boolean | undefined>(undefined);
 
   const isConsumption = hostingPlan === 'consumption';
 
@@ -52,10 +43,16 @@ export const LocalTemplates = () => {
     alert("Congrats you created the workflow! (Not really, you're in standalone)");
   };
 
+  useEffect(() => {
+    if (useEndpoint !== undefined) {
+      setReload(true);
+    }
+  }, [useEndpoint]);
+
   const services = useMemo(
-    () => getServices(isConsumption, loadLocalTemplateFromResourcePath),
+    () => getServices(isConsumption, !!useEndpoint),
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    [isConsumption]
+    [isConsumption, useEndpoint]
   );
   const isSingleTemplateView = useMemo(() => templatesView !== 'gallery', [templatesView]);
 
@@ -68,11 +65,11 @@ export const LocalTemplates = () => {
           location: '',
           workflowAppName: '',
         }}
+        reload={reload}
         connectionReferences={{}}
         services={services}
         isConsumption={isConsumption}
         isCreateView={!isConsumption}
-        customTemplates={localManifests}
         existingWorkflowName={undefined}
         viewTemplate={
           isSingleTemplateView
@@ -164,7 +161,7 @@ export const LocalTemplates = () => {
 
 const httpClient = new HttpClient();
 
-const getServices = (isConsumption: boolean, getLocalResource: (resourcePath: string) => Promise<any>): any => {
+const getServices = (isConsumption: boolean, useEndpoint: boolean): any => {
   const connectionService = isConsumption
     ? new ConsumptionConnectionService({
         apiVersion: '2018-07-01-preview',
@@ -230,33 +227,35 @@ const getServices = (isConsumption: boolean, getLocalResource: (resourcePath: st
     getCallbackUrl: () => Promise.resolve({ method: 'POST', value: 'Dummy url' }),
   };
 
-  const templateService = isConsumption
-    ? new BaseTemplateService({
-        openBladeAfterCreate: (_workflowName: string | undefined) => {
-          window.alert('Open blade after create, consumption creation is complete');
-        },
-        onAddBlankWorkflow: async () => {
-          await new Promise((resolve) => setTimeout(resolve, 1000));
-          window.alert('On Blank Workflow Click');
-        },
-        getCustomResource: getLocalResource,
-      })
-    : new StandardTemplateService({
-        baseUrl: '/url',
-        appId: 'siteResourceId', //TODO: double check
-        httpClient,
-        apiVersions: {
-          subscription: 'subid',
-          gateway: '2018-11-01',
-        },
-        openBladeAfterCreate: (workflowName: string | undefined) => {
-          window.alert(`Open blade after create, workflowName is: ${workflowName}`);
-        },
-        onAddBlankWorkflow: async () => {
-          window.alert('On Blank Workflow Click');
-        },
-        getCustomResource: getLocalResource,
-      });
+  const baseService = new BaseTemplateService({
+    endpoint: 'https://priti-cxf4h5cpcteue4az.b02.azurefd.net',
+    useEndpointForTemplates: useEndpoint,
+    openBladeAfterCreate: (workflowName: string | undefined) => {
+      window.alert(`Open blade after create, workflowName is: ${workflowName}`);
+    },
+    onAddBlankWorkflow: async () => {
+      window.alert('On Blank Workflow Click');
+    },
+    httpClient,
+  });
+  const templateService = new LocalTemplateService({
+    service: baseService,
+    endpoint: 'https://priti-cxf4h5cpcteue4az.b02.azurefd.net',
+    useEndpointForTemplates: useEndpoint,
+    baseUrl: '/url',
+    appId: 'siteResourceId', //TODO: double check
+    httpClient,
+    apiVersions: {
+      subscription: 'subid',
+      gateway: '2018-11-01',
+    },
+    openBladeAfterCreate: (workflowName: string | undefined) => {
+      window.alert(`Open blade after create, workflowName is: ${workflowName}`);
+    },
+    onAddBlankWorkflow: async () => {
+      window.alert('On Blank Workflow Click');
+    },
+  });
 
   return {
     connectionService,
@@ -268,3 +267,46 @@ const getServices = (isConsumption: boolean, getLocalResource: (resourcePath: st
     workflowService,
   };
 };
+
+class LocalTemplateService extends StandardTemplateService {
+  constructor(private readonly _options: any) {
+    super(_options);
+  }
+
+  getAllTemplateNames = async (): Promise<string[]> => {
+    const localManifestNames = localTemplateManifestPaths;
+
+    try {
+      const manifestsFromGithub = await this._options.service.getAllTemplateNames();
+      return [...localManifestNames, ...manifestsFromGithub];
+    } catch {
+      return localManifestNames;
+    }
+  };
+
+  public getResourceManifest = async (resourcePath: string): Promise<Template.Manifest> => {
+    const templateName = resourcePath.split('/')[0];
+    if (localTemplateManifestPaths.includes(templateName)) {
+      return loadLocalTemplateFromResourcePath(resourcePath);
+    }
+
+    return this._options.service.getResourceManifest(resourcePath);
+  };
+
+  public getWorkflowDefinition = async (resourcePath: string): Promise<LogicAppsV2.WorkflowDefinition> => {
+    const templateName = resourcePath.split('/')[0];
+    if (localTemplateManifestPaths.includes(templateName)) {
+      return loadLocalTemplateFromResourcePath(resourcePath, 'workflow');
+    }
+
+    return this._options.service.getWorkflowDefinition(resourcePath);
+  };
+
+  public getContentPathUrl = (templateName: string, resourcePath: string): string => {
+    if (localTemplateManifestPaths.includes(templateName)) {
+      return resourcePath;
+    }
+
+    return this._options.service.getContentPathUrl(templateName, resourcePath);
+  };
+}

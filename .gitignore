@@ -96,6 +96,7 @@ dist-ssr
 # Production
 /build
 /libs/designer/src/lib/core/templates/templateFiles
+/libs/logic-apps-shared/src/designer-client-services/lib/templates
 
 # Generated files
 .docusaurus

@@ -1,4 +1,4 @@
-import { useMemo } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import {
   type ConnectionReferences,
   getReactQueryClient,
@@ -45,10 +45,11 @@ export const TemplatesConsumption = () => {
     theme: state.workflowLoader.theme,
     templatesView: state.workflowLoader.templatesView,
   }));
-  const { resourcePath: workflowId, language } = useSelector((state: RootState) => state.workflowLoader);
+  const { resourcePath: workflowId, language, useEndpoint } = useSelector((state: RootState) => state.workflowLoader);
   const { data: workflowData } = useWorkflowAndArtifactsConsumption(workflowId!);
   const { data: tenantId } = useCurrentTenantId();
   const { data: objectId } = useCurrentObjectId();
+  const [reload, setReload] = useState<boolean | undefined>(undefined);
   const canonicalLocation = WorkflowUtility.convertToCanonicalFormat(workflowData?.location ?? 'westus');
 
   const { workflow, connectionReferences } = useMemo(() => getDataForConsumption(workflowData), [workflowData]);
@@ -56,6 +57,12 @@ export const TemplatesConsumption = () => {
 
   const isWorkflowEmpty = useMemo(() => Object.keys((workflow?.definition as any)?.triggers ?? {}).length === 0, [workflow]);
   const queryClient = getReactQueryClient();
+
+  useEffect(() => {
+    if (useEndpoint !== undefined) {
+      setReload(true);
+    }
+  }, [useEndpoint]);
 
   const onBlankWorkflowClick = async () => {
     if (!workflowData) {
@@ -125,9 +132,20 @@ export const TemplatesConsumption = () => {
   };
 
   const services = useMemo(
-    () => getServices(workflowId!, workflow as any, tenantId, objectId, canonicalLocation, language, onBlankWorkflowClick, queryClient),
+    () =>
+      getServices(
+        workflowId!,
+        workflow as any,
+        tenantId,
+        objectId,
+        canonicalLocation,
+        language,
+        onBlankWorkflowClick,
+        queryClient,
+        useEndpoint
+      ),
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    [workflowId, workflow, tenantId, canonicalLocation, language]
+    [workflowId, workflow, tenantId, canonicalLocation, language, useEndpoint]
   );
 
   const resourceDetails = new ArmParser(workflowId ?? '');
@@ -148,6 +166,7 @@ export const TemplatesConsumption = () => {
         isConsumption={true}
         isCreateView={false}
         viewTemplate={isSingleTemplateView ? { id: templatesView } : undefined}
+        reload={reload}
       >
         <div
           style={{
@@ -214,7 +233,8 @@ const getServices = (
   location: string,
   locale: string | undefined,
   onBlankWorkflowClick: () => Promise<void>,
-  queryClient?: any
+  queryClient?: any,
+  useEndpoint?: boolean
 ): any => {
   const baseUrl = 'https://management.azure.com';
   const { subscriptionId, resourceGroup } = new ArmParser(workflowId);
@@ -333,6 +353,9 @@ const getServices = (
   };
 
   const templateService = new BaseTemplateService({
+    httpClient,
+    endpoint: 'https://priti-cxf4h5cpcteue4az.b02.azurefd.net',
+    useEndpointForTemplates: !!useEndpoint,
     openBladeAfterCreate: (_workflowName: string | undefined) => {
       window.alert('Open blade after create, consumption creation is complete');
     },
