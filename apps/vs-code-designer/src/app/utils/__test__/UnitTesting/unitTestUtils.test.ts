@@ -265,6 +265,64 @@ describe('logTelemetry function', () => {
   });
 });
 
+describe('processAndWriteMockableOperations with no actions', () => {
+  let writeFileSpy: any;
+  let ensureDirSpy: any;
+  let readFileSpy: any;
+
+  beforeEach(() => {
+    writeFileSpy = vi.spyOn(fse, 'writeFile').mockResolvedValue();
+    ensureDirSpy = vi.spyOn(fse, 'ensureDir').mockResolvedValue();
+    readFileSpy = vi.spyOn(fse, 'readFile').mockResolvedValue(
+      JSON.stringify({
+        definition: {
+          $schema: 'https://schema.management.azure.com/providers/Microsoft.Logic/schemas/2016-06-01/workflowdefinition.json#',
+          actions: {},
+          contentVersion: '1.0.0.0',
+          outputs: {},
+          triggers: {
+            When_a_HTTP_request_is_received: {
+              type: 'Request',
+              kind: 'Http',
+            },
+          },
+        },
+        kind: 'Stateful',
+      })
+    );
+    ext.outputChannel = { appendLog: vi.fn() } as any;
+    ext.designTimePort = 1234;
+    vi.spyOn(axios, 'get').mockResolvedValue({ data: ['Request'] });
+  });
+
+  afterEach(() => {
+    vi.restoreAllMocks();
+  });
+
+  it('should gracefully handle workflows with no actions by not creating any files', async () => {
+    const operationInfo = {
+      When_a_HTTP_request_is_received: { type: 'Request', operationId: 'When_a_HTTP_request_is_received' },
+    };
+    const outputParameters = {
+      When_a_HTTP_request_is_received: {
+        outputs: {
+          'outputs.$.dummy': { type: 'string', description: 'dummy description' },
+        },
+      },
+    };
+    const { foundActionMocks, foundTriggerMocks } = await processAndWriteMockableOperations(
+      operationInfo,
+      outputParameters,
+      projectPath,
+      projectPath,
+      'workflowName',
+      fakeLogicAppName
+    );
+    expect(Object.keys(foundActionMocks).length).toEqual(0);
+    expect(Object.keys(foundTriggerMocks).length).toEqual(1);
+  });
+});
+
 describe('processAndWriteMockableOperations', () => {
   let writeFileSpy: any;
   let ensureDirSpy: any;
