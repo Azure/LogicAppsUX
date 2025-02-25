@@ -211,7 +211,7 @@ export const initializeOperationDetails = async (
       nodeInputs
     );
     const nodeDependencies = { inputs: inputDependencies, outputs: outputDependencies };
-    const settings = getOperationSettings(
+    let settings = getOperationSettings(
       isTrigger,
       operationInfo,
       /* manifest */ undefined,
@@ -219,6 +219,17 @@ export const initializeOperationDetails = async (
       /* operation */ undefined,
       state.workflow.workflowKind
     );
+
+    const isSecureByDefault = true;
+
+    // Toggle secure inputs & outputs only when adding to workflow for actions that support secure data and manifest sets by default
+    if (isSecureByDefault) {
+      settings = {
+        ...settings,
+        secureInputs: { isSupported: settings.secureInputs?.isSupported ?? false, value: true },
+        secureOutputs: { isSupported: settings.secureOutputs?.isSupported ?? false, value: true },
+      };
+    }
 
     // We should update the outputs when splitOn is enabled.
     let updatedOutputs = nodeOutputs;
