@@ -130,7 +130,9 @@ export const DesignerCommandBar = ({
 
     if (!hasParametersErrors) {
       await saveWorkflow(serializedWorkflow, customCodeFilesWithData, () => dispatch(resetDesignerDirtyState(undefined)));
-      updateCallbackUrl(designerState, DesignerStore.dispatch);
+      if (Object.keys(serializedWorkflow?.definition?.triggers ?? {}).length > 0) {
+        updateCallbackUrl(designerState, dispatch);
+      }
     }
   });
 
