@@ -74,6 +74,7 @@
   },
   "private": true,
   "scripts": {
+    "postinstall": "pnpm templates",
     "build": "turbo run build",
     "build:extension": "turbo run build:extension",
     "bump": "standard-version --no-verify",
@@ -94,7 +95,8 @@
     "test:e2e:ui": "playwright test --ui",
     "test:extension-unit": "turbo run test:extension-unit",
     "testgen": "playwright codegen https://localhost:4200",
-    "vscode:designer:pack": "turbo run vscode:designer:pack"
+    "vscode:designer:pack": "turbo run vscode:designer:pack",
+    "templates": "ts-node downloadTemplates.js"
   },
   "type": "module",
   "dependencies": {

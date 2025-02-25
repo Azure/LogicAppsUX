@@ -1,4 +1,4 @@
-import { useMemo } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { TemplatesDataProvider, TemplatesView } from '@microsoft/logic-apps-designer';
 import type { RootState } from '../state/Store';
 import { TemplatesDesigner, TemplatesDesignerProvider } from '@microsoft/logic-apps-designer';
@@ -34,7 +34,8 @@ export const LocalTemplates = () => {
     theme: state.workflowLoader.theme,
     templatesView: state.workflowLoader.templatesView,
   }));
-  const { hostingPlan } = useSelector((state: RootState) => state.workflowLoader);
+  const { hostingPlan, useEndpoint } = useSelector((state: RootState) => state.workflowLoader);
+  const [reload, setReload] = useState<boolean | undefined>(undefined);
 
   const isConsumption = hostingPlan === 'consumption';
 
@@ -42,10 +43,16 @@ export const LocalTemplates = () => {
     alert("Congrats you created the workflow! (Not really, you're in standalone)");
   };
 
+  useEffect(() => {
+    if (useEndpoint !== undefined) {
+      setReload(true);
+    }
+  }, [useEndpoint]);
+
   const services = useMemo(
-    () => getServices(isConsumption),
+    () => getServices(isConsumption, !!useEndpoint),
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    [isConsumption]
+    [isConsumption, useEndpoint]
   );
   const isSingleTemplateView = useMemo(() => templatesView !== 'gallery', [templatesView]);
 
@@ -58,6 +65,7 @@ export const LocalTemplates = () => {
           location: '',
           workflowAppName: '',
         }}
+        reload={reload}
         connectionReferences={{}}
         services={services}
         isConsumption={isConsumption}
@@ -153,7 +161,7 @@ export const LocalTemplates = () => {
 
 const httpClient = new HttpClient();
 
-const getServices = (isConsumption: boolean): any => {
+const getServices = (isConsumption: boolean, useEndpoint: boolean): any => {
   const connectionService = isConsumption
     ? new ConsumptionConnectionService({
         apiVersion: '2018-07-01-preview',
@@ -221,6 +229,7 @@ const getServices = (isConsumption: boolean): any => {
 
   const baseService = new BaseTemplateService({
     endpoint: 'https://priti-cxf4h5cpcteue4az.b02.azurefd.net',
+    useEndpointForTemplates: useEndpoint,
     openBladeAfterCreate: (workflowName: string | undefined) => {
       window.alert(`Open blade after create, workflowName is: ${workflowName}`);
     },
@@ -232,6 +241,7 @@ const getServices = (isConsumption: boolean): any => {
   const templateService = new LocalTemplateService({
     service: baseService,
     endpoint: 'https://priti-cxf4h5cpcteue4az.b02.azurefd.net',
+    useEndpointForTemplates: useEndpoint,
     baseUrl: '/url',
     appId: 'siteResourceId', //TODO: double check
     httpClient,

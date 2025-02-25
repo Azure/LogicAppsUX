@@ -35,8 +35,13 @@ export const initialManifestState: ManifestState = {
 };
 
 export const loadGithubManifestNames = createAsyncThunk('manifest/loadGithubManifestNames', async () => {
-  const githubManifestNames = await loadManifestNamesFromGithub();
-  return githubManifestNames ?? [];
+  try {
+    const templateNames = await TemplateService().getAllTemplateNames();
+    return templateNames ?? [];
+  } catch (ex) {
+    console.error(ex);
+    return [];
+  }
 });
 
 export const loadGithubManifests = createAsyncThunk('manifest/loadGithubManifests', async (count: number, thunkAPI) => {
@@ -58,19 +63,13 @@ export const manifestSlice = createSlice({
   initialState: initialManifestState,
   reducers: {
     setavailableTemplatesNames: (state, action: PayloadAction<ManifestName[] | undefined>) => {
-      if (action.payload) {
-        state.availableTemplateNames = action.payload;
-      }
+      state.availableTemplateNames = action.payload;
     },
     setavailableTemplates: (state, action: PayloadAction<Record<ManifestName, Template.Manifest> | undefined>) => {
-      if (action.payload) {
-        state.availableTemplates = action.payload;
-      }
+      state.availableTemplates = action.payload;
     },
     setFilteredTemplateNames: (state, action: PayloadAction<ManifestName[] | undefined>) => {
-      if (action.payload) {
-        state.filteredTemplateNames = action.payload;
-      }
+      state.filteredTemplateNames = action.payload;
     },
     setPageNum: (state, action: PayloadAction<number>) => {
       state.filters.pageNum = action.payload;
@@ -141,12 +140,3 @@ export const {
   setDetailsFilters,
 } = manifestSlice.actions;
 export default manifestSlice.reducer;
-
-const loadManifestNamesFromGithub = async (): Promise<ManifestName[] | undefined> => {
-  try {
-    return TemplateService().getAllTemplateNames();
-  } catch (ex) {
-    console.error(ex);
-    return undefined;
-  }
-};

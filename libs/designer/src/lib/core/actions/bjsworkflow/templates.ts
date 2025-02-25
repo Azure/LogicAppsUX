@@ -27,6 +27,12 @@ import type { TemplateServiceOptions } from '../../templates/TemplatesDesignerCo
 import { initializeParametersMetadata } from '../../templates/utils/parametershelper';
 import { initializeNodeOperationInputsData } from '../../state/operation/operationMetadataSlice';
 import { updateTemplateParameterDefinitions } from '../../state/templates/templateSlice';
+import {
+  loadGithubManifestNames,
+  setavailableTemplates,
+  setavailableTemplatesNames,
+  setFilteredTemplateNames,
+} from '../../state/templates/manifestSlice';
 
 export interface WorkflowTemplateData {
   id: string;
@@ -136,6 +142,18 @@ export const initializeTemplateServices = createAsyncThunk(
     return true;
   }
 );
+
+export const reloadTemplates = createAsyncThunk('reloadTemplates', async ({ clear }: { clear?: boolean }, thunkAPI: any) => {
+  const dispatch = thunkAPI.dispatch;
+
+  if (clear) {
+    dispatch(setavailableTemplatesNames(undefined));
+    dispatch(setavailableTemplates(undefined));
+    dispatch(setFilteredTemplateNames(undefined));
+  }
+
+  dispatch(loadGithubManifestNames());
+});
 
 export const loadManifestsFromPaths = async (resourcePaths: string[]) => {
   try {

@@ -3,11 +3,11 @@ import { existsSync, writeFile, createWriteStream } from 'fs';
 import { mkdir, rm } from 'fs/promises';
 import client from 'https';
 
-const releaseBranch = 'release/20250203';
+const releaseBranch = 'release/20250224';
 
 const baseURL = `https://raw.githubusercontent.com/azure/LogicAppsTemplates/${releaseBranch}`;
 const sourceCodeURL = `https://github.com/Azure/LogicAppsTemplates/tree/${releaseBranch}`;
-const templatesFolder = `./libs/designer/src/lib/core/templates/templateFiles`;
+const templatesFolder = './libs/logic-apps-shared/src/designer-client-services/lib/templates';
 
 const downloadFile = async (path) => {
   const artifactUrl = `${baseURL}/${path}`;
@@ -47,7 +47,7 @@ const downloadTemplate = async (path) => {
   } else {
     templateManifest.images = undefined;
   }
-  
+
   templateManifest.sourceCodeUrl = `${sourceCodeURL}/${path}/manifest.json`;
   writeFile(`${templatesFolder}/${path}/manifest.json`, JSON.stringify(templateManifest, null, 2), () => {});
 
