@@ -1,4 +1,17 @@
 # Logic Apps Designer
+## [5.45.0](https://github.com/Azure/LogicAppsUX/compare/v5.44.0...v5.45.0) (2025-02-25)
+
+
+### Features
+
+* **VSCode:** added docs around new telemetry collection ([#6662](https://github.com/Azure/LogicAppsUX/issues/6662)) ([ab65007](https://github.com/Azure/LogicAppsUX/commit/ab650073218c3fe568b8e778f51dcbe965a3cfb2))
+
+
+### Bug Fixes
+
+* **designer:** Dictionary Editor to not use string interpolation for tokens if ANY value type ([#6666](https://github.com/Azure/LogicAppsUX/issues/6666)) ([9ea1603](https://github.com/Azure/LogicAppsUX/commit/9ea1603a5683bbd4099f3c45b1a866885d85febc))
+* **designer:** Update callback url accordingly to new name ([#6656](https://github.com/Azure/LogicAppsUX/issues/6656)) ([327bb4c](https://github.com/Azure/LogicAppsUX/commit/327bb4c59a3c5f41b2ad99e0993827a486c055a9))
+
 ## [5.44.0](https://github.com/Azure/LogicAppsUX/compare/v5.43.0...v5.44.0) (2025-02-24)
 
 
