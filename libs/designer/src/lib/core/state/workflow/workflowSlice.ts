@@ -56,6 +56,7 @@ export const initialWorkflowState: WorkflowState = {
   operations: {},
   nodesMetadata: {},
   collapsedGraphIds: {},
+  collapsedActionIds: {},
   edgeIdsBySource: {},
   idReplacements: {},
   newlyAddedOperations: {},
@@ -262,6 +263,9 @@ export const workflowSlice = createSlice({
     clearFocusNode: (state: WorkflowState) => {
       state.focusedCanvasNodeId = undefined;
     },
+    clearFocusCollapsedNode: (state: WorkflowState) => {
+      state.focusCollapsedNodeId = undefined;
+    },
     updateNodeSizes: (state: WorkflowState, action: PayloadAction<NodeChange[]>) => {
       const dimensionChanges = action.payload.filter((x) => x.type === 'dimensions');
       if (!state.graph) {
@@ -346,6 +350,21 @@ export const workflowSlice = createSlice({
         args: [action.payload],
       });
     },
+    toggleCollapsedActionId: (state: WorkflowState, action: PayloadAction<string>) => {
+      if (getRecordEntry(state.collapsedActionIds, action.payload) === true) {
+        delete state.collapsedActionIds[action.payload];
+      } else {
+        state.collapsedActionIds[action.payload] = true;
+      }
+      state.focusCollapsedNodeId = action.payload;
+
+      LoggerService().log({
+        level: LogEntryLevel.Verbose,
+        area: 'Designer:Workflow Slice',
+        message: action.type,
+        args: [action.payload],
+      });
+    },
     setRunIndex: (state: WorkflowState, action: PayloadAction<{ page: number; nodeId: string }>) => {
       const { page, nodeId } = action.payload;
       const nodeMetadata = getRecordEntry(state.nodesMetadata, nodeId);
@@ -365,7 +384,7 @@ export const workflowSlice = createSlice({
         ...runData,
         inputsLink: runData?.inputsLink ?? null,
         outputsLink: runData?.outputsLink ?? null,
-        duration: getDurationStringPanelMode(Date.parse(runData.endTime) - Date.parse(runData.startTime), /* abbreviated */ true),
+        duration: getDurationStringPanelMode(Date.parse(runData?.endTime) - Date.parse(runData?.startTime), /* abbreviated */ true),
       };
       nodeMetadata.runData = nodeRunData as LogicAppsV2.WorkflowRunAction;
     },
@@ -618,6 +637,8 @@ export const {
   setRepetitionRunData,
   setIsWorkflowDirty,
   setHostErrorMessages,
+  toggleCollapsedActionId,
+  clearFocusCollapsedNode,
 } = workflowSlice.actions;
 
 export default workflowSlice.reducer;

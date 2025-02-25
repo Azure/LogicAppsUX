@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useMemo } from 'react';
-import { TemplatesDataProvider, templateStore, TemplatesView } from '@microsoft/logic-apps-designer';
+import { getReactQueryClient, TemplatesDataProvider, templateStore, TemplatesView } from '@microsoft/logic-apps-designer';
 import { environment } from '../../environments/environment';
 import type { RootState } from '../state/Store';
 import { TemplatesDesigner, TemplatesDesignerProvider } from '@microsoft/logic-apps-designer';
@@ -16,6 +16,9 @@ import {
   StandardOperationManifestService,
   guid,
   setObjectPropertyValue,
+  StandardConnectorService,
+  BaseAppServiceService,
+  BaseApiManagementService,
 } from '@microsoft/logic-apps-shared';
 import {
   getConnectionStandard,
@@ -38,6 +41,9 @@ import axios from 'axios';
 import type { ConnectionMapping } from '@microsoft/logic-apps-designer/src/lib/core/state/templates/workflowSlice';
 import { parseWorkflowParameterValue } from '@microsoft/logic-apps-designer';
 import { useFunctionalState } from '@react-hookz/web';
+import { ArtifactService } from '../../designer/app/AzureLogicAppsDesigner/Services/Artifact';
+import { ChildWorkflowService } from '../../designer/app/AzureLogicAppsDesigner/Services/ChildWorkflow';
+import type { QueryClient } from '@tanstack/react-query';
 
 interface StringifiedWorkflow {
   name: string;
@@ -53,7 +59,10 @@ export const TemplatesStandard = () => {
   }));
   const { appId, hostingPlan, workflowName: existingWorkflowName } = useSelector((state: RootState) => state.workflowLoader);
   const { data: workflowAppData } = useWorkflowApp(appId as string, hostingPlan);
-  const canonicalLocation = WorkflowUtility.convertToCanonicalFormat(workflowAppData?.location ?? '');
+  const canonicalLocation = useMemo(
+    () => WorkflowUtility.convertToCanonicalFormat(workflowAppData?.location ?? 'westus'),
+    [workflowAppData]
+  );
   const { data: tenantId } = useCurrentTenantId();
   const { data: objectId } = useCurrentObjectId();
   const { data: originalConnectionsData } = useConnectionsData(appId);
@@ -61,6 +70,7 @@ export const TemplatesStandard = () => {
 
   const [connectionsData, setConnectionsData] = useFunctionalState(originalConnectionsData);
   const [settingsData, setSettingsData] = useFunctionalState(originalSettingsData);
+  const queryClient = getReactQueryClient();
 
   useEffect(() => {
     if (originalSettingsData) {
@@ -186,18 +196,51 @@ export const TemplatesStandard = () => {
     [connectionsData, settingsData]
   );
 
+  const getConnectionConfiguration = useCallback(
+    async (connectionId: string): Promise<any> => {
+      if (!connectionId) {
+        return Promise.resolve();
+      }
+
+      const connectionName = connectionId.split('/').splice(-1)[0];
+      const connectionInfo =
+        connectionsData()?.serviceProviderConnections?.[connectionName] ?? connectionsData()?.apiManagementConnections?.[connectionName];
+
+      if (connectionInfo) {
+        // TODO(psamband): Add new settings in this blade so that we do not resolve all the appsettings in the connectionInfo.
+        const resolvedConnectionInfo = WorkflowUtility.resolveConnectionsReferences(
+          JSON.stringify(connectionInfo),
+          {},
+          settingsData()?.properties
+        );
+        delete resolvedConnectionInfo.displayName;
+
+        return {
+          connection: resolvedConnectionInfo,
+        };
+      }
+
+      return undefined;
+    },
+    [connectionsData, settingsData]
+  );
+
   const services = useMemo(
     () =>
       getServices(
+        appId as string,
         connectionsData() ?? {},
         workflowAppData as WorkflowApp,
         addConnectionDataInternal,
+        getConnectionConfiguration,
         tenantId,
         objectId,
-        canonicalLocation
+        canonicalLocation,
+        queryClient,
+        settingsData()?.properties ?? {}
       ),
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    [connectionsData, settingsData, workflowAppData, tenantId, canonicalLocation]
+    [connectionsData, settingsData, workflowAppData, tenantId, canonicalLocation, appId]
   );
   const resourceDetails = new ArmParser(appId ?? '');
 
@@ -211,14 +254,38 @@ export const TemplatesStandard = () => {
           subscriptionId: resourceDetails.subscriptionId,
           resourceGroup: resourceDetails.resourceGroup,
           location: canonicalLocation,
-          workflowAppName: workflowAppData.name as string,
+          workflowAppName: resourceDetails.resourceName,
         }}
         connectionReferences={connectionReferences}
         services={services}
         isConsumption={false}
         isCreateView={true}
         existingWorkflowName={existingWorkflowName}
-        viewTemplate={isSingleTemplateView ? { id: templatesView } : undefined}
+        viewTemplate={
+          isSingleTemplateView
+            ? {
+                id: templatesView,
+                parametersOverride: {
+                  'odataTopDefault_#workflowname#': { value: 0, isEditable: false },
+                  'sharepoint-site-name_#workflowname#': { value: 'overriden-empty' },
+                  'TeamsChannelID_#workflowname#': { value: 'overriden-default', isEditable: false },
+                  'TeamsTeamID_#workflowname#': { value: 'overriden-default-editable' },
+                  'OpenAIEmbeddingModel_#workflowname#': { value: 'overriden-default-editable' },
+                  'SharepointSiteAddress_#workflowname#': { value: 'overriden-default-non-editable', isEditable: false },
+                },
+                basicsOverride: {
+                  [templatesView]: {
+                    name: { value: 'overriden-name', isEditable: false },
+                    kind: { value: 'stateful', isEditable: false },
+                  },
+                  ['ingest-index-ai-sharepoint-rag']: {
+                    name: { value: 'overriden-name', isEditable: false },
+                    kind: { value: 'stateful', isEditable: false },
+                  },
+                },
+              }
+            : undefined
+        }
       >
         <div
           style={{
@@ -285,20 +352,27 @@ const apiVersion = '2020-06-01';
 const httpClient = new HttpClient();
 
 const getServices = (
+  siteResourceId: string,
   connectionsData: ConnectionsData,
   workflowApp: WorkflowApp | undefined,
   addConnection: (data: ConnectionAndAppSetting) => Promise<void>,
+  getConfiguration: (connectionId: string) => Promise<any>,
   tenantId: string | undefined,
   objectId: string | undefined,
-  location: string
+  location: string,
+  queryClient: QueryClient,
+  appSettings: Record<string, string>
 ): any => {
-  const siteResourceId = workflowApp?.id;
   const armUrl = 'https://management.azure.com';
   const baseUrl = `${armUrl}${siteResourceId}/hostruntime/runtime/webhooks/workflow/api/management`;
-  const appName = workflowApp?.name ?? '';
-  const { subscriptionId, resourceGroup } = new ArmParser(siteResourceId ?? '');
+  const { subscriptionId, resourceGroup, resourceName } = new ArmParser(siteResourceId ?? '');
 
   const defaultServiceParams = { baseUrl, httpClient, apiVersion };
+  const armServiceParams = {
+    ...defaultServiceParams,
+    baseUrl: armUrl,
+    siteResourceId,
+  };
 
   const connectionService = new StandardConnectionService({
     ...defaultServiceParams,
@@ -311,7 +385,7 @@ const getServices = (
       tenantId,
       httpClient,
     },
-    workflowAppDetails: { appName, identity: workflowApp?.identity as any },
+    workflowAppDetails: { appName: resourceName, identity: workflowApp?.identity as any },
     readConnections: () => Promise.resolve(connectionsData),
     writeConnection: addConnection as any,
   });
@@ -338,6 +412,78 @@ const getServices = (
     objectId,
   });
   const operationManifestService = new StandardOperationManifestService(defaultServiceParams);
+
+  const apiManagementService = new BaseApiManagementService({
+    apiVersion: '2021-08-01',
+    baseUrl,
+    subscriptionId,
+    httpClient,
+    queryClient,
+  });
+  const childWorkflowService = new ChildWorkflowService({
+    apiVersion,
+    baseUrl: armUrl,
+    siteResourceId,
+    httpClient,
+    workflowName: 'default',
+  });
+  const artifactService = new ArtifactService({
+    ...armServiceParams,
+    siteResourceId,
+    integrationAccountCallbackUrl: appSettings['WORKFLOW_INTEGRATION_ACCOUNT_CALLBACK_URL'],
+  });
+  const appService = new BaseAppServiceService({
+    baseUrl: armUrl,
+    apiVersion,
+    subscriptionId,
+    httpClient,
+  });
+  const connectorService = new StandardConnectorService({
+    ...defaultServiceParams,
+    clientSupportedOperations: [
+      ['connectionProviders/localWorkflowOperation', 'invokeWorkflow'],
+      ['connectionProviders/xmlOperations', 'xmlValidation'],
+      ['connectionProviders/xmlOperations', 'xmlTransform'],
+      ['connectionProviders/liquidOperations', 'liquidJsonToJson'],
+      ['connectionProviders/liquidOperations', 'liquidJsonToText'],
+      ['connectionProviders/liquidOperations', 'liquidXmlToJson'],
+      ['connectionProviders/liquidOperations', 'liquidXmlToText'],
+      ['connectionProviders/flatFileOperations', 'flatFileDecoding'],
+      ['connectionProviders/flatFileOperations', 'flatFileEncoding'],
+      ['connectionProviders/swiftOperations', 'SwiftDecode'],
+      ['connectionProviders/swiftOperations', 'SwiftEncode'],
+      ['/connectionProviders/apiManagementOperation', 'apiManagement'],
+      ['connectionProviders/http', 'httpswaggeraction'],
+      ['connectionProviders/http', 'httpswaggertrigger'],
+    ].map(([connectorId, operationId]) => ({ connectorId, operationId })),
+    getConfiguration,
+    schemaClient: {},
+    valuesClient: {
+      getWorkflows: () => childWorkflowService.getWorkflowsWithRequestTrigger(),
+      getMapArtifacts: (args: any) => {
+        const { mapType, mapSource } = args.parameters;
+        return artifactService.getMapArtifacts(mapType, mapSource);
+      },
+      getSwaggerOperations: (args: any) => {
+        const { parameters } = args;
+        return appService.getOperations(parameters.swaggerUrl);
+      },
+      getSchemaArtifacts: (args: any) => artifactService.getSchemaArtifacts(args.parameters.schemaSource),
+      getApimOperations: (args: any) => {
+        const { configuration } = args;
+        if (!configuration?.connection?.apiId) {
+          throw new Error('Missing api information to make dynamic call');
+        }
+
+        return apiManagementService.getOperations(configuration?.connection?.apiId);
+      },
+    },
+    apiHubServiceDetails: {
+      apiVersion: '2018-07-01-preview',
+      baseUrl: armUrl,
+    },
+  });
+
   const workflowService: IWorkflowService = {
     getCallbackUrl: () => Promise.resolve({} as any),
     getAppIdentity: () => workflowApp?.identity as any,
@@ -367,6 +513,7 @@ const getServices = (
     operationManifestService,
     templateService,
     workflowService,
+    connectorService,
   };
 };
 
