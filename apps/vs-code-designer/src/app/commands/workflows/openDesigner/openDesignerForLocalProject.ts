@@ -304,7 +304,7 @@ export default class OpenDesignerForLocalProject extends OpenDesignerBase {
    * @param {any} workflow - Workflow schema to validate.
    */
   private async validateWorkflow(workflow: any): Promise<void> {
-    const url = `http://localhost:${ext.designTimePort}${managementApiPrefix}/workflows/${this.workflowName}/validate?api-version=${this.apiVersion}`;
+    const url = `http://localhost:${ext.designTimePort}${managementApiPrefix}/workflows/${this.workflowName}/validatePartial?api-version=${this.apiVersion}`;
     try {
       await sendRequest(this.context, {
         url,
