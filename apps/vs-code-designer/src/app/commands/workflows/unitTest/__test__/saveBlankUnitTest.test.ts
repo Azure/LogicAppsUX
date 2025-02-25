@@ -11,6 +11,7 @@ import * as projectRootUtils from '../../../../utils/verifyIsProject';
 import * as unitTestUtils from '../../../../utils/unitTests';
 import * as azextUtils from '@microsoft/vscode-azext-utils';
 import { ext } from '../../../../../extensionVariables';
+import * as convertWorkspace from '../../../../commands/createNewCodeProject/CodeProjectBase/ConvertToWorkspace';
 
 vi.mock('../../../../../extensionVariables', () => ({
   ext: {
@@ -46,6 +47,11 @@ describe('saveBlankUnitTest', () => {
     testsDirectory: path.join(dummyProjectPath, 'tests'),
   };
 
+  const dummyMockOperations: { foundActionMocks: Record<string, string>; foundTriggerMocks: Record<string, string> } = {
+    foundActionMocks: {},
+    foundTriggerMocks: {},
+  };
+
   beforeEach(() => {
     // Stub utility functions used in saveBlankUnitTest
     vi.spyOn(workspaceUtils, 'getWorkspaceFolder').mockResolvedValue(dummyWorkspaceFolder);
@@ -54,7 +60,7 @@ describe('saveBlankUnitTest', () => {
     vi.spyOn(unitTestUtils, 'selectWorkflowNode').mockResolvedValue(dummyWorkflowNodeUri);
     vi.spyOn(unitTestUtils, 'promptForUnitTestName').mockResolvedValue(dummyUnitTestName);
     vi.spyOn(unitTestUtils, 'getUnitTestPaths').mockReturnValue(dummyPaths);
-    vi.spyOn(unitTestUtils, 'processUnitTestDefinition').mockResolvedValue();
+    vi.spyOn(unitTestUtils, 'processAndWriteMockableOperations').mockResolvedValue(dummyMockOperations);
 
     // Stub directory creation
     vi.spyOn(fs, 'ensureDir').mockResolvedValue();
@@ -69,6 +75,11 @@ describe('saveBlankUnitTest', () => {
 
     // Stub isMultiRootWorkspace to simulate a valid multi-root environment
     vi.spyOn(workspaceUtils, 'isMultiRootWorkspace').mockReturnValue(true);
+    vi.spyOn(convertWorkspace, 'ConvertToWorkspace').mockResolvedValue(true);
+    // vi.spyOn(vscode.workspace, 'getConfiguration').mockImplementation({
+    //   get: vi.fn().mockReturnValue(true),
+    //   update: vi.fn().mockResolvedValue(undefined),
+    // } as any);
 
     // Stub the callWithTelemetryAndErrorHandling wrapper used inside saveBlankUnitTest
     vi.spyOn(azextUtils, 'callWithTelemetryAndErrorHandling').mockImplementation(async (eventName, callback) => {
@@ -100,12 +111,16 @@ describe('saveBlankUnitTest', () => {
     expect(azextUtils.callWithTelemetryAndErrorHandling).toHaveBeenCalled();
   });
 
-  test('should throw an error if the workspace is not multi-root', async () => {
+  test('should not continue if not a valid workspace', async () => {
     vi.spyOn(workspaceUtils, 'isMultiRootWorkspace').mockReturnValue(false);
+    vi.spyOn(convertWorkspace, 'ConvertToWorkspace').mockResolvedValue(false);
 
-    await expect(saveBlankUnitTest(dummyContext, dummyNode, dummyUnitTestDefinition)).rejects.toThrow(
-      /A multi-root workspace must be open to create unit tests/
-    );
+    // await expect(saveBlankUnitTest(dummyContext, dummyNode, dummyUnitTestDefinition)).rejects.toThrow(
+    //   /A multi-root workspace must be open to create unit tests/
+    // );
+    await saveBlankUnitTest(dummyContext, dummyNode, dummyUnitTestDefinition);
+    expect(unitTestUtils.promptForUnitTestName).toHaveBeenCalledTimes(0);
+    expect(unitTestUtils.logTelemetry).toHaveBeenCalledWith(dummyContext, expect.objectContaining({ multiRootWorkspaceValid: 'false' }));
   });
 
   test('should log an error and call handleError when an exception occurs', async () => {
