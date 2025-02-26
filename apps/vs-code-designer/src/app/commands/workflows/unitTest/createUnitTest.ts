@@ -9,7 +9,7 @@ import {
   createCsFile,
   createTestExecutorFile,
   createTestSettingsConfigFile,
-  ensureCsprojAndNugetFiles,
+  ensureCsproj,
   extractAndValidateRunId,
   getUnitTestPaths,
   handleError,
@@ -198,14 +198,14 @@ async function generateUnitTestFromRun(
       operationInfo,
       outputParameters,
       workflowPath,
-      paths.workflowFolderPath,
+      paths.workflowTestFolderPath,
       workflowName,
       paths.logicAppName
     );
     // Create the testSettings.config file for the unit test
     ext.outputChannel.appendLog(localize('creatingTestSettingsConfig', 'Creating testSettings.config file for unit test...'));
-    await createTestSettingsConfigFile(paths.workflowFolderPath, workflowName, paths.logicAppName);
-    await createTestExecutorFile(paths.logicAppFolderPath, paths.logicAppName);
+    await createTestSettingsConfigFile(paths.workflowTestFolderPath, workflowName, paths.logicAppName);
+    await createTestExecutorFile(paths.logicAppTestFolderPath, paths.logicAppName);
 
     try {
       ext.outputChannel.appendLog(localize('unzippingFiles', `Unzipping Mock.json into: ${paths.unitTestFolderPath}`));
@@ -246,7 +246,7 @@ async function generateUnitTestFromRun(
     }
 
     try {
-      await ensureCsprojAndNugetFiles(paths.testsDirectory, paths.logicAppFolderPath, paths.logicAppName);
+      await ensureCsproj(paths.testsDirectory, paths.logicAppTestFolderPath, paths.logicAppName);
       logTelemetry(context, { nugetConfigFileCreated: 'true' });
     } catch (nugetError) {
       const nugetConfigFailReason = parseError(nugetError).message;
