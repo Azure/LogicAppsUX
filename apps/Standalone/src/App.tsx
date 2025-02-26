@@ -16,6 +16,7 @@ export const App = () => {
       <Route path="/datamapperv1" element={<DataMapperV1 />} />
       <Route path="/datamapperv2" element={<DataMapperV2 />} />
       <Route path="/templates" element={<TemplatesStandalone />} />
+      <Route path="/customtemplates" element={<CustomTemplatesStandalone />} />
       {/* Using path="*"" means "match anything", so this route
                 acts like a catch-all for URLs that we don't have explicit
                 routes for. */}
@@ -49,6 +50,14 @@ const DataMapperV2 = () => {
 };
 
 const TemplatesStandalone = () => {
+  return (
+    <Provider store={templateStore}>
+      <TemplatesWrapper />
+    </Provider>
+  );
+};
+
+const CustomTemplatesStandalone = () => {
   return (
     <Provider store={templateStore}>
       <TemplatesWrapper />

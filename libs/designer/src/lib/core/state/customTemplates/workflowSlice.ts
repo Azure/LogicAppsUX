@@ -29,10 +29,26 @@ const initialState: WorkflowState = {
   parameters: {},
 };
 
+interface InitialWorkflowState {
+  subscriptionId: string;
+  resourceGroup: string;
+  location: string;
+  workflowAppName?: string;
+  references: ConnectionReferences;
+}
+
 export const workflowSlice = createSlice({
   name: 'workflow',
   initialState,
   reducers: {
+    setInitialData: (state, action: PayloadAction<InitialWorkflowState>) => {
+      const { subscriptionId, resourceGroup, location, workflowAppName, references } = action.payload;
+      state.subscriptionId = subscriptionId;
+      state.resourceGroup = resourceGroup;
+      state.location = location;
+      state.workflowAppName = workflowAppName;
+      state.connections.references = references;
+    },
     setSubscriptionId: (state, action: PayloadAction<string>) => {
       state.subscriptionId = action.payload;
     },
@@ -45,5 +61,5 @@ export const workflowSlice = createSlice({
   },
 });
 
-export const { setSubscriptionId, setResourceGroup, setWorkflowAppName } = workflowSlice.actions;
+export const { setInitialData, setSubscriptionId, setResourceGroup, setWorkflowAppName } = workflowSlice.actions;
 export default workflowSlice.reducer;
