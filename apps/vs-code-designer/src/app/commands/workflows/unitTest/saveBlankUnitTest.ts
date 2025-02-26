@@ -7,7 +7,7 @@ import {
   createCsFile,
   createTestSettingsConfigFile,
   createTestExecutorFile,
-  ensureCsprojAndNugetFiles,
+  ensureCsproj,
   updateCsprojFile,
   getUnitTestPaths,
   handleError,
@@ -58,7 +58,7 @@ export async function saveBlankUnitTest(
     operationInfoExists: 'false',
     outputParametersExists: 'false',
     workflowNodePath: '',
-    workflowFolderPathResolved: 'false',
+    workflowTestFolderPathResolved: 'false',
     mockOutputsFolderPathCreated: 'false',
     mockableOperationsFound: '0',
     mockableOperationsProcessed: '0',
@@ -88,9 +88,6 @@ export async function saveBlankUnitTest(
 
     logTelemetry(context, {
       multiRootWorkspaceValid: 'true',
-    });
-
-    logTelemetry(context, {
       workspaceLocated: 'true',
       projectRootLocated: 'true',
     });
@@ -122,22 +119,22 @@ export async function saveBlankUnitTest(
     ext.outputChannel.appendLog(localize('unitTestNameEntered', `Unit test name entered: ${unitTestName}`));
 
     // Retrieve unitTestFolderPath and logic app name from helper
-    const { unitTestFolderPath, logicAppName, workflowFolderPath } = getUnitTestPaths(projectPath, workflowName, unitTestName);
+    const { unitTestFolderPath, logicAppName, workflowTestFolderPath } = getUnitTestPaths(projectPath, workflowName, unitTestName);
 
     // Retrieve necessary paths
     // Indicate that we resolved the folder path
     logTelemetry(context, {
-      workflowFolderPathResolved: workflowFolderPath ? 'true' : 'false',
+      workflowTestFolderPathResolved: workflowTestFolderPath ? 'true' : 'false',
     });
 
     // Ensure required directories exist
     await fs.ensureDir(unitTestFolderPath);
-    await fs.ensureDir(workflowFolderPath);
+    await fs.ensureDir(workflowTestFolderPath);
     const { foundActionMocks, foundTriggerMocks } = await processAndWriteMockableOperations(
       operationInfo,
       outputParameters,
       workflowNode.fsPath,
-      workflowFolderPath,
+      workflowTestFolderPath,
       workflowName,
       logicAppName
     );
@@ -183,7 +180,7 @@ async function generateBlankCodefulUnitTest(
 ): Promise<void> {
   try {
     // Get required paths
-    const { testsDirectory, logicAppName, logicAppFolderPath, workflowFolderPath, unitTestFolderPath } = getUnitTestPaths(
+    const { testsDirectory, logicAppName, logicAppTestFolderPath, workflowTestFolderPath, unitTestFolderPath } = getUnitTestPaths(
       projectPath,
       workflowName,
       unitTestName
@@ -200,12 +197,12 @@ async function generateBlankCodefulUnitTest(
 
     // Ensure directories exist
     ext.outputChannel.appendLog(localize('ensuringDirectories', 'Ensuring required directories exist...'));
-    await Promise.all([fs.ensureDir(logicAppFolderPath), fs.ensureDir(workflowFolderPath), fs.ensureDir(unitTestFolderPath)]);
+    await Promise.all([fs.ensureDir(logicAppTestFolderPath), fs.ensureDir(workflowTestFolderPath), fs.ensureDir(unitTestFolderPath)]);
 
     // Create the testSettings.config file for the unit test
     ext.outputChannel.appendLog(localize('creatingTestSettingsConfig', 'Creating testSettings.config file for unit test...'));
-    await createTestSettingsConfigFile(workflowFolderPath, workflowName, logicAppName);
-    await createTestExecutorFile(logicAppFolderPath, logicAppName);
+    await createTestSettingsConfigFile(workflowTestFolderPath, workflowName, logicAppName);
+    await createTestExecutorFile(logicAppTestFolderPath, logicAppName);
 
     // Get the first actionMock in foundActionMocks
     const [actionName, actionOutputClassName] = Object.entries(foundActionMocks)[0] || [];
@@ -230,14 +227,14 @@ async function generateBlankCodefulUnitTest(
     );
     logTelemetry(context, { csFileCreated: 'true' });
 
-    // Ensure .csproj and NuGet files exist
-    ext.outputChannel.appendLog(localize('ensuringCsproj', 'Ensuring .csproj and NuGet configuration files exist...'));
-    await ensureCsprojAndNugetFiles(testsDirectory, logicAppFolderPath, logicAppName);
+    // Ensure .csproj file exists
+    ext.outputChannel.appendLog(localize('ensuringCsproj', 'Ensuring .csproj file exists...'));
+    await ensureCsproj(testsDirectory, logicAppTestFolderPath, logicAppName);
     logTelemetry(context, { csprojValid: 'true' });
-    ext.outputChannel.appendLog(localize('csprojEnsured', 'Ensured .csproj and NuGet configuration files.'));
+    ext.outputChannel.appendLog(localize('csprojEnsured', 'Ensured .csproj file.'));
 
     // Update .csproj file with content include for the workflow
-    const csprojFilePath = path.join(logicAppFolderPath, `${logicAppName}.csproj`);
+    const csprojFilePath = path.join(logicAppTestFolderPath, `${logicAppName}.csproj`);
     await updateCsprojFile(csprojFilePath, workflowName);
 
     // Add testsDirectory to workspace if not already included

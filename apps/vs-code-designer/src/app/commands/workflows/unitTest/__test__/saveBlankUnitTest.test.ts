@@ -42,8 +42,8 @@ describe('saveBlankUnitTest', () => {
   const dummyPaths = {
     unitTestFolderPath: dummyUnitTestFolderPath,
     logicAppName: 'LogicApp1',
-    logicAppFolderPath: '/fake/project/myLogicApp',
-    workflowFolderPath: path.join(dummyProjectPath, 'workflows', dummyWorkflowName),
+    logicAppTestFolderPath: '/fake/project/myLogicApp',
+    workflowTestFolderPath: path.join(dummyProjectPath, 'workflows', dummyWorkflowName),
     testsDirectory: path.join(dummyProjectPath, 'tests'),
   };
 
@@ -76,10 +76,6 @@ describe('saveBlankUnitTest', () => {
     // Stub isMultiRootWorkspace to simulate a valid multi-root environment
     vi.spyOn(workspaceUtils, 'isMultiRootWorkspace').mockReturnValue(true);
     vi.spyOn(convertWorkspace, 'ConvertToWorkspace').mockResolvedValue(true);
-    // vi.spyOn(vscode.workspace, 'getConfiguration').mockImplementation({
-    //   get: vi.fn().mockReturnValue(true),
-    //   update: vi.fn().mockResolvedValue(undefined),
-    // } as any);
 
     // Stub the callWithTelemetryAndErrorHandling wrapper used inside saveBlankUnitTest
     vi.spyOn(azextUtils, 'callWithTelemetryAndErrorHandling').mockImplementation(async (eventName, callback) => {
@@ -89,7 +85,7 @@ describe('saveBlankUnitTest', () => {
 
     // Stub methods used within generateBlankCodefulUnitTest
     vi.spyOn(unitTestUtils, 'createCsFile').mockResolvedValue();
-    vi.spyOn(unitTestUtils, 'ensureCsprojAndNugetFiles').mockResolvedValue();
+    vi.spyOn(unitTestUtils, 'ensureCsproj').mockResolvedValue();
     vi.spyOn(workspaceUtils, 'ensureDirectoryInWorkspace').mockResolvedValue();
     vi.spyOn(ext.outputChannel, 'appendLog').mockImplementation(() => {});
   });

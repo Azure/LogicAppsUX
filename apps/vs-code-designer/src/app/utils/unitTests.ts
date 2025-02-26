@@ -3,7 +3,7 @@
  *  Licensed under the MIT License. See License.md in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 import type { UnitTestResult } from '@microsoft/vscode-extension-logic-apps';
-import { nugetFileName, saveUnitTestEvent, testsDirectoryName, unitTestsFileName, workflowFileName } from '../../constants';
+import { saveUnitTestEvent, testsDirectoryName, unitTestsFileName, workflowFileName } from '../../constants';
 import { type IAzureQuickPickItem, type IActionContext, callWithTelemetryAndErrorHandling } from '@microsoft/vscode-azext-utils';
 import * as fse from 'fs-extra';
 import * as path from 'path';
@@ -332,7 +332,7 @@ export async function createCsprojFile(csprojFilePath: string, logicAppName: str
  */
 export async function updateCsprojFile(csprojFilePath: string, workflowName: string): Promise<void> {
   const itemGroupName = 'UnitTestSettingsConfig';
-  const contentInclude = `${workflowName}\\*.config`;
+  const contentInclude = path.join(workflowName, '*.config');
 
   fse.readFile(csprojFilePath, 'utf8', (err, data) => {
     if (err) {
@@ -362,7 +362,7 @@ export async function updateCsprojFile(csprojFilePath: string, workflowName: str
         console.log(`<Content Include="${contentInclude}" /> already exists in ItemGroup "${itemGroupName}".`);
       } else {
         itemGroup.Content.push({
-          $: { Include: contentInclude, Link: `${workflowName}\\%(RecursiveDir)%(Filename)%(Extension)` },
+          $: { Include: contentInclude, Link: path.join(workflowName, '%(RecursiveDir)%(Filename)%(Extension)') },
           CopyToOutputDirectory: 'PreserveNewest',
         });
         console.log(`Added <Content Include="${contentInclude}" Link="${workflowName}\\%(RecursiveDir)%(Filename)%(Extension)">
@@ -466,15 +466,15 @@ export async function createCsFile(
 /**
  * Creates a testSettings.config file in the specified unit test folder using a template.
  * Converts any "-" characters in LogicAppName, WorkflowName, and UnitTestName to "_" only in code-related contexts.
- * @param {string} logicAppFolderPath - The path to the logicapp folder within Tests.
+ * @param {string} logicAppTestFolderPath - The path to the logicapp folder within Tests.
  * @param {string} logicAppName - The name of the logic app.
  */
-export async function createTestExecutorFile(logicAppFolderPath: string, logicAppName: string): Promise<void> {
+export async function createTestExecutorFile(logicAppTestFolderPath: string, logicAppName: string): Promise<void> {
   const templateFolderName = 'UnitTestTemplates';
   const executorTemplateFileName = 'TestExecutorFile';
   const templatePath = path.join(__dirname, 'assets', templateFolderName, executorTemplateFileName);
 
-  const csFilePath = path.join(logicAppFolderPath, 'TestExecutor.cs');
+  const csFilePath = path.join(logicAppTestFolderPath, 'TestExecutor.cs');
 
   if (await fse.pathExists(csFilePath)) {
     ext.outputChannel.appendLog(localize('testExecutorFileExists', 'TestExecutor.cs file already exists at: {0}', csFilePath));
@@ -514,22 +514,6 @@ export async function createTestSettingsConfigFile(unitTestFolderPath: string, w
 
   await fse.writeFile(csFilePath, templateContent);
   ext.outputChannel.appendLog(localize('createdTestSettingsConfig', 'Created testSettings.config file at: {0}', csFilePath));
-}
-
-/**
- * Creates a nuget.config file in the specified logic app folder using a template.
- * @param {string} nugetConfigFilePath - The path where the .csproj file will be created.
- * @returns {Promise<void>} - A promise that resolves when the .csproj file has been created.
- */
-export async function createNugetConfigFile(nugetConfigFilePath: string): Promise<void> {
-  const templateFolderName = 'UnitTestTemplates';
-  const nugetConfigTemplateFileName = 'TestNugetConfig';
-  const templatePath = path.join(__dirname, 'assets', templateFolderName, nugetConfigTemplateFileName);
-
-  const templateContent = await fse.readFile(templatePath, 'utf-8');
-  await fse.writeFile(nugetConfigFilePath, templateContent);
-
-  ext.outputChannel.appendLog(localize('nugetConfigFileCreated', 'Created nuget.config file at: {0}', nugetConfigFilePath));
 }
 
 /**
@@ -598,7 +582,7 @@ export function logError(context: IActionContext, error: Error, property: string
  * @param {string} projectPath - The base project path.
  * @param {string} workflowName - The workflow name.
  * @param {string | undefined} unitTestName - The unit test name, if any.
- * @returns An object containing testsDirectory, logicAppName, logicAppFolderPath, workflowFolderPath, and optionally unitTestFolderPath.
+ * @returns An object containing testsDirectory, logicAppName, logicAppTestFolderPath, workflowTestFolderPath, and optionally unitTestFolderPath.
  */
 export function getUnitTestPaths(
   projectPath: string,
@@ -607,23 +591,23 @@ export function getUnitTestPaths(
 ): {
   testsDirectory: string;
   logicAppName: string;
-  logicAppFolderPath: string;
-  workflowFolderPath: string;
+  logicAppTestFolderPath: string;
+  workflowTestFolderPath: string;
   unitTestFolderPath?: string;
 } {
   const testsDirectoryUri = getTestsDirectory(projectPath);
   const testsDirectory = testsDirectoryUri.fsPath;
   const logicAppName = path.basename(path.dirname(path.join(projectPath, workflowName)));
-  const logicAppFolderPath = path.join(testsDirectory, logicAppName);
-  const workflowFolderPath = path.join(logicAppFolderPath, workflowName);
+  const logicAppTestFolderPath = path.join(testsDirectory, logicAppName);
+  const workflowTestFolderPath = path.join(logicAppTestFolderPath, workflowName);
   const paths = {
     testsDirectory,
     logicAppName,
-    logicAppFolderPath,
-    workflowFolderPath,
+    logicAppTestFolderPath,
+    workflowTestFolderPath,
   };
   if (unitTestName) {
-    paths['unitTestFolderPath'] = path.join(workflowFolderPath, unitTestName);
+    paths['unitTestFolderPath'] = path.join(workflowTestFolderPath, unitTestName);
   }
   return paths;
 }
@@ -667,13 +651,12 @@ export function handleError(context: IAzureConnectorsContext, error: unknown, so
 
 /**
  * Ensures the .csproj and NuGet configuration files exist.
- * @param {string} logicAppFolderPath - Path to the project directory.
+ * @param {string} logicAppTestFolderPath - Path to the project directory.
  * @param {string} logicAppName - Name of the workflow.
  * @param {string} testsDirectory - Name of the workflow.
  */
-export async function ensureCsprojAndNugetFiles(testsDirectory: string, logicAppFolderPath: string, logicAppName: string): Promise<void> {
-  const csprojFilePath = path.join(logicAppFolderPath, `${logicAppName}.csproj`);
-  const nugetConfigFilePath = path.join(testsDirectory, nugetFileName);
+export async function ensureCsproj(testsDirectory: string, logicAppTestFolderPath: string, logicAppName: string): Promise<void> {
+  const csprojFilePath = path.join(logicAppTestFolderPath, `${logicAppName}.csproj`);
 
   if (!(await fse.pathExists(csprojFilePath))) {
     ext.outputChannel.appendLog(localize('creatingCsproj', 'Creating .csproj file at: {0}', csprojFilePath));
@@ -687,7 +670,6 @@ export async function ensureCsprojAndNugetFiles(testsDirectory: string, logicApp
         }
       });
   }
-  await createNugetConfigFile(nugetConfigFilePath);
 }
 
 /**
