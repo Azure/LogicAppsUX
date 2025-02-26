@@ -1,9 +1,13 @@
 import { combineReducers, configureStore } from '@reduxjs/toolkit';
 import type {} from 'redux-thunk';
 import workflowReducer from './workflowSlice';
+import templateReducer from './templateSlice';
+import panelReducer from './panelSlice';
 
 const rootReducer = combineReducers({
   workflow: workflowReducer,
+  template: templateReducer,
+  panel: panelReducer,
 });
 
 export const setupStore = (preloadedState?: Partial<RootState>) => {
