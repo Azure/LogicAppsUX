@@ -16,6 +16,7 @@ import {
   processAndWriteMockableOperations,
   buildClassDefinition,
   mapJsonTypeToCSharp,
+  updateCsprojFile,
 } from '../../unitTests';
 
 // ============================================================================
@@ -513,5 +514,124 @@ describe('mapJsonTypeToCSharp', () => {
     expect(mapJsonTypeToCSharp('object')).toBe('JObject');
     expect(mapJsonTypeToCSharp('any')).toBe('JObject');
     expect(mapJsonTypeToCSharp('array')).toBe('List<object>');
+  });
+});
+
+describe('updateCsprojFile', () => {
+  let readFileSpy: any;
+  let writeFileSpy: any;
+
+  beforeEach(() => {
+    vi.spyOn(ext.outputChannel, 'appendLog').mockImplementation(() => {});
+    vi.spyOn(console, 'log').mockImplementation(() => {});
+    vi.spyOn(console, 'error').mockImplementation(() => {});
+  });
+
+  afterEach(() => {
+    vi.restoreAllMocks();
+  });
+
+  it('should add a new ItemGroup and update the file when the content does not exist', async () => {
+    const csprojFilePath = 'dummy.csproj';
+    const workflowName = 'MyWorkflow';
+
+    const xmlMissingUnitTestSettingsConfig = `<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <TargetFramework>net6.0</TargetFramework>
+    <IsPackable>false</IsPackable>
+    <IsTestProject>true</IsTestProject>
+  </PropertyGroup>
+  <ItemGroup>
+    <PackageReference Include="MSTest" Version="3.2.0" />
+    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.8.0" />
+    <PackageReference Include="MSTest.TestAdapter" Version="3.2.0" />
+    <PackageReference Include="MSTest.TestFramework" Version="3.2.0" />
+    <PackageReference Include="Microsoft.Azure.Workflows.WebJobs.Tests.Extension" Version="1.0.0-preview" />
+    <PackageReference Include="coverlet.collector" Version="3.1.2" />
+  </ItemGroup>
+</Project>`;
+
+    readFileSpy = vi
+      .spyOn(fse, 'readFile')
+      .mockImplementation((file, encoding, callback) => callback(null, xmlMissingUnitTestSettingsConfig));
+    writeFileSpy = vi.spyOn(fse, 'writeFile').mockResolvedValue();
+
+    await updateCsprojFile(csprojFilePath, workflowName);
+
+    expect(readFileSpy).toHaveBeenCalled();
+    expect(writeFileSpy).toHaveBeenCalledWith(csprojFilePath, expect.any(String), 'utf8', expect.any(Function));
+    expect(ext.outputChannel.appendLog).toHaveBeenCalled();
+  });
+
+  it('should not update the file when the <Content> already exists', async () => {
+    const csprojFilePath = 'dummy.csproj';
+    const workflowName = 'MyWorkflow';
+    const contentInclude = path.join(workflowName, '*.config');
+    const contentLink = path.join(workflowName, '%(RecursiveDir)%(Filename)%(Extension)');
+
+    const xmlWithUnitTestSettingsConfig = `<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <TargetFramework>net6.0</TargetFramework>
+    <IsPackable>false</IsPackable>
+    <IsTestProject>true</IsTestProject>
+  </PropertyGroup>
+  <ItemGroup>
+    <PackageReference Include="MSTest" Version="3.2.0" />
+    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.8.0" />
+    <PackageReference Include="MSTest.TestAdapter" Version="3.2.0" />
+    <PackageReference Include="MSTest.TestFramework" Version="3.2.0" />
+    <PackageReference Include="Microsoft.Azure.Workflows.WebJobs.Tests.Extension" Version="1.0.0-preview" />
+    <PackageReference Include="coverlet.collector" Version="3.1.2" />
+  </ItemGroup>
+  <ItemGroup Label="UnitTestSettingsConfig">
+    <Content Include="${contentInclude}" Link="${contentLink}">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+  </ItemGroup>
+</Project>`;
+
+    readFileSpy = vi.spyOn(fse, 'readFile').mockImplementation((file, encoding, callback) => callback(null, xmlWithUnitTestSettingsConfig));
+    writeFileSpy = vi.spyOn(fse, 'writeFile').mockResolvedValue();
+
+    await updateCsprojFile(csprojFilePath, workflowName);
+
+    expect(writeFileSpy).not.toHaveBeenCalled();
+    expect(ext.outputChannel.appendLog).toHaveBeenCalled();
+  });
+
+  it('should log an error when reading the file fails', async () => {
+    const csprojFilePath = 'dummy.csproj';
+    const workflowName = 'MyWorkflow';
+    const readError = new Error('read error');
+
+    vi.spyOn(fse, 'readFile').mockImplementation((file: string, encoding: string, callback: (err: Error | null, data?: string) => void) => {
+      callback(readError, undefined);
+    });
+
+    const consoleErrorSpy = vi.spyOn(console, 'error');
+
+    await updateCsprojFile(csprojFilePath, workflowName);
+
+    expect(consoleErrorSpy).toHaveBeenCalledWith('Error reading file:', readError);
+    expect(ext.outputChannel.appendLog).toHaveBeenCalled();
+  });
+
+  it('should log an error when parsing XML fails', async () => {
+    const csprojFilePath = 'dummy.csproj';
+    const workflowName = 'MyWorkflow';
+    const invalidXml = `<Project></Project`;
+
+    vi.spyOn(fse, 'readFile').mockImplementation((file: string, encoding: string, callback: (err: Error | null, data?: string) => void) => {
+      callback(null, invalidXml);
+    });
+
+    const consoleErrorSpy = vi.spyOn(console, 'error');
+
+    await updateCsprojFile(csprojFilePath, workflowName);
+
+    expect(consoleErrorSpy).toHaveBeenCalledWith('Error parsing XML:', expect.any(Object));
+    expect(ext.outputChannel.appendLog).toHaveBeenCalled();
   });
 });
