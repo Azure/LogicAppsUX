@@ -601,7 +601,7 @@ describe('updateCsprojFile', () => {
     expect(ext.outputChannel.appendLog).toHaveBeenCalled();
   });
 
-  it('should log an error when reading the file fails', async () => {
+  it('should throw an error when reading the file fails', async () => {
     const csprojFilePath = 'dummy.csproj';
     const workflowName = 'MyWorkflow';
     const readError = new Error('read error');
@@ -610,15 +610,10 @@ describe('updateCsprojFile', () => {
       callback(readError, undefined);
     });
 
-    const consoleErrorSpy = vi.spyOn(console, 'error');
-
-    await updateCsprojFile(csprojFilePath, workflowName);
-
-    expect(consoleErrorSpy).toHaveBeenCalledWith('Error reading file:', readError);
-    expect(ext.outputChannel.appendLog).toHaveBeenCalled();
+    expect(() => updateCsprojFile(csprojFilePath, workflowName)).rejects.toThrowError(readError);
   });
 
-  it('should log an error when parsing XML fails', async () => {
+  it('should throw an error when parsing XML fails', async () => {
     const csprojFilePath = 'dummy.csproj';
     const workflowName = 'MyWorkflow';
     const invalidXml = `<Project></Project`;
@@ -627,11 +622,6 @@ describe('updateCsprojFile', () => {
       callback(null, invalidXml);
     });
 
-    const consoleErrorSpy = vi.spyOn(console, 'error');
-
-    await updateCsprojFile(csprojFilePath, workflowName);
-
-    expect(consoleErrorSpy).toHaveBeenCalledWith('Error parsing XML:', expect.any(Object));
-    expect(ext.outputChannel.appendLog).toHaveBeenCalled();
+    expect(() => updateCsprojFile(csprojFilePath, workflowName)).rejects.toThrowError();
   });
 });

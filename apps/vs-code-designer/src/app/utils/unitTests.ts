@@ -336,14 +336,12 @@ export async function updateCsprojFile(csprojFilePath: string, workflowName: str
 
   fse.readFile(csprojFilePath, 'utf8', (err, data) => {
     if (err) {
-      console.error('Error reading file:', err);
-      return;
+      throw err;
     }
 
     xml2js.parseString(data, { explicitRoot: false }, (err, result) => {
       if (err) {
-        console.error('Error parsing XML:', err);
-        return;
+        throw err;
       }
 
       let itemGroup = result.ItemGroup?.find((group: any) => group.$?.Label === itemGroupName);
@@ -374,8 +372,7 @@ export async function updateCsprojFile(csprojFilePath: string, workflowName: str
 
         fse.writeFile(csprojFilePath, updatedXml, 'utf8', (err) => {
           if (err) {
-            console.error('Error writing file:', err);
-            return;
+            throw err;
           }
           console.log('File updated successfully.');
         });
@@ -931,40 +928,37 @@ export function mapJsonTypeToCSharp(jsonType: string, jsonFormat?: string): stri
 }
 
 export function generateTriggerActionMockClass(mockType: string, mockClassName: string, className: string) {
-  const sb: string[] = [];
-  sb.push('    /// <summary>');
-  sb.push(`    /// The <see cref="${mockClassName}"/> class.`);
-  sb.push('    /// </summary>');
-  sb.push(`    public class ${mockClassName} : ${mockType}`);
-  sb.push('    {');
-  sb.push('        /// <summary>');
-  sb.push(`        /// Creates a mocked instance for  <see cref="${mockClassName}"/> with static outputs.`);
-  sb.push('        /// </summary>');
-  sb.push(
-    `        public ${mockClassName}(TestWorkflowStatus status = TestWorkflowStatus.Succeeded, string name = null, ${className} outputs = null)`
-  );
-  sb.push(`            : base(status: status, name: name, outputs: outputs ?? new ${className}())`);
-  sb.push('        {');
-  sb.push('        }');
-  sb.push('');
-  sb.push('        /// <summary>');
-  sb.push(`        /// Creates a mocked instance for  <see cref="${mockClassName}"/> with static error info.`);
-  sb.push('        /// </summary>');
-  sb.push(`        public ${mockClassName}(TestWorkflowStatus status, string name = null, TestErrorInfo error = null)`);
-  sb.push('            : base(status: status, name: name, error: error)');
-  sb.push('        {');
-  sb.push('        }');
-  sb.push('');
-  sb.push('        /// <summary>');
-  sb.push(`        /// Creates a mocked instance for <see cref="${mockClassName}"/> with a callback function for dynamic outputs.`);
-  sb.push('        /// </summary>');
-  sb.push(`        public ${mockClassName}(Func<TestExecutionContext, ${mockClassName}> onGet${mockType}, string name = null)`);
-  sb.push(`            : base(onGet${mockType}: onGet${mockType}, name: name)`);
-  sb.push('        {');
-  sb.push('        }');
-  sb.push('    }');
-  sb.push('');
-  return sb.join('\n');
+  return `    /// <summary>
+    /// The <see cref="${mockClassName}"/> class.
+    /// </summary>
+    public class ${mockClassName} : ${mockType}
+    {
+        /// <summary>
+        /// Creates a mocked instance for  <see cref="${mockClassName}"/> with static outputs.
+        /// </summary>
+        public ${mockClassName}(TestWorkflowStatus status = TestWorkflowStatus.Succeeded, string name = null, ${className} outputs = null)
+            : base(status: status, name: name, outputs: outputs ?? new ${className}())
+        {
+        }
+
+        /// <summary>
+        /// Creates a mocked instance for  <see cref="${mockClassName}"/> with static error info.
+        /// </summary>
+        public ${mockClassName}(TestWorkflowStatus status, string name = null, TestErrorInfo error = null)
+            : base(status: status, name: name, error: error)
+        {
+        }
+
+        /// <summary>
+        /// Creates a mocked instance for <see cref="${mockClassName}"/> with a callback function for dynamic outputs.
+        /// </summary>
+        public ${mockClassName}(Func<TestExecutionContext, ${mockClassName}> onGet${mockType}, string name = null)
+            : base(onGet${mockType}: onGet${mockType}, name: name)
+        {
+        }
+    }
+
+`;
 }
 
 /**
