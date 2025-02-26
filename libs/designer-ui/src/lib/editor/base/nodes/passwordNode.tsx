@@ -58,10 +58,10 @@ export class PasswordNode extends TextNode {
     return new PasswordNode(serializedNode.text);
   }
 
-  setPassword(text: string, newText: string) {
+  setPassword(newText: string) {
     const writableNode = this.getWritable();
     writableNode.__realText = newText;
-    writableNode.setTextContent('•'.repeat(text.length));
+    writableNode.setTextContent('•'.repeat(newText.length));
   }
 
   getRealText(): string {
