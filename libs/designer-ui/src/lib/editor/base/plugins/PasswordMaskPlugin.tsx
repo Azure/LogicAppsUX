@@ -1,13 +1,36 @@
 import { useLexicalComposerContext } from '@lexical/react/LexicalComposerContext';
-import { useEffect } from 'react';
-import type { LexicalNode } from 'lexical';
-import { $getRoot, $getSelection, $isElementNode, $isRangeSelection, $isTextNode, TextNode } from 'lexical';
+import { useEffect, useState } from 'react';
+import type { LexicalNode, RangeSelection } from 'lexical';
+import {
+  $getRoot,
+  $getSelection,
+  $isElementNode,
+  $isRangeSelection,
+  $isTextNode,
+  COMMAND_PRIORITY_EDITOR,
+  SELECTION_CHANGE_COMMAND,
+  TextNode,
+} from 'lexical';
 import { $isPasswordNode, $createPasswordNode, PasswordNode } from '../nodes/passwordNode';
 
 export function PasswordMaskPlugin() {
   const [editor] = useLexicalComposerContext();
+  const [selection, setSelection] = useState<RangeSelection | null>(null);
 
   useEffect(() => {
+    editor.registerCommand(
+      SELECTION_CHANGE_COMMAND,
+      () => {
+        const selection = $getSelection();
+        if (!$isRangeSelection(selection)) {
+          return false;
+        }
+        setSelection(selection);
+        return false;
+      },
+      COMMAND_PRIORITY_EDITOR
+    );
+
     // Mutation Listener: Detects newly created or updated text nodes
     const unregisterMutationListener = editor.registerMutationListener(TextNode, (mutations) => {
       editor.update(() => {
@@ -18,7 +41,8 @@ export function PasswordMaskPlugin() {
               return;
             }
 
-            const selection = $getSelection();
+            // const selection = $getSelection();
+            console.log(selection);
             if (!$isRangeSelection(selection)) {
               return;
             }
@@ -43,18 +67,28 @@ export function PasswordMaskPlugin() {
                 if ($isElementNode(node)) {
                   node.getChildren().forEach((child) => {
                     if (!$isPasswordNode(child)) {
+                      // get the new text and remove the text node (will be re-added to the password node)
                       newText = child.getTextContent().replace(/•/g, '');
                       child.remove();
                     }
                   });
                 }
               });
+
               console.log(`Updating password node by insertion: ${textToAdd}`);
               const existingText = passwordNode.getRealText();
-              const startOffset = selection.anchor.offset;
-              const newSelectionPosition = startOffset + newText.length;
-              const updatedText = existingText.substring(0, startOffset) + newText + existingText.substring(startOffset);
-              passwordNode.setPassword(updatedText);
+
+              const anchorOffset = selection.anchor.offset;
+              const focusOffset = selection.focus.offset;
+
+              const finalText =
+                existingText.substring(0, Math.min(anchorOffset, focusOffset)) +
+                newText +
+                existingText.substring(Math.max(anchorOffset, focusOffset));
+
+              passwordNode.setPassword(finalText);
+
+              const newSelectionPosition = Math.min(anchorOffset, focusOffset) + newText.length;
               const newSelection = $getSelection();
               if ($isRangeSelection(newSelection)) {
                 newSelection.anchor.set(passwordNode.__key, newSelectionPosition, 'text');
@@ -76,19 +110,37 @@ export function PasswordMaskPlugin() {
       editor.update(() => {
         const existingText = node.getRealText();
         const text = node.getTextContent();
-        const textToAdd = text.replace(/•/g, ''); // Remove masking dots to track real input
+        const textToAdd = text.replace(/•/g, '');
 
-        const selection = $getSelection();
         if (!$isRangeSelection(selection)) {
           return;
         }
 
         if (textToAdd) {
-          console.log(`Updating password node: ${textToAdd}`);
+          const anchorOffset = selection.anchor.offset;
+          const focusOffset = selection.focus.offset;
 
-          const startOffset = selection.anchor.offset - 1;
-          const updatedText = existingText.substring(0, startOffset) + textToAdd + existingText.substring(startOffset);
-          node.setPassword(updatedText);
+          // Check if it's a deletion
+          if (anchorOffset !== focusOffset) {
+            // If selection range has an anchor and focus, we are deleting text in that range
+            const newText =
+              existingText.substring(0, Math.min(anchorOffset, focusOffset)) + existingText.substring(Math.max(anchorOffset, focusOffset));
+
+            node.setPassword(newText);
+          } else {
+            // Handle the case where text is being inserted (normal case)
+            const updatedText = existingText.substring(0, anchorOffset) + textToAdd + existingText.substring(anchorOffset);
+            node.setPassword(updatedText);
+
+            const newSelectionPosition = anchorOffset + textToAdd.length;
+            console.log(newSelectionPosition);
+            console.log(selection.focus.offset, selection.anchor.offset);
+            const newSelection = $getSelection();
+            if ($isRangeSelection(newSelection)) {
+              newSelection.anchor.set(node.__key, newSelectionPosition, 'text');
+              newSelection.focus.set(node.__key, newSelectionPosition, 'text');
+            }
+          }
         }
       });
     });
@@ -97,7 +149,7 @@ export function PasswordMaskPlugin() {
       unregisterMutationListener();
       unregisterTransform();
     };
-  }, [editor]);
+  }, [editor, selection]);
 
   return null;
 }
