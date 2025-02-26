@@ -35,14 +35,13 @@ export function PasswordMaskPlugin() {
     const unregisterMutationListener = editor.registerMutationListener(TextNode, (mutations) => {
       editor.update(() => {
         mutations.forEach((mutation, key) => {
+          console.log(mutation);
           if (mutation === 'created' || mutation === 'updated') {
             const node = editor.getEditorState()._nodeMap.get(key) as LexicalNode | null;
             if (!node || !$isTextNode(node) || $isPasswordNode(node)) {
               return;
             }
 
-            // const selection = $getSelection();
-            console.log(selection);
             if (!$isRangeSelection(selection)) {
               return;
             }
@@ -110,36 +109,28 @@ export function PasswordMaskPlugin() {
       editor.update(() => {
         const existingText = node.getRealText();
         const text = node.getTextContent();
-        const textToAdd = text.replace(/•/g, '');
+        const textToAdd = text.replace(/•/g, ''); // Remove masking dots to track real input
 
-        if (!$isRangeSelection(selection)) {
+        // this is the selection used after the transform
+        const postSelection = $getSelection();
+        if (!selection || !$isRangeSelection(postSelection) || !$isRangeSelection(selection)) {
           return;
         }
-
+        const anchorOffset = selection.anchor.offset;
+        const focusOffset = selection.focus.offset;
         if (textToAdd) {
-          const anchorOffset = selection.anchor.offset;
-          const focusOffset = selection.focus.offset;
-
-          // Check if it's a deletion
+          // text is being removed
           if (anchorOffset !== focusOffset) {
-            // If selection range has an anchor and focus, we are deleting text in that range
-            const newText =
-              existingText.substring(0, Math.min(anchorOffset, focusOffset)) + existingText.substring(Math.max(anchorOffset, focusOffset));
-
-            node.setPassword(newText);
-          } else {
-            // Handle the case where text is being inserted (normal case)
-            const updatedText = existingText.substring(0, anchorOffset) + textToAdd + existingText.substring(anchorOffset);
+            const updatedText =
+              existingText.substring(0, Math.min(anchorOffset, focusOffset)) +
+              textToAdd +
+              existingText.substring(Math.max(anchorOffset, focusOffset));
             node.setPassword(updatedText);
-
-            const newSelectionPosition = anchorOffset + textToAdd.length;
-            console.log(newSelectionPosition);
-            console.log(selection.focus.offset, selection.anchor.offset);
-            const newSelection = $getSelection();
-            if ($isRangeSelection(newSelection)) {
-              newSelection.anchor.set(node.__key, newSelectionPosition, 'text');
-              newSelection.focus.set(node.__key, newSelectionPosition, 'text');
-            }
+            setSelection(postSelection);
+          } else {
+            const startOffset = postSelection.anchor.offset - 1;
+            const updatedText = existingText.substring(0, startOffset) + textToAdd + existingText.substring(startOffset);
+            node.setPassword(updatedText);
           }
         }
       });
