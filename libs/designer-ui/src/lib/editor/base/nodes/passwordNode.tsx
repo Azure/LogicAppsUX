@@ -9,7 +9,7 @@ export type SerializedPasswordNode = Spread<
 >;
 
 export class PasswordNode extends TextNode {
-  private __realText: string; // Store actual password
+  private __realText: string;
 
   constructor(text: string, key?: string) {
     super('•'.repeat(text.length), key);
@@ -25,19 +25,19 @@ export class PasswordNode extends TextNode {
   }
 
   getTextContent(): string {
-    return this.__realText; // Ensure real password is returned when needed
+    return this.__text; // Ensure real password is returned when needed
   }
 
   createDOM(): HTMLElement {
     const span = document.createElement('span');
     span.className = 'password-mask';
-    span.textContent = '•'.repeat(this.__realText.length);
+    span.textContent = '•'.repeat(this.__text.length);
     return span;
   }
 
   updateDOM(prevNode: PasswordNode, dom: HTMLElement): boolean {
-    if (this.__realText !== prevNode.__realText) {
-      dom.textContent = '•'.repeat(this.__realText.length);
+    if (this.__text !== prevNode.__text) {
+      dom.textContent = '•'.repeat(this.__text.length);
     }
     return false; // Prevent unnecessary re-renders
   }
@@ -49,7 +49,7 @@ export class PasswordNode extends TextNode {
       style: this.__style,
       mode: 'normal',
       type: 'password',
-      text: this.__realText, // Serialize the real password
+      text: this.__text, // Serialize the real password
       version: 1,
     };
   }
@@ -58,10 +58,14 @@ export class PasswordNode extends TextNode {
     return new PasswordNode(serializedNode.text);
   }
 
-  // Update the password while keeping masked display
-  setPassword(text: string): void {
-    this.__realText = text;
-    this.getWritable().setTextContent('•'.repeat(text.length));
+  setPassword(text: string, newText: string) {
+    const writableNode = this.getWritable();
+    writableNode.__realText = newText;
+    writableNode.setTextContent('•'.repeat(text.length));
+  }
+
+  getRealText(): string {
+    return this.__realText;
   }
 }
 

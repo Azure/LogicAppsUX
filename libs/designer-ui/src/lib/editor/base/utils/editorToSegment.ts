@@ -7,6 +7,7 @@ import { guid } from '@microsoft/logic-apps-shared';
 import type { EditorState, ElementNode } from 'lexical';
 import { $getNodeByKey, $getRoot, $isElementNode, $isLineBreakNode, $isTextNode } from 'lexical';
 import { removeAllNewlines, removeAllSpaces } from '../../../utils';
+import type { PasswordNode } from '../nodes/passwordNode';
 import { $isPasswordNode } from '../nodes/passwordNode';
 
 export function serializeEditorState(editorState: EditorState, trimLiteral = false): ValueSegment[] {
@@ -27,7 +28,15 @@ const getChildrenNodesToSegments = (node: ElementNode, segments: ValueSegment[],
       return getChildrenNodesToSegments(childNode, segments, trimLiteral);
     }
     if ($isTextNode(childNode)) {
-      segments.push(createLiteralValueSegment(trimLiteral ? childNode.getTextContent().trim() : childNode.getTextContent()));
+      if ($isPasswordNode(childNode)) {
+        segments.push(
+          createLiteralValueSegment(
+            trimLiteral ? (childNode as PasswordNode).getRealText().trim() : (childNode as PasswordNode).getRealText()
+          )
+        );
+      } else {
+        segments.push(createLiteralValueSegment(trimLiteral ? childNode.getTextContent().trim() : childNode.getTextContent()));
+      }
     } else if ($isTokenNode(childNode)) {
       segments.push(childNode.__data);
     } else if ($isLineBreakNode(childNode)) {

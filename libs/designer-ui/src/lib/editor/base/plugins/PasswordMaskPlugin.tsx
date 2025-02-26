@@ -1,26 +1,39 @@
 import { useLexicalComposerContext } from '@lexical/react/LexicalComposerContext';
 import { useEffect } from 'react';
-import { $getRoot, $createParagraphNode, $isTextNode } from 'lexical';
-import { $createPasswordNode, $isPasswordNode } from '../nodes/passwordNode';
+import { $getRoot, $getSelection, $isElementNode, $isRangeSelection } from 'lexical';
+import { $isPasswordNode, $createPasswordNode } from '../nodes/passwordNode';
 
 export function PasswordMaskPlugin() {
   const [editor] = useLexicalComposerContext();
 
   useEffect(() => {
-    return editor.registerUpdateListener(() => {
+    return editor.registerTextContentListener(() => {
       editor.update(() => {
-        const root = $getRoot();
-        const textNode = root.getFirstChild();
-
-        console.log('textNode', textNode);
-
-        if (textNode && $isTextNode(textNode) && !$isPasswordNode(textNode)) {
-          const realText = textNode.getTextContent();
-          const passwordNode = $createPasswordNode(realText);
-
-          root.clear();
-          root.append($createParagraphNode().append(passwordNode));
+        const selection = $getSelection();
+        if (!$isRangeSelection(selection)) {
+          return;
         }
+
+        const root = $getRoot();
+        root.getChildren().forEach((node) => {
+          if ($isElementNode(node)) {
+            node.getChildren().forEach((child) => {
+              if ($isPasswordNode(child)) {
+                const realText = child.getRealText();
+                const text = child.getTextContent();
+                const removedText = text.replace(/•/g, '');
+                console.log(text);
+                const updatedText = realText + removedText;
+                child.setPassword(text, updatedText);
+              } else {
+                const text = child.getTextContent();
+                const passwordNode = $createPasswordNode(text);
+                passwordNode.setPassword(text, text); // Ensures the original value is stored
+                child.replace(passwordNode);
+              }
+            });
+          }
+        });
       });
     });
   }, [editor]);
