@@ -33,11 +33,13 @@ namespace <%= LogicAppName %>.Tests
             // PREPARE Mock
             // Generate mock trigger data.
             var triggerMockOutput = new <%= TriggerMockOutputClassName %>();
+            // Sample of how to set the properties of the triggerMockOutput
+            // triggerMockOutput.Body.Flag = true;
             var triggerMock = new <%= TriggerMockClassName %>(outputs: triggerMockOutput);
 
             // ACT
             // Create an instance of UnitTestExecutor, and run the workflow with the mock data.
-           var testMock = new TestMockDefinition(
+            var testMock = new TestMockDefinition(
                 triggerMock: triggerMock,
                 actionMocks: null);
             var testRun = await this.TestExecutor
