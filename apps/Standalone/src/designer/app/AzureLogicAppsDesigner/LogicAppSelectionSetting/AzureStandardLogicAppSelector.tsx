@@ -20,7 +20,7 @@ const comboBoxStyles: Partial<IComboBoxStyles> = {
   callout: { maxWidth: '90vw' },
 };
 const resourceIdValidation =
-  /^\/subscriptions\/[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}\/resourceGroups\/[a-zA-Z0-9](?:[a-zA-Z0-9-_]*[a-zA-Z0-9])?\/providers\/[a-zA-Z0-9-_.]+\/[a-zA-Z0-9-_./]+$/;
+  /^\/subscriptions\/[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}\/resourceGroups\/[a-zA-Z0-9](?:[a-zA-Z0-9-_.]*[a-zA-Z0-9])?\/providers\/[a-zA-Z0-9-_.]+\/[a-zA-Z0-9-_./]+$/;
 
 export const AzureStandardLogicAppSelector = () => {
   const appId = useAppId();
@@ -94,12 +94,15 @@ export const AzureStandardLogicAppSelector = () => {
     }
   }, [reloadRunIds, runId, runInstances?.value]);
   const appOptions: IComboBoxOption[] =
-    appList?.map((app) => {
-      return {
-        key: app.id,
-        text: `${app.name} (${app.id})`,
-      };
-    }) ?? [];
+    appList
+      ?.map((app) => {
+        return {
+          key: app.id,
+          name: app.name,
+          text: `${app.name} (${app.id})`,
+        };
+      })
+      .sort((a, b) => a.name.localeCompare(b.name)) ?? [];
 
   const workflowOptions =
     workflows?.value

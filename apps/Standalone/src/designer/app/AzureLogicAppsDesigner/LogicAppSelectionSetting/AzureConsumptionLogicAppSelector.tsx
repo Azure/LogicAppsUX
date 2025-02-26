@@ -32,13 +32,16 @@ export const AzureConsumptionLogicAppSelector = () => {
   const isMonitoringView = useIsMonitoringView();
 
   const appOptions: IComboBoxOption[] =
-    appList?.map((app) => {
-      return {
-        key: app.id,
-        text: `${app.name} (${app.id})`,
-        data: app,
-      };
-    }) ?? [];
+    appList
+      ?.map((app) => {
+        return {
+          key: app.id,
+          name: app.name,
+          text: `${app.name} (${app.id})`,
+          data: app,
+        };
+      })
+      .sort((a, b) => a.name.localeCompare(b.name)) ?? [];
 
   const {
     data: runInstances,
