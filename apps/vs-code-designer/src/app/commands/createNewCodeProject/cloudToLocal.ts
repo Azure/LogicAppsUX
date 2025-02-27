@@ -1,13 +1,6 @@
-import {
-  extensionCommand,
-  funcVersionSetting,
-  projectLanguageSetting,
-  projectOpenBehaviorSetting,
-  projectTemplateKeySetting,
-} from '../../../constants';
+import { funcVersionSetting, projectLanguageSetting, projectOpenBehaviorSetting, projectTemplateKeySetting } from '../../../constants';
 import { localize } from '../../../localize';
 import { addLocalFuncTelemetry, tryGetLocalFuncVersion, tryParseFuncVersion } from '../../utils/funcCoreTools/funcVersion';
-import { showPreviewWarning } from '../../utils/taskUtils';
 import { getGlobalSetting, getWorkspaceSetting } from '../../utils/vsCodeConfig/settings';
 import { OpenBehaviorStep } from '../createNewProject/OpenBehaviorStep';
 import { NewCodeProjectTypeStep } from './CodeProjectBase/NewCodeProjectTypeStep';
@@ -38,7 +31,6 @@ export async function cloudToLocalCommand(
   }
 ): Promise<void> {
   addLocalFuncTelemetry(context);
-  showPreviewWarning(extensionCommand.cloudToLocal);
 
   const language: ProjectLanguage | string = (options.language as ProjectLanguage) || getGlobalSetting(projectLanguageSetting);
   const version: string = options.version || getGlobalSetting(funcVersionSetting) || (await tryGetLocalFuncVersion()) || latestGAVersion;
