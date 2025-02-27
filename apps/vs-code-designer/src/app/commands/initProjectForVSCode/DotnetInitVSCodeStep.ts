@@ -101,7 +101,7 @@ export class DotnetInitVSCodeStep extends InitVSCodeStepBase {
     }
 
     const targetFramework: string = await getTargetFramework(projFile);
-    this.setDeploySubpath(context, `bin/Release/${targetFramework}/publish`);
+    await this.setDeploySubpath(context, path.posix.join('bin', 'Release', targetFramework, 'publish'));
     this.debugSubpath = getDotnetDebugSubpath(targetFramework);
   }
 
