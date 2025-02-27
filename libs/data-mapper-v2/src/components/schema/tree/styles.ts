@@ -1,5 +1,5 @@
 import { makeStyles, shorthands } from '@fluentui/react-components';
-import { colors } from '../..//common/reactflow/styles';
+import { customTokens } from '../../../core/ThemeConect';
 
 export const useStyles = makeStyles({
   typeAnnotation: {
@@ -46,7 +46,7 @@ export const useTreeNodeStyles = makeStyles({
     overflowWrap: 'anywhere',
     backgroundColor: 'inherit',
     ':hover': {
-      backgroundColor: '#D5E4FF',
+      backgroundColor: customTokens['listElemHover'],
     },
   },
   targetSchemaContainer: {
@@ -70,7 +70,7 @@ export const useTreeNodeStyles = makeStyles({
     cursor: 'pointer',
   },
   active: {
-    backgroundColor: '#D5E4FF',
+    backgroundColor: customTokens['listElemHover'],
   },
 });
 
@@ -84,17 +84,17 @@ export const useHandleStyles = makeStyles({
     top: '16px',
   },
   connected: {
-    backgroundColor: colors.handleConnected,
+    backgroundColor: customTokens['handleConnected'],
   },
   hidden: {
     backgroundColor: 'transparent',
     ...shorthands.border('none'),
   },
   selected: {
-    ...shorthands.border('2px', 'solid', colors.handleActive),
+    ...shorthands.border('2px', 'solid', customTokens['handleActive']),
   },
   connectedAndSelected: {
-    backgroundColor: colors.handleActive,
+    backgroundColor: customTokens['handleActive'],
   },
   repeating: {
     display: 'flex',
@@ -114,7 +114,7 @@ export const useHandleStyles = makeStyles({
     fontSize: '12px',
   },
   repeatingAndActiveNodeIcon: {
-    color: colors.handleActive,
+    color: customTokens['handleActive'],
     fontSize: '12px',
   },
   left: {

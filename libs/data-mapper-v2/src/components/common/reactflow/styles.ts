@@ -1,13 +1,7 @@
 import { makeStyles, shorthands, tokens } from '@fluentui/react-components';
+import { customTokens } from '../../../core/ThemeConect';
 
 const fnIconSize = '17px';
-export const colors = {
-  nodeActive: '#D5E4FF',
-  edgeActive: '#62AAD8',
-  handleActive: '#62AAD8',
-  handleConnected: '#DCE6ED',
-  edgeConnected: '#DCE6ED',
-};
 
 export const useStyles = makeStyles({
   wrapper: {
@@ -27,7 +21,7 @@ export const useStyles = makeStyles({
     fontWeight: '600',
   },
   circleNonHoveredAndNonConnected: {
-    color: '#fff',
+    color: tokens.colorNeutralForeground1,
     stroke: '#ddd',
   },
   rightTreeItemLayout: {
@@ -37,7 +31,7 @@ export const useStyles = makeStyles({
     left: '-15px',
   },
   handleWrapper: {
-    backgroundColor: '#fff',
+    backgroundColor: tokens.colorNeutralForeground1,
     width: '14px',
     height: '14px',
     ...shorthands.border('1px', 'solid', '#ddd'),
@@ -55,24 +49,24 @@ export const useStyles = makeStyles({
     justifyContent: 'left',
     paddingRight: '20px',
     ':hover': {
-      ...shorthands.borderColor(colors.handleActive),
+      ...shorthands.borderColor(customTokens['handleActive']),
     },
   },
   selectedHoverFunctionButton: {
-    ...shorthands.border('2px', 'solid', colors.handleActive),
+    ...shorthands.border('2px', 'solid', customTokens['handleActive']),
   },
   functionName: {
     textWrap: 'nowrap',
     display: 'inline-table',
   },
   selectedHoverHandle: {
-    ...shorthands.border('2px', 'solid', colors.handleActive),
+    ...shorthands.border('2px', 'solid', customTokens['handleActive']),
   },
   connectedSelectedHoverHandle: {
-    backgroundColor: colors.handleActive,
+    backgroundColor: customTokens['handleActive'],
   },
   connectedHandle: {
-    backgroundColor: colors.handleConnected,
+    backgroundColor: customTokens['handleConnected'],
   },
   iconContainer: {
     display: 'inline-flex',

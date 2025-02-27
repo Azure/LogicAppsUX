@@ -1,4 +1,5 @@
 import { makeStyles, shorthands } from '@fluentui/react-components';
+import { customTokens } from '../../core/ThemeConect';
 
 export const useStyles = makeStyles({
   functionsIcon: {
@@ -17,7 +18,7 @@ export const useStyles = makeStyles({
     alignItems: 'right',
   },
   collapsedDataMapperFunctionPanel: {
-    backgroundColor: '#E8F3FE',
+    backgroundColor: customTokens['functionPanelBackground'],
     maxWidth: '40px',
     minWidth: '40px',
     width: '40px',

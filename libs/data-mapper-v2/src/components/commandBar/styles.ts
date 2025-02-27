@@ -1,8 +1,9 @@
 import { makeStyles, shorthands } from '@fluentui/react-components';
+import { customTokens } from '../../core/ThemeConect';
 
 export const useStyles = makeStyles({
   toolbar: {
-    backgroundColor: '#F6FAFE',
+    backgroundColor: customTokens['panelBackground'],
     justifyContent: 'space-between',
     ...shorthands.borderBottom('1px', 'solid', '#ddd'),
   },
