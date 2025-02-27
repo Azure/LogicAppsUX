@@ -39,7 +39,7 @@ export class PasswordNode extends TextNode {
     if (this.__text !== prevNode.__text) {
       dom.textContent = '•'.repeat(this.__text.length);
     }
-    return false; // Prevent unnecessary re-renders
+    return false;
   }
 
   exportJSON(): SerializedPasswordNode {
@@ -52,6 +52,14 @@ export class PasswordNode extends TextNode {
       text: this.__text, // Serialize the real password
       version: 1,
     };
+  }
+
+  spliceText(offset: number, delCount: number, newText: string, moveSelection?: boolean): TextNode {
+    if (!newText) {
+      const updatedText = this.__realText.substring(0, offset) + this.__realText.substring(offset + delCount);
+      this.setPassword(updatedText);
+    }
+    return super.spliceText(offset, delCount, newText, moveSelection);
   }
 
   static importJSON(serializedNode: any): PasswordNode {

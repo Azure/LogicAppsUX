@@ -4,6 +4,7 @@ import type { TokenPickerButtonEditorProps } from '../editor/base/plugins/tokenp
 import { StringEditor } from '../editor/string';
 import type { AuthProperty } from './util';
 import { Label } from '../label';
+import { css } from '@fluentui/utilities';
 
 interface AuthenticationPropertyProps {
   AuthProperty: AuthProperty;
@@ -27,7 +28,7 @@ export const AuthenticationProperty = ({ initialValue = [], AuthProperty, onBlur
         <StringEditor
           {...props}
           valueType={AuthProperty.type}
-          className="msla-authentication-editor-expanded-editor"
+          className={css('msla-authentication-editor-expanded-editor', props.passwordMask && 'hasIcon')}
           initialValue={initialValue}
           placeholder={AuthProperty.placeHolder}
           basePlugins={{ tokens: true, passwordMask: props.passwordMask }}

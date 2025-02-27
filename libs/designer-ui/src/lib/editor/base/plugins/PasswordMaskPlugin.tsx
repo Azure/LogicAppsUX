@@ -1,7 +1,9 @@
 import { useLexicalComposerContext } from '@lexical/react/LexicalComposerContext';
 import { useEffect, useState } from 'react';
-import type { LexicalNode, RangeSelection } from 'lexical';
+import type { RangeSelection } from 'lexical';
 import {
+  $createTextNode,
+  $getNodeByKey,
   $getRoot,
   $getSelection,
   $isElementNode,
@@ -12,10 +14,40 @@ import {
   TextNode,
 } from 'lexical';
 import { $isPasswordNode, $createPasswordNode, PasswordNode } from '../nodes/passwordNode';
+import { Button } from '@fluentui/react-components';
+import { useIntl } from 'react-intl';
+import { bundleIcon, Eye24Filled, Eye24Regular, EyeOff24Filled, EyeOff24Regular } from '@fluentui/react-icons';
 
-export function PasswordMaskPlugin() {
+const EyeIcon = bundleIcon(Eye24Filled, Eye24Regular);
+const CloseEye = bundleIcon(EyeOff24Filled, EyeOff24Regular);
+
+const buttonStyles: any = {
+  height: '26px',
+  width: '26px',
+  margin: '2px',
+  position: 'absolute',
+  right: 0,
+  top: 0,
+  color: 'var(--colorBrandForeground1)',
+};
+
+export function PasswordMaskPlugin(): JSX.Element {
+  const intl = useIntl();
   const [editor] = useLexicalComposerContext();
+  const [showPassword, setShowPassword] = useState(false);
   const [selection, setSelection] = useState<RangeSelection | null>(null);
+
+  const showVisibilityLabel = intl.formatMessage({
+    defaultMessage: 'Show Password',
+    id: 'H6IC6L',
+    description: 'Label to show password',
+  });
+
+  const hideVisibilityLabel = intl.formatMessage({
+    defaultMessage: 'Hide Password',
+    id: 'snzCiK',
+    description: 'Label to hide password',
+  });
 
   useEffect(() => {
     editor.registerCommand(
@@ -34,10 +66,12 @@ export function PasswordMaskPlugin() {
     // Mutation Listener: Detects newly created or updated text nodes
     const unregisterMutationListener = editor.registerMutationListener(TextNode, (mutations) => {
       editor.update(() => {
+        if (showPassword) {
+          return;
+        }
         mutations.forEach((mutation, key) => {
-          console.log(mutation);
           if (mutation === 'created' || mutation === 'updated') {
-            const node = editor.getEditorState()._nodeMap.get(key) as LexicalNode | null;
+            const node = $getNodeByKey(key);
             if (!node || !$isTextNode(node) || $isPasswordNode(node)) {
               return;
             }
@@ -119,6 +153,7 @@ export function PasswordMaskPlugin() {
         const anchorOffset = selection.anchor.offset;
         const focusOffset = selection.focus.offset;
         if (textToAdd) {
+          console.log(`Updating password node by transform: ${textToAdd}`);
           // text is being removed
           if (anchorOffset !== focusOffset) {
             const updatedText =
@@ -140,7 +175,41 @@ export function PasswordMaskPlugin() {
       unregisterMutationListener();
       unregisterTransform();
     };
-  }, [editor, selection]);
+  }, [editor, selection, showPassword]);
 
-  return null;
+  const handleToggleVisibility = () => {
+    setShowPassword((prev) => !prev);
+
+    editor.update(() => {
+      const root = $getRoot();
+      root.getChildren().forEach((node) => {
+        if ($isElementNode(node)) {
+          node.getChildren().forEach((child) => {
+            if ($isPasswordNode(child)) {
+              // Convert PasswordNode to TextNode
+              const textNode = $createTextNode(child.getRealText());
+              console.log(textNode);
+              child.replace(textNode);
+            } else if ($isTextNode(child)) {
+              // Convert TextNode back to PasswordNode
+              const passwordNode = $createPasswordNode(child.getTextContent());
+              console.log(passwordNode);
+              child.replace(passwordNode);
+            }
+          });
+        }
+      });
+    });
+  };
+
+  return (
+    <Button
+      aria-label={showPassword ? hideVisibilityLabel : showVisibilityLabel}
+      title={showPassword ? hideVisibilityLabel : showVisibilityLabel}
+      appearance="subtle"
+      onClick={() => handleToggleVisibility()}
+      icon={showPassword ? <CloseEye /> : <EyeIcon />}
+      style={buttonStyles}
+    />
+  );
 }
