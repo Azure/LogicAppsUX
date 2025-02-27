@@ -145,8 +145,7 @@
       {
         "command": "azureLogicAppsStandard.cloudToLocal",
         "title": "Create new logic app workspace from package...",
-        "category": "Azure Logic Apps",
-        "preview": true
+        "category": "Azure Logic Apps"
       },
       {
         "command": "azureLogicAppsStandard.exportLogicApp",
