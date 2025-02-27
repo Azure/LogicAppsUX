@@ -27,7 +27,6 @@ describe('FileManagement.addFolderToWorkspace', () => {
   const folderPathError = '/error/folder';
 
   beforeEach(() => {
-    // Ensure that ext.outputChannel is defined before spying on it.
     ext.outputChannel = {
       name: 'OutputChannel',
       appendLog: vi.fn(),

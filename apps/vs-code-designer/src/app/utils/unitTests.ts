@@ -3,7 +3,7 @@
  *  Licensed under the MIT License. See License.md in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 import type { UnitTestResult } from '@microsoft/vscode-extension-logic-apps';
-import { nugetFileName, saveUnitTestEvent, testsDirectoryName, unitTestsFileName, workflowFileName } from '../../constants';
+import { saveUnitTestEvent, testsDirectoryName, unitTestsFileName, workflowFileName } from '../../constants';
 import { type IAzureQuickPickItem, type IActionContext, callWithTelemetryAndErrorHandling } from '@microsoft/vscode-azext-utils';
 import * as fse from 'fs-extra';
 import * as path from 'path';
@@ -517,22 +517,6 @@ export async function createTestSettingsConfigFile(unitTestFolderPath: string, w
 }
 
 /**
- * Creates a nuget.config file in the specified logic app folder using a template.
- * @param {string} nugetConfigFilePath - The path where the .csproj file will be created.
- * @returns {Promise<void>} - A promise that resolves when the .csproj file has been created.
- */
-export async function createNugetConfigFile(nugetConfigFilePath: string): Promise<void> {
-  const templateFolderName = 'UnitTestTemplates';
-  const nugetConfigTemplateFileName = 'TestNugetConfig';
-  const templatePath = path.join(__dirname, 'assets', templateFolderName, nugetConfigTemplateFileName);
-
-  const templateContent = await fse.readFile(templatePath, 'utf-8');
-  await fse.writeFile(nugetConfigFilePath, templateContent);
-
-  ext.outputChannel.appendLog(localize('nugetConfigFileCreated', 'Created nuget.config file at: {0}', nugetConfigFilePath));
-}
-
-/**
  * Validates and extracts the runId from a given input.
  * Ensures the runId format is correct and extracts it from a path if needed.
  * @param {string | undefined} runId - The input runId to validate and extract.
@@ -673,7 +657,6 @@ export function handleError(context: IAzureConnectorsContext, error: unknown, so
  */
 export async function ensureCsprojAndNugetFiles(testsDirectory: string, logicAppFolderPath: string, logicAppName: string): Promise<void> {
   const csprojFilePath = path.join(logicAppFolderPath, `${logicAppName}.csproj`);
-  const nugetConfigFilePath = path.join(testsDirectory, nugetFileName);
 
   if (!(await fse.pathExists(csprojFilePath))) {
     ext.outputChannel.appendLog(localize('creatingCsproj', 'Creating .csproj file at: {0}', csprojFilePath));
@@ -687,7 +670,6 @@ export async function ensureCsprojAndNugetFiles(testsDirectory: string, logicApp
         }
       });
   }
-  await createNugetConfigFile(nugetConfigFilePath);
 }
 
 /**
