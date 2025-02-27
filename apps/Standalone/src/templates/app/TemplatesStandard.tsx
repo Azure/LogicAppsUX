@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useMemo } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import { getReactQueryClient, TemplatesDataProvider, templateStore, TemplatesView } from '@microsoft/logic-apps-designer';
 import { environment } from '../../environments/environment';
 import type { RootState } from '../state/Store';
@@ -57,7 +57,7 @@ export const TemplatesStandard = () => {
     theme: state.workflowLoader.theme,
     templatesView: state.workflowLoader.templatesView,
   }));
-  const { appId, hostingPlan, workflowName: existingWorkflowName } = useSelector((state: RootState) => state.workflowLoader);
+  const { appId, hostingPlan, workflowName: existingWorkflowName, useEndpoint } = useSelector((state: RootState) => state.workflowLoader);
   const { data: workflowAppData } = useWorkflowApp(appId as string, hostingPlan);
   const canonicalLocation = useMemo(
     () => WorkflowUtility.convertToCanonicalFormat(workflowAppData?.location ?? 'westus'),
@@ -67,10 +67,17 @@ export const TemplatesStandard = () => {
   const { data: objectId } = useCurrentObjectId();
   const { data: originalConnectionsData } = useConnectionsData(appId);
   const { data: originalSettingsData } = useAppSettings(appId as string);
+  const [reload, setReload] = useState<boolean | undefined>(undefined);
 
   const [connectionsData, setConnectionsData] = useFunctionalState(originalConnectionsData);
   const [settingsData, setSettingsData] = useFunctionalState(originalSettingsData);
   const queryClient = getReactQueryClient();
+
+  useEffect(() => {
+    if (useEndpoint !== undefined) {
+      setReload(true);
+    }
+  }, [useEndpoint]);
 
   useEffect(() => {
     if (originalSettingsData) {
@@ -237,10 +244,11 @@ export const TemplatesStandard = () => {
         objectId,
         canonicalLocation,
         queryClient,
-        settingsData()?.properties ?? {}
+        settingsData()?.properties ?? {},
+        !!useEndpoint
       ),
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    [connectionsData, settingsData, workflowAppData, tenantId, canonicalLocation, appId]
+    [connectionsData, settingsData, workflowAppData, tenantId, canonicalLocation, appId, useEndpoint]
   );
   const resourceDetails = new ArmParser(appId ?? '');
 
@@ -261,6 +269,7 @@ export const TemplatesStandard = () => {
         isConsumption={false}
         isCreateView={true}
         existingWorkflowName={existingWorkflowName}
+        reload={reload}
         viewTemplate={
           isSingleTemplateView
             ? {
@@ -361,7 +370,8 @@ const getServices = (
   objectId: string | undefined,
   location: string,
   queryClient: QueryClient,
-  appSettings: Record<string, string>
+  appSettings: Record<string, string>,
+  useEndpoint: boolean
 ): any => {
   const armUrl = 'https://management.azure.com';
   const baseUrl = `${armUrl}${siteResourceId}/hostruntime/runtime/webhooks/workflow/api/management`;
@@ -490,6 +500,8 @@ const getServices = (
   };
 
   const templateService = new StandardTemplateService({
+    endpoint: 'https://priti-cxf4h5cpcteue4az.b02.azurefd.net',
+    useEndpointForTemplates: useEndpoint,
     baseUrl: armUrl,
     appId: siteResourceId,
     httpClient,

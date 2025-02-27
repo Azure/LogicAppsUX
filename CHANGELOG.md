@@ -1,4 +1,16 @@
 # Logic Apps Designer
+## [5.46.0](https://github.com/Azure/LogicAppsUX/compare/v5.45.0...v5.46.0) (2025-02-27)
+
+
+### Features
+
+* **templates:** Moving templates loading from template service via storage account ([#6644](https://github.com/Azure/LogicAppsUX/issues/6644)) ([9adfd5b](https://github.com/Azure/LogicAppsUX/commit/9adfd5b75e27e809e48f557c6d4be5db6129ec08))
+
+
+### Bug Fixes
+
+* **vscode:** Fix for adding sql for multiple logic apps in a workspace ([#6673](https://github.com/Azure/LogicAppsUX/issues/6673)) ([8f3fe73](https://github.com/Azure/LogicAppsUX/commit/8f3fe73af9568d666a405715c29ea25a340fbf74))
+
 ## [5.45.0](https://github.com/Azure/LogicAppsUX/compare/v5.44.0...v5.45.0) (2025-02-25)
 
 
