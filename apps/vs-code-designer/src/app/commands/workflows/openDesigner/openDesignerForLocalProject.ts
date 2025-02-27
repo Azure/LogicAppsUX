@@ -174,7 +174,7 @@ export default class OpenDesignerForLocalProject extends OpenDesignerBase {
             hostVersion: ext.extensionVersion,
           },
         });
-        await this.validateWorkflow(this.panelMetadata.workflowContent);
+        await this.validateWorkflow(this.panelMetadata.workflowContent, this.panelMetadata.localSettings);
         break;
       }
       case ExtensionCommand.save: {
@@ -186,7 +186,7 @@ export default class OpenDesignerForLocalProject extends OpenDesignerBase {
           this.panelMetadata.azureDetails?.tenantId,
           this.panelMetadata.azureDetails?.workflowManagementBaseUrl
         );
-        await this.validateWorkflow(this.panelMetadata.workflowContent);
+        await this.validateWorkflow(this.panelMetadata.workflowContent, this.panelMetadata.localSettings);
         break;
       }
       case ExtensionCommand.addConnection: {
@@ -303,14 +303,14 @@ export default class OpenDesignerForLocalProject extends OpenDesignerBase {
    * Calls the validate api to validate the workflow schema.
    * @param {any} workflow - Workflow schema to validate.
    */
-  private async validateWorkflow(workflow: any): Promise<void> {
+  private async validateWorkflow(workflow: any, appSettings: any): Promise<void> {
     const url = `http://localhost:${ext.designTimePort}${managementApiPrefix}/workflows/${this.workflowName}/validatePartial?api-version=${this.apiVersion}`;
     try {
       await sendRequest(this.context, {
         url,
         method: HTTP_METHODS.POST,
         headers: { ['Content-Type']: 'application/json' },
-        body: { properties: workflow },
+        body: { properties: { definition: workflow.definition, kind: workflow.kind, appSettings: { values: appSettings } } },
       });
     } catch (error) {
       if (error.statusCode !== 404) {
