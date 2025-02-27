@@ -1,19 +1,12 @@
 import type { AuthProps, RawProps } from '.';
-import type { ValueSegment } from '../editor';
-import type { ChangeState, GetTokenPickerHandler, loadParameterValueFromStringHandler } from '../editor/base';
-import type { TokenPickerButtonEditorProps } from '../editor/base/plugins/tokenpickerbutton';
+import type { BaseEditorProps, ChangeState } from '../editor/base';
 import { AuthenticationProperty } from './AuthenticationProperty';
 import { AUTHENTICATION_PROPERTIES } from './util';
 import type { Dispatch, SetStateAction } from 'react';
 
-interface RawAuthenticationProps {
+interface RawAuthenticationProps extends Partial<BaseEditorProps> {
   rawProps: RawProps;
-  readonly?: boolean;
-  tokenPickerButtonProps?: TokenPickerButtonEditorProps;
   setCurrentProps: Dispatch<SetStateAction<AuthProps>>;
-  getTokenPicker: GetTokenPickerHandler;
-  tokenMapping?: Record<string, ValueSegment>;
-  loadParameterValueFromString?: loadParameterValueFromStringHandler;
 }
 
 export const RawAuthentication = ({ rawProps, setCurrentProps, ...props }: RawAuthenticationProps): JSX.Element => {
@@ -30,9 +23,10 @@ export const RawAuthentication = ({ rawProps, setCurrentProps, ...props }: RawAu
     <div className="msla-authentication-editor-raw-container">
       <AuthenticationProperty
         {...props}
+        dataAutomationId={'msla-authentication-editor-raw-value'}
         initialValue={rawValue}
         AuthProperty={AUTHENTICATION_PROPERTIES.RAW_VALUE}
-        onBlur={updateRawValue}
+        handleBlur={updateRawValue}
       />
     </div>
   );
