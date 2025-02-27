@@ -104,6 +104,19 @@ export const addOperation = createAsyncThunk('addOperation', async (payload: Add
   });
 });
 
+const addDefaultSecureSettings = (settings: Settings, isSecureByDefault: boolean): Settings => {
+  // Toggle secure inputs & outputs only when adding to workflow for actions that support secure data and connector sets by default
+  if (isSecureByDefault) {
+    const updatedSettings = {
+      ...settings,
+      secureInputs: { isSupported: settings.secureInputs?.isSupported ?? false, value: true },
+      secureOutputs: { isSupported: settings.secureOutputs?.isSupported ?? false, value: true },
+    };
+    return updatedSettings;
+  }
+  return settings;
+};
+
 export const initializeOperationDetails = async (
   nodeId: string,
   operationInfo: NodeOperation,
@@ -156,7 +169,7 @@ export const initializeOperationDetails = async (
     parsedManifest = new ManifestParser(manifest, operationManifestService.isAliasingSupported(type, kind));
 
     const nodeDependencies = { inputs: inputDependencies, outputs: outputDependencies };
-    const settings = getOperationSettings(
+    let settings = getOperationSettings(
       isTrigger,
       operationInfo,
       manifest,
@@ -164,6 +177,7 @@ export const initializeOperationDetails = async (
       /* operation */ undefined,
       state.workflow.workflowKind
     );
+    settings = addDefaultSecureSettings(settings, connector?.properties.isSecureByDefault ?? false);
 
     // TODO: This seems redundant now since in line: 143 outputs are already updated with a splitOnExpression. Should remove it.
     // We should update the outputs when splitOn is enabled.
@@ -220,16 +234,7 @@ export const initializeOperationDetails = async (
       state.workflow.workflowKind
     );
 
-    const isSecureByDefault = true;
-
-    // Toggle secure inputs & outputs only when adding to workflow for actions that support secure data and manifest sets by default
-    if (isSecureByDefault) {
-      settings = {
-        ...settings,
-        secureInputs: { isSupported: settings.secureInputs?.isSupported ?? false, value: true },
-        secureOutputs: { isSupported: settings.secureOutputs?.isSupported ?? false, value: true },
-      };
-    }
+    settings = addDefaultSecureSettings(settings, connector?.properties?.isSecureByDefault ?? false);
 
     // We should update the outputs when splitOn is enabled.
     let updatedOutputs = nodeOutputs;
