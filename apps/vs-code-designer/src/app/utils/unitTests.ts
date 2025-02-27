@@ -322,13 +322,12 @@ export async function createCsprojFile(csprojFilePath: string): Promise<void> {
 }
 
 /**
- * Creates a .csproj file in the specified logic app folder using a template.
- * @param {string} csprojFilePath - The path where the .csproj file will be created.
- * @param {string} logicAppName - The name of the Logic App, used to customize the .csproj file.
+ * Updates the .csproj file in the specified logic app folder for the given workflow.
+ * @param {string} csprojFilePath - The path where the .csproj file is located.
  * @param {string} workflowName - The name of the workflow.
- * @returns {Promise<void>} - A promise that resolves when the .csproj file has been created.
+ * @returns {Promise<boolean>} - A promise that resolves to a bool indicating whether the .csproj has been updated.
  */
-export async function updateCsprojFile(csprojFilePath: string, workflowName: string): Promise<void> {
+export async function updateCsprojFile(csprojFilePath: string, workflowName: string): Promise<boolean> {
   const itemGroupName = 'UnitTestSettingsConfig';
   const contentInclude = path.join(workflowName, '*.config');
 
@@ -349,35 +348,32 @@ export async function updateCsprojFile(csprojFilePath: string, workflowName: str
         itemGroup = { $: { Label: itemGroupName }, Content: [] };
         result.ItemGroup = result.ItemGroup || [];
         result.ItemGroup.push(itemGroup);
-        console.log(`Created new ItemGroup with label "${itemGroupName}".`);
       }
 
       const contentExists = itemGroup.Content?.some((content: any) => content.$.Include === contentInclude);
 
       if (contentExists) {
-        console.log(`<Content Include="${contentInclude}" /> already exists in ItemGroup "${itemGroupName}".`);
-      } else {
-        itemGroup.Content.push({
-          $: { Include: contentInclude, Link: path.join(workflowName, '%(RecursiveDir)%(Filename)%(Extension)') },
-          CopyToOutputDirectory: 'PreserveNewest',
-        });
-        console.log(`Added <Content Include="${contentInclude}" Link="${workflowName}\\%(RecursiveDir)%(Filename)%(Extension)">
-          <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-          </Content> to ItemGroup "${itemGroupName}".`);
-
-        const builder = new xml2js.Builder();
-        const updatedXml = builder.buildObject({ Project: result });
-
-        fse.writeFile(csprojFilePath, updatedXml, 'utf8', (err) => {
-          if (err) {
-            throw err;
-          }
-          console.log('File updated successfully.');
-        });
+        return false;
       }
+
+      itemGroup.Content.push({
+        $: { Include: contentInclude, Link: path.join(workflowName, '%(RecursiveDir)%(Filename)%(Extension)') },
+        CopyToOutputDirectory: 'PreserveNewest',
+      });
+
+      const builder = new xml2js.Builder();
+      const updatedXml = builder.buildObject({ Project: result });
+
+      fse.writeFile(csprojFilePath, updatedXml, 'utf8', (err) => {
+        if (err) {
+          throw err;
+        }
+      });
     });
   });
+
   ext.outputChannel.appendLog(localize('csprojFileUpdated', 'Updated .csproj file at: {0}', csprojFilePath));
+  return true;
 }
 
 /**
