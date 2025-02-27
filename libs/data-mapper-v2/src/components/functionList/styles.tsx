@@ -68,7 +68,7 @@ export const useStyles = makeStyles({
     paddingLeft: '8px',
     paddingRight: '4px',
     fontSize: '13px',
-    color: '#242424',
+    color: tokens.colorNeutralForeground1,
     overflow: 'hidden',
   },
   loopInfoText: {

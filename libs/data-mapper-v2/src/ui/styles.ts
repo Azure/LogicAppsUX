@@ -16,7 +16,7 @@ export const useStyles = makeStyles({
     backgroundColor: customTokens['functionPanelBackground'],
     maxWidth: '80px',
     minWidth: '50px',
-    ...shorthands.borderRight('1px', 'solid', '#ddd'),
+    ...shorthands.borderRight('1px', 'solid', tokens.colorNeutralStroke1),
   },
 });
 

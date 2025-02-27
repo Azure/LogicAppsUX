@@ -1,4 +1,4 @@
-import { makeStyles, shorthands } from '@fluentui/react-components';
+import { makeStyles, shorthands, tokens } from '@fluentui/react-components';
 import { customTokens } from '../../../core/ThemeConect';
 
 export const useStyles = makeStyles({
@@ -77,10 +77,10 @@ export const useTreeNodeStyles = makeStyles({
 export const useHandleStyles = makeStyles({
   wrapper: {
     zIndex: 999,
-    backgroundColor: '#fff',
+    backgroundColor: tokens.colorNeutralBackground1,
     width: '14px',
     height: '14px',
-    ...shorthands.border('1px', 'solid', '#ddd'),
+    ...shorthands.border('1px', 'solid', tokens.colorNeutralStroke1),
     top: '16px',
   },
   connected: {
@@ -106,7 +106,7 @@ export const useHandleStyles = makeStyles({
   repeatingIcon: {
     fontSize: '12px',
     pointerEvents: 'none',
-    color: '#ddd',
+    color: tokens.colorNeutralStroke1,
     zIndex: 1000,
   },
   repeatingConnectionIcon: {

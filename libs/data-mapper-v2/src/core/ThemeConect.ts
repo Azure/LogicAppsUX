@@ -6,6 +6,7 @@ import {
   themeToTokensObject,
   tokens,
 } from '@fluentui/react-components';
+import { FunctionCategoryColorToken } from '../constants/FunctionConstants';
 
 export type DataMapperTheme = Theme & {
   functionPanelBackground: string;
@@ -18,16 +19,9 @@ export type DataMapperTheme = Theme & {
   handleActive: string;
   handleConnected: string;
   edgeConnected: string;
-  // category colors
-  colorFnCategoryCollection: string;
-  colorFnCategoryConversion: string;
-  colorFnCategoryDateTime: string;
-  colorFnCategoryLogical: string;
-  colorFnCategoryMath: string;
-  colorFnCategoryString: string;
-  colorFnCategoryUtility: string;
-  colorFnCategoryCustom: string;
-};
+  
+} & {// category colors
+  [key in FunctionCategoryColorToken]: string};
 
 const spacingOverrides: HorizontalSpacingTokens = {
   spacingHorizontalNone: '0px',

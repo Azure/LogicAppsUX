@@ -21,8 +21,8 @@ export const useStyles = makeStyles({
     fontWeight: '600',
   },
   circleNonHoveredAndNonConnected: {
-    color: tokens.colorNeutralForeground1,
-    stroke: '#ddd',
+    color: tokens.colorNeutralBackground1,
+    stroke: tokens.colorNeutralStroke1,
   },
   rightTreeItemLayout: {
     ...shorthands.borderLeft('23px', 'solid', 'transparent'),
@@ -34,7 +34,7 @@ export const useStyles = makeStyles({
     backgroundColor: tokens.colorNeutralForeground1,
     width: '14px',
     height: '14px',
-    ...shorthands.border('1px', 'solid', '#ddd'),
+    ...shorthands.border('1px', 'solid', tokens.colorNeutralStroke1),
   },
   nodeWrapper: {
     width: '14px',

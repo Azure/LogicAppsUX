@@ -1,4 +1,4 @@
-import { makeStyles, shorthands } from '@fluentui/react-components';
+import { makeStyles, shorthands, tokens } from '@fluentui/react-components';
 import { customTokens } from '../../core/ThemeConect';
 
 export const useStyles = makeStyles({
@@ -22,7 +22,7 @@ export const useStyles = makeStyles({
     maxWidth: '40px',
     minWidth: '40px',
     width: '40px',
-    ...shorthands.borderRight('1px', 'solid', '#ddd'),
+    ...shorthands.borderRight('1px', 'solid', tokens.colorNeutralStroke1),
     display: 'flex',
     cursor: 'pointer',
   },
