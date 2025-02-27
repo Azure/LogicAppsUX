@@ -1,6 +1,6 @@
 import type { DictionaryEditorItemProps } from '.';
-import type { ChangeState, TokenPickerButtonEditorProps, ValueSegment } from '..';
-import type { GetTokenPickerHandler, loadParameterValueFromStringHandler } from '../editor/base';
+import type { ChangeState } from '..';
+import type { BaseEditorProps } from '../editor/base';
 import { isEmptySegments } from '../editor/base/utils/parsesegments';
 import { StringEditor } from '../editor/string';
 import { DictionaryDeleteButton } from './expandeddictionarydelete';
@@ -14,19 +14,12 @@ export const ExpandedDictionaryEditorType = {
 } as const;
 export type ExpandedDictionaryEditorType = (typeof ExpandedDictionaryEditorType)[keyof typeof ExpandedDictionaryEditorType];
 
-export interface ExpandedDictionaryProps {
+export interface ExpandedDictionaryProps extends Partial<BaseEditorProps> {
   items: DictionaryEditorItemProps[];
-  readonly?: boolean;
   keyTitle?: string;
   keyType?: string;
   valueTitle?: string;
-  valueType?: string;
   setItems: (items: DictionaryEditorItemProps[]) => void;
-  tokenPickerButtonProps?: TokenPickerButtonEditorProps;
-  getTokenPicker: GetTokenPickerHandler;
-  tokenMapping?: Record<string, ValueSegment>;
-  loadParameterValueFromString?: loadParameterValueFromStringHandler;
-  label?: string;
 }
 
 export const ExpandedDictionary = ({

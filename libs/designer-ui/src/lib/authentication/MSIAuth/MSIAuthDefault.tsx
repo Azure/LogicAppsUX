@@ -1,7 +1,5 @@
 import type { MSIProps } from '..';
-import type { ValueSegment } from '../../editor';
-import type { ChangeHandler, GetTokenPickerHandler, loadParameterValueFromStringHandler } from '../../editor/base';
-import type { TokenPickerButtonEditorProps } from '../../editor/base/plugins/tokenpickerbutton';
+import type { BaseEditorProps, ChangeHandler } from '../../editor/base';
 import { AuthenticationDropdown } from '../AuthenticationDropdown';
 import { AuthenticationProperty } from '../AuthenticationProperty';
 import { AUTHENTICATION_PROPERTIES } from '../util';
@@ -9,21 +7,16 @@ import type { IDropdownOption } from '@fluentui/react';
 import { ResourceIdentityType } from '@microsoft/logic-apps-shared';
 import { useIntl } from 'react-intl';
 
-interface MSIAuthenticationDefaultProps {
+interface MSIAuthenticationDefaultProps extends Partial<BaseEditorProps> {
   msiProps: MSIProps;
-  readonly?: boolean;
-  tokenPickerButtonProps?: TokenPickerButtonEditorProps;
   onManagedIdentityChange(event: React.FormEvent<HTMLDivElement>, item: IDropdownOption): void;
-  onBlur: ChangeHandler;
-  getTokenPicker: GetTokenPickerHandler;
-  tokenMapping?: Record<string, ValueSegment>;
-  loadParameterValueFromString?: loadParameterValueFromStringHandler;
+  handleBlur: ChangeHandler;
 }
 
 export const MSIAuthenticationDefault = ({
   msiProps,
   onManagedIdentityChange,
-  onBlur,
+  handleBlur,
   ...props
 }: MSIAuthenticationDefaultProps): JSX.Element => {
   const intl = useIntl();
@@ -68,7 +61,12 @@ export const MSIAuthenticationDefault = ({
         options={managedIdentityOption}
         onChange={onManagedIdentityChange}
       />
-      <AuthenticationProperty {...props} initialValue={msiAudience} AuthProperty={AUTHENTICATION_PROPERTIES.MSI_AUDIENCE} onBlur={onBlur} />
+      <AuthenticationProperty
+        {...props}
+        initialValue={msiAudience}
+        AuthProperty={AUTHENTICATION_PROPERTIES.MSI_AUDIENCE}
+        handleBlur={handleBlur}
+      />
     </>
   );
 };

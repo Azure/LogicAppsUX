@@ -1,7 +1,5 @@
 import type { AuthProps, OAuthProps } from '..';
-import type { ValueSegment } from '../../editor';
-import type { ChangeState, GetTokenPickerHandler, loadParameterValueFromStringHandler } from '../../editor/base';
-import type { TokenPickerButtonEditorProps } from '../../editor/base/plugins/tokenpickerbutton';
+import type { BaseEditorProps, ChangeState } from '../../editor/base';
 import { AuthenticationDropdown } from '../AuthenticationDropdown';
 import { AuthenticationProperty } from '../AuthenticationProperty';
 import { AUTHENTICATION_PROPERTIES } from '../util';
@@ -17,14 +15,9 @@ export const AuthenticationOAuthType = {
 } as const;
 export type AuthenticationOAuthType = (typeof AuthenticationOAuthType)[keyof typeof AuthenticationOAuthType];
 
-interface ActiveDirectoryAuthenticationProps {
+interface ActiveDirectoryAuthenticationProps extends Partial<BaseEditorProps> {
   OauthProps: OAuthProps;
-  readonly?: boolean;
-  tokenPickerButtonProps?: TokenPickerButtonEditorProps;
   setCurrentProps: Dispatch<SetStateAction<AuthProps>>;
-  getTokenPicker: GetTokenPickerHandler;
-  tokenMapping?: Record<string, ValueSegment>;
-  loadParameterValueFromString?: loadParameterValueFromStringHandler;
 }
 
 export const ActiveDirectoryAuthentication = ({
@@ -113,25 +106,25 @@ export const ActiveDirectoryAuthentication = ({
         {...props}
         initialValue={oauthAuthority}
         AuthProperty={AUTHENTICATION_PROPERTIES.AAD_OAUTH_AUTHORITY}
-        onBlur={updateOAuthAuthority}
+        handleBlur={updateOAuthAuthority}
       />
       <AuthenticationProperty
         {...props}
         initialValue={oauthTenant}
         AuthProperty={AUTHENTICATION_PROPERTIES.AAD_OAUTH_TENANT}
-        onBlur={updateOAuthTenant}
+        handleBlur={updateOAuthTenant}
       />
       <AuthenticationProperty
         {...props}
         initialValue={oauthAudience}
         AuthProperty={AUTHENTICATION_PROPERTIES.AAD_OAUTH_AUDIENCE}
-        onBlur={updateOAuthAudience}
+        handleBlur={updateOAuthAudience}
       />
       <AuthenticationProperty
         {...props}
         initialValue={oauthClientId}
         AuthProperty={AUTHENTICATION_PROPERTIES.AAD_OAUTH_CLIENT_ID}
-        onBlur={updateOAuthClientId}
+        handleBlur={updateOAuthClientId}
       />
       <AuthenticationDropdown
         readonly={props.readonly}

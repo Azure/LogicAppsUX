@@ -1,9 +1,8 @@
 import type { AuthProps } from '.';
 import { AuthenticationType } from '.';
 import type { ValueSegment } from '../editor';
-import type { GetTokenPickerHandler, loadParameterValueFromStringHandler } from '../editor/base';
+import type { BaseEditorProps } from '../editor/base';
 import { EditorWrapper } from '../editor/base/EditorWrapper';
-import type { TokenPickerButtonEditorProps } from '../editor/base/plugins/tokenpickerbutton';
 import { serializeEditorState } from '../editor/base/utils/editorToSegment';
 import { getChildrenNodes, isTokenValueSegment } from '../editor/base/utils/helper';
 import { serializeAuthentication, validateAuthenticationString } from './util';
@@ -12,17 +11,12 @@ import { $getRoot, type EditorState } from 'lexical';
 import type { Dispatch, SetStateAction } from 'react';
 import { useIntl } from 'react-intl';
 
-interface CollapsedAuthenticationProps {
+interface CollapsedAuthenticationProps extends Partial<BaseEditorProps> {
   collapsedValue: ValueSegment[];
   setErrorMessage: (s: string) => void;
   setCurrentProps: Dispatch<SetStateAction<AuthProps>>;
-  readonly?: boolean;
-  tokenPickerButtonProps?: TokenPickerButtonEditorProps;
   setOption: (s: AuthenticationType) => void;
   serializeValue: (value: ValueSegment[]) => void;
-  getTokenPicker: GetTokenPickerHandler;
-  tokenMapping?: Record<string, ValueSegment>;
-  loadParameterValueFromString?: loadParameterValueFromStringHandler;
 }
 
 export const CollapsedAuthentication = ({
@@ -62,7 +56,7 @@ export const CollapsedAuthentication = ({
             );
           }
         }
-      } catch (e) {
+      } catch (_e) {
         // if it is a template expression, we'll assume that it is valid
         if (isTokenValueSegment(newCollapsedValue)) {
           setErrorMessage('');
@@ -81,7 +75,12 @@ export const CollapsedAuthentication = ({
   };
   return (
     <div className="msla-authentication-editor-collapsed-container">
-      <EditorWrapper {...props} initialValue={collapsedValue} basePlugins={{ tabbable: true }}>
+      <EditorWrapper
+        {...props}
+        dataAutomationId={'msla-authentication-editor-collapsed-editor'}
+        initialValue={collapsedValue}
+        basePlugins={{ tabbable: true }}
+      >
         <OnChangePlugin ignoreSelectionChange onChange={onChange} />
       </EditorWrapper>
     </div>

@@ -73,7 +73,7 @@ export const getChildrenNodes = (node: ElementNode, nodeMap?: Map<string, ValueS
       return (text += getChildrenNodes(childNode, nodeMap));
     }
     if ($isTextNode(childNode)) {
-      text += childNode.__text.trim();
+      text += childNode.getTextContent().trim();
     } else if ($isTokenNode(childNode)) {
       text += childNode.toString();
       nodeMap?.set(childNode.toString(), childNode.convertToSegment());
@@ -96,7 +96,7 @@ export const getChildrenNodesWithTokenInterpolation = (node: ElementNode, nodeMa
       return (text += getChildrenNodesWithTokenInterpolation(childNode, nodeMap));
     }
     if ($isTextNode(childNode)) {
-      const childNodeText = childNode.__text.trim();
+      const childNodeText = childNode.getTextContent().trim();
       if (childNodeText.includes('"')) {
         numberOfQuotesAdded = 0; // reset, the interpolation will be added with childNode
       }

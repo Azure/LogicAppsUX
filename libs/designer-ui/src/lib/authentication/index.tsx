@@ -1,6 +1,6 @@
 import type { ValueSegment } from '../editor';
 import { EditorCollapseToggle } from '../editor';
-import type { BaseEditorProps, GetTokenPickerHandler } from '../editor/base';
+import type { BaseEditorProps } from '../editor/base';
 import { isTokenValueSegment, notEqual } from '../editor/base/utils/helper';
 import type { AuthenticationOAuthType } from './AADOAuth/AADOAuth';
 import { ActiveDirectoryAuthentication } from './AADOAuth/AADOAuth';
@@ -75,7 +75,6 @@ interface AuthenticationEditorProps extends BaseEditorProps {
   type: AuthenticationType;
   options: AuthenticationEditorOptions;
   authenticationValue: AuthProps;
-  getTokenPicker: GetTokenPickerHandler;
 }
 
 export const AuthenticationEditor = ({
@@ -83,11 +82,7 @@ export const AuthenticationEditor = ({
   options,
   authenticationValue,
   initialValue,
-  getTokenPicker,
   onChange,
-  readonly,
-  tokenMapping,
-  loadParameterValueFromString,
   ...props
 }: AuthenticationEditorProps): JSX.Element => {
   const intl = useIntl();
@@ -121,64 +116,34 @@ export const AuthenticationEditor = ({
       case AuthenticationType.BASIC:
         return (
           <BasicAuthentication
+            {...props}
             basicProps={basic}
             tokenPickerButtonProps={props.tokenPickerButtonProps}
-            readonly={readonly}
             setCurrentProps={setCurrentProps}
-            getTokenPicker={getTokenPicker}
-            tokenMapping={tokenMapping}
-            loadParameterValueFromString={loadParameterValueFromString}
           />
         );
       case AuthenticationType.CERTIFICATE:
         return (
           <CertificateAuthentication
+            {...props}
             clientCertificateProps={clientCertificate}
             tokenPickerButtonProps={props.tokenPickerButtonProps}
-            readonly={readonly}
             setCurrentProps={setCurrentProps}
-            getTokenPicker={getTokenPicker}
-            tokenMapping={tokenMapping}
-            loadParameterValueFromString={loadParameterValueFromString}
           />
         );
       case AuthenticationType.RAW:
         return (
           <RawAuthentication
+            {...props}
             rawProps={raw}
             tokenPickerButtonProps={props.tokenPickerButtonProps}
-            readonly={readonly}
-            getTokenPicker={getTokenPicker}
             setCurrentProps={setCurrentProps}
-            tokenMapping={tokenMapping}
-            loadParameterValueFromString={loadParameterValueFromString}
           />
         );
       case AuthenticationType.MSI:
-        return (
-          <MSIAuthentication
-            identity={options?.identity}
-            msiProps={msi}
-            readonly={readonly}
-            tokenPickerButtonProps={props.tokenPickerButtonProps}
-            setCurrentProps={setCurrentProps}
-            getTokenPicker={getTokenPicker}
-            tokenMapping={tokenMapping}
-            loadParameterValueFromString={loadParameterValueFromString}
-          />
-        );
+        return <MSIAuthentication {...props} identity={options?.identity} msiProps={msi} setCurrentProps={setCurrentProps} />;
       case AuthenticationType.OAUTH:
-        return (
-          <ActiveDirectoryAuthentication
-            OauthProps={aadOAuth}
-            readonly={readonly}
-            tokenPickerButtonProps={props.tokenPickerButtonProps}
-            setCurrentProps={setCurrentProps}
-            getTokenPicker={getTokenPicker}
-            tokenMapping={tokenMapping}
-            loadParameterValueFromString={loadParameterValueFromString}
-          />
-        );
+        return <ActiveDirectoryAuthentication OauthProps={aadOAuth} setCurrentProps={setCurrentProps} />;
       case AuthenticationType.NONE:
         return null;
       default:
@@ -219,7 +184,7 @@ export const AuthenticationEditor = ({
       {expandedView ? (
         <div className="msla-authentication-editor-expanded-container">
           <AuthenticationDropdown
-            readonly={readonly}
+            readonly={props.readonly}
             dropdownLabel={authenticationTypeLabel}
             selectedKey={option}
             options={getAuthenticationTypes(options.supportedAuthTypes)}
@@ -230,15 +195,12 @@ export const AuthenticationEditor = ({
       ) : (
         <>
           <CollapsedAuthentication
+            {...props}
             collapsedValue={collapsedValue}
             setErrorMessage={setCollapsedErrorMessage}
             setCurrentProps={setCurrentProps}
             setOption={setOption}
             serializeValue={serializeCodeCollapsedValue}
-            readonly={readonly}
-            getTokenPicker={getTokenPicker}
-            tokenMapping={tokenMapping}
-            loadParameterValueFromString={loadParameterValueFromString}
           />
           <div className="msla-auth-editor-validation">{collapsedErrorMessage}</div>
         </>

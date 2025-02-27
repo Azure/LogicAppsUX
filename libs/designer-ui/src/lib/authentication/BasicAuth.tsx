@@ -1,19 +1,12 @@
 import type { AuthProps, BasicProps } from '.';
-import type { ValueSegment } from '../editor';
-import type { ChangeState, GetTokenPickerHandler, loadParameterValueFromStringHandler } from '../editor/base';
-import type { TokenPickerButtonEditorProps } from '../editor/base/plugins/tokenpickerbutton';
+import type { BaseEditorProps, ChangeState } from '../editor/base';
 import { AuthenticationProperty } from './AuthenticationProperty';
 import { AUTHENTICATION_PROPERTIES } from './util';
 import type { Dispatch, SetStateAction } from 'react';
 
-interface BasicAuthenticationProps {
+interface BasicAuthenticationProps extends Partial<BaseEditorProps> {
   basicProps: BasicProps;
-  tokenPickerButtonProps?: TokenPickerButtonEditorProps;
-  readonly?: boolean;
   setCurrentProps: Dispatch<SetStateAction<AuthProps>>;
-  getTokenPicker: GetTokenPickerHandler;
-  tokenMapping?: Record<string, ValueSegment>;
-  loadParameterValueFromString?: loadParameterValueFromStringHandler;
 }
 
 export const BasicAuthentication = ({ basicProps, setCurrentProps, ...props }: BasicAuthenticationProps): JSX.Element => {
@@ -37,15 +30,18 @@ export const BasicAuthentication = ({ basicProps, setCurrentProps, ...props }: B
     <div className="msla-authentication-editor-basic-container">
       <AuthenticationProperty
         {...props}
+        dataAutomationId={'msla-authentication-editor-basic-username'}
         initialValue={basicUsername}
         AuthProperty={AUTHENTICATION_PROPERTIES.BASIC_USERNAME}
-        onBlur={updateBasicUserName}
+        handleBlur={updateBasicUserName}
       />
       <AuthenticationProperty
         {...props}
+        dataAutomationId={'msla-authentication-editor-basic-password'}
         initialValue={basicPassword}
         AuthProperty={AUTHENTICATION_PROPERTIES.BASIC_PASSWORD}
-        onBlur={updateBasicPassword}
+        handleBlur={updateBasicPassword}
+        passwordMask={true}
       />
     </div>
   );

@@ -33,12 +33,14 @@ import {
   createEditor,
   $createLineBreakNode,
 } from 'lexical';
+import { $createPasswordNode } from '../nodes/passwordNode';
 
 export interface SegmentParserOptions {
   readonly?: boolean;
   tokensEnabled?: boolean;
   removeSingleTokenQuotesWrapping?: boolean;
   convertSpaceToNewline?: boolean;
+  passwordMask?: boolean;
 }
 
 export const isEmptySegments = (segments: ValueSegment[]): boolean => {
@@ -179,6 +181,7 @@ const appendStringSegment = (
 };
 
 export const parseSegments = (valueSegments: ValueSegment[], options?: SegmentParserOptions): RootNode => {
+  const { passwordMask } = options ?? {};
   const root = $getRoot();
   const rootChild = root.getFirstChild();
   let paragraph: ParagraphNode;
@@ -199,10 +202,10 @@ export const parseSegments = (valueSegments: ValueSegment[], options?: SegmentPa
       // there are some cases where segmentValue comes in as a JSON
     } else if (typeof segmentValue === 'string') {
       const splitSegment = segmentValue.split('\n');
-      paragraph.append($createTextNode(splitSegment[0]));
+      addStringNodeToParagraph(splitSegment[0], paragraph, passwordMask);
       for (let i = 1; i < splitSegment.length; i++) {
         paragraph.append($createLineBreakNode());
-        paragraph.append($createTextNode(splitSegment[i]));
+        addStringNodeToParagraph(splitSegment[i], paragraph, passwordMask);
       }
     } else {
       paragraph.append($createTextNode(JSON.stringify(segmentValue)));
@@ -210,6 +213,14 @@ export const parseSegments = (valueSegments: ValueSegment[], options?: SegmentPa
   });
   root.append(paragraph);
   return root;
+};
+
+export const addStringNodeToParagraph = (node: string, paragraph: ParagraphNode, passWordMask?: boolean): void => {
+  if (passWordMask) {
+    paragraph.append($createPasswordNode(node));
+  } else {
+    paragraph.append($createTextNode(node));
+  }
 };
 
 export const convertSegmentsToString = (input: ValueSegment[], nodeMap?: Map<string, ValueSegment>): string => {

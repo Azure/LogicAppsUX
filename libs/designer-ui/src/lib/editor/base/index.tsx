@@ -13,6 +13,7 @@ import { FocusChangePlugin } from './plugins/FocusHandler';
 import IgnoreTab from './plugins/IgnoreTab';
 import InsertTokenNode from './plugins/InsertTokenNode';
 import OpenTokenPicker from './plugins/OpenTokenPicker';
+import { PasswordMaskPlugin } from './plugins/PasswordMaskPlugin';
 import { PastePlugin } from './plugins/Paste';
 import { PreventPropagationPlugin } from './plugins/PreventPropagation';
 import { ReadOnly } from './plugins/ReadOnly';
@@ -23,7 +24,7 @@ import type { TokenPickerButtonEditorProps } from './plugins/tokenpickerbutton';
 import { TokenPickerButton } from './plugins/tokenpickerbutton';
 import { css } from '@fluentui/react';
 import { ContentEditable } from '@lexical/react/LexicalContentEditable';
-import LexicalErrorBoundary from '@lexical/react/LexicalErrorBoundary';
+import { LexicalErrorBoundary } from '@lexical/react/LexicalErrorBoundary';
 import { HistoryPlugin as History } from '@lexical/react/LexicalHistoryPlugin';
 import { PlainTextPlugin } from '@lexical/react/LexicalPlainTextPlugin';
 import { RichTextPlugin } from '@lexical/react/LexicalRichTextPlugin';
@@ -88,6 +89,7 @@ export interface BasePlugins {
   htmlEditor?: 'rich-html' | 'raw-html' | false;
   tabbable?: boolean;
   singleValueSegment?: boolean;
+  passwordMask?: boolean;
 }
 
 export const BaseEditor = ({
@@ -136,11 +138,12 @@ export const BaseEditor = ({
     clearEditor,
     history = true,
     tokens = true,
-    treeView,
+    treeView = false,
     htmlEditor = false,
     tabbable,
     singleValueSegment = false,
     preventPropagation = true,
+    passwordMask = false,
   } = basePlugins;
 
   const describedByMessage = intl.formatMessage({
@@ -215,6 +218,7 @@ export const BaseEditor = ({
         {clearEditor ? <ClearEditor showButton={false} /> : null}
         {singleValueSegment ? <SingleValueSegment /> : null}
         {preventPropagation ? <PreventPropagationPlugin /> : null}
+        {passwordMask ? <PasswordMaskPlugin /> : null}
         <FocusChangePlugin onFocus={handleFocus} onBlur={handleBlur} onClick={handleClick} />
         <ReadOnly readonly={readonly} />
         {tabbable ? null : <IgnoreTab />}

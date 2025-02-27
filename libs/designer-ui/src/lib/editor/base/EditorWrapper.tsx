@@ -19,6 +19,7 @@ export const EditorWrapper = ({ ...props }: BaseEditorProps) => {
           readonly,
           tokensEnabled: tokens,
           convertSpaceToNewline: true,
+          passwordMask: props.basePlugins?.passwordMask,
         };
         htmlEditor === 'rich-html' ? parseHtmlSegments(initialValue, options) : parseSegments(initialValue, options);
       }),
