@@ -1,23 +1,17 @@
 import type { AuthProps, ClientCertificateProps } from '..';
 import type { ValueSegment } from '../../editor';
-import type { ChangeState, GetTokenPickerHandler, loadParameterValueFromStringHandler } from '../../editor/base';
-import type { TokenPickerButtonEditorProps } from '../../editor/base/plugins/tokenpickerbutton';
+import type { BaseEditorProps, ChangeState } from '../../editor/base';
 import { AuthenticationProperty } from '../AuthenticationProperty';
 import { CertificateAuthentication } from '../CertificateAuth';
 import { AUTHENTICATION_PROPERTIES } from '../util';
 import { AuthenticationOAuthType } from './AADOAuth';
 import type { Dispatch, SetStateAction } from 'react';
 
-interface AadOAuthCredentialsProps {
+interface AadOAuthCredentialsProps extends Partial<BaseEditorProps> {
   selectedCredTypeKey: string;
   secret?: ValueSegment[];
   clientCertificateProps: ClientCertificateProps;
-  readonly?: boolean;
-  tokenPickerButtonProps?: TokenPickerButtonEditorProps;
   setCurrentProps: Dispatch<SetStateAction<AuthProps>>;
-  getTokenPicker: GetTokenPickerHandler;
-  tokenMapping?: Record<string, ValueSegment>;
-  loadParameterValueFromString?: loadParameterValueFromStringHandler;
 }
 
 export const AadOAuthCredentials = ({
@@ -39,10 +33,11 @@ export const AadOAuthCredentials = ({
       {selectedCredTypeKey === AuthenticationOAuthType.SECRET ? (
         <AuthenticationProperty
           {...props}
+          dataAutomationId={'msla-authentication-editor-aad-oauth-secret'}
           passwordMask={true}
           initialValue={secret}
           AuthProperty={AUTHENTICATION_PROPERTIES.AAD_OAUTH_SECRET}
-          onBlur={updateOAuthTypeSecret}
+          handleBlur={updateOAuthTypeSecret}
         />
       ) : selectedCredTypeKey === AuthenticationOAuthType.CERTIFICATE ? (
         <CertificateAuthentication

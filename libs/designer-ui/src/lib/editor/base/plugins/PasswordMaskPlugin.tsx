@@ -122,6 +122,7 @@ export function PasswordMaskPlugin(): JSX.Element {
 
                 newSelection.anchor.set(passwordNode.__key, newSelectionPosition, 'text');
                 newSelection.focus.set(passwordNode.__key, newSelectionPosition, 'text');
+                setSelection(newSelection);
               }
             } else {
               // No existing password node found, create a new one

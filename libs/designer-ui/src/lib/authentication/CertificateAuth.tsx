@@ -1,20 +1,13 @@
 import type { AuthProps, ClientCertificateProps } from '.';
-import type { ValueSegment } from '../editor';
-import type { ChangeState, GetTokenPickerHandler, loadParameterValueFromStringHandler } from '../editor/base';
-import type { TokenPickerButtonEditorProps } from '../editor/base/plugins/tokenpickerbutton';
+import type { BaseEditorProps, ChangeState } from '../editor/base';
 import { AuthenticationProperty } from './AuthenticationProperty';
 import { AUTHENTICATION_PROPERTIES } from './util';
 import type { Dispatch, SetStateAction } from 'react';
 
-interface CertificateAuthenticationProps {
+interface CertificateAuthenticationProps extends Partial<BaseEditorProps> {
   clientCertificateProps: ClientCertificateProps;
   isOAuth?: boolean;
-  readonly?: boolean;
-  tokenPickerButtonProps?: TokenPickerButtonEditorProps;
   setCurrentProps: Dispatch<SetStateAction<AuthProps>>;
-  getTokenPicker: GetTokenPickerHandler;
-  tokenMapping?: Record<string, ValueSegment>;
-  loadParameterValueFromString?: loadParameterValueFromStringHandler;
 }
 
 export const CertificateAuthentication = ({
@@ -56,16 +49,18 @@ export const CertificateAuthentication = ({
     <div className="msla-authentication-editor-certificate-container">
       <AuthenticationProperty
         {...props}
+        dataAutomationId={'msla-authentication-editor-client-certificate-pfx'}
         initialValue={clientCertificatePfx}
         AuthProperty={AUTHENTICATION_PROPERTIES.CLIENT_CERTIFICATE_PFX}
-        onBlur={isOAuth ? updateOAuthTypeCertificatePfx : updateClientCertificatePfx}
+        handleBlur={isOAuth ? updateOAuthTypeCertificatePfx : updateClientCertificatePfx}
       />
       <AuthenticationProperty
         {...props}
+        dataAutomationId={'msla-authentication-editor-client-certificate-password'}
         initialValue={clientCertificatePassword}
         AuthProperty={AUTHENTICATION_PROPERTIES.CLIENT_CERTIFICATE_PASSWORD}
         passwordMask={true}
-        onBlur={isOAuth ? updateOAuthTypeCertificatePassword : updateClientCertificatePassword}
+        handleBlur={isOAuth ? updateOAuthTypeCertificatePassword : updateClientCertificatePassword}
       />
     </div>
   );
