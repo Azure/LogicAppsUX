@@ -306,10 +306,9 @@ export async function selectWorkflowNode(context: IAzureConnectorsContext, proje
 /**
  * Creates a .csproj file in the specified logic app folder using a template.
  * @param {string} csprojFilePath - The path where the .csproj file will be created.
- * @param {string} logicAppName - The name of the Logic App, used to customize the .csproj file.
  * @returns {Promise<void>} - A promise that resolves when the .csproj file has been created.
  */
-export async function createCsprojFile(csprojFilePath: string, logicAppName: string): Promise<void> {
+export async function createCsprojFile(csprojFilePath: string): Promise<void> {
   if (await fse.pathExists(csprojFilePath)) {
     ext.outputChannel.appendLog(localize('csprojFileExists', '.csproj file already exists at: {0}', csprojFilePath));
     return;
@@ -318,8 +317,7 @@ export async function createCsprojFile(csprojFilePath: string, logicAppName: str
   const csprojTemplateFileName = 'TestProjectFile';
   const templatePath = path.join(__dirname, 'assets', templateFolderName, csprojTemplateFileName);
   const templateContent = await fse.readFile(templatePath, 'utf-8');
-  const csprojContent = templateContent.replace(/<%= logicAppName %>/g, logicAppName);
-  await fse.writeFile(csprojFilePath, csprojContent);
+  await fse.writeFile(csprojFilePath, templateContent);
   ext.outputChannel.appendLog(localize('csprojFileCreated', 'Created .csproj file at: {0}', csprojFilePath));
 }
 
@@ -657,7 +655,7 @@ export async function ensureCsproj(testsDirectory: string, logicAppTestFolderPat
 
   if (!(await fse.pathExists(csprojFilePath))) {
     ext.outputChannel.appendLog(localize('creatingCsproj', 'Creating .csproj file at: {0}', csprojFilePath));
-    await createCsprojFile(csprojFilePath, logicAppName);
+    await createCsprojFile(csprojFilePath);
     const action = 'Reload Window';
     vscode.window
       .showInformationMessage('Reload Required: Please reload the VS Code window to enable test discovery in the Test Explorer', action)
