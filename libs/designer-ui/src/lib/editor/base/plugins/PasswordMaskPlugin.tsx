@@ -63,7 +63,7 @@ export function PasswordMaskPlugin(): JSX.Element {
       COMMAND_PRIORITY_EDITOR
     );
 
-    // Mutation Listener: Detects newly created or updated text nodes
+    // Mutation Listener: Detects first creating the paswordNode or pasting a text
     const unregisterMutationListener = editor.registerMutationListener(TextNode, (mutations) => {
       editor.update(() => {
         if (showPassword) {
@@ -108,22 +108,18 @@ export function PasswordMaskPlugin(): JSX.Element {
                 }
               });
 
-              console.log(`Updating password node by insertion: ${textToAdd}`);
               const existingText = passwordNode.getRealText();
 
-              const anchorOffset = selection.anchor.offset;
-              const focusOffset = selection.focus.offset;
-
-              const finalText =
-                existingText.substring(0, Math.min(anchorOffset, focusOffset)) +
-                newText +
-                existingText.substring(Math.max(anchorOffset, focusOffset));
-
-              passwordNode.setPassword(finalText);
-
-              const newSelectionPosition = Math.min(anchorOffset, focusOffset) + newText.length;
               const newSelection = $getSelection();
+              // This logic is partially handled by PasswordNode.spliceText
+              // This should be handled differently in the future, but for now... it works :)
               if ($isRangeSelection(newSelection)) {
+                const cutoff = newSelection.anchor.offset;
+                const newSelectionPosition = cutoff + newText.length;
+                const finalText = existingText.substring(0, cutoff) + newText + existingText.substring(cutoff);
+
+                passwordNode.setPassword(finalText);
+
                 newSelection.anchor.set(passwordNode.__key, newSelectionPosition, 'text');
                 newSelection.focus.set(passwordNode.__key, newSelectionPosition, 'text');
               }
@@ -153,7 +149,6 @@ export function PasswordMaskPlugin(): JSX.Element {
         const anchorOffset = selection.anchor.offset;
         const focusOffset = selection.focus.offset;
         if (textToAdd) {
-          console.log(`Updating password node by transform: ${textToAdd}`);
           // text is being removed
           if (anchorOffset !== focusOffset) {
             const updatedText =
@@ -188,7 +183,6 @@ export function PasswordMaskPlugin(): JSX.Element {
             if ($isPasswordNode(child)) {
               // Convert PasswordNode to TextNode
               const textNode = $createTextNode(child.getRealText());
-              console.log(textNode);
               child.replace(textNode);
             } else if ($isTextNode(child)) {
               // Convert TextNode back to PasswordNode
