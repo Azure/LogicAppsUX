@@ -111,9 +111,6 @@ describe('saveBlankUnitTest', () => {
     vi.spyOn(workspaceUtils, 'isMultiRootWorkspace').mockReturnValue(false);
     vi.spyOn(convertWorkspace, 'ConvertToWorkspace').mockResolvedValue(false);
 
-    // await expect(saveBlankUnitTest(dummyContext, dummyNode, dummyUnitTestDefinition)).rejects.toThrow(
-    //   /A multi-root workspace must be open to create unit tests/
-    // );
     await saveBlankUnitTest(dummyContext, dummyNode, dummyUnitTestDefinition);
     expect(unitTestUtils.promptForUnitTestName).toHaveBeenCalledTimes(0);
     expect(unitTestUtils.logTelemetry).toHaveBeenCalledWith(dummyContext, expect.objectContaining({ multiRootWorkspaceValid: 'false' }));

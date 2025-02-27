@@ -235,7 +235,8 @@ async function generateBlankCodefulUnitTest(
 
     // Update .csproj file with content include for the workflow
     const csprojFilePath = path.join(logicAppTestFolderPath, `${logicAppName}.csproj`);
-    await updateCsprojFile(csprojFilePath, workflowName);
+    const isCsprojUpdated = await updateCsprojFile(csprojFilePath, workflowName);
+    logTelemetry(context, { csprojUpdated: isCsprojUpdated ? 'true' : 'false' });
 
     // Add testsDirectory to workspace if not already included
     ext.outputChannel.appendLog(localize('checkingWorkspace', 'Checking if tests directory is already part of the workspace...'));
