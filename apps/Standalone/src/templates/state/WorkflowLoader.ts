@@ -14,6 +14,7 @@ export interface WorkflowLoadingState {
   theme: ThemeType;
   language: string;
   templatesView: string;
+  useEndpoint?: boolean;
 }
 
 const initialState: WorkflowLoadingState = {
@@ -68,10 +69,13 @@ export const workflowLoaderSlice = createSlice({
     changeTheme: (state, action: PayloadAction<ThemeType>) => {
       state.theme = action.payload;
     },
+    setUseEndpoint: (state, action: PayloadAction<boolean>) => {
+      state.useEndpoint = action.payload;
+    },
   },
 });
 
-export const { setResourcePath, setAppid, setWorkflowName, clearWorkflowDetails, setHostingPlan, changeRunId } =
+export const { setResourcePath, setAppid, setWorkflowName, clearWorkflowDetails, setHostingPlan, changeRunId, setUseEndpoint } =
   workflowLoaderSlice.actions;
 
 export default workflowLoaderSlice.reducer;
