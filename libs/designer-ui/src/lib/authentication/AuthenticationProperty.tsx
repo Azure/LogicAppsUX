@@ -1,22 +1,21 @@
-import type { ValueSegment } from '../editor';
-import type { ChangeHandler, GetTokenPickerHandler, loadParameterValueFromStringHandler } from '../editor/base';
-import type { TokenPickerButtonEditorProps } from '../editor/base/plugins/tokenpickerbutton';
+import type { BaseEditorProps, ChangeHandler } from '../editor/base';
 import { StringEditor } from '../editor/string';
 import type { AuthProperty } from './util';
 import { Label } from '../label';
+import { css } from '@fluentui/utilities';
 
-interface AuthenticationPropertyProps {
+interface AuthenticationPropertyProps extends Partial<BaseEditorProps> {
   AuthProperty: AuthProperty;
-  initialValue?: ValueSegment[];
-  tokenPickerButtonProps?: TokenPickerButtonEditorProps;
-  readonly?: boolean;
-  tokenMapping?: Record<string, ValueSegment>;
-  loadParameterValueFromString?: loadParameterValueFromStringHandler;
-  getTokenPicker: GetTokenPickerHandler;
-  onBlur?: ChangeHandler;
+  handleBlur?: ChangeHandler;
+  passwordMask?: boolean;
 }
 
-export const AuthenticationProperty = ({ initialValue = [], AuthProperty, onBlur, ...props }: AuthenticationPropertyProps): JSX.Element => {
+export const AuthenticationProperty = ({
+  initialValue = [],
+  AuthProperty,
+  handleBlur,
+  ...props
+}: AuthenticationPropertyProps): JSX.Element => {
   return (
     <div className="msla-authentication-editor-expanded-item">
       <div className="msla-input-parameter-label">
@@ -26,11 +25,11 @@ export const AuthenticationProperty = ({ initialValue = [], AuthProperty, onBlur
         <StringEditor
           {...props}
           valueType={AuthProperty.type}
-          className="msla-authentication-editor-expanded-editor"
+          className={css('msla-authentication-editor-expanded-editor', props.passwordMask && 'hasIcon')}
           initialValue={initialValue}
           placeholder={AuthProperty.placeHolder}
-          basePlugins={{ tokens: true }}
-          editorBlur={onBlur}
+          basePlugins={{ tokens: true, passwordMask: props.passwordMask }}
+          editorBlur={handleBlur}
         />
       </div>
     </div>
