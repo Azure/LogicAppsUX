@@ -2188,6 +2188,16 @@ function getDynamicInputsFromDynamicParameter(parameterKey: string, allInputs: N
   return result;
 }
 
+export function getDisplayValueFromPickerSelectedItem(selectedItem: any, parameter: ParameterInfo, dependencies: NodeDependencies): string {
+  const dependency = dependencies.inputs[parameter.parameterKey];
+  return getPropertyValue(selectedItem, dependency.filePickerInfo?.fullTitlePath ?? '');
+}
+
+export function getValueFromPickerSelectedItem(selectedItem: any, parameter: ParameterInfo, dependencies: NodeDependencies): string {
+  const dependency = dependencies.inputs[parameter.parameterKey];
+  return getPropertyValue(selectedItem, dependency.filePickerInfo?.valuePath ?? '');
+}
+
 export async function loadDynamicTreeItemsForParameter(
   nodeId: string,
   groupId: string,
@@ -3647,7 +3657,7 @@ export function parameterValueToJSONString(parameterValue: ValueSegment[], apply
     let tokenExpression: string = expression.value;
 
     if (isTokenValueSegment(expression)) {
-      const stringifiedTokenExpression = tokenExpression;
+      const stringifiedTokenExpression = JSON.stringify(tokenExpression).slice(1, -1);
       // Note: Stringify the token expression to escape double quotes and other characters which must be escaped in JSON.
       if (shouldInterpolate) {
         if (applyCasting) {
@@ -3667,8 +3677,10 @@ export function parameterValueToJSONString(parameterValue: ValueSegment[], apply
         const nextExpressionIsLiteral =
           i < updatedParameterValue.length - 1 && updatedParameterValue[i + 1].type !== ValueSegmentType.TOKEN;
         tokenExpression = `@${stringifiedTokenExpression}`;
-        tokenExpression = lastExpressionWasLiteral ? `"${tokenExpression}` : tokenExpression;
-        tokenExpression = nextExpressionIsLiteral ? `${tokenExpression}"` : `${tokenExpression}`;
+        // eslint-disable-next-line no-useless-escape
+        tokenExpression = lastExpressionWasLiteral ? `\"${tokenExpression}` : tokenExpression;
+        // eslint-disable-next-line no-useless-escape
+        tokenExpression = nextExpressionIsLiteral ? `${tokenExpression}\"` : `${tokenExpression}`;
       }
 
       parameterValueString += tokenExpression;
@@ -3792,7 +3804,11 @@ export function remapTokenSegmentValue(
  * @arg {boolean} [forValidation=false]
  * @return {string}
  */
-function parameterValueToStringWithoutCasting(value: ValueSegment[], forValidation = false, shouldInterpolateSingleToken = false): string {
+export function parameterValueToStringWithoutCasting(
+  value: ValueSegment[],
+  forValidation = false,
+  shouldInterpolateSingleToken = false
+): string {
   const shouldInterpolateTokens = (value.length > 1 || shouldInterpolateSingleToken) && value.some(isTokenValueSegment);
 
   return value

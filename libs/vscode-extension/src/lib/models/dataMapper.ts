@@ -23,6 +23,10 @@ export type MessageToWebview =
       data: IFileSysTreeItem[];
     }
   | {
+      command: typeof ExtensionCommand.getAvailableCustomXsltPathsV2;
+      data: IFileSysTreeItem[];
+    }
+  | {
       command: typeof ExtensionCommand.getAvailableCustomXsltPaths;
       data: string[];
     }

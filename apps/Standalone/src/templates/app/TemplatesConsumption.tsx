@@ -1,6 +1,7 @@
-import { useMemo } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import {
   type ConnectionReferences,
+  getReactQueryClient,
   isOpenApiSchemaVersion,
   TemplatesDataProvider,
   TemplatesDesigner,
@@ -12,9 +13,13 @@ import { useSelector } from 'react-redux';
 import {
   BaseGatewayService,
   BaseTenantService,
-  StandardOperationManifestService,
+  ConsumptionOperationManifestService,
   ConsumptionConnectionService,
   startsWith,
+  BaseAppServiceService,
+  BaseApiManagementService,
+  BaseFunctionService,
+  ConsumptionConnectorService,
 } from '@microsoft/logic-apps-shared';
 import {
   getWorkflowAndArtifactsConsumption,
@@ -40,16 +45,24 @@ export const TemplatesConsumption = () => {
     theme: state.workflowLoader.theme,
     templatesView: state.workflowLoader.templatesView,
   }));
-  const { resourcePath: workflowId, language } = useSelector((state: RootState) => state.workflowLoader);
+  const { resourcePath: workflowId, language, useEndpoint } = useSelector((state: RootState) => state.workflowLoader);
   const { data: workflowData } = useWorkflowAndArtifactsConsumption(workflowId!);
   const { data: tenantId } = useCurrentTenantId();
   const { data: objectId } = useCurrentObjectId();
+  const [reload, setReload] = useState<boolean | undefined>(undefined);
   const canonicalLocation = WorkflowUtility.convertToCanonicalFormat(workflowData?.location ?? 'westus');
 
   const { workflow, connectionReferences } = useMemo(() => getDataForConsumption(workflowData), [workflowData]);
   const isSingleTemplateView = useMemo(() => templatesView !== 'gallery', [templatesView]);
 
   const isWorkflowEmpty = useMemo(() => Object.keys((workflow?.definition as any)?.triggers ?? {}).length === 0, [workflow]);
+  const queryClient = getReactQueryClient();
+
+  useEffect(() => {
+    if (useEndpoint !== undefined) {
+      setReload(true);
+    }
+  }, [useEndpoint]);
 
   const onBlankWorkflowClick = async () => {
     if (!workflowData) {
@@ -119,9 +132,20 @@ export const TemplatesConsumption = () => {
   };
 
   const services = useMemo(
-    () => getServices(workflowId!, workflow as any, tenantId, objectId, canonicalLocation, language, onBlankWorkflowClick),
+    () =>
+      getServices(
+        workflowId!,
+        workflow as any,
+        tenantId,
+        objectId,
+        canonicalLocation,
+        language,
+        onBlankWorkflowClick,
+        queryClient,
+        useEndpoint
+      ),
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    [workflowId, workflow, tenantId, canonicalLocation, language]
+    [workflowId, workflow, tenantId, canonicalLocation, language, useEndpoint]
   );
 
   const resourceDetails = new ArmParser(workflowId ?? '');
@@ -142,6 +166,7 @@ export const TemplatesConsumption = () => {
         isConsumption={true}
         isCreateView={false}
         viewTemplate={isSingleTemplateView ? { id: templatesView } : undefined}
+        reload={reload}
       >
         <div
           style={{
@@ -207,7 +232,9 @@ const getServices = (
   objectId: string | undefined,
   location: string,
   locale: string | undefined,
-  onBlankWorkflowClick: () => Promise<void>
+  onBlankWorkflowClick: () => Promise<void>,
+  queryClient?: any,
+  useEndpoint?: boolean
 ): any => {
   const baseUrl = 'https://management.azure.com';
   const { subscriptionId, resourceGroup } = new ArmParser(workflowId);
@@ -224,6 +251,69 @@ const getServices = (
     httpClient,
     locale,
   });
+
+  const appServiceService = new BaseAppServiceService({
+    ...defaultServiceParams,
+    apiVersion: '2022-03-01',
+    subscriptionId,
+  });
+
+  const apimService = new BaseApiManagementService({
+    ...defaultServiceParams,
+    apiVersion: '2021-08-01',
+    subscriptionId,
+    includeBasePathInTemplate: true,
+    queryClient,
+  });
+
+  const functionService = new BaseFunctionService({
+    baseUrl,
+    apiVersion,
+    subscriptionId,
+    httpClient,
+  });
+  const connectorService = new ConsumptionConnectorService({
+    ...defaultServiceParams,
+    clientSupportedOperations: [
+      ['/connectionProviders/workflow', 'invokeWorkflow'],
+      ['connectionProviders/xmlOperations', 'xmlValidation'],
+      ['connectionProviders/xmlOperations', 'xmlTransform'],
+      ['connectionProviders/liquidOperations', 'liquidJsonToJson'],
+      ['connectionProviders/liquidOperations', 'liquidJsonToText'],
+      ['connectionProviders/liquidOperations', 'liquidXmlToJson'],
+      ['connectionProviders/liquidOperations', 'liquidXmlToText'],
+      ['connectionProviders/flatFileOperations', 'flatFileDecoding'],
+      ['connectionProviders/flatFileOperations', 'flatFileEncoding'],
+      ['connectionProviders/swiftOperations', 'SwiftDecode'],
+      ['connectionProviders/swiftOperations', 'SwiftEncode'],
+      ['/connectionProviders/apiManagementOperation', 'apiManagement'],
+      ['connectionProviders/http', 'httpswaggeraction'],
+      ['connectionProviders/http', 'httpswaggertrigger'],
+    ].map(([connectorId, operationId]) => ({ connectorId, operationId })),
+    schemaClient: {},
+    valuesClient: {
+      getSwaggerOperations: (args: any) => {
+        const { parameters } = args;
+        return appServiceService.getOperations(parameters.swaggerUrl);
+      },
+      getApimOperations: (args: any) => {
+        const { parameters } = args;
+        const { apiId } = parameters;
+        if (!apiId) {
+          throw new Error('Missing api information to make dynamic operations call');
+        }
+        return apimService.getOperations(apiId);
+      },
+      getSwaggerFunctionOperations: (args: any) => {
+        const { parameters } = args;
+        const functionAppId = parameters.functionAppId;
+        return functionService.getOperations(functionAppId);
+      },
+    },
+    apiVersion: '2018-07-01-preview',
+    workflowReferenceId: workflowId,
+  });
+
   const gatewayService = new BaseGatewayService({
     baseUrl,
     httpClient,
@@ -245,7 +335,12 @@ const getServices = (
     tenantId,
     objectId,
   });
-  const operationManifestService = new StandardOperationManifestService(defaultServiceParams);
+  const operationManifestService = new ConsumptionOperationManifestService({
+    ...defaultServiceParams,
+    apiVersion: '2022-09-01-preview',
+    subscriptionId,
+    location: location || 'location',
+  });
   const workflowService = {
     getCallbackUrl: (triggerName: string) => listCallbackUrl(workflowId, triggerName, true),
     getAppIdentity: () => workflow?.identity,
@@ -258,6 +353,9 @@ const getServices = (
   };
 
   const templateService = new BaseTemplateService({
+    httpClient,
+    endpoint: 'https://priti-cxf4h5cpcteue4az.b02.azurefd.net',
+    useEndpointForTemplates: !!useEndpoint,
     openBladeAfterCreate: (_workflowName: string | undefined) => {
       window.alert('Open blade after create, consumption creation is complete');
     },
@@ -272,6 +370,7 @@ const getServices = (
     operationManifestService,
     templateService,
     workflowService,
+    connectorService,
   };
 };
 

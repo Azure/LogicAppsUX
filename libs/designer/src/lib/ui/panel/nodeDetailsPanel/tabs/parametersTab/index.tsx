@@ -19,7 +19,9 @@ import type { AppDispatch, RootState } from '../../../../../core/store';
 import { getConnectionReference } from '../../../../../core/utils/connectors/connections';
 import { isRootNodeInGraph } from '../../../../../core/utils/graph';
 import {
+  getDisplayValueFromPickerSelectedItem,
   getTypeForTokenFiltering,
+  getValueFromPickerSelectedItem,
   loadDynamicTreeItemsForParameter,
   loadDynamicValuesForParameter,
   loadParameterValueFromString,
@@ -314,14 +316,8 @@ const ParameterSection = ({
     getFileSourceName: (): string => {
       return displayNameResult.result;
     },
-    getDisplayValueFromSelectedItem: (selectedItem: any): string => {
-      const dependency = dependencies.inputs[parameter.parameterKey];
-      return getPropertyValue(selectedItem, dependency.filePickerInfo?.fullTitlePath ?? '');
-    },
-    getValueFromSelectedItem: (selectedItem: any): string => {
-      const dependency = dependencies.inputs[parameter.parameterKey];
-      return getPropertyValue(selectedItem, dependency.filePickerInfo?.valuePath ?? '');
-    },
+    getDisplayValueFromSelectedItem: (selectedItem: any) => getDisplayValueFromPickerSelectedItem(selectedItem, parameter, dependencies),
+    getValueFromSelectedItem: (selectedItem: any) => getValueFromPickerSelectedItem(selectedItem, parameter, dependencies),
     onFolderNavigation: (selectedItem: any | undefined): void => {
       loadDynamicTreeItemsForParameter(
         nodeId,

@@ -63,7 +63,7 @@ export const cleanResourceId = (resourceId?: string): string => {
 };
 
 export const unescapeString = (input: string): string => {
-  return input.replace(/\\([nrtv])/g, (_match, char) => {
+  return input.replace(/\\([nrtv"\\])/g, (_match, char) => {
     switch (char) {
       case 'n':
         return '\n';
@@ -73,6 +73,10 @@ export const unescapeString = (input: string): string => {
         return '\t';
       case 'v':
         return '\v';
+      case '"':
+        return '"';
+      case '\\':
+        return '\\';
       default:
         return char;
     }
@@ -80,11 +84,12 @@ export const unescapeString = (input: string): string => {
 };
 
 export const escapeString = (input: string, requireSingleQuotesWrap?: boolean): string => {
-  if (requireSingleQuotesWrap && !/'.*[\n\r\t\v].*'/.test(input)) {
+  // Only apply escaping if requireSingleQuotesWrap is true and the input is wrapped in single quotes
+  if (requireSingleQuotesWrap && !/'.*[\n\r\t\v"].*'/.test(input)) {
     return input;
   }
 
-  return input?.replace(/[\n\r\t\v]/g, (char) => {
+  return input?.replace(/[\n\r\t\v"]/g, (char) => {
     switch (char) {
       case '\n':
         return '\\n';
@@ -94,6 +99,8 @@ export const escapeString = (input: string, requireSingleQuotesWrap?: boolean): 
         return '\\t';
       case '\v':
         return '\\v';
+      case '"':
+        return requireSingleQuotesWrap ? '\\"' : '"'; // Escape only if requireSingleQuotesWrap is true
       default:
         return char;
     }

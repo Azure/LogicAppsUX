@@ -44,12 +44,17 @@ export const NodeDetailsPanel = (props: CommonPanelProps): JSX.Element => {
   const selectedNode = useOperationPanelSelectedNodeId();
 
   const runData = useRunData(selectedNode);
-  const { isTriggerNode, nodesMetadata, idReplacements, operationInfo } = useSelector((state: RootState) => ({
-    isTriggerNode: isRootNodeInGraph(selectedNode, 'root', state.workflow.nodesMetadata),
-    nodesMetadata: state.workflow.nodesMetadata,
-    idReplacements: state.workflow.idReplacements,
-    operationInfo: state.operations.operationInfo[selectedNode],
-  }));
+  const { isTriggerNode, nodesMetadata, idReplacements, operationInfo, showTriggerInfo } = useSelector((state: RootState) => {
+    const isTrigger = isRootNodeInGraph(selectedNode, 'root', state.workflow.nodesMetadata);
+    const operationInfo = state.operations.operationInfo[selectedNode];
+    return {
+      isTriggerNode: isTrigger,
+      nodesMetadata: state.workflow.nodesMetadata,
+      idReplacements: state.workflow.idReplacements,
+      operationInfo,
+      showTriggerInfo: isTrigger && operationInfo.type === constants.SERIALIZED_TYPE.REQUEST,
+    };
+  });
 
   const [overrideWidth, setOverrideWidth] = useState<string | undefined>();
 
@@ -247,6 +252,7 @@ export const NodeDetailsPanel = (props: CommonPanelProps): JSX.Element => {
         }
         togglePanel();
       }}
+      showTriggerInfo={showTriggerInfo && !readOnly}
       trackEvent={handleTrackEvent}
       onCommentChange={onCommentChange}
       onTitleChange={onTitleChange}

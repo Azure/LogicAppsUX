@@ -1,8 +1,8 @@
 import { useDispatch, useSelector } from 'react-redux';
 import type { CreateWorkflowHandler } from './TemplatesDesigner';
 import type { AppDispatch, RootState } from '../../core/state/templates/store';
-import { isMultiWorkflowTemplate, loadTemplate } from '../../core/actions/bjsworkflow/templates';
-import { useEffect, useMemo } from 'react';
+import { initializeWorkflowMetadata, isMultiWorkflowTemplate, loadTemplate } from '../../core/actions/bjsworkflow/templates';
+import { useEffect } from 'react';
 import { TemplateOverview } from './templateoverview';
 import { setLayerHostSelector, Spinner, SpinnerSize, Text } from '@fluentui/react';
 import { CreateWorkflowPanel } from '../panel/templatePanel/createWorkflowPanel/createWorkflowPanel';
@@ -22,24 +22,23 @@ export const TemplatesView = (props: TemplateViewProps) => {
   const { showCloseButton, panelWidth, createWorkflow, onClose } = props;
   const dispatch = useDispatch<AppDispatch>();
   const intl = useIntl();
-  const { templateName, manifest, allTemplates, customTemplateNames } = useSelector((state: RootState) => ({
+  const { templateName, manifest } = useSelector((state: RootState) => ({
     templateName: state.template.templateName,
     allTemplates: state.manifest.availableTemplates,
-    customTemplateNames: state.manifest.customTemplateNames,
     manifest: state.template.manifest,
   }));
 
-  const isCustomTemplate = useMemo(() => customTemplateNames?.includes(templateName ?? ''), [customTemplateNames, templateName]);
-  const customTemplateManifest = useMemo(
-    () => (isCustomTemplate ? allTemplates?.[templateName ?? ''] : undefined),
-    [allTemplates, isCustomTemplate, templateName]
-  );
-
   useEffect(() => {
     if (templateName) {
-      dispatch(loadTemplate({ preLoadedManifest: customTemplateManifest, isCustomTemplate }));
+      dispatch(loadTemplate({ preLoadedManifest: undefined }));
     }
-  }, [customTemplateManifest, dispatch, isCustomTemplate, templateName]);
+  }, [dispatch, templateName]);
+
+  useEffect(() => {
+    if (manifest) {
+      dispatch(initializeWorkflowMetadata());
+    }
+  }, [dispatch, manifest]);
 
   if (!manifest) {
     return templateName ? (
