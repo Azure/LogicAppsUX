@@ -39,6 +39,7 @@ export const AadOAuthCredentials = ({
       {selectedCredTypeKey === AuthenticationOAuthType.SECRET ? (
         <AuthenticationProperty
           {...props}
+          passwordMask={true}
           initialValue={secret}
           AuthProperty={AUTHENTICATION_PROPERTIES.AAD_OAUTH_SECRET}
           onBlur={updateOAuthTypeSecret}

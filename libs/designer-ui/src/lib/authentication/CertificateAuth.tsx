@@ -64,6 +64,7 @@ export const CertificateAuthentication = ({
         {...props}
         initialValue={clientCertificatePassword}
         AuthProperty={AUTHENTICATION_PROPERTIES.CLIENT_CERTIFICATE_PASSWORD}
+        passwordMask={true}
         onBlur={isOAuth ? updateOAuthTypeCertificatePassword : updateClientCertificatePassword}
       />
     </div>

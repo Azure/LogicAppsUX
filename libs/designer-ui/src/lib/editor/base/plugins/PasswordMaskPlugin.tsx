@@ -187,7 +187,6 @@ export function PasswordMaskPlugin(): JSX.Element {
             } else if ($isTextNode(child)) {
               // Convert TextNode back to PasswordNode
               const passwordNode = $createPasswordNode(child.getTextContent());
-              console.log(passwordNode);
               child.replace(passwordNode);
             }
           });

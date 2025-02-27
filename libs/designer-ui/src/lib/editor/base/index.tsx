@@ -138,7 +138,7 @@ export const BaseEditor = ({
     clearEditor,
     history = true,
     tokens = true,
-    treeView = true,
+    treeView = false,
     htmlEditor = false,
     tabbable,
     singleValueSegment = false,
