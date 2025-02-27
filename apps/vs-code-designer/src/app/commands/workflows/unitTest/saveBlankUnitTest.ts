@@ -5,25 +5,29 @@
 import { localize } from '../../../../localize';
 import {
   createCsFile,
-  ensureCsprojAndNugetFiles,
+  createTestSettingsConfigFile,
+  createTestExecutorFile,
+  ensureCsproj,
+  updateCsprojFile,
   getUnitTestPaths,
   handleError,
   logError,
   logSuccess,
   logTelemetry,
   parseUnitTestOutputs,
-  processUnitTestDefinition,
   promptForUnitTestName,
   selectWorkflowNode,
+  processAndWriteMockableOperations,
 } from '../../../utils/unitTests';
 import { tryGetLogicAppProjectRoot } from '../../../utils/verifyIsProject';
-import { ensureDirectoryInWorkspace, getWorkflowNode, getWorkspaceFolder, isMultiRootWorkspace } from '../../../utils/workspace';
+import { ensureDirectoryInWorkspace, getWorkflowNode, getWorkspaceFolder } from '../../../utils/workspace';
 import type { IAzureConnectorsContext } from '../azureConnectorWizard';
 import { type IActionContext, callWithTelemetryAndErrorHandling, parseError } from '@microsoft/vscode-azext-utils';
 import * as path from 'path';
 import * as vscode from 'vscode';
 import * as fs from 'fs-extra';
 import { ext } from '../../../../extensionVariables';
+import { ConvertToWorkspace } from '../../createNewCodeProject/CodeProjectBase/ConvertToWorkspace';
 
 /**
  * Creates a unit test for a Logic App workflow (codeful only), with telemetry logging and error handling.
@@ -54,7 +58,7 @@ export async function saveBlankUnitTest(
     operationInfoExists: 'false',
     outputParametersExists: 'false',
     workflowNodePath: '',
-    workflowFolderPathResolved: 'false',
+    workflowTestFolderPathResolved: 'false',
     mockOutputsFolderPathCreated: 'false',
     mockableOperationsFound: '0',
     mockableOperationsProcessed: '0',
@@ -72,15 +76,26 @@ export async function saveBlankUnitTest(
     const workspaceFolder = await getWorkspaceFolder(context);
     const projectPath = await tryGetLogicAppProjectRoot(context, workspaceFolder);
 
+    if (!(await ConvertToWorkspace(context))) {
+      logTelemetry(context, {
+        multiRootWorkspaceValid: 'false',
+      });
+      ext.outputChannel.appendLog(
+        localize('createBlankUnitTestCancelled', 'Exiting blank unit test creation, a workspace is required to create blank unit tests.')
+      );
+      return;
+    }
+
     logTelemetry(context, {
+      multiRootWorkspaceValid: 'true',
       workspaceLocated: 'true',
       projectRootLocated: 'true',
     });
 
     // Get parsed outputs
-    await parseUnitTestOutputs(unitTestDefinition);
-    const operationInfo = unitTestDefinition['operationInfo'];
-    const outputParameters = unitTestDefinition['outputParameters'];
+    const parsedOutputs = await parseUnitTestOutputs(unitTestDefinition);
+    const operationInfo = parsedOutputs['operationInfo'];
+    const outputParameters = parsedOutputs['outputParameters'];
 
     logTelemetry(context, {
       operationInfoExists: operationInfo ? 'true' : 'false',
@@ -96,23 +111,6 @@ export async function saveBlankUnitTest(
 
     const workflowName = path.basename(path.dirname(workflowNode.fsPath));
 
-    // Check if in a multi-root workspace
-    if (!isMultiRootWorkspace()) {
-      logTelemetry(context, {
-        multiRootWorkspaceValid: 'false',
-      });
-      const message = localize(
-        'expectedWorkspace',
-        'A multi-root workspace must be open to create unit tests. Please use the "Create New Logic App Workspace" command.'
-      );
-      ext.outputChannel.appendLog(message);
-      throw new Error(message);
-    }
-
-    logTelemetry(context, {
-      multiRootWorkspaceValid: 'true',
-    });
-
     // Prompt for unit test name
     const unitTestName = await promptForUnitTestName(context, projectPath, workflowName);
     logTelemetry(context, {
@@ -120,17 +118,26 @@ export async function saveBlankUnitTest(
     });
     ext.outputChannel.appendLog(localize('unitTestNameEntered', `Unit test name entered: ${unitTestName}`));
 
+    // Retrieve unitTestFolderPath and logic app name from helper
+    const { unitTestFolderPath, logicAppName, workflowTestFolderPath } = getUnitTestPaths(projectPath, workflowName, unitTestName);
+
     // Retrieve necessary paths
-    const { unitTestFolderPath, logicAppName, workflowFolderPath } = getUnitTestPaths(projectPath, workflowName, unitTestName);
     // Indicate that we resolved the folder path
     logTelemetry(context, {
-      workflowFolderPathResolved: workflowFolderPath ? 'true' : 'false',
+      workflowTestFolderPathResolved: workflowTestFolderPath ? 'true' : 'false',
     });
 
     // Ensure required directories exist
     await fs.ensureDir(unitTestFolderPath);
-    await fs.ensureDir(workflowFolderPath);
-    await processUnitTestDefinition(unitTestDefinition, workflowFolderPath, logicAppName);
+    await fs.ensureDir(workflowTestFolderPath);
+    const { foundActionMocks, foundTriggerMocks } = await processAndWriteMockableOperations(
+      operationInfo,
+      outputParameters,
+      workflowNode.fsPath,
+      workflowTestFolderPath,
+      workflowName,
+      logicAppName
+    );
 
     // Log telemetry before proceeding
     logTelemetry(context, { workflowName, unitTestName });
@@ -138,7 +145,7 @@ export async function saveBlankUnitTest(
     // Save the unit test
     await callWithTelemetryAndErrorHandling('logicApp.saveBlankUnitTest', async (telemetryContext: IActionContext) => {
       Object.assign(telemetryContext, context);
-      await generateBlankCodefulUnitTest(context, projectPath, workflowName, unitTestName);
+      await generateBlankCodefulUnitTest(context, projectPath, workflowName, unitTestName, foundActionMocks, foundTriggerMocks);
     });
 
     logTelemetry(context, {
@@ -167,11 +174,13 @@ async function generateBlankCodefulUnitTest(
   context: IAzureConnectorsContext,
   projectPath: string,
   workflowName: string,
-  unitTestName: string
+  unitTestName: string,
+  foundActionMocks: Record<string, string>,
+  foundTriggerMocks: Record<string, string>
 ): Promise<void> {
   try {
     // Get required paths
-    const { testsDirectory, logicAppName, logicAppFolderPath, workflowFolderPath, unitTestFolderPath } = getUnitTestPaths(
+    const { testsDirectory, logicAppName, logicAppTestFolderPath, workflowTestFolderPath, unitTestFolderPath } = getUnitTestPaths(
       projectPath,
       workflowName,
       unitTestName
@@ -188,18 +197,46 @@ async function generateBlankCodefulUnitTest(
 
     // Ensure directories exist
     ext.outputChannel.appendLog(localize('ensuringDirectories', 'Ensuring required directories exist...'));
-    await Promise.all([fs.ensureDir(logicAppFolderPath), fs.ensureDir(workflowFolderPath), fs.ensureDir(unitTestFolderPath!)]);
+    await Promise.all([fs.ensureDir(logicAppTestFolderPath), fs.ensureDir(workflowTestFolderPath), fs.ensureDir(unitTestFolderPath)]);
 
+    // Create the testSettings.config file for the unit test
+    ext.outputChannel.appendLog(localize('creatingTestSettingsConfig', 'Creating testSettings.config file for unit test...'));
+    await createTestSettingsConfigFile(workflowTestFolderPath, workflowName, logicAppName);
+    await createTestExecutorFile(logicAppTestFolderPath, logicAppName);
+
+    // Get the first actionMock in foundActionMocks
+    const [actionName, actionOutputClassName] = Object.entries(foundActionMocks)[0] || [];
+    // Get the first actionMock in foundActionMocks
+    const [, triggerOutputClassName] = Object.entries(foundTriggerMocks)[0] || [];
+    // Create actionMockClassName by replacing "Output" with "Mock" in actionOutputClassName
+    const actionMockClassName = actionOutputClassName?.replace(/(.*)Output$/, '$1Mock');
+    const triggerMockClassName = triggerOutputClassName.replace(/(.*)Output$/, '$1Mock');
     // Create the .cs file for the unit test
     ext.outputChannel.appendLog(localize('creatingCsFile', 'Creating .cs file for unit test...'));
-    await createCsFile(unitTestFolderPath!, unitTestName, workflowName, logicAppName);
+    await createCsFile(
+      unitTestFolderPath,
+      unitTestName,
+      workflowName,
+      logicAppName,
+      actionName,
+      actionOutputClassName,
+      actionMockClassName,
+      triggerOutputClassName,
+      triggerMockClassName,
+      true
+    );
     logTelemetry(context, { csFileCreated: 'true' });
 
-    // Ensure .csproj and NuGet files exist
-    ext.outputChannel.appendLog(localize('ensuringCsproj', 'Ensuring .csproj and NuGet configuration files exist...'));
-    await ensureCsprojAndNugetFiles(testsDirectory, logicAppFolderPath, logicAppName);
+    // Ensure .csproj file exists
+    ext.outputChannel.appendLog(localize('ensuringCsproj', 'Ensuring .csproj file exists...'));
+    await ensureCsproj(testsDirectory, logicAppTestFolderPath, logicAppName);
     logTelemetry(context, { csprojValid: 'true' });
-    ext.outputChannel.appendLog(localize('csprojEnsured', 'Ensured .csproj and NuGet configuration files.'));
+    ext.outputChannel.appendLog(localize('csprojEnsured', 'Ensured .csproj file.'));
+
+    // Update .csproj file with content include for the workflow
+    const csprojFilePath = path.join(logicAppTestFolderPath, `${logicAppName}.csproj`);
+    const isCsprojUpdated = await updateCsprojFile(csprojFilePath, workflowName);
+    logTelemetry(context, { csprojUpdated: isCsprojUpdated ? 'true' : 'false' });
 
     // Add testsDirectory to workspace if not already included
     ext.outputChannel.appendLog(localize('checkingWorkspace', 'Checking if tests directory is already part of the workspace...'));

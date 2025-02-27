@@ -3,12 +3,12 @@
  *  Licensed under the MIT License. See License.md in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 import type { UnitTestResult } from '@microsoft/vscode-extension-logic-apps';
-import { nugetFileName, saveUnitTestEvent, testsDirectoryName, unitTestsFileName, workflowFileName } from '../../constants';
+import { saveUnitTestEvent, testsDirectoryName, unitTestsFileName, workflowFileName } from '../../constants';
 import { type IAzureQuickPickItem, type IActionContext, callWithTelemetryAndErrorHandling } from '@microsoft/vscode-azext-utils';
-
 import * as fse from 'fs-extra';
 import * as path from 'path';
 import * as vscode from 'vscode';
+import * as xml2js from 'xml2js';
 import { getWorkflowsInLocalProject } from './codeless/common';
 import { ext } from '../../extensionVariables';
 import type { IAzureConnectorsContext } from '../commands/workflows/azureConnectorWizard';
@@ -306,17 +306,74 @@ export async function selectWorkflowNode(context: IAzureConnectorsContext, proje
 /**
  * Creates a .csproj file in the specified logic app folder using a template.
  * @param {string} csprojFilePath - The path where the .csproj file will be created.
- * @param {string} logicAppName - The name of the Logic App, used to customize the .csproj file.
  * @returns {Promise<void>} - A promise that resolves when the .csproj file has been created.
  */
-export async function createCsprojFile(csprojFilePath: string, logicAppName: string): Promise<void> {
+export async function createCsprojFile(csprojFilePath: string): Promise<void> {
+  if (await fse.pathExists(csprojFilePath)) {
+    ext.outputChannel.appendLog(localize('csprojFileExists', '.csproj file already exists at: {0}', csprojFilePath));
+    return;
+  }
   const templateFolderName = 'UnitTestTemplates';
   const csprojTemplateFileName = 'TestProjectFile';
   const templatePath = path.join(__dirname, 'assets', templateFolderName, csprojTemplateFileName);
   const templateContent = await fse.readFile(templatePath, 'utf-8');
-  const csprojContent = templateContent.replace(/<%= logicAppName %>/g, logicAppName);
-  await fse.writeFile(csprojFilePath, csprojContent);
+  await fse.writeFile(csprojFilePath, templateContent);
   ext.outputChannel.appendLog(localize('csprojFileCreated', 'Created .csproj file at: {0}', csprojFilePath));
+}
+
+/**
+ * Updates the .csproj file in the specified logic app folder for the given workflow.
+ * @param {string} csprojFilePath - The path where the .csproj file is located.
+ * @param {string} workflowName - The name of the workflow.
+ * @returns {Promise<boolean>} - A promise that resolves to a bool indicating whether the .csproj has been updated.
+ */
+export async function updateCsprojFile(csprojFilePath: string, workflowName: string): Promise<boolean> {
+  const itemGroupName = 'UnitTestSettingsConfig';
+  const contentInclude = path.join(workflowName, '*.config');
+
+  fse.readFile(csprojFilePath, 'utf8', (err, data) => {
+    if (err) {
+      throw err;
+    }
+
+    xml2js.parseString(data, { explicitRoot: false }, (err, result) => {
+      if (err) {
+        throw err;
+      }
+
+      let itemGroup = result.ItemGroup?.find((group: any) => group.$?.Label === itemGroupName);
+
+      if (!itemGroup) {
+        // Create a new ItemGroup if it doesn't exist
+        itemGroup = { $: { Label: itemGroupName }, Content: [] };
+        result.ItemGroup = result.ItemGroup || [];
+        result.ItemGroup.push(itemGroup);
+      }
+
+      const contentExists = itemGroup.Content?.some((content: any) => content.$.Include === contentInclude);
+
+      if (contentExists) {
+        return false;
+      }
+
+      itemGroup.Content.push({
+        $: { Include: contentInclude, Link: path.join(workflowName, '%(RecursiveDir)%(Filename)%(Extension)') },
+        CopyToOutputDirectory: 'PreserveNewest',
+      });
+
+      const builder = new xml2js.Builder();
+      const updatedXml = builder.buildObject({ Project: result });
+
+      fse.writeFile(csprojFilePath, updatedXml, 'utf8', (err) => {
+        if (err) {
+          throw err;
+        }
+      });
+    });
+  });
+
+  ext.outputChannel.appendLog(localize('csprojFileUpdated', 'Updated .csproj file at: {0}', csprojFilePath));
+  return true;
 }
 
 /**
@@ -326,15 +383,41 @@ export async function createCsprojFile(csprojFilePath: string, logicAppName: str
  * @param {string} unitTestName - The name of the unit test.
  * @param {string} workflowName - The name of the workflow.
  * @param {string} logicAppName - The name of the logic app.
+ * @param {string} actionName - The name of the action.
+ * @param {string} actionOutputClassName - The name of the action output class.
+ * @param {string} actionMockClassName - The name of the action mock class.
+ * @param {string} triggerOutputClassName - The name of the trigger output class.
+ * @param {string} triggerMockClassName - The name of the trigger mock class.
  */
 export async function createCsFile(
   unitTestFolderPath: string,
   unitTestName: string,
   workflowName: string,
-  logicAppName: string
+  logicAppName: string,
+  actionName: string,
+  actionOutputClassName: string,
+  actionMockClassName: string,
+  triggerOutputClassName: string,
+  triggerMockClassName: string,
+  isBlank = false
 ): Promise<void> {
   const templateFolderName = 'UnitTestTemplates';
-  const csTemplateFileName = 'TestClassFile';
+
+  let csTemplateFileName = '';
+  if (actionOutputClassName) {
+    // workflow has actions, use templates with action examples
+    if (isBlank) {
+      csTemplateFileName = 'TestBlankClassFile';
+    } else {
+      csTemplateFileName = 'TestClassFile';
+    }
+  } else if (isBlank) {
+    // workflow has no actions, use templates with trigger examples
+    csTemplateFileName = 'TestBlankClassFileWithoutActions';
+  } else {
+    csTemplateFileName = 'TestClassFileWithoutActions';
+  }
+
   const templatePath = path.join(__dirname, 'assets', templateFolderName, csTemplateFileName);
 
   let templateContent = await fse.readFile(templatePath, 'utf-8');
@@ -355,7 +438,15 @@ export async function createCsFile(
   templateContent = templateContent
     .replace(/<%= LogicAppName %>/g, logicAppName)
     .replace(/<%= WorkflowName %>/g, workflowName)
-    .replace(/<%= UnitTestName %>/g, unitTestName);
+    .replace(/<%= UnitTestName %>/g, unitTestName)
+    .replace(/<%= SanitizedWorkflowName %>/g, sanitizedWorkflowName)
+    .replace(/<%= ActionMockName %>/g, actionName)
+    .replace(/<%= ActionMockOutputClassName %>/g, actionOutputClassName)
+    .replace(/<%= ActionMockClassName %>/g, actionMockClassName)
+    .replace(/<%= TriggerMockOutputClassName %>/g, triggerOutputClassName)
+    .replace(/<%= TriggerMockClassName %>/g, triggerMockClassName)
+    .replace(/<%= UnitTestSubFolder %>/g, unitTestName)
+    .replace(/<%= UnitTestMockJson %>/g, `${unitTestName}-mock.json`);
 
   const csFilePath = path.join(unitTestFolderPath, `${unitTestName}.cs`);
   await fse.writeFile(csFilePath, templateContent);
@@ -364,19 +455,56 @@ export async function createCsFile(
 }
 
 /**
- * Creates a nuget.config file in the specified logic app folder using a template.
- * @param {string} nugetConfigFilePath - The path where the .csproj file will be created.
- * @returns {Promise<void>} - A promise that resolves when the .csproj file has been created.
+ * Creates a testSettings.config file in the specified unit test folder using a template.
+ * Converts any "-" characters in LogicAppName, WorkflowName, and UnitTestName to "_" only in code-related contexts.
+ * @param {string} logicAppTestFolderPath - The path to the logicapp folder within Tests.
+ * @param {string} logicAppName - The name of the logic app.
  */
-export async function createNugetConfigFile(nugetConfigFilePath: string): Promise<void> {
+export async function createTestExecutorFile(logicAppTestFolderPath: string, logicAppName: string): Promise<void> {
   const templateFolderName = 'UnitTestTemplates';
-  const nugetConfigTemplateFileName = 'TestNugetConfig';
-  const templatePath = path.join(__dirname, 'assets', templateFolderName, nugetConfigTemplateFileName);
+  const executorTemplateFileName = 'TestExecutorFile';
+  const templatePath = path.join(__dirname, 'assets', templateFolderName, executorTemplateFileName);
 
-  const templateContent = await fse.readFile(templatePath, 'utf-8');
-  await fse.writeFile(nugetConfigFilePath, templateContent);
+  const csFilePath = path.join(logicAppTestFolderPath, 'TestExecutor.cs');
 
-  ext.outputChannel.appendLog(localize('nugetConfigFileCreated', 'Created nuget.config file at: {0}', nugetConfigFilePath));
+  if (await fse.pathExists(csFilePath)) {
+    ext.outputChannel.appendLog(localize('testExecutorFileExists', 'TestExecutor.cs file already exists at: {0}', csFilePath));
+    return;
+  }
+
+  let templateContent = await fse.readFile(templatePath, 'utf-8');
+  templateContent = templateContent.replace(/<%= LogicAppName %>/g, logicAppName);
+
+  await fse.writeFile(csFilePath, templateContent);
+  ext.outputChannel.appendLog(localize('createdTestExecutorFile', 'Created TestExecutor.cs file at: {0}', csFilePath));
+}
+
+/**
+ * Creates a testSettings.config file in the specified unit test folder using a template.
+ * Converts any "-" characters in LogicAppName, WorkflowName, and UnitTestName to "_" only in code-related contexts.
+ * @param {string} unitTestFolderPath - The path to the unit test folder.
+ * @param {string} workflowName - The name of the workflow.
+ * @param {string} logicAppName - The name of the logic app.
+ */
+export async function createTestSettingsConfigFile(unitTestFolderPath: string, workflowName: string, logicAppName: string): Promise<void> {
+  const templateFolderName = 'UnitTestTemplates';
+  const configTemplateFileName = 'TestSettingsConfigFile';
+  const templatePath = path.join(__dirname, 'assets', templateFolderName, configTemplateFileName);
+  const csFilePath = path.join(unitTestFolderPath, 'testSettings.config');
+
+  if (await fse.pathExists(csFilePath)) {
+    ext.outputChannel.appendLog(localize('testSettingsConfigFileExists', 'testSettings.config file already exists at: {0}', csFilePath));
+    return;
+  }
+
+  let templateContent = await fse.readFile(templatePath, 'utf-8');
+  templateContent = templateContent
+    .replace(/%WorkspacePath%/g, '../../../../')
+    .replace(/%LogicAppName%/g, logicAppName)
+    .replace(/%WorkflowName%/g, workflowName);
+
+  await fse.writeFile(csFilePath, templateContent);
+  ext.outputChannel.appendLog(localize('createdTestSettingsConfig', 'Created testSettings.config file at: {0}', csFilePath));
 }
 
 /**
@@ -445,7 +573,7 @@ export function logError(context: IActionContext, error: Error, property: string
  * @param {string} projectPath - The base project path.
  * @param {string} workflowName - The workflow name.
  * @param {string | undefined} unitTestName - The unit test name, if any.
- * @returns An object containing testsDirectory, logicAppName, logicAppFolderPath, workflowFolderPath, and optionally unitTestFolderPath.
+ * @returns An object containing testsDirectory, logicAppName, logicAppTestFolderPath, workflowTestFolderPath, and optionally unitTestFolderPath.
  */
 export function getUnitTestPaths(
   projectPath: string,
@@ -454,23 +582,23 @@ export function getUnitTestPaths(
 ): {
   testsDirectory: string;
   logicAppName: string;
-  logicAppFolderPath: string;
-  workflowFolderPath: string;
+  logicAppTestFolderPath: string;
+  workflowTestFolderPath: string;
   unitTestFolderPath?: string;
 } {
   const testsDirectoryUri = getTestsDirectory(projectPath);
   const testsDirectory = testsDirectoryUri.fsPath;
   const logicAppName = path.basename(path.dirname(path.join(projectPath, workflowName)));
-  const logicAppFolderPath = path.join(testsDirectory, logicAppName);
-  const workflowFolderPath = path.join(logicAppFolderPath, workflowName);
+  const logicAppTestFolderPath = path.join(testsDirectory, logicAppName);
+  const workflowTestFolderPath = path.join(logicAppTestFolderPath, workflowName);
   const paths = {
     testsDirectory,
     logicAppName,
-    logicAppFolderPath,
-    workflowFolderPath,
+    logicAppTestFolderPath,
+    workflowTestFolderPath,
   };
   if (unitTestName) {
-    paths['unitTestFolderPath'] = path.join(workflowFolderPath, unitTestName);
+    paths['unitTestFolderPath'] = path.join(workflowTestFolderPath, unitTestName);
   }
   return paths;
 }
@@ -514,17 +642,16 @@ export function handleError(context: IAzureConnectorsContext, error: unknown, so
 
 /**
  * Ensures the .csproj and NuGet configuration files exist.
- * @param {string} logicAppFolderPath - Path to the project directory.
+ * @param {string} logicAppTestFolderPath - Path to the project directory.
  * @param {string} logicAppName - Name of the workflow.
  * @param {string} testsDirectory - Name of the workflow.
  */
-export async function ensureCsprojAndNugetFiles(testsDirectory: string, logicAppFolderPath: string, logicAppName: string): Promise<void> {
-  const csprojFilePath = path.join(logicAppFolderPath, `${logicAppName}.csproj`);
-  const nugetConfigFilePath = path.join(testsDirectory, nugetFileName);
+export async function ensureCsproj(testsDirectory: string, logicAppTestFolderPath: string, logicAppName: string): Promise<void> {
+  const csprojFilePath = path.join(logicAppTestFolderPath, `${logicAppName}.csproj`);
 
   if (!(await fse.pathExists(csprojFilePath))) {
     ext.outputChannel.appendLog(localize('creatingCsproj', 'Creating .csproj file at: {0}', csprojFilePath));
-    await createCsprojFile(csprojFilePath, logicAppName);
+    await createCsprojFile(csprojFilePath);
     const action = 'Reload Window';
     vscode.window
       .showInformationMessage('Reload Required: Please reload the VS Code window to enable test discovery in the Test Explorer', action)
@@ -534,7 +661,6 @@ export async function ensureCsprojAndNugetFiles(testsDirectory: string, logicApp
         }
       });
   }
-  await createNugetConfigFile(nugetConfigFilePath);
 }
 
 /**
@@ -603,7 +729,8 @@ export async function parseUnitTestOutputs(unitTestDefinition: any): Promise<{
                 ...nestedObject[part],
                 ...Object.keys(rawOutput[rawKey]).reduce((filteredFields, fieldKey) => {
                   if (allowedFields.includes(fieldKey)) {
-                    (filteredFields as Record<string, any>)[fieldKey] = rawOutput[rawKey][fieldKey];
+                    const newFieldKey = fieldKey === 'type' ? 'nestedTypeProperty' : fieldKey;
+                    (filteredFields as Record<string, any>)[newFieldKey] = rawOutput[rawKey][fieldKey];
                   }
                   return filteredFields;
                 }, {}),
@@ -611,7 +738,8 @@ export async function parseUnitTestOutputs(unitTestDefinition: any): Promise<{
             } else {
               nestedObject[part] = Object.keys(rawOutput[rawKey]).reduce((filteredFields, fieldKey) => {
                 if (allowedFields.includes(fieldKey)) {
-                  (filteredFields as Record<string, any>)[fieldKey] = rawOutput[rawKey][fieldKey];
+                  const newFieldKey = fieldKey === 'type' ? 'nestedTypeProperty' : fieldKey;
+                  (filteredFields as Record<string, any>)[newFieldKey] = rawOutput[rawKey][fieldKey];
                 }
                 return filteredFields;
               }, {});
@@ -640,59 +768,13 @@ export async function parseUnitTestOutputs(unitTestDefinition: any): Promise<{
 }
 
 /**
- * Transforms the output parameters object by cleaning keys and keeping only certain fields.
- * @param params - The parameters object.
- * @returns A transformed object with cleaned keys and limited fields.
- */
-export function transformParameters(params: any): any {
-  const allowedFields = ['type', 'title', 'format', 'description'];
-  const result: any = {};
-
-  for (const key in params) {
-    if (Object.prototype.hasOwnProperty.call(params, key)) {
-      // Clean up the key.
-      const cleanedKey = key
-        .replace(/^outputs\.\$\./, '') // remove "outputs.$." prefix
-        .replace(/^outputs\.\$$/, '') // remove "outputs.$" prefix
-        .replace(/^body\.\$\./, 'body.') // replace "body.$." prefix with "body."
-        .replace(/^body\.\$$/, 'body'); // replace "body.$" prefix with "body"
-
-      // Split on '.' to build or traverse nested keys.
-      const keys = cleanedKey.split('.');
-      keys.reduce((acc, part, index) => {
-        const isLastPart = index === keys.length - 1;
-
-        if (isLastPart) {
-          if (!acc[part]) {
-            acc[part] = {};
-          }
-
-          const filteredFields = Object.keys(params[key]).reduce((filtered: any, fieldKey) => {
-            if (allowedFields.includes(fieldKey)) {
-              filtered[fieldKey] = params[key][fieldKey];
-            }
-            return filtered;
-          }, {});
-
-          acc[part] = { ...acc[part], ...filteredFields };
-        } else if (!acc[part]) {
-          acc[part] = {};
-        }
-        return acc[part];
-      }, result);
-    }
-  }
-
-  return result;
-}
-
-/**
  * Represents the metadata for generating a single C# class.
  * Will store the class name, a doc-comment, properties, and child class definitions.
  */
 export interface ClassDefinition {
   className: string;
   description: string | null; // If there's a description at the object level
+  inheritsFrom?: string;
   properties: PropertyDefinition[]; // The list of properties in this class
   children: ClassDefinition[]; // Nested child classes (for sub-objects)
 }
@@ -705,6 +787,7 @@ export interface PropertyDefinition {
   propertyType: string; // e.g. "string", "int", "Body" (another class), etc.
   description: string | null;
   isObject: boolean; // If true, the propertyType is a nested class name
+  jsonPropertyName: string | null;
 }
 
 /**
@@ -718,15 +801,15 @@ export function buildClassDefinition(className: string, node: any): ClassDefinit
   // If there's a top-level "description" for the object
   let classDescription: string | null = node.description ? String(node.description) : null;
   if (!classDescription) {
-    if (node.type === 'object') {
-      const skipKeys = ['type', 'title', 'description', 'format', 'headers', 'queries', 'tags', 'relativePathParameters'];
+    if (node.nestedTypeProperty === 'object') {
+      const skipKeys = ['nestedTypeProperty', 'title', 'description', 'format', 'headers', 'queries', 'tags', 'relativePathParameters'];
       const propertyNames = Object.keys(node).filter((key) => !skipKeys.includes(key));
       classDescription =
         propertyNames.length > 0
           ? `Class for ${className} representing an object with properties.`
           : `Class for ${className} representing an empty object.`;
     } else {
-      classDescription = `Class for ${className} representing a ${node.type} value.`;
+      classDescription = `Class for ${className} representing a ${node.nestedTypeProperty} value.`;
     }
   }
 
@@ -737,9 +820,9 @@ export function buildClassDefinition(className: string, node: any): ClassDefinit
   const children: ClassDefinition[] = [];
 
   // If this node is an object, it may have sub-fields we need to parse as properties.
-  if (node.type === 'object') {
+  if (node.nestedTypeProperty === 'object') {
     // Create a combined array of keys we need to skip
-    const skipKeys = ['type', 'title', 'description', 'format', 'headers', 'queries', 'tags', 'relativePathParameters'];
+    const skipKeys = ['nestedTypeProperty', 'title', 'description', 'format', 'headers', 'queries', 'tags', 'relativePathParameters'];
 
     // For each subfield in node (like "id", "location", "properties", etc.)
     for (const key of Object.keys(node)) {
@@ -749,24 +832,48 @@ export function buildClassDefinition(className: string, node: any): ClassDefinit
       }
 
       const subNode = node[key];
-      const propName = toPascalCase(key);
+      let propName = toPascalCase(key);
+
+      // Handle special characters
+      let jsonPropertyName = null;
+      if (/[~@]/.test(key)) {
+        jsonPropertyName = key.replace(/~1/g, '.');
+        propName = toPascalCase(subNode?.title.replace(/[^a-zA-Z0-9]/g, ''));
+      }
 
       // Determine the child's C# type
-      let csharpType = mapJsonTypeToCSharp(subNode?.type, subNode?.format);
+      let csharpType = mapJsonTypeToCSharp(subNode?.nestedTypeProperty, subNode?.format);
       let isObject = false;
 
       // If it's an object, we must generate a nested class.
       // We'll do that recursively, then use the generated child's className for this property type.
-      if (subNode?.type === 'object') {
+      if (subNode?.nestedTypeProperty === 'object') {
         isObject = true;
         const childClassName = className + propName; // e.g. "ActionOutputs" -> "ActionOutputsBody"
         const childDef = buildClassDefinition(childClassName, subNode);
-        children.push(childDef);
 
-        // The property for this sub-node points to the newly created child's class name
-        csharpType = childDef.className;
+        // If there are child properties then use the newly created object, otherwise use JObject
+        if (childDef.properties.length > 0) {
+          children.push(childDef);
+          // The property for this sub-node points to the newly created child's class name
+          csharpType = childDef.className;
+        }
       }
 
+      // If it's an array, process the array items
+      if (subNode?.nestedTypeProperty === 'array') {
+        isObject = true;
+        const arrayItemNode = subNode['[*]'];
+        const arrayItemClassName = subNode?.description ? toPascalCase(subNode?.description.replace(/\s+/g, '')) : ''; // Remove spaces from description
+        const arrayItemDef = buildClassDefinition(arrayItemClassName, arrayItemNode);
+
+        // If there are child properties then use the newly created object, otherwise use JObject
+        if (arrayItemDef.properties.length > 0) {
+          children.push(arrayItemDef);
+          // The property for this sub-node points to the newly created child's class name
+          csharpType = `List<${arrayItemDef.className}>`;
+        }
+      }
       // If it's an array, you might want to look at subNode.items.type to refine the list item type.
       // Check if the subNode has a "description" to be used as a doc-comment on the property.
       const subDescription = subNode?.description ? String(subNode.description) : null;
@@ -775,6 +882,7 @@ export function buildClassDefinition(className: string, node: any): ClassDefinit
         propertyType: csharpType,
         description: subDescription,
         isObject,
+        jsonPropertyName,
       });
     }
   }
@@ -812,6 +920,41 @@ export function mapJsonTypeToCSharp(jsonType: string, jsonFormat?: string): stri
       return 'JObject';
   }
 }
+
+export function generateTriggerActionMockClass(mockType: string, mockClassName: string, className: string) {
+  return `    /// <summary>
+    /// The <see cref="${mockClassName}"/> class.
+    /// </summary>
+    public class ${mockClassName} : ${mockType}
+    {
+        /// <summary>
+        /// Creates a mocked instance for  <see cref="${mockClassName}"/> with static outputs.
+        /// </summary>
+        public ${mockClassName}(TestWorkflowStatus status = TestWorkflowStatus.Succeeded, string name = null, ${className} outputs = null)
+            : base(status: status, name: name, outputs: outputs ?? new ${className}())
+        {
+        }
+
+        /// <summary>
+        /// Creates a mocked instance for  <see cref="${mockClassName}"/> with static error info.
+        /// </summary>
+        public ${mockClassName}(TestWorkflowStatus status, string name = null, TestErrorInfo error = null)
+            : base(status: status, name: name, error: error)
+        {
+        }
+
+        /// <summary>
+        /// Creates a mocked instance for <see cref="${mockClassName}"/> with a callback function for dynamic outputs.
+        /// </summary>
+        public ${mockClassName}(Func<TestExecutionContext, ${mockClassName}> onGet${mockType}, string name = null)
+            : base(onGet${mockType}: onGet${mockType}, name: name)
+        {
+        }
+    }
+
+`;
+}
+
 /**
  * Recursively builds a single C# class string from a ClassDefinition and any child classes it might have.
  * @param {ClassDefinition} classDef - The definition of the class to generate.
@@ -821,52 +964,55 @@ export function generateClassCode(classDef: ClassDefinition): string {
   const sb: string[] = [];
 
   if (classDef.description) {
-    sb.push('/// <summary>');
-    sb.push(`/// ${classDef.description}`);
-    sb.push('/// </summary>');
+    sb.push('    /// <summary>');
+    sb.push(`    /// ${classDef.description}`);
+    sb.push('    /// </summary>');
   }
 
-  sb.push(`public class ${classDef.className}`);
-  sb.push('{');
+  sb.push(`    public class ${classDef.className}${classDef.inheritsFrom ? ` : ${classDef.inheritsFrom}` : ''}`);
+  sb.push('    {');
 
   for (const prop of classDef.properties) {
     if (prop.description) {
-      sb.push('    /// <summary>');
-      sb.push(`    /// ${prop.description}`);
-      sb.push('    /// </summary>');
+      sb.push('        /// <summary>');
+      sb.push(`        /// ${prop.description}`);
+      sb.push('        /// </summary>');
     }
-    sb.push(`    public ${prop.propertyType} ${prop.propertyName} { get; set; }`);
+    if (prop.jsonPropertyName) {
+      sb.push(`        [JsonProperty(PropertyName="${prop.jsonPropertyName}")]`);
+    }
+    sb.push(`        public ${prop.propertyType} ${prop.propertyName} { get; set; }`);
     sb.push('');
   }
 
-  sb.push('    /// <summary>');
-  sb.push(`    /// Initializes a new instance of the <see cref="${classDef.className}"/> class.`);
-  sb.push('    /// </summary>');
-  sb.push(`    public ${classDef.className}()`);
-  sb.push('    {');
-  sb.push('        this.StatusCode = HttpStatusCode.OK;');
+  sb.push('        /// <summary>');
+  sb.push(`        /// Initializes a new instance of the <see cref="${classDef.className}"/> class.`);
+  sb.push('        /// </summary>');
+  sb.push(`        public ${classDef.className}()`);
+  sb.push('        {');
+  sb.push('            this.StatusCode = HttpStatusCode.OK;');
 
   for (const prop of classDef.properties) {
     if (prop.propertyType === 'string') {
-      sb.push(`        this.${prop.propertyName} = string.Empty;`);
+      sb.push(`            this.${prop.propertyName} = string.Empty;`);
     } else if (prop.propertyType === 'DateTime') {
-      sb.push(`        this.${prop.propertyName} = new DateTime();`);
+      sb.push(`            this.${prop.propertyName} = new DateTime();`);
     } else if (prop.isObject) {
-      sb.push(`        this.${prop.propertyName} = new ${prop.propertyType}();`);
+      sb.push(`            this.${prop.propertyName} = new ${prop.propertyType}();`);
     } else if (prop.propertyType === 'JObject') {
-      sb.push(`        this.${prop.propertyName} = new JObject();`);
+      sb.push(`            this.${prop.propertyName} = new JObject();`);
     } else if (prop.propertyType.startsWith('List<')) {
-      sb.push(`        this.${prop.propertyName} = new ${prop.propertyType}();`);
+      sb.push(`            this.${prop.propertyName} = new ${prop.propertyType}();`);
     } else if (prop.propertyType === 'int') {
-      sb.push(`        this.${prop.propertyName} = 0;`);
+      sb.push(`            this.${prop.propertyName} = 0;`);
     } else if (prop.propertyType === 'HttpStatusCode') {
-      sb.push(`        this.${prop.propertyName} = HttpStatusCode.OK;`);
+      sb.push(`            this.${prop.propertyName} = HttpStatusCode.OK;`);
     }
   }
 
-  sb.push('    }');
+  sb.push('        }');
   sb.push('');
-  sb.push('}');
+  sb.push('    }');
   sb.push('');
 
   for (const child of classDef.children) {
@@ -877,70 +1023,72 @@ export function generateClassCode(classDef: ClassDefinition): string {
 }
 
 /**
- * Processes the unit test definition by parsing outputs and writing C# classes (mock outputs).
- * @param unitTestDefinition - The raw unit test definition.
- * @param workflowFolderPath - The folder path where the workflow’s MockOutputs folder resides.
- * @param logicAppName - The Logic App name (used for the namespace).
- */
-export async function processUnitTestDefinition(unitTestDefinition: any, workflowFolderPath: string, logicAppName: string): Promise<void> {
-  await parseUnitTestOutputs(unitTestDefinition);
-  const operationInfo = unitTestDefinition['operationInfo'];
-  const outputParameters = unitTestDefinition['outputParameters'];
-  await processAndWriteMockableOperations(operationInfo, outputParameters, workflowFolderPath, logicAppName);
-}
-
-/**
  * Filters mockable operations, transforms their output parameters,
  * and writes C# class definitions to .cs files.
  * @param operationInfo - The operation info object.
  * @param outputParameters - The output parameters object.
- * @param workflowFolderPath - The directory where the .cs files will be saved.
+ * @param workflowTestFolderPath - The path to the workflow folder where the .cs files will be saved.
+ * @param workflowName - The name of the workflow.
  * @param logicAppName - The name of the Logic App to use as the namespace.
  */
 export async function processAndWriteMockableOperations(
   operationInfo: any,
   outputParameters: any,
-  workflowFolderPath: string,
+  workflowPath: string,
+  workflowTestFolderPath: string,
+  workflowName: string,
   logicAppName: string
-): Promise<void> {
+): Promise<{ foundActionMocks: Record<string, string>; foundTriggerMocks: Record<string, string> }> {
   // Keep track of all operation IDs we've processed to avoid duplicates
   const processedOperationIds = new Set<string>();
 
-  // Create or verify the "MockOutputs" folder inside the workflow folder
-  const mockOutputsFolderPath = path.join(workflowFolderPath, 'MockOutputs');
+  // Create or verify the "MockOutputs" folder inside the logicApp folder
+  const mockOutputsFolderPath = path.join(workflowTestFolderPath, 'MockOutputs');
   await fse.ensureDir(mockOutputsFolderPath);
+
+  // Dictionaries to store mockable operation names and their corresponding class names
+  const foundActionMocks: Record<string, string> = {};
+  const foundTriggerMocks: Record<string, string> = {};
+
+  const workflowContent = JSON.parse(await fse.readFile(workflowPath, 'utf8'));
+  const triggerName = Object.keys(workflowContent?.definition?.triggers)?.[0] ?? null;
 
   for (const operationName in operationInfo) {
     const operation = operationInfo[operationName];
     const type = operation.type;
 
-    // Edge case: if operationId is absent, use the operation name
+    // Edge cases where operationId might be absent
     const operationId = operation.operationId ?? operationName;
+
+    // If we've already processed this operation ID, skip to the next
     if (processedOperationIds.has(operationId)) {
       continue;
     }
     processedOperationIds.add(operationId);
 
-    // Determine if this is a trigger by comparing in uppercase
-    const isTrigger = ['HTTPWEBHOOK', 'REQUEST', 'MANUAL', 'APICONNECTIONWEBHOOK'].includes(type.toUpperCase());
+    const isTrigger = operationName === triggerName;
 
     // Only proceed if this operation type is mockable (using the new async isMockable)
     if (await isMockable(type)) {
       // Set operationName as className
       const cleanedOperationName = removeInvalidCharacters(operationName);
       let className = toPascalCase(cleanedOperationName);
+      let mockClassName = toPascalCase(cleanedOperationName);
 
       // Append suffix based on whether it's a trigger
       className += isTrigger ? 'TriggerOutput' : 'ActionOutput';
 
+      const mockType = isTrigger ? 'TriggerMock' : 'ActionMock';
+      mockClassName += isTrigger ? 'TriggerMock' : 'ActionMock';
+
       // Transform the output parameters for this operation
-      const outputs = transformParameters(outputParameters[operationName]?.outputs || {});
+      const outputs = outputParameters[operationName]?.outputs;
 
       // Sanitize logic app name for namespace (replace '-' with '_')
       const sanitizedLogicAppName = logicAppName.replace(/-/g, '_');
 
       // Generate C# class content
-      const classContent = generateCSharpClasses(sanitizedLogicAppName, className, outputs);
+      const classContent = generateCSharpClasses(sanitizedLogicAppName, className, workflowName, mockType, mockClassName, outputs);
 
       // Write the .cs file
       const filePath = path.join(mockOutputsFolderPath, `${className}.cs`);
@@ -948,37 +1096,72 @@ export async function processAndWriteMockableOperations(
 
       // Log to output channel
       ext.outputChannel.appendLog(localize('csFileCreated', 'Created .cs file at: {0}', filePath));
+      // Store the operation name and class name in the appropriate dictionary
+      if (isTrigger) {
+        foundTriggerMocks[operationName] = className;
+      } else {
+        foundActionMocks[operationName] = className;
+      }
     }
   }
+  return { foundActionMocks, foundTriggerMocks };
 }
 
 /**
  * Generates a C# class definition as a string.
  * @param {string} logicAppName - The name of the Logic App, used as the namespace.
  * @param {string} className - The name of the class to generate.
+ * @param {string} workflowName - The workflow name the class belongs to.
+ * @param {string} mockType - The mockType of the class to generate.
+ * @param {string} mockClassName - The mockType of the class to generate.
  * @param {any} outputs - The outputs object containing properties to include in the class.
  * @returns {string} - The generated C# class definition.
  */
-export function generateCSharpClasses(namespaceName: string, rootClassName: string, data: any): string {
+export function generateCSharpClasses(
+  namespaceName: string,
+  rootClassName: string,
+  workflowName: string,
+  mockType: string,
+  mockClassName: string,
+  data: any
+): string {
   // Build a root class definition (the entire data is assumed to be an object).
   // If data isn't type "object", you might want special handling, but typically
   // transformParameters() yields an object at the top level.
 
   const rootDef = buildClassDefinition(rootClassName, {
-    type: 'object',
+    nestedTypeProperty: 'object',
     ...data, // Merge the data (including "description", subfields, etc.)
   });
 
-  // StatusCode is defined on the base class and not needed in generated classes
-  delete rootDef.properties['StatusCode'];
+  rootDef.inheritsFrom = 'MockOutput';
 
-  const adjustedNamespace = `${namespaceName}.Tests.Mocks`;
+  const sanitizedWorkflowName = workflowName.replace(/-/g, '_');
 
+  const adjustedNamespace = `${namespaceName}.Tests.Mocks.${sanitizedWorkflowName}`;
+
+  const actionTriggerMockClassCode = generateTriggerActionMockClass(mockType, mockClassName, rootClassName);
   // Generate the code for the root class (this also recursively generates nested classes).
-  const requiredNamespaces = ['Newtonsoft.Json.Linq', 'System.Collections.Generic', 'System.Net', 'System'];
+  const requiredNamespaces = [
+    'Microsoft.Azure.Workflows.UnitTesting.Definitions',
+    'Microsoft.Azure.Workflows.UnitTesting.ErrorResponses',
+    'Newtonsoft.Json',
+    'Newtonsoft.Json.Linq',
+    'System.Collections.Generic',
+    'System.Net',
+    'System',
+  ];
   const classCode = generateClassCode(rootDef);
-  // rap it all in the needed "using" statements + namespace.
-  return [...requiredNamespaces.map((ns) => `using ${ns};`), '', `namespace ${adjustedNamespace}`, '{', classCode, '}'].join('\n');
+  // wrap it all in the needed "using" statements + namespace.
+  return [
+    ...requiredNamespaces.map((ns) => `using ${ns};`),
+    '',
+    `namespace ${adjustedNamespace}`,
+    '{',
+    actionTriggerMockClassCode,
+    classCode,
+    '}',
+  ].join('\n');
 }
 
 // Static sets for mockable operation types

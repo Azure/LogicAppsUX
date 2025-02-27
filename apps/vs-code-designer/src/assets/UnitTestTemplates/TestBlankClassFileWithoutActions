@@ -1,0 +1,55 @@
+using System.Collections.Generic;
+using System.Threading.Tasks;
+using Microsoft.Azure.Workflows.UnitTesting.Definitions;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
+using <%= LogicAppName %>.Tests.Mocks.<%= SanitizedWorkflowName %>;
+
+namespace <%= LogicAppName %>.Tests
+{
+    /// <summary>
+    /// The unit test class.
+    /// </summary>
+    [TestClass]
+    public class <%= UnitTestName %>
+    {
+        /// <summary>
+        /// The unit test executor.
+        /// </summary>
+        public TestExecutor TestExecutor;
+
+        [TestInitialize]
+        public void Setup()
+        {
+            this.TestExecutor = new TestExecutor("<%= WorkflowName %>/testSettings.config");
+        }
+
+        /// <summary>
+        /// A sample unit test for executing the workflow named <%= WorkflowName %> with static mocked data.
+        /// This method shows how to set up mock data, execute the workflow, and assert the outcome.
+        /// </summary>
+        [TestMethod]
+        public async Task <%= WorkflowName %>_<%= UnitTestName %>_ExecuteWorkflow_SUCCESS_Sample1()
+        {
+            // PREPARE Mock
+            // Generate mock trigger data.
+            var triggerMockOutput = new <%= TriggerMockOutputClassName %>();
+            // Sample of how to set the properties of the triggerMockOutput
+            // triggerMockOutput.Body.Flag = true;
+            var triggerMock = new <%= TriggerMockClassName %>(outputs: triggerMockOutput);
+
+            // ACT
+            // Create an instance of UnitTestExecutor, and run the workflow with the mock data.
+            var testMock = new TestMockDefinition(
+                triggerMock: triggerMock,
+                actionMocks: null);
+            var testRun = await this.TestExecutor
+                .Create()
+                .RunWorkflowAsync(testMock: testMock).ConfigureAwait(continueOnCapturedContext: false);
+
+            // ASSERT
+            // Verify that the workflow executed successfully, and the status is 'Succeeded'.
+            Assert.IsNotNull(value: testRun);
+            Assert.AreEqual(expected: TestWorkflowStatus.Succeeded, actual: testRun.Status);
+        }
+    }
+}
