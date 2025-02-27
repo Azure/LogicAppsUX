@@ -7,10 +7,11 @@ import { AzureWizardPromptStep, nonNullProp } from '@microsoft/vscode-azext-util
 import type { IFunctionWizardContext, IWorkflowTemplate } from '@microsoft/vscode-extension-logic-apps';
 import * as fse from 'fs-extra';
 import * as path from 'path';
+import { workflowNameValidation } from '../../../../constants';
 
 export abstract class WorkflowNameStepBase<T extends IFunctionWizardContext> extends AzureWizardPromptStep<T> {
   protected abstract getUniqueFunctionName(context: T): Promise<string | undefined>;
-  protected abstract validateFunctionNameCore(context: T, name: string): Promise<string | undefined>;
+  protected abstract validateNameCore(context: T, name: string): Promise<string | undefined>;
 
   public async prompt(context: T): Promise<void> {
     const template: IWorkflowTemplate = nonNullProp(context, 'functionTemplate');
@@ -19,7 +20,7 @@ export abstract class WorkflowNameStepBase<T extends IFunctionWizardContext> ext
     context.functionName = await context.ui.showInputBox({
       placeHolder: localize('workflowNamePlaceholder', 'Workflow name'),
       prompt: localize('workflowNamePrompt', 'Provide a workflow name'),
-      validateInput: async (s: string): Promise<string | undefined> => await this.validateFunctionName(context, s),
+      validateInput: async (s: string): Promise<string | undefined> => await this.validateWorkflowName(context, s),
       value: uniqueWorkflowName || template.defaultFunctionName,
     });
   }
@@ -43,18 +44,16 @@ export abstract class WorkflowNameStepBase<T extends IFunctionWizardContext> ext
     return undefined;
   }
 
-  private async validateFunctionName(context: T, name: string | undefined): Promise<string | undefined> {
+  private async validateWorkflowName(context: T, name: string | undefined): Promise<string | undefined> {
     if (!name) {
-      return localize('emptyTemplateNameError', 'The function name cannot be empty.');
+      return localize('emptyWorkflowNameError', 'The workflow name cannot be empty.');
     }
-    if (!functionNameRegex.test(name)) {
+    if (!workflowNameValidation.test(name)) {
       return localize(
-        'functionNameInvalidMessage',
-        'Function name must start with a letter and can only contain letters, digits, "_" and "-".'
+        'workflowNameInvalidMessage',
+        'Workflow name must start with a letter and can only contain letters, digits, "_" and "-".'
       );
     }
-    return await this.validateFunctionNameCore(context, name);
+    return await this.validateNameCore(context, name);
   }
 }
-
-const functionNameRegex = /^[a-z][a-z\d_-]*$/i;

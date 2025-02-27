@@ -9,6 +9,7 @@ import * as fs from 'fs-extra';
 import { OpenBehavior } from '@microsoft/vscode-extension-logic-apps';
 import type { IProjectWizardContext } from '@microsoft/vscode-extension-logic-apps';
 import * as path from 'path';
+import { workspaceNameValidation } from '../../../../constants';
 
 export class SetWorkspaceName extends AzureWizardPromptStep<IProjectWizardContext> {
   public hideStepCount = true;
@@ -17,7 +18,9 @@ export class SetWorkspaceName extends AzureWizardPromptStep<IProjectWizardContex
     context.workspaceName = await context.ui.showInputBox({
       placeHolder: localize('setWorkspaceName', 'Workspace name'),
       prompt: localize('workspaceNamePrompt', 'Provide a workspace name'),
+      validateInput: async (input: string): Promise<string | undefined> => await this.validateWorkspaceName(input),
     });
+
     //save uri variable for open project folder command
     context.workspaceCustomFilePath = path.join(context.projectPath, context.workspaceName);
     await fs.ensureDir(context.workspacePath);
@@ -33,5 +36,18 @@ export class SetWorkspaceName extends AzureWizardPromptStep<IProjectWizardContex
 
   public shouldPrompt(): boolean {
     return true;
+  }
+
+  private async validateWorkspaceName(name: string | undefined): Promise<string | undefined> {
+    if (!name) {
+      return localize('emptyWorkspaceName', 'The workspace name cannot be empty.');
+    }
+    if (!workspaceNameValidation.test(name)) {
+      return localize(
+        'workspaceNameInvalidMessage',
+        'Workspace name must start with a letter and can only contain letters, digits, "_" and "-".'
+      );
+    }
+    return undefined;
   }
 }
