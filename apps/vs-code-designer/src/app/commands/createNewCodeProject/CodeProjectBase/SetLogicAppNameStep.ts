@@ -8,6 +8,8 @@ import * as vscode from 'vscode';
 import * as fse from 'fs-extra';
 import { AzureWizardPromptStep } from '@microsoft/vscode-azext-utils';
 import type { IProjectWizardContext } from '@microsoft/vscode-extension-logic-apps';
+import { logicAppNameValidation } from '../../../../constants';
+import * as path from 'path';
 
 export class SetLogicAppName extends AzureWizardPromptStep<IProjectWizardContext> {
   public async prompt(context: IProjectWizardContext): Promise<void> {
@@ -26,17 +28,25 @@ export class SetLogicAppName extends AzureWizardPromptStep<IProjectWizardContext
 
   private async validateLogicAppName(name: string | undefined, context: IProjectWizardContext): Promise<string | undefined> {
     if (!name || name.length === 0) {
-      return localize('projectNameEmpty', 'Project name cannot be empty');
+      return localize('logicAppNameEmpty', 'Logic app name cannot be empty');
     }
 
     if (fse.existsSync(context.workspaceCustomFilePath)) {
       const workspaceFileContent = await vscode.workspace.fs.readFile(vscode.Uri.file(context.workspaceCustomFilePath));
       const workspaceFileJson = JSON.parse(workspaceFileContent.toString());
 
-      if (workspaceFileJson.folders && workspaceFileJson.folders.some((folder: { path: string }) => folder.path === `./${name}`)) {
-        return localize('projectNameExists', 'A project with this name already exists in the workspace');
+      if (workspaceFileJson.folders && workspaceFileJson.folders.some((folder: { path: string }) => folder.path === path.join('.', name))) {
+        return localize('logicAppNameExists', 'A logic app with this name already exists in the workspace');
       }
     }
+
+    if (!logicAppNameValidation.test(name)) {
+      return localize(
+        'logicAppNameInvalidMessage',
+        'Logic app name must start with a letter and can only contain letters, digits, "_" and "-".'
+      );
+    }
+
     return undefined;
   }
 }
