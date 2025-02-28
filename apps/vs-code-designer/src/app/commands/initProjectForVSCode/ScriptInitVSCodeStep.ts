@@ -71,6 +71,6 @@ export class ScriptInitVSCodeStep extends InitVSCodeStepBase {
       }
     }
 
-    this.setDeploySubpath(context, '.');
+    await this.setDeploySubpath(context, '.');
   }
 }

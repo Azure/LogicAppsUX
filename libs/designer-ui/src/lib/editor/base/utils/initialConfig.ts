@@ -5,6 +5,7 @@ import { AutoLinkNode, LinkNode } from '@lexical/link';
 import { ListItemNode, ListNode } from '@lexical/list';
 import { HeadingNode } from '@lexical/rich-text';
 import { LineBreakNode, TextNode } from 'lexical';
+import { PasswordNode } from '../nodes/passwordNode';
 
 const onError = (error: Error) => {
   console.error(error);
@@ -28,4 +29,4 @@ export const htmlNodes = [
   { replace: TextNode, with: (node: TextNode) => new ExtentedTextNode(node.__text) },
 ];
 
-export const defaultNodes = [AutoLinkNode, LinkNode, TokenNode];
+export const defaultNodes = [AutoLinkNode, LinkNode, TokenNode, PasswordNode];

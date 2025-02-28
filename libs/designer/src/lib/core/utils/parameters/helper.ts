@@ -551,7 +551,7 @@ const convertStringToInputParameter = (value: string, options: LoadParamteerValu
   return {
     key: guid(),
     name: newValue,
-    type: parameterType ?? constants.SWAGGER.TYPE.ANY,
+    type: constants.SWAGGER.TYPE.STRING,
     hideInUI: false,
     value: newValue,
     suppressCasting: true,
