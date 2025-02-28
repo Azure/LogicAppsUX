@@ -499,7 +499,7 @@ export async function createTestSettingsConfigFile(unitTestFolderPath: string, w
 
   let templateContent = await fse.readFile(templatePath, 'utf-8');
   templateContent = templateContent
-    .replace(/%WorkspacePath%/g, '../../../../')
+    .replace(/%WorkspacePath%/g, '../../../../../')
     .replace(/%LogicAppName%/g, logicAppName)
     .replace(/%WorkflowName%/g, workflowName);
 
@@ -990,7 +990,9 @@ export function generateClassCode(classDef: ClassDefinition): string {
   sb.push('        /// </summary>');
   sb.push(`        public ${classDef.className}()`);
   sb.push('        {');
-  sb.push('            this.StatusCode = HttpStatusCode.OK;');
+  if (classDef.inheritsFrom === 'MockOutput') {
+    sb.push('            this.StatusCode = HttpStatusCode.OK;');
+  }
 
   for (const prop of classDef.properties) {
     if (prop.propertyType === 'string') {
