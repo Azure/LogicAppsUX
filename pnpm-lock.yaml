@@ -72,6 +72,9 @@ importers:
       '@testing-library/react-hooks':
         specifier: ^8.0.1
         version: 8.0.1(@types/react@18.3.0)(react-test-renderer@18.2.0)
+      '@testing-library/user-event':
+        specifier: ^14.6.1
+        version: 14.6.1(@testing-library/dom@10.0.0)
       '@types/node':
         specifier: ^20.12.7
         version: 20.12.7
@@ -282,15 +285,21 @@ importers:
       '@reduxjs/toolkit':
         specifier: 1.8.5
         version: 1.8.5(react-redux@8.0.2(@types/react-dom@18.3.0)(@types/react@18.3.0)(react-dom@18.2.0(react@18.2.0))(react@18.2.0)(redux@4.2.1))(react@18.2.0)
+      '@tanstack/query-sync-storage-persister':
+        specifier: 4.36.1
+        version: 4.36.1
       '@tanstack/react-query':
         specifier: 4.36.1
         version: 4.36.1(react-dom@18.2.0(react@18.2.0))(react@18.2.0)
       '@tanstack/react-query-devtools':
         specifier: 4.36.1
         version: 4.36.1(@tanstack/react-query@4.36.1(react-dom@18.2.0(react@18.2.0))(react@18.2.0))(react-dom@18.2.0(react@18.2.0))(react@18.2.0)
+      '@tanstack/react-query-persist-client':
+        specifier: 4.36.1
+        version: 4.36.1(@tanstack/react-query@4.36.1(react-dom@18.2.0(react@18.2.0))(react@18.2.0))
       axios:
         specifier: ^1.7.7
-        version: 1.7.7(debug@4.3.4)
+        version: 1.7.7
       axios-retry:
         specifier: ^3.5.0
         version: 3.9.1
@@ -457,7 +466,7 @@ importers:
         version: 0.5.12
       axios:
         specifier: ^1.7.7
-        version: 1.7.7(debug@4.3.4)
+        version: 1.7.7
       azure-storage:
         specifier: ^2.10.3
         version: 2.10.7
@@ -563,12 +572,18 @@ importers:
       '@reduxjs/toolkit':
         specifier: 1.8.5
         version: 1.8.5(react-redux@8.0.2(@types/react-dom@18.3.0)(@types/react@18.3.0)(react-dom@18.2.0(react@18.2.0))(react@18.2.0)(redux@4.2.1))(react@18.2.0)
+      '@tanstack/query-sync-storage-persister':
+        specifier: 4.36.1
+        version: 4.36.1
       '@tanstack/react-query':
         specifier: 4.36.1
         version: 4.36.1(react-dom@18.2.0(react@18.2.0))(react@18.2.0)
       '@tanstack/react-query-devtools':
         specifier: 4.36.1
         version: 4.36.1(@tanstack/react-query@4.36.1(react-dom@18.2.0(react@18.2.0))(react@18.2.0))(react-dom@18.2.0(react@18.2.0))(react@18.2.0)
+      '@tanstack/react-query-persist-client':
+        specifier: 4.36.1
+        version: 4.36.1(@tanstack/react-query@4.36.1(react-dom@18.2.0(react@18.2.0))(react@18.2.0))
       '@use-it/event-listener':
         specifier: 0.1.7
         version: 0.1.7(react@18.2.0)
@@ -918,12 +933,18 @@ importers:
       '@reduxjs/toolkit':
         specifier: 1.8.5
         version: 1.8.5(react-redux@8.0.2(@types/react-dom@18.3.0)(@types/react@18.3.0)(react-dom@18.2.0(react@18.2.0))(react@18.2.0)(redux@4.2.1))(react@18.2.0)
+      '@tanstack/query-sync-storage-persister':
+        specifier: 4.36.1
+        version: 4.36.1
       '@tanstack/react-query':
         specifier: 4.36.1
         version: 4.36.1(react-dom@18.2.0(react@18.2.0))(react@18.2.0)
       '@tanstack/react-query-devtools':
         specifier: 4.36.1
         version: 4.36.1(@tanstack/react-query@4.36.1(react-dom@18.2.0(react@18.2.0))(react@18.2.0))(react-dom@18.2.0(react@18.2.0))(react@18.2.0)
+      '@tanstack/react-query-persist-client':
+        specifier: 4.36.1
+        version: 4.36.1(@tanstack/react-query@4.36.1(react-dom@18.2.0(react@18.2.0))(react@18.2.0))
       '@xyflow/react':
         specifier: ^12.3.5
         version: 12.3.5(@types/react@18.3.0)(immer@9.0.15)(react-dom@18.2.0(react@18.2.0))(react@18.2.0)
@@ -945,6 +966,9 @@ importers:
       lodash.merge:
         specifier: 4.6.2
         version: 4.6.2
+      lz-string:
+        specifier: ^1.5.0
+        version: 1.5.0
       monaco-editor:
         specifier: 0.44.0
         version: 0.44.0
@@ -1069,12 +1093,18 @@ importers:
       '@react-hookz/web':
         specifier: 22.0.0
         version: 22.0.0(react-dom@18.2.0(react@18.2.0))(react@18.2.0)
+      '@tanstack/query-sync-storage-persister':
+        specifier: 4.36.1
+        version: 4.36.1
       '@tanstack/react-query':
         specifier: 4.36.1
         version: 4.36.1(react-dom@18.2.0(react@18.2.0))(react@18.2.0)
       '@tanstack/react-query-devtools':
         specifier: 4.36.1
         version: 4.36.1(@tanstack/react-query@4.36.1(react-dom@18.2.0(react@18.2.0))(react@18.2.0))(react-dom@18.2.0(react@18.2.0))(react@18.2.0)
+      '@tanstack/react-query-persist-client':
+        specifier: 4.36.1
+        version: 4.36.1(@tanstack/react-query@4.36.1(react-dom@18.2.0(react@18.2.0))(react@18.2.0))
       '@xyflow/react':
         specifier: ^12.3.5
         version: 12.3.5(@types/react@18.3.0)(immer@9.0.15)(react-dom@18.2.0(react@18.2.0))(react@18.2.0)
@@ -1130,9 +1160,15 @@ importers:
       '@formatjs/intl':
         specifier: ^2.10.1
         version: 2.10.1(typescript@4.9.5)
+      '@tanstack/query-sync-storage-persister':
+        specifier: 4.36.1
+        version: 4.36.1
       '@tanstack/react-query':
         specifier: 4.36.1
         version: 4.36.1(react-dom@18.2.0(react@18.2.0))(react@18.2.0)
+      '@tanstack/react-query-persist-client':
+        specifier: 4.36.1
+        version: 4.36.1(@tanstack/react-query@4.36.1(react-dom@18.2.0(react@18.2.0))(react@18.2.0))
       '@xyflow/react':
         specifier: ^12.3.5
         version: 12.3.5(@types/react@18.3.0)(immer@9.0.15)(react-dom@18.2.0(react@18.2.0))(react@18.2.0)
@@ -1141,7 +1177,7 @@ importers:
         version: 0.0.37
       axios:
         specifier: ^1.7.7
-        version: 1.7.7(debug@4.3.4)
+        version: 1.7.7
       react:
         specifier: ^16.4.0 || ^17.0.0 || ^18.0.0
         version: 18.2.0
@@ -1169,18 +1205,24 @@ importers:
       '@microsoft/vscode-azext-utils':
         specifier: 0.4.6
         version: 0.4.6(@azure/ms-rest-azure-env@2.0.0)(tslib@2.4.0)
+      '@tanstack/query-sync-storage-persister':
+        specifier: 4.36.1
+        version: 4.36.1
       '@tanstack/react-query':
         specifier: 4.36.1
         version: 4.36.1(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       '@tanstack/react-query-devtools':
         specifier: 4.36.1
         version: 4.36.1(@tanstack/react-query@4.36.1(react-dom@18.3.1(react@18.3.1))(react@18.3.1))(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
+      '@tanstack/react-query-persist-client':
+        specifier: 4.36.1
+        version: 4.36.1(@tanstack/react-query@4.36.1(react-dom@18.3.1(react@18.3.1))(react@18.3.1))
       '@xyflow/react':
         specifier: ^12.3.5
         version: 12.3.5(@types/react@18.3.0)(immer@9.0.15)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       axios:
         specifier: ^1.7.7
-        version: 1.7.7(debug@4.3.4)
+        version: 1.7.7
       react:
         specifier: ^16.4.0 || ^17.0.0 || ^18.0.0
         version: 18.3.1
@@ -4889,12 +4931,23 @@ packages:
   '@tanstack/query-core@4.36.1':
     resolution: {integrity: sha512-DJSilV5+ytBP1FbFcEJovv4rnnm/CokuVvrBEtW/Va9DvuJ3HksbXUJEpI0aV1KtuL4ZoO9AVE6PyNLzF7tLeA==}
 
+  '@tanstack/query-persist-client-core@4.36.1':
+    resolution: {integrity: sha512-eocgCeI7D7TRv1IUUBMfVwOI0wdSmMkBIbkKhqEdTrnUHUQEeOaYac8oeZk2cumAWJdycu6P/wB+WqGynTnzXg==}
+
+  '@tanstack/query-sync-storage-persister@4.36.1':
+    resolution: {integrity: sha512-yMEt5hWe2+1eclf1agMtXHnPIkxEida0lYWkfdhR8U6KXk/lO4Vca6piJmhKI85t0NHlx3l/z6zX+t/Fn5O9NA==}
+
   '@tanstack/react-query-devtools@4.36.1':
     resolution: {integrity: sha512-WYku83CKP3OevnYSG8Y/QO9g0rT75v1om5IvcWUwiUZJ4LanYGLVCZ8TdFG5jfsq4Ej/lu2wwDAULEUnRIMBSw==}
     peerDependencies:
       '@tanstack/react-query': ^4.36.1
       react: ^16.8.0 || ^17.0.0 || ^18.0.0
       react-dom: ^16.8.0 || ^17.0.0 || ^18.0.0
+
+  '@tanstack/react-query-persist-client@4.36.1':
+    resolution: {integrity: sha512-32I5b9aAu4NCiXZ7Te/KEQLfHbYeTNriVPrKYcvEThnZ9tlW01vLcSoxpUIsMYRsembvJUUAkzYBAiZHLOd6pQ==}
+    peerDependencies:
+      '@tanstack/react-query': ^4.36.1
 
   '@tanstack/react-query@4.36.1':
     resolution: {integrity: sha512-y7ySVHFyyQblPl3J3eQBWpXZkliroki3ARnBKsdJchlgt7yJLRDUcf4B8soufgiYt3pEQIkBWBx1N9/ZPIeUWw==}
@@ -4938,6 +4991,12 @@ packages:
     peerDependencies:
       react: ^18.0.0
       react-dom: ^18.0.0
+
+  '@testing-library/user-event@14.6.1':
+    resolution: {integrity: sha512-vq7fv0rnt+QTXgPxr5Hjc210p6YKq2kmdziLgnsZGgLJ9e6VAShx1pACLuRjd/AS/sr7phAR58OIIpf0LlmQNw==}
+    engines: {node: '>=12', npm: '>=6'}
+    peerDependencies:
+      '@testing-library/dom': '>=7.21.4'
 
   '@tootallnate/once@1.1.2':
     resolution: {integrity: sha512-RbzJvlNzmRq5c3O09UipeuXno4tA1FE6ikOjxZK0tuxVv3412l64l5t1W5pj4+rJq9vpkm/kwiR07aZXnsKPxw==}
@@ -18598,6 +18657,14 @@ snapshots:
 
   '@tanstack/query-core@4.36.1': {}
 
+  '@tanstack/query-persist-client-core@4.36.1':
+    dependencies:
+      '@tanstack/query-core': 4.36.1
+
+  '@tanstack/query-sync-storage-persister@4.36.1':
+    dependencies:
+      '@tanstack/query-persist-client-core': 4.36.1
+
   '@tanstack/react-query-devtools@4.36.1(@tanstack/react-query@4.36.1(react-dom@18.2.0(react@18.2.0))(react@18.2.0))(react-dom@18.2.0(react@18.2.0))(react@18.2.0)':
     dependencies:
       '@tanstack/match-sorter-utils': 8.15.1
@@ -18615,6 +18682,16 @@ snapshots:
       react-dom: 18.3.1(react@18.3.1)
       superjson: 1.13.3
       use-sync-external-store: 1.2.0(react@18.3.1)
+
+  '@tanstack/react-query-persist-client@4.36.1(@tanstack/react-query@4.36.1(react-dom@18.2.0(react@18.2.0))(react@18.2.0))':
+    dependencies:
+      '@tanstack/query-persist-client-core': 4.36.1
+      '@tanstack/react-query': 4.36.1(react-dom@18.2.0(react@18.2.0))(react@18.2.0)
+
+  '@tanstack/react-query-persist-client@4.36.1(@tanstack/react-query@4.36.1(react-dom@18.3.1(react@18.3.1))(react@18.3.1))':
+    dependencies:
+      '@tanstack/query-persist-client-core': 4.36.1
+      '@tanstack/react-query': 4.36.1(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
 
   '@tanstack/react-query@4.36.1(react-dom@18.2.0(react@18.2.0))(react@18.2.0)':
     dependencies:
@@ -18666,6 +18743,10 @@ snapshots:
       '@babel/runtime': 7.24.1
       '@testing-library/dom': 10.0.0
       '@types/react-dom': 18.3.0
+
+  '@testing-library/user-event@14.6.1(@testing-library/dom@10.0.0)':
+    dependencies:
+      '@testing-library/dom': 10.0.0
 
   '@tootallnate/once@1.1.2': {}
 
@@ -19985,6 +20066,14 @@ snapshots:
       '@babel/runtime': 7.24.4
       is-retry-allowed: 2.2.0
 
+  axios@1.7.7:
+    dependencies:
+      follow-redirects: 1.15.9(debug@4.3.7)
+      form-data: 4.0.0
+      proxy-from-env: 1.1.0
+    transitivePeerDependencies:
+      - debug
+
   axios@1.7.7(debug@4.3.4):
     dependencies:
       follow-redirects: 1.15.9(debug@4.3.4)
@@ -21284,7 +21373,7 @@ snapshots:
   docusaurus-plugin-remote-content@4.0.0(@docusaurus/core@3.6.1(@mdx-js/react@3.1.0(@types/react@18.3.0)(react@18.3.1))(esbuild@0.19.12)(eslint@8.57.1)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(typescript@5.6.3)):
     dependencies:
       '@docusaurus/core': 3.6.1(@mdx-js/react@3.1.0(@types/react@18.3.0)(react@18.3.1))(esbuild@0.19.12)(eslint@8.57.1)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(typescript@5.6.3)
-      axios: 1.7.7(debug@4.3.4)
+      axios: 1.7.7
       picocolors: 1.0.0
       pretty-ms: 7.0.1
       rimraf: 5.0.5

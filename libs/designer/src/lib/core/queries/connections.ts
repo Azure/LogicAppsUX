@@ -18,6 +18,12 @@ export const getConnectorWithSwagger = async (connectorId: string): Promise<Conn
   return { connector, parsedSwagger: new SwaggerParser(parsedSwagger) };
 };
 
+export const getSwaggerForConnector = async (connectorId: string): Promise<SwaggerParser> => {
+  const swagger = await getSwagger(connectorId);
+  const parsedSwagger = await SwaggerParser.parse(swagger);
+  return new SwaggerParser(parsedSwagger);
+};
+
 export const getSwaggerFromEndpoint = async (uri: string): Promise<SwaggerParser> => {
   const swagger = await getReactQueryClient().fetchQuery(['swaggers', uri.toLowerCase()], async () => {
     const swagger = await ConnectionService().getSwaggerFromUri(uri);

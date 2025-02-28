@@ -1,4 +1,76 @@
 # Logic Apps Designer
+## [5.46.0](https://github.com/Azure/LogicAppsUX/compare/v5.45.0...v5.46.0) (2025-02-27)
+
+
+### Features
+
+* **templates:** Moving templates loading from template service via storage account ([#6644](https://github.com/Azure/LogicAppsUX/issues/6644)) ([9adfd5b](https://github.com/Azure/LogicAppsUX/commit/9adfd5b75e27e809e48f557c6d4be5db6129ec08))
+
+
+### Bug Fixes
+
+* **vscode:** Fix for adding sql for multiple logic apps in a workspace ([#6673](https://github.com/Azure/LogicAppsUX/issues/6673)) ([8f3fe73](https://github.com/Azure/LogicAppsUX/commit/8f3fe73af9568d666a405715c29ea25a340fbf74))
+
+## [5.45.0](https://github.com/Azure/LogicAppsUX/compare/v5.44.0...v5.45.0) (2025-02-25)
+
+
+### Features
+
+* **VSCode:** added docs around new telemetry collection ([#6662](https://github.com/Azure/LogicAppsUX/issues/6662)) ([ab65007](https://github.com/Azure/LogicAppsUX/commit/ab650073218c3fe568b8e778f51dcbe965a3cfb2))
+
+
+### Bug Fixes
+
+* **designer:** Dictionary Editor to not use string interpolation for tokens if ANY value type ([#6666](https://github.com/Azure/LogicAppsUX/issues/6666)) ([9ea1603](https://github.com/Azure/LogicAppsUX/commit/9ea1603a5683bbd4099f3c45b1a866885d85febc))
+* **designer:** Update callback url accordingly to new name ([#6656](https://github.com/Azure/LogicAppsUX/issues/6656)) ([327bb4c](https://github.com/Azure/LogicAppsUX/commit/327bb4c59a3c5f41b2ad99e0993827a486c055a9))
+
+## [5.44.0](https://github.com/Azure/LogicAppsUX/compare/v5.43.0...v5.44.0) (2025-02-24)
+
+
+### Features
+
+* **Data Mapper:** custom code ([#6639](https://github.com/Azure/LogicAppsUX/issues/6639)) ([70e754b](https://github.com/Azure/LogicAppsUX/commit/70e754b767c8579a22f92a9af2784e73f83a6feb))
+
+
+### Bug Fixes
+
+* **vscode:** Add workflow and logic app creation back to azure blade ([#6649](https://github.com/Azure/LogicAppsUX/issues/6649)) ([ddb951b](https://github.com/Azure/LogicAppsUX/commit/ddb951b06a5f301059b21dc048bf5dde2e42afe7))
+* **vscode:** Bug with path separator in local tests ([#6641](https://github.com/Azure/LogicAppsUX/issues/6641)) ([e3008a7](https://github.com/Azure/LogicAppsUX/commit/e3008a7627b09eceb53a16fa17e10d16fd55edf5))
+* **vscode:** Create Unique Configuration Names ([#6657](https://github.com/Azure/LogicAppsUX/issues/6657)) ([c5b2e1a](https://github.com/Azure/LogicAppsUX/commit/c5b2e1a349dcc7ad79e29cd159b45248446ba7a1))
+
+## [5.43.0](https://github.com/Azure/LogicAppsUX/compare/v5.42.0...v5.43.0) (2025-02-20)
+
+
+### Bug Fixes
+
+* **Designer:** Fixes an issue where '\"'  causing json errors in expressions ([#6636](https://github.com/Azure/LogicAppsUX/issues/6636)) ([ccb46a1](https://github.com/Azure/LogicAppsUX/commit/ccb46a1f652ac4ea8d49ad34e38a16db1d2b7150))
+
+## [5.42.0](https://github.com/Azure/LogicAppsUX/compare/v5.41.0...v5.42.0) (2025-02-19)
+
+
+### Features
+
+* **designer:** Add info message for request trigger type ([#6598](https://github.com/Azure/LogicAppsUX/issues/6598)) ([570f465](https://github.com/Azure/LogicAppsUX/commit/570f465a31ad43392fa6ea97f1e12515e895c4e4))
+* **templates:** Adding support for dynamic list and file/folder picker in template parameters ([#6605](https://github.com/Azure/LogicAppsUX/issues/6605)) ([88f742f](https://github.com/Azure/LogicAppsUX/commit/88f742f131a24a240121ba71c966d03acc4f6154))
+
+
+### Bug Fixes
+
+* **Designer:** Fixed nested loop monitoring view issues ([#6624](https://github.com/Azure/LogicAppsUX/issues/6624)) ([527f4af](https://github.com/Azure/LogicAppsUX/commit/527f4af1a0eb191cb25cd0528c861e95213ba848))
+
+## [5.41.0](https://github.com/Azure/LogicAppsUX/compare/v5.40.0...v5.41.0) (2025-02-14)
+
+
+### Features
+
+* **designer:** Introduce collapse node route ([#6534](https://github.com/Azure/LogicAppsUX/issues/6534)) ([2dee3a3](https://github.com/Azure/LogicAppsUX/commit/2dee3a3187204de3c5ad8fec578d2072e01ca006))
+* **Designer:** Local caching of manifests / connectors / swaggers ([#6583](https://github.com/Azure/LogicAppsUX/issues/6583)) ([d5b759d](https://github.com/Azure/LogicAppsUX/commit/d5b759d06259d7ab6035b4cd97229c896af89a98))
+
+
+### Bug Fixes
+
+* **Data Mapper:** extra '/' added to custom values on for/if ([#6599](https://github.com/Azure/LogicAppsUX/issues/6599)) ([cacb1d8](https://github.com/Azure/LogicAppsUX/commit/cacb1d8212fe9fb7bf7424ed07f014c83677530d))
+
 ## [5.40.0](https://github.com/Azure/LogicAppsUX/compare/v5.39.0...v5.40.0) (2025-02-13)
 
 

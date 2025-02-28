@@ -288,6 +288,10 @@ export const getInputValue = (inputConnection: InputConnection | undefined) => {
   return undefined;
 };
 
+export const isFileDropdownFunction = (functionData: FunctionData) => {
+  return functionData.inputs[0]?.inputEntryType === InputFormat.FilePicker;
+};
+
 export const addQuotesToString = (value: string) => {
   let formattedValue = value;
 
