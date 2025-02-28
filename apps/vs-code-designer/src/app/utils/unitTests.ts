@@ -378,11 +378,13 @@ export async function updateCsprojFile(csprojFilePath: string, workflowName: str
 
 /**
  * Creates a .cs file in the specified unit test folder using a template.
- * Converts any "-" characters in LogicAppName, WorkflowName, and UnitTestName to "_" only in code-related contexts.
  * @param {string} unitTestFolderPath - The path to the unit test folder.
  * @param {string} unitTestName - The name of the unit test.
+ * @param {string} cleanedUnitTestName - The cleaned name of the unit test.
  * @param {string} workflowName - The name of the workflow.
+ * @param {string} cleanedWorkflowName - The cleaned name of the workflow.
  * @param {string} logicAppName - The name of the logic app.
+ * @param {string} cleanedLogicAppName - The cleaned name of the logic app.
  * @param {string} actionName - The name of the action.
  * @param {string} actionOutputClassName - The name of the action output class.
  * @param {string} actionMockClassName - The name of the action mock class.
@@ -392,8 +394,11 @@ export async function updateCsprojFile(csprojFilePath: string, workflowName: str
 export async function createCsFile(
   unitTestFolderPath: string,
   unitTestName: string,
+  cleanedUnitTestName: string,
   workflowName: string,
+  cleanedWorkflowName: string,
   logicAppName: string,
+  cleanedLogicAppName: string,
   actionName: string,
   actionOutputClassName: string,
   actionMockClassName: string,
@@ -422,24 +427,20 @@ export async function createCsFile(
 
   let templateContent = await fse.readFile(templatePath, 'utf-8');
 
-  const sanitizedUnitTestName = unitTestName.replace(/-/g, '_');
-  const sanitizedWorkflowName = workflowName.replace(/-/g, '_');
-  const sanitizedLogicAppName = logicAppName.replace(/-/g, '_');
-
-  templateContent = templateContent.replace(/namespace <%= LogicAppName %>\.Tests/g, `namespace ${sanitizedLogicAppName}.Tests`);
-  templateContent = templateContent.replace(/public class <%= UnitTestName %>/g, `public class ${sanitizedUnitTestName}`);
-  templateContent = templateContent.replace(/<see cref="<%= UnitTestName %>" \/>/g, `<see cref="${sanitizedUnitTestName}" />`);
-  templateContent = templateContent.replace(/public <%= UnitTestName %>\(\)/g, `public ${sanitizedUnitTestName}()`);
+  templateContent = templateContent.replace(/namespace <%= LogicAppName %>\.Tests/g, `namespace ${cleanedLogicAppName}.Tests`);
+  templateContent = templateContent.replace(/public class <%= UnitTestName %>/g, `public class ${cleanedUnitTestName}`);
+  templateContent = templateContent.replace(/<see cref="<%= UnitTestName %>" \/>/g, `<see cref="${cleanedUnitTestName}" />`);
+  templateContent = templateContent.replace(/public <%= UnitTestName %>\(\)/g, `public ${cleanedUnitTestName}()`);
   templateContent = templateContent.replace(
     /public async Task <%= WorkflowName %>_<%= UnitTestName %>_ExecuteWorkflow/g,
-    `public async Task ${sanitizedWorkflowName}_${sanitizedUnitTestName}_ExecuteWorkflow`
+    `public async Task ${cleanedWorkflowName}_${cleanedUnitTestName}_ExecuteWorkflow`
   );
 
   templateContent = templateContent
     .replace(/<%= LogicAppName %>/g, logicAppName)
     .replace(/<%= WorkflowName %>/g, workflowName)
     .replace(/<%= UnitTestName %>/g, unitTestName)
-    .replace(/<%= SanitizedWorkflowName %>/g, sanitizedWorkflowName)
+    .replace(/<%= SanitizedWorkflowName %>/g, cleanedWorkflowName)
     .replace(/<%= ActionMockName %>/g, actionName)
     .replace(/<%= ActionMockOutputClassName %>/g, actionOutputClassName)
     .replace(/<%= ActionMockClassName %>/g, actionMockClassName)
@@ -458,9 +459,9 @@ export async function createCsFile(
  * Creates a testSettings.config file in the specified unit test folder using a template.
  * Converts any "-" characters in LogicAppName, WorkflowName, and UnitTestName to "_" only in code-related contexts.
  * @param {string} logicAppTestFolderPath - The path to the logicapp folder within Tests.
- * @param {string} logicAppName - The name of the logic app.
+ * @param {string} cleanedLogicAppName - The cleaned name of the logic app.
  */
-export async function createTestExecutorFile(logicAppTestFolderPath: string, logicAppName: string): Promise<void> {
+export async function createTestExecutorFile(logicAppTestFolderPath: string, cleanedLogicAppName: string): Promise<void> {
   const templateFolderName = 'UnitTestTemplates';
   const executorTemplateFileName = 'TestExecutorFile';
   const templatePath = path.join(__dirname, 'assets', templateFolderName, executorTemplateFileName);
@@ -473,7 +474,7 @@ export async function createTestExecutorFile(logicAppTestFolderPath: string, log
   }
 
   let templateContent = await fse.readFile(templatePath, 'utf-8');
-  templateContent = templateContent.replace(/<%= LogicAppName %>/g, logicAppName);
+  templateContent = templateContent.replace(/<%= LogicAppName %>/g, cleanedLogicAppName);
 
   await fse.writeFile(csFilePath, templateContent);
   ext.outputChannel.appendLog(localize('createdTestExecutorFile', 'Created TestExecutor.cs file at: {0}', csFilePath));
@@ -481,7 +482,6 @@ export async function createTestExecutorFile(logicAppTestFolderPath: string, log
 
 /**
  * Creates a testSettings.config file in the specified unit test folder using a template.
- * Converts any "-" characters in LogicAppName, WorkflowName, and UnitTestName to "_" only in code-related contexts.
  * @param {string} unitTestFolderPath - The path to the unit test folder.
  * @param {string} workflowName - The name of the workflow.
  * @param {string} logicAppName - The name of the logic app.

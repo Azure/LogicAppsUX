@@ -195,6 +195,11 @@ async function generateBlankCodefulUnitTest(
       )
     );
 
+    // Get cleaned versions of strings
+    const cleanedUnitTestName = unitTestName.replace(/-/g, '_');
+    const cleanedWorkflowName = workflowName.replace(/-/g, '_');
+    const cleanedLogicAppName = logicAppName.replace(/-/g, '_');
+
     // Ensure directories exist
     ext.outputChannel.appendLog(localize('ensuringDirectories', 'Ensuring required directories exist...'));
     await Promise.all([fs.ensureDir(logicAppTestFolderPath), fs.ensureDir(workflowTestFolderPath), fs.ensureDir(unitTestFolderPath)]);
@@ -202,7 +207,7 @@ async function generateBlankCodefulUnitTest(
     // Create the testSettings.config file for the unit test
     ext.outputChannel.appendLog(localize('creatingTestSettingsConfig', 'Creating testSettings.config file for unit test...'));
     await createTestSettingsConfigFile(workflowTestFolderPath, workflowName, logicAppName);
-    await createTestExecutorFile(logicAppTestFolderPath, logicAppName);
+    await createTestExecutorFile(logicAppTestFolderPath, cleanedLogicAppName);
 
     // Get the first actionMock in foundActionMocks
     const [actionName, actionOutputClassName] = Object.entries(foundActionMocks)[0] || [];
@@ -216,8 +221,11 @@ async function generateBlankCodefulUnitTest(
     await createCsFile(
       unitTestFolderPath,
       unitTestName,
+      cleanedUnitTestName,
       workflowName,
+      cleanedWorkflowName,
       logicAppName,
+      cleanedLogicAppName,
       actionName,
       actionOutputClassName,
       actionMockClassName,
