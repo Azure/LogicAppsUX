@@ -313,6 +313,7 @@ export const Combobox = ({
               onClick={() => handleClearClick()}
               icon={<ClearIcon />}
               style={buttonStyles}
+              disabled={baseEditorProps.readonly}
             />
           </Tooltip>
         </div>

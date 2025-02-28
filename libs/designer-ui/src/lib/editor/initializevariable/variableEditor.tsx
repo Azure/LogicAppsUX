@@ -57,6 +57,7 @@ interface VariableEditorProps extends Partial<BaseEditorProps> {
   errors?: InitializeVariableErrors;
   onDelete: () => void;
   onVariableChange: (value: InitializeVariableProps) => void;
+  preventMultiVariable?: boolean;
 }
 
 const FieldEditor = ({
@@ -92,6 +93,7 @@ export const VariableEditor = ({
   onVariableChange,
   errors,
   index,
+  preventMultiVariable,
   ...baseEditorProps
 }: VariableEditorProps) => {
   const intl = useIntl();
@@ -172,6 +174,7 @@ export const VariableEditor = ({
       isRequired: true,
       editor: DropdownEditor,
       editorProps: {
+        ...baseEditorProps,
         key: `${VARIABLE_PROPERTIES.TYPE}-${variableId}`,
         initialValue: type,
         options: typeOptions,
@@ -247,18 +250,20 @@ export const VariableEditor = ({
           </>
         ) : null}
       </div>
-      <div className={'msla-variable-editor-edit-or-delete-button'}>
-        <Tooltip relationship="label" content={disableDelete ? deleteButtonDisabledTitle : deleteButtonTitle}>
-          <Button
-            appearance="subtle"
-            aria-label={deleteButtonTitle}
-            onClick={handleDelete}
-            icon={<DeleteIcon />}
-            disabled={disableDelete}
-            style={{ color: 'var(--colorBrandForeground1)' }}
-          />
-        </Tooltip>
-      </div>
+      {preventMultiVariable ? null : (
+        <div className={'msla-variable-editor-edit-or-delete-button'}>
+          <Tooltip relationship="label" content={disableDelete ? deleteButtonDisabledTitle : deleteButtonTitle}>
+            <Button
+              appearance="subtle"
+              aria-label={deleteButtonTitle}
+              onClick={handleDelete}
+              icon={<DeleteIcon />}
+              disabled={disableDelete || baseEditorProps?.readonly}
+              style={{ color: 'var(--colorBrandForeground1)' }}
+            />
+          </Tooltip>
+        </div>
+      )}
     </div>
   );
 };

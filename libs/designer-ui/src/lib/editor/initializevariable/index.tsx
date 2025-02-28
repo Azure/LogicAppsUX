@@ -20,6 +20,7 @@ export interface InitializeVariableProps {
 
 export interface InitializeVariableEditorProps extends BaseEditorProps {
   validationErrors?: InitializeVariableErrors[];
+  preventMultiVariable?: boolean;
 }
 
 export const InitializeVariableEditor = ({ initialValue, onChange, validationErrors, ...props }: InitializeVariableEditorProps) => {
@@ -87,18 +88,24 @@ export const InitializeVariableEditor = ({ initialValue, onChange, validationErr
         />
       ))}
 
-      <div className="msla-initialize-variable-add-variable-button">
-        <Button
-          appearance="subtle"
-          aria-label={addVariableLabel}
-          onClick={addVariable}
-          disabled={variables.length === constants.PARAMETER.VARIABLE_EDITOR_MAX_VARIABLES}
-          icon={<CreateIcon />}
-          style={{ border: '1px solid #9e9e9e', color: 'var(--colorBrandForeground1)' }}
-        >
-          {addVariableLabel}
-        </Button>
-      </div>
+      {props.preventMultiVariable ? null : (
+        <div className="msla-initialize-variable-add-variable-button">
+          <Button
+            appearance="subtle"
+            aria-label={addVariableLabel}
+            onClick={addVariable}
+            disabled={variables.length === constants.PARAMETER.VARIABLE_EDITOR_MAX_VARIABLES || props.readonly}
+            icon={<CreateIcon />}
+            style={
+              variables.length === constants.PARAMETER.VARIABLE_EDITOR_MAX_VARIABLES || props.readonly
+                ? {}
+                : { color: 'var(--colorBrandForeground1)', border: '1px solid #9e9e9e' }
+            }
+          >
+            {addVariableLabel}
+          </Button>
+        </div>
+      )}
     </div>
   ) : (
     <>

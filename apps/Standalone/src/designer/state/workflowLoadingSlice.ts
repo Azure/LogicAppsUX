@@ -35,6 +35,7 @@ export interface WorkflowLoadingState {
     stringOverrides?: Record<string, string>; // string overrides for localization
     maxStateHistorySize?: number; // maximum number of states to save in history for undo/redo
     collapseGraphsByDefault?: boolean; // collapse scope by default
+    preventMultiVariable?: boolean; // supports creating multiple variables in one action
   };
   showPerformanceDebug?: boolean;
   runFiles: any[];
@@ -63,6 +64,7 @@ const initialState: WorkflowLoadingState = {
     displayRuntimeInfo: true,
     maxStateHistorySize: 0,
     collapseGraphsByDefault: false,
+    preventMultiVariable: false,
   },
   showPerformanceDebug: false,
   runFiles: [],
@@ -90,7 +92,6 @@ export const loadWorkflow = createAsyncThunk('workflowLoadingState/loadWorkflow'
   const isMonitoringView = currentState.workflowLoader.isMonitoringView;
 
   const runFiles = isMonitoringView && fileName ? await readJsonFiles(fileName) : [];
-  console.log(fileName);
   const wf = await import(`../../../../../__mocks__/workflows/${fileName}.json`);
   return {
     workflowDefinition: wf.definition as LogicAppsV2.WorkflowDefinition,
@@ -214,6 +215,9 @@ export const workflowLoadingSlice = createSlice({
     setQueryCachePersist: (state, action: PayloadAction<boolean>) => {
       state.queryCachePersist = action.payload;
     },
+    setPreventMultiVariable: (state, action: PayloadAction<boolean>) => {
+      state.hostOptions.preventMultiVariable = action.payload;
+    },
   },
   extraReducers: (builder) => {
     builder.addCase(loadWorkflow.fulfilled, (state, action: PayloadAction<WorkflowPayload | null>) => {
@@ -263,6 +267,7 @@ export const {
   setShowPerformanceDebug,
   setStringOverrides,
   setQueryCachePersist,
+  setPreventMultiVariable,
 } = workflowLoadingSlice.actions;
 
 export default workflowLoadingSlice.reducer;

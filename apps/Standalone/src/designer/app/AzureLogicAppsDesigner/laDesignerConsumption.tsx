@@ -297,6 +297,7 @@ const DesignerEditorConsumption = () => {
             }}
             workflowId={workflowDefinitionId}
             runInstance={runInstanceData}
+            preventMultiVariable={hostOptions.preventMultiVariable}
           >
             <div style={{ display: 'flex', height: 'inherit' }}>
               <RunHistoryPanel

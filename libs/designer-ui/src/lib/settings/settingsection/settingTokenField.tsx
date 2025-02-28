@@ -42,6 +42,11 @@ import { MixedInputEditor } from '../../mixedinputeditor/mixedinputeditor';
 import { useMemo } from 'react';
 import { useIntl } from 'react-intl';
 
+interface EditorHostOptions {
+  suppressCastingForSerialize?: boolean;
+  preventMultiVariable?: boolean;
+}
+
 export interface SettingTokenFieldProps extends SettingProps {
   id?: string;
   value: ValueSegment[];
@@ -71,7 +76,7 @@ export interface SettingTokenFieldProps extends SettingProps {
   getTokenPicker: GetTokenPickerHandler;
   validationErrors?: string[];
   hideValidationErrors?: ChangeHandler;
-  suppressCastingForSerialize?: boolean;
+  hostOptions?: EditorHostOptions;
 }
 
 export const SettingTokenField = ({ ...props }: SettingTokenFieldProps) => {
@@ -119,7 +124,7 @@ export const TokenField = ({
   hideValidationErrors,
   onCastParameter,
   getTokenPicker,
-  suppressCastingForSerialize,
+  hostOptions,
   required,
 }: TokenFieldProps) => {
   const intl = useIntl();
@@ -167,7 +172,7 @@ export const TokenField = ({
           onMenuOpen={onComboboxMenuOpen}
           tokenMapping={tokenMapping}
           loadParameterValueFromString={loadParameterValueFromString}
-          suppressCastingForSerialize={suppressCastingForSerialize}
+          suppressCastingForSerialize={hostOptions?.suppressCastingForSerialize}
         />
       );
 
@@ -379,6 +384,12 @@ export const TokenField = ({
             hideValidationErrors?.(updatedChangeState);
           }}
           validationErrors={editorViewModel.validationErrors}
+          tokenMapping={tokenMapping}
+          loadParameterValueFromString={loadParameterValueFromString}
+          readonly={readOnly}
+          tokenPickerButtonProps={tokenpickerButtonProps}
+          dataAutomationId={`msla-setting-token-editor-initializevariableeditor-${labelForAutomationId}`}
+          preventMultiVariable={hostOptions?.preventMultiVariable}
         />
       );
 

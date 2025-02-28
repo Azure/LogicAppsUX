@@ -228,6 +228,7 @@ export const LocalDesigner = () => {
             kind: workflowKind,
           }}
           runInstance={runInstance}
+          preventMultiVariable={hostOptions.preventMultiVariable}
         >
           <PseudoCommandBar />
           <Designer />

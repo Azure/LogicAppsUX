@@ -25,12 +25,23 @@ interface InitWorkflowPayload {
 
 export const initializeGraphState = createAsyncThunk<
   InitWorkflowPayload,
-  { workflowDefinition: Workflow; runInstance: LogicAppsV2.RunInstanceDefinition | null | undefined },
+  {
+    workflowDefinition: Workflow;
+    runInstance: LogicAppsV2.RunInstanceDefinition | null | undefined;
+    preventMultiVariable?: boolean;
+  },
   { state: RootState }
 >(
   'parser/deserialize',
-  async (graphState: { workflowDefinition: Workflow; runInstance: any }, { getState, dispatch }): Promise<InitWorkflowPayload> => {
-    const { workflowDefinition, runInstance } = graphState;
+  async (
+    graphState: {
+      workflowDefinition: Workflow;
+      runInstance: any;
+      preventMultiVariable?: boolean;
+    },
+    { getState, dispatch }
+  ): Promise<InitWorkflowPayload> => {
+    const { workflowDefinition, runInstance, preventMultiVariable } = graphState;
     const { workflow, designerOptions } = getState() as RootState;
     const spec = workflow.workflowSpec;
 
@@ -48,7 +59,7 @@ export const initializeGraphState = createAsyncThunk<
 
       const { definition, connectionReferences, parameters } = workflowDefinition;
       // Check if there are sequential initialize variable actions
-      const hasSequentialVars = detectSequentialInitializeVariables(definition);
+      const hasSequentialVars = !preventMultiVariable && detectSequentialInitializeVariables(definition);
       let selectedDefinition = definition;
 
       if (hasSequentialVars) {
