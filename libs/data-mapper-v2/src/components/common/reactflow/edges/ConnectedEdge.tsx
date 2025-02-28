@@ -1,10 +1,10 @@
 import { getStraightPath, type EdgeProps } from '@xyflow/react';
 import { useSelectedEdge, useHoverEdge } from '../../../../core/state/selectors/selectors';
 import { useCallback, useMemo } from 'react';
-import { colors } from '../styles';
 import { useDispatch } from 'react-redux';
 import { setSelectedItem } from '../../../../core/state/DataMapSlice';
 import useEdgePath from './useEdgePath';
+import { customTokens } from '../../../../core/ThemeConect';
 
 const ConnectedEdge = (props: EdgeProps) => {
   const { id, source, data } = props;
@@ -13,7 +13,10 @@ const ConnectedEdge = (props: EdgeProps) => {
   const isHovered = useHoverEdge(id);
   const { sourceX, sourceY, targetX, targetY, sourceScenario, targetScenario } = useEdgePath(props);
 
-  const strokeColor = useMemo(() => (isHovered || isSelected ? colors.edgeActive : colors.edgeConnected), [isSelected, isHovered]);
+  const strokeColor = useMemo(
+    () => (isHovered || isSelected ? customTokens['edgeActive'] : customTokens['edgeConnected']),
+    [isSelected, isHovered]
+  );
 
   const onClick = useCallback(() => {
     if (source) {

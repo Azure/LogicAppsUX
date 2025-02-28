@@ -1,5 +1,6 @@
-import { makeStyles } from '@fluentui/react-components';
+import { makeStyles, tokens } from '@fluentui/react-components';
 import { panelWidth, panelWidthWithoutHandles } from '../../utils/ReactFlow.Util';
+import { customTokens } from '../../core/ThemeConect';
 
 export const useStyles = makeStyles({
   root: {
@@ -19,10 +20,10 @@ export const usePanelStyles = makeStyles({
     overflow: 'visible',
   },
   schemaSelection: {
-    backgroundColor: '#fff',
+    backgroundColor: tokens.colorNeutralBackground1,
   },
   schemaTree: {
-    backgroundColor: '#F6FAFE',
+    backgroundColor: customTokens['panelBackground'],
   },
   header: {
     paddingLeft: '20px',

@@ -1,4 +1,5 @@
 import { makeStyles, shorthands, tokens, typographyStyles } from '@fluentui/react-components';
+import { customTokens } from '../../core/ThemeConect';
 
 const fnIconSize = '17px';
 
@@ -18,22 +19,22 @@ export const useStyles = makeStyles({
     width: '100%',
   },
   functionTree: {
-    backgroundColor: '#E8F3FE',
+    backgroundColor: customTokens['functionPanelBackground'],
     height: '100%',
     marginLeft: '15px',
     marginRight: '10px',
     overflow: 'scroll scroll',
   },
   functionTreeItem: {
-    backgroundColor: '#E8F3FE',
+    backgroundColor: customTokens['functionPanelBackground'],
     paddingLeft: '10px',
     ':hover': {
-      backgroundColor: '#D5E4FF',
-      borderRadius: `${tokens.borderRadiusCircular} 0 0 ${tokens.borderRadiusCircular}`,
+      backgroundColor: customTokens['listElemHover'],
+      borderRadius: `${tokens.borderRadiusCircular} ${tokens.borderRadiusCircular} ${tokens.borderRadiusCircular} ${tokens.borderRadiusCircular}`,
       width: '100%',
     },
     ':active': {
-      backgroundColor: '#D5E4FF',
+      backgroundColor: customTokens['listElemHover'],
       borderRadius: tokens.borderRadiusCircular,
     },
   },
@@ -67,7 +68,7 @@ export const useStyles = makeStyles({
     paddingLeft: '8px',
     paddingRight: '4px',
     fontSize: '13px',
-    color: '#242424',
+    color: tokens.colorNeutralForeground1,
     overflow: 'hidden',
   },
   loopInfoText: {
@@ -76,7 +77,7 @@ export const useStyles = makeStyles({
   },
   treeItem: {
     ':hover': {
-      backgroundColor: '#E8F3FE',
+      backgroundColor: customTokens['functionPanelBackground'],
     },
   },
   addIconAside: {
