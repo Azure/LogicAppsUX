@@ -30,7 +30,7 @@ export const useStyles = makeStyles({
     paddingLeft: '10px',
     ':hover': {
       backgroundColor: customTokens['listElemHover'],
-      borderRadius: `${tokens.borderRadiusCircular} 0 0 ${tokens.borderRadiusCircular}`,
+      borderRadius: `${tokens.borderRadiusCircular} ${tokens.borderRadiusCircular} ${tokens.borderRadiusCircular} ${tokens.borderRadiusCircular}`,
       width: '100%',
     },
     ':active': {
