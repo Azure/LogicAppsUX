@@ -65,6 +65,7 @@ const ScopeCardNode = ({ data, targetPosition = Position.Top, sourcePosition = P
   const runData = useRunData(scopeId);
   const parentRunId = useParentRunId(scopeId);
   const parentRunData = useRunData(parentRunId ?? '');
+  const selfRunData = useRunData(scopeId);
   const nodesMetaData = useNodesMetadata();
   const repetitionName = useMemo(
     () => getRepetitionName(parentRunIndex, scopeId, nodesMetaData, operationsInfo),
@@ -102,9 +103,14 @@ const ScopeCardNode = ({ data, targetPosition = Position.Top, sourcePosition = P
 
   useEffect(() => {
     if (!isNullOrUndefined(repetitionRunData)) {
+      if (selfRunData?.correlation?.actionTrackingId === repetitionRunData?.properties?.correlation?.actionTrackingId) {
+        // if the correlation id is the same, we don't need to update the repetition run data
+        return;
+      }
+
       dispatch(setRepetitionRunData({ nodeId: scopeId, runData: repetitionRunData.properties as LogicAppsV2.WorkflowRunAction }));
     }
-  }, [dispatch, repetitionRunData, scopeId]);
+  }, [dispatch, repetitionRunData, scopeId, selfRunData?.correlation?.actionTrackingId]);
 
   const { dependencies, loopSources } = useTokenDependencies(scopeId);
   const [{ isDragging }, drag, dragPreview] = useDrag(

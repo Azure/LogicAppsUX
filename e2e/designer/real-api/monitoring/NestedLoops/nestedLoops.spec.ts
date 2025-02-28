@@ -1,4 +1,11 @@
 import { expect, test } from '../../../fixtures/real-api';
+
+declare global {
+  interface Window {
+    __REDUX_ACTION_LOG__?: string[];
+  }
+}
+
 test.describe(
   'Nested loops',
   {
@@ -16,7 +23,7 @@ test.describe(
       // Load run history
       await page.getByRole('menuitem', { name: 'Run History' }).click();
       await page.waitForTimeout(3000);
-      await page.getByRole('gridcell', { name: '/18/2025, 3:25:03 PM' }).click();
+      await page.getByRole('gridcell', { name: '/18/2025' }).click();
 
       // Check for outermost foreach
       await expect(page.getByTestId('msla-pill-foreach_status')).toBeVisible();
@@ -47,6 +54,22 @@ test.describe(
 
       // Check inner loop to be interactive
       await page.getByTestId('msla-pager-v2-foreach_2').getByLabel('Next').click();
+
+      // Clear action log
+      await page.evaluate(() => (window.__REDUX_ACTION_LOG__ = []));
+      await page.waitForTimeout(1000);
+
+      // Collapse / expand inner loop
+      await page.getByLabel('Foreach-2 operation').click({ button: 'right' });
+      await page.getByText('Collapse nested').click({ force: true });
+      await page.getByLabel('Foreach-2 operation').click({ button: 'right' });
+      await page.getByText('Expand nested').click({ force: true });
+      await page.waitForTimeout(2000);
+
+      // Confirm the actions only triggered once
+      const actionLog = (await page.evaluate(() => window.__REDUX_ACTION_LOG__)) ?? [];
+      const numActions = actionLog?.filter((action) => action === 'workflow/setRepetitionRunData').length;
+      expect(numActions).toEqual(1);
     });
   }
 );

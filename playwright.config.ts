@@ -1,3 +1,5 @@
+process.env.NODE_ENV = 'development'; // Set before importing Playwright
+
 import { defineConfig, devices } from '@playwright/test';
 import 'dotenv/config';
 
