@@ -1,4 +1,11 @@
 # Logic Apps Designer
+### [5.44.2](https://github.com/Azure/LogicAppsUX/compare/v5.44.1...v5.44.2) (2025-02-28)
+
+
+### Bug Fixes
+
+* **Designer:** Fixed loop causing rerender in monitoring view (v5.44) ([#6699](https://github.com/Azure/LogicAppsUX/issues/6699)) ([a114c51](https://github.com/Azure/LogicAppsUX/commit/a114c51ded6b1417e9b969782f4e5974b6459633)), closes [#6686](https://github.com/Azure/LogicAppsUX/issues/6686)
+
 ### [5.44.1](https://github.com/Azure/LogicAppsUX/compare/v5.44.0...v5.44.1) (2025-02-24)
 
 ## [5.44.0](https://github.com/Azure/LogicAppsUX/compare/v5.43.0...v5.44.0) (2025-02-24)
