@@ -21,7 +21,7 @@ export default defineConfig({
   use: {
     testIdAttribute: 'data-automation-id',
     actionTimeout: 20 * 1_000,
-    baseURL: 'https://localhost:4200',
+    baseURL: 'http://localhost:4200',
     video: 'on-first-retry',
     trace: 'on',
   },
@@ -74,7 +74,7 @@ export default defineConfig({
   /* Run your local dev server before starting the tests */
   webServer: {
     command: 'pnpm run start:e2e',
-    url: 'https://localhost:4200/',
+    url: 'http://localhost:4200/',
     ignoreHTTPSErrors: true,
     reuseExistingServer: !process.env.CI,
   },
