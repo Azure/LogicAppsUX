@@ -56,6 +56,7 @@ vi.mock('vscode', () => ({
   },
   workspace: {
     workspaceFolders: [],
+    updateWorkspaceFolders: vi.fn(), // <-- This ensures the method exists.
   },
   Uri: {
     file: (p: string) => ({ fsPath: p, toString: () => p }),
