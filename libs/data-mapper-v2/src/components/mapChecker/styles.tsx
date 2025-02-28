@@ -38,10 +38,10 @@ export const useMapCheckerItemStyles = makeStyles({
     alignItems: 'center',
   },
   errorBadge: {
-    backgroundColor: '#fce2e4',
+    backgroundColor: tokens.colorStatusDangerBackground2,
   },
   warningBadge: {
-    backgroundColor: '#fef0e7',
+    backgroundColor: tokens.colorStatusWarningBackground2,
   },
   subtitleText: {
     marginTop: '5px',
