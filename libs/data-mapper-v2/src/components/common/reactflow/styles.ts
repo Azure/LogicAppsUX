@@ -31,7 +31,7 @@ export const useStyles = makeStyles({
     left: '-15px',
   },
   handleWrapper: {
-    backgroundColor: tokens.colorNeutralForeground1,
+    backgroundColor: tokens.colorNeutralBackground1,
     width: '14px',
     height: '14px',
     ...shorthands.border('1px', 'solid', tokens.colorNeutralStroke1),
