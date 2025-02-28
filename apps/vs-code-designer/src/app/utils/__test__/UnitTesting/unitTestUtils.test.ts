@@ -232,7 +232,7 @@ describe('generateCSharpClasses - Naming and Namespace Validation', () => {
 describe('generateClassCode', () => {
   it('should generate a C# class string for a class definition', () => {
     const classDef = {
-      className: 'TestClass',
+      className: 'TestClassMockOutput',
       description: 'A test class',
       properties: [
         { propertyName: 'Property1', propertyType: 'string', description: 'A string property', isObject: false },
@@ -240,6 +240,7 @@ describe('generateClassCode', () => {
         { propertyName: 'DTProperty', propertyType: 'DateTime', description: 'A DateTime property', isObject: false },
       ],
       children: [],
+      inheritsFrom: 'MockOutput',
     };
     const classCode = generateClassCode(classDef);
     expect(classCode).toContain('public class TestClass');
@@ -248,9 +249,37 @@ describe('generateClassCode', () => {
     expect(classCode).toContain('public DateTime DTProperty { get; set; }');
 
     expect(classCode).toContain('this.StatusCode = HttpStatusCode.OK;');
+    const setStatusCodeOccurrences = classCode.split('this.StatusCode = HttpStatusCode.OK;').length - 1;
+    expect(setStatusCodeOccurrences).toBe(1);
     expect(classCode).toContain('this.Property1 = string.Empty;');
     expect(classCode).toContain('this.Property2 = 0;');
     expect(classCode).toContain('this.DTProperty = new DateTime();');
+  });
+
+  it('should generate multiple C# classes for nested class definitions', () => {
+    const classDef = {
+      className: 'ParentClass',
+      description: 'A parent class',
+      properties: [{ propertyName: 'Child', propertyType: 'ChildClass', description: 'A child class', isObject: true }],
+      children: [
+        {
+          className: 'ChildClass',
+          description: 'A child class',
+          properties: [{ propertyName: 'NestedProperty', propertyType: 'string', description: 'A nested property', isObject: false }],
+          children: [],
+        },
+      ],
+      inheritsFrom: 'MockOutput',
+    };
+
+    const classCode = generateClassCode(classDef);
+    expect(classCode).toContain('public class ParentClass');
+    expect(classCode).toContain('public ChildClass Child { get; set; }');
+    const setChildOccurrences = classCode.split('this.Child = new ChildClass();').length - 1;
+    expect(setChildOccurrences).toBe(1);
+    expect(classCode).toContain('public class ChildClass');
+    expect(classCode).toContain('public string NestedProperty { get; set; }');
+    expect(classCode).toContain('this.NestedProperty = string.Empty;');
   });
 });
 
@@ -1445,7 +1474,7 @@ describe('createTestSettingsConfig', () => {
     expect(writeFileSpy).toHaveBeenCalledTimes(1);
     const writeFileSpyCalledWith = writeFileSpy.mock.calls[writeFileSpy.mock.calls.length - 1];
     expect(writeFileSpyCalledWith[0]).toEqual(path.join(unitTestFolderPath, 'testSettings.config'));
-    expect(writeFileSpyCalledWith[1]).toEqual(expect.stringContaining('<WorkspacePath>../../../../</WorkspacePath>'));
+    expect(writeFileSpyCalledWith[1]).toEqual(expect.stringContaining('<WorkspacePath>../../../../../</WorkspacePath>'));
     expect(writeFileSpyCalledWith[1]).toEqual(expect.stringContaining(`<LogicAppName>${logicAppName}</LogicAppName>`));
     expect(writeFileSpyCalledWith[1]).toEqual(expect.stringContaining(`<WorkflowName>${workflowName}</WorkflowName>`));
   });
