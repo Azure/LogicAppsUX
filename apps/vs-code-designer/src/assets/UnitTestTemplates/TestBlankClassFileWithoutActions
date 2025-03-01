@@ -34,7 +34,7 @@ namespace <%= LogicAppName %>.Tests
             // Generate mock trigger data.
             var triggerMockOutput = new <%= TriggerMockOutputClassName %>();
             // Sample of how to set the properties of the triggerMockOutput
-            // triggerMockOutput.Body.Flag = true;
+            // triggerMockOutput.Body.Id = "SampleId";
             var triggerMock = new <%= TriggerMockClassName %>(outputs: triggerMockOutput);
 
             // ACT

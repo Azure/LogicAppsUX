@@ -878,11 +878,18 @@ namespace <%= LogicAppName %>.Tests
 
     const readFileSpy = vi.spyOn(fse, 'readFile').mockResolvedValue(testBlankClassFileTemplate);
 
+    const cleanedUnitTestName = unitTestName.replace(/-/g, '_');
+    const cleanedWorkflowName = workflowName.replace(/-/g, '_');
+    const cleanedLogicAppName = logicAppName.replace(/-/g, '_');
+
     await createCsFile(
       unitTestFolderPath,
       unitTestName,
+      cleanedUnitTestName,
       workflowName,
+      cleanedWorkflowName,
       logicAppName,
+      cleanedLogicAppName,
       actionName,
       actionOutputClassName,
       actionMockClassName,
@@ -1063,11 +1070,18 @@ namespace <%= LogicAppName %>.Tests
 
     const readFileSpy = vi.spyOn(fse, 'readFile').mockResolvedValue(testClassFileTemplate);
 
+    const cleanedUnitTestName = unitTestName.replace(/-/g, '_');
+    const cleanedWorkflowName = workflowName.replace(/-/g, '_');
+    const cleanedLogicAppName = logicAppName.replace(/-/g, '_');
+
     await createCsFile(
       unitTestFolderPath,
       unitTestName,
+      cleanedUnitTestName,
       workflowName,
+      cleanedWorkflowName,
       logicAppName,
+      cleanedLogicAppName,
       actionName,
       actionOutputClassName,
       actionMockClassName,
@@ -1162,11 +1176,18 @@ namespace <%= LogicAppName %>.Tests
 
     const readFileSpy = vi.spyOn(fse, 'readFile').mockResolvedValue(testBlankClassFileWithoutActionsTemplate);
 
+    const cleanedUnitTestName = unitTestName.replace(/-/g, '_');
+    const cleanedWorkflowName = workflowName.replace(/-/g, '_');
+    const cleanedLogicAppName = logicAppName.replace(/-/g, '_');
+
     await createCsFile(
       unitTestFolderPath,
       unitTestName,
+      cleanedUnitTestName,
       workflowName,
+      cleanedWorkflowName,
       logicAppName,
+      cleanedLogicAppName,
       actionName,
       actionOutputClassName,
       actionMockClassName,
@@ -1292,11 +1313,18 @@ namespace <%= LogicAppName %>.Tests
 
     const readFileSpy = vi.spyOn(fse, 'readFile').mockResolvedValue(testClassFileWithoutActionsTemplate);
 
+    const cleanedUnitTestName = unitTestName.replace(/-/g, '_');
+    const cleanedWorkflowName = workflowName.replace(/-/g, '_');
+    const cleanedLogicAppName = logicAppName.replace(/-/g, '_');
+
     await createCsFile(
       unitTestFolderPath,
       unitTestName,
+      cleanedUnitTestName,
       workflowName,
+      cleanedWorkflowName,
       logicAppName,
+      cleanedLogicAppName,
       actionName,
       actionOutputClassName,
       actionMockClassName,
@@ -1396,7 +1424,7 @@ namespace <%= LogicAppName %>.Tests
 
     }
 }`;
-  const logicAppName: string = 'MyLogicApp';
+  const logicAppName: string = 'My-LogicApp';
   const unitTestFolderPath: string = 'unitTestFolderPath';
   let readFileSpy: any;
   let writeFileSpy: any;
@@ -1415,21 +1443,24 @@ namespace <%= LogicAppName %>.Tests
 
   it('should create a test executor file when does not exist', async () => {
     const pathExistsSpy = vi.spyOn(fse, 'pathExists').mockResolvedValue(false);
+    const cleanedLogicAppName = logicAppName.replace(/-/g, '_');
 
-    await createTestExecutorFile(unitTestFolderPath, logicAppName);
+    await createTestExecutorFile(unitTestFolderPath, cleanedLogicAppName);
 
     expect(pathExistsSpy).toHaveBeenCalledTimes(1);
     expect(readFileSpy).toHaveBeenCalledTimes(1);
     expect(writeFileSpy).toHaveBeenCalledTimes(1);
     const writeFileSpyCalledWith = writeFileSpy.mock.calls[writeFileSpy.mock.calls.length - 1];
     expect(writeFileSpyCalledWith[0]).toEqual(path.join('unitTestFolderPath', 'TestExecutor.cs'));
-    expect(writeFileSpyCalledWith[1]).toEqual(expect.stringContaining(`namespace ${logicAppName}.Tests`));
+    expect(writeFileSpyCalledWith[1]).not.toEqual(expect.stringContaining(`namespace ${logicAppName}.Tests`));
+    expect(writeFileSpyCalledWith[1]).toEqual(expect.stringContaining(`namespace ${cleanedLogicAppName}.Tests`));
   });
 
   it('should not create a test executor file when it already exists', async () => {
     const pathExistsSpy = vi.spyOn(fse, 'pathExists').mockResolvedValue(true);
+    const cleanedLogicAppName = logicAppName.replace(/-/g, '_');
 
-    await createTestExecutorFile(unitTestFolderPath, logicAppName);
+    await createTestExecutorFile(unitTestFolderPath, cleanedLogicAppName);
 
     expect(pathExistsSpy).toHaveBeenCalledTimes(1);
     expect(readFileSpy).not.toHaveBeenCalled();
