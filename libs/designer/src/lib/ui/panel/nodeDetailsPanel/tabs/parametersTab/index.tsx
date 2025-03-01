@@ -254,8 +254,8 @@ const ParameterSection = ({
               id: nodeId,
               variables: variables.map((variable) => {
                 return {
-                  name: variable.name[0].value,
-                  type: variable.type[0].value,
+                  name: variable?.name[0]?.value,
+                  type: variable?.type[0]?.value,
                 };
               }),
             })
