@@ -1,4 +1,11 @@
 # Logic Apps Designer
+### [5.44.3](https://github.com/Azure/LogicAppsUX/compare/v5.44.2...v5.44.3) (2025-03-03)
+
+
+### Features
+
+* **designer:** Add secure inputs/outputs by default  ([#6719](https://github.com/Azure/LogicAppsUX/issues/6719)) ([a0dde7d](https://github.com/Azure/LogicAppsUX/commit/a0dde7d00cbdb4aa68e01266354b8713a495e69e)), closes [#6678](https://github.com/Azure/LogicAppsUX/issues/6678)
+
 ### [5.44.2](https://github.com/Azure/LogicAppsUX/compare/v5.44.1...v5.44.2) (2025-02-28)
 
 
