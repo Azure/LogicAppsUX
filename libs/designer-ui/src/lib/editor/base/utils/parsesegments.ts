@@ -40,6 +40,7 @@ export interface SegmentParserOptions {
   tokensEnabled?: boolean;
   removeSingleTokenQuotesWrapping?: boolean;
   convertSpaceToNewline?: boolean;
+  stringifyNonString?: boolean;
   passwordMask?: boolean;
 }
 

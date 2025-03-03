@@ -1,0 +1,120 @@
+{
+  "definition": {
+    "$schema": "https://schema.management.azure.com/providers/Microsoft.Logic/schemas/2016-06-01/workflowdefinition.json#",
+    "actions": {
+      "Initialize_variables_1": {
+        "type": "InitializeVariable",
+        "inputs": {
+          "variables": [
+            {
+              "name": "testVariable2",
+              "type": "float",
+              "value": 123.5
+            }
+          ]
+        },
+        "runAfter": {
+          "Initialize_variables": ["SUCCEEDED"]
+        }
+      },
+      "Initialize_variables_3": {
+        "type": "InitializeVariable",
+        "inputs": {
+          "variables": [
+            {
+              "name": "testBoolean1",
+              "type": "boolean",
+              "value": true
+            }
+          ]
+        },
+        "runAfter": {
+          "Scope": ["SUCCEEDED"]
+        }
+      },
+      "Initialize_variables_4": {
+        "type": "InitializeVariable",
+        "inputs": {
+          "variables": [
+            {
+              "name": "testBoolean2",
+              "type": "boolean",
+              "value": false
+            }
+          ]
+        },
+        "runAfter": {
+          "Initialize_variables_3": ["SUCCEEDED"]
+        }
+      },
+      "Initialize_variables_5": {
+        "type": "InitializeVariable",
+        "inputs": {
+          "variables": [
+            {
+              "name": "testInteger",
+              "type": "integer",
+              "value": 15
+            }
+          ]
+        },
+        "runAfter": {
+          "Initialize_variables_4": ["SUCCEEDED"]
+        }
+      },
+      "Initialize_variables": {
+        "type": "InitializeVariable",
+        "inputs": {
+          "variables": [
+            {
+              "name": "testVariable1",
+              "type": "string",
+              "value": "123"
+            }
+          ]
+        },
+        "runAfter": {}
+      },
+      "Initialize_variables_2": {
+        "type": "InitializeVariable",
+        "inputs": {
+          "variables": [
+            {
+              "name": "testVariable3",
+              "type": "array",
+              "value": []
+            }
+          ]
+        },
+        "runAfter": {
+          "Initialize_variables_1": ["SUCCEEDED"]
+        }
+      },
+      "Scope": {
+        "type": "Scope",
+        "actions": {
+          "Filter_array": {
+            "type": "Query",
+            "inputs": {
+              "from": "@variables('testVariable3')",
+              "where": "@startsWith(string(variables('testVariable2')),variables('testVariable1'))"
+            }
+          }
+        },
+        "runAfter": {
+          "Initialize_variables_2": ["SUCCEEDED"]
+        }
+      }
+    },
+    "contentVersion": "1.0.0.0",
+    "outputs": {},
+    "parameters": {},
+    "triggers": {
+      "When_a_HTTP_request_is_received": {
+        "type": "Request",
+        "kind": "Http"
+      }
+    }
+  },
+  "kind": "Stateful"
+}

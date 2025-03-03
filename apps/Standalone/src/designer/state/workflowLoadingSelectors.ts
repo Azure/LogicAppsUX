@@ -76,3 +76,7 @@ export const useRunInstance = () => {
 export const useQueryCachePersist = () => {
   return useSelector((state: RootState) => state.workflowLoader.queryCachePersist);
 };
+
+export const usePreventMultiVariable = () => {
+  return useSelector((state: RootState) => state.workflowLoader.hostOptions.preventMultiVariable);
+};

@@ -3,1018 +3,1034 @@
     "$schema": "https://schema.management.azure.com/providers/Microsoft.Logic/schemas/2016-06-01/workflowdefinition.json#",
     "actions": {
       "Initialize_variable": {
+        "type": "InitializeVariable",
         "inputs": {
           "variables": [
             {
-              "name": "t",
+              "name": "test",
               "type": "integer",
               "value": 0
             }
           ]
         },
-        "runAfter": {},
-        "type": "InitializeVariable"
+        "runAfter": {}
       },
       "action_1": {
+        "type": "IncrementVariable",
         "inputs": {
           "name": "t",
           "value": 1
         },
         "runAfter": {
-          "Initialize_variable": ["SUCCEEDED"]
-        },
-        "type": "IncrementVariable"
+          "Initialize_variable2": ["SUCCEEDED"]
+        }
       },
       "action_2": {
+        "type": "IncrementVariable",
         "inputs": {
           "name": "t",
           "value": 1
         },
         "runAfter": {
           "action_1": ["SUCCEEDED"]
-        },
-        "type": "IncrementVariable"
+        }
       },
       "action_3": {
+        "type": "IncrementVariable",
         "inputs": {
           "name": "t",
           "value": 1
         },
         "runAfter": {
           "action_1": ["SUCCEEDED"]
-        },
-        "type": "IncrementVariable"
+        }
       },
       "action_4": {
+        "type": "IncrementVariable",
         "inputs": {
           "name": "t",
           "value": 1
         },
         "runAfter": {
           "action_3": ["SUCCEEDED"]
-        },
-        "type": "IncrementVariable"
+        }
       },
       "action_5": {
+        "type": "IncrementVariable",
         "inputs": {
           "name": "t",
           "value": 1
         },
         "runAfter": {
           "action_1": ["SUCCEEDED"]
-        },
-        "type": "IncrementVariable"
+        }
       },
       "action_6": {
+        "type": "IncrementVariable",
         "inputs": {
           "name": "t",
           "value": 1
         },
         "runAfter": {
-          "Initialize_variable": ["SUCCEEDED"]
-        },
-        "type": "IncrementVariable"
+          "Initialize_variable2": ["SUCCEEDED"]
+        }
       },
       "action_7": {
+        "type": "IncrementVariable",
         "inputs": {
           "name": "t",
           "value": 1
         },
         "runAfter": {
           "action_5": ["SUCCEEDED"]
-        },
-        "type": "IncrementVariable"
+        }
       },
       "action_8": {
+        "type": "IncrementVariable",
         "inputs": {
           "name": "t",
           "value": 1
         },
         "runAfter": {
           "action_1": ["SUCCEEDED"]
-        },
-        "type": "IncrementVariable"
+        }
       },
       "action_9": {
+        "type": "IncrementVariable",
         "inputs": {
           "name": "t",
           "value": 1
         },
         "runAfter": {
           "action_3": ["SUCCEEDED"]
-        },
-        "type": "IncrementVariable"
+        }
       },
       "action_10": {
+        "type": "IncrementVariable",
         "inputs": {
           "name": "t",
           "value": 1
         },
         "runAfter": {
           "action_8": ["SUCCEEDED"]
-        },
-        "type": "IncrementVariable"
+        }
       },
       "action_11": {
+        "type": "IncrementVariable",
         "inputs": {
           "name": "t",
           "value": 1
         },
         "runAfter": {
           "action_9": ["SUCCEEDED"]
-        },
-        "type": "IncrementVariable"
+        }
       },
       "action_12": {
+        "type": "IncrementVariable",
         "inputs": {
           "name": "t",
           "value": 1
         },
         "runAfter": {
           "action_3": ["SUCCEEDED"]
-        },
-        "type": "IncrementVariable"
+        }
       },
       "action_13": {
+        "type": "IncrementVariable",
         "inputs": {
           "name": "t",
           "value": 1
         },
         "runAfter": {
           "action_5": ["SUCCEEDED"]
-        },
-        "type": "IncrementVariable"
+        }
       },
       "action_14": {
+        "type": "IncrementVariable",
         "inputs": {
           "name": "t",
           "value": 1
         },
         "runAfter": {
-          "Initialize_variable": ["SUCCEEDED"]
-        },
-        "type": "IncrementVariable"
+          "Initialize_variable2": ["SUCCEEDED"]
+        }
       },
       "action_15": {
+        "type": "IncrementVariable",
         "inputs": {
           "name": "t",
           "value": 1
         },
         "runAfter": {
           "action_8": ["SUCCEEDED"]
-        },
-        "type": "IncrementVariable"
+        }
       },
       "action_16": {
+        "type": "IncrementVariable",
         "inputs": {
           "name": "t",
           "value": 1
         },
         "runAfter": {
           "action_15": ["SUCCEEDED"]
-        },
-        "type": "IncrementVariable"
+        }
       },
       "action_17": {
+        "type": "IncrementVariable",
         "inputs": {
           "name": "t",
           "value": 1
         },
         "runAfter": {
           "action_12": ["SUCCEEDED"]
-        },
-        "type": "IncrementVariable"
+        }
       },
       "action_18": {
+        "type": "IncrementVariable",
         "inputs": {
           "name": "t",
           "value": 1
         },
         "runAfter": {
           "action_1": ["SUCCEEDED"]
-        },
-        "type": "IncrementVariable"
+        }
       },
       "action_19": {
+        "type": "IncrementVariable",
         "inputs": {
           "name": "t",
           "value": 1
         },
         "runAfter": {
           "action_17": ["SUCCEEDED"]
-        },
-        "type": "IncrementVariable"
+        }
       },
       "action_20": {
+        "type": "IncrementVariable",
         "inputs": {
           "name": "t",
           "value": 1
         },
         "runAfter": {
           "action_12": ["SUCCEEDED"]
-        },
-        "type": "IncrementVariable"
+        }
       },
       "action_21": {
+        "type": "IncrementVariable",
         "inputs": {
           "name": "t",
           "value": 1
         },
         "runAfter": {
           "action_19": ["SUCCEEDED"]
-        },
-        "type": "IncrementVariable"
+        }
       },
       "action_22": {
+        "type": "IncrementVariable",
         "inputs": {
           "name": "t",
           "value": 1
         },
         "runAfter": {
           "action_9": ["SUCCEEDED"]
-        },
-        "type": "IncrementVariable"
+        }
       },
       "action_23": {
+        "type": "IncrementVariable",
         "inputs": {
           "name": "t",
           "value": 1
         },
         "runAfter": {
-          "Initialize_variable": ["SUCCEEDED"]
-        },
-        "type": "IncrementVariable"
+          "Initialize_variable2": ["SUCCEEDED"]
+        }
       },
       "action_24": {
+        "type": "IncrementVariable",
         "inputs": {
           "name": "t",
           "value": 1
         },
         "runAfter": {
           "action_8": ["SUCCEEDED"]
-        },
-        "type": "IncrementVariable"
+        }
       },
       "action_25": {
+        "type": "IncrementVariable",
         "inputs": {
           "name": "t",
           "value": 1
         },
         "runAfter": {
           "action_17": ["SUCCEEDED"]
-        },
-        "type": "IncrementVariable"
+        }
       },
       "action_26": {
+        "type": "IncrementVariable",
         "inputs": {
           "name": "t",
           "value": 1
         },
         "runAfter": {
           "action_21": ["SUCCEEDED"]
-        },
-        "type": "IncrementVariable"
+        }
       },
       "action_27": {
+        "type": "IncrementVariable",
         "inputs": {
           "name": "t",
           "value": 1
         },
         "runAfter": {
           "action_10": ["SUCCEEDED"]
-        },
-        "type": "IncrementVariable"
+        }
       },
       "action_28": {
+        "type": "IncrementVariable",
         "inputs": {
           "name": "t",
           "value": 1
         },
         "runAfter": {
           "action_10": ["SUCCEEDED"]
-        },
-        "type": "IncrementVariable"
+        }
       },
       "action_29": {
+        "type": "IncrementVariable",
         "inputs": {
           "name": "t",
           "value": 1
         },
         "runAfter": {
           "action_27": ["SUCCEEDED"]
-        },
-        "type": "IncrementVariable"
+        }
       },
       "action_30": {
+        "type": "IncrementVariable",
         "inputs": {
           "name": "t",
           "value": 1
         },
         "runAfter": {
           "action_16": ["SUCCEEDED"]
-        },
-        "type": "IncrementVariable"
+        }
       },
       "action_31": {
+        "type": "IncrementVariable",
         "inputs": {
           "name": "t",
           "value": 1
         },
         "runAfter": {
           "action_16": ["SUCCEEDED"]
-        },
-        "type": "IncrementVariable"
+        }
       },
       "action_32": {
+        "type": "IncrementVariable",
         "inputs": {
           "name": "t",
           "value": 1
         },
         "runAfter": {
           "action_19": ["SUCCEEDED"]
-        },
-        "type": "IncrementVariable"
+        }
       },
       "action_33": {
+        "type": "IncrementVariable",
         "inputs": {
           "name": "t",
           "value": 1
         },
         "runAfter": {
           "action_19": ["SUCCEEDED"]
-        },
-        "type": "IncrementVariable"
+        }
       },
       "action_34": {
+        "type": "IncrementVariable",
         "inputs": {
           "name": "t",
           "value": 1
         },
         "runAfter": {
           "action_33": ["SUCCEEDED"]
-        },
-        "type": "IncrementVariable"
+        }
       },
       "action_35": {
+        "type": "IncrementVariable",
         "inputs": {
           "name": "t",
           "value": 1
         },
         "runAfter": {
           "action_22": ["SUCCEEDED"]
-        },
-        "type": "IncrementVariable"
+        }
       },
       "action_36": {
+        "type": "IncrementVariable",
         "inputs": {
           "name": "t",
           "value": 1
         },
         "runAfter": {
           "action_10": ["SUCCEEDED"]
-        },
-        "type": "IncrementVariable"
+        }
       },
       "action_37": {
+        "type": "IncrementVariable",
         "inputs": {
           "name": "t",
           "value": 1
         },
         "runAfter": {
           "action_8": ["SUCCEEDED"]
-        },
-        "type": "IncrementVariable"
+        }
       },
       "action_38": {
+        "type": "IncrementVariable",
         "inputs": {
           "name": "t",
           "value": 1
         },
         "runAfter": {
           "action_12": ["SUCCEEDED"]
-        },
-        "type": "IncrementVariable"
+        }
       },
       "action_39": {
+        "type": "IncrementVariable",
         "inputs": {
           "name": "t",
           "value": 1
         },
         "runAfter": {
           "action_33": ["SUCCEEDED"]
-        },
-        "type": "IncrementVariable"
+        }
       },
       "action_40": {
+        "type": "IncrementVariable",
         "inputs": {
           "name": "t",
           "value": 1
         },
         "runAfter": {
           "action_19": ["SUCCEEDED"]
-        },
-        "type": "IncrementVariable"
+        }
       },
       "action_41": {
+        "type": "IncrementVariable",
         "inputs": {
           "name": "t",
           "value": 1
         },
         "runAfter": {
           "action_11": ["SUCCEEDED"]
-        },
-        "type": "IncrementVariable"
+        }
       },
       "action_42": {
+        "type": "IncrementVariable",
         "inputs": {
           "name": "t",
           "value": 1
         },
         "runAfter": {
           "action_6": ["SUCCEEDED"]
-        },
-        "type": "IncrementVariable"
+        }
       },
       "action_43": {
+        "type": "IncrementVariable",
         "inputs": {
           "name": "t",
           "value": 1
         },
         "runAfter": {
           "action_5": ["SUCCEEDED"]
-        },
-        "type": "IncrementVariable"
+        }
       },
       "action_44": {
+        "type": "IncrementVariable",
         "inputs": {
           "name": "t",
           "value": 1
         },
         "runAfter": {
           "action_42": ["SUCCEEDED"]
-        },
-        "type": "IncrementVariable"
+        }
       },
       "action_45": {
+        "type": "IncrementVariable",
         "inputs": {
           "name": "t",
           "value": 1
         },
         "runAfter": {
           "action_40": ["SUCCEEDED"]
-        },
-        "type": "IncrementVariable"
+        }
       },
       "action_46": {
+        "type": "IncrementVariable",
         "inputs": {
           "name": "t",
           "value": 1
         },
         "runAfter": {
           "action_24": ["SUCCEEDED"]
-        },
-        "type": "IncrementVariable"
+        }
       },
       "action_47": {
+        "type": "IncrementVariable",
         "inputs": {
           "name": "t",
           "value": 1
         },
         "runAfter": {
           "action_20": ["SUCCEEDED"]
-        },
-        "type": "IncrementVariable"
+        }
       },
       "action_48": {
+        "type": "IncrementVariable",
         "inputs": {
           "name": "t",
           "value": 1
         },
         "runAfter": {
           "action_21": ["SUCCEEDED"]
-        },
-        "type": "IncrementVariable"
+        }
       },
       "action_49": {
+        "type": "IncrementVariable",
         "inputs": {
           "name": "t",
           "value": 1
         },
         "runAfter": {
           "action_45": ["SUCCEEDED"]
-        },
-        "type": "IncrementVariable"
+        }
       },
       "action_50": {
+        "type": "IncrementVariable",
         "inputs": {
           "name": "t",
           "value": 1
         },
         "runAfter": {
           "action_44": ["SUCCEEDED"]
-        },
-        "type": "IncrementVariable"
+        }
       },
       "action_51": {
+        "type": "IncrementVariable",
         "inputs": {
           "name": "t",
           "value": 1
         },
         "runAfter": {
-          "Initialize_variable": ["SUCCEEDED"]
-        },
-        "type": "IncrementVariable"
+          "Initialize_variable2": ["SUCCEEDED"]
+        }
       },
       "action_52": {
+        "type": "IncrementVariable",
         "inputs": {
           "name": "t",
           "value": 1
         },
         "runAfter": {
           "action_15": ["SUCCEEDED"]
-        },
-        "type": "IncrementVariable"
+        }
       },
       "action_53": {
+        "type": "IncrementVariable",
         "inputs": {
           "name": "t",
           "value": 1
         },
         "runAfter": {
           "action_10": ["SUCCEEDED"]
-        },
-        "type": "IncrementVariable"
+        }
       },
       "action_54": {
+        "type": "IncrementVariable",
         "inputs": {
           "name": "t",
           "value": 1
         },
         "runAfter": {
           "action_41": ["SUCCEEDED"]
-        },
-        "type": "IncrementVariable"
+        }
       },
       "action_55": {
+        "type": "IncrementVariable",
         "inputs": {
           "name": "t",
           "value": 1
         },
         "runAfter": {
           "action_10": ["SUCCEEDED"]
-        },
-        "type": "IncrementVariable"
+        }
       },
       "action_56": {
+        "type": "IncrementVariable",
         "inputs": {
           "name": "t",
           "value": 1
         },
         "runAfter": {
           "action_32": ["SUCCEEDED"]
-        },
-        "type": "IncrementVariable"
+        }
       },
       "action_57": {
+        "type": "IncrementVariable",
         "inputs": {
           "name": "t",
           "value": 1
         },
         "runAfter": {
           "action_33": ["SUCCEEDED"]
-        },
-        "type": "IncrementVariable"
+        }
       },
       "action_58": {
+        "type": "IncrementVariable",
         "inputs": {
           "name": "t",
           "value": 1
         },
         "runAfter": {
           "action_31": ["SUCCEEDED"]
-        },
-        "type": "IncrementVariable"
+        }
       },
       "action_59": {
+        "type": "IncrementVariable",
         "inputs": {
           "name": "t",
           "value": 1
         },
         "runAfter": {
           "action_45": ["SUCCEEDED"]
-        },
-        "type": "IncrementVariable"
+        }
       },
       "action_60": {
+        "type": "IncrementVariable",
         "inputs": {
           "name": "t",
           "value": 1
         },
         "runAfter": {
           "action_59": ["SUCCEEDED"]
-        },
-        "type": "IncrementVariable"
+        }
       },
       "action_61": {
+        "type": "IncrementVariable",
         "inputs": {
           "name": "t",
           "value": 1
         },
         "runAfter": {
           "action_1": ["SUCCEEDED"]
-        },
-        "type": "IncrementVariable"
+        }
       },
       "action_62": {
+        "type": "IncrementVariable",
         "inputs": {
           "name": "t",
           "value": 1
         },
         "runAfter": {
           "action_23": ["SUCCEEDED"]
-        },
-        "type": "IncrementVariable"
+        }
       },
       "action_63": {
+        "type": "IncrementVariable",
         "inputs": {
           "name": "t",
           "value": 1
         },
         "runAfter": {
           "action_46": ["SUCCEEDED"]
-        },
-        "type": "IncrementVariable"
+        }
       },
       "action_64": {
+        "type": "IncrementVariable",
         "inputs": {
           "name": "t",
           "value": 1
         },
         "runAfter": {
           "action_37": ["SUCCEEDED"]
-        },
-        "type": "IncrementVariable"
+        }
       },
       "action_65": {
+        "type": "IncrementVariable",
         "inputs": {
           "name": "t",
           "value": 1
         },
         "runAfter": {
           "action_58": ["SUCCEEDED"]
-        },
-        "type": "IncrementVariable"
+        }
       },
       "action_66": {
+        "type": "IncrementVariable",
         "inputs": {
           "name": "t",
           "value": 1
         },
         "runAfter": {
           "action_15": ["SUCCEEDED"]
-        },
-        "type": "IncrementVariable"
+        }
       },
       "action_67": {
+        "type": "IncrementVariable",
         "inputs": {
           "name": "t",
           "value": 1
         },
         "runAfter": {
           "action_28": ["SUCCEEDED"]
-        },
-        "type": "IncrementVariable"
+        }
       },
       "action_68": {
+        "type": "IncrementVariable",
         "inputs": {
           "name": "t",
           "value": 1
         },
         "runAfter": {
           "action_27": ["SUCCEEDED"]
-        },
-        "type": "IncrementVariable"
+        }
       },
       "action_69": {
+        "type": "IncrementVariable",
         "inputs": {
           "name": "t",
           "value": 1
         },
         "runAfter": {
           "action_14": ["SUCCEEDED"]
-        },
-        "type": "IncrementVariable"
+        }
       },
       "action_70": {
+        "type": "IncrementVariable",
         "inputs": {
           "name": "t",
           "value": 1
         },
         "runAfter": {
           "action_61": ["SUCCEEDED"]
-        },
-        "type": "IncrementVariable"
+        }
       },
       "action_71": {
+        "type": "IncrementVariable",
         "inputs": {
           "name": "t",
           "value": 1
         },
         "runAfter": {
           "action_19": ["SUCCEEDED"]
-        },
-        "type": "IncrementVariable"
+        }
       },
       "action_72": {
+        "type": "IncrementVariable",
         "inputs": {
           "name": "t",
           "value": 1
         },
         "runAfter": {
           "action_52": ["SUCCEEDED"]
-        },
-        "type": "IncrementVariable"
+        }
       },
       "action_73": {
+        "type": "IncrementVariable",
         "inputs": {
           "name": "t",
           "value": 1
         },
         "runAfter": {
           "action_47": ["SUCCEEDED"]
-        },
-        "type": "IncrementVariable"
+        }
       },
       "action_74": {
+        "type": "IncrementVariable",
         "inputs": {
           "name": "t",
           "value": 1
         },
         "runAfter": {
           "action_11": ["SUCCEEDED"]
-        },
-        "type": "IncrementVariable"
+        }
       },
       "action_75": {
+        "type": "IncrementVariable",
         "inputs": {
           "name": "t",
           "value": 1
         },
         "runAfter": {
           "action_33": ["SUCCEEDED"]
-        },
-        "type": "IncrementVariable"
+        }
       },
       "action_76": {
+        "type": "IncrementVariable",
         "inputs": {
           "name": "t",
           "value": 1
         },
         "runAfter": {
           "action_61": ["SUCCEEDED"]
-        },
-        "type": "IncrementVariable"
+        }
       },
       "action_77": {
+        "type": "IncrementVariable",
         "inputs": {
           "name": "t",
           "value": 1
         },
         "runAfter": {
           "action_73": ["SUCCEEDED"]
-        },
-        "type": "IncrementVariable"
+        }
       },
       "action_78": {
+        "type": "IncrementVariable",
         "inputs": {
           "name": "t",
           "value": 1
         },
         "runAfter": {
           "action_54": ["SUCCEEDED"]
-        },
-        "type": "IncrementVariable"
+        }
       },
       "action_79": {
+        "type": "IncrementVariable",
         "inputs": {
           "name": "t",
           "value": 1
         },
         "runAfter": {
           "action_71": ["SUCCEEDED"]
-        },
-        "type": "IncrementVariable"
+        }
       },
       "action_80": {
+        "type": "IncrementVariable",
         "inputs": {
           "name": "t",
           "value": 1
         },
         "runAfter": {
           "action_23": ["SUCCEEDED"]
-        },
-        "type": "IncrementVariable"
+        }
       },
       "action_81": {
+        "type": "IncrementVariable",
         "inputs": {
           "name": "t",
           "value": 1
         },
         "runAfter": {
           "action_27": ["SUCCEEDED"]
-        },
-        "type": "IncrementVariable"
+        }
       },
       "action_82": {
+        "type": "IncrementVariable",
         "inputs": {
           "name": "t",
           "value": 1
         },
         "runAfter": {
           "action_63": ["SUCCEEDED"]
-        },
-        "type": "IncrementVariable"
+        }
       },
       "action_83": {
+        "type": "IncrementVariable",
         "inputs": {
           "name": "t",
           "value": 1
         },
         "runAfter": {
           "action_24": ["SUCCEEDED"]
-        },
-        "type": "IncrementVariable"
+        }
       },
       "action_84": {
+        "type": "IncrementVariable",
         "inputs": {
           "name": "t",
           "value": 1
         },
         "runAfter": {
           "action_40": ["SUCCEEDED"]
-        },
-        "type": "IncrementVariable"
+        }
       },
       "action_85": {
+        "type": "IncrementVariable",
         "inputs": {
           "name": "t",
           "value": 1
         },
         "runAfter": {
           "action_23": ["SUCCEEDED"]
-        },
-        "type": "IncrementVariable"
+        }
       },
       "action_86": {
+        "type": "IncrementVariable",
         "inputs": {
           "name": "t",
           "value": 1
         },
         "runAfter": {
           "action_71": ["SUCCEEDED"]
-        },
-        "type": "IncrementVariable"
+        }
       },
       "action_87": {
+        "type": "IncrementVariable",
         "inputs": {
           "name": "t",
           "value": 1
         },
         "runAfter": {
           "action_8": ["SUCCEEDED"]
-        },
-        "type": "IncrementVariable"
+        }
       },
       "action_88": {
+        "type": "IncrementVariable",
         "inputs": {
           "name": "t",
           "value": 1
         },
         "runAfter": {
           "action_67": ["SUCCEEDED"]
-        },
-        "type": "IncrementVariable"
+        }
       },
       "action_89": {
+        "type": "IncrementVariable",
         "inputs": {
           "name": "t",
           "value": 1
         },
         "runAfter": {
           "action_25": ["SUCCEEDED"]
-        },
-        "type": "IncrementVariable"
+        }
       },
       "action_90": {
+        "type": "IncrementVariable",
         "inputs": {
           "name": "t",
           "value": 1
         },
         "runAfter": {
           "action_5": ["SUCCEEDED"]
-        },
-        "type": "IncrementVariable"
+        }
       },
       "action_91": {
+        "type": "IncrementVariable",
         "inputs": {
           "name": "t",
           "value": 1
         },
         "runAfter": {
           "action_23": ["SUCCEEDED"]
-        },
-        "type": "IncrementVariable"
+        }
       },
       "action_92": {
+        "type": "IncrementVariable",
         "inputs": {
           "name": "t",
           "value": 1
         },
         "runAfter": {
           "action_39": ["SUCCEEDED"]
-        },
-        "type": "IncrementVariable"
+        }
       },
       "action_93": {
+        "type": "IncrementVariable",
         "inputs": {
           "name": "t",
           "value": 1
         },
         "runAfter": {
           "action_58": ["SUCCEEDED"]
-        },
-        "type": "IncrementVariable"
+        }
       },
       "action_94": {
+        "type": "IncrementVariable",
         "inputs": {
           "name": "t",
           "value": 1
         },
         "runAfter": {
           "action_68": ["SUCCEEDED"]
-        },
-        "type": "IncrementVariable"
+        }
       },
       "action_95": {
+        "type": "IncrementVariable",
         "inputs": {
           "name": "t",
           "value": 1
         },
         "runAfter": {
           "action_55": ["SUCCEEDED"]
-        },
-        "type": "IncrementVariable"
+        }
       },
       "action_96": {
+        "type": "IncrementVariable",
         "inputs": {
           "name": "t",
           "value": 1
         },
         "runAfter": {
           "action_91": ["SUCCEEDED"]
-        },
-        "type": "IncrementVariable"
+        }
       },
       "action_97": {
+        "type": "IncrementVariable",
         "inputs": {
           "name": "t",
           "value": 1
         },
         "runAfter": {
           "action_57": ["SUCCEEDED"]
-        },
-        "type": "IncrementVariable"
+        }
       },
       "action_98": {
+        "type": "IncrementVariable",
         "inputs": {
           "name": "t",
           "value": 1
         },
         "runAfter": {
           "action_41": ["SUCCEEDED"]
-        },
-        "type": "IncrementVariable"
+        }
       },
       "action_99": {
+        "type": "IncrementVariable",
         "inputs": {
           "name": "t",
           "value": 1
         },
         "runAfter": {
           "action_52": ["SUCCEEDED"]
+        }
+      },
+      "Initialize_variable2": {
+        "type": "InitializeVariable",
+        "inputs": {
+          "variables": [
+            {
+              "name": "test2",
+              "type": "integer",
+              "value": 1
+            }
+          ]
         },
-        "type": "IncrementVariable"
+        "runAfter": {
+          "Initialize_variable": ["SUCCEEDED"]
+        }
       }
     },
     "contentVersion": "1.0.0.0",
     "outputs": {},
     "triggers": {
       "manual": {
-        "inputs": {},
-        "kind": "Http",
-        "type": "Request"
+        "type": "Request",
+        "kind": "Http"
       }
     }
   },
+  "connectionReferences": {},
+  "parameters": {},
   "kind": "Stateful"
 }

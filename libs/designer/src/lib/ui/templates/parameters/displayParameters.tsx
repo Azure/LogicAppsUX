@@ -130,7 +130,14 @@ export const DisplayParameters = () => {
         );
 
       case '$value':
-        return <ParameterEditor item={item} onChange={handleParameterValueChange} disabled={parametersOverride?.[item.name]?.isEditable === false} error={parameterErrors[item.name]} />;
+        return (
+          <ParameterEditor
+            item={item}
+            onChange={handleParameterValueChange}
+            disabled={parametersOverride?.[item.name]?.isEditable === false}
+            error={parameterErrors[item.name]}
+          />
+        );
 
       default:
         return null;

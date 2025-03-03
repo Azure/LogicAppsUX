@@ -7,7 +7,7 @@ import type { RelationshipIds } from '../../state/panel/panelTypes';
 import { setIsPanelLoading } from '../../state/panel/panelSlice';
 import { pasteNode, pasteScopeNode, setNodeDescription } from '../../state/workflow/workflowSlice';
 import { getNonDuplicateId, getNonDuplicateNodeId, initializeOperationDetails } from './add';
-import { createIdCopy, getRecordEntry, removeIdTag, type LogicAppsV2 } from '@microsoft/logic-apps-shared';
+import { createIdCopy, getRecordEntry, LOCAL_STORAGE_KEYS, removeIdTag, type LogicAppsV2 } from '@microsoft/logic-apps-shared';
 import { createAsyncThunk } from '@reduxjs/toolkit';
 import { batch } from 'react-redux';
 import { getNodeOperationData } from '../../state/operation/operationSelector';
@@ -55,7 +55,7 @@ export const copyOperation = createAsyncThunk('copyOperation', async (payload: C
     if (navigator.clipboard && typeof navigator.clipboard.readText === 'function') {
       navigator.clipboard.writeText(clipboardItem);
     } else {
-      localStorage.setItem('msla-clipboard', clipboardItem);
+      localStorage.setItem(LOCAL_STORAGE_KEYS.CLIPBOARD, clipboardItem);
     }
   });
 });
@@ -101,7 +101,7 @@ export const copyScopeOperation = createAsyncThunk('copyScopeOperation', async (
     if (navigator.clipboard && typeof navigator.clipboard.readText === 'function') {
       navigator.clipboard.writeText(clipboardItem);
     } else {
-      localStorage.setItem('msla-clipboard', clipboardItem);
+      localStorage.setItem(LOCAL_STORAGE_KEYS.CLIPBOARD, clipboardItem);
     }
   });
 });

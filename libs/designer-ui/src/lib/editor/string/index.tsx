@@ -23,11 +23,11 @@ export const StringEditor = ({
     setValue(newValue);
     onChange?.({ value: newValue, viewModel: { hideErrorMessage: true } });
   };
+
   const handleBlur = () => {
     if (notEqual(value, initialValue)) {
-      editorBlur?.({ value: value });
+      editorBlur?.({ value });
     }
-
     onChange?.({ value, viewModel: { hideErrorMessage: false } });
   };
 

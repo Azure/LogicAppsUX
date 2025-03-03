@@ -124,6 +124,7 @@ import type {
   DropdownItem,
   FloatingActionMenuOutputViewModel,
   GroupItemProps,
+  InitializeVariableProps,
   OutputToken,
   ParameterInfo,
   RowItemProps,
@@ -144,6 +145,7 @@ import {
   ValueSegmentType,
   TokenType,
   AuthenticationOAuthType,
+  validateVariables,
 } from '@microsoft/designer-ui';
 import type {
   DependentParameterInfo,
@@ -309,7 +311,6 @@ export const getDependentParameters = (
     if (operationInput) {
       result[operationInput.id] = { isValid: parameterValidForDynamicCall(operationInput) };
     }
-
     return result;
   }, {});
 };
@@ -492,6 +493,8 @@ export function getParameterEditorProps(
     } else {
       editor = undefined;
     }
+  } else if (editor === constants.EDITOR.INITIALIZE_VARIABLE) {
+    editorViewModel = { hideParameterErrors: true };
   } else if (!editor) {
     if (format === constants.EDITOR.HTML) {
       editor = constants.EDITOR.HTML;
@@ -1825,8 +1828,11 @@ export const updateParameterAndDependencies = createAsyncThunk(
 
     updateNodeMetadataOnParameterUpdate(nodeId, updatedParameter, dispatch);
 
-    if (operationInfo?.type?.toLowerCase() === 'until') {
+    if (operationInfo?.type?.toLowerCase() === constants.NODE.TYPE.UNTIL) {
       validateUntilAction(dispatch, nodeId, groupId, parameterId, nodeInputs.parameterGroups[groupId].parameters, properties);
+    }
+    if (operationInfo?.type?.toLowerCase() === constants.NODE.TYPE.INITIALIZE_VARIABLE) {
+      validateInitializeVariable(dispatch, nodeId, groupId, parameterId, nodeInputs.parameterGroups[groupId].parameters, properties);
     }
 
     if (dependenciesToUpdate) {
@@ -4013,46 +4019,87 @@ export function validateUntilAction(
   parameters: ParameterInfo[],
   changedParameter: Partial<ParameterInfo>
 ) {
-  const errorMessage = 'Either limit count or timout must be specified.';
+  const intl = getIntl();
+  const errorMessage = intl.formatMessage({
+    defaultMessage: 'Either limit count or timeout must be specified.',
+    id: 'BO1cXH',
+    description: 'Error message to show when either limit count or timeout is not specified.',
+  });
 
-  const countParameter = parameters.find((parameter) => parameter.parameterName === 'limit.count');
-  const timeoutParameter = parameters.find((parameter) => parameter.parameterName === 'limit.timeout');
+  const parameterValues = (name: string) => {
+    const parameter = parameters.find((param) => param.parameterName === name);
+    return parameter?.id === parameterId ? (changedParameter?.value ?? []) : (parameter?.value ?? []);
+  };
 
-  const countValue = countParameter?.id === parameterId ? (changedParameter?.value ?? []) : (countParameter?.value ?? []);
-  const timeoutValue = timeoutParameter?.id === parameterId ? (changedParameter?.value ?? []) : (timeoutParameter?.value ?? []);
+  const countValue = parameterValues(constants.PARAMETER_NAMES.LIMIT_COUNT);
+  const timeoutValue = parameterValues(constants.PARAMETER_NAMES.LIMIT_TIMEOUT);
 
-  if ((countValue.length ?? 0) === 0 && (timeoutValue.length ?? 0) === 0) {
+  const hasValidationError = (countValue.length ?? 0) === 0 && (timeoutValue.length ?? 0) === 0;
+
+  const updateValidation = (parameterName: string) => {
+    const parameter = parameters.find((param) => param.parameterName === parameterName);
+    if (parameter) {
+      if (hasValidationError) {
+        dispatch(
+          updateParameterValidation({
+            nodeId,
+            groupId,
+            parameterId: parameter.id,
+            validationErrors: [errorMessage],
+          })
+        );
+      } else {
+        dispatch(
+          removeParameterValidationError({
+            nodeId,
+            groupId,
+            parameterId: parameter.id,
+            validationError: errorMessage,
+          })
+        );
+      }
+    }
+  };
+
+  updateValidation(constants.PARAMETER_NAMES.LIMIT_COUNT);
+  updateValidation(constants.PARAMETER_NAMES.LIMIT_TIMEOUT);
+}
+
+// Eric - This is a very specific logic for initalizeVariable, where previously it was possible having
+// them as separate parameters, but now they are combined into a single parameter
+// Integrating it with the rest of the validation logic would be unnecessarily complex imo
+export function validateInitializeVariable(
+  dispatch: Dispatch,
+  nodeId: string,
+  groupId: string,
+  parameterId: string,
+  parameters: ParameterInfo[],
+  changedParameter: Partial<ParameterInfo>
+) {
+  const intl = getIntl();
+  const multipleVariablesErrorMessage = intl.formatMessage({
+    defaultMessage: 'Multiple variables have validation errors',
+    id: '19fSGN',
+    description: 'Error message to show when multiple variables have errors',
+  });
+
+  const parameter = parameters.find((param) => param.parameterName === constants.PARAMETER_NAMES.VARIABLES);
+  const variables: InitializeVariableProps[] =
+    parameter?.id === parameterId ? (changedParameter?.editorViewModel?.variables ?? []) : (parameter?.editorViewModel?.variables ?? []);
+
+  const validationErrors = validateVariables(variables);
+
+  const errorMessages = validationErrors.flatMap((error) => Object.values(error));
+  const errorMessage = errorMessages.length > 1 ? multipleVariablesErrorMessage : errorMessages[0];
+
+  if (parameter) {
     dispatch(
       updateParameterValidation({
         nodeId,
         groupId,
-        parameterId: countParameter?.id ?? '',
-        validationErrors: [errorMessage],
-      })
-    );
-    dispatch(
-      updateParameterValidation({
-        nodeId,
-        groupId,
-        parameterId: timeoutParameter?.id ?? '',
-        validationErrors: [errorMessage],
-      })
-    );
-  } else {
-    dispatch(
-      removeParameterValidationError({
-        nodeId,
-        groupId,
-        parameterId: countParameter?.id ?? '',
-        validationError: errorMessage,
-      })
-    );
-    dispatch(
-      removeParameterValidationError({
-        nodeId,
-        groupId,
-        parameterId: timeoutParameter?.id ?? '',
-        validationError: errorMessage,
+        parameterId: parameter.id,
+        validationErrors: errorMessage ? [errorMessage] : undefined,
+        editorViewModel: { ...parameter.editorViewModel, validationErrors: errorMessage ? validationErrors : undefined },
       })
     );
   }

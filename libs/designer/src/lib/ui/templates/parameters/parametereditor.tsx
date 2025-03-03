@@ -23,7 +23,12 @@ export const ParameterEditor = ({
   onChange,
   disabled,
   error,
-}: { item: Template.ParameterDefinition; onChange: (newItem: Template.ParameterDefinition) => void; disabled?: boolean, error?: string }) => {
+}: {
+  item: Template.ParameterDefinition;
+  onChange: (newItem: Template.ParameterDefinition) => void;
+  disabled?: boolean;
+  error?: string;
+}) => {
   const dispatch = useDispatch<AppDispatch>();
   const { name, value, dynamicData, displayName, associatedOperationParameter } = item;
   const operationId = associatedOperationParameter?.operationId;
