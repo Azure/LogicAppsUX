@@ -18,6 +18,7 @@ import {
   promptForUnitTestName,
   selectWorkflowNode,
   processAndWriteMockableOperations,
+  updateSolutionWithProject,
 } from '../../../utils/unitTests';
 import { tryGetLogicAppProjectRoot } from '../../../utils/verifyIsProject';
 import { ensureDirectoryInWorkspace, getWorkflowNode, getWorkspaceFolder } from '../../../utils/workspace';
@@ -118,9 +119,11 @@ export async function saveBlankUnitTest(
     });
     ext.outputChannel.appendLog(localize('unitTestNameEntered', `Unit test name entered: ${unitTestName}`));
 
-    // Retrieve unitTestFolderPath and logic app name from helper
-    const { unitTestFolderPath, logicAppName, workflowTestFolderPath } = getUnitTestPaths(projectPath, workflowName, unitTestName);
-
+    const { unitTestFolderPath, logicAppName, workflowTestFolderPath, logicAppTestFolderPath, testsDirectory } = getUnitTestPaths(
+      projectPath,
+      workflowName,
+      unitTestName
+    );
     // Retrieve necessary paths
     // Indicate that we resolved the folder path
     logTelemetry(context, {
@@ -152,6 +155,14 @@ export async function saveBlankUnitTest(
       unitTestSaveStatus: 'Success',
       unitTestProcessingTimeMs: (Date.now() - startTime).toString(),
     });
+    try {
+      // Construct the path for the .csproj file using the logic app test folder
+      const csprojFilePath = path.join(logicAppTestFolderPath, `${logicAppName}.csproj`);
+      ext.outputChannel.appendLog(`Updating solution in tests folder: ${unitTestFolderPath}`);
+      await updateSolutionWithProject(testsDirectory, csprojFilePath);
+    } catch (solutionError) {
+      ext.outputChannel.appendLog(`Failed to update solution: ${solutionError}`);
+    }
   } catch (error) {
     // Handle errors using the helper function
     logTelemetry(context, {

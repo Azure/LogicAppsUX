@@ -19,6 +19,7 @@ import {
   processAndWriteMockableOperations,
   promptForUnitTestName,
   selectWorkflowNode,
+  updateSolutionWithProject,
 } from '../../../utils/unitTests';
 import { tryGetLogicAppProjectRoot } from '../../../utils/verifyIsProject';
 import { ensureDirectoryInWorkspace, getWorkflowNode, getWorkspaceFolder } from '../../../utils/workspace';
@@ -282,6 +283,14 @@ async function generateUnitTestFromRun(
     );
     logTelemetry(context, { unitTestGenerationStatus: 'Success' });
     context.telemetry.measurements.generateCodefulUnitTestMs = Date.now() - startTime;
+    try {
+      const csprojFilePath = path.join(paths.logicAppTestFolderPath, `${paths.logicAppName}.csproj`);
+
+      ext.outputChannel.appendLog(`Updating solution in tests folder: ${paths.testsDirectory}`);
+      await updateSolutionWithProject(paths.testsDirectory, csprojFilePath);
+    } catch (solutionError) {
+      ext.outputChannel.appendLog(`Failed to update solution: ${solutionError}`);
+    }
   } catch (methodError) {
     context.telemetry.properties.unitTestGenerationStatus = 'Failed';
     const errorMessage = parseErrorBeforeTelemetry(methodError);

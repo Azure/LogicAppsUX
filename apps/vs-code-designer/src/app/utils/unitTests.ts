@@ -2,19 +2,21 @@
  *  Copyright (c) Microsoft Corporation. All rights reserved.
  *  Licensed under the MIT License. See License.md in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
-import type { UnitTestResult } from '@microsoft/vscode-extension-logic-apps';
-import { saveUnitTestEvent, testsDirectoryName, unitTestsFileName, workflowFileName } from '../../constants';
-import { type IAzureQuickPickItem, type IActionContext, callWithTelemetryAndErrorHandling } from '@microsoft/vscode-azext-utils';
+import { exec } from 'child_process';
+import axios from 'axios';
 import * as fse from 'fs-extra';
 import * as path from 'path';
 import * as vscode from 'vscode';
 import * as xml2js from 'xml2js';
-import { getWorkflowsInLocalProject } from './codeless/common';
-import { ext } from '../../extensionVariables';
-import type { IAzureConnectorsContext } from '../commands/workflows/azureConnectorWizard';
-import axios from 'axios';
+import { type IActionContext, callWithTelemetryAndErrorHandling, type IAzureQuickPickItem } from '@microsoft/vscode-azext-utils';
+import type { UnitTestResult } from '@microsoft/vscode-extension-logic-apps';
 import { toPascalCase } from '@microsoft/logic-apps-shared';
+import { saveUnitTestEvent, testsDirectoryName, unitTestsFileName, workflowFileName } from '../../constants';
+import { ext } from '../../extensionVariables';
 import { localize } from '../../localize';
+import { getWorkflowsInLocalProject } from './codeless/common';
+import type { IAzureConnectorsContext } from '../commands/workflows/azureConnectorWizard';
+import { promisify } from 'util';
 
 /**
  * Saves the unit test definition for a workflow.
@@ -1232,4 +1234,41 @@ export async function isMockable(type: string): Promise<boolean> {
     return true;
   }
   return false;
+}
+
+/**
+ * Creates a new solution file and adds the specified Logic App .csproj to it.
+ *
+ * This function performs the following steps in the tests directory:
+ * 1. Runs 'dotnet new sln -n Tests' to create a new solution file named Tests.sln.
+ * 2. Computes the relative path from the tests directory to the Logic App .csproj.
+ * 3. Runs 'dotnet sln Tests.sln add <relativePath>' to add the project to the solution.
+ *
+ * @param testsDirectory - The absolute path to the tests directory root.
+ * @param logicAppCsprojPath - The absolute path to the Logic App's .csproj file.
+ */
+export async function updateSolutionWithProject(testsDirectory: string, logicAppCsprojPath: string): Promise<void> {
+  const solutionName = 'Tests'; // This will create "Tests.sln"
+  const solutionFile = path.join(testsDirectory, `${solutionName}.sln`);
+  const execAsync = promisify(exec);
+
+  try {
+    // Create a new solution file if it doesn't already exist.
+    if (await fse.pathExists(solutionFile)) {
+      ext.outputChannel.appendLog(`Solution file already exists at ${solutionFile}.`);
+    } else {
+      ext.outputChannel.appendLog(`Creating new solution file at ${solutionFile}...`);
+      await execAsync(`dotnet new sln -n ${solutionName}`, { cwd: testsDirectory });
+      ext.outputChannel.appendLog(`Solution file created: ${solutionFile}`);
+    }
+
+    // Compute the relative path from the tests directory to the Logic App .csproj.
+    const relativeProjectPath = path.relative(testsDirectory, logicAppCsprojPath);
+    ext.outputChannel.appendLog(`Adding project '${relativeProjectPath}' to solution '${solutionFile}'...`);
+    await execAsync(`dotnet sln "${solutionFile}" add "${relativeProjectPath}"`, { cwd: testsDirectory });
+    ext.outputChannel.appendLog('Project added to solution successfully.');
+  } catch (err) {
+    ext.outputChannel.appendLog(`Error updating solution: ${err}`);
+    vscode.window.showErrorMessage(`Error updating solution: ${err}`);
+  }
 }
