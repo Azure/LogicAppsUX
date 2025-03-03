@@ -154,7 +154,7 @@ export class MapDefinitionDeserializer {
     return srcNode;
   };
 
-  private handleSingleValueOrFunction = (
+  public handleSingleValueOrFunction = (
     key: string,
     funcMetadata: FunctionCreationMetadata | undefined,
     targetNode: SchemaNodeExtended | FunctionData,
