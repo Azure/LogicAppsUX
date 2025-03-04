@@ -27,6 +27,47 @@ export interface Manifest {
   sourceCodeUrl?: string; // Automatically generated for public templates, otherwise optional
 }
 
+export interface TemplateManifest {
+  id: string;
+  title: string;
+  description: string;
+  /* This is a markdown to show features for multi-workflow */
+  detailsDescription?: string;
+  artifacts?: Artifact[];
+  skus: SkuType[];
+
+  /* This consists of list of workflows listed in the multi-workflow template.
+  The key is the folder name, followed by metadata where name is default name to be used for creation */
+  workflows?: Record<string, { name: string }>;
+  featuredConnectors: { id: string; kind: string }[];
+  details: {
+    By: string;
+    Type: string;
+    Category: string;
+    Trigger?: string; // undefined for accelerator
+  };
+  tags?: string[];
+  sourceCodeUrl?: string; // Automatically generated for public templates, otherwise not present
+}
+
+export interface WorkflowManifest {
+  id: string;
+  title: string;
+  description: string;
+  detailsDescription?: string;
+  prerequisites?: string;
+  kinds?: WorkflowKindType[];
+  artifacts?: Artifact[];
+  images: {
+    light: string;
+    dark: string;
+  };
+  parameters: Parameter[];
+  connections: Record<string, Connection>;
+
+  sourceCodeUrl?: string; // Automatically generated for public templates, otherwise optional
+}
+
 export interface Artifact {
   type: string;
   file: string;
