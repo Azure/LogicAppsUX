@@ -76,6 +76,7 @@ const DefaultNode = ({ targetPosition = Position.Top, sourcePosition = Position.
   const runData = useRunData(id);
   const parentRunId = useParentRunId(id);
   const parentRunData = useRunData(parentRunId ?? '');
+  const selfRunData = useRunData(id);
   const nodesMetaData = useNodesMetadata();
   const repetitionName = useMemo(
     () => getRepetitionName(parentRunIndex, id, nodesMetaData, operationsInfo),
@@ -120,9 +121,14 @@ const DefaultNode = ({ targetPosition = Position.Top, sourcePosition = Position.
 
   useEffect(() => {
     if (!isNullOrUndefined(repetitionRunData)) {
+      if (selfRunData?.correlation?.actionTrackingId === repetitionRunData?.properties?.correlation?.actionTrackingId) {
+        // if the correlation id is the same, we don't need to update the repetition run data
+        return;
+      }
+
       dispatch(setRepetitionRunData({ nodeId: id, runData: repetitionRunData.properties as LogicAppsV2.WorkflowRunAction }));
     }
-  }, [dispatch, repetitionRunData, id]);
+  }, [dispatch, repetitionRunData, id, selfRunData?.correlation?.actionTrackingId]);
 
   const { dependencies, loopSources } = useTokenDependencies(id);
 
