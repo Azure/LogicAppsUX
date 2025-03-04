@@ -11,7 +11,9 @@ $targetNamespaces:
   td: http://tempuri.org/TypeDefinition.xsd
   xs: http://www.w3.org/2001/XMLSchema
 ns0:Root:
-  DirectTranslation:
-    Employee:
-      ID: lower-case(/ns0:Root/CumulativeExpression/Population/State[1]/Name)
+  CumulativeExpression:
+    PopulationSummary:
+      $for(/ns0:Root/CumulativeExpression/Population/State, $a):
+        State:
+          Name: County[$a]/Name
 `;
