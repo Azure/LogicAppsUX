@@ -647,7 +647,12 @@ describe('updateCsprojFile', () => {
     await updateCsprojFile(csprojFilePath, workflowName);
 
     expect(readFileSpy).toHaveBeenCalled();
-    expect(writeFileSpy).toHaveBeenCalledWith(csprojFilePath, expect.any(String), 'utf8', expect.any(Function));
+    expect(writeFileSpy).toHaveBeenCalledWith(
+      csprojFilePath,
+      expect.stringContaining('%(RecursiveDir)%(Filename)%(Extension)'),
+      'utf8',
+      expect.any(Function)
+    );
     expect(ext.outputChannel.appendLog).toHaveBeenCalled();
   });
 
