@@ -5,7 +5,7 @@ import { DataMapSchema, MapDefinitionEntry, SchemaType } from '@microsoft/logic-
 import { sourceMockSchema, targetMockSchema } from '../../__mocks__/schemas';
 import { functionMock } from '../../models';
 import { ConnectionDictionary, NodeConnection } from '../../models/Connection';
-import { addReactFlowPrefix, addTargetReactFlowPrefix } from '../../utils/ReactFlow.Util';
+import { addReactFlowPrefix, addSourceReactFlowPrefix, addTargetReactFlowPrefix } from '../../utils/ReactFlow.Util';
 
 describe('MapDefinitionDeserializerHelpers', () => {
   let simpleMap: MapDefinitionEntry = {};
@@ -31,9 +31,10 @@ describe('MapDefinitionDeserializerHelpers', () => {
       hasExpectedConnection(connectionDictionary, 'Concat', targetKeyWithPrefix);
     });
 
-    it('should return index function', () => {
+    it('should return direct access function', () => {
       const connectionDictionary: ConnectionDictionary = {};
-      const sourceKey = '/ns0:Root/DirectTranslation/EmployeeName';
+      // concat(/ns0:Root/DirectTranslation/EmployeeName)
+      const sourceKey = '/ns0:Root/LoopingWithIndex/WeatherReport[1]/@Pressure';
       const sourceKeyWithPrefix = addReactFlowPrefix(sourceKey, SchemaType.Source);
       const targetKey = '/ns0:Root/DataTranslation/EmployeeName';
       const targetKeyWithPrefix = addTargetReactFlowPrefix(targetKey);
@@ -42,7 +43,19 @@ describe('MapDefinitionDeserializerHelpers', () => {
       const targetSchemaNode = targetFlattened[targetKeyWithPrefix];
       mapDefinitionDeserializer.handleSingleValueOrFunction(key, undefined, targetSchemaNode, connectionDictionary);
 
-      hasExpectedConnection(connectionDictionary, sourceKeyWithPrefix, 'Concat', 0);
+      // inputs into directAccess
+      hasExpectedConnection(connectionDictionary, 'directAccess', 'Concat', 0);
+
+      // inputs into concat
+      hasExpectedConnection(connectionDictionary, addSourceReactFlowPrefix('/ns0:Root/LoopingWithIndex/WeatherReport'), 'directAccess', 1);
+      hasExpectedConnection(
+        connectionDictionary,
+        addSourceReactFlowPrefix('/ns0:Root/LoopingWithIndex/WeatherReport/@Pressure'),
+        'directAccess',
+        2
+      );
+
+      // inputs into target
       hasExpectedConnection(connectionDictionary, 'Concat', targetKeyWithPrefix);
     });
   });
@@ -73,6 +86,6 @@ const hasExpectedConnection = (
   expect(source.outputs.some((o) => o.reactFlowKey.startsWith(targetKey))).toBeTruthy();
 
   if (inputIndex > -1) {
-    expect((target.inputs[inputIndex] as NodeConnection).reactFlowKey).toEqual(sourceKey);
+    expect((target.inputs[inputIndex] as NodeConnection).reactFlowKey.startsWith(sourceKey));
   }
 };
