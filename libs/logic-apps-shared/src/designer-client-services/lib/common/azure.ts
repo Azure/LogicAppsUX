@@ -18,7 +18,7 @@ export const getAzureResourceRecursive = async (httpClient: IHttpClient, uri: st
         return await requestPage(nextLink, value);
       }
       return value;
-    } catch (error) {
+    } catch (_error) {
       return value;
     }
   };
@@ -31,6 +31,6 @@ export interface Tenant {
   tenantId: string;
   country: string;
   countryCode: string;
-  displayName: string;
+  displayName?: string;
   domains: string[];
 }
