@@ -1,4 +1,11 @@
 # Logic Apps Designer
+### [5.44.4](https://github.com/Azure/LogicAppsUX/compare/v5.44.3...v5.44.4) (2025-03-05)
+
+
+### Bug Fixes
+
+* **designer:** Add display name for tenants as optional ([#6734](https://github.com/Azure/LogicAppsUX/issues/6734)) ([a23fbe8](https://github.com/Azure/LogicAppsUX/commit/a23fbe87f370a2c118d1bab57fa6a6487b8d97ec))
+
 ### [5.44.3](https://github.com/Azure/LogicAppsUX/compare/v5.44.2...v5.44.3) (2025-03-03)
 
 
