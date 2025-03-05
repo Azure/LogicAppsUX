@@ -71,7 +71,7 @@ export const TemplatesList = ({ detailFilters, createWorkflowCall, isWorkflowEmp
             </>
           ) : null}
         </div>
-        {filteredTemplateNames?.length && filteredTemplateNames.length > 0 && (
+        {(filteredTemplateNames?.length && filteredTemplateNames.length > 0) ? (
           <Pager
             current={pageNum + 1}
             max={lastPage}
@@ -84,7 +84,7 @@ export const TemplatesList = ({ detailFilters, createWorkflowCall, isWorkflowEmp
             }}
             onChange={(page) => dispatch(setPageNum(page.value - 1))}
           />
-        )}
+        ) : null}
       </div>
       {filteredTemplateNames?.length === 0 ? (
         <div className="msla-templates-empty-list">

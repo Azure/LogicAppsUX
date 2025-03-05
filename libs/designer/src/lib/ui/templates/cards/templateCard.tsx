@@ -132,9 +132,11 @@ export const TemplateCard = ({ templateName }: TemplateCardProps) => {
             <Text size={300} className="msla-template-card-tag">
               {details.Type}
             </Text>
-            <Text size={300} className="msla-template-card-tag">
-              {details.Trigger}
-            </Text>
+            {details.Trigger ? (
+              <Text size={300} className="msla-template-card-tag">
+                {details.Trigger}
+              </Text>
+            ) : null}
           </div>
           <div className="msla-template-card-connectors-list">
             {connectorsToShow.length > 0 ? (

@@ -284,7 +284,15 @@ const loadTemplateFromResourcePath = async (
 
     if (workflowData) {
       data.workflows = {
-        [workflowId]: workflowData.workflow,
+        [workflowId]: {
+          ...workflowData.workflow,
+          manifest: {
+            ...workflowData.workflow.manifest,
+            // Override title and summary with template manifest data if single workflow
+            title: templateManifest.title,
+            summary: templateManifest.summary,
+          },
+        },
       };
       data.parameterDefinitions = workflowData.parameterDefinitions;
       data.connections = workflowData.connections;
