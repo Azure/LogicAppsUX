@@ -72,7 +72,7 @@ export const TemplateCard = ({ templateName }: TemplateCardProps) => {
     dispatch(changeCurrentTemplateName(templateName));
     dispatch(loadTemplate({ preLoadedManifest: templateManifest }));
 
-    if (Object.keys(templateManifest?.workflows ?? {}).length === 0) {
+    if (!isMultiWorkflow) {
       dispatch(openQuickViewPanelView());
     }
   };
