@@ -7,19 +7,13 @@ import type { IContextualMenuItem, IContextualMenuProps, IDocumentCardStyles } f
 import { DocumentCard, IconButton, Image, Shimmer, ShimmerElementType } from '@fluentui/react';
 import { ConnectorIcon, ConnectorIconWithName } from '../connections/connector';
 import { useIntl } from 'react-intl';
-import type { OperationInfo, Template } from '@microsoft/logic-apps-shared';
-import {
-  equals,
-  getBuiltInOperationInfo,
-  isBuiltInOperation,
-  LogEntryLevel,
-  LoggerService,
-  TemplateService,
-} from '@microsoft/logic-apps-shared';
+import type { Template } from '@microsoft/logic-apps-shared';
+import { equals, LogEntryLevel, LoggerService, TemplateService } from '@microsoft/logic-apps-shared';
 import MicrosoftIcon from '../../../common/images/templates/microsoft.svg';
 import { Add16Regular, PeopleCommunity16Regular } from '@fluentui/react-icons';
 import { isMultiWorkflowTemplate, loadTemplate } from '../../../core/actions/bjsworkflow/templates';
 import { useMemo } from 'react';
+import { getUniqueConnectorsFromConnections } from '../../../core/templates/utils/helper';
 
 interface TemplateCardProps {
   templateName: string;
@@ -35,7 +29,7 @@ const cardStyles: IDocumentCardStyles = {
 export const TemplateCard = ({ templateName }: TemplateCardProps) => {
   const dispatch = useDispatch<AppDispatch>();
   const intl = useIntl();
-  const { templateManifest, workflowAppName } = useSelector((state: RootState) => ({
+  const { templateManifest, workflowAppName, subscriptionId, location } = useSelector((state: RootState) => ({
     templateManifest: state.manifest.availableTemplates?.[templateName],
     subscriptionId: state.workflow.subscriptionId,
     workflowAppName: state.workflow.workflowAppName,
@@ -82,9 +76,13 @@ export const TemplateCard = ({ templateName }: TemplateCardProps) => {
   }
 
   const { title, details, featuredConnectors = [] } = templateManifest as Template.TemplateManifest;
-  const showOverflow = featuredConnectors.length > maxConnectorsToShow;
-  const connectorsToShow = showOverflow ? featuredConnectors.slice(0, maxConnectorsToShow) : featuredConnectors;
-  const overflowList = showOverflow ? featuredConnectors.slice(maxConnectorsToShow) : [];
+
+  const connectorsFromConnections = getUniqueConnectorsFromConnections(featuredConnectors, subscriptionId, location);
+  const allConnectors = connectorsFromConnections;
+  const showOverflow = allConnectors.length > maxConnectorsToShow;
+  const connectorsToShow = showOverflow ? allConnectors.slice(0, maxConnectorsToShow) : allConnectors;
+  const overflowList = showOverflow ? allConnectors.slice(maxConnectorsToShow) : [];
+
   const onRenderMenuItem = (item: IContextualMenuItem) => (
     <ConnectorIconWithName
       connectorId={item.key}
@@ -98,7 +96,7 @@ export const TemplateCard = ({ templateName }: TemplateCardProps) => {
   );
   const onRenderMenuIcon = () => <div style={{ color: 'grey' }}>{`+${overflowList.length}`}</div>;
   const menuProps: IContextualMenuProps = {
-    items: overflowList.map((info) => ({ key: info.id, text: info.id, data: info, onRender: onRenderMenuItem })),
+    items: overflowList.map((info) => ({ key: info.connectorId, text: info.connectorId, data: info, onRender: onRenderMenuItem })),
     directionalHintFixed: true,
     className: 'msla-template-card-connector-menu-box',
   };
@@ -142,9 +140,9 @@ export const TemplateCard = ({ templateName }: TemplateCardProps) => {
             {connectorsToShow.length > 0 ? (
               connectorsToShow.map((info) => (
                 <ConnectorIcon
-                  key={info.id}
-                  connectorId={info.id}
-                  // operationId={info.id}
+                  key={info.connectorId}
+                  connectorId={info.connectorId}
+                  operationId={info.operationId}
                   classes={{ root: 'msla-template-card-connector', icon: 'msla-template-card-connector-icon' }}
                 />
               ))
@@ -246,16 +244,4 @@ const LoadingTemplateCard = () => {
       </div>
     </DocumentCard>
   );
-};
-
-export const getFeaturedConnectors = (operationInfos: { type: string; kind?: string }[] = []): OperationInfo[] => {
-  return operationInfos
-    .map((info) => {
-      if (isBuiltInOperation(info)) {
-        return getBuiltInOperationInfo(info, /* isTrigger */ false);
-      }
-
-      return undefined;
-    })
-    .filter((info) => info !== undefined) as OperationInfo[];
 };

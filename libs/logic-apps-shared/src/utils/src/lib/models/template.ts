@@ -1,6 +1,7 @@
 export type SkuType = 'standard' | 'consumption';
 export type WorkflowKindType = 'stateful' | 'stateless';
-export type ConnectorRuntimeType = 'inapp' | 'shared';
+export type ConnectorRuntimeType = 'inapp' | 'shared' | 'custom';
+export type FeaturedConnectorType = ConnectorRuntimeType | 'builtin';
 
 export interface Manifest {
   title: string;
@@ -42,7 +43,6 @@ export interface TemplateManifest {
   The key is the folder name, followed by metadata where name is default name to be used for creation */
   workflows: Record<string, { name: string }>;
   featuredConnectors?: FeaturedConnector[];
-  // details: Record<DetailsType, string>;
   details: {
     By: string;
     Type: string;
@@ -108,7 +108,7 @@ export interface Connection {
 
 export interface FeaturedConnector {
   id: string;
-  kind?: ConnectorRuntimeType;
+  kind?: FeaturedConnectorType;
 }
 
 export interface TemplateContext {

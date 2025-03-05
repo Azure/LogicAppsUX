@@ -1,4 +1,4 @@
-import { type Template, getIntl, normalizeConnectorId } from '@microsoft/logic-apps-shared';
+import { type Template, getBuiltInOperationInfo, getIntl, isBuiltInOperation, normalizeConnectorId } from '@microsoft/logic-apps-shared';
 import type { AppDispatch } from '../../../core';
 import { summaryTab } from '../../../ui/panel/templatePanel/quickViewPanel/tabs/summaryTab';
 import { workflowTab } from '../../../ui/panel/templatePanel/quickViewPanel/tabs/workflowTab';
@@ -49,26 +49,40 @@ export const getQuickViewTabs = (
 };
 
 export const getUniqueConnectors = (
-  allFeaturedConectors: Template.FeaturedConnector[],
+  connections: Record<string, Template.Connection>,
   subscriptionId: string,
   location: string
-): Template.FeaturedConnector[] => {
-  return getUniqueConnectorsFromConnections(allFeaturedConectors, subscriptionId, location);
+): Template.Connection[] => {
+  const allConnections = Object.values(connections).map((connection) => ({ ...connection, id: connection.connectorId }));
+  return getUniqueConnectorsFromConnections(allConnections, subscriptionId, location);
 };
 
+interface UniqueConnectorInfo {
+  connectorId: string;
+  operationId: string | undefined;
+}
+
 export const getUniqueConnectorsFromConnections = (
-  allFeaturedConectors: Template.FeaturedConnector[],
+  originalAllConnectors: Template.FeaturedConnector[],
   subscriptionId: string,
   location: string
-): Template.FeaturedConnector[] => {
-  const result: Template.FeaturedConnector[] = [];
+): UniqueConnectorInfo[] => {
+  const result: UniqueConnectorInfo[] = [];
   const finalConnectorIds: string[] = [];
-  while (allFeaturedConectors.length > 0) {
-    const connector = allFeaturedConectors.shift() as Template.FeaturedConnector;
-    const normalizedConnectorId = normalizeConnectorId(connector.id, subscriptionId, location).toLowerCase();
-    if (!finalConnectorIds.includes(normalizedConnectorId)) {
-      finalConnectorIds.push(normalizedConnectorId);
-      result.push({ ...connector, id: normalizedConnectorId });
+  const allConnectors = [...originalAllConnectors];
+
+  while (allConnectors.length > 0) {
+    const connection = allConnectors.shift() as Template.FeaturedConnector;
+    if (connection.kind === 'builtin') {
+      if (isBuiltInOperation(connection)) {
+        result.push(getBuiltInOperationInfo(connection, /* isTrigger */ false));
+      }
+    } else {
+      const normalizedConnectorId = normalizeConnectorId(connection.id, subscriptionId, location).toLowerCase();
+      if (!finalConnectorIds.includes(normalizedConnectorId)) {
+        finalConnectorIds.push(normalizedConnectorId);
+        result.push({ ...connection, connectorId: normalizedConnectorId, operationId: undefined });
+      }
     }
   }
 
