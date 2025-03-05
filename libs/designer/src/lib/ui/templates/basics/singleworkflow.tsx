@@ -10,6 +10,7 @@ import { Open16Regular } from '@fluentui/react-icons';
 import { useWorkflowBasicsEditable, useWorkflowTemplate } from '../../../core/state/templates/templateselectors';
 import { validateWorkflowName } from '../../../core/actions/bjsworkflow/templates';
 import { useFunctionalState } from '@react-hookz/web';
+import { ResourcePicker } from './resourcepicker';
 
 export const SingleWorkflowBasics = ({ workflowId }: { workflowId: string }) => {
   const dispatch = useDispatch<AppDispatch>();
@@ -20,7 +21,10 @@ export const SingleWorkflowBasics = ({ workflowId }: { workflowId: string }) => 
     manifest,
   } = useWorkflowTemplate(workflowId);
   const { isNameEditable, isKindEditable } = useWorkflowBasicsEditable(workflowId);
-  const { existingWorkflowName } = useSelector((state: RootState) => state.workflow);
+  const { existingWorkflowName, enableResourceSelection } = useSelector((state: RootState) => ({
+    existingWorkflowName: state.workflow.existingWorkflowName,
+    enableResourceSelection: state.templateOptions.enableResourceSelection,
+  }));
   const { data: existingWorkflowNames } = useExistingWorkflowNames();
   const [name, setName] = useFunctionalState(existingWorkflowName ?? workflowName);
   const intl = useIntl();
@@ -115,6 +119,7 @@ export const SingleWorkflowBasics = ({ workflowId }: { workflowId: string }) => 
 
   return (
     <div className="msla-templates-tab msla-panel-no-description-tab">
+      {enableResourceSelection ? <ResourcePicker /> : null}
       <Label className="msla-templates-tab-label" required={true} htmlFor={'workflowNameLabel'}>
         {intlText.WORKFLOW_NAME}
       </Label>

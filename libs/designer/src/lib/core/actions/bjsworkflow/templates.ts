@@ -15,6 +15,7 @@ import {
   InitTenantService,
   InitUiInteractionsService,
   InitWorkflowService,
+  InitResourceService,
   LogEntryLevel,
   LoggerService,
   type LogicAppsV2,
@@ -99,6 +100,7 @@ export const initializeTemplateServices = createAsyncThunk(
     loggerService,
     uiInteractionsService,
     experimentationService,
+    resourceService,
   }: TemplateServiceOptions) => {
     InitConnectionService(connectionService);
     InitOperationManifestService(operationManifestService);
@@ -133,6 +135,10 @@ export const initializeTemplateServices = createAsyncThunk(
 
     if (uiInteractionsService) {
       InitUiInteractionsService(uiInteractionsService);
+    }
+
+    if (resourceService) {
+      InitResourceService(resourceService);
     }
 
     // Experimentation service is being used to A/B test features in the designer so in case client does not want to use the A/B test feature,

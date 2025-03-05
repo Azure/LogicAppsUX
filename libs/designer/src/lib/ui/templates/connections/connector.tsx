@@ -12,6 +12,8 @@ import type { ConnectorInfo } from '../../../core/templates/utils/queries';
 import { useConnectorInfo } from '../../../core/templates/utils/queries';
 import { Tooltip } from '@fluentui/react-components';
 import { isConnectionValid } from '../../../core/utils/connectors/connections';
+import { useSelector } from 'react-redux';
+import type { RootState } from 'lib/core/state/templates/store';
 
 export const ConnectorIcon = ({
   connectorId,
@@ -23,7 +25,12 @@ export const ConnectorIcon = ({
   operationId?: string;
   styles?: IStyleFunctionOrObject<IImageStyleProps, IImageStyles>;
 }) => {
-  const { data: connector, isLoading, isError } = useConnectorInfo(connectorId, operationId, /* useCachedData */ true);
+  const { subscriptionId, location } = useSelector((state: RootState) => state.workflow);
+  const {
+    data: connector,
+    isLoading,
+    isError,
+  } = useConnectorInfo(connectorId, operationId, /* useCachedData */ true, /* enabled */ !!subscriptionId && !!location);
   if (!connector) {
     return isLoading ? <Spinner size={SpinnerSize.small} /> : isError ? <Icon iconName="Error" /> : <Icon iconName="Unknown" />;
   }
