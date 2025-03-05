@@ -154,7 +154,7 @@ export class MapDefinitionDeserializer {
     return srcNode;
   };
 
-  private handleSingleValueOrFunction = (
+  public handleSingleValueOrFunction = (
     key: string,
     funcMetadata: FunctionCreationMetadata | undefined,
     targetNode: SchemaNodeExtended | FunctionData,
@@ -609,7 +609,7 @@ export class MapDefinitionDeserializer {
         input: createCustomInputConnection(key),
       });
     } else if (this.isIndexValue(key)) {
-      const indexFnKey = this._createdFunctions[key];
+      const indexFnKey = this._createdFunctions[key]; // already created from parent loop
       const indexFn = connections[indexFnKey];
       if (indexFn) {
         applyConnectionValue(connections, {
@@ -624,7 +624,23 @@ export class MapDefinitionDeserializer {
       const amendedSourceKey = amendSourceKeyForDirectAccessIfNeeded(key);
 
       const directAccessSeparated = separateFunctions(amendedSourceKey[0]);
+
+      // create direct access function
       const schemaNodeOrFunction = createSchemaNodeOrFunction(directAccessSeparated);
+
+      // connect to index if needed
+      if (this.isIndexValue(directAccessSeparated[2])) {
+        const indexFnKey = this._createdFunctions[key];
+        const indexFn = connections[indexFnKey];
+        if (indexFn) {
+          applyConnectionValue(connections, {
+            targetNode: targetNode,
+            targetNodeReactFlowKey: this.getTargetKey(targetNode),
+            findInputSlot: true,
+            input: createNodeConnection(indexFn.self.node, indexFn.self.reactFlowKey),
+          });
+        }
+      }
 
       this.handleSingleValueOrFunction('', schemaNodeOrFunction.term, targetNode, connections);
     } else {
