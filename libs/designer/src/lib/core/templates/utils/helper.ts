@@ -74,8 +74,8 @@ export const getUniqueConnectorsFromConnections = (
   while (allConnectors.length > 0) {
     const connection = allConnectors.shift() as Template.FeaturedConnector;
     if (connection.kind === 'builtin') {
-      if (isBuiltInOperation(connection)) {
-        result.push(getBuiltInOperationInfo(connection, /* isTrigger */ false));
+      if (isBuiltInOperation({ type: connection.id })) {
+        result.push(getBuiltInOperationInfo({ type: connection.id }, /* isTrigger */ false));
       }
     } else {
       const normalizedConnectorId = normalizeConnectorId(connection.id, subscriptionId, location).toLowerCase();
