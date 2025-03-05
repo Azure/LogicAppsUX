@@ -15,6 +15,8 @@ export interface WorkflowLoadingState {
   language: string;
   templatesView: string;
   useEndpoint?: boolean;
+  isCreateView?: boolean;
+  enableResourceSelection?: boolean;
 }
 
 const initialState: WorkflowLoadingState = {
@@ -72,10 +74,25 @@ export const workflowLoaderSlice = createSlice({
     setUseEndpoint: (state, action: PayloadAction<boolean>) => {
       state.useEndpoint = action.payload;
     },
+    setCreateView: (state, action: PayloadAction<boolean>) => {
+      state.isCreateView = action.payload;
+    },
+    setEnableResourceSelection: (state, action: PayloadAction<boolean>) => {
+      state.enableResourceSelection = action.payload;
+    },
   },
 });
 
-export const { setResourcePath, setAppid, setWorkflowName, clearWorkflowDetails, setHostingPlan, changeRunId, setUseEndpoint } =
-  workflowLoaderSlice.actions;
+export const {
+  setResourcePath,
+  setAppid,
+  setWorkflowName,
+  clearWorkflowDetails,
+  setHostingPlan,
+  changeRunId,
+  setUseEndpoint,
+  setCreateView,
+  setEnableResourceSelection,
+} = workflowLoaderSlice.actions;
 
 export default workflowLoaderSlice.reducer;

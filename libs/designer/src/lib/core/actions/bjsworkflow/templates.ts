@@ -198,8 +198,17 @@ export const loadTemplate = createAsyncThunk(
   }
 );
 
-export const validateWorkflowName = (workflowName: string | undefined, existingWorkflowNames: string[]) => {
+export const validateWorkflowName = async (
+  workflowName: string | undefined,
+  isConsumption: boolean,
+  resourceDetails: {
+    subscriptionId: string;
+    resourceGroupName: string;
+    existingWorkflowNames: string[];
+  }
+) => {
   const intl = getIntl();
+  const { subscriptionId, resourceGroupName, existingWorkflowNames } = resourceDetails;
 
   if (!workflowName) {
     return intl.formatMessage({
@@ -216,16 +225,26 @@ export const validateWorkflowName = (workflowName: string | undefined, existingW
       description: 'Error message when the workflow name is invalid regex.',
     });
   }
-  if (existingWorkflowNames.includes(workflowName)) {
-    return intl.formatMessage(
-      {
-        defaultMessage: 'Workflow with name "{workflowName}" already exists.',
-        id: '7F4Bzv',
-        description: 'Error message when the workflow name already exists.',
-      },
-      { workflowName }
-    );
+
+  const availabilityError = intl.formatMessage(
+    {
+      defaultMessage: 'Workflow with name "{workflowName}" already exists.',
+      id: '7F4Bzv',
+      description: 'Error message when the workflow name already exists.',
+    },
+    { workflowName }
+  );
+
+  if (isConsumption) {
+    const resourceId = `/subscriptions/${subscriptionId}/resourceGroups/${resourceGroupName}/providers/Microsoft.Logic/workflows/${workflowName}`;
+    const isResourceAvailable = await TemplateService().isResourceAvailable?.(resourceId);
+    return isResourceAvailable ? undefined : availabilityError;
   }
+
+  if (existingWorkflowNames.includes(workflowName)) {
+    return availabilityError;
+  }
+
   return undefined;
 };
 
