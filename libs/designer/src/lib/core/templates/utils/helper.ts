@@ -1,4 +1,4 @@
-import { type Template, getBuiltInOperationInfo, getIntl, isBuiltInOperation, normalizeConnectorId } from '@microsoft/logic-apps-shared';
+import { type Template, getIntl, normalizeConnectorId } from '@microsoft/logic-apps-shared';
 import type { AppDispatch } from '../../../core';
 import { summaryTab } from '../../../ui/panel/templatePanel/quickViewPanel/tabs/summaryTab';
 import { workflowTab } from '../../../ui/panel/templatePanel/quickViewPanel/tabs/workflowTab';
@@ -73,16 +73,10 @@ export const getUniqueConnectorsFromConnections = (
 
   while (allConnectors.length > 0) {
     const connection = allConnectors.shift() as Template.FeaturedConnector;
-    if (connection.kind === 'builtin') {
-      if (isBuiltInOperation({ type: connection.id })) {
-        result.push(getBuiltInOperationInfo({ type: connection.id }, /* isTrigger */ false));
-      }
-    } else {
-      const normalizedConnectorId = normalizeConnectorId(connection.id, subscriptionId, location).toLowerCase();
-      if (!finalConnectorIds.includes(normalizedConnectorId)) {
-        finalConnectorIds.push(normalizedConnectorId);
-        result.push({ ...connection, connectorId: normalizedConnectorId, operationId: undefined });
-      }
+    const normalizedConnectorId = normalizeConnectorId(connection.id, subscriptionId, location).toLowerCase();
+    if (!finalConnectorIds.includes(normalizedConnectorId)) {
+      finalConnectorIds.push(normalizedConnectorId);
+      result.push({ ...connection, connectorId: normalizedConnectorId, operationId: undefined });
     }
   }
 
