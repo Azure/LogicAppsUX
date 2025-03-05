@@ -18,7 +18,7 @@ const TenantPicker = (props: any) => {
       (tenants ?? [])
         .map((tenant: Tenant) => ({
           key: tenant.id.split('/tenants/')?.[1] ?? tenant.id,
-          text: tenant.displayName,
+          text: tenant.displayName ?? '',
         }))
         .sort((a: any, b: any) => a.text.localeCompare(b.text)),
     [tenants]
