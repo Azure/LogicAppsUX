@@ -149,21 +149,15 @@ export const applyConnectionValue = (
 
   // null is signal to delete unbounded input value
   if (input === null) {
-    // danielle test this
-    if (isFunctionUnboundedInputOrRepeatingSchemaNode) {
-      // const newUnboundedInputValues = connection.inputs[0];
-      // newUnboundedInputValues.splice(confirmedInputIndex, 1);
-      // connection.inputs[0] = newUnboundedInputValues;
-    } else {
+    if (!isFunctionUnboundedInputOrRepeatingSchemaNode) {
       console.error('Invalid Connection Input Op: null was provided for non-unbounded-input value');
     }
   } else if (input === undefined || isEmptyConnection(input)) {
-    // danielle what is the intended effect? do we want to delete the connection?
     // Explicit undefined check to handle empty custom values ('') in the next block
     if (isFunctionUnboundedInputOrRepeatingSchemaNode) {
       connection.inputs[confirmedInputIndex] = createNewEmptyConnection();
     } else {
-      connection.inputs[confirmedInputIndex] = createNewEmptyConnection(); // danielle confirm
+      connection.inputs[confirmedInputIndex] = createNewEmptyConnection();
     }
   } else {
     // Set the value (ConnectionUnit or custom value)

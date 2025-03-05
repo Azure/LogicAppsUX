@@ -434,6 +434,9 @@ const addLoopingForToNewPathItems = (
   let prevPathItemWasConditional = false;
   rootSourceNodes.forEach((sourceNode) => {
     let loopValue = '';
+    if (sourceNode && !isCustomValueConnection(sourceNode) && !isEmptyConnection(sourceNode)) {
+      sourceNode.node = connections[sourceNode.reactFlowKey].self.node;
+    }
 
     if (sourceNode && isNodeConnection(sourceNode)) {
       if (isFunctionData(sourceNode.node)) {
