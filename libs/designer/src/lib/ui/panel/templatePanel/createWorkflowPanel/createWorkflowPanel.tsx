@@ -102,17 +102,10 @@ export const CreateWorkflowPanel = ({
       <CreateWorkflowPanelHeader
         headerTitle={isMultiWorkflow ? resources.multiWorkflowCreateTitle : isCreateView ? undefined : resources.updatedWorkflowTitle}
         title={manifest?.title ?? ''}
-        description={manifest?.description ?? ''}
+        summary={manifest?.summary ?? ''}
       />
     ),
-    [
-      isMultiWorkflow,
-      resources.multiWorkflowCreateTitle,
-      resources.updatedWorkflowTitle,
-      isCreateView,
-      manifest?.title,
-      manifest?.description,
-    ]
+    [isMultiWorkflow, resources.multiWorkflowCreateTitle, resources.updatedWorkflowTitle, isCreateView, manifest?.title, manifest?.summary]
   );
 
   const selectedTabProps = selectedTabId ? panelTabs?.find((tab) => tab.id === selectedTabId) : panelTabs[0];
@@ -140,11 +133,7 @@ export const CreateWorkflowPanel = ({
   );
 };
 
-export const CreateWorkflowPanelHeader = ({
-  headerTitle,
-  title,
-  description,
-}: { title: string; description: string; headerTitle?: string }) => {
+export const CreateWorkflowPanelHeader = ({ headerTitle, title, summary }: { title: string; summary: string; headerTitle?: string }) => {
   const [isOpen, setIsOpen] = useState(false);
   const intl = useIntl();
 
@@ -191,7 +180,7 @@ export const CreateWorkflowPanelHeader = ({
           <div className="msla-template-createworkflow-description">
             <Label className="msla-template-createworkflow-description-title">{intlText.DESCRIPTION}</Label>
             <Markdown className="msla-template-createworkflow-description-text" linkTarget="_blank">
-              {description}
+              {summary}
             </Markdown>
           </div>
         </div>

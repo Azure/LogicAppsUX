@@ -9,14 +9,14 @@ import { getUniqueConnectorsFromConnections } from '../../../core/templates/util
 import { useConnector } from '../../../core/state/connection/connectionSelector';
 import { Tab, TabList } from '@fluentui/react-components';
 import type { SelectTabData, SelectTabEvent } from '@fluentui/react-components';
+import type { Template } from '@microsoft/logic-apps-shared';
 
-export type TemplateDetailFilterType = Record<
-  string,
-  {
-    displayName: string;
-    items: FilterObject[];
-  }
->;
+type TemplateDetailFilterValue = {
+  displayName: string;
+  items: FilterObject[];
+};
+
+export type TemplateDetailFilterType = Partial<Record<Template.DetailsType, TemplateDetailFilterValue>>;
 
 export interface TemplateFiltersProps {
   detailFilters: TemplateDetailFilterType;
@@ -38,9 +38,10 @@ export const TemplateFilters = ({ detailFilters }: TemplateFiltersProps) => {
     const skuTemplates = Object.values(availableTemplates).filter((templateManifest) =>
       templateManifest.skus.includes(isConsumption ? 'consumption' : 'standard')
     );
-    const allConnections = Object.values(skuTemplates).flatMap((template) => Object.values(template.connections));
-    const uniqueConnectorsFromConnections = getUniqueConnectorsFromConnections(allConnections, subscriptionId, location);
-    return uniqueConnectorsFromConnections.map((connector) => connector.connectorId);
+
+    const allConnectors = Object.values(skuTemplates).flatMap((template) => template.featuredConnectors ?? []);
+    const uniqueConnectorsFromConnections = getUniqueConnectorsFromConnections(allConnectors, subscriptionId, location);
+    return uniqueConnectorsFromConnections.map((connector) => connector.id);
   }, [availableTemplates, isConsumption, location, subscriptionId]);
   const selectedTabId = appliedDetailFilters?.Type?.[0]?.value ?? templateDefaultTabKey;
 
@@ -165,16 +166,18 @@ export const TemplateFilters = ({ detailFilters }: TemplateFiltersProps) => {
             isSearchable
           />
         )}
-        {Object.keys(detailFilters).map((filterName, index) => (
-          <TemplatesFilterDropdown
-            key={index}
-            filterName={detailFilters[filterName].displayName}
-            items={detailFilters[filterName].items}
-            onApplyButtonClick={(filterItems) => {
-              dispatch(setDetailsFilters({ filterName, filters: filterItems }));
-            }}
-          />
-        ))}
+        {(Object.keys(detailFilters) as Template.DetailsType[]).map((filterName, index) =>
+          detailFilters[filterName] ? (
+            <TemplatesFilterDropdown
+              key={index}
+              filterName={detailFilters[filterName].displayName}
+              items={detailFilters[filterName].items}
+              onApplyButtonClick={(filterItems) => {
+                dispatch(setDetailsFilters({ filterName, filters: filterItems }));
+              }}
+            />
+          ) : null
+        )}
       </div>
       <div className="msla-templates-filters-row">
         <TabList selectedValue={selectedTabId} onTabSelect={onTabSelected}>

@@ -37,10 +37,13 @@ import {
 export interface WorkflowTemplateData {
   id: string;
   workflowDefinition: LogicAppsV2.WorkflowDefinition;
-  manifest: Template.Manifest;
+  manifest: Template.WorkflowManifest;
   workflowName: string | undefined;
   kind: string | undefined;
-  images?: Record<string, string>;
+  images?: {
+    light?: string;
+    dark?: string;
+  };
   connectionKeys: string[];
   errors: {
     workflow: string | undefined;
@@ -49,7 +52,7 @@ export interface WorkflowTemplateData {
 }
 
 export interface TemplatePayload {
-  manifest: Template.Manifest | undefined;
+  manifest: Template.TemplateManifest | undefined;
   workflows: Record<string, WorkflowTemplateData>;
   parameterDefinitions: Record<string, Template.ParameterDefinition>;
   connections: Record<string, Template.Connection>;
@@ -80,8 +83,8 @@ export const initializeWorkflowMetadata = createAsyncThunk(
   }
 );
 
-export const isMultiWorkflowTemplate = (manifest: Template.Manifest): boolean => {
-  return !!manifest.workflows && Object.keys(manifest.workflows).length > 0;
+export const isMultiWorkflowTemplate = (manifest: Template.TemplateManifest): boolean => {
+  return Object.keys(manifest.workflows).length > 1;
 };
 
 export const initializeTemplateServices = createAsyncThunk(
@@ -155,14 +158,14 @@ export const reloadTemplates = createAsyncThunk('reloadTemplates', async ({ clea
   dispatch(loadGithubManifestNames());
 });
 
-export const loadManifestsFromPaths = async (resourcePaths: string[]) => {
+export const loadManifestsFromPaths = async (templateIds: string[]) => {
   try {
-    const manifestPromises = resourcePaths.map(async (resourcePath) => {
-      return TemplateService().getResourceManifest(resourcePath);
+    const manifestPromises = templateIds.map(async (templateId) => {
+      return TemplateService().getTemplateManifest(templateId);
     });
-    const manifestsArray = await Promise.all(manifestPromises);
-    return manifestsArray.reduce((result: Record<string, Template.Manifest>, manifestFile: any, index: number) => {
-      result[resourcePaths[index]] = manifestFile;
+    const templateManifestsArray = await Promise.all(manifestPromises);
+    return templateManifestsArray.reduce((result: Record<string, Template.TemplateManifest>, manifestFile: any, index: number) => {
+      result[templateIds[index]] = manifestFile;
       return result;
     }, {});
   } catch (error) {
@@ -178,7 +181,7 @@ export const loadManifestsFromPaths = async (resourcePaths: string[]) => {
 
 export const loadTemplate = createAsyncThunk(
   'loadTemplate',
-  async ({ preLoadedManifest }: { preLoadedManifest: Template.Manifest | undefined }, thunkAPI) => {
+  async ({ preLoadedManifest }: { preLoadedManifest: Template.TemplateManifest | undefined }, thunkAPI) => {
     const currentState: RootState = thunkAPI.getState() as RootState;
     const currentTemplateName = currentState.template.templateName;
     const viewTemplateDetails = currentState.templateOptions.viewTemplateDetails;
@@ -224,11 +227,11 @@ export const validateWorkflowName = (workflowName: string | undefined, existingW
 };
 
 const loadTemplateFromResourcePath = async (
-  templateName: string,
-  manifest: Template.Manifest | undefined,
+  templateId: string,
+  preloadedTemplateManifest: Template.TemplateManifest | undefined,
   viewTemplateData?: Template.ViewTemplateDetails
 ): Promise<TemplatePayload> => {
-  const templateManifest: Template.Manifest = manifest ?? (await TemplateService().getResourceManifest(templateName));
+  const templateManifest = preloadedTemplateManifest ?? (await TemplateService().getTemplateManifest(templateId));
 
   const workflows = templateManifest.workflows;
   const isMultiWorkflow = isMultiWorkflowTemplate(templateManifest);
@@ -244,16 +247,12 @@ const loadTemplateFromResourcePath = async (
   };
 
   if (isMultiWorkflow && workflows) {
-    for (const workflowPath of Object.keys(workflows)) {
-      const workflowData = await loadWorkflowTemplateFromManifest(
-        workflowPath,
-        `${templateName}/${workflowPath}`,
-        /* manifest */ undefined,
-        viewTemplateData
-      );
+    for (const workflowId of Object.keys(workflows)) {
+      const workflowData = await loadWorkflowTemplate(templateId, workflowId, viewTemplateData);
+
       if (workflowData) {
-        workflowData.workflow.workflowName = workflows[workflowPath].name;
-        data.workflows[workflowPath] = workflowData.workflow;
+        workflowData.workflow.workflowName = workflows[workflowId].name;
+        data.workflows[workflowId] = workflowData.workflow;
         data.parameterDefinitions = {
           ...data.parameterDefinitions,
           ...Object.keys(workflowData.parameterDefinitions).reduce((acc: Record<string, Template.ParameterDefinition>, key: string) => {
@@ -281,7 +280,7 @@ const loadTemplateFromResourcePath = async (
     }
   } else {
     const workflowId = 'default';
-    const workflowData = await loadWorkflowTemplateFromManifest(workflowId, templateName, manifest, viewTemplateData);
+    const workflowData = await loadWorkflowTemplate(templateId, workflowId, viewTemplateData);
 
     if (workflowData) {
       data.workflows = {
@@ -295,10 +294,9 @@ const loadTemplateFromResourcePath = async (
   return data;
 };
 
-const loadWorkflowTemplateFromManifest = async (
+const loadWorkflowTemplate = async (
+  templateId: string,
   workflowId: string,
-  templatePath: string,
-  manifest: Template.Manifest | undefined,
   viewTemplateData: Template.ViewTemplateDetails | undefined
 ): Promise<
   | {
@@ -309,12 +307,12 @@ const loadWorkflowTemplateFromManifest = async (
   | undefined
 > => {
   try {
-    const { templateManifest, templateWorkflowDefinition } = await getWorkflowAndManifest(templatePath, manifest);
-    const parameterDefinitions = templateManifest.parameters?.reduce((result: Record<string, Template.ParameterDefinition>, parameter) => {
+    const { workflowManifest, templateWorkflowDefinition } = await getWorkflowAndManifest(templateId, workflowId);
+    const parameterDefinitions = workflowManifest.parameters?.reduce((result: Record<string, Template.ParameterDefinition>, parameter) => {
       result[parameter.name] = {
         ...parameter,
         value: viewTemplateData?.parametersOverride?.[parameter.name]?.value?.toString() ?? parameter.default,
-        associatedWorkflows: [templateManifest.title],
+        associatedWorkflows: [workflowManifest.title],
       };
       return result;
     }, {});
@@ -325,52 +323,42 @@ const loadWorkflowTemplateFromManifest = async (
       workflow: {
         id: workflowId,
         workflowDefinition: templateWorkflowDefinition,
-        manifest: templateManifest,
+        manifest: workflowManifest,
         workflowName: viewTemplateData?.basicsOverride?.[workflowId]?.name?.value ?? '',
         kind:
-          overridenKind && templateManifest.kinds?.includes(overridenKind)
+          overridenKind && workflowManifest.kinds?.includes(overridenKind)
             ? overridenKind
-            : templateManifest.kinds?.length
-              ? templateManifest.kinds[0]
+            : workflowManifest.kinds?.length
+              ? workflowManifest.kinds[0]
               : 'stateful',
-        images: Object.keys(templateManifest.images).reduce((result: Record<string, string>, key: string) => {
-          result[key] = TemplateService().getContentPathUrl(templatePath, templateManifest.images[key]);
-          return result;
-        }, {}),
-        connectionKeys: Object.keys(templateManifest.connections),
+        images: {
+          light: TemplateService().getContentPathUrl(`${templateId}/${workflowId}`, workflowManifest.images.light),
+          dark: TemplateService().getContentPathUrl(`${templateId}/${workflowId}`, workflowManifest.images.dark),
+        },
+        connectionKeys: Object.keys(workflowManifest.connections),
         errors: {
           workflow: undefined,
           kind: undefined,
         },
       },
       parameterDefinitions,
-      connections: templateManifest.connections,
+      connections: workflowManifest.connections,
     };
   } catch (ex: any) {
     LoggerService().log({
       level: LogEntryLevel.Error,
-      message: 'Error loading template',
+      message: 'Error loading workflow and manifest',
       area: 'Templates.GithubLoadTemplate',
       error: ex,
-      args: [templatePath],
+      args: [`${templateId}/${workflowId}`],
     });
     return undefined;
   }
 };
 
-const getWorkflowAndManifest = async (templatePath: string, manifest: Template.Manifest | undefined) => {
-  const templateManifest = manifest ?? ((await getTemplateResourceGivenPath(templatePath, 'manifest')) as Template.Manifest);
+const getWorkflowAndManifest = async (templateId: string, workflowId: string) => {
+  const workflowManifest = await TemplateService().getWorkflowManifest(templateId, workflowId);
+  const templateWorkflowDefinition = await TemplateService().getWorkflowDefinition(templateId, workflowId);
 
-  const templateWorkflowDefinition = (await getTemplateResourceGivenPath(templatePath, 'workflow')) as LogicAppsV2.WorkflowDefinition;
-
-  return { templateManifest, templateWorkflowDefinition };
-};
-
-const getTemplateResourceGivenPath = async (
-  resourcePath: string,
-  artifactType: string
-): Promise<Template.Manifest | LogicAppsV2.WorkflowDefinition> => {
-  return artifactType === 'manifest'
-    ? TemplateService().getResourceManifest(resourcePath)
-    : TemplateService().getWorkflowDefinition(resourcePath);
+  return { workflowManifest, templateWorkflowDefinition };
 };

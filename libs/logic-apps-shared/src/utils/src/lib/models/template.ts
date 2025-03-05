@@ -4,13 +4,13 @@ export type ConnectorRuntimeType = 'inapp' | 'shared';
 
 export interface Manifest {
   title: string;
-  description: string;
+  summary: string;
   skus: SkuType[];
   kinds?: WorkflowKindType[];
   details: Record<string, string>;
 
   /* This is a markdown to show features for multi-workflow and details in case of single workflow */
-  detailsDescription?: string;
+  description?: string;
 
   tags?: string[];
   artifacts: Artifact[];
@@ -27,24 +27,27 @@ export interface Manifest {
   sourceCodeUrl?: string; // Automatically generated for public templates, otherwise optional
 }
 
+export type DetailsType = 'By' | 'Type' | 'Category' | 'Trigger';
+
 export interface TemplateManifest {
   id: string;
   title: string;
-  description: string;
+  summary: string;
   /* This is a markdown to show features for multi-workflow */
-  detailsDescription?: string;
+  description?: string;
   artifacts?: Artifact[];
   skus: SkuType[];
 
   /* This consists of list of workflows listed in the multi-workflow template.
   The key is the folder name, followed by metadata where name is default name to be used for creation */
-  workflows?: Record<string, { name: string }>;
-  featuredConnectors: { id: string; kind: string }[];
+  workflows: Record<string, { name: string }>;
+  featuredConnectors?: FeaturedConnector[];
+  // details: Record<DetailsType, string>;
   details: {
     By: string;
     Type: string;
     Category: string;
-    Trigger?: string; // undefined for accelerator
+    Trigger?: string;
   };
   tags?: string[];
   sourceCodeUrl?: string; // Automatically generated for public templates, otherwise not present
@@ -53,8 +56,8 @@ export interface TemplateManifest {
 export interface WorkflowManifest {
   id: string;
   title: string;
-  description: string;
-  detailsDescription?: string;
+  summary: string;
+  description?: string;
   prerequisites?: string;
   kinds?: WorkflowKindType[];
   artifacts?: Artifact[];
@@ -100,6 +103,11 @@ export interface ParameterDefinition extends Parameter {
 
 export interface Connection {
   connectorId: string;
+  kind?: ConnectorRuntimeType;
+}
+
+export interface FeaturedConnector {
+  id: string;
   kind?: ConnectorRuntimeType;
 }
 

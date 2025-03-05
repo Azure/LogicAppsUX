@@ -6,9 +6,10 @@ export interface ITemplateService {
   openBladeAfterCreate: (workflowName: string | undefined) => void;
   onAddBlankWorkflow: () => Promise<void>;
   getAllTemplateNames: () => Promise<string[]>;
-  getResourceManifest: (resourcePath: string) => Promise<Template.Manifest>;
-  getWorkflowDefinition: (resourcePath: string) => Promise<LogicAppsV2.WorkflowDefinition>;
-  getContentPathUrl: (templateName: string, resourcePath: string) => string;
+  getTemplateManifest: (templateId: string) => Promise<Template.TemplateManifest>;
+  getWorkflowManifest: (templateId: string, workflowId: string) => Promise<Template.WorkflowManifest>;
+  getWorkflowDefinition: (templateId: string, workflowId: string) => Promise<LogicAppsV2.WorkflowDefinition>;
+  getContentPathUrl: (templatePath: string, resourcePath: string) => string;
 }
 
 let service: ITemplateService;

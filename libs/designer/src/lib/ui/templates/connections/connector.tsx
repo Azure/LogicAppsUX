@@ -15,15 +15,15 @@ import { isConnectionValid } from '../../../core/utils/connectors/connections';
 
 export const ConnectorIcon = ({
   connectorId,
-  operationId,
+  // operationId,
   classes,
 }: {
   connectorId: string;
   classes: Record<string, string>;
-  operationId?: string;
+  // operationId?: string;
   styles?: IStyleFunctionOrObject<IImageStyleProps, IImageStyles>;
 }) => {
-  const { data: connector, isLoading, isError } = useConnectorInfo(connectorId, operationId, /* useCachedData */ true);
+  const { data: connector, isLoading, isError } = useConnectorInfo(connectorId, undefined, /* useCachedData */ true);
   if (!connector) {
     return isLoading ? <Spinner size={SpinnerSize.small} /> : isError ? <Icon iconName="Error" /> : <Icon iconName="Unknown" />;
   }

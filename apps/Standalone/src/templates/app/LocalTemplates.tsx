@@ -284,29 +284,37 @@ class LocalTemplateService extends StandardTemplateService {
     }
   };
 
-  public getResourceManifest = async (resourcePath: string): Promise<Template.Manifest> => {
-    const templateName = resourcePath.split('/')[0];
-    if (localTemplateManifestPaths.includes(templateName)) {
-      return loadLocalTemplateFromResourcePath(resourcePath);
+  public getTemplateManifest = async (templateId: string): Promise<Template.TemplateManifest> => {
+    if (localTemplateManifestPaths.includes(templateId)) {
+      return loadLocalTemplateFromResourcePath(templateId);
     }
 
-    return this._options.service.getResourceManifest(resourcePath);
+    return this._options.service.getTemplateManifest(templateId);
   };
 
-  public getWorkflowDefinition = async (resourcePath: string): Promise<LogicAppsV2.WorkflowDefinition> => {
-    const templateName = resourcePath.split('/')[0];
-    if (localTemplateManifestPaths.includes(templateName)) {
-      return loadLocalTemplateFromResourcePath(resourcePath, 'workflow');
+  public getWorkflowManifest = async (templateId: string, workflowId: string): Promise<Template.WorkflowManifest> => {
+    if (localTemplateManifestPaths.includes(templateId)) {
+      return loadLocalTemplateFromResourcePath(`${templateId}/${workflowId}`);
     }
 
-    return this._options.service.getWorkflowDefinition(resourcePath);
+    return this._options.service.getWorkflowManifest(templateId, workflowId);
   };
 
-  public getContentPathUrl = (templateName: string, resourcePath: string): string => {
-    if (localTemplateManifestPaths.includes(templateName)) {
+  public getWorkflowDefinition = async (templateId: string, workflowId: string): Promise<LogicAppsV2.WorkflowDefinition> => {
+    if (localTemplateManifestPaths.includes(templateId)) {
+      return loadLocalTemplateFromResourcePath(`${templateId}/${workflowId}`, 'workflow');
+    }
+
+    return this._options.service.getWorkflowDefinition(templateId, workflowId);
+  };
+
+  public getContentPathUrl = (templatePath: string, resourcePath: string): string => {
+    const templateId = templatePath.split('/')[0];
+
+    if (localTemplateManifestPaths.includes(templateId)) {
       return resourcePath;
     }
 
-    return this._options.service.getContentPathUrl(templateName, resourcePath);
+    return this._options.service.getContentPathUrl(templatePath, resourcePath);
   };
 }

@@ -2,6 +2,7 @@ import { useSelector } from 'react-redux';
 import type { RootState } from './store';
 import type { WorkflowTemplateData } from '../../actions/bjsworkflow/templates';
 import type { ConnectionReference } from '../../../common/models/workflow';
+import type { Template } from '@microsoft/logic-apps-shared';
 
 export const useAreServicesInitialized = () => {
   return useSelector((state: RootState) => state.templateOptions.servicesInitialized ?? false);
@@ -17,6 +18,12 @@ export const useWorkflowTemplate = (workflowId: string): WorkflowTemplateData =>
   });
 };
 
+export const useTemplateManifest = (): Template.TemplateManifest | undefined => {
+  return useSelector((state: RootState) => {
+    return state.template.manifest;
+  });
+};
+
 export const useWorkflowBasicsEditable = (workflowId: string) => {
   return useSelector((state: RootState) => {
     return {
@@ -26,6 +33,7 @@ export const useWorkflowBasicsEditable = (workflowId: string) => {
   });
 };
 
+//TODO: remove this
 export const useDefaultWorkflowTemplate = (): WorkflowTemplateData => {
   return useSelector((state: RootState) => {
     const workflows = state.template.workflows ?? {};

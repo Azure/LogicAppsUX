@@ -49,27 +49,26 @@ export const getQuickViewTabs = (
 };
 
 export const getUniqueConnectors = (
-  connections: Record<string, Template.Connection>,
+  allFeaturedConectors: Template.FeaturedConnector[],
   subscriptionId: string,
   location: string
-): Template.Connection[] => {
-  const allConnections = Object.values(connections);
-  return getUniqueConnectorsFromConnections(allConnections, subscriptionId, location);
+): Template.FeaturedConnector[] => {
+  return getUniqueConnectorsFromConnections(allFeaturedConectors, subscriptionId, location);
 };
 
 export const getUniqueConnectorsFromConnections = (
-  allConnections: Template.Connection[],
+  allFeaturedConectors: Template.FeaturedConnector[],
   subscriptionId: string,
   location: string
-): Template.Connection[] => {
-  const result: Template.Connection[] = [];
+): Template.FeaturedConnector[] => {
+  const result: Template.FeaturedConnector[] = [];
   const finalConnectorIds: string[] = [];
-  while (allConnections.length > 0) {
-    const connection = allConnections.shift() as Template.Connection;
-    const normalizedConnectorId = normalizeConnectorId(connection.connectorId, subscriptionId, location).toLowerCase();
+  while (allFeaturedConectors.length > 0) {
+    const connector = allFeaturedConectors.shift() as Template.FeaturedConnector;
+    const normalizedConnectorId = normalizeConnectorId(connector.id, subscriptionId, location).toLowerCase();
     if (!finalConnectorIds.includes(normalizedConnectorId)) {
       finalConnectorIds.push(normalizedConnectorId);
-      result.push({ ...connection, connectorId: normalizedConnectorId });
+      result.push({ ...connector, id: normalizedConnectorId });
     }
   }
 
@@ -83,52 +82,55 @@ const templateSearchOptions = {
   ignoreLocation: true,
   keys: [
     {
-      name: 'title',
+      name: 'id',
       weight: 1,
-      getFn: ([_name, template]: [string, Template.Manifest]) => template.title,
+      getFn: ([_name, template]: [string, Template.TemplateManifest]) => template.id,
     },
     {
-      name: 'description',
+      name: 'title',
       weight: 1,
-      getFn: ([_name, template]: [string, Template.Manifest]) => template.description,
+      getFn: ([_name, template]: [string, Template.TemplateManifest]) => template.title,
+    },
+    {
+      name: 'tags',
+      weight: 1,
+      getFn: ([_name, template]: [string, Template.TemplateManifest]) => template.tags ?? [],
+    },
+    {
+      name: 'summary',
+      weight: 1,
+      getFn: ([_name, template]: [string, Template.TemplateManifest]) => template.summary,
+    },
+    {
+      name: 'workflowName',
+      weight: 2,
+      getFn: ([_name, template]: [string, Template.TemplateManifest]) => Object.values(template.workflows).map((w) => w.name),
     },
     {
       name: 'manifest',
       weight: 2,
-      getFn: ([_name, template]: [string, Template.Manifest]) => [
+      getFn: ([_name, template]: [string, Template.TemplateManifest]) => [
         ...template.skus,
         ...(template.tags ?? []),
-        ...(template.kinds ?? []),
         ...Object.values(template.details),
       ],
     },
     {
-      name: 'parameters',
+      name: 'featuredConnectors',
       weight: 3,
-      getFn: ([_name, template]: [string, Template.Manifest]) =>
-        template.parameters?.reduce((acc: string[], parameter) => acc.concat([parameter.displayName, parameter.description]), []),
-    },
-    {
-      name: 'connections',
-      weight: 3,
-      getFn: ([_name, template]: [string, Template.Manifest]) =>
-        template.connections
-          ? Object.values(template.connections)?.reduce(
-              (acc: string[], connection) => acc.concat([connection.connectorId.split('/').slice(-1)[0]]),
-              []
-            )
-          : [],
+      getFn: ([_name, template]: [string, Template.TemplateManifest]) =>
+        (template.featuredConnectors ?? [])?.map((connector) => connector.id),
     },
   ],
 };
 
 export const getFilteredTemplates = (
-  templates: Record<string, Template.Manifest>,
+  templates: Record<string, Template.TemplateManifest>,
   filters: {
     keyword?: string;
     sortKey: string;
     connectors?: FilterObject[];
-    detailFilters: Record<string, FilterObject[]>;
+    detailFilters: Record<Template.DetailsType, FilterObject[]>;
   },
   isConsumption: boolean
 ): string[] => {
@@ -138,10 +140,10 @@ export const getFilteredTemplates = (
     }
 
     const hasConnectors =
-      filters?.connectors?.some((connector) =>
-        Object.values(templateManifest.connections)?.some(
-          (connection) =>
-            connector.value.split('/').slice(-1)[0].toLowerCase() === connection.connectorId.split('/').slice(-1)[0].toLowerCase()
+      filters?.connectors?.some((filterConnector) =>
+        templateManifest?.featuredConnectors?.some(
+          (featuredConnector) =>
+            filterConnector.value.split('/').slice(-1)[0].toLowerCase() === featuredConnector.id.split('/').slice(-1)[0].toLowerCase()
         )
       ) ?? true;
 
@@ -150,7 +152,7 @@ export const getFilteredTemplates = (
     }
 
     const hasDetailFilters = Object.entries(filters.detailFilters).every(([filterName, filterItems]) => {
-      const templateManifestDetailValue = templateManifest.details?.[filterName]?.split(',');
+      const templateManifestDetailValue = templateManifest.details?.[filterName as Template.DetailsType]?.split(',');
       if (!templateManifestDetailValue) {
         return false;
       }
@@ -170,7 +172,10 @@ export const getFilteredTemplates = (
   return Object.keys(Object.fromEntries(sortedFilteredTemplateEntries));
 };
 
-const _sortTemplateManifestEntriesByTitle = (sortKey: string | undefined, templateManifestEntries: [string, Template.Manifest][]) => {
+const _sortTemplateManifestEntriesByTitle = (
+  sortKey: string | undefined,
+  templateManifestEntries: [string, Template.TemplateManifest][]
+) => {
   switch (sortKey) {
     case 'a-to-z':
       return templateManifestEntries.sort(([_m1, manifest1], [_m2, manifest2]) =>
