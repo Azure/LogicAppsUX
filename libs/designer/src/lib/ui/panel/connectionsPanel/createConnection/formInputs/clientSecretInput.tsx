@@ -59,19 +59,19 @@ const ClientSecretInput = (props: ClientSecretInputProps) => {
 
   const uploadFileLabelText = intl.formatMessage({
     defaultMessage: 'Upload PFX File',
-    id: '78da7d57a593',
+    id: 'ms78da7d57a593',
     description: 'Label for uploading certificate file for authentication',
   });
 
   const passwordLabelText = intl.formatMessage({
     defaultMessage: 'Password',
-    id: '8a852ae90417',
+    id: 'ms8a852ae90417',
     description: 'Label for the password field for the selected certificate file',
   });
 
   const passwordPlaceholderText = intl.formatMessage({
     defaultMessage: '(Optional) Password for PFX file',
-    id: '509868d235e3',
+    id: 'ms509868d235e3',
     description: 'Placeholder for the optional password field for the selected certificate file',
   });
 

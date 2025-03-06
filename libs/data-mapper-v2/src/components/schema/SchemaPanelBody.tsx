@@ -46,42 +46,42 @@ export const SchemaPanelBody = ({
     () => ({
       ADD_NEW: intl.formatMessage({
         defaultMessage: 'Add new',
-        id: 'aefd0f9febf0',
+        id: 'msaefd0f9febf0',
         description: 'Add new option',
       }),
       SELECT_EXISTING: intl.formatMessage({
         defaultMessage: 'Select existing',
-        id: 'd997f3698eb1',
+        id: 'msd997f3698eb1',
         description: 'Select existing option',
       }),
       SOURCE: intl.formatMessage({
         defaultMessage: 'Source',
-        id: '9ce0deb2701a',
+        id: 'ms9ce0deb2701a',
         description: 'Source',
       }),
       DESTINATION: intl.formatMessage({
         defaultMessage: 'Destination',
-        id: '11710bda31cc',
+        id: 'ms11710bda31cc',
         description: 'Destination',
       }),
       SEARCH_PROPERTIES: intl.formatMessage({
         defaultMessage: 'Search properties',
-        id: '067902c07c92',
+        id: 'ms067902c07c92',
         description: 'Seach source or target properties',
       }),
       BROWSE: intl.formatMessage({
         defaultMessage: 'Browse',
-        id: 'b3288d73e33e',
+        id: 'msb3288d73e33e',
         description: 'Browse for file',
       }),
       BROWSE_MESSAGE: intl.formatMessage({
         defaultMessage: 'Select a file to upload',
-        id: 'd825c23ad76a',
+        id: 'msd825c23ad76a',
         description: 'Placeholder for input to load a schema file',
       }),
       CANCEL: intl.formatMessage({
         defaultMessage: 'Cancel',
-        id: 'e8f74e732301',
+        id: 'mse8f74e732301',
         description: 'Cancel',
       }),
     }),

@@ -30,13 +30,13 @@ export const SourceSchemaPlaceholder = ({ onClickSelectElement }: SourceSchemaPl
 
   const placeholderMsgLoc = intl.formatMessage({
     defaultMessage: 'Select source schema elements to build your map',
-    id: 'aec749715e4d',
+    id: 'msaec749715e4d',
     description: 'Main message displayed in the placeholder',
   });
 
   const selectElementLoc = intl.formatMessage({
     defaultMessage: 'Select element',
-    id: 'e615a0e15f55',
+    id: 'mse615a0e15f55',
     description: 'Select element',
   });
 

@@ -10,7 +10,7 @@ export const AriaSearchResultsAlert = ({ resultCount, resultDescription }: AriaS
   const intl = useIntl();
   const ariaResultCount = intl.formatMessage({
     defaultMessage: ' results found',
-    id: 'b7f44fc00fe2',
+    id: 'msb7f44fc00fe2',
     description: 'shows how many results are returned after search',
   });
 

@@ -136,13 +136,13 @@ export class BaseApiManagementService implements IApiManagementService {
 
       if (response.schema) {
         schema.properties['body'] = {
-          title: intl.formatMessage({ defaultMessage: 'Body', id: '55987ec362e3', description: 'Title for body outputs' }),
+          title: intl.formatMessage({ defaultMessage: 'Body', id: 'ms55987ec362e3', description: 'Title for body outputs' }),
           ...response.schema,
         };
       }
       if (response.headers) {
         schema.properties['headers'] = {
-          title: intl.formatMessage({ defaultMessage: 'Headers', id: 'be844328f65a', description: 'Title for header outputs' }),
+          title: intl.formatMessage({ defaultMessage: 'Headers', id: 'msbe844328f65a', description: 'Title for header outputs' }),
           ...response.headers,
         };
       }
@@ -207,7 +207,7 @@ export class BaseApiManagementService implements IApiManagementService {
                 ...parameter,
                 type: undefined,
                 'x-ms-summary': intl.formatMessage(
-                  { defaultMessage: '{fileContent} (content)', id: '463fd5d711e5', description: 'Title for file name parameter' },
+                  { defaultMessage: '{fileContent} (content)', id: 'ms463fd5d711e5', description: 'Title for file name parameter' },
                   { fileContent: parameter['x-ms-summary'] ?? name }
                 ),
                 'x-ms-serialization': { property: { type: 'formdata', parameterReference: `formData.$.${name}.$content` } },
@@ -219,7 +219,7 @@ export class BaseApiManagementService implements IApiManagementService {
                 ...parameter,
                 type: 'string',
                 'x-ms-summary': intl.formatMessage(
-                  { defaultMessage: '{fileName} (file name)', id: '5184484bfd58', description: 'Title for file name parameter' },
+                  { defaultMessage: '{fileName} (file name)', id: 'ms5184484bfd58', description: 'Title for file name parameter' },
                   { fileName: parameter['x-ms-summary'] ?? name }
                 ),
                 'x-ms-serialization': { property: { type: 'formdata', parameterReference: `formData.$.${name}.$filename` } },

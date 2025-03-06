@@ -26,7 +26,7 @@ export const OverviewApp = () => {
   const intlText = {
     DEBUG_PROJECT_ERROR: intl.formatMessage({
       defaultMessage: 'Please start the project by pressing F5 or run it through the Run and Debug view',
-      id: '7b5810033da7',
+      id: 'ms7b5810033da7',
       description: 'Debug logic app project error text',
     }),
   };

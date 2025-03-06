@@ -40,13 +40,13 @@ export const CreateConnectionInTemplate = (props: {
 
   const createButtonText = intl.formatMessage({
     defaultMessage: 'Add connection',
-    id: '7301f1c1b365',
+    id: 'ms7301f1c1b365',
     description: 'Text for create connection button',
   });
   const description = intl.formatMessage(
     {
       defaultMessage: '{connectorName} connection',
-      id: 'd30fe8944a30',
+      id: 'msd30fe8944a30',
       description: 'Message to show in title for connection creation',
     },
     { connectorName: connector?.properties.displayName ?? '' }

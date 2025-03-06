@@ -45,12 +45,12 @@ export const DesignerApp = () => {
   const intlText = {
     ERROR_APP: intl.formatMessage({
       defaultMessage: 'Something went wrong',
-      id: '5ed54e3278a6',
+      id: 'ms5ed54e3278a6',
       description: 'Something went wrong text',
     }),
     LOADING_APP: intl.formatMessage({
       defaultMessage: 'Loading designer',
-      id: '7d9256051e45',
+      id: 'ms7d9256051e45',
       description: 'Loading designer text',
     }),
   };

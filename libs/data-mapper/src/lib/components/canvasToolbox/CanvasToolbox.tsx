@@ -54,49 +54,49 @@ export const CanvasToolbox = ({ canvasBlockHeight }: CanvasToolboxProps) => {
 
   const showSourceSchemaLoc = intl.formatMessage({
     defaultMessage: 'Show source schema',
-    id: '0ffc535d5d46',
+    id: 'ms0ffc535d5d46',
     description: 'Label to open source schema toolbox',
   });
 
   const hideSourceSchemaLoc = intl.formatMessage({
     defaultMessage: 'Hide source schema',
-    id: 'd698cef6c729',
+    id: 'msd698cef6c729',
     description: 'Label to close source schema toolbox',
   });
 
   const showFunctionsLoc = intl.formatMessage({
     defaultMessage: 'Show functions',
-    id: '3ef593c51687',
+    id: 'ms3ef593c51687',
     description: 'Label to open Functions list',
   });
 
   const hideFunctionsLoc = intl.formatMessage({
     defaultMessage: 'Hide functions',
-    id: 'd673835031b9',
+    id: 'msd673835031b9',
     description: 'Label to close Functions list',
   });
 
   const functionLoc = intl.formatMessage({
     defaultMessage: 'Function',
-    id: '3d2ac234bb64',
+    id: 'ms3d2ac234bb64',
     description: 'Function',
   });
 
   const sourceSchemaLoc = intl.formatMessage({
     defaultMessage: 'Source schema',
-    id: '54b737155466',
+    id: 'ms54b737155466',
     description: 'Source schema',
   });
 
   const addSrcSchemaLoc = intl.formatMessage({
     defaultMessage: 'Add a source schema first, then select elements to build your map',
-    id: '87abd56d716b',
+    id: 'ms87abd56d716b',
     description: 'Message to add a source schema',
   });
 
   const addLoc = intl.formatMessage({
     defaultMessage: 'Add',
-    id: '17d751d50e30',
+    id: 'ms17d751d50e30',
     description: 'Add',
   });
 
@@ -136,7 +136,7 @@ export const CanvasToolbox = ({ canvasBlockHeight }: CanvasToolboxProps) => {
     const nodeList = [node, ...node.children];
     const text = intl.formatMessage({
       defaultMessage: 'Add children',
-      id: '602161ce9444',
+      id: 'ms602161ce9444',
       description: 'Add the current node and its children to the map',
     });
     return (
@@ -154,7 +154,7 @@ export const CanvasToolbox = ({ canvasBlockHeight }: CanvasToolboxProps) => {
     const nodeList = flattenSchemaNode(node);
     const text = intl.formatMessage({
       defaultMessage: 'Add children (recursive)',
-      id: 'db4a2ab297c1',
+      id: 'msdb4a2ab297c1',
       description: 'Add the current node and its children to the map',
     });
     return (

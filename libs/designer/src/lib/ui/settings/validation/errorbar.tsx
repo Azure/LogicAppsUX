@@ -12,7 +12,7 @@ export function CustomizableMessageBar({ type, message, onWarningDismiss }: Mess
   const intl = useIntl();
   const dismissText = intl.formatMessage({
     defaultMessage: 'Dismiss',
-    id: '3648ed1bf979',
+    id: 'ms3648ed1bf979',
     description: 'Dismiss button text',
   });
 

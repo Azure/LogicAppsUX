@@ -67,7 +67,7 @@ export const DropDown = ({
 
   const altTextForButtonIcon = intl.formatMessage({
     defaultMessage: 'alt text for button icon',
-    id: 'df836dfc15a0',
+    id: 'msdf836dfc15a0',
     description: 'alt text for button icon',
   });
 

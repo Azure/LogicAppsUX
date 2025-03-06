@@ -33,7 +33,7 @@ export const workflowTab = (
   id: constants.TEMPLATE_PANEL_TAB_NAMES.WORKFLOW_VIEW,
   title: intl.formatMessage({
     defaultMessage: 'Workflow',
-    id: '94559785c29b',
+    id: 'ms94559785c29b',
     description: 'The tab label for the monitoring parameters tab on the operation panel',
   }),
   hasError: false,
@@ -41,7 +41,7 @@ export const workflowTab = (
   footerContent: {
     primaryButtonText: intl.formatMessage({
       defaultMessage: 'Use this template',
-      id: 'e6ccf360ff97',
+      id: 'mse6ccf360ff97',
       description: 'Button text to create workflow from this template',
     }),
     primaryButtonOnClick: () => {
@@ -56,7 +56,7 @@ export const workflowTab = (
     },
     secondaryButtonText: intl.formatMessage({
       defaultMessage: 'Close',
-      id: '153accc4d1cf',
+      id: 'ms153accc4d1cf',
       description: 'Button text for closing the panel',
     }),
     secondaryButtonOnClick: () => {

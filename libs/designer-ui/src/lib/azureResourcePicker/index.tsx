@@ -67,7 +67,7 @@ export const AzureResourcePicker = (props: AzureResourcePickerProps) => {
   const [searchTerm, setSearchTerm] = useState<string | null>(null);
   const searchText = intl.formatMessage({
     defaultMessage: 'Search',
-    id: 'a958107d6bca',
+    id: 'msa958107d6bca',
     description: 'Search box placeholder text',
   });
   const fuseObject = useMemo(
@@ -168,7 +168,7 @@ export const ResourceEntry = (props: ResourceEntryProps) => {
 
   const noSubResourceText = intl.formatMessage({
     defaultMessage: 'No resources of this type found under this subscription.',
-    id: '8d98e0619237',
+    id: 'ms8d98e0619237',
     description: 'Message to show when no resources are found',
   });
 

@@ -62,12 +62,12 @@ export const PropertyEditor = ({ properties, title, schema, updateProperties }: 
 
   const duplicatePropertyName = intl.formatMessage({
     defaultMessage: 'Duplicate property name',
-    id: '90148b7ee89d',
+    id: 'ms90148b7ee89d',
     description: 'Duplicate property name error message',
   });
   const emptyPropertyName = intl.formatMessage({
     defaultMessage: 'Empty property name',
-    id: '99e56407a0b9',
+    id: 'ms99e56407a0b9',
     description: 'Empty property name error message',
   });
 
@@ -141,25 +141,25 @@ export const PropertyEditor = ({ properties, title, schema, updateProperties }: 
 
   const saveButtonLabel = intl.formatMessage({
     defaultMessage: 'Save',
-    id: 'db2db86bf9e2',
+    id: 'msdb2db86bf9e2',
     description: 'Save button label',
   });
 
   const cancelButtonLabel = intl.formatMessage({
     defaultMessage: 'Cancel',
-    id: 'd064f4488113',
+    id: 'msd064f4488113',
     description: 'Cancel button label',
   });
 
   const newPropertyPlaceholderText = intl.formatMessage({
     defaultMessage: 'Enter unique property name',
-    id: '356c4658d85c',
+    id: 'ms356c4658d85c',
     description: 'Placeholder text for new property name',
   });
 
   const addItemButtonLabel = intl.formatMessage({
     defaultMessage: 'Add new item',
-    id: '662f6040ae04',
+    id: 'ms662f6040ae04',
     description: 'Label to add item to property editor',
   });
 

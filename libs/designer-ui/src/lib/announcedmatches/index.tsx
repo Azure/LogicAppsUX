@@ -16,13 +16,13 @@ export const AnnouncedMatches: React.FC<AnnouncedMatchesProps> = ({ count, isLoa
   const message = isLoading
     ? intl.formatMessage({
         defaultMessage: 'Loading...',
-        id: '83010a2cc501',
+        id: 'ms83010a2cc501',
         description: 'This is a message shown while loading. This announced text is read aloud with screen readers. Not shown in text.',
       })
     : intl.formatMessage(
         {
           defaultMessage: '{count, plural, one {# item matched.} =0 {no items matched.} other {# items matched.}}',
-          id: '92563d50d883',
+          id: 'ms92563d50d883',
           description: 'This announced text is read aloud with screen readers. Not shown in text.',
         },
         {

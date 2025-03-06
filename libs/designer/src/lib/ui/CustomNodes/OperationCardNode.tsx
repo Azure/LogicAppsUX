@@ -247,21 +247,21 @@ const DefaultNode = ({ targetPosition = Position.Top, sourcePosition = Position.
 
   const opManifestErrorText = intl.formatMessage({
     defaultMessage: 'Error fetching manifest',
-    id: '1e6707a04819',
+    id: 'ms1e6707a04819',
     description: 'Error message when manifest fails to load',
   });
 
   const settingValidationErrors = useSettingValidationErrors(id);
   const settingValidationErrorText = intl.formatMessage({
     defaultMessage: 'Invalid settings',
-    id: '26297f59a2ad',
+    id: 'ms26297f59a2ad',
     description: 'Text to explain that there are invalid settings for this node',
   });
 
   const parameterValidationErrors = useParameterValidationErrors(id);
   const parameterValidationErrorText = intl.formatMessage({
     defaultMessage: 'Invalid parameters',
-    id: '4e6afff5ebe7',
+    id: 'ms4e6afff5ebe7',
     description: 'Text to explain that there are invalid parameters for this node',
   });
 

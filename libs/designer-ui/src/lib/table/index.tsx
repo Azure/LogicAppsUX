@@ -63,7 +63,7 @@ export const TableEditor: React.FC<TableEditorProps> = ({
       key: ColumnMode.Automatic,
       text: intl.formatMessage({
         defaultMessage: 'Automatic',
-        id: '033d10bc6861',
+        id: 'ms033d10bc6861',
         description: 'Option text for table column type in table editor',
       }),
     },
@@ -71,7 +71,7 @@ export const TableEditor: React.FC<TableEditorProps> = ({
       key: ColumnMode.Custom,
       text: intl.formatMessage({
         defaultMessage: 'Custom',
-        id: '4e2aa78ab013',
+        id: 'ms4e2aa78ab013',
         description: 'Option text for table column type in table editor',
       }),
     },

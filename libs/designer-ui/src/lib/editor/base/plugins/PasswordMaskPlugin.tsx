@@ -39,13 +39,13 @@ export function PasswordMaskPlugin(): JSX.Element {
 
   const showVisibilityLabel = intl.formatMessage({
     defaultMessage: 'Show Password',
-    id: '1fa202e8bc12',
+    id: 'ms1fa202e8bc12',
     description: 'Label to show password',
   });
 
   const hideVisibilityLabel = intl.formatMessage({
     defaultMessage: 'Hide Password',
-    id: 'b27cc288a727',
+    id: 'msb27cc288a727',
     description: 'Label to hide password',
   });
 

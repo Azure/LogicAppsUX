@@ -10,7 +10,7 @@ export const IFrameTermsOfService = (props: IFrameTermsOfServiceProps) => {
   const intl = useIntl();
   const title = intl.formatMessage({
     defaultMessage: 'Terms of Service',
-    id: 'dc4462f84601',
+    id: 'msdc4462f84601',
     description: 'Title for terms of service iframe.',
   });
 

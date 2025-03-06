@@ -60,19 +60,19 @@ export const SchemaTreeSearchbar = ({ onSearch, onClear, filteredDataTypes, setF
 
   const searchLoc = intl.formatMessage({
     defaultMessage: 'Search',
-    id: 'd8d5d862eda8',
+    id: 'msd8d5d862eda8',
     description: 'Search',
   });
 
   const clearLoc = intl.formatMessage({
     defaultMessage: 'Clear',
-    id: '7bd3afcd64c1',
+    id: 'ms7bd3afcd64c1',
     description: 'Clear',
   });
 
   const filterLoc = intl.formatMessage({
     defaultMessage: 'Filter by data type',
-    id: '18851242c940',
+    id: 'ms18851242c940',
     description: 'Filter by data type',
   });
 

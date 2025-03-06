@@ -5,7 +5,7 @@ export const InputCustomInfoLabel = () => {
   const intl = useIntl();
   const label = intl.formatMessage({
     defaultMessage: 'Wrap all custom value string and DateTime values in double quotes. For example, "abc".',
-    id: 'be1c1a61b65d',
+    id: 'msbe1c1a61b65d',
     description: 'Info label describing how to format custom values',
   });
 

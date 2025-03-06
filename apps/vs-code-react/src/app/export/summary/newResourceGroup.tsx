@@ -32,47 +32,47 @@ export const NewResourceGroup: React.FC<INewResourceGroupProps> = ({ onAddNewRes
   const intlText = {
     CREATE_NEW: intl.formatMessage({
       defaultMessage: 'Create new',
-      id: '5ca43f2f0b30',
+      id: 'ms5ca43f2f0b30',
       description: 'Create new text',
     }),
     RESOURCE_GROUP_DESCRIPTION: intl.formatMessage({
       defaultMessage: 'A resource group is a container that holds related resources for an Azure solution.',
-      id: '7d4f7c36d4a8',
+      id: 'ms7d4f7c36d4a8',
       description: 'Deploy managed connections warning text',
     }),
     OK: intl.formatMessage({
       defaultMessage: 'OK',
-      id: 'ef47079a602e',
+      id: 'msef47079a602e',
       description: 'OK button',
     }),
     CANCEL: intl.formatMessage({
       defaultMessage: 'Cancel',
-      id: 'ab3f577869b0',
+      id: 'msab3f577869b0',
       description: 'Cancel button',
     }),
     NAME: intl.formatMessage({
       defaultMessage: 'Name',
-      id: 'd6418174f1be',
+      id: 'msd6418174f1be',
       description: 'Name button',
     }),
     INVALID_CHARS: intl.formatMessage({
       defaultMessage: 'The name can contain only alphanumeric characters or the following symbols: . _ - ( )',
-      id: 'f6f3aae412d0',
+      id: 'msf6f3aae412d0',
       description: 'RResource group name - invalid characters error',
     }),
     INVALID_ENDING_CHAR: intl.formatMessage({
       defaultMessage: `The name can't end with a period.`,
-      id: '3ded1e317eb2',
+      id: 'ms3ded1e317eb2',
       description: 'Resource group name ending error',
     }),
     INVALID_EXISTING_NAME: intl.formatMessage({
       defaultMessage: 'A resource group with the same name already exists in the selected subscription.',
-      id: '2ad1a5cc8a66',
+      id: 'ms2ad1a5cc8a66',
       description: 'Resource group existing name error',
     }),
     NEW: intl.formatMessage({
       defaultMessage: 'New',
-      id: '9b71fe80bccb',
+      id: 'ms9b71fe80bccb',
       description: 'New text',
     }),
   };

@@ -260,14 +260,14 @@ export const SchemaCard = (props: NodeProps<SchemaCardProps>) => {
   const contextMenu = useCardContextMenu();
   const ariaDescribeChevron = intl.formatMessage({
     defaultMessage: 'Navigate to element and view children',
-    id: 'bef48747c734',
+    id: 'msbef48747c734',
     description: "Change context of the canvas to view that element's children",
   });
 
   const RemoveMenuItem = () => {
     const deleteNode = intl.formatMessage({
       defaultMessage: 'Remove',
-      id: '59c9c817c2a8',
+      id: 'ms59c9c817c2a8',
       description: 'Remove card from canvas',
     });
     return (
@@ -365,7 +365,7 @@ const NBadge = ({ isOutput }: NBadgeProps) => {
 
   const arrayMappingLabel = intl.formatMessage({
     defaultMessage: 'Repeating',
-    id: '8f9cfc55dade',
+    id: 'ms8f9cfc55dade',
     description: 'Label for array connection',
   });
 

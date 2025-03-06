@@ -31,7 +31,7 @@ export const CardContextMenu: React.FC<CardContextMenuProps> = ({ contextMenuLoc
   const CARD_CONTEXT_MENU_ARIA_LABEL = intl.formatMessage(
     {
       defaultMessage: 'Context menu for {title} card',
-      id: 'f99481aea6a0',
+      id: 'msf99481aea6a0',
       description: 'Accessibility label',
     },
     {

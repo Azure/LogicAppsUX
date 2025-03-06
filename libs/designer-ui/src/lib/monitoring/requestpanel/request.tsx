@@ -16,27 +16,27 @@ export const Request: React.FC<RequestProps> = ({ request }) => {
   const Resources = {
     REQUEST_HISTORY_LABEL_BODY_TEXT: intl.formatMessage({
       defaultMessage: 'Body',
-      id: 'fc8fd4f0b786',
+      id: 'msfc8fd4f0b786',
       description: 'Label text for request or response body',
     }),
     REQUEST_HISTORY_LABEL_HEADERS_TEXT: intl.formatMessage({
       defaultMessage: 'Headers',
-      id: 'a75ebfe122d4',
+      id: 'msa75ebfe122d4',
       description: 'Label text for request or response headers',
     }),
     REQUEST_HISTORY_LABEL_METHOD_TEXT: intl.formatMessage({
       defaultMessage: 'Method',
-      id: '25b813113e27',
+      id: 'ms25b813113e27',
       description: 'Label text for request method',
     }),
     REQUEST_HISTORY_LABEL_REQUEST_TEXT: intl.formatMessage({
       defaultMessage: 'Request',
-      id: '5e79f4ba3873',
+      id: 'ms5e79f4ba3873',
       description: 'Header text for request',
     }),
     REQUEST_HISTORY_LABEL_URI_TEXT: intl.formatMessage({
       defaultMessage: 'URI',
-      id: '8025ce779384',
+      id: 'ms8025ce779384',
       description: 'Label text for request URI (uniform resource identifier)',
     }),
   };

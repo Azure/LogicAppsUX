@@ -39,32 +39,32 @@ export const AzureResourceSelection = (props: AzureResourceSelectionProps) => {
   const intl = useIntl();
   const apimTitleText = intl.formatMessage({
     defaultMessage: 'Select an API Management resource',
-    id: '7c496e7f0c05',
+    id: 'ms7c496e7f0c05',
     description: 'Select an API Management resource',
   });
   const appServiceTitleText = intl.formatMessage({
     defaultMessage: 'Select an App Service resource',
-    id: '5479b54abbe6',
+    id: 'ms5479b54abbe6',
     description: 'Select an App Service resource',
   });
   const functionAppTitleText = intl.formatMessage({
     defaultMessage: 'Select a Function App resource',
-    id: '2b0180f8ad39',
+    id: 'ms2b0180f8ad39',
     description: 'Select a Function App resource',
   });
   const swaggerFunctionAppTitleText = intl.formatMessage({
     defaultMessage: 'Select a Swagger Function App resource',
-    id: '6395c06e00b0',
+    id: 'ms6395c06e00b0',
     description: 'Select a Swagger Function App resource',
   });
   const manualWorkflowTitleText = intl.formatMessage({
     defaultMessage: `Select workflow with 'manual' trigger`,
-    id: 'ab80a18ca989',
+    id: 'msab80a18ca989',
     description: "Select workflow with 'manual' trigger",
   });
   const batchWorkflowTitleText = intl.formatMessage({
     defaultMessage: 'Select a Batch Workflow resource',
-    id: '82f0ccbaa5b4',
+    id: 'ms82f0ccbaa5b4',
     description: 'Select a Batch Workflow resource',
   });
 
@@ -246,14 +246,14 @@ export const AzureResourceSelection = (props: AzureResourceSelectionProps) => {
   ]);
 
   const headers = [
-    intl.formatMessage({ defaultMessage: 'Name', id: '0060a6d695ff', description: 'Header for resource name' }),
-    intl.formatMessage({ defaultMessage: 'Resource Group', id: 'ff26323aa169', description: 'Header for resource group name' }),
-    intl.formatMessage({ defaultMessage: 'Location', id: '4295f6fa305c', description: 'Header for resource location' }),
+    intl.formatMessage({ defaultMessage: 'Name', id: 'ms0060a6d695ff', description: 'Header for resource name' }),
+    intl.formatMessage({ defaultMessage: 'Resource Group', id: 'msff26323aa169', description: 'Header for resource group name' }),
+    intl.formatMessage({ defaultMessage: 'Location', id: 'ms4295f6fa305c', description: 'Header for resource location' }),
   ];
 
   const loadingText = intl.formatMessage({
     defaultMessage: 'Loading resources...',
-    id: '6a8513ff7978',
+    id: 'ms6a8513ff7978',
     description: 'Text for loading Azure Resources',
   });
 
@@ -300,7 +300,7 @@ export const AzureResourceSelection = (props: AzureResourceSelectionProps) => {
           submitCallback();
         }}
       >
-        {intl.formatMessage({ defaultMessage: 'Add action', id: 'd3f546885fae', description: 'Add action button text' })}
+        {intl.formatMessage({ defaultMessage: 'Add action', id: 'msd3f546885fae', description: 'Add action button text' })}
       </Button>
     </div>
   );

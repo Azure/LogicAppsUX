@@ -52,7 +52,7 @@ export const PanelHeaderTitle = ({
       setErrorMessage(
         intl.formatMessage({
           defaultMessage: 'The name already exists or is invalid. Update the name before you continue.',
-          id: 'd312d6cc6268',
+          id: 'msd312d6cc6268',
           description: 'Text for invalid operation title name',
         })
       );
@@ -76,7 +76,7 @@ export const PanelHeaderTitle = ({
   const readOnly = readOnlyMode || renameTitleDisabled;
   const panelHeaderCardTitle = intl.formatMessage({
     defaultMessage: 'Card title',
-    id: 'b3900ea55907',
+    id: 'msb3900ea55907',
     description: 'Label for the title for panel header card',
   });
 

@@ -189,13 +189,13 @@ export const FunctionList = () => {
 
   const searchLoc = intl.formatMessage({
     defaultMessage: 'Search',
-    id: 'd8d5d862eda8',
+    id: 'msd8d5d862eda8',
     description: 'Search',
   });
 
   const clearLoc = intl.formatMessage({
     defaultMessage: 'Clear',
-    id: '7bd3afcd64c1',
+    id: 'ms7bd3afcd64c1',
     description: 'Clear',
   });
 

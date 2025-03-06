@@ -64,7 +64,7 @@ export const GatewayPicker = (props: GatewayPickerProps) => {
         displayName: intl.formatMessage(
           {
             defaultMessage: '{addIcon} Install gateway',
-            id: '87e6588a9852',
+            id: 'ms87e6588a9852',
             description: 'Option to install a new gateway, links to new page',
           },
           { addIcon: '+ ' }
@@ -96,13 +96,13 @@ export const GatewayPicker = (props: GatewayPickerProps) => {
 
   const subscriptionDropdownLabel = intl.formatMessage({
     defaultMessage: 'Subscription',
-    id: '6c8c938bb3a3',
+    id: 'ms6c8c938bb3a3',
     description: 'Subscription dropdown label',
   });
 
   const gatewayDropdownLabel = intl.formatMessage({
     defaultMessage: 'Gateway',
-    id: '8eebc5fb4c3c',
+    id: 'ms8eebc5fb4c3c',
     description: 'Gateway dropdown label',
   });
 

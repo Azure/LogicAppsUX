@@ -27,12 +27,12 @@ export const Confirm: React.FC<ConfirmProps> = ({ hidden, message, title, onConf
 
   const okMessage = intl.formatMessage({
     defaultMessage: 'OK',
-    id: 'ec64a4f7df72',
+    id: 'msec64a4f7df72',
     description: 'OK message appearing on a confirmation dialog.',
   });
   const cancelMessage = intl.formatMessage({
     defaultMessage: 'Cancel',
-    id: '894b3ba6fc64',
+    id: 'ms894b3ba6fc64',
     description: 'Cancel message appearing on a confirmation dialog.',
   });
   return (

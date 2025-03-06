@@ -40,37 +40,37 @@ export const RunHistory: React.FC<RunHistoryProps> = ({ items, loading = false, 
   const Resources = {
     CONTEXT_MENU: intl.formatMessage({
       defaultMessage: 'Show run menu',
-      id: 'd094c74d9588',
+      id: 'msd094c74d9588',
       description: 'Button text to show run menu',
     }),
     DURATION: intl.formatMessage({
       defaultMessage: 'Duration',
-      id: '0d96777e378a',
+      id: 'ms0d96777e378a',
       description: 'Column header text for duration',
     }),
     IDENTIFIER: intl.formatMessage({
       defaultMessage: 'Identifier',
-      id: 'df7f961c61f6',
+      id: 'msdf7f961c61f6',
       description: 'Column header text for identifier',
     }),
     SHOW_RUN: intl.formatMessage({
       defaultMessage: 'Show run',
-      id: 'ea388eeeddc2',
+      id: 'msea388eeeddc2',
       description: 'Menu item text for show run',
     }),
     START_TIME: intl.formatMessage({
       defaultMessage: 'Start time',
-      id: '04a2f4646626',
+      id: 'ms04a2f4646626',
       description: 'Column header text for start time',
     }),
     LOCAL_TIME: intl.formatMessage({
       defaultMessage: 'Local time',
-      id: 'bfe140f0da43',
+      id: 'msbfe140f0da43',
       description: 'Column header text for local time',
     }),
     STATUS: intl.formatMessage({
       defaultMessage: 'Status',
-      id: '16c94d8054d6',
+      id: 'ms16c94d8054d6',
       description: 'Column header text for status',
     }),
   };

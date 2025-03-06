@@ -92,12 +92,12 @@ export const ParametersTab: React.FC<PanelTabProps> = (props) => {
 
   const emptyParametersMessage = intl.formatMessage({
     defaultMessage: 'No additional information is needed for this step. You will be able to use the outputs in subsequent steps.',
-    id: '06d2fb508378',
+    id: 'ms06d2fb508378',
     description: 'Message to show when there are no parameters to author in operation.',
   });
   const cannotUpdateConnectionIfPinnedMessage = intl.formatMessage({
     defaultMessage: 'Connections cannot be edited in pinned view. Release the pinned action to make connection changes.',
-    id: 'ae5f5438eefe',
+    id: 'msae5f5438eefe',
     description:
       'Descriptive message to show if the connection for an action cannot be changed or edited due to being shown in dual-pane (pinned action) view.',
   });
@@ -543,12 +543,12 @@ export const parametersTab: PanelTabFn = (intl, props) => ({
   id: constants.PANEL_TAB_NAMES.PARAMETERS,
   title: intl.formatMessage({
     defaultMessage: 'Parameters',
-    id: 'bb12913bf1ee',
+    id: 'msbb12913bf1ee',
     description: 'Parameters tab title',
   }),
   description: intl.formatMessage({
     defaultMessage: 'Configure parameters for this node',
-    id: '493a1b959aaa',
+    id: 'ms493a1b959aaa',
     description: 'Parameters tab description',
   }),
   visible: true,

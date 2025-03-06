@@ -145,7 +145,7 @@ export function CodeEditor({
     return intl.formatMessage(
       {
         defaultMessage: `{label} To add dynamic data, press the Alt + '/' keys.`,
-        id: '21d3a13d8a24',
+        id: 'ms21d3a13d8a24',
         description: 'This is an a11y message meant to help screen reader users figure out how to insert dynamic data',
       },
       { label }
@@ -154,18 +154,18 @@ export function CodeEditor({
 
   const messageBarText = intl.formatMessage({
     defaultMessage: 'Add custom modules, uncover new scenarios, and find troubleshooting tips',
-    id: '4012bbd9a2e5',
+    id: 'ms4012bbd9a2e5',
     description: 'This is a message give link to user to find out more about this action',
   });
   const messageBarTextLink = intl.formatMessage({
     defaultMessage: 'here',
-    id: 'c8436b3a0cb9',
+    id: 'msc8436b3a0cb9',
     description: 'This is the link text in the message bar',
   });
 
   const closeButtonAriaLabel = intl.formatMessage({
     defaultMessage: 'Close',
-    id: '4e390ece9dbb',
+    id: 'ms4e390ece9dbb',
     description: 'This is the aria label for the close button in the message bar',
   });
 

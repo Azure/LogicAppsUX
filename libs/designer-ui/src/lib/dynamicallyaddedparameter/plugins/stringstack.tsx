@@ -40,13 +40,13 @@ const StringStack: React.FC<StringStackProps> = ({ advancedStringParameterTitle,
 
   const deleteText = intl.formatMessage({
     defaultMessage: 'Delete',
-    id: '824639c9a88b',
+    id: 'ms824639c9a88b',
     description: 'Delete dynamic parameter corresponding to this row',
   });
 
   const nextOptionText = intl.formatMessage({
     defaultMessage: 'Enter another option',
-    id: 'c70075d865d8',
+    id: 'msc70075d865d8',
     description: 'Enter another option',
   });
 

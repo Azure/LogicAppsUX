@@ -18,17 +18,17 @@ export const SummaryPanel = ({ workflowId }: { workflowId: string }) => {
   const detailsTags: Record<string, string> = {
     Type: intl.formatMessage({
       defaultMessage: 'Solution type',
-      id: '25535197234c',
+      id: 'ms25535197234c',
       description: 'Solution type of the template',
     }),
     Trigger: intl.formatMessage({
       defaultMessage: 'Trigger type',
-      id: '0dc2415314b4',
+      id: 'ms0dc2415314b4',
       description: 'Type of the trigger in the template',
     }),
     By: intl.formatMessage({
       defaultMessage: 'Published by',
-      id: '9feb09e565de',
+      id: 'ms9feb09e565de',
       description: 'Name of the organization that published this template',
     }),
   };
@@ -40,12 +40,12 @@ export const SummaryPanel = ({ workflowId }: { workflowId: string }) => {
           {templateHasConnections
             ? intl.formatMessage({
                 defaultMessage: 'Connections included in this template',
-                id: '4e7c111a85cd',
+                id: 'ms4e7c111a85cd',
                 description: 'Title for the connections section in the template overview tab',
               })
             : intl.formatMessage({
                 defaultMessage: 'No connections are needed in this template',
-                id: '8f6bfc0442f1',
+                id: 'ms8f6bfc0442f1',
                 description: 'Text to show no connections present in the template.',
               })}
         </Text>
@@ -56,7 +56,7 @@ export const SummaryPanel = ({ workflowId }: { workflowId: string }) => {
           <Text className="msla-template-overview-section-title">
             {intl.formatMessage({
               defaultMessage: 'Prerequisites',
-              id: '264d81d2208f',
+              id: 'ms264d81d2208f',
               description: 'Title for the prerequisites section in the template overview tab',
             })}
           </Text>
@@ -69,7 +69,7 @@ export const SummaryPanel = ({ workflowId }: { workflowId: string }) => {
         <Text className="msla-template-overview-section-title">
           {intl.formatMessage({
             defaultMessage: 'Details',
-            id: 'a1c5be445f45',
+            id: 'msa1c5be445f45',
             description: 'Title for the details section in the template overview tab',
           })}
         </Text>
@@ -83,7 +83,7 @@ export const SummaryPanel = ({ workflowId }: { workflowId: string }) => {
             <Text className="msla-template-overview-section-detailkey">
               {intl.formatMessage({
                 defaultMessage: 'Source code',
-                id: '51391cc9f679',
+                id: 'ms51391cc9f679',
                 description: 'Source code of the template',
               })}
               :
@@ -108,7 +108,7 @@ export const SummaryPanel = ({ workflowId }: { workflowId: string }) => {
           <Text className="msla-template-overview-section-title">
             {intl.formatMessage({
               defaultMessage: 'Tags',
-              id: '5f4d8618a025',
+              id: 'ms5f4d8618a025',
               description: 'Title for the tags section in the template overview tab',
             })}
           </Text>
@@ -136,7 +136,7 @@ export const summaryTab = (
   id: constants.TEMPLATE_PANEL_TAB_NAMES.OVERVIEW,
   title: intl.formatMessage({
     defaultMessage: 'Summary',
-    id: '9a00f6653ff7',
+    id: 'ms9a00f6653ff7',
     description: 'The tab label for the monitoring parameters tab on the operation panel',
   }),
   hasError: false,
@@ -144,7 +144,7 @@ export const summaryTab = (
   footerContent: {
     primaryButtonText: intl.formatMessage({
       defaultMessage: 'Use this template',
-      id: 'e6ccf360ff97',
+      id: 'mse6ccf360ff97',
       description: 'Button text to create workflow from this template',
     }),
     primaryButtonOnClick: () => {
@@ -158,7 +158,7 @@ export const summaryTab = (
     },
     secondaryButtonText: intl.formatMessage({
       defaultMessage: 'Close',
-      id: '153accc4d1cf',
+      id: 'ms153accc4d1cf',
       description: 'Button text for closing the panel',
     }),
     secondaryButtonOnClick: () => {

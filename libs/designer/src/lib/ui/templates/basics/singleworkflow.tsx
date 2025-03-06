@@ -29,58 +29,58 @@ export const SingleWorkflowBasics = ({ workflowId }: { workflowId: string }) => 
     () => ({
       WORKFLOW_NAME_DESCRIPTION: intl.formatMessage({
         defaultMessage: 'Avoid spaces and the following symbols in your workflow name: \\ / : * ? " < > | @, #, $, %, &',
-        id: '1af3a0427833',
+        id: 'ms1af3a0427833',
         description: 'Description for workflow name field and the expected format of the name.',
       }),
       STATE_TYPE: intl.formatMessage({
         defaultMessage: 'State type',
-        id: '5b5ae5c543a1',
+        id: 'ms5b5ae5c543a1',
         description: 'Label for choosing State type',
       }),
       STATE_TYPE_DESCRIPTION: intl.formatMessage({
         defaultMessage:
           'This workflow supports the following states. The state determines how data is managed and retained during execution of workflows.',
-        id: '35a5b481ae59',
+        id: 'ms35a5b481ae59',
         description: 'Description for state type choice group.',
       }),
       LEARN_MORE: intl.formatMessage({
         defaultMessage: 'Learn more',
-        id: '5e0d540f00a6',
+        id: 'ms5e0d540f00a6',
         description: 'Link to learn more about state type',
       }),
       STATEFUL: intl.formatMessage({
         defaultMessage: 'Stateful',
-        id: '914e157c39a5',
+        id: 'ms914e157c39a5',
         description: 'Choice group first choice: Stateful Type',
       }),
       STATEFUL_FIRST_POINT: intl.formatMessage({
         defaultMessage: 'Optimized for high reliability',
-        id: '44ba038102d4',
+        id: 'ms44ba038102d4',
         description: 'First bullet point of stateful type',
       }),
       STATEFUL_SECOND_POINT: intl.formatMessage({
         defaultMessage: 'Ideal for process business transitional data',
-        id: '175024bd567c',
+        id: 'ms175024bd567c',
         description: 'Second bullet point of stateful type',
       }),
       STATELESS: intl.formatMessage({
         defaultMessage: 'Stateless',
-        id: 'b934db864150',
+        id: 'msb934db864150',
         description: 'Choice group first choice: Stateless Type',
       }),
       STATELESS_FIRST_POINT: intl.formatMessage({
         defaultMessage: 'Optimized for low latency',
-        id: 'c47ca1a8ef7e',
+        id: 'msc47ca1a8ef7e',
         description: 'First bullet point of stateless type',
       }),
       STATELESS_SECOND_POINT: intl.formatMessage({
         defaultMessage: 'Ideal for request-response and processing IoT events',
-        id: 'c9e6a0af3dc0',
+        id: 'msc9e6a0af3dc0',
         description: 'Second bullet point of stateless type',
       }),
       WORKFLOW_NAME: intl.formatMessage({
         defaultMessage: 'Workflow name',
-        id: '7a433bec99d4',
+        id: 'ms7a433bec99d4',
         description: 'Label for workflow Name',
       }),
     }),

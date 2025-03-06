@@ -6,20 +6,20 @@ const HybridNotice = () => {
 
   const hybridTitle = intl.formatMessage({
     defaultMessage: 'Hybrid connector',
-    id: '025ab8ff7dc4',
+    id: 'ms025ab8ff7dc4',
     description: 'Resource group title',
   });
 
   const hybridBodyText = intl.formatMessage({
     defaultMessage:
       'This connector has multiple versions, built-in and Azure-hosted. Use built-in for the best performance, connection-string authentication, and other features. Use Azure-hosted for other authentication options.',
-    id: 'fd5719f60e21',
+    id: 'msfd5719f60e21',
     description: 'Description about hybrid connectors',
   });
 
   const learnMoreText = intl.formatMessage({
     defaultMessage: 'Learn more',
-    id: 'cb3a97329673',
+    id: 'mscb3a97329673',
     description: "The text for the 'Learn more' link.",
   });
 

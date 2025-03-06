@@ -6,7 +6,7 @@ export const NoActionCard: React.FC = () => {
 
   const triggerTitle = intl.formatMessage({
     defaultMessage: 'No actions',
-    id: '8bcc4f7ce00f',
+    id: 'ms8bcc4f7ce00f',
     description: 'Text on a no actions node',
   });
 

@@ -39,7 +39,7 @@ export const EditorCommandBar = (_props: EditorCommandBarProps) => {
 
   const failedXsltMessage = intl.formatMessage({
     defaultMessage: 'Failed to generate XSLT.',
-    id: '7bd6c82a17a7',
+    id: 'ms7bd6c82a17a7',
     description: 'Message on failed generation',
   });
 
@@ -141,47 +141,47 @@ export const EditorCommandBar = (_props: EditorCommandBarProps) => {
     () => ({
       COMMAND_BAR_ARIA: intl.formatMessage({
         defaultMessage: 'Use left and right arrow keys to navigate between commands',
-        id: 'adde9f6a2d3d',
+        id: 'msadde9f6a2d3d',
         description: 'Aria describing the way to control the keyboard navigation',
       }),
       SAVE: intl.formatMessage({
         defaultMessage: 'Save',
-        id: '4a1d747303a5',
+        id: 'ms4a1d747303a5',
         description: 'Button text for save the changes',
       }),
       UNDO: intl.formatMessage({
         defaultMessage: 'Undo',
-        id: 'af8de731c765',
+        id: 'msaf8de731c765',
         description: 'Button text for undo the last action',
       }),
       DISCARD: intl.formatMessage({
         defaultMessage: 'Discard',
-        id: '4384d415751c',
+        id: 'ms4384d415751c',
         description: 'Button text for discard the unsaved changes',
       }),
       OPEN_TEST_PANEL: intl.formatMessage({
         defaultMessage: 'Open test panel',
-        id: 'c6106f5e3820',
+        id: 'msc6106f5e3820',
         description: 'Button text for opening test panel',
       }),
       VIEW_CODE: intl.formatMessage({
         defaultMessage: 'View code',
-        id: '572b128f72f8',
+        id: 'ms572b128f72f8',
         description: 'Button for View Code',
       }),
       VIEW_MAP_CHECKER: intl.formatMessage({
         defaultMessage: 'View issues',
-        id: '01ef13f78a26',
+        id: 'ms01ef13f78a26',
         description: 'Button to see issues',
       }),
       DISABLED_TEST: intl.formatMessage({
         defaultMessage: 'Please save the map before testing',
-        id: 'c136924e9b40',
+        id: 'msc136924e9b40',
         description: 'Tooltip for disabled test button',
       }),
       DISABLED_TEST_FOR_OS: intl.formatMessage({
         defaultMessage: 'Test is not supported for your current operating system',
-        id: 'db208325d736',
+        id: 'msdb208325d736',
         description: 'Tooltip for disabled test button for the os',
       }),
     }),

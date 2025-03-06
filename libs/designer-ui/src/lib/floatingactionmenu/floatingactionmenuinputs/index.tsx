@@ -313,12 +313,12 @@ export const FloatingActionMenuInputs = (props: FloatingActionMenuInputsProps): 
 
   const collapsedTitle = intl.formatMessage({
     defaultMessage: 'Add an input',
-    id: '0eea075c839f',
+    id: 'ms0eea075c839f',
     description: 'Button to add a dynamically added parameter',
   });
   const expandedTitle = intl.formatMessage({
     defaultMessage: 'Choose the type of user input',
-    id: 'dd7e051d2930',
+    id: 'msdd7e051d2930',
     description: 'Button to choose data type of the dynamically added parameter',
   });
 

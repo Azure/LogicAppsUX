@@ -47,7 +47,7 @@ export const PanelContent = ({ nodeId, tabs = [], selectedTab, selectTab }: Pane
 
   const overflowLabel = intl.formatMessage({
     defaultMessage: 'more panels',
-    id: '3cfeb78d83a8',
+    id: 'ms3cfeb78d83a8',
     description: 'This is a label to access the overflowed panels',
   });
 

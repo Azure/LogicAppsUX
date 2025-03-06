@@ -13,7 +13,7 @@ export const SecureDataSection: React.FC<SecureDataSectionProps> = ({ brandColor
   const Resources = {
     SANITIZED_TEXT: intl.formatMessage({
       defaultMessage: 'Content not shown due to security configuration.',
-      id: '51255f7ee267',
+      id: 'ms51255f7ee267',
       description: 'Message text to inform the customer that the data is secure',
     }),
   };

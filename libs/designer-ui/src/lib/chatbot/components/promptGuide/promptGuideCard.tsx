@@ -12,45 +12,45 @@ export const PromptGuideCard = ({ itemKey }: PromptGuideCardProps) => {
   const intlText = {
     addAction: intl.formatMessage({
       defaultMessage: 'Add an action',
-      id: '306651bb8a15',
+      id: 'ms306651bb8a15',
       description: 'Chatbot prompt to add action',
     }),
     addActionDescription: intl.formatMessage({
       defaultMessage:
         'Describe something your flow should do. Add details where possible, including the connector to use and if any content should be included.',
-      id: '8e570c1a0956',
+      id: 'ms8e570c1a0956',
       description: 'Chatbot prompt to add action description',
     }),
     replaceAction: intl.formatMessage({
       defaultMessage: 'Replace action',
-      id: '74c002e02997',
+      id: 'ms74c002e02997',
       description: 'Chatbot prompt to replace an action',
     }),
     replaceActionDescription: intl.formatMessage({
       defaultMessage:
         'Describe something in your flow that should be replaced, as well as what should replace it. Add details where possible, including the connector to use and if any content should be included.',
-      id: '582012b750e8',
+      id: 'ms582012b750e8',
       description: 'Chatbot prompt to replace an action description',
     }),
     editFlow: intl.formatMessage({
       defaultMessage: 'Edit Flow',
-      id: '1df98393d198',
+      id: 'ms1df98393d198',
       description: 'Chatbot prompt to edit the workflow',
     }),
     editFlowDescription: intl.formatMessage({
       defaultMessage:
         'Describe how your flow should be changed. Add details where possible, including the connector to use and if any content should be included.',
-      id: 'f0d52aa51f2d',
+      id: 'msf0d52aa51f2d',
       description: 'Chatbot prompt to edit the workflow description',
     }),
     question: intl.formatMessage({
       defaultMessage: 'Ask a question',
-      id: '0729cae17160',
+      id: 'ms0729cae17160',
       description: 'Chatbot prompt to ask a question',
     }),
     questionDescription: intl.formatMessage({
       defaultMessage: 'Ask question related to your workflow or Logic Apps.',
-      id: 'bb1435e3756d',
+      id: 'msbb1435e3756d',
       description: 'Chatbot prompt to ask a question description',
     }),
   };

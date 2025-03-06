@@ -67,7 +67,7 @@ const RequiredParameterMarker: React.FC<RequiredParameterMarkerProps> = ({ isReq
 
   const ariaLabel = intl.formatMessage({
     defaultMessage: 'Required',
-    id: 'a92b7449b158',
+    id: 'msa92b7449b158',
     description: 'Accessibility prefix for the input label',
   });
 

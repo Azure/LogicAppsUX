@@ -114,7 +114,7 @@ export const Card: React.FC<CardProps> = memo(
         withConnectorOnly: intl.formatMessage(
           {
             defaultMessage: '{connectorName} connector',
-            id: 'eac48f35b44a',
+            id: 'mseac48f35b44a',
             description: 'Alt text on action/trigger card when there is a connector name but no operation name',
           },
           cardAltTextArgs
@@ -122,7 +122,7 @@ export const Card: React.FC<CardProps> = memo(
         withOperationOnly: intl.formatMessage(
           {
             defaultMessage: '{operationName} operation',
-            id: 'f7a246f086d6',
+            id: 'msf7a246f086d6',
             description: 'Alt text on action/trigger card when there is an operation name but no connector name',
           },
           cardAltTextArgs
@@ -130,7 +130,7 @@ export const Card: React.FC<CardProps> = memo(
         withConnectorAndOperation: intl.formatMessage(
           {
             defaultMessage: '{operationName} operation, {connectorName} connector',
-            id: '9dc5b54b09c3',
+            id: 'ms9dc5b54b09c3',
             description: 'Alt text on action/trigger card when there are both an operation name and connector name',
           },
           cardAltTextArgs

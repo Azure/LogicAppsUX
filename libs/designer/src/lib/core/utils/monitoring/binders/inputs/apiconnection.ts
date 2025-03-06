@@ -103,37 +103,37 @@ export default class ApiConnectionInputsBinder extends Binder {
     const intlMessages = {
       [constants.API_CONNECTION.HOST]: intl.formatMessage({
         defaultMessage: 'Host',
-        id: '32a6420278f1',
+        id: 'ms32a6420278f1',
         description: 'Host',
       }),
       [constants.API_CONNECTION.METHOD]: intl.formatMessage({
         defaultMessage: 'Method',
-        id: '3d3065e6c8ff',
+        id: 'ms3d3065e6c8ff',
         description: 'Method',
       }),
       [constants.API_CONNECTION.PATH]: intl.formatMessage({
         defaultMessage: 'Path',
-        id: '9ee34160408b',
+        id: 'ms9ee34160408b',
         description: 'Path',
       }),
       [constants.API_CONNECTION.AUTHENTICATION]: intl.formatMessage({
         defaultMessage: 'Authentication',
-        id: '6453654804cb',
+        id: 'ms6453654804cb',
         description: 'Authentication',
       }),
       [constants.API_CONNECTION.BODY]: intl.formatMessage({
         defaultMessage: 'Body',
-        id: 'e1222b5670c4',
+        id: 'mse1222b5670c4',
         description: 'Body',
       }),
       [constants.API_CONNECTION.HEADERS]: intl.formatMessage({
         defaultMessage: 'Headers',
-        id: '55c851f5db05',
+        id: 'ms55c851f5db05',
         description: 'Headers',
       }),
       [constants.API_CONNECTION.QUERIES]: intl.formatMessage({
         defaultMessage: 'Queries',
-        id: '9b14882f14f7',
+        id: 'ms9b14882f14f7',
         description: 'Queries',
       }),
     };

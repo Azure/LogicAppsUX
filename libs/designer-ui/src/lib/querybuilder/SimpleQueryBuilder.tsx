@@ -50,19 +50,19 @@ export const SimpleQueryBuilder = ({ getTokenPicker, itemValue, readonly, onChan
 
   const advancedButtonLabel = intl.formatMessage({
     defaultMessage: 'Edit in advanced mode',
-    id: '31f01d7f14df',
+    id: 'ms31f01d7f14df',
     description: 'Button Label when clicked to swith to advanced editor',
   });
 
   const basicButtonLabel = intl.formatMessage({
     defaultMessage: 'Edit in basic mode',
-    id: 'f71f2183c4a3',
+    id: 'msf71f2183c4a3',
     description: 'Button Label when clicked to swith to basic editor',
   });
 
   const invalidRowFormat = intl.formatMessage({
     defaultMessage: 'Condition is too complex or invalid. Unable to switch to basic mode',
-    id: '1482f536dcc3',
+    id: 'ms1482f536dcc3',
     description: 'Error message when unable to switch to basic mode',
   });
 

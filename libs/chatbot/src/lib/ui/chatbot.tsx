@@ -71,49 +71,49 @@ export const Chatbot = ({
     return {
       chatInputPlaceholder: intl.formatMessage({
         defaultMessage: 'Ask a question about this workflow or about Azure Logic Apps as a whole ...',
-        id: '9179f97b4deb',
+        id: 'ms9179f97b4deb',
         description: 'Chabot input placeholder text',
       }),
       protectedMessage: intl.formatMessage({
         defaultMessage: 'Your personal and company data are protected in this chat',
-        id: '62bc3f42db62',
+        id: 'ms62bc3f42db62',
         description: 'Letting user know that their data is protected in the chatbot',
       }),
       submitButtonTitle: intl.formatMessage({
         defaultMessage: 'Submit',
-        id: '39ea7abdaba9',
+        id: 'ms39ea7abdaba9',
         description: 'Submit button',
       }),
       actionsButtonTitle: intl.formatMessage({
         defaultMessage: 'Actions',
-        id: '56ab3c844052',
+        id: 'ms56ab3c844052',
         description: 'Actions button',
       }),
       queryTemplates: {
         createFlow1SentenceStart: intl.formatMessage({
           defaultMessage: 'Send me an email when ',
-          id: 'e0b7af779530',
+          id: 'mse0b7af779530',
           description: 'Chatbot input start of sentence for creating a flow that the user should complete. Trailing space is intentional.',
         }),
         createFlow2SentenceStart: intl.formatMessage({
           defaultMessage: 'Every week on Monday ',
-          id: 'eb7e4aa33107',
+          id: 'mseb7e4aa33107',
           description: 'Chatbot input start of sentence for creating a flow that the user should complete. Trailing space is intentional.',
         }),
         createFlow3SentenceStart: intl.formatMessage({
           defaultMessage: 'When a new item ',
-          id: '22c6dbb06c12',
+          id: 'ms22c6dbb06c12',
           description: 'Chatbot input start of sentence for creating a flow that the user should complete. Trailing space is intentional.',
         }),
         addActionSentenceStart: intl.formatMessage({
           defaultMessage: 'Add an action ',
-          id: '8975beda5389',
+          id: 'ms8975beda5389',
           description: 'Chatbot input start of sentence for adding an action that the user should complete. Trailing space is intentional.',
         }),
         replaceActionSentenceStartFormat: intl.formatMessage(
           {
             defaultMessage: 'Replace "{selectedOperation}" with ',
-            id: 'f504bd6b75c2',
+            id: 'msf504bd6b75c2',
             description:
               'Chatbot input start of sentence for replacing an action that the user should complete. Trailing space is intentional.',
           },
@@ -122,62 +122,62 @@ export const Chatbot = ({
         explainActionSentenceFormat: intl.formatMessage(
           {
             defaultMessage: 'Explain what the "{selectedOperation}" action does in this flow',
-            id: '5446c4f774c6',
+            id: 'ms5446c4f774c6',
             description: 'Chatbot input sentence asking to explain what the selected action does in the flow.',
           },
           { selectedOperation }
         ),
         explainFlowSentence: intl.formatMessage({
           defaultMessage: 'Explain what this flow does',
-          id: 'bc5fa0587f24',
+          id: 'msbc5fa0587f24',
           description: 'Chatbot query sentence that asks to explain what the workflow does',
         }),
         questionSentenceStart: intl.formatMessage({
           defaultMessage: 'Tell me more about ',
-          id: '74a0a9da35a3',
+          id: 'ms74a0a9da35a3',
           description: 'Chatbot query start of sentence for asking for more explaination on an item that the user can should complete.',
         }),
         editFlowSentenceStart: intl.formatMessage({
           defaultMessage: 'Edit this flow to ',
-          id: '788d3491b120',
+          id: 'ms788d3491b120',
           description: 'Chatbot query start of sentence for editing the workflow that the user can should complete.',
         }),
       },
       chatSuggestion: {
         saveButton: intl.formatMessage({
           defaultMessage: 'Save this workflow',
-          id: '3985991383d2',
+          id: 'ms3985991383d2',
           description: 'Chatbot suggestion button to save workflow',
         }),
         testButton: intl.formatMessage({
           defaultMessage: 'Test this workflow',
-          id: 'b5322c4d7611',
+          id: 'msb5322c4d7611',
           description: 'Chatbot suggestion button to test this workflow',
         }),
       },
       assistantErrorMessage: intl.formatMessage({
         defaultMessage: 'Sorry, something went wrong. Please try again.',
-        id: '7ef1af9c0eb3',
+        id: 'ms7ef1af9c0eb3',
         description: 'Chatbot error message',
       }),
       progressCardText: intl.formatMessage({
         defaultMessage: '🖊️ Working on it...',
-        id: '3b4b52bdbb01',
+        id: 'ms3b4b52bdbb01',
         description: 'Chatbot card telling user that the AI response is being generated',
       }),
       progressCardSaveText: intl.formatMessage({
         defaultMessage: '💾 Saving this flow...',
-        id: 'e22c84018baa',
+        id: 'mse22c84018baa',
         description: 'Chatbot card telling user that the workflow is being saved',
       }),
       progressCardStopButtonLabel: intl.formatMessage({
         defaultMessage: 'Stop generating',
-        id: 'c0fd3fb81c38',
+        id: 'msc0fd3fb81c38',
         description: 'Label for the button on the progress card that stops AI response generation',
       }),
       cancelGenerationText: intl.formatMessage({
         defaultMessage: 'Copilot chat canceled',
-        id: '24a66971dbf6',
+        id: 'ms24a66971dbf6',
         description: 'Chatbot card telling user that the AI response is being canceled',
       }),
     };

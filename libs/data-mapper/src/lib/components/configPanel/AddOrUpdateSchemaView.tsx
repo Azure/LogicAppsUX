@@ -55,31 +55,31 @@ export const AddOrUpdateSchemaView = ({
 
   const replaceSchemaWarningLoc = intl.formatMessage({
     defaultMessage: 'Replacing an existing schema with an incompatible schema might create errors in your map.',
-    id: 'dd05d8df3da8',
+    id: 'msdd05d8df3da8',
     description: 'Message bar warning about replacing existing schema',
   });
 
   const addNewLoc = intl.formatMessage({
     defaultMessage: 'Add new',
-    id: 'aefd0f9febf0',
+    id: 'msaefd0f9febf0',
     description: 'Add new option',
   });
 
   const selectExistingLoc = intl.formatMessage({
     defaultMessage: 'Select existing',
-    id: 'd997f3698eb1',
+    id: 'msd997f3698eb1',
     description: 'Select existing option',
   });
 
   const updateSourceSchemaHeaderMsg = intl.formatMessage({
     defaultMessage: 'Update source schema',
-    id: 'ef788cf7edd0',
+    id: 'msef788cf7edd0',
     description: 'Header to update source schema',
   });
 
   const updateTargetSchemaHeaderMsg = intl.formatMessage({
     defaultMessage: 'Update target schema',
-    id: '86d8fe799f82',
+    id: 'ms86d8fe799f82',
     description: 'Header to update target schema',
   });
 
@@ -110,7 +110,7 @@ export const AddOrUpdateSchemaView = ({
       return [
         intl.formatMessage({
           defaultMessage: 'Add or select a source schema to use for your map.',
-          id: '6ae508f7736a',
+          id: 'ms6ae508f7736a',
           description: 'label to inform to upload or select source schema to be used',
         }),
       ];
@@ -118,7 +118,7 @@ export const AddOrUpdateSchemaView = ({
     return [
       intl.formatMessage({
         defaultMessage: 'Add or select a target schema to use for your map.',
-        id: '8c0e96ae9fbe',
+        id: 'ms8c0e96ae9fbe',
         description: 'label to inform to upload or select target schema to be used',
       }),
     ];

@@ -39,37 +39,37 @@ export const MultiWorkflowBasics = () => {
   const resources = {
     general_line1: intl.formatMessage({
       defaultMessage: 'Provide a unique, descriptive name and review the state type to ensure your workflows are properly configured.',
-      id: '009f8b0e175e',
+      id: 'ms009f8b0e175e',
       description: 'General info displayed on basics tab for configuring workflow name and state type info - line 1.',
     }),
     general_line2: intl.formatMessage({
       defaultMessage: 'Avoid spaces and the following symbols in your workflow name: \\ / : * ? " < > | @, #, $, %, &',
-      id: '8f5a7c8900fe',
+      id: 'ms8f5a7c8900fe',
       description: 'General info displayed on basics tab for configuring workflow name and state type info - line 2.',
     }),
     description: intl.formatMessage({
       defaultMessage: 'Description',
-      id: '415b6a0271d2',
+      id: 'ms415b6a0271d2',
       description: 'Label for description column.',
     }),
     stateType: intl.formatMessage({
       defaultMessage: 'State type',
-      id: '5b5ae5c543a1',
+      id: 'ms5b5ae5c543a1',
       description: 'Label for choosing State type',
     }),
     workflowName: intl.formatMessage({
       defaultMessage: 'Workflow name',
-      id: '7a433bec99d4',
+      id: 'ms7a433bec99d4',
       description: 'Label for workflow Name',
     }),
     kind_stateful: intl.formatMessage({
       defaultMessage: 'Stateful',
-      id: '42a99bf96ad7',
+      id: 'ms42a99bf96ad7',
       description: 'Dropdown option for stateful type',
     }),
     kind_stateless: intl.formatMessage({
       defaultMessage: 'Stateless',
-      id: '70d5d2e67479',
+      id: 'ms70d5d2e67479',
       description: 'Dropdown option for stateless type',
     }),
   };
@@ -257,12 +257,12 @@ const TextWithShowMore = ({ text, maxLength = 150 }: { text: string; maxLength?:
   const resources = {
     showMore: intl.formatMessage({
       defaultMessage: 'Show more',
-      id: '3005fbc52ef1',
+      id: 'ms3005fbc52ef1',
       description: 'Label for show more text.',
     }),
     showLess: intl.formatMessage({
       defaultMessage: 'Show less',
-      id: '8a6d0631af20',
+      id: 'ms8a6d0631af20',
       description: 'Label for show less text.',
     }),
   };

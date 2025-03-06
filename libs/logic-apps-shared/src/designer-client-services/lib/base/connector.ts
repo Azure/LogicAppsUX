@@ -117,7 +117,7 @@ export abstract class BaseConnectorService implements IConnectorService {
     }
     const clientRequestId = getClientRequestIdFromHeaders(connectorResponse.headers);
     const defaultErrorMessage = intl.formatMessage(
-      { defaultMessage: 'Error executing the API - {url}', id: '5c7430c895ee', description: 'Error message to show on dynamic call failure' },
+      { defaultMessage: 'Error executing the API - {url}', id: 'ms5c7430c895ee', description: 'Error message to show on dynamic call failure' },
       { url: requestUrl }
     );
     const errorMessage = this._getErrorMessageFromConnectorResponse(connectorResponse, defaultErrorMessage, intl, clientRequestId);
@@ -142,7 +142,7 @@ export abstract class BaseConnectorService implements IConnectorService {
       errorMessage = intl.formatMessage(
         {
           defaultMessage: `Error code: ''{errorCode}'', Message: ''{message}''.`,
-          id: 'd380302bb12a',
+          id: 'msd380302bb12a',
           description:
             'Dynamic call error message. Do not remove the double single quotes around the placeholder texts, as it is needed to wrap the placeholder text in single quotes.',
         },
@@ -156,7 +156,7 @@ export abstract class BaseConnectorService implements IConnectorService {
       ? `${errorMessage} ${intl.formatMessage(
           {
             defaultMessage: `More diagnostic information: x-ms-client-request-id is ''{clientRequestId}''.`,
-            id: '716a56894f94',
+            id: 'ms716a56894f94',
             description:
               "Diagnostics information for error message. Don't remove the double single quotes around the placeholder text, which is needed to wrap the placeholder text in single quotes.",
           },
@@ -200,7 +200,7 @@ export abstract class BaseConnectorService implements IConnectorService {
           intl.formatMessage(
             {
               defaultMessage: `Error occurred while executing the following API parameters: ''{parameters}''`,
-              id: '03c97e93b91f',
+              id: 'ms03c97e93b91f',
               description:
                 'Error message when execute dynamic api in managed connector. Do not remove the double single quotes around the placeholder text, as it is needed to wrap the placeholder text in single quotes.',
             },

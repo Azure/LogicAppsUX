@@ -25,12 +25,12 @@ export const CodeViewPanel = (_props: CodeViewPanelProps) => {
     () => ({
       CODE: intl.formatMessage({
         defaultMessage: 'Code',
-        id: '53d487c70808',
+        id: 'ms53d487c70808',
         description: 'Code view title',
       }),
       CLOSE_CODE_VIEW: intl.formatMessage({
         defaultMessage: 'Close code view',
-        id: 'dec26557e4d5',
+        id: 'msdec26557e4d5',
         description: 'Close code view button',
       }),
     }),

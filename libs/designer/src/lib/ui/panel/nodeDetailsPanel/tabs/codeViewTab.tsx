@@ -31,12 +31,12 @@ export const codeViewTab: PanelTabFn = (intl, props) => ({
   id: constants.PANEL_TAB_NAMES.CODE_VIEW,
   title: intl.formatMessage({
     defaultMessage: 'Code view',
-    id: 'b74b4de09116',
+    id: 'msb74b4de09116',
     description: 'The tab label for the code view tab on the operation panel',
   }),
   description: intl.formatMessage({
     defaultMessage: 'Code view tab',
-    id: 'd8e9f85ee470',
+    id: 'msd8e9f85ee470',
     description: 'An accessibility label that describes the code view tab',
   }),
   visible: true,

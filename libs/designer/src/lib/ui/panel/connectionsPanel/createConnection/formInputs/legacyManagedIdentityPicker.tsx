@@ -20,7 +20,7 @@ const LegacyManagedIdentityDropdown = (props: LegacyManagedIdentityDropdownProps
   const noIdentitiesAvailable = useMemo(() => dropdownOptions.length === 0, [dropdownOptions]);
   const noIdentityText = intl.formatMessage({
     defaultMessage: 'No identities available',
-    id: '67c04e0a53cf',
+    id: 'ms67c04e0a53cf',
     description: 'Placeholder warning for no identities available',
   });
 

@@ -54,42 +54,42 @@ export function TokenPickerHeader({
     return {
       closeMessage: intl.formatMessage({
         defaultMessage: 'Close',
-        id: '660dc88c3461',
+        id: 'ms660dc88c3461',
         description: 'Close token picker',
       }),
       infoMessage: intl.formatMessage({
         defaultMessage: 'Info',
-        id: '8115268800d1',
+        id: 'ms8115268800d1',
         description: 'Info about token picker',
       }),
       fullScreenMessage: intl.formatMessage({
         defaultMessage: 'Full screen',
-        id: '40d7d47ff4af',
+        id: 'ms40d7d47ff4af',
         description: 'Full Screen token picker',
       }),
       fullScreenExitMessage: intl.formatMessage({
         defaultMessage: 'Exit full screen',
-        id: '1cc884fb857f',
+        id: 'ms1cc884fb857f',
         description: "Token picker for 'Exit full screen'",
       }),
       pasteLastUsedExpressionMessage: intl.formatMessage({
         defaultMessage: 'Paste last used expression',
-        id: 'fa28e8ff625b',
+        id: 'msfa28e8ff625b',
         description: "Token picker for 'Paste last used expression'",
       }),
       createWithNl2fButtonText: intl.formatMessage({
         defaultMessage: 'Create an expression with Copilot',
-        id: 'f80822b9b404',
+        id: 'msf80822b9b404',
         description: 'Button text for the create expression with copilot feature',
       }),
       previewTag: intl.formatMessage({
         defaultMessage: 'Preview',
-        id: '5b67d9d2fed4',
+        id: 'ms5b67d9d2fed4',
         description: 'Preview disclaimer tag',
       }),
       returnToExpressionEditor: intl.formatMessage({
         defaultMessage: 'Return to expression editor',
-        id: '330329021411',
+        id: 'ms330329021411',
         description: 'Text of Tooltip to return to expression editor',
       }),
     };

@@ -55,13 +55,13 @@ export const SubgraphCard: React.FC<SubgraphCardProps> = ({
 
   const addCaseLabel = intl.formatMessage({
     defaultMessage: 'Add case',
-    id: '4dc53619f2bd',
+    id: 'ms4dc53619f2bd',
     description: 'add a case to switch statement',
   });
 
   const conditionalTypeText = intl.formatMessage({
     defaultMessage: 'condition, collapse',
-    id: '6160ff4588b0',
+    id: 'ms6160ff4588b0',
     description: 'condition',
   });
 
@@ -71,7 +71,7 @@ export const SubgraphCard: React.FC<SubgraphCardProps> = ({
         color: '#428000',
         title: intl.formatMessage({
           defaultMessage: 'True',
-          id: 'fd65bb21f3c8',
+          id: 'msfd65bb21f3c8',
           description: 'True',
         }),
         typeText: conditionalTypeText,
@@ -82,7 +82,7 @@ export const SubgraphCard: React.FC<SubgraphCardProps> = ({
         color: '#A4262C',
         title: intl.formatMessage({
           defaultMessage: 'False',
-          id: '3d76b40f8ff8',
+          id: 'ms3d76b40f8ff8',
           description: 'False',
         }),
         typeText: conditionalTypeText,
@@ -94,7 +94,7 @@ export const SubgraphCard: React.FC<SubgraphCardProps> = ({
         title: title,
         typeText: intl.formatMessage({
           defaultMessage: 'switch case',
-          id: '0f40f749f675',
+          id: 'ms0f40f749f675',
           description: 'switch case',
         }),
         size: 'large',
@@ -104,7 +104,7 @@ export const SubgraphCard: React.FC<SubgraphCardProps> = ({
         color: '#484F58',
         title: intl.formatMessage({
           defaultMessage: 'Default',
-          id: '154b859428a1',
+          id: 'ms154b859428a1',
           description: 'Default, the backup option if none other apply',
         }),
         typeText: '',
@@ -115,7 +115,7 @@ export const SubgraphCard: React.FC<SubgraphCardProps> = ({
         color: '#486991',
         title: intl.formatMessage({
           defaultMessage: 'Do',
-          id: '73ffa3d3ce94',
+          id: 'ms73ffa3d3ce94',
           description: 'Do, as in "to do an action"',
         }),
         typeText: '',

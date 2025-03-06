@@ -12,12 +12,12 @@ export const KeyValuePairs: React.FC<ValueProps> = ({ displayName, value = {}, v
   const Resources = {
     KVP_KEY: intl.formatMessage({
       defaultMessage: 'Key',
-      id: 'b2117db59084',
+      id: 'msb2117db59084',
       description: 'Header text for key-value pair keys',
     }),
     KVP_VALUE: intl.formatMessage({
       defaultMessage: 'Value',
-      id: 'c70117dbf59a',
+      id: 'msc70117dbf59a',
       description: 'Header text for key-value pair values',
     }),
   };

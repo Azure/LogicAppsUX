@@ -68,31 +68,31 @@ export const FunctionNodePropertiesTab = ({ functionData }: FunctionNodeProperti
 
   const addFieldLoc = intl.formatMessage({
     defaultMessage: 'Add field',
-    id: 'caca2e99b36a',
+    id: 'mscaca2e99b36a',
     description: 'Add input field',
   });
 
   const inputLoc = intl.formatMessage({
     defaultMessage: 'Input',
-    id: '3fa23dd320a2',
+    id: 'ms3fa23dd320a2',
     description: 'Input',
   });
 
   const expressionLoc = intl.formatMessage({
     defaultMessage: 'Expression',
-    id: 'b9eb1a79e4f1',
+    id: 'msb9eb1a79e4f1',
     description: 'Expression',
   });
 
   const functionNoReqInputLoc = intl.formatMessage({
     defaultMessage: `This function doesn't require any input.`,
-    id: '38e5122cfb8d',
+    id: 'ms38e5122cfb8d',
     description: `Function doesn't have or require inputs`,
   });
 
   const removeInputLoc = intl.formatMessage({
     defaultMessage: 'Remove input',
-    id: '48b264467716',
+    id: 'ms48b264467716',
     description: 'Remove input',
   });
 

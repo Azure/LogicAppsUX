@@ -22,12 +22,12 @@ export const connectionsTab = (
   id: constants.TEMPLATE_PANEL_TAB_NAMES.CONNECTIONS,
   title: intl.formatMessage({
     defaultMessage: 'Connections',
-    id: '6c93258169ba',
+    id: 'ms6c93258169ba',
     description: 'The tab label for the monitoring connections tab on the create workflow panel',
   }),
   description: intl.formatMessage({
     defaultMessage: 'Configure connections to authenticate and link your workflows with services and applications.',
-    id: 'a6aa6bc59609',
+    id: 'msa6aa6bc59609',
     description: 'An accessibility label that describes the objective of connections tab',
   }),
   hasError: hasError,
@@ -35,7 +35,7 @@ export const connectionsTab = (
   footerContent: {
     primaryButtonText: intl.formatMessage({
       defaultMessage: 'Next',
-      id: 'd147f150cc64',
+      id: 'msd147f150cc64',
       description: 'Button text for moving to the next tab in the create workflow panel',
     }),
     primaryButtonOnClick: () => {
@@ -44,12 +44,12 @@ export const connectionsTab = (
     secondaryButtonText: previousTabId
       ? intl.formatMessage({
           defaultMessage: 'Previous',
-          id: '62e6bfe282ce',
+          id: 'ms62e6bfe282ce',
           description: 'Button text for moving to the previous tab in the create workflow panel',
         })
       : intl.formatMessage({
           defaultMessage: 'Close',
-          id: '153accc4d1cf',
+          id: 'ms153accc4d1cf',
           description: 'Button text for closing the panel',
         }),
     secondaryButtonOnClick: () => {

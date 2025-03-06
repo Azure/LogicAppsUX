@@ -35,31 +35,31 @@ export const TestTab = ({ currentTargetSchemaNodeKey }: TestTabProps) => {
 
   const provideParamsLoc = intl.formatMessage({
     defaultMessage: 'Provide parameters to test the output.',
-    id: 'b1541edf8bce',
+    id: 'msb1541edf8bce',
     description: 'The description for the test tab parameters.',
   });
 
   const inputLoc = intl.formatMessage({
     defaultMessage: 'Input',
-    id: '3fa23dd320a2',
+    id: 'ms3fa23dd320a2',
     description: 'Input',
   });
 
   const outputLoc = intl.formatMessage({
     defaultMessage: 'Output',
-    id: '0a2a25e886a0',
+    id: 'ms0a2a25e886a0',
     description: 'Output',
   });
 
   const runTestLoc = intl.formatMessage({
     defaultMessage: 'Run test',
-    id: '83b9b2efcf59',
+    id: 'ms83b9b2efcf59',
     description: 'Run test',
   });
 
   const resetLoc = intl.formatMessage({
     defaultMessage: 'Reset',
-    id: '9d26a7e15080',
+    id: 'ms9d26a7e15080',
     description: 'Reset',
   });
 

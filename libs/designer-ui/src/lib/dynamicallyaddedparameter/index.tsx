@@ -66,49 +66,49 @@ export const DynamicallyAddedParameter = (props: DynamicallyAddedParameterProps)
   const renderMenuButton = (): JSX.Element => {
     const menuButtonTitle = intl.formatMessage({
       defaultMessage: 'Menu',
-      id: 'c172402dcc31',
+      id: 'msc172402dcc31',
       description: 'Open dynamically added parameter options menu',
     });
 
     const deleteText = intl.formatMessage({
       defaultMessage: 'Delete',
-      id: '824639c9a88b',
+      id: 'ms824639c9a88b',
       description: 'Delete dynamic parameter corresponding to this row',
     });
 
     const optionalText = intl.formatMessage({
       defaultMessage: 'Make the field optional',
-      id: 'acc6017f021f',
+      id: 'msacc6017f021f',
       description: 'Make the dynamic parameter corresponding to this row optional',
     });
 
     const requiredText = intl.formatMessage({
       defaultMessage: 'Make the field required',
-      id: '1d042d173f89',
+      id: 'ms1d042d173f89',
       description: 'Make the dynamic parameter corresponding to this row required',
     });
 
     const addDropdownText = intl.formatMessage({
       defaultMessage: 'Add a drop-down list of options',
-      id: '5459ee036af8',
+      id: 'ms5459ee036af8',
       description: 'Add a drop-down list of options to the text input dynamic parameter',
     });
 
     const removeDropdownText = intl.formatMessage({
       defaultMessage: 'Remove list of options',
-      id: '0dbc59852300',
+      id: 'ms0dbc59852300',
       description: 'Remove the drop-down list of options for the text input dynamic parameter',
     });
 
     const addMultiSelectText = intl.formatMessage({
       defaultMessage: 'Add a multi-select list of options',
-      id: '754d11812d34',
+      id: 'ms754d11812d34',
       description: 'Add a multi-select list of options to the text input dynamic parameter',
     });
 
     const removeMultiSelectText = intl.formatMessage({
       defaultMessage: 'Remove list of multi options',
-      id: 'a31707bece08',
+      id: 'msa31707bece08',
       description: 'Remove multi-select list of options to the text input dynamic parameter',
     });
 
@@ -212,13 +212,13 @@ export const DynamicallyAddedParameter = (props: DynamicallyAddedParameterProps)
 
   const multiSelectTitleText = intl.formatMessage({
     defaultMessage: 'Multi-select list of options',
-    id: '09c6e6d98663',
+    id: 'ms09c6e6d98663',
     description: 'Multi-select list of options',
   });
 
   const dropdownTitleText = intl.formatMessage({
     defaultMessage: 'Drop-down list of options',
-    id: '07a0630a5445',
+    id: 'ms07a0630a5445',
     description: 'Drop-down list of options',
   });
 

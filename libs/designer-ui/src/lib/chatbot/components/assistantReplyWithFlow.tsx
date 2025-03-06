@@ -18,45 +18,45 @@ export const AssistantReplyWithFlow: React.FC<AssistantReplyWithFlowProps> = ({ 
   const intlText = {
     actionUndone: intl.formatMessage({
       defaultMessage: 'Action undone',
-      id: '249c93f3ceaa',
+      id: 'ms249c93f3ceaa',
       description: 'Chatbot action was undone text',
     }),
     undo: intl.formatMessage({
       defaultMessage: 'Undo',
-      id: '851555751ee6',
+      id: 'ms851555751ee6',
       description: 'Chatbot undo button for undoing assistant change to flow',
     }),
     undoDialog: {
       title: intl.formatMessage({
         defaultMessage: 'Revert your flow',
-        id: 'f503594a3d07',
+        id: 'msf503594a3d07',
         description: 'Chatbot undo operation confirmation title',
       }),
       learnMoreAriaLabel: intl.formatMessage({
         defaultMessage: 'Learn more about undo operations',
-        id: '048cd7dd2e1d',
+        id: 'ms048cd7dd2e1d',
         description: 'Aria label for undo operations in chatbot',
       }),
       primaryButtonActionText: intl.formatMessage({
         defaultMessage: 'Revert',
-        id: '7844a58d7bf4',
+        id: 'ms7844a58d7bf4',
         description: 'Chatbot undo operation confirm button text',
       }),
       secondaryButtonActionText: intl.formatMessage({
         defaultMessage: 'Cancel',
-        id: 'b2b31b9bdfdb',
+        id: 'msb2b31b9bdfdb',
         description: 'Chatbot undo operation cancel button text',
       }),
       warningMessage: intl.formatMessage({
         defaultMessage: `This will revert your workflow to the state it was in before Copilot's edit. If you made additional edits to the workflow after Copilot's, you will lose them. This action cannot be undone. Do you want to continue?`,
-        id: 'ee0504f219ed',
+        id: 'msee0504f219ed',
         description: 'Warning description of what undoing operation will do to the workflow',
       }),
     },
     defaultMessages: {
       flowUpdatedWithNoDiff: intl.formatMessage({
         defaultMessage: 'Your flow has been updated.',
-        id: 'e218b792cdf6',
+        id: 'mse218b792cdf6',
         description: 'Chatbot workflow has been updated message',
       }),
     },

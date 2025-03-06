@@ -17,25 +17,25 @@ export const ConnectionTableDetailsButton = (props: ConnectionTableDetailsButton
 
   const detailsHeader = intl.formatMessage({
     defaultMessage: 'Connection details',
-    id: '001fb23d03a2',
+    id: 'ms001fb23d03a2',
     description: 'Header for popup containing connection details',
   });
 
   const connectionNameLabel = isXrmConnectionReferenceMode
     ? intl.formatMessage({
         defaultMessage: 'Logical name',
-        id: 'cb172d430aa3',
+        id: 'mscb172d430aa3',
         description: 'Label for connection reference logical name',
       })
     : intl.formatMessage({
         defaultMessage: 'Name',
-        id: '0cd42d16be68',
+        id: 'ms0cd42d16be68',
         description: 'Label for connection name',
       });
 
   const createdDateLabel = intl.formatMessage({
     defaultMessage: 'Created',
-    id: '701c3b4829dd',
+    id: 'ms701c3b4829dd',
     description: 'Label for connection creation date',
   });
 

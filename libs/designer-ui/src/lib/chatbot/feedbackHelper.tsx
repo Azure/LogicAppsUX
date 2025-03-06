@@ -10,7 +10,7 @@ export function useReportBugButton(disabled: boolean): IButtonProps {
   const intlText = {
     reportBugButtonText: intl.formatMessage({
       defaultMessage: 'Report a bug',
-      id: '3950c414fd2f',
+      id: 'ms3950c414fd2f',
       description: 'Text for button that allows user to report a bug in the chatbot experience',
     }),
   };
@@ -35,7 +35,7 @@ export function useExternalLink(additionalDocURL?: string) {
   const intlText = {
     guideMoreInfoText: intl.formatMessage({
       defaultMessage: 'For more detailed information, you can refer to the following resources',
-      id: 'f722cfc2813d',
+      id: 'msf722cfc2813d',
       description: 'Message instructing to follow below links for more detailed information',
     }),
   };
@@ -58,7 +58,7 @@ export function useAzureCopilotButton(azureButtonCallback?: () => void): IButton
   const intlText = {
     azureCopilotButtonText: intl.formatMessage({
       defaultMessage: 'Open Azure Copilot',
-      id: 'fd7dbe72af92',
+      id: 'msfd7dbe72af92',
       description: 'Text for button that allows user to open azure copilot',
     }),
   };

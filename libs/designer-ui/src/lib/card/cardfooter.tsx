@@ -69,42 +69,42 @@ export const CardFooter: React.FC<CardFooterProps> = memo(
       () => ({
         CONNECTION_NAME_DISPLAY: intl.formatMessage({
           defaultMessage: 'Connection name',
-          id: '5cece7ff72ec',
+          id: 'ms5cece7ff72ec',
           description: 'This is for a label for a badge, it is used for screen readers and not shown on the screen.',
         }),
         CONNECTION_CONTAINER_CONNECTION_REQUIRED: intl.formatMessage({
           defaultMessage: 'Connection required',
-          id: '086efbd8c85f',
+          id: 'ms086efbd8c85f',
           description: 'This is for a label for a badge, it is used for screen readers and not shown on the screen.',
         }),
         PANEL_STATIC_RESULT_TITLE: intl.formatMessage({
           defaultMessage: 'Testing',
-          id: '9bb63a41f426',
+          id: 'ms9bb63a41f426',
           description: 'Title for a tab panel',
         }),
         MENU_STATIC_RESULT_ICON_TOOLTIP: intl.formatMessage({
           defaultMessage: 'This action has testing configured.',
-          id: '5b172666b970',
+          id: 'ms5b172666b970',
           description: "This is a tooltip for the Status results badge shown on a card. It's shown when the baged is hovered over.",
         }),
         COMMENT: intl.formatMessage({
           defaultMessage: 'Comment',
-          id: '557056aea4c1',
+          id: 'ms557056aea4c1',
           description: 'This is for a label for a badge, it is used for screen readers and not shown on the screen.',
         }),
         SECURE_INPUTS_OUTPUTS_TITLE: intl.formatMessage({
           defaultMessage: 'Secure inputs or outputs enabled',
-          id: '78637c1a5b40',
+          id: 'ms78637c1a5b40',
           description: 'Secure inputs or outputs enabled',
         }),
         SECURE_INPUTS_OUTPUTS_TOOLTIP: intl.formatMessage({
           defaultMessage: 'This operation has secure inputs or outputs enabled.',
-          id: '6f24648fef72',
+          id: 'ms6f24648fef72',
           description: 'This operation has secure inputs or outputs enabled.',
         }),
         LOADING_DYNAMIC_DATA: intl.formatMessage({
           defaultMessage: 'Loading dynamic data',
-          id: 'a8c169347365',
+          id: 'msa8c169347365',
           description: 'Loading dynamic data',
         }),
       }),

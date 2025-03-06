@@ -28,7 +28,7 @@ export const toFriendlyDurationString = (start: Date, end: Date, intl: IntlShape
       {
         defaultMessage: '{count} Day',
         description: 'Day',
-        id: '6605397ae4d0',
+        id: 'ms6605397ae4d0',
       },
       { count }
     );
@@ -37,7 +37,7 @@ export const toFriendlyDurationString = (start: Date, end: Date, intl: IntlShape
       {
         defaultMessage: '{count} Days',
         description: 'Days',
-        id: 'a0100bd85395',
+        id: 'msa0100bd85395',
       },
       { count }
     );
@@ -52,7 +52,7 @@ export const toFriendlyDurationString = (start: Date, end: Date, intl: IntlShape
       {
         defaultMessage: '{count} Hour',
         description: 'Hour',
-        id: 'c0083dfb3892',
+        id: 'msc0083dfb3892',
       },
       { count }
     );
@@ -61,7 +61,7 @@ export const toFriendlyDurationString = (start: Date, end: Date, intl: IntlShape
       {
         defaultMessage: '{count} Hours',
         description: 'Hours',
-        id: 'b0941e7ba8ea',
+        id: 'msb0941e7ba8ea',
       },
       { count }
     );
@@ -76,7 +76,7 @@ export const toFriendlyDurationString = (start: Date, end: Date, intl: IntlShape
       {
         defaultMessage: '{count} Minute',
         description: 'Minute',
-        id: 'c5f5d41b3e5d',
+        id: 'msc5f5d41b3e5d',
       },
       { count }
     );
@@ -85,7 +85,7 @@ export const toFriendlyDurationString = (start: Date, end: Date, intl: IntlShape
       {
         defaultMessage: '{count} Minutes',
         description: 'Minutes',
-        id: '99a3f52bf085',
+        id: 'ms99a3f52bf085',
       },
       { count }
     );
@@ -100,7 +100,7 @@ export const toFriendlyDurationString = (start: Date, end: Date, intl: IntlShape
       {
         defaultMessage: '{count} Second',
         description: 'Second',
-        id: '00c31f6ed06c',
+        id: 'ms00c31f6ed06c',
       },
       { count }
     );
@@ -109,7 +109,7 @@ export const toFriendlyDurationString = (start: Date, end: Date, intl: IntlShape
       {
         defaultMessage: '{count} Seconds',
         description: 'Seconds',
-        id: '7edf011fc7ee',
+        id: 'ms7edf011fc7ee',
       },
       { count }
     );
@@ -123,7 +123,7 @@ export const toFriendlyDurationString = (start: Date, end: Date, intl: IntlShape
     {
       defaultMessage: '{count} Millisecond',
       description: 'Millisecond',
-      id: 'a20e49380eae',
+      id: 'msa20e49380eae',
     },
     { count }
   );
@@ -132,7 +132,7 @@ export const toFriendlyDurationString = (start: Date, end: Date, intl: IntlShape
     {
       defaultMessage: '{count} Milliseconds',
       description: 'Milliseconds',
-      id: '85eb033ec0c7',
+      id: 'ms85eb033ec0c7',
     },
     { count }
   );

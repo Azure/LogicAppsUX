@@ -115,18 +115,18 @@ function WrappedStaticResultProperty({
 
   const dropdownPlaceHolder = intl.formatMessage({
     defaultMessage: 'Select a value',
-    id: '0c95bc4444d2',
+    id: 'ms0c95bc4444d2',
     description: 'Placeholder for dropdown',
   });
 
   const textFieldPlaceHolder = intl.formatMessage({
     defaultMessage: 'Enter a value',
-    id: 'aff9faffd870',
+    id: 'msaff9faffd870',
     description: 'Placeholder for text field',
   });
   const integerTextFieldPlaceHolder = intl.formatMessage({
     defaultMessage: 'Enter an integer',
-    id: '7a120192138c',
+    id: 'ms7a120192138c',
     description: 'Placeholder for integer text field',
   });
 
@@ -136,7 +136,7 @@ function WrappedStaticResultProperty({
       setErrorMessage(
         intl.formatMessage({
           defaultMessage: 'Invalid integer value',
-          id: 'a11db1e0db3b',
+          id: 'msa11db1e0db3b',
           description: 'Error message for invalid integer value',
         })
       );

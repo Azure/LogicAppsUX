@@ -22,27 +22,27 @@ export const OutputsPanel: React.FC<OutputsPanelProps> = ({ runMetaData, brandCo
   const intlText = {
     outputs: intl.formatMessage({
       defaultMessage: 'Outputs',
-      id: 'd2879b3a6191',
+      id: 'msd2879b3a6191',
       description: 'Outputs text',
     }),
     noOutputs: intl.formatMessage({
       defaultMessage: 'No outputs',
-      id: 'fb15c7769043',
+      id: 'msfb15c7769043',
       description: 'No outputs text',
     }),
     showOutputs: intl.formatMessage({
       defaultMessage: 'Show raw outputs',
-      id: 'fe68c7f3899e',
+      id: 'msfe68c7f3899e',
       description: 'Show outputs text',
     }),
     outputsLoading: intl.formatMessage({
       defaultMessage: 'Loading outputs',
-      id: '2ef2e4b337f6',
+      id: 'ms2ef2e4b337f6',
       description: 'Loading outputs text',
     }),
     outputsError: intl.formatMessage({
       defaultMessage: 'Error loading outputs',
-      id: 'a5c1aaa0194c',
+      id: 'msa5c1aaa0194c',
       description: 'Error loading outputs text',
     }),
   };

@@ -27,13 +27,13 @@ export const XsltFilePicker = (props: XsltFilePickerProps) => {
 
   const relativePathMessage = intl.formatMessage({
     defaultMessage: 'Select function from ',
-    id: 'f8a5d7f8e94b',
+    id: 'msf8a5d7f8e94b',
     description: 'Path to the function to select',
   });
 
   const selectFileMessage = intl.formatMessage({
     defaultMessage: 'Select file',
-    id: 'bc0b46cd4347',
+    id: 'msbc0b46cd4347',
     description: 'Path to the file to select',
   });
 

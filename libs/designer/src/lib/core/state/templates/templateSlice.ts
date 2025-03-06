@@ -41,7 +41,7 @@ export const templateSlice = createSlice({
           if (!state.workflows[id].kind) {
             state.workflows[id].errors.kind = intl.formatMessage({
               defaultMessage: 'The value must not be empty.',
-              id: '273bce51c085',
+              id: 'ms273bce51c085',
               description: 'Error message when the stage progressed without selecting kind.',
             });
           }

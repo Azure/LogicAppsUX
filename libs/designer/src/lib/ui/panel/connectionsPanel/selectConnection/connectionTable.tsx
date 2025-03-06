@@ -91,7 +91,7 @@ export const ConnectionTable = (props: ConnectionTableProps): JSX.Element => {
       renderHeaderCell: () =>
         intl.formatMessage({
           defaultMessage: 'Status',
-          id: 'ab1c3d50e933',
+          id: 'msab1c3d50e933',
           description: 'Column header for connection valid/invalid status',
         }),
       renderCell: (item) => {
@@ -99,7 +99,7 @@ export const ConnectionTable = (props: ConnectionTableProps): JSX.Element => {
           ? [...new Set(item.statuses?.map((e) => e.error?.message).filter((m) => !!m))].join(', ')
           : intl.formatMessage({
               defaultMessage: 'Connected',
-              id: 'a0e1934a8168',
+              id: 'msa0e1934a8168',
               description: 'Connected text',
             });
         return (
@@ -114,7 +114,7 @@ export const ConnectionTable = (props: ConnectionTableProps): JSX.Element => {
       renderHeaderCell: () =>
         intl.formatMessage({
           defaultMessage: 'Display name',
-          id: 'cf91f71856f3',
+          id: 'mscf91f71856f3',
           description: 'Column header for connection display name',
         }),
       renderCell: (item) => {
@@ -139,7 +139,7 @@ export const ConnectionTable = (props: ConnectionTableProps): JSX.Element => {
       renderHeaderCell: () =>
         intl.formatMessage({
           defaultMessage: 'Details',
-          id: 'a47eae6ed54a',
+          id: 'msa47eae6ed54a',
           description: 'Column header for accessing connection-related details',
         }),
       renderCell: (item) => <ConnectionTableDetailsButton connection={item} isXrmConnectionReferenceMode={isXrmConnectionReferenceMode} />,

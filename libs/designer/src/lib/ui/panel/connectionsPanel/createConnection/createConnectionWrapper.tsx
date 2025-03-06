@@ -346,7 +346,7 @@ export const CreateConnectionInternal = (props: {
 
   const loadingText = intl.formatMessage({
     defaultMessage: 'Loading connection data...',
-    id: '7da52bb9d529',
+    id: 'ms7da52bb9d529',
     description: 'Message to show under the loading icon when loading connection parameters',
   });
 

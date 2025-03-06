@@ -79,67 +79,67 @@ export const TestMapPanel = ({ mapDefinition, isOpen, onClose }: TestMapPanelPro
   //#region Loc
   const testMapLoc = intl.formatMessage({
     defaultMessage: 'Test map',
-    id: 'e8e4a044f0c2',
+    id: 'mse8e4a044f0c2',
     description: 'Test map panel header',
   });
 
   const testLoc = intl.formatMessage({
     defaultMessage: 'Test',
-    id: '4b3f0a3776da',
+    id: 'ms4b3f0a3776da',
     description: 'Test',
   });
 
   const closeLoc = intl.formatMessage({
     defaultMessage: 'Close',
-    id: 'c331277901e1',
+    id: 'msc331277901e1',
     description: 'Close',
   });
 
   const inputLoc = intl.formatMessage({
     defaultMessage: 'Input',
-    id: '3fa23dd320a2',
+    id: 'ms3fa23dd320a2',
     description: 'Input',
   });
 
   const outputLoc = intl.formatMessage({
     defaultMessage: 'Output',
-    id: '0a2a25e886a0',
+    id: 'ms0a2a25e886a0',
     description: 'Output',
   });
 
   const pasteFromSampleLoc = intl.formatMessage({
     defaultMessage: 'Paste from sample',
-    id: '0f914828bd52',
+    id: 'ms0f914828bd52',
     description: 'Paste from sample',
   });
 
   const inputDataOptionsLabelLoc = intl.formatMessage({
     defaultMessage: 'Provide input data to test the map with',
-    id: '8b54ee7e9d29',
+    id: 'ms8b54ee7e9d29',
     description: 'Label for input data option choice group',
   });
 
   const statusCodeLoc = intl.formatMessage({
     defaultMessage: 'Status code',
-    id: '4066d45d7731',
+    id: 'ms4066d45d7731',
     description: 'Response status code for test map API',
   });
 
   const responseBodyLoc = intl.formatMessage({
     defaultMessage: 'Response body',
-    id: 'a1d439e78e57',
+    id: 'msa1d439e78e57',
     description: 'Response body for test map API',
   });
 
   const noXsltLoc = intl.formatMessage({
     defaultMessage: 'Generate XSLT first before attempting to test mappings.',
-    id: '72d23d3e9245',
+    id: 'ms72d23d3e9245',
     description: 'Message on missing XSLT and attempting to test maps',
   });
 
   const mismatchedXsltLoc = intl.formatMessage({
     defaultMessage: 'The generated XSLT does not match the current mapping.',
-    id: '3479c6d923f7',
+    id: 'ms3479c6d923f7',
     description: 'Message on mismatched XSLT and attempting to test maps',
   });
   //#endregion

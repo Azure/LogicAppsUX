@@ -31,13 +31,13 @@ export const DeleteNodeModal = (props: DeleteNodeModalProps) => {
 
   const deleteLoadingMessage = intl.formatMessage({
     defaultMessage: 'Deleting...',
-    id: '1d7dd79b1f9a',
+    id: 'ms1d7dd79b1f9a',
     description: 'Text for loading state of delete modal',
   });
 
   const closingLoadingMessage = intl.formatMessage({
     defaultMessage: 'Closing...',
-    id: '29678b041bce',
+    id: 'ms29678b041bce',
     description: 'Text for loading state of closing modal',
   });
 
@@ -45,25 +45,25 @@ export const DeleteNodeModal = (props: DeleteNodeModalProps) => {
 
   const operationNodeTitle = intl.formatMessage({
     defaultMessage: 'Delete workflow action',
-    id: 'ff27bd0df298',
+    id: 'msff27bd0df298',
     description: 'Title for operation node',
   });
 
   const graphNodeTitle = intl.formatMessage({
     defaultMessage: 'Delete workflow graph',
-    id: 'eab27e163dc1',
+    id: 'mseab27e163dc1',
     description: 'Title for graph node',
   });
 
   const switchCaseTitle = intl.formatMessage({
     defaultMessage: 'Delete switch case',
-    id: 'a0f28b0d9c3c',
+    id: 'msa0f28b0d9c3c',
     description: 'Title for switch case',
   });
 
   const otherNodeTitle = intl.formatMessage({
     defaultMessage: 'Node',
-    id: '0c32080107d4',
+    id: 'ms0c32080107d4',
     description: 'Title for other node',
   });
 
@@ -78,20 +78,20 @@ export const DeleteNodeModal = (props: DeleteNodeModalProps) => {
 
   const confirmText = intl.formatMessage({
     defaultMessage: 'OK',
-    id: '3bd644c60440',
+    id: 'ms3bd644c60440',
     description: 'Confirmation text for delete button',
   });
 
   const cancelText = intl.formatMessage({
     defaultMessage: 'Cancel',
-    id: 'b62e5311d3f4',
+    id: 'msb62e5311d3f4',
     description: 'Text for cancel button',
   });
 
   const bodyConfirmText = intl.formatMessage(
     {
       defaultMessage: 'Are you sure you want to delete {nodeId}?',
-      id: '8875554e5cc1',
+      id: 'ms8875554e5cc1',
       description: 'Text for delete node modal body',
     },
     { nodeId: <b>{nodeName}</b> }
@@ -99,13 +99,13 @@ export const DeleteNodeModal = (props: DeleteNodeModalProps) => {
 
   const operationBodyMessage = intl.formatMessage({
     defaultMessage: 'This step will be removed from the Logic App.',
-    id: 'ea52ec8be5df',
+    id: 'msea52ec8be5df',
     description: 'Text for delete node modal body',
   });
 
   const graphBodyMessage = intl.formatMessage({
     defaultMessage: 'This will also remove all child steps.',
-    id: 'cfd907fb457d',
+    id: 'mscfd907fb457d',
     description: 'Text for delete node modal body',
   });
 

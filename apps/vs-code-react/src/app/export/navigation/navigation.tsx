@@ -33,27 +33,27 @@ export const Navigation: React.FC = () => {
   const intlText = {
     NEXT: intl.formatMessage({
       defaultMessage: 'Next',
-      id: 'dd672ab32964',
+      id: 'msdd672ab32964',
       description: 'Next button',
     }),
     BACK: intl.formatMessage({
       defaultMessage: 'Back',
-      id: 'd971fda1619f',
+      id: 'msd971fda1619f',
       description: 'Back button',
     }),
     EXPORT: intl.formatMessage({
       defaultMessage: 'Export',
-      id: 'c0fcf2bd7e76',
+      id: 'msc0fcf2bd7e76',
       description: 'Export button',
     }),
     EXPORT_WITH_WARNINGS: intl.formatMessage({
       defaultMessage: 'Export with warnings',
-      id: 'a4ad08afca8b',
+      id: 'msa4ad08afca8b',
       description: 'Export with warnings button',
     }),
     FINISH: intl.formatMessage({
       defaultMessage: 'finish',
-      id: '9a5c43e9160b',
+      id: 'ms9a5c43e9160b',
       description: 'Finish  button',
     }),
   };

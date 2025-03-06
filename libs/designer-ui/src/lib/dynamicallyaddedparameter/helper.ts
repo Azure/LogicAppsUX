@@ -42,37 +42,37 @@ export function getDefaultTitleForDynamicallyAddedParameterType(type: Dynamicall
     case DynamicallyAddedParameterType.Array:
       return intl.formatMessage({
         defaultMessage: 'Input',
-        id: '7be1ae1a85f1',
+        id: 'ms7be1ae1a85f1',
         description: 'Placeholder title for a newly inserted Text parameter',
       });
     case DynamicallyAddedParameterType.Boolean:
       return intl.formatMessage({
         defaultMessage: 'Yes/No',
-        id: '6146d2152118',
+        id: 'ms6146d2152118',
         description: 'Placeholder title for a newly inserted Boolean parameter',
       });
     case DynamicallyAddedParameterType.File:
       return intl.formatMessage({
         defaultMessage: 'File content',
-        id: '8470c9843f80',
+        id: 'ms8470c9843f80',
         description: 'Placeholder title for a newly inserted File parameter',
       });
     case DynamicallyAddedParameterType.Email:
       return intl.formatMessage({
         defaultMessage: 'Email',
-        id: '834efa6cb8ca',
+        id: 'ms834efa6cb8ca',
         description: 'Placeholder title for a newly inserted Email parameter',
       });
     case DynamicallyAddedParameterType.Number:
       return intl.formatMessage({
         defaultMessage: 'Number',
-        id: '058acff05da7',
+        id: 'ms058acff05da7',
         description: 'Placeholder title for a newly inserted Number parameter',
       });
     case DynamicallyAddedParameterType.Date:
       return intl.formatMessage({
         defaultMessage: 'Trigger date',
-        id: 'bfe91e4cffd2',
+        id: 'msbfe91e4cffd2',
         description: 'Placeholder title for a newly inserted Date parameter',
       });
   }
@@ -85,37 +85,37 @@ export function getDescriptionForDynamicallyAddedParameterType(type: Dynamically
     case DynamicallyAddedParameterType.Array:
       return intl.formatMessage({
         defaultMessage: 'Please enter your input',
-        id: '4a089302107c',
+        id: 'ms4a089302107c',
         description: 'Placeholder description for a newly inserted Text parameter',
       });
     case DynamicallyAddedParameterType.Boolean:
       return intl.formatMessage({
         defaultMessage: 'Please select yes or no',
-        id: '12eae4ccbcef',
+        id: 'ms12eae4ccbcef',
         description: 'Placeholder description for a newly inserted Boolean parameter',
       });
     case DynamicallyAddedParameterType.File:
       return intl.formatMessage({
         defaultMessage: 'Please select file or image',
-        id: '7ca62ec1f135',
+        id: 'ms7ca62ec1f135',
         description: 'Placeholder description for a newly inserted File parameter',
       });
     case DynamicallyAddedParameterType.Email:
       return intl.formatMessage({
         defaultMessage: 'Enter an email address.',
-        id: '158b433f42da',
+        id: 'ms158b433f42da',
         description: "The placeholder description for a newly inserted 'Email' parameter.",
       });
     case DynamicallyAddedParameterType.Number:
       return intl.formatMessage({
         defaultMessage: 'Please enter a number',
-        id: 'cae24198ab8e',
+        id: 'mscae24198ab8e',
         description: 'Placeholder description for a newly inserted Number parameter',
       });
     case DynamicallyAddedParameterType.Date:
       return intl.formatMessage({
         defaultMessage: 'Please enter or select a date (YYYY-MM-DD)',
-        id: '0afa2a43a34f',
+        id: 'ms0afa2a43a34f',
         description: 'Placeholder description for a newly inserted Date parameter',
       });
   }

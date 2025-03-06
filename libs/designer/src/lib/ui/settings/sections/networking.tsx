@@ -72,135 +72,135 @@ export const Networking = ({
   const intl = useIntl();
   const asyncPatternTitle = intl.formatMessage({
     defaultMessage: 'Asynchronous pattern',
-    id: '60cd1edc2dfb',
+    id: 'ms60cd1edc2dfb',
     description: 'title for async pattern setting',
   });
   const asyncPatternTooltipText = intl.formatMessage({
     defaultMessage: `With the asynchronous pattern, if the remote server indicates that the request is accepted for processing with a 202 (Accepted) response, the Logic Apps engine will keep polling the URL specified in the response's location header until reaching a terminal state.`,
-    id: 'f23f9ad2789f',
+    id: 'msf23f9ad2789f',
     description: 'description of asynchronous pattern setting',
   });
   const asyncResponseTitle = intl.formatMessage({
     defaultMessage: 'Asynchronous response',
-    id: '206a55d56192',
+    id: 'ms206a55d56192',
     description: 'title for asynchronous response setting',
   });
   const asyncResponseTooltipText = intl.formatMessage({
     defaultMessage:
       'Asynchronous response allows a Logic App to respond with a 202 (Accepted) to indicate the request has been accepted for processing. A location header will be provided to retrieve the final state.',
-    id: 'aabc62d0b83e',
+    id: 'msaabc62d0b83e',
     description: 'description of asynchronous response setting',
   });
   const requestOptionsTitle = intl.formatMessage({
     defaultMessage: 'Request options - Timeout',
-    id: '7d23320c9f63',
+    id: 'ms7d23320c9f63',
     description: 'title for request options setting',
   });
   const requestOptionsPlaceholder = intl.formatMessage({
     defaultMessage: 'Example: PT1S',
-    id: '7fb25a9efcc2',
+    id: 'ms7fb25a9efcc2',
     description: 'Placeholder for time setting, leave PT1S untranslated',
   });
   const requestOptionsTooltipText = intl.formatMessage({
     defaultMessage: `The maximum duration on a single outbound request from this action. If the request doesn't finish within this limit after running retries, the action fails`,
-    id: '0e6d3300e763',
+    id: 'ms0e6d3300e763',
     description: 'description of request options duration setting',
   });
   const requestOptionsDescription = intl.formatMessage({
     defaultMessage: 'Specify the duration in ISO 8601 format',
-    id: '592e795055b8',
+    id: 'ms592e795055b8',
     description: 'description of request options duration setting',
   });
   const requestOptionsSublabel = intl.formatMessage({
     defaultMessage: 'Duration',
-    id: 'be279ee8236c',
+    id: 'msbe279ee8236c',
     description: 'sublabel for request options duration setting',
   });
   const suppressWorkflowHeadersTitle = intl.formatMessage({
     defaultMessage: 'Suppress workflow headers',
-    id: '9d9e272e73e1',
+    id: 'ms9d9e272e73e1',
     description: 'title for suppress workflow headers setting',
   });
   const suppressWorkflowHeadersTooltipText = intl.formatMessage({
     defaultMessage: 'Limit Logic Apps to not include workflow metadata headers in the outgoing request.',
-    id: '9a34bf9359b2',
+    id: 'ms9a34bf9359b2',
     description: 'description of suppress woers setting',
   });
   const paginationTitle = intl.formatMessage({
     defaultMessage: 'Pagination',
-    id: '8932abb3c784',
+    id: 'ms8932abb3c784',
     description: 'Title for pagination setting',
   });
   const paginationTooltipText = intl.formatMessage({
     defaultMessage: 'Retrieve more results up to the pagination limit',
-    id: '709912ac3c1a',
+    id: 'ms709912ac3c1a',
     description: 'tooltip text of pagination setting',
   });
   const paginationDescription = intl.formatMessage({
     defaultMessage: `Retrieve items to meet the specified threshold by following the continuation token. Due to connector's page size, the number returned may exceed the threshold.`,
-    id: '0b8350d4995a',
+    id: 'ms0b8350d4995a',
     description: 'description for pagination setting',
   });
   const paginationPlaceholder = intl.formatMessage({
     defaultMessage: 'Threshold of items to return',
-    id: '9bccf862ba12',
+    id: 'ms9bccf862ba12',
     description: 'placeholder for pagination setting',
   });
   const threshold = intl.formatMessage({
     defaultMessage: 'Threshold',
-    id: 'c5043d928be8',
+    id: 'msc5043d928be8',
     description: 'title for pagination user input',
   });
   const workflowHeadersOnResponseTitle = intl.formatMessage({
     defaultMessage: 'Suppress workflow headers on response',
-    id: 'f3095f7684f8',
+    id: 'msf3095f7684f8',
     description: 'title for workflow headers on response setting',
   });
   const workflowHeadersOnResponseTooltipText = intl.formatMessage({
     defaultMessage: 'Limit Logic Apps to not include workflow metadata headers in the response.',
-    id: '5ec92d43ff3f',
+    id: 'ms5ec92d43ff3f',
     description: 'description of workflow headers on response setting',
   });
   const networking = intl.formatMessage({
     defaultMessage: 'Networking',
-    id: '8b80b8681bf3',
+    id: 'ms8b80b8681bf3',
     description: 'title for networking setting section',
   });
   const contentTransferTitle = intl.formatMessage({
     defaultMessage: 'Content transfer',
-    id: '5d9acc1994de',
+    id: 'ms5d9acc1994de',
     description: 'title for content transfer setting',
   });
   const uploadContentTransferDescription = intl.formatMessage({
     defaultMessage: 'Specify the behavior and capabilities for transferring content over HTTP.',
-    id: 'e01b82770ed8',
+    id: 'mse01b82770ed8',
     description: 'description of upload content transfer setting',
   });
   const uploadContentTransferTooltip = intl.formatMessage({
     defaultMessage:
       'Large messages may be split up into smaller requests to the connector to allow large message upload. More details can be found at http://aka.ms/logicapps-chunk#upload-content-in-chunks',
-    id: '95bab9135b67',
+    id: 'ms95bab9135b67',
     description: 'description of upload content transfer setting',
   });
   const downloadContentTransferDescription = intl.formatMessage({
     defaultMessage: 'Specify the behavior and capabilities for transferring content over HTTP.',
-    id: 'a5f9a48bfc53',
+    id: 'msa5f9a48bfc53',
     description: 'description of download content transfer setting',
   });
   const contentTransferSublabel = intl.formatMessage({
     defaultMessage: 'Allow chunking',
-    id: '84c7f64c0f48',
+    id: 'ms84c7f64c0f48',
     description: 'sublabel for content transfer setting',
   });
   const chunkedTransferNodeSizeLabel = intl.formatMessage({
     defaultMessage: 'Chunk size',
-    id: '49359b6a4998',
+    id: 'ms49359b6a4998',
     description: 'label for chunked transfer node size',
   });
   const uploadChunkSizePlaceholder = intl.formatMessage(
     {
       defaultMessage: 'Specify upload chunk size between {minimumSize} and {maximumSize} Mb. Example: 10',
-      id: '0fa2b3a12ed8',
+      id: 'ms0fa2b3a12ed8',
       description: 'tooltip for upload chunk size setting',
     },
     { minimumSize, maximumSize }
@@ -208,7 +208,7 @@ export const Networking = ({
   const downloadChunkSizePlaceholder = intl.formatMessage(
     {
       defaultMessage: 'Specify download chunk size between {minimumSize} and {maximumSize} Mb. Example: 10',
-      id: '22a344ba2ca9',
+      id: 'ms22a344ba2ca9',
       description: 'tooltip for download chunk size setting',
     },
     { minimumSize, maximumSize }
@@ -217,45 +217,45 @@ export const Networking = ({
   // RETRY POLICY
   const retryPolicyTypeTitle = intl.formatMessage({
     defaultMessage: 'Retry policy',
-    id: 'e8b259ee77ef',
+    id: 'mse8b259ee77ef',
     description: 'title for retry policy setting',
   });
   const retryPolicyTooltip = intl.formatMessage({
     defaultMessage: 'The number of times to retry the request',
-    id: 'd613d9a9e312',
+    id: 'msd613d9a9e312',
     description: 'description of retry count setting',
   });
   const retryPolicyTypeDescription = intl.formatMessage({
     defaultMessage:
       'A retry policy applies to intermittent failures, characterized as HTTP status codes 408, 429, and 5xx, in addition to any connectivity exceptions. The default is an exponential interval policy set to retry 4 times.',
-    id: 'ccd7ac519f15',
+    id: 'msccd7ac519f15',
     description: 'description of retry policy setting',
   });
   const retryPolicyCountTitle = intl.formatMessage({
     defaultMessage: 'Count',
-    id: '5dbb44abd7ec',
+    id: 'ms5dbb44abd7ec',
     description: 'title for retry count setting',
   });
 
   const retryPolicyCountPlaceholder = intl.formatMessage({
     defaultMessage: 'Specify a retry count from 1 to 90',
-    id: 'b8cd62dbb3ab',
+    id: 'msb8cd62dbb3ab',
     description: 'placeholder for retry count setting',
   });
   const retryPolicyIntervalTitle = intl.formatMessage({
     defaultMessage: 'Interval',
-    id: '57c03ed49bc3',
+    id: 'ms57c03ed49bc3',
     description: 'Title for retry interval setting',
   });
   const retryPolicyIntervalDescription = intl.formatMessage({
     defaultMessage: 'Specify interval in ISO 8601 format.',
-    id: '878d2ba604c2',
+    id: 'ms878d2ba604c2',
     description: 'description of retry interval setting',
   });
   const retryPolicyIntervalPlaceholder = intl.formatMessage(
     {
       defaultMessage: 'Example: {example}',
-      id: 'aa222ce15baf',
+      id: 'msaa222ce15baf',
       description: 'placeholder for retry interval setting',
     },
     {
@@ -264,13 +264,13 @@ export const Networking = ({
   );
   const retryPolicyMinIntervalTitle = intl.formatMessage({
     defaultMessage: 'Minimum interval',
-    id: 'c4c80b77c94d',
+    id: 'msc4c80b77c94d',
     description: 'title for retry minimum interval setting',
   });
   const retryPolicyMinIntervalPlaceholder = intl.formatMessage(
     {
       defaultMessage: 'Example: {example}',
-      id: 'qiIs4V',
+      id: 'msaa222ce15baf',
       description: 'placeholder for retry interval setting',
     },
     {
@@ -279,7 +279,7 @@ export const Networking = ({
   );
   const retryPolicyMaxIntervalTitle = intl.formatMessage({
     defaultMessage: 'Maximum interval',
-    id: 'd9a76a438a3f',
+    id: 'msd9a76a438a3f',
     description: 'title for retry maximum interval setting',
   });
   const retryPolicyMaxIntervalPlaceholder = intl.formatMessage(
@@ -443,7 +443,7 @@ export const Networking = ({
       {
         title: intl.formatMessage({
           defaultMessage: 'Default',
-          id: 'dae20db3d9d7',
+          id: 'msdae20db3d9d7',
           description: 'title for retry policy default setting',
         }),
         value: constants.RETRY_POLICY_TYPE.DEFAULT,
@@ -451,7 +451,7 @@ export const Networking = ({
       {
         title: intl.formatMessage({
           defaultMessage: 'None',
-          id: '80be2b5501c3',
+          id: 'ms80be2b5501c3',
           description: 'title for retry policy none setting',
         }),
         value: constants.RETRY_POLICY_TYPE.NONE,
@@ -459,7 +459,7 @@ export const Networking = ({
       {
         title: intl.formatMessage({
           defaultMessage: 'Exponential interval',
-          id: 'a21a5b930596',
+          id: 'msa21a5b930596',
           description: 'title for retry policy exponential interval setting',
         }),
         value: constants.RETRY_POLICY_TYPE.EXPONENTIAL,
@@ -467,7 +467,7 @@ export const Networking = ({
       {
         title: intl.formatMessage({
           defaultMessage: 'Fixed interval',
-          id: 'd5fecb1b8976',
+          id: 'msd5fecb1b8976',
           description: 'title for retry policy fixed interval setting',
         }),
         value: constants.RETRY_POLICY_TYPE.FIXED,

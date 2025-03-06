@@ -5,7 +5,7 @@ export const EmptyContent: React.FC = () => {
   const intl = useIntl();
   const emptyContentMessage = intl.formatMessage({
     defaultMessage: 'Please select a card to see the content',
-    id: '1dfad421d15f',
+    id: 'ms1dfad421d15f',
     description: 'Empty Panel Content Message',
   });
   return (

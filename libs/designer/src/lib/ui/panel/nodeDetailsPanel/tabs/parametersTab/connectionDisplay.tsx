@@ -43,7 +43,7 @@ export const ConnectionDisplay = (props: ConnectionDisplayProps) => {
   const connectionDisplayTextWithName = intl.formatMessage(
     {
       defaultMessage: 'Connected to {connectionName}.',
-      id: '75aa28de5cb1',
+      id: 'ms75aa28de5cb1',
       description: 'Text to show which connection is connected to the node',
     },
     {
@@ -53,31 +53,31 @@ export const ConnectionDisplay = (props: ConnectionDisplayProps) => {
 
   const connectionDisplayTextWithoutName = intl.formatMessage({
     defaultMessage: 'Not connected.',
-    id: '633f68d64f70',
+    id: 'ms633f68d64f70',
     description: 'Text to show that no connection is connected to the node',
   });
 
   const openChangeConnectionText = isXrmConnectionReferenceMode
     ? intl.formatMessage({
         defaultMessage: 'Change connection reference',
-        id: '281686912d76',
+        id: 'ms281686912d76',
         description: "Button text to take the user to the 'change connection' component while in xrm connection reference mode",
       })
     : intl.formatMessage({
         defaultMessage: 'Change connection',
-        id: 'fd42c5c20135',
+        id: 'msfd42c5c20135',
         description: "Button text to take the user to the 'change connection' component",
       });
 
   const loadingText = intl.formatMessage({
     defaultMessage: 'Loading connection...',
-    id: 'dfe4d031a0be',
+    id: 'msdfe4d031a0be',
     description: 'Text to show when the connection is loading',
   });
 
   const connectionErrorText = intl.formatMessage({
     defaultMessage: 'Invalid connection',
-    id: '97fdf226b4a5',
+    id: 'ms97fdf226b4a5',
     description: 'Text to show when there is an error with the connection',
   });
 

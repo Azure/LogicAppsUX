@@ -24,37 +24,37 @@ export const ErrorsTab = () => {
 
   const noErrorsText = intl.formatMessage({
     defaultMessage: 'No errors found.',
-    id: '3b5b5e74c787',
+    id: 'ms3b5b5e74c787',
     description: 'Text to show when no errors exist',
   });
 
   const operationErrorsCategoryHeader = intl.formatMessage({
     defaultMessage: 'Operation errors',
-    id: 'ba2dcab8f204',
+    id: 'msba2dcab8f204',
     description: 'Header for the input errors category',
   });
 
   const workflowParameterErrorsCategoryHeader = intl.formatMessage({
     defaultMessage: 'Workflow parameter errors',
-    id: '4e8dd1372e1b',
+    id: 'ms4e8dd1372e1b',
     description: 'Header for the workflow parameter errors category',
   });
 
   const inputErrorsSubsectionHeader = intl.formatMessage({
     defaultMessage: 'Parameter errors',
-    id: '93c71b435775',
+    id: 'ms93c71b435775',
     description: 'Header for the node parameter errors subsection',
   });
 
   const settingErrorsSubsectionHeader = intl.formatMessage({
     defaultMessage: 'Setting errors',
-    id: '3de83a6530f1',
+    id: 'ms3de83a6530f1',
     description: 'Header for the setting errors subsection',
   });
 
   const connectionErrorsSubsectionHeader = intl.formatMessage({
     defaultMessage: 'Connection errors',
-    id: '3ec987c87ca3',
+    id: 'ms3ec987c87ca3',
     description: 'Header for the connection errors subsection',
   });
 

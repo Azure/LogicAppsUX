@@ -42,22 +42,22 @@ export const InputTabContents = (props: {
     () => ({
       ACCEPTED_TYPES: intl.formatMessage({
         defaultMessage: 'Accepted types: ',
-        id: '660c83f77dec',
+        id: 'ms660c83f77dec',
         description: 'Accepted types',
       }),
       VALUE: intl.formatMessage({
         defaultMessage: 'Value',
-        id: '112e6fb0866c',
+        id: 'ms112e6fb0866c',
         description: 'Value',
       }),
       OPTIONAL: intl.formatMessage({
         defaultMessage: 'optional',
-        id: 'e9e0d8d479c1',
+        id: 'mse9e0d8d479c1',
         description: 'Optional Keyword',
       }),
       ADD_INPUT: intl.formatMessage({
         defaultMessage: 'Add Input',
-        id: 'c31fd940f76e',
+        id: 'msc31fd940f76e',
         description: 'Add Input',
       }),
     }),

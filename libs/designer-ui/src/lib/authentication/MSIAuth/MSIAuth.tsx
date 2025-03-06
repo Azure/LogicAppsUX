@@ -43,12 +43,12 @@ export const MSIAuthentication = ({ identity, msiProps, setCurrentProps, ...prop
 
   const MSIAuthLabel = intl.formatMessage({
     defaultMessage: 'Managed identity',
-    id: 'd9330693b281',
+    id: 'msd9330693b281',
     description: 'Managed Identity Label',
   });
   const MSIAuthPlaceholder = intl.formatMessage({
     defaultMessage: 'select an identity',
-    id: 'b464ac819122',
+    id: 'msb464ac819122',
     description: 'Placehodler text for dropdown',
   });
 
@@ -97,17 +97,17 @@ const getManagedIdentityData = (
 
   const invalidUserAssignedManagedIdentity = intl.formatMessage({
     defaultMessage: 'The entered identity is not associated with this logic app.',
-    id: '50fb194b0273',
+    id: 'ms50fb194b0273',
     description: 'error message for invalid user',
   });
   const systemAssignedManagedIdentity = intl.formatMessage({
     defaultMessage: 'System-assigned managed identity',
-    id: '8bf4a0b98f6f',
+    id: 'ms8bf4a0b98f6f',
     description: 'Text for dropdown of system-assigned managed identity',
   });
   const systemIdentityNotSupported = intl.formatMessage({
     defaultMessage: "The system-assigned identity is unavailable because it's not enabled.",
-    id: 'f0aa599a3e65',
+    id: 'msf0aa599a3e65',
     description: 'error message for unsupported system-assigned managed identity',
   });
   const userAssignedIdentities = containsUserAssignedIdentities(identity) ? getUserAssignedIdentities(identity) : undefined;

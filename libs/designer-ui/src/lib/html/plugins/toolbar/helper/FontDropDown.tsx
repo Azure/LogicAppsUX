@@ -57,18 +57,18 @@ export function FontDropDown({ editor, value, fontDropdownType, disabled = false
     fontDropdownType === FontDropDownType.FONTFAMILY
       ? intl.formatMessage({
           defaultMessage: 'Formatting options for font family',
-          id: 'b1840337e49f',
+          id: 'msb1840337e49f',
           description: 'Label for Font family dropdown',
         })
       : intl.formatMessage({
           defaultMessage: 'Formatting options for font size',
-          id: '2764aeeb138f',
+          id: 'ms2764aeeb138f',
           description: 'Label for Font size dropdown',
         });
 
   const altTextForChevronDown = intl.formatMessage({
     defaultMessage: 'Alt text for down chevron',
-    id: 'f94be8fe96cd',
+    id: 'msf94be8fe96cd',
     description: 'Alt text for down chevron',
   });
 

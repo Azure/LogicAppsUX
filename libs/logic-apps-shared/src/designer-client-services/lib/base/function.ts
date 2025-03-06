@@ -134,13 +134,13 @@ export class BaseFunctionService implements IFunctionService {
 
       if (response.schema) {
         schema.properties['body'] = {
-          title: intl.formatMessage({ defaultMessage: 'Body', id: '55987ec362e3', description: 'Title for body outputs' }),
+          title: intl.formatMessage({ defaultMessage: 'Body', id: 'ms55987ec362e3', description: 'Title for body outputs' }),
           ...response.schema,
         };
       }
       if (response.headers) {
         schema.properties['headers'] = {
-          title: intl.formatMessage({ defaultMessage: 'Headers', id: 'be844328f65a', description: 'Title for header outputs' }),
+          title: intl.formatMessage({ defaultMessage: 'Headers', id: 'msbe844328f65a', description: 'Title for header outputs' }),
           ...response.headers,
         };
       }

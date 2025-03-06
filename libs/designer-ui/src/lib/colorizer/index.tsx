@@ -36,7 +36,7 @@ export const Colorizer: React.FC<ColorizerProps> = ({ ariaLabel, code, utcProps,
   const toggleLocalLabel = intl.formatMessage(
     {
       defaultMessage: `Switch ''{label}'' to the local time`,
-      id: 'b68a1ceafb4d',
+      id: 'msb68a1ceafb4d',
       description: 'label for switching time format to local time',
     },
     {
@@ -46,7 +46,7 @@ export const Colorizer: React.FC<ColorizerProps> = ({ ariaLabel, code, utcProps,
   const toggleUTCLabel = intl.formatMessage(
     {
       defaultMessage: `Switch ''{label}'' to the UTC time format`,
-      id: 'bcefc8ecf013',
+      id: 'msbcefc8ecf013',
       description: 'label for switching time format to UTC',
     },
     {
@@ -56,7 +56,7 @@ export const Colorizer: React.FC<ColorizerProps> = ({ ariaLabel, code, utcProps,
   const copyAria = intl.formatMessage(
     {
       defaultMessage: `Copy the value of ''{label}'' to the clipboard`,
-      id: '940fec1c0d74',
+      id: 'ms940fec1c0d74',
       description: 'Accessibility label for a button to copy all text in a value box',
     },
     {
@@ -66,7 +66,7 @@ export const Colorizer: React.FC<ColorizerProps> = ({ ariaLabel, code, utcProps,
   const selectAria = intl.formatMessage(
     {
       defaultMessage: `Select all text in ''{label}''`,
-      id: '64dd39d0ddaa',
+      id: 'ms64dd39d0ddaa',
       description: 'Accessibility label for a button to select all text in a value box',
     },
     {

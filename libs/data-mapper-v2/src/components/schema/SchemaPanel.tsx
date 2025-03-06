@@ -94,32 +94,32 @@ export const SchemaPanel = ({ id }: ConfigPanelProps) => {
     () => ({
       SELECT_EXISTING: intl.formatMessage({
         defaultMessage: 'Select existing',
-        id: 'd997f3698eb1',
+        id: 'msd997f3698eb1',
         description: 'Select existing option',
       }),
       SOURCE: intl.formatMessage({
         defaultMessage: 'Source',
-        id: '9ce0deb2701a',
+        id: 'ms9ce0deb2701a',
         description: 'Source',
       }),
       DESTINATION: intl.formatMessage({
         defaultMessage: 'Destination',
-        id: '11710bda31cc',
+        id: 'ms11710bda31cc',
         description: 'Destination',
       }),
       SEARCH_PROPERTIES: intl.formatMessage({
         defaultMessage: 'Search nodes',
-        id: 'a49277c7c583',
+        id: 'msa49277c7c583',
         description: 'Seach source or target nodes',
       }),
       EDIT_SCHEMA: intl.formatMessage({
         defaultMessage: 'Edit schema',
-        id: '2aa275e3f1fe',
+        id: 'ms2aa275e3f1fe',
         description: 'Edit scehma',
       }),
       GENERIC_ERROR: intl.formatMessage({
         defaultMessage: 'Failed to load the schema. Please try again.',
-        id: 'e9f0d8cc679d',
+        id: 'mse9f0d8cc679d',
         description: 'Load schema error message',
       }),
     }),

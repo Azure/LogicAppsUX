@@ -10,7 +10,7 @@ interface PreviewProps {
 export const Preview = ({ recurrence }: PreviewProps): JSX.Element => {
   const intl = useIntl();
   const { frequency, interval, schedule, startTime } = recurrence;
-  const previewTitle = intl.formatMessage({ defaultMessage: 'Preview', id: '302cd60dcdac', description: 'Recurrence preview title' });
+  const previewTitle = intl.formatMessage({ defaultMessage: 'Preview', id: 'ms302cd60dcdac', description: 'Recurrence preview title' });
   const scheduleHours = (schedule?.hours ?? []).map((hour) => {
     return hour;
   });
@@ -50,7 +50,7 @@ const convertRecurrenceToExpression = (
       frequencyDesc = intl.formatMessage(
         {
           defaultMessage: 'Every {interval} weeks',
-          id: '526a6bdf3d1f',
+          id: 'ms526a6bdf3d1f',
           description: 'Recurrence schedule description every interval weeks',
         },
         { interval }
@@ -59,7 +59,7 @@ const convertRecurrenceToExpression = (
       frequencyDesc = intl.formatMessage(
         {
           defaultMessage: 'Every {interval} days',
-          id: '11afdfafe8d3',
+          id: 'ms11afdfafe8d3',
           description: 'Recurrence schedule description every interval days',
         },
         { interval }
@@ -68,13 +68,13 @@ const convertRecurrenceToExpression = (
   } else if (equals(frequency, constants.FREQUENCY.WEEK)) {
     frequencyDesc = intl.formatMessage({
       defaultMessage: 'every week',
-      id: '0d677dbf23ad',
+      id: 'ms0d677dbf23ad',
       description: 'Recurrence schedule description every week',
     });
   } else if (equals(frequency, constants.FREQUENCY.DAY)) {
     frequencyDesc = intl.formatMessage({
       defaultMessage: 'every day',
-      id: 'd2f7dd152c95',
+      id: 'msd2f7dd152c95',
       description: 'Recurrence schedule description every day',
     });
   }
@@ -85,7 +85,7 @@ const convertRecurrenceToExpression = (
       onDays = intl.formatMessage(
         {
           defaultMessage: 'on {weekDays} {frequencyDesc}',
-          id: '4d987c9d5913',
+          id: 'ms4d987c9d5913',
           description: 'Recurrence schedule description on days of week',
         },
         { weekDays, frequencyDesc }
@@ -105,7 +105,7 @@ const convertRecurrenceToExpression = (
     }
 
     onTime = intl.formatMessage(
-      { defaultMessage: 'at {times}', id: '0b3b7a6155cd', description: 'Recurrence schedule description at times' },
+      { defaultMessage: 'at {times}', id: 'ms0b3b7a6155cd', description: 'Recurrence schedule description at times' },
       { times: projectTimes.join(', ') }
     );
   } else if (hours && hours.length) {
@@ -115,7 +115,7 @@ const convertRecurrenceToExpression = (
     }
 
     onTime = intl.formatMessage(
-      { defaultMessage: 'at {times}', id: 'Czt6YV', description: 'Recurrence schedule description at times' },
+      { defaultMessage: 'at {times}', id: 'ms0b3b7a6155cd', description: 'Recurrence schedule description at times' },
       { times: projectTimes.join(', ') }
     );
   } else if (minutes && minutes.length) {
@@ -125,7 +125,7 @@ const convertRecurrenceToExpression = (
     }
 
     onTime = intl.formatMessage(
-      { defaultMessage: 'at {times} every hour', id: 'b5657698282b', description: 'Recurrence schedule description at times' },
+      { defaultMessage: 'at {times} every hour', id: 'msb5657698282b', description: 'Recurrence schedule description at times' },
       { times: projectTimes.join(', ') }
     );
   }
@@ -133,24 +133,24 @@ const convertRecurrenceToExpression = (
   let summary: string;
   if (onTime && onDays) {
     summary = intl.formatMessage(
-      { defaultMessage: 'Runs {onTime} {onDays}', id: '538ce8be3510', description: 'Recurrence schedule description on days of week at times' },
+      { defaultMessage: 'Runs {onTime} {onDays}', id: 'ms538ce8be3510', description: 'Recurrence schedule description on days of week at times' },
       { onTime, onDays }
     );
   } else if (onTime) {
     summary = intl.formatMessage(
-      { defaultMessage: 'Runs {onTime}', id: '3cd9379f890f', description: 'Recurrence schedule description on days of week at times' },
+      { defaultMessage: 'Runs {onTime}', id: 'ms3cd9379f890f', description: 'Recurrence schedule description on days of week at times' },
       { onTime }
     );
   } else {
     summary = intl.formatMessage(
-      { defaultMessage: 'Runs {onDays}', id: 'e03ec7e1126c', description: 'Recurrence schedule description on days of week at times' },
+      { defaultMessage: 'Runs {onDays}', id: 'mse03ec7e1126c', description: 'Recurrence schedule description on days of week at times' },
       { onDays }
     );
   }
   const noMinuteOrStartTimeWarning = intl.formatMessage({
     defaultMessage:
       "If a recurrence doesn't specify a specific start date and time, the first recurrence runs immediately when you save or deploy the logic app",
-    id: '8615bfc3c6bc',
+    id: 'ms8615bfc3c6bc',
     description: 'Recurrence additional message if no minutes or starttime is specified',
   });
   return (

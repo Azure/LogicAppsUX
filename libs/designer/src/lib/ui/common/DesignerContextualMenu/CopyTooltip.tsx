@@ -17,7 +17,7 @@ export const CopyTooltip = ({ targetRef: ref, location, hideTooltip, id }: CopyT
   const intl = useIntl();
   const copiedText = intl.formatMessage({
     defaultMessage: 'Copied!',
-    id: '344e7852ec59',
+    id: 'ms344e7852ec59',
     description: 'Copied text',
   });
 

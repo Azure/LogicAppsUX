@@ -67,12 +67,12 @@ export const RunAfterActionSelector = ({ readOnly }: { readOnly: boolean }) => {
   });
   const RUN_AFTER_CONFIGURATION_FILTER_ACTIONS = intl.formatMessage({
     defaultMessage: 'Filter actions',
-    id: '5368ee29b90d',
+    id: 'ms5368ee29b90d',
     description: 'Filter Actions',
   });
   const RUN_AFTER_CONFIGURATION_SELECT_ACTIONS_TITLE = intl.formatMessage({
     defaultMessage: 'Select actions',
-    id: 'ddadde1e022e',
+    id: 'msddadde1e022e',
     description: 'Select Actions',
   });
 

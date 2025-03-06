@@ -35,37 +35,37 @@ export const ConnectionEntry = ({ connectorId, refId, connectionReference, iconU
   const intl = useIntl();
   const openConnectionTooltipText = intl.formatMessage({
     defaultMessage: 'Open connection',
-    id: 'e3576b8e5277',
+    id: 'mse3576b8e5277',
     description: 'Tooltip for the button to open a connection',
   });
   const connectedActionsText = intl.formatMessage({
     defaultMessage: 'Actions',
-    id: '5afbc96308a6',
+    id: 'ms5afbc96308a6',
     description: 'Header for the connected actions section',
   });
   const reassignButtonText = intl.formatMessage({
     defaultMessage: 'Reassign',
-    id: '7a7ff90370ac',
+    id: 'ms7a7ff90370ac',
     description: 'Button text to reassign actions',
   });
   const reassignConnectionTooltipText = intl.formatMessage({
     defaultMessage: 'Reassign all connected actions to a new connection',
-    id: '7afc86623fb1',
+    id: 'ms7afc86623fb1',
     description: 'Tooltip for the button to reassign actions',
   });
   const connectionValidStatusText = intl.formatMessage({
     defaultMessage: 'Connection is valid',
-    id: '719bfd274d49',
+    id: 'ms719bfd274d49',
     description: 'Tooltip for the button to reassign actions',
   });
   const connectionInvalidStatusText = intl.formatMessage({
     defaultMessage: 'Connection is invalid',
-    id: '9945112560e3',
+    id: 'ms9945112560e3',
     description: 'Tooltip for the button to reassign actions',
   });
   const disconnectedText = intl.formatMessage({
     defaultMessage: 'Disconnected',
-    id: '4ec25b1875ae',
+    id: 'ms4ec25b1875ae',
     description: 'Text to show when a connection is disconnected',
   });
 

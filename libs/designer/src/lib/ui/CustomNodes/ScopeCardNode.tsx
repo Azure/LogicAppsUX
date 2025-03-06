@@ -223,21 +223,21 @@ const ScopeCardNode = ({ data, targetPosition = Position.Top, sourcePosition = P
 
   const opManifestErrorText = intl.formatMessage({
     defaultMessage: 'Error fetching manifest',
-    id: '1e6707a04819',
+    id: 'ms1e6707a04819',
     description: 'Error message when manifest fails to load',
   });
 
   const settingValidationErrors = useSettingValidationErrors(scopeId);
   const settingValidationErrorText = intl.formatMessage({
     defaultMessage: 'Invalid settings',
-    id: '26297f59a2ad',
+    id: 'ms26297f59a2ad',
     description: 'Text to explain that there are invalid settings for this node',
   });
 
   const parameterValidationErrors = useParameterValidationErrors(scopeId);
   const parameterValidationErrorText = intl.formatMessage({
     defaultMessage: 'Invalid parameters',
-    id: '4e6afff5ebe7',
+    id: 'ms4e6afff5ebe7',
     description: 'Text to explain that there are invalid parameters for this node',
   });
 
@@ -288,7 +288,7 @@ const ScopeCardNode = ({ data, targetPosition = Position.Top, sourcePosition = P
   const actionString = intl.formatMessage(
     {
       defaultMessage: '{actionCount, plural, one {# Action} =0 {0 Actions} other {# Actions}}',
-      id: '07f273c0a572',
+      id: 'ms07f273c0a572',
       description: 'This is the number of actions to be completed in a group',
     },
     { actionCount }
@@ -297,7 +297,7 @@ const ScopeCardNode = ({ data, targetPosition = Position.Top, sourcePosition = P
   const caseString = intl.formatMessage(
     {
       defaultMessage: '{actionCount, plural, one {# Case} =0 {0 Cases} other {# Cases}}',
-      id: '297d69a022fa',
+      id: 'ms297d69a022fa',
       description: 'This is the number of cases or options the program can take',
     },
     { actionCount }

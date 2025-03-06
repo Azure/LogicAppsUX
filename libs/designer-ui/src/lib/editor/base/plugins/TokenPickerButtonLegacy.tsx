@@ -50,17 +50,17 @@ export default function TokenPickerButtonLegacy({
 
   const addContent = intl.formatMessage({
     defaultMessage: 'Add dynamic content',
-    id: 'dc1667c58238',
+    id: 'msdc1667c58238',
     description: 'Label for button to open token picker',
   });
   const addContentAltTextShow = intl.formatMessage({
     defaultMessage: 'Button to add dynamic content if token picker is shown',
-    id: '4d9a66ed78d2',
+    id: 'ms4d9a66ed78d2',
     description: 'Text for if image does not show up',
   });
   const addContentAltTextHide = intl.formatMessage({
     defaultMessage: 'Button to add dynamic content if token picker is hidden',
-    id: '7cd13f860a37',
+    id: 'ms7cd13f860a37',
     description: 'Text for if image does not show up',
   });
 
@@ -76,7 +76,7 @@ export default function TokenPickerButtonLegacy({
 
   const dynamicContentButtonText = intl.formatMessage({
     defaultMessage: 'Insert data from previous step (you can also add by typing Alt + / in the editor)',
-    id: 'c172c4709460',
+    id: 'msc172c4709460',
     description: 'Label for button to open dynamic content token picker',
   });
 

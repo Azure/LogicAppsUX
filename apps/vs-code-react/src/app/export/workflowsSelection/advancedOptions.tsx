@@ -20,42 +20,42 @@ export const AdvancedOptions: React.FC = () => {
   const intlText = {
     ADVANCED_OPTIONS: intl.formatMessage({
       defaultMessage: 'Advanced options',
-      id: '00036a5ece19',
+      id: 'ms00036a5ece19',
       description: 'Advanced options title',
     }),
     EXPORT_CONNECTION: intl.formatMessage({
       defaultMessage: 'Export connection credentials',
-      id: '21ab0806836a',
+      id: 'ms21ab0806836a',
       description: 'Export connection credentials title',
     }),
     EXPORT_CONNECTION_DESCRIPTION: intl.formatMessage({
       defaultMessage: 'Export the connection credentials for each application',
-      id: 'a8cac46b9cb3',
+      id: 'msa8cac46b9cb3',
       description: 'Export the connection credentials for each application description',
     }),
     OFF: intl.formatMessage({
       defaultMessage: 'Off',
-      id: '9f095a634ecc',
+      id: 'ms9f095a634ecc',
       description: 'Off text',
     }),
     CLONE_CONNECTIONS: intl.formatMessage({
       defaultMessage: 'Clone connections credentials',
-      id: '3a4afa464d6f',
+      id: 'ms3a4afa464d6f',
       description: 'Clone connections text',
     }),
     GENERATE_INFRAESTRUCTURE: intl.formatMessage({
       defaultMessage: 'Generate infrastructure templates',
-      id: 'd629732e26fc',
+      id: 'msd629732e26fc',
       description: 'Generate infrastructure templates',
     }),
     INTEGRATION_ACCOUNT_SOURCE: intl.formatMessage({
       defaultMessage: 'Default to integration account as source for transformations and schema validation',
-      id: '5abf9b2fa28d',
+      id: 'ms5abf9b2fa28d',
       description: 'Default to integration account as source for transformations and schema validation',
     }),
     EXPORT_CUSTOM_API_ACTIONS_TO_API_MANAGEMENT_ACTIONS: intl.formatMessage({
       defaultMessage: 'Export custom connector actions as API Management actions',
-      id: '28c3a460d1ce',
+      id: 'ms28c3a460d1ce',
       description: 'Export custom connector actions as API Management actions',
     }),
   };

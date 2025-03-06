@@ -33,12 +33,12 @@ export const ThumbsReactionButton: React.FC<IThumbsReactionButtonProps> = ({ isV
   const intlText = {
     upvote: intl.formatMessage({
       defaultMessage: 'Like',
-      id: '5d1e1277f637',
+      id: 'ms5d1e1277f637',
       description: 'Chatbot user feedback like button title',
     }),
     downvote: intl.formatMessage({
       defaultMessage: 'Dislike',
-      id: 'ca4ecbfb8989',
+      id: 'msca4ecbfb8989',
       description: 'Chatbot user feedback dislike button title',
     }),
   };

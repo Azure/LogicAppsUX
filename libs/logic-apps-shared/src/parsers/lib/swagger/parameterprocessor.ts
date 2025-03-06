@@ -318,7 +318,7 @@ export class ParametersProcessor {
       editorOptions: parameter[Constants.ExtensionProperties.EditorOptions],
       recommended: undefined,
       summary: intl.formatMessage(
-        { defaultMessage: '{fileName} (file name)', id: '5184484bfd58', description: 'Title for file name parameter' },
+        { defaultMessage: '{fileName} (file name)', id: 'ms5184484bfd58', description: 'Title for file name parameter' },
         { fileName: parameter[Constants.ExtensionProperties.Summary] }
       ),
       visibility: undefined,

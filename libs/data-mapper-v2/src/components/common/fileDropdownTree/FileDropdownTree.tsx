@@ -39,7 +39,7 @@ export const FileDropdownTree = ({
 
   const search = intl.formatMessage({
     defaultMessage: 'Search',
-    id: 'b68593ae5ed0',
+    id: 'msb68593ae5ed0',
     description: 'Search from file list',
   });
 

@@ -83,12 +83,12 @@ export const useCreateWorkflowPanelTabs = ({
     const resources = {
       singleMissingInfo: intl.formatMessage({
         defaultMessage: 'Missing information for workflow creation',
-        id: 'c0106ee203db',
+        id: 'msc0106ee203db',
         description: 'Error message when missing information for workflow creation',
       }),
       multiMissingInfo: intl.formatMessage({
         defaultMessage: 'Missing information for workflows creation',
-        id: 'ac7c92545572',
+        id: 'msac7c92545572',
         description: 'Error message when missing information for workflows creation',
       }),
     };

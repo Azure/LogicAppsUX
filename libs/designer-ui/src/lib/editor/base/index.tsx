@@ -148,7 +148,7 @@ export const BaseEditor = ({
 
   const describedByMessage = intl.formatMessage({
     defaultMessage: 'Add dynamic data or expressions by inserting a /',
-    id: '439c380e86e5',
+    id: 'ms439c380e86e5',
     description: 'This is an a11y message meant to help screen reader users figure out how to insert dynamic data',
   });
 

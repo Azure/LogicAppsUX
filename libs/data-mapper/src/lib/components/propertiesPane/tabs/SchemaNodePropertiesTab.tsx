@@ -45,25 +45,25 @@ export const SchemaNodePropertiesTab = ({ currentNode }: SchemaNodePropertiesTab
 
   const nameLoc = intl.formatMessage({
     defaultMessage: 'Name',
-    id: '4458d8a47f10',
+    id: 'ms4458d8a47f10',
     description: 'Name of current node',
   });
 
   const fullPathLoc = intl.formatMessage({
     defaultMessage: 'Full path',
-    id: 'c0f9530c145c',
+    id: 'msc0f9530c145c',
     description: 'Full path of current node',
   });
 
   const dataTypeLoc = intl.formatMessage({
     defaultMessage: 'Data type',
-    id: 'eb146f9e2730',
+    id: 'mseb146f9e2730',
     description: 'The data type of the current node.',
   });
 
   const inputLoc = intl.formatMessage({
     defaultMessage: 'Input',
-    id: '3fa23dd320a2',
+    id: 'ms3fa23dd320a2',
     description: 'Input',
   });
 

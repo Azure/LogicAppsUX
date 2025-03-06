@@ -20,7 +20,7 @@ export const UndoButton: React.FC<UndoButtonProps> = (props) => {
 
   const undoLabel = intl.formatMessage({
     defaultMessage: 'Undo',
-    id: 'ab996db46b5b',
+    id: 'msab996db46b5b',
     description: 'Label for undoing a change in a text input',
   });
 

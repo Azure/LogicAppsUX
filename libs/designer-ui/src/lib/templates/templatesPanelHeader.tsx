@@ -19,7 +19,7 @@ export const TemplatesPanelHeader = ({ title, onBackClick, children }: Templates
             <ArrowLeft16Filled />
             {intl.formatMessage({
               defaultMessage: 'Back to template library',
-              id: 'eda767987057',
+              id: 'mseda767987057',
               description: 'Button to navigate back to the template library',
             })}
           </Link>

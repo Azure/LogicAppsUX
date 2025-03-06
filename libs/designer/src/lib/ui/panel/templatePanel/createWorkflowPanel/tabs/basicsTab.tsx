@@ -22,7 +22,7 @@ export const basicsTab = (
   id: constants.TEMPLATE_PANEL_TAB_NAMES.BASIC,
   title: intl.formatMessage({
     defaultMessage: 'Basics',
-    id: 'b1572f706171',
+    id: 'msb1572f706171',
     description: 'The tab label for the monitoring name and state tab on the create workflow panel',
   }),
   hasError: hasError,
@@ -30,7 +30,7 @@ export const basicsTab = (
   footerContent: {
     primaryButtonText: intl.formatMessage({
       defaultMessage: 'Next',
-      id: 'd147f150cc64',
+      id: 'msd147f150cc64',
       description: 'Button text for moving to the next tab in the create workflow panel',
     }),
     primaryButtonOnClick: () => {
@@ -38,7 +38,7 @@ export const basicsTab = (
     },
     secondaryButtonText: intl.formatMessage({
       defaultMessage: 'Close',
-      id: '153accc4d1cf',
+      id: 'ms153accc4d1cf',
       description: 'Button text for closing the panel',
     }),
     secondaryButtonOnClick: () => {

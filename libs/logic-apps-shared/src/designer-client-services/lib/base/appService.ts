@@ -89,10 +89,10 @@ export class BaseAppServiceService implements IAppServiceService {
       if (supportsAuthenticationParameter) {
         schema.properties['authentication'] = {
           type: 'object',
-          title: intl.formatMessage({ defaultMessage: 'Authentication', id: '7b019c8ae9d1', description: 'Title for authentication parameter' }),
+          title: intl.formatMessage({ defaultMessage: 'Authentication', id: 'ms7b019c8ae9d1', description: 'Title for authentication parameter' }),
           description: intl.formatMessage({
             defaultMessage: 'Enter JSON object of authentication parameter',
-            id: 'e9cd5f7ce6ef',
+            id: 'mse9cd5f7ce6ef',
             description: 'Description for authentication parameter',
           }),
           'x-ms-visibility': 'advanced',
@@ -116,13 +116,13 @@ export class BaseAppServiceService implements IAppServiceService {
 
       if (response.schema) {
         schema.properties['body'] = {
-          title: intl.formatMessage({ defaultMessage: 'Body', id: '55987ec362e3', description: 'Title for body outputs' }),
+          title: intl.formatMessage({ defaultMessage: 'Body', id: 'ms55987ec362e3', description: 'Title for body outputs' }),
           ...response.schema,
         };
       }
       if (response.headers) {
         schema.properties['headers'] = {
-          title: intl.formatMessage({ defaultMessage: 'Headers', id: 'be844328f65a', description: 'Title for header outputs' }),
+          title: intl.formatMessage({ defaultMessage: 'Headers', id: 'msbe844328f65a', description: 'Title for header outputs' }),
           ...response.headers,
         };
       }
@@ -172,7 +172,7 @@ export class BaseAppServiceService implements IAppServiceService {
                 ...parameter,
                 type: undefined,
                 'x-ms-summary': intl.formatMessage(
-                  { defaultMessage: '{fileContent} (content)', id: '463fd5d711e5', description: 'Title for file name parameter' },
+                  { defaultMessage: '{fileContent} (content)', id: 'ms463fd5d711e5', description: 'Title for file name parameter' },
                   { fileContent: parameter['x-ms-summary'] ?? name }
                 ),
                 'x-ms-serialization': { property: { type: 'formdata', parameterReference: `formData.$.${name}.$content` } },
@@ -184,7 +184,7 @@ export class BaseAppServiceService implements IAppServiceService {
                 ...parameter,
                 type: 'string',
                 'x-ms-summary': intl.formatMessage(
-                  { defaultMessage: '{fileName} (file name)', id: '5184484bfd58', description: 'Title for file name parameter' },
+                  { defaultMessage: '{fileName} (file name)', id: 'ms5184484bfd58', description: 'Title for file name parameter' },
                   { fileName: parameter['x-ms-summary'] ?? name }
                 ),
                 'x-ms-serialization': { property: { type: 'formdata', parameterReference: `formData.$.${name}.$filename` } },

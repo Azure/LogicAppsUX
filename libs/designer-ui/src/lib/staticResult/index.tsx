@@ -62,7 +62,7 @@ export const StaticResultContainer = ({
       setErrorMessage(
         intl.formatMessage({
           defaultMessage: 'Outputs are required when status is "Succeeded"',
-          id: 'eb21546ab926',
+          id: 'mseb21546ab926',
           description: 'Error message for when status is succeded and outputs are not provided',
         })
       );
@@ -70,7 +70,7 @@ export const StaticResultContainer = ({
       setErrorMessage(
         intl.formatMessage({
           defaultMessage: 'Error should not be provided when status is "Succeeded"',
-          id: 'b2f6aa9e9932',
+          id: 'msb2f6aa9e9932',
           description: 'Error message for when status is succeded and error is provided',
         })
       );
@@ -78,7 +78,7 @@ export const StaticResultContainer = ({
       setErrorMessage(
         intl.formatMessage({
           defaultMessage: 'The error and its code are required when status is "Failed"',
-          id: '97c94fd57c53',
+          id: 'ms97c94fd57c53',
           description: 'Error message for when status is failed and error and error code are not provided',
         })
       );
@@ -86,7 +86,7 @@ export const StaticResultContainer = ({
       setErrorMessage(
         intl.formatMessage({
           defaultMessage: 'Outputs should not be provided when status is "Failed"',
-          id: '49b0942b0961',
+          id: 'ms49b0942b0961',
           description: 'Error message for when status is failed and outputs are provided',
         })
       );
@@ -97,43 +97,43 @@ export const StaticResultContainer = ({
 
   const toggleLabelOn = intl.formatMessage({
     defaultMessage: 'Disable static result',
-    id: 'edf6642c0c50',
+    id: 'msedf6642c0c50',
     description: 'Label for toggle to disable static result',
   });
 
   const toggleLabelOff = intl.formatMessage({
     defaultMessage: 'Enable static result',
-    id: '72112c92aedf',
+    id: 'ms72112c92aedf',
     description: 'Label for toggle to enable static result',
   });
 
   const testingTitle = intl.formatMessage({
     defaultMessage: 'Testing',
-    id: 'fbe6557bf92f',
+    id: 'msfbe6557bf92f',
     description: 'Title for testing section',
   });
 
   const saveButtonLabel = intl.formatMessage({
     defaultMessage: 'Save',
-    id: 'b88bab95d80a',
+    id: 'msb88bab95d80a',
     description: 'Label for save button',
   });
 
   const cancelButtonLabel = intl.formatMessage({
     defaultMessage: 'Cancel',
-    id: '29939ae65709',
+    id: 'ms29939ae65709',
     description: 'Label for cancel button',
   });
 
   const removeStaticResultLabel = intl.formatMessage({
     defaultMessage: 'Delete',
-    id: '17fd777946c3',
+    id: 'ms17fd777946c3',
     description: 'Label for button to delete static result',
   });
 
   const removeStaticResultDescription = intl.formatMessage({
     defaultMessage: 'Delete the static result configuration',
-    id: '5af9e5fd567c',
+    id: 'ms5af9e5fd567c',
     description: 'Label for button to delete static result',
   });
 

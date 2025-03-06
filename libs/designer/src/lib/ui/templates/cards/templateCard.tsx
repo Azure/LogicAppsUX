@@ -46,21 +46,21 @@ export const TemplateCard = ({ templateName }: TemplateCardProps) => {
   const isMultiWorkflow = useMemo(() => templateManifest && isMultiWorkflowTemplate(templateManifest), [templateManifest]);
 
   const intlText = {
-    TEMPLATE_LOADING: intl.formatMessage({ defaultMessage: 'Loading....', description: 'Loading text', id: '719eb44e47ce' }),
+    TEMPLATE_LOADING: intl.formatMessage({ defaultMessage: 'Loading....', description: 'Loading text', id: 'ms719eb44e47ce' }),
     NO_CONNECTORS: intl.formatMessage({
       defaultMessage: 'This template does not have connectors',
       description: 'Accessibility text to inform user this template does not contain connectors',
-      id: '688f56e4b1ae',
+      id: 'ms688f56e4b1ae',
     }),
     COMMUNITY_AUTHORED: intl.formatMessage({
       defaultMessage: 'Community Authored',
       description: 'Label text for community authored templates',
-      id: '17e70e2eb0d3',
+      id: 'ms17e70e2eb0d3',
     }),
     MICROSOFT_AUTHORED: intl.formatMessage({
       defaultMessage: 'Microsoft Authored',
       description: 'Label text for Microsoft authored templates',
-      id: 'ac441c7843b0',
+      id: 'msac441c7843b0',
     }),
   };
 
@@ -180,17 +180,17 @@ export const BlankWorkflowTemplateCard = ({ isWorkflowEmpty }: { isWorkflowEmpty
     BLANK_WORKFLOW: intl.formatMessage({
       defaultMessage: 'Blank workflow',
       description: 'Title text for the card that lets users start from a blank workflow',
-      id: 'a72929f1cbbf',
+      id: 'msa72929f1cbbf',
     }),
     BLANK_WORKFLOW_DESCRIPTION: intl.formatMessage({
       defaultMessage: 'Start with an empty workflow to build your integration solution.',
       description: 'Label text for the card that lets users start from a blank workflow',
-      id: '91c5a0c54f8d',
+      id: 'ms91c5a0c54f8d',
     }),
     REPLACE_WITH_BLANK_WORKFLOW: intl.formatMessage({
       defaultMessage: 'Replace your existing workflow with an empty workflow to rebuild your integration solution.',
       description: 'Label text for the card that lets users replace the current workflow with blank workflow',
-      id: '6e8c4158806e',
+      id: 'ms6e8c4158806e',
     }),
   };
 

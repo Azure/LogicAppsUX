@@ -23,67 +23,67 @@ export const DefaultConfigView = ({ setFunctionDisplayExpanded, useExpandedFunct
 
   const schemasSectionTitleLoc = intl.formatMessage({
     defaultMessage: 'Schemas',
-    id: 'c42d738370b2',
+    id: 'msc42d738370b2',
     description: 'Section header for the schema section',
   });
 
   const schemasSectionDescLoc = intl.formatMessage({
     defaultMessage: 'Add or replace your schemas.',
-    id: '4d8e07cd9a8c',
+    id: 'ms4d8e07cd9a8c',
     description: 'Description for the schema section',
   });
 
   const sourceSchemaLabel = intl.formatMessage({
     defaultMessage: 'Source schema',
-    id: '527aebcc5867',
+    id: 'ms527aebcc5867',
     description: 'Label to inform the below schema name is for source schema',
   });
 
   const targetSchemaLabel = intl.formatMessage({
     defaultMessage: 'Target schema',
-    id: '8d40e16ec0c9',
+    id: 'ms8d40e16ec0c9',
     description: 'Label to inform the below schema name is for target schema',
   });
 
   const noSchemaAddedLoc = intl.formatMessage({
     defaultMessage: 'No schema is added.',
-    id: '9cd580021187',
+    id: 'ms9cd580021187',
     description: 'Placeholder when no schema has been added',
   });
 
   const pencilIconLoc = intl.formatMessage({
     defaultMessage: 'Pencil icon',
-    id: '41d25469288e',
+    id: 'ms41d25469288e',
     description: 'Pencil icon aria label',
   });
 
   const functionsSectionTitleLoc = intl.formatMessage({
     defaultMessage: 'Functions',
-    id: '951ed5f3b81c',
+    id: 'ms951ed5f3b81c',
     description: 'Section header for the functions section',
   });
 
   const functionsSectionDescriptionLoc = intl.formatMessage({
     defaultMessage: 'Modify options regarding functions',
-    id: '1b251ee0252d',
+    id: 'ms1b251ee0252d',
     description: 'Description for the functions section',
   });
 
   const functionDisplayLoc = intl.formatMessage({
     defaultMessage: 'Function display',
-    id: 'fb4cb1951609',
+    id: 'msfb4cb1951609',
     description: 'Label for the function display radio group',
   });
 
   const functionDisplaySimpleLoc = intl.formatMessage({
     defaultMessage: 'Simple',
-    id: 'b4078a36165a',
+    id: 'msb4078a36165a',
     description: 'Function display radio group option for simple',
   });
 
   const functionDisplayExpandedLoc = intl.formatMessage({
     defaultMessage: 'Expanded',
-    id: '183de6e175eb',
+    id: 'ms183de6e175eb',
     description: 'Function display radio group option for expanded',
   });
 

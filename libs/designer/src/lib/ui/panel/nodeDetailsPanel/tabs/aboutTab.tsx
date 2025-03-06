@@ -43,12 +43,12 @@ export const aboutTab: PanelTabFn = (intl, props) => ({
   id: constants.PANEL_TAB_NAMES.ABOUT,
   title: intl.formatMessage({
     defaultMessage: 'About',
-    id: '33f81413c252',
+    id: 'ms33f81413c252',
     description: 'The tab label for the about tab on the operation panel',
   }),
   description: intl.formatMessage({
     defaultMessage: 'About tab',
-    id: '29be6ef4572d',
+    id: 'ms29be6ef4572d',
     description: 'An accessibility label that describes the about tab',
   }),
   visible: true,

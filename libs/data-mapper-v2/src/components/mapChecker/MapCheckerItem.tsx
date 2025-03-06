@@ -40,17 +40,17 @@ export const MapCheckerItem = ({ title, description, severity, _onClick, reactFl
     () => ({
       Source: intl.formatMessage({
         defaultMessage: 'Source',
-        id: '9ce0deb2701a',
+        id: 'ms9ce0deb2701a',
         description: 'Source',
       }),
       Target: intl.formatMessage({
         defaultMessage: 'Destination',
-        id: '11710bda31cc',
+        id: 'ms11710bda31cc',
         description: 'Destination',
       }),
       Function: intl.formatMessage({
         defaultMessage: 'Function',
-        id: '3d2ac234bb64',
+        id: 'ms3d2ac234bb64',
         description: 'Function',
       }),
     }),

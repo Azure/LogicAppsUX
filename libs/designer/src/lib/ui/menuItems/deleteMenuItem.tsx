@@ -18,12 +18,12 @@ export const DeleteMenuItem = (props: DeleteMenuItemProps) => {
 
   const deleteText = intl.formatMessage({
     defaultMessage: 'Delete',
-    id: 'bd294d3de598',
+    id: 'msbd294d3de598',
     description: 'Delete text',
   });
   const deleteKeyboardText = intl.formatMessage({
     defaultMessage: 'Del',
-    id: 'd023ecc61b36',
+    id: 'msd023ecc61b36',
     description: '"Delete" keyboard command text',
   });
 

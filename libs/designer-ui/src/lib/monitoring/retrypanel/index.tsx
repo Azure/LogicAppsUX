@@ -27,37 +27,37 @@ export const RetryPanel: React.FC<RetryPanelProps> = ({ retryHistories, visible 
   const Resources = {
     RETRY_HISTORY_CLIENT_REQUEST_ID: intl.formatMessage({
       defaultMessage: 'Client request ID',
-      id: '4dbd902c05ea',
+      id: 'ms4dbd902c05ea',
       description: 'Label text for retry client request ID',
     }),
     RETRY_HISTORY_DURATION: intl.formatMessage({
       defaultMessage: 'Duration',
-      id: '86b6c3bba3c1',
+      id: 'ms86b6c3bba3c1',
       description: 'Label text for retry duration',
     }),
     RETRY_HISTORY_END_TIME: intl.formatMessage({
       defaultMessage: 'End time',
-      id: 'd8ad9f0239a4',
+      id: 'msd8ad9f0239a4',
       description: 'Label text for retry end time',
     }),
     RETRY_HISTORY_SERVICE_REQUEST_ID: intl.formatMessage({
       defaultMessage: 'Service request ID',
-      id: 'e2f986874316',
+      id: 'mse2f986874316',
       description: 'Label text for retry service request ID',
     }),
     RETRY_HISTORY_START_TIME: intl.formatMessage({
       defaultMessage: 'Start time',
-      id: '72a8aa71fd59',
+      id: 'ms72a8aa71fd59',
       description: 'Label text for retry start time',
     }),
     RETRY_HISTORY_STATUS: intl.formatMessage({
       defaultMessage: 'Status',
-      id: '34f505807798',
+      id: 'ms34f505807798',
       description: 'Label text for retry status',
     }),
     RETRY_PAGER_TITLE: intl.formatMessage({
       defaultMessage: 'Retry',
-      id: '5c5169bbf138',
+      id: 'ms5c5169bbf138',
       description: 'Header text for retry history',
     }),
   };

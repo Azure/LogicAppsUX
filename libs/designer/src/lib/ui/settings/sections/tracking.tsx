@@ -29,23 +29,23 @@ export const Tracking = ({
 
   const trackedPropertiesTitle = intl.formatMessage({
     defaultMessage: 'Tracked properties',
-    id: '3e4e1c6fee5c',
+    id: 'ms3e4e1c6fee5c',
     description: 'title for tracked properties setting',
   });
 
   const clientIdTrackingTitle = intl.formatMessage({
     defaultMessage: 'Custom tracking ID',
-    id: '33a188eb3dd9',
+    id: 'ms33a188eb3dd9',
     description: 'title for client tracking id setting',
   });
   const clientTrackingTootltipText = intl.formatMessage({
     defaultMessage: 'Set the tracking ID for the run. For split-on this tracking ID is for the initiating request',
-    id: 'f6ebf4daa7b7',
+    id: 'msf6ebf4daa7b7',
     description: 'description for client tracking id setting',
   });
   const trackingTitle = intl.formatMessage({
     defaultMessage: 'Tracking',
-    id: 'd0a323bfa352',
+    id: 'msd0a323bfa352',
     description: 'title for tracking component',
   });
 

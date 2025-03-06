@@ -20,27 +20,27 @@ export const CopyMenuItem = (props: CopyMenuItemProps) => {
 
   const copyAction = intl.formatMessage({
     defaultMessage: 'Copy action',
-    id: '503df7d2183b',
+    id: 'ms503df7d2183b',
     description: 'Copy Action text',
   });
   const copyTrigger = intl.formatMessage({
     defaultMessage: 'Copy trigger',
-    id: 'b70af4a6259d',
+    id: 'msb70af4a6259d',
     description: 'Copy Trigger text',
   });
   const copyScope = intl.formatMessage({
     defaultMessage: 'Copy entire action',
     description: 'Copy Scope text',
-    id: '1b482781e073',
+    id: 'ms1b482781e073',
   });
   const copyKeyboardTextWin = intl.formatMessage({
     defaultMessage: 'Ctrl+C',
-    id: 'b272455228c1',
+    id: 'msb272455228c1',
     description: '"Copy" keyboard command text for Windows',
   });
   const copyKeyboardTextMac = intl.formatMessage({
     defaultMessage: '⌘+C',
-    id: 'fdcd65d7431f',
+    id: 'msfdcd65d7431f',
     description: '"Copy" keyboard command text for Mac',
   });
   const copyKeyboardText = isApple() ? copyKeyboardTextMac : copyKeyboardTextWin;

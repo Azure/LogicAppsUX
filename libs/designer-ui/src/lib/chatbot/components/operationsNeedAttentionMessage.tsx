@@ -17,27 +17,27 @@ export const OperationsNeedingAttentionMessage: React.FC<OperationsNeedingAttent
   const intlText = {
     allRequiredParametersAreSetMessage: intl.formatMessage({
       defaultMessage: 'All required parameters are set',
-      id: '6020c5ec0538',
+      id: 'ms6020c5ec0538',
       description: 'Chatbot message letting user know that required parameters are set.',
     }),
     savingDescription: intl.formatMessage({
       defaultMessage: 'To save this workflow, finish setting up this action:',
-      id: 'cdbde513a4e6',
+      id: 'mscdbde513a4e6',
       description: 'Chatbot message telling user to set up action in order to save the workflow',
     }),
     editingDescription: intl.formatMessage({
       defaultMessage: 'To get this workflow ready, finish setting up this action:',
-      id: 'be6961541590',
+      id: 'msbe6961541590',
       description: 'Chatbot message telling user to set up action in order to get the workflow ready',
     }),
     savingDescription_plural: intl.formatMessage({
       defaultMessage: 'To save this workflow, finish setting up these actions:',
-      id: 'b0104bba10d3',
+      id: 'msb0104bba10d3',
       description: 'Chatbot message telling user to set up actions in order to save the workflow',
     }),
     editingDescription_plural: intl.formatMessage({
       defaultMessage: 'To get this workflow ready, finish setting up these actions:',
-      id: 'ea9212824c78',
+      id: 'msea9212824c78',
       description: 'Chatbot message telling user to set up actions in order to get the workflow ready',
     }),
   };

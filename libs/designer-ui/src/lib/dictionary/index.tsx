@@ -69,13 +69,13 @@ export const DictionaryEditor: React.FC<DictionaryEditorProps> = ({
 
   const expandedLabel: string = intl.formatMessage({
     defaultMessage: 'Switch to text mode',
-    id: 'c5756edb2e9f',
+    id: 'msc5756edb2e9f',
     description: 'Label for editor toggle button when in expanded mode',
   });
 
   const collapsedLabel: string = intl.formatMessage({
     defaultMessage: 'Switch to key value mode',
-    id: '743f32d67ca5',
+    id: 'ms743f32d67ca5',
     description: 'Label for editor toggle button when in collapsed mode',
   });
 

@@ -135,12 +135,12 @@ export const Format = ({ activeEditor, readonly }: FormatProps) => {
 
   const backgroundColorTitle = intl.formatMessage({
     defaultMessage: 'Background color',
-    id: 'e04ebd695019',
+    id: 'mse04ebd695019',
     description: 'label to set background color',
   });
   const textColorTitle = intl.formatMessage({
     defaultMessage: 'Text color',
-    id: '8f838a9149be',
+    id: 'ms8f838a9149be',
     description: 'label to set text color',
   });
 

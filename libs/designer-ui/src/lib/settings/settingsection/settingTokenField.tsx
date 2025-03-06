@@ -128,7 +128,7 @@ export const TokenField = ({
   const arrayItemLabel = intl.formatMessage(
     {
       defaultMessage: '{label} Item',
-      id: '7c1502ac0451',
+      id: 'ms7c1502ac0451',
       description: 'Label for array item',
     },
     { label }
@@ -136,7 +136,7 @@ export const TokenField = ({
 
   const defaultArrayItemLabel = intl.formatMessage({
     defaultMessage: 'Array Item',
-    id: '812e137aa7f0',
+    id: 'ms812e137aa7f0',
     description: 'Label for array item',
   });
 

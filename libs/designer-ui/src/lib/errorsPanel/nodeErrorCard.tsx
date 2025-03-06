@@ -33,7 +33,7 @@ export const NodeErrorCard: React.FC<NodeErrorCardProps> = ({ id, level, title, 
 
   const buttonHint = intl.formatMessage({
     defaultMessage: 'Open operation',
-    id: '6f09405a79d5',
+    id: 'ms6f09405a79d5',
     description: 'Hint for the button on the error card',
   });
 

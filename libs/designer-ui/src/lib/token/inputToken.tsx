@@ -84,7 +84,7 @@ export const InputToken: React.FC<InputTokenProps> = ({ value, brandColor, icon,
 
   const tokenDelete = intl.formatMessage({
     defaultMessage: 'Delete',
-    id: '5ea6a6599bb2',
+    id: 'ms5ea6a6599bb2',
     description: 'Label of Delete Token Button',
   });
 

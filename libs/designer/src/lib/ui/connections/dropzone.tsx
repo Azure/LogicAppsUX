@@ -138,7 +138,7 @@ export const DropZone: React.FC<DropZoneProps> = memo(({ graphId, parentId, chil
     ? intl.formatMessage(
         {
           defaultMessage: 'Insert a new step between {parentName} and {childName}',
-          id: '0b2a582ec93e',
+          id: 'ms0b2a582ec93e',
           description: 'Tooltip for the button to add a new step (action or branch)',
         },
         {
@@ -150,7 +150,7 @@ export const DropZone: React.FC<DropZoneProps> = memo(({ graphId, parentId, chil
       ? intl.formatMessage(
           {
             defaultMessage: 'Insert a new step in {parentSubgraphName}',
-            id: '463be90fe4fb',
+            id: 'ms463be90fe4fb',
             description: 'Tooltip for the button to add a new step under subgraph',
           },
           {
@@ -160,7 +160,7 @@ export const DropZone: React.FC<DropZoneProps> = memo(({ graphId, parentId, chil
       : intl.formatMessage(
           {
             defaultMessage: 'Insert a new step after {parentName}',
-            id: 'dabdf44bda14',
+            id: 'msdabdf44bda14',
             description: 'Tooltip for the button to add a new step (action or branch)',
           },
           {

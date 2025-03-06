@@ -67,12 +67,12 @@ export const CreateWorkflowPanel = ({
   const resources = {
     multiWorkflowCreateTitle: intl.formatMessage({
       defaultMessage: 'Create workflows from template',
-      id: 'e6948e8e0c2d',
+      id: 'mse6948e8e0c2d',
       description: 'Panel header title for creating workflows',
     }),
     updatedWorkflowTitle: intl.formatMessage({
       defaultMessage: 'Update workflow from template',
-      id: 'e735bea23e32',
+      id: 'mse735bea23e32',
       description: 'Panel header title for updating the workflow',
     }),
   };
@@ -151,22 +151,22 @@ export const CreateWorkflowPanelHeader = ({
   const intlText = {
     CREATE_WORKFLOW: intl.formatMessage({
       defaultMessage: 'Create a new workflow from template',
-      id: '45935a6edcd6',
+      id: 'ms45935a6edcd6',
       description: 'Panel header title for creating the workflow',
     }),
     TEMPLATE_DETAILS: intl.formatMessage({
       defaultMessage: 'Template details',
-      id: '59d3b572cf0a',
+      id: 'ms59d3b572cf0a',
       description: 'Panel description title for template details, allowing to click to read more',
     }),
     NAME: intl.formatMessage({
       defaultMessage: 'Name',
-      id: '0d7f635b3ee7',
+      id: 'ms0d7f635b3ee7',
       description: 'Description label for template name',
     }),
     DESCRIPTION: intl.formatMessage({
       defaultMessage: 'Description',
-      id: '97df846c7708',
+      id: 'ms97df846c7708',
       description: 'Description label for template description',
     }),
   };

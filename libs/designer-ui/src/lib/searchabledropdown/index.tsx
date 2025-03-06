@@ -35,7 +35,7 @@ export const SearchableDropdown: FC<SearchableDropdownProps> = ({
     searchPlaceholderText ??
     intl.formatMessage({
       defaultMessage: 'Search',
-      id: '15cbe0be003e',
+      id: 'ms15cbe0be003e',
       description: 'Default placeholder for search box that searches dropdown options',
     });
 

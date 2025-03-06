@@ -44,47 +44,47 @@ export const WorkflowsSelection: React.FC = () => {
   const intlText = {
     SELECT_TITLE: intl.formatMessage({
       defaultMessage: 'Select logic apps to export',
-      id: '039ac293c2cf',
+      id: 'ms039ac293c2cf',
       description: 'Select apps to export title',
     }),
     SELECT_DESCRIPTION: intl.formatMessage({
       defaultMessage: 'Select the logic apps that you want to export and combine into a single logic app instance.',
-      id: 'deb943b1f259',
+      id: 'msdeb943b1f259',
       description: 'Select logic apps to export description',
     }),
     SELECTION: intl.formatMessage({
       defaultMessage: 'Select',
-      id: '8dcc4bc9ddda',
+      id: 'ms8dcc4bc9ddda',
       description: 'Select logic apps to export description',
     }),
     SELECTION_ALL: intl.formatMessage({
       defaultMessage: 'Select all',
-      id: 'f5daa71cfc24',
+      id: 'msf5daa71cfc24',
       description: 'Select all logic apps to export description',
     }),
     SELECT_WORKFLOW: intl.formatMessage({
       defaultMessage: 'Select logic app',
-      id: 'c8bb9ad18040',
+      id: 'msc8bb9ad18040',
       description: 'Select logic app to export description',
     }),
     LIMIT_INFO: intl.formatMessage({
       defaultMessage: 'Selecting more than 15 logic apps affects the export experience performance.',
-      id: '081fceb9e49b',
+      id: 'ms081fceb9e49b',
       description: 'Limit on selected logic apps warning text',
     }),
     NO_WORKFLOWS: intl.formatMessage({
       defaultMessage: 'No workflows',
-      id: '32f50f3e1c6c',
+      id: 'ms32f50f3e1c6c',
       description: 'No workflows text',
     }),
     NAME: intl.formatMessage({
       defaultMessage: 'Resource name',
-      id: '76bdba8876c5',
+      id: 'ms76bdba8876c5',
       description: 'Resource name title',
     }),
     RESOURCE_GROUP: intl.formatMessage({
       defaultMessage: 'Resource group',
-      id: '50a0a86b266f',
+      id: 'ms50a0a86b266f',
       description: 'Resource group title',
     }),
   };

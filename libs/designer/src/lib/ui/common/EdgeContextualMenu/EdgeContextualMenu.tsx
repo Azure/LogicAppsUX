@@ -77,25 +77,25 @@ export const EdgeContextualMenu = () => {
 
   const newActionText = intl.formatMessage({
     defaultMessage: 'Add an action',
-    id: '982ce45d76dd',
+    id: 'ms982ce45d76dd',
     description: 'Text for button to add a new action',
   });
 
   const newBranchText = intl.formatMessage({
     defaultMessage: 'Add a parallel branch',
-    id: '2d99b7cde282',
+    id: 'ms2d99b7cde282',
     description: 'Text for button to add a parallel branch',
   });
 
   const pasteFromClipboard = intl.formatMessage({
     defaultMessage: 'Paste an action',
-    id: '65409354f94c',
+    id: 'ms65409354f94c',
     description: 'Text for button to paste an action from clipboard',
   });
 
   const pasteParallelFromClipboard = intl.formatMessage({
     defaultMessage: 'Paste a parallel action',
-    id: 'c0f8e733dd23',
+    id: 'msc0f8e733dd23',
     description: 'Text for button to paste a parallel action from clipboard',
   });
 

@@ -26,62 +26,62 @@ export const InstanceSelection: React.FC = () => {
   const intlText = {
     DIVIDER_REGIONS: intl.formatMessage({
       defaultMessage: 'Regions',
-      id: 'c3e68801c770',
+      id: 'msc3e68801c770',
       description: 'Divider title for azure regions',
     }),
     DIVIDER_ISE: intl.formatMessage({
       defaultMessage: 'Integration service environments',
-      id: '05b41717e8be',
+      id: 'ms05b41717e8be',
       description: 'Divider title for ISE',
     }),
     SELECT_TITLE: intl.formatMessage({
       defaultMessage: 'Select logic app instance',
-      id: '68880009b6c5',
+      id: 'ms68880009b6c5',
       description: 'Select logic app instance title',
     }),
     SELECT_DESCRIPTION: intl.formatMessage({
       defaultMessage: 'Select the logic apps that you want to export and combine into a single logic app instance.',
-      id: 'ad0b50a49adf',
+      id: 'msad0b50a49adf',
       description: 'Select apps to export description',
     }),
     SELECTION_SUBSCRIPTION: intl.formatMessage({
       defaultMessage: 'Select a subscription',
-      id: 'e1f3f62a8e94',
+      id: 'mse1f3f62a8e94',
       description: 'Select a subscription',
     }),
     SELECTION_LOCATION: intl.formatMessage({
       defaultMessage: 'Select a region or an integration service environment (ISE) instance',
-      id: '7bb2c01d3a97',
+      id: 'ms7bb2c01d3a97',
       description: 'Select a region or an ISE instance',
     }),
     SELECT_OPTION: intl.formatMessage({
       defaultMessage: 'Select an option',
-      id: 'fff21c6ff1c2',
+      id: 'msfff21c6ff1c2',
       description: 'Select an option placeholder',
     }),
     EMPTY_SUBSCRIPTION: intl.formatMessage({
       defaultMessage: 'No subscriptions available',
-      id: '6d422b343023',
+      id: 'ms6d422b343023',
       description: 'No subscriptions available',
     }),
     EMPTY_LOCATION: intl.formatMessage({
       defaultMessage: 'No regions and integration service environment (ISE) instances available',
-      id: 'c716434eea2f',
+      id: 'msc716434eea2f',
       description: 'No regions and ISE instances available text',
     }),
     SEARCH_SUBSCRIPTION: intl.formatMessage({
       defaultMessage: 'Find and select subscription',
-      id: '6c63dc453223',
+      id: 'ms6c63dc453223',
       description: 'Find and select subscription text',
     }),
     SEARCH_LOCATION: intl.formatMessage({
       defaultMessage: 'Find and select region or integration service environment (ISE)',
-      id: '801453139884',
+      id: 'ms801453139884',
       description: 'Find region or ISE text',
     }),
     LOADING: intl.formatMessage({
       defaultMessage: 'Loading...',
-      id: 'd846567fa875',
+      id: 'msd846567fa875',
       description: 'Loading text',
     }),
   };

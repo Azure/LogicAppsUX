@@ -24,22 +24,22 @@ export const DisplayParameters = () => {
   const resources = {
     parameter_value: intl.formatMessage({
       defaultMessage: 'Value',
-      id: 'b842395a87f5',
+      id: 'msb842395a87f5',
       description: 'Label for displaying parameter value',
     }),
     parameter_type: intl.formatMessage({
       defaultMessage: 'Type',
-      id: '11e262b69382',
+      id: 'ms11e262b69382',
       description: 'Label for displaying parameter type',
     }),
     parameter_name: intl.formatMessage({
       defaultMessage: 'Name',
-      id: '7abe8efb07fe',
+      id: 'ms7abe8efb07fe',
       description: 'Label for parameter Name',
     }),
     associated_workflows: intl.formatMessage({
       defaultMessage: 'Associated workflows',
-      id: 'dfab05ed3f85',
+      id: 'msdfab05ed3f85',
       description: 'Label for displaying associated workflows',
     }),
   };
@@ -177,11 +177,11 @@ const ParameterName = ({
         >
           {!isSingleWorkflow && (
             <Text className="msla-templates-parameter-callout-title" block>
-              {intl.formatMessage({ defaultMessage: 'Details', description: 'Title text for details', id: '736653ee9a0f' })}
+              {intl.formatMessage({ defaultMessage: 'Details', description: 'Title text for details', id: 'ms736653ee9a0f' })}
             </Text>
           )}
           <Text className="msla-templates-parameter-callout-subtitle" block>
-            {intl.formatMessage({ defaultMessage: 'Description', description: 'Subtitle text for description', id: '7935b84831c2' })}
+            {intl.formatMessage({ defaultMessage: 'Description', description: 'Subtitle text for description', id: 'ms7935b84831c2' })}
           </Text>
           <Text className="msla-templates-parameter-callout-body" block>
             {item.description}
@@ -192,7 +192,7 @@ const ParameterName = ({
                 {intl.formatMessage({
                   defaultMessage: 'Associated workflows',
                   description: 'Subtitle text for Associated workflows',
-                  id: '5f3f3c1d57e0',
+                  id: 'ms5f3f3c1d57e0',
                 })}
               </Text>
               {item?.associatedWorkflows?.map((workflow) => (

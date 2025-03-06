@@ -26,7 +26,7 @@ const TenantPicker = (props: any) => {
 
   const tenantDropdownLabel = intl.formatMessage({
     defaultMessage: 'Tenant ID',
-    id: '52c12f1b6503',
+    id: 'ms52c12f1b6503',
     description: 'tenant dropdown label',
   });
 

@@ -39,12 +39,12 @@ export const TemplatesList = ({ detailFilters, createWorkflowCall, isWorkflowEmp
   const intlText = {
     NO_RESULTS: intl.formatMessage({
       defaultMessage: "Can't find any search results",
-      id: '8829e2d42e49',
+      id: 'ms8829e2d42e49',
       description: 'Accessbility text to indicate no search results found',
     }),
     TRY_DIFFERENT: intl.formatMessage({
       defaultMessage: 'Try a different search term or remove filters',
-      id: 'c8a34a57fa0e',
+      id: 'msc8a34a57fa0e',
       description: 'Accessbility text to indicate to try different search term or remove filters',
     }),
   };

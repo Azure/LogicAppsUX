@@ -28,13 +28,13 @@ export const CollapseMenuItem: React.FC<CollapseMenuItemProps> = (props) => {
 
   const collapseAction = intl.formatMessage({
     defaultMessage: 'Collapse action',
-    id: 'f4238542bad2',
+    id: 'msf4238542bad2',
     description: 'Text indicating a menu button to collapse an action in the designer',
   });
 
   const expandAction = intl.formatMessage({
     defaultMessage: 'Expand action',
-    id: '440e13507d61',
+    id: 'ms440e13507d61',
     description: 'Text indicating a menu button to expand an action in the designer',
   });
 

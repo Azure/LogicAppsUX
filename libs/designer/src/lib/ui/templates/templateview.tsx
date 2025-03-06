@@ -47,7 +47,7 @@ export const TemplatesView = (props: TemplateViewProps) => {
       <Text>
         {intl.formatMessage({
           defaultMessage: 'Template wizard closed, please select template to view content.',
-          id: '5580a2818b26',
+          id: 'ms5580a2818b26',
           description: 'Message to show when template wizard is closed',
         })}
       </Text>

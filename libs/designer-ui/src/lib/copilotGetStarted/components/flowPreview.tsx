@@ -30,22 +30,22 @@ export const FlowPreview: React.FC<FlowPreviewProps> = ({ definition, dataAutoma
   const intlText = {
     flowPreviewTrigger: intl.formatMessage({
       defaultMessage: 'Trigger',
-      id: 'f89af287e912',
+      id: 'msf89af287e912',
       description: 'Title for the triggers section in the suggested flow',
     }),
     flowPreviewTriggerDescription: intl.formatMessage({
       defaultMessage: 'The flow starts when this happens',
-      id: '54837b941487',
+      id: 'ms54837b941487',
       description: 'Description text for triggers in the suggested flow',
     }),
     flowPreviewActions: intl.formatMessage({
       defaultMessage: 'Actions',
-      id: 'f0d15fb81df2',
+      id: 'msf0d15fb81df2',
       description: 'Title text for actions in the suggested flow',
     }),
     flowPreviewActionsDescription: intl.formatMessage({
       defaultMessage: 'This is what the flow will do',
-      id: '4283d3a1d408',
+      id: 'ms4283d3a1d408',
       description: 'Description text for actions in the suggested flow',
     }),
   };
@@ -132,17 +132,17 @@ const OperationPreview: React.FC<OperationPreviewProps> = ({ operationName, oper
   const intlText = {
     flowPreviewConditionTrueLabel: intl.formatMessage({
       defaultMessage: 'True',
-      id: '081cd226856c',
+      id: 'ms081cd226856c',
       description: 'Short label to represent when a condition is met.',
     }),
     flowPreviewConditionFalseLabel: intl.formatMessage({
       defaultMessage: 'False',
-      id: '684fb682bde2',
+      id: 'ms684fb682bde2',
       description: 'Short label to represent when a condition is not met.',
     }),
     flowPreviewSwitchDefaultLabel: intl.formatMessage({
       defaultMessage: 'Default',
-      id: 'f5a8fe7a5f94',
+      id: 'msf5a8fe7a5f94',
       description: 'Short label to represent the fallback behavior used by default if no other conditions were met.',
     }),
   };

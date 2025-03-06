@@ -21,7 +21,7 @@ export function WorkflowParametersFooter({ onManageParameters }: WorkflowParamet
 
     const jsonText = intl.formatMessage({
       defaultMessage: 'Edit in JSON',
-      id: '8df227c664b0',
+      id: 'ms8df227c664b0',
       description: 'Parameter Link Text',
     });
 

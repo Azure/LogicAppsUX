@@ -96,67 +96,67 @@ export const RunHistoryPanel = (props: RunHistoryPanelProps) => {
   const statusText = intl.formatMessage({
     defaultMessage: 'Status',
     description: 'Status column header',
-    id: '78b40f7a4daa',
+    id: 'ms78b40f7a4daa',
   });
 
   const startTimeText = intl.formatMessage({
     defaultMessage: 'Start time',
     description: 'Start time column header',
-    id: '0de33fcb3d09',
+    id: 'ms0de33fcb3d09',
   });
 
   const durationText = intl.formatMessage({
     defaultMessage: 'Duration',
     description: 'Duration column header',
-    id: '4ffedbdb2cf2',
+    id: 'ms4ffedbdb2cf2',
   });
 
   const runIdText = intl.formatMessage({
     defaultMessage: 'Run ID',
     description: 'Run ID filter label',
-    id: 'e2b758ec392b',
+    id: 'mse2b758ec392b',
   });
 
   const workflowVersionText = intl.formatMessage({
     defaultMessage: 'Workflow version',
     description: 'Workflow version filter label',
-    id: 'bf35d714f2ac',
+    id: 'msbf35d714f2ac',
   });
 
   const refreshAria = intl.formatMessage({
     defaultMessage: 'Refresh',
     description: 'Refresh button aria label',
-    id: 'd1ae08184cf7',
+    id: 'msd1ae08184cf7',
   });
 
   const noRunsText = intl.formatMessage({
     defaultMessage: 'No runs found',
     description: 'No runs found text',
-    id: '49b1c121965f',
+    id: 'ms49b1c121965f',
   });
 
   const runsErrorMessageTitle = intl.formatMessage({
     defaultMessage: 'Failed to load runs',
     description: 'Error message title when runs fail to load',
-    id: '6cfc96558024',
+    id: 'ms6cfc96558024',
   });
 
   const searchLabelText = intl.formatMessage({
     defaultMessage: 'Search by run identifier',
     description: 'Search by run identifier label',
-    id: '27c1b9e635e7',
+    id: 'ms27c1b9e635e7',
   });
 
   const invalidRunId = intl.formatMessage({
     defaultMessage: 'Enter a valid run identifier',
     description: 'Invalid run identifier error message',
-    id: '4b059a1da12e',
+    id: 'ms4b059a1da12e',
   });
 
   const runIdNotFound = intl.formatMessage({
     defaultMessage: 'Specified run identifier not found',
     description: 'Run identifier not found error message',
-    id: '68a7ffafeeb3',
+    id: 'ms68a7ffafeeb3',
   });
 
   const getFilterKeyText = useCallback(

@@ -144,25 +144,25 @@ export const PanelContainer = ({
 
   const panelLabel = intl.formatMessage({
     defaultMessage: 'Operation details panel',
-    id: '9d5d92a6db1b',
+    id: 'ms9d5d92a6db1b',
     description: 'label for operation details panel component',
   });
 
   const panelErrorTitle = intl.formatMessage({
     defaultMessage: 'Operation details error',
-    id: '8abfa9950e89',
+    id: 'ms8abfa9950e89',
     description: 'title for panel error',
   });
 
   const panelErrorMessage = intl.formatMessage({
     defaultMessage: 'Error loading operation data',
-    id: 'eb66299ebc5e',
+    id: 'mseb66299ebc5e',
     description: 'label for panel error',
   });
 
   const panelCollapseTitle = intl.formatMessage({
     defaultMessage: 'Collapse',
-    id: '957df4fd1cf1',
+    id: 'ms957df4fd1cf1',
     description: 'Text of Tooltip to collapse',
   });
 

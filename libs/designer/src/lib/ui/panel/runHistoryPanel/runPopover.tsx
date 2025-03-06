@@ -20,19 +20,19 @@ export const RunPopover = (props: {
   const runIdentifierText = intl.formatMessage({
     defaultMessage: 'Run identifier',
     description: 'Run identifier text',
-    id: '039fc8a926c8',
+    id: 'ms039fc8a926c8',
   });
 
   const workflowVersionText = intl.formatMessage({
     defaultMessage: 'Workflow version',
     description: 'Workflow version text',
-    id: 'd6d98dda8818',
+    id: 'msd6d98dda8818',
   });
 
   const workflowRunStatusText = intl.formatMessage({
     defaultMessage: 'Workflow run status',
     description: 'Workflow run status text',
-    id: '77d442baad12',
+    id: 'ms77d442baad12',
   });
 
   const filterVersionCallback = useCallback(() => {

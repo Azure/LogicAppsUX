@@ -94,22 +94,22 @@ export function getAssistedConnectionProps(connector: Connector, manifest?: Oper
 
   const intl = getIntl();
   const headers = [
-    intl.formatMessage({ defaultMessage: 'Name', id: '0060a6d695ff', description: 'Header for resource name' }),
-    intl.formatMessage({ defaultMessage: 'Resource group', id: '6a8e81952aa9', description: 'Header for resource group name' }),
-    intl.formatMessage({ defaultMessage: 'Location', id: '6929c2081cc6', description: 'Header for resource lcoation' }),
+    intl.formatMessage({ defaultMessage: 'Name', id: 'ms0060a6d695ff', description: 'Header for resource name' }),
+    intl.formatMessage({ defaultMessage: 'Resource group', id: 'ms6a8e81952aa9', description: 'Header for resource group name' }),
+    intl.formatMessage({ defaultMessage: 'Location', id: 'ms6929c2081cc6', description: 'Header for resource lcoation' }),
   ];
   if (manifest?.properties.connection?.type === ConnectionType.Function) {
     const functionAppsCallback = () => FunctionService().fetchFunctionApps();
     const fetchSubResourcesCallback = (functionApp?: any) => FunctionService().fetchFunctionAppsFunctions(functionApp.id ?? '');
     const functionAppsLoadingText = intl.formatMessage({
       defaultMessage: 'Loading function apps...',
-      id: '61997b154b77',
+      id: 'ms61997b154b77',
       description: 'Text for loading function apps',
     });
 
     const functionAppsLabel = intl.formatMessage({
       defaultMessage: 'Select a function app function',
-      id: '5e4b76bc3cf6',
+      id: 'ms5e4b76bc3cf6',
       description: 'Label for function app selection',
     });
 
@@ -134,13 +134,13 @@ export function getAssistedConnectionProps(connector: Connector, manifest?: Oper
     const apisCallback = (apim?: any) => ApiManagementService().fetchApisInApiM(apim.id ?? '');
     const apimInstancesLoadingText = intl.formatMessage({
       defaultMessage: 'Loading API Management service instances...',
-      id: '50d5d00c8292',
+      id: 'ms50d5d00c8292',
       description: 'Text for loading apim service instances',
     });
 
     const apisLabel = intl.formatMessage({
       defaultMessage: 'Select an API from an API Management instance',
-      id: 'dbb36186f4d5',
+      id: 'msdbb36186f4d5',
       description: 'Label for API selection',
     });
 

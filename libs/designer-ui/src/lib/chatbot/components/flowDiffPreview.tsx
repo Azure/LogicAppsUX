@@ -15,23 +15,23 @@ export const FlowDiffPreview: React.FC<IFlowDiffPreviewProps> = (/*TODO: add pro
   const intlText = {
     checkActions: intl.formatMessage({
       defaultMessage: 'Check these actions to see if any parameters need to be set.',
-      id: '907b39478dc2',
+      id: 'ms907b39478dc2',
       description: 'Chatbot flow preview message reminding user to check workflow actions',
     }),
     updatingFlowCard: {
       addedOperation: intl.formatMessage({
         defaultMessage: 'Added this action',
-        id: '571e9fc0fe68',
+        id: 'ms571e9fc0fe68',
         description: 'Chatbot added operation sentence format',
       }),
       removedOperation: intl.formatMessage({
         defaultMessage: 'Removed this action',
-        id: '2da165161435',
+        id: 'ms2da165161435',
         description: 'Chatbot removed operation sentence format',
       }),
       changedOperation: intl.formatMessage({
         defaultMessage: 'Updated this action',
-        id: 'ea06e5ced22b',
+        id: 'msea06e5ced22b',
         description: 'Chatbot changed operation sentence format',
       }),
     },

@@ -72,10 +72,10 @@ export const WorkflowConnections = ({ connections }: WorkflowConnectionsProps) =
     workflows: state.template.workflows,
   }));
   const columnsNames = {
-    name: intl.formatMessage({ defaultMessage: 'Name', id: 'b517b60ad4cc', description: 'Column name for connector name' }),
-    status: intl.formatMessage({ defaultMessage: 'Status', id: 'b7bcad389fd4', description: 'Column name for connection status' }),
-    connection: intl.formatMessage({ defaultMessage: 'Connection', id: '865aca0c2e07', description: 'Column name for connection display name' }),
-    connectionsList: intl.formatMessage({ defaultMessage: 'Connections list', id: 'c3eeda1a80b7', description: 'Connections list' }),
+    name: intl.formatMessage({ defaultMessage: 'Name', id: 'msb517b60ad4cc', description: 'Column name for connector name' }),
+    status: intl.formatMessage({ defaultMessage: 'Status', id: 'msb7bcad389fd4', description: 'Column name for connection status' }),
+    connection: intl.formatMessage({ defaultMessage: 'Connection', id: 'ms865aca0c2e07', description: 'Column name for connection display name' }),
+    connectionsList: intl.formatMessage({ defaultMessage: 'Connections list', id: 'msc3eeda1a80b7', description: 'Connections list' }),
   };
   const isSingleWorkflow = useMemo(() => Object.keys(workflows).length === 1, [workflows]);
   const [isConnectionInCreate, setConnectionInCreate] = useState(false);
@@ -330,8 +330,8 @@ export const WorkflowConnections = ({ connections }: WorkflowConnectionsProps) =
           <ConnectionStatusWithProgress
             aria-label={
               item.hasConnection
-                ? intl.formatMessage({ defaultMessage: 'Connected', description: 'Label text to connected status', id: '5d1e62cc7420' })
-                : intl.formatMessage({ defaultMessage: 'Not connected', description: 'Label text to not connected status', id: '62748effc512' })
+                ? intl.formatMessage({ defaultMessage: 'Connected', description: 'Label text to connected status', id: 'ms5d1e62cc7420' })
+                : intl.formatMessage({ defaultMessage: 'Not connected', description: 'Label text to not connected status', id: 'ms62748effc512' })
             }
             item={item}
             intl={intl}
@@ -344,7 +344,7 @@ export const WorkflowConnections = ({ connections }: WorkflowConnectionsProps) =
           <ConnectionName
             aria-label={
               item.connection?.displayName ??
-              intl.formatMessage({ defaultMessage: 'Connect', description: 'Link to create a connection', id: 'c90ebe9d5d7f' })
+              intl.formatMessage({ defaultMessage: 'Connect', description: 'Link to create a connection', id: 'msc90ebe9d5d7f' })
             }
             item={item}
             intl={intl}
@@ -356,7 +356,7 @@ export const WorkflowConnections = ({ connections }: WorkflowConnectionsProps) =
       case '$connectionsList':
         return (
           <ConnectionsList
-            aria-label={intl.formatMessage({ defaultMessage: 'Connections list', description: 'Connections list', id: 'w+7aGo' })}
+            aria-label={intl.formatMessage({ defaultMessage: 'Connections list', description: 'Connections list', id: 'msc3eeda1a80b7' })}
             item={item}
             intl={intl}
             onSelect={updateItemInConnectionsList}
@@ -442,7 +442,7 @@ const ConnectionName = ({
   };
   return (
     <Link className="msla-template-connection-text" disabled={disabled} onClick={onCreateConnection}>
-      {intl.formatMessage({ defaultMessage: 'Connect', description: 'Link to create a connection', id: 'yQ6+nV' })}
+      {intl.formatMessage({ defaultMessage: 'Connect', description: 'Link to create a connection', id: 'msc90ebe9d5d7f' })}
     </Link>
   );
 };
@@ -501,7 +501,7 @@ const ConnectionsList = ({
       {
         key: '$addConnection',
         iconProps: { iconName: 'Add', style: { marginLeft: '-15px' } },
-        name: intl.formatMessage({ defaultMessage: 'Add connection', description: 'Add connection', id: '43f57851c699' }),
+        name: intl.formatMessage({ defaultMessage: 'Add connection', description: 'Add connection', id: 'ms43f57851c699' }),
         canCheck: false,
         isChecked: false,
         onClick: onCreateConnection,

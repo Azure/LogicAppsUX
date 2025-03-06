@@ -194,17 +194,17 @@ export const RecommendationPanelContext = (props: CommonPanelProps) => {
   const intl = useIntl();
   const returnToSearchText = intl.formatMessage({
     defaultMessage: 'Return to search',
-    id: 'b47da94f5cab',
+    id: 'msb47da94f5cab',
     description: 'Text for the Details page navigation heading',
   });
 
   const headingText = isTrigger
-    ? intl.formatMessage({ defaultMessage: 'Add a trigger', id: '741c57d0c2e4', description: 'Text for the "Add Trigger" page header' })
-    : intl.formatMessage({ defaultMessage: 'Add an action', id: '11440333a93b', description: 'Text for the "Add Action" page header' });
+    ? intl.formatMessage({ defaultMessage: 'Add a trigger', id: 'ms741c57d0c2e4', description: 'Text for the "Add Trigger" page header' })
+    : intl.formatMessage({ defaultMessage: 'Add an action', id: 'ms11440333a93b', description: 'Text for the "Add Action" page header' });
 
   const closeButtonAriaLabel = intl.formatMessage({
     defaultMessage: 'Close panel',
-    id: 'ca38d7090114',
+    id: 'msca38d7090114',
     description: 'Aria label for the close button in the Add Action Panel',
   });
 

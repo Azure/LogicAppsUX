@@ -157,13 +157,13 @@ export const ArrayEditor: React.FC<ArrayEditorProps> = ({
 
   const expandedLabel: string = intl.formatMessage({
     defaultMessage: 'Switch to input entire array',
-    id: '11d7872ec40f',
+    id: 'ms11d7872ec40f',
     description: 'Label for editor toggle button when in expanded mode',
   });
 
   const collapsedLabel: string = intl.formatMessage({
     defaultMessage: 'Switch to detail inputs for array item',
-    id: '1df8a73b645e',
+    id: 'ms1df8a73b645e',
     description: 'Label for editor toggle button when in collapsed mode',
   });
 

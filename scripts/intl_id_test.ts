@@ -3,7 +3,7 @@ import { extractIntlMessages, extractIntlProperty, generateHexId } from './intl_
 var testFile = `
 	const testingTitle = intl.formatMessage({
 		defaultMessage: 'Testing',
-		id: 'fbe6557bf92f',
+		id: 'msfbe6557bf92f',
 		description: 'Title for testing section',
 	});
 `;

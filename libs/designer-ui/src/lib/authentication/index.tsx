@@ -163,19 +163,19 @@ export const AuthenticationEditor = ({
 
   const authenticationTypeLabel = intl.formatMessage({
     defaultMessage: 'Authentication type',
-    id: '09e178d2d2a7',
+    id: 'ms09e178d2d2a7',
     description: 'Label for Authentication Type dropdown',
   });
 
   const expandedLabel: string = intl.formatMessage({
     defaultMessage: 'Switch to code view mode',
-    id: 'f0b85078bbf8',
+    id: 'msf0b85078bbf8',
     description: 'Label for editor toggle button when in expanded mode',
   });
 
   const collapsedLabel: string = intl.formatMessage({
     defaultMessage: 'Switch to default view mode',
-    id: 'aa28fe55f633',
+    id: 'msaa28fe55f633',
     description: 'Label for editor toggle button when in collapsed mode',
   });
 
@@ -224,30 +224,30 @@ const getAuthenticationTypes = (supportedTypes: AuthenticationType[]): IDropdown
       case AuthenticationType.BASIC:
         return {
           key: type,
-          text: intl.formatMessage({ defaultMessage: 'Basic', id: 'b54951cebf58', description: 'Authentication type' }),
+          text: intl.formatMessage({ defaultMessage: 'Basic', id: 'msb54951cebf58', description: 'Authentication type' }),
         };
       case AuthenticationType.CERTIFICATE:
         return {
           key: type,
-          text: intl.formatMessage({ defaultMessage: 'Client certificate', id: '78bb6182feec', description: 'Authentication type' }),
+          text: intl.formatMessage({ defaultMessage: 'Client certificate', id: 'ms78bb6182feec', description: 'Authentication type' }),
         };
 
       case AuthenticationType.OAUTH:
         return {
           key: type,
-          text: intl.formatMessage({ defaultMessage: 'Active Directory OAuth', id: '9f85761e26d7', description: 'Authentication type' }),
+          text: intl.formatMessage({ defaultMessage: 'Active Directory OAuth', id: 'ms9f85761e26d7', description: 'Authentication type' }),
         };
 
       case AuthenticationType.RAW:
         return {
           key: type,
-          text: intl.formatMessage({ defaultMessage: 'Raw', id: '4dacabb9b10c', description: 'Authentication type' }),
+          text: intl.formatMessage({ defaultMessage: 'Raw', id: 'ms4dacabb9b10c', description: 'Authentication type' }),
         };
 
       case AuthenticationType.MSI:
         return {
           key: type,
-          text: intl.formatMessage({ defaultMessage: 'Managed identity', id: '6aeae0ae09b0', description: 'Authentication type' }),
+          text: intl.formatMessage({ defaultMessage: 'Managed identity', id: 'ms6aeae0ae09b0', description: 'Authentication type' }),
         };
 
       default:

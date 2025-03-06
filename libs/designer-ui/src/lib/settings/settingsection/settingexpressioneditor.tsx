@@ -61,12 +61,12 @@ export const ExpressionsEditor = ({
   const intl = useIntl();
   const addCondition = intl.formatMessage({
     defaultMessage: 'Add',
-    id: '2e93cd003e3e',
+    id: 'ms2e93cd003e3e',
     description: 'label to add a condition',
   });
   const expressionEditorLabel = intl.formatMessage({
     defaultMessage: 'Expression editor',
-    id: 'f3372c3e2b17',
+    id: 'msf3372c3e2b17',
     description: 'label for expression editor',
   });
 
@@ -135,7 +135,7 @@ export const Expressions = ({ expressions, readOnly = false, onChange, onDelete,
   const intl = useIntl();
   const indexItem = intl.formatMessage({
     defaultMessage: 'item',
-    id: '34581f3f82ac',
+    id: 'ms34581f3f82ac',
     description: 'Label for users to know which item they are on in the dictionary',
   });
 
@@ -172,7 +172,7 @@ export const Expression = ({ expression, index, readOnly = false, onChange, onDe
   const deleteValue = intl.formatMessage(
     {
       defaultMessage: 'Delete {expressionValue}',
-      id: '50c3ee509bfb',
+      id: 'ms50c3ee509bfb',
       description: 'Label to delete a value',
     },
     {

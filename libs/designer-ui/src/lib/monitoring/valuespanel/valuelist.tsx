@@ -17,12 +17,12 @@ export const ValueList: React.FC<ValueListProps> = ({ labelledBy, noValuesText, 
   const Resources = {
     VALUES_PANEL_TOGGLE_LESS_TEXT: intl.formatMessage({
       defaultMessage: 'Show less',
-      id: '57465b40e535',
+      id: 'ms57465b40e535',
       description: 'Toggle button text for hiding advanced parameters',
     }),
     VALUES_PANEL_TOGGLE_MORE_TEXT: intl.formatMessage({
       defaultMessage: 'Show more',
-      id: 'ef211d4ad8c1',
+      id: 'msef211d4ad8c1',
       description: 'Toggle button text for showing advanced parameters',
     }),
   };

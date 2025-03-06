@@ -4,17 +4,17 @@ import { StaticResultRootSchema } from './baseactionresult';
 const intl = getIntl();
 const QUERY_OUTPUT_TITLE = intl.formatMessage({
   defaultMessage: 'Body',
-  id: 'e4ebc68271a9',
+  id: 'mse4ebc68271a9',
   description: 'The title of the body field in the static result query action',
 });
 const STATIC_RESULT_OPERATION_OUTPUT_TITLE = intl.formatMessage({
   defaultMessage: 'Output',
-  id: 'a130646d4391',
+  id: 'msa130646d4391',
   description: 'The title of the output field in the static result query action',
 });
 const STATIC_RESULT_OPERATION_BODY_ITEM = intl.formatMessage({
   defaultMessage: 'Body item',
-  id: 'e9ea64582dd6',
+  id: 'mse9ea64582dd6',
   description: 'The title of the child item field in the static result query action',
 });
 

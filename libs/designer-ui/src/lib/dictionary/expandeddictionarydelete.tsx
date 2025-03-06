@@ -20,7 +20,7 @@ export const DictionaryDeleteButton = ({ disabled, items, index, setItems }: Dic
 
   const deleteLabel = intl.formatMessage({
     defaultMessage: 'Click to delete item',
-    id: 'c15dcb99d111',
+    id: 'msc15dcb99d111',
     description: 'Label to delete dictionary item',
   });
 

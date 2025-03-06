@@ -20,7 +20,7 @@ export const RedoButton: React.FC<RedoButtonProps> = (props) => {
 
   const redoLabel = intl.formatMessage({
     defaultMessage: 'Redo',
-    id: '0b2e3e28b607',
+    id: 'ms0b2e3e28b607',
     description: 'Label for redoing a change which was undone in a text input',
   });
 

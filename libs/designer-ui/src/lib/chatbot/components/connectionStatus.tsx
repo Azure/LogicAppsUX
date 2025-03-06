@@ -12,17 +12,17 @@ export const ConnectionStatus: React.FC<ConnectionStatusProps> = ({ apiName, isC
   const intlText = {
     connectionsSetupCardDescription: intl.formatMessage({
       defaultMessage: 'Set up these connections to use them in your flow.',
-      id: '6e544556dbf2',
+      id: 'ms6e544556dbf2',
       description: 'Chatbot connections setup card description',
     }),
     connectedText: intl.formatMessage({
       defaultMessage: 'Connected to',
-      id: 'c6f6afefe9dd',
+      id: 'msc6f6afefe9dd',
       description: 'Chatbot text stating connection to api was made',
     }),
     notConnectedText: intl.formatMessage({
       defaultMessage: 'Not connected to',
-      id: '024d8b91a4d7',
+      id: 'ms024d8b91a4d7',
       description: 'Chatbot text stating connection to api not made',
     }),
   };
@@ -60,7 +60,7 @@ export const ConnectionsLoading: React.FC = () => {
   const intlText = {
     connectionsLoading: intl.formatMessage({
       defaultMessage: 'Connecting to apps and services',
-      id: 'a8134cdde917',
+      id: 'msa8134cdde917',
       description: 'Chatbot connections loading text',
     }),
   };
