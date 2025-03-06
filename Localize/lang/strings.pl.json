@@ -1,8 +1,5 @@
 {
   "msfef58c296cdf": "Brak wymaganych danych wejściowych",
-  "0F6jmK": "Włączono bezpieczne dane wejściowe lub wyjściowe.",
-  "1QktJw": "Błędy mapy",
-  "1vqDeQ": "Wybierz pozycję Utwórz, aby uruchomić nowy przepływ pracy oparty na tym szablonie. Konfiguracja nie jest wymagana.",
   "mse439137f992e": "Nie znaleziono docelowego węzła schematu dla ''{nodeKey}'' klucza węzła",
   "msea0678237bb8": "Funkcja „{functionName}” ma przypisanych zbyt wiele danych wejściowych",
   "ms070aa5c5d996": "Nie znaleziono klucza „{nodeKey}”",

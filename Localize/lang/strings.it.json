@@ -1,8 +1,5 @@
 {
   "msfef58c296cdf": "Input obbligatori mancanti",
-  "0F6jmK": "Input o output protetti abilitati.",
-  "1QktJw": "Errori mappa",
-  "1vqDeQ": "Selezionare Crea per avviare un nuovo flusso di lavoro basato su questo modello. Non è necessaria alcuna configurazione.",
   "mse439137f992e": "Nodo dello schema di destinazione non trovato per la chiave del nodo ''{nodeKey}''",
   "msea0678237bb8": "Alla funzione ''{functionName}'' sono assegnati troppi input",
   "ms070aa5c5d996": "Chiave non trovata ''{nodeKey}''",

@@ -1,8 +1,5 @@
 {
   "msfef58c296cdf": "Hiányzó kötelező bemenetek",
-  "0F6jmK": "Biztonságos bemenetek vagy kimenetek engedélyezve.",
-  "1QktJw": "Leképezési hibák",
-  "1vqDeQ": "A Létrehozás elemet választva új munkafolyamatot indíthat el ezen a sablonon alapulóan, nincs szükség konfigurálásra.",
   "mse439137f992e": "A csomópontkulcshoz tartozó célsémacsomópont nem található ''{nodeKey}''",
   "msea0678237bb8": "A(z) „'{functionName}“ függvényhez túl sok bemenet van hozzárendelve",
   "ms070aa5c5d996": "Nem található „{nodeKey}” kulcs",

@@ -1,8 +1,5 @@
 {
   "msfef58c296cdf": "Gerekli girişler eksik",
-  "0F6jmK": "Güvenli girişler veya çıkışlar etkinleştirildi.",
-  "1QktJw": "Eşleme hataları",
-  "1vqDeQ": "Bu şablonu temel alan yeni bir iş akışı başlatmak için Oluştur'a tıklayın, yapılandırma gerekmez.",
   "mse439137f992e": "Düğüm anahtarı kimliği için hedef şema ''{nodeKey}''",
   "msea0678237bb8": "''{functionName}'' işlevine atanmış çok fazla giriş var",
   "ms070aa5c5d996": "Anahtar bulunamadı ''{nodeKey}''",

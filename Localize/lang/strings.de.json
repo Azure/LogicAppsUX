@@ -1,8 +1,6 @@
 {
   "msfef58c296cdf": "Fehlende erforderliche Eingaben",
-  "0F6jmK": "Sichere Eingaben oder Ausgaben sind aktiviert.",
-  "1QktJw": "Zuordnungsfehler",
-  "1vqDeQ": "Wählen Sie \"Erstellen\" aus, um einen neuen Workflow basierend auf dieser Vorlage zu starten. Es ist keine Konfiguration erforderlich.",
+
   "mse439137f992e": "Der Zielschemaknoten für den Knotenschlüssel ''{nodeKey}'' nicht gefunden.",
   "msea0678237bb8": "Der Funktion „{functionName}“ sind zu viele Eingaben zugewiesen.",
   "ms070aa5c5d996": "Der Schlüssel „{nodeKey}“ wurde nicht gefunden.",

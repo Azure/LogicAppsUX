@@ -1,8 +1,5 @@
 {
   "msfef58c296cdf": "Nödvändiga indata saknas",
-  "0F6jmK": "Säkra indata eller utdata har aktiverats.",
-  "1QktJw": "Mappningsfel",
-  "1vqDeQ": "Välj Skapa om du vill starta ett nytt arbetsflöde baserat på den här mallen. Ingen konfiguration krävs.",
   "mse439137f992e": "Det gick inte att hitta målschemanoden för nodnyckeln ''{nodeKey}''",
   "msea0678237bb8": "Funktionen {functionName} har tilldelats för många indata",
   "ms070aa5c5d996": "Nyckeln hittades inte {nodeKey}",
