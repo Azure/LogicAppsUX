@@ -4,8 +4,8 @@ import { afterEach, beforeEach, vi } from 'vitest';
 import { mockUseIntl } from './src/__test__/intl-test-helper';
 import { initializeIcons } from '@fluentui/react';
 
-import { InitLoggerService } from '@microsoft/logic-apps-shared';
-InitLoggerService([]);
+import { DevLogger, InitLoggerService } from '@microsoft/logic-apps-shared';
+InitLoggerService([new DevLogger()]);
 console.log = vi.fn();
 console.error = vi.fn();
 initializeIcons();

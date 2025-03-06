@@ -86,7 +86,7 @@ export async function isLogicAppProjectInRoot(workspaceFolder: WorkspaceFolder |
     return false;
   }
 
-  return false;
+  return true;
 }
 
 /**
