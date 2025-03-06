@@ -64,7 +64,7 @@ exports[`lib/card/cardfooter > should render with a lock icon 1`] = `
     className="msla-badges"
   >
     <div
-      aria-label=" Secure inputs or outputs enabled.: This operation has secure inputs or outputs enabled."
+      aria-label=" Secure inputs or outputs enabled: This operation has secure inputs or outputs enabled."
       onBlur={[Function]}
       onFocus={[Function]}
       onPointerEnter={[Function]}
