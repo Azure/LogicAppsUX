@@ -1,28 +1,11 @@
 import { extractIntlMessages, extractIntlProperty, generateHexId } from './intl_id_helpers';
 
 var testFile = `
-	private validateLogicAppIdentity(baseUrl: string, identity: ManagedIdentity | undefined) {
-    const intl = getIntl();
-    if (isHybridLogicApp(baseUrl)) {
-      if (!identity?.principalId || !identity?.tenantId) {
-        throw new Error(
-          intl.formatMessage({
-            defaultMessage: 'App identity is not configured on the logic app environment variables.',
-            id: 'zPRSM9',
-            description: 'Error message when no app identity is added in environment variables',
-          })
-        );
-      }
-    } else if (!isIdentityAssociatedWithLogicApp(identity)) {
-      throw new Error(
-        intl.formatMessage({
-          defaultMessage: 'A managed identity is not configured on the logic app.',
-          id: 'WnU9v0',
-          description: 'Error message when no identity is associated',
-        })
-      );
-    }
-  }
+	const testingTitle = intl.formatMessage({
+		defaultMessage: 'Testing',
+		id: '++ZVe/',
+		description: 'Title for testing section',
+	});
 `;
 const localIdMapping = {}; // Store old -> new ID mapping for this file
 
@@ -51,8 +34,10 @@ intlMessages.forEach((message) => {
 
 // Replace old IDs with new IDs
 Object.keys(localIdMapping).forEach((oldId) => {
+  // eslint-disable-next-line no-useless-escape
+  const escapedOldId = oldId.replace(/[-\/\\^$*+?.()|[\]{}]/g, '\\$&');
   // Regex to find the `id` key and replace its value
-  const regex = new RegExp(`(id:\\s*['"\`])${oldId}(['"\`])`);
+  const regex = new RegExp(`(id:\\s*['"\`])${escapedOldId}(['"\`])`);
   // Replace the old ID with the new ID
   const newId = localIdMapping[oldId];
   testFile = testFile.replace(regex, `$1${newId}$2`);

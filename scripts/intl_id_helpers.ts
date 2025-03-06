@@ -82,8 +82,10 @@ export function updateFiles() {
 
     // Replace old IDs with new IDs
     Object.keys(localIdMapping).forEach((oldId) => {
-      // Regex to find the old `id` key and replace its value
-      const regex = new RegExp(`(id:\\s*['"\`])${oldId}(['"\`])`);
+      // eslint-disable-next-line no-useless-escape
+      const escapedOldId = oldId.replace(/[-\/\\^$*+?.()|[\]{}]/g, '\\$&');
+      // Regex to find the `id` key and replace its value
+      const regex = new RegExp(`(id:\\s*['"\`])${escapedOldId}(['"\`])`);
       const newId = localIdMapping[oldId];
       content = content.replace(regex, `$1${newId}$2`);
     });
