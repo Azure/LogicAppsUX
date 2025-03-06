@@ -88,6 +88,29 @@ export const parsedocument = {
   },
 };
 
+export const parsedocumentwithmetadata = {
+  name: 'parsedocumentwithmetadata',
+  id: 'parsedocumentwithmetadata',
+  type: 'ParseDocumentWithMetadata',
+  properties: {
+    api: {
+      id: 'connectionProviders/dataOperationNew',
+      name: 'dataOperationNew',
+      brandColor: '#8c6cff',
+      description: 'Data operations',
+      displayName: 'Data operations',
+      iconUri: 'https://logicappsv2resources.blob.core.windows.net/icons/compose.svg',
+    },
+    summary: 'Parse a document returning text array and metadata',
+    description: 'Parses a document to extract text and metadata from the document.',
+    visibility: 'Important',
+    operationType: 'ParseDocumentWithMetadata',
+    brandColor: '#8c6cff',
+    iconUri: 'https://logicappsv2resources.blob.core.windows.net/icons/compose.svg',
+    annotation: { status: 'Preview' },
+  },
+};
+
 export const queryOperation = {
   name: 'query',
   id: 'query',
