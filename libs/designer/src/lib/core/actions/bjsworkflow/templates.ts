@@ -207,7 +207,7 @@ export const validateWorkflowsBasicInfo = createAsyncThunk(
     const { workflows } = state.template;
     const workflowIds = Object.keys(workflows);
     const result: Record<string, { kindError?: string; nameError?: string }> = {};
-    if (workflows.length) {
+    if (workflowIds.length) {
       const intl = getIntl();
       for (const id of workflowIds) {
         if (!workflows[id].kind) {

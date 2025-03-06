@@ -74,7 +74,7 @@ export const LocalTemplates = () => {
         connectionReferences={{}}
         services={services}
         isConsumption={isConsumption}
-        isCreateView={!!isCreateView}
+        isCreateView={!isConsumption || !!isCreateView}
         enableResourceSelection={enableResourceSelection}
         existingWorkflowName={undefined}
         viewTemplate={
