@@ -8,7 +8,8 @@ interface TechnicalErrorMessageProps {
 export const TechnicalErrorMessage = ({ message, chatSessionId }: TechnicalErrorMessageProps) => {
   const intl = useIntl();
   const chatSessionText = intl.formatMessage({
-    defaultMessage: 'chat-session-id:'msms605d7266469a'ms605d7266469a',
+    defaultMessage: 'chat-session-id:',
+    id: 'ms605d7266469a',
     description: 'Chatbot session id',
   });
   return (
