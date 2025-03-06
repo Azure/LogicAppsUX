@@ -166,18 +166,16 @@ export const TemplateFilters = ({ detailFilters }: TemplateFiltersProps) => {
             isSearchable
           />
         )}
-        {(Object.keys(detailFilters) as Template.DetailsType[]).map((filterName, index) =>
-          detailFilters[filterName] ? (
-            <TemplatesFilterDropdown
-              key={index}
-              filterName={detailFilters[filterName].displayName}
-              items={detailFilters[filterName].items}
-              onApplyButtonClick={(filterItems) => {
-                dispatch(setDetailsFilters({ filterName, filters: filterItems }));
-              }}
-            />
-          ) : null
-        )}
+        {Object.entries(detailFilters).map(([filterName, filterItem], index) => (
+          <TemplatesFilterDropdown
+            key={index}
+            filterName={filterItem.displayName}
+            items={filterItem.items}
+            onApplyButtonClick={(filterItems) => {
+              dispatch(setDetailsFilters({ filterName, filters: filterItems }));
+            }}
+          />
+        ))}
       </div>
       <div className="msla-templates-filters-row">
         <TabList selectedValue={selectedTabId} onTabSelect={onTabSelected}>
