@@ -17,14 +17,18 @@ import constants from '../../../../common/constants';
 describe('panel/templatePanel/quickViewPanel', () => {
   let store: AppStore;
   let templateSliceData: TemplateState;
-  let template1Manifest: Template.Manifest;
-  let template2Manifest: Template.Manifest;
+  let template1Manifest: Template.TemplateManifest;
+  let template2Manifest: Template.TemplateManifest;
+  let workflow1Manifest: Template.WorkflowManifest;
+  let workflow2Manifest: Template.WorkflowManifest;
   let param1DefaultValue: string;
   const defaultWorkflowId = 'default';
 
   const httpClient = new MockHttpClient();
   InitTemplateService(
     new StandardTemplateService({
+      endpoint: '',
+      useEndpointForTemplates: false,
       baseUrl: '/baseUrl',
       appId: '/appId',
       httpClient,
@@ -35,7 +39,7 @@ describe('panel/templatePanel/quickViewPanel', () => {
       openBladeAfterCreate: (workflowName: string | undefined) => {
         console.log('Open blade after create', workflowName);
       },
-      onAddBlankWorkflow: () => {
+      onAddBlankWorkflow: async () => {
         console.log('Add blank workflow');
       },
     })
@@ -44,22 +48,41 @@ describe('panel/templatePanel/quickViewPanel', () => {
   beforeAll(() => {
     param1DefaultValue = 'default value for param 1';
     template1Manifest = {
+      id: 'template1Manifest',
       title: 'Template 1',
-      description: 'Template 1 Description',
+      summary: 'Template 1 Description',
       skus: ['standard', 'consumption'],
-      kinds: ['stateful', 'stateless'],
-      details: {},
-      images: {},
+      workflows: {
+        default: { name: 'default' },
+      },
+      details: {
+        By: '',
+        Type: '',
+        Category: '',
+      },
       artifacts: [
-        {
-          type: 'workflow',
-          file: 'workflow.json',
-        },
         {
           type: 'description',
           file: 'description.md',
         },
       ],
+    };
+
+    workflow1Manifest = {
+      id: 'default',
+      title: 'Template 1',
+      summary: 'Template 1 Description',
+      kinds: ['stateful', 'stateless'],
+      artifacts: [
+        {
+          type: 'workflow',
+          file: 'workflow.json',
+        },
+      ],
+      images: {
+        light: '',
+        dark: '',
+      },
       connections: {},
       parameters: [
         {
@@ -79,22 +102,41 @@ describe('panel/templatePanel/quickViewPanel', () => {
     };
 
     template2Manifest = {
+      id: 'template2Manifest',
       title: 'Template 2',
-      description: 'Template 2 Description - Consumption Only',
+      summary: 'Template 2 Description - Consumption Only',
       skus: ['consumption'],
-      kinds: ['stateful', 'stateless'],
-      details: {},
-      images: {},
+      workflows: {
+        default: { name: 'default' },
+      },
+      details: {
+        By: '',
+        Type: '',
+        Category: '',
+      },
       artifacts: [
-        {
-          type: 'workflow',
-          file: 'workflow.json',
-        },
         {
           type: 'description',
           file: 'description.md',
         },
       ],
+    };
+
+    workflow2Manifest = {
+      id: 'default',
+      title: 'Template 2',
+      summary: 'Template 2 Description - Consumption Only',
+      kinds: ['stateful', 'stateless'],
+      artifacts: [
+        {
+          type: 'workflow',
+          file: 'workflow.json',
+        },
+      ],
+      images: {
+        light: '',
+        dark: '',
+      },
       connections: {},
       parameters: [
         {
@@ -119,7 +161,7 @@ describe('panel/templatePanel/quickViewPanel', () => {
           id: defaultWorkflowId,
           workflowName: '',
           kind: undefined,
-          manifest: template1Manifest,
+          manifest: workflow1Manifest,
           workflowDefinition: {
             $schema: 'https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#',
             contentVersion: '',
@@ -133,15 +175,14 @@ describe('panel/templatePanel/quickViewPanel', () => {
       },
       templateName: template1Manifest.title,
       manifest: template1Manifest,
-      parameterDefinitions: template1Manifest.parameters?.reduce((result: Record<string, Template.ParameterDefinition>, parameter) => {
+      parameterDefinitions: workflow1Manifest.parameters?.reduce((result: Record<string, Template.ParameterDefinition>, parameter) => {
         result[parameter.name] = {
           ...parameter,
           value: parameter.default,
         };
         return result;
       }, {}),
-      connections: template1Manifest.connections,
-      servicesInitialized: false,
+      connections: workflow1Manifest.connections,
       errors: {
         parameters: {},
         connections: undefined,
@@ -176,7 +217,7 @@ describe('panel/templatePanel/quickViewPanel', () => {
     expect(store.getState().template.manifest).toBe(template1Manifest);
     expect(store.getState().template.parameterDefinitions).toBeDefined();
     expect(store.getState().template.errors.parameters).toEqual({});
-    expect(store.getState().template.connections).toBe(template1Manifest.connections);
+    expect(store.getState().template.connections).toBe(workflow1Manifest.connections);
   });
 
   it('Ensures the quickView panel is open with header', async () => {

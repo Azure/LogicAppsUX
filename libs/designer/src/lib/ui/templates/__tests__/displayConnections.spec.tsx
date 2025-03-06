@@ -13,7 +13,8 @@ import React from 'react';
 describe('ui/templates/workflowconnections', () => {
   let store: AppStore;
   let templateSliceData: TemplateState;
-  let template1Manifest: Template.Manifest;
+  let template1Manifest: Template.TemplateManifest;
+  let workflow1Manifest: Template.WorkflowManifest;
   let param1DefaultValue: string;
   let param2DefaultValue: string;
 
@@ -21,23 +22,57 @@ describe('ui/templates/workflowconnections', () => {
     param1DefaultValue = 'default value for param 1';
     param2DefaultValue = 'boolean';
     template1Manifest = {
+      id: 'template1Manifest',
       title: 'Template 1',
-      description: 'Template 1 Description',
+      summary: 'Template 1 Description',
       skus: ['standard', 'consumption'],
+      workflows: {
+        default: { name: 'default' },
+      },
+      details: {
+        By: '',
+        Type: '',
+        Category: '',
+      },
+      artifacts: [
+        {
+          type: 'description',
+          file: 'description.md',
+        },
+      ],
+    };
+
+    workflow1Manifest = {
+      id: 'default',
+      title: 'Template 1',
+      summary: 'Template 1 Description',
       kinds: ['stateful', 'stateless'],
-      details: {},
-      tags: [],
-      images: {},
       artifacts: [
         {
           type: 'workflow',
           file: 'workflow.json',
         },
       ],
-      connections: {
-        conn1: { connectorId: '/serviceProviders/abc', kind: 'inapp' },
+      images: {
+        light: '',
+        dark: '',
       },
-      parameters: [],
+      connections: {},
+      parameters: [
+        {
+          name: 'param1',
+          displayName: 'Param 1',
+          type: 'string',
+          description: 'param1 description',
+          default: param1DefaultValue,
+        },
+        {
+          name: 'param2',
+          displayName: 'Param 2',
+          type: 'object',
+          description: 'param2 description',
+        },
+      ],
     };
 
     templateSliceData = {
@@ -46,12 +81,12 @@ describe('ui/templates/workflowconnections', () => {
           id: 'default',
           workflowName: undefined,
           kind: undefined,
-          manifest: template1Manifest,
+          manifest: workflow1Manifest,
           workflowDefinition: {
             $schema: 'https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#',
             contentVersion: '',
           },
-          connectionKeys: Object.keys(template1Manifest.connections),
+          connectionKeys: Object.keys(workflow1Manifest.connections),
           errors: {
             workflow: undefined,
             kind: undefined,
@@ -61,8 +96,7 @@ describe('ui/templates/workflowconnections', () => {
       manifest: template1Manifest,
       templateName: template1Manifest.title,
       parameterDefinitions: {},
-      connections: template1Manifest.connections,
-      servicesInitialized: false,
+      connections: workflow1Manifest.connections,
       errors: {
         parameters: {},
         connections: undefined,
@@ -81,14 +115,14 @@ describe('ui/templates/workflowconnections', () => {
   beforeEach(() => {
     renderWithProviders(
       <ReactQueryProvider>
-        <WorkflowConnections connections={template1Manifest.connections} />
+        <WorkflowConnections connections={workflow1Manifest.connections} />
       </ReactQueryProvider>,
       { store }
     );
   });
 
   it('should render the connection ids for connections', async () => {
-    const conn = template1Manifest?.connections['conn1'];
+    const conn = workflow1Manifest?.connections['conn1'];
     expect(screen.getByText('Name')).toBeDefined();
   });
 });
