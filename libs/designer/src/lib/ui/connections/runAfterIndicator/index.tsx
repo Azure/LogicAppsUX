@@ -147,18 +147,16 @@ export function CollapsedRunAfterIndicator({ filteredRunAfters, runAfterCount }:
     );
   };
 
-  const defaultMessage = {
-    defaultMessage: 'Run after {sourceNodeId}',
-    id: 'PytMJ0',
-    description: 'The text that shows the node after which the target node is run.',
-  };
-
   const tooltipContents: JSX.Element[] = [];
 
   Object.entries(filteredRunAfters).forEach(([source, statuses], index) => {
     const normalizedStatuses = statuses.map((status) => status.toUpperCase()) as RUN_AFTER_STATUS[];
 
-    const tooltipHeaderText = intl.formatMessage(defaultMessage, {
+		const tooltipHeaderText = intl.formatMessage({
+			defaultMessage: 'Run after {sourceNodeId}',
+			id: 'PytMJ0',
+			description: 'The text that shows the node after which the target node is run.',
+		}, {
       sourceNodeId: <strong>{idDisplayCase(source)}</strong>,
     });
 
