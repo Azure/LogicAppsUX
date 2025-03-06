@@ -65,11 +65,13 @@ export const WorkflowConnections = ({ connections }: WorkflowConnectionsProps) =
     location,
     connections: { references, mapping },
     workflows,
+    viewTemplateDetails,
   } = useSelector((state: RootState) => ({
     subscriptionId: state.workflow.subscriptionId,
     location: state.workflow.location,
     connections: state.workflow.connections,
     workflows: state.template.workflows,
+    viewTemplateDetails: state.templateOptions.viewTemplateDetails,
   }));
   const columnsNames = {
     name: intl.formatMessage({ defaultMessage: 'Name', id: 'tRe2Ct', description: 'Column name for connector name' }),
@@ -84,6 +86,7 @@ export const WorkflowConnections = ({ connections }: WorkflowConnectionsProps) =
       Object.values(workflows).map((workflow) =>
         workflow.connectionKeys.map((key) => {
           const connectionItem = connections[key];
+
           return {
             id: guid(),
             workflowId: workflow.id,
@@ -183,10 +186,12 @@ export const WorkflowConnections = ({ connections }: WorkflowConnectionsProps) =
   );
 
   const onConnectionsLoaded = async (loadedConnections: Connection[], item: ConnectionItem): Promise<void> => {
+    const connectionIdToOverride = viewTemplateDetails?.connectionsOverride?.[item.connectionKey]?.connectionId;
+    const connectionToOverride = loadedConnections.find((connection) => connection.id === connectionIdToOverride);
     const itemHasConnection = item.connection?.id && item.connection?.displayName === undefined;
-    const connectionToUse = itemHasConnection
-      ? loadedConnections.find((connection) => connection.id === item.connection?.id)
-      : loadedConnections[0];
+    const connectionToUse =
+      connectionToOverride ??
+      (itemHasConnection ? loadedConnections.find((connection) => connection.id === item.connection?.id) : loadedConnections[0]);
     const hasConnection = loadedConnections.length > 0;
     updateItemInConnectionsList({
       ...item,
@@ -195,7 +200,7 @@ export const WorkflowConnections = ({ connections }: WorkflowConnectionsProps) =
       connection: connectionToUse ? { id: connectionToUse.id, displayName: getConnectionDisplayName(connectionToUse) } : undefined,
     });
 
-    if (!itemHasConnection && connectionToUse) {
+    if ((connectionToOverride || !itemHasConnection) && connectionToUse) {
       setupTemplateConnection(item.connectionKey, item.connectorId, connectionToUse, dispatch);
     }
   };
