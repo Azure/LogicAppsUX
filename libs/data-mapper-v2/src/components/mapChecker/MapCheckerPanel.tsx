@@ -1,6 +1,6 @@
 import type { RootState } from '../../core/state/Store';
 import { type SelectTabData, type SelectTabEvent, Tab, TabList } from '@fluentui/react-components';
-import { useCallback, useMemo } from 'react';
+import { useCallback, useMemo, useState } from 'react';
 import { useIntl } from 'react-intl';
 import { useDispatch, useSelector } from 'react-redux';
 import {
@@ -14,7 +14,7 @@ import { MapCheckerItem } from './MapCheckerItem';
 import { Panel } from '../common/panel/Panel';
 import { useStyles } from './styles';
 import { PanelXButton } from '../common/panel/PanelXButton';
-import { type MapCheckTabType, setSelectedMapCheckerTab, toggleMapChecker } from '../../core/state/PanelSlice';
+import { type MapCheckTabType, openMapChecker, setSelectedMapCheckerTab, toggleMapChecker } from '../../core/state/PanelSlice';
 
 export const MapCheckerPanel = () => {
   const intl = useIntl();
@@ -28,6 +28,17 @@ export const MapCheckerPanel = () => {
   const targetSchemaDictionary = useSelector((state: RootState) => state.dataMap.present.curDataMapOperation.flattenedTargetSchema);
   const connectionDictionary = useSelector((state: RootState) => state.dataMap.present.curDataMapOperation.dataMapConnections);
   const storeErrors = useSelector((state: RootState) => state.errors.deserializationMessages);
+  const isDirty = useSelector((state: RootState) => state.dataMap.present.isDirty);
+
+  const [isFirstOpen, setIsFirstOpen] = useState(true);
+
+  const openOnDeserializeWithError = useCallback(() => {
+    if (isFirstOpen && storeErrors.length > 0) {
+      dispatch(openMapChecker());
+      setIsFirstOpen(false);
+    }
+  }, [dispatch, isFirstOpen, storeErrors.length]);
+  openOnDeserializeWithError();
 
   const onCloseClick = useCallback(() => {
     dispatch(toggleMapChecker());
@@ -95,13 +106,13 @@ export const MapCheckerPanel = () => {
 
   const errorContent = useMemo(() => {
     if (sourceSchema && targetSchema) {
-      const errors = collectErrorsForMapChecker(connectionDictionary, targetSchemaDictionary);
-      const deserializationWarnings = convertMapIssuesToMessages(storeErrors);
-      return errors.concat(deserializationWarnings);
+      const errors = collectErrorsForMapChecker(connectionDictionary);
+      const deserializationErrorMessages = isDirty ? [] : convertMapIssuesToMessages(storeErrors);
+      return errors.concat(deserializationErrorMessages);
     }
 
     return [];
-  }, [connectionDictionary, sourceSchema, storeErrors, targetSchema, targetSchemaDictionary]);
+  }, [connectionDictionary, sourceSchema, storeErrors, targetSchema, isDirty]);
 
   const errorItems = useMemo(() => {
     return mapMapCheckerContentToElements(errorContent, MapCheckerItemSeverity.Error);

@@ -57,7 +57,7 @@ export interface MapCheckerMessage {
   data?: any;
 }
 
-export const collectErrorsForMapChecker = (connections: ConnectionDictionary, _targetSchema: SchemaNodeDictionary): MapCheckerMessage[] => {
+export const collectErrorsForMapChecker = (connections: ConnectionDictionary): MapCheckerMessage[] => {
   const errors: MapCheckerMessage[] = [];
 
   // Valid input types
