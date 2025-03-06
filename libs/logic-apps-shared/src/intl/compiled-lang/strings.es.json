@@ -1,5 +1,5 @@
 {
-  "/vWMKW": [
+  "fef58c296cdf": [
     {
       "type": 0,
       "value": "Faltan entradas necesarias"
@@ -23,7 +23,7 @@
       "value": "Seleccione Crear para iniciar un nuevo flujo de trabajo basado en esta plantilla, no se requiere ninguna configuración."
     }
   ],
-  "5DkTf5": [
+  "e439137f992e": [
     {
       "type": 0,
       "value": "No se encontró el nodo de esquema de destino para la clave de nodo '"
@@ -37,7 +37,7 @@
       "value": "'"
     }
   ],
-  "6gZ4I3": [
+  "ea0678237bb8": [
     {
       "type": 0,
       "value": "La función \""
@@ -51,7 +51,7 @@
       "value": "\" tiene demasiadas entradas asignadas"
     }
   ],
-  "Bwqlxd": [
+  "070aa5c5d996": [
     {
       "type": 0,
       "value": "Clave no encontrada '"
@@ -65,7 +65,7 @@
       "value": "'"
     }
   ],
-  "E3+TAA": [
+  "137f93000c8c": [
     {
       "type": 0,
       "value": "El nodo de esquema \""
@@ -79,7 +79,7 @@
       "value": "\" tiene una entrada con un tipo no coincidente"
     }
   ],
-  "FPBmrA": [
+  "14f066ac0a08": [
     {
       "type": 0,
       "value": "No se encontró el nodo de esquema de origen para la clave de nodo '"
@@ -93,7 +93,7 @@
       "value": "'"
     }
   ],
-  "GiR7ll": [
+  "1a247b965963": [
     {
       "type": 0,
       "value": "Función no encontrada: '"
@@ -107,13 +107,13 @@
       "value": "'"
     }
   ],
-  "PEJ+e4": [
+  "3c427e7b8f28": [
     {
       "type": 0,
       "value": "Error al cargar el mapa de datos"
     }
   ],
-  "Ufv5m9": [
+  "51fbf99bd202": [
     {
       "type": 0,
       "value": "El nodo de esquema '"
@@ -127,7 +127,7 @@
       "value": "' tiene una cadena de conexión que no termina"
     }
   ],
-  "XRK+gt": [
+  "5d12be82d0da": [
     {
       "type": 0,
       "value": "La función '"
@@ -161,19 +161,19 @@
       "value": "No se puede eliminar el elemento de esquema de destino."
     }
   ],
-  "YF1yZk": [
+  "605d7266469a": [
     {
       "type": 0,
       "value": "Id. de sesión de chat:"
     }
   ],
-  "dBWIjR": [
+  "7415888d139d": [
     {
       "type": 0,
       "value": "Faltan entradas necesarias en el esquema"
     }
   ],
-  "haeWoU": [
+  "85a796a14091": [
     {
       "type": 0,
       "value": "No se pudieron evaluar las salidas porque no se puede evaluar la "
@@ -187,7 +187,7 @@
       "value": " splitOn. Como resultado, es posible que las salidas de esta operación no sean visibles correctamente en acciones posteriores."
     }
   ],
-  "kfmLTY": [
+  "91f98b4d82b2": [
     {
       "type": 0,
       "value": "Faltan entradas necesarias en la función '"
@@ -213,7 +213,7 @@
       "value": "Abrir panel de pruebas"
     }
   ],
-  "qr1lLG": [
+  "aabd652c6254": [
     {
       "type": 0,
       "value": "La función '"
@@ -233,13 +233,13 @@
       "value": "Asignar problemas"
     }
   ],
-  "tAbbH8": [
+  "b406db1fc791": [
     {
       "type": 0,
       "value": "Demasiadas entradas asignadas"
     }
   ],
-  "wkvUUA": [
+  "c24bd450041c": [
     {
       "type": 0,
       "value": "El tipo de entrada no coincide"

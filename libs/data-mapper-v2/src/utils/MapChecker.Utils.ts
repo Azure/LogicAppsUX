@@ -233,27 +233,27 @@ export const functionHasRequiredInputs = (functionData: FunctionData, connection
 const deserializationMessages = defineMessages<MapIssueType>({
   MapLoadError: {
     defaultMessage: 'Error loading data map',
-    id: 'PEJ+e4',
+    id: '3c427e7b8f28',
     description: 'Error message for data map load error',
   },
   TargetSchemaNodeNotFound: {
     defaultMessage: `Target schema node not found for node key ''{nodeKey}''`,
-    id: '5DkTf5',
+    id: 'e439137f992e',
     description: 'Error message for target schema node not found',
   },
   FunctionNotFound: {
     defaultMessage: `Function not found- ''{nodeKey}''`,
-    id: 'GiR7ll',
+    id: '1a247b965963',
     description: 'Error message for function not found',
   },
   KeyNotFound: {
     defaultMessage: `Key not found ''{nodeKey}''`,
-    id: 'Bwqlxd',
+    id: '070aa5c5d996',
     description: 'Error message for key not found',
   },
   SourceSchemaNodeNotFound: {
     defaultMessage: `Source schema node not found for node key ''{nodeKey}''`,
-    id: 'FPBmrA',
+    id: '14f066ac0a08',
     description: 'Error message for source schema node not found',
   },
 });
@@ -261,47 +261,47 @@ const deserializationMessages = defineMessages<MapIssueType>({
 const mapCheckerResources = defineMessages({
   inputTypeMismatchTitle: {
     defaultMessage: 'Input type mismatch',
-    id: 'wkvUUA',
+    id: 'c24bd450041c',
     description: 'Title for the input type mismatch card',
   },
   functionInputTypeMismatchBody: {
     defaultMessage: `Function ''{nodeName}'' has an input with a mismatched type`,
-    id: 'qr1lLG',
+    id: 'aabd652c6254',
     description: 'Body text for the input type mismatch card',
   },
   schemaInputTypeMismatchBody: {
     defaultMessage: `Schema node ''{nodeName}'' has an input with a mismatched type`,
-    id: 'E3+TAA',
+    id: '137f93000c8c',
     description: 'Body text for the input type mismatch card',
   },
   functionMissingInputsTitle: {
     defaultMessage: 'Missing required inputs',
-    id: '/vWMKW',
+    id: 'fef58c296cdf',
     description: 'Title for a function missing a required input card',
   },
   functionMissingInputsBody: {
     defaultMessage: `Function ''{functionName}'' is missing required inputs`,
-    id: 'kfmLTY',
+    id: '91f98b4d82b2',
     description: 'Body text for a function missing a required input card',
   },
   requiredSchemaNodeTitle: {
     defaultMessage: 'Schema is missing required inputs',
-    id: 'dBWIjR',
+    id: '7415888d139d',
     description: 'Title for an unconnected required schema card',
   },
   requiredSchemaNodeBody: {
     defaultMessage: `Schema node ''{nodeName}'' has an non-terminating connection chain`,
-    id: 'Ufv5m9',
+    id: '51fbf99bd202',
     description: 'Body text for an unconnected required schema card',
   },
   functionExceedsMaxInputsTitle: {
     defaultMessage: 'Too many inputs assigned',
-    id: 'tAbbH8',
+    id: 'b406db1fc791',
     description: 'Title for a too many inputs card',
   },
   functionExceedsMaxInputsBody: {
     defaultMessage: `Function ''{functionName}'' has too many inputs assigned to it`,
-    id: '6gZ4I3',
+    id: 'ea0678237bb8',
     description: 'Body text for a too many inputs card',
   },
 });

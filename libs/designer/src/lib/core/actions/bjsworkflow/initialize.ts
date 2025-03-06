@@ -246,12 +246,13 @@ export const getOutputParametersFromManifest = (
       manifestToParse = getUpdatedManifestForSplitOn(manifestToParse, splitOnValue);
     } catch (error: any) {
       const errorInfo: ErrorInfo = { level: ErrorLevel.Default, error, message: error.message };
+      const intl = getIntl();
       if (error instanceof AssertionException && error.code === AssertionErrorCode.INVALID_SPLITON) {
         errorInfo.level = ErrorLevel.DynamicOutputs;
-        errorInfo.message = getIntl().formatMessage(
+        errorInfo.message = intl.formatMessage(
           {
             defaultMessage: `Failed to evaluate outputs because splitOn {splitOn} cannot be evaluated. As a result, this operation's outputs might not be correctly visible in subsequent actions`,
-            id: 'haeWoU',
+            id: '85a796a14091',
             description: 'Error message when splitOn cannot be evaluated',
           },
           { splitOn: splitOnValue }

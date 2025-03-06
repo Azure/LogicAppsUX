@@ -1,5 +1,5 @@
 {
-  "/vWMKW": [
+  "fef58c296cdf": [
     {
       "type": 0,
       "value": "Hiányzó kötelező bemenetek"
@@ -23,7 +23,7 @@
       "value": "A Létrehozás elemet választva új munkafolyamatot indíthat el ezen a sablonon alapulóan, nincs szükség konfigurálásra."
     }
   ],
-  "5DkTf5": [
+  "e439137f992e": [
     {
       "type": 0,
       "value": "A csomópontkulcshoz tartozó célsémacsomópont nem található '"
@@ -37,13 +37,13 @@
       "value": "'"
     }
   ],
-  "6gZ4I3": [
+  "ea0678237bb8": [
     {
       "type": 0,
       "value": "A(z) „{functionName}“ függvényhez túl sok bemenet van hozzárendelve"
     }
   ],
-  "Bwqlxd": [
+  "070aa5c5d996": [
     {
       "type": 0,
       "value": "Nem található „"
@@ -57,7 +57,7 @@
       "value": "” kulcs"
     }
   ],
-  "E3+TAA": [
+  "137f93000c8c": [
     {
       "type": 0,
       "value": "A(z) „"
@@ -71,7 +71,7 @@
       "value": "” sémacsomópont bemenete eltérő típusú"
     }
   ],
-  "FPBmrA": [
+  "14f066ac0a08": [
     {
       "type": 0,
       "value": "A(z) '"
@@ -85,7 +85,7 @@
       "value": "' csomópontkulcs forrásséma-csomópontja nem található"
     }
   ],
-  "GiR7ll": [
+  "1a247b965963": [
     {
       "type": 0,
       "value": "A függvény nem található – '"
@@ -99,13 +99,13 @@
       "value": "'"
     }
   ],
-  "PEJ+e4": [
+  "3c427e7b8f28": [
     {
       "type": 0,
       "value": "Hiba történt az adattérkép betöltésekor"
     }
   ],
-  "Ufv5m9": [
+  "51fbf99bd202": [
     {
       "type": 0,
       "value": "A(z) „"
@@ -119,7 +119,7 @@
       "value": "” sémacsomópont nem megszakító kapcsolati lánccal rendelkezik"
     }
   ],
-  "XRK+gt": [
+  "5d12be82d0da": [
     {
       "type": 0,
       "value": "A(z) „"
@@ -153,19 +153,19 @@
       "value": "A célsémaelem nem törölhető."
     }
   ],
-  "YF1yZk": [
+  "605d7266469a": [
     {
       "type": 0,
       "value": "chat-session-id:"
     }
   ],
-  "dBWIjR": [
+  "7415888d139d": [
     {
       "type": 0,
       "value": "A sémából hiányoznak a szükséges bemenetek"
     }
   ],
-  "haeWoU": [
+  "85a796a14091": [
     {
       "type": 0,
       "value": "Nem sikerült kiértékelni a kimeneteket, mert a splitOn "
@@ -179,7 +179,7 @@
       "value": " nem értékelhető ki. Ennek eredményeképpen előfordulhat, hogy a művelet kimenetei nem lesznek megfelelően láthatók a következő műveletekben"
     }
   ],
-  "kfmLTY": [
+  "91f98b4d82b2": [
     {
       "type": 0,
       "value": "A(z) '"
@@ -205,7 +205,7 @@
       "value": "Tesztpanel megnyitása"
     }
   ],
-  "qr1lLG": [
+  "aabd652c6254": [
     {
       "type": 0,
       "value": "A(z) „"
@@ -225,13 +225,13 @@
       "value": "Leképezési problémák"
     }
   ],
-  "tAbbH8": [
+  "b406db1fc791": [
     {
       "type": 0,
       "value": "Túl sok bemenet van hozzárendelve"
     }
   ],
-  "wkvUUA": [
+  "c24bd450041c": [
     {
       "type": 0,
       "value": "A bemeneti típusok eltérnek"
