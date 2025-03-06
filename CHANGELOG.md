@@ -1,4 +1,16 @@
 # Logic Apps Designer
+## [5.48.0](https://github.com/Azure/LogicAppsUX/compare/v5.47.0...v5.48.0) (2025-03-06)
+
+
+### Features
+
+* **templates:** Adding resource selection feature in basics tab ([#6731](https://github.com/Azure/LogicAppsUX/issues/6731)) ([df84f74](https://github.com/Azure/LogicAppsUX/commit/df84f74a907c1ae33e7b54679b7d07200d05fe8c))
+
+
+### Bug Fixes
+
+* **designer:** Add display name for tenants as optional ([#6733](https://github.com/Azure/LogicAppsUX/issues/6733)) ([8e27ddb](https://github.com/Azure/LogicAppsUX/commit/8e27ddb61604ffc840e21c9c33180d5794772864))
+
 ## [5.47.0](https://github.com/Azure/LogicAppsUX/compare/v5.46.0...v5.47.0) (2025-03-05)
 
 
