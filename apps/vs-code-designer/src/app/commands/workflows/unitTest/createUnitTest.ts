@@ -10,6 +10,7 @@ import {
   createTestExecutorFile,
   createTestSettingsConfigFile,
   ensureCsproj,
+  updateCsprojFile,
   extractAndValidateRunId,
   getUnitTestPaths,
   handleError,
@@ -277,6 +278,10 @@ async function generateUnitTestFromRun(
       logTelemetry(context, { nugetConfigFileCreated: 'false', nugetConfigFailReason });
       throw nugetError;
     }
+
+    const csprojFilePath = path.join(paths.logicAppTestFolderPath, `${paths.logicAppName}.csproj`);
+    const isCsprojUpdated = await updateCsprojFile(csprojFilePath, workflowName);
+    logTelemetry(context, { csprojUpdated: isCsprojUpdated ? 'true' : 'false' });
 
     try {
       ext.outputChannel.appendLog(localize('checkingWorkspace', 'Checking if tests directory is already part of the workspace...'));
