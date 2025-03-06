@@ -28,6 +28,7 @@ import type { TemplateServiceOptions } from '../../templates/TemplatesDesignerCo
 import { initializeParametersMetadata } from '../../templates/utils/parametershelper';
 import { initializeNodeOperationInputsData } from '../../state/operation/operationMetadataSlice';
 import { updateTemplateParameterDefinitions } from '../../state/templates/templateSlice';
+import { getCurrentWorkflowNames } from '../../templates/utils/helper';
 import {
   loadGithubManifestNames,
   setavailableTemplates,
@@ -195,6 +196,50 @@ export const loadTemplate = createAsyncThunk(
     }
 
     return undefined;
+  }
+);
+
+export const validateWorkflowsBasicInfo = createAsyncThunk(
+  'validateWorkflowsBasicInfo',
+  async ({ validateName, existingWorkflowNames }: { validateName: boolean; existingWorkflowNames: string[] }, thunkAPI) => {
+    const state: RootState = thunkAPI.getState() as RootState;
+    const { subscriptionId, resourceGroup: resourceGroupName, isConsumption } = state.workflow;
+    const { workflows } = state.template;
+    const workflowIds = Object.keys(workflows);
+    const result: Record<string, { kindError?: string; nameError?: string }> = {};
+    if (workflows.length) {
+      const intl = getIntl();
+      for (const id of workflowIds) {
+        if (!workflows[id].kind) {
+          result[id] = {
+            ...result[id],
+            kindError: intl.formatMessage({
+              defaultMessage: 'The value must not be empty.',
+              id: 'JzvOUc',
+              description: 'Error message when the stage progressed without selecting kind.',
+            }),
+          };
+        }
+
+        if (validateName) {
+          const currentWorkflowNames = getCurrentWorkflowNames(
+            workflowIds.map((id) => ({ id, name: workflows[id].workflowName ?? '' })),
+            id
+          );
+          const nameError = await validateWorkflowName(workflows[id].workflowName, isConsumption, {
+            subscriptionId,
+            resourceGroupName,
+            existingWorkflowNames: [...existingWorkflowNames, ...currentWorkflowNames],
+          });
+          result[id] = {
+            ...result[id],
+            nameError,
+          };
+        }
+      }
+    }
+
+    return result;
   }
 );
 
