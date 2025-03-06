@@ -100,29 +100,19 @@ export const Group = ({
 
   const deleteButton = intl.formatMessage({
     defaultMessage: 'Delete',
-    id: 'bGtEPd',
+    id: '6c6b443ddf92',
     description: 'delete button',
   });
 
-  // const moveUpButton = intl.formatMessage({
-  //   defaultMessage: 'Move up',
-  //   description: 'Move up button',
-  // });
-
-  // const moveDownButton = intl.formatMessage({
-  //   defaultMessage: 'Move down',
-  //   description: 'Move down button',
-  // });
-
   const makeGroupButton = intl.formatMessage({
     defaultMessage: 'Make group',
-    id: 'J7PN35',
+    id: '27b3cddf9208',
     description: 'Make group button',
   });
 
   const unGroupButton = intl.formatMessage({
     defaultMessage: 'Ungroup',
-    id: 'OdNhwc',
+    id: '39d361c1c22f',
     description: 'Ungroup button',
   });
 
@@ -225,7 +215,7 @@ export const Group = ({
   const onRenderOverflowButton = (): JSX.Element => {
     const groupCommands = intl.formatMessage({
       defaultMessage: 'More commands',
-      id: 'GdGm4T',
+      id: '19d1a6e1321c',
       description: 'Label for commands in row',
     });
     return (
@@ -250,7 +240,7 @@ export const Group = ({
 
   const collapseLabel = intl.formatMessage({
     defaultMessage: 'Collapse',
-    id: 'BoMvF2',
+    id: '06832f176afd',
     description: 'Label for collapsing group',
   });
 
