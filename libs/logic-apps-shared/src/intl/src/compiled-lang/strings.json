@@ -123,20 +123,6 @@
       "value": "' has an non-terminating connection chain"
     }
   ],
-  "Xew1Df": [
-    {
-      "type": 0,
-      "value": "More diagnostic information: x-ms-client-request-id is '"
-    },
-    {
-      "type": 1,
-      "value": "clientRequestId"
-    },
-    {
-      "type": 0,
-      "value": "'."
-    }
-  ],
   "ms605d7266469a": [
     {
       "type": 0,

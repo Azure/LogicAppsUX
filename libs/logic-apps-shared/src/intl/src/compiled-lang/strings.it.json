@@ -123,20 +123,6 @@
       "value": "' ha una catena di connessione non fatale"
     }
   ],
-  "Xew1Df": [
-    {
-      "type": 0,
-      "value": "Altre informazioni di diagnostica: x-ms-client-request-id è '"
-    },
-    {
-      "type": 1,
-      "value": "clientRequestId"
-    },
-    {
-      "type": 0,
-      "value": "'."
-    }
-  ],
   "ms605d7266469a": [
     {
       "type": 0,

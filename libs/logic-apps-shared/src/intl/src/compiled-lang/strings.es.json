@@ -123,20 +123,6 @@
       "value": "' tiene una cadena de conexión que no termina"
     }
   ],
-  "Xew1Df": [
-    {
-      "type": 0,
-      "value": "Más información de diagnóstico: el valor de x-ms-client-request-id es \""
-    },
-    {
-      "type": 1,
-      "value": "clientRequestId"
-    },
-    {
-      "type": 0,
-      "value": "\"."
-    }
-  ],
   "ms605d7266469a": [
     {
       "type": 0,

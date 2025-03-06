@@ -123,20 +123,6 @@
       "value": "' memiliki rantai koneksi tanpa henti"
     }
   ],
-  "Xew1Df": [
-    {
-      "type": 0,
-      "value": "Informasi diagnostik lainnya: x-ms-client-request-id is '"
-    },
-    {
-      "type": 1,
-      "value": "clientRequestId"
-    },
-    {
-      "type": 0,
-      "value": "'."
-    }
-  ],
   "ms605d7266469a": [
     {
       "type": 0,

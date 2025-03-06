@@ -9,7 +9,6 @@
   "ms3c427e7b8f28": "Kesalahan saat memuat peta data",
   "ms51fbf99bd202": "Node skema ''{nodeName}'' memiliki rantai koneksi tanpa henti",
   "ms5d12be82d0da": "Fungsi ''{functionName}'' memiliki rantai koneksi tanpa henti",
-  "Xew1Df": "Informasi diagnostik lainnya: x-ms-client-request-id is ''{clientRequestId}''.",
   "ms605d7266469a": "chat-session-id:",
   "ms7415888d139d": "Skema tidak memiliki input yang diperlukan",
   "ms91f98b4d82b2": "''{functionName}'' fungsi tidak memiliki input yang diperlukan",

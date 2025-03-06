@@ -123,20 +123,6 @@
       "value": "\" tem uma cadeia de conexão de não encerramento"
     }
   ],
-  "Xew1Df": [
-    {
-      "type": 0,
-      "value": "Mais informações de diagnóstico: x-ms-client-request-id é \""
-    },
-    {
-      "type": 1,
-      "value": "clientRequestId"
-    },
-    {
-      "type": 0,
-      "value": "\"."
-    }
-  ],
   "ms605d7266469a": [
     {
       "type": 0,

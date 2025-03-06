@@ -9,7 +9,6 @@
   "ms3c427e7b8f28": "Error al cargar el mapa de datos",
   "ms51fbf99bd202": "El nodo de esquema ''{nodeName}'' tiene una cadena de conexión que no termina",
   "ms5d12be82d0da": "La función ''{functionName}'' tiene una cadena de conexión que no termina",
-  "Xew1Df": "Más información de diagnóstico: el valor de x-ms-client-request-id es \"{clientRequestId}\".",
   "ms605d7266469a": "Id. de sesión de chat:",
   "ms7415888d139d": "Faltan entradas necesarias en el esquema",
   "ms91f98b4d82b2": "Faltan entradas necesarias en la función ''{functionName}''",

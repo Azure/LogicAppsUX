@@ -123,20 +123,6 @@
       "value": "' に終端のない接続チェーンがあります"
     }
   ],
-  "Xew1Df": [
-    {
-      "type": 0,
-      "value": "詳細な診断情報: x-ms-client-request-id は '"
-    },
-    {
-      "type": 1,
-      "value": "clientRequestId"
-    },
-    {
-      "type": 0,
-      "value": "' です。"
-    }
-  ],
   "ms605d7266469a": [
     {
       "type": 0,

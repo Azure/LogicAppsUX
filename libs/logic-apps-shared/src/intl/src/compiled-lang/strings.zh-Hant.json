@@ -123,20 +123,6 @@
       "value": "' 有未終止的連線鏈結"
     }
   ],
-  "Xew1Df": [
-    {
-      "type": 0,
-      "value": "其他診斷資訊: x-ms-client-request-id 是 '"
-    },
-    {
-      "type": 1,
-      "value": "clientRequestId"
-    },
-    {
-      "type": 0,
-      "value": "'。"
-    }
-  ],
   "ms605d7266469a": [
     {
       "type": 0,

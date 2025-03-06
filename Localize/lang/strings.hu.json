@@ -9,7 +9,6 @@
   "ms3c427e7b8f28": "Hiba történt az adattérkép betöltésekor",
   "ms51fbf99bd202": "A(z) „{nodeName}” sémacsomópont nem megszakító kapcsolati lánccal rendelkezik",
   "ms5d12be82d0da": "A(z) „{functionName}” függvény nem megszakító kapcsolati lánccal rendelkezik",
-  "Xew1Df": "További diagnosztikai információ: az x-mS-client-request-id: „{clientRequestId}”.",
   "ms605d7266469a": "chat-session-id:",
   "ms7415888d139d": "A sémából hiányoznak a szükséges bemenetek",
   "ms91f98b4d82b2": "A(z) ''{functionName}'' függvény kötelező bemenetei hiányoznak",
