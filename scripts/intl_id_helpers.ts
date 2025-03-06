@@ -5,7 +5,7 @@ import crypto from 'crypto';
 export function generateHexId(defaultMessage, description) {
   const content = `${defaultMessage}#${description}`;
   const newId = crypto.createHash('sha512').update(content).digest('hex').slice(0, 12);
-  return newId;
+  return `ms${newId}`;
 }
 
 export function extractIntlMessages(str: string) {

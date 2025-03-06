@@ -62,7 +62,7 @@
         "formatjs/enforce-id": [
           "error",
           {
-            "idInterpolationPattern": "[sha512:contenthash:hex:12]"
+            "idInterpolationPattern": "ms[sha512:contenthash:hex:12]"
           }
         ],
         "formatjs/enforce-placeholders": [
