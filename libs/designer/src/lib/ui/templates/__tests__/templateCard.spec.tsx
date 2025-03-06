@@ -11,63 +11,68 @@ import React from 'react';
 describe('ui/templates/templatesDesigner', () => {
   let store: AppStore;
   let minimalStoreData: Partial<RootState>;
-  let template1Manifest: Template.Manifest;
-  let template2Manifest: Template.Manifest;
-  let template3Manifest: Template.Manifest;
+  let template1Manifest: Template.TemplateManifest;
+  let template2Manifest: Template.TemplateManifest;
+  let template3Manifest: Template.TemplateManifest;
 
   beforeAll(() => {
     template1Manifest = {
+      id: 'template1Manifest',
       title: 'Template 1',
-      description: 'Template 1 Description',
-      skus: ['standard'],
-      kinds: ['stateful'],
-      images: {},
-      details: {},
+      summary: 'Template 1 Description',
+      skus: ['standard', 'consumption'],
+      workflows: {
+        default: { name: 'default' },
+      },
+      details: {
+        By: '',
+        Type: '',
+        Category: '',
+      },
       artifacts: [
         {
-          type: 'workflow',
-          file: 'workflow.json',
+          type: 'description',
+          file: 'description.md',
         },
       ],
-      connections: {},
-      parameters: [],
     };
     template2Manifest = {
+      id: 'template2Manifest',
       title: 'Template 2',
-      description: 'Template 2 Description',
+      summary: 'Template 2 Description',
       skus: ['standard', 'consumption'],
-      kinds: ['stateful', 'stateless'],
-      images: {},
-      details: {},
+      workflows: {
+        default: { name: 'default' },
+      },
+      details: {
+        By: '',
+        Type: '',
+        Category: '',
+      },
       artifacts: [
         {
-          type: 'workflow',
-          file: 'workflow.json',
+          type: 'description',
+          file: 'description.md',
         },
       ],
-      connections: {},
-      parameters: [],
     };
     template3Manifest = {
-      title: 'Template 2',
-      description: 'Template 2 Description',
+      id: 'template3Manifest',
+      title: 'Template 3',
+      summary: 'Template 3 Description',
       skus: ['standard', 'consumption'],
-      kinds: ['stateful', 'stateless'],
-      images: {},
-      details: {},
+      workflows: {
+        default: { name: 'default' },
+      },
+      details: {
+        By: '',
+        Type: '',
+        Category: '',
+      },
       artifacts: [
         {
-          type: 'workflow',
-          file: 'workflow.json',
-        },
-      ],
-      connections: {},
-      parameters: [
-        {
-          name: 'param1',
-          displayName: 'param1',
-          type: 'object',
-          description: 'param1 description',
+          type: 'description',
+          file: 'description.md',
         },
       ],
     };
@@ -85,6 +90,7 @@ describe('ui/templates/templatesDesigner', () => {
           sortKey: 'a-to-z',
           connectors: undefined,
           detailFilters: {},
+          pageNum: 0,
         },
       },
     };
@@ -110,6 +116,7 @@ describe('ui/templates/templatesDesigner', () => {
           sortKey: 'a-to-z',
           connectors: undefined,
           detailFilters: {},
+          pageNum: 0,
         },
       },
     };
