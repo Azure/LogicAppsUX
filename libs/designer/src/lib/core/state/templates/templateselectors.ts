@@ -33,14 +33,6 @@ export const useWorkflowBasicsEditable = (workflowId: string) => {
   });
 };
 
-//TODO: remove this
-export const useDefaultWorkflowTemplate = (): WorkflowTemplateData => {
-  return useSelector((state: RootState) => {
-    const workflows = state.template.workflows ?? {};
-    return Object.values(workflows)[0];
-  });
-};
-
 export const useConnectionReferenceForKey = (key: string): ConnectionReference => {
   return useSelector((state: RootState) => {
     const connections = state.workflow.connections;

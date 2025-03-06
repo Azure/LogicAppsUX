@@ -24,7 +24,7 @@ const loadLocalTemplateFromResourcePath = async (resourcePath: string, artifactT
 
   return paths.length === 2
     ? (await import(`./../../../../../__mocks__/templates/${paths[0]}/${paths[1]}/${artifactType}.json`)).default
-    : (await import(`./../../../../../__mocks__/templates//${resourcePath}/${artifactType}.json`)).default;
+    : (await import(`./../../../../../__mocks__/templates/${resourcePath}/${artifactType}.json`)).default;
 };
 
 const localTemplateManifestPaths = ['BasicWorkflowOnly', 'SimpleConnectionParameter', 'SimpleAccelerator', 'SimpleParametersOnly'];
