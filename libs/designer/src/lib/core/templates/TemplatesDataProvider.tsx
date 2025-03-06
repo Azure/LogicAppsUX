@@ -16,7 +16,7 @@ import type { ConnectionReferences } from '../../common/models/workflow';
 import { getFilteredTemplates } from './utils/helper';
 import { initializeTemplateServices, reloadTemplates } from '../actions/bjsworkflow/templates';
 import { InitTemplateService, type Template } from '@microsoft/logic-apps-shared';
-import { setViewTemplateDetails } from '../state/templates/templateOptionsSlice';
+import { setEnableResourceSelection, setViewTemplateDetails } from '../state/templates/templateOptionsSlice';
 import { changeCurrentTemplateName } from '../state/templates/templateSlice';
 
 export interface TemplatesDataProviderProps {
@@ -29,6 +29,7 @@ export interface TemplatesDataProviderProps {
   viewTemplate?: Template.ViewTemplateDetails;
   children?: React.ReactNode;
   reload?: boolean;
+  enableResourceSelection?: boolean;
 }
 
 const DataProviderInner = ({ isConsumption, children, reload, services }: TemplatesDataProviderProps) => {
@@ -118,7 +119,11 @@ export const TemplatesDataProvider = (props: TemplatesDataProviderProps) => {
       dispatch(changeCurrentTemplateName(props.viewTemplate.id));
       dispatch(setViewTemplateDetails(props.viewTemplate));
     }
-  }, [dispatch, props.viewTemplate]);
+
+    if (props.enableResourceSelection) {
+      dispatch(setEnableResourceSelection(props.enableResourceSelection));
+    }
+  }, [dispatch, props.enableResourceSelection, props.viewTemplate]);
 
   if (!servicesInitialized) {
     return null;

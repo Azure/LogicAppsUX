@@ -30,3 +30,4 @@ export * from './lib/customcode';
 export * from './lib/tenant';
 export * from './lib/uiInteractionsService';
 export * from './lib/userpreference';
+export * from './lib/resource';

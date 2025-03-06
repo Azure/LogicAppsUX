@@ -2,7 +2,6 @@ import { ArgumentException } from '../../../utils/src';
 import { BaseTemplateService, type BaseTemplateServiceOptions } from '../base/template';
 
 interface StandardTemplateServiceOptions extends BaseTemplateServiceOptions {
-  baseUrl: string;
   appId?: string;
   apiVersions: {
     subscription: string;

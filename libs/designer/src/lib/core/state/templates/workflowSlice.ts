@@ -98,8 +98,28 @@ export const workflowSlice = createSlice({
         state.connections.mapping[connectionKeyInManifest] = connectionKey;
       }
     },
+    setSubscription: (state, action: PayloadAction<string>) => {
+      state.subscriptionId = action.payload;
+    },
+    setResourceGroup: (state, action: PayloadAction<string>) => {
+      state.resourceGroup = action.payload;
+    },
+    setLocation: (state, action: PayloadAction<string>) => {
+      state.location = action.payload;
+    },
+    setWorkflowAppName: (state, action: PayloadAction<string>) => {
+      state.workflowAppName = action.payload;
+    },
   },
 });
 
-export const { clearWorkflowDetails, setInitialData, changeConnectionMapping } = workflowSlice.actions;
+export const {
+  clearWorkflowDetails,
+  setInitialData,
+  changeConnectionMapping,
+  setSubscription,
+  setResourceGroup,
+  setLocation,
+  setWorkflowAppName,
+} = workflowSlice.actions;
 export default workflowSlice.reducer;
