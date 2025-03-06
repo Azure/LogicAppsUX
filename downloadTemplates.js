@@ -53,8 +53,6 @@ const downloadWorkflowManifest = async (path) => {
   }
 
   if (workflowManifest.images.light && workflowManifest.images.dark) {
-    await downloadFile(`${path}/${workflowManifest.images.light}.png`);
-    await downloadFile(`${path}/${workflowManifest.images.dark}.png`);
     workflowManifest.images = {
       light: `${baseURL}/${path}/${workflowManifest.images.light}.png`,
       dark: `${baseURL}/${path}/${workflowManifest.images.dark}.png`,
