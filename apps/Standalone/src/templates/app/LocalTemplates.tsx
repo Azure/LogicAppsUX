@@ -284,20 +284,13 @@ class LocalTemplateService extends StandardTemplateService {
     }
   };
 
-  public getTemplateManifest = async (templateId: string): Promise<Template.TemplateManifest> => {
+  public getResourceManifest = async (resourcePath: string): Promise<Template.TemplateManifest | Template.WorkflowManifest> => {
+    const templateId = resourcePath.split('/')[0];
     if (localTemplateManifestPaths.includes(templateId)) {
-      return loadLocalTemplateFromResourcePath(templateId);
+      return loadLocalTemplateFromResourcePath(resourcePath);
     }
 
-    return this._options.service.getTemplateManifest(templateId);
-  };
-
-  public getWorkflowManifest = async (templateId: string, workflowId: string): Promise<Template.WorkflowManifest> => {
-    if (localTemplateManifestPaths.includes(templateId)) {
-      return loadLocalTemplateFromResourcePath(`${templateId}/${workflowId}`);
-    }
-
-    return this._options.service.getWorkflowManifest(templateId, workflowId);
+    return this._options.service.getResourceManifest(resourcePath);
   };
 
   public getWorkflowDefinition = async (templateId: string, workflowId: string): Promise<LogicAppsV2.WorkflowDefinition> => {

@@ -161,9 +161,9 @@ export const reloadTemplates = createAsyncThunk('reloadTemplates', async ({ clea
 export const loadManifestsFromPaths = async (templateIds: string[]) => {
   try {
     const manifestPromises = templateIds.map(async (templateId) => {
-      return TemplateService().getTemplateManifest(templateId);
+      return TemplateService().getResourceManifest(templateId);
     });
-    const templateManifestsArray = await Promise.all(manifestPromises);
+    const templateManifestsArray = (await Promise.all(manifestPromises)) as Template.TemplateManifest[];
     return templateManifestsArray.reduce((result: Record<string, Template.TemplateManifest>, manifestFile: any, index: number) => {
       result[templateIds[index]] = manifestFile;
       return result;
@@ -231,7 +231,8 @@ const loadTemplateFromResourcePath = async (
   preloadedTemplateManifest: Template.TemplateManifest | undefined,
   viewTemplateData?: Template.ViewTemplateDetails
 ): Promise<TemplatePayload> => {
-  const templateManifest = preloadedTemplateManifest ?? (await TemplateService().getTemplateManifest(templateId));
+  const templateManifest =
+    preloadedTemplateManifest ?? ((await TemplateService().getResourceManifest(templateId)) as Template.TemplateManifest);
 
   const workflows = templateManifest.workflows;
   const isMultiWorkflow = isMultiWorkflowTemplate(templateManifest);
@@ -365,7 +366,7 @@ const loadWorkflowTemplate = async (
 };
 
 const getWorkflowAndManifest = async (templateId: string, workflowId: string) => {
-  const workflowManifest = await TemplateService().getWorkflowManifest(templateId, workflowId);
+  const workflowManifest = (await TemplateService().getResourceManifest(`${templateId}/${workflowId}`)) as Template.WorkflowManifest;
   const templateWorkflowDefinition = await TemplateService().getWorkflowDefinition(templateId, workflowId);
 
   return { workflowManifest, templateWorkflowDefinition };
