@@ -1,7 +1,53 @@
 {
   "name": "@microsoft/logicappsux",
   "version": "5.46.0",
-  "devDependencies": {
+  "engines": {
+    "node": ">=18",
+    "pnpm": ">=9"
+  },
+  "license": "MIT",
+  "lint-staged": {
+    "*.{js,ts,tsx}": [
+      "npm run extract",
+      "eslint --cache --fix",
+      "biome check --write"
+    ]
+  },
+  "private": true,
+  "scripts": {
+    "postinstall": "pnpm templates",
+    "build": "turbo run build",
+		"build:lib": "turbo run build:lib",
+    "build:extension": "turbo run build:extension",
+    "bump": "standard-version --no-verify",
+    "check": "biome check --write .",
+    "compile:loc": "formatjs compile-folder --ast --format ./format.js \"Localize/lang\" \"libs/logic-apps-shared/src/intl/compiled-lang/\" ",
+    "compile:loc:psuedo": "formatjs compile \"Localize/lang/strings.json\" --ast --format ./format.js --out-file \"libs/logic-apps-shared/src/intl/compiled-lang/strings.en-XA.json\" --pseudo-locale en-XA",
+    "e2e:setup": "playwright install --with-deps",
+    "extract": "formatjs extract \"libs/**/*.{ts,tsx}\" --ignore \"libs/**/*.{d,test,spec}.{ts,tsx}\" --out-file Localize/lang/strings.json --format ./format.js",
+    "generateArmToken": "az account get-access-token --tenant 72f988bf-86f1-41af-91ab-2d7cd011db47 > ./apps/Standalone/src/environments/jsonImport/armToken.json",
+    "prepare": "husky || true",
+    "publish": "turbo run build:lib && pnpm publish -r",
+    "scrub-secrets:e2e": "node ./scrub-e2e-trace.js",
+    "start": "turbo run dev",
+    "start:arm": "npm run generateArmToken && npm run start",
+    "start:e2e": "turbo run e2e",
+    "test:lib": "turbo run test:lib",
+    "test:e2e": "playwright test",
+    "test:e2e:ui": "playwright test --ui",
+    "test:extension-unit": "turbo run test:extension-unit",
+    "testgen": "playwright codegen https://localhost:4200",
+    "vscode:designer:pack": "turbo run vscode:designer:pack",
+    "templates": "ts-node downloadTemplates.js"
+  },
+  "type": "module",
+  "dependencies": {
+    "dotenv": "^16.4.5",
+    "find-process": "^1.4.7",
+    "fs-extra": "^11.2.0",
+    "ts-node": "^10.9.2"
+  },
+	"devDependencies": {
     "@biomejs/biome": "1.9.4",
     "@eslint/eslintrc": "^3.0.2",
     "@eslint/js": "^9.0.0",
@@ -60,51 +106,6 @@
     "vite-plugin-mkcert": "^1.17.5",
     "vite-plugin-node-polyfills": "^0.21.0",
     "vitest": "^2.1.2"
-  },
-  "engines": {
-    "node": ">=18",
-    "pnpm": ">=9"
-  },
-  "license": "MIT",
-  "lint-staged": {
-    "*.{js,ts,tsx}": [
-      "npm run extract",
-      "eslint --cache --fix",
-      "biome check --write"
-    ]
-  },
-  "private": true,
-  "scripts": {
-    "postinstall": "pnpm templates",
-    "build": "turbo run build",
-    "build:extension": "turbo run build:extension",
-    "bump": "standard-version --no-verify",
-    "check": "biome check --write .",
-    "compile:loc": "formatjs compile-folder --ast --format ./format.js \"Localize/lang\" \"libs/logic-apps-shared/src/intl/compiled-lang/\" ",
-    "compile:loc:psuedo": "formatjs compile \"Localize/lang/strings.json\" --ast --format ./format.js --out-file \"libs/logic-apps-shared/src/intl/compiled-lang/strings.en-XA.json\" --pseudo-locale en-XA",
-    "e2e:setup": "playwright install --with-deps",
-    "extract": "formatjs extract \"libs/**/*.{ts,tsx}\" --ignore \"libs/**/*.{d,test,spec}.{ts,tsx}\" --out-file Localize/lang/strings.json --format ./format.js",
-    "generateArmToken": "az account get-access-token --tenant 72f988bf-86f1-41af-91ab-2d7cd011db47 > ./apps/Standalone/src/environments/jsonImport/armToken.json",
-    "prepare": "husky || true",
-    "publish": "turbo run build:lib && pnpm publish -r",
-    "scrub-secrets:e2e": "node ./scrub-e2e-trace.js",
-    "start": "turbo run dev",
-    "start:arm": "npm run generateArmToken && npm run start",
-    "start:e2e": "turbo run e2e",
-    "test:lib": "turbo run test:lib",
-    "test:e2e": "playwright test",
-    "test:e2e:ui": "playwright test --ui",
-    "test:extension-unit": "turbo run test:extension-unit",
-    "testgen": "playwright codegen https://localhost:4200",
-    "vscode:designer:pack": "turbo run vscode:designer:pack",
-    "templates": "ts-node downloadTemplates.js"
-  },
-  "type": "module",
-  "dependencies": {
-    "dotenv": "^16.4.5",
-    "find-process": "^1.4.7",
-    "fs-extra": "^11.2.0",
-    "ts-node": "^10.9.2"
   },
   "pnpm": {
     "overrides": {
