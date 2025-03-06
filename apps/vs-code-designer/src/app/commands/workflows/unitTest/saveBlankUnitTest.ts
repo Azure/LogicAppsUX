@@ -19,6 +19,7 @@ import {
   selectWorkflowNode,
   processAndWriteMockableOperations,
   updateSolutionWithProject,
+  validateWorkflowNode,
 } from '../../../utils/unitTests';
 import { tryGetLogicAppProjectRoot } from '../../../utils/verifyIsProject';
 import { ensureDirectoryInWorkspace, getWorkflowNode, getWorkspaceFolder } from '../../../utils/workspace';
@@ -110,6 +111,12 @@ export async function saveBlankUnitTest(
       workflowNodePath: workflowNode ? workflowNode.fsPath : '',
     });
 
+    try {
+      validateWorkflowNode(projectPath, workflowNode);
+    } catch (error) {
+      vscode.window.showErrorMessage(localize('error.workflowValidation', 'Workflow validation failed: {0}', error.message));
+      return;
+    }
     const workflowName = path.basename(path.dirname(workflowNode.fsPath));
 
     // Prompt for unit test name

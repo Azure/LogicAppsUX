@@ -1272,3 +1272,51 @@ export async function updateSolutionWithProject(testsDirectory: string, logicApp
     vscode.window.showErrorMessage(`Error updating solution: ${err}`);
   }
 }
+
+/**
+ * Validates that the workflow file belongs to the expected project folder.
+ * Logs telemetry if the workflow is not within the project folder and throws an error.
+ * @param projectPath - The absolute file system path of the project.
+ * @param workflowUri - The vscode.Uri of the workflow file (e.g. a workflow.json in a workflow folder).
+ * @param telemetryContext - (Optional) The telemetry or action context for logging events.
+ * @throws {Error} Throws an error if the workflow file is not inside the project folder.
+ */
+export function validateWorkflowNode(projectPath: string, workflowUri: vscode.Uri, telemetryContext?: any): void {
+  const workflowFilePath = workflowUri.fsPath || workflowUri.path;
+  if (!workflowFilePath) {
+    if (telemetryContext) {
+      logTelemetry(telemetryContext, {
+        validationError: 'invalidWorkflowUri',
+      });
+    }
+    throw new Error(localize('error.invalidWorkflowUri', 'Unable to determine the file system path from the provided workflow URI.'));
+  }
+
+  // Normalize both paths for fair comparison.
+  const normalizedProjectPath = path.normalize(projectPath).toLowerCase();
+  const normalizedWorkflowPath = path.normalize(workflowFilePath).toLowerCase();
+
+  // Use path.relative to determine if the workflow path is inside the project folder.
+  const relativePath = path.relative(normalizedProjectPath, normalizedWorkflowPath);
+
+  // If 'relativePath' suggests the file is outside of 'projectPath'...
+  if (relativePath.startsWith('..') || path.isAbsolute(relativePath)) {
+    // Log telemetry if provided.
+    if (telemetryContext) {
+      logTelemetry(telemetryContext, {
+        validationError: 'wrongWorkspace',
+        expectedProjectPath: normalizedProjectPath,
+        actualWorkflowPath: normalizedWorkflowPath,
+      });
+    }
+    throw new Error(
+      localize(
+        'error.wrongWorkspace',
+        // Insert paths into the final message
+        "The Logic Apps Standard workflow {0} doesn't belong to the Logic Apps Standard Project {1}. Please select the correct Logic Apps Standard project and try again.",
+        normalizedWorkflowPath,
+        normalizedProjectPath
+      )
+    );
+  }
+}
