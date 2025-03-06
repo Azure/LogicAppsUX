@@ -34,7 +34,7 @@ export const CollapsedCard: React.FC<CollapsedCardProps> = memo(
     const actionString = intl.formatMessage(
       {
         defaultMessage: '+ {actionCount}',
-        id: 'nCvjDp',
+        id: '9c2be30e9e99',
         description: 'Displays the collapsed action count with a plus sign',
       },
       { actionCount }
@@ -44,7 +44,7 @@ export const CollapsedCard: React.FC<CollapsedCardProps> = memo(
       {
         defaultMessage:
           '{actionCount, plural, one {Collapsed card with # action} =0 {Collapsed card with 0 Actions} other {Collapsed card with # actions}}',
-        id: 'NNCFBV',
+        id: '34d085055f26',
         description: 'Accessibility label for collapsed card with action count',
       },
       { actionCount: actionCount + 3 }
@@ -52,7 +52,7 @@ export const CollapsedCard: React.FC<CollapsedCardProps> = memo(
 
     const expandingString = intl.formatMessage({
       defaultMessage: 'Expanding actions...',
-      id: 'LuIkbo',
+      id: '2ee2246e80db',
       description: 'This is the text that is displayed when the user is expanding collapsed actions',
     });
 

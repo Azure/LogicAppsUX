@@ -27,27 +27,27 @@ export const ManagedConnections: React.FC = () => {
   const intlText = {
     DEPLOY_MANAGED_CONNECTIONS: intl.formatMessage({
       defaultMessage: 'Deploy managed connections',
-      id: 'tyEqTO',
+      id: 'b7212a4ceb3a',
       description: 'Deploy managed connections text',
     }),
     MANAGED_CONNECTIONS: intl.formatMessage({
       defaultMessage: 'Deploy managed connections (recommended only for preproduction environments)',
-      id: 'UHWTjU',
+      id: '5075938d48be',
       description: 'Deploy managed connections warning text',
     }),
     SELECT_OPTION: intl.formatMessage({
       defaultMessage: 'Select an option',
-      id: '//Icb/',
+      id: 'fff21c6ff1c2',
       description: 'Select an option placeholder',
     }),
     RESOURCE_GROUP: intl.formatMessage({
       defaultMessage: 'Resource group',
-      id: 'UKCoay',
+      id: '50a0a86b266f',
       description: 'Resource group title',
     }),
     SEARCH_RESOURCE_GROUP: intl.formatMessage({
       defaultMessage: 'Find and select resource group',
-      id: 'xJv0H1',
+      id: 'c49bf41f5a30',
       description: 'Find and select resource group text',
     }),
   };

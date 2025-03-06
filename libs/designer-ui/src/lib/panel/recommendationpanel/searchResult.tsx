@@ -90,7 +90,7 @@ export const SearchResultsGrid: React.FC<PropsWithChildren<SearchResultsGridProp
   const noResultsText = intl.formatMessage(
     {
       defaultMessage: 'No results found for {searchTermBeingSearchedFor_DO_NOT_TRANSLATE}',
-      id: '4hlqgK',
+      id: 'e2196a80a4f3',
       description: 'Text to show when there are no search results',
     },
     {
@@ -100,19 +100,19 @@ export const SearchResultsGrid: React.FC<PropsWithChildren<SearchResultsGridProp
 
   const loadingText = intl.formatMessage({
     defaultMessage: 'Loading more results...',
-    id: 'AoalgS',
+    id: '0286a5812d90',
     description: 'Message to show when loading search results',
   });
 
   const connectorText = intl.formatMessage({
     defaultMessage: 'connector',
-    id: 'lk/Qic',
+    id: '964fd089c5b3',
     description: 'Connector text',
   });
 
   const actionText = intl.formatMessage({
     defaultMessage: 'action',
-    id: 'D89UXR',
+    id: '0fcf545d142a',
     description: 'Action text',
   });
 

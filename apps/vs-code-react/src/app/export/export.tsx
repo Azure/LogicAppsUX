@@ -14,7 +14,7 @@ export const ExportApp: React.FC = () => {
   const intlText = {
     EXPORT_LOGIC_APP: intl.formatMessage({
       defaultMessage: 'Export logic app',
-      id: 'idw/7j',
+      id: '89dc3fee36fc',
       description: 'Export logic app text.',
     }),
   };

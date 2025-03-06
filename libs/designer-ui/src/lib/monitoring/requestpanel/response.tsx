@@ -16,22 +16,22 @@ export const Response: React.FC<ResponseProps> = ({ response }) => {
   const Resources = {
     REQUEST_HISTORY_LABEL_BODY_TEXT: intl.formatMessage({
       defaultMessage: 'Body',
-      id: '/I/U8L',
+      id: 'fc8fd4f0b786',
       description: 'Label text for request or response body',
     }),
     REQUEST_HISTORY_LABEL_HEADERS_TEXT: intl.formatMessage({
       defaultMessage: 'Headers',
-      id: 'p16/4S',
+      id: 'a75ebfe122d4',
       description: 'Label text for request or response headers',
     }),
     REQUEST_HISTORY_LABEL_RESPONSE_TEXT: intl.formatMessage({
       defaultMessage: 'Response',
-      id: 'ERAWZA',
+      id: '11101664095b',
       description: 'Header text for response',
     }),
     REQUEST_HISTORY_LABEL_STATUS_CODE_TEXT: intl.formatMessage({
       defaultMessage: 'Status code',
-      id: '7k9jXx',
+      id: 'ee4f635f1089',
       description: 'Label text for response status code',
     }),
   };

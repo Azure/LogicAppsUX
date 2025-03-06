@@ -44,12 +44,12 @@ export const TemplatesFilterDropdown = ({
   const intlText = {
     ALL: intl.formatMessage({
       defaultMessage: 'All',
-      id: 'eaEXYa',
+      id: '79a11761a5fb',
       description: 'Checkbox text for the filter representing all items',
     }),
     SEARCH: intl.formatMessage({
       defaultMessage: 'Search',
-      id: '6DZp5H',
+      id: 'e83669e476d6',
       description: 'Placeholder text for search connectors',
     }),
   };

@@ -18,17 +18,17 @@ export const SummaryPanel = ({ workflowId }: { workflowId: string }) => {
   const detailsTags: Record<string, string> = {
     Type: intl.formatMessage({
       defaultMessage: 'Solution type',
-      id: 'JVNRly',
+      id: '25535197234c',
       description: 'Solution type of the template',
     }),
     Trigger: intl.formatMessage({
       defaultMessage: 'Trigger type',
-      id: 'DcJBUx',
+      id: '0dc2415314b4',
       description: 'Type of the trigger in the template',
     }),
     By: intl.formatMessage({
       defaultMessage: 'Published by',
-      id: 'n+sJ5W',
+      id: '9feb09e565de',
       description: 'Name of the organization that published this template',
     }),
   };
@@ -40,12 +40,12 @@ export const SummaryPanel = ({ workflowId }: { workflowId: string }) => {
           {templateHasConnections
             ? intl.formatMessage({
                 defaultMessage: 'Connections included in this template',
-                id: 'TnwRGo',
+                id: '4e7c111a85cd',
                 description: 'Title for the connections section in the template overview tab',
               })
             : intl.formatMessage({
                 defaultMessage: 'No connections are needed in this template',
-                id: 'j2v8BE',
+                id: '8f6bfc0442f1',
                 description: 'Text to show no connections present in the template.',
               })}
         </Text>
@@ -56,7 +56,7 @@ export const SummaryPanel = ({ workflowId }: { workflowId: string }) => {
           <Text className="msla-template-overview-section-title">
             {intl.formatMessage({
               defaultMessage: 'Prerequisites',
-              id: 'Jk2B0i',
+              id: '264d81d2208f',
               description: 'Title for the prerequisites section in the template overview tab',
             })}
           </Text>
@@ -69,7 +69,7 @@ export const SummaryPanel = ({ workflowId }: { workflowId: string }) => {
         <Text className="msla-template-overview-section-title">
           {intl.formatMessage({
             defaultMessage: 'Details',
-            id: 'ocW+RF',
+            id: 'a1c5be445f45',
             description: 'Title for the details section in the template overview tab',
           })}
         </Text>
@@ -83,7 +83,7 @@ export const SummaryPanel = ({ workflowId }: { workflowId: string }) => {
             <Text className="msla-template-overview-section-detailkey">
               {intl.formatMessage({
                 defaultMessage: 'Source code',
-                id: 'UTkcyf',
+                id: '51391cc9f679',
                 description: 'Source code of the template',
               })}
               :
@@ -108,7 +108,7 @@ export const SummaryPanel = ({ workflowId }: { workflowId: string }) => {
           <Text className="msla-template-overview-section-title">
             {intl.formatMessage({
               defaultMessage: 'Tags',
-              id: 'X02GGK',
+              id: '5f4d8618a025',
               description: 'Title for the tags section in the template overview tab',
             })}
           </Text>
@@ -136,7 +136,7 @@ export const summaryTab = (
   id: constants.TEMPLATE_PANEL_TAB_NAMES.OVERVIEW,
   title: intl.formatMessage({
     defaultMessage: 'Summary',
-    id: 'mgD2ZT',
+    id: '9a00f6653ff7',
     description: 'The tab label for the monitoring parameters tab on the operation panel',
   }),
   hasError: false,
@@ -144,7 +144,7 @@ export const summaryTab = (
   footerContent: {
     primaryButtonText: intl.formatMessage({
       defaultMessage: 'Use this template',
-      id: '5szzYP',
+      id: 'e6ccf360ff97',
       description: 'Button text to create workflow from this template',
     }),
     primaryButtonOnClick: () => {
@@ -158,7 +158,7 @@ export const summaryTab = (
     },
     secondaryButtonText: intl.formatMessage({
       defaultMessage: 'Close',
-      id: 'FTrMxN',
+      id: '153accc4d1cf',
       description: 'Button text for closing the panel',
     }),
     secondaryButtonOnClick: () => {

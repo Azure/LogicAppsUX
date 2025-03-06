@@ -20,42 +20,42 @@ export const AdvancedOptions: React.FC = () => {
   const intlText = {
     ADVANCED_OPTIONS: intl.formatMessage({
       defaultMessage: 'Advanced options',
-      id: 'AANqXs',
+      id: '00036a5ece19',
       description: 'Advanced options title',
     }),
     EXPORT_CONNECTION: intl.formatMessage({
       defaultMessage: 'Export connection credentials',
-      id: 'IasIBo',
+      id: '21ab0806836a',
       description: 'Export connection credentials title',
     }),
     EXPORT_CONNECTION_DESCRIPTION: intl.formatMessage({
       defaultMessage: 'Export the connection credentials for each application',
-      id: 'qMrEa5',
+      id: 'a8cac46b9cb3',
       description: 'Export the connection credentials for each application description',
     }),
     OFF: intl.formatMessage({
       defaultMessage: 'Off',
-      id: 'nwlaY0',
+      id: '9f095a634ecc',
       description: 'Off text',
     }),
     CLONE_CONNECTIONS: intl.formatMessage({
       defaultMessage: 'Clone connections credentials',
-      id: 'Okr6Rk',
+      id: '3a4afa464d6f',
       description: 'Clone connections text',
     }),
     GENERATE_INFRAESTRUCTURE: intl.formatMessage({
       defaultMessage: 'Generate infrastructure templates',
-      id: '1ilzLi',
+      id: 'd629732e26fc',
       description: 'Generate infrastructure templates',
     }),
     INTEGRATION_ACCOUNT_SOURCE: intl.formatMessage({
       defaultMessage: 'Default to integration account as source for transformations and schema validation',
-      id: 'Wr+bL6',
+      id: '5abf9b2fa28d',
       description: 'Default to integration account as source for transformations and schema validation',
     }),
     EXPORT_CUSTOM_API_ACTIONS_TO_API_MANAGEMENT_ACTIONS: intl.formatMessage({
       defaultMessage: 'Export custom connector actions as API Management actions',
-      id: 'KMOkYN',
+      id: '28c3a460d1ce',
       description: 'Export custom connector actions as API Management actions',
     }),
   };

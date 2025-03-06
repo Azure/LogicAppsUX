@@ -22,15 +22,15 @@ const getDefaultRuntimeCategories = (intl: IntlShape): OperationRuntimeCategory[
   return [
     {
       key: 'inapp',
-      text: intl.formatMessage({ defaultMessage: 'In-app', id: 'Wc77aJ', description: 'Filter by In App category of connectors' }),
+      text: intl.formatMessage({ defaultMessage: 'In-app', id: '59cefb6898fb', description: 'Filter by In App category of connectors' }),
     },
     {
       key: 'shared',
-      text: intl.formatMessage({ defaultMessage: 'Shared', id: '00xlpa', description: 'Filter by Shared category of connectors' }),
+      text: intl.formatMessage({ defaultMessage: 'Shared', id: 'd34c65a5a8ad', description: 'Filter by Shared category of connectors' }),
     },
     {
       key: 'custom',
-      text: intl.formatMessage({ defaultMessage: 'Custom', id: 'byTBrn', description: 'Filter by Custom category of connectors' }),
+      text: intl.formatMessage({ defaultMessage: 'Custom', id: '6f24c1ae73da', description: 'Filter by Custom category of connectors' }),
     },
   ];
 };
@@ -60,7 +60,7 @@ export const OperationSearchHeader = (props: OperationSearchHeaderProps) => {
     ? [
         {
           key: 'actionType-triggers',
-          text: intl.formatMessage({ defaultMessage: 'Triggers', id: 'piaRy6', description: 'Filter by Triggers category of connectors' }),
+          text: intl.formatMessage({ defaultMessage: 'Triggers', id: 'a62691cba900', description: 'Filter by Triggers category of connectors' }),
           value: 'triggers',
         },
       ]
@@ -72,14 +72,14 @@ export const OperationSearchHeader = (props: OperationSearchHeaderProps) => {
         },
         {
           key: 'actionType-actions',
-          text: intl.formatMessage({ defaultMessage: 'Actions', id: 'bG9rjv', description: 'Filter by Actions category of connectors' }),
+          text: intl.formatMessage({ defaultMessage: 'Actions', id: '6c6f6b8ef65b', description: 'Filter by Actions category of connectors' }),
           value: 'actions',
         },
       ];
 
   const groupByConnectorLabelText = intl.formatMessage({
     defaultMessage: 'Group by Connector',
-    id: 'U3guPp',
+    id: '53782e3e94d0',
     description: 'Label for the checkbox to group results by connector',
   });
 
@@ -106,13 +106,13 @@ export const OperationSearchHeader = (props: OperationSearchHeaderProps) => {
 
   const runtimeText = intl.formatMessage({
     defaultMessage: 'Runtime',
-    id: 'g5A6Bn',
+    id: '83903a06711c',
     description: 'Filter by label',
   });
 
   const actionTypeText = intl.formatMessage({
     defaultMessage: 'Action type',
-    id: 'jvVVTG',
+    id: '8ef5554c639a',
     description: 'Filter by label',
   });
 
@@ -131,7 +131,7 @@ export const OperationSearchHeader = (props: OperationSearchHeaderProps) => {
                     ? runtimeFilters?.find((data) => data.value === filters['runtime'])?.text
                     : intl.formatMessage({
                         defaultMessage: 'Select a runtime',
-                        id: 'uc3ytS',
+                        id: 'b9cdf2b52c09',
                         description: 'Select a runtime placeholder',
                       })
                 }
@@ -157,7 +157,7 @@ export const OperationSearchHeader = (props: OperationSearchHeaderProps) => {
                     ? actionTypeFilters?.find((data) => data.value === filters['actionType'])?.text
                     : intl.formatMessage({
                         defaultMessage: 'Select an action type',
-                        id: 'lsKVU6',
+                        id: '96c29553a4db',
                         description: 'Select an action type placeholder',
                       })
                 }

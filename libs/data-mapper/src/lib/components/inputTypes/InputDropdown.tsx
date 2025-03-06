@@ -93,31 +93,31 @@ export const InputDropdown = (props: InputDropdownProps) => {
 
   const customValueSchemaNodeTypeMismatchLoc = intl.formatMessage({
     defaultMessage: `Warning: custom value does not match the schema node's type`,
-    id: 'sRpETS',
+    id: 'b11a444d2d42',
     description: 'Warning message for when custom value does not match schema node type',
   });
 
   const customValueAllowedTypesMismatchLoc = intl.formatMessage({
     defaultMessage: 'Warning: custom value does not match one of the allowed types for this input',
-    id: 'BCgiRh',
+    id: '0428224619b4',
     description: `Warning message for when custom value does not match one of the function node input's allowed types`,
   });
 
   const nodeTypeSchemaNodeTypeMismatchLoc = intl.formatMessage({
     defaultMessage: `Warning: input node type does not match the schema node's type`,
-    id: '+0H8Or',
+    id: 'fb41fc3ab4c6',
     description: 'Warning message for when input node type does not match schema node type',
   });
 
   const nodeTypeAllowedTypesMismatchLoc = intl.formatMessage({
     defaultMessage: 'Warning: input node type does not match one of the allowed types for this input.',
-    id: 'yNtBUV',
+    id: 'c8db415158c0',
     description: `Warning message for when input node type does not match one of the function node input's allowed types`,
   });
 
   const customValueLoc = intl.formatMessage({
     defaultMessage: '(Custom value)',
-    id: 'WgChTm',
+    id: '5a00a14e60b8',
     description: 'Suffix for a custom value drop down value.',
   });
 
@@ -320,7 +320,7 @@ export const InputDropdown = (props: InputDropdownProps) => {
                 conversionMessage = intl.formatMessage(
                   {
                     defaultMessage: ' Try using a Conversion function such as: {conversionFunctions}',
-                    id: 'ur3P27',
+                    id: 'babdcfdbbea6',
                     description: 'Suggest to the user to try a conversion function instead',
                   },
                   {
@@ -411,13 +411,13 @@ const DataTypeLabel = (props: DataTypeLabelProps) => {
 
   const numericalMessage = intl.formatMessage({
     defaultMessage: `Accepts 'Number', 'Integer', and 'Decimal' types.`,
-    id: 'CyT8H7',
+    id: '0b24fc1fb838',
     description: 'Explains that numerical type allows three different number types',
   });
   const dataTypeMessage = intl.formatMessage(
     {
       defaultMessage: 'Accepted data types: {type}',
-      id: 'J5TTF6',
+      id: '2794d317a7a8',
       description: 'Explains that numerical type allows three different number types',
     },
     {

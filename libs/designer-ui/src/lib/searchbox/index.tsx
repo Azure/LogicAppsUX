@@ -14,7 +14,7 @@ export const DesignerSearchBox: React.FC<SearchBoxProps> = (props) => {
   const intl = getIntl();
   const placeholder = intl.formatMessage({
     defaultMessage: 'Search',
-    id: 'c2XklE',
+    id: '7365e4944d1e',
     description: 'Placeholder text for Operation/Connector search bar',
   });
 

@@ -95,17 +95,17 @@ export const BlockFormatDropDown = ({ editor, blockType, disabled = false }: Blo
   };
 
   const TextNames = {
-    paragraphText: intl.formatMessage({ defaultMessage: 'Normal', id: 'lhL/KL', description: 'Normal text' }),
-    h1Text: intl.formatMessage({ defaultMessage: 'Heading 1', id: 'Ttc0SM', description: 'Heading 1 text' }),
-    h2Text: intl.formatMessage({ defaultMessage: 'Heading 2', id: 'SGnTpt', description: 'Heading 2 text' }),
-    h3Text: intl.formatMessage({ defaultMessage: 'Heading 3', id: 'P+7G62', description: 'Heading 3 text' }),
-    bulletListText: intl.formatMessage({ defaultMessage: 'Bullet list', id: 'wG8fwz', description: 'Bullet List text' }),
-    numberListText: intl.formatMessage({ defaultMessage: 'Numbered list', id: 'bg00eY', description: 'Numbered List text' }),
+    paragraphText: intl.formatMessage({ defaultMessage: 'Normal', id: '9612ff28b11a', description: 'Normal text' }),
+    h1Text: intl.formatMessage({ defaultMessage: 'Heading 1', id: '4ed73448c2db', description: 'Heading 1 text' }),
+    h2Text: intl.formatMessage({ defaultMessage: 'Heading 2', id: '4869d3a6dcd0', description: 'Heading 2 text' }),
+    h3Text: intl.formatMessage({ defaultMessage: 'Heading 3', id: '3feec6eb6016', description: 'Heading 3 text' }),
+    bulletListText: intl.formatMessage({ defaultMessage: 'Bullet list', id: 'c06f1fc33491', description: 'Bullet List text' }),
+    numberListText: intl.formatMessage({ defaultMessage: 'Numbered list', id: '6e0d34798e92', description: 'Numbered List text' }),
   };
 
   const altTextForChevronDown = intl.formatMessage({
     defaultMessage: 'Alt text for down chevron',
-    id: '+Uvo/p',
+    id: 'f94be8fe96cd',
     description: 'Alt text for down chevron',
   });
 

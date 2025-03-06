@@ -22,28 +22,28 @@ export const DataHandling = ({
   const intl = useIntl();
   const dataHandlingTitle = intl.formatMessage({
     defaultMessage: 'Data handling',
-    id: 'z/vIwi',
+    id: 'cffbc8c227d8',
     description: 'title for data handling setting section',
   });
   const requestSchemaValidationLabelText = intl.formatMessage({
     defaultMessage: 'Schema validation',
-    id: 'Valy81',
+    id: '55a972f355b7',
     description: 'A label for the schema validation setting',
   });
   const requestSchemaValidationLabelTooltip = intl.formatMessage({
     defaultMessage: 'Validate request body against the schema provided. In case there is a mismatch, HTTP 400 will be returned',
-    id: 'lsH37F',
+    id: '96c1f7ec55cc',
     description: 'tool tip explaining what schema validation setting does',
   });
   const automaticDecompressionLabelText = intl.formatMessage({
     defaultMessage: 'Automatic decompression',
-    id: 'YC56Tr',
+    id: '602e7a4eb852',
     description: 'A label for the automatic decompression setting',
   });
   const automaticDecompressionLabelTooltip = intl.formatMessage({
     defaultMessage:
       'Decompress the request body if it is compressed using GZip or Deflate. This setting is only applicable for HTTP trigger',
-    id: 'PqUAbF',
+    id: '3ea5006c5968',
     description: 'tool tip explaining what automatic decompression setting does',
   });
 

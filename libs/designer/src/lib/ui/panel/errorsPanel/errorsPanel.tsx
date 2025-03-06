@@ -23,7 +23,7 @@ export const ErrorsPanel = (props: CommonPanelProps) => {
 
   const errorsPanelHeader = intl.formatMessage({
     defaultMessage: 'Flow Checker',
-    id: 'M0bbZk',
+    id: '3346db6641ba',
     description: 'Header for the errors panel',
   });
 
@@ -32,7 +32,7 @@ export const ErrorsPanel = (props: CommonPanelProps) => {
     id: constants.ERRORS_PANEL_TAB_NAMES.ERRORS,
     title: intl.formatMessage({
       defaultMessage: 'Errors',
-      id: '5WTRY8',
+      id: 'e564d163cb66',
       description: 'The tab label for the errors tab on the errors panel',
     }),
     visible: true,
@@ -45,7 +45,7 @@ export const ErrorsPanel = (props: CommonPanelProps) => {
     id: constants.ERRORS_PANEL_TAB_NAMES.WARNINGS,
     title: intl.formatMessage({
       defaultMessage: 'Warnings',
-      id: 'hLOIwp',
+      id: '84b388c2953b',
       description: 'The tab label for the warnings tab on the errors panel',
     }),
     visible: true,
@@ -55,7 +55,7 @@ export const ErrorsPanel = (props: CommonPanelProps) => {
 
   const closeButtonAriaLabel = intl.formatMessage({
     defaultMessage: 'Close panel',
-    id: 'ho2D6F',
+    id: '868d83e852ee',
     description: 'Close panel',
   });
 

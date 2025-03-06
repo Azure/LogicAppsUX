@@ -114,13 +114,13 @@ export const TokenPickerButton = ({
 
   const dynamicContentButtonText = intl.formatMessage({
     defaultMessage: `Enter the data from previous step. You can also add data by typing the '/' character.`,
-    id: 'p1IEXb',
+    id: 'a752045dbc40',
     description: 'Label for button to open dynamic content token picker',
   });
 
   const expressionButtonText = intl.formatMessage({
     defaultMessage: `Insert expression (you can also add by typing '/' in the editor)`,
-    id: '9V2Uwf',
+    id: 'f55d94c1f85a',
     description: 'Label for button to open expression token picker',
   });
 

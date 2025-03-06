@@ -46,13 +46,13 @@ export const AddActionCard: React.FC<AddActionCardProps> = ({ addCardType, onCli
 
   const triggerTitle = intl.formatMessage({
     defaultMessage: 'Add a trigger',
-    id: 'q1gfIs',
+    id: 'ab581f22c1d8',
     description: 'Text on example trigger node',
   });
 
   const actionTitle = intl.formatMessage({
     defaultMessage: 'Add an action',
-    id: '7ZR1xr',
+    id: 'ed9475c6b2d6',
     description: 'Text on example action node',
   });
 
@@ -60,25 +60,25 @@ export const AddActionCard: React.FC<AddActionCardProps> = ({ addCardType, onCli
 
   const triggerTooltipHeading = intl.formatMessage({
     defaultMessage: 'Triggers',
-    id: '3GINhd',
+    id: 'dc620d85d67a',
     description: 'Heading for a tooltip explaining Triggers',
   });
 
   const triggerTooltipBody = intl.formatMessage({
     defaultMessage: 'Triggers tell your app when to start running. Each workflow needs at least one trigger.',
-    id: 'VbMYd8',
+    id: '55b31877cffb',
     description: 'Description of what Triggers are, on a tooltip about Triggers',
   });
 
   const actionTooltipHeading = intl.formatMessage({
     defaultMessage: 'Actions',
-    id: 'MYgKHu',
+    id: '31880a1eec0b',
     description: 'Heading for a tooltip explaining Actions',
   });
 
   const actionTooltipBody = intl.formatMessage({
     defaultMessage: 'Actions perform operations on data, communicate between systems, or run other tasks.',
-    id: '1dlfUe',
+    id: 'd5d95f51e671',
     description: 'Description of what Actions are, on a tooltip about Actions',
   });
 

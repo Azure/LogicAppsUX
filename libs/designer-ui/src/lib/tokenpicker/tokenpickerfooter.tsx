@@ -65,27 +65,27 @@ export function TokenPickerFooter({
 
   const tokenPickerAdd = intl.formatMessage({
     defaultMessage: 'Add',
-    id: '9atGYe',
+    id: 'f5ab4661e396',
     description: 'Insert Expression',
   });
   const tokenPickerUpdate = intl.formatMessage({
     defaultMessage: 'Update',
-    id: 'dOpdsP',
+    id: '74ea5db0f737',
     description: 'Update Expression',
   });
   const invalidExpression = intl.formatMessage({
     defaultMessage: 'The expression is invalid.',
-    id: 't9RwOi',
+    id: 'b7d4703a2b66',
     description: 'Invalid expression alert',
   });
   const invalidExpressionFixWithCopilot = intl.formatMessage({
     defaultMessage: 'This expression has a problem. You can fix it manually or with Copilot.',
-    id: 'QbVD0F',
+    id: '41b543d057a2',
     description: 'Invalid expression alert with option to fix with copilot.',
   });
   const invalidExpressionQuotations = intl.formatMessage({
     defaultMessage: 'The expression is invalid. Make sure to use single quotes.',
-    id: 'H9CZTr',
+    id: '1fd0994ebc33',
     description: 'Invalid expression due to misused double quotes',
   });
 

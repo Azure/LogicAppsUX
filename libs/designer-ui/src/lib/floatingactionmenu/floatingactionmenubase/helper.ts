@@ -11,7 +11,7 @@ export function getMenuItemsForDynamicAddedParameters(supportedTypes: string[]):
     const type = DynamicallyAddedParameterType.Text;
     menuItems.push({
       type,
-      label: intl.formatMessage({ defaultMessage: 'Text', id: '9YZ873', description: 'Label for Text type dynamically added parameter' }),
+      label: intl.formatMessage({ defaultMessage: 'Text', id: 'f5867cef7730', description: 'Label for Text type dynamically added parameter' }),
       icon: getIconForDynamicallyAddedParameterType(type),
     });
   }
@@ -20,7 +20,7 @@ export function getMenuItemsForDynamicAddedParameters(supportedTypes: string[]):
     const type = DynamicallyAddedParameterType.Boolean;
     menuItems.push({
       type,
-      label: intl.formatMessage({ defaultMessage: 'Yes/No', id: 'nOhve4', description: 'Label for Bool type dynamically added parameter' }),
+      label: intl.formatMessage({ defaultMessage: 'Yes/No', id: '9ce86f7b8116', description: 'Label for Bool type dynamically added parameter' }),
       icon: getIconForDynamicallyAddedParameterType(type),
     });
   }
@@ -29,7 +29,7 @@ export function getMenuItemsForDynamicAddedParameters(supportedTypes: string[]):
     const type = DynamicallyAddedParameterType.File;
     menuItems.push({
       type,
-      label: intl.formatMessage({ defaultMessage: 'File', id: '90o7sB', description: 'Label for File type dynamically added parameter' }),
+      label: intl.formatMessage({ defaultMessage: 'File', id: 'f74a3bb016ab', description: 'Label for File type dynamically added parameter' }),
       icon: getIconForDynamicallyAddedParameterType(type),
     });
   }
@@ -40,7 +40,7 @@ export function getMenuItemsForDynamicAddedParameters(supportedTypes: string[]):
       type,
       label: intl.formatMessage({
         defaultMessage: 'Email',
-        id: 'gfBWfH',
+        id: '81f0567c7b8e',
         description: 'Label for Email type dynamically added parameter',
       }),
       icon: getIconForDynamicallyAddedParameterType(type),
@@ -53,7 +53,7 @@ export function getMenuItemsForDynamicAddedParameters(supportedTypes: string[]):
       type,
       label: intl.formatMessage({
         defaultMessage: 'Number',
-        id: 'h+W3VW',
+        id: '87e5b755692f',
         description: 'Label for Number type dynamically added parameter',
       }),
       icon: getIconForDynamicallyAddedParameterType(type),
@@ -66,7 +66,7 @@ export function getMenuItemsForDynamicAddedParameters(supportedTypes: string[]):
       type,
       label: intl.formatMessage({
         defaultMessage: 'Date',
-        id: 'DMuwuJ',
+        id: '0ccbb0b897e7',
         description: 'The label for a dynamically added parameter that has Date type.',
       }),
       icon: getIconForDynamicallyAddedParameterType(DynamicallyAddedParameterType.Date),

@@ -39,37 +39,37 @@ export const MultiWorkflowBasics = () => {
   const resources = {
     general_line1: intl.formatMessage({
       defaultMessage: 'Provide a unique, descriptive name and review the state type to ensure your workflows are properly configured.',
-      id: 'AJ+LDh',
+      id: '009f8b0e175e',
       description: 'General info displayed on basics tab for configuring workflow name and state type info - line 1.',
     }),
     general_line2: intl.formatMessage({
       defaultMessage: 'Avoid spaces and the following symbols in your workflow name: \\ / : * ? " < > | @, #, $, %, &',
-      id: 'YOOBDW',
+      id: '8f5a7c8900fe',
       description: 'General info displayed on basics tab for configuring workflow name and state type info - line 2.',
     }),
     description: intl.formatMessage({
       defaultMessage: 'Description',
-      id: 'QVtqAn',
+      id: '415b6a0271d2',
       description: 'Label for description column.',
     }),
     stateType: intl.formatMessage({
       defaultMessage: 'State type',
-      id: 'W1rlxU',
+      id: '5b5ae5c543a1',
       description: 'Label for choosing State type',
     }),
     workflowName: intl.formatMessage({
       defaultMessage: 'Workflow name',
-      id: 'ekM77J',
+      id: '7a433bec99d4',
       description: 'Label for workflow Name',
     }),
     kind_stateful: intl.formatMessage({
       defaultMessage: 'Stateful',
-      id: 'Qqmb+W',
+      id: '42a99bf96ad7',
       description: 'Dropdown option for stateful type',
     }),
     kind_stateless: intl.formatMessage({
       defaultMessage: 'Stateless',
-      id: 'cNXS5n',
+      id: '70d5d2e67479',
       description: 'Dropdown option for stateless type',
     }),
   };
@@ -257,12 +257,12 @@ const TextWithShowMore = ({ text, maxLength = 150 }: { text: string; maxLength?:
   const resources = {
     showMore: intl.formatMessage({
       defaultMessage: 'Show more',
-      id: 'MAX7xS',
+      id: '3005fbc52ef1',
       description: 'Label for show more text.',
     }),
     showLess: intl.formatMessage({
       defaultMessage: 'Show less',
-      id: 'im0GMa',
+      id: '8a6d0631af20',
       description: 'Label for show less text.',
     }),
   };

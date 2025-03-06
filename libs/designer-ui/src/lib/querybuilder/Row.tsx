@@ -89,13 +89,13 @@ export const Row = ({
 
 	const deleteButton = intl.formatMessage({
 		defaultMessage: 'Delete',
-		id: 'bGtEPd',
+		id: '6c6b443ddf92',
 		description: 'delete button',
 	});
 
 	const makeGroupButton = intl.formatMessage({
 		defaultMessage: 'Make group',
-		id: 'J7PN35',
+		id: '27b3cddf9208',
 		description: 'Make group button',
 	});
 
@@ -211,7 +211,7 @@ export const Row = ({
 
 		const rowCommands = intl.formatMessage({
 			defaultMessage: 'More commands',
-			id: 'GdGm4T',
+			id: '19d1a6e1321c',
 			description: 'Label for commands in row',
 		});
 		return (
@@ -228,7 +228,7 @@ export const Row = ({
 
 	const rowValueInputPlaceholder = intl.formatMessage({
 		defaultMessage: 'Choose a value',
-		id: 'ydqOly',
+		id: 'c9da8e972ea9',
 		description: 'placeholder text for row values',
 	});
 

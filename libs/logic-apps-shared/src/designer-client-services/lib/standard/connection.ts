@@ -294,7 +294,7 @@ export class StandardConnectionService extends BaseConnectionService implements 
       throw new Error(
         intl.formatMessage({
           defaultMessage: 'To create and use an API connection, you must have a managed identity configured on this logic app.',
-          id: 'vdtKjT',
+          id: 'bddb4a8d33a4',
           description: 'Error message to show when logic app does not have managed identity when creating azure connection',
         })
       );
@@ -311,7 +311,7 @@ export class StandardConnectionService extends BaseConnectionService implements 
       const error = new Error(
         intl.formatMessage({
           defaultMessage: 'ACL creation failed for connection. Deleting the connection.',
-          id: 'm4qt/b',
+          id: '9b8aadfdb079',
           description: 'Error while creating acl',
         })
       );
@@ -427,7 +427,7 @@ export class StandardConnectionService extends BaseConnectionService implements 
         throw new Error(
           intl.formatMessage({
             defaultMessage: 'App identity is not configured on the logic app environment variables.',
-            id: 'zPRSM9',
+            id: 'ccf45233d70f',
             description: 'Error message when no app identity is added in environment variables',
           })
         );
@@ -436,7 +436,7 @@ export class StandardConnectionService extends BaseConnectionService implements 
       throw new Error(
         intl.formatMessage({
           defaultMessage: 'A managed identity is not configured on the logic app.',
-          id: 'WnU9v0',
+          id: '5a753dbf47c7',
           description: 'Error message when no identity is associated',
         })
       );

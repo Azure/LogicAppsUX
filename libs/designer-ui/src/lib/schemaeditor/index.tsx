@@ -58,19 +58,19 @@ export function SchemaEditor({ readonly, label, initialValue, onChange, onFocus 
 
   const schemaEditorLabel = intl.formatMessage({
     defaultMessage: 'Use sample payload to generate schema',
-    id: 'DGMwU4',
+    id: '0c6330538de9',
     description: 'Button Label for allowing users to generate from schema',
   });
 
   const DONE_TEXT = intl.formatMessage({
     defaultMessage: 'Done',
-    id: 'SvQyvs',
+    id: '4af432bec760',
     description: 'confirmation text',
   });
 
   const SCHEMA_EDITOR_SAMPLE_PAYLOAD_DESCRIPTION = intl.formatMessage({
     defaultMessage: 'Enter or paste a sample JSON payload.',
-    id: 'h1lQDa',
+    id: '8759500daaf1',
     description: 'Modal Title text',
   });
   const handleContentChanged = (e: EditorContentChangedEventArgs): void => {
@@ -109,7 +109,7 @@ export function SchemaEditor({ readonly, label, initialValue, onChange, onFocus 
       } catch (ex) {
         const error = intl.formatMessage({
           defaultMessage: 'Unable to generate schema',
-          id: 'jgOaTX',
+          id: '8e039a4d7040',
           description: 'Error Message on generating schema based on payload',
         });
         setErrorMessage(error);

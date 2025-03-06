@@ -32,12 +32,12 @@ export const IdentityDropdown: React.FC<IdentityDropdownProps> = ({ defaultSelec
   const intl = useIntl();
   const managedIdentityLabel = intl.formatMessage({
     defaultMessage: 'Managed identity',
-    id: 'qGfwxW',
+    id: 'a867f0c56e87',
     description: 'A Label for a Dropdown',
   });
   const managedIdentityPlaceholder = intl.formatMessage({
     defaultMessage: 'Select a managed identity',
-    id: 'OnrO5/',
+    id: '3a7acee7fb44',
     description: 'A placeholder for the managed identity dropdown',
   });
 

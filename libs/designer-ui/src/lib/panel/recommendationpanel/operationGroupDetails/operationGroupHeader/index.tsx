@@ -20,7 +20,7 @@ export const OperationGroupHeader = (props: OperationGroupHeaderProps) => {
 
   const readMoreText = intl.formatMessage({
     defaultMessage: 'Read more',
-    id: 'ZbCS4a',
+    id: '65b092e1a211',
     description: 'Text for read more button',
   });
   const ReadMoreButton = () => (
@@ -34,7 +34,7 @@ export const OperationGroupHeader = (props: OperationGroupHeaderProps) => {
 
   const readLessText = intl.formatMessage({
     defaultMessage: 'Read less',
-    id: 'SyFXM3',
+    id: '4b2157337bb5',
     description: 'Text for read less button',
   });
   const ReadLessButton = () => (
@@ -45,7 +45,7 @@ export const OperationGroupHeader = (props: OperationGroupHeaderProps) => {
 
   const viewDocsText = intl.formatMessage({
     defaultMessage: 'View documentation',
-    id: 'UWF/WI',
+    id: '51617f588a6b',
     description: 'Text for view docs button',
   });
 

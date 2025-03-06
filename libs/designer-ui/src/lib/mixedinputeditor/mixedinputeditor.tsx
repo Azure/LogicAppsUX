@@ -30,7 +30,7 @@ export const MixedInputEditor: React.FC<MixedInputEditorProps> = ({
   // ...
   const toggleLabel = intl.formatMessage({
     defaultMessage: 'Use Schema Editor',
-    id: 'lkmLHk',
+    id: '96498b1e4e12',
     description: 'Toggle to use schema editor',
   });
   const [isSchemaEditor, setIsSchemaEditor] = useState<boolean>(() => {

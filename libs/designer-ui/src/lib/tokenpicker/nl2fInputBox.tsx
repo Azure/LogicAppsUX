@@ -49,7 +49,7 @@ export const Nl2fInputBox: FC<INl2fInputBoxProps> = ({
   const intl = useIntl();
   const createExpressionButton = intl.formatMessage({
     defaultMessage: 'Create expression',
-    id: 'o6x5J4',
+    id: 'a3ac79278600',
     description: 'Title for create expression button.',
   });
 

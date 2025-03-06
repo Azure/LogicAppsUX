@@ -26,7 +26,7 @@ export const Alert: React.FC<AlertProps> = ({ hidden, message, title, onDismiss 
 
   const okMessage = intl.formatMessage({
     defaultMessage: 'OK',
-    id: 'uN4zFU',
+    id: 'b8de331547c8',
     description: 'OK message appearing on a alert message modal.',
   });
   return (

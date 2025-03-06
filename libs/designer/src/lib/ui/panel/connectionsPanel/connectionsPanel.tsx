@@ -42,22 +42,22 @@ export const ConnectionPanel = (props: CommonPanelProps) => {
   const intl = useIntl();
   const connectionsPanelDefaultHeader = intl.formatMessage({
     defaultMessage: 'Connections',
-    id: 'mlU+AC',
+    id: '9a553e002d1e',
     description: 'Header for the connections panel',
   });
   const selectConnectionPanelHeader = intl.formatMessage({
     defaultMessage: 'Change connection',
-    id: 'eb91v1',
+    id: '79bf75bf5a6f',
     description: 'Header for the change connection panel',
   });
   const createConnectionPanelHeader = intl.formatMessage({
     defaultMessage: 'Create connection',
-    id: 'NHqCeQ',
+    id: '347a82790526',
     description: 'Header for the create connection panel',
   });
   const closeButtonAriaLabel = intl.formatMessage({
     defaultMessage: 'Close panel',
-    id: 'uzj2d3',
+    id: 'bb38f6777a59',
     description: 'Aria label for the close button in the connections panel',
   });
 

@@ -27,52 +27,52 @@ export const ReviewCreatePanel = () => {
   const intlText = {
     BASICS: intl.formatMessage({
       defaultMessage: 'Basics',
-      id: '1LSKq8',
+      id: 'd4b48aabc73e',
       description: 'Accessibility label for the basics section',
     }),
     CONNECTIONS: intl.formatMessage({
       defaultMessage: 'Connections',
-      id: 'Wt1TZJ',
+      id: '5add53649fb8',
       description: 'Accessibility label for the connections section',
     }),
     PARAMETERS: intl.formatMessage({
       defaultMessage: 'Parameters',
-      id: 'oWAB0H',
+      id: 'a16001d07229',
       description: 'Accessibility label for the parameters section',
     }),
     WORKFLOW_NAME: intl.formatMessage({
       defaultMessage: 'Workflow name',
-      id: 'oqgNX3',
+      id: 'a2a80d5f7617',
       description: 'Accessibility label for workflow name',
     }),
     STATE_TYPE: intl.formatMessage({
       defaultMessage: 'State type',
-      id: 'tzeDPE',
+      id: 'b737833c4f94',
       description: 'Accessibility label for state kind',
     }),
     PLACEHOLDER: intl.formatMessage({
       defaultMessage: '----',
-      id: 'wPi8wS',
+      id: 'c0f8bcc124e7',
       description: 'Accessibility label indicating that the value is not set',
     }),
     kind_stateful: intl.formatMessage({
       defaultMessage: 'Stateful',
-      id: 'Qqmb+W',
+      id: '42a99bf96ad7',
       description: 'Dropdown option for stateful type',
     }),
     kind_stateless: intl.formatMessage({
       defaultMessage: 'Stateless',
-      id: 'cNXS5n',
+      id: '70d5d2e67479',
       description: 'Dropdown option for stateless type',
     }),
     CREATE_VIEW_NO_CONFIG: intl.formatMessage({
       defaultMessage: 'Select Create to create a new workflow based on this template, no configuration required.',
-      id: 'uOU0lL',
+      id: 'b8e53494b131',
       description: 'Accessibility label for no configuration required',
     }),
     UPDATE_VIEW_NO_CONFIG: intl.formatMessage({
       defaultMessage: 'Select Update to update this workflow based on this template, no configuration required.',
-      id: 'OaUode',
+      id: '39a52875ee89',
       description: 'Accessibility label for no configuration required',
     }),
   };
@@ -179,12 +179,12 @@ export const reviewCreateTab = (
   title: isCreateView
     ? intl.formatMessage({
         defaultMessage: 'Review + create',
-        id: 'JQBEOg',
+        id: '2500443a098a',
         description: 'The tab label for the monitoring review and create tab on the create workflow panel',
       })
     : intl.formatMessage({
         defaultMessage: 'Review + update',
-        id: 'ak6eFQ',
+        id: '6a4e9e150bba',
         description: 'The tab label for the review and update tab on the update workflow panel',
       }),
   description: errorMessage ? (
@@ -192,13 +192,13 @@ export const reviewCreateTab = (
   ) : isCreateView ? (
     intl.formatMessage({
       defaultMessage: 'Review your settings, ensure everything is correctly set up, and create your workflow.',
-      id: 'xDHpeS',
+      id: 'c431e9792c08',
       description: 'An accessibility label that describes the objective of review and create tab',
     })
   ) : (
     intl.formatMessage({
       defaultMessage: 'Review your settings, ensure everything is correctly set up, and update your workflow.',
-      id: 'RHsEea',
+      id: '447b0479aec8',
       description: 'An accessibility label that describes the objective of review and update tab',
     })
   ),
@@ -210,13 +210,13 @@ export const reviewCreateTab = (
     ) : isCreateView ? (
       intl.formatMessage({
         defaultMessage: 'Create',
-        id: '/qrBuJ',
+        id: 'feaac1b89e5f',
         description: 'Button text for creating the workflow',
       })
     ) : (
       intl.formatMessage({
         defaultMessage: 'Update',
-        id: 'thnhGU',
+        id: 'b619e11945fb',
         description: 'Button text for updating the workflow',
       })
     ),
@@ -225,12 +225,12 @@ export const reviewCreateTab = (
     secondaryButtonText: previousTabId
       ? intl.formatMessage({
           defaultMessage: 'Previous',
-          id: 'Yua/4o',
+          id: '62e6bfe282ce',
           description: 'Button text for moving to the previous tab in the create workflow panel',
         })
       : intl.formatMessage({
           defaultMessage: 'Close',
-          id: 'FTrMxN',
+          id: '153accc4d1cf',
           description: 'Button text for closing the panel',
         }),
     secondaryButtonOnClick: () => {

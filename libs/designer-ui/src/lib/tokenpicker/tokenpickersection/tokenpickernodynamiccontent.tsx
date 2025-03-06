@@ -8,37 +8,37 @@ export const TokenPickerNoDynamicContent = () => {
   const intlText = {
     NO_DYNAMIC_CONTENT_HEADER: intl.formatMessage({
       defaultMessage: 'No dynamic content available',
-      id: 'B59BCg',
+      id: '079f410a04c7',
       description: 'Header for no dynamic content available card section',
     }),
     NO_DYNAMIC_CONTENT_TEXT: intl.formatMessage({
       defaultMessage: 'There is no content available',
-      id: '3O0i4j',
+      id: 'dced22e23ebd',
       description: 'No dynamic content available description',
     }),
     INCLUDING_DYNAMIC_CONTENT_HEADER: intl.formatMessage({
       defaultMessage: 'Including dynamic content',
-      id: 'wGYmui',
+      id: 'c06626ba263c',
       description: 'Header for including dynamic content section',
     }),
     INCLUDING_DYNAMIC_CONTENT_TEXT1: intl.formatMessage({
       defaultMessage: 'If available, dynamic content is automatically generated from the connectors and actions you choose for your flow.',
-      id: 'IQyOth',
+      id: '210c8eb612e2',
       description: 'Section 1 of text for including dynamic content section',
     }),
     INCLUDING_DYNAMIC_CONTENT_TEXT2: intl.formatMessage({
       defaultMessage: 'Dynamic content may also be added from other sources.',
-      id: 'c8UPLp',
+      id: '73c50f2e900f',
       description: 'Section 2 of text for including dynamic content section',
     }),
     DYNAMIC_CONTENT_LINK_TEXT: intl.formatMessage({
       defaultMessage: 'Learn more about dynamic content.',
-      id: 'ZkjTbp',
+      id: '6648d36e9a2a',
       description: 'Text for dynamic content link',
     }),
     TOKEN_PICKER_EMPTY_DYNAMIC_CONTENT_ICON_ALT_TEXT: intl.formatMessage({
       defaultMessage: 'Empty dynamic content icon',
-      id: 'f81ClO',
+      id: '7fcd4294e971',
       description: 'Alt text for empty dynamic content icon',
     }),
   };

@@ -48,42 +48,42 @@ export const About = ({
 
   const documentationURLDescription = intl.formatMessage({
     defaultMessage: 'Learn more',
-    id: 'dDYCuU',
+    id: '743602b94f3e',
     description: 'Link text to open URL',
   });
 
   const notAvailable = intl.formatMessage({
     defaultMessage: 'Not available',
-    id: 'Gmya+V',
+    id: '1a6c9af95a01',
     description: 'Display text for when About content is not available',
   });
 
   const noTags = intl.formatMessage({
     defaultMessage: 'None',
-    id: 'YoQara',
+    id: '62841aada65a',
     description: 'Display text for when About Panel has no Tags',
   });
 
   const connectorMsg = intl.formatMessage({
     defaultMessage: 'Connector',
-    id: '99vsJy',
+    id: 'f7dbec272ab5',
     description: 'Label For Connector Name in About Panel',
   });
 
   const operationNoteMsg = intl.formatMessage({
     defaultMessage: 'Operation note',
-    id: 'YHsAKl',
+    id: '607b002a5781',
     description: 'Label For Operation Description in About Panel',
   });
 
   const tagsMessage = intl.formatMessage({
     defaultMessage: 'Tags',
-    id: 'TgcgXE',
+    id: '4e07205c4471',
     description: 'Label For Tags in About Panel',
   });
   const connectorTypeLabel = intl.formatMessage({
     defaultMessage: 'Connector type',
-    id: 'unMG8m',
+    id: 'ba7306f26e28',
     description: 'Label For Connector Type in About Panel',
   });
   return (

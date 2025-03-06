@@ -33,17 +33,17 @@ const EdgePopOver = (props: EdgePopOverProps) => {
     () => ({
       DELETE: intl.formatMessage({
         defaultMessage: 'Delete mapping',
-        id: '0uuxAX',
+        id: 'd2ebb10176c2',
         description: 'Delete mapping',
       }),
       ADD_LOOP: intl.formatMessage({
         defaultMessage: 'Add loop',
-        id: 'vNqq43',
+        id: 'bcdaaae37d4a',
         description: 'Add loop for the connection',
       }),
       REMOVE_LOOP: intl.formatMessage({
         defaultMessage: 'Remove loop',
-        id: 'IBFBR2',
+        id: '201141476b6c',
         description: 'Remove loop for the connection',
       }),
     }),

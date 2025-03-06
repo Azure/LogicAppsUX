@@ -54,7 +54,7 @@ export const SettingTextField: React.FC<SettingTextFieldProps> = ({
         {
           defaultMessage: 'Value should be greater than {min}',
           description: 'Error message for number input being lower than min',
-          id: 'CRTB+v',
+          id: '0914c1faf68d',
         },
         { min }
       );
@@ -64,7 +64,7 @@ export const SettingTextField: React.FC<SettingTextFieldProps> = ({
         {
           defaultMessage: 'Value should be less than {max}',
           description: 'Error message for number input being lower than max',
-          id: 'NtoWaY',
+          id: '36da166989bc',
         },
         { max }
       );

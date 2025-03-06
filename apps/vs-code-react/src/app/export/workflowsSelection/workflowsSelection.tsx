@@ -44,47 +44,47 @@ export const WorkflowsSelection: React.FC = () => {
   const intlText = {
     SELECT_TITLE: intl.formatMessage({
       defaultMessage: 'Select logic apps to export',
-      id: 'A5rCk8',
+      id: '039ac293c2cf',
       description: 'Select apps to export title',
     }),
     SELECT_DESCRIPTION: intl.formatMessage({
       defaultMessage: 'Select the logic apps that you want to export and combine into a single logic app instance.',
-      id: '3rlDsf',
+      id: 'deb943b1f259',
       description: 'Select logic apps to export description',
     }),
     SELECTION: intl.formatMessage({
       defaultMessage: 'Select',
-      id: 'jcxLyd',
+      id: '8dcc4bc9ddda',
       description: 'Select logic apps to export description',
     }),
     SELECTION_ALL: intl.formatMessage({
       defaultMessage: 'Select all',
-      id: '9dqnHP',
+      id: 'f5daa71cfc24',
       description: 'Select all logic apps to export description',
     }),
     SELECT_WORKFLOW: intl.formatMessage({
       defaultMessage: 'Select logic app',
-      id: 'yLua0Y',
+      id: 'c8bb9ad18040',
       description: 'Select logic app to export description',
     }),
     LIMIT_INFO: intl.formatMessage({
       defaultMessage: 'Selecting more than 15 logic apps affects the export experience performance.',
-      id: 'CB/Oue',
+      id: '081fceb9e49b',
       description: 'Limit on selected logic apps warning text',
     }),
     NO_WORKFLOWS: intl.formatMessage({
       defaultMessage: 'No workflows',
-      id: 'MvUPPh',
+      id: '32f50f3e1c6c',
       description: 'No workflows text',
     }),
     NAME: intl.formatMessage({
       defaultMessage: 'Resource name',
-      id: 'dr26iH',
+      id: '76bdba8876c5',
       description: 'Resource name title',
     }),
     RESOURCE_GROUP: intl.formatMessage({
       defaultMessage: 'Resource group',
-      id: 'UKCoay',
+      id: '50a0a86b266f',
       description: 'Resource group title',
     }),
   };

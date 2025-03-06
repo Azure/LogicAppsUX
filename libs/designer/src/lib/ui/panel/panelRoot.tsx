@@ -61,32 +61,32 @@ export const PanelRoot = (props: PanelRootProps): JSX.Element => {
     () => ({
       [PANEL_MODE.Operation]: intl.formatMessage({
         defaultMessage: 'Operation Panel',
-        id: 'umLmPm',
+        id: 'ba62e63e6252',
         description: 'Operation Panel',
       }),
       [PANEL_MODE.Discovery]: intl.formatMessage({
         defaultMessage: 'Discovery Panel',
-        id: '5rljf7',
+        id: 'e6b9637fb338',
         description: 'Discovery Panel',
       }),
       [PANEL_MODE.WorkflowParameters]: intl.formatMessage({
         defaultMessage: 'Workflow Parameters Panel',
-        id: 's0Qaot',
+        id: 'b3441aa2d6ed',
         description: 'Workflow Parameters Panel',
       }),
       [PANEL_MODE.NodeSearch]: intl.formatMessage({
         defaultMessage: 'Node Search Panel',
-        id: 'wjiptl',
+        id: 'c238a9b65176',
         description: 'Node Search Panel',
       }),
       [PANEL_MODE.Error]: intl.formatMessage({
         defaultMessage: 'Error Panel',
-        id: '3cZFcy',
+        id: 'ddc645732c73',
         description: 'Error Panel',
       }),
       [PANEL_MODE.Connection]: intl.formatMessage({
         defaultMessage: 'Connection Panel',
-        id: '0FRVkr',
+        id: 'd0545592be39',
         description: 'Connection Panel',
       }),
     }),

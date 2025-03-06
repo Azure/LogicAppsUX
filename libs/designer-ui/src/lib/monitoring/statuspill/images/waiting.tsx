@@ -6,7 +6,7 @@ export const Waiting: React.FC = () => {
   const intlText = {
     connectionsLoading: intl.formatMessage({
       defaultMessage: 'Run information loading',
-      id: 'xK8r1/',
+      id: 'c4af2bd7f858',
       description: 'Run information loading text',
     }),
   };

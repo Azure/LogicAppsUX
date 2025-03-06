@@ -43,17 +43,17 @@ export const FunctionConfigurationPopover = (props: FunctionConfigurationPopover
     () => ({
       OUTPUT: intl.formatMessage({
         defaultMessage: 'Output',
-        id: 'fAB0Ww',
+        id: '7c00745b0980',
         description: 'output for the function',
       }),
       INPUT: intl.formatMessage({
         defaultMessage: 'Input',
-        id: 't+h+KW',
+        id: 'b7e87e2965be',
         description: 'Inputs for the function',
       }),
       DETAILS: intl.formatMessage({
         defaultMessage: 'Details',
-        id: 'EoRB1V',
+        id: '128441d558a3',
         description: 'details about the function',
       }),
     }),

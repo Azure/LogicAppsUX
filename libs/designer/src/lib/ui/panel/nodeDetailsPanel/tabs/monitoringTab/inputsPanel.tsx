@@ -22,27 +22,27 @@ export const InputsPanel: React.FC<InputsPanelProps> = ({ runMetaData, brandColo
   const intlText = {
     inputs: intl.formatMessage({
       defaultMessage: 'Inputs',
-      id: 'PORNMZ',
+      id: '3ce44d319fe1',
       description: 'Inputs text',
     }),
     noInputs: intl.formatMessage({
       defaultMessage: 'No inputs',
-      id: '7Fyq1F',
+      id: 'ec5caad45e2c',
       description: 'No inputs text',
     }),
     showInputs: intl.formatMessage({
       defaultMessage: 'Show raw inputs',
-      id: 'xSMbKr',
+      id: 'c5231b2ab1cd',
       description: 'Show inputs text',
     }),
     inputsLoading: intl.formatMessage({
       defaultMessage: 'Loading inputs',
-      id: 'xwD1VZ',
+      id: 'c700f555965e',
       description: 'Loading inputs text',
     }),
     inputsError: intl.formatMessage({
       defaultMessage: 'Error loading inputs',
-      id: '63CC7M',
+      id: 'eb7082ecc88e',
       description: 'The text for the loading inputs error.',
     }),
   };

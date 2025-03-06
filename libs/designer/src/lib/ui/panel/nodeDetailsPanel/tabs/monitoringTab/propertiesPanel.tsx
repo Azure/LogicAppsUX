@@ -16,37 +16,37 @@ export const PropertiesPanel: React.FC<PropertiesPanelProps> = ({ properties, br
   const intlText = {
     properties: intl.formatMessage({
       defaultMessage: 'Properties',
-      id: '/n13VL',
+      id: 'fe7d7754bfba',
       description: 'Properties text',
     }),
     noProperties: intl.formatMessage({
       defaultMessage: 'No properties',
-      id: 'IsVhkH',
+      id: '22c5619070d1',
       description: 'No properties text',
     }),
     startTime: intl.formatMessage({
       defaultMessage: 'Start time',
-      id: '6ueRYm',
+      id: 'eae791626b33',
       description: 'Start time text',
     }),
     endTime: intl.formatMessage({
       defaultMessage: 'End time',
-      id: 'nOWGAV',
+      id: '9ce586015542',
       description: 'End time text',
     }),
     status: intl.formatMessage({
       defaultMessage: 'Status',
-      id: 'ZBJiuD',
+      id: '641262b83976',
       description: 'Status text',
     }),
     clienTrackingId: intl.formatMessage({
       defaultMessage: 'Client tracking ID',
-      id: '5we9SR',
+      id: 'e707bd4912e4',
       description: 'Client Tracking ID text',
     }),
     actionTrackingId: intl.formatMessage({
       defaultMessage: 'Action tracking ID',
-      id: 'lSUNx5',
+      id: '95250dc791a8',
       description: 'Action Tracking ID text',
     }),
   };

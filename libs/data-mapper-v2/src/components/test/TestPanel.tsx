@@ -29,22 +29,22 @@ export const TestPanel = (_props: TestPanelProps) => {
     () => ({
       TEST_MAP: intl.formatMessage({
         defaultMessage: 'Test map',
-        id: 'GFnJQe',
+        id: '1859c941ef3c',
         description: 'Code view title',
       }),
       CLOSE_TEST_MAP: intl.formatMessage({
         defaultMessage: 'Close test map',
-        id: '6oOQnD',
+        id: 'ea83909c3499',
         description: 'Close code view button',
       }),
       CLOSE: intl.formatMessage({
         defaultMessage: 'Close',
-        id: 'Px7S/2',
+        id: '3f1ed2ff61fc',
         description: 'Close button',
       }),
       TEST: intl.formatMessage({
         defaultMessage: 'Test',
-        id: 'ldn/IC',
+        id: '95d9ff202609',
         description: 'Test button',
       }),
     }),

@@ -30,23 +30,23 @@ const LegacyMultiAuth = ({
   const intl = useIntl();
   const legacyMultiAuthLabelText = intl.formatMessage({
     defaultMessage: 'Authentication',
-    id: 'YRk271',
+    id: '611936ef52cf',
     description: 'Label for legacy multi auth dropdown',
   });
 
   const oAuthDropdownText = intl.formatMessage({
     defaultMessage: 'OAuth',
-    id: 'DjbVKU',
+    id: '0e36d5294f10',
     description: 'Dropdown text for OAuth connection',
   });
   const servicePrincipalDropdownText = intl.formatMessage({
     defaultMessage: 'Service principal',
-    id: 'AKOkI2',
+    id: '00a3a423699e',
     description: 'Dropdown text for service principal connection',
   });
   const legacyManagedIdentityDropdownText = intl.formatMessage({
     defaultMessage: 'Managed identity',
-    id: 'uIgGKj',
+    id: 'b888062a3264',
     description: 'Dropdown text for legacy managed identity connection',
   });
 

@@ -55,12 +55,12 @@ export const ChatBubble: React.FC<ChatBubbleProps> = ({
   const intlText = {
     aIGeneratedDisclaimer: intl.formatMessage({
       defaultMessage: 'AI-generated content may be incorrect',
-      id: 'SHXdzU',
+      id: '4875ddcd4abe',
       description: 'Chatbot disclaimer message on AI-generated content potentially being incorrect',
     }),
     copyText: intl.formatMessage({
       defaultMessage: 'Copy',
-      id: 'N7zEUZ',
+      id: '37bcc45196e6',
       description: 'Chatbot copy button title',
     }),
   };

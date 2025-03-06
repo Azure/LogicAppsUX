@@ -60,7 +60,7 @@ export const Nl2fExpressionAssistant: FC<INl2fExpressionAssistantProps> = ({
       fixExpressionText: intl.formatMessage(
         {
           defaultMessage: 'Fix my expression: {expression}',
-          id: 'kBTFhL',
+          id: '9014c584bc62',
           description: 'Prepopulated text in the input box when the user is trying to fix an invalid expression by using copilot.',
         },
         {
@@ -69,48 +69,48 @@ export const Nl2fExpressionAssistant: FC<INl2fExpressionAssistantProps> = ({
       ),
       progressBarText: intl.formatMessage({
         defaultMessage: '🖊️ Working on it...',
-        id: 'eDHwU7',
+        id: '7831f053b689',
         description: 'Progress bar telling user that the AI response is being generated',
       }),
       progressCardStopButtonLabel: intl.formatMessage({
         defaultMessage: 'Stop generating',
-        id: 'wP0/uB',
+        id: 'c0fd3fb81c38',
         description: 'Label for the button on the progress card that stops AI response generation',
       }),
       aIGeneratedDisclaimer: intl.formatMessage({
         defaultMessage: 'AI-generated content may be incorrect',
-        id: 'JMwMaK',
+        id: '24cc0c68a3b9',
         description: 'Disclaimer message on AI-generated content potentially being incorrect',
       }),
       suggestedExpressionTitle: intl.formatMessage({
         defaultMessage: 'Suggested expression',
-        id: 'pjC3M9',
+        id: 'a630b733df25',
         description: 'Title of section containing suggested expressions.',
       }),
       originalExpressionTitle: intl.formatMessage({
         defaultMessage: 'Original expression',
-        id: 'tQIXhy',
+        id: 'b5021787234d',
         description: 'Title of section containing the original expression that will be updated.',
       }),
       OK: intl.formatMessage({
         defaultMessage: 'OK',
-        id: '70cHmm',
+        id: 'ef47079a602e',
         description: 'OK button',
       }),
       showPreviousSuggestion: intl.formatMessage({
         defaultMessage: 'Previous suggestion',
-        id: 'EMbxLf',
+        id: '10c6f12df922',
         description: 'The hover over text and alt text for the suggestions left navigation button',
       }),
       showNextSuggestion: intl.formatMessage({
         defaultMessage: 'Next suggestion',
-        id: 'aWdfiw',
+        id: '69675f8b073f',
         description: 'The hover over text and alt text for the suggestions right navigation button',
       }),
       suggestionIndex: intl.formatMessage(
         {
           defaultMessage: '{suggestionIndex} of {suggestionsCount}',
-          id: '2yUM4j',
+          id: 'db250ce23625',
           description: 'The position in the results carrousel',
         },
         {
@@ -121,13 +121,13 @@ export const Nl2fExpressionAssistant: FC<INl2fExpressionAssistantProps> = ({
       placeholders: {
         updateExpressionPlaceholderText: intl.formatMessage({
           defaultMessage: "Describe how you'd like to update your expression.",
-          id: 'Agqhgu',
+          id: '020aa182e672',
           description: 'Placeholder used when a user is trying to update an existing expression.',
         }),
         newExpressionPlaceholderText: intl.formatMessage({
           defaultMessage:
             'Describe the expression you want Copilot to create. You can reference data from other actions in the flow. For example, “Combine the first and last name of the person who went the email” or “Check the status of the current job.”',
-          id: 'Pkxg6Q',
+          id: '3e4c60e9018e',
           description: 'Placeholder used when a user is trying to create a new expression.',
         }),
       },
@@ -136,7 +136,7 @@ export const Nl2fExpressionAssistant: FC<INl2fExpressionAssistantProps> = ({
           {
             defaultMessage:
               'Please submit a different query than the previously submitted query. Previously submitted query: {lastSubmittedQuery}',
-            id: 'eyuBr7',
+            id: '7b2b81afb845',
             description: 'Error message displayed when user submits the same query twice',
           },
           { lastSubmittedQuery }
@@ -144,7 +144,7 @@ export const Nl2fExpressionAssistant: FC<INl2fExpressionAssistantProps> = ({
         originalExpressionError: intl.formatMessage(
           {
             defaultMessage: 'Please explain how you would like to update your expression: "{expression}"',
-            id: 'v4JmCE',
+            id: 'bf826608453a',
             description: 'Error message displayed when user submits the original query without anything else.',
           },
           { expression: expression.value }

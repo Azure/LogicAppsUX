@@ -13,12 +13,12 @@ export const ResubmitMenuItem = (props: ResubmitMenuItemProps) => {
 
   const resubmitDescription = intl.formatMessage({
     defaultMessage: 'Resubmit a workflow run from this action',
-    id: 'S0N/tx',
+    id: '4b437fb7114e',
     description: 'accessibility text for the resubmit button',
   });
   const resubmitButtonText = intl.formatMessage({
     defaultMessage: 'Submit from this action',
-    id: 'I+85NV',
+    id: '23ef39355993',
     description: 'Button label for submitting a workflow to rerun from this action',
   });
 

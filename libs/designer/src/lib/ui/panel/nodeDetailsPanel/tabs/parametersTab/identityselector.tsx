@@ -65,13 +65,13 @@ export const IdentitySelector = (props: IdentitySelectorProps) => {
               ? intl.formatMessage({
                   defaultMessage:
                     'The managed identity used with this operation no longer exists. To continue, select an available identity or change the connection.',
-                  id: 'Xj4xwI',
+                  id: '5e3e31c08f80',
                   description: 'Erorr mesade when managed identity is not present in logic apps',
                 })
               : intl.formatMessage({
                   defaultMessage:
                     'The managed identity used with this operation no longer exists. To continue, set up an identity or change the connection.',
-                  id: '08e2rO',
+                  id: 'd3c7b6acef4f',
                   description: 'Error message when logic app doesnt have managed identities',
                 }),
           },
@@ -90,12 +90,12 @@ export const IdentitySelector = (props: IdentitySelectorProps) => {
 
   const labelText = intl.formatMessage({
     defaultMessage: 'Managed identity',
-    id: 'dL9V5t',
+    id: '74bf55e6d116',
     description: 'Text to show label for managed identity selector',
   });
   const placeholderText = intl.formatMessage({
     defaultMessage: 'Select a managed identity',
-    id: 'BrWQ0Z',
+    id: '06b590d19705',
     description: 'Placeholder text for identity selection',
   });
 

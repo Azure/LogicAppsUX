@@ -156,22 +156,22 @@ export const SettingsSection: FC<SettingsSectionProps> = ({
   const intl = useIntl();
   const expandedLabel = intl.formatMessage({
     defaultMessage: 'Expanded',
-    id: 'r4zp7m',
+    id: 'af8ce9ee6cee',
     description: 'A label to represent setting section being expanded',
   });
   const collapsedLabel = intl.formatMessage({
     defaultMessage: 'Collapsed',
-    id: 'PDMP/Z',
+    id: '3c330ffd94dc',
     description: 'A label to represent setting section being collapsed',
   });
   const expandAriaLabel = intl.formatMessage({
     defaultMessage: 'Click to collapse',
-    id: 'elWEjT',
+    id: '7a55848d30cf',
     description: 'An accessible label for button to collapse setting section',
   });
   const collapseAriaLabel = intl.formatMessage({
     defaultMessage: 'Click to expand',
-    id: 'G+6Juu',
+    id: '1bee89baea97',
     description: 'An accessible label for button to expand setting section',
   });
   const internalSettings = (
@@ -246,7 +246,7 @@ const Setting = ({
   const addNewParamText = intl.formatMessage(
     {
       defaultMessage: 'Showing {countShowing} of {countTotal}',
-      id: 'jTHUFb',
+      id: '8d31d415b2e8',
       description: 'Placeholder text for the number of advanced parameters showing',
     },
     {
@@ -257,27 +257,27 @@ const Setting = ({
 
   const addAllButtonText = intl.formatMessage({
     defaultMessage: 'Show all',
-    id: 'yRDuqj',
+    id: 'c910eeaa3ed3',
     description: 'Button text to add all advanced parameters',
   });
   const removeAllButtonText = intl.formatMessage({
     defaultMessage: 'Clear all',
-    id: 'bt2CaQ',
+    id: '6edd82690a8a',
     description: 'Button text to clear all advanced parameters',
   });
   const addAllButtonTooltip = intl.formatMessage({
     defaultMessage: 'Show all advanced parameters',
-    id: '63fQWE',
+    id: 'eb77d05841b2',
     description: 'Button tooltip to add all advanced parameters',
   });
   const removeAllButtonTooltip = intl.formatMessage({
     defaultMessage: 'Remove and clear all advanced parameters and their values',
-    id: 'AhvQ7r',
+    id: '021bd0eeb625',
     description: 'Button tooltip to remove all advanced parameters',
   });
   const advancedParametersLabel = intl.formatMessage({
     defaultMessage: 'Advanced parameters',
-    id: 'XFzzaw',
+    id: '5c5cf36b09f4',
     description: 'The label for advanced parameters',
   });
 
@@ -340,7 +340,7 @@ const Setting = ({
     const removeParamTooltip = intl.formatMessage(
       {
         defaultMessage: `Remove parameter ''{parameterName}'' and its value`,
-        id: 'uxt1xW',
+        id: 'bb1b75c56304',
         description:
           'Tooltip for button to remove parameter. Do not remove the double single quotes around the display name, as it is needed to wrap the placeholder text.',
       },

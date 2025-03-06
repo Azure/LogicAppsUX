@@ -213,13 +213,13 @@ export function TokenPicker({
 
   const tokenPickerPlaceHolderText = intl.formatMessage({
     defaultMessage: 'Search',
-    id: 'Mc6ITJ',
+    id: '31ce884c9b2b',
     description: 'Placeholder text to search token picker',
   });
 
   const createWithNl2fButtonText = intl.formatMessage({
     defaultMessage: 'Create an expression with Copilot',
-    id: '+Agiub',
+    id: 'f80822b9b404',
     description: 'Button text for the create expression with copilot feature',
   });
 

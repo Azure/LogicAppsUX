@@ -189,12 +189,12 @@ export const getConnectorResources = (intl: IntlShape) => {
   return {
     connected: intl.formatMessage({
       defaultMessage: 'Connected',
-      id: 'oOGTSo',
+      id: 'a0e1934a8168',
       description: 'Connected text',
     }),
     notConnected: intl.formatMessage({
       defaultMessage: 'Not connected',
-      id: 'WxJJcQ',
+      id: '5b12497107c1',
       description: 'Not Connected text',
     }),
   };
@@ -211,7 +211,7 @@ export const validateParameterValue = (data: { type: string; value?: string }, r
     }
     return intl.formatMessage({
       defaultMessage: 'Must provide value for parameter.',
-      id: 'VL9wOu',
+      id: '54bf703aea55',
       description: 'Error message when the workflow parameter value is empty.',
     });
   }
@@ -226,7 +226,7 @@ export const validateConnectionsValue = (
   const intl = getIntl();
   const errorMessage = intl.formatMessage({
     defaultMessage: 'All connections must be connected for workflow creation',
-    id: 'fNlJSh',
+    id: '7cd9494a142d',
     description: 'Error message to show when all connections are not connected',
   });
 

@@ -63,12 +63,12 @@ export function getEnum(parameter: SchemaObject, required: boolean | undefined):
     const intl = getIntl();
     const TrueDisplayName = intl.formatMessage({
       defaultMessage: 'Yes',
-      id: 'k5tGEr',
+      id: '939b4612b71d',
       description: 'This is the boolean value for Yes',
     });
     const FalseDisplayName = intl.formatMessage({
       defaultMessage: 'No',
-      id: 'rAyuzv',
+      id: 'ac0caecef3a2',
       description: 'This is the boolean value for No',
     });
 
@@ -292,43 +292,43 @@ export function getKnownTitles(name: string, description?: string): string {
     case OutputKeys.Body:
       return intl.formatMessage({
         defaultMessage: 'Body',
-        id: 'ZCFMoe',
+        id: '64214ca1e86d',
         description: 'Display name for body outputs',
       });
     case OutputKeys.Headers:
       return intl.formatMessage({
         defaultMessage: 'Headers',
-        id: 'N4dEVo',
+        id: '37874456815a',
         description: 'Display name for headers in outputs',
       });
     case OutputKeys.Outputs:
       return intl.formatMessage({
         defaultMessage: 'Outputs',
-        id: 'vT0DCP',
+        id: 'bd3d0308f78b',
         description: 'Display name for operation outputs',
       });
     case OutputKeys.Queries:
       return intl.formatMessage({
         defaultMessage: 'Queries',
-        id: 'w16qh+',
+        id: 'c35eaa87e2ec',
         description: 'Display name for queries in outputs',
       });
     case OutputKeys.StatusCode:
       return intl.formatMessage({
         defaultMessage: 'Status code',
-        id: 'eUxnDx',
+        id: '794c670f13f7',
         description: 'Display name for status code in outputs',
       });
     case OutputKeys.Item:
       return intl.formatMessage({
         defaultMessage: 'Item',
-        id: 'oDHXKh',
+        id: 'a031d72a115c',
         description: 'Display name for item output',
       });
     case OutputKeys.PathParameters:
       return intl.formatMessage({
         defaultMessage: 'Path parameters',
-        id: 'IHzSSN',
+        id: '207cd248d431',
         description: 'Display name for relative path parameters in trigger outputs',
       });
     default: {

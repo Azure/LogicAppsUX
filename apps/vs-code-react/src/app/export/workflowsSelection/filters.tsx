@@ -8,22 +8,22 @@ export const Filters: React.FC<any> = ({ dropdownOptions, onChangeResourceGroup,
   const intlText = {
     SEARCH_LOGIC_APP: intl.formatMessage({
       defaultMessage: 'Search for logic app',
-      id: 'x2g49l',
+      id: 'c76838f6543e',
       description: 'Search for logic app',
     }),
     FILTER_RESOURCE_GROUPS: intl.formatMessage({
       defaultMessage: 'Filter by resource group',
-      id: '7KvIpv',
+      id: 'ecabc8a6fc73',
       description: 'Filter by resource group',
     }),
     SEARCH: intl.formatMessage({
       defaultMessage: 'Search...',
-      id: 'Xem1jZ',
+      id: '5de9b58d9465',
       description: 'Search placeholder',
     }),
     SEARCH_RESOURCE_GROUP: intl.formatMessage({
       defaultMessage: 'Find and select resource group',
-      id: 'xJv0H1',
+      id: 'c49bf41f5a30',
       description: 'Find and select resource group text',
     }),
   };

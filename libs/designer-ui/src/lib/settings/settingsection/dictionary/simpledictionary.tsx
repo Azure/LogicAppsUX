@@ -72,7 +72,7 @@ export const SimpleDictionary: React.FC<SimpleDictionaryProps> = ({
 
   const indexItem = intl.formatMessage({
     defaultMessage: 'item',
-    id: 'NFgfP4',
+    id: '34581f3f82ac',
     description: 'Label for users to know which item they are on in the dictionary',
   });
 

@@ -46,42 +46,42 @@ export const SchemaPanelBody = ({
     () => ({
       ADD_NEW: intl.formatMessage({
         defaultMessage: 'Add new',
-        id: 'rv0Pn+',
+        id: 'aefd0f9febf0',
         description: 'Add new option',
       }),
       SELECT_EXISTING: intl.formatMessage({
         defaultMessage: 'Select existing',
-        id: '2ZfzaY',
+        id: 'd997f3698eb1',
         description: 'Select existing option',
       }),
       SOURCE: intl.formatMessage({
         defaultMessage: 'Source',
-        id: 'nODesn',
+        id: '9ce0deb2701a',
         description: 'Source',
       }),
       DESTINATION: intl.formatMessage({
         defaultMessage: 'Destination',
-        id: 'EXEL2j',
+        id: '11710bda31cc',
         description: 'Destination',
       }),
       SEARCH_PROPERTIES: intl.formatMessage({
         defaultMessage: 'Search properties',
-        id: 'BnkCwH',
+        id: '067902c07c92',
         description: 'Seach source or target properties',
       }),
       BROWSE: intl.formatMessage({
         defaultMessage: 'Browse',
-        id: 'syiNc+',
+        id: 'b3288d73e33e',
         description: 'Browse for file',
       }),
       BROWSE_MESSAGE: intl.formatMessage({
         defaultMessage: 'Select a file to upload',
-        id: '2CXCOt',
+        id: 'd825c23ad76a',
         description: 'Placeholder for input to load a schema file',
       }),
       CANCEL: intl.formatMessage({
         defaultMessage: 'Cancel',
-        id: '6PdOcy',
+        id: 'e8f74e732301',
         description: 'Cancel',
       }),
     }),

@@ -404,44 +404,44 @@ export const CreateConnection = (props: CreateConnectionProps) => {
 
   const componentDescription = intl.formatMessage({
     defaultMessage: 'Create a new connection',
-    id: '74e2xB',
+    id: 'ef87b6c4105c',
     description: 'General description for creating a new connection.',
   });
 
   const createButtonText = intl.formatMessage({
     defaultMessage: 'Create new',
-    id: 'JKfEGS',
+    id: '24a7c419263d',
     description: 'Button to add a new connection',
   });
 
   const createButtonLoadingText = intl.formatMessage({
     defaultMessage: 'Creating...',
-    id: 'LMB8am',
+    id: '2cc07c6a6e74',
     description: 'Button text to show a connection is being created',
   });
 
   const createButtonAria = intl.formatMessage({
     defaultMessage: 'Create a new connection',
-    id: 'TX4Kdr',
+    id: '4d7e0a76b9a0',
     description: 'aria label description for create button',
   });
 
   const cancelButtonText = intl.formatMessage({
     defaultMessage: 'Cancel',
-    id: '9EmN2M',
+    id: 'f4498dd8c7f0',
     description: 'Button to cancel creating a connection',
   });
 
   const cancelButtonAria = intl.formatMessage({
     defaultMessage: 'Cancel creating a connection',
-    id: 'sFwHQc',
+    id: 'b05c0741c631',
     description: 'aria label description for cancel button',
   });
 
   const simpleDescriptionText = intl.formatMessage(
     {
       defaultMessage: 'Create a connection for {connectorName}.',
-      id: 'vr70Gn',
+      id: 'bebef41a713c',
       description: 'Create a connection for selected connector',
     },
     {
@@ -452,7 +452,7 @@ export const CreateConnection = (props: CreateConnectionProps) => {
   const authDescriptionText = intl.formatMessage(
     {
       defaultMessage: 'Sign in to create a connection to {connectorDisplayName}.',
-      id: 'EiRMD4',
+      id: '12244c0f89bc',
       description: 'Description for creating an externally authenticated connection.',
     },
     { connectorDisplayName }
@@ -460,31 +460,31 @@ export const CreateConnection = (props: CreateConnectionProps) => {
 
   const signInButtonText = intl.formatMessage({
     defaultMessage: 'Sign in',
-    id: 'y1e9yw',
+    id: 'cb57bdcb072d',
     description: 'Text for sign in button.',
   });
 
   const signInButtonAria = intl.formatMessage({
     defaultMessage: 'Sign in to connector',
-    id: 'mca3Ml',
+    id: '99c6b7325a4f',
     description: 'Aria label description for sign in button.',
   });
 
   const signInButtonLoadingText = intl.formatMessage({
     defaultMessage: 'Signing in...',
-    id: 'E+HsWF',
+    id: '13e1ec585aad',
     description: 'Text for sign in button while loading.',
   });
 
   const closeErrorButtonAriaLabel = intl.formatMessage({
     defaultMessage: 'Close',
-    id: '9IDWMU',
+    id: 'f480d631471f',
     description: 'Close button aria label',
   });
 
   const legacyManagedIdentityLabelText = intl.formatMessage({
     defaultMessage: 'Managed identity',
-    id: 'uIgGKj',
+    id: 'b888062a3264',
     description: 'Dropdown text for legacy managed identity connection',
   });
 

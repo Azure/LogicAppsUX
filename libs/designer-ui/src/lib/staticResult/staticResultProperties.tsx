@@ -51,7 +51,7 @@ export const StaticResultProperties = ({
 
   const fieldLabels = intl.formatMessage({
     defaultMessage: 'Select fields',
-    id: 'w+t06Q',
+    id: 'c3eb74e90890',
     description: 'Label to select Fields',
   });
 

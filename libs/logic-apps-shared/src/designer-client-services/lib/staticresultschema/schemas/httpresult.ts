@@ -6,22 +6,22 @@ const intl = getIntl();
 
 const STATIC_RESULT_HTTP_STATUS_CODE_TITLE = intl.formatMessage({
   defaultMessage: 'Status code',
-  id: 'Gk79Ma',
+  id: '1a4efd31a76a',
   description: 'The title of the status code field in the static result http action',
 });
 const STATIC_RESULT_HTTP_BODY_TITLE = intl.formatMessage({
   defaultMessage: 'Body',
-  id: 'C1cy54',
+  id: '0b5732e78079',
   description: 'The title of the body field in the static result http action',
 });
 const STATIC_RESULT_HTTP_HEADERS_TITLE = intl.formatMessage({
   defaultMessage: 'Headers',
-  id: 'HSJLCu',
+  id: '1d224b0ae33b',
   description: 'The title of the headers field in the static result http action',
 });
 const STATIC_RESULT_OPERATION_OUTPUT_TITLE = intl.formatMessage({
   defaultMessage: 'Output',
-  id: 'UZiXVh',
+  id: '519897561daf',
   description: 'The title of the output field in the static result http action',
 });
 

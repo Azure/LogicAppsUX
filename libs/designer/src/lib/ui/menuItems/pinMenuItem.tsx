@@ -22,13 +22,13 @@ export const PinMenuItem: React.FC<PinMenuItemProps> = (props) => {
 
   const pinAction = intl.formatMessage({
     defaultMessage: 'Pin action',
-    id: 'b2aL+f',
+    id: '6f668bf9fe8f',
     description: 'Text indicating a menu button to pin an action to the side panel',
   });
 
   const unpinAction = intl.formatMessage({
     defaultMessage: 'Unpin action',
-    id: 'iTz1lp',
+    id: '893cf5969a1a',
     description: 'Text indicating a menu button to unpin a pinned action from the side panel',
   });
 

@@ -23,25 +23,25 @@ export const WarningModal: FunctionComponent = () => {
 
   const discardChangesTitleLoc = intl.formatMessage({
     defaultMessage: 'Discard changes',
-    id: 'cR9RtV',
+    id: '711f51b55887',
     description: 'Title for discard modal',
   });
 
   const discardChangesMessageLoc = intl.formatMessage({
     defaultMessage: 'Do you want to discard all unsaved changes?',
-    id: 'oVVPst',
+    id: 'a1554fb2da21',
     description: 'Discard warning message',
   });
 
   const cancelLoc = intl.formatMessage({
     defaultMessage: 'Cancel',
-    id: '6PdOcy',
+    id: 'e8f74e732301',
     description: 'Cancel',
   });
 
   const discardLoc = intl.formatMessage({
     defaultMessage: 'Discard',
-    id: 'vlDynP',
+    id: 'be50f29cf392',
     description: 'Discard',
   });
 

@@ -144,12 +144,12 @@ export const QuickViewPanelHeader = ({
   const detailsTags: Record<string, string> = {
     Type: intl.formatMessage({
       defaultMessage: 'Type',
-      id: 'tjQdhq',
+      id: 'b6341d86a165',
       description: 'Solution type of the template',
     }),
     By: intl.formatMessage({
       defaultMessage: 'By',
-      id: 'nhEgHb',
+      id: '9e11201db5b7',
       description: 'Name of the organization that published this template',
     }),
   };
@@ -173,7 +173,7 @@ export const QuickViewPanelHeader = ({
           <Link className="msla-template-quickview-source-code" href={sourceCodeUrl} target="_blank">
             {intl.formatMessage({
               defaultMessage: 'Source code',
-              id: 'EFQ56R',
+              id: '105439e9180b',
               description: 'Link to the source code of the template',
             })}
             <Open16Regular className="msla-templates-tab-source-code-icon" />
@@ -188,7 +188,7 @@ export const QuickViewPanelHeader = ({
           <Text>
             {intl.formatMessage({
               defaultMessage: 'Features',
-              id: 'SZ78Xp',
+              id: '499efc5e9041',
               description: 'Title for the features section in the template overview',
             })}
             :

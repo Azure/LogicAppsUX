@@ -27,12 +27,12 @@ export const RunProperty = (props: {
   const copiedText = intl.formatMessage({
     defaultMessage: 'Copied!',
     description: 'Copied text',
-    id: 'NE54Uu',
+    id: '344e7852ec59',
   });
   const filteredText = intl.formatMessage({
     defaultMessage: 'Filtered!',
     description: 'Filtered text',
-    id: 'QT4IaP',
+    id: '413e0868fe3e',
   });
 
   const onCopyClick = useCallback(

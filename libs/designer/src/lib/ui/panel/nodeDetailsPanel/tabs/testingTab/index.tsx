@@ -63,12 +63,12 @@ export const testingTab: PanelTabFn = (intl, props) => ({
   id: constants.PANEL_TAB_NAMES.TESTING,
   title: intl.formatMessage({
     defaultMessage: 'Testing',
-    id: '8zkvmc',
+    id: 'f3392f99c21c',
     description: 'The tab label for the testing tab on the operation panel',
   }),
   description: intl.formatMessage({
     defaultMessage: 'Testing tab',
-    id: 'BXb3CB',
+    id: '0576f7081f2f',
     description: 'An accessibility label that describes the testing tab',
   }),
   visible: true,

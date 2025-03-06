@@ -97,7 +97,7 @@ export const FloatingActionMenuOutputs = (props: FloatingActionMenuOutputsProps)
   const onRenderValueField = (schemaKey: string): JSX.Element => {
     const placeholder = intl.formatMessage({
       defaultMessage: 'Enter a value to respond with',
-      id: '4izAMi',
+      id: 'e22cc0322f43',
       description: 'Placeholder for output value field',
     });
     const onDynamicallyAddedParameterValueChange = (schemaKey: string, newValue: ValueSegment[]) => {
@@ -221,23 +221,23 @@ export const FloatingActionMenuOutputs = (props: FloatingActionMenuOutputsProps)
 
   const collapsedTitle = intl.formatMessage({
     defaultMessage: 'Add an output',
-    id: 'kq+I5o',
+    id: '92af88e68eea',
     description: 'Button to add a dynamically added parameter',
   });
   const expandedTitle = intl.formatMessage({
     defaultMessage: 'Choose the type of output',
-    id: 'iE2+sy',
+    id: '884dbeb324c7',
     description: 'Button to choose data type of the dynamically added parameter',
   });
   const titlePlaceholder = intl.formatMessage({
     defaultMessage: 'Enter a name',
-    id: 'Smo/VO',
+    id: '4a6a3f54e57a',
     description: 'Placeholder for output title field',
   });
 
   const descriptionPlaceholder = intl.formatMessage({
     defaultMessage: 'Enter a description of the output',
-    id: 'Nbl3zN',
+    id: '35b977ccd7c3',
     description: 'Placeholder for output description field',
   });
 

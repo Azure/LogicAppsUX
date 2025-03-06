@@ -40,7 +40,7 @@ export const validateParameter = (
       if (!name) {
         return intl.formatMessage({
           defaultMessage: 'Must provide the parameter name.',
-          id: 'Cj3/LJ',
+          id: '0a3dff2c9148',
           description: 'Error message when the workflow parameter name is empty.',
         });
       }
@@ -52,7 +52,7 @@ export const validateParameter = (
       return duplicateParameters.length > 0
         ? intl.formatMessage({
             defaultMessage: 'Parameter name already exists.',
-            id: '8+0teU',
+            id: 'f3ed2d79421f',
             description: 'Error message when the workflow parameter name already exists.',
           })
         : undefined;
@@ -68,7 +68,7 @@ export const validateParameter = (
         }
         return intl.formatMessage({
           defaultMessage: 'Must provide value for parameter.',
-          id: 'VL9wOu',
+          id: '54bf703aea55',
           description: 'Error message when the workflow parameter value is empty.',
         });
       }

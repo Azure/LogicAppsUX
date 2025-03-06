@@ -38,19 +38,19 @@ export const ExpandedDictionary = ({
 
   const keyPlaceholder = intl.formatMessage({
     defaultMessage: 'Enter key',
-    id: 'pC2nr2',
+    id: 'a42da7af6725',
     description: 'Placeholder text for Key',
   });
   const valuePlaceholder = intl.formatMessage({
     defaultMessage: 'Enter value',
-    id: 'zCsGWP',
+    id: 'cc2b0658f478',
     description: 'Placeholder text for Value',
   });
 
   const itemKeyLabel = intl.formatMessage(
     {
       defaultMessage: '{label} key item',
-      id: '5+zBXE',
+      id: 'e7ecc15c4e7f',
       description: 'Label for Key',
     },
     { label }
@@ -58,7 +58,7 @@ export const ExpandedDictionary = ({
   const itemValueLabel = intl.formatMessage(
     {
       defaultMessage: '{label} value item',
-      id: 'cKNvk6',
+      id: '70a36f93ab27',
       description: 'Label for Value',
     },
     { label }

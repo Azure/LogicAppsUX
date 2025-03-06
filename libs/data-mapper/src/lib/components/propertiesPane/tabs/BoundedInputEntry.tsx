@@ -47,18 +47,18 @@ export const BoundedInputEntry = ({ index, input, functionData, connection, conn
 
       const relativePathMessage = intl.formatMessage({
         defaultMessage: 'Select function from ',
-        id: '+KXX+O',
+        id: 'f8a5d7f8e94b',
         description: 'Path to the function to select',
       });
       const ariaLabel = intl.formatMessage({
         defaultMessage: 'Dropdown to select filepath ',
-        id: 'nwLd4b',
+        id: '9f02dde1bfb0',
         description: 'Label of the file path selection box',
       });
       const noFilesFound = intl.formatMessage(
         {
           defaultMessage: 'No files found in {filePath}, please save XSLT to specified path to use this function',
-          id: 'rSa1Id',
+          id: 'ad26b521dbbb',
           description: 'Files could not be found in specified path',
         },
         {

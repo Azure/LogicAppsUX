@@ -46,7 +46,7 @@ export const FunctionList = (props: FunctionListProps) => {
   const intl = useIntl();
   const loopInstructionMessage = intl.formatMessage({
     defaultMessage: 'Loop automatically added when connecting a repeating source element. No function required.',
-    id: 'I2Ztna',
+    id: '23666d9daa72',
     description: 'Message explaining user does not need to add a loop function',
   });
 

@@ -37,7 +37,7 @@ export function RunAfterIndicator({ statuses, sourceNodeId }: RunAfterIndicatorP
   const tooltipHeaderText = intl.formatMessage(
     {
       defaultMessage: 'Run after {sourceNodeId}',
-      id: 'PytMJ0',
+      id: '3f2b4c274fb0',
       description: 'The text that shows the node after which the target node is run.',
     },
     {
@@ -48,22 +48,22 @@ export function RunAfterIndicator({ statuses, sourceNodeId }: RunAfterIndicatorP
   const StatusStrings: Record<string, string> = {
     SUCCEEDED_STATUS: intl.formatMessage({
       defaultMessage: 'Is successful',
-      id: 'rh5g4p',
+      id: 'ae1e60e2925f',
       description: 'Successful run',
     }),
     TIMEDOUT_STATUS: intl.formatMessage({
       defaultMessage: 'Timed out',
-      id: '/2V8bQ',
+      id: 'ff657c6d0258',
       description: 'Timed out run',
     }),
     SKIPPED_STATUS: intl.formatMessage({
       defaultMessage: 'Is skipped',
-      id: 'I3mifR',
+      id: '2379a27d190a',
       description: 'Skipped run',
     }),
     FAILED_STATUS: intl.formatMessage({
       defaultMessage: 'Has failed',
-      id: 'O+3Y9f',
+      id: '3bedd8f5ff2c',
       description: 'Failed run',
     }),
   };

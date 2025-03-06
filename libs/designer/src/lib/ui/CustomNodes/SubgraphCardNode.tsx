@@ -93,7 +93,7 @@ const SubgraphCardNode = ({ targetPosition = Position.Top, sourcePosition = Posi
   const collapsedText = intl.formatMessage(
     {
       defaultMessage: '{actionCount, plural, one {# Action} =0 {0 Actions} other {# Actions}}',
-      id: 'B/JzwK',
+      id: '07f273c0a572',
       description: 'This is the number of actions to be completed in a group',
     },
     { actionCount }
@@ -122,7 +122,7 @@ const SubgraphCardNode = ({ targetPosition = Position.Top, sourcePosition = Posi
   const parameterValidationErrors = useParameterValidationErrors(subgraphId);
   const parameterValidationErrorText = intl.formatMessage({
     defaultMessage: 'Invalid parameters',
-    id: 'Tmr/9e',
+    id: '4e6afff5ebe7',
     description: 'Text to explain that there are invalid parameters for this node',
   });
 

@@ -42,13 +42,13 @@ const TreeBranch = <T extends ITreeNode<T>>(props: TreeBranchProps<T>) => {
 
   const expandTreeNodeLoc = intl.formatMessage({
     defaultMessage: 'Expand tree node',
-    id: '2JA3gY',
+    id: 'd89037818546',
     description: 'Expand tree node',
   });
 
   const collapseTreeNodeLoc = intl.formatMessage({
     defaultMessage: 'Collapse tree node',
-    id: 'td5//c',
+    id: 'b5de7ffdcafe',
     description: 'Collapse tree node',
   });
 

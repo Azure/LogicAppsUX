@@ -89,32 +89,32 @@ export const DesignerCommandBar: React.FC<DesignerCommandBarProps> = ({ isRefres
   const Resources = {
     DESIGNER_SAVE: intl.formatMessage({
       defaultMessage: 'Save',
-      id: 'ZvAp7m',
+      id: '66f029ee63f7',
       description: 'Button text for save',
     }),
     DESIGNER_PARAMETERS: intl.formatMessage({
       defaultMessage: 'Parameters',
-      id: '+0ua83',
+      id: 'fb4b9af37c07',
       description: 'Button text for parameters',
     }),
     DESIGNER_ERRORS: intl.formatMessage({
       defaultMessage: 'Errors',
-      id: 'ohOaXj',
+      id: 'a2139a5e3e10',
       description: 'Button text for errors',
     }),
     MONITORING_VIEW_REFRESH: intl.formatMessage({
       defaultMessage: 'Refresh',
-      id: 'pr9GwA',
+      id: 'a6bf46c006c4',
       description: 'Button text for refresh',
     }),
     MONITORING_VIEW_RESUBMIT: intl.formatMessage({
       defaultMessage: 'Resubmit',
-      id: 'sOnphB',
+      id: 'b0e9e98416fa',
       description: 'Button text for resubmit',
     }),
     COMMAND_BAR_ARIA: intl.formatMessage({
       defaultMessage: 'Use left and right arrow keys to navigate between commands',
-      id: 'rd6fai',
+      id: 'adde9f6a2d3d',
       description: 'Aria describing the way to control the keyboard navigation',
     }),
   };

@@ -34,22 +34,22 @@ export const FunctionPanel = (_props: PanelProps) => {
     () => ({
       FUNCTIONS: intl.formatMessage({
         defaultMessage: 'Functions',
-        id: 'zsc+jp',
+        id: 'cec73e8e9e16',
         description: 'Functions',
       }),
       DRAWER_CHEVRON_EXPANDED: intl.formatMessage({
         defaultMessage: 'open functions drawer',
-        id: '1Xke9D',
+        id: 'd5791ef43585',
         description: 'aria label to open functions drawer',
       }),
       COLLAPSE_FUNCTIONS_DRAWER: intl.formatMessage({
         defaultMessage: 'collapse functions drawer',
-        id: 'iBArTB',
+        id: '88102b4c1043',
         description: 'aria label to collapse functions drawer',
       }),
       SEARCH_FUNCTIONS: intl.formatMessage({
         defaultMessage: 'Search Functions',
-        id: '2xQWRt',
+        id: 'db141646d2e3',
         description: 'Search Functions',
       }),
     }),

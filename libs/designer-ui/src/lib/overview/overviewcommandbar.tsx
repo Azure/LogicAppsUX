@@ -16,12 +16,12 @@ export const OverviewCommandBar: React.FC<OverviewCommandBarProps> = ({ isRefres
   const Resources = {
     OVERVIEW_REFRESH: intl.formatMessage({
       defaultMessage: 'Refresh',
-      id: 'pr9GwA',
+      id: 'a6bf46c006c4',
       description: 'Button text for refresh',
     }),
     OVERVIEW_RUN_TRIGGER: intl.formatMessage({
       defaultMessage: 'Run trigger',
-      id: 'lPTdSf',
+      id: '94f4dd49fafa',
       description: 'Button text for run trigger',
     }),
   };

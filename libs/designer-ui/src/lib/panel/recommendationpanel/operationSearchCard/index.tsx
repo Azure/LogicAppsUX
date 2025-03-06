@@ -37,7 +37,7 @@ export const OperationSearchCard = (props: OperationSearchCardProps) => {
 
   const triggerBadgeText = intl.formatMessage({
     defaultMessage: 'Trigger',
-    id: '02vyBk',
+    id: 'd36bf206409e',
     description: 'Badge showing an action is a logic apps trigger',
   });
 

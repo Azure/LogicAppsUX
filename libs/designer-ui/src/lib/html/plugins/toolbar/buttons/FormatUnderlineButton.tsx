@@ -17,22 +17,22 @@ export const FormatUnderlineButton: React.FC<FormatUnderlineButtonProps> = (prop
 
   const underlineTitleMac = intl.formatMessage({
     defaultMessage: 'Underline (⌘U)',
-    id: 'KYX5Do',
+    id: '2985f90e88c9',
     description: 'Command for underline text for Mac users',
   });
   const underlineTitleMacAriaLabel = intl.formatMessage({
     defaultMessage: 'Format text as underline. Shortcut: ⌘U',
-    id: 'qBkxGU',
+    id: 'a81931194fa1',
     description: 'label to make underline text for Mac users',
   });
   const underlineTitleNonMac = intl.formatMessage({
     defaultMessage: 'Underline (Ctrl+U)',
-    id: 'lwlg2K',
+    id: '970960d8a551',
     description: 'Command for underline text for non-mac users',
   });
   const underlineTitleNonMacAriaLabel = intl.formatMessage({
     defaultMessage: 'Format text as underline. Shortcut: Ctrl+U',
-    id: 'YJlS8E',
+    id: '609952f04e76',
     description: 'label to make underline text for nonMac users',
   });
 

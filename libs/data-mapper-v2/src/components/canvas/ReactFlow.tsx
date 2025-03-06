@@ -62,7 +62,7 @@ export const ReactFlowWrapper = ({ setIsMapStateDirty }: DMReactFlowProps) => {
     () => ({
       DEFAULT_PLACEHOLDER: intl.formatMessage({
         defaultMessage: 'Drag and connect nodes to transform',
-        id: 'QHdKnm',
+        id: '40774a9e6299',
         description: 'default placeholder text',
       }),
     }),

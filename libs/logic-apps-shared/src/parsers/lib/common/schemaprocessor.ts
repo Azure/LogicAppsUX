@@ -179,7 +179,7 @@ export class SchemaProcessor {
       const title = this.options.isInputSchema
         ? schema.title ||
           (this.options.currentKey === ParameterKeyUtility.WildIndexSegment
-            ? intl.formatMessage({ defaultMessage: 'Item', id: 'QbJDi7', description: 'Label for single item inside an array.' })
+            ? intl.formatMessage({ defaultMessage: 'Item', id: '41b2438bbccb', description: 'Label for single item inside an array.' })
             : this.options.currentKey)
         : schema.title;
       const originalTitlePrefix = this.options.titlePrefix;

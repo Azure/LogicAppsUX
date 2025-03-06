@@ -22,13 +22,13 @@ export const FilePickerPopover: React.FC<FilePickerProps> = (props) => {
 
   const loadingMessage = intl.formatMessage({
     defaultMessage: 'Loading files…',
-    id: 'LPzAHC',
+    id: '2cfcc01c2d73',
     description: 'Loading indicator message showing that the UX is getting the next list of files',
   });
 
   const noItemsMessage = intl.formatMessage({
     defaultMessage: 'No items',
-    id: 'Q8HCYK',
+    id: '43c1c260aef0',
     description: 'Message to show when there are no items to show',
   });
 

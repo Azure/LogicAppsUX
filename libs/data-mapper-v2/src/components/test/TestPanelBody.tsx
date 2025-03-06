@@ -31,27 +31,27 @@ export const TestPanelBody = (props: TestPanelBodyProps) => {
     () => ({
       SAMPLE_DATA: intl.formatMessage({
         defaultMessage: 'Sample data',
-        id: 'nRjpgk',
+        id: '9d18e98244f0',
         description: 'Sample data for testing',
       }),
       SAMPLE_TEST_DATA_PLACEHOLDER: intl.formatMessage({
         defaultMessage: 'Paste your sample data to test the mapping',
-        id: 'S5kFNK',
+        id: '4b990534a80e',
         description: 'Sample test data placeholder',
       }),
       RESULT: intl.formatMessage({
         defaultMessage: 'Result',
-        id: '3hHkAn',
+        id: 'de11e4027efc',
         description: 'Result',
       }),
       RESULT_PLACEHOLDER: intl.formatMessage({
         defaultMessage: 'Test your map to see a result',
-        id: 'UVr0mL',
+        id: '515af498b7ee',
         description: 'Placeholder result',
       }),
       TEST_INFO_MESSAGE: intl.formatMessage({
         defaultMessage: 'To generate and test with the latest XSLT, please save the map first.',
-        id: 'DIwFTo',
+        id: '0c8c054e860e',
         description: 'Save map info',
       }),
     }),

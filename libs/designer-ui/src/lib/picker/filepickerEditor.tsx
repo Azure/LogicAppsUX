@@ -132,7 +132,7 @@ export const FilePickerEditor = ({
 
   const openFolderLabel = intl.formatMessage({
     defaultMessage: 'Open folder',
-    id: 's+4LEa',
+    id: 'b3ee0b11a2a4',
     description: 'Open folder label',
   });
   return (

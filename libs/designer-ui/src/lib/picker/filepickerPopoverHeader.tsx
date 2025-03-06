@@ -100,14 +100,14 @@ const FilePickerPopoverOverflowMenu: React.FC<{ items: FilePickerBreadcrumb[] }>
 
   const moreTooltipMessage = intl.formatMessage({
     defaultMessage: 'More…',
-    id: 'TDfQzn',
+    id: '4c37d0ce7923',
     description: 'Tooltip text for the "..." menu that the user can click to reveal more items',
   });
 
   const moreItemsSingularMessage = intl.formatMessage(
     {
       defaultMessage: '{overflowItemsLength} more item',
-      id: 'IlyNs0',
+      id: '225c8db340f9',
       description: 'Message to show when exactly 1 item is present in the overflow menu',
     },
     {
@@ -118,7 +118,7 @@ const FilePickerPopoverOverflowMenu: React.FC<{ items: FilePickerBreadcrumb[] }>
   const moreItemsPluralMessage = intl.formatMessage(
     {
       defaultMessage: '{overflowItemsLength} more items',
-      id: 'gaHI0k',
+      id: '81a1c8d24939',
       description: 'Message to show when 0 or more than 2 items are present in the overflow menu',
     },
     {

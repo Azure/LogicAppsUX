@@ -17,7 +17,7 @@ const InfoBar = () => {
   const text = intl.formatMessage({
     defaultMessage:
       'The parameters will be saved when the workflow is saved. You can edit it here before save or edit it in the parameter page after save.',
-    id: 'M6U2LE',
+    id: '33a5362c4974',
     description: 'Text for Info Bar',
   });
   return (
@@ -75,24 +75,24 @@ export function WorkflowParameters({
     const description1 = useLegacy
       ? intl.formatMessage({
           defaultMessage: 'Create, manage Logic Apps parameters, give it a default value.',
-          id: 'ISaPr+',
+          id: '21268fafeffd',
           description: 'Description for Workflow Parameters Part 1 for Legacy Parameters mode.',
         })
       : intl.formatMessage({
           defaultMessage: 'Parameters are shared across workflows in a Logic App.',
-          id: 'xt5TeT',
+          id: 'c6de53793532',
           description: 'Description for Workflow Parameters Part 1',
         });
     const description2 = useLegacy
       ? intl.formatMessage({
           defaultMessage:
             'Parameters used in Logic App will be converted into Azure Resource Manager template during deployment template generation.',
-          id: '5fmV2Q',
+          id: 'e5f995d9033d',
           description: 'Description for Workflow Parameters Part 2 for Legacy Parameters mode.',
         })
       : intl.formatMessage({
           defaultMessage: 'To reference a parameter, use the dynamic content list.',
-          id: 'UCNM4L',
+          id: '50234ce0bd42',
           description: 'Description for Workflow Parameters Part 2',
         });
 
@@ -127,19 +127,19 @@ export function WorkflowParameters({
 
   const createText = intl.formatMessage({
     defaultMessage: 'Create parameter',
-    id: 'vwH/XV',
+    id: 'bf01ff5d5ee6',
     description: 'Create Parameter Text',
   });
   const titleText = intl.formatMessage({
     defaultMessage: 'Parameters',
-    id: 'X7X5ew',
+    id: '5fb5f97b0e06',
     description: 'Workflow Parameters Title',
   });
   const onClose = () => onDismiss?.();
 
   const closeButtonAriaLabel = intl.formatMessage({
     defaultMessage: 'Close panel',
-    id: 'O8Qy7k',
+    id: '3bc432ee4248',
     description: 'Aria label for the close button on the workflow parameters panel',
   });
 

@@ -44,12 +44,12 @@ export const TemplateOverview = ({
   const resources = {
     by: intl.formatMessage({
       defaultMessage: 'By',
-      id: '+5Jp42',
+      id: 'fb9269e36e14',
       description: 'Title for publisher',
     }),
     type: intl.formatMessage({
       defaultMessage: 'Type',
-      id: 'k/X2ml',
+      id: '93f5f69a5158',
       description: 'Title for solution type',
     }),
   };
@@ -97,7 +97,7 @@ export const TemplateOverview = ({
           <Text className="msla-template-overview-section-title">
             {intl.formatMessage({
               defaultMessage: 'Workflows in this Accelerator',
-              id: 'zK5VPq',
+              id: 'ccae553ea8b5',
               description: 'Title for the workflows section in the template overview',
             })}
           </Text>
@@ -108,12 +108,12 @@ export const TemplateOverview = ({
             {templateHasConnections
               ? intl.formatMessage({
                   defaultMessage: 'Connections',
-                  id: 'Nr8FbX',
+                  id: '36bf056d7389',
                   description: 'Title for the connections section in the template overview tab',
                 })
               : intl.formatMessage({
                   defaultMessage: 'No connections are needed in this template',
-                  id: 'j2v8BE',
+                  id: '8f6bfc0442f1',
                   description: 'Text to show no connections present in the template.',
                 })}
           </Text>
@@ -174,8 +174,8 @@ const WorkflowList = ({
     })
   );
   const columnsNames = {
-    name: intl.formatMessage({ defaultMessage: 'Name', id: '+EREVh', description: 'Column name for workflow name' }),
-    trigger: intl.formatMessage({ defaultMessage: 'Trigger', id: 'MGq28G', description: 'Column name for trigger type' }),
+    name: intl.formatMessage({ defaultMessage: 'Name', id: 'f84444561d7d', description: 'Column name for workflow name' }),
+    trigger: intl.formatMessage({ defaultMessage: 'Trigger', id: '306ab6f063c5', description: 'Column name for trigger type' }),
   };
   const _onColumnClick = (_event: React.MouseEvent<HTMLElement>, column: IColumn): void => {
     let isSortedDescending = column.isSortedDescending;

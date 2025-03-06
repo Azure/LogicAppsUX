@@ -58,12 +58,12 @@ export const RunAfterActionDetails = ({
 
   const expandAriaLabel = intl.formatMessage({
     defaultMessage: 'Expand',
-    id: 'iU1OJh',
+    id: '894d4e2617ba',
     description: 'An accessible label for expand toggle icon',
   });
   const collapseAriaLabel = intl.formatMessage({
     defaultMessage: 'Collapse',
-    id: 'PQOiAc',
+    id: '3d03a201c9cb',
     description: 'An accessible label for collapse toggle icon',
   });
 
@@ -105,13 +105,13 @@ const DeleteButton = ({ visible, disabled, onDelete }: DeleteButtonProps): JSX.E
 
   const MENU_DELETE = intl.formatMessage({
     defaultMessage: 'Delete',
-    id: 's7nGyC',
+    id: 'b3b9c6c820c2',
     description: 'Delete Button',
   });
 
   const preventDeleteText = intl.formatMessage({
     defaultMessage: 'Actions must have one or more run after configurations',
-    id: 'hCrg+6',
+    id: '842ae0fbab22',
     description: 'Cannot delete the last run after edge',
   });
 

@@ -50,7 +50,7 @@ export const CollapsedAuthentication = ({
             setErrorMessage(
               intl.formatMessage({
                 defaultMessage: 'Invalid authentication value',
-                id: '7+ZxCU',
+                id: 'efe671094214',
                 description: 'Error message for invalid Auth in authentication editor',
               })
             );
@@ -65,7 +65,7 @@ export const CollapsedAuthentication = ({
           setErrorMessage(
             intl.formatMessage({
               defaultMessage: 'Enter a valid JSON.',
-              id: 'mNaBPE',
+              id: '98d6813c441a',
               description: 'Error message for invalid JSON in authentication editor',
             })
           );

@@ -71,49 +71,49 @@ export const SelectConnection = () => {
 
   const loadingText = intl.formatMessage({
     defaultMessage: 'Loading connection data...',
-    id: 'faUrud',
+    id: '7da52bb9d529',
     description: 'Message to show under the loading icon when loading connection parameters',
   });
 
   const componentDescription = isXrmConnectionReferenceMode
     ? intl.formatMessage({
         defaultMessage: 'Select an existing connection reference or create a new one',
-        id: 'ZAdaBl',
+        id: '64075a065317',
         description: 'Select an existing connection reference or create a new one.',
       })
     : intl.formatMessage({
         defaultMessage: 'Select an existing connection or create a new one',
-        id: 'DfXxoX',
+        id: '0df5f1a1701e',
         description: 'Select an existing connection or create a new one.',
       });
 
   const buttonAddText = intl.formatMessage({
     defaultMessage: 'Add new',
-    id: 'Lft/is',
+    id: '2dfb7f8acd00',
     description: 'Button to add a new connection',
   });
 
   const buttonAddAria = intl.formatMessage({
     defaultMessage: 'Add a new connection',
-    id: '4Q7WzU',
+    id: 'e10ed6cd4b36',
     description: 'Aria label description for add button',
   });
 
   const buttonCancelText = intl.formatMessage({
     defaultMessage: 'Cancel',
-    id: 'wF7C+h',
+    id: 'c05ec2fa13db',
     description: 'Button to cancel a connection',
   });
 
   const buttonCancelAria = intl.formatMessage({
     defaultMessage: 'Cancel the selection',
-    id: 'GtDOFg',
+    id: '1ad0ce160c4c',
     description: 'Aria label description for cancel button',
   });
 
   const connectionLoadErrorTitle = intl.formatMessage({
     defaultMessage: 'Error loading connections',
-    id: 'HQ/HhZ',
+    id: '1d0fc7859abd',
     description: 'Title for error message when loading connections',
   });
 

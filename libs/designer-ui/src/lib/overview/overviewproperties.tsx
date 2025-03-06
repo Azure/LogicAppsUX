@@ -32,32 +32,32 @@ export const OverviewProperties: React.FC<OverviewPropertiesProps> = ({
   const Resources = {
     CALLBACK_URL: intl.formatMessage({
       defaultMessage: 'Callback URL:',
-      id: 'woJQhv',
+      id: 'c2825086f819',
       description: 'Label text for callback URL',
     }),
     FLOW_STATE_TYPE: intl.formatMessage({
       defaultMessage: 'State type:',
-      id: 'Bn8iTS',
+      id: '067f224d2a29',
       description: 'Label text for workflow state type (Stateless or Stateful)',
     }),
     STATELESS_RUN_MODE: intl.formatMessage({
       defaultMessage: 'Stateless run mode:',
-      id: 'lgs5sf',
+      id: '960b39b1fb01',
       description: 'label text for stateless run mode',
     }),
     WORKFLOW_NAME: intl.formatMessage({
       defaultMessage: 'Name:',
-      id: 'JnlcZQ',
+      id: '26795c650ca4',
       description: 'Label text for workflow name',
     }),
     WORKFLOW_OPERATION_OPTIONS: intl.formatMessage({
       defaultMessage: 'Operation options:',
-      id: 'OFKZzQ',
+      id: '385299cd0432',
       description: 'Label text for workflow operation options',
     }),
     WORKFLOW_PROPERTIES: intl.formatMessage({
       defaultMessage: 'Workflow properties',
-      id: 'OMuMCI',
+      id: '38cb8c0881e5',
       description: 'Header text for workflow properties',
     }),
   };

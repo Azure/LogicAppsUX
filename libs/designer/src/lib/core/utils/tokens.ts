@@ -224,7 +224,7 @@ export const getOutputTokenSections = (
   if (Object.keys(workflowParameters).length) {
     tokenGroups.push({
       id: 'workflowparameters',
-      label: intl.formatMessage({ description: 'Heading section for Parameter tokens', defaultMessage: 'Parameters', id: 'J9wWry' }),
+      label: intl.formatMessage({ description: 'Heading section for Parameter tokens', defaultMessage: 'Parameters', id: '27dc16af2b35' }),
       tokens: getWorkflowParameterTokens(workflowParameters),
     });
   }
@@ -232,7 +232,7 @@ export const getOutputTokenSections = (
   if (nodeTokens) {
     tokenGroups.push({
       id: 'variables',
-      label: intl.formatMessage({ description: 'Heading section for Variable tokens', defaultMessage: 'Variables', id: 'unMaeV' }),
+      label: intl.formatMessage({ description: 'Heading section for Variable tokens', defaultMessage: 'Variables', id: 'ba731a795cfa' }),
       tokens: getVariableTokens(variables, nodeTokens).map((token) => ({
         ...token,
         value: getTokenValue(token, nodeType, replacementIds),
@@ -501,7 +501,7 @@ const getListCallbackUrlToken = (nodeId: string): TokenGroup => {
     key: Constants.HTTP_WEBHOOK_LIST_CALLBACK_URL_KEY,
     title: intl.formatMessage({
       defaultMessage: 'Callback URL',
-      id: 'hMpLz3',
+      id: '84ca4bcf71b5',
       description: 'Callback url token title',
     }),
     type: Constants.SWAGGER.TYPE.STRING,
@@ -521,7 +521,7 @@ const getListCallbackUrlToken = (nodeId: string): TokenGroup => {
     hasAdvanced: false,
     label: intl.formatMessage({
       defaultMessage: 'Webhook reference information',
-      id: 'FT3jt6',
+      id: '153de3b7a68f',
       description: 'httpwebhook callback url section title',
     }),
     id: nodeId,

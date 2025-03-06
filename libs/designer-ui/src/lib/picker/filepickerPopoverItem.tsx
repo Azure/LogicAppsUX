@@ -18,7 +18,7 @@ export const FilePickerPopoverItem: React.FC<FilePickerPopoverItemProps> = (prop
   const navMessage = intl.formatMessage(
     {
       defaultMessage: 'Navigate to {folderName} folder',
-      id: 'z/UY4k',
+      id: 'cff518e24eea',
       description: 'a label that shows which folder the user will be able to dig deeper into',
     },
     {

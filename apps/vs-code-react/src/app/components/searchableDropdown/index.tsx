@@ -20,7 +20,7 @@ export const SearchableDropdown: React.FC<ISearchableDropdownProps> = (props) =>
   const intlText = {
     SEARCH_OPTIONS: intl.formatMessage({
       defaultMessage: 'Search options',
-      id: 'R7LyKb',
+      id: '47b2f229b05f',
       description: 'Search options description',
     }),
   };

@@ -47,22 +47,22 @@ export const TemplateFilters = ({ detailFilters }: TemplateFiltersProps) => {
   const intlText = {
     SEARCH: intl.formatMessage({
       defaultMessage: 'Search',
-      id: 'IUbVFR',
+      id: '2146d5151a50',
       description: 'Placeholder text for search templates',
     }),
     CONNECTORS: intl.formatMessage({
       defaultMessage: 'Connectors',
-      id: 'KO2eUv',
+      id: '28ed9e52f3fa',
       description: 'Label text for connectors filter',
     }),
     TYPE: intl.formatMessage({
       defaultMessage: 'Type',
-      id: 'wfekJ7',
+      id: 'c1f7a427bbe0',
       description: 'Label text for type filter',
     }),
     SORT_BY: intl.formatMessage({
       defaultMessage: 'Sort By',
-      id: 'ZOIvqN',
+      id: '64e22fa8d09c',
       description: 'Label text for sort by filter',
     }),
   };
@@ -72,7 +72,7 @@ export const TemplateFilters = ({ detailFilters }: TemplateFiltersProps) => {
       key: 'a-to-z',
       text: intl.formatMessage({
         defaultMessage: 'A to Z, ascending',
-        id: 'zxF7g+',
+        id: 'cf117b83e358',
         description: 'Sort by dropdown option of A to Z ascending',
       }),
     },
@@ -80,7 +80,7 @@ export const TemplateFilters = ({ detailFilters }: TemplateFiltersProps) => {
       key: 'z-to-a',
       text: intl.formatMessage({
         defaultMessage: 'Z to A, descending',
-        id: '1jf3Dq',
+        id: 'd637f70ea0bc',
         description: 'Sort by dropdown option of Z to A descending',
       }),
     },
@@ -92,7 +92,7 @@ export const TemplateFilters = ({ detailFilters }: TemplateFiltersProps) => {
         value: templateDefaultTabKey,
         displayName: intl.formatMessage({
           defaultMessage: 'All',
-          id: 'YX0jQs',
+          id: '617d2342cbc5',
           description: 'All templates tab',
         }),
       },
@@ -103,7 +103,7 @@ export const TemplateFilters = ({ detailFilters }: TemplateFiltersProps) => {
         value: 'Workflow',
         displayName: intl.formatMessage({
           defaultMessage: 'Workflows',
-          id: 'fxue5l',
+          id: '7f1b9ee65748',
           description: 'Workflows only templates tab',
         }),
       });
@@ -111,7 +111,7 @@ export const TemplateFilters = ({ detailFilters }: TemplateFiltersProps) => {
         value: 'Accelerator',
         displayName: intl.formatMessage({
           defaultMessage: 'Accelerators',
-          id: 'A5/UwX',
+          id: '039fd4c1754a',
           description: 'Accelerators only templates tab',
         }),
       });

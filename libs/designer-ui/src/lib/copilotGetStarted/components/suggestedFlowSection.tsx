@@ -18,28 +18,28 @@ export const SuggestedFlowsSection: React.FC = () => {
   const intlText = {
     suggestedFlow: intl.formatMessage({
       defaultMessage: 'Suggested flow',
-      id: 'Uxckds',
+      id: '53172476c8fa',
       description: 'Title for the suggested flow section',
     }),
     suggestedFlowDescriptionPart1: intl.formatMessage({
       defaultMessage: 'After you review this AI generated flow suggestion, select',
-      id: 'id4DBb',
+      id: '89de0305b714',
       description: 'First part of the Copilot Get Started description for Suggested Flow section',
     }),
     suggestedFlowDescriptionPart2: intl.formatMessage({
       defaultMessage: 'to configure it',
-      id: 'O7HhyP',
+      id: '3bb1e1c8f96b',
       description: 'Second part of the Copilot Get Started description for Suggested Flow section',
     }),
     nextButtonText: intl.formatMessage({
       defaultMessage: 'Next',
-      id: 'W+mUyI',
+      id: '5be994c88f36',
       description: 'Placeholder text for the Next button in the suggested workflow description',
     }),
     suggestedFlowNavigationPagination: intl.formatMessage(
       {
         defaultMessage: '{s1} of {s2}',
-        id: 'GZ8MDP',
+        id: '199f0c0cf2da',
         description: 'Shows how many suggested flows there are',
       },
       {
@@ -49,22 +49,22 @@ export const SuggestedFlowsSection: React.FC = () => {
     ),
     showDifferentSuggestion: intl.formatMessage({
       defaultMessage: 'Show a different suggestion',
-      id: 'ZyDq4/',
+      id: '6720eae3f223',
       description: 'Text for the show different suggestion flow button',
     }),
     automationSuggestionDoesNotWork: intl.formatMessage({
       defaultMessage: `This isn't what I'm looking for`,
-      id: 'hbOvB4',
+      id: '85b3af078ed1',
       description: 'Dislike button text for suggested flow',
     }),
     previousSuggestedFlow: intl.formatMessage({
       defaultMessage: 'Previous flow suggestion',
-      id: 'qy5WqY',
+      id: 'ab2e56a9833c',
       description: 'Text for button that shows the previous flow suggestion',
     }),
     nextSuggestedFlow: intl.formatMessage({
       defaultMessage: 'Next flow suggestion',
-      id: 'LElaX3',
+      id: '2c495a5f766b',
       description: 'Text for button that shows the next flow suggestion',
     }),
   };

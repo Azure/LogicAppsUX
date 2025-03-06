@@ -10,42 +10,42 @@ export const AssistantGreeting = ({ item }: { item: AssistantGreetingItem }) => 
   const intlText = {
     greetingMessageFromOpenedFlow: intl.formatMessage({
       defaultMessage: 'Welcome to the workflow assistant!',
-      id: 'Yuxprm',
+      id: '62ec69ae6def',
       description: 'Chatbot greeting message from existing flow',
     }),
     subHeading1: intl.formatMessage({
       defaultMessage: `This assistant can help you learn about your workflows and Azure Logic Apps platform's capabilities and connectors.`,
-      id: 'eO1h/h',
+      id: '78ed61fe19e7',
       description: 'Chatbot introduction message to suggest what it can help with',
     }),
     subHeading2: intl.formatMessage({
       defaultMessage: 'Some things you can ask:',
-      id: 'kEjmTx',
+      id: '9048e64f12ba',
       description: 'Chatbot introduction message to suggest what it can help with',
     }),
     suggestedPromptItem1: intl.formatMessage({
       defaultMessage: 'Describe this workflow.',
-      id: 'o5fYVy',
+      id: 'a397d8572b97',
       description: 'Chatbot suggestion message to describe the workflow',
     }),
     suggestedPromptItem2: intl.formatMessage({
       defaultMessage: 'Explain how to receive files from SFTP server.',
-      id: 'Pnt0Xj',
+      id: '3e7b745e37a5',
       description: 'Chatbot suggestion message to recieve specific files from SFTP server',
     }),
     suggestedPromptItem3: intl.formatMessage({
       defaultMessage: 'How can I call an external endpoint?',
-      id: 'NhJPUn',
+      id: '36124f527688',
       description: 'Chatbot suggestion message to call an external endpoint',
     }),
     suggestedPromptItem4: intl.formatMessage({
       defaultMessage: 'What is the concurrency setting of this workflow?',
-      id: 'WMX2ig',
+      id: '58c5f68a0b84',
       description: 'Chatbot suggestion message to get the concurrency setting of the workflow',
     }),
     outroMessage: intl.formatMessage({
       defaultMessage: `The workflow assistant is designed only to provide help and doesn't support workflow creation or editing.`,
-      id: 'Z8tBFS',
+      id: '67cb41152f33',
       description: 'Chatbot disclaimer message that workflow assistant can only provide help and not modify workflows',
     }),
   };

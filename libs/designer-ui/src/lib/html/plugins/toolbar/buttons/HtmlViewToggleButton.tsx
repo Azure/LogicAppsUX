@@ -17,7 +17,7 @@ export const HtmlViewToggleButton: React.FC<HtmlViewToggleButtonProps> = (props)
 
   const toggleCodeViewMessage = intl.formatMessage({
     defaultMessage: 'Toggle code view',
-    id: 'gA1dde',
+    id: '800d5d75efbb',
     description: 'Label used for the toolbar button which switches between raw HTML (code) view and WYSIWIG (rich text) view',
   });
 

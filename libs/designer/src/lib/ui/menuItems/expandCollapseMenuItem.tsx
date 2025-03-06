@@ -32,13 +32,13 @@ export const ExpandCollapseMenuItem = (props: ExpandCollapseMenuItemProps) => {
 
   const expandText = intl.formatMessage({
     defaultMessage: 'Expand nested',
-    id: 'JSbDfI',
+    id: '2526c37c8acc',
     description: 'Expand text',
   });
 
   const collapseText = intl.formatMessage({
     defaultMessage: 'Collapse nested',
-    id: 'pC7/+m',
+    id: 'a42efffa6edf',
     description: 'Collapse text',
   });
 

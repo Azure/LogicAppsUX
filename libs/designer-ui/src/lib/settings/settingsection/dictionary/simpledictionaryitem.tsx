@@ -44,14 +44,14 @@ export const SimpleDictionaryItem: React.FC<SimpleDictionaryItemProps> = ({
 
   const dictionaryItemDelete = intl.formatMessage({
     defaultMessage: 'Click to delete item',
-    id: 'Ur+wph',
+    id: '52bfb0a6142d',
     description: 'Label for delete button',
   });
 
   const itemKeyAriaLabel = intl.formatMessage(
     {
       defaultMessage: '{name} Key',
-      id: 'Q8zxeb',
+      id: '43ccf179b845',
       description: 'Accessibility Label for dictionary text key field',
     },
     {
@@ -60,14 +60,14 @@ export const SimpleDictionaryItem: React.FC<SimpleDictionaryItemProps> = ({
   );
   const dictionaryItemKeyPlaceholder = intl.formatMessage({
     defaultMessage: 'Key',
-    id: 'BBD8Em',
+    id: '0410fc126f5c',
     description: 'A placeholder for the dictionary key',
   });
   const itemValueAriaLabel = intl.formatMessage(
     {
       // defaultMessage: `${format(unformattedItemValueAriaLabel, itemIndex)}`,
       defaultMessage: '{name} Value',
-      id: 'mvu5xN',
+      id: 'f64d2aee5920',
       description: 'Accessibility Label for the dictionary text value field',
     },
     {
@@ -76,7 +76,7 @@ export const SimpleDictionaryItem: React.FC<SimpleDictionaryItemProps> = ({
   );
   const dictionaryItemValuePlaceholder = intl.formatMessage({
     defaultMessage: 'Value',
-    id: 'b9/1dK',
+    id: '6fdff574ae3e',
     description: 'A placeholder for the dictionary value field',
   });
 

@@ -140,7 +140,7 @@ export const Combobox = ({
       disabled: true,
       displayName: intl.formatMessage({
         defaultMessage: 'Loading...',
-        id: 'kM+Mr0',
+        id: '90cf8caf4916',
         description: 'Loading text when items are being fetched',
       }),
       type: 'loadingrender',
@@ -162,7 +162,7 @@ export const Combobox = ({
       if (newOptions.length === 0) {
         const noValuesLabel = intl.formatMessage({
           defaultMessage: 'No values match your search.',
-          id: '/KRvvg',
+          id: 'fca46fbe02a3',
           description: 'Label for when no values match search value.',
         });
         newOptions.push({ key: 'header', value: noValuesLabel, disabled: true, displayName: noValuesLabel });
@@ -172,7 +172,7 @@ export const Combobox = ({
         const customValueLabel = intl.formatMessage(
           {
             defaultMessage: 'Use "{value}" as a custom value',
-            id: 'VptXzY',
+            id: '569b57cd8996',
             description: 'Label for button to allow user to create custom value in combobox from current input',
           },
           { value: searchValue }
@@ -261,7 +261,7 @@ export const Combobox = ({
 
   const clearEditor = intl.formatMessage({
     defaultMessage: 'Clear custom value',
-    id: 'zUgja+',
+    id: 'cd48236be44f',
     description: 'Label for button to clear the editor',
   });
 
@@ -345,13 +345,13 @@ const getOptions = (options: ComboboxItem[]): IComboBoxOption[] => {
 
   const customValueLabel = intl.formatMessage({
     defaultMessage: 'Enter custom value',
-    id: 'vrYqUF',
+    id: 'beb62a5059de',
     description: 'Label for button to allow user to create custom value in combobox',
   });
 
   const noOptionsExists = intl.formatMessage({
     defaultMessage: 'No items',
-    id: 'tbl/ar',
+    id: 'b5b97f6ab76c',
     description: 'Label for when no items exist for combobox options',
   });
 

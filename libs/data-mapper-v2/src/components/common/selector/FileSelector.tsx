@@ -58,13 +58,13 @@ const SchemaFileSelector = <T extends U>(props: FileSelectorProps<T>) => {
 
   const addNewInfo = intl.formatMessage({
     defaultMessage: 'Copy schema and its imports from the file system to your Logic App.',
-    id: 'nRCTkX',
+    id: '9d1093917f18',
     description: 'Add new option',
   });
 
   const selectSchema = intl.formatMessage({
     defaultMessage: 'Select schema',
-    id: '3pheF6',
+    id: 'de985e17a232',
     description: 'Select schema',
   });
 

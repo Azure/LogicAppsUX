@@ -13,12 +13,12 @@ const LegacyGatewayCheckbox = ({ isLoading, value, onChange }: LegacyGatewayChec
   const intl = useIntl();
   const gatewayLabelText = intl.formatMessage({
     defaultMessage: 'Connect via on-premises data gateway',
-    id: 'rAwCdh',
+    id: 'ac0c0276152f',
     description: 'Checkbox label for using an on-premises gateway',
   });
   const gatewayTooltipText = intl.formatMessage({
     defaultMessage: `Select this checkbox if you're setting up an on-premises connection.`,
-    id: 'rNi5Y3',
+    id: 'acd8b9637f81',
     description: 'Tooltip for the on-premises data gateway connection checkbox',
   });
 

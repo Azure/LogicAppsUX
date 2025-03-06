@@ -67,13 +67,13 @@ export const InputDropdown = ({
 
   const customValueLoc = intl.formatMessage({
     defaultMessage: '(Custom value)',
-    id: 'WgChTm',
+    id: '5a00a14e60b8',
     description: 'Suffix for a custom value drop down value.',
   });
 
   const placeholder = intl.formatMessage({
     defaultMessage: 'Enter a value',
-    id: 'm8MjHH',
+    id: '9bc3231c7f68',
     description: 'Placeholder for a dropdown',
   });
 
@@ -87,19 +87,19 @@ export const InputDropdown = ({
 
   const customValueAllowedTypesMismatchLoc = intl.formatMessage({
     defaultMessage: 'Warning: custom value does not match one of the allowed types for this input',
-    id: 'BCgiRh',
+    id: '0428224619b4',
     description: `Warning message for when custom value does not match one of the function node input's allowed types`,
   });
 
   const nodeTypeSchemaNodeTypeMismatchLoc = intl.formatMessage({
     defaultMessage: `Warning: input node type does not match the schema node's type`,
-    id: '+0H8Or',
+    id: 'fb41fc3ab4c6',
     description: 'Warning message for when input node type does not match schema node type',
   });
 
   const nodeTypeAllowedTypesMismatchLoc = intl.formatMessage({
     defaultMessage: 'Warning: input node type does not match one of the allowed types for this input.',
-    id: 'yNtBUV',
+    id: 'c8db415158c0',
     description: `Warning message for when input node type does not match one of the function node input's allowed types`,
   });
 
@@ -144,7 +144,7 @@ export const InputDropdown = ({
                 conversionMessage = intl.formatMessage(
                   {
                     defaultMessage: ' Try using a Conversion function such as: {conversionFunctions}',
-                    id: 'ur3P27',
+                    id: 'babdcfdbbea6',
                     description: 'Suggest to the user to try a conversion function instead',
                   },
                   {

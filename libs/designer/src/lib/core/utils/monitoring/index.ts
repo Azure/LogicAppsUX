@@ -13,7 +13,7 @@ export const parseOutputs = (outputs: any): BoundParameters => {
   const intl = getIntl();
   const ouputsTitle = intl.formatMessage({
     defaultMessage: 'Outputs',
-    id: '0oebOm',
+    id: 'd2879b3a6191',
     description: 'Outputs text',
   });
 
@@ -39,7 +39,7 @@ export const parseInputs = (inputs: any): BoundParameters => {
   const intl = getIntl();
   const inputsTitle = intl.formatMessage({
     defaultMessage: 'Inputs',
-    id: 'PORNMZ',
+    id: '3ce44d319fe1',
     description: 'Inputs text',
   });
 

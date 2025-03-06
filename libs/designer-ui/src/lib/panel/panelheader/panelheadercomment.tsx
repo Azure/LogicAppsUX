@@ -39,7 +39,7 @@ export const PanelHeaderComment = ({
 
   const commentLabel = intl.formatMessage({
     defaultMessage: 'Comment',
-    id: '1A1P5b',
+    id: 'd40d4fe5beb2',
     description: 'Comment Label',
   });
 
@@ -56,7 +56,7 @@ export const PanelHeaderComment = ({
     const commentClassName = commentHasFocus ? 'msla-card-comment-focused' : 'msla-card-comment';
     const commentTitle = intl.formatMessage({
       defaultMessage: 'Comment',
-      id: 'OSHNZ2',
+      id: '3921cd6760ef',
       description: 'Label for the comment textfield',
     });
 

@@ -73,12 +73,12 @@ export const monitoringTab: PanelTabFn = (intl, props) => ({
   id: constants.PANEL_TAB_NAMES.MONITORING,
   title: intl.formatMessage({
     defaultMessage: 'Parameters',
-    id: 'xi2tn6',
+    id: 'c62dad9fabab',
     description: 'The tab label for the monitoring parameters tab on the operation panel',
   }),
   description: intl.formatMessage({
     defaultMessage: 'Monitoring tab',
-    id: 'OkGMwC',
+    id: '3a418cc020f0',
     description: 'An accessibility label that describes the monitoring tab',
   }),
   visible: true,

@@ -17,22 +17,22 @@ export const FormatItalicButton: React.FC<FormatItalicButtonProps> = (props) => 
 
   const italicTitleMac = intl.formatMessage({
     defaultMessage: 'Italic (⌘I)',
-    id: 'elD6+N',
+    id: '7a50faf8d4c6',
     description: 'Command for italic text for Mac users',
   });
   const italicTitleMacAriaLabel = intl.formatMessage({
     defaultMessage: 'Format text as italic. Shortcut: ⌘I',
-    id: 'YdQw4/',
+    id: '61d430e3f946',
     description: 'label to make italic text for Mac users',
   });
   const italicTitleNonMac = intl.formatMessage({
     defaultMessage: 'Italic (Ctrl+I)',
-    id: 'dfmH55',
+    id: '75f987e7931a',
     description: 'Command for italic text for non-mac users',
   });
   const italicTitleNonMacAriaLabel = intl.formatMessage({
     defaultMessage: 'Format text as italic. Shortcut: Ctrl+I',
-    id: 'gIx5ys',
+    id: '808c79cacf93',
     description: 'label to make italic text for nonMac users',
   });
 

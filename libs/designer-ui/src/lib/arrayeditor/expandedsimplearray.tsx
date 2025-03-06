@@ -60,7 +60,7 @@ export const ExpandedSimpleArray = ({
 
   const addItemButtonLabel = intl.formatMessage({
     defaultMessage: 'Add new item',
-    id: 'JWl/LD',
+    id: '25697f2c3c1a',
     description: 'Label to add item to array editor',
   });
 
@@ -151,13 +151,13 @@ export const ItemMenuButton = ({ disabled, itemKey, visible, onDeleteItem }: Ite
   }
   const deleteButton = intl.formatMessage({
     defaultMessage: 'Delete',
-    id: 'JErLDT',
+    id: '244acb0d3af3',
     description: 'Delete label',
   });
 
   const menuButton = intl.formatMessage({
     defaultMessage: 'Menu',
-    id: 'z3VuE+',
+    id: 'cf756e13eca0',
     description: 'Menu label',
   });
 

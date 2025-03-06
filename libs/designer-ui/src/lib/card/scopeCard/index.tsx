@@ -63,7 +63,7 @@ export const ScopeCard: React.FC<ScopeCardProps> = ({
   const cardAltText = intl.formatMessage(
     {
       defaultMessage: '{title} operation',
-      id: 'Aui3Mq',
+      id: '02e8b732ae28',
       description: 'Alt text on action card including the operation name',
     },
     {

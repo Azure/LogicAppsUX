@@ -26,42 +26,42 @@ export const getIntervalValue = (value: string | undefined): number | undefined 
 const intl = getIntl();
 export const resources = {
   frequency: {
-    label: intl.formatMessage({ defaultMessage: 'Frequency', id: 'dQmi91', description: 'Label for Frequency' }),
-    description: intl.formatMessage({ defaultMessage: 'Select frequency.', id: 'AheXMN', description: 'Placeholder for Frequency' }),
+    label: intl.formatMessage({ defaultMessage: 'Frequency', id: '7509a2f75a10', description: 'Label for Frequency' }),
+    description: intl.formatMessage({ defaultMessage: 'Select frequency.', id: '02179730d648', description: 'Placeholder for Frequency' }),
   },
   interval: {
-    label: intl.formatMessage({ defaultMessage: 'Interval', id: 'XVTQT6', description: 'Label for Interval' }),
-    description: intl.formatMessage({ defaultMessage: 'Specify the interval.', id: '83G5rr', description: 'Placeholder for Interval' }),
+    label: intl.formatMessage({ defaultMessage: 'Interval', id: '5d54d04fa87d', description: 'Label for Interval' }),
+    description: intl.formatMessage({ defaultMessage: 'Specify the interval.', id: 'f371b9aebf2e', description: 'Placeholder for Interval' }),
   },
   startTime: {
-    label: intl.formatMessage({ defaultMessage: 'Start time', id: '6nWQm7', description: 'Label for Start time' }),
+    label: intl.formatMessage({ defaultMessage: 'Start time', id: 'ea75909bb796', description: 'Label for Start time' }),
     description: intl.formatMessage({
       defaultMessage: 'Example: 2017-03-24T15:00:00Z',
-      id: 'tUYXRA',
+      id: 'b546174404d8',
       description: 'Placeholder for Start time',
     }),
   },
   timezone: {
-    label: intl.formatMessage({ defaultMessage: 'Time zone', id: '+powfX', description: 'Label for timezone' }),
-    description: intl.formatMessage({ defaultMessage: 'Select timezone.', id: 'E+iim4', description: 'Placeholder for timezone' }),
+    label: intl.formatMessage({ defaultMessage: 'Time zone', id: 'fa9a307d75f1', description: 'Label for timezone' }),
+    description: intl.formatMessage({ defaultMessage: 'Select timezone.', id: '13e8a29b8020', description: 'Placeholder for timezone' }),
   },
   hours: {
-    label: intl.formatMessage({ defaultMessage: 'At these hours', id: 'Gl5khw', description: 'Label for schedule hours' }),
-    description: intl.formatMessage({ defaultMessage: 'Example: 0, 10', id: 'iVMVAt', description: 'Placeholder for schedule hours' }),
+    label: intl.formatMessage({ defaultMessage: 'At these hours', id: '1a5e64870dff', description: 'Label for schedule hours' }),
+    description: intl.formatMessage({ defaultMessage: 'Example: 0, 10', id: '89531502d70e', description: 'Placeholder for schedule hours' }),
   },
   minutes: {
-    label: intl.formatMessage({ defaultMessage: 'At these minutes', id: 'ESZXfC', description: 'Label for schedule minutes' }),
+    label: intl.formatMessage({ defaultMessage: 'At these minutes', id: '1126577c280d', description: 'Label for schedule minutes' }),
     description: intl.formatMessage({
       defaultMessage: 'Enter the valid minute values (from 0 to 59) separated by comma, e.g., 15,30',
-      id: 'H2WdiZ',
+      id: '1f659d899d33',
       description: 'Placeholder for schedule minutes',
     }),
   },
   days: {
-    label: intl.formatMessage({ defaultMessage: 'On these days', id: 'OIOexo', description: 'Label for schedule days' }),
+    label: intl.formatMessage({ defaultMessage: 'On these days', id: '38839ec6812b', description: 'Label for schedule days' }),
     description: intl.formatMessage({
       defaultMessage: 'Example: Monday, Friday',
-      id: 'BSgavq',
+      id: '05281abea864',
       description: 'Placeholder for schedule days',
     }),
   },

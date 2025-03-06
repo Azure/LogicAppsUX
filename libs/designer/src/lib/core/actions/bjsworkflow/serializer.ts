@@ -80,7 +80,7 @@ export const serializeWorkflow = async (rootState: RootState, options?: Serializ
         intl.formatMessage(
           {
             defaultMessage: 'Workflow has invalid connections on the following operations: {invalidNodes}',
-            id: 'WTZvGW',
+            id: '59366f196f83',
             description: 'Error message to show when there are invalid connections in the nodes.',
           },
           { invalidNodes }
@@ -99,7 +99,7 @@ export const serializeWorkflow = async (rootState: RootState, options?: Serializ
         intl.formatMessage(
           {
             defaultMessage: 'Workflow has settings validation errors on the following operations: {invalidNodes}',
-            id: 'H/QVod',
+            id: '1ff415a1de8d',
             description: 'Error message to show when there are invalid connections in the nodes.',
           },
           { invalidNodes }
@@ -121,7 +121,7 @@ export const serializeWorkflow = async (rootState: RootState, options?: Serializ
         intl.formatMessage(
           {
             defaultMessage: 'The workflow has parameter validation errors in the following operations: {invalidNodes}',
-            id: '8mDG0V',
+            id: 'f260c6d15e02',
             description: 'Error message to show when there are invalid connections in the nodes.',
           },
           { invalidNodes }
@@ -720,7 +720,7 @@ const serializeHost = (
         intl.formatMessage(
           {
             defaultMessage: `Unsupported manifest connection reference format: ''{referenceKeyFormat}''`,
-            id: 'qAlTD5',
+            id: 'a809530f9b15',
             description:
               'Error message to show when reference format is unsupported, {referenceKeyFormat} will be replaced based on action definition. Do not remove the double single quotes around the display name, as it is needed to wrap the placeholder text.',
           },

@@ -71,18 +71,18 @@ export const NodeSearchPanel = (props: NodeSearchPanelProps) => {
   const goToOperationHeader = intl.formatMessage({
     description: 'Header for a search panel that searches for and allows direct navigation to a specific node',
     defaultMessage: 'Go to operation',
-    id: 'Fx/6sv',
+    id: '171ffab2fde2',
   });
 
   const searchOperation = intl.formatMessage({
     defaultMessage: 'Search for operation',
-    id: 'i0XjL5',
+    id: '8b45e32f9dd5',
     description: 'Placeholder for search box that searches operations',
   });
 
   const closeButtonAriaLabel = intl.formatMessage({
     defaultMessage: 'Close panel',
-    id: 'sfTqHY',
+    id: 'b1f4ea1d8dbc',
     description: 'Aria label for the close button in the node search panel',
   });
 

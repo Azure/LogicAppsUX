@@ -198,7 +198,7 @@ export const validateWorkflowName = (workflowName: string | undefined, existingW
   if (!workflowName) {
     return intl.formatMessage({
       defaultMessage: 'Must provide value for workflow name.',
-      id: 'sKy720',
+      id: 'b0acbbdb4980',
       description: 'Error message when the workflow name is empty.',
     });
   }
@@ -206,7 +206,7 @@ export const validateWorkflowName = (workflowName: string | undefined, existingW
   if (!regex.test(workflowName)) {
     return intl.formatMessage({
       defaultMessage: 'Name does not match the given pattern.',
-      id: 'zMKxg9',
+      id: 'ccc2b183d577',
       description: 'Error message when the workflow name is invalid regex.',
     });
   }
@@ -214,7 +214,7 @@ export const validateWorkflowName = (workflowName: string | undefined, existingW
     return intl.formatMessage(
       {
         defaultMessage: 'Workflow with name "{workflowName}" already exists.',
-        id: '7F4Bzv',
+        id: 'ec5e01cefb5d',
         description: 'Error message when the workflow name already exists.',
       },
       { workflowName }

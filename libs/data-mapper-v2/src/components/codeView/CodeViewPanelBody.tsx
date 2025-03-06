@@ -19,7 +19,7 @@ export const CodeViewPanelBody = (_props: CodeViewPanelBodyProps) => {
     () => ({
       EMPTY_MAP_DEFINITION: intl.formatMessage({
         defaultMessage: 'Unable to generate data map definition',
-        id: 'sv+IcU',
+        id: 'b2ff88714eb0',
         description: `Message to display when the data map definition can't be generated`,
       }),
     }),

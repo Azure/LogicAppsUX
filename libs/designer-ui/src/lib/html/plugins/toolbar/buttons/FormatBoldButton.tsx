@@ -17,22 +17,22 @@ export const FormatBoldButton: React.FC<FormatBoldButtonProps> = (props) => {
 
   const boldTitleMac = intl.formatMessage({
     defaultMessage: 'Bold (⌘B)',
-    id: 'ciLkfU',
+    id: '7222e47d458d',
     description: 'Command for bold text for Mac users',
   });
   const boldTitleMacAriaLabel = intl.formatMessage({
     defaultMessage: 'Format text as bold. Shortcut: ⌘B',
-    id: 'S138/4',
+    id: '4b5dfcff86f4',
     description: 'label to make bold text for Mac users',
   });
   const boldTitleNonMac = intl.formatMessage({
     defaultMessage: 'Bold (Ctrl+B)',
-    id: 'Lnqh6h',
+    id: '2e7aa1ea1a3f',
     description: 'Command for bold text for non-mac users',
   });
   const boldTitleNonMacAriaLabel = intl.formatMessage({
     defaultMessage: 'Format text as bold. Shortcut: Ctrl+B',
-    id: 'YR1uWE',
+    id: '611d6e58437a',
     description: 'label to make bold text for nonMac users',
   });
 

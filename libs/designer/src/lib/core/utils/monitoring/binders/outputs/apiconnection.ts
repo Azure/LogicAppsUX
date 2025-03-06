@@ -77,17 +77,17 @@ export default class ApiConnectionOutputsBinder extends Binder {
     const intlMessages = {
       [constants.OUTPUTS.STATUS_CODE]: intl.formatMessage({
         defaultMessage: 'Status Code',
-        id: 'm5InJc',
+        id: '9b922725cf26',
         description: 'status code',
       }),
       [constants.OUTPUTS.HEADERS]: intl.formatMessage({
         defaultMessage: 'Headers',
-        id: '1HhCtq',
+        id: 'd47842b6a29d',
         description: 'headers',
       }),
       [constants.OUTPUTS.BODY]: intl.formatMessage({
         defaultMessage: 'Body',
-        id: 'zkqKJ+',
+        id: 'ce4a8a27e92e',
         description: 'body',
       }),
     };

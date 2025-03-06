@@ -71,12 +71,12 @@ const CollapseButton = (props: PanelHeaderProps & { isRight: boolean; nodeId: st
 
   const panelCollapseTitle = intl.formatMessage({
     defaultMessage: 'Collapse',
-    id: 'lX30/R',
+    id: '957df4fd1cf1',
     description: 'Text of Tooltip to collapse',
   });
   const panelExpandTitle = intl.formatMessage({
     defaultMessage: 'Expand',
-    id: 'oZMhX/',
+    id: 'a193215fffe3',
     description: 'Text of Tooltip to expand',
   });
   const buttonText = isCollapsed ? panelExpandTitle : panelCollapseTitle;
@@ -114,7 +114,7 @@ const OverflowButton = (props: PanelHeaderProps): JSX.Element => {
 
   const panelHeaderMenuCommands = intl.formatMessage({
     defaultMessage: 'More commands',
-    id: '0y5eia',
+    id: 'd32e5e89af4f',
     description: 'Label for commands in panel header',
   });
 
@@ -167,31 +167,31 @@ export const PanelHeader = (props: PanelHeaderProps): JSX.Element => {
 
   const resubmitButtonText = intl.formatMessage({
     defaultMessage: 'Submit from this action',
-    id: 'I+85NV',
+    id: '23ef39355993',
     description: 'Button label for submitting a workflow to rerun from this action',
   });
 
   const unpinButtonText = intl.formatMessage({
     defaultMessage: 'Unpin action',
-    id: 'iTz1lp',
+    id: '893cf5969a1a',
     description: 'Text indicating a menu button to unpin a pinned action from the side panel',
   });
 
   const showLogicAppRunText = intl.formatMessage({
     defaultMessage: 'Show Logic App run details',
-    id: 'y6aoMi',
+    id: 'cba6a83225d4',
     description: 'Show Logic App run details text',
   });
 
   const triggerInfoMessageBar = {
     text: intl.formatMessage({
       defaultMessage: 'Changes to the trigger name update the callback URL when you save the workflow.',
-      id: '0jNY+o',
+      id: 'd23358fa8ced',
       description: 'Trigger name update information message',
     }),
     ariaLabel: intl.formatMessage({
       defaultMessage: 'Trigger name update message information bar',
-      id: 'u7pNIX',
+      id: 'bbba4d217e9a',
       description: 'Accessible label for trigger name update information',
     }),
   };

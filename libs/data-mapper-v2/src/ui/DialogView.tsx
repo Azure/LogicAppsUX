@@ -56,17 +56,17 @@ const DialogView = () => {
     () => ({
       DISCARD_MESSAGE: intl.formatMessage({
         defaultMessage: 'You will lose all unsaved changes. Are you sure you want to discard the changes?',
-        id: 'tt1pJC',
+        id: 'b6dd69242979',
         description: 'Discard message for the unsaved changes',
       }),
       CANCEL: intl.formatMessage({
         defaultMessage: 'Cancel',
-        id: 'no+blV',
+        id: '9e8f9b9550ab',
         description: 'Button text for cancel the dialog',
       }),
       DISCARD: intl.formatMessage({
         defaultMessage: 'Discard',
-        id: '/IVuGP',
+        id: 'fc856e18f37a',
         description: 'Button text for discard the dialog',
       }),
     }),

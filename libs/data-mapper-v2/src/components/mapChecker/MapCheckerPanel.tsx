@@ -44,32 +44,32 @@ export const MapCheckerPanel = () => {
     () => ({
       MAP_ISSUES: intl.formatMessage({
         defaultMessage: 'Issues',
-        id: 'iGxL1E',
+        id: '886c4bd44f64',
         description: 'Issues ith the map',
       }),
       CLOSE_MAP_CHECKER: intl.formatMessage({
         defaultMessage: 'Close map checker',
-        id: 'epi+zR',
+        id: '7a98becd1b43',
         description: 'Describes X button to close the map checker panel',
       }),
       ERROR_TAB: intl.formatMessage({
         defaultMessage: 'Errors',
-        id: 'c/2T3J',
+        id: '73fd93dc9fa9',
         description: 'Error tab name',
       }),
       WARNING_TAB: intl.formatMessage({
         defaultMessage: 'Warnings',
-        id: 'hqa/U1',
+        id: '86a6bf535a41',
         description: 'Warning tab name',
       }),
       ZERO_ERRORS_MESSAGE: intl.formatMessage({
         defaultMessage: 'No errors found in your map.',
-        id: 'BFBJi2',
+        id: '0450498b690d',
         description: 'Message displayed when there are no errors',
       }),
       ZERO_WARNINGS_MESSAGE: intl.formatMessage({
         defaultMessage: 'No warnings found in your map.',
-        id: 'gnYVoF',
+        id: '827615a05507',
         description: 'Message displayed when there are no warnings',
       }),
     }),

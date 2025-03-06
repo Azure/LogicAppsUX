@@ -50,12 +50,12 @@ describe('ui/workflowparameters/workflowparameterField', () => {
 
     const nameTitle = intl.formatMessage({
       defaultMessage: 'Name',
-      id: 'm8Q61y',
+      id: '9bc43ad7244f',
       description: 'Parameter Field Name Title',
     });
     const nameDescription = intl.formatMessage({
       defaultMessage: 'Enter parameter name.',
-      id: 'GreYWQ',
+      id: '1ab798590139',
       description: 'Parameter Field Name Description',
     });
     expect(name.props.className).toBe(textFieldClassName);
@@ -72,7 +72,7 @@ describe('ui/workflowparameters/workflowparameterField', () => {
 
     const typeTitle = intl.formatMessage({
       defaultMessage: 'Type',
-      id: 'tNoZx2',
+      id: 'b4da19c76885',
       description: 'Parameter Field Type Title',
     });
     expect(type.props.className).toBe(textFieldClassName);
@@ -89,12 +89,12 @@ describe('ui/workflowparameters/workflowparameterField', () => {
 
     const defaultValueTitle = intl.formatMessage({
       defaultMessage: 'Value',
-      id: 'mOxbN1',
+      id: '98ec5b375ba2',
       description: 'Parameter Field Default Value Title',
     });
     const defaultValueDescription = intl.formatMessage({
       defaultMessage: 'Enter value for parameter.',
-      id: '7jAQar',
+      id: 'ee30106ab117',
       description: 'Parameter Field Default Value Placeholder Text',
     });
     expect(defaultValue.props.className).toBe(textFieldClassName);
@@ -151,7 +151,7 @@ describe('ui/workflowparameters/workflowparameterField', () => {
 
     const descriptionTitle = intl.formatMessage({
       defaultMessage: 'Description',
-      id: 'UXDOiw',
+      id: '5170ce8b0a12',
       description: 'Parameter Field Description Title',
     });
     const [label2, textField2]: any[] = React.Children.toArray(description.props.children);
