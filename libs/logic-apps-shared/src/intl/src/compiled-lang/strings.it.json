@@ -1,5 +1,5 @@
 {
-  "fef58c296cdf": [
+  "msfef58c296cdf": [
     {
       "type": 0,
       "value": "Input obbligatori mancanti"
@@ -23,7 +23,7 @@
       "value": "Selezionare Crea per avviare un nuovo flusso di lavoro basato su questo modello. Non è necessaria alcuna configurazione."
     }
   ],
-  "e439137f992e": [
+  "mse439137f992e": [
     {
       "type": 0,
       "value": "Nodo dello schema di destinazione non trovato per la chiave del nodo '"
@@ -37,7 +37,7 @@
       "value": "'"
     }
   ],
-  "ea0678237bb8": [
+  "msea0678237bb8": [
     {
       "type": 0,
       "value": "Alla funzione '"
@@ -51,7 +51,7 @@
       "value": "' sono assegnati troppi input"
     }
   ],
-  "070aa5c5d996": [
+  "ms070aa5c5d996": [
     {
       "type": 0,
       "value": "Chiave non trovata '"
@@ -65,7 +65,7 @@
       "value": "'"
     }
   ],
-  "137f93000c8c": [
+  "ms137f93000c8c": [
     {
       "type": 0,
       "value": "Il nodo dello schema '"
@@ -79,7 +79,7 @@
       "value": "' contiene un input con un tipo non corrispondente"
     }
   ],
-  "14f066ac0a08": [
+  "ms14f066ac0a08": [
     {
       "type": 0,
       "value": "Nodo dello schema di origine non trovato per la chiave del nodo '"
@@ -93,7 +93,7 @@
       "value": "'"
     }
   ],
-  "1a247b965963": [
+  "ms1a247b965963": [
     {
       "type": 0,
       "value": "Funzione non trovata- '"
@@ -107,13 +107,13 @@
       "value": "'"
     }
   ],
-  "3c427e7b8f28": [
+  "ms3c427e7b8f28": [
     {
       "type": 0,
       "value": "Errore durante il caricamento della mappa dati"
     }
   ],
-  "51fbf99bd202": [
+  "ms51fbf99bd202": [
     {
       "type": 0,
       "value": "Il nodo dello schema '"
@@ -127,7 +127,7 @@
       "value": "' contiene una catena di connessioni non fatale"
     }
   ],
-  "5d12be82d0da": [
+  "ms5d12be82d0da": [
     {
       "type": 0,
       "value": "La funzione '"
@@ -161,19 +161,19 @@
       "value": "Impossibile eliminare l'elemento dello schema di destinazione."
     }
   ],
-  "605d7266469a": [
+  "ms605d7266469a": [
     {
       "type": 0,
       "value": "chat-session-id:"
     }
   ],
-  "7415888d139d": [
+  "ms7415888d139d": [
     {
       "type": 0,
       "value": "Nello schema mancano gli input obbligatori"
     }
   ],
-  "91f98b4d82b2": [
+  "ms91f98b4d82b2": [
     {
       "type": 0,
       "value": "Input obbligatori mancanti nella '"
@@ -199,7 +199,7 @@
       "value": "Apri pannello di test"
     }
   ],
-  "aabd652c6254": [
+  "msaabd652c6254": [
     {
       "type": 0,
       "value": "La funzione '"
@@ -219,13 +219,13 @@
       "value": "Problemi mappa"
     }
   ],
-  "b406db1fc791": [
+  "msb406db1fc791": [
     {
       "type": 0,
       "value": "Troppi input assegnati"
     }
   ],
-  "c24bd450041c": [
+  "msc24bd450041c": [
     {
       "type": 0,
       "value": "Tipo di input non corrispondente"

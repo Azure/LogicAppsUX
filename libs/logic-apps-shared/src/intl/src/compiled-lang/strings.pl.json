@@ -1,5 +1,5 @@
 {
-  "fef58c296cdf": [
+  "msfef58c296cdf": [
     {
       "type": 0,
       "value": "Brak wymaganych danych wejściowych"
@@ -23,7 +23,7 @@
       "value": "Wybierz pozycję Utwórz, aby uruchomić nowy przepływ pracy oparty na tym szablonie. Konfiguracja nie jest wymagana."
     }
   ],
-  "e439137f992e": [
+  "mse439137f992e": [
     {
       "type": 0,
       "value": "Nie znaleziono docelowego węzła schematu dla '"
@@ -37,7 +37,7 @@
       "value": "' klucza węzła"
     }
   ],
-  "ea0678237bb8": [
+  "msea0678237bb8": [
     {
       "type": 0,
       "value": "Funkcja „"
@@ -51,7 +51,7 @@
       "value": "” ma przypisanych zbyt wiele danych wejściowych"
     }
   ],
-  "070aa5c5d996": [
+  "ms070aa5c5d996": [
     {
       "type": 0,
       "value": "Nie znaleziono klucza „"
@@ -65,7 +65,7 @@
       "value": "”"
     }
   ],
-  "137f93000c8c": [
+  "ms137f93000c8c": [
     {
       "type": 0,
       "value": "Węzeł schematu „"
@@ -79,7 +79,7 @@
       "value": "” ma dane wejściowe o niezgodnym typie"
     }
   ],
-  "14f066ac0a08": [
+  "ms14f066ac0a08": [
     {
       "type": 0,
       "value": "Nie znaleziono węzła schematu źródłowego dla '"
@@ -93,7 +93,7 @@
       "value": "' klucza węzła"
     }
   ],
-  "1a247b965963": [
+  "ms1a247b965963": [
     {
       "type": 0,
       "value": "Nie znaleziono funkcji — '"
@@ -107,13 +107,13 @@
       "value": "'"
     }
   ],
-  "3c427e7b8f28": [
+  "ms3c427e7b8f28": [
     {
       "type": 0,
       "value": "Błąd podczas ładowania mapy danych"
     }
   ],
-  "51fbf99bd202": [
+  "ms51fbf99bd202": [
     {
       "type": 0,
       "value": "Węzeł schematu „"
@@ -127,7 +127,7 @@
       "value": "” ma niekończący się łańcuch połączeń"
     }
   ],
-  "5d12be82d0da": [
+  "ms5d12be82d0da": [
     {
       "type": 0,
       "value": "Funkcja „"
@@ -161,19 +161,19 @@
       "value": "Nie można usunąć elementu schematu docelowego."
     }
   ],
-  "605d7266469a": [
+  "ms605d7266469a": [
     {
       "type": 0,
       "value": "chat-session-id:"
     }
   ],
-  "7415888d139d": [
+  "ms7415888d139d": [
     {
       "type": 0,
       "value": "W schemacie brakuje wymaganych danych wejściowych"
     }
   ],
-  "91f98b4d82b2": [
+  "ms91f98b4d82b2": [
     {
       "type": 0,
       "value": "W '"
@@ -199,7 +199,7 @@
       "value": "Otwórz panel testowy"
     }
   ],
-  "aabd652c6254": [
+  "msaabd652c6254": [
     {
       "type": 0,
       "value": "Funkcja „"
@@ -219,13 +219,13 @@
       "value": "Problemy z mapą"
     }
   ],
-  "b406db1fc791": [
+  "msb406db1fc791": [
     {
       "type": 0,
       "value": "Przypisano zbyt wiele danych wejściowych"
     }
   ],
-  "c24bd450041c": [
+  "msc24bd450041c": [
     {
       "type": 0,
       "value": "Niezgodność typów danych wejściowych"

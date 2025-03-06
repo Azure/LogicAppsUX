@@ -1,5 +1,5 @@
 {
-  "fef58c296cdf": [
+  "msfef58c296cdf": [
     {
       "type": 0,
       "value": "Chybí požadované vstupy"
@@ -23,7 +23,7 @@
       "value": "Chcete-li zahájit nový pracovní postup založený na této šabloně, není vyžadována žádná konfigurace, vyberte možnost Vytvořit."
     }
   ],
-  "e439137f992e": [
+  "mse439137f992e": [
     {
       "type": 0,
       "value": "Cílový uzel schématu pro '"
@@ -37,7 +37,7 @@
       "value": "' klíče uzlu se nenašel."
     }
   ],
-  "ea0678237bb8": [
+  "msea0678237bb8": [
     {
       "type": 0,
       "value": "K funkci "
@@ -51,7 +51,7 @@
       "value": " je přiřazeno příliš mnoho vstupů"
     }
   ],
-  "070aa5c5d996": [
+  "ms070aa5c5d996": [
     {
       "type": 0,
       "value": "Klíč "
@@ -65,7 +65,7 @@
       "value": " se nenašel"
     }
   ],
-  "137f93000c8c": [
+  "ms137f93000c8c": [
     {
       "type": 0,
       "value": "Uzel schématu "
@@ -79,7 +79,7 @@
       "value": " má vstup s neodpovídajícím typem"
     }
   ],
-  "14f066ac0a08": [
+  "ms14f066ac0a08": [
     {
       "type": 0,
       "value": "Nenašel se zdrojový uzel schématu pro '"
@@ -93,7 +93,7 @@
       "value": "' klíče uzlu."
     }
   ],
-  "1a247b965963": [
+  "ms1a247b965963": [
     {
       "type": 0,
       "value": "Funkce se nenašla – '"
@@ -107,13 +107,13 @@
       "value": "'"
     }
   ],
-  "3c427e7b8f28": [
+  "ms3c427e7b8f28": [
     {
       "type": 0,
       "value": "Chyba při načítání mapování dat"
     }
   ],
-  "51fbf99bd202": [
+  "ms51fbf99bd202": [
     {
       "type": 0,
       "value": "Uzel schématu "
@@ -127,7 +127,7 @@
       "value": " má neukončený řetězec připojení"
     }
   ],
-  "5d12be82d0da": [
+  "ms5d12be82d0da": [
     {
       "type": 0,
       "value": "Funkce "
@@ -161,19 +161,19 @@
       "value": "Prvek cílového schématu nelze odstranit."
     }
   ],
-  "605d7266469a": [
+  "ms605d7266469a": [
     {
       "type": 0,
       "value": "chat-session-id:"
     }
   ],
-  "7415888d139d": [
+  "ms7415888d139d": [
     {
       "type": 0,
       "value": "Ve schématu chybí požadované vstupy"
     }
   ],
-  "91f98b4d82b2": [
+  "ms91f98b4d82b2": [
     {
       "type": 0,
       "value": "V '"
@@ -199,7 +199,7 @@
       "value": "Otevřít panel Test"
     }
   ],
-  "aabd652c6254": [
+  "msaabd652c6254": [
     {
       "type": 0,
       "value": "Funkce "
@@ -219,13 +219,13 @@
       "value": "Problémy s mapou"
     }
   ],
-  "b406db1fc791": [
+  "msb406db1fc791": [
     {
       "type": 0,
       "value": "Bylo přiřazeno příliš mnoho vstupů"
     }
   ],
-  "c24bd450041c": [
+  "msc24bd450041c": [
     {
       "type": 0,
       "value": "Neodpovídající typ vstupu"
