@@ -83,8 +83,8 @@ export const initializeWorkflowMetadata = createAsyncThunk(
   }
 );
 
-export const isMultiWorkflowTemplate = (manifest: Template.TemplateManifest): boolean => {
-  return Object.keys(manifest.workflows).length > 1;
+export const isMultiWorkflowTemplate = (manifest: Template.TemplateManifest | undefined): boolean => {
+  return Object.keys(manifest?.workflows ?? {}).length > 1;
 };
 
 export const initializeTemplateServices = createAsyncThunk(
@@ -247,7 +247,7 @@ const loadTemplateFromResourcePath = async (
     },
   };
 
-  if (isMultiWorkflow && workflows) {
+  if (isMultiWorkflow) {
     for (const workflowId of Object.keys(workflows)) {
       const workflowData = await loadWorkflowTemplate(templateId, workflowId, viewTemplateData);
 

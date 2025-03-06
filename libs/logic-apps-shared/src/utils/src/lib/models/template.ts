@@ -1,6 +1,6 @@
 export type SkuType = 'standard' | 'consumption';
 export type WorkflowKindType = 'stateful' | 'stateless';
-export type ConnectorRuntimeType = 'inapp' | 'shared' | 'custom';
+export type ConnectorRuntimeType = 'inapp' | 'shared' | 'custom' | 'builtin';
 export type FeaturedConnectorType = ConnectorRuntimeType | 'builtin';
 
 export type DetailsType = 'By' | 'Type' | 'Category' | 'Trigger';

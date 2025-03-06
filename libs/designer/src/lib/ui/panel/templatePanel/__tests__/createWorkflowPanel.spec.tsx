@@ -60,12 +60,6 @@ describe('panel/templatePanel/createWorkflowPanel', () => {
         Type: '',
         Category: '',
       },
-      artifacts: [
-        {
-          type: 'description',
-          file: 'description.md',
-        },
-      ],
     };
 
     workflow1Manifest = {
@@ -114,12 +108,6 @@ describe('panel/templatePanel/createWorkflowPanel', () => {
         Type: '',
         Category: '',
       },
-      artifacts: [
-        {
-          type: 'description',
-          file: 'description.md',
-        },
-      ],
     };
 
     workflow2Manifest = {

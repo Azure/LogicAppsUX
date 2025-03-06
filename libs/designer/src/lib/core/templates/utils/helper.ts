@@ -52,22 +52,17 @@ export const getUniqueConnectors = (
   connections: Record<string, Template.Connection>,
   subscriptionId: string,
   location: string
-): Template.Connection[] => {
-  const allConnections = Object.values(connections).map((connection) => ({ ...connection, id: connection.connectorId }));
-  return getUniqueConnectorsFromConnections(allConnections, subscriptionId, location);
+): Template.FeaturedConnector[] => {
+  const allConnectors = Object.values(connections).map((connector) => ({ ...connector, id: connector.connectorId }));
+  return getUniqueConnectorsFromConnections(allConnectors, subscriptionId, location);
 };
-
-interface UniqueConnectorInfo {
-  connectorId: string;
-  operationId: string | undefined;
-}
 
 export const getUniqueConnectorsFromConnections = (
   originalAllConnectors: Template.FeaturedConnector[],
   subscriptionId: string,
   location: string
-): UniqueConnectorInfo[] => {
-  const result: UniqueConnectorInfo[] = [];
+): Template.FeaturedConnector[] => {
+  const result: Template.FeaturedConnector[] = [];
   const finalConnectorIds: string[] = [];
   const allConnectors = [...originalAllConnectors];
 
@@ -76,7 +71,7 @@ export const getUniqueConnectorsFromConnections = (
     const normalizedConnectorId = normalizeConnectorId(connection.id, subscriptionId, location).toLowerCase();
     if (!finalConnectorIds.includes(normalizedConnectorId)) {
       finalConnectorIds.push(normalizedConnectorId);
-      result.push({ ...connection, connectorId: normalizedConnectorId, operationId: undefined });
+      result.push({ ...connection, id: normalizedConnectorId });
     }
   }
 

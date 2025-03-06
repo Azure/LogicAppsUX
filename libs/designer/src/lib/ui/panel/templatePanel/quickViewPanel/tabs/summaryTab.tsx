@@ -10,11 +10,13 @@ import Markdown from 'react-markdown';
 import { useTemplateManifest, useWorkflowTemplate } from '../../../../../core/state/templates/templateselectors';
 import { ConnectionsList } from '../../../../templates/connections/connections';
 import { Open16Regular } from '@fluentui/react-icons';
+import { isMultiWorkflowTemplate } from '../../../../../core/actions/bjsworkflow/templates';
 
 export const SummaryPanel = ({ workflowId }: { workflowId: string }) => {
   const intl = useIntl();
   const { manifest: workflowManifest } = useWorkflowTemplate(workflowId);
   const templateManifest = useTemplateManifest();
+  const isMultiWorkflow = isMultiWorkflowTemplate(templateManifest);
   const templateHasConnections = Object.keys(workflowManifest?.connections || {}).length > 0;
   const detailsTags: Partial<Record<Template.DetailsType, string>> = {
     Type: intl.formatMessage({
@@ -104,7 +106,7 @@ export const SummaryPanel = ({ workflowId }: { workflowId: string }) => {
           );
         })}
       </div>
-      {templateManifest.tags?.length ? (
+      {!isMultiWorkflow && templateManifest.tags?.length ? (
         <div className="msla-template-overview-section">
           <Text className="msla-template-overview-section-title">
             {intl.formatMessage({

@@ -39,12 +39,6 @@ describe('ui/templates/DisplayParameters', () => {
         Type: '',
         Category: '',
       },
-      artifacts: [
-        {
-          type: 'description',
-          file: 'description.md',
-        },
-      ],
     };
 
     workflow1Manifest = {

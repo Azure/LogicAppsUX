@@ -29,12 +29,6 @@ describe('ui/templates/templatesDesigner', () => {
         Type: '',
         Category: '',
       },
-      artifacts: [
-        {
-          type: 'description',
-          file: 'description.md',
-        },
-      ],
     };
     template2Manifest = {
       id: 'template2Manifest',
@@ -49,12 +43,6 @@ describe('ui/templates/templatesDesigner', () => {
         Type: '',
         Category: '',
       },
-      artifacts: [
-        {
-          type: 'description',
-          file: 'description.md',
-        },
-      ],
     };
     template3Manifest = {
       id: 'template3Manifest',
@@ -69,12 +57,6 @@ describe('ui/templates/templatesDesigner', () => {
         Type: '',
         Category: '',
       },
-      artifacts: [
-        {
-          type: 'description',
-          file: 'description.md',
-        },
-      ],
     };
   });
 

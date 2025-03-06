@@ -9,14 +9,14 @@ export const ConnectionsList = (props: { connections: Record<string, Template.Co
   const { subscriptionId, location } = useSelector((state: RootState) => state.workflow);
   const connectors = getUniqueConnectors(props.connections, subscriptionId, location);
 
-  const onRenderCell = (item: Template.Connection | undefined): JSX.Element => {
+  const onRenderCell = (item: Template.FeaturedConnector | undefined): JSX.Element => {
     if (!item) {
       return <div>No data</div>;
     }
 
     return (
       <div className="msla-template-overview-connection">
-        <ConnectorWithDetails connectorId={item.connectorId} kind={item.kind} />
+        <ConnectorWithDetails connectorId={item.id} kind={item.kind} />
       </div>
     );
   };

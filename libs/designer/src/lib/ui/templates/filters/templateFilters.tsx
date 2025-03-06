@@ -41,7 +41,7 @@ export const TemplateFilters = ({ detailFilters }: TemplateFiltersProps) => {
 
     const allConnectors = Object.values(skuTemplates).flatMap((template) => template.featuredConnectors ?? []);
     const uniqueConnectorsFromConnections = getUniqueConnectorsFromConnections(allConnectors, subscriptionId, location);
-    return uniqueConnectorsFromConnections.map((connector) => connector.connectorId);
+    return uniqueConnectorsFromConnections.map((connector) => connector.id);
   }, [availableTemplates, isConsumption, location, subscriptionId]);
   const selectedTabId = appliedDetailFilters?.Type?.[0]?.value ?? templateDefaultTabKey;
 

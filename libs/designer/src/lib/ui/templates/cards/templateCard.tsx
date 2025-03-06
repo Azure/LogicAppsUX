@@ -96,7 +96,7 @@ export const TemplateCard = ({ templateName }: TemplateCardProps) => {
   );
   const onRenderMenuIcon = () => <div style={{ color: 'grey' }}>{`+${overflowList.length}`}</div>;
   const menuProps: IContextualMenuProps = {
-    items: overflowList.map((info) => ({ key: info.connectorId, text: info.connectorId, data: info, onRender: onRenderMenuItem })),
+    items: overflowList.map((info) => ({ key: info.id, text: info.id, data: info, onRender: onRenderMenuItem })),
     directionalHintFixed: true,
     className: 'msla-template-card-connector-menu-box',
   };
@@ -140,9 +140,9 @@ export const TemplateCard = ({ templateName }: TemplateCardProps) => {
             {connectorsToShow.length > 0 ? (
               connectorsToShow.map((info) => (
                 <ConnectorIcon
-                  key={info.connectorId}
-                  connectorId={info.connectorId}
-                  operationId={info.operationId}
+                  key={info.id}
+                  connectorId={info.id}
+                  operationId={info.id}
                   classes={{ root: 'msla-template-card-connector', icon: 'msla-template-card-connector-icon' }}
                 />
               ))
