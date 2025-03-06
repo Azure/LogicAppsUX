@@ -3,31 +3,6 @@ export type WorkflowKindType = 'stateful' | 'stateless';
 export type ConnectorRuntimeType = 'inapp' | 'shared' | 'custom';
 export type FeaturedConnectorType = ConnectorRuntimeType | 'builtin';
 
-export interface Manifest {
-  title: string;
-  summary: string;
-  skus: SkuType[];
-  kinds?: WorkflowKindType[];
-  details: Record<string, string>;
-
-  /* This is a markdown to show features for multi-workflow and details in case of single workflow */
-  description?: string;
-
-  tags?: string[];
-  artifacts: Artifact[];
-
-  /* This consists of list of workflows listed in the multi-workflow template.
-  The key is the folder name, followed by metadata where name is default name to be used for creation */
-  workflows?: Record<string, { name: string }>;
-
-  images: Record<string, string>;
-  prerequisites?: string;
-  parameters: Parameter[];
-  connections: Record<string, Connection>;
-  featuredOperations?: { type: string; kind?: string }[];
-  sourceCodeUrl?: string; // Automatically generated for public templates, otherwise optional
-}
-
 export type DetailsType = 'By' | 'Type' | 'Category' | 'Trigger';
 
 export interface TemplateManifest {
