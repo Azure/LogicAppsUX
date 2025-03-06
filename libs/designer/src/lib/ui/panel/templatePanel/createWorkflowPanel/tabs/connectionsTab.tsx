@@ -17,9 +17,19 @@ export const ConnectionsPanel: React.FC = () => {
 export const connectionsTab = (
   intl: IntlShape,
   dispatch: AppDispatch,
-  { shouldClearDetails, previousTabId, isCreating, nextTabId, hasError, showCloseButton = true, onClosePanel }: CreateWorkflowTabProps
+  {
+    disabled,
+    shouldClearDetails,
+    previousTabId,
+    isCreating,
+    nextTabId,
+    hasError,
+    showCloseButton = true,
+    onClosePanel,
+  }: CreateWorkflowTabProps
 ): TemplatePanelTab => ({
   id: constants.TEMPLATE_PANEL_TAB_NAMES.CONNECTIONS,
+  disabled,
   title: intl.formatMessage({
     defaultMessage: 'Connections',
     id: 'bJMlgW',

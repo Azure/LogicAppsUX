@@ -14,9 +14,10 @@ export const ParametersPanel: React.FC = () => {
 export const parametersTab = (
   intl: IntlShape,
   dispatch: AppDispatch,
-  { isCreating, shouldClearDetails, previousTabId, hasError, onClosePanel, showCloseButton = true }: CreateWorkflowTabProps
+  { isCreating, disabled, shouldClearDetails, previousTabId, hasError, onClosePanel, showCloseButton = true }: CreateWorkflowTabProps
 ): TemplatePanelTab => ({
   id: constants.TEMPLATE_PANEL_TAB_NAMES.PARAMETERS,
+  disabled,
   title: intl.formatMessage({
     defaultMessage: 'Parameters',
     id: 'xi2tn6',

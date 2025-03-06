@@ -20,6 +20,8 @@ import {
   BaseApiManagementService,
   BaseFunctionService,
   ConsumptionConnectorService,
+  ConsumptionTemplateService,
+  BaseResourceService,
 } from '@microsoft/logic-apps-shared';
 import {
   getWorkflowAndArtifactsConsumption,
@@ -36,7 +38,6 @@ import { HttpClient } from '../../designer/app/AzureLogicAppsDesigner/Services/H
 import type { Template, LogicAppsV2 } from '@microsoft/logic-apps-shared';
 import type { ConnectionMapping } from '@microsoft/logic-apps-designer/src/lib/core/state/templates/workflowSlice';
 import { parseWorkflowParameterValue } from '@microsoft/logic-apps-designer';
-import { BaseTemplateService } from '@microsoft/logic-apps-shared';
 
 const workflowIdentifier = '#workflowname#';
 
@@ -45,7 +46,13 @@ export const TemplatesConsumption = () => {
     theme: state.workflowLoader.theme,
     templatesView: state.workflowLoader.templatesView,
   }));
-  const { resourcePath: workflowId, language, useEndpoint } = useSelector((state: RootState) => state.workflowLoader);
+  const {
+    resourcePath: workflowId,
+    language,
+    useEndpoint,
+    isCreateView,
+    enableResourceSelection,
+  } = useSelector((state: RootState) => state.workflowLoader);
   const { data: workflowData } = useWorkflowAndArtifactsConsumption(workflowId!);
   const { data: tenantId } = useCurrentTenantId();
   const { data: objectId } = useCurrentObjectId();
@@ -164,7 +171,8 @@ export const TemplatesConsumption = () => {
         connectionReferences={connectionReferences}
         services={services}
         isConsumption={true}
-        isCreateView={false}
+        isCreateView={!!isCreateView}
+        enableResourceSelection={enableResourceSelection}
         viewTemplate={isSingleTemplateView ? { id: templatesView } : undefined}
         reload={reload}
       >
@@ -352,8 +360,8 @@ const getServices = (
     },
   };
 
-  const templateService = new BaseTemplateService({
-    httpClient,
+  const templateService = new ConsumptionTemplateService({
+    ...defaultServiceParams,
     endpoint: 'https://priti-cxf4h5cpcteue4az.b02.azurefd.net',
     useEndpointForTemplates: !!useEndpoint,
     openBladeAfterCreate: (_workflowName: string | undefined) => {
@@ -361,6 +369,8 @@ const getServices = (
     },
     onAddBlankWorkflow: onBlankWorkflowClick,
   });
+
+  const resourceService = new BaseResourceService(defaultServiceParams);
 
   return {
     connectionService,
@@ -371,6 +381,7 @@ const getServices = (
     templateService,
     workflowService,
     connectorService,
+    resourceService,
   };
 };
 

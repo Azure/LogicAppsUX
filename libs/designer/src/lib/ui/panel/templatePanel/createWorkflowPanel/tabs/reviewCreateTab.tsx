@@ -169,6 +169,7 @@ export const reviewCreateTab = (
     previousTabId,
     onClosePanel,
     showCloseButton = true,
+    disabled,
   }: {
     errorMessage: string | undefined;
     isPrimaryButtonDisabled: boolean;
@@ -176,6 +177,7 @@ export const reviewCreateTab = (
   } & CreateWorkflowTabProps
 ): TemplatePanelTab => ({
   id: constants.TEMPLATE_PANEL_TAB_NAMES.REVIEW_AND_CREATE,
+  disabled,
   title: isCreateView
     ? intl.formatMessage({
         defaultMessage: 'Review + create',

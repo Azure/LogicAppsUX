@@ -11,6 +11,7 @@ import { useMemo, useState } from 'react';
 import { useIntl } from 'react-intl';
 import { useDispatch, useSelector } from 'react-redux';
 import { getCurrentWorkflowNames } from '../../../core/templates/utils/helper';
+import { ResourcePicker } from './resourcepicker';
 
 interface WorkflowItem {
   id: string;
@@ -32,7 +33,10 @@ interface WorkflowItem {
 export const MultiWorkflowBasics = () => {
   const dispatch = useDispatch<AppDispatch>();
   const { workflows } = useSelector((state: RootState) => state.template);
-  const basicsOverrideByWorkflow = useSelector((state: RootState) => state.templateOptions.viewTemplateDetails?.basicsOverride);
+  const { basicsOverrideByWorkflow, enableResourceSelection } = useSelector((state: RootState) => ({
+    basicsOverrideByWorkflow: state.templateOptions.viewTemplateDetails?.basicsOverride,
+    enableResourceSelection: state.templateOptions.enableResourceSelection,
+  }));
   const { data: existingWorkflowNames } = useExistingWorkflowNames();
 
   const intl = useIntl();
@@ -177,7 +181,7 @@ export const MultiWorkflowBasics = () => {
     dispatch(updateWorkflowName({ id: item.id, name }));
   };
 
-  const handleWorkflowNameBlur = (item: WorkflowItem) => {
+  const handleWorkflowNameBlur = async (item: WorkflowItem) => {
     const existingNames = [
       ...(existingWorkflowNames ?? []),
       ...getCurrentWorkflowNames(
@@ -185,7 +189,11 @@ export const MultiWorkflowBasics = () => {
         item.id
       ),
     ];
-    const validationError = validateWorkflowName(item.name, existingNames);
+    const validationError = await validateWorkflowName(item.name, /* isConsumption */ false, {
+      subscriptionId: '',
+      resourceGroupName: '',
+      existingWorkflowNames: existingNames,
+    });
     updateItemInList({ ...item, errors: { ...item.errors, workflow: validationError } });
     dispatch(updateWorkflowNameValidationError({ id: item.id, error: validationError }));
   };
@@ -233,6 +241,7 @@ export const MultiWorkflowBasics = () => {
 
   return (
     <div className="msla-templates-basics-tab">
+      {enableResourceSelection ? <ResourcePicker /> : null}
       <div>
         <Text>{resources.general_line1}</Text>
         <br />
