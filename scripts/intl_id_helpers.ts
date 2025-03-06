@@ -48,6 +48,10 @@ export function extractIntlProperty(str: string, property: string) {
   return valueRegex.exec(str)?.[1];
 }
 
+export function idToCommentId(id: string) {
+  return `_${id}.comment`;
+}
+
 export function updateFiles() {
   // Step 1: Update IDs in TS/TSX Files and Collect Mappings
   const idMapping = {}; // Store old -> new ID mapping
@@ -114,9 +118,16 @@ export function updateFiles() {
     let updated = false;
 
     Object.keys(idMapping).forEach((oldId) => {
+      // Adjust raw string ids
       if (jsonData[oldId]) {
         jsonData[idMapping[oldId]] = jsonData[oldId]; // Copy to new ID
         delete jsonData[oldId]; // Remove old ID
+        updated = true;
+      }
+      // Adjust comment ids
+      if (jsonData[idToCommentId(oldId)]) {
+        jsonData[idToCommentId(idMapping[oldId])] = jsonData[idToCommentId(oldId)]; // Copy to new ID
+        delete jsonData[idToCommentId(oldId)]; // Remove old ID
         updated = true;
       }
     });
