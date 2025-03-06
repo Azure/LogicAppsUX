@@ -13,7 +13,7 @@ import { useConnectorInfo } from '../../../core/templates/utils/queries';
 import { Tooltip } from '@fluentui/react-components';
 import { isConnectionValid } from '../../../core/utils/connectors/connections';
 import { useSelector } from 'react-redux';
-import type { RootState } from 'lib/core/state/templates/store';
+import type { RootState } from '../../../core/state/templates/store';
 
 export const ConnectorIcon = ({
   connectorId,

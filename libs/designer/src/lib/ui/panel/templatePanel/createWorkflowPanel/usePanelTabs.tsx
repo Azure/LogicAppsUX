@@ -9,12 +9,8 @@ import type { AppDispatch, RootState } from '../../../../core/state/templates/st
 import type { TemplatePanelTab } from '@microsoft/designer-ui';
 import Constants from '../../../../common/constants';
 import { useExistingWorkflowNames } from '../../../../core/queries/template';
-import {
-  validateConnections,
-  validateWorkflowsBasicInfo,
-  validateParameters,
-  clearTemplateDetails,
-} from '../../../../core/state/templates/templateSlice';
+import { validateWorkflowsBasicInfo } from '../../../../core/actions/bjsworkflow/templates';
+import { validateConnections, validateParameters, clearTemplateDetails } from '../../../../core/state/templates/templateSlice';
 import { LogEntryLevel, LoggerService, Status, TemplateService } from '@microsoft/logic-apps-shared';
 import { useMutation } from '@tanstack/react-query';
 import type { CreateWorkflowHandler } from '../../../templates';
@@ -85,7 +81,7 @@ export const useCreateWorkflowPanelTabs = ({
       dispatch(validateParameters());
     }
     if (!isConsumption && selectedTabId && selectedTabId !== Constants.TEMPLATE_PANEL_TAB_NAMES.BASIC) {
-      dispatch(validateWorkflowsBasicInfo({ validateName: !existingWorkflowName, existingNames: existingWorkflowNames ?? [] }));
+      dispatch(validateWorkflowsBasicInfo({ validateName: !existingWorkflowName, existingWorkflowNames: existingWorkflowNames ?? [] }));
     }
   }, [dispatch, isConsumption, existingWorkflowName, existingWorkflowNames, parametersExist, selectedTabId, connections.mapping]);
 
