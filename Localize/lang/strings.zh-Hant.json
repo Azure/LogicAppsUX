@@ -10,7 +10,6 @@
   "ms51fbf99bd202": "結構描述節點 ''{nodeName}'' 有未終止的連線鏈結",
   "ms5d12be82d0da": "函數 ''{functionName}'' 有未終止的連線鏈結",
   "Xew1Df": "其他診斷資訊: x-ms-client-request-id 是 ''{clientRequestId}''。",
-  "Xj0Gr/": "無法刪除目標結構描述元素。",
   "ms605d7266469a": "chat-session-id:",
   "ms7415888d139d": "結構描述遺漏必要輸入",
   "ms91f98b4d82b2": "函數 ''{functionName}'' 遺失必要的輸入",

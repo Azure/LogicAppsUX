@@ -10,7 +10,6 @@
   "ms51fbf99bd202": "O nó de esquema \"{nodeName}\" tem uma cadeia de ligação sem terminação",
   "ms5d12be82d0da": "A função \"{functionName}\" tem uma cadeia de ligação sem terminação",
   "Xew1Df": "Mais informações de diagnóstico: x-ms-client-request-id é \"{clientRequestId}\".",
-  "Xj0Gr/": "Não é possível eliminar o elemento de esquema de destino.",
   "ms605d7266469a": "chat-session-id:",
   "ms7415888d139d": "Faltam entradas necessárias no esquema",
   "ms91f98b4d82b2": "Faltam entradas necessárias no ''{functionName}'' de função",

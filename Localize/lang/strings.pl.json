@@ -10,7 +10,6 @@
   "ms51fbf99bd202": "Węzeł schematu „{nodeName}” ma niekończący się łańcuch połączeń",
   "ms5d12be82d0da": "Funkcja „{functionName}” ma niekończący się łańcuch połączeń",
   "Xew1Df": "Więcej informacji diagnostycznych: x-ms-client-request-id to „{clientRequestId}”.",
-  "Xj0Gr/": "Nie można usunąć elementu schematu docelowego.",
   "ms605d7266469a": "chat-session-id:",
   "ms7415888d139d": "W schemacie brakuje wymaganych danych wejściowych",
   "ms91f98b4d82b2": "W ''{functionName}'' funkcji brakuje wymaganych danych wejściowych",

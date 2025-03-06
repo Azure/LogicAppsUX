@@ -11,7 +11,6 @@
   "ms51fbf99bd202": "Die Funktion „{nodeName}“ hat eine nicht beendende Verbindungskette.",
   "ms5d12be82d0da": "Die Funktion „{functionName}“ hat eine nicht beendende Verbindungskette.",
   "Xew1Df": "Weitere Diagnoseinformationen: x-ms-client-Anforderungs-Id lautet „{clientRequestId}“.",
-  "Xj0Gr/": "Das Zielschemaelement kann nicht gelöscht werden.",
   "ms605d7266469a": "chat-session-id:",
   "ms7415888d139d": "Im Schema fehlen erforderliche Eingaben.",
   "ms91f98b4d82b2": "In der Funktion ''{functionName}'' fehlen erforderliche Eingaben.",

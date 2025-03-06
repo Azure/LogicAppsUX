@@ -10,7 +10,6 @@
   "ms51fbf99bd202": "Schemanoden {nodeName} innehåller en icke-avslutande anslutningskedja",
   "ms5d12be82d0da": "Funktionen {functionName} innehåller en icke-avslutande anslutningskedja",
   "Xew1Df": "Mer diagnostikinformation: x-ms-client-request-id är {clientRequestId}.",
-  "Xj0Gr/": "Det går inte att ta bort målschemaelementet.",
   "ms605d7266469a": "chattsessions-id:",
   "ms7415888d139d": "Nödvändiga indata saknas i schemat",
   "ms91f98b4d82b2": "Funktionen ''{functionName}'' saknar nödvändiga indata",

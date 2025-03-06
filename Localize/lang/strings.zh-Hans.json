@@ -10,7 +10,6 @@
   "ms51fbf99bd202": "架构节点 \"{nodeName}\" 具有非终止连接链",
   "ms5d12be82d0da": "函数 \"{functionName}\" 具有非终止连接链",
   "Xew1Df": "更多诊断信息: x-ms-client-request-id 为 \"{clientRequestId}\"。",
-  "Xj0Gr/": "无法删除目标架构元素。",
   "ms605d7266469a": "chat-session-id:",
   "ms7415888d139d": "架构缺少所需的输入",
   "ms91f98b4d82b2": "函数 ''{functionName}'' 缺少必需的输入",

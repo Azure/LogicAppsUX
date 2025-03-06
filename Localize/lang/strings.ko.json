@@ -10,7 +10,6 @@
   "ms51fbf99bd202": "스키마 노드 ''{nodeName}''에 종료되지 않는 연결 체인이 있습니다.",
   "ms5d12be82d0da": "''{functionName}' 함수에 종료되지 않는 연결 체인이 있습니다.",
   "Xew1Df": "추가 진단 정보: x-ms-client-request-id는 “{clientRequestId}”입니다.",
-  "Xj0Gr/": "대상 스키마 요소를 삭제할 수 없습니다.",
   "ms605d7266469a": "chat-session-id:",
   "ms7415888d139d": "스키마에 필수 입력이 없습니다.",
   "ms91f98b4d82b2": "함수 ''{functionName}'' 필수 입력이 누락되었습니다.",

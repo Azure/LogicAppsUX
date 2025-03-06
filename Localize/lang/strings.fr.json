@@ -10,7 +10,6 @@
   "ms51fbf99bd202": "Le nœud de schéma « {nodeName} » a une chaîne de connexion sans fin",
   "ms5d12be82d0da": "La fonction « {functionName} » a une chaîne de connexion sans fin",
   "Xew1Df": "Informations de diagnostic supplémentaires : x-ms-client-request-id est « {clientRequestId} ».",
-  "Xj0Gr/": "Nous ne pouvons pas supprimer l’élément de schéma cible.",
   "ms605d7266469a": "chat-session-id :",
   "ms7415888d139d": "Les entrées requises sont manquantes dans le schéma",
   "ms91f98b4d82b2": "Des entrées obligatoires sont manquantes dans le ''{functionName}'' de fonction",
