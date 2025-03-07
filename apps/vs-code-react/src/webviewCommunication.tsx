@@ -33,6 +33,7 @@ import {
 } from './state/DataMapSlice';
 import {
   changeCustomXsltPathList as changeCustomXsltPathListV2,
+  changeDataMapFilename,
   changeDataMapMetadata as changeDataMapMetadataV2,
   changeIsTestDisabledForOS,
   changeMapDefinition as changeMapDefinitionV2,
@@ -133,6 +134,7 @@ export const WebViewCommunication: React.FC<{ children: ReactNode }> = ({ childr
               dispatch(changeSourceSchemaFilenameV2(message.data.sourceSchemaFileName));
               dispatch(changeTargetSchemaFilenameV2(message.data.targetSchemaFileName));
               dispatch(changeMapDefinitionV2(message.data.mapDefinition));
+              dispatch(changeDataMapFilename(message.data.mapDefinitionName));
               dispatch(changeDataMapMetadataV2(message.data.metadata));
               break;
             }

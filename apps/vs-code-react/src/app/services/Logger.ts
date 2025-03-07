@@ -3,9 +3,14 @@ import { guid } from '@microsoft/logic-apps-shared';
 import { ExtensionCommand, type MessageToVsix } from '@microsoft/vscode-extension-logic-apps';
 type traceStart = Pick<TelemetryEvent, 'action' | 'actionModifier' | 'name' | 'source'>;
 
-interface LoggerContext {
+interface InitialLoggerContext {
   designerVersion: string;
   dataMapperVersion?: number;
+}
+export interface AdditionalContext {
+  dataMapName?: string;
+  sourceType?: string;
+  targetType?: string;
 }
 
 /**
@@ -16,14 +21,22 @@ interface LoggerContext {
 export class LoggerService implements ILoggerService {
   private sendMsgToVsix: (msg: MessageToVsix) => void;
   private inProgressTraces = new Map<string, { data: Record<string, any>; startTimestamp: number }>();
-  private context: LoggerContext;
+  private context: InitialLoggerContext & AdditionalContext;
 
   /**
    * Initializes a new instance of the DataMapperLoggerService.
    * @param sendMsgToVsix - A callback function for sending messages to a VSIX extension.
    * @param context - An object specifying the environment or context in which the logger operates.
    */
-  constructor(sendMsgToVsix: (msg: MessageToVsix) => void, context: LoggerContext) {
+  public addPropertyToContext(context: AdditionalContext) {
+    this.context = { ...this.context, ...context };
+  }
+  /**
+   * Initializes a new instance of the DataMapperLoggerService.
+   * @param sendMsgToVsix - A callback function for sending messages to a VSIX extension.
+   * @param context - An object specifying the environment or context in which the logger operates.
+   */
+  constructor(sendMsgToVsix: (msg: MessageToVsix) => void, context: InitialLoggerContext & AdditionalContext) {
     this.sendMsgToVsix = sendMsgToVsix;
     this.context = context;
   }

@@ -38,6 +38,7 @@ export const convertSchemaToSchemaExtended = (schema: DataMapSchema): SchemaExte
     message: 'Schema converted',
     args: [
       {
+        schemaName: schema.name,
         schemaFileFormat: schema.type,
         largestNode: telemetryLargestNode(extendedSchema),
         deepestNodeChild: telemetryDeepestNodeChild(extendedSchema),

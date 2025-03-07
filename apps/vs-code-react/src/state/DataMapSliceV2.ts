@@ -10,6 +10,7 @@ export interface DataMapState {
   mapDefinition?: MapDefinitionEntry;
   dataMapMetadata?: MapMetadataV2;
 
+  dataMapFilename?: string;
   sourceSchemaFilename?: string;
   sourceSchema?: DataMapSchema;
   targetSchemaFilename?: string;
@@ -64,6 +65,9 @@ export const dataMapSlice = createSlice({
     changeTargetSchemaFilename: (state, action: PayloadAction<string>) => {
       state.targetSchemaFilename = action.payload;
     },
+    changeDataMapFilename: (state, action: PayloadAction<string>) => {
+      state.dataMapFilename = action.payload;
+    },
     changeTargetSchema: (state, action: PayloadAction<DataMapSchema>) => {
       state.targetSchema = action.payload;
     },
@@ -91,6 +95,7 @@ export const {
   changeLoadingMethod,
   changeXsltFilename,
   changeXsltContent,
+  changeDataMapFilename,
   changeMapDefinition,
   changeDataMapMetadata,
   changeIsTestDisabledForOS,

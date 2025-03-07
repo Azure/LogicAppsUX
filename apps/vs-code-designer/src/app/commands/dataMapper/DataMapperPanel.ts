@@ -215,7 +215,7 @@ export default class DataMapperPanel {
       const mapMetadata = this.readMapMetadataFile();
       this.sendMsgToWebview({
         command: ExtensionCommand.loadDataMap,
-        data: { ...this.mapDefinitionData, metadata: mapMetadata },
+        data: { ...this.mapDefinitionData, mapDefinitionName: this.dataMapName, metadata: mapMetadata },
       });
 
       this.checkAndSetXslt();
@@ -349,8 +349,22 @@ export default class DataMapperPanel {
     });
   }
 
+  private setDataMapperVersionForLogging(context: IActionContext) {
+    context.telemetry.properties.dataMapperVersion = this.dataMapVersion.toString();
+    context.telemetry.properties.dataMapName = this.dataMapName;
+  }
+
+  private callWithTelemetryAndErrorHandlingSyncForDM<T>(command: string, fn: (context: IActionContext) => T): T {
+    const result = callWithTelemetryAndErrorHandlingSync(command, (context: IActionContext) => {
+      this.setDataMapperVersionForLogging(context);
+      return fn(context);
+    });
+    return result;
+  }
+
   public addSchemaFromFile(schemaType: SchemaType) {
-    callWithTelemetryAndErrorHandlingSync(extensionCommand.dataMapAddSchemaFromFile, (_context: IActionContext) => {
+    this.callWithTelemetryAndErrorHandlingSyncForDM(extensionCommand.dataMapAddSchemaFromFile, (context: IActionContext) => {
+      this.setDataMapperVersionForLogging(context);
       const fileSelectOptions: vscode.OpenDialogOptions = {
         filters: { Schemas: ['xsd', 'json'] },
         canSelectMany: false,
@@ -389,9 +403,10 @@ export default class DataMapperPanel {
   }
 
   public saveMapDefinition(mapDefinition: string) {
-    callWithTelemetryAndErrorHandlingSync(extensionCommand.dataMapSaveMapDefinition, (_context: IActionContext) => {
+    this.callWithTelemetryAndErrorHandlingSyncForDM(extensionCommand.dataMapSaveMapDefinition, (context: IActionContext) => {
       // Delete *draft* map definition as it's no longer needed
       this.deleteDraftDataMapDefinition();
+      this.setDataMapperVersionForLogging(context);
 
       const fileName = `${this.dataMapName}${mapDefinitionExtension}`;
       const dataMapFolderPath = path.join(ext.logicAppWorkspace, dataMapDefinitionsPath);
@@ -422,7 +437,9 @@ export default class DataMapperPanel {
   }
 
   public saveMapXslt(mapXslt: string) {
-    callWithTelemetryAndErrorHandlingSync(extensionCommand.dataMapSaveMapXslt, (_context: IActionContext) => {
+    this.callWithTelemetryAndErrorHandlingSyncForDM(extensionCommand.dataMapSaveMapXslt, (context: IActionContext) => {
+      this.setDataMapperVersionForLogging(context);
+
       const fileName = `${this.dataMapName}${mapXsltExtension}`;
       const dataMapFolderPath = path.join(ext.logicAppWorkspace, dataMapsPath);
       const filePath = path.join(dataMapFolderPath, fileName);
@@ -461,32 +478,42 @@ export default class DataMapperPanel {
   }
 
   private readMapMetadataFile(): MapMetadata | undefined {
-    const vscodeFolderPath = this.getMapMetadataPath();
-    if (fileExistsSync(vscodeFolderPath)) {
-      try {
-        const fileBuffer = readFileSync(vscodeFolderPath);
-        const metadataJson = JSON.parse(fileBuffer.toString()) as MapMetadata;
-        return metadataJson;
-      } catch {
-        ext.showError(
+    const result = this.callWithTelemetryAndErrorHandlingSyncForDM(ExtensionCommand.webviewLoaded, (context: IActionContext) => {
+      const vscodeFolderPath = this.getMapMetadataPath();
+      if (fileExistsSync(vscodeFolderPath)) {
+        try {
+          const fileBuffer = readFileSync(vscodeFolderPath);
+          const metadataJson = JSON.parse(fileBuffer.toString()) as MapMetadata;
+          context.telemetry.properties.loadMetadataStatus = 'Succeeded';
+          return metadataJson;
+        } catch {
+          ext.showError(
+            localize(
+              'MetadataInvalidJSON',
+              `Data map metadata file found at "{0}" contains invalid JSON. Data map will load without metadata file.`,
+              vscodeFolderPath
+            )
+          );
+          context.telemetry.properties.result = 'Failed';
+          context.telemetry.properties.loadMetadataStatus = 'Failed';
+          context.telemetry.properties.loadMetadataError = 'Invalid JSON in metadata file.';
+          return undefined;
+        }
+      } else {
+        ext.showWarning(
           localize(
-            'MetadataInvalidJSON',
-            `Data map metadata file found at "{0}" contains invalid JSON. Data map will load without metadata file.`,
+            'MetadataNotFound',
+            `Data map metadata not found at path "{0}". This file configures your function positioning and other info. Please save your map to regenerate the file.`,
             vscodeFolderPath
           )
         );
+        // not logging result as failed as there are a few reasons users may not have the file, possible user error
+        context.telemetry.properties.loadMetadataStatus = 'Failed';
+        context.telemetry.properties.loadMetadataError = 'Metadata file not found.';
         return undefined;
       }
-    } else {
-      ext.showWarning(
-        localize(
-          'MetadataNotFound',
-          `Data map metadata not found at path "{0}". This file configures your function positioning and other info. Please save your map to regenerate the file.`,
-          vscodeFolderPath
-        )
-      );
-      return undefined;
-    }
+    });
+    return result;
   }
 
   public deleteDraftDataMapDefinition() {
