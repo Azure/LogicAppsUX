@@ -21,7 +21,7 @@ import {
   promptForUnitTestName,
   selectWorkflowNode,
   updateSolutionWithProject,
-  validateWorkflowNode,
+  validateWorkflowPath,
 } from '../../../utils/unitTests';
 import { tryGetLogicAppProjectRoot } from '../../../utils/verifyIsProject';
 import { ensureDirectoryInWorkspace, getWorkflowNode, getWorkspaceFolder } from '../../../utils/workspace';
@@ -75,15 +75,8 @@ export async function createUnitTest(
     // Determine workflow node
     const workflowNode = node ? (getWorkflowNode(node) as vscode.Uri) : await selectWorkflowNode(context, projectPath);
 
-    // try {
-    //   validateWorkflowNode(projectPath, workflowNode);
-    // } catch (error) {
-    //   vscode.window.showErrorMessage(localize('error.workflowValidation', 'Workflow validation failed: {0}', error.message));
-    //   return;
-    // }
-
     try {
-      validateWorkflowNode(projectPath, workflowNode);
+      validateWorkflowPath(projectPath, workflowNode.fsPath);
     } catch (error) {
       vscode.window.showErrorMessage(localize('error.workflowValidation', 'Workflow validation failed: {0}', error.message));
       return;
