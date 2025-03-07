@@ -157,6 +157,7 @@ export const TemplateOverview = ({
 interface WorkflowItem {
   id: string;
   name: string;
+  trigger: string;
 }
 
 const WorkflowList = ({
@@ -169,11 +170,12 @@ const WorkflowList = ({
     unmap(workflows).map((workflow) => {
       const { id, manifest } = workflow;
       const { title } = manifest as Template.WorkflowManifest;
-      return { id, name: title };
+      return { id, name: title, trigger: '' };
     })
   );
   const columnsNames = {
     name: intl.formatMessage({ defaultMessage: 'Name', id: '+EREVh', description: 'Column name for workflow name' }),
+    trigger: intl.formatMessage({ defaultMessage: 'Trigger', id: 'MGq28G', description: 'Column name for trigger type' }),
   };
   const _onColumnClick = (_event: React.MouseEvent<HTMLElement>, column: IColumn): void => {
     let isSortedDescending = column.isSortedDescending;
@@ -210,6 +212,18 @@ const WorkflowList = ({
       showSortIconWhenUnsorted: true,
       onColumnClick: _onColumnClick,
     },
+    {
+      ariaLabel: columnsNames.trigger,
+      fieldName: 'trigger',
+      flexGrow: 1,
+      key: 'trigger',
+      isResizable: true,
+      minWidth: 1,
+      maxWidth: 100,
+      name: columnsNames.trigger,
+      showSortIconWhenUnsorted: true,
+      onColumnClick: _onColumnClick,
+    },
   ]);
 
   const onRenderItemColumn = (item: WorkflowItem, _index: number | undefined, column: IColumn | undefined) => {
@@ -219,6 +233,13 @@ const WorkflowList = ({
           <Link aria-label={item.name} as="button" onClick={() => showDetails(item.id)}>
             {item.name}
           </Link>
+        );
+
+      case 'trigger':
+        return (
+          <Text aria-label={item.trigger} className="msla-template-overview-text">
+            {item.trigger}
+          </Text>
         );
 
       default:

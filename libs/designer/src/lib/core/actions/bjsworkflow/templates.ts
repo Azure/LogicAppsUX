@@ -247,56 +247,42 @@ const loadTemplateFromResourcePath = async (
     },
   };
 
-  if (isMultiWorkflow) {
-    for (const workflowId of Object.keys(workflows)) {
-      const workflowData = await loadWorkflowTemplate(templateId, workflowId, viewTemplateData);
-
-      if (workflowData) {
-        workflowData.workflow.workflowName = workflows[workflowId].name;
-        data.workflows[workflowId] = workflowData.workflow;
-        data.parameterDefinitions = {
-          ...data.parameterDefinitions,
-          ...Object.keys(workflowData.parameterDefinitions).reduce((acc: Record<string, Template.ParameterDefinition>, key: string) => {
-            if (data.parameterDefinitions[key] && workflowData.parameterDefinitions[key]) {
-              // Combine associatedWorkflows arrays if both definitions exist
-              const combinedAssociatedWorkflows = [
-                ...(data.parameterDefinitions[key].associatedWorkflows || []),
-                ...(workflowData.parameterDefinitions[key].associatedWorkflows || []),
-              ];
-
-              acc[key] = {
-                ...data.parameterDefinitions[key],
-                ...workflowData.parameterDefinitions[key],
-                associatedWorkflows: combinedAssociatedWorkflows,
-              };
-            } else {
-              // If the key doesn't exist in data, just take from workflowData
-              acc[key] = workflowData.parameterDefinitions[key];
-            }
-            return acc;
-          }, {}),
-        };
-        data.connections = { ...data.connections, ...workflowData.connections };
-      }
-    }
-  } else {
-    const workflowId = 'default';
+  for (const workflowId of Object.keys(workflows)) {
     const workflowData = await loadWorkflowTemplate(templateId, workflowId, viewTemplateData);
-
+    console.log('---workflowData ', workflowData);
     if (workflowData) {
-      data.workflows = {
-        [workflowId]: {
-          ...workflowData.workflow,
-          manifest: {
-            ...workflowData.workflow.manifest,
-            // Override title and summary with template manifest data if single workflow
-            title: templateManifest.title,
-            summary: templateManifest.summary,
-          },
-        },
-      };
-      data.parameterDefinitions = workflowData.parameterDefinitions;
-      data.connections = workflowData.connections;
+      workflowData.workflow.workflowName = workflows[workflowId].name;
+      data.workflows[workflowId] = workflowData.workflow;
+      // Override title and summary with template manifest data if single workflow
+      if (!isMultiWorkflow) {
+        data.workflows[workflowId].manifest.title = templateManifest.title;
+        data.workflows[workflowId].manifest.summary = templateManifest.summary;
+      }
+      data.parameterDefinitions = isMultiWorkflow
+        ? {
+            ...data.parameterDefinitions,
+            ...Object.keys(workflowData.parameterDefinitions).reduce((acc: Record<string, Template.ParameterDefinition>, key: string) => {
+              if (data.parameterDefinitions[key] && workflowData.parameterDefinitions[key]) {
+                // Combine associatedWorkflows arrays if both definitions exist
+                const combinedAssociatedWorkflows = [
+                  ...(data.parameterDefinitions[key].associatedWorkflows || []),
+                  ...(workflowData.parameterDefinitions[key].associatedWorkflows || []),
+                ];
+
+                acc[key] = {
+                  ...data.parameterDefinitions[key],
+                  ...workflowData.parameterDefinitions[key],
+                  associatedWorkflows: combinedAssociatedWorkflows,
+                };
+              } else {
+                // If the key doesn't exist in data, just take from workflowData
+                acc[key] = workflowData.parameterDefinitions[key];
+              }
+              return acc;
+            }, {}),
+          }
+        : workflowData.parameterDefinitions;
+      data.connections = { ...data.connections, ...workflowData.connections };
     }
   }
 
