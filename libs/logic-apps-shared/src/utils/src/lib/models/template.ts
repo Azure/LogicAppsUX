@@ -73,6 +73,10 @@ interface ContentInfo<T> {
   isEditable?: boolean;
 }
 
+interface ConnectionInfo {
+  connectionId: string;
+}
+
 export interface ViewTemplateDetails {
   id: string;
   basicsOverride?: Record<
@@ -83,4 +87,5 @@ export interface ViewTemplateDetails {
     }
   >;
   parametersOverride?: Record<string, ContentInfo<any>>;
+  connectionsOverride?: Record<string, ConnectionInfo>;
 }

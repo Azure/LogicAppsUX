@@ -7,6 +7,7 @@ export interface TemplateOptionsState {
   servicesInitialized: boolean;
   enableResourceSelection?: boolean;
   viewTemplateDetails?: Template.ViewTemplateDetails;
+  connectionsOverrideCompleted?: Record<string, boolean>;
 }
 
 const initialState: TemplateOptionsState = {
@@ -23,6 +24,12 @@ export const templateOptionsSlice = createSlice({
     setEnableResourceSelection: (state, action: PayloadAction<boolean>) => {
       state.enableResourceSelection = action.payload;
     },
+    setConnectionsOverrideCompleted: (state, action: PayloadAction<string>) => {
+      if (!state.connectionsOverrideCompleted) {
+        state.connectionsOverrideCompleted = {};
+      }
+      state.connectionsOverrideCompleted[action.payload] = true;
+    },
   },
   extraReducers: (builder) => {
     builder.addCase(initializeTemplateServices.fulfilled, (state, action) => {
@@ -31,5 +38,5 @@ export const templateOptionsSlice = createSlice({
   },
 });
 
-export const { setViewTemplateDetails, setEnableResourceSelection } = templateOptionsSlice.actions;
+export const { setViewTemplateDetails, setEnableResourceSelection, setConnectionsOverrideCompleted } = templateOptionsSlice.actions;
 export default templateOptionsSlice.reducer;
