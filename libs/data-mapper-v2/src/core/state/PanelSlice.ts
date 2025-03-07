@@ -76,6 +76,18 @@ export const panelSlice = createSlice({
       state.currentPanelView = ConfigPanelView.DefaultConfig;
     },
 
+    openMapChecker: (state) => {
+      const newState = true;
+
+      if (newState) {
+        state.codeViewPanel.isOpen = false;
+        state.testPanel.isOpen = false;
+        state.functionPanel.isOpen = false;
+      }
+
+      state.mapCheckerPanel.isOpen = true;
+    },
+
     toggleMapChecker: (state) => {
       const newState = !state.mapCheckerPanel.isOpen;
 
@@ -190,6 +202,7 @@ export const {
   updateTestOutput,
   toggleFunctionPanel,
   toggleMapChecker,
+  openMapChecker,
   setSelectedMapCheckerTab,
 } = panelSlice.actions;
 
