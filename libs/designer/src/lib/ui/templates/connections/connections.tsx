@@ -16,7 +16,7 @@ export const ConnectionsList = (props: { connections: Record<string, Template.Co
 
     return (
       <div className="msla-template-overview-connection">
-        <ConnectorWithDetails connectorId={item.id} kind={item.kind} />
+        <ConnectorWithDetails id={item.id} kind={item.kind} />
       </div>
     );
   };

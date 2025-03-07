@@ -101,9 +101,9 @@ const textStyles = {
   },
 };
 
-export const ConnectorWithDetails = ({ connectorId, kind }: Template.Connection) => {
-  const { data: connector, isLoading, isError } = useConnector(connectorId, /* enabled */ true, /* getCachedData */ true);
-  const { data: connections, isLoading: isConnectionsLoading } = useConnectionsForConnector(connectorId, /* shouldNotRefetch */ true);
+export const ConnectorWithDetails = ({ id, kind }: Template.FeaturedConnector) => {
+  const { data: connector, isLoading, isError } = useConnector(id, /* enabled */ true, /* getCachedData */ true);
+  const { data: connections, isLoading: isConnectionsLoading } = useConnectionsForConnector(id, /* shouldNotRefetch */ true);
   const connectorConnections = useMemo(() => connections?.filter(isConnectionValid), [connections]);
   const intl = useIntl();
 
@@ -123,7 +123,7 @@ export const ConnectorWithDetails = ({ connectorId, kind }: Template.Connection)
         />
       ) : (
         <ConnectorIcon
-          connectorId={connectorId}
+          connectorId={id}
           classes={{ root: 'msla-template-connector-box', icon: 'msla-template-connector-icon' }}
           styles={{ root: { width: 50, height: 50 } }}
         />
