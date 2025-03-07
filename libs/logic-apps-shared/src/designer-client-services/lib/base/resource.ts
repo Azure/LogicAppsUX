@@ -47,10 +47,10 @@ export class BaseResourceService implements IResourceService {
     }
   }
 
-  async listLogicApps(subscriptionId: string, resourceGroup: string, location: string): Promise<LogicAppResource[]> {
+  async listLogicApps(subscriptionId: string, resourceGroup: string): Promise<LogicAppResource[]> {
     const { baseUrl, httpClient } = this.options;
     const uri = `${baseUrl}/providers/Microsoft.ResourceGraph/resources?api-version=2019-04-01`;
-    const query = `resources | where type == "microsoft.web/sites" and kind contains "workflowapp" and resourceGroup == "${resourceGroup.toLowerCase()}" and location == "${location.toLowerCase()}"`;
+    const query = `resources | where type == "microsoft.web/sites" and kind contains "workflowapp" and resourceGroup == "${resourceGroup.toLowerCase()}"`;
     const response = await fetchAppsByQuery(httpClient, uri, [subscriptionId], query);
     return response.map((item) => ({ id: item.id, name: item.name, kind: 'standard' }));
   }
