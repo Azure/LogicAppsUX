@@ -26,6 +26,7 @@ import { updateTemplateConnection } from '../../../core/actions/bjsworkflow/conn
 import { getConnector } from '../../../core/queries/operation';
 import type { ConnectorInfo } from '../../../core/templates/utils/queries';
 import { isConnectionValid } from '../../../core/utils/connectors/connections';
+import { setConnectionsOverrideCompleted } from '../../../core/state/templates/templateOptionsSlice';
 
 const createPlaceholderKey = '##create##';
 const connectionStatus: Record<string, any> = {
@@ -66,12 +67,14 @@ export const WorkflowConnections = ({ connections }: WorkflowConnectionsProps) =
     connections: { references, mapping },
     workflows,
     viewTemplateDetails,
+    connectionsOverrideCompleted,
   } = useSelector((state: RootState) => ({
     subscriptionId: state.workflow.subscriptionId,
     location: state.workflow.location,
     connections: state.workflow.connections,
     workflows: state.template.workflows,
     viewTemplateDetails: state.templateOptions.viewTemplateDetails,
+    connectionsOverrideCompleted: state.templateOptions.connectionsOverrideCompleted,
   }));
   const columnsNames = {
     name: intl.formatMessage({ defaultMessage: 'Name', id: 'tRe2Ct', description: 'Column name for connector name' }),
@@ -186,8 +189,12 @@ export const WorkflowConnections = ({ connections }: WorkflowConnectionsProps) =
   );
 
   const onConnectionsLoaded = async (loadedConnections: Connection[], item: ConnectionItem): Promise<void> => {
-    const connectionIdToOverride = viewTemplateDetails?.connectionsOverride?.[item.connectionKey]?.connectionId;
-    const connectionToOverride = loadedConnections.find((connection) => connection.id === connectionIdToOverride);
+    const connectionIdToOverride = connectionsOverrideCompleted?.[item.connectionKey]
+      ? undefined
+      : viewTemplateDetails?.connectionsOverride?.[item.connectionKey]?.connectionId;
+    const connectionToOverride = connectionIdToOverride
+      ? loadedConnections.find((connection) => connection.id === connectionIdToOverride)
+      : undefined;
     const itemHasConnection = item.connection?.id && item.connection?.displayName === undefined;
     const connectionToUse =
       connectionToOverride ??
@@ -202,6 +209,9 @@ export const WorkflowConnections = ({ connections }: WorkflowConnectionsProps) =
 
     if ((connectionToOverride || !itemHasConnection) && connectionToUse) {
       setupTemplateConnection(item.connectionKey, item.connectorId, connectionToUse, dispatch);
+      if (connectionToOverride) {
+        dispatch(setConnectionsOverrideCompleted(item.connectionKey));
+      }
     }
   };
 
