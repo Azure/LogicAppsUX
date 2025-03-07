@@ -248,10 +248,8 @@ const loadTemplateFromResourcePath = async (
   };
 
   for (const workflowId of Object.keys(workflows)) {
-    const workflowData = await loadWorkflowTemplate(templateId, workflowId, viewTemplateData);
-    console.log('---workflowData ', workflowData);
+    const workflowData = await loadWorkflowTemplate(templateId, workflowId, viewTemplateData, workflows[workflowId].name);
     if (workflowData) {
-      workflowData.workflow.workflowName = workflows[workflowId].name;
       data.workflows[workflowId] = workflowData.workflow;
       // Override title and summary with template manifest data if single workflow
       if (!isMultiWorkflow) {
@@ -292,7 +290,8 @@ const loadTemplateFromResourcePath = async (
 const loadWorkflowTemplate = async (
   templateId: string,
   workflowId: string,
-  viewTemplateData: Template.ViewTemplateDetails | undefined
+  viewTemplateData: Template.ViewTemplateDetails | undefined,
+  defaultNameInManifest: string
 ): Promise<
   | {
       workflow: WorkflowTemplateData;
@@ -319,7 +318,7 @@ const loadWorkflowTemplate = async (
         id: workflowId,
         workflowDefinition: templateWorkflowDefinition,
         manifest: workflowManifest,
-        workflowName: viewTemplateData?.basicsOverride?.[workflowId]?.name?.value ?? '',
+        workflowName: viewTemplateData?.basicsOverride?.[workflowId]?.name?.value ?? defaultNameInManifest,
         kind:
           overridenKind && workflowManifest.kinds?.includes(overridenKind)
             ? overridenKind
