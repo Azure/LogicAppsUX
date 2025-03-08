@@ -23,9 +23,9 @@ export class BaseTemplateService implements ITemplateService {
 
   public onAddBlankWorkflow = (): Promise<void> => this.options.onAddBlankWorkflow();
 
-  public getContentPathUrl = (templateName: string, resourcePath: string): string => {
+  public getContentPathUrl = (templatePath: string, resourcePath: string): string => {
     const { endpoint, useEndpointForTemplates } = this.options;
-    return useEndpointForTemplates ? `${endpoint}/templates/${templateName}/${resourcePath}` : resourcePath;
+    return useEndpointForTemplates ? `${endpoint}/templates/${templatePath}/${resourcePath}` : resourcePath;
   };
 
   public getAllTemplateNames = async (): Promise<string[]> => {
@@ -35,7 +35,7 @@ export class BaseTemplateService implements ITemplateService {
       : ((await import('./../templates/manifest.json'))?.default as string[]);
   };
 
-  public getResourceManifest = async (resourcePath: string): Promise<Template.Manifest> => {
+  public getResourceManifest = async (resourcePath: string): Promise<Template.TemplateManifest | Template.WorkflowManifest> => {
     const { httpClient, endpoint, useEndpointForTemplates } = this.options;
     if (useEndpointForTemplates) {
       return httpClient.get<any>({
@@ -51,19 +51,15 @@ export class BaseTemplateService implements ITemplateService {
       : (await import(`./../templates/${resourcePath}/manifest.json`)).default;
   };
 
-  public getWorkflowDefinition = async (resourcePath: string): Promise<LogicAppsV2.WorkflowDefinition> => {
+  public getWorkflowDefinition = async (templateId: string, workflowId: string): Promise<LogicAppsV2.WorkflowDefinition> => {
     const { httpClient, endpoint, useEndpointForTemplates } = this.options;
     if (useEndpointForTemplates) {
       return httpClient.get<any>({
-        uri: `${endpoint}/templates/${resourcePath}/workflow.json`,
+        uri: `${endpoint}/templates/${templateId}/${workflowId}/workflow.json`,
         headers: { 'Access-Control-Allow-Origin': '*' },
       });
     }
 
-    const paths = resourcePath.split('/');
-
-    return paths.length === 2
-      ? (await import(`./../templates/${paths[0]}/${paths[1]}/workflow.json`)).default
-      : (await import(`./../templates/${resourcePath}/workflow.json`)).default;
+    return (await import(`./../templates/${templateId}/${workflowId}/workflow.json`)).default;
   };
 }

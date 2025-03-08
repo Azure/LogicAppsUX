@@ -1,48 +1,29 @@
 {
-  "title": "[Mock] Simple Connection Parameter Template",
-  "description": "This is a simple connection parameter template description",
-  "prerequisites": "This is a simple connection parameter template prerequisites",
-  "detailsDescription": "This is a simple connection parameter template details description \n- point 1 \n- point 2.",
-  "tags": [
-    "Simple-Connection-Parameter"
-  ],
-  "skus": [
-    "standard"
-  ],
-  "kinds": [
-    "stateful",
-    "stateless"
-  ],
-  "details": {
-    "By": "Microsoft",
-    "Type": "Workflow",
-    "Trigger": "Request",
-    "Category": "Mock"
-  },
-  "artifacts": [
-    {
-      "type": "workflow",
-      "file": "workflow.json"
-    }
-  ],
-  "images": {
-    "light": "/templates/SimpleConnectionParameter/workflow-light.png",
-    "dark": "/templates/SimpleConnectionParameter/workflow-dark.png"
-  },
-  "parameters": [
-    {
-      "name": "AzureOpenAI_deployment_model_vision_#workflowname#",
-      "displayName": "OpenAI deployment model",
-      "type": "String",
-      "description": "Provide the Azure OpenAI deployment model that supports image and vision.",
-      "required": true
-    }
-  ],
-  "connections": {
-    "Openai_#workflowname#": {
-      "connectorId": "/serviceProviders/openai",
-      "kind": "inapp"
-    }
-  },
-  "sourceCodeUrl": "/sourceCodeUrl"
+    "id": "SimpleConnectionParameter",
+    "title": "[Mock] Simple Connection Parameter Template",
+    "summary": "This is a simple connection parameter template description",
+    "skus": [
+        "standard"
+    ],
+    "workflows": {
+        "default": {
+            "name": "SimpleConnectionParameter"
+        }
+    },
+    "featuredConnectors": [
+        {
+            "id": "/serviceProviders/openai",
+            "kind": "inapp"
+        }
+    ],
+    "details": {
+        "By": "Microsoft",
+        "Type": "Workflow",
+        "Trigger": "Request",
+        "Category": "Mock"
+    },
+    "tags": [
+        "Simple-Connection-Parameter"
+    ],
+    "sourceCodeUrl": "/sourceCode"
 }

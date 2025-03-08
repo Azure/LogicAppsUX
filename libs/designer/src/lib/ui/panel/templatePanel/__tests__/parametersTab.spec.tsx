@@ -10,6 +10,7 @@ import { ParametersPanel } from '../createWorkflowPanel/tabs/parametersTab';
 import { ReactQueryProvider } from '../../../../core/ReactQueryProvider';
 // biome-ignore lint/correctness/noUnusedImports: <explanation>
 import React from 'react';
+import type { TemplateState } from '../../../../core/state/templates/templateSlice';
 
 describe('panel/templatePanel/createWorkflowPanel/parametersTab', () => {
   let store: AppStore;
@@ -36,9 +37,7 @@ describe('panel/templatePanel/createWorkflowPanel/parametersTab', () => {
     };
     const parameters = [param1, param2];
 
-    const templateSliceData = {
-      workflowName: '',
-      kind: undefined,
+    const templateSliceData: TemplateState = {
       templateName: 'title',
       manifest: undefined,
       workflows: {},
@@ -49,12 +48,8 @@ describe('panel/templatePanel/createWorkflowPanel/parametersTab', () => {
         };
         return result;
       }, {}),
-      validationErrors: {},
       connections: {},
-      servicesInitialized: false,
       errors: {
-        workflow: undefined,
-        kind: undefined,
         parameters: {},
         connections: undefined,
       },

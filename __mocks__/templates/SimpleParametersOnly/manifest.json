@@ -1,49 +1,31 @@
 {
-  "title": "[Mock] Simple Parameters Only Template",
-  "description": "This is a simple workflow only template description",
-  "tags": [
-    "Simple Parameters Only",
-    "try catch"
-  ],
-  "skus": [
-    "consumption",
-    "standard"
-  ],
-  "kinds": [
-    "stateful",
-    "stateless"
-  ],
-  "detailsDescription": "This is a basic workflow only template details description \n- point 1 \n- point 2.",
-  "details": {
-    "By": "Microsoft",
-    "Type": "Workflow",
-    "Trigger": "Request",
-    "Category": "Mock"
-  },
-  "artifacts": [
-    {
-      "type": "workflow",
-      "file": "workflow.json"
-    }
-  ],
-  "images": {
-    "light": "/templates/BasicWorkflowOnly/workflow-light.png",
-    "dark": "/templates/BasicWorkflowOnly/workflow-dark.png"
-  },
-  "parameters": [
-    {
-      "name": "LogicMessage_#workflowname#",
-      "displayName": "Business Logic Message",
-      "type": "String",
-      "description": "Provide the message run by the business logic.",
-      "required": true
-    }
-  ],
-  "connections": {},
-  "featuredOperations": [
-    {
-      "type": "Scope"
-    }
-  ],
-  "sourceCodeUrl": "/sourceCode"
+    "id": "SimpleParametersOnly",
+    "title": "[Mock] Simple Parameters Only Template",
+    "summary": "This is a simple workflow only template description",
+    "skus": [
+        "consumption",
+        "standard"
+    ],
+    "workflows": {
+        "default": {
+            "name": "SimpleParametersOnly"
+        }
+    },
+    "featuredConnectors": [
+        {
+            "id": "connectionProviders/control",
+            "kind": "builtin"
+        }
+    ],
+    "details": {
+        "By": "Microsoft",
+        "Type": "Workflow",
+        "Trigger": "Request",
+        "Category": "Mock"
+    },
+    "tags": [
+        "Simple Parameters Only",
+        "try catch"
+    ],
+    "sourceCodeUrl": "/sourceCode"
 }

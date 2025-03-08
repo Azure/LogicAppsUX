@@ -51,7 +51,7 @@ test.describe(
       await page.getByText('Azure Business').click();
       await page.getByRole('tab', { name: 'Workflow' }).click();
       await page.getByRole('tab', { name: 'Summary' }).click();
-      await page.getByRole('button', { name: 'Use this template' }).click();
+      await page.getByTestId('template-footer-primary-button').click();
       await expect(page.getByText('Create a new workflow from template', { exact: true })).toBeVisible();
       await page.getByRole('button', { name: 'Close' }).click();
 

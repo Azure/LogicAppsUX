@@ -36,13 +36,16 @@ export const QuickViewPanel = ({
 }: QuickViewPanelProps) => {
   const dispatch = useDispatch<AppDispatch>();
   const intl = useIntl();
-  const { templateName, workflowAppName, isOpen, currentPanelView, shouldCloseByDefault } = useSelector((state: RootState) => ({
-    templateName: state.template.templateName,
-    workflowAppName: state.workflow.workflowAppName,
-    isOpen: state.panel.isOpen,
-    currentPanelView: state.panel.currentPanelView,
-    shouldCloseByDefault: !state.templateOptions.viewTemplateDetails,
-  }));
+  const { templateName, templateManifest, workflowAppName, isOpen, currentPanelView, shouldCloseByDefault } = useSelector(
+    (state: RootState) => ({
+      templateName: state.template.templateName,
+      templateManifest: state.template.manifest,
+      workflowAppName: state.workflow.workflowAppName,
+      isOpen: state.panel.isOpen,
+      currentPanelView: state.panel.currentPanelView,
+      shouldCloseByDefault: !state.templateOptions.viewTemplateDetails,
+    })
+  );
   const { manifest } = useWorkflowTemplate(workflowId);
   const panelTabs = getQuickViewTabs(
     intl,
@@ -72,12 +75,12 @@ export const QuickViewPanel = ({
     () => (
       <QuickViewPanelHeader
         title={manifest.title}
-        description={manifest.description}
+        summary={manifest.summary}
         sourceCodeUrl={manifest.sourceCodeUrl}
-        details={manifest?.details ?? {}}
+        details={templateManifest?.details ?? {}}
       />
     ),
-    [manifest]
+    [templateManifest, manifest]
   );
 
   const selectedTabProps = selectedTabId ? panelTabs?.find((tab) => tab.id === selectedTabId) : panelTabs[0];
@@ -127,14 +130,14 @@ export const QuickViewPanel = ({
 
 export const QuickViewPanelHeader = ({
   title,
-  description,
+  summary,
   sourceCodeUrl,
   details,
   features,
   onBackClick,
 }: {
   title: string;
-  description: string;
+  summary: string;
   sourceCodeUrl: string | undefined;
   details: Record<string, string>;
   features?: string;
@@ -181,7 +184,7 @@ export const QuickViewPanelHeader = ({
         )}
       </div>
       <Markdown className="msla-template-markdown" linkTarget="_blank">
-        {description}
+        {summary}
       </Markdown>
       {features && (
         <div className="msla-template-quickview-features">

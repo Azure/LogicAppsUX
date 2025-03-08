@@ -10,25 +10,22 @@ import { QueryClientProvider } from '@tanstack/react-query';
 import { getReactQueryClient } from '../../../../core';
 // biome-ignore lint/correctness/noUnusedImports: <explanation>
 import React from 'react';
+import type { TemplateState } from '../../../../core/state/templates/templateSlice';
 
 describe('panel/templatePanel/createWorkflowPanel/nameStateTab', () => {
   let store: AppStore;
 
   beforeAll(() => {
-    const templateSliceData = {
+    const templateSliceData: TemplateState = {
       workflows: {
         default: {
           id: 'default',
           workflowName: 'workflowName 1',
           kind: undefined,
-          templateName: 'title',
           manifest: {
+            id: 'default',
             title: 'Template 1',
-            description: 'Template 1 Description',
-            tags: [],
-            details: {},
-            images: {},
-            skus: [],
+            summary: 'Template 1 Description',
             kinds: [],
             artifacts: [
               {
@@ -36,6 +33,10 @@ describe('panel/templatePanel/createWorkflowPanel/nameStateTab', () => {
                 file: 'workflow.json',
               },
             ],
+            images: {
+              light: '',
+              dark: '',
+            },
             connections: {},
             parameters: [],
           },
@@ -53,7 +54,6 @@ describe('panel/templatePanel/createWorkflowPanel/nameStateTab', () => {
       manifest: undefined,
       parameterDefinitions: {},
       connections: {},
-      servicesInitialized: false,
       errors: {
         parameters: {},
         connections: undefined,

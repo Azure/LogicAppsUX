@@ -40,7 +40,7 @@ export const TemplateOverview = ({
     connections: state.template.connections,
     workflows: state.template.workflows,
   }));
-  const { title, description, sourceCodeUrl, details, detailsDescription } = manifest as Template.Manifest;
+  const { title, summary, sourceCodeUrl, details, description } = manifest as Template.TemplateManifest;
   const resources = {
     by: intl.formatMessage({
       defaultMessage: 'By',
@@ -86,10 +86,10 @@ export const TemplateOverview = ({
     <>
       <QuickViewPanelHeader
         title={title}
-        description={description}
+        summary={summary}
         sourceCodeUrl={sourceCodeUrl}
         details={info}
-        features={detailsDescription}
+        features={description}
         onBackClick={goBackToTemplateLibrary}
       />
       <div className="msla-template-overview" style={{ marginTop: '-34px' }}>
@@ -165,12 +165,12 @@ const WorkflowList = ({
   showDetails,
 }: { workflows: Record<string, WorkflowTemplateData>; showDetails: (workflowId: string) => void }) => {
   const intl = useIntl();
+
   const [items, setItems] = useFunctionalState(
     unmap(workflows).map((workflow) => {
       const { id, manifest } = workflow;
-      const { title, details } = manifest as Template.Manifest;
-      const trigger = getPropertyValue(details, 'trigger');
-      return { id, name: title, trigger };
+      const { title } = manifest as Template.WorkflowManifest;
+      return { id, name: title, trigger: '' };
     })
   );
   const columnsNames = {

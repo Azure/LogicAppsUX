@@ -7,15 +7,18 @@ import { Link, Text } from '@fluentui/react-components';
 import type { TemplatePanelTab } from '@microsoft/designer-ui';
 import { clearTemplateDetails } from '../../../../../core/state/templates/templateSlice';
 import Markdown from 'react-markdown';
-import { useWorkflowTemplate } from '../../../../../core/state/templates/templateselectors';
+import { useTemplateManifest, useWorkflowTemplate } from '../../../../../core/state/templates/templateselectors';
 import { ConnectionsList } from '../../../../templates/connections/connections';
 import { Open16Regular } from '@fluentui/react-icons';
+import { isMultiWorkflowTemplate } from '../../../../../core/actions/bjsworkflow/templates';
 
 export const SummaryPanel = ({ workflowId }: { workflowId: string }) => {
   const intl = useIntl();
-  const { manifest } = useWorkflowTemplate(workflowId);
-  const templateHasConnections = Object.keys(manifest?.connections || {}).length > 0;
-  const detailsTags: Record<string, string> = {
+  const { manifest: workflowManifest } = useWorkflowTemplate(workflowId);
+  const templateManifest = useTemplateManifest();
+  const isMultiWorkflow = isMultiWorkflowTemplate(templateManifest);
+  const templateHasConnections = Object.keys(workflowManifest?.connections || {}).length > 0;
+  const detailsTags: Partial<Record<Template.DetailsType, string>> = {
     Type: intl.formatMessage({
       defaultMessage: 'Solution type',
       id: 'JVNRly',
@@ -33,7 +36,7 @@ export const SummaryPanel = ({ workflowId }: { workflowId: string }) => {
     }),
   };
 
-  return isNullOrUndefined(manifest) ? null : (
+  return isNullOrUndefined(workflowManifest) || isNullOrUndefined(templateManifest) ? null : (
     <div className="msla-template-overview">
       <div className="msla-template-overview-section">
         <Text className="msla-template-overview-section-title" style={templateHasConnections ? undefined : { marginBottom: '-30px' }}>
@@ -49,9 +52,9 @@ export const SummaryPanel = ({ workflowId }: { workflowId: string }) => {
                 description: 'Text to show no connections present in the template.',
               })}
         </Text>
-        {templateHasConnections ? <ConnectionsList connections={manifest.connections} /> : null}
+        {templateHasConnections ? <ConnectionsList connections={workflowManifest.connections} /> : null}
       </div>
-      {manifest.prerequisites ? (
+      {workflowManifest.prerequisites ? (
         <div className="msla-template-overview-section">
           <Text className="msla-template-overview-section-title">
             {intl.formatMessage({
@@ -61,7 +64,7 @@ export const SummaryPanel = ({ workflowId }: { workflowId: string }) => {
             })}
           </Text>
           <Markdown className="msla-template-markdown" linkTarget="_blank">
-            {manifest.prerequisites}
+            {workflowManifest.prerequisites}
           </Markdown>
         </div>
       ) : null}
@@ -73,12 +76,12 @@ export const SummaryPanel = ({ workflowId }: { workflowId: string }) => {
             description: 'Title for the details section in the template overview tab',
           })}
         </Text>
-        {manifest?.detailsDescription && (
+        {workflowManifest?.description && (
           <Markdown className="msla-template-overview-section-detail msla-template-markdown" linkTarget="_blank">
-            {manifest?.detailsDescription}
+            {workflowManifest?.description}
           </Markdown>
         )}
-        {manifest?.sourceCodeUrl && (
+        {workflowManifest?.sourceCodeUrl && (
           <div className="msla-template-overview-section-detail">
             <Text className="msla-template-overview-section-detailkey">
               {intl.formatMessage({
@@ -88,22 +91,22 @@ export const SummaryPanel = ({ workflowId }: { workflowId: string }) => {
               })}
               :
             </Text>
-            <Link className="msla-template-quickview-source-code" href={manifest?.sourceCodeUrl} target="_blank">
-              {manifest?.sourceCodeUrl}
+            <Link className="msla-template-quickview-source-code" href={workflowManifest?.sourceCodeUrl} target="_blank">
+              {workflowManifest?.sourceCodeUrl}
               <Open16Regular className="msla-templates-tab-source-code-icon" />
             </Link>
           </div>
         )}
-        {Object.keys(detailsTags).map((key: string) => {
+        {Object.keys(detailsTags).map((key) => {
           return (
             <div className="msla-template-overview-section-detail" key={key}>
-              <Text className="msla-template-overview-section-detailkey">{detailsTags[key]}:</Text>
-              <Text>{manifest.details[key]}</Text>
+              <Text className="msla-template-overview-section-detailkey">{detailsTags[key as Template.DetailsType]}:</Text>
+              <Text>{templateManifest.details[key as Template.DetailsType]}</Text>
             </div>
           );
         })}
       </div>
-      {manifest.tags?.length ? (
+      {!isMultiWorkflow && templateManifest.tags?.length ? (
         <div className="msla-template-overview-section">
           <Text className="msla-template-overview-section-title">
             {intl.formatMessage({
@@ -113,7 +116,7 @@ export const SummaryPanel = ({ workflowId }: { workflowId: string }) => {
             })}
           </Text>
           <div className="msla-template-overview-section-tags-section">
-            {manifest.tags.map((key: string) => (
+            {templateManifest.tags.map((key: string) => (
               <Text key={key} className="msla-template-overview-section-tag" size={300}>
                 {key}
               </Text>
