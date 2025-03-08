@@ -23,7 +23,7 @@ test.describe(
 
       await page.getByRole('button', { name: 'Next' }).click();
 
-      await expect(page.getByText('----', { exact: true })).not.toBeVisible();
+      await expect(page.getByText('BasicWorkflowOnly', { exact: true })).not.toBeVisible();
       await expect(page.getByText('Stateful', { exact: true })).not.toBeVisible();
       await expect(page.getByText(workflowName, { exact: true })).toBeVisible();
       await expect(page.getByText('Stateless', { exact: true })).toBeVisible();
