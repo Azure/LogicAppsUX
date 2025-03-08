@@ -3,6 +3,7 @@ import { AssertionErrorCode, AssertionException } from '../../utils/src';
 
 export interface ITemplateService {
   getExistingWorkflowNames?: () => Promise<string[]>;
+  isResourceAvailable?: (resourceId: string) => Promise<boolean>;
   openBladeAfterCreate: (workflowName: string | undefined) => void;
   onAddBlankWorkflow: () => Promise<void>;
   getAllTemplateNames: () => Promise<string[]>;

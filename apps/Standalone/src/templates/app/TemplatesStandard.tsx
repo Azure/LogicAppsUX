@@ -19,6 +19,7 @@ import {
   StandardConnectorService,
   BaseAppServiceService,
   BaseApiManagementService,
+  BaseResourceService,
 } from '@microsoft/logic-apps-shared';
 import {
   getConnectionStandard,
@@ -270,6 +271,7 @@ export const TemplatesStandard = () => {
         isCreateView={true}
         existingWorkflowName={existingWorkflowName}
         reload={reload}
+        enableResourceSelection={true}
         viewTemplate={
           isSingleTemplateView
             ? {
@@ -517,6 +519,8 @@ const getServices = (
     },
   });
 
+  const resourceService = new BaseResourceService({ baseUrl: armUrl, httpClient, apiVersion });
+
   return {
     connectionService,
     gatewayService,
@@ -526,6 +530,7 @@ const getServices = (
     templateService,
     workflowService,
     connectorService,
+    resourceService,
   };
 };
 

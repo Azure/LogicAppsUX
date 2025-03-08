@@ -15,6 +15,7 @@ import {
   InitTenantService,
   InitUiInteractionsService,
   InitWorkflowService,
+  InitResourceService,
   LogEntryLevel,
   LoggerService,
   type LogicAppsV2,
@@ -27,6 +28,7 @@ import type { TemplateServiceOptions } from '../../templates/TemplatesDesignerCo
 import { initializeParametersMetadata } from '../../templates/utils/parametershelper';
 import { initializeNodeOperationInputsData } from '../../state/operation/operationMetadataSlice';
 import { updateTemplateParameterDefinitions } from '../../state/templates/templateSlice';
+import { getCurrentWorkflowNames } from '../../templates/utils/helper';
 import {
   loadGithubManifestNames,
   setavailableTemplates,
@@ -102,6 +104,7 @@ export const initializeTemplateServices = createAsyncThunk(
     loggerService,
     uiInteractionsService,
     experimentationService,
+    resourceService,
   }: TemplateServiceOptions) => {
     InitConnectionService(connectionService);
     InitOperationManifestService(operationManifestService);
@@ -136,6 +139,10 @@ export const initializeTemplateServices = createAsyncThunk(
 
     if (uiInteractionsService) {
       InitUiInteractionsService(uiInteractionsService);
+    }
+
+    if (resourceService) {
+      InitResourceService(resourceService);
     }
 
     // Experimentation service is being used to A/B test features in the designer so in case client does not want to use the A/B test feature,
@@ -195,8 +202,61 @@ export const loadTemplate = createAsyncThunk(
   }
 );
 
-export const validateWorkflowName = (workflowName: string | undefined, existingWorkflowNames: string[]) => {
+export const validateWorkflowsBasicInfo = createAsyncThunk(
+  'validateWorkflowsBasicInfo',
+  async ({ validateName, existingWorkflowNames }: { validateName: boolean; existingWorkflowNames: string[] }, thunkAPI) => {
+    const state: RootState = thunkAPI.getState() as RootState;
+    const { subscriptionId, resourceGroup: resourceGroupName, isConsumption } = state.workflow;
+    const { workflows } = state.template;
+    const workflowIds = Object.keys(workflows);
+    const result: Record<string, { kindError?: string; nameError?: string }> = {};
+    if (workflowIds.length) {
+      const intl = getIntl();
+      for (const id of workflowIds) {
+        if (!workflows[id].kind) {
+          result[id] = {
+            ...result[id],
+            kindError: intl.formatMessage({
+              defaultMessage: 'The value must not be empty.',
+              id: 'JzvOUc',
+              description: 'Error message when the stage progressed without selecting kind.',
+            }),
+          };
+        }
+
+        if (validateName) {
+          const currentWorkflowNames = getCurrentWorkflowNames(
+            workflowIds.map((id) => ({ id, name: workflows[id].workflowName ?? '' })),
+            id
+          );
+          const nameError = await validateWorkflowName(workflows[id].workflowName, isConsumption, {
+            subscriptionId,
+            resourceGroupName,
+            existingWorkflowNames: [...existingWorkflowNames, ...currentWorkflowNames],
+          });
+          result[id] = {
+            ...result[id],
+            nameError,
+          };
+        }
+      }
+    }
+
+    return result;
+  }
+);
+
+export const validateWorkflowName = async (
+  workflowName: string | undefined,
+  isConsumption: boolean,
+  resourceDetails: {
+    subscriptionId: string;
+    resourceGroupName: string;
+    existingWorkflowNames: string[];
+  }
+) => {
   const intl = getIntl();
+  const { subscriptionId, resourceGroupName, existingWorkflowNames } = resourceDetails;
 
   if (!workflowName) {
     return intl.formatMessage({
@@ -213,16 +273,26 @@ export const validateWorkflowName = (workflowName: string | undefined, existingW
       description: 'Error message when the workflow name is invalid regex.',
     });
   }
-  if (existingWorkflowNames.includes(workflowName)) {
-    return intl.formatMessage(
-      {
-        defaultMessage: 'Workflow with name "{workflowName}" already exists.',
-        id: '7F4Bzv',
-        description: 'Error message when the workflow name already exists.',
-      },
-      { workflowName }
-    );
+
+  const availabilityError = intl.formatMessage(
+    {
+      defaultMessage: 'Workflow with name "{workflowName}" already exists.',
+      id: '7F4Bzv',
+      description: 'Error message when the workflow name already exists.',
+    },
+    { workflowName }
+  );
+
+  if (isConsumption) {
+    const resourceId = `/subscriptions/${subscriptionId}/resourceGroups/${resourceGroupName}/providers/Microsoft.Logic/workflows/${workflowName}`;
+    const isResourceAvailable = await TemplateService().isResourceAvailable?.(resourceId);
+    return isResourceAvailable ? undefined : availabilityError;
   }
+
+  if (existingWorkflowNames.includes(workflowName)) {
+    return availabilityError;
+  }
+
   return undefined;
 };
 

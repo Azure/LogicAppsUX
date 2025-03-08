@@ -11,6 +11,7 @@ import type {
   IDesignerUiInteractionsService,
   IExperimentationService,
   IConnectorService,
+  IResourceService,
 } from '@microsoft/logic-apps-shared';
 import { createContext } from 'react';
 
@@ -31,6 +32,7 @@ export interface TemplateServiceOptions {
   templateService?: ITemplateService;
   uiInteractionsService?: IDesignerUiInteractionsService;
   experimentationService?: IExperimentationService;
+  resourceService?: IResourceService;
 }
 
 export const TemplatesWrappedContext = createContext<TemplatesDesignerContext | null>(null);

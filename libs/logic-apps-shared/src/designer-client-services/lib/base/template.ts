@@ -3,6 +3,7 @@ import type { IHttpClient } from '../httpClient';
 import type { ITemplateService } from '../template';
 
 export interface BaseTemplateServiceOptions {
+  baseUrl: string;
   httpClient: IHttpClient;
   endpoint: string;
   useEndpointForTemplates: boolean;
