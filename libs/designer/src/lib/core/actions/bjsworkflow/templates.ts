@@ -21,6 +21,7 @@ import {
   type LogicAppsV2,
   TemplateService,
   type Template,
+  clone,
 } from '@microsoft/logic-apps-shared';
 import { createAsyncThunk } from '@reduxjs/toolkit';
 import type { RootState } from '../../state/templates/store';
@@ -307,7 +308,7 @@ const loadTemplateFromResourcePath = async (
   const workflows = templateManifest.workflows;
   const isMultiWorkflow = isMultiWorkflowTemplate(templateManifest);
   const data: TemplatePayload = {
-    manifest: templateManifest,
+    manifest: clone(templateManifest),
     workflows: {},
     parameterDefinitions: {},
     connections: {},
@@ -387,7 +388,7 @@ const loadWorkflowTemplate = async (
       workflow: {
         id: workflowId,
         workflowDefinition: templateWorkflowDefinition,
-        manifest: workflowManifest,
+        manifest: clone(workflowManifest),
         workflowName: viewTemplateData?.basicsOverride?.[workflowId]?.name?.value ?? defaultNameInManifest,
         kind:
           overridenKind && workflowManifest.kinds?.includes(overridenKind)
