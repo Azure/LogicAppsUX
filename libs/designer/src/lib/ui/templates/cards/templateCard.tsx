@@ -5,12 +5,11 @@ import { Text } from '@fluentui/react-components';
 import type { IContextualMenuItem, IContextualMenuProps, IDocumentCardStyles } from '@fluentui/react';
 import { css, DocumentCard, IconButton, Image } from '@fluentui/react';
 import { ConnectorIcon, ConnectorIconWithName } from '../connections/connector';
-import type { Manifest } from '@microsoft/logic-apps-shared/src/utils/src/lib/models/template';
-import { getUniqueConnectors } from '../../../core/templates/utils/helper';
+import type { Template } from '@microsoft/logic-apps-shared';
+import { getUniqueConnectorsFromConnections } from '../../../core/templates/utils/helper';
 import type { IntlShape } from 'react-intl';
 import { useIntl } from 'react-intl';
-import type { OperationInfo } from '@microsoft/logic-apps-shared';
-import { equals, getBuiltInOperationInfo, isBuiltInOperation, LogEntryLevel, LoggerService } from '@microsoft/logic-apps-shared';
+import { equals, LogEntryLevel, LoggerService } from '@microsoft/logic-apps-shared';
 import MicrosoftIcon from '../../../common/images/templates/microsoft.svg';
 import { PeopleCommunity16Regular } from '@fluentui/react-icons';
 import { isMultiWorkflowTemplate, loadTemplate } from '../../../core/actions/bjsworkflow/templates';
@@ -76,7 +75,7 @@ export const TemplateCard = ({ templateName, isLightweight, blankWorkflowProps, 
     onSelect?.(templateName, !isMultiWorkflow);
   };
 
-  const { title, details } = templateManifest as Manifest;
+  const { title, details } = templateManifest as Template.TemplateManifest;
   const isMicrosoftAuthored = equals(details?.By, 'Microsoft');
 
   return (
@@ -111,7 +110,7 @@ export const TemplateCard = ({ templateName, isLightweight, blankWorkflowProps, 
   );
 };
 
-const TemplateFeaturedConnectors = ({ manifest, intl }: { manifest: Manifest; intl: IntlShape }) => {
+const TemplateFeaturedConnectors = ({ manifest, intl }: { manifest: Template.TemplateManifest; intl: IntlShape }) => {
   const noConnectorsMessage = intl.formatMessage({
     defaultMessage: 'This template does not have connectors',
     description: 'Accessibility text to inform user this template does not contain connectors',
@@ -121,16 +120,12 @@ const TemplateFeaturedConnectors = ({ manifest, intl }: { manifest: Manifest; in
     subscriptionId: state.workflow.subscriptionId,
     location: state.workflow.location,
   }));
-  const { details, featuredOperations, connections } = manifest;
-  const connectorsFromConnections = getUniqueConnectors(connections, subscriptionId, location).map((connection) => ({
-    connectorId: connection.connectorId,
-    operationId: undefined,
-  })) as { connectorId: string; operationId: string | undefined }[];
-  const connectorsFeatured = getFeaturedConnectors(featuredOperations);
-  const allConnectors = connectorsFromConnections.concat(connectorsFeatured);
+  const { details, featuredConnectors = [] } = manifest;
+  const allConnectors = getUniqueConnectorsFromConnections(featuredConnectors, subscriptionId, location);
   const showOverflow = allConnectors.length > maxConnectorsToShow;
   const connectorsToShow = showOverflow ? allConnectors.slice(0, maxConnectorsToShow) : allConnectors;
   const overflowList = showOverflow ? allConnectors.slice(maxConnectorsToShow) : [];
+
   const onRenderMenuItem = (item: IContextualMenuItem) => (
     <ConnectorIconWithName
       connectorId={item.key}
@@ -144,7 +139,7 @@ const TemplateFeaturedConnectors = ({ manifest, intl }: { manifest: Manifest; in
   );
   const onRenderMenuIcon = () => <div style={{ color: 'grey' }}>{`+${overflowList.length}`}</div>;
   const menuProps: IContextualMenuProps = {
-    items: overflowList.map((info) => ({ key: info.connectorId, text: info.connectorId, data: info, onRender: onRenderMenuItem })),
+    items: overflowList.map((info) => ({ key: info.id, text: info.id, data: info, onRender: onRenderMenuItem })),
     directionalHintFixed: true,
     className: 'msla-template-card-connector-menu-box',
   };
@@ -152,24 +147,22 @@ const TemplateFeaturedConnectors = ({ manifest, intl }: { manifest: Manifest; in
   return (
     <div className="msla-template-card-footer">
       <div className="msla-template-card-tags">
-        {['Type', 'Trigger'].map((key: string) => {
-          if (!details[key]) {
-            return null;
-          }
-          return (
-            <Text key={key} size={300} className="msla-template-card-tag">
-              {details[key]}
-            </Text>
-          );
-        })}
+        <Text size={300} className="msla-template-card-tag">
+          {details.Type}
+        </Text>
+        {details.Trigger ? (
+          <Text size={300} className="msla-template-card-tag">
+            {details.Trigger}
+          </Text>
+        ) : null}
       </div>
       <div className="msla-template-card-connectors-list">
         {connectorsToShow.length > 0 ? (
           connectorsToShow.map((info) => (
             <ConnectorIcon
-              key={info.connectorId}
-              connectorId={info.connectorId}
-              operationId={info.operationId}
+              key={info.id}
+              connectorId={info.id}
+              operationId={info.id}
               classes={{ root: 'msla-template-card-connector', icon: 'msla-template-card-connector-icon' }}
             />
           ))
@@ -182,16 +175,4 @@ const TemplateFeaturedConnectors = ({ manifest, intl }: { manifest: Manifest; in
       </div>
     </div>
   );
-};
-
-const getFeaturedConnectors = (operationInfos: { type: string; kind?: string }[] = []): OperationInfo[] => {
-  return operationInfos
-    .map((info) => {
-      if (isBuiltInOperation(info)) {
-        return getBuiltInOperationInfo(info, /* isTrigger */ false);
-      }
-
-      return undefined;
-    })
-    .filter((info) => info !== undefined) as OperationInfo[];
 };

@@ -9,14 +9,14 @@ import { useConnector } from '../../../core/state/connection/connectionSelector'
 import { Field, Tab, TabList } from '@fluentui/react-components';
 import { type SelectTabData, type SelectTabEvent, SearchBox, Text, Option, Dropdown } from '@fluentui/react-components';
 import { css } from '@fluentui/utilities';
+import type { Template } from '@microsoft/logic-apps-shared';
 
-export type TemplateDetailFilterType = Record<
-  string,
-  {
-    displayName: string;
-    items: FilterObject[];
-  }
->;
+type TemplateDetailFilterValue = {
+  displayName: string;
+  items: FilterObject[];
+};
+
+export type TemplateDetailFilterType = Partial<Record<Template.DetailsType, TemplateDetailFilterValue>>;
 
 interface GalleryTab {
   displayName: string;
@@ -48,7 +48,6 @@ export const TemplateSearchAndFilters = ({
     isConsumption: state.workflow.isConsumption,
     availableTemplates: state.manifest.availableTemplates ?? {},
   }));
-
   const selectedTabId = appliedDetailFilters?.Type?.[0]?.value ?? templateDefaultTabKey;
 
   const intlText = {
@@ -207,9 +206,9 @@ const Filters = ({ detailFilters }: { detailFilters: TemplateDetailFilterType })
     const skuTemplates = Object.values(availableTemplates).filter((templateManifest) =>
       templateManifest.skus.includes(isConsumption ? 'consumption' : 'standard')
     );
-    const allConnections = Object.values(skuTemplates).flatMap((template) => Object.values(template.connections));
-    const uniqueConnectorsFromConnections = getUniqueConnectorsFromConnections(allConnections, subscriptionId, location);
-    return uniqueConnectorsFromConnections.map((connector) => connector.connectorId);
+    const allConnectors = Object.values(skuTemplates).flatMap((template) => template.featuredConnectors ?? []);
+    const uniqueConnectorsFromConnections = getUniqueConnectorsFromConnections(allConnectors, subscriptionId, location);
+    return uniqueConnectorsFromConnections.map((connector) => connector.id);
   }, [availableTemplates, isConsumption, location, subscriptionId]);
   const [allConnectorsData, setConnectorsData] = useState<Record<string, string>>({});
   const connectorOptions = useMemo(() => {
@@ -249,11 +248,11 @@ const Filters = ({ detailFilters }: { detailFilters: TemplateDetailFilterType })
           isSearchable
         />
       )}
-      {Object.keys(detailFilters).map((filterName, index) => (
+      {Object.entries(detailFilters).map(([filterName, filterItem], index) => (
         <TemplatesFilterDropdown
           key={index}
-          filterName={detailFilters[filterName].displayName}
-          items={detailFilters[filterName].items}
+          filterName={filterItem.displayName}
+          items={filterItem.items}
           onApplyButtonClick={(filterItems) => {
             dispatch(setDetailsFilters({ filterName, filters: filterItems }));
           }}
