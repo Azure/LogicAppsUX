@@ -50,7 +50,6 @@ const DataProviderInner = ({ isConsumption, children, reload, services }: Templa
       if (servicesInitialized && services.templateService) {
         InitTemplateService(services.templateService);
       }
-      console.log('reloadTemplates got called');
       dispatch(reloadTemplates({ clear: true }));
     }
   }, [reload, dispatch, services.templateService, servicesInitialized]);
