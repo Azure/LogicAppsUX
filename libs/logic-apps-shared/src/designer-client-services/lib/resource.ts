@@ -7,7 +7,7 @@ export interface IResourceService {
   listSubscriptions: () => Promise<Resource[]>;
   listResourceGroups: (subscriptionId: string) => Promise<Resource[]>;
   listLocations: (subscriptionId: string) => Promise<Resource[]>;
-  listLogicApps: (subscriptionId: string, resourceGroup: string, location: string) => Promise<LogicAppResource[]>;
+  listLogicApps: (subscriptionId: string, resourceGroup: string) => Promise<LogicAppResource[]>;
 }
 
 let service: IResourceService;

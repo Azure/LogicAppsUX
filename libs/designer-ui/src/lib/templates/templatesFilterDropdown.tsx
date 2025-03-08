@@ -108,6 +108,7 @@ export const TemplatesFilterDropdown = ({
 
   return (
     <Dropdown
+      styles={{ title: { borderRadius: '4px' } }}
       className="msla-templates-filter-dropdown"
       calloutProps={{
         gapSpace: 10,
