@@ -23,7 +23,7 @@ interface WorkflowItem {
     key: string;
     text: string;
   }[];
-  description: string;
+  summary: string;
   errors: {
     workflow: string | undefined;
     kind: string | undefined;
@@ -95,7 +95,7 @@ export const MultiWorkflowBasics = () => {
             text: equals(kind, WorkflowKind.STATEFUL) ? resources.kind_stateful : resources.kind_stateless,
           }))
         : defaultKindOptions,
-      description: workflow.manifest.description,
+      summary: workflow.manifest.summary,
       errors: workflow.errors,
     }))
   );
@@ -232,7 +232,7 @@ export const MultiWorkflowBasics = () => {
         );
 
       case '$description':
-        return <TextWithShowMore aria-label={item.description} text={item.description} />;
+        return <TextWithShowMore aria-label={item.summary} text={item.summary} />;
 
       default:
         return null;
