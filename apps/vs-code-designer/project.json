@@ -1,0 +1,67 @@
+{
+  "name": "vs-code-designer",
+  "$schema": "../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "apps/vs-code-designer/src",
+  "projectType": "application",
+  "targets": {
+    "build": {
+      "executor": "@nrwl/webpack:webpack",
+      "outputs": ["{options.outputPath}"],
+      "options": {
+        "outputPath": "dist/apps/vs-code-designer",
+        "main": "apps/vs-code-designer/src/main.ts",
+        "tsConfig": "apps/vs-code-designer/tsconfig.app.json",
+        "assets": [
+          "apps/vs-code-designer/src/assets",
+          "apps/vs-code-designer/src/package.json",
+          "apps/vs-code-designer/src/LICENSE.md",
+          "apps/vs-code-designer/src/README.md",
+          {
+            "glob": "**/*.svg",
+            "input": "node_modules/@microsoft/vscode-azext-azureutils/resources",
+            "output": "node_modules/@microsoft/vscode-azext-azureutils/resources"
+          }
+        ],
+        "externalDependencies": ["vscode", "commonjs"],
+        "target": "node",
+        "compiler": "tsc"
+      },
+      "configurations": {
+        "production": {
+          "optimization": true,
+          "extractLicenses": true,
+          "inspect": false,
+          "fileReplacements": [
+            {
+              "replace": "apps/vs-code-designer/src/environments/environment.ts",
+              "with": "apps/vs-code-designer/src/environments/environment.prod.ts"
+            }
+          ]
+        }
+      }
+    },
+    "serve": {
+      "executor": "@nrwl/node:node",
+      "options": {
+        "buildTarget": "vs-code-designer:build"
+      }
+    },
+    "lint": {
+      "executor": "@nrwl/linter:eslint",
+      "outputs": ["{options.outputFile}"],
+      "options": {
+        "lintFilePatterns": ["apps/vs-code-designer/**/*.ts"]
+      }
+    },
+    "test": {
+      "executor": "@nrwl/jest:jest",
+      "outputs": ["{workspaceRoot}/coverage/apps/vs-code-designer"],
+      "options": {
+        "jestConfig": "apps/vs-code-designer/jest.config.ts",
+        "passWithNoTests": true
+      }
+    }
+  },
+  "tags": [],
+  "implicitDependencies": ["vs-code-react"]
+}

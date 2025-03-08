@@ -1,0 +1,67 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`CopyTooltip > should position the tooltip based on the provided location 1`] = `
+<body>
+  <div
+    id="root"
+  />
+  <div>
+    <div
+      aria-describedby="tooltip-r1"
+      data-automation-id="msla-tooltip-location-test_id"
+      data-testid="msla-tooltip-location-test_id"
+      style="width: 1px; height: 1px; position: absolute; top: 100px; left: 100px;"
+    />
+    <span
+      hidden=""
+    />
+  </div>
+  <div
+    class="___1uxlrft_djprso0 f1euv43f f15twtuk f1vgc2s3 f1e31b4d f494woh"
+    data-portal-node="true"
+    dir="ltr"
+  >
+    <div
+      class="fui-Tooltip__content ___1iilip3_omhya70 ftgm304 f1ewtqcl f132xexn f158kwzp fk6fouc fy9rknc fwrc4pm fokg9q4 ft85np5 f9ggezi f1bzqsji fxugw4r f19n0e5 fxeb0a7"
+      id="tooltip-r1"
+      role="tooltip"
+      style="position: fixed; left: 0px; top: 0px; margin: 0px;"
+    >
+      Copied!
+    </div>
+  </div>
+</body>
+`;
+
+exports[`CopyTooltip > should render the tooltip with the correct content 1`] = `
+<body>
+  <div
+    id="root"
+  />
+  <div>
+    <div
+      aria-describedby="tooltip-r0"
+      data-automation-id="msla-tooltip-location-test_id"
+      data-testid="msla-tooltip-location-test_id"
+      style="width: 1px; height: 1px; position: absolute; top: 100px; left: 100px;"
+    />
+    <span
+      hidden=""
+    />
+  </div>
+  <div
+    class="___1uxlrft_djprso0 f1euv43f f15twtuk f1vgc2s3 f1e31b4d f494woh"
+    data-portal-node="true"
+    dir="ltr"
+  >
+    <div
+      class="fui-Tooltip__content ___1iilip3_omhya70 ftgm304 f1ewtqcl f132xexn f158kwzp fk6fouc fy9rknc fwrc4pm fokg9q4 ft85np5 f9ggezi f1bzqsji fxugw4r f19n0e5 fxeb0a7"
+      id="tooltip-r0"
+      role="tooltip"
+      style="position: fixed; left: 0px; top: 0px; margin: 0px;"
+    >
+      Copied!
+    </div>
+  </div>
+</body>
+`;

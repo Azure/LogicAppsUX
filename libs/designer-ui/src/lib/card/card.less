@@ -1,0 +1,512 @@
+@import (reference) '../variables.less';
+@import './config/config.less';
+@import './connectiontypeselector/connectiontypeselector.less';
+@import '../selector/listitem.less';
+@import '../flyout/flyout.less';
+@import './parameters/parameters.less';
+@import './function/function.less';
+@import './graphContainer/graphContainer.less';
+@import './collapsedCard/collapsedCard.less';
+@import './scopeCard/scopeCard.less';
+
+.msla-card-loading {
+  font-family: @font-family;
+  margin: 10px;
+  padding: 10px;
+}
+
+.card-narrow-width-mixin() {
+  /* For mobile the min width cannot be the maximum width */
+  min-width: @card-min-width;
+  max-width: @card-max-width;
+  width: 100%;
+}
+
+.msla-card {
+  margin: 0 auto;
+}
+
+.msla-card {
+  min-width: 200px;
+  border: @defaultBorder;
+  box-sizing: content-box;
+  font-family: @font-family;
+  font-size: @card-body-font-size;
+
+  .msla-card-body {
+    text-align: justify;
+
+    .msla-card-inner-body {
+      padding: 12px;
+
+      .msla-card-section-title {
+        font-size: 16px;
+      }
+    }
+  }
+
+  .msla-iframe-terms-of-service {
+    padding-top: 10px;
+  }
+
+  .msla-iframe-terms-of-service iframe {
+    border: 1px solid @defaultBorderColor;
+    width: 100%;
+    height: 200px;
+    min-width: calc(100% - 20px);
+    background: white;
+  }
+}
+
+.msla-card {
+  background-color: @card-background-color;
+}
+
+.msla-designer-canvas {
+  .msla-card-body {
+    padding: 5px 5px 10px 5px;
+  }
+}
+
+.msla-badge {
+  border: 1px solid #666;
+  color: #666;
+  display: inline-block;
+  font-size: 11px;
+  height: 14px;
+  line-height: 13px;
+  text-align: center;
+  text-transform: uppercase;
+  padding: 1px 4px;
+  margin-left: 6px;
+}
+
+.msla-selection-box {
+  pointer-events: none;
+  position: absolute;
+  top: 0px;
+  left: 0px;
+  width: 100%;
+  height: 100%;
+  z-index: 1;
+  box-sizing: border-box;
+  border-radius: 2px;
+  &.selected {
+    border: 2px solid #0078d4;
+    &.white-outline {
+      outline: 1px solid white;
+      outline-offset: -3px;
+    }
+  }
+  &.pinned {
+    border: 2px solid @pinned-item-color;
+  }
+}
+
+.msla-panel-card-container {
+  border: 1px solid #c8c6c4;
+  box-sizing: border-box;
+  box-shadow: 0 0.3px 0.9px rgba(0, 0, 0, 0.1), 0 1.6px 3.6px rgba(0, 0, 0, 0.13);
+  font-size: 12px;
+  border-radius: 2px;
+  width: @panel-mode-card-width;
+  -webkit-user-select: none;
+  user-select: none;
+  background-color: #fff;
+  cursor: default;
+
+  &:focus {
+    outline: none;
+    .msla-selection-box {
+      border: 2px solid #000000;
+    }
+  }
+
+  &:focus,
+  &:hover {
+    box-shadow: 0 1.2px 3.6px rgba(0, 0, 0, 0.1), 0 6.4px 14.4px rgba(0, 0, 0, 0.13) !important;
+
+    .panel-card-content-gripper-section {
+      visibility: visible;
+      &.draggable {
+        cursor: grab;
+      }
+    }
+  }
+
+  &.msla-panel-card-container-selected {
+    box-shadow: 0 0.3px 0.9px rgba(0, 0, 0, 0.1), 0 1.6px 3.6px rgba(0, 0, 0, 0.13);
+  }
+
+  &.dragging {
+    cursor: grabbing;
+    opacity: 0.6;
+    outline: none;
+    box-shadow: 0 1.2px 3.6px rgba(0, 0, 0, 0.1), 0 6.4px 14.4px rgba(0, 0, 0, 0.13);
+
+    .panel-card-content-gripper-section {
+      visibility: hidden;
+    }
+  }
+
+  &.msla-card-ghost-image {
+    position: fixed;
+    pointer-events: none;
+    opacity: 100%;
+    z-index: 12;
+    box-shadow: 0 1.2px 3.6px rgba(0, 0, 0, 0.1), 0px 12px 40px rgba(0, 0, 0, 0.24);
+
+    .panel-card-content-gripper-section {
+      visibility: visible;
+    }
+  }
+
+  .msla-selection-box {
+    border-left: 0;
+  }
+
+  .panel-card-main {
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+
+    .panel-card-header {
+      cursor: pointer;
+
+      .panel-card-content-container {
+        flex: 1 1 auto;
+        display: flex;
+        flex-direction: row;
+        min-height: 32px;
+        align-items: flex-start;
+
+        .panel-card-right-controls {
+          display: flex;
+          flex-direction: column;
+
+          .msla-card-edit-button {
+            overflow: hidden;
+            flex: 0 0 30px;
+            margin-top: 9px;
+          }
+        }
+
+        .panel-card-content-icon-section {
+          display: flex;
+          margin: 8px 8px 8px 0px;
+
+          .panel-card-icon {
+            height: 24px;
+            width: 24px;
+            border-radius: 2px;
+
+            &.default {
+              background-color: rgb(71, 71, 71);
+              color: white;
+              display: flex;
+              align-items: center;
+              justify-content: center;
+            }
+          }
+        }
+
+        .panel-card-top-content {
+          align-self: center;
+          flex: 1 1 auto;
+          font-size: 13px;
+          display: flex;
+          justify-content: space-between;
+
+          .panel-msla-title {
+            align-self: center;
+            display: inline-block;
+            font: 14px/20px normal @semibold-font-family;
+            margin: 10px 8px 10px 0;
+            text-align: left;
+            word-break: break-word;
+          }
+
+          .msla-card-title {
+            cursor: pointer;
+            color: @card-text-color;
+            text-align: left;
+          }
+
+          &--no-action {
+            justify-content: space-around;
+          }
+        }
+
+        .panel-card-expand {
+          flex: 0 0 8px;
+          display: inline-block;
+          vertical-align: middle;
+          background-color: transparent;
+          border: none;
+
+          &.loading {
+            padding-bottom: 10px;
+          }
+        }
+      }
+    }
+
+    .msla-panel-card-error {
+      margin: -4px 12px 6px;
+      text-align: left;
+      display: flex;
+      align-items: center;
+      gap: 4px;
+
+      .msla-panel-card-error-text {
+        margin: 0px;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+      }
+
+      &.error,
+      &.blocked {
+        color: #a80000;
+      }
+
+      &.severeWarning {
+        color: #d83b01;
+      }
+
+      &.success {
+        color: #107c10;
+      }
+
+      &.info,
+      &.warning {
+        color: #605e5c;
+      }
+    }
+  }
+
+  .panel-card-content-gripper-section {
+    min-width: 12px;
+    text-align: center;
+    visibility: hidden;
+    padding-top: 11px; // The svg renders a little off
+  }
+
+  .panel-card-bottom-toolbar {
+    flex: 0 0 30px;
+    height: 35px;
+    width: 100%;
+  }
+
+  .panel-card-badge {
+    align-items: center;
+    display: flex;
+    font-size: 11px;
+    padding: 0 4px;
+    margin: 5px;
+    border: 1px solid rgb(100, 100, 100);
+  }
+
+  .msla-pill {
+    .msla-pill-card();
+  }
+}
+
+.msla-card-inactive {
+  opacity: 0.3;
+}
+
+.msla-panel-card-container--no-action {
+  border: 1px dashed #c8c6c4;
+  box-sizing: border-box;
+  box-shadow: 0 0.3px 0.9px rgba(0, 0, 0, 0.1), 0 1.6px 3.6px rgba(0, 0, 0, 0.13);
+  font-size: 12px;
+  border-radius: 2px;
+  width: @panel-mode-card-width;
+  -webkit-user-select: none;
+  user-select: none;
+  background-color: #fff;
+  cursor: default;
+
+  .panel-card--no-action {
+    display: flex;
+    justify-content: space-around;
+
+    .panel-msla-title {
+      display: inline-block;
+      font: 14px/20px normal @semibold-font-family;
+      margin: 10px 8px 10px 0;
+      word-break: break-word;
+    }
+  }
+}
+
+.msla-badges {
+  border-top: 1px solid #e1dfdd;
+  display: flex;
+  justify-content: flex-end;
+  padding: 2px 5px;
+  text-align: left;
+
+  &:empty {
+    display: none;
+  }
+
+  .panel-card-v2-badge {
+    padding: 4px;
+    font-size: 12px;
+    line-height: 12px;
+
+    &.active {
+      color: #323130;
+
+      &:focus {
+        outline: 1px solid #605e5c;
+      }
+      &:hover {
+        background-color: #f3f2f1;
+      }
+      &:active {
+        background-color: #edebe9;
+      }
+
+      &.darkBackground {
+        color: #fff;
+
+        &:focus {
+          outline: 1px solid #fff;
+        }
+        &:hover {
+          background-color: rgba(0, 0, 0, 0.2);
+        }
+      }
+    }
+
+    &.inactive {
+      color: #a19f9d;
+    }
+  }
+}
+
+.msla-theme-dark {
+
+  .msla-panel-card-container {
+    background-color: @ms-color-primaryBackground;
+    border: 1px solid @ms-color-primaryBorder;
+
+    &:focus {
+      outline-color: @ms-color-primaryBorderFocused;
+    }
+
+    &:hover {
+      background-color: @ms-color-primaryBackgroundHover;
+    }
+
+		&:focus {
+			.msla-selection-box {
+				border: 2px solid #ffffff;
+			}
+		}
+  }
+
+  .msla-panel-card-container--no-action {
+    background-color: @ms-color-primaryBackground;
+    border: 1px dashed @ms-color-primaryBorder;
+  }
+
+  .msla-button-link {
+    color: @ms-color-themePrimary;
+  }
+
+  .msla-card-button-primary {
+    background-color: @ms-color-themePrimary;
+    color: @ms-color-white;
+  }
+
+  .panel-card-content-container {
+    .panel-card-content-gripper-section {
+      svg path {
+        fill: #c8c6c4;
+      }
+    }
+  }
+}
+
+.react-flow__edges {
+  z-index: 100 !important;
+}
+
+.msla-content-fit {
+  width: 100%;
+  height: 100%;
+}
+
+.msla-badge-spinner {
+	width: 20px;
+	height: 20px;
+	
+	.fui-Spinner__spinner {
+		width: 12px;
+		height: 12px;
+	}
+}
+
+.msla-theme-dark {
+  .msla-badge {
+    border-color: @ms-color-neutralTertiary;
+    color: @ms-color-neutralTertiary;
+  }
+
+  .msla-badges {
+    border-top: 1px solid @ms-color-primaryBorder;
+
+    .panel-card-v2-badge {
+      &.active {
+        color: @ms-color-neutralTertiary;
+
+        &:focus {
+          outline: 1px solid #a19f9d;
+        }
+        &:hover {
+          background-color: @ms-color-neutralLighter;
+        }
+        &:active {
+          background-color: @ms-color-neutralLight;
+        }
+      }
+
+      &.inactive {
+        color: #a19f9d;
+      }
+    }
+  }
+
+  .msla-panel-card-container {
+    .msla-panel-card-error {
+      &.error,
+      &.blocked {
+        color: #f1707b;
+      }
+
+      &.severeWarning {
+        color: #fce100;
+      }
+
+      &.success {
+        color: #92c353;
+      }
+
+      &.info,
+      &.warning {
+        color: #a19f9d;
+      }
+    }
+  }
+
+  .errorMessage-managed-identity {
+    color: #f1707b;
+    .managed-identity-link {
+      color: #69afe5;
+    }
+  }
+}

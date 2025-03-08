@@ -1,0 +1,12 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`ui/workflowparameters/workflowparametersButtons > should construct. 1`] = `
+<EditButton
+  definition={
+    {
+      "id": "test",
+    }
+  }
+  onClick={[Function]}
+/>
+`;

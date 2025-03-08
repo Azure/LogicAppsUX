@@ -1,0 +1,83 @@
+@import (reference) '../variables.less';
+
+.msla-pager-v2-pagenumbers {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+
+  .msla-pager-v2 {
+    > *:not(:last-child) {
+      margin-right: 4px;
+    }
+  }
+
+  .msla-pager-v2--inner {
+    > *:not(:last-child) {
+      margin-right: 24px;
+    }
+  }
+
+  .msla-pager-pageNum {
+    cursor: default;
+
+    &.toSelect {
+      color: rgb(0, 120, 212);
+
+      &:hover {
+        text-decoration: underline;
+      }
+    }
+  }
+}
+
+.msla-pager-v2 {
+  display: flex;
+  justify-content: center;
+  margin: 5px;
+  position: relative;
+  z-index: 5; /* Force pager to render over lines. */
+
+  &.alternate {
+    justify-content: space-around;
+  }
+
+  > * {
+    align-self: flex-start;
+  }
+
+  > .msla-pager-v2--inner {
+    height: 32px;
+    display: flex;
+
+    > * {
+      align-self: center;
+    }
+  }
+
+  .msla-pager-failed-container {
+    position: relative;
+
+    > .msla-pager-failed-icon {
+      cursor: pointer;
+      pointer-events: none;
+      position: absolute;
+      color: #a80000;
+      background-color: transparent;
+      top: 25%;
+      height: 24px;
+    }
+  }
+}
+
+.msla-card-foreach-body,
+.msla-card-until-body-canvas {
+  .msla-pager-v2 {
+    margin-bottom: 30px;
+  }
+}
+
+.msla-theme-dark {
+  .msla-pager-v2 .msla-pager-failed-container > .msla-pager-failed-icon {
+    color: #f1707b;
+  }
+}

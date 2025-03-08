@@ -1,0 +1,202 @@
+@import (reference) "../variables.less";
+
+.msla-querybuilder-group-dropdown-container {
+  width: 70px;
+}
+
+.msla-querybuilder-row-container {
+  min-height: 32px;
+  display: flex;
+  align-items: center;
+  &.showBorder {
+    margin-left: 35px;
+    border-left: 1px solid @brandColor;
+  }
+  .msla-querybuilder-row-gutter-hook {
+    width: 30px;
+    margin-left: -1px;
+    border-bottom: 1px solid @brandColor;
+  }
+  .msla-querybuilder-row-checkbox {
+    padding: 0 20px 0px 10px;
+  }
+  .msla-querybuilder-row-content {
+    width: 100%;
+    display: grid;
+    grid-template-columns: 1.5fr 1fr 1.5fr;
+    align-items: center;
+    .msla-querybuilder-row-value-input {
+      width: 100%;
+      border-radius: 2px;
+      position: relative;
+      .editor-input {
+        outline: 1px solid @panel-mode-panel-border-color;
+        resize: none;
+        font-size: 12px;
+        tab-size: 1;
+        min-height: 24px;
+        line-height: 20px;
+        padding-inline-start: 6px;
+        padding-inline-end: 15px;
+        &.readonly {
+          background-color: rgba(128, 128, 128, 0.1);
+        }
+        &:focus {
+          outline: 2px solid @primary_focus_blue;
+        }
+        p {
+          padding-top: 2px;
+          margin: 0;
+        }
+      }
+      .editor-placeholder {
+        color: #696969;
+        overflow: hidden;
+        position: absolute;
+        text-overflow: ellipsis;
+        margin-top: -23px;
+        margin-left: 7px;
+        font-size: 12px;
+        user-select: none;
+        display: inline-block;
+        pointer-events: none;
+      }
+    }
+    .msla-querybuilder-row-dropdown-container {
+      outline: 1px solid @panel-mode-panel-border-color;
+      margin: 1px;
+    }
+  }
+}
+
+.msla-querybuilder-group-container {
+  border-left: 1px solid @brandColor;
+  margin-left: 35px;
+  display: inline-flex;
+  align-items: center;
+
+  &.firstGroup {
+    margin-left: 0px;
+    border-left: none;
+  }
+
+  .msla-querybuilder-group-gutter-hook {
+    width: 55px;
+    border-bottom: 1px solid @brandColor;
+  }
+
+  .msla-querybuilder-group-content {
+    min-height: 125px;
+    background-color: @scopev2-background-color;
+    display: inherit;
+    align-items: center;
+    min-width: 550px;
+    position: relative;
+    margin: 5px 0px;
+    border-radius: 2px;
+
+    &.collapsed {
+      min-width: 0px;
+      width: 130px;
+      min-height: 50px;
+      margin: 0px;
+      margin-right: 320px;
+    }
+
+    &.firstGroup {
+      width: 550px;
+      background-color: inherit;
+    }
+
+    .msla-querybuilder-row-section {
+      display: block;
+      width: 550px;
+    }
+
+    .msla-querybuilder-group-checkbox {
+      padding: 0 10px;
+    }
+    .msla-querybuilder-group-controlbar {
+      position: absolute;
+      top: 0px;
+      right: 0px;
+      display: flex;
+
+      &.collapsed {
+        position: relative;
+      }
+    }
+  }
+}
+
+.msla-querybuilder-row-add-container {
+  height: 32px;
+  border-left: 1px solid @brandColor;
+  margin-left: 35px;
+  display: flex;
+  align-items: center;
+  position: relative;
+
+  .msla-querybuilder-row-gutter-hook {
+    width: 50px;
+    margin-left: -1px;
+    border-bottom: 1px solid @brandColor;
+  }
+}
+.msla-querybuilder-row-add-container:after {
+  content: "";
+  width: 1.1px;
+  height: 50%;
+  background-color: white;
+  position: absolute;
+  left: -1px;
+  top: 16px;
+}
+
+.msla-theme-dark {
+  .msla-querybuilder-group-content {
+    background-color: @ms-color-bodyBackground;
+  }
+  .msla-querybuilder-row-add-container:after {
+    background-color: @ms-color-bodyBackground;
+  }
+}
+
+.msla-simple-querybuilder-editor-container {
+  width: 100%;
+  border-radius: 2px;
+  position: relative;
+  margin: 4px 0px;
+  .editor-input {
+    outline: 1px solid @panel-mode-panel-border-color;
+    margin: 1px;
+    resize: none;
+    font-size: 12px;
+    tab-size: 1;
+    min-height: 24px;
+    line-height: 24px;
+    padding-inline-start: 5px;
+    padding-inline-end: 15px;
+    &.readonly {
+      background-color: rgba(128, 128, 128, 0.1);
+    }
+    &:focus {
+      outline: 2px solid @primary_focus_blue;
+    }
+    p {
+      margin: 0;
+    }
+  }
+  .editor-placeholder {
+    color: #696969;
+    overflow: hidden;
+    position: absolute;
+    text-overflow: ellipsis;
+    margin-top: -22px;
+    margin-left: 7px;
+    font-size: 12px;
+    user-select: none;
+    display: inline-block;
+    pointer-events: none;
+  }
+}

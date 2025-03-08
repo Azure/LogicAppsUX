@@ -1,0 +1,228 @@
+.msla-editor-container {
+  width: 100%;
+  margin: 20px auto 0px auto;
+  border-radius: 2px;
+  position: relative;
+
+  .editor-input {
+    outline: 1px solid @panel-mode-panel-border-color;
+    margin: 1px;
+    resize: none;
+    font-size: 15px;
+    tab-size: 1;
+    min-height: 30px;
+    line-height: 30px;
+    padding-inline-start: 5px;
+    &.readonly {
+      background-color: rgba(128, 128, 128, 0.1);
+    }
+    &:focus {
+      outline: 2px solid @primary_focus_blue;
+    }
+  }
+  .editor-placeholder {
+    color: #696969;
+    overflow: hidden;
+    position: absolute;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    width: 95%;
+    margin-top: -28px;
+    margin-left: 5px;
+    font-size: 15px;
+    user-select: none;
+    display: inline-block;
+    pointer-events: none;
+  }
+}
+
+.msla-editor-container-plugin {
+  background: #fff;
+  margin: 20px auto 20px auto;
+  border-radius: 2px;
+  width: 100%;
+  color: #000;
+  position: relative;
+  line-height: 20px;
+  font-weight: 400;
+  text-align: left;
+  border-top-left-radius: 10px;
+  border-top-right-radius: 10px;
+  padding-bottom: 20px;
+  .editor-input {
+    min-height: 150px;
+    resize: none;
+    font-size: 15px;
+    position: relative;
+    tab-size: 1;
+    outline: 0;
+    padding: 15px 10px;
+    &.readonly {
+      background-color: rgba(128, 128, 128, 0.1);
+    }
+    &:focus {
+      outline: 2px solid @primary_focus_blue;
+    }
+  }
+
+  .editor-placeholder {
+    color: #696969;
+    overflow: hidden;
+    position: absolute;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    width: 95%;
+    top: 30px;
+    left: 10px;
+    font-size: 15px;
+    user-select: none;
+    display: inline-block;
+    pointer-events: none;
+  }
+
+  .tree-view-output {
+    display: block;
+    background: #222;
+    color: #fff;
+    padding: 5px;
+    font-size: 12px;
+    white-space: pre-wrap;
+    margin: 1px auto 10px auto;
+    max-height: 250px;
+    position: relative;
+    border-bottom-left-radius: 10px;
+    border-bottom-right-radius: 10px;
+    overflow: hidden;
+    line-height: 14px;
+  }
+
+  pre::-webkit-scrollbar {
+    background: transparent;
+    width: 10px;
+  }
+
+  pre::-webkit-scrollbar-thumb {
+    background: #999;
+  }
+
+  .debug-timetravel-panel {
+    overflow: hidden;
+    padding: 0 0 10px 0;
+    margin: auto;
+    display: flex;
+  }
+
+  .debug-timetravel-panel-slider {
+    padding: 0;
+    flex: 8;
+  }
+
+  .debug-timetravel-panel-button {
+    padding: 0;
+    border: 0;
+    background: none;
+    flex: 1;
+    color: #fff;
+    font-size: 12px;
+  }
+
+  .debug-timetravel-panel-button:hover {
+    text-decoration: underline;
+    cursor: pointer;
+  }
+
+  .debug-timetravel-button {
+    border: 0;
+    padding: 0;
+    font-size: 12px;
+    top: 10px;
+    right: 15px;
+    position: absolute;
+    background: none;
+    color: #fff;
+  }
+
+  .debug-timetravel-button:hover {
+    text-decoration: underline;
+    cursor: pointer;
+  }
+  .debug-treetype-button {
+    border: 0;
+    padding: 0;
+    font-size: 12px;
+    top: 10px;
+    right: 85px;
+    position: absolute;
+    background: none;
+    color: #fff;
+  }
+
+  .debug-treetype-button:hover {
+    text-decoration: underline;
+  }
+}
+
+.msla-base-editor-validation {
+  position: relative;
+  color: rgb(224, 2, 2);
+  font-size: 14px;
+  bottom: 15px;
+  left: 4px;
+}
+
+.msla-token-picker-entrypoint-button-container {
+  display: block;
+  position: fixed;
+  border-radius: 20px;
+  width: 24px;
+  height: fit-content;
+  box-shadow: 0 0 3px rgba(0, 0, 0, 0.2);
+  z-index: 100;
+  background-color: @primary_focus_blue;
+  margin-left: 9px;
+  .top-root-button-style {
+    color: @defaultButtonTextColor;
+    width: 100%;
+    height: 30px;
+
+    &:hover {
+      background-color: @primary_hover_blue;
+      border-top-left-radius: 20px;
+      border-top-right-radius: 20px;
+    }
+  }
+
+  .top-root-button-style-single,
+  .bottom-root-button-style-single {
+    &:hover {
+      background-color: @primary_hover_blue;
+      border-radius: 20px;
+    }
+  }
+
+  .bottom-root-button-style {
+    color: @defaultButtonTextColor;
+    width: 100%;
+    height: 30px;
+
+    &:hover {
+      background-color: @primary_hover_blue;
+      border-bottom-left-radius: 20px;
+      border-bottom-right-radius: 20px;
+    }
+  }
+}
+
+@media (forced-colors: active) {
+  .msla-token-picker-entrypoint-button-container {
+    forced-color-adjust: none;
+  }
+
+  .toolbar-item {
+    filter: invert(1);
+  }
+
+  .toolbar-item:hover {
+    forced-color-adjust: none;
+  }
+}

@@ -1,0 +1,48 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`lib/card/errorbanner > should render 1`] = `
+<div
+  className="ms-TooltipHost msla-panel-card-error-wrapper root-109"
+  onBlurCapture={[Function]}
+  onFocusCapture={[Function]}
+  onKeyDown={[Function]}
+  onMouseEnter={[Function]}
+  onMouseLeave={[Function]}
+  role="none"
+>
+  <div
+    className="msla-panel-card-error severeWarning"
+  >
+    <i
+      aria-hidden={true}
+      className="msla-panel-card-error-icon root-112"
+      data-icon-name="Warning"
+    >
+      
+    </i>
+    <div
+      className="msla-panel-card-error-text"
+    >
+      errorMessage
+    </div>
+  </div>
+  <div
+    hidden={true}
+    id="tooltip0"
+    style={
+      {
+        "border": 0,
+        "height": 1,
+        "margin": -1,
+        "overflow": "hidden",
+        "padding": 0,
+        "position": "absolute",
+        "whiteSpace": "nowrap",
+        "width": 1,
+      }
+    }
+  >
+    errorMessage
+  </div>
+</div>
+`;

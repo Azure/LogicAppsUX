@@ -1,0 +1,33 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`ui/panel/panelContainer > should construct 1`] = `
+<Drawer
+  aria-label="Operation details panel"
+  className="msla-panel-container"
+  modalType="non-modal"
+  mountNode={
+    {
+      "className": "msla-panel-host-container",
+      "element": undefined,
+    }
+  }
+  open={true}
+  position="end"
+  style={
+    {
+      "height": "100%",
+      "maxWidth": "100%",
+      "position": "relative",
+      "width": "630px",
+    }
+  }
+>
+  <React.Fragment>
+    <div
+      className="msla-panel-container-nested msla-panel-container-nested-right"
+    >
+      <React.Fragment />
+    </div>
+  </React.Fragment>
+</Drawer>
+`;

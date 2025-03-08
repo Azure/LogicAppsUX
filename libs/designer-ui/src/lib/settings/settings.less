@@ -1,0 +1,168 @@
+@import (reference) '../variables.less';
+
+.msla-setting-token-editor-container {
+  width: 100%;
+  border-radius: 2px;
+  position: relative;
+
+  .editor-input {
+    outline: 1px solid @panel-mode-panel-border-color;
+    resize: none;
+    font-size: 15px;
+    tab-size: 1;
+    min-height: 30px;
+    line-height: 20px;
+    padding-inline-start: 5px;
+    &.readonly {
+      background-color: rgba(128, 128, 128, 0.1);
+    }
+    &:focus {
+      outline: 2px solid @primary_focus_blue;
+    }
+    p {
+      padding-top: 5px;
+      padding-bottom: 2px;
+      margin: 0;
+    }
+  }
+  .editor-placeholder {
+    color: #696969;
+    overflow: hidden;
+    position: absolute;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    width: 95%;
+    margin-top: -25px;
+    margin-left: 5px;
+    font-size: 15px;
+    user-select: none;
+    display: inline-block;
+    pointer-events: none;
+  }
+}
+
+.msla-setting-section {
+  display: inline-block;
+  width: 100%;
+  height: auto;
+
+  .msla-setting-section-content {
+    width: 100%;
+    height: auto;
+		margin-bottom: 8px;
+
+    .msla-setting-section-header {
+      width: inherit;
+			justify-content: flex-start;
+			padding: 8px;
+
+			.error-dot {
+				margin-left: 8px;
+			}
+    }
+
+    .msla-setting-section-dropdown {
+      display: block;
+      width: 50%;
+    }
+
+    .msla-setting-section-settings {
+			padding: 16px 0px 16px 36px;
+      display: flex;
+			flex-direction: column;
+			gap: 8px;
+    }
+
+    .msla-setting-section-row {
+      display: flex;
+
+      .msla-setting-label-title {
+        font-family: @font-family;
+        padding-top: 3px;
+      }
+    }
+
+    .msla-setting-label-tooltip-icon {
+      padding: 3px 8px;
+      color: var(--colorNeutralForeground3);
+    }
+
+    .msla-setting-section-divider {
+      margin-top: 8px;
+    }
+
+    .msla-setting-label-container {
+      display: flex;
+      width: 100%;
+    }
+    .msla-setting-label-description {
+      font-size: 10px;
+      line-height: 12px;
+      margin-bottom: 5px;
+      font-style: italic;
+    }
+
+    .msla-setting-label-subLabel {
+      font-weight: 600;
+      font-size: 10px;
+      &.isToggle {
+        margin-left: 5px;
+        margin-bottom: -5px;
+      }
+    }
+
+    .msla-operation-setting {
+      width: 81%;
+    }
+
+    .msla-setting-tracked-properties-dictionary {
+      margin-right: -16px;
+    }
+
+    .msla-setting-row-dictionary-input {
+      min-width: 200px;
+      margin-right: 8px;
+    }
+
+    .msla-setting-section-toggle {
+      margin-top: 6px;
+      justify-content: right;
+    }
+
+    .msla-setting-section-textField {
+      width: ~'calc( 100% - 35px )';
+      margin-right: 36px;
+    }
+  }
+
+  .msla-setting-section-message-bar {
+    margin: 8px 0px 8px 35px;
+  }
+}
+
+.msla-trigger-condition-expression {
+  display: inherit;
+  margin-left: 12px;
+  width: 100%;
+  margin-top: 8px;
+
+  [class^='ms-TextField'] {
+    flex: 1;
+  }
+}
+
+.msla-trigger-condition-expression-add {
+  margin-top: 0px;
+}
+
+.msla-setting-section-expression-field {
+  display: flex;
+  flex-wrap: wrap;
+
+  .msla-setting-label-container {
+    display: flex;
+    width: 100%;
+    justify-content: left;
+    margin-top: 9px;
+  }
+}

@@ -1,0 +1,46 @@
+@import (reference) "../variables.less";
+
+.msla-recurrence-editor {
+  flex: 1 1 auto;
+  border: 1px dashed @defaultBorderColor;
+  padding: 0 10px 10px 10px;
+}
+
+.msla-recurrence-editor-frequency-group {
+  display: flex;
+  width: 100%;
+}
+
+.msla-recurrence-editor-group {
+  width: 50%;
+  &.msla-recurrence-editor-interval {
+    margin-right: 10px;
+  }
+}
+.msla-recurrence-preview {
+  border: 1px dashed #000;
+  background-color: #e9e9f3;
+  margin-bottom: 6px;
+  margin-top: 10px;
+  padding: 6px;
+  .msla-recurrence-preview-title {
+    font-size: 14px;
+    font-weight: 600;
+  }
+  .msla-recurrence-preview-content {
+    .msla-recurrence-friendly-desc {
+      word-break: break-all;
+      display: inline-block;
+      margin-right: 6px;
+      .warning-message {
+        font-style: italic;
+      }
+    }
+  }
+}
+
+.msla-theme-dark {
+  .msla-recurrence-preview {
+    background-color: #383838;
+  }
+}

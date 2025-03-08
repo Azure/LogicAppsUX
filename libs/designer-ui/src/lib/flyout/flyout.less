@@ -1,0 +1,50 @@
+@import (reference) '../variables.less';
+@import (reference) '../themes.less';
+
+.msla-flyout {
+  display: inline-block;
+  @arrow-size: 5px;
+  @right-offset: 17px;
+
+  .msla-flyout-icon {
+    &.sm {
+      width: 14px;
+      height: 14px;
+      display: inline-block;
+    }
+    &.lg {
+      width: 28px;
+      height: 28px;
+      margin: 8px;
+    }
+  }
+}
+
+.msla-flyout-callout {
+  div[role='dialog'] {
+    padding: 8px;
+  }
+
+  a {
+    &:active,
+    &:link,
+    &:hover,
+    &:visited {
+      text-decoration: underline;
+      color: @brandColor;
+    }
+  }
+}
+
+.msla-theme-dark {
+  .msla-flyout-callout {
+    a {
+      &:active,
+      &:link,
+      &:hover,
+      &:visited {
+        color: @ms-color-themePrimary;
+      }
+    }
+  }
+}

@@ -1,0 +1,232 @@
+.msla-export {
+  height: 100vh;
+  padding: 0 20px;
+
+  &-title {
+    padding: 15px 0;
+  }
+
+  &-instance-panel {
+    &-dropdown {
+      width: 400px;
+      margin: 16px 0;
+    }
+  }
+
+  &-navigation-panel {
+    position: absolute;
+    bottom: 10px;
+    right: 10px;
+
+    &-button {
+      margin: 20px;
+    }
+  }
+
+  &-workflows {
+    display: initial;
+
+    &-panel {
+      display: flex;
+      max-height: 65%;
+
+      &-filters {
+        display: flex;
+        margin-top: 15px;
+
+        &-input {
+          margin-right: 10px;
+
+          input::placeholder {
+            font-style: normal;
+          }
+        }
+
+        &-dropdown {
+          width: 100%;
+        }
+      }
+
+      &-filters > * {
+        width: 30%;
+      }
+
+      &-limit-selection {
+        margin-top: 10px;
+
+        .ms-MessageBar-text {
+          display: inline-flex;
+          align-items: center;
+        }
+      }
+
+      &-list {
+        flex: 5 1 auto;
+        display: flex;
+        flex-direction: column;
+        max-width: 75%;
+
+        .loading {
+          .ms-DetailsHeader-cell {
+            pointer-events: none;
+          }
+        }
+
+        &-workflows {
+          overflow: auto;
+          margin: 15px 0;
+          flex: 1;
+
+          &-empty {
+            display: inline-flex;
+            justify-content: center;
+            width: 100%;
+          }
+        }
+      }
+
+      &-divider {
+        padding: 0 20px;
+
+        &::after {
+          width: 3px;
+        }
+      }
+
+      &-selected {
+        display: flex;
+        flex-direction: column;
+        max-width: 20%;
+        flex: 2 1 auto;
+
+        &-title {
+          padding: 0 0 16px 8px;
+        }
+
+        &-list {
+          display: flex;
+          flex-direction: column;
+          overflow: auto;
+          flex: 1;
+
+          &-item {
+            display: inline-flex;
+            align-items: center;
+
+            &-text {
+              max-width: 45%;
+            }
+
+            &-subtext {
+              display: flex;
+              max-width: 45%;
+              padding-left: 6px;
+              margin: 5px;
+            }
+          }
+
+          &-shimmer {
+            margin: 10px;
+          }
+        }
+      }
+    }
+
+    &-advanced-options {
+      &-title {
+        margin: 15px 0;
+      }
+      &-dropdown {
+        width: 450px;
+        margin: 16px 0;
+      }
+    }
+  }
+
+  &-validation {
+    display: flex;
+    flex-direction: column;
+    height: 75%;
+
+    &-list {
+      flex: 2;
+      overflow: auto;
+      margin-top: 10px;
+    }
+  }
+
+  &-summary {
+    display: flex;
+    flex-direction: column;
+    height: 75%;
+
+    &-file-location {
+      margin-top: 10px;
+
+      &-text {
+        width: 40%;
+      }
+
+      &-button {
+        margin: 0 10px;
+      }
+
+      display: flex;
+      align-items: flex-end;
+    }
+
+    &-detail-list {
+      overflow: auto;
+      margin-top: 10px;
+      flex: 2;
+
+      .ms-DetailsRow-fields {
+        display: flex;
+        align-items: center;
+
+        .ms-DetailsRow-cell {
+          white-space: normal;
+        }
+      }
+
+      &-empty {
+        display: inline-flex;
+        justify-content: center;
+        width: 100%;
+      }
+    }
+
+    &-connections {
+      margin: 20px 0;
+
+      &-checkbox {
+        margin: 10px 0;
+      }
+
+      &-dropdown {
+        width: 30%;
+      }
+
+      &-button {
+        margin: 20px 20px 20px 0;
+      }
+    }
+
+    &-package-warning {
+      margin-top: 10px;
+
+      .ms-MessageBar-text {
+        display: inline-flex;
+        align-items: center;
+      }
+    }
+  }
+
+  &-status {
+    &--item {
+      display: inline-flex;
+      align-items: center;
+      margin: 10px 0;
+    }
+  }
+}

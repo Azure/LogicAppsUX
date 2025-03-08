@@ -1,0 +1,94 @@
+# Trigger the build whenever `main` or `rel/*` is updated
+trigger: none
+  # - main
+  # - rel/*
+
+# Disable PR trigger
+pr: none
+
+# `resources` specifies the location of templates to pick up, use it to get 1ES templates
+resources:
+  repositories:
+    - repository: 1esPipelines
+      type: git
+      name: 1ESPipelineTemplates/MicroBuildTemplate
+      ref: refs/tags/release
+    - repository: azExtTemplates
+      type: github
+      name: microsoft/vscode-azuretools
+      ref: main
+      endpoint: GitHub-AzureTools # The service connection to use when accessing this repository
+    - repository: LogicAppsUX
+      type: github
+      name: Azure/LogicAppsUX
+      endpoint: LogicApps-VSCode-connection  # The service connection to use when accessing this repository
+
+parameters:
+  # When true, skips the deployment job which actually publishes the extension
+  - name: dryRun
+    displayName: Dry run
+    type: boolean
+    default: true
+
+  - name: enableSigning
+    displayName: Enable signing
+    type: boolean
+    default: True
+
+  # The intended extension version to publish. 
+  # This is used to verify the version in package.json matches the version to publish to avoid accidental publishing.
+  - name: publishVersion
+    displayName: Version to publish
+    type: string
+
+  # Customize the environment to associate the deployment with. 
+  # Useful to control which group of people should be required to approve the deployment.
+  - name: environmentName
+    type: string
+    default: AzCodeDeploy
+
+variables:
+  # Required by MicroBuild template
+  - name: TeamName
+    value: "Azure Logic Apps for VS Code"
+  - name: working_directory
+    value: '.'
+
+extends:
+  template: azure-pipelines/MicroBuild.1ES.Official.yml@1esPipelines
+  parameters:
+    sdl:
+      credscan:
+        suppressionsFile: $(Build.SourcesDirectory)\.azure-pipelines\compliance\CredScanSuppressions.json
+      codeql:
+        language: javascript # only build a codeql database for javascript, since the jsoncli pipeline handles csharp
+      #   enabled: true # TODO: would like to enable only on scheduled builds but CodeQL cannot currently be disabled per https://eng.ms/docs/cloud-ai-platform/devdiv/one-engineering-system-1es/1es-docs/codeql/1es-codeql
+    pool:
+      name: VSEngSS-MicroBuild2022-1ES # Name of your hosted pool
+      image: server2022-microbuildVS2022-1es # Name of the image in your pool. If not specified, first image of the pool is used
+      os: windows # OS of the image. Allowed values: windows, linux, macOS
+    stages:
+      - stage: Build
+        displayName: Build extension
+        jobs:
+          - job: Build
+            templateContext:
+              mb: # Enable the MicroBuild Signing toolset
+                signing:
+                  enabled: ${{ parameters.enableSigning }}
+                  signType: real # options are 'real' & 'test'
+                  zipSources: false
+              outputs:
+                - output: pipelineArtifact
+                  targetPath: $(build.artifactstagingdirectory)/build/${{ parameters.publishVersion }}
+                  artifactName: Build ${{ parameters.publishVersion }}
+            steps:
+              - script: git checkout v${{ parameters.publishVersion }} # Replace with your desired version to release
+                displayName: 'Checkout to specific branch'
+              - template: .azure-pipelines/templates/setup.yml@LogicAppsUX
+              - template: .azure-pipelines/templates/build.yml@LogicAppsUX
+              - template: .azure-pipelines/templates/package.yml@LogicAppsUX
+              - template: .azure-pipelines/templates/sign.yml@LogicAppsUX
+              - template: .azure-pipelines/templates/stage-artifacts.yml@LogicAppsUX
+                parameters:
+                  publishVersion: ${{ parameters.publishVersion }}

@@ -1,0 +1,48 @@
+{
+    "id": "Workflow1",
+    "title": "Workflow 1",
+    "summary": "Workflow 1 description",
+    "description": "Workflow 1 details description \n- point 1 \n- point 2.",
+    "prerequisites": "Workflow 1 prerequisites",
+    "kinds": [
+        "stateful",
+        "stateless"
+    ],
+    "artifacts": [
+        {
+            "type": "workflow",
+            "file": "workflow.json"
+        }
+    ],
+    "images": {
+        "light": "/templates/SimpleAccelerator/Workflow1/workflow-light.png",
+        "dark": "/templates/SimpleAccelerator/Workflow1/workflow-dark.png"
+    },
+    "parameters": [
+        {
+            "name": "OpenAIEmbeddingModel_#workflowname#",
+            "displayName": "Azure OpenAI text embedding deployment model name",
+            "type": "String",
+            "description": "Provide the Azure OpenAI embedding model to generate vector embeddings.",
+            "required": true
+        },
+        {
+            "name": "OpenAIChatModel_#workflowname#",
+            "displayName": "Azure OpenAI chat model name",
+            "type": "String",
+            "description": "Provide the Azure OpenAI chat model name to use for chat completions.",
+            "required": true
+        }
+    ],
+    "connections": {
+        "azuresql_#workflowname#": {
+            "connectorId": "/serviceProviders/sql",
+            "kind": "inapp"
+        },
+        "openai_#workflowname#": {
+            "connectorId": "/serviceProviders/openai",
+            "kind": "inapp"
+        }
+    },
+    "sourceCodeUrl": "/sourceCode"
+}

@@ -1,0 +1,21 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`ui/settings/settingreactiveinput > should construct 1`] = `
+<React.Fragment>
+  <SettingToggle
+    checked={false}
+    offText="Off"
+    onText="On"
+    onToggleInputChange={[Function]}
+    readOnly={false}
+  />
+  <div
+    style={
+      {
+        "marginBottom": "10px",
+        "marginTop": "-10px",
+      }
+    }
+  />
+</React.Fragment>
+`;

@@ -1,0 +1,142 @@
+@import (reference) '../themes.less';
+
+.msla-operationPreview-blockContainer {
+  width: 100%;
+}
+
+.msla-operationPreview-blockSubActionsContainer {
+  padding-left: 14px;
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  column-gap: 16px;
+  width: 100%;
+}
+
+.msla-operationPreview-blockSubActions {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  flex-basis: 250px;
+  flex-grow: 1;
+}
+
+.msla-operationPreview-blockSubActionsLabel {
+  padding-left: 4px;
+  margin: -6px 0px 4px;
+  font-size: 14px;
+  font-weight: 600;
+  line-height: normal;
+  color: rgb(96, 94, 92); //neutral secondary
+}
+
+.msla-operationPreview-blockSubActionsIcon {
+  margin-right: 8px;
+  vertical-align: -0.15em;
+  font-size: 14px;
+}
+
+.msla-operationPreview-blockInvisibleSubActions {
+  background-color: transparent;
+  flex-basis: 250px;
+  flex-grow: 1;
+  height: 0px;
+  width: 250px;
+}
+
+.msla-flowPreview-root {
+  display: flex;
+  flex-direction: column;
+}
+
+.msla-flowPreview-title {
+  margin: 0 0 4px;
+  font-size: 14px;
+  font-weight: 600;
+  line-height: normal;
+
+  &.is-action {
+    margin-top: 16px;
+  }
+}
+
+.msla-flowPreview-titleIcon {
+  margin-right: 8px;
+  vertical-align: -0.15em;
+  color: rgb(0, 102, 255);
+}
+
+.msla-flowpreview-description {
+  margin: 0 0 12px;
+  color: rgb(96, 94, 92);
+  font-size: 14px;
+}
+
+.msla-flowpreview-arrowDown {
+  margin-top: 12px;
+  font-size: 18px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.msla-suggestedflowSection {
+  margin-top: 0px;
+}
+
+.msla-suggestedflowSection-title {
+  margin-bottom: 10;
+  font-size: 20px;
+  font-weight: 600;
+  line-height: normal;
+}
+
+.msla-suggestedflowSection-description {
+  margin-bottom: 20px;
+  font-size: 14px;
+  line-height: normal;
+  display: flex;
+}
+
+.msla-suggestedflowSection-suggestedFlow {
+  padding: 32px;
+  box-shadow: rgba(0, 0, 0, 0.133) 0px 1.6px 3.6px 0px, rgba(0, 0, 0, 0.11) 0px 0.3px 0.9px 0px;
+  border-width: 2px;
+  border-style: solid;
+  border: 2px solid transparent;
+  border-radius: 8px;
+  background: linear-gradient(rgb(242, 247, 255), rgb(242, 247, 255)) padding-box padding-box,
+    linear-gradient(115deg, rgb(61, 124, 232), rgb(164, 94, 208)) border-box border-box;
+  animation-name: css-908;
+  animation-duration: 200ms;
+  animation-timing-function: linear, ease-in;
+  @media (prefers-reduced-motion) {
+    animation: none;
+  }
+}
+
+.msla-suggestedflowSection-suggestedFlowActions {
+  display: grid;
+  grid-template-columns: auto auto auto;
+}
+
+.msla-suggestedflowSection-suggestedFlowNavigator {
+  display: flex;
+  align-items: center;
+  margin-top: 16px;
+  button {
+    margin: 0px;
+  }
+  span {
+    line-height: 0px;
+  }
+}
+
+.msla-suggestedflowSection-descriptionPadding {
+  padding-left: 5px;
+  padding-right: 5px;
+  font-weight: bold;
+}
+
+.msla-naturallanguagetoflowinput-root {
+  margin-bottom: 32px;
+}

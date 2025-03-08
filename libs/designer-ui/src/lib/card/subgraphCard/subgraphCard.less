@@ -1,0 +1,69 @@
+@import (reference) '../../mixins.less';
+
+.msla-subgraph-card {
+  position: relative;
+  display: flex;
+  flex-direction: row;
+  align-items: stretch;
+  padding: 0px;
+  height: 100%;
+  cursor: pointer;
+  border: 0px;
+  border-radius: 2px;
+  color: white;
+  background-color: var(--brand-color, black);
+  overflow: hidden;
+
+  &.large {
+    width: @card-v2-width;
+    .msla-subgraph-title {
+      padding: 10px 16px;
+      .node-button-interaction();
+    }
+  }
+
+  &.small {
+    .node-button-interaction();
+  }
+
+  .msla-subgraph-title {
+    border: none;
+    padding: 0px;
+    color: white;
+    flex-grow: 1;
+    align-self: center;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    text-align: left;
+    word-break: break-word;
+    padding: 4px 8px;
+    background-color: var(--brand-color, black);
+  }
+
+  .msla-subgraph-title-text {
+    font: 14px/20px normal @semibold-font-family;
+  }
+  .msla-panel-card-error-wrapper {
+    width: 100%;
+    margin-left: 0%;
+  }
+  .msla-panel-card-error {
+    margin: 8px 0px 0px;
+    text-align: left;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+
+    .msla-panel-card-error-text {
+      margin: 0px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    &.severeWarning {
+      color: #ffffff;
+    }
+  }
+}

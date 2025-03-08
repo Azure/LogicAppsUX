@@ -1,0 +1,87 @@
+@import (reference) '../../variables.less';
+
+@parameter-label-color: #595959;
+@parameter-box-color: #989898;
+@parameter-box-color-focus: #4692d0;
+
+@dynamic-param-label-text-size: 13px;
+@dynamic-param-label-text-color: rgb(51, 51, 51);
+@dynamic-param-error-color: #b40e1b;
+
+@toggleMargin: 5px;
+@dynamic-added-param-icon-width: 40px;
+@input-selection-delete-width: 26px;
+
+.msla-input-parameter {
+  .msla-dynamic-added-param-container & {
+    padding-bottom: 0;
+  }
+
+  &.dynamic {
+    width: 100%;
+    min-width: 120px;
+    display: inline-block;
+    vertical-align: top;
+    margin-right: 7px;
+
+    .msla-input-parameter {
+      display: flex;
+      flex: 1 1 auto;
+    }
+  }
+}
+
+.msla-input-parameter-error {
+  color: @dynamic-param-error-color;
+
+  @msla-label-margin-left: (@parameter-label-width + @parameter-label-inputbox-margin);
+}
+
+.msla-input-parameter-label {
+  color: @parameter-label-color;
+  margin: 0;
+  display: inline-block;
+  flex: 0 0 @parameter-label-width;
+  vertical-align: top;
+  padding-top: 5.5px;
+  max-height: (@parameter-inputbox-height + 2px);
+  text-transform: capitalize;
+
+  .msla-label {
+    max-height: 3em;
+  }
+}
+
+.msla-identity-dropdown-container {
+  display: flex;
+  margin: 5px @parameter-label-inputbox-margin;
+  text-align: left;
+  word-wrap: break-word;
+
+  .msla-identity-dropdown-label {
+    padding: 0;
+    margin-right: 6px;
+    font-weight: 400;
+    font-family: @font-family;
+    font-size: @card-label-font-size;
+    line-height: @parameter-inputbox-height;
+    text-align: left;
+    word-wrap: break-word;
+		color: @profile-text-color;
+  }
+}
+
+.msla-theme-dark {
+
+  .msla-input-parameter-label {
+    color: @ms-color-neutralTertiary;
+  }
+
+  .msla-input-parameter-error {
+    color: #f36873;
+  }
+
+  .msla-identity-dropdown-label {
+    color: @ms-color-neutralTertiary;
+  }
+}

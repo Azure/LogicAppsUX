@@ -1,0 +1,105 @@
+{
+  "definition": {
+    "$schema": "https://schema.management.azure.com/providers/Microsoft.Logic/schemas/2016-06-01/workflowdefinition.json#",
+    "actions": {
+      "Init_all": {
+        "inputs": {
+          "variables": [
+            {
+              "name": "testVar",
+              "type": "string",
+              "value": "@{body('Create_a_goal')['id']},@{body('Create_a_goal_2')['id']},"
+            }
+          ]
+        },
+        "runAfter": {},
+        "type": "InitializeVariable"
+      },
+      "Compose": {
+        "runAfter": {
+          "Init_all": ["SUCCEEDED"]
+        },
+        "type": "Compose"
+      },
+      "Execute_a_navigation_plan": {
+        "runAfter": {
+          "Init_all": ["SUCCEEDED"]
+        },
+        "type": "Compose"
+      },
+      "Initialize_test_var": {
+        "inputs": {
+          "variables": [
+            {
+              "name": "testVar",
+              "type": "string",
+              "value": "@{body('Create_a_goal')['id']},@{body('Create_a_goal_2')['id']},"
+            }
+          ]
+        },
+        "runAfter": {
+          "Init_all": ["SUCCEEDED"]
+        },
+        "type": "InitializeVariable"
+      },
+      "Response": {
+        "type": "Response",
+        "kind": "http",
+        "inputs": {
+          "statusCode": 200,
+          "headers": "@triggerBody()",
+          "body": "@outputs('Execute_a_navigation_plan')?['outputParameters']?['balance']"
+        },
+        "runAfter": {
+          "Compose": ["SUCCEEDED"],
+          "Initialize_test_var": ["SUCCEEDED", "Skipped"],
+          "Execute_a_navigation_plan": ["SUCCEEDED", "TimedOut", "Skipped"]
+        },
+        "operationOptions": "Asynchronous",
+        "runtimeConfiguration": {
+          "secureData": {
+            "properties": ["inputs"]
+          }
+        },
+        "trackedProperties": {
+          "dfd": "fdfdf"
+        }
+      },
+      "Terminate_2": {
+        "inputs": {
+          "runError": {
+            "code": "CreateAndGetGoalFailed",
+            "message": "Created goal does not match expected goal"
+          },
+          "runStatus": "Failed"
+        },
+        "runAfter": {
+          "Response": ["Failed"],
+          "Initialize_test_var": ["SUCCEEDED", "Skipped"]
+        },
+        "type": "Terminate"
+      }
+    },
+    "contentVersion": "1.0.0.0",
+    "outputs": {},
+    "triggers": {
+      "Http": {
+        "inputs": {
+          "body": "d",
+          "headers": {
+            "d": "d"
+          },
+          "method": "PUT",
+          "uri": "http://uri.com"
+        },
+        "recurrence": {
+          "frequency": "Hour",
+          "interval": 3,
+          "timeZone": "UTC-11"
+        },
+        "type": "Http"
+      }
+    }
+  },
+  "kind": "Stateful"
+}

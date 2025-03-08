@@ -1,0 +1,256 @@
+@import "./actionbuttonv2/actionbuttonv2.less";
+@import "./chatbot/chatbot.less";
+@import "./common.less";
+@import "./connectioncontainer.less";
+@import "./copilotGetStarted/copilot.less";
+@import "./variables.less";
+@import "./apicards.less";
+@import "./error.less";
+@import "./picker/picker.less";
+@import "./nodeCollapseToggle/nodeCollapseToggle.less";
+@import "./card/batch.less";
+@import "./card/card.less";
+@import "./checkbox/checkbox.less";
+@import "./colorizer/colorizer.less";
+@import "./code/codeeditor.less";
+@import "./combobox/combobox.less";
+@import "./dropdown/dropdown.less";
+@import "./datetimeeditor/datetimeeditor.less";
+@import "./dictionary/dictionaryeditor.less";
+@import "./html/htmleditor.less";
+@import "./infoDot/infoDot.less";
+@import "./label/label.less";
+@import "./modaldialog/modaldialog.less";
+@import "./pager/pager.less";
+@import "./panel/panel.less";
+@import "./panel/recommendationpanel/recommendation.less";
+@import "./schemaeditor/schemaeditor.less";
+@import "./table/table.less";
+@import "./texteditor.less";
+@import "./card/parameters/parameters.less";
+@import "./connectorsummarycard/connectorsummarycard.less";
+@import "./token/token.less";
+@import "./copyinputcontrol/copyinputcontrol.less";
+@import "./tokenpicker/tokenpicker.less";
+@import "./floatingactionmenu/_floatingactionmenu.less";
+@import "./monitoring/monitoring.less";
+@import "./monitoring/statuspill/statuspill.less";
+@import "./templates/templates.less";
+@import "./tip/tip.less";
+@import "./arrayeditor/arrayeditor.less";
+@import "./ariaSearchResults/ariaSearchResultsAlert.less";
+@import "./editor/shared/editorCollapseToggle.less";
+@import "./fabric.less";
+@import "./editor/monaco/monaco.less";
+@import "./editor/base/tokenpickerbutton.less";
+@import "./editor/base/editor.less";
+@import "./errorsPanel/errorsPanel.less";
+@import "./querybuilder/querybuilder.less";
+@import "./peek/peek.less";
+@import "./expressioneditor/expressioneditor.less";
+@import "./configItem/connectiongatewaypicker.less";
+@import "./settings/settings.less";
+@import "./searchbox/searchbox.less";
+@import "./searchabledropdown/searchabledropdown.less";
+@import "./searchabledropdownWithAddAll/searchabledropdownWithAddAll.less";
+@import "./authentication/authentication.less";
+@import "./workflowparameters/workflowparameters.less";
+@import "./card/cardv2.less";
+@import "./card/subgraphCard/subgraphCard.less";
+@import "./overview/overview.less";
+@import "./about/about.less";
+@import "./modals/styles.less";
+@import "./recurrence/recurrence.less";
+@import "./azureResourcePicker/azureResourcePicker.less";
+@import "./staticResult/staticResult.less";
+@import "./dynamicallyaddedparameter/dynamicallyaddedparameter.less";
+@import "./editor/base/themes/editorTheme.less";
+
+.msla-clear-both {
+  clear: both;
+}
+
+.msla-designer-container,
+.msla-monitor-container {
+  text-align: center;
+}
+
+.msla-monitor-container {
+  padding-top: 1em;
+}
+
+.msla-designer-canvas {
+  display: flex;
+  flex: 1;
+  margin: 0 auto;
+  min-width: 100%;
+	overflow: hidden;
+
+  @media only screen and (max-width: calc(@card-max-width + 40)) {
+    width: 100%;
+    min-width: @card-min-width;
+  }
+
+  img {
+    vertical-align: baseline;
+  }
+
+	/*
+		Weird new fluent bug where this generated css is causing weird
+		behavior when opening / closing panels.
+		This does not have any other effect.
+	*/
+	&>div {
+		--fui-Drawer--size: 0px;
+	}
+}
+
+.msla-theme-dark {
+  .msla-designer-canvas {
+    background-color: @ms-color-bodyBackground;
+  }
+}
+
+::-webkit-input-placeholder {
+  /* Chrome */
+  color: @parameter-placeholder-color;
+}
+
+::-moz-placeholder {
+  /* Firefox 19+ */
+  color: @parameter-placeholder-color;
+  opacity: 1;
+}
+
+.msla-profile-column-centered {
+  align-content: center;
+  display: flex;
+  justify-content: center;
+}
+
+/* TODO: Replace this with proper Fabric styling if and when they enabled custom details list column styles */
+[class^="ms-DetailsHeader"] {
+  [class^="ms-DetailsHeader-cellName"] {
+    .ms-DetailsHeader-cellName {
+      font-size: @card-body-font-size;
+      font-weight: normal;
+    }
+  }
+}
+
+.msla-node {
+  position: absolute;
+  z-index: 1;
+
+  &:focus {
+    outline: none;
+  }
+
+  &.msla-new-step {
+    margin-top: -44px;
+  }
+}
+
+.msla-node-graph {
+  margin: 25px auto;
+  position: relative;
+  left: 2px; /* Note: Adjust position so jsPlumb lines drawn to them are not jagged. */
+}
+
+/* Note. https://docs.jsplumbtoolkit.com/toolkit/current/articles/styling-via-css.html#static-classes */
+.jtk-connector {
+  z-index: 4;
+}
+.jtk-managed {
+  z-index: 10;
+}
+.jtk-overlay {
+  z-index: 10;
+}
+
+.msla-connector-arrow {
+  transform: translateX(0.5px);
+}
+
+.msla-panel-mode {
+  position: relative;
+
+  .msla-drop-zone-viewmanager {
+    display: flex;
+    justify-content: center;
+    align-content: center;
+    height: @card-v2-small-height;
+		max-width: @card-v2-small-width;
+    cursor: grab;
+		margin: 0px auto;
+		box-sizing: border-box;
+
+    &.canDrop {
+      background: #e7f4ff;
+      outline: 2px dashed #0078d4;
+      border-radius: 4px;
+    }
+
+    &.cannotDrop {
+      background: #b1b1b7;
+			max-width: 24px;
+			height: 24px;
+      border-radius: 12px;
+    }
+  }
+}
+
+.msla-theme-dark {
+  background-color: @ms-color-bodyBackground;
+  color: @ms-color-bodyText;
+
+  [class^="ms-Fabric"] {
+    color: @ms-color-black;
+  }
+
+  ::-webkit-input-placeholder {
+    /* Chrome */
+    color: @ms-color-neutralSecondary;
+  }
+
+  ::-moz-placeholder {
+    /* Firefox 19+ */
+    color: @ms-color-neutralSecondary;
+  }
+
+  .jtk-connector > path {
+    /* #456 in light mode */
+    stroke: #c2cbd6;
+  }
+
+  .msla-drop-zone-viewmanager {
+    &.canDrop {
+      background: #00245b;
+      outline: 2px dashed #2899f5;
+    }
+
+    &.cannotDrop {
+      background: #8a8886;
+    }
+  }
+}
+
+.react-flow__node {
+  cursor: default !important;
+  pointer-events: none !important;
+  & > div {
+    pointer-events: initial;
+  }
+}
+
+.hidden {
+  visibility: hidden;
+}
+
+.msla-theme-dark {
+  .ms-Panel-main {
+    background-color: @ms-color-secondaryBackground;
+    box-shadow: none;
+    border-left: 1px solid @ms-color-secondaryBorder;
+  }
+}

@@ -1,0 +1,48 @@
+name: Deploy Standalone
+
+on:
+  workflow_dispatch:
+  repository_dispatch:
+    types: [release]
+
+jobs:
+  build_and_deploy_job:
+    runs-on: ubuntu-latest
+    name: Build and Deploy Job
+    steps:
+      - uses: actions/checkout@v2
+        with:
+          submodules: true
+
+      - name: Cache turbo build setup
+        uses: actions/cache@v4
+        with:
+          path: .turbo
+          key: ${{ runner.os }}-turbo-docs-${{ github.sha }}
+          restore-keys: |
+            ${{ runner.os }}-turbo-docs-
+
+      - name: Set up Node.js version 20.x
+        uses: actions/setup-node@v1
+        with:
+          node-version: 20.x
+
+      - uses: pnpm/action-setup@v3
+        with:
+          version: 9.1.3
+          run_install: |
+            - recursive: true
+              args: [--frozen-lockfile, --strict-peer-dependencies]
+              
+      - run: pnpm turbo run build
+
+      - name: Build And Deploy
+        id: builddeploy
+        uses: Azure/static-web-apps-deploy@v1
+        with:
+          azure_static_web_apps_api_token: ${{ secrets.STANDALONE_STATIC_WEB_APP }}
+          repo_token: ${{ secrets.GITHUB_TOKEN }} # Used for Github integrations (i.e. PR comments)
+          action: 'upload'
+          skip_app_build: true
+          app_location: 'apps/Standalone/dist'
+          output_location: 'apps/Standalone/dist'

@@ -1,0 +1,5 @@
+/* Example of modifying a specific node type
+.react-flow__node-schemaNode {
+  background: blue;
+}
+*/

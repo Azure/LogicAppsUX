@@ -1,0 +1,86 @@
+name: Private vsix build
+run-name: Private vsix build - [ ${{ github.ref_name || 'branch'  }} ]
+on:
+  workflow_dispatch: # Trigger only manually  workflow_dispatch: # Trigger only manually
+
+env:
+  AI_KEY: ${{ vars.AI_KEY }}
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+
+    strategy:
+      matrix:
+        node-version: [18.x, 20.x, 22.x]
+
+    steps:
+      # checkout the repo
+      - name: 'Checkout Github Action'
+        uses: actions/checkout@master
+        with:
+          fetch-depth: 0
+
+      - name: Cache turbo build setup
+        uses: actions/cache@v4
+        with:
+          path: .turbo
+          key: ${{ runner.os }}-turbo-${{ github.sha }}
+          restore-keys: |
+            ${{ runner.os }}-turbo-
+
+      - name: Set up Node.js version ${{ matrix.node-version }}
+        uses: actions/setup-node@v1
+        with:
+          node-version: ${{ matrix.node-version }}
+
+      - uses: pnpm/action-setup@v3
+        with:
+          version: 9.1.3
+          run_install: |
+            - recursive: true
+              args: [--frozen-lockfile, --strict-peer-dependencies]
+            
+      - run: pnpm turbo run test:lib --cache-dir=.turbo
+      - run: pnpm turbo run test:extension-unit --cache-dir=.turbo
+
+  build:
+    name: Build private vsix
+    runs-on: ubuntu-latest
+
+    steps:
+      # checkout the repo
+      - name: 'Checkout Github Action'
+        uses: actions/checkout@master
+        with:
+          fetch-depth: 0
+
+      - name: Set up Node.js version 20
+        uses: actions/setup-node@v1
+        with:
+          node-version: 20
+
+      - uses: pnpm/action-setup@v3
+        with:
+          version: 9.1.3
+          run_install: |
+            - recursive: true
+              args: [--frozen-lockfile, --strict-peer-dependencies]
+
+      - name: 'Set Designer Extension VSIX aiKey in package.json'
+        run: echo "`jq '.aiKey="${{ env.AI_KEY }}"' apps/vs-code-designer/src/package.json`" > apps/vs-code-designer/src/package.json
+
+      - name: Replace Placeholder with Telemetry Key
+        run: sed -i 's/setInGitHubBuild/${{ env.AI_KEY }}/g' apps/vs-code-designer/src/main.ts
+
+      - name: 'Pack VSCode Designer Extension'
+        run: pnpm run vscode:designer:pack
+
+      - name: Archive VSIX
+        uses: actions/upload-artifact@v4
+        with:
+          path: |
+            apps/vs-code-designer/dist/*.vsix
+
+
+ 

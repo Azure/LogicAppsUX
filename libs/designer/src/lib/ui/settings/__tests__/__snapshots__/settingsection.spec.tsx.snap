@@ -1,0 +1,22 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`ui/settings/settingsection > should construct 1`] = `
+<div
+  className="msla-setting-section"
+>
+  <div
+    className="msla-setting-section-content"
+  >
+    <Button
+      appearance="subtle"
+      aria-label="Collapsed Sample Setting Section, Click to expand"
+      className="msla-setting-section-header"
+      icon={<CompoundIcon />}
+      onClick={[Function]}
+    >
+      Sample Setting Section
+    </Button>
+    <React.Fragment />
+  </div>
+</div>
+`;

@@ -1,0 +1,71 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`lib/searchabledropdownwithaddall > should render a search box 1`] = `
+<div
+  className="ms-SearchBox can-clear msla-search-box root-109"
+  onFocusCapture={[Function]}
+>
+  <div
+    aria-hidden={true}
+    className="ms-SearchBox-iconContainer iconContainer-110"
+    onClick={[Function]}
+  >
+    <i
+      aria-hidden={true}
+      className="ms-SearchBox-icon icon-116"
+      data-icon-name="Search"
+    >
+      
+    </i>
+  </div>
+  <input
+    aria-label="Search"
+    autoFocus={true}
+    className="ms-SearchBox-field field-113"
+    data-automation-id="msla-search-box"
+    id="SearchBox0"
+    onBlur={[Function]}
+    onChange={[Function]}
+    onInput={[Function]}
+    onKeyDown={[Function]}
+    placeholder="Search"
+    role="searchbox"
+    value="foo"
+  />
+  <div
+    className="ms-SearchBox-clearButton clearButton-112"
+  >
+    <button
+      aria-label="Clear text"
+      className="ms-Button ms-Button--icon root-117"
+      data-is-focusable={true}
+      onBlur={[Function]}
+      onClick={[Function]}
+      onKeyDown={[Function]}
+      onKeyPress={[Function]}
+      onKeyUp={[Function]}
+      onMouseDown={[Function]}
+      onMouseUp={[Function]}
+      type="button"
+    >
+      <span
+        className="ms-Button-flexContainer flexContainer-118"
+        data-automationid="splitbuttonprimary"
+      >
+        <i
+          aria-hidden={true}
+          className="ms-Icon root-105 css-115 ms-Button-icon icon-120"
+          data-icon-name="Clear"
+          style={
+            {
+              "fontFamily": ""FabricMDL2Icons"",
+            }
+          }
+        >
+          
+        </i>
+      </span>
+    </button>
+  </div>
+</div>
+`;

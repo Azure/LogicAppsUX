@@ -1,0 +1,4254 @@
+{
+  "name": "api_projectrequest.xsd",
+  "type": "XML",
+  "targetNamespace": "https://SchProjectGBO.SchProjectGBO",
+  "namespaces": {
+    "ns4": "https://SchProjectGBO.SchProjectGBO",
+    "pjc": "http://SchCustomerReference.SchCustomerReference",
+    "b": "http://schemas.microsoft.com/BizTalk/2003",
+    "ns0": "https://SchProjectGBO.PropertySchema",
+    "xs": "http://www.w3.org/2001/XMLSchema"
+  },
+  "schemaTreeRoot": {
+    "key": "/ns4:projectGBO",
+    "name": "projectGBO",
+    "type": "Complex",
+    "properties": "None",
+    "children": [
+      {
+        "key": "/ns4:projectGBO/OEBS_Header",
+        "name": "OEBS_Header",
+        "type": "Complex",
+        "properties": "None",
+        "children": [
+          {
+            "key": "/ns4:projectGBO/OEBS_Header/messageDetails",
+            "name": "messageDetails",
+            "type": "Complex",
+            "properties": "None",
+            "children": [
+              {
+                "key": "/ns4:projectGBO/OEBS_Header/messageDetails/msgID",
+                "name": "msgID",
+                "type": "String",
+                "properties": "None",
+                "qName": "msgID"
+              },
+              {
+                "key": "/ns4:projectGBO/OEBS_Header/messageDetails/correlationID",
+                "name": "correlationID",
+                "type": "String",
+                "properties": "None",
+                "qName": "correlationID"
+              },
+              {
+                "key": "/ns4:projectGBO/OEBS_Header/messageDetails/ResponseLocation",
+                "name": "ResponseLocation",
+                "type": "String",
+                "properties": "None",
+                "qName": "ResponseLocation"
+              },
+              {
+                "key": "/ns4:projectGBO/OEBS_Header/messageDetails/responseServer",
+                "name": "responseServer",
+                "type": "String",
+                "properties": "None",
+                "qName": "responseServer"
+              },
+              {
+                "key": "/ns4:projectGBO/OEBS_Header/messageDetails/requestedOperation",
+                "name": "requestedOperation",
+                "type": "String",
+                "properties": "None",
+                "qName": "requestedOperation"
+              },
+              {
+                "key": "/ns4:projectGBO/OEBS_Header/messageDetails/numRecordsOutput",
+                "name": "numRecordsOutput",
+                "type": "String",
+                "properties": "None",
+                "qName": "numRecordsOutput"
+              },
+              {
+                "key": "/ns4:projectGBO/OEBS_Header/messageDetails/documentType",
+                "name": "documentType",
+                "type": "String",
+                "properties": "None",
+                "qName": "documentType"
+              },
+              {
+                "key": "/ns4:projectGBO/OEBS_Header/messageDetails/sentTimeStamp",
+                "name": "sentTimeStamp",
+                "type": "DateTime",
+                "properties": "None",
+                "qName": "sentTimeStamp"
+              },
+              {
+                "key": "/ns4:projectGBO/OEBS_Header/messageDetails/receivedTimeStamp",
+                "name": "receivedTimeStamp",
+                "type": "DateTime",
+                "properties": "Optional",
+                "qName": "receivedTimeStamp"
+              },
+              {
+                "key": "/ns4:projectGBO/OEBS_Header/messageDetails/SenderSystem",
+                "name": "SenderSystem",
+                "type": "String",
+                "properties": "None",
+                "qName": "SenderSystem"
+              },
+              {
+                "key": "/ns4:projectGBO/OEBS_Header/messageDetails/ReceiverSystem",
+                "name": "ReceiverSystem",
+                "type": "String",
+                "properties": "None",
+                "qName": "ReceiverSystem"
+              },
+              {
+                "key": "/ns4:projectGBO/OEBS_Header/messageDetails/locationName",
+                "name": "locationName",
+                "type": "String",
+                "properties": "None",
+                "qName": "locationName"
+              },
+              {
+                "key": "/ns4:projectGBO/OEBS_Header/messageDetails/user",
+                "name": "user",
+                "type": "String",
+                "properties": "None",
+                "qName": "user"
+              },
+              {
+                "key": "/ns4:projectGBO/OEBS_Header/messageDetails/organisationUnit",
+                "name": "organisationUnit",
+                "type": "String",
+                "properties": "None",
+                "qName": "organisationUnit"
+              },
+              {
+                "key": "/ns4:projectGBO/OEBS_Header/messageDetails/ServiceCallType",
+                "name": "ServiceCallType",
+                "type": "String",
+                "properties": "Optional",
+                "qName": "ServiceCallType"
+              }
+            ],
+            "qName": "messageDetails"
+          }
+        ],
+        "qName": "OEBS_Header"
+      },
+      {
+        "key": "/ns4:projectGBO/project",
+        "name": "project",
+        "type": "Complex",
+        "properties": "Repeating",
+        "children": [
+          {
+            "key": "/ns4:projectGBO/project/pmProjectReference",
+            "name": "pmProjectReference",
+            "type": "String",
+            "properties": "None",
+            "qName": "pmProjectReference"
+          },
+          {
+            "key": "/ns4:projectGBO/project/paProjectNumber",
+            "name": "paProjectNumber",
+            "type": "String",
+            "properties": "None",
+            "qName": "paProjectNumber"
+          },
+          {
+            "key": "/ns4:projectGBO/project/projectSource",
+            "name": "projectSource",
+            "type": "String",
+            "properties": "None",
+            "qName": "projectSource"
+          },
+          {
+            "key": "/ns4:projectGBO/project/projectType",
+            "name": "projectType",
+            "type": "String",
+            "properties": "None",
+            "qName": "projectType"
+          },
+          {
+            "key": "/ns4:projectGBO/project/projectCategory",
+            "name": "projectCategory",
+            "type": "String",
+            "properties": "None",
+            "qName": "projectCategory"
+          },
+          {
+            "key": "/ns4:projectGBO/project/projectName",
+            "name": "projectName",
+            "type": "String",
+            "properties": "None",
+            "qName": "projectName"
+          },
+          {
+            "key": "/ns4:projectGBO/project/longName",
+            "name": "longName",
+            "type": "String",
+            "properties": "None",
+            "qName": "longName"
+          },
+          {
+            "key": "/ns4:projectGBO/project/projectCurrencyCode",
+            "name": "projectCurrencyCode",
+            "type": "String",
+            "properties": "None",
+            "qName": "projectCurrencyCode"
+          },
+          {
+            "key": "/ns4:projectGBO/project/orgUnitCode",
+            "name": "orgUnitCode",
+            "type": "String",
+            "properties": "None",
+            "qName": "orgUnitCode"
+          },
+          {
+            "key": "/ns4:projectGBO/project/operatingUnitCode",
+            "name": "operatingUnitCode",
+            "type": "String",
+            "properties": "None",
+            "qName": "operatingUnitCode"
+          },
+          {
+            "key": "/ns4:projectGBO/project/projectStatusCode",
+            "name": "projectStatusCode",
+            "type": "String",
+            "properties": "None",
+            "qName": "projectStatusCode"
+          },
+          {
+            "key": "/ns4:projectGBO/project/description",
+            "name": "description",
+            "type": "String",
+            "properties": "None",
+            "qName": "description"
+          },
+          {
+            "key": "/ns4:projectGBO/project/startDate",
+            "name": "startDate",
+            "type": "String",
+            "properties": "None",
+            "qName": "startDate"
+          },
+          {
+            "key": "/ns4:projectGBO/project/completionDate",
+            "name": "completionDate",
+            "type": "String",
+            "properties": "None",
+            "qName": "completionDate"
+          },
+          {
+            "key": "/ns4:projectGBO/project/createdDate",
+            "name": "createdDate",
+            "type": "String",
+            "properties": "None",
+            "qName": "createdDate"
+          },
+          {
+            "key": "/ns4:projectGBO/project/plObject",
+            "name": "plObject",
+            "type": "String",
+            "properties": "None",
+            "qName": "plObject"
+          },
+          {
+            "key": "/ns4:projectGBO/project/serviceCode",
+            "name": "serviceCode",
+            "type": "String",
+            "properties": "None",
+            "qName": "serviceCode"
+          },
+          {
+            "key": "/ns4:projectGBO/project/createdFromProjectID",
+            "name": "createdFromProjectID",
+            "type": "String",
+            "properties": "Optional",
+            "qName": "createdFromProjectID"
+          },
+          {
+            "key": "/ns4:projectGBO/project/projectTemplateName",
+            "name": "projectTemplateName",
+            "type": "String",
+            "properties": "Optional",
+            "qName": "projectTemplateName"
+          },
+          {
+            "key": "/ns4:projectGBO/project/costCenter",
+            "name": "costCenter",
+            "type": "String",
+            "properties": "Optional",
+            "qName": "costCenter"
+          },
+          {
+            "key": "/ns4:projectGBO/project/publicSectorFlag",
+            "name": "publicSectorFlag",
+            "type": "String",
+            "properties": "Optional",
+            "qName": "publicSectorFlag"
+          },
+          {
+            "key": "/ns4:projectGBO/project/distributionRule",
+            "name": "distributionRule",
+            "type": "String",
+            "properties": "Optional",
+            "qName": "distributionRule"
+          },
+          {
+            "key": "/ns4:projectGBO/project/actualStartDate",
+            "name": "actualStartDate",
+            "type": "String",
+            "properties": "Optional",
+            "qName": "actualStartDate"
+          },
+          {
+            "key": "/ns4:projectGBO/project/actualFinishDate",
+            "name": "actualFinishDate",
+            "type": "String",
+            "properties": "Optional",
+            "qName": "actualFinishDate"
+          },
+          {
+            "key": "/ns4:projectGBO/project/earlyStartDate",
+            "name": "earlyStartDate",
+            "type": "String",
+            "properties": "Optional",
+            "qName": "earlyStartDate"
+          },
+          {
+            "key": "/ns4:projectGBO/project/earlyFinishDate",
+            "name": "earlyFinishDate",
+            "type": "String",
+            "properties": "Optional",
+            "qName": "earlyFinishDate"
+          },
+          {
+            "key": "/ns4:projectGBO/project/lateStartDate",
+            "name": "lateStartDate",
+            "type": "String",
+            "properties": "Optional",
+            "qName": "lateStartDate"
+          },
+          {
+            "key": "/ns4:projectGBO/project/lateFinishDate",
+            "name": "lateFinishDate",
+            "type": "String",
+            "properties": "Optional",
+            "qName": "lateFinishDate"
+          },
+          {
+            "key": "/ns4:projectGBO/project/sheduledStartDate",
+            "name": "sheduledStartDate",
+            "type": "String",
+            "properties": "Optional",
+            "qName": "sheduledStartDate"
+          },
+          {
+            "key": "/ns4:projectGBO/project/scheduledFinishDate",
+            "name": "scheduledFinishDate",
+            "type": "String",
+            "properties": "Optional",
+            "qName": "scheduledFinishDate"
+          },
+          {
+            "key": "/ns4:projectGBO/project/Attribute1",
+            "name": "Attribute1",
+            "type": "String",
+            "properties": "Optional",
+            "qName": "Attribute1"
+          },
+          {
+            "key": "/ns4:projectGBO/project/Attribute2",
+            "name": "Attribute2",
+            "type": "String",
+            "properties": "Optional",
+            "qName": "Attribute2"
+          },
+          {
+            "key": "/ns4:projectGBO/project/projectCustomerContact",
+            "name": "projectCustomerContact",
+            "type": "String",
+            "properties": "Optional",
+            "qName": "projectCustomerContact"
+          },
+          {
+            "key": "/ns4:projectGBO/project/invoiceCustomerContact",
+            "name": "invoiceCustomerContact",
+            "type": "String",
+            "properties": "Optional",
+            "qName": "invoiceCustomerContact"
+          },
+          {
+            "key": "/ns4:projectGBO/project/Attribute7",
+            "name": "Attribute7",
+            "type": "String",
+            "properties": "Optional",
+            "qName": "Attribute7"
+          },
+          {
+            "key": "/ns4:projectGBO/project/Attribute8",
+            "name": "Attribute8",
+            "type": "String",
+            "properties": "Optional",
+            "qName": "Attribute8"
+          },
+          {
+            "key": "/ns4:projectGBO/project/Attribute9",
+            "name": "Attribute9",
+            "type": "String",
+            "properties": "Optional",
+            "qName": "Attribute9"
+          },
+          {
+            "key": "/ns4:projectGBO/project/Attribute10",
+            "name": "Attribute10",
+            "type": "String",
+            "properties": "Optional",
+            "qName": "Attribute10"
+          },
+          {
+            "key": "/ns4:projectGBO/project/outputTaxCode",
+            "name": "outputTaxCode",
+            "type": "String",
+            "properties": "Optional",
+            "qName": "outputTaxCode"
+          },
+          {
+            "key": "/ns4:projectGBO/project/retentionTaxCode",
+            "name": "retentionTaxCode",
+            "type": "String",
+            "properties": "Optional",
+            "qName": "retentionTaxCode"
+          },
+          {
+            "key": "/ns4:projectGBO/project/allowCrossChargeFlag",
+            "name": "allowCrossChargeFlag",
+            "type": "String",
+            "properties": "Optional",
+            "qName": "allowCrossChargeFlag"
+          },
+          {
+            "key": "/ns4:projectGBO/project/projectRateDate",
+            "name": "projectRateDate",
+            "type": "String",
+            "properties": "Optional",
+            "qName": "projectRateDate"
+          },
+          {
+            "key": "/ns4:projectGBO/project/projectRateType",
+            "name": "projectRateType",
+            "type": "String",
+            "properties": "Optional",
+            "qName": "projectRateType"
+          },
+          {
+            "key": "/ns4:projectGBO/project/ccProcessLaborFlag",
+            "name": "ccProcessLaborFlag",
+            "type": "String",
+            "properties": "Optional",
+            "qName": "ccProcessLaborFlag"
+          },
+          {
+            "key": "/ns4:projectGBO/project/laborTpSheduleId",
+            "name": "laborTpSheduleId",
+            "type": "String",
+            "properties": "None",
+            "qName": "laborTpSheduleId"
+          },
+          {
+            "key": "/ns4:projectGBO/project/laborTpFixedDate",
+            "name": "laborTpFixedDate",
+            "type": "String",
+            "properties": "None",
+            "qName": "laborTpFixedDate"
+          },
+          {
+            "key": "/ns4:projectGBO/project/ccProcessNlFlag",
+            "name": "ccProcessNlFlag",
+            "type": "String",
+            "properties": "None",
+            "qName": "ccProcessNlFlag"
+          },
+          {
+            "key": "/ns4:projectGBO/project/nlTpSheduleId",
+            "name": "nlTpSheduleId",
+            "type": "String",
+            "properties": "Optional",
+            "qName": "nlTpSheduleId"
+          },
+          {
+            "key": "/ns4:projectGBO/project/nlTpFixedDate",
+            "name": "nlTpFixedDate",
+            "type": "String",
+            "properties": "Optional",
+            "qName": "nlTpFixedDate"
+          },
+          {
+            "key": "/ns4:projectGBO/project/ccTaxTaskId",
+            "name": "ccTaxTaskId",
+            "type": "String",
+            "properties": "Optional",
+            "qName": "ccTaxTaskId"
+          },
+          {
+            "key": "/ns4:projectGBO/project/roleListId",
+            "name": "roleListId",
+            "type": "String",
+            "properties": "Optional",
+            "qName": "roleListId"
+          },
+          {
+            "key": "/ns4:projectGBO/project/workTypeId",
+            "name": "workTypeId",
+            "type": "String",
+            "properties": "Optional",
+            "qName": "workTypeId"
+          },
+          {
+            "key": "/ns4:projectGBO/project/calendarId",
+            "name": "calendarId",
+            "type": "String",
+            "properties": "Optional",
+            "qName": "calendarId"
+          },
+          {
+            "key": "/ns4:projectGBO/project/locationId",
+            "name": "locationId",
+            "type": "String",
+            "properties": "Optional",
+            "qName": "locationId"
+          },
+          {
+            "key": "/ns4:projectGBO/project/probabilityMemberId",
+            "name": "probabilityMemberId",
+            "type": "String",
+            "properties": "Optional",
+            "qName": "probabilityMemberId"
+          },
+          {
+            "key": "/ns4:projectGBO/project/projectValue",
+            "name": "projectValue",
+            "type": "String",
+            "properties": "Optional",
+            "qName": "projectValue"
+          },
+          {
+            "key": "/ns4:projectGBO/project/expectedApprovalDate",
+            "name": "expectedApprovalDate",
+            "type": "String",
+            "properties": "Optional",
+            "qName": "expectedApprovalDate"
+          },
+          {
+            "key": "/ns4:projectGBO/project/costJobGroupId",
+            "name": "costJobGroupId",
+            "type": "String",
+            "properties": "Optional",
+            "qName": "costJobGroupId"
+          },
+          {
+            "key": "/ns4:projectGBO/project/billJobGroupId",
+            "name": "billJobGroupId",
+            "type": "String",
+            "properties": "Optional",
+            "qName": "billJobGroupId"
+          },
+          {
+            "key": "/ns4:projectGBO/project/teamTemplateId",
+            "name": "teamTemplateId",
+            "type": "String",
+            "properties": "Optional",
+            "qName": "teamTemplateId"
+          },
+          {
+            "key": "/ns4:projectGBO/project/countryCode",
+            "name": "countryCode",
+            "type": "String",
+            "properties": "Optional",
+            "qName": "countryCode"
+          },
+          {
+            "key": "/ns4:projectGBO/project/region",
+            "name": "region",
+            "type": "String",
+            "properties": "Optional",
+            "qName": "region"
+          },
+          {
+            "key": "/ns4:projectGBO/project/city",
+            "name": "city",
+            "type": "String",
+            "properties": "Optional",
+            "qName": "city"
+          },
+          {
+            "key": "/ns4:projectGBO/project/empBillRateScheduleId",
+            "name": "empBillRateScheduleId",
+            "type": "String",
+            "properties": "Optional",
+            "qName": "empBillRateScheduleId"
+          },
+          {
+            "key": "/ns4:projectGBO/project/jobBillRateScheduleId",
+            "name": "jobBillRateScheduleId",
+            "type": "String",
+            "properties": "Optional",
+            "qName": "jobBillRateScheduleId"
+          },
+          {
+            "key": "/ns4:projectGBO/project/invprocCurrencyType",
+            "name": "invprocCurrencyType",
+            "type": "String",
+            "properties": "Optional",
+            "qName": "invprocCurrencyType"
+          },
+          {
+            "key": "/ns4:projectGBO/project/revprocCurrencyCode",
+            "name": "revprocCurrencyCode",
+            "type": "String",
+            "properties": "Optional",
+            "qName": "revprocCurrencyCode"
+          },
+          {
+            "key": "/ns4:projectGBO/project/projectBilRateDateCode",
+            "name": "projectBilRateDateCode",
+            "type": "String",
+            "properties": "Optional",
+            "qName": "projectBilRateDateCode"
+          },
+          {
+            "key": "/ns4:projectGBO/project/projectBilRateType",
+            "name": "projectBilRateType",
+            "type": "String",
+            "properties": "Optional",
+            "qName": "projectBilRateType"
+          },
+          {
+            "key": "/ns4:projectGBO/project/projectBilRateDate",
+            "name": "projectBilRateDate",
+            "type": "String",
+            "properties": "Optional",
+            "qName": "projectBilRateDate"
+          },
+          {
+            "key": "/ns4:projectGBO/project/projectBilRateExchangeRate",
+            "name": "projectBilRateExchangeRate",
+            "type": "String",
+            "properties": "Optional",
+            "qName": "projectBilRateExchangeRate"
+          },
+          {
+            "key": "/ns4:projectGBO/project/projfuncCurrencyCode",
+            "name": "projfuncCurrencyCode",
+            "type": "String",
+            "properties": "Optional",
+            "qName": "projfuncCurrencyCode"
+          },
+          {
+            "key": "/ns4:projectGBO/project/projfuncBilRateDateCode",
+            "name": "projfuncBilRateDateCode",
+            "type": "String",
+            "properties": "Optional",
+            "qName": "projfuncBilRateDateCode"
+          },
+          {
+            "key": "/ns4:projectGBO/project/projfuncBilRateType",
+            "name": "projfuncBilRateType",
+            "type": "String",
+            "properties": "Optional",
+            "qName": "projfuncBilRateType"
+          },
+          {
+            "key": "/ns4:projectGBO/project/projfuncBilRateDate",
+            "name": "projfuncBilRateDate",
+            "type": "String",
+            "properties": "Optional",
+            "qName": "projfuncBilRateDate"
+          },
+          {
+            "key": "/ns4:projectGBO/project/projfuncBilExchangeRate",
+            "name": "projfuncBilExchangeRate",
+            "type": "String",
+            "properties": "Optional",
+            "qName": "projfuncBilExchangeRate"
+          },
+          {
+            "key": "/ns4:projectGBO/project/fundingRatedDateCode",
+            "name": "fundingRatedDateCode",
+            "type": "String",
+            "properties": "Optional",
+            "qName": "fundingRatedDateCode"
+          },
+          {
+            "key": "/ns4:projectGBO/project/fundingRatedType",
+            "name": "fundingRatedType",
+            "type": "String",
+            "properties": "Optional",
+            "qName": "fundingRatedType"
+          },
+          {
+            "key": "/ns4:projectGBO/project/fundingRatedDate",
+            "name": "fundingRatedDate",
+            "type": "String",
+            "properties": "Optional",
+            "qName": "fundingRatedDate"
+          },
+          {
+            "key": "/ns4:projectGBO/project/fundingExchangeRate",
+            "name": "fundingExchangeRate",
+            "type": "String",
+            "properties": "Optional",
+            "qName": "fundingExchangeRate"
+          },
+          {
+            "key": "/ns4:projectGBO/project/baselineFunfingFlag",
+            "name": "baselineFunfingFlag",
+            "type": "String",
+            "properties": "Optional",
+            "qName": "baselineFunfingFlag"
+          },
+          {
+            "key": "/ns4:projectGBO/project/multiCurrencyBillingFlag",
+            "name": "multiCurrencyBillingFlag",
+            "type": "String",
+            "properties": "Optional",
+            "qName": "multiCurrencyBillingFlag"
+          },
+          {
+            "key": "/ns4:projectGBO/project/competenceMatchWt",
+            "name": "competenceMatchWt",
+            "type": "String",
+            "properties": "Optional",
+            "qName": "competenceMatchWt"
+          },
+          {
+            "key": "/ns4:projectGBO/project/availabilitymatchWt",
+            "name": "availabilitymatchWt",
+            "type": "String",
+            "properties": "Optional",
+            "qName": "availabilitymatchWt"
+          },
+          {
+            "key": "/ns4:projectGBO/project/jobLevelMatchWt",
+            "name": "jobLevelMatchWt",
+            "type": "String",
+            "properties": "Optional",
+            "qName": "jobLevelMatchWt"
+          },
+          {
+            "key": "/ns4:projectGBO/project/enableAutomatedSearch",
+            "name": "enableAutomatedSearch",
+            "type": "String",
+            "properties": "Optional",
+            "qName": "enableAutomatedSearch"
+          },
+          {
+            "key": "/ns4:projectGBO/project/searchMinAvailability",
+            "name": "searchMinAvailability",
+            "type": "String",
+            "properties": "Optional",
+            "qName": "searchMinAvailability"
+          },
+          {
+            "key": "/ns4:projectGBO/project/searchOrgHierId",
+            "name": "searchOrgHierId",
+            "type": "String",
+            "properties": "Optional",
+            "qName": "searchOrgHierId"
+          },
+          {
+            "key": "/ns4:projectGBO/project/searchStartingOrgId",
+            "name": "searchStartingOrgId",
+            "type": "String",
+            "properties": "Optional",
+            "qName": "searchStartingOrgId"
+          },
+          {
+            "key": "/ns4:projectGBO/project/searchCountryId",
+            "name": "searchCountryId",
+            "type": "String",
+            "properties": "Optional",
+            "qName": "searchCountryId"
+          },
+          {
+            "key": "/ns4:projectGBO/project/minCandScoreReqdForNom",
+            "name": "minCandScoreReqdForNom",
+            "type": "String",
+            "properties": "Optional",
+            "qName": "minCandScoreReqdForNom"
+          },
+          {
+            "key": "/ns4:projectGBO/project/maxNumOfSysNomCand",
+            "name": "maxNumOfSysNomCand",
+            "type": "String",
+            "properties": "Optional",
+            "qName": "maxNumOfSysNomCand"
+          },
+          {
+            "key": "/ns4:projectGBO/project/nonLabStdBillRtSchId",
+            "name": "nonLabStdBillRtSchId",
+            "type": "String",
+            "properties": "Optional",
+            "qName": "nonLabStdBillRtSchId"
+          },
+          {
+            "key": "/ns4:projectGBO/project/searchCountryCode",
+            "name": "searchCountryCode",
+            "type": "String",
+            "properties": "Optional",
+            "qName": "searchCountryCode"
+          },
+          {
+            "key": "/ns4:projectGBO/project/invByBillTransCurrFlag",
+            "name": "invByBillTransCurrFlag",
+            "type": "String",
+            "properties": "Optional",
+            "qName": "invByBillTransCurrFlag"
+          },
+          {
+            "key": "/ns4:projectGBO/project/projfuncCostRateType",
+            "name": "projfuncCostRateType",
+            "type": "String",
+            "properties": "Optional",
+            "qName": "projfuncCostRateType"
+          },
+          {
+            "key": "/ns4:projectGBO/project/projfuncCostRateDate",
+            "name": "projfuncCostRateDate",
+            "type": "String",
+            "properties": "Optional",
+            "qName": "projfuncCostRateDate"
+          },
+          {
+            "key": "/ns4:projectGBO/project/assignPrecedesTask",
+            "name": "assignPrecedesTask",
+            "type": "String",
+            "properties": "Optional",
+            "qName": "assignPrecedesTask"
+          },
+          {
+            "key": "/ns4:projectGBO/project/splitCostFromWorkplanFlag",
+            "name": "splitCostFromWorkplanFlag",
+            "type": "String",
+            "properties": "Optional",
+            "qName": "splitCostFromWorkplanFlag"
+          },
+          {
+            "key": "/ns4:projectGBO/project/splitCostFromBillFlag",
+            "name": "splitCostFromBillFlag",
+            "type": "String",
+            "properties": "Optional",
+            "qName": "splitCostFromBillFlag"
+          },
+          {
+            "key": "/ns4:projectGBO/project/advActionSetId",
+            "name": "advActionSetId",
+            "type": "String",
+            "properties": "Optional",
+            "qName": "advActionSetId"
+          },
+          {
+            "key": "/ns4:projectGBO/project/startAdvActionSetFlag",
+            "name": "startAdvActionSetFlag",
+            "type": "String",
+            "properties": "Optional",
+            "qName": "startAdvActionSetFlag"
+          },
+          {
+            "key": "/ns4:projectGBO/project/priorityCode",
+            "name": "priorityCode",
+            "type": "String",
+            "properties": "Optional",
+            "qName": "priorityCode"
+          },
+          {
+            "key": "/ns4:projectGBO/project/retnBillingInvFormatId",
+            "name": "retnBillingInvFormatId",
+            "type": "String",
+            "properties": "Optional",
+            "qName": "retnBillingInvFormatId"
+          },
+          {
+            "key": "/ns4:projectGBO/project/retnAccountingFlag",
+            "name": "retnAccountingFlag",
+            "type": "String",
+            "properties": "Optional",
+            "qName": "retnAccountingFlag"
+          },
+          {
+            "key": "/ns4:projectGBO/project/oppValueCurrencyCode",
+            "name": "oppValueCurrencyCode",
+            "type": "String",
+            "properties": "Optional",
+            "qName": "oppValueCurrencyCode"
+          },
+          {
+            "key": "/ns4:projectGBO/project/revaluateFundingFlag",
+            "name": "revaluateFundingFlag",
+            "type": "String",
+            "properties": "Optional",
+            "qName": "revaluateFundingFlag"
+          },
+          {
+            "key": "/ns4:projectGBO/project/includeGainsLossesFlag",
+            "name": "includeGainsLossesFlag",
+            "type": "String",
+            "properties": "Optional",
+            "qName": "includeGainsLossesFlag"
+          },
+          {
+            "key": "/ns4:projectGBO/project/securityLevel",
+            "name": "securityLevel",
+            "type": "String",
+            "properties": "Optional",
+            "qName": "securityLevel"
+          },
+          {
+            "key": "/ns4:projectGBO/project/laborDiscReasonCode",
+            "name": "laborDiscReasonCode",
+            "type": "String",
+            "properties": "Optional",
+            "qName": "laborDiscReasonCode"
+          },
+          {
+            "key": "/ns4:projectGBO/project/nonLaborDiscReasonCode",
+            "name": "nonLaborDiscReasonCode",
+            "type": "String",
+            "properties": "Optional",
+            "qName": "nonLaborDiscReasonCode"
+          },
+          {
+            "key": "/ns4:projectGBO/project/laborScheduleFixedDate",
+            "name": "laborScheduleFixedDate",
+            "type": "String",
+            "properties": "Optional",
+            "qName": "laborScheduleFixedDate"
+          },
+          {
+            "key": "/ns4:projectGBO/project/laborScheduleDiscount",
+            "name": "laborScheduleDiscount",
+            "type": "String",
+            "properties": "Optional",
+            "qName": "laborScheduleDiscount"
+          },
+          {
+            "key": "/ns4:projectGBO/project/nonLaborBillRateOrgId",
+            "name": "nonLaborBillRateOrgId",
+            "type": "String",
+            "properties": "Optional",
+            "qName": "nonLaborBillRateOrgId"
+          },
+          {
+            "key": "/ns4:projectGBO/project/nonLaborSheduleFixedDate",
+            "name": "nonLaborSheduleFixedDate",
+            "type": "String",
+            "properties": "Optional",
+            "qName": "nonLaborSheduleFixedDate"
+          },
+          {
+            "key": "/ns4:projectGBO/project/nonLaborSheduleDiscount",
+            "name": "nonLaborSheduleDiscount",
+            "type": "String",
+            "properties": "Optional",
+            "qName": "nonLaborSheduleDiscount"
+          },
+          {
+            "key": "/ns4:projectGBO/project/revIndRateSchId",
+            "name": "revIndRateSchId",
+            "type": "String",
+            "properties": "Optional",
+            "qName": "revIndRateSchId"
+          },
+          {
+            "key": "/ns4:projectGBO/project/invIndRateSchId",
+            "name": "invIndRateSchId",
+            "type": "String",
+            "properties": "Optional",
+            "qName": "invIndRateSchId"
+          },
+          {
+            "key": "/ns4:projectGBO/project/revIndSchFixedDate",
+            "name": "revIndSchFixedDate",
+            "type": "String",
+            "properties": "Optional",
+            "qName": "revIndSchFixedDate"
+          },
+          {
+            "key": "/ns4:projectGBO/project/invIndSchFixedDate",
+            "name": "invIndSchFixedDate",
+            "type": "String",
+            "properties": "Optional",
+            "qName": "invIndSchFixedDate"
+          },
+          {
+            "key": "/ns4:projectGBO/project/laborSchType",
+            "name": "laborSchType",
+            "type": "String",
+            "properties": "Optional",
+            "qName": "laborSchType"
+          },
+          {
+            "key": "/ns4:projectGBO/project/nonLaborSchType",
+            "name": "nonLaborSchType",
+            "type": "String",
+            "properties": "Optional",
+            "qName": "nonLaborSchType"
+          },
+          {
+            "key": "/ns4:projectGBO/project/AssetAllocationMethod",
+            "name": "AssetAllocationMethod",
+            "type": "String",
+            "properties": "Optional",
+            "qName": "AssetAllocationMethod"
+          },
+          {
+            "key": "/ns4:projectGBO/project/CapitalEventProcessing",
+            "name": "CapitalEventProcessing",
+            "type": "String",
+            "properties": "Optional",
+            "qName": "CapitalEventProcessing"
+          },
+          {
+            "key": "/ns4:projectGBO/project/cintRateSchId",
+            "name": "cintRateSchId",
+            "type": "String",
+            "properties": "Optional",
+            "qName": "cintRateSchId"
+          },
+          {
+            "key": "/ns4:projectGBO/project/cintEligibleFlag",
+            "name": "cintEligibleFlag",
+            "type": "String",
+            "properties": "Optional",
+            "qName": "cintEligibleFlag"
+          },
+          {
+            "key": "/ns4:projectGBO/project/cintStopDate",
+            "name": "cintStopDate",
+            "type": "String",
+            "properties": "Optional",
+            "qName": "cintStopDate"
+          },
+          {
+            "key": "/ns4:projectGBO/project/sysProgramflag",
+            "name": "sysProgramflag",
+            "type": "String",
+            "properties": "Optional",
+            "qName": "sysProgramflag"
+          },
+          {
+            "key": "/ns4:projectGBO/project/allowMultiProgramRollup",
+            "name": "allowMultiProgramRollup",
+            "type": "String",
+            "properties": "Optional",
+            "qName": "allowMultiProgramRollup"
+          },
+          {
+            "key": "/ns4:projectGBO/project/enableTopTaskInvMthFlag",
+            "name": "enableTopTaskInvMthFlag",
+            "type": "String",
+            "properties": "Optional",
+            "qName": "enableTopTaskInvMthFlag"
+          },
+          {
+            "key": "/ns4:projectGBO/project/projfunkAttrForArFlag",
+            "name": "projfunkAttrForArFlag",
+            "type": "String",
+            "properties": "Optional",
+            "qName": "projfunkAttrForArFlag"
+          },
+          {
+            "key": "/ns4:projectGBO/project/dateEffFundsFlag",
+            "name": "dateEffFundsFlag",
+            "type": "String",
+            "properties": "Optional",
+            "qName": "dateEffFundsFlag"
+          },
+          {
+            "key": "/ns4:projectGBO/project/arRecNotifyFlag",
+            "name": "arRecNotifyFlag",
+            "type": "String",
+            "properties": "Optional",
+            "qName": "arRecNotifyFlag"
+          },
+          {
+            "key": "/ns4:projectGBO/project/autoReleasePwpInv",
+            "name": "autoReleasePwpInv",
+            "type": "String",
+            "properties": "Optional",
+            "qName": "autoReleasePwpInv"
+          },
+          {
+            "key": "/ns4:projectGBO/project/statusChangeComment",
+            "name": "statusChangeComment",
+            "type": "String",
+            "properties": "Optional",
+            "qName": "statusChangeComment"
+          },
+          {
+            "key": "/ns4:projectGBO/project/billLaborAccrual",
+            "name": "billLaborAccrual",
+            "type": "String",
+            "properties": "Optional",
+            "qName": "billLaborAccrual"
+          },
+          {
+            "key": "/ns4:projectGBO/project/adjOnStdInv",
+            "name": "adjOnStdInv",
+            "type": "String",
+            "properties": "Optional",
+            "qName": "adjOnStdInv"
+          },
+          {
+            "key": "/ns4:projectGBO/project/costPlusFixedFeeFlag",
+            "name": "costPlusFixedFeeFlag",
+            "type": "String",
+            "properties": "Optional",
+            "qName": "costPlusFixedFeeFlag"
+          },
+          {
+            "key": "/ns4:projectGBO/project/progressPaymentFlag",
+            "name": "progressPaymentFlag",
+            "type": "String",
+            "properties": "Optional",
+            "qName": "progressPaymentFlag"
+          },
+          {
+            "key": "/ns4:projectGBO/project/billingFundsCheckFcFlag",
+            "name": "billingFundsCheckFcFlag",
+            "type": "String",
+            "properties": "Optional",
+            "qName": "billingFundsCheckFcFlag"
+          },
+          {
+            "key": "/ns4:projectGBO/project/deriveBillingFromOkeFlag",
+            "name": "deriveBillingFromOkeFlag",
+            "type": "String",
+            "properties": "Optional",
+            "qName": "deriveBillingFromOkeFlag"
+          },
+          {
+            "key": "/ns4:projectGBO/project/retentionPercentage",
+            "name": "retentionPercentage",
+            "type": "String",
+            "properties": "Optional",
+            "qName": "retentionPercentage"
+          },
+          {
+            "key": "/ns4:projectGBO/project/ratePercentage",
+            "name": "ratePercentage",
+            "type": "String",
+            "properties": "Optional",
+            "qName": "ratePercentage"
+          },
+          {
+            "key": "/ns4:projectGBO/project/liquidationRatePercentage",
+            "name": "liquidationRatePercentage",
+            "type": "String",
+            "properties": "Optional",
+            "qName": "liquidationRatePercentage"
+          },
+          {
+            "key": "/ns4:projectGBO/project/altLiquidationRatePer",
+            "name": "altLiquidationRatePer",
+            "type": "String",
+            "properties": "Optional",
+            "qName": "altLiquidationRatePer"
+          },
+          {
+            "key": "/ns4:projectGBO/project/witholdAmount",
+            "name": "witholdAmount",
+            "type": "String",
+            "properties": "Optional",
+            "qName": "witholdAmount"
+          },
+          {
+            "key": "/ns4:projectGBO/project/feeRateSchedule",
+            "name": "feeRateSchedule",
+            "type": "String",
+            "properties": "Optional",
+            "qName": "feeRateSchedule"
+          },
+          {
+            "key": "/ns4:projectGBO/project/ovrFeeRateSchedule",
+            "name": "ovrFeeRateSchedule",
+            "type": "String",
+            "properties": "Optional",
+            "qName": "ovrFeeRateSchedule"
+          },
+          {
+            "key": "/ns4:projectGBO/project/feeRevenueSchedule",
+            "name": "feeRevenueSchedule",
+            "type": "String",
+            "properties": "Optional",
+            "qName": "feeRevenueSchedule"
+          },
+          {
+            "key": "/ns4:projectGBO/project/invLineGroup",
+            "name": "invLineGroup",
+            "type": "String",
+            "properties": "Optional",
+            "qName": "invLineGroup"
+          },
+          {
+            "key": "/ns4:projectGBO/project/billGroupName",
+            "name": "billGroupName",
+            "type": "String",
+            "properties": "Optional",
+            "qName": "billGroupName"
+          },
+          {
+            "key": "/ns4:projectGBO/project/feePercentage",
+            "name": "feePercentage",
+            "type": "String",
+            "properties": "Optional",
+            "qName": "feePercentage"
+          },
+          {
+            "key": "/ns4:projectGBO/project/feeRate",
+            "name": "feeRate",
+            "type": "String",
+            "properties": "Optional",
+            "qName": "feeRate"
+          },
+          {
+            "key": "/ns4:projectGBO/project/task",
+            "name": "task",
+            "type": "Complex",
+            "properties": "Optional, Repeating",
+            "children": [
+              {
+                "key": "/ns4:projectGBO/project/task/pmTaskReference",
+                "name": "pmTaskReference",
+                "type": "String",
+                "properties": "Optional",
+                "qName": "pmTaskReference"
+              },
+              {
+                "key": "/ns4:projectGBO/project/task/taskID",
+                "name": "taskID",
+                "type": "String",
+                "properties": "None",
+                "qName": "taskID"
+              },
+              {
+                "key": "/ns4:projectGBO/project/task/taskNumber",
+                "name": "taskNumber",
+                "type": "String",
+                "properties": "Optional",
+                "qName": "taskNumber"
+              },
+              {
+                "key": "/ns4:projectGBO/project/task/taskName",
+                "name": "taskName",
+                "type": "String",
+                "properties": "None",
+                "qName": "taskName"
+              },
+              {
+                "key": "/ns4:projectGBO/project/task/taskLongName",
+                "name": "taskLongName",
+                "type": "String",
+                "properties": "Optional",
+                "qName": "taskLongName"
+              },
+              {
+                "key": "/ns4:projectGBO/project/task/taskManager",
+                "name": "taskManager",
+                "type": "String",
+                "properties": "None",
+                "qName": "taskManager"
+              },
+              {
+                "key": "/ns4:projectGBO/project/task/description",
+                "name": "description",
+                "type": "String",
+                "properties": "None",
+                "qName": "description"
+              },
+              {
+                "key": "/ns4:projectGBO/project/task/startDate",
+                "name": "startDate",
+                "type": "String",
+                "properties": "None",
+                "qName": "startDate"
+              },
+              {
+                "key": "/ns4:projectGBO/project/task/endDate",
+                "name": "endDate",
+                "type": "String",
+                "properties": "None",
+                "qName": "endDate"
+              },
+              {
+                "key": "/ns4:projectGBO/project/task/billableFlag",
+                "name": "billableFlag",
+                "type": "String",
+                "properties": "Optional",
+                "qName": "billableFlag"
+              },
+              {
+                "key": "/ns4:projectGBO/project/task/chargeableFlag",
+                "name": "chargeableFlag",
+                "type": "String",
+                "properties": "Optional",
+                "qName": "chargeableFlag"
+              },
+              {
+                "key": "/ns4:projectGBO/project/task/pmParentReference",
+                "name": "pmParentReference",
+                "type": "String",
+                "properties": "Optional",
+                "qName": "pmParentReference"
+              },
+              {
+                "key": "/ns4:projectGBO/project/task/paParentTaskId",
+                "name": "paParentTaskId",
+                "type": "String",
+                "properties": "Optional",
+                "qName": "paParentTaskId"
+              },
+              {
+                "key": "/ns4:projectGBO/project/task/addressId",
+                "name": "addressId",
+                "type": "String",
+                "properties": "Optional",
+                "qName": "addressId"
+              },
+              {
+                "key": "/ns4:projectGBO/project/task/carryingOutOrganisationId",
+                "name": "carryingOutOrganisationId",
+                "type": "String",
+                "properties": "Optional",
+                "qName": "carryingOutOrganisationId"
+              },
+              {
+                "key": "/ns4:projectGBO/project/task/serviceTypeCode",
+                "name": "serviceTypeCode",
+                "type": "String",
+                "properties": "Optional",
+                "qName": "serviceTypeCode"
+              },
+              {
+                "key": "/ns4:projectGBO/project/task/readyToBillFlag",
+                "name": "readyToBillFlag",
+                "type": "String",
+                "properties": "Optional",
+                "qName": "readyToBillFlag"
+              },
+              {
+                "key": "/ns4:projectGBO/project/task/readyToDistributeFlag",
+                "name": "readyToDistributeFlag",
+                "type": "String",
+                "properties": "Optional",
+                "qName": "readyToDistributeFlag"
+              },
+              {
+                "key": "/ns4:projectGBO/project/task/limitToTxnControlsFlag",
+                "name": "limitToTxnControlsFlag",
+                "type": "String",
+                "properties": "Optional",
+                "qName": "limitToTxnControlsFlag"
+              },
+              {
+                "key": "/ns4:projectGBO/project/task/laborBillRateOrgId",
+                "name": "laborBillRateOrgId",
+                "type": "String",
+                "properties": "Optional",
+                "qName": "laborBillRateOrgId"
+              },
+              {
+                "key": "/ns4:projectGBO/project/task/laborStdBillRateSchdl",
+                "name": "laborStdBillRateSchdl",
+                "type": "String",
+                "properties": "Optional",
+                "qName": "laborStdBillRateSchdl"
+              },
+              {
+                "key": "/ns4:projectGBO/project/task/laborScheduleFixedDate",
+                "name": "laborScheduleFixedDate",
+                "type": "String",
+                "properties": "Optional",
+                "qName": "laborScheduleFixedDate"
+              },
+              {
+                "key": "/ns4:projectGBO/project/task/laborScheduleDiscount",
+                "name": "laborScheduleDiscount",
+                "type": "String",
+                "properties": "Optional",
+                "qName": "laborScheduleDiscount"
+              },
+              {
+                "key": "/ns4:projectGBO/project/task/nonLaborBillRateOrgId",
+                "name": "nonLaborBillRateOrgId",
+                "type": "String",
+                "properties": "Optional",
+                "qName": "nonLaborBillRateOrgId"
+              },
+              {
+                "key": "/ns4:projectGBO/project/task/nonlaborStdBillRateSchdl",
+                "name": "nonlaborStdBillRateSchdl",
+                "type": "String",
+                "properties": "Optional",
+                "qName": "nonlaborStdBillRateSchdl"
+              },
+              {
+                "key": "/ns4:projectGBO/project/task/nonlaborScheduleFixedDate",
+                "name": "nonlaborScheduleFixedDate",
+                "type": "String",
+                "properties": "Optional",
+                "qName": "nonlaborScheduleFixedDate"
+              },
+              {
+                "key": "/ns4:projectGBO/project/task/nonlaborScheduleDiscount",
+                "name": "nonlaborScheduleDiscount",
+                "type": "String",
+                "properties": "Optional",
+                "qName": "nonlaborScheduleDiscount"
+              },
+              {
+                "key": "/ns4:projectGBO/project/task/laborCostMultiplierName",
+                "name": "laborCostMultiplierName",
+                "type": "String",
+                "properties": "Optional",
+                "qName": "laborCostMultiplierName"
+              },
+              {
+                "key": "/ns4:projectGBO/project/task/costIndRateSchId",
+                "name": "costIndRateSchId",
+                "type": "String",
+                "properties": "Optional",
+                "qName": "costIndRateSchId"
+              },
+              {
+                "key": "/ns4:projectGBO/project/task/revIndRateSchId",
+                "name": "revIndRateSchId",
+                "type": "String",
+                "properties": "Optional",
+                "qName": "revIndRateSchId"
+              },
+              {
+                "key": "/ns4:projectGBO/project/task/InvIndrateSchId",
+                "name": "InvIndrateSchId",
+                "type": "String",
+                "properties": "Optional",
+                "qName": "InvIndrateSchId"
+              },
+              {
+                "key": "/ns4:projectGBO/project/task/costIndSchFixedDate",
+                "name": "costIndSchFixedDate",
+                "type": "String",
+                "properties": "Optional",
+                "qName": "costIndSchFixedDate"
+              },
+              {
+                "key": "/ns4:projectGBO/project/task/revIndSchFixedDate",
+                "name": "revIndSchFixedDate",
+                "type": "String",
+                "properties": "Optional",
+                "qName": "revIndSchFixedDate"
+              },
+              {
+                "key": "/ns4:projectGBO/project/task/invIndSchFixedDate",
+                "name": "invIndSchFixedDate",
+                "type": "String",
+                "properties": "Optional",
+                "qName": "invIndSchFixedDate"
+              },
+              {
+                "key": "/ns4:projectGBO/project/task/laborSchType",
+                "name": "laborSchType",
+                "type": "String",
+                "properties": "Optional",
+                "qName": "laborSchType"
+              },
+              {
+                "key": "/ns4:projectGBO/project/task/nonLaborSchType",
+                "name": "nonLaborSchType",
+                "type": "String",
+                "properties": "Optional",
+                "qName": "nonLaborSchType"
+              },
+              {
+                "key": "/ns4:projectGBO/project/task/actualStartDate",
+                "name": "actualStartDate",
+                "type": "String",
+                "properties": "Optional",
+                "qName": "actualStartDate"
+              },
+              {
+                "key": "/ns4:projectGBO/project/task/actualFinishDate",
+                "name": "actualFinishDate",
+                "type": "String",
+                "properties": "Optional",
+                "qName": "actualFinishDate"
+              },
+              {
+                "key": "/ns4:projectGBO/project/task/earlyStartDate",
+                "name": "earlyStartDate",
+                "type": "String",
+                "properties": "Optional",
+                "qName": "earlyStartDate"
+              },
+              {
+                "key": "/ns4:projectGBO/project/task/earlyFinishDate",
+                "name": "earlyFinishDate",
+                "type": "String",
+                "properties": "Optional",
+                "qName": "earlyFinishDate"
+              },
+              {
+                "key": "/ns4:projectGBO/project/task/lateStartDate",
+                "name": "lateStartDate",
+                "type": "String",
+                "properties": "Optional",
+                "qName": "lateStartDate"
+              },
+              {
+                "key": "/ns4:projectGBO/project/task/lateFinishDate",
+                "name": "lateFinishDate",
+                "type": "String",
+                "properties": "Optional",
+                "qName": "lateFinishDate"
+              },
+              {
+                "key": "/ns4:projectGBO/project/task/scheduledStartDate",
+                "name": "scheduledStartDate",
+                "type": "String",
+                "properties": "Optional",
+                "qName": "scheduledStartDate"
+              },
+              {
+                "key": "/ns4:projectGBO/project/task/scheduledFinishDate",
+                "name": "scheduledFinishDate",
+                "type": "String",
+                "properties": "Optional",
+                "qName": "scheduledFinishDate"
+              },
+              {
+                "key": "/ns4:projectGBO/project/task/attribute1",
+                "name": "attribute1",
+                "type": "String",
+                "properties": "Optional",
+                "qName": "attribute1"
+              },
+              {
+                "key": "/ns4:projectGBO/project/task/attribute2",
+                "name": "attribute2",
+                "type": "String",
+                "properties": "Optional",
+                "qName": "attribute2"
+              },
+              {
+                "key": "/ns4:projectGBO/project/task/plObject",
+                "name": "plObject",
+                "type": "String",
+                "properties": "Optional",
+                "qName": "plObject"
+              },
+              {
+                "key": "/ns4:projectGBO/project/task/serviceCode",
+                "name": "serviceCode",
+                "type": "String",
+                "properties": "Optional",
+                "qName": "serviceCode"
+              },
+              {
+                "key": "/ns4:projectGBO/project/task/projectCustomerContact",
+                "name": "projectCustomerContact",
+                "type": "String",
+                "properties": "Optional",
+                "qName": "projectCustomerContact"
+              },
+              {
+                "key": "/ns4:projectGBO/project/task/invoiceCustomerContact",
+                "name": "invoiceCustomerContact",
+                "type": "String",
+                "properties": "Optional",
+                "qName": "invoiceCustomerContact"
+              },
+              {
+                "key": "/ns4:projectGBO/project/task/attribute7",
+                "name": "attribute7",
+                "type": "String",
+                "properties": "Optional",
+                "qName": "attribute7"
+              },
+              {
+                "key": "/ns4:projectGBO/project/task/attribute8",
+                "name": "attribute8",
+                "type": "String",
+                "properties": "Optional",
+                "qName": "attribute8"
+              },
+              {
+                "key": "/ns4:projectGBO/project/task/attribute9",
+                "name": "attribute9",
+                "type": "String",
+                "properties": "Optional",
+                "qName": "attribute9"
+              },
+              {
+                "key": "/ns4:projectGBO/project/task/attribute10",
+                "name": "attribute10",
+                "type": "String",
+                "properties": "Optional",
+                "qName": "attribute10"
+              },
+              {
+                "key": "/ns4:projectGBO/project/task/attribute11",
+                "name": "attribute11",
+                "type": "String",
+                "properties": "Optional",
+                "qName": "attribute11"
+              },
+              {
+                "key": "/ns4:projectGBO/project/task/attribute12",
+                "name": "attribute12",
+                "type": "String",
+                "properties": "Optional",
+                "qName": "attribute12"
+              },
+              {
+                "key": "/ns4:projectGBO/project/task/attribute13",
+                "name": "attribute13",
+                "type": "String",
+                "properties": "Optional",
+                "qName": "attribute13"
+              },
+              {
+                "key": "/ns4:projectGBO/project/task/attribute14",
+                "name": "attribute14",
+                "type": "String",
+                "properties": "Optional",
+                "qName": "attribute14"
+              },
+              {
+                "key": "/ns4:projectGBO/project/task/attribute15",
+                "name": "attribute15",
+                "type": "String",
+                "properties": "Optional",
+                "qName": "attribute15"
+              },
+              {
+                "key": "/ns4:projectGBO/project/task/allowCrossChargeFlag",
+                "name": "allowCrossChargeFlag",
+                "type": "String",
+                "properties": "Optional",
+                "qName": "allowCrossChargeFlag"
+              },
+              {
+                "key": "/ns4:projectGBO/project/task/projectRateDate",
+                "name": "projectRateDate",
+                "type": "String",
+                "properties": "Optional",
+                "qName": "projectRateDate"
+              },
+              {
+                "key": "/ns4:projectGBO/project/task/projectRateType",
+                "name": "projectRateType",
+                "type": "String",
+                "properties": "Optional",
+                "qName": "projectRateType"
+              },
+              {
+                "key": "/ns4:projectGBO/project/task/ccProcessLaborFlag",
+                "name": "ccProcessLaborFlag",
+                "type": "String",
+                "properties": "Optional",
+                "qName": "ccProcessLaborFlag"
+              },
+              {
+                "key": "/ns4:projectGBO/project/task/laborTpScheduleId",
+                "name": "laborTpScheduleId",
+                "type": "String",
+                "properties": "Optional",
+                "qName": "laborTpScheduleId"
+              },
+              {
+                "key": "/ns4:projectGBO/project/task/laborTpFixedDate",
+                "name": "laborTpFixedDate",
+                "type": "String",
+                "properties": "Optional",
+                "qName": "laborTpFixedDate"
+              },
+              {
+                "key": "/ns4:projectGBO/project/task/ccProcessNlFlag",
+                "name": "ccProcessNlFlag",
+                "type": "String",
+                "properties": "Optional",
+                "qName": "ccProcessNlFlag"
+              },
+              {
+                "key": "/ns4:projectGBO/project/task/nlTpScheduleId",
+                "name": "nlTpScheduleId",
+                "type": "String",
+                "properties": "Optional",
+                "qName": "nlTpScheduleId"
+              },
+              {
+                "key": "/ns4:projectGBO/project/task/nlTpFixedDate",
+                "name": "nlTpFixedDate",
+                "type": "String",
+                "properties": "Optional",
+                "qName": "nlTpFixedDate"
+              },
+              {
+                "key": "/ns4:projectGBO/project/task/iclaborTpScheduleId",
+                "name": "iclaborTpScheduleId",
+                "type": "String",
+                "properties": "Optional",
+                "qName": "iclaborTpScheduleId"
+              },
+              {
+                "key": "/ns4:projectGBO/project/task/icLaborTpFixedDate",
+                "name": "icLaborTpFixedDate",
+                "type": "String",
+                "properties": "Optional",
+                "qName": "icLaborTpFixedDate"
+              },
+              {
+                "key": "/ns4:projectGBO/project/task/icNlTpScheduleId",
+                "name": "icNlTpScheduleId",
+                "type": "String",
+                "properties": "Optional",
+                "qName": "icNlTpScheduleId"
+              },
+              {
+                "key": "/ns4:projectGBO/project/task/icNlTpFixedDate",
+                "name": "icNlTpFixedDate",
+                "type": "String",
+                "properties": "Optional",
+                "qName": "icNlTpFixedDate"
+              },
+              {
+                "key": "/ns4:projectGBO/project/task/receiveProjectInvoiceFlag",
+                "name": "receiveProjectInvoiceFlag",
+                "type": "String",
+                "properties": "Optional",
+                "qName": "receiveProjectInvoiceFlag"
+              },
+              {
+                "key": "/ns4:projectGBO/project/task/workTypeId",
+                "name": "workTypeId",
+                "type": "String",
+                "properties": "Optional",
+                "qName": "workTypeId"
+              },
+              {
+                "key": "/ns4:projectGBO/project/task/empBillRateScheduleId",
+                "name": "empBillRateScheduleId",
+                "type": "String",
+                "properties": "Optional",
+                "qName": "empBillRateScheduleId"
+              },
+              {
+                "key": "/ns4:projectGBO/project/task/jobBillRateScheduleId",
+                "name": "jobBillRateScheduleId",
+                "type": "String",
+                "properties": "Optional",
+                "qName": "jobBillRateScheduleId"
+              },
+              {
+                "key": "/ns4:projectGBO/project/task/nonLabStdBillRtSchId",
+                "name": "nonLabStdBillRtSchId",
+                "type": "String",
+                "properties": "Optional",
+                "qName": "nonLabStdBillRtSchId"
+              },
+              {
+                "key": "/ns4:projectGBO/project/task/taskfuncCostRateType",
+                "name": "taskfuncCostRateType",
+                "type": "String",
+                "properties": "Optional",
+                "qName": "taskfuncCostRateType"
+              },
+              {
+                "key": "/ns4:projectGBO/project/task/taskfuncCostRateDate",
+                "name": "taskfuncCostRateDate",
+                "type": "String",
+                "properties": "Optional",
+                "qName": "taskfuncCostRateDate"
+              },
+              {
+                "key": "/ns4:projectGBO/project/task/displaySequence",
+                "name": "displaySequence",
+                "type": "String",
+                "properties": "Optional",
+                "qName": "displaySequence"
+              },
+              {
+                "key": "/ns4:projectGBO/project/task/wbsLevel",
+                "name": "wbsLevel",
+                "type": "String",
+                "properties": "Optional",
+                "qName": "wbsLevel"
+              },
+              {
+                "key": "/ns4:projectGBO/project/task/obligationStartDate",
+                "name": "obligationStartDate",
+                "type": "String",
+                "properties": "Optional",
+                "qName": "obligationStartDate"
+              },
+              {
+                "key": "/ns4:projectGBO/project/task/obligationFinishDate",
+                "name": "obligationFinishDate",
+                "type": "String",
+                "properties": "Optional",
+                "qName": "obligationFinishDate"
+              },
+              {
+                "key": "/ns4:projectGBO/project/task/estimatedStartDate",
+                "name": "estimatedStartDate",
+                "type": "String",
+                "properties": "Optional",
+                "qName": "estimatedStartDate"
+              },
+              {
+                "key": "/ns4:projectGBO/project/task/estimatedFinishDate",
+                "name": "estimatedFinishDate",
+                "type": "String",
+                "properties": "Optional",
+                "qName": "estimatedFinishDate"
+              },
+              {
+                "key": "/ns4:projectGBO/project/task/baselineStartDate",
+                "name": "baselineStartDate",
+                "type": "String",
+                "properties": "Optional",
+                "qName": "baselineStartDate"
+              },
+              {
+                "key": "/ns4:projectGBO/project/task/baselineFinishDate",
+                "name": "baselineFinishDate",
+                "type": "String",
+                "properties": "Optional",
+                "qName": "baselineFinishDate"
+              },
+              {
+                "key": "/ns4:projectGBO/project/task/closedDate",
+                "name": "closedDate",
+                "type": "String",
+                "properties": "Optional",
+                "qName": "closedDate"
+              },
+              {
+                "key": "/ns4:projectGBO/project/task/wqUomCode",
+                "name": "wqUomCode",
+                "type": "String",
+                "properties": "Optional",
+                "qName": "wqUomCode"
+              },
+              {
+                "key": "/ns4:projectGBO/project/task/wqItemCode",
+                "name": "wqItemCode",
+                "type": "String",
+                "properties": "Optional",
+                "qName": "wqItemCode"
+              },
+              {
+                "key": "/ns4:projectGBO/project/task/statusCode",
+                "name": "statusCode",
+                "type": "String",
+                "properties": "Optional",
+                "qName": "statusCode"
+              },
+              {
+                "key": "/ns4:projectGBO/project/task/wfStatusCode",
+                "name": "wfStatusCode",
+                "type": "String",
+                "properties": "Optional",
+                "qName": "wfStatusCode"
+              },
+              {
+                "key": "/ns4:projectGBO/project/task/pmSourceCode",
+                "name": "pmSourceCode",
+                "type": "String",
+                "properties": "Optional",
+                "qName": "pmSourceCode"
+              },
+              {
+                "key": "/ns4:projectGBO/project/task/priorityCode",
+                "name": "priorityCode",
+                "type": "String",
+                "properties": "Optional",
+                "qName": "priorityCode"
+              },
+              {
+                "key": "/ns4:projectGBO/project/task/milestoneFlag",
+                "name": "milestoneFlag",
+                "type": "String",
+                "properties": "Optional",
+                "qName": "milestoneFlag"
+              },
+              {
+                "key": "/ns4:projectGBO/project/task/criticalFlag",
+                "name": "criticalFlag",
+                "type": "String",
+                "properties": "Optional",
+                "qName": "criticalFlag"
+              },
+              {
+                "key": "/ns4:projectGBO/project/task/incProjProgressFlag",
+                "name": "incProjProgressFlag",
+                "type": "String",
+                "properties": "Optional",
+                "qName": "incProjProgressFlag"
+              },
+              {
+                "key": "/ns4:projectGBO/project/task/linkTaskFlag",
+                "name": "linkTaskFlag",
+                "type": "String",
+                "properties": "Optional",
+                "qName": "linkTaskFlag"
+              },
+              {
+                "key": "/ns4:projectGBO/project/task/calendarId",
+                "name": "calendarId",
+                "type": "String",
+                "properties": "Optional",
+                "qName": "calendarId"
+              },
+              {
+                "key": "/ns4:projectGBO/project/task/plannedEffort",
+                "name": "plannedEffort",
+                "type": "String",
+                "properties": "Optional",
+                "qName": "plannedEffort"
+              },
+              {
+                "key": "/ns4:projectGBO/project/task/duration",
+                "name": "duration",
+                "type": "String",
+                "properties": "Optional",
+                "qName": "duration"
+              },
+              {
+                "key": "/ns4:projectGBO/project/task/plannedWorkQuantity",
+                "name": "plannedWorkQuantity",
+                "type": "String",
+                "properties": "Optional",
+                "qName": "plannedWorkQuantity"
+              },
+              {
+                "key": "/ns4:projectGBO/project/task/taskType",
+                "name": "taskType",
+                "type": "String",
+                "properties": "Optional",
+                "qName": "taskType"
+              },
+              {
+                "key": "/ns4:projectGBO/project/task/laborDiscReasonCode",
+                "name": "laborDiscReasonCode",
+                "type": "String",
+                "properties": "Optional",
+                "qName": "laborDiscReasonCode"
+              },
+              {
+                "key": "/ns4:projectGBO/project/task/nonLaborDiscReasonCode",
+                "name": "nonLaborDiscReasonCode",
+                "type": "String",
+                "properties": "Optional",
+                "qName": "nonLaborDiscReasonCode"
+              },
+              {
+                "key": "/ns4:projectGBO/project/task/retirementCostFlag",
+                "name": "retirementCostFlag",
+                "type": "String",
+                "properties": "Optional",
+                "qName": "retirementCostFlag"
+              },
+              {
+                "key": "/ns4:projectGBO/project/task/cintEligibleFlag",
+                "name": "cintEligibleFlag",
+                "type": "String",
+                "properties": "Optional",
+                "qName": "cintEligibleFlag"
+              },
+              {
+                "key": "/ns4:projectGBO/project/task/cintStopDate",
+                "name": "cintStopDate",
+                "type": "String",
+                "properties": "Optional",
+                "qName": "cintStopDate"
+              },
+              {
+                "key": "/ns4:projectGBO/project/task/predString",
+                "name": "predString",
+                "type": "String",
+                "properties": "Optional",
+                "qName": "predString"
+              },
+              {
+                "key": "/ns4:projectGBO/project/task/predDelimiter",
+                "name": "predDelimiter",
+                "type": "String",
+                "properties": "Optional",
+                "qName": "predDelimiter"
+              },
+              {
+                "key": "/ns4:projectGBO/project/task/basePercentCompDerivCode",
+                "name": "basePercentCompDerivCode",
+                "type": "String",
+                "properties": "Optional",
+                "qName": "basePercentCompDerivCode"
+              },
+              {
+                "key": "/ns4:projectGBO/project/task/schToolTskTypeCode",
+                "name": "schToolTskTypeCode",
+                "type": "String",
+                "properties": "Optional",
+                "qName": "schToolTskTypeCode"
+              },
+              {
+                "key": "/ns4:projectGBO/project/task/constraintTypeCode",
+                "name": "constraintTypeCode",
+                "type": "String",
+                "properties": "Optional",
+                "qName": "constraintTypeCode"
+              },
+              {
+                "key": "/ns4:projectGBO/project/task/constraintDate",
+                "name": "constraintDate",
+                "type": "String",
+                "properties": "Optional",
+                "qName": "constraintDate"
+              },
+              {
+                "key": "/ns4:projectGBO/project/task/freeSlack",
+                "name": "freeSlack",
+                "type": "String",
+                "properties": "Optional",
+                "qName": "freeSlack"
+              },
+              {
+                "key": "/ns4:projectGBO/project/task/totalSlack",
+                "name": "totalSlack",
+                "type": "String",
+                "properties": "Optional",
+                "qName": "totalSlack"
+              },
+              {
+                "key": "/ns4:projectGBO/project/task/effortDrivenFlag",
+                "name": "effortDrivenFlag",
+                "type": "String",
+                "properties": "Optional",
+                "qName": "effortDrivenFlag"
+              },
+              {
+                "key": "/ns4:projectGBO/project/task/levelAssignmentsFlag",
+                "name": "levelAssignmentsFlag",
+                "type": "String",
+                "properties": "Optional",
+                "qName": "levelAssignmentsFlag"
+              },
+              {
+                "key": "/ns4:projectGBO/project/task/invoiceMethod",
+                "name": "invoiceMethod",
+                "type": "String",
+                "properties": "Optional",
+                "qName": "invoiceMethod"
+              },
+              {
+                "key": "/ns4:projectGBO/project/task/customerId",
+                "name": "customerId",
+                "type": "String",
+                "properties": "Optional",
+                "qName": "customerId"
+              },
+              {
+                "key": "/ns4:projectGBO/project/task/genEtcSourceCode",
+                "name": "genEtcSourceCode",
+                "type": "String",
+                "properties": "Optional",
+                "qName": "genEtcSourceCode"
+              },
+              {
+                "key": "/ns4:projectGBO/project/task/financialTaskFlag",
+                "name": "financialTaskFlag",
+                "type": "String",
+                "properties": "Optional",
+                "qName": "financialTaskFlag"
+              },
+              {
+                "key": "/ns4:projectGBO/project/task/mappedTaskId",
+                "name": "mappedTaskId",
+                "type": "String",
+                "properties": "Optional",
+                "qName": "mappedTaskId"
+              },
+              {
+                "key": "/ns4:projectGBO/project/task/mappedTaskReference",
+                "name": "mappedTaskReference",
+                "type": "String",
+                "properties": "Optional",
+                "qName": "mappedTaskReference"
+              },
+              {
+                "key": "/ns4:projectGBO/project/task/deliverable",
+                "name": "deliverable",
+                "type": "String",
+                "properties": "Optional",
+                "qName": "deliverable"
+              },
+              {
+                "key": "/ns4:projectGBO/project/task/deliverableId",
+                "name": "deliverableId",
+                "type": "String",
+                "properties": "Optional",
+                "qName": "deliverableId"
+              },
+              {
+                "key": "/ns4:projectGBO/project/task/extActDuration",
+                "name": "extActDuration",
+                "type": "String",
+                "properties": "Optional",
+                "qName": "extActDuration"
+              },
+              {
+                "key": "/ns4:projectGBO/project/task/extRemainDuration",
+                "name": "extRemainDuration",
+                "type": "String",
+                "properties": "Optional",
+                "qName": "extRemainDuration"
+              },
+              {
+                "key": "/ns4:projectGBO/project/task/extSchDuration",
+                "name": "extSchDuration",
+                "type": "String",
+                "properties": "Optional",
+                "qName": "extSchDuration"
+              },
+              {
+                "key": "/ns4:projectGBO/project/task/etcEffort",
+                "name": "etcEffort",
+                "type": "String",
+                "properties": "Optional",
+                "qName": "etcEffort"
+              },
+              {
+                "key": "/ns4:projectGBO/project/task/percentComplete",
+                "name": "percentComplete",
+                "type": "String",
+                "properties": "Optional",
+                "qName": "percentComplete"
+              },
+              {
+                "key": "/ns4:projectGBO/project/task/adjOnStdInv",
+                "name": "adjOnStdInv",
+                "type": "String",
+                "properties": "Optional",
+                "qName": "adjOnStdInv"
+              },
+              {
+                "key": "/ns4:projectGBO/project/task/costPlusFixedFeeFlag",
+                "name": "costPlusFixedFeeFlag",
+                "type": "String",
+                "properties": "Optional",
+                "qName": "costPlusFixedFeeFlag"
+              },
+              {
+                "key": "/ns4:projectGBO/project/task/progressPaymentFlag",
+                "name": "progressPaymentFlag",
+                "type": "String",
+                "properties": "Optional",
+                "qName": "progressPaymentFlag"
+              },
+              {
+                "key": "/ns4:projectGBO/project/task/retentionPercentage",
+                "name": "retentionPercentage",
+                "type": "String",
+                "properties": "Optional",
+                "qName": "retentionPercentage"
+              },
+              {
+                "key": "/ns4:projectGBO/project/task/ratePercentage",
+                "name": "ratePercentage",
+                "type": "String",
+                "properties": "Optional",
+                "qName": "ratePercentage"
+              },
+              {
+                "key": "/ns4:projectGBO/project/task/liquidationRatePercentage",
+                "name": "liquidationRatePercentage",
+                "type": "String",
+                "properties": "Optional",
+                "qName": "liquidationRatePercentage"
+              },
+              {
+                "key": "/ns4:projectGBO/project/task/altLiquidationRatePer",
+                "name": "altLiquidationRatePer",
+                "type": "String",
+                "properties": "Optional",
+                "qName": "altLiquidationRatePer"
+              },
+              {
+                "key": "/ns4:projectGBO/project/task/witholdAmount",
+                "name": "witholdAmount",
+                "type": "String",
+                "properties": "Optional",
+                "qName": "witholdAmount"
+              },
+              {
+                "key": "/ns4:projectGBO/project/task/feeRateSchedule",
+                "name": "feeRateSchedule",
+                "type": "String",
+                "properties": "Optional",
+                "qName": "feeRateSchedule"
+              },
+              {
+                "key": "/ns4:projectGBO/project/task/ovrFeeRateSchedule",
+                "name": "ovrFeeRateSchedule",
+                "type": "String",
+                "properties": "Optional",
+                "qName": "ovrFeeRateSchedule"
+              },
+              {
+                "key": "/ns4:projectGBO/project/task/feeRevenueSchedule",
+                "name": "feeRevenueSchedule",
+                "type": "String",
+                "properties": "Optional",
+                "qName": "feeRevenueSchedule"
+              },
+              {
+                "key": "/ns4:projectGBO/project/task/invLineGroup",
+                "name": "invLineGroup",
+                "type": "String",
+                "properties": "Optional",
+                "qName": "invLineGroup"
+              },
+              {
+                "key": "/ns4:projectGBO/project/task/billGroupName",
+                "name": "billGroupName",
+                "type": "String",
+                "properties": "Optional",
+                "qName": "billGroupName"
+              },
+              {
+                "key": "/ns4:projectGBO/project/task/feePercentage",
+                "name": "feePercentage",
+                "type": "String",
+                "properties": "Optional",
+                "qName": "feePercentage"
+              },
+              {
+                "key": "/ns4:projectGBO/project/task/feeRate",
+                "name": "feeRate",
+                "type": "String",
+                "properties": "Optional",
+                "qName": "feeRate"
+              },
+              {
+                "key": "/ns4:projectGBO/project/task/billingExtensions",
+                "name": "billingExtensions",
+                "type": "Complex",
+                "properties": "Optional",
+                "children": [
+                  {
+                    "key": "/ns4:projectGBO/project/task/billingExtensions/billingExtension",
+                    "name": "billingExtension",
+                    "type": "Complex",
+                    "properties": "Optional, Repeating",
+                    "children": [
+                      {
+                        "key": "/ns4:projectGBO/project/task/billingExtensions/billingExtension/billingExtName",
+                        "name": "billingExtName",
+                        "type": "String",
+                        "properties": "Optional",
+                        "qName": "billingExtName"
+                      },
+                      {
+                        "key": "/ns4:projectGBO/project/task/billingExtensions/billingExtension/amount",
+                        "name": "amount",
+                        "type": "String",
+                        "properties": "Optional",
+                        "qName": "amount"
+                      },
+                      {
+                        "key": "/ns4:projectGBO/project/task/billingExtensions/billingExtension/percent",
+                        "name": "percent",
+                        "type": "String",
+                        "properties": "Optional",
+                        "qName": "percent"
+                      },
+                      {
+                        "key": "/ns4:projectGBO/project/task/billingExtensions/billingExtension/active",
+                        "name": "active",
+                        "type": "String",
+                        "properties": "Optional",
+                        "qName": "active"
+                      }
+                    ],
+                    "qName": "billingExtension"
+                  }
+                ],
+                "qName": "billingExtensions"
+              },
+              {
+                "key": "/ns4:projectGBO/project/task/nlBillRateOverrides",
+                "name": "nlBillRateOverrides",
+                "type": "Complex",
+                "properties": "Optional",
+                "children": [
+                  {
+                    "key": "/ns4:projectGBO/project/task/nlBillRateOverrides/nlBillRateOverride",
+                    "name": "nlBillRateOverride",
+                    "type": "Complex",
+                    "properties": "Optional, Repeating",
+                    "children": [
+                      {
+                        "key": "/ns4:projectGBO/project/task/nlBillRateOverrides/nlBillRateOverride/nlBillRateOverrideId",
+                        "name": "nlBillRateOverrideId",
+                        "type": "String",
+                        "properties": "None",
+                        "qName": "nlBillRateOverrideId"
+                      },
+                      {
+                        "key": "/ns4:projectGBO/project/task/nlBillRateOverrides/nlBillRateOverride/expenditureType",
+                        "name": "expenditureType",
+                        "type": "String",
+                        "properties": "Optional",
+                        "qName": "expenditureType"
+                      },
+                      {
+                        "key": "/ns4:projectGBO/project/task/nlBillRateOverrides/nlBillRateOverride/nonLaborResource",
+                        "name": "nonLaborResource",
+                        "type": "String",
+                        "properties": "Optional",
+                        "qName": "nonLaborResource"
+                      },
+                      {
+                        "key": "/ns4:projectGBO/project/task/nlBillRateOverrides/nlBillRateOverride/markupPercentage",
+                        "name": "markupPercentage",
+                        "type": "String",
+                        "properties": "Optional",
+                        "qName": "markupPercentage"
+                      },
+                      {
+                        "key": "/ns4:projectGBO/project/task/nlBillRateOverrides/nlBillRateOverride/billRate",
+                        "name": "billRate",
+                        "type": "String",
+                        "properties": "Optional",
+                        "qName": "billRate"
+                      },
+                      {
+                        "key": "/ns4:projectGBO/project/task/nlBillRateOverrides/nlBillRateOverride/startDateActive",
+                        "name": "startDateActive",
+                        "type": "String",
+                        "properties": "Optional",
+                        "qName": "startDateActive"
+                      },
+                      {
+                        "key": "/ns4:projectGBO/project/task/nlBillRateOverrides/nlBillRateOverride/endDateActive",
+                        "name": "endDateActive",
+                        "type": "String",
+                        "properties": "Optional",
+                        "qName": "endDateActive"
+                      },
+                      {
+                        "key": "/ns4:projectGBO/project/task/nlBillRateOverrides/nlBillRateOverride/rateCurrencyCode",
+                        "name": "rateCurrencyCode",
+                        "type": "String",
+                        "properties": "Optional",
+                        "qName": "rateCurrencyCode"
+                      },
+                      {
+                        "key": "/ns4:projectGBO/project/task/nlBillRateOverrides/nlBillRateOverride/discountPercentage",
+                        "name": "discountPercentage",
+                        "type": "String",
+                        "properties": "Optional",
+                        "qName": "discountPercentage"
+                      },
+                      {
+                        "key": "/ns4:projectGBO/project/task/nlBillRateOverrides/nlBillRateOverride/rateDiscReasonCode",
+                        "name": "rateDiscReasonCode",
+                        "type": "String",
+                        "properties": "Optional",
+                        "qName": "rateDiscReasonCode"
+                      }
+                    ],
+                    "qName": "nlBillRateOverride"
+                  }
+                ],
+                "qName": "nlBillRateOverrides"
+              },
+              {
+                "key": "/ns4:projectGBO/project/task/empBillRateOverrides",
+                "name": "empBillRateOverrides",
+                "type": "Complex",
+                "properties": "Optional",
+                "children": [
+                  {
+                    "key": "/ns4:projectGBO/project/task/empBillRateOverrides/empBillRateOverride",
+                    "name": "empBillRateOverride",
+                    "type": "Complex",
+                    "properties": "Optional, Repeating",
+                    "children": [
+                      {
+                        "key": "/ns4:projectGBO/project/task/empBillRateOverrides/empBillRateOverride/empBillRateOverrideId",
+                        "name": "empBillRateOverrideId",
+                        "type": "String",
+                        "properties": "None",
+                        "qName": "empBillRateOverrideId"
+                      },
+                      {
+                        "key": "/ns4:projectGBO/project/task/empBillRateOverrides/empBillRateOverride/personId",
+                        "name": "personId",
+                        "type": "String",
+                        "properties": "Optional",
+                        "qName": "personId"
+                      },
+                      {
+                        "key": "/ns4:projectGBO/project/task/empBillRateOverrides/empBillRateOverride/rate",
+                        "name": "rate",
+                        "type": "String",
+                        "properties": "Optional",
+                        "qName": "rate"
+                      },
+                      {
+                        "key": "/ns4:projectGBO/project/task/empBillRateOverrides/empBillRateOverride/billRateUnit",
+                        "name": "billRateUnit",
+                        "type": "String",
+                        "properties": "Optional",
+                        "qName": "billRateUnit"
+                      },
+                      {
+                        "key": "/ns4:projectGBO/project/task/empBillRateOverrides/empBillRateOverride/startDateActive",
+                        "name": "startDateActive",
+                        "type": "String",
+                        "properties": "Optional",
+                        "qName": "startDateActive"
+                      },
+                      {
+                        "key": "/ns4:projectGBO/project/task/empBillRateOverrides/empBillRateOverride/endDateActive",
+                        "name": "endDateActive",
+                        "type": "String",
+                        "properties": "Optional",
+                        "qName": "endDateActive"
+                      },
+                      {
+                        "key": "/ns4:projectGBO/project/task/empBillRateOverrides/empBillRateOverride/rateCurrencyCode",
+                        "name": "rateCurrencyCode",
+                        "type": "String",
+                        "properties": "Optional",
+                        "qName": "rateCurrencyCode"
+                      },
+                      {
+                        "key": "/ns4:projectGBO/project/task/empBillRateOverrides/empBillRateOverride/discountPercentage",
+                        "name": "discountPercentage",
+                        "type": "String",
+                        "properties": "Optional",
+                        "qName": "discountPercentage"
+                      },
+                      {
+                        "key": "/ns4:projectGBO/project/task/empBillRateOverrides/empBillRateOverride/rateDiscReasonCode",
+                        "name": "rateDiscReasonCode",
+                        "type": "String",
+                        "properties": "Optional",
+                        "qName": "rateDiscReasonCode"
+                      }
+                    ],
+                    "qName": "empBillRateOverride"
+                  }
+                ],
+                "qName": "empBillRateOverrides"
+              },
+              {
+                "key": "/ns4:projectGBO/project/task/jobAssignmentOverrides",
+                "name": "jobAssignmentOverrides",
+                "type": "Complex",
+                "properties": "Optional",
+                "children": [
+                  {
+                    "key": "/ns4:projectGBO/project/task/jobAssignmentOverrides/jobAssignmentOverride",
+                    "name": "jobAssignmentOverride",
+                    "type": "Complex",
+                    "properties": "Optional, Repeating",
+                    "children": [
+                      {
+                        "key": "/ns4:projectGBO/project/task/jobAssignmentOverrides/jobAssignmentOverride/jobAssignmentOverrideId",
+                        "name": "jobAssignmentOverrideId",
+                        "type": "String",
+                        "properties": "None",
+                        "qName": "jobAssignmentOverrideId"
+                      },
+                      {
+                        "key": "/ns4:projectGBO/project/task/jobAssignmentOverrides/jobAssignmentOverride/personId",
+                        "name": "personId",
+                        "type": "String",
+                        "properties": "Optional",
+                        "qName": "personId"
+                      },
+                      {
+                        "key": "/ns4:projectGBO/project/task/jobAssignmentOverrides/jobAssignmentOverride/startDateActive",
+                        "name": "startDateActive",
+                        "type": "String",
+                        "properties": "Optional",
+                        "qName": "startDateActive"
+                      },
+                      {
+                        "key": "/ns4:projectGBO/project/task/jobAssignmentOverrides/jobAssignmentOverride/endDateActive",
+                        "name": "endDateActive",
+                        "type": "String",
+                        "properties": "Optional",
+                        "qName": "endDateActive"
+                      },
+                      {
+                        "key": "/ns4:projectGBO/project/task/jobAssignmentOverrides/jobAssignmentOverride/billingTitle",
+                        "name": "billingTitle",
+                        "type": "String",
+                        "properties": "Optional",
+                        "qName": "billingTitle"
+                      },
+                      {
+                        "key": "/ns4:projectGBO/project/task/jobAssignmentOverrides/jobAssignmentOverride/jobId",
+                        "name": "jobId",
+                        "type": "String",
+                        "properties": "Optional",
+                        "qName": "jobId"
+                      }
+                    ],
+                    "qName": "jobAssignmentOverride"
+                  }
+                ],
+                "qName": "jobAssignmentOverrides"
+              },
+              {
+                "key": "/ns4:projectGBO/project/task/jobBillTitleOverrides",
+                "name": "jobBillTitleOverrides",
+                "type": "Complex",
+                "properties": "Optional",
+                "children": [
+                  {
+                    "key": "/ns4:projectGBO/project/task/jobBillTitleOverrides/jobBillTitleOverride",
+                    "name": "jobBillTitleOverride",
+                    "type": "Complex",
+                    "properties": "Optional, Repeating",
+                    "children": [
+                      {
+                        "key": "/ns4:projectGBO/project/task/jobBillTitleOverrides/jobBillTitleOverride/jobBillTitleOverrideId",
+                        "name": "jobBillTitleOverrideId",
+                        "type": "String",
+                        "properties": "Optional",
+                        "qName": "jobBillTitleOverrideId"
+                      },
+                      {
+                        "key": "/ns4:projectGBO/project/task/jobBillTitleOverrides/jobBillTitleOverride/jobId",
+                        "name": "jobId",
+                        "type": "String",
+                        "properties": "None",
+                        "qName": "jobId"
+                      },
+                      {
+                        "key": "/ns4:projectGBO/project/task/jobBillTitleOverrides/jobBillTitleOverride/startDateActive",
+                        "name": "startDateActive",
+                        "type": "String",
+                        "properties": "Optional",
+                        "qName": "startDateActive"
+                      },
+                      {
+                        "key": "/ns4:projectGBO/project/task/jobBillTitleOverrides/jobBillTitleOverride/endDateActive",
+                        "name": "endDateActive",
+                        "type": "String",
+                        "properties": "None",
+                        "qName": "endDateActive"
+                      },
+                      {
+                        "key": "/ns4:projectGBO/project/task/jobBillTitleOverrides/jobBillTitleOverride/billingTitle",
+                        "name": "billingTitle",
+                        "type": "String",
+                        "properties": "None",
+                        "qName": "billingTitle"
+                      }
+                    ],
+                    "qName": "jobBillTitleOverride"
+                  }
+                ],
+                "qName": "jobBillTitleOverrides"
+              },
+              {
+                "key": "/ns4:projectGBO/project/task/jobBillRateOverrides",
+                "name": "jobBillRateOverrides",
+                "type": "Complex",
+                "properties": "Optional",
+                "children": [
+                  {
+                    "key": "/ns4:projectGBO/project/task/jobBillRateOverrides/jobBillRateOverride",
+                    "name": "jobBillRateOverride",
+                    "type": "Complex",
+                    "properties": "Optional, Repeating",
+                    "children": [
+                      {
+                        "key": "/ns4:projectGBO/project/task/jobBillRateOverrides/jobBillRateOverride/jobBillRateOverrideId",
+                        "name": "jobBillRateOverrideId",
+                        "type": "String",
+                        "properties": "Optional",
+                        "qName": "jobBillRateOverrideId"
+                      },
+                      {
+                        "key": "/ns4:projectGBO/project/task/jobBillRateOverrides/jobBillRateOverride/jobId",
+                        "name": "jobId",
+                        "type": "String",
+                        "properties": "None",
+                        "qName": "jobId"
+                      },
+                      {
+                        "key": "/ns4:projectGBO/project/task/jobBillRateOverrides/jobBillRateOverride/startDateActive",
+                        "name": "startDateActive",
+                        "type": "String",
+                        "properties": "None",
+                        "qName": "startDateActive"
+                      },
+                      {
+                        "key": "/ns4:projectGBO/project/task/jobBillRateOverrides/jobBillRateOverride/endDateActive",
+                        "name": "endDateActive",
+                        "type": "String",
+                        "properties": "Optional",
+                        "qName": "endDateActive"
+                      },
+                      {
+                        "key": "/ns4:projectGBO/project/task/jobBillRateOverrides/jobBillRateOverride/rate",
+                        "name": "rate",
+                        "type": "String",
+                        "properties": "None",
+                        "qName": "rate"
+                      },
+                      {
+                        "key": "/ns4:projectGBO/project/task/jobBillRateOverrides/jobBillRateOverride/billRateUnit",
+                        "name": "billRateUnit",
+                        "type": "String",
+                        "properties": "Optional",
+                        "qName": "billRateUnit"
+                      },
+                      {
+                        "key": "/ns4:projectGBO/project/task/jobBillRateOverrides/jobBillRateOverride/rateCurrencyCode",
+                        "name": "rateCurrencyCode",
+                        "type": "String",
+                        "properties": "Optional",
+                        "qName": "rateCurrencyCode"
+                      },
+                      {
+                        "key": "/ns4:projectGBO/project/task/jobBillRateOverrides/jobBillRateOverride/discountPercentage",
+                        "name": "discountPercentage",
+                        "type": "String",
+                        "properties": "Optional",
+                        "qName": "discountPercentage"
+                      },
+                      {
+                        "key": "/ns4:projectGBO/project/task/jobBillRateOverrides/jobBillRateOverride/rateDiscReasonCode",
+                        "name": "rateDiscReasonCode",
+                        "type": "String",
+                        "properties": "Optional",
+                        "qName": "rateDiscReasonCode"
+                      }
+                    ],
+                    "qName": "jobBillRateOverride"
+                  }
+                ],
+                "qName": "jobBillRateOverrides"
+              }
+            ],
+            "qName": "task"
+          },
+          {
+            "key": "/ns4:projectGBO/project/customerReference",
+            "name": "customerReference",
+            "type": "Complex",
+            "properties": "Optional, Repeating",
+            "children": [
+              {
+                "key": "/ns4:projectGBO/project/customerReference/source_customerID",
+                "name": "source_customerID",
+                "type": "String",
+                "properties": "None",
+                "qName": "source_customerID"
+              },
+              {
+                "key": "/ns4:projectGBO/project/customerReference/billToAddressID",
+                "name": "billToAddressID",
+                "type": "String",
+                "properties": "None",
+                "qName": "billToAddressID"
+              },
+              {
+                "key": "/ns4:projectGBO/project/customerReference/shipToAddressID",
+                "name": "shipToAddressID",
+                "type": "String",
+                "properties": "None",
+                "qName": "shipToAddressID"
+              },
+              {
+                "key": "/ns4:projectGBO/project/customerReference/projectRelationshipCode",
+                "name": "projectRelationshipCode",
+                "type": "String",
+                "properties": "None",
+                "qName": "projectRelationshipCode"
+              },
+              {
+                "key": "/ns4:projectGBO/project/customerReference/DNVGL_ID",
+                "name": "DNVGL_ID",
+                "type": "String",
+                "properties": "None",
+                "qName": "DNVGL_ID"
+              },
+              {
+                "key": "/ns4:projectGBO/project/customerReference/MDM_ID",
+                "name": "MDM_ID",
+                "type": "String",
+                "properties": "None",
+                "qName": "MDM_ID"
+              },
+              {
+                "key": "/ns4:projectGBO/project/customerReference/ContactFirstName",
+                "name": "ContactFirstName",
+                "type": "String",
+                "properties": "Optional",
+                "qName": "ContactFirstName"
+              },
+              {
+                "key": "/ns4:projectGBO/project/customerReference/ContactLastName",
+                "name": "ContactLastName",
+                "type": "String",
+                "properties": "Optional",
+                "qName": "ContactLastName"
+              },
+              {
+                "key": "/ns4:projectGBO/project/customerReference/InvoiceCustomerFirstName",
+                "name": "InvoiceCustomerFirstName",
+                "type": "String",
+                "properties": "Optional",
+                "qName": "InvoiceCustomerFirstName"
+              },
+              {
+                "key": "/ns4:projectGBO/project/customerReference/InvoiceCustomerLastName",
+                "name": "InvoiceCustomerLastName",
+                "type": "String",
+                "properties": "Optional",
+                "qName": "InvoiceCustomerLastName"
+              },
+              {
+                "key": "/ns4:projectGBO/project/customerReference/billToCustomerId",
+                "name": "billToCustomerId",
+                "type": "String",
+                "properties": "Optional",
+                "qName": "billToCustomerId"
+              },
+              {
+                "key": "/ns4:projectGBO/project/customerReference/shipToCustomerId",
+                "name": "shipToCustomerId",
+                "type": "String",
+                "properties": "Optional",
+                "qName": "shipToCustomerId"
+              },
+              {
+                "key": "/ns4:projectGBO/project/customerReference/contactId",
+                "name": "contactId",
+                "type": "String",
+                "properties": "Optional",
+                "qName": "contactId"
+              },
+              {
+                "key": "/ns4:projectGBO/project/customerReference/projectContactTypeCode",
+                "name": "projectContactTypeCode",
+                "type": "String",
+                "properties": "Optional",
+                "qName": "projectContactTypeCode"
+              },
+              {
+                "key": "/ns4:projectGBO/project/customerReference/customerBillSplit",
+                "name": "customerBillSplit",
+                "type": "String",
+                "properties": "Optional",
+                "qName": "customerBillSplit"
+              },
+              {
+                "key": "/ns4:projectGBO/project/customerReference/allowInvUserRateTypeFlag",
+                "name": "allowInvUserRateTypeFlag",
+                "type": "String",
+                "properties": "Optional",
+                "qName": "allowInvUserRateTypeFlag"
+              },
+              {
+                "key": "/ns4:projectGBO/project/customerReference/invRateDate",
+                "name": "invRateDate",
+                "type": "String",
+                "properties": "Optional",
+                "qName": "invRateDate"
+              },
+              {
+                "key": "/ns4:projectGBO/project/customerReference/invRateType",
+                "name": "invRateType",
+                "type": "String",
+                "properties": "Optional",
+                "qName": "invRateType"
+              },
+              {
+                "key": "/ns4:projectGBO/project/customerReference/invCurrencyCode",
+                "name": "invCurrencyCode",
+                "type": "String",
+                "properties": "Optional",
+                "qName": "invCurrencyCode"
+              },
+              {
+                "key": "/ns4:projectGBO/project/customerReference/invExchangeRate",
+                "name": "invExchangeRate",
+                "type": "String",
+                "properties": "Optional",
+                "qName": "invExchangeRate"
+              },
+              {
+                "key": "/ns4:projectGBO/project/customerReference/EnableTopTaskCustomerFlag",
+                "name": "EnableTopTaskCustomerFlag",
+                "type": "String",
+                "properties": "Optional",
+                "qName": "EnableTopTaskCustomerFlag"
+              },
+              {
+                "key": "/ns4:projectGBO/project/customerReference/billAnotherProjectFlag",
+                "name": "billAnotherProjectFlag",
+                "type": "String",
+                "properties": "Optional",
+                "qName": "billAnotherProjectFlag"
+              },
+              {
+                "key": "/ns4:projectGBO/project/customerReference/receiverTaskId",
+                "name": "receiverTaskId",
+                "type": "String",
+                "properties": "Optional",
+                "qName": "receiverTaskId"
+              },
+              {
+                "key": "/ns4:projectGBO/project/customerReference/receiverTaskNumber",
+                "name": "receiverTaskNumber",
+                "type": "String",
+                "properties": "Optional",
+                "qName": "receiverTaskNumber"
+              }
+            ],
+            "qName": "customerReference"
+          },
+          {
+            "key": "/ns4:projectGBO/project/agreements",
+            "name": "agreements",
+            "type": "Complex",
+            "properties": "Optional",
+            "children": [
+              {
+                "key": "/ns4:projectGBO/project/agreements/agreement",
+                "name": "agreement",
+                "type": "Complex",
+                "properties": "Optional, Repeating",
+                "children": [
+                  {
+                    "key": "/ns4:projectGBO/project/agreements/agreement/agreementReference",
+                    "name": "agreementReference",
+                    "type": "String",
+                    "properties": "None",
+                    "qName": "agreementReference"
+                  },
+                  {
+                    "key": "/ns4:projectGBO/project/agreements/agreement/agreementID",
+                    "name": "agreementID",
+                    "type": "String",
+                    "properties": "None",
+                    "qName": "agreementID"
+                  },
+                  {
+                    "key": "/ns4:projectGBO/project/agreements/agreement/agreementNumber",
+                    "name": "agreementNumber",
+                    "type": "String",
+                    "properties": "None",
+                    "qName": "agreementNumber"
+                  },
+                  {
+                    "key": "/ns4:projectGBO/project/agreements/agreement/agreementType",
+                    "name": "agreementType",
+                    "type": "String",
+                    "properties": "None",
+                    "qName": "agreementType"
+                  },
+                  {
+                    "key": "/ns4:projectGBO/project/agreements/agreement/customerID",
+                    "name": "customerID",
+                    "type": "String",
+                    "properties": "None",
+                    "qName": "customerID"
+                  },
+                  {
+                    "key": "/ns4:projectGBO/project/agreements/agreement/amount",
+                    "name": "amount",
+                    "type": "String",
+                    "properties": "None",
+                    "qName": "amount"
+                  },
+                  {
+                    "key": "/ns4:projectGBO/project/agreements/agreement/currencyCodes",
+                    "name": "currencyCodes",
+                    "type": "String",
+                    "properties": "None",
+                    "qName": "currencyCodes"
+                  },
+                  {
+                    "key": "/ns4:projectGBO/project/agreements/agreement/termId",
+                    "name": "termId",
+                    "type": "String",
+                    "properties": "None",
+                    "qName": "termId"
+                  },
+                  {
+                    "key": "/ns4:projectGBO/project/agreements/agreement/startDate",
+                    "name": "startDate",
+                    "type": "String",
+                    "properties": "None",
+                    "qName": "startDate"
+                  },
+                  {
+                    "key": "/ns4:projectGBO/project/agreements/agreement/expirationDate",
+                    "name": "expirationDate",
+                    "type": "String",
+                    "properties": "None",
+                    "qName": "expirationDate"
+                  },
+                  {
+                    "key": "/ns4:projectGBO/project/agreements/agreement/agreementDescription",
+                    "name": "agreementDescription",
+                    "type": "String",
+                    "properties": "None",
+                    "qName": "agreementDescription"
+                  },
+                  {
+                    "key": "/ns4:projectGBO/project/agreements/agreement/ownedByPersonID",
+                    "name": "ownedByPersonID",
+                    "type": "String",
+                    "properties": "None",
+                    "qName": "ownedByPersonID"
+                  },
+                  {
+                    "key": "/ns4:projectGBO/project/agreements/agreement/operatingUnitCode",
+                    "name": "operatingUnitCode",
+                    "type": "String",
+                    "properties": "None",
+                    "qName": "operatingUnitCode"
+                  },
+                  {
+                    "key": "/ns4:projectGBO/project/agreements/agreement/revenueLimitFlag",
+                    "name": "revenueLimitFlag",
+                    "type": "String",
+                    "properties": "Optional",
+                    "qName": "revenueLimitFlag"
+                  },
+                  {
+                    "key": "/ns4:projectGBO/project/agreements/agreement/invoiceLimitFlag",
+                    "name": "invoiceLimitFlag",
+                    "type": "String",
+                    "properties": "Optional",
+                    "qName": "invoiceLimitFlag"
+                  },
+                  {
+                    "key": "/ns4:projectGBO/project/agreements/agreement/owningOrganizationId",
+                    "name": "owningOrganizationId",
+                    "type": "String",
+                    "properties": "Optional",
+                    "qName": "owningOrganizationId"
+                  },
+                  {
+                    "key": "/ns4:projectGBO/project/agreements/agreement/agreementCurrencyCode",
+                    "name": "agreementCurrencyCode",
+                    "type": "String",
+                    "properties": "Optional",
+                    "qName": "agreementCurrencyCode"
+                  },
+                  {
+                    "key": "/ns4:projectGBO/project/agreements/agreement/customerOrderNumber",
+                    "name": "customerOrderNumber",
+                    "type": "String",
+                    "properties": "Optional",
+                    "qName": "customerOrderNumber"
+                  },
+                  {
+                    "key": "/ns4:projectGBO/project/agreements/agreement/advanceRequired",
+                    "name": "advanceRequired",
+                    "type": "String",
+                    "properties": "Optional",
+                    "qName": "advanceRequired"
+                  },
+                  {
+                    "key": "/ns4:projectGBO/project/agreements/agreement/billingSequence",
+                    "name": "billingSequence",
+                    "type": "String",
+                    "properties": "Optional",
+                    "qName": "billingSequence"
+                  },
+                  {
+                    "key": "/ns4:projectGBO/project/agreements/agreement/lineofAccount",
+                    "name": "lineofAccount",
+                    "type": "String",
+                    "properties": "Optional",
+                    "qName": "lineofAccount"
+                  },
+                  {
+                    "key": "/ns4:projectGBO/project/agreements/agreement/attribute1",
+                    "name": "attribute1",
+                    "type": "String",
+                    "properties": "Optional",
+                    "qName": "attribute1"
+                  },
+                  {
+                    "key": "/ns4:projectGBO/project/agreements/agreement/attribute2",
+                    "name": "attribute2",
+                    "type": "String",
+                    "properties": "Optional",
+                    "qName": "attribute2"
+                  },
+                  {
+                    "key": "/ns4:projectGBO/project/agreements/agreement/attribute3",
+                    "name": "attribute3",
+                    "type": "String",
+                    "properties": "Optional",
+                    "qName": "attribute3"
+                  },
+                  {
+                    "key": "/ns4:projectGBO/project/agreements/agreement/attribute4",
+                    "name": "attribute4",
+                    "type": "String",
+                    "properties": "Optional",
+                    "qName": "attribute4"
+                  },
+                  {
+                    "key": "/ns4:projectGBO/project/agreements/agreement/attribute5",
+                    "name": "attribute5",
+                    "type": "String",
+                    "properties": "Optional",
+                    "qName": "attribute5"
+                  },
+                  {
+                    "key": "/ns4:projectGBO/project/agreements/agreement/attribute6",
+                    "name": "attribute6",
+                    "type": "String",
+                    "properties": "Optional",
+                    "qName": "attribute6"
+                  },
+                  {
+                    "key": "/ns4:projectGBO/project/agreements/agreement/attribute7",
+                    "name": "attribute7",
+                    "type": "String",
+                    "properties": "Optional",
+                    "qName": "attribute7"
+                  },
+                  {
+                    "key": "/ns4:projectGBO/project/agreements/agreement/attribute8",
+                    "name": "attribute8",
+                    "type": "String",
+                    "properties": "Optional",
+                    "qName": "attribute8"
+                  },
+                  {
+                    "key": "/ns4:projectGBO/project/agreements/agreement/attribute9",
+                    "name": "attribute9",
+                    "type": "String",
+                    "properties": "Optional",
+                    "qName": "attribute9"
+                  },
+                  {
+                    "key": "/ns4:projectGBO/project/agreements/agreement/attribute10",
+                    "name": "attribute10",
+                    "type": "String",
+                    "properties": "Optional",
+                    "qName": "attribute10"
+                  },
+                  {
+                    "key": "/ns4:projectGBO/project/agreements/agreement/attribute11",
+                    "name": "attribute11",
+                    "type": "String",
+                    "properties": "Optional",
+                    "qName": "attribute11"
+                  },
+                  {
+                    "key": "/ns4:projectGBO/project/agreements/agreement/attribute12",
+                    "name": "attribute12",
+                    "type": "String",
+                    "properties": "Optional",
+                    "qName": "attribute12"
+                  },
+                  {
+                    "key": "/ns4:projectGBO/project/agreements/agreement/attribute13",
+                    "name": "attribute13",
+                    "type": "String",
+                    "properties": "Optional",
+                    "qName": "attribute13"
+                  },
+                  {
+                    "key": "/ns4:projectGBO/project/agreements/agreement/attribute14",
+                    "name": "attribute14",
+                    "type": "String",
+                    "properties": "Optional",
+                    "qName": "attribute14"
+                  },
+                  {
+                    "key": "/ns4:projectGBO/project/agreements/agreement/attribute15",
+                    "name": "attribute15",
+                    "type": "String",
+                    "properties": "Optional",
+                    "qName": "attribute15"
+                  },
+                  {
+                    "key": "/ns4:projectGBO/project/agreements/agreement/attribute16",
+                    "name": "attribute16",
+                    "type": "String",
+                    "properties": "Optional",
+                    "qName": "attribute16"
+                  },
+                  {
+                    "key": "/ns4:projectGBO/project/agreements/agreement/attribute17",
+                    "name": "attribute17",
+                    "type": "String",
+                    "properties": "Optional",
+                    "qName": "attribute17"
+                  },
+                  {
+                    "key": "/ns4:projectGBO/project/agreements/agreement/attribute18",
+                    "name": "attribute18",
+                    "type": "String",
+                    "properties": "Optional",
+                    "qName": "attribute18"
+                  },
+                  {
+                    "key": "/ns4:projectGBO/project/agreements/agreement/attribute19",
+                    "name": "attribute19",
+                    "type": "String",
+                    "properties": "Optional",
+                    "qName": "attribute19"
+                  },
+                  {
+                    "key": "/ns4:projectGBO/project/agreements/agreement/attribute20",
+                    "name": "attribute20",
+                    "type": "String",
+                    "properties": "Optional",
+                    "qName": "attribute20"
+                  },
+                  {
+                    "key": "/ns4:projectGBO/project/agreements/agreement/attribute21",
+                    "name": "attribute21",
+                    "type": "String",
+                    "properties": "Optional",
+                    "qName": "attribute21"
+                  },
+                  {
+                    "key": "/ns4:projectGBO/project/agreements/agreement/attribute22",
+                    "name": "attribute22",
+                    "type": "String",
+                    "properties": "Optional",
+                    "qName": "attribute22"
+                  },
+                  {
+                    "key": "/ns4:projectGBO/project/agreements/agreement/attribute23",
+                    "name": "attribute23",
+                    "type": "String",
+                    "properties": "Optional",
+                    "qName": "attribute23"
+                  },
+                  {
+                    "key": "/ns4:projectGBO/project/agreements/agreement/attribute24",
+                    "name": "attribute24",
+                    "type": "String",
+                    "properties": "Optional",
+                    "qName": "attribute24"
+                  },
+                  {
+                    "key": "/ns4:projectGBO/project/agreements/agreement/attribute25",
+                    "name": "attribute25",
+                    "type": "String",
+                    "properties": "Optional",
+                    "qName": "attribute25"
+                  },
+                  {
+                    "key": "/ns4:projectGBO/project/agreements/agreement/fundings",
+                    "name": "fundings",
+                    "type": "Complex",
+                    "properties": "Optional",
+                    "children": [
+                      {
+                        "key": "/ns4:projectGBO/project/agreements/agreement/fundings/funding",
+                        "name": "funding",
+                        "type": "Complex",
+                        "properties": "Optional, Repeating",
+                        "children": [
+                          {
+                            "key": "/ns4:projectGBO/project/agreements/agreement/fundings/funding/allocatedAmount",
+                            "name": "allocatedAmount",
+                            "type": "String",
+                            "properties": "None",
+                            "qName": "allocatedAmount"
+                          },
+                          {
+                            "key": "/ns4:projectGBO/project/agreements/agreement/fundings/funding/dateAllocated",
+                            "name": "dateAllocated",
+                            "type": "DateTime",
+                            "properties": "None",
+                            "qName": "dateAllocated"
+                          },
+                          {
+                            "key": "/ns4:projectGBO/project/agreements/agreement/fundings/funding/pmFundingReference",
+                            "name": "pmFundingReference",
+                            "type": "String",
+                            "properties": "Optional",
+                            "qName": "pmFundingReference"
+                          },
+                          {
+                            "key": "/ns4:projectGBO/project/agreements/agreement/fundings/funding/taskNumber",
+                            "name": "taskNumber",
+                            "type": "String",
+                            "properties": "Optional",
+                            "qName": "taskNumber"
+                          },
+                          {
+                            "key": "/ns4:projectGBO/project/agreements/agreement/fundings/funding/fundingCategory",
+                            "name": "fundingCategory",
+                            "type": "String",
+                            "properties": "Optional",
+                            "qName": "fundingCategory"
+                          },
+                          {
+                            "key": "/ns4:projectGBO/project/agreements/agreement/fundings/funding/attribute1",
+                            "name": "attribute1",
+                            "type": "String",
+                            "properties": "Optional",
+                            "qName": "attribute1"
+                          },
+                          {
+                            "key": "/ns4:projectGBO/project/agreements/agreement/fundings/funding/attribute2",
+                            "name": "attribute2",
+                            "type": "String",
+                            "properties": "Optional",
+                            "qName": "attribute2"
+                          },
+                          {
+                            "key": "/ns4:projectGBO/project/agreements/agreement/fundings/funding/attribute3",
+                            "name": "attribute3",
+                            "type": "String",
+                            "properties": "Optional",
+                            "qName": "attribute3"
+                          },
+                          {
+                            "key": "/ns4:projectGBO/project/agreements/agreement/fundings/funding/attribute4",
+                            "name": "attribute4",
+                            "type": "String",
+                            "properties": "Optional",
+                            "qName": "attribute4"
+                          },
+                          {
+                            "key": "/ns4:projectGBO/project/agreements/agreement/fundings/funding/attribute5",
+                            "name": "attribute5",
+                            "type": "String",
+                            "properties": "Optional",
+                            "qName": "attribute5"
+                          },
+                          {
+                            "key": "/ns4:projectGBO/project/agreements/agreement/fundings/funding/attribute6",
+                            "name": "attribute6",
+                            "type": "String",
+                            "properties": "Optional",
+                            "qName": "attribute6"
+                          },
+                          {
+                            "key": "/ns4:projectGBO/project/agreements/agreement/fundings/funding/attribute7",
+                            "name": "attribute7",
+                            "type": "String",
+                            "properties": "Optional",
+                            "qName": "attribute7"
+                          },
+                          {
+                            "key": "/ns4:projectGBO/project/agreements/agreement/fundings/funding/attribute8",
+                            "name": "attribute8",
+                            "type": "String",
+                            "properties": "Optional",
+                            "qName": "attribute8"
+                          },
+                          {
+                            "key": "/ns4:projectGBO/project/agreements/agreement/fundings/funding/attribute9",
+                            "name": "attribute9",
+                            "type": "String",
+                            "properties": "Optional",
+                            "qName": "attribute9"
+                          },
+                          {
+                            "key": "/ns4:projectGBO/project/agreements/agreement/fundings/funding/attribute10",
+                            "name": "attribute10",
+                            "type": "String",
+                            "properties": "Optional",
+                            "qName": "attribute10"
+                          }
+                        ],
+                        "qName": "funding"
+                      }
+                    ],
+                    "qName": "fundings"
+                  }
+                ],
+                "qName": "agreement"
+              }
+            ],
+            "qName": "agreements"
+          },
+          {
+            "key": "/ns4:projectGBO/project/projectTeam",
+            "name": "projectTeam",
+            "type": "Complex",
+            "properties": "None",
+            "children": [
+              {
+                "key": "/ns4:projectGBO/project/projectTeam/teamMember",
+                "name": "teamMember",
+                "type": "Complex",
+                "properties": "Optional, Repeating",
+                "children": [
+                  {
+                    "key": "/ns4:projectGBO/project/projectTeam/teamMember/projectRoleType",
+                    "name": "projectRoleType",
+                    "type": "String",
+                    "properties": "None",
+                    "qName": "projectRoleType"
+                  },
+                  {
+                    "key": "/ns4:projectGBO/project/projectTeam/teamMember/startDateActive",
+                    "name": "startDateActive",
+                    "type": "String",
+                    "properties": "None",
+                    "qName": "startDateActive"
+                  },
+                  {
+                    "key": "/ns4:projectGBO/project/projectTeam/teamMember/endDateActive",
+                    "name": "endDateActive",
+                    "type": "String",
+                    "properties": "None",
+                    "qName": "endDateActive"
+                  },
+                  {
+                    "key": "/ns4:projectGBO/project/projectTeam/teamMember/personID",
+                    "name": "personID",
+                    "type": "String",
+                    "properties": "None",
+                    "qName": "personID"
+                  }
+                ],
+                "qName": "teamMember"
+              }
+            ],
+            "qName": "projectTeam"
+          },
+          {
+            "key": "/ns4:projectGBO/project/classifications",
+            "name": "classifications",
+            "type": "Complex",
+            "properties": "Optional",
+            "children": [
+              {
+                "key": "/ns4:projectGBO/project/classifications/classification",
+                "name": "classification",
+                "type": "Complex",
+                "properties": "Optional, Repeating",
+                "children": [
+                  {
+                    "key": "/ns4:projectGBO/project/classifications/classification/classCategory",
+                    "name": "classCategory",
+                    "type": "String",
+                    "properties": "Optional",
+                    "qName": "classCategory"
+                  },
+                  {
+                    "key": "/ns4:projectGBO/project/classifications/classification/classCode",
+                    "name": "classCode",
+                    "type": "String",
+                    "properties": "Optional",
+                    "qName": "classCode"
+                  },
+                  {
+                    "key": "/ns4:projectGBO/project/classifications/classification/codePercentage",
+                    "name": "codePercentage",
+                    "type": "String",
+                    "properties": "Optional",
+                    "qName": "codePercentage"
+                  },
+                  {
+                    "key": "/ns4:projectGBO/project/classifications/classification/newClassCode",
+                    "name": "newClassCode",
+                    "type": "String",
+                    "properties": "Optional",
+                    "qName": "newClassCode"
+                  }
+                ],
+                "qName": "classification"
+              }
+            ],
+            "qName": "classifications"
+          },
+          {
+            "key": "/ns4:projectGBO/project/budgets",
+            "name": "budgets",
+            "type": "Complex",
+            "properties": "Optional",
+            "children": [
+              {
+                "key": "/ns4:projectGBO/project/budgets/budget",
+                "name": "budget",
+                "type": "Complex",
+                "properties": "Optional, Repeating",
+                "children": [
+                  {
+                    "key": "/ns4:projectGBO/project/budgets/budget/budgetType",
+                    "name": "budgetType",
+                    "type": "String",
+                    "properties": "None",
+                    "qName": "budgetType"
+                  },
+                  {
+                    "key": "/ns4:projectGBO/project/budgets/budget/expectedEndDate",
+                    "name": "expectedEndDate",
+                    "type": "DateTime",
+                    "properties": "None",
+                    "qName": "expectedEndDate"
+                  },
+                  {
+                    "key": "/ns4:projectGBO/project/budgets/budget/SFProjectName",
+                    "name": "SFProjectName",
+                    "type": "DateTime",
+                    "properties": "Optional",
+                    "qName": "SFProjectName"
+                  },
+                  {
+                    "key": "/ns4:projectGBO/project/budgets/budget/pmBudgetReference",
+                    "name": "pmBudgetReference",
+                    "type": "String",
+                    "properties": "Optional",
+                    "qName": "pmBudgetReference"
+                  },
+                  {
+                    "key": "/ns4:projectGBO/project/budgets/budget/budgetVersionName",
+                    "name": "budgetVersionName",
+                    "type": "String",
+                    "properties": "Optional",
+                    "qName": "budgetVersionName"
+                  },
+                  {
+                    "key": "/ns4:projectGBO/project/budgets/budget/budgetChangeReason",
+                    "name": "budgetChangeReason",
+                    "type": "String",
+                    "properties": "Optional",
+                    "qName": "budgetChangeReason"
+                  },
+                  {
+                    "key": "/ns4:projectGBO/project/budgets/budget/entryMethodCode",
+                    "name": "entryMethodCode",
+                    "type": "String",
+                    "properties": "Optional",
+                    "qName": "entryMethodCode"
+                  },
+                  {
+                    "key": "/ns4:projectGBO/project/budgets/budget/resourceListId",
+                    "name": "resourceListId",
+                    "type": "String",
+                    "properties": "Optional",
+                    "qName": "resourceListId"
+                  },
+                  {
+                    "key": "/ns4:projectGBO/project/budgets/budget/resourceListName",
+                    "name": "resourceListName",
+                    "type": "String",
+                    "properties": "Optional",
+                    "qName": "resourceListName"
+                  },
+                  {
+                    "key": "/ns4:projectGBO/project/budgets/budget/attribute1",
+                    "name": "attribute1",
+                    "type": "String",
+                    "properties": "Optional",
+                    "qName": "attribute1"
+                  },
+                  {
+                    "key": "/ns4:projectGBO/project/budgets/budget/attribute2",
+                    "name": "attribute2",
+                    "type": "String",
+                    "properties": "Optional",
+                    "qName": "attribute2"
+                  },
+                  {
+                    "key": "/ns4:projectGBO/project/budgets/budget/attribute3",
+                    "name": "attribute3",
+                    "type": "String",
+                    "properties": "Optional",
+                    "qName": "attribute3"
+                  },
+                  {
+                    "key": "/ns4:projectGBO/project/budgets/budget/attribute4",
+                    "name": "attribute4",
+                    "type": "String",
+                    "properties": "Optional",
+                    "qName": "attribute4"
+                  },
+                  {
+                    "key": "/ns4:projectGBO/project/budgets/budget/attribute5",
+                    "name": "attribute5",
+                    "type": "String",
+                    "properties": "Optional",
+                    "qName": "attribute5"
+                  },
+                  {
+                    "key": "/ns4:projectGBO/project/budgets/budget/attribute6",
+                    "name": "attribute6",
+                    "type": "String",
+                    "properties": "Optional",
+                    "qName": "attribute6"
+                  },
+                  {
+                    "key": "/ns4:projectGBO/project/budgets/budget/attribute7",
+                    "name": "attribute7",
+                    "type": "String",
+                    "properties": "Optional",
+                    "qName": "attribute7"
+                  },
+                  {
+                    "key": "/ns4:projectGBO/project/budgets/budget/attribute8",
+                    "name": "attribute8",
+                    "type": "String",
+                    "properties": "Optional",
+                    "qName": "attribute8"
+                  },
+                  {
+                    "key": "/ns4:projectGBO/project/budgets/budget/attribute9",
+                    "name": "attribute9",
+                    "type": "String",
+                    "properties": "Optional",
+                    "qName": "attribute9"
+                  },
+                  {
+                    "key": "/ns4:projectGBO/project/budgets/budget/attribute10",
+                    "name": "attribute10",
+                    "type": "String",
+                    "properties": "Optional",
+                    "qName": "attribute10"
+                  },
+                  {
+                    "key": "/ns4:projectGBO/project/budgets/budget/attribute11",
+                    "name": "attribute11",
+                    "type": "String",
+                    "properties": "Optional",
+                    "qName": "attribute11"
+                  },
+                  {
+                    "key": "/ns4:projectGBO/project/budgets/budget/attribute12",
+                    "name": "attribute12",
+                    "type": "String",
+                    "properties": "Optional",
+                    "qName": "attribute12"
+                  },
+                  {
+                    "key": "/ns4:projectGBO/project/budgets/budget/attribute13",
+                    "name": "attribute13",
+                    "type": "String",
+                    "properties": "Optional",
+                    "qName": "attribute13"
+                  },
+                  {
+                    "key": "/ns4:projectGBO/project/budgets/budget/attribute14",
+                    "name": "attribute14",
+                    "type": "String",
+                    "properties": "Optional",
+                    "qName": "attribute14"
+                  },
+                  {
+                    "key": "/ns4:projectGBO/project/budgets/budget/attribute15",
+                    "name": "attribute15",
+                    "type": "String",
+                    "properties": "Optional",
+                    "qName": "attribute15"
+                  },
+                  {
+                    "key": "/ns4:projectGBO/project/budgets/budget/budgetLines",
+                    "name": "budgetLines",
+                    "type": "Complex",
+                    "properties": "Optional",
+                    "children": [
+                      {
+                        "key": "/ns4:projectGBO/project/budgets/budget/budgetLines/budgetLine",
+                        "name": "budgetLine",
+                        "type": "Complex",
+                        "properties": "Optional, Repeating",
+                        "children": [
+                          {
+                            "key": "/ns4:projectGBO/project/budgets/budget/budgetLines/budgetLine/pmTaskReference",
+                            "name": "pmTaskReference",
+                            "type": "String",
+                            "properties": "Optional",
+                            "qName": "pmTaskReference"
+                          },
+                          {
+                            "key": "/ns4:projectGBO/project/budgets/budget/budgetLines/budgetLine/fromDate",
+                            "name": "fromDate",
+                            "type": "DateTime",
+                            "properties": "None",
+                            "qName": "fromDate"
+                          },
+                          {
+                            "key": "/ns4:projectGBO/project/budgets/budget/budgetLines/budgetLine/toDate",
+                            "name": "toDate",
+                            "type": "DateTime",
+                            "properties": "None",
+                            "qName": "toDate"
+                          },
+                          {
+                            "key": "/ns4:projectGBO/project/budgets/budget/budgetLines/budgetLine/periodName",
+                            "name": "periodName",
+                            "type": "String",
+                            "properties": "None",
+                            "qName": "periodName"
+                          },
+                          {
+                            "key": "/ns4:projectGBO/project/budgets/budget/budgetLines/budgetLine/description",
+                            "name": "description",
+                            "type": "String",
+                            "properties": "None",
+                            "qName": "description"
+                          },
+                          {
+                            "key": "/ns4:projectGBO/project/budgets/budget/budgetLines/budgetLine/rawCost",
+                            "name": "rawCost",
+                            "type": "Integer",
+                            "properties": "None",
+                            "qName": "rawCost"
+                          },
+                          {
+                            "key": "/ns4:projectGBO/project/budgets/budget/budgetLines/budgetLine/revenue",
+                            "name": "revenue",
+                            "type": "Integer",
+                            "properties": "None",
+                            "qName": "revenue"
+                          },
+                          {
+                            "key": "/ns4:projectGBO/project/budgets/budget/budgetLines/budgetLine/quantity",
+                            "name": "quantity",
+                            "type": "Integer",
+                            "properties": "None",
+                            "qName": "quantity"
+                          },
+                          {
+                            "key": "/ns4:projectGBO/project/budgets/budget/budgetLines/budgetLine/changeReasonCode",
+                            "name": "changeReasonCode",
+                            "type": "String",
+                            "properties": "None",
+                            "qName": "changeReasonCode"
+                          },
+                          {
+                            "key": "/ns4:projectGBO/project/budgets/budget/budgetLines/budgetLine/pmBudgetLineReference",
+                            "name": "pmBudgetLineReference",
+                            "type": "String",
+                            "properties": "None",
+                            "qName": "pmBudgetLineReference"
+                          },
+                          {
+                            "key": "/ns4:projectGBO/project/budgets/budget/budgetLines/budgetLine/resourceAlias",
+                            "name": "resourceAlias",
+                            "type": "String",
+                            "properties": "Optional",
+                            "qName": "resourceAlias"
+                          },
+                          {
+                            "key": "/ns4:projectGBO/project/budgets/budget/budgetLines/budgetLine/resourceListMemberId",
+                            "name": "resourceListMemberId",
+                            "type": "String",
+                            "properties": "Optional",
+                            "qName": "resourceListMemberId"
+                          },
+                          {
+                            "key": "/ns4:projectGBO/project/budgets/budget/budgetLines/budgetLine/costCode",
+                            "name": "costCode",
+                            "type": "String",
+                            "properties": "Optional",
+                            "qName": "costCode"
+                          },
+                          {
+                            "key": "/ns4:projectGBO/project/budgets/budget/budgetLines/budgetLine/cbsElementId",
+                            "name": "cbsElementId",
+                            "type": "String",
+                            "properties": "Optional",
+                            "qName": "cbsElementId"
+                          },
+                          {
+                            "key": "/ns4:projectGBO/project/budgets/budget/budgetLines/budgetLine/burdenedCost",
+                            "name": "burdenedCost",
+                            "type": "String",
+                            "properties": "Optional",
+                            "qName": "burdenedCost"
+                          },
+                          {
+                            "key": "/ns4:projectGBO/project/budgets/budget/budgetLines/budgetLine/attribute1",
+                            "name": "attribute1",
+                            "type": "String",
+                            "properties": "Optional",
+                            "qName": "attribute1"
+                          },
+                          {
+                            "key": "/ns4:projectGBO/project/budgets/budget/budgetLines/budgetLine/attribute2",
+                            "name": "attribute2",
+                            "type": "String",
+                            "properties": "Optional",
+                            "qName": "attribute2"
+                          },
+                          {
+                            "key": "/ns4:projectGBO/project/budgets/budget/budgetLines/budgetLine/attribute3",
+                            "name": "attribute3",
+                            "type": "String",
+                            "properties": "Optional",
+                            "qName": "attribute3"
+                          },
+                          {
+                            "key": "/ns4:projectGBO/project/budgets/budget/budgetLines/budgetLine/attribute4",
+                            "name": "attribute4",
+                            "type": "String",
+                            "properties": "Optional",
+                            "qName": "attribute4"
+                          },
+                          {
+                            "key": "/ns4:projectGBO/project/budgets/budget/budgetLines/budgetLine/attribute5",
+                            "name": "attribute5",
+                            "type": "String",
+                            "properties": "Optional",
+                            "qName": "attribute5"
+                          },
+                          {
+                            "key": "/ns4:projectGBO/project/budgets/budget/budgetLines/budgetLine/attribute6",
+                            "name": "attribute6",
+                            "type": "String",
+                            "properties": "Optional",
+                            "qName": "attribute6"
+                          },
+                          {
+                            "key": "/ns4:projectGBO/project/budgets/budget/budgetLines/budgetLine/attribute7",
+                            "name": "attribute7",
+                            "type": "String",
+                            "properties": "Optional",
+                            "qName": "attribute7"
+                          },
+                          {
+                            "key": "/ns4:projectGBO/project/budgets/budget/budgetLines/budgetLine/attribute8",
+                            "name": "attribute8",
+                            "type": "String",
+                            "properties": "Optional",
+                            "qName": "attribute8"
+                          },
+                          {
+                            "key": "/ns4:projectGBO/project/budgets/budget/budgetLines/budgetLine/attribute9",
+                            "name": "attribute9",
+                            "type": "String",
+                            "properties": "Optional",
+                            "qName": "attribute9"
+                          },
+                          {
+                            "key": "/ns4:projectGBO/project/budgets/budget/budgetLines/budgetLine/attribute10",
+                            "name": "attribute10",
+                            "type": "String",
+                            "properties": "Optional",
+                            "qName": "attribute10"
+                          },
+                          {
+                            "key": "/ns4:projectGBO/project/budgets/budget/budgetLines/budgetLine/attribute11",
+                            "name": "attribute11",
+                            "type": "String",
+                            "properties": "Optional",
+                            "qName": "attribute11"
+                          },
+                          {
+                            "key": "/ns4:projectGBO/project/budgets/budget/budgetLines/budgetLine/attribute12",
+                            "name": "attribute12",
+                            "type": "String",
+                            "properties": "Optional",
+                            "qName": "attribute12"
+                          },
+                          {
+                            "key": "/ns4:projectGBO/project/budgets/budget/budgetLines/budgetLine/attribute13",
+                            "name": "attribute13",
+                            "type": "String",
+                            "properties": "Optional",
+                            "qName": "attribute13"
+                          },
+                          {
+                            "key": "/ns4:projectGBO/project/budgets/budget/budgetLines/budgetLine/attribute14",
+                            "name": "attribute14",
+                            "type": "String",
+                            "properties": "Optional",
+                            "qName": "attribute14"
+                          },
+                          {
+                            "key": "/ns4:projectGBO/project/budgets/budget/budgetLines/budgetLine/attribute15",
+                            "name": "attribute15",
+                            "type": "String",
+                            "properties": "Optional",
+                            "qName": "attribute15"
+                          }
+                        ],
+                        "qName": "budgetLine"
+                      }
+                    ],
+                    "qName": "budgetLines"
+                  }
+                ],
+                "qName": "budget"
+              }
+            ],
+            "qName": "budgets"
+          },
+          {
+            "key": "/ns4:projectGBO/project/billingExtensions",
+            "name": "billingExtensions",
+            "type": "Complex",
+            "properties": "Optional",
+            "children": [
+              {
+                "key": "/ns4:projectGBO/project/billingExtensions/billingExtension",
+                "name": "billingExtension",
+                "type": "Complex",
+                "properties": "Optional, Repeating",
+                "children": [
+                  {
+                    "key": "/ns4:projectGBO/project/billingExtensions/billingExtension/billingExtName",
+                    "name": "billingExtName",
+                    "type": "String",
+                    "properties": "Optional",
+                    "qName": "billingExtName"
+                  },
+                  {
+                    "key": "/ns4:projectGBO/project/billingExtensions/billingExtension/amount",
+                    "name": "amount",
+                    "type": "String",
+                    "properties": "Optional",
+                    "qName": "amount"
+                  },
+                  {
+                    "key": "/ns4:projectGBO/project/billingExtensions/billingExtension/percent",
+                    "name": "percent",
+                    "type": "String",
+                    "properties": "Optional",
+                    "qName": "percent"
+                  },
+                  {
+                    "key": "/ns4:projectGBO/project/billingExtensions/billingExtension/active",
+                    "name": "active",
+                    "type": "String",
+                    "properties": "Optional",
+                    "qName": "active"
+                  }
+                ],
+                "qName": "billingExtension"
+              }
+            ],
+            "qName": "billingExtensions"
+          },
+          {
+            "key": "/ns4:projectGBO/project/nlBillRateOverrides",
+            "name": "nlBillRateOverrides",
+            "type": "Complex",
+            "properties": "Optional",
+            "children": [
+              {
+                "key": "/ns4:projectGBO/project/nlBillRateOverrides/nlBillRateOverride",
+                "name": "nlBillRateOverride",
+                "type": "Complex",
+                "properties": "Optional, Repeating",
+                "children": [
+                  {
+                    "key": "/ns4:projectGBO/project/nlBillRateOverrides/nlBillRateOverride/nlBillRateOverrideId",
+                    "name": "nlBillRateOverrideId",
+                    "type": "String",
+                    "properties": "None",
+                    "qName": "nlBillRateOverrideId"
+                  },
+                  {
+                    "key": "/ns4:projectGBO/project/nlBillRateOverrides/nlBillRateOverride/expenditureType",
+                    "name": "expenditureType",
+                    "type": "String",
+                    "properties": "Optional",
+                    "qName": "expenditureType"
+                  },
+                  {
+                    "key": "/ns4:projectGBO/project/nlBillRateOverrides/nlBillRateOverride/nonLaborResource",
+                    "name": "nonLaborResource",
+                    "type": "String",
+                    "properties": "Optional",
+                    "qName": "nonLaborResource"
+                  },
+                  {
+                    "key": "/ns4:projectGBO/project/nlBillRateOverrides/nlBillRateOverride/markupPercentage",
+                    "name": "markupPercentage",
+                    "type": "String",
+                    "properties": "Optional",
+                    "qName": "markupPercentage"
+                  },
+                  {
+                    "key": "/ns4:projectGBO/project/nlBillRateOverrides/nlBillRateOverride/billRate",
+                    "name": "billRate",
+                    "type": "String",
+                    "properties": "Optional",
+                    "qName": "billRate"
+                  },
+                  {
+                    "key": "/ns4:projectGBO/project/nlBillRateOverrides/nlBillRateOverride/startDateActive",
+                    "name": "startDateActive",
+                    "type": "String",
+                    "properties": "Optional",
+                    "qName": "startDateActive"
+                  },
+                  {
+                    "key": "/ns4:projectGBO/project/nlBillRateOverrides/nlBillRateOverride/endDateActive",
+                    "name": "endDateActive",
+                    "type": "String",
+                    "properties": "Optional",
+                    "qName": "endDateActive"
+                  },
+                  {
+                    "key": "/ns4:projectGBO/project/nlBillRateOverrides/nlBillRateOverride/rateCurrencyCode",
+                    "name": "rateCurrencyCode",
+                    "type": "String",
+                    "properties": "Optional",
+                    "qName": "rateCurrencyCode"
+                  },
+                  {
+                    "key": "/ns4:projectGBO/project/nlBillRateOverrides/nlBillRateOverride/discountPercentage",
+                    "name": "discountPercentage",
+                    "type": "String",
+                    "properties": "Optional",
+                    "qName": "discountPercentage"
+                  },
+                  {
+                    "key": "/ns4:projectGBO/project/nlBillRateOverrides/nlBillRateOverride/rateDiscReasonCode",
+                    "name": "rateDiscReasonCode",
+                    "type": "String",
+                    "properties": "Optional",
+                    "qName": "rateDiscReasonCode"
+                  }
+                ],
+                "qName": "nlBillRateOverride"
+              }
+            ],
+            "qName": "nlBillRateOverrides"
+          },
+          {
+            "key": "/ns4:projectGBO/project/empBillRateOverrides",
+            "name": "empBillRateOverrides",
+            "type": "Complex",
+            "properties": "Optional",
+            "children": [
+              {
+                "key": "/ns4:projectGBO/project/empBillRateOverrides/empBillRateOverride",
+                "name": "empBillRateOverride",
+                "type": "Complex",
+                "properties": "Optional, Repeating",
+                "children": [
+                  {
+                    "key": "/ns4:projectGBO/project/empBillRateOverrides/empBillRateOverride/empBillRateOverrideId",
+                    "name": "empBillRateOverrideId",
+                    "type": "String",
+                    "properties": "None",
+                    "qName": "empBillRateOverrideId"
+                  },
+                  {
+                    "key": "/ns4:projectGBO/project/empBillRateOverrides/empBillRateOverride/personId",
+                    "name": "personId",
+                    "type": "String",
+                    "properties": "Optional",
+                    "qName": "personId"
+                  },
+                  {
+                    "key": "/ns4:projectGBO/project/empBillRateOverrides/empBillRateOverride/rate",
+                    "name": "rate",
+                    "type": "String",
+                    "properties": "Optional",
+                    "qName": "rate"
+                  },
+                  {
+                    "key": "/ns4:projectGBO/project/empBillRateOverrides/empBillRateOverride/billRateUnit",
+                    "name": "billRateUnit",
+                    "type": "String",
+                    "properties": "Optional",
+                    "qName": "billRateUnit"
+                  },
+                  {
+                    "key": "/ns4:projectGBO/project/empBillRateOverrides/empBillRateOverride/startDateActive",
+                    "name": "startDateActive",
+                    "type": "String",
+                    "properties": "Optional",
+                    "qName": "startDateActive"
+                  },
+                  {
+                    "key": "/ns4:projectGBO/project/empBillRateOverrides/empBillRateOverride/endDateActive",
+                    "name": "endDateActive",
+                    "type": "String",
+                    "properties": "Optional",
+                    "qName": "endDateActive"
+                  },
+                  {
+                    "key": "/ns4:projectGBO/project/empBillRateOverrides/empBillRateOverride/rateCurrencyCode",
+                    "name": "rateCurrencyCode",
+                    "type": "String",
+                    "properties": "Optional",
+                    "qName": "rateCurrencyCode"
+                  },
+                  {
+                    "key": "/ns4:projectGBO/project/empBillRateOverrides/empBillRateOverride/discountPercentage",
+                    "name": "discountPercentage",
+                    "type": "String",
+                    "properties": "Optional",
+                    "qName": "discountPercentage"
+                  },
+                  {
+                    "key": "/ns4:projectGBO/project/empBillRateOverrides/empBillRateOverride/rateDiscReasonCode",
+                    "name": "rateDiscReasonCode",
+                    "type": "String",
+                    "properties": "Optional",
+                    "qName": "rateDiscReasonCode"
+                  }
+                ],
+                "qName": "empBillRateOverride"
+              }
+            ],
+            "qName": "empBillRateOverrides"
+          },
+          {
+            "key": "/ns4:projectGBO/project/jobAssignmentOverrides",
+            "name": "jobAssignmentOverrides",
+            "type": "Complex",
+            "properties": "Optional",
+            "children": [
+              {
+                "key": "/ns4:projectGBO/project/jobAssignmentOverrides/jobAssignmentOverride",
+                "name": "jobAssignmentOverride",
+                "type": "Complex",
+                "properties": "Optional, Repeating",
+                "children": [
+                  {
+                    "key": "/ns4:projectGBO/project/jobAssignmentOverrides/jobAssignmentOverride/jobAssignmentOverrideId",
+                    "name": "jobAssignmentOverrideId",
+                    "type": "String",
+                    "properties": "None",
+                    "qName": "jobAssignmentOverrideId"
+                  },
+                  {
+                    "key": "/ns4:projectGBO/project/jobAssignmentOverrides/jobAssignmentOverride/personId",
+                    "name": "personId",
+                    "type": "String",
+                    "properties": "Optional",
+                    "qName": "personId"
+                  },
+                  {
+                    "key": "/ns4:projectGBO/project/jobAssignmentOverrides/jobAssignmentOverride/startDateActive",
+                    "name": "startDateActive",
+                    "type": "String",
+                    "properties": "Optional",
+                    "qName": "startDateActive"
+                  },
+                  {
+                    "key": "/ns4:projectGBO/project/jobAssignmentOverrides/jobAssignmentOverride/endDateActive",
+                    "name": "endDateActive",
+                    "type": "String",
+                    "properties": "Optional",
+                    "qName": "endDateActive"
+                  },
+                  {
+                    "key": "/ns4:projectGBO/project/jobAssignmentOverrides/jobAssignmentOverride/billingTitle",
+                    "name": "billingTitle",
+                    "type": "String",
+                    "properties": "Optional",
+                    "qName": "billingTitle"
+                  },
+                  {
+                    "key": "/ns4:projectGBO/project/jobAssignmentOverrides/jobAssignmentOverride/jobId",
+                    "name": "jobId",
+                    "type": "String",
+                    "properties": "Optional",
+                    "qName": "jobId"
+                  }
+                ],
+                "qName": "jobAssignmentOverride"
+              }
+            ],
+            "qName": "jobAssignmentOverrides"
+          },
+          {
+            "key": "/ns4:projectGBO/project/jobBillTitleOverrides",
+            "name": "jobBillTitleOverrides",
+            "type": "Complex",
+            "properties": "Optional",
+            "children": [
+              {
+                "key": "/ns4:projectGBO/project/jobBillTitleOverrides/jobBillTitleOverride",
+                "name": "jobBillTitleOverride",
+                "type": "Complex",
+                "properties": "Optional, Repeating",
+                "children": [
+                  {
+                    "key": "/ns4:projectGBO/project/jobBillTitleOverrides/jobBillTitleOverride/jobBillTitleOverrideId",
+                    "name": "jobBillTitleOverrideId",
+                    "type": "String",
+                    "properties": "Optional",
+                    "qName": "jobBillTitleOverrideId"
+                  },
+                  {
+                    "key": "/ns4:projectGBO/project/jobBillTitleOverrides/jobBillTitleOverride/jobId",
+                    "name": "jobId",
+                    "type": "String",
+                    "properties": "None",
+                    "qName": "jobId"
+                  },
+                  {
+                    "key": "/ns4:projectGBO/project/jobBillTitleOverrides/jobBillTitleOverride/startDateActive",
+                    "name": "startDateActive",
+                    "type": "String",
+                    "properties": "Optional",
+                    "qName": "startDateActive"
+                  },
+                  {
+                    "key": "/ns4:projectGBO/project/jobBillTitleOverrides/jobBillTitleOverride/endDateActive",
+                    "name": "endDateActive",
+                    "type": "String",
+                    "properties": "None",
+                    "qName": "endDateActive"
+                  },
+                  {
+                    "key": "/ns4:projectGBO/project/jobBillTitleOverrides/jobBillTitleOverride/billingTitle",
+                    "name": "billingTitle",
+                    "type": "String",
+                    "properties": "None",
+                    "qName": "billingTitle"
+                  }
+                ],
+                "qName": "jobBillTitleOverride"
+              }
+            ],
+            "qName": "jobBillTitleOverrides"
+          },
+          {
+            "key": "/ns4:projectGBO/project/jobBillRateOverrides",
+            "name": "jobBillRateOverrides",
+            "type": "Complex",
+            "properties": "Optional",
+            "children": [
+              {
+                "key": "/ns4:projectGBO/project/jobBillRateOverrides/jobBillRateOverride",
+                "name": "jobBillRateOverride",
+                "type": "Complex",
+                "properties": "Optional, Repeating",
+                "children": [
+                  {
+                    "key": "/ns4:projectGBO/project/jobBillRateOverrides/jobBillRateOverride/jobBillRateOverrideId",
+                    "name": "jobBillRateOverrideId",
+                    "type": "String",
+                    "properties": "Optional",
+                    "qName": "jobBillRateOverrideId"
+                  },
+                  {
+                    "key": "/ns4:projectGBO/project/jobBillRateOverrides/jobBillRateOverride/jobId",
+                    "name": "jobId",
+                    "type": "String",
+                    "properties": "None",
+                    "qName": "jobId"
+                  },
+                  {
+                    "key": "/ns4:projectGBO/project/jobBillRateOverrides/jobBillRateOverride/startDateActive",
+                    "name": "startDateActive",
+                    "type": "String",
+                    "properties": "None",
+                    "qName": "startDateActive"
+                  },
+                  {
+                    "key": "/ns4:projectGBO/project/jobBillRateOverrides/jobBillRateOverride/endDateActive",
+                    "name": "endDateActive",
+                    "type": "String",
+                    "properties": "Optional",
+                    "qName": "endDateActive"
+                  },
+                  {
+                    "key": "/ns4:projectGBO/project/jobBillRateOverrides/jobBillRateOverride/rate",
+                    "name": "rate",
+                    "type": "String",
+                    "properties": "None",
+                    "qName": "rate"
+                  },
+                  {
+                    "key": "/ns4:projectGBO/project/jobBillRateOverrides/jobBillRateOverride/billRateUnit",
+                    "name": "billRateUnit",
+                    "type": "String",
+                    "properties": "Optional",
+                    "qName": "billRateUnit"
+                  },
+                  {
+                    "key": "/ns4:projectGBO/project/jobBillRateOverrides/jobBillRateOverride/rateCurrencyCode",
+                    "name": "rateCurrencyCode",
+                    "type": "String",
+                    "properties": "Optional",
+                    "qName": "rateCurrencyCode"
+                  },
+                  {
+                    "key": "/ns4:projectGBO/project/jobBillRateOverrides/jobBillRateOverride/discountPercentage",
+                    "name": "discountPercentage",
+                    "type": "String",
+                    "properties": "Optional",
+                    "qName": "discountPercentage"
+                  },
+                  {
+                    "key": "/ns4:projectGBO/project/jobBillRateOverrides/jobBillRateOverride/rateDiscReasonCode",
+                    "name": "rateDiscReasonCode",
+                    "type": "String",
+                    "properties": "Optional",
+                    "qName": "rateDiscReasonCode"
+                  }
+                ],
+                "qName": "jobBillRateOverride"
+              }
+            ],
+            "qName": "jobBillRateOverrides"
+          }
+        ],
+        "qName": "project"
+      },
+      {
+        "key": "/ns4:projectGBO/status",
+        "name": "status",
+        "type": "String",
+        "properties": "None",
+        "qName": "status"
+      },
+      {
+        "key": "/ns4:projectGBO/errorMessage",
+        "name": "errorMessage",
+        "type": "String",
+        "properties": "None",
+        "qName": "errorMessage"
+      },
+      {
+        "key": "/ns4:projectGBO/projectCreatedDate",
+        "name": "projectCreatedDate",
+        "type": "String",
+        "properties": "None",
+        "qName": "projectCreatedDate"
+      },
+      {
+        "key": "/ns4:projectGBO/paProjectNumber",
+        "name": "paProjectNumber",
+        "type": "String",
+        "properties": "None",
+        "qName": "paProjectNumber"
+      },
+      {
+        "key": "/ns4:projectGBO/pmProjectReference",
+        "name": "pmProjectReference",
+        "type": "String",
+        "properties": "None",
+        "qName": "pmProjectReference"
+      }
+    ],
+    "qName": "ns4:projectGBO"
+  }
+}

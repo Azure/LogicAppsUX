@@ -1,0 +1,89 @@
+@import (reference) '../variables.less';
+
+@comboboxItemPadding: 5px 0px 5px 15px;
+.msla-combobox-container {
+  .msla-combobox-label {
+    font-size: 14px;
+    padding-left: 5px;
+  }
+  .msla-combobox {
+    input {
+      height: 30px;
+      padding: 5px;
+      font-family: @font-family;
+      outline: none;
+      forced-color-adjust: none;
+      &:hover {
+        cursor: pointer;
+      }
+    }
+    button {
+      &:hover {
+        cursor: pointer;
+      }
+    }
+  }
+
+  .msla-combobox-editor-container {
+    outline: 1px solid @panel-mode-panel-border-color;
+    margin: 1px;
+    border-radius: 2px;
+    resize: none;
+    text-overflow: ellipsis;
+    display: flex;
+    position: relative;
+
+    .msla-combobox-editor {
+      position: relative;
+      .editor-input {
+        outline: none;
+        resize: none;
+        font-size: 14px;
+        font-weight: 400;
+        min-height: 30px;
+        text-overflow: ellipsis;
+        position: relative;
+        padding-inline-start: 10px;
+        box-sizing: border-box;
+        &.readonly {
+          background-color: rgba(128, 128, 128, 0.1);
+        }
+        &:focus {
+          outline: 2px solid @primary_focus_blue;
+        }
+        p {
+          margin: 0;
+          line-height: 22px;
+          padding: 4px 30px 4px 0px;
+          margin-inline-start: 2px;
+        }
+      }
+      .editor-placeholder {
+        color: #696969;
+        overflow: hidden;
+        position: absolute;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+        width: 95%;
+        margin-top: -24px;
+        margin-left: 13px;
+        font-size: 13px;
+        font-weight: 400;
+        font-style: italic;
+        user-select: none;
+        display: inline-block;
+        pointer-events: none;
+      }
+    }
+  }
+  .msla-combobox-editor-container:focus-within {
+    outline: 1px solid rgb(0, 120, 212);
+  }
+}
+.msla-combobox-custom-option {
+  color: rgb(0, 120, 212);
+}
+
+.msla-combobox-loading {
+  display: flex;
+}

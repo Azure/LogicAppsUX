@@ -1,0 +1,34 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`ui/dialogs/_confirm > should render 1`] = `
+<Dialog
+  dialogContentProps={
+    {
+      "title": "Title",
+    }
+  }
+  hidden={false}
+  modalProps={
+    {
+      "firstFocusableSelector": "dialog-ok-button",
+      "isBlocking": true,
+    }
+  }
+  onDismiss={[MockFunction spy]}
+>
+  Message
+  <StyledDialogFooterBase>
+    <CustomizedPrimaryButton
+      className="dialog-ok-button"
+      onClick={[MockFunction spy]}
+    >
+      OK
+    </CustomizedPrimaryButton>
+    <CustomizedDefaultButton
+      onClick={[MockFunction spy]}
+    >
+      Cancel
+    </CustomizedDefaultButton>
+  </StyledDialogFooterBase>
+</Dialog>
+`;

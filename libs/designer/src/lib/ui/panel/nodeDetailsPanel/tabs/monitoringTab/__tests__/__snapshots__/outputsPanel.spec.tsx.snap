@@ -1,0 +1,1465 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`OutputsPanel > Should render OutputsPanel with error state 1`] = `
+{
+  "asFragment": [Function],
+  "baseElement": <body>
+    <div>
+      <section
+        class="msla-trace-inputs-outputs"
+      >
+        <div
+          class="msla-trace-inputs-outputs-header"
+        >
+          <div
+            class="msla-trace-inputs-outputs-header-text"
+            id="outputs-node1"
+            style="border-color: #000000b3;"
+          >
+            Outputs
+          </div>
+          <button
+            class="ms-Button ms-Button--action ms-Button--command msla-show-raw-button root-184"
+            data-is-focusable="true"
+            type="button"
+          >
+            <span
+              class="ms-Button-flexContainer flexContainer-185"
+              data-automationid="splitbuttonprimary"
+            >
+              <i
+                aria-hidden="true"
+                class="ms-Icon root-105 css-193 ms-Button-icon icon-187"
+                data-icon-name="ChevronRightSmall"
+                style="font-family: "FabricMDL2Icons-3";"
+              >
+                
+              </i>
+              <span
+                class="ms-Button-textContainer textContainer-186"
+              >
+                <span
+                  class="ms-Button-label label-188"
+                  id="id__18"
+                >
+                  Show raw outputs
+                </span>
+              </span>
+            </span>
+          </button>
+        </div>
+        <div
+          aria-labelledby="outputs-node1"
+          class="msla-trace-values"
+        >
+          <section
+            class="msla-trace-value-label"
+          >
+            <label
+              class="msla-trace-value-display-name"
+            />
+            <div
+              class="msla-colorizer-json-body"
+            >
+              <div
+                aria-readonly="true"
+                class="msla-colorizer-wrapper"
+                role="textbox"
+                tabindex="0"
+              >
+                <div
+                  class="buttons"
+                >
+                  <button
+                    aria-label="Select all text in ''"
+                    class="ms-Button ms-Button--icon root-194"
+                    data-is-focusable="true"
+                    title="Select all text in ''"
+                    type="button"
+                  >
+                    <span
+                      class="ms-Button-flexContainer flexContainer-195"
+                      data-automationid="splitbuttonprimary"
+                    >
+                      <i
+                        aria-hidden="true"
+                        class="ms-Icon root-105 css-200 ms-Button-icon icon-197"
+                        data-icon-name="SelectAll"
+                        style="font-family: "FabricMDL2Icons-1";"
+                      >
+                        
+                      </i>
+                    </span>
+                  </button>
+                  <button
+                    aria-label="Copy the value of '' to the clipboard"
+                    class="ms-Button ms-Button--icon root-194"
+                    data-is-focusable="true"
+                    title="Copy the value of '' to the clipboard"
+                    type="button"
+                  >
+                    <span
+                      class="ms-Button-flexContainer flexContainer-195"
+                      data-automationid="splitbuttonprimary"
+                    >
+                      <i
+                        aria-hidden="true"
+                        class="ms-Icon root-105 css-202 ms-Button-icon icon-197"
+                        data-icon-name="Copy"
+                        style="font-family: "FabricMDL2Icons-2";"
+                      >
+                        
+                      </i>
+                    </span>
+                  </button>
+                </div>
+                <pre
+                  class="prism-code language-json"
+                  style="color: rgb(0, 0, 0); background-color: rgb(255, 255, 255);"
+                >
+                  <div
+                    class="token-line"
+                    style="color: rgb(0, 0, 0);"
+                  >
+                    <span
+                      class="token plain"
+                    >
+                      ‌
+                    </span>
+                  </div>
+                </pre>
+              </div>
+            </div>
+          </section>
+        </div>
+      </section>
+    </div>
+  </body>,
+  "container": <div>
+    <section
+      class="msla-trace-inputs-outputs"
+    >
+      <div
+        class="msla-trace-inputs-outputs-header"
+      >
+        <div
+          class="msla-trace-inputs-outputs-header-text"
+          id="outputs-node1"
+          style="border-color: #000000b3;"
+        >
+          Outputs
+        </div>
+        <button
+          class="ms-Button ms-Button--action ms-Button--command msla-show-raw-button root-184"
+          data-is-focusable="true"
+          type="button"
+        >
+          <span
+            class="ms-Button-flexContainer flexContainer-185"
+            data-automationid="splitbuttonprimary"
+          >
+            <i
+              aria-hidden="true"
+              class="ms-Icon root-105 css-193 ms-Button-icon icon-187"
+              data-icon-name="ChevronRightSmall"
+              style="font-family: "FabricMDL2Icons-3";"
+            >
+              
+            </i>
+            <span
+              class="ms-Button-textContainer textContainer-186"
+            >
+              <span
+                class="ms-Button-label label-188"
+                id="id__18"
+              >
+                Show raw outputs
+              </span>
+            </span>
+          </span>
+        </button>
+      </div>
+      <div
+        aria-labelledby="outputs-node1"
+        class="msla-trace-values"
+      >
+        <section
+          class="msla-trace-value-label"
+        >
+          <label
+            class="msla-trace-value-display-name"
+          />
+          <div
+            class="msla-colorizer-json-body"
+          >
+            <div
+              aria-readonly="true"
+              class="msla-colorizer-wrapper"
+              role="textbox"
+              tabindex="0"
+            >
+              <div
+                class="buttons"
+              >
+                <button
+                  aria-label="Select all text in ''"
+                  class="ms-Button ms-Button--icon root-194"
+                  data-is-focusable="true"
+                  title="Select all text in ''"
+                  type="button"
+                >
+                  <span
+                    class="ms-Button-flexContainer flexContainer-195"
+                    data-automationid="splitbuttonprimary"
+                  >
+                    <i
+                      aria-hidden="true"
+                      class="ms-Icon root-105 css-200 ms-Button-icon icon-197"
+                      data-icon-name="SelectAll"
+                      style="font-family: "FabricMDL2Icons-1";"
+                    >
+                      
+                    </i>
+                  </span>
+                </button>
+                <button
+                  aria-label="Copy the value of '' to the clipboard"
+                  class="ms-Button ms-Button--icon root-194"
+                  data-is-focusable="true"
+                  title="Copy the value of '' to the clipboard"
+                  type="button"
+                >
+                  <span
+                    class="ms-Button-flexContainer flexContainer-195"
+                    data-automationid="splitbuttonprimary"
+                  >
+                    <i
+                      aria-hidden="true"
+                      class="ms-Icon root-105 css-202 ms-Button-icon icon-197"
+                      data-icon-name="Copy"
+                      style="font-family: "FabricMDL2Icons-2";"
+                    >
+                      
+                    </i>
+                  </span>
+                </button>
+              </div>
+              <pre
+                class="prism-code language-json"
+                style="color: rgb(0, 0, 0); background-color: rgb(255, 255, 255);"
+              >
+                <div
+                  class="token-line"
+                  style="color: rgb(0, 0, 0);"
+                >
+                  <span
+                    class="token plain"
+                  >
+                    ‌
+                  </span>
+                </div>
+              </pre>
+            </div>
+          </div>
+        </section>
+      </div>
+    </section>
+  </div>,
+  "debug": [Function],
+  "findAllByAltText": [Function],
+  "findAllByDisplayValue": [Function],
+  "findAllByLabelText": [Function],
+  "findAllByPlaceholderText": [Function],
+  "findAllByRole": [Function],
+  "findAllByTestId": [Function],
+  "findAllByText": [Function],
+  "findAllByTitle": [Function],
+  "findByAltText": [Function],
+  "findByDisplayValue": [Function],
+  "findByLabelText": [Function],
+  "findByPlaceholderText": [Function],
+  "findByRole": [Function],
+  "findByTestId": [Function],
+  "findByText": [Function],
+  "findByTitle": [Function],
+  "getAllByAltText": [Function],
+  "getAllByDisplayValue": [Function],
+  "getAllByLabelText": [Function],
+  "getAllByPlaceholderText": [Function],
+  "getAllByRole": [Function],
+  "getAllByTestId": [Function],
+  "getAllByText": [Function],
+  "getAllByTitle": [Function],
+  "getByAltText": [Function],
+  "getByDisplayValue": [Function],
+  "getByLabelText": [Function],
+  "getByPlaceholderText": [Function],
+  "getByRole": [Function],
+  "getByTestId": [Function],
+  "getByText": [Function],
+  "getByTitle": [Function],
+  "queryAllByAltText": [Function],
+  "queryAllByDisplayValue": [Function],
+  "queryAllByLabelText": [Function],
+  "queryAllByPlaceholderText": [Function],
+  "queryAllByRole": [Function],
+  "queryAllByTestId": [Function],
+  "queryAllByText": [Function],
+  "queryAllByTitle": [Function],
+  "queryByAltText": [Function],
+  "queryByDisplayValue": [Function],
+  "queryByLabelText": [Function],
+  "queryByPlaceholderText": [Function],
+  "queryByRole": [Function],
+  "queryByTestId": [Function],
+  "queryByText": [Function],
+  "queryByTitle": [Function],
+  "rerender": [Function],
+  "unmount": [Function],
+}
+`;
+
+exports[`OutputsPanel > Should render OutputsPanel with loading state 1`] = `
+{
+  "asFragment": [Function],
+  "baseElement": <body>
+    <div>
+      <section
+        class="msla-trace-inputs-outputs"
+      >
+        <div
+          class="msla-trace-inputs-outputs-header"
+        >
+          <div
+            class="msla-trace-inputs-outputs-header-text"
+            id="outputs-node1"
+            style="border-color: #000000b3;"
+          >
+            Outputs
+          </div>
+          <button
+            class="ms-Button ms-Button--action ms-Button--command msla-show-raw-button root-184"
+            data-is-focusable="true"
+            type="button"
+          >
+            <span
+              class="ms-Button-flexContainer flexContainer-185"
+              data-automationid="splitbuttonprimary"
+            >
+              <i
+                aria-hidden="true"
+                class="ms-Icon root-105 css-193 ms-Button-icon icon-187"
+                data-icon-name="ChevronRightSmall"
+                style="font-family: "FabricMDL2Icons-3";"
+              >
+                
+              </i>
+              <span
+                class="ms-Button-textContainer textContainer-186"
+              >
+                <span
+                  class="ms-Button-label label-188"
+                  id="id__9"
+                >
+                  Show raw outputs
+                </span>
+              </span>
+            </span>
+          </button>
+        </div>
+        <div
+          aria-labelledby="outputs-node1"
+          class="msla-trace-values"
+        >
+          <section
+            class="msla-trace-value-label"
+          >
+            <label
+              class="msla-trace-value-display-name"
+            />
+            <div
+              class="msla-colorizer-json-body"
+            >
+              <div
+                aria-readonly="true"
+                class="msla-colorizer-wrapper"
+                role="textbox"
+                tabindex="0"
+              >
+                <div
+                  class="buttons"
+                >
+                  <button
+                    aria-label="Select all text in ''"
+                    class="ms-Button ms-Button--icon root-194"
+                    data-is-focusable="true"
+                    title="Select all text in ''"
+                    type="button"
+                  >
+                    <span
+                      class="ms-Button-flexContainer flexContainer-195"
+                      data-automationid="splitbuttonprimary"
+                    >
+                      <i
+                        aria-hidden="true"
+                        class="ms-Icon root-105 css-200 ms-Button-icon icon-197"
+                        data-icon-name="SelectAll"
+                        style="font-family: "FabricMDL2Icons-1";"
+                      >
+                        
+                      </i>
+                    </span>
+                  </button>
+                  <button
+                    aria-label="Copy the value of '' to the clipboard"
+                    class="ms-Button ms-Button--icon root-194"
+                    data-is-focusable="true"
+                    title="Copy the value of '' to the clipboard"
+                    type="button"
+                  >
+                    <span
+                      class="ms-Button-flexContainer flexContainer-195"
+                      data-automationid="splitbuttonprimary"
+                    >
+                      <i
+                        aria-hidden="true"
+                        class="ms-Icon root-105 css-202 ms-Button-icon icon-197"
+                        data-icon-name="Copy"
+                        style="font-family: "FabricMDL2Icons-2";"
+                      >
+                        
+                      </i>
+                    </span>
+                  </button>
+                </div>
+                <pre
+                  class="prism-code language-json"
+                  style="color: rgb(0, 0, 0); background-color: rgb(255, 255, 255);"
+                >
+                  <div
+                    class="token-line"
+                    style="color: rgb(0, 0, 0);"
+                  >
+                    <span
+                      class="token plain"
+                    >
+                      ‌
+                    </span>
+                  </div>
+                </pre>
+              </div>
+            </div>
+          </section>
+        </div>
+      </section>
+    </div>
+  </body>,
+  "container": <div>
+    <section
+      class="msla-trace-inputs-outputs"
+    >
+      <div
+        class="msla-trace-inputs-outputs-header"
+      >
+        <div
+          class="msla-trace-inputs-outputs-header-text"
+          id="outputs-node1"
+          style="border-color: #000000b3;"
+        >
+          Outputs
+        </div>
+        <button
+          class="ms-Button ms-Button--action ms-Button--command msla-show-raw-button root-184"
+          data-is-focusable="true"
+          type="button"
+        >
+          <span
+            class="ms-Button-flexContainer flexContainer-185"
+            data-automationid="splitbuttonprimary"
+          >
+            <i
+              aria-hidden="true"
+              class="ms-Icon root-105 css-193 ms-Button-icon icon-187"
+              data-icon-name="ChevronRightSmall"
+              style="font-family: "FabricMDL2Icons-3";"
+            >
+              
+            </i>
+            <span
+              class="ms-Button-textContainer textContainer-186"
+            >
+              <span
+                class="ms-Button-label label-188"
+                id="id__9"
+              >
+                Show raw outputs
+              </span>
+            </span>
+          </span>
+        </button>
+      </div>
+      <div
+        aria-labelledby="outputs-node1"
+        class="msla-trace-values"
+      >
+        <section
+          class="msla-trace-value-label"
+        >
+          <label
+            class="msla-trace-value-display-name"
+          />
+          <div
+            class="msla-colorizer-json-body"
+          >
+            <div
+              aria-readonly="true"
+              class="msla-colorizer-wrapper"
+              role="textbox"
+              tabindex="0"
+            >
+              <div
+                class="buttons"
+              >
+                <button
+                  aria-label="Select all text in ''"
+                  class="ms-Button ms-Button--icon root-194"
+                  data-is-focusable="true"
+                  title="Select all text in ''"
+                  type="button"
+                >
+                  <span
+                    class="ms-Button-flexContainer flexContainer-195"
+                    data-automationid="splitbuttonprimary"
+                  >
+                    <i
+                      aria-hidden="true"
+                      class="ms-Icon root-105 css-200 ms-Button-icon icon-197"
+                      data-icon-name="SelectAll"
+                      style="font-family: "FabricMDL2Icons-1";"
+                    >
+                      
+                    </i>
+                  </span>
+                </button>
+                <button
+                  aria-label="Copy the value of '' to the clipboard"
+                  class="ms-Button ms-Button--icon root-194"
+                  data-is-focusable="true"
+                  title="Copy the value of '' to the clipboard"
+                  type="button"
+                >
+                  <span
+                    class="ms-Button-flexContainer flexContainer-195"
+                    data-automationid="splitbuttonprimary"
+                  >
+                    <i
+                      aria-hidden="true"
+                      class="ms-Icon root-105 css-202 ms-Button-icon icon-197"
+                      data-icon-name="Copy"
+                      style="font-family: "FabricMDL2Icons-2";"
+                    >
+                      
+                    </i>
+                  </span>
+                </button>
+              </div>
+              <pre
+                class="prism-code language-json"
+                style="color: rgb(0, 0, 0); background-color: rgb(255, 255, 255);"
+              >
+                <div
+                  class="token-line"
+                  style="color: rgb(0, 0, 0);"
+                >
+                  <span
+                    class="token plain"
+                  >
+                    ‌
+                  </span>
+                </div>
+              </pre>
+            </div>
+          </div>
+        </section>
+      </div>
+    </section>
+  </div>,
+  "debug": [Function],
+  "findAllByAltText": [Function],
+  "findAllByDisplayValue": [Function],
+  "findAllByLabelText": [Function],
+  "findAllByPlaceholderText": [Function],
+  "findAllByRole": [Function],
+  "findAllByTestId": [Function],
+  "findAllByText": [Function],
+  "findAllByTitle": [Function],
+  "findByAltText": [Function],
+  "findByDisplayValue": [Function],
+  "findByLabelText": [Function],
+  "findByPlaceholderText": [Function],
+  "findByRole": [Function],
+  "findByTestId": [Function],
+  "findByText": [Function],
+  "findByTitle": [Function],
+  "getAllByAltText": [Function],
+  "getAllByDisplayValue": [Function],
+  "getAllByLabelText": [Function],
+  "getAllByPlaceholderText": [Function],
+  "getAllByRole": [Function],
+  "getAllByTestId": [Function],
+  "getAllByText": [Function],
+  "getAllByTitle": [Function],
+  "getByAltText": [Function],
+  "getByDisplayValue": [Function],
+  "getByLabelText": [Function],
+  "getByPlaceholderText": [Function],
+  "getByRole": [Function],
+  "getByTestId": [Function],
+  "getByText": [Function],
+  "getByTitle": [Function],
+  "queryAllByAltText": [Function],
+  "queryAllByDisplayValue": [Function],
+  "queryAllByLabelText": [Function],
+  "queryAllByPlaceholderText": [Function],
+  "queryAllByRole": [Function],
+  "queryAllByTestId": [Function],
+  "queryAllByText": [Function],
+  "queryAllByTitle": [Function],
+  "queryByAltText": [Function],
+  "queryByDisplayValue": [Function],
+  "queryByLabelText": [Function],
+  "queryByPlaceholderText": [Function],
+  "queryByRole": [Function],
+  "queryByTestId": [Function],
+  "queryByText": [Function],
+  "queryByTitle": [Function],
+  "rerender": [Function],
+  "unmount": [Function],
+}
+`;
+
+exports[`OutputsPanel > Should render OutputsPanel with no outputs 1`] = `
+{
+  "asFragment": [Function],
+  "baseElement": <body>
+    <div>
+      <section
+        class="msla-trace-inputs-outputs"
+      >
+        <div
+          class="msla-trace-inputs-outputs-header"
+        >
+          <div
+            class="msla-trace-inputs-outputs-header-text"
+            id="outputs-node1"
+            style="border-color: #000000b3;"
+          >
+            Outputs
+          </div>
+        </div>
+        <div
+          class="msla-trace-values"
+        >
+          <div
+            class="msla-trace-download-link"
+          >
+            <a
+              aria-label="Download (Alt or Option + select)"
+              class="ms-Link root-203"
+              download=""
+              href="http://example.com"
+              rel="noopener"
+              target="_blank"
+            >
+              Download (Alt or Option + select)
+            </a>
+          </div>
+        </div>
+      </section>
+    </div>
+  </body>,
+  "container": <div>
+    <section
+      class="msla-trace-inputs-outputs"
+    >
+      <div
+        class="msla-trace-inputs-outputs-header"
+      >
+        <div
+          class="msla-trace-inputs-outputs-header-text"
+          id="outputs-node1"
+          style="border-color: #000000b3;"
+        >
+          Outputs
+        </div>
+      </div>
+      <div
+        class="msla-trace-values"
+      >
+        <div
+          class="msla-trace-download-link"
+        >
+          <a
+            aria-label="Download (Alt or Option + select)"
+            class="ms-Link root-203"
+            download=""
+            href="http://example.com"
+            rel="noopener"
+            target="_blank"
+          >
+            Download (Alt or Option + select)
+          </a>
+        </div>
+      </div>
+    </section>
+  </div>,
+  "debug": [Function],
+  "findAllByAltText": [Function],
+  "findAllByDisplayValue": [Function],
+  "findAllByLabelText": [Function],
+  "findAllByPlaceholderText": [Function],
+  "findAllByRole": [Function],
+  "findAllByTestId": [Function],
+  "findAllByText": [Function],
+  "findAllByTitle": [Function],
+  "findByAltText": [Function],
+  "findByDisplayValue": [Function],
+  "findByLabelText": [Function],
+  "findByPlaceholderText": [Function],
+  "findByRole": [Function],
+  "findByTestId": [Function],
+  "findByText": [Function],
+  "findByTitle": [Function],
+  "getAllByAltText": [Function],
+  "getAllByDisplayValue": [Function],
+  "getAllByLabelText": [Function],
+  "getAllByPlaceholderText": [Function],
+  "getAllByRole": [Function],
+  "getAllByTestId": [Function],
+  "getAllByText": [Function],
+  "getAllByTitle": [Function],
+  "getByAltText": [Function],
+  "getByDisplayValue": [Function],
+  "getByLabelText": [Function],
+  "getByPlaceholderText": [Function],
+  "getByRole": [Function],
+  "getByTestId": [Function],
+  "getByText": [Function],
+  "getByTitle": [Function],
+  "queryAllByAltText": [Function],
+  "queryAllByDisplayValue": [Function],
+  "queryAllByLabelText": [Function],
+  "queryAllByPlaceholderText": [Function],
+  "queryAllByRole": [Function],
+  "queryAllByTestId": [Function],
+  "queryAllByText": [Function],
+  "queryAllByTitle": [Function],
+  "queryByAltText": [Function],
+  "queryByDisplayValue": [Function],
+  "queryByLabelText": [Function],
+  "queryByPlaceholderText": [Function],
+  "queryByRole": [Function],
+  "queryByTestId": [Function],
+  "queryByText": [Function],
+  "queryByTitle": [Function],
+  "rerender": [Function],
+  "unmount": [Function],
+}
+`;
+
+exports[`OutputsPanel > Should render OutputsPanel with outputs 1`] = `
+{
+  "asFragment": [Function],
+  "baseElement": <body>
+    <div>
+      <section
+        class="msla-trace-inputs-outputs"
+      >
+        <div
+          class="msla-trace-inputs-outputs-header"
+        >
+          <div
+            class="msla-trace-inputs-outputs-header-text"
+            id="outputs-node1"
+            style="border-color: #000000b3;"
+          >
+            Outputs
+          </div>
+          <button
+            class="ms-Button ms-Button--action ms-Button--command msla-show-raw-button root-184"
+            data-is-focusable="true"
+            type="button"
+          >
+            <span
+              class="ms-Button-flexContainer flexContainer-185"
+              data-automationid="splitbuttonprimary"
+            >
+              <i
+                aria-hidden="true"
+                class="ms-Icon root-105 css-193 ms-Button-icon icon-187"
+                data-icon-name="ChevronRightSmall"
+                style="font-family: "FabricMDL2Icons-3";"
+              >
+                
+              </i>
+              <span
+                class="ms-Button-textContainer textContainer-186"
+              >
+                <span
+                  class="ms-Button-label label-188"
+                  id="id__0"
+                >
+                  Show raw outputs
+                </span>
+              </span>
+            </span>
+          </button>
+        </div>
+        <div
+          aria-labelledby="outputs-node1"
+          class="msla-trace-values"
+        >
+          <section
+            class="msla-trace-value-label"
+          >
+            <label
+              class="msla-trace-value-display-name"
+            />
+            <div
+              class="msla-colorizer-json-body"
+            >
+              <div
+                aria-readonly="true"
+                class="msla-colorizer-wrapper"
+                role="textbox"
+                tabindex="0"
+              >
+                <div
+                  class="buttons"
+                >
+                  <button
+                    aria-label="Select all text in ''"
+                    class="ms-Button ms-Button--icon root-194"
+                    data-is-focusable="true"
+                    title="Select all text in ''"
+                    type="button"
+                  >
+                    <span
+                      class="ms-Button-flexContainer flexContainer-195"
+                      data-automationid="splitbuttonprimary"
+                    >
+                      <i
+                        aria-hidden="true"
+                        class="ms-Icon root-105 css-200 ms-Button-icon icon-197"
+                        data-icon-name="SelectAll"
+                        style="font-family: "FabricMDL2Icons-1";"
+                      >
+                        
+                      </i>
+                    </span>
+                  </button>
+                  <button
+                    aria-label="Copy the value of '' to the clipboard"
+                    class="ms-Button ms-Button--icon root-194"
+                    data-is-focusable="true"
+                    title="Copy the value of '' to the clipboard"
+                    type="button"
+                  >
+                    <span
+                      class="ms-Button-flexContainer flexContainer-195"
+                      data-automationid="splitbuttonprimary"
+                    >
+                      <i
+                        aria-hidden="true"
+                        class="ms-Icon root-105 css-202 ms-Button-icon icon-197"
+                        data-icon-name="Copy"
+                        style="font-family: "FabricMDL2Icons-2";"
+                      >
+                        
+                      </i>
+                    </span>
+                  </button>
+                </div>
+                <pre
+                  class="prism-code language-json"
+                  style="color: rgb(0, 0, 0); background-color: rgb(255, 255, 255);"
+                >
+                  <div
+                    class="token-line"
+                    style="color: rgb(0, 0, 0);"
+                  >
+                    <span
+                      class="token plain"
+                    >
+                      ‌
+                    </span>
+                  </div>
+                </pre>
+              </div>
+            </div>
+          </section>
+        </div>
+      </section>
+    </div>
+  </body>,
+  "container": <div>
+    <section
+      class="msla-trace-inputs-outputs"
+    >
+      <div
+        class="msla-trace-inputs-outputs-header"
+      >
+        <div
+          class="msla-trace-inputs-outputs-header-text"
+          id="outputs-node1"
+          style="border-color: #000000b3;"
+        >
+          Outputs
+        </div>
+        <button
+          class="ms-Button ms-Button--action ms-Button--command msla-show-raw-button root-184"
+          data-is-focusable="true"
+          type="button"
+        >
+          <span
+            class="ms-Button-flexContainer flexContainer-185"
+            data-automationid="splitbuttonprimary"
+          >
+            <i
+              aria-hidden="true"
+              class="ms-Icon root-105 css-193 ms-Button-icon icon-187"
+              data-icon-name="ChevronRightSmall"
+              style="font-family: "FabricMDL2Icons-3";"
+            >
+              
+            </i>
+            <span
+              class="ms-Button-textContainer textContainer-186"
+            >
+              <span
+                class="ms-Button-label label-188"
+                id="id__0"
+              >
+                Show raw outputs
+              </span>
+            </span>
+          </span>
+        </button>
+      </div>
+      <div
+        aria-labelledby="outputs-node1"
+        class="msla-trace-values"
+      >
+        <section
+          class="msla-trace-value-label"
+        >
+          <label
+            class="msla-trace-value-display-name"
+          />
+          <div
+            class="msla-colorizer-json-body"
+          >
+            <div
+              aria-readonly="true"
+              class="msla-colorizer-wrapper"
+              role="textbox"
+              tabindex="0"
+            >
+              <div
+                class="buttons"
+              >
+                <button
+                  aria-label="Select all text in ''"
+                  class="ms-Button ms-Button--icon root-194"
+                  data-is-focusable="true"
+                  title="Select all text in ''"
+                  type="button"
+                >
+                  <span
+                    class="ms-Button-flexContainer flexContainer-195"
+                    data-automationid="splitbuttonprimary"
+                  >
+                    <i
+                      aria-hidden="true"
+                      class="ms-Icon root-105 css-200 ms-Button-icon icon-197"
+                      data-icon-name="SelectAll"
+                      style="font-family: "FabricMDL2Icons-1";"
+                    >
+                      
+                    </i>
+                  </span>
+                </button>
+                <button
+                  aria-label="Copy the value of '' to the clipboard"
+                  class="ms-Button ms-Button--icon root-194"
+                  data-is-focusable="true"
+                  title="Copy the value of '' to the clipboard"
+                  type="button"
+                >
+                  <span
+                    class="ms-Button-flexContainer flexContainer-195"
+                    data-automationid="splitbuttonprimary"
+                  >
+                    <i
+                      aria-hidden="true"
+                      class="ms-Icon root-105 css-202 ms-Button-icon icon-197"
+                      data-icon-name="Copy"
+                      style="font-family: "FabricMDL2Icons-2";"
+                    >
+                      
+                    </i>
+                  </span>
+                </button>
+              </div>
+              <pre
+                class="prism-code language-json"
+                style="color: rgb(0, 0, 0); background-color: rgb(255, 255, 255);"
+              >
+                <div
+                  class="token-line"
+                  style="color: rgb(0, 0, 0);"
+                >
+                  <span
+                    class="token plain"
+                  >
+                    ‌
+                  </span>
+                </div>
+              </pre>
+            </div>
+          </div>
+        </section>
+      </div>
+    </section>
+  </div>,
+  "debug": [Function],
+  "findAllByAltText": [Function],
+  "findAllByDisplayValue": [Function],
+  "findAllByLabelText": [Function],
+  "findAllByPlaceholderText": [Function],
+  "findAllByRole": [Function],
+  "findAllByTestId": [Function],
+  "findAllByText": [Function],
+  "findAllByTitle": [Function],
+  "findByAltText": [Function],
+  "findByDisplayValue": [Function],
+  "findByLabelText": [Function],
+  "findByPlaceholderText": [Function],
+  "findByRole": [Function],
+  "findByTestId": [Function],
+  "findByText": [Function],
+  "findByTitle": [Function],
+  "getAllByAltText": [Function],
+  "getAllByDisplayValue": [Function],
+  "getAllByLabelText": [Function],
+  "getAllByPlaceholderText": [Function],
+  "getAllByRole": [Function],
+  "getAllByTestId": [Function],
+  "getAllByText": [Function],
+  "getAllByTitle": [Function],
+  "getByAltText": [Function],
+  "getByDisplayValue": [Function],
+  "getByLabelText": [Function],
+  "getByPlaceholderText": [Function],
+  "getByRole": [Function],
+  "getByTestId": [Function],
+  "getByText": [Function],
+  "getByTitle": [Function],
+  "queryAllByAltText": [Function],
+  "queryAllByDisplayValue": [Function],
+  "queryAllByLabelText": [Function],
+  "queryAllByPlaceholderText": [Function],
+  "queryAllByRole": [Function],
+  "queryAllByTestId": [Function],
+  "queryAllByText": [Function],
+  "queryAllByTitle": [Function],
+  "queryByAltText": [Function],
+  "queryByDisplayValue": [Function],
+  "queryByLabelText": [Function],
+  "queryByPlaceholderText": [Function],
+  "queryByRole": [Function],
+  "queryByTestId": [Function],
+  "queryByText": [Function],
+  "queryByTitle": [Function],
+  "rerender": [Function],
+  "unmount": [Function],
+}
+`;
+
+exports[`OutputsPanel > Should render OutputsPanel with secured outputs 1`] = `
+{
+  "asFragment": [Function],
+  "baseElement": <body>
+    <div>
+      <section
+        class="msla-trace-inputs-outputs"
+      >
+        <div
+          class="msla-trace-inputs-outputs-header"
+        >
+          <div
+            class="msla-trace-inputs-outputs-header-text"
+            style="border-color: #000000b3;"
+          >
+            Outputs
+          </div>
+        </div>
+        <div
+          class="msla-trace-values"
+        >
+          <div
+            class="msla-trace-inputs-outputs-secured"
+          >
+            <div
+              class="msla-trace-secured-text"
+            >
+              Content not shown due to security configuration.
+            </div>
+          </div>
+        </div>
+      </section>
+    </div>
+  </body>,
+  "container": <div>
+    <section
+      class="msla-trace-inputs-outputs"
+    >
+      <div
+        class="msla-trace-inputs-outputs-header"
+      >
+        <div
+          class="msla-trace-inputs-outputs-header-text"
+          style="border-color: #000000b3;"
+        >
+          Outputs
+        </div>
+      </div>
+      <div
+        class="msla-trace-values"
+      >
+        <div
+          class="msla-trace-inputs-outputs-secured"
+        >
+          <div
+            class="msla-trace-secured-text"
+          >
+            Content not shown due to security configuration.
+          </div>
+        </div>
+      </div>
+    </section>
+  </div>,
+  "debug": [Function],
+  "findAllByAltText": [Function],
+  "findAllByDisplayValue": [Function],
+  "findAllByLabelText": [Function],
+  "findAllByPlaceholderText": [Function],
+  "findAllByRole": [Function],
+  "findAllByTestId": [Function],
+  "findAllByText": [Function],
+  "findAllByTitle": [Function],
+  "findByAltText": [Function],
+  "findByDisplayValue": [Function],
+  "findByLabelText": [Function],
+  "findByPlaceholderText": [Function],
+  "findByRole": [Function],
+  "findByTestId": [Function],
+  "findByText": [Function],
+  "findByTitle": [Function],
+  "getAllByAltText": [Function],
+  "getAllByDisplayValue": [Function],
+  "getAllByLabelText": [Function],
+  "getAllByPlaceholderText": [Function],
+  "getAllByRole": [Function],
+  "getAllByTestId": [Function],
+  "getAllByText": [Function],
+  "getAllByTitle": [Function],
+  "getByAltText": [Function],
+  "getByDisplayValue": [Function],
+  "getByLabelText": [Function],
+  "getByPlaceholderText": [Function],
+  "getByRole": [Function],
+  "getByTestId": [Function],
+  "getByText": [Function],
+  "getByTitle": [Function],
+  "queryAllByAltText": [Function],
+  "queryAllByDisplayValue": [Function],
+  "queryAllByLabelText": [Function],
+  "queryAllByPlaceholderText": [Function],
+  "queryAllByRole": [Function],
+  "queryAllByTestId": [Function],
+  "queryAllByText": [Function],
+  "queryAllByTitle": [Function],
+  "queryByAltText": [Function],
+  "queryByDisplayValue": [Function],
+  "queryByLabelText": [Function],
+  "queryByPlaceholderText": [Function],
+  "queryByRole": [Function],
+  "queryByTestId": [Function],
+  "queryByText": [Function],
+  "queryByTitle": [Function],
+  "rerender": [Function],
+  "unmount": [Function],
+}
+`;
+
+exports[`OutputsPanel > Should render OutputsPanel without uri 1`] = `
+{
+  "asFragment": [Function],
+  "baseElement": <body>
+    <div>
+      <section
+        class="msla-trace-inputs-outputs"
+      >
+        <div
+          class="msla-trace-inputs-outputs-header"
+        >
+          <div
+            class="msla-trace-inputs-outputs-header-text"
+            id="outputs-node1"
+            style="border-color: #000000b3;"
+          >
+            Outputs
+          </div>
+        </div>
+        <div
+          aria-labelledby="outputs-node1"
+          class="msla-trace-values"
+        >
+          <section
+            class="msla-trace-value-label"
+          >
+            <label
+              class="msla-trace-value-display-name"
+            />
+            <div
+              class="msla-colorizer-json-body"
+            >
+              <div
+                aria-readonly="true"
+                class="msla-colorizer-wrapper"
+                role="textbox"
+                tabindex="0"
+              >
+                <div
+                  class="buttons"
+                >
+                  <button
+                    aria-label="Select all text in ''"
+                    class="ms-Button ms-Button--icon root-194"
+                    data-is-focusable="true"
+                    title="Select all text in ''"
+                    type="button"
+                  >
+                    <span
+                      class="ms-Button-flexContainer flexContainer-195"
+                      data-automationid="splitbuttonprimary"
+                    >
+                      <i
+                        aria-hidden="true"
+                        class="ms-Icon root-105 css-200 ms-Button-icon icon-197"
+                        data-icon-name="SelectAll"
+                        style="font-family: "FabricMDL2Icons-1";"
+                      >
+                        
+                      </i>
+                    </span>
+                  </button>
+                  <button
+                    aria-label="Copy the value of '' to the clipboard"
+                    class="ms-Button ms-Button--icon root-194"
+                    data-is-focusable="true"
+                    title="Copy the value of '' to the clipboard"
+                    type="button"
+                  >
+                    <span
+                      class="ms-Button-flexContainer flexContainer-195"
+                      data-automationid="splitbuttonprimary"
+                    >
+                      <i
+                        aria-hidden="true"
+                        class="ms-Icon root-105 css-202 ms-Button-icon icon-197"
+                        data-icon-name="Copy"
+                        style="font-family: "FabricMDL2Icons-2";"
+                      >
+                        
+                      </i>
+                    </span>
+                  </button>
+                </div>
+                <pre
+                  class="prism-code language-json"
+                  style="color: rgb(0, 0, 0); background-color: rgb(255, 255, 255);"
+                >
+                  <div
+                    class="token-line"
+                    style="color: rgb(0, 0, 0);"
+                  >
+                    <span
+                      class="token plain"
+                    >
+                      ‌
+                    </span>
+                  </div>
+                </pre>
+              </div>
+            </div>
+          </section>
+        </div>
+      </section>
+    </div>
+  </body>,
+  "container": <div>
+    <section
+      class="msla-trace-inputs-outputs"
+    >
+      <div
+        class="msla-trace-inputs-outputs-header"
+      >
+        <div
+          class="msla-trace-inputs-outputs-header-text"
+          id="outputs-node1"
+          style="border-color: #000000b3;"
+        >
+          Outputs
+        </div>
+      </div>
+      <div
+        aria-labelledby="outputs-node1"
+        class="msla-trace-values"
+      >
+        <section
+          class="msla-trace-value-label"
+        >
+          <label
+            class="msla-trace-value-display-name"
+          />
+          <div
+            class="msla-colorizer-json-body"
+          >
+            <div
+              aria-readonly="true"
+              class="msla-colorizer-wrapper"
+              role="textbox"
+              tabindex="0"
+            >
+              <div
+                class="buttons"
+              >
+                <button
+                  aria-label="Select all text in ''"
+                  class="ms-Button ms-Button--icon root-194"
+                  data-is-focusable="true"
+                  title="Select all text in ''"
+                  type="button"
+                >
+                  <span
+                    class="ms-Button-flexContainer flexContainer-195"
+                    data-automationid="splitbuttonprimary"
+                  >
+                    <i
+                      aria-hidden="true"
+                      class="ms-Icon root-105 css-200 ms-Button-icon icon-197"
+                      data-icon-name="SelectAll"
+                      style="font-family: "FabricMDL2Icons-1";"
+                    >
+                      
+                    </i>
+                  </span>
+                </button>
+                <button
+                  aria-label="Copy the value of '' to the clipboard"
+                  class="ms-Button ms-Button--icon root-194"
+                  data-is-focusable="true"
+                  title="Copy the value of '' to the clipboard"
+                  type="button"
+                >
+                  <span
+                    class="ms-Button-flexContainer flexContainer-195"
+                    data-automationid="splitbuttonprimary"
+                  >
+                    <i
+                      aria-hidden="true"
+                      class="ms-Icon root-105 css-202 ms-Button-icon icon-197"
+                      data-icon-name="Copy"
+                      style="font-family: "FabricMDL2Icons-2";"
+                    >
+                      
+                    </i>
+                  </span>
+                </button>
+              </div>
+              <pre
+                class="prism-code language-json"
+                style="color: rgb(0, 0, 0); background-color: rgb(255, 255, 255);"
+              >
+                <div
+                  class="token-line"
+                  style="color: rgb(0, 0, 0);"
+                >
+                  <span
+                    class="token plain"
+                  >
+                    ‌
+                  </span>
+                </div>
+              </pre>
+            </div>
+          </div>
+        </section>
+      </div>
+    </section>
+  </div>,
+  "debug": [Function],
+  "findAllByAltText": [Function],
+  "findAllByDisplayValue": [Function],
+  "findAllByLabelText": [Function],
+  "findAllByPlaceholderText": [Function],
+  "findAllByRole": [Function],
+  "findAllByTestId": [Function],
+  "findAllByText": [Function],
+  "findAllByTitle": [Function],
+  "findByAltText": [Function],
+  "findByDisplayValue": [Function],
+  "findByLabelText": [Function],
+  "findByPlaceholderText": [Function],
+  "findByRole": [Function],
+  "findByTestId": [Function],
+  "findByText": [Function],
+  "findByTitle": [Function],
+  "getAllByAltText": [Function],
+  "getAllByDisplayValue": [Function],
+  "getAllByLabelText": [Function],
+  "getAllByPlaceholderText": [Function],
+  "getAllByRole": [Function],
+  "getAllByTestId": [Function],
+  "getAllByText": [Function],
+  "getAllByTitle": [Function],
+  "getByAltText": [Function],
+  "getByDisplayValue": [Function],
+  "getByLabelText": [Function],
+  "getByPlaceholderText": [Function],
+  "getByRole": [Function],
+  "getByTestId": [Function],
+  "getByText": [Function],
+  "getByTitle": [Function],
+  "queryAllByAltText": [Function],
+  "queryAllByDisplayValue": [Function],
+  "queryAllByLabelText": [Function],
+  "queryAllByPlaceholderText": [Function],
+  "queryAllByRole": [Function],
+  "queryAllByTestId": [Function],
+  "queryAllByText": [Function],
+  "queryAllByTitle": [Function],
+  "queryByAltText": [Function],
+  "queryByDisplayValue": [Function],
+  "queryByLabelText": [Function],
+  "queryByPlaceholderText": [Function],
+  "queryByRole": [Function],
+  "queryByTestId": [Function],
+  "queryByText": [Function],
+  "queryByTitle": [Function],
+  "rerender": [Function],
+  "unmount": [Function],
+}
+`;

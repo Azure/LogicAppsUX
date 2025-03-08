@@ -1,0 +1,39 @@
+@import (reference) './variables.less';
+
+.msla-button {
+  background-color: transparent;
+  border: none;
+  font-family: @font-family;
+  cursor: pointer;
+  font-size: @card-body-font-size;
+  color: @brandColor;
+  line-height: @parameter-inputbox-height;
+}
+
+.placeholder() {
+  &::-webkit-input-placeholder {
+    font-family: @font-family;
+  }
+  &:-moz-placeholder {
+    font-family: @font-family;
+  }
+  &::-moz-placeholder {
+    font-family: @font-family;
+  }
+  &::placeholder {
+    font-family: @font-family;
+  }
+  &:placeholder-shown {
+    font-family: @font-family;
+  }
+}
+
+.msla-hidden {
+  visibility: hidden;
+}
+
+.msla-theme-dark {
+  .msla-button {
+    color: @brandColorLight;
+  }
+}

@@ -1,0 +1,17 @@
+import EmptyPanel from './images/empty-panel.svg';
+import { useIntl } from 'react-intl';
+
+export const EmptyContent: React.FC = () => {
+  const intl = useIntl();
+  const emptyContentMessage = intl.formatMessage({
+    defaultMessage: 'Please select a card to see the content',
+    id: 'HfrUId',
+    description: 'Empty Panel Content Message',
+  });
+  return (
+    <div className="msla-panel-select-card-container-empty">
+      <img src={EmptyPanel} alt="" role="presentation" />
+      <p className="msla-panel-empty-text">{emptyContentMessage}</p>
+    </div>
+  );
+};

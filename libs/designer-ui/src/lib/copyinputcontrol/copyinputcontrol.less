@@ -1,0 +1,70 @@
+@import (reference) '../variables.less';
+
+@placeholderTextColor: #000;
+
+.msla-copy-input-control {
+  align-items: center;
+  display: flex;
+  white-space: nowrap;
+}
+
+.msla-copy-input-control-textbox {
+  flex: 1;
+
+  input {
+    font-size: @parameter-value-font-size;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+
+    // WebKit and Blink (Safari, Google Chrome, Opera 15+)
+    &::-webkit-input-placeholder {
+      color: @placeholderTextColor;
+      font-family: @font-family;
+    }
+
+    // Mozilla Firefox 19+
+    &::-moz-placeholder {
+      color: @placeholderTextColor;
+      font-family: @font-family;
+    }
+
+    // W3C CSS Pseudo-Elements Level 4 specification
+    &::placeholder {
+      color: @placeholderTextColor;
+      font-family: @font-family;
+    }
+
+    // W3C CSS Selectors Level 4 specification
+    &:placeholder-shown {
+      color: @placeholderTextColor;
+      font-family: @font-family;
+    }
+  }
+}
+
+.msla-theme-dark {
+  .msla-copy-input-control-textbox {
+    input {
+
+      // WebKit and Blink (Safari, Google Chrome, Opera 15+)
+      &::-webkit-input-placeholder {
+        color: @ms-color-black;
+      }
+
+      // Mozilla Firefox 19+
+      &::-moz-placeholder {
+        color: @ms-color-black;
+      }
+
+      // W3C CSS Pseudo-Elements Level 4 specification
+      &::placeholder {
+        color: @ms-color-black;
+      }
+
+      // W3C CSS Selectors Level 4 specification
+      &:placeholder-shown {
+        color: @ms-color-black;
+      }
+    }
+  }
+}

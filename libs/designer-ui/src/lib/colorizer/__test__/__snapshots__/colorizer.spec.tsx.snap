@@ -1,0 +1,301 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`lib/colorizer > should render 1`] = `
+<div
+  aria-label="start time"
+  aria-readonly={true}
+  className="msla-colorizer-wrapper"
+  role="textbox"
+  tabIndex={0}
+>
+  <div
+    className="buttons"
+  >
+    <CustomizedIconButton
+      ariaLabel="Select all text in 'start time'"
+      iconProps={
+        {
+          "iconName": "SelectAll",
+        }
+      }
+      onClick={[Function]}
+      title="Select all text in 'start time'"
+    />
+    <CustomizedIconButton
+      ariaLabel="Copy the value of 'start time' to the clipboard"
+      iconProps={
+        {
+          "iconName": "Copy",
+        }
+      }
+      onClick={[Function]}
+      title="Copy the value of 'start time' to the clipboard"
+    />
+  </div>
+  <Highlight2
+    code="12:00"
+    language="json"
+    theme={
+      {
+        "plain": {
+          "backgroundColor": "#ffffff",
+          "color": "#000000",
+        },
+        "styles": [
+          {
+            "style": {
+              "color": "rgb(0, 128, 0)",
+            },
+            "types": [
+              "comment",
+            ],
+          },
+          {
+            "style": {
+              "color": "rgb(0, 112, 193)",
+            },
+            "types": [
+              "builtin",
+            ],
+          },
+          {
+            "style": {
+              "color": "rgb(9, 134, 88)",
+            },
+            "types": [
+              "number",
+              "variable",
+              "inserted",
+            ],
+          },
+          {
+            "style": {
+              "color": "rgb(0, 0, 0)",
+            },
+            "types": [
+              "operator",
+            ],
+          },
+          {
+            "style": {
+              "color": "rgb(129, 31, 63)",
+            },
+            "types": [
+              "constant",
+              "char",
+            ],
+          },
+          {
+            "style": {
+              "color": "rgb(128, 0, 0)",
+            },
+            "types": [
+              "tag",
+            ],
+          },
+          {
+            "style": {
+              "color": "rgb(255, 0, 0)",
+            },
+            "types": [
+              "attr-name",
+            ],
+          },
+          {
+            "style": {
+              "color": "rgb(163, 21, 21)",
+            },
+            "types": [
+              "deleted",
+              "string",
+            ],
+          },
+          {
+            "style": {
+              "color": "rgb(4, 81, 165)",
+            },
+            "types": [
+              "changed",
+              "punctuation",
+            ],
+          },
+          {
+            "style": {
+              "color": "rgb(0, 0, 255)",
+            },
+            "types": [
+              "function",
+              "keyword",
+            ],
+          },
+          {
+            "style": {
+              "color": "rgb(38, 127, 153)",
+            },
+            "types": [
+              "class-name",
+            ],
+          },
+        ],
+      }
+    }
+  >
+    [Function]
+  </Highlight2>
+</div>
+`;
+
+exports[`lib/colorizer > should render when utc time format props are given 1`] = `
+<div
+  aria-label="start time"
+  aria-readonly={true}
+  className="msla-colorizer-wrapper date-time"
+  role="textbox"
+  tabIndex={0}
+>
+  <div
+    className="buttons"
+  >
+    <CustomizedIconButton
+      ariaLabel="Switch 'start time' to the local time"
+      iconProps={
+        {
+          "iconName": "DateTime",
+        }
+      }
+      onClick={[Function]}
+      title="Switch 'start time' to the local time"
+    />
+    <CustomizedIconButton
+      ariaLabel="Select all text in 'start time'"
+      iconProps={
+        {
+          "iconName": "SelectAll",
+        }
+      }
+      onClick={[Function]}
+      title="Select all text in 'start time'"
+    />
+    <CustomizedIconButton
+      ariaLabel="Copy the value of 'start time' to the clipboard"
+      iconProps={
+        {
+          "iconName": "Copy",
+        }
+      }
+      onClick={[Function]}
+      title="Copy the value of 'start time' to the clipboard"
+    />
+  </div>
+  <Highlight2
+    code="12:00"
+    language="json"
+    theme={
+      {
+        "plain": {
+          "backgroundColor": "#ffffff",
+          "color": "#000000",
+        },
+        "styles": [
+          {
+            "style": {
+              "color": "rgb(0, 128, 0)",
+            },
+            "types": [
+              "comment",
+            ],
+          },
+          {
+            "style": {
+              "color": "rgb(0, 112, 193)",
+            },
+            "types": [
+              "builtin",
+            ],
+          },
+          {
+            "style": {
+              "color": "rgb(9, 134, 88)",
+            },
+            "types": [
+              "number",
+              "variable",
+              "inserted",
+            ],
+          },
+          {
+            "style": {
+              "color": "rgb(0, 0, 0)",
+            },
+            "types": [
+              "operator",
+            ],
+          },
+          {
+            "style": {
+              "color": "rgb(129, 31, 63)",
+            },
+            "types": [
+              "constant",
+              "char",
+            ],
+          },
+          {
+            "style": {
+              "color": "rgb(128, 0, 0)",
+            },
+            "types": [
+              "tag",
+            ],
+          },
+          {
+            "style": {
+              "color": "rgb(255, 0, 0)",
+            },
+            "types": [
+              "attr-name",
+            ],
+          },
+          {
+            "style": {
+              "color": "rgb(163, 21, 21)",
+            },
+            "types": [
+              "deleted",
+              "string",
+            ],
+          },
+          {
+            "style": {
+              "color": "rgb(4, 81, 165)",
+            },
+            "types": [
+              "changed",
+              "punctuation",
+            ],
+          },
+          {
+            "style": {
+              "color": "rgb(0, 0, 255)",
+            },
+            "types": [
+              "function",
+              "keyword",
+            ],
+          },
+          {
+            "style": {
+              "color": "rgb(38, 127, 153)",
+            },
+            "types": [
+              "class-name",
+            ],
+          },
+        ],
+      }
+    }
+  >
+    [Function]
+  </Highlight2>
+</div>
+`;

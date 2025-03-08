@@ -1,0 +1,39 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`ui/workflowparameters/workflowparameter > should construct. 1`] = `
+<div
+  className="msla-workflow-parameter"
+>
+  <div>
+    <div>
+      <Button
+        appearance="subtle"
+        aria-expanded={false}
+        className="msla-workflow-parameter-heading-button"
+        data-automation-id="-parameter-heading-button"
+        data-testid="-parameter-heading-button"
+        icon={<CompoundIcon />}
+        id="id"
+        onClick={[Function]}
+      >
+        New parameter
+      </Button>
+    </div>
+  </div>
+  <div
+    className="msla-workflow-parameter-edit-or-delete-button"
+  >
+    <EditOrDeleteButton
+      definition={
+        {
+          "id": "id",
+          "name": "",
+          "type": "Array",
+        }
+      }
+      setExpanded={[Function]}
+      setIsEditable={[Function]}
+    />
+  </div>
+</div>
+`;

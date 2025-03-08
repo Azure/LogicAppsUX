@@ -1,0 +1,117 @@
+# See http://help.github.com/ignore-files/ for more about ignoring files.
+
+.turbo
+
+# compiled output
+/dist
+/tmp
+/out-tsc
+build 
+.nx
+# dependencies
+node_modules
+/CodeCoverage
+# IDEs and editors
+/.idea
+.project
+.classpath
+.c9/
+*.launch
+.settings/
+*.sublime-workspace
+coverage
+# IDE - VSCode
+.vscode/*
+!.vscode/tasks.json
+!.vscode/launch.json
+!.vscode/extensions.json
+
+# misc
+/.sass-cache
+/connect.lock
+/coverage
+/libpeerconnection.log
+npm-debug.log
+yarn-error.log
+junit.xml
+testem.log
+/typings
+**/dist
+debug.log
+
+# System Files
+.DS_Store
+Thumbs.db
+
+# Azure local files
+__azurite_db_queue__.json
+__azurite_db_queue_extent__.json
+
+# Playwright
+**/test-results
+**/playwright-report
+**/playwright/.cache
+*.pem
+
+# ARM Token
+**/armToken.json
+
+# Generated Docusaurus files
+.docusaurus/
+.cache-loader/
+docs/src/pages/CHANGELOG.MD
+/test-results/
+/playwright-report/
+/blob-report/
+/playwright/.cache/
+
+# Logs
+logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+lerna-debug.log*
+
+node_modules
+dist
+dist-ssr
+*.local
+
+# Editor directories and files
+.vscode/*
+!.vscode/extensions.json
+.idea
+.DS_Store
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
+
+# Dependencies
+/node_modules
+
+# Production
+/build
+/libs/designer/src/lib/core/templates/templateFiles
+/libs/logic-apps-shared/src/designer-client-services/lib/templates
+
+# Generated files
+.docusaurus
+.cache-loader
+CHANGELOG.MD
+# Misc
+.DS_Store
+.env
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+.eslintcache
+
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+vite.config.ts.timestamp*

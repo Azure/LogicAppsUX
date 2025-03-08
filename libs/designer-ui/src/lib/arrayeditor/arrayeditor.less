@@ -1,0 +1,179 @@
+@import (reference) '../variables.less';
+
+@command-icon-width: 16px;
+@padding: 5px;
+
+.msla-array-editor-container {
+  border: 1px dashed @defaultBorderColor;
+  display: flex;
+
+  .msla-array-commands {
+    vertical-align: top;
+    display: inline-block;
+    align-self: flex-start;
+  }
+
+  .msla-array-container {
+    flex: 1 1 100%;
+
+    &.msla-array-editor-collapsed {
+      padding: 10px 0px 10px @padding;
+
+      .msla-input-parameter-label {
+        align-self: center;
+      }
+
+      .msla-array-content {
+        display: inline-block;
+        box-sizing: border-box;
+        width: calc(100% - @command-icon-width - @parameter-label-inputbox-margin);
+
+        .msla-input-parameter-error {
+          margin-left: 0;
+        }
+      }
+
+      .msla-collapsed-editor-container {
+        width: 98%;
+        border-radius: 2px;
+        position: relative;
+
+        .editor-input {
+          outline: 1px solid @panel-mode-panel-border-color;
+          resize: none;
+          font-size: 15px;
+          tab-size: 1;
+          min-height: 75px;
+          line-height: 30px;
+          padding-inline-start: 5px;
+          &.readonly {
+            background-color: rgba(128, 128, 128, 0.1);
+          }
+          &:focus {
+            outline: 2px solid @primary_focus_blue;
+          }
+          p {
+            margin: 0;
+            line-height: 1.5rem;
+          }
+        }
+        .editor-placeholder {
+          color: #696969;
+          overflow: hidden;
+          position: absolute;
+          text-overflow: ellipsis;
+          white-space: nowrap;
+          width: 95%;
+          margin-top: -75px;
+          margin-left: 5px;
+          font-size: 15px;
+          user-select: none;
+          display: inline-block;
+          pointer-events: none;
+        }
+      }
+
+      .msla-array-commands {
+        margin-top: 0;
+      }
+    }
+  }
+
+  .msla-array-item-container {
+    margin: 10px 0;
+    padding: 0 @padding;
+
+    .msla-array-item {
+      margin-left: 6px;
+      &.complex {
+        margin: 4px;
+        padding: 4px 4px 4px 4px;
+        border: 1px dashed @defaultBorderColor;
+      }
+      &.isNested {
+        border: 1px dotted @defaultBorderColor;
+      }
+
+      .msla-array-item-header {
+        display: flex;
+        justify-content: space-between;
+        padding-bottom: 4px;
+      }
+      .msla-array-editor-container-expanded {
+        width: 100%;
+        border-radius: 2px;
+        padding-bottom: 5px;
+        position: relative;
+
+        .editor-input {
+          outline: 1px solid @panel-mode-panel-border-color;
+          resize: none;
+          font-size: 15px;
+          tab-size: 1;
+          min-height: 30px;
+          line-height: 20px;
+          padding-inline-start: 5px;
+          &.readonly {
+            background-color: rgba(128, 128, 128, 0.1);
+          }
+          &:focus {
+            outline: 2px solid @primary_focus_blue;
+          }
+          p {
+            padding-top: 5px;
+            padding-bottom: 2px;
+            margin: 0;
+          }
+        }
+        .editor-placeholder {
+          color: #696969;
+          overflow: hidden;
+          position: absolute;
+          text-overflow: ellipsis;
+          white-space: nowrap;
+          width: 95%;
+          margin-top: -25px;
+          margin-left: 5px;
+          font-size: 15px;
+          user-select: none;
+          display: inline-block;
+          pointer-events: none;
+        }
+      }
+    }
+
+    .msla-array-item-parameters {
+      display: inline-block;
+      width: calc(100% - 30px);
+
+      .msla-input-parameter-array {
+        margin-bottom: @parameter-interval-margin;
+      }
+    }
+
+    .msla-array-item-commands {
+      display: inline-block;
+      width: 30px;
+      vertical-align: top;
+
+      .msla-array-item-contextbutton {
+        i[data-icon-name='ChevronDown'] {
+          display: none;
+        }
+        &:hover {
+          background-color: transparent;
+        }
+      }
+    }
+  }
+
+  .msla-array-toolbar {
+    display: flex;
+    margin: @padding;
+
+    .msla-array-add-item-button {
+      height: @parameter-inputbox-height;
+      font-size: @card-label-font-size;
+    }
+  }
+}

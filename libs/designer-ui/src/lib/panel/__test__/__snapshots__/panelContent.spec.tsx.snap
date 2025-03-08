@@ -1,0 +1,29 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`ui/panel/panelContent > should construct. 1`] = `
+<div
+  className="msla-node-details-panel"
+  id="msla-node-details-panel-"
+>
+  <ForwardRef
+    aria-label="more panels"
+  >
+    <TabList
+      onTabSelect={[Function]}
+      style={
+        {
+          "margin": "5px 5px 0px 5px",
+        }
+      }
+    >
+      <OverflowMenu
+        onTabSelect={[MockFunction spy]}
+        tabs={[]}
+      />
+    </TabList>
+  </ForwardRef>
+  <div
+    className="msla-panel-content-container"
+  />
+</div>
+`;

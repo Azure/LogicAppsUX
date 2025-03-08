@@ -1,0 +1,33 @@
+@import (reference) '../variables.less';
+
+.msla-tip {
+  .msla-tip-inner {
+    box-sizing: border-box;
+    width: 388px;
+
+    .msla-tip-message {
+      padding: 1em;
+
+      a {
+        &:active,
+        &:link,
+        &:hover,
+        &:visited {
+          text-decoration: underline;
+          color: @brandColor;
+        }
+      }
+    }
+
+    .msla-tip-actions {
+      padding: 0 0.5em 0.5em;
+      .msla-tip-command-button {
+        border: 1px solid transparent;
+      }
+    }
+  }
+}
+
+.msla-azure-function-tip-message-link-div {
+  padding-top: 1em;
+}

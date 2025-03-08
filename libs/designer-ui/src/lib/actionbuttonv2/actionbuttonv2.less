@@ -1,0 +1,63 @@
+.msla-action-button-v2 {
+  background-color: #fff;
+  border: 1px solid #b1b1b7;
+  border-radius: 50%;
+  height: 24px;
+  width: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0px;
+
+  &::after {
+    outline: transparent !important;
+  }
+
+  &:active,
+  &:focus {
+    border-color: #0078d4;
+  }
+
+  &:hover {
+    box-shadow: 0 0.6px 1.8px rgba(0, 0, 0, 0.1), 0 3.2px 7.2px rgba(0, 0, 0, 0.13);
+    cursor: pointer;
+  }
+
+  &:active {
+    box-shadow: 0 0 3.6px #0078d4, 0 0 14.4px #0078d4;
+  }
+
+  &:focus {
+    box-shadow: 0 0.6px 1.8px rgba(0, 0, 0, 0.1), 0 3.2px 7.2px rgba(0, 0, 0, 0.13);
+  }
+}
+
+.msla-theme-dark {
+  .msla-action-button-v2 {
+    background-color: @ms-color-primaryBackground;
+    border: 1px solid @ms-color-primaryBorder;
+    box-shadow: 0 0.3px 0.9px rgba(255, 255, 255, 0.1), 0 1.6px 3.6px rgba(255, 255, 255, 0.13);
+
+    &:active,
+    &:focus {
+      border: 2px solid #3aa0f3;
+    }
+
+    &:hover {
+      background-color: @ms-color-primaryBackgroundHover;
+      box-shadow: 0 0.6px 1.8px rgba(255, 255, 255, 0.1), 0 3.2px 7.2px rgba(255, 255, 255, 0.13);
+
+      path {
+        fill: 2px solid#82c7ff;
+      }
+    }
+
+    &:active {
+      box-shadow: 0 0 3.6px #3aa0f3, 0 0 14.4px #3aa0f3;
+    }
+
+    &:focus {
+      box-shadow: 0 0.6px 1.8px rgba(255, 255, 255, 0.1), 0 3.2px 7.2px rgba(255, 255, 255, 0.13);
+    }
+  }
+}

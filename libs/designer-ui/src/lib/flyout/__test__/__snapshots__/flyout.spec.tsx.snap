@@ -1,0 +1,179 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`ui/flyout > should render 1`] = `
+<div
+  className="ms-TooltipHost root-116"
+  onBlurCapture={[Function]}
+  onFocusCapture={[Function]}
+  onKeyDown={[Function]}
+  onMouseEnter={[Function]}
+  onMouseLeave={[Function]}
+  role="none"
+>
+  <button
+    aria-label="text"
+    className="msla-button msla-flyout"
+    data-testid="callout-btn"
+    onClick={[Function]}
+    tabIndex={0}
+  >
+    <img
+      alt=""
+      className="msla-flyout-icon lg"
+      draggable={false}
+      role="presentation"
+      src="/src/lib/card/images/information_tiny.svg"
+    />
+  </button>
+  <div
+    hidden={true}
+    id="tooltip0"
+    style={
+      {
+        "border": 0,
+        "height": 1,
+        "margin": -1,
+        "overflow": "hidden",
+        "padding": 0,
+        "position": "absolute",
+        "whiteSpace": "nowrap",
+        "width": 1,
+      }
+    }
+  />
+</div>
+`;
+
+exports[`ui/flyout > should render with a non-zero tab index 1`] = `
+<div
+  className="ms-TooltipHost root-116"
+  onBlurCapture={[Function]}
+  onFocusCapture={[Function]}
+  onKeyDown={[Function]}
+  onMouseEnter={[Function]}
+  onMouseLeave={[Function]}
+  role="none"
+>
+  <button
+    aria-label="text"
+    className="msla-button msla-flyout"
+    data-testid="callout-btn"
+    onClick={[Function]}
+    tabIndex={-1}
+  >
+    <img
+      alt=""
+      className="msla-flyout-icon lg"
+      draggable={false}
+      role="presentation"
+      src="/src/lib/card/images/information_tiny.svg"
+    />
+  </button>
+  <div
+    hidden={true}
+    id="tooltip2"
+    style={
+      {
+        "border": 0,
+        "height": 1,
+        "margin": -1,
+        "overflow": "hidden",
+        "padding": 0,
+        "position": "absolute",
+        "whiteSpace": "nowrap",
+        "width": 1,
+      }
+    }
+  />
+</div>
+`;
+
+exports[`ui/flyout > should render with a title 1`] = `
+<div
+  className="ms-TooltipHost root-116"
+  onBlurCapture={[Function]}
+  onFocusCapture={[Function]}
+  onKeyDown={[Function]}
+  onMouseEnter={[Function]}
+  onMouseLeave={[Function]}
+  role="none"
+>
+  <button
+    aria-label="title"
+    className="msla-button msla-flyout"
+    data-testid="callout-btn"
+    onClick={[Function]}
+    tabIndex={0}
+  >
+    <img
+      alt=""
+      className="msla-flyout-icon lg"
+      draggable={false}
+      role="presentation"
+      src="/src/lib/card/images/information_tiny.svg"
+    />
+  </button>
+  <div
+    hidden={true}
+    id="tooltip3"
+    style={
+      {
+        "border": 0,
+        "height": 1,
+        "margin": -1,
+        "overflow": "hidden",
+        "padding": 0,
+        "position": "absolute",
+        "whiteSpace": "nowrap",
+        "width": 1,
+      }
+    }
+  />
+</div>
+`;
+
+exports[`ui/flyout > should render with an ARIA label 1`] = `
+<div
+  className="ms-TooltipHost root-116"
+  onBlurCapture={[Function]}
+  onFocusCapture={[Function]}
+  onKeyDown={[Function]}
+  onMouseEnter={[Function]}
+  onMouseLeave={[Function]}
+  role="none"
+>
+  <button
+    aria-label="aria-label"
+    className="msla-button msla-flyout"
+    data-testid="callout-btn"
+    onClick={[Function]}
+    tabIndex={0}
+  >
+    <img
+      alt=""
+      className="msla-flyout-icon lg"
+      draggable={false}
+      role="presentation"
+      src="/src/lib/card/images/information_tiny.svg"
+    />
+  </button>
+  <div
+    hidden={true}
+    id="tooltip1"
+    style={
+      {
+        "border": 0,
+        "height": 1,
+        "margin": -1,
+        "overflow": "hidden",
+        "padding": 0,
+        "position": "absolute",
+        "whiteSpace": "nowrap",
+        "width": 1,
+      }
+    }
+  >
+    aria-label
+  </div>
+</div>
+`;

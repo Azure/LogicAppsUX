@@ -1,0 +1,145 @@
+@import (reference) "../variables.less";
+
+.msla-static-result-container-header {
+  display: flex;
+  width: 100%;
+  vertical-align: middle;
+  border: none;
+  cursor: pointer;
+  background-color: transparent;
+  justify-content: space-between;
+  padding-left: 0;
+  margin-top: 10px;
+  height: 30px;
+  &:hover,
+  &:hover,
+  &:active {
+    background-color: @selected-item-background-color;
+  }
+
+  .msla-static-result-container-header-icon {
+    padding-left: 10px;
+    padding-top: 8px;
+    padding-bottom: 12px;
+    width: 20px;
+  }
+  .msla-static-result-container-header-text {
+    border: none;
+    text-align: left;
+    font-size: 14px;
+    font-weight: 600;
+    font-family: @font-family;
+    min-width: 80%;
+    line-height: 25px;
+  }
+}
+.msla-static-result-label {
+  font-size: 14px;
+  font-weight: 600;
+  line-height: 25px;
+}
+
+.msla-static-result-container-header-root {
+  display: flex;
+  width: 100%;
+  align-items: flex-end;
+  border: none;
+  .msla-static-result-container-header-text {
+    border: none;
+    text-align: left;
+    font-size: 14px;
+    font-weight: 600;
+    font-family: @font-family;
+    margin-right: 30px;
+    line-height: 25px;
+  }
+  .static-result-info-icon {
+    height: 20px;
+    width: 20px;
+  }
+}
+
+.msla-static-result-properties-header {
+  padding-bottom: 20px;
+  border-bottom: @border;
+  .msla-static-result-properties-header-optional-values {
+    width: 50%;
+  }
+}
+.msla-static-result-properties-inner {
+  margin-left: 20px;
+}
+.msla-static-result-property-inner {
+  padding-top: 10px;
+}
+.msla-property-editor-container {
+  border: 1px solid #8a8886;
+  display: flex;
+  padding: 10px;
+  .msla-property-editors {
+    width: 95%;
+
+    .msla-property-editor-property {
+      padding-bottom: 10px;
+      .msla-property-editor-property-header {
+        display: flex;
+        justify-content: space-between;
+        .msla-property-editor-property-header-text {
+          width: 80%;
+        }
+        .msla-property-editor-property-header-icon {
+          width: 20%;
+        }
+      }
+    }
+    .msla-property-editor-new-property {
+      margin-top: 15px;
+      border-top: @border;
+      display: flex;
+      justify-content: space-between;
+      .msla-property-editor-add-new-property-button {
+        margin-top: 12px;
+      }
+    }
+  }
+  .msla-propery-editor-commands {
+    vertical-align: top;
+    display: inline-block;
+    align-self: flex-start;
+  }
+}
+
+.msla-static-result-actions {
+  display: flex;
+  justify-content: center;
+  padding-top: 30px;
+  margin-top: 30px;
+  border-top: @border;
+  .msla-static-result-action-button {
+    height: 30px;
+    &.delete {
+      background-color: rgb(164, 38, 44);
+      color: #fff;
+    }
+  }
+}
+
+.msla-theme-dark {
+  .msla-static-result-container-header {
+    background-color: @ms-color-secondaryBackground;
+    &:hover {
+      background-color: @ms-color-primaryBackground;
+      cursor: pointer;
+    }
+    &:active {
+      background-color: @ms-color-primaryBackgroundHover;
+    }
+  }
+}
+
+.msla-static-results-validation {
+  position: relative;
+  color: #e00202;
+  font-size: 14px;
+  top: 15px;
+}

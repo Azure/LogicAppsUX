@@ -1,0 +1,16 @@
+{
+  "LABEL": {
+    "name": "ConventionalCommitMessage",
+    "color": "EEEEEE"
+  },
+  "CHECKS": {
+    "regexp": "^(feat|fix|docs|style|refactor|test|chore|meta)(!)?(\\([a-zA-Z0-9-_. ]+\\))?:\\s.+$",
+    "regexpFlags": "i",
+    "ignoreLabels": ["skip-pr-check"]
+  },
+  "MESSAGES": {
+    "success": "PR Message follows Standards",
+    "failure": "Please modify your PR title to match the conventional commits format: https://www.conventionalcommits.org/",
+    "notice": "Please modify your PR title to match the conventional commits format: https://www.conventionalcommits.org/"
+  }
+}

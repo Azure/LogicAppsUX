@@ -1,0 +1,30 @@
+@import (reference) '../../variables.less';
+
+.msla-editor-toggle-button {
+  vertical-align: top;
+  display: inline-block;
+  padding: 0;
+
+  img {
+    width: @command-icon-width;
+    height: @command-icon-width;
+    vertical-align: middle;
+  }
+
+  &[disabled] {
+    cursor: default;
+    img {
+      opacity: 0.6;
+    }
+  }
+}
+
+@media (forced-colors: active) {
+  .msla-editor-toggle-button {
+    filter: invert(1);
+  }
+
+  .msla-editor-toggle-button:hover {
+    forced-color-adjust: none;
+  }
+}

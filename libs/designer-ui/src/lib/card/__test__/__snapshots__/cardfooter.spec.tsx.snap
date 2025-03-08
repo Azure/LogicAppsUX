@@ -1,0 +1,131 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`lib/card/cardfooter > should render 1`] = `null`;
+
+exports[`lib/card/cardfooter > should render with a comment icon 1`] = `
+<div
+  className="msla-card-v2-footer"
+>
+  <div
+    className="msla-badges"
+  >
+    <div
+      aria-label=" Comment: comment"
+      onBlur={[Function]}
+      onFocus={[Function]}
+      onPointerEnter={[Function]}
+      onPointerLeave={[Function]}
+    >
+      <i
+        aria-hidden={true}
+        className="panel-card-v2-badge active root-111"
+        data-icon-name="Comment"
+        role="button"
+      >
+        
+      </i>
+    </div>
+  </div>
+</div>
+`;
+
+exports[`lib/card/cardfooter > should render with a connection icon 1`] = `
+<div
+  className="msla-card-v2-footer"
+>
+  <div
+    className="msla-badges"
+  >
+    <div
+      aria-label=" Connection name: joechung@microsoft.com"
+      onBlur={[Function]}
+      onFocus={[Function]}
+      onPointerEnter={[Function]}
+      onPointerLeave={[Function]}
+    >
+      <i
+        aria-hidden={true}
+        className="panel-card-v2-badge active root-114"
+        data-icon-name="Link"
+        role="button"
+      >
+        
+      </i>
+    </div>
+  </div>
+</div>
+`;
+
+exports[`lib/card/cardfooter > should render with a lock icon 1`] = `
+<div
+  className="msla-card-v2-footer"
+>
+  <div
+    className="msla-badges"
+  >
+    <div
+      aria-label=" Secure inputs or outputs enabled: This operation has secure inputs or outputs enabled."
+      onBlur={[Function]}
+      onFocus={[Function]}
+      onPointerEnter={[Function]}
+      onPointerLeave={[Function]}
+    >
+      <i
+        aria-hidden={true}
+        className="panel-card-v2-badge active root-114"
+        data-icon-name="Lock"
+        role="button"
+      >
+        
+      </i>
+    </div>
+  </div>
+</div>
+`;
+
+exports[`lib/card/cardfooter > should render with a testing icon 1`] = `
+<div
+  className="msla-card-v2-footer"
+>
+  <div
+    className="msla-badges"
+  >
+    <div
+      aria-label=" Testing: This action has testing configured."
+      onBlur={[Function]}
+      onFocus={[Function]}
+      onPointerEnter={[Function]}
+      onPointerLeave={[Function]}
+    >
+      <i
+        aria-hidden={true}
+        className="panel-card-v2-badge active root-117"
+        data-icon-name="TestBeaker"
+        role="button"
+      >
+        
+      </i>
+    </div>
+  </div>
+</div>
+`;
+
+exports[`lib/card/cardfooter > should render with an inactive connection icon 1`] = `
+<div
+  className="msla-card-v2-footer"
+>
+  <div
+    className="msla-badges"
+  >
+    <i
+      aria-label="Connection required"
+      className="panel-card-v2-badge inactive root-114"
+      data-icon-name="Link"
+      role="img"
+      tabIndex={0}
+    >
+      
+    </i>
+  </div>
+</div>
+`;

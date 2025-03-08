@@ -1,0 +1,44 @@
+.msla-sub-heading-container {
+  margin: 0px -24px 12px;
+  padding: 12px 24px;
+  z-index: 1;
+  position: sticky;
+  top: 68px;
+
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  background-color: #fff;
+
+  .msla-search-box {
+    margin: 0px;
+
+    .ms-SearchBox-iconContainer {
+      max-width: 24px;
+    }
+  }
+
+  .msla-flex-row {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  .msla-search-heading-text {
+    text-overflow: ellipsis;
+    overflow: hidden;
+    white-space: nowrap;
+  }
+
+  @media only screen and (max-height: 420px) {
+    position: initial;
+  }
+}
+
+.msla-theme-dark {
+  .msla-sub-heading-container {
+    background-color: @ms-color-secondaryBackground;
+  }
+}

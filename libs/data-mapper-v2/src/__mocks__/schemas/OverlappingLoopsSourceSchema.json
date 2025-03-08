@@ -1,0 +1,77 @@
+{
+  "name": "overlappingLoop.json",
+  "type": "JSON",
+  "schemaTreeRoot": {
+    "key": "/root",
+    "name": "root",
+    "type": "Object",
+    "properties": "None",
+    "children": [
+      {
+        "key": "/root/root",
+        "name": "root",
+        "type": "Object",
+        "properties": "None",
+        "children": [
+          {
+            "key": "/root/root/outerLoop",
+            "name": "outerLoop",
+            "type": "Object",
+            "properties": "None",
+            "children": [
+              {
+                "key": "/root/root/outerLoop/repeating",
+                "name": "repeating",
+                "type": "Bool",
+                "properties": "None",
+                "qName": "repeating"
+              },
+              {
+                "key": "/root/root/outerLoop/innerLoop1",
+                "name": "innerLoop1",
+                "type": "Object",
+                "properties": "None",
+                "children": [
+                  {
+                    "key": "/root/root/outerLoop/innerLoop1/name",
+                    "name": "name",
+                    "type": "String",
+                    "properties": "None",
+                    "qName": "name"
+                  },
+                  {
+                    "key": "/root/root/outerLoop/innerLoop1/nameTarget",
+                    "name": "nameTarget",
+                    "type": "String",
+                    "properties": "None",
+                    "qName": "nameTarget"
+                  }
+                ],
+                "qName": "innerLoop1"
+              },
+              {
+                "key": "/root/root/outerLoop/innerLoop2",
+                "name": "innerLoop2",
+                "type": "Object",
+                "properties": "None",
+                "children": [
+                  {
+                    "key": "/root/root/outerLoop/innerLoop2/name",
+                    "name": "name",
+                    "type": "String",
+                    "properties": "None",
+                    "qName": "name"
+                  }
+                ],
+                "qName": "innerLoop2"
+              }
+            ],
+            "qName": "outerLoop"
+          }
+        ],
+        "qName": "root"
+      }
+    ],
+    "qName": "root"
+  }
+}

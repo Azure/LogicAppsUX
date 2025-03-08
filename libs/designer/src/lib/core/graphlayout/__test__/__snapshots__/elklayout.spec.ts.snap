@@ -1,0 +1,253 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`elklayout > elkLayout > layout should be deterministic 1`] = `
+{
+  "$H": 13,
+  "children": [
+    {
+      "$H": 277,
+      "height": 40,
+      "id": "manual",
+      "width": 200,
+      "x": 174,
+      "y": 0,
+    },
+    {
+      "$H": 279,
+      "height": 40,
+      "id": "Increment_variable",
+      "width": 200,
+      "x": 174,
+      "y": 208,
+    },
+    {
+      "$H": 281,
+      "height": 40,
+      "id": "Initialize_variable",
+      "width": 200,
+      "x": 174,
+      "y": 104,
+    },
+    {
+      "$H": 283,
+      "children": [
+        {
+          "$H": 285,
+          "children": [
+            {
+              "$H": 287,
+              "height": 40,
+              "id": "Increment_variable2",
+              "width": 200,
+              "x": 16,
+              "y": 0,
+            },
+            {
+              "$H": 289,
+              "height": 40,
+              "id": "Increment_variable4",
+              "width": 200,
+              "x": 16,
+              "y": 104,
+            },
+          ],
+          "edges": [
+            {
+              "container": "ActionIf-actions",
+              "id": "Increment_variable2-Increment_variable4",
+              "layoutOptions": {
+                "edgeType": "BUTTON_EDGE",
+              },
+              "sections": [
+                {
+                  "endPoint": {
+                    "x": 116,
+                    "y": 104,
+                  },
+                  "id": "Increment_variable2-Increment_variable4_s0",
+                  "incomingShape": "Increment_variable2",
+                  "outgoingShape": "Increment_variable4",
+                  "startPoint": {
+                    "x": 116,
+                    "y": 40,
+                  },
+                },
+              ],
+              "sources": [
+                "Increment_variable2",
+              ],
+              "targets": [
+                "Increment_variable4",
+              ],
+            },
+          ],
+          "height": 160,
+          "id": "ActionIf-actions",
+          "width": 232,
+          "x": 16,
+          "y": 0,
+        },
+        {
+          "$H": 291,
+          "children": [
+            {
+              "$H": 293,
+              "height": 40,
+              "id": "Increment_variable3",
+              "layoutOptions": {
+                "nodeType": "OPERATION_NODE",
+              },
+              "width": 200,
+              "x": 16,
+              "y": 0,
+            },
+          ],
+          "edges": [],
+          "height": 56,
+          "id": "ActionIf-elseActions",
+          "width": 232,
+          "x": 268,
+          "y": 0,
+        },
+      ],
+      "height": 176,
+      "id": "ActionIf",
+      "width": 516,
+      "x": 16,
+      "y": 312,
+    },
+    {
+      "$H": 295,
+      "height": 40,
+      "id": "Response",
+      "width": 200,
+      "x": 174,
+      "y": 552,
+    },
+  ],
+  "edges": [
+    {
+      "container": "root",
+      "id": "manual-Initialize_variable",
+      "layoutOptions": {
+        "edgeType": "BUTTON_EDGE",
+      },
+      "sections": [
+        {
+          "endPoint": {
+            "x": 274,
+            "y": 104,
+          },
+          "id": "manual-Initialize_variable_s0",
+          "incomingShape": "manual",
+          "outgoingShape": "Initialize_variable",
+          "startPoint": {
+            "x": 274,
+            "y": 40,
+          },
+        },
+      ],
+      "sources": [
+        "manual",
+      ],
+      "targets": [
+        "Initialize_variable",
+      ],
+    },
+    {
+      "container": "root",
+      "id": "Initialize_variable-Increment_variable",
+      "layoutOptions": {
+        "edgeType": "BUTTON_EDGE",
+      },
+      "sections": [
+        {
+          "endPoint": {
+            "x": 274,
+            "y": 208,
+          },
+          "id": "Initialize_variable-Increment_variable_s0",
+          "incomingShape": "Initialize_variable",
+          "outgoingShape": "Increment_variable",
+          "startPoint": {
+            "x": 274,
+            "y": 144,
+          },
+        },
+      ],
+      "sources": [
+        "Initialize_variable",
+      ],
+      "targets": [
+        "Increment_variable",
+      ],
+    },
+    {
+      "container": "root",
+      "id": "Increment_variable-ActionIf",
+      "layoutOptions": {
+        "edgeType": "BUTTON_EDGE",
+      },
+      "sections": [
+        {
+          "endPoint": {
+            "x": 274,
+            "y": 312,
+          },
+          "id": "Increment_variable-ActionIf_s0",
+          "incomingShape": "Increment_variable",
+          "outgoingShape": "ActionIf",
+          "startPoint": {
+            "x": 274,
+            "y": 248,
+          },
+        },
+      ],
+      "sources": [
+        "Increment_variable",
+      ],
+      "targets": [
+        "ActionIf",
+      ],
+    },
+    {
+      "container": "root",
+      "id": "ActionIf-Response",
+      "layoutOptions": {
+        "edgeType": "BUTTON_EDGE",
+      },
+      "sections": [
+        {
+          "endPoint": {
+            "x": 274,
+            "y": 552,
+          },
+          "id": "ActionIf-Response_s0",
+          "incomingShape": "ActionIf",
+          "outgoingShape": "Response",
+          "startPoint": {
+            "x": 274,
+            "y": 488,
+          },
+        },
+      ],
+      "sources": [
+        "ActionIf",
+      ],
+      "targets": [
+        "Response",
+      ],
+    },
+  ],
+  "height": 640,
+  "id": "root",
+  "layoutOptions": {
+    "elk.padding": "[top=0,left=16,bottom=48,right=16]",
+    "elk.position": "(0, 0)",
+    "nodeType": "GRAPH_NODE",
+  },
+  "width": 548,
+  "x": 0,
+  "y": 0,
+}
+`;

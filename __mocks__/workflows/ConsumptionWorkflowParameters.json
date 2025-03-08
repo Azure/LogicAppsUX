@@ -1,0 +1,105 @@
+{
+  "definition": {
+    "$schema": "https://schema.management.azure.com/providers/Microsoft.Logic/schemas/2016-06-01/workflowdefinition.json#",
+    "actions": {
+      "Initialize_variable": {
+        "type": "InitializeVariable",
+        "inputs": {
+          "variables": [
+            {
+              "name": "TestVar",
+              "type": "integer",
+              "value": 3
+            }
+          ]
+        },
+        "runAfter": {}
+      },
+      "Condition": {
+        "type": "If",
+        "expression": {
+          "and": [
+            {
+              "equals": [null, null]
+            }
+          ]
+        },
+        "actions": {
+          "Increment_variable": {
+            "type": "IncrementVariable",
+            "inputs": {
+              "name": "TestVar",
+              "value": 4
+            }
+          },
+          "APP_SERVICE": {
+            "inputs": {
+              "method": "get",
+              "uri": "http://localhost:54335/api/Values"
+            },
+            "metadata": {
+              "apiDefinitionUrl": "https://rarayudutestswaggerwebapp.azurewebsites.net/apidefinition.swagger.json",
+              "swaggerSource": "website"
+            },
+            "runAfter": {
+              "Increment_variable": ["Succeeded"]
+            },
+            "type": "Http"
+          }
+        },
+        "else": {
+          "actions": {
+            "Terminate": {
+              "type": "Terminate",
+              "inputs": {
+                "runStatus": "Failed"
+              }
+            }
+          }
+        },
+        "runAfter": {
+          "Initialize_variable": ["SUCCEEDED"]
+        }
+      }
+    },
+    "contentVersion": "1.0.0.0",
+    "outputs": {},
+    "parameters": {
+      "Float Parameter": {
+        "defaultValue": 9.9,
+        "type": "Float"
+      },
+      "Int Parameter": {
+        "defaultValue": 8,
+        "value": 2,
+        "type": "Int"
+      },
+      "Bool Parameter": {
+        "defaultValue": true,
+        "type": "Bool"
+      },
+      "String Parameter": {
+        "defaultValue": "Hello",
+        "type": "String"
+      },
+      "Object Parameter": {
+        "defaultValue": {
+          "a": 1,
+          "b": 2
+        },
+        "type": "Object"
+      },
+      "Array Parameter": {
+        "defaultValue": ["blue", 1, 2, 3],
+        "type": "Array"
+      }
+    },
+    "triggers": {
+      "manual": {
+        "inputs": {},
+        "kind": "Http",
+        "type": "Request"
+      }
+    }
+  }
+}

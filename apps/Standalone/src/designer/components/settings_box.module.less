@@ -1,0 +1,83 @@
+@background-light: white;
+@background-dark: #323130;
+
+@header-light: #f0f0f0;
+@header-dark: #2a2928;
+
+.toybox {
+  --toy-bg: @background-light;
+  --toy-header-bg: @header-light;
+  --toy-highlight: lighten(@header-light, 10%);
+  --toy-lowlight: darken(@header-light, 10%);
+  transition: transform 0.2s var(--ease-in-out-quint, cubic-bezier(0.83, 0, 0.17, 1));
+  transform: translate3d(0, -100%, 0);
+  position: fixed;
+  top: 0;
+  left: 10%;
+  width: var(--toy-width, 300px);
+  z-index: var(--toy-z, 2001);
+
+  &.active {
+    transform: translate3d(0, 0, 0) scale(1);
+  }
+
+  &.dark {
+    --toy-bg: #323130;
+    --toy-header-bg: @header-dark;
+    --toy-highlight: lighten(@header-dark, 10%);
+    --toy-lowlight: darken(@header-dark, 10%);
+    --toy-color: white;
+  }
+
+  .nub {
+    border-radius: 0 0 5px 5px;
+    box-shadow: 0 3px 6px rgba(0, 0, 0, 0.16), 0 3px 6px rgba(0, 0, 0, 0.23);
+    position: absolute;
+    padding: 12px;
+    top: 100%;
+    left: var(--toy-width, 600px);
+    background: var(--toy-nub-bg, var(--toy-header-bg));
+    width: 40px;
+    display: grid;
+    place-content: center;
+    cursor: pointer;
+  }
+
+  .contentWrapper {
+    box-shadow: 0 3px 6px rgba(0, 0, 0, 0.16), 0 3px 6px rgba(0, 0, 0, 0.23);
+    background: var(--toy-bg);
+    overflow: hidden;
+    min-height: 100px;
+    max-height: 90vh;
+    overflow-y: auto;
+    border-radius: 0 0 5px 5px;
+    padding: 0;
+    padding-top: 16px;
+    min-width: 70vw;
+    .content {
+      padding: 24px;
+    }
+
+    h4 {
+      border-bottom: solid 1px var(--toy-lowlight);
+      border-top: solid 1px var(--toy-highlight);
+      font-family: 'MonoLisa', monospace;
+      text-transform: capitalize;
+      padding: 4px 6px;
+      cursor: pointer;
+      font-size: var(--toy-heading-font-size, 12px);
+      margin: 0;
+      background: var(--toy-header-bg);
+      color: var(--toy-color);
+      span {
+        display: inline-block;
+        font-size: 10px;
+        transform: rotate(-90deg);
+        transition: 0.2s transform var(--ease-in-out-quint);
+      }
+      .openIcon {
+        transform: rotate(0turn);
+      }
+    }
+  }
+}

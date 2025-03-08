@@ -1,0 +1,2019 @@
+{
+    "name": "X12_00401_856 Custom2.xsd",
+    "type": "XML",
+    "targetNamespace": "http://schemas.microsoft.com/BizTalk/EDI/X12/2006",
+    "namespaces": {
+        "btsedi": "http://schemas.microsoft.com/BizTalk/2005/EdiSchemaEditorExtension",
+        "b": "http://schemas.microsoft.com/BizTalk/2003",
+        "ns0": "http://schemas.microsoft.com/BizTalk/EDI/X12/2006",
+        "xs": "http://www.w3.org/2001/XMLSchema"
+    },
+    "schemaTreeRoot": {
+        "key": "/ns0:X12_00401_856",
+        "name": "X12_00401_856",
+        "type": "Complex",
+        "properties": "None",
+        "children": [
+            {
+                "key": "/ns0:X12_00401_856/ST",
+                "name": "ST",
+                "type": "Complex",
+                "properties": "Optional",
+                "children": [
+                    {
+                        "key": "/ns0:X12_00401_856/ST/ST01",
+                        "name": "ST01",
+                        "type": "String",
+                        "properties": "None",
+                        "qName": "ST01"
+                    },
+                    {
+                        "key": "/ns0:X12_00401_856/ST/ST02",
+                        "name": "ST02",
+                        "type": "String",
+                        "properties": "None",
+                        "qName": "ST02"
+                    },
+                    {
+                        "key": "/ns0:X12_00401_856/ST/ST03",
+                        "name": "ST03",
+                        "type": "String",
+                        "properties": "Optional",
+                        "qName": "ST03"
+                    }
+                ],
+                "qName": "ST"
+            },
+            {
+                "key": "/ns0:X12_00401_856/ns0:BSN",
+                "name": "BSN",
+                "type": "Complex",
+                "properties": "None",
+                "children": [
+                    {
+                        "key": "/ns0:X12_00401_856/ns0:BSN/BSN01",
+                        "name": "BSN01",
+                        "type": "String",
+                        "properties": "None",
+                        "qName": "BSN01"
+                    },
+                    {
+                        "key": "/ns0:X12_00401_856/ns0:BSN/BSN02",
+                        "name": "BSN02",
+                        "type": "String",
+                        "properties": "None",
+                        "qName": "BSN02"
+                    },
+                    {
+                        "key": "/ns0:X12_00401_856/ns0:BSN/BSN03",
+                        "name": "BSN03",
+                        "type": "String",
+                        "properties": "None",
+                        "qName": "BSN03"
+                    },
+                    {
+                        "key": "/ns0:X12_00401_856/ns0:BSN/BSN04",
+                        "name": "BSN04",
+                        "type": "String",
+                        "properties": "None",
+                        "qName": "BSN04"
+                    },
+                    {
+                        "key": "/ns0:X12_00401_856/ns0:BSN/BSN05",
+                        "name": "BSN05",
+                        "type": "String",
+                        "properties": "Optional",
+                        "qName": "BSN05"
+                    },
+                    {
+                        "key": "/ns0:X12_00401_856/ns0:BSN/BSN06",
+                        "name": "BSN06",
+                        "type": "String",
+                        "properties": "Optional",
+                        "qName": "BSN06"
+                    },
+                    {
+                        "key": "/ns0:X12_00401_856/ns0:BSN/BSN07",
+                        "name": "BSN07",
+                        "type": "String",
+                        "properties": "Optional",
+                        "qName": "BSN07"
+                    }
+                ],
+                "qName": "ns0:BSN"
+            },
+            {
+                "key": "/ns0:X12_00401_856/ns0:HL-SLoop",
+                "name": "HL-SLoop",
+                "type": "Complex",
+                "properties": "Repeating",
+                "children": [
+                    {
+                        "key": "/ns0:X12_00401_856/ns0:HL-SLoop/ns0:HL",
+                        "name": "HL",
+                        "type": "Complex",
+                        "properties": "Optional, Repeating",
+                        "children": [
+                            {
+                                "key": "/ns0:X12_00401_856/ns0:HL-SLoop/ns0:HL/HL01",
+                                "name": "HL01",
+                                "type": "String",
+                                "properties": "None",
+                                "qName": "HL01"
+                            },
+                            {
+                                "key": "/ns0:X12_00401_856/ns0:HL-SLoop/ns0:HL/HL02",
+                                "name": "HL02",
+                                "type": "String",
+                                "properties": "Optional",
+                                "qName": "HL02"
+                            },
+                            {
+                                "key": "/ns0:X12_00401_856/ns0:HL-SLoop/ns0:HL/HL03",
+                                "name": "HL03",
+                                "type": "String",
+                                "properties": "None",
+                                "qName": "HL03"
+                            },
+                            {
+                                "key": "/ns0:X12_00401_856/ns0:HL-SLoop/ns0:HL/HL04",
+                                "name": "HL04",
+                                "type": "String",
+                                "properties": "Optional",
+                                "qName": "HL04"
+                            }
+                        ],
+                        "qName": "ns0:HL"
+                    },
+                    {
+                        "key": "/ns0:X12_00401_856/ns0:HL-SLoop/ns0:TD1",
+                        "name": "TD1",
+                        "type": "Complex",
+                        "properties": "Optional, Repeating",
+                        "children": [
+                            {
+                                "key": "/ns0:X12_00401_856/ns0:HL-SLoop/ns0:TD1/TD101",
+                                "name": "TD101",
+                                "type": "String",
+                                "properties": "Optional",
+                                "qName": "TD101"
+                            },
+                            {
+                                "key": "/ns0:X12_00401_856/ns0:HL-SLoop/ns0:TD1/TD102",
+                                "name": "TD102",
+                                "type": "String",
+                                "properties": "Optional",
+                                "qName": "TD102"
+                            },
+                            {
+                                "key": "/ns0:X12_00401_856/ns0:HL-SLoop/ns0:TD1/TD103",
+                                "name": "TD103",
+                                "type": "String",
+                                "properties": "Optional",
+                                "qName": "TD103"
+                            },
+                            {
+                                "key": "/ns0:X12_00401_856/ns0:HL-SLoop/ns0:TD1/TD104",
+                                "name": "TD104",
+                                "type": "String",
+                                "properties": "Optional",
+                                "qName": "TD104"
+                            },
+                            {
+                                "key": "/ns0:X12_00401_856/ns0:HL-SLoop/ns0:TD1/TD105",
+                                "name": "TD105",
+                                "type": "String",
+                                "properties": "Optional",
+                                "qName": "TD105"
+                            },
+                            {
+                                "key": "/ns0:X12_00401_856/ns0:HL-SLoop/ns0:TD1/TD106",
+                                "name": "TD106",
+                                "type": "String",
+                                "properties": "Optional",
+                                "qName": "TD106"
+                            },
+                            {
+                                "key": "/ns0:X12_00401_856/ns0:HL-SLoop/ns0:TD1/TD107",
+                                "name": "TD107",
+                                "type": "String",
+                                "properties": "Optional",
+                                "qName": "TD107"
+                            },
+                            {
+                                "key": "/ns0:X12_00401_856/ns0:HL-SLoop/ns0:TD1/TD108",
+                                "name": "TD108",
+                                "type": "String",
+                                "properties": "Optional",
+                                "qName": "TD108"
+                            },
+                            {
+                                "key": "/ns0:X12_00401_856/ns0:HL-SLoop/ns0:TD1/TD109",
+                                "name": "TD109",
+                                "type": "String",
+                                "properties": "Optional",
+                                "qName": "TD109"
+                            },
+                            {
+                                "key": "/ns0:X12_00401_856/ns0:HL-SLoop/ns0:TD1/TD110",
+                                "name": "TD110",
+                                "type": "String",
+                                "properties": "Optional",
+                                "qName": "TD110"
+                            }
+                        ],
+                        "qName": "ns0:TD1"
+                    },
+                    {
+                        "key": "/ns0:X12_00401_856/ns0:HL-SLoop/ns0:TD5",
+                        "name": "TD5",
+                        "type": "Complex",
+                        "properties": "Optional, Repeating",
+                        "children": [
+                            {
+                                "key": "/ns0:X12_00401_856/ns0:HL-SLoop/ns0:TD5/TD501",
+                                "name": "TD501",
+                                "type": "String",
+                                "properties": "Optional",
+                                "qName": "TD501"
+                            },
+                            {
+                                "key": "/ns0:X12_00401_856/ns0:HL-SLoop/ns0:TD5/TD502",
+                                "name": "TD502",
+                                "type": "String",
+                                "properties": "Optional",
+                                "qName": "TD502"
+                            },
+                            {
+                                "key": "/ns0:X12_00401_856/ns0:HL-SLoop/ns0:TD5/TD503",
+                                "name": "TD503",
+                                "type": "String",
+                                "properties": "Optional",
+                                "qName": "TD503"
+                            },
+                            {
+                                "key": "/ns0:X12_00401_856/ns0:HL-SLoop/ns0:TD5/TD504",
+                                "name": "TD504",
+                                "type": "String",
+                                "properties": "Optional",
+                                "qName": "TD504"
+                            },
+                            {
+                                "key": "/ns0:X12_00401_856/ns0:HL-SLoop/ns0:TD5/TD505",
+                                "name": "TD505",
+                                "type": "String",
+                                "properties": "Optional",
+                                "qName": "TD505"
+                            },
+                            {
+                                "key": "/ns0:X12_00401_856/ns0:HL-SLoop/ns0:TD5/TD506",
+                                "name": "TD506",
+                                "type": "String",
+                                "properties": "Optional",
+                                "qName": "TD506"
+                            },
+                            {
+                                "key": "/ns0:X12_00401_856/ns0:HL-SLoop/ns0:TD5/TD507",
+                                "name": "TD507",
+                                "type": "String",
+                                "properties": "Optional",
+                                "qName": "TD507"
+                            },
+                            {
+                                "key": "/ns0:X12_00401_856/ns0:HL-SLoop/ns0:TD5/TD508",
+                                "name": "TD508",
+                                "type": "String",
+                                "properties": "Optional",
+                                "qName": "TD508"
+                            },
+                            {
+                                "key": "/ns0:X12_00401_856/ns0:HL-SLoop/ns0:TD5/TD509",
+                                "name": "TD509",
+                                "type": "String",
+                                "properties": "Optional",
+                                "qName": "TD509"
+                            },
+                            {
+                                "key": "/ns0:X12_00401_856/ns0:HL-SLoop/ns0:TD5/TD510",
+                                "name": "TD510",
+                                "type": "String",
+                                "properties": "Optional",
+                                "qName": "TD510"
+                            },
+                            {
+                                "key": "/ns0:X12_00401_856/ns0:HL-SLoop/ns0:TD5/TD511",
+                                "name": "TD511",
+                                "type": "String",
+                                "properties": "Optional",
+                                "qName": "TD511"
+                            },
+                            {
+                                "key": "/ns0:X12_00401_856/ns0:HL-SLoop/ns0:TD5/TD512",
+                                "name": "TD512",
+                                "type": "String",
+                                "properties": "Optional",
+                                "qName": "TD512"
+                            },
+                            {
+                                "key": "/ns0:X12_00401_856/ns0:HL-SLoop/ns0:TD5/TD513",
+                                "name": "TD513",
+                                "type": "String",
+                                "properties": "Optional",
+                                "qName": "TD513"
+                            },
+                            {
+                                "key": "/ns0:X12_00401_856/ns0:HL-SLoop/ns0:TD5/TD514",
+                                "name": "TD514",
+                                "type": "String",
+                                "properties": "Optional",
+                                "qName": "TD514"
+                            },
+                            {
+                                "key": "/ns0:X12_00401_856/ns0:HL-SLoop/ns0:TD5/TD515",
+                                "name": "TD515",
+                                "type": "String",
+                                "properties": "Optional",
+                                "qName": "TD515"
+                            }
+                        ],
+                        "qName": "ns0:TD5"
+                    },
+                    {
+                        "key": "/ns0:X12_00401_856/ns0:HL-SLoop/ns0:TD3",
+                        "name": "TD3",
+                        "type": "Complex",
+                        "properties": "Optional, Repeating",
+                        "children": [
+                            {
+                                "key": "/ns0:X12_00401_856/ns0:HL-SLoop/ns0:TD3/TD301",
+                                "name": "TD301",
+                                "type": "String",
+                                "properties": "Optional",
+                                "qName": "TD301"
+                            },
+                            {
+                                "key": "/ns0:X12_00401_856/ns0:HL-SLoop/ns0:TD3/TD302",
+                                "name": "TD302",
+                                "type": "String",
+                                "properties": "Optional",
+                                "qName": "TD302"
+                            },
+                            {
+                                "key": "/ns0:X12_00401_856/ns0:HL-SLoop/ns0:TD3/TD303",
+                                "name": "TD303",
+                                "type": "String",
+                                "properties": "Optional",
+                                "qName": "TD303"
+                            },
+                            {
+                                "key": "/ns0:X12_00401_856/ns0:HL-SLoop/ns0:TD3/TD304",
+                                "name": "TD304",
+                                "type": "String",
+                                "properties": "Optional",
+                                "qName": "TD304"
+                            },
+                            {
+                                "key": "/ns0:X12_00401_856/ns0:HL-SLoop/ns0:TD3/TD305",
+                                "name": "TD305",
+                                "type": "String",
+                                "properties": "Optional",
+                                "qName": "TD305"
+                            },
+                            {
+                                "key": "/ns0:X12_00401_856/ns0:HL-SLoop/ns0:TD3/TD306",
+                                "name": "TD306",
+                                "type": "String",
+                                "properties": "Optional",
+                                "qName": "TD306"
+                            },
+                            {
+                                "key": "/ns0:X12_00401_856/ns0:HL-SLoop/ns0:TD3/TD307",
+                                "name": "TD307",
+                                "type": "String",
+                                "properties": "Optional",
+                                "qName": "TD307"
+                            },
+                            {
+                                "key": "/ns0:X12_00401_856/ns0:HL-SLoop/ns0:TD3/TD308",
+                                "name": "TD308",
+                                "type": "String",
+                                "properties": "Optional",
+                                "qName": "TD308"
+                            },
+                            {
+                                "key": "/ns0:X12_00401_856/ns0:HL-SLoop/ns0:TD3/TD309",
+                                "name": "TD309",
+                                "type": "String",
+                                "properties": "Optional",
+                                "qName": "TD309"
+                            },
+                            {
+                                "key": "/ns0:X12_00401_856/ns0:HL-SLoop/ns0:TD3/TD310",
+                                "name": "TD310",
+                                "type": "String",
+                                "properties": "Optional",
+                                "qName": "TD310"
+                            }
+                        ],
+                        "qName": "ns0:TD3"
+                    },
+                    {
+                        "key": "/ns0:X12_00401_856/ns0:HL-SLoop/ns0:DTM",
+                        "name": "DTM",
+                        "type": "Complex",
+                        "properties": "Optional, Repeating",
+                        "children": [
+                            {
+                                "key": "/ns0:X12_00401_856/ns0:HL-SLoop/ns0:DTM/DTM01",
+                                "name": "DTM01",
+                                "type": "String",
+                                "properties": "None",
+                                "qName": "DTM01"
+                            },
+                            {
+                                "key": "/ns0:X12_00401_856/ns0:HL-SLoop/ns0:DTM/DTM02",
+                                "name": "DTM02",
+                                "type": "String",
+                                "properties": "Optional",
+                                "qName": "DTM02"
+                            },
+                            {
+                                "key": "/ns0:X12_00401_856/ns0:HL-SLoop/ns0:DTM/DTM03",
+                                "name": "DTM03",
+                                "type": "String",
+                                "properties": "Optional",
+                                "qName": "DTM03"
+                            },
+                            {
+                                "key": "/ns0:X12_00401_856/ns0:HL-SLoop/ns0:DTM/DTM04",
+                                "name": "DTM04",
+                                "type": "String",
+                                "properties": "Optional",
+                                "qName": "DTM04"
+                            },
+                            {
+                                "key": "/ns0:X12_00401_856/ns0:HL-SLoop/ns0:DTM/DTM05",
+                                "name": "DTM05",
+                                "type": "String",
+                                "properties": "Optional",
+                                "qName": "DTM05"
+                            },
+                            {
+                                "key": "/ns0:X12_00401_856/ns0:HL-SLoop/ns0:DTM/DTM06",
+                                "name": "DTM06",
+                                "type": "String",
+                                "properties": "Optional",
+                                "qName": "DTM06"
+                            }
+                        ],
+                        "qName": "ns0:DTM"
+                    },
+                    {
+                        "key": "/ns0:X12_00401_856/ns0:HL-SLoop/ns0:N1Loop1",
+                        "name": "N1Loop1",
+                        "type": "Complex",
+                        "properties": "Optional, Repeating",
+                        "children": [
+                            {
+                                "key": "/ns0:X12_00401_856/ns0:HL-SLoop/ns0:N1Loop1/ns0:N1",
+                                "name": "N1",
+                                "type": "Complex",
+                                "properties": "None",
+                                "children": [
+                                    {
+                                        "key": "/ns0:X12_00401_856/ns0:HL-SLoop/ns0:N1Loop1/ns0:N1/N101",
+                                        "name": "N101",
+                                        "type": "String",
+                                        "properties": "None",
+                                        "qName": "N101"
+                                    },
+                                    {
+                                        "key": "/ns0:X12_00401_856/ns0:HL-SLoop/ns0:N1Loop1/ns0:N1/N102",
+                                        "name": "N102",
+                                        "type": "String",
+                                        "properties": "Optional",
+                                        "qName": "N102"
+                                    },
+                                    {
+                                        "key": "/ns0:X12_00401_856/ns0:HL-SLoop/ns0:N1Loop1/ns0:N1/N103",
+                                        "name": "N103",
+                                        "type": "String",
+                                        "properties": "Optional",
+                                        "qName": "N103"
+                                    },
+                                    {
+                                        "key": "/ns0:X12_00401_856/ns0:HL-SLoop/ns0:N1Loop1/ns0:N1/N104",
+                                        "name": "N104",
+                                        "type": "String",
+                                        "properties": "Optional",
+                                        "qName": "N104"
+                                    },
+                                    {
+                                        "key": "/ns0:X12_00401_856/ns0:HL-SLoop/ns0:N1Loop1/ns0:N1/N105",
+                                        "name": "N105",
+                                        "type": "String",
+                                        "properties": "Optional",
+                                        "qName": "N105"
+                                    },
+                                    {
+                                        "key": "/ns0:X12_00401_856/ns0:HL-SLoop/ns0:N1Loop1/ns0:N1/N106",
+                                        "name": "N106",
+                                        "type": "String",
+                                        "properties": "Optional",
+                                        "qName": "N106"
+                                    }
+                                ],
+                                "qName": "ns0:N1"
+                            },
+                            {
+                                "key": "/ns0:X12_00401_856/ns0:HL-SLoop/ns0:N1Loop1/ns0:N2",
+                                "name": "N2",
+                                "type": "Complex",
+                                "properties": "Optional, Repeating",
+                                "children": [
+                                    {
+                                        "key": "/ns0:X12_00401_856/ns0:HL-SLoop/ns0:N1Loop1/ns0:N2/N201",
+                                        "name": "N201",
+                                        "type": "String",
+                                        "properties": "None",
+                                        "qName": "N201"
+                                    },
+                                    {
+                                        "key": "/ns0:X12_00401_856/ns0:HL-SLoop/ns0:N1Loop1/ns0:N2/N202",
+                                        "name": "N202",
+                                        "type": "String",
+                                        "properties": "Optional",
+                                        "qName": "N202"
+                                    }
+                                ],
+                                "qName": "ns0:N2"
+                            },
+                            {
+                                "key": "/ns0:X12_00401_856/ns0:HL-SLoop/ns0:N1Loop1/ns0:N3",
+                                "name": "N3",
+                                "type": "Complex",
+                                "properties": "Optional, Repeating",
+                                "children": [
+                                    {
+                                        "key": "/ns0:X12_00401_856/ns0:HL-SLoop/ns0:N1Loop1/ns0:N3/N301",
+                                        "name": "N301",
+                                        "type": "String",
+                                        "properties": "None",
+                                        "qName": "N301"
+                                    },
+                                    {
+                                        "key": "/ns0:X12_00401_856/ns0:HL-SLoop/ns0:N1Loop1/ns0:N3/N302",
+                                        "name": "N302",
+                                        "type": "String",
+                                        "properties": "Optional",
+                                        "qName": "N302"
+                                    }
+                                ],
+                                "qName": "ns0:N3"
+                            },
+                            {
+                                "key": "/ns0:X12_00401_856/ns0:HL-SLoop/ns0:N1Loop1/ns0:N4",
+                                "name": "N4",
+                                "type": "Complex",
+                                "properties": "Optional",
+                                "children": [
+                                    {
+                                        "key": "/ns0:X12_00401_856/ns0:HL-SLoop/ns0:N1Loop1/ns0:N4/N401",
+                                        "name": "N401",
+                                        "type": "String",
+                                        "properties": "Optional",
+                                        "qName": "N401"
+                                    },
+                                    {
+                                        "key": "/ns0:X12_00401_856/ns0:HL-SLoop/ns0:N1Loop1/ns0:N4/N402",
+                                        "name": "N402",
+                                        "type": "String",
+                                        "properties": "Optional",
+                                        "qName": "N402"
+                                    },
+                                    {
+                                        "key": "/ns0:X12_00401_856/ns0:HL-SLoop/ns0:N1Loop1/ns0:N4/N403",
+                                        "name": "N403",
+                                        "type": "String",
+                                        "properties": "Optional",
+                                        "qName": "N403"
+                                    },
+                                    {
+                                        "key": "/ns0:X12_00401_856/ns0:HL-SLoop/ns0:N1Loop1/ns0:N4/N404",
+                                        "name": "N404",
+                                        "type": "String",
+                                        "properties": "Optional",
+                                        "qName": "N404"
+                                    },
+                                    {
+                                        "key": "/ns0:X12_00401_856/ns0:HL-SLoop/ns0:N1Loop1/ns0:N4/N405",
+                                        "name": "N405",
+                                        "type": "String",
+                                        "properties": "Optional",
+                                        "qName": "N405"
+                                    },
+                                    {
+                                        "key": "/ns0:X12_00401_856/ns0:HL-SLoop/ns0:N1Loop1/ns0:N4/N406",
+                                        "name": "N406",
+                                        "type": "String",
+                                        "properties": "Optional",
+                                        "qName": "N406"
+                                    }
+                                ],
+                                "qName": "ns0:N4"
+                            },
+                            {
+                                "key": "/ns0:X12_00401_856/ns0:HL-SLoop/ns0:N1Loop1/ns0:REF_3",
+                                "name": "REF_3",
+                                "type": "Complex",
+                                "properties": "Optional, Repeating",
+                                "children": [
+                                    {
+                                        "key": "/ns0:X12_00401_856/ns0:HL-SLoop/ns0:N1Loop1/ns0:REF_3/REF01",
+                                        "name": "REF01",
+                                        "type": "String",
+                                        "properties": "None",
+                                        "qName": "REF01"
+                                    },
+                                    {
+                                        "key": "/ns0:X12_00401_856/ns0:HL-SLoop/ns0:N1Loop1/ns0:REF_3/REF02",
+                                        "name": "REF02",
+                                        "type": "String",
+                                        "properties": "Optional",
+                                        "qName": "REF02"
+                                    },
+                                    {
+                                        "key": "/ns0:X12_00401_856/ns0:HL-SLoop/ns0:N1Loop1/ns0:REF_3/REF03",
+                                        "name": "REF03",
+                                        "type": "String",
+                                        "properties": "Optional",
+                                        "qName": "REF03"
+                                    },
+                                    {
+                                        "key": "/ns0:X12_00401_856/ns0:HL-SLoop/ns0:N1Loop1/ns0:REF_3/ns0:C040_3",
+                                        "name": "C040_3",
+                                        "type": "Complex",
+                                        "properties": "Optional",
+                                        "children": [
+                                            {
+                                                "key": "/ns0:X12_00401_856/ns0:HL-SLoop/ns0:N1Loop1/ns0:REF_3/ns0:C040_3/C04001",
+                                                "name": "C04001",
+                                                "type": "String",
+                                                "properties": "None",
+                                                "qName": "C04001"
+                                            },
+                                            {
+                                                "key": "/ns0:X12_00401_856/ns0:HL-SLoop/ns0:N1Loop1/ns0:REF_3/ns0:C040_3/C04002",
+                                                "name": "C04002",
+                                                "type": "String",
+                                                "properties": "None",
+                                                "qName": "C04002"
+                                            },
+                                            {
+                                                "key": "/ns0:X12_00401_856/ns0:HL-SLoop/ns0:N1Loop1/ns0:REF_3/ns0:C040_3/C04003",
+                                                "name": "C04003",
+                                                "type": "String",
+                                                "properties": "Optional",
+                                                "qName": "C04003"
+                                            },
+                                            {
+                                                "key": "/ns0:X12_00401_856/ns0:HL-SLoop/ns0:N1Loop1/ns0:REF_3/ns0:C040_3/C04004",
+                                                "name": "C04004",
+                                                "type": "String",
+                                                "properties": "Optional",
+                                                "qName": "C04004"
+                                            },
+                                            {
+                                                "key": "/ns0:X12_00401_856/ns0:HL-SLoop/ns0:N1Loop1/ns0:REF_3/ns0:C040_3/C04005",
+                                                "name": "C04005",
+                                                "type": "String",
+                                                "properties": "Optional",
+                                                "qName": "C04005"
+                                            },
+                                            {
+                                                "key": "/ns0:X12_00401_856/ns0:HL-SLoop/ns0:N1Loop1/ns0:REF_3/ns0:C040_3/C04006",
+                                                "name": "C04006",
+                                                "type": "String",
+                                                "properties": "Optional",
+                                                "qName": "C04006"
+                                            }
+                                        ],
+                                        "qName": "ns0:C040_3"
+                                    }
+                                ],
+                                "qName": "ns0:REF_3"
+                            },
+                            {
+                                "key": "/ns0:X12_00401_856/ns0:HL-SLoop/ns0:N1Loop1/ns0:PER_3",
+                                "name": "PER_3",
+                                "type": "Complex",
+                                "properties": "Optional, Repeating",
+                                "children": [
+                                    {
+                                        "key": "/ns0:X12_00401_856/ns0:HL-SLoop/ns0:N1Loop1/ns0:PER_3/PER01",
+                                        "name": "PER01",
+                                        "type": "String",
+                                        "properties": "None",
+                                        "qName": "PER01"
+                                    },
+                                    {
+                                        "key": "/ns0:X12_00401_856/ns0:HL-SLoop/ns0:N1Loop1/ns0:PER_3/PER02",
+                                        "name": "PER02",
+                                        "type": "String",
+                                        "properties": "Optional",
+                                        "qName": "PER02"
+                                    },
+                                    {
+                                        "key": "/ns0:X12_00401_856/ns0:HL-SLoop/ns0:N1Loop1/ns0:PER_3/PER03",
+                                        "name": "PER03",
+                                        "type": "String",
+                                        "properties": "Optional",
+                                        "qName": "PER03"
+                                    },
+                                    {
+                                        "key": "/ns0:X12_00401_856/ns0:HL-SLoop/ns0:N1Loop1/ns0:PER_3/PER04",
+                                        "name": "PER04",
+                                        "type": "String",
+                                        "properties": "Optional",
+                                        "qName": "PER04"
+                                    },
+                                    {
+                                        "key": "/ns0:X12_00401_856/ns0:HL-SLoop/ns0:N1Loop1/ns0:PER_3/PER05",
+                                        "name": "PER05",
+                                        "type": "String",
+                                        "properties": "Optional",
+                                        "qName": "PER05"
+                                    },
+                                    {
+                                        "key": "/ns0:X12_00401_856/ns0:HL-SLoop/ns0:N1Loop1/ns0:PER_3/PER06",
+                                        "name": "PER06",
+                                        "type": "String",
+                                        "properties": "Optional",
+                                        "qName": "PER06"
+                                    },
+                                    {
+                                        "key": "/ns0:X12_00401_856/ns0:HL-SLoop/ns0:N1Loop1/ns0:PER_3/PER07",
+                                        "name": "PER07",
+                                        "type": "String",
+                                        "properties": "Optional",
+                                        "qName": "PER07"
+                                    },
+                                    {
+                                        "key": "/ns0:X12_00401_856/ns0:HL-SLoop/ns0:N1Loop1/ns0:PER_3/PER08",
+                                        "name": "PER08",
+                                        "type": "String",
+                                        "properties": "Optional",
+                                        "qName": "PER08"
+                                    },
+                                    {
+                                        "key": "/ns0:X12_00401_856/ns0:HL-SLoop/ns0:N1Loop1/ns0:PER_3/PER09",
+                                        "name": "PER09",
+                                        "type": "String",
+                                        "properties": "Optional",
+                                        "qName": "PER09"
+                                    }
+                                ],
+                                "qName": "ns0:PER_3"
+                            },
+                            {
+                                "key": "/ns0:X12_00401_856/ns0:HL-SLoop/ns0:N1Loop1/ns0:FOB_2",
+                                "name": "FOB_2",
+                                "type": "Complex",
+                                "properties": "Optional",
+                                "children": [
+                                    {
+                                        "key": "/ns0:X12_00401_856/ns0:HL-SLoop/ns0:N1Loop1/ns0:FOB_2/FOB01",
+                                        "name": "FOB01",
+                                        "type": "String",
+                                        "properties": "None",
+                                        "qName": "FOB01"
+                                    },
+                                    {
+                                        "key": "/ns0:X12_00401_856/ns0:HL-SLoop/ns0:N1Loop1/ns0:FOB_2/FOB02",
+                                        "name": "FOB02",
+                                        "type": "String",
+                                        "properties": "Optional",
+                                        "qName": "FOB02"
+                                    },
+                                    {
+                                        "key": "/ns0:X12_00401_856/ns0:HL-SLoop/ns0:N1Loop1/ns0:FOB_2/FOB03",
+                                        "name": "FOB03",
+                                        "type": "String",
+                                        "properties": "Optional",
+                                        "qName": "FOB03"
+                                    },
+                                    {
+                                        "key": "/ns0:X12_00401_856/ns0:HL-SLoop/ns0:N1Loop1/ns0:FOB_2/FOB04",
+                                        "name": "FOB04",
+                                        "type": "String",
+                                        "properties": "Optional",
+                                        "qName": "FOB04"
+                                    },
+                                    {
+                                        "key": "/ns0:X12_00401_856/ns0:HL-SLoop/ns0:N1Loop1/ns0:FOB_2/FOB05",
+                                        "name": "FOB05",
+                                        "type": "String",
+                                        "properties": "Optional",
+                                        "qName": "FOB05"
+                                    },
+                                    {
+                                        "key": "/ns0:X12_00401_856/ns0:HL-SLoop/ns0:N1Loop1/ns0:FOB_2/FOB06",
+                                        "name": "FOB06",
+                                        "type": "String",
+                                        "properties": "Optional",
+                                        "qName": "FOB06"
+                                    },
+                                    {
+                                        "key": "/ns0:X12_00401_856/ns0:HL-SLoop/ns0:N1Loop1/ns0:FOB_2/FOB07",
+                                        "name": "FOB07",
+                                        "type": "String",
+                                        "properties": "Optional",
+                                        "qName": "FOB07"
+                                    },
+                                    {
+                                        "key": "/ns0:X12_00401_856/ns0:HL-SLoop/ns0:N1Loop1/ns0:FOB_2/FOB08",
+                                        "name": "FOB08",
+                                        "type": "String",
+                                        "properties": "Optional",
+                                        "qName": "FOB08"
+                                    },
+                                    {
+                                        "key": "/ns0:X12_00401_856/ns0:HL-SLoop/ns0:N1Loop1/ns0:FOB_2/FOB09",
+                                        "name": "FOB09",
+                                        "type": "String",
+                                        "properties": "Optional",
+                                        "qName": "FOB09"
+                                    }
+                                ],
+                                "qName": "ns0:FOB_2"
+                            }
+                        ],
+                        "qName": "ns0:N1Loop1"
+                    },
+                    {
+                        "key": "/ns0:X12_00401_856/ns0:HL-SLoop/ns0:REF",
+                        "name": "REF",
+                        "type": "Complex",
+                        "properties": "Optional, Repeating",
+                        "children": [
+                            {
+                                "key": "/ns0:X12_00401_856/ns0:HL-SLoop/ns0:REF/REF01",
+                                "name": "REF01",
+                                "type": "String",
+                                "properties": "None",
+                                "qName": "REF01"
+                            },
+                            {
+                                "key": "/ns0:X12_00401_856/ns0:HL-SLoop/ns0:REF/REF02",
+                                "name": "REF02",
+                                "type": "String",
+                                "properties": "Optional",
+                                "qName": "REF02"
+                            },
+                            {
+                                "key": "/ns0:X12_00401_856/ns0:HL-SLoop/ns0:REF/REF03",
+                                "name": "REF03",
+                                "type": "String",
+                                "properties": "Optional",
+                                "qName": "REF03"
+                            },
+                            {
+                                "key": "/ns0:X12_00401_856/ns0:HL-SLoop/ns0:REF/ns0:C040",
+                                "name": "C040",
+                                "type": "Complex",
+                                "properties": "Optional",
+                                "children": [
+                                    {
+                                        "key": "/ns0:X12_00401_856/ns0:HL-SLoop/ns0:REF/ns0:C040/C04001",
+                                        "name": "C04001",
+                                        "type": "String",
+                                        "properties": "None",
+                                        "qName": "C04001"
+                                    },
+                                    {
+                                        "key": "/ns0:X12_00401_856/ns0:HL-SLoop/ns0:REF/ns0:C040/C04002",
+                                        "name": "C04002",
+                                        "type": "String",
+                                        "properties": "None",
+                                        "qName": "C04002"
+                                    },
+                                    {
+                                        "key": "/ns0:X12_00401_856/ns0:HL-SLoop/ns0:REF/ns0:C040/C04003",
+                                        "name": "C04003",
+                                        "type": "String",
+                                        "properties": "Optional",
+                                        "qName": "C04003"
+                                    },
+                                    {
+                                        "key": "/ns0:X12_00401_856/ns0:HL-SLoop/ns0:REF/ns0:C040/C04004",
+                                        "name": "C04004",
+                                        "type": "String",
+                                        "properties": "Optional",
+                                        "qName": "C04004"
+                                    },
+                                    {
+                                        "key": "/ns0:X12_00401_856/ns0:HL-SLoop/ns0:REF/ns0:C040/C04005",
+                                        "name": "C04005",
+                                        "type": "String",
+                                        "properties": "Optional",
+                                        "qName": "C04005"
+                                    },
+                                    {
+                                        "key": "/ns0:X12_00401_856/ns0:HL-SLoop/ns0:REF/ns0:C040/C04006",
+                                        "name": "C04006",
+                                        "type": "String",
+                                        "properties": "Optional",
+                                        "qName": "C04006"
+                                    }
+                                ],
+                                "qName": "ns0:C040"
+                            }
+                        ],
+                        "qName": "ns0:REF"
+                    },
+                    {
+                        "key": "/ns0:X12_00401_856/ns0:HL-SLoop/ns0:HL-OLoop",
+                        "name": "HL-OLoop",
+                        "type": "Complex",
+                        "properties": "Optional, Repeating",
+                        "children": [
+                            {
+                                "key": "/ns0:X12_00401_856/ns0:HL-SLoop/ns0:HL-OLoop/ns0:HL",
+                                "name": "HL",
+                                "type": "Complex",
+                                "properties": "Optional, Repeating",
+                                "children": [
+                                    {
+                                        "key": "/ns0:X12_00401_856/ns0:HL-SLoop/ns0:HL-OLoop/ns0:HL/HL01",
+                                        "name": "HL01",
+                                        "type": "String",
+                                        "properties": "None",
+                                        "qName": "HL01"
+                                    },
+                                    {
+                                        "key": "/ns0:X12_00401_856/ns0:HL-SLoop/ns0:HL-OLoop/ns0:HL/HL02",
+                                        "name": "HL02",
+                                        "type": "String",
+                                        "properties": "Optional",
+                                        "qName": "HL02"
+                                    },
+                                    {
+                                        "key": "/ns0:X12_00401_856/ns0:HL-SLoop/ns0:HL-OLoop/ns0:HL/HL03",
+                                        "name": "HL03",
+                                        "type": "String",
+                                        "properties": "None",
+                                        "qName": "HL03"
+                                    },
+                                    {
+                                        "key": "/ns0:X12_00401_856/ns0:HL-SLoop/ns0:HL-OLoop/ns0:HL/HL04",
+                                        "name": "HL04",
+                                        "type": "String",
+                                        "properties": "Optional",
+                                        "qName": "HL04"
+                                    }
+                                ],
+                                "qName": "ns0:HL"
+                            },
+                            {
+                                "key": "/ns0:X12_00401_856/ns0:HL-SLoop/ns0:HL-OLoop/ns0:PRF",
+                                "name": "PRF",
+                                "type": "Complex",
+                                "properties": "Optional",
+                                "children": [
+                                    {
+                                        "key": "/ns0:X12_00401_856/ns0:HL-SLoop/ns0:HL-OLoop/ns0:PRF/PRF01",
+                                        "name": "PRF01",
+                                        "type": "String",
+                                        "properties": "None",
+                                        "qName": "PRF01"
+                                    },
+                                    {
+                                        "key": "/ns0:X12_00401_856/ns0:HL-SLoop/ns0:HL-OLoop/ns0:PRF/PRF02",
+                                        "name": "PRF02",
+                                        "type": "String",
+                                        "properties": "Optional",
+                                        "qName": "PRF02"
+                                    },
+                                    {
+                                        "key": "/ns0:X12_00401_856/ns0:HL-SLoop/ns0:HL-OLoop/ns0:PRF/PRF03",
+                                        "name": "PRF03",
+                                        "type": "String",
+                                        "properties": "Optional",
+                                        "qName": "PRF03"
+                                    },
+                                    {
+                                        "key": "/ns0:X12_00401_856/ns0:HL-SLoop/ns0:HL-OLoop/ns0:PRF/PRF04",
+                                        "name": "PRF04",
+                                        "type": "String",
+                                        "properties": "Optional",
+                                        "qName": "PRF04"
+                                    },
+                                    {
+                                        "key": "/ns0:X12_00401_856/ns0:HL-SLoop/ns0:HL-OLoop/ns0:PRF/PRF05",
+                                        "name": "PRF05",
+                                        "type": "String",
+                                        "properties": "Optional",
+                                        "qName": "PRF05"
+                                    },
+                                    {
+                                        "key": "/ns0:X12_00401_856/ns0:HL-SLoop/ns0:HL-OLoop/ns0:PRF/PRF06",
+                                        "name": "PRF06",
+                                        "type": "String",
+                                        "properties": "Optional",
+                                        "qName": "PRF06"
+                                    },
+                                    {
+                                        "key": "/ns0:X12_00401_856/ns0:HL-SLoop/ns0:HL-OLoop/ns0:PRF/PRF07",
+                                        "name": "PRF07",
+                                        "type": "String",
+                                        "properties": "Optional",
+                                        "qName": "PRF07"
+                                    }
+                                ],
+                                "qName": "ns0:PRF"
+                            },
+                            {
+                                "key": "/ns0:X12_00401_856/ns0:HL-SLoop/ns0:HL-OLoop/ns0:REF",
+                                "name": "REF",
+                                "type": "Complex",
+                                "properties": "Optional, Repeating",
+                                "children": [
+                                    {
+                                        "key": "/ns0:X12_00401_856/ns0:HL-SLoop/ns0:HL-OLoop/ns0:REF/REF01",
+                                        "name": "REF01",
+                                        "type": "String",
+                                        "properties": "None",
+                                        "qName": "REF01"
+                                    },
+                                    {
+                                        "key": "/ns0:X12_00401_856/ns0:HL-SLoop/ns0:HL-OLoop/ns0:REF/REF02",
+                                        "name": "REF02",
+                                        "type": "String",
+                                        "properties": "Optional",
+                                        "qName": "REF02"
+                                    },
+                                    {
+                                        "key": "/ns0:X12_00401_856/ns0:HL-SLoop/ns0:HL-OLoop/ns0:REF/REF03",
+                                        "name": "REF03",
+                                        "type": "String",
+                                        "properties": "Optional",
+                                        "qName": "REF03"
+                                    },
+                                    {
+                                        "key": "/ns0:X12_00401_856/ns0:HL-SLoop/ns0:HL-OLoop/ns0:REF/ns0:C040",
+                                        "name": "C040",
+                                        "type": "Complex",
+                                        "properties": "Optional",
+                                        "children": [
+                                            {
+                                                "key": "/ns0:X12_00401_856/ns0:HL-SLoop/ns0:HL-OLoop/ns0:REF/ns0:C040/C04001",
+                                                "name": "C04001",
+                                                "type": "String",
+                                                "properties": "None",
+                                                "qName": "C04001"
+                                            },
+                                            {
+                                                "key": "/ns0:X12_00401_856/ns0:HL-SLoop/ns0:HL-OLoop/ns0:REF/ns0:C040/C04002",
+                                                "name": "C04002",
+                                                "type": "String",
+                                                "properties": "None",
+                                                "qName": "C04002"
+                                            },
+                                            {
+                                                "key": "/ns0:X12_00401_856/ns0:HL-SLoop/ns0:HL-OLoop/ns0:REF/ns0:C040/C04003",
+                                                "name": "C04003",
+                                                "type": "String",
+                                                "properties": "Optional",
+                                                "qName": "C04003"
+                                            },
+                                            {
+                                                "key": "/ns0:X12_00401_856/ns0:HL-SLoop/ns0:HL-OLoop/ns0:REF/ns0:C040/C04004",
+                                                "name": "C04004",
+                                                "type": "String",
+                                                "properties": "Optional",
+                                                "qName": "C04004"
+                                            },
+                                            {
+                                                "key": "/ns0:X12_00401_856/ns0:HL-SLoop/ns0:HL-OLoop/ns0:REF/ns0:C040/C04005",
+                                                "name": "C04005",
+                                                "type": "String",
+                                                "properties": "Optional",
+                                                "qName": "C04005"
+                                            },
+                                            {
+                                                "key": "/ns0:X12_00401_856/ns0:HL-SLoop/ns0:HL-OLoop/ns0:REF/ns0:C040/C04006",
+                                                "name": "C04006",
+                                                "type": "String",
+                                                "properties": "Optional",
+                                                "qName": "C04006"
+                                            }
+                                        ],
+                                        "qName": "ns0:C040"
+                                    }
+                                ],
+                                "qName": "ns0:REF"
+                            },
+                            {
+                                "key": "/ns0:X12_00401_856/ns0:HL-SLoop/ns0:HL-OLoop/ns0:HL-TLoop",
+                                "name": "HL-TLoop",
+                                "type": "Complex",
+                                "properties": "Optional, Repeating",
+                                "children": [
+                                    {
+                                        "key": "/ns0:X12_00401_856/ns0:HL-SLoop/ns0:HL-OLoop/ns0:HL-TLoop/ns0:HL",
+                                        "name": "HL",
+                                        "type": "Complex",
+                                        "properties": "Optional, Repeating",
+                                        "children": [
+                                            {
+                                                "key": "/ns0:X12_00401_856/ns0:HL-SLoop/ns0:HL-OLoop/ns0:HL-TLoop/ns0:HL/HL01",
+                                                "name": "HL01",
+                                                "type": "String",
+                                                "properties": "None",
+                                                "qName": "HL01"
+                                            },
+                                            {
+                                                "key": "/ns0:X12_00401_856/ns0:HL-SLoop/ns0:HL-OLoop/ns0:HL-TLoop/ns0:HL/HL02",
+                                                "name": "HL02",
+                                                "type": "String",
+                                                "properties": "Optional",
+                                                "qName": "HL02"
+                                            },
+                                            {
+                                                "key": "/ns0:X12_00401_856/ns0:HL-SLoop/ns0:HL-OLoop/ns0:HL-TLoop/ns0:HL/HL03",
+                                                "name": "HL03",
+                                                "type": "String",
+                                                "properties": "None",
+                                                "qName": "HL03"
+                                            },
+                                            {
+                                                "key": "/ns0:X12_00401_856/ns0:HL-SLoop/ns0:HL-OLoop/ns0:HL-TLoop/ns0:HL/HL04",
+                                                "name": "HL04",
+                                                "type": "String",
+                                                "properties": "Optional",
+                                                "qName": "HL04"
+                                            }
+                                        ],
+                                        "qName": "ns0:HL"
+                                    },
+                                    {
+                                        "key": "/ns0:X12_00401_856/ns0:HL-SLoop/ns0:HL-OLoop/ns0:HL-TLoop/ns0:MAN",
+                                        "name": "MAN",
+                                        "type": "Complex",
+                                        "properties": "Optional, Repeating",
+                                        "children": [
+                                            {
+                                                "key": "/ns0:X12_00401_856/ns0:HL-SLoop/ns0:HL-OLoop/ns0:HL-TLoop/ns0:MAN/MAN01",
+                                                "name": "MAN01",
+                                                "type": "String",
+                                                "properties": "None",
+                                                "qName": "MAN01"
+                                            },
+                                            {
+                                                "key": "/ns0:X12_00401_856/ns0:HL-SLoop/ns0:HL-OLoop/ns0:HL-TLoop/ns0:MAN/MAN02",
+                                                "name": "MAN02",
+                                                "type": "String",
+                                                "properties": "None",
+                                                "qName": "MAN02"
+                                            },
+                                            {
+                                                "key": "/ns0:X12_00401_856/ns0:HL-SLoop/ns0:HL-OLoop/ns0:HL-TLoop/ns0:MAN/MAN03",
+                                                "name": "MAN03",
+                                                "type": "String",
+                                                "properties": "Optional",
+                                                "qName": "MAN03"
+                                            },
+                                            {
+                                                "key": "/ns0:X12_00401_856/ns0:HL-SLoop/ns0:HL-OLoop/ns0:HL-TLoop/ns0:MAN/MAN04",
+                                                "name": "MAN04",
+                                                "type": "String",
+                                                "properties": "Optional",
+                                                "qName": "MAN04"
+                                            },
+                                            {
+                                                "key": "/ns0:X12_00401_856/ns0:HL-SLoop/ns0:HL-OLoop/ns0:HL-TLoop/ns0:MAN/MAN05",
+                                                "name": "MAN05",
+                                                "type": "String",
+                                                "properties": "Optional",
+                                                "qName": "MAN05"
+                                            },
+                                            {
+                                                "key": "/ns0:X12_00401_856/ns0:HL-SLoop/ns0:HL-OLoop/ns0:HL-TLoop/ns0:MAN/MAN06",
+                                                "name": "MAN06",
+                                                "type": "String",
+                                                "properties": "Optional",
+                                                "qName": "MAN06"
+                                            }
+                                        ],
+                                        "qName": "ns0:MAN"
+                                    },
+                                    {
+                                        "key": "/ns0:X12_00401_856/ns0:HL-SLoop/ns0:HL-OLoop/ns0:HL-TLoop/ns0:PAL",
+                                        "name": "PAL",
+                                        "type": "Complex",
+                                        "properties": "Optional",
+                                        "children": [
+                                            {
+                                                "key": "/ns0:X12_00401_856/ns0:HL-SLoop/ns0:HL-OLoop/ns0:HL-TLoop/ns0:PAL/PAL01",
+                                                "name": "PAL01",
+                                                "type": "String",
+                                                "properties": "Optional",
+                                                "qName": "PAL01"
+                                            },
+                                            {
+                                                "key": "/ns0:X12_00401_856/ns0:HL-SLoop/ns0:HL-OLoop/ns0:HL-TLoop/ns0:PAL/PAL02",
+                                                "name": "PAL02",
+                                                "type": "String",
+                                                "properties": "Optional",
+                                                "qName": "PAL02"
+                                            },
+                                            {
+                                                "key": "/ns0:X12_00401_856/ns0:HL-SLoop/ns0:HL-OLoop/ns0:HL-TLoop/ns0:PAL/PAL03",
+                                                "name": "PAL03",
+                                                "type": "String",
+                                                "properties": "Optional",
+                                                "qName": "PAL03"
+                                            },
+                                            {
+                                                "key": "/ns0:X12_00401_856/ns0:HL-SLoop/ns0:HL-OLoop/ns0:HL-TLoop/ns0:PAL/PAL04",
+                                                "name": "PAL04",
+                                                "type": "String",
+                                                "properties": "Optional",
+                                                "qName": "PAL04"
+                                            },
+                                            {
+                                                "key": "/ns0:X12_00401_856/ns0:HL-SLoop/ns0:HL-OLoop/ns0:HL-TLoop/ns0:PAL/PAL05",
+                                                "name": "PAL05",
+                                                "type": "String",
+                                                "properties": "Optional",
+                                                "qName": "PAL05"
+                                            },
+                                            {
+                                                "key": "/ns0:X12_00401_856/ns0:HL-SLoop/ns0:HL-OLoop/ns0:HL-TLoop/ns0:PAL/PAL06",
+                                                "name": "PAL06",
+                                                "type": "String",
+                                                "properties": "Optional",
+                                                "qName": "PAL06"
+                                            },
+                                            {
+                                                "key": "/ns0:X12_00401_856/ns0:HL-SLoop/ns0:HL-OLoop/ns0:HL-TLoop/ns0:PAL/PAL07",
+                                                "name": "PAL07",
+                                                "type": "String",
+                                                "properties": "Optional",
+                                                "qName": "PAL07"
+                                            },
+                                            {
+                                                "key": "/ns0:X12_00401_856/ns0:HL-SLoop/ns0:HL-OLoop/ns0:HL-TLoop/ns0:PAL/PAL08",
+                                                "name": "PAL08",
+                                                "type": "String",
+                                                "properties": "Optional",
+                                                "qName": "PAL08"
+                                            },
+                                            {
+                                                "key": "/ns0:X12_00401_856/ns0:HL-SLoop/ns0:HL-OLoop/ns0:HL-TLoop/ns0:PAL/PAL09",
+                                                "name": "PAL09",
+                                                "type": "String",
+                                                "properties": "Optional",
+                                                "qName": "PAL09"
+                                            },
+                                            {
+                                                "key": "/ns0:X12_00401_856/ns0:HL-SLoop/ns0:HL-OLoop/ns0:HL-TLoop/ns0:PAL/PAL10",
+                                                "name": "PAL10",
+                                                "type": "String",
+                                                "properties": "Optional",
+                                                "qName": "PAL10"
+                                            },
+                                            {
+                                                "key": "/ns0:X12_00401_856/ns0:HL-SLoop/ns0:HL-OLoop/ns0:HL-TLoop/ns0:PAL/PAL11",
+                                                "name": "PAL11",
+                                                "type": "String",
+                                                "properties": "Optional",
+                                                "qName": "PAL11"
+                                            },
+                                            {
+                                                "key": "/ns0:X12_00401_856/ns0:HL-SLoop/ns0:HL-OLoop/ns0:HL-TLoop/ns0:PAL/PAL12",
+                                                "name": "PAL12",
+                                                "type": "String",
+                                                "properties": "Optional",
+                                                "qName": "PAL12"
+                                            },
+                                            {
+                                                "key": "/ns0:X12_00401_856/ns0:HL-SLoop/ns0:HL-OLoop/ns0:HL-TLoop/ns0:PAL/PAL13",
+                                                "name": "PAL13",
+                                                "type": "String",
+                                                "properties": "Optional",
+                                                "qName": "PAL13"
+                                            },
+                                            {
+                                                "key": "/ns0:X12_00401_856/ns0:HL-SLoop/ns0:HL-OLoop/ns0:HL-TLoop/ns0:PAL/PAL14",
+                                                "name": "PAL14",
+                                                "type": "String",
+                                                "properties": "Optional",
+                                                "qName": "PAL14"
+                                            },
+                                            {
+                                                "key": "/ns0:X12_00401_856/ns0:HL-SLoop/ns0:HL-OLoop/ns0:HL-TLoop/ns0:PAL/PAL15",
+                                                "name": "PAL15",
+                                                "type": "String",
+                                                "properties": "Optional",
+                                                "qName": "PAL15"
+                                            },
+                                            {
+                                                "key": "/ns0:X12_00401_856/ns0:HL-SLoop/ns0:HL-OLoop/ns0:HL-TLoop/ns0:PAL/PAL16",
+                                                "name": "PAL16",
+                                                "type": "String",
+                                                "properties": "Optional",
+                                                "qName": "PAL16"
+                                            }
+                                        ],
+                                        "qName": "ns0:PAL"
+                                    },
+                                    {
+                                        "key": "/ns0:X12_00401_856/ns0:HL-SLoop/ns0:HL-OLoop/ns0:HL-TLoop/ns0:HL-PLoop",
+                                        "name": "HL-PLoop",
+                                        "type": "Complex",
+                                        "properties": "Optional, Repeating",
+                                        "children": [
+                                            {
+                                                "key": "/ns0:X12_00401_856/ns0:HL-SLoop/ns0:HL-OLoop/ns0:HL-TLoop/ns0:HL-PLoop/ns0:HL",
+                                                "name": "HL",
+                                                "type": "Complex",
+                                                "properties": "Optional, Repeating",
+                                                "children": [
+                                                    {
+                                                        "key": "/ns0:X12_00401_856/ns0:HL-SLoop/ns0:HL-OLoop/ns0:HL-TLoop/ns0:HL-PLoop/ns0:HL/HL01",
+                                                        "name": "HL01",
+                                                        "type": "String",
+                                                        "properties": "None",
+                                                        "qName": "HL01"
+                                                    },
+                                                    {
+                                                        "key": "/ns0:X12_00401_856/ns0:HL-SLoop/ns0:HL-OLoop/ns0:HL-TLoop/ns0:HL-PLoop/ns0:HL/HL02",
+                                                        "name": "HL02",
+                                                        "type": "String",
+                                                        "properties": "Optional",
+                                                        "qName": "HL02"
+                                                    },
+                                                    {
+                                                        "key": "/ns0:X12_00401_856/ns0:HL-SLoop/ns0:HL-OLoop/ns0:HL-TLoop/ns0:HL-PLoop/ns0:HL/HL03",
+                                                        "name": "HL03",
+                                                        "type": "String",
+                                                        "properties": "None",
+                                                        "qName": "HL03"
+                                                    },
+                                                    {
+                                                        "key": "/ns0:X12_00401_856/ns0:HL-SLoop/ns0:HL-OLoop/ns0:HL-TLoop/ns0:HL-PLoop/ns0:HL/HL04",
+                                                        "name": "HL04",
+                                                        "type": "String",
+                                                        "properties": "Optional",
+                                                        "qName": "HL04"
+                                                    }
+                                                ],
+                                                "qName": "ns0:HL"
+                                            },
+                                            {
+                                                "key": "/ns0:X12_00401_856/ns0:HL-SLoop/ns0:HL-OLoop/ns0:HL-TLoop/ns0:HL-PLoop/ns0:LIN",
+                                                "name": "LIN",
+                                                "type": "Complex",
+                                                "properties": "Optional",
+                                                "children": [
+                                                    {
+                                                        "key": "/ns0:X12_00401_856/ns0:HL-SLoop/ns0:HL-OLoop/ns0:HL-TLoop/ns0:HL-PLoop/ns0:LIN/LIN01",
+                                                        "name": "LIN01",
+                                                        "type": "String",
+                                                        "properties": "Optional",
+                                                        "qName": "LIN01"
+                                                    },
+                                                    {
+                                                        "key": "/ns0:X12_00401_856/ns0:HL-SLoop/ns0:HL-OLoop/ns0:HL-TLoop/ns0:HL-PLoop/ns0:LIN/LIN02",
+                                                        "name": "LIN02",
+                                                        "type": "String",
+                                                        "properties": "None",
+                                                        "qName": "LIN02"
+                                                    },
+                                                    {
+                                                        "key": "/ns0:X12_00401_856/ns0:HL-SLoop/ns0:HL-OLoop/ns0:HL-TLoop/ns0:HL-PLoop/ns0:LIN/LIN03",
+                                                        "name": "LIN03",
+                                                        "type": "String",
+                                                        "properties": "None",
+                                                        "qName": "LIN03"
+                                                    },
+                                                    {
+                                                        "key": "/ns0:X12_00401_856/ns0:HL-SLoop/ns0:HL-OLoop/ns0:HL-TLoop/ns0:HL-PLoop/ns0:LIN/LIN04",
+                                                        "name": "LIN04",
+                                                        "type": "String",
+                                                        "properties": "Optional",
+                                                        "qName": "LIN04"
+                                                    },
+                                                    {
+                                                        "key": "/ns0:X12_00401_856/ns0:HL-SLoop/ns0:HL-OLoop/ns0:HL-TLoop/ns0:HL-PLoop/ns0:LIN/LIN05",
+                                                        "name": "LIN05",
+                                                        "type": "String",
+                                                        "properties": "Optional",
+                                                        "qName": "LIN05"
+                                                    },
+                                                    {
+                                                        "key": "/ns0:X12_00401_856/ns0:HL-SLoop/ns0:HL-OLoop/ns0:HL-TLoop/ns0:HL-PLoop/ns0:LIN/LIN06",
+                                                        "name": "LIN06",
+                                                        "type": "String",
+                                                        "properties": "Optional",
+                                                        "qName": "LIN06"
+                                                    },
+                                                    {
+                                                        "key": "/ns0:X12_00401_856/ns0:HL-SLoop/ns0:HL-OLoop/ns0:HL-TLoop/ns0:HL-PLoop/ns0:LIN/LIN07",
+                                                        "name": "LIN07",
+                                                        "type": "String",
+                                                        "properties": "Optional",
+                                                        "qName": "LIN07"
+                                                    },
+                                                    {
+                                                        "key": "/ns0:X12_00401_856/ns0:HL-SLoop/ns0:HL-OLoop/ns0:HL-TLoop/ns0:HL-PLoop/ns0:LIN/LIN08",
+                                                        "name": "LIN08",
+                                                        "type": "String",
+                                                        "properties": "Optional",
+                                                        "qName": "LIN08"
+                                                    },
+                                                    {
+                                                        "key": "/ns0:X12_00401_856/ns0:HL-SLoop/ns0:HL-OLoop/ns0:HL-TLoop/ns0:HL-PLoop/ns0:LIN/LIN09",
+                                                        "name": "LIN09",
+                                                        "type": "String",
+                                                        "properties": "Optional",
+                                                        "qName": "LIN09"
+                                                    },
+                                                    {
+                                                        "key": "/ns0:X12_00401_856/ns0:HL-SLoop/ns0:HL-OLoop/ns0:HL-TLoop/ns0:HL-PLoop/ns0:LIN/LIN10",
+                                                        "name": "LIN10",
+                                                        "type": "String",
+                                                        "properties": "Optional",
+                                                        "qName": "LIN10"
+                                                    },
+                                                    {
+                                                        "key": "/ns0:X12_00401_856/ns0:HL-SLoop/ns0:HL-OLoop/ns0:HL-TLoop/ns0:HL-PLoop/ns0:LIN/LIN11",
+                                                        "name": "LIN11",
+                                                        "type": "String",
+                                                        "properties": "Optional",
+                                                        "qName": "LIN11"
+                                                    },
+                                                    {
+                                                        "key": "/ns0:X12_00401_856/ns0:HL-SLoop/ns0:HL-OLoop/ns0:HL-TLoop/ns0:HL-PLoop/ns0:LIN/LIN12",
+                                                        "name": "LIN12",
+                                                        "type": "String",
+                                                        "properties": "Optional",
+                                                        "qName": "LIN12"
+                                                    },
+                                                    {
+                                                        "key": "/ns0:X12_00401_856/ns0:HL-SLoop/ns0:HL-OLoop/ns0:HL-TLoop/ns0:HL-PLoop/ns0:LIN/LIN13",
+                                                        "name": "LIN13",
+                                                        "type": "String",
+                                                        "properties": "Optional",
+                                                        "qName": "LIN13"
+                                                    },
+                                                    {
+                                                        "key": "/ns0:X12_00401_856/ns0:HL-SLoop/ns0:HL-OLoop/ns0:HL-TLoop/ns0:HL-PLoop/ns0:LIN/LIN14",
+                                                        "name": "LIN14",
+                                                        "type": "String",
+                                                        "properties": "Optional",
+                                                        "qName": "LIN14"
+                                                    },
+                                                    {
+                                                        "key": "/ns0:X12_00401_856/ns0:HL-SLoop/ns0:HL-OLoop/ns0:HL-TLoop/ns0:HL-PLoop/ns0:LIN/LIN15",
+                                                        "name": "LIN15",
+                                                        "type": "String",
+                                                        "properties": "Optional",
+                                                        "qName": "LIN15"
+                                                    },
+                                                    {
+                                                        "key": "/ns0:X12_00401_856/ns0:HL-SLoop/ns0:HL-OLoop/ns0:HL-TLoop/ns0:HL-PLoop/ns0:LIN/LIN16",
+                                                        "name": "LIN16",
+                                                        "type": "String",
+                                                        "properties": "Optional",
+                                                        "qName": "LIN16"
+                                                    },
+                                                    {
+                                                        "key": "/ns0:X12_00401_856/ns0:HL-SLoop/ns0:HL-OLoop/ns0:HL-TLoop/ns0:HL-PLoop/ns0:LIN/LIN17",
+                                                        "name": "LIN17",
+                                                        "type": "String",
+                                                        "properties": "Optional",
+                                                        "qName": "LIN17"
+                                                    },
+                                                    {
+                                                        "key": "/ns0:X12_00401_856/ns0:HL-SLoop/ns0:HL-OLoop/ns0:HL-TLoop/ns0:HL-PLoop/ns0:LIN/LIN18",
+                                                        "name": "LIN18",
+                                                        "type": "String",
+                                                        "properties": "Optional",
+                                                        "qName": "LIN18"
+                                                    },
+                                                    {
+                                                        "key": "/ns0:X12_00401_856/ns0:HL-SLoop/ns0:HL-OLoop/ns0:HL-TLoop/ns0:HL-PLoop/ns0:LIN/LIN19",
+                                                        "name": "LIN19",
+                                                        "type": "String",
+                                                        "properties": "Optional",
+                                                        "qName": "LIN19"
+                                                    },
+                                                    {
+                                                        "key": "/ns0:X12_00401_856/ns0:HL-SLoop/ns0:HL-OLoop/ns0:HL-TLoop/ns0:HL-PLoop/ns0:LIN/LIN20",
+                                                        "name": "LIN20",
+                                                        "type": "String",
+                                                        "properties": "Optional",
+                                                        "qName": "LIN20"
+                                                    },
+                                                    {
+                                                        "key": "/ns0:X12_00401_856/ns0:HL-SLoop/ns0:HL-OLoop/ns0:HL-TLoop/ns0:HL-PLoop/ns0:LIN/LIN21",
+                                                        "name": "LIN21",
+                                                        "type": "String",
+                                                        "properties": "Optional",
+                                                        "qName": "LIN21"
+                                                    },
+                                                    {
+                                                        "key": "/ns0:X12_00401_856/ns0:HL-SLoop/ns0:HL-OLoop/ns0:HL-TLoop/ns0:HL-PLoop/ns0:LIN/LIN22",
+                                                        "name": "LIN22",
+                                                        "type": "String",
+                                                        "properties": "Optional",
+                                                        "qName": "LIN22"
+                                                    },
+                                                    {
+                                                        "key": "/ns0:X12_00401_856/ns0:HL-SLoop/ns0:HL-OLoop/ns0:HL-TLoop/ns0:HL-PLoop/ns0:LIN/LIN23",
+                                                        "name": "LIN23",
+                                                        "type": "String",
+                                                        "properties": "Optional",
+                                                        "qName": "LIN23"
+                                                    },
+                                                    {
+                                                        "key": "/ns0:X12_00401_856/ns0:HL-SLoop/ns0:HL-OLoop/ns0:HL-TLoop/ns0:HL-PLoop/ns0:LIN/LIN24",
+                                                        "name": "LIN24",
+                                                        "type": "String",
+                                                        "properties": "Optional",
+                                                        "qName": "LIN24"
+                                                    },
+                                                    {
+                                                        "key": "/ns0:X12_00401_856/ns0:HL-SLoop/ns0:HL-OLoop/ns0:HL-TLoop/ns0:HL-PLoop/ns0:LIN/LIN25",
+                                                        "name": "LIN25",
+                                                        "type": "String",
+                                                        "properties": "Optional",
+                                                        "qName": "LIN25"
+                                                    },
+                                                    {
+                                                        "key": "/ns0:X12_00401_856/ns0:HL-SLoop/ns0:HL-OLoop/ns0:HL-TLoop/ns0:HL-PLoop/ns0:LIN/LIN26",
+                                                        "name": "LIN26",
+                                                        "type": "String",
+                                                        "properties": "Optional",
+                                                        "qName": "LIN26"
+                                                    },
+                                                    {
+                                                        "key": "/ns0:X12_00401_856/ns0:HL-SLoop/ns0:HL-OLoop/ns0:HL-TLoop/ns0:HL-PLoop/ns0:LIN/LIN27",
+                                                        "name": "LIN27",
+                                                        "type": "String",
+                                                        "properties": "Optional",
+                                                        "qName": "LIN27"
+                                                    },
+                                                    {
+                                                        "key": "/ns0:X12_00401_856/ns0:HL-SLoop/ns0:HL-OLoop/ns0:HL-TLoop/ns0:HL-PLoop/ns0:LIN/LIN28",
+                                                        "name": "LIN28",
+                                                        "type": "String",
+                                                        "properties": "Optional",
+                                                        "qName": "LIN28"
+                                                    },
+                                                    {
+                                                        "key": "/ns0:X12_00401_856/ns0:HL-SLoop/ns0:HL-OLoop/ns0:HL-TLoop/ns0:HL-PLoop/ns0:LIN/LIN29",
+                                                        "name": "LIN29",
+                                                        "type": "String",
+                                                        "properties": "Optional",
+                                                        "qName": "LIN29"
+                                                    },
+                                                    {
+                                                        "key": "/ns0:X12_00401_856/ns0:HL-SLoop/ns0:HL-OLoop/ns0:HL-TLoop/ns0:HL-PLoop/ns0:LIN/LIN30",
+                                                        "name": "LIN30",
+                                                        "type": "String",
+                                                        "properties": "Optional",
+                                                        "qName": "LIN30"
+                                                    },
+                                                    {
+                                                        "key": "/ns0:X12_00401_856/ns0:HL-SLoop/ns0:HL-OLoop/ns0:HL-TLoop/ns0:HL-PLoop/ns0:LIN/LIN31",
+                                                        "name": "LIN31",
+                                                        "type": "String",
+                                                        "properties": "Optional",
+                                                        "qName": "LIN31"
+                                                    }
+                                                ],
+                                                "qName": "ns0:LIN"
+                                            },
+                                            {
+                                                "key": "/ns0:X12_00401_856/ns0:HL-SLoop/ns0:HL-OLoop/ns0:HL-TLoop/ns0:HL-PLoop/ns0:SN1",
+                                                "name": "SN1",
+                                                "type": "Complex",
+                                                "properties": "Optional",
+                                                "children": [
+                                                    {
+                                                        "key": "/ns0:X12_00401_856/ns0:HL-SLoop/ns0:HL-OLoop/ns0:HL-TLoop/ns0:HL-PLoop/ns0:SN1/SN101",
+                                                        "name": "SN101",
+                                                        "type": "String",
+                                                        "properties": "Optional",
+                                                        "qName": "SN101"
+                                                    },
+                                                    {
+                                                        "key": "/ns0:X12_00401_856/ns0:HL-SLoop/ns0:HL-OLoop/ns0:HL-TLoop/ns0:HL-PLoop/ns0:SN1/SN102",
+                                                        "name": "SN102",
+                                                        "type": "String",
+                                                        "properties": "None",
+                                                        "qName": "SN102"
+                                                    },
+                                                    {
+                                                        "key": "/ns0:X12_00401_856/ns0:HL-SLoop/ns0:HL-OLoop/ns0:HL-TLoop/ns0:HL-PLoop/ns0:SN1/SN103",
+                                                        "name": "SN103",
+                                                        "type": "String",
+                                                        "properties": "None",
+                                                        "qName": "SN103"
+                                                    },
+                                                    {
+                                                        "key": "/ns0:X12_00401_856/ns0:HL-SLoop/ns0:HL-OLoop/ns0:HL-TLoop/ns0:HL-PLoop/ns0:SN1/SN104",
+                                                        "name": "SN104",
+                                                        "type": "String",
+                                                        "properties": "Optional",
+                                                        "qName": "SN104"
+                                                    },
+                                                    {
+                                                        "key": "/ns0:X12_00401_856/ns0:HL-SLoop/ns0:HL-OLoop/ns0:HL-TLoop/ns0:HL-PLoop/ns0:SN1/SN105",
+                                                        "name": "SN105",
+                                                        "type": "String",
+                                                        "properties": "Optional",
+                                                        "qName": "SN105"
+                                                    },
+                                                    {
+                                                        "key": "/ns0:X12_00401_856/ns0:HL-SLoop/ns0:HL-OLoop/ns0:HL-TLoop/ns0:HL-PLoop/ns0:SN1/SN106",
+                                                        "name": "SN106",
+                                                        "type": "String",
+                                                        "properties": "Optional",
+                                                        "qName": "SN106"
+                                                    },
+                                                    {
+                                                        "key": "/ns0:X12_00401_856/ns0:HL-SLoop/ns0:HL-OLoop/ns0:HL-TLoop/ns0:HL-PLoop/ns0:SN1/SN107",
+                                                        "name": "SN107",
+                                                        "type": "String",
+                                                        "properties": "Optional",
+                                                        "qName": "SN107"
+                                                    },
+                                                    {
+                                                        "key": "/ns0:X12_00401_856/ns0:HL-SLoop/ns0:HL-OLoop/ns0:HL-TLoop/ns0:HL-PLoop/ns0:SN1/SN108",
+                                                        "name": "SN108",
+                                                        "type": "String",
+                                                        "properties": "Optional",
+                                                        "qName": "SN108"
+                                                    }
+                                                ],
+                                                "qName": "ns0:SN1"
+                                            },
+                                            {
+                                                "key": "/ns0:X12_00401_856/ns0:HL-SLoop/ns0:HL-OLoop/ns0:HL-TLoop/ns0:HL-PLoop/ns0:PO4",
+                                                "name": "PO4",
+                                                "type": "Complex",
+                                                "properties": "Optional",
+                                                "children": [
+                                                    {
+                                                        "key": "/ns0:X12_00401_856/ns0:HL-SLoop/ns0:HL-OLoop/ns0:HL-TLoop/ns0:HL-PLoop/ns0:PO4/PO401",
+                                                        "name": "PO401",
+                                                        "type": "String",
+                                                        "properties": "Optional",
+                                                        "qName": "PO401"
+                                                    },
+                                                    {
+                                                        "key": "/ns0:X12_00401_856/ns0:HL-SLoop/ns0:HL-OLoop/ns0:HL-TLoop/ns0:HL-PLoop/ns0:PO4/PO402",
+                                                        "name": "PO402",
+                                                        "type": "String",
+                                                        "properties": "Optional",
+                                                        "qName": "PO402"
+                                                    },
+                                                    {
+                                                        "key": "/ns0:X12_00401_856/ns0:HL-SLoop/ns0:HL-OLoop/ns0:HL-TLoop/ns0:HL-PLoop/ns0:PO4/PO403",
+                                                        "name": "PO403",
+                                                        "type": "String",
+                                                        "properties": "Optional",
+                                                        "qName": "PO403"
+                                                    },
+                                                    {
+                                                        "key": "/ns0:X12_00401_856/ns0:HL-SLoop/ns0:HL-OLoop/ns0:HL-TLoop/ns0:HL-PLoop/ns0:PO4/PO404",
+                                                        "name": "PO404",
+                                                        "type": "String",
+                                                        "properties": "Optional",
+                                                        "qName": "PO404"
+                                                    },
+                                                    {
+                                                        "key": "/ns0:X12_00401_856/ns0:HL-SLoop/ns0:HL-OLoop/ns0:HL-TLoop/ns0:HL-PLoop/ns0:PO4/PO405",
+                                                        "name": "PO405",
+                                                        "type": "String",
+                                                        "properties": "Optional",
+                                                        "qName": "PO405"
+                                                    },
+                                                    {
+                                                        "key": "/ns0:X12_00401_856/ns0:HL-SLoop/ns0:HL-OLoop/ns0:HL-TLoop/ns0:HL-PLoop/ns0:PO4/PO406",
+                                                        "name": "PO406",
+                                                        "type": "String",
+                                                        "properties": "Optional",
+                                                        "qName": "PO406"
+                                                    },
+                                                    {
+                                                        "key": "/ns0:X12_00401_856/ns0:HL-SLoop/ns0:HL-OLoop/ns0:HL-TLoop/ns0:HL-PLoop/ns0:PO4/PO407",
+                                                        "name": "PO407",
+                                                        "type": "String",
+                                                        "properties": "Optional",
+                                                        "qName": "PO407"
+                                                    },
+                                                    {
+                                                        "key": "/ns0:X12_00401_856/ns0:HL-SLoop/ns0:HL-OLoop/ns0:HL-TLoop/ns0:HL-PLoop/ns0:PO4/PO408",
+                                                        "name": "PO408",
+                                                        "type": "String",
+                                                        "properties": "Optional",
+                                                        "qName": "PO408"
+                                                    },
+                                                    {
+                                                        "key": "/ns0:X12_00401_856/ns0:HL-SLoop/ns0:HL-OLoop/ns0:HL-TLoop/ns0:HL-PLoop/ns0:PO4/PO409",
+                                                        "name": "PO409",
+                                                        "type": "String",
+                                                        "properties": "Optional",
+                                                        "qName": "PO409"
+                                                    },
+                                                    {
+                                                        "key": "/ns0:X12_00401_856/ns0:HL-SLoop/ns0:HL-OLoop/ns0:HL-TLoop/ns0:HL-PLoop/ns0:PO4/PO410",
+                                                        "name": "PO410",
+                                                        "type": "String",
+                                                        "properties": "Optional",
+                                                        "qName": "PO410"
+                                                    },
+                                                    {
+                                                        "key": "/ns0:X12_00401_856/ns0:HL-SLoop/ns0:HL-OLoop/ns0:HL-TLoop/ns0:HL-PLoop/ns0:PO4/PO411",
+                                                        "name": "PO411",
+                                                        "type": "String",
+                                                        "properties": "Optional",
+                                                        "qName": "PO411"
+                                                    },
+                                                    {
+                                                        "key": "/ns0:X12_00401_856/ns0:HL-SLoop/ns0:HL-OLoop/ns0:HL-TLoop/ns0:HL-PLoop/ns0:PO4/PO412",
+                                                        "name": "PO412",
+                                                        "type": "String",
+                                                        "properties": "Optional",
+                                                        "qName": "PO412"
+                                                    },
+                                                    {
+                                                        "key": "/ns0:X12_00401_856/ns0:HL-SLoop/ns0:HL-OLoop/ns0:HL-TLoop/ns0:HL-PLoop/ns0:PO4/PO413",
+                                                        "name": "PO413",
+                                                        "type": "String",
+                                                        "properties": "Optional",
+                                                        "qName": "PO413"
+                                                    },
+                                                    {
+                                                        "key": "/ns0:X12_00401_856/ns0:HL-SLoop/ns0:HL-OLoop/ns0:HL-TLoop/ns0:HL-PLoop/ns0:PO4/PO414",
+                                                        "name": "PO414",
+                                                        "type": "String",
+                                                        "properties": "Optional",
+                                                        "qName": "PO414"
+                                                    },
+                                                    {
+                                                        "key": "/ns0:X12_00401_856/ns0:HL-SLoop/ns0:HL-OLoop/ns0:HL-TLoop/ns0:HL-PLoop/ns0:PO4/PO415",
+                                                        "name": "PO415",
+                                                        "type": "String",
+                                                        "properties": "Optional",
+                                                        "qName": "PO415"
+                                                    },
+                                                    {
+                                                        "key": "/ns0:X12_00401_856/ns0:HL-SLoop/ns0:HL-OLoop/ns0:HL-TLoop/ns0:HL-PLoop/ns0:PO4/PO416",
+                                                        "name": "PO416",
+                                                        "type": "String",
+                                                        "properties": "Optional",
+                                                        "qName": "PO416"
+                                                    },
+                                                    {
+                                                        "key": "/ns0:X12_00401_856/ns0:HL-SLoop/ns0:HL-OLoop/ns0:HL-TLoop/ns0:HL-PLoop/ns0:PO4/PO417",
+                                                        "name": "PO417",
+                                                        "type": "String",
+                                                        "properties": "Optional",
+                                                        "qName": "PO417"
+                                                    },
+                                                    {
+                                                        "key": "/ns0:X12_00401_856/ns0:HL-SLoop/ns0:HL-OLoop/ns0:HL-TLoop/ns0:HL-PLoop/ns0:PO4/PO418",
+                                                        "name": "PO418",
+                                                        "type": "String",
+                                                        "properties": "Optional",
+                                                        "qName": "PO418"
+                                                    }
+                                                ],
+                                                "qName": "ns0:PO4"
+                                            },
+                                            {
+                                                "key": "/ns0:X12_00401_856/ns0:HL-SLoop/ns0:HL-OLoop/ns0:HL-TLoop/ns0:HL-PLoop/ns0:PID",
+                                                "name": "PID",
+                                                "type": "Complex",
+                                                "properties": "Optional, Repeating",
+                                                "children": [
+                                                    {
+                                                        "key": "/ns0:X12_00401_856/ns0:HL-SLoop/ns0:HL-OLoop/ns0:HL-TLoop/ns0:HL-PLoop/ns0:PID/PID01",
+                                                        "name": "PID01",
+                                                        "type": "String",
+                                                        "properties": "None",
+                                                        "qName": "PID01"
+                                                    },
+                                                    {
+                                                        "key": "/ns0:X12_00401_856/ns0:HL-SLoop/ns0:HL-OLoop/ns0:HL-TLoop/ns0:HL-PLoop/ns0:PID/PID02",
+                                                        "name": "PID02",
+                                                        "type": "String",
+                                                        "properties": "Optional",
+                                                        "qName": "PID02"
+                                                    },
+                                                    {
+                                                        "key": "/ns0:X12_00401_856/ns0:HL-SLoop/ns0:HL-OLoop/ns0:HL-TLoop/ns0:HL-PLoop/ns0:PID/PID03",
+                                                        "name": "PID03",
+                                                        "type": "String",
+                                                        "properties": "Optional",
+                                                        "qName": "PID03"
+                                                    },
+                                                    {
+                                                        "key": "/ns0:X12_00401_856/ns0:HL-SLoop/ns0:HL-OLoop/ns0:HL-TLoop/ns0:HL-PLoop/ns0:PID/PID04",
+                                                        "name": "PID04",
+                                                        "type": "String",
+                                                        "properties": "Optional",
+                                                        "qName": "PID04"
+                                                    },
+                                                    {
+                                                        "key": "/ns0:X12_00401_856/ns0:HL-SLoop/ns0:HL-OLoop/ns0:HL-TLoop/ns0:HL-PLoop/ns0:PID/PID05",
+                                                        "name": "PID05",
+                                                        "type": "String",
+                                                        "properties": "Optional",
+                                                        "qName": "PID05"
+                                                    },
+                                                    {
+                                                        "key": "/ns0:X12_00401_856/ns0:HL-SLoop/ns0:HL-OLoop/ns0:HL-TLoop/ns0:HL-PLoop/ns0:PID/PID06",
+                                                        "name": "PID06",
+                                                        "type": "String",
+                                                        "properties": "Optional",
+                                                        "qName": "PID06"
+                                                    },
+                                                    {
+                                                        "key": "/ns0:X12_00401_856/ns0:HL-SLoop/ns0:HL-OLoop/ns0:HL-TLoop/ns0:HL-PLoop/ns0:PID/PID07",
+                                                        "name": "PID07",
+                                                        "type": "String",
+                                                        "properties": "Optional",
+                                                        "qName": "PID07"
+                                                    },
+                                                    {
+                                                        "key": "/ns0:X12_00401_856/ns0:HL-SLoop/ns0:HL-OLoop/ns0:HL-TLoop/ns0:HL-PLoop/ns0:PID/PID08",
+                                                        "name": "PID08",
+                                                        "type": "String",
+                                                        "properties": "Optional",
+                                                        "qName": "PID08"
+                                                    },
+                                                    {
+                                                        "key": "/ns0:X12_00401_856/ns0:HL-SLoop/ns0:HL-OLoop/ns0:HL-TLoop/ns0:HL-PLoop/ns0:PID/PID09",
+                                                        "name": "PID09",
+                                                        "type": "String",
+                                                        "properties": "Optional",
+                                                        "qName": "PID09"
+                                                    }
+                                                ],
+                                                "qName": "ns0:PID"
+                                            },
+                                            {
+                                                "key": "/ns0:X12_00401_856/ns0:HL-SLoop/ns0:HL-OLoop/ns0:HL-TLoop/ns0:HL-PLoop/ns0:DTM_2",
+                                                "name": "DTM_2",
+                                                "type": "Complex",
+                                                "properties": "Optional, Repeating",
+                                                "children": [
+                                                    {
+                                                        "key": "/ns0:X12_00401_856/ns0:HL-SLoop/ns0:HL-OLoop/ns0:HL-TLoop/ns0:HL-PLoop/ns0:DTM_2/DTM01",
+                                                        "name": "DTM01",
+                                                        "type": "String",
+                                                        "properties": "None",
+                                                        "qName": "DTM01"
+                                                    },
+                                                    {
+                                                        "key": "/ns0:X12_00401_856/ns0:HL-SLoop/ns0:HL-OLoop/ns0:HL-TLoop/ns0:HL-PLoop/ns0:DTM_2/DTM02",
+                                                        "name": "DTM02",
+                                                        "type": "String",
+                                                        "properties": "Optional",
+                                                        "qName": "DTM02"
+                                                    },
+                                                    {
+                                                        "key": "/ns0:X12_00401_856/ns0:HL-SLoop/ns0:HL-OLoop/ns0:HL-TLoop/ns0:HL-PLoop/ns0:DTM_2/DTM03",
+                                                        "name": "DTM03",
+                                                        "type": "String",
+                                                        "properties": "Optional",
+                                                        "qName": "DTM03"
+                                                    },
+                                                    {
+                                                        "key": "/ns0:X12_00401_856/ns0:HL-SLoop/ns0:HL-OLoop/ns0:HL-TLoop/ns0:HL-PLoop/ns0:DTM_2/DTM04",
+                                                        "name": "DTM04",
+                                                        "type": "String",
+                                                        "properties": "Optional",
+                                                        "qName": "DTM04"
+                                                    },
+                                                    {
+                                                        "key": "/ns0:X12_00401_856/ns0:HL-SLoop/ns0:HL-OLoop/ns0:HL-TLoop/ns0:HL-PLoop/ns0:DTM_2/DTM05",
+                                                        "name": "DTM05",
+                                                        "type": "String",
+                                                        "properties": "Optional",
+                                                        "qName": "DTM05"
+                                                    },
+                                                    {
+                                                        "key": "/ns0:X12_00401_856/ns0:HL-SLoop/ns0:HL-OLoop/ns0:HL-TLoop/ns0:HL-PLoop/ns0:DTM_2/DTM06",
+                                                        "name": "DTM06",
+                                                        "type": "String",
+                                                        "properties": "Optional",
+                                                        "qName": "DTM06"
+                                                    }
+                                                ],
+                                                "qName": "ns0:DTM_2"
+                                            }
+                                        ],
+                                        "qName": "ns0:HL-PLoop"
+                                    }
+                                ],
+                                "qName": "ns0:HL-TLoop"
+                            }
+                        ],
+                        "qName": "ns0:HL-OLoop"
+                    }
+                ],
+                "qName": "ns0:HL-SLoop"
+            },
+            {
+                "key": "/ns0:X12_00401_856/ns0:CTT",
+                "name": "CTT",
+                "type": "Complex",
+                "properties": "Optional",
+                "children": [
+                    {
+                        "key": "/ns0:X12_00401_856/ns0:CTT/CTT01",
+                        "name": "CTT01",
+                        "type": "String",
+                        "properties": "None",
+                        "qName": "CTT01"
+                    },
+                    {
+                        "key": "/ns0:X12_00401_856/ns0:CTT/CTT02",
+                        "name": "CTT02",
+                        "type": "String",
+                        "properties": "Optional",
+                        "qName": "CTT02"
+                    },
+                    {
+                        "key": "/ns0:X12_00401_856/ns0:CTT/CTT03",
+                        "name": "CTT03",
+                        "type": "String",
+                        "properties": "Optional",
+                        "qName": "CTT03"
+                    },
+                    {
+                        "key": "/ns0:X12_00401_856/ns0:CTT/CTT04",
+                        "name": "CTT04",
+                        "type": "String",
+                        "properties": "Optional",
+                        "qName": "CTT04"
+                    },
+                    {
+                        "key": "/ns0:X12_00401_856/ns0:CTT/CTT05",
+                        "name": "CTT05",
+                        "type": "String",
+                        "properties": "Optional",
+                        "qName": "CTT05"
+                    },
+                    {
+                        "key": "/ns0:X12_00401_856/ns0:CTT/CTT06",
+                        "name": "CTT06",
+                        "type": "String",
+                        "properties": "Optional",
+                        "qName": "CTT06"
+                    },
+                    {
+                        "key": "/ns0:X12_00401_856/ns0:CTT/CTT07",
+                        "name": "CTT07",
+                        "type": "String",
+                        "properties": "Optional",
+                        "qName": "CTT07"
+                    }
+                ],
+                "qName": "ns0:CTT"
+            },
+            {
+                "key": "/ns0:X12_00401_856/SE",
+                "name": "SE",
+                "type": "Complex",
+                "properties": "Optional",
+                "children": [
+                    {
+                        "key": "/ns0:X12_00401_856/SE/SE01",
+                        "name": "SE01",
+                        "type": "String",
+                        "properties": "None",
+                        "qName": "SE01"
+                    },
+                    {
+                        "key": "/ns0:X12_00401_856/SE/SE02",
+                        "name": "SE02",
+                        "type": "String",
+                        "properties": "None",
+                        "qName": "SE02"
+                    }
+                ],
+                "qName": "SE"
+            }
+        ],
+        "qName": "ns0:X12_00401_856"
+    }
+}

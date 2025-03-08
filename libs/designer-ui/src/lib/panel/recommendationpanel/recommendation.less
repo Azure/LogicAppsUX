@@ -1,0 +1,101 @@
+@import './operationGroupDetails/operationGroupDetails.less';
+@import './operationSearchCard/operationSearchCard.less';
+@import './operationSearchGroup/operationSearchGroup.less';
+@import './operationSearchHeader/operationSearchHeader.less';
+
+@import (reference) '../../variables.less';
+
+.msla-app-action-header {
+  margin: 0px -24px;
+  padding: 24px 24px 16px;
+  z-index: 1;
+  position: sticky;
+  top: 0px;
+
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+  background-color: #fff;
+}
+
+.msla-theme-dark {
+  .msla-app-action-header {
+    background-color: @ms-color-secondaryBackground;
+  }
+}
+
+.msla-filter-container {
+  margin-top: 7px;
+  padding: 5px;
+
+  .msla-block {
+    display: block;
+  }
+
+  .msla-filter-btn {
+    display: inline-block;
+    font-size: 12px;
+    line-height: 16px;
+    color: black;
+    border-radius: 12px;
+    padding: 1px 9px 1px;
+    margin-right: 4px;
+    margin-top: 2px;
+  }
+
+  .msla-filter-selected {
+    color: white;
+    background-color: black;
+  }
+}
+
+.ms-Panel-commands {
+  padding-top: 0px;
+}
+
+.msla-browse-results-container {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+  gap: 8px;
+}
+
+.msla-no-results-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 16px;
+  gap: 32px;
+}
+
+// These classes are strange but it's so that we get two columns on our FluentUI list
+
+.msla-result-list {
+  position: relative;
+  margin: 0px -24px;
+  padding: 0px 24px;
+  display: flex;
+  flex-direction: column;
+}
+
+.msla-browse-list {
+  position: relative;
+  margin: 0px -24px;
+  padding: 0px 20px;
+  display: flex;
+  flex-direction: column;
+}
+
+.mlsa-browse-list-tile-wrapper {
+  padding-bottom: 80px;
+  display: contents;
+  width: 100%;
+}
+
+.msla-browse-list-tile {
+  position: relative;
+  float: left;
+  padding: 4px;
+  box-sizing: border-box;
+}

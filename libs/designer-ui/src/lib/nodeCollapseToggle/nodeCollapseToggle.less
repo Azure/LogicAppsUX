@@ -1,0 +1,20 @@
+.msla-collapse-toggle {
+  background: none;
+  height: 100%;
+  border: none;
+  color: white;
+  background-color: var(--brand-color, black);
+  padding: 12px 6px;
+  display: flex;
+  align-items: flex-start;
+
+  &.small {
+    padding: 8px 6px;
+  }
+
+  cursor: pointer;
+  &.disabled {
+    pointer-events: none;
+  }
+  .node-button-interaction();
+}

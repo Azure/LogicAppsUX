@@ -1,0 +1,38 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`lib/flyout/flyoutcallout > should render 1`] = `
+<FocusTrapCallout
+  ariaLabel="text"
+  beakWidth={8}
+  className="msla-flyout-callout"
+  directionalHint={11}
+  focusTrapProps={
+    {
+      "isClickableOutsideFocusTrap": true,
+    }
+  }
+  gapSpace={0}
+  onDismiss={[MockFunction spy]}
+  setInitialFocus={true}
+  styles={
+    {
+      "calloutMain": "calloutMain-115",
+      "subComponentStyles": {},
+    }
+  }
+>
+  <div
+    aria-label="text"
+    data-is-focusable={true}
+    data-testid="callout-text"
+    role="dialog"
+    style={
+      {
+        "color": "#323130",
+      }
+    }
+  >
+    text
+  </div>
+</FocusTrapCallout>
+`;

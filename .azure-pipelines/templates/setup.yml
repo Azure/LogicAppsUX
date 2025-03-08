@@ -1,0 +1,15 @@
+steps:
+  - task: NodeTool@0
+    displayName: "Using Node.js"
+    inputs:
+      versionSpec: '20.x'
+    condition: succeeded()
+
+  - script: npm install -g pnpm
+    displayName: "Install pnpm"
+    condition: succeeded()
+
+  - script: pnpm install --frozen-lockfile --strict-peer-dependencies --recursive
+    displayName: "Install Dependencies with pnpm"
+    workingDirectory: $(working_directory)
+    condition: succeeded()

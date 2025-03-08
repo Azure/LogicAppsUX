@@ -1,0 +1,273 @@
+// Universal across templates
+.msla-template-markdown {
+    * {
+        margin: 0;
+    }
+
+    a {
+        color: #115EA3;
+    }
+}
+
+.msla-templates-tab-source-code-icon {
+    padding-left: 4px;
+}
+
+.msla-template-quickview-tags {
+    display: flex;
+    flex-direction: row;
+    color: grey;
+    padding: 10px 0 10px 0;
+
+    .msla-template-last-tag {
+        vertical-align: middle;
+    }
+
+    .msla-template-quickview-source-code {
+        padding-left: 20px;
+        display: inline-flex;
+        flex-direction: row;
+        text-align: center;
+        align-items: center;
+        justify-content: center;
+    }
+}
+
+.msla-template-quickview-features {
+    padding-top: 10px;
+}
+
+.msla-template-quickview-tabs {
+    border-bottom: solid #d4d4d4 1px;
+}
+
+.msla-template-createworkflow-title {
+    padding: 8px 0px;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    height: fit-content;
+    cursor: pointer;
+
+    .msla-template-createworkflow-title-text {
+        margin-right: 16px;
+    }
+}
+
+.msla-template-createworkflow-description-wrapper {
+    padding: 8px 0px;
+
+    .msla-template-createworkflow-description {
+        display: flex;
+        flex-direction: row;
+        align-items: flex-start;
+        gap: 8px;
+
+        .msla-template-createworkflow-description-title {
+            min-width: 100px;
+            height: max-content;
+            display: flex;
+            align-items: flex-start;
+            justify-content: flex-start;
+            color: #605E5C;
+            font-size: 12px;
+        }
+
+        .msla-template-createworkflow-description-text {
+            font-size: 12px;
+            * {
+                margin: 0;
+            }
+        }
+    }
+}
+
+.msla-template-workflow-preview {
+    width: 100%;
+    display: flex;
+
+    .msla-template-workflow-preview-image {
+        width: 70%;
+        margin: 10px auto;
+        height: fit-content
+    }
+}
+
+.msla-templates-tab {
+    .msla-templates-empty-review-tab {
+        padding: 80px 0px;
+        text-align: center;
+    }
+
+    .msla-templates-tab-label {
+        font-size: 14px;
+        font-weight: 600;
+        line-height: 20px;
+    }
+
+    .msla-templates-tab-textField {
+        padding: 16px 0 32px 0;
+    }
+
+    .msla-templates-tab-label-description {
+        font-size: 13px;
+        line-height: 18px;
+
+        .msla-templates-tab-label-link {
+            display: inline-flex;
+            flex-direction: row;
+            text-align: center;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .msla-templates-tab-description-icon {
+            padding-left: 4px;
+        }
+    }
+
+    .msla-templates-tab-choiceGroup {
+        padding-top: 16px;
+    }
+
+    .msla-templates-tab-choiceGroup-label {
+        padding-left: 32px;
+    }
+
+    .msla-templates-tab-choiceGroup-list {
+        padding-left: 8px;
+    }
+
+    .msla-templates-tab-stateType-error {
+        border: 2px solid #e81123;
+    }
+
+    .msla-templates-tab-stateType-error-message {
+        color: #a4262c;
+        font-size: 14px;
+      }
+
+    .msla-templates-tab-review-section {
+        padding-top: 12px;
+        padding-bottom: 20px;
+
+        .msla-templates-tab-review-section-details {
+            display: flex;
+            flex-direction: row;
+            padding-bottom: 10px;
+        }
+
+        .msla-templates-tab-review-section-details-title {
+            width: 240px;
+            padding-right: 8px;
+        }
+
+        .msla-templates-tab-review-section-details-value {
+            flex: 1;
+            width: 100%;
+        }
+    }
+}
+
+.msla-template-overview {
+    display: flex;
+    flex-direction: column;
+    padding-bottom: 20px;
+
+    .msla-template-overview-section {
+        padding: 15px 0 0 0;
+        display: flex;
+        flex-direction: column;
+
+        .msla-template-overview-section-title {
+            font-size: 15px;
+            font-weight: 600;
+            padding: 18px 0;
+        }
+
+        .msla-template-overview-section-detail {
+            padding: 5px 0;
+            
+            .msla-template-overview-section-detailkey {
+                color: rgb(119, 118, 118);
+                padding-right: 6px;
+            }
+        }
+
+        .msla-template-overview-section-tags-section {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+
+            .msla-template-overview-section-tag {
+                border: 5px solid #d9eefe;
+                border-radius: 2px;
+                padding: 1px 2px;
+                background-color: #d9eefe;
+                width: fit-content;
+            }
+        }
+
+        .msla-template-overview-connections {
+            display: flex;
+            
+            .msla-template-overview-connection {
+                display: flex;
+                flex-direction: column;
+
+                .msla-template-connector {
+                    display: flex;
+                    flex-direction: row;
+
+                    .msla-template-connector-box {
+                        width: 50px;
+                        height: 50px;
+                        display: flex;
+                        justify-content: center;
+                        align-items: center;
+                    }
+
+                    .msla-template-connector-icon {
+                        width: 60%;
+                        height: 60%;
+                    }
+
+                    .msla-template-connector-details {
+                        padding: 10px;;
+                        .msla-template-connector-name {
+                            font-size: 15px;
+                            font-weight: 600;
+                        }
+
+                        .msla-template-connector-type {
+                            padding-top: 3px;
+                            font-size: 10px !important;
+                            display: flex;
+                        }
+                    }
+                }
+            }
+        }
+
+
+    }
+}
+
+.msla-template-overview-footer {
+    position: sticky;
+    bottom: 0;
+    border-top: 1px solid #cacaca;
+    background-color: white;
+    padding: 16px 0;
+}
+
+.msla-template-create-connection {
+    font-size: 14px;
+    font-weight: 600;
+    gap: 5px;
+    padding: 10px 10px 20px 10px;
+}
+
+.msla-template-create-connection-content {
+    gap: 1px;
+}

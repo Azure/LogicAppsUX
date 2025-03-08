@@ -1,0 +1,90 @@
+{
+  "definition": {
+    "$schema": "https://schema.management.azure.com/providers/Microsoft.Logic/schemas/2016-06-01/workflowdefinition.json#",
+    "actions": {
+      "Condition": {
+        "actions": {
+          "Terminate": {
+            "inputs": {
+              "runStatus": "Succeeded",
+              "runError": { "message": "@false" }
+            },
+            "runAfter": {},
+            "type": "Terminate"
+          }
+        },
+        "else": {
+          "actions": {
+            "Terminate_2": {
+              "inputs": {
+                "runError": {
+                  "code": "CreateAndGetGoalFailed",
+                  "message": "Created goal does not match expected goal"
+                },
+                "runStatus": "Failed"
+              },
+              "runAfter": {},
+              "type": "Terminate"
+            }
+          }
+        },
+        "expression": {
+          "or": [
+            {
+              "equals": ["abc@microsoft.com", "@variables('goalOwner')"]
+            },
+            {
+              "equals": ["@null", "@variables('goalOwner')"]
+            },
+            {
+              "not": {
+                "equals": ["@true", "@variables('goalOwner')"]
+              }
+            },
+            {
+              "and": [
+                {
+                  "not": {
+                    "endsWith": ["@concat(concat(concat(concat())))", "@variables('goalOwner')"]
+                  }
+                },
+                {
+                  "equals": ["", "@variables('goalOwner')"]
+                }
+              ]
+            }
+          ]
+        },
+        "runAfter": {
+          "Initialize_variable": ["Succeeded"]
+        },
+        "type": "If"
+      },
+      "Initialize_variable": {
+        "inputs": {
+          "variables": [
+            {
+              "name": "goalOwner",
+              "type": "string",
+              "value": "@null"
+            }
+          ]
+        },
+        "runAfter": {},
+        "type": "InitializeVariable"
+      }
+    },
+    "contentVersion": "1.0.0.0",
+    "outputs": {},
+    "triggers": {
+      "Recurrence": {
+        "recurrence": {
+          "frequency": "Month",
+          "interval": 1
+        },
+        "type": "Recurrence"
+      }
+    }
+  },
+  "kind": "Stateful"
+}

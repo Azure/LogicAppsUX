@@ -1,0 +1,80 @@
+{
+  "name": "Source.xsd",
+  "type": "XML",
+  "targetNamespace": "http://tempuri.org/source.xsd",
+  "namespaces": {
+    "ns0": "http://tempuri.org/source.xsd",
+    "xs": "http://www.w3.org/2001/XMLSchema"
+  },
+  "schemaTreeRoot": {
+    "key": "/ns0:Root",
+    "name": "Root",
+    "type": "Complex",
+    "properties": "None",
+    "children": [
+      {
+        "key": "/ns0:Root/DirectTranslation",
+        "name": "DirectTranslation",
+        "type": "Complex",
+        "properties": "None",
+        "children": [
+          {
+            "key": "/ns0:Root/DirectTranslation/EmployeeID",
+            "name": "EmployeeID",
+            "type": "Decimal",
+            "properties": "None",
+            "qName": "EmployeeID"
+          },
+          {
+            "key": "/ns0:Root/DirectTranslation/EmployeeName",
+            "name": "EmployeeName",
+            "type": "String",
+            "properties": "None",
+            "qName": "EmployeeName"
+          }
+        ],
+        "qName": "DirectTranslation"
+      },
+      {
+        "key": "/ns0:Root/DataTranslation",
+        "name": "DataTranslation",
+        "type": "Complex",
+        "properties": "None",
+        "children": [
+          {
+            "key": "/ns0:Root/DataTranslation/Employee",
+            "name": "Employee",
+            "type": "Complex",
+            "properties": "None",
+            "children": [
+              {
+                "key": "/ns0:Root/DataTranslation/Employee/FirstName",
+                "name": "FirstName",
+                "type": "String",
+                "properties": "None",
+                "qName": "FirstName"
+              },
+              {
+                "key": "/ns0:Root/DataTranslation/Employee/LastName",
+                "name": "LastName",
+                "type": "String",
+                "properties": "None",
+                "qName": "LastName"
+              },
+              {
+                "key": "/ns0:Root/DataTranslation/Employee/EmploymentStatus",
+                "name": "EmploymentStatus",
+                "type": "Bool",
+                "properties": "None",
+                "qName": "EmploymentStatus"
+              }
+            ],
+            "qName": "Employee"
+          }
+        ],
+        "qName": "DataTranslation"
+      }
+    ],
+    "qName": "ns0:Root"
+  }
+}

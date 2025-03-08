@@ -1,0 +1,6 @@
+steps:
+  - script: pnpm run vscode:designer:pack
+    displayName: "Package with pnpm"
+    workingDirectory: $(working_directory)
+    condition: succeeded()
+    
