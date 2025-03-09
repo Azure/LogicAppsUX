@@ -408,7 +408,7 @@ export const WorkflowConnections = ({ connections, viewMode = 'full' }: Workflow
         return (
           <ConnectionsList
             aria-label={intl.formatMessage({ defaultMessage: 'Connections list', description: 'Connections list', id: 'w+7aGo' })}
-            className={isCompactView ? 'msla-template-connection-cell-content' : ''}
+            className={isCompactView ? 'msla-template-connection-cell-content' : undefined}
             item={item}
             intl={intl}
             onSelect={updateItemInConnectionsList}
@@ -459,17 +459,15 @@ const ConnectorWithConnectionStatus = ({
 
   if (isLoading) {
     return (
-      <div className={'msla-template-create-progress-connector'}>
-        <Shimmer
-          style={{ width: '20px', height: '20px', marginTop: 5 }}
-          shimmerElements={[{ type: ShimmerElementType.line, height: 10, verticalAlign: 'bottom', width: '100%' }]}
-          size={SpinnerSize.xSmall}
-        />
-        <Shimmer
-          style={{ width: '70px', marginTop: 10 }}
-          shimmerElements={[{ type: ShimmerElementType.line, height: 10, verticalAlign: 'bottom', width: '100%' }]}
-          size={SpinnerSize.xSmall}
-        />
+      <div className="msla-template-connection-compact">
+        <Shimmer shimmerElements={[{ type: ShimmerElementType.circle, width: '100%', height: 30 }]} />
+        <div className="msla-template-connection-compact-text">
+          <Shimmer
+            style={{ width: '150px' }}
+            shimmerElements={[{ type: ShimmerElementType.line, height: 12, verticalAlign: 'top' }]}
+            size={SpinnerSize.xSmall}
+          />
+        </div>
       </div>
     );
   }
