@@ -349,7 +349,6 @@ export function safeSetObjectPropertyValue(
       current[property] = value;
     }
   } else {
-    console.log('current[property]', current[property]);
     current[property] = value;
   }
 

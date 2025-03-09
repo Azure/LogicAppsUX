@@ -28,6 +28,7 @@ export const useAllOperations = () => {
   const { data: customOperations, isLoading: customLoading, hasNextPage: customHasNextPage } = useCustomOperationsLazyQuery();
 
   const { data: builtinOperations, isLoading: builtinLoading } = useBuiltInOperationsQuery();
+  console.log(builtinOperations);
 
   const data = useMemo(() => {
     const azure = azureOperations?.pages.flatMap((page) => page.data) ?? [];
