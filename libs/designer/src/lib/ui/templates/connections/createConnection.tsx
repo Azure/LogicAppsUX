@@ -9,15 +9,18 @@ import { getAssistedConnectionProps } from '../../../core/utils/connectors/conne
 import { updateTemplateConnection } from '../../../core/actions/bjsworkflow/connections';
 import { useIntl } from 'react-intl';
 import { useConnector } from '../../../core/state/connection/connectionSelector';
+import type { CreateButtonTexts } from '../../panel';
 
 export const CreateConnectionInTemplate = (props: {
   connectorId: string;
   connectionKey: string;
+  showDescription?: boolean;
+  createButtonTexts?: CreateButtonTexts;
   onConnectionCreated: (connection: Connection) => void;
   onConnectionCancelled: () => void;
 }) => {
   const intl = useIntl();
-  const { connectorId, connectionKey, onConnectionCreated, onConnectionCancelled } = props;
+  const { connectorId, connectionKey, createButtonTexts, onConnectionCreated, onConnectionCancelled } = props;
   const dispatch = useDispatch<AppDispatch>();
   const { data: connector } = useConnector(connectorId);
 
@@ -37,12 +40,6 @@ export const CreateConnectionInTemplate = (props: {
     },
     [connectionKey, dispatch, uniqueConnectionKey]
   );
-
-  const createButtonText = intl.formatMessage({
-    defaultMessage: 'Add connection',
-    id: 'cwHxwb',
-    description: 'Text for create connection button',
-  });
   const description = intl.formatMessage(
     {
       defaultMessage: '{connectorName} connection',
@@ -56,8 +53,8 @@ export const CreateConnectionInTemplate = (props: {
     <CreateConnectionInternal
       classes={{ root: 'msla-template-create-connection', content: 'msla-template-create-connection-content' }}
       connectorId={connectorId}
-      createButtonText={createButtonText}
-      description={description}
+      createButtonTexts={createButtonTexts}
+      description={props.showDescription ? description : ''}
       connectionName={uniqueConnectionKey}
       operationType={isInAppConnector ? 'ServiceProvider' : 'ApiConnection'}
       existingReferences={references}

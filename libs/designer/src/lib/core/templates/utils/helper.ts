@@ -205,6 +205,16 @@ export const getConnectorResources = (intl: IntlShape) => {
       id: 'WxJJcQ',
       description: 'Not Connected text',
     }),
+    authenticated: intl.formatMessage({
+      defaultMessage: 'Authenticated',
+      id: 'iwKxSD',
+      description: 'Connection authenticated text',
+    }),
+    notAuthenticated: intl.formatMessage({
+      defaultMessage: 'Not authenticated',
+      id: 'QdRn5z',
+      description: 'Connection not authenticated text',
+    }),
   };
 };
 
