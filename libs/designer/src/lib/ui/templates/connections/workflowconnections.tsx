@@ -1,6 +1,7 @@
 import type { IColumn, IContextualMenuProps, IDetailsRowProps, IGroup } from '@fluentui/react';
 import {
   ContextualMenuItemType,
+  css,
   DetailsList,
   DetailsRow,
   Icon,
@@ -10,7 +11,7 @@ import {
   ShimmerElementType,
   SpinnerSize,
 } from '@fluentui/react';
-import { Link, Text } from '@fluentui/react-components';
+import { Link, Text, Image } from '@fluentui/react-components';
 import type { Connection, Template } from '@microsoft/logic-apps-shared';
 import { aggregate, ConnectionService, getObjectPropertyValue, guid, normalizeConnectorId } from '@microsoft/logic-apps-shared';
 import type { AppDispatch, RootState } from '../../../core/state/templates/store';
@@ -24,7 +25,7 @@ import { CreateConnectionInTemplate } from './createConnection';
 import React, { useEffect, useMemo, useState } from 'react';
 import { updateTemplateConnection } from '../../../core/actions/bjsworkflow/connections';
 import { getConnector } from '../../../core/queries/operation';
-import type { ConnectorInfo } from '../../../core/templates/utils/queries';
+import { useConnectorInfo, type ConnectorInfo } from '../../../core/templates/utils/queries';
 import { isConnectionValid } from '../../../core/utils/connectors/connections';
 
 const createPlaceholderKey = '##create##';
@@ -55,11 +56,13 @@ interface ConnectionItem {
 
 export interface WorkflowConnectionsProps {
   connections: Record<string, Template.Connection>;
+  viewMode?: 'compact' | 'full';
 }
 
-export const WorkflowConnections = ({ connections }: WorkflowConnectionsProps) => {
+export const WorkflowConnections = ({ connections, viewMode = 'full' }: WorkflowConnectionsProps) => {
   const intl = useIntl();
   const dispatch = useDispatch<AppDispatch>();
+  const isCompactView = viewMode === 'compact';
   const {
     subscriptionId,
     location,
@@ -71,11 +74,26 @@ export const WorkflowConnections = ({ connections }: WorkflowConnectionsProps) =
     connections: state.workflow.connections,
     workflows: state.template.workflows,
   }));
-  const columnsNames = {
-    name: intl.formatMessage({ defaultMessage: 'Name', id: 'tRe2Ct', description: 'Column name for connector name' }),
-    status: intl.formatMessage({ defaultMessage: 'Status', id: 't7ytOJ', description: 'Column name for connection status' }),
-    connection: intl.formatMessage({ defaultMessage: 'Connection', id: 'hlrKDC', description: 'Column name for connection display name' }),
-    connectionsList: intl.formatMessage({ defaultMessage: 'Connections list', id: 'w+7aGo', description: 'Connections list' }),
+  const intlTexts = {
+    columnsNames: {
+      name: intl.formatMessage({ defaultMessage: 'Name', id: 'tRe2Ct', description: 'Column name for connector name' }),
+      status: intl.formatMessage({ defaultMessage: 'Status', id: 't7ytOJ', description: 'Column name for connection status' }),
+      connection: intl.formatMessage({
+        defaultMessage: 'Connection',
+        id: 'hlrKDC',
+        description: 'Column name for connection display name',
+      }),
+      connectionsList: intl.formatMessage({ defaultMessage: 'Connections list', id: 'w+7aGo', description: 'Connections list' }),
+    },
+    createConnectionTexts: {
+      defaultCreate: intl.formatMessage({
+        defaultMessage: 'Add connection',
+        id: 'cwHxwb',
+        description: 'Text for create connection button',
+      }),
+      create: intl.formatMessage({ defaultMessage: 'Authenticate', id: 'marivS', description: 'Create connection button text' }),
+      creating: intl.formatMessage({ defaultMessage: 'Authenticating', id: 'bVWmOW', description: 'Creating connection button text' }),
+    },
   };
   const isSingleWorkflow = useMemo(() => Object.keys(workflows).length === 1, [workflows]);
   const [isConnectionInCreate, setConnectionInCreate] = useState(false);
@@ -121,56 +139,65 @@ export const WorkflowConnections = ({ connections }: WorkflowConnectionsProps) =
     );
   };
 
-  const [columns, setColumns] = useFunctionalState<IColumn[]>([
-    {
-      ariaLabel: columnsNames.name,
-      fieldName: '$name',
-      key: '$name',
-      isResizable: true,
-      minWidth: 300,
-      name: columnsNames.name,
-      maxWidth: 350,
-      showSortIconWhenUnsorted: true,
-      onColumnClick: _onColumnClick,
-    },
-    {
-      ariaLabel: columnsNames.status,
-      fieldName: '$status',
-      key: '$status',
-      isResizable: true,
-      minWidth: 150,
-      maxWidth: 150,
-      name: columnsNames.status,
-      showSortIconWhenUnsorted: true,
-      onColumnClick: _onColumnClick,
-    },
-    {
-      ariaLabel: columnsNames.connection,
-      fieldName: '$connection',
-      flexGrow: 3,
-      key: '$connection',
-      isResizable: true,
-      minWidth: 200,
-      maxWidth: 250,
-      name: columnsNames.connection,
-      showSortIconWhenUnsorted: true,
-      onColumnClick: _onColumnClick,
-    },
-    {
-      ariaLabel: columnsNames.connectionsList,
-      fieldName: '$connectionsList',
-      key: '$connectionsList',
-      minWidth: 10,
-      maxWidth: 10,
-      name: '',
-    },
-  ]);
+  const [columns, setColumns] = useFunctionalState<IColumn[]>(() => {
+    const result = [
+      {
+        ariaLabel: intlTexts.columnsNames.name,
+        fieldName: '$name',
+        key: '$name',
+        isResizable: true,
+        minWidth: 300,
+        name: intlTexts.columnsNames.name,
+        maxWidth: 350,
+        showSortIconWhenUnsorted: true,
+        onColumnClick: _onColumnClick,
+      },
+      {
+        ariaLabel: intlTexts.columnsNames.connection,
+        fieldName: '$connection',
+        flexGrow: 3,
+        key: '$connection',
+        isResizable: true,
+        minWidth: 200,
+        maxWidth: 250,
+        name: intlTexts.columnsNames.connection,
+        showSortIconWhenUnsorted: true,
+        className: 'msla-template-connection-grid-cell',
+        onColumnClick: _onColumnClick,
+      },
+      {
+        ariaLabel: intlTexts.columnsNames.connectionsList,
+        fieldName: '$connectionsList',
+        key: '$connectionsList',
+        minWidth: 10,
+        maxWidth: 10,
+        name: '',
+        className: 'msla-template-connection-grid-cell',
+      },
+    ];
+
+    if (!isCompactView) {
+      result.splice(1, 0, {
+        ariaLabel: intlTexts.columnsNames.status,
+        fieldName: '$status',
+        key: '$status',
+        isResizable: true,
+        minWidth: 150,
+        maxWidth: 150,
+        name: intlTexts.columnsNames.status,
+        showSortIconWhenUnsorted: true,
+        onColumnClick: _onColumnClick,
+      });
+    }
+
+    return result;
+  });
 
   useEffect(() => {
-    if (!isSingleWorkflow) {
+    if (!isSingleWorkflow || isCompactView) {
       setColumns(columns().map((col) => ({ ...col, showSortIconWhenUnsorted: false, onColumnClick: undefined })));
     }
-  }, [columns, isSingleWorkflow, setColumns]);
+  }, [columns, isCompactView, isSingleWorkflow, setColumns]);
 
   const [groups, setGroups] = useFunctionalState<IGroup[]>(
     Object.values(workflows).map((workflow) => ({
@@ -212,7 +239,7 @@ export const WorkflowConnections = ({ connections }: WorkflowConnectionsProps) =
     }, []);
     setGroups(updatedGroups);
 
-    if (isSingleWorkflow) {
+    if (isSingleWorkflow && !isCompactView) {
       setColumns(
         columns().map((col, index) => ({
           ...col,
@@ -290,6 +317,17 @@ export const WorkflowConnections = ({ connections }: WorkflowConnectionsProps) =
           <CreateConnectionInTemplate
             connectorId={connectorId}
             connectionKey={connectionKey.replace(createPlaceholderKey, '')}
+            showDescription={!isCompactView}
+            createButtonTexts={
+              isCompactView
+                ? {
+                    create: intlTexts.createConnectionTexts.create,
+                    creating: intlTexts.createConnectionTexts.creating,
+                    signIn: intlTexts.createConnectionTexts.create,
+                    signingIn: intlTexts.createConnectionTexts.creating,
+                  }
+                : { create: intlTexts.createConnectionTexts.defaultCreate }
+            }
             onConnectionCreated={(connection) => handleConnectionCreate(item, connection)}
             onConnectionCancelled={() => handleConnectionCancelled(workflowId, connectionKey)}
           />
@@ -303,8 +341,19 @@ export const WorkflowConnections = ({ connections }: WorkflowConnectionsProps) =
 
   const onRenderItemColumn = (item: ConnectionItem, _index: number | undefined, column: IColumn | undefined) => {
     switch (column?.key) {
-      case '$name':
-        return (
+      case '$name': {
+        const onConnectorLoaded = item.connectorDisplayName
+          ? undefined
+          : (connector: ConnectorInfo) => updateItemInConnectionsList({ ...item, connectorDisplayName: connector.displayName });
+
+        return isCompactView ? (
+          <ConnectorWithConnectionStatus
+            item={item}
+            intl={intl}
+            onConnectorLoaded={onConnectorLoaded}
+            onConnectionLoaded={(connections) => onConnectionsLoaded(connections, item)}
+          />
+        ) : (
           <div className="msla-template-connection-name">
             <ConnectorIconWithName
               aria-label={item.connectorDisplayName}
@@ -324,6 +373,7 @@ export const WorkflowConnections = ({ connections }: WorkflowConnectionsProps) =
             <Text className="msla-template-connection-key">{`(${item.connectionKey.replace('_#workflowname#', '')})`}</Text>
           </div>
         );
+      }
 
       case '$status':
         return (
@@ -346,6 +396,7 @@ export const WorkflowConnections = ({ connections }: WorkflowConnectionsProps) =
               item.connection?.displayName ??
               intl.formatMessage({ defaultMessage: 'Connect', description: 'Link to create a connection', id: 'yQ6+nV' })
             }
+            className={isCompactView ? 'msla-template-connection-cell-content' : undefined}
             item={item}
             intl={intl}
             disabled={isConnectionInCreate}
@@ -357,6 +408,7 @@ export const WorkflowConnections = ({ connections }: WorkflowConnectionsProps) =
         return (
           <ConnectionsList
             aria-label={intl.formatMessage({ defaultMessage: 'Connections list', description: 'Connections list', id: 'w+7aGo' })}
+            className={isCompactView ? 'msla-template-connection-cell-content' : ''}
             item={item}
             intl={intl}
             onSelect={updateItemInConnectionsList}
@@ -385,11 +437,75 @@ export const WorkflowConnections = ({ connections }: WorkflowConnectionsProps) =
   );
 };
 
+const ConnectorWithConnectionStatus = ({
+  item,
+  intl,
+  onConnectorLoaded,
+  onConnectionLoaded,
+}: {
+  item: ConnectionItem;
+  intl: IntlShape;
+  onConnectorLoaded?: (connector: ConnectorInfo) => void;
+  onConnectionLoaded: (connections: Connection[]) => void;
+}): JSX.Element => {
+  const { connectorId } = item;
+  const { data: connector, isLoading } = useConnectorInfo(connectorId, /* operationId */ undefined, /* useCachedData */ true);
+
+  useEffect(() => {
+    if (onConnectorLoaded && connector) {
+      onConnectorLoaded(connector);
+    }
+  }, [connector, onConnectorLoaded]);
+
+  if (isLoading) {
+    return (
+      <div className={'msla-template-create-progress-connector'}>
+        <Shimmer
+          style={{ width: '20px', height: '20px', marginTop: 5 }}
+          shimmerElements={[{ type: ShimmerElementType.line, height: 10, verticalAlign: 'bottom', width: '100%' }]}
+          size={SpinnerSize.xSmall}
+        />
+        <Shimmer
+          style={{ width: '70px', marginTop: 10 }}
+          shimmerElements={[{ type: ShimmerElementType.line, height: 10, verticalAlign: 'bottom', width: '100%' }]}
+          size={SpinnerSize.xSmall}
+        />
+      </div>
+    );
+  }
+
+  return (
+    <div className="msla-template-connection-compact">
+      <div className="msla-template-connection-compact-image">
+        <Image src={connector?.iconUrl} style={{ width: 30, height: 30, borderRadius: 4 }} />
+      </div>
+      <div className="msla-template-connection-compact-text">
+        <Text className="msla-template-connection-compact-connector">{connector?.displayName}</Text>
+        <ConnectionStatusWithProgress
+          className="msla-template-connection-compact-status"
+          isCompactView={true}
+          item={item}
+          intl={intl}
+          onConnectionLoaded={onConnectionLoaded}
+        />
+      </div>
+    </div>
+  );
+};
+
 const ConnectionStatusWithProgress = ({
   item,
   intl,
+  className,
+  isCompactView,
   onConnectionLoaded,
-}: { item: ConnectionItem; intl: IntlShape; onConnectionLoaded: (connections: Connection[]) => void }): JSX.Element => {
+}: {
+  className?: string;
+  item: ConnectionItem;
+  intl: IntlShape;
+  isCompactView?: boolean;
+  onConnectionLoaded: (connections: Connection[]) => void;
+}): JSX.Element => {
   const { data } = useConnectionsForConnector(item.connectorId, /* shouldNotRefetch */ true);
 
   useEffect(() => {
@@ -399,7 +515,7 @@ const ConnectionStatusWithProgress = ({
   }, [data, item.allConnections, onConnectionLoaded]);
 
   return item.hasConnection !== undefined ? (
-    <ConnectionStatus hasConnection={item.hasConnection} intl={intl} />
+    <ConnectionStatus className={className} isCompactView={isCompactView} hasConnection={item.hasConnection} intl={intl} />
   ) : (
     <Shimmer
       className="msla-template-connection-status"
@@ -410,18 +526,35 @@ const ConnectionStatusWithProgress = ({
   );
 };
 
-const ConnectionStatus = ({ hasConnection, intl }: { hasConnection: boolean; intl: IntlShape }): JSX.Element => {
+const ConnectionStatus = ({
+  hasConnection,
+  intl,
+  className,
+  isCompactView,
+}: {
+  className?: string;
+  hasConnection: boolean;
+  isCompactView?: boolean;
+  intl: IntlShape;
+}): JSX.Element => {
   const resources = getConnectorResources(intl);
   const statusText: Record<string, string> = {
-    true: resources.connected,
-    false: resources.notConnected,
+    true: isCompactView ? resources.authenticated : resources.connected,
+    false: isCompactView ? resources.notAuthenticated : resources.notConnected,
   };
   const key = (!!hasConnection).toString();
   const details = connectionStatus[key];
-  return (
-    <div className="msla-template-connection-status">
+  const status = (
+    <Text className={className ?? 'msla-template-connection-status-text'} style={isCompactView ? { color: details.color } : undefined}>
+      {hasConnection ? statusText[key] : statusText[key]}
+    </Text>
+  );
+  return isCompactView ? (
+    status
+  ) : (
+    <div className={className ?? 'msla-template-connection-status'}>
       <Icon style={{ color: details.color }} className="msla-template-connection-status-badge" iconName={details.iconName} />
-      <Text className="msla-template-connection-status-text">{hasConnection ? statusText[key] : statusText[key]}</Text>
+      {status}
     </div>
   );
 };
@@ -430,18 +563,25 @@ const ConnectionName = ({
   item,
   intl,
   disabled,
+  className,
   onCreate,
-}: { item: ConnectionItem; intl: IntlShape; disabled: boolean; onCreate: (item: ConnectionItem) => void }): JSX.Element => {
+}: {
+  item: ConnectionItem;
+  intl: IntlShape;
+  className?: string;
+  disabled: boolean;
+  onCreate: (item: ConnectionItem) => void;
+}): JSX.Element => {
   const { connection } = item;
   if (connection?.id) {
-    return <Text className="msla-template-connection-text">{connection.displayName}</Text>;
+    return <Text className={className ?? 'msla-template-connection-text'}>{connection.displayName}</Text>;
   }
 
   const onCreateConnection = () => {
     onCreate(item);
   };
   return (
-    <Link className="msla-template-connection-text" disabled={disabled} onClick={onCreateConnection}>
+    <Link disabled={disabled} onClick={onCreateConnection}>
       {intl.formatMessage({ defaultMessage: 'Connect', description: 'Link to create a connection', id: 'yQ6+nV' })}
     </Link>
   );
@@ -450,11 +590,13 @@ const ConnectionName = ({
 const ConnectionsList = ({
   item,
   intl,
+  className,
   onSelect,
   onCreate,
 }: {
   item: ConnectionItem;
   intl: IntlShape;
+  className?: string;
   onSelect: (newItem: ConnectionItem) => void;
   onCreate: (item: ConnectionItem) => void;
 }): JSX.Element | null => {
@@ -509,7 +651,9 @@ const ConnectionsList = ({
     ],
   };
 
-  return <IconButton menuIconProps={{ iconName: 'More' }} menuProps={menuProps} className="msla-template-connection-list" />;
+  return (
+    <IconButton menuIconProps={{ iconName: 'More' }} menuProps={menuProps} className={css('msla-template-connection-list', className)} />
+  );
 };
 
 const setupTemplateConnection = async (
