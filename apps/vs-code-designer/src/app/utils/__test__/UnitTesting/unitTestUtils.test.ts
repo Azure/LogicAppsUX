@@ -1,6 +1,8 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 import axios from 'axios';
 import * as fse from 'fs-extra';
+import * as childProcess from 'child_process';
+import * as util from 'util';
 import path from 'path';
 import * as localizeModule from '../../../../localize';
 import { ext } from '../../../../extensionVariables';
@@ -21,6 +23,8 @@ import {
   createCsFile,
   createTestExecutorFile,
   createTestSettingsConfigFile,
+  updateSolutionWithProject,
+  validateWorkflowPath,
 } from '../../unitTests';
 
 // ============================================================================
@@ -1513,5 +1517,63 @@ describe('createTestSettingsConfig', () => {
     expect(writeFileSpyCalledWith[1]).toEqual(expect.stringContaining('<WorkspacePath>../../../../../</WorkspacePath>'));
     expect(writeFileSpyCalledWith[1]).toEqual(expect.stringContaining(`<LogicAppName>${logicAppName}</LogicAppName>`));
     expect(writeFileSpyCalledWith[1]).toEqual(expect.stringContaining(`<WorkflowName>${workflowName}</WorkflowName>`));
+  });
+});
+
+describe('updateSolutionWithProject', () => {
+  let pathExistsSpy: any;
+  let execSpy: any;
+
+  beforeEach(() => {
+    vi.spyOn(ext.outputChannel, 'appendLog').mockImplementation(() => {});
+    vi.spyOn(util, 'promisify').mockImplementation((fn) => fn);
+    execSpy = vi.spyOn(childProcess, 'exec').mockResolvedValue(new childProcess.ChildProcess());
+  });
+
+  afterEach(() => {
+    vi.restoreAllMocks();
+  });
+
+  it('should update the solution with the project when solution file exists', async () => {
+    pathExistsSpy = vi.spyOn(fse, 'pathExists').mockResolvedValue(true);
+
+    const testsDirectory = path.join(projectPath, 'Tests');
+    const logicAppCsprojPath = path.join(testsDirectory, `${fakeLogicAppName}.csproj`);
+
+    await updateSolutionWithProject(testsDirectory, logicAppCsprojPath);
+
+    expect(execSpy).toHaveBeenCalledTimes(1);
+    expect(execSpy).toHaveBeenCalledWith(
+      `dotnet sln "${path.join(testsDirectory, 'Tests.sln')}" add "${fakeLogicAppName}.csproj"`,
+      expect.anything()
+    );
+  });
+
+  it('should create a new solution file when it does not exist', async () => {
+    pathExistsSpy = vi.spyOn(fse, 'pathExists').mockResolvedValue(false);
+
+    const testsDirectory = path.join(projectPath, 'Tests');
+    const logicAppCsprojPath = path.join(testsDirectory, `${fakeLogicAppName}.csproj`);
+
+    await updateSolutionWithProject(testsDirectory, logicAppCsprojPath);
+
+    expect(execSpy).toHaveBeenCalledTimes(2);
+    expect(execSpy).toHaveBeenCalledWith('dotnet new sln -n Tests', expect.anything());
+    expect(execSpy).toHaveBeenCalledWith(
+      `dotnet sln "${path.join(testsDirectory, 'Tests.sln')}" add "${fakeLogicAppName}.csproj"`,
+      expect.anything()
+    );
+  });
+});
+
+describe('validateWorkflowPath', () => {
+  it('should throw an error if the workflow node is not valid', () => {
+    const invalidWorkflowPath = path.join(projectPath, '..', fakeLogicAppName, 'workflow1', 'workflow.json');
+    expect(() => validateWorkflowPath(projectPath, invalidWorkflowPath)).toThrowError("doesn't belong to the Logic Apps Standard Project");
+  });
+
+  it('should not throw an error if the workflow node is valid', () => {
+    const validWorkflowPath = path.join(projectPath, fakeLogicAppName, 'workflow1', 'workflow.json');
+    expect(() => validateWorkflowPath(projectPath, validWorkflowPath)).not.toThrowError();
   });
 });
