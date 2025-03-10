@@ -15,6 +15,7 @@ import { batchTriggerManifest, sendToBatchManifest } from './manifests/batchWork
 import { composeManifest } from './manifests/compose';
 import { chunkTextManifest } from './manifests/chunktext';
 import { parseDocumentManifest } from './manifests/parsedocument';
+import { parseDocumentWithMetadataManifest } from './manifests/parsedocumentwithmetadata';
 import { flatFileDecodingManifest, flatFileEncodingManifest } from './manifests/flatfile';
 import { selectFunctionManifest } from './manifests/functions';
 import { inlineCodeManifest } from './manifests/inlinecode';
@@ -160,6 +161,7 @@ const rosettanetdecode = 'rosettanetdecode';
 const rosettanetwaitforresponse = 'rosettanetwaitforresponse';
 const chunktext = 'chunktext';
 const parsedocument = 'parsedocument';
+const parsedocumentwithmetadata = 'parsedocumentwithmetadata';
 
 // Azure Resource Connectors
 const apimanagement = 'apimanagement';
@@ -207,4 +209,5 @@ const supportedConsumptionManifestObjects = new Map<string, OperationManifest>([
   [rosettanetwaitforresponse, rosettaNetWaitForResponseManifest],
   [chunktext, chunkTextManifest],
   [parsedocument, parseDocumentManifest],
+  [parsedocumentwithmetadata, parseDocumentWithMetadataManifest]
 ]);
