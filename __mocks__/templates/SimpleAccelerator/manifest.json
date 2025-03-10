@@ -1,43 +1,41 @@
 {
-  "title": "[Mock] Simple Accelerator Template",
-  "description": "This is a simple accelerator description",
-  "skus": [
-    "standard"
-  ],
-  "detailsDescription": "This is a simple accelerator details description \n- point 1 \n- point 2.",
-  "details": {
-    "By": "Microsoft",
-    "Type": "Accelerator",
-    "Category": "Mock"
-  },
-  "artifacts": [],
-  "workflows": {
-    "Workflow1": {
-      "name": "Workflow1_name"
+    "id": "SimpleAccelerator",
+    "title": "[Mock] Simple Accelerator Template",
+    "summary": "This is a simple accelerator description",
+    "description": "This is a simple accelerator details description \n- point 1 \n- point 2.",
+    "skus": [
+        "standard"
+    ],
+    "workflows": {
+        "Workflow1": {
+            "name": "Workflow1_name"
+        },
+        "Workflow2": {
+            "name": "Workflow2_name"
+        }
     },
-    "Workflow2": {
-      "name": "Workflow2_name"
-    }
-  },
-  "parameters": [],
-  "connections": {
-    "azuresql_#workflowname#": {
-      "connectorId": "/serviceProviders/sql",
-      "kind": "inapp"
+    "featuredConnectors": [
+        {
+            "id": "connectionProviders/dataOperationNew",
+            "kind": "builtin"
+        },
+        {
+            "id": "/serviceProviders/sql",
+            "kind": "inapp"
+        },
+        {
+            "id": "/serviceProviders/openai",
+            "kind": "inapp"
+        },
+        {
+            "id": "/serviceProviders/AzureBlob",
+            "kind": "inapp"
+        }
+    ],
+    "details": {
+        "By": "Microsoft",
+        "Type": "Accelerator",
+        "Category": "Mock"
     },
-    "openai_#workflowname#": {
-      "connectorId": "/serviceProviders/openai",
-      "kind": "inapp"
-    },
-    "azureblob_#workflowname#": {
-      "connectorId": "/serviceProviders/AzureBlob",
-      "kind": "inapp"
-    }
-  },
-  "featuredOperations": [
-    {
-      "type": "ChunkText"
-    }
-  ],
-  "sourceCodeUrl": "/sourceCodeUrl"
+    "sourceCodeUrl": "/sourceCode"
 }

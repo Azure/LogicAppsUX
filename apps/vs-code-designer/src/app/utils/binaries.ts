@@ -300,7 +300,19 @@ function getCompressionFileExtension(binariesUrl: string): string {
   throw new Error(localize('UnsupportedCompressionFileExtension', `Unsupported compression file extension: ${binariesUrl}`));
 }
 
+function cleanDirectory(targetFolder: string): void {
+  // Read all files/folders in targetFolder
+  const entries = fs.readdirSync(targetFolder);
+  for (const entry of entries) {
+    const entryPath = path.join(targetFolder, entry);
+    // Remove files or directories recursively
+    fs.rmSync(entryPath, { recursive: true, force: true });
+  }
+}
+
 async function extractDependency(dependencyFilePath: string, targetFolder: string, dependencyName: string): Promise<void> {
+  // Clear targetFolder's contents without deleting the folder itself
+  cleanDirectory(targetFolder);
   await executeCommand(ext.outputChannel, undefined, 'echo', `Extracting ${dependencyFilePath}`);
   try {
     if (dependencyFilePath.endsWith('.zip')) {
@@ -309,7 +321,7 @@ async function extractDependency(dependencyFilePath: string, targetFolder: strin
     } else {
       await executeCommand(ext.outputChannel, undefined, 'tar', '-xzvf', dependencyFilePath, '-C', targetFolder);
     }
-    cleanupContainerFolder(targetFolder);
+    extractContainerFolder(targetFolder);
     await executeCommand(ext.outputChannel, undefined, 'echo', `Extraction ${dependencyName} successfully completed.`);
   } catch (error) {
     throw new Error(`Error extracting ${dependencyName}: ${error}`);
@@ -331,7 +343,7 @@ function checkMajorVersion(version: string, majorVersion: string): boolean {
  * path/to/folder/container/files --> /path/to/folder/files
  * @param targetFolder
  */
-function cleanupContainerFolder(targetFolder: string) {
+function extractContainerFolder(targetFolder: string) {
   const extractedContents = fs.readdirSync(targetFolder);
   if (extractedContents.length === 1 && fs.statSync(path.join(targetFolder, extractedContents[0])).isDirectory()) {
     const containerFolderPath = path.join(targetFolder, extractedContents[0]);

@@ -7,69 +7,57 @@ import { screen } from '@testing-library/react';
 import { TemplateCard } from '../cards/templateCard';
 // biome-ignore lint/correctness/noUnusedImports: <explanation>
 import React from 'react';
+import { openQuickViewPanelView } from '../../../core/state/templates/panelSlice';
 
 describe('ui/templates/templatesDesigner', () => {
   let store: AppStore;
   let minimalStoreData: Partial<RootState>;
-  let template1Manifest: Template.Manifest;
-  let template2Manifest: Template.Manifest;
-  let template3Manifest: Template.Manifest;
+  let template1Manifest: Template.TemplateManifest;
+  let template2Manifest: Template.TemplateManifest;
+  let template3Manifest: Template.TemplateManifest;
 
   beforeAll(() => {
     template1Manifest = {
+      id: 'template1Manifest',
       title: 'Template 1',
-      description: 'Template 1 Description',
-      skus: ['standard'],
-      kinds: ['stateful'],
-      images: {},
-      details: {},
-      artifacts: [
-        {
-          type: 'workflow',
-          file: 'workflow.json',
-        },
-      ],
-      connections: {},
-      parameters: [],
+      summary: 'Template 1 Description',
+      skus: ['standard', 'consumption'],
+      workflows: {
+        default: { name: 'default' },
+      },
+      details: {
+        By: '',
+        Type: '',
+        Category: '',
+      },
     };
     template2Manifest = {
+      id: 'template2Manifest',
       title: 'Template 2',
-      description: 'Template 2 Description',
+      summary: 'Template 2 Description',
       skus: ['standard', 'consumption'],
-      kinds: ['stateful', 'stateless'],
-      images: {},
-      details: {},
-      artifacts: [
-        {
-          type: 'workflow',
-          file: 'workflow.json',
-        },
-      ],
-      connections: {},
-      parameters: [],
+      workflows: {
+        default: { name: 'default' },
+      },
+      details: {
+        By: '',
+        Type: '',
+        Category: '',
+      },
     };
     template3Manifest = {
-      title: 'Template 2',
-      description: 'Template 2 Description',
+      id: 'template3Manifest',
+      title: 'Template 3',
+      summary: 'Template 3 Description',
       skus: ['standard', 'consumption'],
-      kinds: ['stateful', 'stateless'],
-      images: {},
-      details: {},
-      artifacts: [
-        {
-          type: 'workflow',
-          file: 'workflow.json',
-        },
-      ],
-      connections: {},
-      parameters: [
-        {
-          name: 'param1',
-          displayName: 'param1',
-          type: 'object',
-          description: 'param1 description',
-        },
-      ],
+      workflows: {
+        default: { name: 'default' },
+      },
+      details: {
+        By: '',
+        Type: '',
+        Category: '',
+      },
     };
   });
 
@@ -85,6 +73,7 @@ describe('ui/templates/templatesDesigner', () => {
           sortKey: 'a-to-z',
           connectors: undefined,
           detailFilters: {},
+          pageNum: 0,
         },
       },
     };
@@ -97,7 +86,7 @@ describe('ui/templates/templatesDesigner', () => {
     expect(store.getState().template.templateName).toBe('template1');
   });
 
-  it('Renders TemplateCard and Opens the right panel', async () => {
+  it('Renders TemplateCard and calls select handler on selection', async () => {
     minimalStoreData = {
       manifest: {
         availableTemplateNames: ['template1', 'template2', 'template3'],
@@ -110,12 +99,15 @@ describe('ui/templates/templatesDesigner', () => {
           sortKey: 'a-to-z',
           connectors: undefined,
           detailFilters: {},
+          pageNum: 0,
         },
       },
     };
     store = setupStore(minimalStoreData);
 
-    renderWithProviders(<TemplateCard templateName="template2" />, { store });
+    const onSelect = () => store.dispatch(openQuickViewPanelView());
+
+    renderWithProviders(<TemplateCard templateName="template2" onSelect={onSelect} />, { store });
 
     expect(screen.getByText('Template 2')).toBeDefined();
     screen.getByText('Template 2').click();
