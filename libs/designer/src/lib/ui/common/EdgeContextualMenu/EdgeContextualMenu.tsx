@@ -5,6 +5,7 @@ import {
   LogEntryLevel,
   LoggerService,
   UiInteractionsService,
+  agentOperation,
   guid,
   isUiInteractionsServiceEnabled,
   normalizeAutomationId,
@@ -15,12 +16,14 @@ import { useIntl } from 'react-intl';
 import { useOnViewportChange } from '@xyflow/react';
 
 import { useEdgeContextMenuData } from '../../../core/state/designerView/designerViewSelectors';
-import { useNodeDisplayName, useNodeMetadata, type AppDispatch } from '../../../core';
+import { addOperation, useNodeDisplayName, useNodeMetadata, type AppDispatch } from '../../../core';
 import { expandDiscoveryPanel } from '../../../core/state/panel/panelSlice';
 import { retrieveClipboardData } from '../../../core/utils/clipboard';
 import { CustomMenu } from './customMenu';
 
 import {
+  BotAdd24Filled,
+  BotAdd24Regular,
   ArrowBetweenDown24Filled,
   ArrowBetweenDown24Regular,
   ArrowSplit24Filled,
@@ -31,10 +34,12 @@ import {
 } from '@fluentui/react-icons';
 import { pasteOperation, pasteScopeOperation } from '../../../core/actions/bjsworkflow/copypaste';
 import { useUpstreamNodes } from '../../../core/state/tokens/tokenSelectors';
+import { useHostOptions } from '../../../core/state/designerOptions/designerOptionsSelectors';
 
 const AddIcon = bundleIcon(ArrowBetweenDown24Filled, ArrowBetweenDown24Regular);
 const ParallelIcon = bundleIcon(ArrowSplit24Filled, ArrowSplit24Regular);
 const ClipboardIcon = bundleIcon(ClipboardPasteFilled, ClipboardPasteRegular);
+const AgentIcon = bundleIcon(BotAdd24Filled, BotAdd24Regular);
 
 export const EdgeContextualMenu = () => {
   const intl = useIntl();
@@ -75,6 +80,14 @@ export const EdgeContextualMenu = () => {
     });
   }, [dispatch, graphId, parentId]);
 
+  const addAgenticLoop = useCallback(() => {
+    if (!graphId) {
+      return;
+    }
+    const relationshipIds = { graphId, childId: undefined, parentId };
+    dispatch(addOperation({ nodeId: 'Agent', relationshipIds, operation: agentOperation }));
+  }, [dispatch, graphId, parentId]);
+
   const newActionText = intl.formatMessage({
     defaultMessage: 'Add an action',
     id: 'mCzkXX',
@@ -85,6 +98,12 @@ export const EdgeContextualMenu = () => {
     defaultMessage: 'Add a parallel branch',
     id: 'LZm3ze',
     description: 'Text for button to add a parallel branch',
+  });
+
+  const newAgentText = intl.formatMessage({
+    defaultMessage: 'Add an agentic loop',
+    id: 'J7ybbb',
+    description: 'Text for button to add an agentic loop',
   });
 
   const pasteFromClipboard = intl.formatMessage({
@@ -114,6 +133,8 @@ export const EdgeContextualMenu = () => {
   }, [dispatch, graphId, childId, parentId]);
 
   const showParallelBranchButton = !isLeaf && parentId;
+
+  const { enableAgenticLoops } = useHostOptions();
 
   const [isPasteEnabled, setIsPasteEnabled] = useState<boolean>(false);
   useEffect(() => {
@@ -215,6 +236,11 @@ export const EdgeContextualMenu = () => {
             {showParallelBranchButton && (
               <MenuItem icon={<ParallelIcon />} onClick={addParallelBranch} data-automation-id={automationId('add-parallel')}>
                 {newBranchText}
+              </MenuItem>
+            )}
+            {enableAgenticLoops && (
+              <MenuItem icon={<AgentIcon />} onClick={addAgenticLoop} data-automation-id={automationId('add-agentic=loop')}>
+                {newAgentText}
               </MenuItem>
             )}
             {isPasteEnabled && (

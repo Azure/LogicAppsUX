@@ -12,14 +12,14 @@ import {
   useActionMetadata,
   useIsGraphCollapsed,
   useIsLeafNode,
-  useNewSwitchCaseId,
+  useNewAdditiveSubgraphId,
   useNodeDisplayName,
   useNodeMetadata,
   useParentRunId,
   useRunData,
   useWorkflowNode,
 } from '../../core/state/workflow/workflowSelectors';
-import { addSwitchCase, setFocusNode, toggleCollapsedGraphId } from '../../core/state/workflow/workflowSlice';
+import { addAgentCondition, addSwitchCase, setFocusNode, toggleCollapsedGraphId } from '../../core/state/workflow/workflowSlice';
 import { LoopsPager } from '../common/LoopsPager/LoopsPager';
 import { DropZone } from '../connections/dropzone';
 import { MessageBarType } from '@fluentui/react';
@@ -52,15 +52,23 @@ const SubgraphCardNode = ({ targetPosition = Position.Top, sourcePosition = Posi
 
   const title = useNodeDisplayName(subgraphId);
 
-  const isAddCase = metadata?.subgraphType === SUBGRAPH_TYPES.SWITCH_ADD_CASE;
+  const isSwitchAddCase = metadata?.subgraphType === SUBGRAPH_TYPES.SWITCH_ADD_CASE;
+  const isAgentAddCondition = metadata?.subgraphType === SUBGRAPH_TYPES.AGENT_ADD_CONDITON;
+
+  const isAddCase = isSwitchAddCase || isAgentAddCondition;
 
   const iconUri = useIconUri(graphId);
 
-  const newCaseId = useNewSwitchCaseId();
+  const newCaseIdNewAdditiveSubgraphId = useNewAdditiveSubgraphId(isAgentAddCondition ? 'Condition' : 'Case');
   const subgraphClick = useCallback(
     async (_id: string) => {
       if (isAddCase && graphNode) {
-        dispatch(addSwitchCase({ caseId: newCaseId, nodeId: subgraphId }));
+        if (isAgentAddCondition) {
+          dispatch(addAgentCondition({ conditionId: newCaseIdNewAdditiveSubgraphId, nodeId: subgraphId }));
+        } else {
+          dispatch(addSwitchCase({ caseId: newCaseIdNewAdditiveSubgraphId, nodeId: subgraphId }));
+        }
+
         const rootManifest = await getOperationManifest(operationInfo);
         if (!rootManifest?.properties?.subGraphDetails) {
           return;
@@ -69,14 +77,14 @@ const SubgraphCardNode = ({ targetPosition = Position.Top, sourcePosition = Posi
         const subGraphManifest = {
           properties: { ...caseManifestData, iconUri: iconUri ?? '', brandColor: '' },
         };
-        initializeSwitchCaseFromManifest(newCaseId, subGraphManifest, dispatch);
-        dispatch(changePanelNode(newCaseId));
-        dispatch(setFocusNode(newCaseId));
+        initializeSwitchCaseFromManifest(newCaseIdNewAdditiveSubgraphId, subGraphManifest, dispatch);
+        dispatch(changePanelNode(newCaseIdNewAdditiveSubgraphId));
+        dispatch(setFocusNode(newCaseIdNewAdditiveSubgraphId));
       } else {
         dispatch(changePanelNode(_id));
       }
     },
-    [isAddCase, graphNode, dispatch, newCaseId, subgraphId, operationInfo, iconUri]
+    [isAddCase, graphNode, isAgentAddCondition, operationInfo, iconUri, newCaseIdNewAdditiveSubgraphId, dispatch, subgraphId]
   );
 
   const graphCollapsed = useIsGraphCollapsed(subgraphId);

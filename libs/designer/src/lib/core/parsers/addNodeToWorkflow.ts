@@ -183,6 +183,32 @@ const handleExtraScopeNodeSetup = (
     };
   }
 
+  // Handle Agent Loops
+
+  if (operation.type.toLowerCase() === CONSTANTS.NODE.TYPE.AGENT) {
+    // Add Case Graph
+    const addCaseGraphId = `${node.id}-addCase`;
+    const addCaseGraph = createWorkflowNode(addCaseGraphId, WORKFLOW_NODE_TYPES.HIDDEN_NODE);
+    addCaseGraph.subGraphLocation = 'addCase';
+    addChildNode(node, addCaseGraph);
+    const addCaseGraphHeading = createWorkflowNode(`${addCaseGraphId}-#subgraph`, WORKFLOW_NODE_TYPES.SUBGRAPH_CARD_NODE);
+    addChildNode(addCaseGraph, addCaseGraphHeading);
+    nodesMetadata[addCaseGraphId] = {
+      graphId: node.id,
+      subgraphType: SUBGRAPH_TYPES.AGENT_ADD_CONDITON,
+      actionCount: 0,
+    };
+    const addCaseEdge = createWorkflowEdge(scopeHeadingId, addCaseGraphId, WORKFLOW_EDGE_TYPES.HIDDEN_EDGE);
+    addChildEdge(node, addCaseEdge);
+
+    state.operations[node.id] = {
+      ...(getRecordEntry(state.operations, node.id) ?? ({} as any)),
+      cases: {},
+      default: {},
+      expression: '',
+    };
+  }
+
   if (operation.type.toLowerCase() === CONSTANTS.NODE.TYPE.UNTIL) {
     // Create Footer node
     const footerNode = createWorkflowNode(`${node.id}-#footer`, WORKFLOW_NODE_TYPES.SCOPE_CARD_NODE);
@@ -216,5 +242,38 @@ export const addSwitchCaseToWorkflow = (caseId: string, switchNode: WorkflowNode
   // Increase action count of graph
   if (nodesMetadata[switchNode.id]) {
     nodesMetadata[switchNode.id].actionCount = nodesMetadata[switchNode.id].actionCount ?? 0 + 1;
+  }
+};
+
+export const addAgentConditionToWorkflow = (
+  caseId: string,
+  agentNode: WorkflowNode,
+  nodesMetadata: NodesMetadata,
+  state: WorkflowState
+) => {
+  const caseNode = createWorkflowNode(caseId, WORKFLOW_NODE_TYPES.SUBGRAPH_NODE);
+  caseNode.subGraphLocation = 'tools';
+  // addChildNode(switchNode, caseNode);
+  agentNode.children?.splice(agentNode.children.length - 2, 0, caseNode);
+  const caseHeading = createWorkflowNode(`${caseId}-#subgraph`, WORKFLOW_NODE_TYPES.SUBGRAPH_CARD_NODE);
+  addChildNode(caseNode, caseHeading);
+  nodesMetadata[caseId] = {
+    graphId: agentNode.id,
+    parentNodeId: agentNode.id,
+    subgraphType: SUBGRAPH_TYPES.SWITCH_CASE,
+    actionCount: 0,
+  };
+  addChildEdge(agentNode, createWorkflowEdge(`${agentNode.id}-#scope`, caseId, WORKFLOW_EDGE_TYPES.ONLY_EDGE));
+
+  // Add Case to Switch operation data
+  const switchAction = state.operations[agentNode.id] as LogicAppsV2.SwitchAction;
+  switchAction.cases = {
+    ...switchAction.cases,
+    [caseId]: { actions: {}, case: '' },
+  };
+
+  // Increase action count of graph
+  if (nodesMetadata[agentNode.id]) {
+    nodesMetadata[agentNode.id].actionCount = nodesMetadata[agentNode.id].actionCount ?? 0 + 1;
   }
 };

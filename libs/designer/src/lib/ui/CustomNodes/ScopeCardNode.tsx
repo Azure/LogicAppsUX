@@ -307,7 +307,8 @@ const ScopeCardNode = ({ data, targetPosition = Position.Top, sourcePosition = P
     normalizedType === constants.NODE.TYPE.SWITCH || normalizedType === constants.NODE.TYPE.IF ? caseString : actionString;
 
   const isFooter = id.endsWith('#footer');
-  const showEmptyGraphComponents = isLeaf && !graphCollapsed && !isFooter;
+  const isAgent = normalizedType === constants.NODE.TYPE.AGENT;
+  const showEmptyGraphComponents = isLeaf && !graphCollapsed && !isFooter && !isAgent;
 
   return (
     <>

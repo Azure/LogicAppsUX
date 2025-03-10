@@ -24,7 +24,6 @@ import {
   InitUiInteractionsService,
   InitUserPreferenceService,
   InitExperimentationServiceService,
-  BaseExperimentationService,
 } from '@microsoft/logic-apps-shared';
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
 import type { PayloadAction } from '@reduxjs/toolkit';
@@ -137,7 +136,7 @@ export const initializeServices = createAsyncThunk(
 
     // Experimentation service is being used to A/B test features in the designer so in case client does not want to use the A/B test feature,
     // we are always defaulting to the false implementation of the experimentation service.
-    InitExperimentationServiceService(experimentationService ?? new BaseExperimentationService());
+    InitExperimentationServiceService(experimentationService);
     InitEditorService(editorService);
     InitConnectionParameterEditorService(connectionParameterEditorService);
 

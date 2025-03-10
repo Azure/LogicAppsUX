@@ -807,6 +807,27 @@ export interface SwitchAction extends Action {
   expression: string;
 }
 
+export interface AgentAction extends Action {
+  tools?: Record<string, AgentCondition>;
+  deploymentId: string;
+  messages: AgentMessage[];
+  temperature?: number;
+}
+
+export interface AgentMessage {
+  role: string;
+  content: string;
+  image?: string;
+  author?: string;
+}
+
+export interface AgentCondition {
+  actions?: Actions;
+  description?: string;
+  type: string;
+  agentParameterSchema?: any;
+}
+
 /* Table action types */
 
 export interface TableAction extends Action {

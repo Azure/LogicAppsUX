@@ -10,6 +10,7 @@ import {
   useSuppressDefaultNodeSelect,
   useStringOverrides,
   useQueryCachePersist,
+  useIsAgenticLoopEnabled,
 } from '../../state/workflowLoadingSelectors';
 import {
   setDarkMode,
@@ -23,6 +24,7 @@ import {
   setSuppressDefaultNodeSelect,
   setStringOverrides,
   setQueryCachePersist,
+  setEnableAgenticLoops,
 } from '../../state/workflowLoadingSlice';
 import { Checkbox, TextField } from '@fluentui/react';
 import { useCallback } from 'react';
@@ -39,6 +41,7 @@ const ContextSettings = () => {
   const showPerformanceDebug = useShowPerformanceDebug();
   const showTestStringOverride = useStringOverrides();
   const queryCachePersist = useQueryCachePersist();
+  const isAgenticLoopEnabled = useIsAgenticLoopEnabled();
   const dispatch = useDispatch<AppDispatch>();
 
   const changeMonitoringView = useCallback(
@@ -111,6 +114,11 @@ const ContextSettings = () => {
         label="Query Cache Persist"
         checked={queryCachePersist}
         onChange={(_, checked) => dispatch(setQueryCachePersist(!!checked))}
+      />
+      <Checkbox
+        label="Enable Agentic Loops"
+        checked={isAgenticLoopEnabled}
+        onChange={(_, checked) => dispatch(setEnableAgenticLoops(!!checked))}
       />
       <TextField
         label="Max State History Size"
