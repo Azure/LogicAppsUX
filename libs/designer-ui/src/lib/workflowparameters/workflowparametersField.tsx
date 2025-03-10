@@ -4,6 +4,7 @@ import type { IDropdownOption, IDropdownStyles, ILabelStyles, IStyle, ITextField
 import { Dropdown, FontWeights, getTheme, TextField } from '@fluentui/react';
 import { equals, getRecordEntry } from '@microsoft/logic-apps-shared';
 import { type CSSProperties, useState } from 'react';
+import type { IntlShape } from 'react-intl';
 import { useIntl } from 'react-intl';
 import { Text } from '@fluentui/react-components';
 import { SmallText } from '../text';
@@ -102,73 +103,42 @@ export const WorkflowparameterField = ({
   };
 
   const errors = validationErrors ? validationErrors : {};
+  const typeTexts = getWorkflowParameterTypeDisplayNames(intl);
 
   const typeOptions: IDropdownOption[] = [
     {
       key: Constants.WORKFLOW_PARAMETER_SERIALIZED_TYPE.ARRAY,
-      text: intl.formatMessage({
-        defaultMessage: 'Array',
-        id: 'GzQQqH',
-        description: 'This is an option in a dropdown where users can select type Array for their parameter.',
-      }),
+      text: typeTexts[Constants.WORKFLOW_PARAMETER_SERIALIZED_TYPE.ARRAY],
     },
     {
       key: Constants.WORKFLOW_PARAMETER_SERIALIZED_TYPE.BOOL,
-      text: intl.formatMessage({
-        defaultMessage: 'Bool',
-        id: 'Mb+Eaq',
-        description: 'This is an option in a dropdown where users can select type Boolean for their parameter.',
-      }),
+      text: typeTexts[Constants.WORKFLOW_PARAMETER_SERIALIZED_TYPE.BOOL],
     },
     {
       key: Constants.WORKFLOW_PARAMETER_SERIALIZED_TYPE.FLOAT,
-      text: intl.formatMessage({
-        defaultMessage: 'Float',
-        id: 'zjDJwP',
-        description: 'This is an option in a dropdown where users can select type Float for their parameter.',
-      }),
+      text: typeTexts[Constants.WORKFLOW_PARAMETER_SERIALIZED_TYPE.FLOAT],
     },
     {
       key: Constants.WORKFLOW_PARAMETER_SERIALIZED_TYPE.INT,
-      text: intl.formatMessage({
-        defaultMessage: 'Int',
-        id: 'r9SVE4',
-        description: 'This is an option in a dropdown where users can select type Integer for their parameter.',
-      }),
+      text: typeTexts[Constants.WORKFLOW_PARAMETER_SERIALIZED_TYPE.INT],
     },
     {
       key: Constants.WORKFLOW_PARAMETER_SERIALIZED_TYPE.OBJECT,
-      text: intl.formatMessage({
-        defaultMessage: 'Object',
-        id: 'Q/7unA',
-        description: 'This is an option in a dropdown where users can select type Object for their parameter.',
-      }),
+      text: typeTexts[Constants.WORKFLOW_PARAMETER_SERIALIZED_TYPE.OBJECT],
     },
     {
       key: Constants.WORKFLOW_PARAMETER_SERIALIZED_TYPE.STRING,
-      text: intl.formatMessage({
-        defaultMessage: 'String',
-        id: 'YJJ+gQ',
-        description: 'This is an option in a dropdown where users can select type String for their parameter.',
-      }),
+      text: typeTexts[Constants.WORKFLOW_PARAMETER_SERIALIZED_TYPE.STRING],
     },
     ...(useLegacy
       ? [
           {
             key: Constants.WORKFLOW_PARAMETER_SERIALIZED_TYPE.SECURE_STRING,
-            text: intl.formatMessage({
-              defaultMessage: 'Secure string',
-              id: 'lK+Vzo',
-              description: 'This is an option in a dropdown where users can select type Secure String for their parameter.',
-            }),
+            text: typeTexts[Constants.WORKFLOW_PARAMETER_SERIALIZED_TYPE.SECURE_STRING],
           },
           {
             key: Constants.WORKFLOW_PARAMETER_SERIALIZED_TYPE.SECURE_OBJECT,
-            text: intl.formatMessage({
-              defaultMessage: 'Secure object',
-              id: 'udnt8c',
-              description: 'This is an option in a dropdown where users can select type Secure Object for their parameter.',
-            }),
+            text: typeTexts[Constants.WORKFLOW_PARAMETER_SERIALIZED_TYPE.SECURE_OBJECT],
           },
         ]
       : []),
@@ -419,6 +389,51 @@ export const WorkflowparameterField = ({
       )}
     </>
   );
+};
+
+export const getWorkflowParameterTypeDisplayNames = (intl: IntlShape): Record<string, string> => {
+  return {
+    [Constants.WORKFLOW_PARAMETER_SERIALIZED_TYPE.ARRAY]: intl.formatMessage({
+      defaultMessage: 'Array',
+      id: 'GzQQqH',
+      description: 'This is an option in a dropdown where users can select type Array for their parameter.',
+    }),
+    [Constants.WORKFLOW_PARAMETER_SERIALIZED_TYPE.BOOL]: intl.formatMessage({
+      defaultMessage: 'Boolean',
+      id: 'J8lR2l',
+      description: 'This is an option in a dropdown where users can select type Boolean for their parameter.',
+    }),
+    [Constants.WORKFLOW_PARAMETER_SERIALIZED_TYPE.FLOAT]: intl.formatMessage({
+      defaultMessage: 'Float',
+      id: 'zjDJwP',
+      description: 'This is an option in a dropdown where users can select type Float for their parameter.',
+    }),
+    [Constants.WORKFLOW_PARAMETER_SERIALIZED_TYPE.INT]: intl.formatMessage({
+      defaultMessage: 'Integer',
+      id: 'bZtnLw',
+      description: 'This is an option in a dropdown where users can select type Integer for their parameter.',
+    }),
+    [Constants.WORKFLOW_PARAMETER_SERIALIZED_TYPE.OBJECT]: intl.formatMessage({
+      defaultMessage: 'Object',
+      id: 'Q/7unA',
+      description: 'This is an option in a dropdown where users can select type Object for their parameter.',
+    }),
+    [Constants.WORKFLOW_PARAMETER_SERIALIZED_TYPE.STRING]: intl.formatMessage({
+      defaultMessage: 'String',
+      id: 'YJJ+gQ',
+      description: 'This is an option in a dropdown where users can select type String for their parameter.',
+    }),
+    [Constants.WORKFLOW_PARAMETER_SERIALIZED_TYPE.SECURE_STRING]: intl.formatMessage({
+      defaultMessage: 'Secure string',
+      id: 'lK+Vzo',
+      description: 'This is an option in a dropdown where users can select type Secure String for their parameter.',
+    }),
+    [Constants.WORKFLOW_PARAMETER_SERIALIZED_TYPE.SECURE_OBJECT]: intl.formatMessage({
+      defaultMessage: 'Secure object',
+      id: 'udnt8c',
+      description: 'This is an option in a dropdown where users can select type Secure Object for their parameter.',
+    }),
+  };
 };
 
 function isSecureParameter(type?: string): boolean {
