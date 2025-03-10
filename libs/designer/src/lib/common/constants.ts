@@ -382,6 +382,7 @@ export default {
       SET_VARIABLE: 'setvariable',
       SLIDING_WINDOW: 'slidingwindow',
       SWITCH: 'switch',
+      AGENT: 'agent',
       TABLE: 'table',
       TERMINATE: 'terminate',
       UNTIL: 'until',

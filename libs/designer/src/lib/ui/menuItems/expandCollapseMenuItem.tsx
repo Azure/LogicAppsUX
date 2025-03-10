@@ -17,12 +17,12 @@ const CollapseIcon = bundleIcon(SubtractSquareMultipleFilled, SubtractSquareMult
 const ExpandIcon = bundleIcon(AddSquareMultipleFilled, AddSquareMultipleRegular);
 
 export interface ExpandCollapseMenuItemProps {
-  key: string;
+  id: string;
   nodeId: string;
 }
 
 export const ExpandCollapseMenuItem = (props: ExpandCollapseMenuItemProps) => {
-  const { key, nodeId } = props;
+  const { id, nodeId } = props;
 
   const graphId = useMemo(() => removeIdTag(nodeId), [nodeId]);
   const expanded = !useIsGraphCollapsed(graphId);
@@ -47,7 +47,7 @@ export const ExpandCollapseMenuItem = (props: ExpandCollapseMenuItemProps) => {
   }, [dispatch, nodeId]);
 
   return (
-    <MenuItem key={key} icon={expanded ? <CollapseIcon /> : <ExpandIcon />} onClick={onClick}>
+    <MenuItem key={id} icon={expanded ? <CollapseIcon /> : <ExpandIcon />} onClick={onClick}>
       {expanded ? collapseText : expandText}
     </MenuItem>
   );

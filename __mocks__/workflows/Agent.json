@@ -1,0 +1,71 @@
+{
+  "definition": {
+    "$schema": "https://schema.management.azure.com/providers/Microsoft.Logic/schemas/2016-06-01/workflowdefinition.json#",
+    "actions": {
+      "Agent": {
+        "type": "Agent",
+        "inputs": {
+          "parameters": {
+            "deploymentId": "test",
+            "messages": [
+              {
+                "role": "System",
+                "content": "This is a system message."
+              },
+              {
+                "role": "User",
+                "content": "This is a user message.",
+                "image": "image data",
+                "author": "chat user name"
+              }
+            ],
+            "temperature": 1
+          }
+        },
+        "tools": {
+          "If_Condition_X_Matches": {
+            "description": "If the condition X matches, execute this branch",
+            "type": "Tool",
+            "agentParameterSchema": {
+              "type": "object",
+              "properties": {
+                "Property1": {
+                  "type": "string"
+                },
+                "Property2": {
+                  "type": "boolean"
+                }
+              }
+            },
+            "actions": {
+              "HTTP": {
+                "type": "Http",
+                "inputs": {
+                  "uri": "http://test.com",
+                  "method": "GET",
+                  "body": "@triggerBody()"
+                },
+                "runtimeConfiguration": {
+                  "contentTransfer": {
+                    "transferMode": "Chunked"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "runAfter": {}
+      }
+    },
+    "contentVersion": "1.0.0.0",
+    "outputs": {},
+    "parameters": {},
+    "triggers": {
+      "When_a_HTTP_request_is_received": {
+        "type": "Request",
+        "kind": "Http"
+      }
+    }
+  },
+  "kind": "Stateful"
+}
