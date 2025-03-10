@@ -9,8 +9,9 @@ import { type IntlShape, useIntl } from 'react-intl';
 import { useMemo } from 'react';
 import { useBoolean, useId } from '@fluentui/react-hooks';
 import { ParameterEditor } from './parametereditor';
+import { getWorkflowParameterTypeDisplayNames } from '@microsoft/designer-ui';
 
-export const DisplayParameters = () => {
+export const DisplayParameters = ({ isCompactView = false }: { isCompactView?: boolean }) => {
   const dispatch = useDispatch<AppDispatch>();
   const intl = useIntl();
   const {
@@ -43,6 +44,7 @@ export const DisplayParameters = () => {
       description: 'Label for displaying associated workflows',
     }),
   };
+  const typeDisplayNames = getWorkflowParameterTypeDisplayNames(intl);
 
   const [parametersList, setParametersList] = useFunctionalState<Template.ParameterDefinition[]>(Object.values(parameterDefinitions));
 
@@ -80,8 +82,8 @@ export const DisplayParameters = () => {
       isMultiline: true,
       name: resources.parameter_name,
       maxWidth: 250,
-      showSortIconWhenUnsorted: true,
-      onColumnClick: _onColumnClick,
+      showSortIconWhenUnsorted: !isCompactView,
+      onColumnClick: isCompactView ? undefined : _onColumnClick,
     },
     {
       ariaLabel: resources.parameter_type,
@@ -91,8 +93,8 @@ export const DisplayParameters = () => {
       minWidth: 70,
       maxWidth: 70,
       name: resources.parameter_type,
-      showSortIconWhenUnsorted: true,
-      onColumnClick: _onColumnClick,
+      showSortIconWhenUnsorted: !isCompactView,
+      onColumnClick: isCompactView ? undefined : _onColumnClick,
     },
     {
       ariaLabel: resources.parameter_value,
@@ -103,7 +105,6 @@ export const DisplayParameters = () => {
       isMultiline: true,
       name: resources.parameter_value,
       showSortIconWhenUnsorted: false,
-      onColumnClick: _onColumnClick,
     },
   ]);
 
@@ -124,13 +125,20 @@ export const DisplayParameters = () => {
 
       case '$type':
         return (
-          <Text className="msla-templates-parameters-values" aria-label={item.type}>
-            {item.type}
+          <Text className="msla-templates-parameters-values" aria-label={typeDisplayNames[item.type]}>
+            {typeDisplayNames[item.type]}
           </Text>
         );
 
       case '$value':
-        return <ParameterEditor item={item} onChange={handleParameterValueChange} disabled={parametersOverride?.[item.name]?.isEditable === false} error={parameterErrors[item.name]} />;
+        return (
+          <ParameterEditor
+            item={item}
+            onChange={handleParameterValueChange}
+            disabled={parametersOverride?.[item.name]?.isEditable === false}
+            error={parameterErrors[item.name]}
+          />
+        );
 
       default:
         return null;

@@ -25,14 +25,14 @@ describe('panel/templatePanel/createWorkflowPanel/parametersTab', () => {
     param1 = {
       name: 'param1',
       displayName: 'param 1',
-      type: 'string',
+      type: 'String',
       description: 'param1 description',
       default: 'param1DefaultValue',
     };
     param2 = {
       name: 'param2',
       displayName: 'param 2',
-      type: 'object',
+      type: 'Object',
       description: 'param2 description',
     };
     const parameters = [param1, param2];
@@ -77,8 +77,8 @@ describe('panel/templatePanel/createWorkflowPanel/parametersTab', () => {
 
   it('Shows Parameters Tab values displayed', async () => {
     expect(store.getState().panel.selectedTabId).toBe(constants.TEMPLATE_PANEL_TAB_NAMES.PARAMETERS);
-    expect(store.getState().template.parameterDefinitions['param1'].type).toBe('string');
-    expect(store.getState().template.parameterDefinitions['param2'].type).toBe('object');
+    expect(store.getState().template.parameterDefinitions['param1'].type).toBe('String');
+    expect(store.getState().template.parameterDefinitions['param2'].type).toBe('Object');
     expect(screen.getAllByText(param1.displayName)).toBeDefined();
     expect(screen.getAllByText(param1.type)).toBeDefined();
     expect(screen.getAllByText(param2.displayName)).toBeDefined();

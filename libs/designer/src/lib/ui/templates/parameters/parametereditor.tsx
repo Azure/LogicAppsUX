@@ -1,4 +1,4 @@
-import { TextField } from '@fluentui/react';
+import { Field, Input } from '@fluentui/react-components';
 import type { ChangeState } from '@microsoft/designer-ui';
 import { Combobox, DynamicLoadStatus, FilePickerEditor, getDropdownOptionsFromOptions } from '@microsoft/designer-ui';
 import { type ParameterInfo, getPropertyValue, replaceWhiteSpaceWithUnderscore, type Template, equals } from '@microsoft/logic-apps-shared';
@@ -23,7 +23,12 @@ export const ParameterEditor = ({
   onChange,
   disabled,
   error,
-}: { item: Template.ParameterDefinition; onChange: (newItem: Template.ParameterDefinition) => void; disabled?: boolean, error?: string }) => {
+}: {
+  item: Template.ParameterDefinition;
+  onChange: (newItem: Template.ParameterDefinition) => void;
+  disabled?: boolean;
+  error?: string;
+}) => {
   const dispatch = useDispatch<AppDispatch>();
   const { name, value, dynamicData, displayName, associatedOperationParameter } = item;
   const operationId = associatedOperationParameter?.operationId;
@@ -159,15 +164,16 @@ export const ParameterEditor = ({
   }
 
   return (
-    <TextField
-      className="msla-templates-parameters-values"
-      data-testid={`msla-templates-parameter-value-${name}`}
-      id={`msla-templates-parameter-value-${name}`}
-      aria-label={value}
-      value={value}
-      disabled={disabled}
-      onChange={(_event, newValue) => onChange({ ...item, value: newValue ?? '' })}
-      errorMessage={error}
-    />
+    <Field validationMessage={error}>
+      <Input
+        className="msla-templates-parameters-values"
+        data-testid={`msla-templates-parameter-value-${name}`}
+        id={`msla-templates-parameter-value-${name}`}
+        aria-label={value}
+        value={value}
+        disabled={disabled}
+        onChange={(_event, data) => onChange({ ...item, value: data.value ?? '' })}
+      />
+    </Field>
   );
 };

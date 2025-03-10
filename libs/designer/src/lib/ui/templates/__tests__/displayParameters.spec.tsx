@@ -61,20 +61,20 @@ describe('ui/templates/DisplayParameters', () => {
         {
           name: 'param1',
           displayName: 'param 1',
-          type: 'string',
+          type: 'String',
           description: 'param1 description',
           default: param1DefaultValue,
         },
         {
           name: 'param2',
           displayName: 'param 2',
-          type: 'object',
+          type: 'Object',
           description: 'param2 description',
         },
         {
           name: 'param3',
           displayName: 'param 3',
-          type: 'boolean',
+          type: 'Bool',
           description: 'param3 description',
           default: param2DefaultValue,
           required: true,
@@ -173,7 +173,7 @@ describe('ui/templates/DisplayParameters', () => {
     const parameter3 = workflow1Manifest?.parameters[2];
 
     expect(screen.getByText(parameter3.displayName)).toBeDefined();
-    expect(screen.getByText(parameter3.type)).toBeDefined();
+    expect(screen.getByText('Boolean')).toBeDefined();
     expect(screen.getAllByDisplayValue(param2DefaultValue)).toBeDefined();
 
     store.dispatch(
