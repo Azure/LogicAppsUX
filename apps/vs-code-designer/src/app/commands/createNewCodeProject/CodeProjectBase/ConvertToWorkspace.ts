@@ -15,7 +15,7 @@ import { SetWorkspaceName } from './SetWorkspaceName';
 import { SetWorkspaceContents } from './SetWorkspaceContents';
 import { isLogicAppProjectInRoot } from '../../../utils/verifyIsProject';
 
-export async function ConvertToWorkspace(context: IActionContext): Promise<boolean> {
+export async function convertToWorkspace(context: IActionContext): Promise<boolean> {
   const workspaceFolder = await getWorkspaceFolder(context, undefined, true);
   if (await isLogicAppProjectInRoot(workspaceFolder)) {
     addLocalFuncTelemetry(context);
@@ -24,6 +24,7 @@ export async function ConvertToWorkspace(context: IActionContext): Promise<boole
     const wizardContext: Partial<IFunctionWizardContext> & IActionContext = Object.assign(context, {
       version: tryParseFuncVersion(version),
     });
+
     context.telemetry.properties.isWorkspace = 'false';
     wizardContext.workspaceCustomFilePath =
       (await getWorkspaceFile(wizardContext)) ?? (await getWorkspaceFileInParentDirectory(wizardContext));

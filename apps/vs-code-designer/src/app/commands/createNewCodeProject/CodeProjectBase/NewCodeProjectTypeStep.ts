@@ -5,9 +5,9 @@
 import { WorkflowStateTypeStep } from '../../createCodeless/createCodelessSteps/WorkflowStateTypeStep';
 import { WorkflowProjectCreateStep } from '../../createNewProject/createProjectSteps/WorkflowProjectCreateStep';
 import { addInitVSCodeSteps } from '../../initProjectForVSCode/InitVSCodeLanguageStep';
-import { InvokeFunctionProjectSetup } from '../createCodeProjectSteps/createFunction/InvokeFunctionProjectSetup';
-import { setMethodName } from '../createCodeProjectSteps/createFunction/setMethodName';
-import { setNamespace } from '../createCodeProjectSteps/createFunction/setNamepSpace';
+import { FunctionAppFilesStep } from '../createCodeProjectSteps/createFunction/FunctionAppFilesStep';
+import { FunctionAppNameStep } from '../createCodeProjectSteps/createFunction/FunctionAppNameStep';
+import { FunctionAppNamespaceStep } from '../createCodeProjectSteps/createFunction/FunctionAppNamespaceStep';
 import { CodeProjectWorkflowStateTypeStep } from '../createCodeProjectSteps/createLogicApp/CodeProjectWorkflowStateTypeStep';
 import { WorkflowCodeProjectCreateStep } from './WorkflowCodeProjectCreateStep';
 import type { AzureWizardExecuteStep, IWizardOptions } from '@microsoft/vscode-azext-utils';
@@ -111,9 +111,9 @@ export class NewCodeProjectTypeStep extends AzureWizardPromptStep<IProjectWizard
     await addInitVSCodeSteps(context, executeSteps, true);
 
     promptSteps.push(
-      new setMethodName(),
-      new setNamespace(),
-      new InvokeFunctionProjectSetup(),
+      new FunctionAppNameStep(),
+      new FunctionAppNamespaceStep(),
+      new FunctionAppFilesStep(),
       await CodeProjectWorkflowStateTypeStep.create(context, {
         isProjectWizard: true,
         templateId: this.templateId,

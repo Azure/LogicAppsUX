@@ -55,14 +55,13 @@ export class CodelessFunctionWorkflow extends WorkflowCreateStepBase<IFunctionWi
 
   // Async method that creates a new workflow for the codeless Azure Function project
   public async executeCore(context: IFunctionWizardContext): Promise<string> {
-    // Get the function template and function name from the IFunctionWizardContext object
+    // Get the function template and function path from the IFunctionWizardContext object
     const template: IWorkflowTemplate = nonNullProp(context, 'functionTemplate');
     const functionPath: string = path.join(context.projectPath, nonNullProp(context, 'functionName'));
-    const methodName = context.methodName;
 
     // Determine which definition object to use based on the type of workflow template
     const codelessDefinition: StandardApp = getFunctionWorkflowTemplate(
-      methodName,
+      context.functionAppName,
       template?.id === workflowType.stateful,
       context.projectType
     );

@@ -31,8 +31,9 @@ import {
 } from '@microsoft/vscode-azext-utils';
 import type { IActionContext } from '@microsoft/vscode-azext-utils';
 import * as vscode from 'vscode';
-import { ConvertToWorkspace } from './app/commands/createNewCodeProject/CodeProjectBase/ConvertToWorkspace';
+import { convertToWorkspace } from './app/commands/createNewCodeProject/CodeProjectBase/ConvertToWorkspace';
 import TelemetryReporter from '@vscode/extension-telemetry';
+import { buildCodeProject } from './app/commands/createNewCodeProject/CodeProjectBase/BuildCodeProject';
 
 const perfStats = {
   loadStartTime: Date.now(),
@@ -71,7 +72,7 @@ export async function activate(context: vscode.ExtensionContext) {
     runPostExtractStepsFromCache();
 
     if (vscode.workspace.workspaceFolders && vscode.workspace.workspaceFolders.length > 0) {
-      await ConvertToWorkspace(activateContext);
+      await convertToWorkspace(activateContext);
     }
 
     try {
@@ -106,6 +107,8 @@ export async function activate(context: vscode.ExtensionContext) {
         await verifyVSCodeConfigOnActivate(actionContext, event.added);
       }
     );
+
+    await buildCodeProject(activateContext);
 
     context.subscriptions.push(ext.outputChannel);
     context.subscriptions.push(ext.azureAccountTreeItem);
