@@ -20,7 +20,7 @@ export interface InitializeVariableProps {
 
 export interface InitializeVariableEditorProps extends BaseEditorProps {
   validationErrors?: InitializeVariableErrors[];
-  preventMultiVariable?: boolean;
+  isMultiVariableEnabled?: boolean;
 }
 
 export const InitializeVariableEditor = ({ initialValue, onChange, validationErrors, ...props }: InitializeVariableEditorProps) => {
@@ -88,7 +88,7 @@ export const InitializeVariableEditor = ({ initialValue, onChange, validationErr
         />
       ))}
 
-      {props.preventMultiVariable ? null : (
+      {props.isMultiVariableEnabled ? (
         <div className="msla-initialize-variable-add-variable-button">
           <Button
             appearance="subtle"
@@ -105,7 +105,7 @@ export const InitializeVariableEditor = ({ initialValue, onChange, validationErr
             {addVariableLabel}
           </Button>
         </div>
-      )}
+      ) : null}
     </div>
   ) : (
     <>

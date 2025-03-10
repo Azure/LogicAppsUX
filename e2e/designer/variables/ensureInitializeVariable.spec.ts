@@ -26,7 +26,7 @@ test(
       .filter({ hasText: 'Variables*testname*testAdd' })
       .first()
       .click();
-    await expect(page.locator('#msla-node-details-panel-Initialize_variables')).toContainText('Value must be a valid integer');
+    await expect(page.locator('#msla-node-details-panel-Initialize_variables')).toContainText("'Value' must be a valid integer");
     await page.getByRole('textbox', { name: 'Enter initial value' }).getByRole('paragraph').click();
     await page.getByRole('textbox', { name: 'Enter initial value' }).fill('12');
     await page

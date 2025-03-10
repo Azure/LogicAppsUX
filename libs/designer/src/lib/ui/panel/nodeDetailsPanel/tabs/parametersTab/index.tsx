@@ -226,7 +226,7 @@ const ParameterSection = ({
   const displayNameResult = useConnectorName(operationInfo);
   const panelLocation = usePanelLocation();
 
-  const { suppressCastingForSerialize, hideUTFExpressions, preventMultiVariable } = useHostOptions();
+  const { suppressCastingForSerialize, hideUTFExpressions, enableMultiVariable } = useHostOptions();
 
   const [tokenMapping, setTokenMapping] = useState<Record<string, ValueSegment>>({});
 
@@ -464,7 +464,7 @@ const ParameterSection = ({
           tokenpickerButtonProps: {
             location: panelLocation === PanelLocation.Left ? TokenPickerButtonLocation.Right : TokenPickerButtonLocation.Left,
           },
-          hostOptions: { suppressCastingForSerialize, preventMultiVariable },
+          hostOptions: { suppressCastingForSerialize, isMultiVariableEnabled: enableMultiVariable },
           onCastParameter: (value: ValueSegment[], type?: string, format?: string, suppressCasting?: boolean) =>
             parameterValueToString(
               {

@@ -406,7 +406,7 @@ const DesignerEditor = () => {
             customCode={customCodeData}
             runInstance={runInstanceData}
             appSettings={settingsData?.properties}
-            preventMultiVariable={hostOptions.preventMultiVariable}
+            isMultiVariableEnabled={hostOptions.enableMultiVariable}
           >
             <div style={{ display: 'flex', flexDirection: 'row', height: 'inherit' }}>
               <RunHistoryPanel

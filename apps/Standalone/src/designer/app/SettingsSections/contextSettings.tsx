@@ -10,7 +10,7 @@ import {
   useSuppressDefaultNodeSelect,
   useStringOverrides,
   useQueryCachePersist,
-  usePreventMultiVariable,
+  useIsMultiVariableEnabled,
   useIsAgenticLoopEnabled,
 } from '../../state/workflowLoadingSelectors';
 import {
@@ -25,7 +25,7 @@ import {
   setSuppressDefaultNodeSelect,
   setStringOverrides,
   setQueryCachePersist,
-  setPreventMultiVariable,
+  setEnableMultiVariable,
   setEnableAgenticLoops,
 } from '../../state/workflowLoadingSlice';
 import { Checkbox, TextField } from '@fluentui/react';
@@ -43,7 +43,7 @@ const ContextSettings = () => {
   const showPerformanceDebug = useShowPerformanceDebug();
   const showTestStringOverride = useStringOverrides();
   const queryCachePersist = useQueryCachePersist();
-  const preventMultiVariable = usePreventMultiVariable();
+  const isMultiVariableEnabled = useIsMultiVariableEnabled();
   const isAgenticLoopEnabled = useIsAgenticLoopEnabled();
   const dispatch = useDispatch<AppDispatch>();
 
@@ -119,9 +119,9 @@ const ContextSettings = () => {
         onChange={(_, checked) => dispatch(setQueryCachePersist(!!checked))}
       />
       <Checkbox
-        label="Prevent Multivariable"
-        checked={preventMultiVariable}
-        onChange={(_, checked) => dispatch(setPreventMultiVariable(!!checked))}
+        label="Enable Multivariable"
+        checked={isMultiVariableEnabled}
+        onChange={(_, checked) => dispatch(setEnableMultiVariable(!!checked))}
       />
       <Checkbox
         label="Enable Agentic Loops"

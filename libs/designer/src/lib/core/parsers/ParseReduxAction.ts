@@ -28,7 +28,7 @@ export const initializeGraphState = createAsyncThunk<
   {
     workflowDefinition: Workflow;
     runInstance: LogicAppsV2.RunInstanceDefinition | null | undefined;
-    preventMultiVariable?: boolean;
+    isMultiVariableEnabled?: boolean;
   },
   { state: RootState }
 >(
@@ -37,11 +37,11 @@ export const initializeGraphState = createAsyncThunk<
     graphState: {
       workflowDefinition: Workflow;
       runInstance: any;
-      preventMultiVariable?: boolean;
+      isMultiVariableEnabled?: boolean;
     },
     { getState, dispatch }
   ): Promise<InitWorkflowPayload> => {
-    const { workflowDefinition, runInstance, preventMultiVariable } = graphState;
+    const { workflowDefinition, runInstance, isMultiVariableEnabled } = graphState;
     const { workflow, designerOptions } = getState() as RootState;
     const spec = workflow.workflowSpec;
 
@@ -59,7 +59,7 @@ export const initializeGraphState = createAsyncThunk<
 
       const { definition, connectionReferences, parameters } = workflowDefinition;
       // Check if there are sequential initialize variable actions
-      const hasSequentialVars = !preventMultiVariable && detectSequentialInitializeVariables(definition);
+      const hasSequentialVars = isMultiVariableEnabled && detectSequentialInitializeVariables(definition);
       let selectedDefinition = definition;
 
       if (hasSequentialVars) {

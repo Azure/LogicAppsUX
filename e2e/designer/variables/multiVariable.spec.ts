@@ -15,6 +15,12 @@ test.describe(
         await page.goto('/');
         await page.evaluate(() => localStorage.clear());
         await page.getByText('Local', { exact: true }).click();
+
+        // enable multivariable
+        await page.getByRole('heading', { name: '▼ Context Settings' }).click();
+        await page.getByText('Enable Multivariable').click();
+        await page.getByRole('heading', { name: '▼ Context Settings' }).click();
+
         await page.getByText('Select an option').click();
         await page.getByRole('option', { name: 'Multi Variable', exact: true }).click();
         await page.waitForTimeout(100);
@@ -42,6 +48,12 @@ test.describe(
       await page.goto('/');
       await page.evaluate(() => localStorage.clear());
       await page.getByText('Local', { exact: true }).click();
+
+      // enable multivariable
+      await page.getByRole('heading', { name: '▼ Context Settings' }).click();
+      await page.getByText('Enable Multivariable').click();
+      await page.getByRole('heading', { name: '▼ Context Settings' }).click();
+
       await page.getByText('Select an option').click();
       await page.getByRole('option', { name: 'Multi Variable', exact: true }).click();
       await page.waitForTimeout(100);
@@ -72,6 +84,12 @@ test.describe(
       await page.goto('/');
       await page.evaluate(() => localStorage.clear());
       await page.getByText('Local', { exact: true }).click();
+
+      // enable multivariable
+      await page.getByRole('heading', { name: '▼ Context Settings' }).click();
+      await page.getByText('Enable Multivariable').click();
+      await page.getByRole('heading', { name: '▼ Context Settings' }).click();
+
       await page.getByText('Select an option').click();
       await page.getByRole('option', { name: 'Multi Variable', exact: true }).click();
       await page.waitForTimeout(100);
@@ -93,6 +111,11 @@ test.describe(
       );
 
       await page.goto('/');
+      // enable multivariable
+      await page.getByRole('heading', { name: '▼ Context Settings' }).click();
+      await page.getByText('Enable Multivariable').click();
+      await page.getByRole('heading', { name: '▼ Context Settings' }).click();
+
       await page.getByText('Local', { exact: true }).click();
       await page.getByText('Select an option').click();
       await page.getByRole('option', { name: 'Multi Variable', exact: true }).click();

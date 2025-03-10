@@ -77,9 +77,9 @@ export const useQueryCachePersist = () => {
   return useSelector((state: RootState) => state.workflowLoader.queryCachePersist);
 };
 
-export const usePreventMultiVariable = () => {
-  return useSelector((state: RootState) => state.workflowLoader.hostOptions.preventMultiVariable);
-}
+export const useIsMultiVariableEnabled = () => {
+  return useSelector((state: RootState) => state.workflowLoader.hostOptions.enableMultiVariable);
+};
 
 export const useIsAgenticLoopEnabled = () => {
   return useSelector((state: RootState) => !!state.workflowLoader.hostOptions.enableAgenticLoops);

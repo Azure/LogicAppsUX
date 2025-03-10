@@ -44,7 +44,7 @@ import { useIntl } from 'react-intl';
 
 interface EditorHostOptions {
   suppressCastingForSerialize?: boolean;
-  preventMultiVariable?: boolean;
+  isMultiVariableEnabled?: boolean;
 }
 
 export interface SettingTokenFieldProps extends SettingProps {
@@ -389,7 +389,7 @@ export const TokenField = ({
           readonly={readOnly}
           tokenPickerButtonProps={tokenpickerButtonProps}
           dataAutomationId={`msla-setting-token-editor-initializevariableeditor-${labelForAutomationId}`}
-          preventMultiVariable={hostOptions?.preventMultiVariable}
+          isMultiVariableEnabled={hostOptions?.isMultiVariableEnabled}
         />
       );
 
