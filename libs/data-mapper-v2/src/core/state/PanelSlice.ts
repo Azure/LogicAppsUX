@@ -48,7 +48,7 @@ export interface TestMapOutput {
   error?: Error;
 }
 
-const initialState: PanelState = {
+export const initialState: PanelState = {
   currentPanelView: ConfigPanelView.AddSchema,
   codeViewPanel: {
     isOpen: false,

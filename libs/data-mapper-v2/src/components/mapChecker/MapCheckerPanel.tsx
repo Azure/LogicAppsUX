@@ -107,7 +107,7 @@ export const MapCheckerPanel = () => {
   const errorContent = useMemo(() => {
     if (sourceSchema && targetSchema) {
       const errors = collectErrorsForMapChecker(connectionDictionary);
-      const deserializationErrorMessages = isDirty ? [] : convertMapIssuesToMessages(storeErrors);
+      const deserializationErrorMessages = isDirty ? [] : convertMapIssuesToMessages(storeErrors); // remove deserialization errors after users edit the map
       return errors.concat(deserializationErrorMessages);
     }
 
