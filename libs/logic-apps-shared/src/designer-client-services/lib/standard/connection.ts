@@ -79,6 +79,13 @@ interface APIManagementConnectionModel {
   displayName?: string;
 }
 
+export interface AgentConnectionModel {
+  parameterValues: Record<string, any>;
+  parameterSetName?: string;
+  type?: string;
+  displayName?: string;
+}
+
 interface ConnectionAndAppSetting<T> {
   connectionKey: string;
   connectionData: T;
@@ -91,6 +98,7 @@ interface ConnectionsData {
   serviceProviderConnections?: Record<string, ServiceProviderConnectionModel>;
   functionConnections?: Record<string, FunctionsConnectionModel>;
   apiManagementConnections?: Record<string, APIManagementConnectionModel>;
+  agentConnections?: Record<string, AgentConnectionModel>;
 }
 
 type LocalConnectionModel = FunctionsConnectionModel | ServiceProviderConnectionModel | APIManagementConnectionModel;
@@ -100,6 +108,7 @@ type WriteConnectionFunc = (connectionData: ConnectionAndAppSetting<LocalConnect
 const serviceProviderLocation = 'serviceProviderConnections';
 const functionsLocation = 'functionConnections';
 const apimLocation = 'apiManagementConnections';
+const agentLocation = 'agentConnections';
 
 export interface StandardConnectionServiceOptions {
   apiVersion: string;
@@ -161,8 +170,94 @@ export class StandardConnectionService extends BaseConnectionService implements 
           },
         });
       } else {
+        const connectorIdKeyword = connectorId.split('/').at(-1);
+        if (connectorIdKeyword === 'agent') {
+          return {
+            properties: {
+              name: 'azureopenai',
+              connectionParameters: {
+                azureOpenAIResourceName: {
+                  type: 'string',
+                  uiDefinition: {
+                    displayName: 'Azure OpenAI resource name',
+                    description: 'The name of the Azure OpenAI resource that hosts the AI model',
+                    tooltip: 'Provide the Azure OpenAI resource name',
+                    constraints: {
+                      clearText: true,
+                      required: 'true',
+                    },
+                  },
+                },
+                azureOpenAIApiKey: {
+                  type: 'securestring',
+                  uiDefinition: {
+                    displayName: 'Azure OpenAI API key',
+                    description: 'The API key to access the Azure OpenAI resource that hosts the AI model',
+                    tooltip: 'Provide the Azure OpenAI API key',
+                    constraints: {
+                      clearText: false,
+                      required: 'true',
+                    },
+                  },
+                },
+                azureSearchEndpointUrl: {
+                  type: 'string',
+                  uiDefinition: {
+                    displayName: 'Azure Cognitive Search endpoint URL',
+                    description: 'The URL of the Azure Cognitive Search endpoint indexing your data',
+                    tooltip: 'Provide the Azure Cognitive Search endpoint URL',
+                    constraints: {
+                      clearText: true,
+                      required: 'false',
+                    },
+                  },
+                },
+                azureSearchApiKey: {
+                  type: 'securestring',
+                  uiDefinition: {
+                    displayName: 'Azure Cognitive Search API key',
+                    description: 'The API key to access the Azure Cognitive Search endpoint indexing your data',
+                    tooltip: 'Provide the Azure Cognitive Search API key',
+                    constraints: {
+                      clearText: false,
+                      required: 'false',
+                    },
+                  },
+                },
+              },
+              metadata: {
+                source: 'marketplace',
+                brandColor: '#000000',
+                useNewApimVersion: true,
+              },
+              runtimeUrls: ['https://logic-apis-westus.azure-apim.net/apim/azureopenai'],
+              generalInformation: {
+                iconUrl:
+                  'https://conn-afd-prod-endpoint-bmc9bqahasf3grgk.b01.azurefd.net/releases/v1.0.1722/1.0.1722.3983/azureopenai/icon.png',
+                displayName: 'Azure OpenAI',
+                description: "Easily integrate Azure OpenAI's cutting-edge artificial intelligence capabilities into your workflows",
+                releaseTag: 'Preview',
+                tier: 'Premium',
+              },
+              capabilities: ['actions'],
+              isExportSupported: true,
+              isSecureByDefault: false,
+              iconUrl:
+                'https://conn-afd-prod-endpoint-bmc9bqahasf3grgk.b01.azurefd.net/releases/v1.0.1722/1.0.1722.3983/azureopenai/icon.png',
+              displayName: 'Azure OpenAI',
+              description: "Easily integrate Azure OpenAI's cutting-edge artificial intelligence capabilities into your workflows",
+              releaseTag: 'Preview',
+              tier: 'Premium',
+            },
+            id: '/subscriptions/11e43792-2b16-4f94-b5ea-de10eade3aef/providers/Microsoft.Web/locations/westus/managedApis/azureopenai',
+            name: 'azureopenai',
+            type: 'Microsoft.Web/locations/managedApis',
+            location: 'westus',
+          } as any;
+        }
+
         response = await httpClient.get<Connector>({
-          uri: `${baseUrl}/operationGroups/${connectorId.split('/').at(-1)}?api-version=${apiVersion}`,
+          uri: `${baseUrl}/operationGroups/${connectorIdKeyword}?api-version=${apiVersion}`,
         });
       }
 
@@ -181,6 +276,8 @@ export class StandardConnectionService extends BaseConnectionService implements 
     const serviceProviderConnections = (localConnections[serviceProviderLocation] || {}) as Record<string, ServiceProviderConnectionModel>;
     const functionConnections = (localConnections[functionsLocation] || {}) as Record<string, FunctionsConnectionModel>;
     const apimConnections = (localConnections[apimLocation] || {}) as Record<string, APIManagementConnectionModel>;
+    const agentConnections = (localConnections[agentLocation] || {}) as Record<string, AgentConnectionModel>;
+    console.log('charlie', localConnections);
 
     this._allConnectionsInitialized = true;
     return [
@@ -195,6 +292,11 @@ export class StandardConnectionService extends BaseConnectionService implements 
         return connection;
       }),
       ...Object.keys(apimConnections).map((key) => {
+        const connection = convertApimConnectionDataToConnection(key, apimConnections[key]);
+        this._connections[connection.id] = connection;
+        return connection;
+      }),
+      ...Object.keys(agentConnections).map((key) => {
         const connection = convertApimConnectionDataToConnection(key, apimConnections[key]);
         this._connections[connection.id] = connection;
         return connection;
