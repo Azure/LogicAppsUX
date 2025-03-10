@@ -51,7 +51,7 @@ test.describe(
       await page.getByText('Azure Business').click();
       await page.getByRole('tab', { name: 'Workflow' }).click();
       await page.getByRole('tab', { name: 'Summary' }).click();
-      await page.getByRole('button', { name: 'Use this template' }).click();
+      await page.getByTestId('template-footer-primary-button').click();
       await expect(page.getByText('Create a new workflow from template', { exact: true })).toBeVisible();
       await page.getByRole('button', { name: 'Close' }).click();
 
@@ -70,6 +70,84 @@ test.describe(
       await page.waitForTimeout(5);
 
       await expect(page.getByText('Azure Business', { exact: false })).not.toBeVisible();
+    });
+
+    test('Should show basics tab for consumption workflow when it is create view and tabs to be enabled.', async ({ page }) => {
+      await page.goto('/templates');
+      await page.getByText('Local', { exact: true }).click();
+      await page.getByText('Consumption', { exact: true }).click();
+      await page.getByText('Create View', { exact: true }).click();
+      await page.getByLabel('Categories').click();
+      await page.getByText('Mock', { exact: true }).click();
+      await page.getByText('[Mock] Simple Parameters', { exact: false }).click();
+      await page.getByRole('button', { name: 'Use this template' }).click();
+      await page.getByRole('tab', { name: 'Basics' }).click();
+      await expect(page.getByText('Workflow name', { exact: true })).toBeVisible();
+      await expect(page.getByText('State type')).not.toBeVisible();
+
+      await page.getByRole('button', { name: 'Next' }).click();
+      await page.getByRole('tab', { name: 'Review + create' }).click();
+    });
+
+    test('Should show resource selection in basics tab for consumption workflow when it is create view.', async ({ page }) => {
+      await page.goto('/templates');
+      await page.getByText('Local', { exact: true }).click();
+      await page.getByText('Consumption', { exact: true }).click();
+      await page.getByText('Create View', { exact: true }).click();
+      await page.getByText('Resource Selection', { exact: true }).click();
+      await page.getByLabel('Categories').click();
+      await page.getByText('Mock', { exact: true }).click();
+      await page.getByText('[Mock] Simple Parameters', { exact: false }).click();
+
+      await page.getByRole('button', { name: 'Use this template' }).click();
+      await page.getByRole('tab', { name: 'Basics' }).click();
+      await expect(page.getByText('Subscription 1', { exact: true })).toBeVisible();
+      await expect(page.getByText('SecondRG', { exact: true })).toBeVisible();
+      await expect(page.getByText('East US', { exact: true })).toBeVisible();
+      await expect(page.getByText('Workflow name', { exact: true })).toBeVisible();
+
+      await page.getByRole('button', { name: 'Next' }).click();
+      await page.getByRole('tab', { name: 'Review + create' }).click();
+
+      await page.getByRole('tab', { name: 'Basics' }).click();
+      await page.getByRole('button', { name: 'Close' }).click();
+      await page.getByRole('combobox', { name: 'Gallery' }).click();
+      await page.getByText('Simple Parameters', { exact: true }).click();
+      await page.waitForTimeout(10);
+
+      await page.getByRole('button', { name: 'Use this template' }).click();
+      await page.getByRole('tab', { name: 'Basics' }).click();
+      await expect(page.getByText('Subscription 1', { exact: true })).toBeVisible();
+      await expect(page.getByText('SecondRG', { exact: true })).toBeVisible();
+      await expect(page.getByText('East US', { exact: true })).toBeVisible();
+      await expect(page.getByText('Workflow name', { exact: true })).toBeVisible();
+
+      await page.getByRole('button', { name: 'Next' }).click();
+      await page.getByRole('tab', { name: 'Review + create' }).click();
+    });
+
+    test('Should disable navigation is resource selection in basics tab is invalid.', async ({ page }) => {
+      await page.goto('/templates');
+      await page.getByText('Local', { exact: true }).click();
+      await page.getByText('Consumption', { exact: true }).click();
+      await page.getByText('Create View', { exact: true }).click();
+      await page.getByText('Resource Selection', { exact: true }).click();
+      await page.getByLabel('Categories').click();
+      await page.getByText('Mock', { exact: true }).click();
+      await page.getByText('[Mock] Simple Parameters', { exact: false }).click();
+
+      await page.getByRole('button', { name: 'Use this template' }).click();
+      await page.getByRole('tab', { name: 'Basics' }).click();
+      await page.getByText('Subscription 1', { exact: true }).click();
+      await page.getByText('Subscription 2', { exact: true }).click();
+
+      await expect(page.getByText('Please select a valid resource', { exact: false })).toBeVisible();
+
+      const button = await page.getByRole('button', { name: 'Next' });
+      expect(button).toBeDisabled();
+
+      const tab = await page.getByRole('tab', { name: 'Parameters' });
+      await expect(tab).toBeDisabled();
     });
   }
 );
