@@ -47,6 +47,10 @@ vi.mock('fs-extra', () => ({
   pathExists: vi.fn(() => Promise.resolve()),
 }));
 
+vi.mock('child_process');
+
+vi.mock('util');
+
 vi.mock('axios');
 
 vi.mock('vscode', () => ({

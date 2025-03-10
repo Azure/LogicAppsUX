@@ -1277,24 +1277,23 @@ export async function updateSolutionWithProject(testsDirectory: string, logicApp
  * Validates that the workflow file belongs to the expected project folder.
  * Logs telemetry if the workflow is not within the project folder and throws an error.
  * @param projectPath - The absolute file system path of the project.
- * @param workflowUri - The vscode.Uri of the workflow file (e.g. a workflow.json in a workflow folder).
+ * @param workflowPath - The workflow file path.
  * @param telemetryContext - (Optional) The telemetry or action context for logging events.
  * @throws {Error} Throws an error if the workflow file is not inside the project folder.
  */
-export function validateWorkflowNode(projectPath: string, workflowUri: vscode.Uri, telemetryContext?: any): void {
-  const workflowFilePath = workflowUri.fsPath || workflowUri.path;
-  if (!workflowFilePath) {
+export function validateWorkflowPath(projectPath: string, workflowPath: string, telemetryContext?: any): void {
+  if (!workflowPath) {
     if (telemetryContext) {
       logTelemetry(telemetryContext, {
-        validationError: 'invalidWorkflowUri',
+        validationError: 'undefinedWorkflowPath',
       });
     }
-    throw new Error(localize('error.invalidWorkflowUri', 'Unable to determine the file system path from the provided workflow URI.'));
+    throw new Error(localize('error.undefinedWorkflowPath', 'The provided workflow path is undefined.'));
   }
 
   // Normalize both paths for fair comparison.
   const normalizedProjectPath = path.normalize(projectPath).toLowerCase();
-  const normalizedWorkflowPath = path.normalize(workflowFilePath).toLowerCase();
+  const normalizedWorkflowPath = path.normalize(workflowPath).toLowerCase();
 
   // Use path.relative to determine if the workflow path is inside the project folder.
   const relativePath = path.relative(normalizedProjectPath, normalizedWorkflowPath);

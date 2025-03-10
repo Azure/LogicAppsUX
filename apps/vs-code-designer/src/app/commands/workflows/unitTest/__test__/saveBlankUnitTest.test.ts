@@ -3,6 +3,8 @@ import { describe, test, expect, beforeEach, afterEach, vi } from 'vitest';
 import * as vscode from 'vscode';
 import * as fs from 'fs-extra';
 import * as path from 'path';
+import * as util from 'util';
+import * as childProcess from 'child_process';
 
 // Import the function under test and the utility modules
 import { saveBlankUnitTest } from '../saveBlankUnitTest';
@@ -52,6 +54,8 @@ describe('saveBlankUnitTest', () => {
     foundTriggerMocks: {},
   };
 
+  let updateSolutionWithProjectSpy: any;
+
   beforeEach(() => {
     // Stub utility functions used in saveBlankUnitTest
     vi.spyOn(workspaceUtils, 'getWorkspaceFolder').mockResolvedValue(dummyWorkspaceFolder);
@@ -59,6 +63,7 @@ describe('saveBlankUnitTest', () => {
     vi.spyOn(unitTestUtils, 'parseUnitTestOutputs').mockResolvedValue({} as any);
     vi.spyOn(unitTestUtils, 'selectWorkflowNode').mockResolvedValue(dummyWorkflowNodeUri);
     vi.spyOn(unitTestUtils, 'promptForUnitTestName').mockResolvedValue(dummyUnitTestName);
+    vi.spyOn(unitTestUtils, 'validateWorkflowPath').mockResolvedValue();
     vi.spyOn(unitTestUtils, 'getUnitTestPaths').mockReturnValue(dummyPaths);
     vi.spyOn(unitTestUtils, 'processAndWriteMockableOperations').mockResolvedValue(dummyMockOperations);
 
@@ -88,6 +93,11 @@ describe('saveBlankUnitTest', () => {
     vi.spyOn(unitTestUtils, 'ensureCsproj').mockResolvedValue();
     vi.spyOn(workspaceUtils, 'ensureDirectoryInWorkspace').mockResolvedValue();
     vi.spyOn(ext.outputChannel, 'appendLog').mockImplementation(() => {});
+
+    // Stub the methods used in updateSolutionWithProject
+    updateSolutionWithProjectSpy = vi.spyOn(unitTestUtils, 'updateSolutionWithProject');
+    vi.spyOn(util, 'promisify').mockImplementation((fn) => fn);
+    vi.spyOn(childProcess, 'exec').mockResolvedValue(new childProcess.ChildProcess());
   });
 
   afterEach(() => {
@@ -105,6 +115,9 @@ describe('saveBlankUnitTest', () => {
     expect(fs.ensureDir).toHaveBeenCalled();
     // Verify that the backend process was invoked via callWithTelemetryAndErrorHandling
     expect(azextUtils.callWithTelemetryAndErrorHandling).toHaveBeenCalled();
+
+    expect(updateSolutionWithProjectSpy).toHaveBeenCalledOnce();
+    expect(updateSolutionWithProjectSpy).not.toThrowError();
   });
 
   test('should not continue if not a valid workspace', async () => {
@@ -114,6 +127,7 @@ describe('saveBlankUnitTest', () => {
     await saveBlankUnitTest(dummyContext, dummyNode, dummyUnitTestDefinition);
     expect(unitTestUtils.promptForUnitTestName).toHaveBeenCalledTimes(0);
     expect(unitTestUtils.logTelemetry).toHaveBeenCalledWith(dummyContext, expect.objectContaining({ multiRootWorkspaceValid: 'false' }));
+    expect(updateSolutionWithProjectSpy).not.toHaveBeenCalled();
   });
 
   test('should log an error and call handleError when an exception occurs', async () => {
@@ -124,5 +138,6 @@ describe('saveBlankUnitTest', () => {
 
     // Verify that the error logging function was called
     expect(unitTestUtils.handleError).toHaveBeenCalled();
+    expect(updateSolutionWithProjectSpy).not.toHaveBeenCalled();
   });
 });
