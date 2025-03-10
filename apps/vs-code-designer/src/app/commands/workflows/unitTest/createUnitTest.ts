@@ -20,6 +20,8 @@ import {
   processAndWriteMockableOperations,
   promptForUnitTestName,
   selectWorkflowNode,
+  updateSolutionWithProject,
+  validateWorkflowPath,
 } from '../../../utils/unitTests';
 import { tryGetLogicAppProjectRoot } from '../../../utils/verifyIsProject';
 import { ensureDirectoryInWorkspace, getWorkflowNode, getWorkspaceFolder } from '../../../utils/workspace';
@@ -73,6 +75,12 @@ export async function createUnitTest(
     // Determine workflow node
     const workflowNode = node ? (getWorkflowNode(node) as vscode.Uri) : await selectWorkflowNode(context, projectPath);
 
+    try {
+      validateWorkflowPath(projectPath, workflowNode.fsPath);
+    } catch (error) {
+      vscode.window.showErrorMessage(`Workflow validation failed: ${error.message}`);
+      return;
+    }
     // Get workflow name and prompt for unit test name
     const workflowName = path.basename(path.dirname(workflowNode.fsPath));
     const unitTestName = await promptForUnitTestName(context, projectPath, workflowName);
@@ -287,6 +295,14 @@ async function generateUnitTestFromRun(
     );
     logTelemetry(context, { unitTestGenerationStatus: 'Success' });
     context.telemetry.measurements.generateCodefulUnitTestMs = Date.now() - startTime;
+    try {
+      const csprojFilePath = path.join(paths.logicAppTestFolderPath, `${paths.logicAppName}.csproj`);
+
+      ext.outputChannel.appendLog(`Updating solution in tests folder: ${paths.testsDirectory}`);
+      await updateSolutionWithProject(paths.testsDirectory, csprojFilePath);
+    } catch (solutionError) {
+      ext.outputChannel.appendLog(`Failed to update solution: ${solutionError}`);
+    }
   } catch (methodError) {
     context.telemetry.properties.unitTestGenerationStatus = 'Failed';
     const errorMessage = parseErrorBeforeTelemetry(methodError);
