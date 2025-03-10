@@ -107,7 +107,7 @@ export async function getWorkspaceFolder(
   context: IActionContext,
   message?: string,
   skipPromptOnMultipleFolders?: boolean
-): Promise<vscode.WorkspaceFolder | string | undefined> {
+): Promise<vscode.WorkspaceFolder | undefined> {
   const promptMessage: string = message ?? localize('noWorkspaceWarning', 'You must have a project open to create a workflow.');
   let folder: vscode.WorkspaceFolder | undefined;
   if (!vscode.workspace.workspaceFolders || vscode.workspace.workspaceFolders.length === 0) {
