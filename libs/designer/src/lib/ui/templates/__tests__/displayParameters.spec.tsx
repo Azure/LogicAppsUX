@@ -13,7 +13,8 @@ import { ReactQueryProvider } from '../../../core/ReactQueryProvider';
 describe('ui/templates/DisplayParameters', () => {
   let store: AppStore;
   let templateSliceData: TemplateState;
-  let template1Manifest: Template.Manifest;
+  let template1Manifest: Template.TemplateManifest;
+  let workflow1Manifest: Template.WorkflowManifest;
   let param1DefaultValue: string;
   let param2DefaultValue: string;
   const manifestService = {
@@ -24,24 +25,37 @@ describe('ui/templates/DisplayParameters', () => {
   beforeAll(() => {
     param1DefaultValue = 'default value for param 1';
     param2DefaultValue = 'boolean';
+    param1DefaultValue = 'default value for param 1';
     template1Manifest = {
+      id: 'template1Manifest',
       title: 'Template 1',
-      description: 'Template 1 Description',
-      tags: [],
-      details: {},
-      images: {},
+      summary: 'Template 1 Description',
       skus: ['standard', 'consumption'],
+      workflows: {
+        default: { name: 'default' },
+      },
+      details: {
+        By: '',
+        Type: '',
+        Category: '',
+      },
+    };
+
+    workflow1Manifest = {
+      id: 'default',
+      title: 'Template 1',
+      summary: 'Template 1 Description',
       kinds: ['stateful', 'stateless'],
       artifacts: [
         {
           type: 'workflow',
           file: 'workflow.json',
         },
-        {
-          type: 'description',
-          file: 'description.md',
-        },
       ],
+      images: {
+        light: '',
+        dark: '',
+      },
       connections: {},
       parameters: [
         {
@@ -70,16 +84,32 @@ describe('ui/templates/DisplayParameters', () => {
 
     templateSliceData = {
       templateName: template1Manifest.title,
-      workflows: {},
+      workflows: {
+        default: {
+          id: 'default',
+          workflowName: '',
+          kind: undefined,
+          manifest: workflow1Manifest,
+          workflowDefinition: {
+            $schema: 'https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#',
+            contentVersion: '',
+          },
+          errors: {
+            workflow: undefined,
+            kind: undefined,
+          },
+          connectionKeys: [],
+        },
+      },
       manifest: template1Manifest,
-      parameterDefinitions: template1Manifest.parameters?.reduce((result: Record<string, Template.ParameterDefinition>, parameter) => {
+      parameterDefinitions: workflow1Manifest.parameters?.reduce((result: Record<string, Template.ParameterDefinition>, parameter) => {
         result[parameter.name] = {
           ...parameter,
           value: parameter.default,
         };
         return result;
       }, {}),
-      connections: template1Manifest.connections,
+      connections: workflow1Manifest.connections,
       errors: {
         parameters: {},
         connections: undefined,
@@ -98,7 +128,7 @@ describe('ui/templates/DisplayParameters', () => {
       { store }
     );
 
-    const parameter1 = template1Manifest?.parameters[0];
+    const parameter1 = workflow1Manifest?.parameters[0];
     expect(screen.getByText(parameter1.displayName)).toBeDefined();
     expect(screen.getByText(parameter1.type)).toBeDefined();
     expect(screen.getAllByDisplayValue(param1DefaultValue)).toBeDefined();
@@ -113,7 +143,7 @@ describe('ui/templates/DisplayParameters', () => {
       { store }
     );
 
-    const parameter2 = template1Manifest?.parameters[1];
+    const parameter2 = workflow1Manifest?.parameters[1];
 
     expect(screen.getByText(parameter2.displayName)).toBeDefined();
     expect(screen.getByText(parameter2.type)).toBeDefined();
@@ -140,7 +170,7 @@ describe('ui/templates/DisplayParameters', () => {
       { store }
     );
 
-    const parameter3 = template1Manifest?.parameters[2];
+    const parameter3 = workflow1Manifest?.parameters[2];
 
     expect(screen.getByText(parameter3.displayName)).toBeDefined();
     expect(screen.getByText(parameter3.type)).toBeDefined();
@@ -201,7 +231,7 @@ describe('ui/templates/DisplayParameters', () => {
       { store }
     );
 
-    const parameter1 = template1Manifest?.parameters[0];
+    const parameter1 = workflow1Manifest?.parameters[0];
     expect(screen.getByText(parameter1.displayName)).toBeDefined();
     expect(screen.getByText(parameter1.type)).toBeDefined();
     expect(screen.getByRole('combobox')).toBeDefined();
@@ -267,7 +297,7 @@ describe('ui/templates/DisplayParameters', () => {
       { store }
     );
 
-    const parameter1 = template1Manifest?.parameters[0];
+    const parameter1 = workflow1Manifest?.parameters[0];
     expect(screen.getByText(parameter1.displayName)).toBeDefined();
     expect(screen.getByText(parameter1.type)).toBeDefined();
     expect(screen.getAllByRole('button').find((button) => button.ariaLabel === 'Open folder')).toBeDefined();

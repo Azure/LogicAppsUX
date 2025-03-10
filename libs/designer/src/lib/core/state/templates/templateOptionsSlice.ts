@@ -5,6 +5,7 @@ import { initializeTemplateServices } from '../../actions/bjsworkflow/templates'
 
 export interface TemplateOptionsState {
   servicesInitialized: boolean;
+  enableResourceSelection?: boolean;
   viewTemplateDetails?: Template.ViewTemplateDetails;
 }
 
@@ -19,6 +20,9 @@ export const templateOptionsSlice = createSlice({
     setViewTemplateDetails: (state, action: PayloadAction<Template.ViewTemplateDetails>) => {
       state.viewTemplateDetails = action.payload;
     },
+    setEnableResourceSelection: (state, action: PayloadAction<boolean>) => {
+      state.enableResourceSelection = action.payload;
+    },
   },
   extraReducers: (builder) => {
     builder.addCase(initializeTemplateServices.fulfilled, (state, action) => {
@@ -27,5 +31,5 @@ export const templateOptionsSlice = createSlice({
   },
 });
 
-export const { setViewTemplateDetails } = templateOptionsSlice.actions;
+export const { setViewTemplateDetails, setEnableResourceSelection } = templateOptionsSlice.actions;
 export default templateOptionsSlice.reducer;
