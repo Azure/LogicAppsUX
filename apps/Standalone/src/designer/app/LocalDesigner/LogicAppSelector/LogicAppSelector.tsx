@@ -27,6 +27,9 @@ const fileOptions = [
   { key: 'simpleForeach.json', text: 'ForEach' },
   // { key: 'Scoped.json', text: 'Scoped' },
 
+  // Agent
+  { key: 'Agent.json', text: 'Agent' },
+
   // Run-After
   { key: 'divider_2', text: '-', itemType: DropdownMenuItemType.Divider },
   { key: 'RunAfterHeader', text: 'Run After Testing Workflows', itemType: DropdownMenuItemType.Header },
