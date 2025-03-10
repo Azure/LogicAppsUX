@@ -50,6 +50,20 @@ export const DevToolbox = ({ templatesList = [] }: { templatesList?: { key: stri
     [dispatch]
   );
 
+  const changeCreateView = useCallback(
+    (_: unknown, checked?: boolean) => {
+      dispatch(workflowLoaderSlice.actions.setCreateView(!!checked));
+    },
+    [dispatch]
+  );
+
+  const changeResourceSelection = useCallback(
+    (_: unknown, checked?: boolean) => {
+      dispatch(workflowLoaderSlice.actions.setEnableResourceSelection(!!checked));
+    },
+    [dispatch]
+  );
+
   const isConsumption = useHostingPlan() === 'consumption';
   const armToken = environment.armToken;
 
@@ -81,6 +95,12 @@ export const DevToolbox = ({ templatesList = [] }: { templatesList?: { key: stri
                       style={{ margin: '0 12px 12px 0', width: '250px' }}
                     />
                     <Checkbox label="Use Endpoint" onChange={changeEndpointUsage} styles={{ root: { margin: '30px 0 0 12px' } }} />
+                    <Checkbox label="Create View" onChange={changeCreateView} styles={{ root: { margin: '30px 0 0 12px' } }} />
+                    <Checkbox
+                      label="Resource Selection"
+                      onChange={changeResourceSelection}
+                      styles={{ root: { margin: '30px 0 0 12px' } }}
+                    />
                   </StackItem>
                   <StackItem style={{ width: '100%' }}>
                     <SourceSettings showHistoryButton={false} showHybridPlan={false} />
