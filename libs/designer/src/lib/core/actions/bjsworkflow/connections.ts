@@ -31,6 +31,7 @@ import {
   ResourceIdentityType,
   optional,
   isHiddenConnectionParameter,
+  getConnectionParametersWithType,
   ConnectionParameterTypes,
   equals,
   ConnectionReferenceKeyFormat,
@@ -365,63 +366,11 @@ function needsAuth(connector?: Connector): boolean {
   return getConnectionParametersWithType(connector, ConnectionParameterTypes.oauthSetting).length > 0;
 }
 
-export function getAuthRedirect(connector?: Connector): string | undefined {
-  if (!connector) {
-    return undefined;
-  }
-  const authParameters = getConnectionParametersWithType(connector, ConnectionParameterTypes.oauthSetting);
-  if (authParameters?.[0]) {
-    return authParameters?.[0].oAuthSettings?.redirectUrl;
-  }
-  return undefined;
-}
-
-export function isFirstPartyConnector(connector: Connector): boolean {
-  const oauthParameters = getConnectionParametersWithType(connector, ConnectionParameterTypes.oauthSetting);
-
-  return (
-    !!oauthParameters &&
-    oauthParameters.length > 0 &&
-    !!oauthParameters[0].oAuthSettings &&
-    !!oauthParameters[0].oAuthSettings.properties &&
-    equals(oauthParameters[0].oAuthSettings.properties.IsFirstParty, 'true')
-  );
-}
-
-export function getConnectionParametersWithType(connector: Connector, connectionParameterType: string): ConnectionParameter[] {
-  if (connector && connector.properties) {
-    const connectionParameters =
-      connector.properties.connectionParameterSets !== undefined
-        ? _getConnectionParameterSetParametersUsingType(connector, connectionParameterType)
-        : connector.properties.connectionParameters;
-    if (!connectionParameters) {
-      return [];
-    }
-    return Object.keys(connectionParameters || {})
-      .filter((connectionParameterKey) => !isHiddenConnectionParameter(connectionParameters, connectionParameterKey))
-      .map((connectionParameterKey) => connectionParameters[connectionParameterKey])
-      .filter((connectionParameter) => equals(connectionParameter.type, connectionParameterType));
-  }
-
-  return [];
-}
-
-function _getConnectionParameterSetParametersUsingType(connector: Connector, parameterType: string): Record<string, ConnectionParameter> {
-  for (const parameterSet of connector.properties?.connectionParameterSets?.values ?? []) {
-    for (const parameterKey in parameterSet.parameters) {
-      if (parameterSet.parameters[parameterKey].type === parameterType) {
-        return parameterSet.parameters;
-      }
-    }
-  }
-  return {};
-}
-
-export function hasPrerequisiteConnection(connector: Connector): boolean {
+function hasPrerequisiteConnection(connector: Connector): boolean {
   return getConnectionParametersWithType(connector, ConnectionParameterTypes.connection).length > 0;
 }
 
-export function needsSimpleConnection(connector: Connector): boolean {
+function needsSimpleConnection(connector: Connector): boolean {
   if (!connector) {
     return false;
   }
@@ -441,7 +390,7 @@ export function needsSimpleConnection(connector: Connector): boolean {
   return false;
 }
 
-export function needsConfigConnection(connector: Connector): boolean {
+function needsConfigConnection(connector: Connector): boolean {
   const connectionParameters = connector?.properties?.connectionParameters;
   if (connectionParameters) {
     return Object.keys(connectionParameters)
@@ -455,7 +404,7 @@ export function needsConfigConnection(connector: Connector): boolean {
   return false;
 }
 
-export const SupportedConfigConnectionParameterTypes = [
+const SupportedConfigConnectionParameterTypes = [
   ConnectionParameterTypes.array,
   ConnectionParameterTypes.bool,
   ConnectionParameterTypes.gatewaySetting,
@@ -466,7 +415,7 @@ export const SupportedConfigConnectionParameterTypes = [
   ConnectionParameterTypes.string,
 ];
 
-export function isConfigConnectionParameter(connectionParameter: ConnectionParameter): boolean {
+function isConfigConnectionParameter(connectionParameter: ConnectionParameter): boolean {
   if (connectionParameter && connectionParameter.type) {
     return SupportedConfigConnectionParameterTypes.some((connectionParameterType) => {
       return equals(connectionParameter.type, connectionParameterType);
