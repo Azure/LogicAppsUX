@@ -114,7 +114,7 @@ export async function saveBlankUnitTest(
     try {
       validateWorkflowPath(projectPath, workflowNode.fsPath);
     } catch (error) {
-      vscode.window.showErrorMessage(localize('error.workflowValidation', 'Workflow validation failed: {0}', error.message));
+      vscode.window.showErrorMessage(`Workflow validation failed: ${error.message}`);
       return;
     }
     const workflowName = path.basename(path.dirname(workflowNode.fsPath));

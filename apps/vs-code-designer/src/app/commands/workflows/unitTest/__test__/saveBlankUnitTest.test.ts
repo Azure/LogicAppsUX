@@ -1,4 +1,3 @@
-// saveBlankUnitTest.test.ts
 import { describe, test, expect, beforeEach, afterEach, vi } from 'vitest';
 import * as vscode from 'vscode';
 import * as fs from 'fs-extra';

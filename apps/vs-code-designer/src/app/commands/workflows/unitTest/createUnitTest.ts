@@ -78,7 +78,7 @@ export async function createUnitTest(
     try {
       validateWorkflowPath(projectPath, workflowNode.fsPath);
     } catch (error) {
-      vscode.window.showErrorMessage(localize('error.workflowValidation', 'Workflow validation failed: {0}', error.message));
+      vscode.window.showErrorMessage(`Workflow validation failed: ${error.message}`);
       return;
     }
     // Get workflow name and prompt for unit test name
