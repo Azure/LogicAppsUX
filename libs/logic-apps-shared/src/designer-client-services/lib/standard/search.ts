@@ -74,8 +74,6 @@ export class StandardSearchService extends BaseSearchService {
     const isAzureConnectorsEnabled = this.options.apiHubServiceDetails.subscriptionId !== undefined;
     const filteredApiOperations = isAzureConnectorsEnabled ? response.value : filterAzureConnection(response.value);
 
-    console.log(getClientBuiltInOperations(filterOperation));
-
     return [
       ...filteredApiOperations,
       ...getClientBuiltInOperations(filterOperation),
