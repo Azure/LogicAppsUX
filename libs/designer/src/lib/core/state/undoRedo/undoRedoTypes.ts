@@ -3,6 +3,7 @@ import type { RootState } from '../../store';
 import { updateParameterAndDependencies } from '../../utils/parameters/helper';
 import { updateStaticResults } from '../operation/operationMetadataSlice';
 import {
+  addAgentCondition,
   addEdgeFromRunAfter,
   addNode,
   addSwitchCase,
@@ -41,6 +42,7 @@ export const undoableWorkflowActionTypes = [
   addNode,
   moveNode,
   addSwitchCase,
+  addAgentCondition,
   addForeachToNode.pending,
   pasteNode,
   pasteScopeNode,
