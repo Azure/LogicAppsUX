@@ -37,6 +37,6 @@ export const useStyles = makeStyles({
     paddingTop: '8px',
   },
   detailsText: {
-    color: '#605E5C',
+    color: tokens.colorNeutralForeground2,
   },
 });

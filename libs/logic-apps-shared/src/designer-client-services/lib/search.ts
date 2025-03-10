@@ -27,7 +27,12 @@ export interface ISearchService {
   getCustomOperationsByPage(page: number): Promise<DiscoveryOpArray>;
   getActiveSearchOperations?(searchTerm: string, actionType?: string, runtimeFilter?: string): Promise<DiscoveryOpArray>;
   getBuiltInOperations(): Promise<DiscoveryOpArray>;
-  searchOperations?(searchTerm: string, actionType?: string, runtimeFilter?: string): Promise<DiscoveryOpArray>;
+  searchOperations?(
+    searchTerm: string,
+    actionType?: string,
+    runtimeFilter?: string,
+    additionalFilter?: (operation: DiscoveryOperation<DiscoveryResultTypes>) => boolean
+  ): Promise<DiscoveryOpArray>;
   getRuntimeCategories?(): OperationRuntimeCategory[];
   filterConnector?(connector: Connector, runtimeFilter: string): boolean;
   getOperationById?(operationId: string): Promise<DiscoveryOperation<DiscoveryResultTypes> | undefined>;

@@ -2,7 +2,7 @@ import type { WorkflowNodeType } from '../models/workflowNode';
 import { WORKFLOW_NODE_TYPES } from '../models/workflowNode';
 
 export const isScopeOperation = (s: string): boolean => {
-  return ['scope', 'foreach', 'until', 'if', 'switch'].includes(s.toLowerCase());
+  return ['scope', 'foreach', 'until', 'if', 'switch', 'agent'].includes(s.toLowerCase());
 };
 
 export const isSubGraphNode = (s: WorkflowNodeType): boolean => {

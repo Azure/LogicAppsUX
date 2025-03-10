@@ -2,56 +2,54 @@ import type { AppDispatch, RootState } from '../../../core/state/templates/store
 import { changeCurrentTemplateName } from '../../../core/state/templates/templateSlice';
 import { useDispatch, useSelector } from 'react-redux';
 import { Text } from '@fluentui/react-components';
-import { openQuickViewPanelView } from '../../../core/state/templates/panelSlice';
 import type { IContextualMenuItem, IContextualMenuProps, IDocumentCardStyles } from '@fluentui/react';
-import { DocumentCard, IconButton, Image, Shimmer, ShimmerElementType } from '@fluentui/react';
+import { css, DocumentCard, IconButton, Image } from '@fluentui/react';
 import { ConnectorIcon, ConnectorIconWithName } from '../connections/connector';
-import type { Manifest } from '@microsoft/logic-apps-shared/src/utils/src/lib/models/template';
-import { getUniqueConnectors } from '../../../core/templates/utils/helper';
+import type { Template } from '@microsoft/logic-apps-shared';
+import { getUniqueConnectorsFromConnections } from '../../../core/templates/utils/helper';
+import type { IntlShape } from 'react-intl';
 import { useIntl } from 'react-intl';
-import type { OperationInfo } from '@microsoft/logic-apps-shared';
-import {
-  equals,
-  getBuiltInOperationInfo,
-  isBuiltInOperation,
-  LogEntryLevel,
-  LoggerService,
-  TemplateService,
-} from '@microsoft/logic-apps-shared';
+import { equals, LogEntryLevel, LoggerService } from '@microsoft/logic-apps-shared';
 import MicrosoftIcon from '../../../common/images/templates/microsoft.svg';
-import { Add16Regular, PeopleCommunity16Regular } from '@fluentui/react-icons';
+import { PeopleCommunity16Regular } from '@fluentui/react-icons';
 import { isMultiWorkflowTemplate, loadTemplate } from '../../../core/actions/bjsworkflow/templates';
 import { useMemo } from 'react';
+import { BlankWorkflowTemplateCard } from './blankworklowcard';
+import { LoadingTemplateCard } from './loadingcard';
 
 interface TemplateCardProps {
   templateName: string;
-  isPlaceholder?: boolean;
+  isLightweight?: boolean;
+  blankWorkflowProps?: { isWorkflowEmpty: boolean };
+  cssOverrides?: Record<string, string>;
+  onSelect?: TemplateSelectHandler;
 }
 
+export type TemplateSelectHandler = (templateName: string, isSingleWorkflow: boolean) => void;
 export const maxConnectorsToShow = 5;
-
-const cardStyles: IDocumentCardStyles = {
-  root: { display: 'inline-block', maxWidth: 1000 },
+export const templateCardStyles: IDocumentCardStyles = {
+  root: { display: 'inline-block', height: 220, maxWidth: 1000 },
 };
 
-export const TemplateCard = ({ templateName }: TemplateCardProps) => {
+export const TemplateCard = ({ templateName, isLightweight, blankWorkflowProps, cssOverrides, onSelect }: TemplateCardProps) => {
   const dispatch = useDispatch<AppDispatch>();
   const intl = useIntl();
-  const { templateManifest, workflowAppName, subscriptionId, location } = useSelector((state: RootState) => ({
+  const { templateManifest, workflowAppName } = useSelector((state: RootState) => ({
     templateManifest: state.manifest.availableTemplates?.[templateName],
-    subscriptionId: state.workflow.subscriptionId,
     workflowAppName: state.workflow.workflowAppName,
-    location: state.workflow.location,
   }));
   const isMultiWorkflow = useMemo(() => templateManifest && isMultiWorkflowTemplate(templateManifest), [templateManifest]);
 
+  if (blankWorkflowProps) {
+    return <BlankWorkflowTemplateCard {...blankWorkflowProps} />;
+  }
+
+  if (!templateManifest) {
+    return <LoadingTemplateCard />;
+  }
+
   const intlText = {
     TEMPLATE_LOADING: intl.formatMessage({ defaultMessage: 'Loading....', description: 'Loading text', id: 'cZ60Tk' }),
-    NO_CONNECTORS: intl.formatMessage({
-      defaultMessage: 'This template does not have connectors',
-      description: 'Accessibility text to inform user this template does not contain connectors',
-      id: 'aI9W5L',
-    }),
     COMMUNITY_AUTHORED: intl.formatMessage({
       defaultMessage: 'Community Authored',
       description: 'Label text for community authored templates',
@@ -74,47 +72,19 @@ export const TemplateCard = ({ templateName }: TemplateCardProps) => {
     dispatch(changeCurrentTemplateName(templateName));
     dispatch(loadTemplate({ preLoadedManifest: templateManifest }));
 
-    if (Object.keys(templateManifest?.workflows ?? {}).length === 0) {
-      dispatch(openQuickViewPanelView());
-    }
+    onSelect?.(templateName, !isMultiWorkflow);
   };
 
-  if (!templateManifest) {
-    return <LoadingTemplateCard />;
-  }
-
-  const { title, details, featuredOperations, connections } = templateManifest as Manifest;
-  const connectorsFromConnections = getUniqueConnectors(connections, subscriptionId, location).map((connection) => ({
-    connectorId: connection.connectorId,
-    operationId: undefined,
-  })) as { connectorId: string; operationId: string | undefined }[];
-  const connectorsFeatured = getFeaturedConnectors(featuredOperations);
-  const allConnectors = connectorsFromConnections.concat(connectorsFeatured);
-  const showOverflow = allConnectors.length > maxConnectorsToShow;
-  const connectorsToShow = showOverflow ? allConnectors.slice(0, maxConnectorsToShow) : allConnectors;
-  const overflowList = showOverflow ? allConnectors.slice(maxConnectorsToShow) : [];
-  const onRenderMenuItem = (item: IContextualMenuItem) => (
-    <ConnectorIconWithName
-      connectorId={item.key}
-      operationId={item.data.operationId}
-      classes={{
-        root: 'msla-template-connector-menuitem',
-        icon: 'msla-template-connector-menuitem-icon',
-        text: 'msla-template-connector-menuitem-text',
-      }}
-    />
-  );
-  const onRenderMenuIcon = () => <div style={{ color: 'grey' }}>{`+${overflowList.length}`}</div>;
-  const menuProps: IContextualMenuProps = {
-    items: overflowList.map((info) => ({ key: info.connectorId, text: info.connectorId, data: info, onRender: onRenderMenuItem })),
-    directionalHintFixed: true,
-    className: 'msla-template-card-connector-menu-box',
-  };
-
+  const { title, details } = templateManifest as Template.TemplateManifest;
   const isMicrosoftAuthored = equals(details?.By, 'Microsoft');
 
   return (
-    <DocumentCard className="msla-template-card-wrapper" styles={cardStyles} onClick={onSelectTemplate} aria-label={title}>
+    <DocumentCard
+      className={css('msla-template-card-wrapper', cssOverrides?.['card'])}
+      styles={templateCardStyles}
+      onClick={onSelectTemplate}
+      aria-label={title}
+    >
       <div className="msla-template-card-authored-wrapper">
         <div className="msla-template-card-authored">
           {isMicrosoftAuthored ? (
@@ -134,138 +104,75 @@ export const TemplateCard = ({ templateName }: TemplateCardProps) => {
             {title}
           </Text>
         </div>
-
-        <div className="msla-template-card-footer">
-          <div className="msla-template-card-tags">
-            {['Type', 'Trigger'].map((key: string) => {
-              if (!details[key]) {
-                return null;
-              }
-              return (
-                <Text key={key} size={300} className="msla-template-card-tag">
-                  {details[key]}
-                </Text>
-              );
-            })}
-          </div>
-          <div className="msla-template-card-connectors-list">
-            {connectorsToShow.length > 0 ? (
-              connectorsToShow.map((info) => (
-                <ConnectorIcon
-                  key={info.connectorId}
-                  connectorId={info.connectorId}
-                  operationId={info.operationId}
-                  classes={{ root: 'msla-template-card-connector', icon: 'msla-template-card-connector-icon' }}
-                />
-              ))
-            ) : (
-              <Text className="msla-template-card-connectors-emptyText">{intlText.NO_CONNECTORS}</Text>
-            )}
-            {showOverflow ? (
-              <IconButton className="msla-template-card-connector-overflow" onRenderMenuIcon={onRenderMenuIcon} menuProps={menuProps} />
-            ) : null}
-          </div>
-        </div>
+        {isLightweight ? null : <TemplateFeaturedConnectors manifest={templateManifest} intl={intl} />}
       </div>
     </DocumentCard>
   );
 };
 
-export const BlankWorkflowTemplateCard = ({ isWorkflowEmpty }: { isWorkflowEmpty: boolean }) => {
-  const intl = useIntl();
+const TemplateFeaturedConnectors = ({ manifest, intl }: { manifest: Template.TemplateManifest; intl: IntlShape }) => {
+  const noConnectorsMessage = intl.formatMessage({
+    defaultMessage: 'This template does not have connectors',
+    description: 'Accessibility text to inform user this template does not contain connectors',
+    id: 'aI9W5L',
+  });
+  const { subscriptionId, location } = useSelector((state: RootState) => ({
+    subscriptionId: state.workflow.subscriptionId,
+    location: state.workflow.location,
+  }));
+  const { details, featuredConnectors = [] } = manifest;
+  const allConnectors = getUniqueConnectorsFromConnections(featuredConnectors, subscriptionId, location);
+  const showOverflow = allConnectors.length > maxConnectorsToShow;
+  const connectorsToShow = showOverflow ? allConnectors.slice(0, maxConnectorsToShow) : allConnectors;
+  const overflowList = showOverflow ? allConnectors.slice(maxConnectorsToShow) : [];
 
-  const workflowAppName = useSelector((state: RootState) => state.workflow.workflowAppName);
-
-  const intlText = {
-    BLANK_WORKFLOW: intl.formatMessage({
-      defaultMessage: 'Blank workflow',
-      description: 'Title text for the card that lets users start from a blank workflow',
-      id: 'pykp8c',
-    }),
-    BLANK_WORKFLOW_DESCRIPTION: intl.formatMessage({
-      defaultMessage: 'Start with an empty workflow to build your integration solution.',
-      description: 'Label text for the card that lets users start from a blank workflow',
-      id: 'kcWgxU',
-    }),
-    REPLACE_WITH_BLANK_WORKFLOW: intl.formatMessage({
-      defaultMessage: 'Replace your existing workflow with an empty workflow to rebuild your integration solution.',
-      description: 'Label text for the card that lets users replace the current workflow with blank workflow',
-      id: 'boxBWI',
-    }),
-  };
-
-  const onBlankWorkflowClick = async () => {
-    LoggerService().log({
-      level: LogEntryLevel.Trace,
-      area: 'Templates.TemplateCard.Blank',
-      message: 'Blank workflow is selected',
-      args: [workflowAppName],
-    });
-    await TemplateService()?.onAddBlankWorkflow();
-  };
-
-  return (
-    <DocumentCard
-      className="msla-template-card-wrapper"
-      styles={cardStyles}
-      onClick={onBlankWorkflowClick}
-      aria-label={intlText.BLANK_WORKFLOW}
-    >
-      <div className="msla-blank-template-card">
-        <Add16Regular className="msla-blank-template-card-add-icon" />
-        <Text size={400} weight="semibold" align="center" className="msla-template-card-title">
-          {intlText.BLANK_WORKFLOW}
-        </Text>
-        <Text size={400} align="center" className="msla-blank-template-card-description">
-          {isWorkflowEmpty ? intlText.BLANK_WORKFLOW_DESCRIPTION : intlText.REPLACE_WITH_BLANK_WORKFLOW}
-        </Text>
-      </div>
-    </DocumentCard>
+  const onRenderMenuItem = (item: IContextualMenuItem) => (
+    <ConnectorIconWithName
+      connectorId={item.key}
+      operationId={item.data.operationId}
+      classes={{
+        root: 'msla-template-connector-menuitem',
+        icon: 'msla-template-connector-menuitem-icon',
+        text: 'msla-template-connector-menuitem-text',
+      }}
+    />
   );
-};
+  const onRenderMenuIcon = () => <div style={{ color: 'grey' }}>{`+${overflowList.length}`}</div>;
+  const menuProps: IContextualMenuProps = {
+    items: overflowList.map((info) => ({ key: info.id, text: info.id, data: info, onRender: onRenderMenuItem })),
+    directionalHintFixed: true,
+    className: 'msla-template-card-connector-menu-box',
+  };
 
-const LoadingTemplateCard = () => {
   return (
-    <DocumentCard className="msla-template-card-wrapper" styles={cardStyles}>
-      <div className="msla-template-card-authored-wrapper">
-        <div className="msla-template-card-authored">
-          <Shimmer style={{ width: '100%' }} width={'100%'} />
-        </div>
+    <div className="msla-template-card-footer">
+      <div className="msla-template-card-tags">
+        <Text size={300} className="msla-template-card-tag">
+          {details.Type}
+        </Text>
+        {details.Trigger ? (
+          <Text size={300} className="msla-template-card-tag">
+            {details.Trigger}
+          </Text>
+        ) : null}
       </div>
-
-      <div className="msla-template-card-body">
-        <div className="msla-template-card-title-wrapper">
-          <br />
-          <Shimmer width={'100%'} />
-          <br />
-          <Shimmer width={'70%'} />
-        </div>
-        <div className="msla-template-card-footer">
-          <div className="msla-template-card-connectors-list">
-            <Shimmer
-              shimmerElements={[
-                { type: ShimmerElementType.circle },
-                { type: ShimmerElementType.gap },
-                { type: ShimmerElementType.circle },
-                { type: ShimmerElementType.gap },
-                { type: ShimmerElementType.circle },
-              ]}
+      <div className="msla-template-card-connectors-list">
+        {connectorsToShow.length > 0 ? (
+          connectorsToShow.map((info) => (
+            <ConnectorIcon
+              key={info.id}
+              connectorId={info.id}
+              operationId={info.id}
+              classes={{ root: 'msla-template-card-connector', icon: 'msla-template-card-connector-icon' }}
             />
-          </div>
-        </div>
+          ))
+        ) : (
+          <Text className="msla-template-card-connectors-emptyText">{noConnectorsMessage}</Text>
+        )}
+        {showOverflow ? (
+          <IconButton className="msla-template-card-connector-overflow" onRenderMenuIcon={onRenderMenuIcon} menuProps={menuProps} />
+        ) : null}
       </div>
-    </DocumentCard>
+    </div>
   );
-};
-
-export const getFeaturedConnectors = (operationInfos: { type: string; kind?: string }[] = []): OperationInfo[] => {
-  return operationInfos
-    .map((info) => {
-      if (isBuiltInOperation(info)) {
-        return getBuiltInOperationInfo(info, /* isTrigger */ false);
-      }
-
-      return undefined;
-    })
-    .filter((info) => info !== undefined) as OperationInfo[];
 };

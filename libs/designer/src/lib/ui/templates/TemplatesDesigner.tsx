@@ -1,11 +1,11 @@
 import type { RootState } from '../../core/state/templates/store';
 import { useSelector } from 'react-redux';
-import { TemplatesList } from './templateslist';
 import type { LogicAppsV2, Template } from '@microsoft/logic-apps-shared';
-import type { TemplateDetailFilterType } from './filters/templateFilters';
+import type { TemplateDetailFilterType } from './filters/templatesearchfilters';
 import type { ConnectionMapping } from '../../core/state/templates/workflowSlice';
 import { isMultiWorkflowTemplate } from '../../core/actions/bjsworkflow/templates';
 import { TemplateOverview } from './templateoverview';
+import { TemplatesFullGalleryView } from './gallery/templatesfullgalleryview';
 
 export type CreateWorkflowHandler = (
   workflows: {
@@ -30,6 +30,6 @@ export const TemplatesDesigner = (props: TemplatesDesignerProps) => {
   return manifest && isMultiWorkflowTemplate(manifest) ? (
     <TemplateOverview createWorkflow={props.createWorkflowCall} />
   ) : (
-    <TemplatesList {...props} />
+    <TemplatesFullGalleryView {...props} />
   );
 };

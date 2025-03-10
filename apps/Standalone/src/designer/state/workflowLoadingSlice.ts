@@ -35,6 +35,7 @@ export interface WorkflowLoadingState {
     stringOverrides?: Record<string, string>; // string overrides for localization
     maxStateHistorySize?: number; // maximum number of states to save in history for undo/redo
     collapseGraphsByDefault?: boolean; // collapse scope by default
+    enableAgenticLoops?: boolean;
   };
   showPerformanceDebug?: boolean;
   runFiles: any[];
@@ -63,6 +64,7 @@ const initialState: WorkflowLoadingState = {
     displayRuntimeInfo: true,
     maxStateHistorySize: 0,
     collapseGraphsByDefault: false,
+    enableAgenticLoops: false,
   },
   showPerformanceDebug: false,
   runFiles: [],
@@ -214,6 +216,9 @@ export const workflowLoadingSlice = createSlice({
     setQueryCachePersist: (state, action: PayloadAction<boolean>) => {
       state.queryCachePersist = action.payload;
     },
+    setEnableAgenticLoops: (state, action: PayloadAction<boolean>) => {
+      state.hostOptions.enableAgenticLoops = action.payload;
+    },
   },
   extraReducers: (builder) => {
     builder.addCase(loadWorkflow.fulfilled, (state, action: PayloadAction<WorkflowPayload | null>) => {
@@ -263,6 +268,7 @@ export const {
   setShowPerformanceDebug,
   setStringOverrides,
   setQueryCachePersist,
+  setEnableAgenticLoops,
 } = workflowLoadingSlice.actions;
 
 export default workflowLoadingSlice.reducer;

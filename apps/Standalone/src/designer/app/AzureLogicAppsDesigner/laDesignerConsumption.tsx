@@ -35,7 +35,7 @@ import {
   StandardCustomCodeService,
   BaseUserPreferenceService,
 } from '@microsoft/logic-apps-shared';
-import type { CustomCodeFileNameMapping, Workflow } from '@microsoft/logic-apps-designer';
+import type { ConnectionReferences, CustomCodeFileNameMapping, Workflow, WorkflowParameter } from '@microsoft/logic-apps-designer';
 import {
   DesignerProvider,
   BJSWorkflowProvider,
@@ -87,32 +87,29 @@ const DesignerEditorConsumption = () => {
     isError: isWorklowAndArtifactsError,
     error: workflowAndArtifactsError,
   } = useWorkflowAndArtifactsConsumption(workflowId);
+  const { data: runInstanceData } = useRunInstanceConsumption(workflowName, appId, runId);
+
   const { data: tenantId } = useCurrentTenantId();
   const { data: objectId } = useCurrentObjectId();
   const [designerID, setDesignerID] = useState(guid());
 
-  const {
-    workflow: baseWorkflow,
-    connectionReferences,
-    parameters,
-  } = useMemo(() => getDataForConsumption(workflowAndArtifactsData), [workflowAndArtifactsData]);
-
-  const { data: runInstanceData } = useRunInstanceConsumption(workflowName, appId, runId);
-  const [runWorkflow, setRunWorkflow] = useState<any>();
+  const [workflow, setWorkflow] = useState<any>();
+  const [connectionReferences, setConnectionReferences] = useState<ConnectionReferences>({});
+  const [parameters, setParameters] = useState<Record<string, WorkflowParameter>>({});
 
   useEffect(() => {
-    if (runInstanceData && isMonitoringView) {
-      const appInstance = {
-        ...baseWorkflow,
-        definition: runInstanceData.properties.workflow.properties.definition,
-      };
-      setRunWorkflow(appInstance);
+    const data = runInstanceData?.properties.workflow ?? workflowAndArtifactsData;
+    if (!data) {
+      return;
     }
-  }, [runInstanceData, baseWorkflow, isMonitoringView]);
 
-  const workflow = useMemo(() => runWorkflow ?? baseWorkflow, [runWorkflow, baseWorkflow]);
+    const { workflow: _workflow, connectionReferences: _connectionReferences, parameters: _parameters } = getDataForConsumption(data);
+    setWorkflow(_workflow);
+    setConnectionReferences(_connectionReferences);
+    setParameters(_parameters);
+  }, [workflowAndArtifactsData, runInstanceData]);
 
-  const [definition, setDefinition] = useState(workflow.definition);
+  const [definition, setDefinition] = useState<any>();
   const [workflowDefinitionId, setWorkflowDefinitionId] = useState(guid());
   const [designerView, setDesignerView] = useState(true);
   const codeEditorRef = useRef<{ getValue: () => string | undefined }>(null);
@@ -132,13 +129,12 @@ const DesignerEditorConsumption = () => {
       if (!services) {
         return;
       }
-      if (!(workflow.definition as any)?.actions) {
+      if (!workflow?.definition?.actions) {
         return;
       }
       setDefinition(workflow.definition);
-      setDesignerView(true);
     })();
-  }, [services, workflow.definition]);
+  }, [workflow, services]);
 
   // Our iframe root element is given a strange padding (not in this repo), this removes it
   useEffect(() => {
@@ -255,7 +251,14 @@ const DesignerEditorConsumption = () => {
         const codeToConvert = JSON.parse(codeEditorRef.current?.getValue() ?? '');
         if (workflowAndArtifactsData) {
           await validateWorkflowConsumption(workflowId, canonicalLocation, workflowAndArtifactsData, codeToConvert);
-          setDefinition(codeToConvert.definition);
+          const {
+            workflow,
+            connectionReferences: _connectionReferences,
+            parameters: _parameters,
+          } = getDataForConsumption({ properties: codeToConvert });
+          setDefinition(workflow.definition);
+          setConnectionReferences(_connectionReferences);
+          setParameters(_parameters);
           setWorkflowDefinitionId(guid());
           setDesignerView(true);
         }
@@ -287,7 +290,7 @@ const DesignerEditorConsumption = () => {
           showPerformanceDebug,
         }}
       >
-        {workflow?.definition ? (
+        {definition ? (
           <BJSWorkflowProvider
             workflow={{
               definition,
