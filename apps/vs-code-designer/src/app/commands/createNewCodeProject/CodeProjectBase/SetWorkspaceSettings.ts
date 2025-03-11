@@ -103,12 +103,6 @@ export class SetWorkspaceSettings extends AzureWizardPromptStep<IProjectWizardCo
       folders: workspaceFolders,
     };
 
-    if (context.isWorkspaceWithFunctions) {
-      workspaceData['settings'] = {
-        'azureFunctions.functionFolderPath': context.functionFolderPath,
-      };
-    }
-
     await fs.writeJSON(context.workspaceCustomFilePath, workspaceData, { spaces: 2 });
   }
 
@@ -134,14 +128,6 @@ export class SetWorkspaceSettings extends AzureWizardPromptStep<IProjectWizardCo
     workspaceFolders.push({ name: logicAppName, path: `./${logicAppName}` });
 
     workspaceContent.folders = [...workspaceContent.folders, ...workspaceFolders];
-
-    // TODO: Support for multiple custom code functions projects
-    if (context.isWorkspaceWithFunctions) {
-      workspaceContent.settings = {
-        ...workspaceContent.settings,
-        'azureFunctions.functionFolderPath': context.functionFolderPath,
-      };
-    }
 
     await fs.writeJSON(context.workspaceCustomFilePath, workspaceContent, { spaces: 2 });
   }

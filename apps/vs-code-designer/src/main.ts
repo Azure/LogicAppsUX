@@ -33,7 +33,7 @@ import type { IActionContext } from '@microsoft/vscode-azext-utils';
 import * as vscode from 'vscode';
 import { convertToWorkspace } from './app/commands/createNewCodeProject/CodeProjectBase/ConvertToWorkspace';
 import TelemetryReporter from '@vscode/extension-telemetry';
-import { buildCodeProject } from './app/commands/createNewCodeProject/CodeProjectBase/BuildCodeProject';
+import { buildCodeProjects } from './app/commands/createNewCodeProject/CodeProjectBase/BuildCodeProjects';
 
 const perfStats = {
   loadStartTime: Date.now(),
@@ -108,7 +108,7 @@ export async function activate(context: vscode.ExtensionContext) {
       }
     );
 
-    await buildCodeProject(activateContext);
+    await buildCodeProjects(activateContext);
 
     context.subscriptions.push(ext.outputChannel);
     context.subscriptions.push(ext.azureAccountTreeItem);
