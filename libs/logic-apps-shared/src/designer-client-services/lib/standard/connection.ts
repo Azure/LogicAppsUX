@@ -216,7 +216,7 @@ export class StandardConnectionService extends BaseConnectionService implements 
         return connection;
       }),
       ...Object.keys(agentConnections).map((key) => {
-        const connection = convertApimConnectionDataToConnection(key, apimConnections[key]);
+        const connection = convertAgentConnectionDataToConnection(key, agentConnections[key]);
         this._connections[connection.id] = connection;
         return connection;
       }),
