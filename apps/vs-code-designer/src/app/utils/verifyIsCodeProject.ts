@@ -22,7 +22,7 @@ export async function isCustomCodeFunctionsProject(folderPath: string): Promise<
   return isCustomCodeNet8Csproj(csprojContent) || isCustomCodeNetFxCsproj(csprojContent);
 }
 
-async function isCustomCodeNet8Csproj(csprojContent: string): Promise<boolean> {
+function isCustomCodeNet8Csproj(csprojContent: string): boolean {
   return (
     csprojContent.includes('<TargetFramework>net8</TargetFramework>') &&
     csprojContent.includes('Microsoft.Azure.Workflows.Webjobs.Sdk') &&
@@ -30,10 +30,10 @@ async function isCustomCodeNet8Csproj(csprojContent: string): Promise<boolean> {
   );
 }
 
-async function isCustomCodeNetFxCsproj(csprojContent: string): Promise<boolean> {
+function isCustomCodeNetFxCsproj(csprojContent: string): boolean {
   return (
     csprojContent.includes('<TargetFramework>net472</TargetFramework>') &&
-    csprojContent.includes('Microsoft.Azure.Workflows.Webjobs.Sdk') &&
+    csprojContent.includes('Microsoft.Azure.Workflows.WebJobs.Sdk') &&
     csprojContent.includes('<LogicAppFolder>')
   );
 }
