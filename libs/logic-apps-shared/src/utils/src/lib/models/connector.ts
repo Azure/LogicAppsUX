@@ -117,6 +117,7 @@ export interface ParameterCredentialMapping {
 
 export interface ConnectionParameterSetUIDefinition {
   description: string;
+  tooltip?: string;
   displayName: string;
 }
 

@@ -27,6 +27,7 @@ import type { IOAuthPopup } from '../oAuth';
 import { OAuthService } from '../oAuth';
 import { getHybridAppBaseRelativeUrl, isHybridLogicApp } from './hybrid';
 import { validateRequiredServiceArguments } from '../../../utils/src/lib/helpers/functions';
+import agentloopConnector from '../standard/manifest/agentLoopConnector';
 
 interface ConnectionAcl {
   id: string;
@@ -172,61 +173,7 @@ export class StandardConnectionService extends BaseConnectionService implements 
       } else {
         const connectorIdKeyword = connectorId.split('/').at(-1);
         if (connectorIdKeyword === 'agent') {
-          return {
-            type: 'AgentConnection',
-            name: 'agent',
-            id: 'connectionProviders/agent',
-            properties: {
-              displayName: 'Agent',
-              iconUri:
-                'https://conn-afd-prod-endpoint-bmc9bqahasf3grgk.b01.azurefd.net/releases/v1.0.1722/1.0.1722.3983/azureopenai/icon.png',
-              brandColor: '#000000',
-              description: "Easily integrate Azure OpenAI's cutting-edge artificial intelligence capabilities into your workflows",
-              capabilities: ['actions'],
-              connectionParameterSets: {
-                uiDefinition: {
-                  displayName: 'Authentication type',
-                  description: 'Type of authentication to use',
-                },
-                values: [
-                  {
-                    name: 'UrlKeyBasedAuthentication',
-                    parameters: {
-                      azureOpenAIResourceName: {
-                        type: 'string',
-                        uiDefinition: {
-                          displayName: 'Azure OpenAI resource name',
-                          description: 'The name of the Azure OpenAI resource that hosts the AI model',
-                          tooltip: 'Provide the Azure OpenAI resource name',
-                          constraints: {
-                            clearText: true,
-                            required: 'true',
-                          },
-                        },
-                      },
-                      azureOpenAIApiKey: {
-                        type: 'securestring',
-                        uiDefinition: {
-                          displayName: 'Azure OpenAI API key',
-                          description: 'The API key to access the Azure OpenAI resource that hosts the AI model',
-                          tooltip: 'Provide the Azure OpenAI API key',
-                          constraints: {
-                            clearText: false,
-                            required: 'true',
-                          },
-                        },
-                      },
-                    },
-                    uiDefinition: {
-                      displayName: 'URL and key-based authentication',
-                      tooltip: 'URL and key-based authentication',
-                      description: 'URL and key-based authentication',
-                    },
-                  },
-                ],
-              },
-            },
-          } as any;
+          return agentloopConnector;
         }
 
         response = await httpClient.get<Connector>({
