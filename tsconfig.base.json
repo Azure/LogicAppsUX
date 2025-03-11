@@ -9,7 +9,7 @@
     "experimentalDecorators": true,
     "noPropertyAccessFromIndexSignature": false,
     "importHelpers": true,
-    "target": "ESNext",
+    "target": "ES2020",
     "module": "esnext",
     "lib": ["esnext", "dom"],
     "skipLibCheck": true,
