@@ -18,7 +18,7 @@ export const getAzureResourceRecursive = async (httpClient: IHttpClient, uri: st
         return await requestPage(nextLink, value);
       }
       return value;
-    } catch (error) {
+    } catch (_error) {
       return value;
     }
   };
@@ -31,6 +31,38 @@ export interface Tenant {
   tenantId: string;
   country: string;
   countryCode: string;
-  displayName: string;
+  displayName?: string;
   domains: string[];
 }
+
+export const fetchAppsByQuery = async (httpClient: IHttpClient, uri: string, subscriptionIds: string[], query: string): Promise<any[]> => {
+  const requestPage = async (value: any[] = [], pageNum = 0, currentSkipToken = ''): Promise<any> => {
+    try {
+      const pageSize = 500;
+      const result: any = await httpClient.post({
+        uri,
+        content: {
+          query,
+          options: {
+            resultFormat: 'ObjectArray',
+            $top: pageSize,
+            $skip: pageSize * pageNum,
+            $skipToken: currentSkipToken,
+          },
+          subscriptions: subscriptionIds,
+        },
+      });
+
+      const $skipToken = result.$skipToken;
+      const newValues = result.data;
+      value.push(...newValues);
+      if ($skipToken && newValues.length !== 0) {
+        return await requestPage(value, pageNum + 1, $skipToken);
+      }
+      return value;
+    } catch (_e) {
+      return value;
+    }
+  };
+  return requestPage();
+};

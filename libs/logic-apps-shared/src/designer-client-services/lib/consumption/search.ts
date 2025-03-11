@@ -64,7 +64,7 @@ export class ConsumptionSearchService extends BaseSearchService {
       // const response = await this.pagedBatchAzureResourceRequests(page, uri, queryParameters, 1);
       const { value } = await this.getAzureResourceByPage(uri, queryParameters, page, 100);
       return value;
-    } catch (error) {
+    } catch (_error) {
       return [];
     }
   }
@@ -76,6 +76,7 @@ export class ConsumptionSearchService extends BaseSearchService {
       ClientOperationsData.composeOperation,
       ClientOperationsData.chunktext,
       ClientOperationsData.parsedocument,
+      ClientOperationsData.parsedocumentwithmetadata,
       OperationsData.inlineCodeOperation,
       OperationsData.flatFileDecodingOperations,
       OperationsData.flatFileEncodingOperations,
@@ -176,7 +177,7 @@ export class ConsumptionSearchService extends BaseSearchService {
         .filter((connector) => connector.properties?.supportedConnectionKinds?.includes('V1'))
         .filter((connector) => connector?.location === location);
       return { nextlink: nextLink, value: filteredValue };
-    } catch (error) {
+    } catch (_error) {
       return { value: [] };
     }
   }

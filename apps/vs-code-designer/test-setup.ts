@@ -38,6 +38,15 @@ vi.mock('fs', () => ({
   mkdirSync: vi.fn(),
   chmodSync: vi.fn(),
   createWriteStream: vi.fn(),
+  dirent: vi.fn().mockImplementation(() => ({
+    isDirectory: vi.fn().mockImplementation(() => {
+      return true;
+    }),
+  })),
+}));
+
+vi.mock('fs-extra', () => ({
+  readdir: vi.fn(() => Promise.resolve()),
 }));
 
 vi.mock('fs-extra', () => ({

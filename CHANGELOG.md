@@ -1,4 +1,96 @@
 # Logic Apps Designer
+## [5.48.0](https://github.com/Azure/LogicAppsUX/compare/v5.47.0...v5.48.0) (2025-03-06)
+
+
+### Features
+
+* **templates:** Adding resource selection feature in basics tab ([#6731](https://github.com/Azure/LogicAppsUX/issues/6731)) ([df84f74](https://github.com/Azure/LogicAppsUX/commit/df84f74a907c1ae33e7b54679b7d07200d05fe8c))
+
+
+### Bug Fixes
+
+* **designer:** Add display name for tenants as optional ([#6733](https://github.com/Azure/LogicAppsUX/issues/6733)) ([8e27ddb](https://github.com/Azure/LogicAppsUX/commit/8e27ddb61604ffc840e21c9c33180d5794772864))
+
+## [5.47.0](https://github.com/Azure/LogicAppsUX/compare/v5.46.0...v5.47.0) (2025-03-05)
+
+
+### Features
+
+* **Data Mapper:** dark theme ([#6697](https://github.com/Azure/LogicAppsUX/issues/6697)) ([1d89042](https://github.com/Azure/LogicAppsUX/commit/1d890429d5643f1ebefa879cc8b3f224aca1ce9a))
+* **designer:** Add secure inputs/outputs by default ([#6678](https://github.com/Azure/LogicAppsUX/issues/6678)) ([87875e0](https://github.com/Azure/LogicAppsUX/commit/87875e091c22919b5431a772d8d2bcd9e861faee))
+* **designer:** Adding Password Masking to Authentication Editors ([#6687](https://github.com/Azure/LogicAppsUX/issues/6687)) ([ca05c91](https://github.com/Azure/LogicAppsUX/commit/ca05c91a8de5a6b18f560792fde31fbe5ae4eb79))
+* **designer:** Support parsedocumentwithmetadat in standard ([#6696](https://github.com/Azure/LogicAppsUX/issues/6696)) ([d3c7c1c](https://github.com/Azure/LogicAppsUX/commit/d3c7c1cdca2f61eef4709934f2e9915a7a5ca98a))
+
+
+### Bug Fixes
+
+* **Data Mapper:** Able to load maps with combination of 'Direct Access' and 'Index' functions ([#6729](https://github.com/Azure/LogicAppsUX/issues/6729)) ([9272fa0](https://github.com/Azure/LogicAppsUX/commit/9272fa0516148b2064f4282bf46969a4d6ed3053))
+* **Designer:** Fixed loop causing rerender in monitoring view ([#6686](https://github.com/Azure/LogicAppsUX/issues/6686)) ([c7c1d87](https://github.com/Azure/LogicAppsUX/commit/c7c1d8786a658895e4b64b1d4ae3c42f2362d801))
+* **standalone:** Update Consumption to Match Portal ([#6726](https://github.com/Azure/LogicAppsUX/issues/6726)) ([64e2a0e](https://github.com/Azure/LogicAppsUX/commit/64e2a0e28d52db6dcb5bbe61088d85b24b9e3f43))
+* **vscode:** Add validation for workspace and logic app name ([#6690](https://github.com/Azure/LogicAppsUX/issues/6690)) ([dc6f825](https://github.com/Azure/LogicAppsUX/commit/dc6f8258957482dee1e47790b6b71690750e164b))
+* **vscode:** Clean dependency installation folder before extracting content ([#6706](https://github.com/Azure/LogicAppsUX/issues/6706)) ([c5012c0](https://github.com/Azure/LogicAppsUX/commit/c5012c0bd7fd8e7dc129f75361f66672ebdf5a07))
+* **vscode:** Fix nuget debug issue introduced with workspace ([#6698](https://github.com/Azure/LogicAppsUX/issues/6698)) ([d37b76f](https://github.com/Azure/LogicAppsUX/commit/d37b76f40aa0a67f8d8e60d792e0f7b21e8cb224))
+* **vscode:** Workspace fixes for empty vscode and designtime directory creation ([#6720](https://github.com/Azure/LogicAppsUX/issues/6720)) ([5145615](https://github.com/Azure/LogicAppsUX/commit/5145615079218b7755228d0d0401fe2b65e2477f))
+
+## [5.46.0](https://github.com/Azure/LogicAppsUX/compare/v5.45.0...v5.46.0) (2025-02-27)
+
+
+### Features
+
+* **templates:** Moving templates loading from template service via storage account ([#6644](https://github.com/Azure/LogicAppsUX/issues/6644)) ([9adfd5b](https://github.com/Azure/LogicAppsUX/commit/9adfd5b75e27e809e48f557c6d4be5db6129ec08))
+
+
+### Bug Fixes
+
+* **vscode:** Fix for adding sql for multiple logic apps in a workspace ([#6673](https://github.com/Azure/LogicAppsUX/issues/6673)) ([8f3fe73](https://github.com/Azure/LogicAppsUX/commit/8f3fe73af9568d666a405715c29ea25a340fbf74))
+
+## [5.45.0](https://github.com/Azure/LogicAppsUX/compare/v5.44.0...v5.45.0) (2025-02-25)
+
+
+### Features
+
+* **VSCode:** added docs around new telemetry collection ([#6662](https://github.com/Azure/LogicAppsUX/issues/6662)) ([ab65007](https://github.com/Azure/LogicAppsUX/commit/ab650073218c3fe568b8e778f51dcbe965a3cfb2))
+
+
+### Bug Fixes
+
+* **designer:** Dictionary Editor to not use string interpolation for tokens if ANY value type ([#6666](https://github.com/Azure/LogicAppsUX/issues/6666)) ([9ea1603](https://github.com/Azure/LogicAppsUX/commit/9ea1603a5683bbd4099f3c45b1a866885d85febc))
+* **designer:** Update callback url accordingly to new name ([#6656](https://github.com/Azure/LogicAppsUX/issues/6656)) ([327bb4c](https://github.com/Azure/LogicAppsUX/commit/327bb4c59a3c5f41b2ad99e0993827a486c055a9))
+
+## [5.44.0](https://github.com/Azure/LogicAppsUX/compare/v5.43.0...v5.44.0) (2025-02-24)
+
+
+### Features
+
+* **Data Mapper:** custom code ([#6639](https://github.com/Azure/LogicAppsUX/issues/6639)) ([70e754b](https://github.com/Azure/LogicAppsUX/commit/70e754b767c8579a22f92a9af2784e73f83a6feb))
+
+
+### Bug Fixes
+
+* **vscode:** Add workflow and logic app creation back to azure blade ([#6649](https://github.com/Azure/LogicAppsUX/issues/6649)) ([ddb951b](https://github.com/Azure/LogicAppsUX/commit/ddb951b06a5f301059b21dc048bf5dde2e42afe7))
+* **vscode:** Bug with path separator in local tests ([#6641](https://github.com/Azure/LogicAppsUX/issues/6641)) ([e3008a7](https://github.com/Azure/LogicAppsUX/commit/e3008a7627b09eceb53a16fa17e10d16fd55edf5))
+* **vscode:** Create Unique Configuration Names ([#6657](https://github.com/Azure/LogicAppsUX/issues/6657)) ([c5b2e1a](https://github.com/Azure/LogicAppsUX/commit/c5b2e1a349dcc7ad79e29cd159b45248446ba7a1))
+
+## [5.43.0](https://github.com/Azure/LogicAppsUX/compare/v5.42.0...v5.43.0) (2025-02-20)
+
+
+### Bug Fixes
+
+* **Designer:** Fixes an issue where '\"'  causing json errors in expressions ([#6636](https://github.com/Azure/LogicAppsUX/issues/6636)) ([ccb46a1](https://github.com/Azure/LogicAppsUX/commit/ccb46a1f652ac4ea8d49ad34e38a16db1d2b7150))
+
+## [5.42.0](https://github.com/Azure/LogicAppsUX/compare/v5.41.0...v5.42.0) (2025-02-19)
+
+
+### Features
+
+* **designer:** Add info message for request trigger type ([#6598](https://github.com/Azure/LogicAppsUX/issues/6598)) ([570f465](https://github.com/Azure/LogicAppsUX/commit/570f465a31ad43392fa6ea97f1e12515e895c4e4))
+* **templates:** Adding support for dynamic list and file/folder picker in template parameters ([#6605](https://github.com/Azure/LogicAppsUX/issues/6605)) ([88f742f](https://github.com/Azure/LogicAppsUX/commit/88f742f131a24a240121ba71c966d03acc4f6154))
+
+
+### Bug Fixes
+
+* **Designer:** Fixed nested loop monitoring view issues ([#6624](https://github.com/Azure/LogicAppsUX/issues/6624)) ([527f4af](https://github.com/Azure/LogicAppsUX/commit/527f4af1a0eb191cb25cd0528c861e95213ba848))
+
 ## [5.41.0](https://github.com/Azure/LogicAppsUX/compare/v5.40.0...v5.41.0) (2025-02-14)
 
 

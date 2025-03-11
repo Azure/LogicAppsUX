@@ -87,7 +87,7 @@ export abstract class BaseSearchService implements ISearchService {
     try {
       const { nextLink, value = [] } = await httpClient.get<ContinuationTokenResponse<any[]>>({ uri, queryParameters, headers });
       return { value, hasMore: !!nextLink };
-    } catch {
+    } catch (_error) {
       return { value: [], hasMore: false };
     }
   }
@@ -105,7 +105,7 @@ export abstract class BaseSearchService implements ISearchService {
           return await requestPage(nextLink, value);
         }
         return value;
-      } catch {
+      } catch (_error) {
         return value;
       }
     };
@@ -212,7 +212,7 @@ export abstract class BaseSearchService implements ISearchService {
       };
       // const response = await this.batchAzureResourceRequests(uri, queryParameters);
       return this.getAzureResourceRecursive(uri, queryParameters);
-    } catch {
+    } catch (_error) {
       return [];
     }
   }
@@ -231,7 +231,7 @@ export abstract class BaseSearchService implements ISearchService {
       const response = await this.getAzureResourceRecursive(uri, queryParameters);
       const locationFilteredResponse = response.filter((connector: any) => equals(connector.location, location));
       return locationFilteredResponse;
-    } catch {
+    } catch (_error) {
       return [];
     }
   }
@@ -347,6 +347,7 @@ export function getClientBuiltInOperations(
     ClientOperationsData.foreachOperation,
     ClientOperationsData.untilOperation,
     ClientOperationsData.switchOperation,
+    ClientOperationsData.agentOperation,
     ClientOperationsData.recurrenceOperation,
     ClientOperationsData.delayOperation,
     ClientOperationsData.delayUntilOperation,
@@ -378,6 +379,7 @@ export function getClientBuiltInConnectors(filterConnector?: (connector: Connect
     ClientOperationsData.httpGroup,
     ClientOperationsData.variableGroup,
     ClientOperationsData.controlGroup,
+    ClientOperationsData.agentGroup,
     ClientOperationsData.scheduleGroup,
     ClientOperationsData.dateTimeGroup,
   ];

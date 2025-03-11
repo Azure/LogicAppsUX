@@ -9,6 +9,7 @@ export type MapDefinitionData = {
   mapDefinition: MapDefinitionEntry;
   sourceSchemaFileName: string;
   targetSchemaFileName: string;
+  mapDefinitionName: string;
   metadata: MapMetadata | undefined;
 };
 export type XsltData = { filename: string; fileContents: string };
@@ -20,6 +21,10 @@ export type MessageToWebview =
   | { command: typeof ExtensionCommand.showAvailableSchemas; data: string[] }
   | {
       command: typeof ExtensionCommand.showAvailableSchemasV2;
+      data: IFileSysTreeItem[];
+    }
+  | {
+      command: typeof ExtensionCommand.getAvailableCustomXsltPathsV2;
       data: IFileSysTreeItem[];
     }
   | {

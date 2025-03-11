@@ -15,6 +15,7 @@ import * as path from 'path';
 import * as vscode from 'vscode';
 import { FileManagement } from '../commands/generateDeploymentScripts/iacGestureHelperFunctions';
 import { ext } from '../../extensionVariables';
+import * as fse from 'fs-extra';
 
 /**
  * Checks if the current workspace has a Logic App project.
@@ -133,48 +134,67 @@ export async function getWorkspaceFolder(
   context: IActionContext,
   message?: string,
   skipPromptOnMultipleFolders?: boolean
-): Promise<vscode.WorkspaceFolder | string | undefined> {
+): Promise<vscode.WorkspaceFolder | undefined> {
   const promptMessage: string = message ?? localize('noWorkspaceWarning', 'You must have a project open to create a workflow.');
   let folder: vscode.WorkspaceFolder | undefined;
   if (!vscode.workspace.workspaceFolders || vscode.workspace.workspaceFolders.length === 0) {
     await promptOpenProject(context, promptMessage);
   }
   if (vscode.workspace.workspaceFolders.length === 1) {
-    folder = vscode.workspace.workspaceFolders[0];
-  } else {
-    const logicAppsWorkspaces = [];
-
-    for (const folder of vscode.workspace.workspaceFolders) {
-      const projectRoot = await tryGetLogicAppProjectRoot(context, folder);
-      if (projectRoot) {
-        logicAppsWorkspaces.push(projectRoot);
-      }
-    }
-
-    if (logicAppsWorkspaces.length === 0) {
-      return undefined;
-    }
-
-    if (logicAppsWorkspaces.length === 1) {
-      folder = logicAppsWorkspaces[0];
-    } else if (skipPromptOnMultipleFolders) {
-      folder = logicAppsWorkspaces[0];
+    if (vscode.workspace.workspaceFile) {
+      folder = vscode.workspace.workspaceFolders[0];
     } else {
-      const placeHolder: string = localize('selectProjectFolder', 'Select the folder containing your logic app project');
-      const folderPicks: IAzureQuickPickItem<vscode.WorkspaceFolder>[] = logicAppsWorkspaces.map((projectRoot) => {
-        const workspaceFolder = vscode.workspace.workspaceFolders?.find((folder) => folder.uri.fsPath === projectRoot);
-        return {
-          label: path.basename(projectRoot),
-          description: projectRoot,
-          data: workspaceFolder,
-        };
-      });
+      const returnsWorkspaceFolder: boolean = false;
+      const folderPath = vscode.workspace.workspaceFolders[0].uri.fsPath;
+      const folders = await fse.readdir(folderPath, { withFileTypes: true });
+      const subFolders = folders.filter((dirent) => dirent.isDirectory()).map((dirent) => path.join(folderPath, dirent.name));
+      folder = await selectLogicAppWorkspaceFolder(context, returnsWorkspaceFolder, subFolders, skipPromptOnMultipleFolders);
+    }
+  } else {
+    const returnsWorkspaceFolder: boolean = true;
+    folder = await selectLogicAppWorkspaceFolder(context, returnsWorkspaceFolder, null, skipPromptOnMultipleFolders);
+  }
 
-      const selectedItem = await context.ui.showQuickPick(folderPicks, { placeHolder });
-      folder = selectedItem?.data;
-      if (!folder) {
-        throw new UserCancelledError();
-      }
+  return folder;
+}
+
+async function selectLogicAppWorkspaceFolder(
+  context: IActionContext,
+  returnsWorkspaceFolder: boolean,
+  subFolders: string[],
+  skipPromptOnMultipleFolders?: boolean
+): Promise<vscode.WorkspaceFolder> {
+  const logicAppsWorkspaces = [];
+  for (const folder of returnsWorkspaceFolder ? vscode.workspace.workspaceFolders : subFolders) {
+    const projectRoot = await tryGetLogicAppProjectRoot(context, folder);
+    if (projectRoot) {
+      logicAppsWorkspaces.push(projectRoot);
+    }
+  }
+  let folder = null;
+  if (logicAppsWorkspaces.length === 0) {
+    return undefined;
+  }
+
+  if (logicAppsWorkspaces.length === 1) {
+    folder = logicAppsWorkspaces[0];
+  } else if (skipPromptOnMultipleFolders) {
+    folder = logicAppsWorkspaces[0];
+  } else {
+    const placeHolder: string = localize('selectProjectFolder', 'Select the folder containing your logic app project');
+    const folderPicks: IAzureQuickPickItem<vscode.WorkspaceFolder>[] = logicAppsWorkspaces.map((projectRoot) => {
+      const workspaceFolder = vscode.workspace.workspaceFolders?.find((folder) => folder.uri.fsPath === projectRoot);
+      return {
+        label: path.basename(projectRoot),
+        description: projectRoot,
+        data: returnsWorkspaceFolder ? workspaceFolder : projectRoot,
+      };
+    });
+
+    const selectedItem = await context.ui.showQuickPick(folderPicks, { placeHolder });
+    folder = selectedItem?.data;
+    if (!folder) {
+      throw new UserCancelledError();
     }
   }
 

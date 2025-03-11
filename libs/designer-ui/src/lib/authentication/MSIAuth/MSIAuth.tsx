@@ -1,7 +1,5 @@
 import type { AuthProps, MSIProps } from '..';
-import type { ValueSegment } from '../../editor';
-import type { ChangeState, GetTokenPickerHandler, loadParameterValueFromStringHandler } from '../../editor/base';
-import type { TokenPickerButtonEditorProps } from '../../editor/base/plugins/tokenpickerbutton';
+import type { BaseEditorProps, ChangeState } from '../../editor/base';
 import { AuthenticationDropdown } from '../AuthenticationDropdown';
 import { AuthenticationProperty } from '../AuthenticationProperty';
 import { AUTHENTICATION_PROPERTIES, containsUserAssignedIdentities } from '../util';
@@ -14,15 +12,10 @@ import { useState } from 'react';
 import type { IntlShape } from 'react-intl';
 import { useIntl } from 'react-intl';
 
-interface MSIAuthenticationProps {
+interface MSIAuthenticationProps extends Partial<BaseEditorProps> {
   msiProps: MSIProps;
   identity?: ManagedIdentity;
-  readonly?: boolean;
-  tokenPickerButtonProps?: TokenPickerButtonEditorProps;
   setCurrentProps: Dispatch<SetStateAction<AuthProps>>;
-  getTokenPicker: GetTokenPickerHandler;
-  tokenMapping?: Record<string, ValueSegment>;
-  loadParameterValueFromString?: loadParameterValueFromStringHandler;
 }
 
 export const MSIAuthentication = ({ identity, msiProps, setCurrentProps, ...props }: MSIAuthenticationProps): JSX.Element => {
@@ -76,9 +69,10 @@ export const MSIAuthentication = ({ identity, msiProps, setCurrentProps, ...prop
           />
           <AuthenticationProperty
             {...props}
+            dataAutomationId={'msla-authentication-editor-msi-audience'}
             initialValue={msiAudience}
             AuthProperty={AUTHENTICATION_PROPERTIES.MSI_AUDIENCE}
-            onBlur={updateMsiAudience}
+            handleBlur={updateMsiAudience}
           />
         </>
       ) : (
@@ -86,7 +80,7 @@ export const MSIAuthentication = ({ identity, msiProps, setCurrentProps, ...prop
           {...props}
           msiProps={msiProps}
           onManagedIdentityChange={onManagedIdentityChange}
-          onBlur={updateMsiAudience}
+          handleBlur={updateMsiAudience}
         />
       )}
     </div>

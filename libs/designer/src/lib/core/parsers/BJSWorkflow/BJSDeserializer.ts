@@ -337,7 +337,7 @@ export const deserializeUnitTestDefinition = (
 };
 
 const isScopeAction = (action: LogicAppsV2.ActionDefinition): action is LogicAppsV2.ScopeAction => {
-  return ['scope', 'foreach', 'until', 'if', 'switch'].includes(action?.type?.toLowerCase());
+  return ['scope', 'foreach', 'until', 'if', 'switch', 'agent'].includes(action?.type?.toLowerCase());
 };
 
 const isIfAction = (action: LogicAppsV2.ActionDefinition): action is LogicAppsV2.IfAction => {
@@ -346,6 +346,10 @@ const isIfAction = (action: LogicAppsV2.ActionDefinition): action is LogicAppsV2
 
 const isSwitchAction = (action: LogicAppsV2.ActionDefinition): action is LogicAppsV2.SwitchAction => {
   return equals(action?.type, 'switch');
+};
+
+const isAgentAction = (action: LogicAppsV2.ActionDefinition): action is LogicAppsV2.AgentAction => {
+  return equals(action?.type, 'agent');
 };
 
 const isUntilAction = (action: LogicAppsV2.ActionDefinition) => action?.type?.toLowerCase() === 'until';
@@ -388,6 +392,24 @@ export const buildGraphFromActions = (
             [newCaseId]: caseAction,
           };
           delete action.cases[key];
+        }
+      }
+    } else if (isAgentAction(action) && action?.tools) {
+      const toolKeys = Object.keys(action.tools);
+      for (const key of toolKeys) {
+        if (!allActionNames.includes(key)) {
+          allActionNames.push(key);
+          continue;
+        }
+        const toolAction: any = action.tools?.[key];
+        const newToolId = pasteScopeParams ? (pasteScopeParams.renamedNodes[key] ?? key) : getUniqueName(allActionNames, key).name;
+        allActionNames.push(newToolId);
+        if (toolAction) {
+          action.tools = {
+            ...action.tools,
+            [newToolId]: toolAction,
+          };
+          delete action.tools[key];
         }
       }
     }
@@ -510,7 +532,7 @@ export const processScopeActions = (
     const rootId = `${subgraphId}-#subgraph`;
     const subgraphCardNode = createWorkflowNode(rootId, WORKFLOW_NODE_TYPES.SUBGRAPH_CARD_NODE);
 
-    const isAddCase = subgraphType === SUBGRAPH_TYPES.SWITCH_ADD_CASE;
+    const isAddCase = subgraphType === SUBGRAPH_TYPES.SWITCH_ADD_CASE || subgraphType === SUBGRAPH_TYPES.AGENT_ADD_CONDITON;
     if (isAddCase) {
       graph.type = WORKFLOW_NODE_TYPES.HIDDEN_NODE;
     }
@@ -592,6 +614,25 @@ export const processScopeActions = (
       [actionName]: {
         graphId: rootGraphId,
         actionCount: Object.entries(action.cases || {}).length,
+        parentNodeId: rootGraphId === 'root' ? undefined : rootGraphId,
+      },
+    };
+  } else if (isAgentAction(action)) {
+    for (const [toolName, toolAction] of Object.entries(action.tools || {})) {
+      applySubgraphActions(actionName, toolName, toolAction.actions, SUBGRAPH_TYPES.SWITCH_CASE, 'tools');
+    }
+    applySubgraphActions(
+      actionName,
+      `${actionName}-addCase`,
+      undefined,
+      SUBGRAPH_TYPES.AGENT_ADD_CONDITON,
+      undefined /* subGraphLocation */
+    );
+    nodesMetadata = {
+      ...nodesMetadata,
+      [actionName]: {
+        graphId: rootGraphId,
+        actionCount: Object.entries(action.tools || {}).length,
         parentNodeId: rootGraphId === 'root' ? undefined : rootGraphId,
       },
     };
@@ -734,6 +775,18 @@ export const getAllActionNames = (actions: LogicAppsV2.Actions | undefined, name
             }
             if (caseAction.actions) {
               names.push(...getAllActionNames(caseAction.actions, [], includeCase));
+            }
+          }
+        }
+      }
+      if (isAgentAction(action)) {
+        if (action.tools) {
+          for (const [toolName, toolAction] of Object.entries(action.tools)) {
+            if (includeCase) {
+              names.push(toolName);
+            }
+            if (toolAction.actions) {
+              names.push(...getAllActionNames(toolAction.actions, [], includeCase));
             }
           }
         }

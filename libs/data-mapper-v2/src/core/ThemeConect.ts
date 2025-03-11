@@ -6,10 +6,21 @@ import {
   themeToTokensObject,
   tokens,
 } from '@fluentui/react-components';
+// import type { FunctionCategoryColorToken } from '../constants/FunctionConstants';
+// {// category colors
+//   [key in FunctionCategoryColorToken]: string};
+export type DataMapperTheme = Theme & {
+  functionPanelBackground: string;
+  panelBackground: string;
+  listElemHover: string;
 
-interface ExtendedTheme extends Theme {
-  [key: string]: any;
-}
+  // node handle and edge colors
+  nodeActive: string;
+  edgeActive: string;
+  handleActive: string;
+  handleConnected: string;
+  edgeConnected: string;
+} & any;
 
 const spacingOverrides: HorizontalSpacingTokens = {
   spacingHorizontalNone: '0px',
@@ -36,15 +47,43 @@ const fnColors = {
   colorFnCategoryCustom: tokens.colorPaletteDarkGreenBackground2,
 };
 
-const extendedWebLightTheme: ExtendedTheme = {
+const extendedWebLightTheme: DataMapperTheme = {
+  functionPanelBackground: '#E8F3FE',
+  panelBackground: '#F6FAFE',
+  listElemHover: '#D5E4FF',
+  // node handle and edge colors
+  nodeActive: '#D5E4FF',
+  edgeActive: '#62AAD8',
+  handleActive: '#62AAD8',
+  handleConnected: '#DCE6ED',
+  edgeConnected: '#DCE6ED',
   ...webLightTheme,
   ...fnColors,
 };
 
-export const customTokens = themeToTokensObject(extendedWebLightTheme);
+const customDarkTokens = {
+  functionPanelBackground: tokens.colorNeutralBackground1,
+  panelBackground: tokens.colorNeutralBackground1,
+  listElemHover: tokens.colorNeutralBackground1Hover,
+  // node handle and edge colors
+  nodeActive: '#D5E4FF',
+  edgeActive: '#CFE4FA',
+  handleActive: '#CFE4FA',
+  handleConnected: '#38445A',
+  edgeConnected: '#38445A',
+};
 
-export const getCustomizedTheme = (isLightTheme: boolean): ExtendedTheme => ({
-  ...(isLightTheme ? webLightTheme : webDarkTheme),
+const extendedWebDarkTheme: DataMapperTheme = {
+  ...webDarkTheme,
+  ...fnColors,
+  ...customDarkTokens,
+};
+
+export const customTokens: ReturnType<typeof themeToTokensObject<DataMapperTheme>> =
+  themeToTokensObject<DataMapperTheme>(extendedWebLightTheme);
+
+export const getCustomizedTheme = (isLightTheme: boolean): DataMapperTheme => ({
+  ...(isLightTheme ? extendedWebLightTheme : extendedWebDarkTheme),
   ...spacingOverrides,
   ...fnColors,
 });

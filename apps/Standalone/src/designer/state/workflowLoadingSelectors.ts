@@ -80,3 +80,7 @@ export const useRunInstance = () => {
 export const useQueryCachePersist = () => {
   return useSelector((state: RootState) => state.workflowLoader.queryCachePersist);
 };
+
+export const useIsAgenticLoopEnabled = () => {
+  return useSelector((state: RootState) => !!state.workflowLoader.hostOptions.enableAgenticLoops);
+};

@@ -360,3 +360,8 @@ export type COMMON_ERRORS = (typeof COMMON_ERRORS)[keyof typeof COMMON_ERRORS];
 // Environment Variables
 export const azurePublicBaseUrl = 'https://management.azure.com';
 export const sqlConnectionStringSecretName = 'sqlconnectionstring';
+
+//Regex validations
+export const workflowNameValidation = /^[a-z][a-z0-9]*(?:[_-][a-z0-9]+)*$/i;
+export const logicAppNameValidation = /^[a-z][a-z0-9]*(?:[_-][a-z0-9]+)*$/i;
+export const workspaceNameValidation = /^[a-z][a-z0-9]*(?:[_-][a-z0-9]+)*$/i;

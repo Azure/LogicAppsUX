@@ -1,7 +1,7 @@
 import constants from '../../../constants';
 import { isEmpty } from '../../../dictionary/expandeddictionary';
 import type { ValueSegment } from '../../models/parameter';
-import { createLiteralValueSegment, insertQutationForStringType } from './helper';
+import { containsTokenSegments, createLiteralValueSegment, insertQutationForStringType } from './helper';
 import { convertSegmentsToString } from './parsesegments';
 import { escapeString } from '@microsoft/logic-apps-shared';
 
@@ -61,7 +61,7 @@ export const convertValueType = (value: ValueSegment[], type?: string): string |
     return type;
   }
   const stringSegments = convertSegmentsToString(value).trim();
-  if (isNonString(stringSegments)) {
+  if (isNonString(stringSegments) || containsTokenSegments(value)) {
     return type;
   }
   return constants.SWAGGER.TYPE.STRING;

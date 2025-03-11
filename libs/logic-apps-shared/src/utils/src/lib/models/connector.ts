@@ -209,6 +209,8 @@ export interface ConnectorProperty {
   connectionParameters?: Record<string, ConnectionParameter>;
   connectionParameterSets?: ConnectionParameterSets;
   connectionAlternativeParameters?: ConnectionAlternativeParameters;
+  isExportSupported?: boolean;
+  isSecureByDefault?: boolean;
   swagger?: any;
   wadlUrl?: string;
   brandColor?: string;

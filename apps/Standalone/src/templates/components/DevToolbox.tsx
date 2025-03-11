@@ -1,6 +1,6 @@
 import type { AppDispatch, RootState } from '../state/Store';
 import type { IDropdownOption } from '@fluentui/react';
-import { Dropdown, Stack, StackItem } from '@fluentui/react';
+import { Dropdown, Stack, StackItem, Checkbox } from '@fluentui/react';
 import { Accordion, AccordionHeader, AccordionItem, AccordionPanel, tokens } from '@fluentui/react-components';
 import { Theme as ThemeType } from '@microsoft/logic-apps-shared';
 import { useCallback } from 'react';
@@ -43,6 +43,27 @@ export const DevToolbox = ({ templatesList = [] }: { templatesList?: { key: stri
     [dispatch]
   );
 
+  const changeEndpointUsage = useCallback(
+    (_: unknown, checked?: boolean) => {
+      dispatch(workflowLoaderSlice.actions.setUseEndpoint(!!checked));
+    },
+    [dispatch]
+  );
+
+  const changeCreateView = useCallback(
+    (_: unknown, checked?: boolean) => {
+      dispatch(workflowLoaderSlice.actions.setCreateView(!!checked));
+    },
+    [dispatch]
+  );
+
+  const changeResourceSelection = useCallback(
+    (_: unknown, checked?: boolean) => {
+      dispatch(workflowLoaderSlice.actions.setEnableResourceSelection(!!checked));
+    },
+    [dispatch]
+  );
+
   const isConsumption = useHostingPlan() === 'consumption';
   const armToken = environment.armToken;
 
@@ -56,14 +77,14 @@ export const DevToolbox = ({ templatesList = [] }: { templatesList?: { key: stri
               <AccordionHeader>Dev Toolbox</AccordionHeader>
               <AccordionPanel>
                 <Stack horizontal tokens={{ childrenGap: '12px' }} wrap>
-                  <StackItem key={'themeDropDown'} style={{ width: '250px' }}>
+                  <StackItem key={'themeDropDown'} style={{ display: 'flex', flexDirection: 'row' }}>
                     <Dropdown
                       label="Theme"
                       selectedKey={theme}
                       onChange={changeThemeCB}
                       placeholder="Select a theme"
                       options={themeDropdownOptions}
-                      style={{ marginBottom: '12px' }}
+                      style={{ margin: '0 12px 12px 0', width: '100px' }}
                     />
                     <Dropdown
                       label="Templates View"
@@ -71,7 +92,14 @@ export const DevToolbox = ({ templatesList = [] }: { templatesList?: { key: stri
                       onChange={changeTemplatesView}
                       placeholder="Select templates view"
                       options={[...templatesViewOptions, ...templatesList]}
-                      style={{ marginBottom: '12px' }}
+                      style={{ margin: '0 12px 12px 0', width: '250px' }}
+                    />
+                    <Checkbox label="Use Endpoint" onChange={changeEndpointUsage} styles={{ root: { margin: '30px 0 0 12px' } }} />
+                    <Checkbox label="Create View" onChange={changeCreateView} styles={{ root: { margin: '30px 0 0 12px' } }} />
+                    <Checkbox
+                      label="Resource Selection"
+                      onChange={changeResourceSelection}
+                      styles={{ root: { margin: '30px 0 0 12px' } }}
                     />
                   </StackItem>
                   <StackItem style={{ width: '100%' }}>

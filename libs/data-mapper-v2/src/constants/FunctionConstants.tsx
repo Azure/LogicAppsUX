@@ -10,9 +10,19 @@ import {
 
 export interface FunctionGroupBranding {
   displayName: string;
-  colorTokenName: string;
+  colorTokenName: FunctionCategoryColorToken;
   icon: IconProps;
 }
+
+export type FunctionCategoryColorToken =
+  | 'colorFnCategoryCustom'
+  | 'colorFnCategoryCollection'
+  | 'colorFnCategoryDateTime'
+  | 'colorFnCategoryLogical'
+  | 'colorFnCategoryMath'
+  | 'colorFnCategoryString'
+  | 'colorFnCategoryUtility'
+  | 'colorFnCategoryConversion';
 
 export const UnboundedInput = -1;
 
