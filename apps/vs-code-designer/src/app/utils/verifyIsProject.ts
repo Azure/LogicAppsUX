@@ -61,32 +61,27 @@ export async function isLogicAppProjectInRoot(workspaceFolder: WorkspaceFolder |
   if (isNullOrUndefined(workspaceFolder)) {
     return false;
   }
-  const subpath: string | undefined = getWorkspaceSetting(projectSubpathKey, workspaceFolder);
   const folderPath = isString(workspaceFolder) ? workspaceFolder : workspaceFolder.uri.fsPath;
-  if (!subpath) {
-    if (!(await fse.pathExists(folderPath))) {
-      return undefined;
-    }
-    if (await isLogicAppProject(folderPath)) {
-      return true;
-    }
-    const subpaths: string[] = await fse.readdir(folderPath);
-    const matchingSubpaths: string[] = [];
-    await Promise.all(
-      subpaths.map(async (s) => {
-        if (await isLogicAppProject(path.join(folderPath, s))) {
-          matchingSubpaths.push(s);
-        }
-      })
-    );
-
-    if (matchingSubpaths.length !== 0) {
-      return true;
-    }
-    return false;
+  if (!(await fse.pathExists(folderPath))) {
+    return undefined;
   }
+  if (await isLogicAppProject(folderPath)) {
+    return true;
+  }
+  const subpaths: string[] = await fse.readdir(folderPath);
+  const matchingSubpaths: string[] = [];
+  await Promise.all(
+    subpaths.map(async (s) => {
+      if (await isLogicAppProject(path.join(folderPath, s))) {
+        matchingSubpaths.push(s);
+      }
+    })
+  );
 
-  return true;
+  if (matchingSubpaths.length !== 0) {
+    return true;
+  }
+  return false;
 }
 
 /**
@@ -104,30 +99,28 @@ export async function tryGetLogicAppProjectRoot(
   }
   let subpath: string | undefined = getWorkspaceSetting(projectSubpathKey, workspaceFolder);
   const folderPath = isString(workspaceFolder) ? workspaceFolder : workspaceFolder.uri.fsPath;
-  if (!subpath) {
-    if (!(await fse.pathExists(folderPath))) {
-      return undefined;
-    }
-    if (await isLogicAppProject(folderPath)) {
-      return folderPath;
-    }
-    const subpaths: string[] = await fse.readdir(folderPath);
-    const matchingSubpaths: string[] = [];
-    await Promise.all(
-      subpaths.map(async (s) => {
-        if (await isLogicAppProject(path.join(folderPath, s))) {
-          matchingSubpaths.push(s);
-        }
-      })
-    );
+  if (!(await fse.pathExists(folderPath))) {
+    return undefined;
+  }
+  if (await isLogicAppProject(folderPath)) {
+    return folderPath;
+  }
+  const subpaths: string[] = await fse.readdir(folderPath);
+  const matchingSubpaths: string[] = [];
+  await Promise.all(
+    subpaths.map(async (s) => {
+      if (await isLogicAppProject(path.join(folderPath, s))) {
+        matchingSubpaths.push(s);
+      }
+    })
+  );
 
-    if (matchingSubpaths.length === 1 || (matchingSubpaths.length !== 0 && suppressPrompt)) {
-      subpath = matchingSubpaths[0];
-    } else if (matchingSubpaths.length !== 0 && !suppressPrompt) {
-      subpath = await promptForProjectSubpath(context, folderPath, matchingSubpaths);
-    } else {
-      return undefined;
-    }
+  if (matchingSubpaths.length === 1 || (matchingSubpaths.length !== 0 && suppressPrompt)) {
+    subpath = matchingSubpaths[0];
+  } else if (matchingSubpaths.length !== 0 && !suppressPrompt) {
+    subpath = await promptForProjectSubpath(context, folderPath, matchingSubpaths);
+  } else {
+    return undefined;
   }
 
   return path.join(folderPath, subpath);
