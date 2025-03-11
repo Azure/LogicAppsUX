@@ -10,7 +10,6 @@ export const LogCategory = {
   InputTextbox: 'InputTextbox',
   FunctionNodePropertiesTab: 'FunctionNodePropertiesTab',
   TestMapPanel: 'TestMapPanel',
-  SerializeDataMap: 'SerializeDataMap',
   DataMapUtils: 'DataMapUtils',
   EdgeUtils: 'EdgeUtils',
   FunctionUtils: 'FunctionUtils',
