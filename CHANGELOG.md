@@ -1,4 +1,11 @@
 # Logic Apps Designer
+### [5.44.5](https://github.com/Azure/LogicAppsUX/compare/v5.44.4...v5.44.5) (2025-03-11)
+
+
+### Bug Fixes
+
+* **vscode:** Fix workspaces experience behavior ([#6762](https://github.com/Azure/LogicAppsUX/issues/6762)) ([f77f451](https://github.com/Azure/LogicAppsUX/commit/f77f4515c912679e136c79e675279748061cb938)), closes [#6673](https://github.com/Azure/LogicAppsUX/issues/6673) [#6690](https://github.com/Azure/LogicAppsUX/issues/6690) [#6698](https://github.com/Azure/LogicAppsUX/issues/6698) [#6706](https://github.com/Azure/LogicAppsUX/issues/6706) [#6720](https://github.com/Azure/LogicAppsUX/issues/6720) [#6739](https://github.com/Azure/LogicAppsUX/issues/6739)
+
 ### [5.44.4](https://github.com/Azure/LogicAppsUX/compare/v5.44.3...v5.44.4) (2025-03-05)
 
 
