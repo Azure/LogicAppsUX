@@ -76,10 +76,10 @@ describe('getIntl', () => {
       expect(intl.defaultLocale).toBe('en');
       expect(intl.messages).toEqual(
         expect.objectContaining({
-          '00xlpa': [
+          ms1c7f7bd22261: [
             {
               type: 0,
-              value: 'Partagé',
+              value: 'Mois', // Month
             },
           ],
         })
