@@ -1,5 +1,6 @@
 import { ArrayEditor } from '../../arrayeditor';
 import { AuthenticationEditor } from '../../authentication';
+import type { FileNameChangeHandler } from '../../code';
 import { CodeEditor } from '../../code';
 import { isCustomCode } from '../../code/util';
 import { Combobox } from '../../combobox';
@@ -12,12 +13,12 @@ import type {
   CallbackHandler,
   CastHandler,
   ChangeHandler,
-  FileNameChangeHandler,
   GetTokenPickerHandler,
   loadParameterValueFromStringHandler,
 } from '../../editor/base';
 import type { TokenPickerButtonEditorProps } from '../../editor/base/plugins/tokenpickerbutton';
 import { createLiteralValueSegment, getDropdownOptionsFromOptions } from '../../editor/base/utils/helper';
+import { InitializeVariableEditor } from '../../editor/initializevariable';
 import { StringEditor } from '../../editor/string';
 import { FloatingActionMenuKind } from '../../floatingactionmenu/constants';
 import { FloatingActionMenuInputs } from '../../floatingactionmenu/floatingactionmenuinputs';
@@ -40,6 +41,11 @@ import { EditorLanguage, equals, getPropertyValue, replaceWhiteSpaceWithUndersco
 import { MixedInputEditor } from '../../mixedinputeditor/mixedinputeditor';
 import { useMemo } from 'react';
 import { useIntl } from 'react-intl';
+
+interface EditorHostOptions {
+  suppressCastingForSerialize?: boolean;
+  isMultiVariableEnabled?: boolean;
+}
 
 export interface SettingTokenFieldProps extends SettingProps {
   id?: string;
@@ -70,7 +76,7 @@ export interface SettingTokenFieldProps extends SettingProps {
   getTokenPicker: GetTokenPickerHandler;
   validationErrors?: string[];
   hideValidationErrors?: ChangeHandler;
-  suppressCastingForSerialize?: boolean;
+  hostOptions?: EditorHostOptions;
 }
 
 export const SettingTokenField = ({ ...props }: SettingTokenFieldProps) => {
@@ -114,11 +120,11 @@ export const TokenField = ({
   loadParameterValueFromString,
   onValueChange,
   onComboboxMenuOpen,
+  onFileNameChange,
   hideValidationErrors,
   onCastParameter,
-  onFileNameChange,
   getTokenPicker,
-  suppressCastingForSerialize,
+  hostOptions,
   required,
 }: TokenFieldProps) => {
   const intl = useIntl();
@@ -166,7 +172,7 @@ export const TokenField = ({
           onMenuOpen={onComboboxMenuOpen}
           tokenMapping={tokenMapping}
           loadParameterValueFromString={loadParameterValueFromString}
-          suppressCastingForSerialize={suppressCastingForSerialize}
+          suppressCastingForSerialize={hostOptions?.suppressCastingForSerialize}
         />
       );
 
@@ -365,6 +371,25 @@ export const TokenField = ({
           getTokenPicker={getTokenPicker}
           onChange={onValueChange}
           dataAutomationId={`msla-setting-token-editor-htmleditor-${labelForAutomationId}`}
+        />
+      );
+
+    case constants.PARAMETER.EDITOR.INITIALIZE_VARIABLE:
+      return (
+        <InitializeVariableEditor
+          initialValue={value}
+          getTokenPicker={getTokenPicker}
+          onChange={(updatedChangeState) => {
+            onValueChange?.(updatedChangeState);
+            hideValidationErrors?.(updatedChangeState);
+          }}
+          validationErrors={editorViewModel.validationErrors}
+          tokenMapping={tokenMapping}
+          loadParameterValueFromString={loadParameterValueFromString}
+          readonly={readOnly}
+          tokenPickerButtonProps={tokenpickerButtonProps}
+          dataAutomationId={`msla-setting-token-editor-initializevariableeditor-${labelForAutomationId}`}
+          isMultiVariableEnabled={hostOptions?.isMultiVariableEnabled}
         />
       );
 

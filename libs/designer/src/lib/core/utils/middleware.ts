@@ -5,7 +5,7 @@ import type { ThunkMiddleware } from 'redux-thunk';
 export const storeStateHistoryMiddleware: ThunkMiddleware =
   ({ dispatch }) =>
   (next) =>
-  (action) => {
+  (action: any) => {
     if (undoableActionTypes.includes(action.type)) {
       dispatch(storeStateToUndoRedoHistory(action));
     }

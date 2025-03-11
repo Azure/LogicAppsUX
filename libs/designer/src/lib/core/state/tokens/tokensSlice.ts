@@ -55,24 +55,9 @@ export const tokensSlice = createSlice({
       // delete state.outputTokens[id]; // TODO: This causes lots of errors as tokens are not null-safe
       delete state.variables[id];
     },
-    updateVariableInfo: (state, action: PayloadAction<{ id: string; name?: string; type?: string }>) => {
-      const { id, name, type } = action.payload;
-      const variables = getRecordEntry(state.variables, id);
-      if (!variables) {
-        return;
-      }
-      if (name) {
-        state.variables[id] = variables.map((variable) => ({
-          ...variable,
-          name,
-        }));
-      }
-      if (type) {
-        state.variables[id] = variables.map((variable) => ({
-          ...variable,
-          type,
-        }));
-      }
+    updateVariableInfo: (state, action: PayloadAction<{ id: string; variables: VariableDeclaration[] }>) => {
+      const { id, variables } = action.payload;
+      state.variables[id] = variables;
     },
     updateTokens: (state, action: PayloadAction<{ id: string; tokens: Token[] }>) => {
       const { id, tokens } = action.payload;

@@ -1,0 +1,269 @@
+import { Label } from '../../label';
+import { Combobox, DropdownEditor, getVariableType, StringEditor, TrafficLightDot, useId } from '../..';
+import type { DropdownItem } from '../../dropdown';
+import type { BaseEditorProps, ChangeState } from '../base';
+import type { ValueSegment } from '../models/parameter';
+import { Button, Tooltip } from '@fluentui/react-components';
+import { useIntl } from 'react-intl';
+import {
+  bundleIcon,
+  ChevronDown24Filled,
+  ChevronDown24Regular,
+  ChevronRight24Filled,
+  ChevronRight24Regular,
+  Delete24Filled,
+  Delete24Regular,
+} from '@fluentui/react-icons';
+import { useState } from 'react';
+import { createEmptyLiteralValueSegment, isSingleLiteralValueSegment } from '../base/utils/helper';
+import { guid, RUN_AFTER_COLORS } from '@microsoft/logic-apps-shared';
+import { VARIABLE_TYPE } from '../../constants';
+import { isEmptySegments } from '../base/utils/parsesegments';
+import { useTheme } from '@fluentui/react';
+
+const DeleteIcon = bundleIcon(Delete24Filled, Delete24Regular);
+const ExpandIcon = bundleIcon(ChevronRight24Filled, ChevronRight24Regular);
+const CollapseIcon = bundleIcon(ChevronDown24Regular, ChevronDown24Filled);
+
+const typeOptions: DropdownItem[] = [
+  { key: VARIABLE_TYPE.BOOLEAN, value: VARIABLE_TYPE.BOOLEAN, displayName: 'Boolean' },
+  { key: VARIABLE_TYPE.INTEGER, value: VARIABLE_TYPE.INTEGER, displayName: 'Integer' },
+  { key: VARIABLE_TYPE.FLOAT, value: VARIABLE_TYPE.FLOAT, displayName: 'Float' },
+  { key: VARIABLE_TYPE.STRING, value: VARIABLE_TYPE.STRING, displayName: 'String' },
+  { key: VARIABLE_TYPE.OBJECT, value: VARIABLE_TYPE.OBJECT, displayName: 'Object' },
+  { key: VARIABLE_TYPE.ARRAY, value: VARIABLE_TYPE.ARRAY, displayName: 'Array' },
+];
+
+export const VARIABLE_PROPERTIES = {
+  NAME: 'name',
+  TYPE: 'type',
+  VALUE: 'value',
+};
+
+export interface InitializeVariableProps {
+  name: ValueSegment[];
+  type: ValueSegment[];
+  value: ValueSegment[];
+}
+
+export interface InitializeVariableErrors {
+  [key: string]: string;
+}
+
+interface VariableEditorProps extends Partial<BaseEditorProps> {
+  index: number;
+  variable: InitializeVariableProps;
+  disableDelete: boolean;
+  errors?: InitializeVariableErrors;
+  onDelete: () => void;
+  onVariableChange: (value: InitializeVariableProps) => void;
+  preventMultiVariable?: boolean;
+}
+
+const FieldEditor = ({
+  label,
+  id,
+  index,
+  isRequired,
+  editor: EditorComponent,
+  editorProps,
+  errorMessage,
+}: {
+  label: string;
+  id: string;
+  index: number;
+  isRequired: boolean;
+  editor: React.ElementType;
+  editorProps: Record<string, any>;
+  errorMessage?: string;
+}) => (
+  <div className="msla-input-parameter-field">
+    <div className="msla-input-parameter-label">
+      <Label id={id} isRequiredField={isRequired} text={label} />
+    </div>
+    <EditorComponent {...editorProps} labelId={`${label} - ${index}`} />
+    {errorMessage ? <div className="msla-input-parameter-error">{errorMessage}</div> : null}
+  </div>
+);
+
+export const VariableEditor = ({
+  variable,
+  onDelete,
+  disableDelete,
+  onVariableChange,
+  errors,
+  index,
+  preventMultiVariable,
+  ...baseEditorProps
+}: VariableEditorProps) => {
+  const intl = useIntl();
+  const { isInverted } = useTheme();
+  const themeName = isInverted ? 'dark' : 'light';
+  const [expanded, setExpanded] = useState(true);
+  const [variableId, setVariableId] = useState<string>(guid());
+
+  const handleToggleExpand = (): void => {
+    setExpanded(!expanded);
+  };
+
+  const deleteButtonTitle = intl.formatMessage({
+    defaultMessage: 'Delete',
+    id: 'JErLDT',
+    description: 'Delete label',
+  });
+
+  const deleteButtonDisabledTitle = intl.formatMessage({
+    defaultMessage: 'Cannot delete the last variable',
+    id: 'YL00wK',
+    description: 'Delete label',
+  });
+
+  const newVariableName = intl.formatMessage({
+    defaultMessage: 'New Variable',
+    id: 'TyFREt',
+    description: 'Heading Title for a Variable Without Name',
+  });
+
+  const namePlaceHolder = intl.formatMessage({
+    defaultMessage: 'Enter variable name',
+    id: 'QKC8fv',
+    description: 'Placeholder for variable name',
+  });
+
+  const typePlaceHolder = intl.formatMessage({
+    defaultMessage: 'Select variable type',
+    id: 'Xrd4VK',
+    description: 'Placeholder for variable type',
+  });
+
+  const valuePlaceHolder = intl.formatMessage({
+    defaultMessage: 'Enter initial value',
+    id: 'RlOSrx',
+    description: 'Placeholder for initial value',
+  });
+
+  const handleBlur = (newState: ChangeState, property: string): void => {
+    const newVariable = { ...variable, [property]: isEmptySegments(newState.value) ? [createEmptyLiteralValueSegment()] : newState.value };
+    onVariableChange(newVariable);
+  };
+
+  const { name, type, value } = variable;
+
+  const isBooleanType = type[0]?.value === VARIABLE_TYPE.BOOLEAN;
+  const variableType = getVariableType(type);
+  const fields = [
+    {
+      label: VARIABLE_PROPERTIES.NAME,
+      id: useId(VARIABLE_PROPERTIES.NAME),
+      isRequired: true,
+      editor: StringEditor,
+      editorProps: {
+        ...baseEditorProps,
+        key: `${VARIABLE_PROPERTIES.NAME}-${variableId}`,
+        className: 'msla-setting-token-editor-container',
+        initialValue: name,
+        editorBlur: (newState: ChangeState) => handleBlur(newState, VARIABLE_PROPERTIES.NAME),
+        basePlugins: { ...baseEditorProps.basePlugins, tokens: false },
+        placeholder: namePlaceHolder,
+      },
+      errorMessage: errors?.[VARIABLE_PROPERTIES.NAME],
+    },
+    {
+      label: VARIABLE_PROPERTIES.TYPE,
+      id: useId(VARIABLE_PROPERTIES.TYPE),
+      isRequired: true,
+      editor: DropdownEditor,
+      editorProps: {
+        ...baseEditorProps,
+        key: `${VARIABLE_PROPERTIES.TYPE}-${variableId}`,
+        initialValue: type,
+        options: typeOptions,
+        onChange: (newState: ChangeState) => handleBlur(newState, VARIABLE_PROPERTIES.TYPE),
+        placeholder: typePlaceHolder,
+      },
+      errorMessage: errors?.[VARIABLE_PROPERTIES.TYPE],
+    },
+    {
+      label: VARIABLE_PROPERTIES.VALUE,
+      id: useId(VARIABLE_PROPERTIES.VALUE),
+      isRequired: false,
+      editor: isBooleanType ? Combobox : StringEditor,
+      editorProps: {
+        ...baseEditorProps,
+        key: `value-${variableId}`,
+        className: 'msla-setting-token-editor-container',
+        initialValue: value,
+        valueType: variableType,
+        editorBlur: (newState: ChangeState) => handleBlur(newState, VARIABLE_PROPERTIES.VALUE),
+        options: isBooleanType
+          ? [
+              { key: 'true', displayName: 'true', value: true },
+              { key: 'false', displayName: 'false', value: false },
+            ]
+          : undefined,
+        onChange: isBooleanType ? (newState: ChangeState) => handleBlur(newState, VARIABLE_PROPERTIES.VALUE) : undefined,
+        placeholder: valuePlaceHolder,
+      },
+      errorMessage: errors?.[VARIABLE_PROPERTIES.VALUE],
+    },
+  ];
+
+  const handleDelete = () => {
+    setVariableId(guid());
+    onDelete();
+  };
+
+  return (
+    <div className="msla-editor-initialize-variable">
+      <div>
+        <div>
+          <Button
+            appearance="subtle"
+            className="msla-variable-editor-heading-button"
+            onClick={handleToggleExpand}
+            icon={expanded ? <CollapseIcon /> : <ExpandIcon />}
+            aria-expanded={expanded}
+            style={{ justifyContent: 'flex-start' }}
+          >
+            {isSingleLiteralValueSegment(name) && name[0]?.value ? name[0]?.value : newVariableName}
+          </Button>
+          {Object.values(errors ?? {}).filter((x) => !!x).length > 0 ? (
+            <span className="msla-initialize-variable-error-dot">
+              <TrafficLightDot fill={RUN_AFTER_COLORS[themeName]['FAILED']} />
+            </span>
+          ) : null}
+        </div>
+        {expanded ? (
+          <>
+            {fields.map(({ label, id, isRequired, editor, editorProps, errorMessage }) => (
+              <FieldEditor
+                key={id}
+                index={index}
+                label={label}
+                id={id}
+                isRequired={isRequired}
+                editor={editor}
+                editorProps={editorProps}
+                errorMessage={errorMessage}
+              />
+            ))}
+          </>
+        ) : null}
+      </div>
+      {preventMultiVariable ? null : (
+        <div className={'msla-variable-editor-edit-or-delete-button'}>
+          <Tooltip relationship="label" content={disableDelete ? deleteButtonDisabledTitle : deleteButtonTitle}>
+            <Button
+              appearance="subtle"
+              aria-label={deleteButtonTitle}
+              onClick={handleDelete}
+              icon={<DeleteIcon />}
+              disabled={disableDelete || baseEditorProps?.readonly}
+              style={{ color: 'var(--colorBrandForeground1)' }}
+            />
+          </Tooltip>
+        </div>
+      )}
+    </div>
+  );
+};

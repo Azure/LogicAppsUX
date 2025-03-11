@@ -29,6 +29,8 @@ test.describe(
       await GoToMockWorkflow(page, 'Panel');
       expect(await page.getByText('manual', { exact: true }).isVisible()).toBeTruthy();
 
+      await page.waitForFunction(() => localStorage.getItem('REACT_QUERY_OFFLINE_CACHE') !== null);
+
       // Confirm that the query cache is stored in local storage
       expect((await page.evaluate(() => localStorage.getItem('REACT_QUERY_OFFLINE_CACHE') ?? '')) != '').toBeTruthy();
     });

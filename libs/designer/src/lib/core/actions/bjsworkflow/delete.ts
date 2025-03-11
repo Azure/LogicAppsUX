@@ -1,4 +1,4 @@
-import { type ParameterInfo, isCustomCode } from '@microsoft/designer-ui';
+import { type ParameterInfo, isCustomCodeParameter } from '@microsoft/designer-ui';
 import type { RootState } from '../../..';
 import constants from '../../../common/constants';
 import type { WorkflowNode } from '../../parsers/models/workflowNode';
@@ -124,7 +124,7 @@ const deleteCustomCodeInfo = (nodeId: string, dispatch: Dispatch, state: RootSta
   const nodeInputs = getRecordEntry(state.operations.inputParameters, nodeId);
   if (nodeInputs) {
     const parameter = getParameterFromName(nodeInputs, constants.DEFAULT_CUSTOM_CODE_INPUT);
-    if (isCustomCode(parameter?.editor, parameter?.editorOptions?.language)) {
+    if (parameter && isCustomCodeParameter(parameter)) {
       const fileName = parameter?.editorViewModel?.customCodeData?.fileName;
       // if the file name is not present, then it is a new custom code and we just need to remove the file data
       dispatch(deleteCustomCode({ nodeId, fileName }));

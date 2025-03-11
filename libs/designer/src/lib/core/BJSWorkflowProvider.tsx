@@ -23,6 +23,7 @@ export interface BJSWorkflowProviderProps {
   runInstance?: LogicAppsV2.RunInstanceDefinition | null;
   children?: React.ReactNode;
   appSettings?: Record<string, any>;
+  isMultiVariableEnabled?: boolean;
 }
 
 const DataProviderInner: React.FC<BJSWorkflowProviderProps> = ({
@@ -32,6 +33,7 @@ const DataProviderInner: React.FC<BJSWorkflowProviderProps> = ({
   runInstance,
   customCode,
   appSettings,
+  isMultiVariableEnabled,
 }) => {
   const dispatch = useDispatch<AppDispatch>();
   useDeepCompareEffect(() => {
@@ -40,7 +42,7 @@ const DataProviderInner: React.FC<BJSWorkflowProviderProps> = ({
     dispatch(initRunInstance(runInstance ?? null));
     dispatch(initRunInPanel(runInstance ?? null));
     dispatch(initCustomCode(customCode));
-    dispatch(initializeGraphState({ workflowDefinition: workflow, runInstance }));
+    dispatch(initializeGraphState({ workflowDefinition: workflow, runInstance, isMultiVariableEnabled }));
   }, [workflowId, runInstance, workflow, customCode]);
 
   // Store app settings in query to access outside of functional components

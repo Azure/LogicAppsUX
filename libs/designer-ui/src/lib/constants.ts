@@ -38,6 +38,16 @@ const WORKFLOW_PARAMETER_SERIALIZED_TYPE = {
   SECURE_STRING: 'SecureString',
   STRING: 'String',
 };
+
+export const VARIABLE_TYPE = {
+  ARRAY: 'array',
+  BOOLEAN: 'boolean',
+  FLOAT: 'float',
+  INTEGER: 'integer',
+  OBJECT: 'object',
+  STRING: 'string',
+};
+
 const PANEL_TAB_NAMES = {
   ABOUT: 'ABOUT',
   CODE_VIEW: 'CODE_VIEW',
@@ -446,6 +456,7 @@ export default {
       FLOATINGACTIONMENU: 'floatingactionmenu',
       FILEPICKER: 'filepicker',
       HTML: 'html',
+      INITIALIZE_VARIABLE: 'initializevariable',
       RECURRENCE: 'recurrence',
       SCHEMA: 'schema',
       STRING: 'string',
@@ -462,6 +473,7 @@ export default {
         POWERSHELL: 'powershell',
       },
     },
+    VARIABLE_EDITOR_MAX_VARIABLES: 20,
   },
 };
 

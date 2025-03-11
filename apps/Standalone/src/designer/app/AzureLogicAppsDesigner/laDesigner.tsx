@@ -58,6 +58,7 @@ import {
   Constants,
   getSKUDefaultHostOptions,
   RunHistoryPanel,
+  CombineInitializeVariableDialog,
 } from '@microsoft/logic-apps-designer';
 import axios from 'axios';
 import isEqual from 'lodash.isequal';
@@ -405,6 +406,7 @@ const DesignerEditor = () => {
             customCode={customCodeData}
             runInstance={runInstanceData}
             appSettings={settingsData?.properties}
+            isMultiVariableEnabled={hostOptions.enableMultiVariable}
           >
             <div style={{ display: 'flex', flexDirection: 'row', height: 'inherit' }}>
               <RunHistoryPanel
@@ -445,6 +447,7 @@ const DesignerEditor = () => {
                   saveWorkflowFromCode={saveWorkflowFromCode}
                 />
                 {designerView ? <Designer /> : <CodeViewEditor ref={codeEditorRef} workflowKind={workflow?.kind} />}
+                <CombineInitializeVariableDialog />
               </div>
             </div>
           </BJSWorkflowProvider>

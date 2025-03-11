@@ -283,7 +283,7 @@ const Setting = ({
 
   const renderSetting = (setting: Settings, i: number) => {
     const { settingType, settingProp, visible = true } = setting;
-    const { id: parameterId, conditionalVisibility, readOnly, validationErrors } = settingProp as any;
+    const { id: parameterId, conditionalVisibility, readOnly, validationErrors, editorViewModel } = settingProp as any;
     if (!readOnly) {
       settingProp.readOnly = isReadOnly;
     }
@@ -351,7 +351,7 @@ const Setting = ({
       <div key={i} style={{ display: 'flex', gap: '4px' }}>
         <div className={getClassName()} style={{ flex: '1 1 auto', width: '100%' }}>
           {renderSetting()}
-          {errorMessage && !hideErrorMessage[i] && (
+          {errorMessage && !hideErrorMessage[i] && !editorViewModel?.hideParameterErrors && (
             <span className="msla-input-parameter-error" role="alert">
               {errorMessage}
             </span>

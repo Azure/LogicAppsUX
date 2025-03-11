@@ -1,6 +1,6 @@
 import type { IEditorParameterInfo, IEditorService } from '@microsoft/logic-apps-shared';
-import { IncrementVariableEditor } from './customEditor/IncrementVariableEditor';
-import { InitializeVariableEditor } from './customEditor/initializeVariableEditor';
+import { CustomEditorIncrementVariable } from './customEditor/CustomEditorIncrementVariable';
+import { CustomEditorInitializeVariable } from './customEditor/CustomEditorInitializeVariable';
 
 export class CustomEditorService implements IEditorService {
   public areCustomEditorsEnabled = false;
@@ -16,7 +16,7 @@ export class CustomEditorService implements IEditorService {
 
     if (connectorId === 'connectionProviders/variable' && operationId === 'incrementvariable' && parameterName === 'value') {
       return {
-        EditorComponent: IncrementVariableEditor,
+        EditorComponent: CustomEditorIncrementVariable,
         hideLabel: true,
         editor,
         editorOptions,
@@ -25,7 +25,7 @@ export class CustomEditorService implements IEditorService {
 
     if (connectorId === 'connectionProviders/variable' && operationId === 'initializevariable' && parameterName === 'value') {
       return {
-        EditorComponent: InitializeVariableEditor,
+        EditorComponent: CustomEditorInitializeVariable,
         hideLabel: true,
         editor,
         editorOptions,

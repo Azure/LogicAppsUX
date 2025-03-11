@@ -50,14 +50,14 @@ export const convertStringToSegments = (
   nodeMap: Map<string, ValueSegment>,
   options?: SegmentParserOptions
 ): ValueSegment[] => {
-  if (!value) {
+  if (value === undefined) {
     return [];
   }
 
-  const { tokensEnabled } = options ?? {};
+  const { tokensEnabled, stringifyNonString } = options ?? {};
 
   if (typeof value !== 'string' || !tokensEnabled) {
-    return [createLiteralValueSegment(value)];
+    return [createLiteralValueSegment(stringifyNonString ? JSON.stringify(value) : value)];
   }
 
   const returnSegments: ValueSegment[] = [];

@@ -12,6 +12,7 @@ const fileOptions = [
   { key: 'Empty.json', text: 'Empty/New' },
   { key: 'Panel.json', text: 'Panel' },
   { key: 'Recurrence.json', text: 'Recurrence' },
+  { key: 'MultiVariable.json', text: 'Multi Variable' },
   // { key: 'straightLine.json', text: 'Straight Line' },
   { key: 'simpleBigworkflow.json', text: 'Simple Big Workflow' },
   { key: 'UnicodeKeys.json', text: 'Unicode Keys' },

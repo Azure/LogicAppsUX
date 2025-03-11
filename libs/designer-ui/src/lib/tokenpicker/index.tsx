@@ -22,7 +22,7 @@ import { useIntl } from 'react-intl';
 import { Button } from '@fluentui/react-components';
 import copilotLogo from './images/copilotLogo.svg';
 import { Nl2fExpressionAssistant } from './nl2fExpressionAssistant';
-import { escapeString, isCopilotServiceEnabled } from '@microsoft/logic-apps-shared';
+import { escapeString, isCopilotServiceEnabled, LOCAL_STORAGE_KEYS } from '@microsoft/logic-apps-shared';
 
 export const TokenPickerMode = {
   TOKEN: 'token',
@@ -207,7 +207,7 @@ export function TokenPicker({
   };
 
   const pasteLastUsedExpression = () => {
-    setExpression({ ...expression, value: window.localStorage.getItem('msla-tokenpicker-expression') ?? expression.value });
+    setExpression({ ...expression, value: window.localStorage.getItem(LOCAL_STORAGE_KEYS.TOKEN_PICKER_EXPRESSION) ?? expression.value });
     expressionEditorRef.current?.focus();
   };
 

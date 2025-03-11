@@ -1,8 +1,7 @@
 import { render } from '@testing-library/react';
 import { MixedInputEditor } from '../mixedinputeditor';
-import type { ValueSegment } from '@microsoft/logic-apps-shared';
+import { LOCAL_STORAGE_KEYS, type ValueSegment } from '@microsoft/logic-apps-shared';
 import { describe, vi, beforeEach, it, expect } from 'vitest';
-
 describe('MixedInputEditor', () => {
   let initialValue: ValueSegment[];
   let mockOnChange: ReturnType<typeof vi.fn>;
@@ -41,7 +40,7 @@ describe('MixedInputEditor', () => {
   });
 
   it('should read the toggle state from local storage', () => {
-    localStorage.setItem('mixedInputEditor_toggle', 'true');
+    localStorage.setItem(LOCAL_STORAGE_KEYS.MIXED_INPUT_TOGGLE, 'true');
 
     const { getByLabelText } = render(
       <MixedInputEditor
