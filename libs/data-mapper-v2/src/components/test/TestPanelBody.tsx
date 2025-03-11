@@ -115,11 +115,20 @@ export const TestPanelBody = (props: TestPanelBodyProps) => {
       try {
         return JSON.stringify(JSON.parse(content), null, 2);
       } catch (err) {
-        LoggerService().log({
-          level: LogEntryLevel.Error,
-          area: `${LogCategory.DataMapperDesigner}/testPanel`,
-          message: `${err}`,
-        });
+        if (err instanceof Error) {
+          // if not json log as verbose, not an error
+          LoggerService().log({
+            level: LogEntryLevel.Verbose,
+            area: `${LogCategory.DataMapperDesigner}/testPanelMessage`,
+            message: `${err.message}`,
+          });
+        } else {
+          LoggerService().log({
+            level: LogEntryLevel.Verbose,
+            area: `${LogCategory.DataMapperDesigner}/testPanelMessage`,
+            message: `${err}`,
+          });
+        }
         return content;
       }
     }

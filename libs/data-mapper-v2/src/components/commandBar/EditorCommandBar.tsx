@@ -13,6 +13,7 @@ import type { MetaMapDefinition } from '../../mapHandling/MapDefinitionSerialize
 import { convertToMapDefinition } from '../../mapHandling/MapDefinitionSerializer';
 import { toggleCodeView, toggleMapChecker, toggleTestPanel } from '../../core/state/PanelSlice';
 import { useStyles } from './styles';
+import type { LogEntry } from '@microsoft/logic-apps-shared';
 import { emptyCanvasRect, LogEntryLevel, LoggerService } from '@microsoft/logic-apps-shared';
 
 export type EditorCommandBarProps = {};
@@ -53,17 +54,16 @@ export const EditorCommandBar = (_props: EditorCommandBarProps) => {
         const result = convertToMapDefinition(currentConnections, sourceSchema, targetSchema, targetSchemaSortArray);
         return result;
       } catch (error) {
-        let errorMessage = '';
-        if (typeof error === 'string') {
-          errorMessage = error;
-        } else if (error instanceof Error) {
-          errorMessage = error.message;
-        }
-        LoggerService().log({
+        const logEntry: Omit<LogEntry, 'timestamp'> = {
           level: LogEntryLevel.Error,
-          area: `${LogCategory.DataMapperDesigner}/dataMapDefinition`,
-          message: errorMessage,
-        });
+          area: `${LogCategory.DataMapperDesigner}/generateDataMapDefinitionSerialize`,
+          message: '',
+        };
+        if (typeof error === 'string') {
+          LoggerService().log({ ...logEntry, message: error });
+        } else if (error instanceof Error) {
+          LoggerService().log({ ...logEntry, message: error.message, args: [{ stack: error.stack ?? '' }] });
+        }
         return { isSuccess: false, errorNodes: [] };
       }
     }
@@ -112,7 +112,7 @@ export const EditorCommandBar = (_props: EditorCommandBarProps) => {
           LoggerService().log({
             level: LogEntryLevel.Error,
             area: `${LogCategory.DataMapperDesigner}/onGenerateClick`,
-            message: JSON.stringify(error),
+            message: JSON.stringify(error.message),
           });
           DataMapperFileService().sendNotification(failedXsltMessage, error.message, LogEntryLevel.Error);
         });
