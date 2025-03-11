@@ -1,3 +1,5 @@
+import { LOCAL_STORAGE_KEYS } from '@microsoft/logic-apps-shared';
+
 export async function retrieveClipboardData() {
   try {
     if (navigator.clipboard && typeof navigator.clipboard.readText === 'function') {
@@ -10,8 +12,8 @@ export async function retrieveClipboardData() {
       }
       return null;
     }
-    return JSON.parse(localStorage.getItem('msla-clipboard') ?? '');
-  } catch (error) {
+    return JSON.parse(localStorage.getItem(LOCAL_STORAGE_KEYS.CLIPBOARD) ?? '');
+  } catch (_error) {
     return null;
   }
 }
