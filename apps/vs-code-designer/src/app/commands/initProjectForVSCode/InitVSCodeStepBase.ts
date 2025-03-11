@@ -17,6 +17,7 @@ import {
   extensionCommand,
   vscodeFolderName,
   logicAppsStandardExtensionId,
+  designTimeDirectoryName,
 } from '../../../constants';
 import { ext } from '../../../extensionVariables';
 import { localize } from '../../../localize';
@@ -31,7 +32,7 @@ import {
 } from '../../utils/vsCodeConfig/launch';
 import { updateWorkspaceSetting } from '../../utils/vsCodeConfig/settings';
 import { getTasksVersion, updateTasksVersion, updateTasks, getTasks, updateInputs, getInputs } from '../../utils/vsCodeConfig/tasks';
-import { isMultiRootWorkspace } from '../../utils/workspace';
+import { getWorkspaceFolder, isMultiRootWorkspace } from '../../utils/workspace';
 import { AzureWizardExecuteStep, nonNullProp } from '@microsoft/vscode-azext-utils';
 import type { IActionContext } from '@microsoft/vscode-azext-utils';
 import type {
@@ -47,7 +48,10 @@ import type {
 import { WorkflowProjectType, FuncVersion } from '@microsoft/vscode-extension-logic-apps';
 import * as fse from 'fs-extra';
 import * as path from 'path';
+import * as vscode from 'vscode';
 import type { TaskDefinition, DebugConfiguration, WorkspaceFolder } from 'vscode';
+import { isLogicAppProjectInRoot } from '../../utils/verifyIsProject';
+import { getOrCreateDesignTimeDirectory } from '../../utils/codeless/startDesignTimeApi';
 
 export abstract class InitVSCodeStepBase extends AzureWizardExecuteStep<IProjectWizardContext> {
   public priority = 20;
@@ -87,6 +91,7 @@ export abstract class InitVSCodeStepBase extends AzureWizardExecuteStep<IProject
     await this.writeLaunchJson(context, context.workspaceFolder, vscodePath, version, context.logicAppName || context.workspaceFolder.name);
     await this.writeSettingsJson(context, vscodePath, language, version);
     await this.writeExtensionsJson(context, vscodePath, language);
+    await getOrCreateDesignTimeDirectory(designTimeDirectoryName, context.projectPath);
 
     // Remove '.vscode' from gitignore if applicable
     await removeFromGitIgnore(context.workspacePath, /^\.vscode(\/|\\)?\s*$/gm);
@@ -96,14 +101,21 @@ export abstract class InitVSCodeStepBase extends AzureWizardExecuteStep<IProject
     return true;
   }
 
-  protected setDeploySubpath(context: IProjectWizardContext, deploySubpath: string): string {
-    deploySubpath = this.addSubDir(context, deploySubpath);
+  protected async setDeploySubpath(context: IProjectWizardContext, deploySubpath: string): Promise<string> {
+    deploySubpath = await this.addSubDir(context, deploySubpath);
     this.settings.push({ key: deploySubpathSetting, value: deploySubpath });
     return deploySubpath;
   }
 
-  protected addSubDir(context: IProjectWizardContext, fsPath: string): string {
-    const subDir: string = path.relative(context.workspacePath, context.projectPath);
+  protected async addSubDir(context: IProjectWizardContext, fsPath: string): Promise<string> {
+    let subDir = '';
+    if (vscode.workspace.workspaceFolders && vscode.workspace.workspaceFolders.length > 0) {
+      const workspaceFolder = await getWorkspaceFolder(context, undefined, true);
+      if (await isLogicAppProjectInRoot(workspaceFolder)) {
+        const projectPath = path.relative(context.workspacePath, context.projectPath);
+        subDir = projectPath === workspaceFolder.name ? projectPath : subDir;
+      }
+    }
     // always use posix for debug config
     return path.posix.join(subDir, fsPath);
   }
@@ -113,11 +125,11 @@ export abstract class InitVSCodeStepBase extends AzureWizardExecuteStep<IProject
 
     for (const task of newTasks) {
       let cwd: string = (task.options && task.options.cwd) || '.';
-      cwd = this.addSubDir(context, cwd);
+      cwd = await this.addSubDir(context, cwd);
       if (!isPathEqual(cwd, '.')) {
         task.options = task.options || {};
         // always use posix for debug config
-        task.options.cwd = path.posix.join('${workspaceFolder}');
+        task.options.cwd = path.posix.join('${workspaceFolder}', cwd);
       }
     }
 
