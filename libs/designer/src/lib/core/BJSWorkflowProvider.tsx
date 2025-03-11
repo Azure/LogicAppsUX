@@ -26,6 +26,7 @@ export interface BJSWorkflowProviderProps {
   children?: React.ReactNode;
   appSettings?: Record<string, any>;
   unitTestDefinition?: UnitTestDefinition | null;
+  isMultiVariableEnabled?: boolean;
 }
 
 const DataProviderInner: React.FC<BJSWorkflowProviderProps> = ({
@@ -36,6 +37,7 @@ const DataProviderInner: React.FC<BJSWorkflowProviderProps> = ({
   customCode,
   appSettings,
   unitTestDefinition,
+  isMultiVariableEnabled,
 }) => {
   const dispatch = useDispatch<AppDispatch>();
 
@@ -45,7 +47,7 @@ const DataProviderInner: React.FC<BJSWorkflowProviderProps> = ({
     dispatch(initRunInstance(runInstance ?? null));
     dispatch(initRunInPanel(runInstance ?? null));
     dispatch(initCustomCode(customCode));
-    dispatch(initializeGraphState({ workflowDefinition: workflow, runInstance }));
+    dispatch(initializeGraphState({ workflowDefinition: workflow, runInstance, isMultiVariableEnabled }));
     dispatch(initUnitTestDefinition(deserializeUnitTestDefinition(unitTestDefinition ?? null, workflow)));
   }, [workflowId, runInstance, workflow, customCode, unitTestDefinition]);
 

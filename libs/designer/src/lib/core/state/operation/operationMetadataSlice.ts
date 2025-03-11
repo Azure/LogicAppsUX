@@ -146,6 +146,13 @@ export interface NodeOperation extends OperationInfo {
   kind?: string;
 }
 
+export interface NodeOperationInputsData {
+  id: string;
+  nodeInputs: NodeInputs;
+  nodeDependencies: NodeDependencies;
+  operationInfo: NodeOperation;
+}
+
 export interface NodeData {
   id: string;
   nodeInputs: NodeInputs;
@@ -210,6 +217,21 @@ export const operationMetadataSlice = createSlice({
   name: 'operationMetadata',
   initialState: initialState,
   reducers: {
+    initializeNodeOperationInputsData: (state, action: PayloadAction<NodeOperationInputsData[]>) => {
+      const nodes = action.payload;
+
+      for (const nodeData of nodes) {
+        if (!nodeData) {
+          return;
+        }
+
+        const { id, nodeInputs, nodeDependencies, operationInfo } = nodeData;
+        state.inputParameters[id] = nodeInputs;
+        state.dependencies[id] = nodeDependencies;
+        state.operationInfo[id] = operationInfo;
+      }
+      state.loadStatus.nodesInitialized = true;
+    },
     initializeOperationInfo: (state, action: PayloadAction<AddNodeOperationPayload>) => {
       const { id, connectorId, operationId, type, kind } = action.payload;
       state.operationInfo[id] = { connectorId, operationId, type, kind };
@@ -469,9 +491,10 @@ export const operationMetadataSlice = createSlice({
         groupId: string;
         parameterId: string;
         validationErrors: string[] | undefined;
+        editorViewModel?: any; // To update validation on the editor level
       }>
     ) => {
-      const { nodeId, groupId, parameterId, validationErrors } = action.payload;
+      const { nodeId, groupId, parameterId, validationErrors, editorViewModel } = action.payload;
       const inputParameters = getRecordEntry(state.inputParameters, nodeId);
       const parameterGroup = getRecordEntry(inputParameters?.parameterGroups, groupId);
       if (!inputParameters || !parameterGroup) {
@@ -480,6 +503,9 @@ export const operationMetadataSlice = createSlice({
       const index = parameterGroup.parameters.findIndex((parameter) => parameter.id === parameterId);
       if (index > -1) {
         parameterGroup.parameters[index].validationErrors = validationErrors;
+        if (editorViewModel) {
+          parameterGroup.parameters[index].editorViewModel = editorViewModel;
+        }
       }
     },
     removeParameterValidationError: (
@@ -599,6 +625,7 @@ const updateExistingInputTokenTitles = (state: OperationMetadataState, actionPay
 // Action creators are generated for each case reducer function
 export const {
   initializeNodes,
+  initializeNodeOperationInputsData,
   initializeOperationInfo,
   updateNodeParameters,
   addDynamicInputs,

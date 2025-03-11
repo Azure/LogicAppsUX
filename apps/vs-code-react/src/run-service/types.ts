@@ -230,6 +230,11 @@ export interface GetAvailableCustomXsltPathsMessage {
   data: string[];
 }
 
+export interface GetAvailableCustomXsltPathsMessageV2 {
+  command: typeof ExtensionCommand.getAvailableCustomXsltPathsV2;
+  data: IFileSysTreeItem[];
+}
+
 export interface SetXsltDataMessage {
   command: typeof ExtensionCommand.setXsltData;
   data: XsltData;

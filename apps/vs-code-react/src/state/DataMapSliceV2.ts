@@ -10,12 +10,13 @@ export interface DataMapState {
   mapDefinition?: MapDefinitionEntry;
   dataMapMetadata?: MapMetadataV2;
 
+  dataMapFilename?: string;
   sourceSchemaFilename?: string;
   sourceSchema?: DataMapSchema;
   targetSchemaFilename?: string;
   targetSchema?: DataMapSchema;
   schemaFileList?: IFileSysTreeItem[];
-  customXsltPathsList?: string[];
+  customXsltPathsList?: IFileSysTreeItem[];
   xsltFilename: string;
   xsltContent: string;
   fetchedFunctions?: FunctionData[];
@@ -64,13 +65,16 @@ export const dataMapSlice = createSlice({
     changeTargetSchemaFilename: (state, action: PayloadAction<string>) => {
       state.targetSchemaFilename = action.payload;
     },
+    changeDataMapFilename: (state, action: PayloadAction<string>) => {
+      state.dataMapFilename = action.payload;
+    },
     changeTargetSchema: (state, action: PayloadAction<DataMapSchema>) => {
       state.targetSchema = action.payload;
     },
     changeSchemaTreeList: (state, action: PayloadAction<IFileSysTreeItem[]>) => {
       state.schemaFileList = action.payload;
     },
-    changeCustomXsltPathList: (state, action: PayloadAction<string[]>) => {
+    changeCustomXsltPathList: (state, action: PayloadAction<IFileSysTreeItem[]>) => {
       state.customXsltPathsList = action.payload;
     },
     changeFetchedFunctions: (state, action: PayloadAction<FunctionData[]>) => {
@@ -91,6 +95,7 @@ export const {
   changeLoadingMethod,
   changeXsltFilename,
   changeXsltContent,
+  changeDataMapFilename,
   changeMapDefinition,
   changeDataMapMetadata,
   changeIsTestDisabledForOS,

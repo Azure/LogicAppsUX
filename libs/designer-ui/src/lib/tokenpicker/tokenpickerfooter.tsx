@@ -19,6 +19,7 @@ import {
   guid,
   isCopilotServiceEnabled,
   unescapeString,
+  LOCAL_STORAGE_KEYS,
 } from '@microsoft/logic-apps-shared';
 import type { Expression, TokenGroup, Token as TokenGroupToken } from '@microsoft/logic-apps-shared';
 import type { LexicalEditor, NodeKey } from 'lexical';
@@ -115,7 +116,6 @@ export function TokenPickerFooter({
     let currExpression: Expression | null = null;
     const unescapedExpressionValue = unescapeString(expression.value);
     try {
-      console.log(unescapedExpressionValue);
       currExpression = ExpressionParser.parseExpression(unescapedExpressionValue);
     } catch (ex) {
       console.log(ex);
@@ -138,8 +138,8 @@ export function TokenPickerFooter({
       return;
     }
 
-    if (expression.value && window.localStorage.getItem('msla-tokenpicker-expression') !== expression.value) {
-      window.localStorage.setItem('msla-tokenpicker-expression', expression.value);
+    if (expression.value && window.localStorage.getItem(LOCAL_STORAGE_KEYS.TOKEN_PICKER_EXPRESSION) !== expression.value) {
+      window.localStorage.setItem(LOCAL_STORAGE_KEYS.TOKEN_PICKER_EXPRESSION, expression.value);
     }
     // if the expression is just an output token, instead of creating an expression, we'll just insert the token
     const outputToken = getExpressionOutput(currExpression, outputTokenMap);

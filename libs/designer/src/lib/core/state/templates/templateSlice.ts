@@ -1,8 +1,8 @@
-import { getIntl, getRecordEntry, type Template } from '@microsoft/logic-apps-shared';
+import { getRecordEntry, type Template } from '@microsoft/logic-apps-shared';
 import type { PayloadAction } from '@reduxjs/toolkit';
 import { createSlice } from '@reduxjs/toolkit';
-import { getCurrentWorkflowNames, validateConnectionsValue, validateParameterValue } from '../../templates/utils/helper';
-import { loadTemplate, validateWorkflowName, type TemplatePayload } from '../../actions/bjsworkflow/templates';
+import { validateConnectionsValue, validateParameterValue } from '../../templates/utils/helper';
+import { loadTemplate, validateWorkflowsBasicInfo, type TemplatePayload } from '../../actions/bjsworkflow/templates';
 
 export interface TemplateState extends TemplatePayload {
   templateName?: string;
@@ -32,33 +32,6 @@ export const templateSlice = createSlice({
         state.workflows[id].workflowName = name;
       }
     },
-    validateWorkflowsBasicInfo: (state, action: PayloadAction<{ validateName: boolean; existingNames: string[] }>) => {
-      const { validateName, existingNames } = action.payload;
-      const workflows = Object.keys(state.workflows);
-      if (workflows.length) {
-        const intl = getIntl();
-        for (const id of workflows) {
-          if (!state.workflows[id].kind) {
-            state.workflows[id].errors.kind = intl.formatMessage({
-              defaultMessage: 'The value must not be empty.',
-              id: 'JzvOUc',
-              description: 'Error message when the stage progressed without selecting kind.',
-            });
-          }
-
-          if (validateName) {
-            const currentWorkflowNames = getCurrentWorkflowNames(
-              workflows.map((id) => ({ id, name: state.workflows[id].workflowName ?? '' })),
-              id
-            );
-            state.workflows[id].errors.workflow = validateWorkflowName(state.workflows[id].workflowName, [
-              ...existingNames,
-              ...currentWorkflowNames,
-            ]);
-          }
-        }
-      }
-    },
     updateWorkflowNameValidationError: (state, action: PayloadAction<{ id: string; error: string | undefined }>) => {
       const { id, error } = action.payload;
       if (!state.workflows[id]) {
@@ -85,6 +58,9 @@ export const templateSlice = createSlice({
         value,
       };
       state.errors.parameters[name] = validationError;
+    },
+    updateTemplateParameterDefinitions: (state, action: PayloadAction<Record<string, Template.ParameterDefinition>>) => {
+      state.parameterDefinitions = { ...state.parameterDefinitions, ...action.payload };
     },
     validateParameters: (state) => {
       const parametersDefinition = { ...state.parameterDefinitions };
@@ -137,6 +113,20 @@ export const templateSlice = createSlice({
         connections: undefined,
       };
     });
+
+    builder.addCase(
+      validateWorkflowsBasicInfo.fulfilled,
+      (state, action: PayloadAction<Record<string, { kindError?: string; nameError?: string }>>) => {
+        const workflows = action.payload;
+        for (const workflowId of Object.keys(workflows)) {
+          const { kindError, nameError } = workflows[workflowId];
+          if (state.workflows[workflowId]) {
+            state.workflows[workflowId].errors.kind = kindError;
+            state.workflows[workflowId].errors.workflow = nameError;
+          }
+        }
+      }
+    );
   },
 });
 
@@ -144,11 +134,11 @@ export const {
   changeCurrentTemplateName,
   updateWorkflowName,
   updateKind,
-  validateWorkflowsBasicInfo,
   updateTemplateParameterValue,
   validateParameters,
   validateConnections,
   clearTemplateDetails,
   updateWorkflowNameValidationError,
+  updateTemplateParameterDefinitions,
 } = templateSlice.actions;
 export default templateSlice.reducer;

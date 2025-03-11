@@ -1,6 +1,6 @@
 import type { ValueSegment } from '../editor';
 import { ValueSegmentType } from '../editor';
-import type { BaseEditorProps, CallbackHandler, ChangeHandler } from '../editor/base';
+import type { BaseEditorProps, CallbackHandler } from '../editor/base';
 import { EditorWrapper } from '../editor/base/EditorWrapper';
 import { EditorChangePlugin } from '../editor/base/plugins/EditorChange';
 import { createLiteralValueSegment, notEqual } from '../editor/base/utils/helper';
@@ -26,6 +26,8 @@ type Mode = (typeof Mode)[keyof typeof Mode];
 const comboboxStyles: Partial<IComboBoxStyles> = {
   root: {
     minHeight: '30px',
+    paddingLeft: '6px',
+    fontSize: '15px',
   },
   divider: {
     height: '2px',
@@ -65,31 +67,35 @@ export interface ComboboxItem {
 
 export interface ComboboxProps extends BaseEditorProps {
   options: ComboboxItem[];
+  // Behavior
   isLoading?: boolean;
-  errorDetails?: { message: string };
-  useOption?: boolean;
-  onMenuOpen?: CallbackHandler;
+  multiSelect?: boolean;
   isCaseSensitive?: boolean;
   shouldSort?: boolean;
-  multiSelect?: boolean;
+  useOption?: boolean;
+  // Event Handlers
+  onMenuOpen?: CallbackHandler;
+  // Error Handling
+  errorDetails?: { message: string };
+  // Misc
   serialization?: SerializationOptions;
-  onChange?: ChangeHandler;
 }
 
 export const Combobox = ({
-  options,
   initialValue,
+  options,
   isLoading,
-  errorDetails,
+  multiSelect = false,
+  isCaseSensitive,
+  shouldSort = true,
   useOption = true,
   onChange,
   onMenuOpen,
   labelId,
-  multiSelect = false,
-  serialization,
   label,
-  shouldSort = true,
-  isCaseSensitive,
+  errorDetails,
+  serialization,
+  basePlugins,
   ...baseEditorProps
 }: ComboboxProps): JSX.Element => {
   const intl = useIntl();
@@ -290,17 +296,13 @@ export const Combobox = ({
       {mode === Mode.Custom ? (
         <div className="msla-combobox-editor-container">
           <EditorWrapper
+            {...baseEditorProps}
             labelId={labelId}
             readonly={baseEditorProps.readonly}
             className="msla-combobox-editor"
-            basePlugins={{ clearEditor: true, autoFocus: canAutoFocus }}
+            basePlugins={{ clearEditor: true, autoFocus: canAutoFocus, ...basePlugins }}
             initialValue={value}
             onBlur={handleBlur}
-            getTokenPicker={baseEditorProps.getTokenPicker}
-            placeholder={baseEditorProps.placeholder}
-            dataAutomationId={baseEditorProps.dataAutomationId}
-            tokenMapping={baseEditorProps.tokenMapping}
-            loadParameterValueFromString={baseEditorProps.loadParameterValueFromString}
           >
             <EditorChangePlugin setValue={setValue} />
           </EditorWrapper>
@@ -311,6 +313,7 @@ export const Combobox = ({
               onClick={() => handleClearClick()}
               icon={<ClearIcon />}
               style={buttonStyles}
+              disabled={baseEditorProps.readonly}
             />
           </Tooltip>
         </div>

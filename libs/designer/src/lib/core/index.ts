@@ -92,3 +92,4 @@ export { storeStateToUndoRedoHistory, onUndoClick, onRedoClick } from './actions
 export { useCanUndo, useCanRedo } from './state/undoRedo/undoRedoSelectors';
 export { resetDesignerView } from './state/designerView/designerViewSlice';
 export * from './queries/runs';
+export { reloadTemplates } from './actions/bjsworkflow/templates';

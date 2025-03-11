@@ -72,131 +72,126 @@ describe('canStringBeConverted', () => {
 
 describe('unescapeString', () => {
   it('unescapes newline characters', () => {
-    const input = 'Hello\\nWorld';
-    const expectedOutput = 'Hello\nWorld';
-    const result = unescapeString(input);
-    expect(result).toBe(expectedOutput);
+    expect(unescapeString('Hello\\nWorld')).toBe('Hello\nWorld');
   });
 
   it('unescapes carriage return characters', () => {
-    const input = 'Hello\\rWorld';
-    const expectedOutput = 'Hello\rWorld';
-    const result = unescapeString(input);
-    expect(result).toBe(expectedOutput);
+    expect(unescapeString('Hello\\rWorld')).toBe('Hello\rWorld');
   });
 
   it('unescapes tab characters', () => {
-    const input = 'Hello\\tWorld';
-    const expectedOutput = 'Hello\tWorld';
-    const result = unescapeString(input);
-    expect(result).toBe(expectedOutput);
+    expect(unescapeString('Hello\\tWorld')).toBe('Hello\tWorld');
   });
 
   it('unescapes vertical tab characters', () => {
-    const input = 'Hello\\vWorld';
-    const expectedOutput = 'Hello\vWorld';
-    const result = unescapeString(input);
-    expect(result).toBe(expectedOutput);
+    expect(unescapeString('Hello\\vWorld')).toBe('Hello\vWorld');
+  });
+
+  it('unescapes backslashes', () => {
+    expect(unescapeString('Hello\\\\World')).toBe('Hello\\World');
+  });
+
+  it('unescapes double quotes', () => {
+    expect(unescapeString('Hello\\"World"')).toBe('Hello"World"');
   });
 
   it('returns the same string if there are no escape sequences', () => {
-    const input = 'Hello World';
-    const expectedOutput = 'Hello World';
-    const result = unescapeString(input);
-    expect(result).toBe(expectedOutput);
+    expect(unescapeString('Hello World')).toBe('Hello World');
+  });
+
+  it('handles multiple escape sequences in a row', () => {
+    expect(unescapeString('Line1\\nLine2\\tTabbed')).toBe('Line1\nLine2\tTabbed');
+  });
+
+  it('handles an empty string', () => {
+    expect(unescapeString('')).toBe('');
+  });
+
+  it('ignores invalid escape sequences', () => {
+    expect(unescapeString('Hello\\xWorld')).toBe('Hello\\xWorld');
   });
 });
 
 describe('escapeString', () => {
   it('escapes newline characters', () => {
-    const input = 'Hello\nWorld';
-    const expectedOutput = 'Hello\\nWorld';
-    const result = escapeString(input);
-    expect(result).toBe(expectedOutput);
+    expect(escapeString('Hello\nWorld')).toBe('Hello\\nWorld');
   });
 
   it('escapes carriage return characters', () => {
-    const input = 'Hello\rWorld';
-    const expectedOutput = 'Hello\\rWorld';
-    const result = escapeString(input);
-    expect(result).toBe(expectedOutput);
+    expect(escapeString('Hello\rWorld')).toBe('Hello\\rWorld');
   });
 
   it('escapes tab characters', () => {
-    const input = 'Hello\tWorld';
-    const expectedOutput = 'Hello\\tWorld';
-    const result = escapeString(input);
-    expect(result).toBe(expectedOutput);
+    expect(escapeString('Hello\tWorld')).toBe('Hello\\tWorld');
   });
 
   it('escapes vertical tab characters', () => {
-    const input = 'Hello\vWorld';
-    const expectedOutput = 'Hello\\vWorld';
-    const result = escapeString(input);
-    expect(result).toBe(expectedOutput);
+    expect(escapeString('Hello\vWorld')).toBe('Hello\\vWorld');
   });
 
   it('returns the same string if there are no special characters', () => {
-    const input = 'Hello World';
-    const expectedOutput = 'Hello World';
-    const result = escapeString(input);
-    expect(result).toBe(expectedOutput);
+    expect(escapeString('Hello World')).toBe('Hello World');
   });
 
-  it('should correctly escape newline characters', () => {
-    expect(escapeString('\n')).toEqual('\\n');
-    expect(escapeString('Test\nTest')).toEqual('Test\\nTest');
+  it('escapes newline characters', () => {
+    expect(escapeString('\n')).toBe('\\n');
+    expect(escapeString('Test\nTest')).toBe('Test\\nTest');
   });
 
-  it('should correctly escape backslashes and newline characters together', () => {
-    expect(escapeString('\\\n')).toEqual('\\\\n');
-    expect(escapeString('Test\\\nTest')).toEqual('Test\\\\nTest');
+  it('escapes backslashes and newline characters together', () => {
+    expect(escapeString('\\\n')).toBe('\\\\n');
+    expect(escapeString('Test\\\nTest')).toBe('Test\\\\nTest');
   });
 
-  it('should handle an empty string', () => {
-    expect(escapeString('')).toEqual('');
+  it('handles an empty string', () => {
+    expect(escapeString('')).toBe('');
   });
 
-  it('does not escape characters if requireSingleQuotesWrap is true and there are no surrounding single quotes', () => {
-    const input = 'Test\nTest';
-    const result = escapeString(input, true);
-    expect(result).toBe(input); // No change, since it's not surrounded by single quotes
+  it('does not escape characters if requireSingleQuotesWrap is true and the string is not wrapped in single quotes', () => {
+    expect(escapeString('Test\nTest', true)).toBe('Test\nTest');
   });
 
-  it('escapes characters if requireSingleQuotesWrap is true and the string is surrounded by single quotes', () => {
-    const input = "'Test\nTest'";
-    const expectedOutput = "'Test\\nTest'";
-    const result = escapeString(input, true);
-    expect(result).toBe(expectedOutput); // Should escape \n
+  it('escapes characters if requireSingleQuotesWrap is true and the string is wrapped in single quotes', () => {
+    expect(escapeString("'Test\nTest'", true)).toBe("'Test\\nTest'");
   });
 
-  it('escapes characters even if the string contains multiple lines when requireSingleQuotesWrap is true and surrounded by single quotes', () => {
-    const input = "'Test\nAnotherLine\nTest'";
-    const expectedOutput = `'Test
+  it('escapes multiple newlines when requireSingleQuotesWrap is true and wrapped in single quotes', () => {
+    expect(escapeString("'Test\nAnotherLine\nTest'", true)).toBe(`'Test
 AnotherLine
-Test'`;
-    const result = escapeString(input, true);
-    expect(result).toBe(expectedOutput);
+Test'`);
   });
 
-  it('does not escape characters if requireSingleQuotesWrap is true and string is not surrounded by single quotes', () => {
-    const input = 'Test\nTest';
-    const result = escapeString(input, true);
-    expect(result).toBe(input); // No change, since it's not surrounded by single quotes
+  it('escapes characters even if requireSingleQuotesWrap is false, regardless of surrounding quotes', () => {
+    expect(escapeString("'Test\nTest'", false)).toBe("'Test\\nTest'");
   });
 
-  it('escapes characters when requireSingleQuotesWrap is false regardless of surrounding quotes', () => {
-    const input = "'Test\nTest'";
-    const expectedOutput = "'Test\\nTest'";
-    const result = escapeString(input, false);
-    expect(result).toBe(expectedOutput);
+  it('escapes characters when requireSingleQuotesWrap is undefined, regardless of surrounding quotes', () => {
+    expect(escapeString("'Test\nTest'")).toBe("'Test\\nTest'");
   });
 
-  it('escapes characters when requireSingleQuotesWrap is undefined regardless of surrounding quotes', () => {
-    const input = "'Test\nTest'";
-    const expectedOutput = "'Test\\nTest'";
-    const result = escapeString(input);
-    expect(result).toBe(expectedOutput);
+  it('escapes double quotes only when requireSingleQuotesWrap is true', () => {
+    expect(escapeString(`concat('{', '"ErrorDetail"', ':', '"Exchange get failed with exchange id', '-', '"}')`, true)).toBe(
+      `concat('{', '\\"ErrorDetail\\"', ':', '\\"Exchange get failed with exchange id', '-', '\\"}')`
+    );
+    expect(escapeString(`concat('{', '"ErrorDetail"', ':', '"Exchange get failed with exchange id', '-', '"}')`, false)).toBe(
+      `concat('{', '"ErrorDetail"', ':', '"Exchange get failed with exchange id', '-', '"}')`
+    );
+  });
+
+  it('escapes double quotes and newlines when requireSingleQuotesWrap is true', () => {
+    expect(escapeString('\'Hello\n"World"\'', true)).toBe('\'Hello\\n\\"World\\"\'');
+  });
+
+  it('does not escape double quotes when requireSingleQuotesWrap is false', () => {
+    expect(escapeString('Hello "World"', false)).toBe('Hello "World"');
+  });
+
+  it('escapes double quotes and other characters when requireSingleQuotesWrap is true and surrounded by single quotes', () => {
+    expect(escapeString('\'Test\n"AnotherTest"\'', true)).toBe('\'Test\\n\\"AnotherTest\\"\'');
+  });
+
+  it('does not escape double quotes when requireSingleQuotesWrap is false', () => {
+    expect(escapeString('Test "Hello"', false)).toBe('Test "Hello"');
   });
 });
 

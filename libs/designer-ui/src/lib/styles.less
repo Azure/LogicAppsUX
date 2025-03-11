@@ -1,72 +1,75 @@
+@import "./about/about.less";
 @import "./actionbuttonv2/actionbuttonv2.less";
-@import "./chatbot/chatbot.less";
-@import "./common.less";
-@import "./connectioncontainer.less";
-@import "./copilotGetStarted/copilot.less";
-@import "./variables.less";
 @import "./apicards.less";
-@import "./error.less";
-@import "./picker/picker.less";
-@import "./nodeCollapseToggle/nodeCollapseToggle.less";
+@import "./ariaSearchResults/ariaSearchResultsAlert.less";
+@import "./arrayeditor/arrayeditor.less";
+@import "./authentication/authentication.less";
+@import "./azureResourcePicker/azureResourcePicker.less";
 @import "./card/batch.less";
 @import "./card/card.less";
+@import "./card/cardv2.less";
+@import "./card/parameters/parameters.less";
+@import "./card/subgraphCard/subgraphCard.less";
+@import "./chatbot/chatbot.less";
 @import "./checkbox/checkbox.less";
-@import "./colorizer/colorizer.less";
 @import "./code/codeeditor.less";
+@import "./colorizer/colorizer.less";
 @import "./combobox/combobox.less";
-@import "./dropdown/dropdown.less";
+@import "./common.less";
+@import "./configItem/connectiongatewaypicker.less";
+@import "./connectioncontainer.less";
+@import "./connectorsummarycard/connectorsummarycard.less";
+@import "./copilotGetStarted/copilot.less";
+@import "./copyinputcontrol/copyinputcontrol.less";
 @import "./datetimeeditor/datetimeeditor.less";
 @import "./dictionary/dictionaryeditor.less";
+@import "./dropdown/dropdown.less";
+@import "./dynamicallyaddedparameter/dynamicallyaddedparameter.less";
+@import "./editor/base/editor.less";
+@import "./editor/base/themes/editorTheme.less";
+@import "./editor/base/tokenpickerbutton.less";
+@import "./editor/initializevariable/variableEditor.less";
+@import "./editor/monaco/monaco.less";
+@import "./editor/shared/editorCollapseToggle.less";
+@import "./error.less";
+@import "./errorsPanel/errorsPanel.less";
+@import "./expressioneditor/expressioneditor.less";
+@import "./fabric.less";
+@import "./floatingactionmenu/_floatingactionmenu.less";
 @import "./html/htmleditor.less";
 @import "./infoDot/infoDot.less";
 @import "./label/label.less";
 @import "./modaldialog/modaldialog.less";
+@import "./modals/styles.less";
+@import "./monitoring/monitoring.less";
+@import "./monitoring/statuspill/statuspill.less";
+@import "./nodeCollapseToggle/nodeCollapseToggle.less";
+@import "./overview/overview.less";
 @import "./pager/pager.less";
 @import "./panel/panel.less";
 @import "./panel/recommendationpanel/recommendation.less";
-@import "./schemaeditor/schemaeditor.less";
-@import "./table/table.less";
-@import "./texteditor.less";
-@import "./card/parameters/parameters.less";
-@import "./connectorsummarycard/connectorsummarycard.less";
-@import "./token/token.less";
-@import "./copyinputcontrol/copyinputcontrol.less";
-@import "./tokenpicker/tokenpicker.less";
-@import "./floatingactionmenu/_floatingactionmenu.less";
-@import "./monitoring/monitoring.less";
-@import "./monitoring/statuspill/statuspill.less";
-@import "./templates/templates.less";
-@import "./tip/tip.less";
-@import "./arrayeditor/arrayeditor.less";
-@import "./ariaSearchResults/ariaSearchResultsAlert.less";
-@import "./editor/shared/editorCollapseToggle.less";
-@import "./fabric.less";
-@import "./editor/monaco/monaco.less";
-@import "./editor/base/tokenpickerbutton.less";
-@import "./editor/base/editor.less";
-@import "./errorsPanel/errorsPanel.less";
-@import "./querybuilder/querybuilder.less";
 @import "./peek/peek.less";
-@import "./expressioneditor/expressioneditor.less";
-@import "./configItem/connectiongatewaypicker.less";
-@import "./settings/settings.less";
-@import "./searchbox/searchbox.less";
+@import "./picker/picker.less";
+@import "./querybuilder/querybuilder.less";
+@import "./recurrence/recurrence.less";
+@import "./schemaeditor/schemaeditor.less";
 @import "./searchabledropdown/searchabledropdown.less";
 @import "./searchabledropdownWithAddAll/searchabledropdownWithAddAll.less";
-@import "./authentication/authentication.less";
-@import "./workflowparameters/workflowparameters.less";
-@import "./card/cardv2.less";
-@import "./card/subgraphCard/subgraphCard.less";
-@import "./overview/overview.less";
-@import "./about/about.less";
-@import "./modals/styles.less";
-@import "./recurrence/recurrence.less";
-@import "./azureResourcePicker/azureResourcePicker.less";
+@import "./searchbox/searchbox.less";
+@import "./settings/settings.less";
 @import "./staticResult/staticResult.less";
 @import "./dynamicallyaddedparameter/dynamicallyaddedparameter.less";
 @import "./editor/base/themes/editorTheme.less";
 @import "./unitTesting/assertionsPanel/assertions.less";
 @import "./unitTesting/conditionExpression/conditionExpression.less";
+@import "./table/table.less";
+@import "./templates/templates.less";
+@import "./texteditor.less";
+@import "./tip/tip.less";
+@import "./token/token.less";
+@import "./tokenpicker/tokenpicker.less";
+@import "./variables.less";
+@import "./workflowparameters/workflowparameters.less";
 
 .msla-clear-both {
   clear: both;
@@ -86,7 +89,7 @@
   flex: 1;
   margin: 0 auto;
   min-width: 100%;
-	overflow: hidden;
+  overflow: hidden;
 
   @media only screen and (max-width: calc(@card-max-width + 40)) {
     width: 100%;
@@ -97,14 +100,14 @@
     vertical-align: baseline;
   }
 
-	/*
+  /*
 		Weird new fluent bug where this generated css is causing weird
 		behavior when opening / closing panels.
 		This does not have any other effect.
 	*/
-	&>div {
-		--fui-Drawer--size: 0px;
-	}
+  & > div {
+    --fui-Drawer--size: 0px;
+  }
 }
 
 .msla-theme-dark {
@@ -182,10 +185,10 @@
     justify-content: center;
     align-content: center;
     height: @card-v2-small-height;
-		max-width: @card-v2-small-width;
+    max-width: @card-v2-small-width;
     cursor: grab;
-		margin: 0px auto;
-		box-sizing: border-box;
+    margin: 0px auto;
+    box-sizing: border-box;
 
     &.canDrop {
       background: #e7f4ff;
@@ -195,8 +198,8 @@
 
     &.cannotDrop {
       background: #b1b1b7;
-			max-width: 24px;
-			height: 24px;
+      max-width: 24px;
+      height: 24px;
       border-radius: 12px;
     }
   }

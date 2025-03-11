@@ -19,6 +19,14 @@ export const normalizeAutomationId = (s: string) => s.replace(/\W/g, '-');
 
 export const wrapTokenValue = (s: string) => `@{${s}}`;
 
+export const wrapStringifiedTokenSegments = (jsonString: string): string => {
+  const tokenRegex = /:\s?(@{?(?:[^,}\s]+}?))/g;
+
+  return jsonString.replace(tokenRegex, (match, token) => {
+    return /^".*"$/.test(token) ? match : `: "${token}"`;
+  });
+};
+
 // Some staging locations like `East US (stage)` show sometimes as `eastus(stage)` and sometimes as `eastusstage`
 // This function just removes the parentheses so they can be compared as equal
 export const cleanConnectorId = (id: string) => id.replace(/[()]/g, '');
@@ -55,7 +63,7 @@ export const cleanResourceId = (resourceId?: string): string => {
 };
 
 export const unescapeString = (input: string): string => {
-  return input.replace(/\\([nrtv])/g, (_match, char) => {
+  return input.replace(/\\([nrtv"\\])/g, (_match, char) => {
     switch (char) {
       case 'n':
         return '\n';
@@ -65,6 +73,10 @@ export const unescapeString = (input: string): string => {
         return '\t';
       case 'v':
         return '\v';
+      case '"':
+        return '"';
+      case '\\':
+        return '\\';
       default:
         return char;
     }
@@ -72,11 +84,12 @@ export const unescapeString = (input: string): string => {
 };
 
 export const escapeString = (input: string, requireSingleQuotesWrap?: boolean): string => {
-  if (requireSingleQuotesWrap && !/'.*[\n\r\t\v].*'/.test(input)) {
+  // Only apply escaping if requireSingleQuotesWrap is true and the input is wrapped in single quotes
+  if (requireSingleQuotesWrap && !/'.*[\n\r\t\v"].*'/.test(input)) {
     return input;
   }
 
-  return input?.replace(/[\n\r\t\v]/g, (char) => {
+  return input?.replace(/[\n\r\t\v"]/g, (char) => {
     switch (char) {
       case '\n':
         return '\\n';
@@ -86,6 +99,8 @@ export const escapeString = (input: string, requireSingleQuotesWrap?: boolean): 
         return '\\t';
       case '\v':
         return '\\v';
+      case '"':
+        return requireSingleQuotesWrap ? '\\"' : '"'; // Escape only if requireSingleQuotesWrap is true
       default:
         return char;
     }

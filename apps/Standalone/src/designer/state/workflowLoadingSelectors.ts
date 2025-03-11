@@ -80,3 +80,11 @@ export const useRunInstance = () => {
 export const useQueryCachePersist = () => {
   return useSelector((state: RootState) => state.workflowLoader.queryCachePersist);
 };
+
+export const useIsMultiVariableEnabled = () => {
+  return useSelector((state: RootState) => state.workflowLoader.hostOptions.enableMultiVariable);
+};
+
+export const useIsAgenticLoopEnabled = () => {
+  return useSelector((state: RootState) => !!state.workflowLoader.hostOptions.enableAgenticLoops);
+};

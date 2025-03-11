@@ -19,7 +19,9 @@ import type { AppDispatch, RootState } from '../../../../../core/store';
 import { getConnectionReference } from '../../../../../core/utils/connectors/connections';
 import { isRootNodeInGraph } from '../../../../../core/utils/graph';
 import {
+  getDisplayValueFromPickerSelectedItem,
   getTypeForTokenFiltering,
+  getValueFromPickerSelectedItem,
   loadDynamicTreeItemsForParameter,
   loadDynamicValuesForParameter,
   loadParameterValueFromString,
@@ -44,7 +46,8 @@ import {
   TokenPicker,
   TokenPickerButtonLocation,
   TokenType,
-  isCustomCode,
+  isCustomCodeParameter,
+  isInitializeVariableParameter,
   toCustomEditorAndOptions,
 } from '@microsoft/designer-ui';
 import type {
@@ -55,6 +58,7 @@ import type {
   TokenPickerMode,
   PanelTabFn,
   PanelTabProps,
+  InitializeVariableProps,
 } from '@microsoft/designer-ui';
 import { EditorService, equals, getPropertyValue, getRecordEntry, isRecordNotEmpty } from '@microsoft/logic-apps-shared';
 import type { OperationInfo } from '@microsoft/logic-apps-shared';
@@ -222,7 +226,7 @@ const ParameterSection = ({
   const displayNameResult = useConnectorName(operationInfo);
   const panelLocation = usePanelLocation();
 
-  const { suppressCastingForSerialize, hideUTFExpressions } = useHostOptions();
+  const { suppressCastingForSerialize, hideUTFExpressions, enableMultiVariable } = useHostOptions();
 
   const [tokenMapping, setTokenMapping] = useState<Record<string, ValueSegment>>({});
 
@@ -239,22 +243,27 @@ const ParameterSection = ({
       const propertiesToUpdate = {
         value,
         preservedValue: undefined,
+        ...(viewModel !== undefined && { editorViewModel: viewModel }),
       } as Partial<ParameterInfo>;
 
-      if (viewModel !== undefined) {
-        propertiesToUpdate.editorViewModel = viewModel;
-      }
-
-      // TODO: This should never be added, since the update is taken care by dynamic parameter update.
-      if (getRecordEntry(variables, nodeId)) {
-        if (parameter?.parameterKey === 'inputs.$.name') {
-          dispatch(updateVariableInfo({ id: nodeId, name: value[0]?.value }));
-        } else if (parameter?.parameterKey === 'inputs.$.type') {
-          dispatch(updateVariableInfo({ id: nodeId, type: value[0]?.value }));
+      if (parameter && isInitializeVariableParameter(parameter)) {
+        const variables: InitializeVariableProps[] | undefined = newState?.viewModel?.variables;
+        if (variables) {
+          dispatch(
+            updateVariableInfo({
+              id: nodeId,
+              variables: variables.map((variable) => {
+                return {
+                  name: variable?.name[0]?.value,
+                  type: variable?.type[0]?.value,
+                };
+              }),
+            })
+          );
         }
       }
 
-      if (isCustomCode(parameter?.editor, parameter?.editorOptions?.language)) {
+      if (parameter && isCustomCodeParameter(parameter)) {
         const { fileData, fileExtension, fileName } = viewModel.customCodeData;
         dispatch(addOrUpdateCustomCode({ nodeId, fileData, fileExtension, fileName }));
       }
@@ -275,8 +284,7 @@ const ParameterSection = ({
         })
       );
     },
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    [nodeId, group.id, isTrigger, operationInfo, connectionReference, nodeInputs, dependencies, variables, dispatch, operationDefinition]
+    [nodeId, group.id, isTrigger, operationInfo, connectionReference, nodeInputs, dependencies, dispatch, operationDefinition]
   );
 
   const onComboboxMenuOpen = (parameter: ParameterInfo): void => {
@@ -308,14 +316,8 @@ const ParameterSection = ({
     getFileSourceName: (): string => {
       return displayNameResult.result;
     },
-    getDisplayValueFromSelectedItem: (selectedItem: any): string => {
-      const dependency = dependencies.inputs[parameter.parameterKey];
-      return getPropertyValue(selectedItem, dependency.filePickerInfo?.fullTitlePath ?? '');
-    },
-    getValueFromSelectedItem: (selectedItem: any): string => {
-      const dependency = dependencies.inputs[parameter.parameterKey];
-      return getPropertyValue(selectedItem, dependency.filePickerInfo?.valuePath ?? '');
-    },
+    getDisplayValueFromSelectedItem: (selectedItem: any) => getDisplayValueFromPickerSelectedItem(selectedItem, parameter, dependencies),
+    getValueFromSelectedItem: (selectedItem: any) => getValueFromPickerSelectedItem(selectedItem, parameter, dependencies),
     onFolderNavigation: (selectedItem: any | undefined): void => {
       loadDynamicTreeItemsForParameter(
         nodeId,
@@ -462,7 +464,7 @@ const ParameterSection = ({
           tokenpickerButtonProps: {
             location: panelLocation === PanelLocation.Left ? TokenPickerButtonLocation.Right : TokenPickerButtonLocation.Left,
           },
-          suppressCastingForSerialize: suppressCastingForSerialize ?? false,
+          hostOptions: { suppressCastingForSerialize, isMultiVariableEnabled: enableMultiVariable },
           onCastParameter: (value: ValueSegment[], type?: string, format?: string, suppressCasting?: boolean) =>
             parameterValueToString(
               {

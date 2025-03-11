@@ -17,6 +17,7 @@ import type {
   GetDataMapperVersionMessage,
   ShowAvailableSchemasMessageV2,
   GetTestFeatureEnablementStatus,
+  GetAvailableCustomXsltPathsMessageV2,
 } from './run-service';
 import {
   changeCustomXsltPathList,
@@ -32,6 +33,7 @@ import {
 } from './state/DataMapSlice';
 import {
   changeCustomXsltPathList as changeCustomXsltPathListV2,
+  changeDataMapFilename,
   changeDataMapMetadata as changeDataMapMetadataV2,
   changeIsTestDisabledForOS,
   changeMapDefinition as changeMapDefinitionV2,
@@ -66,6 +68,7 @@ type DataMapperMessageType =
   | ShowAvailableSchemasMessage
   | ShowAvailableSchemasMessageV2
   | GetAvailableCustomXsltPathsMessage
+  | GetAvailableCustomXsltPathsMessageV2
   | SetXsltDataMessage
   | SetRuntimePortMessage
   | GetConfigurationSettingMessage
@@ -131,6 +134,7 @@ export const WebViewCommunication: React.FC<{ children: ReactNode }> = ({ childr
               dispatch(changeSourceSchemaFilenameV2(message.data.sourceSchemaFileName));
               dispatch(changeTargetSchemaFilenameV2(message.data.targetSchemaFileName));
               dispatch(changeMapDefinitionV2(message.data.mapDefinition));
+              dispatch(changeDataMapFilename(message.data.mapDefinitionName));
               dispatch(changeDataMapMetadataV2(message.data.metadata));
               break;
             }
@@ -139,6 +143,10 @@ export const WebViewCommunication: React.FC<{ children: ReactNode }> = ({ childr
               break;
             }
             case ExtensionCommand.getAvailableCustomXsltPaths: {
+              dispatch(changeCustomXsltPathList(message.data));
+              break;
+            }
+            case ExtensionCommand.getAvailableCustomXsltPathsV2: {
               dispatch(changeCustomXsltPathListV2(message.data));
               break;
             }

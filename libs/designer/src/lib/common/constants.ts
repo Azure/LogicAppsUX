@@ -192,6 +192,7 @@ export default {
     SCHEMA: 'schema',
     STRING: 'string',
     TABLE: 'table',
+    INITIALIZE_VARIABLE: 'initializevariable',
     VARIABLE_NAME: 'variablename',
     HTML: 'html',
     RECURRENCE: 'recurrence',
@@ -382,6 +383,7 @@ export default {
       SET_VARIABLE: 'setvariable',
       SLIDING_WINDOW: 'slidingwindow',
       SWITCH: 'switch',
+      AGENT: 'agent',
       TABLE: 'table',
       TERMINATE: 'terminate',
       UNTIL: 'until',
@@ -451,6 +453,11 @@ export default {
     NAME: 'name',
     PROPERTIES: 'properties',
     RELATIVE_PATH_PARAMETERS: 'relativePathParameters',
+  },
+  PARAMETER_NAMES: {
+    VARIABLES: 'variables',
+    LIMIT_COUNT: 'limit.count',
+    LIMIT_TIMEOUT: 'limit.timeout',
   },
   PARAMETER_VALUE_TYPE: {
     ALTERNATIVE: 'Alternative',

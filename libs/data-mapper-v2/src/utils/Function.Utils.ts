@@ -13,9 +13,8 @@ import { reservedMapNodeParamsArray } from '../constants/MapDefinitionConstants'
 import { convertConnectionShorthandToId, generateFunctionConnectionMetadata } from '../mapHandling/MapMetadataSerializer';
 import type { Connection, ConnectionDictionary, InputConnection } from '../models/Connection';
 import type { FunctionDictionary, FunctionData } from '../models/Function';
-import { FunctionCategory, directAccessPseudoFunctionKey, ifPseudoFunctionKey, indexPseudoFunctionKey } from '../models/Function';
+import { FunctionCategory, ifPseudoFunctionKey, indexPseudoFunctionKey } from '../models/Function';
 import { connectionDoesExist, isNodeConnection, isCustomValueConnection, isEmptyConnection } from './Connection.Utils';
-import { getInputValues } from './DataMap.Utils';
 import { LogCategory } from './Logging.Utils';
 import { isSchemaNodeExtended } from './Schema.Utils';
 import {
@@ -251,12 +250,6 @@ export const functionDropDownItemText = (key: string, node: FunctionData, connec
   let nodeName: string;
   if (node.key === indexPseudoFunctionKey && isNodeConnection(sourceNode) && isSchemaNodeExtended(sourceNode.node)) {
     nodeName = calculateIndexValue(sourceNode.node);
-  } else if (node.key === directAccessPseudoFunctionKey) {
-    const functionValues = getInputValues(connections[key], connections);
-    nodeName =
-      functionValues.length === 3
-        ? formatDirectAccess(functionValues[0], functionValues[1], functionValues[2])
-        : getFunctionOutputValue(fnInputValues, node.functionName);
   } else {
     nodeName = getFunctionOutputValue(fnInputValues, node.functionName);
   }
@@ -286,6 +279,10 @@ export const getInputValue = (inputConnection: InputConnection | undefined) => {
   }
 
   return undefined;
+};
+
+export const isFileDropdownFunction = (functionData: FunctionData) => {
+  return functionData.inputs[0]?.inputEntryType === InputFormat.FilePicker;
 };
 
 export const addQuotesToString = (value: string) => {

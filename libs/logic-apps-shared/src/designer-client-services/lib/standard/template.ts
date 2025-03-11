@@ -1,11 +1,8 @@
 import { ArgumentException } from '../../../utils/src';
 import { BaseTemplateService, type BaseTemplateServiceOptions } from '../base/template';
-import type { IHttpClient } from '../httpClient';
 
 interface StandardTemplateServiceOptions extends BaseTemplateServiceOptions {
-  baseUrl: string;
   appId?: string;
-  httpClient: IHttpClient;
   apiVersions: {
     subscription: string;
     gateway: string;

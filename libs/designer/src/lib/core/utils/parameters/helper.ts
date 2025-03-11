@@ -124,6 +124,7 @@ import type {
   DropdownItem,
   FloatingActionMenuOutputViewModel,
   GroupItemProps,
+  InitializeVariableProps,
   OutputToken,
   ParameterInfo,
   RowItemProps,
@@ -144,6 +145,7 @@ import {
   ValueSegmentType,
   TokenType,
   AuthenticationOAuthType,
+  validateVariables,
 } from '@microsoft/designer-ui';
 import type {
   DependentParameterInfo,
@@ -309,7 +311,6 @@ export const getDependentParameters = (
     if (operationInput) {
       result[operationInput.id] = { isValid: parameterValidForDynamicCall(operationInput) };
     }
-
     return result;
   }, {});
 };
@@ -492,6 +493,8 @@ export function getParameterEditorProps(
     } else {
       editor = undefined;
     }
+  } else if (editor === constants.EDITOR.INITIALIZE_VARIABLE) {
+    editorViewModel = { hideParameterErrors: true };
   } else if (!editor) {
     if (format === constants.EDITOR.HTML) {
       editor = constants.EDITOR.HTML;
@@ -548,7 +551,7 @@ const convertStringToInputParameter = (value: string, options: LoadParamteerValu
   return {
     key: guid(),
     name: newValue,
-    type: parameterType ?? constants.SWAGGER.TYPE.ANY,
+    type: constants.SWAGGER.TYPE.STRING,
     hideInUI: false,
     value: newValue,
     suppressCasting: true,
@@ -1825,8 +1828,11 @@ export const updateParameterAndDependencies = createAsyncThunk(
 
     updateNodeMetadataOnParameterUpdate(nodeId, updatedParameter, dispatch);
 
-    if (operationInfo?.type?.toLowerCase() === 'until') {
+    if (operationInfo?.type?.toLowerCase() === constants.NODE.TYPE.UNTIL) {
       validateUntilAction(dispatch, nodeId, groupId, parameterId, nodeInputs.parameterGroups[groupId].parameters, properties);
+    }
+    if (operationInfo?.type?.toLowerCase() === constants.NODE.TYPE.INITIALIZE_VARIABLE) {
+      validateInitializeVariable(dispatch, nodeId, groupId, parameterId, nodeInputs.parameterGroups[groupId].parameters, properties);
     }
 
     if (dependenciesToUpdate) {
@@ -2179,6 +2185,16 @@ function getDynamicInputsFromDynamicParameter(parameterKey: string, allInputs: N
   }
 
   return result;
+}
+
+export function getDisplayValueFromPickerSelectedItem(selectedItem: any, parameter: ParameterInfo, dependencies: NodeDependencies): string {
+  const dependency = dependencies.inputs[parameter.parameterKey];
+  return getPropertyValue(selectedItem, dependency.filePickerInfo?.fullTitlePath ?? '');
+}
+
+export function getValueFromPickerSelectedItem(selectedItem: any, parameter: ParameterInfo, dependencies: NodeDependencies): string {
+  const dependency = dependencies.inputs[parameter.parameterKey];
+  return getPropertyValue(selectedItem, dependency.filePickerInfo?.valuePath ?? '');
 }
 
 export async function loadDynamicTreeItemsForParameter(
@@ -3656,7 +3672,7 @@ export function parameterValueToJSONString(parameterValue: ValueSegment[], apply
     let tokenExpression: string = expression.value;
 
     if (isTokenValueSegment(expression)) {
-      const stringifiedTokenExpression = tokenExpression;
+      const stringifiedTokenExpression = JSON.stringify(tokenExpression).slice(1, -1);
       // Note: Stringify the token expression to escape double quotes and other characters which must be escaped in JSON.
       if (shouldInterpolate) {
         if (applyCasting) {
@@ -3676,8 +3692,10 @@ export function parameterValueToJSONString(parameterValue: ValueSegment[], apply
         const nextExpressionIsLiteral =
           i < updatedParameterValue.length - 1 && updatedParameterValue[i + 1].type !== ValueSegmentType.TOKEN;
         tokenExpression = `@${stringifiedTokenExpression}`;
-        tokenExpression = lastExpressionWasLiteral ? `"${tokenExpression}` : tokenExpression;
-        tokenExpression = nextExpressionIsLiteral ? `${tokenExpression}"` : `${tokenExpression}`;
+        // eslint-disable-next-line no-useless-escape
+        tokenExpression = lastExpressionWasLiteral ? `\"${tokenExpression}` : tokenExpression;
+        // eslint-disable-next-line no-useless-escape
+        tokenExpression = nextExpressionIsLiteral ? `${tokenExpression}\"` : `${tokenExpression}`;
       }
 
       parameterValueString += tokenExpression;
@@ -3801,7 +3819,11 @@ export function remapTokenSegmentValue(
  * @arg {boolean} [forValidation=false]
  * @return {string}
  */
-function parameterValueToStringWithoutCasting(value: ValueSegment[], forValidation = false, shouldInterpolateSingleToken = false): string {
+export function parameterValueToStringWithoutCasting(
+  value: ValueSegment[],
+  forValidation = false,
+  shouldInterpolateSingleToken = false
+): string {
   const shouldInterpolateTokens = (value.length > 1 || shouldInterpolateSingleToken) && value.some(isTokenValueSegment);
 
   return value
@@ -4012,46 +4034,87 @@ export function validateUntilAction(
   parameters: ParameterInfo[],
   changedParameter: Partial<ParameterInfo>
 ) {
-  const errorMessage = 'Either limit count or timout must be specified.';
+  const intl = getIntl();
+  const errorMessage = intl.formatMessage({
+    defaultMessage: 'Either limit count or timeout must be specified.',
+    id: 'BO1cXH',
+    description: 'Error message to show when either limit count or timeout is not specified.',
+  });
 
-  const countParameter = parameters.find((parameter) => parameter.parameterName === 'limit.count');
-  const timeoutParameter = parameters.find((parameter) => parameter.parameterName === 'limit.timeout');
+  const parameterValues = (name: string) => {
+    const parameter = parameters.find((param) => param.parameterName === name);
+    return parameter?.id === parameterId ? (changedParameter?.value ?? []) : (parameter?.value ?? []);
+  };
 
-  const countValue = countParameter?.id === parameterId ? (changedParameter?.value ?? []) : (countParameter?.value ?? []);
-  const timeoutValue = timeoutParameter?.id === parameterId ? (changedParameter?.value ?? []) : (timeoutParameter?.value ?? []);
+  const countValue = parameterValues(constants.PARAMETER_NAMES.LIMIT_COUNT);
+  const timeoutValue = parameterValues(constants.PARAMETER_NAMES.LIMIT_TIMEOUT);
 
-  if ((countValue.length ?? 0) === 0 && (timeoutValue.length ?? 0) === 0) {
+  const hasValidationError = (countValue.length ?? 0) === 0 && (timeoutValue.length ?? 0) === 0;
+
+  const updateValidation = (parameterName: string) => {
+    const parameter = parameters.find((param) => param.parameterName === parameterName);
+    if (parameter) {
+      if (hasValidationError) {
+        dispatch(
+          updateParameterValidation({
+            nodeId,
+            groupId,
+            parameterId: parameter.id,
+            validationErrors: [errorMessage],
+          })
+        );
+      } else {
+        dispatch(
+          removeParameterValidationError({
+            nodeId,
+            groupId,
+            parameterId: parameter.id,
+            validationError: errorMessage,
+          })
+        );
+      }
+    }
+  };
+
+  updateValidation(constants.PARAMETER_NAMES.LIMIT_COUNT);
+  updateValidation(constants.PARAMETER_NAMES.LIMIT_TIMEOUT);
+}
+
+// Eric - This is a very specific logic for initalizeVariable, where previously it was possible having
+// them as separate parameters, but now they are combined into a single parameter
+// Integrating it with the rest of the validation logic would be unnecessarily complex imo
+export function validateInitializeVariable(
+  dispatch: Dispatch,
+  nodeId: string,
+  groupId: string,
+  parameterId: string,
+  parameters: ParameterInfo[],
+  changedParameter: Partial<ParameterInfo>
+) {
+  const intl = getIntl();
+  const multipleVariablesErrorMessage = intl.formatMessage({
+    defaultMessage: 'Multiple variables have validation errors',
+    id: '19fSGN',
+    description: 'Error message to show when multiple variables have errors',
+  });
+
+  const parameter = parameters.find((param) => param.parameterName === constants.PARAMETER_NAMES.VARIABLES);
+  const variables: InitializeVariableProps[] =
+    parameter?.id === parameterId ? (changedParameter?.editorViewModel?.variables ?? []) : (parameter?.editorViewModel?.variables ?? []);
+
+  const validationErrors = validateVariables(variables);
+
+  const errorMessages = validationErrors.flatMap((error) => Object.values(error));
+  const errorMessage = errorMessages.length > 1 ? multipleVariablesErrorMessage : errorMessages[0];
+
+  if (parameter) {
     dispatch(
       updateParameterValidation({
         nodeId,
         groupId,
-        parameterId: countParameter?.id ?? '',
-        validationErrors: [errorMessage],
-      })
-    );
-    dispatch(
-      updateParameterValidation({
-        nodeId,
-        groupId,
-        parameterId: timeoutParameter?.id ?? '',
-        validationErrors: [errorMessage],
-      })
-    );
-  } else {
-    dispatch(
-      removeParameterValidationError({
-        nodeId,
-        groupId,
-        parameterId: countParameter?.id ?? '',
-        validationError: errorMessage,
-      })
-    );
-    dispatch(
-      removeParameterValidationError({
-        nodeId,
-        groupId,
-        parameterId: timeoutParameter?.id ?? '',
-        validationError: errorMessage,
+        parameterId: parameter.id,
+        validationErrors: errorMessage ? [errorMessage] : undefined,
+        editorViewModel: { ...parameter.editorViewModel, validationErrors: errorMessage ? validationErrors : undefined },
       })
     );
   }

@@ -1,7 +1,7 @@
 import constants from '../constants';
 import type { ValueSegment } from '../editor';
 import { EditorCollapseToggle } from '../editor';
-import type { BaseEditorProps } from '../editor/base';
+import type { BaseEditorProps, GetTokenPickerHandler } from '../editor/base';
 import { convertKeyValueItemToSegments } from '../editor/base/utils/keyvalueitem';
 import { CollapsedDictionary } from './collapsedDictionary';
 import { ExpandedDictionary } from './expandeddictionary';
@@ -27,6 +27,7 @@ export interface DictionaryEditorProps extends BaseEditorProps {
   valueTitle?: string;
   keyType?: string;
   dictionaryType?: DictionaryType;
+  getTokenPicker: GetTokenPickerHandler;
 }
 
 export const DictionaryEditor: React.FC<DictionaryEditorProps> = ({
@@ -37,7 +38,7 @@ export const DictionaryEditor: React.FC<DictionaryEditorProps> = ({
   valueTitle,
   dictionaryType = DictionaryType.DEFAULT,
   keyType = constants.SWAGGER.TYPE.STRING,
-  valueType = constants.SWAGGER.TYPE.STRING,
+  valueType = constants.SWAGGER.TYPE.ANY,
   getTokenPicker,
   onChange,
   ...baseEditorProps

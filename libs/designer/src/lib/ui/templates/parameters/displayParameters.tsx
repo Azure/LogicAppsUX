@@ -1,4 +1,4 @@
-import { Callout, css, DetailsList, type IColumn, Label, SelectionMode, TextField } from '@fluentui/react';
+import { Callout, css, DetailsList, type IColumn, Label, SelectionMode } from '@fluentui/react';
 import { Link, Text } from '@fluentui/react-components';
 import { updateTemplateParameterValue } from '../../../core/state/templates/templateSlice';
 import type { AppDispatch, RootState } from '../../../core/state/templates/store';
@@ -8,8 +8,10 @@ import { useFunctionalState } from '@react-hookz/web';
 import { type IntlShape, useIntl } from 'react-intl';
 import { useMemo } from 'react';
 import { useBoolean, useId } from '@fluentui/react-hooks';
+import { ParameterEditor } from './parametereditor';
+import { getWorkflowParameterTypeDisplayNames } from '@microsoft/designer-ui';
 
-export const DisplayParameters = () => {
+export const DisplayParameters = ({ isCompactView = false }: { isCompactView?: boolean }) => {
   const dispatch = useDispatch<AppDispatch>();
   const intl = useIntl();
   const {
@@ -42,6 +44,7 @@ export const DisplayParameters = () => {
       description: 'Label for displaying associated workflows',
     }),
   };
+  const typeDisplayNames = getWorkflowParameterTypeDisplayNames(intl);
 
   const [parametersList, setParametersList] = useFunctionalState<Template.ParameterDefinition[]>(Object.values(parameterDefinitions));
 
@@ -79,8 +82,8 @@ export const DisplayParameters = () => {
       isMultiline: true,
       name: resources.parameter_name,
       maxWidth: 250,
-      showSortIconWhenUnsorted: true,
-      onColumnClick: _onColumnClick,
+      showSortIconWhenUnsorted: !isCompactView,
+      onColumnClick: isCompactView ? undefined : _onColumnClick,
     },
     {
       ariaLabel: resources.parameter_type,
@@ -90,8 +93,8 @@ export const DisplayParameters = () => {
       minWidth: 70,
       maxWidth: 70,
       name: resources.parameter_type,
-      showSortIconWhenUnsorted: true,
-      onColumnClick: _onColumnClick,
+      showSortIconWhenUnsorted: !isCompactView,
+      onColumnClick: isCompactView ? undefined : _onColumnClick,
     },
     {
       ariaLabel: resources.parameter_value,
@@ -102,7 +105,6 @@ export const DisplayParameters = () => {
       isMultiline: true,
       name: resources.parameter_value,
       showSortIconWhenUnsorted: false,
-      onColumnClick: _onColumnClick,
     },
   ]);
 
@@ -111,14 +113,9 @@ export const DisplayParameters = () => {
     setParametersList(newList);
   };
 
-  const handleParameterValueChange = (item: Template.ParameterDefinition, newValue: string) => {
-    updateItemInList({ ...item, value: newValue });
-    dispatch(
-      updateTemplateParameterValue({
-        ...item,
-        value: newValue,
-      })
-    );
+  const handleParameterValueChange = (newItem: Template.ParameterDefinition) => {
+    updateItemInList(newItem);
+    dispatch(updateTemplateParameterValue(newItem));
   };
 
   const onRenderItemColumn = (item: Template.ParameterDefinition, _index: number | undefined, column: IColumn | undefined) => {
@@ -128,24 +125,18 @@ export const DisplayParameters = () => {
 
       case '$type':
         return (
-          <Text className="msla-templates-parameters-values" aria-label={item.type}>
-            {item.type}
+          <Text className="msla-templates-parameters-values" aria-label={typeDisplayNames[item.type]}>
+            {typeDisplayNames[item.type]}
           </Text>
         );
 
       case '$value':
         return (
-          <TextField
-            className="msla-templates-parameters-values"
-            data-testid={`msla-templates-parameter-value-${item.name}`}
-            id={`msla-templates-parameter-value-${item.name}`}
-            aria-label={item.value}
-            value={item.value}
+          <ParameterEditor
+            item={item}
+            onChange={handleParameterValueChange}
             disabled={parametersOverride?.[item.name]?.isEditable === false}
-            onChange={(_event, newValue) => {
-              handleParameterValueChange(item, newValue ?? '');
-            }}
-            errorMessage={parameterErrors[item.name]}
+            error={parameterErrors[item.name]}
           />
         );
 

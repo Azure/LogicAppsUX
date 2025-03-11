@@ -156,9 +156,9 @@ export abstract class BaseConnectorService implements IConnectorService {
       ? `${errorMessage} ${intl.formatMessage(
           {
             defaultMessage: `More diagnostic information: x-ms-client-request-id is ''{clientRequestId}''.`,
-            id: 'Xew1Df',
+            id: 'cWpWiU',
             description:
-              'Diagnostics information on error message. Do not remove the double single quotes around the placeholder texts, as it is needed to wrap the placeholder text in single quotes.',
+              "Diagnostics information for error message. Don't remove the double single quotes around the placeholder text, which is needed to wrap the placeholder text in single quotes.",
           },
           { clientRequestId }
         )}`
