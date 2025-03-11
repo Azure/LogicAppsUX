@@ -173,86 +173,59 @@ export class StandardConnectionService extends BaseConnectionService implements 
         const connectorIdKeyword = connectorId.split('/').at(-1);
         if (connectorIdKeyword === 'agent') {
           return {
+            type: 'AgentConnection',
+            name: 'agent',
+            id: 'connectionProviders/agent',
             properties: {
-              name: 'azureopenai',
-              connectionParameters: {
-                azureOpenAIResourceName: {
-                  type: 'string',
-                  uiDefinition: {
-                    displayName: 'Azure OpenAI resource name',
-                    description: 'The name of the Azure OpenAI resource that hosts the AI model',
-                    tooltip: 'Provide the Azure OpenAI resource name',
-                    constraints: {
-                      clearText: true,
-                      required: 'true',
-                    },
-                  },
-                },
-                azureOpenAIApiKey: {
-                  type: 'securestring',
-                  uiDefinition: {
-                    displayName: 'Azure OpenAI API key',
-                    description: 'The API key to access the Azure OpenAI resource that hosts the AI model',
-                    tooltip: 'Provide the Azure OpenAI API key',
-                    constraints: {
-                      clearText: false,
-                      required: 'true',
-                    },
-                  },
-                },
-                azureSearchEndpointUrl: {
-                  type: 'string',
-                  uiDefinition: {
-                    displayName: 'Azure Cognitive Search endpoint URL',
-                    description: 'The URL of the Azure Cognitive Search endpoint indexing your data',
-                    tooltip: 'Provide the Azure Cognitive Search endpoint URL',
-                    constraints: {
-                      clearText: true,
-                      required: 'false',
-                    },
-                  },
-                },
-                azureSearchApiKey: {
-                  type: 'securestring',
-                  uiDefinition: {
-                    displayName: 'Azure Cognitive Search API key',
-                    description: 'The API key to access the Azure Cognitive Search endpoint indexing your data',
-                    tooltip: 'Provide the Azure Cognitive Search API key',
-                    constraints: {
-                      clearText: false,
-                      required: 'false',
-                    },
-                  },
-                },
-              },
-              metadata: {
-                source: 'marketplace',
-                brandColor: '#000000',
-                useNewApimVersion: true,
-              },
-              runtimeUrls: ['https://logic-apis-westus.azure-apim.net/apim/azureopenai'],
-              generalInformation: {
-                iconUrl:
-                  'https://conn-afd-prod-endpoint-bmc9bqahasf3grgk.b01.azurefd.net/releases/v1.0.1722/1.0.1722.3983/azureopenai/icon.png',
-                displayName: 'Azure OpenAI',
-                description: "Easily integrate Azure OpenAI's cutting-edge artificial intelligence capabilities into your workflows",
-                releaseTag: 'Preview',
-                tier: 'Premium',
-              },
-              capabilities: ['actions'],
-              isExportSupported: true,
-              isSecureByDefault: false,
-              iconUrl:
+              displayName: 'Agent',
+              iconUri:
                 'https://conn-afd-prod-endpoint-bmc9bqahasf3grgk.b01.azurefd.net/releases/v1.0.1722/1.0.1722.3983/azureopenai/icon.png',
-              displayName: 'Azure OpenAI',
+              brandColor: '#000000',
               description: "Easily integrate Azure OpenAI's cutting-edge artificial intelligence capabilities into your workflows",
-              releaseTag: 'Preview',
-              tier: 'Premium',
+              capabilities: ['actions'],
+              connectionParameterSets: {
+                uiDefinition: {
+                  displayName: 'Authentication type',
+                  description: 'Type of authentication to use',
+                },
+                values: [
+                  {
+                    name: 'UrlKeyBasedAuthentication',
+                    parameters: {
+                      azureOpenAIResourceName: {
+                        type: 'string',
+                        uiDefinition: {
+                          displayName: 'Azure OpenAI resource name',
+                          description: 'The name of the Azure OpenAI resource that hosts the AI model',
+                          tooltip: 'Provide the Azure OpenAI resource name',
+                          constraints: {
+                            clearText: true,
+                            required: 'true',
+                          },
+                        },
+                      },
+                      azureOpenAIApiKey: {
+                        type: 'securestring',
+                        uiDefinition: {
+                          displayName: 'Azure OpenAI API key',
+                          description: 'The API key to access the Azure OpenAI resource that hosts the AI model',
+                          tooltip: 'Provide the Azure OpenAI API key',
+                          constraints: {
+                            clearText: false,
+                            required: 'true',
+                          },
+                        },
+                      },
+                    },
+                    uiDefinition: {
+                      displayName: 'URL and key-based authentication',
+                      tooltip: 'URL and key-based authentication',
+                      description: 'URL and key-based authentication',
+                    },
+                  },
+                ],
+              },
             },
-            id: '/subscriptions/11e43792-2b16-4f94-b5ea-de10eade3aef/providers/Microsoft.Web/locations/westus/managedApis/azureopenai',
-            name: 'azureopenai',
-            type: 'Microsoft.Web/locations/managedApis',
-            location: 'westus',
           } as any;
         }
 
@@ -277,7 +250,6 @@ export class StandardConnectionService extends BaseConnectionService implements 
     const functionConnections = (localConnections[functionsLocation] || {}) as Record<string, FunctionsConnectionModel>;
     const apimConnections = (localConnections[apimLocation] || {}) as Record<string, APIManagementConnectionModel>;
     const agentConnections = (localConnections[agentLocation] || {}) as Record<string, AgentConnectionModel>;
-    console.log('charlie', localConnections);
 
     this._allConnectionsInitialized = true;
     return [
@@ -641,6 +613,25 @@ export class StandardConnectionService extends BaseConnectionService implements 
           connectionsData.connectionKey,
           connectionsData.connectionData as APIManagementConnectionModel
         );
+        break;
+      }
+      case ConnectionType.Agent: {
+        const { connectionAndSettings, rawConnection } = convertToServiceProviderConnectionsData(
+          connectionName,
+          connector.id,
+          connectionInfo,
+          parametersMetadata
+        );
+        connectionsData = connectionAndSettings;
+        connection = convertServiceProviderConnectionDataToConnection(
+          connectionsData.connectionKey,
+          connectionsData.connectionData as ServiceProviderConnectionModel
+        );
+
+        if (connector.properties.testConnectionUrl) {
+          await this._testServiceProviderConnection(connector.properties.testConnectionUrl, rawConnection);
+        }
+        connectionsData.pathLocation = [agentLocation];
         break;
       }
       default: {

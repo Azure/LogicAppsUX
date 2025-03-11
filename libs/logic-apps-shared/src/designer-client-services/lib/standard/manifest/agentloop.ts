@@ -134,7 +134,7 @@ export default {
 
     connection: {
       required: true,
-      type: 'serviceprovider',
+      type: 'agent',
     },
 
     connector: {

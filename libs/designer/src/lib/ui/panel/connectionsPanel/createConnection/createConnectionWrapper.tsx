@@ -351,7 +351,7 @@ export const CreateConnectionInternal = (props: {
     description: 'Message to show under the loading icon when loading connection parameters',
   });
 
-  console.log('charlie', connector);
+  console.log('charlie connector', connector);
   if (connector?.properties === undefined) {
     return (
       <div className="msla-loading-container-full">
