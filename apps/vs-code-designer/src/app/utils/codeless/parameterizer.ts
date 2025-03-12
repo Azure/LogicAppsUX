@@ -72,7 +72,7 @@ export function parameterizeConnection(
  */
 export function hasParameterizedConnection(connectionsData: ConnectionsData): boolean {
   if (!connectionsData || Object.keys(connectionsData).length === 0) {
-    return false;
+    return true;
   }
   for (const connectionType in connectionsData) {
     if (connectionType !== 'serviceProviderConnections') {
@@ -105,7 +105,7 @@ export function hasParameterizedConnection(connectionsData: ConnectionsData): bo
  */
 export function areAllConnectionsParameterized(connectionsData: ConnectionsData): boolean {
   if (!connectionsData || Object.keys(connectionsData).length === 0) {
-    return false;
+    return true;
   }
   for (const connectionType in connectionsData) {
     if (connectionType !== 'serviceProviderConnections') {
