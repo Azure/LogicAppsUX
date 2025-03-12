@@ -108,7 +108,7 @@ export const SelectConnection = () => {
   });
 
   const buttonAddingText = intl.formatMessage({
-    defaultMessage: 'Adding new connection....',
+    defaultMessage: 'Adding new connection...',
     id: 'yAAMQA',
     description: 'Button text for adding a new connection',
   });

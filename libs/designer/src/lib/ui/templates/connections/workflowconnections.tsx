@@ -686,7 +686,7 @@ const ConnectionsList = ({
         key: '$addConnection',
         iconProps: item.isConnectionCreating ? undefined : { iconName: 'Add', style: { marginLeft: '-15px' } },
         name: item.isConnectionCreating
-          ? intl.formatMessage({ defaultMessage: 'Adding connection.....', description: 'Adding connection text.', id: '9L2sCO' })
+          ? intl.formatMessage({ defaultMessage: 'Adding connection...', description: 'Adding connection text.', id: '9L2sCO' })
           : intl.formatMessage({ defaultMessage: 'Add connection', description: 'Add connection', id: 'Q/V4Uc' }),
         disabled: item.isConnectionCreating,
         canCheck: false,
