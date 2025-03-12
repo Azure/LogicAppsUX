@@ -182,6 +182,7 @@ export interface ConnectionParameterSetParameter {
   managedIdentitySettings?: ManagedIdentitySetting;
   oAuthSettings?: OAuthSetting;
   gateway?: GatewaySetting;
+  parameterSource?: ConnectionParameterSource;
 }
 
 export interface ConnectionParameterSet {

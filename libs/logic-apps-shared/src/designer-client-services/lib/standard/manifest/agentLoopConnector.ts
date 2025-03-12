@@ -21,6 +21,7 @@ export default {
           parameters: {
             azureOpenAIResourceName: {
               type: 'string',
+              parameterSource: 'AppConfiguration',
               uiDefinition: {
                 displayName: 'AI resource name',
                 description: 'The name of the resource that hosts the AI model',
@@ -33,6 +34,7 @@ export default {
             },
             azureOpenAIApiKey: {
               type: 'securestring',
+              parameterSource: 'AppConfiguration',
               uiDefinition: {
                 displayName: 'API key',
                 description: 'The API key to access the resource that hosts the AI model',

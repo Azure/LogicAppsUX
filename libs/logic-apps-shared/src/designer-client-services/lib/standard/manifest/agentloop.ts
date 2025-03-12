@@ -137,6 +137,10 @@ export default {
       type: 'agent',
     },
 
+    connectionReference: {
+      referenceKeyFormat: 'agentconnection',
+    },
+
     connector: {
       id: 'connectionProviders/agent',
       name: 'Agent',

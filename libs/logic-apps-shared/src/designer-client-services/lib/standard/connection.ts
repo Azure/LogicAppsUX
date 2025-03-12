@@ -667,10 +667,10 @@ function convertAgentConnectionDataToConnection(connectionKey: string, connectio
 
   return {
     name: connectionKey,
-    id: `${agentConnectorId}/connections/${connectionKey}`,
+    id: `/${agentConnectorId}/connections/${connectionKey}`,
     type: 'connections',
     properties: {
-      api: { id: agentConnectorId } as any,
+      api: { id: `/${agentConnectorId}` } as any,
       createdTime: '',
       connectionParameters: {},
       displayName: displayName as string,
