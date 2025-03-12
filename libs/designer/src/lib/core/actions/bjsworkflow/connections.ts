@@ -2,10 +2,11 @@ import Constants from '../../../common/constants';
 import type { ApiHubAuthentication } from '../../../common/models/workflow';
 import { isOpenApiSchemaVersion } from '../../../common/utilities/Utils';
 import type { DeserializedWorkflow } from '../../parsers/BJSWorkflow/BJSDeserializer';
-import { getConnection } from '../../queries/connections';
+import { getConnection, getUniqueConnectionName, updateNewConnectionInQueryCache } from '../../queries/connections';
 import { getConnector, getOperationInfo, getOperationManifest } from '../../queries/operation';
 import { changeConnectionMapping, initializeConnectionsMappings } from '../../state/connection/connectionSlice';
 import { changeConnectionMapping as changeTemplateConnectionMapping } from '../../state/templates/workflowSlice';
+import type { NodeOperation } from '../../state/operation/operationMetadataSlice';
 import { updateErrorDetails } from '../../state/operation/operationMetadataSlice';
 import type { RootState as TemplateRootState } from '../../state/templates/store';
 import type { RootState } from '../../store';
@@ -23,6 +24,7 @@ import type {
   Connector,
   OperationManifest,
   LogicAppsV2,
+  ConnectionCreationInfo,
 } from '@microsoft/logic-apps-shared';
 import {
   ConnectionService,
@@ -31,6 +33,7 @@ import {
   ResourceIdentityType,
   optional,
   isHiddenConnectionParameter,
+  hasTermsOfUse,
   getConnectionParametersWithType,
   ConnectionParameterTypes,
   equals,
@@ -42,6 +45,8 @@ import {
 } from '@microsoft/logic-apps-shared';
 import type { Dispatch } from '@reduxjs/toolkit';
 import { createAsyncThunk } from '@reduxjs/toolkit';
+import { openPanel, setIsCreatingConnection } from '../../state/panel/panelSlice';
+import type { PanelMode } from '../../state/panel/panelTypes';
 
 export interface ConnectionPayload {
   nodeId: string;
@@ -104,6 +109,16 @@ export const updateNodeConnection = createAsyncThunk(
       dispatch,
       getState as () => RootState
     );
+  }
+);
+
+export const closeConnectionsFlow = createAsyncThunk(
+  'closeConnectionsFlow',
+  async ({ nodeId, panelMode }: { nodeId: string; panelMode?: PanelMode }, { dispatch }): Promise<void> => {
+    const actualPanelMode = panelMode ?? 'Operation';
+    const actualNodeId = actualPanelMode === 'Operation' ? nodeId : undefined;
+    dispatch(setIsCreatingConnection(false));
+    dispatch(openPanel({ nodeId: actualNodeId, panelMode: actualPanelMode }));
   }
 );
 
@@ -225,6 +240,50 @@ export const updateIdentityChangeInConnection = createAsyncThunk(
     );
   }
 );
+
+export const autoCreateConnectionIfPossible = async (payload: {
+  connector: Connector;
+  referenceKeys: string[];
+  operationInfo?: NodeOperation;
+  applyNewConnection: (connection: Connection) => void;
+  onSuccess: (connection: Connection) => void;
+  onManualConnectionCreation: () => void;
+}): Promise<void> => {
+  const { connector, operationInfo, referenceKeys, applyNewConnection, onSuccess, onManualConnectionCreation } = payload;
+  const operationManifest = operationInfo
+    ? await getOperationManifest({ connectorId: connector.id, operationId: operationInfo.operationId ?? '' })
+    : undefined;
+
+  const connectionInfo: ConnectionCreationInfo = { connectionParameters: {} };
+  const parametersMetadata = {
+    connectionMetadata: getConnectionMetadata(operationManifest),
+    connectionParameters: connector?.properties.connectionParameters,
+  };
+  const newName = await getUniqueConnectionName(connector.id, referenceKeys);
+  let connection: Connection | undefined;
+
+  if (needsSimpleConnection(connector) && !hasTermsOfUse(connector)) {
+    connection = await ConnectionService().createConnection(newName, connector, connectionInfo, parametersMetadata);
+  } else if (hasOnlyOAuthParameters(connector, true)) {
+    // TODO: First party connections were never created for LA, so would need separate implementation and testing if we need to include this.
+
+    const connectionResult = await ConnectionService().createAndAuthorizeOAuthConnection(
+      newName,
+      connector.id,
+      connectionInfo,
+      parametersMetadata
+    );
+    connection = connectionResult.connection;
+  }
+
+  if (connection) {
+    updateNewConnectionInQueryCache(connector.id, connection as Connection);
+    applyNewConnection(connection);
+    onSuccess(connection);
+  } else {
+    onManualConnectionCreation();
+  }
+};
 
 async function getConnectionsMappingForNodes(deserializedWorkflow: DeserializedWorkflow): Promise<Record<string, string>> {
   const { actionData, nodesMetadata } = deserializedWorkflow;
@@ -356,6 +415,30 @@ export function needsOAuth(connectionParameters: Record<string, ConnectionParame
       .map((connectionParameterKey) => connectionParameters[connectionParameterKey])
       .filter((connectionParameter) => equals(connectionParameter.type, ConnectionParameterTypes.oauthSetting)).length > 0
   );
+}
+
+export function hasOnlyOAuthParameters(connector: Connector, isManagedIdentityForOAuthFlagEnabled: boolean): boolean {
+  if (
+    connector.properties?.connectionParameters &&
+    connector.properties?.connectionParameterSets === undefined &&
+    (!connector.properties?.connectionAlternativeParameters || !isManagedIdentityForOAuthFlagEnabled)
+  ) {
+    const connectionParameters = connector.properties.connectionParameters;
+    const filteredConnectionParametersKeys = Object.keys(connectionParameters).filter(
+      (connectionParameterKey) => !isHiddenConnectionParameter(connectionParameters, connectionParameterKey)
+    );
+    if (filteredConnectionParametersKeys.length === 0) {
+      return false;
+    }
+
+    // Check if all the parameters are OAuth only.
+    return filteredConnectionParametersKeys.every((connectionParameterKey) => {
+      const connectionParameter = connectionParameters[connectionParameterKey];
+      return equals(connectionParameter.type, ConnectionParameterTypes.oauthSetting);
+    });
+  }
+
+  return false;
 }
 
 // This only checks if this connector has any OAuth connection, it can be just part of Multi Auth
