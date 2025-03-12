@@ -1,8 +1,12 @@
 import type { OperationActionData } from '@microsoft/designer-ui';
 import { OperationActionDataFromOperation, OperationGroupDetailsPage } from '@microsoft/designer-ui';
 import type { Connector, DiscoveryOpArray } from '@microsoft/logic-apps-shared';
-import { useCallback } from 'react';
+import { useCallback, useMemo } from 'react';
 import { useDiscoveryPanelRelationshipIds } from '../../../core/state/panel/panelSelectors';
+import { useIsWithinAgenticLoop } from '../../../core/state/workflow/workflowSelectors';
+import { useDispatch } from 'react-redux';
+import { addConnectorAsOperation, type AppDispatch } from '../../../core';
+import { selectOperationGroupId } from '../../../core/state/panel/panelSlice';
 
 type OperationGroupDetailViewProps = {
   connector?: Connector;
@@ -16,7 +20,12 @@ type OperationGroupDetailViewProps = {
 
 export const OperationGroupDetailView = (props: OperationGroupDetailViewProps) => {
   const { connector, groupOperations, filters, onOperationClick, isLoading, displayRuntimeInfo, ignoreActionsFilter } = props;
-  const isRoot = useDiscoveryPanelRelationshipIds().graphId === 'root';
+  const relationshipIds = useDiscoveryPanelRelationshipIds();
+  const graphId = useMemo(() => relationshipIds.graphId, [relationshipIds]);
+  const isRoot = useMemo(() => graphId === 'root', [graphId]);
+  const isWithinAgenticLoop = useIsWithinAgenticLoop(graphId);
+
+  const dispatch = useDispatch<AppDispatch>();
 
   const filterItems = useCallback(
     (data: OperationActionData): boolean => {
@@ -38,6 +47,14 @@ export const OperationGroupDetailView = (props: OperationGroupDetailViewProps) =
     .map((operation) => OperationActionDataFromOperation(operation))
     .filter(filterItems);
 
+  const addOperationAsConnector = useCallback(
+    (connector?: Connector, actionData?: OperationActionData[]) => {
+      dispatch(selectOperationGroupId(''));
+      dispatch(addConnectorAsOperation({ relationshipIds, connector, actionData }));
+    },
+    [dispatch, relationshipIds]
+  );
+
   return (
     <OperationGroupDetailsPage
       connector={connector}
@@ -45,6 +62,7 @@ export const OperationGroupDetailView = (props: OperationGroupDetailViewProps) =
       onOperationClick={onOperationClick}
       isLoading={isLoading}
       displayRuntimeInfo={displayRuntimeInfo}
+      addAsConnector={isWithinAgenticLoop ? addOperationAsConnector : undefined}
     />
   );
 };

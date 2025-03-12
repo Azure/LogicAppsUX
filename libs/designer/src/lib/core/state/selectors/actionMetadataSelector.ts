@@ -12,6 +12,7 @@ import type { UseQueryResult } from '@tanstack/react-query';
 import { useQuery } from '@tanstack/react-query';
 import { useSelector } from 'react-redux';
 import { getOperationManifest } from '../../queries/operation';
+import Constants from '../../../common/constants';
 
 interface QueryResult {
   isLoading?: boolean;
@@ -20,6 +21,9 @@ interface QueryResult {
 
 export const useIsConnectionRequired = (operationInfo: NodeOperation) => {
   const result = useOperationManifest(operationInfo);
+  if (operationInfo.type === Constants.NODE.TYPE.CONNECTOR) {
+    return false;
+  }
   if (result.isLoading || !result.isFetched || result.isPlaceholderData) {
     return false;
   }

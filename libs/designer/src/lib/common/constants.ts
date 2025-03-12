@@ -390,6 +390,7 @@ export default {
       WORKFLOW: 'workflow',
       XML_VALIDATION: 'xmlvalidation',
       XSLT: 'xslt',
+      CONNECTOR: 'connector',
     },
     KIND: {
       ADDTOTIME: 'addtotime',

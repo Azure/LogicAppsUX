@@ -4,8 +4,8 @@ import { OperationSearchCard } from '../operationSearchCard';
 import HybridNotice from './HybridNotice';
 import { OperationGroupHeader } from './operationGroupHeader';
 import { MessageBar, MessageBarType } from '@fluentui/react';
-import { Spinner } from '@fluentui/react-components';
-import { isNullOrUndefined, type Connector } from '@microsoft/logic-apps-shared';
+import { Button, Spinner } from '@fluentui/react-components';
+import { getContrastTextColor, isNullOrUndefined, type Connector } from '@microsoft/logic-apps-shared';
 import { useIntl } from 'react-intl';
 
 export interface OperationGroupDetailsPageProps {
@@ -14,12 +14,13 @@ export interface OperationGroupDetailsPageProps {
   onOperationClick: (id: string, apiId?: string) => void;
   isLoading: boolean;
   displayRuntimeInfo: boolean;
+  addAsConnector?: (connector?: Connector, actionData?: OperationActionData[]) => void;
 }
 
 export const OperationGroupDetailsPage: React.FC<OperationGroupDetailsPageProps> = (props) => {
-  const { connector, operationActionsData, onOperationClick, isLoading, displayRuntimeInfo } = props;
+  const { connector, operationActionsData, onOperationClick, addAsConnector, isLoading, displayRuntimeInfo } = props;
   const { id = '', properties } = connector ?? {};
-  const { displayName = '', description, iconUri = '', externalDocs, generalInformation } = properties ?? {};
+  const { displayName = '', description, iconUri = '', externalDocs, generalInformation, brandColor } = properties ?? {};
 
   const intl = useIntl();
 
@@ -41,6 +42,14 @@ export const OperationGroupDetailsPage: React.FC<OperationGroupDetailsPageProps>
     description: 'Loading text for spinner',
   });
 
+  const addAsConnectorText = intl.formatMessage({
+    defaultMessage: 'Add as connector',
+    id: 'Du5IWc',
+    description: 'Add as connector button text',
+  });
+
+  const textColor = getContrastTextColor(brandColor);
+
   return (
     <div className="msla-op-group-detail-page">
       {isLoadingConnector ? null : (
@@ -53,6 +62,15 @@ export const OperationGroupDetailsPage: React.FC<OperationGroupDetailsPageProps>
         />
       )}
       {isHybrid ? <HybridNotice /> : null}
+      {addAsConnector ? (
+        <Button
+          className="msla-op-group-connector-add-button"
+          style={{ backgroundColor: brandColor, color: textColor }}
+          onClick={() => addAsConnector(connector, sortedOperations)}
+        >
+          {addAsConnectorText}
+        </Button>
+      ) : null}
       <ul className="msla-op-group-item-container" aria-label={`Operation list for ${displayName} Connector`}>
         {!isLoading && operationActionsData.length === 0 ? (
           <MessageBar messageBarType={MessageBarType.info}>{noOperationsText}</MessageBar>

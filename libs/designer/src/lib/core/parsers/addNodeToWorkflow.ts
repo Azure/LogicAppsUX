@@ -246,30 +246,29 @@ export const addSwitchCaseToWorkflow = (caseId: string, switchNode: WorkflowNode
 };
 
 export const addAgentConditionToWorkflow = (
-  caseId: string,
+  conditionId: string,
   agentNode: WorkflowNode,
   nodesMetadata: NodesMetadata,
   state: WorkflowState
 ) => {
-  const caseNode = createWorkflowNode(caseId, WORKFLOW_NODE_TYPES.SUBGRAPH_NODE);
-  caseNode.subGraphLocation = 'tools';
-  // addChildNode(switchNode, caseNode);
-  agentNode.children?.splice(agentNode.children.length - 2, 0, caseNode);
-  const caseHeading = createWorkflowNode(`${caseId}-#subgraph`, WORKFLOW_NODE_TYPES.SUBGRAPH_CARD_NODE);
-  addChildNode(caseNode, caseHeading);
-  nodesMetadata[caseId] = {
+  const conditionNode = createWorkflowNode(conditionId, WORKFLOW_NODE_TYPES.SUBGRAPH_NODE);
+  conditionNode.subGraphLocation = 'tools';
+  agentNode.children?.splice(agentNode.children.length - 2, 0, conditionNode);
+  const conditionHeading = createWorkflowNode(`${conditionId}-#subgraph`, WORKFLOW_NODE_TYPES.SUBGRAPH_CARD_NODE);
+  addChildNode(conditionNode, conditionHeading);
+  nodesMetadata[conditionId] = {
     graphId: agentNode.id,
     parentNodeId: agentNode.id,
-    subgraphType: SUBGRAPH_TYPES.SWITCH_CASE,
+    subgraphType: SUBGRAPH_TYPES.AGENT_CONDITION,
     actionCount: 0,
   };
-  addChildEdge(agentNode, createWorkflowEdge(`${agentNode.id}-#scope`, caseId, WORKFLOW_EDGE_TYPES.ONLY_EDGE));
+  addChildEdge(agentNode, createWorkflowEdge(`${agentNode.id}-#scope`, conditionId, WORKFLOW_EDGE_TYPES.ONLY_EDGE));
 
-  // Add Case to Switch operation data
-  const switchAction = state.operations[agentNode.id] as LogicAppsV2.SwitchAction;
-  switchAction.cases = {
-    ...switchAction.cases,
-    [caseId]: { actions: {}, case: '' },
+  // Add Condion to Agent operation data
+  const agentAction = state.operations[agentNode.id] as LogicAppsV2.AgentAction;
+  agentAction.tools = {
+    ...agentAction.tools,
+    [conditionId]: { actions: {}, description: '', type: 'Agent' },
   };
 
   // Increase action count of graph
