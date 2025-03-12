@@ -99,7 +99,7 @@ export const addConnectorAsOperation = createAsyncThunk(
       const { name, properties, id } = connector;
       const { iconUri, brandColor = Constants.DEFAULT_BRAND_COLOR, description = '', displayName } = properties;
       const workflowState = (getState() as RootState).workflow;
-      const nodeId = getNonDuplicateNodeId(workflowState.nodesMetadata, displayName, workflowState.idReplacements);
+      const nodeId = getNonDuplicateNodeId(workflowState.nodesMetadata, `${displayName} Connector`, workflowState.idReplacements);
 
       const connectorOperation = {
         name,

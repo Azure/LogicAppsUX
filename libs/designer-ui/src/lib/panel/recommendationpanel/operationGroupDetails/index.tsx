@@ -20,7 +20,15 @@ export interface OperationGroupDetailsPageProps {
 export const OperationGroupDetailsPage: React.FC<OperationGroupDetailsPageProps> = (props) => {
   const { connector, operationActionsData, onOperationClick, addAsConnector, isLoading, displayRuntimeInfo } = props;
   const { id = '', properties } = connector ?? {};
-  const { displayName = '', description, iconUri = '', externalDocs, generalInformation, brandColor } = properties ?? {};
+  const {
+    displayName = '',
+    description,
+    iconUri = '',
+    externalDocs,
+    generalInformation,
+    brandColor: connectorBrandColor,
+  } = properties ?? {};
+  const brandColor = connectorBrandColor ?? operationActionsData.find((action) => action.brandColor)?.brandColor;
 
   const intl = useIntl();
 
