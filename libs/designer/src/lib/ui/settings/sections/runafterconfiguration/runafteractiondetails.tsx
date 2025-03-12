@@ -135,7 +135,7 @@ const DeleteButton = ({ visible, disabled, onDelete }: DeleteButtonProps): JSX.E
         style={{ color: 'var(--colorBrandForeground1)' }}
       />
     ),
-    [disabled, handleDelete]
+    [MENU_DELETE, disabled, handleDelete]
   );
 
   if (!visible) {

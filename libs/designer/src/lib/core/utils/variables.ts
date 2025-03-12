@@ -2,8 +2,8 @@ import Constants from '../../common/constants';
 import type { NodeInputs } from '../state/operation/operationMetadataSlice';
 import type { NodeTokens, VariableDeclaration } from '../state/tokens/tokensSlice';
 import { ParameterGroupKeys } from './parameters/helper';
-import type { OutputToken as Token } from '@microsoft/designer-ui';
-import { TokenType } from '@microsoft/designer-ui';
+import type { InitializeVariableProps, OutputToken as Token } from '@microsoft/designer-ui';
+import { parseVariableEditorSegments, TokenType } from '@microsoft/designer-ui';
 import { aggregate, getRecordEntry } from '@microsoft/logic-apps-shared';
 
 let variableIcon = '';
@@ -16,13 +16,21 @@ export const setVariableMetadata = (icon: string, brandColor: string): void => {
 
 export const getVariableDeclarations = (nodeInputs: NodeInputs): VariableDeclaration[] => {
   const defaultParameterGroup = nodeInputs.parameterGroups[ParameterGroupKeys.DEFAULT];
-  const nameParameter = defaultParameterGroup.parameters.find((parameter) => parameter.parameterName === 'name');
-  const typeParameter = defaultParameterGroup.parameters.find((parameter) => parameter.parameterName === 'type');
+  const variableParameter = defaultParameterGroup.parameters.find(
+    (parameter) => parameter.parameterName === Constants.PARAMETER_NAMES.VARIABLES
+  );
 
-  const name = nameParameter?.value.length === 1 ? nameParameter.value[0].value : null;
-  const type = typeParameter?.value.length === 1 ? typeParameter.value[0].value : null;
+  const variables: InitializeVariableProps[] =
+    variableParameter?.editorViewModel?.variables ?? parseVariableEditorSegments(variableParameter?.value ?? []);
 
-  return name || type ? [{ name: name as string, type: type as string }] : [];
+  return variables
+    .map((variable) => {
+      const name = variable.name?.[0]?.value ?? null;
+      const type = variable.type?.[0]?.value ?? null;
+
+      return name || type ? { name, type } : null;
+    })
+    .filter((variable): variable is VariableDeclaration => variable !== null);
 };
 
 export const getAllVariables = (variables: Record<string, VariableDeclaration[]>): VariableDeclaration[] => {

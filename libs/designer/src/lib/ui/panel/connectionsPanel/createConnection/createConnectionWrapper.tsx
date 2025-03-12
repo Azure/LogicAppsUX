@@ -29,6 +29,7 @@ import {
   getConnectionParametersForAzureConnection,
   getSupportedParameterSets,
 } from '../../../../core/utils/connectors/connections';
+import type { CreateButtonTexts } from './createConnection';
 import { CreateConnection } from './createConnection';
 import { Spinner, SpinnerSize } from '@fluentui/react/lib/Spinner';
 import {
@@ -115,7 +116,7 @@ export const CreateConnectionInternal = (props: {
   updateConnectionInState: (payload: CreatedConnectionPayload) => void;
   onConnectionCreated: (connection: Connection) => void;
   onConnectionCancelled?: () => void;
-  createButtonText?: string;
+  createButtonTexts?: CreateButtonTexts;
   description?: string;
   nodeIds?: string[];
   assistedConnectionProps?: AssistedConnectionProps;
@@ -133,7 +134,7 @@ export const CreateConnectionInternal = (props: {
     nodeIds = [],
     hideCancelButton,
     showActionBar,
-    createButtonText,
+    createButtonTexts,
     updateConnectionInState,
     onConnectionCreated,
     onConnectionCancelled,
@@ -351,7 +352,7 @@ export const CreateConnectionInternal = (props: {
         operationType,
         connector.properties.capabilities
       )}
-      createText={createButtonText}
+      createButtonTexts={createButtonTexts}
       description={description}
       identity={identity}
       createConnectionCallback={createConnectionCallback}
