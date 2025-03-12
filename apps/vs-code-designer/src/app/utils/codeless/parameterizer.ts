@@ -80,15 +80,30 @@ export function hasParameterizedConnection(connectionsData: ConnectionsData): bo
       for (const connectionKey in connectionTypeJson) {
         const connection = connectionTypeJson[connectionKey];
         if (isConnectionReferenceModel(connection)) {
-          if (connection.api.id.includes('@appsetting') || connection.connectionRuntimeUrl.includes('@parameters')) {
+          if (
+            connection.api.id.includes('@appsetting') ||
+            connection.api.id.includes('@{appsetting') ||
+            connection.connectionRuntimeUrl.includes('@parameters') ||
+            connection.connectionRuntimeUrl.includes('@{parameters')
+          ) {
             return true;
           }
         } else if (isFunctionConnectionModel(connection)) {
-          if (connection.function.id.includes('@parameters') || connection.triggerUrl.includes('@parameters')) {
+          if (
+            connection.function.id.includes('@parameters') ||
+            connection.function.id.includes('@{parameters') ||
+            connection.triggerUrl.includes('@parameters') ||
+            connection.triggerUrl.includes('@{parameters')
+          ) {
             return true;
           }
         } else if (isAPIManagementConnectionModel(connection)) {
-          if (connection.apiId.includes('@parameters') || connection.baseUrl.includes('@parameters')) {
+          if (
+            connection.apiId.includes('@parameters') ||
+            connection.apiId.includes('@{parameters') ||
+            connection.baseUrl.includes('@parameters') ||
+            connection.baseUrl.includes('@{parameters')
+          ) {
             return true;
           }
         }
@@ -113,15 +128,24 @@ export function areAllConnectionsParameterized(connectionsData: ConnectionsData)
       for (const connectionKey in connectionTypeJson) {
         const connection = connectionTypeJson[connectionKey];
         if (isConnectionReferenceModel(connection)) {
-          if (!connection.api.id.includes('@appsetting') || !connection.connectionRuntimeUrl.includes('@parameters')) {
+          if (
+            !(connection.api.id.includes('@appsetting') || connection.api.id.includes('@{appsetting')) ||
+            !(connection.connectionRuntimeUrl.includes('@parameters') || connection.connectionRuntimeUrl.includes('@{parameters'))
+          ) {
             return false;
           }
         } else if (isFunctionConnectionModel(connection)) {
-          if (!connection.function.id.includes('@parameters') || !connection.triggerUrl.includes('@parameters')) {
+          if (
+            !(connection.function.id.includes('@parameters') || connection.function.id.includes('@{parameters')) ||
+            !(connection.triggerUrl.includes('@parameters') || connection.triggerUrl.includes('@{parameters'))
+          ) {
             return false;
           }
         } else if (isAPIManagementConnectionModel(connection)) {
-          if (!connection.apiId.includes('@parameters') || !connection.baseUrl.includes('@parameters')) {
+          if (
+            !(connection.apiId.includes('@parameters') || !connection.baseUrl.includes('@parameters')) ||
+            !(connection.apiId.includes('@{parameters') || connection.baseUrl.includes('@{parameters'))
+          ) {
             return false;
           }
         }
