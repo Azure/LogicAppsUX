@@ -53,17 +53,7 @@ export const EditorCommandBar = (_props: EditorCommandBarProps) => {
         const result = convertToMapDefinition(currentConnections, sourceSchema, targetSchema, targetSchemaSortArray);
         return result;
       } catch (error) {
-        let errorMessage = '';
-        if (typeof error === 'string') {
-          errorMessage = error;
-        } else if (error instanceof Error) {
-          errorMessage = error.message;
-        }
-        LoggerService().log({
-          level: LogEntryLevel.Error,
-          area: `${LogCategory.DataMapperDesigner}/dataMapDefinition`,
-          message: errorMessage,
-        });
+        LoggerService().logErrorWithFormatting(error, `${LogCategory.DataMapperDesigner}/generateDataMapDefinitionSerialize`);
         return { isSuccess: false, errorNodes: [] };
       }
     }
@@ -112,7 +102,7 @@ export const EditorCommandBar = (_props: EditorCommandBarProps) => {
           LoggerService().log({
             level: LogEntryLevel.Error,
             area: `${LogCategory.DataMapperDesigner}/onGenerateClick`,
-            message: JSON.stringify(error),
+            message: JSON.stringify(error.message),
           });
           DataMapperFileService().sendNotification(failedXsltMessage, error.message, LogEntryLevel.Error);
         });

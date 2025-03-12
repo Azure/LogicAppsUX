@@ -8,6 +8,7 @@ describe('lib/designer-client-services/logger', () => {
       log: vi.fn(),
       startTrace: vi.fn(),
       endTrace: vi.fn(),
+      logErrorWithFormatting: vi.fn(),
     };
     InitLoggerService([mockLoggingService]);
     const entry: LogEntry = {
@@ -25,11 +26,13 @@ describe('lib/designer-client-services/logger', () => {
       log: vi.fn(),
       startTrace: vi.fn(),
       endTrace: vi.fn(),
+      logErrorWithFormatting: vi.fn(),
     };
     const mockLoggingService2 = {
       log: vi.fn(),
       startTrace: vi.fn(),
       endTrace: vi.fn(),
+      logErrorWithFormatting: vi.fn(),
     };
     InitLoggerService([mockLoggingService1, mockLoggingService2]);
 
@@ -49,6 +52,7 @@ describe('lib/designer-client-services/logger', () => {
       log: vi.fn(),
       startTrace: vi.fn(),
       endTrace: vi.fn(),
+      logErrorWithFormatting: vi.fn(),
     };
     InitLoggerService([mockLoggingService1]);
 
@@ -68,6 +72,7 @@ describe('lib/designer-client-services/logger', () => {
       log: vi.fn(),
       startTrace: vi.fn().mockReturnValue(innerGuid),
       endTrace: vi.fn(),
+      logErrorWithFormatting: vi.fn(),
     };
     InitLoggerService([mockLoggingService1]);
 
@@ -88,11 +93,13 @@ describe('lib/designer-client-services/logger', () => {
       log: vi.fn(),
       startTrace: vi.fn().mockReturnValue(innerGuid1),
       endTrace: vi.fn(),
+      logErrorWithFormatting: vi.fn(),
     };
     const mockLoggingService2 = {
       log: vi.fn(),
       startTrace: vi.fn().mockReturnValue(innerGuid2),
       endTrace: vi.fn(),
+      logErrorWithFormatting: vi.fn(),
     };
     InitLoggerService([mockLoggingService1, mockLoggingService2]);
 
@@ -105,5 +112,49 @@ describe('lib/designer-client-services/logger', () => {
     LoggerService().endTrace(g, { data: 'test', status: 'someStatus' });
     expect(mockLoggingService1.endTrace).toHaveBeenCalledWith(innerGuid1, { data: 'test', status: 'someStatus' });
     expect(mockLoggingService2.endTrace).toHaveBeenCalledWith(innerGuid2, { data: 'test', status: 'someStatus' });
+  });
+
+  describe('logErrorWithFormatting', () => {
+    it('should log error with stack trace when error is an instance of Error', () => {
+      const innerGuid = 'innerguid';
+      const mockLoggingService1 = {
+        log: vi.fn(),
+        startTrace: vi.fn().mockReturnValue(innerGuid),
+        endTrace: vi.fn(),
+        logErrorWithFormatting: vi.fn(),
+      };
+      InitLoggerService([mockLoggingService1]);
+
+      const error = new Error('test error', { cause: 'cause' });
+      error.stack = 'stack';
+      LoggerService().logErrorWithFormatting(error, 'test area', LogEntryLevel.Error);
+
+      expect(mockLoggingService1.log).toHaveBeenCalledWith({
+        level: LogEntryLevel.Error,
+        area: 'test area',
+        message: 'test error',
+        args: [{ stack: 'stack', cause: 'cause' }],
+      });
+    });
+
+    it('should log error with string when error is a string', () => {
+      const innerGuid = 'innerguid';
+      const mockLoggingService1 = {
+        log: vi.fn(),
+        startTrace: vi.fn().mockReturnValue(innerGuid),
+        endTrace: vi.fn(),
+        logErrorWithFormatting: vi.fn(),
+      };
+      InitLoggerService([mockLoggingService1]);
+
+      const error = 'error';
+      LoggerService().logErrorWithFormatting('error', 'test area', LogEntryLevel.Error);
+
+      expect(mockLoggingService1.log).toHaveBeenCalledWith({
+        level: LogEntryLevel.Error,
+        area: 'test area',
+        message: error,
+      });
+    });
   });
 });

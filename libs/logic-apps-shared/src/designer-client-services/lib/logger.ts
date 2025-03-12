@@ -1,11 +1,15 @@
 import { AssertionErrorCode, AssertionException, guid } from '../../utils/src';
 import type { LogEntry, TelemetryEvent } from './logging/logEntry';
+import { LogEntryLevel } from './logging/logEntry';
 
 export interface ILoggerService {
-  log: (entry: Omit<LogEntry, 'timestamp'>) => void;
+  log: (entry: LogEntryWithoutTimestamp) => void;
   startTrace: (eventData: Pick<TelemetryEvent, 'action' | 'actionModifier' | 'name' | 'source'>) => string;
   endTrace: (id: string, eventData: Pick<TelemetryEvent, 'status' | 'data'>) => void;
+  logErrorWithFormatting: (error: Error | string | unknown, area: string, level?: number) => void;
 }
+
+export type LogEntryWithoutTimestamp = Omit<LogEntry, 'timestamp'>;
 
 class Service implements ILoggerService {
   private loggingServices: ILoggerService[];
@@ -14,7 +18,7 @@ class Service implements ILoggerService {
     this.loggingServices = services;
   }
 
-  public log = (entry: Omit<LogEntry, 'timestamp'>) => {
+  public log = (entry: LogEntryWithoutTimestamp) => {
     this.loggingServices.forEach((s) => s.log(entry));
   };
 
@@ -37,6 +41,19 @@ class Service implements ILoggerService {
     group?.forEach((tid) => {
       this.loggingServices[tid.service].endTrace(tid.traceId, eventData);
     });
+  };
+
+  public logErrorWithFormatting = (error: Error | string | unknown, area: string, level: number = LogEntryLevel.Error): void => {
+    const logEntry: LogEntryWithoutTimestamp = {
+      level,
+      area,
+      message: '',
+    };
+    if (typeof error === 'string') {
+      this.log({ ...logEntry, message: error });
+    } else if (error instanceof Error) {
+      this.log({ ...logEntry, message: error.message, args: [{ stack: error.stack ?? '', cause: error.cause ?? '' }] });
+    }
   };
 }
 
