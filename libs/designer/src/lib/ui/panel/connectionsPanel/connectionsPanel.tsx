@@ -1,7 +1,8 @@
 import { XLargeText } from '@microsoft/designer-ui';
-import { useOperationPanelSelectedNodeId } from '../../../core';
+import type { AppDispatch } from '../../../core';
+import { updateNodeConnection, useOperationInfo, useOperationPanelSelectedNodeId } from '../../../core';
 import { useConnectionsForConnector } from '../../../core/queries/connections';
-import { useConnectorByNodeId } from '../../../core/state/connection/connectionSelector';
+import { useConnectionRefs, useConnectorByNodeId } from '../../../core/state/connection/connectionSelector';
 import { useIsCreatingConnection } from '../../../core/state/panel/panelSelectors';
 import { setIsCreatingConnection } from '../../../core/state/panel/panelSlice';
 import { AllConnections } from './allConnections/allConnections';
@@ -13,23 +14,35 @@ import type { CommonPanelProps } from '@microsoft/designer-ui';
 import { useCallback, useEffect, useMemo } from 'react';
 import { useIntl } from 'react-intl';
 import { useDispatch } from 'react-redux';
+import { autoCreateConnectionIfPossible, closeConnectionsFlow } from '../../../core/actions/bjsworkflow/connections';
+import type { Connection, Connector } from '@microsoft/logic-apps-shared';
 
 const CloseIcon = bundleIcon(Dismiss24Filled, Dismiss24Regular);
 
 export const ConnectionPanel = (props: CommonPanelProps) => {
-  const dispatch = useDispatch();
+  const dispatch = useDispatch<AppDispatch>();
   const selectedNodeId = useOperationPanelSelectedNodeId();
   const connector = useConnectorByNodeId(selectedNodeId);
+  const operationInfo = useOperationInfo(selectedNodeId);
+  const references = useConnectionRefs();
   const connectionQuery = useConnectionsForConnector(connector?.id ?? '');
   const connections = useMemo(() => connectionQuery.data ?? [], [connectionQuery.data]);
 
   const isCreatingConnection = useIsCreatingConnection();
 
   useEffect(() => {
-    if (selectedNodeId && !connectionQuery.isLoading && !connectionQuery.isError && connections.length === 0) {
-      dispatch(setIsCreatingConnection(true));
+    if (selectedNodeId && connector && !connectionQuery.isLoading && !connectionQuery.isError && connections.length === 0) {
+      autoCreateConnectionIfPossible({
+        connector: connector as Connector,
+        referenceKeys: Object.keys(references),
+        operationInfo,
+        applyNewConnection: (connection: Connection) =>
+          dispatch(updateNodeConnection({ nodeId: selectedNodeId, connection, connector: connector as Connector })),
+        onSuccess: () => dispatch(closeConnectionsFlow({ nodeId: selectedNodeId })),
+        onManualConnectionCreation: () => dispatch(setIsCreatingConnection(true)),
+      });
     }
-  }, [connectionQuery.isError, connectionQuery.isLoading, connections, dispatch, selectedNodeId]);
+  }, [connectionQuery.isError, connectionQuery.isLoading, connections, connector, dispatch, operationInfo, references, selectedNodeId]);
 
   const panelStatus = useMemo(() => {
     if (!selectedNodeId) {

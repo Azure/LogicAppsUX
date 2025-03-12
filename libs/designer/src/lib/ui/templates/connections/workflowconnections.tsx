@@ -13,7 +13,15 @@ import {
 } from '@fluentui/react';
 import { Link, Text, Image } from '@fluentui/react-components';
 import type { Connection, Template } from '@microsoft/logic-apps-shared';
-import { aggregate, ConnectionService, getObjectPropertyValue, guid, normalizeConnectorId } from '@microsoft/logic-apps-shared';
+import {
+  aggregate,
+  ConnectionService,
+  getObjectPropertyValue,
+  getUniqueName,
+  guid,
+  isArmResourceId,
+  normalizeConnectorId,
+} from '@microsoft/logic-apps-shared';
 import type { AppDispatch, RootState } from '../../../core/state/templates/store';
 import { getConnectorResources } from '../../../core/templates/utils/helper';
 import { type IntlShape, useIntl } from 'react-intl';
@@ -23,7 +31,7 @@ import { useConnectionsForConnector } from '../../../core/queries/connections';
 import { useFunctionalState } from '@react-hookz/web';
 import { CreateConnectionInTemplate } from './createConnection';
 import React, { useEffect, useMemo, useState } from 'react';
-import { updateTemplateConnection } from '../../../core/actions/bjsworkflow/connections';
+import { autoCreateConnectionIfPossible, updateTemplateConnection } from '../../../core/actions/bjsworkflow/connections';
 import { getConnector } from '../../../core/queries/operation';
 import { useConnectorInfo, type ConnectorInfo } from '../../../core/templates/utils/queries';
 import { isConnectionValid } from '../../../core/utils/connectors/connections';
@@ -52,6 +60,7 @@ interface ConnectionItem {
   };
   hasConnection?: boolean;
   allConnections?: Connection[];
+  isConnectionCreating?: boolean;
 }
 
 export interface WorkflowConnectionsProps {
@@ -112,6 +121,7 @@ export const WorkflowConnections = ({ connections, viewMode = 'full' }: Workflow
             connectorId: normalizeConnectorId(connectionItem.connectorId, subscriptionId, location),
             hasConnection: mapping[key] !== undefined ? true : undefined,
             connection: { id: references[mapping[key]]?.connection?.id, displayName: undefined },
+            isConnectionCreating: false,
           };
         })
       )
@@ -212,7 +222,7 @@ export const WorkflowConnections = ({ connections, viewMode = 'full' }: Workflow
     }))
   );
 
-  const onConnectionsLoaded = async (loadedConnections: Connection[], item: ConnectionItem): Promise<void> => {
+  const onConnectionsLoaded = (loadedConnections: Connection[], item: ConnectionItem) => {
     const connectionIdToOverride = viewTemplateDetails?.connectionsOverride?.[item.connectionKey]?.connectionId;
     const itemHasConnection = item.connection?.id && item.connection?.displayName === undefined;
     const connectionToUse = itemHasConnection
@@ -267,10 +277,10 @@ export const WorkflowConnections = ({ connections, viewMode = 'full' }: Workflow
     completeConnectionCreate(workflowId, newListItems);
   };
 
-  const handleConnectionCreate = (item: ConnectionItem, connection: Connection) => {
+  const handleConnectionCreate = (item: ConnectionItem, connection: Connection, inlineCreate = false) => {
     const actualItemKey = item.connectionKey.replace(createPlaceholderKey, '');
     const newListItems = connectionsList()
-      .filter((current: ConnectionItem) => current.connectionKey !== item.connectionKey)
+      .filter((current: ConnectionItem) => inlineCreate || current.connectionKey !== item.connectionKey)
       .map((current) =>
         current.connectionKey === actualItemKey
           ? {
@@ -278,6 +288,7 @@ export const WorkflowConnections = ({ connections, viewMode = 'full' }: Workflow
               allConnections: [...(current.allConnections ?? []), connection],
               connection: { id: connection.id, displayName: connection.properties.displayName },
               hasConnection: true,
+              isConnectionCreating: false,
             }
           : current
       );
@@ -285,9 +296,9 @@ export const WorkflowConnections = ({ connections, viewMode = 'full' }: Workflow
     completeConnectionCreate(item.workflowId, newListItems);
   };
 
-  const handleConnectionCreateClick = (item: ConnectionItem) => {
+  const inlineConnectionCreationUI = (item: ConnectionItem) => {
     const newListItems = connectionsList().reduce((result: ConnectionItem[], current: ConnectionItem) => {
-      result.push(current);
+      result.push({ ...current, isConnectionCreating: false });
       if (current.workflowId === item.workflowId && current.connectionKey === item.connectionKey) {
         result.push({ ...current, connectionKey: `${createPlaceholderKey}${current.connectionKey}`, id: guid() });
       }
@@ -310,6 +321,28 @@ export const WorkflowConnections = ({ connections, viewMode = 'full' }: Workflow
       setColumns(columns().map((col) => ({ ...col, showSortIconWhenUnsorted: false, onColumnClick: undefined })));
     }
     setConnectionInCreate(true);
+  };
+
+  const handleConnectionCreateClick = async (item: ConnectionItem) => {
+    updateItemInConnectionsList({ ...item, isConnectionCreating: true });
+    if (isSingleWorkflow) {
+      setColumns(columns().map((col) => ({ ...col, showSortIconWhenUnsorted: false, onColumnClick: undefined })));
+    }
+
+    const nodeId = item.connectionKey;
+    const connector = await getConnector(item.connectorId);
+    const referenceKeys = Object.keys(references);
+    const connectionKey = isArmResourceId(item.connectorId)
+      ? item.connectionKey
+      : (getUniqueName(referenceKeys, item.connectionKey).name ?? item.connectionKey);
+
+    autoCreateConnectionIfPossible({
+      connector,
+      referenceKeys,
+      applyNewConnection: (connection) => dispatch(updateTemplateConnection({ connection, connector, nodeId, connectionKey })),
+      onSuccess: (connection) => handleConnectionCreate(item, connection, /* inlineCreate */ true),
+      onManualConnectionCreation: () => inlineConnectionCreationUI(item),
+    });
   };
 
   const onRenderRow = (props: IDetailsRowProps | undefined) => {
@@ -411,7 +444,7 @@ export const WorkflowConnections = ({ connections, viewMode = 'full' }: Workflow
         );
 
       case '$connectionsList':
-        return (
+        return isConnectionInCreate ? null : (
           <ConnectionsList
             aria-label={intl.formatMessage({ defaultMessage: 'Connections list', description: 'Connections list', id: 'w+7aGo' })}
             className={isCompactView ? 'msla-template-connection-cell-content' : undefined}
@@ -550,7 +583,7 @@ const ConnectionStatus = ({
   const details = connectionStatus[key];
   const status = (
     <Text className={className ?? 'msla-template-connection-status-text'} style={isCompactView ? { color: details.color } : undefined}>
-      {hasConnection ? statusText[key] : statusText[key]}
+      {statusText[key]}
     </Text>
   );
   return isCompactView ? (
@@ -577,6 +610,10 @@ const ConnectionName = ({
   onCreate: (item: ConnectionItem) => void;
 }): JSX.Element => {
   const { connection } = item;
+  if (item.isConnectionCreating) {
+    return <Shimmer className="msla-template-connection-text" style={{ width: '100px' }} />;
+  }
+
   if (connection?.id) {
     return <Text className={className ?? 'msla-template-connection-text'}>{connection.displayName}</Text>;
   }
@@ -640,14 +677,18 @@ const ConnectionsList = ({
           canCheck: true,
           isChecked: key === item.connection?.id,
           onRenderIcon: () => null,
+          disabled: item.isConnectionCreating,
           onClick: () => onConnectionSelection(key, text, data),
         };
       }),
       { key: 'divider_1', itemType: ContextualMenuItemType.Divider },
       {
         key: '$addConnection',
-        iconProps: { iconName: 'Add', style: { marginLeft: '-15px' } },
-        name: intl.formatMessage({ defaultMessage: 'Add connection', description: 'Add connection', id: 'Q/V4Uc' }),
+        iconProps: item.isConnectionCreating ? undefined : { iconName: 'Add', style: { marginLeft: '-15px' } },
+        name: item.isConnectionCreating
+          ? intl.formatMessage({ defaultMessage: 'Adding connection...', description: 'Adding connection text.', id: '9L2sCO' })
+          : intl.formatMessage({ defaultMessage: 'Add connection', description: 'Add connection', id: 'Q/V4Uc' }),
+        disabled: item.isConnectionCreating,
         canCheck: false,
         isChecked: false,
         onClick: onCreateConnection,
