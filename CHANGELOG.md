@@ -1,4 +1,11 @@
 # Logic Apps Designer
+### [5.35.4](https://github.com/Azure/LogicAppsUX/compare/v5.35.3...v5.35.4) (2025-03-12)
+
+
+### Bug Fixes
+
+* **designer:** Implement password masking and secure inputs/outputs ([#6780](https://github.com/Azure/LogicAppsUX/issues/6780)) ([65a3980](https://github.com/Azure/LogicAppsUX/commit/65a3980cf05737c5d4f604c66e36a46da0573802)), closes [#6678](https://github.com/Azure/LogicAppsUX/issues/6678) [#6687](https://github.com/Azure/LogicAppsUX/issues/6687)
+
 ### [5.35.3](https://github.com/Azure/LogicAppsUX/compare/v5.35.2...v5.35.3) (2025-02-18)
 
 
