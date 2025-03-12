@@ -74,7 +74,7 @@ export interface BaseEditorProps {
   onChange?: ChangeHandler;
   onBlur?: () => void;
   onFocus?: () => void;
-  getTokenPicker: GetTokenPickerHandler;
+  getTokenPicker?: GetTokenPickerHandler;
   setIsValuePlaintext?: (isValuePlaintext: boolean) => void;
 }
 
@@ -241,7 +241,7 @@ export const BaseEditor = ({
           <FloatingLinkEditorPlugin anchorElem={floatingAnchorElem} isMainEditorFocused={isEditorFocused} />
         ) : null}
         {children}
-        {tokens && isTokenPickerOpened ? getTokenPicker(editorId, labelId ?? '', tokenPickerMode, valueType) : null}
+        {tokens && isTokenPickerOpened && getTokenPicker ? getTokenPicker(editorId, labelId ?? '', tokenPickerMode, valueType) : null}
       </div>
       {tokens && isEditorFocused && !isTokenPickerOpened
         ? createPortal(<TokenPickerButton {...tokenPickerButtonProps} openTokenPicker={openTokenPicker} />, document.body)

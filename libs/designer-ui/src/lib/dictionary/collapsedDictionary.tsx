@@ -16,7 +16,7 @@ export type CollapsedDictionaryProps = {
   setItems: (items: DictionaryEditorItemProps[]) => void;
   setCollapsedValue: (val: ValueSegment[]) => void;
   onBlur?: () => void;
-  getTokenPicker: GetTokenPickerHandler;
+  getTokenPicker?: GetTokenPickerHandler;
   tokenMapping?: Record<string, ValueSegment>;
   labelId?: string;
   loadParameterValueFromString?: loadParameterValueFromStringHandler;

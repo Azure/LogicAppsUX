@@ -20,7 +20,7 @@ export interface CollapsedArrayProps {
   setItems: ((simpleItems: SimpleArrayItem[]) => void) | ((complexItems: ComplexArrayItems[]) => void);
   setIsValid: (b: boolean) => void;
   onBlur?: () => void;
-  getTokenPicker: GetTokenPickerHandler;
+  getTokenPicker?: GetTokenPickerHandler;
   tokenMapping?: Record<string, ValueSegment>;
   loadParameterValueFromString?: loadParameterValueFromStringHandler;
 }
