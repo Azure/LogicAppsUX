@@ -71,6 +71,7 @@ export const ConnectionType = {
   Function: 'function',
   ServiceProvider: 'serviceprovider',
   ApiManagement: 'apimanagement',
+  Agent: 'agent',
 };
 export type ConnectionType = (typeof ConnectionType)[keyof typeof ConnectionType];
 
@@ -81,6 +82,7 @@ export const ConnectionReferenceKeyFormat = {
   OpenApiConnection: 'openapiconnection', // TODO: This can change when backend fixes a value, right now this is not used by any manifest.
   ServiceProvider: 'serviceprovider',
   HybridTrigger: 'hybridtrigger',
+  AgentConnection: 'agentconnection',
 };
 export type ConnectionReferenceKeyFormat = (typeof ConnectionReferenceKeyFormat)[keyof typeof ConnectionReferenceKeyFormat];
 
