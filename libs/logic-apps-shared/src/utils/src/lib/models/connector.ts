@@ -117,6 +117,7 @@ export interface ParameterCredentialMapping {
 
 export interface ConnectionParameterSetUIDefinition {
   description: string;
+  tooltip?: string;
   displayName: string;
 }
 
@@ -181,6 +182,7 @@ export interface ConnectionParameterSetParameter {
   managedIdentitySettings?: ManagedIdentitySetting;
   oAuthSettings?: OAuthSetting;
   gateway?: GatewaySetting;
+  parameterSource?: ConnectionParameterSource;
 }
 
 export interface ConnectionParameterSet {

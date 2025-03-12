@@ -16,6 +16,7 @@ export class WorkflowUtility {
     const functionConnections = connectionsData.functionConnections || {};
     const connectionReferences = connectionsData.managedApiConnections || {};
     const serviceProviderConnections = connectionsData.serviceProviderConnections || {};
+    const agentConnections = connectionsData.agentConnections || {};
 
     for (const connectionReferenceKey of Object.keys(connectionReferences)) {
       const { connection, api, connectionProperties, authentication } = connectionReferences[connectionReferenceKey];
@@ -52,6 +53,15 @@ export class WorkflowUtility {
         connection: { id: `${serviceProviderId}/connections/${connectionKey}` },
         connectionName: serviceProviderConnections[connectionKey].displayName ?? connectionKey,
         api: { id: serviceProviderId },
+      };
+    }
+
+    const agentConnectorId = 'connectionProviders/agent';
+    for (const connectionKey of Object.keys(agentConnections)) {
+      references[connectionKey] = {
+        connection: { id: `/${agentConnectorId}/connections/${connectionKey}` },
+        connectionName: connectionKey, // updated to use connectionKey directly
+        api: { id: `/${agentConnectorId}` },
       };
     }
 
