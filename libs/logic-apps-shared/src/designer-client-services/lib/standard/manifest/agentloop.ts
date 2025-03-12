@@ -142,7 +142,7 @@ export default {
     },
 
     connector: {
-      id: 'connectionProviders/agent',
+      id: '/connectionProviders/agent',
       name: 'Agent',
       properties: {
         description: 'Agent operations',
