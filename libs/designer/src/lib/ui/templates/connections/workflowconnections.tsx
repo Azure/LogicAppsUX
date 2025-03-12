@@ -222,7 +222,7 @@ export const WorkflowConnections = ({ connections, viewMode = 'full' }: Workflow
     }))
   );
 
-  const onConnectionsLoaded = async (loadedConnections: Connection[], item: ConnectionItem): Promise<void> => {
+  const onConnectionsLoaded = (loadedConnections: Connection[], item: ConnectionItem) => {
     const connectionIdToOverride = viewTemplateDetails?.connectionsOverride?.[item.connectionKey]?.connectionId;
     const itemHasConnection = item.connection?.id && item.connection?.displayName === undefined;
     const connectionToUse = itemHasConnection
@@ -583,7 +583,7 @@ const ConnectionStatus = ({
   const details = connectionStatus[key];
   const status = (
     <Text className={className ?? 'msla-template-connection-status-text'} style={isCompactView ? { color: details.color } : undefined}>
-      {hasConnection ? statusText[key] : statusText[key]}
+      {statusText[key]}
     </Text>
   );
   return isCompactView ? (

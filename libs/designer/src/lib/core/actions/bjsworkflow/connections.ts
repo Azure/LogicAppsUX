@@ -264,7 +264,7 @@ export const autoCreateConnectionIfPossible = async (payload: {
 
   if (needsSimpleConnection(connector) && !hasTermsOfUse(connector)) {
     connection = await ConnectionService().createConnection(newName, connector, connectionInfo, parametersMetadata);
-  } else if (hasOnlyOAuthParameters(connector, true)) {
+  } else if (hasOnlyOAuthParameters(connector)) {
     // TODO: First party connections were never created for LA, so would need separate implementation and testing if we need to include this.
 
     const connectionResult = await ConnectionService().createAndAuthorizeOAuthConnection(
@@ -417,11 +417,11 @@ export function needsOAuth(connectionParameters: Record<string, ConnectionParame
   );
 }
 
-export function hasOnlyOAuthParameters(connector: Connector, isManagedIdentityForOAuthFlagEnabled: boolean): boolean {
+export function hasOnlyOAuthParameters(connector: Connector): boolean {
   if (
     connector.properties?.connectionParameters &&
     connector.properties?.connectionParameterSets === undefined &&
-    (!connector.properties?.connectionAlternativeParameters || !isManagedIdentityForOAuthFlagEnabled)
+    !connector.properties?.connectionAlternativeParameters
   ) {
     const connectionParameters = connector.properties.connectionParameters;
     const filteredConnectionParametersKeys = Object.keys(connectionParameters).filter(
