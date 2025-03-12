@@ -353,7 +353,7 @@ export const CreateConnectionInternal = (props: {
 
   if (connector?.properties === undefined) {
     return (
-      <div className="msla-loading-container-full">
+      <div className="msla-loading-container">
         <Spinner size={SpinnerSize.small} label={loadingText} />
       </div>
     );
