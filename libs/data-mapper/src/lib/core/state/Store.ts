@@ -25,7 +25,6 @@ export const store = configureStore({
     modal: modalReducer,
     dataMap: undoable(dataMapReducer, {
       filter: includeAction(includedActions),
-      ignoreInitialState: true,
     }),
     app: appReducer,
   },
