@@ -12,6 +12,21 @@ export interface ConnectorWithParsedSwagger {
   parsedSwagger: SwaggerParser;
 }
 
+export const updateNewConnectionInQueryCache = async (connectorId: string, connection: Connection) => {
+  const queryClient = getReactQueryClient();
+
+  // Update all connections cache (Used for custom connectors)
+  queryClient.setQueryData<Connection[]>(['allConnections'], (oldConnections: Connection[] | undefined) => [
+    ...(oldConnections ?? []),
+    connection,
+  ]);
+  // Update connector specific cache (Used for everything else)
+  queryClient.setQueryData<Connection[]>(['connections', connectorId?.toLowerCase()], (oldConnections: Connection[] | undefined) => [
+    ...(oldConnections ?? []),
+    connection,
+  ]);
+};
+
 export const getConnectorWithSwagger = async (connectorId: string): Promise<ConnectorWithParsedSwagger> => {
   const [connector, swagger] = await Promise.all([await getConnector(connectorId), await getSwagger(connectorId)]);
   const parsedSwagger = await SwaggerParser.parse(swagger);

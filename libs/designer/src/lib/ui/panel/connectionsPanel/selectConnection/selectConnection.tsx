@@ -1,7 +1,7 @@
-import type { AppDispatch } from '../../../../core';
-import { updateNodeConnection } from '../../../../core/actions/bjsworkflow/connections';
+import { useOperationInfo, type AppDispatch } from '../../../../core';
+import { autoCreateConnectionIfPossible, updateNodeConnection } from '../../../../core/actions/bjsworkflow/connections';
 import { useConnectionsForConnector } from '../../../../core/queries/connections';
-import { useConnectorByNodeId, useNodeConnectionId } from '../../../../core/state/connection/connectionSelector';
+import { useConnectionRefs, useConnectorByNodeId, useNodeConnectionId } from '../../../../core/state/connection/connectionSelector';
 import { useIsXrmConnectionReferenceMode } from '../../../../core/state/designerOptions/designerOptionsSelectors';
 import { useConnectionPanelSelectedNodeIds, usePreviousPanelMode } from '../../../../core/state/panel/panelSelectors';
 import { openPanel, setIsCreatingConnection } from '../../../../core/state/panel/panelSlice';
@@ -15,7 +15,7 @@ import {
   type Connection,
   type Connector,
 } from '@microsoft/logic-apps-shared';
-import { useCallback, useEffect, useMemo } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useIntl } from 'react-intl';
 import { useDispatch } from 'react-redux';
 
@@ -27,6 +27,7 @@ export const SelectConnection = () => {
   const currentConnectionId = useNodeConnectionId(selectedNodeIds?.[0]); // only need to grab first one, they should all be the same
   const isXrmConnectionReferenceMode = useIsXrmConnectionReferenceMode();
   const referencePanelMode = usePreviousPanelMode();
+  const [isInlineCreatingConnection, setIsInlineCreatingConnection] = useState(false);
 
   const closeConnectionsFlow = useCallback(() => {
     const panelMode = referencePanelMode ?? 'Operation';
@@ -34,20 +35,12 @@ export const SelectConnection = () => {
     dispatch(openPanel({ nodeId, panelMode }));
   }, [dispatch, referencePanelMode, selectedNodeIds]);
 
-  const createConnectionCallback = useCallback(() => {
-    dispatch(setIsCreatingConnection(true));
-  }, [dispatch]);
-
+  const operationInfo = useOperationInfo(selectedNodeIds?.[0]);
   const connector = useConnectorByNodeId(selectedNodeIds?.[0]); // only need to grab first one, they should all be the same
   const connectorIconUri = useMemo(() => getIconUriFromConnector(connector), [connector]);
   const connectionQuery = useConnectionsForConnector(connector?.id ?? '');
   const connections = useMemo(() => connectionQuery?.data ?? [], [connectionQuery]);
-
-  useEffect(() => {
-    if (!connectionQuery.isLoading && !connectionQuery.isError && connections.length === 0) {
-      createConnectionCallback();
-    }
-  }, [connectionQuery.isError, connectionQuery.isLoading, connections, createConnectionCallback]);
+  const references = useConnectionRefs();
 
   const saveSelectionCallback = useCallback(
     (connection?: Connection) => {
@@ -68,6 +61,27 @@ export const SelectConnection = () => {
     },
     [dispatch, selectedNodeIds, connector, closeConnectionsFlow]
   );
+
+  const createConnectionCallback = useCallback(() => {
+    setIsInlineCreatingConnection(true);
+    autoCreateConnectionIfPossible({
+      connector: connector as Connector,
+      operationInfo,
+      referenceKeys: Object.keys(references),
+      applyNewConnection: saveSelectionCallback,
+      onSuccess: closeConnectionsFlow,
+      onManualConnectionCreation: () => {
+        setIsCreatingConnection(false);
+        dispatch(setIsCreatingConnection(true));
+      },
+    });
+  }, [closeConnectionsFlow, connector, dispatch, operationInfo, references, saveSelectionCallback]);
+
+  useEffect(() => {
+    if (!connectionQuery.isLoading && !connectionQuery.isError && connections.length === 0) {
+      createConnectionCallback();
+    }
+  }, [connectionQuery.isError, connectionQuery.isLoading, connections, connector, createConnectionCallback]);
 
   const loadingText = intl.formatMessage({
     defaultMessage: 'Loading connection data...',
@@ -91,6 +105,12 @@ export const SelectConnection = () => {
     defaultMessage: 'Add new',
     id: 'Lft/is',
     description: 'Button to add a new connection',
+  });
+
+  const buttonAddingText = intl.formatMessage({
+    defaultMessage: 'Adding new connection...',
+    id: 'yAAMQA',
+    description: 'Button text for adding a new connection',
   });
 
   const buttonAddAria = intl.formatMessage({
@@ -152,8 +172,8 @@ export const SelectConnection = () => {
       )}
 
       <div className="msla-edit-connection-actions-container">
-        <Button aria-label={buttonAddAria} onClick={createConnectionCallback}>
-          {buttonAddText}
+        <Button aria-label={buttonAddAria} disabled={isInlineCreatingConnection} onClick={createConnectionCallback}>
+          {isInlineCreatingConnection ? buttonAddingText : buttonAddText}
         </Button>
         <Button aria-label={buttonCancelAria} onClick={closeConnectionsFlow}>
           {buttonCancelText}

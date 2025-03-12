@@ -2,7 +2,7 @@ import type { Connection, ConnectionStatus, ManagedIdentity } from '../models';
 import { ResourceIdentityType } from '../models';
 import type { ConnectionParameter, Connector } from '../models/connector';
 import { ConnectionParameterTypes } from '../models/connector';
-import { equals, hasProperty } from './functions';
+import { equals, hasProperty, startsWith } from './functions';
 import type { IntlShape } from 'react-intl';
 
 export const connectorsShownAsAzure = ['builtin/as2', 'builtin/rosettanet'];
@@ -135,16 +135,8 @@ export function getAuthRedirect(connector?: Connector): string | undefined {
   return undefined;
 }
 
-export function isFirstPartyConnector(connector: Connector): boolean {
-  const oauthParameters = getConnectionParametersWithType(connector, ConnectionParameterTypes.oauthSetting);
-
-  return (
-    !!oauthParameters &&
-    oauthParameters.length > 0 &&
-    !!oauthParameters[0].oAuthSettings &&
-    !!oauthParameters[0].oAuthSettings.properties &&
-    equals(oauthParameters[0].oAuthSettings.properties.IsFirstParty, 'true')
-  );
+export function hasTermsOfUse(connector: Connector): boolean {
+  return startsWith(connector?.properties?.termsOfUseUrl?.toUpperCase() ?? '', 'HTTPS://');
 }
 
 export function isUsingAadAuthentication(connector: Connector): boolean {
