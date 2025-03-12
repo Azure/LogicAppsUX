@@ -18,7 +18,7 @@ export async function createRulesFiles(context: IFunctionWizardContext): Promise
     const xmlTemplatePath = path.join(__dirname, 'assets', 'RuleSetProjectTemplate', 'SampleRuleSet');
     const xmlRuleSetPath = path.join(context.projectPath, 'Artifacts', 'Rules', 'SampleRuleSet.xml');
     const xmlTemplateContent = await fse.readFile(xmlTemplatePath, 'utf-8');
-    const xmlFileContent = xmlTemplateContent.replace(/<%= methodName %>/g, context.methodName);
+    const xmlFileContent = xmlTemplateContent.replace(/<%= methodName %>/g, context.functionAppName);
     await fse.writeFile(xmlRuleSetPath, xmlFileContent);
   }
 }

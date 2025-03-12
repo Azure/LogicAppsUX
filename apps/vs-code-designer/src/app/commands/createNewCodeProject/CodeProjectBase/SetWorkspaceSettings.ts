@@ -76,7 +76,7 @@ export class SetWorkspaceSettings extends AzureWizardPromptStep<IProjectWizardCo
    * @param workspacePath - Root path of the workspace
    */
   private async setupCustomDirectories(context: IProjectWizardContext, workspacePath: string): Promise<void> {
-    const functionFolderPath = path.join(workspacePath, context.methodName);
+    const functionFolderPath = path.join(workspacePath, context.functionAppName);
     await fs.ensureDir(functionFolderPath);
     context.functionFolderPath = functionFolderPath;
   }
@@ -90,7 +90,7 @@ export class SetWorkspaceSettings extends AzureWizardPromptStep<IProjectWizardCo
     const workspaceFolders = [];
 
     // Add Functions folder first if it's a custom code code Logic App
-    const functionsFolder = context.methodName;
+    const functionsFolder = context.functionAppName;
     if (context.isWorkspaceWithFunctions) {
       workspaceFolders.push({ name: functionsFolder, path: `./${functionsFolder}` });
     }
@@ -118,7 +118,7 @@ export class SetWorkspaceSettings extends AzureWizardPromptStep<IProjectWizardCo
     const workspaceFolders = [];
 
     // Add Functions folder first if it's a custom code code Logic App
-    const functionsFolder = context.methodName;
+    const functionsFolder = context.functionAppName;
     if (context.isWorkspaceWithFunctions) {
       workspaceFolders.push({ name: functionsFolder, path: `./${functionsFolder}` });
     }

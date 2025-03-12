@@ -12,7 +12,7 @@ import { SetWorkspaceSettings } from '../createNewCodeProject/CodeProjectBase/Se
 import { isString } from '@microsoft/logic-apps-shared';
 import type { IActionContext } from '@microsoft/vscode-azext-utils';
 import type { ProjectLanguage, ProjectVersion } from '@microsoft/vscode-extension-logic-apps';
-import { ConvertToWorkspace } from '../createNewCodeProject/CodeProjectBase/ConvertToWorkspace';
+import { convertToWorkspace } from '../createNewCodeProject/CodeProjectBase/ConvertToWorkspace';
 
 export async function createNewProjectFromCommand(
   context: IActionContext,
@@ -24,7 +24,7 @@ export async function createNewProjectFromCommand(
   functionName?: string,
   functionSettings?: { [key: string]: string | undefined }
 ): Promise<void> {
-  if (await ConvertToWorkspace(context)) {
+  if (await convertToWorkspace(context)) {
     await createNewProjectInternalBase(
       context,
       {
