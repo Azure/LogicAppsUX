@@ -644,6 +644,14 @@ interface ServiceProviderConnectionConfigInfo {
   };
 }
 
+interface AgentConnectionInfo {
+  agentConfiguration: {
+    connectionName: string;
+    operationId: string;
+    agentId: string;
+  };
+}
+
 const serializeHost = (
   nodeId: string,
   manifest: OperationManifest,
@@ -653,6 +661,7 @@ const serializeHost = (
   | ApiManagementConnectionInfo
   | OpenApiConnectionInfo
   | ServiceProviderConnectionConfigInfo
+  | AgentConnectionInfo
   | HybridTriggerConnectionInfo
   | undefined => {
   if (!manifest.properties.connectionReference) {
@@ -704,6 +713,14 @@ const serializeHost = (
           connectionName: referenceKey,
           operationId,
           serviceProviderId: connectorId,
+        },
+      };
+    case ConnectionReferenceKeyFormat.AgentConnection:
+      return {
+        agentConfiguration: {
+          connectionName: referenceKey,
+          operationId,
+          agentId: connectorId,
         },
       };
     case ConnectionReferenceKeyFormat.HybridTrigger:
@@ -834,7 +851,7 @@ const serializeSubGraph = async (
 
   if (graphDetail?.inputs && graphDetail?.inputsLocation) {
     const inputs = serializeParametersFromManifest(getOperationInputsToSerialize(rootState, graphId), { properties: graphDetail } as any);
-    safeSetObjectPropertyValue(result, [...graphInputsLocation, ...graphDetail.inputsLocation], inputs);
+    safeSetObjectPropertyValue(result, [...graphInputsLocation, ...graphDetail.inputsLocation], inputs, true);
   }
 
   return result;

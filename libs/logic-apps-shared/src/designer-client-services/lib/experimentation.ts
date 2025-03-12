@@ -1,4 +1,5 @@
 import { AssertionException, AssertionErrorCode } from '../../utils/src';
+import { BaseExperimentationService } from './base';
 
 export interface IExperimentationService {
   isFeatureEnabled: (featureGateName: string) => Promise<boolean>;
@@ -8,8 +9,12 @@ export interface IExperimentationService {
 
 let service: IExperimentationService;
 
-export const InitExperimentationServiceService = (experimentationService: IExperimentationService): void => {
-  service = experimentationService;
+export const InitExperimentationServiceService = (experimentationService: IExperimentationService | undefined): void => {
+  if (experimentationService) {
+    service = experimentationService;
+  } else {
+    service = new BaseExperimentationService();
+  }
 };
 
 export const ExperimentationService = (): IExperimentationService => {
