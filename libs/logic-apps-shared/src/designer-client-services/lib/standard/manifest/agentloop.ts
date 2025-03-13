@@ -35,6 +35,24 @@ export default {
           },
           required: ['description'],
         },
+        outputs: { 
+          type: 'object',
+          properties: {
+            agentParameterSchema: {
+              type: 'object',
+              'x-ms-editor': 'schema',
+            },
+          },
+        },
+        outputsSchema: {
+          outputPaths: [
+            {
+              outputLocation: ['properties', 'body'],
+              name: 'agentParameterSchema',
+              schema: 'Value',
+            },
+          ],
+        },
         inputsLocation: [],
       },
     },
@@ -52,15 +70,6 @@ export default {
           title: 'Deployment model',
           description: 'The deployment model connection',
           'x-ms-visibility': 'important',
-        },
-        temperature: {
-          type: 'number',
-          title: 'Sampling temperature',
-          description:
-            'A value used to control the apparent creativity of generated completions. See [Azure.AI.Inference.ChatCompletionsOptions.Temperature Property](https://go.microsoft.com/fwlink/?linkid=2282134).',
-          default: 1.0,
-          maximum: 2.0,
-          minimum: 0.0,
         },
         messages: {
           description: 'Messages',
@@ -96,36 +105,6 @@ export default {
           'x-ms-summary': 'Messages',
           'x-ms-visibility': 'important',
         },
-        top_p: {
-          type: 'number',
-          title: 'Nucleus sampling (top_p)',
-          description:
-            'A value used to control the apparent creativity of generated completions and an alternative value to Temperature. See [ChatCompletionsOptions.NucleusSamplingFactor Property](https://go.microsoft.com/fwlink/?linkid=2267246).',
-          minimum: 0.0,
-        },
-        max_tokens: {
-          type: 'integer',
-          title: 'Max tokens',
-          description:
-            'The maximum number of tokens to generate. See [ChatCompletionsOptions.MaxTokens Property](https://go.microsoft.com/fwlink/?linkid=2267172).',
-          minimum: 0.0,
-        },
-        presence_penalty: {
-          type: 'number',
-          title: 'Presence penalty',
-          description:
-            'A value that influences the probability of generated tokens appearing based on their existing presence in generated text. See [ChatCompletionsOptions.PresencePenalty Property](https://go.microsoft.com/fwlink/?linkid=2267450).',
-          maximum: 2.0,
-          minimum: -2.0,
-        },
-        frequency_penalty: {
-          type: 'number',
-          title: 'Frequency penalty',
-          description:
-            'A value that influences the probability of generated tokens appearing based on their cumulative frequence. See [ChatCompletionsOptions.FrequencyPenalty Property](https://go.microsoft.com/fwlink/?linkid=2267245).',
-          maximum: 2.0,
-          minimum: -2.0,
-        },
       },
       required: ['deploymentId', 'deploymentModel', 'messages'],
     },
@@ -142,7 +121,7 @@ export default {
     },
 
     connector: {
-      id: '/connectionProviders/agent',
+      id: 'connectionProviders/agent',
       name: 'Agent',
       properties: {
         description: 'Agent operations',

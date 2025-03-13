@@ -373,3 +373,11 @@ export const useIsWithinAgenticLoop = (id: string): boolean => {
     })
   );
 };
+
+export const getAgentFromCondition = (state: WorkflowState, nodeId: string): string | undefined => {
+  if (!nodeId || state.nodesMetadata[nodeId].subgraphType !== SUBGRAPH_TYPES.AGENT_CONDITION) {
+    return undefined;
+  }
+
+  return state.nodesMetadata[nodeId].parentNodeId;
+};

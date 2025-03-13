@@ -18,14 +18,21 @@ export interface VariableDeclaration {
   type: string;
 }
 
+type AgentParameters = Record<string, AgentParameter>;
+interface AgentParameter {
+  tokens: Token[];
+}
+
 export interface TokensState {
   outputTokens: Record<string, NodeTokens>;
   variables: Record<string, VariableDeclaration[]>;
+  agentParameters: Record<string, AgentParameters>;
 }
 
 export const initialState: TokensState = {
   outputTokens: {},
   variables: {},
+  agentParameters: {},
 };
 
 export interface InitializeTokensAndVariablesPayload {
@@ -65,6 +72,10 @@ export const tokensSlice = createSlice({
       if (outputTokens) {
         outputTokens.tokens = tokens;
       }
+    },
+    updateAgentParameter: (state, action: PayloadAction<{ id: string; agent: string; agentParameter: AgentParameter }>) => {
+      const { id, agent, agentParameter } = action.payload;
+      state.agentParameters[agent] = { ...state.agentParameters[agent], [id]: agentParameter };
     },
     updateTokenSecureStatus: (state, action: PayloadAction<{ id: string; isSecure: boolean }>) => {
       const { id, isSecure } = action.payload;
@@ -127,6 +138,7 @@ export const {
   addDynamicTokens,
   updateVariableInfo,
   updateTokens,
+  updateAgentParameter,
   updateTokenSecureStatus,
   updateUpstreamNodes,
 } = tokensSlice.actions;

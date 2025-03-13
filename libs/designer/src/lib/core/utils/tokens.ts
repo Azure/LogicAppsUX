@@ -5,7 +5,7 @@ import type { WorkflowNode } from '../parsers/models/workflowNode';
 import type { NodeOperation, OutputInfo } from '../state/operation/operationMetadataSlice';
 import { updateRepetitionContext } from '../state/operation/operationMetadataSlice';
 import type { TokensState } from '../state/tokens/tokensSlice';
-import type { NodesMetadata } from '../state/workflow/workflowInterfaces';
+import type { NodesMetadata, WorkflowState } from '../state/workflow/workflowInterfaces';
 import type { WorkflowParameterDefinition, WorkflowParametersState } from '../state/workflowparameters/workflowparametersSlice';
 import type { AppDispatch, RootState } from '../store';
 import { getAllNodesInsideNode, getTriggerNodeId, getUpstreamNodeIds } from './graph';
@@ -44,6 +44,7 @@ import {
   equals,
   filterRecord,
   getRecordEntry,
+  SUBGRAPH_TYPES,
 } from '@microsoft/logic-apps-shared';
 import type { FunctionDefinition, OutputToken, Token, ValueSegment } from '@microsoft/designer-ui';
 import { UIConstants, TemplateFunctions, TokenType, removeUTFExpressions } from '@microsoft/designer-ui';
@@ -212,15 +213,40 @@ export const getOutputTokenSections = (
   nodeType: string,
   tokenState: TokensState,
   workflowParametersState: WorkflowParametersState,
+  workflowState: WorkflowState,
   replacementIds: Record<string, string>,
   includeCurrentNodeTokens = false
 ): TokenGroup[] => {
   const workflowParameters = filterRecord(workflowParametersState.definitions, (_, defintion) => defintion.name !== '');
-  const { variables, outputTokens } = tokenState;
+  const { variables, outputTokens, agentParameters } = tokenState;
   const nodeTokens = getRecordEntry(outputTokens, nodeId);
   const tokenGroups: TokenGroup[] = [];
-
+  const upstreamAgentConditionId = nodeTokens?.upstreamNodeIds.find(
+    (upstreamNodeId) => getRecordEntry(workflowState.nodesMetadata, upstreamNodeId)?.subgraphType === SUBGRAPH_TYPES.AGENT_CONDITION
+  );
+  const upstreamAgentNodeId = getRecordEntry(workflowState.nodesMetadata, upstreamAgentConditionId)?.parentNodeId;
   const intl = getIntl();
+  if (upstreamAgentConditionId && upstreamAgentNodeId) {
+    const agentParameterTokens = (
+      getRecordEntry(getRecordEntry(agentParameters, upstreamAgentNodeId), upstreamAgentConditionId)?.tokens ?? []
+    ).map((agentParameterToken) => {
+      return {
+        ...agentParameterToken,
+        value: getTokenValue(agentParameterToken, nodeType, replacementIds),
+      };
+    });
+    if (agentParameterTokens.length) {
+      tokenGroups.push({
+        id: 'agentparameters',
+        label: intl.formatMessage({
+          description: 'Heading section for Agent Parameter tokens',
+          defaultMessage: 'Agent Parameters',
+          id: '8/IRht',
+        }),
+        tokens: agentParameterTokens,
+      });
+    }
+  }
   if (Object.keys(workflowParameters).length) {
     tokenGroups.push({
       id: 'workflowparameters',
@@ -289,7 +315,7 @@ export const getOutputTokenSections = (
 
     tokenGroups.push(...(outputTokenGroups.filter((group) => !!group) as TokenGroup[]));
   }
-
+  console.log(tokenGroups);
   return tokenGroups;
 };
 

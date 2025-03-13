@@ -71,9 +71,10 @@ export const ParametersTab: React.FC<PanelTabProps> = (props) => {
   const { nodeId: selectedNodeId } = props;
   const nodeMetadata = useNodeMetadata(selectedNodeId);
   const inputs = useSelector((state: RootState) => state.operations.inputParameters[selectedNodeId]);
-  const { tokenState, workflowParametersState } = useSelector((state: RootState) => ({
+  const { tokenState, workflowParametersState, workflowState } = useSelector((state: RootState) => ({
     tokenState: state.tokens,
     workflowParametersState: state.workflowParameters,
+    workflowState: state.workflow,
   }));
   const nodeType = useSelector((state: RootState) => state.operations.operationInfo[selectedNodeId]?.type);
   const readOnly = useReadOnly();
@@ -138,6 +139,7 @@ export const ParametersTab: React.FC<PanelTabProps> = (props) => {
     parentIdOfSwitch ? constants.NODE.TYPE.SWITCH_CASE : nodeType,
     tokenState,
     workflowParametersState,
+    workflowState,
     replacedIds
   );
   const expressionGroup = getExpressionTokenSections(hideUTFExpressions);

@@ -22,7 +22,7 @@ import {
   ErrorLevel,
 } from '../../state/operation/operationMetadataSlice';
 import type { UpdateUpstreamNodesPayload } from '../../state/tokens/tokensSlice';
-import { updateTokens, updateUpstreamNodes } from '../../state/tokens/tokensSlice';
+import { updateAgentParameter, updateTokens, updateUpstreamNodes } from '../../state/tokens/tokensSlice';
 import type { WorkflowParameterDefinition } from '../../state/workflowparameters/workflowparametersSlice';
 import { initializeParameters } from '../../state/workflowparameters/workflowparametersSlice';
 import type { RootState } from '../../store';
@@ -101,7 +101,7 @@ import {
   getIntl,
   isObject,
 } from '@microsoft/logic-apps-shared';
-import type { OutputToken, ParameterInfo } from '@microsoft/designer-ui';
+import type { ParameterInfo } from '@microsoft/designer-ui';
 import type { Dispatch } from '@reduxjs/toolkit';
 import { addOrUpdateCustomCode } from '../../state/customcode/customcodeSlice';
 
@@ -343,53 +343,120 @@ export const updateOutputsAndTokens = async (
   isTrigger: boolean,
   inputs: NodeInputs,
   settings: Settings,
-  shouldProcessSettings = false
+  shouldProcessSettings = false,
+  agentParent?: string
 ): Promise<void> => {
   const { type, kind, connectorId } = operationInfo;
-  const supportsManifest = OperationManifestService().isSupported(type, kind);
-  const splitOnValue = settings.splitOn?.value?.enabled ? settings.splitOn.value.value : undefined;
-  let nodeOutputs: NodeOutputs;
-  let tokens: OutputToken[];
-  if (supportsManifest) {
-    const manifest = await getOperationManifest(operationInfo);
-    nodeOutputs = getOutputParametersFromManifest(nodeId, manifest, isTrigger, inputs, operationInfo, dispatch, splitOnValue).outputs;
-    tokens = [
-      ...getBuiltInTokens(manifest),
-      ...convertOutputsToTokens(
-        isTrigger ? undefined : nodeId,
-        type,
-        nodeOutputs.outputs ?? {},
-        { iconUri: manifest.properties.iconUri, brandColor: manifest.properties.brandColor },
-        settings
-      ),
-    ];
+  const isAgent = !!agentParent;
+  const operationType = isAgent ? Constants.NODE.TYPE.AGENT : type;
+  const supportsManifest = OperationManifestService().isSupported(operationType, kind);
+  const splitOnValue = settings?.splitOn?.value?.enabled ? settings.splitOn.value.value : undefined;
+
+  const { nodeOutputs, tokens } = supportsManifest
+    ? await getManifestOutputAndTokenData(nodeId, operationInfo, isTrigger, inputs, dispatch, splitOnValue, agentParent)
+    : await getSwaggerOutputAndTokenData(nodeId, connectorId, operationInfo, isTrigger, inputs, splitOnValue, settings);
+  dispatch(updateOutputs({ id: nodeId, nodeOutputs }));
+  if (agentParent) {
+    dispatch(updateAgentParameter({ id: nodeId, agent: agentParent, agentParameter: { tokens } }));
   } else {
-    const { connector, parsedSwagger } = await getConnectorWithSwagger(connectorId);
-    nodeOutputs = getOutputParametersFromSwagger(isTrigger, parsedSwagger, operationInfo, inputs, splitOnValue).outputs;
-    tokens = convertOutputsToTokens(
+    dispatch(updateTokens({ id: nodeId, tokens }));
+  }
+
+  if (shouldProcessSettings && operationSupportsSplitOn(isTrigger)) {
+    updateSplitOnSetting(dispatch, nodeId, settings, nodeOutputs, supportsManifest);
+  }
+};
+
+const getManifestOutputAndTokenData = async (
+  nodeId: string,
+  operationInfo: NodeOperation,
+  isTrigger: boolean,
+  inputs: NodeInputs,
+  dispatch: Dispatch,
+  splitOnValue?: string,
+  agentParent?: string
+) => {
+  let manifest = await getOperationManifest(
+    agentParent ? { connectorId: 'connectionProviders/agent', operationId: Constants.NODE.TYPE.AGENT } : operationInfo
+  );
+
+  if (agentParent && manifest?.properties?.subGraphDetails) {
+    const conditionManifestData = Object.values(manifest.properties.subGraphDetails).find((data) => data.isAdditive);
+    manifest = {
+      properties: {
+        ...conditionManifestData,
+        iconUri: manifest.properties.iconUri,
+        brandColor: manifest.properties.brandColor,
+      } as OperationManifestProperties,
+    };
+  }
+
+  return processOutputsAndTokens(nodeId, manifest, isTrigger, inputs, operationInfo, dispatch, splitOnValue);
+};
+
+// Helper to process outputs & tokens
+const processOutputsAndTokens = (
+  nodeId: string,
+  manifest: OperationManifest,
+  isTrigger: boolean,
+  inputs: NodeInputs,
+  operationInfo: NodeOperation,
+  dispatch: Dispatch,
+  splitOnValue?: string
+) => ({
+  nodeOutputs: getOutputParametersFromManifest(nodeId, manifest, isTrigger, inputs, operationInfo, dispatch, splitOnValue).outputs,
+  tokens: [
+    ...getBuiltInTokens(manifest),
+    ...convertOutputsToTokens(
       isTrigger ? undefined : nodeId,
-      type,
+      operationInfo.type,
+      manifest.properties.outputs ?? {},
+      { iconUri: manifest.properties.iconUri, brandColor: manifest.properties.brandColor },
+      {}
+    ),
+  ],
+});
+
+const getSwaggerOutputAndTokenData = async (
+  nodeId: string,
+  connectorId: string,
+  operationInfo: NodeOperation,
+  isTrigger: boolean,
+  inputs: NodeInputs,
+  splitOnValue?: string,
+  settings?: Settings
+) => {
+  const { connector, parsedSwagger } = await getConnectorWithSwagger(connectorId);
+  const nodeOutputs = getOutputParametersFromSwagger(isTrigger, parsedSwagger, operationInfo, inputs, splitOnValue).outputs;
+  return {
+    nodeOutputs,
+    tokens: convertOutputsToTokens(
+      isTrigger ? undefined : nodeId,
+      operationInfo.type,
       nodeOutputs.outputs ?? {},
       { iconUri: getIconUriFromConnector(connector), brandColor: getBrandColorFromConnector(connector) },
       settings
+    ),
+  };
+};
+
+// Helper to update splitOn setting
+const updateSplitOnSetting = (
+  dispatch: Dispatch,
+  nodeId: string,
+  settings: Settings,
+  nodeOutputs: NodeOutputs,
+  supportsManifest: boolean
+) => {
+  const hasSplitOnOptions = getSplitOnOptions(nodeOutputs, supportsManifest).length > 0;
+  if (settings.splitOn?.isSupported !== hasSplitOnOptions) {
+    dispatch(
+      updateNodeSettings({
+        id: nodeId,
+        settings: { splitOn: { ...settings.splitOn, isSupported: hasSplitOnOptions } },
+        ignoreDirty: true,
+      })
     );
-  }
-
-  dispatch(updateOutputs({ id: nodeId, nodeOutputs }));
-  dispatch(updateTokens({ id: nodeId, tokens }));
-
-  // NOTE: Split On setting changes as outputs of trigger changes, so we will be recalculating such settings in this block for triggers.
-  if (shouldProcessSettings && operationSupportsSplitOn(isTrigger)) {
-    const hasSplitOnOptions = getSplitOnOptions(nodeOutputs, supportsManifest).length > 0;
-    if (settings.splitOn?.isSupported !== hasSplitOnOptions) {
-      dispatch(
-        updateNodeSettings({
-          id: nodeId,
-          settings: { splitOn: { ...settings.splitOn, isSupported: hasSplitOnOptions } },
-          ignoreDirty: true,
-        })
-      );
-    }
   }
 };
 

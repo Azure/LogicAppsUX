@@ -277,7 +277,7 @@ export const initializeOperationDetailsForManifest = async (
 
     const settings = getOperationSettings(isTrigger, nodeOperationInfo, manifest, undefined /* swagger */, operation, workflowKind);
 
-    const childGraphInputs = processChildGraphAndItsInputs(manifest, operation);
+    const childGraphInputs = processChildGraphAndItsInputs(manifest, operation, dispatch);
 
     return [
       {
@@ -310,17 +310,18 @@ export const initializeOperationDetailsForManifest = async (
 
 const processChildGraphAndItsInputs = (
   manifest: OperationManifest,
-  operation: LogicAppsV2.ActionDefinition | LogicAppsV2.TriggerDefinition
+  operation: LogicAppsV2.ActionDefinition | LogicAppsV2.TriggerDefinition,
+  dispatch: Dispatch
 ): NodeDataWithOperationMetadata[] => {
   const { subGraphDetails } = manifest.properties;
   const nodesData: NodeDataWithOperationMetadata[] = [];
 
   if (subGraphDetails) {
     for (const subGraphKey of Object.keys(subGraphDetails)) {
-      const { inputs, inputsLocation, isAdditive } = subGraphDetails[subGraphKey];
+      const { inputs, isAdditive, ...restOfManifest } = subGraphDetails[subGraphKey];
       const subOperation = getPropertyValue(operation, subGraphKey) ?? {};
       if (inputs) {
-        const subManifest = { properties: { inputs, inputsLocation } } as any;
+        const subManifest = { properties: { inputs, ...restOfManifest } } as any;
         if (isAdditive) {
           for (const subNodeKey of Object.keys(subOperation)) {
             const { inputs: subNodeInputs, dependencies: subNodeInputDependencies } = getInputParametersFromManifest(
@@ -331,12 +332,22 @@ const processChildGraphAndItsInputs = (
               /* customSwagger */ undefined,
               subOperation[subNodeKey]
             );
-            const subNodeOutputs = { outputs: {} };
+            console.log(subNodeKey, subManifest, subNodeInputs);
+            const { outputs: subNodeOutputs, dependencies: subNodeOutputDependencies } = getOutputParametersFromManifest(
+              subNodeKey,
+              subManifest,
+              false,
+              subNodeInputs,
+              { type: '', kind: '', connectorId: '', operationId: '' },
+              dispatch,
+              /* splitOnValue */ undefined
+            );
+            console.log(subNodeOutputs);
             nodesData.push({
               id: subNodeKey,
               nodeInputs: subNodeInputs,
               nodeOutputs: subNodeOutputs,
-              nodeDependencies: { inputs: subNodeInputDependencies, outputs: {} },
+              nodeDependencies: { inputs: subNodeInputDependencies, outputs: subNodeOutputDependencies },
               operationInfo: { type: '', kind: '', connectorId: '', operationId: '' },
               manifest: subManifest,
               operationMetadata: { iconUri: manifest?.properties?.iconUri ?? '', brandColor: '' },

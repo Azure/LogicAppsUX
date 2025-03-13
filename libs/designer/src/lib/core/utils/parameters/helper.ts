@@ -169,6 +169,7 @@ import type {
 import { createAsyncThunk, type Dispatch } from '@reduxjs/toolkit';
 import { getInputDependencies } from '../../actions/bjsworkflow/initialize';
 import { getAllVariables } from '../variables';
+import { getAgentFromCondition } from '../../state/workflow/workflowSelectors';
 
 // import { debounce } from 'lodash';
 
@@ -1865,35 +1866,32 @@ function getDependenciesToUpdate(
   parameterId: string,
   updatedParameter: ParameterInfo
 ): NodeDependencies | undefined {
-  let dependenciesToUpdate: NodeDependencies | undefined;
+  if (!dependencies.inputs && !dependencies.outputs) {
+    return undefined;
+  }
 
-  // TODO - Add a method to properly validate parameter's value with its type.
   const hasParameterValue = parameterHasValue(updatedParameter);
   const isParameterValidForDynamicCall = parameterValidForDynamicCall(updatedParameter);
+  let dependenciesToUpdate: NodeDependencies | undefined;
 
-  for (const inputKey of Object.keys(dependencies.inputs)) {
-    if (dependencies.inputs[inputKey].dependentParameters[parameterId]) {
+  const updateDependency = (type: 'inputs' | 'outputs') => {
+    for (const [key, dependency] of Object.entries(dependencies[type])) {
+      if (!dependency.dependentParameters[parameterId]) {
+        continue;
+      }
+
       if (!dependenciesToUpdate) {
         dependenciesToUpdate = { inputs: {}, outputs: {} };
       }
 
-      dependenciesToUpdate.inputs[inputKey] = clone(dependencies.inputs[inputKey]);
-      dependenciesToUpdate.inputs[inputKey].dependentParameters[parameterId].isValid =
-        dependencies.inputs[inputKey].dependencyType === 'StaticSchema' ? hasParameterValue : isParameterValidForDynamicCall;
+      dependenciesToUpdate[type][key] = clone(dependency);
+      dependenciesToUpdate[type][key].dependentParameters[parameterId].isValid =
+        dependency.dependencyType === 'StaticSchema' ? hasParameterValue : isParameterValidForDynamicCall;
     }
-  }
+  };
 
-  for (const outputKey of Object.keys(dependencies.outputs)) {
-    if (dependencies.outputs[outputKey].dependentParameters[parameterId]) {
-      if (!dependenciesToUpdate) {
-        dependenciesToUpdate = { inputs: {}, outputs: {} };
-      }
-
-      dependenciesToUpdate.outputs[outputKey] = clone(dependencies.outputs[outputKey]);
-      dependenciesToUpdate.outputs[outputKey].dependentParameters[parameterId].isValid =
-        dependencies.outputs[outputKey].dependencyType === 'StaticSchema' ? hasParameterValue : isParameterValidForDynamicCall;
-    }
-  }
+  updateDependency('inputs');
+  updateDependency('outputs');
 
   return dependenciesToUpdate;
 }
@@ -1959,6 +1957,7 @@ async function loadDynamicData(
 ): Promise<void> {
   if (Object.keys(dependencies?.outputs ?? {}).length) {
     const rootState = getState();
+    const agentParent = getAgentFromCondition(rootState.workflow, nodeId);
     loadDynamicOutputsInNode(
       nodeId,
       isTrigger,
@@ -1968,7 +1967,8 @@ async function loadDynamicData(
       rootState.operations.inputParameters[nodeId],
       rootState.operations.settings[nodeId],
       rootState.workflowParameters.definitions,
-      dispatch
+      dispatch,
+      agentParent
     );
   }
 
@@ -2001,6 +2001,7 @@ export const loadDynamicContentForInputsInNode = async (
       continue;
     }
 
+    const rootState = getState();
     dispatch(
       clearDynamicIO({
         nodeId,
@@ -2008,8 +2009,8 @@ export const loadDynamicContentForInputsInNode = async (
         outputs: false,
         dynamicParameterKeys: getAllDependentDynamicParameters(
           inputKey,
-          getState().operations.dependencies[nodeId].inputs,
-          getState().operations.inputParameters[nodeId]
+          rootState.operations.dependencies[nodeId].inputs,
+          rootState.operations.inputParameters[nodeId]
         ),
       })
     );
@@ -2018,7 +2019,6 @@ export const loadDynamicContentForInputsInNode = async (
       continue;
     }
 
-    const rootState = getState();
     const allInputs = rootState.operations.inputParameters[nodeId];
     const variables = getAllVariables(rootState.tokens.variables);
 
