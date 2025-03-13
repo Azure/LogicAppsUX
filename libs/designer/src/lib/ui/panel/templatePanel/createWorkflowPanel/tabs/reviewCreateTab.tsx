@@ -13,6 +13,7 @@ import type { CreateWorkflowTabProps } from '../createWorkflowPanel';
 import { clearTemplateDetails } from '../../../../../core/state/templates/templateSlice';
 import { useSubscriptions } from '../../../../../core/templates/utils/queries';
 import { useMemo } from 'react';
+import { useTemplatesStrings } from 'lib/ui/templates/templatesStrings';
 
 const useStyles = makeStyles({
   actionName: {
@@ -20,7 +21,7 @@ const useStyles = makeStyles({
   },
 });
 
-export const ReviewCreatePanel = ({ viewMode = 'full' }) => {
+export const ReviewCreatePanel = ({ viewMode = 'compact' }) => {
   const intl = useIntl();
   const { parameterDefinitions, workflows, connections } = useSelector((state: RootState) => state.template);
   const {
@@ -99,21 +100,6 @@ export const ReviewCreatePanel = ({ viewMode = 'full' }) => {
       id: '4ZDZFr',
       description: 'Label for action name',
     }),
-    SUBSCRIPTION: intl.formatMessage({
-      defaultMessage: 'Subscription',
-      id: 'X/pilm',
-      description: 'Label for subscription',
-    }),
-    LOCATION: intl.formatMessage({
-      defaultMessage: 'Location',
-      id: 'OO37qq',
-      description: 'Label for location',
-    }),
-    RESOURCE_GROUP: intl.formatMessage({
-      defaultMessage: 'Resource group',
-      id: 'YAGa7I',
-      description: 'Label for resource group',
-    }),
     AUTHENTICATION: intl.formatMessage({
       defaultMessage: 'Authentication',
       id: 'BHXsCs',
@@ -129,17 +115,9 @@ export const ReviewCreatePanel = ({ viewMode = 'full' }) => {
       id: 'YoMJq+',
       description: 'Label for value',
     }),
-    PRICING_ACKNOWLEDGEMENT: intl.formatMessage({
-      defaultMessage: 'I acknowledge that connecting to an Azure Logic Apps service will incur additional costs to my account.',
-      id: 'VRTo30',
-      description: 'Label for pricing acknowledgement',
-    }),
-    VIEW_PRICING: intl.formatMessage({
-      defaultMessage: 'View pricing',
-      id: 't/FNDI',
-      description: 'Label for view pricing',
-    }),
   };
+
+  const { resourceStrings } = useTemplatesStrings();
 
   const { data: subscriptions, isLoading: subscriptionLoading } = useSubscriptions();
   const subscriptionDisplayName = useMemo(
@@ -171,15 +149,15 @@ export const ReviewCreatePanel = ({ viewMode = 'full' }) => {
 
         <div className="msla-templates-review-block basics">
           <div className="msla-templates-review-block">
-            <Text>{intlText.SUBSCRIPTION}</Text>
+            <Text>{resourceStrings.SUBSCRIPTION}</Text>
             {subscriptionLoading ? <Spinner size={SpinnerSize.xSmall} /> : <Text weight="semibold">{subscriptionDisplayName}</Text>}
           </div>
           <div className="msla-templates-review-block">
-            <Text>{intlText.LOCATION}</Text>
+            <Text>{resourceStrings.LOCATION}</Text>
             <Text weight="semibold">{location}</Text>
           </div>
           <div className="msla-templates-review-block">
-            <Text>{intlText.RESOURCE_GROUP}</Text>
+            <Text>{resourceStrings.RESOURCE_GROUP}</Text>
             <Text weight="semibold">{resourceGroup}</Text>
           </div>
         </div>
