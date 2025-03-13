@@ -86,4 +86,6 @@ export { storeStateToUndoRedoHistory, onUndoClick, onRedoClick } from './actions
 export { useCanUndo, useCanRedo } from './state/undoRedo/undoRedoSelectors';
 export { resetDesignerView } from './state/designerView/designerViewSlice';
 export * from './queries/runs';
-export { reloadTemplates } from './actions/bjsworkflow/templates';
+export { reloadTemplates, type WorkflowTemplateData } from './actions/bjsworkflow/templates';
+export type { AppDispatch as TemplatesAppDispatch, RootState as TemplatesRootState } from './state/templates/store';
+export type { TemplateServiceOptions } from './templates/TemplatesDesignerContext';

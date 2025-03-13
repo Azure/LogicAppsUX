@@ -1,4 +1,17 @@
 # Logic Apps Designer
+## [5.52.0](https://github.com/Azure/LogicAppsUX/compare/v5.51.0...v5.52.0) (2025-03-13)
+
+
+### Features
+
+* **Data Mapper:** map checker improvements ([#6743](https://github.com/Azure/LogicAppsUX/issues/6743)) ([7e0f610](https://github.com/Azure/LogicAppsUX/commit/7e0f6101e26b87521d7adb3493e02465641d39b0))
+* **Templates:** New `Review` components for templates ([#6785](https://github.com/Azure/LogicAppsUX/issues/6785)) ([013c779](https://github.com/Azure/LogicAppsUX/commit/013c77986ce40c368660e1f83320411952f99cde))
+
+
+### Bug Fixes
+
+* **Data Mapper:** removed old code that affects connection deletion ([#6788](https://github.com/Azure/LogicAppsUX/issues/6788)) ([4dc9b54](https://github.com/Azure/LogicAppsUX/commit/4dc9b547770cad49f6b3d7bd6a9200f58feb67a7))
+
 ## [5.51.0](https://github.com/Azure/LogicAppsUX/compare/v5.50.0...v5.51.0) (2025-03-13)
 
 ## [5.50.0](https://github.com/Azure/LogicAppsUX/compare/v5.49.0...v5.50.0) (2025-03-13)

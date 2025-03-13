@@ -1,4 +1,4 @@
-import { Field, Input, Text } from '@fluentui/react-components';
+import { Field, Input, makeStyles } from '@fluentui/react-components';
 import { ResourcePicker } from './resourcepicker';
 import type { AppDispatch, RootState } from '../../../core/state/templates/store';
 import { useDispatch, useSelector } from 'react-redux';
@@ -6,6 +6,8 @@ import { useWorkflowTemplate } from '../../../core/state/templates/templateselec
 import { updateWorkflowName, updateWorkflowNameValidationError } from '../../../core/state/templates/templateSlice';
 import { validateWorkflowName } from '../../../core/actions/bjsworkflow/templates';
 import { useIntl } from 'react-intl';
+import { useTemplatesStrings } from '../templatesStrings';
+import { TemplateDisplay } from '../review/ReviewAddPanel';
 
 interface ResourceSectionProps {
   workflowId: string;
@@ -18,43 +20,35 @@ interface ResourceSectionProps {
   cssOverrides?: Record<string, string>;
 }
 
+const useStyles = makeStyles({
+  template: {
+    padding: '20px 0 10px 0',
+  },
+  workflowName: {
+    padding: '10px 0 10px 0',
+  },
+});
+
 export const ResourceSection = (props: ResourceSectionProps) => {
   const { workflowId, showTemplateInfo, showResourceFirst, resourceOverrides } = props;
   const intl = useIntl();
-  const { enableResourceSelection, templateTitle } = useSelector((state: RootState) => ({
-    templateTitle: state.template.manifest?.title,
+  const { enableResourceSelection } = useSelector((state: RootState) => ({
     enableResourceSelection: state.templateOptions.enableResourceSelection,
   }));
+  const { resourceStrings } = useTemplatesStrings();
   const resources = {
-    templateLabel:
-      resourceOverrides?.templateLabel ??
-      intl.formatMessage({
-        defaultMessage: 'Template',
-        id: 'fEnHVG',
-        description: 'Label for the template',
-      }),
-    workflowLabel:
-      resourceOverrides?.workflowLabel ??
-      intl.formatMessage({
-        defaultMessage: 'Workflow name',
-        id: 'IHEZgQ',
-        description: 'Label for the workflow name',
-      }),
+    workflowLabel: resourceOverrides?.workflowLabel ?? resourceStrings.WORKFLOW_NAME,
     placeholderText: intl.formatMessage({
       defaultMessage: "The name can only contain letters, numbers, and '-', '(', ')', '_' or '.",
       id: 'JimYZy',
       description: 'Description text for workflow name for allowed values',
     }),
   };
+  const styles = useStyles();
   const workflowName = <WorkflowName workflowId={workflowId} label={resources.workflowLabel} placeholder={resources.placeholderText} />;
   return (
     <>
-      {showTemplateInfo ? (
-        <div className="msla-templates-review-block">
-          <Text>{resources.templateLabel}</Text>
-          <Text weight="semibold">{templateTitle}</Text>
-        </div>
-      ) : null}
+      {showTemplateInfo ? <TemplateDisplay label={resourceOverrides?.templateLabel} cssOverrides={styles} /> : null}
       {showResourceFirst ? workflowName : null}
       {enableResourceSelection ? <ResourcePicker /> : null}
       {showResourceFirst ? null : workflowName}
@@ -64,6 +58,7 @@ export const ResourceSection = (props: ResourceSectionProps) => {
 
 const WorkflowName = ({ workflowId, label, placeholder }: { workflowId: string; label: string; placeholder?: string }) => {
   const dispatch = useDispatch<AppDispatch>();
+  const styles = useStyles();
   const {
     workflowName,
     errors: { workflow: workflowError },
@@ -76,7 +71,7 @@ const WorkflowName = ({ workflowId, label, placeholder }: { workflowId: string; 
   }));
 
   return (
-    <Field label={label} required={true} validationMessage={workflowError} className="msla-template-resource-workflow-name">
+    <Field label={label} required={true} validationMessage={workflowError} className={styles.workflowName}>
       <Input
         placeholder={placeholder}
         value={workflowName}

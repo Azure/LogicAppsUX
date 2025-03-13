@@ -6,3 +6,4 @@ export * from './basics/resourcepicker';
 export * from './basics/resource';
 export * from './gallery/templatesgallerywithsearch';
 export * from './parameters/displayParameters';
+export * from './review/index';
