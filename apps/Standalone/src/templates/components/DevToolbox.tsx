@@ -86,7 +86,11 @@ export const DevToolbox = ({ templatesList = [] }: { templatesList?: { key: stri
           }}
         >
           <Accordion defaultOpenItems={'1'} collapsible style={{ position: 'relative' }}>
-            {armToken ? null : <MessageBar intent="error">Reload page after loading arm token.</MessageBar>}
+            {armToken ? null : (
+              <MessageBar intent="error" style={{ margin: '8px' }}>
+                Reload page after loading arm token.
+              </MessageBar>
+            )}
             <AccordionItem value="1">
               <AccordionHeader>Dev Toolbox</AccordionHeader>
               <AccordionPanel style={{ padding: '0px 12px 16px' }}>
