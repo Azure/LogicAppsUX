@@ -88,5 +88,5 @@ export { resetDesignerView } from './state/designerView/designerViewSlice';
 export * from './queries/runs';
 export { reloadTemplates } from './actions/bjsworkflow/templates';
 export { WorkflowTemplateData } from './actions/bjsworkflow/templates';
-export { AppDispatch as TemplatesAppDispatch } from './state/templates/store';
+export { AppDispatch as TemplatesAppDispatch, RootState as TemplatesRootState } from './state/templates/store';
 export { TemplateServiceOptions } from './templates/TemplatesDesignerContext';
