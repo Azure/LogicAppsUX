@@ -1,11 +1,18 @@
 import type { RootState } from '../../../core/state/templates/store';
 import { useIntl } from 'react-intl';
-import { Label, Text } from '@fluentui/react-components';
+import { Label, makeStyles, Text } from '@fluentui/react-components';
 import { useSelector } from 'react-redux';
 import { equals, isUndefinedOrEmptyString, normalizeConnectorId } from '@microsoft/logic-apps-shared';
 import { ConnectorConnectionStatus } from '../connections/connector';
 import { WorkflowKind } from '../../../core/state/workflow/workflowInterfaces';
 import { ResourceDisplay } from './ResourceDisplay';
+import { useTemplatesStrings } from '../templatesStrings';
+
+const useStyles = makeStyles({
+  root: {
+    paddingBottom: '24px',
+  },
+});
 
 export const ReviewCreatePanel = () => {
   const intl = useIntl();
@@ -19,6 +26,8 @@ export const ReviewCreatePanel = () => {
     isConsumption,
     isCreateView,
   } = useSelector((state: RootState) => state.workflow);
+  const { resourceStrings } = useTemplatesStrings();
+  const styles = useStyles();
 
   const intlText = {
     BASICS: intl.formatMessage({
@@ -35,11 +44,6 @@ export const ReviewCreatePanel = () => {
       defaultMessage: 'Parameters',
       id: 'oWAB0H',
       description: 'Accessibility label for the parameters section',
-    }),
-    WORKFLOW_NAME: intl.formatMessage({
-      defaultMessage: 'Workflow name',
-      id: 'oqgNX3',
-      description: 'Accessibility label for workflow name',
     }),
     STATE_TYPE: intl.formatMessage({
       defaultMessage: 'State type',
@@ -86,7 +90,7 @@ export const ReviewCreatePanel = () => {
               return (
                 <div key={workflow.id}>
                   <div className="msla-templates-tab-review-section-details">
-                    <Text className="msla-templates-tab-review-section-details-title">{intlText.WORKFLOW_NAME}</Text>
+                    <Text className="msla-templates-tab-review-section-details-title">{resourceStrings.WORKFLOW_NAME}</Text>
                     <Text className="msla-templates-tab-review-section-details-value">
                       {isUndefinedOrEmptyString(workflowNameToShow) ? intlText.PLACEHOLDER : workflowNameToShow}
                     </Text>
@@ -106,7 +110,7 @@ export const ReviewCreatePanel = () => {
         </>
       )}
 
-      {enableResourceSelection && <ResourceDisplay invertBolds />}
+      {enableResourceSelection && <ResourceDisplay invertBolds cssOverrides={styles} />}
 
       {isConsumption && !Object.keys(connections).length && !Object.keys(parameterDefinitions).length ? (
         <div className="msla-templates-empty-review-tab">

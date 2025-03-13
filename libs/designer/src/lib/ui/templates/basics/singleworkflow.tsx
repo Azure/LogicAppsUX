@@ -11,6 +11,7 @@ import { useWorkflowBasicsEditable, useWorkflowTemplate } from '../../../core/st
 import { validateWorkflowName } from '../../../core/actions/bjsworkflow/templates';
 import { useFunctionalState } from '@react-hookz/web';
 import { ResourcePicker } from './resourcepicker';
+import { useTemplatesStrings } from '../templatesStrings';
 
 export const SingleWorkflowBasics = ({ workflowId }: { workflowId: string }) => {
   const dispatch = useDispatch<AppDispatch>();
@@ -33,6 +34,7 @@ export const SingleWorkflowBasics = ({ workflowId }: { workflowId: string }) => 
   const { data: existingWorkflowNames } = useExistingWorkflowNames();
   const [name, setName] = useFunctionalState(existingWorkflowName ?? workflowName);
   const intl = useIntl();
+  const resources = useTemplatesStrings().resourceStrings;
 
   const intlText = useMemo(
     () => ({
@@ -87,11 +89,6 @@ export const SingleWorkflowBasics = ({ workflowId }: { workflowId: string }) => 
         id: 'yeagrz',
         description: 'Second bullet point of stateless type',
       }),
-      WORKFLOW_NAME: intl.formatMessage({
-        defaultMessage: 'Workflow name',
-        id: 'ekM77J',
-        description: 'Label for workflow Name',
-      }),
     }),
     [intl]
   );
@@ -126,14 +123,14 @@ export const SingleWorkflowBasics = ({ workflowId }: { workflowId: string }) => 
     <div className="msla-templates-tab msla-panel-no-description-tab">
       {enableResourceSelection ? <ResourcePicker /> : null}
       <Label className="msla-templates-tab-label" required={true} htmlFor={'workflowNameLabel'}>
-        {intlText.WORKFLOW_NAME}
+        {resources.WORKFLOW_NAME}
       </Label>
       <Text className="msla-templates-tab-label-description">{intlText.WORKFLOW_NAME_DESCRIPTION}</Text>
       <TextField
         className="msla-templates-tab-textField"
         data-testid={'msla-templates-workflowName'}
         id={'msla-templates-workflowName'}
-        ariaLabel={intlText.WORKFLOW_NAME}
+        ariaLabel={resources.WORKFLOW_NAME}
         value={name()}
         onChange={(_event: React.FormEvent<HTMLInputElement | HTMLTextAreaElement>, newValue?: string) => {
           setName(newValue);

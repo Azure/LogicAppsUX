@@ -1,10 +1,11 @@
 import type { RootState } from '../../../core/state/templates/store';
 import { useIntl } from 'react-intl';
-import { makeStyles, Text, tokens } from '@fluentui/react-components';
+import { makeStyles, mergeClasses, Text, tokens } from '@fluentui/react-components';
 import { useSelector } from 'react-redux';
 import { normalizeConnectorId } from '@microsoft/logic-apps-shared';
 import { CompactConnectorConnectionStatus } from '../connections/connector';
 import { ResourceDisplay } from './ResourceDisplay';
+import { useTemplatesStrings } from '../templatesStrings';
 
 const useStyles = makeStyles({
   actionName: {
@@ -29,24 +30,13 @@ export const ReviewAddPanel = ({ resourceOverrides }: ReviewCreatePanelProps) =>
     subscriptionId,
     location,
   } = useSelector((state: RootState) => state.workflow);
-
-  const templateTitle = useSelector((state: RootState) => state.template.manifest?.title);
+  const { resourceStrings } = useTemplatesStrings();
 
   const intlText = {
     PLACEHOLDER: intl.formatMessage({
       defaultMessage: '----',
       id: 'wPi8wS',
       description: 'Accessibility label indicating that the value is not set',
-    }),
-    TEMPLATE_NAME: intl.formatMessage({
-      defaultMessage: 'Template',
-      id: '83Vrgj',
-      description: 'Label for template',
-    }),
-    WORKFLOW_NAME: intl.formatMessage({
-      defaultMessage: 'Workflow name',
-      id: 'TdgpOf',
-      description: 'Label for workflow name',
     }),
     AUTHENTICATION: intl.formatMessage({
       defaultMessage: 'Authentication',
@@ -65,19 +55,12 @@ export const ReviewAddPanel = ({ resourceOverrides }: ReviewCreatePanelProps) =>
     }),
   };
 
-  const styles = useStyles();
-
   return (
     <div className="msla-templates-tab msla-templates-review-container">
-      <div className="msla-templates-review-block">
-        <Text>{resourceOverrides?.templateName ?? intlText.TEMPLATE_NAME}</Text>
-        <Text weight="semibold" className={styles.actionName}>
-          {templateTitle}
-        </Text>
-      </div>
+      <TemplateDisplay label={resourceOverrides?.templateName} />
 
       <div className="msla-templates-review-block">
-        <Text>{resourceOverrides?.workflowName ?? intlText.WORKFLOW_NAME}</Text>
+        <Text>{resourceOverrides?.workflowName ?? resourceStrings.WORKFLOW_NAME}</Text>
         {Object.values(workflows).map((workflow) => (
           <Text weight="semibold" key={workflow.id}>
             {existingWorkflowName ?? workflow.workflowName}
@@ -108,6 +91,21 @@ export const ReviewAddPanel = ({ resourceOverrides }: ReviewCreatePanelProps) =>
           </>
         ))}
       </div>
+    </div>
+  );
+};
+
+export const TemplateDisplay = ({ label, cssOverrides }: { label?: string; cssOverrides?: Record<string, string> }) => {
+  const styles = useStyles();
+  const { resourceStrings } = useTemplatesStrings();
+  const templateTitle = useSelector((state: RootState) => state.template.manifest?.title);
+
+  return (
+    <div className={mergeClasses('msla-templates-review-block', cssOverrides?.template)}>
+      <Text>{label ?? resourceStrings.TEMPLATE_NAME}</Text>
+      <Text weight="semibold" className={styles.actionName}>
+        {templateTitle}
+      </Text>
     </div>
   );
 };
