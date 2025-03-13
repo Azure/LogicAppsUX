@@ -1,11 +1,12 @@
 import type { AppDispatch, RootState } from '../../../core/state/templates/store';
 import { useDispatch, useSelector } from 'react-redux';
 import { useIntl } from 'react-intl';
-import { Dropdown, Option, Field } from '@fluentui/react-components';
+import { Option, Field, Dropdown } from '@fluentui/react-components';
 import { useEffect, useMemo, useState } from 'react';
 import { useLocations, useLogicApps, useResourceGroups, useSubscriptions } from '../../../core/templates/utils/queries';
 import { setLocation, setResourceGroup, setSubscription, setWorkflowAppName } from '../../../core/state/templates/workflowSlice';
 import type { Resource } from '@microsoft/logic-apps-shared';
+import { useTemplatesStrings } from '../templatesStrings';
 
 export const ResourcePicker = () => {
   const dispatch = useDispatch<AppDispatch>();
@@ -28,26 +29,6 @@ export const ResourcePicker = () => {
         id: 'e1+Gqi',
         description: 'Description for resource location section.',
       }),
-      SUBSCRIPTION: intl.formatMessage({
-        defaultMessage: 'Subscription',
-        id: 'K5t+Ia',
-        description: 'Label for choosing subscription id.',
-      }),
-      RESOURCE_GROUP: intl.formatMessage({
-        defaultMessage: 'Resource group',
-        id: 'BjrVzW',
-        description: 'Label for choosing resource group',
-      }),
-      LOCATION: intl.formatMessage({
-        defaultMessage: 'Location',
-        id: '9Vk2Sn',
-        description: 'Label for choosing location.',
-      }),
-      LOGIC_APP_INSTANCE: intl.formatMessage({
-        defaultMessage: 'Logic App',
-        id: 'E7jFWU',
-        description: 'Label for choosing logic app instance',
-      }),
       VALIDATION_ERROR: intl.formatMessage({
         defaultMessage: 'Please select a valid resource',
         id: 'nJfJNU',
@@ -56,11 +37,14 @@ export const ResourcePicker = () => {
     }),
     [intl]
   );
+
+  const { resourceStrings } = useTemplatesStrings();
+
   return (
     <div>
       <ResourceField
         id="subscriptionId"
-        label={intlText.SUBSCRIPTION}
+        label={resourceStrings.SUBSCRIPTION}
         onSelect={(value) => dispatch(setSubscription(value))}
         defaultKey={subscriptionId}
         isLoading={isLoading}
@@ -69,7 +53,7 @@ export const ResourcePicker = () => {
       />
       <ResourceField
         id="resourceGroupName"
-        label={intlText.RESOURCE_GROUP}
+        label={resourceStrings.RESOURCE_GROUP}
         onSelect={(value) => dispatch(setResourceGroup(value))}
         defaultKey={resourceGroup}
         isLoading={isResourceGroupLoading}
@@ -78,7 +62,7 @@ export const ResourcePicker = () => {
       />
       <ResourceField
         id="location"
-        label={intlText.LOCATION}
+        label={resourceStrings.LOCATION}
         onSelect={(value) => dispatch(setLocation(value))}
         defaultKey={location}
         isLoading={islocationLoading}
@@ -88,7 +72,7 @@ export const ResourcePicker = () => {
       {isConsumption ? null : (
         <ResourceField
           id="logicapp"
-          label={intlText.LOGIC_APP_INSTANCE}
+          label={resourceStrings.LOGIC_APP}
           onSelect={(value) => dispatch(setWorkflowAppName(value))}
           defaultKey={workflowAppName ?? ''}
           isLoading={isLogicAppsLoading}
@@ -134,6 +118,9 @@ const ResourceField = ({
       description: 'No items to select text',
     }),
   };
+
+  const sortedResources = useMemo(() => resources.sort((a, b) => a.displayName.localeCompare(b.displayName)), [resources]);
+
   const [selectedResource, setSelectedResource] = useState<string | undefined>('');
   useEffect(() => {
     if (!isLoading) {
@@ -167,12 +154,12 @@ const ResourceField = ({
           size="small"
           placeholder={isLoading ? texts.LOADING : ''}
         >
-          {!isLoading && !resources.length ? (
+          {!isLoading && !sortedResources.length ? (
             <Option key={'no-items'} value={'#noitem#'} disabled>
               {texts.NO_ITEMS}
             </Option>
           ) : (
-            resources.map((resource) => (
+            sortedResources.map((resource) => (
               <Option key={resource.id} value={resource.name}>
                 {resource.displayName}
               </Option>

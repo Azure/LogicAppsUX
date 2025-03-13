@@ -5,3 +5,4 @@ export * from './templateview';
 export * from './basics/resourcepicker';
 export * from './gallery/templatesgallerywithsearch';
 export * from './parameters/displayParameters';
+export * from './review/index';
