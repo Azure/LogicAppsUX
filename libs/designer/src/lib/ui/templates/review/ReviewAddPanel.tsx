@@ -2,12 +2,9 @@ import type { RootState } from '../../../core/state/templates/store';
 import { useIntl } from 'react-intl';
 import { makeStyles, Text, tokens } from '@fluentui/react-components';
 import { useSelector } from 'react-redux';
-import { Spinner, SpinnerSize } from '@fluentui/react';
 import { normalizeConnectorId } from '@microsoft/logic-apps-shared';
 import { CompactConnectorConnectionStatus } from '../connections/connector';
-import { useSubscriptions } from '../../../core/templates/utils/queries';
-import { useMemo } from 'react';
-import { useTemplatesStrings } from '../templatesStrings';
+import { ResourceDisplay } from './ResourceDisplay';
 
 const useStyles = makeStyles({
   actionName: {
@@ -31,7 +28,6 @@ export const ReviewAddPanel = ({ resourceOverrides }: ReviewCreatePanelProps) =>
     connections: { mapping },
     subscriptionId,
     location,
-    resourceGroup,
   } = useSelector((state: RootState) => state.workflow);
 
   const templateTitle = useSelector((state: RootState) => state.template.manifest?.title);
@@ -69,14 +65,6 @@ export const ReviewAddPanel = ({ resourceOverrides }: ReviewCreatePanelProps) =>
     }),
   };
 
-  const { resourceStrings } = useTemplatesStrings();
-
-  const { data: subscriptions, isLoading: subscriptionLoading } = useSubscriptions();
-  const subscriptionDisplayName = useMemo(
-    () => subscriptions?.find((sub) => sub.id === `/subscriptions/${subscriptionId}`)?.displayName ?? '-',
-    [subscriptions, subscriptionId]
-  );
-
   const styles = useStyles();
 
   return (
@@ -97,22 +85,7 @@ export const ReviewAddPanel = ({ resourceOverrides }: ReviewCreatePanelProps) =>
         ))}
       </div>
 
-      {enableResourceSelection && (
-        <div className="msla-templates-review-block basics">
-          <div className="msla-templates-review-block">
-            <Text>{resourceStrings.SUBSCRIPTION}</Text>
-            {subscriptionLoading ? <Spinner size={SpinnerSize.xSmall} /> : <Text weight="semibold">{subscriptionDisplayName}</Text>}
-          </div>
-          <div className="msla-templates-review-block">
-            <Text>{resourceStrings.LOCATION}</Text>
-            <Text weight="semibold">{location}</Text>
-          </div>
-          <div className="msla-templates-review-block">
-            <Text>{resourceStrings.RESOURCE_GROUP}</Text>
-            <Text weight="semibold">{resourceGroup}</Text>
-          </div>
-        </div>
-      )}
+      {enableResourceSelection && <ResourceDisplay />}
 
       <div className="msla-templates-review-block">
         <Text>{intlText.AUTHENTICATION}</Text>
