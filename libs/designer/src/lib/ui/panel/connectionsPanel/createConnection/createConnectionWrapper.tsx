@@ -1,15 +1,15 @@
-import { useQueryClient } from '@tanstack/react-query';
 import constants from '../../../../common/constants';
 import type { AppDispatch, RootState } from '../../../../core';
 import { useOperationInfo } from '../../../../core';
 import {
+  closeConnectionsFlow,
   getApiHubAuthentication,
   getConnectionMetadata,
   getConnectionProperties,
   needsOAuth,
   updateNodeConnection,
 } from '../../../../core/actions/bjsworkflow/connections';
-import { getUniqueConnectionName } from '../../../../core/queries/connections';
+import { getUniqueConnectionName, updateNewConnectionInQueryCache } from '../../../../core/queries/connections';
 import {
   useConnectorByNodeId,
   useConnector,
@@ -22,13 +22,14 @@ import {
   useOperationPanelSelectedNodeId,
   usePreviousPanelMode,
 } from '../../../../core/state/panel/panelSelectors';
-import { openPanel, setIsCreatingConnection } from '../../../../core/state/panel/panelSlice';
+import { setIsCreatingConnection } from '../../../../core/state/panel/panelSlice';
 import { useOperationManifest } from '../../../../core/state/selectors/actionMetadataSelector';
 import {
   getAssistedConnectionProps,
   getConnectionParametersForAzureConnection,
   getSupportedParameterSets,
 } from '../../../../core/utils/connectors/connections';
+import type { CreateButtonTexts } from './createConnection';
 import { CreateConnection } from './createConnection';
 import { Spinner, SpinnerSize } from '@fluentui/react/lib/Spinner';
 import {
@@ -72,13 +73,6 @@ export const CreateConnectionWrapper = () => {
   );
 
   const referencePanelMode = usePreviousPanelMode();
-  const closeConnectionsFlow = useCallback(() => {
-    const panelMode = referencePanelMode ?? 'Operation';
-    const nodeId = panelMode === 'Operation' ? nodeIds?.[0] : undefined;
-    dispatch(setIsCreatingConnection(false));
-    dispatch(openPanel({ nodeId, panelMode }));
-  }, [dispatch, referencePanelMode, nodeIds]);
-
   const updateConnectionInState = useCallback(
     (payload: CreatedConnectionPayload) => {
       for (const nodeId of nodeIds) {
@@ -99,7 +93,7 @@ export const CreateConnectionWrapper = () => {
       showActionBar={true}
       hideCancelButton={!hasExistingConnection}
       updateConnectionInState={updateConnectionInState}
-      onConnectionCreated={() => closeConnectionsFlow()}
+      onConnectionCreated={() => dispatch(closeConnectionsFlow({ nodeId, panelMode: referencePanelMode }))}
     />
   );
 };
@@ -122,7 +116,7 @@ export const CreateConnectionInternal = (props: {
   updateConnectionInState: (payload: CreatedConnectionPayload) => void;
   onConnectionCreated: (connection: Connection) => void;
   onConnectionCancelled?: () => void;
-  createButtonText?: string;
+  createButtonTexts?: CreateButtonTexts;
   description?: string;
   nodeIds?: string[];
   assistedConnectionProps?: AssistedConnectionProps;
@@ -140,7 +134,7 @@ export const CreateConnectionInternal = (props: {
     nodeIds = [],
     hideCancelButton,
     showActionBar,
-    createButtonText,
+    createButtonTexts,
     updateConnectionInState,
     onConnectionCreated,
     onConnectionCancelled,
@@ -182,21 +176,9 @@ export const CreateConnectionInternal = (props: {
       }
     : undefined;
 
-  const queryClient = useQueryClient();
   const updateNewConnectionInCache = useCallback(
-    async (newConnection: Connection) => {
-      // Update all connections cache (Used for custom connectors)
-      queryClient.setQueryData<Connection[]>(['allConnections'], (oldConnections: Connection[] | undefined) => [
-        ...(oldConnections ?? []),
-        newConnection,
-      ]);
-      // Update connector specific cache (Used for everything else)
-      queryClient.setQueryData<Connection[]>(['connections', connector?.id?.toLowerCase()], (oldConnections: Connection[] | undefined) => [
-        ...(oldConnections ?? []),
-        newConnection,
-      ]);
-    },
-    [connector?.id, queryClient]
+    async (newConnection: Connection) => updateNewConnectionInQueryCache(connector?.id ?? '', newConnection),
+    [connector?.id]
   );
 
   const applyNewConnection = useCallback(
@@ -370,7 +352,7 @@ export const CreateConnectionInternal = (props: {
         operationType,
         connector.properties.capabilities
       )}
-      createText={createButtonText}
+      createButtonTexts={createButtonTexts}
       description={description}
       identity={identity}
       createConnectionCallback={createConnectionCallback}

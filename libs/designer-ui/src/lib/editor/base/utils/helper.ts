@@ -15,15 +15,15 @@ import type { ComboboxItem } from '../../../combobox';
  */
 export function createLiteralValueSegment(value: string, segmentId?: string): ValueSegment {
   return {
-    id: segmentId ? segmentId : guid(),
+    id: segmentId ?? guid(),
     type: ValueSegmentType.LITERAL,
     value,
   };
 }
 
-export function createEmptyLiteralValueSegment(): ValueSegment {
+export function createEmptyLiteralValueSegment(segmentId?: string): ValueSegment {
   return {
-    id: guid(),
+    id: segmentId ?? guid(),
     type: ValueSegmentType.LITERAL,
     value: '',
   };
@@ -50,6 +50,10 @@ export const showCollapsedValidation = (collapsedValue: ValueSegment[]): boolean
 
 export const isTokenValueSegment = (value: ValueSegment[]): boolean => {
   return value.length === 1 && value[0].type === ValueSegmentType.TOKEN;
+};
+
+export const isSingleLiteralValueSegment = (value: ValueSegment[]): boolean => {
+  return value.length === 1 && value[0].type === ValueSegmentType.LITERAL;
 };
 
 export const containsTokenSegments = (segments: ValueSegment[]): boolean => {

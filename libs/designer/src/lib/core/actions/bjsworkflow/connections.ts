@@ -2,10 +2,11 @@ import Constants from '../../../common/constants';
 import type { ApiHubAuthentication } from '../../../common/models/workflow';
 import { isOpenApiSchemaVersion } from '../../../common/utilities/Utils';
 import type { DeserializedWorkflow } from '../../parsers/BJSWorkflow/BJSDeserializer';
-import { getConnection } from '../../queries/connections';
+import { getConnection, getUniqueConnectionName, updateNewConnectionInQueryCache } from '../../queries/connections';
 import { getConnector, getOperationInfo, getOperationManifest } from '../../queries/operation';
 import { changeConnectionMapping, initializeConnectionsMappings } from '../../state/connection/connectionSlice';
 import { changeConnectionMapping as changeTemplateConnectionMapping } from '../../state/templates/workflowSlice';
+import type { NodeOperation } from '../../state/operation/operationMetadataSlice';
 import { updateErrorDetails } from '../../state/operation/operationMetadataSlice';
 import type { RootState as TemplateRootState } from '../../state/templates/store';
 import type { RootState } from '../../store';
@@ -23,6 +24,7 @@ import type {
   Connector,
   OperationManifest,
   LogicAppsV2,
+  ConnectionCreationInfo,
 } from '@microsoft/logic-apps-shared';
 import {
   ConnectionService,
@@ -31,6 +33,8 @@ import {
   ResourceIdentityType,
   optional,
   isHiddenConnectionParameter,
+  hasTermsOfUse,
+  getConnectionParametersWithType,
   ConnectionParameterTypes,
   equals,
   ConnectionReferenceKeyFormat,
@@ -41,6 +45,8 @@ import {
 } from '@microsoft/logic-apps-shared';
 import type { Dispatch } from '@reduxjs/toolkit';
 import { createAsyncThunk } from '@reduxjs/toolkit';
+import { openPanel, setIsCreatingConnection } from '../../state/panel/panelSlice';
+import type { PanelMode } from '../../state/panel/panelTypes';
 
 export interface ConnectionPayload {
   nodeId: string;
@@ -103,6 +109,16 @@ export const updateNodeConnection = createAsyncThunk(
       dispatch,
       getState as () => RootState
     );
+  }
+);
+
+export const closeConnectionsFlow = createAsyncThunk(
+  'closeConnectionsFlow',
+  async ({ nodeId, panelMode }: { nodeId: string; panelMode?: PanelMode }, { dispatch }): Promise<void> => {
+    const actualPanelMode = panelMode ?? 'Operation';
+    const actualNodeId = actualPanelMode === 'Operation' ? nodeId : undefined;
+    dispatch(setIsCreatingConnection(false));
+    dispatch(openPanel({ nodeId: actualNodeId, panelMode: actualPanelMode }));
   }
 );
 
@@ -224,6 +240,50 @@ export const updateIdentityChangeInConnection = createAsyncThunk(
     );
   }
 );
+
+export const autoCreateConnectionIfPossible = async (payload: {
+  connector: Connector;
+  referenceKeys: string[];
+  operationInfo?: NodeOperation;
+  applyNewConnection: (connection: Connection) => void;
+  onSuccess: (connection: Connection) => void;
+  onManualConnectionCreation: () => void;
+}): Promise<void> => {
+  const { connector, operationInfo, referenceKeys, applyNewConnection, onSuccess, onManualConnectionCreation } = payload;
+  const operationManifest = operationInfo
+    ? await getOperationManifest({ connectorId: connector.id, operationId: operationInfo.operationId ?? '' })
+    : undefined;
+
+  const connectionInfo: ConnectionCreationInfo = { connectionParameters: {} };
+  const parametersMetadata = {
+    connectionMetadata: getConnectionMetadata(operationManifest),
+    connectionParameters: connector?.properties.connectionParameters,
+  };
+  const newName = await getUniqueConnectionName(connector.id, referenceKeys);
+  let connection: Connection | undefined;
+
+  if (needsSimpleConnection(connector) && !hasTermsOfUse(connector)) {
+    connection = await ConnectionService().createConnection(newName, connector, connectionInfo, parametersMetadata);
+  } else if (hasOnlyOAuthParameters(connector)) {
+    // TODO: First party connections were never created for LA, so would need separate implementation and testing if we need to include this.
+
+    const connectionResult = await ConnectionService().createAndAuthorizeOAuthConnection(
+      newName,
+      connector.id,
+      connectionInfo,
+      parametersMetadata
+    );
+    connection = connectionResult.connection;
+  }
+
+  if (connection) {
+    updateNewConnectionInQueryCache(connector.id, connection as Connection);
+    applyNewConnection(connection);
+    onSuccess(connection);
+  } else {
+    onManualConnectionCreation();
+  }
+};
 
 async function getConnectionsMappingForNodes(deserializedWorkflow: DeserializedWorkflow): Promise<Record<string, string>> {
   const { actionData, nodesMetadata } = deserializedWorkflow;
@@ -357,6 +417,30 @@ export function needsOAuth(connectionParameters: Record<string, ConnectionParame
   );
 }
 
+export function hasOnlyOAuthParameters(connector: Connector): boolean {
+  if (
+    connector.properties?.connectionParameters &&
+    connector.properties?.connectionParameterSets === undefined &&
+    !connector.properties?.connectionAlternativeParameters
+  ) {
+    const connectionParameters = connector.properties.connectionParameters;
+    const filteredConnectionParametersKeys = Object.keys(connectionParameters).filter(
+      (connectionParameterKey) => !isHiddenConnectionParameter(connectionParameters, connectionParameterKey)
+    );
+    if (filteredConnectionParametersKeys.length === 0) {
+      return false;
+    }
+
+    // Check if all the parameters are OAuth only.
+    return filteredConnectionParametersKeys.every((connectionParameterKey) => {
+      const connectionParameter = connectionParameters[connectionParameterKey];
+      return equals(connectionParameter.type, ConnectionParameterTypes.oauthSetting);
+    });
+  }
+
+  return false;
+}
+
 // This only checks if this connector has any OAuth connection, it can be just part of Multi Auth
 function needsAuth(connector?: Connector): boolean {
   if (!connector) {
@@ -365,63 +449,11 @@ function needsAuth(connector?: Connector): boolean {
   return getConnectionParametersWithType(connector, ConnectionParameterTypes.oauthSetting).length > 0;
 }
 
-export function getAuthRedirect(connector?: Connector): string | undefined {
-  if (!connector) {
-    return undefined;
-  }
-  const authParameters = getConnectionParametersWithType(connector, ConnectionParameterTypes.oauthSetting);
-  if (authParameters?.[0]) {
-    return authParameters?.[0].oAuthSettings?.redirectUrl;
-  }
-  return undefined;
-}
-
-export function isFirstPartyConnector(connector: Connector): boolean {
-  const oauthParameters = getConnectionParametersWithType(connector, ConnectionParameterTypes.oauthSetting);
-
-  return (
-    !!oauthParameters &&
-    oauthParameters.length > 0 &&
-    !!oauthParameters[0].oAuthSettings &&
-    !!oauthParameters[0].oAuthSettings.properties &&
-    equals(oauthParameters[0].oAuthSettings.properties.IsFirstParty, 'true')
-  );
-}
-
-export function getConnectionParametersWithType(connector: Connector, connectionParameterType: string): ConnectionParameter[] {
-  if (connector && connector.properties) {
-    const connectionParameters =
-      connector.properties.connectionParameterSets !== undefined
-        ? _getConnectionParameterSetParametersUsingType(connector, connectionParameterType)
-        : connector.properties.connectionParameters;
-    if (!connectionParameters) {
-      return [];
-    }
-    return Object.keys(connectionParameters || {})
-      .filter((connectionParameterKey) => !isHiddenConnectionParameter(connectionParameters, connectionParameterKey))
-      .map((connectionParameterKey) => connectionParameters[connectionParameterKey])
-      .filter((connectionParameter) => equals(connectionParameter.type, connectionParameterType));
-  }
-
-  return [];
-}
-
-function _getConnectionParameterSetParametersUsingType(connector: Connector, parameterType: string): Record<string, ConnectionParameter> {
-  for (const parameterSet of connector.properties?.connectionParameterSets?.values ?? []) {
-    for (const parameterKey in parameterSet.parameters) {
-      if (parameterSet.parameters[parameterKey].type === parameterType) {
-        return parameterSet.parameters;
-      }
-    }
-  }
-  return {};
-}
-
-export function hasPrerequisiteConnection(connector: Connector): boolean {
+function hasPrerequisiteConnection(connector: Connector): boolean {
   return getConnectionParametersWithType(connector, ConnectionParameterTypes.connection).length > 0;
 }
 
-export function needsSimpleConnection(connector: Connector): boolean {
+function needsSimpleConnection(connector: Connector): boolean {
   if (!connector) {
     return false;
   }
@@ -441,7 +473,7 @@ export function needsSimpleConnection(connector: Connector): boolean {
   return false;
 }
 
-export function needsConfigConnection(connector: Connector): boolean {
+function needsConfigConnection(connector: Connector): boolean {
   const connectionParameters = connector?.properties?.connectionParameters;
   if (connectionParameters) {
     return Object.keys(connectionParameters)
@@ -455,7 +487,7 @@ export function needsConfigConnection(connector: Connector): boolean {
   return false;
 }
 
-export const SupportedConfigConnectionParameterTypes = [
+const SupportedConfigConnectionParameterTypes = [
   ConnectionParameterTypes.array,
   ConnectionParameterTypes.bool,
   ConnectionParameterTypes.gatewaySetting,
@@ -466,7 +498,7 @@ export const SupportedConfigConnectionParameterTypes = [
   ConnectionParameterTypes.string,
 ];
 
-export function isConfigConnectionParameter(connectionParameter: ConnectionParameter): boolean {
+function isConfigConnectionParameter(connectionParameter: ConnectionParameter): boolean {
   if (connectionParameter && connectionParameter.type) {
     return SupportedConfigConnectionParameterTypes.some((connectionParameterType) => {
       return equals(connectionParameter.type, connectionParameterType);
@@ -486,6 +518,9 @@ function getConnectionReferenceKeyForManifest(referenceFormat: string, operation
 
     case ConnectionReferenceKeyFormat.ServiceProvider:
       return (operationDefinition as LogicAppsV2.ServiceProvider).inputs.serviceProviderConfiguration.connectionName;
+
+    case ConnectionReferenceKeyFormat.AgentConnection:
+      return (operationDefinition as any).inputs.agentConfiguration.connectionName;
 
     case ConnectionReferenceKeyFormat.OpenApi:
     case ConnectionReferenceKeyFormat.OpenApiConnection:

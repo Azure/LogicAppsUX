@@ -1,5 +1,5 @@
 import { guid } from '../../../utils/src';
-import type { ILoggerService } from '../logger';
+import type { ILoggerService, LogEntryWithoutTimestamp } from '../logger';
 import { BrowserReporter } from './browserLogger';
 import type { LogEntry, TelemetryEvent } from './logEntry';
 import { LogEntryLevel } from './logEntry';
@@ -47,5 +47,18 @@ export class DevLogger implements ILoggerService {
       area: trace.data.source,
       args: [eventData.data],
     });
+  };
+
+  public logErrorWithFormatting = (error: Error | string | unknown, area: string, level?: number): void => {
+    const logEntry: LogEntryWithoutTimestamp = {
+      level: level ?? LogEntryLevel.Error,
+      area: area,
+      message: '',
+    };
+    if (typeof error === 'string') {
+      this.log({ ...logEntry, message: error });
+    } else if (error instanceof Error) {
+      this.log({ ...logEntry, message: error.message, args: [{ stack: error.stack ?? '' }] });
+    }
   };
 }

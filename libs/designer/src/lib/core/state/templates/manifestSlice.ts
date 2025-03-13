@@ -12,7 +12,7 @@ export interface ManifestState {
   availableTemplateNames?: ManifestName[];
   filteredTemplateNames?: ManifestName[];
   githubTemplateNames?: ManifestName[];
-  availableTemplates?: Record<ManifestName, Template.Manifest>;
+  availableTemplates?: Record<ManifestName, Template.TemplateManifest>;
   filters: {
     pageNum: number;
     keyword?: string;
@@ -65,7 +65,7 @@ export const manifestSlice = createSlice({
     setavailableTemplatesNames: (state, action: PayloadAction<ManifestName[] | undefined>) => {
       state.availableTemplateNames = action.payload;
     },
-    setavailableTemplates: (state, action: PayloadAction<Record<ManifestName, Template.Manifest> | undefined>) => {
+    setavailableTemplates: (state, action: PayloadAction<Record<ManifestName, Template.TemplateManifest> | undefined>) => {
       state.availableTemplates = action.payload;
     },
     setFilteredTemplateNames: (state, action: PayloadAction<ManifestName[] | undefined>) => {

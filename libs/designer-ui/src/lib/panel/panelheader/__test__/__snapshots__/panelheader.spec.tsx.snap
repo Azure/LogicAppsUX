@@ -689,7 +689,7 @@ exports[`lib/panel/panelHeader/main > should render with panel header trigger in
       <div
         className="fui-MessageBarBody rtatq2b"
       >
-        Changes to the trigger name update the callback URL when you save the workflow.
+        Changing the trigger name updates the callback URL when you save the workflow.
       </div>
       <div
         className="fui-MessageBar__bottomReflowSpacer r1vx593n"

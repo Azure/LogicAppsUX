@@ -106,9 +106,9 @@ export const useLogicApps = (
   isConsumption: boolean
 ): UseQueryResult<LogicAppResource[], unknown> => {
   return useQuery(
-    ['logicapps', subscriptionId, resourceGroup, location],
+    ['logicapps', subscriptionId, resourceGroup],
     async () => {
-      return ResourceService().listLogicApps(subscriptionId, resourceGroup, location);
+      return ResourceService().listLogicApps(subscriptionId, resourceGroup);
     },
     {
       cacheTime: 1000 * 60 * 60 * 24,

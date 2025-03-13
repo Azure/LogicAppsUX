@@ -1,4 +1,43 @@
 # Logic Apps Designer
+## [5.51.0](https://github.com/Azure/LogicAppsUX/compare/v5.50.0...v5.51.0) (2025-03-13)
+
+## [5.50.0](https://github.com/Azure/LogicAppsUX/compare/v5.49.0...v5.50.0) (2025-03-13)
+
+
+### Features
+
+* **Data Mapper:** Undo/Redo map actions ([#6767](https://github.com/Azure/LogicAppsUX/issues/6767)) ([9a973d8](https://github.com/Azure/LogicAppsUX/commit/9a973d80acd18d406953a1e83313d8147c7e0564))
+* **designer:** Adding auto creation of certain connections in designer and templates ([#6773](https://github.com/Azure/LogicAppsUX/issues/6773)) ([6cd0a34](https://github.com/Azure/LogicAppsUX/commit/6cd0a343c6563ce0c38a83c3b7d9e955e1100c8a))
+* **designer:** Agent Loop adding Connectors as Operations POC ([#6784](https://github.com/Azure/LogicAppsUX/issues/6784)) ([c1db74e](https://github.com/Azure/LogicAppsUX/commit/c1db74e729a700a43f3748d1fe98109f0cb460d0))
+* **designer:** Introduce agent connections ([#6766](https://github.com/Azure/LogicAppsUX/issues/6766)) ([75af0cf](https://github.com/Azure/LogicAppsUX/commit/75af0cf8ce4acde8ed9390890c39697eb9f75db4))
+
+
+### Bug Fixes
+
+* **Data Mapper:** Improving information in error logs and fixing bugs ([#6768](https://github.com/Azure/LogicAppsUX/issues/6768)) ([23fe938](https://github.com/Azure/LogicAppsUX/commit/23fe938f80d5d22b799afe011b30e07e3e207d1c))
+
+## [5.49.0](https://github.com/Azure/LogicAppsUX/compare/v5.48.0...v5.49.0) (2025-03-12)
+
+
+### Features
+
+* **Data Mapper:** added telemetry values for DM ([#6741](https://github.com/Azure/LogicAppsUX/issues/6741)) ([79b02a1](https://github.com/Azure/LogicAppsUX/commit/79b02a17faf79e01548739d72c58d4f2f3294171))
+* **designer:** Agentic Loop Entry Point ([#6749](https://github.com/Azure/LogicAppsUX/issues/6749)) ([3b739c6](https://github.com/Azure/LogicAppsUX/commit/3b739c6f02c96d75eda7315a0e79bb23a636a1a0))
+* **designer:** Introduce "Parse document with metadata" action for consumption ([#6727](https://github.com/Azure/LogicAppsUX/issues/6727)) ([08bff11](https://github.com/Azure/LogicAppsUX/commit/08bff11b30ca2a8fe7a502874f249a31e5270fca))
+* **designer:** Multi-InitializeVariable Editor Support ([#6621](https://github.com/Azure/LogicAppsUX/issues/6621)) ([201bb6e](https://github.com/Azure/LogicAppsUX/commit/201bb6e7f01f90e760a9549738d0cd3047e4068d))
+* **Designer:** Switched ES target to ES2020 ([#6772](https://github.com/Azure/LogicAppsUX/issues/6772)) ([696ede3](https://github.com/Azure/LogicAppsUX/commit/696ede30abe1e9663580f2872bad3caf43d9fcb1))
+* **templates:** Adding compact version in template parameters and updating the type strings ([#6751](https://github.com/Azure/LogicAppsUX/issues/6751)) ([3491c5d](https://github.com/Azure/LogicAppsUX/commit/3491c5dc85de1fca6f3943e57d67757a911c3b84))
+* **templates:** Refactor template gallery to create lightweight version to export in package. ([#6742](https://github.com/Azure/LogicAppsUX/issues/6742)) ([a3578cb](https://github.com/Azure/LogicAppsUX/commit/a3578cb71d269b883e6489f37c80b3aa6c8452bd))
+* **templates:** Refactor workflow connections grid for agents UI ([#6748](https://github.com/Azure/LogicAppsUX/issues/6748)) ([063f767](https://github.com/Azure/LogicAppsUX/commit/063f7675fd829974c248cf12b989c0a955dbd810))
+* **Templates:** Restructure to Reflect Custom Templates Restructuring ([#6730](https://github.com/Azure/LogicAppsUX/issues/6730)) ([971bdb4](https://github.com/Azure/LogicAppsUX/commit/971bdb42faed1fc45524358c4aa3f1557c469369))
+* **template:** Support overriding managed api connections ([#6737](https://github.com/Azure/LogicAppsUX/issues/6737)) ([ecb7a62](https://github.com/Azure/LogicAppsUX/commit/ecb7a6203ab195e5dc9254b5769cb6ab6bd22f16))
+
+
+### Bug Fixes
+
+* **designer:** Change Default Dictionary valueType to not be String ([#6752](https://github.com/Azure/LogicAppsUX/issues/6752)) ([ecafee4](https://github.com/Azure/LogicAppsUX/commit/ecafee4f98e673cfcd7a95fc5f74d9bc4cb85a8c))
+* **vscode:** Remove subpath dependency for multi-root projects outside of workspace ([#6739](https://github.com/Azure/LogicAppsUX/issues/6739)) ([c1d550f](https://github.com/Azure/LogicAppsUX/commit/c1d550f1ea5d675b6177975d2c87e7931307ed57))
+
 ## [5.48.0](https://github.com/Azure/LogicAppsUX/compare/v5.47.0...v5.48.0) (2025-03-06)
 
 

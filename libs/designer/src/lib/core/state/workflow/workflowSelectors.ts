@@ -4,7 +4,7 @@ import type { RootState } from '../../store';
 import { createWorkflowEdge, getAllParentsForNode } from '../../utils/graph';
 import type { NodesMetadata, WorkflowState } from './workflowInterfaces';
 import type { LogicAppsV2 } from '@microsoft/logic-apps-shared';
-import { labelCase, WORKFLOW_NODE_TYPES, WORKFLOW_EDGE_TYPES, getRecordEntry, SUBGRAPH_TYPES } from '@microsoft/logic-apps-shared';
+import { labelCase, WORKFLOW_NODE_TYPES, WORKFLOW_EDGE_TYPES, getRecordEntry, SUBGRAPH_TYPES, equals } from '@microsoft/logic-apps-shared';
 import { createSelector } from '@reduxjs/toolkit';
 import { useMemo } from 'react';
 import { useSelector } from 'react-redux';
@@ -190,16 +190,16 @@ export const useNodeIds = () => {
   );
 };
 
-export const useNewSwitchCaseId = () =>
+export const useNewAdditiveSubgraphId = (baseId: string) =>
   useSelector(
     createSelector(getWorkflowState, (state: WorkflowState) => {
-      let caseId = 'Case';
+      let caseId = baseId;
       let caseCount = 1;
       const idList = Object.keys(state.nodesMetadata);
       // eslint-disable-next-line no-loop-func
       while (idList.some((id) => id === caseId)) {
         caseCount++;
-        caseId = `Case ${caseCount}`;
+        caseId = `${baseId} ${caseCount}`;
       }
       return caseId;
     })
@@ -349,3 +349,27 @@ export const useRootTriggerId = (): string =>
       return '';
     })
   );
+
+export const useIsWithinAgenticLoop = (id: string): boolean => {
+  return useSelector(
+    createSelector(getWorkflowState, (state: WorkflowState) => {
+      let currentId = id;
+
+      while (currentId) {
+        const type = getRecordEntry(state.operations, currentId)?.type;
+        if (equals(type, constants.NODE.TYPE.AGENT)) {
+          return true;
+        }
+        const parentId = getRecordEntry(state.nodesMetadata, currentId)?.parentNodeId;
+
+        if (!parentId) {
+          return false;
+        }
+
+        currentId = parentId;
+      }
+
+      return false;
+    })
+  );
+};

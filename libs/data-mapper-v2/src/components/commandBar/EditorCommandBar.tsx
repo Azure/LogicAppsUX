@@ -1,7 +1,14 @@
 import { WarningModalState, openDiscardWarningModal } from '../../core/state/ModalSlice';
 import type { AppDispatch, RootState } from '../../core/state/Store';
 import { Toolbar, ToolbarButton, ToolbarGroup, Switch, tokens, useId, Toaster, Badge } from '@fluentui/react-components';
-import { Dismiss20Regular, PlayRegular, Save20Regular, TextGrammarErrorRegular } from '@fluentui/react-icons';
+import {
+  ArrowRedo20Regular,
+  ArrowUndo20Regular,
+  Dismiss20Regular,
+  PlayRegular,
+  Save20Regular,
+  TextGrammarErrorRegular,
+} from '@fluentui/react-icons';
 import { useCallback, useEffect, useMemo } from 'react';
 import { useIntl } from 'react-intl';
 import { useDispatch, useSelector } from 'react-redux';
@@ -15,6 +22,7 @@ import { toggleCodeView, toggleMapChecker, toggleTestPanel } from '../../core/st
 import { useStyles } from './styles';
 import { emptyCanvasRect, LogEntryLevel, LoggerService } from '@microsoft/logic-apps-shared';
 import { collectErrorsForMapChecker } from '../../utils/MapChecker.Utils';
+import { ActionCreators } from 'redux-undo';
 
 export type EditorCommandBarProps = {};
 
@@ -24,6 +32,7 @@ export const EditorCommandBar = (_props: EditorCommandBarProps) => {
 
   const { isDirty, sourceInEditState, targetInEditState, isTestDisabledForOS } = useSelector((state: RootState) => state.dataMap.present);
   const undoStack = useSelector((state: RootState) => state.dataMap.past);
+  const redoStack = useSelector((state: RootState) => state.dataMap.future);
   const isCodeViewOpen = useSelector((state: RootState) => state.panel.codeViewPanel.isOpen);
   const { sourceSchema, targetSchema } = useSelector((state: RootState) => state.dataMap.present.curDataMapOperation);
 
@@ -57,17 +66,7 @@ export const EditorCommandBar = (_props: EditorCommandBarProps) => {
         const result = convertToMapDefinition(currentConnections, sourceSchema, targetSchema, targetSchemaSortArray);
         return result;
       } catch (error) {
-        let errorMessage = '';
-        if (typeof error === 'string') {
-          errorMessage = error;
-        } else if (error instanceof Error) {
-          errorMessage = error.message;
-        }
-        LoggerService().log({
-          level: LogEntryLevel.Error,
-          area: `${LogCategory.DataMapperDesigner}/dataMapDefinition`,
-          message: errorMessage,
-        });
+        LoggerService().logErrorWithFormatting(error, `${LogCategory.DataMapperDesigner}/generateDataMapDefinitionSerialize`);
         return { isSuccess: false, errorNodes: [] };
       }
     }
@@ -116,7 +115,7 @@ export const EditorCommandBar = (_props: EditorCommandBarProps) => {
           LoggerService().log({
             level: LogEntryLevel.Error,
             area: `${LogCategory.DataMapperDesigner}/onGenerateClick`,
-            message: JSON.stringify(error),
+            message: JSON.stringify(error.message),
           });
           DataMapperFileService().sendNotification(failedXsltMessage, error.message, LogEntryLevel.Error);
         });
@@ -158,6 +157,11 @@ export const EditorCommandBar = (_props: EditorCommandBarProps) => {
         id: 'r43nMc',
         description: 'Button text for undo the last action',
       }),
+      REDO: intl.formatMessage({
+        defaultMessage: 'Redo',
+        id: 'i1cwra',
+        description: 'Button text for redo the last undone action',
+      }),
       DISCARD: intl.formatMessage({
         defaultMessage: 'Discard',
         id: 'Q4TUFX',
@@ -193,6 +197,14 @@ export const EditorCommandBar = (_props: EditorCommandBarProps) => {
   );
 
   const toolbarStyles = useStyles();
+
+  const onUndoClick = () => {
+    dispatch(ActionCreators.undo());
+  };
+
+  const onRedoClick = () => {
+    dispatch(ActionCreators.redo());
+  };
 
   const disabledState = useMemo(
     () => ({
@@ -252,6 +264,12 @@ export const EditorCommandBar = (_props: EditorCommandBarProps) => {
             onClick={onTestClick}
           >
             {Resources.OPEN_TEST_PANEL}
+          </ToolbarButton>
+          <ToolbarButton aria-label={Resources.UNDO} icon={<ArrowUndo20Regular />} disabled={undoStack.length === 0} onClick={onUndoClick}>
+            {Resources.UNDO}
+          </ToolbarButton>
+          <ToolbarButton aria-label={Resources.REDO} icon={<ArrowRedo20Regular />} disabled={redoStack.length === 0} onClick={onRedoClick}>
+            {Resources.REDO}
           </ToolbarButton>
         </ToolbarGroup>
         <ToolbarGroup className={toolbarStyles.toolbarGroup}>

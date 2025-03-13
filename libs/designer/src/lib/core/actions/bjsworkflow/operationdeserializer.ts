@@ -1,5 +1,5 @@
 /* eslint-disable no-param-reassign */
-import { isCustomCode } from '@microsoft/designer-ui';
+import { isCustomCodeParameter } from '@microsoft/designer-ui';
 import type { CustomCodeFileNameMapping } from '../../..';
 import Constants from '../../../common/constants';
 import type { ConnectionReference, ConnectionReferences, WorkflowParameter } from '../../../common/models/workflow';
@@ -76,6 +76,7 @@ import {
 import type { InputParameter, OutputParameter, LogicAppsV2, OperationManifest } from '@microsoft/logic-apps-shared';
 import type { Dispatch } from '@reduxjs/toolkit';
 import { operationSupportsSplitOn } from '../../utils/outputs';
+import { initializeConnectorOperationDetails } from './agent';
 
 export interface NodeDataWithOperationMetadata extends NodeData {
   manifest?: OperationManifest;
@@ -130,7 +131,9 @@ export const initializeOperationMetadata = async (
     if (isTrigger) {
       triggerNodeId = operationId;
     }
-    if (operationManifestService.isSupported(operation.type, operation.kind)) {
+    if (operation.type === Constants.NODE.TYPE.CONNECTOR) {
+      promises.push(initializeConnectorOperationDetails(operationId, operation as LogicAppsV2.ConnectorAction, workflowKind, dispatch));
+    } else if (operationManifestService.isSupported(operation.type, operation.kind)) {
       promises.push(initializeOperationDetailsForManifest(operationId, operation, customCode, !!isTrigger, workflowKind, dispatch));
     } else {
       promises.push(initializeOperationDetailsForSwagger(operationId, operation, references, !!isTrigger, workflowKind, dispatch));
@@ -257,7 +260,7 @@ export const initializeOperationDetailsForManifest = async (
 
     const customCodeParameter = getParameterFromName(nodeInputs, Constants.DEFAULT_CUSTOM_CODE_INPUT);
     // Populate Customcode with values gotten from file system
-    if (customCodeParameter && isCustomCode(customCodeParameter?.editor, customCodeParameter?.editorOptions?.language)) {
+    if (customCodeParameter && isCustomCodeParameter(customCodeParameter)) {
       updateCustomCodeInInputs(customCodeParameter, customCode);
     }
 

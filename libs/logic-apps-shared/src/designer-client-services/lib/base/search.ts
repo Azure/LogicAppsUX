@@ -87,7 +87,7 @@ export abstract class BaseSearchService implements ISearchService {
     try {
       const { nextLink, value = [] } = await httpClient.get<ContinuationTokenResponse<any[]>>({ uri, queryParameters, headers });
       return { value, hasMore: !!nextLink };
-    } catch (error) {
+    } catch (_error) {
       return { value: [], hasMore: false };
     }
   }
@@ -105,7 +105,7 @@ export abstract class BaseSearchService implements ISearchService {
           return await requestPage(nextLink, value);
         }
         return value;
-      } catch (error) {
+      } catch (_error) {
         return value;
       }
     };
@@ -212,7 +212,7 @@ export abstract class BaseSearchService implements ISearchService {
       };
       // const response = await this.batchAzureResourceRequests(uri, queryParameters);
       return this.getAzureResourceRecursive(uri, queryParameters);
-    } catch (error) {
+    } catch (_error) {
       return [];
     }
   }
@@ -231,7 +231,7 @@ export abstract class BaseSearchService implements ISearchService {
       const response = await this.getAzureResourceRecursive(uri, queryParameters);
       const locationFilteredResponse = response.filter((connector: any) => equals(connector.location, location));
       return locationFilteredResponse;
-    } catch (error) {
+    } catch (_error) {
       return [];
     }
   }
@@ -327,6 +327,43 @@ export abstract class BaseSearchService implements ISearchService {
     LoggerService().endTrace(traceId, { status: Status.Success });
     return this.removeUnsupportedOperations(operations);
   }
+
+  /// Agent search ///
+  ///   - This is called when fetching operations for a given connector
+  public async getAgentConnectorOperation?(connectorId: string): Promise<DiscoveryOpArray> {
+    const {
+      apiHubServiceDetails: { location, subscriptionId, apiVersion },
+    } = this.options;
+    if (this._isDev) {
+      const operations = (await this.getBuiltInOperations()).filter(
+        (op) => op.properties.api.id === connectorId && op.properties.trigger === undefined
+      );
+      return Promise.resolve(operations);
+    }
+
+    const traceId = LoggerService().startTrace({
+      name: 'Get Agent Connector Operations',
+      action: 'getAgentConnectorOperations',
+      source: 'connection.ts',
+    });
+
+    const uri = `/subscriptions/${subscriptionId}/providers/Microsoft.Web/locations/${location}/apiOperations`;
+    const filters = [
+      'properties/integrationServiceEnvironmentResourceId eq null', // Excludes integration service environment operations
+      `(properties/api.id eq '${connectorId}' or properties/connector.id eq '${connectorId}')`, // Includes both API-based and connector-based operations
+      'properties/trigger eq null', // Ensures we only get actions (operations that are NOT triggers)
+    ];
+
+    const queryParameters: QueryParameters = {
+      $filter: filters.join(' and '),
+      'api-version': apiVersion,
+    };
+
+    const operations = await this.getAzureResourceRecursive(uri, queryParameters);
+
+    LoggerService().endTrace(traceId, { status: Status.Success });
+    return this.removeUnsupportedOperations(operations);
+  }
 }
 
 export function getClientBuiltInOperations(
@@ -347,6 +384,7 @@ export function getClientBuiltInOperations(
     ClientOperationsData.foreachOperation,
     ClientOperationsData.untilOperation,
     ClientOperationsData.switchOperation,
+    ClientOperationsData.agentOperation,
     ClientOperationsData.recurrenceOperation,
     ClientOperationsData.delayOperation,
     ClientOperationsData.delayUntilOperation,
@@ -378,6 +416,7 @@ export function getClientBuiltInConnectors(filterConnector?: (connector: Connect
     ClientOperationsData.httpGroup,
     ClientOperationsData.variableGroup,
     ClientOperationsData.controlGroup,
+    ClientOperationsData.agentGroup,
     ClientOperationsData.scheduleGroup,
     ClientOperationsData.dateTimeGroup,
   ];

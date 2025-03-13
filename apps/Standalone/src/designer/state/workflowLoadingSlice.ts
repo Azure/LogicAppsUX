@@ -35,6 +35,8 @@ export interface WorkflowLoadingState {
     stringOverrides?: Record<string, string>; // string overrides for localization
     maxStateHistorySize?: number; // maximum number of states to save in history for undo/redo
     collapseGraphsByDefault?: boolean; // collapse scope by default
+    enableMultiVariable?: boolean; // supports creating multiple variables in one action
+    enableAgenticLoops?: boolean;
   };
   showPerformanceDebug?: boolean;
   runFiles: any[];
@@ -63,6 +65,8 @@ const initialState: WorkflowLoadingState = {
     displayRuntimeInfo: true,
     maxStateHistorySize: 0,
     collapseGraphsByDefault: false,
+    enableMultiVariable: false,
+    enableAgenticLoops: false,
   },
   showPerformanceDebug: false,
   runFiles: [],
@@ -90,7 +94,6 @@ export const loadWorkflow = createAsyncThunk('workflowLoadingState/loadWorkflow'
   const isMonitoringView = currentState.workflowLoader.isMonitoringView;
 
   const runFiles = isMonitoringView && fileName ? await readJsonFiles(fileName) : [];
-
   const wf = await import(`../../../../../__mocks__/workflows/${fileName}.json`);
   return {
     workflowDefinition: wf.definition as LogicAppsV2.WorkflowDefinition,
@@ -214,6 +217,12 @@ export const workflowLoadingSlice = createSlice({
     setQueryCachePersist: (state, action: PayloadAction<boolean>) => {
       state.queryCachePersist = action.payload;
     },
+    setEnableMultiVariable: (state, action: PayloadAction<boolean>) => {
+      state.hostOptions.enableMultiVariable = action.payload;
+    },
+    setEnableAgenticLoops: (state, action: PayloadAction<boolean>) => {
+      state.hostOptions.enableAgenticLoops = action.payload;
+    },
   },
   extraReducers: (builder) => {
     builder.addCase(loadWorkflow.fulfilled, (state, action: PayloadAction<WorkflowPayload | null>) => {
@@ -263,6 +272,8 @@ export const {
   setShowPerformanceDebug,
   setStringOverrides,
   setQueryCachePersist,
+  setEnableMultiVariable,
+  setEnableAgenticLoops,
 } = workflowLoadingSlice.actions;
 
 export default workflowLoadingSlice.reducer;

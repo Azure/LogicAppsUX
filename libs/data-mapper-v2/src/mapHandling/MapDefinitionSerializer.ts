@@ -108,10 +108,8 @@ export const createYamlFromMap = (mapDefinition: MapDefinitionEntry, targetSchem
       noRefs: true,
       noArrayIndent: true,
       sortKeys: (keyA, keyB) => {
-        console.log(keyA);
-        console.log(keyB);
         return sortMapDefinition(keyA, keyB, targetSchemaSortArray, mapDefinition);
-      }, // danielle pass map definition here to sort
+      },
     })
     .replaceAll(/'"|"'/g, '"')
     .replaceAll('- ', '  ');
@@ -197,6 +195,9 @@ export const generateMapDefinitionBody = (
 
 export const convertToArray = (mapPartial: MapDefinitionValue, newMapArray: MapDefinitionEntry[]): MapDefinitionEntry[] | string => {
   if (typeof mapPartial === 'string') {
+    return mapPartial;
+  }
+  if (mapPartial === undefined) {
     return mapPartial;
   }
   if (!Array.isArray(mapPartial)) {
