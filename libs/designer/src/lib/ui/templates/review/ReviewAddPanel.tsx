@@ -7,7 +7,7 @@ import { normalizeConnectorId } from '@microsoft/logic-apps-shared';
 import { CompactConnectorConnectionStatus } from '../connections/connector';
 import { useSubscriptions } from '../../../core/templates/utils/queries';
 import { useMemo } from 'react';
-import { useTemplatesStrings } from 'lib/ui/templates/templatesStrings';
+import { useTemplatesStrings } from '../templatesStrings';
 
 const useStyles = makeStyles({
   actionName: {

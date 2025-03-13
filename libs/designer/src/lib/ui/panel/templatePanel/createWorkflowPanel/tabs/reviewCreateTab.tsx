@@ -7,7 +7,7 @@ import { Spinner, SpinnerSize } from '@fluentui/react';
 import { closePanel, selectPanelTab } from '../../../../../core/state/templates/panelSlice';
 import type { CreateWorkflowTabProps } from '../createWorkflowPanel';
 import { clearTemplateDetails } from '../../../../../core/state/templates/templateSlice';
-import { ReviewCreatePanel } from '../../../../templates/review/ReviewCreatePanel';
+import { ReviewExisting } from '../../../../templates/review/ReviewExisting';
 
 export const reviewCreateTab = (
   intl: IntlShape,
@@ -58,7 +58,7 @@ export const reviewCreateTab = (
     })
   ),
   hasError: false,
-  content: <ReviewCreatePanel />,
+  content: <ReviewExisting />,
   footerContent: {
     primaryButtonText: isCreating ? (
       <Spinner size={SpinnerSize.xSmall} />

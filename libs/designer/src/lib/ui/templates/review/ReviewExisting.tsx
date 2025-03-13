@@ -5,7 +5,7 @@ import { useSelector } from 'react-redux';
 import { Spinner, SpinnerSize } from '@fluentui/react';
 import { useSubscriptions } from '../../../core/templates/utils/queries';
 import { useMemo } from 'react';
-import { useTemplatesStrings } from 'lib/ui/templates/templatesStrings';
+import { useTemplatesStrings } from '../templatesStrings';
 
 const useStyles = makeStyles({
   actionName: {
