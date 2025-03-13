@@ -1,6 +1,6 @@
 import { WarningModalState, openDiscardWarningModal } from '../../core/state/ModalSlice';
 import type { AppDispatch, RootState } from '../../core/state/Store';
-import { Toolbar, ToolbarButton, ToolbarGroup, Switch, tokens, useId, Toaster } from '@fluentui/react-components';
+import { Toolbar, ToolbarButton, ToolbarGroup, Switch, tokens, useId, Toaster, Badge } from '@fluentui/react-components';
 import {
   ArrowRedo20Regular,
   ArrowUndo20Regular,
@@ -21,6 +21,7 @@ import { convertToMapDefinition } from '../../mapHandling/MapDefinitionSerialize
 import { toggleCodeView, toggleMapChecker, toggleTestPanel } from '../../core/state/PanelSlice';
 import { useStyles } from './styles';
 import { emptyCanvasRect, LogEntryLevel, LoggerService } from '@microsoft/logic-apps-shared';
+import { collectErrorsForMapChecker } from '../../utils/MapChecker.Utils';
 import { ActionCreators } from 'redux-undo';
 
 export type EditorCommandBarProps = {};
@@ -45,6 +46,9 @@ export const EditorCommandBar = (_props: EditorCommandBarProps) => {
   const canvasRect = useSelector(
     (state: RootState) => state.dataMap.present.curDataMapOperation.loadedMapMetadata?.canvasRect ?? emptyCanvasRect
   );
+  // used to calculate error count
+  const storeErrors = useSelector((state: RootState) => state.errors.deserializationMessages);
+  const connectionDictionary = useSelector((state: RootState) => state.dataMap.present.curDataMapOperation.dataMapConnections);
 
   const failedXsltMessage = intl.formatMessage({
     defaultMessage: 'Failed to generate XSLT.',
@@ -214,6 +218,23 @@ export const EditorCommandBar = (_props: EditorCommandBarProps) => {
     [isDirty, undoStack.length, sourceInEditState, targetInEditState, xsltFilename, isTestDisabledForOS]
   );
 
+  const mapCheckerIcon = useMemo(() => {
+    const errorMessagesCount = collectErrorsForMapChecker(connectionDictionary).length;
+    const deserializationErrorMessages = isDirty ? 0 : storeErrors.length;
+    const errorCount = errorMessagesCount + deserializationErrorMessages;
+
+    const mapCheckerDisabled = <TextGrammarErrorRegular color={undefined} />;
+    const mapCheckerEnabledNoErrors = <TextGrammarErrorRegular color={tokens.colorPaletteBlueBorderActive} />;
+    const mapCheckerErrors = <Badge color="danger">{errorCount}</Badge>;
+    if (disabledState.mapChecker) {
+      return mapCheckerDisabled;
+    }
+    if (errorCount > 0) {
+      return mapCheckerErrors;
+    }
+    return mapCheckerEnabledNoErrors;
+  }, [connectionDictionary, disabledState.mapChecker, isDirty, storeErrors.length]);
+
   return (
     <>
       <Toolbar size="small" aria-label={Resources.COMMAND_BAR_ARIA} className={toolbarStyles.toolbar}>
@@ -252,11 +273,7 @@ export const EditorCommandBar = (_props: EditorCommandBarProps) => {
           </ToolbarButton>
         </ToolbarGroup>
         <ToolbarGroup className={toolbarStyles.toolbarGroup}>
-          <ToolbarButton
-            disabled={disabledState.mapChecker}
-            icon={<TextGrammarErrorRegular color={disabledState.mapChecker ? undefined : tokens.colorPaletteBlueBorderActive} />}
-            onClick={onMapCheckerClick}
-          >
+          <ToolbarButton disabled={disabledState.mapChecker} icon={mapCheckerIcon} onClick={onMapCheckerClick}>
             {Resources.VIEW_MAP_CHECKER}
           </ToolbarButton>
           <Switch disabled={disabledState.codeView} label={Resources.VIEW_CODE} onChange={onCodeViewClick} checked={isCodeViewOpen} />
