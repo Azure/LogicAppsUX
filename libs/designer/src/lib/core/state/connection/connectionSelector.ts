@@ -19,6 +19,7 @@ import type { UseQueryResult } from '@tanstack/react-query';
 import { useQuery } from '@tanstack/react-query';
 import { useSelector } from 'react-redux';
 import type { ConnectionsStoreState } from './connectionSlice';
+import Constants from '../../../common/constants';
 
 export const useConnector = (connectorId?: string, enabled = true, useCachedData = false): UseQueryResult<Connector | undefined, unknown> =>
   useQuery(
@@ -86,8 +87,9 @@ export const useConnectorByNodeId = (nodeId: string): Connector | undefined => {
   // The below logic is to only use the manifest connector data when we expect a service call to fail. (i.e. our built-in local operations)
   const isManifestSupported = OperationManifestService().isSupported(operationInfo?.type ?? '', operationInfo?.kind ?? '');
   const isServiceProvider = isServiceProviderOperation(operationInfo?.type);
+  const isConnectorNode = operationInfo?.type === Constants.NODE.TYPE.CONNECTOR;
   const useManifestConnector = isManifestSupported && !isServiceProvider;
-  const enableConnectorFromService = !connectorFromManifest || !useManifestConnector;
+  const enableConnectorFromService = (!connectorFromManifest || !useManifestConnector) && !isConnectorNode;
   const connectorFromService = useConnector(storeConnectorId, enableConnectorFromService)?.data;
   return connectorFromService ?? connectorFromManifest;
 };

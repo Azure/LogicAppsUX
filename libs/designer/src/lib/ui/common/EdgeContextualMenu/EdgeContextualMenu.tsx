@@ -238,7 +238,7 @@ export const EdgeContextualMenu = () => {
                 {newBranchText}
               </MenuItem>
             )}
-            {enableAgenticLoops && (
+            {enableAgenticLoops && graphId === 'root' && (
               <MenuItem icon={<AgentIcon />} onClick={addAgenticLoop} data-automation-id={automationId('add-agentic=loop')}>
                 {newAgentText}
               </MenuItem>
