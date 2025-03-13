@@ -1,18 +1,26 @@
 import type { AppDispatch, RootState } from '../../../../../core/state/templates/store';
 import { useIntl, type IntlShape } from 'react-intl';
-import { Label, Text } from '@fluentui/react-components';
+import { Label, Text, MessageBar, tokens, makeStyles } from '@fluentui/react-components';
 import constants from '../../../../../common/constants';
 import type { TemplatePanelTab } from '@microsoft/designer-ui';
 import { useSelector } from 'react-redux';
-import { MessageBar, MessageBarType, Spinner, SpinnerSize } from '@fluentui/react';
+import { Spinner, SpinnerSize } from '@fluentui/react';
 import { closePanel, selectPanelTab } from '../../../../../core/state/templates/panelSlice';
 import { equals, isUndefinedOrEmptyString, normalizeConnectorId } from '@microsoft/logic-apps-shared';
-import { ConnectorConnectionStatus } from '../../../../templates/connections/connector';
+import { CompactConnectorConnectionStatus, ConnectorConnectionStatus } from '../../../../templates/connections/connector';
 import { WorkflowKind } from '../../../../../core/state/workflow/workflowInterfaces';
 import type { CreateWorkflowTabProps } from '../createWorkflowPanel';
 import { clearTemplateDetails } from '../../../../../core/state/templates/templateSlice';
+import { useSubscriptions } from '../../../../../core/templates/utils/queries';
+import { useMemo } from 'react';
 
-export const ReviewCreatePanel = () => {
+const useStyles = makeStyles({
+  actionName: {
+    color: tokens.colorPaletteLavenderBorderActive,
+  },
+});
+
+export const ReviewCreatePanel = ({ viewMode = 'full' }) => {
   const intl = useIntl();
   const { parameterDefinitions, workflows, connections } = useSelector((state: RootState) => state.template);
   const {
@@ -22,7 +30,12 @@ export const ReviewCreatePanel = () => {
     location,
     isConsumption,
     isCreateView,
+    resourceGroup,
   } = useSelector((state: RootState) => state.workflow);
+
+  const templateTitle = useSelector((state: RootState) => state.template.manifest?.title);
+
+  const isCompactView = viewMode === 'compact';
 
   const intlText = {
     BASICS: intl.formatMessage({
@@ -75,7 +88,126 @@ export const ReviewCreatePanel = () => {
       id: 'OaUode',
       description: 'Accessibility label for no configuration required',
     }),
+    // Compact view strings
+    ACTION: intl.formatMessage({
+      defaultMessage: 'Action',
+      id: 'F9hn5p',
+      description: 'Label for action description',
+    }),
+    ACTION_NAME: intl.formatMessage({
+      defaultMessage: 'Your action name',
+      id: '4ZDZFr',
+      description: 'Label for action name',
+    }),
+    SUBSCRIPTION: intl.formatMessage({
+      defaultMessage: 'Subscription',
+      id: 'X/pilm',
+      description: 'Label for subscription',
+    }),
+    LOCATION: intl.formatMessage({
+      defaultMessage: 'Location',
+      id: 'OO37qq',
+      description: 'Label for location',
+    }),
+    RESOURCE_GROUP: intl.formatMessage({
+      defaultMessage: 'Resource group',
+      id: 'YAGa7I',
+      description: 'Label for resource group',
+    }),
+    AUTHENTICATION: intl.formatMessage({
+      defaultMessage: 'Authentication',
+      id: 'BHXsCs',
+      description: 'Label for authentication',
+    }),
+    PARAMETER: intl.formatMessage({
+      defaultMessage: 'Parameter',
+      id: '0/OIcB',
+      description: 'Label for parameter',
+    }),
+    VALUE: intl.formatMessage({
+      defaultMessage: 'Value',
+      id: 'YoMJq+',
+      description: 'Label for value',
+    }),
+    PRICING_ACKNOWLEDGEMENT: intl.formatMessage({
+      defaultMessage: 'I acknowledge that connecting to an Azure Logic Apps service will incur additional costs to my account.',
+      id: 'VRTo30',
+      description: 'Label for pricing acknowledgement',
+    }),
+    VIEW_PRICING: intl.formatMessage({
+      defaultMessage: 'View pricing',
+      id: 't/FNDI',
+      description: 'Label for view pricing',
+    }),
   };
+
+  const { data: subscriptions, isLoading: subscriptionLoading } = useSubscriptions();
+  const subscriptionDisplayName = useMemo(
+    () => subscriptions?.find((sub) => sub.id === `/subscriptions/${subscriptionId}`)?.displayName ?? '-',
+    [subscriptions, subscriptionId]
+  );
+
+  const styles = useStyles();
+
+  // Compact view
+  if (isCompactView) {
+    return (
+      <div className="msla-templates-tab msla-templates-review-compact-container">
+        <div className="msla-templates-review-block">
+          <Text>{intlText.ACTION}</Text>
+          <Text weight="semibold" className={styles.actionName}>
+            {templateTitle}
+          </Text>
+        </div>
+
+        <div className="msla-templates-review-block">
+          <Text>{intlText.ACTION_NAME}</Text>
+          {Object.values(workflows).map((workflow) => (
+            <Text weight="semibold" key={workflow.id}>
+              {existingWorkflowName ?? workflow.workflowName}
+            </Text>
+          ))}
+        </div>
+
+        <div className="msla-templates-review-block basics">
+          <div className="msla-templates-review-block">
+            <Text>{intlText.SUBSCRIPTION}</Text>
+            {subscriptionLoading ? <Spinner size={SpinnerSize.xSmall} /> : <Text weight="semibold">{subscriptionDisplayName}</Text>}
+          </div>
+          <div className="msla-templates-review-block">
+            <Text>{intlText.LOCATION}</Text>
+            <Text weight="semibold">{location}</Text>
+          </div>
+          <div className="msla-templates-review-block">
+            <Text>{intlText.RESOURCE_GROUP}</Text>
+            <Text weight="semibold">{resourceGroup}</Text>
+          </div>
+        </div>
+
+        <div className="msla-templates-review-block">
+          <Text>{intlText.AUTHENTICATION}</Text>
+          {Object.keys(connections).map((connectionKey) => (
+            <CompactConnectorConnectionStatus
+              key={connectionKey}
+              connectorId={normalizeConnectorId(connections[connectionKey].connectorId ?? '', subscriptionId, location)}
+              hasConnection={mapping[connectionKey] !== undefined}
+            />
+          ))}
+        </div>
+
+        <div className="msla-templates-review-block parameters">
+          <Text>{intlText.PARAMETER}</Text>
+          <Text>{intlText.VALUE}</Text>
+          {Object.values(parameterDefinitions)?.map((parameter) => (
+            <>
+              <Text weight="semibold">{parameter.displayName}</Text>
+              <Text>{parameter.value ?? intlText.PLACEHOLDER}</Text>
+            </>
+          ))}
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="msla-templates-tab">
@@ -190,7 +322,7 @@ export const reviewCreateTab = (
         description: 'The tab label for the review and update tab on the update workflow panel',
       }),
   description: errorMessage ? (
-    <MessageBar messageBarType={MessageBarType.error}>{errorMessage}</MessageBar>
+    <MessageBar intent="error">{errorMessage}</MessageBar>
   ) : isCreateView ? (
     intl.formatMessage({
       defaultMessage: 'Review your settings, ensure everything is correctly set up, and create your workflow.',

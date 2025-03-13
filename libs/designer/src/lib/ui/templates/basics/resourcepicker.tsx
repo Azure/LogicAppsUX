@@ -1,7 +1,7 @@
 import type { AppDispatch, RootState } from '../../../core/state/templates/store';
 import { useDispatch, useSelector } from 'react-redux';
 import { useIntl } from 'react-intl';
-import { Dropdown, Option, Field } from '@fluentui/react-components';
+import { Option, Field, Combobox } from '@fluentui/react-components';
 import { useEffect, useMemo, useState } from 'react';
 import { useLocations, useLogicApps, useResourceGroups, useSubscriptions } from '../../../core/templates/utils/queries';
 import { setLocation, setResourceGroup, setSubscription, setWorkflowAppName } from '../../../core/state/templates/workflowSlice';
@@ -134,6 +134,9 @@ const ResourceField = ({
       description: 'No items to select text',
     }),
   };
+
+  const sortedResources = useMemo(() => resources.sort((a, b) => a.displayName.localeCompare(b.displayName)), [resources]);
+
   const [selectedResource, setSelectedResource] = useState<string | undefined>('');
   useEffect(() => {
     if (!isLoading) {
@@ -157,7 +160,7 @@ const ResourceField = ({
         validationMessage={errorMessage}
         validationState={errorMessage ? 'error' : 'none'}
       >
-        <Dropdown
+        <Combobox
           style={{ width: '100%' }}
           id={id}
           onOptionSelect={(e, option) => onSelect(option?.optionValue)}
@@ -167,18 +170,18 @@ const ResourceField = ({
           size="small"
           placeholder={isLoading ? texts.LOADING : ''}
         >
-          {!isLoading && !resources.length ? (
+          {!isLoading && !sortedResources.length ? (
             <Option key={'no-items'} value={'#noitem#'} disabled>
               {texts.NO_ITEMS}
             </Option>
           ) : (
-            resources.map((resource) => (
+            sortedResources.map((resource) => (
               <Option key={resource.id} value={resource.name}>
                 {resource.displayName}
               </Option>
             ))
           )}
-        </Dropdown>
+        </Combobox>
       </Field>
     </div>
   );
