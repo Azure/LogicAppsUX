@@ -1,6 +1,6 @@
 import { Text } from '@fluentui/react-components';
 import { Spinner, SpinnerSize } from '@fluentui/react';
-import { useSubscriptions } from 'lib/core/state/connection/connectionSelector';
+import { useSubscriptions } from '../../../core/state/connection/connectionSelector';
 import { useMemo } from 'react';
 import { useSelector } from 'react-redux';
 import { useTemplatesStrings } from '../templatesStrings';
