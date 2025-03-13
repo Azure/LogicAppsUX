@@ -1,7 +1,7 @@
 import type { AppDispatch, RootState } from '../../../core/state/templates/store';
 import { useDispatch, useSelector } from 'react-redux';
 import { useIntl } from 'react-intl';
-import { Option, Field, Combobox } from '@fluentui/react-components';
+import { Option, Field, Dropdown } from '@fluentui/react-components';
 import { useEffect, useMemo, useState } from 'react';
 import { useLocations, useLogicApps, useResourceGroups, useSubscriptions } from '../../../core/templates/utils/queries';
 import { setLocation, setResourceGroup, setSubscription, setWorkflowAppName } from '../../../core/state/templates/workflowSlice';
@@ -144,7 +144,7 @@ const ResourceField = ({
         validationMessage={errorMessage}
         validationState={errorMessage ? 'error' : 'none'}
       >
-        <Combobox
+        <Dropdown
           style={{ width: '100%' }}
           id={id}
           onOptionSelect={(e, option) => onSelect(option?.optionValue)}
@@ -165,7 +165,7 @@ const ResourceField = ({
               </Option>
             ))
           )}
-        </Combobox>
+        </Dropdown>
       </Field>
     </div>
   );
