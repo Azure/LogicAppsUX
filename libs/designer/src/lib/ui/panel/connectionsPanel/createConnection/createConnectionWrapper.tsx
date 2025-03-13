@@ -54,9 +54,8 @@ import { useDispatch, useSelector } from 'react-redux';
 import type { AssistedConnectionProps } from '@microsoft/designer-ui';
 import type { ApiHubAuthentication } from 'lib/common/models/workflow';
 
-export const CreateConnectionWrapper = () => {
+export const CreateConnectionWrapper = ({ isInline = false }) => {
   const dispatch = useDispatch<AppDispatch>();
-
   const nodeId: string = useOperationPanelSelectedNodeId();
   const nodeIds = useConnectionPanelSelectedNodeIds();
   const connector = useConnectorByNodeId(nodeId);
@@ -90,7 +89,7 @@ export const CreateConnectionWrapper = () => {
       nodeIds={nodeIds}
       assistedConnectionProps={assistedConnectionProps}
       connectionMetadata={connectionMetadata}
-      showActionBar={true}
+      showActionBar={!isInline}
       hideCancelButton={!hasExistingConnection}
       updateConnectionInState={updateConnectionInState}
       onConnectionCreated={() => dispatch(closeConnectionsFlow({ nodeId, panelMode: referencePanelMode }))}

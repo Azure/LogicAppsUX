@@ -66,6 +66,7 @@ import type React from 'react';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useIntl } from 'react-intl';
 import { useDispatch, useSelector } from 'react-redux';
+import { ConnectionInline } from './connectionInline';
 
 export const ParametersTab: React.FC<PanelTabProps> = (props) => {
   const { nodeId: selectedNodeId } = props;
@@ -442,6 +443,8 @@ const ParameterSection = ({
       const { value: remappedValues } = isRecordNotEmpty(idReplacements) ? remapValueSegmentsWithNewIds(value, idReplacements) : { value };
       const isCodeEditor = editor?.toLowerCase() === constants.EDITOR.CODE;
       const isConnectionRequired = getPropertyValue(param.schema, 'x-ms-connection-required');
+      const subComponent = isConnectionRequired ? <ConnectionInline /> : null;
+
       return {
         settingType: 'SettingTokenField',
         settingProp: {
@@ -484,7 +487,7 @@ const ParameterSection = ({
             editorType?: string,
             tokenClickedCallback?: (token: ValueSegment) => void
           ) => getTokenPicker(id, editorId, labelId, tokenPickerMode, editorType, isCodeEditor, tokenClickedCallback),
-          isConnectionRequired: isConnectionRequired,
+          subComponent: subComponent,
         },
       };
     });

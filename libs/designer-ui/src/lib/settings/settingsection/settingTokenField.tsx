@@ -41,7 +41,6 @@ import { EditorLanguage, equals, getPropertyValue, replaceWhiteSpaceWithUndersco
 import { MixedInputEditor } from '../../mixedinputeditor/mixedinputeditor';
 import { useMemo } from 'react';
 import { useIntl } from 'react-intl';
-import { Button } from '@fluentui/react-components';
 
 interface EditorHostOptions {
   suppressCastingForSerialize?: boolean;
@@ -78,14 +77,12 @@ export interface SettingTokenFieldProps extends SettingProps {
   validationErrors?: string[];
   hideValidationErrors?: ChangeHandler;
   hostOptions?: EditorHostOptions;
-  isConnectionRequired?: boolean;
+  subComponent?: JSX.Element | null;
 }
 
 export const SettingTokenField = ({ ...props }: SettingTokenFieldProps) => {
   const normalizedLabel = props.label?.replace(/ /g, '-');
   const labelId = useId(normalizedLabel);
-
-  const requiresConnection = props.isConnectionRequired ?? false; // TODO: Implement logic to determine if connection is required
   const hideLabel =
     (isCustomEditor(props) && props.editorOptions?.hideLabel === true) ||
     equals(props.editor?.toLowerCase(), constants.PARAMETER.EDITOR.FLOATINGACTIONMENU);
@@ -99,19 +96,7 @@ export const SettingTokenField = ({ ...props }: SettingTokenFieldProps) => {
       <div key={props.id}>
         {isCustomEditor(props) ? <CustomTokenField {...props} labelId={labelId} /> : <TokenField {...props} labelId={labelId} />}
       </div>
-      {requiresConnection ? (
-        <Button
-          className="change-connection-button"
-          id="change-connection-button"
-          size="small"
-          appearance="subtle"
-          // onClick={openChangeConnectionCallback}
-          style={{ color: 'var(--colorBrandForeground1)' }}
-          // aria-label={`${connectionLabel}, ${openChangeConnectionText}`}
-        >
-          {'CONNECT'}
-        </Button>
-      ) : null}
+      {props.subComponent && props.subComponent}
     </>
   );
 };
