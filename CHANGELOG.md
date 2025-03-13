@@ -1,4 +1,19 @@
 # Logic Apps Designer
+## [5.50.0](https://github.com/Azure/LogicAppsUX/compare/v5.49.0...v5.50.0) (2025-03-13)
+
+
+### Features
+
+* **Data Mapper:** Undo/Redo map actions ([#6767](https://github.com/Azure/LogicAppsUX/issues/6767)) ([9a973d8](https://github.com/Azure/LogicAppsUX/commit/9a973d80acd18d406953a1e83313d8147c7e0564))
+* **designer:** Adding auto creation of certain connections in designer and templates ([#6773](https://github.com/Azure/LogicAppsUX/issues/6773)) ([6cd0a34](https://github.com/Azure/LogicAppsUX/commit/6cd0a343c6563ce0c38a83c3b7d9e955e1100c8a))
+* **designer:** Agent Loop adding Connectors as Operations POC ([#6784](https://github.com/Azure/LogicAppsUX/issues/6784)) ([c1db74e](https://github.com/Azure/LogicAppsUX/commit/c1db74e729a700a43f3748d1fe98109f0cb460d0))
+* **designer:** Introduce agent connections ([#6766](https://github.com/Azure/LogicAppsUX/issues/6766)) ([75af0cf](https://github.com/Azure/LogicAppsUX/commit/75af0cf8ce4acde8ed9390890c39697eb9f75db4))
+
+
+### Bug Fixes
+
+* **Data Mapper:** Improving information in error logs and fixing bugs ([#6768](https://github.com/Azure/LogicAppsUX/issues/6768)) ([23fe938](https://github.com/Azure/LogicAppsUX/commit/23fe938f80d5d22b799afe011b30e07e3e207d1c))
+
 ## [5.49.0](https://github.com/Azure/LogicAppsUX/compare/v5.48.0...v5.49.0) (2025-03-12)
 
 
