@@ -12,6 +12,7 @@ import {
   customXsltPath,
   supportedSchemaFileExts,
   supportedCustomXsltFileExts,
+  customFunctionsPath,
 } from './extensionConfig';
 import { LogEntryLevel } from '@microsoft/logic-apps-shared';
 import type { SchemaType, MapMetadata, IFileSysTreeItem } from '@microsoft/logic-apps-shared';
@@ -27,6 +28,7 @@ import {
   statSync,
   readdirSync,
   readFileSync,
+  mkdirSync,
 } from 'fs';
 import * as path from 'path';
 import type { WebviewPanel } from 'vscode';
@@ -53,6 +55,8 @@ export default class DataMapperPanel {
 
     vscode.commands.executeCommand('workbench.action.toggleSidebarVisibility');
     vscode.commands.executeCommand('workbench.action.togglePanel');
+
+    this.setCustomFolders();
 
     ext.context.subscriptions.push(panel);
 
@@ -96,6 +100,14 @@ export default class DataMapperPanel {
       return folderWatcher;
     }
     return;
+  }
+
+  private setCustomFolders() {
+    const customXsltFullPath = path.join(ext.logicAppWorkspace, customXsltPath);
+    mkdirSync(customXsltFullPath, { recursive: true });
+
+    const customFunctionsFullPath = path.join(ext.logicAppWorkspace, customFunctionsPath);
+    mkdirSync(customFunctionsFullPath, { recursive: true });
   }
 
   private async _setWebviewHtml() {
