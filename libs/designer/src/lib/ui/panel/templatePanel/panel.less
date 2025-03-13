@@ -272,27 +272,26 @@
     gap: 1px;
 }
 
-.msla-templates-review-compact-container {
+.msla-templates-review-container {
 		display: flex;
 		flex-direction: column;
 		gap: 32px;
-		
-		.msla-templates-review-block {
-				display: flex;
-				flex-direction: column;
-				gap: 6px;
-			
-				&.basics {
-						display: flex;
-						flex-direction: row;
-						gap: 48px;
-				}
-
-				&.parameters {
-						display: grid;
-						grid-template-columns: 1fr 1fr;
-						gap: 6px 32px;
-				}
-		}
 }
 
+.msla-templates-review-block {
+	display: flex;
+	flex-direction: column;
+	gap: 6px;
+
+	&.basics {
+		display: flex;
+		flex-direction: row;
+		gap: 48px;
+	}
+
+	&.parameters {
+		display: grid;
+		grid-template-columns: 1fr 1fr;
+		gap: 6px 32px;
+	}
+}

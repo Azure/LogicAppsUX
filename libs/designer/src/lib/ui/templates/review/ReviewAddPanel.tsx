@@ -25,6 +25,7 @@ type ReviewCreatePanelProps = {
 export const ReviewAddPanel = ({ resourceOverrides }: ReviewCreatePanelProps) => {
   const intl = useIntl();
   const { parameterDefinitions, workflows, connections } = useSelector((state: RootState) => state.template);
+  const { enableResourceSelection } = useSelector((state: RootState) => state.templateOptions);
   const {
     existingWorkflowName,
     connections: { mapping },
@@ -79,7 +80,7 @@ export const ReviewAddPanel = ({ resourceOverrides }: ReviewCreatePanelProps) =>
   const styles = useStyles();
 
   return (
-    <div className="msla-templates-tab msla-templates-review-compact-container">
+    <div className="msla-templates-tab msla-templates-review-container">
       <div className="msla-templates-review-block">
         <Text>{resourceOverrides?.templateName ?? intlText.TEMPLATE_NAME}</Text>
         <Text weight="semibold" className={styles.actionName}>
@@ -96,20 +97,22 @@ export const ReviewAddPanel = ({ resourceOverrides }: ReviewCreatePanelProps) =>
         ))}
       </div>
 
-      <div className="msla-templates-review-block basics">
-        <div className="msla-templates-review-block">
-          <Text>{resourceStrings.SUBSCRIPTION}</Text>
-          {subscriptionLoading ? <Spinner size={SpinnerSize.xSmall} /> : <Text weight="semibold">{subscriptionDisplayName}</Text>}
+      {enableResourceSelection && (
+        <div className="msla-templates-review-block basics">
+          <div className="msla-templates-review-block">
+            <Text>{resourceStrings.SUBSCRIPTION}</Text>
+            {subscriptionLoading ? <Spinner size={SpinnerSize.xSmall} /> : <Text weight="semibold">{subscriptionDisplayName}</Text>}
+          </div>
+          <div className="msla-templates-review-block">
+            <Text>{resourceStrings.LOCATION}</Text>
+            <Text weight="semibold">{location}</Text>
+          </div>
+          <div className="msla-templates-review-block">
+            <Text>{resourceStrings.RESOURCE_GROUP}</Text>
+            <Text weight="semibold">{resourceGroup}</Text>
+          </div>
         </div>
-        <div className="msla-templates-review-block">
-          <Text>{resourceStrings.LOCATION}</Text>
-          <Text weight="semibold">{location}</Text>
-        </div>
-        <div className="msla-templates-review-block">
-          <Text>{resourceStrings.RESOURCE_GROUP}</Text>
-          <Text weight="semibold">{resourceGroup}</Text>
-        </div>
-      </div>
+      )}
 
       <div className="msla-templates-review-block">
         <Text>{intlText.AUTHENTICATION}</Text>

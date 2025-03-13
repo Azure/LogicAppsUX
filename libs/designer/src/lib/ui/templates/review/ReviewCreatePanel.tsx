@@ -5,15 +5,21 @@ import { useSelector } from 'react-redux';
 import { equals, isUndefinedOrEmptyString, normalizeConnectorId } from '@microsoft/logic-apps-shared';
 import { ConnectorConnectionStatus } from '../connections/connector';
 import { WorkflowKind } from '../../../core/state/workflow/workflowInterfaces';
+import { Spinner, SpinnerSize } from '@fluentui/react';
+import { useSubscriptions } from '../../../core/templates/utils/queries';
+import { useMemo } from 'react';
+import { useTemplatesStrings } from '../templatesStrings';
 
 export const ReviewCreatePanel = () => {
   const intl = useIntl();
   const { parameterDefinitions, workflows, connections } = useSelector((state: RootState) => state.template);
+  const { enableResourceSelection } = useSelector((state: RootState) => state.templateOptions);
   const {
     existingWorkflowName,
     connections: { mapping },
     subscriptionId,
     location,
+    resourceGroup,
     isConsumption,
     isCreateView,
   } = useSelector((state: RootState) => state.workflow);
@@ -71,6 +77,14 @@ export const ReviewCreatePanel = () => {
     }),
   };
 
+  const { resourceStrings } = useTemplatesStrings();
+
+  const { data: subscriptions, isLoading: subscriptionLoading } = useSubscriptions();
+  const subscriptionDisplayName = useMemo(
+    () => subscriptions?.find((sub) => sub.id === `/subscriptions/${subscriptionId}`)?.displayName ?? '-',
+    [subscriptions, subscriptionId]
+  );
+
   return (
     <div className="msla-templates-tab">
       {!isConsumption && (
@@ -102,6 +116,23 @@ export const ReviewCreatePanel = () => {
             })}
           </div>
         </>
+      )}
+
+      {enableResourceSelection && (
+        <div className="msla-templates-tab-review-section msla-templates-review-block basics">
+          <div className="msla-templates-review-block">
+            <Text weight="semibold">{resourceStrings.SUBSCRIPTION}</Text>t
+            {subscriptionLoading ? <Spinner size={SpinnerSize.xSmall} /> : <Text>{subscriptionDisplayName}</Text>}
+          </div>
+          <div className="msla-templates-review-block">
+            <Text weight="semibold">{resourceStrings.LOCATION}</Text>
+            <Text>{location}</Text>
+          </div>
+          <div className="msla-templates-review-block">
+            <Text weight="semibold">{resourceStrings.RESOURCE_GROUP}</Text>
+            <Text>{resourceGroup}</Text>
+          </div>
+        </div>
       )}
 
       {isConsumption && !Object.keys(connections).length && !Object.keys(parameterDefinitions).length ? (
