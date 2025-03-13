@@ -15,7 +15,14 @@ const useStyles = makeStyles({
   },
 });
 
-export const ReviewCreatePanel = () => {
+type ReviewCreatePanelProps = {
+  resourceOverrides?: {
+    templateName?: string;
+    workflowName?: string;
+  };
+};
+
+export const ReviewCreatePanel = ({ resourceOverrides }: ReviewCreatePanelProps) => {
   const intl = useIntl();
   const { parameterDefinitions, workflows, connections } = useSelector((state: RootState) => state.template);
   const {
@@ -34,15 +41,15 @@ export const ReviewCreatePanel = () => {
       id: 'wPi8wS',
       description: 'Accessibility label indicating that the value is not set',
     }),
-    ACTION: intl.formatMessage({
-      defaultMessage: 'Action',
-      id: 'F9hn5p',
-      description: 'Label for action description',
+    TEMPLATE_NAME: intl.formatMessage({
+      defaultMessage: 'Template',
+      id: '83Vrgj',
+      description: 'Label for template',
     }),
-    ACTION_NAME: intl.formatMessage({
-      defaultMessage: 'Your action name',
-      id: '4ZDZFr',
-      description: 'Label for action name',
+    WORKFLOW_NAME: intl.formatMessage({
+      defaultMessage: 'Workflow name',
+      id: 'TdgpOf',
+      description: 'Label for workflow name',
     }),
     AUTHENTICATION: intl.formatMessage({
       defaultMessage: 'Authentication',
@@ -74,14 +81,14 @@ export const ReviewCreatePanel = () => {
   return (
     <div className="msla-templates-tab msla-templates-review-compact-container">
       <div className="msla-templates-review-block">
-        <Text>{intlText.ACTION}</Text>
+        <Text>{resourceOverrides?.templateName ?? intlText.TEMPLATE_NAME}</Text>
         <Text weight="semibold" className={styles.actionName}>
           {templateTitle}
         </Text>
       </div>
 
       <div className="msla-templates-review-block">
-        <Text>{intlText.ACTION_NAME}</Text>
+        <Text>{resourceOverrides?.workflowName ?? intlText.WORKFLOW_NAME}</Text>
         {Object.values(workflows).map((workflow) => (
           <Text weight="semibold" key={workflow.id}>
             {existingWorkflowName ?? workflow.workflowName}
