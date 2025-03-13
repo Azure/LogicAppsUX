@@ -57,7 +57,11 @@ export interface MapCheckerMessage {
   data?: any;
 }
 
-export const collectErrorsForMapChecker = (connections: ConnectionDictionary, _targetSchema: SchemaNodeDictionary): MapCheckerMessage[] => {
+const connectionHasOutputs = (connection: Connection): boolean => {
+  return connection.outputs.length > 0;
+};
+
+export const collectErrorsForMapChecker = (connections: ConnectionDictionary): MapCheckerMessage[] => {
   const errors: MapCheckerMessage[] = [];
 
   // Valid input types
@@ -65,7 +69,7 @@ export const collectErrorsForMapChecker = (connections: ConnectionDictionary, _t
     const node = connectionValue.self.node;
 
     if (isFunctionData(node)) {
-      if (!functionHasRequiredInputs(node, connectionValue)) {
+      if (!functionHasRequiredInputs(node, connectionValue) && connectionHasOutputs(connectionValue)) {
         errors.push({
           title: { message: mapCheckerResources.functionMissingInputsTitle },
           description: { message: mapCheckerResources.functionMissingInputsBody, value: { functionName: node.displayName } },
