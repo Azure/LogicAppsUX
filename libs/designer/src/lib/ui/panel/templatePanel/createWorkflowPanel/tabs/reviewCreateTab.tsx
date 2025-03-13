@@ -7,7 +7,7 @@ import { Spinner, SpinnerSize } from '@fluentui/react';
 import { closePanel, selectPanelTab } from '../../../../../core/state/templates/panelSlice';
 import type { CreateWorkflowTabProps } from '../createWorkflowPanel';
 import { clearTemplateDetails } from '../../../../../core/state/templates/templateSlice';
-import { ReviewCreatePanel } from '../../../../templates/reviewCreate/ReviewCreatePanel';
+import { ReviewCreatePanel } from '../../../../templates/review/ReviewCreatePanel';
 
 export const reviewCreateTab = (
   intl: IntlShape,
