@@ -672,6 +672,14 @@ interface ServiceProviderConnectionConfigInfo {
   };
 }
 
+interface AgentConnectionInfo {
+  agentConfiguration: {
+    connectionName: string;
+    operationId: string;
+    agentId: string;
+  };
+}
+
 const serializeHost = (
   nodeId: string,
   manifest: OperationManifest,
@@ -681,6 +689,7 @@ const serializeHost = (
   | ApiManagementConnectionInfo
   | OpenApiConnectionInfo
   | ServiceProviderConnectionConfigInfo
+  | AgentConnectionInfo
   | HybridTriggerConnectionInfo
   | undefined => {
   if (!manifest.properties.connectionReference) {
@@ -732,6 +741,14 @@ const serializeHost = (
           connectionName: referenceKey,
           operationId,
           serviceProviderId: connectorId,
+        },
+      };
+    case ConnectionReferenceKeyFormat.AgentConnection:
+      return {
+        agentConfiguration: {
+          connectionName: referenceKey,
+          operationId,
+          agentId: connectorId,
         },
       };
     case ConnectionReferenceKeyFormat.HybridTrigger:

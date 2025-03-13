@@ -193,7 +193,7 @@ export const DesignerContextualMenu = () => {
   );
 
   const graphMenuItems: JSX.Element[] = useMemo(
-    () => [<ExpandCollapseMenuItem key={'expand-collapse '} id={'expand-collapse'} nodeId={nodeId} />],
+    () => [<ExpandCollapseMenuItem key={'expand-collapse'} menuKey={'expand-collapse'} nodeId={nodeId} />],
     [nodeId]
   );
 

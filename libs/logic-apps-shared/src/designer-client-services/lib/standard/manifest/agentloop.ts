@@ -47,6 +47,12 @@ export default {
           description: 'The deployment or model name.',
           'x-ms-visibility': 'important',
         },
+        deploymentModel: {
+          type: 'string',
+          title: 'Deployment model',
+          description: 'The deployment model connection',
+          'x-ms-visibility': 'important',
+        },
         temperature: {
           type: 'number',
           title: 'Sampling temperature',
@@ -121,13 +127,22 @@ export default {
           minimum: -2.0,
         },
       },
-      required: ['deploymentId', 'messages'],
+      required: ['deploymentId', 'deploymentModel', 'messages'],
     },
     inputsLocation: ['inputs', 'parameters'],
     isInputsOptional: false,
 
+    connection: {
+      required: true,
+      type: 'agent',
+    },
+
+    connectionReference: {
+      referenceKeyFormat: 'agentconnection',
+    },
+
     connector: {
-      id: 'connectionProviders/agent',
+      id: '/connectionProviders/agent',
       name: 'Agent',
       properties: {
         description: 'Agent operations',

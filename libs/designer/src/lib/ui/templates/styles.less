@@ -107,6 +107,9 @@
             cursor: pointer;
         }
     }
+    .ms-DetailsRow {
+        border-bottom: none;
+    }
 }
 
 .msla-templates-parameters-callout {
@@ -134,6 +137,42 @@
             text-indent: 10px;
             list-style-type: circle;
 
+        }
+    }
+}
+
+.msla-template-connection-grid-cell {
+    display: flex;
+
+    .msla-template-connection-cell-content {
+        margin-top: 12px;
+    }
+}
+
+.msla-template-connection-compact {
+    display: flex;
+    flex-direction: row;
+
+    .msla-template-connection-compact-image {
+        border: #dcd8d8 1px solid;
+        border-radius: 4px;
+        padding: 10px 0 0 10px;
+        width: 40px;
+        height: 40px;
+    }
+
+    .msla-template-connection-compact-text {
+        display: flex;
+        flex-direction: column;
+        padding-left: 10px;
+        margin-top: 8px;
+
+        .msla-template-connection-compact-connector {
+            font-weight: 500;
+        }
+
+        .msla-template-connection-compact-status {
+            font-size: 12px;
         }
     }
 }

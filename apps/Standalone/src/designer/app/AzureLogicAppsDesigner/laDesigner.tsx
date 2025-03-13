@@ -58,6 +58,7 @@ import {
   Constants,
   getSKUDefaultHostOptions,
   RunHistoryPanel,
+  CombineInitializeVariableDialog,
 } from '@microsoft/logic-apps-designer';
 import axios from 'axios';
 import isEqual from 'lodash.isequal';
@@ -253,6 +254,7 @@ const DesignerEditor = () => {
       ...(connectionsData?.managedApiConnections ?? {}),
     };
     const newServiceProviderConnections: Record<string, any> = {};
+    const newAgentConnections: Record<string, any> = {};
 
     const referenceKeys = Object.keys(connectionReferences ?? {});
     if (referenceKeys.length) {
@@ -279,6 +281,13 @@ const DesignerEditor = () => {
               connectionProperties,
             };
             newManagedApiConnections[referenceKey] = newConnectionObj;
+          } else if (reference?.connection?.id.startsWith('connectionProviders/agent/')) {
+            // Service Provider Connection
+            const connectionKey = reference.connection.id.split('/').splice(-1)[0];
+            // We can't apply this directly in case there is a temporary key overlap
+            // We need to move the data out to a new object, delete the old data, then apply the new data at the end
+            newAgentConnections[referenceKey] = connectionsData?.agentConnections?.[connectionKey];
+            delete connectionsData?.agentConnections?.[connectionKey];
           } else if (reference?.connection?.id.startsWith('/serviceProviders/')) {
             // Service Provider Connection
             const connectionKey = reference.connection.id.split('/').splice(-1)[0];
@@ -294,6 +303,10 @@ const DesignerEditor = () => {
         ...connectionsData?.serviceProviderConnections,
         ...newServiceProviderConnections,
       };
+      (connectionsData as ConnectionsData).agentConnections = {
+        ...connectionsData?.agentConnections,
+        ...newAgentConnections,
+      };
     }
 
     const connectionsToUpdate = getConnectionsToUpdate(originalConnectionsData, connectionsData ?? {});
@@ -308,7 +321,8 @@ const DesignerEditor = () => {
       parametersToUpdate,
       settingsToUpdate,
       customCodeToUpdate,
-      clearDirtyState
+      clearDirtyState,
+      { skipValidation: hostOptions.enableAgenticLoops ?? false }
     );
   };
 
@@ -405,6 +419,7 @@ const DesignerEditor = () => {
             customCode={customCodeData}
             runInstance={runInstanceData}
             appSettings={settingsData?.properties}
+            isMultiVariableEnabled={hostOptions.enableMultiVariable}
           >
             <div style={{ display: 'flex', flexDirection: 'row', height: 'inherit' }}>
               <RunHistoryPanel
@@ -445,6 +460,7 @@ const DesignerEditor = () => {
                   saveWorkflowFromCode={saveWorkflowFromCode}
                 />
                 {designerView ? <Designer /> : <CodeViewEditor ref={codeEditorRef} workflowKind={workflow?.kind} />}
+                <CombineInitializeVariableDialog />
               </div>
             </div>
           </BJSWorkflowProvider>
@@ -839,8 +855,9 @@ const getConnectionsToUpdate = (
     originalConnectionsJson.serviceProviderConnections,
     connectionsJson.serviceProviderConnections
   );
+  const hasNewAgentKeys = hasNewKeys(originalConnectionsJson.agentConnections, connectionsJson.agentConnections);
 
-  if (!hasNewFunctionKeys && !hasNewApimKeys && !hasNewManagedApiKeys && !hasNewServiceProviderKeys) {
+  if (!hasNewFunctionKeys && !hasNewApimKeys && !hasNewManagedApiKeys && !hasNewServiceProviderKeys && !hasNewAgentKeys) {
     return undefined;
   }
 
@@ -880,6 +897,15 @@ const getConnectionsToUpdate = (
         // eslint-disable-next-line no-param-reassign
         (connectionsJson.serviceProviderConnections as any)[serviceProviderConnectionName] =
           originalConnectionsJson.serviceProviderConnections[serviceProviderConnectionName];
+      }
+    }
+  }
+
+  if (hasNewAgentKeys) {
+    for (const agentConnectionName of Object.keys(connectionsJson.agentConnections ?? {})) {
+      if (originalConnectionsJson.agentConnections?.[agentConnectionName]) {
+        // eslint-disable-next-line no-param-reassign
+        (connectionsJson.agentConnections as any)[agentConnectionName] = originalConnectionsJson.agentConnections[agentConnectionName];
       }
     }
   }
