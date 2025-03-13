@@ -22,7 +22,7 @@ type ReviewCreatePanelProps = {
   };
 };
 
-export const ReviewCreatePanel = ({ resourceOverrides }: ReviewCreatePanelProps) => {
+export const ReviewAddPanel = ({ resourceOverrides }: ReviewCreatePanelProps) => {
   const intl = useIntl();
   const { parameterDefinitions, workflows, connections } = useSelector((state: RootState) => state.template);
   const {
