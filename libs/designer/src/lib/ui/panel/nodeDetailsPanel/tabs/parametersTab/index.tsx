@@ -441,7 +441,7 @@ const ParameterSection = ({
 
       const { value: remappedValues } = isRecordNotEmpty(idReplacements) ? remapValueSegmentsWithNewIds(value, idReplacements) : { value };
       const isCodeEditor = editor?.toLowerCase() === constants.EDITOR.CODE;
-
+      const isConnectionRequired = getPropertyValue(param.schema, 'x-ms-connection-required');
       return {
         settingType: 'SettingTokenField',
         settingProp: {
@@ -484,6 +484,7 @@ const ParameterSection = ({
             editorType?: string,
             tokenClickedCallback?: (token: ValueSegment) => void
           ) => getTokenPicker(id, editorId, labelId, tokenPickerMode, editorType, isCodeEditor, tokenClickedCallback),
+          isConnectionRequired: isConnectionRequired,
         },
       };
     });

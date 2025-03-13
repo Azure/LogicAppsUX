@@ -289,6 +289,8 @@ const Setting = ({
     }
     const errorMessage = validationErrors?.reduce((acc: string, message: any) => `${acc + message} `, '');
 
+    console.log('charlie', setting);
+
     const getClassName = (): string => (settingType === 'MultiAddExpressionEditor' ? 'msla-setting-section-expression-field' : '');
     const renderSetting = (): JSX.Element | null => {
       switch (settingType) {

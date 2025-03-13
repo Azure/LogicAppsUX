@@ -1,6 +1,8 @@
 import type { OperationManifest } from '../../../../utils/src';
 import { SettingScope } from '../../../../utils/src';
 
+const methodOptions = [{ value: 'GET', displayName: 'GET' }];
+
 export default {
   properties: {
     iconUri:
@@ -41,17 +43,16 @@ export default {
     inputs: {
       type: 'object',
       properties: {
-        deploymentId: {
-          type: 'string',
-          title: 'Deployment identifier',
-          description: 'The deployment or model name.',
-          'x-ms-visibility': 'important',
-        },
         deploymentModel: {
           type: 'string',
           title: 'Deployment model',
           description: 'The deployment model connection',
+          'x-ms-connection-required': true,
           'x-ms-visibility': 'important',
+          'x-ms-editor': 'combobox',
+          'x-ms-editor-options': {
+            options: methodOptions,
+          },
         },
         temperature: {
           type: 'number',
@@ -127,7 +128,7 @@ export default {
           minimum: -2.0,
         },
       },
-      required: ['deploymentId', 'deploymentModel', 'messages'],
+      required: ['deploymentModel', 'messages'],
     },
     inputsLocation: ['inputs', 'parameters'],
     isInputsOptional: false,
