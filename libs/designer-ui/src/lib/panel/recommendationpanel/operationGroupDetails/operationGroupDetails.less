@@ -1,9 +1,18 @@
-@import './operationGroupHeader/operationGroupHeader.less';
+@import "./operationGroupHeader/operationGroupHeader.less";
 
 .msla-op-group-detail-page {
   display: flex;
   flex-direction: column;
   gap: 16px;
+}
+
+.msla-op-group-connector-add-button {
+  &:hover {
+    filter: brightness(90%);
+  }
+  &:active {
+    filter: brightness(80%);
+  }
 }
 
 .msla-op-group-item-container {

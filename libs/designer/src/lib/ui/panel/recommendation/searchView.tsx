@@ -14,6 +14,7 @@ import type React from 'react';
 import { useCallback, useEffect, useState } from 'react';
 import { useDispatch } from 'react-redux';
 import { useHostOptions } from '../../../core/state/designerOptions/designerOptionsSelectors';
+import { useDiscoveryPanelRelationshipIds } from '../../../core/state/panel/panelSelectors';
 
 type SearchViewProps = {
   searchTerm: string;
@@ -29,6 +30,7 @@ type SearchViewProps = {
 export const SearchView: React.FC<SearchViewProps> = (props) => {
   const { searchTerm, allOperations, groupByConnector, isLoading, filters, onOperationClick, displayRuntimeInfo } = props;
   const { enableAgenticLoops } = useHostOptions();
+  const isRoot = useDiscoveryPanelRelationshipIds().graphId === 'root';
 
   const dispatch = useDispatch<AppDispatch>();
 
@@ -43,12 +45,15 @@ export const SearchView: React.FC<SearchViewProps> = (props) => {
 
   const filterAgenticLoops = useCallback(
     (operation: DiscoveryOperation<DiscoveryResultTypes>): boolean => {
-      if (!enableAgenticLoops && operation.type === 'Agent') {
+      if ((!enableAgenticLoops || !isRoot) && operation.type === 'Agent') {
+        return false;
+      }
+      if (!isRoot && operation.id === 'initializevariable') {
         return false;
       }
       return true;
     },
-    [enableAgenticLoops]
+    [enableAgenticLoops, isRoot]
   );
 
   useDebouncedEffect(

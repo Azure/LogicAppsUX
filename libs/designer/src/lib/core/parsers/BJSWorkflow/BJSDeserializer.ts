@@ -395,7 +395,7 @@ export const processScopeActions = (
     };
   } else if (isAgentAction(action)) {
     for (const [toolName, toolAction] of Object.entries(action.tools || {})) {
-      applySubgraphActions(actionName, toolName, toolAction.actions, SUBGRAPH_TYPES.SWITCH_CASE, 'tools');
+      applySubgraphActions(actionName, toolName, toolAction.actions, SUBGRAPH_TYPES.AGENT_CONDITION, 'tools');
     }
     applySubgraphActions(
       actionName,

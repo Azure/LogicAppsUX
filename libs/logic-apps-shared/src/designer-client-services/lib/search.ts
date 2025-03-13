@@ -26,6 +26,7 @@ export interface ISearchService {
   getAzureOperationsByPage(page: number): Promise<DiscoveryOpArray>;
   getCustomOperationsByPage(page: number): Promise<DiscoveryOpArray>;
   getActiveSearchOperations?(searchTerm: string, actionType?: string, runtimeFilter?: string): Promise<DiscoveryOpArray>;
+  getAgentConnectorOperation?(connectorId: string): Promise<DiscoveryOpArray>;
   getBuiltInOperations(): Promise<DiscoveryOpArray>;
   searchOperations?(
     searchTerm: string,

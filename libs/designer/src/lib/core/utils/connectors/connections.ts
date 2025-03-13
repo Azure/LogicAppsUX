@@ -54,7 +54,7 @@ export async function isConnectionReferenceValid(
   reference: ConnectionReference | undefined
 ): Promise<boolean> {
   const { type, kind, connectorId, operationId } = operationInfo;
-  if (OperationManifestService().isSupported(type, kind)) {
+  if (OperationManifestService().isSupported(type, kind) || type === constants.NODE.TYPE.CONNECTOR) {
     const manifest = await getOperationManifest({ connectorId, operationId });
     if (!manifest?.properties?.connection?.required) {
       return true;
@@ -67,7 +67,7 @@ export async function isConnectionReferenceValid(
   try {
     const connection = await getConnection(reference.connection.id, connectorId, /* fetchResourceIfNeeded */ true);
     return !!connection && isConnectionValid(connection);
-  } catch (error: any) {
+  } catch (_error: any) {
     return false;
   }
 }

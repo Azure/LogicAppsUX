@@ -106,6 +106,17 @@ export const SubgraphCard: React.FC<SubgraphCardProps> = ({
         size: 'large',
         id: id,
       },
+      AGENT_CONDITION: {
+        color: '#07518e',
+        title: title,
+        typeText: intl.formatMessage({
+          defaultMessage: 'agent condition',
+          id: 'gOLL4k',
+          description: 'agent condition',
+        }),
+        size: 'large',
+        id: id,
+      },
       SWITCH_DEFAULT: {
         color: '#484F58',
         title: intl.formatMessage({
