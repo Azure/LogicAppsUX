@@ -100,10 +100,11 @@ export const SettingTokenField = ({ ...props }: SettingTokenFieldProps) => {
       <div key={props.id}>
         {isCustomEditor(props) ? <CustomTokenField {...props} labelId={labelId} /> : <TokenField {...props} labelId={labelId} />}
       </div>
-      <div className="msla-input-parameter-subcomponent">
-        {' '}
-        {props.subComponent && cloneElement(props.subComponent, { showSubComponent, setShowSubComponent })}
-      </div>
+      {props.subComponent ? (
+        <div className="msla-input-parameter-subcomponent">
+          {cloneElement(props.subComponent, { showSubComponent, setShowSubComponent })}
+        </div>
+      ) : null}
     </>
   );
 };
