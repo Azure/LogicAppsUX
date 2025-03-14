@@ -55,7 +55,7 @@ export const indexPseudoFunctionKey = 'index';
 export const indexPseudoFunction: FunctionData = {
   key: indexPseudoFunctionKey,
   maxNumberOfInputs: 1,
-  functionName: '',
+  functionName: indexPseudoFunctionKey,
   outputValueType: NormalizedDataType.Any,
   inputs: [
     {
@@ -102,7 +102,7 @@ export const directAccessPseudoFunctionKey = 'directAccess';
 export const directAccessPseudoFunction: FunctionData = {
   key: directAccessPseudoFunctionKey,
   maxNumberOfInputs: 3,
-  functionName: '',
+  functionName: directAccessPseudoFunctionKey,
   outputValueType: NormalizedDataType.Any,
   inputs: [
     {

@@ -1,4 +1,5 @@
 import { makeStaticStyles, makeStyles, tokens, shorthands } from '@fluentui/react-components';
+import { customTokens } from '../core/ThemeConect';
 
 export const useStyles = makeStyles({
   root: {
@@ -12,10 +13,10 @@ export const useStyles = makeStyles({
     flex: '1 1 1px',
   },
   dataMapperFunctionPanel: {
-    backgroundColor: '#E8F3FE',
+    backgroundColor: customTokens['functionPanelBackground'],
     maxWidth: '80px',
     minWidth: '50px',
-    ...shorthands.borderRight('1px', 'solid', '#ddd'),
+    ...shorthands.borderRight('1px', 'solid', tokens.colorNeutralStroke1),
   },
 });
 

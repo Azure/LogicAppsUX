@@ -7,7 +7,8 @@ export const supportedDataMapperFolders = ['Maps', 'MapDefinitions', 'Schemas'];
 
 const artifactsPath = '/Artifacts/';
 export const schemasPath = `${artifactsPath}/Schemas`;
-export const customXsltPath = `${artifactsPath}/DataMapper/Extensions/InlineXslt`;
+export const customXsltPath = 'Artifacts/DataMapper/Extensions/InlineXslt';
+export const customFunctionsPath = 'Artifacts/DataMapper/Extensions/Functions';
 export const dataMapsPath = `${artifactsPath}/Maps`;
 export const dataMapDefinitionsPath = `${artifactsPath}/MapDefinitions`;
 

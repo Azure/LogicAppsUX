@@ -69,7 +69,9 @@ export const getInputValues = (
 };
 
 const combineFunctionAndInputs = (functionData: FunctionData, inputs: string[]): string => {
-  return functionData.functionName ? `${functionData.functionName}(${inputs.join(', ')})` : inputs.join(', ');
+  return functionData.functionName && functionData.key !== indexPseudoFunctionKey
+    ? `${functionData.functionName}(${inputs.join(', ')})`
+    : inputs.join(', ');
 };
 
 export const collectFunctionValue = (

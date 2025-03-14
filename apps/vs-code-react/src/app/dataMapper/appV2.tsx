@@ -19,7 +19,8 @@ import { ExtensionCommand } from '@microsoft/vscode-extension-logic-apps';
 import { useCallback, useContext, useEffect, useMemo, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import packagejson from '../../../package.json';
-import { LoggerService } from '../services/Logger';
+import { type AdditionalContext, LoggerService } from '../services/Logger';
+import * as path from 'path';
 
 export const DataMapperAppV2 = () => {
   const dispatch = useDispatch<AppDispatch>();
@@ -32,6 +33,7 @@ export const DataMapperAppV2 = () => {
   const sourceSchemaFilename = useSelector((state: RootState) => state.dataMap.sourceSchemaFilename);
   const sourceSchema = useSelector((state: RootState) => state.dataMap.sourceSchema);
   const targetSchemaFilename = useSelector((state: RootState) => state.dataMap.targetSchemaFilename);
+  const dataMapFilename = useSelector((state: RootState) => state.dataMap.dataMapFilename);
   const targetSchema = useSelector((state: RootState) => state.dataMap.targetSchema);
   const schemaFileList = useSelector((state: RootState) => state.dataMap.schemaFileList);
   const customXsltPathsList = useSelector((state: RootState) => state.dataMap.customXsltPathsList);
@@ -62,6 +64,17 @@ export const DataMapperAppV2 = () => {
   const dataMapperLoggerService = useMemo(() => {
     return new LoggerService(sendMsgToVsix, { designerVersion: packagejson.version, dataMapperVersion });
   }, [sendMsgToVsix, dataMapperVersion]);
+
+  useEffect(() => {
+    const additionalContext: AdditionalContext = {
+      dataMapName: dataMapFilename,
+      sourceType: sourceSchemaFilename ? path.extname(sourceSchemaFilename) : undefined,
+      targetType: targetSchemaFilename ? path.extname(targetSchemaFilename) : undefined,
+    };
+    if (dataMapperLoggerService) {
+      dataMapperLoggerService.addPropertyToContext(additionalContext);
+    }
+  }, [dataMapFilename, sourceSchemaFilename, targetSchemaFilename, dataMapperLoggerService]);
 
   const setIsMapStateDirty = (isMapStateDirty: boolean) => {
     sendMsgToVsix({

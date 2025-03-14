@@ -3,7 +3,7 @@ import { makeStyles, shorthands, tokens } from '@fluentui/react-components';
 export const useStyles = makeStyles({
   root: {
     width: '400px',
-    backgroundColor: '#fff',
+    backgroundColor: tokens.colorNeutralBackground1,
     overflow: 'visible',
     paddingLeft: '10px',
   },
@@ -15,7 +15,7 @@ export const useStyles = makeStyles({
   editorStyle: {
     ...shorthands.border('1px', 'solid', tokens.colorNeutralStroke1),
     borderRadius: tokens.borderRadiusMedium,
-    backgroundColor: '#fff',
+    backgroundColor: tokens.colorNeutralBackground1,
   },
   accordianHeader: {
     fontWeight: 'bolder',

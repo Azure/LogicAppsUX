@@ -115,11 +115,7 @@ export const TestPanelBody = (props: TestPanelBodyProps) => {
       try {
         return JSON.stringify(JSON.parse(content), null, 2);
       } catch (err) {
-        LoggerService().log({
-          level: LogEntryLevel.Error,
-          area: `${LogCategory.DataMapperDesigner}/testPanel`,
-          message: `${err}`,
-        });
+        LoggerService().logErrorWithFormatting(err, `${LogCategory.DataMapperDesigner}/testPanelMessage`, LogEntryLevel.Verbose);
         return content;
       }
     }
