@@ -1,5 +1,5 @@
 import { Button } from '@fluentui/react-components';
-import { useCallback, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import {
   CreateConnectionInternal,
   type CreatedConnectionPayload,
@@ -33,16 +33,20 @@ export const ConnectionInline: React.FC<ConnectionInlineProps> = ({ showSubCompo
   const connectionQuery = useConnectionsForConnector(connector?.id ?? '');
   const connections = useMemo(() => connectionQuery?.data ?? [], [connectionQuery]);
   const hasExistingConnections = connections.length > 0;
+  const [showCreateConnection, setShowCreation] = useState(hasExistingConnections);
 
-  const [createConnection, setCreateConnection] = useState(hasExistingConnections);
   const setConnection = useCallback(() => {
-    setCreateConnection(true);
-  }, []);
+    setShowCreation(true);
+  }, [setShowCreation]);
 
   const assistedConnectionProps = useMemo(
     () => (connector ? getAssistedConnectionProps(connector, operationManifest) : undefined),
     [connector, operationManifest]
   );
+
+  useEffect(() => {
+    setShowCreation(hasExistingConnections);
+  }, [hasExistingConnections]);
 
   const intlText = useMemo(
     () => ({
@@ -68,7 +72,7 @@ export const ConnectionInline: React.FC<ConnectionInlineProps> = ({ showSubCompo
     return null;
   }
 
-  return createConnection ? (
+  return showCreateConnection ? (
     <CreateConnectionInternal
       connectorId={connector?.id ?? ''}
       operationType={operationInfo?.type}
@@ -84,7 +88,8 @@ export const ConnectionInline: React.FC<ConnectionInlineProps> = ({ showSubCompo
         if (hasExistingConnections) {
           setShowSubComponent && setShowSubComponent(false);
         } else {
-          setCreateConnection(false);
+          console.log('charlie connections, getting canc');
+          setShowCreation(false);
         }
       }}
     />
