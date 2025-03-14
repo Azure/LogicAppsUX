@@ -32,9 +32,9 @@ export const ConnectionInline: React.FC<ConnectionInlineProps> = ({ showSubCompo
   const existingReferences = useSelector((state: RootState) => Object.keys(state.connections.connectionReferences));
   const connectionQuery = useConnectionsForConnector(connector?.id ?? '');
   const connections = useMemo(() => connectionQuery?.data ?? [], [connectionQuery]);
-  const hasExistingConnection = connections.length > 0;
+  const hasExistingConnections = connections.length > 0;
 
-  const [createConnection, setCreateConnection] = useState(hasExistingConnection);
+  const [createConnection, setCreateConnection] = useState(hasExistingConnections);
   const setConnection = useCallback(() => {
     setCreateConnection(true);
   }, []);
@@ -64,7 +64,7 @@ export const ConnectionInline: React.FC<ConnectionInlineProps> = ({ showSubCompo
     [dispatch, nodeIds]
   );
 
-  if (!showSubComponent) {
+  if (!showSubComponent && hasExistingConnections) {
     return null;
   }
 
@@ -79,9 +79,9 @@ export const ConnectionInline: React.FC<ConnectionInlineProps> = ({ showSubCompo
       showActionBar={false}
       hideCancelButton={false}
       updateConnectionInState={updateConnectionInState}
-      onConnectionCreated={() => dispatch(reloadParametersTab(nodeId))}
+      onConnectionCreated={() => dispatch(reloadParametersTab())}
       onConnectionCancelled={() => {
-        if (hasExistingConnection) {
+        if (hasExistingConnections) {
           setShowSubComponent && setShowSubComponent(false);
         } else {
           setCreateConnection(false);
