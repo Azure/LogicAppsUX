@@ -1,7 +1,7 @@
-import { TabList, Tab } from '@fluentui/react-components';
+import { TabList, Tab, Text, tokens } from '@fluentui/react-components';
 import type { SelectTabData, SelectTabEvent } from '@fluentui/react-components';
 import type { TemplatePanelTab } from './model';
-import { Dismiss12Filled } from '@fluentui/react-icons';
+import { DismissCircleFilled } from '@fluentui/react-icons';
 
 export interface TemplatesPanelContentProps {
   className?: string;
@@ -28,17 +28,21 @@ export const TemplatesPanelContent = ({ tabs = [], selectedTab, selectTab, class
         <>
           <TabList selectedValue={selectedTabId} onTabSelect={onTabSelected} className={tabClass}>
             {tabs.map(({ id, title, disabled = false, hasError = false }) => (
-              <Tab disabled={disabled} key={id} id={id} data-testid={id} className="msla-templates-panel-tabName" value={id} role={'tab'}>
-                {hasError && (
-                  <span className="msla-templates-panel-error-icon">
-                    <Dismiss12Filled />
-                  </span>
-                )}
+              <Tab
+                disabled={disabled}
+                key={id}
+                id={id}
+                data-testid={id}
+                className="msla-templates-panel-tabName"
+                value={id}
+                role={'tab'}
+                icon={hasError ? <DismissCircleFilled color={tokens.colorStatusDangerForeground1} /> : undefined}
+              >
                 {title}
               </Tab>
             ))}
           </TabList>
-          {selectedTabProps?.description && <div className="msla-panel-content-description">{selectedTabProps?.description}</div>}
+          {selectedTabProps?.description && <Text className="msla-panel-content-description">{selectedTabProps?.description}</Text>}
         </>
       )}
       <div className="msla-panel-content-container">{selectedTabProps?.content}</div>
