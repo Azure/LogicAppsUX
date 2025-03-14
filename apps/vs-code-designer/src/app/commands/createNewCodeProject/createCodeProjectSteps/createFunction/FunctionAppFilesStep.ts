@@ -203,7 +203,7 @@ export class FunctionAppFilesStep extends AzureWizardPromptStep<IProjectWizardCo
       configurations: [
         {
           name: 'Run/Debug local function',
-          type: 'clr',
+          type: 'coreclr',
           request: 'attach',
           processName: 'Microsoft.Azure.Workflows.Functions.CustomCodeNetFxWorker.exe',
         },

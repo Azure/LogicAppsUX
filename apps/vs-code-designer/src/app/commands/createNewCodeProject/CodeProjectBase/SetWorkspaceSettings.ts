@@ -86,18 +86,13 @@ export class SetWorkspaceSettings extends AzureWizardPromptStep<IProjectWizardCo
    * @param context - Project wizard context
    */
   private async createWorkspaceFile(context: IProjectWizardContext): Promise<void> {
-    // Start with an empty folders array
     const workspaceFolders = [];
-
-    // Add Functions folder first if it's a custom code code Logic App
+    const logicAppName = context.logicAppName || 'LogicApp';
+    workspaceFolders.push({ name: logicAppName, path: `./${logicAppName}` });
     const functionsFolder = context.functionAppName;
     if (context.isWorkspaceWithFunctions) {
       workspaceFolders.push({ name: functionsFolder, path: `./${functionsFolder}` });
     }
-
-    // Use context.logicAppName for the folder name; default to 'LogicApp' if not available
-    const logicAppName = context.logicAppName || 'LogicApp';
-    workspaceFolders.push({ name: logicAppName, path: `./${logicAppName}` });
 
     const workspaceData = {
       folders: workspaceFolders,
@@ -111,21 +106,15 @@ export class SetWorkspaceSettings extends AzureWizardPromptStep<IProjectWizardCo
    * @param context - Project wizard context
    */
   private async updateWorkspaceFile(context: IProjectWizardContext): Promise<void> {
-    // Read existing workspace file
     const workspaceContent = await fs.readJson(context.workspaceCustomFilePath);
 
-    // Start with an empty folders array
     const workspaceFolders = [];
-
-    // Add Functions folder first if it's a custom code code Logic App
+    const logicAppName = context.logicAppName || 'LogicApp';
+    workspaceFolders.push({ name: logicAppName, path: `./${logicAppName}` });
     const functionsFolder = context.functionAppName;
     if (context.isWorkspaceWithFunctions) {
       workspaceFolders.push({ name: functionsFolder, path: `./${functionsFolder}` });
     }
-
-    // Use context.logicAppName for the folder name; default to 'LogicApp' if not available
-    const logicAppName = context.logicAppName || 'LogicApp';
-    workspaceFolders.push({ name: logicAppName, path: `./${logicAppName}` });
 
     workspaceContent.folders = [...workspaceContent.folders, ...workspaceFolders];
 
