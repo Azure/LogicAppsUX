@@ -56,6 +56,7 @@ import type { ApiHubAuthentication } from 'lib/common/models/workflow';
 
 export const CreateConnectionWrapper = () => {
   const dispatch = useDispatch<AppDispatch>();
+
   const nodeId: string = useOperationPanelSelectedNodeId();
   const nodeIds = useConnectionPanelSelectedNodeIds();
   const connector = useConnectorByNodeId(nodeId);
