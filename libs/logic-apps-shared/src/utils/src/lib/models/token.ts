@@ -7,6 +7,7 @@ export const TokenType = {
   OUTPUTS: 'outputs',
   PARAMETER: 'parameter',
   VARIABLE: 'variable',
+  AGENTPARAMETER: 'agentParameter',
 } as const;
 
 export type TokenType = (typeof TokenType)[keyof typeof TokenType];
@@ -22,7 +23,7 @@ export interface Token {
   isAdvanced?: boolean;
   value?: string;
   outputInfo: {
-    type: TokenType; // Should only support FX, OUTPUTS, VARIABLE, PARAMETER
+    type: TokenType; // Should only support FX, OUTPUTS, VARIABLE, PARAMETER, AGENTPARAMETER
     required?: boolean;
     format?: string;
     source?: string;

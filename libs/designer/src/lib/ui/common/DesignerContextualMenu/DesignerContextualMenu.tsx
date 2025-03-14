@@ -185,7 +185,7 @@ export const DesignerContextualMenu = () => {
 
   const subgraphMenuItems: JSX.Element[] = useMemo(
     () => [
-      ...(metadata?.subgraphType === SUBGRAPH_TYPES['SWITCH_CASE']
+      ...(metadata?.subgraphType === SUBGRAPH_TYPES.SWITCH_CASE || metadata?.subgraphType === SUBGRAPH_TYPES.AGENT_CONDITION
         ? [<DeleteMenuItem key={'delete'} onClick={deleteClick} showKey />]
         : []),
     ],

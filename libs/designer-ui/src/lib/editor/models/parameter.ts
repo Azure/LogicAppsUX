@@ -107,5 +107,6 @@ export const TokenType = {
   OUTPUTS: 'outputs',
   PARAMETER: 'parameter',
   VARIABLE: 'variable',
+  AGENTPARAMETER: 'agentParameter',
 } as const;
 export type TokenType = (typeof TokenType)[keyof typeof TokenType];
