@@ -48,7 +48,7 @@ export interface TestMapOutput {
   error?: Error;
 }
 
-const initialState: PanelState = {
+export const initialState: PanelState = {
   currentPanelView: ConfigPanelView.AddSchema,
   codeViewPanel: {
     isOpen: false,
@@ -74,6 +74,18 @@ export const panelSlice = createSlice({
     openDefaultConfigPanelView: (state) => {
       state.schemaType = undefined;
       state.currentPanelView = ConfigPanelView.DefaultConfig;
+    },
+
+    openMapChecker: (state) => {
+      const newState = true;
+
+      if (newState) {
+        state.codeViewPanel.isOpen = false;
+        state.testPanel.isOpen = false;
+        state.functionPanel.isOpen = false;
+      }
+
+      state.mapCheckerPanel.isOpen = true;
     },
 
     toggleMapChecker: (state) => {
@@ -190,6 +202,7 @@ export const {
   updateTestOutput,
   toggleFunctionPanel,
   toggleMapChecker,
+  openMapChecker,
   setSelectedMapCheckerTab,
 } = panelSlice.actions;
 
