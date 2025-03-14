@@ -29,9 +29,4 @@ export const htmlNodes = [
   { replace: TextNode, with: (node: TextNode) => new ExtentedTextNode(node.__text) },
 ];
 
-export const defaultNodes = [
-  AutoLinkNode,
-  LinkNode,
-  TokenNode,
-  PasswordNode,
-];
+export const defaultNodes = [AutoLinkNode, LinkNode, TokenNode, PasswordNode];

@@ -209,5 +209,5 @@ const supportedConsumptionManifestObjects = new Map<string, OperationManifest>([
   [rosettanetwaitforresponse, rosettaNetWaitForResponseManifest],
   [chunktext, chunkTextManifest],
   [parsedocument, parseDocumentManifest],
-  [parsedocumentwithmetadata, parseDocumentWithMetadataManifest]
+  [parsedocumentwithmetadata, parseDocumentWithMetadataManifest],
 ]);

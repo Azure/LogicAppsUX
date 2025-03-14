@@ -12,6 +12,7 @@ import type { UseQueryResult } from '@tanstack/react-query';
 import { useQuery } from '@tanstack/react-query';
 import { useSelector } from 'react-redux';
 import { getOperationManifest } from '../../queries/operation';
+import Constants from '../../../common/constants';
 
 interface QueryResult {
   isLoading?: boolean;
@@ -20,6 +21,9 @@ interface QueryResult {
 
 export const useIsConnectionRequired = (operationInfo: NodeOperation) => {
   const result = useOperationManifest(operationInfo);
+  if (operationInfo.type === Constants.NODE.TYPE.CONNECTOR) {
+    return false;
+  }
   if (result.isLoading || !result.isFetched || result.isPlaceholderData) {
     return false;
   }
@@ -101,21 +105,25 @@ export const useOperationQuery = (nodeId: string) => {
   const operationInfo = useOperationInfo(nodeId);
 
   const operationManifestService = OperationManifestService();
-  const useManifest = operationManifestService.isSupported(operationInfo?.type ?? '', operationInfo?.kind ?? '');
+  const isConnectorNode = operationInfo?.type === Constants.NODE.TYPE.CONNECTOR;
+  const useManifest = operationManifestService.isSupported(operationInfo?.type ?? '', operationInfo?.kind ?? '') || isConnectorNode;
 
   const manifestQuery = useOperationManifest(operationInfo, useManifest);
 
-  const connectorQuery = useConnector(operationInfo?.connectorId, !useManifest);
+  const connectorQuery = useConnector(operationInfo?.connectorId, !useManifest && !isConnectorNode);
 
   return useManifest ? manifestQuery : connectorQuery;
 };
 
 const useNodeAttribute = (operationInfo: NodeOperation, propertyInManifest: string[], propertyInConnector: string[]): QueryResult => {
   const operationManifestService = OperationManifestService();
-  const useManifest = operationManifestService.isSupported(operationInfo?.type ?? '', operationInfo?.kind ?? '');
+  const isConnectorNode = operationInfo?.type === Constants.NODE.TYPE.CONNECTOR;
+  const useManifest = operationManifestService.isSupported(operationInfo?.type ?? '', operationInfo?.kind ?? '') || isConnectorNode;
 
   const { data: manifest, isLoading } = useOperationManifest(operationInfo, useManifest);
-  const { data: connector } = useConnector(operationInfo?.connectorId, !useManifest);
+
+  const { data: connector } = useConnector(operationInfo?.connectorId, !useManifest && !isConnectorNode);
+
   return {
     isLoading,
     result: manifest
