@@ -9,6 +9,7 @@ import { useIsPanelInPinnedViewMode, usePanelLocation } from '../../../../../cor
 import {
   useAllowUserToChangeConnection,
   useConnectorName,
+  useIsInlineConnection,
   useNodeConnectionName,
   useOperationInfo,
 } from '../../../../../core/state/selectors/actionMetadataSelector';
@@ -66,6 +67,8 @@ import type React from 'react';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useIntl } from 'react-intl';
 import { useDispatch, useSelector } from 'react-redux';
+import { ConnectionInline } from './connectionInline';
+import { ConnectionsSubMenu } from './connectionsSubMenu';
 
 export const ParametersTab: React.FC<PanelTabProps> = (props) => {
   const { nodeId: selectedNodeId } = props;
@@ -82,6 +85,7 @@ export const ParametersTab: React.FC<PanelTabProps> = (props) => {
   const connectionName = useNodeConnectionName(selectedNodeId);
   const operationInfo = useOperationInfo(selectedNodeId);
   const showConnectionDisplay = useAllowUserToChangeConnection(operationInfo);
+  const isInlineConnection = useIsInlineConnection(operationInfo);
   const showIdentitySelector = useShowIdentitySelectorQuery(selectedNodeId);
   const errorInfo = useOperationErrorInfo(selectedNodeId);
   const { hideUTFExpressions } = useHostOptions();
@@ -170,7 +174,7 @@ export const ParametersTab: React.FC<PanelTabProps> = (props) => {
           />
         </div>
       ))}
-      {operationInfo && showConnectionDisplay && connectionName.isLoading !== undefined ? (
+      {!isInlineConnection && operationInfo && showConnectionDisplay && connectionName.isLoading !== undefined ? (
         <>
           <Divider style={{ padding: '16px 0px' }} />
           <ConnectionDisplay
@@ -441,6 +445,8 @@ const ParameterSection = ({
 
       const { value: remappedValues } = isRecordNotEmpty(idReplacements) ? remapValueSegmentsWithNewIds(value, idReplacements) : { value };
       const isCodeEditor = editor?.toLowerCase() === constants.EDITOR.CODE;
+      const subComponent = getSubComponent(param);
+      const subMenu = getSubMenu(param);
 
       return {
         settingType: 'SettingTokenField',
@@ -484,6 +490,8 @@ const ParameterSection = ({
             editorType?: string,
             tokenClickedCallback?: (token: ValueSegment) => void
           ) => getTokenPicker(id, editorId, labelId, tokenPickerMode, editorType, isCodeEditor, tokenClickedCallback),
+          subComponent: subComponent,
+          subMenu: subMenu,
         },
       };
     });
@@ -501,6 +509,22 @@ const ParameterSection = ({
       showSeparator={false}
     />
   );
+};
+
+const getSubComponent = (parameter: ParameterInfo) => {
+  const hasConnectionInline = getPropertyValue(parameter.schema, 'x-ms-connection-required');
+  if (hasConnectionInline) {
+    return <ConnectionInline />;
+  }
+  return null;
+};
+
+const getSubMenu = (parameter: ParameterInfo) => {
+  const hasConnectionInline = getPropertyValue(parameter.schema, 'x-ms-connection-required');
+  if (hasConnectionInline) {
+    return <ConnectionsSubMenu />;
+  }
+  return null;
 };
 
 export const getEditorAndOptions = (

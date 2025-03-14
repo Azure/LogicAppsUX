@@ -31,6 +31,15 @@ export const useIsConnectionRequired = (operationInfo: NodeOperation) => {
   return manifest ? isConnectionRequiredForOperation(manifest) : true;
 };
 
+export const useIsInlineConnection = (operationInfo: NodeOperation) => {
+  const result = useOperationManifest(operationInfo);
+  if (result.isLoading || !result.isFetched || result.isPlaceholderData) {
+    return false;
+  }
+  const manifest = result.data;
+  return manifest?.properties.connector?.id === '/connectionProviders/agent';
+};
+
 export const useAllowUserToChangeConnection = (op: NodeOperation) => {
   return useIsConnectionRequired(op);
 };
