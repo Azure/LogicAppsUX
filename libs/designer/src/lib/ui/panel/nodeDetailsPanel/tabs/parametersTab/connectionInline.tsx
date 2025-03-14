@@ -16,7 +16,6 @@ import { useOperationInfo } from '../../../../../core';
 
 export const ConnectionInline = () => {
   const [hasConnectionCreated, setHasConnectionCreated] = useState(false);
-
   const setConnection = useCallback(() => {
     setHasConnectionCreated(true);
   }, []);
@@ -57,7 +56,7 @@ export const ConnectionInline = () => {
       assistedConnectionProps={assistedConnectionProps}
       connectionMetadata={connectionMetadata}
       showActionBar={false}
-      hideCancelButton={!hasExistingConnection}
+      hideCancelButton={false}
       updateConnectionInState={updateConnectionInState}
       onConnectionCreated={() => {}}
       onConnectionCancelled={() => {
