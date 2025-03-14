@@ -12,7 +12,7 @@ export default defineConfig({
   splitting: false,
   tsconfig: 'tsconfig.json',
   format: ['cjs', 'esm'],
-  external: ['react', '~@xyflow/react/dist/style.css'],
+  external: ['react', '@xyflow/react/dist/style.css'],
   injectStyle: false,
   loader: {
     '.svg': 'dataurl',
