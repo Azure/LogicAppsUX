@@ -125,7 +125,7 @@ export const closeConnectionsFlow = createAsyncThunk(
 export const reloadParametersTab = createAsyncThunk<void, void>('reloadParametersTab', async (_, { dispatch }): Promise<void> => {
   dispatch(setIsCreatingConnection(false));
   dispatch(setIsPanelLoading(true));
-  // Wait for 2 seconds
+  // Wait for 1 second to allow the UI to update
   await new Promise((resolve) => setTimeout(resolve, 1000));
   dispatch(setIsPanelLoading(false));
 });
