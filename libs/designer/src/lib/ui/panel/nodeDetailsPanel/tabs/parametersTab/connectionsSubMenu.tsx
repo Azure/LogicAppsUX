@@ -78,9 +78,10 @@ export const ConnectionsSubMenu: React.FC<ConnectionsSubMenuProps> = ({ setShowS
         <MenuGroup>
           {connections.map((connection) => {
             const icon = connection.id === currentConnectionId ? <Checkmark16Regular /> : undefined;
+            const connectionName = connection.properties.displayName || connection.name;
             return (
               <MenuItem icon={icon} key={connection.id} onClick={() => onConnectionSelect(connection)}>
-                {connection.name}
+                {connectionName}
               </MenuItem>
             );
           })}
@@ -99,6 +100,8 @@ export const ConnectionsSubMenu: React.FC<ConnectionsSubMenuProps> = ({ setShowS
       </MenuList>
     );
   }, [connections]);
+
+  console.log('charlie connections, connectionsList', connections);
 
   if (connections.length === 0) {
     return null;
