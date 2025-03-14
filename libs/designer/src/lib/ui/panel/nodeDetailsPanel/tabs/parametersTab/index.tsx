@@ -15,7 +15,7 @@ import {
 } from '../../../../../core/state/selectors/actionMetadataSelector';
 import type { VariableDeclaration } from '../../../../../core/state/tokens/tokensSlice';
 import { updateVariableInfo } from '../../../../../core/state/tokens/tokensSlice';
-import { useGetSwitchParentId, useNodeMetadata, useReplacedIds } from '../../../../../core/state/workflow/workflowSelectors';
+import { useGetSwitchOrAgentParentId, useNodeMetadata, useReplacedIds } from '../../../../../core/state/workflow/workflowSelectors';
 import type { AppDispatch, RootState } from '../../../../../core/store';
 import { getConnectionReference } from '../../../../../core/utils/connectors/connections';
 import { isRootNodeInGraph } from '../../../../../core/utils/graph';
@@ -74,9 +74,10 @@ export const ParametersTab: React.FC<PanelTabProps> = (props) => {
   const { nodeId: selectedNodeId } = props;
   const nodeMetadata = useNodeMetadata(selectedNodeId);
   const inputs = useSelector((state: RootState) => state.operations.inputParameters[selectedNodeId]);
-  const { tokenState, workflowParametersState } = useSelector((state: RootState) => ({
+  const { tokenState, workflowParametersState, workflowState } = useSelector((state: RootState) => ({
     tokenState: state.tokens,
     workflowParametersState: state.workflowParameters,
+    workflowState: state.workflow,
   }));
   const nodeType = useSelector((state: RootState) => state.operations.operationInfo[selectedNodeId]?.type);
   const readOnly = useReadOnly();
@@ -90,7 +91,7 @@ export const ParametersTab: React.FC<PanelTabProps> = (props) => {
   const errorInfo = useOperationErrorInfo(selectedNodeId);
   const { hideUTFExpressions } = useHostOptions();
   const replacedIds = useReplacedIds();
-  const parentIdOfSwitch = useGetSwitchParentId(selectedNodeId);
+  const switchOrAgentParentInfo = useGetSwitchOrAgentParentId(selectedNodeId);
 
   const isPaneInPinnedViewMode = useIsPanelInPinnedViewMode();
 
@@ -138,10 +139,11 @@ export const ParametersTab: React.FC<PanelTabProps> = (props) => {
   }
 
   const tokenGroup = getOutputTokenSections(
-    parentIdOfSwitch ?? selectedNodeId,
-    parentIdOfSwitch ? constants.NODE.TYPE.SWITCH_CASE : nodeType,
+    switchOrAgentParentInfo?.parentId ?? selectedNodeId,
+    switchOrAgentParentInfo?.type ?? nodeType,
     tokenState,
     workflowParametersState,
+    workflowState,
     replacedIds
   );
   const expressionGroup = getExpressionTokenSections(hideUTFExpressions);
