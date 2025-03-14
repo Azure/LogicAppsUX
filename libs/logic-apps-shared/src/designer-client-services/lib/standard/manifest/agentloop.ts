@@ -47,7 +47,6 @@ export default {
           description: 'The deployment model connection',
           'x-ms-connection-required': true,
           'x-ms-visibility': 'important',
-          'x-ms-editor': 'combobox',
         },
         temperature: {
           type: 'number',
