@@ -1,4 +1,19 @@
 # Logic Apps Designer
+## [5.53.0](https://github.com/Azure/LogicAppsUX/compare/v5.52.0...v5.53.0) (2025-03-14)
+
+
+### Features
+
+* **Data Mapper:** creates folders needed for DM custom code feature ([#6790](https://github.com/Azure/LogicAppsUX/issues/6790)) ([931841f](https://github.com/Azure/LogicAppsUX/commit/931841f715229cea9aad12342d0d2cdbe5befbc5))
+* **templates:** Adding new resource component for agents basics tab ([#6792](https://github.com/Azure/LogicAppsUX/issues/6792)) ([64e5478](https://github.com/Azure/LogicAppsUX/commit/64e5478becf0d1aea4381d48d81ffcc6f243f5cb))
+* **vscode:** Add telemetry to handle and record tenant id ([#6777](https://github.com/Azure/LogicAppsUX/issues/6777)) ([80ada0e](https://github.com/Azure/LogicAppsUX/commit/80ada0edecad454c8900c99064303b5762b7fbf3))
+
+
+### Bug Fixes
+
+* **Designer:** Modified xyflow css import ([#6791](https://github.com/Azure/LogicAppsUX/issues/6791)) ([19196d5](https://github.com/Azure/LogicAppsUX/commit/19196d5b9ab6697608edbe5cb50aae29f2699f95))
+* **Desinger:** Modified css export again ([#6800](https://github.com/Azure/LogicAppsUX/issues/6800)) ([c12302e](https://github.com/Azure/LogicAppsUX/commit/c12302e580ee24756e3dd18904da3655f90cd801))
+
 ## [5.52.0](https://github.com/Azure/LogicAppsUX/compare/v5.51.0...v5.52.0) (2025-03-13)
 
 
