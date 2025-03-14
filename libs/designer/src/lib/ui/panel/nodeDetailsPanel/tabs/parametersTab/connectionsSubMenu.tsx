@@ -6,7 +6,11 @@ import { AddRegular, Checkmark16Regular, MoreHorizontalRegular } from '@fluentui
 import { useConnectionsForConnector } from '../../../../../core/queries/connections';
 import { useIntl } from 'react-intl';
 
-export const ConnectionsSubMenu = () => {
+interface ConnectionsSubMenuProps {
+  setShowSubComponent?: React.Dispatch<React.SetStateAction<boolean>>;
+}
+
+export const ConnectionsSubMenu: React.FC<ConnectionsSubMenuProps> = ({ setShowSubComponent }) => {
   const intl = useIntl();
   const nodeId: string = useOperationPanelSelectedNodeId();
   const connector = useConnectorByNodeId(nodeId);
@@ -41,7 +45,14 @@ export const ConnectionsSubMenu = () => {
         </MenuGroup>
         <MenuDivider />
         <MenuGroup>
-          <MenuItem icon={<AddRegular />}>{intlText.CREATE}</MenuItem>
+          <MenuItem
+            onClick={() => {
+              setShowSubComponent && setShowSubComponent(true);
+            }}
+            icon={<AddRegular />}
+          >
+            {intlText.CREATE}
+          </MenuItem>
         </MenuGroup>
       </MenuList>
     );

@@ -1,8 +1,6 @@
 import type { OperationManifest } from '../../../../utils/src';
 import { SettingScope } from '../../../../utils/src';
 
-const methodOptions = [{ value: 'GET', displayName: 'GET' }];
-
 export default {
   properties: {
     iconUri:
@@ -50,9 +48,6 @@ export default {
           'x-ms-connection-required': true,
           'x-ms-visibility': 'important',
           'x-ms-editor': 'combobox',
-          'x-ms-editor-options': {
-            options: methodOptions,
-          },
         },
         temperature: {
           type: 'number',

@@ -45,7 +45,7 @@ import {
 } from '@microsoft/logic-apps-shared';
 import type { Dispatch } from '@reduxjs/toolkit';
 import { createAsyncThunk } from '@reduxjs/toolkit';
-import { openPanel, setIsCreatingConnection } from '../../state/panel/panelSlice';
+import { openPanel, setIsCreatingConnection, setIsPanelLoading } from '../../state/panel/panelSlice';
 import type { PanelMode } from '../../state/panel/panelTypes';
 
 export interface ConnectionPayload {
@@ -121,6 +121,11 @@ export const closeConnectionsFlow = createAsyncThunk(
     dispatch(openPanel({ nodeId: actualNodeId, panelMode: actualPanelMode }));
   }
 );
+
+export const reloadParametersTab = createAsyncThunk('reloadParametersTab', async (_: any, { dispatch }): Promise<void> => {
+  dispatch(setIsCreatingConnection(false));
+  dispatch(setIsPanelLoading(true));
+});
 
 const updateNodeConnectionAndProperties = async (
   payload: UpdateConnectionPayload,

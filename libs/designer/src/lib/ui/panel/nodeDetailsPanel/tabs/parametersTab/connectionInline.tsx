@@ -5,21 +5,23 @@ import {
   type CreatedConnectionPayload,
 } from '../../../connectionsPanel/createConnection/createConnectionWrapper';
 import { useDispatch, useSelector } from 'react-redux';
-import { getConnectionMetadata, updateNodeConnection } from '../../../../../core/actions/bjsworkflow/connections';
+import { getConnectionMetadata, reloadParametersTab, updateNodeConnection } from '../../../../../core/actions/bjsworkflow/connections';
 import { useConnectorByNodeId } from '../../../../../core/state/connection/connectionSelector';
 import { useConnectionPanelSelectedNodeIds, useOperationPanelSelectedNodeId } from '../../../../../core/state/panel/panelSelectors';
 import { useOperationManifest } from '../../../../../core/state/selectors/actionMetadataSelector';
 import { getAssistedConnectionProps } from '../../../../../core/utils/connectors/connections';
 import type { AppDispatch, RootState } from '../../../../../core';
-import { getRecordEntry } from '@microsoft/logic-apps-shared';
 import { useOperationInfo } from '../../../../../core';
+import { useIntl } from 'react-intl';
+import { useConnectionsForConnector } from '../../../../../core/queries/connections';
 
-export const ConnectionInline = () => {
-  const [hasConnectionCreated, setHasConnectionCreated] = useState(false);
-  const setConnection = useCallback(() => {
-    setHasConnectionCreated(true);
-  }, []);
+interface ConnectionInlineProps {
+  setShowSubComponent?: React.Dispatch<React.SetStateAction<boolean>>;
+  showSubComponent?: boolean;
+}
 
+export const ConnectionInline: React.FC<ConnectionInlineProps> = ({ showSubComponent, setShowSubComponent }) => {
+  const intl = useIntl();
   const dispatch = useDispatch<AppDispatch>();
   const nodeId: string = useOperationPanelSelectedNodeId();
   const nodeIds = useConnectionPanelSelectedNodeIds();
@@ -27,11 +29,30 @@ export const ConnectionInline = () => {
   const operationInfo = useOperationInfo(nodeId);
   const { data: operationManifest } = useOperationManifest(operationInfo);
   const connectionMetadata = getConnectionMetadata(operationManifest);
-  const hasExistingConnection = useSelector((state: RootState) => !!getRecordEntry(state.connections.connectionsMapping, nodeId));
   const existingReferences = useSelector((state: RootState) => Object.keys(state.connections.connectionReferences));
+  const connectionQuery = useConnectionsForConnector(connector?.id ?? '');
+  const connections = useMemo(() => connectionQuery?.data ?? [], [connectionQuery]);
+  const hasExistingConnection = connections.length > 0;
+
+  const [createConnection, setCreateConnection] = useState(hasExistingConnection);
+  const setConnection = useCallback(() => {
+    setCreateConnection(true);
+  }, []);
+
   const assistedConnectionProps = useMemo(
     () => (connector ? getAssistedConnectionProps(connector, operationManifest) : undefined),
     [connector, operationManifest]
+  );
+
+  const intlText = useMemo(
+    () => ({
+      CONNECT: intl.formatMessage({
+        defaultMessage: 'Connect',
+        id: 'F0rSr0',
+        description: 'Text to show that the user can create the connection',
+      }),
+    }),
+    [intl]
   );
 
   const updateConnectionInState = useCallback(
@@ -43,11 +64,11 @@ export const ConnectionInline = () => {
     [dispatch, nodeIds]
   );
 
-  if (hasExistingConnection) {
+  if (!showSubComponent) {
     return null;
   }
 
-  return hasConnectionCreated ? (
+  return createConnection ? (
     <CreateConnectionInternal
       connectorId={connector?.id ?? ''}
       operationType={operationInfo?.type}
@@ -58,9 +79,13 @@ export const ConnectionInline = () => {
       showActionBar={false}
       hideCancelButton={false}
       updateConnectionInState={updateConnectionInState}
-      onConnectionCreated={() => {}}
+      onConnectionCreated={() => dispatch(reloadParametersTab(nodeId))}
       onConnectionCancelled={() => {
-        setHasConnectionCreated(false);
+        if (hasExistingConnection) {
+          setShowSubComponent && setShowSubComponent(false);
+        } else {
+          setCreateConnection(false);
+        }
       }}
     />
   ) : (
@@ -71,9 +96,9 @@ export const ConnectionInline = () => {
       appearance="subtle"
       onClick={setConnection}
       style={{ color: 'var(--colorBrandForeground1)' }}
-      // aria-label={`${connectionLabel}, ${openChangeConnectionText}`}
+      aria-label={`${intlText.CONNECT}, ${connector?.id}`}
     >
-      {'Connect'}
+      {intlText.CONNECT}
     </Button>
   );
 };
