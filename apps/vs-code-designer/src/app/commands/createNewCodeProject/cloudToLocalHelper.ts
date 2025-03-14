@@ -10,7 +10,7 @@ import { isEmptyString } from '@microsoft/logic-apps-shared';
 import { ext } from '../../../extensionVariables';
 import { localize } from '../../../localize';
 import { getParametersJson } from '../../utils/codeless/parameter';
-import { isConnectionsParameterized, parameterizeConnection } from '../../utils/codeless/parameterizer';
+import { areAllConnectionsParameterized, parameterizeConnection } from '../../utils/codeless/parameterizer';
 import * as path from 'path';
 import * as fs from 'fs';
 import { isCSharpProject } from '../initProjectForVSCode/detectProjectLanguage';
@@ -211,7 +211,7 @@ export async function parameterizeConnectionsDuringImport(
       const connectionsData = JSON.parse(connectionsJson);
       const parametersJson = await getParametersJson(projectPath);
 
-      if (isConnectionsParameterized(connectionsData)) {
+      if (areAllConnectionsParameterized(connectionsData)) {
         window.showInformationMessage(localize('connectionsAlreadyParameterized', 'Connections are already parameterized.'));
         return;
       }
