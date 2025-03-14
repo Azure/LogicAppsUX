@@ -66,54 +66,6 @@ export function parameterizeConnection(
 }
 
 /**
- * Checks if there exists a parameterized connection data entry.
- * @param {ConnectionsData} connectionsData - The connections data object.
- * @returns A boolean indicating whether the connections data is parameterized or not.
- */
-export function hasParameterizedConnection(connectionsData: ConnectionsData): boolean {
-  if (!connectionsData || Object.keys(connectionsData).length === 0) {
-    return true;
-  }
-  for (const connectionType in connectionsData) {
-    if (connectionType !== 'serviceProviderConnections') {
-      const connectionTypeJson = connectionsData[connectionType];
-      for (const connectionKey in connectionTypeJson) {
-        const connection = connectionTypeJson[connectionKey];
-        if (isConnectionReferenceModel(connection)) {
-          if (
-            connection.api.id.includes('@appsetting') ||
-            connection.api.id.includes('@{appsetting') ||
-            connection.connectionRuntimeUrl.includes('@parameters') ||
-            connection.connectionRuntimeUrl.includes('@{parameters')
-          ) {
-            return true;
-          }
-        } else if (isFunctionConnectionModel(connection)) {
-          if (
-            connection.function.id.includes('@parameters') ||
-            connection.function.id.includes('@{parameters') ||
-            connection.triggerUrl.includes('@parameters') ||
-            connection.triggerUrl.includes('@{parameters')
-          ) {
-            return true;
-          }
-        } else if (isAPIManagementConnectionModel(connection)) {
-          if (
-            connection.apiId.includes('@parameters') ||
-            connection.apiId.includes('@{parameters') ||
-            connection.baseUrl.includes('@parameters') ||
-            connection.baseUrl.includes('@{parameters')
-          ) {
-            return true;
-          }
-        }
-      }
-    }
-  }
-  return false;
-}
-
-/**
  * Checks if all connections are parameterized.
  * @param {ConnectionsData} connectionsData - The connections data object.
  * @returns A boolean indicating whether all connections are parameterized or not.

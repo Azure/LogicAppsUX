@@ -1,4 +1,4 @@
-import { parameterizeConnection, areAllConnectionsParameterized, hasParameterizedConnection } from '../parameterizer';
+import { parameterizeConnection, areAllConnectionsParameterized } from '../parameterizer';
 import type {
   ConnectionReferenceModel,
   FunctionConnectionModel,
@@ -6,91 +6,6 @@ import type {
   ConnectionsData,
 } from '@microsoft/vscode-extension-logic-apps';
 import { describe, it, expect } from 'vitest';
-
-describe('hasParameterizedConnection', () => {
-  it('should return true when there is one parameterized connection among others that are not parameterized', () => {
-    const connectionsData: ConnectionsData = {
-      managedApiConnections: {
-        connection1: {
-          api: {
-            id: '/subscriptions/subscription-test-id/providers/Microsoft.Web/locations/eastus2/managedApis/connection1',
-          },
-          connection: {
-            id: '/subscriptions/subscription-test-id/resourceGroups/vs-code-debug/providers/Microsoft.Web/connections/connection1',
-          },
-          connectionRuntimeUrl: 'https://example.com/runtimeUrl',
-          authentication: {
-            type: 'Raw',
-            scheme: 'Key',
-            parameter: 'connectionKey',
-          },
-        },
-        connection2: {
-          api: {
-            id: "/subscriptions/@{appsetting('WORKFLOWS_SUBSCRIPTION_ID')}/providers/Microsoft.Web/locations/@{appsetting('WORKFLOWS_LOCATION_NAME')}/managedApis/connection2",
-          },
-          connection: {
-            id: "/subscriptions/@{appsetting('WORKFLOWS_SUBSCRIPTION_ID')}/resourceGroups/@{appsetting('WORKFLOWS_RESOURCE_GROUP_NAME')}/providers/Microsoft.Web/connections/connection2",
-          },
-          connectionRuntimeUrl: "@parameters('connection2-ConnectionRuntimeUrl')",
-          authentication: {
-            type: 'Raw',
-            scheme: 'Key',
-            parameter: "@appsetting('connection2-connectionKey')",
-          },
-        },
-      },
-    };
-
-    const result = hasParameterizedConnection(connectionsData);
-    expect(result).toBe(true);
-  });
-
-  it('should return false when there are no parameterized connections', () => {
-    const connectionsData: ConnectionsData = {
-      managedApiConnections: {
-        connection1: {
-          api: {
-            id: '/subscriptions/subscription-test-id/providers/Microsoft.Web/locations/eastus2/managedApis/connection1',
-          },
-          connection: {
-            id: '/subscriptions/subscription-test-id/resourceGroups/vs-code-debug/providers/Microsoft.Web/connections/connection1',
-          },
-          connectionRuntimeUrl: 'https://example.com/runtimeUrl',
-          authentication: {
-            type: 'Raw',
-            scheme: 'Key',
-            parameter: 'connectionKey',
-          },
-        },
-      },
-      functionConnections: {
-        function1: {
-          function: {
-            id: '/subscriptions/subscription-test-id/resourceGroups/vs-code-debug/providers/Microsoft.Web/sites/vscodesite/functions/HttpTrigger',
-          },
-          triggerUrl: 'https://vscodesite.azurewebsites.net/api/httptrigger',
-          authentication: {
-            type: 'QueryString',
-            name: 'Code',
-            value: 'functionAppKey',
-          },
-          displayName: 'func01',
-        },
-      },
-    };
-
-    const result = hasParameterizedConnection(connectionsData);
-    expect(result).toBe(false);
-  });
-
-  it('should return true when there are no connections', () => {
-    const connectionsData: ConnectionsData = {};
-
-    const result = hasParameterizedConnection(connectionsData);
-    expect(result).toBe(true);
-  });
-});
 
 describe('areAllConnectionsParameterized', () => {
   it('should return true when all connections are parameterized', () => {
