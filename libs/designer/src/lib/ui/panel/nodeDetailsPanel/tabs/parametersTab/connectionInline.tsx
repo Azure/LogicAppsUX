@@ -29,9 +29,7 @@ export const ConnectionInline = () => {
   const { data: operationManifest } = useOperationManifest(operationInfo);
   const connectionMetadata = getConnectionMetadata(operationManifest);
   const hasExistingConnection = useSelector((state: RootState) => !!getRecordEntry(state.connections.connectionsMapping, nodeId));
-
   const existingReferences = useSelector((state: RootState) => Object.keys(state.connections.connectionReferences));
-
   const assistedConnectionProps = useMemo(
     () => (connector ? getAssistedConnectionProps(connector, operationManifest) : undefined),
     [connector, operationManifest]
@@ -45,6 +43,10 @@ export const ConnectionInline = () => {
     },
     [dispatch, nodeIds]
   );
+
+  if (hasExistingConnection) {
+    return null;
+  }
 
   return hasConnectionCreated ? (
     <CreateConnectionInternal

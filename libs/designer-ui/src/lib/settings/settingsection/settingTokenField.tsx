@@ -78,6 +78,7 @@ export interface SettingTokenFieldProps extends SettingProps {
   hideValidationErrors?: ChangeHandler;
   hostOptions?: EditorHostOptions;
   subComponent?: JSX.Element | null;
+  subMenu?: JSX.Element | null;
 }
 
 export const SettingTokenField = ({ ...props }: SettingTokenFieldProps) => {
@@ -89,14 +90,15 @@ export const SettingTokenField = ({ ...props }: SettingTokenFieldProps) => {
   return (
     <>
       {!hideLabel && (
-        <div className="msla-input-parameter-label">
+        <div className="msla-input-parameter-label" style={{ display: 'flex', justifyContent: 'space-between' }}>
           <Label id={labelId} isRequiredField={props.required} text={props.label} />
+          {props.subMenu && props.subMenu}
         </div>
       )}
       <div key={props.id}>
         {isCustomEditor(props) ? <CustomTokenField {...props} labelId={labelId} /> : <TokenField {...props} labelId={labelId} />}
       </div>
-      {props.subComponent && props.subComponent}
+      <div className="msla-input-parameter-subcomponent">{props.subComponent && props.subComponent}</div>
     </>
   );
 };
