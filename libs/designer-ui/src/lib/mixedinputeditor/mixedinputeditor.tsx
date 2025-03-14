@@ -1,7 +1,7 @@
 import type React from 'react';
 import { useEffect, useState } from 'react';
 import { Toggle } from '@fluentui/react/lib/Toggle';
-import type { ChangeHandler, ValueSegment } from '@microsoft/logic-apps-shared';
+import { LOCAL_STORAGE_KEYS, type ChangeHandler, type ValueSegment } from '@microsoft/logic-apps-shared';
 import { addUseSchemaEditor, checkIsSchemaEditor } from './mixedinputeditorhelper';
 import { FloatingActionMenuInputs } from '../floatingactionmenu/floatingactionmenuinputs';
 import { SchemaEditor } from '../schemaeditor';
@@ -34,7 +34,7 @@ export const MixedInputEditor: React.FC<MixedInputEditorProps> = ({
     description: 'Toggle to use schema editor',
   });
   const [isSchemaEditor, setIsSchemaEditor] = useState<boolean>(() => {
-    const storedToggleValue = localStorage.getItem('mixedInputEditor_toggle');
+    const storedToggleValue = localStorage.getItem(LOCAL_STORAGE_KEYS.MIXED_INPUT_TOGGLE);
     const hasSchemaEditor = checkIsSchemaEditor(initialValue);
 
     if (storedToggleValue === null) {
@@ -50,11 +50,11 @@ export const MixedInputEditor: React.FC<MixedInputEditorProps> = ({
       if (JSON.stringify(updatedValue) !== JSON.stringify(initialValue)) {
         onChange?.({ value: updatedValue });
       }
-      if (localStorage.getItem('mixedInputEditor_toggle') !== 'true') {
-        localStorage.setItem('mixedInputEditor_toggle', 'true');
+      if (localStorage.getItem(LOCAL_STORAGE_KEYS.MIXED_INPUT_TOGGLE) !== 'true') {
+        localStorage.setItem(LOCAL_STORAGE_KEYS.MIXED_INPUT_TOGGLE, 'true');
       }
-    } else if (localStorage.getItem('mixedInputEditor_toggle') === 'true') {
-      localStorage.setItem('mixedInputEditor_toggle', 'false');
+    } else if (localStorage.getItem(LOCAL_STORAGE_KEYS.MIXED_INPUT_TOGGLE) === 'true') {
+      localStorage.setItem(LOCAL_STORAGE_KEYS.MIXED_INPUT_TOGGLE, 'false');
     }
   }, [isSchemaEditor, initialValue, onChange]);
 

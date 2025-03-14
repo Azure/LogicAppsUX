@@ -9,12 +9,8 @@ import type { AppDispatch, RootState } from '../../../../core/state/templates/st
 import type { TemplatePanelTab } from '@microsoft/designer-ui';
 import Constants from '../../../../common/constants';
 import { useExistingWorkflowNames } from '../../../../core/queries/template';
-import {
-  validateConnections,
-  validateWorkflowsBasicInfo,
-  validateParameters,
-  clearTemplateDetails,
-} from '../../../../core/state/templates/templateSlice';
+import { validateWorkflowsBasicInfo } from '../../../../core/actions/bjsworkflow/templates';
+import { validateConnections, validateParameters, clearTemplateDetails } from '../../../../core/state/templates/templateSlice';
 import { LogEntryLevel, LoggerService, Status, TemplateService } from '@microsoft/logic-apps-shared';
 import { useMutation } from '@tanstack/react-query';
 import type { CreateWorkflowHandler } from '../../../templates';
@@ -39,6 +35,9 @@ export const useCreateWorkflowPanelTabs = ({
     existingWorkflowName,
     selectedTabId,
     templateName,
+    subscriptionId,
+    resourceGroup,
+    location,
     workflowAppName,
     isConsumption,
     parameterDefinitions,
@@ -58,6 +57,9 @@ export const useCreateWorkflowPanelTabs = ({
     templateConnections: state.template.connections,
     workflows: state.template.workflows,
     isCreateView: state.workflow.isCreateView,
+    subscriptionId: state.workflow.subscriptionId,
+    resourceGroup: state.workflow.resourceGroup,
+    location: state.workflow.location,
   }));
 
   const [errorMessage, setErrorMessage] = useState<string | undefined>(undefined);
@@ -65,6 +67,10 @@ export const useCreateWorkflowPanelTabs = ({
   const connectionsExist = useMemo(() => Object.keys(templateConnections).length > 0, [templateConnections]);
   const parametersExist = useMemo(() => Object.keys(parameterDefinitions).length > 0, [parameterDefinitions]);
   const hasParametersValidationErrors = useMemo(() => Object.values(parameterErrors).some((error) => !!error), [parameterErrors]);
+  const hasResourceValidationErrors = useMemo(
+    () => !subscriptionId || !resourceGroup || !location || (!isConsumption && !workflowAppName),
+    [subscriptionId, resourceGroup, location, isConsumption, workflowAppName]
+  );
 
   // Validation user inputs based on the selected tab.
   useEffect(() => {
@@ -75,7 +81,7 @@ export const useCreateWorkflowPanelTabs = ({
       dispatch(validateParameters());
     }
     if (!isConsumption && selectedTabId && selectedTabId !== Constants.TEMPLATE_PANEL_TAB_NAMES.BASIC) {
-      dispatch(validateWorkflowsBasicInfo({ validateName: !existingWorkflowName, existingNames: existingWorkflowNames ?? [] }));
+      dispatch(validateWorkflowsBasicInfo({ validateName: !existingWorkflowName, existingWorkflowNames: existingWorkflowNames ?? [] }));
     }
   }, [dispatch, isConsumption, existingWorkflowName, existingWorkflowNames, parametersExist, selectedTabId, connections.mapping]);
 
@@ -175,8 +181,20 @@ export const useCreateWorkflowPanelTabs = ({
         isCreating,
         onClosePanel,
         showCloseButton,
+        disabled: hasResourceValidationErrors,
       }),
-    [intl, dispatch, isMultiWorkflowTemplate, connectionsExist, parametersExist, workflows, isCreating, onClosePanel, showCloseButton]
+    [
+      intl,
+      dispatch,
+      isMultiWorkflowTemplate,
+      connectionsExist,
+      parametersExist,
+      workflows,
+      isCreating,
+      onClosePanel,
+      showCloseButton,
+      hasResourceValidationErrors,
+    ]
   );
 
   const connectionsTabItem = useMemo(
@@ -189,9 +207,21 @@ export const useCreateWorkflowPanelTabs = ({
         isCreating,
         onClosePanel,
         showCloseButton,
+        disabled: hasResourceValidationErrors,
       }),
     }),
-    [intl, dispatch, isMultiWorkflowTemplate, isConsumption, parametersExist, connectionsError, isCreating, onClosePanel, showCloseButton]
+    [
+      intl,
+      dispatch,
+      isMultiWorkflowTemplate,
+      isConsumption,
+      parametersExist,
+      connectionsError,
+      isCreating,
+      onClosePanel,
+      showCloseButton,
+      hasResourceValidationErrors,
+    ]
   );
 
   const parametersTabItem = useMemo(
@@ -207,6 +237,7 @@ export const useCreateWorkflowPanelTabs = ({
         isCreating,
         onClosePanel,
         showCloseButton,
+        disabled: hasResourceValidationErrors,
       }),
     }),
     [
@@ -219,6 +250,7 @@ export const useCreateWorkflowPanelTabs = ({
       isCreating,
       onClosePanel,
       showCloseButton,
+      hasResourceValidationErrors,
     ]
   );
 
@@ -240,6 +272,7 @@ export const useCreateWorkflowPanelTabs = ({
               : Constants.TEMPLATE_PANEL_TAB_NAMES.BASIC,
         onClosePanel,
         showCloseButton,
+        disabled: hasResourceValidationErrors,
       }),
     }),
     [
@@ -258,12 +291,13 @@ export const useCreateWorkflowPanelTabs = ({
       isConsumption,
       onClosePanel,
       showCloseButton,
+      hasResourceValidationErrors,
     ]
   );
 
   const tabs = useMemo(() => {
     const validTabs = [];
-    if (!isConsumption) {
+    if (!isConsumption || isCreateView) {
       validTabs.push(nameStateTabItem);
     }
     if (connectionsExist) {
@@ -274,7 +308,16 @@ export const useCreateWorkflowPanelTabs = ({
     }
     validTabs.push(reviewCreateTabItem);
     return validTabs;
-  }, [isConsumption, connectionsExist, parametersExist, connectionsTabItem, parametersTabItem, nameStateTabItem, reviewCreateTabItem]);
+  }, [
+    isConsumption,
+    isCreateView,
+    connectionsExist,
+    parametersExist,
+    reviewCreateTabItem,
+    nameStateTabItem,
+    connectionsTabItem,
+    parametersTabItem,
+  ]);
 
   return tabs;
 };

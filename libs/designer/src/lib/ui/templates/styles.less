@@ -24,23 +24,31 @@
     }
 }
 
-.msla-templates-filters-row {
+.msla-templates-filters-tabs {
     display: flex;
     flex-direction: row;
     justify-content: space-between;
     align-items: center;
 }
 
-.msla-templates-filters {
+.msla-templates-agent-filters-tabs {
+    margin-top: 20px;
+}
+
+.msla-templates-search-and-filters {
     align-items: center;
     justify-content: center;
     width: 100%;
 
-    .msla-templates-filters-search {
-        align-items: center;
-        justify-content: center;
-        width: 585px;
-        margin: auto;
+    .msla-templates-search-and-sort {
+        display: flex;
+        margin: 0 10px 0 10px;
+    }
+
+    .msla-templates-filters-search-box {
+        flex-grow: 2;
+        max-width: 100%;
+        border-radius: 4px;
     }
 
     .msla-templates-filters-dropdowns {
@@ -53,12 +61,12 @@
     .msla-templates-filters-sort {
         display: flex;
         justify-content: flex-end;
-        padding-top: 10px;
+        width: 50%;
+        border-radius: 4px;
     }
 
     .msla-templates-filters-sort-dropdown {
         width: 200px;
-        margin-left: 6px;
     }
 }
 
@@ -99,6 +107,9 @@
             cursor: pointer;
         }
     }
+    .ms-DetailsRow {
+        border-bottom: none;
+    }
 }
 
 .msla-templates-parameters-callout {
@@ -128,4 +139,46 @@
 
         }
     }
+}
+
+.msla-template-connection-grid-cell {
+    display: flex;
+
+    .msla-template-connection-cell-content {
+        margin-top: 12px;
+    }
+}
+
+.msla-template-connection-compact {
+    display: flex;
+    flex-direction: row;
+
+    .msla-template-connection-compact-image {
+        border: #dcd8d8 1px solid;
+        border-radius: 4px;
+        padding: 10px 0 0 10px;
+        width: 40px;
+        height: 40px;
+    }
+
+    .msla-template-connection-compact-text {
+        display: flex;
+        flex-direction: column;
+        padding-left: 10px;
+        margin-top: 8px;
+
+        .msla-template-connection-compact-connector {
+            font-weight: 500;
+        }
+
+        .msla-template-connection-compact-status {
+            font-size: 12px;
+        }
+    }
+}
+
+.msla-connection-status-compact {
+	display: flex;
+	align-items: center;
+	gap: 6px;	
 }

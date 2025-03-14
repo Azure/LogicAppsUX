@@ -1,10 +1,105 @@
-import { parameterizeConnection } from '../parameterizer';
+import { parameterizeConnection, areAllConnectionsParameterized } from '../parameterizer';
 import type {
   ConnectionReferenceModel,
   FunctionConnectionModel,
   APIManagementConnectionModel,
+  ConnectionsData,
 } from '@microsoft/vscode-extension-logic-apps';
 import { describe, it, expect } from 'vitest';
+
+describe('areAllConnectionsParameterized', () => {
+  it('should return true when all connections are parameterized', () => {
+    const connectionsData: ConnectionsData = {
+      managedApiConnections: {
+        connection1: {
+          api: {
+            id: "/subscriptions/@{appsetting('WORKFLOWS_SUBSCRIPTION_ID')}/providers/Microsoft.Web/locations/@{appsetting('WORKFLOWS_LOCATION_NAME')}/managedApis/connection1",
+          },
+          connection: {
+            id: "/subscriptions/@{appsetting('WORKFLOWS_SUBSCRIPTION_ID')}/resourceGroups/@{appsetting('WORKFLOWS_RESOURCE_GROUP_NAME')}/providers/Microsoft.Web/connections/connection1",
+          },
+          connectionRuntimeUrl: "@parameters('connection1-ConnectionRuntimeUrl')",
+          authentication: {
+            type: 'Raw',
+            scheme: 'Key',
+            parameter: "@appsetting('connection1-connectionKey')",
+          },
+        },
+      },
+      functionConnections: {
+        function1: {
+          function: {
+            id: "/subscriptions/@{appsetting('WORKFLOWS_SUBSCRIPTION_ID')}/resourceGroups/@{parameters('azureFunctionOperation-ResourceGroup')}/providers/Microsoft.Web/sites/@{parameters('azureFunctionOperation-SiteName')}/functions/HttpTrigger",
+          },
+          triggerUrl: "@parameters('azureFunctionOperation-TriggerUrl')",
+          authentication: {
+            type: 'QueryString',
+            name: 'Code',
+            value: "@appsetting('azureFunctionOperation_functionAppKey')",
+          },
+          displayName: 'func01',
+        },
+      },
+    };
+
+    const result = areAllConnectionsParameterized(connectionsData);
+    expect(result).toBe(true);
+  });
+
+  it('should return false when not all connections are parameterized', () => {
+    const connectionsData: ConnectionsData = {
+      managedApiConnections: {
+        connection1: {
+          api: {
+            id: "/subscriptions/@{appsetting('WORKFLOWS_SUBSCRIPTION_ID')}/providers/Microsoft.Web/locations/@{appsetting('WORKFLOWS_LOCATION_NAME')}/managedApis/connection1",
+          },
+          connection: {
+            id: "/subscriptions/@{appsetting('WORKFLOWS_SUBSCRIPTION_ID')}/resourceGroups/@{appsetting('WORKFLOWS_RESOURCE_GROUP_NAME')}/providers/Microsoft.Web/connections/connection1",
+          },
+          connectionRuntimeUrl: "@parameters('connection1-ConnectionRuntimeUrl')",
+          authentication: {
+            type: 'Raw',
+            scheme: 'Key',
+            parameter: "@appsetting('connection1-connectionKey')",
+          },
+        },
+      },
+      functionConnections: {
+        function1: {
+          function: {
+            id: '/subscriptions/subscription-test-id/resourceGroups/vs-code-debug/providers/Microsoft.Web/sites/vscodesite/functions/HttpTrigger',
+          },
+          triggerUrl: 'https://vscodesite.azurewebsites.net/api/httptrigger',
+          authentication: {
+            type: 'QueryString',
+            name: 'Code',
+            value: "@appsetting('azureFunctionOperation_functionAppKey')",
+          },
+          displayName: 'func01',
+        },
+      },
+      apiManagementConnections: {
+        apiManagement1: {
+          apiId:
+            '/subscriptions/subscription-test-id/resourceGroups/vs-code-debug/providers/Microsoft.ApiManagement/service/vscodeservicename/apis/echo-api',
+          baseUrl: "@parameters('apiManagementOperation-BaseUrl')",
+          subscriptionKey: "@appsetting('apiManagementOperation_SubscriptionKey')",
+          displayName: 'api01',
+        },
+      },
+    };
+
+    const result = areAllConnectionsParameterized(connectionsData);
+    expect(result).toBe(false);
+  });
+
+  it('should return true when connectionsData is empty', () => {
+    const connectionsData: ConnectionsData = {};
+
+    const result = areAllConnectionsParameterized(connectionsData);
+    expect(result).toBe(true);
+  });
+});
 
 describe('parameterizeConnection for ConnectionReferenceModel', () => {
   it('should parameterize Connection Reference', () => {

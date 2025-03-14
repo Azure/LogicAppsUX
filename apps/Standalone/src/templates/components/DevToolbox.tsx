@@ -1,7 +1,16 @@
 import type { AppDispatch, RootState } from '../state/Store';
 import type { IDropdownOption } from '@fluentui/react';
-import { Dropdown, Stack, StackItem, Checkbox } from '@fluentui/react';
-import { Accordion, AccordionHeader, AccordionItem, AccordionPanel, tokens } from '@fluentui/react-components';
+import { Dropdown, Stack, StackItem } from '@fluentui/react';
+import {
+  Accordion,
+  AccordionHeader,
+  AccordionItem,
+  AccordionPanel,
+  tokens,
+  MessageBar,
+  Checkbox,
+  type CheckboxOnChangeData,
+} from '@fluentui/react-components';
 import { Theme as ThemeType } from '@microsoft/logic-apps-shared';
 import { useCallback } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
@@ -44,8 +53,22 @@ export const DevToolbox = ({ templatesList = [] }: { templatesList?: { key: stri
   );
 
   const changeEndpointUsage = useCallback(
-    (_: unknown, checked?: boolean) => {
-      dispatch(workflowLoaderSlice.actions.setUseEndpoint(!!checked));
+    (_: unknown, data: CheckboxOnChangeData) => {
+      dispatch(workflowLoaderSlice.actions.setUseEndpoint(!!data.checked));
+    },
+    [dispatch]
+  );
+
+  const changeCreateView = useCallback(
+    (_: unknown, data: CheckboxOnChangeData) => {
+      dispatch(workflowLoaderSlice.actions.setCreateView(!!data.checked));
+    },
+    [dispatch]
+  );
+
+  const changeResourceSelection = useCallback(
+    (_: unknown, data: CheckboxOnChangeData) => {
+      dispatch(workflowLoaderSlice.actions.setEnableResourceSelection(!!data.checked));
     },
     [dispatch]
   );
@@ -56,21 +79,38 @@ export const DevToolbox = ({ templatesList = [] }: { templatesList?: { key: stri
   return (
     <ThemeProvider theme={isLightMode ? AzureThemeLight : AzureThemeDark}>
       <FluentProvider theme={isLightMode ? webLightTheme : webDarkTheme}>
-        <div style={{ marginBottom: '8px', backgroundColor: tokens.colorNeutralBackground2, padding: 4 }}>
+        <div
+          style={{
+            backgroundColor: tokens.colorNeutralBackground3,
+            borderBottom: `1px solid ${tokens.colorNeutralBackground3Pressed}`,
+          }}
+        >
           <Accordion defaultOpenItems={'1'} collapsible style={{ position: 'relative' }}>
-            {armToken ? null : <span style={{ color: 'red', padding: 10 }}> Reload page after loading arm token.</span>}
+            {armToken ? null : (
+              <MessageBar intent="error" style={{ margin: '8px' }}>
+                Reload page after loading arm token.
+              </MessageBar>
+            )}
             <AccordionItem value="1">
               <AccordionHeader>Dev Toolbox</AccordionHeader>
-              <AccordionPanel>
+              <AccordionPanel style={{ padding: '0px 12px 16px' }}>
                 <Stack horizontal tokens={{ childrenGap: '12px' }} wrap>
-                  <StackItem key={'themeDropDown'} style={{ display: 'flex', flexDirection: 'row' }}>
+                  <StackItem
+                    key={'themeDropDown'}
+                    style={{
+                      display: 'flex',
+                      flexDirection: 'row',
+                      gap: '12px',
+                      alignItems: 'end',
+                    }}
+                  >
                     <Dropdown
                       label="Theme"
                       selectedKey={theme}
                       onChange={changeThemeCB}
                       placeholder="Select a theme"
                       options={themeDropdownOptions}
-                      style={{ margin: '0 12px 12px 0', width: '100px' }}
+                      style={{ width: '100px' }}
                     />
                     <Dropdown
                       label="Templates View"
@@ -78,9 +118,11 @@ export const DevToolbox = ({ templatesList = [] }: { templatesList?: { key: stri
                       onChange={changeTemplatesView}
                       placeholder="Select templates view"
                       options={[...templatesViewOptions, ...templatesList]}
-                      style={{ margin: '0 12px 12px 0', width: '250px' }}
+                      style={{ width: '250px' }}
                     />
-                    <Checkbox label="Use Endpoint" onChange={changeEndpointUsage} styles={{ root: { margin: '30px 0 0 12px' } }} />
+                    <Checkbox label="Use Endpoint" onChange={changeEndpointUsage} />
+                    <Checkbox label="Create View" onChange={changeCreateView} />
+                    <Checkbox label="Resource Selection" onChange={changeResourceSelection} />
                   </StackItem>
                   <StackItem style={{ width: '100%' }}>
                     <SourceSettings showHistoryButton={false} showHybridPlan={false} />

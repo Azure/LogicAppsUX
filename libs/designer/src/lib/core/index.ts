@@ -80,9 +80,12 @@ export {
   getIconUriFromManifest,
 } from './utils/card';
 export { addOperation } from './actions/bjsworkflow/add';
+export { addConnectorAsOperation } from './actions/bjsworkflow/agent';
 export { updateNodeConnection } from './actions/bjsworkflow/connections';
 export { storeStateToUndoRedoHistory, onUndoClick, onRedoClick } from './actions/bjsworkflow/undoRedo';
 export { useCanUndo, useCanRedo } from './state/undoRedo/undoRedoSelectors';
 export { resetDesignerView } from './state/designerView/designerViewSlice';
 export * from './queries/runs';
-export { reloadTemplates } from './actions/bjsworkflow/templates';
+export { reloadTemplates, type WorkflowTemplateData } from './actions/bjsworkflow/templates';
+export type { AppDispatch as TemplatesAppDispatch, RootState as TemplatesRootState } from './state/templates/store';
+export type { TemplateServiceOptions } from './templates/TemplatesDesignerContext';
