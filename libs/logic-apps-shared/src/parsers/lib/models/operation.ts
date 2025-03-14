@@ -261,6 +261,7 @@ interface ParameterBase {
   title?: string;
   visibility?: string;
   groupName?: string;
+  isConnectionRequired?: boolean;
 }
 
 export interface SchemaProperty extends ParameterBase {

@@ -41,16 +41,11 @@ export default {
     inputs: {
       type: 'object',
       properties: {
-        deploymentId: {
-          type: 'string',
-          title: 'Deployment identifier',
-          description: 'The deployment or model name.',
-          'x-ms-visibility': 'important',
-        },
         deploymentModel: {
           type: 'string',
           title: 'Deployment model',
           description: 'The deployment model connection',
+          'x-ms-connection-required': true,
           'x-ms-visibility': 'important',
         },
         temperature: {
@@ -127,7 +122,7 @@ export default {
           minimum: -2.0,
         },
       },
-      required: ['deploymentId', 'deploymentModel', 'messages'],
+      required: ['deploymentModel', 'messages'],
     },
     inputsLocation: ['inputs', 'parameters'],
     isInputsOptional: false,
