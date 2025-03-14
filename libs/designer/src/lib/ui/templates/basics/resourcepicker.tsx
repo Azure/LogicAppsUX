@@ -5,7 +5,7 @@ import { Option, Field, Dropdown } from '@fluentui/react-components';
 import { useEffect, useMemo, useState } from 'react';
 import { useLocations, useLogicApps, useResourceGroups, useSubscriptions } from '../../../core/templates/utils/queries';
 import { setLocation, setResourceGroup, setSubscription, setWorkflowAppName } from '../../../core/state/templates/workflowSlice';
-import type { Resource } from '@microsoft/logic-apps-shared';
+import { type Resource, equals } from '@microsoft/logic-apps-shared';
 import { useTemplatesStrings } from '../templatesStrings';
 
 export const ResourcePicker = () => {
@@ -124,7 +124,7 @@ const ResourceField = ({
   const [selectedResource, setSelectedResource] = useState<string | undefined>('');
   useEffect(() => {
     if (!isLoading) {
-      const resource = resources.find((resource) => resource.name === defaultKey)?.displayName;
+      const resource = resources.find((resource) => equals(resource.name, defaultKey))?.displayName;
       if (!resource && !!defaultKey) {
         onSelect('');
       }

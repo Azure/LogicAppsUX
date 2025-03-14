@@ -3,6 +3,7 @@ import { createSlice } from '@reduxjs/toolkit';
 import type { ConnectionReferences } from '../../../common/models/workflow';
 import type { UpdateConnectionPayload } from '../../actions/bjsworkflow/connections';
 import { getExistingReferenceKey } from '../../utils/connectors/connections';
+import { resetTemplatesState } from '../global';
 
 export interface ResourceDetails {
   subscriptionId: string;
@@ -110,6 +111,9 @@ export const workflowSlice = createSlice({
     setWorkflowAppName: (state, action: PayloadAction<string>) => {
       state.workflowAppName = action.payload;
     },
+  },
+  extraReducers: (builder) => {
+    builder.addCase(resetTemplatesState, () => initialState);
   },
 });
 

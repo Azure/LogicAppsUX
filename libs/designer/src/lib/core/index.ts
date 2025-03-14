@@ -32,7 +32,7 @@ export {
   useIsWorkflowParametersDirty,
   useWorkflowParameterValidationErrors,
 } from './state/workflowparameters/workflowparametersselector';
-export { useIsDesignerDirty, resetDesignerDirtyState } from './state/global';
+export { useIsDesignerDirty, resetDesignerDirtyState, resetTemplatesState } from './state/global';
 export { useAllSettingsValidationErrors } from './state/setting/settingSelector';
 export { useAllConnectionErrors } from './state/operation/operationSelector';
 export { serializeWorkflow, parseWorkflowParameterValue } from './actions/bjsworkflow/serializer';

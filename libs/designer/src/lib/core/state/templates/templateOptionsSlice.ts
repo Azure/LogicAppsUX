@@ -2,6 +2,7 @@ import type { Template } from '@microsoft/logic-apps-shared';
 import type { PayloadAction } from '@reduxjs/toolkit';
 import { createSlice } from '@reduxjs/toolkit';
 import { initializeTemplateServices } from '../../actions/bjsworkflow/templates';
+import { resetTemplatesState } from '../global';
 
 export interface TemplateOptionsState {
   servicesInitialized: boolean;
@@ -25,6 +26,7 @@ export const templateOptionsSlice = createSlice({
     },
   },
   extraReducers: (builder) => {
+    builder.addCase(resetTemplatesState, () => initialState);
     builder.addCase(initializeTemplateServices.fulfilled, (state, action) => {
       state.servicesInitialized = action.payload;
     });
