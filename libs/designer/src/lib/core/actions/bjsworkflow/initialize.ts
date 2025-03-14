@@ -391,7 +391,7 @@ const getManifestOutputAndTokenData = async (
     };
   }
 
-  return processOutputsAndTokens(nodeId, manifest, isTrigger, inputs, operationInfo, dispatch, splitOnValue);
+  return processOutputsAndTokens(nodeId, manifest, isTrigger, inputs, operationInfo, dispatch, splitOnValue, agentParent);
 };
 
 // Helper to process outputs & tokens
@@ -402,20 +402,24 @@ const processOutputsAndTokens = (
   inputs: NodeInputs,
   operationInfo: NodeOperation,
   dispatch: Dispatch,
-  splitOnValue?: string
-) => ({
-  nodeOutputs: getOutputParametersFromManifest(nodeId, manifest, isTrigger, inputs, operationInfo, dispatch, splitOnValue).outputs,
-  tokens: [
-    ...getBuiltInTokens(manifest),
-    ...convertOutputsToTokens(
-      isTrigger ? undefined : nodeId,
-      operationInfo.type,
-      manifest.properties.outputs ?? {},
-      { iconUri: manifest.properties.iconUri, brandColor: manifest.properties.brandColor },
-      {}
-    ),
-  ],
-});
+  splitOnValue?: string,
+  agentParent?: string
+) => {
+  const nodeOutputs = getOutputParametersFromManifest(nodeId, manifest, isTrigger, inputs, operationInfo, dispatch, splitOnValue).outputs;
+  return {
+    nodeOutputs,
+    tokens: [
+      ...getBuiltInTokens(manifest),
+      ...convertOutputsToTokens(
+        isTrigger ? undefined : nodeId,
+        agentParent ? Constants.NODE.TYPE.AGENT_CONDITION : operationInfo.type,
+        nodeOutputs.outputs ?? {},
+        { iconUri: manifest.properties.iconUri, brandColor: manifest.properties.brandColor },
+        {}
+      ),
+    ],
+  };
+};
 
 const getSwaggerOutputAndTokenData = async (
   nodeId: string,

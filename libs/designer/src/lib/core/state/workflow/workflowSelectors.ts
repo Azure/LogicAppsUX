@@ -107,11 +107,18 @@ export const useIsGraphCollapsed = (graphId: string): boolean =>
 export const useIsActionCollapsed = (actionId: string): boolean =>
   useSelector(createSelector(getWorkflowState, (state: WorkflowState): boolean => state.collapsedActionIds?.[actionId]));
 
-export const useGetSwitchParentId = (nodeId: string): string | undefined => {
+export const useGetSwitchOrAgentParentId = (nodeId: string): { parentId?: string; type?: string } | undefined => {
   return useSelector(
-    createSelector(getWorkflowState, (state: WorkflowState) =>
-      state.nodesMetadata[nodeId]?.subgraphType === SUBGRAPH_TYPES.SWITCH_CASE ? state.nodesMetadata[nodeId]?.parentNodeId : undefined
-    )
+    createSelector(getWorkflowState, (state: WorkflowState) => {
+      const nodeMetadata = state.nodesMetadata[nodeId];
+      const subgraphType = nodeMetadata?.subgraphType;
+
+      if (subgraphType === SUBGRAPH_TYPES.SWITCH_CASE || subgraphType === SUBGRAPH_TYPES.AGENT_CONDITION) {
+        return { parentId: nodeMetadata?.parentNodeId, type: subgraphType };
+      }
+
+      return undefined;
+    })
   );
 };
 

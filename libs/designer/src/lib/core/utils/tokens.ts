@@ -134,6 +134,18 @@ export const convertOutputsToTokens = (
   const { iconUri: icon, brandColor } = operationMetadata;
   const isSecure = hasSecureOutputs(nodeType, settings);
 
+  let tokenType: TokenType;
+  switch (nodeType) {
+    case Constants.NODE.TYPE.FOREACH:
+      tokenType = TokenType.ITEM;
+      break;
+    case Constants.NODE.TYPE.AGENT_CONDITION:
+      tokenType = TokenType.AGENTPARAMETER;
+      break;
+    default:
+      tokenType = TokenType.OUTPUTS;
+  }
+
   // TODO - Look at repetition context to get foreach context correctly in tokens and for splitOn
   return Object.keys(outputs).map((outputKey) => {
     const {
@@ -164,7 +176,7 @@ export const convertOutputsToTokens = (
       description,
       isAdvanced,
       outputInfo: {
-        type: nodeType.toLowerCase() === Constants.NODE.TYPE.FOREACH ? TokenType.ITEM : TokenType.OUTPUTS,
+        type: tokenType,
         required,
         format,
         source,
@@ -315,7 +327,6 @@ export const getOutputTokenSections = (
 
     tokenGroups.push(...(outputTokenGroups.filter((group) => !!group) as TokenGroup[]));
   }
-  console.log(tokenGroups);
   return tokenGroups;
 };
 
@@ -376,7 +387,7 @@ export const createValueSegmentFromToken = async (
       };
     }
 
-    if (equals(tokenOwnerOperationInfo.type, Constants.NODE.TYPE.FOREACH)) {
+    if (equals(tokenOwnerOperationInfo?.type, Constants.NODE.TYPE.FOREACH)) {
       (tokenValueSegment.token as Token).arrayDetails = {
         ...tokenValueSegment.token?.arrayDetails,
         loopSource: tokenOwnerActionName,

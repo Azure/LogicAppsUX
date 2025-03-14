@@ -28,27 +28,30 @@ export default {
               title: 'Type',
               default: 'Tool',
             },
-            agentParameterSchema: {
+            schema: {
+              title: 'Agent Parameter Schema',
+              description: 'The agent parameter schema',
               type: 'object',
               'x-ms-editor': 'schema',
             },
           },
           required: ['description'],
         },
-        outputs: { 
+        outputs: {
           type: 'object',
+          required: ['schema'],
           properties: {
-            agentParameterSchema: {
-              type: 'object',
-              'x-ms-editor': 'schema',
+            schema: {
+              title: 'Agent Schema',
+              description: 'The agent parameter schema',
             },
           },
         },
         outputsSchema: {
           outputPaths: [
             {
-              outputLocation: ['properties', 'body'],
-              name: 'agentParameterSchema',
+              outputLocation: ['properties', 'schema'],
+              name: 'schema',
               schema: 'Value',
             },
           ],

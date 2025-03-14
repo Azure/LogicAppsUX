@@ -38,6 +38,7 @@ export const initialState: TokensState = {
 export interface InitializeTokensAndVariablesPayload {
   outputTokens: Record<string, NodeTokens>;
   variables: Record<string, VariableDeclaration[]>;
+  agentParameters?: Record<string, AgentParameters>;
 }
 
 interface AddDynamicTokensPayload {
@@ -50,12 +51,15 @@ export const tokensSlice = createSlice({
   initialState,
   reducers: {
     initializeTokensAndVariables: (state, action: PayloadAction<InitializeTokensAndVariablesPayload>) => {
-      const { outputTokens, variables } = action.payload;
+      const { outputTokens, variables, agentParameters } = action.payload;
       state.outputTokens = {
         ...state.outputTokens,
         ...outputTokens,
       };
       state.variables = { ...state.variables, ...variables };
+      if (agentParameters) {
+        state.agentParameters = { ...state.agentParameters, ...agentParameters };
+      }
     },
     deinitializeTokensAndVariables: (state, action: PayloadAction<{ id: string }>) => {
       const { id } = action.payload;
