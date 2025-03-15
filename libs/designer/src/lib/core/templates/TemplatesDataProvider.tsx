@@ -11,7 +11,7 @@ import {
   lazyLoadGithubManifests,
 } from '../state/templates/manifestSlice';
 import { type ResourceDetails, setInitialData } from '../state/templates/workflowSlice';
-import { useAreServicesInitialized } from '../state/templates/templateselectors';
+import { useServiceOptions } from '../state/templates/templateselectors';
 import type { ConnectionReferences } from '../../common/models/workflow';
 import { getFilteredTemplates } from './utils/helper';
 import { initializeTemplateServices, reloadTemplates } from '../actions/bjsworkflow/templates';
@@ -29,7 +29,9 @@ export interface TemplatesDataProviderProps {
   viewTemplate?: Template.ViewTemplateDetails;
   children?: React.ReactNode;
   reload?: boolean;
+  servicesToReload?: Partial<TemplateServiceOptions>;
   enableResourceSelection?: boolean;
+  onResourceChange?: () => void;
 }
 
 const DataProviderInner = ({ isConsumption, children, reload, services }: TemplatesDataProviderProps) => {
@@ -79,7 +81,7 @@ const DataProviderInner = ({ isConsumption, children, reload, services }: Templa
 export const TemplatesDataProvider = (props: TemplatesDataProviderProps) => {
   const wrapped = useContext(TemplatesWrappedContext);
   const dispatch = useDispatch<AppDispatch>();
-  const servicesInitialized = useAreServicesInitialized();
+  const { servicesInitialized, reInitializeServices } = useServiceOptions();
 
   if (!wrapped) {
     throw new Error('TemplatesDataProvider must be used inside of a TemplatesWrappedContext');
@@ -123,6 +125,12 @@ export const TemplatesDataProvider = (props: TemplatesDataProviderProps) => {
       dispatch(setEnableResourceSelection(props.enableResourceSelection));
     }
   }, [dispatch, props.enableResourceSelection, props.viewTemplate]);
+
+  useEffect(() => {
+    if (reInitializeServices && props.onResourceChange) {
+      props.onResourceChange();
+    }
+  }, [reInitializeServices, props.onResourceChange]);
 
   if (!servicesInitialized) {
     return null;

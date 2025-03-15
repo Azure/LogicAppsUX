@@ -8,7 +8,6 @@ import type {
   ITemplateService,
   IWorkflowService,
   IOperationManifestService,
-  IDesignerUiInteractionsService,
   IExperimentationService,
   IConnectorService,
   IResourceService,
@@ -23,14 +22,13 @@ export interface TemplateServiceOptions {
   connectionService: IConnectionService;
   operationManifestService: IOperationManifestService;
   connectorService?: IConnectorService;
-  workflowService: IWorkflowService;
+  workflowService?: IWorkflowService;
   gatewayService?: IGatewayService;
   tenantService?: ITenantService;
   loggerService?: ILoggerService;
   oAuthService: IOAuthService;
   connectionParameterEditorService?: IConnectionParameterEditorService;
-  templateService?: ITemplateService;
-  uiInteractionsService?: IDesignerUiInteractionsService;
+  templateService: ITemplateService;
   experimentationService?: IExperimentationService;
   resourceService?: IResourceService;
 }

@@ -3,6 +3,7 @@ import type { PayloadAction } from '@reduxjs/toolkit';
 import { createSlice } from '@reduxjs/toolkit';
 import { validateConnectionsValue, validateParameterValue } from '../../templates/utils/helper';
 import { loadTemplate, validateWorkflowsBasicInfo, type TemplatePayload } from '../../actions/bjsworkflow/templates';
+import { resetTemplatesState } from '../global';
 
 export interface TemplateState extends TemplatePayload {
   templateName?: string;
@@ -92,6 +93,7 @@ export const templateSlice = createSlice({
     },
   },
   extraReducers: (builder) => {
+    builder.addCase(resetTemplatesState, () => initialState);
     builder.addCase(loadTemplate.fulfilled, (state, action: PayloadAction<TemplatePayload | undefined>) => {
       if (action.payload) {
         const { workflows, parameterDefinitions, connections, errors, manifest } = action.payload;

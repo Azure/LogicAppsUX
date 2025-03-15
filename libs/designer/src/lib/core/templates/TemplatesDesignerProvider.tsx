@@ -1,4 +1,5 @@
 import { templateStore } from '../state/templates/store';
+import { resetTemplatesState } from '../state/global';
 import { AzureThemeDark } from '@fluentui/azure-themes/lib/azure/AzureThemeDark';
 import { AzureThemeLight } from '@fluentui/azure-themes/lib/azure/AzureThemeLight';
 import { ThemeProvider } from '@fluentui/react';
@@ -6,8 +7,9 @@ import type { Theme } from '@fluentui/react-components';
 import { FluentProvider, themeToTokensObject, webDarkTheme, webLightTheme } from '@fluentui/react-components';
 import { IntlProvider, Theme as ThemeType } from '@microsoft/logic-apps-shared';
 import type React from 'react';
-import { Provider as ReduxProvider } from 'react-redux';
+import { Provider as ReduxProvider, useDispatch } from 'react-redux';
 import { TemplatesWrappedContext } from './TemplatesDesignerContext';
+import { useEffect } from 'react';
 
 interface ExtendedTheme extends Theme {
   [key: string]: any;
@@ -38,12 +40,13 @@ const extendedWebDarkTheme: ExtendedTheme = {
 export const customTokens = themeToTokensObject(extendedWebLightTheme);
 
 export interface TemplatesDesignerProviderProps {
+  id?: string;
   theme?: ThemeType;
   locale?: string;
   children: React.ReactNode;
 }
 
-export const TemplatesDesignerProvider = ({ theme = ThemeType.Light, locale = 'en', children }: TemplatesDesignerProviderProps) => {
+export const TemplatesDesignerProvider = ({ id, theme = ThemeType.Light, locale = 'en', children }: TemplatesDesignerProviderProps) => {
   return (
     <ReduxProvider store={templateStore}>
       <TemplatesWrappedContext.Provider value={{}}>
@@ -65,6 +68,7 @@ export const TemplatesDesignerProvider = ({ theme = ThemeType.Light, locale = 'e
                 throw err;
               }}
             >
+              <ReduxReset id={id} />
               {children}
             </IntlProvider>
           </FluentProvider>
@@ -72,4 +76,13 @@ export const TemplatesDesignerProvider = ({ theme = ThemeType.Light, locale = 'e
       </TemplatesWrappedContext.Provider>
     </ReduxProvider>
   );
+};
+
+// Redux state persists even through component re-mounts (like with changing the key prop in a parent), so we need to reset the state when the key changes manually
+const ReduxReset = ({ id }: { id?: string }) => {
+  const dispatch = useDispatch();
+  useEffect(() => {
+    dispatch(resetTemplatesState());
+  }, [id, dispatch]);
+  return null;
 };

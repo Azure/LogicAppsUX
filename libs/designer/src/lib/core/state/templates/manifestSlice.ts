@@ -4,6 +4,7 @@ import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
 import type { RootState } from './store';
 import type { FilterObject } from '@microsoft/designer-ui';
 import { loadManifestsFromPaths } from '../../actions/bjsworkflow/templates';
+import { resetTemplatesState } from '../global';
 
 export const templatesCountPerPage = 25;
 const initialPageNum = 0;
@@ -103,6 +104,7 @@ export const manifestSlice = createSlice({
     },
   },
   extraReducers: (builder) => {
+    builder.addCase(resetTemplatesState, () => initialManifestState);
     builder.addCase(loadGithubManifestNames.fulfilled, (state, action) => {
       state.availableTemplateNames = [...action.payload];
       state.githubTemplateNames = action.payload;

@@ -12,7 +12,6 @@ import {
   InitOperationManifestService,
   InitTemplateService,
   InitTenantService,
-  InitUiInteractionsService,
   InitWorkflowService,
   InitResourceService,
   LogEntryLevel,
@@ -35,6 +34,7 @@ import {
   setavailableTemplatesNames,
   setFilteredTemplateNames,
 } from '../../state/templates/manifestSlice';
+import { clearConnectionCaches } from '../../queries/connections';
 
 export interface WorkflowTemplateData {
   id: string;
@@ -89,69 +89,84 @@ export const isMultiWorkflowTemplate = (manifest: Template.TemplateManifest | un
   return Object.keys(manifest?.workflows ?? {}).length > 1;
 };
 
-export const initializeTemplateServices = createAsyncThunk(
-  'initializeTemplateServices',
-  async ({
-    connectionService,
-    operationManifestService,
-    connectorService,
-    workflowService,
-    oAuthService,
-    gatewayService,
-    tenantService,
-    connectionParameterEditorService,
-    templateService,
-    loggerService,
-    uiInteractionsService,
-    experimentationService,
-    resourceService,
-  }: TemplateServiceOptions) => {
-    InitConnectionService(connectionService);
-    InitOperationManifestService(operationManifestService);
-    InitOAuthService(oAuthService);
-    InitWorkflowService(workflowService);
-
-    const loggerServices: ILoggerService[] = [];
-    if (loggerService) {
-      loggerServices.push(loggerService);
-    }
-    if (process.env.NODE_ENV !== 'production') {
-      loggerServices.push(new DevLogger());
-    }
-    InitLoggerService(loggerServices);
-
-    if (connectorService) {
-      InitConnectorService(connectorService);
-    }
-
-    if (gatewayService) {
-      InitGatewayService(gatewayService);
-    }
-    if (tenantService) {
-      InitTenantService(tenantService);
-    }
-    if (connectionParameterEditorService) {
-      InitConnectionParameterEditorService(connectionParameterEditorService);
-    }
-    if (templateService) {
-      InitTemplateService(templateService);
-    }
-
-    if (uiInteractionsService) {
-      InitUiInteractionsService(uiInteractionsService);
-    }
-
-    if (resourceService) {
-      InitResourceService(resourceService);
-    }
-
-    // Experimentation service is being used to A/B test features in the designer so in case client does not want to use the A/B test feature,
-    // we are always defaulting to the false implementation of the experimentation service.
-    InitExperimentationServiceService(experimentationService);
-
+export const resetStateOnResourceChange = createAsyncThunk(
+  'resetStateOnResourceChange',
+  async (services: Partial<TemplateServiceOptions>) => {
+    clearConnectionCaches();
+    initializeServices(services);
     return true;
   }
 );
+
+export const initializeTemplateServices = createAsyncThunk('initializeTemplateServices', async (services: TemplateServiceOptions) => {
+  const { loggerService, experimentationService } = services;
+  const loggerServices: ILoggerService[] = [];
+  if (loggerService) {
+    loggerServices.push(loggerService);
+  }
+  if (process.env.NODE_ENV !== 'production') {
+    loggerServices.push(new DevLogger());
+  }
+  InitLoggerService(loggerServices);
+
+  initializeServices(services);
+
+  // Experimentation service is being used to A/B test features in the designer so in case client does not want to use the A/B test feature,
+  // we are always defaulting to the false implementation of the experimentation service.
+  InitExperimentationServiceService(experimentationService);
+
+  return true;
+});
+
+const initializeServices = ({
+  connectionService,
+  operationManifestService,
+  connectorService,
+  workflowService,
+  oAuthService,
+  gatewayService,
+  tenantService,
+  connectionParameterEditorService,
+  templateService,
+  resourceService,
+}: Partial<TemplateServiceOptions>) => {
+  if (connectionService) {
+    InitConnectionService(connectionService);
+  }
+
+  if (operationManifestService) {
+    InitOperationManifestService(operationManifestService);
+  }
+
+  if (oAuthService) {
+    InitOAuthService(oAuthService);
+  }
+
+  if (workflowService) {
+    InitWorkflowService(workflowService);
+  }
+
+  if (connectorService) {
+    InitConnectorService(connectorService);
+  }
+
+  if (gatewayService) {
+    InitGatewayService(gatewayService);
+  }
+  if (tenantService) {
+    InitTenantService(tenantService);
+  }
+  if (connectionParameterEditorService) {
+    InitConnectionParameterEditorService(connectionParameterEditorService);
+  }
+  if (templateService) {
+    InitTemplateService(templateService);
+  }
+
+  if (resourceService) {
+    InitResourceService(resourceService);
+  }
+};
 
 export const reloadTemplates = createAsyncThunk('reloadTemplates', async ({ clear }: { clear?: boolean }, thunkAPI: any) => {
   const dispatch = thunkAPI.dispatch;

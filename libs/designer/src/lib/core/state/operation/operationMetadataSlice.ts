@@ -4,7 +4,7 @@ import { StaticResultOption } from '../../actions/bjsworkflow/staticresults';
 import type { RepetitionContext } from '../../utils/parameters/helper';
 import { createTokenValueSegment, isTokenValueSegment } from '../../utils/parameters/segment';
 import { getTokenTitle, normalizeKey } from '../../utils/tokens';
-import { resetNodesLoadStatus, resetWorkflowState, setStateAfterUndoRedo } from '../global';
+import { resetNodesLoadStatus, resetTemplatesState, resetWorkflowState, setStateAfterUndoRedo } from '../global';
 import { LogEntryLevel, LoggerService, filterRecord, getRecordEntry } from '@microsoft/logic-apps-shared';
 import type { ParameterInfo } from '@microsoft/designer-ui';
 import type { FilePickerInfo, InputParameter, OutputParameter, OpenAPIV2, OperationInfo } from '@microsoft/logic-apps-shared';
@@ -588,6 +588,7 @@ export const operationMetadataSlice = createSlice({
   },
   extraReducers: (builder) => {
     builder.addCase(resetWorkflowState, () => initialState);
+    builder.addCase(resetTemplatesState, () => initialState);
     builder.addCase(resetNodesLoadStatus, (state) => {
       state.loadStatus.nodesInitialized = false;
       state.loadStatus.nodesAndDynamicDataInitialized = false;
