@@ -1,12 +1,14 @@
 import type { Template } from '@microsoft/logic-apps-shared';
 import type { PayloadAction } from '@reduxjs/toolkit';
-import { createSlice } from '@reduxjs/toolkit';
-import { initializeTemplateServices } from '../../actions/bjsworkflow/templates';
+import { createSlice, isAnyOf } from '@reduxjs/toolkit';
+import { initializeTemplateServices, resetStateOnResourceChange } from '../../actions/bjsworkflow/templates';
 import { resetTemplatesState } from '../global';
+import { setLocation, setResourceGroup, setSubscription } from './workflowSlice';
 
 export interface TemplateOptionsState {
   servicesInitialized: boolean;
   enableResourceSelection?: boolean;
+  reInitializeServices?: boolean;
   viewTemplateDetails?: Template.ViewTemplateDetails;
 }
 
@@ -29,6 +31,12 @@ export const templateOptionsSlice = createSlice({
     builder.addCase(resetTemplatesState, () => initialState);
     builder.addCase(initializeTemplateServices.fulfilled, (state, action) => {
       state.servicesInitialized = action.payload;
+    });
+    builder.addCase(resetStateOnResourceChange.fulfilled, (state, action) => {
+      state.reInitializeServices = !action.payload;
+    });
+    builder.addMatcher(isAnyOf(setSubscription, setResourceGroup, setLocation), (state, action) => {
+      state.reInitializeServices = !!action.payload;
     });
   },
 });

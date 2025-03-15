@@ -100,13 +100,28 @@ export const workflowSlice = createSlice({
       }
     },
     setSubscription: (state, action: PayloadAction<string>) => {
-      state.subscriptionId = action.payload;
+      const subscriptionId = action.payload;
+      state.subscriptionId = subscriptionId;
+
+      if (subscriptionId) {
+        state.connections.mapping = {};
+      }
     },
     setResourceGroup: (state, action: PayloadAction<string>) => {
-      state.resourceGroup = action.payload;
+      const resourceGroup = action.payload;
+      state.resourceGroup = resourceGroup;
+
+      if (resourceGroup) {
+        state.connections.mapping = {};
+      }
     },
     setLocation: (state, action: PayloadAction<string>) => {
-      state.location = action.payload;
+      const location = action.payload;
+      state.location = location;
+
+      if (location) {
+        state.connections.mapping = {};
+      }
     },
     setWorkflowAppName: (state, action: PayloadAction<string>) => {
       state.workflowAppName = action.payload;
