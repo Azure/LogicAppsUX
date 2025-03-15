@@ -55,6 +55,44 @@ export const parseVariableEditorSegments = (initialValue: ValueSegment[]): Initi
   }
 };
 
+export const parseSchemaAsVariableEditorSegments = (initialValue: ValueSegment[]): InitializeVariableProps[] => {
+  if (isEmptySegments(initialValue)) {
+    return [
+      { name: [createEmptyLiteralValueSegment()], type: [createEmptyLiteralValueSegment()], value: [createEmptyLiteralValueSegment()] },
+    ];
+  }
+
+  const nodeMap: Map<string, ValueSegment> = new Map<string, ValueSegment>();
+  const initialValueString = convertSegmentsToString(initialValue, nodeMap);
+  const wrappedValueString = wrapStringifiedTokenSegments(initialValueString);
+
+  try {
+    const schema = JSON.parse(wrappedValueString);
+
+    if (schema.type !== 'object' || !schema.properties || typeof schema.properties !== 'object') {
+      return [];
+    }
+
+    return Object.entries(schema.properties).map(([key, property]: [string, any]) => {
+      const { name, type, description } = property;
+      return {
+        name: [createLiteralValueSegment(name || key)],
+        type: [createLiteralValueSegment(type)],
+        description: [createLiteralValueSegment(description)],
+        value: [createEmptyLiteralValueSegment()],
+      };
+    });
+  } catch (error) {
+    LoggerService().log({
+      level: LogEntryLevel.Error,
+      area: 'Schema Editor',
+      message: 'Failed to parse schema editor segments',
+      args: [{ error }],
+    });
+    return [];
+  }
+};
+
 export const createVariableEditorSegments = (variables: InitializeVariableProps[] | undefined): ValueSegment[] => {
   if (!variables || variables.length === 0) {
     return [createEmptyLiteralValueSegment()];
@@ -79,6 +117,39 @@ export const createVariableEditorSegments = (variables: InitializeVariableProps[
   const stringifiedVariables = JSON.stringify(mappedVariables);
 
   return convertStringToSegments(stringifiedVariables, nodeMap, { tokensEnabled: true });
+};
+
+export const createVariableEditorSegmentsAsSchema = (variables: InitializeVariableProps[] | undefined): ValueSegment[] => {
+  if (!variables || variables.length === 0) {
+    return [createEmptyLiteralValueSegment()];
+  }
+
+  const nodeMap = new Map<string, ValueSegment>();
+  const properties: Record<string, any> = {};
+
+  variables.forEach((variable) => {
+    const { name: _name, type: _type, description: _description } = variable;
+    const name = convertSegmentsToString(_name);
+    const type = convertSegmentsToString(_type);
+    const description = convertSegmentsToString(_description ?? [], nodeMap);
+    const value: ValueSegment[] = [];
+
+    properties[name] = {
+      name,
+      type,
+      ...(description ? { description } : {}),
+      value,
+    };
+  });
+
+  const schema = {
+    type: 'object',
+    properties,
+  };
+
+  const stringifiedSchema = JSON.stringify(schema);
+
+  return convertStringToSegments(stringifiedSchema, nodeMap, { tokensEnabled: true });
 };
 
 export const getVariableType = (type: ValueSegment[]): string => {
@@ -206,6 +277,6 @@ export const validateVariables = (variables: InitializeVariableProps[]): Initial
 };
 
 export const isInitializeVariableParameter = (parameter: ParameterInfo): boolean => {
-  const { editor } = parameter;
-  return equals(editor, constants.PARAMETER.EDITOR.INITIALIZE_VARIABLE);
+  const { editor, editorOptions } = parameter;
+  return equals(editor, constants.PARAMETER.EDITOR.INITIALIZE_VARIABLE) && !editorOptions?.['isSchemaFormat'];
 };

@@ -241,12 +241,14 @@ export const getOutputTokenSections = (
   if (upstreamAgentConditionId && upstreamAgentNodeId) {
     const agentParameterTokens = (
       getRecordEntry(getRecordEntry(agentParameters, upstreamAgentNodeId), upstreamAgentConditionId)?.tokens ?? []
-    ).map((agentParameterToken) => {
-      return {
-        ...agentParameterToken,
-        value: getTokenValue(agentParameterToken, nodeType, replacementIds),
-      };
-    });
+    )
+      .map((agentParameterToken) => {
+        return {
+          ...agentParameterToken,
+          value: getTokenValue(agentParameterToken, nodeType, replacementIds),
+        };
+      })
+      .filter((token) => token.key !== 'outputs.$.schema');
     if (agentParameterTokens.length) {
       tokenGroups.push({
         id: 'agentparameters',

@@ -57,8 +57,8 @@
                 "inputs": {
                   "uri": "http://google.com",
                   "method": "POST",
-                  "headers": "@agentParameters()?['schema']",
-                  "body": "@agentParameters()?['schema']?['Property1']"
+                  "headers": "@agentParameters('TestParameter')",
+                  "body": "@agentParameters('Parameter1')"
                 },
                 "runAfter": {
                   "HTTP": ["SUCCEEDED"]
@@ -75,12 +75,13 @@
             "schema": {
               "type": "object",
               "properties": {
-                "Property1": {
+                "Parameter1": {
+                  "name": "Parameter1",
                   "type": "string",
-                  "description": "This is a string property",
-                  "title": "TestProperty"
+                  "description": "This is a string property"
                 },
-                "Property2": {
+                "TestParameter": {
+                  "name": "TestParameter",
                   "type": "boolean",
                   "description": "This is a boolean property"
                 }

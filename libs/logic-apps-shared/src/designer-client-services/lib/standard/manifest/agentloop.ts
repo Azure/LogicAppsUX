@@ -32,20 +32,16 @@ export default {
               title: 'Agent Parameter Schema',
               description: 'The agent parameter schema',
               type: 'object',
-              'x-ms-editor': 'schema',
+              'x-ms-editor': 'initializevariable',
+              'x-ms-editor-options': {
+                isSchemaFormat: true,
+              },
             },
           },
           required: ['description'],
         },
         outputs: {
           type: 'object',
-          required: ['schema'],
-          properties: {
-            schema: {
-              title: 'Agent Schema',
-              description: 'The agent parameter schema',
-            },
-          },
         },
         outputsSchema: {
           outputPaths: [
@@ -119,7 +115,7 @@ export default {
     },
 
     connector: {
-      id: 'connectionProviders/agent',
+      id: '/connectionProviders/agent',
       name: 'Agent',
       properties: {
         description: 'Agent operations',

@@ -193,9 +193,7 @@ export const buildGraphFromActions = (
     allActions[actionName] = { ...action };
 
     const isRoot = Object.keys(action.runAfter ?? {}).length === 0 && parentNodeId;
-    nodesMetadata[actionName] = isAgentAction(action)
-      ? { graphId, parentNodeId: graphId }
-      : { graphId, ...(parentNodeId ? { parentNodeId: parentNodeId } : {}) };
+    nodesMetadata[actionName] = { graphId, parentNodeId: graphId };
     if (isScopeAction(action)) {
       const [scopeNodes, scopeEdges, scopeActions, scopeNodesMetadata] = processScopeActions(
         graphId,

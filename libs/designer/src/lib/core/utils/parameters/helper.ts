@@ -1036,6 +1036,7 @@ export function getExpressionValueForOutputToken(token: OutputToken, nodeType: s
   const {
     key,
     name,
+    title,
     outputInfo: { type: tokenType, actionName, required, arrayDetails, functionArguments, source },
   } = token;
   // get the expression value for webhook list callback url
@@ -1048,7 +1049,7 @@ export function getExpressionValueForOutputToken(token: OutputToken, nodeType: s
     case TokenType.VARIABLE:
       return getTokenValueFromToken(tokenType, functionArguments as string[]);
     case TokenType.AGENTPARAMETER:
-      return generateAgentParameterFromKey(key);
+      return `agentParameters(${convertToStringLiteral(title)})`;
 
     case TokenType.ITERATIONINDEX:
       return `iterationIndexes(${convertToStringLiteral(actionName as string)})`;
@@ -1103,17 +1104,6 @@ export function getTokenExpressionMethodFromKey(key: string, actionName?: string
     }
   }
   return constants.TRIGGER_OUTPUTS_OUTPUT;
-}
-
-export function generateAgentParameterFromKey(key: string): string {
-  const segments = parseEx(key);
-  let result = `${constants.FUNCTION_NAME.AGENT_PARAMETERS}()`;
-
-  const filteredSegments = segments.filter((segment) => segment.value !== 'outputs' && segment.value !== '$');
-  if (filteredSegments.length) {
-    result += filteredSegments.reduce((acc, segment) => `${acc}?[${convertToStringLiteral(segment.value as string)}]`, '');
-  }
-  return result;
 }
 
 function segmentsAreBodyReference(segments: Segment[]): boolean {
@@ -3260,6 +3250,7 @@ export function updateTokenMetadata(
   parameterNodeId?: string
 ): ValueSegment {
   const token = valueSegment.token as SegmentToken;
+  console.log(token);
   switch (token?.tokenType) {
     case TokenType.VARIABLE: {
       token.brandColor = VariableBrandColor;

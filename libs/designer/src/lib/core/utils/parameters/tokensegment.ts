@@ -41,9 +41,8 @@ export class TokenSegmentConvertor {
       return createTokenValueSegment(createParameterToken(parameterName), value);
     }
     if (TokenSegmentConvertor.isAgentParameterToken(expression)) {
-      const parameterName = (expression.dereferences[0].expression as ExpressionLiteral).value;
-      const agentParameterToken = createAgentParameterToken(parameterName, expression.dereferences);
-
+      const agentParameterName = (expression.arguments[0] as ExpressionLiteral).value;
+      const agentParameterToken = createAgentParameterToken(agentParameterName, expression.dereferences);
       return createTokenValueSegment(agentParameterToken, value);
     }
     if (TokenSegmentConvertor.isVariableToken(expression)) {
@@ -206,15 +205,15 @@ export class TokenSegmentConvertor {
       return false;
     }
 
-    if (numberOfArguments > 0) {
+    if (numberOfArguments !== 1) {
       return false;
     }
 
-    if (expression.dereferences.length < 1) {
+    if (functionArguments[0].type !== ExpressionType.StringLiteral) {
       return false;
     }
 
-    if (expression.dereferences.filter((deref) => deref.expression.type !== ExpressionType.StringLiteral).length > 0) {
+    if (expression.dereferences.length > 0) {
       return false;
     }
 

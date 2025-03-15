@@ -397,6 +397,7 @@ export const TokenField = ({
           tokenMapping={tokenMapping}
           loadParameterValueFromString={loadParameterValueFromString}
           readonly={readOnly}
+          isSchemaFormat={editorOptions?.isSchemaFormat}
           tokenPickerButtonProps={tokenpickerButtonProps}
           dataAutomationId={`msla-setting-token-editor-initializevariableeditor-${labelForAutomationId}`}
           isMultiVariableEnabled={hostOptions?.isMultiVariableEnabled}
