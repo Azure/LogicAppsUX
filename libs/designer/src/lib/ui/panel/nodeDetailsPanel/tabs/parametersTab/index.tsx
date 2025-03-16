@@ -247,22 +247,22 @@ const ParameterSection = ({
       const { value, viewModel } = newState;
       const parameter = nodeInputs.parameterGroups[group.id].parameters.find((param: any) => param.id === id);
 
-      const propertiesToUpdate = {
+      const propertiesToUpdate: Partial<ParameterInfo> = {
         value,
         preservedValue: undefined,
-        ...(viewModel !== undefined && { editorViewModel: viewModel }),
-      } as Partial<ParameterInfo>;
+        ...(viewModel && { editorViewModel: viewModel }),
+      };
 
       if (isInitializeVariableOperation(operationInfo)) {
-        const variables: InitializeVariableProps[] | undefined = newState?.viewModel?.variables;
-        if (variables) {
+        const variables: InitializeVariableProps[] | undefined = viewModel?.variables;
+        if (variables?.length) {
           dispatch(
             updateVariableInfo({
               id: nodeId,
-              variables: variables.map((variable) => {
+              variables: variables.map(({ name, type }) => {
                 return {
-                  name: variable?.name[0]?.value,
-                  type: variable?.type[0]?.value,
+                  name: name[0]?.value,
+                  type: type[0]?.value,
                 };
               }),
             })
@@ -270,17 +270,18 @@ const ParameterSection = ({
         }
       }
       const nodeMetadataInfo = getRecordEntry(nodesMetadata, nodeId);
-      if (nodesMetadata && nodeMetadataInfo?.subgraphType === SUBGRAPH_TYPES.AGENT_CONDITION && nodeMetadataInfo?.parentNodeId) {
-        const agentParameters: InitializeVariableProps[] | undefined = newState?.viewModel?.variables;
-        const agentParameter: Record<string, AgentParameterDeclaration> = {};
-        agentParameters?.forEach((agaentParameter) => {
-          const { name, type, description } = agaentParameter;
-          agentParameter[name[0].value] = {
-            name: name[0].value,
-            type: type[0].value,
-            description: convertSegmentsToString(description ?? []),
-          };
-        });
+      if (nodeMetadataInfo?.subgraphType === SUBGRAPH_TYPES.AGENT_CONDITION && nodeMetadataInfo?.parentNodeId) {
+        const agentParameters: InitializeVariableProps[] = viewModel?.variables ?? [];
+        const agentParameter: Record<string, AgentParameterDeclaration> = Object.fromEntries(
+          agentParameters.map(({ name, type, description }) => [
+            name?.[0]?.value,
+            {
+              name: name?.[0]?.value,
+              type: type?.[0]?.value,
+              description: convertSegmentsToString(description ?? []),
+            },
+          ])
+        );
         dispatch(
           updateAgentParameter({
             id: nodeId,
@@ -406,6 +407,7 @@ const ParameterSection = ({
           return !(
             token.outputInfo.type === TokenType.VARIABLE ||
             token.outputInfo.type === TokenType.PARAMETER ||
+            token.outputInfo.type === TokenType.AGENTPARAMETER ||
             token.outputInfo.arrayDetails ||
             token.key === constants.UNTIL_CURRENT_ITERATION_INDEX_KEY ||
             token.key === constants.FOREACH_CURRENT_ITEM_KEY

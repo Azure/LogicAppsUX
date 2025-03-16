@@ -69,7 +69,6 @@ export const InitializeVariableEditor = ({
     const segments = isAgentParameter
       ? createAgentParameterEditorSegments(updatedVariables)
       : createVariableEditorSegments(updatedVariables);
-    console.log('segments', segments);
     onChange?.({ value: segments, viewModel: { variables: updatedVariables, hideParameterErrors: true } });
     return updatedVariables;
   };

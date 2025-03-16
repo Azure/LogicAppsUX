@@ -171,6 +171,8 @@ export const VariableEditor = ({
   const { name, type, value, description } = variable;
 
   const valueOrDescription = isAgentParameter ? VARIABLE_PROPERTIES.DESCRIPTION : VARIABLE_PROPERTIES.VALUE;
+  const displayName =
+    isSingleLiteralValueSegment(name) && name[0]?.value ? name[0]?.value : isAgentParameter ? newAgentParameterName : newVariableName;
 
   const isBooleanType = type[0]?.value === VARIABLE_TYPE.BOOLEAN;
   const variableType = getVariableType(type);
@@ -249,11 +251,7 @@ export const VariableEditor = ({
             aria-expanded={expanded}
             style={{ justifyContent: 'flex-start' }}
           >
-            {isSingleLiteralValueSegment(name) && name[0]?.value
-              ? name[0]?.value
-              : isAgentParameter
-                ? newAgentParameterName
-                : newVariableName}
+            {displayName}
           </Button>
           {Object.values(errors ?? {}).filter((x) => !!x).length > 0 ? (
             <span className="msla-initialize-variable-error-dot">
@@ -266,9 +264,9 @@ export const VariableEditor = ({
             {fields.map(({ label, id, isRequired, editor, editorProps, errorMessage }) => (
               <FieldEditor
                 key={id}
-                index={index}
                 label={label}
                 id={id}
+                index={index}
                 isRequired={isRequired}
                 editor={editor}
                 editorProps={editorProps}

@@ -11,28 +11,35 @@ export const initializeAgentParameters = (
   allNodesData: NodeDataWithOperationMetadata[]
 ): Record<string, Record<string, AgentParameterDeclarations>> => {
   const agentParameters: Record<string, Record<string, AgentParameterDeclarations>> = {};
+
   const agentConditions = Object.keys(nodesMetadata).filter(
     (nodeId) => getRecordEntry(nodesMetadata, nodeId)?.subgraphType === SUBGRAPH_TYPES.AGENT_CONDITION
   );
-  const nodesWithData: Record<string, NodeDataWithOperationMetadata> = {};
-  for (const node of allNodesData) {
-    nodesWithData[node.id] = node;
-  }
+  //   const nodesWithData: Record<string, NodeDataWithOperationMetadata> = {};
+  //   for (const node of allNodesData) {
+  //     nodesWithData[node.id] = node;
+  //   }
 
   agentConditions.forEach((agentCondition) => {
-    const nodeInputs = getRecordEntry(nodesWithData, agentCondition)?.nodeInputs.parameterGroups;
-    if (nodeInputs) {
-      const agent = nodeInputs[ParameterGroupKeys.DEFAULT].rawInputs.find(
-        (input) => input.name === Constants.PARAMETER_NAMES.AGENT_PARAMETERS
-      )?.value;
-      if (agent) {
-        const agentNodeId = getRecordEntry(nodesMetadata, agentCondition)?.parentNodeId;
-        if (agentNodeId) {
-          agentParameters[agentNodeId] = agentParameters[agent] ?? {};
-          agentParameters[agentNodeId][agentCondition] = agent;
-        }
-      }
+    const nodeData = allNodesData.find((node) => node.id === agentCondition);
+    const nodeInputs = nodeData?.nodeInputs?.parameterGroups?.[ParameterGroupKeys.DEFAULT]?.rawInputs;
+
+    if (!nodeInputs) {
+      return;
     }
+
+    const agent = nodeInputs.find((input) => input.name === Constants.PARAMETER_NAMES.AGENT_PARAMETERS)?.value;
+    if (!agent) {
+      return;
+    }
+
+    const agentNodeId = getRecordEntry(nodesMetadata, agentCondition)?.parentNodeId;
+    if (!agentNodeId) {
+      return;
+    }
+
+    agentParameters[agentNodeId] = agentParameters[agentNodeId] ?? {};
+    agentParameters[agentNodeId][agentCondition] = agent;
   });
   return agentParameters;
 };
@@ -43,23 +50,31 @@ export const getAgentParameterTokens = (
   nodesMetadata: NodesMetadata
 ): OutputToken[] | undefined => {
   const nodeGraphId = getRecordEntry(nodesMetadata, nodeId)?.graphId;
-  const upstreamAgentConditionId =
-    nodeGraphId && getRecordEntry(nodesMetadata, nodeGraphId)?.subgraphType === SUBGRAPH_TYPES.AGENT_CONDITION ? nodeGraphId : undefined;
-  const upstreamAgentNodeId = getRecordEntry(nodesMetadata, upstreamAgentConditionId)?.parentNodeId;
-  if (upstreamAgentConditionId && upstreamAgentNodeId) {
-    const agentParameterDeclarations = getRecordEntry(getRecordEntry(agentParameters, upstreamAgentNodeId), upstreamAgentConditionId);
-    return convertAgentParameterToOutputToken(agentParameterDeclarations);
+  if (!nodeGraphId) {
+    return undefined;
   }
-  return undefined;
+
+  const isAgentCondition = getRecordEntry(nodesMetadata, nodeGraphId)?.subgraphType === SUBGRAPH_TYPES.AGENT_CONDITION;
+  if (!isAgentCondition) {
+    return undefined;
+  }
+
+  const upstreamAgentNodeId = getRecordEntry(nodesMetadata, nodeGraphId)?.parentNodeId;
+  if (!upstreamAgentNodeId) {
+    return undefined;
+  }
+
+  const agentParameterDeclarations = getRecordEntry(agentParameters[upstreamAgentNodeId], nodeGraphId);
+  return convertAgentParameterToOutputToken(agentParameterDeclarations);
 };
 
 export const convertAgentParameterToOutputToken = (agentParameters?: AgentParameterDeclarations): OutputToken[] => {
   if (!agentParameters) {
     return [];
   }
-  return Object.entries(agentParameters).map(([_name, agentParameter]) => {
+  return Object.entries(agentParameters).map(([key, agentParameter]) => {
     const { name: parameterName, type, description } = agentParameter;
-    const name = parameterName ?? _name;
+    const name = parameterName ?? key;
     return {
       key: `agentParameter:${name}`,
       brandColor: AgentParameterBrandColor,
