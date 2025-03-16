@@ -101,8 +101,6 @@ export const ConnectionsSubMenu: React.FC<ConnectionsSubMenuProps> = ({ setShowS
     );
   }, [connections]);
 
-  console.log('charlie connections, connectionsList', connections);
-
   if (connections.length === 0) {
     return null;
   }

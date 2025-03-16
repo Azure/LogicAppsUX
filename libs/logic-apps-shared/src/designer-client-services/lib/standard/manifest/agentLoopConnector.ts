@@ -17,22 +17,22 @@ export default {
       },
       values: [
         {
-          name: 'UrlKeyBasedAuthentication',
+          name: 'Key',
           parameters: {
-            azureOpenAIResourceName: {
+            openAIEndpoint: {
               type: 'string',
               parameterSource: 'AppConfiguration',
               uiDefinition: {
-                displayName: 'AI resource name',
-                description: 'The name of the resource that hosts the AI model',
-                tooltip: 'Provide the AI resource name',
+                displayName: 'AI endpoint',
+                description: 'The endpoint of the resource that hosts the AI model',
+                tooltip: 'Provide the AI endpoint',
                 constraints: {
                   clearText: true,
                   required: 'true',
                 },
               },
             },
-            azureOpenAIApiKey: {
+            openAIKey: {
               type: 'securestring',
               parameterSource: 'AppConfiguration',
               uiDefinition: {

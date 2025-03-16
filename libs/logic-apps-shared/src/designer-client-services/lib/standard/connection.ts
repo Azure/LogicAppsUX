@@ -81,8 +81,8 @@ interface APIManagementConnectionModel {
 }
 
 export interface AgentConnectionModel {
-  parameterValues: Record<string, any>;
-  parameterSetName?: string;
+  authentication: Record<string, any>;
+  endpoint: string;
   type?: string;
   displayName?: string;
 }
@@ -725,7 +725,7 @@ function convertToAgentConnectionsData(
   connectionInfo: ConnectionCreationInfo,
   connectionParameterMetadata: ConnectionParametersMetadata
 ): { connectionAndSettings: ConnectionAndAppSetting<AgentConnectionModel>; rawConnection: ServiceProviderConnectionModel } {
-  const { additionalParameterValues, connectionParametersSet: connectionParametersSetValues } = connectionInfo;
+  const { connectionParametersSet: connectionParametersSetValues } = connectionInfo;
   const { parameterValues, rawParameterValues, settings, displayName } = createLocalConnectionsData(
     connectionKey,
     connectionInfo,
@@ -735,10 +735,12 @@ function convertToAgentConnectionsData(
   const connectionsData: ConnectionAndAppSetting<AgentConnectionModel> = {
     connectionKey,
     connectionData: {
-      parameterValues,
-      ...optional('parameterSetName', connectionParametersSetValues?.name),
       displayName,
-      ...optional('additionalParameterValues', additionalParameterValues),
+      authentication: {
+        type: connectionParametersSetValues?.name,
+        key: parameterValues?.['openAIKey'],
+      },
+      endpoint: parameterValues?.['openAIEndpoint'],
       type: 'model',
     },
     settings,
