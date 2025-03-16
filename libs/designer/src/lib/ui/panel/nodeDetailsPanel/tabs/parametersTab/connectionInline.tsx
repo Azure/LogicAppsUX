@@ -88,7 +88,6 @@ export const ConnectionInline: React.FC<ConnectionInlineProps> = ({ showSubCompo
         if (hasExistingConnections) {
           setShowSubComponent && setShowSubComponent(false);
         } else {
-          console.log('charlie connections, getting canc');
           setShowCreation(false);
         }
       }}
