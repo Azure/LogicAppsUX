@@ -1,9 +1,9 @@
 import { describe, expect, it, vi } from 'vitest';
-import type { ParameterInfo } from '@microsoft/logic-apps-shared';
+import type { OperationInfo, ParameterInfo } from '@microsoft/logic-apps-shared';
 import {
   createVariableEditorSegments,
   getVariableType,
-  isInitializeVariableParameter,
+  isInitializeVariableOperation,
   parseVariableEditorSegments,
   validateVariables,
 } from '../util';
@@ -88,12 +88,12 @@ describe('validateVariables', () => {
 
 describe('isInitializeVariableParameter', () => {
   it('should return true for initialize variable editor', () => {
-    const param: ParameterInfo = { editor: 'InitializeVariable' } as ParameterInfo;
-    expect(isInitializeVariableParameter(param)).toBe(true);
+    const operationInfo = { connectorId: 'connectionProviders/variable', operationId: 'initializeVariable' } as OperationInfo;
+    expect(isInitializeVariableOperation(operationInfo)).toBe(true);
   });
 
   it('should return false for other editors', () => {
-    const param: ParameterInfo = { editor: 'OtherEditor' } as ParameterInfo;
-    expect(isInitializeVariableParameter(param)).toBe(false);
+    const operationInfo = { connectorId: 'connectionProviders/otherConnectorId', operationId: 'otherOperation' } as OperationInfo;
+    expect(isInitializeVariableOperation(operationInfo)).toBe(false);
   });
 });

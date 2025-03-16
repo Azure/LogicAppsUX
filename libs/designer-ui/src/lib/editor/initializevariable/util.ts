@@ -1,4 +1,4 @@
-import type { ParameterInfo } from '@microsoft/logic-apps-shared';
+import type { OperationInfo } from '@microsoft/logic-apps-shared';
 import {
   capitalizeFirstLetter,
   equals,
@@ -55,6 +55,46 @@ export const parseVariableEditorSegments = (initialValue: ValueSegment[]): Initi
   }
 };
 
+export const parseAgentParameterAsVariableEditorSegments = (initialValue: ValueSegment[]): InitializeVariableProps[] => {
+  if (isEmptySegments(initialValue)) {
+    return [
+      { name: [createEmptyLiteralValueSegment()], type: [createEmptyLiteralValueSegment()], value: [createEmptyLiteralValueSegment()] },
+    ];
+  }
+
+  const nodeMap: Map<string, ValueSegment> = new Map<string, ValueSegment>();
+  const initialValueString = convertSegmentsToString(initialValue, nodeMap);
+  const wrappedValueString = wrapStringifiedTokenSegments(initialValueString);
+
+  try {
+    const agentParameters = JSON.parse(wrappedValueString);
+    return Object.entries(agentParameters).map(([_name, value]) => {
+      const { type, description, name } = value as { type: string; description: string; name: string };
+      return {
+        name: [createLiteralValueSegment(name)],
+        type: [createLiteralValueSegment(type)],
+        description: convertStringToSegments(description, nodeMap, {
+          tokensEnabled: true,
+          stringifyNonString: true,
+        }),
+        value: [createEmptyLiteralValueSegment()],
+      };
+    });
+  } catch (error) {
+    LoggerService().log({
+      level: LogEntryLevel.Error,
+      area: 'Variable Editor',
+      message: 'Failed to parse variable editor segments',
+      args: [
+        {
+          error,
+        },
+      ],
+    });
+    return [];
+  }
+};
+
 export const createVariableEditorSegments = (variables: InitializeVariableProps[] | undefined): ValueSegment[] => {
   if (!variables || variables.length === 0) {
     return [createEmptyLiteralValueSegment()];
@@ -79,6 +119,30 @@ export const createVariableEditorSegments = (variables: InitializeVariableProps[
   const stringifiedVariables = JSON.stringify(mappedVariables);
 
   return convertStringToSegments(stringifiedVariables, nodeMap, { tokensEnabled: true });
+};
+
+export const createAgentParameterEditorSegments = (agentParameters: InitializeVariableProps[] | undefined): ValueSegment[] => {
+  if (!agentParameters || agentParameters.length === 0) {
+    return [createEmptyLiteralValueSegment()];
+  }
+
+  const nodeMap = new Map<string, ValueSegment>();
+  const mappedAgentParameters = agentParameters.reduce<Record<string, { name: string; type: string; description?: string }>>(
+    (acc, agentParameter) => {
+      const { name: _name, type: _type, description: _description } = agentParameter;
+      const name = convertSegmentsToString(_name);
+      const type = convertSegmentsToString(_type);
+      const description = convertSegmentsToString(_description ?? [], nodeMap);
+
+      acc[name] = { name, type, ...(description ? { description } : {}) };
+      return acc;
+    },
+    {}
+  );
+
+  const stringifiedAgentParameters = JSON.stringify(mappedAgentParameters);
+
+  return convertStringToSegments(stringifiedAgentParameters, nodeMap, { tokensEnabled: true });
 };
 
 export const getVariableType = (type: ValueSegment[]): string => {
@@ -205,7 +269,7 @@ export const validateVariables = (variables: InitializeVariableProps[]): Initial
   return errors;
 };
 
-export const isInitializeVariableParameter = (parameter: ParameterInfo): boolean => {
-  const { editor } = parameter;
-  return equals(editor, constants.PARAMETER.EDITOR.INITIALIZE_VARIABLE);
+export const isInitializeVariableOperation = (operationInfo: OperationInfo): boolean => {
+  const { connectorId, operationId } = operationInfo;
+  return equals(connectorId, 'connectionProviders/variable') && equals(operationId, 'initializeVariable');
 };

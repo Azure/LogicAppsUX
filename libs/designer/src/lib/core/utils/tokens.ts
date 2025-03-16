@@ -44,11 +44,11 @@ import {
   equals,
   filterRecord,
   getRecordEntry,
-  SUBGRAPH_TYPES,
 } from '@microsoft/logic-apps-shared';
 import type { FunctionDefinition, OutputToken, Token, ValueSegment } from '@microsoft/designer-ui';
 import { UIConstants, TemplateFunctions, TokenType, removeUTFExpressions } from '@microsoft/designer-ui';
 import type { BuiltInOutput, OperationManifest } from '@microsoft/logic-apps-shared';
+import { getAgentParameterTokens } from './agentParameters';
 
 export interface TokenGroup {
   id: string;
@@ -233,32 +233,21 @@ export const getOutputTokenSections = (
   const { variables, outputTokens, agentParameters } = tokenState;
   const nodeTokens = getRecordEntry(outputTokens, nodeId);
   const tokenGroups: TokenGroup[] = [];
-  const upstreamAgentConditionId = nodeTokens?.upstreamNodeIds.find(
-    (upstreamNodeId) => getRecordEntry(workflowState.nodesMetadata, upstreamNodeId)?.subgraphType === SUBGRAPH_TYPES.AGENT_CONDITION
-  );
-  const upstreamAgentNodeId = getRecordEntry(workflowState.nodesMetadata, upstreamAgentConditionId)?.parentNodeId;
   const intl = getIntl();
-  if (upstreamAgentConditionId && upstreamAgentNodeId) {
-    const agentParameterTokens = (
-      getRecordEntry(getRecordEntry(agentParameters, upstreamAgentNodeId), upstreamAgentConditionId)?.tokens ?? []
-    ).map((agentParameterToken) => {
-      return {
-        ...agentParameterToken,
-        value: getTokenValue(agentParameterToken, nodeType, replacementIds),
-      };
+
+  const agentParameterTokens = getAgentParameterTokens(nodeId, agentParameters, workflowState.nodesMetadata);
+  if (agentParameterTokens?.length) {
+    tokenGroups.push({
+      id: 'agentparameters',
+      label: intl.formatMessage({
+        description: 'Heading section for Agent Parameter tokens',
+        defaultMessage: 'Agent Parameters',
+        id: '8/IRht',
+      }),
+      tokens: agentParameterTokens,
     });
-    if (agentParameterTokens.length) {
-      tokenGroups.push({
-        id: 'agentparameters',
-        label: intl.formatMessage({
-          description: 'Heading section for Agent Parameter tokens',
-          defaultMessage: 'Agent Parameters',
-          id: '8/IRht',
-        }),
-        tokens: agentParameterTokens,
-      });
-    }
   }
+
   if (Object.keys(workflowParameters).length) {
     tokenGroups.push({
       id: 'workflowparameters',

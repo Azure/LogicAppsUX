@@ -461,8 +461,7 @@ export const loadDynamicOutputsInNode = async (
   nodeInputs: NodeInputs,
   settings: Settings,
   workflowParameters: Record<string, WorkflowParameterDefinition>,
-  dispatch: Dispatch,
-  agentParent: string | undefined
+  dispatch: Dispatch
 ): Promise<void> => {
   dispatch(clearDynamicIO({ nodeId, inputs: false, outputs: true }));
 
@@ -470,16 +469,7 @@ export const loadDynamicOutputsInNode = async (
     const info = outputDependencies[outputKey];
     if (isDynamicDataReadyToLoad(info)) {
       if (info.dependencyType === 'StaticSchema') {
-        updateOutputsAndTokens(
-          nodeId,
-          operationInfo,
-          dispatch,
-          isTrigger,
-          nodeInputs,
-          settings,
-          true /* shouldProcessSettings */,
-          agentParent
-        );
+        updateOutputsAndTokens(nodeId, operationInfo, dispatch, isTrigger, nodeInputs, settings, true /* shouldProcessSettings */);
       } else {
         try {
           const outputSchema = await getDynamicSchema(

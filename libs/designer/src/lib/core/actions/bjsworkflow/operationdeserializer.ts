@@ -45,6 +45,7 @@ import { isTokenValueSegment } from '../../utils/parameters/segment';
 import { initializeOperationDetailsForSwagger } from '../../utils/swagger/operation';
 import { convertOutputsToTokens, getBuiltInTokens, getTokenNodeIds } from '../../utils/tokens';
 import { getVariableDeclarations, setVariableMetadata } from '../../utils/variables';
+import { initializeAgentParameters } from '../../utils/agentParameters';
 import type { PasteScopeParams } from './copypaste';
 import {
   getCustomSwaggerIfNeeded,
@@ -72,7 +73,6 @@ import {
   getRecordEntry,
   parseErrorMessage,
   cleanResourceId,
-  SUBGRAPH_TYPES,
 } from '@microsoft/logic-apps-shared';
 import type { InputParameter, OutputParameter, LogicAppsV2, OperationManifest } from '@microsoft/logic-apps-shared';
 import type { Dispatch } from '@reduxjs/toolkit';
@@ -182,7 +182,8 @@ export const initializeOperationMetadata = async (
   );
 
   const variables = initializeVariables(operations, allNodeData);
-  const { outputTokens, agentParameters } = initializeOutputTokensForOperations(allNodeData, operations, graph, nodesMetadata);
+  const agentParameters = initializeAgentParameters(nodesMetadata, allNodeData);
+  const outputTokens = initializeOutputTokensForOperations(allNodeData, operations, graph, nodesMetadata);
   dispatch(
     initializeTokensAndVariables({
       outputTokens,
@@ -449,7 +450,7 @@ const initializeOutputTokensForOperations = (
   graph: WorkflowNode,
   nodesMetadata: NodesMetadata,
   existingOutputTokens: string[] = []
-): { outputTokens: Record<string, NodeTokens>; agentParameters: Record<string, Record<string, NodeTokens>> } => {
+): Record<string, NodeTokens> => {
   const nodeMap: Record<string, string> = {};
   for (const id of Object.keys(operations)) {
     nodeMap[id] = id;
@@ -463,21 +464,14 @@ const initializeOutputTokensForOperations = (
     operationInfos[node.id] = node.operationInfo as NodeOperation;
   }
 
-  const outputTokenResults: Record<string, NodeTokens> = {};
-  const agentParameterResults: Record<string, Record<string, NodeTokens>> = {};
+  const result: Record<string, NodeTokens> = {};
 
-  for (const nodeId of Object.keys(nodesWithData)) {
-    const nodeMetadata = nodesMetadata[nodeId];
-    const agentParent = nodeMetadata?.subgraphType === SUBGRAPH_TYPES.AGENT_CONDITION ? nodeMetadata.parentNodeId : undefined;
-    const upstreamNodeIds = getTokenNodeIds(nodeId, graph, nodesMetadata, nodesWithData, operationInfos, nodeMap);
+  for (const operationId of Object.keys(operations)) {
+    const upstreamNodeIds = getTokenNodeIds(operationId, graph, nodesMetadata, nodesWithData, operationInfos, nodeMap);
     const nodeTokens: NodeTokens = { tokens: [], upstreamNodeIds: [...upstreamNodeIds, ...existingOutputTokens] };
 
-    const nodeData = nodesWithData[nodeId];
-    if (!nodeData) {
-      continue;
-    }
-
     try {
+      const nodeData = nodesWithData[operationId];
       const {
         manifest,
         nodeOutputs,
@@ -487,11 +481,11 @@ const initializeOutputTokensForOperations = (
       nodeTokens.tokens.push(...getBuiltInTokens(manifest));
       nodeTokens.tokens.push(
         ...convertOutputsToTokens(
-          isRootNodeInGraph(nodeId, 'root', nodesMetadata) ? undefined : nodeId,
-          agentParent ? Constants.NODE.TYPE.AGENT_CONDITION : (nodeData?.operationInfo?.type ?? ''),
+          isRootNodeInGraph(operationId, 'root', nodesMetadata) ? undefined : operationId,
+          operations[operationId]?.type,
           nodeOutputs.outputs ?? {},
           { iconUri, brandColor },
-          nodeData?.settings
+          nodesWithData[operationId]?.settings
         )
       );
     } catch (error: any) {
@@ -500,21 +494,14 @@ const initializeOutputTokensForOperations = (
       LoggerService().log({
         level: LogEntryLevel.Warning,
         area: 'OperationDeserializer:InitializeOutputTokens',
-        message: `Error initializing output tokens for operation - ${nodeId}. Error details - ${errorMessage}`,
+        message: `Error initializing output tokens for operation - ${operationId}. Error details - ${errorMessage}`,
       });
     }
 
-    if (agentParent) {
-      if (!agentParameterResults[agentParent]) {
-        agentParameterResults[agentParent] = {};
-      }
-      agentParameterResults[agentParent][nodeId] = nodeTokens;
-    } else {
-      outputTokenResults[nodeId] = nodeTokens;
-    }
+    result[operationId] = nodeTokens;
   }
 
-  return { outputTokens: outputTokenResults, agentParameters: agentParameterResults };
+  return result;
 };
 
 const initializeVariables = (
