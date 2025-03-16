@@ -51,18 +51,38 @@
                     "transferMode": "Chunked"
                   }
                 }
+              },
+              "HTTP_1": {
+                "type": "Http",
+                "inputs": {
+                  "uri": "http://google.com",
+                  "method": "POST",
+                  "headers": "@agentParameters()?['schema']",
+                  "body": "@agentParameters()?['schema']?['Property1']"
+                },
+                "runAfter": {
+                  "HTTP": ["SUCCEEDED"]
+                },
+                "runtimeConfiguration": {
+                  "contentTransfer": {
+                    "transferMode": "Chunked"
+                  }
+                }
               }
             },
             "description": "If the condition X matches, execute this branch",
             "type": "Tool",
-            "agentParameterSchema": {
+            "schema": {
               "type": "object",
               "properties": {
                 "Property1": {
-                  "type": "string"
+                  "type": "string",
+                  "description": "This is a string property",
+                  "title": "TestProperty"
                 },
                 "Property2": {
-                  "type": "boolean"
+                  "type": "boolean",
+                  "description": "This is a boolean property"
                 }
               }
             }

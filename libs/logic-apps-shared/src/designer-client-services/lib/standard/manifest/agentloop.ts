@@ -28,12 +28,33 @@ export default {
               title: 'Type',
               default: 'Tool',
             },
-            agentParameterSchema: {
+            schema: {
+              title: 'Agent Parameter Schema',
+              description: 'The agent parameter schema',
               type: 'object',
               'x-ms-editor': 'schema',
             },
           },
           required: ['description'],
+        },
+        outputs: {
+          type: 'object',
+          required: ['schema'],
+          properties: {
+            schema: {
+              title: 'Agent Schema',
+              description: 'The agent parameter schema',
+            },
+          },
+        },
+        outputsSchema: {
+          outputPaths: [
+            {
+              outputLocation: ['properties', 'schema'],
+              name: 'schema',
+              schema: 'Value',
+            },
+          ],
         },
         inputsLocation: [],
       },
@@ -47,15 +68,6 @@ export default {
           description: 'The deployment model connection',
           'x-ms-connection-required': true,
           'x-ms-visibility': 'important',
-        },
-        temperature: {
-          type: 'number',
-          title: 'Sampling temperature',
-          description:
-            'A value used to control the apparent creativity of generated completions. See [Azure.AI.Inference.ChatCompletionsOptions.Temperature Property](https://go.microsoft.com/fwlink/?linkid=2282134).',
-          default: 1.0,
-          maximum: 2.0,
-          minimum: 0.0,
         },
         messages: {
           description: 'Messages',
@@ -91,36 +103,6 @@ export default {
           'x-ms-summary': 'Messages',
           'x-ms-visibility': 'important',
         },
-        top_p: {
-          type: 'number',
-          title: 'Nucleus sampling (top_p)',
-          description:
-            'A value used to control the apparent creativity of generated completions and an alternative value to Temperature. See [ChatCompletionsOptions.NucleusSamplingFactor Property](https://go.microsoft.com/fwlink/?linkid=2267246).',
-          minimum: 0.0,
-        },
-        max_tokens: {
-          type: 'integer',
-          title: 'Max tokens',
-          description:
-            'The maximum number of tokens to generate. See [ChatCompletionsOptions.MaxTokens Property](https://go.microsoft.com/fwlink/?linkid=2267172).',
-          minimum: 0.0,
-        },
-        presence_penalty: {
-          type: 'number',
-          title: 'Presence penalty',
-          description:
-            'A value that influences the probability of generated tokens appearing based on their existing presence in generated text. See [ChatCompletionsOptions.PresencePenalty Property](https://go.microsoft.com/fwlink/?linkid=2267450).',
-          maximum: 2.0,
-          minimum: -2.0,
-        },
-        frequency_penalty: {
-          type: 'number',
-          title: 'Frequency penalty',
-          description:
-            'A value that influences the probability of generated tokens appearing based on their cumulative frequence. See [ChatCompletionsOptions.FrequencyPenalty Property](https://go.microsoft.com/fwlink/?linkid=2267245).',
-          maximum: 2.0,
-          minimum: -2.0,
-        },
       },
       required: ['deploymentModel', 'messages'],
     },
@@ -137,7 +119,7 @@ export default {
     },
 
     connector: {
-      id: '/connectionProviders/agent',
+      id: 'connectionProviders/agent',
       name: 'Agent',
       properties: {
         description: 'Agent operations',
