@@ -9,8 +9,8 @@ import { Button, MessageBar, MessageBarBody, MessageBarTitle } from '@fluentui/r
 import { useIntl } from 'react-intl';
 import {
   createVariableEditorSegments,
-  createVariableEditorSegmentsAsSchema,
-  parseSchemaAsVariableEditorSegments,
+  createAgentParameterEditorSegments,
+  parseAgentParameterAsVariableEditorSegments,
   parseVariableEditorSegments,
 } from './util';
 import constants from '../../constants';
@@ -27,19 +27,19 @@ export interface InitializeVariableProps {
 export interface InitializeVariableEditorProps extends BaseEditorProps {
   validationErrors?: InitializeVariableErrors[];
   isMultiVariableEnabled?: boolean;
-  isSchemaFormat?: boolean;
+  isAgentParameter?: boolean;
 }
 
 export const InitializeVariableEditor = ({
   initialValue,
   onChange,
   validationErrors,
-  isSchemaFormat,
+  isAgentParameter,
   ...props
 }: InitializeVariableEditorProps) => {
   const intl = useIntl();
   const [variables, setVariables] = useState<InitializeVariableProps[]>(() =>
-    isSchemaFormat ? parseSchemaAsVariableEditorSegments(initialValue) : parseVariableEditorSegments(initialValue)
+    isAgentParameter ? parseAgentParameterAsVariableEditorSegments(initialValue) : parseVariableEditorSegments(initialValue)
   );
 
   const addVariableLabel = intl.formatMessage({ defaultMessage: 'Add a Variable', id: 'HET2nV', description: 'label to add a variable' });
@@ -66,9 +66,10 @@ export const InitializeVariableEditor = ({
   };
 
   const updateVariables = (updatedVariables: InitializeVariableProps[]) => {
-    const segments = isSchemaFormat
-      ? createVariableEditorSegmentsAsSchema(updatedVariables)
+    const segments = isAgentParameter
+      ? createAgentParameterEditorSegments(updatedVariables)
       : createVariableEditorSegments(updatedVariables);
+    console.log('segments', segments);
     onChange?.({ value: segments, viewModel: { variables: updatedVariables, hideParameterErrors: true } });
     return updatedVariables;
   };
@@ -95,7 +96,7 @@ export const InitializeVariableEditor = ({
       {variables.map((variable, index) => (
         <VariableEditor
           {...props}
-          isSchemaFormat={isSchemaFormat}
+          isAgentParameter={isAgentParameter}
           key={index}
           index={index}
           variable={variable}
@@ -106,7 +107,7 @@ export const InitializeVariableEditor = ({
         />
       ))}
 
-      {props.isMultiVariableEnabled || isSchemaFormat ? (
+      {props.isMultiVariableEnabled || isAgentParameter ? (
         <div className="msla-initialize-variable-add-variable-button">
           <Button
             appearance="subtle"

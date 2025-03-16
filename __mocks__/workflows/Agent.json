@@ -72,19 +72,16 @@
             },
             "description": "If the condition X matches, execute this branch",
             "type": "Tool",
-            "schema": {
-              "type": "object",
-              "properties": {
-                "Parameter1": {
-                  "name": "Parameter1",
-                  "type": "string",
-                  "description": "This is a string property"
-                },
-                "TestParameter": {
-                  "name": "TestParameter",
-                  "type": "boolean",
-                  "description": "This is a boolean property"
-                }
+            "agentParameters": {
+              "Parameter1": {
+                "name": "Parameter1",
+                "type": "string",
+                "description": "This is a string property"
+              },
+              "TestParameter": {
+                "name": "TestParameter",
+                "type": "boolean",
+                "description": "This is a boolean property"
               }
             }
           }

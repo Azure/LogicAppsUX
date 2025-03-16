@@ -459,6 +459,7 @@ export default {
   },
   PARAMETER_NAMES: {
     VARIABLES: 'variables',
+    AGENT_PARAMETERS: 'agentParameters',
     LIMIT_COUNT: 'limit.count',
     LIMIT_TIMEOUT: 'limit.timeout',
   },

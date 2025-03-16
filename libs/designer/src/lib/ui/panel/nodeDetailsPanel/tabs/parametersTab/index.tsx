@@ -13,8 +13,8 @@ import {
   useNodeConnectionName,
   useOperationInfo,
 } from '../../../../../core/state/selectors/actionMetadataSelector';
-import type { VariableDeclaration } from '../../../../../core/state/tokens/tokensSlice';
-import { updateVariableInfo } from '../../../../../core/state/tokens/tokensSlice';
+import type { AgentParameterDeclaration, VariableDeclaration } from '../../../../../core/state/tokens/tokensSlice';
+import { updateAgentParameter, updateVariableInfo } from '../../../../../core/state/tokens/tokensSlice';
 import { useGetSwitchOrAgentParentId, useNodeMetadata, useReplacedIds } from '../../../../../core/state/workflow/workflowSelectors';
 import type { AppDispatch, RootState } from '../../../../../core/store';
 import { getConnectionReference } from '../../../../../core/utils/connectors/connections';
@@ -47,8 +47,9 @@ import {
   TokenPicker,
   TokenPickerButtonLocation,
   TokenType,
+  convertSegmentsToString,
   isCustomCodeParameter,
-  isInitializeVariableParameter,
+  isInitializeVariableOperation,
   toCustomEditorAndOptions,
 } from '@microsoft/designer-ui';
 import type {
@@ -61,7 +62,7 @@ import type {
   PanelTabProps,
   InitializeVariableProps,
 } from '@microsoft/designer-ui';
-import { EditorService, equals, getPropertyValue, getRecordEntry, isRecordNotEmpty } from '@microsoft/logic-apps-shared';
+import { EditorService, equals, getPropertyValue, getRecordEntry, isRecordNotEmpty, SUBGRAPH_TYPES } from '@microsoft/logic-apps-shared';
 import type { OperationInfo } from '@microsoft/logic-apps-shared';
 import type React from 'react';
 import { useCallback, useEffect, useMemo, useState } from 'react';
@@ -214,8 +215,8 @@ const ParameterSection = ({
   const isTrigger = useSelector((state: RootState) => isRootNodeInGraph(nodeId, 'root', state.workflow.nodesMetadata));
   const operationInfo = useOperationInfo(nodeId);
   const dependencies = useDependencies(nodeId);
-  const { variables, upstreamNodeIds, operationDefinition, connectionReference, idReplacements, workflowParameters } = useSelector(
-    (state: RootState) => {
+  const { variables, upstreamNodeIds, operationDefinition, connectionReference, idReplacements, workflowParameters, nodesMetadata } =
+    useSelector((state: RootState) => {
       return {
         upstreamNodeIds: getRecordEntry(state.tokens.outputTokens, nodeId)?.upstreamNodeIds,
         variables: state.tokens.variables,
@@ -225,9 +226,9 @@ const ParameterSection = ({
         connectionReference: getConnectionReference(state.connections, nodeId),
         idReplacements: state.workflow.idReplacements,
         workflowParameters: state.workflowParameters.definitions,
+        nodesMetadata: state.workflow.nodesMetadata,
       };
-    }
-  );
+    });
   const rootState = useSelector((state: RootState) => state);
   const displayNameResult = useConnectorName(operationInfo);
   const panelLocation = usePanelLocation();
@@ -252,7 +253,7 @@ const ParameterSection = ({
         ...(viewModel !== undefined && { editorViewModel: viewModel }),
       } as Partial<ParameterInfo>;
 
-      if (parameter && isInitializeVariableParameter(parameter)) {
+      if (isInitializeVariableOperation(operationInfo)) {
         const variables: InitializeVariableProps[] | undefined = newState?.viewModel?.variables;
         if (variables) {
           dispatch(
@@ -267,6 +268,26 @@ const ParameterSection = ({
             })
           );
         }
+      }
+      const nodeMetadataInfo = getRecordEntry(nodesMetadata, nodeId);
+      if (nodesMetadata && nodeMetadataInfo?.subgraphType === SUBGRAPH_TYPES.AGENT_CONDITION && nodeMetadataInfo?.parentNodeId) {
+        const agentParameters: InitializeVariableProps[] | undefined = newState?.viewModel?.variables;
+        const agentParameter: Record<string, AgentParameterDeclaration> = {};
+        agentParameters?.forEach((agaentParameter) => {
+          const { name, type, description } = agaentParameter;
+          agentParameter[name[0].value] = {
+            name: name[0].value,
+            type: type[0].value,
+            description: convertSegmentsToString(description ?? []),
+          };
+        });
+        dispatch(
+          updateAgentParameter({
+            id: nodeId,
+            agent: nodeMetadataInfo.parentNodeId,
+            agentParameter,
+          })
+        );
       }
 
       if (parameter && isCustomCodeParameter(parameter)) {
@@ -290,7 +311,18 @@ const ParameterSection = ({
         })
       );
     },
-    [nodeId, group.id, isTrigger, operationInfo, connectionReference, nodeInputs, dependencies, dispatch, operationDefinition]
+    [
+      nodeInputs,
+      group.id,
+      nodesMetadata,
+      nodeId,
+      dispatch,
+      isTrigger,
+      operationInfo,
+      connectionReference,
+      dependencies,
+      operationDefinition,
+    ]
   );
 
   const onComboboxMenuOpen = (parameter: ParameterInfo): void => {

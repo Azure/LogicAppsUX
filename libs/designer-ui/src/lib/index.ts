@@ -33,6 +33,7 @@ export * from './editor/base';
 export * from './editor/base/plugins/tokenpickerbutton';
 export * from './editor/initializevariable/util';
 export * from './editor/initializevariable/';
+export { convertSegmentsToString } from './editor/base/utils/parsesegments';
 export * from './editor/monaco';
 export * from './editor/string';
 export * from './errorsPanel';

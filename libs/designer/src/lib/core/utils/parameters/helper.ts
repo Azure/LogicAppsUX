@@ -169,7 +169,6 @@ import type {
 import { createAsyncThunk, type Dispatch } from '@reduxjs/toolkit';
 import { getInputDependencies } from '../../actions/bjsworkflow/initialize';
 import { getAllVariables } from '../variables';
-import { getAgentFromCondition } from '../../state/workflow/workflowSelectors';
 
 // import { debounce } from 'lodash';
 
@@ -1966,7 +1965,6 @@ async function loadDynamicData(
 ): Promise<void> {
   if (Object.keys(dependencies?.outputs ?? {}).length) {
     const rootState = getState();
-    const agentParent = getAgentFromCondition(rootState.workflow, nodeId);
     loadDynamicOutputsInNode(
       nodeId,
       isTrigger,
@@ -1976,8 +1974,7 @@ async function loadDynamicData(
       rootState.operations.inputParameters[nodeId],
       rootState.operations.settings[nodeId],
       rootState.workflowParameters.definitions,
-      dispatch,
-      agentParent
+      dispatch
     );
   }
 
@@ -3250,7 +3247,6 @@ export function updateTokenMetadata(
   parameterNodeId?: string
 ): ValueSegment {
   const token = valueSegment.token as SegmentToken;
-  console.log(token);
   switch (token?.tokenType) {
     case TokenType.VARIABLE: {
       token.brandColor = VariableBrandColor;

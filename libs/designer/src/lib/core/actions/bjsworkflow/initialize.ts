@@ -22,7 +22,7 @@ import {
   ErrorLevel,
 } from '../../state/operation/operationMetadataSlice';
 import type { UpdateUpstreamNodesPayload } from '../../state/tokens/tokensSlice';
-import { updateAgentParameter, updateTokens, updateUpstreamNodes } from '../../state/tokens/tokensSlice';
+import { updateTokens, updateUpstreamNodes } from '../../state/tokens/tokensSlice';
 import type { WorkflowParameterDefinition } from '../../state/workflowparameters/workflowparametersSlice';
 import { initializeParameters } from '../../state/workflowparameters/workflowparametersSlice';
 import type { RootState } from '../../store';
@@ -343,24 +343,18 @@ export const updateOutputsAndTokens = async (
   isTrigger: boolean,
   inputs: NodeInputs,
   settings: Settings,
-  shouldProcessSettings = false,
-  agentParent?: string
+  shouldProcessSettings = false
 ): Promise<void> => {
   const { type, kind, connectorId } = operationInfo;
-  const isAgent = !!agentParent;
-  const operationType = isAgent ? Constants.NODE.TYPE.AGENT : type;
-  const supportsManifest = OperationManifestService().isSupported(operationType, kind);
+  const supportsManifest = OperationManifestService().isSupported(type, kind);
   const splitOnValue = settings?.splitOn?.value?.enabled ? settings.splitOn.value.value : undefined;
 
   const { nodeOutputs, tokens } = supportsManifest
-    ? await getManifestOutputAndTokenData(nodeId, operationInfo, isTrigger, inputs, dispatch, splitOnValue, agentParent)
+    ? await getManifestOutputAndTokenData(nodeId, operationInfo, isTrigger, inputs, dispatch, splitOnValue)
     : await getSwaggerOutputAndTokenData(nodeId, connectorId, operationInfo, isTrigger, inputs, splitOnValue, settings);
   dispatch(updateOutputs({ id: nodeId, nodeOutputs }));
-  if (agentParent) {
-    dispatch(updateAgentParameter({ id: nodeId, agent: agentParent, agentParameter: { tokens } }));
-  } else {
-    dispatch(updateTokens({ id: nodeId, tokens }));
-  }
+
+  dispatch(updateTokens({ id: nodeId, tokens }));
 
   if (shouldProcessSettings && operationSupportsSplitOn(isTrigger)) {
     updateSplitOnSetting(dispatch, nodeId, settings, nodeOutputs, supportsManifest);
@@ -373,25 +367,11 @@ const getManifestOutputAndTokenData = async (
   isTrigger: boolean,
   inputs: NodeInputs,
   dispatch: Dispatch,
-  splitOnValue?: string,
-  agentParent?: string
+  splitOnValue?: string
 ) => {
-  let manifest = await getOperationManifest(
-    agentParent ? { connectorId: 'connectionProviders/agent', operationId: Constants.NODE.TYPE.AGENT } : operationInfo
-  );
+  const manifest = await getOperationManifest(operationInfo);
 
-  if (agentParent && manifest?.properties?.subGraphDetails) {
-    const conditionManifestData = Object.values(manifest.properties.subGraphDetails).find((data) => data.isAdditive);
-    manifest = {
-      properties: {
-        ...conditionManifestData,
-        iconUri: manifest.properties.iconUri,
-        brandColor: manifest.properties.brandColor,
-      } as OperationManifestProperties,
-    };
-  }
-
-  return processOutputsAndTokens(nodeId, manifest, isTrigger, inputs, operationInfo, dispatch, splitOnValue, agentParent);
+  return processOutputsAndTokens(nodeId, manifest, isTrigger, inputs, operationInfo, dispatch, splitOnValue);
 };
 
 // Helper to process outputs & tokens
@@ -402,8 +382,7 @@ const processOutputsAndTokens = (
   inputs: NodeInputs,
   operationInfo: NodeOperation,
   dispatch: Dispatch,
-  splitOnValue?: string,
-  agentParent?: string
+  splitOnValue?: string
 ) => {
   const nodeOutputs = getOutputParametersFromManifest(nodeId, manifest, isTrigger, inputs, operationInfo, dispatch, splitOnValue).outputs;
   return {
@@ -412,7 +391,7 @@ const processOutputsAndTokens = (
       ...getBuiltInTokens(manifest),
       ...convertOutputsToTokens(
         isTrigger ? undefined : nodeId,
-        agentParent ? Constants.NODE.TYPE.AGENT_CONDITION : operationInfo.type,
+        operationInfo.type,
         nodeOutputs.outputs ?? {},
         { iconUri: manifest.properties.iconUri, brandColor: manifest.properties.brandColor },
         {}

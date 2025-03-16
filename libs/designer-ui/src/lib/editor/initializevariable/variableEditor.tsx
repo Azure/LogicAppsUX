@@ -53,7 +53,7 @@ interface VariableEditorProps extends Partial<BaseEditorProps> {
   onDelete: () => void;
   onVariableChange: (value: InitializeVariableProps) => void;
   preventMultiVariable?: boolean;
-  isSchemaFormat?: boolean;
+  isAgentParameter?: boolean;
 }
 
 const FieldEditor = ({
@@ -90,7 +90,7 @@ export const VariableEditor = ({
   errors,
   index,
   preventMultiVariable,
-  isSchemaFormat,
+  isAgentParameter,
   ...baseEditorProps
 }: VariableEditorProps) => {
   const intl = useIntl();
@@ -115,22 +115,40 @@ export const VariableEditor = ({
     description: 'Delete label',
   });
 
+  const newAgentParameterName = intl.formatMessage({
+    defaultMessage: 'New Agent Parameter',
+    id: '2bR583',
+    description: 'Heading Title for a Agent Parameter Without Name',
+  });
+
   const newVariableName = intl.formatMessage({
     defaultMessage: 'New Variable',
     id: 'TyFREt',
     description: 'Heading Title for a Variable Without Name',
   });
 
-  const namePlaceHolder = intl.formatMessage({
+  const nameVariablePlaceHolder = intl.formatMessage({
     defaultMessage: 'Enter variable name',
     id: 'QKC8fv',
     description: 'Placeholder for variable name',
   });
 
-  const typePlaceHolder = intl.formatMessage({
+  const nameAgentParameterPlaceHolder = intl.formatMessage({
+    defaultMessage: 'Enter agent parameter name',
+    id: '02TAGZ',
+    description: 'Placeholder for parameter name',
+  });
+
+  const typeVariablePlaceHolder = intl.formatMessage({
     defaultMessage: 'Select variable type',
     id: 'Xrd4VK',
     description: 'Placeholder for variable type',
+  });
+
+  const typeAgentParameterPlaceholder = intl.formatMessage({
+    defaultMessage: 'Select agent parameter type',
+    id: 'gQSH6J',
+    description: 'Placeholder for agent parameter type',
   });
 
   const valuePlaceHolder = intl.formatMessage({
@@ -152,7 +170,7 @@ export const VariableEditor = ({
 
   const { name, type, value, description } = variable;
 
-  const valueOrDescription = isSchemaFormat ? VARIABLE_PROPERTIES.DESCRIPTION : VARIABLE_PROPERTIES.VALUE;
+  const valueOrDescription = isAgentParameter ? VARIABLE_PROPERTIES.DESCRIPTION : VARIABLE_PROPERTIES.VALUE;
 
   const isBooleanType = type[0]?.value === VARIABLE_TYPE.BOOLEAN;
   const variableType = getVariableType(type);
@@ -169,7 +187,7 @@ export const VariableEditor = ({
         initialValue: name,
         editorBlur: (newState: ChangeState) => handleBlur(newState, VARIABLE_PROPERTIES.NAME),
         basePlugins: { ...baseEditorProps.basePlugins, tokens: false },
-        placeholder: namePlaceHolder,
+        placeholder: isAgentParameter ? nameAgentParameterPlaceHolder : nameVariablePlaceHolder,
       },
       errorMessage: errors?.[VARIABLE_PROPERTIES.NAME],
     },
@@ -184,7 +202,7 @@ export const VariableEditor = ({
         initialValue: type,
         options: typeOptions,
         onChange: (newState: ChangeState) => handleBlur(newState, VARIABLE_PROPERTIES.TYPE),
-        placeholder: typePlaceHolder,
+        placeholder: isAgentParameter ? typeAgentParameterPlaceholder : typeVariablePlaceHolder,
       },
       errorMessage: errors?.[VARIABLE_PROPERTIES.TYPE],
     },
@@ -192,23 +210,23 @@ export const VariableEditor = ({
       label: valueOrDescription,
       id: useId(valueOrDescription),
       isRequired: false,
-      editor: isBooleanType && !isSchemaFormat ? Combobox : StringEditor,
+      editor: isBooleanType && !isAgentParameter ? Combobox : StringEditor,
       editorProps: {
         ...baseEditorProps,
         key: `${valueOrDescription}-${variableId}`,
         className: 'msla-setting-token-editor-container',
-        initialValue: isSchemaFormat ? (description ?? []) : value,
-        valueType: isSchemaFormat ? constants.SWAGGER.TYPE.STRING : variableType,
+        initialValue: isAgentParameter ? (description ?? []) : value,
+        valueType: isAgentParameter ? constants.SWAGGER.TYPE.STRING : variableType,
         editorBlur: (newState: ChangeState) => handleBlur(newState, valueOrDescription),
         options:
-          isBooleanType && !isSchemaFormat
+          isBooleanType && !isAgentParameter
             ? [
                 { key: 'true', displayName: 'true', value: true },
                 { key: 'false', displayName: 'false', value: false },
               ]
             : undefined,
         onChange: isBooleanType ? (newState: ChangeState) => handleBlur(newState, valueOrDescription) : undefined,
-        placeholder: isSchemaFormat ? descriptionPlaceHolder : valuePlaceHolder,
+        placeholder: isAgentParameter ? descriptionPlaceHolder : valuePlaceHolder,
       },
       errorMessage: errors?.[valueOrDescription],
     },
@@ -231,7 +249,11 @@ export const VariableEditor = ({
             aria-expanded={expanded}
             style={{ justifyContent: 'flex-start' }}
           >
-            {isSingleLiteralValueSegment(name) && name[0]?.value ? name[0]?.value : newVariableName}
+            {isSingleLiteralValueSegment(name) && name[0]?.value
+              ? name[0]?.value
+              : isAgentParameter
+                ? newAgentParameterName
+                : newVariableName}
           </Button>
           {Object.values(errors ?? {}).filter((x) => !!x).length > 0 ? (
             <span className="msla-initialize-variable-error-dot">
@@ -256,7 +278,7 @@ export const VariableEditor = ({
           </>
         ) : null}
       </div>
-      {preventMultiVariable && !isSchemaFormat ? null : (
+      {preventMultiVariable && !isAgentParameter ? null : (
         <div className={'msla-variable-editor-edit-or-delete-button'}>
           <Tooltip relationship="label" content={disableDelete ? deleteButtonDisabledTitle : deleteButtonTitle}>
             <Button
