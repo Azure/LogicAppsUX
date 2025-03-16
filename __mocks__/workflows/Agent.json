@@ -57,8 +57,8 @@
                 "inputs": {
                   "uri": "http://google.com",
                   "method": "POST",
-                  "headers": "@agentParameters()?['schema']",
-                  "body": "@agentParameters()?['schema']?['Property1']"
+                  "headers": "@agentParameters('TestParameter')",
+                  "body": "@agentParameters('Parameter1')"
                 },
                 "runAfter": {
                   "HTTP": ["SUCCEEDED"]
@@ -72,18 +72,16 @@
             },
             "description": "If the condition X matches, execute this branch",
             "type": "Tool",
-            "schema": {
-              "type": "object",
-              "properties": {
-                "Property1": {
-                  "type": "string",
-                  "description": "This is a string property",
-                  "title": "TestProperty"
-                },
-                "Property2": {
-                  "type": "boolean",
-                  "description": "This is a boolean property"
-                }
+            "agentParameters": {
+              "Parameter1": {
+                "name": "Parameter1",
+                "type": "string",
+                "description": "This is a string property"
+              },
+              "TestParameter": {
+                "name": "TestParameter",
+                "type": "boolean",
+                "description": "This is a boolean property"
               }
             }
           }

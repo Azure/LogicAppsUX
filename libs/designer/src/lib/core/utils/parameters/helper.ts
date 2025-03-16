@@ -169,7 +169,6 @@ import type {
 import { createAsyncThunk, type Dispatch } from '@reduxjs/toolkit';
 import { getInputDependencies } from '../../actions/bjsworkflow/initialize';
 import { getAllVariables } from '../variables';
-import { getAgentFromCondition } from '../../state/workflow/workflowSelectors';
 
 // import { debounce } from 'lodash';
 
@@ -1036,6 +1035,7 @@ export function getExpressionValueForOutputToken(token: OutputToken, nodeType: s
   const {
     key,
     name,
+    title,
     outputInfo: { type: tokenType, actionName, required, arrayDetails, functionArguments, source },
   } = token;
   // get the expression value for webhook list callback url
@@ -1048,7 +1048,7 @@ export function getExpressionValueForOutputToken(token: OutputToken, nodeType: s
     case TokenType.VARIABLE:
       return getTokenValueFromToken(tokenType, functionArguments as string[]);
     case TokenType.AGENTPARAMETER:
-      return generateAgentParameterFromKey(key);
+      return `agentParameters(${convertToStringLiteral(title)})`;
 
     case TokenType.ITERATIONINDEX:
       return `iterationIndexes(${convertToStringLiteral(actionName as string)})`;
@@ -1103,17 +1103,6 @@ export function getTokenExpressionMethodFromKey(key: string, actionName?: string
     }
   }
   return constants.TRIGGER_OUTPUTS_OUTPUT;
-}
-
-export function generateAgentParameterFromKey(key: string): string {
-  const segments = parseEx(key);
-  let result = `${constants.FUNCTION_NAME.AGENT_PARAMETERS}()`;
-
-  const filteredSegments = segments.filter((segment) => segment.value !== 'outputs' && segment.value !== '$');
-  if (filteredSegments.length) {
-    result += filteredSegments.reduce((acc, segment) => `${acc}?[${convertToStringLiteral(segment.value as string)}]`, '');
-  }
-  return result;
 }
 
 function segmentsAreBodyReference(segments: Segment[]): boolean {
@@ -1976,7 +1965,6 @@ async function loadDynamicData(
 ): Promise<void> {
   if (Object.keys(dependencies?.outputs ?? {}).length) {
     const rootState = getState();
-    const agentParent = getAgentFromCondition(rootState.workflow, nodeId);
     loadDynamicOutputsInNode(
       nodeId,
       isTrigger,
@@ -1986,8 +1974,7 @@ async function loadDynamicData(
       rootState.operations.inputParameters[nodeId],
       rootState.operations.settings[nodeId],
       rootState.workflowParameters.definitions,
-      dispatch,
-      agentParent
+      dispatch
     );
   }
 

@@ -58,7 +58,7 @@ export const ConnectionsSubMenu: React.FC<ConnectionsSubMenuProps> = ({ setShowS
         dispatch(reloadParametersTab());
       }
     },
-    [currentConnectionId, saveSelectionCallback]
+    [currentConnectionId, dispatch, saveSelectionCallback]
   );
 
   const intlText = useMemo(
@@ -99,7 +99,7 @@ export const ConnectionsSubMenu: React.FC<ConnectionsSubMenuProps> = ({ setShowS
         </MenuGroup>
       </MenuList>
     );
-  }, [connections]);
+  }, [connections, currentConnectionId, intlText.CREATE, onConnectionSelect, setShowSubComponent]);
 
   if (connections.length === 0) {
     return null;
