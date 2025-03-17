@@ -673,7 +673,7 @@ interface ServiceProviderConnectionConfigInfo {
 }
 
 interface AgentConnectionInfo {
-  agentConfiguration: {
+  modelConfiguration: {
     connectionName: string;
     operationId: string;
     agentId: string;
@@ -745,7 +745,7 @@ const serializeHost = (
       };
     case ConnectionReferenceKeyFormat.AgentConnection:
       return {
-        agentConfiguration: {
+        modelConfiguration: {
           connectionName: referenceKey,
           operationId,
           agentId: connectorId,

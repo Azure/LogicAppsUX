@@ -22,13 +22,7 @@ export default {
               title: 'Condition',
               description: 'The condition to execute this branch',
             },
-            type: {
-              'x-ms-visibility': 'internal',
-              type: 'string',
-              title: 'Type',
-              default: 'Tool',
-            },
-            agentParameters: {
+            agentParameterSchema: {
               title: 'Agent Parameters',
               description: 'Initialize Agent Parameters',
               type: 'object',
@@ -46,9 +40,9 @@ export default {
     inputs: {
       type: 'object',
       properties: {
-        deploymentModel: {
+        deploymentId: {
           type: 'string',
-          title: 'Deployment model',
+          title: 'Deployment Model',
           description: 'The deployment model connection',
           'x-ms-connection-required': true,
           'x-ms-visibility': 'important',
@@ -71,24 +65,32 @@ export default {
                 type: 'string',
                 'x-ms-summary': 'Content',
               },
-              image: {
-                type: 'string',
-                title: 'Chat Image message',
-                description: 'The image content.',
-              },
-              author: {
-                type: 'string',
-                title: 'Chat Author',
-                description: 'The chat author.',
-              },
             },
           },
           required: ['Role', 'Content'],
           'x-ms-summary': 'Messages',
           'x-ms-visibility': 'important',
         },
+        limit: {
+          type: 'object',
+          'x-ms-group-name': 'Change limits',
+          required: [],
+          properties: {
+            count: {
+              type: 'integer',
+              default: 60,
+              title: 'Count',
+            },
+            timeout: {
+              type: 'string',
+              default: 'PT1H',
+              title: 'Timeout',
+              'x-ms-stateless-default': 'PT5M',
+            },
+          },
+        },
       },
-      required: ['deploymentModel', 'messages'],
+      required: ['deploymentId', 'messages'],
     },
     inputsLocation: ['inputs', 'parameters'],
     isInputsOptional: false,
