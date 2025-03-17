@@ -231,6 +231,7 @@ export default {
   FUNCTION_NAME: {
     VARIABLES: 'variables',
     PARAMETERS: 'parameters',
+    AGENT_PARAMETERS: 'agentParameters',
   },
   GATEWAY_CHECKBOX_KEY: '__GATEWAY_CHECKBOX',
   GATEWAY_DEFAULT_REFRESH_INTERVAL_IN_MILLISECONDS: 15000,
@@ -384,6 +385,7 @@ export default {
       SLIDING_WINDOW: 'slidingwindow',
       SWITCH: 'switch',
       AGENT: 'agent',
+      AGENT_CONDITION: 'agentcondition',
       TABLE: 'table',
       TERMINATE: 'terminate',
       UNTIL: 'until',
@@ -457,6 +459,7 @@ export default {
   },
   PARAMETER_NAMES: {
     VARIABLES: 'variables',
+    AGENT_PARAMETER_SCHEMA: 'agentParameterSchema',
     LIMIT_COUNT: 'limit.count',
     LIMIT_TIMEOUT: 'limit.timeout',
   },

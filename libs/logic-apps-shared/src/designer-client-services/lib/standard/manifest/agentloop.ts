@@ -22,15 +22,14 @@ export default {
               title: 'Condition',
               description: 'The condition to execute this branch',
             },
-            type: {
-              'x-ms-visibility': 'internal',
-              type: 'string',
-              title: 'Type',
-              default: 'Tool',
-            },
             agentParameterSchema: {
+              title: 'Agent Parameters',
+              description: 'Initialize Agent Parameters',
               type: 'object',
-              'x-ms-editor': 'schema',
+              'x-ms-editor': 'initializevariable',
+              'x-ms-editor-options': {
+                isAgentParameter: true,
+              },
             },
           },
           required: ['description'],
@@ -41,21 +40,12 @@ export default {
     inputs: {
       type: 'object',
       properties: {
-        deploymentModel: {
+        deploymentId: {
           type: 'string',
-          title: 'Deployment model',
+          title: 'Deployment Model',
           description: 'The deployment model connection',
           'x-ms-connection-required': true,
           'x-ms-visibility': 'important',
-        },
-        temperature: {
-          type: 'number',
-          title: 'Sampling temperature',
-          description:
-            'A value used to control the apparent creativity of generated completions. See [Azure.AI.Inference.ChatCompletionsOptions.Temperature Property](https://go.microsoft.com/fwlink/?linkid=2282134).',
-          default: 1.0,
-          maximum: 2.0,
-          minimum: 0.0,
         },
         messages: {
           description: 'Messages',
@@ -75,54 +65,32 @@ export default {
                 type: 'string',
                 'x-ms-summary': 'Content',
               },
-              image: {
-                type: 'string',
-                title: 'Chat Image message',
-                description: 'The image content.',
-              },
-              author: {
-                type: 'string',
-                title: 'Chat Author',
-                description: 'The chat author.',
-              },
             },
           },
           required: ['Role', 'Content'],
           'x-ms-summary': 'Messages',
           'x-ms-visibility': 'important',
         },
-        top_p: {
-          type: 'number',
-          title: 'Nucleus sampling (top_p)',
-          description:
-            'A value used to control the apparent creativity of generated completions and an alternative value to Temperature. See [ChatCompletionsOptions.NucleusSamplingFactor Property](https://go.microsoft.com/fwlink/?linkid=2267246).',
-          minimum: 0.0,
-        },
-        max_tokens: {
-          type: 'integer',
-          title: 'Max tokens',
-          description:
-            'The maximum number of tokens to generate. See [ChatCompletionsOptions.MaxTokens Property](https://go.microsoft.com/fwlink/?linkid=2267172).',
-          minimum: 0.0,
-        },
-        presence_penalty: {
-          type: 'number',
-          title: 'Presence penalty',
-          description:
-            'A value that influences the probability of generated tokens appearing based on their existing presence in generated text. See [ChatCompletionsOptions.PresencePenalty Property](https://go.microsoft.com/fwlink/?linkid=2267450).',
-          maximum: 2.0,
-          minimum: -2.0,
-        },
-        frequency_penalty: {
-          type: 'number',
-          title: 'Frequency penalty',
-          description:
-            'A value that influences the probability of generated tokens appearing based on their cumulative frequence. See [ChatCompletionsOptions.FrequencyPenalty Property](https://go.microsoft.com/fwlink/?linkid=2267245).',
-          maximum: 2.0,
-          minimum: -2.0,
+        limit: {
+          type: 'object',
+          'x-ms-group-name': 'Change limits',
+          required: [],
+          properties: {
+            count: {
+              type: 'integer',
+              default: 60,
+              title: 'Count',
+            },
+            timeout: {
+              type: 'string',
+              default: 'PT1H',
+              title: 'Timeout',
+              'x-ms-stateless-default': 'PT5M',
+            },
+          },
         },
       },
-      required: ['deploymentModel', 'messages'],
+      required: ['deploymentId', 'messages'],
     },
     inputsLocation: ['inputs', 'parameters'],
     isInputsOptional: false,
