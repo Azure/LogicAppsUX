@@ -1,4 +1,20 @@
 # Logic Apps Designer
+## [5.54.0](https://github.com/Azure/LogicAppsUX/compare/v5.53.0...v5.54.0) (2025-03-17)
+
+
+### Features
+
+* **designer:** Agent Parameter Rework ([#6807](https://github.com/Azure/LogicAppsUX/issues/6807)) ([0feeda9](https://github.com/Azure/LogicAppsUX/commit/0feeda99030381db97b031b05030c29b69d83282))
+* **designer:** Agent Parameters Entry Point  ([#6797](https://github.com/Azure/LogicAppsUX/issues/6797)) ([3e63abf](https://github.com/Azure/LogicAppsUX/commit/3e63abf709171c58c39df5d9acb02c836eff39ab))
+* **designer:** Implement inline connection creation for agent action ([#6794](https://github.com/Azure/LogicAppsUX/issues/6794)) ([84e18b7](https://github.com/Azure/LogicAppsUX/commit/84e18b75b46872ee2704e6b87ed39dad7d2a5766))
+* **designer:** Update agent connections schema ([#6806](https://github.com/Azure/LogicAppsUX/issues/6806)) ([a853f7f](https://github.com/Azure/LogicAppsUX/commit/a853f7f8f27d1e851143abafc0dfaf43d092a3f1))
+
+
+### Bug Fixes
+
+* **Designer:** Agentic Manifest Changes ([#6808](https://github.com/Azure/LogicAppsUX/issues/6808)) ([0409911](https://github.com/Azure/LogicAppsUX/commit/04099111078137da7f8794382862a7222a7942c1))
+* **vscode:** Fix parameterize connection checks to check all connections ([#6779](https://github.com/Azure/LogicAppsUX/issues/6779)) ([6b5d918](https://github.com/Azure/LogicAppsUX/commit/6b5d91836fb9012b122fdb6d5091ee400a9e8e2d))
+
 ## [5.53.0](https://github.com/Azure/LogicAppsUX/compare/v5.52.0...v5.53.0) (2025-03-14)
 
 
