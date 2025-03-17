@@ -8,9 +8,12 @@ import type { IAzureConnectorsContext } from '../azureConnectorWizard';
 import { OpenDesignerForAzureResource } from './openDesignerForAzureResource';
 import OpenDesignerForLocalProject from './openDesignerForLocalProject';
 import { Uri } from 'vscode';
+import { buildWorkspaceCodeFunctionsProjects } from '../../buildCodeFunctionsProject';
 
 export async function openDesigner(context: IAzureConnectorsContext, node: Uri | RemoteWorkflowTreeItem | undefined): Promise<void> {
   let openDesignerObj: OpenDesignerForLocalProject | OpenDesignerForAzureResource;
+
+  await buildWorkspaceCodeFunctionsProjects(context);
 
   const workflowNode = getWorkflowNode(node);
 

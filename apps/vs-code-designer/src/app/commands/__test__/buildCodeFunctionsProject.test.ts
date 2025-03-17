@@ -1,11 +1,11 @@
 import { describe, it, expect, beforeEach, vi } from 'vitest';
-import { buildCodeProjects } from '../BuildCodeProjects';
+import { buildWorkspaceCodeFunctionsProjects } from '../buildCodeFunctionsProject';
 import type { IActionContext } from '@microsoft/vscode-azext-utils';
 import { window } from 'vscode';
 import * as child_process from 'child_process';
-import * as workspaceUtils from '../../../../utils/workspace';
-import * as verifyUtils from '../../../../utils/verifyIsCodeProject';
-import { ext } from '../../../../../extensionVariables';
+import * as workspaceUtils from '../../utils/workspace';
+import * as verifyUtils from '../../utils/verifyIsCodeProject';
+import { ext } from '../../../extensionVariables';
 import path from 'path';
 
 vi.mock('child_process', () => ({
@@ -19,7 +19,7 @@ vi.mock('vscode', () => ({
   },
 }));
 
-vi.mock('../../../../../extensionVariables', () => ({
+vi.mock('../../../extensionVariables', () => ({
   ext: {
     outputChannel: {
       appendLog: vi.fn(),
@@ -27,7 +27,7 @@ vi.mock('../../../../../extensionVariables', () => ({
   },
 }));
 
-describe('buildCodeProjects', () => {
+describe('buildWorkspaceCodeFunctionsProjects', () => {
   let context: IActionContext;
   const testWorkspaceFolder = path.join('test', 'workspace', 'folder');
   let execSpy: any;
@@ -48,7 +48,7 @@ describe('buildCodeProjects', () => {
   it('should log and return if no custom code functions projects are found', async () => {
     vi.spyOn(verifyUtils, 'tryGetCustomCodeFunctionsProjects').mockResolvedValue([]);
 
-    await buildCodeProjects(context);
+    await buildWorkspaceCodeFunctionsProjects(context);
 
     expect(ext.outputChannel.appendLog).toHaveBeenCalledWith('No custom code functions projects found.');
     expect(execSpy).not.toHaveBeenCalled();
@@ -63,13 +63,14 @@ describe('buildCodeProjects', () => {
       return {} as child_process.ChildProcess;
     });
 
-    await buildCodeProjects(context);
+    await buildWorkspaceCodeFunctionsProjects(context);
 
     for (const projectPath of projectPaths) {
       expect(execSpy).toHaveBeenCalledWith('dotnet restore && dotnet build', { cwd: projectPath }, expect.any(Function));
       expect(ext.outputChannel.appendLog).toHaveBeenCalledWith(`Custom code functions project built successfully at ${projectPath}.`);
     }
-    expect(window.showInformationMessage).toHaveBeenCalledTimes(projectPaths.length);
+    expect(ext.outputChannel.appendLog).toHaveBeenCalledTimes(projectPaths.length * 2);
+    expect(window.showErrorMessage).not.toHaveBeenCalled();
   });
 
   it('should handle errors during build for a custom code functions project', async () => {
@@ -83,7 +84,7 @@ describe('buildCodeProjects', () => {
       return {} as child_process.ChildProcess;
     });
 
-    await expect(buildCodeProjects(context)).rejects.toBe(testBuildError);
+    await expect(buildWorkspaceCodeFunctionsProjects(context)).rejects.toBe(testBuildError);
 
     const testErrorMessage = `Error building custom code functions project at ${projectPaths[0]}: ${testBuildError}`;
     expect(ext.outputChannel.appendLog).toHaveBeenCalledWith(testErrorMessage);

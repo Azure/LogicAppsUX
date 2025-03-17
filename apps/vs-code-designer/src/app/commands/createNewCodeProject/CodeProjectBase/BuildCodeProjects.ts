@@ -23,6 +23,7 @@ export async function buildCodeProjects(context: IActionContext): Promise<void> 
 
 async function buildCodeProject(functionsProjectPath: string): Promise<void> {
   return new Promise((resolve, reject) => {
+    ext.outputChannel.appendLog(`Building custom code functions project at ${functionsProjectPath}...`);
     exec('dotnet restore && dotnet build', { cwd: functionsProjectPath }, (error: Error, stdout: string, stderr: string) => {
       const err = error || stderr;
       if (err) {
