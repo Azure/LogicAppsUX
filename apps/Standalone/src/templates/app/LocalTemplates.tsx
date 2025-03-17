@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useState } from 'react';
 import { TemplatesDataProvider, TemplatesView } from '@microsoft/logic-apps-designer';
 import type { RootState } from '../state/Store';
-import { TemplatesDesigner, TemplatesDesignerProvider } from '@microsoft/logic-apps-designer';
+import { TemplatesDesigner, TemplatesDesignerProvider, templateStore, resetStateOnResourceChange } from '@microsoft/logic-apps-designer';
 import { useSelector } from 'react-redux';
 import {
   BaseGatewayService,
@@ -16,6 +16,7 @@ import {
   type Template,
   type LogicAppsV2,
   BaseTemplateService,
+  type IResourceService,
 } from '@microsoft/logic-apps-shared';
 import { HttpClient } from '../../designer/app/AzureLogicAppsDesigner/Services/HttpClient';
 
@@ -24,17 +25,20 @@ const loadLocalTemplateFromResourcePath = async (resourcePath: string, artifactT
 
   return paths.length === 2
     ? (await import(`./../../../../../__mocks__/templates/${paths[0]}/${paths[1]}/${artifactType}.json`)).default
-    : (await import(`./../../../../../__mocks__/templates//${resourcePath}/${artifactType}.json`)).default;
+    : (await import(`./../../../../../__mocks__/templates/${resourcePath}/${artifactType}.json`)).default;
 };
 
 const localTemplateManifestPaths = ['BasicWorkflowOnly', 'SimpleConnectionParameter', 'SimpleAccelerator', 'SimpleParametersOnly'];
+const defaultSubscriptionId = 'one';
+const defaultResourceGroup = 'SecondRG';
+const defaultLocation = 'eastus';
 
 export const LocalTemplates = () => {
   const { theme, templatesView } = useSelector((state: RootState) => ({
     theme: state.workflowLoader.theme,
     templatesView: state.workflowLoader.templatesView,
   }));
-  const { hostingPlan, useEndpoint } = useSelector((state: RootState) => state.workflowLoader);
+  const { hostingPlan, useEndpoint, isCreateView, enableResourceSelection } = useSelector((state: RootState) => state.workflowLoader);
   const [reload, setReload] = useState<boolean | undefined>(undefined);
 
   const isConsumption = hostingPlan === 'consumption';
@@ -50,26 +54,32 @@ export const LocalTemplates = () => {
   }, [useEndpoint]);
 
   const services = useMemo(
-    () => getServices(isConsumption, !!useEndpoint),
+    () => getServices(defaultSubscriptionId, defaultResourceGroup, defaultLocation, isConsumption, !!useEndpoint),
     // eslint-disable-next-line react-hooks/exhaustive-deps
     [isConsumption, useEndpoint]
   );
+  const onReloadServices = () => {
+    const { subscriptionId, resourceGroup, location } = templateStore.getState().workflow;
+    templateStore.dispatch(resetStateOnResourceChange(getResourceBasedServices(subscriptionId, resourceGroup, location, isConsumption)));
+  };
   const isSingleTemplateView = useMemo(() => templatesView !== 'gallery', [templatesView]);
 
   return (
     <TemplatesDesignerProvider locale="en-US" theme={theme}>
       <TemplatesDataProvider
         resourceDetails={{
-          subscriptionId: '',
-          resourceGroup: '',
-          location: '',
-          workflowAppName: '',
+          subscriptionId: defaultSubscriptionId,
+          resourceGroup: defaultResourceGroup,
+          location: defaultLocation,
+          workflowAppName: 'app1',
         }}
         reload={reload}
         connectionReferences={{}}
         services={services}
         isConsumption={isConsumption}
-        isCreateView={!isConsumption}
+        isCreateView={!isConsumption || !!isCreateView}
+        enableResourceSelection={enableResourceSelection}
+        onResourceChange={onReloadServices}
         existingWorkflowName={undefined}
         viewTemplate={
           isSingleTemplateView
@@ -161,14 +171,20 @@ export const LocalTemplates = () => {
 
 const httpClient = new HttpClient();
 
-const getServices = (isConsumption: boolean, useEndpoint: boolean): any => {
+const getServices = (
+  subscriptionId: string,
+  resourceGroup: string,
+  location: string,
+  isConsumption: boolean,
+  useEndpoint: boolean
+): any => {
   const connectionService = isConsumption
     ? new ConsumptionConnectionService({
         apiVersion: '2018-07-01-preview',
         baseUrl: '/baseUrl',
-        subscriptionId: '',
-        resourceGroup: '',
-        location: '',
+        subscriptionId,
+        resourceGroup,
+        location,
         httpClient,
       })
     : new StandardConnectionService({
@@ -178,9 +194,9 @@ const getServices = (isConsumption: boolean, useEndpoint: boolean): any => {
         apiHubServiceDetails: {
           apiVersion: '2018-07-01-preview',
           baseUrl: '/baseUrl',
-          subscriptionId: '',
-          resourceGroup: '',
-          location: '',
+          subscriptionId,
+          resourceGroup,
+          location,
           httpClient,
         },
         workflowAppDetails: {
@@ -206,17 +222,17 @@ const getServices = (isConsumption: boolean, useEndpoint: boolean): any => {
     apiVersion: '2018-11-01',
     baseUrl: '/url',
     httpClient,
-    subscriptionId: '',
-    resourceGroup: '',
-    location: '',
+    subscriptionId,
+    resourceGroup,
+    location,
   });
   const operationManifestService = isConsumption
     ? new ConsumptionOperationManifestService({
         apiVersion: '2018-11-01',
         baseUrl: '/url',
         httpClient,
-        subscriptionId: 'subid',
-        location: 'location',
+        subscriptionId,
+        location,
       })
     : new StandardOperationManifestService({
         apiVersion: '2018-11-01',
@@ -237,6 +253,7 @@ const getServices = (isConsumption: boolean, useEndpoint: boolean): any => {
       window.alert('On Blank Workflow Click');
     },
     httpClient,
+    baseUrl: '/url',
   });
   const templateService = new LocalTemplateService({
     service: baseService,
@@ -265,7 +282,40 @@ const getServices = (isConsumption: boolean, useEndpoint: boolean): any => {
     operationManifestService,
     templateService,
     workflowService,
+    resourceService: new LocalResourceService(),
   };
+};
+
+const getResourceBasedServices = (subscriptionId: string, resourceGroup: string, location: string, isConsumption: boolean) => {
+  const connectionService = isConsumption
+    ? new ConsumptionConnectionService({
+        apiVersion: '2018-07-01-preview',
+        baseUrl: '/baseUrl',
+        subscriptionId,
+        resourceGroup,
+        location,
+        httpClient,
+      })
+    : new StandardConnectionService({
+        baseUrl: '/url',
+        apiVersion: '2018-11-01',
+        httpClient,
+        apiHubServiceDetails: {
+          apiVersion: '2018-07-01-preview',
+          baseUrl: '/baseUrl',
+          subscriptionId,
+          resourceGroup,
+          location,
+          httpClient,
+        },
+        workflowAppDetails: {
+          appName: 'app',
+          identity: { type: ResourceIdentityType.SYSTEM_ASSIGNED },
+        },
+        readConnections: () => Promise.resolve({}),
+      });
+
+  return { connectionService };
 };
 
 class LocalTemplateService extends StandardTemplateService {
@@ -284,29 +334,68 @@ class LocalTemplateService extends StandardTemplateService {
     }
   };
 
-  public getResourceManifest = async (resourcePath: string): Promise<Template.Manifest> => {
-    const templateName = resourcePath.split('/')[0];
-    if (localTemplateManifestPaths.includes(templateName)) {
+  public getResourceManifest = async (resourcePath: string): Promise<Template.TemplateManifest | Template.WorkflowManifest> => {
+    const templateId = resourcePath.split('/')[0];
+    if (localTemplateManifestPaths.includes(templateId)) {
       return loadLocalTemplateFromResourcePath(resourcePath);
     }
 
     return this._options.service.getResourceManifest(resourcePath);
   };
 
-  public getWorkflowDefinition = async (resourcePath: string): Promise<LogicAppsV2.WorkflowDefinition> => {
-    const templateName = resourcePath.split('/')[0];
-    if (localTemplateManifestPaths.includes(templateName)) {
-      return loadLocalTemplateFromResourcePath(resourcePath, 'workflow');
+  public getWorkflowDefinition = async (templateId: string, workflowId: string): Promise<LogicAppsV2.WorkflowDefinition> => {
+    if (localTemplateManifestPaths.includes(templateId)) {
+      return loadLocalTemplateFromResourcePath(`${templateId}/${workflowId}`, 'workflow');
     }
 
-    return this._options.service.getWorkflowDefinition(resourcePath);
+    return this._options.service.getWorkflowDefinition(templateId, workflowId);
   };
 
-  public getContentPathUrl = (templateName: string, resourcePath: string): string => {
-    if (localTemplateManifestPaths.includes(templateName)) {
+  public getContentPathUrl = (templatePath: string, resourcePath: string): string => {
+    const templateId = templatePath.split('/')[0];
+
+    if (localTemplateManifestPaths.includes(templateId)) {
       return resourcePath;
     }
 
-    return this._options.service.getContentPathUrl(templateName, resourcePath);
+    return this._options.service.getContentPathUrl(templatePath, resourcePath);
   };
+
+  public isResourceAvailable = async () => {
+    return true;
+  };
+}
+
+class LocalResourceService implements IResourceService {
+  async listSubscriptions() {
+    return [
+      { id: '/subscriptions/one', name: 'one', displayName: 'Subscription 1' },
+      { id: '/subscriptions/two', name: 'two', displayName: 'Subscription 2' },
+      { id: '/subscriptions/three', name: 'three', displayName: 'Subscription 3' },
+    ];
+  }
+
+  async listResourceGroups(subscriptionId: string) {
+    return subscriptionId === 'two'
+      ? []
+      : [
+          { id: '/1', name: 'FirstRG', displayName: 'FirstRG' },
+          { id: '/2', name: 'SecondRG', displayName: 'SecondRG' },
+          { id: '/3', name: 'ThirdRG', displayName: 'ThirdRG' },
+        ];
+  }
+
+  async listLocations() {
+    return [
+      { id: '/eastus', name: 'eastus', displayName: 'East US' },
+      { id: '/westus', name: 'westus', displayName: 'West US' },
+    ];
+  }
+
+  async listLogicApps() {
+    return [
+      { id: '/app1', name: 'app1', kind: 'standard' },
+      { id: '/app2', name: 'app2', kind: 'standard' },
+    ] as any;
+  }
 }

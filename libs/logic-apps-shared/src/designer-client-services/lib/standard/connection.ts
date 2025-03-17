@@ -17,7 +17,7 @@ import {
 } from '../../../utils/src';
 import type { BaseConnectionServiceOptions } from '../base';
 import { BaseConnectionService } from '../base';
-import { apiManagementConnectorId, azureFunctionConnectorId } from '../base/operationmanifest';
+import { agentConnectorId, apiManagementConnectorId, azureFunctionConnectorId } from '../base/operationmanifest';
 import type { HttpResponse } from '../common/exceptions';
 import type { ConnectionCreationInfo, ConnectionParametersMetadata, CreateConnectionResult, IConnectionService } from '../connection';
 import type { IHttpClient } from '../httpClient';
@@ -27,6 +27,7 @@ import type { IOAuthPopup } from '../oAuth';
 import { OAuthService } from '../oAuth';
 import { getHybridAppBaseRelativeUrl, isHybridLogicApp } from './hybrid';
 import { validateRequiredServiceArguments } from '../../../utils/src/lib/helpers/functions';
+import agentloopConnector from '../standard/manifest/agentLoopConnector';
 
 interface ConnectionAcl {
   id: string;
@@ -79,6 +80,13 @@ interface APIManagementConnectionModel {
   displayName?: string;
 }
 
+export interface AgentConnectionModel {
+  authentication: Record<string, any>;
+  endpoint: string;
+  type?: string;
+  displayName?: string;
+}
+
 interface ConnectionAndAppSetting<T> {
   connectionKey: string;
   connectionData: T;
@@ -91,15 +99,17 @@ interface ConnectionsData {
   serviceProviderConnections?: Record<string, ServiceProviderConnectionModel>;
   functionConnections?: Record<string, FunctionsConnectionModel>;
   apiManagementConnections?: Record<string, APIManagementConnectionModel>;
+  agentConnections?: Record<string, AgentConnectionModel>;
 }
 
-type LocalConnectionModel = FunctionsConnectionModel | ServiceProviderConnectionModel | APIManagementConnectionModel;
+type LocalConnectionModel = FunctionsConnectionModel | ServiceProviderConnectionModel | APIManagementConnectionModel | AgentConnectionModel;
 type ReadConnectionsFunc = () => Promise<ConnectionsData>;
 type WriteConnectionFunc = (connectionData: ConnectionAndAppSetting<LocalConnectionModel>) => Promise<void>;
 
 const serviceProviderLocation = 'serviceProviderConnections';
 const functionsLocation = 'functionConnections';
 const apimLocation = 'apiManagementConnections';
+const agentLocation = 'agentConnections';
 
 export interface StandardConnectionServiceOptions {
   apiVersion: string;
@@ -161,8 +171,13 @@ export class StandardConnectionService extends BaseConnectionService implements 
           },
         });
       } else {
+        const connectorIdKeyword = connectorId.split('/').at(-1);
+        if (connectorIdKeyword === 'agent') {
+          return agentloopConnector;
+        }
+
         response = await httpClient.get<Connector>({
-          uri: `${baseUrl}/operationGroups/${connectorId.split('/').at(-1)}?api-version=${apiVersion}`,
+          uri: `${baseUrl}/operationGroups/${connectorIdKeyword}?api-version=${apiVersion}`,
         });
       }
 
@@ -181,6 +196,7 @@ export class StandardConnectionService extends BaseConnectionService implements 
     const serviceProviderConnections = (localConnections[serviceProviderLocation] || {}) as Record<string, ServiceProviderConnectionModel>;
     const functionConnections = (localConnections[functionsLocation] || {}) as Record<string, FunctionsConnectionModel>;
     const apimConnections = (localConnections[apimLocation] || {}) as Record<string, APIManagementConnectionModel>;
+    const agentConnections = (localConnections[agentLocation] || {}) as Record<string, AgentConnectionModel>;
 
     this._allConnectionsInitialized = true;
     return [
@@ -196,6 +212,11 @@ export class StandardConnectionService extends BaseConnectionService implements 
       }),
       ...Object.keys(apimConnections).map((key) => {
         const connection = convertApimConnectionDataToConnection(key, apimConnections[key]);
+        this._connections[connection.id] = connection;
+        return connection;
+      }),
+      ...Object.keys(agentConnections).map((key) => {
+        const connection = convertAgentConnectionDataToConnection(key, agentConnections[key]);
         this._connections[connection.id] = connection;
         return connection;
       }),
@@ -522,7 +543,9 @@ export class StandardConnectionService extends BaseConnectionService implements 
     connection: Connection;
   }> {
     const connectionType = parametersMetadata?.connectionMetadata?.type;
-    let connectionsData: ConnectionAndAppSetting<FunctionsConnectionModel | APIManagementConnectionModel | ServiceProviderConnectionModel>;
+    let connectionsData: ConnectionAndAppSetting<
+      FunctionsConnectionModel | APIManagementConnectionModel | ServiceProviderConnectionModel | AgentConnectionModel
+    >;
     let connection: Connection;
     switch (connectionType) {
       case ConnectionType.Function: {
@@ -539,6 +562,19 @@ export class StandardConnectionService extends BaseConnectionService implements 
           connectionsData.connectionKey,
           connectionsData.connectionData as APIManagementConnectionModel
         );
+        break;
+      }
+      case ConnectionType.Agent: {
+        const { connectionAndSettings } = convertToAgentConnectionsData(connectionName, connector.id, connectionInfo, parametersMetadata);
+        connectionsData = connectionAndSettings;
+        connection = convertAgentConnectionDataToConnection(
+          connectionsData.connectionKey,
+          connectionsData.connectionData as AgentConnectionModel
+        );
+
+        // if (connector.properties.testConnectionUrl) {
+        //   await this._testServiceProviderConnection(connector.properties.testConnectionUrl, rawConnection);
+        // }
         break;
       }
       default: {
@@ -626,6 +662,25 @@ function convertServiceProviderConnectionDataToConnection(
   };
 }
 
+function convertAgentConnectionDataToConnection(connectionKey: string, connectionData: AgentConnectionModel): Connection {
+  const { displayName } = connectionData;
+
+  return {
+    name: connectionKey,
+    id: `/${agentConnectorId}/connections/${connectionKey}`,
+    type: 'connections',
+    properties: {
+      api: { id: `/${agentConnectorId}` } as any,
+      createdTime: '',
+      connectionParameters: {},
+      displayName: displayName as string,
+      statuses: [{ status: 'Connected' }],
+      overallStatus: 'Connected',
+      testLinks: [],
+    },
+  };
+}
+
 function convertApimConnectionDataToConnection(connectionKey: string, connectionData: APIManagementConnectionModel): Connection {
   const { displayName } = connectionData;
 
@@ -662,6 +717,39 @@ function convertFunctionsConnectionDataToConnection(connectionKey: string, conne
       testLinks: [],
     },
   };
+}
+
+function convertToAgentConnectionsData(
+  connectionKey: string,
+  connectorId: string,
+  connectionInfo: ConnectionCreationInfo,
+  connectionParameterMetadata: ConnectionParametersMetadata
+): { connectionAndSettings: ConnectionAndAppSetting<AgentConnectionModel>; rawConnection: ServiceProviderConnectionModel } {
+  const { connectionParametersSet: connectionParametersSetValues } = connectionInfo;
+  const { parameterValues, rawParameterValues, settings, displayName } = createLocalConnectionsData(
+    connectionKey,
+    connectionInfo,
+    connectionParameterMetadata
+  );
+
+  const connectionsData: ConnectionAndAppSetting<AgentConnectionModel> = {
+    connectionKey,
+    connectionData: {
+      displayName,
+      authentication: {
+        type: connectionParametersSetValues?.name,
+        key: parameterValues?.['openAIKey'],
+      },
+      endpoint: parameterValues?.['openAIEndpoint'],
+      type: 'model',
+    },
+    settings,
+    pathLocation: [agentLocation],
+  };
+  const rawConnection = createCopy(connectionsData.connectionData);
+  rawConnection.parameterValues = rawParameterValues;
+
+  return { connectionAndSettings: connectionsData, rawConnection };
 }
 
 function convertToServiceProviderConnectionsData(

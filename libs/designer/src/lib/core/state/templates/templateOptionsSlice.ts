@@ -1,10 +1,14 @@
 import type { Template } from '@microsoft/logic-apps-shared';
 import type { PayloadAction } from '@reduxjs/toolkit';
-import { createSlice } from '@reduxjs/toolkit';
-import { initializeTemplateServices } from '../../actions/bjsworkflow/templates';
+import { createSlice, isAnyOf } from '@reduxjs/toolkit';
+import { initializeTemplateServices, resetStateOnResourceChange } from '../../actions/bjsworkflow/templates';
+import { resetTemplatesState } from '../global';
+import { setLocation, setResourceGroup, setSubscription, setWorkflowAppDetails } from './workflowSlice';
 
 export interface TemplateOptionsState {
   servicesInitialized: boolean;
+  enableResourceSelection?: boolean;
+  reInitializeServices?: boolean;
   viewTemplateDetails?: Template.ViewTemplateDetails;
 }
 
@@ -19,13 +23,26 @@ export const templateOptionsSlice = createSlice({
     setViewTemplateDetails: (state, action: PayloadAction<Template.ViewTemplateDetails>) => {
       state.viewTemplateDetails = action.payload;
     },
+    setEnableResourceSelection: (state, action: PayloadAction<boolean>) => {
+      state.enableResourceSelection = action.payload;
+    },
   },
   extraReducers: (builder) => {
+    builder.addCase(resetTemplatesState, () => initialState);
     builder.addCase(initializeTemplateServices.fulfilled, (state, action) => {
       state.servicesInitialized = action.payload;
+    });
+    builder.addCase(resetStateOnResourceChange.fulfilled, (state, action) => {
+      state.reInitializeServices = !action.payload;
+    });
+    builder.addCase(setWorkflowAppDetails, (state, action) => {
+      state.reInitializeServices = !!action.payload.name;
+    });
+    builder.addMatcher(isAnyOf(setSubscription, setResourceGroup, setLocation), (state, action) => {
+      state.reInitializeServices = !!action.payload;
     });
   },
 });
 
-export const { setViewTemplateDetails } = templateOptionsSlice.actions;
+export const { setViewTemplateDetails, setEnableResourceSelection } = templateOptionsSlice.actions;
 export default templateOptionsSlice.reducer;

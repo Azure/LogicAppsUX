@@ -1,5 +1,5 @@
 import type { IImageStyles, IImageStyleProps, IStyleFunctionOrObject } from '@fluentui/react';
-import { Icon, Shimmer, ShimmerElementType, Spinner, SpinnerSize, Text, css } from '@fluentui/react';
+import { Icon, Shimmer, ShimmerElementType, Spinner, SpinnerSize, css } from '@fluentui/react';
 import { useConnector } from '../../../core/state/connection/connectionSelector';
 import type { Template } from '@microsoft/logic-apps-shared';
 import type { IntlShape } from 'react-intl';
@@ -10,8 +10,11 @@ import { getConnectorResources } from '../../../core/templates/utils/helper';
 import { useEffect, useMemo } from 'react';
 import type { ConnectorInfo } from '../../../core/templates/utils/queries';
 import { useConnectorInfo } from '../../../core/templates/utils/queries';
-import { Tooltip } from '@fluentui/react-components';
+import { tokens, Tooltip, Text } from '@fluentui/react-components';
 import { isConnectionValid } from '../../../core/utils/connectors/connections';
+import { useSelector } from 'react-redux';
+import type { RootState } from '../../../core/state/templates/store';
+import { Checkmark16Filled, Dismiss16Filled } from '@fluentui/react-icons';
 
 export const ConnectorIcon = ({
   connectorId,
@@ -23,7 +26,12 @@ export const ConnectorIcon = ({
   operationId?: string;
   styles?: IStyleFunctionOrObject<IImageStyleProps, IImageStyles>;
 }) => {
-  const { data: connector, isLoading, isError } = useConnectorInfo(connectorId, operationId, /* useCachedData */ true);
+  const { subscriptionId, location } = useSelector((state: RootState) => state.workflow);
+  const {
+    data: connector,
+    isLoading,
+    isError,
+  } = useConnectorInfo(connectorId, operationId, /* useCachedData */ true, /* enabled */ !!subscriptionId && !!location);
   if (!connector) {
     return isLoading ? <Spinner size={SpinnerSize.small} /> : isError ? <Icon iconName="Error" /> : <Icon iconName="Unknown" />;
   }
@@ -101,9 +109,9 @@ const textStyles = {
   },
 };
 
-export const ConnectorWithDetails = ({ connectorId, kind }: Template.Connection) => {
-  const { data: connector, isLoading, isError } = useConnector(connectorId, /* enabled */ true, /* getCachedData */ true);
-  const { data: connections, isLoading: isConnectionsLoading } = useConnectionsForConnector(connectorId, /* shouldNotRefetch */ true);
+export const ConnectorWithDetails = ({ id, kind }: Template.FeaturedConnector) => {
+  const { data: connector, isLoading, isError } = useConnector(id, /* enabled */ true, /* getCachedData */ true);
+  const { data: connections, isLoading: isConnectionsLoading } = useConnectionsForConnector(id, /* shouldNotRefetch */ true);
   const connectorConnections = useMemo(() => connections?.filter(isConnectionValid), [connections]);
   const intl = useIntl();
 
@@ -123,7 +131,7 @@ export const ConnectorWithDetails = ({ connectorId, kind }: Template.Connection)
         />
       ) : (
         <ConnectorIcon
-          connectorId={connectorId}
+          connectorId={id}
           classes={{ root: 'msla-template-connector-box', icon: 'msla-template-connector-icon' }}
           styles={{ root: { width: 50, height: 50 } }}
         />
@@ -189,6 +197,31 @@ export const ConnectorConnectionStatus = ({
         </Text>
       )}
       <Text className="msla-templates-tab-review-section-details-value">{hasConnection ? texts.connected : texts.notConnected}</Text>
+    </div>
+  );
+};
+
+export const CompactConnectorConnectionStatus = ({ connectorId, hasConnection }: { connectorId: string; hasConnection: boolean }) => {
+  const { data: connector, isLoading } = useConnector(connectorId, /* enabled */ true, /* getCachedData */ true);
+
+  return (
+    <div className="msla-templates-tab-review-section-details">
+      {isLoading ? (
+        <Shimmer
+          style={{ width: '70%', marginTop: 5 }}
+          shimmerElements={[{ type: ShimmerElementType.line, height: 15, verticalAlign: 'bottom', width: '100%' }]}
+          size={SpinnerSize.xSmall}
+        />
+      ) : (
+        <div className="msla-connection-status-compact">
+          {hasConnection ? (
+            <Checkmark16Filled color={tokens.colorStatusSuccessForeground1} />
+          ) : (
+            <Dismiss16Filled color={tokens.colorStatusDangerForeground1} />
+          )}
+          <Text weight="semibold">{connector?.properties?.displayName ?? connectorId}</Text>
+        </div>
+      )}
     </div>
   );
 };

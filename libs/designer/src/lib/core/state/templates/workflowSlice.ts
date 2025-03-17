@@ -3,6 +3,7 @@ import { createSlice } from '@reduxjs/toolkit';
 import type { ConnectionReferences } from '../../../common/models/workflow';
 import type { UpdateConnectionPayload } from '../../actions/bjsworkflow/connections';
 import { getExistingReferenceKey } from '../../utils/connectors/connections';
+import { resetTemplatesState } from '../global';
 
 export interface ResourceDetails {
   subscriptionId: string;
@@ -98,8 +99,52 @@ export const workflowSlice = createSlice({
         state.connections.mapping[connectionKeyInManifest] = connectionKey;
       }
     },
+    setSubscription: (state, action: PayloadAction<string>) => {
+      const subscriptionId = action.payload;
+      state.subscriptionId = subscriptionId;
+
+      if (subscriptionId) {
+        state.connections.mapping = {};
+      }
+    },
+    setResourceGroup: (state, action: PayloadAction<string>) => {
+      const resourceGroup = action.payload;
+      state.resourceGroup = resourceGroup;
+
+      if (resourceGroup) {
+        state.connections.mapping = {};
+      }
+    },
+    setLocation: (state, action: PayloadAction<string>) => {
+      const location = action.payload;
+      state.location = location;
+
+      if (location) {
+        state.connections.mapping = {};
+      }
+    },
+    setWorkflowAppDetails: (state, action: PayloadAction<{ name: string; location: string }>) => {
+      const { name, location } = action.payload;
+      state.workflowAppName = name;
+      state.location = location;
+
+      if (name) {
+        state.connections = { references: {}, mapping: {} };
+      }
+    },
+  },
+  extraReducers: (builder) => {
+    builder.addCase(resetTemplatesState, () => initialState);
   },
 });
 
-export const { clearWorkflowDetails, setInitialData, changeConnectionMapping } = workflowSlice.actions;
+export const {
+  clearWorkflowDetails,
+  setInitialData,
+  changeConnectionMapping,
+  setSubscription,
+  setResourceGroup,
+  setLocation,
+  setWorkflowAppDetails,
+} = workflowSlice.actions;
 export default workflowSlice.reducer;

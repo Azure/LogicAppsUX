@@ -71,6 +71,7 @@ export const ConnectionType = {
   Function: 'function',
   ServiceProvider: 'serviceprovider',
   ApiManagement: 'apimanagement',
+  Agent: 'agent',
 };
 export type ConnectionType = (typeof ConnectionType)[keyof typeof ConnectionType];
 
@@ -81,6 +82,7 @@ export const ConnectionReferenceKeyFormat = {
   OpenApiConnection: 'openapiconnection', // TODO: This can change when backend fixes a value, right now this is not used by any manifest.
   ServiceProvider: 'serviceprovider',
   HybridTrigger: 'hybridtrigger',
+  AgentConnection: 'agentconnection',
 };
 export type ConnectionReferenceKeyFormat = (typeof ConnectionReferenceKeyFormat)[keyof typeof ConnectionReferenceKeyFormat];
 
@@ -251,13 +253,23 @@ export interface OperationManifestProperties {
   externalDocs?: Documentation;
 }
 
-export type SubgraphType = 'CONDITIONAL_TRUE' | 'CONDITIONAL_FALSE' | 'SWITCH_CASE' | 'SWITCH_DEFAULT' | 'SWITCH_ADD_CASE' | 'UNTIL_DO';
+export type SubgraphType =
+  | 'CONDITIONAL_TRUE'
+  | 'CONDITIONAL_FALSE'
+  | 'SWITCH_CASE'
+  | 'AGENT_CONDITION'
+  | 'SWITCH_DEFAULT'
+  | 'SWITCH_ADD_CASE'
+  | 'AGENT_ADD_CONDITON'
+  | 'UNTIL_DO';
 export const SUBGRAPH_TYPES: Record<string, SubgraphType> = {
   CONDITIONAL_TRUE: 'CONDITIONAL_TRUE',
   CONDITIONAL_FALSE: 'CONDITIONAL_FALSE',
   SWITCH_CASE: 'SWITCH_CASE',
+  AGENT_CONDITION: 'AGENT_CONDITION',
   SWITCH_DEFAULT: 'SWITCH_DEFAULT',
   SWITCH_ADD_CASE: 'SWITCH_ADD_CASE',
+  AGENT_ADD_CONDITON: 'AGENT_ADD_CONDITON',
   UNTIL_DO: 'UNTIL_DO',
 };
 

@@ -124,6 +124,7 @@ import type {
   DropdownItem,
   FloatingActionMenuOutputViewModel,
   GroupItemProps,
+  InitializeVariableProps,
   OutputToken,
   ParameterInfo,
   RowItemProps,
@@ -144,6 +145,7 @@ import {
   ValueSegmentType,
   TokenType,
   AuthenticationOAuthType,
+  validateVariables,
 } from '@microsoft/designer-ui';
 import type {
   DependentParameterInfo,
@@ -173,6 +175,10 @@ import { getAllVariables } from '../variables';
 export const ParameterBrandColor = '#916F6F';
 export const ParameterIcon =
   'data:image/svg+xml;base64,PHN2ZyB2ZXJzaW9uPSIxLjEiIHZpZXdCb3g9IjAgMCAzMiAzMiIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4NCiA8cGF0aCBkPSJtMCAwaDMydjMyaC0zMnoiIGZpbGw9IiM5MTZmNmYiLz4NCiA8ZyBmaWxsPSIjZmZmIj4NCiAgPHBhdGggZD0ibTE2LjAyMyAxMS41cTAuOTQ1MzEgMCAxLjc3MzQgMC4yODkwNiAwLjgyODEyIDAuMjg5MDYgMS40NDUzIDAuODM1OTQgMC42MTcxOSAwLjU0Njg4IDAuOTY4NzUgMS4zMjgxIDAuMzU5MzggMC43ODEyNSAwLjM1OTM4IDEuNzY1NiAwIDAuNTE1NjItMC4xNDA2MiAxLjA3ODEtMC4xMzI4MSAwLjU1NDY5LTAuNDIxODggMS4wMTU2LTAuMjgxMjUgMC40NTMxMi0wLjcyNjU2IDAuNzUtMC40Mzc1IDAuMjk2ODgtMS4wNDY5IDAuMjk2ODgtMC42NzE4OCAwLTAuOTY4NzUtMC4zNjcxOS0wLjI5Njg4LTAuMzY3MTktMC4zMDQ2OS0xLjAwNzhoLTAuMDMxMjVxLTAuMTc5NjkgMC42MTcxOS0wLjU4NTk0IDEtMC4zOTg0NCAwLjM3NS0xLjA3MDMgMC4zNzUtMC40NjA5NCAwLTAuNzk2ODgtMC4xNzk2OS0wLjMyODEyLTAuMTg3NS0wLjU0Njg4LTAuNDg0MzgtMC4yMTA5NC0wLjMwNDY5LTAuMzEyNS0wLjY4NzUtMC4xMDE1Ni0wLjM5MDYyLTAuMTAxNTYtMC44MDQ2OSAwLTAuNTQ2ODggMC4xNDA2Mi0xLjA5MzggMC4xNDg0NC0wLjU0Njg4IDAuNDQ1MzEtMC45NzY1NiAwLjI5Njg4LTAuNDI5NjkgMC43NS0wLjY5NTMxIDAuNDYwOTQtMC4yNzM0NCAxLjA4NTktMC4yNzM0NCAwLjE3OTY5IDAgMC4zNTkzOCAwLjA0Njg3IDAuMTg3NSAwLjA0Njg3IDAuMzUxNTYgMC4xNDA2MiAwLjE2NDA2IDAuMDkzNzUgMC4yODkwNiAwLjIzNDM4dDAuMTg3NSAwLjMyODEydi0wLjAzOTA1OHEwLjAxNTYzLTAuMTU2MjUgMC4wMjM0NC0wLjMxMjUgMC4wMTU2My0wLjE1NjI1IDAuMDMxMjUtMC4zMTI1aDAuNzI2NTZsLTAuMTg3NSAyLjIzNDRxLTAuMDIzNDQgMC4yNS0wLjA1NDY5IDAuNTA3ODEtMC4wMzEyNTEgMC4yNTc4MS0wLjAzMTI1MSAwLjUwNzgxIDAgMC4xNzE4OCAwLjAxNTYzIDAuMzgyODEgMC4wMjM0NCAwLjIwMzEyIDAuMDkzNzUgMC4zOTA2MiAwLjA3MDMxIDAuMTc5NjkgMC4yMDMxMiAwLjMwNDY5IDAuMTQwNjIgMC4xMTcxOSAwLjM3NSAwLjExNzE5IDAuMjgxMjUgMCAwLjUtMC4xMTcxOSAwLjIxODc1LTAuMTI1IDAuMzc1LTAuMzIwMzEgMC4xNjQwNi0wLjE5NTMxIDAuMjczNDQtMC40NDUzMSAwLjEwOTM4LTAuMjU3ODEgMC4xNzk2OS0wLjUyMzQ0IDAuMDcwMzEtMC4yNzM0NCAwLjA5Mzc1LTAuNTM5MDYgMC4wMzEyNS0wLjI2NTYyIDAuMDMxMjUtMC40ODQzOCAwLTAuODU5MzgtMC4yODEyNS0xLjUzMTJ0LTAuNzg5MDYtMS4xMzI4cS0wLjUtMC40NjA5NC0xLjIwMzEtMC43MDMxMi0wLjY5NTMxLTAuMjQyMTktMS41MjM0LTAuMjQyMTktMC44OTg0NCAwLTEuNjMyOCAwLjMzNTk0LTAuNzI2NTYgMC4zMzU5NC0xLjI1IDAuOTE0MDYtMC41MTU2MiAwLjU3MDMxLTAuNzk2ODggMS4zMzU5dC0wLjI4MTI1IDEuNjMyOHEwIDAuODk4NDQgMC4yNzM0NCAxLjYzMjggMC4yODEyNSAwLjcyNjU2IDAuNzk2ODggMS4yNDIydDEuMjQyMiAwLjc5Njg4cTAuNzM0MzggMC4yODEyNSAxLjYzMjggMC4yODEyNSAwLjYzMjgxIDAgMS4yNS0wLjEwMTU2IDAuNjI1LTAuMTAxNTYgMS4xOTUzLTAuMzc1djAuNzE4NzVxLTAuNTg1OTQgMC4yNS0xLjIyNjYgMC4zNDM3NS0wLjY0MDYzIDAuMDg1OTM4LTEuMjczNCAwLjA4NTkzOC0xLjAzOTEgMC0xLjg5ODQtMC4zMjAzMS0wLjg1OTM4LTAuMzI4MTItMS40ODQ0LTAuOTIxODgtMC42MTcxOS0wLjYwMTU2LTAuOTYwOTQtMS40NTMxLTAuMzQzNzUtMC44NTE1Ni0wLjM0Mzc1LTEuODk4NCAwLTEuMDU0NyAwLjM1MTU2LTEuOTUzMSAwLjM1MTU2LTAuODk4NDQgMC45ODQzOC0xLjU1NDcgMC42MzI4MS0wLjY1NjI1IDEuNTE1Ni0xLjAyMzQgMC44ODI4MS0wLjM3NSAxLjk1MzEtMC4zNzV6bS0wLjYwOTM3IDYuNjc5N3EwLjQ3NjU2IDAgMC43ODEyNS0wLjI2NTYyIDAuMzA0NjktMC4yNzM0NCAwLjQ3NjU2LTAuNjcxODggMC4xNzE4OC0wLjM5ODQ0IDAuMjM0MzgtMC44NTE1NiAwLjA3MDMxLTAuNDUzMTIgMC4wNzAzMS0wLjgyMDMxIDAtMC4yNjU2Mi0wLjA1NDY5LTAuNDkyMTktMC4wNTQ2OS0wLjIyNjU2LTAuMTc5NjktMC4zOTA2Mi0wLjExNzE5LTAuMTY0MDYtMC4zMjAzMS0wLjI1NzgxdC0wLjQ5MjE5LTAuMDkzNzVxLTAuNDUzMTIgMC0wLjc1NzgxIDAuMjM0MzgtMC4zMDQ2OSAwLjIzNDM4LTAuNDkyMTkgMC41ODU5NC0wLjE4NzUgMC4zNTE1Ni0wLjI3MzQ0IDAuNzczNDQtMC4wNzgxMyAwLjQxNDA2LTAuMDc4MTMgMC43ODEyNSAwIDAuMjU3ODEgMC4wNTQ2OSAwLjUyMzQ0IDAuMDU0NjkgMC4yNTc4MSAwLjE3OTY5IDAuNDY4NzUgMC4xMjUgMC4yMTA5NCAwLjMzNTk0IDAuMzQzNzUgMC4yMTA5NCAwLjEzMjgxIDAuNTE1NjIgMC4xMzI4MXptLTcuNDE0MS04LjE3OTdoM3YxaC0ydjEwaDJ2MWgtM3ptMTYgMHYxMmgtM3YtMWgydi0xMGgtMnYtMXoiIHN0cm9rZS13aWR0aD0iLjQiLz4NCiA8L2c+DQo8L3N2Zz4NCg==';
+
+export const AgentParameterBrandColor = '#072a8e';
+export const AgentParameterIcon =
+  'data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHhtbG5zOnhsaW5rPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5L3hsaW5rIiBpZD0idXVpZC1hOTNkNmI0YS02N2Y2LTQ1MjAtODNhOS0yMGIwZGJlMjQ1Y2YiIGRhdGEtbmFtZT0iTGF5ZXIgMSIgd2lkdGg9IjE4IiBoZWlnaHQ9IjE4IiB2aWV3Qm94PSIwIDAgMTggMTgiPg0KICA8ZGVmcz4NCiAgICA8cmFkaWFsR3JhZGllbnQgaWQ9InV1aWQtMGJmODYwMGYtNmQ3ZC00OTZmLWE1ZGMtZDJhZjg2ZGQ2NGNmIiBjeD0iLTY3Ljk4MSIgY3k9Ijc5My4xOTkiIGZ4PSItNjcuOTgxIiBmeT0iNzkzLjE5OSIgcj0iLjQ1IiBncmFkaWVudFRyYW5zZm9ybT0idHJhbnNsYXRlKC0xNzkzOS4wMyAyMDM2OC4wMjkpIHJvdGF0ZSg0NSkgc2NhbGUoMjUuMDkxIC0zNC4xNDkpIiBncmFkaWVudFVuaXRzPSJ1c2VyU3BhY2VPblVzZSI+DQogICAgICA8c3RvcCBvZmZzZXQ9IjAiIHN0b3AtY29sb3I9IiM4M2I5ZjkiLz4NCiAgICAgIDxzdG9wIG9mZnNldD0iMSIgc3RvcC1jb2xvcj0iIzAwNzhkNCIvPg0KICAgIDwvcmFkaWFsR3JhZGllbnQ+DQogIDwvZGVmcz4NCiAgPHBhdGggZD0ibTAsMi43djEyLjZjMCwxLjQ5MSwxLjIwOSwyLjcsMi43LDIuN2gxMi42YzEuNDkxLDAsMi43LTEuMjA5LDIuNy0yLjdWMi43YzAtMS40OTEtMS4yMDktMi43LTIuNy0yLjdIMi43QzEuMjA5LDAsMCwxLjIwOSwwLDIuN1pNMTAuOCwwdjMuNmMwLDMuOTc2LDMuMjI0LDcuMiw3LjIsNy4yaC0zLjZjLTMuOTc2LDAtNy4xOTksMy4yMjItNy4yLDcuMTk4di0zLjU5OGMwLTMuOTc2LTMuMjI0LTcuMi03LjItNy4yaDMuNmMzLjk3NiwwLDcuMi0zLjIyNCw3LjItNy4yWiIgZmlsbD0idXJsKCN1dWlkLTBiZjg2MDBmLTZkN2QtNDk2Zi1hNWRjLWQyYWY4NmRkNjRjZikiIGZpbGwtcnVsZT0iZXZlbm9kZCIgc3Ryb2tlLXdpZHRoPSIwIi8+DQo8L3N2Zz4=';
 
 export const FxBrandColor = '#AD008C';
 export const FxIcon =
@@ -309,7 +315,6 @@ export const getDependentParameters = (
     if (operationInput) {
       result[operationInput.id] = { isValid: parameterValidForDynamicCall(operationInput) };
     }
-
     return result;
   }, {});
 };
@@ -492,6 +497,8 @@ export function getParameterEditorProps(
     } else {
       editor = undefined;
     }
+  } else if (editor === constants.EDITOR.INITIALIZE_VARIABLE) {
+    editorViewModel = { hideParameterErrors: true };
   } else if (!editor) {
     if (format === constants.EDITOR.HTML) {
       editor = constants.EDITOR.HTML;
@@ -548,7 +555,7 @@ const convertStringToInputParameter = (value: string, options: LoadParamteerValu
   return {
     key: guid(),
     name: newValue,
-    type: parameterType ?? constants.SWAGGER.TYPE.ANY,
+    type: constants.SWAGGER.TYPE.STRING,
     hideInUI: false,
     value: newValue,
     suppressCasting: true,
@@ -1028,6 +1035,7 @@ export function getExpressionValueForOutputToken(token: OutputToken, nodeType: s
   const {
     key,
     name,
+    title,
     outputInfo: { type: tokenType, actionName, required, arrayDetails, functionArguments, source },
   } = token;
   // get the expression value for webhook list callback url
@@ -1039,6 +1047,8 @@ export function getExpressionValueForOutputToken(token: OutputToken, nodeType: s
     case TokenType.PARAMETER:
     case TokenType.VARIABLE:
       return getTokenValueFromToken(tokenType, functionArguments as string[]);
+    case TokenType.AGENTPARAMETER:
+      return `agentParameters(${convertToStringLiteral(title)})`;
 
     case TokenType.ITERATIONINDEX:
       return `iterationIndexes(${convertToStringLiteral(actionName as string)})`;
@@ -1066,7 +1076,6 @@ export function getExpressionValueForOutputToken(token: OutputToken, nodeType: s
       }
       return `items(${convertToStringLiteral(actionName as string)})${propertyPath}`;
     }
-
     default: {
       method = arrayDetails ? constants.ITEM : getTokenExpressionMethodFromKey(key, actionName, source);
       return generateExpressionFromKey(method, key, actionName, !!arrayDetails, !!required);
@@ -1143,11 +1152,14 @@ export function generateExpressionFromKey(
 }
 
 export function getTokenValueFromToken(tokenType: TokenType, functionArguments: string[]): string | undefined {
-  return tokenType === TokenType.PARAMETER
-    ? `parameters(${convertToStringLiteral(functionArguments[0])})`
-    : tokenType === TokenType.VARIABLE
-      ? `variables(${convertToStringLiteral(functionArguments[0])})`
-      : undefined;
+  switch (tokenType) {
+    case TokenType.PARAMETER:
+      return `parameters(${convertToStringLiteral(functionArguments[0])})`;
+    case TokenType.VARIABLE:
+      return `variables(${convertToStringLiteral(functionArguments[0])})`;
+    default:
+      return undefined;
+  }
 }
 
 export function getTokenExpressionValue(token: SegmentToken, currentValue?: string): string {
@@ -1825,8 +1837,14 @@ export const updateParameterAndDependencies = createAsyncThunk(
 
     updateNodeMetadataOnParameterUpdate(nodeId, updatedParameter, dispatch);
 
-    if (operationInfo?.type?.toLowerCase() === 'until') {
+    if (
+      operationInfo?.type?.toLowerCase() === constants.NODE.TYPE.UNTIL ||
+      operationInfo?.type?.toLowerCase() === constants.NODE.TYPE.AGENT
+    ) {
       validateUntilAction(dispatch, nodeId, groupId, parameterId, nodeInputs.parameterGroups[groupId].parameters, properties);
+    }
+    if (operationInfo?.type?.toLowerCase() === constants.NODE.TYPE.INITIALIZE_VARIABLE) {
+      validateInitializeVariable(dispatch, nodeId, groupId, parameterId, nodeInputs.parameterGroups[groupId].parameters, properties);
     }
 
     if (dependenciesToUpdate) {
@@ -1859,35 +1877,32 @@ function getDependenciesToUpdate(
   parameterId: string,
   updatedParameter: ParameterInfo
 ): NodeDependencies | undefined {
-  let dependenciesToUpdate: NodeDependencies | undefined;
+  if (!dependencies.inputs && !dependencies.outputs) {
+    return undefined;
+  }
 
-  // TODO - Add a method to properly validate parameter's value with its type.
   const hasParameterValue = parameterHasValue(updatedParameter);
   const isParameterValidForDynamicCall = parameterValidForDynamicCall(updatedParameter);
+  let dependenciesToUpdate: NodeDependencies | undefined;
 
-  for (const inputKey of Object.keys(dependencies.inputs)) {
-    if (dependencies.inputs[inputKey].dependentParameters[parameterId]) {
+  const updateDependency = (type: 'inputs' | 'outputs') => {
+    for (const [key, dependency] of Object.entries(dependencies[type])) {
+      if (!dependency.dependentParameters[parameterId]) {
+        continue;
+      }
+
       if (!dependenciesToUpdate) {
         dependenciesToUpdate = { inputs: {}, outputs: {} };
       }
 
-      dependenciesToUpdate.inputs[inputKey] = clone(dependencies.inputs[inputKey]);
-      dependenciesToUpdate.inputs[inputKey].dependentParameters[parameterId].isValid =
-        dependencies.inputs[inputKey].dependencyType === 'StaticSchema' ? hasParameterValue : isParameterValidForDynamicCall;
+      dependenciesToUpdate[type][key] = clone(dependency);
+      dependenciesToUpdate[type][key].dependentParameters[parameterId].isValid =
+        dependency.dependencyType === 'StaticSchema' ? hasParameterValue : isParameterValidForDynamicCall;
     }
-  }
+  };
 
-  for (const outputKey of Object.keys(dependencies.outputs)) {
-    if (dependencies.outputs[outputKey].dependentParameters[parameterId]) {
-      if (!dependenciesToUpdate) {
-        dependenciesToUpdate = { inputs: {}, outputs: {} };
-      }
-
-      dependenciesToUpdate.outputs[outputKey] = clone(dependencies.outputs[outputKey]);
-      dependenciesToUpdate.outputs[outputKey].dependentParameters[parameterId].isValid =
-        dependencies.outputs[outputKey].dependencyType === 'StaticSchema' ? hasParameterValue : isParameterValidForDynamicCall;
-    }
-  }
+  updateDependency('inputs');
+  updateDependency('outputs');
 
   return dependenciesToUpdate;
 }
@@ -1995,6 +2010,7 @@ export const loadDynamicContentForInputsInNode = async (
       continue;
     }
 
+    const rootState = getState();
     dispatch(
       clearDynamicIO({
         nodeId,
@@ -2002,8 +2018,8 @@ export const loadDynamicContentForInputsInNode = async (
         outputs: false,
         dynamicParameterKeys: getAllDependentDynamicParameters(
           inputKey,
-          getState().operations.dependencies[nodeId].inputs,
-          getState().operations.inputParameters[nodeId]
+          rootState.operations.dependencies[nodeId].inputs,
+          rootState.operations.inputParameters[nodeId]
         ),
       })
     );
@@ -2012,7 +2028,6 @@ export const loadDynamicContentForInputsInNode = async (
       continue;
     }
 
-    const rootState = getState();
     const allInputs = rootState.operations.inputParameters[nodeId];
     const variables = getAllVariables(rootState.tokens.variables);
 
@@ -3074,7 +3089,8 @@ export const updateTokenMetadataInParameters = (nodeId: string, parameters: Para
             operations,
             definitions,
             nodesMetadata,
-            parameter.type
+            parameter.type,
+            nodeId
           );
         }
 
@@ -3084,6 +3100,7 @@ export const updateTokenMetadataInParameters = (nodeId: string, parameters: Para
     const viewModel = parameter.editorViewModel;
     if (viewModel) {
       flattenAndUpdateViewModel(
+        nodeId,
         repetitionContext,
         viewModel,
         actionNodes,
@@ -3099,6 +3116,7 @@ export const updateTokenMetadataInParameters = (nodeId: string, parameters: Para
 };
 
 export const flattenAndUpdateViewModel = (
+  nodeId: string,
   repetitionContext: RepetitionContext,
   items: any,
   actionNodes: Record<string, string>,
@@ -3140,6 +3158,7 @@ export const flattenAndUpdateViewModel = (
   Object.entries(items).forEach(([itemKey, itemValue]) => {
     if (typeof itemValue === 'object') {
       replacedItems[itemKey] = flattenAndUpdateViewModel(
+        nodeId,
         repetitionContext,
         itemValue,
         actionNodes,
@@ -3256,6 +3275,7 @@ export function updateTokenMetadata(
     case TokenType.ITERATIONINDEX:
       // TODO - Need implementation for until
       break;
+
     default:
       break;
   }
@@ -3285,9 +3305,25 @@ export function updateTokenMetadata(
   const nodeType = tokenNodeOperation?.type;
   const isSecure = hasSecureOutputs(nodeType, settings ?? {});
   const isFromExistingLoop = Boolean(arrayDetails?.loopSource && getPropertyValue(actionNodes, arrayDetails.loopSource));
-  const nodeOutputInfo = getOutputByTokenInfo(unmap(nodeOutputs?.outputs), valueSegment.token as SegmentToken, parameterType);
-  const brandColor = token.tokenType === TokenType.ITEM || isFromExistingLoop ? ItemBrandColor : operationMetadata?.brandColor;
-  const iconUri = token.tokenType === TokenType.ITEM || isFromExistingLoop ? ItemIcon : operationMetadata?.iconUri;
+  let brandColor: string | undefined;
+  let iconUri: string | undefined;
+  let nodeOutputInfo: OutputInfo | undefined;
+  if (token.tokenType === TokenType.AGENTPARAMETER) {
+    token.brandColor = AgentParameterBrandColor;
+    token.icon = AgentParameterIcon;
+    token.value = valueSegment.value;
+    if (parameterNodeId) {
+      const agentParameterSourceId = nodesMetadata[parameterNodeId]?.parentNodeId;
+      if (agentParameterSourceId) {
+        token.actionName = agentParameterSourceId;
+        nodeOutputInfo = nodes[agentParameterSourceId].nodeOutputs?.outputs[token.key];
+      }
+    }
+  } else {
+    nodeOutputInfo = getOutputByTokenInfo(unmap(nodeOutputs?.outputs), valueSegment.token as SegmentToken, parameterType);
+    brandColor = token.tokenType === TokenType.ITEM || isFromExistingLoop ? ItemBrandColor : operationMetadata?.brandColor;
+    iconUri = token.tokenType === TokenType.ITEM || isFromExistingLoop ? ItemIcon : operationMetadata?.iconUri;
+  }
 
   let outputInsideForeach = false;
   if (parameterNodeId) {
@@ -4013,46 +4049,87 @@ export function validateUntilAction(
   parameters: ParameterInfo[],
   changedParameter: Partial<ParameterInfo>
 ) {
-  const errorMessage = 'Either limit count or timout must be specified.';
+  const intl = getIntl();
+  const errorMessage = intl.formatMessage({
+    defaultMessage: 'Either limit count or timeout must be specified.',
+    id: 'BO1cXH',
+    description: 'Error message to show when either limit count or timeout is not specified.',
+  });
 
-  const countParameter = parameters.find((parameter) => parameter.parameterName === 'limit.count');
-  const timeoutParameter = parameters.find((parameter) => parameter.parameterName === 'limit.timeout');
+  const parameterValues = (name: string) => {
+    const parameter = parameters.find((param) => param.parameterName === name);
+    return parameter?.id === parameterId ? (changedParameter?.value ?? []) : (parameter?.value ?? []);
+  };
 
-  const countValue = countParameter?.id === parameterId ? (changedParameter?.value ?? []) : (countParameter?.value ?? []);
-  const timeoutValue = timeoutParameter?.id === parameterId ? (changedParameter?.value ?? []) : (timeoutParameter?.value ?? []);
+  const countValue = parameterValues(constants.PARAMETER_NAMES.LIMIT_COUNT);
+  const timeoutValue = parameterValues(constants.PARAMETER_NAMES.LIMIT_TIMEOUT);
 
-  if ((countValue.length ?? 0) === 0 && (timeoutValue.length ?? 0) === 0) {
+  const hasValidationError = (countValue.length ?? 0) === 0 && (timeoutValue.length ?? 0) === 0;
+
+  const updateValidation = (parameterName: string) => {
+    const parameter = parameters.find((param) => param.parameterName === parameterName);
+    if (parameter) {
+      if (hasValidationError) {
+        dispatch(
+          updateParameterValidation({
+            nodeId,
+            groupId,
+            parameterId: parameter.id,
+            validationErrors: [errorMessage],
+          })
+        );
+      } else {
+        dispatch(
+          removeParameterValidationError({
+            nodeId,
+            groupId,
+            parameterId: parameter.id,
+            validationError: errorMessage,
+          })
+        );
+      }
+    }
+  };
+
+  updateValidation(constants.PARAMETER_NAMES.LIMIT_COUNT);
+  updateValidation(constants.PARAMETER_NAMES.LIMIT_TIMEOUT);
+}
+
+// Eric - This is a very specific logic for initalizeVariable, where previously it was possible having
+// them as separate parameters, but now they are combined into a single parameter
+// Integrating it with the rest of the validation logic would be unnecessarily complex imo
+export function validateInitializeVariable(
+  dispatch: Dispatch,
+  nodeId: string,
+  groupId: string,
+  parameterId: string,
+  parameters: ParameterInfo[],
+  changedParameter: Partial<ParameterInfo>
+) {
+  const intl = getIntl();
+  const multipleVariablesErrorMessage = intl.formatMessage({
+    defaultMessage: 'Multiple variables have validation errors',
+    id: '19fSGN',
+    description: 'Error message to show when multiple variables have errors',
+  });
+
+  const parameter = parameters.find((param) => param.parameterName === constants.PARAMETER_NAMES.VARIABLES);
+  const variables: InitializeVariableProps[] =
+    parameter?.id === parameterId ? (changedParameter?.editorViewModel?.variables ?? []) : (parameter?.editorViewModel?.variables ?? []);
+
+  const validationErrors = validateVariables(variables);
+
+  const errorMessages = validationErrors.flatMap((error) => Object.values(error));
+  const errorMessage = errorMessages.length > 1 ? multipleVariablesErrorMessage : errorMessages[0];
+
+  if (parameter) {
     dispatch(
       updateParameterValidation({
         nodeId,
         groupId,
-        parameterId: countParameter?.id ?? '',
-        validationErrors: [errorMessage],
-      })
-    );
-    dispatch(
-      updateParameterValidation({
-        nodeId,
-        groupId,
-        parameterId: timeoutParameter?.id ?? '',
-        validationErrors: [errorMessage],
-      })
-    );
-  } else {
-    dispatch(
-      removeParameterValidationError({
-        nodeId,
-        groupId,
-        parameterId: countParameter?.id ?? '',
-        validationError: errorMessage,
-      })
-    );
-    dispatch(
-      removeParameterValidationError({
-        nodeId,
-        groupId,
-        parameterId: timeoutParameter?.id ?? '',
-        validationError: errorMessage,
+        parameterId: parameter.id,
+        validationErrors: errorMessage ? [errorMessage] : undefined,
+        editorViewModel: { ...parameter.editorViewModel, validationErrors: errorMessage ? validationErrors : undefined },
       })
     );
   }

@@ -9,12 +9,13 @@ import { useIsPanelInPinnedViewMode, usePanelLocation } from '../../../../../cor
 import {
   useAllowUserToChangeConnection,
   useConnectorName,
+  useIsInlineConnection,
   useNodeConnectionName,
   useOperationInfo,
 } from '../../../../../core/state/selectors/actionMetadataSelector';
-import type { VariableDeclaration } from '../../../../../core/state/tokens/tokensSlice';
-import { updateVariableInfo } from '../../../../../core/state/tokens/tokensSlice';
-import { useGetSwitchParentId, useNodeMetadata, useReplacedIds } from '../../../../../core/state/workflow/workflowSelectors';
+import type { AgentParameterDeclaration, VariableDeclaration } from '../../../../../core/state/tokens/tokensSlice';
+import { updateAgentParameter, updateVariableInfo } from '../../../../../core/state/tokens/tokensSlice';
+import { useGetSwitchOrAgentParentId, useNodeMetadata, useReplacedIds } from '../../../../../core/state/workflow/workflowSelectors';
 import type { AppDispatch, RootState } from '../../../../../core/store';
 import { getConnectionReference } from '../../../../../core/utils/connectors/connections';
 import { isRootNodeInGraph } from '../../../../../core/utils/graph';
@@ -46,7 +47,9 @@ import {
   TokenPicker,
   TokenPickerButtonLocation,
   TokenType,
-  isCustomCode,
+  convertSegmentsToString,
+  isCustomCodeParameter,
+  isInitializeVariableOperation,
   toCustomEditorAndOptions,
 } from '@microsoft/designer-ui';
 import type {
@@ -57,21 +60,25 @@ import type {
   TokenPickerMode,
   PanelTabFn,
   PanelTabProps,
+  InitializeVariableProps,
 } from '@microsoft/designer-ui';
-import { EditorService, equals, getPropertyValue, getRecordEntry, isRecordNotEmpty } from '@microsoft/logic-apps-shared';
+import { EditorService, equals, getPropertyValue, getRecordEntry, isRecordNotEmpty, SUBGRAPH_TYPES } from '@microsoft/logic-apps-shared';
 import type { OperationInfo } from '@microsoft/logic-apps-shared';
 import type React from 'react';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useIntl } from 'react-intl';
 import { useDispatch, useSelector } from 'react-redux';
+import { ConnectionInline } from './connectionInline';
+import { ConnectionsSubMenu } from './connectionsSubMenu';
 
 export const ParametersTab: React.FC<PanelTabProps> = (props) => {
   const { nodeId: selectedNodeId } = props;
   const nodeMetadata = useNodeMetadata(selectedNodeId);
   const inputs = useSelector((state: RootState) => state.operations.inputParameters[selectedNodeId]);
-  const { tokenState, workflowParametersState } = useSelector((state: RootState) => ({
+  const { tokenState, workflowParametersState, workflowState } = useSelector((state: RootState) => ({
     tokenState: state.tokens,
     workflowParametersState: state.workflowParameters,
+    workflowState: state.workflow,
   }));
   const nodeType = useSelector((state: RootState) => state.operations.operationInfo[selectedNodeId]?.type);
   const readOnly = useReadOnly();
@@ -80,11 +87,12 @@ export const ParametersTab: React.FC<PanelTabProps> = (props) => {
   const connectionName = useNodeConnectionName(selectedNodeId);
   const operationInfo = useOperationInfo(selectedNodeId);
   const showConnectionDisplay = useAllowUserToChangeConnection(operationInfo);
+  const isInlineConnection = useIsInlineConnection(operationInfo);
   const showIdentitySelector = useShowIdentitySelectorQuery(selectedNodeId);
   const errorInfo = useOperationErrorInfo(selectedNodeId);
   const { hideUTFExpressions } = useHostOptions();
   const replacedIds = useReplacedIds();
-  const parentIdOfSwitch = useGetSwitchParentId(selectedNodeId);
+  const switchOrAgentParentInfo = useGetSwitchOrAgentParentId(selectedNodeId);
 
   const isPaneInPinnedViewMode = useIsPanelInPinnedViewMode();
 
@@ -132,10 +140,11 @@ export const ParametersTab: React.FC<PanelTabProps> = (props) => {
   }
 
   const tokenGroup = getOutputTokenSections(
-    parentIdOfSwitch ?? selectedNodeId,
-    parentIdOfSwitch ? constants.NODE.TYPE.SWITCH_CASE : nodeType,
+    switchOrAgentParentInfo?.parentId ?? selectedNodeId,
+    switchOrAgentParentInfo?.type ?? nodeType,
     tokenState,
     workflowParametersState,
+    workflowState,
     replacedIds
   );
   const expressionGroup = getExpressionTokenSections(hideUTFExpressions);
@@ -168,7 +177,7 @@ export const ParametersTab: React.FC<PanelTabProps> = (props) => {
           />
         </div>
       ))}
-      {operationInfo && showConnectionDisplay && connectionName.isLoading !== undefined ? (
+      {!isInlineConnection && operationInfo && showConnectionDisplay && connectionName.isLoading !== undefined ? (
         <>
           <Divider style={{ padding: '16px 0px' }} />
           <ConnectionDisplay
@@ -206,8 +215,8 @@ const ParameterSection = ({
   const isTrigger = useSelector((state: RootState) => isRootNodeInGraph(nodeId, 'root', state.workflow.nodesMetadata));
   const operationInfo = useOperationInfo(nodeId);
   const dependencies = useDependencies(nodeId);
-  const { variables, upstreamNodeIds, operationDefinition, connectionReference, idReplacements, workflowParameters } = useSelector(
-    (state: RootState) => {
+  const { variables, upstreamNodeIds, operationDefinition, connectionReference, idReplacements, workflowParameters, nodesMetadata } =
+    useSelector((state: RootState) => {
       return {
         upstreamNodeIds: getRecordEntry(state.tokens.outputTokens, nodeId)?.upstreamNodeIds,
         variables: state.tokens.variables,
@@ -217,14 +226,14 @@ const ParameterSection = ({
         connectionReference: getConnectionReference(state.connections, nodeId),
         idReplacements: state.workflow.idReplacements,
         workflowParameters: state.workflowParameters.definitions,
+        nodesMetadata: state.workflow.nodesMetadata,
       };
-    }
-  );
+    });
   const rootState = useSelector((state: RootState) => state);
   const displayNameResult = useConnectorName(operationInfo);
   const panelLocation = usePanelLocation();
 
-  const { suppressCastingForSerialize, hideUTFExpressions } = useHostOptions();
+  const { suppressCastingForSerialize, hideUTFExpressions, enableMultiVariable } = useHostOptions();
 
   const [tokenMapping, setTokenMapping] = useState<Record<string, ValueSegment>>({});
 
@@ -238,25 +247,51 @@ const ParameterSection = ({
       const { value, viewModel } = newState;
       const parameter = nodeInputs.parameterGroups[group.id].parameters.find((param: any) => param.id === id);
 
-      const propertiesToUpdate = {
+      const propertiesToUpdate: Partial<ParameterInfo> = {
         value,
         preservedValue: undefined,
-      } as Partial<ParameterInfo>;
+        ...(viewModel && { editorViewModel: viewModel }),
+      };
 
-      if (viewModel !== undefined) {
-        propertiesToUpdate.editorViewModel = viewModel;
-      }
-
-      // TODO: This should never be added, since the update is taken care by dynamic parameter update.
-      if (getRecordEntry(variables, nodeId)) {
-        if (parameter?.parameterKey === 'inputs.$.name') {
-          dispatch(updateVariableInfo({ id: nodeId, name: value[0]?.value }));
-        } else if (parameter?.parameterKey === 'inputs.$.type') {
-          dispatch(updateVariableInfo({ id: nodeId, type: value[0]?.value }));
+      if (isInitializeVariableOperation(operationInfo)) {
+        const variables: InitializeVariableProps[] | undefined = viewModel?.variables;
+        if (variables?.length) {
+          dispatch(
+            updateVariableInfo({
+              id: nodeId,
+              variables: variables.map(({ name, type }) => {
+                return {
+                  name: name[0]?.value,
+                  type: type[0]?.value,
+                };
+              }),
+            })
+          );
         }
       }
+      const nodeMetadataInfo = getRecordEntry(nodesMetadata, nodeId);
+      if (nodeMetadataInfo?.subgraphType === SUBGRAPH_TYPES.AGENT_CONDITION && nodeMetadataInfo?.parentNodeId) {
+        const agentParameters: InitializeVariableProps[] = viewModel?.variables ?? [];
+        const agentParameter: Record<string, AgentParameterDeclaration> = Object.fromEntries(
+          agentParameters.map(({ name, type, description }) => [
+            name?.[0]?.value,
+            {
+              name: name?.[0]?.value,
+              type: type?.[0]?.value,
+              description: convertSegmentsToString(description ?? []),
+            },
+          ])
+        );
+        dispatch(
+          updateAgentParameter({
+            id: nodeId,
+            agent: nodeMetadataInfo.parentNodeId,
+            agentParameter,
+          })
+        );
+      }
 
-      if (isCustomCode(parameter?.editor, parameter?.editorOptions?.language)) {
+      if (parameter && isCustomCodeParameter(parameter)) {
         const { fileData, fileExtension, fileName } = viewModel.customCodeData;
         dispatch(addOrUpdateCustomCode({ nodeId, fileData, fileExtension, fileName }));
       }
@@ -277,8 +312,18 @@ const ParameterSection = ({
         })
       );
     },
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    [nodeId, group.id, isTrigger, operationInfo, connectionReference, nodeInputs, dependencies, variables, dispatch, operationDefinition]
+    [
+      nodeInputs,
+      group.id,
+      nodesMetadata,
+      nodeId,
+      dispatch,
+      isTrigger,
+      operationInfo,
+      connectionReference,
+      dependencies,
+      operationDefinition,
+    ]
   );
 
   const onComboboxMenuOpen = (parameter: ParameterInfo): void => {
@@ -362,6 +407,7 @@ const ParameterSection = ({
           return !(
             token.outputInfo.type === TokenType.VARIABLE ||
             token.outputInfo.type === TokenType.PARAMETER ||
+            token.outputInfo.type === TokenType.AGENTPARAMETER ||
             token.outputInfo.arrayDetails ||
             token.key === constants.UNTIL_CURRENT_ITERATION_INDEX_KEY ||
             token.key === constants.FOREACH_CURRENT_ITEM_KEY
@@ -435,6 +481,8 @@ const ParameterSection = ({
 
       const { value: remappedValues } = isRecordNotEmpty(idReplacements) ? remapValueSegmentsWithNewIds(value, idReplacements) : { value };
       const isCodeEditor = editor?.toLowerCase() === constants.EDITOR.CODE;
+      const subComponent = getSubComponent(param);
+      const subMenu = getSubMenu(param);
 
       return {
         settingType: 'SettingTokenField',
@@ -458,7 +506,7 @@ const ParameterSection = ({
           tokenpickerButtonProps: {
             location: panelLocation === PanelLocation.Left ? TokenPickerButtonLocation.Right : TokenPickerButtonLocation.Left,
           },
-          suppressCastingForSerialize: suppressCastingForSerialize ?? false,
+          hostOptions: { suppressCastingForSerialize, isMultiVariableEnabled: enableMultiVariable },
           onCastParameter: (value: ValueSegment[], type?: string, format?: string, suppressCasting?: boolean) =>
             parameterValueToString(
               {
@@ -478,6 +526,8 @@ const ParameterSection = ({
             editorType?: string,
             tokenClickedCallback?: (token: ValueSegment) => void
           ) => getTokenPicker(id, editorId, labelId, tokenPickerMode, editorType, isCodeEditor, tokenClickedCallback),
+          subComponent: subComponent,
+          subMenu: subMenu,
         },
       };
     });
@@ -495,6 +545,22 @@ const ParameterSection = ({
       showSeparator={false}
     />
   );
+};
+
+const getSubComponent = (parameter: ParameterInfo) => {
+  const hasConnectionInline = getPropertyValue(parameter.schema, 'x-ms-connection-required');
+  if (hasConnectionInline) {
+    return <ConnectionInline />;
+  }
+  return null;
+};
+
+const getSubMenu = (parameter: ParameterInfo) => {
+  const hasConnectionInline = getPropertyValue(parameter.schema, 'x-ms-connection-required');
+  if (hasConnectionInline) {
+    return <ConnectionsSubMenu />;
+  }
+  return null;
 };
 
 export const getEditorAndOptions = (

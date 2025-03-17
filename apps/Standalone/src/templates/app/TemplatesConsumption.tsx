@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import {
   type ConnectionReferences,
   getReactQueryClient,
@@ -8,7 +8,7 @@ import {
   type WorkflowParameter,
 } from '@microsoft/logic-apps-designer';
 import type { RootState } from '../state/Store';
-import { TemplatesView, TemplatesDesignerProvider } from '@microsoft/logic-apps-designer';
+import { TemplatesView, TemplatesDesignerProvider, templateStore, resetStateOnResourceChange } from '@microsoft/logic-apps-designer';
 import { useSelector } from 'react-redux';
 import {
   BaseGatewayService,
@@ -20,6 +20,8 @@ import {
   BaseApiManagementService,
   BaseFunctionService,
   ConsumptionConnectorService,
+  ConsumptionTemplateService,
+  BaseResourceService,
 } from '@microsoft/logic-apps-shared';
 import {
   getWorkflowAndArtifactsConsumption,
@@ -36,7 +38,6 @@ import { HttpClient } from '../../designer/app/AzureLogicAppsDesigner/Services/H
 import type { Template, LogicAppsV2 } from '@microsoft/logic-apps-shared';
 import type { ConnectionMapping } from '@microsoft/logic-apps-designer/src/lib/core/state/templates/workflowSlice';
 import { parseWorkflowParameterValue } from '@microsoft/logic-apps-designer';
-import { BaseTemplateService } from '@microsoft/logic-apps-shared';
 
 const workflowIdentifier = '#workflowname#';
 
@@ -45,7 +46,13 @@ export const TemplatesConsumption = () => {
     theme: state.workflowLoader.theme,
     templatesView: state.workflowLoader.templatesView,
   }));
-  const { resourcePath: workflowId, language, useEndpoint } = useSelector((state: RootState) => state.workflowLoader);
+  const {
+    resourcePath: workflowId,
+    language,
+    useEndpoint,
+    isCreateView,
+    enableResourceSelection,
+  } = useSelector((state: RootState) => state.workflowLoader);
   const { data: workflowData } = useWorkflowAndArtifactsConsumption(workflowId!);
   const { data: tenantId } = useCurrentTenantId();
   const { data: objectId } = useCurrentObjectId();
@@ -150,6 +157,30 @@ export const TemplatesConsumption = () => {
 
   const resourceDetails = new ArmParser(workflowId ?? '');
 
+  const onReloadServices = useCallback(() => {
+    const {
+      workflow: { subscriptionId, resourceGroup, location },
+      templateOptions: { reInitializeServices },
+    } = templateStore.getState();
+    console.log('onReloadServices - Resource is updated');
+    if (reInitializeServices) {
+      templateStore.dispatch(
+        resetStateOnResourceChange(
+          getResourceBasedServices(
+            subscriptionId,
+            resourceGroup,
+            tenantId,
+            objectId,
+            WorkflowUtility.convertToCanonicalFormat(location ?? 'westus'),
+            language,
+            queryClient,
+            workflowId
+          )
+        )
+      );
+    }
+  }, [language, objectId, queryClient, tenantId, workflowId]);
+
   if (!workflowData) {
     return null;
   }
@@ -164,9 +195,11 @@ export const TemplatesConsumption = () => {
         connectionReferences={connectionReferences}
         services={services}
         isConsumption={true}
-        isCreateView={false}
+        isCreateView={!!isCreateView}
+        enableResourceSelection={enableResourceSelection}
         viewTemplate={isSingleTemplateView ? { id: templatesView } : undefined}
         reload={reload}
+        onResourceChange={onReloadServices}
       >
         <div
           style={{
@@ -241,6 +274,75 @@ const getServices = (
 
   const defaultServiceParams = { baseUrl, httpClient, apiVersion };
 
+  const gatewayService = new BaseGatewayService({
+    baseUrl,
+    httpClient,
+    apiVersions: {
+      subscription: apiVersion,
+      gateway: '2016-06-01',
+    },
+  });
+  const tenantService = new BaseTenantService({
+    ...defaultServiceParams,
+    apiVersion: '2017-08-01',
+  });
+  const workflowService = {
+    getCallbackUrl: (triggerName: string) => listCallbackUrl(workflowId, triggerName, true),
+    getAppIdentity: () => workflow?.identity,
+    isExplicitAuthRequiredForManagedIdentity: () => false,
+    getDefinitionSchema: (operationInfos: { type: string; kind?: string }[]) => {
+      return operationInfos.some((info) => startsWith(info.type, 'openapiconnection'))
+        ? 'https://schema.management.azure.com/providers/Microsoft.Logic/schemas/2023-01-31-preview/workflowdefinition.json#'
+        : undefined;
+    },
+  };
+  const templateService = new ConsumptionTemplateService({
+    ...defaultServiceParams,
+    endpoint: 'https://priti-cxf4h5cpcteue4az.b02.azurefd.net',
+    useEndpointForTemplates: !!useEndpoint,
+    openBladeAfterCreate: (_workflowName: string | undefined) => {
+      window.alert('Open blade after create, consumption creation is complete');
+    },
+    onAddBlankWorkflow: onBlankWorkflowClick,
+  });
+  const resourceService = new BaseResourceService(defaultServiceParams);
+  const { connectionService, oAuthService, operationManifestService, connectorService } = getResourceBasedServices(
+    subscriptionId,
+    resourceGroup,
+    tenantId,
+    objectId,
+    location,
+    locale,
+    queryClient,
+    workflowId
+  );
+
+  return {
+    connectionService,
+    gatewayService,
+    tenantService,
+    oAuthService,
+    operationManifestService,
+    templateService,
+    workflowService,
+    connectorService,
+    resourceService,
+  };
+};
+
+const getResourceBasedServices = (
+  subscriptionId: string,
+  resourceGroup: string,
+  tenantId: string | undefined,
+  objectId: string | undefined,
+  location: string,
+  locale: string | undefined,
+  queryClient?: any,
+  workflowId?: string
+): any => {
+  const baseUrl = 'https://management.azure.com';
+  const defaultServiceParams = { baseUrl, httpClient, apiVersion };
+
   const connectionService = new ConsumptionConnectionService({
     apiVersion: '2018-07-01-preview',
     baseUrl,
@@ -311,20 +413,7 @@ const getServices = (
       },
     },
     apiVersion: '2018-07-01-preview',
-    workflowReferenceId: workflowId,
-  });
-
-  const gatewayService = new BaseGatewayService({
-    baseUrl,
-    httpClient,
-    apiVersions: {
-      subscription: apiVersion,
-      gateway: '2016-06-01',
-    },
-  });
-  const tenantService = new BaseTenantService({
-    ...defaultServiceParams,
-    apiVersion: '2017-08-01',
+    workflowReferenceId: workflowId ?? 'default',
   });
   const oAuthService = new StandaloneOAuthService({
     ...defaultServiceParams,
@@ -341,35 +430,11 @@ const getServices = (
     subscriptionId,
     location: location || 'location',
   });
-  const workflowService = {
-    getCallbackUrl: (triggerName: string) => listCallbackUrl(workflowId, triggerName, true),
-    getAppIdentity: () => workflow?.identity,
-    isExplicitAuthRequiredForManagedIdentity: () => false,
-    getDefinitionSchema: (operationInfos: { type: string; kind?: string }[]) => {
-      return operationInfos.some((info) => startsWith(info.type, 'openapiconnection'))
-        ? 'https://schema.management.azure.com/providers/Microsoft.Logic/schemas/2023-01-31-preview/workflowdefinition.json#'
-        : undefined;
-    },
-  };
-
-  const templateService = new BaseTemplateService({
-    httpClient,
-    endpoint: 'https://priti-cxf4h5cpcteue4az.b02.azurefd.net',
-    useEndpointForTemplates: !!useEndpoint,
-    openBladeAfterCreate: (_workflowName: string | undefined) => {
-      window.alert('Open blade after create, consumption creation is complete');
-    },
-    onAddBlankWorkflow: onBlankWorkflowClick,
-  });
 
   return {
     connectionService,
-    gatewayService,
-    tenantService,
     oAuthService,
     operationManifestService,
-    templateService,
-    workflowService,
     connectorService,
   };
 };

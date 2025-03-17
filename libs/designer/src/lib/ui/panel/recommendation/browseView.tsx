@@ -1,9 +1,11 @@
 import { useAllApiIdsWithActions, useAllApiIdsWithTriggers, useAllConnectors } from '../../../core/queries/browse';
+import { useHostOptions } from '../../../core/state/designerOptions/designerOptionsSelectors';
 import { selectOperationGroupId } from '../../../core/state/panel/panelSlice';
 import { SearchService, cleanConnectorId, type Connector } from '@microsoft/logic-apps-shared';
 import { BrowseGrid, isBuiltInConnector, isCustomConnector } from '@microsoft/designer-ui';
 import { useCallback, useMemo } from 'react';
 import { useDispatch } from 'react-redux';
+import { useDiscoveryPanelRelationshipIds } from '../../../core/state/panel/panelSelectors';
 
 const defaultFilterConnector = (connector: Connector, runtimeFilter: string): boolean => {
   if (runtimeFilter === 'inapp' && !isBuiltInConnector(connector)) {
@@ -59,6 +61,8 @@ export interface BrowseViewProps {
 
 export const BrowseView = (props: BrowseViewProps) => {
   const { filters, isLoadingOperations, displayRuntimeInfo } = props;
+  const { enableAgenticLoops } = useHostOptions();
+  const isRoot = useDiscoveryPanelRelationshipIds().graphId === 'root';
 
   const dispatch = useDispatch();
 
@@ -69,6 +73,9 @@ export const BrowseView = (props: BrowseViewProps) => {
 
   const filterItems = useCallback(
     (connector: Connector): boolean => {
+      if ((!enableAgenticLoops || !isRoot) && connector.id === 'connectionProviders/agent') {
+        return false;
+      }
       if (filters['runtime']) {
         const filterMethod = SearchService().filterConnector?.bind(SearchService()) || defaultFilterConnector;
         if (!filterMethod(connector, filters['runtime'])) {
@@ -93,7 +100,7 @@ export const BrowseView = (props: BrowseViewProps) => {
 
       return true;
     },
-    [filters, allApiIdsWithActions, allApiIdsWithTriggers]
+    [enableAgenticLoops, isRoot, filters, allApiIdsWithActions.data, allApiIdsWithTriggers.data]
   );
 
   const sortedConnectors = useMemo(() => {
