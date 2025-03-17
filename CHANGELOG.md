@@ -1,4 +1,17 @@
 # Logic Apps Designer
+### [5.53.1](https://github.com/Azure/LogicAppsUX/compare/v5.53.0...v5.53.1) (2025-03-17)
+
+
+### Features
+
+* **designer:** Implement inline connection creation for agent action ([#6794](https://github.com/Azure/LogicAppsUX/issues/6794)) ([84e18b7](https://github.com/Azure/LogicAppsUX/commit/84e18b75b46872ee2704e6b87ed39dad7d2a5766))
+
+
+### Bug Fixes
+
+* **templates:** Adding a reload handler when a resource changes and services to reload ([15ed538](https://github.com/Azure/LogicAppsUX/commit/15ed53823103194d0c4dcb622a80dc2133835909))
+* **vscode:** Fix parameterize connection checks to check all connections ([#6779](https://github.com/Azure/LogicAppsUX/issues/6779)) ([6b5d918](https://github.com/Azure/LogicAppsUX/commit/6b5d91836fb9012b122fdb6d5091ee400a9e8e2d))
+
 ## [5.53.0](https://github.com/Azure/LogicAppsUX/compare/v5.52.0...v5.53.0) (2025-03-14)
 
 
