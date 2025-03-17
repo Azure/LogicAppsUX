@@ -123,8 +123,14 @@ export const workflowSlice = createSlice({
         state.connections.mapping = {};
       }
     },
-    setWorkflowAppName: (state, action: PayloadAction<string>) => {
-      state.workflowAppName = action.payload;
+    setWorkflowAppDetails: (state, action: PayloadAction<{ name: string; location: string }>) => {
+      const { name, location } = action.payload;
+      state.workflowAppName = name;
+      state.location = location;
+
+      if (name) {
+        state.connections = { references: {}, mapping: {} };
+      }
     },
   },
   extraReducers: (builder) => {
@@ -139,6 +145,6 @@ export const {
   setSubscription,
   setResourceGroup,
   setLocation,
-  setWorkflowAppName,
+  setWorkflowAppDetails,
 } = workflowSlice.actions;
 export default workflowSlice.reducer;

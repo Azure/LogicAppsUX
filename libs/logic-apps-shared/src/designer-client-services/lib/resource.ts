@@ -1,7 +1,7 @@
 import { AssertionErrorCode, AssertionException } from '../../utils/src';
 
 export type Resource = { id: string; name: string; displayName: string };
-export type LogicAppResource = { id: string; name: string; kind: 'standard' | 'consumption' };
+export type LogicAppResource = { id: string; name: string; location: string; kind: 'standard' | 'consumption' };
 
 export interface IResourceService {
   listSubscriptions: () => Promise<Resource[]>;

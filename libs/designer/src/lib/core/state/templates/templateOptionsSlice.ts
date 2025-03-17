@@ -3,7 +3,7 @@ import type { PayloadAction } from '@reduxjs/toolkit';
 import { createSlice, isAnyOf } from '@reduxjs/toolkit';
 import { initializeTemplateServices, resetStateOnResourceChange } from '../../actions/bjsworkflow/templates';
 import { resetTemplatesState } from '../global';
-import { setLocation, setResourceGroup, setSubscription } from './workflowSlice';
+import { setLocation, setResourceGroup, setSubscription, setWorkflowAppDetails } from './workflowSlice';
 
 export interface TemplateOptionsState {
   servicesInitialized: boolean;
@@ -34,6 +34,9 @@ export const templateOptionsSlice = createSlice({
     });
     builder.addCase(resetStateOnResourceChange.fulfilled, (state, action) => {
       state.reInitializeServices = !action.payload;
+    });
+    builder.addCase(setWorkflowAppDetails, (state, action) => {
+      state.reInitializeServices = !!action.payload.name;
     });
     builder.addMatcher(isAnyOf(setSubscription, setResourceGroup, setLocation), (state, action) => {
       state.reInitializeServices = !!action.payload;

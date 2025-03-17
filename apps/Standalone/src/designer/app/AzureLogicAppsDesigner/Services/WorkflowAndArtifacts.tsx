@@ -8,7 +8,7 @@ import { CustomCodeService, LogEntryLevel, LoggerService, equals, getAppFileForF
 import type { LogicAppsV2, VFSObject } from '@microsoft/logic-apps-shared';
 import axios from 'axios';
 import jwt_decode from 'jwt-decode';
-import { useQuery } from '@tanstack/react-query';
+import { type QueryClient, useQuery } from '@tanstack/react-query';
 import { isSuccessResponse } from './HttpClient';
 import { fetchFileData, fetchFilesFromFolder } from './vfsService';
 import type { CustomCodeFileNameMapping } from '@microsoft/logic-apps-designer';
@@ -22,33 +22,31 @@ const hybridApiVersion = '2024-02-02-preview';
 const consumptionApiVersion = '2019-05-01';
 
 export const useConnectionsData = (appId?: string) => {
-  return useQuery(
-    ['getConnectionsData', appId],
-    async () => {
-      const uri = `${baseUrl}/${appId}/workflowsconfiguration/connections?api-version=2018-11-01`;
-      try {
-        const response = await axios.get(uri, {
-          headers: {
-            Authorization: `Bearer ${environment.armToken}`,
-          },
-        });
-        const { files, health } = response.data.properties;
-        if (equals(health.state, 'healthy')) {
-          return files['connections.json'];
-        }
-        const { error } = health;
-        throw new Error(error.message);
-      } catch {
-        return {};
-      }
-    },
-    {
-      enabled: !!appId,
-      refetchOnMount: false,
-      refetchOnReconnect: false,
-      refetchOnWindowFocus: false,
+  return useQuery(['getConnectionsData', appId], async () => getConnectionsData(appId as string), {
+    enabled: !!appId,
+    refetchOnMount: false,
+    refetchOnReconnect: false,
+    refetchOnWindowFocus: false,
+  });
+};
+
+export const getConnectionsData = async (appId: string): Promise<ConnectionsData> => {
+  const uri = `${baseUrl}/${appId}/workflowsconfiguration/connections?api-version=2018-11-01`;
+  try {
+    const response = await axios.get(uri, {
+      headers: {
+        Authorization: `Bearer ${environment.armToken}`,
+      },
+    });
+    const { files, health } = response.data.properties;
+    if (equals(health.state, 'healthy')) {
+      return files['connections.json'];
     }
-  );
+    const { error } = health;
+    throw new Error(error.message);
+  } catch {
+    return {};
+  }
 };
 
 export const useWorkflowAndArtifactsStandard = (workflowId: string) => {
@@ -293,66 +291,66 @@ export const listCallbackUrl = async (
 };
 
 export const useWorkflowApp = (siteResourceId: string, hostingPlan: HostingPlanTypes) => {
-  return useQuery(
-    ['workflowApp', siteResourceId],
-    async () => {
-      const apiVersions = {
-        consumption: '2016-10-01',
-        standard: '2018-11-01',
-        hybrid: '2023-11-02-preview',
-      };
-      const uri = `${baseUrl}${siteResourceId}?api-version=${apiVersions[hostingPlan] || '2018-11-01'}`;
-      const response = await axios.get(uri, {
-        headers: {
-          Authorization: `Bearer ${environment.armToken}`,
-        },
-      });
+  return useQuery(['workflowApp', siteResourceId], async () => getWorkflowApp(siteResourceId, hostingPlan), {
+    refetchOnMount: false,
+    refetchOnReconnect: false,
+    refetchOnWindowFocus: false,
+  });
+};
 
-      return response.data;
+export const getWorkflowAppFromCache = async (siteResourceId: string, hostingPlan: HostingPlanTypes, queryClient: QueryClient) => {
+  return queryClient.fetchQuery(['workflowApp', siteResourceId], async () => getWorkflowApp(siteResourceId, hostingPlan));
+};
+
+const getWorkflowApp = async (siteResourceId: string, hostingPlan: HostingPlanTypes) => {
+  const apiVersions = {
+    consumption: '2016-10-01',
+    standard: '2018-11-01',
+    hybrid: '2023-11-02-preview',
+  };
+  const uri = `${baseUrl}${siteResourceId}?api-version=${apiVersions[hostingPlan] || '2018-11-01'}`;
+  const response = await axios.get(uri, {
+    headers: {
+      Authorization: `Bearer ${environment.armToken}`,
     },
-    {
-      refetchOnMount: false,
-      refetchOnReconnect: false,
-      refetchOnWindowFocus: false,
-    }
-  );
+  });
+
+  return response.data;
 };
 
 export const useAppSettings = (siteResourceId: string) => {
-  return useQuery(
-    ['appSettings', siteResourceId],
-    async () => {
-      if (HybridAppUtility.isHybridLogicApp(siteResourceId)) {
-        const containerAppInfo = (
-          await axios.get(`${baseUrl}${siteResourceId}?api-version=2024-02-02-preview`, {
-            headers: {
-              Authorization: `Bearer ${environment.armToken}`,
-            },
-          })
-        ).data;
-        containerAppInfo.properties = containerAppInfo.properties.template.containers[0].env;
-        containerAppInfo.properties = containerAppInfo.properties.reduce((acc: any, cur: any) => {
-          acc[cur.name] = cur.value;
-          return acc;
-        }, {});
-        return containerAppInfo;
-      }
+  return useQuery(['appSettings', siteResourceId], async () => getAppSettings(siteResourceId), {
+    refetchOnMount: false,
+    refetchOnReconnect: false,
+    refetchOnWindowFocus: false,
+  });
+};
 
-      const uri = `${baseUrl}${siteResourceId}/config/appsettings/list?api-version=2018-11-01`;
-      return (
-        await axios.post(uri, null, {
-          headers: {
-            Authorization: `Bearer ${environment.armToken}`,
-          },
-        })
-      ).data;
-    },
-    {
-      refetchOnMount: false,
-      refetchOnReconnect: false,
-      refetchOnWindowFocus: false,
-    }
-  );
+export const getAppSettings = async (siteResourceId: string) => {
+  if (HybridAppUtility.isHybridLogicApp(siteResourceId)) {
+    const containerAppInfo = (
+      await axios.get(`${baseUrl}${siteResourceId}?api-version=2024-02-02-preview`, {
+        headers: {
+          Authorization: `Bearer ${environment.armToken}`,
+        },
+      })
+    ).data;
+    containerAppInfo.properties = containerAppInfo.properties.template.containers[0].env;
+    containerAppInfo.properties = containerAppInfo.properties.reduce((acc: any, cur: any) => {
+      acc[cur.name] = cur.value;
+      return acc;
+    }, {});
+    return containerAppInfo;
+  }
+
+  const uri = `${baseUrl}${siteResourceId}/config/appsettings/list?api-version=2018-11-01`;
+  return (
+    await axios.post(uri, null, {
+      headers: {
+        Authorization: `Bearer ${environment.armToken}`,
+      },
+    })
+  ).data;
 };
 
 export const useCurrentTenantId = () => {

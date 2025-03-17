@@ -64,8 +64,6 @@ const WorkflowName = ({ workflowId, label, placeholder }: { workflowId: string; 
     errors: { workflow: workflowError },
   } = useWorkflowTemplate(workflowId);
   const { subscriptionId, resourceGroupName } = useSelector((state: RootState) => ({
-    existingWorkflowName: state.workflow.existingWorkflowName,
-    isConsumption: state.workflow.isConsumption,
     subscriptionId: state.workflow.subscriptionId,
     resourceGroupName: state.workflow.resourceGroup,
   }));
