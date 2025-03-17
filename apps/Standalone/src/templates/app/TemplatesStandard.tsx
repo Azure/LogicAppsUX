@@ -52,7 +52,6 @@ import { parseWorkflowParameterValue } from '@microsoft/logic-apps-designer';
 import { useFunctionalState } from '@react-hookz/web';
 import { ArtifactService } from '../../designer/app/AzureLogicAppsDesigner/Services/Artifact';
 import { ChildWorkflowService } from '../../designer/app/AzureLogicAppsDesigner/Services/ChildWorkflow';
-import type { QueryClient } from '@tanstack/react-query';
 import { setAppid } from '../state/WorkflowLoader';
 
 interface StringifiedWorkflow {
@@ -89,8 +88,6 @@ export const TemplatesStandard = () => {
 
   const [connectionsData, setConnectionsData] = useFunctionalState(originalConnectionsData);
   const [settingsData, setSettingsData] = useFunctionalState(originalSettingsData);
-
-  const queryClient = getReactQueryClient();
 
   useEffect(() => {
     if (useEndpoint !== undefined) {
@@ -262,7 +259,6 @@ export const TemplatesStandard = () => {
         tenantId,
         objectId,
         canonicalLocation,
-        queryClient,
         settingsData()?.properties ?? {},
         !!useEndpoint,
         getWorkflowConnectionsData
@@ -275,6 +271,9 @@ export const TemplatesStandard = () => {
   useEffect(() => {
     if (shouldReload) {
       const newAppId = getWorkflowAppIdFromStore();
+      const {
+        workflow: { location },
+      } = templateStore.getState();
       if (equals(newAppId, workflowAppData?.id)) {
         templateStore.dispatch(
           resetStateOnResourceChange(
@@ -285,8 +284,7 @@ export const TemplatesStandard = () => {
               getConnectionConfiguration,
               tenantId,
               objectId,
-              canonicalLocation,
-              queryClient,
+              location,
               settingsData()?.properties ?? {},
               !!useEndpoint,
               getWorkflowConnectionsData
@@ -296,22 +294,38 @@ export const TemplatesStandard = () => {
         setShouldReload(false);
       }
     }
-  }, [shouldReload, workflowAppData, settingsData()]);
+  }, [
+    addConnectionDataInternal,
+    getConnectionConfiguration,
+    getWorkflowConnectionsData,
+    objectId,
+    settingsData(),
+    shouldReload,
+    tenantId,
+    useEndpoint,
+    workflowAppData,
+  ]);
 
   const onResourceChange = useCallback(async () => {
-    const newAppId = getWorkflowAppIdFromStore();
-    if (newAppId && !equals(newAppId, appId)) {
-      try {
-        const appData = await getWorkflowAppFromCache(newAppId, hostingPlan, queryClient);
-        if (appData) {
-          dispatch(setAppid(getWorkflowAppIdFromStore()));
-          setShouldReload(true);
+    const {
+      templateOptions: { reInitializeServices },
+    } = templateStore.getState();
+    console.log('onReloadServices - Resource is updated');
+    if (reInitializeServices) {
+      const newAppId = getWorkflowAppIdFromStore();
+      if (newAppId && !equals(newAppId, appId)) {
+        try {
+          const appData = await getWorkflowAppFromCache(newAppId, hostingPlan);
+          if (appData) {
+            dispatch(setAppid(getWorkflowAppIdFromStore()));
+            setShouldReload(true);
+          }
+        } catch (error) {
+          console.log('Error fetching workflow app data', error);
         }
-      } catch (error) {
-        console.log('Error fetching workflow app data', error);
       }
     }
-  }, [appId]);
+  }, [appId, dispatch, hostingPlan]);
 
   if (!workflowAppData) {
     return null;
@@ -432,7 +446,6 @@ const getServices = (
   tenantId: string | undefined,
   objectId: string | undefined,
   location: string,
-  queryClient: QueryClient,
   appSettings: Record<string, string>,
   useEndpoint: boolean,
   getConnectionsData: () => ConnectionsData
@@ -464,7 +477,6 @@ const getServices = (
     tenantId,
     objectId,
     location,
-    queryClient,
     appSettings,
     useEndpoint,
     getConnectionsData
@@ -491,7 +503,6 @@ const getResourceBasedServices = (
   tenantId: string | undefined,
   objectId: string | undefined,
   location: string,
-  queryClient: QueryClient,
   appSettings: Record<string, string>,
   useEndpoint: boolean,
   getConnectionsData: () => ConnectionsData
@@ -499,6 +510,7 @@ const getResourceBasedServices = (
   const armUrl = 'https://management.azure.com';
   const baseUrl = `${armUrl}${siteResourceId}/hostruntime/runtime/webhooks/workflow/api/management`;
   const { subscriptionId, resourceGroup, resourceName } = new ArmParser(siteResourceId ?? '');
+  const queryClient = getReactQueryClient();
 
   const defaultServiceParams = { baseUrl, httpClient, apiVersion };
   const armServiceParams = {

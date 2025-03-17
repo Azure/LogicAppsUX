@@ -8,7 +8,7 @@ import { CustomCodeService, LogEntryLevel, LoggerService, equals, getAppFileForF
 import type { LogicAppsV2, VFSObject } from '@microsoft/logic-apps-shared';
 import axios from 'axios';
 import jwt_decode from 'jwt-decode';
-import { type QueryClient, useQuery } from '@tanstack/react-query';
+import { useQuery } from '@tanstack/react-query';
 import { isSuccessResponse } from './HttpClient';
 import { fetchFileData, fetchFilesFromFolder } from './vfsService';
 import type { CustomCodeFileNameMapping } from '@microsoft/logic-apps-designer';
@@ -298,7 +298,8 @@ export const useWorkflowApp = (siteResourceId: string, hostingPlan: HostingPlanT
   });
 };
 
-export const getWorkflowAppFromCache = async (siteResourceId: string, hostingPlan: HostingPlanTypes, queryClient: QueryClient) => {
+export const getWorkflowAppFromCache = async (siteResourceId: string, hostingPlan: HostingPlanTypes) => {
+  const queryClient = getReactQueryClient();
   return queryClient.fetchQuery(['workflowApp', siteResourceId], async () => getWorkflowApp(siteResourceId, hostingPlan));
 };
 

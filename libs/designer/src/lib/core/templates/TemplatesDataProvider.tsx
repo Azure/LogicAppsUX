@@ -11,7 +11,6 @@ import {
   lazyLoadGithubManifests,
 } from '../state/templates/manifestSlice';
 import { type ResourceDetails, setInitialData } from '../state/templates/workflowSlice';
-import { useServiceOptions } from '../state/templates/templateselectors';
 import type { ConnectionReferences } from '../../common/models/workflow';
 import { getFilteredTemplates } from './utils/helper';
 import { initializeTemplateServices, reloadTemplates } from '../actions/bjsworkflow/templates';
@@ -81,7 +80,24 @@ const DataProviderInner = ({ isConsumption, children, reload, services }: Templa
 export const TemplatesDataProvider = (props: TemplatesDataProviderProps) => {
   const wrapped = useContext(TemplatesWrappedContext);
   const dispatch = useDispatch<AppDispatch>();
-  const { servicesInitialized, reInitializeServices } = useServiceOptions();
+  const { servicesInitialized, subscriptionId, resourceGroup, location, workflowAppName } = useSelector((state: RootState) => ({
+    servicesInitialized: state.templateOptions.servicesInitialized,
+    subscriptionId: state.workflow.subscriptionId,
+    resourceGroup: state.workflow.resourceGroup,
+    location: state.workflow.location,
+    workflowAppName: state.workflow.workflowAppName,
+  }));
+  const {
+    services,
+    existingWorkflowName,
+    isConsumption,
+    resourceDetails,
+    connectionReferences,
+    isCreateView,
+    viewTemplate,
+    enableResourceSelection,
+    onResourceChange,
+  } = props;
 
   if (!wrapped) {
     throw new Error('TemplatesDataProvider must be used inside of a TemplatesWrappedContext');
@@ -89,48 +105,42 @@ export const TemplatesDataProvider = (props: TemplatesDataProviderProps) => {
 
   useEffect(() => {
     if (!servicesInitialized) {
-      dispatch(initializeTemplateServices(props.services));
+      dispatch(initializeTemplateServices(services));
     }
 
     dispatch(
       setInitialData({
-        existingWorkflowName: props.existingWorkflowName,
-        isConsumption: !!props.isConsumption,
-        subscriptionId: props.resourceDetails.subscriptionId,
-        resourceGroup: props.resourceDetails.resourceGroup,
-        location: props.resourceDetails.location,
-        workflowAppName: props.resourceDetails.workflowAppName,
-        references: props.connectionReferences,
-        isCreateView: props.isCreateView,
+        existingWorkflowName,
+        isConsumption: !!isConsumption,
+        subscriptionId: resourceDetails.subscriptionId,
+        resourceGroup: resourceDetails.resourceGroup,
+        location: resourceDetails.location,
+        workflowAppName: resourceDetails.workflowAppName,
+        references: connectionReferences,
+        isCreateView: isCreateView,
       })
     );
-  }, [
-    dispatch,
-    servicesInitialized,
-    props.services,
-    props.existingWorkflowName,
-    props.isConsumption,
-    props.resourceDetails,
-    props.connectionReferences,
-    props.isCreateView,
-  ]);
+  }, [dispatch, servicesInitialized, existingWorkflowName, isConsumption, resourceDetails, connectionReferences, isCreateView, services]);
 
   useEffect(() => {
-    if (props.viewTemplate) {
-      dispatch(changeCurrentTemplateName(props.viewTemplate.id));
-      dispatch(setViewTemplateDetails(props.viewTemplate));
+    if (viewTemplate) {
+      dispatch(changeCurrentTemplateName(viewTemplate.id));
+      dispatch(setViewTemplateDetails(viewTemplate));
     }
 
-    if (props.enableResourceSelection) {
-      dispatch(setEnableResourceSelection(props.enableResourceSelection));
+    if (enableResourceSelection) {
+      dispatch(setEnableResourceSelection(enableResourceSelection));
     }
-  }, [dispatch, props.enableResourceSelection, props.viewTemplate]);
+  }, [dispatch, enableResourceSelection, viewTemplate]);
 
   useEffect(() => {
-    if (reInitializeServices && props.onResourceChange) {
-      props.onResourceChange();
+    if (
+      onResourceChange &&
+      (subscriptionId !== undefined || resourceGroup !== undefined || location !== undefined || workflowAppName !== undefined)
+    ) {
+      onResourceChange();
     }
-  }, [reInitializeServices, props.onResourceChange]);
+  }, [onResourceChange, subscriptionId, resourceGroup, location, workflowAppName]);
 
   if (!servicesInitialized) {
     return null;

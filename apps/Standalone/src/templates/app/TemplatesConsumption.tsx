@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import {
   type ConnectionReferences,
   getReactQueryClient,
@@ -157,23 +157,29 @@ export const TemplatesConsumption = () => {
 
   const resourceDetails = new ArmParser(workflowId ?? '');
 
-  const onReloadServices = () => {
-    const { subscriptionId, resourceGroup, location } = templateStore.getState().workflow;
-    templateStore.dispatch(
-      resetStateOnResourceChange(
-        getResourceBasedServices(
-          subscriptionId,
-          resourceGroup,
-          tenantId,
-          objectId,
-          WorkflowUtility.convertToCanonicalFormat(location ?? 'westus'),
-          language,
-          queryClient,
-          workflowId
+  const onReloadServices = useCallback(() => {
+    const {
+      workflow: { subscriptionId, resourceGroup, location },
+      templateOptions: { reInitializeServices },
+    } = templateStore.getState();
+    console.log('onReloadServices - Resource is updated');
+    if (reInitializeServices) {
+      templateStore.dispatch(
+        resetStateOnResourceChange(
+          getResourceBasedServices(
+            subscriptionId,
+            resourceGroup,
+            tenantId,
+            objectId,
+            WorkflowUtility.convertToCanonicalFormat(location ?? 'westus'),
+            language,
+            queryClient,
+            workflowId
+          )
         )
-      )
-    );
-  };
+      );
+    }
+  }, [language, objectId, queryClient, tenantId, workflowId]);
 
   if (!workflowData) {
     return null;

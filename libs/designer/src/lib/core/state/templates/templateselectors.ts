@@ -4,10 +4,6 @@ import type { WorkflowTemplateData } from '../../actions/bjsworkflow/templates';
 import type { ConnectionReference } from '../../../common/models/workflow';
 import type { Template } from '@microsoft/logic-apps-shared';
 
-export const useServiceOptions = () => {
-  return useSelector((state: RootState) => state.templateOptions);
-};
-
 export const useTemplateWorkflows = () => {
   return useSelector((state: RootState) => state.template.workflows ?? {});
 };
