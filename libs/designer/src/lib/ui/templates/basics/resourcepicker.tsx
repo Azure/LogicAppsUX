@@ -2,10 +2,10 @@ import type { AppDispatch, RootState } from '../../../core/state/templates/store
 import { useDispatch, useSelector } from 'react-redux';
 import { useIntl } from 'react-intl';
 import { Option, Field, Dropdown } from '@fluentui/react-components';
-import { useEffect, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useLocations, useLogicApps, useResourceGroups, useSubscriptions } from '../../../core/templates/utils/queries';
-import { setLocation, setResourceGroup, setSubscription, setWorkflowAppName } from '../../../core/state/templates/workflowSlice';
-import type { Resource } from '@microsoft/logic-apps-shared';
+import { setLocation, setResourceGroup, setSubscription, setWorkflowAppDetails } from '../../../core/state/templates/workflowSlice';
+import { type Resource, equals } from '@microsoft/logic-apps-shared';
 import { useTemplatesStrings } from '../templatesStrings';
 
 export const ResourcePicker = () => {
@@ -39,6 +39,13 @@ export const ResourcePicker = () => {
   );
 
   const { resourceStrings } = useTemplatesStrings();
+  const onLogicAppSelect = useCallback(
+    (value: string) => {
+      const app = logicApps?.find((app) => equals(app.name, value));
+      dispatch(setWorkflowAppDetails({ name: value, location: app?.location ?? '' }));
+    },
+    [dispatch, logicApps]
+  );
 
   return (
     <div>
@@ -60,20 +67,22 @@ export const ResourcePicker = () => {
         resources={resourceGroups ?? []}
         errorMessage={resourceGroup ? '' : intlText.VALIDATION_ERROR}
       />
-      <ResourceField
-        id="location"
-        label={resourceStrings.LOCATION}
-        onSelect={(value) => dispatch(setLocation(value))}
-        defaultKey={location}
-        isLoading={islocationLoading}
-        resources={locations ?? []}
-        errorMessage={location ? '' : intlText.VALIDATION_ERROR}
-      />
+      {isConsumption ? (
+        <ResourceField
+          id="location"
+          label={resourceStrings.LOCATION}
+          onSelect={(value) => dispatch(setLocation(value))}
+          defaultKey={location}
+          isLoading={islocationLoading}
+          resources={locations ?? []}
+          errorMessage={location ? '' : intlText.VALIDATION_ERROR}
+        />
+      ) : null}
       {isConsumption ? null : (
         <ResourceField
           id="logicapp"
           label={resourceStrings.LOGIC_APP}
-          onSelect={(value) => dispatch(setWorkflowAppName(value))}
+          onSelect={onLogicAppSelect}
           defaultKey={workflowAppName ?? ''}
           isLoading={isLogicAppsLoading}
           resources={(logicApps ?? []).map((app) => ({
@@ -124,7 +133,7 @@ const ResourceField = ({
   const [selectedResource, setSelectedResource] = useState<string | undefined>('');
   useEffect(() => {
     if (!isLoading) {
-      const resource = resources.find((resource) => resource.name === defaultKey)?.displayName;
+      const resource = resources.find((resource) => equals(resource.name, defaultKey))?.displayName;
       if (!resource && !!defaultKey) {
         onSelect('');
       }

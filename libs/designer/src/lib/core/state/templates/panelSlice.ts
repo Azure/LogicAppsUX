@@ -1,5 +1,6 @@
 import type { PayloadAction } from '@reduxjs/toolkit';
 import { createSlice } from '@reduxjs/toolkit';
+import { resetTemplatesState } from '../global';
 
 export const TemplatePanelView = {
   QuickView: 'quickView',
@@ -40,6 +41,9 @@ export const panelSlice = createSlice({
       state.currentPanelView = undefined;
       state.selectedTabId = undefined;
     },
+  },
+  extraReducers: (builder) => {
+    builder.addCase(resetTemplatesState, () => initialState);
   },
 });
 

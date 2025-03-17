@@ -9,7 +9,6 @@ import { useExistingWorkflowNames } from '../../../core/queries/template';
 import { Open16Regular } from '@fluentui/react-icons';
 import { useWorkflowBasicsEditable, useWorkflowTemplate } from '../../../core/state/templates/templateselectors';
 import { validateWorkflowName } from '../../../core/actions/bjsworkflow/templates';
-import { useFunctionalState } from '@react-hookz/web';
 import { ResourcePicker } from './resourcepicker';
 import { useTemplatesStrings } from '../templatesStrings';
 
@@ -32,7 +31,7 @@ export const SingleWorkflowBasics = ({ workflowId }: { workflowId: string }) => 
     })
   );
   const { data: existingWorkflowNames } = useExistingWorkflowNames();
-  const [name, setName] = useFunctionalState(existingWorkflowName ?? workflowName);
+  const name = useMemo(() => existingWorkflowName ?? workflowName, [existingWorkflowName, workflowName]);
   const intl = useIntl();
   const resources = useTemplatesStrings().resourceStrings;
 
@@ -131,14 +130,13 @@ export const SingleWorkflowBasics = ({ workflowId }: { workflowId: string }) => 
         data-testid={'msla-templates-workflowName'}
         id={'msla-templates-workflowName'}
         ariaLabel={resources.WORKFLOW_NAME}
-        value={name()}
+        value={name}
         onChange={(_event: React.FormEvent<HTMLInputElement | HTMLTextAreaElement>, newValue?: string) => {
-          setName(newValue);
           dispatch(updateWorkflowName({ id: workflowId, name: newValue }));
         }}
         disabled={!!existingWorkflowName || !isNameEditable}
         onBlur={async () => {
-          const validationError = await validateWorkflowName(name(), isConsumption, {
+          const validationError = await validateWorkflowName(name, isConsumption, {
             subscriptionId,
             resourceGroupName,
             existingWorkflowNames: existingWorkflowNames ?? [],

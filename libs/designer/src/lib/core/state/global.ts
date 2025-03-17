@@ -9,6 +9,7 @@ import type { UndoRedoPartialRootState } from './undoRedo/undoRedoTypes';
 export const resetWorkflowState = createAction('resetWorkflowState');
 export const resetNodesLoadStatus = createAction('resetNodesLoadStatus');
 export const setStateAfterUndoRedo = createAction<UndoRedoPartialRootState>('setStateAfterUndoRedo');
+export const resetTemplatesState = createAction('resetTemplatesState');
 
 export const useIsDesignerDirty = () => {
   const isWorkflowDirty = useIsWorkflowDirty();
