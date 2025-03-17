@@ -109,9 +109,15 @@ export const VariableEditor = ({
     description: 'Delete label',
   });
 
-  const deleteButtonDisabledTitle = intl.formatMessage({
+  const deleteButtonDisabledVariableTitle = intl.formatMessage({
     defaultMessage: 'Cannot delete the last variable',
     id: 'YL00wK',
+    description: 'Delete label',
+  });
+
+  const deleteButtonDisabledAgentParameter = intl.formatMessage({
+    defaultMessage: 'Cannot delete the last agent parameter',
+    id: 'hcpXlK',
     description: 'Delete label',
   });
 
@@ -278,7 +284,16 @@ export const VariableEditor = ({
       </div>
       {preventMultiVariable && !isAgentParameter ? null : (
         <div className={'msla-variable-editor-edit-or-delete-button'}>
-          <Tooltip relationship="label" content={disableDelete ? deleteButtonDisabledTitle : deleteButtonTitle}>
+          <Tooltip
+            relationship="label"
+            content={
+              disableDelete
+                ? isAgentParameter
+                  ? deleteButtonDisabledAgentParameter
+                  : deleteButtonDisabledVariableTitle
+                : deleteButtonTitle
+            }
+          >
             <Button
               appearance="subtle"
               aria-label={deleteButtonTitle}

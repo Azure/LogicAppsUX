@@ -2,11 +2,11 @@
   "definition": {
     "$schema": "https://schema.management.azure.com/providers/Microsoft.Logic/schemas/2016-06-01/workflowdefinition.json#",
     "actions": {
-      "Agent": {
+      "WorkflowAgent": {
         "type": "Agent",
         "inputs": {
           "parameters": {
-            "deploymentId": "test",
+            "deploymentId": "gpt-4o",
             "messages": [
               {
                 "role": "System",
@@ -14,12 +14,13 @@
               },
               {
                 "role": "User",
-                "content": "This is a user message.",
-                "image": "image data",
-                "author": "chat user name"
+                "content": "This is a user message."
               }
             ],
-            "temperature": 1
+            "limit": {
+              "count": 60,
+              "timeout": "PT1H"
+            }
           }
         },
         "tools": {
@@ -72,16 +73,17 @@
             },
             "description": "If the condition X matches, execute this branch",
             "type": "Tool",
-            "agentParameters": {
-              "Parameter1": {
-                "name": "Parameter1",
-                "type": "string",
-                "description": "This is a string property"
-              },
-              "TestParameter": {
-                "name": "TestParameter",
-                "type": "boolean",
-                "description": "This is a boolean property"
+            "agentParameterSchema": {
+              "type": "object",
+              "properties": {
+                "TestParameter": {
+                  "type": "string",
+                  "description": "this is a string parameter"
+                },
+                "Parameter1": {
+                  "type": "boolean",
+                  "description": "this is a boolean parameter"
+                }
               }
             }
           }
