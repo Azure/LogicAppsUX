@@ -7,6 +7,7 @@ import * as vscode from 'vscode';
 import * as fse from 'fs-extra';
 import { AzureWizardPromptStep } from '@microsoft/vscode-azext-utils';
 import type { IProjectWizardContext } from '@microsoft/vscode-extension-logic-apps';
+import * as path from 'path';
 
 export class setMethodName extends AzureWizardPromptStep<IProjectWizardContext> {
   public hideStepCount = true;
@@ -19,7 +20,7 @@ export class setMethodName extends AzureWizardPromptStep<IProjectWizardContext> 
     });
   }
 
-  public shouldPrompt(_context: IProjectWizardContext): boolean {
+  public shouldPrompt(): boolean {
     return true;
   }
 
@@ -42,7 +43,7 @@ export class setMethodName extends AzureWizardPromptStep<IProjectWizardContext> 
       const workspaceFileContent = await vscode.workspace.fs.readFile(vscode.Uri.file(context.workspaceCustomFilePath));
       const workspaceFileJson = JSON.parse(workspaceFileContent.toString());
 
-      if (workspaceFileJson.folders && workspaceFileJson.folders.some((folder: { path: string }) => folder.path === `./${name}`)) {
+      if (workspaceFileJson.folders && workspaceFileJson.folders.some((folder: { path: string }) => folder.path === path.join('.', name))) {
         return localize('functionNameExistsInWorkspaceError', 'A function with this name already exists in the workspace.');
       }
     }

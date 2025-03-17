@@ -23,6 +23,7 @@ import {
   isUsingAadAuthentication,
   equals,
   isTenantServiceEnabled,
+  isEmptyString,
 } from '@microsoft/logic-apps-shared';
 import type {
   GatewayServiceConfig,
@@ -47,6 +48,13 @@ import TenantPicker from './formInputs/tenantPicker';
 
 type ParamType = ConnectionParameter | ConnectionParameterSetParameter;
 
+export interface CreateButtonTexts {
+  create?: string;
+  creating?: string;
+  signIn?: string;
+  signingIn?: string;
+}
+
 export interface CreateConnectionProps {
   classes?: Record<string, string>;
   nodeIds?: string[];
@@ -56,7 +64,7 @@ export interface CreateConnectionProps {
   description?: string;
   identity?: ManagedIdentity;
   isLoading?: boolean;
-  createText?: string;
+  createButtonTexts?: CreateButtonTexts;
   createConnectionCallback?: (
     newName?: string,
     selectedParameterSet?: ConnectionParameterSet,
@@ -83,7 +91,7 @@ export interface CreateConnectionProps {
 export const CreateConnection = (props: CreateConnectionProps) => {
   const {
     classes,
-    createText,
+    createButtonTexts,
     nodeIds = [],
     showActionBar = true,
     iconUri = '',
@@ -498,13 +506,25 @@ export const CreateConnection = (props: CreateConnectionProps) => {
     return '';
   }, [authDescriptionText, isUsingOAuth, parameters, simpleDescriptionText]);
 
-  const createConnectionText = createText ?? createButtonText;
   const submitButtonText = useMemo(() => {
     if (isLoading) {
-      return isUsingOAuth ? signInButtonLoadingText : createButtonLoadingText;
+      return isUsingOAuth
+        ? (createButtonTexts?.signingIn ?? signInButtonLoadingText)
+        : (createButtonTexts?.creating ?? createButtonLoadingText);
     }
-    return isUsingOAuth ? signInButtonText : createConnectionText;
-  }, [createButtonLoadingText, createConnectionText, isLoading, isUsingOAuth, signInButtonLoadingText, signInButtonText]);
+    return isUsingOAuth ? (createButtonTexts?.signIn ?? signInButtonText) : (createButtonTexts?.create ?? createButtonText);
+  }, [
+    createButtonLoadingText,
+    createButtonText,
+    createButtonTexts?.create,
+    createButtonTexts?.creating,
+    createButtonTexts?.signIn,
+    createButtonTexts?.signingIn,
+    isLoading,
+    isUsingOAuth,
+    signInButtonLoadingText,
+    signInButtonText,
+  ]);
 
   const submitButtonAriaLabel = useMemo(() => {
     return isUsingOAuth ? signInButtonAria : createButtonAria;
@@ -714,7 +734,7 @@ export const CreateConnection = (props: CreateConnectionProps) => {
         </div>
 
         {/* Descriptor text for simple and oauth */}
-        <div>{connectorDescription}</div>
+        {isEmptyString(connectorDescription) ? null : <div>{connectorDescription}</div>}
         {/* {needsAuth && <IFrameTermsOfService url={termsOfServiceUrl} />} */}
       </div>
 

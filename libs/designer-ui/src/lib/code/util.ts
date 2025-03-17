@@ -1,6 +1,7 @@
 import constants from '../constants';
 import type { Token, ValueSegment } from '../editor';
 import { TokenType } from '../editor';
+import type { ParameterInfo } from '@microsoft/logic-apps-shared';
 import {
   getIntl,
   decodePropertySegment,
@@ -185,6 +186,12 @@ export const getEditorHeight = (input = ''): string => {
 // CodeEditor Height should be at least 12 rows high (19*12 px) but no more than 24 rows high (19*24 px).
 export const getCodeEditorHeight = (input = ''): string => {
   return `${Math.min(Math.max(input?.split('\n').length * 20, 228), 456)}px`;
+};
+
+export const isCustomCodeParameter = (parameter: ParameterInfo): boolean => {
+  const { editor, editorOptions } = parameter;
+  const language = editorOptions?.['language'];
+  return equals(editor, constants.PARAMETER.EDITOR.CODE) && !equals(language, constants.PARAMETER.EDITOR_OPTIONS.LANGUAGE.JAVASCRIPT);
 };
 
 export const isCustomCode = (editor?: string, language?: string): boolean => {

@@ -1,6 +1,6 @@
 import constants from '../constants';
 import type { ValueSegment } from '../editor';
-import type { BaseEditorProps, FileNameChangeHandler } from '../editor/base';
+import type { BaseEditorProps } from '../editor/base';
 import TokenPickerButtonLegacy from '../editor/base/plugins/TokenPickerButtonLegacy';
 import { createLiteralValueSegment, notEqual } from '../editor/base/utils/helper';
 import type { EditorContentChangedEventArgs } from '../editor/monaco';
@@ -25,6 +25,8 @@ const customCodeIconStyle = {
     color: constants.PANEL_HIGHLIGHT_COLOR,
   },
 };
+
+export type FileNameChangeHandler = (originalFileName: string, newFileName: string) => void;
 
 export interface CodeEditorProps extends BaseEditorProps {
   language: EditorLanguage;

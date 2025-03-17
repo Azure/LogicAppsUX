@@ -19,6 +19,7 @@ import {
   StandardConnectorService,
   BaseAppServiceService,
   BaseApiManagementService,
+  BaseResourceService,
 } from '@microsoft/logic-apps-shared';
 import {
   getConnectionStandard,
@@ -57,7 +58,13 @@ export const TemplatesStandard = () => {
     theme: state.workflowLoader.theme,
     templatesView: state.workflowLoader.templatesView,
   }));
-  const { appId, hostingPlan, workflowName: existingWorkflowName, useEndpoint } = useSelector((state: RootState) => state.workflowLoader);
+  const {
+    appId,
+    hostingPlan,
+    workflowName: existingWorkflowName,
+    useEndpoint,
+    enableResourceSelection,
+  } = useSelector((state: RootState) => state.workflowLoader);
   const { data: workflowAppData } = useWorkflowApp(appId as string, hostingPlan);
   const canonicalLocation = useMemo(
     () => WorkflowUtility.convertToCanonicalFormat(workflowAppData?.location ?? 'westus'),
@@ -270,6 +277,7 @@ export const TemplatesStandard = () => {
         isCreateView={true}
         existingWorkflowName={existingWorkflowName}
         reload={reload}
+        enableResourceSelection={enableResourceSelection}
         viewTemplate={
           isSingleTemplateView
             ? {
@@ -517,6 +525,8 @@ const getServices = (
     },
   });
 
+  const resourceService = new BaseResourceService({ baseUrl: armUrl, httpClient, apiVersion });
+
   return {
     connectionService,
     gatewayService,
@@ -526,6 +536,7 @@ const getServices = (
     templateService,
     workflowService,
     connectorService,
+    resourceService,
   };
 };
 

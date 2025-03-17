@@ -11,10 +11,17 @@ import tokens from './state/tokens/tokensSlice';
 import undoRedoReducer from './state/undoRedo/undoRedoSlice';
 import workflowReducer from './state/workflow/workflowSlice';
 import workflowParametersReducer from './state/workflowparameters/workflowparametersSlice';
+import modalReducer from './state/modal/modalSlice';
 
 import { configureStore } from '@reduxjs/toolkit';
 import type {} from 'redux-thunk';
 import { storeStateHistoryMiddleware } from './utils/middleware';
+
+declare global {
+  interface Window {
+    __REDUX_ACTION_LOG__?: string[];
+  }
+}
 
 export const store = configureStore({
   reducer: {
@@ -30,6 +37,7 @@ export const store = configureStore({
     staticResults: staticResultsSchemasReducer,
     customCode: customCodeReducer,
     undoRedo: undoRedoReducer,
+    modal: modalReducer,
     // if is in dev environment, add devSlice to store
     ...(process.env.NODE_ENV === 'development' ? { dev: devReducer } : {}),
   },
@@ -42,6 +50,18 @@ export const store = configureStore({
 if (process.env.NODE_ENV === 'development') {
   (window as any).DesignerStore = store;
 }
+
+// Log actions for testing purposes
+if (typeof window !== 'undefined' && process.env.NODE_ENV === 'development') {
+  window.__REDUX_ACTION_LOG__ = [];
+  const originalDispatch = store.dispatch;
+  store.dispatch = (action: any) => {
+    window.__REDUX_ACTION_LOG__?.push(action.type);
+    return originalDispatch(action);
+  };
+}
+
+export default store;
 
 // Infer the `AppStore` from the store itself
 export type AppStore = typeof store;

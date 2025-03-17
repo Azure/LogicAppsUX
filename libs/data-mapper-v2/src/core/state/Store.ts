@@ -9,14 +9,15 @@ import type {} from 'redux-thunk';
 import { configureStore } from '@reduxjs/toolkit';
 import undoable, { includeAction } from 'redux-undo';
 
-export const includedActions = [
-  'dataMap/doDataMapOperation',
-  'dataMap/makeConnection',
-  'dataMap/addFunctionNode',
-  'dataMap/deleteCurrentlySelectedItem',
+export const includedActionsForUndo = [
   'dataMap/setConnectionInput',
-  'dataMap/addSourceSchemaNodes',
-  'dataMap/removeSourceSchemaNodes',
+  'dataMap/addFunctionNode',
+  'dataMap/makeConnectionFromMap',
+  'dataMap/deleteConnectionFromFunctionMenu',
+  'dataMap/deleteFunction',
+  'dataMap/deleteEdge',
+  'dataMap/updateFunctionConnectionInputs',
+  'dataMap/setInitialDataMap',
 ];
 
 export const store = configureStore({
@@ -27,7 +28,7 @@ export const store = configureStore({
     modal: modalReducer,
     errors: errorsReducer,
     dataMap: undoable(dataMapReducer, {
-      filter: includeAction(includedActions),
+      filter: includeAction(includedActionsForUndo),
     }),
     app: appReducer,
   },

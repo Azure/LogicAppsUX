@@ -117,6 +117,7 @@ export interface ParameterCredentialMapping {
 
 export interface ConnectionParameterSetUIDefinition {
   description: string;
+  tooltip?: string;
   displayName: string;
 }
 
@@ -181,6 +182,7 @@ export interface ConnectionParameterSetParameter {
   managedIdentitySettings?: ManagedIdentitySetting;
   oAuthSettings?: OAuthSetting;
   gateway?: GatewaySetting;
+  parameterSource?: ConnectionParameterSource;
 }
 
 export interface ConnectionParameterSet {
@@ -209,6 +211,8 @@ export interface ConnectorProperty {
   connectionParameters?: Record<string, ConnectionParameter>;
   connectionParameterSets?: ConnectionParameterSets;
   connectionAlternativeParameters?: ConnectionAlternativeParameters;
+  isExportSupported?: boolean;
+  isSecureByDefault?: boolean;
   swagger?: any;
   wadlUrl?: string;
   brandColor?: string;

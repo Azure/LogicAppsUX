@@ -39,6 +39,7 @@ import { delayManifest, delayUntilManifest, recurrenceManifest, slidingWindowMan
 import scopeManifest from './manifests/scope';
 import selectManifest from './manifests/select';
 import switchManifest from './manifests/switch';
+import agentloopManifest from '../standard/manifest/agentloop';
 import terminateManifest from './manifests/terminate';
 import untilManifest from './manifests/until';
 
@@ -80,6 +81,7 @@ const scope = 'scope';
 const foreach = 'foreach';
 const condition = 'if';
 const switchType = 'switch';
+export const agentType = 'agent';
 const request = 'request';
 const response = 'response';
 const table = 'table';
@@ -122,6 +124,7 @@ const edifactencode = 'edifactencode';
 const edifactbatchencode = 'edifactbatchencode';
 const edifactdecode = 'edifactdecode';
 const parsedocument = 'parsedocument';
+const parsedocumentwithmetadata = 'parsedocumentwithmetadata';
 
 export const apiManagementConnectorId = '/connectionProviders/apiManagementOperation';
 export const azureFunctionConnectorId = '/connectionProviders/azureFunctionOperation';
@@ -129,6 +132,7 @@ export const appServiceConnectorId = '/connectionProviders/appService';
 export const batchConnectorId = '/connectionProviders/batch';
 export const dataOperationConnectorId = 'connectionProviders/dataOperationNew';
 const controlConnectorId = 'connectionProviders/control';
+export const agentConnectorId = 'connectionProviders/agent';
 const dateTimeConnectorId = 'connectionProviders/datetime';
 const scheduleConnectorId = 'connectionProviders/schedule';
 export const httpConnectorId = 'connectionProviders/http';
@@ -185,6 +189,7 @@ export const supportedBaseManifestTypes = [
   setvariable,
   slidingwindow,
   switchType,
+  agentType,
   serviceprovider,
   table,
   workflow,
@@ -212,6 +217,7 @@ export const supportedBaseManifestTypes = [
   edifactdecode,
   chunktext,
   parsedocument,
+  parsedocumentwithmetadata,
 ];
 
 export type getAccessTokenType = () => Promise<string>;
@@ -296,6 +302,7 @@ export function isBuiltInOperation(definition: any): boolean {
     case setvariable:
     case slidingwindow:
     case switchType:
+    case agentType:
     case workflow:
     case xslt:
     case xmlcompose:
@@ -327,6 +334,7 @@ export function isBuiltInOperation(definition: any): boolean {
     case invokeworkflow:
     case parsedocument:
     case chunktext:
+    case parsedocumentwithmetadata:
       return true;
 
     default:
@@ -595,6 +603,10 @@ const builtInOperationsMetadata: Record<string, OperationInfo> = {
     connectorId: controlConnectorId,
     operationId: switchType,
   },
+  [agentType]: {
+    connectorId: agentConnectorId,
+    operationId: agentType,
+  },
   [workflow]: {
     connectorId: 'connectionProviders/localWorkflowOperation',
     operationId: 'invokeWorkflow',
@@ -707,6 +719,10 @@ const builtInOperationsMetadata: Record<string, OperationInfo> = {
     connectorId: dataOperationConnectorId,
     operationId: parsedocument,
   },
+  [parsedocumentwithmetadata]: {
+    connectorId: dataOperationConnectorId,
+    operationId: parsedocumentwithmetadata,
+  },
 };
 
 export const supportedBaseManifestObjects = new Map<string, OperationManifest>([
@@ -744,6 +760,7 @@ export const supportedBaseManifestObjects = new Map<string, OperationManifest>([
   [slidingwindow, slidingWindowManifest],
   [subtractfromtime, subtractFromTimeManifest],
   [switchType, switchManifest],
+  [agentType, agentloopManifest],
   [terminate, terminateManifest],
   [until, untilManifest],
 ]);

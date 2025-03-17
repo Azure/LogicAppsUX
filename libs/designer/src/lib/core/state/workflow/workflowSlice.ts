@@ -2,7 +2,7 @@ import constants from '../../../common/constants';
 import { updateNodeConnection } from '../../actions/bjsworkflow/connections';
 import { initializeGraphState } from '../../parsers/ParseReduxAction';
 import type { AddNodePayload } from '../../parsers/addNodeToWorkflow';
-import { addSwitchCaseToWorkflow, addNodeToWorkflow } from '../../parsers/addNodeToWorkflow';
+import { addSwitchCaseToWorkflow, addNodeToWorkflow, addAgentConditionToWorkflow } from '../../parsers/addNodeToWorkflow';
 import type { DeleteNodePayload } from '../../parsers/deleteNodeFromWorkflow';
 import { deleteWorkflowNode, deleteNodeFromWorkflow } from '../../parsers/deleteNodeFromWorkflow';
 import type { WorkflowNode } from '../../parsers/models/workflowNode';
@@ -407,6 +407,25 @@ export const workflowSlice = createSlice({
         args: [action.payload],
       });
     },
+    addAgentCondition: (state: WorkflowState, action: PayloadAction<{ conditionId: string; nodeId: string }>) => {
+      if (!state.graph) {
+        return; // log exception
+      }
+      const { conditionId, nodeId } = action.payload;
+      const graphId = getRecordEntry(state.nodesMetadata, nodeId)?.graphId ?? '';
+      const node = getWorkflowNodeFromGraphState(state, graphId);
+      if (!node) {
+        throw new Error('node not set');
+      }
+      addAgentConditionToWorkflow(conditionId, node, state.nodesMetadata, state);
+
+      LoggerService().log({
+        level: LogEntryLevel.Verbose,
+        area: 'Designer:Workflow Slice',
+        message: action.type,
+        args: [action.payload],
+      });
+    },
     discardAllChanges: (_state: WorkflowState) => {
       // Will implement later, currently here to test host dispatch
       LoggerService().log({
@@ -588,7 +607,7 @@ export const workflowSlice = createSlice({
         deleteNode,
         addSwitchCase,
         deleteSwitchCase,
-        addSwitchCase,
+        addAgentCondition,
         addImplicitForeachNode,
         pasteScopeNode,
         setNodeDescription,
@@ -623,6 +642,7 @@ export const {
   setNodeDescription,
   toggleCollapsedGraphId,
   addSwitchCase,
+  addAgentCondition,
   discardAllChanges,
   buildEdgeIdsBySource,
   updateRunAfter,

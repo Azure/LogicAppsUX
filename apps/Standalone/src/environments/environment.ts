@@ -8,7 +8,7 @@ const getAccessToken = async (fileName: string): Promise<string | undefined> => 
       return undefined;
     }
     return armTokenData.accessToken;
-  } catch (e) {
+  } catch (_e) {
     return undefined;
   }
 };

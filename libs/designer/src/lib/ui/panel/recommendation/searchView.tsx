@@ -11,8 +11,10 @@ import { SearchResultsGrid, isBuiltInConnector, isCustomConnector } from '@micro
 import { useDebouncedEffect } from '@react-hookz/web';
 import Fuse from 'fuse.js';
 import type React from 'react';
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { useDispatch } from 'react-redux';
+import { useHostOptions } from '../../../core/state/designerOptions/designerOptionsSelectors';
+import { useDiscoveryPanelRelationshipIds } from '../../../core/state/panel/panelSelectors';
 
 type SearchViewProps = {
   searchTerm: string;
@@ -27,6 +29,8 @@ type SearchViewProps = {
 
 export const SearchView: React.FC<SearchViewProps> = (props) => {
   const { searchTerm, allOperations, groupByConnector, isLoading, filters, onOperationClick, displayRuntimeInfo } = props;
+  const { enableAgenticLoops } = useHostOptions();
+  const isRoot = useDiscoveryPanelRelationshipIds().graphId === 'root';
 
   const dispatch = useDispatch<AppDispatch>();
 
@@ -39,20 +43,38 @@ export const SearchView: React.FC<SearchViewProps> = (props) => {
     }
   }, [searchTerm]);
 
+  const filterAgenticLoops = useCallback(
+    (operation: DiscoveryOperation<DiscoveryResultTypes>): boolean => {
+      if ((!enableAgenticLoops || !isRoot) && operation.type === 'Agent') {
+        return false;
+      }
+      if (!isRoot && operation.id === 'initializevariable') {
+        return false;
+      }
+      return true;
+    },
+    [enableAgenticLoops, isRoot]
+  );
+
   useDebouncedEffect(
     () => {
       const searchOperations = SearchService().searchOperations?.bind(SearchService());
 
       const searchResultsPromise = searchOperations
-        ? searchOperations(searchTerm, filters['actionType'], filters['runtime'])
-        : new DefaultSearchOperationsService(allOperations).searchOperations(searchTerm, filters['actionType'], filters['runtime']);
+        ? searchOperations(searchTerm, filters['actionType'], filters['runtime'], filterAgenticLoops)
+        : new DefaultSearchOperationsService(allOperations).searchOperations(
+            searchTerm,
+            filters['actionType'],
+            filters['runtime'],
+            filterAgenticLoops
+          );
 
       searchResultsPromise.then((results) => {
         setSearchResults(results);
         setIsLoadingSearchResults(false);
       });
     },
-    [searchTerm, allOperations, filters],
+    [searchTerm, allOperations, filters, filterAgenticLoops],
     200
   );
 
@@ -141,7 +163,8 @@ class DefaultSearchOperationsService implements Pick<ISearchService, 'searchOper
   public searchOperations(
     searchTerm: string,
     actionType?: string | undefined,
-    runtimeFilter?: string | undefined
+    runtimeFilter?: string | undefined,
+    additionalFilter?: (operation: DiscoveryOperation<DiscoveryResultTypes>) => boolean
   ): Promise<DiscoveryOpArray> {
     type FuseSearchResult = Fuse.FuseResult<DiscoveryOperation<DiscoveryResultTypes>>;
 
@@ -169,7 +192,9 @@ class DefaultSearchOperationsService implements Pick<ISearchService, 'searchOper
           return false;
         }
       }
-
+      if (additionalFilter && !additionalFilter(searchResult.item)) {
+        return false;
+      }
       return true;
     };
 
