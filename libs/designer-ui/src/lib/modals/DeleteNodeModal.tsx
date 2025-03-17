@@ -117,7 +117,7 @@ export const DeleteNodeModal = (props: DeleteNodeModalProps) => {
   }, [closingLoadingMessage, onDismiss]);
 
   return (
-    <Dialog inertTrapFocus={true} open={isOpen} aria-labelledby={title} onOpenChange={onClosing}>
+    <Dialog inertTrapFocus={true} open={isOpen} aria-labelledby={title} onOpenChange={onClosing} surfaceMotion={null}>
       <DialogSurface>
         <DialogBody>
           <DialogTitle>{nodeId ? title : ''}</DialogTitle>
