@@ -1,4 +1,11 @@
 # Logic Apps Designer
+### [5.44.6](https://github.com/Azure/LogicAppsUX/compare/v5.44.5...v5.44.6) (2025-03-18)
+
+
+### Features
+
+* **Data Mapper:** Refresh release ([#6804](https://github.com/Azure/LogicAppsUX/issues/6804)) ([a3e4c7c](https://github.com/Azure/LogicAppsUX/commit/a3e4c7cd6e7a9a734deacb4907e28d61248206b3)), closes [#6697](https://github.com/Azure/LogicAppsUX/issues/6697) [#6729](https://github.com/Azure/LogicAppsUX/issues/6729) [#6741](https://github.com/Azure/LogicAppsUX/issues/6741) [#6768](https://github.com/Azure/LogicAppsUX/issues/6768) [#6790](https://github.com/Azure/LogicAppsUX/issues/6790)
+
 ### [5.44.5](https://github.com/Azure/LogicAppsUX/compare/v5.44.4...v5.44.5) (2025-03-11)
 
 
