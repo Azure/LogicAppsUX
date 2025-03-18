@@ -3,22 +3,40 @@ import { useDispatch, useSelector } from 'react-redux';
 import { useIntl } from 'react-intl';
 import { Option, Field, Dropdown } from '@fluentui/react-components';
 import { useCallback, useEffect, useMemo, useState } from 'react';
-import { useLocations, useLogicApps, useResourceGroups, useSubscriptions } from '../../../core/templates/utils/queries';
-import { setLocation, setResourceGroup, setSubscription, setWorkflowAppDetails } from '../../../core/state/templates/workflowSlice';
-import { type Resource, equals } from '@microsoft/logic-apps-shared';
+import { useAllLogicApps, useLocations, useLogicApps, useResourceGroups, useSubscriptions } from '../../../core/templates/utils/queries';
+import {
+  setLocation,
+  setLogicAppDetails,
+  setResourceGroup,
+  setSubscription,
+  setWorkflowAppDetails,
+} from '../../../core/state/templates/workflowSlice';
+import { type LogicAppResource, type Resource, equals } from '@microsoft/logic-apps-shared';
 import { useTemplatesStrings } from '../templatesStrings';
 
-export const ResourcePicker = () => {
+export interface ResourcePickerProps {
+  viewMode?: 'default' | 'alllogicapps';
+  onSelectApp?: (value: LogicAppResource) => void;
+}
+
+export const ResourcePicker = ({ viewMode = 'default', onSelectApp }: ResourcePickerProps) => {
   const dispatch = useDispatch<AppDispatch>();
-  const { subscriptionId, resourceGroup, location, workflowAppName, isConsumption } = useSelector((state: RootState) => state.workflow);
+  const isDefaultMode = viewMode === 'default';
+  const { subscriptionId, resourceGroup, location, workflowAppName, logicAppName, isConsumption } = useSelector(
+    (state: RootState) => state.workflow
+  );
   const { data: subscriptions, isLoading } = useSubscriptions();
   const { data: resourceGroups, isLoading: isResourceGroupLoading } = useResourceGroups(subscriptionId ?? '');
   const { data: locations, isLoading: islocationLoading } = useLocations(subscriptionId ?? '');
   const { data: logicApps, isLoading: isLogicAppsLoading } = useLogicApps(
     subscriptionId ?? '',
     resourceGroup ?? '',
-    location ?? '',
-    isConsumption
+    isDefaultMode && !isConsumption
+  );
+  const { data: allLogicApps, isLoading: isAllLogicAppsLoading } = useAllLogicApps(
+    subscriptionId ?? '',
+    resourceGroup ?? '',
+    !isDefaultMode
   );
 
   const intl = useIntl();
@@ -34,6 +52,11 @@ export const ResourcePicker = () => {
         id: 'nJfJNU',
         description: 'Validation error message when a resource is not selected',
       }),
+      ALL_LOGIC_APPS: intl.formatMessage({
+        defaultMessage: 'Logic App instance',
+        id: 'Tx+tIP',
+        description: 'Label field for logic app instance',
+      }),
     }),
     [intl]
   );
@@ -45,6 +68,18 @@ export const ResourcePicker = () => {
       dispatch(setWorkflowAppDetails({ name: value, location: app?.location ?? '' }));
     },
     [dispatch, logicApps]
+  );
+
+  const onLogicAppInstanceSelect = useCallback(
+    (value: string) => {
+      const app = allLogicApps?.find((app) => equals(app.name, value));
+      dispatch(setLogicAppDetails({ name: value, location: app?.location ?? '', plan: app?.plan ?? '' }));
+
+      if (app) {
+        onSelectApp?.(app);
+      }
+    },
+    [dispatch, allLogicApps, onSelectApp]
   );
 
   return (
@@ -67,7 +102,7 @@ export const ResourcePicker = () => {
         resources={resourceGroups ?? []}
         errorMessage={resourceGroup ? '' : intlText.VALIDATION_ERROR}
       />
-      {isConsumption ? (
+      {isDefaultMode && isConsumption ? (
         <ResourceField
           id="location"
           label={resourceStrings.LOCATION}
@@ -78,7 +113,7 @@ export const ResourcePicker = () => {
           errorMessage={location ? '' : intlText.VALIDATION_ERROR}
         />
       ) : null}
-      {isConsumption ? null : (
+      {isDefaultMode && !isConsumption ? (
         <ResourceField
           id="logicapp"
           label={resourceStrings.LOGIC_APP}
@@ -86,6 +121,21 @@ export const ResourcePicker = () => {
           defaultKey={workflowAppName ?? ''}
           isLoading={isLogicAppsLoading}
           resources={(logicApps ?? []).map((app) => ({
+            id: app.id,
+            name: app.name,
+            displayName: app.name,
+          }))}
+          errorMessage={workflowAppName ? '' : intlText.VALIDATION_ERROR}
+        />
+      ) : null}
+      {isDefaultMode ? null : (
+        <ResourceField
+          id="alllogicapp"
+          label={intlText.ALL_LOGIC_APPS}
+          onSelect={onLogicAppInstanceSelect}
+          defaultKey={logicAppName ?? ''}
+          isLoading={isAllLogicAppsLoading}
+          resources={(allLogicApps ?? []).map((app) => ({
             id: app.id,
             name: app.name,
             displayName: app.name,

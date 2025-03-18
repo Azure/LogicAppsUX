@@ -86,7 +86,6 @@ describe('panel/templatePanel/createWorkflowPanel/reviewCreateTab', () => {
     };
 
     const workflowSliceData: WorkflowState = {
-      existingWorkflowName: 'workflowName 1',
       connections: {
         references: {},
         mapping: {},

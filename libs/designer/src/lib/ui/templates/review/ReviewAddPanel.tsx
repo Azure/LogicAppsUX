@@ -25,7 +25,6 @@ export const ReviewAddPanel = ({ resourceOverrides }: ReviewCreatePanelProps) =>
   const { parameterDefinitions, workflows, connections } = useSelector((state: RootState) => state.template);
   const { enableResourceSelection } = useSelector((state: RootState) => state.templateOptions);
   const {
-    existingWorkflowName,
     connections: { mapping },
     subscriptionId,
     location,
@@ -63,7 +62,7 @@ export const ReviewAddPanel = ({ resourceOverrides }: ReviewCreatePanelProps) =>
         <Text>{resourceOverrides?.workflowName ?? resourceStrings.WORKFLOW_NAME}</Text>
         {Object.values(workflows).map((workflow) => (
           <Text weight="semibold" key={workflow.id}>
-            {existingWorkflowName ?? workflow.workflowName}
+            {workflow.workflowName}
           </Text>
         ))}
       </div>

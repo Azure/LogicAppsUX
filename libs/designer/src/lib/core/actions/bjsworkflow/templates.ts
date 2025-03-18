@@ -219,7 +219,7 @@ export const loadTemplate = createAsyncThunk(
 
 export const validateWorkflowsBasicInfo = createAsyncThunk(
   'validateWorkflowsBasicInfo',
-  async ({ validateName, existingWorkflowNames }: { validateName: boolean; existingWorkflowNames: string[] }, thunkAPI) => {
+  async ({ existingWorkflowNames }: { existingWorkflowNames: string[] }, thunkAPI) => {
     const state: RootState = thunkAPI.getState() as RootState;
     const { subscriptionId, resourceGroup: resourceGroupName, isConsumption } = state.workflow;
     const { workflows } = state.template;
@@ -239,21 +239,19 @@ export const validateWorkflowsBasicInfo = createAsyncThunk(
           };
         }
 
-        if (validateName) {
-          const currentWorkflowNames = getCurrentWorkflowNames(
-            workflowIds.map((id) => ({ id, name: workflows[id].workflowName ?? '' })),
-            id
-          );
-          const nameError = await validateWorkflowName(workflows[id].workflowName, isConsumption, {
-            subscriptionId,
-            resourceGroupName,
-            existingWorkflowNames: [...existingWorkflowNames, ...currentWorkflowNames],
-          });
-          result[id] = {
-            ...result[id],
-            nameError,
-          };
-        }
+        const currentWorkflowNames = getCurrentWorkflowNames(
+          workflowIds.map((id) => ({ id, name: workflows[id].workflowName ?? '' })),
+          id
+        );
+        const nameError = await validateWorkflowName(workflows[id].workflowName, !!isConsumption, {
+          subscriptionId,
+          resourceGroupName,
+          existingWorkflowNames: [...existingWorkflowNames, ...currentWorkflowNames],
+        });
+        result[id] = {
+          ...result[id],
+          nameError,
+        };
       }
     }
 

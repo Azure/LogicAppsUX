@@ -67,13 +67,7 @@ export const TemplatesStandard = () => {
     theme: state.workflowLoader.theme,
     templatesView: state.workflowLoader.templatesView,
   }));
-  const {
-    appId,
-    hostingPlan,
-    workflowName: existingWorkflowName,
-    useEndpoint,
-    enableResourceSelection,
-  } = useSelector((state: RootState) => state.workflowLoader);
+  const { appId, hostingPlan, useEndpoint, enableResourceSelection } = useSelector((state: RootState) => state.workflowLoader);
   const [shouldReload, setShouldReload] = useState<boolean | undefined>(undefined);
   const { data: workflowAppData } = useWorkflowApp(appId as string, hostingPlan);
   const canonicalLocation = useMemo(
@@ -344,7 +338,6 @@ export const TemplatesStandard = () => {
         services={services}
         isConsumption={false}
         isCreateView={true}
-        existingWorkflowName={existingWorkflowName}
         reload={reload}
         enableResourceSelection={enableResourceSelection}
         onResourceChange={onResourceChange}

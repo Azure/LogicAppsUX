@@ -32,7 +32,6 @@ export const useCreateWorkflowPanelTabs = ({
   const { data: existingWorkflowNames } = useExistingWorkflowNames();
   const {
     connections,
-    existingWorkflowName,
     selectedTabId,
     templateName,
     subscriptionId,
@@ -46,7 +45,6 @@ export const useCreateWorkflowPanelTabs = ({
     workflows,
     isCreateView,
   } = useSelector((state: RootState) => ({
-    existingWorkflowName: state.workflow.existingWorkflowName,
     connections: state.workflow.connections,
     workflowAppName: state.workflow.workflowAppName,
     isConsumption: state.workflow.isConsumption,
@@ -81,9 +79,9 @@ export const useCreateWorkflowPanelTabs = ({
       dispatch(validateParameters());
     }
     if (!isConsumption && selectedTabId && selectedTabId !== Constants.TEMPLATE_PANEL_TAB_NAMES.BASIC) {
-      dispatch(validateWorkflowsBasicInfo({ validateName: !existingWorkflowName, existingWorkflowNames: existingWorkflowNames ?? [] }));
+      dispatch(validateWorkflowsBasicInfo({ existingWorkflowNames: existingWorkflowNames ?? [] }));
     }
-  }, [dispatch, isConsumption, existingWorkflowName, existingWorkflowNames, parametersExist, selectedTabId, connections.mapping]);
+  }, [dispatch, isConsumption, existingWorkflowNames, parametersExist, selectedTabId, connections.mapping]);
 
   const onCreateClick = useCallback(async () => {
     const resources = {
@@ -259,7 +257,7 @@ export const useCreateWorkflowPanelTabs = ({
       ...reviewCreateTab(intl, dispatch, createWorkflowFromTemplate, {
         shouldClearDetails: !isMultiWorkflowTemplate,
         isCreating,
-        isCreateView,
+        isCreateView: !!isCreateView,
         errorMessage,
         hasError: false,
         isPrimaryButtonDisabled: nameStateTabItem.hasError || !!connectionsError || hasParametersValidationErrors,
