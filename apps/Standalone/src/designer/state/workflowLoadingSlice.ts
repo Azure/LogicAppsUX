@@ -226,7 +226,6 @@ export const workflowLoadingSlice = createSlice({
       if (!action.payload) {
         return;
       }
-      console.log('Payload: ', action.payload);
       state.workflowDefinition = action.payload?.workflowDefinition;
       state.connections = action.payload?.connectionReferences ?? {};
       state.parameters = action.payload?.parameters ?? {};
