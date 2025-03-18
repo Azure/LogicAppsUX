@@ -1,4 +1,11 @@
 # Logic Apps Designer
+### [5.44.7](https://github.com/Azure/LogicAppsUX/compare/v5.44.6...v5.44.7) (2025-03-18)
+
+
+### Features
+
+* **designer:** Adding Password Masking to Authentication Editors ([#6826](https://github.com/Azure/LogicAppsUX/issues/6826)) ([40d9658](https://github.com/Azure/LogicAppsUX/commit/40d96580bd988a36093282addceec2d5404a6e8b)), closes [#6687](https://github.com/Azure/LogicAppsUX/issues/6687)
+
 ### [5.44.6](https://github.com/Azure/LogicAppsUX/compare/v5.44.5...v5.44.6) (2025-03-18)
 
 
