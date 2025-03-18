@@ -76,6 +76,7 @@ type WorkflowPayload = {
   connectionReferences: ConnectionReferences;
   parameters: Record<string, WorkflowParameter>;
   runFiles: any[];
+  workflowKind?: string;
 };
 
 type RunPayload = {
@@ -97,6 +98,7 @@ export const loadWorkflow = createAsyncThunk('workflowLoadingState/loadWorkflow'
     workflowDefinition: wf.definition as LogicAppsV2.WorkflowDefinition,
     connectionReferences: wf.connections as ConnectionReferences,
     parameters: wf?.parameters ?? wf?.definition?.parameters ?? {},
+    workflowKind: wf?.kind,
     runFiles,
   } as WorkflowPayload;
 });
@@ -224,10 +226,12 @@ export const workflowLoadingSlice = createSlice({
       if (!action.payload) {
         return;
       }
+      console.log('Payload: ', action.payload);
       state.workflowDefinition = action.payload?.workflowDefinition;
       state.connections = action.payload?.connectionReferences ?? {};
       state.parameters = action.payload?.parameters ?? {};
       state.runFiles = action.payload?.runFiles ?? [];
+      state.workflowKind = action.payload?.workflowKind ?? 'stateful';
     });
     builder.addCase(loadWorkflow.rejected, (state) => {
       state.workflowDefinition = null;
