@@ -89,7 +89,7 @@ export const addNodeToWorkflow = (
 
   // Increase action count of graph
   if (nodesMetadata[workflowGraph.id]) {
-    nodesMetadata[workflowGraph.id].actionCount = nodesMetadata[graphId].actionCount ?? 0 + 1;
+    nodesMetadata[workflowGraph.id].actionCount = (nodesMetadata[graphId].actionCount ?? 0) + 1;
   }
 
   // If the added node is a do-until, we need to set the subgraphtype for the header
