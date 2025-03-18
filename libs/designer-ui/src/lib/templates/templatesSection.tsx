@@ -2,14 +2,12 @@ import { Field, Input, Label, Link, Text } from '@fluentui/react-components';
 import { Open16Regular } from '@fluentui/react-icons';
 
 interface BaseTemplatesSectionItem {
-  label?: string;
+  label?: string | React.ReactNode;
   value: string | undefined;
 }
 
 interface TextItem extends BaseTemplatesSectionItem {
   type: 'text';
-  onChange?: never;
-  disabled?: never;
 }
 
 interface TextFieldItem extends BaseTemplatesSectionItem {
@@ -69,7 +67,7 @@ export const TemplatesSection = ({
               //   className="msla-templates-parameters-values"
               data-testid={item.id}
               id={item.id}
-              aria-label={item.label}
+              aria-label={typeof item.label === 'string' ? item.label : undefined}
               value={item.value}
               disabled={item.disabled}
               onChange={(_event, data) => item.onChange(data.value ?? '')}
@@ -101,7 +99,13 @@ export const TemplatesSection = ({
           ? items.map((item, index) => {
               return (
                 <div key={index} className="msla-templates-section-item">
-                  {item.label ? <Text className="msla-templates-section-item-label">{item.label}</Text> : null}
+                  {item.label ? (
+                    typeof item.label === 'string' ? (
+                      <Text className="msla-templates-section-item-label">{item.label}</Text>
+                    ) : (
+                      <div className="msla-templates-section-item-label">{item.label}</div>
+                    )
+                  ) : null}
                   <div className="msla-templates-section-item-value">{onRenderItem(item)}</div>
                 </div>
               );
