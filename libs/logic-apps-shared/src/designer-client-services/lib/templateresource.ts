@@ -23,7 +23,7 @@ export const TemplateResourceService = (): ITemplateResourceService => {
   if (!service) {
     throw new AssertionException(
       AssertionErrorCode.SERVICE_NOT_INITIALIZED,
-      'Template Resource 0Service needs to be initialized before using'
+      'Template Resource Service needs to be initialized before using'
     );
   }
 
