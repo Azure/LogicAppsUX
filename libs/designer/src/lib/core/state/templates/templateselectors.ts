@@ -35,3 +35,11 @@ export const useConnectionReferenceForKey = (key: string): ConnectionReference =
     return connections.references[connections.mapping[key] ?? ''];
   });
 };
+
+export const useTemplateConnections = (): Record<string, Template.Connection> => {
+  return useSelector((state: RootState) => state.template?.connections);
+};
+
+export const useTemplateParameterDefinitions = (): Record<string, Template.ParameterDefinition> => {
+  return useSelector((state: RootState) => state.template?.parameterDefinitions);
+};

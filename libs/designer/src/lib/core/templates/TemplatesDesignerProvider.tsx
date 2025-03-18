@@ -43,39 +43,46 @@ export interface TemplatesDesignerProviderProps {
   id?: string;
   theme?: ThemeType;
   locale?: string;
+  useExternalRedux?: boolean;
   children: React.ReactNode;
 }
 
-export const TemplatesDesignerProvider = ({ id, theme = ThemeType.Light, locale = 'en', children }: TemplatesDesignerProviderProps) => {
-  return (
-    <ReduxProvider store={templateStore}>
-      <TemplatesWrappedContext.Provider value={{}}>
-        <ThemeProvider
-          theme={theme === ThemeType.Light ? AzureThemeLight : AzureThemeDark}
+export const TemplatesDesignerProvider = ({
+  id,
+  theme = ThemeType.Light,
+  locale = 'en',
+  useExternalRedux = false,
+  children,
+}: TemplatesDesignerProviderProps) => {
+  const content = (
+    <TemplatesWrappedContext.Provider value={{}}>
+      <ThemeProvider
+        theme={theme === ThemeType.Light ? AzureThemeLight : AzureThemeDark}
+        style={{ flex: '1 1 1px', display: 'flex', flexDirection: 'column' }}
+      >
+        <FluentProvider
+          theme={theme === ThemeType.Light ? extendedWebLightTheme : extendedWebDarkTheme}
           style={{ flex: '1 1 1px', display: 'flex', flexDirection: 'column' }}
         >
-          <FluentProvider
-            theme={theme === ThemeType.Light ? extendedWebLightTheme : extendedWebDarkTheme}
-            style={{ flex: '1 1 1px', display: 'flex', flexDirection: 'column' }}
+          <IntlProvider
+            locale={locale}
+            defaultLocale={locale}
+            onError={(err) => {
+              if (err.code === 'MISSING_TRANSLATION') {
+                return;
+              }
+              throw err;
+            }}
           >
-            <IntlProvider
-              locale={locale}
-              defaultLocale={locale}
-              onError={(err) => {
-                if (err.code === 'MISSING_TRANSLATION') {
-                  return;
-                }
-                throw err;
-              }}
-            >
-              <ReduxReset id={id} />
-              {children}
-            </IntlProvider>
-          </FluentProvider>
-        </ThemeProvider>
-      </TemplatesWrappedContext.Provider>
-    </ReduxProvider>
+            <ReduxReset id={id} />
+            {children}
+          </IntlProvider>
+        </FluentProvider>
+      </ThemeProvider>
+    </TemplatesWrappedContext.Provider>
   );
+
+  return useExternalRedux ? content : <ReduxProvider store={templateStore}>{content}</ReduxProvider>;
 };
 
 // Redux state persists even through component re-mounts (like with changing the key prop in a parent), so we need to reset the state when the key changes manually
