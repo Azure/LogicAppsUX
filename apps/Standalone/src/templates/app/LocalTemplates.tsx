@@ -80,7 +80,6 @@ export const LocalTemplates = () => {
         isCreateView={!isConsumption || !!isCreateView}
         enableResourceSelection={enableResourceSelection}
         onResourceChange={onReloadServices}
-        existingWorkflowName={undefined}
         viewTemplate={
           isSingleTemplateView
             ? {

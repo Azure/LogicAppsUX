@@ -21,17 +21,14 @@ export const SingleWorkflowBasics = ({ workflowId }: { workflowId: string }) => 
     manifest,
   } = useWorkflowTemplate(workflowId);
   const { isNameEditable, isKindEditable } = useWorkflowBasicsEditable(workflowId);
-  const { existingWorkflowName, enableResourceSelection, isConsumption, subscriptionId, resourceGroupName } = useSelector(
-    (state: RootState) => ({
-      existingWorkflowName: state.workflow.existingWorkflowName,
-      isConsumption: state.workflow.isConsumption,
-      subscriptionId: state.workflow.subscriptionId,
-      resourceGroupName: state.workflow.resourceGroup,
-      enableResourceSelection: state.templateOptions.enableResourceSelection,
-    })
-  );
+  const { enableResourceSelection, isConsumption, subscriptionId, resourceGroupName } = useSelector((state: RootState) => ({
+    isConsumption: state.workflow.isConsumption,
+    subscriptionId: state.workflow.subscriptionId,
+    resourceGroupName: state.workflow.resourceGroup,
+    enableResourceSelection: state.templateOptions.enableResourceSelection,
+  }));
   const { data: existingWorkflowNames } = useExistingWorkflowNames();
-  const name = useMemo(() => existingWorkflowName ?? workflowName, [existingWorkflowName, workflowName]);
+  const name = useMemo(() => workflowName, [workflowName]);
   const intl = useIntl();
   const resources = useTemplatesStrings().resourceStrings;
 
@@ -134,9 +131,9 @@ export const SingleWorkflowBasics = ({ workflowId }: { workflowId: string }) => 
         onChange={(_event: React.FormEvent<HTMLInputElement | HTMLTextAreaElement>, newValue?: string) => {
           dispatch(updateWorkflowName({ id: workflowId, name: newValue }));
         }}
-        disabled={!!existingWorkflowName || !isNameEditable}
+        disabled={!isNameEditable}
         onBlur={async () => {
-          const validationError = await validateWorkflowName(name, isConsumption, {
+          const validationError = await validateWorkflowName(name, !!isConsumption, {
             subscriptionId,
             resourceGroupName,
             existingWorkflowNames: existingWorkflowNames ?? [],
