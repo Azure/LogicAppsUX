@@ -1,14 +1,15 @@
-import { Field, Input, Label, Text } from '@fluentui/react-components';
+import { Field, Input, Label, Link, Text } from '@fluentui/react-components';
+import { Open16Regular } from '@fluentui/react-icons';
 
 interface BaseTemplatesSectionItem {
   label: string;
-  value: string; // Required when type is 'text'
+  value: string;
 }
 
 interface TextItem extends BaseTemplatesSectionItem {
   type: 'text';
-  onChange?: never; // Prevents onChange for text type
-  disabled?: never; // Prevents disabled for text type
+  onChange?: never;
+  disabled?: never;
 }
 
 interface InputItem extends BaseTemplatesSectionItem {
@@ -26,6 +27,10 @@ export type TemplatesSectionItem = TextItem | InputItem;
 export interface BaseTemplatesSectionProps {
   title: string;
   description?: string;
+  descriptionLink?: {
+    text: string;
+    href: string;
+  };
 }
 
 export interface ContentBasedProps extends BaseTemplatesSectionProps {
@@ -40,16 +45,16 @@ export interface ChildrenBasedProps extends BaseTemplatesSectionProps {
 
 export type TemplatesSectionProps = ContentBasedProps | ChildrenBasedProps;
 
-export const TemplatesSection = ({ title, description, items, children = null }: TemplatesSectionProps) => {
+export const TemplatesSection = ({ title, description, descriptionLink, items, children = null }: TemplatesSectionProps) => {
   const onRenderItem = (item: TemplatesSectionItem) => {
     switch (item.type) {
       case 'text':
-        return <Text className="msla-templates-tab-review-section-details-value">{item.value}</Text>;
+        return <Text className="msla-templates-section-item-text">{item.value}</Text>;
       case 'input':
         return (
           <Field validationMessage={item.error} hint={item.hint} required={item.required}>
             <Input
-              className="msla-templates-parameters-values"
+              //   className="msla-templates-parameters-values"
               data-testid={`msla-templates-parameter-value-${item.label}`}
               id={`msla-templates-parameter-value-${item.label}`}
               aria-label={item.label}
@@ -66,22 +71,31 @@ export const TemplatesSection = ({ title, description, items, children = null }:
 
   return (
     <div className="msla-templates-section">
-      <Label className="msla-templates-tab-label" required={true} htmlFor={'workflowNameLabel'}>
+      <Label className="msla-templates-section-title" required={true} htmlFor={'workflowNameLabel'}>
         {title}
       </Label>
-      <Text className="msla-templates-tab-label-description">{description}</Text>
+      <Text className="msla-templates-section-description">
+        {description}
+        {descriptionLink && (
+          <Link className="msla-templates-section-description-link" href={descriptionLink.href} target="_blank" rel="noreferrer">
+            {descriptionLink.text}
+            <Open16Regular className="msla-templates-section-description-icon" />
+          </Link>
+        )}
+      </Text>
 
-      {items
-        ? items.map((item, index) => {
-            return (
-              <div key={index} className="msla-templates-tab-review-section-details">
-                <Text className="msla-templates-tab-review-section-details-title">{item.label}</Text>
-                {onRenderItem(item)}
-              </div>
-            );
-          })
-        : children}
-      {children}
+      <div className="msla-templates-section-items">
+        {items
+          ? items.map((item, index) => {
+              return (
+                <div key={index} className="msla-templates-section-item">
+                  <Text className="msla-templates-section-item-label">{item.label}</Text>
+                  <div className="msla-templates-section-item-value">{onRenderItem(item)}</div>
+                </div>
+              );
+            })
+          : children}
+      </div>
     </div>
   );
 };
