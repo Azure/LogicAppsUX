@@ -1,9 +1,9 @@
-import { customTemplateLoaderSlice } from './CustomTemplateLoader';
+import { configureTemplateLoaderSlice } from './ConfigureTemplateLoader';
 import { configureStore } from '@reduxjs/toolkit';
 
 export const store = configureStore({
   reducer: {
-    customTemplateLoader: customTemplateLoaderSlice.reducer,
+    configureTemplateLoader: configureTemplateLoaderSlice.reducer,
   },
 });
 

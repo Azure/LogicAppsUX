@@ -102,8 +102,7 @@ export const useLocations = (subscriptionId: string): UseQueryResult<Resource[],
 export const useLogicApps = (
   subscriptionId: string,
   resourceGroup: string,
-  location: string,
-  isConsumption: boolean
+  enabled: boolean
 ): UseQueryResult<LogicAppResource[], unknown> => {
   return useQuery(
     ['logicapps', subscriptionId, resourceGroup],
@@ -115,7 +114,48 @@ export const useLogicApps = (
       refetchOnMount: false,
       refetchOnWindowFocus: false,
       refetchOnReconnect: false,
-      enabled: !isConsumption && !!subscriptionId && !!resourceGroup && !!location,
+      enabled: enabled && !!subscriptionId && !!resourceGroup,
+    }
+  );
+};
+
+export const useAllLogicApps = (
+  subscriptionId: string,
+  resourceGroup: string,
+  enabled: boolean
+): UseQueryResult<LogicAppResource[], unknown> => {
+  return useQuery(
+    ['allLogicApps', subscriptionId, resourceGroup],
+    async () => {
+      return ResourceService().listAllLogicApps(subscriptionId, resourceGroup);
+    },
+    {
+      cacheTime: 1000 * 60 * 60 * 24,
+      refetchOnMount: false,
+      refetchOnWindowFocus: false,
+      refetchOnReconnect: false,
+      enabled: enabled && !!subscriptionId && !!resourceGroup,
+    }
+  );
+};
+
+export const useWorkflowsInApp = (
+  subscriptionId: string,
+  resourceGroup: string,
+  logicAppName: string,
+  isConsumption: boolean
+): UseQueryResult<LogicAppResource[], unknown> => {
+  return useQuery(
+    ['workflowsInApp', subscriptionId, resourceGroup, logicAppName, isConsumption],
+    async () => {
+      return ResourceService().listWorkflowsInApp(subscriptionId, resourceGroup, logicAppName, isConsumption);
+    },
+    {
+      cacheTime: 1000 * 60 * 60 * 24,
+      refetchOnMount: false,
+      refetchOnWindowFocus: false,
+      refetchOnReconnect: false,
+      enabled: !!subscriptionId && !!resourceGroup && !!logicAppName,
     }
   );
 };
