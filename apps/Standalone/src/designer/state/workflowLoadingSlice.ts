@@ -36,7 +36,6 @@ export interface WorkflowLoadingState {
     maxStateHistorySize?: number; // maximum number of states to save in history for undo/redo
     collapseGraphsByDefault?: boolean; // collapse scope by default
     enableMultiVariable?: boolean; // supports creating multiple variables in one action
-    enableAgenticLoops?: boolean;
   };
   showPerformanceDebug?: boolean;
   runFiles: any[];
@@ -66,7 +65,6 @@ const initialState: WorkflowLoadingState = {
     maxStateHistorySize: 0,
     collapseGraphsByDefault: false,
     enableMultiVariable: false,
-    enableAgenticLoops: false,
   },
   showPerformanceDebug: false,
   runFiles: [],
@@ -78,6 +76,7 @@ type WorkflowPayload = {
   connectionReferences: ConnectionReferences;
   parameters: Record<string, WorkflowParameter>;
   runFiles: any[];
+  workflowKind?: string;
 };
 
 type RunPayload = {
@@ -99,6 +98,7 @@ export const loadWorkflow = createAsyncThunk('workflowLoadingState/loadWorkflow'
     workflowDefinition: wf.definition as LogicAppsV2.WorkflowDefinition,
     connectionReferences: wf.connections as ConnectionReferences,
     parameters: wf?.parameters ?? wf?.definition?.parameters ?? {},
+    workflowKind: wf?.kind,
     runFiles,
   } as WorkflowPayload;
 });
@@ -220,9 +220,6 @@ export const workflowLoadingSlice = createSlice({
     setEnableMultiVariable: (state, action: PayloadAction<boolean>) => {
       state.hostOptions.enableMultiVariable = action.payload;
     },
-    setEnableAgenticLoops: (state, action: PayloadAction<boolean>) => {
-      state.hostOptions.enableAgenticLoops = action.payload;
-    },
   },
   extraReducers: (builder) => {
     builder.addCase(loadWorkflow.fulfilled, (state, action: PayloadAction<WorkflowPayload | null>) => {
@@ -233,6 +230,7 @@ export const workflowLoadingSlice = createSlice({
       state.connections = action.payload?.connectionReferences ?? {};
       state.parameters = action.payload?.parameters ?? {};
       state.runFiles = action.payload?.runFiles ?? [];
+      state.workflowKind = action.payload?.workflowKind ?? 'stateful';
     });
     builder.addCase(loadWorkflow.rejected, (state) => {
       state.workflowDefinition = null;
@@ -273,7 +271,6 @@ export const {
   setStringOverrides,
   setQueryCachePersist,
   setEnableMultiVariable,
-  setEnableAgenticLoops,
 } = workflowLoadingSlice.actions;
 
 export default workflowLoadingSlice.reducer;

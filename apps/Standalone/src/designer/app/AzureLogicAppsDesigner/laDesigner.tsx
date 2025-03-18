@@ -321,8 +321,7 @@ const DesignerEditor = () => {
       parametersToUpdate,
       settingsToUpdate,
       customCodeToUpdate,
-      clearDirtyState,
-      { skipValidation: hostOptions.enableAgenticLoops ?? false }
+      clearDirtyState
     );
   };
 

@@ -13,8 +13,8 @@ import Fuse from 'fuse.js';
 import type React from 'react';
 import { useCallback, useEffect, useState } from 'react';
 import { useDispatch } from 'react-redux';
-import { useHostOptions } from '../../../core/state/designerOptions/designerOptionsSelectors';
 import { useDiscoveryPanelRelationshipIds } from '../../../core/state/panel/panelSelectors';
+import { useAgenticWorkflow } from '../../../core/state/designerView/designerViewSelectors';
 
 type SearchViewProps = {
   searchTerm: string;
@@ -29,7 +29,7 @@ type SearchViewProps = {
 
 export const SearchView: React.FC<SearchViewProps> = (props) => {
   const { searchTerm, allOperations, groupByConnector, isLoading, filters, onOperationClick, displayRuntimeInfo } = props;
-  const { enableAgenticLoops } = useHostOptions();
+  const isAgenticWorkflow = useAgenticWorkflow();
   const isRoot = useDiscoveryPanelRelationshipIds().graphId === 'root';
 
   const dispatch = useDispatch<AppDispatch>();
@@ -45,7 +45,7 @@ export const SearchView: React.FC<SearchViewProps> = (props) => {
 
   const filterAgenticLoops = useCallback(
     (operation: DiscoveryOperation<DiscoveryResultTypes>): boolean => {
-      if ((!enableAgenticLoops || !isRoot) && operation.type === 'Agent') {
+      if ((!isAgenticWorkflow || !isRoot) && operation.type === 'Agent') {
         return false;
       }
       if (!isRoot && operation.id === 'initializevariable') {
@@ -53,7 +53,7 @@ export const SearchView: React.FC<SearchViewProps> = (props) => {
       }
       return true;
     },
-    [enableAgenticLoops, isRoot]
+    [isAgenticWorkflow, isRoot]
   );
 
   useDebouncedEffect(

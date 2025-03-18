@@ -1,11 +1,11 @@
 import { useAllApiIdsWithActions, useAllApiIdsWithTriggers, useAllConnectors } from '../../../core/queries/browse';
-import { useHostOptions } from '../../../core/state/designerOptions/designerOptionsSelectors';
 import { selectOperationGroupId } from '../../../core/state/panel/panelSlice';
 import { SearchService, cleanConnectorId, type Connector } from '@microsoft/logic-apps-shared';
 import { BrowseGrid, isBuiltInConnector, isCustomConnector } from '@microsoft/designer-ui';
 import { useCallback, useMemo } from 'react';
 import { useDispatch } from 'react-redux';
 import { useDiscoveryPanelRelationshipIds } from '../../../core/state/panel/panelSelectors';
+import { useAgenticWorkflow } from '../../../core/state/designerView/designerViewSelectors';
 
 const defaultFilterConnector = (connector: Connector, runtimeFilter: string): boolean => {
   if (runtimeFilter === 'inapp' && !isBuiltInConnector(connector)) {
@@ -61,7 +61,7 @@ export interface BrowseViewProps {
 
 export const BrowseView = (props: BrowseViewProps) => {
   const { filters, isLoadingOperations, displayRuntimeInfo } = props;
-  const { enableAgenticLoops } = useHostOptions();
+  const isAgenticWorkflow = useAgenticWorkflow();
   const isRoot = useDiscoveryPanelRelationshipIds().graphId === 'root';
 
   const dispatch = useDispatch();
@@ -73,7 +73,7 @@ export const BrowseView = (props: BrowseViewProps) => {
 
   const filterItems = useCallback(
     (connector: Connector): boolean => {
-      if ((!enableAgenticLoops || !isRoot) && connector.id === 'connectionProviders/agent') {
+      if ((!isAgenticWorkflow || !isRoot) && connector.id === 'connectionProviders/agent') {
         return false;
       }
       if (filters['runtime']) {
@@ -100,7 +100,7 @@ export const BrowseView = (props: BrowseViewProps) => {
 
       return true;
     },
-    [enableAgenticLoops, isRoot, filters, allApiIdsWithActions.data, allApiIdsWithTriggers.data]
+    [isAgenticWorkflow, isRoot, filters, allApiIdsWithActions.data, allApiIdsWithTriggers.data]
   );
 
   const sortedConnectors = useMemo(() => {
