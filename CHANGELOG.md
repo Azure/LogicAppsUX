@@ -1,4 +1,24 @@
 # Logic Apps Designer
+### [5.53.2](https://github.com/Azure/LogicAppsUX/compare/v5.54.0...v5.53.2) (2025-03-18)
+
+
+### Features
+
+* **designer:** Remove animation for delete node modal ([#6814](https://github.com/Azure/LogicAppsUX/issues/6814)) ([e2b90e6](https://github.com/Azure/LogicAppsUX/commit/e2b90e683fc3ae211bfffcb44bcb855de4cdcfdf))
+* **Templates:** Review tab improvements + Template provider useExternalRedux flag ([#6829](https://github.com/Azure/LogicAppsUX/issues/6829)) ([9ed541f](https://github.com/Azure/LogicAppsUX/commit/9ed541f8624efbf0944a72f55ca0d42084a7d178)), closes [#6828](https://github.com/Azure/LogicAppsUX/issues/6828)
+
+
+### Bug Fixes
+
+* **designer:** Fix typo in connection configuration model ([#6813](https://github.com/Azure/LogicAppsUX/issues/6813)) ([1172a46](https://github.com/Azure/LogicAppsUX/commit/1172a46e54d02f8dadecacb3b08d4ff39315c235))
+
+### [5.53.1](https://github.com/Azure/LogicAppsUX/compare/v5.53.0...v5.53.1) (2025-03-17)
+
+
+### Bug Fixes
+
+* **templates:** Adding a reload handler when a resource changes and services to reload ([15ed538](https://github.com/Azure/LogicAppsUX/commit/15ed53823103194d0c4dcb622a80dc2133835909))
+
 ## [5.54.0](https://github.com/Azure/LogicAppsUX/compare/v5.53.0...v5.54.0) (2025-03-17)
 
 
