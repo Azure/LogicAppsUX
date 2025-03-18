@@ -18,7 +18,6 @@ type ReviewExistingProps = {
 
 export const ReviewExisting = ({ resourceOverrides }: ReviewExistingProps) => {
   const { existingWorkflowName } = useSelector((state: RootState) => state.workflow);
-  const { templateName } = useSelector((state: RootState) => state.template);
   const { enableResourceSelection } = useSelector((state: RootState) => state.templateOptions);
   const { resourceStrings } = useTemplatesStrings();
 
@@ -29,7 +28,7 @@ export const ReviewExisting = ({ resourceOverrides }: ReviewExistingProps) => {
       <div className="msla-templates-review-block">
         <Text>{resourceOverrides?.workflowName ?? resourceStrings.WORKFLOW_NAME}</Text>
         <Text weight="semibold" className={styles.actionName}>
-          {existingWorkflowName ?? templateName}
+          {existingWorkflowName}
         </Text>
       </div>
 
