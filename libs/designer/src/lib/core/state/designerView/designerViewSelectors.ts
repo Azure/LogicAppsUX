@@ -20,3 +20,7 @@ export const useNodeContextMenuData = () => {
 export const useEdgeContextMenuData = () => {
   return useSelector((state: RootState) => state.designerView.edgeContextMenuData);
 };
+
+export const useAgenticWorkflow = () => {
+  return useSelector((state: RootState) => state.workflow.workflowKind === 'agentic');
+};
