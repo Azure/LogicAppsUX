@@ -113,7 +113,7 @@ export const ResourcePicker = ({ viewMode = 'default', onSelectApp }: ResourcePi
           errorMessage={location ? '' : intlText.VALIDATION_ERROR}
         />
       ) : null}
-      {isDefaultMode && isConsumption ? null : (
+      {isDefaultMode && !isConsumption ? (
         <ResourceField
           id="logicapp"
           label={resourceStrings.LOGIC_APP}
@@ -127,7 +127,7 @@ export const ResourcePicker = ({ viewMode = 'default', onSelectApp }: ResourcePi
           }))}
           errorMessage={workflowAppName ? '' : intlText.VALIDATION_ERROR}
         />
-      )}
+      ) : null}
       {isDefaultMode ? null : (
         <ResourceField
           id="alllogicapp"

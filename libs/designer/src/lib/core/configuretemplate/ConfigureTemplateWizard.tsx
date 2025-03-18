@@ -12,7 +12,7 @@ export const ConfigureTemplateWizard = () => {
   const { data: workflows, isLoading } = useWorkflowsInApp(subscriptionId, resourceGroup, logicAppName ?? '', !!isConsumption);
   return (
     <div>
-      <ResourcePicker onSelectApp={(app) => setDisableSelection(equals(app.plan, 'consumption'))} />
+      <ResourcePicker viewMode={'alllogicapps'} onSelectApp={(app) => setDisableSelection(equals(app.plan, 'consumption'))} />
       <div>
         <h4>Workflows</h4>
         <div>
