@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useState } from 'react';
 import { TemplatesDataProvider, TemplatesView } from '@microsoft/logic-apps-designer';
 import type { RootState } from '../state/Store';
-import { TemplatesDesigner, TemplatesDesignerProvider } from '@microsoft/logic-apps-designer';
+import { TemplatesDesigner, TemplatesDesignerProvider, templateStore, resetStateOnResourceChange } from '@microsoft/logic-apps-designer';
 import { useSelector } from 'react-redux';
 import {
   BaseGatewayService,
@@ -20,10 +20,6 @@ import {
 } from '@microsoft/logic-apps-shared';
 import { HttpClient } from '../../designer/app/AzureLogicAppsDesigner/Services/HttpClient';
 
-const subscriptionId = 'one';
-const resourceGroup = 'SecondRG';
-const location = 'eastus';
-
 const loadLocalTemplateFromResourcePath = async (resourcePath: string, artifactType = 'manifest') => {
   const paths = resourcePath.split('/');
 
@@ -33,6 +29,9 @@ const loadLocalTemplateFromResourcePath = async (resourcePath: string, artifactT
 };
 
 const localTemplateManifestPaths = ['BasicWorkflowOnly', 'SimpleConnectionParameter', 'SimpleAccelerator', 'SimpleParametersOnly'];
+const defaultSubscriptionId = 'one';
+const defaultResourceGroup = 'SecondRG';
+const defaultLocation = 'eastus';
 
 export const LocalTemplates = () => {
   const { theme, templatesView } = useSelector((state: RootState) => ({
@@ -55,19 +54,23 @@ export const LocalTemplates = () => {
   }, [useEndpoint]);
 
   const services = useMemo(
-    () => getServices(isConsumption, !!useEndpoint),
+    () => getServices(defaultSubscriptionId, defaultResourceGroup, defaultLocation, isConsumption, !!useEndpoint),
     // eslint-disable-next-line react-hooks/exhaustive-deps
     [isConsumption, useEndpoint]
   );
+  const onReloadServices = () => {
+    const { subscriptionId, resourceGroup, location } = templateStore.getState().workflow;
+    templateStore.dispatch(resetStateOnResourceChange(getResourceBasedServices(subscriptionId, resourceGroup, location, isConsumption)));
+  };
   const isSingleTemplateView = useMemo(() => templatesView !== 'gallery', [templatesView]);
 
   return (
     <TemplatesDesignerProvider locale="en-US" theme={theme}>
       <TemplatesDataProvider
         resourceDetails={{
-          subscriptionId,
-          resourceGroup,
-          location,
+          subscriptionId: defaultSubscriptionId,
+          resourceGroup: defaultResourceGroup,
+          location: defaultLocation,
           workflowAppName: 'app1',
         }}
         reload={reload}
@@ -76,6 +79,7 @@ export const LocalTemplates = () => {
         isConsumption={isConsumption}
         isCreateView={!isConsumption || !!isCreateView}
         enableResourceSelection={enableResourceSelection}
+        onResourceChange={onReloadServices}
         existingWorkflowName={undefined}
         viewTemplate={
           isSingleTemplateView
@@ -167,7 +171,13 @@ export const LocalTemplates = () => {
 
 const httpClient = new HttpClient();
 
-const getServices = (isConsumption: boolean, useEndpoint: boolean): any => {
+const getServices = (
+  subscriptionId: string,
+  resourceGroup: string,
+  location: string,
+  isConsumption: boolean,
+  useEndpoint: boolean
+): any => {
   const connectionService = isConsumption
     ? new ConsumptionConnectionService({
         apiVersion: '2018-07-01-preview',
@@ -274,6 +284,38 @@ const getServices = (isConsumption: boolean, useEndpoint: boolean): any => {
     workflowService,
     resourceService: new LocalResourceService(),
   };
+};
+
+const getResourceBasedServices = (subscriptionId: string, resourceGroup: string, location: string, isConsumption: boolean) => {
+  const connectionService = isConsumption
+    ? new ConsumptionConnectionService({
+        apiVersion: '2018-07-01-preview',
+        baseUrl: '/baseUrl',
+        subscriptionId,
+        resourceGroup,
+        location,
+        httpClient,
+      })
+    : new StandardConnectionService({
+        baseUrl: '/url',
+        apiVersion: '2018-11-01',
+        httpClient,
+        apiHubServiceDetails: {
+          apiVersion: '2018-07-01-preview',
+          baseUrl: '/baseUrl',
+          subscriptionId,
+          resourceGroup,
+          location,
+          httpClient,
+        },
+        workflowAppDetails: {
+          appName: 'app',
+          identity: { type: ResourceIdentityType.SYSTEM_ASSIGNED },
+        },
+        readConnections: () => Promise.resolve({}),
+      });
+
+  return { connectionService };
 };
 
 class LocalTemplateService extends StandardTemplateService {

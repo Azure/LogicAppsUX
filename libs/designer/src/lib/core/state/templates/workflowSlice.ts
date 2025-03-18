@@ -3,6 +3,7 @@ import { createSlice } from '@reduxjs/toolkit';
 import type { ConnectionReferences } from '../../../common/models/workflow';
 import type { UpdateConnectionPayload } from '../../actions/bjsworkflow/connections';
 import { getExistingReferenceKey } from '../../utils/connectors/connections';
+import { resetTemplatesState } from '../global';
 
 export interface ResourceDetails {
   subscriptionId: string;
@@ -99,17 +100,41 @@ export const workflowSlice = createSlice({
       }
     },
     setSubscription: (state, action: PayloadAction<string>) => {
-      state.subscriptionId = action.payload;
+      const subscriptionId = action.payload;
+      state.subscriptionId = subscriptionId;
+
+      if (subscriptionId) {
+        state.connections.mapping = {};
+      }
     },
     setResourceGroup: (state, action: PayloadAction<string>) => {
-      state.resourceGroup = action.payload;
+      const resourceGroup = action.payload;
+      state.resourceGroup = resourceGroup;
+
+      if (resourceGroup) {
+        state.connections.mapping = {};
+      }
     },
     setLocation: (state, action: PayloadAction<string>) => {
-      state.location = action.payload;
+      const location = action.payload;
+      state.location = location;
+
+      if (location) {
+        state.connections.mapping = {};
+      }
     },
-    setWorkflowAppName: (state, action: PayloadAction<string>) => {
-      state.workflowAppName = action.payload;
+    setWorkflowAppDetails: (state, action: PayloadAction<{ name: string; location: string }>) => {
+      const { name, location } = action.payload;
+      state.workflowAppName = name;
+      state.location = location;
+
+      if (name) {
+        state.connections = { references: {}, mapping: {} };
+      }
     },
+  },
+  extraReducers: (builder) => {
+    builder.addCase(resetTemplatesState, () => initialState);
   },
 });
 
@@ -120,6 +145,6 @@ export const {
   setSubscription,
   setResourceGroup,
   setLocation,
-  setWorkflowAppName,
+  setWorkflowAppDetails,
 } = workflowSlice.actions;
 export default workflowSlice.reducer;
