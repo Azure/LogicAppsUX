@@ -4,6 +4,7 @@ import { DesignerWrapper } from './designer/app/DesignerShell/designer';
 import { store as designerStore } from './designer/state/store';
 import { store as dataMapperStore } from './dataMapperV1/state/Store';
 import { store as templateStore } from './templates/state/Store';
+import { store as configureTemplateStore } from './configuretemplate/state/Store';
 import { DataMapperStandaloneDesignerV1 } from './dataMapperV1/app/DataMapperStandaloneDesignerV1';
 import { DataMapperStandaloneDesignerV2 } from './dataMapperV1/app/DataMapperStandaloneDesignerV2';
 import { TemplatesWrapper } from './templates/app/TemplatesShell';
@@ -60,7 +61,7 @@ const TemplatesStandalone = () => {
 
 const ConfigureTemplateStandalone = () => {
   return (
-    <Provider store={templateStore}>
+    <Provider store={configureTemplateStore}>
       <ConfigureTemplateWrapper />
     </Provider>
   );

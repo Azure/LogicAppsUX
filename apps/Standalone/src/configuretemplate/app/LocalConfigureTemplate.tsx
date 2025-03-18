@@ -1,7 +1,7 @@
 import { useMemo } from 'react';
 import { ConfigureTemplateDataProvider, ConfigureTemplateWizard } from '@microsoft/logic-apps-designer';
 import { TemplatesDesignerProvider } from '@microsoft/logic-apps-designer';
-// import { useSelector } from 'react-redux';
+import { useSelector } from 'react-redux';
 import {
   StandardConnectionService,
   StandardOperationManifestService,
@@ -9,17 +9,15 @@ import {
   BaseTemplateResourceService,
 } from '@microsoft/logic-apps-shared';
 import { HttpClient } from '../../designer/app/AzureLogicAppsDesigner/Services/HttpClient';
-// import type { RootState } from '../state/Store';
+import type { RootState } from '../state/Store';
 import { ArmParser } from '../../designer/app/AzureLogicAppsDesigner/Utilities/ArmParser';
 import { useCurrentTenantId } from '../../designer/app/AzureLogicAppsDesigner/Services/WorkflowAndArtifacts';
 
 export const LocalConfigureTemplate = () => {
-  /*const { theme, resourcePath } = useSelector((state: RootState) => ({
+  const { theme, resourcePath } = useSelector((state: RootState) => ({
     theme: state.configureTemplateLoader.theme,
     resourcePath: state.configureTemplateLoader.resourcePath,
-  }));*/
-  const theme = 'light';
-  const resourcePath = '';
+  }));
   const { data: tenantId } = useCurrentTenantId();
   const armParser = new ArmParser(resourcePath ?? '');
   const subscriptionId = armParser?.subscriptionId ?? '';
