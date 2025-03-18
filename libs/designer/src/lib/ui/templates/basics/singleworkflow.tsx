@@ -1,16 +1,16 @@
 import type { AppDispatch, RootState } from '../../../core/state/templates/store';
 import { useDispatch, useSelector } from 'react-redux';
 import { useIntl } from 'react-intl';
-import { ChoiceGroup, Label, TextField } from '@fluentui/react';
+import { ChoiceGroup } from '@fluentui/react';
 import { updateKind, updateWorkflowName, updateWorkflowNameValidationError } from '../../../core/state/templates/templateSlice';
-import { Link, Text } from '@fluentui/react-components';
+import { Text } from '@fluentui/react-components';
 import { useCallback, useMemo } from 'react';
 import { useExistingWorkflowNames } from '../../../core/queries/template';
-import { Open16Regular } from '@fluentui/react-icons';
 import { useWorkflowBasicsEditable, useWorkflowTemplate } from '../../../core/state/templates/templateselectors';
 import { validateWorkflowName } from '../../../core/actions/bjsworkflow/templates';
 import { ResourcePicker } from './resourcepicker';
 import { useTemplatesStrings } from '../templatesStrings';
+import { TemplatesSection } from '@microsoft/designer-ui';
 
 export const SingleWorkflowBasics = ({ workflowId }: { workflowId: string }) => {
   const dispatch = useDispatch<AppDispatch>();
@@ -118,65 +118,63 @@ export const SingleWorkflowBasics = ({ workflowId }: { workflowId: string }) => 
   return (
     <div className="msla-templates-tab msla-panel-no-description-tab">
       {enableResourceSelection ? <ResourcePicker /> : null}
-      <Label className="msla-templates-tab-label" required={true} htmlFor={'workflowNameLabel'}>
-        {resources.WORKFLOW_NAME}
-      </Label>
-      <Text className="msla-templates-tab-label-description">{intlText.WORKFLOW_NAME_DESCRIPTION}</Text>
-      <TextField
-        className="msla-templates-tab-textField"
-        data-testid={'msla-templates-workflowName'}
-        id={'msla-templates-workflowName'}
-        ariaLabel={resources.WORKFLOW_NAME}
-        value={name}
-        onChange={(_event: React.FormEvent<HTMLInputElement | HTMLTextAreaElement>, newValue?: string) => {
-          dispatch(updateWorkflowName({ id: workflowId, name: newValue }));
-        }}
-        disabled={!isNameEditable}
-        onBlur={async () => {
-          const validationError = await validateWorkflowName(name, !!isConsumption, {
-            subscriptionId,
-            resourceGroupName,
-            existingWorkflowNames: existingWorkflowNames ?? [],
-          });
-          dispatch(updateWorkflowNameValidationError({ id: workflowId, error: validationError }));
-        }}
-        errorMessage={workflowError}
+      <TemplatesSection
+        title={resources.WORKFLOW_NAME}
+        isTitleRequired={true}
+        titleHtmlFor={'workflowNameLabel'}
+        description={intlText.WORKFLOW_NAME_DESCRIPTION}
+        items={[
+          {
+            id: 'msla-templates-workflowName',
+            value: name,
+            type: 'textField',
+            onChange: (newValue: string) => {
+              dispatch(updateWorkflowName({ id: workflowId, name: newValue }));
+            },
+            disabled: !isNameEditable,
+            onBlur: async () => {
+              const validationError = await validateWorkflowName(name, !!isConsumption, {
+                subscriptionId,
+                resourceGroupName,
+                existingWorkflowNames: existingWorkflowNames ?? [],
+              });
+              dispatch(updateWorkflowNameValidationError({ id: workflowId, error: validationError }));
+            },
+            errorMessage: workflowError,
+          },
+        ]}
       />
+
       {isConsumption ? null : (
         <div className={kindError ? 'msla-templates-tab-stateType-error' : ''}>
-          <Label className="msla-templates-tab-label" required={true} htmlFor={'stateTypeLabel'}>
-            {intlText.STATE_TYPE}
-          </Label>
-          <Text className="msla-templates-tab-label-description">
-            {intlText.STATE_TYPE_DESCRIPTION}{' '}
-            <Link
-              className="msla-templates-tab-label-link"
-              href={'https://learn.microsoft.com/azure/logic-apps/single-tenant-overview-compare#stateful-stateless'}
-              target="_blank"
-              rel="noreferrer"
-            >
-              {intlText.LEARN_MORE}
-              <Open16Regular className="msla-templates-tab-description-icon" />
-            </Link>
-          </Text>
-          <ChoiceGroup
-            className="msla-templates-tab-choiceGroup"
-            options={[
-              { key: 'stateful', text: intlText.STATEFUL, onRenderLabel: onRenderStatefulField },
-              {
-                key: 'stateless',
-                text: intlText.STATELESS,
-                onRenderLabel: onRenderStatelessField,
-              },
-            ]}
-            onChange={(_, option) => {
-              if (option?.key) {
-                dispatch(updateKind({ id: workflowId, kind: option?.key }));
-              }
+          <TemplatesSection
+            title={intlText.STATE_TYPE}
+            isTitleRequired={true}
+            titleHtmlFor={'stateTypeLabel'}
+            description={intlText.STATE_TYPE_DESCRIPTION}
+            descriptionLink={{
+              text: intlText.LEARN_MORE,
+              href: 'https://learn.microsoft.com/azure/logic-apps/single-tenant-overview-compare#stateful-stateless',
             }}
-            selectedKey={kind}
-            disabled={manifest?.kinds?.length === 1 || !isKindEditable}
-          />
+          >
+            <ChoiceGroup
+              options={[
+                { key: 'stateful', text: intlText.STATEFUL, onRenderLabel: onRenderStatefulField },
+                {
+                  key: 'stateless',
+                  text: intlText.STATELESS,
+                  onRenderLabel: onRenderStatelessField,
+                },
+              ]}
+              onChange={(_, option) => {
+                if (option?.key) {
+                  dispatch(updateKind({ id: workflowId, kind: option?.key }));
+                }
+              }}
+              selectedKey={kind}
+              disabled={manifest?.kinds?.length === 1 || !isKindEditable}
+            />
+          </TemplatesSection>
         </div>
       )}
       {kindError && <Text className="msla-templates-tab-stateType-error-message">{kindError}</Text>}

@@ -2,8 +2,8 @@ import { Field, Input, Label, Link, Text } from '@fluentui/react-components';
 import { Open16Regular } from '@fluentui/react-icons';
 
 interface BaseTemplatesSectionItem {
-  label: string;
-  value: string;
+  label?: string;
+  value: string | undefined;
 }
 
 interface TextItem extends BaseTemplatesSectionItem {
@@ -12,20 +12,24 @@ interface TextItem extends BaseTemplatesSectionItem {
   disabled?: never;
 }
 
-interface InputItem extends BaseTemplatesSectionItem {
-  type: 'input';
+interface TextFieldItem extends BaseTemplatesSectionItem {
+  type: 'textField';
   onChange: (value: string) => void;
+  id?: string;
   required?: boolean;
   disabled?: boolean;
   placeholder?: string;
-  error?: string;
+  errorMessage?: string;
   hint?: string;
+  onBlur?: () => Promise<void>;
 }
 
-export type TemplatesSectionItem = TextItem | InputItem;
+export type TemplatesSectionItem = TextItem | TextFieldItem;
 
 export interface BaseTemplatesSectionProps {
   title: string;
+  isTitleRequired?: boolean;
+  titleHtmlFor?: string;
   description?: string;
   descriptionLink?: {
     text: string;
@@ -45,18 +49,26 @@ export interface ChildrenBasedProps extends BaseTemplatesSectionProps {
 
 export type TemplatesSectionProps = ContentBasedProps | ChildrenBasedProps;
 
-export const TemplatesSection = ({ title, description, descriptionLink, items, children = null }: TemplatesSectionProps) => {
+export const TemplatesSection = ({
+  title,
+  isTitleRequired,
+  titleHtmlFor,
+  description,
+  descriptionLink,
+  items,
+  children = null,
+}: TemplatesSectionProps) => {
   const onRenderItem = (item: TemplatesSectionItem) => {
     switch (item.type) {
       case 'text':
         return <Text className="msla-templates-section-item-text">{item.value}</Text>;
-      case 'input':
+      case 'textField':
         return (
-          <Field validationMessage={item.error} hint={item.hint} required={item.required}>
+          <Field validationMessage={item.errorMessage} hint={item.hint} required={item.required}>
             <Input
               //   className="msla-templates-parameters-values"
-              data-testid={`msla-templates-parameter-value-${item.label}`}
-              id={`msla-templates-parameter-value-${item.label}`}
+              data-testid={item.id}
+              id={item.id}
               aria-label={item.label}
               value={item.value}
               disabled={item.disabled}
@@ -71,7 +83,7 @@ export const TemplatesSection = ({ title, description, descriptionLink, items, c
 
   return (
     <div className="msla-templates-section">
-      <Label className="msla-templates-section-title" required={true} htmlFor={'workflowNameLabel'}>
+      <Label className="msla-templates-section-title" required={isTitleRequired} htmlFor={titleHtmlFor}>
         {title}
       </Label>
       <Text className="msla-templates-section-description">
@@ -89,7 +101,7 @@ export const TemplatesSection = ({ title, description, descriptionLink, items, c
           ? items.map((item, index) => {
               return (
                 <div key={index} className="msla-templates-section-item">
-                  <Text className="msla-templates-section-item-label">{item.label}</Text>
+                  {item.label ? <Text className="msla-templates-section-item-label">{item.label}</Text> : null}
                   <div className="msla-templates-section-item-value">{onRenderItem(item)}</div>
                 </div>
               );
