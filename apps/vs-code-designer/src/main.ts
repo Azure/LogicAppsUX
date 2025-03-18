@@ -33,6 +33,7 @@ import type { IActionContext } from '@microsoft/vscode-azext-utils';
 import * as vscode from 'vscode';
 import { ConvertToWorkspace } from './app/commands/createNewCodeProject/CodeProjectBase/ConvertToWorkspace';
 import TelemetryReporter from '@vscode/extension-telemetry';
+import { VSCodeAzureSubscriptionProvider } from '@microsoft/vscode-azext-azureauth';
 
 const perfStats = {
   loadStartTime: Date.now(),
@@ -73,7 +74,14 @@ export async function activate(context: vscode.ExtensionContext) {
     if (vscode.workspace.workspaceFolders && vscode.workspace.workspaceFolders.length > 0) {
       await ConvertToWorkspace(activateContext);
     }
+    const testVSCODE = new VSCodeAzureSubscriptionProvider();
 
+    if (await testVSCODE.isSignedIn()) {
+      const subscriptions = await testVSCODE.getSubscriptions();
+      const tenants = await testVSCODE.getTenants();
+      activateContext.telemetry.properties.sublist = subscriptions.length.toString();
+      activateContext.telemetry.properties.tenantCount = tenants.length.toString();
+    }
     try {
       await downloadExtensionBundle(activateContext);
     } catch (error) {
