@@ -55,6 +55,7 @@ export { initializeServices } from './state/designerOptions/designerOptionsSlice
 export { resetWorkflowState, resetNodesLoadStatus } from './state/global';
 export { TemplatesDataProvider } from './templates/TemplatesDataProvider';
 export { TemplatesDesignerProvider } from './templates/TemplatesDesignerProvider';
+export { ConfigureTemplateDataProvider } from './configuretemplate/ConfigureTemplateDataProvider';
 export {
   validateParameter,
   parameterValueToString,
@@ -89,3 +90,4 @@ export * from './queries/runs';
 export { reloadTemplates, resetStateOnResourceChange, type WorkflowTemplateData } from './actions/bjsworkflow/templates';
 export type { AppDispatch as TemplatesAppDispatch, RootState as TemplatesRootState } from './state/templates/store';
 export type { TemplateServiceOptions } from './templates/TemplatesDesignerContext';
+export { ConfigureTemplateWizard } from './configuretemplate/ConfigureTemplateWizard';
