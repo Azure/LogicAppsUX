@@ -40,8 +40,8 @@ export interface WorkflowTemplateData {
   id: string;
   workflowDefinition: LogicAppsV2.WorkflowDefinition;
   manifest: Template.WorkflowManifest;
-  workflowName: string | undefined;
-  kind: string | undefined;
+  workflowName?: string;
+  kind?: string;
   images?: {
     light?: string;
     dark?: string;
@@ -49,7 +49,7 @@ export interface WorkflowTemplateData {
   connectionKeys: string[];
   errors: {
     workflow: string | undefined;
-    kind: string | undefined;
+    kind?: string;
   };
 }
 

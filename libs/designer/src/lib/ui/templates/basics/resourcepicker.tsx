@@ -3,7 +3,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { useIntl } from 'react-intl';
 import { Option, Field, Dropdown } from '@fluentui/react-components';
 import { useCallback, useEffect, useMemo, useState } from 'react';
-import { useAllLogicApps, useLocations, useLogicApps, useResourceGroups, useSubscriptions } from '../../../core/templates/utils/queries';
+import { useLocations, useLogicApps, useResourceGroups, useSubscriptions } from '../../../core/templates/utils/queries';
 import {
   setLocation,
   setLogicAppDetails,
@@ -13,6 +13,7 @@ import {
 } from '../../../core/state/templates/workflowSlice';
 import { type LogicAppResource, type Resource, equals } from '@microsoft/logic-apps-shared';
 import { useTemplatesStrings } from '../templatesStrings';
+import { useAllLogicApps } from '../../../core/configuretemplate/utils/queries';
 
 export interface ResourcePickerProps {
   viewMode?: 'default' | 'alllogicapps';
@@ -138,9 +139,9 @@ export const ResourcePicker = ({ viewMode = 'default', onSelectApp }: ResourcePi
           resources={(allLogicApps ?? []).map((app) => ({
             id: app.id,
             name: app.name,
-            displayName: app.name,
+            displayName: equals(app.plan, 'consumption') ? `${app.name} (Consumption)` : `${app.name} (Standard)`,
           }))}
-          errorMessage={workflowAppName ? '' : intlText.VALIDATION_ERROR}
+          errorMessage={logicAppName ? '' : intlText.VALIDATION_ERROR}
         />
       )}
     </div>
