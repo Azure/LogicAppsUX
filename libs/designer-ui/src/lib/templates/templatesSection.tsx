@@ -28,15 +28,17 @@ export const TemplatesSection = ({
       <Label className="msla-templates-section-title" required={isTitleRequired} htmlFor={titleHtmlFor}>
         {title}
       </Label>
-      <Text className="msla-templates-section-description">
-        {description}
-        {descriptionLink && (
-          <Link className="msla-templates-section-description-link" href={descriptionLink.href} target="_blank" rel="noreferrer">
-            {descriptionLink.text}
-            <Open16Regular className="msla-templates-section-description-icon" />
-          </Link>
-        )}
-      </Text>
+      {description && (
+        <Text className="msla-templates-section-description">
+          {description}
+          {descriptionLink && (
+            <Link className="msla-templates-section-description-link" href={descriptionLink.href} target="_blank" rel="noreferrer">
+              {descriptionLink.text}
+              <Open16Regular className="msla-templates-section-description-icon" />
+            </Link>
+          )}
+        </Text>
+      )}
 
       <div className="msla-templates-section-items">
         {items
