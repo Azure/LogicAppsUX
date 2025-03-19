@@ -1,8 +1,8 @@
-import { Dropdown, Field, Input, Label, Link, Option, Text } from '@fluentui/react-components';
+import { Dropdown, Field, Input, Label, Link, Option, Radio, RadioGroup, type Slot, Text } from '@fluentui/react-components';
 import { Open16Regular } from '@fluentui/react-icons';
 
 interface BaseTemplatesSectionItem {
-  type: 'text' | 'textField' | 'dropdown';
+  type: 'text' | 'textField' | 'dropdown' | 'radioGroup';
   label?: string | React.ReactNode;
   value: string | undefined;
 }
@@ -11,26 +11,29 @@ interface TextItem extends BaseTemplatesSectionItem {
   type: 'text';
 }
 
-interface FieldItem extends BaseTemplatesSectionItem {
+interface BaseFieldItem extends BaseTemplatesSectionItem {
   id?: string;
   required?: boolean;
   disabled?: boolean;
-  placeholder?: string;
   errorMessage?: string;
   hint?: string;
+}
+
+interface BaseTextInputFieldItem extends BaseFieldItem {
+  placeholder?: string;
   onBlur?: () => Promise<void>;
 }
 
-interface TextFieldItem extends FieldItem {
+interface TextFieldItem extends BaseTextInputFieldItem {
   type: 'textField';
   onChange: (value: string) => void;
 }
 
-interface DropdownItem extends FieldItem {
+interface DropdownItem extends BaseTextInputFieldItem {
   type: 'dropdown';
   options: {
     id: string;
-    displayName: string;
+    label: string;
     value: string;
   }[];
   onOptionSelect: (selectedOptions: string[]) => void;
@@ -38,7 +41,17 @@ interface DropdownItem extends FieldItem {
   multiselect?: boolean;
 }
 
-export type TemplatesSectionItem = TextItem | TextFieldItem | DropdownItem;
+interface RadioGroupItem extends BaseFieldItem {
+  type: 'radioGroup';
+  onOptionSelect: (selectedValue: string) => void;
+  options: {
+    id: string;
+    label: Slot<typeof Label>;
+    value: string;
+  }[];
+}
+
+export type TemplatesSectionItem = TextItem | TextFieldItem | DropdownItem | RadioGroupItem;
 
 export interface BaseTemplatesSectionProps {
   title: string;
@@ -73,50 +86,15 @@ export const TemplatesSection = ({
   children = null,
 }: TemplatesSectionProps) => {
   const onRenderItem = (item: TemplatesSectionItem) => {
-    switch (item.type) {
-      case 'text':
-        return <Text className="msla-templates-section-item-text">{item.value}</Text>;
-      case 'textField':
-        return (
-          <Field validationMessage={item.errorMessage} hint={item.hint} required={item.required}>
-            <Input
-              //   className="msla-templates-parameters-values"
-              data-testid={item.id}
-              id={item.id}
-              aria-label={typeof item.label === 'string' ? item.label : undefined}
-              value={item.value}
-              disabled={item.disabled}
-              onChange={(_event, data) => item.onChange(data.value ?? '')}
-              onBlur={item.onBlur}
-            />
-          </Field>
-        );
-      case 'dropdown':
-        return (
-          <Field validationMessage={item.errorMessage} hint={item.hint} required={item.required}>
-            <Dropdown
-              style={{ width: '100%' }}
-              id={item.id}
-              onOptionSelect={(e, option) => item.onOptionSelect(option?.selectedOptions)}
-              disabled={item.disabled}
-              value={item.value}
-              selectedOptions={item.selectedOptions}
-              size="small"
-              placeholder={item.placeholder}
-              onBlur={item.onBlur}
-              multiselect={item.multiselect}
-            >
-              {item.options.map((option) => (
-                <Option key={option.id} value={option.value}>
-                  {option.displayName}
-                </Option>
-              ))}
-            </Dropdown>
-          </Field>
-        );
-      default:
-        return null;
+    if (item.type === 'text') {
+      return <Text className="msla-templates-section-item-text">{item.value}</Text>;
     }
+
+    return (
+      <Field validationMessage={item.errorMessage} hint={item.hint} required={item.required}>
+        <CustomFieldInput {...item} />
+      </Field>
+    );
   };
 
   return (
@@ -154,4 +132,55 @@ export const TemplatesSection = ({
       </div>
     </div>
   );
+};
+
+const CustomFieldInput = (item: TemplatesSectionItem) => {
+  switch (item.type) {
+    case 'textField':
+      return (
+        <Input
+          data-testid={item.id}
+          id={item.id}
+          aria-label={typeof item.label === 'string' ? item.label : undefined}
+          value={item.value}
+          disabled={item.disabled}
+          onChange={(_event, data) => item.onChange(data.value ?? '')}
+          onBlur={item.onBlur}
+        />
+      );
+
+    case 'dropdown':
+      return (
+        <Dropdown
+          style={{ width: '100%' }}
+          id={item.id}
+          onOptionSelect={(e, option) => item.onOptionSelect(option?.selectedOptions)}
+          disabled={item.disabled}
+          value={item.value}
+          selectedOptions={item.selectedOptions}
+          size="small"
+          placeholder={item.placeholder}
+          onBlur={item.onBlur}
+          multiselect={item.multiselect}
+        >
+          {item.options.map((option) => (
+            <Option key={option.id} value={option.value}>
+              {option.label}
+            </Option>
+          ))}
+        </Dropdown>
+      );
+
+    case 'radioGroup':
+      return (
+        <RadioGroup id={item.id} onChange={(_e, option) => item.onOptionSelect(option.value)} disabled={item.disabled} value={item.value}>
+          {item.options.map((option) => (
+            <Radio key={option.id} value={option.value} label={option.label} />
+          ))}
+        </RadioGroup>
+      );
+
+    default:
+      return null;
+  }
 };

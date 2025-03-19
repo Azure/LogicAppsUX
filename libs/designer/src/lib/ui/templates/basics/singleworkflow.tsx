@@ -1,10 +1,9 @@
 import type { AppDispatch, RootState } from '../../../core/state/templates/store';
 import { useDispatch, useSelector } from 'react-redux';
 import { useIntl } from 'react-intl';
-import { ChoiceGroup } from '@fluentui/react';
 import { updateKind, updateWorkflowName, updateWorkflowNameValidationError } from '../../../core/state/templates/templateSlice';
 import { Text } from '@fluentui/react-components';
-import { useCallback, useMemo } from 'react';
+import { useMemo } from 'react';
 import { useExistingWorkflowNames } from '../../../core/queries/template';
 import { useWorkflowBasicsEditable, useWorkflowTemplate } from '../../../core/state/templates/templateselectors';
 import { validateWorkflowName } from '../../../core/actions/bjsworkflow/templates';
@@ -89,32 +88,6 @@ export const SingleWorkflowBasics = ({ workflowId }: { workflowId: string }) => 
     [intl]
   );
 
-  const onRenderStatefulField = useCallback(
-    () => (
-      <div className="msla-templates-tab-choiceGroup-label">
-        <Text>{intlText.STATEFUL}</Text>
-        <div className="msla-templates-tab-choiceGroup-list">
-          <li>{intlText.STATEFUL_FIRST_POINT}</li>
-          <li>{intlText.STATEFUL_SECOND_POINT}</li>
-        </div>
-      </div>
-    ),
-    [intlText]
-  );
-
-  const onRenderStatelessField = useCallback(
-    () => (
-      <div className="msla-templates-tab-choiceGroup-label">
-        <Text>{intlText.STATELESS}</Text>
-        <div className="msla-templates-tab-choiceGroup-list">
-          <li>{intlText.STATELESS_FIRST_POINT}</li>
-          <li>{intlText.STATELESS_SECOND_POINT}</li>
-        </div>
-      </div>
-    ),
-    [intlText]
-  );
-
   return (
     <div className="msla-templates-tab msla-panel-no-description-tab">
       {enableResourceSelection ? <ResourcePicker /> : null}
@@ -156,25 +129,47 @@ export const SingleWorkflowBasics = ({ workflowId }: { workflowId: string }) => 
               text: intlText.LEARN_MORE,
               href: 'https://learn.microsoft.com/azure/logic-apps/single-tenant-overview-compare#stateful-stateless',
             }}
-          >
-            <ChoiceGroup
-              options={[
-                { key: 'stateful', text: intlText.STATEFUL, onRenderLabel: onRenderStatefulField },
-                {
-                  key: 'stateless',
-                  text: intlText.STATELESS,
-                  onRenderLabel: onRenderStatelessField,
+            items={[
+              {
+                type: 'radioGroup',
+                value: kind,
+                disabled: manifest?.kinds?.length === 1 || !isKindEditable,
+                onOptionSelect: (selectedValue) => {
+                  if (selectedValue) {
+                    dispatch(updateKind({ id: workflowId, kind: selectedValue }));
+                  }
                 },
-              ]}
-              onChange={(_, option) => {
-                if (option?.key) {
-                  dispatch(updateKind({ id: workflowId, kind: option?.key }));
-                }
-              }}
-              selectedKey={kind}
-              disabled={manifest?.kinds?.length === 1 || !isKindEditable}
-            />
-          </TemplatesSection>
+                options: [
+                  {
+                    id: 'stateful',
+                    label: (
+                      <div className="msla-templates-tab-choiceGroup-label">
+                        <Text>{intlText.STATEFUL}</Text>
+                        <div className="msla-templates-tab-choiceGroup-list">
+                          <li>{intlText.STATEFUL_FIRST_POINT}</li>
+                          <li>{intlText.STATEFUL_SECOND_POINT}</li>
+                        </div>
+                      </div>
+                    ),
+                    value: 'stateful',
+                  },
+                  {
+                    id: 'stateless',
+                    label: (
+                      <div className="msla-templates-tab-choiceGroup-label">
+                        <Text>{intlText.STATELESS}</Text>
+                        <div className="msla-templates-tab-choiceGroup-list">
+                          <li>{intlText.STATELESS_FIRST_POINT}</li>
+                          <li>{intlText.STATELESS_SECOND_POINT}</li>
+                        </div>
+                      </div>
+                    ),
+                    value: 'stateless',
+                  },
+                ],
+              },
+            ]}
+          />
         </div>
       )}
 
