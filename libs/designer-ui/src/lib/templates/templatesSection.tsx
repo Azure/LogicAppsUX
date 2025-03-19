@@ -1,7 +1,8 @@
-import { Field, Input, Label, Link, Text } from '@fluentui/react-components';
+import { Dropdown, Field, Input, Label, Link, Option, Text } from '@fluentui/react-components';
 import { Open16Regular } from '@fluentui/react-icons';
 
 interface BaseTemplatesSectionItem {
+  type: 'text' | 'textField' | 'dropdown';
   label?: string | React.ReactNode;
   value: string | undefined;
 }
@@ -10,9 +11,7 @@ interface TextItem extends BaseTemplatesSectionItem {
   type: 'text';
 }
 
-interface TextFieldItem extends BaseTemplatesSectionItem {
-  type: 'textField';
-  onChange: (value: string) => void;
+interface FieldItem extends BaseTemplatesSectionItem {
   id?: string;
   required?: boolean;
   disabled?: boolean;
@@ -22,7 +21,24 @@ interface TextFieldItem extends BaseTemplatesSectionItem {
   onBlur?: () => Promise<void>;
 }
 
-export type TemplatesSectionItem = TextItem | TextFieldItem;
+interface TextFieldItem extends FieldItem {
+  type: 'textField';
+  onChange: (value: string) => void;
+}
+
+interface DropdownItem extends FieldItem {
+  type: 'dropdown';
+  options: {
+    id: string;
+    displayName: string;
+    value: string;
+  }[];
+  onOptionSelect: (selectedOptions: string[]) => void;
+  selectedOptions: string[];
+  multiselect?: boolean;
+}
+
+export type TemplatesSectionItem = TextItem | TextFieldItem | DropdownItem;
 
 export interface BaseTemplatesSectionProps {
   title: string;
@@ -71,7 +87,31 @@ export const TemplatesSection = ({
               value={item.value}
               disabled={item.disabled}
               onChange={(_event, data) => item.onChange(data.value ?? '')}
+              onBlur={item.onBlur}
             />
+          </Field>
+        );
+      case 'dropdown':
+        return (
+          <Field validationMessage={item.errorMessage} hint={item.hint} required={item.required}>
+            <Dropdown
+              style={{ width: '100%' }}
+              id={item.id}
+              onOptionSelect={(e, option) => item.onOptionSelect(option?.selectedOptions)}
+              disabled={item.disabled}
+              value={item.value}
+              selectedOptions={item.selectedOptions}
+              size="small"
+              placeholder={item.placeholder}
+              onBlur={item.onBlur}
+              multiselect={item.multiselect}
+            >
+              {item.options.map((option) => (
+                <Option key={option.id} value={option.value}>
+                  {option.displayName}
+                </Option>
+              ))}
+            </Dropdown>
           </Field>
         );
       default:

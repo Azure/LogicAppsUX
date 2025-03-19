@@ -177,6 +177,7 @@ export const SingleWorkflowBasics = ({ workflowId }: { workflowId: string }) => 
           </TemplatesSection>
         </div>
       )}
+
       {kindError && <Text className="msla-templates-tab-stateType-error-message">{kindError}</Text>}
     </div>
   );
