@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useRef } from 'react';
+import { useEffect, useRef } from 'react';
 import { StatusPill } from '../../monitoring';
 import NodeCollapseToggle from '../../nodeCollapseToggle';
 import { ErrorBanner } from '../errorbanner';
@@ -27,7 +27,6 @@ export const ScopeCard: React.FC<ScopeCardProps> = ({
   errorLevel,
   errorMessage,
   icon,
-  isMonitoringView,
   isLoading,
   title,
   onClick,
@@ -38,6 +37,7 @@ export const ScopeCard: React.FC<ScopeCardProps> = ({
   runData,
   setFocus,
   nodeIndex,
+  showStatusPill,
 }) => {
   const focusRef = useRef<HTMLDivElement | null>(null);
   const restoreFocusTargetAttribute = useRestoreFocusTarget();
@@ -78,13 +78,6 @@ export const ScopeCard: React.FC<ScopeCardProps> = ({
     <img className="scope-icon" alt="" role="presentation" src={icon} />
   ) : null;
 
-  const shouldShowStatusPill = useMemo(() => {
-    if (!isMonitoringView) {
-      return false;
-    }
-    return isMonitoringView && active;
-  }, [active, isMonitoringView]);
-
   return (
     <div ref={dragPreview} className="msla-content-fit" style={{ cursor: 'default' }}>
       <div className={'msla-content-fit'} aria-label={title}>
@@ -96,7 +89,7 @@ export const ScopeCard: React.FC<ScopeCardProps> = ({
           onContextMenu={onContextMenu}
           className={css('msla-scope-v2--header msla-scope-card-wrapper', !active && 'msla-card-inactive')}
         >
-          {shouldShowStatusPill ? (
+          {showStatusPill ? (
             <StatusPill
               id={`${title}-status`}
               status={runData?.status}

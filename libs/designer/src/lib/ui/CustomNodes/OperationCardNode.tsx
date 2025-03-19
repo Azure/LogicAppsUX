@@ -309,13 +309,15 @@ const DefaultNode = ({ targetPosition = Position.Top, sourcePosition = Position.
   const staticResults = useParameterStaticResult(id);
 
   const nodeIndex = useNodeIndex(id);
+  const isCardActive = isMonitoringView ? !isNullOrUndefined(runData?.status) : true;
 
   return (
     <>
       <div className="nopan" ref={ref as any}>
         <Handle className="node-handle top" type="target" position={targetPosition} isConnectable={false} />
         <Card
-          active={isMonitoringView ? !isNullOrUndefined(runData?.status) : true}
+          active={isCardActive}
+          showStatusPill={isMonitoringView && isCardActive}
           title={label}
           icon={iconUri}
           draggable={!readOnly && !isTrigger}
@@ -331,7 +333,6 @@ const DefaultNode = ({ targetPosition = Position.Top, sourcePosition = Position.
           errorLevel={errorLevel}
           isDragging={isDragging}
           isLoading={isLoading}
-          isMonitoringView={isMonitoringView}
           runData={runData}
           readOnly={readOnly}
           onClick={nodeClick}

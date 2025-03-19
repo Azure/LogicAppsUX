@@ -311,6 +311,7 @@ const ScopeCardNode = ({ data, targetPosition = Position.Top, sourcePosition = P
   const showEmptyGraphComponents = isLeaf && !graphCollapsed && !isFooter && !isAgent;
 
   const shouldShowPager = (normalizedType === constants.NODE.TYPE.FOREACH || isAgent) && isMonitoringView;
+  const isCardActive = isMonitoringView ? !isNullOrUndefined(runData?.status) : true;
 
   return (
     <>
@@ -318,7 +319,8 @@ const ScopeCardNode = ({ data, targetPosition = Position.Top, sourcePosition = P
         <div ref={rootRef}>
           <Handle className="node-handle top" type="target" position={targetPosition} isConnectable={false} />
           <ScopeCard
-            active={isMonitoringView ? !isNullOrUndefined(runData?.status) : true}
+            active={isCardActive}
+            showStatusPill={!isAgent && isMonitoringView && isCardActive}
             brandColor={brandColor}
             icon={iconUri}
             isLoading={isLoading}
@@ -331,7 +333,6 @@ const ScopeCardNode = ({ data, targetPosition = Position.Top, sourcePosition = P
             errorMessage={errorMessage}
             isDragging={isDragging}
             id={scopeId}
-            isMonitoringView={isMonitoringView}
             title={label}
             readOnly={readOnly}
             onClick={nodeClick}
