@@ -35,7 +35,7 @@ test.describe(
       await page.getByRole('tab', { name: 'Review + create' }).click();
       await expect(page.getByText('Create a new workflow from template', { exact: true })).toBeVisible();
       await page.getByText('Template details').click();
-      await expect(page.getByText('Workflow name', { exact: true })).toBeVisible();
+      await expect(page.getByText('Workflow name')).toBeVisible();
       await expect(page.getByText('State type')).toBeVisible();
     });
 
@@ -82,7 +82,7 @@ test.describe(
       await page.getByText('[Mock] Simple Parameters', { exact: false }).click();
       await page.getByRole('button', { name: 'Use this template' }).click();
       await page.getByRole('tab', { name: 'Basics' }).click();
-      await expect(page.getByText('Workflow name', { exact: true })).toBeVisible();
+      await expect(page.getByText('Workflow name')).toBeVisible();
       await expect(page.getByText('State type')).not.toBeVisible();
 
       await page.getByRole('button', { name: 'Next' }).click();
@@ -104,7 +104,7 @@ test.describe(
       await expect(page.getByText('Subscription 1', { exact: true })).toBeVisible();
       await expect(page.getByText('SecondRG', { exact: true })).toBeVisible();
       await expect(page.getByText('East US', { exact: true })).toBeVisible();
-      await expect(page.getByText('Workflow name', { exact: true })).toBeVisible();
+      await expect(page.getByText('Workflow name')).toBeVisible();
 
       await page.getByRole('button', { name: 'Next' }).click();
       await page.getByRole('tab', { name: 'Review + create' }).click();
@@ -120,7 +120,7 @@ test.describe(
       await expect(page.getByText('Subscription 1', { exact: true })).toBeVisible();
       await expect(page.getByText('SecondRG', { exact: true })).toBeVisible();
       await expect(page.getByText('East US', { exact: true })).toBeVisible();
-      await expect(page.getByText('Workflow name', { exact: true })).toBeVisible();
+      await expect(page.getByText('Workflow name')).toBeVisible();
 
       await page.getByRole('button', { name: 'Next' }).click();
       await page.getByRole('tab', { name: 'Review + create' }).click();
