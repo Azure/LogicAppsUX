@@ -39,7 +39,7 @@ import { CustomTokenField, isCustomEditor } from './customTokenField';
 import { Label } from '../../label';
 import { EditorLanguage, equals, getPropertyValue, replaceWhiteSpaceWithUnderscore } from '@microsoft/logic-apps-shared';
 import { MixedInputEditor } from '../../mixedinputeditor/mixedinputeditor';
-import { useMemo } from 'react';
+import { cloneElement, useMemo, useState } from 'react';
 import { useIntl } from 'react-intl';
 
 interface EditorHostOptions {
@@ -77,6 +77,8 @@ export interface SettingTokenFieldProps extends SettingProps {
   validationErrors?: string[];
   hideValidationErrors?: ChangeHandler;
   hostOptions?: EditorHostOptions;
+  subComponent?: JSX.Element | null;
+  subMenu?: JSX.Element | null;
 }
 
 export const SettingTokenField = ({ ...props }: SettingTokenFieldProps) => {
@@ -85,16 +87,24 @@ export const SettingTokenField = ({ ...props }: SettingTokenFieldProps) => {
   const hideLabel =
     (isCustomEditor(props) && props.editorOptions?.hideLabel === true) ||
     equals(props.editor?.toLowerCase(), constants.PARAMETER.EDITOR.FLOATINGACTIONMENU);
+  const [showSubComponent, setShowSubComponent] = useState(false);
+
   return (
     <>
       {!hideLabel && (
-        <div className="msla-input-parameter-label">
+        <div className="msla-input-parameter-label" style={{ display: 'flex', justifyContent: 'space-between' }}>
           <Label id={labelId} isRequiredField={props.required} text={props.label} />
+          {props.subMenu && cloneElement(props.subMenu, { setShowSubComponent })}
         </div>
       )}
       <div key={props.id}>
         {isCustomEditor(props) ? <CustomTokenField {...props} labelId={labelId} /> : <TokenField {...props} labelId={labelId} />}
       </div>
+      {props.subComponent ? (
+        <div className="msla-input-parameter-subcomponent">
+          {cloneElement(props.subComponent, { showSubComponent, setShowSubComponent })}
+        </div>
+      ) : null}
     </>
   );
 };
@@ -387,6 +397,7 @@ export const TokenField = ({
           tokenMapping={tokenMapping}
           loadParameterValueFromString={loadParameterValueFromString}
           readonly={readOnly}
+          isAgentParameter={editorOptions?.isAgentParameter}
           tokenPickerButtonProps={tokenpickerButtonProps}
           dataAutomationId={`msla-setting-token-editor-initializevariableeditor-${labelForAutomationId}`}
           isMultiVariableEnabled={hostOptions?.isMultiVariableEnabled}

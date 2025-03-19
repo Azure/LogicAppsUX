@@ -7,21 +7,29 @@ import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { getConnector, getSwagger } from './operation';
 
 const connectionKey = 'connections';
+const allConnectionsKey = 'allConnections';
+
 export interface ConnectorWithParsedSwagger {
   connector: Connector;
   parsedSwagger: SwaggerParser;
 }
 
+export const clearConnectionCaches = () => {
+  const queryClient = getReactQueryClient();
+  queryClient.removeQueries([allConnectionsKey], { exact: true });
+  queryClient.removeQueries([connectionKey]);
+};
+
 export const updateNewConnectionInQueryCache = async (connectorId: string, connection: Connection) => {
   const queryClient = getReactQueryClient();
 
   // Update all connections cache (Used for custom connectors)
-  queryClient.setQueryData<Connection[]>(['allConnections'], (oldConnections: Connection[] | undefined) => [
+  queryClient.setQueryData<Connection[]>([allConnectionsKey], (oldConnections: Connection[] | undefined) => [
     ...(oldConnections ?? []),
     connection,
   ]);
   // Update connector specific cache (Used for everything else)
-  queryClient.setQueryData<Connection[]>(['connections', connectorId?.toLowerCase()], (oldConnections: Connection[] | undefined) => [
+  queryClient.setQueryData<Connection[]>([connectionKey, connectorId?.toLowerCase()], (oldConnections: Connection[] | undefined) => [
     ...(oldConnections ?? []),
     connection,
   ]);

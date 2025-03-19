@@ -1,3 +1,4 @@
+import { equals } from '@microsoft/logic-apps-shared';
 import type { RootState } from '../../store';
 import { useSelector } from 'react-redux';
 
@@ -19,4 +20,8 @@ export const useNodeContextMenuData = () => {
 
 export const useEdgeContextMenuData = () => {
   return useSelector((state: RootState) => state.designerView.edgeContextMenuData);
+};
+
+export const useAgenticWorkflow = () => {
+  return useSelector((state: RootState) => equals(state.workflow.workflowKind, 'agentic', false));
 };

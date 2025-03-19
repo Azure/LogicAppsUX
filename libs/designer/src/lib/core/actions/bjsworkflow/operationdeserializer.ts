@@ -45,6 +45,7 @@ import { isTokenValueSegment } from '../../utils/parameters/segment';
 import { initializeOperationDetailsForSwagger } from '../../utils/swagger/operation';
 import { convertOutputsToTokens, getBuiltInTokens, getTokenNodeIds } from '../../utils/tokens';
 import { getVariableDeclarations, setVariableMetadata } from '../../utils/variables';
+import { initializeAgentParameters } from '../../utils/agentParameters';
 import type { PasteScopeParams } from './copypaste';
 import {
   getCustomSwaggerIfNeeded,
@@ -181,10 +182,13 @@ export const initializeOperationMetadata = async (
   );
 
   const variables = initializeVariables(operations, allNodeData);
+  const agentParameters = initializeAgentParameters(nodesMetadata, allNodeData);
+  const outputTokens = initializeOutputTokensForOperations(allNodeData, operations, graph, nodesMetadata);
   dispatch(
     initializeTokensAndVariables({
-      outputTokens: initializeOutputTokensForOperations(allNodeData, operations, graph, nodesMetadata),
+      outputTokens,
       variables,
+      agentParameters,
     })
   );
 
@@ -277,7 +281,7 @@ export const initializeOperationDetailsForManifest = async (
 
     const settings = getOperationSettings(isTrigger, nodeOperationInfo, manifest, undefined /* swagger */, operation, workflowKind);
 
-    const childGraphInputs = processChildGraphAndItsInputs(manifest, operation);
+    const childGraphInputs = processChildGraphAndItsInputs(manifest, operation, dispatch);
 
     return [
       {
@@ -310,17 +314,20 @@ export const initializeOperationDetailsForManifest = async (
 
 const processChildGraphAndItsInputs = (
   manifest: OperationManifest,
-  operation: LogicAppsV2.ActionDefinition | LogicAppsV2.TriggerDefinition
+  operation: LogicAppsV2.ActionDefinition | LogicAppsV2.TriggerDefinition,
+  dispatch: Dispatch
 ): NodeDataWithOperationMetadata[] => {
-  const { subGraphDetails } = manifest.properties;
+  const { subGraphDetails, brandColor = '', iconUri = '' } = manifest.properties;
   const nodesData: NodeDataWithOperationMetadata[] = [];
 
   if (subGraphDetails) {
     for (const subGraphKey of Object.keys(subGraphDetails)) {
-      const { inputs, inputsLocation, isAdditive } = subGraphDetails[subGraphKey];
+      const { inputs, isAdditive, ...restOfManifest } = subGraphDetails[subGraphKey];
       const subOperation = getPropertyValue(operation, subGraphKey) ?? {};
       if (inputs) {
-        const subManifest = { properties: { inputs, inputsLocation } } as any;
+        const subManifest = {
+          properties: { inputs, ...restOfManifest, iconUri, brandColor },
+        } as OperationManifest;
         if (isAdditive) {
           for (const subNodeKey of Object.keys(subOperation)) {
             const { inputs: subNodeInputs, dependencies: subNodeInputDependencies } = getInputParametersFromManifest(
@@ -331,15 +338,25 @@ const processChildGraphAndItsInputs = (
               /* customSwagger */ undefined,
               subOperation[subNodeKey]
             );
-            const subNodeOutputs = { outputs: {} };
+
+            const { outputs: subNodeOutputs, dependencies: subNodeOutputDependencies } = getOutputParametersFromManifest(
+              subNodeKey,
+              subManifest,
+              false,
+              subNodeInputs,
+              { type: '', kind: '', connectorId: '', operationId: '' },
+              dispatch,
+              /* splitOnValue */ undefined
+            );
+
             nodesData.push({
               id: subNodeKey,
               nodeInputs: subNodeInputs,
               nodeOutputs: subNodeOutputs,
-              nodeDependencies: { inputs: subNodeInputDependencies, outputs: {} },
+              nodeDependencies: { inputs: subNodeInputDependencies, outputs: subNodeOutputDependencies },
               operationInfo: { type: '', kind: '', connectorId: '', operationId: '' },
               manifest: subManifest,
-              operationMetadata: { iconUri: manifest?.properties?.iconUri ?? '', brandColor: '' },
+              operationMetadata: { iconUri, brandColor },
             });
           }
         }
@@ -387,7 +404,8 @@ const updateTokenMetadataInParameters = (
               operations,
               workflowParameters,
               nodesMetadata,
-              type
+              type,
+              id
             );
 
             if (pasteParams) {
@@ -410,6 +428,7 @@ const updateTokenMetadataInParameters = (
       }
       if (editorViewModel) {
         flattenAndUpdateViewModel(
+          id,
           repetitionInfo,
           editorViewModel,
           actionNodes,
@@ -436,13 +455,13 @@ const initializeOutputTokensForOperations = (
   for (const id of Object.keys(operations)) {
     nodeMap[id] = id;
   }
+
   const nodesWithData: Record<string, NodeDataWithOperationMetadata> = {};
-  for (const nodeData of allNodesData) {
-    nodesWithData[nodeData.id] = nodeData;
-  }
   const operationInfos: Record<string, NodeOperation> = {};
-  for (const nodeData of allNodesData) {
-    operationInfos[nodeData.id] = nodeData.operationInfo as NodeOperation;
+
+  for (const node of allNodesData) {
+    nodesWithData[node.id] = node;
+    operationInfos[node.id] = node.operationInfo as NodeOperation;
   }
 
   const result: Record<string, NodeTokens> = {};

@@ -1,9 +1,15 @@
 import { useCallback, useEffect, useMemo, useState } from 'react';
-import { getReactQueryClient, TemplatesDataProvider, templateStore, TemplatesView } from '@microsoft/logic-apps-designer';
+import {
+  getReactQueryClient,
+  resetStateOnResourceChange,
+  TemplatesDataProvider,
+  templateStore,
+  TemplatesView,
+} from '@microsoft/logic-apps-designer';
 import { environment } from '../../environments/environment';
-import type { RootState } from '../state/Store';
+import type { AppDispatch, RootState } from '../state/Store';
 import { TemplatesDesigner, TemplatesDesignerProvider } from '@microsoft/logic-apps-designer';
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import {
   BaseGatewayService,
   StandardTemplateService,
@@ -20,9 +26,11 @@ import {
   BaseAppServiceService,
   BaseApiManagementService,
   BaseResourceService,
+  equals,
 } from '@microsoft/logic-apps-shared';
 import {
   getConnectionStandard,
+  getWorkflowAppFromCache,
   useAppSettings,
   useConnectionsData,
   useCurrentObjectId,
@@ -44,7 +52,7 @@ import { parseWorkflowParameterValue } from '@microsoft/logic-apps-designer';
 import { useFunctionalState } from '@react-hookz/web';
 import { ArtifactService } from '../../designer/app/AzureLogicAppsDesigner/Services/Artifact';
 import { ChildWorkflowService } from '../../designer/app/AzureLogicAppsDesigner/Services/ChildWorkflow';
-import type { QueryClient } from '@tanstack/react-query';
+import { setAppid } from '../state/WorkflowLoader';
 
 interface StringifiedWorkflow {
   name: string;
@@ -54,17 +62,13 @@ interface StringifiedWorkflow {
 
 const workflowIdentifier = '#workflowname#';
 export const TemplatesStandard = () => {
+  const dispatch = useDispatch<AppDispatch>();
   const { theme, templatesView } = useSelector((state: RootState) => ({
     theme: state.workflowLoader.theme,
     templatesView: state.workflowLoader.templatesView,
   }));
-  const {
-    appId,
-    hostingPlan,
-    workflowName: existingWorkflowName,
-    useEndpoint,
-    enableResourceSelection,
-  } = useSelector((state: RootState) => state.workflowLoader);
+  const { appId, hostingPlan, useEndpoint, enableResourceSelection } = useSelector((state: RootState) => state.workflowLoader);
+  const [shouldReload, setShouldReload] = useState<boolean | undefined>(undefined);
   const { data: workflowAppData } = useWorkflowApp(appId as string, hostingPlan);
   const canonicalLocation = useMemo(
     () => WorkflowUtility.convertToCanonicalFormat(workflowAppData?.location ?? 'westus'),
@@ -78,7 +82,6 @@ export const TemplatesStandard = () => {
 
   const [connectionsData, setConnectionsData] = useFunctionalState(originalConnectionsData);
   const [settingsData, setSettingsData] = useFunctionalState(originalSettingsData);
-  const queryClient = getReactQueryClient();
 
   useEffect(() => {
     if (useEndpoint !== undefined) {
@@ -98,7 +101,7 @@ export const TemplatesStandard = () => {
     }
   }, [originalConnectionsData, setConnectionsData]);
 
-  const connectionReferences = useMemo(() => WorkflowUtility.convertConnectionsDataToReferences(connectionsData()), [connectionsData]);
+  const connectionReferences = useMemo(() => WorkflowUtility.convertConnectionsDataToReferences(connectionsData()), [connectionsData()]);
   const isSingleTemplateView = useMemo(() => templatesView !== 'gallery', [templatesView]);
 
   const createWorkflowCall = async (
@@ -136,7 +139,7 @@ export const TemplatesStandard = () => {
           settingProperties: updatedSettingProperties,
           workflowsJsonString: updatedWorkflowsJsonString,
         } = await updateConnectionsDataWithNewConnections(
-          connectionsData(),
+          connectionsData() as ConnectionsData,
           settingsData()?.properties,
           connectionsMapping,
           sanitizedWorkflowDefinitions,
@@ -239,29 +242,89 @@ export const TemplatesStandard = () => {
     [connectionsData, settingsData]
   );
 
+  const getWorkflowConnectionsData = useCallback(() => connectionsData() ?? {}, [connectionsData]);
   const services = useMemo(
     () =>
       getServices(
         appId as string,
-        connectionsData() ?? {},
         workflowAppData as WorkflowApp,
         addConnectionDataInternal,
         getConnectionConfiguration,
         tenantId,
         objectId,
         canonicalLocation,
-        queryClient,
         settingsData()?.properties ?? {},
-        !!useEndpoint
+        !!useEndpoint,
+        getWorkflowConnectionsData
       ),
     // eslint-disable-next-line react-hooks/exhaustive-deps
     [connectionsData, settingsData, workflowAppData, tenantId, canonicalLocation, appId, useEndpoint]
   );
   const resourceDetails = new ArmParser(appId ?? '');
 
+  useEffect(() => {
+    if (shouldReload) {
+      const newAppId = getWorkflowAppIdFromStore();
+      const {
+        workflow: { location },
+      } = templateStore.getState();
+      if (equals(newAppId, workflowAppData?.id)) {
+        templateStore.dispatch(
+          resetStateOnResourceChange(
+            getResourceBasedServices(
+              newAppId,
+              workflowAppData as WorkflowApp,
+              addConnectionDataInternal,
+              getConnectionConfiguration,
+              tenantId,
+              objectId,
+              location,
+              settingsData()?.properties ?? {},
+              !!useEndpoint,
+              getWorkflowConnectionsData
+            )
+          )
+        );
+        setShouldReload(false);
+      }
+    }
+  }, [
+    addConnectionDataInternal,
+    getConnectionConfiguration,
+    getWorkflowConnectionsData,
+    objectId,
+    settingsData(),
+    shouldReload,
+    tenantId,
+    useEndpoint,
+    workflowAppData,
+  ]);
+
+  const onResourceChange = useCallback(async () => {
+    const {
+      templateOptions: { reInitializeServices },
+    } = templateStore.getState();
+    console.log('onReloadServices - Resource is updated');
+    if (reInitializeServices) {
+      const newAppId = getWorkflowAppIdFromStore();
+      if (newAppId && !equals(newAppId, appId)) {
+        try {
+          const appData = await getWorkflowAppFromCache(newAppId, hostingPlan);
+          if (appData) {
+            dispatch(setAppid(getWorkflowAppIdFromStore()));
+            setShouldReload(true);
+          }
+        } catch (error) {
+          console.log('Error fetching workflow app data', error);
+        }
+      }
+    }
+  }, [appId, dispatch, hostingPlan]);
+
   if (!workflowAppData) {
     return null;
   }
+
   return (
     <TemplatesDesignerProvider locale="en-US" theme={theme}>
       <TemplatesDataProvider
@@ -275,9 +338,9 @@ export const TemplatesStandard = () => {
         services={services}
         isConsumption={false}
         isCreateView={true}
-        existingWorkflowName={existingWorkflowName}
         reload={reload}
         enableResourceSelection={enableResourceSelection}
+        onResourceChange={onResourceChange}
         viewTemplate={
           isSingleTemplateView
             ? {
@@ -370,20 +433,77 @@ const httpClient = new HttpClient();
 
 const getServices = (
   siteResourceId: string,
-  connectionsData: ConnectionsData,
   workflowApp: WorkflowApp | undefined,
   addConnection: (data: ConnectionAndAppSetting) => Promise<void>,
   getConfiguration: (connectionId: string) => Promise<any>,
   tenantId: string | undefined,
   objectId: string | undefined,
   location: string,
-  queryClient: QueryClient,
   appSettings: Record<string, string>,
-  useEndpoint: boolean
+  useEndpoint: boolean,
+  getConnectionsData: () => ConnectionsData
+): any => {
+  const armUrl = 'https://management.azure.com';
+  const baseUrl = `${armUrl}${siteResourceId}/hostruntime/runtime/webhooks/workflow/api/management`;
+  const defaultServiceParams = { baseUrl, httpClient, apiVersion };
+
+  const gatewayService = new BaseGatewayService({
+    baseUrl: armUrl,
+    httpClient,
+    apiVersions: {
+      subscription: apiVersion,
+      gateway: '2016-06-01',
+    },
+  });
+  const tenantService = new BaseTenantService({
+    baseUrl: armUrl,
+    httpClient,
+    apiVersion: '2017-08-01',
+  });
+  const operationManifestService = new StandardOperationManifestService(defaultServiceParams);
+  const resourceService = new BaseResourceService({ baseUrl: armUrl, httpClient, apiVersion });
+  const { connectionService, oAuthService, connectorService, workflowService, templateService } = getResourceBasedServices(
+    siteResourceId,
+    workflowApp,
+    addConnection,
+    getConfiguration,
+    tenantId,
+    objectId,
+    location,
+    appSettings,
+    useEndpoint,
+    getConnectionsData
+  );
+
+  return {
+    connectionService,
+    gatewayService,
+    tenantService,
+    oAuthService,
+    operationManifestService,
+    templateService,
+    workflowService,
+    connectorService,
+    resourceService,
+  };
+};
+
+const getResourceBasedServices = (
+  siteResourceId: string,
+  workflowApp: WorkflowApp | undefined,
+  addConnection: (data: ConnectionAndAppSetting) => Promise<void>,
+  getConfiguration: (connectionId: string) => Promise<any>,
+  tenantId: string | undefined,
+  objectId: string | undefined,
+  location: string,
+  appSettings: Record<string, string>,
+  useEndpoint: boolean,
+  getConnectionsData: () => ConnectionsData
 ): any => {
   const armUrl = 'https://management.azure.com';
   const baseUrl = `${armUrl}${siteResourceId}/hostruntime/runtime/webhooks/workflow/api/management`;
   const { subscriptionId, resourceGroup, resourceName } = new ArmParser(siteResourceId ?? '');
+  const queryClient = getReactQueryClient();
 
   const defaultServiceParams = { baseUrl, httpClient, apiVersion };
   const armServiceParams = {
@@ -404,21 +524,8 @@ const getServices = (
       httpClient,
     },
     workflowAppDetails: { appName: resourceName, identity: workflowApp?.identity as any },
-    readConnections: () => Promise.resolve(connectionsData),
+    readConnections: () => Promise.resolve(getConnectionsData()),
     writeConnection: addConnection as any,
-  });
-  const gatewayService = new BaseGatewayService({
-    baseUrl: armUrl,
-    httpClient,
-    apiVersions: {
-      subscription: apiVersion,
-      gateway: '2016-06-01',
-    },
-  });
-  const tenantService = new BaseTenantService({
-    baseUrl: armUrl,
-    httpClient,
-    apiVersion: '2017-08-01',
   });
   const oAuthService = new StandaloneOAuthService({
     ...defaultServiceParams,
@@ -429,7 +536,6 @@ const getServices = (
     tenantId,
     objectId,
   });
-  const operationManifestService = new StandardOperationManifestService(defaultServiceParams);
 
   const apiManagementService = new BaseApiManagementService({
     apiVersion: '2021-08-01',
@@ -525,18 +631,12 @@ const getServices = (
     },
   });
 
-  const resourceService = new BaseResourceService({ baseUrl: armUrl, httpClient, apiVersion });
-
   return {
     connectionService,
-    gatewayService,
-    tenantService,
     oAuthService,
-    operationManifestService,
     templateService,
     workflowService,
     connectorService,
-    resourceService,
   };
 };
 
@@ -703,4 +803,11 @@ const updateSettingsKeyWithWorkflowName = (
   }
 
   return updatedSettings;
+};
+
+const getWorkflowAppIdFromStore = () => {
+  const { subscriptionId, resourceGroup, workflowAppName } = templateStore.getState().workflow;
+  return subscriptionId && resourceGroup && workflowAppName
+    ? `/subscriptions/${subscriptionId}/resourceGroups/${resourceGroup}/providers/Microsoft.Web/sites/${workflowAppName}`
+    : '';
 };

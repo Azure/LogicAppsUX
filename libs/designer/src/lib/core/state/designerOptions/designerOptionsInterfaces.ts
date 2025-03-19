@@ -49,7 +49,6 @@ export interface DesignerOptionsState {
     hideContentTransferSettings?: boolean; // hide content transfer settings in the designer
     collapseGraphsByDefault?: boolean; // collapse scope by default
     enableMultiVariable?: boolean; // prevent creating multiple variables in one action
-    enableAgenticLoops?: boolean;
   };
   nodeSelectAdditionalCallback?: (nodeId: string) => any;
   showConnectionsPanel?: boolean;
