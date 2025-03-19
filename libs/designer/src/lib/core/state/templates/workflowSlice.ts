@@ -124,12 +124,11 @@ export const workflowSlice = createSlice({
     },
     setLogicAppDetails: (state, action: PayloadAction<{ name: string; location: string; plan: string }>) => {
       const { name, location, plan } = action.payload;
+      const isConsumption = equals(plan, 'Consumption');
       state.logicAppName = name;
       state.location = location;
-
-      if (!equals(plan, 'Consumption')) {
-        state.workflowAppName = name;
-      }
+      state.workflowAppName = isConsumption ? '' : name;
+      state.isConsumption = isConsumption;
 
       if (name) {
         state.connections = { references: {}, mapping: {} };

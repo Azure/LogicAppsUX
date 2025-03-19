@@ -94,7 +94,7 @@ interface ConnectionAndAppSetting<T> {
   pathLocation: string[];
 }
 
-interface ConnectionsData {
+export interface ConnectionsData {
   managedApiConnections?: any;
   serviceProviderConnections?: Record<string, ServiceProviderConnectionModel>;
   functionConnections?: Record<string, FunctionsConnectionModel>;
