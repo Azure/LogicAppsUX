@@ -2,7 +2,7 @@ import constants from '../../../common/constants';
 import type { AppDispatch } from '../../../core';
 import { useActionMetadata, useNodeMetadata, useRunInstance } from '../../../core/state/workflow/workflowSelectors';
 import { setRunIndex } from '../../../core/state/workflow/workflowSlice';
-import { getForeachItemsCount } from './helper';
+import { getLoopsCount } from './helper';
 import {
   RunService,
   FindPreviousAndNextPage,
@@ -29,12 +29,11 @@ export const LoopsPager = ({ metadata, scopeId, collapsed }: LoopsPagerProps) =>
   const normalizedType = useMemo(() => actionMetadata?.type.toLowerCase(), [actionMetadata]);
   const nodeMetadata = useNodeMetadata(scopeId);
   const currentPage = useMemo(() => nodeMetadata?.runIndex ?? 0, [nodeMetadata]);
-
-  const forEachItemsCount = useMemo(() => getForeachItemsCount(metadata?.runData), [metadata?.runData]);
+  const loopsCount = useMemo(() => getLoopsCount(metadata?.runData), [metadata?.runData]);
 
   const {
     isError,
-    isLoading,
+    isFetching,
     data: failedRepetitions,
   } = useQuery<any>(
     ['runRepetitions', { nodeId: scopeId, runId: runInstance?.id }],
@@ -103,17 +102,17 @@ export const LoopsPager = ({ metadata, scopeId, collapsed }: LoopsPagerProps) =>
     [failedRepetitions, onClickNextFailed, onClickPreviousFailed]
   );
 
-  if (!forEachItemsCount || isError || collapsed) {
+  if (!loopsCount || isError || collapsed) {
     return null;
   }
 
-  return isLoading ? null : (
+  return isFetching ? null : (
     <div data-automation-id={`msla-pager-v2-${replaceWhiteSpaceWithUnderscore(scopeId)}`}>
       <Pager
         current={currentPage + 1}
         onChange={onPagerChange}
-        max={forEachItemsCount}
-        maxLength={forEachItemsCount.toString().length + 1}
+        max={loopsCount}
+        maxLength={loopsCount.toString().length + 1}
         min={1}
         readonlyPagerInput={false}
         failedIterationProps={failedIterationProps}

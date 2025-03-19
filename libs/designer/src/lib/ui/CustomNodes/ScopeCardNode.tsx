@@ -302,13 +302,15 @@ const ScopeCardNode = ({ data, targetPosition = Position.Top, sourcePosition = P
     },
     { actionCount }
   );
+  const isAgent = normalizedType === constants.NODE.TYPE.AGENT;
 
   const collapsedText =
-    normalizedType === constants.NODE.TYPE.SWITCH || normalizedType === constants.NODE.TYPE.IF ? caseString : actionString;
+    normalizedType === constants.NODE.TYPE.SWITCH || normalizedType === constants.NODE.TYPE.IF || isAgent ? caseString : actionString;
 
   const isFooter = id.endsWith('#footer');
-  const isAgent = normalizedType === constants.NODE.TYPE.AGENT;
   const showEmptyGraphComponents = isLeaf && !graphCollapsed && !isFooter && !isAgent;
+
+  const shouldShowPager = (normalizedType === constants.NODE.TYPE.FOREACH || isAgent) && isMonitoringView;
 
   return (
     <>
@@ -342,7 +344,7 @@ const ScopeCardNode = ({ data, targetPosition = Position.Top, sourcePosition = P
             nodeIndex={nodeIndex}
           />
           {showCopyCallout ? <CopyTooltip id={scopeId} targetRef={rootRef} hideTooltip={clearCopyCallout} /> : null}
-          {normalizedType === constants.NODE.TYPE.FOREACH && isMonitoringView ? renderLoopsPager : null}
+          {shouldShowPager ? renderLoopsPager : null}
           <Handle className="node-handle bottom" type="source" position={sourcePosition} isConnectable={false} />
         </div>
       </div>
