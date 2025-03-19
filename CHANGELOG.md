@@ -1,4 +1,18 @@
 # Logic Apps Designer
+## [5.56.0](https://github.com/Azure/LogicAppsUX/compare/v5.55.0...v5.56.0) (2025-03-19)
+
+
+### Features
+
+* **designer:** Include dependency on kind to enable Agentic workflows ([#6821](https://github.com/Azure/LogicAppsUX/issues/6821)) ([a50b5c8](https://github.com/Azure/LogicAppsUX/commit/a50b5c8a63c2375f36c4df14ba8d737a4cde90ff))
+* **Templates:** Custom Template Standalone ([#6685](https://github.com/Azure/LogicAppsUX/issues/6685)) ([530ec1c](https://github.com/Azure/LogicAppsUX/commit/530ec1c22ef3bbbf7ebb8a953e91f82bec652ed7))
+* **Templates:** Review tab improvements + Template provider `useExternalRedux` flag ([#6828](https://github.com/Azure/LogicAppsUX/issues/6828)) ([4a7bcaf](https://github.com/Azure/LogicAppsUX/commit/4a7bcaf843ad60e1cd15add849cd72ca5479f5b6))
+
+
+### Bug Fixes
+
+* **designer:** Fix item count when adding operations in scope and subgraph ([#6818](https://github.com/Azure/LogicAppsUX/issues/6818)) ([a22fea5](https://github.com/Azure/LogicAppsUX/commit/a22fea596f41fe4d953e1892374d1e2e38020b28))
+
 ## [5.55.0](https://github.com/Azure/LogicAppsUX/compare/v5.54.0...v5.55.0) (2025-03-18)
 
 
