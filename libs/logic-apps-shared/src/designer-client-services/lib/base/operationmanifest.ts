@@ -125,6 +125,7 @@ const edifactbatchencode = 'edifactbatchencode';
 const edifactdecode = 'edifactdecode';
 const parsedocument = 'parsedocument';
 const parsedocumentwithmetadata = 'parsedocumentwithmetadata';
+const chunktextwithmetadata = 'chunktextwithmetadata';
 
 export const apiManagementConnectorId = '/connectionProviders/apiManagementOperation';
 export const azureFunctionConnectorId = '/connectionProviders/azureFunctionOperation';
@@ -218,6 +219,7 @@ export const supportedBaseManifestTypes = [
   chunktext,
   parsedocument,
   parsedocumentwithmetadata,
+  chunktextwithmetadata,
 ];
 
 export type getAccessTokenType = () => Promise<string>;
@@ -335,8 +337,9 @@ export function isBuiltInOperation(definition: any): boolean {
     case parsedocument:
     case chunktext:
     case parsedocumentwithmetadata:
-      return true;
-
+    case chunktextwithmetadata:
+       return true;
+      
     default:
       return false;
   }
@@ -722,6 +725,10 @@ const builtInOperationsMetadata: Record<string, OperationInfo> = {
   [parsedocumentwithmetadata]: {
     connectorId: dataOperationConnectorId,
     operationId: parsedocumentwithmetadata,
+  },
+  [chunktextwithmetadata]: {
+    connectorId: dataOperationConnectorId,
+    operationId: chunktextwithmetadata,
   },
 };
 
