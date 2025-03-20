@@ -1,4 +1,4 @@
-import { LogEntryLevel, LoggerService, type Template, isNullOrUndefined } from '@microsoft/logic-apps-shared';
+import { LogEntryLevel, LoggerService, type Template, getTriggerFromDefinition, isNullOrUndefined } from '@microsoft/logic-apps-shared';
 import type { AppDispatch } from '../../../../../core/state/templates/store';
 import { useIntl, type IntlShape } from 'react-intl';
 import constants from '../../../../../common/constants';
@@ -11,7 +11,6 @@ import { useTemplateManifest, useWorkflowTemplate } from '../../../../../core/st
 import { ConnectionsList } from '../../../../templates/connections/connections';
 import { Open16Regular } from '@fluentui/react-icons';
 import { isMultiWorkflowTemplate } from '../../../../../core/actions/bjsworkflow/templates';
-import { getDetailTriggerDisplayValue } from '../../../../../ui/templates/templatesStrings';
 
 export const SummaryPanel = ({ workflowId }: { workflowId: string }) => {
   const intl = useIntl();
@@ -107,9 +106,7 @@ export const SummaryPanel = ({ workflowId }: { workflowId: string }) => {
 
         <div className="msla-template-overview-section-detail">
           <Text className="msla-template-overview-section-detailkey">{detailsTags.Trigger}:</Text>
-          <Text>
-            {isMultiWorkflow ? getDetailTriggerDisplayValue(workflowDefinition.triggers ?? {}) : templateManifest.details.Trigger}
-          </Text>
+          <Text>{isMultiWorkflow ? getTriggerFromDefinition(workflowDefinition.triggers ?? {}) : templateManifest.details.Trigger}</Text>
         </div>
 
         <div className="msla-template-overview-section-detail">

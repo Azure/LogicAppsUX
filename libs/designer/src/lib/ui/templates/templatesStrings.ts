@@ -1,4 +1,3 @@
-import { getIntl, type LogicAppsV2 } from '@microsoft/logic-apps-shared';
 import { useIntl } from 'react-intl';
 
 export const useTemplatesStrings = () => {
@@ -65,29 +64,4 @@ export const useConnectorStatusStrings = () => {
       description: 'Connection not authenticated text',
     }),
   };
-};
-
-export const getDetailTriggerDisplayValue = (triggers: LogicAppsV2.Triggers): string => {
-  const intl = getIntl();
-  const detailTriggerStrings = {
-    Request: intl.formatMessage({
-      defaultMessage: 'Request',
-      id: 'VOk0Eh',
-      description: 'Trigger belongs to Request category',
-    }),
-    Recurrence: intl.formatMessage({
-      defaultMessage: 'Recurrence',
-      id: 'CdyJ6f',
-      description: 'Trigger belongs to Recurrence category',
-    }),
-    Event: intl.formatMessage({
-      defaultMessage: 'Event',
-      id: '2iq12E',
-      description: 'Trigger belongs to Event category',
-    }),
-  };
-
-  return Object.values(triggers)
-    .map((trigger) => detailTriggerStrings[trigger.type as keyof typeof detailTriggerStrings] ?? detailTriggerStrings.Event)
-    .join(', ');
 };
