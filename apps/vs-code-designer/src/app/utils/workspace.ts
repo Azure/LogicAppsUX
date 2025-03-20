@@ -6,7 +6,7 @@ import { workflowFileName } from '../../constants';
 import { localize } from '../../localize';
 import type { RemoteWorkflowTreeItem } from '../tree/remoteWorkflowsTree/RemoteWorkflowTreeItem';
 import { isPathEqual, isSubpath } from './fs';
-import { promptOpenProject, tryGetLogicAppProjectRoot } from './verifyIsProject';
+import { promptOpenProjectOrWorkspace, tryGetLogicAppProjectRoot } from './verifyIsProject';
 import { isNullOrUndefined, isString } from '@microsoft/logic-apps-shared';
 import { UserCancelledError } from '@microsoft/vscode-azext-utils';
 import type { IActionContext, IAzureQuickPickItem } from '@microsoft/vscode-azext-utils';
@@ -108,10 +108,10 @@ export async function getWorkspaceFolder(
   message?: string,
   skipPromptOnMultipleFolders?: boolean
 ): Promise<vscode.WorkspaceFolder | undefined> {
-  const promptMessage: string = message ?? localize('noWorkspaceWarning', 'You must have a project open to create a workflow.');
+  const promptMessage: string = message ?? localize('noWorkspaceWarning', 'You must have a workspace open to perform this action.');
   let folder: vscode.WorkspaceFolder | undefined;
   if (!vscode.workspace.workspaceFolders || vscode.workspace.workspaceFolders.length === 0) {
-    await promptOpenProject(context, promptMessage);
+    await promptOpenProjectOrWorkspace(context, promptMessage, false);
   }
   if (vscode.workspace.workspaceFolders.length === 1) {
     if (vscode.workspace.workspaceFile) {

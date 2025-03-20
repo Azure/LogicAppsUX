@@ -156,7 +156,7 @@ export async function verifyAndPromptToCreateProject(context: IActionContext, fs
   const projectPath: string | undefined = await tryGetLogicAppProjectRoot(context, fsPath);
   if (!projectPath) {
     const message: string = localize('notLogicApp', 'The selected folder is not a logic app project.');
-    await promptOpenProject(context, message);
+    await promptOpenProjectOrWorkspace(context, message, true);
   }
   return projectPath;
 }
@@ -166,18 +166,31 @@ export async function verifyAndPromptToCreateProject(context: IActionContext, fs
  *
  * @param {IActionContext} context - The action context.
  * @param {string} message - The message to display in the warning dialog.
+ * @param {boolean} isProject - Indicates whether the operation is for a project.
  * @returns A promise that resolves when the user selects an option.
  * @throws {NoWorkspaceError} - If the user cancels the operation.
  */
-export const promptOpenProject = async (context: IActionContext, message: string): Promise<void> => {
+export const promptOpenProjectOrWorkspace = async (context: IActionContext, message: string, isProject: boolean): Promise<void> => {
   const newProject: vscode.MessageItem = { title: localize('createNewProject', 'Create new project') };
   const openExistingProject: vscode.MessageItem = { title: localize('openExistingProject', 'Open existing project') };
-  const result: vscode.MessageItem = await context.ui.showWarningMessage(message, { modal: true }, newProject, openExistingProject);
 
-  if (result === newProject) {
+  const newWorkspace: vscode.MessageItem = { title: localize('createNewWorkspace', 'Create new workspace') };
+  const openExistingWorkspace: vscode.MessageItem = { title: localize('openExistingWorkspace', 'Open existing workspace') };
+
+  const result: vscode.MessageItem = await context.ui.showWarningMessage(
+    message,
+    { modal: true },
+    isProject ? newProject : newWorkspace,
+    isProject ? openExistingProject : openExistingWorkspace
+  );
+
+  if (result === newWorkspace) {
+    vscode.commands.executeCommand(extensionCommand.createNewWorkspace);
+    context.telemetry.properties.noWorkspaceResult = 'createNewWorkspace';
+  } else if (result === newProject) {
     vscode.commands.executeCommand(extensionCommand.createNewProject);
     context.telemetry.properties.noWorkspaceResult = 'createNewProject';
-  } else {
+  } else if (result === openExistingProject) {
     const uri: vscode.Uri[] = await context.ui.showOpenDialog({
       canSelectFiles: false,
       canSelectFolders: true,
@@ -186,6 +199,9 @@ export const promptOpenProject = async (context: IActionContext, message: string
     });
     vscode.commands.executeCommand(extensionCommand.vscodeOpenFolder, uri[0]);
     context.telemetry.properties.noWorkspaceResult = 'openExistingProject';
+  } else if (result === openExistingWorkspace) {
+    vscode.commands.executeCommand('workbench.action.openWorkspace');
+    context.telemetry.properties.noWorkspaceResult = 'openExistingWorkspace';
   }
   context.errorHandling.suppressDisplay = true;
   throw new NoWorkspaceError();
