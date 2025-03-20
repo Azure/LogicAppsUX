@@ -209,11 +209,9 @@ async function getConnectionReference(
         connectionProperties,
       };
 
-      if (parameterizeConnectionsSetting) {
-        parameterizeConnection(connectionReference, referenceKey, parametersToAdd, settingsToAdd);
-      }
-
-      return connectionReference;
+      return parameterizeConnectionsSetting
+        ? (parameterizeConnection(connectionReference, referenceKey, parametersToAdd, settingsToAdd) as ConnectionReferenceModel)
+        : connectionReference;
     })
     .catch((error) => {
       context.telemetry.properties.connectionKeyFailure = `Error fetching ${referenceKey}-connectionKey`;
