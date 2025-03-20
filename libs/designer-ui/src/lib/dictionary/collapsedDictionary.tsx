@@ -51,6 +51,7 @@ export const CollapsedDictionary = ({
           }}
           placeholder={editorPlaceHolder}
           initialValue={collapsedValue?.length > 0 ? collapsedValue : ([] as ValueSegment[])}
+          tokenPickerButtonProps={{ verticalOffSet: 17 }}
           onBlur={onBlur}
         >
           <CollapsedDictionaryValidation

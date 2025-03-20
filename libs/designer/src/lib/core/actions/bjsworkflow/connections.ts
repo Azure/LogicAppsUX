@@ -293,7 +293,7 @@ export const autoCreateConnectionIfPossible = async (payload: {
   }
 };
 
-async function getConnectionsMappingForNodes(deserializedWorkflow: DeserializedWorkflow): Promise<Record<string, string>> {
+export async function getConnectionsMappingForNodes(deserializedWorkflow: DeserializedWorkflow): Promise<Record<string, string>> {
   const { actionData, nodesMetadata } = deserializedWorkflow;
   let connectionsMapping: Record<string, string> = {};
   const operationManifestService = OperationManifestService();

@@ -19,7 +19,6 @@ export const ReviewCreatePanel = () => {
   const { parameterDefinitions, workflows, connections } = useSelector((state: RootState) => state.template);
   const { enableResourceSelection } = useSelector((state: RootState) => state.templateOptions);
   const {
-    existingWorkflowName,
     connections: { mapping },
     subscriptionId,
     location,
@@ -86,7 +85,7 @@ export const ReviewCreatePanel = () => {
           </Label>
           <div className="msla-templates-tab-review-section">
             {Object.values(workflows).map((workflow) => {
-              const workflowNameToShow = existingWorkflowName ?? workflow.workflowName;
+              const workflowNameToShow = workflow.workflowName;
               return (
                 <div key={workflow.id}>
                   <div className="msla-templates-tab-review-section-details">
