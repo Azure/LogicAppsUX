@@ -33,18 +33,18 @@ import { LoopsPager } from '../common/LoopsPager/LoopsPager';
 import { getRepetitionName } from '../common/LoopsPager/helper';
 import { DropZone } from '../connections/dropzone';
 import { MessageBarType } from '@fluentui/react';
-import { RunService, equals, isNullOrUndefined, removeIdTag, useNodeIndex } from '@microsoft/logic-apps-shared';
+import { equals, isNullOrUndefined, removeIdTag, useNodeIndex } from '@microsoft/logic-apps-shared';
 import { ScopeCard } from '@microsoft/designer-ui';
 import type { LogicAppsV2 } from '@microsoft/logic-apps-shared';
 import { memo, useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useDrag } from 'react-dnd';
 import { useIntl } from 'react-intl';
-import { useQuery } from '@tanstack/react-query';
 import { useDispatch } from 'react-redux';
 import { Handle, Position, type NodeProps } from '@xyflow/react';
 import { copyScopeOperation } from '../../core/actions/bjsworkflow/copypaste';
 import { useHotkeys } from 'react-hotkeys-hook';
 import { CopyTooltip } from '../common/DesignerContextualMenu/CopyTooltip';
+import { useNodeRepetition } from '../../core/queries/runs';
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 const ScopeCardNode = ({ data, targetPosition = Position.Top, sourcePosition = Position.Bottom, id }: NodeProps) => {
@@ -72,33 +72,13 @@ const ScopeCardNode = ({ data, targetPosition = Position.Top, sourcePosition = P
     [nodesMetaData, operationsInfo, parentRunIndex, scopeId]
   );
   const rootRef = useRef<HTMLDivElement | null>(null);
-
-  const { isFetching: isRepetitionFetching, data: repetitionRunData } = useQuery<any>(
-    ['runInstance', { nodeId: scopeId, runId: runInstance?.id, repetitionName, parentStatus: parentRunData?.status }],
-    async () => {
-      if (parentRunData?.status === constants.FLOW_STATUS.SKIPPED) {
-        return {
-          properties: {
-            status: constants.FLOW_STATUS.SKIPPED,
-            inputsLink: null,
-            outputsLink: null,
-            startTime: null,
-            endTime: null,
-            trackingId: null,
-            correlation: null,
-          },
-        };
-      }
-
-      return await RunService().getRepetition({ nodeId: scopeId, runId: runInstance?.id }, repetitionName);
-    },
-    {
-      refetchOnWindowFocus: false,
-      refetchOnReconnect: false,
-      refetchOnMount: false,
-      retryOnMount: false,
-      enabled: parentRunIndex !== undefined && !!isMonitoringView,
-    }
+  const { isFetching: isRepetitionFetching, data: repetitionRunData } = useNodeRepetition(
+    !!isMonitoringView,
+    scopeId,
+    runInstance?.id,
+    repetitionName,
+    parentRunData?.status,
+    parentRunIndex
   );
 
   useEffect(() => {

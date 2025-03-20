@@ -54,8 +54,8 @@ export const getRepetitionName = (
   let repetitionName = '';
   const parentsForNode = getAllParentsForNode(id, nodesMetadata);
   parentsForNode.forEach((parent) => {
-    const parentType = getRecordEntry(operationInfo, parent)?.type?.toLowerCase();
-    const isLoopScope = parentType ? parentType === constants.NODE.TYPE.FOREACH || parentType === constants.NODE.TYPE.UNTIL : false;
+    const parentType = getRecordEntry(operationInfo, parent)?.type?.toLowerCase() ?? '';
+    const isLoopScope = [constants.NODE.TYPE.FOREACH, constants.NODE.TYPE.UNTIL, constants.NODE.TYPE.AGENT].includes(parentType);
     if (isLoopScope) {
       const zeroBasedCurrent = getRecordEntry(nodesMetadata, parent)?.runIndex;
       repetitionName = repetitionName ? `${String(zeroBasedCurrent).padStart(6, '0')}-${repetitionName}` : String(index).padStart(6, '0');

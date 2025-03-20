@@ -321,9 +321,10 @@ export const useParentRunIndex = (id: string | undefined): number | undefined =>
       if (!id) {
         return undefined;
       }
-      const parents = getAllParentsForNode(id, state.nodesMetadata).filter((x) => {
-        const operationType = getRecordEntry(state.operations, x)?.type?.toLowerCase();
-        return operationType ? operationType === constants.NODE.TYPE.FOREACH || operationType === constants.NODE.TYPE.UNTIL : false;
+      const allParents = getAllParentsForNode(id, state.nodesMetadata);
+      const parents = allParents.filter((x) => {
+        const operationType = getRecordEntry(state.operations, x)?.type?.toLowerCase() ?? '';
+        return [constants.NODE.TYPE.FOREACH, constants.NODE.TYPE.UNTIL, constants.NODE.TYPE.AGENT].includes(operationType);
       });
       return parents.length ? getRecordEntry(state.nodesMetadata, parents[0])?.runIndex : undefined;
     })
