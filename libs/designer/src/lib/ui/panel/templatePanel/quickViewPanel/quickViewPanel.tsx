@@ -47,7 +47,8 @@ export const QuickViewPanel = ({
       shouldCloseByDefault: !state.templateOptions.viewTemplateDetails,
     })
   );
-  const { manifest } = useWorkflowTemplate(workflowId);
+  const workflowTemplate = useWorkflowTemplate(workflowId);
+  const manifest = useMemo(() => workflowTemplate?.manifest, [workflowTemplate]);
   const panelTabs = getQuickViewTabs(
     intl,
     dispatch,
@@ -75,9 +76,9 @@ export const QuickViewPanel = ({
   const onRenderHeaderContent = useCallback(
     () => (
       <QuickViewPanelHeader
-        title={manifest.title}
-        summary={manifest.summary}
-        sourceCodeUrl={manifest.sourceCodeUrl}
+        title={manifest?.title ?? ''}
+        summary={manifest?.summary ?? ''}
+        sourceCodeUrl={manifest?.sourceCodeUrl}
         isMultiWorkflowTemplate={isMultiWorkflowTemplate(templateManifest)}
         details={templateManifest?.details ?? {}}
       />

@@ -169,31 +169,19 @@ export const ConnectorWithDetails = ({ id, kind }: Template.FeaturedConnector) =
   );
 };
 
-export const ConnectorConnectionStatus = ({
-  connectorId,
-  connectionKey,
-  hasConnection,
-}: { connectorId: string; connectionKey: string; hasConnection: boolean }) => {
+export const ConnectorConnectionName = ({ connectorId, connectionKey }: { connectorId: string; connectionKey: string }) => {
   const { data: connector, isLoading } = useConnector(connectorId, /* enabled */ true, /* getCachedData */ true);
-  const texts = useConnectorStatusStrings();
 
-  return (
-    <div className="msla-templates-tab-review-section-details">
-      {isLoading ? (
-        <div className="msla-templates-tab-review-section-details-title">
-          <Shimmer
-            style={{ width: '70%', marginTop: 5 }}
-            shimmerElements={[{ type: ShimmerElementType.line, height: 10, verticalAlign: 'bottom', width: '100%' }]}
-            size={SpinnerSize.xSmall}
-          />
-        </div>
-      ) : (
-        <Text className="msla-templates-tab-review-section-details-title">
-          {connector?.properties?.displayName} ({connectionKey})
-        </Text>
-      )}
-      <Text className="msla-templates-tab-review-section-details-value">{hasConnection ? texts.connected : texts.notConnected}</Text>
-    </div>
+  return isLoading ? (
+    <Shimmer
+      style={{ width: '70%', marginTop: 5 }}
+      shimmerElements={[{ type: ShimmerElementType.line, height: 10, verticalAlign: 'bottom', width: '100%' }]}
+      size={SpinnerSize.xSmall}
+    />
+  ) : (
+    <Text>
+      {connector?.properties?.displayName} ({connectionKey})
+    </Text>
   );
 };
 

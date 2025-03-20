@@ -11,10 +11,13 @@ import { useTemplateManifest, useWorkflowTemplate } from '../../../../../core/st
 import { ConnectionsList } from '../../../../templates/connections/connections';
 import { Open16Regular } from '@fluentui/react-icons';
 import { isMultiWorkflowTemplate } from '../../../../../core/actions/bjsworkflow/templates';
+import { useMemo } from 'react';
 
 export const SummaryPanel = ({ workflowId }: { workflowId: string }) => {
   const intl = useIntl();
-  const { manifest: workflowManifest, workflowDefinition } = useWorkflowTemplate(workflowId);
+  const workflowTemplate = useWorkflowTemplate(workflowId);
+  const workflowManifest = useMemo(() => workflowTemplate?.manifest, [workflowTemplate]);
+  const workflowDefinition = useMemo(() => workflowTemplate?.workflowDefinition, [workflowTemplate]);
   const templateManifest = useTemplateManifest();
   const isMultiWorkflow = isMultiWorkflowTemplate(templateManifest);
   const templateHasConnections = Object.keys(workflowManifest?.connections || {}).length > 0;
@@ -52,9 +55,9 @@ export const SummaryPanel = ({ workflowId }: { workflowId: string }) => {
                 description: 'Text to show no connections present in the template.',
               })}
         </Text>
-        {templateHasConnections ? <ConnectionsList connections={workflowManifest.connections} /> : null}
+        {templateHasConnections ? <ConnectionsList connections={workflowManifest?.connections ?? {}} /> : null}
       </div>
-      {workflowManifest.prerequisites ? (
+      {workflowManifest?.prerequisites ? (
         <div className="msla-template-overview-section">
           <Text className="msla-template-overview-section-title">
             {intl.formatMessage({
@@ -64,7 +67,7 @@ export const SummaryPanel = ({ workflowId }: { workflowId: string }) => {
             })}
           </Text>
           <Markdown className="msla-template-markdown" linkTarget="_blank">
-            {workflowManifest.prerequisites}
+            {workflowManifest?.prerequisites}
           </Markdown>
         </div>
       ) : null}
@@ -106,7 +109,7 @@ export const SummaryPanel = ({ workflowId }: { workflowId: string }) => {
 
         <div className="msla-template-overview-section-detail">
           <Text className="msla-template-overview-section-detailkey">{detailsTags.Trigger}:</Text>
-          <Text>{isMultiWorkflow ? getTriggerFromDefinition(workflowDefinition.triggers ?? {}) : templateManifest.details.Trigger}</Text>
+          <Text>{isMultiWorkflow ? getTriggerFromDefinition(workflowDefinition?.triggers ?? {}) : templateManifest.details.Trigger}</Text>
         </div>
 
         <div className="msla-template-overview-section-detail">

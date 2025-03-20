@@ -8,9 +8,9 @@ export const useTemplateWorkflows = () => {
   return useSelector((state: RootState) => state.template.workflows ?? {});
 };
 
-export const useWorkflowTemplate = (workflowId: string): WorkflowTemplateData => {
+export const useWorkflowTemplate = (workflowId: string): WorkflowTemplateData | undefined => {
   return useSelector((state: RootState) => {
-    return state.template.workflows[workflowId];
+    return state.template.workflows?.[workflowId];
   });
 };
 
