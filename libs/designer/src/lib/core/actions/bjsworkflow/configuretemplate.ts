@@ -190,7 +190,7 @@ const getTemplateConnections = async (state: RootState, dispatch: ThunkDispatch<
         data,
         index
       ) => {
-        if (data.definition) {
+        if (data?.definition) {
           result.push({ id: workflowIds[index], ...data });
         }
         return result;

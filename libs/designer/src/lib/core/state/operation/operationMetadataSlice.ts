@@ -12,8 +12,8 @@ import { createSlice } from '@reduxjs/toolkit';
 import type { PayloadAction } from '@reduxjs/toolkit';
 import type { WritableDraft } from 'immer/dist/internal';
 import type { UndoRedoPartialRootState } from '../undoRedo/undoRedoTypes';
-import { deleteWorkflowData } from 'lib/core/actions/bjsworkflow/configuretemplate';
-import { delimiter } from 'lib/core/configuretemplate/utils/helper';
+import { deleteWorkflowData } from '../../actions/bjsworkflow/configuretemplate';
+import { delimiter } from '../../configuretemplate/utils/helper';
 
 export interface ParameterGroup {
   id: string;
