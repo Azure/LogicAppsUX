@@ -47,7 +47,7 @@ export const TemplatesSection = ({
                 <div key={index} className="msla-templates-section-item">
                   {item.label ? (
                     typeof item.label === 'string' ? (
-                      <Text className="msla-templates-section-item-label">{item.label}</Text>
+                      <Label className="msla-templates-section-item-label">{item.label}</Label>
                     ) : (
                       <div className="msla-templates-section-item-label">{item.label}</div>
                     )
