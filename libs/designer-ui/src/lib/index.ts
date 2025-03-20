@@ -34,6 +34,7 @@ export * from './editor/base/plugins/tokenpickerbutton';
 export * from './editor/initializevariable/util';
 export * from './editor/initializevariable/';
 export { convertSegmentsToString } from './editor/base/utils/parsesegments';
+export { createLiteralValueSegment } from './editor/base/utils/helper';
 export * from './editor/monaco';
 export * from './editor/string';
 export * from './errorsPanel';
