@@ -68,7 +68,7 @@
         }
       },
       {
-        "command": "azureLogicAppsStandard.createNewCodeProject",
+        "command": "azureLogicAppsStandard.createNewWorkspace",
         "title": "Create new logic app workspace...",
         "category": "Azure Logic Apps",
         "icon": {
@@ -376,11 +376,11 @@
     "menus": {
       "azureLogicAppsStandard.submenus.workspaceActions": [
         {
-          "command": "azureLogicAppsStandard.createNewProject",
+          "command": "azureLogicAppsStandard.createNewWorkspace",
           "group": "1_create@1"
         },
         {
-          "command": "azureLogicAppsStandard.createNewCodeProject",
+          "command": "azureLogicAppsStandard.createNewProject",
           "group": "1_create@2"
         },
         {
@@ -988,7 +988,7 @@
     "onCommand:azureLogicAppsStandard.openDesigner",
     "onCommand:azureLogicAppsStandard.viewContent",
     "onCommand:azureLogicAppsStandard.createNewProject",
-    "onCommand:azureLogicAppsStandard.createNewCodeProject",
+    "onCommand:azureLogicAppsStandard.createNewWorkspace",
     "onCommand:azureLogicAppsStandard.createCodeless",
     "onCommand:azureLogicAppsStandard.deploy",
     "onCommand:azureLogicAppsStandard.generateDeploymentScripts",
