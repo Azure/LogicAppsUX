@@ -3,7 +3,7 @@ import { useIntl } from 'react-intl';
 import { makeStyles, Text } from '@fluentui/react-components';
 import { useSelector } from 'react-redux';
 import { equals, isUndefinedOrEmptyString, normalizeConnectorId } from '@microsoft/logic-apps-shared';
-import { ConnectorConnectionStatus } from '../connections/connector';
+import { ConnectorConnectionName } from '../connections/connector';
 import { WorkflowKind } from '../../../core/state/workflow/workflowInterfaces';
 import { ResourceDisplay } from './ResourceDisplay';
 import { useTemplatesStrings } from '../templatesStrings';
@@ -121,7 +121,7 @@ export const ReviewCreatePanel = () => {
             return {
               type: 'text',
               label: (
-                <ConnectorConnectionStatus
+                <ConnectorConnectionName
                   key={connectionKey}
                   connectionKey={connectionKey.replace('_#workflowname#', '')}
                   connectorId={normalizeConnectorId(connections[connectionKey].connectorId ?? '', subscriptionId, location)}

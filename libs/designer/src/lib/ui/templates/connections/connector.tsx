@@ -171,7 +171,7 @@ export const ConnectorWithDetails = ({ id, kind }: Template.FeaturedConnector) =
   );
 };
 
-export const ConnectorConnectionStatus = ({ connectorId, connectionKey }: { connectorId: string; connectionKey: string }) => {
+export const ConnectorConnectionName = ({ connectorId, connectionKey }: { connectorId: string; connectionKey: string }) => {
   const { data: connector, isLoading } = useConnector(connectorId, /* enabled */ true, /* getCachedData */ true);
 
   return isLoading ? (

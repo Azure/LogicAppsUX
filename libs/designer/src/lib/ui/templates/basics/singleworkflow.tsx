@@ -100,7 +100,7 @@ export const SingleWorkflowBasics = ({ workflowId }: { workflowId: string }) => 
           {
             id: 'msla-templates-workflowName',
             value: name,
-            type: 'textField',
+            type: 'textfield',
             onChange: (newValue: string) => {
               dispatch(updateWorkflowName({ id: workflowId, name: newValue }));
             },
@@ -131,7 +131,7 @@ export const SingleWorkflowBasics = ({ workflowId }: { workflowId: string }) => 
             }}
             items={[
               {
-                type: 'radioGroup',
+                type: 'radiogroup',
                 value: kind,
                 disabled: manifest?.kinds?.length === 1 || !isKindEditable,
                 onOptionSelect: (selectedValue) => {

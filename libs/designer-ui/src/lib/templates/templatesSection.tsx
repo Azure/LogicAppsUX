@@ -64,7 +64,7 @@ export const TemplatesSection = ({
 
 const CustomFieldInput = (item: TemplatesSectionItem) => {
   switch (item.type) {
-    case 'textField':
+    case 'textfield':
       return (
         <Input
           data-testid={item.id}
@@ -99,7 +99,7 @@ const CustomFieldInput = (item: TemplatesSectionItem) => {
         </Dropdown>
       );
 
-    case 'radioGroup':
+    case 'radiogroup':
       return (
         <RadioGroup id={item.id} onChange={(_e, option) => item.onOptionSelect(option.value)} disabled={item.disabled} value={item.value}>
           {item.options.map((option) => (
