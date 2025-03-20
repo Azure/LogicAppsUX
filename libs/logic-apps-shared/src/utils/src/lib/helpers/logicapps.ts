@@ -1,4 +1,4 @@
-import { getIntl } from 'intl/src';
+import { getIntl } from '../../../../intl/src/intl';
 import type { LogicAppsV2 } from '../models';
 
 export function getResourceGroupFromWorkflowId(workflowID: string): string {
