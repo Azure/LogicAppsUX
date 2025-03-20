@@ -111,7 +111,7 @@ export async function getWorkspaceFolder(
   const promptMessage: string = message ?? localize('noWorkspaceWarning', 'You must have a workspace open to perform this action.');
   let folder: vscode.WorkspaceFolder | undefined;
   if (!vscode.workspace.workspaceFolders || vscode.workspace.workspaceFolders.length === 0) {
-    await promptOpenProjectOrWorkspace(context, promptMessage, false);
+    await promptOpenProjectOrWorkspace(context, promptMessage);
   }
   if (vscode.workspace.workspaceFolders.length === 1) {
     if (vscode.workspace.workspaceFile) {
