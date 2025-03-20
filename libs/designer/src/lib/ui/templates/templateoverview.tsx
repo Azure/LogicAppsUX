@@ -16,6 +16,7 @@ import { TemplatesPanelFooter } from '@microsoft/designer-ui';
 import { workflowTab } from '../panel/templatePanel/quickViewPanel/tabs/workflowTab';
 import { clearTemplateDetails } from '../../core/state/templates/templateSlice';
 import { CreateWorkflowPanel } from '../panel/templatePanel/createWorkflowPanel/createWorkflowPanel';
+import { getDetailTriggerDisplayValue } from './templatesStrings';
 
 export const TemplateOverview = ({
   createWorkflow,
@@ -170,7 +171,7 @@ const WorkflowList = ({
     unmap(workflows).map((workflow) => {
       const { id, manifest } = workflow;
       const { title } = manifest as Template.WorkflowManifest;
-      return { id, name: title, trigger: '' };
+      return { id, name: title, trigger: getDetailTriggerDisplayValue(workflow.workflowDefinition.triggers ?? {}) };
     })
   );
   const columnsNames = {

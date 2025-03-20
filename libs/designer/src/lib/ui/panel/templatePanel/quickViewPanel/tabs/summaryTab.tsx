@@ -11,10 +11,11 @@ import { useTemplateManifest, useWorkflowTemplate } from '../../../../../core/st
 import { ConnectionsList } from '../../../../templates/connections/connections';
 import { Open16Regular } from '@fluentui/react-icons';
 import { isMultiWorkflowTemplate } from '../../../../../core/actions/bjsworkflow/templates';
+import { getDetailTriggerDisplayValue } from '../../../../../ui/templates/templatesStrings';
 
 export const SummaryPanel = ({ workflowId }: { workflowId: string }) => {
   const intl = useIntl();
-  const { manifest: workflowManifest } = useWorkflowTemplate(workflowId);
+  const { manifest: workflowManifest, workflowDefinition } = useWorkflowTemplate(workflowId);
   const templateManifest = useTemplateManifest();
   const isMultiWorkflow = isMultiWorkflowTemplate(templateManifest);
   const templateHasConnections = Object.keys(workflowManifest?.connections || {}).length > 0;
@@ -97,14 +98,24 @@ export const SummaryPanel = ({ workflowId }: { workflowId: string }) => {
             </Link>
           </div>
         )}
-        {Object.keys(detailsTags).map((key) => {
-          return (
-            <div className="msla-template-overview-section-detail" key={key}>
-              <Text className="msla-template-overview-section-detailkey">{detailsTags[key as Template.DetailsType]}:</Text>
-              <Text>{templateManifest.details[key as Template.DetailsType]}</Text>
-            </div>
-          );
-        })}
+        {!isMultiWorkflow && (
+          <div className="msla-template-overview-section-detail">
+            <Text className="msla-template-overview-section-detailkey">{detailsTags.Type}:</Text>
+            <Text>{templateManifest.details.Type}</Text>
+          </div>
+        )}
+
+        <div className="msla-template-overview-section-detail">
+          <Text className="msla-template-overview-section-detailkey">{detailsTags.Trigger}:</Text>
+          <Text>
+            {isMultiWorkflow ? getDetailTriggerDisplayValue(workflowDefinition.triggers ?? {}) : templateManifest.details.Trigger}
+          </Text>
+        </div>
+
+        <div className="msla-template-overview-section-detail">
+          <Text className="msla-template-overview-section-detailkey">{detailsTags.By}:</Text>
+          <Text>{templateManifest.details.By}</Text>
+        </div>
       </div>
       {!isMultiWorkflow && templateManifest.tags?.length ? (
         <div className="msla-template-overview-section">
