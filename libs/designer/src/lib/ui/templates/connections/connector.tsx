@@ -2,7 +2,6 @@ import type { IImageStyles, IImageStyleProps, IStyleFunctionOrObject } from '@fl
 import { Icon, Shimmer, ShimmerElementType, Spinner, SpinnerSize, css } from '@fluentui/react';
 import { useConnector } from '../../../core/state/connection/connectionSelector';
 import type { Template } from '@microsoft/logic-apps-shared';
-import type { IntlShape } from 'react-intl';
 import { useIntl } from 'react-intl';
 import { getConnectorAllCategories } from '@microsoft/designer-ui';
 import { useConnectionsForConnector } from '../../../core/queries/connections';
@@ -172,32 +171,19 @@ export const ConnectorWithDetails = ({ id, kind }: Template.FeaturedConnector) =
   );
 };
 
-export const ConnectorConnectionStatus = ({
-  connectorId,
-  connectionKey,
-  hasConnection,
-  intl,
-}: { connectorId: string; connectionKey: string; hasConnection: boolean; intl: IntlShape }) => {
+export const ConnectorConnectionName = ({ connectorId, connectionKey }: { connectorId: string; connectionKey: string }) => {
   const { data: connector, isLoading } = useConnector(connectorId, /* enabled */ true, /* getCachedData */ true);
-  const texts = getConnectorResources(intl);
 
-  return (
-    <div className="msla-templates-tab-review-section-details">
-      {isLoading ? (
-        <div className="msla-templates-tab-review-section-details-title">
-          <Shimmer
-            style={{ width: '70%', marginTop: 5 }}
-            shimmerElements={[{ type: ShimmerElementType.line, height: 10, verticalAlign: 'bottom', width: '100%' }]}
-            size={SpinnerSize.xSmall}
-          />
-        </div>
-      ) : (
-        <Text className="msla-templates-tab-review-section-details-title">
-          {connector?.properties?.displayName} ({connectionKey})
-        </Text>
-      )}
-      <Text className="msla-templates-tab-review-section-details-value">{hasConnection ? texts.connected : texts.notConnected}</Text>
-    </div>
+  return isLoading ? (
+    <Shimmer
+      style={{ width: '70%', marginTop: 5 }}
+      shimmerElements={[{ type: ShimmerElementType.line, height: 10, verticalAlign: 'bottom', width: '100%' }]}
+      size={SpinnerSize.xSmall}
+    />
+  ) : (
+    <Text>
+      {connector?.properties?.displayName} ({connectionKey})
+    </Text>
   );
 };
 
