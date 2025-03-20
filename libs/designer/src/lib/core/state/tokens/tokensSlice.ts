@@ -92,6 +92,16 @@ export const tokensSlice = createSlice({
 
       state.agentParameters[agent][id] = agentParameter;
     },
+    addAgentParameterToNode: (
+      state,
+      action: PayloadAction<{ conditionId: string; agentId: string; agentParameter: AgentParameterDeclaration }>
+    ) => {
+      const { conditionId, agentId, agentParameter } = action.payload;
+      if (!state.agentParameters[agentId]) {
+        state.agentParameters[agentId] = {};
+      }
+      state.agentParameters[agentId][conditionId] = { ...state.agentParameters[agentId][conditionId], agentParameter };
+    },
     updateTokenSecureStatus: (state, action: PayloadAction<{ id: string; isSecure: boolean }>) => {
       const { id, isSecure } = action.payload;
       const outputTokens = getRecordEntry(state.outputTokens, id);
@@ -154,6 +164,7 @@ export const {
   updateVariableInfo,
   updateTokens,
   updateAgentParameter,
+  addAgentParameterToNode,
   updateTokenSecureStatus,
   updateUpstreamNodes,
 } = tokensSlice.actions;
