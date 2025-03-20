@@ -30,7 +30,6 @@ export async function createCodeless(
   let workspaceFolder: WorkspaceFolder | undefined;
 
   workspacePath = isString(workspacePath) ? workspacePath : undefined;
-
   if (workspacePath === undefined) {
     workspaceFolder = await getWorkspaceFolder(context);
     workspacePath = isNullOrUndefined(workspaceFolder)
