@@ -42,7 +42,7 @@ export class TokenSegmentConvertor {
     }
     if (TokenSegmentConvertor.isAgentParameterToken(expression)) {
       const agentParameterName = (expression.arguments[0] as ExpressionLiteral).value;
-      const agentParameterToken = createAgentParameterToken(agentParameterName, expression.dereferences);
+      const agentParameterToken = createAgentParameterToken(agentParameterName);
       return createTokenValueSegment(agentParameterToken, value);
     }
     if (TokenSegmentConvertor.isVariableToken(expression)) {

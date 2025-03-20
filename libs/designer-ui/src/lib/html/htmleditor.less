@@ -7,6 +7,7 @@ div.msla-html-editor-toolbar {
   border-top-right-radius: 10px;
   overflow: auto;
   align-items: center;
+  outline: 1px solid @panel-mode-panel-border-color;
 
   .msla-html-editor-toolbar-group {
     display: flex;
@@ -55,7 +56,8 @@ div.msla-html-editor-toolbar {
       cursor: not-allowed;
     }
 
-    & img.format, &.color-picker img {
+    & img.format,
+    &.color-picker img {
       background-size: contain;
       height: 18px;
       width: 18px;
@@ -168,10 +170,8 @@ img.chevron-down {
   width: 100%;
   border-radius: 2px;
   position: relative;
-  outline: 1px solid @panel-mode-panel-border-color;
   .editor-input {
-    outline: none;
-    margin: 1px;
+    outline: 1px solid @panel-mode-panel-border-color;
     resize: none;
     font-size: 15px;
     tab-size: 1;
@@ -183,7 +183,7 @@ img.chevron-down {
       background-color: rgba(128, 128, 128, 0.1);
     }
     &:focus {
-      outline: 2px solid @primary_focus_blue;
+      outline: 1px solid @primary_border_blue;
     }
     p {
       margin-block-end: 0px;
@@ -271,7 +271,8 @@ div.msla-toolbar-divider {
   position: relative;
   margin-top: 15px;
   height: 150px;
-  background-image: linear-gradient(transparent, black), linear-gradient(to right, white, transparent);
+  background-image: linear-gradient(transparent, black),
+    linear-gradient(to right, white, transparent);
   user-select: none;
 }
 .color-picker-saturation_cursor {
@@ -342,7 +343,7 @@ div.msla-toolbar-divider {
     width: 100%;
     a {
       padding: 6px;
-      overflow-x: 'auto';
+      overflow-x: "auto";
       max-width: 78%;
     }
   }

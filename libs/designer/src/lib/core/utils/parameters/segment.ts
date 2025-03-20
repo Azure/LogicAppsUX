@@ -14,7 +14,7 @@ import { TokenSegmentConvertor } from './tokensegment';
 import { UncastingUtility } from './uncast';
 import { TokenType, ValueSegmentType } from '@microsoft/designer-ui';
 import type { Token, ValueSegment } from '@microsoft/designer-ui';
-import type { Dereference, Expression, ExpressionFunction, ExpressionLiteral } from '@microsoft/logic-apps-shared';
+import type { Expression, ExpressionFunction, ExpressionLiteral } from '@microsoft/logic-apps-shared';
 import {
   ExpressionParser,
   ExpressionType,
@@ -436,12 +436,12 @@ export function createParameterToken(parameterName: string): Token {
  * @arg {string} parameterName - The parameter name.
  * @return {Token}
  */
-export function createAgentParameterToken(parameterName: string, dereferences: Dereference[]): Token {
+export function createAgentParameterToken(parameterName: string): Token {
   return {
     tokenType: TokenType.AGENTPARAMETER,
     title: parameterName,
     name: parameterName,
-    key: `outputs.$.${dereferences.map((dref) => (dref.expression as ExpressionLiteral).value).join('.')}`,
+    key: `agentParameter.${parameterName}`,
     brandColor: AgentParameterBrandColor,
     icon: AgentParameterIcon,
   };

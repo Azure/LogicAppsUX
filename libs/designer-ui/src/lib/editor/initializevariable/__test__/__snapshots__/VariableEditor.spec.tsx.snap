@@ -74,6 +74,7 @@ exports[`VariableEditor > renders correctly with empty variables 1`] = `
           <div
             class="msla-setting-token-editor-container"
             id="msla-tokenpicker-callout-location3"
+            style="position: relative;"
           >
             <div
               aria-describedby="msla-described-by-message4"
@@ -84,7 +85,7 @@ exports[`VariableEditor > renders correctly with empty variables 1`] = `
               data-testid="name - 0 contenteditable"
               role="textbox"
               spellcheck="false"
-              style="user-select: text; white-space: pre-wrap; word-break: break-word;"
+              style="padding-inline-end: 32px; user-select: text; white-space: pre-wrap; word-break: break-word;"
               tabindex="0"
               title="Enter variable name"
             >
@@ -186,6 +187,7 @@ exports[`VariableEditor > renders correctly with empty variables 1`] = `
           <div
             class="msla-setting-token-editor-container"
             id="msla-tokenpicker-callout-location6"
+            style="position: relative;"
           >
             <div
               aria-describedby="msla-described-by-message7"
@@ -196,7 +198,7 @@ exports[`VariableEditor > renders correctly with empty variables 1`] = `
               data-testid="value - 0 contenteditable"
               role="textbox"
               spellcheck="false"
-              style="user-select: text; white-space: pre-wrap; word-break: break-word;"
+              style="padding-inline-end: 32px; user-select: text; white-space: pre-wrap; word-break: break-word;"
               tabindex="0"
               title="Enter initial value"
             >
@@ -341,6 +343,7 @@ exports[`VariableEditor > renders correctly with single variable 1`] = `
           <div
             class="msla-setting-token-editor-container"
             id="msla-tokenpicker-callout-location11"
+            style="position: relative;"
           >
             <div
               aria-describedby="msla-described-by-message12"
@@ -351,7 +354,7 @@ exports[`VariableEditor > renders correctly with single variable 1`] = `
               data-testid="name - 0 contenteditable"
               role="textbox"
               spellcheck="false"
-              style="user-select: text; white-space: pre-wrap; word-break: break-word;"
+              style="padding-inline-end: 32px; user-select: text; white-space: pre-wrap; word-break: break-word;"
               tabindex="0"
               title="Enter variable name"
             >
@@ -459,6 +462,7 @@ exports[`VariableEditor > renders correctly with single variable 1`] = `
               <div
                 class="msla-combobox-editor"
                 id="msla-tokenpicker-callout-location14"
+                style="position: relative;"
               >
                 <div
                   aria-describedby="msla-described-by-message15"
@@ -469,7 +473,7 @@ exports[`VariableEditor > renders correctly with single variable 1`] = `
                   data-testid="value - 0 contenteditable"
                   role="textbox"
                   spellcheck="false"
-                  style="user-select: text; white-space: pre-wrap; word-break: break-word;"
+                  style="padding-inline-end: 32px; user-select: text; white-space: pre-wrap; word-break: break-word;"
                   tabindex="0"
                   title="Enter initial value"
                 >
@@ -655,6 +659,7 @@ exports[`VariableEditor > renders correctly with single variable with Token 1`] 
           <div
             class="msla-setting-token-editor-container"
             id="msla-tokenpicker-callout-location19"
+            style="position: relative;"
           >
             <div
               aria-describedby="msla-described-by-message20"
@@ -665,7 +670,7 @@ exports[`VariableEditor > renders correctly with single variable with Token 1`] 
               data-testid="name - 0 contenteditable"
               role="textbox"
               spellcheck="false"
-              style="user-select: text; white-space: pre-wrap; word-break: break-word;"
+              style="padding-inline-end: 32px; user-select: text; white-space: pre-wrap; word-break: break-word;"
               tabindex="0"
               title="Enter variable name"
             >
@@ -773,6 +778,7 @@ exports[`VariableEditor > renders correctly with single variable with Token 1`] 
               <div
                 class="msla-combobox-editor"
                 id="msla-tokenpicker-callout-location22"
+                style="position: relative;"
               >
                 <div
                   aria-describedby="msla-described-by-message23"
@@ -783,7 +789,7 @@ exports[`VariableEditor > renders correctly with single variable with Token 1`] 
                   data-testid="value - 0 contenteditable"
                   role="textbox"
                   spellcheck="false"
-                  style="user-select: text; white-space: pre-wrap; word-break: break-word;"
+                  style="padding-inline-end: 32px; user-select: text; white-space: pre-wrap; word-break: break-word;"
                   tabindex="0"
                   title="Enter initial value"
                 />

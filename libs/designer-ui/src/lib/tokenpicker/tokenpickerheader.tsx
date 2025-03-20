@@ -2,14 +2,10 @@ import constants from '../constants';
 import { CLOSE_TOKENPICKER } from '../editor/base/plugins/CloseTokenPicker';
 import type { IButtonStyles } from '@fluentui/react';
 import { IconButton } from '@fluentui/react';
-import copilotLogo from './images/copilotLogo.svg';
-import { Button, Tooltip } from '@fluentui/react-components';
-import { ChevronLeft24Filled, ChevronLeft24Regular, bundleIcon } from '@fluentui/react-icons';
 import { useLexicalComposerContext } from '@lexical/react/LexicalComposerContext';
 import { LogEntryLevel, LoggerService } from '@microsoft/logic-apps-shared';
 import type { LexicalEditor } from 'lexical';
 import { useIntl } from 'react-intl';
-import { TokenPickerMode } from '.';
 import { useMemo } from 'react';
 
 const buttonStyles: IButtonStyles = {
@@ -28,20 +24,11 @@ const buttonStyles: IButtonStyles = {
 interface TokenPickerHeaderProps {
   fullScreen: boolean;
   isExpression: boolean;
-  isNl2fExpression: boolean;
-  setSelectedMode: (value: React.SetStateAction<TokenPickerMode>) => void;
   setFullScreen: (fullScreen: boolean) => void;
   pasteLastUsedExpression?: () => void;
 }
 
-export function TokenPickerHeader({
-  fullScreen,
-  isExpression,
-  isNl2fExpression,
-  setFullScreen,
-  pasteLastUsedExpression,
-  setSelectedMode,
-}: TokenPickerHeaderProps) {
+export function TokenPickerHeader({ fullScreen, isExpression, setFullScreen, pasteLastUsedExpression }: TokenPickerHeaderProps) {
   let editor: LexicalEditor | null;
   try {
     [editor] = useLexicalComposerContext();
@@ -77,21 +64,6 @@ export function TokenPickerHeader({
         id: '+ijo/2',
         description: "Token picker for 'Paste last used expression'",
       }),
-      createWithNl2fButtonText: intl.formatMessage({
-        defaultMessage: 'Create an expression with Copilot',
-        id: '+Agiub',
-        description: 'Button text for the create expression with copilot feature',
-      }),
-      previewTag: intl.formatMessage({
-        defaultMessage: 'Preview',
-        id: 'W2fZ0v',
-        description: 'Preview disclaimer tag',
-      }),
-      returnToExpressionEditor: intl.formatMessage({
-        defaultMessage: 'Return to expression editor',
-        id: 'MwMpAh',
-        description: 'Text of Tooltip to return to expression editor',
-      }),
     };
   }, [intl]);
 
@@ -107,43 +79,7 @@ export function TokenPickerHeader({
     });
   };
 
-  const DismissIcon = bundleIcon(ChevronLeft24Filled, ChevronLeft24Regular);
-  const renderNl2fExHeader = (
-    <div className="msla-token-picker-nl2f-header">
-      <div className="msla-token-picker-nl2f-header-title-container">
-        <Tooltip relationship="label" positioning={'before'} content={intlText.returnToExpressionEditor}>
-          <Button
-            data-testId={'expression-assistant-panel-header-back-button'}
-            appearance="subtle"
-            icon={<DismissIcon />}
-            className={'msla-token-picker-nl2f-header-back'}
-            onClick={() => {
-              setSelectedMode(TokenPickerMode.EXPRESSION);
-            }}
-            data-automation-id="msla-token-picker-nl2f-header-back"
-          />
-        </Tooltip>
-        <img src={copilotLogo} alt="Copilot" />
-        <div className={'msla-token-picker-nl2f-title'} data-testId={'expression-assistant-panel-header-title'}>
-          {intlText.createWithNl2fButtonText}
-        </div>
-        <div className={'msla-token-picker-nl2f-header-preview-tag'}>{intlText.previewTag}</div>
-      </div>
-      <div className={'msla-token-picker-nl2f-header-close-icon-container'}>
-        <IconButton
-          data-testId={'expression-assistant-panel-header-close-button'}
-          className="msla-token-picker-nl2f-header-close-icon"
-          iconProps={{ iconName: 'Cancel' }}
-          title={intlText.closeMessage}
-          ariaLabel={intlText.closeMessage}
-          onClick={handleCloseTokenPicker}
-          styles={buttonStyles}
-        />
-      </div>
-    </div>
-  );
-
-  const renderRegularHeader = (
+  const Header = (
     <div className="msla-token-picker-header">
       <div className="msla-token-picker-header-close" data-automation-id="msla-token-picker-header-close">
         <IconButton
@@ -211,5 +147,5 @@ export function TokenPickerHeader({
     </div>
   );
 
-  return isNl2fExpression ? renderNl2fExHeader : renderRegularHeader;
+  return Header;
 }

@@ -1,4 +1,4 @@
-@import (reference) '../variables.less';
+@import (reference) "../variables.less";
 
 @command-icon-width: 16px;
 @padding: 5px;
@@ -26,7 +26,9 @@
       .msla-array-content {
         display: inline-block;
         box-sizing: border-box;
-        width: calc(100% - @command-icon-width - @parameter-label-inputbox-margin);
+        width: calc(
+          100% - @command-icon-width - @parameter-label-inputbox-margin
+        );
 
         .msla-input-parameter-error {
           margin-left: 0;
@@ -39,18 +41,33 @@
         position: relative;
 
         .editor-input {
-          outline: 1px solid @panel-mode-panel-border-color;
+          border: 1px solid @panel-mode-panel-border-color;
           resize: none;
           font-size: 15px;
           tab-size: 1;
           min-height: 75px;
           line-height: 30px;
           padding-inline-start: 5px;
+          outline: none;
+          border-radius: 4px;
           &.readonly {
             background-color: rgba(128, 128, 128, 0.1);
           }
           &:focus {
-            outline: 2px solid @primary_focus_blue;
+            border-bottom: 1px solid @primary_border_blue;
+          }
+          &:focus::after {
+            content: "";
+            position: absolute;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            height: 4px;
+            border-left: 1px solid @primary_border_blue;
+            border-right: 1px solid @primary_border_blue;
+            border-bottom-left-radius: 4px; /* Match parent radius */
+            border-bottom-right-radius: 4px;
+            pointer-events: none;
           }
           p {
             margin: 0;
@@ -102,22 +119,37 @@
       .msla-array-editor-container-expanded {
         width: 100%;
         border-radius: 2px;
-        padding-bottom: 5px;
+        margin-bottom: 5px;
         position: relative;
 
         .editor-input {
-          outline: 1px solid @panel-mode-panel-border-color;
+          border: 1px solid @panel-mode-panel-border-color;
           resize: none;
           font-size: 15px;
           tab-size: 1;
           min-height: 30px;
           line-height: 20px;
           padding-inline-start: 5px;
+          outline: none;
+          border-radius: 4px;
           &.readonly {
             background-color: rgba(128, 128, 128, 0.1);
           }
           &:focus {
-            outline: 2px solid @primary_focus_blue;
+            border-bottom: 1px solid @primary_border_blue;
+          }
+          &:focus::after {
+            content: "";
+            position: absolute;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            height: 4px;
+            border-left: 1px solid @primary_border_blue;
+            border-right: 1px solid @primary_border_blue;
+            border-bottom-left-radius: 4px; /* Match parent radius */
+            border-bottom-right-radius: 4px;
+            pointer-events: none;
           }
           p {
             padding-top: 5px;
@@ -157,7 +189,7 @@
       vertical-align: top;
 
       .msla-array-item-contextbutton {
-        i[data-icon-name='ChevronDown'] {
+        i[data-icon-name="ChevronDown"] {
           display: none;
         }
         &:hover {

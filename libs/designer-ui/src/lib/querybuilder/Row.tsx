@@ -284,7 +284,7 @@ export const Row = ({
           getTokenPicker={getTokenPicker}
           editorBlur={handleValueSave}
           clearEditorOnTokenInsertion={clearEditorOnTokenInsertion}
-          tokenPickerButtonProps={{ location: TokenPickerButtonLocation.Left, newlineVerticalOffset: 16.5, horizontalOffSet: 33 }}
+          tokenPickerButtonProps={{ location: TokenPickerButtonLocation.Left, newlineVerticalOffset: 16, horizontalOffSet: 33 }}
           {...baseEditorProps}
         />
       </div>
