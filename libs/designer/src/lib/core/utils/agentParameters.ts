@@ -47,13 +47,23 @@ export const getAgentParameterTokens = (
   agentParameters: Record<string, AgentParameters>,
   nodesMetadata: NodesMetadata
 ): OutputToken[] | undefined => {
-  const nodeGraphId = getRecordEntry(nodesMetadata, nodeId)?.graphId;
-  if (!nodeGraphId) {
-    return undefined;
+  let nodeGraphId = getRecordEntry(nodesMetadata, nodeId)?.graphId;
+
+  while (nodeGraphId) {
+    const nodeMetadata = getRecordEntry(nodesMetadata, nodeGraphId);
+    if (!nodeMetadata) {
+      return undefined;
+    }
+
+    const isAgentCondition = nodeMetadata.subgraphType === SUBGRAPH_TYPES.AGENT_CONDITION;
+    if (isAgentCondition) {
+      break;
+    }
+
+    nodeGraphId = nodeMetadata.graphId;
   }
 
-  const isAgentCondition = getRecordEntry(nodesMetadata, nodeGraphId)?.subgraphType === SUBGRAPH_TYPES.AGENT_CONDITION;
-  if (!isAgentCondition) {
+  if (!nodeGraphId) {
     return undefined;
   }
 
