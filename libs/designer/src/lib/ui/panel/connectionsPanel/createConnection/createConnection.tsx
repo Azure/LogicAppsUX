@@ -23,6 +23,7 @@ import {
   isUsingAadAuthentication,
   equals,
   isTenantServiceEnabled,
+  isEmptyString,
 } from '@microsoft/logic-apps-shared';
 import type {
   GatewayServiceConfig,
@@ -733,7 +734,7 @@ export const CreateConnection = (props: CreateConnectionProps) => {
         </div>
 
         {/* Descriptor text for simple and oauth */}
-        <div>{connectorDescription}</div>
+        {isEmptyString(connectorDescription) ? null : <div>{connectorDescription}</div>}
         {/* {needsAuth && <IFrameTermsOfService url={termsOfServiceUrl} />} */}
       </div>
 

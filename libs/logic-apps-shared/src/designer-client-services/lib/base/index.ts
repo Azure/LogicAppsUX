@@ -40,12 +40,10 @@ export * from './operations';
 // Chatbot
 export { BaseChatbotService } from './chatbot';
 export type { ChatbotServiceOptions } from './chatbot';
-// Copilot
-export { BaseCopilotService } from './copilot';
-export type { CopilotServiceOptions } from './copilot';
 // Template
 export { BaseTemplateService } from './template';
 export type { BaseTemplateServiceOptions } from './template';
+export { BaseTemplateResourceService } from './templateresource';
 export { BaseResourceService } from './resource';
 // Tenant
 export { BaseTenantService } from './tenant';

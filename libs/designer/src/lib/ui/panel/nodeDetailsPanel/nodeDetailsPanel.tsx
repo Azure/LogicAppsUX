@@ -114,7 +114,7 @@ export const NodeDetailsPanel = (props: CommonPanelProps): JSX.Element => {
       const comment = nodeData?.comment;
 
       // Removing the 'add a note' button for subgraph nodes
-      const isSubgraphContainer = nodeData?.subgraphType === SUBGRAPH_TYPES['SWITCH_CASE'];
+      const isSubgraphContainer = nodeData?.subgraphType === SUBGRAPH_TYPES.SWITCH_CASE;
       const headerMenuItems: JSX.Element[] = [];
       if (!isSubgraphContainer) {
         headerMenuItems.push(

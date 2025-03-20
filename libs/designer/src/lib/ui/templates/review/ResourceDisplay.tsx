@@ -1,4 +1,4 @@
-import { Text } from '@fluentui/react-components';
+import { mergeClasses, Text } from '@fluentui/react-components';
 import { Spinner, SpinnerSize } from '@fluentui/react';
 import { useSubscriptions } from '../../../core/state/connection/connectionSelector';
 import { useMemo } from 'react';
@@ -8,10 +8,11 @@ import type { RootState } from '../../../core/state/templates/store';
 
 export type ResourceDisplayProps = {
   invertBolds?: boolean;
+  cssOverrides?: Record<string, string>;
 };
 
 export const ResourceDisplay = (props: ResourceDisplayProps) => {
-  const { invertBolds } = props;
+  const { invertBolds, cssOverrides } = props;
 
   const { subscriptionId, location, resourceGroup } = useSelector((state: RootState) => state.workflow);
 
@@ -27,7 +28,7 @@ export const ResourceDisplay = (props: ResourceDisplayProps) => {
   const valueWeight = useMemo(() => (invertBolds ? 'regular' : 'semibold'), [invertBolds]);
 
   return (
-    <div className="msla-templates-review-block basics">
+    <div className={mergeClasses('msla-templates-review-block basics', cssOverrides?.root)}>
       <div className="msla-templates-review-block">
         <Text weight={labelWeight}>{resourceStrings.SUBSCRIPTION}</Text>
         {subscriptionLoading ? <Spinner size={SpinnerSize.xSmall} /> : <Text weight={valueWeight}>{subscriptionDisplayName}</Text>}

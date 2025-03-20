@@ -25,6 +25,16 @@ export const useTemplatesStrings = () => {
         id: 'E7jFWU',
         description: 'Label for choosing logic app instance',
       }),
+      WORKFLOW_NAME: intl.formatMessage({
+        defaultMessage: 'Workflow name',
+        id: 'ekM77J',
+        description: 'Label for workflow Name',
+      }),
+      TEMPLATE_NAME: intl.formatMessage({
+        defaultMessage: 'Template',
+        id: '83Vrgj',
+        description: 'Label for template',
+      }),
     },
   };
 };
