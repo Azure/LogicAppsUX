@@ -19,7 +19,6 @@ import type {
   IChatbotService,
   ICustomCodeService,
   LogicApps,
-  ICopilotService,
   IDesignerUiInteractionsService,
   IUserPreferenceService,
   IExperimentationService,
@@ -75,7 +74,6 @@ export interface ServiceOptions {
   connectionParameterEditorService?: IConnectionParameterEditorService;
   chatbotService?: IChatbotService;
   customCodeService?: ICustomCodeService;
-  copilotService?: ICopilotService;
   uiInteractionsService?: IDesignerUiInteractionsService;
   userPreferenceService?: IUserPreferenceService;
   experimentationService?: IExperimentationService;
