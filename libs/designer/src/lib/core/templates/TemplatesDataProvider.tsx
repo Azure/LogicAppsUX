@@ -21,7 +21,6 @@ import { changeCurrentTemplateName } from '../state/templates/templateSlice';
 export interface TemplatesDataProviderProps {
   isConsumption: boolean | undefined;
   isCreateView: boolean;
-  existingWorkflowName?: string;
   resourceDetails: ResourceDetails;
   services: TemplateServiceOptions;
   connectionReferences: ConnectionReferences;
@@ -89,7 +88,6 @@ export const TemplatesDataProvider = (props: TemplatesDataProviderProps) => {
   }));
   const {
     services,
-    existingWorkflowName,
     isConsumption,
     resourceDetails,
     connectionReferences,
@@ -110,7 +108,6 @@ export const TemplatesDataProvider = (props: TemplatesDataProviderProps) => {
 
     dispatch(
       setInitialData({
-        existingWorkflowName,
         isConsumption: !!isConsumption,
         subscriptionId: resourceDetails.subscriptionId,
         resourceGroup: resourceDetails.resourceGroup,
@@ -120,7 +117,7 @@ export const TemplatesDataProvider = (props: TemplatesDataProviderProps) => {
         isCreateView: isCreateView,
       })
     );
-  }, [dispatch, servicesInitialized, existingWorkflowName, isConsumption, resourceDetails, connectionReferences, isCreateView, services]);
+  }, [dispatch, servicesInitialized, isConsumption, resourceDetails, connectionReferences, isCreateView, services]);
 
   useEffect(() => {
     if (viewTemplate) {

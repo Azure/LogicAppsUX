@@ -1,4 +1,4 @@
-@import (reference) '../variables.less';
+@import (reference) "../variables.less";
 
 @command-icon-width: 16px;
 @padding: 5px;
@@ -83,13 +83,12 @@
         display: table-row;
         .msla-dictionary-item-cell {
           position: relative;
-          border: 1px solid #989898;
           display: table-cell;
           vertical-align: top;
           width: 49%;
           .editor-input {
+            border: 1px solid @panel-mode-panel-border-color;
             outline: none;
-            margin: 1px;
             resize: none;
             font-size: 15px;
             tab-size: 1;
@@ -100,7 +99,7 @@
               background-color: rgba(128, 128, 128, 0.1);
             }
             &:focus {
-              outline: 2px solid @primary_focus_blue;
+              border-bottom: 1px solid @primary_border_blue;
             }
             p {
               padding-top: 5px;

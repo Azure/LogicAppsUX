@@ -89,7 +89,7 @@ export const addNodeToWorkflow = (
 
   // Increase action count of graph
   if (nodesMetadata[workflowGraph.id]) {
-    nodesMetadata[workflowGraph.id].actionCount = nodesMetadata[graphId].actionCount ?? 0 + 1;
+    nodesMetadata[workflowGraph.id].actionCount = (nodesMetadata[graphId].actionCount ?? 0) + 1;
   }
 
   // If the added node is a do-until, we need to set the subgraphtype for the header
@@ -241,7 +241,7 @@ export const addSwitchCaseToWorkflow = (caseId: string, switchNode: WorkflowNode
 
   // Increase action count of graph
   if (nodesMetadata[switchNode.id]) {
-    nodesMetadata[switchNode.id].actionCount = nodesMetadata[switchNode.id].actionCount ?? 0 + 1;
+    nodesMetadata[switchNode.id].actionCount = (nodesMetadata[switchNode.id].actionCount ?? 0) + 1;
   }
 };
 
@@ -273,6 +273,6 @@ export const addAgentConditionToWorkflow = (
 
   // Increase action count of graph
   if (nodesMetadata[agentNode.id]) {
-    nodesMetadata[agentNode.id].actionCount = nodesMetadata[agentNode.id].actionCount ?? 0 + 1;
+    nodesMetadata[agentNode.id].actionCount = (nodesMetadata[agentNode.id].actionCount ?? 0) + 1;
   }
 };

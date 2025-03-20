@@ -14,24 +14,25 @@ import { useTemplatesStrings } from '../templatesStrings';
 
 export const SingleWorkflowBasics = ({ workflowId }: { workflowId: string }) => {
   const dispatch = useDispatch<AppDispatch>();
-  const {
-    workflowName,
-    errors: { workflow: workflowError, kind: kindError },
-    kind,
-    manifest,
-  } = useWorkflowTemplate(workflowId);
-  const { isNameEditable, isKindEditable } = useWorkflowBasicsEditable(workflowId);
-  const { existingWorkflowName, enableResourceSelection, isConsumption, subscriptionId, resourceGroupName } = useSelector(
-    (state: RootState) => ({
-      existingWorkflowName: state.workflow.existingWorkflowName,
-      isConsumption: state.workflow.isConsumption,
-      subscriptionId: state.workflow.subscriptionId,
-      resourceGroupName: state.workflow.resourceGroup,
-      enableResourceSelection: state.templateOptions.enableResourceSelection,
-    })
+  const workflowTemplate = useWorkflowTemplate(workflowId);
+  const { workflowName, errors, kind, manifest } = useMemo(
+    () => ({
+      workflowName: workflowTemplate?.workflowName,
+      errors: workflowTemplate?.errors,
+      kind: workflowTemplate?.kind,
+      manifest: workflowTemplate?.manifest,
+    }),
+    [workflowTemplate]
   );
+  const { isNameEditable, isKindEditable } = useWorkflowBasicsEditable(workflowId);
+  const { enableResourceSelection, isConsumption, subscriptionId, resourceGroupName } = useSelector((state: RootState) => ({
+    isConsumption: state.workflow.isConsumption,
+    subscriptionId: state.workflow.subscriptionId,
+    resourceGroupName: state.workflow.resourceGroup,
+    enableResourceSelection: state.templateOptions.enableResourceSelection,
+  }));
   const { data: existingWorkflowNames } = useExistingWorkflowNames();
-  const name = useMemo(() => existingWorkflowName ?? workflowName, [existingWorkflowName, workflowName]);
+  const name = useMemo(() => workflowName, [workflowName]);
   const intl = useIntl();
   const resources = useTemplatesStrings().resourceStrings;
 
@@ -134,19 +135,19 @@ export const SingleWorkflowBasics = ({ workflowId }: { workflowId: string }) => 
         onChange={(_event: React.FormEvent<HTMLInputElement | HTMLTextAreaElement>, newValue?: string) => {
           dispatch(updateWorkflowName({ id: workflowId, name: newValue }));
         }}
-        disabled={!!existingWorkflowName || !isNameEditable}
+        disabled={!isNameEditable}
         onBlur={async () => {
-          const validationError = await validateWorkflowName(name, isConsumption, {
+          const validationError = await validateWorkflowName(name, !!isConsumption, {
             subscriptionId,
             resourceGroupName,
             existingWorkflowNames: existingWorkflowNames ?? [],
           });
           dispatch(updateWorkflowNameValidationError({ id: workflowId, error: validationError }));
         }}
-        errorMessage={workflowError}
+        errorMessage={errors?.workflow}
       />
       {isConsumption ? null : (
-        <div className={kindError ? 'msla-templates-tab-stateType-error' : ''}>
+        <div className={errors?.kind ? 'msla-templates-tab-stateType-error' : ''}>
           <Label className="msla-templates-tab-label" required={true} htmlFor={'stateTypeLabel'}>
             {intlText.STATE_TYPE}
           </Label>
@@ -182,7 +183,7 @@ export const SingleWorkflowBasics = ({ workflowId }: { workflowId: string }) => 
           />
         </div>
       )}
-      {kindError && <Text className="msla-templates-tab-stateType-error-message">{kindError}</Text>}
+      {errors?.kind && <Text className="msla-templates-tab-stateType-error-message">{errors?.kind}</Text>}
     </div>
   );
 };

@@ -3,7 +3,8 @@ import type { PayloadAction } from '@reduxjs/toolkit';
 import { createSlice, isAnyOf } from '@reduxjs/toolkit';
 import { initializeTemplateServices, resetStateOnResourceChange } from '../../actions/bjsworkflow/templates';
 import { resetTemplatesState } from '../global';
-import { setLocation, setResourceGroup, setSubscription, setWorkflowAppDetails } from './workflowSlice';
+import { setLocation, setLogicAppDetails, setResourceGroup, setSubscription, setWorkflowAppDetails } from './workflowSlice';
+import { initializeConfigureTemplateServices } from '../../actions/bjsworkflow/configuretemplate';
 
 export interface TemplateOptionsState {
   servicesInitialized: boolean;
@@ -29,13 +30,13 @@ export const templateOptionsSlice = createSlice({
   },
   extraReducers: (builder) => {
     builder.addCase(resetTemplatesState, () => initialState);
-    builder.addCase(initializeTemplateServices.fulfilled, (state, action) => {
-      state.servicesInitialized = action.payload;
-    });
     builder.addCase(resetStateOnResourceChange.fulfilled, (state, action) => {
       state.reInitializeServices = !action.payload;
     });
-    builder.addCase(setWorkflowAppDetails, (state, action) => {
+    builder.addMatcher(isAnyOf(initializeTemplateServices.fulfilled, initializeConfigureTemplateServices.fulfilled), (state, action) => {
+      state.servicesInitialized = action.payload;
+    });
+    builder.addMatcher(isAnyOf(setWorkflowAppDetails, setLogicAppDetails), (state, action) => {
       state.reInitializeServices = !!action.payload.name;
     });
     builder.addMatcher(isAnyOf(setSubscription, setResourceGroup, setLocation), (state, action) => {
