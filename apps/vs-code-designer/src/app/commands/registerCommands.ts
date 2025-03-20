@@ -69,7 +69,7 @@ export function registerCommands(): void {
   );
   registerCommandWithTreeNodeUnwrapping(extensionCommand.viewContent, viewContent);
   registerCommand(extensionCommand.createNewProject, createNewProjectFromCommand);
-  registerCommand(extensionCommand.createNewCodeProject, createNewCodeProjectFromCommand);
+  registerCommand(extensionCommand.createNewWorkspace, createNewCodeProjectFromCommand);
   registerCommand(extensionCommand.cloudToLocal, cloudToLocalCommand);
   registerCommand(extensionCommand.createCodeless, createCodeless);
   registerCommandWithTreeNodeUnwrapping(extensionCommand.createLogicApp, createLogicApp);
