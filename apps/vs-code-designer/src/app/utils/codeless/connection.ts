@@ -209,11 +209,9 @@ async function getConnectionReference(
         connectionProperties,
       };
 
-      if (parameterizeConnectionsSetting) {
-        parameterizeConnection(connectionReference, referenceKey, parametersToAdd, settingsToAdd);
-      }
-
-      return connectionReference;
+      return parameterizeConnectionsSetting
+        ? (parameterizeConnection(connectionReference, referenceKey, parametersToAdd, settingsToAdd) as ConnectionReferenceModel)
+        : connectionReference;
     })
     .catch((error) => {
       context.telemetry.properties.connectionKeyFailure = `Error fetching ${referenceKey}-connectionKey`;
@@ -265,7 +263,9 @@ export async function getConnectionsAndSettingsToUpdate(
       const resolvedConnectionReference = resolveConnectionsReferences(JSON.stringify(reference), undefined, localSettings.Values);
 
       accessToken = accessToken ? accessToken : await getAuthorizationToken(azureTenantId);
-      referencesToAdd[referenceKey] = await getConnectionReference(
+
+      // call api to get connection key but will not modify connections file
+      await getConnectionReference(
         context,
         referenceKey,
         resolvedConnectionReference,
@@ -286,7 +286,9 @@ export async function getConnectionsAndSettingsToUpdate(
       const resolvedConnectionReference = resolveConnectionsReferences(JSON.stringify(reference), undefined, localSettings.Values);
 
       accessToken = accessToken ? accessToken : await getAuthorizationToken(azureTenantId);
-      referencesToAdd[referenceKey] = await getConnectionReference(
+
+      // call api to get connection key but will not modify connections file
+      await getConnectionReference(
         context,
         referenceKey,
         resolvedConnectionReference,
