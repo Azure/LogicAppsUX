@@ -76,7 +76,7 @@ export const useNodeRepetition = (
   parentRunIndex: number | undefined
 ) => {
   return useQuery(
-    ['runInstance', { nodeId, runId, repetitionName, parentStatus }],
+    ['useNodeRepetition', { nodeId, runId, repetitionName, parentStatus }],
     async () => {
       if (parentStatus === constants.FLOW_STATUS.SKIPPED) {
         return {
@@ -138,14 +138,12 @@ export const useScopeRepetition = (
   runIndex: number | undefined
 ) => {
   return useQuery(
-    ['runInstance', { nodeId, runId, repetitionName, parentStatus, runIndex }],
+    ['runScopeRepetition', { nodeId, runId, repetitionName, parentStatus, runIndex }],
     async () => {
       return RunService().getScopeRepetition({ nodeId, runId }, repetitionName);
     },
     {
-      refetchOnWindowFocus: false,
-      refetchOnReconnect: false,
-      refetchOnMount: false,
+      ...queryOpts,
       retryOnMount: false,
       enabled: isMonitoringView && runIndex !== undefined && isAgent,
     }

@@ -1,6 +1,5 @@
-import constants from '../../common/constants';
 import { getMonitoringError } from '../../common/utilities/error';
-import type { AppDispatch } from '../../core';
+import { useNodeRepetition, type AppDispatch } from '../../core';
 import { copyOperation } from '../../core/actions/bjsworkflow/copypaste';
 import { moveOperation } from '../../core/actions/bjsworkflow/move';
 import {
@@ -48,12 +47,11 @@ import { getRepetitionName } from '../common/LoopsPager/helper';
 import { DropZone } from '../connections/dropzone';
 import { MessageBarType } from '@fluentui/react';
 import type { LogicAppsV2 } from '@microsoft/logic-apps-shared';
-import { isNullOrUndefined, RunService, useNodeIndex } from '@microsoft/logic-apps-shared';
+import { isNullOrUndefined, useNodeIndex } from '@microsoft/logic-apps-shared';
 import { Card } from '@microsoft/designer-ui';
 import { memo, useCallback, useEffect, useMemo, useState } from 'react';
 import { useDrag } from 'react-dnd';
 import { useIntl } from 'react-intl';
-import { useQuery } from '@tanstack/react-query';
 import { useDispatch } from 'react-redux';
 import { Handle, Position, type NodeProps } from '@xyflow/react';
 import { useHotkeys } from 'react-hotkeys-hook';
@@ -88,35 +86,13 @@ const DefaultNode = ({ targetPosition = Position.Top, sourcePosition = Position.
   const suppressDefaultNodeSelect = useSuppressDefaultNodeSelectFunctionality();
   const nodeSelectCallbackOverride = useNodeSelectAdditionalCallback();
 
-  const getRunRepetition = useCallback(() => {
-    if (parentRunData?.status === constants.FLOW_STATUS.SKIPPED) {
-      return {
-        properties: {
-          status: constants.FLOW_STATUS.SKIPPED,
-          inputsLink: null,
-          outputsLink: null,
-          startTime: null,
-          endTime: null,
-          trackingId: null,
-          correlation: null,
-        },
-      };
-    }
-    return RunService().getRepetition({ nodeId: id, runId: runInstance?.id }, repetitionName);
-  }, [id, parentRunData?.status, repetitionName, runInstance?.id]);
-
-  const { isFetching: isRepetitionFetching, data: repetitionRunData } = useQuery<any>(
-    ['runInstance', { nodeId: id, runId: runInstance?.id, repetitionName, parentStatus: parentRunData?.status, parentRunIndex }],
-    async () => {
-      return await getRunRepetition();
-    },
-    {
-      refetchOnWindowFocus: false,
-      refetchOnReconnect: false,
-      refetchOnMount: false,
-      retryOnMount: false,
-      enabled: !!isMonitoringView && parentRunIndex !== undefined,
-    }
+  const { isFetching: isRepetitionFetching, data: repetitionRunData } = useNodeRepetition(
+    !!isMonitoringView,
+    id,
+    runInstance?.id,
+    repetitionName,
+    parentRunData?.status,
+    parentRunIndex
   );
 
   useEffect(() => {
