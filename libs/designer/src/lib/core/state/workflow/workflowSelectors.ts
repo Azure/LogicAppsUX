@@ -330,6 +330,16 @@ export const useParentRunIndex = (id: string | undefined): number | undefined =>
     })
   );
 };
+export const useRunIndex = (id: string | undefined): number | undefined => {
+  return useSelector(
+    createSelector(getWorkflowState, (state: WorkflowState) => {
+      if (!id) {
+        return undefined;
+      }
+      return getRecordEntry(state.nodesMetadata, id)?.runIndex;
+    })
+  );
+};
 
 export const useParentRunId = (id: string | undefined): string | undefined => {
   return useSelector(

@@ -26,6 +26,7 @@ import {
   useParentRunId,
   useNodeDescription,
   useShouldNodeFocus,
+  useRunIndex,
 } from '../../core/state/workflow/workflowSelectors';
 import { setRepetitionRunData, toggleCollapsedGraphId } from '../../core/state/workflow/workflowSlice';
 import type { AppDispatch } from '../../core/store';
@@ -44,7 +45,7 @@ import { Handle, Position, type NodeProps } from '@xyflow/react';
 import { copyScopeOperation } from '../../core/actions/bjsworkflow/copypaste';
 import { useHotkeys } from 'react-hotkeys-hook';
 import { CopyTooltip } from '../common/DesignerContextualMenu/CopyTooltip';
-import { useNodeRepetition } from '../../core/queries/runs';
+import { useNodeRepetition, useScopeRepetition } from '../../core/queries/runs';
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 const ScopeCardNode = ({ data, targetPosition = Position.Top, sourcePosition = Position.Bottom, id }: NodeProps) => {
@@ -67,6 +68,16 @@ const ScopeCardNode = ({ data, targetPosition = Position.Top, sourcePosition = P
   const parentRunData = useRunData(parentRunId ?? '');
   const selfRunData = useRunData(scopeId);
   const nodesMetaData = useNodesMetadata();
+  const isPinned = useIsNodePinnedToOperationPanel(scopeId);
+  const selected = useIsNodeSelectedInOperationPanel(scopeId);
+  const brandColor = useBrandColor(scopeId);
+  const iconUri = useIconUri(scopeId);
+  const isLeaf = useIsLeafNode(id);
+  const label = useNodeDisplayName(scopeId);
+  const normalizedType = node?.type.toLowerCase();
+  const isAgent = normalizedType === constants.NODE.TYPE.AGENT;
+  const runIndex = useRunIndex(scopeId);
+
   const repetitionName = useMemo(
     () => getRepetitionName(parentRunIndex, scopeId, nodesMetaData, operationsInfo),
     [nodesMetaData, operationsInfo, parentRunIndex, scopeId]
@@ -80,6 +91,18 @@ const ScopeCardNode = ({ data, targetPosition = Position.Top, sourcePosition = P
     parentRunData?.status,
     parentRunIndex
   );
+
+  const { isFetching: isScopeRepetitionFetching, data: scopeRepetitionRunData } = useScopeRepetition(
+    !!isMonitoringView,
+    isAgent,
+    scopeId,
+    runInstance?.id,
+    repetitionName,
+    parentRunData?.status,
+    runIndex
+  );
+
+  console.log('charlie', isAgent, scopeId, runIndex, isScopeRepetitionFetching, scopeRepetitionRunData, runInstance?.id);
 
   useEffect(() => {
     if (!isNullOrUndefined(repetitionRunData)) {
@@ -126,13 +149,6 @@ const ScopeCardNode = ({ data, targetPosition = Position.Top, sourcePosition = P
     }),
     [readOnly, metadata]
   );
-
-  const isPinned = useIsNodePinnedToOperationPanel(scopeId);
-  const selected = useIsNodeSelectedInOperationPanel(scopeId);
-  const brandColor = useBrandColor(scopeId);
-  const iconUri = useIconUri(scopeId);
-  const isLeaf = useIsLeafNode(id);
-  const label = useNodeDisplayName(scopeId);
 
   const nodeClick = useCallback(() => {
     dispatch(changePanelNode(scopeId));
@@ -262,7 +278,6 @@ const ScopeCardNode = ({ data, targetPosition = Position.Top, sourcePosition = P
     return null;
   }
 
-  const normalizedType = node?.type.toLowerCase();
   const actionCount = metadata?.actionCount ?? 0;
 
   const actionString = intl.formatMessage(
@@ -282,7 +297,6 @@ const ScopeCardNode = ({ data, targetPosition = Position.Top, sourcePosition = P
     },
     { actionCount }
   );
-  const isAgent = normalizedType === constants.NODE.TYPE.AGENT;
 
   const collapsedText =
     normalizedType === constants.NODE.TYPE.SWITCH || normalizedType === constants.NODE.TYPE.IF || isAgent ? caseString : actionString;

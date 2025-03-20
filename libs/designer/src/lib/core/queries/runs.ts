@@ -128,29 +128,17 @@ export const useScopeFailedRepetitions = (normalizedType: string, nodeId: string
   );
 };
 
-// const {
-//   isError,
-//   isFetching,
-//   data: failedRepetitions,
-// } = useQuery<any>(
-//   ['runRepetitions', { nodeId: scopeId, runId: runInstance?.id }],
-//   async () => {
-
-//   },
-
-// );
-
 export const useScopeRepetition = (
   isMonitoringView: boolean,
   isAgent: boolean,
   nodeId: string,
   runId: string | undefined,
   repetitionName: string,
-  parentStatus: string,
-  parentRunIndex: number | undefined
+  parentStatus: string | undefined,
+  runIndex: number | undefined
 ) => {
   return useQuery(
-    ['runInstance', { nodeId, runId, repetitionName, parentStatus, parentRunIndex }],
+    ['runInstance', { nodeId, runId, repetitionName, parentStatus, runIndex }],
     async () => {
       return RunService().getScopeRepetition({ nodeId, runId }, repetitionName);
     },
@@ -159,36 +147,7 @@ export const useScopeRepetition = (
       refetchOnReconnect: false,
       refetchOnMount: false,
       retryOnMount: false,
-      enabled: isMonitoringView && parentRunIndex !== undefined && isAgent,
+      enabled: isMonitoringView && runIndex !== undefined && isAgent,
     }
   );
 };
-
-// export const useScopeFailedRepetitions = (isMonitoringView: boolean, nodeId: string, runId: string | undefined, repetitionName: string, parentStatus: string, parentRunIndex:  number | undefined) => {
-//   return useQuery(
-//     ['runInstance', { nodeId, runId, repetitionName, parentStatus, parentRunIndex }],
-//     async () => {
-//           if (parentStatus === constants.FLOW_STATUS.SKIPPED) {
-//       return {
-//         properties: {
-//           status: constants.FLOW_STATUS.SKIPPED,
-//           inputsLink: null,
-//           outputsLink: null,
-//           startTime: null,
-//           endTime: null,
-//           trackingId: null,
-//           correlation: null,
-//         },
-//       };
-//     }
-//       return RunService().getRepetition({ nodeId, runId }, repetitionName);
-//     },
-//     {
-//       refetchOnWindowFocus: false,
-//       refetchOnReconnect: false,
-//       refetchOnMount: false,
-//       retryOnMount: false,
-//       enabled: isMonitoringView && parentRunIndex !== undefined,
-//     }
-//   );
-// };
