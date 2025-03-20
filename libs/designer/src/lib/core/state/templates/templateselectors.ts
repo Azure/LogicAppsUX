@@ -4,10 +4,6 @@ import type { WorkflowTemplateData } from '../../actions/bjsworkflow/templates';
 import type { ConnectionReference } from '../../../common/models/workflow';
 import type { Template } from '@microsoft/logic-apps-shared';
 
-export const useAreServicesInitialized = () => {
-  return useSelector((state: RootState) => state.templateOptions.servicesInitialized ?? false);
-};
-
 export const useTemplateWorkflows = () => {
   return useSelector((state: RootState) => state.template.workflows ?? {});
 };
@@ -38,4 +34,12 @@ export const useConnectionReferenceForKey = (key: string): ConnectionReference =
     const connections = state.workflow.connections;
     return connections.references[connections.mapping[key] ?? ''];
   });
+};
+
+export const useTemplateConnections = (): Record<string, Template.Connection> => {
+  return useSelector((state: RootState) => state.template?.connections);
+};
+
+export const useTemplateParameterDefinitions = (): Record<string, Template.ParameterDefinition> => {
+  return useSelector((state: RootState) => state.template?.parameterDefinitions);
 };

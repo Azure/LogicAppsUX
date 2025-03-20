@@ -73,6 +73,7 @@ import type {
 } from '@microsoft/logic-apps-shared';
 import merge from 'lodash.merge';
 import { createTokenValueSegment } from '../../utils/parameters/segment';
+import { ConnectorManifest } from './agent';
 
 export interface SerializeOptions {
   skipValidation: boolean;
@@ -286,6 +287,10 @@ export const serializeOperation = async (
         serializedOperation = await serializeSwaggerBasedOperation(rootState, operationId);
         break;
       }
+      case Constants.NODE.TYPE.CONNECTOR: {
+        serializedOperation = await serializeAgentConnectorOperation(rootState, operationId);
+        break;
+      }
 
       default: {
         LoggerService().log({
@@ -387,6 +392,29 @@ const serializeSwaggerBasedOperation = async (rootState: RootState, operationId:
   };
 };
 
+export const serializeAgentConnectorOperation = async (
+  rootState: RootState,
+  operationId: string
+): Promise<LogicAppsV2.OperationDefinition> => {
+  const idReplacements = rootState.workflow.idReplacements;
+  const operation = getRecordEntry(rootState.operations.operationInfo, operationId);
+  if (!operation) {
+    throw new AssertionException(AssertionErrorCode.OPERATION_NOT_FOUND, `Operation with id ${operationId} not found`);
+  }
+  const inputsToSerialize = getOperationInputsToSerialize(rootState, operationId);
+  const inputPathValue = serializeParametersFromManifest(inputsToSerialize, ConnectorManifest);
+  const operationFromWorkflow = getRecordEntry(rootState.workflow.operations, operationId) as LogicAppsV2.OperationDefinition;
+  const runAfter = getRunAfter(operationFromWorkflow, idReplacements);
+
+  return {
+    type: operation.type,
+    ...optional('description', operationFromWorkflow?.description),
+    ...optional('kind', operation.kind),
+    ...optional('inputs', inputPathValue),
+    ...optional('runAfter', runAfter),
+  };
+};
+
 const getRunAfter = (operation: LogicAppsV2.ActionDefinition, idReplacements: Record<string, string>): LogicAppsV2.RunAfter => {
   if (!operation.runAfter) {
     return {};
@@ -402,7 +430,7 @@ export interface SerializedParameter extends ParameterInfo {
   value: any;
 }
 
-const getOperationInputsToSerialize = (rootState: RootState, operationId: string): SerializedParameter[] => {
+export const getOperationInputsToSerialize = (rootState: RootState, operationId: string): SerializedParameter[] => {
   const idReplacements = rootState.workflow.idReplacements;
   return getOperationInputParameters(rootState, operationId).map((input) => ({
     ...input,
@@ -657,6 +685,14 @@ interface ServiceProviderConnectionConfigInfo {
   };
 }
 
+interface AgentConnectionInfo {
+  modelConfiguration: {
+    connectionName: string;
+    operationId: string;
+    agentId: string;
+  };
+}
+
 const serializeHost = (
   nodeId: string,
   manifest: OperationManifest,
@@ -666,6 +702,7 @@ const serializeHost = (
   | ApiManagementConnectionInfo
   | OpenApiConnectionInfo
   | ServiceProviderConnectionConfigInfo
+  | AgentConnectionInfo
   | HybridTriggerConnectionInfo
   | undefined => {
   if (!manifest.properties.connectionReference) {
@@ -717,6 +754,14 @@ const serializeHost = (
           connectionName: referenceKey,
           operationId,
           serviceProviderId: connectorId,
+        },
+      };
+    case ConnectionReferenceKeyFormat.AgentConnection:
+      return {
+        modelConfiguration: {
+          connectionName: referenceKey,
+          operationId,
+          agentId: connectorId,
         },
       };
     case ConnectionReferenceKeyFormat.HybridTrigger:

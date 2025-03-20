@@ -1,4 +1,4 @@
-import { isCustomCode } from '@microsoft/designer-ui';
+import { isCustomCodeParameter } from '@microsoft/designer-ui';
 import Constants from '../../../common/constants';
 import type { WorkflowNode } from '../../parsers/models/workflowNode';
 import { getConnectionsForConnector, getConnectorWithSwagger } from '../../queries/connections';
@@ -154,7 +154,7 @@ export const initializeOperationDetails = async (
       presetParameterValues
     );
     const customCodeParameter = getParameterFromName(nodeInputs, Constants.DEFAULT_CUSTOM_CODE_INPUT);
-    if (customCodeParameter && isCustomCode(customCodeParameter?.editor, customCodeParameter?.editorOptions?.language)) {
+    if (customCodeParameter && isCustomCodeParameter(customCodeParameter)) {
       initializeCustomCodeDataInInputs(customCodeParameter, nodeId, dispatch);
     }
     const { outputs: nodeOutputs, dependencies: outputDependencies } = getOutputParametersFromManifest(
@@ -337,8 +337,10 @@ export const trySetDefaultConnectionForNode = async (
     await ConnectionService().setupConnectionIfNeeded(connection);
     dispatch(updateNodeConnection({ nodeId, connection, connector }));
   } else if (isConnectionRequired) {
-    dispatch(initEmptyConnectionMap(nodeId));
-    dispatch(openPanel({ nodeId, panelMode: 'Connection', referencePanelMode: 'Operation' }));
+    if (connector.id !== '/connectionProviders/agent') {
+      dispatch(initEmptyConnectionMap(nodeId));
+      dispatch(openPanel({ nodeId, panelMode: 'Connection', referencePanelMode: 'Operation' }));
+    }
   }
 };
 

@@ -14,3 +14,4 @@ export * from './operations';
 export * from './recurrence';
 export * from './run';
 export * from './stringFunctions';
+export * from './localStorage';

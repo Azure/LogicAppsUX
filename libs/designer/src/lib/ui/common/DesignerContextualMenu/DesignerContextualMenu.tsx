@@ -185,7 +185,7 @@ export const DesignerContextualMenu = () => {
 
   const subgraphMenuItems: JSX.Element[] = useMemo(
     () => [
-      ...(metadata?.subgraphType === SUBGRAPH_TYPES['SWITCH_CASE']
+      ...(metadata?.subgraphType === SUBGRAPH_TYPES.SWITCH_CASE || metadata?.subgraphType === SUBGRAPH_TYPES.AGENT_CONDITION
         ? [<DeleteMenuItem key={'delete'} onClick={deleteClick} showKey />]
         : []),
     ],
@@ -193,7 +193,7 @@ export const DesignerContextualMenu = () => {
   );
 
   const graphMenuItems: JSX.Element[] = useMemo(
-    () => [<ExpandCollapseMenuItem key={'expand-collapse '} id={'expand-collapse'} nodeId={nodeId} />],
+    () => [<ExpandCollapseMenuItem key={'expand-collapse'} menuKey={'expand-collapse'} nodeId={nodeId} />],
     [nodeId]
   );
 

@@ -11,8 +11,7 @@ import Fuse from 'fuse.js';
 import React, { useCallback, useMemo } from 'react';
 import { useStyles } from './styles';
 import { useSelector } from 'react-redux';
-import { LogEntryLevel, LoggerService } from '@microsoft/logic-apps-shared';
-import { isString } from 'lodash';
+import { LoggerService } from '@microsoft/logic-apps-shared';
 import { useIntl } from 'react-intl';
 
 const loopFuseFunctionSearchOptions: Fuse.IFuseOptions<string> = {
@@ -131,12 +130,7 @@ export const FunctionList = (props: FunctionListProps) => {
       // Add function categories as children to the tree root, filtering out any that don't have any children
       return Object.values(updatedFunctionCategories).filter((category) => category.children.length > 0);
     } catch (error) {
-      const errorMessage = isString(error) ? error : error instanceof Error ? error.message : 'Unknown error';
-      LoggerService().log({
-        level: LogEntryLevel.Error,
-        area: `${LogCategory.FunctionList}/functionListError`,
-        message: errorMessage,
-      });
+      LoggerService().logErrorWithFormatting(error, `${LogCategory.FunctionList}/functionListError`);
     }
 
     return [];

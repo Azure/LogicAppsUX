@@ -828,6 +828,15 @@ export interface AgentCondition {
   agentParameterSchema?: any;
 }
 
+export interface ConnectorAction extends Action {
+  inputs: ConnectorActionInputs;
+}
+
+export interface ConnectorActionInputs {
+  operations: string;
+  connector: string;
+}
+
 /* Table action types */
 
 export interface TableAction extends Action {

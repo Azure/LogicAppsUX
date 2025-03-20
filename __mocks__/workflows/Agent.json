@@ -2,11 +2,11 @@
   "definition": {
     "$schema": "https://schema.management.azure.com/providers/Microsoft.Logic/schemas/2016-06-01/workflowdefinition.json#",
     "actions": {
-      "Agent": {
+      "WorkflowAgent": {
         "type": "Agent",
         "inputs": {
           "parameters": {
-            "deploymentId": "test",
+            "deploymentId": "gpt-4o",
             "messages": [
               {
                 "role": "System",
@@ -14,29 +14,31 @@
               },
               {
                 "role": "User",
-                "content": "This is a user message.",
-                "image": "image data",
-                "author": "chat user name"
+                "content": "This is a user message."
               }
             ],
-            "temperature": 1
+            "limit": {
+              "count": 60,
+              "timeout": "PT1H"
+            }
           }
         },
         "tools": {
-          "If_Condition_X_Matches": {
-            "description": "If the condition X matches, execute this branch",
-            "type": "Tool",
-            "agentParameterSchema": {
-              "type": "object",
-              "properties": {
-                "Property1": {
-                  "type": "string"
+          "If_Condition_Y_Matches": {
+            "actions": {
+              "Service Bus": {
+                "type": "connector",
+                "inputs": {
+                  "operations": "getQueues,getTopics,getTopicSubcriptions,sendMessage",
+                  "connector": "/serviceProviders/serviceBus"
                 },
-                "Property2": {
-                  "type": "boolean"
-                }
+                "runAfter": {}
               }
             },
+            "description": "If the condition Y matches, execute this branch",
+            "type": "Tool"
+          },
+          "If_Condition_X_Matches": {
             "actions": {
               "HTTP": {
                 "type": "Http",
@@ -49,6 +51,38 @@
                   "contentTransfer": {
                     "transferMode": "Chunked"
                   }
+                }
+              },
+              "HTTP_1": {
+                "type": "Http",
+                "inputs": {
+                  "uri": "http://google.com",
+                  "method": "POST",
+                  "headers": "@agentParameters('TestParameter')",
+                  "body": "@agentParameters('Parameter1')"
+                },
+                "runAfter": {
+                  "HTTP": ["SUCCEEDED"]
+                },
+                "runtimeConfiguration": {
+                  "contentTransfer": {
+                    "transferMode": "Chunked"
+                  }
+                }
+              }
+            },
+            "description": "If the condition X matches, execute this branch",
+            "type": "Tool",
+            "agentParameterSchema": {
+              "type": "object",
+              "properties": {
+                "TestParameter": {
+                  "type": "string",
+                  "description": "this is a string parameter"
+                },
+                "Parameter1": {
+                  "type": "boolean",
+                  "description": "this is a boolean parameter"
                 }
               }
             }
@@ -67,5 +101,5 @@
       }
     }
   },
-  "kind": "Stateful"
+  "kind": "Agentic"
 }

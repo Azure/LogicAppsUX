@@ -1,7 +1,14 @@
 import { WarningModalState, openDiscardWarningModal } from '../../core/state/ModalSlice';
 import type { AppDispatch, RootState } from '../../core/state/Store';
-import { Toolbar, ToolbarButton, ToolbarGroup, Switch, tokens, useId, Toaster } from '@fluentui/react-components';
-import { Dismiss20Regular, PlayRegular, Save20Regular, TextGrammarErrorRegular } from '@fluentui/react-icons';
+import { Toolbar, ToolbarButton, ToolbarGroup, Switch, tokens, useId, Toaster, Badge } from '@fluentui/react-components';
+import {
+  ArrowRedo20Regular,
+  ArrowUndo20Regular,
+  Dismiss20Regular,
+  PlayRegular,
+  Save20Regular,
+  TextGrammarErrorRegular,
+} from '@fluentui/react-icons';
 import { useCallback, useEffect, useMemo } from 'react';
 import { useIntl } from 'react-intl';
 import { useDispatch, useSelector } from 'react-redux';
@@ -14,6 +21,8 @@ import { convertToMapDefinition } from '../../mapHandling/MapDefinitionSerialize
 import { toggleCodeView, toggleMapChecker, toggleTestPanel } from '../../core/state/PanelSlice';
 import { useStyles } from './styles';
 import { emptyCanvasRect, LogEntryLevel, LoggerService } from '@microsoft/logic-apps-shared';
+import { collectErrorsForMapChecker } from '../../utils/MapChecker.Utils';
+import { ActionCreators } from 'redux-undo';
 
 export type EditorCommandBarProps = {};
 
@@ -23,6 +32,7 @@ export const EditorCommandBar = (_props: EditorCommandBarProps) => {
 
   const { isDirty, sourceInEditState, targetInEditState, isTestDisabledForOS } = useSelector((state: RootState) => state.dataMap.present);
   const undoStack = useSelector((state: RootState) => state.dataMap.past);
+  const redoStack = useSelector((state: RootState) => state.dataMap.future);
   const isCodeViewOpen = useSelector((state: RootState) => state.panel.codeViewPanel.isOpen);
   const { sourceSchema, targetSchema } = useSelector((state: RootState) => state.dataMap.present.curDataMapOperation);
 
@@ -36,6 +46,9 @@ export const EditorCommandBar = (_props: EditorCommandBarProps) => {
   const canvasRect = useSelector(
     (state: RootState) => state.dataMap.present.curDataMapOperation.loadedMapMetadata?.canvasRect ?? emptyCanvasRect
   );
+  // used to calculate error count
+  const storeErrors = useSelector((state: RootState) => state.errors.deserializationMessages);
+  const connectionDictionary = useSelector((state: RootState) => state.dataMap.present.curDataMapOperation.dataMapConnections);
 
   const failedXsltMessage = intl.formatMessage({
     defaultMessage: 'Failed to generate XSLT.',
@@ -53,17 +66,7 @@ export const EditorCommandBar = (_props: EditorCommandBarProps) => {
         const result = convertToMapDefinition(currentConnections, sourceSchema, targetSchema, targetSchemaSortArray);
         return result;
       } catch (error) {
-        let errorMessage = '';
-        if (typeof error === 'string') {
-          errorMessage = error;
-        } else if (error instanceof Error) {
-          errorMessage = error.message;
-        }
-        LoggerService().log({
-          level: LogEntryLevel.Error,
-          area: `${LogCategory.DataMapperDesigner}/dataMapDefinition`,
-          message: errorMessage,
-        });
+        LoggerService().logErrorWithFormatting(error, `${LogCategory.DataMapperDesigner}/generateDataMapDefinitionSerialize`);
         return { isSuccess: false, errorNodes: [] };
       }
     }
@@ -112,7 +115,7 @@ export const EditorCommandBar = (_props: EditorCommandBarProps) => {
           LoggerService().log({
             level: LogEntryLevel.Error,
             area: `${LogCategory.DataMapperDesigner}/onGenerateClick`,
-            message: JSON.stringify(error),
+            message: JSON.stringify(error.message),
           });
           DataMapperFileService().sendNotification(failedXsltMessage, error.message, LogEntryLevel.Error);
         });
@@ -154,6 +157,11 @@ export const EditorCommandBar = (_props: EditorCommandBarProps) => {
         id: 'r43nMc',
         description: 'Button text for undo the last action',
       }),
+      REDO: intl.formatMessage({
+        defaultMessage: 'Redo',
+        id: 'i1cwra',
+        description: 'Button text for redo the last undone action',
+      }),
       DISCARD: intl.formatMessage({
         defaultMessage: 'Discard',
         id: 'Q4TUFX',
@@ -190,6 +198,14 @@ export const EditorCommandBar = (_props: EditorCommandBarProps) => {
 
   const toolbarStyles = useStyles();
 
+  const onUndoClick = () => {
+    dispatch(ActionCreators.undo());
+  };
+
+  const onRedoClick = () => {
+    dispatch(ActionCreators.redo());
+  };
+
   const disabledState = useMemo(
     () => ({
       save: !isDirty || sourceInEditState || targetInEditState,
@@ -201,6 +217,23 @@ export const EditorCommandBar = (_props: EditorCommandBarProps) => {
     }),
     [isDirty, undoStack.length, sourceInEditState, targetInEditState, xsltFilename, isTestDisabledForOS]
   );
+
+  const mapCheckerIcon = useMemo(() => {
+    const errorMessagesCount = collectErrorsForMapChecker(connectionDictionary).length;
+    const deserializationErrorMessages = isDirty ? 0 : storeErrors.length;
+    const errorCount = errorMessagesCount + deserializationErrorMessages;
+
+    const mapCheckerDisabled = <TextGrammarErrorRegular color={undefined} />;
+    const mapCheckerEnabledNoErrors = <TextGrammarErrorRegular color={tokens.colorPaletteBlueBorderActive} />;
+    const mapCheckerErrors = <Badge color="danger">{errorCount}</Badge>;
+    if (disabledState.mapChecker) {
+      return mapCheckerDisabled;
+    }
+    if (errorCount > 0) {
+      return mapCheckerErrors;
+    }
+    return mapCheckerEnabledNoErrors;
+  }, [connectionDictionary, disabledState.mapChecker, isDirty, storeErrors.length]);
 
   return (
     <>
@@ -232,13 +265,15 @@ export const EditorCommandBar = (_props: EditorCommandBarProps) => {
           >
             {Resources.OPEN_TEST_PANEL}
           </ToolbarButton>
+          <ToolbarButton aria-label={Resources.UNDO} icon={<ArrowUndo20Regular />} disabled={undoStack.length === 0} onClick={onUndoClick}>
+            {Resources.UNDO}
+          </ToolbarButton>
+          <ToolbarButton aria-label={Resources.REDO} icon={<ArrowRedo20Regular />} disabled={redoStack.length === 0} onClick={onRedoClick}>
+            {Resources.REDO}
+          </ToolbarButton>
         </ToolbarGroup>
         <ToolbarGroup className={toolbarStyles.toolbarGroup}>
-          <ToolbarButton
-            disabled={disabledState.mapChecker}
-            icon={<TextGrammarErrorRegular color={disabledState.mapChecker ? undefined : tokens.colorPaletteBlueBorderActive} />}
-            onClick={onMapCheckerClick}
-          >
+          <ToolbarButton disabled={disabledState.mapChecker} icon={mapCheckerIcon} onClick={onMapCheckerClick}>
             {Resources.VIEW_MAP_CHECKER}
           </ToolbarButton>
           <Switch disabled={disabledState.codeView} label={Resources.VIEW_CODE} onChange={onCodeViewClick} checked={isCodeViewOpen} />

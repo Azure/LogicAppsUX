@@ -1,5 +1,14 @@
 import constants from '../../../common/constants';
-import { VariableBrandColor, FxIcon, ParameterIcon, VariableIcon } from './helper';
+import {
+  VariableBrandColor,
+  FxIcon,
+  ParameterIcon,
+  VariableIcon,
+  AgentParameterIcon,
+  AgentParameterBrandColor,
+  ParameterBrandColor,
+  FxBrandColor,
+} from './helper';
 import { JsonSplitter } from './jsonsplitter';
 import { TokenSegmentConvertor } from './tokensegment';
 import { UncastingUtility } from './uncast';
@@ -379,7 +388,7 @@ export function createExpressionToken(expression: Expression): Token {
     expression,
     key: guid(),
     title: (expression as ExpressionFunction).name,
-    brandColor: '#AD008C',
+    brandColor: FxBrandColor,
     icon: FxIcon,
     value: (expression as ExpressionFunction).expression,
   };
@@ -416,8 +425,25 @@ export function createParameterToken(parameterName: string): Token {
     title: parameterName,
     name: parameterName,
     key: parameterName,
-    brandColor: '#916F6F',
+    brandColor: ParameterBrandColor,
     icon: ParameterIcon,
+  };
+}
+
+/**
+ * Creates an agent parameter token.
+ * @arg {string} value - The value.
+ * @arg {string} parameterName - The parameter name.
+ * @return {Token}
+ */
+export function createAgentParameterToken(parameterName: string): Token {
+  return {
+    tokenType: TokenType.AGENTPARAMETER,
+    title: parameterName,
+    name: parameterName,
+    key: `agentParameter.${parameterName}`,
+    brandColor: AgentParameterBrandColor,
+    icon: AgentParameterIcon,
   };
 }
 

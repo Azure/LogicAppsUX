@@ -192,6 +192,7 @@ export default {
     SCHEMA: 'schema',
     STRING: 'string',
     TABLE: 'table',
+    INITIALIZE_VARIABLE: 'initializevariable',
     VARIABLE_NAME: 'variablename',
     HTML: 'html',
     RECURRENCE: 'recurrence',
@@ -230,6 +231,7 @@ export default {
   FUNCTION_NAME: {
     VARIABLES: 'variables',
     PARAMETERS: 'parameters',
+    AGENT_PARAMETERS: 'agentParameters',
   },
   GATEWAY_CHECKBOX_KEY: '__GATEWAY_CHECKBOX',
   GATEWAY_DEFAULT_REFRESH_INTERVAL_IN_MILLISECONDS: 15000,
@@ -383,6 +385,7 @@ export default {
       SLIDING_WINDOW: 'slidingwindow',
       SWITCH: 'switch',
       AGENT: 'agent',
+      AGENT_CONDITION: 'agentcondition',
       TABLE: 'table',
       TERMINATE: 'terminate',
       UNTIL: 'until',
@@ -390,6 +393,7 @@ export default {
       WORKFLOW: 'workflow',
       XML_VALIDATION: 'xmlvalidation',
       XSLT: 'xslt',
+      CONNECTOR: 'connector',
     },
     KIND: {
       ADDTOTIME: 'addtotime',
@@ -452,6 +456,12 @@ export default {
     NAME: 'name',
     PROPERTIES: 'properties',
     RELATIVE_PATH_PARAMETERS: 'relativePathParameters',
+  },
+  PARAMETER_NAMES: {
+    VARIABLES: 'variables',
+    AGENT_PARAMETER_SCHEMA: 'agentParameterSchema',
+    LIMIT_COUNT: 'limit.count',
+    LIMIT_TIMEOUT: 'limit.timeout',
   },
   PARAMETER_VALUE_TYPE: {
     ALTERNATIVE: 'Alternative',

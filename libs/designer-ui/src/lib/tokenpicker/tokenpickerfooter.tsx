@@ -17,8 +17,8 @@ import {
   ExpressionParser,
   ScannerException,
   guid,
-  isCopilotServiceEnabled,
   unescapeString,
+  LOCAL_STORAGE_KEYS,
 } from '@microsoft/logic-apps-shared';
 import type { Expression, TokenGroup, Token as TokenGroupToken } from '@microsoft/logic-apps-shared';
 import type { LexicalEditor, NodeKey } from 'lexical';
@@ -78,11 +78,6 @@ export function TokenPickerFooter({
     id: 't9RwOi',
     description: 'Invalid expression alert',
   });
-  const invalidExpressionFixWithCopilot = intl.formatMessage({
-    defaultMessage: 'This expression has a problem. You can fix it manually or with Copilot.',
-    id: 'QbVD0F',
-    description: 'Invalid expression alert with option to fix with copilot.',
-  });
   const invalidExpressionQuotations = intl.formatMessage({
     defaultMessage: 'The expression is invalid. Make sure to use single quotes.',
     id: 'H9CZTr',
@@ -122,7 +117,7 @@ export function TokenPickerFooter({
         // if the expression contains misused double quotes, we'll show a different error message
         setExpressionEditorError(invalidExpressionQuotations);
       } else {
-        setExpressionEditorError(isCopilotServiceEnabled() ? invalidExpressionFixWithCopilot : invalidExpression);
+        setExpressionEditorError(invalidExpression);
       }
     }
 
@@ -137,8 +132,8 @@ export function TokenPickerFooter({
       return;
     }
 
-    if (expression.value && window.localStorage.getItem('msla-tokenpicker-expression') !== expression.value) {
-      window.localStorage.setItem('msla-tokenpicker-expression', expression.value);
+    if (expression.value && window.localStorage.getItem(LOCAL_STORAGE_KEYS.TOKEN_PICKER_EXPRESSION) !== expression.value) {
+      window.localStorage.setItem(LOCAL_STORAGE_KEYS.TOKEN_PICKER_EXPRESSION, expression.value);
     }
     // if the expression is just an output token, instead of creating an expression, we'll just insert the token
     const outputToken = getExpressionOutput(currExpression, outputTokenMap);

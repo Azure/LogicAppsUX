@@ -47,6 +47,7 @@ import {
   getSKUDefaultHostOptions,
   Constants,
   RunHistoryPanel,
+  CombineInitializeVariableDialog,
 } from '@microsoft/logic-apps-designer';
 import { useDispatch, useSelector } from 'react-redux';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
@@ -299,6 +300,7 @@ const DesignerEditorConsumption = () => {
             }}
             workflowId={workflowDefinitionId}
             runInstance={runInstanceData}
+            isMultiVariableEnabled={hostOptions.enableMultiVariable}
           >
             <div style={{ display: 'flex', height: 'inherit' }}>
               <RunHistoryPanel
@@ -340,6 +342,7 @@ const DesignerEditorConsumption = () => {
                   saveWorkflowFromCode={saveWorkflowFromCode}
                 />
                 {designerView ? <Designer /> : <CodeViewEditor ref={codeEditorRef} isConsumption />}
+                <CombineInitializeVariableDialog />
               </div>
             </div>
           </BJSWorkflowProvider>

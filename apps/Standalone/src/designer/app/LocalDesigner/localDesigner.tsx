@@ -17,12 +17,10 @@ import {
   ConsumptionConnectionService,
   StandardCustomCodeService,
   ResourceIdentityType,
-  // Uncomment to use dummy version of copilot expression assistant
-  // BaseCopilotService,
   BaseTenantService,
 } from '@microsoft/logic-apps-shared';
 import type { ContentType } from '@microsoft/logic-apps-shared';
-import { DesignerProvider, BJSWorkflowProvider, Designer } from '@microsoft/logic-apps-designer';
+import { DesignerProvider, BJSWorkflowProvider, Designer, CombineInitializeVariableDialog } from '@microsoft/logic-apps-designer';
 import { useSelector } from 'react-redux';
 
 const httpClient = new HttpClient();
@@ -59,9 +57,6 @@ const operationManifestServiceStandard = new StandardOperationManifestService({
   baseUrl: '/url',
   httpClient,
 });
-
-// Uncomment to use dummy version of copilot expression assistant
-// const baseCopilotService = new BaseCopilotService({isDev: true});
 
 const operationManifestServiceConsumption = new ConsumptionOperationManifestService({
   apiVersion: '2018-11-01',
@@ -193,8 +188,6 @@ export const LocalDesigner = () => {
       connectionService: isConsumption ? connectionServiceConsumption : connectionServiceStandard,
       operationManifestService: isConsumption ? operationManifestServiceConsumption : operationManifestServiceStandard,
       searchService: isConsumption ? searchServiceConsumption : searchServiceStandard,
-      // Uncomment to use dummy version of copilot expression assistant
-      // copilotService: baseCopilotService,
       oAuthService,
       gatewayService,
       tenantService,
@@ -228,9 +221,11 @@ export const LocalDesigner = () => {
             kind: workflowKind,
           }}
           runInstance={runInstance}
+          isMultiVariableEnabled={hostOptions.enableMultiVariable}
         >
           <PseudoCommandBar />
           <Designer />
+          <CombineInitializeVariableDialog />
         </BJSWorkflowProvider>
       ) : null}
     </DesignerProvider>

@@ -271,3 +271,28 @@
 .msla-template-create-connection-content {
     gap: 1px;
 }
+
+.msla-templates-review-container {
+		display: flex;
+		flex-direction: column;
+		gap: 32px;
+		padding: 20px 0px 10px;
+}
+
+.msla-templates-review-block {
+	display: flex;
+	flex-direction: column;
+	gap: 6px;
+
+	&.basics {
+		display: flex;
+		flex-direction: row;
+		gap: 48px;
+	}
+
+	&.parameters {
+		display: grid;
+		grid-template-columns: 1fr 1fr;
+		gap: 6px 32px;
+	}
+}

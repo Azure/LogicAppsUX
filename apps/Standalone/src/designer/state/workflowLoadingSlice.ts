@@ -36,7 +36,7 @@ export interface WorkflowLoadingState {
     stringOverrides?: Record<string, string>; // string overrides for localization
     maxStateHistorySize?: number; // maximum number of states to save in history for undo/redo
     collapseGraphsByDefault?: boolean; // collapse scope by default
-    enableAgenticLoops?: boolean;
+    enableMultiVariable?: boolean; // supports creating multiple variables in one action
   };
   showPerformanceDebug?: boolean;
   runFiles: any[];
@@ -66,7 +66,7 @@ const initialState: WorkflowLoadingState = {
     displayRuntimeInfo: true,
     maxStateHistorySize: 0,
     collapseGraphsByDefault: false,
-    enableAgenticLoops: false,
+    enableMultiVariable: false,
   },
   showPerformanceDebug: false,
   runFiles: [],
@@ -78,6 +78,7 @@ type WorkflowPayload = {
   connectionReferences: ConnectionReferences;
   parameters: Record<string, WorkflowParameter>;
   runFiles: any[];
+  workflowKind?: string;
 };
 
 type RunPayload = {
@@ -94,12 +95,12 @@ export const loadWorkflow = createAsyncThunk('workflowLoadingState/loadWorkflow'
   const isMonitoringView = currentState.workflowLoader.isMonitoringView;
 
   const runFiles = isMonitoringView && fileName ? await readJsonFiles(fileName) : [];
-
   const wf = await import(`../../../../../__mocks__/workflows/${fileName}.json`);
   return {
     workflowDefinition: wf.definition as LogicAppsV2.WorkflowDefinition,
     connectionReferences: wf.connections as ConnectionReferences,
     parameters: wf?.parameters ?? wf?.definition?.parameters ?? {},
+    workflowKind: wf?.kind,
     runFiles,
   } as WorkflowPayload;
 });
@@ -225,8 +226,8 @@ export const workflowLoadingSlice = createSlice({
     setQueryCachePersist: (state, action: PayloadAction<boolean>) => {
       state.queryCachePersist = action.payload;
     },
-    setEnableAgenticLoops: (state, action: PayloadAction<boolean>) => {
-      state.hostOptions.enableAgenticLoops = action.payload;
+    setEnableMultiVariable: (state, action: PayloadAction<boolean>) => {
+      state.hostOptions.enableMultiVariable = action.payload;
     },
   },
   extraReducers: (builder) => {
@@ -238,6 +239,7 @@ export const workflowLoadingSlice = createSlice({
       state.connections = action.payload?.connectionReferences ?? {};
       state.parameters = action.payload?.parameters ?? {};
       state.runFiles = action.payload?.runFiles ?? [];
+      state.workflowKind = action.payload?.workflowKind ?? 'stateful';
     });
     builder.addCase(loadWorkflow.rejected, (state) => {
       state.workflowDefinition = null;
@@ -278,7 +280,7 @@ export const {
   setShowPerformanceDebug,
   setStringOverrides,
   setQueryCachePersist,
-  setEnableAgenticLoops,
+  setEnableMultiVariable,
 } = workflowLoadingSlice.actions;
 
 export default workflowLoadingSlice.reducer;

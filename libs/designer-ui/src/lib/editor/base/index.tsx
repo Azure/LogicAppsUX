@@ -31,6 +31,8 @@ import { RichTextPlugin } from '@lexical/react/LexicalRichTextPlugin';
 import { useEffect, useRef, useState } from 'react';
 import { createPortal } from 'react-dom';
 import { useIntl } from 'react-intl';
+import type { AgentParameterButtonProps } from './plugins/tokenpickerbutton/agentParameterButton';
+import { AgentParameterButton } from './plugins/tokenpickerbutton/agentParameterButton';
 
 export interface ChangeState {
   value: ValueSegment[];
@@ -47,7 +49,6 @@ export type GetTokenPickerHandler = (
 
 export type ChangeHandler = (newState: ChangeState, skipStateSave?: boolean) => void;
 export type CallbackHandler = () => void;
-export type FileNameChangeHandler = (originalFileName: string, newFileName: string) => void;
 export type CastHandler = (value: ValueSegment[], type?: string, format?: string, suppressCasting?: boolean) => string;
 export type loadParameterValueFromStringHandler = (value: string) => ValueSegment[];
 
@@ -55,27 +56,34 @@ export interface DictionaryCallbackProps {
   addItem: (index: number) => void;
   index: number;
 }
+
 export interface BaseEditorProps {
-  className?: string;
-  readonly?: boolean;
-  placeholder?: string;
-  basePlugins?: BasePlugins;
   initialValue: ValueSegment[];
-  children?: React.ReactNode;
-  ariaLabel?: string;
-  labelId?: string;
+  // Appearance
+  className?: string;
+  placeholder?: string;
   label?: string;
-  valueType?: string;
-  tokenPickerButtonProps?: TokenPickerButtonEditorProps;
-  dataAutomationId?: string;
-  tokenMapping?: Record<string, ValueSegment>;
+  labelId?: string;
+  ariaLabel?: string;
+  // Behavior
+  readonly?: boolean;
   isSwitchFromPlaintextBlocked?: boolean;
-  loadParameterValueFromString?: loadParameterValueFromStringHandler;
+  valueType?: string;
+  tokenMapping?: Record<string, ValueSegment>;
+  // Plugins & Extensions
+  agentParameterButtonProps?: Partial<AgentParameterButtonProps>;
+  basePlugins?: BasePlugins;
+  tokenPickerButtonProps?: TokenPickerButtonEditorProps;
+  // Event Handlers
   onChange?: ChangeHandler;
   onBlur?: () => void;
   onFocus?: () => void;
   getTokenPicker?: GetTokenPickerHandler;
   setIsValuePlaintext?: (isValuePlaintext: boolean) => void;
+  loadParameterValueFromString?: loadParameterValueFromStringHandler;
+  // Misc
+  dataAutomationId?: string;
+  children?: React.ReactNode;
 }
 
 export interface BasePlugins {
@@ -100,6 +108,7 @@ export const BaseEditor = ({
   children,
   labelId,
   ariaLabel,
+  agentParameterButtonProps,
   tokenPickerButtonProps,
   valueType,
   dataAutomationId,
@@ -179,7 +188,13 @@ export const BaseEditor = ({
   const TextPlugin = htmlEditor === 'rich-html' ? RichTextPlugin : PlainTextPlugin;
   return (
     <>
-      <div className={className ?? 'msla-editor-container'} id={editorId} ref={containerRef} data-automation-id={dataAutomationId}>
+      <div
+        className={className ?? 'msla-editor-container'}
+        id={editorId}
+        ref={containerRef}
+        data-automation-id={dataAutomationId}
+        style={{ position: 'relative' }}
+      >
         {htmlEditor ? (
           <RichTextToolbar
             isRawText={htmlEditor === 'raw-html'}
@@ -199,6 +214,7 @@ export const BaseEditor = ({
               ariaDescribedBy={id}
               tabIndex={0}
               title={placeholder}
+              style={{ paddingInlineEnd: '32px' }}
             />
           }
           placeholder={
@@ -242,6 +258,9 @@ export const BaseEditor = ({
         ) : null}
         {children}
         {tokens && isTokenPickerOpened && getTokenPicker ? getTokenPicker(editorId, labelId ?? '', tokenPickerMode, valueType) : null}
+        {tokens && isEditorFocused && !isTokenPickerOpened && agentParameterButtonProps?.showAgentParameterButton ? (
+          <AgentParameterButton openTokenPicker={openTokenPicker} shifted={agentParameterButtonProps?.shifted} />
+        ) : null}
       </div>
       {tokens && isEditorFocused && !isTokenPickerOpened
         ? createPortal(<TokenPickerButton {...tokenPickerButtonProps} openTokenPicker={openTokenPicker} />, document.body)

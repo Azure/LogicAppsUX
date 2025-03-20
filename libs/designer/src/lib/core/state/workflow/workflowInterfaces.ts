@@ -22,6 +22,7 @@ export type Operations = Record<string, LogicAppsV2.OperationDefinition>;
 export const WorkflowKind = {
   STATEFUL: 'stateful',
   STATELESS: 'stateless',
+  AGENTIC: 'agentic',
 } as const;
 export type WorkflowKind = (typeof WorkflowKind)[keyof typeof WorkflowKind] | undefined;
 

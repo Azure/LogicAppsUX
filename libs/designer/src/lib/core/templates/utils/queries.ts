@@ -102,8 +102,7 @@ export const useLocations = (subscriptionId: string): UseQueryResult<Resource[],
 export const useLogicApps = (
   subscriptionId: string,
   resourceGroup: string,
-  location: string,
-  isConsumption: boolean
+  enabled: boolean
 ): UseQueryResult<LogicAppResource[], unknown> => {
   return useQuery(
     ['logicapps', subscriptionId, resourceGroup],
@@ -115,7 +114,7 @@ export const useLogicApps = (
       refetchOnMount: false,
       refetchOnWindowFocus: false,
       refetchOnReconnect: false,
-      enabled: !isConsumption && !!subscriptionId && !!resourceGroup && !!location,
+      enabled: enabled && !!subscriptionId && !!resourceGroup,
     }
   );
 };

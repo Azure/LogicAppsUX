@@ -26,7 +26,7 @@ interface WorkflowItem {
   summary: string;
   errors: {
     workflow: string | undefined;
-    kind: string | undefined;
+    kind?: string;
   };
 }
 
