@@ -3,7 +3,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { Link, Text } from '@fluentui/react-components';
 import { Icon, Panel, PanelType } from '@fluentui/react';
 import { useIntl } from 'react-intl';
-import { useCallback, useState } from 'react';
+import { useCallback, useMemo, useState } from 'react';
 import { TemplatesPanelContent, TemplatesPanelFooter, TemplatesPanelHeader } from '@microsoft/designer-ui';
 import { getQuickViewTabs } from '../../../../core/templates/utils/helper';
 import Markdown from 'react-markdown';
@@ -46,7 +46,8 @@ export const QuickViewPanel = ({
       shouldCloseByDefault: !state.templateOptions.viewTemplateDetails,
     })
   );
-  const { manifest } = useWorkflowTemplate(workflowId);
+  const workflowTemplate = useWorkflowTemplate(workflowId);
+  const manifest = useMemo(() => workflowTemplate?.manifest, [workflowTemplate]);
   const panelTabs = getQuickViewTabs(
     intl,
     dispatch,
@@ -74,9 +75,9 @@ export const QuickViewPanel = ({
   const onRenderHeaderContent = useCallback(
     () => (
       <QuickViewPanelHeader
-        title={manifest.title}
-        summary={manifest.summary}
-        sourceCodeUrl={manifest.sourceCodeUrl}
+        title={manifest?.title ?? ''}
+        summary={manifest?.summary ?? ''}
+        sourceCodeUrl={manifest?.sourceCodeUrl}
         details={templateManifest?.details ?? {}}
       />
     ),
