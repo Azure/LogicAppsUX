@@ -10,7 +10,9 @@ import { LogEntryLevel, LoggerService, type Template } from '@microsoft/logic-ap
 import { useWorkflowTemplate } from '../../../../../core/state/templates/templateselectors';
 
 export const WorkflowPanel = ({ workflowId }: { workflowId: string }) => {
-  const { manifest, images } = useWorkflowTemplate(workflowId);
+  const workflowTemplate = useWorkflowTemplate(workflowId);
+  const manifest = useMemo(() => workflowTemplate?.manifest, [workflowTemplate]);
+  const images = useMemo(() => workflowTemplate?.images, [workflowTemplate]);
   const { isInverted } = useTheme();
   const imageName = useMemo(() => (isInverted ? images?.dark : images?.light), [isInverted, images]);
 

@@ -8,6 +8,7 @@ import { validateWorkflowName } from '../../../core/actions/bjsworkflow/template
 import { useIntl } from 'react-intl';
 import { useTemplatesStrings } from '../templatesStrings';
 import { TemplateDisplay } from '../review/ReviewAddPanel';
+import { useMemo } from 'react';
 
 interface ResourceSectionProps {
   workflowId: string;
@@ -59,10 +60,9 @@ export const ResourceSection = (props: ResourceSectionProps) => {
 const WorkflowName = ({ workflowId, label, placeholder }: { workflowId: string; label: string; placeholder?: string }) => {
   const dispatch = useDispatch<AppDispatch>();
   const styles = useStyles();
-  const {
-    workflowName,
-    errors: { workflow: workflowError },
-  } = useWorkflowTemplate(workflowId);
+  const workflowTemplate = useWorkflowTemplate(workflowId);
+  const workflowName = useMemo(() => workflowTemplate?.workflowName, [workflowTemplate]);
+  const workflowError = useMemo(() => workflowTemplate?.errors?.workflow, [workflowTemplate]);
   const { subscriptionId, resourceGroupName } = useSelector((state: RootState) => ({
     subscriptionId: state.workflow.subscriptionId,
     resourceGroupName: state.workflow.resourceGroup,
