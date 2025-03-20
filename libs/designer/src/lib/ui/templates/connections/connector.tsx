@@ -2,11 +2,8 @@ import type { IImageStyles, IImageStyleProps, IStyleFunctionOrObject } from '@fl
 import { Icon, Shimmer, ShimmerElementType, Spinner, SpinnerSize, css } from '@fluentui/react';
 import { useConnector } from '../../../core/state/connection/connectionSelector';
 import type { Template } from '@microsoft/logic-apps-shared';
-import type { IntlShape } from 'react-intl';
-import { useIntl } from 'react-intl';
 import { getConnectorAllCategories } from '@microsoft/designer-ui';
 import { useConnectionsForConnector } from '../../../core/queries/connections';
-import { getConnectorResources } from '../../../core/templates/utils/helper';
 import { useEffect, useMemo } from 'react';
 import type { ConnectorInfo } from '../../../core/templates/utils/queries';
 import { useConnectorInfo } from '../../../core/templates/utils/queries';
@@ -15,6 +12,7 @@ import { isConnectionValid } from '../../../core/utils/connectors/connections';
 import { useSelector } from 'react-redux';
 import type { RootState } from '../../../core/state/templates/store';
 import { Checkmark16Filled, Dismiss16Filled } from '@fluentui/react-icons';
+import { useConnectorStatusStrings } from '../templatesStrings';
 
 export const ConnectorIcon = ({
   connectorId,
@@ -113,14 +111,13 @@ export const ConnectorWithDetails = ({ id, kind }: Template.FeaturedConnector) =
   const { data: connector, isLoading, isError } = useConnector(id, /* enabled */ true, /* getCachedData */ true);
   const { data: connections, isLoading: isConnectionsLoading } = useConnectionsForConnector(id, /* shouldNotRefetch */ true);
   const connectorConnections = useMemo(() => connections?.filter(isConnectionValid), [connections]);
-  const intl = useIntl();
+  const text = useConnectorStatusStrings();
 
   if (!connector) {
     return isLoading ? <Spinner size={SpinnerSize.small} /> : isError ? <Icon iconName="Error" /> : <Icon iconName="Unknown" />;
   }
 
   const allCategories = getConnectorAllCategories();
-  const text = getConnectorResources(intl);
   return (
     <div className="msla-template-connector">
       {isLoading ? (
@@ -176,10 +173,9 @@ export const ConnectorConnectionStatus = ({
   connectorId,
   connectionKey,
   hasConnection,
-  intl,
-}: { connectorId: string; connectionKey: string; hasConnection: boolean; intl: IntlShape }) => {
+}: { connectorId: string; connectionKey: string; hasConnection: boolean }) => {
   const { data: connector, isLoading } = useConnector(connectorId, /* enabled */ true, /* getCachedData */ true);
-  const texts = getConnectorResources(intl);
+  const texts = useConnectorStatusStrings();
 
   return (
     <div className="msla-templates-tab-review-section-details">
