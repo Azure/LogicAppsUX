@@ -1,4 +1,11 @@
 # Logic Apps Designer
+### [5.44.8](https://github.com/Azure/LogicAppsUX/compare/v5.44.7...v5.44.8) (2025-03-20)
+
+
+### Bug Fixes
+
+* **vscode:** Fix project creation and redirect to workspace creation  ([#6842](https://github.com/Azure/LogicAppsUX/issues/6842)) ([7ff66d4](https://github.com/Azure/LogicAppsUX/commit/7ff66d473f1d7d1c3bca6bb09e013a0eeffc7a5c)), closes [#6839](https://github.com/Azure/LogicAppsUX/issues/6839)
+
 ### [5.44.7](https://github.com/Azure/LogicAppsUX/compare/v5.44.6...v5.44.7) (2025-03-18)
 
 
