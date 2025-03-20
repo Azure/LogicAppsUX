@@ -17,7 +17,6 @@ import {
   ExpressionParser,
   ScannerException,
   guid,
-  isCopilotServiceEnabled,
   unescapeString,
   LOCAL_STORAGE_KEYS,
 } from '@microsoft/logic-apps-shared';
@@ -79,11 +78,6 @@ export function TokenPickerFooter({
     id: 't9RwOi',
     description: 'Invalid expression alert',
   });
-  const invalidExpressionFixWithCopilot = intl.formatMessage({
-    defaultMessage: 'This expression has a problem. You can fix it manually or with Copilot.',
-    id: 'QbVD0F',
-    description: 'Invalid expression alert with option to fix with copilot.',
-  });
   const invalidExpressionQuotations = intl.formatMessage({
     defaultMessage: 'The expression is invalid. Make sure to use single quotes.',
     id: 'H9CZTr',
@@ -123,7 +117,7 @@ export function TokenPickerFooter({
         // if the expression contains misused double quotes, we'll show a different error message
         setExpressionEditorError(invalidExpressionQuotations);
       } else {
-        setExpressionEditorError(isCopilotServiceEnabled() ? invalidExpressionFixWithCopilot : invalidExpression);
+        setExpressionEditorError(invalidExpression);
       }
     }
 

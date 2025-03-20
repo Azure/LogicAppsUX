@@ -65,6 +65,7 @@ export const CollapsedArray = ({
           basePlugins={{
             tabbable: true,
           }}
+          tokenPickerButtonProps={{ verticalOffSet: 17 }}
           placeholder={editorPlaceHolder}
           initialValue={collapsedValue?.length > 0 ? collapsedValue : ([] as ValueSegment[])}
           onBlur={onBlur}

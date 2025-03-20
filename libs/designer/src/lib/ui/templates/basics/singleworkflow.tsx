@@ -13,12 +13,16 @@ import { TemplatesSection } from '@microsoft/designer-ui';
 
 export const SingleWorkflowBasics = ({ workflowId }: { workflowId: string }) => {
   const dispatch = useDispatch<AppDispatch>();
-  const {
-    workflowName,
-    errors: { workflow: workflowError, kind: kindError },
-    kind,
-    manifest,
-  } = useWorkflowTemplate(workflowId);
+  const workflowTemplate = useWorkflowTemplate(workflowId);
+  const { workflowName, errors, kind, manifest } = useMemo(
+    () => ({
+      workflowName: workflowTemplate?.workflowName,
+      errors: workflowTemplate?.errors,
+      kind: workflowTemplate?.kind,
+      manifest: workflowTemplate?.manifest,
+    }),
+    [workflowTemplate]
+  );
   const { isNameEditable, isKindEditable } = useWorkflowBasicsEditable(workflowId);
   const { enableResourceSelection, isConsumption, subscriptionId, resourceGroupName } = useSelector((state: RootState) => ({
     isConsumption: state.workflow.isConsumption,
@@ -113,13 +117,13 @@ export const SingleWorkflowBasics = ({ workflowId }: { workflowId: string }) => 
               });
               dispatch(updateWorkflowNameValidationError({ id: workflowId, error: validationError }));
             },
-            errorMessage: workflowError,
+            errorMessage: errors?.workflow,
           },
         ]}
       />
 
       {isConsumption ? null : (
-        <div className={kindError ? 'msla-templates-tab-stateType-error' : ''}>
+        <div className={errors?.kind ? 'msla-templates-tab-stateType-error' : ''}>
           <TemplatesSection
             title={intlText.STATE_TYPE}
             isTitleRequired={true}
@@ -172,8 +176,7 @@ export const SingleWorkflowBasics = ({ workflowId }: { workflowId: string }) => 
           />
         </div>
       )}
-
-      {kindError && <Text className="msla-templates-tab-stateType-error-message">{kindError}</Text>}
+      {errors?.kind && <Text className="msla-templates-tab-stateType-error-message">{errors?.kind}</Text>}
     </div>
   );
 };

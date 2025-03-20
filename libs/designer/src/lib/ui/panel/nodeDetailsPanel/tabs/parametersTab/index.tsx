@@ -3,7 +3,7 @@ import { useShowIdentitySelectorQuery } from '../../../../../core/state/connecti
 import { addOrUpdateCustomCode, renameCustomCodeFile } from '../../../../../core/state/customcode/customcodeSlice';
 import { useHostOptions, useReadOnly } from '../../../../../core/state/designerOptions/designerOptionsSelectors';
 import type { ParameterGroup } from '../../../../../core/state/operation/operationMetadataSlice';
-import { DynamicLoadStatus, ErrorLevel } from '../../../../../core/state/operation/operationMetadataSlice';
+import { DynamicLoadStatus, ErrorLevel, updateNodeParameters } from '../../../../../core/state/operation/operationMetadataSlice';
 import { useDependencies, useNodesInitialized, useOperationErrorInfo } from '../../../../../core/state/operation/operationSelector';
 import { useIsPanelInPinnedViewMode, usePanelLocation } from '../../../../../core/state/panel/panelSelectors';
 import {
@@ -14,7 +14,7 @@ import {
   useOperationInfo,
 } from '../../../../../core/state/selectors/actionMetadataSelector';
 import type { AgentParameterDeclaration, VariableDeclaration } from '../../../../../core/state/tokens/tokensSlice';
-import { updateAgentParameter, updateVariableInfo } from '../../../../../core/state/tokens/tokensSlice';
+import { addAgentParameterToNode, updateAgentParameter, updateVariableInfo } from '../../../../../core/state/tokens/tokensSlice';
 import { useGetSwitchOrAgentParentId, useNodeMetadata, useReplacedIds } from '../../../../../core/state/workflow/workflowSelectors';
 import type { AppDispatch, RootState } from '../../../../../core/store';
 import { getConnectionReference } from '../../../../../core/utils/connectors/connections';
@@ -26,6 +26,7 @@ import {
   loadDynamicTreeItemsForParameter,
   loadDynamicValuesForParameter,
   loadParameterValueFromString,
+  ParameterGroupKeys,
   parameterValueToString,
   remapEditorViewModelWithNewIds,
   remapValueSegmentsWithNewIds,
@@ -48,8 +49,11 @@ import {
   TokenPickerButtonLocation,
   TokenType,
   convertSegmentsToString,
+  convertVariableEditorSegmentsAsSchema,
+  createLiteralValueSegment,
   isCustomCodeParameter,
   isInitializeVariableOperation,
+  parseSchemaAsVariableEditorSegments,
   toCustomEditorAndOptions,
 } from '@microsoft/designer-ui';
 import type {
@@ -387,8 +391,90 @@ const ParameterSection = ({
     [dispatch, nodeId, rootState]
   );
 
+  const showAgentParameterButton = useMemo(() => {
+    let nodeGraphId = getRecordEntry(nodesMetadata, nodeId)?.graphId;
+
+    while (nodeGraphId) {
+      const nodeMetadata = getRecordEntry(nodesMetadata, nodeGraphId);
+      if (!nodeMetadata) {
+        return undefined;
+      }
+
+      const isAgentCondition = nodeMetadata.subgraphType === SUBGRAPH_TYPES.AGENT_CONDITION;
+      if (isAgentCondition) {
+        break;
+      }
+
+      nodeGraphId = nodeMetadata.graphId;
+    }
+    return !!nodeGraphId;
+  }, [nodesMetadata, nodeId]);
+
+  const createAgentParameter = (name: string, type: string, description: string) => {
+    let nodeGraphId = getRecordEntry(nodesMetadata, nodeId)?.graphId;
+
+    while (nodeGraphId) {
+      const nodeMetadata = getRecordEntry(nodesMetadata, nodeGraphId);
+      if (!nodeMetadata) {
+        return undefined;
+      }
+
+      const isAgentCondition = nodeMetadata.subgraphType === SUBGRAPH_TYPES.AGENT_CONDITION;
+      if (isAgentCondition) {
+        break;
+      }
+
+      nodeGraphId = nodeMetadata.graphId;
+    }
+
+    if (!nodeGraphId) {
+      return undefined;
+    }
+
+    const upstreamAgentNodeId = getRecordEntry(nodesMetadata, nodeGraphId)?.parentNodeId;
+    if (!upstreamAgentNodeId) {
+      return undefined;
+    }
+    dispatch(
+      addAgentParameterToNode({
+        conditionId: nodeGraphId,
+        agentId: upstreamAgentNodeId,
+        agentParameter: { name, type, description },
+      })
+    );
+
+    const conditionParameter = rootState.operations.inputParameters[nodeGraphId].parameterGroups[
+      ParameterGroupKeys.DEFAULT
+    ].parameters.find((param: any) => param.parameterName === 'agentParameterSchema');
+    if (!conditionParameter?.id) {
+      return;
+    }
+    const previousConditionValue = parseSchemaAsVariableEditorSegments(conditionParameter.value);
+    previousConditionValue.push({
+      name: [createLiteralValueSegment(name)],
+      type: [createLiteralValueSegment(type)],
+      description: [createLiteralValueSegment(description)],
+      value: [],
+    });
+
+    const newConditionValue = convertVariableEditorSegmentsAsSchema(previousConditionValue);
+
+    dispatch(
+      updateNodeParameters({
+        nodeId: nodeGraphId,
+        parameters: [
+          {
+            groupId: ParameterGroupKeys.DEFAULT,
+            parameterId: conditionParameter.id,
+            propertiesToUpdate: { value: newConditionValue, preservedValue: undefined },
+          },
+        ],
+      })
+    );
+  };
+
   const getTokenPicker = (
-    parameterId: string,
+    parameter: ParameterInfo,
     editorId: string,
     labelId: string,
     tokenPickerMode?: TokenPickerMode,
@@ -396,8 +482,7 @@ const ParameterSection = ({
     isCodeEditor?: boolean,
     tokenClickedCallback?: (token: ValueSegment) => void
   ): JSX.Element => {
-    const parameterType =
-      editorType ?? (nodeInputs.parameterGroups[group.id].parameters.find((param) => param.id === parameterId) ?? {})?.type;
+    const parameterType = editorType ?? parameter?.type;
     const supportedTypes: string[] = getPropertyValue(constants.TOKENS, getTypeForTokenFiltering(parameterType));
 
     const filteredTokenGroup = tokenGroup.map((group) => ({
@@ -429,9 +514,12 @@ const ParameterSection = ({
         hideUTFExpressions={hideUTFExpressions}
         initialMode={tokenPickerMode}
         getValueSegmentFromToken={(token: OutputToken, addImplicitForeach: boolean) =>
-          getValueSegmentFromToken(parameterId, token, addImplicitForeach, !!isCodeEditor)
+          getValueSegmentFromToken(parameter.id, token, addImplicitForeach, !!isCodeEditor)
         }
+        valueType={parameterType}
+        parameter={parameter}
         tokenClickedCallback={tokenClickedCallback}
+        createAgentParameter={createAgentParameter}
       />
     );
   };
@@ -483,7 +571,6 @@ const ParameterSection = ({
       const isCodeEditor = editor?.toLowerCase() === constants.EDITOR.CODE;
       const subComponent = getSubComponent(param);
       const subMenu = getSubMenu(param);
-
       return {
         settingType: 'SettingTokenField',
         settingProp: {
@@ -506,6 +593,7 @@ const ParameterSection = ({
           tokenpickerButtonProps: {
             location: panelLocation === PanelLocation.Left ? TokenPickerButtonLocation.Right : TokenPickerButtonLocation.Left,
           },
+          agentParameterButtonProps: { showAgentParameterButton },
           hostOptions: { suppressCastingForSerialize, isMultiVariableEnabled: enableMultiVariable },
           onCastParameter: (value: ValueSegment[], type?: string, format?: string, suppressCasting?: boolean) =>
             parameterValueToString(
@@ -525,7 +613,7 @@ const ParameterSection = ({
             tokenPickerMode?: TokenPickerMode,
             editorType?: string,
             tokenClickedCallback?: (token: ValueSegment) => void
-          ) => getTokenPicker(id, editorId, labelId, tokenPickerMode, editorType, isCodeEditor, tokenClickedCallback),
+          ) => getTokenPicker(param, editorId, labelId, tokenPickerMode, editorType, isCodeEditor, tokenClickedCallback),
           subComponent: subComponent,
           subMenu: subMenu,
         },
