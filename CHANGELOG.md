@@ -1,4 +1,18 @@
 # Logic Apps Designer
+## [5.57.0](https://github.com/Azure/LogicAppsUX/compare/v5.56.0...v5.57.0) (2025-03-20)
+
+
+### Features
+
+* **designer:** Agent Parameter Create Token Picker ([#6840](https://github.com/Azure/LogicAppsUX/issues/6840)) ([46a34c0](https://github.com/Azure/LogicAppsUX/commit/46a34c099fd0099268fece43dee7ab3510cdffe5))
+* **templates:** Add action for fetching template connections from selected workflows ([#6831](https://github.com/Azure/LogicAppsUX/issues/6831)) ([0ab0afb](https://github.com/Azure/LogicAppsUX/commit/0ab0afbafa57e81c662adaaa43e1c07157dd2959))
+
+
+### Bug Fixes
+
+* **vscode:** Fix project creation and redirect to workspace creation ([#6839](https://github.com/Azure/LogicAppsUX/issues/6839)) ([968bec3](https://github.com/Azure/LogicAppsUX/commit/968bec37afa9270fbc6670c5922731b52559cd78))
+* **vscode:** Updating connection keys will no longer overwrite existing connection data ([#6753](https://github.com/Azure/LogicAppsUX/issues/6753)) ([d05a41b](https://github.com/Azure/LogicAppsUX/commit/d05a41bcbd8e90bb59ed4e41171c3ca1a5b9e834))
+
 ## [5.56.0](https://github.com/Azure/LogicAppsUX/compare/v5.55.0...v5.56.0) (2025-03-19)
 
 
