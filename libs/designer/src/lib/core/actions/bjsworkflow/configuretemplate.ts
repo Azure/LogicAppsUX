@@ -154,7 +154,7 @@ export const deleteWorkflowData = createAsyncThunk(
   }
 );
 
-const getTemplateConnections = async (state: RootState, dispatch: ThunkDispatch<unknown, unknown, AnyAction>) => {
+export const getTemplateConnections = async (state: RootState, dispatch: ThunkDispatch<unknown, unknown, AnyAction>) => {
   const {
     workflow: { subscriptionId, resourceGroup, isConsumption, logicAppName },
     template: { workflows },
@@ -300,7 +300,7 @@ const getDefinitionAndUsedConnectionMappings = async (
   }
 };
 
-const getTemplateParameters = async (state: RootState, mapping: Record<string, string>) => {
+export const getTemplateParameters = async (state: RootState, mapping: Record<string, string>) => {
   const {
     workflow: { isConsumption, subscriptionId, resourceGroup, logicAppName },
     operation: { inputParameters, dependencies },
