@@ -1,4 +1,19 @@
 # Logic Apps Designer
+### [5.53.4](https://github.com/Azure/LogicAppsUX/compare/v5.53.3...v5.53.4) (2025-03-21)
+
+
+### Features
+
+* **templates:** Adding actions to initialize workflows data on selection fo custom templates ([#6841](https://github.com/Azure/LogicAppsUX/issues/6841)) ([1b10f58](https://github.com/Azure/LogicAppsUX/commit/1b10f5886ab559fe2c092f1a82f3ae01d126ecd5))
+* **templates:** Adding featured connectors dropdown for template profile ([#6850](https://github.com/Azure/LogicAppsUX/issues/6850)) ([2b612fb](https://github.com/Azure/LogicAppsUX/commit/2b612fbc73645c91a3956add980aa4ca6da4e5de))
+* **Templates:** Exported `validateParameters` + `validateConnections` actions from templates store ([#6852](https://github.com/Azure/LogicAppsUX/issues/6852)) ([a01b406](https://github.com/Azure/LogicAppsUX/commit/a01b406fe4ad2e805343cba18a47f378cacd48ea))
+* **Templates:** Template Section UI ([#6830](https://github.com/Azure/LogicAppsUX/issues/6830)) ([2b511fc](https://github.com/Azure/LogicAppsUX/commit/2b511fc2bb964d2734268505eab950fb3d36d296))
+
+
+### Bug Fixes
+
+* **Templates:** Remove built-in operations from filtering dropdown ([#6849](https://github.com/Azure/LogicAppsUX/issues/6849)) ([244c6dd](https://github.com/Azure/LogicAppsUX/commit/244c6dd41d57dd897767d54ccd61a4d3fe13537b))
+
 ### [5.53.3](https://github.com/Azure/LogicAppsUX/compare/v5.57.0...v5.53.3) (2025-03-20)
 
 
