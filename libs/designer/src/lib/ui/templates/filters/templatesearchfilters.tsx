@@ -207,7 +207,12 @@ const Filters = ({ detailFilters }: { detailFilters: TemplateDetailFilterType })
       templateManifest.skus.includes(isConsumption ? 'consumption' : 'standard')
     );
     const allConnectors = Object.values(skuTemplates).flatMap((template) => template.featuredConnectors ?? []);
-    const uniqueConnectorsFromConnections = getUniqueConnectorsFromConnections(allConnectors, subscriptionId, location, true);
+    const uniqueConnectorsFromConnections = getUniqueConnectorsFromConnections(
+      allConnectors,
+      subscriptionId,
+      location,
+      /* removeBuiltInConnectors */ true
+    );
     return uniqueConnectorsFromConnections.map((connector) => connector.id);
   }, [availableTemplates, isConsumption, location, subscriptionId]);
   const [allConnectorsData, setConnectorsData] = useState<Record<string, string>>({});
