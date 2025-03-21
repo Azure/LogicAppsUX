@@ -1,4 +1,4 @@
-import { escapeString, idDisplayCase, labelCase, canStringBeConverted, unescapeString } from '../stringFunctions';
+import { escapeString, idDisplayCase, labelCase, canStringBeConverted, unescapeString, toPascalCase } from '../stringFunctions';
 import { describe, it, expect } from 'vitest';
 describe('label_case', () => {
   it('should replace _ with spaces', () => {
@@ -192,5 +192,37 @@ Test'`);
 
   it('does not escape double quotes when requireSingleQuotesWrap is false', () => {
     expect(escapeString('Test "Hello"', false)).toBe('Test "Hello"');
+  });
+});
+
+describe('toPascalCase', () => {
+  it('should convert a valid snake_case string to PascalCase', () => {
+    const input = 'example_string';
+    const result = toPascalCase(input);
+    expect(result).toBe('ExampleString');
+  });
+
+  it('should capitalize the first letter of a single word', () => {
+    const input = 'example';
+    const result = toPascalCase(input);
+    expect(result).toBe('Example');
+  });
+
+  it('should handle strings with multiple underscores', () => {
+    const input = 'example__string__test';
+    const result = toPascalCase(input);
+    expect(result).toBe('ExampleStringTest');
+  });
+
+  it('should handle an empty string gracefully', () => {
+    const input = '';
+    const result = toPascalCase(input);
+    expect(result).toBe('');
+  });
+
+  it('should handle strings with leading underscores', () => {
+    const input = '_example_string';
+    const result = toPascalCase(input);
+    expect(result).toBe('ExampleString');
   });
 });

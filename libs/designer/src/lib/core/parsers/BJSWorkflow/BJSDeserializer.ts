@@ -1,7 +1,10 @@
 import constants from '../../../common/constants';
 import { UnsupportedException, UnsupportedExceptionCode } from '../../../common/exceptions/unsupported';
+import type { Workflow } from '../../../common/models/workflow';
+import type { OutputMock } from '../../state/unitTest/unitTestInterfaces';
 import type { Operations, NodesMetadata } from '../../state/workflow/workflowInterfaces';
 import { createWorkflowNode, createWorkflowEdge } from '../../utils/graph';
+import { createLiteralValueSegment, isValueSegment } from '../../utils/parameters/segment';
 import type { WorkflowNode, WorkflowEdge } from '../models/workflowNode';
 import {
   LoggerService,
@@ -16,9 +19,14 @@ import {
   isNullOrUndefined,
   getUniqueName,
   getRecordEntry,
+  guid,
+  ConnectionType,
+  isObject,
+  ExpressionParser,
+  isEmptyString,
 } from '@microsoft/logic-apps-shared';
-import { getDurationStringPanelMode } from '@microsoft/designer-ui';
-import type { LogicAppsV2, SubgraphType } from '@microsoft/logic-apps-shared';
+import { getDurationStringPanelMode, ActionResults } from '@microsoft/designer-ui';
+import type { Assertion, ExpressionFunction, LogicAppsV2, SubgraphType, UnitTestDefinition } from '@microsoft/logic-apps-shared';
 import type { PasteScopeParams } from '../../actions/bjsworkflow/copypaste';
 
 const hasMultipleTriggers = (definition: LogicAppsV2.WorkflowDefinition): boolean => {
@@ -110,6 +118,222 @@ export const Deserialize = (
     nodesMetadata,
     ...(Object.keys(definition.staticResults ?? {}).length > 0 ? { staticResults: definition.staticResults } : {}),
   };
+};
+
+/**
+ * Parses the mock outputs to a value segment.
+ * @param {Record<string,any>} mockOutputs - The mock outputs to be parsed.
+ * @returns The parsed value segment.
+ */
+const parseOutputsToValueSegment = (mockOutputs: Record<string, any>) => {
+  const flattenOutputs = flattenObject({ outputs: mockOutputs });
+  return Object.keys(flattenOutputs).reduce((acc, key) => {
+    const id = guid();
+    if (isValueSegment({ id, ...flattenOutputs[key][0] })) {
+      return Object.assign({}, acc, { [key]: [{ id, ...flattenOutputs[key] }] });
+    }
+    const value =
+      isObject(flattenOutputs[key]) || Array.isArray(flattenOutputs[key]) ? JSON.stringify(flattenOutputs[key]) : flattenOutputs[key];
+    return Object.assign({}, acc, { [key]: [createLiteralValueSegment(value)] });
+  }, {});
+};
+
+/**
+ * Flattens a nested object into a single-level object.
+ * @param {Record<string, any>} obj - The object to flatten.
+ * @param {string} prefix - The prefix to use for the flattened keys.
+ * @param {Record<string,any>} result - The resulting flattened object.
+ * @returns The flattened object.
+ */
+const flattenObject = (obj: Record<string, any>, prefix = '', result: Record<string, any> = {}): Record<string, any> => {
+  for (const key in obj) {
+    if (obj[key]) {
+      let newKey = prefix ? `${prefix}.${key}` : key;
+
+      if (isEmptyString(prefix)) {
+        newKey = `${key}.$`;
+      }
+
+      if (isObject(obj[key]) && obj[key] !== null) {
+        flattenObject(obj[key], newKey, result);
+      } else {
+        result[newKey] = obj[key];
+      }
+    }
+  }
+  return result;
+};
+
+/**
+ * Deserializes a unit test definition and a workflow definition into assertions and mock results.
+ * @param {UnitTestDefinition | null} unitTestDefinition - The unit test definition to deserialize.
+ * @param {Workflow} workflowDefinition - The workflow definition to deserialize.
+ * @returns An object containing the assertions and mock results, or null if the unit test definition is null.
+ */
+export const deserializeUnitTestDefinition = (
+  unitTestDefinition: UnitTestDefinition | null,
+  workflowDefinition: Workflow
+): {
+  assertions: Assertion[];
+  mockResults: Record<string, OutputMock>;
+} | null => {
+  const { definition } = workflowDefinition;
+  const triggersKeys = Object.keys(definition.triggers ?? {});
+
+  // Build mock output for all actions and triggers
+  const mockResults: Record<string, OutputMock> = {};
+
+  // Helper function to add mock result for an action
+  const addMockResult = (key: string, action: LogicAppsV2.ActionDefinition) => {
+    const type = action?.type?.toLowerCase();
+    const supportedAction =
+      type === 'http' ||
+      type === 'invokefunction' ||
+      type === ConnectionType.ServiceProvider ||
+      type === ConnectionType.Function ||
+      type === ConnectionType.ApiManagement ||
+      type === ConnectionType.ApiConnection;
+
+    if (supportedAction) {
+      mockResults[key] = {
+        actionResult: ActionResults.SUCCESS,
+        output: {},
+      };
+    }
+  };
+
+  // Recursively process all actions, including nested ones
+  const processActions = (actions: LogicAppsV2.Actions | undefined) => {
+    if (!actions) {
+      return;
+    }
+    for (const [key, action] of Object.entries(actions)) {
+      addMockResult(key, action);
+      if (isScopeAction(action)) {
+        if (action.actions) {
+          processActions(action.actions);
+        }
+        if (isIfAction(action) && action.else?.actions) {
+          processActions(action.else.actions);
+        }
+        if (isSwitchAction(action)) {
+          if (action.default?.actions) {
+            processActions(action.default.actions);
+          }
+          if (action.cases) {
+            for (const caseAction of Object.values(action.cases)) {
+              if (caseAction.actions) {
+                processActions(caseAction.actions);
+              }
+            }
+          }
+        }
+      }
+    }
+  };
+
+  // Process all actions in the workflow
+  processActions(definition.actions);
+
+  // Process triggers
+  triggersKeys.forEach((key) => {
+    mockResults[`&${key}`] = {
+      actionResult: ActionResults.SUCCESS,
+      output: {},
+    };
+  });
+
+  if (isNullOrUndefined(unitTestDefinition)) {
+    return { assertions: [], mockResults };
+  }
+
+  // Deserialize mocks
+  const triggerName = triggersKeys[0]; // only 1 trigger
+
+  if (triggerName) {
+    const mocksTrigger = unitTestDefinition.triggerMocks[triggerName].outputs ?? {};
+    mockResults[`&${triggerName}`] = {
+      actionResult: unitTestDefinition.triggerMocks[triggerName].properties?.status ?? ActionResults.SUCCESS,
+      output: parseOutputsToValueSegment(mocksTrigger),
+      isCompleted: !isNullOrEmpty(mocksTrigger),
+    };
+  }
+
+  // Recursively process action mocks, including nested ones
+  const processActionMocks = (actions: LogicAppsV2.Actions | undefined, mocks: Record<string, any>) => {
+    if (!actions || !mocks) {
+      return;
+    }
+    for (const [actionName, action] of Object.entries(actions)) {
+      if (mocks[actionName]) {
+        const mockOutputs = mocks[actionName].outputs ?? {};
+        const type = action?.type?.toLowerCase();
+        const supportedAction =
+          type === 'http' ||
+          type === 'invokefunction' ||
+          type === ConnectionType.ServiceProvider ||
+          type === ConnectionType.Function ||
+          type === ConnectionType.ApiManagement ||
+          type === ConnectionType.ApiConnection;
+
+        const actionResult = mocks[actionName].properties?.status;
+
+        if (supportedAction) {
+          if (actionResult === ActionResults.SUCCESS || actionResult === ActionResults.FAILED) {
+            mockResults[actionName] = {
+              actionResult: actionResult,
+              output: parseOutputsToValueSegment(mockOutputs),
+              isCompleted: !isNullOrEmpty(mockOutputs),
+            };
+          } else {
+            delete mockResults[actionName];
+          }
+        }
+      }
+
+      if (isScopeAction(action)) {
+        if (action.actions) {
+          processActionMocks(action.actions, mocks[actionName]?.actions ?? {});
+        }
+        if (isIfAction(action)) {
+          if (action.actions) {
+            processActionMocks(action.actions, mocks[actionName]?.actions ?? {});
+          }
+          if (action.else?.actions) {
+            processActionMocks(action.else.actions, mocks[actionName]?.else?.actions ?? {});
+          }
+        }
+        if (isSwitchAction(action)) {
+          if (action.default?.actions) {
+            processActionMocks(action.default.actions, mocks[actionName]?.default?.actions ?? {});
+          }
+          if (action.cases) {
+            for (const [caseName, caseAction] of Object.entries(action.cases)) {
+              if (caseAction.actions) {
+                processActionMocks(caseAction.actions, mocks[actionName]?.cases?.[caseName]?.actions ?? {});
+              }
+            }
+          }
+        }
+      }
+    }
+  };
+
+  // Process all action mocks
+  processActionMocks(definition.actions, unitTestDefinition.actionMocks);
+
+  // Deserialize assertions
+  const assertions = Object.values(unitTestDefinition.assertions).map((assertion) => {
+    const { name, description, assertionString } = assertion;
+    try {
+      const uncastAssertionString = ExpressionParser.parseTemplateExpression(assertionString) as ExpressionFunction;
+      return { name, description, assertionString: uncastAssertionString.expression };
+    } catch {
+      return { name, description, assertionString: '' };
+    }
+  });
+
+  return { mockResults, assertions: assertions };
 };
 
 const isScopeAction = (action: LogicAppsV2.ActionDefinition): action is LogicAppsV2.ScopeAction => {
