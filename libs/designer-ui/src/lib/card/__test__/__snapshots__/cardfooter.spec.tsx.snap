@@ -20,8 +20,7 @@ exports[`lib/card/cardfooter > should render with a comment icon 1`] = `
         aria-hidden={true}
         className="panel-card-v2-badge active root-111"
         data-icon-name="Comment"
-        role="img"
-        tabIndex={0}
+        role="button"
       >
         
       </i>
@@ -38,7 +37,7 @@ exports[`lib/card/cardfooter > should render with a comment icon 2`] = `
     className="msla-badges"
   >
     <div
-      aria-label=" Comment: comment"
+      aria-label="test title Comment: comment"
       onBlur={[Function]}
       onFocus={[Function]}
       onPointerEnter={[Function]}
@@ -75,8 +74,7 @@ exports[`lib/card/cardfooter > should render with a connection icon 1`] = `
         aria-hidden={true}
         className="panel-card-v2-badge active root-114"
         data-icon-name="Link"
-        role="img"
-        tabIndex={0}
+        role="button"
       >
         
       </i>
@@ -93,7 +91,7 @@ exports[`lib/card/cardfooter > should render with a connection icon 2`] = `
     className="msla-badges"
   >
     <div
-      aria-label=" Connection name: joechung@microsoft.com"
+      aria-label="test title Connection name: joechung@microsoft.com"
       onBlur={[Function]}
       onFocus={[Function]}
       onPointerEnter={[Function]}
@@ -130,8 +128,7 @@ exports[`lib/card/cardfooter > should render with a lock icon 1`] = `
         aria-hidden={true}
         className="panel-card-v2-badge active root-114"
         data-icon-name="Lock"
-        role="img"
-        tabIndex={0}
+        role="button"
       >
         
       </i>
@@ -148,7 +145,7 @@ exports[`lib/card/cardfooter > should render with a lock icon 2`] = `
     className="msla-badges"
   >
     <div
-      aria-label=" Secure inputs or outputs enabled.: This operation has secure inputs or outputs enabled."
+      aria-label="test title Secure inputs or outputs enabled: This operation has secure inputs or outputs enabled."
       onBlur={[Function]}
       onFocus={[Function]}
       onPointerEnter={[Function]}
@@ -175,18 +172,17 @@ exports[`lib/card/cardfooter > should render with a testing icon 1`] = `
     className="msla-badges"
   >
     <div
-      aria-label="This Action has testing configured."
+      aria-label=" Testing: This action has testing configured."
       onBlur={[Function]}
       onFocus={[Function]}
       onPointerEnter={[Function]}
       onPointerLeave={[Function]}
     >
       <i
-        aria-label="Testing: This Action has testing configured."
+        aria-hidden={true}
         className="panel-card-v2-badge active root-117"
         data-icon-name="TestBeaker"
-        role="img"
-        tabIndex={0}
+        role="button"
       >
         
       </i>
@@ -203,7 +199,7 @@ exports[`lib/card/cardfooter > should render with a testing icon 2`] = `
     className="msla-badges"
   >
     <div
-      aria-label=" Testing: This action has testing configured."
+      aria-label="test title Testing: This action has testing configured."
       onBlur={[Function]}
       onFocus={[Function]}
       onPointerEnter={[Function]}
