@@ -59,7 +59,7 @@ describe('panel/templatePanel/createWorkflowPanel/parametersTab', () => {
       panel: {
         isOpen: true,
         currentPanelView: TemplatePanelView.CreateWorkflow,
-        selectedTabId: constants.TEMPLATE_PANEL_TAB_NAMES.PARAMETERS,
+        selectedTabId: constants.TEMPLATE_TAB_NAMES.PARAMETERS,
       },
     };
     store = setupStore(minimalStoreData);
@@ -76,7 +76,7 @@ describe('panel/templatePanel/createWorkflowPanel/parametersTab', () => {
   });
 
   it('Shows Parameters Tab values displayed', async () => {
-    expect(store.getState().panel.selectedTabId).toBe(constants.TEMPLATE_PANEL_TAB_NAMES.PARAMETERS);
+    expect(store.getState().panel.selectedTabId).toBe(constants.TEMPLATE_TAB_NAMES.PARAMETERS);
     expect(store.getState().template.parameterDefinitions['param1'].type).toBe('String');
     expect(store.getState().template.parameterDefinitions['param2'].type).toBe('Object');
     expect(screen.getAllByText(param1.displayName)).toBeDefined();

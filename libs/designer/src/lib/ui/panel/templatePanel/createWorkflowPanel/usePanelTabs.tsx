@@ -72,13 +72,13 @@ export const useCreateWorkflowPanelTabs = ({
 
   // Validation user inputs based on the selected tab.
   useEffect(() => {
-    if (selectedTabId === Constants.TEMPLATE_PANEL_TAB_NAMES.PARAMETERS) {
+    if (selectedTabId === Constants.TEMPLATE_TAB_NAMES.PARAMETERS) {
       dispatch(validateConnections(connections.mapping));
-    } else if (selectedTabId === Constants.TEMPLATE_PANEL_TAB_NAMES.REVIEW_AND_CREATE) {
+    } else if (selectedTabId === Constants.TEMPLATE_TAB_NAMES.REVIEW_AND_CREATE) {
       dispatch(validateConnections(connections.mapping));
       dispatch(validateParameters());
     }
-    if (!isConsumption && selectedTabId && selectedTabId !== Constants.TEMPLATE_PANEL_TAB_NAMES.BASIC) {
+    if (!isConsumption && selectedTabId && selectedTabId !== Constants.TEMPLATE_TAB_NAMES.BASIC) {
       dispatch(validateWorkflowsBasicInfo({ existingWorkflowNames: existingWorkflowNames ?? [] }));
     }
   }, [dispatch, isConsumption, existingWorkflowNames, parametersExist, selectedTabId, connections.mapping]);
@@ -171,10 +171,10 @@ export const useCreateWorkflowPanelTabs = ({
       basicsTab(intl, dispatch, {
         shouldClearDetails: !isMultiWorkflowTemplate,
         nextTabId: connectionsExist
-          ? Constants.TEMPLATE_PANEL_TAB_NAMES.CONNECTIONS
+          ? Constants.TEMPLATE_TAB_NAMES.CONNECTIONS
           : parametersExist
-            ? Constants.TEMPLATE_PANEL_TAB_NAMES.PARAMETERS
-            : Constants.TEMPLATE_PANEL_TAB_NAMES.REVIEW_AND_CREATE,
+            ? Constants.TEMPLATE_TAB_NAMES.PARAMETERS
+            : Constants.TEMPLATE_TAB_NAMES.REVIEW_AND_CREATE,
         hasError: Object.values(workflows).some((workflowData) => workflowData.errors.kind || workflowData.errors.workflow),
         isCreating,
         onClosePanel,
@@ -199,8 +199,8 @@ export const useCreateWorkflowPanelTabs = ({
     () => ({
       ...connectionsTab(intl, dispatch, {
         shouldClearDetails: !isMultiWorkflowTemplate,
-        previousTabId: isConsumption ? undefined : Constants.TEMPLATE_PANEL_TAB_NAMES.BASIC,
-        nextTabId: parametersExist ? Constants.TEMPLATE_PANEL_TAB_NAMES.PARAMETERS : Constants.TEMPLATE_PANEL_TAB_NAMES.REVIEW_AND_CREATE,
+        previousTabId: isConsumption ? undefined : Constants.TEMPLATE_TAB_NAMES.BASIC,
+        nextTabId: parametersExist ? Constants.TEMPLATE_TAB_NAMES.PARAMETERS : Constants.TEMPLATE_TAB_NAMES.REVIEW_AND_CREATE,
         hasError: !!connectionsError,
         isCreating,
         onClosePanel,
@@ -227,10 +227,10 @@ export const useCreateWorkflowPanelTabs = ({
       ...parametersTab(intl, dispatch, {
         shouldClearDetails: !isMultiWorkflowTemplate,
         previousTabId: connectionsExist
-          ? Constants.TEMPLATE_PANEL_TAB_NAMES.CONNECTIONS
+          ? Constants.TEMPLATE_TAB_NAMES.CONNECTIONS
           : isConsumption
             ? undefined
-            : Constants.TEMPLATE_PANEL_TAB_NAMES.BASIC,
+            : Constants.TEMPLATE_TAB_NAMES.BASIC,
         hasError: hasParametersValidationErrors,
         isCreating,
         onClosePanel,
@@ -262,12 +262,12 @@ export const useCreateWorkflowPanelTabs = ({
         hasError: false,
         isPrimaryButtonDisabled: nameStateTabItem.hasError || !!connectionsError || hasParametersValidationErrors,
         previousTabId: parametersExist
-          ? Constants.TEMPLATE_PANEL_TAB_NAMES.PARAMETERS
+          ? Constants.TEMPLATE_TAB_NAMES.PARAMETERS
           : connectionsExist
-            ? Constants.TEMPLATE_PANEL_TAB_NAMES.CONNECTIONS
+            ? Constants.TEMPLATE_TAB_NAMES.CONNECTIONS
             : isConsumption
               ? undefined
-              : Constants.TEMPLATE_PANEL_TAB_NAMES.BASIC,
+              : Constants.TEMPLATE_TAB_NAMES.BASIC,
         onClosePanel,
         showCloseButton,
         disabled: hasResourceValidationErrors,

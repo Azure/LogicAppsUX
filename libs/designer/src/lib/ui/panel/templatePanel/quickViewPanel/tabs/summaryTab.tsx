@@ -138,7 +138,7 @@ export const summaryTab = (
   { templateId, workflowAppName, isMultiWorkflow }: Template.TemplateContext,
   onClose?: () => void
 ): TemplatePanelTab => ({
-  id: constants.TEMPLATE_PANEL_TAB_NAMES.OVERVIEW,
+  id: constants.TEMPLATE_TAB_NAMES.OVERVIEW,
   title: intl.formatMessage({
     defaultMessage: 'Summary',
     id: 'mgD2ZT',

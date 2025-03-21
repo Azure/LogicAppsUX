@@ -28,7 +28,7 @@ export const connectionsTab = (
     onClosePanel,
   }: CreateWorkflowTabProps
 ): TemplatePanelTab => ({
-  id: constants.TEMPLATE_PANEL_TAB_NAMES.CONNECTIONS,
+  id: constants.TEMPLATE_TAB_NAMES.CONNECTIONS,
   disabled,
   title: intl.formatMessage({
     defaultMessage: 'Connections',

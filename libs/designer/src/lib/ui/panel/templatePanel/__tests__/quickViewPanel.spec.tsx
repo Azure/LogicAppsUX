@@ -181,7 +181,7 @@ describe('panel/templatePanel/quickViewPanel', () => {
       panel: {
         isOpen: true,
         currentPanelView: TemplatePanelView.QuickView,
-        selectedTabId: constants.TEMPLATE_PANEL_TAB_NAMES.WORKFLOW_VIEW,
+        selectedTabId: constants.TEMPLATE_TAB_NAMES.WORKFLOW_VIEW,
       },
     };
     store = setupStore(minimalStoreData);
@@ -211,13 +211,13 @@ describe('panel/templatePanel/quickViewPanel', () => {
   it('Ensures the quickView panel is open with header', async () => {
     expect(store.getState().panel.isOpen).toBe(true);
     expect(store.getState().panel.currentPanelView).toBe(TemplatePanelView.QuickView);
-    expect(store.getState().panel.selectedTabId).toBe(constants.TEMPLATE_PANEL_TAB_NAMES.WORKFLOW_VIEW);
+    expect(store.getState().panel.selectedTabId).toBe(constants.TEMPLATE_TAB_NAMES.WORKFLOW_VIEW);
     expect(screen.queryByText(store.getState().template?.templateName ?? '')).toBeDefined();
   });
 
   it('Ensures the quickView panel is open with header', async () => {
     const newState = store.getState();
-    newState.panel.selectedTabId = constants.TEMPLATE_PANEL_TAB_NAMES.OVERVIEW;
+    newState.panel.selectedTabId = constants.TEMPLATE_TAB_NAMES.OVERVIEW;
     store = setupStore(newState);
     expect(store.getState().panel.isOpen).toBe(true);
     expect(store.getState().panel.currentPanelView).toBe(TemplatePanelView.QuickView);
