@@ -39,8 +39,9 @@ import {
   useParentRunIndex,
   useRunInstance,
   useShouldNodeFocus,
-  useParentRunId,
+  useParentNodeId,
   useIsLeafNode,
+  useActionMetadata,
 } from '../../core/state/workflow/workflowSelectors';
 import { setRepetitionRunData } from '../../core/state/workflow/workflowSlice';
 import { getRepetitionName } from '../common/LoopsPager/helper';
@@ -56,6 +57,7 @@ import { useDispatch } from 'react-redux';
 import { Handle, Position, type NodeProps } from '@xyflow/react';
 import { useHotkeys } from 'react-hotkeys-hook';
 import { CopyTooltip } from '../common/DesignerContextualMenu/CopyTooltip';
+import constants from '../../common/constants';
 
 const DefaultNode = ({ targetPosition = Position.Top, sourcePosition = Position.Bottom, id }: NodeProps) => {
   const readOnly = useReadOnly();
@@ -72,8 +74,9 @@ const DefaultNode = ({ targetPosition = Position.Top, sourcePosition = Position.
   const parentRunIndex = useParentRunIndex(id);
   const runInstance = useRunInstance();
   const runData = useRunData(id);
-  const parentRunId = useParentRunId(id);
-  const parentRunData = useRunData(parentRunId ?? '');
+  const parentNodeId = useParentNodeId(id);
+  const parentActionMetadata = useActionMetadata(parentNodeId);
+  const parentRunData = useRunData(parentNodeId ?? '');
   const selfRunData = useRunData(id);
   const nodesMetaData = useNodesMetadata();
   const repetitionName = useMemo(
@@ -85,14 +88,19 @@ const DefaultNode = ({ targetPosition = Position.Top, sourcePosition = Position.
 
   const suppressDefaultNodeSelect = useSuppressDefaultNodeSelectFunctionality();
   const nodeSelectCallbackOverride = useNodeSelectAdditionalCallback();
+  const isParentAgent = parentActionMetadata?.type?.toLowerCase() === constants.NODE.TYPE.AGENT;
+
+  const referenceUri = 'https://www.microsoft.com/en-us/microsoft-365/roadmap?filters=searchterms=agent';
 
   const { isFetching: isRepetitionFetching, data: repetitionRunData } = useNodeRepetition(
     !!isMonitoringView,
+    isParentAgent,
     id,
     runInstance?.id,
     repetitionName,
     parentRunData?.status,
-    parentRunIndex
+    parentRunIndex,
+    referenceUri
   );
 
   useEffect(() => {

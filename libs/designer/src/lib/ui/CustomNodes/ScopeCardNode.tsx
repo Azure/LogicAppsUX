@@ -23,12 +23,12 @@ import {
   useRunData,
   useParentRunIndex,
   useRunInstance,
-  useParentRunId,
+  useParentNodeId,
   useNodeDescription,
   useShouldNodeFocus,
   useRunIndex,
 } from '../../core/state/workflow/workflowSelectors';
-import { setRepetitionRunData, toggleCollapsedGraphId } from '../../core/state/workflow/workflowSlice';
+import { setRepetitionRunData, toggleCollapsedGraphId, updateAgenticGraph } from '../../core/state/workflow/workflowSlice';
 import type { AppDispatch } from '../../core/store';
 import { LoopsPager } from '../common/LoopsPager/LoopsPager';
 import { getRepetitionName } from '../common/LoopsPager/helper';
@@ -64,8 +64,8 @@ const ScopeCardNode = ({ data, targetPosition = Position.Top, sourcePosition = P
   const parentRunIndex = useParentRunIndex(scopeId);
   const runInstance = useRunInstance();
   const runData = useRunData(scopeId);
-  const parentRunId = useParentRunId(scopeId);
-  const parentRunData = useRunData(parentRunId ?? '');
+  const parentNodeId = useParentNodeId(scopeId);
+  const parentRunData = useRunData(parentNodeId ?? '');
   const selfRunData = useRunData(scopeId);
   const nodesMetaData = useNodesMetadata();
   const isPinned = useIsNodePinnedToOperationPanel(scopeId);
@@ -85,6 +85,7 @@ const ScopeCardNode = ({ data, targetPosition = Position.Top, sourcePosition = P
   const rootRef = useRef<HTMLDivElement | null>(null);
   const { isFetching: isRepetitionFetching, data: repetitionRunData } = useNodeRepetition(
     !!isMonitoringView,
+    false,
     scopeId,
     runInstance?.id,
     repetitionName,
@@ -103,6 +104,63 @@ const ScopeCardNode = ({ data, targetPosition = Position.Top, sourcePosition = P
   );
 
   console.log('charlie', isAgent, scopeId, runIndex, isScopeRepetitionFetching, scopeRepetitionRunData, runInstance?.id);
+
+  useEffect(() => {
+    // if (!isNullOrUndefined(scopeRepetitionRunData)) {
+    //   if (selfRunData?.correlation?.actionTrackingId === scopeRepetitionRunData?.properties?.correlation?.actionTrackingId) {
+    //     // if the correlation id is the same, we don't need to update the repetition run data
+    //     return;
+    //   }
+
+    //   dispatch(setRepetitionRunData({ nodeId: scopeId, runData: scopeRepetitionRunData.properties as LogicAppsV2.WorkflowRunAction }));
+    // }
+    const test: Record<string, any> = {
+      '0': {
+        If_Condition_X_Matches: {
+          status: 'InProgress',
+          reference: 'https://www.bing.com',
+        },
+      },
+      '1': {
+        If_Condition_X_Matches: {
+          status: 'InProgress',
+          reference: 'https://www.bing.com',
+        },
+        If_Condition_Y_Matches: {
+          status: 'InProgress',
+          reference: 'https://www.bing.com',
+        },
+      },
+      '2': {
+        If_Condition_Y_Matches: {
+          status: 'InProgress',
+          reference: 'https://www.bing.com',
+        },
+      },
+      '3': {
+        If_Condition_Y_Matches: {
+          status: 'InProgress',
+          reference: 'https://www.bing.com',
+        },
+      },
+      '4': {
+        If_Condition_Y_Matches: {
+          status: 'InProgress',
+          reference: 'https://www.bing.com',
+        },
+      },
+      '5': {
+        If_Condition_Y_Matches: {
+          status: 'InProgress',
+          reference: 'https://www.bing.com',
+        },
+      },
+    };
+    const indexTest = runIndex?.toString() as any;
+    const updatePayload = { nodeId: scopeId, tools: test[indexTest] };
+    console.log('charlie', updatePayload);
+    dispatch(updateAgenticGraph(updatePayload));
+  }, [dispatch, scopeRepetitionRunData, scopeId, selfRunData?.correlation?.actionTrackingId]);
 
   useEffect(() => {
     if (!isNullOrUndefined(repetitionRunData)) {

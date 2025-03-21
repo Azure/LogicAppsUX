@@ -13,8 +13,9 @@ export interface IRunService {
     action: { nodeId: string; runId: string | undefined },
     status?: string
   ): Promise<{ value: LogicAppsV2.RunRepetition[] }>;
-  getScopeRepetition(action: { nodeId: string; runId: string | undefined }, repetitionId: string): Promise<{ value: any }>;
+  getScopeRepetition(action: { nodeId: string; runId: string | undefined }, repetitionId: string): Promise<LogicAppsV2.RunRepetition>;
   getRepetition(action: { nodeId: string; runId: string | undefined }, repetitionId: string): Promise<LogicAppsV2.RunRepetition>;
+  getAgentRepetition(referenceUri: string): Promise<LogicAppsV2.RunRepetition>;
 }
 
 let service: IRunService;

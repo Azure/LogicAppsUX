@@ -36,11 +36,12 @@ import {
 import type { MessageLevel } from '@microsoft/designer-ui';
 import { getDurationStringPanelMode } from '@microsoft/designer-ui';
 import type * as LogicAppsV2 from '@microsoft/logic-apps-shared/src/utils/src/lib/models/logicAppsV2';
-import { createSlice, isAnyOf } from '@reduxjs/toolkit';
+import { createSlice, current, isAnyOf } from '@reduxjs/toolkit';
 import type { PayloadAction } from '@reduxjs/toolkit';
 import type { NodeChange, NodeDimensionChange } from '@xyflow/system';
 import type { UndoRedoPartialRootState } from '../undoRedo/undoRedoTypes';
 import { initializeInputsOutputsBinding } from '../../actions/bjsworkflow/monitoring';
+import type { UpdateAgenticGraphPayload } from '../../parsers/updateAgenticGraph';
 
 export interface AddImplicitForeachPayload {
   nodeId: string;
@@ -244,6 +245,27 @@ export const workflowSlice = createSlice({
         level: LogEntryLevel.Verbose,
         area: 'Designer:Workflow Slice',
         message: 'Action Node Deleted',
+        args: [action.payload],
+      });
+    },
+    updateAgenticGraph: (state: WorkflowState, action: PayloadAction<UpdateAgenticGraphPayload>) => {
+      if (!state.graph) {
+        return; // log exception
+      }
+      const { nodeId } = action.payload;
+      const graphId = getRecordEntry(state.nodesMetadata, nodeId)?.graphId ?? '';
+      const graph = getWorkflowNodeFromGraphState(state, graphId);
+      if (!graph) {
+        throw new Error('graph not set');
+      }
+      console.log('charlie graph', current(graph));
+
+      // deleteNodeFromWorkflow(action.payload, graph, state.nodesMetadata, state);
+
+      LoggerService().log({
+        level: LogEntryLevel.Verbose,
+        area: 'Designer:Workflow Slice',
+        message: 'Update node agentic workflow',
         args: [action.payload],
       });
     },
@@ -659,6 +681,7 @@ export const {
   setHostErrorMessages,
   toggleCollapsedActionId,
   clearFocusCollapsedNode,
+  updateAgenticGraph,
 } = workflowSlice.actions;
 
 export default workflowSlice.reducer;
