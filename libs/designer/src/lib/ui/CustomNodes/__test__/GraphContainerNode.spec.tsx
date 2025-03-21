@@ -5,7 +5,7 @@ import { vi, beforeEach, describe, Mock, it, expect } from 'vitest';
 import { useMonitoringView, useReadOnly } from '../../../core/state/designerOptions/designerOptionsSelectors';
 import { useIsNodeSelectedInOperationPanel } from '../../../core/state/panel/panelSelectors';
 import { useNodeMetadata } from '../../../core';
-import { useActionMetadata, useIsLeafNode, useParentRunId, useRunData } from '../../../core/state/workflow/workflowSelectors';
+import { useActionMetadata, useIsLeafNode, useParentNodeId, useRunData } from '../../../core/state/workflow/workflowSelectors';
 import { useNodeSize, useNodeLeafIndex, SUBGRAPH_TYPES } from '@microsoft/logic-apps-shared';
 import { NodeProps } from '@xyflow/react';
 
@@ -22,7 +22,7 @@ vi.mock('../../../core/state/workflow/workflowSelectors', () => ({
   useActionMetadata: vi.fn(),
   useNodeMetadata: vi.fn(),
   useIsLeafNode: vi.fn(),
-  useParentRunId: vi.fn(),
+  useParentNodeId: vi.fn(),
   useRunData: vi.fn(),
 }));
 
@@ -63,7 +63,7 @@ describe('GraphContainerNode', () => {
     (useNodeMetadata as Mock).mockReturnValue({});
     (useIsLeafNode as Mock).mockReturnValue(false);
     (useMonitoringView as Mock).mockReturnValue(false);
-    (useParentRunId as Mock).mockReturnValue(null);
+    (useParentNodeId as Mock).mockReturnValue(null);
     (useRunData as Mock).mockReturnValue({});
     (useNodeSize as Mock).mockReturnValue({ width: 100, height: 100 });
     (useNodeLeafIndex as Mock).mockReturnValue(0);

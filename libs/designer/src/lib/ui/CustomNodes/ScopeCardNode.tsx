@@ -23,28 +23,29 @@ import {
   useRunData,
   useParentRunIndex,
   useRunInstance,
-  useParentRunId,
+  useParentNodeId,
   useNodeDescription,
   useShouldNodeFocus,
+  useRunIndex,
 } from '../../core/state/workflow/workflowSelectors';
-import { setRepetitionRunData, toggleCollapsedGraphId } from '../../core/state/workflow/workflowSlice';
+import { setRepetitionRunData, toggleCollapsedGraphId, updateAgenticGraph } from '../../core/state/workflow/workflowSlice';
 import type { AppDispatch } from '../../core/store';
 import { LoopsPager } from '../common/LoopsPager/LoopsPager';
 import { getRepetitionName } from '../common/LoopsPager/helper';
 import { DropZone } from '../connections/dropzone';
 import { MessageBarType } from '@fluentui/react';
-import { RunService, equals, isNullOrUndefined, removeIdTag, useNodeIndex } from '@microsoft/logic-apps-shared';
+import { equals, isNullOrUndefined, removeIdTag, useNodeIndex } from '@microsoft/logic-apps-shared';
 import { ScopeCard } from '@microsoft/designer-ui';
 import type { LogicAppsV2 } from '@microsoft/logic-apps-shared';
 import { memo, useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useDrag } from 'react-dnd';
 import { useIntl } from 'react-intl';
-import { useQuery } from '@tanstack/react-query';
 import { useDispatch } from 'react-redux';
 import { Handle, Position, type NodeProps } from '@xyflow/react';
 import { copyScopeOperation } from '../../core/actions/bjsworkflow/copypaste';
 import { useHotkeys } from 'react-hotkeys-hook';
 import { CopyTooltip } from '../common/DesignerContextualMenu/CopyTooltip';
+import { useNodeRepetition, useScopeRepetition } from '../../core/queries/runs';
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 const ScopeCardNode = ({ data, targetPosition = Position.Top, sourcePosition = Position.Bottom, id }: NodeProps) => {
@@ -63,43 +64,103 @@ const ScopeCardNode = ({ data, targetPosition = Position.Top, sourcePosition = P
   const parentRunIndex = useParentRunIndex(scopeId);
   const runInstance = useRunInstance();
   const runData = useRunData(scopeId);
-  const parentRunId = useParentRunId(scopeId);
-  const parentRunData = useRunData(parentRunId ?? '');
+  const parentNodeId = useParentNodeId(scopeId);
+  const parentRunData = useRunData(parentNodeId ?? '');
   const selfRunData = useRunData(scopeId);
   const nodesMetaData = useNodesMetadata();
+  const isPinned = useIsNodePinnedToOperationPanel(scopeId);
+  const selected = useIsNodeSelectedInOperationPanel(scopeId);
+  const brandColor = useBrandColor(scopeId);
+  const iconUri = useIconUri(scopeId);
+  const isLeaf = useIsLeafNode(id);
+  const label = useNodeDisplayName(scopeId);
+  const normalizedType = node?.type.toLowerCase();
+  const isAgent = normalizedType === constants.NODE.TYPE.AGENT;
+  const runIndex = useRunIndex(scopeId);
+
   const repetitionName = useMemo(
     () => getRepetitionName(parentRunIndex, scopeId, nodesMetaData, operationsInfo),
     [nodesMetaData, operationsInfo, parentRunIndex, scopeId]
   );
   const rootRef = useRef<HTMLDivElement | null>(null);
-
-  const { isFetching: isRepetitionFetching, data: repetitionRunData } = useQuery<any>(
-    ['runInstance', { nodeId: scopeId, runId: runInstance?.id, repetitionName, parentStatus: parentRunData?.status }],
-    async () => {
-      if (parentRunData?.status === constants.FLOW_STATUS.SKIPPED) {
-        return {
-          properties: {
-            status: constants.FLOW_STATUS.SKIPPED,
-            inputsLink: null,
-            outputsLink: null,
-            startTime: null,
-            endTime: null,
-            trackingId: null,
-            correlation: null,
-          },
-        };
-      }
-
-      return await RunService().getRepetition({ nodeId: scopeId, runId: runInstance?.id }, repetitionName);
-    },
-    {
-      refetchOnWindowFocus: false,
-      refetchOnReconnect: false,
-      refetchOnMount: false,
-      retryOnMount: false,
-      enabled: parentRunIndex !== undefined && !!isMonitoringView,
-    }
+  const { isFetching: isRepetitionFetching, data: repetitionRunData } = useNodeRepetition(
+    !!isMonitoringView,
+    false,
+    scopeId,
+    runInstance?.id,
+    repetitionName,
+    parentRunData?.status,
+    parentRunIndex
   );
+
+  const { isFetching: isScopeRepetitionFetching, data: scopeRepetitionRunData } = useScopeRepetition(
+    !!isMonitoringView,
+    isAgent,
+    scopeId,
+    runInstance?.id,
+    repetitionName,
+    parentRunData?.status,
+    runIndex
+  );
+
+  console.log('charlie', isAgent, scopeId, runIndex, isScopeRepetitionFetching, scopeRepetitionRunData, runInstance?.id);
+
+  useEffect(() => {
+    // if (!isNullOrUndefined(scopeRepetitionRunData)) {
+    //   if (selfRunData?.correlation?.actionTrackingId === scopeRepetitionRunData?.properties?.correlation?.actionTrackingId) {
+    //     // if the correlation id is the same, we don't need to update the repetition run data
+    //     return;
+    //   }
+
+    //   dispatch(setRepetitionRunData({ nodeId: scopeId, runData: scopeRepetitionRunData.properties as LogicAppsV2.WorkflowRunAction }));
+    // }
+    const test: Record<string, any> = {
+      '0': {
+        If_Condition_X_Matches: {
+          status: 'InProgress',
+          reference: 'https://www.bing.com',
+        },
+      },
+      '1': {
+        If_Condition_X_Matches: {
+          status: 'InProgress',
+          reference: 'https://www.bing.com',
+        },
+        If_Condition_Y_Matches: {
+          status: 'InProgress',
+          reference: 'https://www.bing.com',
+        },
+      },
+      '2': {
+        If_Condition_Y_Matches: {
+          status: 'InProgress',
+          reference: 'https://www.bing.com',
+        },
+      },
+      '3': {
+        If_Condition_Y_Matches: {
+          status: 'InProgress',
+          reference: 'https://www.bing.com',
+        },
+      },
+      '4': {
+        If_Condition_Y_Matches: {
+          status: 'InProgress',
+          reference: 'https://www.bing.com',
+        },
+      },
+      '5': {
+        If_Condition_Y_Matches: {
+          status: 'InProgress',
+          reference: 'https://www.bing.com',
+        },
+      },
+    };
+    const indexTest = runIndex?.toString() as any;
+    const updatePayload = { nodeId: scopeId, tools: test[indexTest] };
+    console.log('charlie', updatePayload);
+    dispatch(updateAgenticGraph(updatePayload));
+  }, [dispatch, scopeRepetitionRunData, scopeId, selfRunData?.correlation?.actionTrackingId]);
 
   useEffect(() => {
     if (!isNullOrUndefined(repetitionRunData)) {
@@ -146,13 +207,6 @@ const ScopeCardNode = ({ data, targetPosition = Position.Top, sourcePosition = P
     }),
     [readOnly, metadata]
   );
-
-  const isPinned = useIsNodePinnedToOperationPanel(scopeId);
-  const selected = useIsNodeSelectedInOperationPanel(scopeId);
-  const brandColor = useBrandColor(scopeId);
-  const iconUri = useIconUri(scopeId);
-  const isLeaf = useIsLeafNode(id);
-  const label = useNodeDisplayName(scopeId);
 
   const nodeClick = useCallback(() => {
     dispatch(changePanelNode(scopeId));
@@ -282,7 +336,6 @@ const ScopeCardNode = ({ data, targetPosition = Position.Top, sourcePosition = P
     return null;
   }
 
-  const normalizedType = node?.type.toLowerCase();
   const actionCount = metadata?.actionCount ?? 0;
 
   const actionString = intl.formatMessage(
@@ -304,11 +357,13 @@ const ScopeCardNode = ({ data, targetPosition = Position.Top, sourcePosition = P
   );
 
   const collapsedText =
-    normalizedType === constants.NODE.TYPE.SWITCH || normalizedType === constants.NODE.TYPE.IF ? caseString : actionString;
+    normalizedType === constants.NODE.TYPE.SWITCH || normalizedType === constants.NODE.TYPE.IF || isAgent ? caseString : actionString;
 
   const isFooter = id.endsWith('#footer');
-  const isAgent = normalizedType === constants.NODE.TYPE.AGENT;
   const showEmptyGraphComponents = isLeaf && !graphCollapsed && !isFooter && !isAgent;
+
+  const shouldShowPager = (normalizedType === constants.NODE.TYPE.FOREACH || isAgent) && isMonitoringView;
+  const isCardActive = isMonitoringView ? !isNullOrUndefined(runData?.status) : true;
 
   return (
     <>
@@ -316,7 +371,8 @@ const ScopeCardNode = ({ data, targetPosition = Position.Top, sourcePosition = P
         <div ref={rootRef}>
           <Handle className="node-handle top" type="target" position={targetPosition} isConnectable={false} />
           <ScopeCard
-            active={isMonitoringView ? !isNullOrUndefined(runData?.status) : true}
+            active={isCardActive}
+            showStatusPill={!isAgent && isMonitoringView && isCardActive}
             brandColor={brandColor}
             icon={iconUri}
             isLoading={isLoading}
@@ -329,7 +385,6 @@ const ScopeCardNode = ({ data, targetPosition = Position.Top, sourcePosition = P
             errorMessage={errorMessage}
             isDragging={isDragging}
             id={scopeId}
-            isMonitoringView={isMonitoringView}
             title={label}
             readOnly={readOnly}
             onClick={nodeClick}
@@ -342,7 +397,7 @@ const ScopeCardNode = ({ data, targetPosition = Position.Top, sourcePosition = P
             nodeIndex={nodeIndex}
           />
           {showCopyCallout ? <CopyTooltip id={scopeId} targetRef={rootRef} hideTooltip={clearCopyCallout} /> : null}
-          {normalizedType === constants.NODE.TYPE.FOREACH && isMonitoringView ? renderLoopsPager : null}
+          {shouldShowPager ? renderLoopsPager : null}
           <Handle className="node-handle bottom" type="source" position={sourcePosition} isConnectable={false} />
         </div>
       </div>

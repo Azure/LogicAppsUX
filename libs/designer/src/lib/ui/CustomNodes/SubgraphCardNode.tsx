@@ -15,7 +15,7 @@ import {
   useNewAdditiveSubgraphId,
   useNodeDisplayName,
   useNodeMetadata,
-  useParentRunId,
+  useParentNodeId,
   useRunData,
   useWorkflowNode,
 } from '../../core/state/workflow/workflowSelectors';
@@ -47,8 +47,8 @@ const SubgraphCardNode = ({ targetPosition = Position.Top, sourcePosition = Posi
   const operationInfo = useOperationInfo(graphId);
   const isMonitoringView = useMonitoringView();
   const normalizedType = node?.type.toLowerCase();
-  const parentRunId = useParentRunId(subgraphId);
-  const runData = useRunData(parentRunId ?? subgraphId);
+  const parentNodeId = useParentNodeId(subgraphId);
+  const runData = useRunData(parentNodeId ?? subgraphId);
 
   const title = useNodeDisplayName(subgraphId);
 

@@ -26,7 +26,7 @@
         "tools": {
           "If_Condition_Y_Matches": {
             "actions": {
-              "Service Bus": {
+              "Service_Bus": {
                 "type": "connector",
                 "inputs": {
                   "operations": "getQueues,getTopics,getTopicSubcriptions,sendMessage",
