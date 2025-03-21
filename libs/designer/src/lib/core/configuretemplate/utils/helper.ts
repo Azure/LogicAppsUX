@@ -9,7 +9,7 @@ import type { NodeOperationInputsData } from '../../state/operation/operationMet
 import type { ConnectionReferences } from '../../../common/models/workflow';
 import type { Token, ValueSegment } from '@microsoft/designer-ui';
 import { isExpressionToken, isParameterToken, isTokenValueSegment } from '../../utils/parameters/segment';
-import { isFunction, isParameterExpression, LogEntryLevel, LoggerService } from '@microsoft/logic-apps-shared';
+import { isArmResourceId, isFunction, isParameterExpression, LogEntryLevel, LoggerService } from '@microsoft/logic-apps-shared';
 
 export const delimiter = '::::::';
 export const getTemplateConnectionsFromConnectionsData = (
@@ -184,4 +184,8 @@ const findParameterExpressions = (expression: Expression, result: string[]): voi
   for (const arg of expression.arguments) {
     findParameterExpressions(arg, result);
   }
+};
+
+export const getConnectorKind = (connectorId: string): Template.FeaturedConnectorType => {
+  return isArmResourceId(connectorId) ? 'shared' : connectorId.startsWith('/serviceproviders') ? 'inapp' : 'builtin';
 };

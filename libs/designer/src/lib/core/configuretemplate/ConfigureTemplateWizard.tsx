@@ -1,6 +1,6 @@
 import { useDispatch, useSelector } from 'react-redux';
 import type { AppDispatch, RootState } from '../state/templates/store';
-import { useCallback } from 'react';
+import { useCallback, useState } from 'react';
 import { ResourcePicker } from '../../ui/templates/basics/resourcepicker';
 import { equals, hasProperty, type LogicAppResource } from '@microsoft/logic-apps-shared';
 import { useWorkflowsInApp } from '../configuretemplate/utils/queries';
@@ -10,6 +10,7 @@ import { updateAllWorkflowsData, updateWorkflowData } from '../state/templates/t
 import { TemplateContent, TemplatesPanelFooter, type TemplateTabProps } from '@microsoft/designer-ui';
 import { useConfigureTemplateWizardTabs } from '../../ui/configuretemplate/tabs/useWizardTabs';
 import { selectWizardTab } from '../state/templates/tabSlice';
+import { FeaturedConnectors } from '../../ui/configuretemplate/templateprofile/connectors';
 
 export const ConfigureTemplateWizard = () => {
   const dispatch = useDispatch<AppDispatch>();
@@ -24,9 +25,11 @@ export const ConfigureTemplateWizard = () => {
     })
   );
   const { data: workflows, isLoading } = useWorkflowsInApp(subscriptionId, resourceGroup, logicAppName ?? '', !!isConsumption);
+  const [showFeaturedConnectors, setShowFeaturedConnectors] = useState(false);
 
   const onInitializeWorkflows = useCallback(() => {
     dispatch(initializeWorkflowsData({}));
+    setShowFeaturedConnectors(true);
   }, [dispatch]);
 
   const onWorkflowSelected = useCallback(
@@ -79,6 +82,12 @@ export const ConfigureTemplateWizard = () => {
       <div>
         <Button onClick={onInitializeWorkflows}>{'Initialize Workflows'}</Button>
       </div>
+
+      <p>
+        {'Featured Connectors'}
+        <br />
+        {showFeaturedConnectors ? <FeaturedConnectors /> : 'Click "Initialize Workflows" to show featured connectors'}
+      </p>
 
       <TemplateContent className="msla-template-quickview-tabs" tabs={panelTabs} selectedTab={selectedTabId} selectTab={handleSelectTab} />
       <div className="msla-template-overview-footer">
