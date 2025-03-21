@@ -72,9 +72,9 @@ async function buildCodeProject(functionsProjectPath: string, showWindowInformat
             vscode.window.showInformationMessage(localize('azureLogicAppsStandard.buildCodeFunctionsProjectSuccess', successMessage));
           }
         }
-        disposable.dispose();
         resolve();
       }
     });
+    disposable.dispose();
   });
 }
