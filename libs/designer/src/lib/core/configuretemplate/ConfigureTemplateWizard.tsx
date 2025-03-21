@@ -5,7 +5,7 @@ import { ResourcePicker } from '../../ui/templates/basics/resourcepicker';
 import { equals, hasProperty, type LogicAppResource } from '@microsoft/logic-apps-shared';
 import { useWorkflowsInApp } from '../configuretemplate/utils/queries';
 import { Button, Checkbox } from '@fluentui/react-components';
-import { initializeConnectionsFromWorkflows } from '../actions/bjsworkflow/configuretemplate';
+import { initializeWorkflowsData } from '../actions/bjsworkflow/configuretemplate';
 import { updateAllWorkflowsData, updateWorkflowData } from '../state/templates/templateSlice';
 
 export const ConfigureTemplateWizard = () => {
@@ -19,13 +19,9 @@ export const ConfigureTemplateWizard = () => {
   }));
   const { data: workflows, isLoading } = useWorkflowsInApp(subscriptionId, resourceGroup, logicAppName ?? '', !!isConsumption);
 
-  const onGetConnections = useCallback(() => {
-    dispatch(initializeConnectionsFromWorkflows({}));
+  const onInitializeWorkflows = useCallback(() => {
+    dispatch(initializeWorkflowsData({}));
   }, [dispatch]);
-
-  const onGetParameters = useCallback(() => {
-    // dispatch(initializeParametersFromWorkflows({}));
-  }, []);
 
   const onWorkflowSelected = useCallback(
     (workflowId: string, checked: boolean) => {
@@ -68,8 +64,7 @@ export const ConfigureTemplateWizard = () => {
         </div>
       </div>
       <div>
-        <Button onClick={onGetConnections}>{'Get Connections'}</Button>
-        <Button onClick={onGetParameters}>{'Get Parameters'}</Button>
+        <Button onClick={onInitializeWorkflows}>{'Initialize Workflows'}</Button>
       </div>
     </div>
   );

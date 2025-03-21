@@ -28,7 +28,7 @@ export const InitResourceService = (templateService: IResourceService): void => 
 
 export const ResourceService = (): IResourceService => {
   if (!service) {
-    throw new AssertionException(AssertionErrorCode.SERVICE_NOT_INITIALIZED, 'Template Service needs to be initialized before using');
+    throw new AssertionException(AssertionErrorCode.SERVICE_NOT_INITIALIZED, 'Resource Service needs to be initialized before using');
   }
 
   return service;

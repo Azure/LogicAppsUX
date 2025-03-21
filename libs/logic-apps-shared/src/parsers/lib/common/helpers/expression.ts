@@ -88,7 +88,7 @@ export function convertToStringLiteral(value: string): string {
   return `'${value.replace(/'/g, `''`)}'`;
 }
 
-function isParameterExpression(functionName: string) {
+export function isParameterExpression(functionName: string) {
   return equals(functionName, ExpressionFunctionNames.PARAMETERS);
 }
 

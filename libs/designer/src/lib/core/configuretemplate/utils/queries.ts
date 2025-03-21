@@ -97,3 +97,26 @@ export const getConnectionsInWorkflowApp = async (
     }
   });
 };
+
+export const getParametersInWorkflowApp = async (
+  subscriptionId: string,
+  resourceGroup: string,
+  logicAppName: string,
+  queryClient: QueryClient
+): Promise<Record<string, any>> => {
+  const resourceId = `/subscriptions/${subscriptionId}/resourceGroups/${resourceGroup}/providers/Microsoft.Web/sites/${logicAppName}/hostruntime/admin/vfs/parameters.json`;
+  const queryParameters = {
+    'api-version': '2018-11-01',
+    relativepath: '1',
+  };
+  return queryClient.fetchQuery(['parametersdata', resourceId.toLowerCase()], async () => {
+    try {
+      return ResourceService().getResource(resourceId, queryParameters);
+    } catch (error: any) {
+      if (error?.response?.status === 404) {
+        return {};
+      }
+      throw error;
+    }
+  });
+};

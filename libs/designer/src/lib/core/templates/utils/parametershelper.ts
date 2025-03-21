@@ -1,5 +1,5 @@
 import type { LogicAppsV2, ParameterInfo, Template } from '@microsoft/logic-apps-shared';
-import { normalizeConnectorId, OperationManifestService } from '@microsoft/logic-apps-shared';
+import { LogEntryLevel, LoggerService, normalizeConnectorId, OperationManifestService } from '@microsoft/logic-apps-shared';
 import { getCustomSwaggerIfNeeded, getInputParametersFromManifest } from '../../actions/bjsworkflow/initialize';
 import type { WorkflowTemplateData } from '../../actions/bjsworkflow/templates';
 import { Deserialize } from '../../parsers/BJSWorkflow/BJSDeserializer';
@@ -11,6 +11,7 @@ import type { DependencyInfo, NodeInputs, NodeOperation, NodeOperationInputsData
 import { convertToValueSegments } from '../../utils/parameters/helper';
 import type { Token } from '@microsoft/designer-ui';
 import { isParameterToken, isTokenValueSegment } from '../../utils/parameters/segment';
+import type { ConnectionReferences } from '../../../common/models/workflow';
 
 export interface TemplateOperationParametersMetadata {
   parameterDefinitions: Record<string, Template.ParameterDefinition>;
@@ -70,7 +71,7 @@ export const initializeParametersMetadata = async (
           ).toLowerCase()
         : undefined;
 
-      promises.push(initializeOperationDetails(nodeId, operation, connectorId, isTrigger, parametersToInitialize));
+      promises.push(initializeOperationDetails(nodeId, operation, connectorId, isTrigger, parametersToInitialize, /*references */ {}));
     }
   }
 
@@ -105,7 +106,7 @@ export const initializeParametersMetadata = async (
 };
 
 type TemplateParameter = Template.ParameterDefinition & { id: string };
-interface OperationDetails {
+export interface OperationDetails {
   id: string;
   nodeInputs: NodeInputs;
   nodeOperationInfo: NodeOperation;
@@ -113,44 +114,56 @@ interface OperationDetails {
   templateParameters: TemplateParameter[];
 }
 
-const initializeOperationDetails = async (
+export const initializeOperationDetails = async (
   nodeId: string,
   operation: LogicAppsV2.OperationDefinition,
   connectorId: string | undefined,
   isTrigger: boolean,
-  templateParameters: TemplateParameter[]
+  templateParameters: TemplateParameter[],
+  references: ConnectionReferences
 ): Promise<OperationDetails | undefined> => {
   const operationManifestService = OperationManifestService();
-  if (operationManifestService.isSupported(operation.type, operation.kind)) {
-    const operationInfo = await getOperationInfo(nodeId, operation, isTrigger);
-    const nodeOperationInfo = { ...operationInfo, type: operation.type, kind: operation.kind };
-    const manifest = await getOperationManifest(operationInfo);
-    const customSwagger = await getCustomSwaggerIfNeeded(manifest.properties, operation);
-    const { inputs: nodeInputs, dependencies: inputDependencies } = getInputParametersFromManifest(
-      nodeId,
-      nodeOperationInfo,
-      manifest,
-      /* presetParameterValues */ undefined,
-      customSwagger,
-      operation
-    );
 
-    return { id: nodeId, nodeInputs, nodeOperationInfo, inputDependencies, templateParameters };
-  }
+  try {
+    if (operationManifestService.isSupported(operation.type, operation.kind)) {
+      const operationInfo = await getOperationInfo(nodeId, operation, isTrigger);
+      const nodeOperationInfo = { ...operationInfo, type: operation.type, kind: operation.kind };
+      const manifest = await getOperationManifest(operationInfo);
+      const customSwagger = await getCustomSwaggerIfNeeded(manifest.properties, operation);
+      const { inputs: nodeInputs, dependencies: inputDependencies } = getInputParametersFromManifest(
+        nodeId,
+        nodeOperationInfo,
+        manifest,
+        /* presetParameterValues */ undefined,
+        customSwagger,
+        operation
+      );
 
-  const operationInfo = await getSwaggerOperationInfo(nodeId, operation as LogicAppsV2.ApiConnectionAction, {}, connectorId);
-  if (operationInfo) {
-    const nodeOperationInfo = { ...operationInfo, type: operation.type, kind: operation.kind };
-    const parsedSwagger = await getSwaggerForConnector(operationInfo.connectorId);
+      return { id: nodeId, nodeInputs, nodeOperationInfo, inputDependencies, templateParameters };
+    }
 
-    const { inputs: nodeInputs, dependencies: inputDependencies } = getInputParametersFromSwagger(
-      nodeId,
-      isTrigger,
-      parsedSwagger,
-      nodeOperationInfo,
-      operation
-    );
-    return { id: nodeId, nodeInputs, nodeOperationInfo, inputDependencies, templateParameters };
+    const operationInfo = await getSwaggerOperationInfo(nodeId, operation as LogicAppsV2.ApiConnectionAction, references, connectorId);
+    if (operationInfo) {
+      const nodeOperationInfo = { ...operationInfo, type: operation.type, kind: operation.kind };
+      const parsedSwagger = await getSwaggerForConnector(operationInfo.connectorId);
+
+      const { inputs: nodeInputs, dependencies: inputDependencies } = getInputParametersFromSwagger(
+        nodeId,
+        isTrigger,
+        parsedSwagger,
+        nodeOperationInfo,
+        operation
+      );
+      return { id: nodeId, nodeInputs, nodeOperationInfo, inputDependencies, templateParameters };
+    }
+  } catch (error: any) {
+    LoggerService().log({
+      level: LogEntryLevel.Error,
+      area: 'Template.initializeOperationDetails',
+      error,
+      message: `Error while initializing operation details for nodeId: ${nodeId}`,
+    });
+    return undefined;
   }
 
   return undefined;
@@ -166,12 +179,7 @@ const getAndUpdateOperationParameterForTemplateParameter = (
   for (const groupKey of Object.keys(nodeInputs.parameterGroups)) {
     nodeInputs.parameterGroups[groupKey].parameters = nodeInputs.parameterGroups[groupKey].parameters.map((parameter) => {
       const value = parameter.value;
-      if (
-        value.length === 1 &&
-        isTokenValueSegment(value[0]) &&
-        isParameterToken(value[0].token as Token) &&
-        value[0].token?.name === parameterName
-      ) {
+      if (shouldAddDynamicData(parameter) && value[0].token?.name === parameterName) {
         parameter.value = convertToValueSegments(parameterValue, !parameter.suppressCasting /* shouldUncast */, parameter.type);
         result = parameter;
       }
@@ -192,4 +200,8 @@ export const updateOperationParameterWithTemplateParameterValue = (parameterId: 
       return parameter;
     });
   }
+};
+
+export const shouldAddDynamicData = ({ value }: ParameterInfo): boolean => {
+  return value.length === 1 && isTokenValueSegment(value[0]) && isParameterToken(value[0].token as Token);
 };

@@ -12,6 +12,8 @@ import { createSlice } from '@reduxjs/toolkit';
 import type { PayloadAction } from '@reduxjs/toolkit';
 import type { WritableDraft } from 'immer/dist/internal';
 import type { UndoRedoPartialRootState } from '../undoRedo/undoRedoTypes';
+import { deleteWorkflowData } from '../../actions/bjsworkflow/configuretemplate';
+import { delimiter } from '../../configuretemplate/utils/helper';
 
 export interface ParameterGroup {
   id: string;
@@ -594,6 +596,15 @@ export const operationMetadataSlice = createSlice({
       state.loadStatus.nodesAndDynamicDataInitialized = false;
     });
     builder.addCase(setStateAfterUndoRedo, (_, action: PayloadAction<UndoRedoPartialRootState>) => action.payload.operations);
+    builder.addCase(deleteWorkflowData.fulfilled, (state, action: PayloadAction<{ id: string }>) => {
+      const nodeIds = Object.keys(state.operationInfo).filter((nodeId) => nodeId.startsWith(`${action.payload.id}${delimiter}`));
+
+      for (const nodeId of nodeIds) {
+        delete state.inputParameters[nodeId];
+        delete state.dependencies[nodeId];
+        delete state.operationInfo[nodeId];
+      }
+    });
   },
 });
 

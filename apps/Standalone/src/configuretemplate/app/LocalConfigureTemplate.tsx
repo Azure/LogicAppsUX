@@ -12,6 +12,7 @@ import {
   StandardOperationManifestService,
   BaseResourceService,
   BaseTemplateResourceService,
+  ConsumptionOperationManifestService,
 } from '@microsoft/logic-apps-shared';
 import { HttpClient } from '../../designer/app/AzureLogicAppsDesigner/Services/HttpClient';
 import type { RootState } from '../state/Store';
@@ -31,18 +32,20 @@ export const LocalConfigureTemplate = () => {
 
   // Need to fetch template resource to get location.
   const services = useMemo(
-    () => getServices(defaultSubscriptionId, defaultResourceGroup, defaultLocation, tenantId ?? ''),
+    () => getServices(defaultSubscriptionId, defaultResourceGroup, defaultLocation, tenantId ?? '', /* isConsumption */ false),
     [defaultResourceGroup, defaultSubscriptionId, tenantId]
   );
 
   const onResourceChange = useCallback(async () => {
     const {
-      workflow: { subscriptionId, resourceGroup, location, workflowAppName },
+      workflow: { subscriptionId, resourceGroup, location, workflowAppName, isConsumption },
       templateOptions: { reInitializeServices },
     } = templateStore.getState();
     if (reInitializeServices) {
       templateStore.dispatch(
-        resetStateOnResourceChange(getResourceBasedServices(subscriptionId, resourceGroup, location, workflowAppName ?? '', tenantId ?? ''))
+        resetStateOnResourceChange(
+          getResourceBasedServices(subscriptionId, resourceGroup, location, workflowAppName ?? '', tenantId ?? '', !!isConsumption)
+        )
       );
     }
   }, [tenantId]);
@@ -73,17 +76,25 @@ export const LocalConfigureTemplate = () => {
 
 const apiVersion = '2020-06-01';
 const httpClient = new HttpClient();
-const getServices = (subscriptionId: string, resourceGroup: string, location: string, tenantId: string): any => {
+const getServices = (subscriptionId: string, resourceGroup: string, location: string, tenantId: string, isConsumption: boolean): any => {
   const armUrl = 'https://management.azure.com';
   const resourceService = new BaseResourceService({ baseUrl: armUrl, httpClient, apiVersion });
   const templateResourceService = new BaseTemplateResourceService({ baseUrl: armUrl, httpClient, apiVersion });
 
-  const { connectionService, operationManifestService } = getResourceBasedServices(subscriptionId, resourceGroup, location, '', tenantId);
+  const { connectionService, operationManifestService } = getResourceBasedServices(
+    subscriptionId,
+    resourceGroup,
+    location,
+    '',
+    tenantId,
+    isConsumption
+  );
   return {
     connectionService,
     operationManifestService,
     resourceService,
     templateResourceService,
+    workflowService: {},
   };
 };
 
@@ -92,16 +103,25 @@ const getResourceBasedServices = (
   resourceGroup: string,
   location: string,
   appName: string,
-  tenantId: string
+  tenantId: string,
+  isConsumption: boolean
 ): any => {
   const armUrl = 'https://management.azure.com';
   const baseUrl = `${armUrl}/subscriptions/${subscriptionId}/resourceGroups/${resourceGroup}/providers/Microsoft.Web/sites/${appName}/hostruntime/runtime/webhooks/workflow/api/management`;
   const defaultServiceParams = { baseUrl, httpClient, apiVersion };
-  const operationManifestService = new StandardOperationManifestService({
-    apiVersion,
-    baseUrl,
-    httpClient,
-  });
+  const operationManifestService = isConsumption
+    ? new ConsumptionOperationManifestService({
+        baseUrl: armUrl,
+        httpClient,
+        apiVersion: '2022-09-01-preview',
+        subscriptionId,
+        location: location || 'location',
+      })
+    : new StandardOperationManifestService({
+        apiVersion,
+        baseUrl,
+        httpClient,
+      });
   const connectionService = new StandardConnectionService({
     ...defaultServiceParams,
     apiHubServiceDetails: {
