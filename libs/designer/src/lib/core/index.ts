@@ -91,3 +91,4 @@ export { reloadTemplates, resetStateOnResourceChange, type WorkflowTemplateData 
 export type { AppDispatch as TemplatesAppDispatch, RootState as TemplatesRootState } from './state/templates/store';
 export type { TemplateServiceOptions } from './templates/TemplatesDesignerContext';
 export { ConfigureTemplateWizard } from './configuretemplate/ConfigureTemplateWizard';
+export { validateParameters, validateConnections } from './state/templates/templateSlice';
