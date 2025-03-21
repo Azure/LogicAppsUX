@@ -3,7 +3,7 @@ import type { IntlShape } from 'react-intl';
 import constants from '../../../../../common/constants';
 import { useTheme } from '@fluentui/react';
 import { useMemo } from 'react';
-import type { TemplatePanelTab } from '@microsoft/designer-ui';
+import type { TemplateTabProps } from '@microsoft/designer-ui';
 import { closePanel, openCreateWorkflowPanelView } from '../../../../../core/state/templates/panelSlice';
 import { clearTemplateDetails } from '../../../../../core/state/templates/templateSlice';
 import { LogEntryLevel, LoggerService, type Template } from '@microsoft/logic-apps-shared';
@@ -31,7 +31,7 @@ export const workflowTab = (
   onPrimaryButtonClick: (() => void) | undefined,
   { templateId, workflowAppName, isMultiWorkflow }: Template.TemplateContext,
   onClose?: () => void
-): TemplatePanelTab => ({
+): TemplateTabProps => ({
   id: constants.TEMPLATE_TAB_NAMES.WORKFLOW_VIEW,
   title: intl.formatMessage({
     defaultMessage: 'Workflow',

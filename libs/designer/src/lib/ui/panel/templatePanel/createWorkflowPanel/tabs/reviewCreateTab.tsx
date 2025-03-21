@@ -2,7 +2,7 @@ import type { AppDispatch } from '../../../../../core/state/templates/store';
 import type { IntlShape } from 'react-intl';
 import { MessageBar } from '@fluentui/react-components';
 import constants from '../../../../../common/constants';
-import type { TemplatePanelTab } from '@microsoft/designer-ui';
+import type { TemplateTabProps } from '@microsoft/designer-ui';
 import { Spinner, SpinnerSize } from '@fluentui/react';
 import { closePanel, selectPanelTab } from '../../../../../core/state/templates/panelSlice';
 import type { CreateWorkflowTabProps } from '../createWorkflowPanel';
@@ -28,7 +28,7 @@ export const reviewCreateTab = (
     isPrimaryButtonDisabled: boolean;
     isCreateView: boolean;
   } & CreateWorkflowTabProps
-): TemplatePanelTab => ({
+): TemplateTabProps => ({
   id: constants.TEMPLATE_TAB_NAMES.REVIEW_AND_CREATE,
   disabled,
   title: isCreateView
