@@ -41,7 +41,7 @@ import type { PayloadAction } from '@reduxjs/toolkit';
 import type { NodeChange, NodeDimensionChange } from '@xyflow/system';
 import type { UndoRedoPartialRootState } from '../undoRedo/undoRedoTypes';
 import { initializeInputsOutputsBinding } from '../../actions/bjsworkflow/monitoring';
-import type { UpdateAgenticGraphPayload } from '../../parsers/updateAgenticGraph';
+import { updateNodeGraph, type UpdateAgenticGraphPayload } from '../../parsers/updateAgenticGraph';
 
 export interface AddImplicitForeachPayload {
   nodeId: string;
@@ -260,7 +260,7 @@ export const workflowSlice = createSlice({
       }
       console.log('charlie graph', current(graph));
 
-      // deleteNodeFromWorkflow(action.payload, graph, state.nodesMetadata, state);
+      updateNodeGraph(action.payload, graph, state.nodesMetadata, state);
 
       LoggerService().log({
         level: LogEntryLevel.Verbose,
