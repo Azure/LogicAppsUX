@@ -10,8 +10,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { useCallback } from 'react';
 import { equals, hasProperty, type LogicAppResource } from '@microsoft/logic-apps-shared';
 import { updateAllWorkflowsData, updateWorkflowData } from '../../../../../core/state/templates/templateSlice';
-import { Button, Checkbox } from '@fluentui/react-components';
-import { initializeWorkflowsData } from '../../../../../core/actions/bjsworkflow/configuretemplate';
+import { Checkbox } from '@fluentui/react-components';
 
 export const SelectWorkflows = () => {
   const dispatch = useDispatch<AppDispatch>();
@@ -24,10 +23,6 @@ export const SelectWorkflows = () => {
     selectedTabId: state.tab.selectedTabId,
   }));
   const { data: workflows, isLoading } = useWorkflowsInApp(subscriptionId, resourceGroup, logicAppName ?? '', !!isConsumption);
-
-  const onInitializeWorkflows = useCallback(() => {
-    dispatch(initializeWorkflowsData({}));
-  }, [dispatch]);
 
   const onWorkflowSelected = useCallback(
     (workflowId: string, checked: boolean) => {
@@ -67,10 +62,6 @@ export const SelectWorkflows = () => {
               />
             ))
           )}
-        </div>
-
-        <div>
-          <Button onClick={onInitializeWorkflows}>{'Initialize Workflows'}</Button>
         </div>
       </div>
     </div>

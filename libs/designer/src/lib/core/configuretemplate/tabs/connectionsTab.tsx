@@ -1,12 +1,17 @@
-import type { AppDispatch } from '../../state/templates/store';
+import type { AppDispatch, RootState } from '../../state/templates/store';
 import { Text } from '@fluentui/react-components';
 import type { TemplateTabProps } from '@microsoft/designer-ui';
 import constants from '../../../common/constants';
 import type { IntlShape } from 'react-intl';
 import { selectWizardTab } from '../../state/templates/tabSlice';
+import { useSelector } from 'react-redux';
 
 export const ConnectionsTab = () => {
-  return <Text>placeholder - show connections</Text>;
+  const { connections } = useSelector((state: RootState) => ({
+    connections: state.template.connections,
+  }));
+
+  return <Text>placeholder - show connections {JSON.stringify(connections)}</Text>;
 };
 
 export const connectionsTab = (intl: IntlShape, dispatch: AppDispatch): TemplateTabProps => ({

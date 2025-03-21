@@ -1,12 +1,17 @@
-import type { AppDispatch } from '../../state/templates/store';
+import type { AppDispatch, RootState } from '../../state/templates/store';
 import { Text } from '@fluentui/react-components';
 import type { TemplateTabProps } from '@microsoft/designer-ui';
 import constants from '../../../common/constants';
 import type { IntlShape } from 'react-intl';
 import { selectWizardTab } from '../../state/templates/tabSlice';
+import { useSelector } from 'react-redux';
 
 export const ParametersTab = () => {
-  return <Text>placeholder - show parameters</Text>;
+  const { parameterDefinitions } = useSelector((state: RootState) => ({
+    parameterDefinitions: state.template.parameterDefinitions,
+  }));
+
+  return <Text>placeholder - show parameters {JSON.stringify(parameterDefinitions)}</Text>;
 };
 
 export const parametersTab = (intl: IntlShape, dispatch: AppDispatch): TemplateTabProps => ({
