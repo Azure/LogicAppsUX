@@ -25,6 +25,10 @@ export const useIsMonitoringView = () => {
   return useSelector((state: RootState) => state.workflowLoader.isMonitoringView);
 };
 
+export const useIsUnitTestView = () => {
+  return useSelector((state: RootState) => state.workflowLoader.isUnitTest);
+};
+
 export const useResourcePath = () => {
   return useSelector((state: RootState) => state.workflowLoader.resourcePath);
 };

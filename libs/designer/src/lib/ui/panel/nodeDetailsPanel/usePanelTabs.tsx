@@ -1,7 +1,7 @@
 import constants from '../../../common/constants';
 import type { RootState } from '../../../core';
 import { useNodeMetadata, useOperationInfo } from '../../../core';
-import { usePanelTabHideKeys, useMonitoringView } from '../../../core/state/designerOptions/designerOptionsSelectors';
+import { usePanelTabHideKeys, useUnitTest, useMonitoringView } from '../../../core/state/designerOptions/designerOptionsSelectors';
 import { useParameterValidationErrors } from '../../../core/state/operation/operationSelector';
 import { useIsNodePinnedToOperationPanel } from '../../../core/state/panel/panelSelectors';
 import { useSettingValidationErrors } from '../../../core/state/setting/settingSelector';
@@ -10,6 +10,7 @@ import { useRetryHistory } from '../../../core/state/workflow/workflowSelectors'
 import { isRootNodeInGraph } from '../../../core/utils/graph';
 import { aboutTab } from './tabs/aboutTab';
 import { codeViewTab } from './tabs/codeViewTab';
+import { mockResultsTab } from './tabs/mockResultsTab/mockResultsTab';
 import { monitoringTab } from './tabs/monitoringTab/monitoringTab';
 import { parametersTab } from './tabs/parametersTab';
 import { monitorRetryTab } from './tabs/retryTab';
@@ -26,6 +27,7 @@ export const usePanelTabs = ({ nodeId }: { nodeId: string }) => {
   const intl = useIntl();
 
   const isMonitoringView = useMonitoringView();
+  const isUnitTestView = useUnitTest();
   const panelTabHideKeys = usePanelTabHideKeys();
 
   const isPinnedNode = useIsNodePinnedToOperationPanel(nodeId);
@@ -52,6 +54,14 @@ export const usePanelTabs = ({ nodeId }: { nodeId: string }) => {
       visible: !isScopeNode && isMonitoringView,
     }),
     [intl, isMonitoringView, isScopeNode, tabProps]
+  );
+
+  const mockResultsTabItem = useMemo(
+    () => ({
+      ...mockResultsTab(intl, tabProps),
+      visible: isUnitTestView,
+    }),
+    [intl, isUnitTestView, tabProps]
   );
 
   const parametersTabItem = useMemo(
@@ -100,6 +110,9 @@ export const usePanelTabs = ({ nodeId }: { nodeId: string }) => {
   );
 
   const tabs = useMemo(() => {
+    if (isUnitTestView) {
+      return [mockResultsTabItem];
+    }
     // Switch cases should only show parameters tab
     if (
       nodeMetaData &&
@@ -122,6 +135,8 @@ export const usePanelTabs = ({ nodeId }: { nodeId: string }) => {
       .filter((a) => a.visible)
       .sort((a, b) => a.order - b.order);
   }, [
+    mockResultsTabItem,
+    isUnitTestView,
     aboutTabItem,
     codeViewTabItem,
     monitorRetryTabItem,

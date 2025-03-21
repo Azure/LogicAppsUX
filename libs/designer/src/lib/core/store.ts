@@ -8,6 +8,7 @@ import panelReducer from './state/panel/panelSlice';
 import settingsReducer from './state/setting/settingSlice';
 import staticResultsSchemasReducer from './state/staticresultschema/staticresultsSlice';
 import tokens from './state/tokens/tokensSlice';
+import unitTestReducer from './state/unitTest/unitTestSlice';
 import undoRedoReducer from './state/undoRedo/undoRedoSlice';
 import workflowReducer from './state/workflow/workflowSlice';
 import workflowParametersReducer from './state/workflowparameters/workflowparametersSlice';
@@ -35,6 +36,7 @@ export const store = configureStore({
     tokens: tokens,
     workflowParameters: workflowParametersReducer,
     staticResults: staticResultsSchemasReducer,
+    unitTest: unitTestReducer,
     customCode: customCodeReducer,
     undoRedo: undoRedoReducer,
     modal: modalReducer,

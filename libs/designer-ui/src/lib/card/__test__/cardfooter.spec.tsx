@@ -14,7 +14,7 @@ describe('lib/card/cardfooter', () => {
   });
 
   beforeEach(() => {
-    minimal = {};
+    minimal = { title: 'test title' };
   });
 
   it('should render', () => {

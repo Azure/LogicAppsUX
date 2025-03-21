@@ -14,6 +14,7 @@ import {
   BaseAppServiceService,
   HTTP_METHODS,
   clone,
+  isEmptyString,
   BaseTenantService,
 } from '@microsoft/logic-apps-shared';
 import type {
@@ -57,6 +58,7 @@ export interface IDesignerServices {
 
 export const getDesignerServices = (
   baseUrl: string,
+  workflowRuntimeBaseUrl: string,
   apiVersion: string,
   apiHubDetails: ApiHubServiceDetails,
   isLocal: boolean,
@@ -318,8 +320,8 @@ export const getDesignerServices = (
 
   const runService = new StandardRunService({
     apiVersion,
-    baseUrl,
-    workflowName,
+    baseUrl: isEmptyString(workflowRuntimeBaseUrl) ? baseUrl : workflowRuntimeBaseUrl,
+    workflowName: workflowName ?? '',
     httpClient,
   });
 

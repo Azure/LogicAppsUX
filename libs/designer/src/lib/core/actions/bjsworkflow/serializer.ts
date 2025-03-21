@@ -3,13 +3,15 @@ import type { ConnectionReferences, Workflow, WorkflowParameter } from '../../..
 import type { WorkflowNode } from '../../parsers/models/workflowNode';
 import { getConnectorWithSwagger } from '../../queries/connections';
 import { getOperationManifest } from '../../queries/operation';
-import type { NodeInputs, NodeOperation, ParameterGroup } from '../../state/operation/operationMetadataSlice';
+import type { NodeInputs, NodeOperation, NodeOutputs, ParameterGroup } from '../../state/operation/operationMetadataSlice';
 import { ErrorLevel } from '../../state/operation/operationMetadataSlice';
 import { getOperationInputParameters } from '../../state/operation/operationSelector';
+import type { OutputMock } from '../../state/unitTest/unitTestInterfaces';
 import type { WorkflowParameterDefinition } from '../../state/workflowparameters/workflowparametersSlice';
 import type { RootState } from '../../store';
 import { getNode, getTriggerNodeId, isRootNode, isRootNodeInGraph } from '../../utils/graph';
 import {
+  castValueSegments,
   encodePathValue,
   getAndEscapeSegment,
   getEncodeValue,
@@ -56,10 +58,21 @@ import {
   excludePathValueFromTarget,
   getRecordEntry,
 } from '@microsoft/logic-apps-shared';
-import type { ParameterInfo } from '@microsoft/designer-ui';
-import { UIConstants } from '@microsoft/designer-ui';
-import type { Segment, LocationSwapMap, LogicAppsV2, OperationManifest, SubGraphDetail } from '@microsoft/logic-apps-shared';
+import type { ParameterInfo, ValueSegment } from '@microsoft/designer-ui';
+import { TokenType, UIConstants } from '@microsoft/designer-ui';
+import type {
+  Segment,
+  LocationSwapMap,
+  LogicAppsV2,
+  OperationManifest,
+  SubGraphDetail,
+  OperationMock,
+  AssertionDefinition,
+  Assertion,
+  UnitTestDefinition,
+} from '@microsoft/logic-apps-shared';
 import merge from 'lodash.merge';
+import { createTokenValueSegment } from '../../utils/parameters/segment';
 import { ConnectorManifest } from './agent';
 
 export interface SerializeOptions {
@@ -1140,4 +1153,134 @@ const getSplitOn = (
     ...(splitOnConfiguration ? { splitOnConfiguration } : {}),
   };
 };
-//#endregion
+
+/**
+ * Serializes the unit test definition based on the provided root state.
+ * @param {RootState} rootState The root state object containing the unit test data.
+ * @returns A promise that resolves to the serialized unit test definition.
+ */
+export const serializeUnitTestDefinition = async (rootState: RootState): Promise<UnitTestDefinition> => {
+  const { mockResults, assertions } = rootState.unitTest;
+  const { triggerMocks, actionMocks } = getTriggerActionMocks(mockResults);
+
+  return {
+    triggerMocks: triggerMocks,
+    actionMocks: actionMocks,
+    assertions: getAssertions(assertions),
+  };
+};
+
+/**
+ * Gets the node output operations based on the provided root state.
+ * @param {RootState} rootState The root state object containing the current designer state.
+ * @returns A promise that resolves to the serialized unit test definition.
+ */
+export const getNodeOutputOperations = (state: RootState) => {
+  const outputOperations: { operationInfo: Record<string, NodeOperation>; outputParameters: Record<string, NodeOutputs> } = {
+    operationInfo: state.operations.operationInfo,
+    outputParameters: state.operations.outputParameters,
+  };
+  return outputOperations;
+};
+
+/**
+ * Retrieves an array of Assertion objects based on the provided Assertion definitions.
+ * @param {Record<string, AssertionDefinition>} assertions - The Assertion definitions.
+ * @returns An array of Assertion objects.
+ */
+const getAssertions = (assertions: Record<string, AssertionDefinition>): Assertion[] => {
+  return Object.values(assertions).map((assertion) => {
+    const { name, description, assertionString } = assertion;
+    const assertionValueSegment = createTokenValueSegment(
+      { title: assertionString, key: assertionString, tokenType: TokenType.FX, type: Constants.SWAGGER.TYPE.STRING },
+      assertionString,
+      TokenType.FX
+    );
+    const castAsertionString = castValueSegments([assertionValueSegment], false, Constants.SWAGGER.TYPE.STRING, false);
+
+    return { name, description, assertionString: castAsertionString };
+  });
+};
+
+/**
+ * Parses the output of a workflow into a more structured format.
+ * @param {Record<string, ValueSegment[]>} outputs - The outputs of the workflow.
+ * @returns The parsed outputs in a more structured format.
+ */
+const parseOutputMock = (outputs: Record<string, ValueSegment[]>): Record<string, any> => {
+  const outputValues: Record<string, any> = {};
+  for (const [key, value] of Object.entries(outputs)) {
+    if (value && value.length > 0) {
+      outputValues[key] = value[0].value;
+    }
+  }
+  return unifyOutputs(outputValues);
+};
+
+/**
+ * Unifies the outputs by converting a dot-separated key-value object into a nested object.
+ * @param {Record<string, any>} outputs - The dot-separated key-value object to unify.
+ * @returns The unified object with nested properties.
+ */
+const unifyOutputs = (outputs: Record<string, any>): Record<string, any> => {
+  const result: Record<string, any> = {};
+
+  Object.keys(outputs).forEach((key) => {
+    const parts = key.split('.').filter((part) => part !== '$');
+    let currentLevel = result;
+
+    parts.forEach((part, index) => {
+      if (index === parts.length - 1) {
+        currentLevel[part] = outputs[key];
+      } else {
+        if (!currentLevel[part]) {
+          currentLevel[part] = {};
+        }
+        currentLevel = currentLevel[part];
+      }
+    });
+  });
+
+  return result;
+};
+
+/**
+ * Retrieves the trigger and action mocks from the provided mock results.
+ * @param {Record<string, OutputMock>} mockResults - The mock results containing the trigger and action mocks.
+ * @returns An object containing the trigger mocks and action mocks.
+ */
+const getTriggerActionMocks = (
+  mockResults: Record<string, OutputMock>
+): { triggerMocks: Record<string, OperationMock>; actionMocks: Record<string, OperationMock> } => {
+  const triggerMocks: Record<string, OperationMock> = {};
+  const actionMocks: Record<string, OperationMock> = {};
+
+  Object.keys(mockResults).forEach((key) => {
+    const outputMock = mockResults[key];
+    if (outputMock) {
+      const outputsValue = parseOutputMock(outputMock.output);
+      const operationMock: OperationMock = {
+        properties: {
+          status: outputMock.actionResult,
+        },
+        ...outputsValue,
+      };
+
+      // Only add error property if errorCode or errorMessage exists
+      if (outputMock.errorCode || outputMock.errorMessage) {
+        operationMock.error = {
+          ...(outputMock.errorCode && { code: outputMock.errorCode }),
+          ...(outputMock.errorMessage && { message: outputMock.errorMessage }),
+        };
+      }
+
+      if (key.charAt(0) === '&') {
+        const triggerName = key.substring(1);
+        triggerMocks[triggerName] = operationMock;
+      } else {
+        actionMocks[key] = operationMock;
+      }
+    }
+  });
+  return { triggerMocks, actionMocks };
+};

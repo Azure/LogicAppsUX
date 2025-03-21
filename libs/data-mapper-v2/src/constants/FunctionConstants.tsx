@@ -14,7 +14,15 @@ export interface FunctionGroupBranding {
   icon: IconProps;
 }
 
-export type FunctionCategoryColorToken = 'colorFnCategoryCustom' | 'colorFnCategoryCollection' | 'colorFnCategoryDateTime' | 'colorFnCategoryLogical' | 'colorFnCategoryMath' | 'colorFnCategoryString' | 'colorFnCategoryUtility' | 'colorFnCategoryConversion';
+export type FunctionCategoryColorToken =
+  | 'colorFnCategoryCustom'
+  | 'colorFnCategoryCollection'
+  | 'colorFnCategoryDateTime'
+  | 'colorFnCategoryLogical'
+  | 'colorFnCategoryMath'
+  | 'colorFnCategoryString'
+  | 'colorFnCategoryUtility'
+  | 'colorFnCategoryConversion';
 
 export const UnboundedInput = -1;
 

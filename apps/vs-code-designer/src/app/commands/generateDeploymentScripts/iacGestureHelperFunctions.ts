@@ -22,7 +22,10 @@ export class FileManagement {
       if (isAlreadyInWorkspace) {
         ext.outputChannel.appendLog(localize('folderAlreadyInWorkspace', `Folder is already in the workspace: ${folderPath}`));
       } else {
-        const result = vscode.workspace.updateWorkspaceFolders(0, null, { uri });
+        const insertIndex = existingFolders.length;
+
+        const result = vscode.workspace.updateWorkspaceFolders(insertIndex, 0, { uri });
+
         if (result) {
           ext.outputChannel.appendLog(localize('folderAddedSuccessfully', `Folder added successfully: ${folderPath}`));
         } else {
@@ -31,7 +34,7 @@ export class FileManagement {
           );
         }
       }
-    } catch (error) {
+    } catch (error: any) {
       ext.outputChannel.appendLog(localize('errorAddingFolder', `Error in addFolderToWorkspace: ${error}`));
       vscode.window.showErrorMessage(localize('errorMessageAddingFolder', 'Failed to add folder to workspace: ') + error.message);
     }

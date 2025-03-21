@@ -34,6 +34,7 @@ export abstract class OpenDesignerBase {
   protected apiVersion: string;
   protected panelGroupKey: string;
   protected baseUrl: string;
+  protected workflowRuntimeBaseUrl: string;
   protected connectionData: ConnectionsData;
   protected panel: WebviewPanel;
   protected apiHubServiceDetails: Record<string, any>;
@@ -46,6 +47,10 @@ export abstract class OpenDesignerBase {
   protected oauthRedirectUrl?: string;
   protected schemaArtifacts?: FileDetails[] | undefined;
   protected mapArtifacts?: Record<string, FileDetails[]> | undefined;
+  protected unitTestName: string;
+  protected isUnitTest: boolean;
+  protected unitTestDefinition: any;
+  protected runId?: string;
 
   protected constructor(
     context: IActionContext | IAzureConnectorsContext,
@@ -55,7 +60,8 @@ export abstract class OpenDesignerBase {
     panelGroupKey: string,
     readOnly: boolean,
     isLocal: boolean,
-    isMonitoringView: boolean
+    isMonitoringView: boolean,
+    runId: string
   ) {
     this.context = context;
     this.workflowName = workflowName;
@@ -65,6 +71,7 @@ export abstract class OpenDesignerBase {
     this.readOnly = readOnly;
     this.isLocal = isLocal;
     this.isMonitoringView = isMonitoringView;
+    this.runId = runId;
   }
 
   protected abstract createPanel(): Promise<void>;

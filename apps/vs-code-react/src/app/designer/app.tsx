@@ -1,9 +1,10 @@
-import { createFileSystemConnection } from '../../state/DesignerSlice';
+import { createFileSystemConnection, updateUnitTestDefinition } from '../../state/DesignerSlice';
 import type { AppDispatch, RootState } from '../../state/store';
 import { VSCodeContext } from '../../webviewCommunication';
 import { DesignerCommandBar } from './DesignerCommandBar';
 import './app.less';
 import { getDesignerServices } from './servicesHelper';
+import { getRunInstanceMocks } from './utilities/runInstance';
 import { convertConnectionsDataToReferences } from './utilities/workflow';
 import { Spinner, SpinnerSize } from '@fluentui/react';
 import type { ConnectionCreationInfo, LogicAppsV2 } from '@microsoft/logic-apps-shared';
@@ -34,10 +35,14 @@ export const DesignerApp = () => {
     isMonitoringView,
     runId,
     hostVersion,
+    isUnitTest,
+    unitTestDefinition,
+    workflowRuntimeBaseUrl,
   } = vscodeState;
   const [standardApp, setStandardApp] = useState<StandardApp | undefined>(panelMetaData?.standardApp);
   const [customCode, setCustomCode] = useState<Record<string, string> | undefined>(panelMetaData?.customCodeData);
   const [runInstance, setRunInstance] = useState<LogicAppsV2.RunInstanceDefinition | null>(null);
+
   const [theme, setTheme] = useState<Theme>(getTheme(document.body));
   const intl = useIntl();
   const queryClient = useQueryClient();
@@ -82,6 +87,7 @@ export const DesignerApp = () => {
     };
     return getDesignerServices(
       baseUrl,
+      workflowRuntimeBaseUrl,
       apiVersion,
       apiHubServiceDetails ?? {},
       isLocal,
@@ -96,6 +102,7 @@ export const DesignerApp = () => {
     );
   }, [
     baseUrl,
+    workflowRuntimeBaseUrl,
     apiVersion,
     apiHubServiceDetails,
     isLocal,
@@ -128,7 +135,7 @@ export const DesignerApp = () => {
     refetchOnWindowFocus: false,
     refetchOnMount: true,
     initialData: null,
-    enabled: isMonitoringView && !isEmptyString(runId),
+    enabled: (isMonitoringView || isUnitTest) && !isEmptyString(runId),
   });
 
   useEffect(() => {
@@ -140,14 +147,30 @@ export const DesignerApp = () => {
           definition: runData.properties.workflow.properties.definition,
         };
       });
+    } else if (isUnitTest && isNullOrUndefined(unitTestDefinition)) {
+      const updateTestDefinition = async () => {
+        if (!isNullOrUndefined(runData)) {
+          const { triggerMocks, actionMocks } = await getRunInstanceMocks(runData, services, false);
+          dispatch(
+            updateUnitTestDefinition({
+              unitTestDefinition: {
+                triggerMocks: triggerMocks,
+                actionMocks: actionMocks,
+                assertions: [],
+              },
+            })
+          );
+        }
+      };
+      updateTestDefinition();
     }
-  }, [runData, isMonitoringView]);
+  }, [runData, isMonitoringView, isUnitTest, unitTestDefinition, services, dispatch]);
 
   useEffect(() => {
-    if (isMonitoringView && !isEmptyString(runId)) {
+    if ((isMonitoringView || isUnitTest) && !isEmptyString(runId)) {
       refetch();
     }
-  }, [isMonitoringView, runId, services, refetch]);
+  }, [isMonitoringView, isUnitTest, runId, services, refetch]);
 
   useEffect(() => {
     setStandardApp(panelMetaData?.standardApp);
@@ -159,12 +182,15 @@ export const DesignerApp = () => {
   const loadingApp = <Spinner className="designer--loading" size={SpinnerSize.large} label={intlText.LOADING_APP} />;
 
   const designerCommandBar =
-    readOnly && !isMonitoringView ? null : (
+    readOnly && !isMonitoringView && !isUnitTest ? null : (
       <DesignerCommandBar
         isDisabled={isError || isFetching || isLoading}
         isRefreshing={isRefetching}
         onRefresh={refetch}
         isDarkMode={theme === Theme.Dark}
+        isUnitTest={isUnitTest}
+        isLocal={isLocal}
+        runId={runId}
       />
     );
 
@@ -178,6 +204,7 @@ export const DesignerApp = () => {
       }}
       customCode={customCode}
       runInstance={runInstance}
+      unitTestDefinition={unitTestDefinition}
       appSettings={panelMetaData?.localSettings}
     >
       <Designer />
@@ -193,6 +220,7 @@ export const DesignerApp = () => {
         options={{
           isDarkMode: theme === Theme.Dark,
           isVSCode: true,
+          isUnitTest,
           readOnly,
           isMonitoringView,
           services: services,

@@ -31,6 +31,10 @@ export const StateWrapper: React.FC = () => {
           navigate(`/${ProjectName.dataMapper}`, { replace: true });
           break;
         }
+        case ProjectName.unitTest: {
+          navigate(`/${ProjectName.unitTest}`, { replace: true });
+          break;
+        }
         default: {
           break;
         }

@@ -8,12 +8,29 @@ import type { RemoteWorkflowTreeItem } from '../tree/remoteWorkflowsTree/RemoteW
 import { isPathEqual, isSubpath } from './fs';
 import { promptOpenProjectOrWorkspace, tryGetLogicAppProjectRoot } from './verifyIsProject';
 import { isNullOrUndefined, isString } from '@microsoft/logic-apps-shared';
-import { UserCancelledError } from '@microsoft/vscode-azext-utils';
+import { UserCancelledError, nonNullValue } from '@microsoft/vscode-azext-utils';
 import type { IActionContext, IAzureQuickPickItem } from '@microsoft/vscode-azext-utils';
 import globby from 'globby';
 import * as path from 'path';
 import * as vscode from 'vscode';
+import { FileManagement } from '../commands/generateDeploymentScripts/iacGestureHelperFunctions';
+import { ext } from '../../extensionVariables';
 import * as fse from 'fs-extra';
+
+/**
+ * Checks if the current workspace has a Logic App project.
+ * @param {IActionContext} actionContext - The action context.
+ * @returns A promise that resolves to a boolean indicating whether a Logic App project exists in the workspace.
+ */
+export const hasLogicAppProject = async (actionContext: IActionContext): Promise<boolean> => {
+  for (const folder of vscode.workspace.workspaceFolders) {
+    const projectRoot = await tryGetLogicAppProjectRoot(actionContext, folder);
+    if (projectRoot) {
+      return true;
+    }
+  }
+  return false;
+};
 
 /**
  * Gets the folder path that contains the .code-workspace file.
@@ -95,6 +112,16 @@ export function getContainingWorkspace(fsPath: string): vscode.WorkspaceFolder |
     return isPathEqual(folder.uri.fsPath, fsPath) || isSubpath(folder.uri.fsPath, fsPath);
   });
 }
+
+/**
+ * Retrieves the path of the workspace folder containing the specified workflow file.
+ * @param workflowFilePath - The path of the workflow file.
+ * @returns The path of the workspace folder.
+ */
+export const getWorkspacePath = (workflowFilePath: string): string => {
+  const workspaceFolder = nonNullValue(getContainingWorkspace(workflowFilePath), 'workspaceFolder');
+  return workspaceFolder.uri.fsPath;
+};
 
 /**
  * Gets workspace folder of project.
@@ -314,4 +341,19 @@ export async function selectWorkspaceFile(
     },
     getSubPath
   );
+}
+
+/**
+ * Ensures a directory is added to the workspace if it is not already included.
+ * @param {string} directoryPath - The path to the directory to be added.
+ * @returns {Promise<void>} - A promise that resolves when the directory is added to the workspace (if needed).
+ */
+export async function ensureDirectoryInWorkspace(directoryPath: string): Promise<void> {
+  const workspaceFolders = vscode.workspace.workspaceFolders || [];
+  const isAlreadyInWorkspace = workspaceFolders.some((folder) => folder.uri.fsPath === directoryPath);
+
+  if (!isAlreadyInWorkspace) {
+    ext.outputChannel.appendLog(localize('addingDirectoryToWorkspace', 'Adding directory to workspace: {0}', directoryPath));
+    await FileManagement.addFolderToWorkspace(directoryPath);
+  }
 }
