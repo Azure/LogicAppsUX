@@ -71,7 +71,7 @@ export class FunctionAppFilesStep extends AzureWizardPromptStep<IProjectWizardCo
     await this.createCsprojFile(functionFolderPath, functionAppName, logicAppName, projectType, targetFramework);
 
     // Generate the Visual Studio Code configuration files in the specified folder.
-    await this.createVscodeConfigFiles(context.functionFolderPath);
+    await this.createVscodeConfigFiles(context.functionFolderPath, targetFramework);
   }
 
   /**
@@ -161,22 +161,19 @@ export class FunctionAppFilesStep extends AzureWizardPromptStep<IProjectWizardCo
   /**
    * Creates the Visual Studio Code configuration files in the .vscode folder of the specified functions app.
    * @param functionFolderPath The path to the functions folder.
+   * @param targetFramework The target framework of the functions app.
    */
-  private async createVscodeConfigFiles(functionFolderPath: string): Promise<void> {
+  private async createVscodeConfigFiles(functionFolderPath: string, targetFramework: string): Promise<void> {
     await fs.ensureDir(functionFolderPath);
     const vscodePath: string = path.join(functionFolderPath, vscodeFolderName);
     await fs.ensureDir(vscodePath);
 
-    // Generate the extensions.json file
     await this.generateExtensionsJson(vscodePath);
 
-    // Generate the launch.json file
     await this.generateLaunchJson(vscodePath);
 
-    // Generate the settings.json file
-    await this.generateSettingsJson(vscodePath);
+    await this.generateSettingsJson(vscodePath, targetFramework);
 
-    // Generate the tasks.json file
     await this.generateTasksJson(vscodePath);
   }
 
@@ -203,7 +200,7 @@ export class FunctionAppFilesStep extends AzureWizardPromptStep<IProjectWizardCo
       configurations: [
         {
           name: 'Run/Debug local function',
-          type: 'clr',
+          type: 'coreclr',
           request: 'attach',
           processName: 'Microsoft.Azure.Workflows.Functions.CustomCodeNetFxWorker.exe',
         },
@@ -215,18 +212,19 @@ export class FunctionAppFilesStep extends AzureWizardPromptStep<IProjectWizardCo
   /**
    * Generates the settings.json file in the specified folder.
    * @param folderPath The path to the folder where the settings.json file should be generated.
+   * @param targetFramework The target framework of the functions app.
    */
-  private async generateSettingsJson(folderPath: string): Promise<void> {
+  private async generateSettingsJson(folderPath: string, targetFramework: string): Promise<void> {
     const filePath = path.join(folderPath, settingsFileName);
     const content = {
-      'azureFunctions.deploySubpath': 'bin/Release/net472/publish',
+      'azureFunctions.deploySubpath': `bin/Release/${targetFramework}/publish`,
       'azureFunctions.projectLanguage': 'C#',
       'azureFunctions.projectRuntime': '~4',
       'debug.internalConsoleOptions': 'neverOpen',
       'azureFunctions.preDeployTask': 'publish (functions)',
       'azureFunctions.templateFilter': 'Core',
       'azureFunctions.showTargetFrameworkWarning': false,
-      'azureFunctions.projectSubpath': 'bin\\Release\\net472\\publish',
+      'azureFunctions.projectSubpath': `bin\\Release\\${targetFramework}\\publish`,
     };
     await fs.writeJson(filePath, content, { spaces: 2 });
   }

@@ -148,6 +148,11 @@
         "category": "Azure Logic Apps"
       },
       {
+        "command": "azureLogicAppsStandard.buildCodeFunctionsProject",
+        "title": "Build custom code functions project...",
+        "category": "Azure Logic Apps"
+      },
+      {
         "command": "azureLogicAppsStandard.exportLogicApp",
         "title": "Export logic app...",
         "category": "Azure Logic Apps",
@@ -660,6 +665,11 @@
           "group": "zzz_LogicApptools@1"
         },
         {
+          "command": "azureLogicAppsStandard.buildCodeFunctionsProject",
+          "when": "explorerResourceIsRoot == true",
+          "group": "zzz_LogicApptools@1"
+        },
+        {
           "command": "azureLogicAppsStandard.openOverview",
           "when": "resourceFilename==workflow.json",
           "group": "navigation@1"
@@ -1002,6 +1012,7 @@
     "onCommand:azureLogicAppsStandard.openOverview",
     "onCommand:azureLogicAppsStandard.exportLogicApp",
     "onCommand:azureLogicAppsStandard.cloudToLocal",
+    "onCommand:azureLogicAppsStandard.buildCodeFunctionsProject",
     "onCommand:azureLogicAppsStandard.reviewValidation",
     "onCommand:azureLogicAppsStandard.switchToDotnetProject",
     "onCommand:azureLogicAppsStandard.openInPortal",

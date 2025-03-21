@@ -1,10 +1,12 @@
 import * as fse from 'fs-extra';
 import * as path from 'path';
+import * as verifyProjectUtils from '../verifyIsProject';
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import {
   isCustomCodeFunctionsProject,
   isCustomCodeFunctionsProjectInRoot,
   tryGetCustomCodeFunctionsProjects,
+  tryGetPeerCustomCodeFunctionsProjects,
 } from '../verifyIsCodeProject';
 
 vi.mock('fs-extra', () => ({
@@ -12,6 +14,10 @@ vi.mock('fs-extra', () => ({
   readdir: vi.fn(),
   readFile: vi.fn(),
   pathExists: vi.fn(),
+}));
+
+vi.mock('verifyProjectUtils', () => ({
+  isLogicAppProject: vi.fn(),
 }));
 
 describe('verifyIsCodeProject', () => {
@@ -268,6 +274,51 @@ describe('verifyIsCodeProject', () => {
 
       const result = await tryGetCustomCodeFunctionsProjects(testWorkspacePath);
       expect(result).toEqual([]);
+    });
+  });
+
+  describe('tryGetPeerCustomCodeFunctionsProjects', () => {
+    const testLogicAppFolder = path.join('test', 'LogicApp');
+    const testBaseFolder = path.dirname(testLogicAppFolder);
+    const testPeerProject = 'PeerProject';
+    const testPeerProjectCsproj = 'PeerProject.csproj';
+
+    it('should return undefined if target folder is undefined', async () => {
+      const result = await tryGetPeerCustomCodeFunctionsProjects(undefined);
+      expect(result).toBeUndefined();
+    });
+
+    it('should return undefined if target folder is not a valid logic app project', async () => {
+      const result = await tryGetPeerCustomCodeFunctionsProjects(testLogicAppFolder);
+      expect(result).toBeUndefined();
+    });
+
+    it('should return an empty array if no sibling projects are found', async () => {
+      vi.spyOn(verifyProjectUtils, 'isLogicAppProject').mockResolvedValue(true);
+      vi.spyOn(fse, 'readdir').mockResolvedValue([]);
+      const result = await tryGetPeerCustomCodeFunctionsProjects(testLogicAppFolder);
+      expect(result).toEqual([]);
+    });
+
+    it('should return an array of paths for a valid logic app with sibling custom code project folders', async () => {
+      vi.spyOn(verifyProjectUtils, 'isLogicAppProject').mockResolvedValue(true);
+      vi.spyOn(fse, 'readdir').mockResolvedValue([testPeerProject]);
+      vi.spyOn(fse, 'readdir').mockImplementation(async (p: string) => {
+        if (p === path.dirname(testLogicAppFolder)) return [testPeerProject];
+        if (p === path.join(testBaseFolder, testPeerProject)) return [testPeerProjectCsproj];
+        return [];
+      });
+      vi.spyOn(fse, 'statSync').mockImplementation((p: string) => {
+        if (p === path.join(testBaseFolder, testPeerProject)) return { isDirectory: () => true };
+        return { isDirectory: () => false };
+      });
+      vi.spyOn(fse, 'readFile').mockImplementation(async (p: string) => {
+        if (p === path.join(testBaseFolder, testPeerProject, testPeerProjectCsproj)) return validNet8CsprojContent;
+        return '';
+      });
+
+      const result = await tryGetPeerCustomCodeFunctionsProjects(testLogicAppFolder);
+      expect(result).toEqual([path.join(testBaseFolder, testPeerProject)]);
     });
   });
 });
