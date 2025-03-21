@@ -46,14 +46,11 @@ vi.mock('fs', () => ({
 }));
 
 vi.mock('fs-extra', () => ({
-  readdir: vi.fn(() => Promise.resolve()),
-}));
-
-vi.mock('fs-extra', () => ({
   writeFile: vi.fn(() => Promise.resolve()),
   ensureDir: vi.fn(() => Promise.resolve()),
   readFile: vi.fn(() => Promise.resolve()),
   pathExists: vi.fn(() => Promise.resolve()),
+  readdir: vi.fn(() => Promise.resolve()),
 }));
 
 vi.mock('child_process');
