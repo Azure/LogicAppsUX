@@ -60,6 +60,10 @@ export const ConfigureWorkflowsPanel = () => {
     [selectedTabProps?.footerContent]
   );
 
+  if (currentPanelView !== TemplatePanelView.ConfigureWorkflows) {
+    return null;
+  }
+
   return (
     <Panel
       styles={{ main: { padding: '0 20px', zIndex: 1000 }, content: { paddingLeft: '0px' } }}
