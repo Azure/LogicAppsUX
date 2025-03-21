@@ -4,7 +4,7 @@ import constants from '../../../../../common/constants';
 import { useTheme } from '@fluentui/react';
 import { useMemo } from 'react';
 import type { TemplateTabProps } from '@microsoft/designer-ui';
-import { closePanel, openCreateWorkflowPanelView } from '../../../../../core/state/templates/panelSlice';
+import { closePanel, openPanelView, TemplatePanelView } from '../../../../../core/state/templates/panelSlice';
 import { clearTemplateDetails } from '../../../../../core/state/templates/templateSlice';
 import { LogEntryLevel, LoggerService, type Template } from '@microsoft/logic-apps-shared';
 import { useWorkflowTemplate } from '../../../../../core/state/templates/templateselectors';
@@ -53,7 +53,7 @@ export const workflowTab = (
         message: 'Template create button clicked',
         args: [templateId, workflowAppName, `isMultiWorkflowTemplate:${isMultiWorkflow}`],
       });
-      dispatch(openCreateWorkflowPanelView());
+      dispatch(openPanelView({ panelView: TemplatePanelView.CreateWorkflow }));
       onPrimaryButtonClick?.();
     },
     secondaryButtonText: intl.formatMessage({

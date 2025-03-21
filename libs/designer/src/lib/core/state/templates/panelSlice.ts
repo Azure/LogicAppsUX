@@ -27,25 +27,16 @@ export const panelSlice = createSlice({
   name: 'panel',
   initialState,
   reducers: {
-    openQuickViewPanelView: (state) => {
-      state.selectedTabId = undefined;
+    openPanelView: (
+      state,
+      action: PayloadAction<{
+        panelView: ConfigPanelView;
+        selectedTabId?: string;
+      }>
+    ) => {
+      state.selectedTabId = action.payload.selectedTabId;
       state.isOpen = true;
-      state.currentPanelView = TemplatePanelView.QuickView;
-    },
-    openCreateWorkflowPanelView: (state) => {
-      state.selectedTabId = undefined;
-      state.isOpen = true;
-      state.currentPanelView = TemplatePanelView.CreateWorkflow;
-    },
-    openConfigureWorkflowPanelView: (state) => {
-      state.selectedTabId = undefined;
-      state.isOpen = true;
-      state.currentPanelView = TemplatePanelView.ConfigureWorkflows;
-    },
-    openCustomizeParameterPanelView: (state, action: PayloadAction<string>) => {
-      state.selectedTabId = action.payload; // parameterName
-      state.isOpen = true;
-      state.currentPanelView = TemplatePanelView.ConfigureWorkflows;
+      state.currentPanelView = action.payload.panelView;
     },
     selectPanelTab: (state, action: PayloadAction<string | undefined>) => {
       state.selectedTabId = action.payload;
@@ -61,12 +52,5 @@ export const panelSlice = createSlice({
   },
 });
 
-export const {
-  openQuickViewPanelView,
-  openCreateWorkflowPanelView,
-  openConfigureWorkflowPanelView,
-  openCustomizeParameterPanelView,
-  selectPanelTab,
-  closePanel,
-} = panelSlice.actions;
+export const { openPanelView, selectPanelTab, closePanel } = panelSlice.actions;
 export default panelSlice.reducer;

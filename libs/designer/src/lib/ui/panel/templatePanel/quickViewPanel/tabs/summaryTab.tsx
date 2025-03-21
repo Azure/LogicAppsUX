@@ -2,7 +2,7 @@ import { LogEntryLevel, LoggerService, type Template, isNullOrUndefined } from '
 import type { AppDispatch } from '../../../../../core/state/templates/store';
 import { useIntl, type IntlShape } from 'react-intl';
 import constants from '../../../../../common/constants';
-import { closePanel, openCreateWorkflowPanelView } from '../../../../../core/state/templates/panelSlice';
+import { closePanel, openPanelView, TemplatePanelView } from '../../../../../core/state/templates/panelSlice';
 import { Link, Text } from '@fluentui/react-components';
 import type { TemplateTabProps } from '@microsoft/designer-ui';
 import { clearTemplateDetails } from '../../../../../core/state/templates/templateSlice';
@@ -159,7 +159,7 @@ export const summaryTab = (
         message: 'Template create button clicked',
         args: [templateId, workflowAppName, `isMultiWorkflowTemplate:${isMultiWorkflow}`],
       });
-      dispatch(openCreateWorkflowPanelView());
+      dispatch(openPanelView({ panelView: TemplatePanelView.CreateWorkflow }));
     },
     secondaryButtonText: intl.formatMessage({
       defaultMessage: 'Close',
