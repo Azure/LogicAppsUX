@@ -31,6 +31,7 @@ export interface DesignerOptionsState {
   readOnly?: boolean;
   isMonitoringView?: boolean;
   isDarkMode?: boolean;
+  isUnitTest?: boolean;
   isVSCode?: boolean;
   servicesInitialized?: boolean;
   designerOptionsInitialized?: boolean;
