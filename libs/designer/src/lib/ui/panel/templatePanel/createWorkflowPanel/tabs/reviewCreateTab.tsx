@@ -29,7 +29,7 @@ export const reviewCreateTab = (
     isCreateView: boolean;
   } & CreateWorkflowTabProps
 ): TemplateTabProps => ({
-  id: constants.TEMPLATE_TAB_NAMES.REVIEW_AND_CREATE,
+  id: constants.TEMPLATE_PANEL_TAB_NAMES.REVIEW_AND_CREATE,
   disabled,
   title: isCreateView
     ? intl.formatMessage({

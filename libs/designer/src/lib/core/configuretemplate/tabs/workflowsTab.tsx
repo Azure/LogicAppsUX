@@ -72,7 +72,7 @@ export const WorkflowsTab = () => {
 };
 
 export const workflowsTab = (intl: IntlShape, dispatch: AppDispatch): TemplateTabProps => ({
-  id: constants.TEMPLATE_TAB_NAMES.WORKFLOWS,
+  id: constants.CONFIGURE_TEMPLATE_WIZARD_TAB_NAMES.WORKFLOWS,
   title: intl.formatMessage({
     defaultMessage: 'Workflows',
     id: 'R7VvvJ',
@@ -90,7 +90,7 @@ export const workflowsTab = (intl: IntlShape, dispatch: AppDispatch): TemplateTa
       description: 'Button text for proceeding to the next tab',
     }),
     secondaryButtonOnClick: () => {
-      dispatch(selectWizardTab(constants.TEMPLATE_TAB_NAMES.CONNECTIONS));
+      dispatch(selectWizardTab(constants.CONFIGURE_TEMPLATE_WIZARD_TAB_NAMES.CONNECTIONS));
     },
   },
 });

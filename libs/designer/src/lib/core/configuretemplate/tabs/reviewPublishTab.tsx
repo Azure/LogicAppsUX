@@ -10,7 +10,7 @@ export const ReviewPublishTab = () => {
 };
 
 export const reviewPublishTab = (intl: IntlShape, dispatch: AppDispatch): TemplateTabProps => ({
-  id: constants.TEMPLATE_TAB_NAMES.REVIEW_AND_PUBLISH,
+  id: constants.CONFIGURE_TEMPLATE_WIZARD_TAB_NAMES.REVIEW_AND_PUBLISH,
   title: intl.formatMessage({
     defaultMessage: 'Review + publish',
     id: 'FJQUqL',
@@ -25,7 +25,7 @@ export const reviewPublishTab = (intl: IntlShape, dispatch: AppDispatch): Templa
       description: 'Button text for going back to the previous tab',
     }),
     primaryButtonOnClick: () => {
-      dispatch(selectWizardTab(constants.TEMPLATE_TAB_NAMES.PUBLISH));
+      dispatch(selectWizardTab(constants.CONFIGURE_TEMPLATE_WIZARD_TAB_NAMES.PUBLISH));
     },
     secondaryButtonText: intl.formatMessage({
       defaultMessage: 'Publish',

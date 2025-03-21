@@ -16,7 +16,7 @@ export const parametersTab = (
   dispatch: AppDispatch,
   { isCreating, disabled, shouldClearDetails, previousTabId, hasError, onClosePanel, showCloseButton = true }: CreateWorkflowTabProps
 ): TemplateTabProps => ({
-  id: constants.TEMPLATE_TAB_NAMES.PARAMETERS,
+  id: constants.TEMPLATE_PANEL_TAB_NAMES.PARAMETERS,
   disabled,
   title: intl.formatMessage({
     defaultMessage: 'Parameters',
@@ -37,7 +37,7 @@ export const parametersTab = (
       description: 'Button text for moving to the next tab in the create workflow panel',
     }),
     primaryButtonOnClick: () => {
-      dispatch(selectPanelTab(constants.TEMPLATE_TAB_NAMES.REVIEW_AND_CREATE));
+      dispatch(selectPanelTab(constants.TEMPLATE_PANEL_TAB_NAMES.REVIEW_AND_CREATE));
     },
     secondaryButtonText: previousTabId
       ? intl.formatMessage({

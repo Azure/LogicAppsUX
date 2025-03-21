@@ -19,7 +19,7 @@ export const basicsTab = (
   dispatch: AppDispatch,
   { disabled, shouldClearDetails, isCreating, nextTabId, hasError, onClosePanel, showCloseButton = true }: CreateWorkflowTabProps
 ): TemplateTabProps => ({
-  id: constants.TEMPLATE_TAB_NAMES.BASIC,
+  id: constants.TEMPLATE_PANEL_TAB_NAMES.BASIC,
   title: intl.formatMessage({
     defaultMessage: 'Basics',
     id: 'sVcvcG',

@@ -73,7 +73,7 @@ export const selectWorkflowsTab = (
   dispatch: AppDispatch,
   { hasError, isSaving, onClosePanel }: ConfigureWorkflowsTabProps
 ): TemplateTabProps => ({
-  id: constants.TEMPLATE_TAB_NAMES.SELECT_WORKFLOWS,
+  id: constants.CONFIGURE_TEMPLATE_WIZARD_TAB_NAMES.SELECT_WORKFLOWS,
   title: intl.formatMessage({
     defaultMessage: 'Select workflows',
     id: 'vWOWFo',
@@ -88,7 +88,7 @@ export const selectWorkflowsTab = (
       description: 'Button text for moving to the next tab in the create workflow panel',
     }),
     primaryButtonOnClick: () => {
-      dispatch(selectPanelTab(constants.TEMPLATE_TAB_NAMES.CUSTOMIZE_WORKFLOWS));
+      dispatch(selectPanelTab(constants.CONFIGURE_TEMPLATE_WIZARD_TAB_NAMES.CUSTOMIZE_WORKFLOWS));
     },
     secondaryButtonText: intl.formatMessage({
       defaultMessage: 'Cancel',

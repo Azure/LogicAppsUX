@@ -32,7 +32,7 @@ export const workflowTab = (
   { templateId, workflowAppName, isMultiWorkflow }: Template.TemplateContext,
   onClose?: () => void
 ): TemplateTabProps => ({
-  id: constants.TEMPLATE_TAB_NAMES.WORKFLOW_VIEW,
+  id: constants.TEMPLATE_PANEL_TAB_NAMES.WORKFLOW_VIEW,
   title: intl.formatMessage({
     defaultMessage: 'Workflow',
     id: 'lFWXhc',

@@ -15,7 +15,7 @@ export const ConnectionsTab = () => {
 };
 
 export const connectionsTab = (intl: IntlShape, dispatch: AppDispatch): TemplateTabProps => ({
-  id: constants.TEMPLATE_TAB_NAMES.CONNECTIONS,
+  id: constants.CONFIGURE_TEMPLATE_WIZARD_TAB_NAMES.CONNECTIONS,
   title: intl.formatMessage({
     defaultMessage: 'Connections',
     id: 'ur+ZvW',
@@ -30,7 +30,7 @@ export const connectionsTab = (intl: IntlShape, dispatch: AppDispatch): Template
       description: 'Button text for going back to the previous tab',
     }),
     primaryButtonOnClick: () => {
-      dispatch(selectWizardTab(constants.TEMPLATE_TAB_NAMES.WORKFLOWS));
+      dispatch(selectWizardTab(constants.CONFIGURE_TEMPLATE_WIZARD_TAB_NAMES.WORKFLOWS));
     },
     secondaryButtonText: intl.formatMessage({
       defaultMessage: 'Next',
@@ -38,7 +38,7 @@ export const connectionsTab = (intl: IntlShape, dispatch: AppDispatch): Template
       description: 'Button text for proceeding to the next tab',
     }),
     secondaryButtonOnClick: () => {
-      dispatch(selectWizardTab(constants.TEMPLATE_TAB_NAMES.PARAMETERS));
+      dispatch(selectWizardTab(constants.CONFIGURE_TEMPLATE_WIZARD_TAB_NAMES.PARAMETERS));
     },
   },
 });

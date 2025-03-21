@@ -16,7 +16,7 @@ export const customizeWorkflowsTab = (
   dispatch: AppDispatch,
   { hasError, isSaving, onClosePanel }: ConfigureWorkflowsTabProps
 ): TemplateTabProps => ({
-  id: constants.TEMPLATE_TAB_NAMES.CUSTOMIZE_WORKFLOWS,
+  id: constants.CONFIGURE_TEMPLATE_WIZARD_TAB_NAMES.CUSTOMIZE_WORKFLOWS,
   title: intl.formatMessage({
     defaultMessage: 'Customize workflows',
     id: 'qnio+9',

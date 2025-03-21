@@ -15,7 +15,7 @@ export const ParametersTab = () => {
 };
 
 export const parametersTab = (intl: IntlShape, dispatch: AppDispatch): TemplateTabProps => ({
-  id: constants.TEMPLATE_TAB_NAMES.PARAMETERS,
+  id: constants.CONFIGURE_TEMPLATE_WIZARD_TAB_NAMES.PARAMETERS,
   title: intl.formatMessage({
     defaultMessage: 'Parameters',
     id: 'lYAlE9',
@@ -30,7 +30,7 @@ export const parametersTab = (intl: IntlShape, dispatch: AppDispatch): TemplateT
       description: 'Button text for going back to the previous tab',
     }),
     primaryButtonOnClick: () => {
-      dispatch(selectWizardTab(constants.TEMPLATE_TAB_NAMES.CONNECTIONS));
+      dispatch(selectWizardTab(constants.CONFIGURE_TEMPLATE_WIZARD_TAB_NAMES.CONNECTIONS));
     },
     secondaryButtonText: intl.formatMessage({
       defaultMessage: 'Next',
@@ -38,7 +38,7 @@ export const parametersTab = (intl: IntlShape, dispatch: AppDispatch): TemplateT
       description: 'Button text for proceeding to the next tab',
     }),
     secondaryButtonOnClick: () => {
-      dispatch(selectWizardTab(constants.TEMPLATE_TAB_NAMES.PROFILE));
+      dispatch(selectWizardTab(constants.CONFIGURE_TEMPLATE_WIZARD_TAB_NAMES.PROFILE));
     },
   },
 });
