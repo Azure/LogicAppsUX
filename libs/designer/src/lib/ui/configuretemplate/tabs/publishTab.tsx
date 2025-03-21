@@ -1,9 +1,9 @@
-import type { AppDispatch } from '../../state/templates/store';
+import type { AppDispatch } from '../../../core/state/templates/store';
 import { Text } from '@fluentui/react-components';
 import type { TemplateTabProps } from '@microsoft/designer-ui';
 import constants from '../../../common/constants';
 import type { IntlShape } from 'react-intl';
-import { selectWizardTab } from '../../state/templates/tabSlice';
+import { selectWizardTab } from '../../../core/state/templates/tabSlice';
 
 export const PublishTab = () => {
   return <Text>placeholder - show publish</Text>;

@@ -1,4 +1,4 @@
-import type { AppDispatch } from '../../state/templates/store';
+import type { AppDispatch } from '../../../core/state/templates/store';
 import { useIntl } from 'react-intl';
 import { useDispatch } from 'react-redux';
 import { workflowsTab } from './workflowsTab';

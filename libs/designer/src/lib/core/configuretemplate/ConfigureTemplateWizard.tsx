@@ -8,7 +8,7 @@ import { Button, Checkbox } from '@fluentui/react-components';
 import { initializeWorkflowsData } from '../actions/bjsworkflow/configuretemplate';
 import { updateAllWorkflowsData, updateWorkflowData } from '../state/templates/templateSlice';
 import { TemplateContent, TemplatesPanelFooter, type TemplateTabProps } from '@microsoft/designer-ui';
-import { useConfigureTemplateWizardTabs } from './tabs/useWizardTabs';
+import { useConfigureTemplateWizardTabs } from '../../ui/configuretemplate/tabs/useWizardTabs';
 import { selectWizardTab } from '../state/templates/tabSlice';
 
 export const ConfigureTemplateWizard = () => {

@@ -1,14 +1,14 @@
-import type { AppDispatch, RootState } from '../../state/templates/store';
+import type { AppDispatch, RootState } from '../../../core/state/templates/store';
 import { useDispatch, useSelector } from 'react-redux';
 import { Text } from '@fluentui/react-components';
 import type { TemplateTabProps } from '@microsoft/designer-ui';
 import constants from '../../../common/constants';
 import { useIntl, type IntlShape } from 'react-intl';
-import { selectWizardTab } from '../../state/templates/tabSlice';
+import { selectWizardTab } from '../../../core/state/templates/tabSlice';
 import { CommandBar, type ICommandBarItemProps } from '@fluentui/react';
 import { useMemo } from 'react';
-import { openPanelView, TemplatePanelView } from '../../state/templates/panelSlice';
-import { ConfigureWorkflowsPanel } from '../../../ui/panel/configureTemplatePanel/configureWorkflowsPanel/configureWorkflowsPanel';
+import { openPanelView, TemplatePanelView } from '../../../core/state/templates/panelSlice';
+import { ConfigureWorkflowsPanel } from '../../panel/configureTemplatePanel/configureWorkflowsPanel/configureWorkflowsPanel';
 
 export const WorkflowsTab = () => {
   const intl = useIntl();

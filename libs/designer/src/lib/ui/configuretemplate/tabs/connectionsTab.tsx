@@ -1,9 +1,9 @@
-import type { AppDispatch, RootState } from '../../state/templates/store';
+import type { AppDispatch, RootState } from '../../../core/state/templates/store';
 import { Text } from '@fluentui/react-components';
 import type { TemplateTabProps } from '@microsoft/designer-ui';
 import constants from '../../../common/constants';
 import type { IntlShape } from 'react-intl';
-import { selectWizardTab } from '../../state/templates/tabSlice';
+import { selectWizardTab } from '../../../core/state/templates/tabSlice';
 import { useSelector } from 'react-redux';
 
 export const ConnectionsTab = () => {
