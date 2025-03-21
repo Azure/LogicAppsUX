@@ -7,7 +7,8 @@ import { useIntl, type IntlShape } from 'react-intl';
 import { selectWizardTab } from '../../state/templates/tabSlice';
 import { CommandBar, type ICommandBarItemProps } from '@fluentui/react';
 import { useMemo } from 'react';
-import { openCreateWorkflowPanelView } from '../../state/templates/panelSlice';
+import { openConfigureWorkflowPanelView } from '../../state/templates/panelSlice';
+import { ConfigureWorkflowsPanel } from '../../../ui/panel/configureTemplatePanel/configureWorkflowsPanel/configureWorkflowsPanel';
 
 export const WorkflowsTab = () => {
   const intl = useIntl();
@@ -27,7 +28,7 @@ export const WorkflowsTab = () => {
         }),
         iconProps: { iconName: 'Add' },
         onClick: () => {
-          dispatch(openCreateWorkflowPanelView());
+          dispatch(openConfigureWorkflowPanelView());
         },
       },
       {
@@ -48,6 +49,8 @@ export const WorkflowsTab = () => {
 
   return (
     <div>
+      <ConfigureWorkflowsPanel />
+
       <CommandBar
         items={commandBarItems}
         styles={{

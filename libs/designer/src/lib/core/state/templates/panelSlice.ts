@@ -7,7 +7,7 @@ export const TemplatePanelView = {
   QuickView: 'quickView',
   CreateWorkflow: 'createWorkflow',
   // Configure template panels
-  ConfigureWorkflow: 'configureWorkflow',
+  ConfigureWorkflows: 'configureWorkflows',
   CustomizeParameter: 'customizeParameter',
 } as const;
 export type ConfigPanelView = (typeof TemplatePanelView)[keyof typeof TemplatePanelView];
@@ -38,14 +38,15 @@ export const panelSlice = createSlice({
       state.currentPanelView = TemplatePanelView.CreateWorkflow;
     },
     openConfigureWorkflowPanelView: (state) => {
+      console.log('---');
       state.selectedTabId = undefined;
       state.isOpen = true;
-      state.currentPanelView = TemplatePanelView.ConfigureWorkflow;
+      state.currentPanelView = TemplatePanelView.ConfigureWorkflows;
     },
     openCustomizeParameterPanelView: (state, action: PayloadAction<string>) => {
       state.selectedTabId = action.payload; // parameterName
       state.isOpen = true;
-      state.currentPanelView = TemplatePanelView.ConfigureWorkflow;
+      state.currentPanelView = TemplatePanelView.ConfigureWorkflows;
     },
     selectPanelTab: (state, action: PayloadAction<string | undefined>) => {
       state.selectedTabId = action.payload;
@@ -61,5 +62,12 @@ export const panelSlice = createSlice({
   },
 });
 
-export const { openQuickViewPanelView, openCreateWorkflowPanelView, selectPanelTab, closePanel } = panelSlice.actions;
+export const {
+  openQuickViewPanelView,
+  openCreateWorkflowPanelView,
+  openConfigureWorkflowPanelView,
+  openCustomizeParameterPanelView,
+  selectPanelTab,
+  closePanel,
+} = panelSlice.actions;
 export default panelSlice.reducer;
