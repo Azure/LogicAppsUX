@@ -7,7 +7,12 @@ import type { InitializeVariableErrors } from './variableEditor';
 import { VariableEditor } from './variableEditor';
 import { Button, MessageBar, MessageBarBody, MessageBarTitle } from '@fluentui/react-components';
 import { useIntl } from 'react-intl';
-import { createVariableEditorSegments, parseVariableEditorSegments } from './util';
+import {
+  createVariableEditorSegments,
+  convertVariableEditorSegmentsAsSchema,
+  parseSchemaAsVariableEditorSegments,
+  parseVariableEditorSegments,
+} from './util';
 import constants from '../../constants';
 import { Add24Filled, Add24Regular, bundleIcon } from '@fluentui/react-icons';
 
@@ -16,27 +21,51 @@ export interface InitializeVariableProps {
   name: ValueSegment[];
   type: ValueSegment[];
   value: ValueSegment[];
+  description?: ValueSegment[];
 }
 
 export interface InitializeVariableEditorProps extends BaseEditorProps {
   validationErrors?: InitializeVariableErrors[];
   isMultiVariableEnabled?: boolean;
+  isAgentParameter?: boolean;
 }
 
-export const InitializeVariableEditor = ({ initialValue, onChange, validationErrors, ...props }: InitializeVariableEditorProps) => {
+export const InitializeVariableEditor = ({
+  initialValue,
+  onChange,
+  validationErrors,
+  isAgentParameter,
+  ...props
+}: InitializeVariableEditorProps) => {
   const intl = useIntl();
-  const [variables, setVariables] = useState<InitializeVariableProps[]>(() => parseVariableEditorSegments(initialValue));
+  const [variables, setVariables] = useState<InitializeVariableProps[]>(() =>
+    isAgentParameter ? parseSchemaAsVariableEditorSegments(initialValue) : parseVariableEditorSegments(initialValue)
+  );
 
   const addVariableLabel = intl.formatMessage({ defaultMessage: 'Add a Variable', id: 'HET2nV', description: 'label to add a variable' });
-  const warningTitle = intl.formatMessage({
+
+  const warningTitleVariable = intl.formatMessage({
     defaultMessage: 'Unable to Parse Variables',
     id: 'uqrOee',
     description: 'Warning title for when unable to parse variables',
   });
-  const warningBody = intl.formatMessage({
+
+  const warningTitleAgentParameter = intl.formatMessage({
+    defaultMessage: 'Unable to Parse Agent Parameter Schema',
+    id: '4vZjpN',
+    description: 'Warning title for when unable to parse schema',
+  });
+
+  const warningVariableBody = intl.formatMessage({
     defaultMessage: 'This could mean that the variable is set up incorrectly.',
     id: '3pOMqH',
     description: 'Warning body for when unable to parse variables',
+  });
+
+  const warningAgentParameterBody = intl.formatMessage({
+    defaultMessage: 'This could mean that the agenet parameter schema is set up incorrectly.',
+    id: '9YmvIw',
+    description: 'Warning body for when unable to parse schema',
   });
 
   const addVariable = () => {
@@ -51,7 +80,9 @@ export const InitializeVariableEditor = ({ initialValue, onChange, validationErr
   };
 
   const updateVariables = (updatedVariables: InitializeVariableProps[]) => {
-    const segments = createVariableEditorSegments(updatedVariables);
+    const segments = isAgentParameter
+      ? convertVariableEditorSegmentsAsSchema(updatedVariables)
+      : createVariableEditorSegments(updatedVariables);
     onChange?.({ value: segments, viewModel: { variables: updatedVariables, hideParameterErrors: true } });
     return updatedVariables;
   };
@@ -78,6 +109,7 @@ export const InitializeVariableEditor = ({ initialValue, onChange, validationErr
       {variables.map((variable, index) => (
         <VariableEditor
           {...props}
+          isAgentParameter={isAgentParameter}
           key={index}
           index={index}
           variable={variable}
@@ -88,7 +120,7 @@ export const InitializeVariableEditor = ({ initialValue, onChange, validationErr
         />
       ))}
 
-      {props.isMultiVariableEnabled ? (
+      {props.isMultiVariableEnabled || isAgentParameter ? (
         <div className="msla-initialize-variable-add-variable-button">
           <Button
             appearance="subtle"
@@ -112,8 +144,8 @@ export const InitializeVariableEditor = ({ initialValue, onChange, validationErr
       <StringEditor {...props} initialValue={initialValue} />
       <MessageBar key={'warning'} intent={'warning'} className="msla-initialize-variable-warning">
         <MessageBarBody>
-          <MessageBarTitle>{warningTitle}</MessageBarTitle>
-          {warningBody}
+          <MessageBarTitle>{isAgentParameter ? warningTitleAgentParameter : warningTitleVariable}</MessageBarTitle>
+          {isAgentParameter ? warningAgentParameterBody : warningVariableBody}
         </MessageBarBody>
       </MessageBar>
     </>

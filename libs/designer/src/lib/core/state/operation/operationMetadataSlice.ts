@@ -4,7 +4,7 @@ import { StaticResultOption } from '../../actions/bjsworkflow/staticresults';
 import type { RepetitionContext } from '../../utils/parameters/helper';
 import { createTokenValueSegment, isTokenValueSegment } from '../../utils/parameters/segment';
 import { getTokenTitle, normalizeKey } from '../../utils/tokens';
-import { resetNodesLoadStatus, resetWorkflowState, setStateAfterUndoRedo } from '../global';
+import { resetNodesLoadStatus, resetTemplatesState, resetWorkflowState, setStateAfterUndoRedo } from '../global';
 import { LogEntryLevel, LoggerService, filterRecord, getRecordEntry } from '@microsoft/logic-apps-shared';
 import type { ParameterInfo } from '@microsoft/designer-ui';
 import type { FilePickerInfo, InputParameter, OutputParameter, OpenAPIV2, OperationInfo } from '@microsoft/logic-apps-shared';
@@ -12,6 +12,8 @@ import { createSlice } from '@reduxjs/toolkit';
 import type { PayloadAction } from '@reduxjs/toolkit';
 import type { WritableDraft } from 'immer/dist/internal';
 import type { UndoRedoPartialRootState } from '../undoRedo/undoRedoTypes';
+import { deleteWorkflowData } from '../../actions/bjsworkflow/configuretemplate';
+import { delimiter } from '../../configuretemplate/utils/helper';
 
 export interface ParameterGroup {
   id: string;
@@ -588,11 +590,21 @@ export const operationMetadataSlice = createSlice({
   },
   extraReducers: (builder) => {
     builder.addCase(resetWorkflowState, () => initialState);
+    builder.addCase(resetTemplatesState, () => initialState);
     builder.addCase(resetNodesLoadStatus, (state) => {
       state.loadStatus.nodesInitialized = false;
       state.loadStatus.nodesAndDynamicDataInitialized = false;
     });
     builder.addCase(setStateAfterUndoRedo, (_, action: PayloadAction<UndoRedoPartialRootState>) => action.payload.operations);
+    builder.addCase(deleteWorkflowData.fulfilled, (state, action: PayloadAction<{ id: string }>) => {
+      const nodeIds = Object.keys(state.operationInfo).filter((nodeId) => nodeId.startsWith(`${action.payload.id}${delimiter}`));
+
+      for (const nodeId of nodeIds) {
+        delete state.inputParameters[nodeId];
+        delete state.dependencies[nodeId];
+        delete state.operationInfo[nodeId];
+      }
+    });
   },
 });
 

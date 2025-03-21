@@ -20,7 +20,6 @@ import {
   InitConnectionParameterEditorService,
   InitChatbotService,
   InitCustomCodeService,
-  InitCopilotService,
   InitUiInteractionsService,
   InitUserPreferenceService,
   InitExperimentationServiceService,
@@ -71,7 +70,6 @@ export const initializeServices = createAsyncThunk(
     connectionParameterEditorService,
     chatbotService,
     customCodeService,
-    copilotService,
     uiInteractionsService,
     userPreferenceService,
     experimentationService,
@@ -110,9 +108,6 @@ export const initializeServices = createAsyncThunk(
     }
     if (chatbotService) {
       InitChatbotService(chatbotService);
-    }
-    if (copilotService) {
-      InitCopilotService(copilotService);
     }
     if (customCodeService) {
       InitCustomCodeService(customCodeService);

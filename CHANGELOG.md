@@ -1,4 +1,61 @@
 # Logic Apps Designer
+## [5.57.0](https://github.com/Azure/LogicAppsUX/compare/v5.56.0...v5.57.0) (2025-03-20)
+
+
+### Features
+
+* **designer:** Agent Parameter Create Token Picker ([#6840](https://github.com/Azure/LogicAppsUX/issues/6840)) ([46a34c0](https://github.com/Azure/LogicAppsUX/commit/46a34c099fd0099268fece43dee7ab3510cdffe5))
+* **templates:** Add action for fetching template connections from selected workflows ([#6831](https://github.com/Azure/LogicAppsUX/issues/6831)) ([0ab0afb](https://github.com/Azure/LogicAppsUX/commit/0ab0afbafa57e81c662adaaa43e1c07157dd2959))
+
+
+### Bug Fixes
+
+* **vscode:** Fix project creation and redirect to workspace creation ([#6839](https://github.com/Azure/LogicAppsUX/issues/6839)) ([968bec3](https://github.com/Azure/LogicAppsUX/commit/968bec37afa9270fbc6670c5922731b52559cd78))
+* **vscode:** Updating connection keys will no longer overwrite existing connection data ([#6753](https://github.com/Azure/LogicAppsUX/issues/6753)) ([d05a41b](https://github.com/Azure/LogicAppsUX/commit/d05a41bcbd8e90bb59ed4e41171c3ca1a5b9e834))
+
+## [5.56.0](https://github.com/Azure/LogicAppsUX/compare/v5.55.0...v5.56.0) (2025-03-19)
+
+
+### Features
+
+* **designer:** Include dependency on kind to enable Agentic workflows ([#6821](https://github.com/Azure/LogicAppsUX/issues/6821)) ([a50b5c8](https://github.com/Azure/LogicAppsUX/commit/a50b5c8a63c2375f36c4df14ba8d737a4cde90ff))
+* **Templates:** Custom Template Standalone ([#6685](https://github.com/Azure/LogicAppsUX/issues/6685)) ([530ec1c](https://github.com/Azure/LogicAppsUX/commit/530ec1c22ef3bbbf7ebb8a953e91f82bec652ed7))
+* **Templates:** Review tab improvements + Template provider `useExternalRedux` flag ([#6828](https://github.com/Azure/LogicAppsUX/issues/6828)) ([4a7bcaf](https://github.com/Azure/LogicAppsUX/commit/4a7bcaf843ad60e1cd15add849cd72ca5479f5b6))
+
+
+### Bug Fixes
+
+* **designer:** Fix item count when adding operations in scope and subgraph ([#6818](https://github.com/Azure/LogicAppsUX/issues/6818)) ([a22fea5](https://github.com/Azure/LogicAppsUX/commit/a22fea596f41fe4d953e1892374d1e2e38020b28))
+
+## [5.55.0](https://github.com/Azure/LogicAppsUX/compare/v5.54.0...v5.55.0) (2025-03-18)
+
+
+### Features
+
+* **designer:** Remove animation for delete node modal ([#6814](https://github.com/Azure/LogicAppsUX/issues/6814)) ([e2b90e6](https://github.com/Azure/LogicAppsUX/commit/e2b90e683fc3ae211bfffcb44bcb855de4cdcfdf))
+
+
+### Bug Fixes
+
+* **designer:** Fix typo in connection configuration model ([#6813](https://github.com/Azure/LogicAppsUX/issues/6813)) ([1172a46](https://github.com/Azure/LogicAppsUX/commit/1172a46e54d02f8dadecacb3b08d4ff39315c235))
+* **templates:** Adding reload handler when resource changes to reload services ([#6805](https://github.com/Azure/LogicAppsUX/issues/6805)) ([b34518f](https://github.com/Azure/LogicAppsUX/commit/b34518f91ff55f2b434aeb1ea1b6275ff93d3efc))
+
+## [5.54.0](https://github.com/Azure/LogicAppsUX/compare/v5.53.0...v5.54.0) (2025-03-17)
+
+
+### Features
+
+* **designer:** Agent Parameter Rework ([#6807](https://github.com/Azure/LogicAppsUX/issues/6807)) ([0feeda9](https://github.com/Azure/LogicAppsUX/commit/0feeda99030381db97b031b05030c29b69d83282))
+* **designer:** Agent Parameters Entry Point  ([#6797](https://github.com/Azure/LogicAppsUX/issues/6797)) ([3e63abf](https://github.com/Azure/LogicAppsUX/commit/3e63abf709171c58c39df5d9acb02c836eff39ab))
+* **designer:** Implement inline connection creation for agent action ([#6794](https://github.com/Azure/LogicAppsUX/issues/6794)) ([84e18b7](https://github.com/Azure/LogicAppsUX/commit/84e18b75b46872ee2704e6b87ed39dad7d2a5766))
+* **designer:** Update agent connections schema ([#6806](https://github.com/Azure/LogicAppsUX/issues/6806)) ([a853f7f](https://github.com/Azure/LogicAppsUX/commit/a853f7f8f27d1e851143abafc0dfaf43d092a3f1))
+
+
+### Bug Fixes
+
+* **Designer:** Agentic Manifest Changes ([#6808](https://github.com/Azure/LogicAppsUX/issues/6808)) ([0409911](https://github.com/Azure/LogicAppsUX/commit/04099111078137da7f8794382862a7222a7942c1))
+* **vscode:** Fix parameterize connection checks to check all connections ([#6779](https://github.com/Azure/LogicAppsUX/issues/6779)) ([6b5d918](https://github.com/Azure/LogicAppsUX/commit/6b5d91836fb9012b122fdb6d5091ee400a9e8e2d))
+
 ## [5.53.0](https://github.com/Azure/LogicAppsUX/compare/v5.52.0...v5.53.0) (2025-03-14)
 
 

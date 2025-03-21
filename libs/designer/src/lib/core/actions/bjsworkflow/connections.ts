@@ -45,7 +45,7 @@ import {
 } from '@microsoft/logic-apps-shared';
 import type { Dispatch } from '@reduxjs/toolkit';
 import { createAsyncThunk } from '@reduxjs/toolkit';
-import { openPanel, setIsCreatingConnection } from '../../state/panel/panelSlice';
+import { openPanel, setIsCreatingConnection, setIsPanelLoading } from '../../state/panel/panelSlice';
 import type { PanelMode } from '../../state/panel/panelTypes';
 
 export interface ConnectionPayload {
@@ -121,6 +121,14 @@ export const closeConnectionsFlow = createAsyncThunk(
     dispatch(openPanel({ nodeId: actualNodeId, panelMode: actualPanelMode }));
   }
 );
+
+export const reloadParametersTab = createAsyncThunk<void, void>('reloadParametersTab', async (_, { dispatch }): Promise<void> => {
+  dispatch(setIsCreatingConnection(false));
+  dispatch(setIsPanelLoading(true));
+  // Wait for 1 second to allow the UI to update
+  await new Promise((resolve) => setTimeout(resolve, 1000));
+  dispatch(setIsPanelLoading(false));
+});
 
 const updateNodeConnectionAndProperties = async (
   payload: UpdateConnectionPayload,
@@ -285,7 +293,7 @@ export const autoCreateConnectionIfPossible = async (payload: {
   }
 };
 
-async function getConnectionsMappingForNodes(deserializedWorkflow: DeserializedWorkflow): Promise<Record<string, string>> {
+export async function getConnectionsMappingForNodes(deserializedWorkflow: DeserializedWorkflow): Promise<Record<string, string>> {
   const { actionData, nodesMetadata } = deserializedWorkflow;
   let connectionsMapping: Record<string, string> = {};
   const operationManifestService = OperationManifestService();
@@ -520,7 +528,7 @@ function getConnectionReferenceKeyForManifest(referenceFormat: string, operation
       return (operationDefinition as LogicAppsV2.ServiceProvider).inputs.serviceProviderConfiguration.connectionName;
 
     case ConnectionReferenceKeyFormat.AgentConnection:
-      return (operationDefinition as any).inputs.agentConfiguration.connectionName;
+      return (operationDefinition as any).inputs.modelConfiguration.connectionName;
 
     case ConnectionReferenceKeyFormat.OpenApi:
     case ConnectionReferenceKeyFormat.OpenApiConnection:

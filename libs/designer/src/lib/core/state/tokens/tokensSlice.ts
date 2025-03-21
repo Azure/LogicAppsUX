@@ -18,19 +18,30 @@ export interface VariableDeclaration {
   type: string;
 }
 
+export type AgentParameters = Record<string, AgentParameterDeclarations>;
+export type AgentParameterDeclarations = Record<string, AgentParameterDeclaration>;
+export interface AgentParameterDeclaration {
+  name: string;
+  type: string;
+  description: string;
+}
+
 export interface TokensState {
   outputTokens: Record<string, NodeTokens>;
   variables: Record<string, VariableDeclaration[]>;
+  agentParameters: Record<string, AgentParameters>;
 }
 
 export const initialState: TokensState = {
   outputTokens: {},
   variables: {},
+  agentParameters: {},
 };
 
 export interface InitializeTokensAndVariablesPayload {
   outputTokens: Record<string, NodeTokens>;
   variables: Record<string, VariableDeclaration[]>;
+  agentParameters?: Record<string, AgentParameters>;
 }
 
 interface AddDynamicTokensPayload {
@@ -43,12 +54,15 @@ export const tokensSlice = createSlice({
   initialState,
   reducers: {
     initializeTokensAndVariables: (state, action: PayloadAction<InitializeTokensAndVariablesPayload>) => {
-      const { outputTokens, variables } = action.payload;
+      const { outputTokens, variables, agentParameters } = action.payload;
       state.outputTokens = {
         ...state.outputTokens,
         ...outputTokens,
       };
       state.variables = { ...state.variables, ...variables };
+      if (agentParameters) {
+        state.agentParameters = { ...state.agentParameters, ...agentParameters };
+      }
     },
     deinitializeTokensAndVariables: (state, action: PayloadAction<{ id: string }>) => {
       const { id } = action.payload;
@@ -65,6 +79,28 @@ export const tokensSlice = createSlice({
       if (outputTokens) {
         outputTokens.tokens = tokens;
       }
+    },
+    updateAgentParameter: (
+      state,
+      action: PayloadAction<{ id: string; agent: string; agentParameter: Record<string, AgentParameterDeclaration> }>
+    ) => {
+      const { id, agent, agentParameter } = action.payload;
+
+      if (!state.agentParameters[agent]) {
+        state.agentParameters[agent] = {};
+      }
+
+      state.agentParameters[agent][id] = agentParameter;
+    },
+    addAgentParameterToNode: (
+      state,
+      action: PayloadAction<{ conditionId: string; agentId: string; agentParameter: AgentParameterDeclaration }>
+    ) => {
+      const { conditionId, agentId, agentParameter } = action.payload;
+      if (!state.agentParameters[agentId]) {
+        state.agentParameters[agentId] = {};
+      }
+      state.agentParameters[agentId][conditionId] = { ...state.agentParameters[agentId][conditionId], agentParameter };
     },
     updateTokenSecureStatus: (state, action: PayloadAction<{ id: string; isSecure: boolean }>) => {
       const { id, isSecure } = action.payload;
@@ -127,6 +163,8 @@ export const {
   addDynamicTokens,
   updateVariableInfo,
   updateTokens,
+  updateAgentParameter,
+  addAgentParameterToNode,
   updateTokenSecureStatus,
   updateUpstreamNodes,
 } = tokensSlice.actions;
