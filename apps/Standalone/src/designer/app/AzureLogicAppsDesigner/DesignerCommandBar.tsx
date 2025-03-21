@@ -87,7 +87,6 @@ export const DesignerCommandBar = ({
   isMonitoringView?: boolean;
   isDarkMode: boolean;
   isUnitTest: boolean;
-  isConsumption?: boolean;
   showConnectionsPanel?: boolean;
   showRunHistory?: boolean;
   toggleRunHistory: () => void;
