@@ -1,12 +1,13 @@
 import { useDispatch, useSelector } from 'react-redux';
 import type { AppDispatch, RootState } from '../state/templates/store';
-import { useCallback } from 'react';
+import { useCallback, useState } from 'react';
 import { ResourcePicker } from '../../ui/templates/basics/resourcepicker';
 import { equals, hasProperty, type LogicAppResource } from '@microsoft/logic-apps-shared';
 import { useWorkflowsInApp } from '../configuretemplate/utils/queries';
 import { Button, Checkbox } from '@fluentui/react-components';
-import { initializeConnectionsFromWorkflows } from '../actions/bjsworkflow/configuretemplate';
+import { initializeWorkflowsData } from '../actions/bjsworkflow/configuretemplate';
 import { updateAllWorkflowsData, updateWorkflowData } from '../state/templates/templateSlice';
+import { FeaturedConnectors } from '../../ui/configuretemplate/templateprofile/connectors';
 
 export const ConfigureTemplateWizard = () => {
   const dispatch = useDispatch<AppDispatch>();
@@ -18,14 +19,12 @@ export const ConfigureTemplateWizard = () => {
     workflowsInTemplate: state.template.workflows,
   }));
   const { data: workflows, isLoading } = useWorkflowsInApp(subscriptionId, resourceGroup, logicAppName ?? '', !!isConsumption);
+  const [showFeaturedConnectors, setShowFeaturedConnectors] = useState(false);
 
-  const onGetConnections = useCallback(() => {
-    dispatch(initializeConnectionsFromWorkflows({}));
+  const onInitializeWorkflows = useCallback(() => {
+    dispatch(initializeWorkflowsData({}));
+    setShowFeaturedConnectors(true);
   }, [dispatch]);
-
-  const onGetParameters = useCallback(() => {
-    // dispatch(initializeParametersFromWorkflows({}));
-  }, []);
 
   const onWorkflowSelected = useCallback(
     (workflowId: string, checked: boolean) => {
@@ -68,9 +67,13 @@ export const ConfigureTemplateWizard = () => {
         </div>
       </div>
       <div>
-        <Button onClick={onGetConnections}>{'Get Connections'}</Button>
-        <Button onClick={onGetParameters}>{'Get Parameters'}</Button>
+        <Button onClick={onInitializeWorkflows}>{'Initialize Workflows'}</Button>
       </div>
+      <p>
+        {'Featured Connectors'}
+        <br />
+        {showFeaturedConnectors ? <FeaturedConnectors /> : 'Click "Initialize Workflows" to show featured connectors'}
+      </p>
     </div>
   );
 };
