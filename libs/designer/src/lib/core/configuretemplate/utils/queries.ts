@@ -2,6 +2,29 @@ import type { ArmResource, LogicAppResource } from '@microsoft/logic-apps-shared
 import { getTriggerFromDefinition, ResourceService } from '@microsoft/logic-apps-shared';
 import type { QueryClient, UseQueryResult } from '@tanstack/react-query';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
+import { getConnector } from '../../queries/operation';
+import type { NodeOperation } from '../../state/operation/operationMetadataSlice';
+
+export const useAllConnectors = (operationInfos: Record<string, NodeOperation>) => {
+  const allConnectorIds = Object.values(operationInfos).reduce((result: string[], operationInfo) => {
+    const normalizedConnectorId = operationInfo.connectorId?.toLowerCase();
+    if (normalizedConnectorId && !result.includes(normalizedConnectorId)) {
+      result.push(normalizedConnectorId);
+    }
+
+    return result;
+  }, []);
+
+  return useQuery(['allconnectors', ...allConnectorIds], async () => {
+    const promises = allConnectorIds.map((connectorId) => getConnector(connectorId));
+    return (await Promise.all(promises))
+      .filter((connector) => !!connector)
+      .map((connector) => ({
+        id: connector.id.toLowerCase(),
+        displayName: connector.properties.displayName ?? connector.name,
+      }));
+  });
+};
 
 export const useAllLogicApps = (
   subscriptionId: string,
@@ -89,6 +112,29 @@ export const getConnectionsInWorkflowApp = async (
     try {
       const response = await ResourceService().getResource(resourceId, queryParameters);
       return response.properties.files?.['connections.json'];
+    } catch (error: any) {
+      if (error?.response?.status === 404) {
+        return {};
+      }
+      throw error;
+    }
+  });
+};
+
+export const getParametersInWorkflowApp = async (
+  subscriptionId: string,
+  resourceGroup: string,
+  logicAppName: string,
+  queryClient: QueryClient
+): Promise<Record<string, any>> => {
+  const resourceId = `/subscriptions/${subscriptionId}/resourceGroups/${resourceGroup}/providers/Microsoft.Web/sites/${logicAppName}/hostruntime/admin/vfs/parameters.json`;
+  const queryParameters = {
+    'api-version': '2018-11-01',
+    relativepath: '1',
+  };
+  return queryClient.fetchQuery(['parametersdata', resourceId.toLowerCase()], async () => {
+    try {
+      return ResourceService().getResource(resourceId, queryParameters);
     } catch (error: any) {
       if (error?.response?.status === 404) {
         return {};
