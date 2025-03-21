@@ -3,7 +3,7 @@ import { Text } from '@fluentui/react-components';
 import type { TemplateTabProps } from '@microsoft/designer-ui';
 import constants from '../../../common/constants';
 import type { IntlShape } from 'react-intl';
-import { selectWizardTab } from 'lib/core/state/templates/tabSlice';
+import { selectWizardTab } from '../../state/templates/tabSlice';
 
 export const ConnectionsTab = () => {
   return <Text>placeholder - show connections</Text>;
