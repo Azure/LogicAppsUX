@@ -11,7 +11,7 @@ import { QuickViewPanel, QuickViewPanelHeader } from '../panel/templatePanel/qui
 import { ConnectionsList } from './connections/connections';
 import { useFunctionalState } from '@react-hookz/web';
 import type { WorkflowTemplateData } from '../../core/actions/bjsworkflow/templates';
-import { openQuickViewPanelView } from '../../core/state/templates/panelSlice';
+import { openPanelView, TemplatePanelView } from '../../core/state/templates/panelSlice';
 import { TemplatesPanelFooter } from '@microsoft/designer-ui';
 import { workflowTab } from '../panel/templatePanel/quickViewPanel/tabs/workflowTab';
 import { clearTemplateDetails } from '../../core/state/templates/templateSlice';
@@ -60,7 +60,7 @@ export const TemplateOverview = ({
   const templateHasConnections = Object.keys(connections).length > 0;
 
   const showDetails = (workflowId: string) => {
-    dispatch(openQuickViewPanelView());
+    dispatch(openPanelView({ panelView: TemplatePanelView.QuickView }));
     setSelectedWorkflow(workflowId);
   };
 

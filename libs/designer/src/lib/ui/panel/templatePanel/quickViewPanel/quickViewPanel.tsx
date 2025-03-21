@@ -4,7 +4,7 @@ import { Link, Text } from '@fluentui/react-components';
 import { Icon, Panel, PanelType } from '@fluentui/react';
 import { useIntl } from 'react-intl';
 import { useCallback, useMemo, useState } from 'react';
-import { TemplatesPanelContent, TemplatesPanelFooter, TemplatesPanelHeader } from '@microsoft/designer-ui';
+import { TemplateContent, TemplatesPanelFooter, TemplatesPanelHeader } from '@microsoft/designer-ui';
 import { getQuickViewTabs } from '../../../../core/templates/utils/helper';
 import Markdown from 'react-markdown';
 import { useWorkflowTemplate } from '../../../../core/state/templates/templateselectors';
@@ -119,12 +119,7 @@ export const QuickViewPanel = ({
       layerProps={layerProps}
       isFooterAtBottom={true}
     >
-      <TemplatesPanelContent
-        className="msla-template-quickview-tabs"
-        tabs={panelTabs}
-        selectedTab={selectedTabId}
-        selectTab={onTabSelected}
-      />
+      <TemplateContent className="msla-template-quickview-tabs" tabs={panelTabs} selectedTab={selectedTabId} selectTab={onTabSelected} />
     </Panel>
   );
 };

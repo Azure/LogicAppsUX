@@ -4,6 +4,7 @@ import workflowReducer from './workflowSlice';
 import templateReducer from './templateSlice';
 import manifestReducer from './manifestSlice';
 import panelReducer from './panelSlice';
+import tabReducer from './tabSlice';
 import operationReducer from '../operation/operationMetadataSlice';
 import templateOptionsReducer from './templateOptionsSlice';
 
@@ -12,6 +13,7 @@ const rootReducer = combineReducers({
   template: templateReducer,
   manifest: manifestReducer,
   panel: panelReducer,
+  tab: tabReducer,
   operation: operationReducer,
   templateOptions: templateOptionsReducer,
 });

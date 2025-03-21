@@ -1,9 +1,7 @@
-import type { IntlShape } from 'react-intl';
 import type { TemplatePanelFooterProps } from './templatesPanelFooter';
 import type { ReactNode } from 'react';
 
-export type TemplatePanelTabFn = (intl: IntlShape) => TemplatePanelTab;
-export interface TemplatePanelTab {
+export interface TemplateTabProps {
   id: string;
   title: string;
   description?: string | ReactNode;
