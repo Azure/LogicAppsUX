@@ -1,4 +1,4 @@
-import { DynamicLoadStatus } from '@microsoft/designer-ui';
+import { DynamicLoadStatus, isBuiltInConnector } from '@microsoft/designer-ui';
 import { getDynamicInputsFromSchema, getDynamicOutputsFromSchema, getDynamicValues } from '../dynamicdata';
 import { InitConnectionService, InitOperationManifestService } from '@microsoft/logic-apps-shared';
 import { expect, describe, test, afterEach, vitest } from 'vitest';
@@ -14,6 +14,7 @@ describe('DynamicData', () => {
       getOperationManifest() {
         return Promise.resolve({ properties: { inputsLocationSwapMap: [] } } as any);
       },
+      isBuiltInConnector: () => false,
     };
     const dynamicSchema = {
       type: 'object',
@@ -305,6 +306,7 @@ describe('DynamicData', () => {
     };
     test('should make dynamic calls with non referenced default parameters in dynamic operation', async () => {
       InitConnectionService(connectionService);
+      InitOperationManifestService({ isBuiltInConnector: () => false } as any);
       const spy = vitest.spyOn(ConnectorQueries, 'getLegacyDynamicValues').mockResolvedValueOnce([{ value: 'test', displayName: 'test' }]);
 
       await getDynamicValues(dependencyInfo, nodeInputs, operationInfo, connectionReference, {}, {});

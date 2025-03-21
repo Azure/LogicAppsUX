@@ -24,8 +24,14 @@ export const getConnector = async (connectorId: string, useCachedData = false): 
   }
   const queryClient = getReactQueryClient();
   const connectionService = ConnectionService();
+  const manifestService = OperationManifestService();
   connectorId = connectorId.toLowerCase();
-  return queryClient.fetchQuery(['connector', { connectorId }], () => connectionService.getConnector(connectorId, useCachedData));
+  return queryClient.fetchQuery(['connector', { connectorId }], () => {
+    if (manifestService.isBuiltInConnector(connectorId)) {
+      return Promise.resolve(manifestService.getBuiltInConnector(connectorId));
+    }
+    return connectionService.getConnector(connectorId, useCachedData);
+  });
 };
 
 export const getSwagger = async (connectorId: string): Promise<OpenAPIV2.Document> => {

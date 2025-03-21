@@ -2,6 +2,29 @@ import type { ArmResource, LogicAppResource } from '@microsoft/logic-apps-shared
 import { getTriggerFromDefinition, ResourceService } from '@microsoft/logic-apps-shared';
 import type { QueryClient, UseQueryResult } from '@tanstack/react-query';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
+import { getConnector } from '../../queries/operation';
+import type { NodeOperation } from '../../state/operation/operationMetadataSlice';
+
+export const useAllConnectors = (operationInfos: Record<string, NodeOperation>) => {
+  const allConnectorIds = Object.values(operationInfos).reduce((result: string[], operationInfo) => {
+    const normalizedConnectorId = operationInfo.connectorId?.toLowerCase();
+    if (normalizedConnectorId && !result.includes(normalizedConnectorId)) {
+      result.push(normalizedConnectorId);
+    }
+
+    return result;
+  }, []);
+
+  return useQuery(['allconnectors', ...allConnectorIds], async () => {
+    const promises = allConnectorIds.map((connectorId) => getConnector(connectorId));
+    return (await Promise.all(promises))
+      .filter((connector) => !!connector)
+      .map((connector) => ({
+        id: connector.id.toLowerCase(),
+        displayName: connector.properties.displayName ?? connector.name,
+      }));
+  });
+};
 
 export const useAllLogicApps = (
   subscriptionId: string,

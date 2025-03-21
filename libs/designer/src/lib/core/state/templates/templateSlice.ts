@@ -93,6 +93,9 @@ export const templateSlice = createSlice({
       state.templateName = undefined;
       state.manifest = undefined;
     },
+    updateTemplateManifest: (state, action: PayloadAction<Partial<Template.TemplateManifest>>) => {
+      state.manifest = { ...(state.manifest ?? {}), ...(action.payload as Template.TemplateManifest) };
+    },
     updateWorkflowData: (
       state,
       action: PayloadAction<{ shouldDelete?: boolean; data: Partial<WorkflowTemplateData> & { id: string } }>
@@ -215,5 +218,6 @@ export const {
   updateTemplateParameterDefinitions,
   updateWorkflowData,
   updateAllWorkflowsData,
+  updateTemplateManifest,
 } = templateSlice.actions;
 export default templateSlice.reducer;

@@ -5,6 +5,7 @@ import {
   ConnectionService,
   InitConnectionService,
   InitGatewayService,
+  InitOperationManifestService,
   InitWorkflowService,
   type Template,
 } from '@microsoft/logic-apps-shared';
@@ -100,6 +101,9 @@ describe('ui/templates/workflowconnections', () => {
     InitGatewayService({
       getGateways: async () => [],
       getSubscriptions: async () => [],
+    } as any);
+    InitOperationManifestService({
+      isBuiltInConnector: () => false,
     } as any);
   });
 
