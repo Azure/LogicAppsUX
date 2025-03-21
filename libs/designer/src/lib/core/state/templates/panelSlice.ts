@@ -3,8 +3,12 @@ import { createSlice } from '@reduxjs/toolkit';
 import { resetTemplatesState } from '../global';
 
 export const TemplatePanelView = {
+  // Template creation panels
   QuickView: 'quickView',
   CreateWorkflow: 'createWorkflow',
+  // Configure template panels
+  ConfigureWorkflow: 'configureWorkflow',
+  CustomizeParameter: 'customizeParameter',
 } as const;
 export type ConfigPanelView = (typeof TemplatePanelView)[keyof typeof TemplatePanelView];
 
@@ -32,6 +36,16 @@ export const panelSlice = createSlice({
       state.selectedTabId = undefined;
       state.isOpen = true;
       state.currentPanelView = TemplatePanelView.CreateWorkflow;
+    },
+    openConfigureWorkflowPanelView: (state) => {
+      state.selectedTabId = undefined;
+      state.isOpen = true;
+      state.currentPanelView = TemplatePanelView.ConfigureWorkflow;
+    },
+    openCustomizeParameterPanelView: (state, action: PayloadAction<string>) => {
+      state.selectedTabId = action.payload; // parameterName
+      state.isOpen = true;
+      state.currentPanelView = TemplatePanelView.ConfigureWorkflow;
     },
     selectPanelTab: (state, action: PayloadAction<string | undefined>) => {
       state.selectedTabId = action.payload;

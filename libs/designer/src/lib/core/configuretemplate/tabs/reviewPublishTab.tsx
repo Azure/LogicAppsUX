@@ -25,15 +25,15 @@ export const reviewPublishTab = (intl: IntlShape, dispatch: AppDispatch): Templa
       description: 'Button text for going back to the previous tab',
     }),
     primaryButtonOnClick: () => {
-      dispatch(selectWizardTab(constants.TEMPLATE_TAB_NAMES.REVIEW_AND_PUBLISH));
+      dispatch(selectWizardTab(constants.TEMPLATE_TAB_NAMES.PUBLISH));
     },
     secondaryButtonText: intl.formatMessage({
-      defaultMessage: 'Next',
-      id: 'daThty',
-      description: 'Button text for proceeding to the next tab',
+      defaultMessage: 'Publish',
+      id: 'RkT4rN',
+      description: 'Button text for publishing the template',
     }),
     secondaryButtonOnClick: () => {
-      dispatch(selectWizardTab(constants.TEMPLATE_TAB_NAMES.PUBLISH));
+      //TODO: service call to publish the template
     },
   },
 });

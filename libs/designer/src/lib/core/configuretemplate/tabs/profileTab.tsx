@@ -25,7 +25,7 @@ export const profileTab = (intl: IntlShape, dispatch: AppDispatch): TemplateTabP
       description: 'Button text for going back to the previous tab',
     }),
     primaryButtonOnClick: () => {
-      dispatch(selectWizardTab(constants.TEMPLATE_TAB_NAMES.PUBLISH));
+      dispatch(selectWizardTab(constants.TEMPLATE_TAB_NAMES.PARAMETERS));
     },
     secondaryButtonText: intl.formatMessage({
       defaultMessage: 'Next',
@@ -33,7 +33,7 @@ export const profileTab = (intl: IntlShape, dispatch: AppDispatch): TemplateTabP
       description: 'Button text for proceeding to the next tab',
     }),
     secondaryButtonOnClick: () => {
-      dispatch(selectWizardTab(constants.TEMPLATE_TAB_NAMES.PARAMETERS));
+      dispatch(selectWizardTab(constants.TEMPLATE_TAB_NAMES.PUBLISH));
     },
   },
 });

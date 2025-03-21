@@ -1,20 +1,70 @@
 import type { AppDispatch, RootState } from '../../state/templates/store';
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { Text } from '@fluentui/react-components';
 import type { TemplateTabProps } from '@microsoft/designer-ui';
 import constants from '../../../common/constants';
-import type { IntlShape } from 'react-intl';
+import { useIntl, type IntlShape } from 'react-intl';
 import { selectWizardTab } from '../../state/templates/tabSlice';
+import { CommandBar, type ICommandBarItemProps } from '@fluentui/react';
+import { useMemo } from 'react';
+import { openCreateWorkflowPanelView } from '../../state/templates/panelSlice';
 
 export const WorkflowsTab = () => {
+  const intl = useIntl();
   const { workflows } = useSelector((state: RootState) => ({
     workflows: state.template.workflows,
   }));
+  const dispatch = useDispatch<AppDispatch>();
 
-  return Object.keys(workflows).length > 0 ? (
-    Object.values(workflows).map((workflowData) => <Text key={workflowData.id}>{workflowData.id}</Text>)
-  ) : (
-    <Text>placeholder - add workflows</Text>
+  const commandBarItems: ICommandBarItemProps[] = useMemo(
+    () => [
+      {
+        key: 'add',
+        text: intl.formatMessage({
+          defaultMessage: 'Add workflows',
+          id: 'Ve6uLm',
+          description: 'Button text for opening panel for adding workflows',
+        }),
+        iconProps: { iconName: 'Add' },
+        onClick: () => {
+          dispatch(openCreateWorkflowPanelView());
+        },
+      },
+      {
+        key: 'delete',
+        text: intl.formatMessage({
+          defaultMessage: 'Delete',
+          id: 'Ld62T8',
+          description: 'Button text for deleting selected workflows',
+        }),
+        iconProps: { iconName: 'Trash' },
+        onClick: () => {
+          //todo remove selected workflows
+        },
+      },
+    ],
+    [intl, dispatch]
+  );
+
+  return (
+    <div>
+      <CommandBar
+        items={commandBarItems}
+        styles={{
+          root: {
+            borderBottom: `1px solid ${'#333333'}`,
+            position: 'relative',
+            padding: '4px 8px',
+          },
+        }}
+      />
+
+      {Object.keys(workflows).length > 0 ? (
+        Object.values(workflows).map((workflowData) => <Text key={workflowData.id}>{workflowData.id}</Text>)
+      ) : (
+        <Text>placeholder - add workflows</Text>
+      )}
+    </div>
   );
 };
 
