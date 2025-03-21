@@ -1,4 +1,4 @@
-import type { OperationInfo, OperationManifest } from '../../utils/src';
+import type { Connector, OperationInfo, OperationManifest } from '../../utils/src';
 import { AssertionException, AssertionErrorCode } from '../../utils/src';
 
 /**
@@ -45,6 +45,20 @@ export interface IOperationManifestService {
    * @return {Promise<any>}
    */
   getOperation(connectorId: string, operationId: string, useCachedData?: boolean): Promise<any>;
+
+  /**
+   * Checks if the connector is a built-in connector.
+   * @arg {string} connectorId - The connector id.
+   * @return {boolean}
+   */
+  isBuiltInConnector(connectorId: string): boolean;
+
+  /**
+   * Gets the connector for built-in operation.
+   * @arg {string} connectorId - The connector id.
+   * @return {string}
+   */
+  getBuiltInConnector(connectorId: string): Connector;
 }
 
 let service: IOperationManifestService;
