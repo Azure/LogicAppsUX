@@ -5,9 +5,10 @@ import { closePanel } from '../../../../../core/state/templates/panelSlice';
 import type { ConfigureWorkflowsTabProps } from '../configureWorkflowsPanel';
 import type { IntlShape } from 'react-intl';
 import { Text } from '@fluentui/react-components';
+import { initializeWorkflowsData } from '../../../../../core/actions/bjsworkflow/configuretemplate';
 
 export const CustomizeWorkflows = () => {
-  return <Text>placeholder</Text>;
+  return <Text>CustomizeWorkflows</Text>;
 };
 
 export const customizeWorkflowsTab = (
@@ -15,11 +16,11 @@ export const customizeWorkflowsTab = (
   dispatch: AppDispatch,
   { hasError, isSaving, onClosePanel }: ConfigureWorkflowsTabProps
 ): TemplateTabProps => ({
-  id: constants.TEMPLATE_TAB_NAMES.SELECT_WORKFLOWS,
+  id: constants.TEMPLATE_TAB_NAMES.CUSTOMIZE_WORKFLOWS,
   title: intl.formatMessage({
-    defaultMessage: 'Select workflows',
-    id: 'vWOWFo',
-    description: 'The tab label for the monitoring select workflows tab on the configure template wizard',
+    defaultMessage: 'Customize workflows',
+    id: 'qnio+9',
+    description: 'The tab label for the monitoring customize workflows tab on the configure template wizard',
   }),
   hasError: hasError,
   content: <CustomizeWorkflows />,
@@ -31,6 +32,9 @@ export const customizeWorkflowsTab = (
     }),
     primaryButtonOnClick: () => {
       //TODO: save changes
+      dispatch(initializeWorkflowsData({}));
+
+      dispatch(closePanel());
     },
     secondaryButtonText: intl.formatMessage({
       defaultMessage: 'Cancel',

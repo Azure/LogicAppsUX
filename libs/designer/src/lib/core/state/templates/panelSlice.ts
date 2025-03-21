@@ -38,7 +38,6 @@ export const panelSlice = createSlice({
       state.currentPanelView = TemplatePanelView.CreateWorkflow;
     },
     openConfigureWorkflowPanelView: (state) => {
-      console.log('---');
       state.selectedTabId = undefined;
       state.isOpen = true;
       state.currentPanelView = TemplatePanelView.ConfigureWorkflows;
