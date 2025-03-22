@@ -1,4 +1,11 @@
 # Logic Apps Designer
+## [5.59.0](https://github.com/Azure/LogicAppsUX/compare/v5.58.0...v5.59.0) (2025-03-22)
+
+
+### Bug Fixes
+
+* **designer:** Change input for Agent ([#6854](https://github.com/Azure/LogicAppsUX/issues/6854)) ([08ffca0](https://github.com/Azure/LogicAppsUX/commit/08ffca01d134124cc587d19463eff0b8d2b93ee3))
+
 ## [5.58.0](https://github.com/Azure/LogicAppsUX/compare/v5.57.0...v5.58.0) (2025-03-22)
 
 
