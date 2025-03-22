@@ -11,6 +11,7 @@ import type { IntlShape } from 'react-intl';
 import { useIntl } from 'react-intl';
 import { equals, LogEntryLevel, LoggerService } from '@microsoft/logic-apps-shared';
 import MicrosoftIcon from '../../../common/images/templates/microsoft.svg';
+import WorkflowIcon from '../../../common/images/templates/logicapp.png';
 import { PeopleCommunity16Regular } from '@fluentui/react-icons';
 import { isMultiWorkflowTemplate, loadTemplate } from '../../../core/actions/bjsworkflow/templates';
 import { useMemo } from 'react';
@@ -45,7 +46,7 @@ export const TemplateCard = ({ templateName, isLightweight, blankWorkflowProps, 
   }
 
   if (!templateManifest) {
-    return <LoadingTemplateCard />;
+    return <LoadingTemplateCard isLightweight={isLightweight} cssOverrides={cssOverrides} />;
   }
 
   const intlText = {
@@ -59,6 +60,11 @@ export const TemplateCard = ({ templateName, isLightweight, blankWorkflowProps, 
       defaultMessage: 'Microsoft Authored',
       description: 'Label text for Microsoft authored templates',
       id: 'rEQceE',
+    }),
+    RESOURCE: intl.formatMessage({
+      defaultMessage: 'Workflow',
+      description: 'Label text for logic app resource',
+      id: 'XUFUOM',
     }),
   };
 
@@ -77,6 +83,7 @@ export const TemplateCard = ({ templateName, isLightweight, blankWorkflowProps, 
 
   const { title, details } = templateManifest as Template.TemplateManifest;
   const isMicrosoftAuthored = equals(details?.By, 'Microsoft');
+  const isWorkflowResource = equals(details?.By, 'resource');
 
   return (
     <DocumentCard
@@ -89,18 +96,20 @@ export const TemplateCard = ({ templateName, isLightweight, blankWorkflowProps, 
         <div className="msla-template-card-authored">
           {isMicrosoftAuthored ? (
             <Image src={MicrosoftIcon} aria-label={intlText.MICROSOFT_AUTHORED} width={16} />
+          ) : isWorkflowResource ? (
+            <Image src={WorkflowIcon} aria-label={intlText.RESOURCE} width={16} />
           ) : (
             <PeopleCommunity16Regular aria-label={intlText.COMMUNITY_AUTHORED} />
           )}
           <Text size={200} weight="semibold" align="start" className="msla-template-card-authored-label">
-            {isMicrosoftAuthored ? intlText.MICROSOFT_AUTHORED : intlText.COMMUNITY_AUTHORED}
+            {isMicrosoftAuthored ? intlText.MICROSOFT_AUTHORED : isWorkflowResource ? intlText.RESOURCE : intlText.COMMUNITY_AUTHORED}
           </Text>
         </div>
       </div>
 
       <div className="msla-template-card-body">
         <div className="msla-template-card-title-wrapper">
-          <Text size={400} weight="semibold" align="start" className="msla-template-card-title">
+          <Text size={400} weight="semibold" align="start" className={css('msla-template-card-title', cssOverrides?.['cardTitle'])}>
             {title}
           </Text>
         </div>
