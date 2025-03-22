@@ -64,7 +64,7 @@ async function buildCustomCodeProject(functionsProjectPath: string): Promise<voi
         if (e.exitCode !== 0) {
           const errorMessage = `Error building custom code functions project at ${functionsProjectPath}: ${e.exitCode}`;
           ext.outputChannel.appendLog(errorMessage);
-          vscode.window.showWarningMessage(localize('azureLogicAppsStandard.buildCodeFunctionsProjectError', errorMessage));
+          vscode.window.showWarningMessage(localize('azureLogicAppsStandard.buildCustomCodeFunctionsProjectError', errorMessage));
         } else {
           ext.outputChannel.appendLog(`Custom code functions project built successfully at ${functionsProjectPath}.`);
         }

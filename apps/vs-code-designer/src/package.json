@@ -148,7 +148,7 @@
         "category": "Azure Logic Apps"
       },
       {
-        "command": "azureLogicAppsStandard.buildCodeFunctionsProject",
+        "command": "azureLogicAppsStandard.buildCustomCodeFunctionsProject",
         "title": "Build functions project...",
         "category": "Azure Logic Apps"
       },
@@ -675,7 +675,7 @@
           "group": "navigation@1"
         },
         {
-          "command": "azureLogicAppsStandard.buildCodeFunctionsProject",
+          "command": "azureLogicAppsStandard.buildCustomCodeFunctionsProject",
           "when": "explorerResourceIsRoot == true && resourcePath in azureLogicAppsStandard.customCode.setFunctionsFolders",
           "group": "zzz_LogicApptools@1"
         },
@@ -1022,7 +1022,7 @@
     "onCommand:azureLogicAppsStandard.openOverview",
     "onCommand:azureLogicAppsStandard.exportLogicApp",
     "onCommand:azureLogicAppsStandard.cloudToLocal",
-    "onCommand:azureLogicAppsStandard.buildCodeFunctionsProject",
+    "onCommand:azureLogicAppsStandard.buildCustomCodeFunctionsProject",
     "onCommand:azureLogicAppsStandard.createCustomCodeFunction",
     "onCommand:azureLogicAppsStandard.reviewValidation",
     "onCommand:azureLogicAppsStandard.switchToDotnetProject",

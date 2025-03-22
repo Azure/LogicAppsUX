@@ -142,6 +142,6 @@ export function registerCommands(): void {
   // Data Mapper Commands
   registerCommand(extensionCommand.createNewDataMap, (context: IActionContext) => createNewDataMapCmd(context));
   registerCommand(extensionCommand.loadDataMapFile, (context: IActionContext, uri: Uri) => loadDataMapFileCmd(context, uri));
-  registerCommandWithTreeNodeUnwrapping(extensionCommand.buildCodeFunctionsProject, buildCustomCodeFunctionsProject);
+  registerCommandWithTreeNodeUnwrapping(extensionCommand.buildCustomCodeFunctionsProject, buildCustomCodeFunctionsProject);
   registerCommand(extensionCommand.createCustomCodeFunction, createCustomCodeFunctionFromCommand);
 }
