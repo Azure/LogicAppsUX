@@ -8,7 +8,7 @@ export interface UpdateAgenticGraphPayload {
   tools: Record<string, any>;
 }
 
-export const updateNodeGraph = (payload: UpdateAgenticGraphPayload, workflowGraph: WorkflowNode, state: WorkflowState) => {
+export const updateAgenticSubgraph = (payload: UpdateAgenticGraphPayload, workflowGraph: WorkflowNode, state: WorkflowState) => {
   if (!workflowGraph.id) {
     throw new Error('Workflow graph is missing an id');
   }

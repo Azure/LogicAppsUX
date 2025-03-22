@@ -22,7 +22,7 @@ import {
   updateStaticResults,
 } from '../operation/operationMetadataSlice';
 import type { RelationshipIds } from '../panel/panelTypes';
-import type { ErrorMessage, SpecTypes, WorkflowState, WorkflowKind } from './workflowInterfaces';
+import type { ErrorMessage, SpecTypes, WorkflowState, WorkflowKind, NodeMetadata } from './workflowInterfaces';
 import { getParentsUncollapseFromGraphState, getWorkflowNodeFromGraphState } from './workflowSelectors';
 import {
   LogEntryLevel,
@@ -41,7 +41,7 @@ import type { PayloadAction } from '@reduxjs/toolkit';
 import type { NodeChange, NodeDimensionChange } from '@xyflow/system';
 import type { UndoRedoPartialRootState } from '../undoRedo/undoRedoTypes';
 import { initializeInputsOutputsBinding } from '../../actions/bjsworkflow/monitoring';
-import { updateNodeGraph, type UpdateAgenticGraphPayload } from '../../parsers/updateAgenticGraph';
+import { updateAgenticSubgraph, type UpdateAgenticGraphPayload } from '../../parsers/updateAgenticGraph';
 
 export interface AddImplicitForeachPayload {
   nodeId: string;
@@ -260,7 +260,7 @@ export const workflowSlice = createSlice({
         throw new Error('graph not set');
       }
 
-      updateNodeGraph(action.payload, graph, state);
+      updateAgenticSubgraph(action.payload, graph, state);
 
       LoggerService().log({
         level: LogEntryLevel.Verbose,
@@ -283,15 +283,18 @@ export const workflowSlice = createSlice({
           const nodeData = {
             ...nodeMetadata,
             referenceUri: condition.tools[toolId].reference,
+            runData: {
+              status: condition.tools[toolId].status,
+            },
           };
-          state.nodesMetadata[toolId] = nodeData;
+          state.nodesMetadata[toolId] = nodeData as NodeMetadata;
         });
       });
 
       LoggerService().log({
         level: LogEntryLevel.Verbose,
         area: 'Designer:Workflow Slice',
-        message: 'Update node agentic workflow',
+        message: 'Update nodes reference',
         args: [action.payload],
       });
     },
