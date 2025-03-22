@@ -38,3 +38,30 @@ export const useTemplatesStrings = () => {
     },
   };
 };
+
+export const useConnectorStatusStrings = () => {
+  const intl = useIntl();
+
+  return {
+    connected: intl.formatMessage({
+      defaultMessage: 'Connected',
+      id: 'oOGTSo',
+      description: 'Connected text',
+    }),
+    notConnected: intl.formatMessage({
+      defaultMessage: 'Not connected',
+      id: 'WxJJcQ',
+      description: 'Not Connected text',
+    }),
+    authenticated: intl.formatMessage({
+      defaultMessage: 'Authenticated',
+      id: 'iwKxSD',
+      description: 'Connection authenticated text',
+    }),
+    notAuthenticated: intl.formatMessage({
+      defaultMessage: 'Not authenticated',
+      id: 'QdRn5z',
+      description: 'Connection not authenticated text',
+    }),
+  };
+};

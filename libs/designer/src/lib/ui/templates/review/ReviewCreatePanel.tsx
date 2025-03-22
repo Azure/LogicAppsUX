@@ -6,9 +6,8 @@ import { equals, isUndefinedOrEmptyString, normalizeConnectorId } from '@microso
 import { ConnectorConnectionName } from '../connections/connector';
 import { WorkflowKind } from '../../../core/state/workflow/workflowInterfaces';
 import { ResourceDisplay } from './ResourceDisplay';
-import { useTemplatesStrings } from '../templatesStrings';
+import { useConnectorStatusStrings, useTemplatesStrings } from '../templatesStrings';
 import { TemplatesSection } from '@microsoft/designer-ui';
-import { getConnectorResources } from '../../../core/templates/utils/helper';
 
 const useStyles = makeStyles({
   root: {
@@ -77,7 +76,7 @@ export const ReviewCreatePanel = () => {
       description: 'Accessibility label for no configuration required',
     }),
   };
-  const connectionTexts = getConnectorResources(intl);
+  const connectionTexts = useConnectorStatusStrings();
 
   return (
     <div className="msla-templates-tab">
