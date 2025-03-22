@@ -50,6 +50,7 @@ export interface WorkflowState {
   isDirty: boolean;
   workflowKind: WorkflowKind;
   originalDefinition: LogicAppsV2.WorkflowDefinition;
+  originalGraph: WorkflowNode | null;
   hostData: {
     errorMessages: Partial<Record<MessageLevel, ErrorMessage[]>>;
   };

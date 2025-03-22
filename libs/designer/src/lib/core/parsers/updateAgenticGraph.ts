@@ -1,5 +1,5 @@
 import { removeCaseTag } from '@microsoft/logic-apps-shared';
-import type { NodesMetadata, WorkflowState } from '../state/workflow/workflowInterfaces';
+import type { WorkflowState } from '../state/workflow/workflowInterfaces';
 import type { WorkflowNode } from './models/workflowNode';
 import { reassignEdgeSources, removeEdge } from './restructuringHelpers';
 
@@ -11,7 +11,7 @@ export interface UpdateAgenticGraphPayload {
 export const updateNodeGraph = (
   payload: UpdateAgenticGraphPayload,
   workflowGraph: WorkflowNode,
-  nodesMetadata: NodesMetadata,
+  originalGraph: WorkflowNode,
   state: WorkflowState
 ) => {
   if (!workflowGraph.id) {
@@ -21,9 +21,13 @@ export const updateNodeGraph = (
   const normalizedId = removeCaseTag(nodeId);
 
   const agentGraph = workflowGraph.children?.find((child) => child.id === normalizedId);
-  if (agentGraph && tools) {
-    const agentTools = agentGraph?.children ?? [];
+  const originalAgentGraph = originalGraph.children?.find((child) => child.id === normalizedId);
 
+  if (agentGraph && tools) {
+    agentGraph.children = originalAgentGraph?.children;
+    agentGraph.edges = originalAgentGraph?.edges;
+
+    const agentTools = agentGraph?.children ?? [];
     const hidingTools: string[] = [];
 
     const filteredTools = agentTools.filter((tool) => {

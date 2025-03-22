@@ -207,6 +207,52 @@ export class StandardRunService implements IRunService {
   ): Promise<LogicAppsV2.RunRepetition> {
     const { nodeId, runId } = action;
 
+    if (this._isDev) {
+      const test: Record<string, any> = {
+        '000000': {
+          If_Condition_X_Matches: {
+            status: 'InProgress',
+            reference: 'https://www.bing.com',
+          },
+        },
+        '000001': {
+          If_Condition_X_Matches: {
+            status: 'InProgress',
+            reference: 'https://www.bing.com',
+          },
+          If_Condition_Y_Matches: {
+            status: 'InProgress',
+            reference: 'https://www.bing.com',
+          },
+        },
+        '000002': {
+          If_Condition_Y_Matches: {
+            status: 'InProgress',
+            reference: 'https://www.bing.com',
+          },
+        },
+        '000003': {
+          If_Condition_Y_Matches: {
+            status: 'InProgress',
+            reference: 'https://www.bing.com',
+          },
+        },
+        '000004': {
+          If_Condition_Y_Matches: {
+            status: 'InProgress',
+            reference: 'https://www.bing.com',
+          },
+        },
+        '000005': {
+          If_Condition_Y_Matches: {
+            status: 'InProgress',
+            reference: 'https://www.bing.com',
+          },
+        },
+      };
+      return Promise.resolve(test[repetitionId] as LogicAppsV2.RunRepetition);
+    }
+
     const { apiVersion, baseUrl, httpClient } = this.options;
     const headers = this.getAccessTokenHeaders();
 

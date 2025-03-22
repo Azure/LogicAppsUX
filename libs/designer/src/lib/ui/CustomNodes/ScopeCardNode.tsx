@@ -31,7 +31,7 @@ import {
 import { setRepetitionRunData, toggleCollapsedGraphId, updateAgenticGraph } from '../../core/state/workflow/workflowSlice';
 import type { AppDispatch } from '../../core/store';
 import { LoopsPager } from '../common/LoopsPager/LoopsPager';
-import { getRepetitionName } from '../common/LoopsPager/helper';
+import { getRepetitionName, getScopeRepetitionName } from '../common/LoopsPager/helper';
 import { DropZone } from '../connections/dropzone';
 import { MessageBarType } from '@fluentui/react';
 import { equals, isNullOrUndefined, removeIdTag, useNodeIndex } from '@microsoft/logic-apps-shared';
@@ -77,6 +77,7 @@ const ScopeCardNode = ({ data, targetPosition = Position.Top, sourcePosition = P
   const normalizedType = node?.type.toLowerCase();
   const isAgent = normalizedType === constants.NODE.TYPE.AGENT;
   const runIndex = useRunIndex(scopeId);
+  const scopeRepetitionName = useMemo(() => getScopeRepetitionName(runIndex), [runIndex]);
 
   const repetitionName = useMemo(
     () => getRepetitionName(parentRunIndex, scopeId, nodesMetaData, operationsInfo),
@@ -98,59 +99,20 @@ const ScopeCardNode = ({ data, targetPosition = Position.Top, sourcePosition = P
     isAgent,
     scopeId,
     runInstance?.id,
-    repetitionName,
+    scopeRepetitionName,
     parentRunData?.status,
     runIndex
   );
 
-  // console.log('charlie', isAgent, scopeId, runIndex, isScopeRepetitionFetching, scopeRepetitionRunData, runInstance?.id);
-
   useEffect(() => {
-    const test: Record<string, any> = {
-      '0': {
-        If_Condition_X_Matches: {
-          status: 'InProgress',
-          reference: 'https://www.bing.com',
-        },
-      },
-      '1': {
-        If_Condition_X_Matches: {
-          status: 'InProgress',
-          reference: 'https://www.bing.com',
-        },
-        If_Condition_Y_Matches: {
-          status: 'InProgress',
-          reference: 'https://www.bing.com',
-        },
-      },
-      '2': {
-        If_Condition_Y_Matches: {
-          status: 'InProgress',
-          reference: 'https://www.bing.com',
-        },
-      },
-      '3': {
-        If_Condition_Y_Matches: {
-          status: 'InProgress',
-          reference: 'https://www.bing.com',
-        },
-      },
-      '4': {
-        If_Condition_Y_Matches: {
-          status: 'InProgress',
-          reference: 'https://www.bing.com',
-        },
-      },
-      '5': {
-        If_Condition_Y_Matches: {
-          status: 'InProgress',
-          reference: 'https://www.bing.com',
-        },
-      },
-    };
-    const indexTest = runIndex?.toString() as any;
-    const updatePayload = { nodeId: scopeId, tools: test[indexTest] };
-    dispatch(updateAgenticGraph(updatePayload));
+    if (!isNullOrUndefined(scopeRepetitionRunData)) {
+      if (selfRunData?.correlation?.actionTrackingId === scopeRepetitionRunData?.properties?.correlation?.actionTrackingId) {
+        // if the correlation id is the same, we don't need to update the repetition run data
+        return;
+      }
+      const updatePayload = { nodeId: scopeId, tools: scopeRepetitionRunData };
+      dispatch(updateAgenticGraph(updatePayload));
+    }
   }, [dispatch, scopeRepetitionRunData, scopeId, selfRunData?.correlation?.actionTrackingId]);
 
   useEffect(() => {

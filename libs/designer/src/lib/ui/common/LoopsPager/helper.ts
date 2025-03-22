@@ -64,3 +64,13 @@ export const getRepetitionName = (
 
   return repetitionName;
 };
+
+/**
+ * Gets repetition name for API call.
+ * @param {number | undefined} index - Node's parent loop index.
+ * @returns {string} Repetition name.
+ */
+export const getScopeRepetitionName = (index: number | undefined): string => {
+  const repetitionName = String(index).padStart(6, '0');
+  return repetitionName;
+};
