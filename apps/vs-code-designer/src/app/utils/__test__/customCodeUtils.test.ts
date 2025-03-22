@@ -6,8 +6,8 @@ import {
   isCustomCodeFunctionsProject,
   isCustomCodeFunctionsProjectInRoot,
   tryGetCustomCodeFunctionsProjects,
-  tryGetPeerCustomCodeFunctionsProjects,
-} from '../verifyIsCodeProject';
+  tryGetLogicAppCustomCodeFunctionsProjects,
+} from '../customCodeUtils';
 
 vi.mock('fs-extra', () => ({
   statSync: vi.fn(),
@@ -20,7 +20,7 @@ vi.mock('verifyProjectUtils', () => ({
   isLogicAppProject: vi.fn(),
 }));
 
-describe('verifyIsCodeProject', () => {
+describe('customCodeUtils', () => {
   const validNet8CsprojContent = `
         <Project Sdk="Microsoft.NET.Sdk">
             <PropertyGroup>
@@ -277,26 +277,26 @@ describe('verifyIsCodeProject', () => {
     });
   });
 
-  describe('tryGetPeerCustomCodeFunctionsProjects', () => {
+  describe('tryGetLogicAppCustomCodeFunctionsProjects', () => {
     const testLogicAppFolder = path.join('test', 'LogicApp');
     const testBaseFolder = path.dirname(testLogicAppFolder);
     const testPeerProject = 'PeerProject';
     const testPeerProjectCsproj = 'PeerProject.csproj';
 
     it('should return undefined if target folder is undefined', async () => {
-      const result = await tryGetPeerCustomCodeFunctionsProjects(undefined);
+      const result = await tryGetLogicAppCustomCodeFunctionsProjects(undefined);
       expect(result).toBeUndefined();
     });
 
     it('should return undefined if target folder is not a valid logic app project', async () => {
-      const result = await tryGetPeerCustomCodeFunctionsProjects(testLogicAppFolder);
+      const result = await tryGetLogicAppCustomCodeFunctionsProjects(testLogicAppFolder);
       expect(result).toBeUndefined();
     });
 
     it('should return an empty array if no sibling projects are found', async () => {
       vi.spyOn(verifyProjectUtils, 'isLogicAppProject').mockResolvedValue(true);
       vi.spyOn(fse, 'readdir').mockResolvedValue([]);
-      const result = await tryGetPeerCustomCodeFunctionsProjects(testLogicAppFolder);
+      const result = await tryGetLogicAppCustomCodeFunctionsProjects(testLogicAppFolder);
       expect(result).toEqual([]);
     });
 
@@ -317,7 +317,7 @@ describe('verifyIsCodeProject', () => {
         return '';
       });
 
-      const result = await tryGetPeerCustomCodeFunctionsProjects(testLogicAppFolder);
+      const result = await tryGetLogicAppCustomCodeFunctionsProjects(testLogicAppFolder);
       expect(result).toEqual([path.join(testBaseFolder, testPeerProject)]);
     });
   });

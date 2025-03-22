@@ -88,6 +88,7 @@ export async function isLogicAppProjectInRoot(workspaceFolder: WorkspaceFolder |
  * Checks root folder and subFolders one level down
  * If a single logic app project is found, return that path.
  * If multiple projects are found, prompt to pick the project.
+ * TODO - this is checking every root folder and subfolders of non-logic app projects in the workspace, can we optimize this?
  */
 export async function tryGetLogicAppProjectRoot(
   context: IActionContext,

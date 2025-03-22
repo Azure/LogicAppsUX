@@ -10,7 +10,7 @@ export class FunctionAppNamespaceStep extends AzureWizardPromptStep<IProjectWiza
   public hideStepCount = true;
 
   public async prompt(context: IProjectWizardContext): Promise<void> {
-    context.namespaceName = await context.ui.showInputBox({
+    context.functionAppNamespace = await context.ui.showInputBox({
       placeHolder: localize('setNamespace', 'namespace'),
       prompt: localize('methodNamePrompt', 'Provide a namespace for functions project'),
     });

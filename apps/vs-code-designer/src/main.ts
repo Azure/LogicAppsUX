@@ -33,6 +33,7 @@ import type { IActionContext } from '@microsoft/vscode-azext-utils';
 import * as vscode from 'vscode';
 import { convertToWorkspace } from './app/commands/createNewCodeProject/CodeProjectBase/ConvertToWorkspace';
 import TelemetryReporter from '@vscode/extension-telemetry';
+import { getCustomCodeFunctionsProjects } from './app/utils/customCodeUtils';
 
 const perfStats = {
   loadStartTime: Date.now(),
@@ -64,6 +65,12 @@ export async function activate(context: vscode.ExtensionContext) {
   registerAppServiceExtensionVariables(ext);
 
   await callWithTelemetryAndErrorHandling(extensionCommand.activate, async (activateContext: IActionContext) => {
+    vscode.commands.executeCommand(
+      'setContext',
+      extensionCommand.customCodeSetFunctionsFolders,
+      await getCustomCodeFunctionsProjects(activateContext)
+    );
+
     activateContext.telemetry.properties.isActivationEvent = 'true';
     activateContext.telemetry.measurements.mainFileLoad = (perfStats.loadEndTime - perfStats.loadStartTime) / 1000;
 

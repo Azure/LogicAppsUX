@@ -11,7 +11,7 @@ import type { IProjectWizardContext } from '@microsoft/vscode-extension-logic-ap
 import { logicAppNameValidation } from '../../../../constants';
 import * as path from 'path';
 
-export class SetLogicAppName extends AzureWizardPromptStep<IProjectWizardContext> {
+export class LogicAppNameStep extends AzureWizardPromptStep<IProjectWizardContext> {
   public async prompt(context: IProjectWizardContext): Promise<void> {
     context.logicAppName = await context.ui.showInputBox({
       placeHolder: localize('logicAppNamePlaceHolder', 'Logic App name'),

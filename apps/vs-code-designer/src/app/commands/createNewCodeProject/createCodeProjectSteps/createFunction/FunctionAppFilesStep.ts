@@ -19,7 +19,6 @@ import * as path from 'path';
 
 /**
  * This class represents a prompt step that allows the user to set up an Azure Function project.
- * TODO: This should not be a prompt step.
  */
 export class FunctionAppFilesStep extends AzureWizardPromptStep<IProjectWizardContext> {
   // Hide the step count in the wizard UI
@@ -49,14 +48,13 @@ export class FunctionAppFilesStep extends AzureWizardPromptStep<IProjectWizardCo
   public async prompt(context: IProjectWizardContext): Promise<void> {
     // Set the functionAppName and namespaceName properties from the context wizard
     const functionAppName = context.functionAppName;
-    const namespace = context.namespaceName;
+    const namespace = context.functionAppNamespace;
     const targetFramework = context.targetFramework;
     const logicAppName = context.logicAppName || 'LogicApp';
 
     // Define the functions folder path using the context property of the wizard
     const functionFolderPath = path.join(context.workspacePath, context.functionAppName);
     await fs.ensureDir(functionFolderPath);
-    context.functionFolderPath = functionFolderPath;
 
     // Define the type of project in the workspace
     const projectType = context.projectType;
@@ -71,7 +69,7 @@ export class FunctionAppFilesStep extends AzureWizardPromptStep<IProjectWizardCo
     await this.createCsprojFile(functionFolderPath, functionAppName, logicAppName, projectType, targetFramework);
 
     // Generate the Visual Studio Code configuration files in the specified folder.
-    await this.createVscodeConfigFiles(context.functionFolderPath, targetFramework);
+    await this.createVscodeConfigFiles(functionFolderPath, targetFramework);
   }
 
   /**
