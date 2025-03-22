@@ -1,7 +1,7 @@
 import { removeCaseTag } from '@microsoft/logic-apps-shared';
 import type { NodesMetadata, WorkflowState } from '../state/workflow/workflowInterfaces';
 import type { WorkflowNode } from './models/workflowNode';
-import { current } from '@reduxjs/toolkit';
+import { reassignEdgeSources, removeEdge } from './restructuringHelpers';
 
 export interface UpdateAgenticGraphPayload {
   nodeId: string;
@@ -11,8 +11,8 @@ export interface UpdateAgenticGraphPayload {
 export const updateNodeGraph = (
   payload: UpdateAgenticGraphPayload,
   workflowGraph: WorkflowNode,
-  _nodesMetadata: NodesMetadata,
-  _state: WorkflowState
+  nodesMetadata: NodesMetadata,
+  state: WorkflowState
 ) => {
   if (!workflowGraph.id) {
     throw new Error('Workflow graph is missing an id');
@@ -24,16 +24,24 @@ export const updateNodeGraph = (
   if (agentGraph && tools) {
     const agentTools = agentGraph?.children ?? [];
 
-    console.log('Agent tools: ', current(agentTools));
+    const hidingTools: string[] = [];
 
     const filteredTools = agentTools.filter((tool) => {
       if (tool.id.includes('#scope') || tool.id.includes('-addCase')) {
         return true;
       }
-      return tool.id in tools;
+      const isToolVisible = tool.id in tools;
+      if (!isToolVisible) {
+        hidingTools.push(tool.id);
+      }
+      return isToolVisible;
     });
 
-    console.log('Filtered tools: ', filteredTools);
+    hidingTools.forEach((tool) => {
+      const parentId = (agentGraph.edges ?? []).find((edge) => edge.target === tool)?.source ?? '';
+      reassignEdgeSources(state, tool, parentId, workflowGraph, true);
+      removeEdge(state, parentId, tool, agentGraph);
+    });
 
     agentGraph.children = filteredTools;
   }

@@ -103,17 +103,9 @@ const ScopeCardNode = ({ data, targetPosition = Position.Top, sourcePosition = P
     runIndex
   );
 
-  console.log('charlie', isAgent, scopeId, runIndex, isScopeRepetitionFetching, scopeRepetitionRunData, runInstance?.id);
+  // console.log('charlie', isAgent, scopeId, runIndex, isScopeRepetitionFetching, scopeRepetitionRunData, runInstance?.id);
 
   useEffect(() => {
-    // if (!isNullOrUndefined(scopeRepetitionRunData)) {
-    //   if (selfRunData?.correlation?.actionTrackingId === scopeRepetitionRunData?.properties?.correlation?.actionTrackingId) {
-    //     // if the correlation id is the same, we don't need to update the repetition run data
-    //     return;
-    //   }
-
-    //   dispatch(setRepetitionRunData({ nodeId: scopeId, runData: scopeRepetitionRunData.properties as LogicAppsV2.WorkflowRunAction }));
-    // }
     const test: Record<string, any> = {
       '0': {
         If_Condition_X_Matches: {
@@ -158,7 +150,6 @@ const ScopeCardNode = ({ data, targetPosition = Position.Top, sourcePosition = P
     };
     const indexTest = runIndex?.toString() as any;
     const updatePayload = { nodeId: scopeId, tools: test[indexTest] };
-    console.log('charlie', updatePayload);
     dispatch(updateAgenticGraph(updatePayload));
   }, [dispatch, scopeRepetitionRunData, scopeId, selfRunData?.correlation?.actionTrackingId]);
 
@@ -258,8 +249,8 @@ const ScopeCardNode = ({ data, targetPosition = Position.Top, sourcePosition = P
   const opQuery = useOperationQuery(scopeId);
 
   const isLoading = useMemo(
-    () => isRepetitionFetching || opQuery.isLoading || (!brandColor && !iconUri),
-    [brandColor, iconUri, opQuery.isLoading, isRepetitionFetching]
+    () => isRepetitionFetching || isScopeRepetitionFetching || opQuery.isLoading || (!brandColor && !iconUri),
+    [brandColor, iconUri, opQuery.isLoading, isRepetitionFetching, isScopeRepetitionFetching]
   );
 
   const comment = useMemo(
