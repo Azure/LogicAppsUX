@@ -1,7 +1,7 @@
 {
   "name": "vscode-azurelogicapps",
   "displayName": "Azure Logic Apps (Standard)",
-  "version": "5.53.4",
+  "version": "5.53.5",
   "aiKey": "setInGitHubBuild",
   "repository": "https://github.com/Azure/LogicAppsUX",
   "main": "main.js",
@@ -1053,8 +1053,8 @@
     "ms-azuretools.vscode-azurefunctions",
     "azurite.azurite",
     "ms-azuretools.vscode-azureresourcegroups",
-    "ms-dotnettools.csharp", 
-     "ms-dotnettools.csdevkit"
+    "ms-dotnettools.csharp",
+    "ms-dotnettools.csdevkit"
   ],
   "activationEvents": [
     "onCommand:azureLogicAppsStandard.openDesigner",
