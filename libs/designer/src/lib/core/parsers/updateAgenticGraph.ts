@@ -8,12 +8,7 @@ export interface UpdateAgenticGraphPayload {
   tools: Record<string, any>;
 }
 
-export const updateNodeGraph = (
-  payload: UpdateAgenticGraphPayload,
-  workflowGraph: WorkflowNode,
-  originalGraph: WorkflowNode,
-  state: WorkflowState
-) => {
+export const updateNodeGraph = (payload: UpdateAgenticGraphPayload, workflowGraph: WorkflowNode, state: WorkflowState) => {
   if (!workflowGraph.id) {
     throw new Error('Workflow graph is missing an id');
   }
@@ -21,9 +16,16 @@ export const updateNodeGraph = (
   const normalizedId = removeCaseTag(nodeId);
 
   const agentGraph = workflowGraph.children?.find((child) => child.id === normalizedId);
-  const originalAgentGraph = originalGraph.children?.find((child) => child.id === normalizedId);
 
   if (agentGraph && tools) {
+    let originalAgentGraph: WorkflowNode | undefined;
+    if (agentGraph?.id in state.agentsGraph) {
+      originalAgentGraph = { ...state.agentsGraph[agentGraph.id] };
+    } else {
+      originalAgentGraph = { ...agentGraph };
+      state.agentsGraph[agentGraph.id] = { ...agentGraph };
+    }
+
     agentGraph.children = originalAgentGraph?.children;
     agentGraph.edges = originalAgentGraph?.edges;
 

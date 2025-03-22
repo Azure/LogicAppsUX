@@ -23,7 +23,7 @@ import {
 } from '../operation/operationMetadataSlice';
 import type { RelationshipIds } from '../panel/panelTypes';
 import type { ErrorMessage, SpecTypes, WorkflowState, WorkflowKind } from './workflowInterfaces';
-import { getParentsUncollapseFromGraphState, getWorkflowNodeFromGraphState, getWorkflowNodeFromGraphState2 } from './workflowSelectors';
+import { getParentsUncollapseFromGraphState, getWorkflowNodeFromGraphState } from './workflowSelectors';
 import {
   LogEntryLevel,
   LoggerService,
@@ -66,7 +66,7 @@ export const initialWorkflowState: WorkflowState = {
     $schema: constants.SCHEMA.GA_20160601.URL,
     contentVersion: '1.0.0.0',
   },
-  originalGraph: null,
+  agentsGraph: {},
   hostData: {
     errorMessages: {},
   },
@@ -256,12 +256,11 @@ export const workflowSlice = createSlice({
       const { nodeId } = action.payload;
       const graphId = getRecordEntry(state.nodesMetadata, nodeId)?.graphId ?? '';
       const graph = getWorkflowNodeFromGraphState(state, graphId);
-      const originalGraph = getWorkflowNodeFromGraphState2(state, graphId);
-      if (!graph || !originalGraph) {
+      if (!graph) {
         throw new Error('graph not set');
       }
 
-      updateNodeGraph(action.payload, graph, originalGraph, state);
+      updateNodeGraph(action.payload, graph, state);
 
       LoggerService().log({
         level: LogEntryLevel.Verbose,
@@ -617,7 +616,6 @@ export const workflowSlice = createSlice({
       const isFirstLoad = !state.graph;
       state.originalDefinition = originalDefinition;
       state.graph = deserializedWorkflow.graph;
-      state.originalGraph = deserializedWorkflow.graph;
       state.operations = deserializedWorkflow.actionData;
       state.nodesMetadata = deserializedWorkflow.nodesMetadata;
 

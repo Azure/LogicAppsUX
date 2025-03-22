@@ -141,30 +141,6 @@ export const useEdgesBySource = (parentId?: string): WorkflowEdge[] =>
     })
   );
 
-export const getWorkflowNodeFromGraphState2 = (state: WorkflowState, actionId: string) => {
-  const graph = state.originalGraph;
-  if (!graph) {
-    return undefined;
-  }
-
-  const traverseGraph = (node: WorkflowNode): WorkflowNode | undefined => {
-    if (node.id === actionId) {
-      return node;
-    }
-
-    let result: WorkflowNode | undefined;
-    for (const child of node.children ?? []) {
-      const childRes = traverseGraph(child);
-      if (childRes) {
-        result = childRes;
-      }
-    }
-    return result;
-  };
-
-  return traverseGraph(graph);
-};
-
 export const getWorkflowNodeFromGraphState = (state: WorkflowState, actionId: string) => {
   const graph = state.graph;
   if (!graph) {
