@@ -9,8 +9,8 @@ import { getWorkspaceRoot } from '../utils/workspace';
 import {
   isCustomCodeFunctionsProject,
   tryGetCustomCodeFunctionsProjects,
-  tryGetPeerCustomCodeFunctionsProjects,
-} from '../utils/verifyIsCodeProject';
+  tryGetLogicAppCustomCodeFunctionsProjects,
+} from '../utils/customCodeUtils';
 import * as vscode from 'vscode';
 
 /**
@@ -19,19 +19,19 @@ import * as vscode from 'vscode';
  * @param {vscode.Uri} node - The URI of the project to build or the corresponding logic app project.
  * @returns {Promise<void>} - A promise that resolves when the build process is complete.
  */
-export async function buildCodeFunctionsProject(context: IActionContext, node: vscode.Uri): Promise<void> {
+export async function buildCustomCodeFunctionsProject(context: IActionContext, node: vscode.Uri): Promise<void> {
   if (await isCustomCodeFunctionsProject(node.fsPath)) {
-    await buildCodeProject(node.fsPath, true);
+    await buildCustomCodeProject(node.fsPath);
     return;
   }
 
-  const peerCustomCodeProjectPaths = await tryGetPeerCustomCodeFunctionsProjects(node.fsPath);
-  if (!peerCustomCodeProjectPaths || peerCustomCodeProjectPaths.length === 0) {
+  const customCodeProjectPaths = await tryGetLogicAppCustomCodeFunctionsProjects(node.fsPath);
+  if (!customCodeProjectPaths || customCodeProjectPaths.length === 0) {
     ext.outputChannel.appendLog(`No peer custom code functions projects found for target folder ${node.fsPath}.`);
     return;
   }
 
-  await Promise.all(peerCustomCodeProjectPaths.map((functionsProjectPath) => buildCodeProject(functionsProjectPath, true)));
+  await Promise.all(customCodeProjectPaths.map((functionsProjectPath) => buildCustomCodeProject(functionsProjectPath)));
 }
 
 /**
@@ -39,7 +39,7 @@ export async function buildCodeFunctionsProject(context: IActionContext, node: v
  * @param {IActionContext} context - The action context.
  * @returns {Promise<void>} - A promise that resolves when the build process is complete.
  */
-export async function buildWorkspaceCodeFunctionsProjects(context: IActionContext): Promise<void> {
+export async function buildWorkspaceCustomCodeFunctionsProjects(context: IActionContext): Promise<void> {
   const workspaceFolder = await getWorkspaceRoot(context);
   const functionsProjectPaths = await tryGetCustomCodeFunctionsProjects(workspaceFolder);
   if (!functionsProjectPaths || functionsProjectPaths.length === 0) {
@@ -47,10 +47,10 @@ export async function buildWorkspaceCodeFunctionsProjects(context: IActionContex
     return;
   }
 
-  await Promise.all(functionsProjectPaths.map((functionsProjectPath) => buildCodeProject(functionsProjectPath, false)));
+  await Promise.all(functionsProjectPaths.map((functionsProjectPath) => buildCustomCodeProject(functionsProjectPath)));
 }
 
-async function buildCodeProject(functionsProjectPath: string, showWindowInformationMessage: boolean): Promise<void> {
+async function buildCustomCodeProject(functionsProjectPath: string): Promise<void> {
   const tasks: vscode.Task[] = await vscode.tasks.fetchTasks();
   const buildTask = tasks.find((task) => {
     const currTaskPath = (task.scope as vscode.WorkspaceFolder)?.uri.fsPath;
@@ -66,15 +66,11 @@ async function buildCodeProject(functionsProjectPath: string, showWindowInformat
           ext.outputChannel.appendLog(errorMessage);
           vscode.window.showWarningMessage(localize('azureLogicAppsStandard.buildCodeFunctionsProjectError', errorMessage));
         } else {
-          const successMessage = `Custom code functions project built successfully at ${functionsProjectPath}.`;
-          ext.outputChannel.appendLog(successMessage);
-          if (showWindowInformationMessage) {
-            vscode.window.showInformationMessage(localize('azureLogicAppsStandard.buildCodeFunctionsProjectSuccess', successMessage));
-          }
+          ext.outputChannel.appendLog(`Custom code functions project built successfully at ${functionsProjectPath}.`);
         }
+        disposable.dispose();
         resolve();
       }
     });
-    disposable.dispose();
   });
 }

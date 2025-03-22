@@ -14,7 +14,7 @@ import { uploadAppSettings } from './appSettings/uploadAppSettings';
 import { disableValidateAndInstallBinaries, resetValidateAndInstallBinaries } from './binaries/resetValidateAndInstallBinaries';
 import { validateAndInstallBinaries } from './binaries/validateAndInstallBinaries';
 import { browseWebsite } from './browseWebsite';
-import { buildCodeFunctionsProject } from './buildCodeFunctionsProject';
+import { buildCustomCodeFunctionsProject } from './buildCustomCodeFunctionsProject';
 import { configureDeploymentSource } from './configureDeploymentSource';
 import { createChildNode } from './createChildNode';
 import { createCodeless } from './createCodeless/createCodeless';
@@ -22,6 +22,7 @@ import { createLogicApp, createLogicAppAdvanced } from './createLogicApp/createL
 import { cloudToLocalCommand } from './createNewCodeProject/cloudToLocal';
 import { createNewCodeProjectFromCommand } from './createNewCodeProject/createNewCodeProject';
 import { createNewProjectFromCommand } from './createNewProject/createNewProject';
+import { createCustomCodeFunctionFromCommand } from './createCustomCodeFunction/createCustomCodeFunction';
 import { createSlot } from './createSlot';
 import { createNewDataMapCmd, loadDataMapFileCmd } from './dataMapper/dataMapper';
 import { deleteLogicApp } from './deleteLogicApp/deleteLogicApp';
@@ -141,5 +142,6 @@ export function registerCommands(): void {
   // Data Mapper Commands
   registerCommand(extensionCommand.createNewDataMap, (context: IActionContext) => createNewDataMapCmd(context));
   registerCommand(extensionCommand.loadDataMapFile, (context: IActionContext, uri: Uri) => loadDataMapFileCmd(context, uri));
-  registerCommandWithTreeNodeUnwrapping(extensionCommand.buildCodeFunctionsProject, buildCodeFunctionsProject);
+  registerCommandWithTreeNodeUnwrapping(extensionCommand.buildCodeFunctionsProject, buildCustomCodeFunctionsProject);
+  registerCommand(extensionCommand.createCustomCodeFunction, createCustomCodeFunctionFromCommand);
 }

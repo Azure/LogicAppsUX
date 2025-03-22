@@ -1,9 +1,9 @@
 import { describe, it, expect, beforeEach, vi } from 'vitest';
-import { buildWorkspaceCodeFunctionsProjects } from '../buildCodeFunctionsProject';
+import { buildWorkspaceCustomCodeFunctionsProjects } from '../buildCustomCodeFunctionsProject';
 import type { IActionContext } from '@microsoft/vscode-azext-utils';
 import { window, tasks, Task } from 'vscode';
 import * as workspaceUtils from '../../utils/workspace';
-import * as verifyUtils from '../../utils/verifyIsCodeProject';
+import * as customCodeUtils from '../../utils/customCodeUtils';
 import { ext } from '../../../extensionVariables';
 import path from 'path';
 
@@ -44,9 +44,9 @@ describe('buildWorkspaceCodeFunctionsProjects', () => {
   });
 
   it('should log and return if no custom code functions projects are found', async () => {
-    vi.spyOn(verifyUtils, 'tryGetCustomCodeFunctionsProjects').mockResolvedValue([]);
+    vi.spyOn(customCodeUtils, 'tryGetCustomCodeFunctionsProjects').mockResolvedValue([]);
 
-    await buildWorkspaceCodeFunctionsProjects(context);
+    await buildWorkspaceCustomCodeFunctionsProjects(context);
 
     expect(ext.outputChannel.appendLog).toHaveBeenCalledWith('No custom code functions projects found.');
   });
@@ -63,7 +63,7 @@ describe('buildWorkspaceCodeFunctionsProjects', () => {
         scope: { uri: { fsPath: projectPaths[1] } },
       },
     ];
-    vi.spyOn(verifyUtils, 'tryGetCustomCodeFunctionsProjects').mockResolvedValue(projectPaths);
+    vi.spyOn(customCodeUtils, 'tryGetCustomCodeFunctionsProjects').mockResolvedValue(projectPaths);
     vi.spyOn(tasks, 'fetchTasks').mockResolvedValue(mockTasks);
     let callCount = 0;
     const events = [
@@ -75,7 +75,7 @@ describe('buildWorkspaceCodeFunctionsProjects', () => {
       return { dispose: () => {} };
     });
 
-    await buildWorkspaceCodeFunctionsProjects(context);
+    await buildWorkspaceCustomCodeFunctionsProjects(context);
 
     for (const projectPath of projectPaths) {
       expect(executeTaskSpy).toHaveBeenCalledTimes(projectPaths.length);
@@ -87,7 +87,7 @@ describe('buildWorkspaceCodeFunctionsProjects', () => {
 
   it('should handle errors during build for a custom code functions project', async () => {
     const projectPaths = ['projectError'];
-    vi.spyOn(verifyUtils, 'tryGetCustomCodeFunctionsProjects').mockResolvedValue(projectPaths);
+    vi.spyOn(customCodeUtils, 'tryGetCustomCodeFunctionsProjects').mockResolvedValue(projectPaths);
 
     const mockTasks = [
       {
@@ -102,7 +102,7 @@ describe('buildWorkspaceCodeFunctionsProjects', () => {
       return { dispose: () => {} };
     });
 
-    await buildWorkspaceCodeFunctionsProjects(context);
+    await buildWorkspaceCustomCodeFunctionsProjects(context);
 
     const testErrorMessage = `Error building custom code functions project at ${projectPaths[0]}: 1`;
     expect(ext.outputChannel.appendLog).toHaveBeenCalledWith(testErrorMessage);

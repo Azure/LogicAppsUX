@@ -5,10 +5,9 @@
 import { AzureWizardPromptStep } from '@microsoft/vscode-azext-utils';
 import { type IProjectWizardContext, ProjectLanguage, WorkflowProjectType } from '@microsoft/vscode-extension-logic-apps';
 import * as fs from 'fs-extra';
-import * as path from 'path';
 import { OpenBehavior } from '@microsoft/vscode-extension-logic-apps';
 
-export class SetWorkspaceSettings extends AzureWizardPromptStep<IProjectWizardContext> {
+export class WorkspaceSettingsStep extends AzureWizardPromptStep<IProjectWizardContext> {
   // Hide the step count in the wizard UI
   public hideStepCount = true;
 
@@ -20,12 +19,15 @@ export class SetWorkspaceSettings extends AzureWizardPromptStep<IProjectWizardCo
     // Set default project type and language
     context.workflowProjectType = WorkflowProjectType.Bundle;
     context.language = ProjectLanguage.JavaScript;
+
     // Create directories based on user choices
-    const { workspacePath, isWorkspaceWithFunctions } = context;
+    const { workspacePath } = context;
     if (context.customWorkspaceFolderPath && context.workspaceCustomFilePath.endsWith('.code-workspace')) {
-      await this.createDirectoriesExistingWorkspace(context, workspacePath, isWorkspaceWithFunctions);
+      await this.updateWorkspaceFile(context);
+      context.openBehavior = OpenBehavior.addToWorkspace;
     } else {
-      await this.createDirectories(context, workspacePath, isWorkspaceWithFunctions);
+      context.customWorkspaceFolderPath = workspacePath;
+      await this.createWorkspaceFile(context);
     }
   }
 
@@ -36,49 +38,6 @@ export class SetWorkspaceSettings extends AzureWizardPromptStep<IProjectWizardCo
    */
   public shouldPrompt(): boolean {
     return true;
-  }
-
-  /**
-   * Creates required directories for the project
-   * @param context - Project wizard context
-   * @param workspacePath - Root path of the workspace
-   * @param isWorkspaceWithFunctions - Flag to check if it's a workspace with functions
-   */
-  private async createDirectories(context: IProjectWizardContext, workspacePath: string, isWorkspaceWithFunctions: boolean): Promise<void> {
-    context.customWorkspaceFolderPath = workspacePath;
-    if (isWorkspaceWithFunctions) {
-      await this.setupCustomDirectories(context, workspacePath);
-    }
-    await this.createWorkspaceFile(context);
-  }
-
-  /**
-   * Creates required directories for the project
-   * @param context - Project wizard context
-   * @param workspacePath - Root path of the workspace
-   * @param isWorkspaceWithFunctions - Flag to check if it's a workspace with functions
-   */
-  private async createDirectoriesExistingWorkspace(
-    context: IProjectWizardContext,
-    workspacePath: string,
-    isWorkspaceWithFunctions: boolean
-  ): Promise<void> {
-    if (isWorkspaceWithFunctions) {
-      await this.setupCustomDirectories(context, workspacePath);
-    }
-    await this.updateWorkspaceFile(context);
-    context.openBehavior = OpenBehavior.addToWorkspace;
-  }
-
-  /**
-   * Setup directories and configs for custom code logic app
-   * @param context - Project wizard context
-   * @param workspacePath - Root path of the workspace
-   */
-  private async setupCustomDirectories(context: IProjectWizardContext, workspacePath: string): Promise<void> {
-    const functionFolderPath = path.join(workspacePath, context.functionAppName);
-    await fs.ensureDir(functionFolderPath);
-    context.functionFolderPath = functionFolderPath;
   }
 
   /**

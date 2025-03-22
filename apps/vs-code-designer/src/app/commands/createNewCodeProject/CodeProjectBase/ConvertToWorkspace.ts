@@ -11,8 +11,8 @@ import type { IFunctionWizardContext } from '@microsoft/vscode-extension-logic-a
 import * as vscode from 'vscode';
 import { window } from 'vscode';
 import { getWorkspaceFile, getWorkspaceFileInParentDirectory, getWorkspaceFolder, getWorkspaceRoot } from '../../../utils/workspace';
-import { SetWorkspaceName } from './SetWorkspaceName';
-import { SetWorkspaceContents } from './SetWorkspaceContents';
+import { WorkspaceNameStep } from './WorkspaceNameStep';
+import { WorkspaceContentsStep } from './WorkspaceContentsStep';
 import { isLogicAppProjectInRoot } from '../../../utils/verifyIsProject';
 
 export async function convertToWorkspace(context: IActionContext): Promise<boolean> {
@@ -53,7 +53,7 @@ export async function convertToWorkspace(context: IActionContext): Promise<boole
       if (result === DialogResponses.yes) {
         const workspaceWizard: AzureWizard<IFunctionWizardContext> = new AzureWizard(wizardContext, {
           title: localize('convertToWorkspace', 'Convert to workspace'),
-          promptSteps: [new FolderListStep(), new SetWorkspaceName(), new SetWorkspaceContents()],
+          promptSteps: [new FolderListStep(), new WorkspaceNameStep(), new WorkspaceContentsStep()],
           executeSteps: [new OpenFolderStepCodeProject()],
         });
 

@@ -107,6 +107,8 @@ export const extensionCommand = {
   createNewCodeProject: 'azureLogicAppsStandard.createNewCodeProject',
   cloudToLocal: 'azureLogicAppsStandard.cloudToLocal',
   buildCodeFunctionsProject: 'azureLogicAppsStandard.buildCodeFunctionsProject',
+  customCodeSetFunctionsFolders: 'azureLogicAppsStandard.customCode.setFunctionsFolders',
+  createCustomCodeFunction: 'azureLogicAppsStandard.createCustomCodeFunction',
   createNewDataMap: 'azureLogicAppsStandard.dataMap.createNewDataMap',
   createCodeless: 'azureLogicAppsStandard.createCodeless',
   createLogicApp: 'azureLogicAppsStandard.createLogicApp',
