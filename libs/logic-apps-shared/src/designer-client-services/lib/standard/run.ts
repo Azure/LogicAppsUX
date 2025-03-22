@@ -214,11 +214,11 @@ export class StandardRunService implements IRunService {
             tools: {
               HTTP: {
                 status: 'Succeeded',
-                reference: 'https://www.bing.com',
+                ID: 'https://www.bing.com',
               },
               HTTP_1: {
                 status: 'Succeeded',
-                reference: 'https://www.bing.com',
+                ID: 'https://www.bing.com',
               },
             },
           },
@@ -228,11 +228,11 @@ export class StandardRunService implements IRunService {
             tools: {
               HTTP: {
                 status: 'Succeeded',
-                reference: 'https://www.bing.com',
+                ID: 'https://www.bing.com',
               },
               HTTP_1: {
                 status: 'Succeeded',
-                reference: 'https://www.bing.com',
+                ID: 'https://www.bing.com',
               },
             },
           },
@@ -240,7 +240,7 @@ export class StandardRunService implements IRunService {
             tools: {
               Service_Bus: {
                 status: 'Succeeded',
-                reference: 'https://www.bing.com',
+                ID: 'https://www.bing.com',
               },
             },
           },
@@ -250,7 +250,7 @@ export class StandardRunService implements IRunService {
             tools: {
               Service_Bus: {
                 status: 'Succeeded',
-                reference: 'https://www.bing.com',
+                ID: 'https://www.bing.com',
               },
             },
           },
@@ -260,7 +260,7 @@ export class StandardRunService implements IRunService {
             tools: {
               Service_Bus: {
                 status: 'Succeeded',
-                reference: 'https://www.bing.com',
+                ID: 'https://www.bing.com',
               },
             },
           },
@@ -270,7 +270,7 @@ export class StandardRunService implements IRunService {
             tools: {
               Service_Bus: {
                 status: 'Succeeded',
-                reference: 'https://www.bing.com',
+                ID: 'https://www.bing.com',
               },
             },
           },
@@ -280,7 +280,7 @@ export class StandardRunService implements IRunService {
             tools: {
               Service_Bus: {
                 status: 'Succeeded',
-                reference: 'https://www.bing.com',
+                ID: 'https://www.bing.com',
               },
             },
           },
@@ -336,11 +336,11 @@ export class StandardRunService implements IRunService {
    * @param {string} repetitionId - A string with the resource ID of a repetition record
    * @return {Promise<any>}
    */
-  async getAgentRepetition(referenceUri: string): Promise<LogicAppsV2.RunRepetition> {
+  async getAgentRepetition(IDUri: string): Promise<LogicAppsV2.RunRepetition> {
     const { apiVersion, httpClient } = this.options;
     const headers = this.getAccessTokenHeaders();
 
-    const uri = `${referenceUri}?api-version=${apiVersion}`;
+    const uri = `${IDUri}?api-version=${apiVersion}`;
     try {
       const response = await httpClient.get<LogicAppsV2.RunRepetition>({
         uri,

@@ -283,7 +283,7 @@ export const workflowSlice = createSlice({
           }
           const nodeData = {
             ...nodeMetadata,
-            referenceUri: condition.tools[toolId].reference,
+            referenceUri: condition.tools[toolId].ID,
             runData: {
               status: condition.tools[toolId].status,
             },
