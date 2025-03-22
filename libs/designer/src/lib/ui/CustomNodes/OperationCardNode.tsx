@@ -7,6 +7,7 @@ import {
   useNodeSelectAdditionalCallback,
   useReadOnly,
   useSuppressDefaultNodeSelectFunctionality,
+  useUnitTest,
 } from '../../core/state/designerOptions/designerOptionsSelectors';
 import { setNodeContextMenuData, setShowDeleteModalNodeId } from '../../core/state/designerView/designerViewSlice';
 import { ErrorLevel } from '../../core/state/operation/operationMetadataSlice';
@@ -30,6 +31,7 @@ import {
   useOperationQuery,
 } from '../../core/state/selectors/actionMetadataSelector';
 import { useSettingValidationErrors } from '../../core/state/setting/settingSelector';
+import { useIsMockSupported, useMocksByOperation } from '../../core/state/unitTest/unitTestSelectors';
 import {
   useNodeDescription,
   useNodeDisplayName,
@@ -62,6 +64,8 @@ import constants from '../../common/constants';
 const DefaultNode = ({ targetPosition = Position.Top, sourcePosition = Position.Bottom, id }: NodeProps) => {
   const readOnly = useReadOnly();
   const isMonitoringView = useMonitoringView();
+  const isUnitTest = useUnitTest();
+
   const intl = useIntl();
 
   const dispatch = useDispatch<AppDispatch>();
@@ -77,6 +81,8 @@ const DefaultNode = ({ targetPosition = Position.Top, sourcePosition = Position.
   const parentNodeId = useParentNodeId(id);
   const parentActionMetadata = useActionMetadata(parentNodeId);
   const parentRunData = useRunData(parentNodeId ?? '');
+  const nodeMockResults = useMocksByOperation(isTrigger ? `&${id}` : id);
+  const isMockSupported = useIsMockSupported(id, isTrigger ?? false);
   const selfRunData = useRunData(id);
   const nodesMetaData = useNodesMetadata();
   const repetitionName = useMemo(
@@ -315,6 +321,9 @@ const DefaultNode = ({ targetPosition = Position.Top, sourcePosition = Position.
           errorLevel={errorLevel}
           isDragging={isDragging}
           isLoading={isLoading}
+          isUnitTest={isUnitTest}
+          nodeMockResults={nodeMockResults}
+          isMockSupported={isMockSupported}
           runData={runData}
           readOnly={readOnly}
           onClick={nodeClick}

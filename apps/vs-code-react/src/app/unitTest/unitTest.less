@@ -1,0 +1,25 @@
+.msla-unit-test-results {
+  display: flex;
+  flex-direction: column;
+  position: relative;
+  height: 100vh;
+
+  &-header {
+    padding: 20px 40px;
+  }
+
+  &-assertions-list {
+    padding: 0 40px;
+    flex: 6;
+    overflow: scroll;
+    &-item {
+      display: flex;
+      margin: 15px 10px;
+    }
+  }
+
+  &-button{
+    flex: 1;
+    padding: 0 40px;
+  }
+}
