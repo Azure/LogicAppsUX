@@ -71,6 +71,5 @@ export const getRepetitionName = (
  * @returns {string} Repetition name.
  */
 export const getScopeRepetitionName = (index: number | undefined): string => {
-  const repetitionName = String(index).padStart(6, '0');
-  return repetitionName;
+  return String(index).padStart(6, '0');
 };

@@ -28,7 +28,12 @@ import {
   useShouldNodeFocus,
   useRunIndex,
 } from '../../core/state/workflow/workflowSelectors';
-import { setRepetitionRunData, toggleCollapsedGraphId, updateAgenticGraph } from '../../core/state/workflow/workflowSlice';
+import {
+  setRepetitionRunData,
+  toggleCollapsedGraphId,
+  updateAgenticGraph,
+  updateNodesReference,
+} from '../../core/state/workflow/workflowSlice';
 import type { AppDispatch } from '../../core/store';
 import { LoopsPager } from '../common/LoopsPager/LoopsPager';
 import { getRepetitionName, getScopeRepetitionName } from '../common/LoopsPager/helper';
@@ -112,6 +117,7 @@ const ScopeCardNode = ({ data, targetPosition = Position.Top, sourcePosition = P
       }
       const updatePayload = { nodeId: scopeId, tools: scopeRepetitionRunData };
       dispatch(updateAgenticGraph(updatePayload));
+      dispatch(updateNodesReference(updatePayload));
     }
   }, [dispatch, scopeRepetitionRunData, scopeId, selfRunData?.correlation?.actionTrackingId]);
 

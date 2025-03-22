@@ -270,6 +270,32 @@ export const workflowSlice = createSlice({
         args: [action.payload],
       });
     },
+    updateNodesReference: (state: WorkflowState, action: PayloadAction<UpdateAgenticGraphPayload>) => {
+      if (!state.graph) {
+        return; // log exception
+      }
+      const { tools } = action.payload;
+      Object.values(tools).forEach((condition: any) => {
+        Object.keys(condition.tools).forEach((toolId) => {
+          const nodeMetadata = getRecordEntry(state.nodesMetadata, toolId);
+          if (!nodeMetadata) {
+            return;
+          }
+          const nodeData = {
+            ...nodeMetadata,
+            referenceUri: condition.tools[toolId].reference,
+          };
+          state.nodesMetadata[toolId] = nodeData;
+        });
+      });
+
+      LoggerService().log({
+        level: LogEntryLevel.Verbose,
+        area: 'Designer:Workflow Slice',
+        message: 'Update node agentic workflow',
+        args: [action.payload],
+      });
+    },
     deleteSwitchCase: (state: WorkflowState, action: PayloadAction<{ caseId: string; nodeId: string }>) => {
       delete (getRecordEntry(state.operations, action.payload.nodeId) as any).cases?.[action.payload.caseId];
 
@@ -684,6 +710,7 @@ export const {
   toggleCollapsedActionId,
   clearFocusCollapsedNode,
   updateAgenticGraph,
+  updateNodesReference,
 } = workflowSlice.actions;
 
 export default workflowSlice.reducer;

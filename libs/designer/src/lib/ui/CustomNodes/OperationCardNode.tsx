@@ -90,8 +90,6 @@ const DefaultNode = ({ targetPosition = Position.Top, sourcePosition = Position.
   const nodeSelectCallbackOverride = useNodeSelectAdditionalCallback();
   const isParentAgent = parentActionMetadata?.type?.toLowerCase() === constants.NODE.TYPE.AGENT;
 
-  const referenceUri = 'https://www.microsoft.com/en-us/microsoft-365/roadmap?filters=searchterms=agent';
-
   const { isFetching: isRepetitionFetching, data: repetitionRunData } = useNodeRepetition(
     !!isMonitoringView,
     isParentAgent,
@@ -100,7 +98,7 @@ const DefaultNode = ({ targetPosition = Position.Top, sourcePosition = Position.
     repetitionName,
     parentRunData?.status,
     parentRunIndex,
-    referenceUri
+    metadata?.referenceUri
   );
 
   useEffect(() => {
@@ -109,7 +107,7 @@ const DefaultNode = ({ targetPosition = Position.Top, sourcePosition = Position.
         // if the correlation id is the same, we don't need to update the repetition run data
         return;
       }
-
+      console.log('charlie', repetitionRunData);
       dispatch(setRepetitionRunData({ nodeId: id, runData: repetitionRunData.properties as LogicAppsV2.WorkflowRunAction }));
     }
   }, [dispatch, repetitionRunData, id, selfRunData?.correlation?.actionTrackingId]);
