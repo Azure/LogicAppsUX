@@ -11,7 +11,7 @@ import type { IntlShape } from 'react-intl';
 import { useIntl } from 'react-intl';
 import { equals, LogEntryLevel, LoggerService } from '@microsoft/logic-apps-shared';
 import MicrosoftIcon from '../../../common/images/templates/microsoft.svg';
-import WorkflowIcon from '../../../common/images/templates/logicapp.png';
+import WorkflowIcon from '../../../common/images/templates/logicapps.svg';
 import { PeopleCommunity16Regular } from '@fluentui/react-icons';
 import { isMultiWorkflowTemplate, loadTemplate } from '../../../core/actions/bjsworkflow/templates';
 import { useMemo } from 'react';
