@@ -33,7 +33,8 @@ import type { IActionContext } from '@microsoft/vscode-azext-utils';
 import * as vscode from 'vscode';
 import { ConvertToWorkspace } from './app/commands/createNewCodeProject/CodeProjectBase/ConvertToWorkspace';
 import TelemetryReporter from '@vscode/extension-telemetry';
-import { VSCodeAzureSubscriptionProvider } from '@microsoft/vscode-azext-azureauth';
+import { createVSCodeAzureSubscriptionProviderFactory } from './app/utils/services/VSCodeAzureSubscriptionProvider';
+import { logAzureResources } from './app/utils/telemetry';
 
 const perfStats = {
   loadStartTime: Date.now(),
@@ -58,6 +59,7 @@ export async function activate(context: vscode.ExtensionContext) {
 
   ext.context = context;
   ext.telemetryReporter = new TelemetryReporter(telemetryString);
+  ext.subscriptionProvider = createVSCodeAzureSubscriptionProviderFactory();
   context.subscriptions.push(ext.telemetryReporter);
 
   ext.outputChannel = createAzExtOutputChannel('Azure Logic Apps (Standard)', ext.prefix);
@@ -70,18 +72,12 @@ export async function activate(context: vscode.ExtensionContext) {
 
     runPostWorkflowCreateStepsFromCache();
     runPostExtractStepsFromCache();
+    await logAzureResources(activateContext);
 
     if (vscode.workspace.workspaceFolders && vscode.workspace.workspaceFolders.length > 0) {
       await ConvertToWorkspace(activateContext);
     }
-    const testVSCODE = new VSCodeAzureSubscriptionProvider();
 
-    if (await testVSCODE.isSignedIn()) {
-      const subscriptions = await testVSCODE.getSubscriptions();
-      const tenants = await testVSCODE.getTenants();
-      activateContext.telemetry.properties.sublist = subscriptions.length.toString();
-      activateContext.telemetry.properties.tenantCount = tenants.length.toString();
-    }
     try {
       await downloadExtensionBundle(activateContext);
     } catch (error) {
