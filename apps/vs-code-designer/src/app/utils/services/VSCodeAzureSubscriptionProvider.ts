@@ -11,10 +11,3 @@ export const createVSCodeAzureSubscriptionProviderFactory = (): VSCodeAzureSubsc
   vscodeAzureSubscriptionProvider ??= new VSCodeAzureSubscriptionProvider();
   return vscodeAzureSubscriptionProvider;
 };
-
-// const createVSCodeAzureSubscriptionProvider = (): VSCodeAzureSubscriptionProvider =>{
-//     // This will update the selected subscription IDs to ensure the filters are in the form of `${tenantId}/${subscriptionId}`
-//     // await getSelectedTenantAndSubscriptionIds();
-
-//     return ;
-// }
