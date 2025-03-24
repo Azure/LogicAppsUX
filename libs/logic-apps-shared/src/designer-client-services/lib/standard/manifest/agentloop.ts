@@ -8,7 +8,6 @@ export default {
     brandColor: '#072a8e',
     description:
       'Loop in which the AI agent decides at each step which tools to use and how, and which text to generate to respond to the user.',
-
     allowChildOperations: true,
     subGraphDetails: {
       tools: {
@@ -47,50 +46,32 @@ export default {
           'x-ms-connection-required': true,
           'x-ms-visibility': 'important',
         },
-        messages: {
-          description: 'Messages',
-          type: 'array',
-          items: {
-            description: 'Message',
-            required: ['Role', 'Content'],
-            type: 'object',
-            properties: {
-              role: {
-                description: 'Message role',
-                type: 'string',
-                'x-ms-summary': 'Role',
-              },
-              content: {
-                description: 'Message content',
-                type: 'string',
-                'x-ms-summary': 'Content',
-              },
-            },
-          },
-          required: ['Role', 'Content'],
-          'x-ms-summary': 'Messages',
+        instructions: {
+          title: 'Instructions',
+          description: 'Provide instructions for your agent',
+          type: 'string',
+          'x-ms-summary': 'Instructions',
           'x-ms-visibility': 'important',
         },
         limit: {
           type: 'object',
           'x-ms-group-name': 'Change limits',
           required: [],
+          default: {},
           properties: {
             count: {
               type: 'integer',
-              default: 60,
               title: 'Count',
             },
             timeout: {
               type: 'string',
-              default: 'PT1H',
               title: 'Timeout',
               'x-ms-stateless-default': 'PT5M',
             },
           },
         },
       },
-      required: ['deploymentId', 'messages'],
+      required: ['deploymentId', 'instructions'],
     },
     inputsLocation: ['inputs', 'parameters'],
     isInputsOptional: false,

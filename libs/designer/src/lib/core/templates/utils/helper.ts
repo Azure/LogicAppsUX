@@ -60,7 +60,8 @@ export const getUniqueConnectors = (
 export const getUniqueConnectorsFromConnections = (
   originalAllConnectors: Template.FeaturedConnector[],
   subscriptionId: string,
-  location: string
+  location: string,
+  removeBuiltInConnectors = false
 ): Template.FeaturedConnector[] => {
   const result: Template.FeaturedConnector[] = [];
   const finalConnectorIds: string[] = [];
@@ -68,6 +69,9 @@ export const getUniqueConnectorsFromConnections = (
 
   while (allConnectors.length > 0) {
     const connection = allConnectors.shift() as Template.FeaturedConnector;
+    if (removeBuiltInConnectors && connection.kind === 'builtin') {
+      continue;
+    }
     const normalizedConnectorId = normalizeConnectorId(connection.id, subscriptionId, location).toLowerCase();
     if (!finalConnectorIds.includes(normalizedConnectorId)) {
       finalConnectorIds.push(normalizedConnectorId);

@@ -1,4 +1,56 @@
 # Logic Apps Designer
+## [5.59.0](https://github.com/Azure/LogicAppsUX/compare/v5.58.0...v5.59.0) (2025-03-22)
+
+
+### Bug Fixes
+
+* **designer:** Change input for Agent ([#6854](https://github.com/Azure/LogicAppsUX/issues/6854)) ([08ffca0](https://github.com/Azure/LogicAppsUX/commit/08ffca01d134124cc587d19463eff0b8d2b93ee3))
+
+## [5.58.0](https://github.com/Azure/LogicAppsUX/compare/v5.57.0...v5.58.0) (2025-03-22)
+
+
+### Features
+
+* **templates:** Adding actions to initialize workflows data on selection fo custom templates ([#6841](https://github.com/Azure/LogicAppsUX/issues/6841)) ([1b10f58](https://github.com/Azure/LogicAppsUX/commit/1b10f5886ab559fe2c092f1a82f3ae01d126ecd5))
+* **templates:** Adding featured connectors dropdown for template profile ([#6850](https://github.com/Azure/LogicAppsUX/issues/6850)) ([2b612fb](https://github.com/Azure/LogicAppsUX/commit/2b612fbc73645c91a3956add980aa4ca6da4e5de))
+* **Templates:** Exported `validateParameters` + `validateConnections` actions from templates store ([#6852](https://github.com/Azure/LogicAppsUX/issues/6852)) ([a01b406](https://github.com/Azure/LogicAppsUX/commit/a01b406fe4ad2e805343cba18a47f378cacd48ea))
+* **Templates:** Template Section UI ([#6830](https://github.com/Azure/LogicAppsUX/issues/6830)) ([2b511fc](https://github.com/Azure/LogicAppsUX/commit/2b511fc2bb964d2734268505eab950fb3d36d296))
+* **vscode:** Introducing unit testing codeful experience to vscode ([#6845](https://github.com/Azure/LogicAppsUX/issues/6845)) ([b39ddd8](https://github.com/Azure/LogicAppsUX/commit/b39ddd8fd3e9f2911adb0c8d3b485484c3bb9eb1)), closes [#6216](https://github.com/Azure/LogicAppsUX/issues/6216) [#3819](https://github.com/Azure/LogicAppsUX/issues/3819) [#3845](https://github.com/Azure/LogicAppsUX/issues/3845) [#3864](https://github.com/Azure/LogicAppsUX/issues/3864) [#3876](https://github.com/Azure/LogicAppsUX/issues/3876) [#3895](https://github.com/Azure/LogicAppsUX/issues/3895) [#3909](https://github.com/Azure/LogicAppsUX/issues/3909) [#3913](https://github.com/Azure/LogicAppsUX/issues/3913) [#3923](https://github.com/Azure/LogicAppsUX/issues/3923) [#4125](https://github.com/Azure/LogicAppsUX/issues/4125) [#4134](https://github.com/Azure/LogicAppsUX/issues/4134) [#4211](https://github.com/Azure/LogicAppsUX/issues/4211) [#4223](https://github.com/Azure/LogicAppsUX/issues/4223) [#4230](https://github.com/Azure/LogicAppsUX/issues/4230) [#4240](https://github.com/Azure/LogicAppsUX/issues/4240) [#4248](https://github.com/Azure/LogicAppsUX/issues/4248) [#4255](https://github.com/Azure/LogicAppsUX/issues/4255) [#4348](https://github.com/Azure/LogicAppsUX/issues/4348) [#4362](https://github.com/Azure/LogicAppsUX/issues/4362) [#4364](https://github.com/Azure/LogicAppsUX/issues/4364) [#4387](https://github.com/Azure/LogicAppsUX/issues/4387) [#4393](https://github.com/Azure/LogicAppsUX/issues/4393) [#4411](https://github.com/Azure/LogicAppsUX/issues/4411) [#4458](https://github.com/Azure/LogicAppsUX/issues/4458) [#4495](https://github.com/Azure/LogicAppsUX/issues/4495) [#4497](https://github.com/Azure/LogicAppsUX/issues/4497) [#4510](https://github.com/Azure/LogicAppsUX/issues/4510) [#4771](https://github.com/Azure/LogicAppsUX/issues/4771) [#4787](https://github.com/Azure/LogicAppsUX/issues/4787) [#4827](https://github.com/Azure/LogicAppsUX/issues/4827) [#4853](https://github.com/Azure/LogicAppsUX/issues/4853) [#4856](https://github.com/Azure/LogicAppsUX/issues/4856) [#4859](https://github.com/Azure/LogicAppsUX/issues/4859) [#4863](https://github.com/Azure/LogicAppsUX/issues/4863) [#4871](https://github.com/Azure/LogicAppsUX/issues/4871) [#4877](https://github.com/Azure/LogicAppsUX/issues/4877) [#4883](https://github.com/Azure/LogicAppsUX/issues/4883) [#4904](https://github.com/Azure/LogicAppsUX/issues/4904) [#4905](https://github.com/Azure/LogicAppsUX/issues/4905) [#4906](https://github.com/Azure/LogicAppsUX/issues/4906) [#4943](https://github.com/Azure/LogicAppsUX/issues/4943) [#4969](https://github.com/Azure/LogicAppsUX/issues/4969) [#5006](https://github.com/Azure/LogicAppsUX/issues/5006) [#5010](https://github.com/Azure/LogicAppsUX/issues/5010) [#5015](https://github.com/Azure/LogicAppsUX/issues/5015) [#5028](https://github.com/Azure/LogicAppsUX/issues/5028) [#5063](https://github.com/Azure/LogicAppsUX/issues/5063) [#5051](https://github.com/Azure/LogicAppsUX/issues/5051) [#5069](https://github.com/Azure/LogicAppsUX/issues/5069) [#5096](https://github.com/Azure/LogicAppsUX/issues/5096) [#5100](https://github.com/Azure/LogicAppsUX/issues/5100) [#5106](https://github.com/Azure/LogicAppsUX/issues/5106) [#5115](https://github.com/Azure/LogicAppsUX/issues/5115) [#5118](https://github.com/Azure/LogicAppsUX/issues/5118) [#5121](https://github.com/Azure/LogicAppsUX/issues/5121) [#5132](https://github.com/Azure/LogicAppsUX/issues/5132) [#5429](https://github.com/Azure/LogicAppsUX/issues/5429) [#5501](https://github.com/Azure/LogicAppsUX/issues/5501) [#5730](https://github.com/Azure/LogicAppsUX/issues/5730) [#5902](https://github.com/Azure/LogicAppsUX/issues/5902)
+
+
+### Bug Fixes
+
+* **Templates:** Made `useWorkflowTemplate` hook + usage null safe ([#6843](https://github.com/Azure/LogicAppsUX/issues/6843)) ([62b618f](https://github.com/Azure/LogicAppsUX/commit/62b618fc09eafba01417249dce6bd8d9e1946bac))
+* **Templates:** Remove built-in operations from filtering dropdown ([#6849](https://github.com/Azure/LogicAppsUX/issues/6849)) ([244c6dd](https://github.com/Azure/LogicAppsUX/commit/244c6dd41d57dd897767d54ccd61a4d3fe13537b))
+
+## [5.57.0](https://github.com/Azure/LogicAppsUX/compare/v5.56.0...v5.57.0) (2025-03-20)
+
+
+### Features
+
+* **designer:** Agent Parameter Create Token Picker ([#6840](https://github.com/Azure/LogicAppsUX/issues/6840)) ([46a34c0](https://github.com/Azure/LogicAppsUX/commit/46a34c099fd0099268fece43dee7ab3510cdffe5))
+* **templates:** Add action for fetching template connections from selected workflows ([#6831](https://github.com/Azure/LogicAppsUX/issues/6831)) ([0ab0afb](https://github.com/Azure/LogicAppsUX/commit/0ab0afbafa57e81c662adaaa43e1c07157dd2959))
+
+
+### Bug Fixes
+
+* **vscode:** Fix project creation and redirect to workspace creation ([#6839](https://github.com/Azure/LogicAppsUX/issues/6839)) ([968bec3](https://github.com/Azure/LogicAppsUX/commit/968bec37afa9270fbc6670c5922731b52559cd78))
+* **vscode:** Updating connection keys will no longer overwrite existing connection data ([#6753](https://github.com/Azure/LogicAppsUX/issues/6753)) ([d05a41b](https://github.com/Azure/LogicAppsUX/commit/d05a41bcbd8e90bb59ed4e41171c3ca1a5b9e834))
+
+## [5.56.0](https://github.com/Azure/LogicAppsUX/compare/v5.55.0...v5.56.0) (2025-03-19)
+
+
+### Features
+
+* **designer:** Include dependency on kind to enable Agentic workflows ([#6821](https://github.com/Azure/LogicAppsUX/issues/6821)) ([a50b5c8](https://github.com/Azure/LogicAppsUX/commit/a50b5c8a63c2375f36c4df14ba8d737a4cde90ff))
+* **Templates:** Custom Template Standalone ([#6685](https://github.com/Azure/LogicAppsUX/issues/6685)) ([530ec1c](https://github.com/Azure/LogicAppsUX/commit/530ec1c22ef3bbbf7ebb8a953e91f82bec652ed7))
+* **Templates:** Review tab improvements + Template provider `useExternalRedux` flag ([#6828](https://github.com/Azure/LogicAppsUX/issues/6828)) ([4a7bcaf](https://github.com/Azure/LogicAppsUX/commit/4a7bcaf843ad60e1cd15add849cd72ca5479f5b6))
+
+
+### Bug Fixes
+
+* **designer:** Fix item count when adding operations in scope and subgraph ([#6818](https://github.com/Azure/LogicAppsUX/issues/6818)) ([a22fea5](https://github.com/Azure/LogicAppsUX/commit/a22fea596f41fe4d953e1892374d1e2e38020b28))
+
 ## [5.55.0](https://github.com/Azure/LogicAppsUX/compare/v5.54.0...v5.55.0) (2025-03-18)
 
 

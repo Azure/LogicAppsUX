@@ -82,6 +82,7 @@ const DesignerEditor = () => {
   const {
     isReadOnly,
     isDarkMode,
+    isUnitTest,
     isMonitoringView,
     runId,
     appId,
@@ -321,8 +322,7 @@ const DesignerEditor = () => {
       parametersToUpdate,
       settingsToUpdate,
       customCodeToUpdate,
-      clearDirtyState,
-      { skipValidation: hostOptions.enableAgenticLoops ?? false }
+      clearDirtyState
     );
   };
 
@@ -398,6 +398,7 @@ const DesignerEditor = () => {
           isDarkMode,
           readOnly: isReadOnly,
           isMonitoringView,
+          isUnitTest,
           suppressDefaultNodeSelectFunctionality: suppressDefaultNodeSelect,
           hostOptions: {
             ...hostOptions,
@@ -445,6 +446,7 @@ const DesignerEditor = () => {
                   discard={discardAllChanges}
                   location={canonicalLocation}
                   isReadOnly={isReadOnly}
+                  isUnitTest={isUnitTest}
                   isDarkMode={isDarkMode}
                   isDesignerView={designerView}
                   showConnectionsPanel={showConnectionsPanel}

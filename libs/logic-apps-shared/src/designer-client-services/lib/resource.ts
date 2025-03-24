@@ -1,3 +1,4 @@
+import type { ArmResource } from '../../utils/src';
 import { AssertionErrorCode, AssertionException } from '../../utils/src';
 
 export type Resource = { id: string; name: string; displayName: string };
@@ -16,6 +17,7 @@ export interface IResourceService {
     logicAppName: string,
     isConsumption: boolean
   ) => Promise<WorkflowResource[]>;
+  getResource: (resourceId: string, queryParameters: Record<string, string>) => Promise<ArmResource<any>>;
 }
 
 let service: IResourceService;
@@ -26,7 +28,7 @@ export const InitResourceService = (templateService: IResourceService): void => 
 
 export const ResourceService = (): IResourceService => {
   if (!service) {
-    throw new AssertionException(AssertionErrorCode.SERVICE_NOT_INITIALIZED, 'Template Service needs to be initialized before using');
+    throw new AssertionException(AssertionErrorCode.SERVICE_NOT_INITIALIZED, 'Resource Service needs to be initialized before using');
   }
 
   return service;

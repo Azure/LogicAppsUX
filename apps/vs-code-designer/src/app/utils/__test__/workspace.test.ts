@@ -1,9 +1,8 @@
 import { describe, it, expect, vi, beforeEach, afterEach, Mock } from 'vitest';
 import * as vscode from 'vscode';
 import * as workspaceUtils from '../workspace';
-import { promptOpenProject, tryGetLogicAppProjectRoot } from '../verifyIsProject';
+import { promptOpenProjectOrWorkspace, tryGetLogicAppProjectRoot } from '../verifyIsProject';
 import * as fse from 'fs-extra';
-import * as fs from 'fs';
 
 vi.mock('../verifyIsProject');
 
@@ -40,37 +39,38 @@ describe('workspaceUtils.getWorkspaceFolder', () => {
     const folder1 = mockFolder('/path/one');
     (vscode.workspace as any).workspaceFolders = [];
 
-    const promptOpenProjectSpy = vi.fn(() => {
+    const promptOpenProjectOrWorkspaceSpy = vi.fn(() => {
       (vscode.workspace as any).workspaceFolders = [folder1];
     });
 
-    const filereadSpy = vi.spyOn(fse, 'readdir').mockResolvedValue([
+    (fse.readdir as unknown as Mock).mockReturnValue([
       { name: 'dir1', isDirectory: () => true },
       { name: 'dir2', isDirectory: () => true },
-    ] as fse.Dirent[]);
+    ]);
 
-    (promptOpenProject as Mock).mockImplementation(promptOpenProjectSpy);
+    (promptOpenProjectOrWorkspace as Mock).mockImplementation(promptOpenProjectOrWorkspaceSpy);
 
     await workspaceUtils.getWorkspaceFolder(mockContext);
-    expect(promptOpenProjectSpy).toHaveBeenCalled();
+    expect(promptOpenProjectOrWorkspaceSpy).toHaveBeenCalled();
   });
 
   it('should prompt to open project if workspace folders are undefined', async () => {
     const folder1 = mockFolder('/path/one');
     (vscode.workspace as any).workspaceFolders = undefined;
 
-    const promptOpenProjectSpy = vi.fn(() => {
+    const promptOpenProjectOrWorkspaceSpy = vi.fn(() => {
       (vscode.workspace as any).workspaceFolders = [folder1];
     });
 
-    const filereadSpy = vi
-      .spyOn(fse, 'readdir')
-      .mockResolvedValue([{ name: 'dir1', isDirectory: () => true } as fs.Dirent, { name: 'dir2', isDirectory: () => true } as fs.Dirent]);
+    (fse.readdir as unknown as Mock).mockReturnValue([
+      { name: 'dir1', isDirectory: () => true },
+      { name: 'dir2', isDirectory: () => true },
+    ]);
 
-    (promptOpenProject as Mock).mockImplementation(promptOpenProjectSpy);
+    (promptOpenProjectOrWorkspace as Mock).mockImplementation(promptOpenProjectOrWorkspaceSpy);
 
     await workspaceUtils.getWorkspaceFolder(mockContext);
-    expect(promptOpenProjectSpy).toHaveBeenCalled();
+    expect(promptOpenProjectOrWorkspaceSpy).toHaveBeenCalled();
   });
 
   it('should return the only workspace folder if there is only one', async () => {
@@ -78,21 +78,21 @@ describe('workspaceUtils.getWorkspaceFolder', () => {
     const subfolder1 = '/path/one/dir1';
     (vscode.workspace as any).workspaceFolders = [folder1];
 
-    const promptOpenProjectSpy = vi.fn(() => {
+    const promptOpenProjectOrWorkspaceSpy = vi.fn(() => {
       (vscode.workspace as any).workspaceFolders = [folder1];
     });
 
-    const filereadSpy = vi.spyOn(fse, 'readdir').mockResolvedValue([{ name: 'dir1', isDirectory: () => true } as fs.Dirent]);
+    (fse.readdir as unknown as Mock).mockReturnValue([{ name: 'dir1', isDirectory: () => true }]);
 
     const tryGetLogicAppProjectRootSpy = vi.fn(() => {
       return '/path/one/dir1';
     });
     (tryGetLogicAppProjectRoot as Mock).mockImplementation(tryGetLogicAppProjectRootSpy);
 
-    (promptOpenProject as Mock).mockImplementation(promptOpenProjectSpy);
+    (promptOpenProjectOrWorkspace as Mock).mockImplementation(promptOpenProjectOrWorkspaceSpy);
 
     const result = await workspaceUtils.getWorkspaceFolder(mockContext);
-    expect(promptOpenProjectSpy).not.toHaveBeenCalled();
+    expect(promptOpenProjectOrWorkspaceSpy).not.toHaveBeenCalled();
     expect(result).toEqual(subfolder1);
   });
 
@@ -101,18 +101,18 @@ describe('workspaceUtils.getWorkspaceFolder', () => {
     const subfolder1 = '/path/one/dir1';
     (vscode.workspace as any).workspaceFolders = undefined;
 
-    const promptOpenProjectSpy = vi.fn(() => {
+    const promptOpenProjectOrWorkspaceSpy = vi.fn(() => {
       (vscode.workspace as any).workspaceFolders = [folder1];
     });
 
-    const filereadSpy = vi.spyOn(fse, 'readdir').mockResolvedValue([{ name: 'dir1', isDirectory: () => true } as fs.Dirent]);
+    (fse.readdir as unknown as Mock).mockResolvedValue([{ name: 'dir1', isDirectory: () => true }]);
 
     const tryGetLogicAppProjectRootSpy = vi.fn(() => {
       return '/path/one/dir1';
     });
     (tryGetLogicAppProjectRoot as Mock).mockImplementation(tryGetLogicAppProjectRootSpy);
 
-    (promptOpenProject as Mock).mockImplementation(promptOpenProjectSpy);
+    (promptOpenProjectOrWorkspace as Mock).mockImplementation(promptOpenProjectOrWorkspaceSpy);
 
     const result = await workspaceUtils.getWorkspaceFolder(mockContext);
     expect(result).toEqual(subfolder1);

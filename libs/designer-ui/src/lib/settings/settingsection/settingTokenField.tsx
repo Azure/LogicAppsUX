@@ -41,6 +41,7 @@ import { EditorLanguage, equals, getPropertyValue, replaceWhiteSpaceWithUndersco
 import { MixedInputEditor } from '../../mixedinputeditor/mixedinputeditor';
 import { cloneElement, useMemo, useState } from 'react';
 import { useIntl } from 'react-intl';
+import type { AgentParameterButtonProps } from '../../editor/base/plugins/tokenpickerbutton/agentParameterButton';
 
 interface EditorHostOptions {
   suppressCastingForSerialize?: boolean;
@@ -72,6 +73,7 @@ export interface SettingTokenFieldProps extends SettingProps {
   onCastParameter: CastHandler;
   onFileNameChange?: FileNameChangeHandler;
   pickerCallbacks?: PickerCallbackHandlers;
+  agentParameterButtonProps?: Partial<AgentParameterButtonProps>;
   tokenpickerButtonProps?: TokenPickerButtonEditorProps;
   getTokenPicker: GetTokenPickerHandler;
   validationErrors?: string[];
@@ -125,6 +127,7 @@ export const TokenField = ({
   label,
   labelId,
   pickerCallbacks,
+  agentParameterButtonProps,
   tokenpickerButtonProps,
   tokenMapping,
   loadParameterValueFromString,
@@ -168,8 +171,10 @@ export const TokenField = ({
           placeholder={placeholder}
           readonly={readOnly}
           initialValue={editorViewModel.uncastedValue}
+          agentParameterButtonProps={agentParameterButtonProps}
           tokenPickerButtonProps={tokenpickerButtonProps}
           getTokenPicker={getTokenPicker}
+          basePlugins={{ tokens: showTokens }}
           itemSchema={editorViewModel.itemSchema}
           castParameter={onCastParameter}
           onChange={onValueChange}
@@ -201,6 +206,7 @@ export const TokenField = ({
           basePlugins={{ tokens: showTokens }}
           readonly={readOnly}
           tokenPickerButtonProps={tokenpickerButtonProps}
+          agentParameterButtonProps={agentParameterButtonProps}
         />
       );
 
@@ -251,6 +257,7 @@ export const TokenField = ({
           dataAutomationId={`msla-setting-token-editor-combobox-${labelForAutomationId}`}
           tokenMapping={tokenMapping}
           loadParameterValueFromString={loadParameterValueFromString}
+          agentParameterButtonProps={agentParameterButtonProps}
         />
       );
 
@@ -296,6 +303,7 @@ export const TokenField = ({
           initialItems={editorViewModel.items}
           valueType={editorOptions?.valueType}
           tokenPickerButtonProps={tokenpickerButtonProps}
+          agentParameterButtonProps={agentParameterButtonProps}
           getTokenPicker={getTokenPicker}
           onChange={onValueChange}
           dataAutomationId={`msla-setting-token-editor-dictionaryeditor-${labelForAutomationId}`}
@@ -361,6 +369,7 @@ export const TokenField = ({
           loadParameterValueFromString={loadParameterValueFromString}
           editorBlur={onValueChange}
           tokenPickerButtonProps={tokenpickerButtonProps}
+          agentParameterButtonProps={agentParameterButtonProps}
           getTokenPicker={getTokenPicker}
           onChange={hideValidationErrors}
           dataAutomationId={`msla-setting-token-editor-filepickereditor-${labelForAutomationId}`}
@@ -376,6 +385,7 @@ export const TokenField = ({
           basePlugins={{ tokens: showTokens }}
           readonly={readOnly}
           tokenPickerButtonProps={tokenpickerButtonProps}
+          agentParameterButtonProps={agentParameterButtonProps}
           loadParameterValueFromString={loadParameterValueFromString}
           tokenMapping={tokenMapping}
           getTokenPicker={getTokenPicker}
@@ -399,6 +409,7 @@ export const TokenField = ({
           readonly={readOnly}
           isAgentParameter={editorOptions?.isAgentParameter}
           tokenPickerButtonProps={tokenpickerButtonProps}
+          agentParameterButtonProps={agentParameterButtonProps}
           dataAutomationId={`msla-setting-token-editor-initializevariableeditor-${labelForAutomationId}`}
           isMultiVariableEnabled={hostOptions?.isMultiVariableEnabled}
         />
@@ -431,6 +442,7 @@ export const TokenField = ({
           keys={editorOptions?.columns?.keys}
           types={editorOptions?.columns?.types}
           tokenPickerButtonProps={tokenpickerButtonProps}
+          agentParameterButtonProps={agentParameterButtonProps}
           getTokenPicker={getTokenPicker}
           onChange={onValueChange}
           dataAutomationId={`msla-setting-token-editor-tableditor-${labelForAutomationId}`}
@@ -461,6 +473,7 @@ export const TokenField = ({
           readonly={readOnly}
           initialValue={value}
           tokenPickerButtonProps={tokenpickerButtonProps}
+          agentParameterButtonProps={agentParameterButtonProps}
           tokenMapping={tokenMapping}
           loadParameterValueFromString={loadParameterValueFromString}
           editorBlur={onValueChange}

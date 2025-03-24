@@ -88,6 +88,7 @@ export async function activate(context: vscode.ExtensionContext) {
     promptParameterizeConnections(activateContext, true);
     verifyLocalConnectionKeys(activateContext, true);
     await startOnboarding(activateContext);
+    //await prepareTestExplorer(context, activateContext);
 
     ext.extensionVersion = getExtensionVersion();
     ext.currentBundleVersion = activateContext.telemetry.properties.latestBundleVersion;
@@ -129,6 +130,7 @@ export async function activate(context: vscode.ExtensionContext) {
 
 export function deactivate(): Promise<any> {
   stopDesignTimeApi();
+  ext.unitTestController?.dispose();
   ext.telemetryReporter.dispose();
   return undefined;
 }

@@ -23,6 +23,7 @@ import {
 } from '../operation/operationMetadataSlice';
 import type { RelationshipIds } from '../panel/panelTypes';
 import type { ErrorMessage, SpecTypes, WorkflowState, WorkflowKind } from './workflowInterfaces';
+import type { BoundParameters } from '@microsoft/logic-apps-shared';
 import { getParentsUncollapseFromGraphState, getWorkflowNodeFromGraphState } from './workflowSelectors';
 import {
   LogEntryLevel,
@@ -388,6 +389,22 @@ export const workflowSlice = createSlice({
       };
       nodeMetadata.runData = nodeRunData as LogicAppsV2.WorkflowRunAction;
     },
+    setRunDataInputOutputs: (
+      state: WorkflowState,
+      action: PayloadAction<{ nodeId: string; inputs: BoundParameters; outputs: BoundParameters }>
+    ) => {
+      const { nodeId, inputs, outputs } = action.payload;
+      const nodeMetadata = getRecordEntry(state.nodesMetadata, nodeId);
+      if (!nodeMetadata) {
+        return;
+      }
+      const nodeRunData = {
+        ...nodeMetadata.runData,
+        inputs: inputs,
+        outputs: outputs,
+      };
+      nodeMetadata.runData = nodeRunData as LogicAppsV2.WorkflowRunAction;
+    },
     addSwitchCase: (state: WorkflowState, action: PayloadAction<{ caseId: string; nodeId: string }>) => {
       if (!state.graph) {
         return; // log exception
@@ -657,6 +674,7 @@ export const {
   setRepetitionRunData,
   setIsWorkflowDirty,
   setHostErrorMessages,
+  setRunDataInputOutputs,
   toggleCollapsedActionId,
   clearFocusCollapsedNode,
 } = workflowSlice.actions;

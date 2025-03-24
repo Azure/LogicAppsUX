@@ -2,8 +2,10 @@ import { getRecordEntry, type Template } from '@microsoft/logic-apps-shared';
 import type { PayloadAction } from '@reduxjs/toolkit';
 import { createSlice } from '@reduxjs/toolkit';
 import { validateConnectionsValue, validateParameterValue } from '../../templates/utils/helper';
-import { loadTemplate, validateWorkflowsBasicInfo, type TemplatePayload } from '../../actions/bjsworkflow/templates';
+import type { WorkflowTemplateData, TemplatePayload } from '../../actions/bjsworkflow/templates';
+import { loadTemplate, validateWorkflowsBasicInfo } from '../../actions/bjsworkflow/templates';
 import { resetTemplatesState } from '../global';
+import { initializeWorkflowsData, deleteWorkflowData } from '../../actions/bjsworkflow/configuretemplate';
 
 export interface TemplateState extends TemplatePayload {
   templateName?: string;
@@ -91,6 +93,36 @@ export const templateSlice = createSlice({
       state.templateName = undefined;
       state.manifest = undefined;
     },
+    updateTemplateManifest: (state, action: PayloadAction<Partial<Template.TemplateManifest>>) => {
+      state.manifest = { ...(state.manifest ?? {}), ...(action.payload as Template.TemplateManifest) };
+    },
+    updateWorkflowData: (
+      state,
+      action: PayloadAction<{ shouldDelete?: boolean; data: Partial<WorkflowTemplateData> & { id: string } }>
+    ) => {
+      const {
+        shouldDelete,
+        data: { id },
+        data,
+      } = action.payload;
+
+      if (shouldDelete) {
+        delete state.workflows[id];
+      } else {
+        state.workflows[id] = { ...(state.workflows[id] ?? {}), ...data };
+      }
+    },
+    updateAllWorkflowsData: (state, action: PayloadAction<Record<string, Partial<WorkflowTemplateData>>>) => {
+      const workflowsToUpdate = action.payload;
+      const workflows: Record<string, WorkflowTemplateData> = {};
+
+      for (const id of Object.keys(workflowsToUpdate)) {
+        const data = workflowsToUpdate[id];
+        workflows[id] = { ...(state.workflows[id] ?? {}), ...data };
+      }
+
+      state.workflows = workflows;
+    },
   },
   extraReducers: (builder) => {
     builder.addCase(resetTemplatesState, () => initialState);
@@ -129,6 +161,48 @@ export const templateSlice = createSlice({
         }
       }
     );
+
+    builder.addCase(
+      initializeWorkflowsData.fulfilled,
+      (
+        state,
+        action: PayloadAction<{
+          connections: Record<string, Template.Connection>;
+          parameterDefinitions: Record<string, Partial<Template.ParameterDefinition>>;
+        }>
+      ) => {
+        if (action.payload) {
+          state.connections = action.payload.connections;
+          state.parameterDefinitions = action.payload.parameterDefinitions as any;
+        }
+      }
+    );
+
+    builder.addCase(
+      deleteWorkflowData.fulfilled,
+      (
+        state,
+        action: PayloadAction<{
+          id: string;
+          connectionKeys: string[];
+          parameterKeys: string[];
+          parametersToUpdate: Record<string, Partial<Template.ParameterDefinition>>;
+        }>
+      ) => {
+        if (action.payload) {
+          const { id, connectionKeys, parameterKeys, parametersToUpdate } = action.payload;
+          delete state.workflows[id];
+          for (const key of connectionKeys) {
+            delete state.connections[key];
+          }
+
+          state.parameterDefinitions = { ...state.parameterDefinitions, ...(parametersToUpdate as any) };
+          for (const key of parameterKeys) {
+            delete state.parameterDefinitions[key];
+          }
+        }
+      }
+    );
   },
 });
 
@@ -142,5 +216,8 @@ export const {
   clearTemplateDetails,
   updateWorkflowNameValidationError,
   updateTemplateParameterDefinitions,
+  updateWorkflowData,
+  updateAllWorkflowsData,
+  updateTemplateManifest,
 } = templateSlice.actions;
 export default templateSlice.reducer;
