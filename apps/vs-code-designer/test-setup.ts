@@ -11,6 +11,7 @@ vi.mock('@microsoft/vscode-azext-azureutils', () => ({
 
 vi.mock('@microsoft/vscode-azext-azureauth', () => ({
   getSessionFromVSCode: vi.fn(() => Promise.resolve({})), // example of a mocked function
+  VSCodeAzureSubscriptionProvider: class VSCodeAzureSubscriptionProvider {},
 }));
 
 vi.mock('@microsoft/vscode-azext-utils', () => {

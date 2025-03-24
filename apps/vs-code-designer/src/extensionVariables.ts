@@ -2,6 +2,7 @@
  *  Copyright (c) Microsoft Corporation. All rights reserved.
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
+import type { VSCodeAzureSubscriptionProvider } from '@microsoft/vscode-azext-azureauth';
 import type DataMapperPanel from './app/commands/dataMapper/DataMapperPanel';
 import type { AzureAccountTreeItemWithProjects } from './app/tree/AzureAccountTreeItemWithProjects';
 import type { TestData } from './app/tree/unitTestTree';
@@ -48,6 +49,9 @@ export namespace ext {
   export let currentBundleVersion: string;
   export let pinnedBundleVersion: boolean;
   export let latestBundleVersion: string;
+
+  // Services
+  export let subscriptionProvider: VSCodeAzureSubscriptionProvider;
 
   // Tree item view
   export let azureAccountTreeItem: AzureAccountTreeItemWithProjects;

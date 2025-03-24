@@ -241,8 +241,6 @@ export async function getAzureConnectorDetailsForLocalProject(
 
   const enabled = !!subscriptionId;
 
-  ext.telemetryReporter.sendTelemetryEvent('getAzureConnectorDetails', { tenantId: tenantId });
-
   return {
     enabled,
     accessToken: enabled ? await getAuthorizationToken(tenantId) : undefined,
