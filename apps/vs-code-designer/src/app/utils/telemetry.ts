@@ -27,18 +27,17 @@ export async function runWithDurationTelemetry<T>(context: IActionContext, prefi
   }
 }
 
-export const logAzureResources = async (context: IActionContext) => {
+export const logSubscriptions = async (context: IActionContext) => {
+  let azureSubscriptions: any[] = [];
   if (await ext.subscriptionProvider.isSignedIn()) {
     const subscriptions = await ext.subscriptionProvider.getSubscriptions();
-    const azureResources = subscriptions.map((subscription) => {
+    azureSubscriptions = subscriptions.map((subscription) => {
       return {
         id: subscription.subscriptionId,
         tenant: subscription.tenantId,
         isCustomCloud: subscription.isCustomCloud,
       };
     });
-    context.telemetry.properties.subscriptions = JSON.stringify(azureResources);
-  } else {
-    context.telemetry.properties.subscriptions = '[]';
   }
+  context.telemetry.properties.subscriptions = JSON.stringify(azureSubscriptions);
 };

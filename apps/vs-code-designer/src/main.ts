@@ -34,7 +34,7 @@ import * as vscode from 'vscode';
 import { ConvertToWorkspace } from './app/commands/createNewCodeProject/CodeProjectBase/ConvertToWorkspace';
 import TelemetryReporter from '@vscode/extension-telemetry';
 import { createVSCodeAzureSubscriptionProviderFactory } from './app/utils/services/VSCodeAzureSubscriptionProvider';
-import { logAzureResources } from './app/utils/telemetry';
+import { logSubscriptions } from './app/utils/telemetry';
 
 const perfStats = {
   loadStartTime: Date.now(),
@@ -72,7 +72,7 @@ export async function activate(context: vscode.ExtensionContext) {
 
     runPostWorkflowCreateStepsFromCache();
     runPostExtractStepsFromCache();
-    await logAzureResources(activateContext);
+    await logSubscriptions(activateContext);
 
     if (vscode.workspace.workspaceFolders && vscode.workspace.workspaceFolders.length > 0) {
       await ConvertToWorkspace(activateContext);
