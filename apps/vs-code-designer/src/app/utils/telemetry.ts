@@ -33,8 +33,8 @@ export const logSubscriptions = async (context: IActionContext) => {
     const subscriptions = await ext.subscriptionProvider.getSubscriptions();
     azureSubscriptions = subscriptions.map((subscription) => {
       return {
-        id: subscription.subscriptionId,
-        tenant: subscription.tenantId,
+        subscriptionId: subscription.subscriptionId,
+        tenantId: subscription.tenantId,
         isCustomCloud: subscription.isCustomCloud,
       };
     });

@@ -59,8 +59,8 @@ describe('logSubscriptions', () => {
     } as any;
     await logSubscriptions(context);
     expect(JSON.parse(context.telemetry.properties.subscriptions)).toEqual([
-      { id: 'sub1', tenant: 'tenant1', isCustomCloud: true },
-      { id: 'sub2', tenant: 'tenant2', isCustomCloud: false },
+      { subscriptionId: 'sub1', tenantId: 'tenant1', isCustomCloud: true },
+      { subscriptionId: 'sub2', tenantId: 'tenant2', isCustomCloud: false },
     ]);
   });
 });
