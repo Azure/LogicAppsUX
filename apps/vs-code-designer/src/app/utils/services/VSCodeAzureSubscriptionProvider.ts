@@ -7,7 +7,7 @@ import { VSCodeAzureSubscriptionProvider } from '@microsoft/vscode-azext-azureau
 
 let vscodeAzureSubscriptionProvider: VSCodeAzureSubscriptionProvider | undefined;
 
-export const createVSCodeAzureSubscriptionProviderFactory = (): VSCodeAzureSubscriptionProvider => {
+export const createVSCodeAzureSubscriptionProvider = (): VSCodeAzureSubscriptionProvider => {
   vscodeAzureSubscriptionProvider ??= new VSCodeAzureSubscriptionProvider();
   return vscodeAzureSubscriptionProvider;
 };
