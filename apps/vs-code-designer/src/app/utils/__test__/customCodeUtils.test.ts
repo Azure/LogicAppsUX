@@ -1,13 +1,19 @@
 import * as fse from 'fs-extra';
 import * as path from 'path';
 import * as verifyProjectUtils from '../verifyIsProject';
+import * as workspaceUtils from '../workspace';
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import {
+  CustomCodeFunctionsProjectMetadata,
+  getCustomCodeFunctionsProjectMetadata,
+  getCustomCodeFunctionsProjects,
   isCustomCodeFunctionsProject,
   isCustomCodeFunctionsProjectInRoot,
   tryGetCustomCodeFunctionsProjects,
   tryGetLogicAppCustomCodeFunctionsProjects,
 } from '../customCodeUtils';
+import { TargetFramework } from '@microsoft/vscode-extension-logic-apps';
+import { ext } from '../../../extensionVariables';
 
 vi.mock('fs-extra', () => ({
   statSync: vi.fn(),
@@ -18,6 +24,18 @@ vi.mock('fs-extra', () => ({
 
 vi.mock('verifyProjectUtils', () => ({
   isLogicAppProject: vi.fn(),
+}));
+
+vi.mock('workspaceUtils', () => ({
+  getWorkspaceRoot: vi.fn(),
+}));
+
+vi.mock('../../../extensionVariables', () => ({
+  ext: {
+    outputChannel: {
+      appendLog: vi.fn(),
+    },
+  },
 }));
 
 describe('customCodeUtils', () => {
@@ -113,6 +131,73 @@ describe('customCodeUtils', () => {
     vi.restoreAllMocks();
   });
 
+  describe('getCustomCodeFunctionsProjects', () => {
+    const testContext: any = {};
+    const testWorkspaceRoot = path.join('test', 'workspace');
+
+    beforeEach(() => {
+      vi.restoreAllMocks();
+      vi.spyOn(workspaceUtils, 'getWorkspaceRoot').mockResolvedValue(testWorkspaceRoot);
+    });
+
+    it('should return an empty array if workspace root is undefined', async () => {
+      vi.spyOn(workspaceUtils, 'getWorkspaceRoot').mockResolvedValue(undefined);
+      const result = await getCustomCodeFunctionsProjects(testContext);
+      expect(result).toEqual([]);
+    });
+
+    it('should return custom code project paths for valid projects', async () => {
+      const subpaths = ['proj1', 'proj2', 'nonProject'];
+      const proj1Path = path.join(testWorkspaceRoot, 'proj1');
+      const proj2Path = path.join(testWorkspaceRoot, 'proj2');
+      const nonProjectPath = path.join(testWorkspaceRoot, 'nonProject');
+      const proj1Csproj = 'proj1.csproj';
+      const proj2Csproj = 'proj2.csproj';
+      const nonProjectFile = 'nonProject.txt';
+
+      vi.spyOn(fse, 'statSync').mockReturnValue({ isDirectory: () => true } as any);
+      vi.spyOn(fse, 'readdir').mockImplementation(async (p: string) => {
+        if (p === testWorkspaceRoot) return subpaths;
+        if (p === proj1Path) return [proj1Csproj];
+        if (p === proj2Path) return [proj2Csproj];
+        if (p === nonProjectPath) return [nonProjectFile];
+        return [];
+      });
+      vi.spyOn(fse, 'readFile').mockImplementation(async (p: string) => {
+        if (p === path.join(proj1Path, proj1Csproj)) return validNet8CsprojContent;
+        if (p === path.join(proj2Path, proj2Csproj)) return validNetFxCsprojContent;
+        return '';
+      });
+
+      const result = await getCustomCodeFunctionsProjects(testContext);
+      expect(result).toEqual([path.join(testWorkspaceRoot, 'proj1'), path.join(testWorkspaceRoot, 'proj2')]);
+    });
+
+    it('should return an empty array if no valid projects are found', async () => {
+      const subpaths = ['nonProject1', 'nonProject2'];
+      const nonProject1Path = path.join(testWorkspaceRoot, 'nonProject1');
+      const nonProject2Path = path.join(testWorkspaceRoot, 'nonProject2');
+      const nonProject1File = 'nonProject1.txt';
+      const nonProject2File = 'nonProject2.csproj';
+
+      vi.spyOn(fse, 'statSync').mockReturnValue({ isDirectory: () => true } as any);
+      vi.spyOn(fse, 'readdir').mockImplementation(async (p: string) => {
+        if (p === testWorkspaceRoot) return subpaths;
+        if (p === nonProject1Path) return [nonProject1File];
+        if (p === nonProject2Path) return [nonProject2File];
+        return [];
+      });
+      vi.spyOn(fse, 'readFile').mockImplementation(async (p: string) => {
+        if (p === path.join(nonProject1Path, nonProject1File)) return 'invalid content';
+        if (p === path.join(nonProject2Path, nonProject2File)) return '<Project></Project>';
+        return '';
+      });
+
+      const result = await getCustomCodeFunctionsProjects(testContext);
+      expect(result).toEqual([]);
+    });
+  });
+
   describe('isCustomCodeFunctionsProject', () => {
     const testFolderPath = path.join('test', 'folder', 'path');
     const testCsprojFile = 'Function.csproj';
@@ -153,6 +238,103 @@ describe('customCodeUtils', () => {
       vi.spyOn(fse, 'readFile').mockResolvedValue(invalidCsprojContent);
       const result = await isCustomCodeFunctionsProject(testFolderPath);
       expect(result).toBe(false);
+    });
+  });
+
+  describe('getCustomCodeFunctionsProjectMetadata', () => {
+    const testFunctionName = 'Func';
+    const testNamespace = 'MyNS';
+    const testFolderPath = path.join('test', 'folder', testFunctionName);
+    const testCsprojFile = `${testFunctionName}.csproj`;
+    const testCsFile = `${testFunctionName}.cs`;
+
+    beforeEach(() => {
+      vi.restoreAllMocks();
+      vi.spyOn(fse, 'pathExists').mockResolvedValue(true);
+      vi.spyOn(fse, 'statSync').mockReturnValue({ isDirectory: () => true } as any);
+      vi.spyOn(ext.outputChannel, 'appendLog').mockImplementation(() => {});
+    });
+
+    it('should return undefined if the folder does not exist', async () => {
+      vi.spyOn(fse, 'pathExists').mockResolvedValue(false);
+      const result = await getCustomCodeFunctionsProjectMetadata(testFolderPath);
+      expect(result).toBeUndefined();
+    });
+
+    it('should return undefined if the folder is not a directory', async () => {
+      vi.spyOn(fse, 'statSync').mockReturnValue({ isDirectory: () => false } as any);
+      const result = await getCustomCodeFunctionsProjectMetadata(testFolderPath);
+      expect(result).toBeUndefined();
+    });
+
+    it('should return undefined if no .cs file exists', async () => {
+      vi.spyOn(fse, 'readdir').mockResolvedValue(['file.txt', 'app.js']);
+      const result = await getCustomCodeFunctionsProjectMetadata(testFolderPath);
+      expect(result).toBeUndefined();
+    });
+
+    it('should return undefined if the .cs file does not contain a valid namespace', async () => {
+      vi.spyOn(fse, 'readdir').mockResolvedValue([testCsFile]);
+      vi.spyOn(fse, 'readFile').mockResolvedValue('invalid content');
+      const result = await getCustomCodeFunctionsProjectMetadata(testFolderPath);
+      expect(result).toBeUndefined();
+    });
+
+    it('should return undefined if no .csproj file exists', async () => {
+      vi.spyOn(fse, 'readdir').mockResolvedValue([testCsFile]);
+      vi.spyOn(fse, 'readFile').mockResolvedValue(`namespace ${testNamespace} {}`);
+      const result = await getCustomCodeFunctionsProjectMetadata(testFolderPath);
+      expect(result).toBeUndefined();
+    });
+
+    it('should return undefined if the .csproj is not a valid custom code project file', async () => {
+      vi.spyOn(fse, 'readdir').mockResolvedValue([testCsFile, testCsprojFile]);
+      vi.spyOn(fse, 'readFile').mockImplementation(async (p: string) => {
+        if (p.endsWith('.csproj')) {
+          return '<Project></Project>';
+        }
+        return `namespace ${testNamespace} {}`;
+      });
+      const result = await getCustomCodeFunctionsProjectMetadata(testFolderPath);
+      expect(result).toBeUndefined();
+    });
+
+    it('should return metadata for a valid net8 csproj file', async () => {
+      vi.spyOn(fse, 'readdir').mockResolvedValue([testCsFile, testCsprojFile]);
+      vi.spyOn(fse, 'readFile').mockImplementation(async (p: string) => {
+        if (p.endsWith('.csproj')) {
+          return validNet8CsprojContent;
+        }
+        return `namespace ${testNamespace} {}`;
+      });
+
+      const result = await getCustomCodeFunctionsProjectMetadata(testFolderPath);
+      expect(result).toEqual({
+        projectPath: testFolderPath,
+        functionAppName: testFunctionName,
+        logicAppName: 'LogicApp',
+        targetFramework: TargetFramework.Net8,
+        namespace: testNamespace,
+      } as CustomCodeFunctionsProjectMetadata);
+    });
+
+    it('should return metadata for a valid netfx csproj file', async () => {
+      vi.spyOn(fse, 'readdir').mockResolvedValue([testCsFile, testCsprojFile]);
+      vi.spyOn(fse, 'readFile').mockImplementation(async (p: string) => {
+        if (p.endsWith('.csproj')) {
+          return validNetFxCsprojContent;
+        }
+        return `namespace ${testNamespace} {}`;
+      });
+
+      const result = await getCustomCodeFunctionsProjectMetadata(testFolderPath);
+      expect(result).toEqual({
+        projectPath: testFolderPath,
+        functionAppName: testFunctionName,
+        logicAppName: 'LogicApp',
+        targetFramework: TargetFramework.NetFx,
+        namespace: testNamespace,
+      } as CustomCodeFunctionsProjectMetadata);
     });
   });
 

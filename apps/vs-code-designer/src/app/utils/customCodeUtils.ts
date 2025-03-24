@@ -67,7 +67,8 @@ export async function getCustomCodeFunctionsProjectMetadata(folderPath: string):
     return undefined;
   }
 
-  const csFile = (await fse.readdir(folderPath)).find((file) => file.endsWith('.cs'));
+  const files = await fse.readdir(folderPath);
+  const csFile = files.find((file) => file.endsWith('.cs'));
   if (!csFile) {
     return undefined;
   }
@@ -81,17 +82,17 @@ export async function getCustomCodeFunctionsProjectMetadata(folderPath: string):
   }
   const namespace = matches[1];
 
-  const csprojFile = (await fse.readdir(folderPath)).find((file) => file.endsWith('.csproj'));
+  const csprojFile = files.find((file) => file.endsWith('.csproj'));
   if (!csprojFile) {
     return undefined;
   }
 
   const csprojContentStr = await fse.readFile(path.join(folderPath, csprojFile), 'utf-8');
-  return new Promise((resolve, reject) => {
+  return new Promise((resolve, _) => {
     parseString(csprojContentStr, (err, result) => {
       if (err) {
         ext.outputChannel.appendLog(`Error parsing csproj file: ${err}`);
-        reject();
+        resolve(undefined);
       }
 
       if (isCustomCodeNet8Csproj(csprojContentStr)) {
@@ -117,7 +118,7 @@ export async function getCustomCodeFunctionsProjectMetadata(folderPath: string):
       ext.outputChannel.appendLog(
         `The csproj file in ${folderPath} does not match the expected format for a .Net 8 or .Net Framework custom code functions project.`
       );
-      reject();
+      resolve(undefined);
     });
   });
 }
