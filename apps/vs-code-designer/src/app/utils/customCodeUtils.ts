@@ -98,8 +98,8 @@ export async function getCustomCodeFunctionsProjectMetadata(folderPath: string):
       if (isCustomCodeNet8Csproj(csprojContentStr)) {
         resolve({
           projectPath: folderPath,
-          functionAppName: path.basename(folderPath),
-          logicAppName: path.basename(result.Project.PropertyGroup[0].LogicAppFolderToPublish[0]),
+          functionAppName: path.basename(path.normalize(folderPath)),
+          logicAppName: path.basename(path.normalize(result.Project.PropertyGroup[0].LogicAppFolderToPublish[0])),
           targetFramework: TargetFramework.Net8,
           namespace: namespace,
         });
@@ -108,8 +108,8 @@ export async function getCustomCodeFunctionsProjectMetadata(folderPath: string):
       if (isCustomCodeNetFxCsproj(csprojContentStr)) {
         resolve({
           projectPath: folderPath,
-          functionAppName: path.basename(folderPath),
-          logicAppName: path.basename(result.Project.PropertyGroup[0].LogicAppFolder[0]),
+          functionAppName: path.basename(path.normalize(folderPath)),
+          logicAppName: path.basename(path.normalize(result.Project.PropertyGroup[0].LogicAppFolder[0])),
           targetFramework: TargetFramework.NetFx,
           namespace: namespace,
         });
@@ -214,7 +214,7 @@ export async function tryGetLogicAppCustomCodeFunctionsProjects(targetFolder: st
     return undefined;
   }
 
-  const logicAppName = path.basename(targetFolder);
+  const logicAppName = path.basename(path.normalize(targetFolder));
   const parentFolder = path.dirname(targetFolder);
   const subpaths: string[] = await fse.readdir(parentFolder);
   const customCodeProjectPaths: string[] = [];
