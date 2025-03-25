@@ -456,7 +456,7 @@ export function hasOnlyOAuthParameters(connector: Connector): boolean {
 }
 
 function connectorHasMultiAuth(connector: Connector): boolean {
-  return connector !== undefined && connector.properties.connectionParameterSets !== undefined;
+  return connector !== undefined && connector.properties?.connectionParameterSets !== undefined;
 }
 
 // This only checks if this connector has any OAuth connection, it can be just part of Multi Auth
@@ -472,7 +472,7 @@ function hasPrerequisiteConnection(connector: Connector): boolean {
 }
 
 function needsSimpleConnection(connector: Connector): boolean {
-  if (!connector || connector.properties?.connectionParameterSets !== undefined) {
+  if (!connector || connectorHasMultiAuth(connector)) {
     return false;
   }
 
