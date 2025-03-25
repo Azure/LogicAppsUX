@@ -68,6 +68,7 @@ export const SelectConnection = () => {
       connector: connector as Connector,
       operationInfo,
       referenceKeys: Object.keys(references),
+      skipOAuth: true,
       applyNewConnection: saveSelectionCallback,
       onSuccess: closeConnectionsFlow,
       onManualConnectionCreation: () => {

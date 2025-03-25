@@ -36,6 +36,7 @@ export const ConnectionPanel = (props: CommonPanelProps) => {
         connector: connector as Connector,
         referenceKeys: Object.keys(references),
         operationInfo,
+        skipOAuth: true,
         applyNewConnection: (connection: Connection) =>
           dispatch(updateNodeConnection({ nodeId: selectedNodeId, connection, connector: connector as Connector })),
         onSuccess: () => dispatch(closeConnectionsFlow({ nodeId: selectedNodeId })),
