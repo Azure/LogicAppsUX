@@ -1,4 +1,11 @@
 # Logic Apps Designer
+### [5.58.1](https://github.com/Azure/LogicAppsUX/compare/v5.58.0...v5.58.1) (2025-03-25)
+
+
+### Bug Fixes
+
+* **designer:** Skip auto create connection for oauth in designer and for multi auth ([#6861](https://github.com/Azure/LogicAppsUX/issues/6861)) ([#6862](https://github.com/Azure/LogicAppsUX/issues/6862)) ([285059b](https://github.com/Azure/LogicAppsUX/commit/285059b800fb4c342b1d08c2df627011f10a61cc))
+
 ## [5.58.0](https://github.com/Azure/LogicAppsUX/compare/v5.57.0...v5.58.0) (2025-03-22)
 
 
