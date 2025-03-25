@@ -99,7 +99,7 @@ export async function getCustomCodeFunctionsProjectMetadata(folderPath: string):
         resolve({
           projectPath: folderPath,
           functionAppName: path.basename(path.normalize(folderPath)),
-          logicAppName: path.basename(path.normalize(result.Project.PropertyGroup[0].LogicAppFolderToPublish[0])),
+          logicAppName: path.win32.basename(path.win32.normalize(result.Project.PropertyGroup[0].LogicAppFolderToPublish[0])),
           targetFramework: TargetFramework.Net8,
           namespace: namespace,
         });
@@ -109,7 +109,7 @@ export async function getCustomCodeFunctionsProjectMetadata(folderPath: string):
         resolve({
           projectPath: folderPath,
           functionAppName: path.basename(path.normalize(folderPath)),
-          logicAppName: path.basename(path.normalize(result.Project.PropertyGroup[0].LogicAppFolder[0])),
+          logicAppName: path.win32.basename(path.win32.normalize(result.Project.PropertyGroup[0].LogicAppFolder[0])),
           targetFramework: TargetFramework.NetFx,
           namespace: namespace,
         });
