@@ -103,8 +103,7 @@ const DefaultNode = ({ targetPosition = Position.Top, sourcePosition = Position.
     runInstance?.id,
     repetitionName,
     parentRunData?.status,
-    parentRunIndex,
-    metadata?.referenceUri
+    parentRunIndex
   );
 
   useEffect(() => {

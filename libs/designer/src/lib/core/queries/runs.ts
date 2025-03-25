@@ -74,11 +74,10 @@ export const useNodeRepetition = (
   runId: string | undefined,
   repetitionName: string,
   parentStatus: string | undefined,
-  parentRunIndex: number | undefined,
-  referenceUri?: string | undefined
+  parentRunIndex: number | undefined
 ) => {
   return useQuery(
-    ['useNodeRepetition', { nodeId, runId, repetitionName, parentStatus, referenceUri }],
+    ['useNodeRepetition', { nodeId, runId, repetitionName, parentStatus, parentRunIndex }],
     async () => {
       if (parentStatus === constants.FLOW_STATUS.SKIPPED) {
         return {
@@ -93,10 +92,6 @@ export const useNodeRepetition = (
           },
         };
       }
-
-      // if (isParentAgent && referenceUri) {
-      //   return await RunService().getAgentRepetition(referenceUri);
-      // }
 
       return await RunService().getRepetition({ nodeId, runId }, repetitionName);
     },

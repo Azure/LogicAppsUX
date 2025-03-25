@@ -32,7 +32,7 @@ import {
   setRepetitionRunData,
   toggleCollapsedGraphId,
   updateAgenticGraph,
-  updateNodesReference,
+  updateToolsMetadata,
 } from '../../core/state/workflow/workflowSlice';
 import type { AppDispatch } from '../../core/store';
 import { LoopsPager } from '../common/LoopsPager/LoopsPager';
@@ -117,7 +117,7 @@ const ScopeCardNode = ({ data, targetPosition = Position.Top, sourcePosition = P
       }
       const updatePayload = { nodeId: scopeId, tools: scopeRepetitionRunData };
       dispatch(updateAgenticGraph(updatePayload));
-      dispatch(updateNodesReference(updatePayload));
+      dispatch(updateToolsMetadata(updatePayload));
     }
   }, [dispatch, scopeRepetitionRunData, scopeId, selfRunData?.correlation?.actionTrackingId]);
 

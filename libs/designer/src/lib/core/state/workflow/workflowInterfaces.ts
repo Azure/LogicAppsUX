@@ -13,7 +13,6 @@ export interface NodeMetadata {
   runData?: LogicAppsV2.WorkflowRunAction | LogicAppsV2.WorkflowRunTrigger;
   actionMetadata?: Record<string, any>;
   runIndex?: number;
-  referenceUri?: string;
 }
 export interface NodesMetadata {
   [nodeId: string]: NodeMetadata;

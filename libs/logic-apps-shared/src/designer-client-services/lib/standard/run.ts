@@ -211,76 +211,74 @@ export class StandardRunService implements IRunService {
       const test: Record<string, any> = {
         '000000': {
           If_Condition_X_Matches: {
-            tools: {
+            repetitions: 5,
+            actions: {
               HTTP: {
                 status: 'Succeeded',
-                ID: 'https://www.bing.com',
               },
               HTTP_1: {
                 status: 'Succeeded',
-                ID: 'https://www.bing.com',
               },
             },
           },
         },
         '000001': {
           If_Condition_X_Matches: {
-            tools: {
+            repetitions: 5,
+            actions: {
               HTTP: {
                 status: 'Succeeded',
-                ID: 'https://www.bing.com',
               },
               HTTP_1: {
                 status: 'Succeeded',
-                ID: 'https://www.bing.com',
               },
             },
           },
           If_Condition_Y_Matches: {
-            tools: {
+            repetitions: 5,
+            actions: {
               Service_Bus: {
                 status: 'Succeeded',
-                ID: 'https://www.bing.com',
               },
             },
           },
         },
         '000002': {
           If_Condition_Y_Matches: {
-            tools: {
+            repetitions: 5,
+            actions: {
               Service_Bus: {
                 status: 'Succeeded',
-                ID: 'https://www.bing.com',
               },
             },
           },
         },
         '000003': {
           If_Condition_Y_Matches: {
-            tools: {
+            repetitions: 1,
+            actions: {
               Service_Bus: {
                 status: 'Succeeded',
-                ID: 'https://www.bing.com',
               },
             },
           },
         },
         '000004': {
           If_Condition_Y_Matches: {
-            tools: {
+            repetitions: 5,
+            actions: {
               Service_Bus: {
                 status: 'Succeeded',
-                ID: 'https://www.bing.com',
               },
             },
           },
         },
         '000005': {
           If_Condition_Y_Matches: {
-            tools: {
+            repetitions: 5,
+            actions: {
               Service_Bus: {
                 status: 'Succeeded',
-                ID: 'https://www.bing.com',
               },
             },
           },

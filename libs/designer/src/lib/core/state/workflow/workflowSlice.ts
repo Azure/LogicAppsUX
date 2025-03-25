@@ -270,32 +270,31 @@ export const workflowSlice = createSlice({
         args: [action.payload],
       });
     },
-    updateNodesReference: (state: WorkflowState, action: PayloadAction<UpdateAgenticGraphPayload>) => {
+    updateToolsMetadata: (state: WorkflowState, action: PayloadAction<UpdateAgenticGraphPayload>) => {
       if (!state.graph) {
         return; // log exception
       }
       const { tools } = action.payload;
-      Object.values(tools).forEach((condition: any) => {
-        Object.keys(condition.tools).forEach((toolId) => {
-          const nodeMetadata = getRecordEntry(state.nodesMetadata, toolId);
-          if (!nodeMetadata) {
-            return;
-          }
-          const nodeData = {
-            ...nodeMetadata,
-            referenceUri: condition.tools[toolId].ID,
-            runData: {
-              status: condition.tools[toolId].status,
-            },
-          };
-          state.nodesMetadata[toolId] = nodeData as NodeMetadata;
-        });
+      console.log('updateToolsMetadata', tools);
+
+      Object.keys(tools).forEach((toolId: any) => {
+        const nodeMetadata = getRecordEntry(state.nodesMetadata, toolId);
+        if (!nodeMetadata) {
+          return;
+        }
+        const nodeData = {
+          ...nodeMetadata,
+          runData: {
+            repetitionCount: tools[toolId].repetitions,
+          },
+        };
+        state.nodesMetadata[toolId] = nodeData as NodeMetadata;
       });
 
       LoggerService().log({
         level: LogEntryLevel.Verbose,
         area: 'Designer:Workflow Slice',
-        message: 'Update nodes reference',
+        message: 'Update tools metadata',
         args: [action.payload],
       });
     },
@@ -729,7 +728,7 @@ export const {
   toggleCollapsedActionId,
   clearFocusCollapsedNode,
   updateAgenticGraph,
-  updateNodesReference,
+  updateToolsMetadata,
 } = workflowSlice.actions;
 
 export default workflowSlice.reducer;
