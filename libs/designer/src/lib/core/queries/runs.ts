@@ -94,9 +94,9 @@ export const useNodeRepetition = (
         };
       }
 
-      if (isParentAgent && referenceUri) {
-        return await RunService().getAgentRepetition(referenceUri);
-      }
+      // if (isParentAgent && referenceUri) {
+      //   return await RunService().getAgentRepetition(referenceUri);
+      // }
 
       return await RunService().getRepetition({ nodeId, runId }, repetitionName);
     },
@@ -110,7 +110,7 @@ export const useNodeRepetition = (
 
 export const useScopeFailedRepetitions = (normalizedType: string, nodeId: string, runId: string | undefined) => {
   return useQuery(
-    ['runRepetitions', { nodeId, runId }],
+    ['useScopeFailedRepetitions', { nodeId, runId }],
     async () => {
       let failedRunRepetitions: LogicAppsV2.RunRepetition[] = [];
       try {
@@ -134,7 +134,7 @@ export const useScopeFailedRepetitions = (normalizedType: string, nodeId: string
   );
 };
 
-export const useScopeRepetition = (
+export const useAgentRepetition = (
   isMonitoringView: boolean,
   isAgent: boolean,
   nodeId: string,
@@ -144,9 +144,9 @@ export const useScopeRepetition = (
   runIndex: number | undefined
 ) => {
   return useQuery(
-    ['runScopeRepetition', { nodeId, runId, repetitionName, parentStatus, runIndex }],
+    ['useAgentRepetition', { nodeId, runId, repetitionName, parentStatus, runIndex }],
     async () => {
-      return RunService().getScopeRepetition({ nodeId, runId }, repetitionName);
+      return RunService().getAgentRepetition({ nodeId, runId }, repetitionName);
     },
     {
       ...queryOpts,

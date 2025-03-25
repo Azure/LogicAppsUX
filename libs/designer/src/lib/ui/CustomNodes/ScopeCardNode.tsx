@@ -50,7 +50,7 @@ import { Handle, Position, type NodeProps } from '@xyflow/react';
 import { copyScopeOperation } from '../../core/actions/bjsworkflow/copypaste';
 import { useHotkeys } from 'react-hotkeys-hook';
 import { CopyTooltip } from '../common/DesignerContextualMenu/CopyTooltip';
-import { useNodeRepetition, useScopeRepetition } from '../../core/queries/runs';
+import { useNodeRepetition, useAgentRepetition } from '../../core/queries/runs';
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 const ScopeCardNode = ({ data, targetPosition = Position.Top, sourcePosition = Position.Bottom, id }: NodeProps) => {
@@ -99,7 +99,7 @@ const ScopeCardNode = ({ data, targetPosition = Position.Top, sourcePosition = P
     parentRunIndex
   );
 
-  const { isFetching: isScopeRepetitionFetching, data: scopeRepetitionRunData } = useScopeRepetition(
+  const { isFetching: isScopeRepetitionFetching, data: scopeRepetitionRunData } = useAgentRepetition(
     !!isMonitoringView,
     isAgent,
     scopeId,

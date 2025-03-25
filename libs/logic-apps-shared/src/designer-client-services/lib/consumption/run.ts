@@ -181,7 +181,7 @@ export class ConsumptionRunService implements IRunService {
    * @param {string} repetitionId - A string with the resource ID of a repetition record
    * @return {Promise<RunScopeRepetition[]>}
    */
-  async getScopeRepetition(
+  async getAgentRepetition(
     action: { nodeId: string; runId: string | undefined },
     repetitionId: string
   ): Promise<LogicAppsV2.RunRepetition> {
@@ -190,7 +190,7 @@ export class ConsumptionRunService implements IRunService {
     const { apiVersion, baseUrl, httpClient } = this.options;
     const headers = this.getAccessTokenHeaders();
 
-    const uri = `${baseUrl}${runId}/actions/${nodeId}/scopeRepetitions/${repetitionId}?api-version=${apiVersion}`;
+    const uri = `${baseUrl}${runId}/actions/${nodeId}/agentRepetitions/${repetitionId}?api-version=${apiVersion}`;
 
     try {
       const response = await httpClient.get<LogicAppsV2.RunRepetition>({
@@ -216,29 +216,6 @@ export class ConsumptionRunService implements IRunService {
     const headers = this.getAccessTokenHeaders();
 
     const uri = `${baseUrl}${runId}/actions/${nodeId}/repetitions/${repetitionId}?api-version=${apiVersion}`;
-    try {
-      const response = await httpClient.get<LogicAppsV2.RunRepetition>({
-        uri,
-        headers: headers as Record<string, any>,
-      });
-
-      return response;
-    } catch (e: any) {
-      throw new Error(e.message);
-    }
-  }
-
-  /**
-   * Gets the repetition record for the repetition item with the specified ID
-   * @param {{ actionId: string, runId: string }} action - An object with nodeId and the runId of the workflow
-   * @param {string} referenceUri - A string with the resource ID of a repetition record
-   * @return {Promise<any>}
-   */
-  async getAgentRepetition(referenceUri: string): Promise<LogicAppsV2.RunRepetition> {
-    const { apiVersion, httpClient } = this.options;
-    const headers = this.getAccessTokenHeaders();
-
-    const uri = `${referenceUri}?api-version=${apiVersion}`;
     try {
       const response = await httpClient.get<LogicAppsV2.RunRepetition>({
         uri,
