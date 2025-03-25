@@ -293,7 +293,7 @@ export const autoCreateConnectionIfPossible = async (payload: {
   }
 };
 
-async function getConnectionsMappingForNodes(deserializedWorkflow: DeserializedWorkflow): Promise<Record<string, string>> {
+export async function getConnectionsMappingForNodes(deserializedWorkflow: DeserializedWorkflow): Promise<Record<string, string>> {
   const { actionData, nodesMetadata } = deserializedWorkflow;
   let connectionsMapping: Record<string, string> = {};
   const operationManifestService = OperationManifestService();
@@ -528,7 +528,7 @@ function getConnectionReferenceKeyForManifest(referenceFormat: string, operation
       return (operationDefinition as LogicAppsV2.ServiceProvider).inputs.serviceProviderConfiguration.connectionName;
 
     case ConnectionReferenceKeyFormat.AgentConnection:
-      return (operationDefinition as any).inputs.momdelConfiguration.connectionName;
+      return (operationDefinition as any).inputs.modelConfiguration.model1.referenceName;
 
     case ConnectionReferenceKeyFormat.OpenApi:
     case ConnectionReferenceKeyFormat.OpenApiConnection:

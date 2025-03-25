@@ -6,6 +6,12 @@ import { normalizeConnectorId } from '@microsoft/logic-apps-shared';
 import { CompactConnectorConnectionStatus } from '../connections/connector';
 import { ResourceDisplay } from './ResourceDisplay';
 import { useTemplatesStrings } from '../templatesStrings';
+import {
+  useTemplateWorkflows,
+  useTemplateConnections,
+  useTemplateParameterDefinitions,
+} from '../../../core/state/templates/templateselectors';
+import { useMemo } from 'react';
 
 const useStyles = makeStyles({
   actionName: {
@@ -22,10 +28,11 @@ type ReviewCreatePanelProps = {
 
 export const ReviewAddPanel = ({ resourceOverrides }: ReviewCreatePanelProps) => {
   const intl = useIntl();
-  const { parameterDefinitions, workflows, connections } = useSelector((state: RootState) => state.template);
+  const workflows = useTemplateWorkflows();
+  const connections = useTemplateConnections();
+  const parameterDefinitions = useTemplateParameterDefinitions();
   const { enableResourceSelection } = useSelector((state: RootState) => state.templateOptions);
   const {
-    existingWorkflowName,
     connections: { mapping },
     subscriptionId,
     location,
@@ -55,6 +62,9 @@ export const ReviewAddPanel = ({ resourceOverrides }: ReviewCreatePanelProps) =>
     }),
   };
 
+  const templateHasConnections = useMemo(() => Object.keys(connections).length > 0, [connections]);
+  const templateHasParameters = useMemo(() => Object.keys(parameterDefinitions).length > 0, [parameterDefinitions]);
+
   return (
     <div className="msla-templates-tab msla-templates-review-container">
       <TemplateDisplay label={resourceOverrides?.templateName} />
@@ -63,34 +73,38 @@ export const ReviewAddPanel = ({ resourceOverrides }: ReviewCreatePanelProps) =>
         <Text>{resourceOverrides?.workflowName ?? resourceStrings.WORKFLOW_NAME}</Text>
         {Object.values(workflows).map((workflow) => (
           <Text weight="semibold" key={workflow.id}>
-            {existingWorkflowName ?? workflow.workflowName}
+            {workflow.workflowName}
           </Text>
         ))}
       </div>
 
       {enableResourceSelection && <ResourceDisplay />}
 
-      <div className="msla-templates-review-block">
-        <Text>{intlText.AUTHENTICATION}</Text>
-        {Object.keys(connections).map((connectionKey) => (
-          <CompactConnectorConnectionStatus
-            key={connectionKey}
-            connectorId={normalizeConnectorId(connections[connectionKey].connectorId ?? '', subscriptionId, location)}
-            hasConnection={mapping[connectionKey] !== undefined}
-          />
-        ))}
-      </div>
+      {templateHasConnections && (
+        <div className="msla-templates-review-block">
+          <Text>{intlText.AUTHENTICATION}</Text>
+          {Object.keys(connections).map((connectionKey) => (
+            <CompactConnectorConnectionStatus
+              key={connectionKey}
+              connectorId={normalizeConnectorId(connections[connectionKey].connectorId ?? '', subscriptionId, location)}
+              hasConnection={mapping[connectionKey] !== undefined}
+            />
+          ))}
+        </div>
+      )}
 
-      <div className="msla-templates-review-block parameters">
-        <Text>{intlText.PARAMETER}</Text>
-        <Text>{intlText.VALUE}</Text>
-        {Object.values(parameterDefinitions)?.map((parameter) => (
-          <>
-            <Text weight="semibold">{parameter.displayName}</Text>
-            <Text>{parameter.value ?? intlText.PLACEHOLDER}</Text>
-          </>
-        ))}
-      </div>
+      {templateHasParameters && (
+        <div className="msla-templates-review-block parameters">
+          <Text>{intlText.PARAMETER}</Text>
+          <Text>{intlText.VALUE}</Text>
+          {Object.values(parameterDefinitions)?.map((parameter) => (
+            <>
+              <Text weight="semibold">{parameter.displayName}</Text>
+              <Text>{parameter.value ?? intlText.PLACEHOLDER}</Text>
+            </>
+          ))}
+        </div>
+      )}
     </div>
   );
 };

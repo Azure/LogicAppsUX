@@ -6,12 +6,12 @@ import {
   useIsReadOnly,
   useShowConnectionsPanel,
   useHostOptions,
+  useIsUnitTestView,
   useShowPerformanceDebug,
   useSuppressDefaultNodeSelect,
   useStringOverrides,
   useQueryCachePersist,
   useIsMultiVariableEnabled,
-  useIsAgenticLoopEnabled,
 } from '../../state/workflowLoadingSelectors';
 import {
   setDarkMode,
@@ -21,12 +21,12 @@ import {
   setAreCustomEditorsEnabled,
   setShowConnectionsPanel,
   setHostOptions,
+  setUnitTest,
   setShowPerformanceDebug,
   setSuppressDefaultNodeSelect,
   setStringOverrides,
   setQueryCachePersist,
   setEnableMultiVariable,
-  setEnableAgenticLoops,
 } from '../../state/workflowLoadingSlice';
 import { Checkbox, TextField } from '@fluentui/react';
 import { useCallback } from 'react';
@@ -35,6 +35,7 @@ import { useDispatch } from 'react-redux';
 const ContextSettings = () => {
   const isReadOnly = useIsReadOnly();
   const isMonitoringView = useIsMonitoringView();
+  const isUnitTest = useIsUnitTestView();
   const isDarkMode = useIsDarkMode();
   const showConnectionsPanel = useShowConnectionsPanel();
   const areCustomEditorsEnabled = useAreCustomEditorsEnabled();
@@ -44,7 +45,6 @@ const ContextSettings = () => {
   const showTestStringOverride = useStringOverrides();
   const queryCachePersist = useQueryCachePersist();
   const isMultiVariableEnabled = useIsMultiVariableEnabled();
-  const isAgenticLoopEnabled = useIsAgenticLoopEnabled();
   const dispatch = useDispatch<AppDispatch>();
 
   const changeMonitoringView = useCallback(
@@ -52,6 +52,17 @@ const ContextSettings = () => {
       dispatch(setMonitoringView(!!checked));
       if (checked) {
         dispatch(loadWorkflow(_));
+      }
+    },
+    [dispatch]
+  );
+
+  const changeUnitTestView = useCallback(
+    (_: unknown, checked?: boolean) => {
+      dispatch(setUnitTest(!!checked));
+      if (checked) {
+        dispatch(loadRun());
+        dispatch(loadWorkflow());
       }
     },
     [dispatch]
@@ -66,6 +77,7 @@ const ContextSettings = () => {
         onChange={(_, checked) => dispatch(setReadOnly(!!checked))}
       />
       <Checkbox label="Monitoring View" checked={isMonitoringView} onChange={changeMonitoringView} />
+      <Checkbox label="Unit Test View" checked={isUnitTest} onChange={changeUnitTestView} />
       <Checkbox label="Dark Mode" checked={isDarkMode} onChange={(_, checked) => dispatch(setDarkMode(!!checked))} />
       <Checkbox
         label="Custom Editors"
@@ -122,11 +134,6 @@ const ContextSettings = () => {
         label="Enable Multivariable"
         checked={isMultiVariableEnabled}
         onChange={(_, checked) => dispatch(setEnableMultiVariable(!!checked))}
-      />
-      <Checkbox
-        label="Enable Agentic Loops"
-        checked={isAgenticLoopEnabled}
-        onChange={(_, checked) => dispatch(setEnableAgenticLoops(!!checked))}
       />
       <TextField
         label="Max State History Size"

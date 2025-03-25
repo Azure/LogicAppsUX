@@ -303,6 +303,7 @@ export const Combobox = ({
             basePlugins={{ clearEditor: true, autoFocus: canAutoFocus, ...basePlugins }}
             initialValue={value}
             onBlur={handleBlur}
+            agentParameterButtonProps={{ ...baseEditorProps.agentParameterButtonProps, shifted: true }}
           >
             <EditorChangePlugin setValue={setValue} />
           </EditorWrapper>

@@ -32,10 +32,15 @@ export {
   useIsWorkflowParametersDirty,
   useWorkflowParameterValidationErrors,
 } from './state/workflowparameters/workflowparametersselector';
-export { useIsDesignerDirty, resetDesignerDirtyState } from './state/global';
+export { useIsDesignerDirty, resetDesignerDirtyState, resetTemplatesState } from './state/global';
 export { useAllSettingsValidationErrors } from './state/setting/settingSelector';
 export { useAllConnectionErrors } from './state/operation/operationSelector';
-export { serializeWorkflow, parseWorkflowParameterValue } from './actions/bjsworkflow/serializer';
+export {
+  serializeWorkflow,
+  serializeUnitTestDefinition,
+  getNodeOutputOperations,
+  parseWorkflowParameterValue,
+} from './actions/bjsworkflow/serializer';
 export {
   setSelectedNodeId,
   changePanelNode,
@@ -55,6 +60,7 @@ export { initializeServices } from './state/designerOptions/designerOptionsSlice
 export { resetWorkflowState, resetNodesLoadStatus } from './state/global';
 export { TemplatesDataProvider } from './templates/TemplatesDataProvider';
 export { TemplatesDesignerProvider } from './templates/TemplatesDesignerProvider';
+export { ConfigureTemplateDataProvider } from './configuretemplate/ConfigureTemplateDataProvider';
 export {
   validateParameter,
   parameterValueToString,
@@ -75,6 +81,8 @@ export { downloadDocumentAsFile, getDocumentationMetadata } from './utils/docume
 export { getTriggerNodeId } from './utils/graph';
 export { updateParameterValidation } from './state/operation/operationMetadataSlice';
 export { updateWorkflowParameters } from './actions/bjsworkflow/initialize';
+export { useAssertionsValidationErrors } from './state/unitTest/unitTestSelectors';
+export { convertVariableTypeToSwaggerType } from './utils/variables';
 export {
   getBrandColorFromManifest,
   getIconUriFromManifest,
@@ -86,6 +94,8 @@ export { storeStateToUndoRedoHistory, onUndoClick, onRedoClick } from './actions
 export { useCanUndo, useCanRedo } from './state/undoRedo/undoRedoSelectors';
 export { resetDesignerView } from './state/designerView/designerViewSlice';
 export * from './queries/runs';
-export { reloadTemplates, type WorkflowTemplateData } from './actions/bjsworkflow/templates';
+export { reloadTemplates, resetStateOnResourceChange, type WorkflowTemplateData } from './actions/bjsworkflow/templates';
 export type { AppDispatch as TemplatesAppDispatch, RootState as TemplatesRootState } from './state/templates/store';
 export type { TemplateServiceOptions } from './templates/TemplatesDesignerContext';
+export { ConfigureTemplateWizard } from './configuretemplate/ConfigureTemplateWizard';
+export { validateParameters, validateConnections } from './state/templates/templateSlice';
