@@ -1,4 +1,4 @@
-name: '🐞 Logic Apps/Power Automate Bug Report'
+name: '🐞 Logic Apps Bug Report'
 description: Create a report to help us improve Logic Apps
 labels: ['bug']
 body:
@@ -37,7 +37,6 @@ body:
       label: What type of Logic App Is this happening in?
       options:
         - Consumption (Portal)
-        - Power Automate
         - Standard (Portal)
         - Standard (VSCode)
     validations:
