@@ -528,7 +528,7 @@ function getConnectionReferenceKeyForManifest(referenceFormat: string, operation
       return (operationDefinition as LogicAppsV2.ServiceProvider).inputs.serviceProviderConfiguration.connectionName;
 
     case ConnectionReferenceKeyFormat.AgentConnection:
-      return (operationDefinition as any).inputs.modelConfiguration.connectionName;
+      return (operationDefinition as any).inputs.modelConfiguration.model1.referenceName;
 
     case ConnectionReferenceKeyFormat.OpenApi:
     case ConnectionReferenceKeyFormat.OpenApiConnection:
