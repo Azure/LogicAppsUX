@@ -39,7 +39,7 @@ vi.mock('../../../extensionVariables', () => ({
 }));
 
 describe('customCodeUtils', () => {
-  const validNet8CsprojContent = `
+  const validNet8CsprojContent = String.raw`
         <Project Sdk="Microsoft.NET.Sdk">
             <PropertyGroup>
                 <IsPackable>false</IsPackable>
@@ -47,7 +47,7 @@ describe('customCodeUtils', () => {
                 <AzureFunctionsVersion>v4</AzureFunctionsVersion>
                 <OutputType>Library</OutputType>
                 <PlatformTarget>AnyCPU</PlatformTarget>
-                <LogicAppFolderToPublish>$(MSBuildProjectDirectory)\\..\\LogicApp</LogicAppFolderToPublish>
+                <LogicAppFolderToPublish>$(MSBuildProjectDirectory)\..\LogicApp</LogicAppFolderToPublish>
                 <CopyToOutputDirectory>Always</CopyToOutputDirectory>
                 <SelfContained>false</SelfContained>
             </PropertyGroup>
@@ -66,7 +66,7 @@ describe('customCodeUtils', () => {
         </Project>
     `;
 
-  const validNetFxCsprojContent = `
+  const validNetFxCsprojContent = String.raw`
         <Project Sdk="Microsoft.NET.Sdk">
             <PropertyGroup>
                 <IsPackable>false</IsPackable>
@@ -88,25 +88,25 @@ describe('customCodeUtils', () => {
 
             <Target Name="Task" AfterTargets="Compile">
                 <ItemGroup>
-                    <DirsToClean2 Include="..\\$(LogicAppFolder)\\lib\\custom" />
+                    <DirsToClean2 Include="..\$(LogicAppFolder)\lib\custom" />
                 </ItemGroup>
                 <RemoveDir Directories="@(DirsToClean2)" />
             </Target>
             
             <Target Name="CopyExtensionFiles" AfterTargets="ParameterizedFunctionJsonGenerator">
                 <ItemGroup>
-                    <CopyFiles Include="$(MSBuildProjectDirectory)\\bin\\$(Configuration)\\net472\\**\\*.*" CopyToOutputDirectory="PreserveNewest" Exclude="$(MSBuildProjectDirectory)\\bin\\$(Configuration)\\net472\\*.*" />
-                <CopyFiles2 Include="$(MSBuildProjectDirectory)\\bin\\$(Configuration)\\net472\\*.*" />
+                    <CopyFiles Include="$(MSBuildProjectDirectory)\bin\$(Configuration)\net472\**\*.*" CopyToOutputDirectory="PreserveNewest" Exclude="$(MSBuildProjectDirectory)\bin\$(Configuration)\net472\*.*" />
+                <CopyFiles2 Include="$(MSBuildProjectDirectory)\bin\$(Configuration)\net472\*.*" />
                 </ItemGroup>
-                <Copy SourceFiles="@(CopyFiles)" DestinationFolder="..\\$(LogicAppFolder)\\lib\\custom\\%(RecursiveDir)" SkipUnchangedFiles="true" />
-                <Copy SourceFiles="@(CopyFiles2)" DestinationFolder="..\\$(LogicAppFolder)\\lib\\custom\\net472\\" SkipUnchangedFiles="true" />
+                <Copy SourceFiles="@(CopyFiles)" DestinationFolder="..\$(LogicAppFolder)\lib\custom\%(RecursiveDir)" SkipUnchangedFiles="true" />
+                <Copy SourceFiles="@(CopyFiles2)" DestinationFolder="..\$(LogicAppFolder)\lib\custom\net472\" SkipUnchangedFiles="true" />
                 <ItemGroup>
-                    <MoveFiles Include="..\\$(LogicAppFolder)\\lib\\custom\\bin\\*.*" />
+                    <MoveFiles Include="..\$(LogicAppFolder)\lib\custom\bin\*.*" />
                 </ItemGroup>
 
-            <Move SourceFiles="@(MoveFiles)" DestinationFolder="..\\$(LogicAppFolder)\\lib\\custom\\net472" />
+            <Move SourceFiles="@(MoveFiles)" DestinationFolder="..\$(LogicAppFolder)\lib\custom\net472" />
                 <ItemGroup>
-                <DirsToClean Include="..\\$(LogicAppFolder)\\lib\\custom\\bin" />
+                <DirsToClean Include="..\$(LogicAppFolder)\lib\custom\bin" />
                 </ItemGroup>
                 <RemoveDir Directories="@(DirsToClean)" />
             </Target>
@@ -115,7 +115,7 @@ describe('customCodeUtils', () => {
                 <Reference Include="Microsoft.CSharp" />
             </ItemGroup>
             <ItemGroup>
-                <Folder Include="bin\\$(Configuration)\\net472\\" />
+                <Folder Include="bin\$(Configuration)\net472\" />
             </ItemGroup>
         </Project>
     `;
@@ -475,14 +475,14 @@ describe('customCodeUtils', () => {
       expect(result).toBeUndefined();
     });
 
-    it('should return an empty array if no sibling projects are found', async () => {
+    it('should return an empty array if no custom code projects are found', async () => {
       vi.spyOn(verifyProjectUtils, 'isLogicAppProject').mockResolvedValue(true);
       vi.spyOn(fse, 'readdir').mockResolvedValue([]);
       const result = await tryGetLogicAppCustomCodeFunctionsProjects(testLogicAppFolder);
       expect(result).toEqual([]);
     });
 
-    it('should return an array of paths for a valid logic app with sibling custom code project folders', async () => {
+    it('should return an array of paths for a valid logic app with custom code project folders', async () => {
       vi.spyOn(verifyProjectUtils, 'isLogicAppProject').mockResolvedValue(true);
       vi.spyOn(fse, 'readdir').mockResolvedValue([testPeerProject]);
       vi.spyOn(fse, 'readdir').mockImplementation(async (p: string) => {

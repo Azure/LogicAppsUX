@@ -201,9 +201,9 @@ export async function tryGetCustomCodeFunctionsProjects(
 }
 
 /**
- * Searches for a peer custom code functions projects to the target folder.
- * @param {string} targetFolder - The target folder in search for peer custom code functions projects.
- * @returns {Promise<string[] | undefined>} - The path to the peer custom code functions projects if found, otherwise returns undefined.
+ * Searches for custom code functions projects corresponding to the target logic app.
+ * @param {string} targetFolder - The folder of the logic app project to search for custom code functions projects.
+ * @returns {Promise<string[] | undefined>} - The path to the custom code functions projects if found, otherwise returns undefined.
  */
 export async function tryGetLogicAppCustomCodeFunctionsProjects(targetFolder: string): Promise<string[] | undefined> {
   if (isNullOrUndefined(targetFolder)) {
@@ -217,7 +217,7 @@ export async function tryGetLogicAppCustomCodeFunctionsProjects(targetFolder: st
   const logicAppName = path.basename(targetFolder);
   const parentFolder = path.dirname(targetFolder);
   const subpaths: string[] = await fse.readdir(parentFolder);
-  const peerCustomCodeProjectPaths: string[] = [];
+  const customCodeProjectPaths: string[] = [];
   await Promise.all(
     subpaths.map(async (s) => {
       if (s === logicAppName) {
@@ -225,12 +225,12 @@ export async function tryGetLogicAppCustomCodeFunctionsProjects(targetFolder: st
       }
       const currPath = path.join(parentFolder, s);
       if (await isCustomCodeFunctionsProjectForLogicApp(currPath, logicAppName)) {
-        peerCustomCodeProjectPaths.push(currPath);
+        customCodeProjectPaths.push(currPath);
       }
     })
   );
 
-  return peerCustomCodeProjectPaths;
+  return customCodeProjectPaths;
 }
 
 async function isCustomCodeFunctionsProjectForLogicApp(folderPath: string, logicAppName: string): Promise<boolean> {
