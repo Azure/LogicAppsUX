@@ -64,7 +64,7 @@ describe('panel/templatePanel/createWorkflowPanel/nameStateTab', () => {
       panel: {
         isOpen: true,
         currentPanelView: TemplatePanelView.CreateWorkflow,
-        selectedTabId: constants.TEMPLATE_TAB_NAMES.BASIC,
+        selectedTabId: constants.TEMPLATE_PANEL_TAB_NAMES.BASIC,
       },
     };
     store = setupStore(minimalStoreData);
@@ -83,7 +83,7 @@ describe('panel/templatePanel/createWorkflowPanel/nameStateTab', () => {
   });
 
   it('Shows Name and State Tab values displayed', async () => {
-    expect(store.getState().panel.selectedTabId).toBe(constants.TEMPLATE_TAB_NAMES.BASIC);
+    expect(store.getState().panel.selectedTabId).toBe(constants.TEMPLATE_PANEL_TAB_NAMES.BASIC);
     expect(screen.getAllByText('Workflow name')).toBeDefined();
     expect(screen.getAllByDisplayValue(store.getState().template.workflows['default'].workflowName ?? 'n/a')).toBeDefined;
     expect(screen.getAllByText('State type')).toBeDefined();

@@ -103,7 +103,7 @@ describe('panel/templatePanel/createWorkflowPanel/reviewCreateTab', () => {
       panel: {
         isOpen: true,
         currentPanelView: TemplatePanelView.CreateWorkflow,
-        selectedTabId: constants.TEMPLATE_TAB_NAMES.REVIEW_AND_CREATE,
+        selectedTabId: constants.TEMPLATE_PANEL_TAB_NAMES.REVIEW_AND_CREATE,
       },
     };
     store = setupStore(minimalStoreData);
@@ -122,7 +122,7 @@ describe('panel/templatePanel/createWorkflowPanel/reviewCreateTab', () => {
   });
 
   it('Shows Review Tab values displayed', async () => {
-    expect(store.getState().panel.selectedTabId).toBe(constants.TEMPLATE_TAB_NAMES.REVIEW_AND_CREATE);
+    expect(store.getState().panel.selectedTabId).toBe(constants.TEMPLATE_PANEL_TAB_NAMES.REVIEW_AND_CREATE);
     expect(screen.getAllByText('Basics')).toBeDefined();
     expect(screen.getAllByText('Workflow name')).toBeDefined();
     expect(screen.getAllByText(store.getState().template.workflows['default'].workflowName ?? 'n/a')).toBeDefined;

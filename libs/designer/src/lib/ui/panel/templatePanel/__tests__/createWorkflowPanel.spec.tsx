@@ -215,10 +215,10 @@ describe('panel/templatePanel/createWorkflowPanel', () => {
   });
 
   it('Hides Connections Tab on no connections', async () => {
-    expect(screen.queryByText(constants.TEMPLATE_TAB_NAMES.CONNECTIONS)).toBe(null);
-    expect(screen.queryByText(constants.TEMPLATE_TAB_NAMES.PARAMETERS)).toBeDefined();
-    expect(screen.queryByText(constants.TEMPLATE_TAB_NAMES.BASIC)).toBeDefined();
-    expect(screen.queryByText(constants.TEMPLATE_TAB_NAMES.REVIEW_AND_CREATE)).toBeDefined();
+    expect(screen.queryByText(constants.TEMPLATE_PANEL_TAB_NAMES.CONNECTIONS)).toBe(null);
+    expect(screen.queryByText(constants.TEMPLATE_PANEL_TAB_NAMES.PARAMETERS)).toBeDefined();
+    expect(screen.queryByText(constants.TEMPLATE_PANEL_TAB_NAMES.BASIC)).toBeDefined();
+    expect(screen.queryByText(constants.TEMPLATE_PANEL_TAB_NAMES.REVIEW_AND_CREATE)).toBeDefined();
   });
 
   it('Hides basic tab on consumption only template', async () => {
@@ -264,9 +264,9 @@ describe('panel/templatePanel/createWorkflowPanel', () => {
       },
     };
     store = setupStore(minimalStoreData);
-    expect(screen.queryByText(constants.TEMPLATE_TAB_NAMES.CONNECTIONS)).toBe(null);
-    expect(screen.queryByText(constants.TEMPLATE_TAB_NAMES.PARAMETERS)).toBeDefined();
-    expect(screen.queryByText(constants.TEMPLATE_TAB_NAMES.BASIC)).toBeNull();
-    expect(screen.queryByText(constants.TEMPLATE_TAB_NAMES.REVIEW_AND_CREATE)).toBeDefined();
+    expect(screen.queryByText(constants.TEMPLATE_PANEL_TAB_NAMES.CONNECTIONS)).toBe(null);
+    expect(screen.queryByText(constants.TEMPLATE_PANEL_TAB_NAMES.PARAMETERS)).toBeDefined();
+    expect(screen.queryByText(constants.TEMPLATE_PANEL_TAB_NAMES.BASIC)).toBeNull();
+    expect(screen.queryByText(constants.TEMPLATE_PANEL_TAB_NAMES.REVIEW_AND_CREATE)).toBeDefined();
   });
 });
