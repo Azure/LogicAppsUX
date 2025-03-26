@@ -12,11 +12,6 @@ jobs:
     permissions:
         id-token: write
         contents: read
-    strategy:
-      fail-fast: false
-      matrix:
-        shardIndex: [1, 2, 3]
-        shardTotal: [3]
 
     steps:
     - uses: actions/checkout@v4
@@ -47,5 +42,5 @@ jobs:
       if: ${{ !cancelled() }}
       shell: bash
       run: |
-          az storage blob upload-batch --account-name workflowtemplates --auth-mode key --overwrite True -d templates -s "./libs/logic-apps-shared/src/designer-client-services/lib/templates"
+          az storage blob upload-batch --account-name workflowtemplates --auth-mode login --overwrite True -d templates -s "./libs/logic-apps-shared/src/designer-client-services/lib/templates"
           echo "Templates are uploaded to the storage account - workflowtemplates"
