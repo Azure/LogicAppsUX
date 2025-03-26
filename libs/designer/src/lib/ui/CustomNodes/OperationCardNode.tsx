@@ -44,6 +44,7 @@ import {
   useParentNodeId,
   useIsLeafNode,
   useIsWithinAgenticLoop,
+  useRunIndex,
 } from '../../core/state/workflow/workflowSelectors';
 import { setRepetitionRunData } from '../../core/state/workflow/workflowSlice';
 import { getRepetitionName } from '../common/LoopsPager/helper';
@@ -76,12 +77,10 @@ const DefaultNode = ({ targetPosition = Position.Top, sourcePosition = Position.
   const isTrigger = useMemo(() => metadata?.graphId === 'root' && metadata?.isRoot, [metadata]);
   const parentRunIndex = useParentRunIndex(id);
   const runInstance = useRunInstance();
-  const runData = useRunData(id);
   const parentNodeId = useParentNodeId(id);
   const parentRunData = useRunData(parentNodeId ?? '');
   const nodeMockResults = useMocksByOperation(isTrigger ? `&${id}` : id);
   const isMockSupported = useIsMockSupported(id, isTrigger ?? false);
-  const selfRunData = useRunData(id);
   const nodesMetaData = useNodesMetadata();
   const repetitionName = useMemo(
     () => getRepetitionName(parentRunIndex, id, nodesMetaData, operationsInfo),
@@ -94,6 +93,8 @@ const DefaultNode = ({ targetPosition = Position.Top, sourcePosition = Position.
   const nodeSelectCallbackOverride = useNodeSelectAdditionalCallback();
   const graphId = metadata?.graphId ?? '';
   const isWithinAgenticLoop = useIsWithinAgenticLoop(graphId);
+  const selfRunData = useRunData(id);
+  const toolRunIndex = useRunIndex(graphId);
 
   const { isFetching: isRepetitionFetching, data: repetitionRunData } = useNodeRepetition(
     !!isMonitoringView,
@@ -101,9 +102,10 @@ const DefaultNode = ({ targetPosition = Position.Top, sourcePosition = Position.
     runInstance?.id,
     repetitionName,
     parentRunData?.status,
-    parentRunIndex,
-    isWithinAgenticLoop
+    parentRunIndex
   );
+
+  console.log('charlie repetitionRunData', isWithinAgenticLoop, graphId, repetitionRunData);
 
   useEffect(() => {
     if (!isNullOrUndefined(repetitionRunData)) {
@@ -111,7 +113,14 @@ const DefaultNode = ({ targetPosition = Position.Top, sourcePosition = Position.
         // if the correlation id is the same, we don't need to update the repetition run data
         return;
       }
-      dispatch(setRepetitionRunData({ nodeId: id, runData: repetitionRunData as LogicAppsV2.RunRepetition }));
+      let operationRepetitionRunData = repetitionRunData.properties;
+      if (isWithinAgenticLoop) {
+        const toolIndex = toolRunIndex ?? 0;
+        operationRepetitionRunData = Array.isArray(repetitionRunData.properties)
+          ? repetitionRunData.properties[toolIndex]
+          : repetitionRunData.properties;
+      }
+      dispatch(setRepetitionRunData({ nodeId: id, runData: operationRepetitionRunData as LogicAppsV2.WorkflowRunAction }));
     }
   }, [dispatch, repetitionRunData, id, selfRunData?.correlation?.actionTrackingId]);
 
@@ -273,7 +282,7 @@ const DefaultNode = ({ targetPosition = Position.Top, sourcePosition = Position.
     }
 
     if (isMonitoringView) {
-      const { status: statusRun, error: errorRun, code: codeRun } = runData ?? {};
+      const { status: statusRun, error: errorRun, code: codeRun } = selfRunData ?? {};
       return getMonitoringError(errorRun, statusRun, codeRun);
     }
 
@@ -287,14 +296,14 @@ const DefaultNode = ({ targetPosition = Position.Top, sourcePosition = Position.
     settingValidationErrorText,
     parameterValidationErrorText,
     isMonitoringView,
-    runData,
+    selfRunData,
   ]);
 
   const shouldFocus = useShouldNodeFocus(id);
   const staticResults = useParameterStaticResult(id);
 
   const nodeIndex = useNodeIndex(id);
-  const isCardActive = isMonitoringView ? !isNullOrUndefined(runData?.status) : true;
+  const isCardActive = isMonitoringView ? !isNullOrUndefined(selfRunData?.status) : true;
 
   return (
     <>
@@ -321,7 +330,7 @@ const DefaultNode = ({ targetPosition = Position.Top, sourcePosition = Position.
           isUnitTest={isUnitTest}
           nodeMockResults={nodeMockResults}
           isMockSupported={isMockSupported}
-          runData={runData}
+          runData={selfRunData}
           readOnly={readOnly}
           onClick={nodeClick}
           onContextMenu={onContextMenu}

@@ -95,8 +95,7 @@ const ScopeCardNode = ({ data, targetPosition = Position.Top, sourcePosition = P
     runInstance?.id,
     repetitionName,
     parentRunData?.status,
-    parentRunIndex,
-    false
+    parentRunIndex
   );
 
   const { isFetching: isScopeRepetitionFetching, data: scopeRepetitionRunData } = useAgentRepetition(
@@ -123,11 +122,11 @@ const ScopeCardNode = ({ data, targetPosition = Position.Top, sourcePosition = P
 
   useEffect(() => {
     if (!isNullOrUndefined(repetitionRunData)) {
-      // if (selfRunData?.correlation?.actionTrackingId === repetitionRunData?.properties?.correlation?.actionTrackingId) {
-      //   // if the correlation id is the same, we don't need to update the repetition run data
-      //   return;
-      // }
-      dispatch(setRepetitionRunData({ nodeId: scopeId, runData: repetitionRunData as LogicAppsV2.RunRepetition }));
+      if (selfRunData?.correlation?.actionTrackingId === repetitionRunData?.properties?.correlation?.actionTrackingId) {
+        // if the correlation id is the same, we don't need to update the repetition run data
+        return;
+      }
+      dispatch(setRepetitionRunData({ nodeId: scopeId, runData: repetitionRunData.properties as LogicAppsV2.WorkflowRunAction }));
     }
   }, [dispatch, repetitionRunData, scopeId, selfRunData?.correlation?.actionTrackingId]);
 

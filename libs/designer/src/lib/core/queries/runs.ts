@@ -73,8 +73,7 @@ export const useNodeRepetition = (
   runId: string | undefined,
   repetitionName: string,
   parentStatus: string | undefined,
-  parentRunIndex: number | undefined,
-  _isWithinAgenticLoop: boolean
+  parentRunIndex: number | undefined
 ) => {
   return useQuery(
     ['useNodeRepetition', { nodeId, runId, repetitionName, parentStatus, parentRunIndex }],
