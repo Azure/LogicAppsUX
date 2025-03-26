@@ -108,6 +108,9 @@ export default {
       count: {
         scopes: [SettingScope.Action],
       },
+      retryPolicy: {
+        scopes: [SettingScope.Action],
+      },
     },
   },
 } as OperationManifest;
