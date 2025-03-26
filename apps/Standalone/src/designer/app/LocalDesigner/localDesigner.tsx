@@ -20,7 +20,13 @@ import {
   BaseTenantService,
 } from '@microsoft/logic-apps-shared';
 import type { ContentType } from '@microsoft/logic-apps-shared';
-import { DesignerProvider, BJSWorkflowProvider, Designer, CombineInitializeVariableDialog } from '@microsoft/logic-apps-designer';
+import {
+  DesignerProvider,
+  BJSWorkflowProvider,
+  Designer,
+  CombineInitializeVariableDialog,
+  TriggerDescriptionDialog,
+} from '@microsoft/logic-apps-designer';
 import { useSelector } from 'react-redux';
 
 const httpClient = new HttpClient();
@@ -226,6 +232,7 @@ export const LocalDesigner = () => {
           <PseudoCommandBar />
           <Designer />
           <CombineInitializeVariableDialog />
+          <TriggerDescriptionDialog />
         </BJSWorkflowProvider>
       ) : null}
     </DesignerProvider>

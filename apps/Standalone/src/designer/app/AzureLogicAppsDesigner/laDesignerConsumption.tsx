@@ -48,6 +48,7 @@ import {
   Constants,
   RunHistoryPanel,
   CombineInitializeVariableDialog,
+  TriggerDescriptionDialog,
 } from '@microsoft/logic-apps-designer';
 import { useDispatch, useSelector } from 'react-redux';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
@@ -343,6 +344,7 @@ const DesignerEditorConsumption = () => {
                 />
                 {designerView ? <Designer /> : <CodeViewEditor ref={codeEditorRef} isConsumption />}
                 <CombineInitializeVariableDialog />
+                <TriggerDescriptionDialog />
               </div>
             </div>
           </BJSWorkflowProvider>
