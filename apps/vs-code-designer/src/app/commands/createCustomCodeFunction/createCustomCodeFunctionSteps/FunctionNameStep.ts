@@ -2,20 +2,20 @@
  *  Copyright (c) Microsoft Corporation. All rights reserved.
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
-import { localize } from '../../../../../localize';
+import { localize } from '../../../../localize';
 import * as vscode from 'vscode';
 import * as fse from 'fs-extra';
 import { AzureWizardPromptStep } from '@microsoft/vscode-azext-utils';
 import type { IProjectWizardContext } from '@microsoft/vscode-extension-logic-apps';
 import * as path from 'path';
 
-export class FunctionAppNameStep extends AzureWizardPromptStep<IProjectWizardContext> {
+export class FunctionNameStep extends AzureWizardPromptStep<IProjectWizardContext> {
   public hideStepCount = true;
 
   public async prompt(context: IProjectWizardContext): Promise<void> {
-    context.functionAppName = await context.ui.showInputBox({
+    context.customCodeFunctionName = await context.ui.showInputBox({
       placeHolder: localize('setFunctionName', 'Function name'),
-      prompt: localize('functionNamePrompt', 'Provide a function name for functions app project'),
+      prompt: localize('functionNamePrompt', 'Provide a function name'),
       validateInput: async (input: string): Promise<string | undefined> => await this.validateFunctionName(input, context),
     });
   }
