@@ -7,7 +7,7 @@ import { screen } from '@testing-library/react';
 import { TemplateCard } from '../cards/templateCard';
 // biome-ignore lint/correctness/noUnusedImports: <explanation>
 import React from 'react';
-import { openQuickViewPanelView } from '../../../core/state/templates/panelSlice';
+import { openPanelView, TemplatePanelView } from '../../../core/state/templates/panelSlice';
 
 describe('ui/templates/templatesDesigner', () => {
   let store: AppStore;
@@ -105,7 +105,7 @@ describe('ui/templates/templatesDesigner', () => {
     };
     store = setupStore(minimalStoreData);
 
-    const onSelect = () => store.dispatch(openQuickViewPanelView());
+    const onSelect = () => store.dispatch(openPanelView({ panelView: TemplatePanelView.QuickView }));
 
     renderWithProviders(<TemplateCard templateName="template2" onSelect={onSelect} />, { store });
 

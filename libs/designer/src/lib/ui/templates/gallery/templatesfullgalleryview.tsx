@@ -6,7 +6,7 @@ import { setLayerHostSelector } from '@fluentui/react';
 import type { CreateWorkflowHandler, TemplatesDesignerProps } from '../TemplatesDesigner';
 import { QuickViewPanel } from '../../panel/templatePanel/quickViewPanel/quickViewPanel';
 import { CreateWorkflowPanel } from '../../panel/templatePanel/createWorkflowPanel/createWorkflowPanel';
-import { openQuickViewPanelView } from '../../../core/state/templates/panelSlice';
+import { openPanelView, TemplatePanelView } from '../../../core/state/templates/panelSlice';
 import { TemplatesGalleryWithSearch } from './templatesgallerywithsearch';
 
 export const TemplatesFullGalleryView = ({ detailFilters, createWorkflowCall, isWorkflowEmpty = true }: TemplatesDesignerProps) => {
@@ -23,7 +23,7 @@ export const TemplatesFullGalleryView = ({ detailFilters, createWorkflowCall, is
     selectedTabId !== 'Accelerator' ? <TemplateCard blankWorkflowProps={{ isWorkflowEmpty }} templateName="#blank#" /> : undefined;
   const onTemplateSelect = (_templateName: string, isSingleWorkflow: boolean) => {
     if (isSingleWorkflow) {
-      dispatch(openQuickViewPanelView());
+      dispatch(openPanelView({ panelView: TemplatePanelView.QuickView }));
     }
   };
 

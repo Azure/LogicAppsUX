@@ -1,7 +1,7 @@
 import type { AppDispatch, RootState } from '../../../../core/state/templates/store';
 import { useDispatch, useSelector } from 'react-redux';
 import { closePanel, selectPanelTab, TemplatePanelView } from '../../../../core/state/templates/panelSlice';
-import { type TemplatePanelTab, TemplatesPanelContent, TemplatesPanelFooter, TemplatesPanelHeader } from '@microsoft/designer-ui';
+import { type TemplateTabProps, TemplateContent, TemplatesPanelFooter, TemplatesPanelHeader } from '@microsoft/designer-ui';
 import { ChevronDown16Regular, ChevronUp16Regular } from '@fluentui/react-icons';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useIntl } from 'react-intl';
@@ -58,7 +58,7 @@ export const CreateWorkflowPanel = ({
   }));
   const isMultiWorkflow = useMemo(() => !!manifest && isMultiWorkflowTemplate(manifest), [manifest]);
 
-  const panelTabs: TemplatePanelTab[] = useCreateWorkflowPanelTabs({
+  const panelTabs: TemplateTabProps[] = useCreateWorkflowPanelTabs({
     isMultiWorkflowTemplate: isMultiWorkflow,
     createWorkflow: createWorkflow ?? (() => Promise.resolve()),
     showCloseButton,
@@ -129,7 +129,7 @@ export const CreateWorkflowPanel = ({
       layerProps={layerProps}
       isFooterAtBottom={true}
     >
-      <TemplatesPanelContent tabs={panelTabs} selectedTab={selectedTabId ?? panelTabs?.[0]?.id} selectTab={handleSelectTab} />
+      <TemplateContent tabs={panelTabs} selectedTab={selectedTabId ?? panelTabs?.[0]?.id} selectTab={handleSelectTab} />
     </Panel>
   );
 };

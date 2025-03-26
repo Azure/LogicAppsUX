@@ -2,9 +2,9 @@ import { LogEntryLevel, LoggerService, type Template, getTriggerFromDefinition, 
 import type { AppDispatch } from '../../../../../core/state/templates/store';
 import { useIntl, type IntlShape } from 'react-intl';
 import constants from '../../../../../common/constants';
-import { closePanel, openCreateWorkflowPanelView } from '../../../../../core/state/templates/panelSlice';
+import { closePanel, openPanelView, TemplatePanelView } from '../../../../../core/state/templates/panelSlice';
 import { Link, Text } from '@fluentui/react-components';
-import type { TemplatePanelTab } from '@microsoft/designer-ui';
+import type { TemplateTabProps } from '@microsoft/designer-ui';
 import { clearTemplateDetails } from '../../../../../core/state/templates/templateSlice';
 import Markdown from 'react-markdown';
 import { useTemplateManifest, useWorkflowTemplate } from '../../../../../core/state/templates/templateselectors';
@@ -146,7 +146,7 @@ export const summaryTab = (
   clearDetailsOnClose: boolean,
   { templateId, workflowAppName, isMultiWorkflow }: Template.TemplateContext,
   onClose?: () => void
-): TemplatePanelTab => ({
+): TemplateTabProps => ({
   id: constants.TEMPLATE_PANEL_TAB_NAMES.OVERVIEW,
   title: intl.formatMessage({
     defaultMessage: 'Summary',
@@ -168,7 +168,7 @@ export const summaryTab = (
         message: 'Template create button clicked',
         args: [templateId, workflowAppName, `isMultiWorkflowTemplate:${isMultiWorkflow}`],
       });
-      dispatch(openCreateWorkflowPanelView());
+      dispatch(openPanelView({ panelView: TemplatePanelView.CreateWorkflow }));
     },
     secondaryButtonText: intl.formatMessage({
       defaultMessage: 'Close',

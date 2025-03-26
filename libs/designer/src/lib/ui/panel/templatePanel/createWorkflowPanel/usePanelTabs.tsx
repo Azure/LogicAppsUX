@@ -6,7 +6,7 @@ import { basicsTab } from './tabs/basicsTab';
 import { reviewCreateTab } from './tabs/reviewCreateTab';
 import { useDispatch, useSelector } from 'react-redux';
 import type { AppDispatch, RootState } from '../../../../core/state/templates/store';
-import type { TemplatePanelTab } from '@microsoft/designer-ui';
+import type { TemplateTabProps } from '@microsoft/designer-ui';
 import Constants from '../../../../common/constants';
 import { useExistingWorkflowNames } from '../../../../core/queries/template';
 import { validateWorkflowsBasicInfo } from '../../../../core/actions/bjsworkflow/templates';
@@ -26,7 +26,7 @@ export const useCreateWorkflowPanelTabs = ({
   isMultiWorkflowTemplate: boolean;
   showCloseButton?: boolean;
   onClosePanel?: () => void;
-}): TemplatePanelTab[] => {
+}): TemplateTabProps[] => {
   const intl = useIntl();
   const dispatch = useDispatch<AppDispatch>();
   const { data: existingWorkflowNames } = useExistingWorkflowNames();

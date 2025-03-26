@@ -2,7 +2,7 @@ import type { AppDispatch, RootState } from '../../../../../core/state/templates
 import { useSelector } from 'react-redux';
 import constants from '../../../../../common/constants';
 import { clearTemplateDetails } from '../../../../../core/state/templates/templateSlice';
-import type { TemplatePanelTab } from '@microsoft/designer-ui';
+import type { TemplateTabProps } from '@microsoft/designer-ui';
 import { closePanel, selectPanelTab } from '../../../../../core/state/templates/panelSlice';
 import type { CreateWorkflowTabProps } from '../createWorkflowPanel';
 import { SingleWorkflowBasics } from '../../../../templates/basics/singleworkflow';
@@ -18,7 +18,7 @@ export const basicsTab = (
   intl: IntlShape,
   dispatch: AppDispatch,
   { disabled, shouldClearDetails, isCreating, nextTabId, hasError, onClosePanel, showCloseButton = true }: CreateWorkflowTabProps
-): TemplatePanelTab => ({
+): TemplateTabProps => ({
   id: constants.TEMPLATE_PANEL_TAB_NAMES.BASIC,
   title: intl.formatMessage({
     defaultMessage: 'Basics',
