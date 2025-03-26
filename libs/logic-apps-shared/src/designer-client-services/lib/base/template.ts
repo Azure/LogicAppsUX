@@ -7,8 +7,8 @@ export interface BaseTemplateServiceOptions {
   httpClient: IHttpClient;
   endpoint: string;
   useEndpointForTemplates: boolean;
-  openBladeAfterCreate: (workflowName: string | undefined) => void;
-  onAddBlankWorkflow: () => Promise<void>;
+  openBladeAfterCreate?: (workflowName: string | undefined) => void;
+  onAddBlankWorkflow?: () => Promise<void>;
 }
 
 export class BaseTemplateService implements ITemplateService {
@@ -19,13 +19,15 @@ export class BaseTemplateService implements ITemplateService {
     return;
   }
 
-  public openBladeAfterCreate = (workflowName: string | undefined): void => this.options.openBladeAfterCreate(workflowName);
+  public openBladeAfterCreate = (workflowName: string | undefined): void => this.options.openBladeAfterCreate?.(workflowName);
 
-  public onAddBlankWorkflow = (): Promise<void> => this.options.onAddBlankWorkflow();
+  public onAddBlankWorkflow = (): Promise<void> =>
+    this.options.onAddBlankWorkflow ? this.options.onAddBlankWorkflow() : Promise.resolve();
 
   public getContentPathUrl = (templatePath: string, resourcePath: string): string => {
     const { endpoint, useEndpointForTemplates } = this.options;
-    return useEndpointForTemplates ? `${endpoint}/templates/${templatePath}/${resourcePath}` : resourcePath;
+    const resourceName = resourcePath.split('/').pop();
+    return useEndpointForTemplates ? `${endpoint}/templates/${templatePath}/${resourceName}` : resourcePath;
   };
 
   public getAllTemplateNames = async (): Promise<string[]> => {
