@@ -69,12 +69,12 @@ export const getRun = (runId: string) => {
 
 export const useNodeRepetition = (
   isMonitoringView: boolean,
-  isParentAgent: boolean,
   nodeId: string,
   runId: string | undefined,
   repetitionName: string,
   parentStatus: string | undefined,
-  parentRunIndex: number | undefined
+  parentRunIndex: number | undefined,
+  _isWithinAgenticLoop: boolean
 ) => {
   return useQuery(
     ['useNodeRepetition', { nodeId, runId, repetitionName, parentStatus, parentRunIndex }],

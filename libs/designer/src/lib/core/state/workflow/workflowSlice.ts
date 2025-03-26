@@ -275,7 +275,6 @@ export const workflowSlice = createSlice({
         return; // log exception
       }
       const { tools } = action.payload;
-      console.log('updateToolsMetadata', tools);
 
       Object.keys(tools).forEach((toolId: any) => {
         const nodeMetadata = getRecordEntry(state.nodesMetadata, toolId);
@@ -424,7 +423,7 @@ export const workflowSlice = createSlice({
       }
       nodeMetadata.runIndex = page;
     },
-    setRepetitionRunData: (state: WorkflowState, action: PayloadAction<{ nodeId: string; runData: LogicAppsV2.WorkflowRunAction }>) => {
+    setRepetitionRunData: (state: WorkflowState, action: PayloadAction<{ nodeId: string; runData: LogicAppsV2.RunRepetition }>) => {
       const { nodeId, runData } = action.payload;
       const nodeMetadata = getRecordEntry(state.nodesMetadata, nodeId);
       if (!nodeMetadata) {
@@ -432,10 +431,13 @@ export const workflowSlice = createSlice({
       }
       const nodeRunData = {
         ...nodeMetadata.runData,
-        ...runData,
-        inputsLink: runData?.inputsLink ?? null,
-        outputsLink: runData?.outputsLink ?? null,
-        duration: getDurationStringPanelMode(Date.parse(runData?.endTime) - Date.parse(runData?.startTime), /* abbreviated */ true),
+        ...runData?.properties,
+        inputsLink: runData?.properties.inputsLink ?? null,
+        outputsLink: runData?.properties.outputsLink ?? null,
+        duration: getDurationStringPanelMode(
+          Date.parse(runData?.properties.endTime) - Date.parse(runData?.properties.startTime),
+          /* abbreviated */ true
+        ),
       };
       nodeMetadata.runData = nodeRunData as LogicAppsV2.WorkflowRunAction;
     },

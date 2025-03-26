@@ -43,7 +43,7 @@ import {
   useShouldNodeFocus,
   useParentNodeId,
   useIsLeafNode,
-  useActionMetadata,
+  useIsWithinAgenticLoop,
 } from '../../core/state/workflow/workflowSelectors';
 import { setRepetitionRunData } from '../../core/state/workflow/workflowSlice';
 import { getRepetitionName } from '../common/LoopsPager/helper';
@@ -59,7 +59,6 @@ import { useDispatch } from 'react-redux';
 import { Handle, Position, type NodeProps } from '@xyflow/react';
 import { useHotkeys } from 'react-hotkeys-hook';
 import { CopyTooltip } from '../common/DesignerContextualMenu/CopyTooltip';
-import constants from '../../common/constants';
 
 const DefaultNode = ({ targetPosition = Position.Top, sourcePosition = Position.Bottom, id }: NodeProps) => {
   const readOnly = useReadOnly();
@@ -79,7 +78,6 @@ const DefaultNode = ({ targetPosition = Position.Top, sourcePosition = Position.
   const runInstance = useRunInstance();
   const runData = useRunData(id);
   const parentNodeId = useParentNodeId(id);
-  const parentActionMetadata = useActionMetadata(parentNodeId);
   const parentRunData = useRunData(parentNodeId ?? '');
   const nodeMockResults = useMocksByOperation(isTrigger ? `&${id}` : id);
   const isMockSupported = useIsMockSupported(id, isTrigger ?? false);
@@ -94,16 +92,17 @@ const DefaultNode = ({ targetPosition = Position.Top, sourcePosition = Position.
 
   const suppressDefaultNodeSelect = useSuppressDefaultNodeSelectFunctionality();
   const nodeSelectCallbackOverride = useNodeSelectAdditionalCallback();
-  const isParentAgent = parentActionMetadata?.type?.toLowerCase() === constants.NODE.TYPE.AGENT;
+  const graphId = metadata?.graphId ?? '';
+  const isWithinAgenticLoop = useIsWithinAgenticLoop(graphId);
 
   const { isFetching: isRepetitionFetching, data: repetitionRunData } = useNodeRepetition(
     !!isMonitoringView,
-    isParentAgent,
     id,
     runInstance?.id,
     repetitionName,
     parentRunData?.status,
-    parentRunIndex
+    parentRunIndex,
+    isWithinAgenticLoop
   );
 
   useEffect(() => {
@@ -112,8 +111,7 @@ const DefaultNode = ({ targetPosition = Position.Top, sourcePosition = Position.
         // if the correlation id is the same, we don't need to update the repetition run data
         return;
       }
-      console.log('charlie', repetitionRunData);
-      dispatch(setRepetitionRunData({ nodeId: id, runData: repetitionRunData.properties as LogicAppsV2.WorkflowRunAction }));
+      dispatch(setRepetitionRunData({ nodeId: id, runData: repetitionRunData as LogicAppsV2.RunRepetition }));
     }
   }, [dispatch, repetitionRunData, id, selfRunData?.correlation?.actionTrackingId]);
 
