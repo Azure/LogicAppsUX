@@ -52,12 +52,7 @@ export default {
           description: 'Provide Instructions for your agent.',
           title: 'Instructions',
           type: 'array',
-          default: [
-            {
-              Role: 'System',
-              Content: 'Provide Instructions for your agent.',
-            },
-          ],
+          default: [],
           items: {
             description: 'Provide Instructions for your agent.',
             required: ['Role', 'Content'],
@@ -77,14 +72,16 @@ export default {
             },
           },
           required: ['Role', 'Content'],
-          'x-ms-summary': 'Messages',
+          'x-ms-summary': 'Instructions',
           'x-ms-visibility': 'important',
           'x-ms-allowed': '1', // Only used for array types
         },
         limit: {
           type: 'object',
           'x-ms-group-name': 'Change limits',
-          required: [],
+          'x-ms-visibility': 'advanced',
+          'x-ms-summary': 'Limits',
+          required: ['Count', 'Timeout'],
           default: {},
           properties: {
             count: {

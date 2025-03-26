@@ -187,7 +187,7 @@ export const ExpandedComplexArray = ({
           </div>
         );
       })}
-      {allowedCount === undefined || allowedCount > 1 ? (
+      {allowedCount === undefined || allowedCount > 1 || allItems.length === 0 ? (
         <div className="msla-array-toolbar">
           <DefaultButton
             disabled={props.readonly}
