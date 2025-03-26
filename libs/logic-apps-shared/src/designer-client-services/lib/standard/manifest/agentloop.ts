@@ -26,6 +26,7 @@ export default {
               title: 'Agent Parameters',
               description: 'Initialize Agent Parameters',
               type: 'object',
+              'x-ms-visibility': 'important',
               'x-ms-editor': 'initializevariable',
               'x-ms-editor-options': {
                 isAgentParameter: true,
