@@ -18,6 +18,7 @@ export interface ItemSchemaItemProps {
   items?: ItemSchemaItemProps[];
   readOnly?: boolean;
   enum?: string[];
+  visibility?: string;
   [property: string]: any;
 }
 
@@ -54,6 +55,7 @@ export const getOneDimensionalSchema = (itemSchema: ArrayItemSchema, isRequired:
       enum: itemSchema.enum,
       items: isArray ? getOneDimensionalSchema(items, isRequired) : undefined,
       readOnly,
+      visibility: itemSchema[ExtensionProperties.Visibility],
     },
   ];
 };

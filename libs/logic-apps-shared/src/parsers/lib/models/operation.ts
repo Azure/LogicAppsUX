@@ -262,6 +262,7 @@ interface ParameterBase {
   visibility?: string;
   groupName?: string;
   isConnectionRequired?: boolean;
+  allowedCount?: number;
 }
 
 export interface SchemaProperty extends ParameterBase {
@@ -338,6 +339,7 @@ export function toInputParameter(schemaProperty: SchemaProperty, suppressCasting
     title,
     type,
     visibility,
+    allowedCount,
   } = schemaProperty;
 
   return {
@@ -370,5 +372,6 @@ export function toInputParameter(schemaProperty: SchemaProperty, suppressCasting
     title,
     type,
     visibility,
+    allowedCount,
   };
 }

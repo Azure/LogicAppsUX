@@ -35,6 +35,7 @@ export interface ParameterInfo {
   validationErrors?: string[];
   value: ValueSegment[];
   visibility?: string;
+  allowedCount?: number;
 }
 
 export interface ParameterDetails {

@@ -72,6 +72,7 @@ export interface ArrayEditorProps extends BaseEditorProps {
   onMenuOpen?: CallbackHandler;
   suppressCastingForSerialize?: boolean;
   isRequired?: boolean;
+  allowedCount?: number;
   getTokenPicker: GetTokenPickerHandler;
 }
 

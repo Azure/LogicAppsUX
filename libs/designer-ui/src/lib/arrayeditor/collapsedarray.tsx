@@ -23,6 +23,7 @@ export interface CollapsedArrayProps {
   getTokenPicker: GetTokenPickerHandler;
   tokenMapping?: Record<string, ValueSegment>;
   loadParameterValueFromString?: loadParameterValueFromStringHandler;
+  allowedCount?: number;
 }
 
 export const CollapsedArray = ({

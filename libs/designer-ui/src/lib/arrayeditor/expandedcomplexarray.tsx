@@ -8,7 +8,7 @@ import type { ItemSchemaItemProps } from './util/util';
 import type { IIconProps } from '@fluentui/react';
 import { css, DefaultButton } from '@fluentui/react';
 import { Label } from '../label';
-import { guid } from '@microsoft/logic-apps-shared';
+import { equals, guid } from '@microsoft/logic-apps-shared';
 import { useIntl } from 'react-intl';
 
 const addItemButtonIconProps: IIconProps = {
@@ -29,6 +29,7 @@ export interface ExpandedComplexArrayProps {
   tokenMapping?: Record<string, ValueSegment>;
   loadParameterValueFromString?: loadParameterValueFromStringHandler;
   isDynamic?: boolean;
+  allowedCount?: number;
 }
 
 export const ExpandedComplexArray = ({
@@ -39,6 +40,7 @@ export const ExpandedComplexArray = ({
   isNested = false,
   options,
   isDynamic,
+  allowedCount,
   ...props
 }: ExpandedComplexArrayProps): JSX.Element => {
   const intl = useIntl();
@@ -130,8 +132,9 @@ export const ExpandedComplexArray = ({
                   ) : (
                     <>
                       {
-                        // hide empty readonly editors
-                        schemaItem?.readOnly && (!complexItem || complexItem.value.length === 0) ? null : (
+                        // hide empty readonly editors or when visibility is hideInUI
+                        equals(schemaItem?.visibility ?? '', 'hideInUI') ||
+                        (schemaItem?.readOnly && (!complexItem || complexItem.value.length === 0)) ? null : (
                           <>
                             <div className="msla-array-item-header">
                               {renderLabel(index, schemaItem, schemaItem?.isRequired)}
@@ -184,25 +187,32 @@ export const ExpandedComplexArray = ({
           </div>
         );
       })}
-      <div className="msla-array-toolbar">
-        <DefaultButton
-          disabled={props.readonly}
-          className="msla-array-add-item-button"
-          iconProps={addItemButtonIconProps}
-          text={addItemButtonLabel}
-          onClick={() => {
-            setItems([
-              ...allItems,
-              {
-                key: guid(),
-                items: dimensionalSchema.map((item) => {
-                  return { key: item.key, title: item.title, value: [], description: item.description };
-                }),
-              },
-            ]);
-          }}
-        />
-      </div>
+      {allowedCount === undefined || allowedCount > 1 ? (
+        <div className="msla-array-toolbar">
+          <DefaultButton
+            disabled={props.readonly}
+            className="msla-array-add-item-button"
+            iconProps={addItemButtonIconProps}
+            text={addItemButtonLabel}
+            onClick={() => {
+              setItems([
+                ...allItems,
+                {
+                  key: guid(),
+                  items: dimensionalSchema.map((item) => {
+                    return {
+                      key: item.key,
+                      title: item.title,
+                      value: [],
+                      description: item.description,
+                    };
+                  }),
+                },
+              ]);
+            }}
+          />
+        </div>
+      ) : null}
     </div>
   );
 };

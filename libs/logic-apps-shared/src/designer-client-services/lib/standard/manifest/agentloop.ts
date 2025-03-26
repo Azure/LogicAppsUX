@@ -27,6 +27,7 @@ export default {
               description: 'Initialize Agent Parameters',
               type: 'object',
               'x-ms-editor': 'initializevariable',
+              'x-ms-visibility': 'important',
               'x-ms-editor-options': {
                 isAgentParameter: true,
               },
@@ -48,20 +49,28 @@ export default {
           'x-ms-visibility': 'important',
         },
         messages: {
-          description: 'Messages',
+          description: 'Provide Instructions for your agent.',
+          title: 'Instructions',
           type: 'array',
+          default: [
+            {
+              Role: 'System',
+              Content: 'Provide Instructions for your agent.',
+            },
+          ],
           items: {
-            description: 'Message',
+            description: 'Provide Instructions for your agent.',
             required: ['Role', 'Content'],
             type: 'object',
             properties: {
               role: {
                 description: 'Message role',
                 type: 'string',
+                'x-ms-visibility': 'hideInUI',
                 'x-ms-summary': 'Role',
               },
               content: {
-                description: 'Message content',
+                description: 'Provide your prompt',
                 type: 'string',
                 'x-ms-summary': 'Content',
               },
@@ -70,6 +79,7 @@ export default {
           required: ['Role', 'Content'],
           'x-ms-summary': 'Messages',
           'x-ms-visibility': 'important',
+          'x-ms-allowed': '1', // Only used for array types
         },
         limit: {
           type: 'object',

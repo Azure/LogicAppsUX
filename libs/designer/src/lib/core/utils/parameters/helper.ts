@@ -402,6 +402,7 @@ export function createParameterInfo(
     type: parameter.type,
     value,
     visibility: getVisibility(parameter),
+    allowedCount: parameter.allowedCount,
   };
 
   return parameterInfo;

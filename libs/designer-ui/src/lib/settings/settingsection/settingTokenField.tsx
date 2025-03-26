@@ -81,6 +81,7 @@ export interface SettingTokenFieldProps extends SettingProps {
   hostOptions?: EditorHostOptions;
   subComponent?: JSX.Element | null;
   subMenu?: JSX.Element | null;
+  allowedCount?: number;
 }
 
 export const SettingTokenField = ({ ...props }: SettingTokenFieldProps) => {
@@ -139,6 +140,7 @@ export const TokenField = ({
   getTokenPicker,
   hostOptions,
   required,
+  allowedCount,
 }: TokenFieldProps) => {
   const intl = useIntl();
   const dropdownOptions = useMemo(() => getDropdownOptionsFromOptions(editorOptions), [editorOptions]);
@@ -188,6 +190,7 @@ export const TokenField = ({
           tokenMapping={tokenMapping}
           loadParameterValueFromString={loadParameterValueFromString}
           suppressCastingForSerialize={hostOptions?.suppressCastingForSerialize}
+          allowedCount={allowedCount}
         />
       );
 

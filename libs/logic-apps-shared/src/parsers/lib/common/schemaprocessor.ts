@@ -511,6 +511,7 @@ export class SchemaProcessor {
     const summary = this._getSummary(schema[SwaggerConstants.ExtensionProperties.Summary], '');
     const type = (schema.type as string) || SwaggerConstants.Types.Any;
     const visibility = this._getVisibility(schema);
+    const allowedCount = schema[SwaggerConstants.ExtensionProperties.Allowed] ?? undefined;
     const groupName = this._getGroupName(schema);
     const alias = this.options.useAliasedIndexing ? schema[SwaggerConstants.ExtensionProperties.Alias] : undefined;
 
@@ -560,6 +561,7 @@ export class SchemaProcessor {
       title,
       type,
       visibility,
+      allowedCount,
     };
   }
 

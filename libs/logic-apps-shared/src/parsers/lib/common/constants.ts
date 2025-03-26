@@ -42,6 +42,7 @@ export const ExtensionProperties = {
   Trigger: 'x-ms-trigger',
   TriggerHint: 'x-ms-trigger-hint',
   Visibility: 'x-ms-visibility',
+  Allowed: 'x-ms-allowed',
 };
 
 export const Formats = {
