@@ -49,6 +49,8 @@ export default {
         },
         messages: {
           description: 'Messages',
+          title: 'Messages',
+          default: [],
           type: 'array',
           items: {
             description: 'Message',
@@ -70,24 +72,6 @@ export default {
           required: ['Role', 'Content'],
           'x-ms-summary': 'Messages',
           'x-ms-visibility': 'important',
-        },
-        limit: {
-          type: 'object',
-          'x-ms-group-name': 'Change limits',
-          required: [],
-          properties: {
-            count: {
-              type: 'integer',
-              default: 60,
-              title: 'Count',
-            },
-            timeout: {
-              type: 'string',
-              default: 'PT1H',
-              title: 'Timeout',
-              'x-ms-stateless-default': 'PT5M',
-            },
-          },
         },
       },
       required: ['deploymentId', 'messages'],
@@ -116,6 +100,10 @@ export default {
     settings: {
       trackedProperties: {
         scopes: [SettingScope.Action],
+      },
+      limit: {
+        scopes: [SettingScope.Action],
+        options: {},
       },
     },
   },
