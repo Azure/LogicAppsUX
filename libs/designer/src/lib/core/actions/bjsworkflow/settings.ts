@@ -108,6 +108,7 @@ export interface Settings {
   downloadChunkSize?: SettingData<number>;
   runAfter?: SettingData<GraphEdge[]>;
   invokerConnection?: SettingData<SimpleSetting<boolean>>;
+  count?: SettingData<string | number>;
 }
 
 /**
@@ -183,6 +184,10 @@ export const getOperationSettings = (
     timeout: {
       isSupported: isTimeoutSupported(isTrigger, nodeType, manifest),
       value: getTimeout(nodeType, isTrigger, manifest, operation),
+    },
+    count: {
+      isSupported: isCountSupported(isTrigger, nodeType, manifest),
+      value: getCount(nodeType, isTrigger, manifest, operation),
     },
     paging: {
       isSupported: isPagingSupported(isTrigger, nodeType, manifest, swagger, operationId),
@@ -622,6 +627,22 @@ const getTimeout = (
   return undefined;
 };
 
+const getCount = (
+  nodeType: string,
+  isTrigger: boolean,
+  manifest?: OperationManifest,
+  definition?: LogicAppsV2.ActionDefinition
+): string | number | undefined => {
+  const isSupported = isCountSupported(isTrigger, nodeType, manifest);
+
+  if (isSupported) {
+    const timeoutableActionDefinition = definition as LogicAppsV2.TimeoutableActionDefinition;
+    return timeoutableActionDefinition?.limit?.count ?? 100; // TODO: Change this to come from manifest
+  }
+
+  return undefined;
+};
+
 const isTimeoutableAction = (operationType: string): boolean => {
   const supportedTypes = [Constants.NODE.TYPE.API_CONNECTION, Constants.NODE.TYPE.API_CONNECTION_WEBHOOK, Constants.NODE.TYPE.HTTP];
   return supportedTypes.indexOf(operationType.toLowerCase()) > -1;
@@ -634,6 +655,16 @@ const isTimeoutSupported = (isTrigger: boolean, nodeType: string, manifest?: Ope
         isTrigger
       )
     : isTimeoutableAction(nodeType);
+};
+
+const isCountSupported = (isTrigger: boolean, nodeType: string, manifest?: OperationManifest): boolean => {
+  return (
+    !!manifest &&
+    !!isSettingSupportedFromOperationManifest(
+      getOperationSettingFromManifest(manifest, 'count') as OperationManifestSetting<void>,
+      isTrigger
+    )
+  );
 };
 
 const getOperationSettingFromManifest = (

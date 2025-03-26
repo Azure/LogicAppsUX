@@ -16,11 +16,7 @@
                 "role": "User",
                 "content": "This is a user message."
               }
-            ],
-            "limit": {
-              "count": 60,
-              "timeout": "PT1H"
-            }
+            ]
           }
         },
         "tools": {
@@ -88,7 +84,11 @@
             }
           }
         },
-        "runAfter": {}
+        "runAfter": {},
+        "limit": {
+          "timeout": "PT1H",
+          "count": 100
+        }
       }
     },
     "contentVersion": "1.0.0.0",

@@ -115,6 +115,7 @@ export interface OperationManifestSettings {
   secureData?: OperationManifestSetting<SecureDataOptions>;
   timeout?: OperationManifestSetting<void>;
   trackedProperties?: OperationManifestSetting<void>;
+  count?: OperationManifestSetting<void>;
 }
 
 export interface Badge {

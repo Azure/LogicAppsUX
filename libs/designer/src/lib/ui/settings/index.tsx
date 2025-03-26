@@ -242,7 +242,7 @@ function GeneralSettings({
   const operationInfo = useOperationInfo(nodeId) ?? ({} as any);
   const nodeInputs = useRawInputParameters(nodeId) ?? ({} as any);
 
-  const { timeout, splitOn, splitOnConfiguration, concurrency, conditionExpressions, invokerConnection } = useSelector(
+  const { timeout, splitOn, splitOnConfiguration, concurrency, conditionExpressions, invokerConnection, count } = useSelector(
     (state: RootState) => getRecordEntry(state.operations.settings, nodeId) ?? {}
   );
 
@@ -292,6 +292,15 @@ function GeneralSettings({
       timeout: {
         isSupported: !!timeout?.isSupported,
         value: newVal,
+      },
+    });
+  };
+
+  const onCountValueChange = (value: number): void => {
+    updateSettings({
+      count: {
+        isSupported: !!count?.isSupported,
+        value: value,
       },
     });
   };
@@ -348,7 +357,8 @@ function GeneralSettings({
     timeout?.isSupported ||
     concurrency?.isSupported ||
     conditionExpressions?.isSupported ||
-    invokerConnection?.isSupported
+    invokerConnection?.isSupported ||
+    count?.isSupported
   ) {
     return (
       <General
@@ -357,6 +367,7 @@ function GeneralSettings({
         expanded={isExpanded}
         validationErrors={validationErrors}
         splitOn={splitOn}
+        count={count}
         timeout={timeout}
         concurrency={concurrency}
         invokerConnection={invokerConnection}
@@ -370,6 +381,7 @@ function GeneralSettings({
         onSplitOnToggle={onSplitOnToggle}
         onSplitOnSelectionChanged={onSplitOnSelectionChanged}
         onTimeoutValueChange={onTimeoutValueChange}
+        onCountValueChange={onCountValueChange}
         onTriggerConditionsChange={onTriggerConditionsChange}
         onClientTrackingIdChange={onClientTrackingIdChange}
         maximumWaitingRunsMetadata={maximumWaitingRunsMetadata ?? constants.MAXIMUM_WAITING_RUNS.DEFAULT}
