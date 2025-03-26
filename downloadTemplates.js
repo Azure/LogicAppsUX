@@ -5,10 +5,13 @@ import client from 'https';
 
 const releaseBranch = 'release/20250324';
 
+const shouldDownloadImages = process.argv[2] === '--download-images';
+const subdirectory = process.argv[3] === '--subdirectory' ? process.argv[4] : undefined;
 const baseURL = `https://raw.githubusercontent.com/azure/LogicAppsTemplates/${releaseBranch}`;
 const sourceCodeURL = `https://github.com/Azure/LogicAppsTemplates/tree/${releaseBranch}`;
-const templatesFolder = './libs/logic-apps-shared/src/designer-client-services/lib/templates';
-const shouldDownloadImages = process.argv[2] === '--download-images';
+const templatesFolder = subdirectory
+  ? `./libs/logic-apps-shared/src/designer-client-services/lib/templates/${subdirectory}`
+  : './libs/logic-apps-shared/src/designer-client-services/lib/templates';
 
 const downloadFile = async (path) => {
   const artifactUrl = `${baseURL}/${path}`;
@@ -74,6 +77,10 @@ const downloadWorkflowManifest = async (path) => {
 const run = async () => {
   if (shouldDownloadImages) {
     console.log('Templates will be downloaded with images');
+  }
+
+  if (subdirectory) {
+    console.log(`Templates will be downloaded to the subdirectory: ${subdirectory}`);
   }
 
   await removeTemplatesFolderIfPresent();

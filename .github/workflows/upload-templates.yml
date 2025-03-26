@@ -34,7 +34,7 @@ jobs:
             args: [--frozen-lockfile, --strict-peer-dependencies]
 
     - name: Build Templates Folder
-      run: pnpm run templates --download-images
+      run: pnpm run templates --download-images --subdirectory logicapps
 
     - name: Azure login
       uses: azure/login@v2
