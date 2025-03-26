@@ -23,7 +23,6 @@ import {
   normalizeConnectorId,
 } from '@microsoft/logic-apps-shared';
 import type { AppDispatch, RootState } from '../../../core/state/templates/store';
-import { getConnectorResources } from '../../../core/templates/utils/helper';
 import { type IntlShape, useIntl } from 'react-intl';
 import { useDispatch, useSelector } from 'react-redux';
 import { ConnectorIconWithName } from './connector';
@@ -35,6 +34,7 @@ import { autoCreateConnectionIfPossible, updateTemplateConnection } from '../../
 import { getConnector } from '../../../core/queries/operation';
 import { useConnectorInfo, type ConnectorInfo } from '../../../core/templates/utils/queries';
 import { isConnectionValid } from '../../../core/utils/connectors/connections';
+import { useConnectorStatusStrings } from '../templatesStrings';
 
 const createPlaceholderKey = '##create##';
 const connectionStatus: Record<string, any> = {
@@ -388,7 +388,6 @@ export const WorkflowConnections = ({ connections, viewMode = 'full' }: Workflow
         return isCompactView ? (
           <ConnectorWithConnectionStatus
             item={item}
-            intl={intl}
             onConnectorLoaded={onConnectorLoaded}
             onConnectionLoaded={(connections) => onConnectionsLoaded(connections, item)}
           />
@@ -423,7 +422,6 @@ export const WorkflowConnections = ({ connections, viewMode = 'full' }: Workflow
                 : intl.formatMessage({ defaultMessage: 'Not connected', description: 'Label text to not connected status', id: 'YnSO/8' })
             }
             item={item}
-            intl={intl}
             onConnectionLoaded={(connections) => onConnectionsLoaded(connections, item)}
           />
         );
@@ -478,12 +476,10 @@ export const WorkflowConnections = ({ connections, viewMode = 'full' }: Workflow
 
 const ConnectorWithConnectionStatus = ({
   item,
-  intl,
   onConnectorLoaded,
   onConnectionLoaded,
 }: {
   item: ConnectionItem;
-  intl: IntlShape;
   onConnectorLoaded?: (connector: ConnectorInfo) => void;
   onConnectionLoaded: (connections: Connection[]) => void;
 }): JSX.Element => {
@@ -522,7 +518,6 @@ const ConnectorWithConnectionStatus = ({
           className="msla-template-connection-compact-status"
           isCompactView={true}
           item={item}
-          intl={intl}
           onConnectionLoaded={onConnectionLoaded}
         />
       </div>
@@ -532,14 +527,12 @@ const ConnectorWithConnectionStatus = ({
 
 const ConnectionStatusWithProgress = ({
   item,
-  intl,
   className,
   isCompactView,
   onConnectionLoaded,
 }: {
   className?: string;
   item: ConnectionItem;
-  intl: IntlShape;
   isCompactView?: boolean;
   onConnectionLoaded: (connections: Connection[]) => void;
 }): JSX.Element => {
@@ -552,7 +545,7 @@ const ConnectionStatusWithProgress = ({
   }, [data, item.allConnections, onConnectionLoaded]);
 
   return item.hasConnection !== undefined ? (
-    <ConnectionStatus className={className} isCompactView={isCompactView} hasConnection={item.hasConnection} intl={intl} />
+    <ConnectionStatus className={className} isCompactView={isCompactView} hasConnection={item.hasConnection} />
   ) : (
     <Shimmer
       className="msla-template-connection-status"
@@ -565,16 +558,14 @@ const ConnectionStatusWithProgress = ({
 
 const ConnectionStatus = ({
   hasConnection,
-  intl,
   className,
   isCompactView,
 }: {
   className?: string;
   hasConnection: boolean;
   isCompactView?: boolean;
-  intl: IntlShape;
 }): JSX.Element => {
-  const resources = getConnectorResources(intl);
+  const resources = useConnectorStatusStrings();
   const statusText: Record<string, string> = {
     true: isCompactView ? resources.authenticated : resources.connected,
     false: isCompactView ? resources.notAuthenticated : resources.notConnected,
