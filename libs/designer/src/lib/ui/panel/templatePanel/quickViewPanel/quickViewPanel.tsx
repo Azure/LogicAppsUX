@@ -11,6 +11,7 @@ import { useWorkflowTemplate } from '../../../../core/state/templates/templatese
 import { Open16Regular } from '@fluentui/react-icons';
 import { closePanel, TemplatePanelView } from '../../../../core/state/templates/panelSlice';
 import { clearTemplateDetails } from '../../../../core/state/templates/templateSlice';
+import { isMultiWorkflowTemplate } from '../../../../core/actions/bjsworkflow/templates';
 
 export interface QuickViewPanelProps {
   showCreate: boolean;
@@ -78,6 +79,7 @@ export const QuickViewPanel = ({
         title={manifest?.title ?? ''}
         summary={manifest?.summary ?? ''}
         sourceCodeUrl={manifest?.sourceCodeUrl}
+        isMultiWorkflowTemplate={isMultiWorkflowTemplate(templateManifest)}
         details={templateManifest?.details ?? {}}
       />
     ),
@@ -128,6 +130,7 @@ export const QuickViewPanelHeader = ({
   title,
   summary,
   sourceCodeUrl,
+  isMultiWorkflowTemplate = false,
   details,
   features,
   onBackClick,
@@ -136,22 +139,29 @@ export const QuickViewPanelHeader = ({
   summary: string;
   sourceCodeUrl: string | undefined;
   details: Record<string, string>;
+  isMultiWorkflowTemplate?: boolean;
   features?: string;
   onBackClick?: () => void;
 }) => {
   const intl = useIntl();
-  const detailsTags: Record<string, string> = {
-    Type: intl.formatMessage({
-      defaultMessage: 'Type',
-      id: 'tjQdhq',
-      description: 'Solution type of the template',
-    }),
-    By: intl.formatMessage({
+  const detailsTags: Record<string, string> = useMemo(() => {
+    const baseDetailsTags: Record<string, string> = isMultiWorkflowTemplate
+      ? {}
+      : {
+          Type: intl.formatMessage({
+            defaultMessage: 'Type',
+            id: 'tjQdhq',
+            description: 'Solution type of the template',
+          }),
+        };
+
+    baseDetailsTags.By = intl.formatMessage({
       defaultMessage: 'By',
       id: 'nhEgHb',
       description: 'Name of the organization that published this template',
-    }),
-  };
+    });
+    return baseDetailsTags;
+  }, [isMultiWorkflowTemplate, intl]);
 
   return (
     <TemplatesPanelHeader title={title} onBackClick={onBackClick}>

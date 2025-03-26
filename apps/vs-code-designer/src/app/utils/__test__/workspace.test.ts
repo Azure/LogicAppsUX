@@ -3,7 +3,6 @@ import * as vscode from 'vscode';
 import * as workspaceUtils from '../workspace';
 import { promptOpenProjectOrWorkspace, tryGetLogicAppProjectRoot } from '../verifyIsProject';
 import * as fse from 'fs-extra';
-import * as fs from 'fs';
 
 vi.mock('../verifyIsProject');
 
@@ -44,10 +43,10 @@ describe('workspaceUtils.getWorkspaceFolder', () => {
       (vscode.workspace as any).workspaceFolders = [folder1];
     });
 
-    const filereadSpy = vi.spyOn(fse, 'readdir').mockResolvedValue([
+    (fse.readdir as unknown as Mock).mockReturnValue([
       { name: 'dir1', isDirectory: () => true },
       { name: 'dir2', isDirectory: () => true },
-    ] as fse.Dirent[]);
+    ]);
 
     (promptOpenProjectOrWorkspace as Mock).mockImplementation(promptOpenProjectOrWorkspaceSpy);
 
@@ -63,9 +62,10 @@ describe('workspaceUtils.getWorkspaceFolder', () => {
       (vscode.workspace as any).workspaceFolders = [folder1];
     });
 
-    const filereadSpy = vi
-      .spyOn(fse, 'readdir')
-      .mockResolvedValue([{ name: 'dir1', isDirectory: () => true } as fs.Dirent, { name: 'dir2', isDirectory: () => true } as fs.Dirent]);
+    (fse.readdir as unknown as Mock).mockReturnValue([
+      { name: 'dir1', isDirectory: () => true },
+      { name: 'dir2', isDirectory: () => true },
+    ]);
 
     (promptOpenProjectOrWorkspace as Mock).mockImplementation(promptOpenProjectOrWorkspaceSpy);
 
@@ -82,7 +82,7 @@ describe('workspaceUtils.getWorkspaceFolder', () => {
       (vscode.workspace as any).workspaceFolders = [folder1];
     });
 
-    const filereadSpy = vi.spyOn(fse, 'readdir').mockResolvedValue([{ name: 'dir1', isDirectory: () => true } as fs.Dirent]);
+    (fse.readdir as unknown as Mock).mockReturnValue([{ name: 'dir1', isDirectory: () => true }]);
 
     const tryGetLogicAppProjectRootSpy = vi.fn(() => {
       return '/path/one/dir1';
@@ -105,7 +105,7 @@ describe('workspaceUtils.getWorkspaceFolder', () => {
       (vscode.workspace as any).workspaceFolders = [folder1];
     });
 
-    const filereadSpy = vi.spyOn(fse, 'readdir').mockResolvedValue([{ name: 'dir1', isDirectory: () => true } as fs.Dirent]);
+    (fse.readdir as unknown as Mock).mockResolvedValue([{ name: 'dir1', isDirectory: () => true }]);
 
     const tryGetLogicAppProjectRootSpy = vi.fn(() => {
       return '/path/one/dir1';

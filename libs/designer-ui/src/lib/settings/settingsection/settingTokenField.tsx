@@ -174,6 +174,7 @@ export const TokenField = ({
           agentParameterButtonProps={agentParameterButtonProps}
           tokenPickerButtonProps={tokenpickerButtonProps}
           getTokenPicker={getTokenPicker}
+          basePlugins={{ tokens: showTokens }}
           itemSchema={editorViewModel.itemSchema}
           castParameter={onCastParameter}
           onChange={onValueChange}

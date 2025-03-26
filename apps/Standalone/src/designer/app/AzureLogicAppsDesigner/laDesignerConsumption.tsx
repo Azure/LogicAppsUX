@@ -327,6 +327,7 @@ const DesignerEditorConsumption = () => {
                   isReadOnly={readOnly}
                   isDarkMode={isDarkMode}
                   isDesignerView={designerView}
+                  isUnitTest={false}
                   isMonitoringView={isMonitoringView}
                   showConnectionsPanel={showConnectionsPanel}
                   enableCopilot={() => dispatch(setIsChatBotEnabled(!showChatBot))}

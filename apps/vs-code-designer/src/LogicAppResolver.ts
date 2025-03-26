@@ -20,7 +20,6 @@ export class LogicAppResolver implements AppResourceResolver {
   public async resolveResource(subContext: ISubscriptionContext, resource: AppResource): Promise<LogicAppResourceTree | undefined> {
     return await callWithTelemetryAndErrorHandling('resolveResource', async (context: IActionContext) => {
       const site: Site = await this.getAppResourceSite(context, subContext, resource);
-      context.telemetry.properties.tenantId = subContext?.tenantId;
       if (!site) {
         return;
       }
