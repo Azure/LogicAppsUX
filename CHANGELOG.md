@@ -1,4 +1,11 @@
 # Logic Apps Designer
+### [5.58.2](https://github.com/Azure/LogicAppsUX/compare/v5.58.1...v5.58.2) (2025-03-26)
+
+
+### Features
+
+* **Templates:** Infer workflow trigger from definition for accelerator ([#6869](https://github.com/Azure/LogicAppsUX/issues/6869)) ([e092a56](https://github.com/Azure/LogicAppsUX/commit/e092a56de8749df1e86641a7a3a277ae643b0243)), closes [#6844](https://github.com/Azure/LogicAppsUX/issues/6844)
+
 ### [5.58.1](https://github.com/Azure/LogicAppsUX/compare/v5.58.0...v5.58.1) (2025-03-25)
 
 
