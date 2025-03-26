@@ -243,7 +243,7 @@ const getServices = (
   };
 
   const baseService = new BaseTemplateService({
-    endpoint: 'https://priti-cxf4h5cpcteue4az.b02.azurefd.net',
+    endpoint: 'https://priti-cxf4h5cpcteue4az.b02.azurefd.net/logicapps',
     useEndpointForTemplates: useEndpoint,
     openBladeAfterCreate: (workflowName: string | undefined) => {
       window.alert(`Open blade after create, workflowName is: ${workflowName}`);
@@ -396,5 +396,23 @@ class LocalResourceService implements IResourceService {
       { id: '/app1', name: 'app1', kind: 'standard' },
       { id: '/app2', name: 'app2', kind: 'standard' },
     ] as any;
+  }
+
+  async listAllLogicApps() {
+    return [
+      { id: '/app1', name: 'app1', kind: 'standard' },
+      { id: '/app2', name: 'app2', kind: 'standard' },
+    ] as any;
+  }
+
+  async listWorkflowsInApp() {
+    return [
+      { id: '/app1/workflow1', name: 'workflow1' },
+      { id: '/app1/workflow2', name: 'workflow2' },
+    ] as any;
+  }
+
+  async getResource(_resourceId: string, _queryParameters: Record<string, string>) {
+    return {} as any;
   }
 }

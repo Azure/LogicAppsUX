@@ -8,6 +8,7 @@ const releaseBranch = 'release/20250324';
 const baseURL = `https://raw.githubusercontent.com/azure/LogicAppsTemplates/${releaseBranch}`;
 const sourceCodeURL = `https://github.com/Azure/LogicAppsTemplates/tree/${releaseBranch}`;
 const templatesFolder = './libs/logic-apps-shared/src/designer-client-services/lib/templates';
+const shouldDownloadImages = process.argv[2] === '--download-images';
 
 const downloadFile = async (path) => {
   const artifactUrl = `${baseURL}/${path}`;
@@ -53,6 +54,11 @@ const downloadWorkflowManifest = async (path) => {
   }
 
   if (workflowManifest.images.light && workflowManifest.images.dark) {
+    if (shouldDownloadImages) {
+      await downloadFile(`${path}/${workflowManifest.images.light}.png`);
+      await downloadFile(`${path}/${workflowManifest.images.dark}.png`);
+    }
+
     workflowManifest.images = {
       light: `${baseURL}/${path}/${workflowManifest.images.light}.png`,
       dark: `${baseURL}/${path}/${workflowManifest.images.dark}.png`,
@@ -66,6 +72,10 @@ const downloadWorkflowManifest = async (path) => {
 };
 
 const run = async () => {
+  if (shouldDownloadImages) {
+    console.log('Templates will be downloaded with images');
+  }
+
   await removeTemplatesFolderIfPresent();
   await createTemplatesFolder('');
   const registeredManifestNames = await (await downloadFetchFile('manifest.json')).json();
