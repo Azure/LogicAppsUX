@@ -12,8 +12,9 @@ import { ConfigureWorkflowsPanel } from '../../panel/configureTemplatePanel/conf
 
 export const WorkflowsTab = () => {
   const intl = useIntl();
-  const { workflows } = useSelector((state: RootState) => ({
+  const { workflows, currentPanelView } = useSelector((state: RootState) => ({
     workflows: state.template.workflows,
+    currentPanelView: state.panel.currentPanelView,
   }));
   const dispatch = useDispatch<AppDispatch>();
 
@@ -49,7 +50,7 @@ export const WorkflowsTab = () => {
 
   return (
     <div>
-      <ConfigureWorkflowsPanel />
+      {currentPanelView === TemplatePanelView.ConfigureWorkflows && <ConfigureWorkflowsPanel />}
 
       <CommandBar
         items={commandBarItems}
