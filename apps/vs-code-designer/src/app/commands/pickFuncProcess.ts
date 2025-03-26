@@ -35,6 +35,7 @@ import type { IPreDebugValidateResult, IProcessInfo } from '@microsoft/vscode-ex
 import unixPsTree from 'ps-tree';
 import * as vscode from 'vscode';
 import parser from 'yargs-parser';
+import { buildCustomCodeFunctionsProject } from './buildCustomCodeFunctionsProject';
 
 type OSAgnosticProcess = { command: string | undefined; pid: number | string };
 type ActualUnixPS = unixPsTree.PS & { COMM?: string };
@@ -56,6 +57,8 @@ export async function pickFuncProcess(context: IActionContext, debugConfig: vsco
   if (!result.shouldContinue) {
     throw new UserCancelledError('preDebugValidate');
   }
+
+  await buildCustomCodeFunctionsProject(context, result.workspace.uri);
 
   await waitForPrevFuncTaskToStop(result.workspace);
   const projectFiles = await getProjFiles(context, ProjectLanguage.CSharp, result.workspace.uri.fsPath);
