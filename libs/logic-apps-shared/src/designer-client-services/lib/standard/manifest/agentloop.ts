@@ -101,9 +101,11 @@ export default {
       trackedProperties: {
         scopes: [SettingScope.Action],
       },
-      limit: {
+      timeout: {
         scopes: [SettingScope.Action],
-        options: {},
+      },
+      count: {
+        scopes: [SettingScope.Action],
       },
     },
   },

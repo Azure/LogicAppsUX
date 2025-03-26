@@ -7,11 +7,6 @@ export interface UploadChunkMetadata {
   maximumSize?: number;
 }
 
-export interface LimitMetadata {
-  count?: number;
-  timeout?: string;
-}
-
 export interface DownloadChunkMetadata {
   acceptDownloadSize?: boolean;
   minimumSize?: number;
@@ -120,7 +115,7 @@ export interface OperationManifestSettings {
   secureData?: OperationManifestSetting<SecureDataOptions>;
   timeout?: OperationManifestSetting<void>;
   trackedProperties?: OperationManifestSetting<void>;
-  limit?: OperationManifestSetting<LimitMetadata>;
+  count?: OperationManifestSetting<void>;
 }
 
 export interface Badge {
