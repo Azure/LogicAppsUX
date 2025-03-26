@@ -46,7 +46,6 @@ jobs:
     - name: "Upload Logic Apps Templates to Azure Blob Storage"
       if: ${{ !cancelled() }}
       shell: bash
-      if: always()
       run: |
           az storage blob upload-batch --account-name workflowtemplates --auth-mode key --overwrite True -d templates -s "./libs/logic-apps-shared/src/designer-client-services/lib/templates"
           echo "Templates are uploaded to the storage account - workflowtemplates"
