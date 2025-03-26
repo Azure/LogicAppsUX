@@ -35,7 +35,7 @@ export const getLoopsCount = (action: LogicAppsV2.WorkflowRunAction): number | u
     return repetitionCount;
   }
 
-  return undefined;
+  return 4;
 };
 
 /**

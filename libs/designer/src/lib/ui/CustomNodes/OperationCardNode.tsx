@@ -105,8 +105,6 @@ const DefaultNode = ({ targetPosition = Position.Top, sourcePosition = Position.
     parentRunIndex
   );
 
-  console.log('charlie repetitionRunData', isWithinAgenticLoop, graphId, repetitionRunData);
-
   useEffect(() => {
     if (!isNullOrUndefined(repetitionRunData)) {
       if (selfRunData?.correlation?.actionTrackingId === repetitionRunData?.properties?.correlation?.actionTrackingId) {
@@ -115,7 +113,7 @@ const DefaultNode = ({ targetPosition = Position.Top, sourcePosition = Position.
       }
       let operationRepetitionRunData = repetitionRunData.properties;
       if (isWithinAgenticLoop) {
-        const toolIndex = toolRunIndex ?? 0;
+        const toolIndex = toolRunIndex ? toolRunIndex - 1 : 0;
         operationRepetitionRunData = Array.isArray(repetitionRunData.properties)
           ? repetitionRunData.properties[toolIndex]
           : repetitionRunData.properties;

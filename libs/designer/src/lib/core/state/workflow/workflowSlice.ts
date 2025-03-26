@@ -270,11 +270,12 @@ export const workflowSlice = createSlice({
         args: [action.payload],
       });
     },
-    updateToolsMetadata: (state: WorkflowState, action: PayloadAction<UpdateAgenticGraphPayload>) => {
+    updateAgenticMetadata: (state: WorkflowState, action: PayloadAction<UpdateAgenticGraphPayload>) => {
       if (!state.graph) {
         return; // log exception
       }
-      const { tools } = action.payload;
+      const { scopeRepetitionRunData, nodeId } = action.payload;
+      const { tools } = scopeRepetitionRunData;
 
       Object.keys(tools).forEach((toolId: any) => {
         const nodeMetadata = getRecordEntry(state.nodesMetadata, toolId);
@@ -284,11 +285,28 @@ export const workflowSlice = createSlice({
         const nodeData = {
           ...nodeMetadata,
           runData: {
+            status: tools[toolId].status,
             repetitionCount: tools[toolId].repetitions,
           },
         };
         state.nodesMetadata[toolId] = nodeData as NodeMetadata;
       });
+
+      const nodeMetadata = getRecordEntry(state.nodesMetadata, nodeId);
+      if (!nodeMetadata) {
+        return;
+      }
+      const nodeRunData = {
+        ...nodeMetadata.runData,
+        ...scopeRepetitionRunData,
+        inputsLink: scopeRepetitionRunData?.inputsLink ?? null,
+        outputsLink: scopeRepetitionRunData?.outputsLink ?? null,
+        duration: getDurationStringPanelMode(
+          Date.parse(scopeRepetitionRunData?.endTime) - Date.parse(scopeRepetitionRunData?.startTime),
+          /* abbreviated */ true
+        ),
+      };
+      nodeMetadata.runData = nodeRunData as LogicAppsV2.WorkflowRunAction;
 
       LoggerService().log({
         level: LogEntryLevel.Verbose,
@@ -727,7 +745,7 @@ export const {
   toggleCollapsedActionId,
   clearFocusCollapsedNode,
   updateAgenticGraph,
-  updateToolsMetadata,
+  updateAgenticMetadata,
 } = workflowSlice.actions;
 
 export default workflowSlice.reducer;

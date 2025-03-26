@@ -5,19 +5,19 @@ import { reassignEdgeSources, removeEdge } from './restructuringHelpers';
 
 export interface UpdateAgenticGraphPayload {
   nodeId: string;
-  tools: Record<string, any>;
+  scopeRepetitionRunData: Record<string, any>;
 }
 
 export const updateAgenticSubgraph = (payload: UpdateAgenticGraphPayload, workflowGraph: WorkflowNode, state: WorkflowState) => {
   if (!workflowGraph.id) {
     throw new Error('Workflow graph is missing an id');
   }
-  const { nodeId, tools } = payload;
+  const { nodeId, scopeRepetitionRunData } = payload;
   const normalizedId = removeCaseTag(nodeId);
 
   const agentGraph = workflowGraph.children?.find((child) => child.id === normalizedId);
 
-  if (agentGraph && tools) {
+  if (agentGraph && scopeRepetitionRunData) {
     let originalAgentGraph: WorkflowNode | undefined;
     if (agentGraph?.id in state.agentsGraph) {
       originalAgentGraph = { ...state.agentsGraph[agentGraph.id] };
@@ -36,7 +36,8 @@ export const updateAgenticSubgraph = (payload: UpdateAgenticGraphPayload, workfl
       if (tool.id.includes('#scope') || tool.id.includes('-addCase')) {
         return true;
       }
-      const isToolVisible = tool.id in tools;
+
+      const isToolVisible = tool.id in (scopeRepetitionRunData.tools ?? {});
       if (!isToolVisible) {
         hidingTools.push(tool.id);
       }

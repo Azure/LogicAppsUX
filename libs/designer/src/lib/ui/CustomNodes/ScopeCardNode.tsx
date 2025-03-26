@@ -32,7 +32,7 @@ import {
   setRepetitionRunData,
   toggleCollapsedGraphId,
   updateAgenticGraph,
-  updateToolsMetadata,
+  updateAgenticMetadata,
 } from '../../core/state/workflow/workflowSlice';
 import type { AppDispatch } from '../../core/store';
 import { LoopsPager } from '../common/LoopsPager/LoopsPager';
@@ -110,13 +110,9 @@ const ScopeCardNode = ({ data, targetPosition = Position.Top, sourcePosition = P
 
   useEffect(() => {
     if (!isNullOrUndefined(scopeRepetitionRunData)) {
-      if (selfRunData?.correlation?.actionTrackingId === scopeRepetitionRunData?.properties?.correlation?.actionTrackingId) {
-        // if the correlation id is the same, we don't need to update the repetition run data
-        return;
-      }
-      const updatePayload = { nodeId: scopeId, tools: scopeRepetitionRunData };
+      const updatePayload = { nodeId: scopeId, scopeRepetitionRunData: scopeRepetitionRunData.properties } as any;
       dispatch(updateAgenticGraph(updatePayload));
-      dispatch(updateToolsMetadata(updatePayload));
+      dispatch(updateAgenticMetadata(updatePayload));
     }
   }, [dispatch, scopeRepetitionRunData, scopeId, selfRunData?.correlation?.actionTrackingId]);
 
