@@ -1,4 +1,21 @@
 # Logic Apps Designer
+## [5.60.0](https://github.com/Azure/LogicAppsUX/compare/v5.59.0...v5.60.0) (2025-03-26)
+
+
+### Features
+
+* **Templates:** Configure Template Tabs with Initial Flow ([#6848](https://github.com/Azure/LogicAppsUX/issues/6848)) ([16dc0d9](https://github.com/Azure/LogicAppsUX/commit/16dc0d93b293c8e963d78d10a2c210cf33e38dac))
+* **Templates:** Infer workflow trigger from definition for accelerator ([#6844](https://github.com/Azure/LogicAppsUX/issues/6844)) ([b7044f5](https://github.com/Azure/LogicAppsUX/commit/b7044f5abf736b386fcea212d86e5190473e0bfd))
+* **vscode:** Add subscriptions to telemetry logs when extension gets activated ([#6855](https://github.com/Azure/LogicAppsUX/issues/6855)) ([ddd33b1](https://github.com/Azure/LogicAppsUX/commit/ddd33b1eed97885b3b3800f7597fc582bbc148d4)), closes [#6777](https://github.com/Azure/LogicAppsUX/issues/6777)
+
+
+### Bug Fixes
+
+* **designer:** Move limit at action level, fix connection name and messages ([#6868](https://github.com/Azure/LogicAppsUX/issues/6868)) ([504b4ba](https://github.com/Azure/LogicAppsUX/commit/504b4ba281c4c3b4536b937fcb1d875e2f36e94f)), closes [#6854](https://github.com/Azure/LogicAppsUX/issues/6854)
+* **designer:** Skip auto create connection for oauth in designer and for multi auth ([#6861](https://github.com/Azure/LogicAppsUX/issues/6861)) ([f7b19e5](https://github.com/Azure/LogicAppsUX/commit/f7b19e590112d40e1721e5e38a57b8a05c7e8614))
+* **designer:** Update agent connection model configuration ([#6859](https://github.com/Azure/LogicAppsUX/issues/6859)) ([633f7d5](https://github.com/Azure/LogicAppsUX/commit/633f7d5feaec6556177cb0a7b597a4fbe407adf7))
+* **templates:** Update the endpoint url and few fixes in services ([#6870](https://github.com/Azure/LogicAppsUX/issues/6870)) ([c905539](https://github.com/Azure/LogicAppsUX/commit/c905539e927d961a1cddf2ff327bedb79d2d5633))
+
 ## [5.59.0](https://github.com/Azure/LogicAppsUX/compare/v5.58.0...v5.59.0) (2025-03-22)
 
 
