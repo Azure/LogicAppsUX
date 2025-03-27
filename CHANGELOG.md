@@ -1,4 +1,43 @@
 # Logic Apps Designer
+### [5.53.8](https://github.com/Azure/LogicAppsUX/compare/v5.62.0...v5.53.8) (2025-03-27)
+
+
+### Features
+
+* **designer:** Add empty state and inputs/outputs binder for agent action ([#6880](https://github.com/Azure/LogicAppsUX/issues/6880)) ([e15a8b3](https://github.com/Azure/LogicAppsUX/commit/e15a8b350e3f8243c05f14c344873cef441dc804))
+* **Designer:** Node `description` changes + trigger dialog ([#6875](https://github.com/Azure/LogicAppsUX/issues/6875)) ([432a398](https://github.com/Azure/LogicAppsUX/commit/432a398fd0ac59a03cd6aadcb83b55f015ba1a10))
+* **templates:** Adding create consumption workflow from template helper as exportable method ([#6877](https://github.com/Azure/LogicAppsUX/issues/6877)) ([69cb79e](https://github.com/Azure/LogicAppsUX/commit/69cb79e86494ab7c7719fd949e938c09f3ab324c)), closes [#6829](https://github.com/Azure/LogicAppsUX/issues/6829) [#6828](https://github.com/Azure/LogicAppsUX/issues/6828)
+* **Templates:** Exporting `TemplateDisplay` component, connector icons on `ReviewAdd` ([#6879](https://github.com/Azure/LogicAppsUX/issues/6879)) ([77cb3a8](https://github.com/Azure/LogicAppsUX/commit/77cb3a86abf78a8ec86093f25b628ea9ec172d82))
+
+
+### Bug Fixes
+
+* **standalone:** Fix connections update in standalone ([#6876](https://github.com/Azure/LogicAppsUX/issues/6876)) ([9b20d50](https://github.com/Azure/LogicAppsUX/commit/9b20d50174fdc5938b3b867f939b065eac7315a6))
+
+### [5.53.7](https://github.com/Azure/LogicAppsUX/compare/v5.53.6...v5.53.7) (2025-03-22)
+
+### [5.53.6](https://github.com/Azure/LogicAppsUX/compare/v5.59.0...v5.53.6) (2025-03-22)
+
+### [5.53.5](https://github.com/Azure/LogicAppsUX/compare/v5.53.4...v5.53.5) (2025-03-22)
+
+### [5.53.4](https://github.com/Azure/LogicAppsUX/compare/v5.53.3...v5.53.4) (2025-03-21)
+
+### [5.53.3](https://github.com/Azure/LogicAppsUX/compare/v5.57.0...v5.53.3) (2025-03-20)
+
+### [5.53.2](https://github.com/Azure/LogicAppsUX/compare/v5.55.0...v5.53.2) (2025-03-18)
+
+
+### Features
+
+* **Templates:** Review tab improvements + Template provider useExternalRedux flag ([#6829](https://github.com/Azure/LogicAppsUX/issues/6829)) ([9ed541f](https://github.com/Azure/LogicAppsUX/commit/9ed541f8624efbf0944a72f55ca0d42084a7d178)), closes [#6828](https://github.com/Azure/LogicAppsUX/issues/6828)
+
+### [5.53.1](https://github.com/Azure/LogicAppsUX/compare/v5.53.0...v5.53.1) (2025-03-17)
+
+
+### Bug Fixes
+
+* **templates:** Adding a reload handler when a resource changes and services to reload ([15ed538](https://github.com/Azure/LogicAppsUX/commit/15ed53823103194d0c4dcb622a80dc2133835909))
+
 ### [5.53.7](https://github.com/Azure/LogicAppsUX/compare/v5.53.6...v5.53.7) (2025-03-22)
 
 ### [5.53.6](https://github.com/Azure/LogicAppsUX/compare/v5.53.5...v5.53.6) (2025-03-22)
