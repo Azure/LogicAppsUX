@@ -203,6 +203,11 @@ export const CompactConnectorConnectionStatus = ({ connectorId, hasConnection }:
           ) : (
             <Dismiss16Filled color={tokens.colorStatusDangerForeground1} />
           )}
+          <img
+            className="msla-connection-status-compact-icon"
+            src={connector?.properties?.iconUrl}
+            alt={connector?.properties?.displayName ?? connectorId}
+          />
           <Text weight="semibold">{connector?.properties?.displayName ?? connectorId}</Text>
         </div>
       )}

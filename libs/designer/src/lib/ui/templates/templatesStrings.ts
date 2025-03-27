@@ -35,6 +35,11 @@ export const useTemplatesStrings = () => {
         id: '83Vrgj',
         description: 'Label for template',
       }),
+      DESCRIPTION: intl.formatMessage({
+        defaultMessage: 'Description',
+        id: 'FOoLuS',
+        description: 'Label for description',
+      }),
     },
   };
 };

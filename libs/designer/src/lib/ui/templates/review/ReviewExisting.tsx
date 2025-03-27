@@ -12,12 +12,14 @@ const useStyles = makeStyles({
 
 type ReviewExistingProps = {
   name: string;
+  description?: string;
   resourceOverrides?: {
     workflowName?: string;
+    workflowDescription?: string;
   };
 };
 
-export const ReviewExisting = ({ name, resourceOverrides }: ReviewExistingProps) => {
+export const ReviewExisting = ({ name, description, resourceOverrides }: ReviewExistingProps) => {
   const { enableResourceSelection } = useSelector((state: RootState) => state.templateOptions);
   const { resourceStrings } = useTemplatesStrings();
 
@@ -30,8 +32,8 @@ export const ReviewExisting = ({ name, resourceOverrides }: ReviewExistingProps)
         <Text weight="semibold" className={styles.actionName}>
           {name}
         </Text>
+        {description && <Text>{description}</Text>}
       </div>
-
       {enableResourceSelection && <ResourceDisplay />}
     </div>
   );
