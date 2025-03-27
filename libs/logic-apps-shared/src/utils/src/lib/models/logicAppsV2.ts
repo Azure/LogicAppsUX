@@ -582,7 +582,8 @@ export type TimeoutableActionDefinition =
   | FunctionAction
   | HttpAction
   | HttpWebhookAction
-  | UntilAction;
+  | UntilAction
+  | AgentAction;
 
 /* Terminate type */
 
@@ -807,7 +808,7 @@ export interface SwitchAction extends Action {
   expression: string;
 }
 
-export interface AgentAction extends Action {
+export interface AgentAction extends TimeoutableAction {
   tools?: Record<string, AgentCondition>;
   deploymentId: string;
   messages: AgentMessage[];
