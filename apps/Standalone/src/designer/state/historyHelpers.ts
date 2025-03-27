@@ -17,7 +17,7 @@ export const setStateHistory = (state: WorkflowLoadingState): void => {
       isUnitTest: state.isUnitTest,
     };
     window.localStorage.setItem('msla-standalone-stateHistory', JSON.stringify(filteredState));
-  } catch {
+  } catch (e) {
     return;
   }
 };
@@ -29,7 +29,7 @@ export const getStateHistory = (): any => {
       return undefined;
     }
     return JSON.parse(state);
-  } catch {
+  } catch (e) {
     return undefined;
   }
 };
