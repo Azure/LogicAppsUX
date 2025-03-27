@@ -32,7 +32,8 @@ export default class OutputsBinder {
         !equals(type, constants.NODE.TYPE.SWITCH) &&
         !equals(type, constants.NODE.TYPE.OPEN_API_CONNECTION) &&
         !equals(type, constants.NODE.TYPE.OPEN_API_CONNECTION_WEBHOOK) &&
-        !equals(type, constants.NODE.TYPE.OPEN_API_CONNECTION_NOTIFICATION)
+        !equals(type, constants.NODE.TYPE.OPEN_API_CONNECTION_NOTIFICATION) &&
+        !equals(type, constants.NODE.TYPE.AGENT)
       ) {
         const binder = new ManifestOutputsBinder(manifest, nodeParameters ?? {}, operationMetadata);
         return binder.bind(output, outputParametersByName);

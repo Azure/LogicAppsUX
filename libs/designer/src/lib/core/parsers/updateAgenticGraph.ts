@@ -1,4 +1,3 @@
-import { removeCaseTag } from '@microsoft/logic-apps-shared';
 import type { WorkflowState } from '../state/workflow/workflowInterfaces';
 import type { WorkflowNode } from './models/workflowNode';
 import { reassignEdgeSources, removeEdge } from './restructuringHelpers';
@@ -8,14 +7,11 @@ export interface UpdateAgenticGraphPayload {
   scopeRepetitionRunData: Record<string, any>;
 }
 
-export const updateAgenticSubgraph = (payload: UpdateAgenticGraphPayload, workflowGraph: WorkflowNode, state: WorkflowState) => {
-  if (!workflowGraph.id) {
+export const updateAgenticSubgraph = (payload: UpdateAgenticGraphPayload, agentGraph: WorkflowNode, state: WorkflowState) => {
+  if (!agentGraph.id) {
     throw new Error('Workflow graph is missing an id');
   }
-  const { nodeId, scopeRepetitionRunData } = payload;
-  const normalizedId = removeCaseTag(nodeId);
-
-  const agentGraph = workflowGraph.children?.find((child) => child.id === normalizedId);
+  const { scopeRepetitionRunData } = payload;
 
   if (agentGraph && scopeRepetitionRunData) {
     let originalAgentGraph: WorkflowNode | undefined;
@@ -46,7 +42,7 @@ export const updateAgenticSubgraph = (payload: UpdateAgenticGraphPayload, workfl
 
     hidingTools.forEach((tool) => {
       const parentId = (agentGraph.edges ?? []).find((edge) => edge.target === tool)?.source ?? '';
-      reassignEdgeSources(state, tool, parentId, workflowGraph, true);
+      reassignEdgeSources(state, tool, parentId, agentGraph, true);
       removeEdge(state, parentId, tool, agentGraph);
     });
 

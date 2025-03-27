@@ -33,6 +33,8 @@ import {
   RUN_AFTER_STATUS,
   WORKFLOW_EDGE_TYPES,
   WORKFLOW_NODE_TYPES,
+  containsIdTag,
+  containsCaseTag,
 } from '@microsoft/logic-apps-shared';
 import type { MessageLevel } from '@microsoft/designer-ui';
 import { getDurationStringPanelMode } from '@microsoft/designer-ui';
@@ -255,8 +257,7 @@ export const workflowSlice = createSlice({
         return; // log exception
       }
       const { nodeId } = action.payload;
-      const graphId = getRecordEntry(state.nodesMetadata, nodeId)?.graphId ?? '';
-      const graph = getWorkflowNodeFromGraphState(state, graphId);
+      const graph = getWorkflowNodeFromGraphState(state, nodeId);
       if (!graph) {
         throw new Error('graph not set');
       }
@@ -276,6 +277,7 @@ export const workflowSlice = createSlice({
       }
       const { scopeRepetitionRunData, nodeId } = action.payload;
       const { tools = {} } = scopeRepetitionRunData ?? {};
+      const agentGraph = getWorkflowNodeFromGraphState(state, nodeId);
 
       Object.keys(tools).forEach((toolId: any) => {
         const nodeMetadata = getRecordEntry(state.nodesMetadata, toolId);
@@ -307,11 +309,13 @@ export const workflowSlice = createSlice({
         ),
       };
       nodeMetadata.runData = nodeRunData as LogicAppsV2.WorkflowRunAction;
+      nodeMetadata.actionCount =
+        (agentGraph?.children ?? []).filter((node) => !containsIdTag(node.id) && !containsCaseTag(node.id))?.length ?? -1;
 
       LoggerService().log({
         level: LogEntryLevel.Verbose,
         area: 'Designer:Workflow Slice',
-        message: 'Update tools metadata',
+        message: 'Update agentic metadata',
         args: [action.payload],
       });
     },
