@@ -47,6 +47,7 @@ export type PanelContainerProps = {
   canShowLogicAppRun?: boolean;
   showLogicAppRun?: () => void;
   showTriggerInfo?: boolean;
+  isTrigger?: boolean;
 } & CommonPanelProps;
 
 export const PanelContainer = ({
@@ -75,6 +76,7 @@ export const PanelContainer = ({
   canShowLogicAppRun,
   showLogicAppRun,
   showTriggerInfo,
+  isTrigger,
 }: PanelContainerProps) => {
   const intl = useIntl();
   const canResize = !!(isResizeable && setOverrideWidth);
@@ -115,6 +117,7 @@ export const PanelContainer = ({
           onTitleChange={onTitleChange}
           handleTitleUpdate={handleTitleUpdate}
           showTriggerInfo={showTriggerInfo}
+          isTrigger={isTrigger}
         />
       );
     },
@@ -139,6 +142,7 @@ export const PanelContainer = ({
       resubmitOperation,
       onCommentChange,
       showTriggerInfo,
+      isTrigger,
     ]
   );
 

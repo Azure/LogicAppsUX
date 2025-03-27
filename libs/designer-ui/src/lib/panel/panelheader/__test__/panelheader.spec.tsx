@@ -43,8 +43,8 @@ describe('lib/panel/panelHeader/main', () => {
     minimalWithHeader = {
       ...minimal,
       headerItems: [
-        <MenuItem key={'Comment'} disabled={false} icon={'Comment'} onClick={vi.fn()}>
-          Add a comment
+        <MenuItem key={'Description'} disabled={false} icon={'Description'} onClick={vi.fn()}>
+          Add a description
         </MenuItem>,
         <MenuItem key={'Delete'} disabled={false} icon={'Delete'} onClick={vi.fn()}>
           Delete
@@ -83,7 +83,7 @@ describe('lib/panel/panelHeader/main', () => {
       ...minimalWithHeader,
       nodeData: {
         ...minimalWithHeader.nodeData,
-        comment: 'sample comment',
+        comment: 'sample description',
         displayName: 'sample title',
         iconUri: 'sample icon url',
       },
