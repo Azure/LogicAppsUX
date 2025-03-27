@@ -357,7 +357,7 @@ const ScopeCardNode = ({ data, targetPosition = Position.Top, sourcePosition = P
         </p>
       ) : null}
       {isAgent && actionCount === 0 && !graphCollapsed ? (
-        <p className="no-actions-text" data-automation-id={`scope-${id}-no-actions`}>
+        <p className="no-actions-text" data-automation-id={`scope-${id}-no-tools`}>
           {intlText.emptyAgent}
         </p>
       ) : null}
