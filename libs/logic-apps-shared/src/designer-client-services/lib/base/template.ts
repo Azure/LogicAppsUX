@@ -27,13 +27,13 @@ export class BaseTemplateService implements ITemplateService {
   public getContentPathUrl = (templatePath: string, resourcePath: string): string => {
     const { endpoint, useEndpointForTemplates } = this.options;
     const resourceName = resourcePath.split('/').pop();
-    return useEndpointForTemplates ? `${endpoint}/templates/${templatePath}/${resourceName}` : resourcePath;
+    return useEndpointForTemplates ? `${endpoint}/${templatePath}/${resourceName}` : resourcePath;
   };
 
   public getAllTemplateNames = async (): Promise<string[]> => {
     const { httpClient, endpoint, useEndpointForTemplates } = this.options;
     return useEndpointForTemplates
-      ? httpClient.get<any>({ uri: `${endpoint}/templates/manifest.json`, headers: { 'Access-Control-Allow-Origin': '*' } })
+      ? httpClient.get<any>({ uri: `${endpoint}/manifest.json`, headers: { 'Access-Control-Allow-Origin': '*' } })
       : ((await import('./../templates/manifest.json'))?.default as string[]);
   };
 
@@ -41,7 +41,7 @@ export class BaseTemplateService implements ITemplateService {
     const { httpClient, endpoint, useEndpointForTemplates } = this.options;
     if (useEndpointForTemplates) {
       return httpClient.get<any>({
-        uri: `${endpoint}/templates/${resourcePath}/manifest.json`,
+        uri: `${endpoint}/${resourcePath}/manifest.json`,
         headers: { 'Access-Control-Allow-Origin': '*' },
       });
     }
@@ -57,7 +57,7 @@ export class BaseTemplateService implements ITemplateService {
     const { httpClient, endpoint, useEndpointForTemplates } = this.options;
     if (useEndpointForTemplates) {
       return httpClient.get<any>({
-        uri: `${endpoint}/templates/${templateId}/${workflowId}/workflow.json`,
+        uri: `${endpoint}/${templateId}/${workflowId}/workflow.json`,
         headers: { 'Access-Control-Allow-Origin': '*' },
       });
     }
