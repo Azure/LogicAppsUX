@@ -2,7 +2,7 @@
  *  Copyright (c) Microsoft Corporation. All rights reserved.
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
-import { extensionBundleId, hostFileName, extensionCommand } from '../../constants';
+import { extensionBundleId, hostFileName, extensionCommand, workflowFileName } from '../../constants';
 import { localize } from '../../localize';
 import { getWorkspaceSetting, updateWorkspaceSetting } from './vsCodeConfig/settings';
 import { isNullOrUndefined, isString } from '@microsoft/logic-apps-shared';
@@ -22,16 +22,18 @@ export async function isLogicAppProject(folderPath: string): Promise<boolean> {
 
   if (hasHostJson) {
     const subpaths: string[] = await fse.readdir(folderPath);
-    const workflowJsonPaths = subpaths.map((subpath) => path.join(folderPath, subpath, 'workflow.json'));
+    const workflowJsonPaths = subpaths.map((subpath) => path.join(folderPath, subpath, workflowFileName));
+
     const validWorkflowJsonPaths = await Promise.all(
       workflowJsonPaths.map(async (workflowJsonPath) => {
         if (await fse.pathExists(workflowJsonPath)) {
           const workflowJsonData = await fse.readFile(workflowJsonPath, 'utf-8');
           const workflowJson = JSON.parse(workflowJsonData);
           const schema = workflowJson?.definition?.$schema;
+
           if (schema && schema.includes('Microsoft.Logic') && schema.includes('workflowdefinition.json')) {
             const filesInSubpath = await fse.readdir(path.dirname(workflowJsonPath));
-            if (filesInSubpath.length === 1 && filesInSubpath[0] === 'workflow.json') {
+            if (filesInSubpath.includes(workflowFileName)) {
               return true;
             }
           }
