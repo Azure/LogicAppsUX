@@ -2,7 +2,7 @@ import { environment } from '../../../environments/environment';
 import type { AppDispatch, RootState } from '../../state/store';
 import { changeRunId, setIsChatBotEnabled, setMonitoringView, setReadOnly, setRunHistoryEnabled } from '../../state/workflowLoadingSlice';
 import { DesignerCommandBar } from './DesignerCommandBar';
-import type { ConnectionAndAppSetting, ConnectionsData, ParametersData } from './Models/Workflow';
+import type { ConnectionAndAppSetting, ConnectionReferenceModel, ConnectionsData, ParametersData } from './Models/Workflow';
 import { Artifact } from './Models/Workflow';
 import type { WorkflowApp } from './Models/WorkflowApp';
 import { ArtifactService } from './Services/Artifact';
@@ -283,7 +283,7 @@ const DesignerEditor = () => {
               connectionProperties,
             };
             newManagedApiConnections[referenceKey] = newConnectionObj;
-          } else if (reference?.connection?.id.startsWith('connectionProviders/agent/')) {
+          } else if (reference?.connection?.id.startsWith('/connectionProviders/agent/')) {
             // Service Provider Connection
             const connectionKey = reference.connection.id.split('/').splice(-1)[0];
             // We can't apply this directly in case there is a temporary key overlap
@@ -843,23 +843,41 @@ const getDesignerServices = (
     userPreferenceService: new BaseUserPreferenceService(),
   };
 };
+const hasNewKeys = (original: Record<string, any>, updated: Record<string, any>) => {
+  return Object.keys(updated).some((key) => !Object.keys(original).includes(key));
+};
 
-const hasNewKeys = (original: Record<string, any> = {}, updated: Record<string, any> = {}) => {
-  return !Object.keys(updated).some((key) => !Object.keys(original).includes(key));
+const hasNewConnectionRuntimeUrl = (
+  original: Record<string, ConnectionReferenceModel>,
+  updated: Record<string, ConnectionReferenceModel>
+) => {
+  return Object.keys(updated).some((key) => {
+    const originalConnection = original[key];
+    const updatedConnection = updated[key];
+    const haveDifferentRuntimeUrl = originalConnection?.connectionRuntimeUrl !== updatedConnection?.connectionRuntimeUrl;
+    const haveSameConnectionId = originalConnection?.connection.id === updatedConnection?.connection.id;
+    return haveDifferentRuntimeUrl && haveSameConnectionId;
+  });
 };
 
 const getConnectionsToUpdate = (
   originalConnectionsJson: ConnectionsData,
   connectionsJson: ConnectionsData
 ): ConnectionsData | undefined => {
-  const hasNewFunctionKeys = hasNewKeys(originalConnectionsJson.functionConnections, connectionsJson.functionConnections);
-  const hasNewApimKeys = hasNewKeys(originalConnectionsJson.apiManagementConnections, connectionsJson.apiManagementConnections);
-  const hasNewManagedApiKeys = hasNewKeys(originalConnectionsJson.managedApiConnections, connectionsJson.managedApiConnections);
+  const hasNewFunctionKeys = hasNewKeys(originalConnectionsJson.functionConnections ?? {}, connectionsJson.functionConnections ?? {});
+  const hasNewApimKeys = hasNewKeys(originalConnectionsJson.apiManagementConnections ?? {}, connectionsJson.apiManagementConnections ?? {});
+  const hasNewManagedApiKeys = hasNewKeys(originalConnectionsJson.managedApiConnections ?? {}, connectionsJson.managedApiConnections ?? {});
   const hasNewServiceProviderKeys = hasNewKeys(
-    originalConnectionsJson.serviceProviderConnections,
-    connectionsJson.serviceProviderConnections
+    originalConnectionsJson.serviceProviderConnections ?? {},
+    connectionsJson.serviceProviderConnections ?? {}
   );
-  const hasNewAgentKeys = hasNewKeys(originalConnectionsJson.agentConnections, connectionsJson.agentConnections);
+
+  const hasNewManagedApiConnectionRuntimeUrl = hasNewConnectionRuntimeUrl(
+    originalConnectionsJson.managedApiConnections ?? {},
+    connectionsJson.managedApiConnections ?? {}
+  );
+
+  const hasNewAgentKeys = hasNewKeys(originalConnectionsJson.agentConnections ?? {}, connectionsJson.agentConnections ?? {});
 
   if (!hasNewFunctionKeys && !hasNewApimKeys && !hasNewManagedApiKeys && !hasNewServiceProviderKeys && !hasNewAgentKeys) {
     return undefined;
@@ -888,9 +906,15 @@ const getConnectionsToUpdate = (
   if (hasNewManagedApiKeys) {
     for (const managedApiConnectionName of Object.keys(connectionsJson.managedApiConnections ?? {})) {
       if (originalConnectionsJson.managedApiConnections?.[managedApiConnectionName]) {
-        // eslint-disable-next-line no-param-reassign
-        (connectionsJson.managedApiConnections as any)[managedApiConnectionName] =
+        (connectionsToUpdate.managedApiConnections as any)[managedApiConnectionName] =
           originalConnectionsJson.managedApiConnections[managedApiConnectionName];
+
+        if (hasNewManagedApiConnectionRuntimeUrl) {
+          const newRuntimeUrl = connectionsJson?.managedApiConnections?.[managedApiConnectionName]?.connectionRuntimeUrl;
+          if (newRuntimeUrl !== undefined) {
+            (connectionsToUpdate.managedApiConnections as any)[managedApiConnectionName].connectionRuntimeUrl = newRuntimeUrl;
+          }
+        }
       }
     }
   }

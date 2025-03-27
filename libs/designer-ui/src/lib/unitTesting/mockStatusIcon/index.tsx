@@ -1,6 +1,6 @@
 import Constants from '../../constants';
 import { getMockStatusString } from '../../utils';
-import { type OutputMock } from '../outputMocks';
+import type { OutputMock } from '../outputMocks';
 import { Completed } from './completed';
 import { Empty } from './empty';
 import './mockStatusIcon.less';
