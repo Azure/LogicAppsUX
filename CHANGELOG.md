@@ -1,4 +1,16 @@
 # Logic Apps Designer
+## [5.61.0](https://github.com/Azure/LogicAppsUX/compare/v5.60.0...v5.61.0) (2025-03-27)
+
+
+### Features
+
+* **designer:** Implement agent action for monitoring view ([#6838](https://github.com/Azure/LogicAppsUX/issues/6838)) ([d9a1d6d](https://github.com/Azure/LogicAppsUX/commit/d9a1d6d5e051d807876066112df80966d5755ddd))
+
+
+### Bug Fixes
+
+* **templates:** Removing extra path from templates load when getting from storage ([#6874](https://github.com/Azure/LogicAppsUX/issues/6874)) ([8d744cf](https://github.com/Azure/LogicAppsUX/commit/8d744cf49d53dd2eecf7ca7a0d17731acfa181ec))
+
 ## [5.60.0](https://github.com/Azure/LogicAppsUX/compare/v5.59.0...v5.60.0) (2025-03-26)
 
 
