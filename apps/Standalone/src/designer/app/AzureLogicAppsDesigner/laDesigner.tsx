@@ -464,7 +464,7 @@ const DesignerEditor = () => {
                 />
                 {designerView ? <Designer /> : <CodeViewEditor ref={codeEditorRef} workflowKind={workflow?.kind} />}
                 <CombineInitializeVariableDialog />
-                <TriggerDescriptionDialog />
+                <TriggerDescriptionDialog workflowId={workflowId} />
               </div>
             </div>
           </BJSWorkflowProvider>

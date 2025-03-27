@@ -1,3 +1,4 @@
+import { LOCAL_STORAGE_KEYS } from '@microsoft/logic-apps-shared';
 import type { RootState } from '../../store';
 import { useSelector } from 'react-redux';
 
@@ -13,8 +14,14 @@ export const useIsTriggerDescriptionModalOpen = () => {
   return useSelector((state: RootState) => state.modal.isTriggerDescriptionOpen);
 };
 
-export const useShouldPromptForTriggerDescription = () => {
+export const useShouldPromptForTriggerDescription = (workflowId: string) => {
   return useSelector((state: RootState) => {
+    // Check for local storage flag
+    const localFlagKey = `${LOCAL_STORAGE_KEYS.IGNORE_EMPTY_TRIGGER_DESCRIPTION}-${workflowId}`;
+    const ignoreForWorkflow = !!JSON.parse(localStorage.getItem(localFlagKey) ?? 'false');
+    if (ignoreForWorkflow) {
+      return false;
+    }
     // Must have 3 nodes
     const operationKeys = Object.keys(state.workflow.operations);
     if (operationKeys.length !== 3) {

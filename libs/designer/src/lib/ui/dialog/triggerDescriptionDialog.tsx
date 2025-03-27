@@ -18,8 +18,10 @@ import { useRootTriggerId } from '../../core/state/workflow/workflowSelectors';
 import { setNodeDescription } from '../../core/state/workflow/workflowSlice';
 import type { RootState } from '../../core';
 import { useOperationInfo, useOperationManifest } from '../../core/state/selectors/actionMetadataSelector';
+import { LOCAL_STORAGE_KEYS } from '@microsoft/logic-apps-shared';
 
 export interface TriggerDescriptionDialogProps {
+  workflowId?: string;
   onSubmit?: () => void;
 }
 
@@ -27,17 +29,17 @@ export const TriggerDescriptionDialog = (props: TriggerDescriptionDialogProps) =
   const intl = useIntl();
   const dispatch = useDispatch();
   const isOpen = useIsTriggerDescriptionModalOpen();
-  const shouldPrompt = useShouldPromptForTriggerDescription();
+  const shouldPrompt = useShouldPromptForTriggerDescription(props.workflowId ?? '');
 
-  const title = intl.formatMessage({
-    defaultMessage: 'Set a trigger description',
-    id: 'vg2Ybr',
+  const dialogTitle = intl.formatMessage({
+    defaultMessage: 'Add description',
+    id: 'UcFx/i',
     description: 'Title for the trigger description dialog.',
   });
 
-  const description = intl.formatMessage({
-    defaultMessage: '--- Add description here for why we want them to set a trigger description ---',
-    id: 'c0/8vO',
+  const dialogDescription = intl.formatMessage({
+    defaultMessage: 'Describe the goal or purpose for this workflow. To edit this description later, open the trigger details pane.',
+    id: 'XulI0a',
     description: 'Description for the trigger description dialog.',
   });
 
@@ -51,6 +53,12 @@ export const TriggerDescriptionDialog = (props: TriggerDescriptionDialogProps) =
     defaultMessage: 'Confirm',
     id: 'MLwQFB',
     description: 'Confirm button label',
+  });
+
+  const dismissButtonLabel = intl.formatMessage({
+    defaultMessage: 'Dismiss',
+    id: 'nxlxgi',
+    description: 'Dismiss button label',
   });
 
   const loadingText = intl.formatMessage({
@@ -68,6 +76,12 @@ export const TriggerDescriptionDialog = (props: TriggerDescriptionDialogProps) =
     dispatch(closeTriggerDescriptionModal());
     props.onSubmit?.();
   }, [dispatch, triggerId, newDescriptionValue, props]);
+
+  const dismissCallback = useCallback(() => {
+    const localFlagKey = `${LOCAL_STORAGE_KEYS.IGNORE_EMPTY_TRIGGER_DESCRIPTION}-${props.workflowId}`;
+    localStorage.setItem(localFlagKey, 'true');
+    dispatch(closeTriggerDescriptionModal());
+  }, [dispatch, props.workflowId]);
 
   const mainActionId = useSelector((state: RootState) => Object.keys(state.workflow.operations)?.[1]);
   const mainActionOperationInfo = useOperationInfo(mainActionId);
@@ -89,10 +103,10 @@ export const TriggerDescriptionDialog = (props: TriggerDescriptionDialogProps) =
     <Dialog open={isOpen && shouldPrompt}>
       <DialogSurface>
         <DialogBody>
-          <DialogTitle>{title}</DialogTitle>
+          <DialogTitle>{dialogTitle}</DialogTitle>
           <DialogContent>
-            <p>{description}</p>
-            <Field label={inputLabel} required={true}>
+            <p>{dialogDescription}</p>
+            <Field label={inputLabel} style={{ padding: '12px 0' }}>
               <Textarea
                 value={newDescriptionValue}
                 onChange={onChange}
@@ -102,7 +116,10 @@ export const TriggerDescriptionDialog = (props: TriggerDescriptionDialogProps) =
             </Field>
           </DialogContent>
           <DialogActions>
-            <Button appearance="primary" onClick={confirmCallback}>
+            <Button appearance="secondary" onClick={dismissCallback}>
+              {dismissButtonLabel}
+            </Button>
+            <Button appearance="primary" onClick={confirmCallback} disabled={isFetchingMainActionManifest}>
               {confirmButtonLabel}
             </Button>
           </DialogActions>

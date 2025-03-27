@@ -6,7 +6,7 @@ exports[`ui/panel/panelheadercomment > should construct. 1`] = `
   hidden={false}
 >
   <CompoundIcon
-    aria-label="Comment"
+    aria-label="Description"
     className="msla-comment-icon"
   />
   <StyledTextFieldBase

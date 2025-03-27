@@ -232,7 +232,7 @@ export const LocalDesigner = () => {
           <PseudoCommandBar />
           <Designer />
           <CombineInitializeVariableDialog />
-          <TriggerDescriptionDialog />
+          <TriggerDescriptionDialog workflowId={'local'} />
         </BJSWorkflowProvider>
       ) : null}
     </DesignerProvider>
