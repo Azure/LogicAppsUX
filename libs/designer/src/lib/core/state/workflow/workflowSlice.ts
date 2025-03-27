@@ -22,7 +22,7 @@ import {
   updateStaticResults,
 } from '../operation/operationMetadataSlice';
 import type { RelationshipIds } from '../panel/panelTypes';
-import type { ErrorMessage, SpecTypes, WorkflowState, WorkflowKind } from './workflowInterfaces';
+import type { ErrorMessage, SpecTypes, WorkflowState, WorkflowKind, NodeMetadata } from './workflowInterfaces';
 import type { BoundParameters } from '@microsoft/logic-apps-shared';
 import { getParentsUncollapseFromGraphState, getWorkflowNodeFromGraphState } from './workflowSelectors';
 import {
@@ -42,6 +42,7 @@ import type { PayloadAction } from '@reduxjs/toolkit';
 import type { NodeChange, NodeDimensionChange } from '@xyflow/system';
 import type { UndoRedoPartialRootState } from '../undoRedo/undoRedoTypes';
 import { initializeInputsOutputsBinding } from '../../actions/bjsworkflow/monitoring';
+import { updateAgenticSubgraph, type UpdateAgenticGraphPayload } from '../../parsers/updateAgenticGraph';
 
 export interface AddImplicitForeachPayload {
   nodeId: string;
@@ -66,6 +67,7 @@ export const initialWorkflowState: WorkflowState = {
     $schema: constants.SCHEMA.GA_20160601.URL,
     contentVersion: '1.0.0.0',
   },
+  agentsGraph: {},
   hostData: {
     errorMessages: {},
   },
@@ -245,6 +247,71 @@ export const workflowSlice = createSlice({
         level: LogEntryLevel.Verbose,
         area: 'Designer:Workflow Slice',
         message: 'Action Node Deleted',
+        args: [action.payload],
+      });
+    },
+    updateAgenticGraph: (state: WorkflowState, action: PayloadAction<UpdateAgenticGraphPayload>) => {
+      if (!state.graph) {
+        return; // log exception
+      }
+      const { nodeId } = action.payload;
+      const graphId = getRecordEntry(state.nodesMetadata, nodeId)?.graphId ?? '';
+      const graph = getWorkflowNodeFromGraphState(state, graphId);
+      if (!graph) {
+        throw new Error('graph not set');
+      }
+
+      updateAgenticSubgraph(action.payload, graph, state);
+
+      LoggerService().log({
+        level: LogEntryLevel.Verbose,
+        area: 'Designer:Workflow Slice',
+        message: 'Update node agentic workflow',
+        args: [action.payload],
+      });
+    },
+    updateAgenticMetadata: (state: WorkflowState, action: PayloadAction<UpdateAgenticGraphPayload>) => {
+      if (!state.graph) {
+        return; // log exception
+      }
+      const { scopeRepetitionRunData, nodeId } = action.payload;
+      const { tools = {} } = scopeRepetitionRunData ?? {};
+
+      Object.keys(tools).forEach((toolId: any) => {
+        const nodeMetadata = getRecordEntry(state.nodesMetadata, toolId);
+        if (!nodeMetadata) {
+          return;
+        }
+        const nodeData = {
+          ...nodeMetadata,
+          runData: {
+            status: tools[toolId].status,
+            repetitionCount: tools[toolId].repetitions,
+          },
+        };
+        state.nodesMetadata[toolId] = nodeData as NodeMetadata;
+      });
+
+      const nodeMetadata = getRecordEntry(state.nodesMetadata, nodeId);
+      if (!nodeMetadata) {
+        return;
+      }
+      const nodeRunData = {
+        ...nodeMetadata.runData,
+        ...scopeRepetitionRunData,
+        inputsLink: scopeRepetitionRunData?.inputsLink ?? null,
+        outputsLink: scopeRepetitionRunData?.outputsLink ?? null,
+        duration: getDurationStringPanelMode(
+          Date.parse(scopeRepetitionRunData?.endTime) - Date.parse(scopeRepetitionRunData?.startTime),
+          /* abbreviated */ true
+        ),
+      };
+      nodeMetadata.runData = nodeRunData as LogicAppsV2.WorkflowRunAction;
+
+      LoggerService().log({
+        level: LogEntryLevel.Verbose,
+        area: 'Designer:Workflow Slice',
+        message: 'Update tools metadata',
         args: [action.payload],
       });
     },
@@ -677,6 +744,8 @@ export const {
   setRunDataInputOutputs,
   toggleCollapsedActionId,
   clearFocusCollapsedNode,
+  updateAgenticGraph,
+  updateAgenticMetadata,
 } = workflowSlice.actions;
 
 export default workflowSlice.reducer;

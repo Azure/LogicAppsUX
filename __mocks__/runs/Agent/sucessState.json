@@ -1,0 +1,66 @@
+{
+  "properties": {
+    "waitEndTime": "2023-01-30T15:29:22.1497974Z",
+    "startTime": "2023-01-30T15:29:22.1497974Z",
+    "endTime": "2023-01-30T15:29:24.6967605Z",
+    "status": "Succeeded",
+    "correlation": {
+      "clientTrackingId": "08585265143234327272054208430CU00"
+    },
+    "workflow": {
+      "id": "/workflows/agent/versions/08585265143413558706",
+      "name": "08585265143413558706",
+      "type": "workflows/versions"
+    },
+    "trigger": {
+      "name": "manual",
+      "outputsLink": {
+        "uri": "testLink",
+        "contentSize": 3908
+      },
+      "startTime": "2023-01-30T15:29:22.0568781Z",
+      "endTime": "2023-01-30T15:29:22.0568781Z",
+      "originHistoryName": "08585265143234327272054208430CU00",
+      "correlation": {
+        "clientTrackingId": "08585265143234327272054208430CU00"
+      },
+      "status": "Succeeded"
+    },
+    "actions": {
+      "WorkflowAgent": {
+              "inputsLink": {
+                  "uri": "testLink",
+                  "contentSize": 30
+              },
+              "iterationCount": 6,
+              "canResubmit": false,
+              "startTime": "2025-03-19T19:30:38.2960123Z",
+              "endTime": "2025-03-19T19:30:40.8382718Z",
+              "correlation": {
+                  "actionTrackingId": "2ceaf0ff-9c1d-40b6-b0eb-043aa8128a81",
+                  "clientTrackingId": "08584591942513644464378807855CU00"
+              },
+              "status": "Running",
+              "code": "NotSpecified",
+              "summary": [
+                { 
+                  "type": "message",
+                  "time": "2025-03-12T21:26:31.611225Z",
+                  "message": "Hello, I am an assistant",
+                  "role": "assistant"
+                },
+                {   
+                  "time": "2025-03-12T21:26:31.611225Z",
+                  "message": "Hello, please do this task",
+                  "role": "user",
+                  "iteration": 1
+              }
+              ]
+          }
+    },
+    "outputs": {}
+  },
+  "id": "/workflows/agent/runs/08585265143234327272054208430CU00",
+  "name": "08585265143234327272054208430CU00",
+  "type": "workflows/runs"
+}

@@ -27,7 +27,6 @@ export const ScopeCard: React.FC<ScopeCardProps> = ({
   errorLevel,
   errorMessage,
   icon,
-  isMonitoringView,
   isLoading,
   title,
   onClick,
@@ -38,6 +37,7 @@ export const ScopeCard: React.FC<ScopeCardProps> = ({
   runData,
   setFocus,
   nodeIndex,
+  showStatusPill,
 }) => {
   const focusRef = useRef<HTMLDivElement | null>(null);
   const restoreFocusTargetAttribute = useRestoreFocusTarget();
@@ -89,7 +89,7 @@ export const ScopeCard: React.FC<ScopeCardProps> = ({
           onContextMenu={onContextMenu}
           className={css('msla-scope-v2--header msla-scope-card-wrapper', !active && 'msla-card-inactive')}
         >
-          {isMonitoringView && active ? (
+          {showStatusPill ? (
             <StatusPill
               id={`${title}-status`}
               status={runData?.status}

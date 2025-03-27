@@ -34,7 +34,6 @@ export interface CardProps {
   icon?: string;
   id: string;
   isDragging?: boolean;
-  isMonitoringView?: boolean;
   isUnitTest?: boolean;
   isLoading?: boolean;
   nodeIndex?: number;
@@ -53,6 +52,7 @@ export interface CardProps {
   nodeMockResults?: OutputMock;
   isMockSupported?: boolean;
   isLoadingDynamicData?: boolean;
+  showStatusPill?: boolean;
 }
 
 export interface BadgeProps {
@@ -78,7 +78,6 @@ export const Card: React.FC<CardProps> = memo(
     icon,
     id,
     isDragging,
-    isMonitoringView,
     isUnitTest,
     nodeMockResults,
     isMockSupported,
@@ -95,6 +94,7 @@ export const Card: React.FC<CardProps> = memo(
     setFocus,
     isSecureInputsOutputs,
     isLoadingDynamicData,
+    showStatusPill,
   }) => {
     const handleClick: React.MouseEventHandler<HTMLElement> = (e) => {
       e.stopPropagation();
@@ -195,7 +195,7 @@ export const Card: React.FC<CardProps> = memo(
         tabIndex={nodeIndex}
         onKeyUp={keyboardInteraction.keyUp}
       >
-        {isMonitoringView && active ? (
+        {showStatusPill ? (
           <StatusPill
             id={`${title}-status`}
             status={runData?.status}

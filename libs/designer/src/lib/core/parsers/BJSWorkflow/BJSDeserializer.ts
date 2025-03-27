@@ -100,8 +100,7 @@ export const Deserialize = (
     : buildGraphFromActions(definition.actions, 'root', undefined /* parentNodeId */, allActionNames);
   allActions = { ...allActions, ...actions };
   nodesMetadata = { ...nodesMetadata, ...actionNodesMetadata };
-
-  nodesMetadata = addActionsInstanceMetaData(nodesMetadata, runInstance);
+  nodesMetadata = addActionsInstanceMetaData(nodesMetadata, allActions, runInstance);
 
   const graph: WorkflowNode = {
     id: 'root',
@@ -714,7 +713,11 @@ const addTriggerInstanceMetaData = (runInstance: LogicAppsV2.RunInstanceDefiniti
   };
 };
 
-const addActionsInstanceMetaData = (nodesMetadata: NodesMetadata, runInstance: LogicAppsV2.RunInstanceDefinition | null): NodesMetadata => {
+const addActionsInstanceMetaData = (
+  nodesMetadata: NodesMetadata,
+  allActions: Operations,
+  runInstance: LogicAppsV2.RunInstanceDefinition | null
+): NodesMetadata => {
   if (isNullOrUndefined(runInstance)) {
     return nodesMetadata;
   }
@@ -724,6 +727,9 @@ const addActionsInstanceMetaData = (nodesMetadata: NodesMetadata, runInstance: L
 
   Object.entries(updatedNodesData).forEach(([key, node]) => {
     const nodeRunData = runInstanceActions?.[key];
+    const isAgent = allActions[key]?.type.toLowerCase() === constants.NODE.TYPE.AGENT;
+    const runIndex = isAgent ? (nodeRunData?.iterationCount ? nodeRunData.iterationCount - 1 : 0) : 0;
+
     if (!isNullOrUndefined(nodeRunData)) {
       const repetitionRunData = isNullOrUndefined(nodeRunData.repetitionCount)
         ? {
@@ -740,7 +746,7 @@ const addActionsInstanceMetaData = (nodesMetadata: NodesMetadata, runInstance: L
       updatedNodesData[key] = {
         ...node,
         ...repetitionRunData,
-        runIndex: 0,
+        runIndex,
       };
     }
   });

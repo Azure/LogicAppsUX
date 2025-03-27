@@ -175,7 +175,6 @@ export const promptOpenProjectOrWorkspace = async (context: IActionContext, mess
 
   const result: vscode.MessageItem = await context.ui.showWarningMessage(message, { modal: true }, newWorkspace, openExistingWorkspace);
 
-  console.log('charlie debug: result', result);
   if (result === newWorkspace) {
     vscode.commands.executeCommand(extensionCommand.createNewWorkspace);
     context.telemetry.properties.noWorkspaceResult = 'createNewWorkspace';

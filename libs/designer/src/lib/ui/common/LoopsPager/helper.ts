@@ -9,7 +9,7 @@ import { getRecordEntry, type LogicAppsV2 } from '@microsoft/logic-apps-shared';
  * @param {LogicAppsV2.WorkflowRunAction} action - Node run metadata.
  * @returns {number | undefined} Number of loops if metadata has the property otherwise undefined.
  */
-export const getForeachItemsCount = (action: LogicAppsV2.WorkflowRunAction): number | undefined => {
+export const getLoopsCount = (action: LogicAppsV2.WorkflowRunAction): number | undefined => {
   const { inputsLink, iterationCount, repetitionCount } = action || {};
 
   // Until actions have an iterationCount property when using the 2016-10-01 or later API.
@@ -51,8 +51,8 @@ export const getRepetitionName = (
   let repetitionName = '';
   const parentsForNode = getAllParentsForNode(id, nodesMetadata);
   parentsForNode.forEach((parent) => {
-    const parentType = getRecordEntry(operationInfo, parent)?.type?.toLowerCase();
-    const isLoopScope = parentType ? parentType === constants.NODE.TYPE.FOREACH || parentType === constants.NODE.TYPE.UNTIL : false;
+    const parentType = getRecordEntry(operationInfo, parent)?.type?.toLowerCase() ?? '';
+    const isLoopScope = [constants.NODE.TYPE.FOREACH, constants.NODE.TYPE.UNTIL, constants.NODE.TYPE.AGENT].includes(parentType);
     if (isLoopScope) {
       const zeroBasedCurrent = getRecordEntry(nodesMetadata, parent)?.runIndex;
       repetitionName = repetitionName ? `${String(zeroBasedCurrent).padStart(6, '0')}-${repetitionName}` : String(index).padStart(6, '0');
@@ -60,4 +60,13 @@ export const getRepetitionName = (
   });
 
   return repetitionName;
+};
+
+/**
+ * Gets repetition name for API call.
+ * @param {number | undefined} index - Node's parent loop index.
+ * @returns {string} Repetition name.
+ */
+export const getScopeRepetitionName = (index: number | undefined): string => {
+  return String(index).padStart(6, '0');
 };

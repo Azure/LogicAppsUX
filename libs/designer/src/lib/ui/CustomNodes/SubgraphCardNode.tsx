@@ -15,7 +15,7 @@ import {
   useNewAdditiveSubgraphId,
   useNodeDisplayName,
   useNodeMetadata,
-  useParentRunId,
+  useParentNodeId,
   useRunData,
   useWorkflowNode,
 } from '../../core/state/workflow/workflowSelectors';
@@ -47,8 +47,10 @@ const SubgraphCardNode = ({ targetPosition = Position.Top, sourcePosition = Posi
   const operationInfo = useOperationInfo(graphId);
   const isMonitoringView = useMonitoringView();
   const normalizedType = node?.type.toLowerCase();
-  const parentRunId = useParentRunId(subgraphId);
-  const runData = useRunData(parentRunId ?? subgraphId);
+  const parentNodeId = useParentNodeId(subgraphId);
+  const runData = useRunData(parentNodeId ?? subgraphId);
+  const parentActionMetadata = useActionMetadata(parentNodeId);
+  const isParentAgent = parentActionMetadata?.type?.toLowerCase() === constants.NODE.TYPE.AGENT;
 
   const title = useNodeDisplayName(subgraphId);
 
@@ -142,6 +144,8 @@ const SubgraphCardNode = ({ targetPosition = Position.Top, sourcePosition = Posi
   }, [parameterValidationErrors?.length, parameterValidationErrorText]);
 
   const nodeIndex = useNodeIndex(subgraphId);
+  const shouldShowPager =
+    isMonitoringView && (normalizedType === constants.NODE.TYPE.UNTIL || (isParentAgent && (metadata?.runData?.repetitionCount ?? 0) > 1));
 
   return (
     <div>
@@ -167,9 +171,7 @@ const SubgraphCardNode = ({ targetPosition = Position.Top, sourcePosition = Posi
                 errorMessage={errorMessage}
                 nodeIndex={nodeIndex}
               />
-              {isMonitoringView && normalizedType === constants.NODE.TYPE.UNTIL ? (
-                <LoopsPager metadata={metadata} scopeId={subgraphId} collapsed={graphCollapsed} />
-              ) : null}
+              {shouldShowPager ? <LoopsPager metadata={metadata} scopeId={subgraphId} collapsed={graphCollapsed} /> : null}
             </>
           ) : null}
           <Handle className="node-handle bottom" type="source" position={sourcePosition} isConnectable={false} />

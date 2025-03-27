@@ -12,6 +12,7 @@ export const convertConnectionsDataToReferences = (connectionsData: ConnectionsD
   const functionConnections = connectionsData.functionConnections || {};
   const connectionReferences = connectionsData.managedApiConnections || {};
   const serviceProviderConnections = connectionsData.serviceProviderConnections || {};
+  const agentConnections = connectionsData.agentConnections || {};
 
   for (const connectionReferenceKey of Object.keys(connectionReferences)) {
     const { connection, api, connectionProperties, authentication } = connectionReferences[connectionReferenceKey];
@@ -51,6 +52,15 @@ export const convertConnectionsDataToReferences = (connectionsData: ConnectionsD
     };
   }
 
+  const agentConnectorId = 'connectionProviders/agent';
+  for (const connectionKey of Object.keys(agentConnections)) {
+    references[connectionKey] = {
+      connection: { id: `/${agentConnectorId}/connections/${connectionKey}` },
+      connectionName: connectionKey, // updated to use connectionKey directly
+      api: { id: `/${agentConnectorId}` },
+    };
+  }
+
   return references;
 };
 
@@ -77,7 +87,7 @@ export const resolveConnectionsReferences = (
 
   try {
     return JSON.parse(result);
-  } catch (error) {
+  } catch {
     throw new Error('Failure in resolving connection parameterisation');
   }
 };
