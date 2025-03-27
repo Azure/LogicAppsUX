@@ -271,6 +271,7 @@ export const PanelHeader = (props: PanelHeaderProps): JSX.Element => {
           noNodeSelected={noNodeOnCardLevel}
           readOnlyMode={readOnlyMode}
           commentChange={commentChange}
+          isTrigger={isTrigger}
         />
       ) : null}
       {canResubmit || canShowLogicAppRun ? (

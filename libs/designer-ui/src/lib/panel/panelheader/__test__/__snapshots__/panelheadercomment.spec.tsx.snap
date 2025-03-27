@@ -6,11 +6,11 @@ exports[`ui/panel/panelheadercomment > should construct. 1`] = `
   hidden={false}
 >
   <CompoundIcon
-    aria-label="Description"
+    aria-label="Comment"
     className="msla-comment-icon"
   />
   <StyledTextFieldBase
-    ariaLabel="Comment"
+    ariaLabel="Description"
     autoAdjustHeight={true}
     borderless={true}
     className="msla-card-comment"
@@ -26,6 +26,7 @@ exports[`ui/panel/panelheadercomment > should construct. 1`] = `
     onFocus={[Function]}
     onKeyDown={[Function]}
     onKeyUp={[Function]}
+    placeholder="Add a description"
     resizable={false}
     styles={
       {

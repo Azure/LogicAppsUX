@@ -17,6 +17,7 @@ export interface PanelHeaderCommentProps {
   noNodeSelected?: boolean;
   readOnlyMode?: boolean;
   commentChange: (panelCommentChangeEvent?: string) => void;
+  isTrigger?: boolean;
 }
 
 const commentTextFieldStyle: Partial<ITextFieldStyles> = {
@@ -31,6 +32,7 @@ export const PanelHeaderComment = ({
   noNodeSelected,
   readOnlyMode,
   commentChange,
+  isTrigger,
 }: PanelHeaderCommentProps): JSX.Element => {
   const intl = useIntl();
 
@@ -47,11 +49,12 @@ export const PanelHeaderComment = ({
     return <DescriptionIcon className={'msla-comment-icon'} aria-label={commentLabel} />;
   };
 
+  // Autofocusing when opened for a node
   useEffect(() => {
-    if (!isCollapsed && !readOnlyMode && !comment) {
+    if (!isCollapsed && !readOnlyMode && !comment && !isTrigger) {
       commentTextFieldRef.current?.focus();
     }
-  }, [comment, commentTextFieldRef, isCollapsed, readOnlyMode]);
+  }, [comment, commentTextFieldRef, isCollapsed, readOnlyMode, isTrigger]);
   const getCommentEditor = (): JSX.Element => {
     const commentClassName = commentHasFocus ? 'msla-card-comment-focused' : 'msla-card-comment';
     const commentTitle = intl.formatMessage({
@@ -83,6 +86,7 @@ export const PanelHeaderComment = ({
         }
       }
     };
+
     return (
       <TextField
         className={css(!readOnlyMode && commentClassName)}
