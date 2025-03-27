@@ -100,3 +100,5 @@ export type { TemplateServiceOptions } from './templates/TemplatesDesignerContex
 export { ConfigureTemplateWizard } from './configuretemplate/ConfigureTemplateWizard';
 export { validateParameters, validateConnections } from './state/templates/templateSlice';
 export { getConsumptionWorkflowPayloadForCreate } from './templates/utils/createhelper';
+export * from './state/modal/modalSelectors';
+export * from './state/modal/modalSlice';

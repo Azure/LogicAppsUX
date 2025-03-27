@@ -4,8 +4,8 @@ import { AssertionErrorCode, AssertionException } from '../../utils/src';
 export interface ITemplateService {
   getExistingWorkflowNames?: () => Promise<string[]>;
   isResourceAvailable?: (resourceId: string) => Promise<boolean>;
-  openBladeAfterCreate: (workflowName: string | undefined) => void;
-  onAddBlankWorkflow: () => Promise<void>;
+  openBladeAfterCreate?: (workflowName: string | undefined) => void;
+  onAddBlankWorkflow?: () => Promise<void>;
   getAllTemplateNames: () => Promise<string[]>;
   getResourceManifest: (resourcePath: string) => Promise<Template.TemplateManifest | Template.WorkflowManifest>;
   getWorkflowDefinition: (templateId: string, workflowId: string) => Promise<LogicAppsV2.WorkflowDefinition>;

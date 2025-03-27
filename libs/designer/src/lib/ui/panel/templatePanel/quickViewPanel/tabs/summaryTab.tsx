@@ -1,10 +1,10 @@
-import { LogEntryLevel, LoggerService, type Template, isNullOrUndefined } from '@microsoft/logic-apps-shared';
+import { LogEntryLevel, LoggerService, type Template, getTriggerFromDefinition, isNullOrUndefined } from '@microsoft/logic-apps-shared';
 import type { AppDispatch } from '../../../../../core/state/templates/store';
 import { useIntl, type IntlShape } from 'react-intl';
 import constants from '../../../../../common/constants';
-import { closePanel, openCreateWorkflowPanelView } from '../../../../../core/state/templates/panelSlice';
+import { closePanel, openPanelView, TemplatePanelView } from '../../../../../core/state/templates/panelSlice';
 import { Link, Text } from '@fluentui/react-components';
-import type { TemplatePanelTab } from '@microsoft/designer-ui';
+import type { TemplateTabProps } from '@microsoft/designer-ui';
 import { clearTemplateDetails } from '../../../../../core/state/templates/templateSlice';
 import Markdown from 'react-markdown';
 import { useTemplateManifest, useWorkflowTemplate } from '../../../../../core/state/templates/templateselectors';
@@ -17,6 +17,7 @@ export const SummaryPanel = ({ workflowId }: { workflowId: string }) => {
   const intl = useIntl();
   const workflowTemplate = useWorkflowTemplate(workflowId);
   const workflowManifest = useMemo(() => workflowTemplate?.manifest, [workflowTemplate]);
+  const workflowDefinition = useMemo(() => workflowTemplate?.workflowDefinition, [workflowTemplate]);
   const templateManifest = useTemplateManifest();
   const isMultiWorkflow = isMultiWorkflowTemplate(templateManifest);
   const templateHasConnections = Object.keys(workflowManifest?.connections || {}).length > 0;
@@ -99,14 +100,22 @@ export const SummaryPanel = ({ workflowId }: { workflowId: string }) => {
             </Link>
           </div>
         )}
-        {Object.keys(detailsTags).map((key) => {
-          return (
-            <div className="msla-template-overview-section-detail" key={key}>
-              <Text className="msla-template-overview-section-detailkey">{detailsTags[key as Template.DetailsType]}:</Text>
-              <Text>{templateManifest.details[key as Template.DetailsType]}</Text>
-            </div>
-          );
-        })}
+        {!isMultiWorkflow && (
+          <div className="msla-template-overview-section-detail">
+            <Text className="msla-template-overview-section-detailkey">{detailsTags.Type}:</Text>
+            <Text>{templateManifest.details.Type}</Text>
+          </div>
+        )}
+
+        <div className="msla-template-overview-section-detail">
+          <Text className="msla-template-overview-section-detailkey">{detailsTags.Trigger}:</Text>
+          <Text>{isMultiWorkflow ? getTriggerFromDefinition(workflowDefinition?.triggers ?? {}) : templateManifest.details.Trigger}</Text>
+        </div>
+
+        <div className="msla-template-overview-section-detail">
+          <Text className="msla-template-overview-section-detailkey">{detailsTags.By}:</Text>
+          <Text>{templateManifest.details.By}</Text>
+        </div>
       </div>
       {!isMultiWorkflow && templateManifest.tags?.length ? (
         <div className="msla-template-overview-section">
@@ -137,7 +146,7 @@ export const summaryTab = (
   clearDetailsOnClose: boolean,
   { templateId, workflowAppName, isMultiWorkflow }: Template.TemplateContext,
   onClose?: () => void
-): TemplatePanelTab => ({
+): TemplateTabProps => ({
   id: constants.TEMPLATE_PANEL_TAB_NAMES.OVERVIEW,
   title: intl.formatMessage({
     defaultMessage: 'Summary',
@@ -159,7 +168,7 @@ export const summaryTab = (
         message: 'Template create button clicked',
         args: [templateId, workflowAppName, `isMultiWorkflowTemplate:${isMultiWorkflow}`],
       });
-      dispatch(openCreateWorkflowPanelView());
+      dispatch(openPanelView({ panelView: TemplatePanelView.CreateWorkflow }));
     },
     secondaryButtonText: intl.formatMessage({
       defaultMessage: 'Close',

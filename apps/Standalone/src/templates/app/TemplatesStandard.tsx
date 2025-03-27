@@ -524,7 +524,7 @@ const getResourceBasedServices = (
       httpClient,
     },
     workflowAppDetails: { appName: resourceName, identity: workflowApp?.identity as any },
-    readConnections: () => Promise.resolve(getConnectionsData()),
+    readConnections: () => Promise.resolve(getConnectionsData() as any),
     writeConnection: addConnection as any,
   });
   const oAuthService = new StandaloneOAuthService({
@@ -614,7 +614,7 @@ const getResourceBasedServices = (
   };
 
   const templateService = new StandardTemplateService({
-    endpoint: 'https://priti-cxf4h5cpcteue4az.b02.azurefd.net',
+    endpoint: 'https://priti-cxf4h5cpcteue4az.b02.azurefd.net/logicapps',
     useEndpointForTemplates: useEndpoint,
     baseUrl: armUrl,
     appId: siteResourceId,

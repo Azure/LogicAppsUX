@@ -1,15 +1,15 @@
 import { TabList, Tab, Text, tokens } from '@fluentui/react-components';
 import type { SelectTabData, SelectTabEvent } from '@fluentui/react-components';
-import type { TemplatePanelTab } from './model';
+import type { TemplateTabProps } from './model';
 import { DismissCircleFilled } from '@fluentui/react-icons';
 
-export interface TemplatesPanelContentProps {
+export interface TemplateContentProps {
   className?: string;
-  tabs: TemplatePanelTab[];
+  tabs: TemplateTabProps[];
   selectedTab?: string;
   selectTab: (tabId: string) => void;
 }
-export const TemplatesPanelContent = ({ tabs = [], selectedTab, selectTab, className }: TemplatesPanelContentProps): JSX.Element => {
+export const TemplateContent = ({ tabs = [], selectedTab, selectTab, className }: TemplateContentProps): JSX.Element => {
   const selectedTabId = selectedTab ?? tabs[0]?.id;
 
   const selectedTabProps = tabs?.find((tab) => tab.id === selectedTabId);
