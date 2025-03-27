@@ -32,13 +32,8 @@ export const ReviewExisting = ({ name, description, resourceOverrides }: ReviewE
         <Text weight="semibold" className={styles.actionName}>
           {name}
         </Text>
+        {description && <Text>{description}</Text>}
       </div>
-      {description && (
-        <div className="msla-templates-review-block">
-          <Text>{resourceOverrides?.workflowDescription ?? resourceStrings.DESCRIPTION}</Text>
-          <Text weight="semibold">{description}</Text>
-        </div>
-      )}
       {enableResourceSelection && <ResourceDisplay />}
     </div>
   );
