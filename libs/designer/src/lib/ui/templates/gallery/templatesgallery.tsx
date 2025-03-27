@@ -5,6 +5,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { setPageNum, templatesCountPerPage } from '../../../core/state/templates/manifestSlice';
 import { Text } from '@fluentui/react-components';
 import { useIntl } from 'react-intl';
+import { css } from '@fluentui/utilities';
 
 interface TemplatesGalleryProps {
   isLightweight?: boolean;
@@ -47,7 +48,7 @@ export const TemplatesGallery = ({
   return (
     <>
       <div>
-        <div className="msla-templates-list">
+        <div className={css('msla-templates-list', cssOverrides?.['list'])}>
           {blankTemplateCard ? blankTemplateCard : null}
           {filteredTemplateNames === undefined
             ? [1, 2, 3, 4].map((i) => <TemplateCard key={i} cssOverrides={cssOverrides} templateName={''} />)
