@@ -30,15 +30,14 @@ export async function isLogicAppProject(folderPath: string): Promise<boolean> {
       return false;
     }
     try {
-      const workflowJsonData = await fse.readFile(workflowJsonPath, 'utf-8');
-      const workflowJson = JSON.parse(workflowJsonData);
-      const schema = workflowJson?.definition?.$schema;
-      if (schema && schema.includes('Microsoft.Logic') && schema.includes('workflowdefinition.json')) {
-        const filesInSubpath = await fse.readdir(path.dirname(workflowJsonPath));
-        return filesInSubpath.includes(workflowFileName);
+      const filesInSubpath = await fse.readdir(path.dirname(workflowJsonPath));
+      if (filesInSubpath.includes(workflowFileName)) {
+        const workflowJsonData = await fse.readFile(workflowJsonPath, 'utf-8');
+        const workflowJson = JSON.parse(workflowJsonData);
+        const schema = workflowJson?.definition?.$schema;
+        return schema && schema.includes('Microsoft.Logic') && schema.includes('workflowdefinition.json');
       }
     } catch {
-      // Optionally log error if needed
       return false;
     }
     return false;
@@ -51,7 +50,7 @@ export async function isLogicAppProject(folderPath: string): Promise<boolean> {
     })
   );
 
-  if (!validWorkflowChecks.some((valid) => !!valid)) {
+  if (!validWorkflowChecks.some((valid) => valid)) {
     return false;
   }
 
