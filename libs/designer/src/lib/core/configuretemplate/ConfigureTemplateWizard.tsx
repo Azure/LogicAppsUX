@@ -1,31 +1,36 @@
 import { useDispatch, useSelector } from 'react-redux';
 import type { AppDispatch, RootState } from '../state/templates/store';
-import { useCallback } from 'react';
+import { useCallback, useState } from 'react';
 import { ResourcePicker } from '../../ui/templates/basics/resourcepicker';
 import { equals, hasProperty, type LogicAppResource } from '@microsoft/logic-apps-shared';
 import { useWorkflowsInApp } from '../configuretemplate/utils/queries';
 import { Button, Checkbox } from '@fluentui/react-components';
-import { initializeConnectionsFromWorkflows } from '../actions/bjsworkflow/configuretemplate';
+import { initializeWorkflowsData } from '../actions/bjsworkflow/configuretemplate';
 import { updateAllWorkflowsData, updateWorkflowData } from '../state/templates/templateSlice';
+import { TemplateContent, TemplatesPanelFooter, type TemplateTabProps } from '@microsoft/designer-ui';
+import { useConfigureTemplateWizardTabs } from '../../ui/configuretemplate/tabs/useWizardTabs';
+import { selectWizardTab } from '../state/templates/tabSlice';
+import { FeaturedConnectors } from '../../ui/configuretemplate/templateprofile/connectors';
 
 export const ConfigureTemplateWizard = () => {
   const dispatch = useDispatch<AppDispatch>();
-  const { isConsumption, logicAppName, subscriptionId, resourceGroup, workflowsInTemplate } = useSelector((state: RootState) => ({
-    isConsumption: !!state.workflow.isConsumption,
-    logicAppName: state.workflow.logicAppName,
-    subscriptionId: state.workflow.subscriptionId,
-    resourceGroup: state.workflow.resourceGroup,
-    workflowsInTemplate: state.template.workflows,
-  }));
+  const { isConsumption, logicAppName, subscriptionId, resourceGroup, workflowsInTemplate, selectedTabId } = useSelector(
+    (state: RootState) => ({
+      isConsumption: !!state.workflow.isConsumption,
+      logicAppName: state.workflow.logicAppName,
+      subscriptionId: state.workflow.subscriptionId,
+      resourceGroup: state.workflow.resourceGroup,
+      workflowsInTemplate: state.template.workflows,
+      selectedTabId: state.tab.selectedTabId,
+    })
+  );
   const { data: workflows, isLoading } = useWorkflowsInApp(subscriptionId, resourceGroup, logicAppName ?? '', !!isConsumption);
+  const [showFeaturedConnectors, setShowFeaturedConnectors] = useState(false);
 
-  const onGetConnections = useCallback(() => {
-    dispatch(initializeConnectionsFromWorkflows({}));
+  const onInitializeWorkflows = useCallback(() => {
+    dispatch(initializeWorkflowsData({}));
+    setShowFeaturedConnectors(true);
   }, [dispatch]);
-
-  const onGetParameters = useCallback(() => {
-    // dispatch(initializeParametersFromWorkflows({}));
-  }, []);
 
   const onWorkflowSelected = useCallback(
     (workflowId: string, checked: boolean) => {
@@ -45,6 +50,13 @@ export const ConfigureTemplateWizard = () => {
     },
     [dispatch]
   );
+
+  const handleSelectTab = (tabId: string): void => {
+    dispatch(selectWizardTab(tabId));
+  };
+
+  const panelTabs: TemplateTabProps[] = useConfigureTemplateWizardTabs();
+  const selectedTabProps = selectedTabId ? panelTabs?.find((tab) => tab.id === selectedTabId) : panelTabs[0];
 
   return (
     <div>
@@ -68,8 +80,18 @@ export const ConfigureTemplateWizard = () => {
         </div>
       </div>
       <div>
-        <Button onClick={onGetConnections}>{'Get Connections'}</Button>
-        <Button onClick={onGetParameters}>{'Get Parameters'}</Button>
+        <Button onClick={onInitializeWorkflows}>{'Initialize Workflows'}</Button>
+      </div>
+
+      <p>
+        {'Featured Connectors'}
+        <br />
+        {showFeaturedConnectors ? <FeaturedConnectors /> : 'Click "Initialize Workflows" to show featured connectors'}
+      </p>
+
+      <TemplateContent className="msla-template-quickview-tabs" tabs={panelTabs} selectedTab={selectedTabId} selectTab={handleSelectTab} />
+      <div className="msla-template-overview-footer">
+        {selectedTabProps?.footerContent ? <TemplatesPanelFooter showPrimaryButton={true} {...selectedTabProps?.footerContent} /> : null}
       </div>
     </div>
   );

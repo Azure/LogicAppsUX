@@ -1,6 +1,5 @@
-import constants from '../../common/constants';
 import { getMonitoringError } from '../../common/utilities/error';
-import type { AppDispatch } from '../../core';
+import { useNodeRepetition, type AppDispatch } from '../../core';
 import { copyOperation } from '../../core/actions/bjsworkflow/copypaste';
 import { moveOperation } from '../../core/actions/bjsworkflow/move';
 import {
@@ -8,6 +7,7 @@ import {
   useNodeSelectAdditionalCallback,
   useReadOnly,
   useSuppressDefaultNodeSelectFunctionality,
+  useUnitTest,
 } from '../../core/state/designerOptions/designerOptionsSelectors';
 import { setNodeContextMenuData, setShowDeleteModalNodeId } from '../../core/state/designerView/designerViewSlice';
 import { ErrorLevel } from '../../core/state/operation/operationMetadataSlice';
@@ -31,6 +31,7 @@ import {
   useOperationQuery,
 } from '../../core/state/selectors/actionMetadataSelector';
 import { useSettingValidationErrors } from '../../core/state/setting/settingSelector';
+import { useIsMockSupported, useMocksByOperation } from '../../core/state/unitTest/unitTestSelectors';
 import {
   useNodeDescription,
   useNodeDisplayName,
@@ -40,20 +41,21 @@ import {
   useParentRunIndex,
   useRunInstance,
   useShouldNodeFocus,
-  useParentRunId,
+  useParentNodeId,
   useIsLeafNode,
+  useIsWithinAgenticLoop,
+  useRunIndex,
 } from '../../core/state/workflow/workflowSelectors';
 import { setRepetitionRunData } from '../../core/state/workflow/workflowSlice';
 import { getRepetitionName } from '../common/LoopsPager/helper';
 import { DropZone } from '../connections/dropzone';
 import { MessageBarType } from '@fluentui/react';
 import type { LogicAppsV2 } from '@microsoft/logic-apps-shared';
-import { isNullOrUndefined, RunService, useNodeIndex } from '@microsoft/logic-apps-shared';
+import { isNullOrUndefined, useNodeIndex } from '@microsoft/logic-apps-shared';
 import { Card } from '@microsoft/designer-ui';
 import { memo, useCallback, useEffect, useMemo, useState } from 'react';
 import { useDrag } from 'react-dnd';
 import { useIntl } from 'react-intl';
-import { useQuery } from '@tanstack/react-query';
 import { useDispatch } from 'react-redux';
 import { Handle, Position, type NodeProps } from '@xyflow/react';
 import { useHotkeys } from 'react-hotkeys-hook';
@@ -62,6 +64,8 @@ import { CopyTooltip } from '../common/DesignerContextualMenu/CopyTooltip';
 const DefaultNode = ({ targetPosition = Position.Top, sourcePosition = Position.Bottom, id }: NodeProps) => {
   const readOnly = useReadOnly();
   const isMonitoringView = useMonitoringView();
+  const isUnitTest = useUnitTest();
+
   const intl = useIntl();
 
   const dispatch = useDispatch<AppDispatch>();
@@ -73,10 +77,10 @@ const DefaultNode = ({ targetPosition = Position.Top, sourcePosition = Position.
   const isTrigger = useMemo(() => metadata?.graphId === 'root' && metadata?.isRoot, [metadata]);
   const parentRunIndex = useParentRunIndex(id);
   const runInstance = useRunInstance();
-  const runData = useRunData(id);
-  const parentRunId = useParentRunId(id);
-  const parentRunData = useRunData(parentRunId ?? '');
-  const selfRunData = useRunData(id);
+  const parentNodeId = useParentNodeId(id);
+  const parentRunData = useRunData(parentNodeId ?? '');
+  const nodeMockResults = useMocksByOperation(isTrigger ? `&${id}` : id);
+  const isMockSupported = useIsMockSupported(id, isTrigger ?? false);
   const nodesMetaData = useNodesMetadata();
   const repetitionName = useMemo(
     () => getRepetitionName(parentRunIndex, id, nodesMetaData, operationsInfo),
@@ -87,36 +91,18 @@ const DefaultNode = ({ targetPosition = Position.Top, sourcePosition = Position.
 
   const suppressDefaultNodeSelect = useSuppressDefaultNodeSelectFunctionality();
   const nodeSelectCallbackOverride = useNodeSelectAdditionalCallback();
+  const graphId = metadata?.graphId ?? '';
+  const isWithinAgenticLoop = useIsWithinAgenticLoop(graphId);
+  const selfRunData = useRunData(id);
+  const toolRunIndex = useRunIndex(graphId);
 
-  const getRunRepetition = useCallback(() => {
-    if (parentRunData?.status === constants.FLOW_STATUS.SKIPPED) {
-      return {
-        properties: {
-          status: constants.FLOW_STATUS.SKIPPED,
-          inputsLink: null,
-          outputsLink: null,
-          startTime: null,
-          endTime: null,
-          trackingId: null,
-          correlation: null,
-        },
-      };
-    }
-    return RunService().getRepetition({ nodeId: id, runId: runInstance?.id }, repetitionName);
-  }, [id, parentRunData?.status, repetitionName, runInstance?.id]);
-
-  const { isFetching: isRepetitionFetching, data: repetitionRunData } = useQuery<any>(
-    ['runInstance', { nodeId: id, runId: runInstance?.id, repetitionName, parentStatus: parentRunData?.status, parentRunIndex }],
-    async () => {
-      return await getRunRepetition();
-    },
-    {
-      refetchOnWindowFocus: false,
-      refetchOnReconnect: false,
-      refetchOnMount: false,
-      retryOnMount: false,
-      enabled: !!isMonitoringView && parentRunIndex !== undefined,
-    }
+  const { isFetching: isRepetitionFetching, data: repetitionRunData } = useNodeRepetition(
+    !!isMonitoringView,
+    id,
+    runInstance?.id,
+    repetitionName,
+    parentRunData?.status,
+    parentRunIndex
   );
 
   useEffect(() => {
@@ -125,8 +111,14 @@ const DefaultNode = ({ targetPosition = Position.Top, sourcePosition = Position.
         // if the correlation id is the same, we don't need to update the repetition run data
         return;
       }
-
-      dispatch(setRepetitionRunData({ nodeId: id, runData: repetitionRunData.properties as LogicAppsV2.WorkflowRunAction }));
+      let operationRepetitionRunData = repetitionRunData.properties;
+      if (isWithinAgenticLoop) {
+        const toolIndex = toolRunIndex ? toolRunIndex - 1 : 0;
+        operationRepetitionRunData = Array.isArray(repetitionRunData.properties)
+          ? repetitionRunData.properties[toolIndex]
+          : repetitionRunData.properties;
+      }
+      dispatch(setRepetitionRunData({ nodeId: id, runData: operationRepetitionRunData as LogicAppsV2.WorkflowRunAction }));
     }
   }, [dispatch, repetitionRunData, id, selfRunData?.correlation?.actionTrackingId]);
 
@@ -288,7 +280,7 @@ const DefaultNode = ({ targetPosition = Position.Top, sourcePosition = Position.
     }
 
     if (isMonitoringView) {
-      const { status: statusRun, error: errorRun, code: codeRun } = runData ?? {};
+      const { status: statusRun, error: errorRun, code: codeRun } = selfRunData ?? {};
       return getMonitoringError(errorRun, statusRun, codeRun);
     }
 
@@ -302,20 +294,22 @@ const DefaultNode = ({ targetPosition = Position.Top, sourcePosition = Position.
     settingValidationErrorText,
     parameterValidationErrorText,
     isMonitoringView,
-    runData,
+    selfRunData,
   ]);
 
   const shouldFocus = useShouldNodeFocus(id);
   const staticResults = useParameterStaticResult(id);
 
   const nodeIndex = useNodeIndex(id);
+  const isCardActive = isMonitoringView ? !isNullOrUndefined(selfRunData?.status) : true;
 
   return (
     <>
       <div className="nopan" ref={ref as any}>
         <Handle className="node-handle top" type="target" position={targetPosition} isConnectable={false} />
         <Card
-          active={isMonitoringView ? !isNullOrUndefined(runData?.status) : true}
+          active={isCardActive}
+          showStatusPill={isMonitoringView && isCardActive}
           title={label}
           icon={iconUri}
           draggable={!readOnly && !isTrigger}
@@ -331,8 +325,10 @@ const DefaultNode = ({ targetPosition = Position.Top, sourcePosition = Position.
           errorLevel={errorLevel}
           isDragging={isDragging}
           isLoading={isLoading}
-          isMonitoringView={isMonitoringView}
-          runData={runData}
+          isUnitTest={isUnitTest}
+          nodeMockResults={nodeMockResults}
+          isMockSupported={isMockSupported}
+          runData={selfRunData}
           readOnly={readOnly}
           onClick={nodeClick}
           onContextMenu={onContextMenu}

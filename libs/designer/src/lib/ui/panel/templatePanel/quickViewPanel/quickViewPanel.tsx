@@ -3,14 +3,15 @@ import { useDispatch, useSelector } from 'react-redux';
 import { Link, Text } from '@fluentui/react-components';
 import { Icon, Panel, PanelType } from '@fluentui/react';
 import { useIntl } from 'react-intl';
-import { useCallback, useState } from 'react';
-import { TemplatesPanelContent, TemplatesPanelFooter, TemplatesPanelHeader } from '@microsoft/designer-ui';
+import { useCallback, useMemo, useState } from 'react';
+import { TemplateContent, TemplatesPanelFooter, TemplatesPanelHeader } from '@microsoft/designer-ui';
 import { getQuickViewTabs } from '../../../../core/templates/utils/helper';
 import Markdown from 'react-markdown';
 import { useWorkflowTemplate } from '../../../../core/state/templates/templateselectors';
 import { Open16Regular } from '@fluentui/react-icons';
 import { closePanel, TemplatePanelView } from '../../../../core/state/templates/panelSlice';
 import { clearTemplateDetails } from '../../../../core/state/templates/templateSlice';
+import { isMultiWorkflowTemplate } from '../../../../core/actions/bjsworkflow/templates';
 
 export interface QuickViewPanelProps {
   showCreate: boolean;
@@ -46,7 +47,8 @@ export const QuickViewPanel = ({
       shouldCloseByDefault: !state.templateOptions.viewTemplateDetails,
     })
   );
-  const { manifest } = useWorkflowTemplate(workflowId);
+  const workflowTemplate = useWorkflowTemplate(workflowId);
+  const manifest = useMemo(() => workflowTemplate?.manifest, [workflowTemplate]);
   const panelTabs = getQuickViewTabs(
     intl,
     dispatch,
@@ -74,9 +76,10 @@ export const QuickViewPanel = ({
   const onRenderHeaderContent = useCallback(
     () => (
       <QuickViewPanelHeader
-        title={manifest.title}
-        summary={manifest.summary}
-        sourceCodeUrl={manifest.sourceCodeUrl}
+        title={manifest?.title ?? ''}
+        summary={manifest?.summary ?? ''}
+        sourceCodeUrl={manifest?.sourceCodeUrl}
+        isMultiWorkflowTemplate={isMultiWorkflowTemplate(templateManifest)}
         details={templateManifest?.details ?? {}}
       />
     ),
@@ -118,12 +121,7 @@ export const QuickViewPanel = ({
       layerProps={layerProps}
       isFooterAtBottom={true}
     >
-      <TemplatesPanelContent
-        className="msla-template-quickview-tabs"
-        tabs={panelTabs}
-        selectedTab={selectedTabId}
-        selectTab={onTabSelected}
-      />
+      <TemplateContent className="msla-template-quickview-tabs" tabs={panelTabs} selectedTab={selectedTabId} selectTab={onTabSelected} />
     </Panel>
   );
 };
@@ -132,6 +130,7 @@ export const QuickViewPanelHeader = ({
   title,
   summary,
   sourceCodeUrl,
+  isMultiWorkflowTemplate = false,
   details,
   features,
   onBackClick,
@@ -140,22 +139,29 @@ export const QuickViewPanelHeader = ({
   summary: string;
   sourceCodeUrl: string | undefined;
   details: Record<string, string>;
+  isMultiWorkflowTemplate?: boolean;
   features?: string;
   onBackClick?: () => void;
 }) => {
   const intl = useIntl();
-  const detailsTags: Record<string, string> = {
-    Type: intl.formatMessage({
-      defaultMessage: 'Type',
-      id: 'tjQdhq',
-      description: 'Solution type of the template',
-    }),
-    By: intl.formatMessage({
+  const detailsTags: Record<string, string> = useMemo(() => {
+    const baseDetailsTags: Record<string, string> = isMultiWorkflowTemplate
+      ? {}
+      : {
+          Type: intl.formatMessage({
+            defaultMessage: 'Type',
+            id: 'tjQdhq',
+            description: 'Solution type of the template',
+          }),
+        };
+
+    baseDetailsTags.By = intl.formatMessage({
       defaultMessage: 'By',
       id: 'nhEgHb',
       description: 'Name of the organization that published this template',
-    }),
-  };
+    });
+    return baseDetailsTags;
+  }, [isMultiWorkflowTemplate, intl]);
 
   return (
     <TemplatesPanelHeader title={title} onBackClick={onBackClick}>

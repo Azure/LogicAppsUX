@@ -7,6 +7,7 @@ export const replaceWhiteSpaceWithUnderscore = (uiElementName: string): string =
 
 export const containsIdTag = (id: string) => id?.includes('-#');
 export const removeIdTag = (id: string) => id?.split('-#')[0];
+export const removeCaseTag = (id: string) => id?.split('-addCase')[0];
 
 export const getIdLeaf = (id?: string) => id?.split('/').at(-1) ?? '';
 
@@ -106,3 +107,13 @@ export const escapeString = (input: string, requireSingleQuotesWrap?: boolean): 
     }
   });
 };
+
+/**
+ * Converts a string to PascalCase.
+ * Assumes the input string has been cleaned of invalid characters.
+ * @param {string} str - The input string.
+ * @returns {string} - The PascalCase version of the string.
+ */
+export function toPascalCase(str: string): string {
+  return str.replace(/(?:_+|^)(\w)/g, (match, p1) => p1.toUpperCase());
+}

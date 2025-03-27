@@ -14,9 +14,11 @@ export const setStateHistory = (state: WorkflowLoadingState): void => {
       isDarkMode: state.isDarkMode,
       isReadOnly: state.isReadOnly,
       isMonitoringView: state.isMonitoringView,
+      isUnitTest: state.isUnitTest,
     };
     window.localStorage.setItem('msla-standalone-stateHistory', JSON.stringify(filteredState));
-  } catch (e) {
+  } catch (error) {
+    console.error(error);
     return;
   }
 };
@@ -28,7 +30,8 @@ export const getStateHistory = (): any => {
       return undefined;
     }
     return JSON.parse(state);
-  } catch (e) {
+  } catch (error) {
+    console.error(error);
     return undefined;
   }
 };

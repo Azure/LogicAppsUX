@@ -35,7 +35,12 @@ export {
 export { useIsDesignerDirty, resetDesignerDirtyState, resetTemplatesState } from './state/global';
 export { useAllSettingsValidationErrors } from './state/setting/settingSelector';
 export { useAllConnectionErrors } from './state/operation/operationSelector';
-export { serializeWorkflow, parseWorkflowParameterValue } from './actions/bjsworkflow/serializer';
+export {
+  serializeWorkflow,
+  serializeUnitTestDefinition,
+  getNodeOutputOperations,
+  parseWorkflowParameterValue,
+} from './actions/bjsworkflow/serializer';
 export {
   setSelectedNodeId,
   changePanelNode,
@@ -76,6 +81,8 @@ export { downloadDocumentAsFile, getDocumentationMetadata } from './utils/docume
 export { getTriggerNodeId } from './utils/graph';
 export { updateParameterValidation } from './state/operation/operationMetadataSlice';
 export { updateWorkflowParameters } from './actions/bjsworkflow/initialize';
+export { useAssertionsValidationErrors } from './state/unitTest/unitTestSelectors';
+export { convertVariableTypeToSwaggerType } from './utils/variables';
 export {
   getBrandColorFromManifest,
   getIconUriFromManifest,
@@ -91,3 +98,7 @@ export { reloadTemplates, resetStateOnResourceChange, type WorkflowTemplateData 
 export type { AppDispatch as TemplatesAppDispatch, RootState as TemplatesRootState } from './state/templates/store';
 export type { TemplateServiceOptions } from './templates/TemplatesDesignerContext';
 export { ConfigureTemplateWizard } from './configuretemplate/ConfigureTemplateWizard';
+export { validateParameters, validateConnections } from './state/templates/templateSlice';
+export { getConsumptionWorkflowPayloadForCreate } from './templates/utils/createhelper';
+export * from './state/modal/modalSelectors';
+export * from './state/modal/modalSlice';
