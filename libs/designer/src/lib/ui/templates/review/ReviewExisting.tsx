@@ -12,12 +12,14 @@ const useStyles = makeStyles({
 
 type ReviewExistingProps = {
   name: string;
+  description?: string;
   resourceOverrides?: {
     workflowName?: string;
+    workflowDescription?: string;
   };
 };
 
-export const ReviewExisting = ({ name, resourceOverrides }: ReviewExistingProps) => {
+export const ReviewExisting = ({ name, description, resourceOverrides }: ReviewExistingProps) => {
   const { enableResourceSelection } = useSelector((state: RootState) => state.templateOptions);
   const { resourceStrings } = useTemplatesStrings();
 
@@ -31,7 +33,12 @@ export const ReviewExisting = ({ name, resourceOverrides }: ReviewExistingProps)
           {name}
         </Text>
       </div>
-
+      {description && (
+        <div className="msla-templates-review-block">
+          <Text>{resourceOverrides?.workflowDescription ?? resourceStrings.DESCRIPTION}</Text>
+          <Text weight="semibold">{description}</Text>
+        </div>
+      )}
       {enableResourceSelection && <ResourceDisplay />}
     </div>
   );

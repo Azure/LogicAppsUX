@@ -7,7 +7,7 @@ import { updateWorkflowName, updateWorkflowNameValidationError } from '../../../
 import { validateWorkflowName } from '../../../core/actions/bjsworkflow/templates';
 import { useIntl } from 'react-intl';
 import { useTemplatesStrings } from '../templatesStrings';
-import { TemplateDisplay } from '../review/ReviewAddPanel';
+import { TemplateDisplay } from '../templateDisplay';
 import { useMemo } from 'react';
 
 interface ResourceSectionProps {
@@ -49,7 +49,9 @@ export const ResourceSection = (props: ResourceSectionProps) => {
   const workflowName = <WorkflowName workflowId={workflowId} label={resources.workflowLabel} placeholder={resources.placeholderText} />;
   return (
     <>
-      {showTemplateInfo ? <TemplateDisplay label={resourceOverrides?.templateLabel} cssOverrides={styles} /> : null}
+      {showTemplateInfo ? (
+        <TemplateDisplay titleLabel={resourceOverrides?.templateLabel} cssOverrides={styles} showDescription={true} />
+      ) : null}
       {showResourceFirst ? workflowName : null}
       {enableResourceSelection ? <ResourcePicker /> : null}
       {showResourceFirst ? null : workflowName}
