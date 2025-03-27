@@ -63,7 +63,7 @@ export const undoablePanelActionTypes = [
   /*
    * The following two actions are not triggering state saves since they are dispatched for each keystroke for text input
    * updateNodeSettings // Settings tab - settings text field dispatches updateNodeSettings on change (i.e. on each keystroke)
-   * setNodeDescription, // Add a note - onCommentChange in nodeDetailsPanel
+   * setNodeDescription, // Add a description - onCommentChange in nodeDetailsPanel
    */
 ].map((action) => action.type);
 

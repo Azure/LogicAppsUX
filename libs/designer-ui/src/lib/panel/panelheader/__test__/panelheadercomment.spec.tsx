@@ -21,7 +21,7 @@ describe('ui/panel/panelheadercomment', () => {
   });
 
   it('should render panelheadercomment when passed a comment.', () => {
-    const props = { ...minimal, noNodeSelected: false, readOnlyMode: false, comment: 'Panel comment' };
+    const props = { ...minimal, noNodeSelected: false, readOnlyMode: false, comment: 'Panel description' };
     renderer.render(<PanelHeaderComment {...props} />);
     const commentContainer = renderer.getRenderOutput();
 
@@ -31,12 +31,12 @@ describe('ui/panel/panelheadercomment', () => {
     expect(icon.props.className).toBe('msla-comment-icon');
 
     expect(comment.props.className).toBe('msla-card-comment');
-    expect(comment.props.ariaLabel).toBe('Comment');
+    expect(comment.props.ariaLabel).toBe('Description');
     expect(comment.props.multiline).toBeTruthy();
     expect(comment.props.autoAdjustHeight).toBeTruthy();
     expect(comment.props.resizable).not.toBeTruthy();
     expect(comment.props.readOnly).toBe(props.readOnlyMode);
-    expect(comment.props.ariaLabel).toBe('Comment');
+    expect(comment.props.ariaLabel).toBe('Description');
     expect(comment.props.maxLength).toBe(256);
     expect(comment.props.value).toBe(props.comment);
   });

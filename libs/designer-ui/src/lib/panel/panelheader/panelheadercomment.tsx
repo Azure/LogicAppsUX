@@ -1,7 +1,7 @@
 import constants from '../../constants';
 import { isEscapeKey } from '../../utils/keyboardUtils';
 import { handleOnEscapeDown } from './panelheader';
-import { bundleIcon, Comment20Filled, Comment20Regular } from '@fluentui/react-icons';
+import { bundleIcon, TextDescription20Filled, TextDescription20Regular } from '@fluentui/react-icons';
 import type { ITextField, ITextFieldStyles } from '@fluentui/react/lib/TextField';
 import { TextField } from '@fluentui/react/lib/TextField';
 import { css } from '@fluentui/react/lib/Utilities';
@@ -9,7 +9,7 @@ import type React from 'react';
 import { useEffect, useRef, useState } from 'react';
 import { useIntl } from 'react-intl';
 
-const CommentIcon = bundleIcon(Comment20Filled, Comment20Regular);
+const DescriptionIcon = bundleIcon(TextDescription20Filled, TextDescription20Regular);
 
 export interface PanelHeaderCommentProps {
   comment?: string;
@@ -17,6 +17,7 @@ export interface PanelHeaderCommentProps {
   noNodeSelected?: boolean;
   readOnlyMode?: boolean;
   commentChange: (panelCommentChangeEvent?: string) => void;
+  isTrigger?: boolean;
 }
 
 const commentTextFieldStyle: Partial<ITextFieldStyles> = {
@@ -31,6 +32,7 @@ export const PanelHeaderComment = ({
   noNodeSelected,
   readOnlyMode,
   commentChange,
+  isTrigger,
 }: PanelHeaderCommentProps): JSX.Element => {
   const intl = useIntl();
 
@@ -43,21 +45,28 @@ export const PanelHeaderComment = ({
     description: 'Comment Label',
   });
 
-  const getCommentIcon = (): JSX.Element => {
-    return <CommentIcon className={'msla-comment-icon'} aria-label={commentLabel} />;
+  const getDescriptionIcon = (): JSX.Element => {
+    return <DescriptionIcon className={'msla-comment-icon'} aria-label={commentLabel} />;
   };
 
+  // Autofocusing when opened for a node
   useEffect(() => {
-    if (!isCollapsed && !readOnlyMode && !comment) {
+    if (!isCollapsed && !readOnlyMode && !comment && !isTrigger) {
       commentTextFieldRef.current?.focus();
     }
-  }, [comment, commentTextFieldRef, isCollapsed, readOnlyMode]);
+  }, [comment, commentTextFieldRef, isCollapsed, readOnlyMode, isTrigger]);
   const getCommentEditor = (): JSX.Element => {
     const commentClassName = commentHasFocus ? 'msla-card-comment-focused' : 'msla-card-comment';
     const commentTitle = intl.formatMessage({
-      defaultMessage: 'Comment',
-      id: 'OSHNZ2',
-      description: 'Label for the comment textfield',
+      defaultMessage: 'Description',
+      id: 'p8AKOz',
+      description: 'Label for the description textfield',
+    });
+
+    const commentPlaceholder = intl.formatMessage({
+      defaultMessage: 'Add a description',
+      id: 'wD5i+Z',
+      description: 'Text to tell users to click to add description',
     });
 
     const onCommentBlur = (_: React.FocusEvent<HTMLInputElement | HTMLTextAreaElement>): void => {
@@ -77,6 +86,7 @@ export const PanelHeaderComment = ({
         }
       }
     };
+
     return (
       <TextField
         className={css(!readOnlyMode && commentClassName)}
@@ -88,6 +98,7 @@ export const PanelHeaderComment = ({
         readOnly={readOnlyMode}
         styles={commentTextFieldStyle}
         ariaLabel={commentTitle}
+        placeholder={commentPlaceholder}
         maxLength={constants.PANEL.MAX_COMMENT_LENGTH}
         value={comment ?? ''}
         onChange={(_e, value) => commentChange(value)}
@@ -100,7 +111,7 @@ export const PanelHeaderComment = ({
   };
   return (
     <div className="msla-panel-comment-container" hidden={isCollapsed}>
-      {noNodeSelected ? null : getCommentIcon()}
+      {noNodeSelected ? null : getDescriptionIcon()}
       {noNodeSelected ? null : getCommentEditor()}
     </div>
   );

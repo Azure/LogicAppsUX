@@ -1,11 +1,16 @@
 import { useReadOnly } from '../../core/state/designerOptions/designerOptionsSelectors';
 import { MenuItem } from '@fluentui/react-components';
-import { bundleIcon, Comment24Filled, Comment24Regular, CommentOff24Filled, CommentOff24Regular } from '@fluentui/react-icons';
+import {
+  bundleIcon,
+  TextDescription24Filled,
+  TextDescription24Regular,
+  TextGrammarDismiss24Filled,
+  TextGrammarDismiss24Regular,
+} from '@fluentui/react-icons';
 import { useIntl } from 'react-intl';
 
-const CommentIcon = bundleIcon(Comment24Filled, Comment24Regular);
-const CommentDeleteIcon = bundleIcon(CommentOff24Filled, CommentOff24Regular);
-
+const DescriptionIcon = bundleIcon(TextDescription24Filled, TextDescription24Regular);
+const DescriptionDeleteIcon = bundleIcon(TextGrammarDismiss24Filled, TextGrammarDismiss24Regular);
 export interface CommentMenuItemProps {
   onClick: React.MouseEventHandler<HTMLDivElement>;
   hasComment: boolean;
@@ -23,21 +28,21 @@ export const CommentMenuItem = (props: CommentMenuItemProps) => {
     description: 'Note text',
   });
   const commentAdd = intl.formatMessage({
-    defaultMessage: 'Add a note',
-    id: 'onXUu0',
-    description: 'Text to tell users to click to add comments',
+    defaultMessage: 'Add a description',
+    id: 'wD5i+Z',
+    description: 'Text to tell users to click to add description',
   });
   const commentDelete = intl.formatMessage({
-    defaultMessage: 'Delete note',
-    id: 'x8kTAX',
-    description: 'Text to tell users to click to delete comments',
+    defaultMessage: 'Delete description',
+    id: 'IY0Nus',
+    description: 'Text to tell users to click to delete description',
   });
 
   return (
     <MenuItem
       key={commentDescription}
       disabled={readOnly}
-      icon={hasComment ? <CommentDeleteIcon /> : <CommentIcon />}
+      icon={hasComment ? <DescriptionDeleteIcon /> : <DescriptionIcon />}
       title={hasComment ? commentDelete : commentAdd}
       onClick={onClick}
     >

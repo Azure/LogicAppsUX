@@ -88,8 +88,8 @@ export const CardFooter: React.FC<CardFooterProps> = memo(
           description: "This is a tooltip for the Status results badge shown on a card. It's shown when the baged is hovered over.",
         }),
         COMMENT: intl.formatMessage({
-          defaultMessage: 'Comment',
-          id: 'VXBWrq',
+          defaultMessage: 'Description',
+          id: 'AlPxuK',
           description: 'This is for a label for a badge, it is used for screen readers and not shown on the screen.',
         }),
         SECURE_INPUTS_OUTPUTS_TITLE: intl.formatMessage({
