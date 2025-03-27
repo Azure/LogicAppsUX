@@ -1,4 +1,19 @@
 # Logic Apps Designer
+## [5.63.0](https://github.com/Azure/LogicAppsUX/compare/v5.62.0...v5.63.0) (2025-03-27)
+
+
+### Features
+
+* **designer:** Add empty state and inputs/outputs binder for agent action ([#6880](https://github.com/Azure/LogicAppsUX/issues/6880)) ([e15a8b3](https://github.com/Azure/LogicAppsUX/commit/e15a8b350e3f8243c05f14c344873cef441dc804))
+* **Designer:** Node `description` changes + trigger dialog ([#6875](https://github.com/Azure/LogicAppsUX/issues/6875)) ([432a398](https://github.com/Azure/LogicAppsUX/commit/432a398fd0ac59a03cd6aadcb83b55f015ba1a10))
+* **templates:** Adding create consumption workflow from template helper as exportable method ([#6877](https://github.com/Azure/LogicAppsUX/issues/6877)) ([69cb79e](https://github.com/Azure/LogicAppsUX/commit/69cb79e86494ab7c7719fd949e938c09f3ab324c)), closes [#6829](https://github.com/Azure/LogicAppsUX/issues/6829) [#6828](https://github.com/Azure/LogicAppsUX/issues/6828)
+* **Templates:** Exporting `TemplateDisplay` component, connector icons on `ReviewAdd` ([#6879](https://github.com/Azure/LogicAppsUX/issues/6879)) ([77cb3a8](https://github.com/Azure/LogicAppsUX/commit/77cb3a86abf78a8ec86093f25b628ea9ec172d82))
+
+
+### Bug Fixes
+
+* **standalone:** Fix connections update in standalone ([#6876](https://github.com/Azure/LogicAppsUX/issues/6876)) ([9b20d50](https://github.com/Azure/LogicAppsUX/commit/9b20d50174fdc5938b3b867f939b065eac7315a6))
+
 ## [5.62.0](https://github.com/Azure/LogicAppsUX/compare/v5.61.0...v5.62.0) (2025-03-27)
 
 ## [5.61.0](https://github.com/Azure/LogicAppsUX/compare/v5.60.0...v5.61.0) (2025-03-27)
