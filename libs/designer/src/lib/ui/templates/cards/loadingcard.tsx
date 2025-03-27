@@ -1,9 +1,12 @@
-import { DocumentCard, Shimmer, ShimmerElementType } from '@fluentui/react';
+import { css, DocumentCard, Shimmer, ShimmerElementType } from '@fluentui/react';
 import { templateCardStyles } from './templateCard';
 
-export const LoadingTemplateCard = () => {
+export const LoadingTemplateCard = ({
+  cssOverrides,
+  isLightweight = true,
+}: { isLightweight?: boolean; cssOverrides?: Record<string, string> }) => {
   return (
-    <DocumentCard className="msla-template-card-wrapper" styles={templateCardStyles}>
+    <DocumentCard className={css('msla-template-card-wrapper', cssOverrides?.['card'])} styles={templateCardStyles}>
       <div className="msla-template-card-authored-wrapper">
         <div className="msla-template-card-authored">
           <Shimmer style={{ width: '100%' }} width={'100%'} />
@@ -17,19 +20,21 @@ export const LoadingTemplateCard = () => {
           <br />
           <Shimmer width={'70%'} />
         </div>
-        <div className="msla-template-card-footer">
-          <div className="msla-template-card-connectors-list">
-            <Shimmer
-              shimmerElements={[
-                { type: ShimmerElementType.circle },
-                { type: ShimmerElementType.gap },
-                { type: ShimmerElementType.circle },
-                { type: ShimmerElementType.gap },
-                { type: ShimmerElementType.circle },
-              ]}
-            />
+        {isLightweight ? null : (
+          <div className="msla-template-card-footer">
+            <div className="msla-template-card-connectors-list">
+              <Shimmer
+                shimmerElements={[
+                  { type: ShimmerElementType.circle },
+                  { type: ShimmerElementType.gap },
+                  { type: ShimmerElementType.circle },
+                  { type: ShimmerElementType.gap },
+                  { type: ShimmerElementType.circle },
+                ]}
+              />
+            </div>
           </div>
-        </div>
+        )}
       </div>
     </DocumentCard>
   );
