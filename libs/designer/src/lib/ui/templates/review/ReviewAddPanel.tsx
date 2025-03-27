@@ -62,7 +62,7 @@ export const ReviewAddPanel = ({ resourceOverrides }: ReviewCreatePanelProps) =>
 
   return (
     <div className="msla-templates-tab msla-templates-review-container">
-      <TemplateDisplay titleLabel={resourceOverrides?.templateName} showDescription />
+      <TemplateDisplay titleLabel={resourceOverrides?.templateName} />
 
       <div className="msla-templates-review-block">
         <Text>{resourceOverrides?.workflowName ?? resourceStrings.WORKFLOW_NAME}</Text>
