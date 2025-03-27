@@ -686,10 +686,10 @@ interface ServiceProviderConnectionConfigInfo {
 }
 
 interface AgentConnectionInfo {
-  modelConfiguration: {
-    connectionName: string;
-    operationId: string;
-    agentId: string;
+  modelConfigurations: {
+    model1: {
+      referenceName: string;
+    };
   };
 }
 
@@ -758,10 +758,10 @@ const serializeHost = (
       };
     case ConnectionReferenceKeyFormat.AgentConnection:
       return {
-        modelConfiguration: {
-          connectionName: referenceKey,
-          operationId,
-          agentId: connectorId,
+        modelConfigurations: {
+          model1: {
+            referenceName: referenceKey,
+          },
         },
       };
     case ConnectionReferenceKeyFormat.HybridTrigger:
@@ -914,7 +914,10 @@ const serializeSettings = (
   const conditions = conditionExpressions
     ? conditionExpressions.value?.filter((expression) => !!expression).map((expression) => ({ expression }))
     : undefined;
-  const timeout = settings.timeout?.isSupported && settings.timeout.value ? { timeout: settings.timeout.value } : undefined;
+  const timeout = settings.timeout?.isSupported ? settings.timeout.value : undefined;
+  const count = settings.count?.isSupported ? settings.count.value : undefined;
+  const limit = timeout || count ? { count, timeout } : undefined;
+
   const trackedProperties = settings.trackedProperties?.value;
 
   return {
@@ -923,7 +926,7 @@ const serializeSettings = (
       ? optional('isInvokerConnectionEnabled', settings.invokerConnection?.value?.enabled)
       : {}),
     ...optional('conditions', conditions),
-    ...optional('limit', timeout),
+    ...optional('limit', limit),
     ...optional('operationOptions', getSerializedOperationOptions(operationId, settings, rootState)),
     ...optional('runtimeConfiguration', getSerializedRuntimeConfiguration(operationId, settings, nodeStaticResults, rootState)),
     ...optional('trackedProperties', trackedProperties),

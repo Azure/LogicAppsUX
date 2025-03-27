@@ -59,11 +59,19 @@ export interface ConnectionAndAppSetting {
   pathLocation: string[];
 }
 
+export interface AgentConnectionModel {
+  authentication: Record<string, any>;
+  endpoint: string;
+  type?: string;
+  displayName?: string;
+}
+
 export interface ConnectionsData {
   functionConnections?: Record<string, FunctionConnectionModel>;
   managedApiConnections?: Record<string, ConnectionReferenceModel>;
   serviceProviderConnections?: Record<string, ServiceProviderConnectionModel>;
   apiManagementConnections?: Record<string, APIManagementConnectionModel>;
+  agentConnections?: Record<string, AgentConnectionModel>;
 }
 
 export interface ConnectionAndSettings {

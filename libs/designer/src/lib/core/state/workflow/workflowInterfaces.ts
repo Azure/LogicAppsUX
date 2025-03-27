@@ -53,4 +53,5 @@ export interface WorkflowState {
   hostData: {
     errorMessages: Partial<Record<MessageLevel, ErrorMessage[]>>;
   };
+  agentsGraph: Record<string, any>;
 }
