@@ -275,7 +275,7 @@ export const workflowSlice = createSlice({
         return; // log exception
       }
       const { scopeRepetitionRunData, nodeId } = action.payload;
-      const { tools } = scopeRepetitionRunData;
+      const { tools = {} } = scopeRepetitionRunData ?? {};
 
       Object.keys(tools).forEach((toolId: any) => {
         const nodeMetadata = getRecordEntry(state.nodesMetadata, toolId);
