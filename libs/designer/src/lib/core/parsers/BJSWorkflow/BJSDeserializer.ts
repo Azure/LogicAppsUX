@@ -728,8 +728,7 @@ const addActionsInstanceMetaData = (
   Object.entries(updatedNodesData).forEach(([key, node]) => {
     const nodeRunData = runInstanceActions?.[key];
     const isAgent = allActions[key]?.type.toLowerCase() === constants.NODE.TYPE.AGENT;
-    // const runIndex = isAgent ? (nodeRunData?.inputsLink?.metadata?.iterations - 1) : 0;
-    const runIndex = isAgent ? 3 : 0;
+    const runIndex = isAgent ? (nodeRunData?.iterationCount ? nodeRunData.iterationCount - 1 : 0) : 0;
 
     if (!isNullOrUndefined(nodeRunData)) {
       const repetitionRunData = isNullOrUndefined(nodeRunData.repetitionCount)

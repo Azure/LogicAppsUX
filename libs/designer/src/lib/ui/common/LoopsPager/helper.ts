@@ -21,12 +21,9 @@ export const getLoopsCount = (action: LogicAppsV2.WorkflowRunAction): number | u
   if (inputsLink) {
     const { metadata } = inputsLink;
     if (metadata) {
-      const { foreachItemsCount, iterations } = metadata;
+      const { foreachItemsCount } = metadata;
       if (typeof foreachItemsCount === 'number') {
         return foreachItemsCount;
-      }
-      if (typeof iterations === 'number') {
-        return iterations;
       }
     }
   }
@@ -35,7 +32,7 @@ export const getLoopsCount = (action: LogicAppsV2.WorkflowRunAction): number | u
     return repetitionCount;
   }
 
-  return 4;
+  return undefined;
 };
 
 /**

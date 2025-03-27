@@ -30,11 +30,9 @@
       "WorkflowAgent": {
               "inputsLink": {
                   "uri": "testLink",
-                  "contentSize": 30,
-                  "metadata": {
-                      "iterations": 6
-                  }
+                  "contentSize": 30
               },
+              "iterationCount": 6,
               "canResubmit": false,
               "startTime": "2025-03-19T19:30:38.2960123Z",
               "endTime": "2025-03-19T19:30:40.8382718Z",
