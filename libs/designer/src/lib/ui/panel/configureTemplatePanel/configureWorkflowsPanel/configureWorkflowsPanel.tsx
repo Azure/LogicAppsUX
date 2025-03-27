@@ -13,6 +13,11 @@ export interface ConfigureWorkflowsTabProps {
   onClosePanel: () => void;
 }
 
+const layerProps = {
+  hostId: 'msla-layer-host',
+  eventBubblingEnabled: true,
+};
+
 export const ConfigureWorkflowsPanel = () => {
   const dispatch = useDispatch<AppDispatch>();
   const intl = useIntl();
@@ -71,6 +76,7 @@ export const ConfigureWorkflowsPanel = () => {
       onRenderHeader={onRenderHeaderContent}
       onRenderFooterContent={onRenderFooterContent}
       hasCloseButton={true}
+      layerProps={layerProps}
       isFooterAtBottom={true}
     >
       <TemplateContent tabs={panelTabs} selectedTab={selectedTabId ?? panelTabs?.[0]?.id} selectTab={handleSelectTab} />

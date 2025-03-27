@@ -1,6 +1,6 @@
 import { useDispatch, useSelector } from 'react-redux';
 import type { AppDispatch, RootState } from '../state/templates/store';
-import { useCallback, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { ResourcePicker } from '../../ui/templates/basics/resourcepicker';
 import { equals, hasProperty, type LogicAppResource } from '@microsoft/logic-apps-shared';
 import { useWorkflowsInApp } from '../configuretemplate/utils/queries';
@@ -11,8 +11,10 @@ import { TemplateContent, TemplatesPanelFooter, type TemplateTabProps } from '@m
 import { useConfigureTemplateWizardTabs } from '../../ui/configuretemplate/tabs/useWizardTabs';
 import { selectWizardTab } from '../state/templates/tabSlice';
 import { FeaturedConnectors } from '../../ui/configuretemplate/templateprofile/connectors';
+import { setLayerHostSelector } from '@fluentui/react';
 
 export const ConfigureTemplateWizard = () => {
+  useEffect(() => setLayerHostSelector('#msla-layer-host'), []);
   const dispatch = useDispatch<AppDispatch>();
   const { isConsumption, logicAppName, subscriptionId, resourceGroup, workflowsInTemplate, selectedTabId } = useSelector(
     (state: RootState) => ({
@@ -93,6 +95,15 @@ export const ConfigureTemplateWizard = () => {
       <div className="msla-template-overview-footer">
         {selectedTabProps?.footerContent ? <TemplatesPanelFooter showPrimaryButton={true} {...selectedTabProps?.footerContent} /> : null}
       </div>
+
+      <div
+        id={'msla-layer-host'}
+        style={{
+          position: 'absolute',
+          inset: '0px',
+          visibility: 'hidden',
+        }}
+      />
     </div>
   );
 };
