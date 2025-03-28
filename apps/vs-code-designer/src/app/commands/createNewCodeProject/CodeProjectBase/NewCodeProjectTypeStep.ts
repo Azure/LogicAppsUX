@@ -115,6 +115,7 @@ export class NewCodeProjectTypeStep extends AzureWizardPromptStep<IProjectWizard
       new setNamespace(),
       new InvokeFunctionProjectSetup(),
       await CodeProjectWorkflowStateTypeStep.create(context, {
+        // danielle look here
         isProjectWizard: true,
         templateId: this.templateId,
         triggerSettings: this.functionSettings,

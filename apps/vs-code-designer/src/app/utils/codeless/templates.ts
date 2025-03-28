@@ -118,3 +118,25 @@ export const getCodelessWorkflowTemplate = (isStateful: boolean) => {
 
   return emptyCodelessDefinition;
 };
+
+/**
+ * Creates a codeful workflow.
+ * @param {boolean} isStateful - A boolean indicating whether the workflow is stateful or not.
+ * @returns The codeful workflow template.
+ */
+export const getCodefulWorkflowTemplate = (isStateful: boolean) => {
+  const kind = isStateful ? workflowKind.stateful : workflowKind.stateless;
+
+  const emptyCodelessDefinition: StandardApp = {
+    definition: {
+      $schema: 'https://schema.management.azure.com/providers/Microsoft.Logic/schemas/2016-06-01/workflowdefinition.json#',
+      actions: {},
+      contentVersion: '1.0.0.0',
+      outputs: {},
+      triggers: {},
+    },
+    kind: kind,
+  };
+
+  return emptyCodelessDefinition;
+};

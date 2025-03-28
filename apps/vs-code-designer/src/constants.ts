@@ -89,6 +89,12 @@ export const workflowType = {
 } as const;
 export type workflowType = (typeof workflowType)[keyof typeof workflowType];
 
+export const workflowCodeType = {
+  codeful: 'Codeful',
+  codeless: 'Codeless',
+} as const;
+export type workflowCodeType = (typeof workflowCodeType)[keyof typeof workflowCodeType];
+
 export const workflowKind = {
   stateful: 'Stateful',
   stateless: 'Stateless',
@@ -110,6 +116,7 @@ export const extensionCommand = {
   createNewWorkspace: 'azureLogicAppsStandard.createNewWorkspace',
   cloudToLocal: 'azureLogicAppsStandard.cloudToLocal',
   createNewDataMap: 'azureLogicAppsStandard.dataMap.createNewDataMap',
+  createWorkflow: 'azureLogicAppsStandard.createWorkflow',
   createCodeless: 'azureLogicAppsStandard.createCodeless',
   createLogicApp: 'azureLogicAppsStandard.createLogicApp',
   createLogicAppAdvanced: 'azureLogicAppsStandard.createLogicAppAdvanced',

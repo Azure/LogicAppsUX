@@ -2,10 +2,7 @@
  *  Copyright (c) Microsoft Corporation. All rights reserved.
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
-import { workflowType } from '../../../../constants';
-import { localize } from '../../../../localize';
-import { CodelessWorkflowCreateStep } from './CodelessWorkflowCreateStep';
-import { ScriptWorkflowNameStep } from './ScriptSteps/ScriptWorkflowNameStep';
+import { workflowCodeType } from '../../../constants';
 import type { AzureWizardExecuteStep, IAzureQuickPickItem, IWizardOptions } from '@microsoft/vscode-azext-utils';
 import { nonNullProp, AzureWizardPromptStep } from '@microsoft/vscode-azext-utils';
 import type {
@@ -15,8 +12,10 @@ import type {
   ProjectLanguage,
 } from '@microsoft/vscode-extension-logic-apps';
 import { TemplateCategory, TemplatePromptResult } from '@microsoft/vscode-extension-logic-apps';
+import { localize } from '../../../localize';
+import { ScriptWorkflowNameStep } from '../createCodeless/createCodelessSteps/ScriptSteps/ScriptWorkflowNameStep';
 
-export class WorkflowStateTypeStep extends AzureWizardPromptStep<IFunctionWizardContext> {
+export class WorkflowCodeTypeStep extends AzureWizardPromptStep<IFunctionWizardContext> {
   public hideStepCount = true;
 
   private readonly triggerSettings: { [key: string]: string | undefined };
@@ -28,28 +27,8 @@ export class WorkflowStateTypeStep extends AzureWizardPromptStep<IFunctionWizard
     this.isProjectWizard = !!isProjectWizard;
   }
 
-  public static async create(_context: IFunctionWizardContext, options: IWorkflowStateTypeStepOptions): Promise<WorkflowStateTypeStep> {
-    return new WorkflowStateTypeStep(options.triggerSettings, options.isProjectWizard);
-  }
-
-  public async getSubWizard(context: IFunctionWizardContext): Promise<IWizardOptions<IFunctionWizardContext> | undefined> {
-    const template: IWorkflowTemplate | undefined = context.functionTemplate;
-
-    if (template) {
-      const promptSteps: AzureWizardPromptStep<IFunctionWizardContext>[] = [];
-      const executeSteps: AzureWizardExecuteStep<IFunctionWizardContext>[] = [];
-      const title: string = localize('createCodeless', 'Create new {0}', template.name);
-
-      promptSteps.push(new ScriptWorkflowNameStep());
-      executeSteps.push(await CodelessWorkflowCreateStep.createStep(context));
-
-      for (const key of Object.keys(this.triggerSettings)) {
-        context[key.toLowerCase()] = this.triggerSettings[key];
-      }
-
-      return { promptSteps, executeSteps, title };
-    }
-    return undefined;
+  public static async create(_context: IFunctionWizardContext, options: IWorkflowStateTypeStepOptions): Promise<WorkflowCodeTypeStep> {
+    return new WorkflowCodeTypeStep(options.triggerSettings, options.isProjectWizard);
   }
 
   public async prompt(context: IFunctionWizardContext): Promise<void> {
@@ -65,22 +44,43 @@ export class WorkflowStateTypeStep extends AzureWizardPromptStep<IFunctionWizard
         context.telemetry.properties.templateId = TemplatePromptResult.skipForNow;
         break;
       }
-      context.functionTemplate = result;
+
+      context.isCodeless = result.id === workflowCodeType.codeless;
     }
   }
 
+  public async getSubWizard(context: IFunctionWizardContext): Promise<IWizardOptions<IFunctionWizardContext> | undefined> {
+    const template: IWorkflowTemplate | undefined = context.functionTemplate;
+
+    if (context.isCodeless) {
+      const promptSteps: AzureWizardPromptStep<IFunctionWizardContext>[] = [];
+      const executeSteps: AzureWizardExecuteStep<IFunctionWizardContext>[] = [];
+      const title: string = localize('createCodeless', 'Create new {0}', template.name);
+
+      promptSteps.push(new ScriptWorkflowNameStep());
+      //executeSteps.push(await CodelessWorkflowCreateStep.createStep(context));
+
+      for (const key of Object.keys(this.triggerSettings)) {
+        context[key.toLowerCase()] = this.triggerSettings[key];
+      }
+
+      return { promptSteps, executeSteps, title };
+    }
+    return undefined;
+  }
+
   public shouldPrompt(context: IFunctionWizardContext): boolean {
-    return !context.functionTemplate && !context.isCodeless;
+    return !context.functionTemplate;
   }
 
   private async getPicks(context: IFunctionWizardContext): Promise<IAzureQuickPickItem<IWorkflowTemplate | TemplatePromptResult>[]> {
     const language: ProjectLanguage = nonNullProp(context, 'language');
     const picks: IAzureQuickPickItem<IWorkflowTemplate | TemplatePromptResult>[] = [];
 
-    const stateful: IWorkflowTemplate = {
-      id: workflowType.stateful,
-      name: localize('Stateful', 'Stateful Workflow'),
-      defaultFunctionName: 'Stateful',
+    const codeful: IWorkflowTemplate = {
+      id: workflowCodeType.codeful,
+      name: localize('Codeful', 'Codeful Workflow (Preview)'),
+      defaultFunctionName: 'Codeful',
       language: language,
       isHttpTrigger: true,
       isTimerTrigger: false,
@@ -88,10 +88,10 @@ export class WorkflowStateTypeStep extends AzureWizardPromptStep<IFunctionWizard
       categories: [TemplateCategory.Core],
     };
 
-    const stateless: IWorkflowTemplate = {
-      id: workflowType.stateless,
-      name: localize('Stateless', 'Stateless Workflow'),
-      defaultFunctionName: 'Stateless',
+    const codeless: IWorkflowTemplate = {
+      id: workflowCodeType.codeless,
+      name: localize('Codeless', 'Codeless Workflow'),
+      defaultFunctionName: 'Codeless',
       language: language,
       isHttpTrigger: true,
       isTimerTrigger: false,
@@ -100,13 +100,13 @@ export class WorkflowStateTypeStep extends AzureWizardPromptStep<IFunctionWizard
     };
 
     picks.push({
-      label: stateful.name,
-      data: stateful,
+      label: codeful.name,
+      data: codeful,
     });
 
     picks.push({
-      label: stateless.name,
-      data: stateless,
+      label: codeless.name,
+      data: codeless,
     });
 
     if (this.isProjectWizard) {

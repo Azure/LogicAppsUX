@@ -34,6 +34,7 @@ export type pathRelativeFunc = (fsPath1: string, fsPath2: string) => string;
 export interface IFunctionWizardContext extends Partial<ISubscriptionContext>, IProjectWizardContext {
   functionTemplate?: IWorkflowTemplate;
   functionName?: string;
+  isCodeless?: boolean;
 }
 
 export interface IPreDebugValidateResult {

@@ -22,6 +22,7 @@ import { cloudToLocalCommand } from './createNewCodeProject/cloudToLocal';
 import { createNewCodeProjectFromCommand } from './createNewCodeProject/createNewCodeProject';
 import { createNewProjectFromCommand } from './createNewProject/createNewProject';
 import { createSlot } from './createSlot';
+import { createWorkflow } from './createWorkflow/createWorkflow';
 import { createNewDataMapCmd, loadDataMapFileCmd } from './dataMapper/dataMapper';
 import { deleteLogicApp } from './deleteLogicApp/deleteLogicApp';
 import { deleteNode } from './deleteNode';
@@ -76,6 +77,7 @@ export function registerCommands(): void {
   registerCommand(extensionCommand.createNewProject, createNewProjectFromCommand);
   registerCommand(extensionCommand.createNewWorkspace, createNewCodeProjectFromCommand);
   registerCommand(extensionCommand.cloudToLocal, cloudToLocalCommand);
+  registerCommand(extensionCommand.createWorkflow, createWorkflow);
   registerCommand(extensionCommand.createCodeless, createCodeless);
   registerCommandWithTreeNodeUnwrapping(extensionCommand.createLogicApp, createLogicApp);
   registerCommandWithTreeNodeUnwrapping(extensionCommand.createLogicAppAdvanced, createLogicAppAdvanced);
