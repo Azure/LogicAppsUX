@@ -56,6 +56,10 @@ export const useConfigureWorkflowPanelTabs = ({
     dispatch(initializeWorkflowsData({}));
   };
 
+  const missingNameOrDisplayName = Object.values(selectedWorkflowsList()).some(
+    (workflow) => !workflow?.workflowName || !workflow?.manifest?.title
+  );
+
   return [
     selectWorkflowsTab(intl, dispatch, {
       hasError,
@@ -72,6 +76,7 @@ export const useConfigureWorkflowPanelTabs = ({
       selectedWorkflowsList: selectedWorkflowsList(),
       updateWorkflowDataField,
       onSaveChanges,
+      disabled: missingNameOrDisplayName,
     }),
   ];
 };

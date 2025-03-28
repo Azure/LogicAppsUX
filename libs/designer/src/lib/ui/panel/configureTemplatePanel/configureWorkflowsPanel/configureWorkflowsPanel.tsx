@@ -10,6 +10,7 @@ import type { WorkflowTemplateData } from '../../../../core';
 
 export interface ConfigureWorkflowsTabProps {
   hasError: boolean;
+  disabled?: boolean;
   isSaving: boolean;
   onClosePanel: () => void;
   selectedWorkflowsList: Record<string, Partial<WorkflowTemplateData>>;

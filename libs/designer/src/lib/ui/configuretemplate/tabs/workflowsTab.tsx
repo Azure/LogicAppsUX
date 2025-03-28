@@ -194,8 +194,7 @@ export const WorkflowsTab = () => {
             <TableRow key={item.id} onClick={onClick} onKeyDown={onKeyDown} aria-selected={selected} appearance={appearance}>
               <TableSelectionCell checked={selected} checkboxIndicator={{ 'aria-label': 'Select row' }} />
               <TableCell>
-                {/* // TODO: change this to name */}
-                <TableCellLayout>{item.id}</TableCellLayout>
+                <TableCellLayout>{item.name}</TableCellLayout>
               </TableCell>
               <TableCell>
                 <TableCellLayout>{item.displayName}</TableCellLayout>

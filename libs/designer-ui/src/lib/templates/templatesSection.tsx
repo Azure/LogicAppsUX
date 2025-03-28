@@ -1,6 +1,6 @@
 import { Dropdown, Field, Input, Label, Link, Option, Radio, RadioGroup, Text } from '@fluentui/react-components';
 import { Open16Regular } from '@fluentui/react-icons';
-import type { TemplatesSectionItem, TemplatesSectionProps } from './templatesSectionModel';
+import type { BaseFieldItem, TemplatesSectionItem, TemplatesSectionProps } from './templatesSectionModel';
 
 export const TemplatesSection = ({
   title,
@@ -47,7 +47,9 @@ export const TemplatesSection = ({
                 <div key={index} className="msla-templates-section-item">
                   {item.label ? (
                     typeof item.label === 'string' ? (
-                      <Label className="msla-templates-section-item-label">{item.label}</Label>
+                      <Label className="msla-templates-section-item-label" required={(item as BaseFieldItem)?.required ?? false}>
+                        {item.label}
+                      </Label>
                     ) : (
                       <div className="msla-templates-section-item-label">{item.label}</div>
                     )

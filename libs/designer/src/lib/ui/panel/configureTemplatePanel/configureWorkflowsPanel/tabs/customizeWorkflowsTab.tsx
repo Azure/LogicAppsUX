@@ -1,11 +1,13 @@
 import type { AppDispatch } from '../../../../../core/state/templates/store';
 import constants from '../../../../../common/constants';
-import { TemplatesSection, type TemplateTabProps } from '@microsoft/designer-ui';
+import { TemplatesSection, type TemplateTabProps, type TemplatesSectionItem } from '@microsoft/designer-ui';
 import { closePanel } from '../../../../../core/state/templates/panelSlice';
 import type { ConfigureWorkflowsTabProps } from '../configureWorkflowsPanel';
 import type { IntlShape } from 'react-intl';
 import type { WorkflowTemplateData } from '../../../../../core';
 import { Accordion, AccordionHeader, AccordionItem, AccordionPanel, Text } from '@fluentui/react-components';
+import type { Template } from '@microsoft/logic-apps-shared';
+import { useMemo } from 'react';
 
 export const CustomizeWorkflows = ({
   selectedWorkflowsList,
@@ -29,6 +31,7 @@ export const CustomizeWorkflows = ({
                 <AccordionPanel>
                   <CustomizeWorkflowSection
                     normalizedWorkflowId={workflowId}
+                    isMultiWorkflowTemplate={true}
                     workflow={workflowData}
                     updateWorkflowDataField={updateWorkflowDataField}
                   />
@@ -39,6 +42,7 @@ export const CustomizeWorkflows = ({
         ) : (
           <CustomizeWorkflowSection
             normalizedWorkflowId={workflowEntries[0][0]}
+            isMultiWorkflowTemplate={false}
             workflow={workflowEntries[0][1]}
             updateWorkflowDataField={updateWorkflowDataField}
           />
@@ -54,49 +58,100 @@ const sanitizeWorkflowId = (workflowId: string) => {
 
 const CustomizeWorkflowSection = ({
   normalizedWorkflowId,
+  isMultiWorkflowTemplate,
   workflow,
   updateWorkflowDataField,
 }: {
   normalizedWorkflowId: string;
+  isMultiWorkflowTemplate: boolean;
   workflow: Partial<WorkflowTemplateData>;
   updateWorkflowDataField: (workflowId: string, workflowData: Partial<WorkflowTemplateData>) => void;
 }) => {
-  return (
-    <TemplatesSection
-      title={'General'}
-      // titleHtmlFor={'connectionsLabel'}
-      items={[
-        {
-          label: 'Workflow name', //TODO: intl
-          value: workflow.workflowName,
-          type: 'textfield',
-          onChange: (value: string) => {
-            updateWorkflowDataField(normalizedWorkflowId, { workflowName: value });
-          },
+  const generalSectionItems: TemplatesSectionItem[] = useMemo(() => {
+    return [
+      {
+        label: 'Workflow name', //TODO: intl
+        value: workflow.workflowName || '', //TODO: default value with workflow name
+        type: 'textfield',
+        required: true,
+        onChange: (value: string) => {
+          updateWorkflowDataField(normalizedWorkflowId, { workflowName: value });
         },
-        // {
-        //   label: 'Workflow display name', //TODO: intl
-        //   value: workflow.manifest?.title,
-        //   type: 'textField',
-        //   onChange: (value: string) => {
-        //     updateWorkflowDataField(normalizedWorkflowId, {
-        //       // ...workflow,
-        //       manifest: {
-        //       ...workflow.manifest,
-        //       title: value,
-        //     } });
-        //   }
-        // },
-        // {
-        //   label: 'Summary', //TODO: intl
-        //   value: workflow.manifest?.summary,
-        //   type: 'textField',
-        //   onChange: (value: string) => {
-        //     updateWorkflowDataField(normalizedWorkflowId, { workflowName: value });
-        //   }
-        // },
-      ]}
-    />
+      },
+      {
+        label: 'Workflow display name', //TODO: intl
+        value: workflow.manifest?.title || '',
+        type: 'textfield',
+        required: true,
+        onChange: (value: string) => {
+          updateWorkflowDataField(normalizedWorkflowId, {
+            ...workflow,
+            manifest: {
+              ...workflow.manifest,
+              title: value,
+            } as Template.WorkflowManifest,
+          });
+        },
+      },
+      //TODO: add state type
+    ];
+  }, [normalizedWorkflowId, updateWorkflowDataField, workflow]);
+
+  const descriptionSectionItems: TemplatesSectionItem[] = useMemo(() => {
+    const baseItems: TemplatesSectionItem[] = isMultiWorkflowTemplate
+      ? [
+          {
+            label: 'Summary', //TODO: intl
+            value: workflow.manifest?.summary || '',
+            type: 'textfield',
+            onChange: (value: string) => {
+              updateWorkflowDataField(normalizedWorkflowId, {
+                ...workflow,
+                manifest: {
+                  ...workflow.manifest,
+                  summary: value,
+                } as Template.WorkflowManifest,
+              });
+            },
+          },
+        ]
+      : [];
+    baseItems.push({
+      label: 'Description', //TODO: intl
+      value: workflow.manifest?.description || '',
+      type: 'textfield',
+      onChange: (value: string) => {
+        updateWorkflowDataField(normalizedWorkflowId, {
+          ...workflow,
+          manifest: {
+            ...workflow.manifest,
+            description: value,
+          } as Template.WorkflowManifest,
+        });
+      },
+    });
+    baseItems.push({
+      label: 'Prerequisites', //TODO: intl
+      value: workflow.manifest?.prerequisites || '',
+      type: 'textfield',
+      onChange: (value: string) => {
+        updateWorkflowDataField(normalizedWorkflowId, {
+          ...workflow,
+          manifest: {
+            ...workflow.manifest,
+            prerequisites: value,
+          } as Template.WorkflowManifest,
+        });
+      },
+    });
+    return baseItems;
+  }, [normalizedWorkflowId, updateWorkflowDataField, workflow, isMultiWorkflowTemplate]);
+
+  return (
+    <div>
+      <TemplatesSection title={isMultiWorkflowTemplate ? '' : 'General'} titleHtmlFor={'generalSectionLabel'} items={generalSectionItems} />
+      <TemplatesSection title={'Description'} titleHtmlFor={'descriptionSectionLabel'} items={descriptionSectionItems} />
+    </div>
   );
 };
 
@@ -107,6 +162,7 @@ export const customizeWorkflowsTab = (
     hasError,
     isSaving,
     onClosePanel,
+    disabled,
     selectedWorkflowsList,
     updateWorkflowDataField,
     onSaveChanges,
@@ -133,6 +189,7 @@ export const customizeWorkflowsTab = (
       onSaveChanges();
       dispatch(closePanel());
     },
+    primaryButtonDisabled: disabled,
     secondaryButtonText: intl.formatMessage({
       defaultMessage: 'Cancel',
       id: '75zXUl',
