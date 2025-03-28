@@ -19,8 +19,8 @@ export default {
           properties: {
             description: {
               type: 'string',
-              title: 'Condition',
-              description: 'The condition to execute this branch',
+              title: 'Description',
+              description: 'Enter some explanation of when you would use this tool.',
             },
             agentParameterSchema: {
               title: 'Agent Parameters',

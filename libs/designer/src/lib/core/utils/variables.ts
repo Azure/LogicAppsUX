@@ -21,7 +21,7 @@ export const getVariableDeclarations = (nodeInputs: NodeInputs): VariableDeclara
   );
 
   const variables: InitializeVariableProps[] =
-    variableParameter?.editorViewModel?.variables ?? parseVariableEditorSegments(variableParameter?.value ?? []);
+    variableParameter?.editorViewModel?.variables ?? parseVariableEditorSegments(variableParameter?.value ?? []) ?? [];
 
   return variables
     .map((variable) => {

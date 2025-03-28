@@ -25,24 +25,57 @@ export const CreateAgentParameter = ({
   const descriptionId = useId('description');
   const [name, setName] = useState(defaultAgentParamName);
   const initialType = useMemo(
-    () => (options.includes(defaultAgentParamType ?? '') ? (defaultAgentParamType as string) : 'String'),
+    // Type needs to be lowercased
+    () => (options.includes(defaultAgentParamType ?? '') ? (defaultAgentParamType as string) : 'string').toLowerCase(),
     [defaultAgentParamType]
   );
   const [type, setType] = useState(initialType);
   const [description, setDescription] = useState('');
 
   const labels = {
-    title: intl.formatMessage({ defaultMessage: 'Create new agent parameter', id: 'uhxyi+', description: 'Create new parameter' }),
-    createButton: intl.formatMessage({ defaultMessage: 'Create', id: 'M4MGQN', description: 'Create button label' }),
-    cancelButton: intl.formatMessage({ defaultMessage: 'Cancel', id: '0GT0SI', description: 'Cancel button label' }),
-    name: intl.formatMessage({ defaultMessage: 'Name', id: 'gOkIvb', description: 'Name label' }),
-    type: intl.formatMessage({ defaultMessage: 'Type', id: 'qBKOEO', description: 'Type label' }),
-    description: intl.formatMessage({ defaultMessage: 'Description', id: 'QMyMOI', description: 'Description label' }),
+    title: intl.formatMessage({
+      defaultMessage: 'Create new agent parameter',
+      id: 'uhxyi+',
+      description: 'Create new parameter',
+    }),
+    createButton: intl.formatMessage({
+      defaultMessage: 'Create',
+      id: 'M4MGQN',
+      description: 'Create button label',
+    }),
+    cancelButton: intl.formatMessage({
+      defaultMessage: 'Cancel',
+      id: '0GT0SI',
+      description: 'Cancel button label',
+    }),
+    name: intl.formatMessage({
+      defaultMessage: 'Name',
+      id: 'gOkIvb',
+      description: 'Name label',
+    }),
+    type: intl.formatMessage({
+      defaultMessage: 'Type',
+      id: 'qBKOEO',
+      description: 'Type label',
+    }),
+    description: intl.formatMessage({
+      defaultMessage: 'Description',
+      id: 'QMyMOI',
+      description: 'Description label',
+    }),
   };
 
   const placeholders = {
-    name: intl.formatMessage({ defaultMessage: 'Name this parameter', id: 'AmSRsf', description: 'Name input placeholder' }),
-    type: intl.formatMessage({ defaultMessage: 'Select Type', id: '+Oshid', description: 'Type dropdown placeholder' }),
+    name: intl.formatMessage({
+      defaultMessage: 'Name this parameter',
+      id: 'AmSRsf',
+      description: 'Name input placeholder',
+    }),
+    type: intl.formatMessage({
+      defaultMessage: 'Select Type',
+      id: '+Oshid',
+      description: 'Type dropdown placeholder',
+    }),
     description: intl.formatMessage({
       defaultMessage: 'Describe This Parameter',
       id: 'DwLFBV',
@@ -83,7 +116,7 @@ export const CreateAgentParameter = ({
             placeholder={placeholders.type}
             className="msla-agent-parameter-input"
             value={type}
-            onOptionSelect={(_, data) => setType(data.optionValue ?? '')}
+            onOptionSelect={(_, data) => setType((data.optionValue ?? '').toLowerCase())}
           >
             {options.map((option) => (
               <Option key={option} value={option}>

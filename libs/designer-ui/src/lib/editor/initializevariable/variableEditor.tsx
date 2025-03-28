@@ -96,7 +96,7 @@ export const VariableEditor = ({
   const intl = useIntl();
   const { isInverted } = useTheme();
   const themeName = isInverted ? 'dark' : 'light';
-  const [expanded, setExpanded] = useState(true);
+  const [expanded, setExpanded] = useState(!isAgentParameter); // Marking it collapsed for agent parameters
   const [variableId, setVariableId] = useState<string>(guid());
 
   const handleToggleExpand = (): void => {

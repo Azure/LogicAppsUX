@@ -58,15 +58,44 @@ const SubgraphCardNode = ({ targetPosition = Position.Top, sourcePosition = Posi
   const isAgentAddCondition = metadata?.subgraphType === SUBGRAPH_TYPES.AGENT_ADD_CONDITON;
 
   const isAddCase = isSwitchAddCase || isAgentAddCondition;
-
+  const actionCount = metadata?.actionCount ?? 0;
   const iconUri = useIconUri(graphId);
 
-  const newCaseIdNewAdditiveSubgraphId = useNewAdditiveSubgraphId(isAgentAddCondition ? 'Condition' : 'Case');
+  const stringResources = useMemo(
+    () => ({
+      TOOL: intl.formatMessage({
+        defaultMessage: 'Tool',
+        id: '3PXVj+',
+        description: 'Label for the tool node',
+      }),
+      CASE: intl.formatMessage({
+        defaultMessage: 'Case',
+        id: 'GusLAj',
+        description: 'Label for the case node',
+      }),
+      COLLAPSED_TEXT: intl.formatMessage(
+        {
+          defaultMessage: '{actionCount, plural, one {# Action} =0 {0 Actions} other {# Actions}}',
+          id: 'B/JzwK',
+          description: 'This is the number of actions to be completed in a group',
+        },
+        { actionCount }
+      ),
+      PARAMETER_VALIDATION_ERROR: intl.formatMessage({
+        defaultMessage: 'Invalid parameters',
+        id: 'Tmr/9e',
+        description: 'Text to explain that there are invalid parameters for this node',
+      }),
+    }),
+    [actionCount, intl]
+  );
+
+  const newCaseIdNewAdditiveSubgraphId = useNewAdditiveSubgraphId(isAgentAddCondition ? stringResources.TOOL : stringResources.CASE);
   const subgraphClick = useCallback(
     async (_id: string) => {
       if (isAddCase && graphNode) {
         if (isAgentAddCondition) {
-          dispatch(addAgentCondition({ conditionId: newCaseIdNewAdditiveSubgraphId, nodeId: subgraphId }));
+          dispatch(addAgentCondition({ toolId: newCaseIdNewAdditiveSubgraphId, nodeId: subgraphId }));
         } else {
           dispatch(addSwitchCase({ caseId: newCaseIdNewAdditiveSubgraphId, nodeId: subgraphId }));
         }
@@ -99,16 +128,6 @@ const SubgraphCardNode = ({ targetPosition = Position.Top, sourcePosition = Posi
 
   const showEmptyGraphComponents = isLeaf && !graphCollapsed && !isAddCase;
 
-  const actionCount = metadata?.actionCount ?? 0;
-  const collapsedText = intl.formatMessage(
-    {
-      defaultMessage: '{actionCount, plural, one {# Action} =0 {0 Actions} other {# Actions}}',
-      id: 'B/JzwK',
-      description: 'This is the number of actions to be completed in a group',
-    },
-    { actionCount }
-  );
-
   const deleteClick = useCallback(() => {
     dispatch(setShowDeleteModalNodeId(id));
   }, [dispatch, id]);
@@ -130,18 +149,13 @@ const SubgraphCardNode = ({ targetPosition = Position.Top, sourcePosition = Posi
   );
 
   const parameterValidationErrors = useParameterValidationErrors(subgraphId);
-  const parameterValidationErrorText = intl.formatMessage({
-    defaultMessage: 'Invalid parameters',
-    id: 'Tmr/9e',
-    description: 'Text to explain that there are invalid parameters for this node',
-  });
 
   const { errorMessage, errorLevel } = useMemo(() => {
     if (parameterValidationErrors?.length > 0) {
-      return { errorMessage: parameterValidationErrorText, errorLevel: MessageBarType.severeWarning };
+      return { errorMessage: stringResources.PARAMETER_VALIDATION_ERROR, errorLevel: MessageBarType.severeWarning };
     }
     return { errorMessage: undefined, errorLevel: undefined };
-  }, [parameterValidationErrors?.length, parameterValidationErrorText]);
+  }, [parameterValidationErrors?.length, stringResources.PARAMETER_VALIDATION_ERROR]);
 
   const nodeIndex = useNodeIndex(subgraphId);
   const shouldShowPager =
@@ -179,7 +193,7 @@ const SubgraphCardNode = ({ targetPosition = Position.Top, sourcePosition = Posi
       </div>
       {graphCollapsed ? (
         <p className="no-actions-text" data-automation-id={`subgraph-${id}-no-actions`}>
-          {collapsedText}
+          {stringResources.COLLAPSED_TEXT}
         </p>
       ) : null}
       {showEmptyGraphComponents ? (
