@@ -7,7 +7,11 @@ import type { AppDispatch, RootState } from '../../../../core/state/templates/st
 import { useFunctionalState } from '@react-hookz/web';
 import type { WorkflowTemplateData } from '../../../../core';
 import { updateAllWorkflowsData } from '../../../../core/state/templates/templateSlice';
-import { getWorkflowsWithDefinitions, initializeWorkflowsData } from '../../../../core/actions/bjsworkflow/configuretemplate';
+import {
+  getWorkflownameFromWorkflowId,
+  getWorkflowsWithDefinitions,
+  initializeWorkflowsData,
+} from '../../../../core/actions/bjsworkflow/configuretemplate';
 
 export const useConfigureWorkflowPanelTabs = ({
   onClosePanel,
@@ -31,7 +35,10 @@ export const useConfigureWorkflowPanelTabs = ({
     setSelectedWorkflowsList((prevSelectedWorkflows) => {
       const newSelectedWorkflows: Record<string, Partial<WorkflowTemplateData>> = {};
       normalizedWorkflowIds.forEach((normalizedWorkflowId) => {
-        newSelectedWorkflows[normalizedWorkflowId] = prevSelectedWorkflows[normalizedWorkflowId] ?? { id: normalizedWorkflowId };
+        newSelectedWorkflows[normalizedWorkflowId] = prevSelectedWorkflows[normalizedWorkflowId] ?? {
+          id: normalizedWorkflowId,
+          workflowName: getWorkflownameFromWorkflowId(normalizedWorkflowId),
+        };
       });
       return newSelectedWorkflows;
     });

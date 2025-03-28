@@ -450,7 +450,7 @@ export const getWorkflowsWithDefinitions = async (
     if (workflowDefinition) {
       const id = workflowIds[index];
       result[id] = {
-        ...result[id],
+        ...workflows[id],
         id,
         kind,
         workflowDefinition,
@@ -460,4 +460,8 @@ export const getWorkflowsWithDefinitions = async (
   }, {});
 
   return allWorkflowsData;
+};
+
+export const getWorkflownameFromWorkflowId = (workflowId: string) => {
+  return workflowId.split('/').pop() ?? workflowId;
 };

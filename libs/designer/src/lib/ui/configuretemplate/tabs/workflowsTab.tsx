@@ -25,6 +25,7 @@ import { openPanelView, TemplatePanelView } from '../../../core/state/templates/
 import { ConfigureWorkflowsPanel } from '../../panel/configureTemplatePanel/configureWorkflowsPanel/configureWorkflowsPanel';
 import { useFunctionalState } from '@react-hookz/web';
 import { Add12Filled } from '@fluentui/react-icons';
+import { useTemplatesStrings } from '../../templates/templatesStrings';
 
 export const WorkflowsTab = () => {
   const intl = useIntl();
@@ -48,6 +49,11 @@ export const WorkflowsTab = () => {
         id: 'Ve6uLm',
         description: 'Button text for opening panel for adding workflows',
       }),
+      ADD_WORKFLOWS_FOR_TEMPLATE: intl.formatMessage({
+        defaultMessage: 'Add workflows for this template',
+        id: '5S9Ta6',
+        description: 'Button text for opening panel for adding workflows',
+      }),
       DELETE: intl.formatMessage({
         defaultMessage: 'Delete',
         id: 'Ld62T8',
@@ -63,29 +69,11 @@ export const WorkflowsTab = () => {
         id: 'hpKZGo',
         description: 'Accessibility label for the select row checkbox',
       }),
-      WORKFLOW_NAME: intl.formatMessage({
-        defaultMessage: 'Name',
-        id: 'kLqXDY',
-        description: 'Label for workflow Name',
-      }),
-      WORKFLOW_DISPLAY_NAME: intl.formatMessage({
-        defaultMessage: 'Display name',
-        id: 'Sk0Pms',
-        description: 'Label for workflow display name',
-      }),
-      STATE: intl.formatMessage({
-        defaultMessage: 'State',
-        id: 'IG4XXf',
-        description: 'Label for workflow state',
-      }),
-      ADD_WORKFLOWS_FOR_TEMPLATE: intl.formatMessage({
-        defaultMessage: 'Add workflows for this template',
-        id: '5S9Ta6',
-        description: 'Button text for opening panel for adding workflows',
-      }),
     }),
     [intl]
   );
+
+  const { resourceStrings } = useTemplatesStrings();
 
   const handleAddWorkflows = useCallback(() => {
     dispatch(openPanelView({ panelView: TemplatePanelView.ConfigureWorkflows }));
@@ -209,9 +197,9 @@ export const WorkflowsTab = () => {
                 checkboxIndicator={{ 'aria-label': intlText.CHECKBOX_ALL_ROWS }}
               />
 
-              <TableHeaderCell>{intlText.WORKFLOW_NAME}</TableHeaderCell>
-              <TableHeaderCell>{intlText.WORKFLOW_DISPLAY_NAME}</TableHeaderCell>
-              <TableHeaderCell>{intlText.STATE}</TableHeaderCell>
+              <TableHeaderCell>{resourceStrings.WORKFLOW_NAME}</TableHeaderCell>
+              <TableHeaderCell>{resourceStrings.WORKFLOW_DISPLAY_NAME}</TableHeaderCell>
+              <TableHeaderCell>{resourceStrings.STATE}</TableHeaderCell>
             </TableRow>
           </TableHeader>
           {rows.map(({ item, selected, onClick, onKeyDown, appearance }) => (
