@@ -196,20 +196,24 @@ export class StandardRunService implements IRunService {
   }
 
   /**
-   * Gets an array of scope repetition records for a node with the specified status.
-   * @param {{ actionId: string, runId: string }} action - An object with nodeId and the runId of the workflow
-   * @param {string} repetitionId - A string with the resource ID of a repetition record
-   * @return {Promise<RunScopeRepetition[]>}
+   * Retrieves the repetition details of a specific agent action run.
+   *
+   * This function constructs the request URI using the provided run ID, action node ID, and repetition ID,
+   * and then uses an HTTP client to fetch the run repetition data.
+   * @param action - An object containing the identifier for the action node and the run ID.
+   * @param action.nodeId - The unique identifier for the action node.
+   * @param action.runId - The identifier of the run; can be undefined.
+   * @param repetitionId - The identifier for the specific repetition of the agent action.
+   * @returns A promise that resolves to the run repetition details.
+   * @throws Will throw an error if the HTTP request fails.
    */
   async getAgentRepetition(
     action: { nodeId: string; runId: string | undefined },
     repetitionId: string
   ): Promise<LogicAppsV2.RunRepetition> {
     const { nodeId, runId } = action;
-
     const { apiVersion, baseUrl, httpClient } = this.options;
     const headers = this.getAccessTokenHeaders();
-
     const uri = `${baseUrl}${runId}/actions/${nodeId}/agentRepetitions/${repetitionId}?api-version=${apiVersion}`;
 
     try {
@@ -225,22 +229,51 @@ export class StandardRunService implements IRunService {
   }
 
   /**
-   * Gets an array of scope repetition records for a node with the specified status.
-   * @param {{ actionId: string, runId: string }} action - An object with nodeId and the runId of the workflow
-   * @param {string} repetitionId - A string with the resource ID of a repetition record
-   * @return {Promise<RunScopeRepetition[]>}
+   * Retrieves the actions of an agent repetition for a specific node and run.
+   *
+   * This function constructs the API endpoint URI using the provided node and run identifiers,
+   * along with the given repetition ID, then sends an HTTP GET request to fetch the corresponding actions.
+   * @param action - An object containing:
+   *   - nodeId: The identifier for the node.
+   *   - runId: The identifier for the run (may be undefined).
+   * @param repetitionId - The identifier for the repetition to query.
+   * @returns A promise that resolves with the run repetition actions retrieved from the API.
+   * @throws An error if the HTTP request fails, propagating the error message.
    */
   async getAgentActionsRepetition(action: { nodeId: string; runId: string | undefined }, repetitionId: string): Promise<any> {
     const { nodeId, runId } = action;
-
     const { apiVersion, baseUrl, httpClient } = this.options;
     const headers = this.getAccessTokenHeaders();
-
     const uri = `${baseUrl}${runId}/actions/${nodeId}/agentRepetitions/${repetitionId}/actions?api-version=${apiVersion}`;
 
     try {
       const response = await httpClient.get<LogicAppsV2.RunRepetition>({
         uri,
+        headers: headers as Record<string, any>,
+      });
+
+      return response;
+    } catch (e: any) {
+      throw new Error(e.message);
+    }
+  }
+
+  /**
+   * Retrieves additional agent actions repetition data based on the provided continuation token.
+   *
+   * This method constructs an HTTP GET request using the continuation token as the URI and leverages the authorized HTTP client.
+   * It returns a promise that resolves with the run repetition data in the form of a [[LogicAppsV2.RunRepetition]] object.
+   * @param continuationToken - A string token used to fetch the next set of agent actions repetition data.
+   * @returns A promise that resolves with the run repetition data.
+   * @throws Will throw an error with the corresponding message if the HTTP request fails.
+   */
+  async getMoreAgentActionsRepetition(continuationToken: string): Promise<any> {
+    const { httpClient } = this.options;
+    const headers = this.getAccessTokenHeaders();
+
+    try {
+      const response = await httpClient.get<LogicAppsV2.RunRepetition>({
+        uri: continuationToken,
         headers: headers as Record<string, any>,
       });
 

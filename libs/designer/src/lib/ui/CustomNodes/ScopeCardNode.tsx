@@ -122,7 +122,7 @@ const ScopeCardNode = ({ data, targetPosition = Position.Top, sourcePosition = P
 
   useEffect(() => {
     if (!isNullOrUndefined(agentActionsRepetitionData)) {
-      const updatePayload = { nodeId: scopeId, runData: agentActionsRepetitionData.resources } as any;
+      const updatePayload = { nodeId: scopeId, runData: agentActionsRepetitionData } as any;
       dispatch(setSubgraphRunData(updatePayload));
     }
   }, [dispatch, scopeRepetitionRunData, scopeId, agentActionsRepetitionData]);
