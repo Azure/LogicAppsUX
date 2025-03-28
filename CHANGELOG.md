@@ -1,4 +1,11 @@
 # Logic Apps Designer
+### [5.44.9](https://github.com/Azure/LogicAppsUX/compare/v5.44.8...v5.44.9) (2025-03-28)
+
+
+### Bug Fixes
+
+* **vscode:** Update validation to allow having the csharp file inside the workflow folder  ([#6883](https://github.com/Azure/LogicAppsUX/issues/6883)) ([8c3a4d9](https://github.com/Azure/LogicAppsUX/commit/8c3a4d93c1bdee5c231933ca13babc943103e748)), closes [#6881](https://github.com/Azure/LogicAppsUX/issues/6881)
+
 ### [5.44.8](https://github.com/Azure/LogicAppsUX/compare/v5.44.7...v5.44.8) (2025-03-20)
 
 
