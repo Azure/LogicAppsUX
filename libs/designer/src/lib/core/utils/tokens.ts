@@ -417,7 +417,13 @@ const getTokenValueSegmentTokenType = (token: OutputToken, nodeType: string): To
     return TokenType.ITERATIONINDEX;
   }
   if (token.outputInfo?.functionName) {
-    return equals(token.outputInfo.functionName, Constants.FUNCTION_NAME.PARAMETERS) ? TokenType.PARAMETER : TokenType.VARIABLE;
+    if (token.outputInfo.functionName === Constants.FUNCTION_NAME.PARAMETERS) {
+      return TokenType.PARAMETER;
+    }
+    if (token.outputInfo.functionName === Constants.FUNCTION_NAME.AGENT_PARAMETERS) {
+      return TokenType.AGENTPARAMETER;
+    }
+    return TokenType.VARIABLE;
   }
   return TokenType.OUTPUTS;
 };

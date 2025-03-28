@@ -81,10 +81,10 @@ export const convertAgentParameterToOutputToken = (agentParameters?: AgentParame
     return [];
   }
   return Object.entries(agentParameters).map(([key, agentParameter]) => {
-    const { name: parameterName, type, description } = agentParameter;
-    const name = parameterName ?? key;
+    const { type, description } = agentParameter;
+    const name = key;
     return {
-      key: `agentParameter:${name}`,
+      key: `agentParameter.${name}`,
       brandColor: AgentParameterBrandColor,
       icon: AgentParameterIcon,
       title: name,

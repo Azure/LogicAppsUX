@@ -96,7 +96,7 @@ export const VariableEditor = ({
   const intl = useIntl();
   const { isInverted } = useTheme();
   const themeName = isInverted ? 'dark' : 'light';
-  const [expanded, setExpanded] = useState(!isAgentParameter); // Marking it collapsed for agent parameters
+  const [expanded, setExpanded] = useState(!isAgentParameter);
   const [variableId, setVariableId] = useState<string>(guid());
 
   const handleToggleExpand = (): void => {
@@ -246,7 +246,7 @@ export const VariableEditor = ({
   };
 
   return (
-    <div className="msla-editor-initialize-variable">
+    <div className={'msla-editor-initialize-variable'}>
       <div>
         <div>
           <Button
@@ -255,7 +255,7 @@ export const VariableEditor = ({
             onClick={handleToggleExpand}
             icon={expanded ? <CollapseIcon /> : <ExpandIcon />}
             aria-expanded={expanded}
-            style={{ justifyContent: 'flex-start' }}
+            style={{ justifyContent: 'flex-start', width: '90%' }}
           >
             {displayName}
           </Button>

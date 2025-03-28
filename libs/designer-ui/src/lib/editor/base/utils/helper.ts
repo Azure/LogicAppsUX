@@ -1,7 +1,8 @@
 import constants from '../../../constants';
-import type { ValueSegment, TokenType } from '../../models/parameter';
+import type { ValueSegment } from '../../models/parameter';
 import { ValueSegmentType } from '../../models/parameter';
 import { $isTokenNode } from '../nodes/tokenNode';
+import type { TokenType } from '@microsoft/logic-apps-shared';
 import { guid } from '@microsoft/logic-apps-shared';
 import type { ElementNode } from 'lexical';
 import { $getNodeByKey, $isElementNode, $isLineBreakNode, $isTextNode } from 'lexical';

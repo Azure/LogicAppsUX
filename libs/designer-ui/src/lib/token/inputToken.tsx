@@ -58,23 +58,34 @@ export const InputToken: React.FC<InputTokenProps> = ({ value, brandColor, icon,
   }, [editor]);
 
   const handleTokenClicked = (e: React.MouseEvent<HTMLSpanElement, MouseEvent>) => {
-    if (nodeKey) {
-      editor.getEditorState().read(() => {
-        // if it is an expression token we'll open the token picker in update mode
-        const node: TokenNode | null = $getNodeByKey(nodeKey);
-        if (node?.['__data']?.token?.tokenType === TokenType.FX && !readonly) {
-          editor.dispatchCommand(OPEN_TOKEN_PICKER, nodeKey);
-        }
-        // otherwise we'll select the token
-        else if (e.shiftKey) {
-          setSelected(!isSelected);
-        } else {
-          clearSelection();
-          setSelected(true);
-          editor.dispatchCommand(CLOSE_TOKENPICKER, { focusEditorAfter: true });
-        }
-      });
+    if (!nodeKey) {
+      return;
     }
+
+    editor.getEditorState().read(() => {
+      const node: TokenNode | null = $getNodeByKey(nodeKey);
+      const token = node?.['__data']?.token;
+      const tokenType = token?.tokenType;
+
+      if (!token) {
+        return;
+      }
+
+      if (!readonly && (tokenType === TokenType.FX || tokenType === TokenType.AGENTPARAMETER)) {
+        editor.dispatchCommand(OPEN_TOKEN_PICKER, { token, nodeKey });
+        return;
+      }
+
+      if (e.shiftKey) {
+        setSelected(!isSelected);
+      } else {
+        clearSelection();
+        setSelected(true);
+        editor.dispatchCommand(CLOSE_TOKENPICKER, { focusEditorAfter: true });
+      }
+
+      editor.focus();
+    });
   };
 
   const tokenStyle = {

@@ -6,7 +6,7 @@ import type { ExpressionEditorEvent } from '../expressioneditor';
 import { ExpressionEditor } from '../expressioneditor';
 import { PanelSize } from '../panel/panelUtil';
 import type { ParameterInfo, TokenGroup } from '@microsoft/logic-apps-shared';
-import TokenPickerHandler from './plugins/InitializeTokenPickerExpressionHandler';
+import TokenPickerExpressionHandler from './plugins/InitializeTokenPickerExpressionHandler';
 import UpdateTokenNode from './plugins/UpdateTokenNode';
 import { TokenPickerFooter } from './tokenpickerfooter';
 import { TokenPickerHeader } from './tokenpickerheader';
@@ -22,6 +22,8 @@ import { useIntl } from 'react-intl';
 import { escapeString, guid, LOCAL_STORAGE_KEYS, TokenType } from '@microsoft/logic-apps-shared';
 import { CreateAgentParameter, generateDefaultAgentParamName } from './tokenpickersection/CreateAgentParameter';
 import { INSERT_TOKEN_NODE } from '../editor/base/plugins/InsertTokenNode';
+import TokenPickerAgentParameterHandler from './plugins/InitializeTokenPickerAgentParameterHandler';
+import { UPDATE_ALL_EDITORS_EVENT } from '../editor/base/plugins/UpdateTokenNodes';
 
 export const TokenPickerMode = {
   TOKEN: 'token',
@@ -76,7 +78,7 @@ export interface TokenPickerProps {
   hideUTFExpressions?: boolean;
   valueType?: string;
   parameter: ParameterInfo;
-  createAgentParameter?: (name: string, type: string, description: string) => void;
+  createOrUpdateAgentParameter?: (name: string, type: string, description: string, isUpdating?: boolean) => void;
 }
 export function TokenPicker({
   editorId,
@@ -90,13 +92,13 @@ export function TokenPicker({
   parameter,
   getValueSegmentFromToken,
   tokenClickedCallback,
-  createAgentParameter,
+  createOrUpdateAgentParameter,
 }: TokenPickerProps): JSX.Element {
   const intl = useIntl();
   const [windowDimensions, setWindowDimensions] = useState(getWindowDimensions());
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedMode, setSelectedMode] = useState<TokenPickerMode>(initialMode ?? TokenPickerMode.TOKEN);
-  const [expressionToBeUpdated, setExpressionToBeUpdated] = useState<NodeKey | null>(null);
+  const [nodeToBeUpdated, setNodeToBeUpdated] = useState<NodeKey | null>(null);
   const [expression, setExpression] = useState<ExpressionEditorEvent>({ value: '', selectionStart: 0, selectionEnd: 0 });
   const [fullScreen, setFullScreen] = useState(false);
   const [isDraggingExpressionEditor, setIsDraggingExpressionEditor] = useState(false);
@@ -108,6 +110,7 @@ export function TokenPicker({
   const searchBoxRef = useRef<ISearchBox | null>(null);
   const isExpression = initialMode === TokenPickerMode.EXPRESSION;
   const [anchorKey, setAnchorKey] = useState<NodeKey | null>(null);
+  const [selectedAgentParameterToken, setSelectedAgentParameterToken] = useState<Token | null>(null);
   const [styleWithMargin, setStyleWithMargin] = useState(false);
   const showCreateAgentParameter =
     selectedMode === TokenPickerMode.AGENT_PARAMETER_CREATE || selectedMode === TokenPickerMode.AGENT_PARAMETER_ADD;
@@ -165,7 +168,7 @@ export function TokenPicker({
     const escapedString = escapeString(s, /*requireSingleQuotesWrap*/ true);
     setExpression({ value: escapedString, selectionStart: 0, selectionEnd: 0 });
     setSelectedMode(TokenPickerMode.EXPRESSION);
-    setExpressionToBeUpdated(n);
+    setNodeToBeUpdated(n);
 
     setTimeout(() => {
       expressionEditorRef.current?.setSelection({
@@ -176,6 +179,12 @@ export function TokenPicker({
       });
       expressionEditorRef.current?.focus();
     }, 100);
+  };
+
+  const handleInitializeAgentParameter = (token: Token, n: NodeKey) => {
+    setSelectedAgentParameterToken(token);
+    setSelectedMode(TokenPickerMode.AGENT_PARAMETER_CREATE);
+    setNodeToBeUpdated(n);
   };
 
   const handleSelectKey = (item?: PivotItem) => {
@@ -216,33 +225,44 @@ export function TokenPicker({
 
   const cancelCreateAgentParameter = (): void => {
     if (selectedMode === TokenPickerMode.AGENT_PARAMETER_ADD) {
+      // not yet implemented
       setSelectedMode(TokenPickerMode.AGENT_PARAMETER);
     } else {
       editor?.dispatchCommand(CLOSE_TOKENPICKER, { focusEditorAfter: true });
     }
   };
 
-  const handleCreateClick = (name: string, type: string, description: string) => {
-    const agentParameterValue = `agentParameters('${name}')`;
-    const token: Token = {
-      tokenType: TokenType.AGENTPARAMETER,
-      name: name,
-      title: name,
-      key: `agentParameter.${name}`,
-      brandColor: AgentParameterBrandColor,
-      icon: AgentParameterIcon,
-      value: agentParameterValue,
-      description,
-    };
-    editor?.dispatchCommand(INSERT_TOKEN_NODE, {
-      brandColor: token.brandColor,
-      description: token.description,
-      title: token.title,
-      icon: token.icon,
-      value: token.value,
-      data: { id: guid(), type: ValueSegmentType.TOKEN, value: agentParameterValue, token },
-    });
-    createAgentParameter?.(name, type, description);
+  const handleCreateAgentParameter = (name: string, type: string, description: string) => {
+    if (nodeToBeUpdated) {
+      const event = new CustomEvent(UPDATE_ALL_EDITORS_EVENT, {
+        detail: { payload: { key: `agentParameter.${name}`, type, description } }, // Pass payload here
+      });
+      window.dispatchEvent(event);
+      editor?.dispatchCommand(CLOSE_TOKENPICKER, { focusEditorAfter: true });
+    } else {
+      const agentParameterValue = `agentParameters('${name}')`;
+      const token: Token = {
+        tokenType: TokenType.AGENTPARAMETER,
+        name: name,
+        title: name,
+        type: type,
+        key: `agentParameter.${name}`,
+        brandColor: AgentParameterBrandColor,
+        icon: AgentParameterIcon,
+        value: agentParameterValue,
+        description,
+      };
+      editor?.dispatchCommand(INSERT_TOKEN_NODE, {
+        brandColor: token.brandColor,
+        description: token.description,
+        title: token.title,
+        icon: token.icon,
+        value: token.value,
+        data: { id: guid(), type: ValueSegmentType.TOKEN, value: agentParameterValue, token },
+      });
+    }
+
+    createOrUpdateAgentParameter?.(name, type, description, !!nodeToBeUpdated);
   };
 
   return (
@@ -302,10 +322,12 @@ export function TokenPicker({
             ) : null}
             {showCreateAgentParameter ? (
               <CreateAgentParameter
-                createAgentParameter={handleCreateClick}
+                nodeToBeUpdated={nodeToBeUpdated}
+                createAgentParameter={handleCreateAgentParameter}
                 cancelCreateAgentParameter={cancelCreateAgentParameter}
-                defaultAgentParamType={valueType}
-                defaultAgentParamName={generateDefaultAgentParamName(parameter)}
+                defaultName={selectedAgentParameterToken?.name || generateDefaultAgentParamName(parameter)}
+                defaultType={selectedAgentParameterToken?.type || valueType}
+                defaultDescription={selectedAgentParameterToken?.description || ''}
               />
             ) : (
               <>
@@ -358,7 +380,7 @@ export function TokenPicker({
                   <TokenPickerFooter
                     tokenGroup={tokenGroup ?? []}
                     expression={expression}
-                    expressionToBeUpdated={expressionToBeUpdated}
+                    nodeToBeUpdated={nodeToBeUpdated}
                     getValueSegmentFromToken={getValueSegmentFromToken}
                     setExpressionEditorError={setExpressionEditorError}
                   />
@@ -368,8 +390,9 @@ export function TokenPicker({
           </div>
         </div>
       </Callout>
-      {tokenClickedCallback ? null : <TokenPickerHandler handleInitializeExpression={handleInitializeExpression} />}
+      {tokenClickedCallback ? null : <TokenPickerExpressionHandler handleInitializeExpression={handleInitializeExpression} />}
       {tokenClickedCallback ? null : <UpdateTokenNode />}
+      {tokenClickedCallback ? null : <TokenPickerAgentParameterHandler handleInitializeAgentParameter={handleInitializeAgentParameter} />}
     </>
   );
 }

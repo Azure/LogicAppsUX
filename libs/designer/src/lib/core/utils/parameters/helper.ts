@@ -1967,7 +1967,7 @@ async function loadDynamicData(
 ): Promise<void> {
   if (Object.keys(dependencies?.outputs ?? {}).length) {
     const rootState = getState();
-    loadDynamicOutputsInNode(
+    await loadDynamicOutputsInNode(
       nodeId,
       isTrigger,
       operationInfo,
@@ -3249,25 +3249,68 @@ export function updateTokenMetadata(
   parameterNodeId?: string
 ): ValueSegment {
   const token = valueSegment.token as SegmentToken;
+  if (!token) {
+    return valueSegment;
+  }
+
+  const setTokenMetadata = (brandColor: string, icon: string, type?: string, value?: any) => {
+    token.brandColor = brandColor;
+    token.icon = icon;
+    if (type) {
+      token.type = type;
+    }
+    if (value !== undefined) {
+      token.value = value;
+    }
+  };
+
   switch (token?.tokenType) {
     case TokenType.VARIABLE: {
-      token.brandColor = VariableBrandColor;
-      token.icon = VariableIcon;
+      setTokenMetadata(VariableBrandColor, VariableIcon);
       return valueSegment;
     }
     case TokenType.PARAMETER: {
-      token.brandColor = ParameterBrandColor;
-      token.icon = ParameterIcon;
-      token.type = convertWorkflowParameterTypeToSwaggerType(workflowParameters[token.title]?.type);
-      token.value = valueSegment.value;
+      setTokenMetadata(
+        ParameterBrandColor,
+        ParameterIcon,
+        convertWorkflowParameterTypeToSwaggerType(workflowParameters[token.title]?.type),
+        valueSegment.value
+      );
       return valueSegment;
     }
 
     case TokenType.FX: {
-      token.brandColor = FxBrandColor;
-      token.icon = FxIcon;
+      setTokenMetadata(FxBrandColor, FxIcon, undefined, valueSegment.value);
       token.title = getExpressionTokenTitle(token.expression as Expression);
-      token.value = valueSegment.value;
+      return valueSegment;
+    }
+
+    case TokenType.AGENTPARAMETER: {
+      setTokenMetadata(AgentParameterBrandColor, AgentParameterIcon, token.type, valueSegment.value);
+
+      if (!parameterNodeId) {
+        return valueSegment;
+      }
+
+      const agentParameterConditionId = nodesMetadata[parameterNodeId]?.graphId;
+      if (!agentParameterConditionId) {
+        return valueSegment;
+      }
+
+      token.actionName = agentParameterConditionId;
+      const nodeInputs = nodes[agentParameterConditionId]?.nodeInputs?.parameterGroups?.[ParameterGroupKeys.DEFAULT]?.rawInputs;
+      if (!nodeInputs || !valueSegment.token?.name) {
+        return valueSegment;
+      }
+
+      const agentInfo = nodeInputs.find((input) => input.name === constants.PARAMETER_NAMES.AGENT_PARAMETER_SCHEMA)?.value?.properties?.[
+        valueSegment.token.name
+      ];
+      if (agentInfo) {
+        token.description = agentInfo.description;
+        token.type = agentInfo.type;
+      }
+
       return valueSegment;
     }
 
@@ -3304,25 +3347,9 @@ export function updateTokenMetadata(
   const nodeType = tokenNodeOperation?.type;
   const isSecure = hasSecureOutputs(nodeType, settings ?? {});
   const isFromExistingLoop = Boolean(arrayDetails?.loopSource && getPropertyValue(actionNodes, arrayDetails.loopSource));
-  let brandColor: string | undefined;
-  let iconUri: string | undefined;
-  let nodeOutputInfo: OutputInfo | undefined;
-  if (token.tokenType === TokenType.AGENTPARAMETER) {
-    token.brandColor = AgentParameterBrandColor;
-    token.icon = AgentParameterIcon;
-    token.value = valueSegment.value;
-    if (parameterNodeId) {
-      const agentParameterSourceId = nodesMetadata[parameterNodeId]?.parentNodeId;
-      if (agentParameterSourceId) {
-        token.actionName = agentParameterSourceId;
-        nodeOutputInfo = nodes[agentParameterSourceId].nodeOutputs?.outputs[token.key];
-      }
-    }
-  } else {
-    nodeOutputInfo = getOutputByTokenInfo(unmap(nodeOutputs?.outputs), valueSegment.token as SegmentToken, parameterType);
-    brandColor = token.tokenType === TokenType.ITEM || isFromExistingLoop ? ItemBrandColor : operationMetadata?.brandColor;
-    iconUri = token.tokenType === TokenType.ITEM || isFromExistingLoop ? ItemIcon : operationMetadata?.iconUri;
-  }
+  const nodeOutputInfo = getOutputByTokenInfo(unmap(nodeOutputs?.outputs), valueSegment.token as SegmentToken, parameterType);
+  const brandColor = token.tokenType === TokenType.ITEM || isFromExistingLoop ? ItemBrandColor : operationMetadata?.brandColor;
+  const iconUri = token.tokenType === TokenType.ITEM || isFromExistingLoop ? ItemIcon : operationMetadata?.iconUri;
 
   let outputInsideForeach = false;
   if (parameterNodeId) {
