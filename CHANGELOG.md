@@ -1,4 +1,11 @@
 # Logic Apps Designer
+### [5.58.3](https://github.com/Azure/LogicAppsUX/compare/v5.58.2...v5.58.3) (2025-03-28)
+
+
+### Bug Fixes
+
+* **templates:** Getting templates service changes to load from storage account ([#6885](https://github.com/Azure/LogicAppsUX/issues/6885)) ([ce43d28](https://github.com/Azure/LogicAppsUX/commit/ce43d280ef097852cf344f49383c52c159c0973c))
+
 ### [5.58.2](https://github.com/Azure/LogicAppsUX/compare/v5.58.1...v5.58.2) (2025-03-26)
 
 
