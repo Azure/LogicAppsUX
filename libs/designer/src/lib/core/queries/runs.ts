@@ -163,7 +163,7 @@ export const useAgentActionsRepetition = (
   return useQuery(
     ['useAgentActionsRepetition', { nodeId, runId, repetitionName, parentStatus, runIndex }],
     async () => {
-      return RunService().getSubgraphRepetition({ nodeId, runId }, repetitionName);
+      return RunService().getAgentActionsRepetition({ nodeId, runId }, repetitionName);
     },
     {
       ...queryOpts,
