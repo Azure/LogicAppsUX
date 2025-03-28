@@ -30,6 +30,7 @@ import {
 } from '../../core/state/workflow/workflowSelectors';
 import {
   setRepetitionRunData,
+  setSubgraphRunData,
   toggleCollapsedGraphId,
   updateAgenticGraph,
   updateAgenticMetadata,
@@ -50,7 +51,7 @@ import { Handle, Position, type NodeProps } from '@xyflow/react';
 import { copyScopeOperation } from '../../core/actions/bjsworkflow/copypaste';
 import { useHotkeys } from 'react-hotkeys-hook';
 import { CopyTooltip } from '../common/DesignerContextualMenu/CopyTooltip';
-import { useNodeRepetition, useAgentRepetition } from '../../core/queries/runs';
+import { useNodeRepetition, useAgentRepetition, useAgentActionsRepetition } from '../../core/queries/runs';
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 const ScopeCardNode = ({ data, targetPosition = Position.Top, sourcePosition = Position.Bottom, id }: NodeProps) => {
@@ -95,7 +96,8 @@ const ScopeCardNode = ({ data, targetPosition = Position.Top, sourcePosition = P
     runInstance?.id,
     repetitionName,
     parentRunData?.status,
-    parentRunIndex
+    parentRunIndex,
+    false
   );
 
   const { isFetching: isScopeRepetitionFetching, data: scopeRepetitionRunData } = useAgentRepetition(
@@ -107,6 +109,23 @@ const ScopeCardNode = ({ data, targetPosition = Position.Top, sourcePosition = P
     parentRunData?.status,
     runIndex
   );
+
+  const { isFetching: isActionsRepetitionFetching, data: agentActionsRepetitionData } = useAgentActionsRepetition(
+    !!isMonitoringView,
+    isAgent,
+    scopeId,
+    runInstance?.id,
+    scopeRepetitionName,
+    parentRunData?.status,
+    runIndex
+  );
+
+  useEffect(() => {
+    if (!isNullOrUndefined(agentActionsRepetitionData)) {
+      const updatePayload = { nodeId: scopeId, runData: agentActionsRepetitionData.resources } as any;
+      dispatch(setSubgraphRunData(updatePayload));
+    }
+  }, [dispatch, scopeRepetitionRunData, scopeId, agentActionsRepetitionData]);
 
   useEffect(() => {
     if (!isNullOrUndefined(scopeRepetitionRunData)) {
@@ -211,8 +230,9 @@ const ScopeCardNode = ({ data, targetPosition = Position.Top, sourcePosition = P
   const opQuery = useOperationQuery(scopeId);
 
   const isLoading = useMemo(
-    () => isRepetitionFetching || isScopeRepetitionFetching || opQuery.isLoading || (!brandColor && !iconUri),
-    [brandColor, iconUri, opQuery.isLoading, isRepetitionFetching, isScopeRepetitionFetching]
+    () =>
+      isRepetitionFetching || isScopeRepetitionFetching || isActionsRepetitionFetching || opQuery.isLoading || (!brandColor && !iconUri),
+    [brandColor, iconUri, opQuery.isLoading, isRepetitionFetching, isScopeRepetitionFetching, isActionsRepetitionFetching]
   );
 
   const comment = useMemo(

@@ -73,7 +73,8 @@ export const useNodeRepetition = (
   runId: string | undefined,
   repetitionName: string,
   parentStatus: string | undefined,
-  parentRunIndex: number | undefined
+  parentRunIndex: number | undefined,
+  isWithinAgenticLoop: boolean
 ) => {
   return useQuery(
     ['useNodeRepetition', { nodeId, runId, repetitionName, parentStatus, parentRunIndex }],
@@ -97,7 +98,7 @@ export const useNodeRepetition = (
     {
       ...queryOpts,
       retryOnMount: false,
-      enabled: parentRunIndex !== undefined && isMonitoringView,
+      enabled: parentRunIndex !== undefined && isMonitoringView && !isWithinAgenticLoop,
     }
   );
 };
@@ -146,6 +147,28 @@ export const useAgentRepetition = (
       ...queryOpts,
       retryOnMount: false,
       enabled: isMonitoringView && runIndex !== undefined && isAgent,
+    }
+  );
+};
+
+export const useAgentActionsRepetition = (
+  isMonitoringView: boolean,
+  isParentAgent: boolean,
+  nodeId: string,
+  runId: string | undefined,
+  repetitionName: string,
+  parentStatus: string | undefined,
+  runIndex: number | undefined
+) => {
+  return useQuery(
+    ['useAgentActionsRepetition', { nodeId, runId, repetitionName, parentStatus, runIndex }],
+    async () => {
+      return RunService().getAgentActionsRepetition({ nodeId, runId }, repetitionName);
+    },
+    {
+      ...queryOpts,
+      retryOnMount: false,
+      enabled: isMonitoringView && runIndex !== undefined && isParentAgent,
     }
   );
 };
