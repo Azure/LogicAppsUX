@@ -129,7 +129,6 @@ const TemplateFeaturedConnectors = ({ manifest, intl }: { manifest: Template.Tem
   const onRenderMenuItem = (item: IContextualMenuItem) => (
     <ConnectorIconWithName
       connectorId={item.key}
-      operationId={item.data.operationId}
       classes={{
         root: 'msla-template-connector-menuitem',
         icon: 'msla-template-connector-menuitem-icon',
@@ -162,7 +161,6 @@ const TemplateFeaturedConnectors = ({ manifest, intl }: { manifest: Template.Tem
             <ConnectorIcon
               key={info.id}
               connectorId={info.id}
-              operationId={info.id}
               classes={{ root: 'msla-template-card-connector', icon: 'msla-template-card-connector-icon' }}
             />
           ))
