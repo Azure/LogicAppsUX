@@ -37,6 +37,7 @@ const SubgraphCardNode = ({ targetPosition = Position.Top, sourcePosition = Posi
   const intl = useIntl();
   const readOnly = useReadOnly();
   const dispatch = useDispatch<AppDispatch>();
+
   const isPinned = useIsNodePinnedToOperationPanel(subgraphId);
   const selected = useIsNodeSelectedInOperationPanel(subgraphId);
   const isLeaf = useIsLeafNode(id);
@@ -50,14 +51,15 @@ const SubgraphCardNode = ({ targetPosition = Position.Top, sourcePosition = Posi
   const runData = useRunData(parentNodeId ?? subgraphId);
   const parentActionMetadata = useActionMetadata(parentNodeId);
   const isParentAgent = parentActionMetadata?.type?.toLowerCase() === constants.NODE.TYPE.AGENT;
+
   const title = useNodeDisplayName(subgraphId);
+
   const isSwitchAddCase = metadata?.subgraphType === SUBGRAPH_TYPES.SWITCH_ADD_CASE;
   const isAgentAddCondition = metadata?.subgraphType === SUBGRAPH_TYPES.AGENT_ADD_CONDITON;
-  const graphCollapsed = useIsGraphCollapsed(subgraphId);
+
   const isAddCase = isSwitchAddCase || isAgentAddCondition;
   const actionCount = metadata?.actionCount ?? 0;
   const iconUri = useIconUri(graphId);
-  const showEmptyGraphComponents = isLeaf && !graphCollapsed && !isAddCase;
 
   const stringResources = useMemo(
     () => ({
@@ -116,12 +118,15 @@ const SubgraphCardNode = ({ targetPosition = Position.Top, sourcePosition = Posi
     [isAddCase, graphNode, isAgentAddCondition, operationInfo, iconUri, newCaseIdNewAdditiveSubgraphId, dispatch, subgraphId]
   );
 
+  const graphCollapsed = useIsGraphCollapsed(subgraphId);
   const handleGraphCollapse = useCallback(
     (includeNested?: boolean) => {
       dispatch(toggleCollapsedGraphId({ id: subgraphId, includeNested }));
     },
     [dispatch, subgraphId]
   );
+
+  const showEmptyGraphComponents = isLeaf && !graphCollapsed && !isAddCase;
 
   const deleteClick = useCallback(() => {
     dispatch(setShowDeleteModalNodeId(id));
