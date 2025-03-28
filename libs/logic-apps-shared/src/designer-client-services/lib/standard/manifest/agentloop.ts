@@ -51,7 +51,12 @@ export default {
         messages: {
           description: 'Messages',
           title: 'Messages',
-          default: [],
+          default: [
+            {
+              role: 'System',
+              content: 'You are an assistant who will help...',
+            },
+          ],
           type: 'array',
           items: {
             description: 'Message',
@@ -61,7 +66,20 @@ export default {
               role: {
                 description: 'Message role',
                 type: 'string',
-                'x-ms-summary': 'Role',
+                title: 'Role',
+                'x-ms-editor': 'dropdown',
+                'x-ms-editor-options': {
+                  options: [
+                    {
+                      value: 'System',
+                      displayName: 'System',
+                    },
+                    {
+                      value: 'User',
+                      displayName: 'User',
+                    },
+                  ],
+                },
               },
               content: {
                 description: 'Message content',
