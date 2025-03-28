@@ -2,6 +2,7 @@ import type { RootState } from '../../core/state/templates/store';
 import { makeStyles, mergeClasses, Text, tokens } from '@fluentui/react-components';
 import { useSelector } from 'react-redux';
 import { useTemplatesStrings } from './templatesStrings';
+import Markdown from 'react-markdown';
 
 const useStyles = makeStyles({
   actionName: {
@@ -27,7 +28,7 @@ export const TemplateDisplay = ({ titleLabel, showDescription, cssOverrides }: T
       <Text weight="semibold" className={styles.actionName}>
         {templateTitle}
       </Text>
-      {showDescription && <Text>{templateDescription}</Text>}
+      {showDescription && templateDescription && <Markdown>{templateDescription}</Markdown>}
     </div>
   );
 };
