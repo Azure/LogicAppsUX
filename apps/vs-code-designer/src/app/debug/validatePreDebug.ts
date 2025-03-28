@@ -70,7 +70,12 @@ export async function preDebugValidate(context: IActionContext, debugConfig: vsc
   return { workspace, shouldContinue };
 }
 
-function getMatchingWorkspace(debugConfig: vscode.DebugConfiguration): vscode.WorkspaceFolder {
+/**
+ * Gets the workspace folder that matches the debug configuration
+ * @param {vscode.DebugConfiguration} debugConfig - The debug configuration to match against
+ * @returns {vscode.WorkspaceFolder} - The workspace folder that matches the debug configuration
+ */
+export function getMatchingWorkspace(debugConfig: vscode.DebugConfiguration): vscode.WorkspaceFolder {
   if (vscode.workspace.workspaceFolders) {
     for (const workspace of vscode.workspace.workspaceFolders) {
       try {
@@ -132,7 +137,7 @@ export async function validateEmulatorIsRunning(
           err ? reject(err) : resolve();
         });
       });
-    } catch (error) {
+    } catch {
       if (!promptWarningMessage) {
         return false;
       }

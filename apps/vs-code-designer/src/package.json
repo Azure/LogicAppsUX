@@ -138,6 +138,11 @@
         "category": "Azure Logic Apps"
       },
       {
+        "command": "azureLogicAppsStandard.pickCustomCodeNetHostProcess",
+        "title": "Pick Custom Code .NET Host Process",
+        "category": "Azure Logic Apps"
+      },
+      {
         "command": "azureLogicAppsStandard.openOverview",
         "title": "Overview",
         "category": "Azure Logic Apps"
@@ -739,6 +744,10 @@
           "when": "never"
         },
         {
+          "command": "azureLogicAppsStandard.pickCustomCodeNetHostProcess",
+          "when": "never"
+        },
+        {
           "command": "azureLogicAppsStandard.openOverview",
           "when": "resourceFilename==workflow.json"
         },
@@ -1018,6 +1027,7 @@
     "onCommand:azureLogicAppsStandard.stopLogicApp",
     "onCommand:azureLogicAppsStandard.restartLogicApp",
     "onCommand:azureLogicAppsStandard.pickProcess",
+    "onCommand:azureLogicAppsStandard.pickCustomCodeNetHostProcess",
     "onCommand:azureLogicAppsStandard.deleteLogicApp",
     "onCommand:azureLogicAppsStandard.openOverview",
     "onCommand:azureLogicAppsStandard.exportLogicApp",
