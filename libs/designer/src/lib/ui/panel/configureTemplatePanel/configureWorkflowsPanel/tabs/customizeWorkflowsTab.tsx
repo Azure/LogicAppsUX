@@ -17,34 +17,36 @@ export const CustomizeWorkflows = ({
 }) => {
   const workflowEntries = Object.entries(selectedWorkflowsList);
 
-  return workflowEntries.length ? (
-    workflowEntries.length > 1 ? (
-      <div>
-        <Accordion multiple={true}>
-          {Object.entries(selectedWorkflowsList).map(([workflowId, workflowData]) => (
-            <AccordionItem value={workflowId} key={workflowId}>
-              <AccordionHeader>
-                <Text style={{ fontWeight: 'bold' }}>{workflowId}</Text>
-              </AccordionHeader>
-              <AccordionPanel>
-                <CustomizeWorkflowSection
-                  normalizedWorkflowId={workflowId}
-                  workflow={workflowData}
-                  updateWorkflowDataField={updateWorkflowDataField}
-                />
-              </AccordionPanel>
-            </AccordionItem>
-          ))}
-        </Accordion>
-      </div>
-    ) : (
-      <CustomizeWorkflowSection
-        normalizedWorkflowId={workflowEntries[0][0]}
-        workflow={workflowEntries[0][1]}
-        updateWorkflowDataField={updateWorkflowDataField}
-      />
-    )
-  ) : null;
+  return (
+    <div className="msla-templates-tab msla-panel-no-description-tab">
+      {workflowEntries.length ? (
+        workflowEntries.length > 1 ? (
+          <Accordion multiple={true}>
+            {Object.entries(selectedWorkflowsList).map(([workflowId, workflowData]) => (
+              <AccordionItem value={workflowId} key={workflowId}>
+                <AccordionHeader>
+                  <Text style={{ fontWeight: 'bold' }}>{workflowId}</Text>
+                </AccordionHeader>
+                <AccordionPanel>
+                  <CustomizeWorkflowSection
+                    normalizedWorkflowId={workflowId}
+                    workflow={workflowData}
+                    updateWorkflowDataField={updateWorkflowDataField}
+                  />
+                </AccordionPanel>
+              </AccordionItem>
+            ))}
+          </Accordion>
+        ) : (
+          <CustomizeWorkflowSection
+            normalizedWorkflowId={workflowEntries[0][0]}
+            workflow={workflowEntries[0][1]}
+            updateWorkflowDataField={updateWorkflowDataField}
+          />
+        )
+      ) : null}
+    </div>
+  );
 };
 
 const CustomizeWorkflowSection = ({

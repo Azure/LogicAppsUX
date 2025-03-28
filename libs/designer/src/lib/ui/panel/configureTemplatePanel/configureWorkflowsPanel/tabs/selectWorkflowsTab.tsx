@@ -49,12 +49,13 @@ export const SelectWorkflows = ({
   const onLogicAppSelected = useCallback(
     (app: LogicAppResource) => {
       const { id, plan } = app;
+      onWorkflowsSelected([]);
       if (equals(plan, 'Consumption')) {
         const normalizedWorkflowId = id.toLowerCase();
         dispatch(updateAllWorkflowsData({ [normalizedWorkflowId]: { id: normalizedWorkflowId } }));
       }
     },
-    [dispatch]
+    [dispatch, onWorkflowsSelected]
   );
 
   const intlText = {

@@ -1,14 +1,28 @@
 import type { AppDispatch, RootState } from '../../../core/state/templates/store';
 import { useDispatch, useSelector } from 'react-redux';
-import { Text } from '@fluentui/react-components';
+import {
+  Text,
+  TableCell,
+  TableRow,
+  Table,
+  TableHeader,
+  TableHeaderCell,
+  TableSelectionCell,
+  TableCellLayout,
+  useTableFeatures,
+  type TableColumnDefinition,
+  useTableSelection,
+  createTableColumn,
+} from '@fluentui/react-components';
 import type { TemplateTabProps } from '@microsoft/designer-ui';
 import constants from '../../../common/constants';
 import { useIntl, type IntlShape } from 'react-intl';
 import { selectWizardTab } from '../../../core/state/templates/tabSlice';
 import { CommandBar, type ICommandBarItemProps } from '@fluentui/react';
-import { useMemo } from 'react';
+import { useCallback, useMemo } from 'react';
 import { openPanelView, TemplatePanelView } from '../../../core/state/templates/panelSlice';
 import { ConfigureWorkflowsPanel } from '../../panel/configureTemplatePanel/configureWorkflowsPanel/configureWorkflowsPanel';
+import { useFunctionalState } from '@react-hookz/web';
 
 export const WorkflowsTab = () => {
   const intl = useIntl();
@@ -17,6 +31,31 @@ export const WorkflowsTab = () => {
     currentPanelView: state.panel.currentPanelView,
   }));
   const dispatch = useDispatch<AppDispatch>();
+
+  const [selectedWorkflowsList, setSelectedWorkflowsList] = useFunctionalState<string[]>([]);
+
+  const intlText = {
+    PLACEHOLDER: intl.formatMessage({
+      defaultMessage: '--',
+      id: '5lRHeK',
+      description: 'Accessibility label indicating that the value is not set',
+    }),
+    WORKFLOW_NAME: intl.formatMessage({
+      defaultMessage: 'Name',
+      id: 'kLqXDY',
+      description: 'Label for workflow Name',
+    }),
+    WORKFLOW_DISPLAY_NAME: intl.formatMessage({
+      defaultMessage: 'Display name',
+      id: 'Sk0Pms',
+      description: 'Label for workflow display name',
+    }),
+    STATE: intl.formatMessage({
+      defaultMessage: 'State',
+      id: 'IG4XXf',
+      description: 'Label for workflow state',
+    }),
+  };
 
   const commandBarItems: ICommandBarItemProps[] = useMemo(
     () => [
@@ -48,6 +87,78 @@ export const WorkflowsTab = () => {
     [intl, dispatch]
   );
 
+  type WorkflowsTableItem = {
+    id: string;
+    name: string;
+    displayName: string;
+    state: string;
+  };
+
+  const columns: TableColumnDefinition<WorkflowsTableItem>[] = [
+    createTableColumn<WorkflowsTableItem>({
+      columnId: 'name',
+    }),
+    createTableColumn<WorkflowsTableItem>({
+      columnId: 'displayName',
+    }),
+    createTableColumn<WorkflowsTableItem>({
+      columnId: 'state',
+    }),
+  ];
+
+  const items =
+    Object.values(workflows)?.map((workflowData) => ({
+      id: workflowData.id,
+      name: workflowData?.workflowName ?? intlText.PLACEHOLDER,
+      displayName: workflowData?.manifest?.title ?? intlText.PLACEHOLDER,
+      state: workflowData?.manifest?.kinds?.join(', ') ?? intlText.PLACEHOLDER,
+    })) ?? [];
+
+  const {
+    getRows,
+    selection: { allRowsSelected, someRowsSelected, toggleAllRows, toggleRow, isRowSelected },
+  } = useTableFeatures(
+    {
+      columns,
+      items,
+    },
+    [
+      useTableSelection({
+        selectionMode: 'multiselect',
+        selectedItems: new Set(Object.keys(selectedWorkflowsList)),
+        onSelectionChange: (_, data) => {
+          setSelectedWorkflowsList(Array.from(data.selectedItems, String));
+        },
+      }),
+    ]
+  );
+
+  const rows = getRows((row) => {
+    const selected = isRowSelected(row.item.id);
+    return {
+      ...row,
+      onClick: (e: React.MouseEvent) => toggleRow(e, row.item.id),
+      onKeyDown: (e: React.KeyboardEvent) => {
+        if (e.key === ' ') {
+          e.preventDefault();
+          toggleRow(e, row.item.id);
+        }
+      },
+      selected,
+      appearance: selected ? ('brand' as const) : ('none' as const),
+    };
+  });
+
+  const toggleAllKeydown = useCallback(
+    (e: React.KeyboardEvent<HTMLDivElement>) => {
+      if (e.key === ' ') {
+        toggleAllRows(e);
+        e.preventDefault();
+      }
+    },
+    [toggleAllRows]
+  );
+
   return (
     <div>
       {currentPanelView === TemplatePanelView.ConfigureWorkflows && <ConfigureWorkflowsPanel />}
@@ -64,7 +175,36 @@ export const WorkflowsTab = () => {
       />
 
       {Object.keys(workflows).length > 0 ? (
-        Object.values(workflows).map((workflowData) => <Text key={workflowData.id}>{workflowData.id}</Text>)
+        <Table aria-label="Table with multiselect" style={{ minWidth: '550px' }}>
+          <TableHeader>
+            <TableRow>
+              <TableSelectionCell
+                checked={allRowsSelected ? true : someRowsSelected ? 'mixed' : false}
+                onClick={toggleAllRows}
+                onKeyDown={toggleAllKeydown}
+                checkboxIndicator={{ 'aria-label': 'Select all rows' }}
+              />
+
+              <TableHeaderCell>{intlText.WORKFLOW_NAME}</TableHeaderCell>
+              <TableHeaderCell>{intlText.WORKFLOW_DISPLAY_NAME}</TableHeaderCell>
+              <TableHeaderCell>{intlText.STATE}</TableHeaderCell>
+            </TableRow>
+          </TableHeader>
+          {rows.map(({ item, selected, onClick, onKeyDown, appearance }) => (
+            <TableRow key={item.name} onClick={onClick} onKeyDown={onKeyDown} aria-selected={selected} appearance={appearance}>
+              <TableSelectionCell checked={selected} checkboxIndicator={{ 'aria-label': 'Select row' }} />
+              <TableCell>
+                <TableCellLayout>{item.name}</TableCellLayout>
+              </TableCell>
+              <TableCell>
+                <TableCellLayout>{item.displayName}</TableCellLayout>
+              </TableCell>
+              <TableCell>
+                <TableCellLayout>{item.state}</TableCellLayout>
+              </TableCell>
+            </TableRow>
+          ))}
+        </Table>
       ) : (
         <Text>placeholder - add workflows</Text>
       )}
