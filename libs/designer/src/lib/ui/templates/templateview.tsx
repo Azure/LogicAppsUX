@@ -1,7 +1,7 @@
 import { useDispatch, useSelector } from 'react-redux';
 import type { CreateWorkflowHandler } from './TemplatesDesigner';
 import type { AppDispatch, RootState } from '../../core/state/templates/store';
-import { initializeWorkflowMetadata, isMultiWorkflowTemplate, loadTemplate } from '../../core/actions/bjsworkflow/templates';
+import { isMultiWorkflowTemplate, loadTemplate } from '../../core/actions/bjsworkflow/templates';
 import { useEffect } from 'react';
 import { TemplateOverview } from './templateoverview';
 import { setLayerHostSelector, Spinner, SpinnerSize, Text } from '@fluentui/react';
@@ -33,12 +33,6 @@ export const TemplatesView = (props: TemplateViewProps) => {
       dispatch(loadTemplate({ preLoadedManifest: undefined }));
     }
   }, [dispatch, templateName]);
-
-  useEffect(() => {
-    if (manifest) {
-      dispatch(initializeWorkflowMetadata());
-    }
-  }, [dispatch, manifest]);
 
   if (!manifest) {
     return templateName ? (
