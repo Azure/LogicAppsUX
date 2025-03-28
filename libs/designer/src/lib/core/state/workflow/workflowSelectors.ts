@@ -206,7 +206,7 @@ export const useNewAdditiveSubgraphId = (baseId: string) =>
       // eslint-disable-next-line no-loop-func
       while (idList.some((id) => id === caseId)) {
         caseCount++;
-        caseId = `${baseId} ${caseCount}`;
+        caseId = `${baseId}_${caseCount}`;
       }
       return caseId;
     })
