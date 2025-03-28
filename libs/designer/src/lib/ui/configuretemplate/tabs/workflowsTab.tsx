@@ -191,10 +191,11 @@ export const WorkflowsTab = () => {
             </TableRow>
           </TableHeader>
           {rows.map(({ item, selected, onClick, onKeyDown, appearance }) => (
-            <TableRow key={item.name} onClick={onClick} onKeyDown={onKeyDown} aria-selected={selected} appearance={appearance}>
+            <TableRow key={item.id} onClick={onClick} onKeyDown={onKeyDown} aria-selected={selected} appearance={appearance}>
               <TableSelectionCell checked={selected} checkboxIndicator={{ 'aria-label': 'Select row' }} />
               <TableCell>
-                <TableCellLayout>{item.name}</TableCellLayout>
+                {/* // TODO: change this to name */}
+                <TableCellLayout>{item.id}</TableCellLayout>
               </TableCell>
               <TableCell>
                 <TableCellLayout>{item.displayName}</TableCellLayout>

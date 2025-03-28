@@ -92,6 +92,7 @@ export const SelectWorkflows = ({
   };
 
   type WorkflowsTableItem = {
+    id: string;
     name: string;
     trigger: string;
   };
@@ -107,6 +108,7 @@ export const SelectWorkflows = ({
 
   const items =
     workflows?.map((workflow) => ({
+      id: workflow.id,
       name: workflow.name,
       trigger: workflow.triggerType,
     })) ?? [];
@@ -131,14 +133,14 @@ export const SelectWorkflows = ({
   );
 
   const rows = getRows((row) => {
-    const selected = isRowSelected(normalizedWorkflowId(row.item.name));
+    const selected = isRowSelected(normalizedWorkflowId(row.item.id));
     return {
       ...row,
-      onClick: (e: React.MouseEvent) => toggleRow(e, normalizedWorkflowId(row.item.name)),
+      onClick: (e: React.MouseEvent) => toggleRow(e, normalizedWorkflowId(row.item.id)),
       onKeyDown: (e: React.KeyboardEvent) => {
         if (e.key === ' ') {
           e.preventDefault();
-          toggleRow(e, normalizedWorkflowId(row.item.name));
+          toggleRow(e, normalizedWorkflowId(row.item.id));
         }
       },
       selected,
@@ -197,7 +199,7 @@ export const SelectWorkflows = ({
                   ))
                 : null
               : rows.map(({ item, selected, onClick, onKeyDown, appearance }) => (
-                  <TableRow key={item.name} onClick={onClick} onKeyDown={onKeyDown} aria-selected={selected} appearance={appearance}>
+                  <TableRow key={item.id} onClick={onClick} onKeyDown={onKeyDown} aria-selected={selected} appearance={appearance}>
                     <TableSelectionCell checked={selected} checkboxIndicator={{ 'aria-label': 'Select row' }} />
                     <TableCell>
                       <TableCellLayout>{item.name}</TableCellLayout>
@@ -225,7 +227,11 @@ export const selectWorkflowsTab = (
     onClosePanel,
     selectedWorkflowsList,
     onWorkflowsSelected,
-  }: ConfigureWorkflowsTabProps & { onWorkflowsSelected: (normalizedWorkflowIds: string[]) => void }
+    onNextButtonClick,
+  }: ConfigureWorkflowsTabProps & {
+    onWorkflowsSelected: (normalizedWorkflowIds: string[]) => void;
+    onNextButtonClick: () => Promise<void>;
+  }
 ): TemplateTabProps => ({
   id: constants.CONFIGURE_TEMPLATE_WIZARD_TAB_NAMES.SELECT_WORKFLOWS,
   title: intl.formatMessage({
@@ -241,8 +247,9 @@ export const selectWorkflowsTab = (
       id: '0UfxUM',
       description: 'Button text for moving to the next tab in the create workflow panel',
     }),
-    primaryButtonOnClick: () => {
+    primaryButtonOnClick: async () => {
       dispatch(selectPanelTab(constants.CONFIGURE_TEMPLATE_WIZARD_TAB_NAMES.CUSTOMIZE_WORKFLOWS));
+      await onNextButtonClick();
     },
     secondaryButtonText: intl.formatMessage({
       defaultMessage: 'Cancel',

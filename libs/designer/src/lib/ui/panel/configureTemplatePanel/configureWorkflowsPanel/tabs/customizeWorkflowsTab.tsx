@@ -4,7 +4,6 @@ import { TemplatesSection, type TemplateTabProps } from '@microsoft/designer-ui'
 import { closePanel } from '../../../../../core/state/templates/panelSlice';
 import type { ConfigureWorkflowsTabProps } from '../configureWorkflowsPanel';
 import type { IntlShape } from 'react-intl';
-import { initializeWorkflowsData } from '../../../../../core/actions/bjsworkflow/configuretemplate';
 import type { WorkflowTemplateData } from '../../../../../core';
 import { Accordion, AccordionHeader, AccordionItem, AccordionPanel, Text } from '@fluentui/react-components';
 
@@ -25,7 +24,7 @@ export const CustomizeWorkflows = ({
             {Object.entries(selectedWorkflowsList).map(([workflowId, workflowData]) => (
               <AccordionItem value={workflowId} key={workflowId}>
                 <AccordionHeader>
-                  <Text style={{ fontWeight: 'bold' }}>{workflowId}</Text>
+                  <Text style={{ fontWeight: 'bold' }}>{sanitizeWorkflowId(workflowId)}</Text>
                 </AccordionHeader>
                 <AccordionPanel>
                   <CustomizeWorkflowSection
@@ -47,6 +46,10 @@ export const CustomizeWorkflows = ({
       ) : null}
     </div>
   );
+};
+
+const sanitizeWorkflowId = (workflowId: string) => {
+  return workflowId.split('/').pop() ?? workflowId;
 };
 
 const CustomizeWorkflowSection = ({
@@ -106,7 +109,11 @@ export const customizeWorkflowsTab = (
     onClosePanel,
     selectedWorkflowsList,
     updateWorkflowDataField,
-  }: ConfigureWorkflowsTabProps & { updateWorkflowDataField: (workflowId: string, workflowData: Partial<WorkflowTemplateData>) => void }
+    onSaveChanges,
+  }: ConfigureWorkflowsTabProps & {
+    updateWorkflowDataField: (workflowId: string, workflowData: Partial<WorkflowTemplateData>) => void;
+    onSaveChanges: () => void;
+  }
 ): TemplateTabProps => ({
   id: constants.CONFIGURE_TEMPLATE_WIZARD_TAB_NAMES.CUSTOMIZE_WORKFLOWS,
   title: intl.formatMessage({
@@ -123,9 +130,7 @@ export const customizeWorkflowsTab = (
       description: 'Button text for saving changes in the configure workflows panel',
     }),
     primaryButtonOnClick: () => {
-      //TODO: save changes
-      dispatch(initializeWorkflowsData({}));
-
+      onSaveChanges();
       dispatch(closePanel());
     },
     secondaryButtonText: intl.formatMessage({

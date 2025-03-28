@@ -6,6 +6,8 @@ import { useDispatch, useSelector } from 'react-redux';
 import type { AppDispatch, RootState } from '../../../../core/state/templates/store';
 import { useFunctionalState } from '@react-hookz/web';
 import type { WorkflowTemplateData } from '../../../../core';
+import { updateAllWorkflowsData } from '../../../../core/state/templates/templateSlice';
+import { getWorkflowsWithDefinitions, initializeWorkflowsData } from '../../../../core/actions/bjsworkflow/configuretemplate';
 
 export const useConfigureWorkflowPanelTabs = ({
   onClosePanel,
@@ -14,8 +16,9 @@ export const useConfigureWorkflowPanelTabs = ({
 }): TemplateTabProps[] => {
   const intl = useIntl();
   const dispatch = useDispatch<AppDispatch>();
-  const { workflowsInTemplate } = useSelector((state: RootState) => ({
+  const { workflowsInTemplate, workflowState } = useSelector((state: RootState) => ({
     workflowsInTemplate: state.template.workflows,
+    workflowState: state.workflow,
   }));
 
   const hasError = false; // Placeholder for actual error state
@@ -44,6 +47,15 @@ export const useConfigureWorkflowPanelTabs = ({
     }));
   };
 
+  const onNextButtonClick = async () => {
+    setSelectedWorkflowsList(await getWorkflowsWithDefinitions(workflowState, selectedWorkflowsList()));
+  };
+
+  const onSaveChanges = () => {
+    dispatch(updateAllWorkflowsData(selectedWorkflowsList()));
+    dispatch(initializeWorkflowsData({}));
+  };
+
   return [
     selectWorkflowsTab(intl, dispatch, {
       hasError,
@@ -51,6 +63,7 @@ export const useConfigureWorkflowPanelTabs = ({
       onClosePanel,
       selectedWorkflowsList: selectedWorkflowsList(),
       onWorkflowsSelected,
+      onNextButtonClick,
     }),
     customizeWorkflowsTab(intl, dispatch, {
       hasError,
@@ -58,6 +71,7 @@ export const useConfigureWorkflowPanelTabs = ({
       onClosePanel,
       selectedWorkflowsList: selectedWorkflowsList(),
       updateWorkflowDataField,
+      onSaveChanges,
     }),
   ];
 };

@@ -44,6 +44,7 @@ import { initializeNodeOperationInputsData } from '../../state/operation/operati
 import type { WorkflowParameter } from '../../../common/models/workflow';
 import { getAllInputParameters } from '../../utils/parameters/helper';
 import { shouldAddDynamicData } from '../../templates/utils/parametershelper';
+import type { WorkflowState } from 'lib/core/state/templates/workflowSlice';
 
 export interface ConfigureTemplateServiceOptions {
   connectionService: IConnectionService;
@@ -272,6 +273,7 @@ const getConnectionsForStandard = async (
 
 const getWorkflowDefinitionForStandard = async (workflowId: string): Promise<any> => {
   const queryClient = getReactQueryClient();
+  console.log('workflowId ', workflowId);
   const workflow = await getStandardWorkflow(workflowId, queryClient);
   return workflow.properties.files?.['workflow.json'];
 };
@@ -411,6 +413,7 @@ export const updateDefinitionsInWorkflows = async (state: RootState, dispatch: T
         },
       })
     );
+    return;
   }
 
   const workflowIds = Object.keys(workflows).map((id) => workflows[id].id);
@@ -425,4 +428,37 @@ export const updateDefinitionsInWorkflows = async (state: RootState, dispatch: T
   }, {});
 
   dispatch(updateAllWorkflowsData(allWorkflowsData));
+};
+
+export const getWorkflowsWithDefinitions = async (
+  { subscriptionId, resourceGroup, isConsumption, logicAppName }: WorkflowState,
+  workflows: Record<string, Partial<WorkflowTemplateData>>
+) => {
+  if (isConsumption) {
+    const definition = await getWorkflowDefinitionForConsumption(subscriptionId, resourceGroup, logicAppName as string);
+    const workflowId = getLogicAppId(subscriptionId, resourceGroup, logicAppName as string);
+    workflows[workflowId] = {
+      ...(workflows[workflowId] ?? {}),
+      workflowDefinition: definition,
+    };
+    return workflows;
+  }
+
+  const workflowIds = Object.keys(workflows);
+  const promises = Object.keys(workflows).map((workflowId) => getWorkflowDefinitionForStandard(workflowId));
+  const allWorkflowsData = (await Promise.all(promises)).reduce((result: Record<string, Partial<WorkflowTemplateData>>, data, index) => {
+    const { kind, definition: workflowDefinition } = data;
+    if (workflowDefinition) {
+      const id = workflowIds[index];
+      result[id] = {
+        ...result[id],
+        id,
+        kind,
+        workflowDefinition,
+      };
+    }
+    return result;
+  }, {});
+
+  return allWorkflowsData;
 };
