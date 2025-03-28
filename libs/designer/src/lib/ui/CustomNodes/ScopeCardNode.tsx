@@ -231,44 +231,47 @@ const ScopeCardNode = ({ data, targetPosition = Position.Top, sourcePosition = P
 
   const actionCount = metadata?.actionCount ?? 0;
 
-  const intlText = {
-    opManifestErrorText: intl.formatMessage({
-      defaultMessage: 'Error fetching manifest',
-      id: 'HmcHoE',
-      description: 'Error message when manifest fails to load',
+  const intlText = useMemo(
+    () => ({
+      opManifestErrorText: intl.formatMessage({
+        defaultMessage: 'Error fetching manifest',
+        id: 'HmcHoE',
+        description: 'Error message when manifest fails to load',
+      }),
+      settingValidationErrorText: intl.formatMessage({
+        defaultMessage: 'Invalid settings',
+        id: 'Jil/Wa',
+        description: 'Text to explain that there are invalid settings for this node',
+      }),
+      parameterValidationErrorText: intl.formatMessage({
+        defaultMessage: 'Invalid parameters',
+        id: 'Tmr/9e',
+        description: 'Text to explain that there are invalid parameters for this node',
+      }),
+      actionString: intl.formatMessage(
+        {
+          defaultMessage: '{actionCount, plural, one {# Action} =0 {0 Actions} other {# Actions}}',
+          id: 'B/JzwK',
+          description: 'This is the number of actions to be completed in a group',
+        },
+        { actionCount }
+      ),
+      caseString: intl.formatMessage(
+        {
+          defaultMessage: '{actionCount, plural, one {# Case} =0 {0 Cases} other {# Cases}}',
+          id: 'KX1poC',
+          description: 'This is the number of cases or options the program can take',
+        },
+        { actionCount }
+      ),
+      emptyAgent: intl.formatMessage({
+        defaultMessage: 'No tools were executed ',
+        id: 'ZuQSme',
+        description: 'Text to explain that there are no tools in this agent',
+      }),
     }),
-    settingValidationErrorText: intl.formatMessage({
-      defaultMessage: 'Invalid settings',
-      id: 'Jil/Wa',
-      description: 'Text to explain that there are invalid settings for this node',
-    }),
-    parameterValidationErrorText: intl.formatMessage({
-      defaultMessage: 'Invalid parameters',
-      id: 'Tmr/9e',
-      description: 'Text to explain that there are invalid parameters for this node',
-    }),
-    actionString: intl.formatMessage(
-      {
-        defaultMessage: '{actionCount, plural, one {# Action} =0 {0 Actions} other {# Actions}}',
-        id: 'B/JzwK',
-        description: 'This is the number of actions to be completed in a group',
-      },
-      { actionCount }
-    ),
-    caseString: intl.formatMessage(
-      {
-        defaultMessage: '{actionCount, plural, one {# Case} =0 {0 Cases} other {# Cases}}',
-        id: 'KX1poC',
-        description: 'This is the number of cases or options the program can take',
-      },
-      { actionCount }
-    ),
-    emptyAgent: intl.formatMessage({
-      defaultMessage: 'No tools were executed ',
-      id: 'ZuQSme',
-      description: 'Text to explain that there are no tools in this agent',
-    }),
-  };
+    [actionCount, intl]
+  );
 
   const settingValidationErrors = useSettingValidationErrors(scopeId);
   const parameterValidationErrors = useParameterValidationErrors(scopeId);
