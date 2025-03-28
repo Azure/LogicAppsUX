@@ -6,11 +6,13 @@ import { useCallback } from 'react';
 import { useIntl } from 'react-intl';
 import { Panel, PanelType } from '@fluentui/react';
 import { useConfigureWorkflowPanelTabs } from './usePanelTabs';
+import type { WorkflowTemplateData } from '../../../../core';
 
 export interface ConfigureWorkflowsTabProps {
   hasError: boolean;
   isSaving: boolean;
   onClosePanel: () => void;
+  selectedWorkflowsList: Record<string, Partial<WorkflowTemplateData>>;
 }
 
 const layerProps = {
