@@ -1,5 +1,5 @@
 /* eslint-disable no-case-declarations  */
-import { Constants, type CustomCodeFileNameMapping } from '../../..';
+import type { CustomCodeFileNameMapping } from '../../..';
 import constants from '../../../common/constants';
 import type { ConnectionReference, WorkflowParameter } from '../../../common/models/workflow';
 import { getReactQueryClient } from '../../ReactQueryProvider';
@@ -3303,7 +3303,7 @@ export function updateTokenMetadata(
         return valueSegment;
       }
 
-      const agentInfo = nodeInputs.find((input) => input.name === Constants.PARAMETER_NAMES.AGENT_PARAMETER_SCHEMA)?.value?.properties?.[
+      const agentInfo = nodeInputs.find((input) => input.name === constants.PARAMETER_NAMES.AGENT_PARAMETER_SCHEMA)?.value?.properties?.[
         valueSegment.token.name
       ];
       if (agentInfo) {
