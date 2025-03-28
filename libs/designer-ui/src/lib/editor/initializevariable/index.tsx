@@ -113,9 +113,6 @@ export const InitializeVariableEditor = ({
     (index: number) => {
       setVariables((prev) => {
         const p = prev ?? [];
-        if (p.length === 1) {
-          return prev;
-        }
         const updatedVariables = p.filter((_, i) => i !== index);
         return updateVariables(updatedVariables);
       });
@@ -144,7 +141,7 @@ export const InitializeVariableEditor = ({
           variable={variable}
           onDelete={() => handleDeleteVariable(index)}
           onVariableChange={(value: InitializeVariableProps) => handleVariableChange(value, index)}
-          disableDelete={isAgentParameter ? !variables : variables.length === 1}
+          disableDelete={!isAgentParameter && variables.length === 1}
           errors={validationErrors?.[index]}
         />
       ))}
