@@ -1,4 +1,11 @@
 # Logic Apps Designer
+### [5.58.4](https://github.com/Azure/LogicAppsUX/compare/v5.58.3...v5.58.4) (2025-03-28)
+
+
+### Bug Fixes
+
+* **templates:** Fixing incorrect operation ids in connector icons ([#6887](https://github.com/Azure/LogicAppsUX/issues/6887)) ([f3d8b59](https://github.com/Azure/LogicAppsUX/commit/f3d8b59d39e289927402b2ed634756a027e85b5b))
+
 ### [5.58.3](https://github.com/Azure/LogicAppsUX/compare/v5.58.2...v5.58.3) (2025-03-28)
 
 
