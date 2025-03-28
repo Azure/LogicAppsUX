@@ -298,6 +298,21 @@ const ParameterSection = ({
             agentParameter,
           })
         );
+        const agentParameterUpdates = agentParameters
+          .map(({ name, type, description }) => {
+            const paramName = name?.[0]?.value;
+            if (!paramName) {
+              return null;
+            }
+
+            return {
+              name: paramName,
+              type: type?.[0]?.value ?? '',
+              description: convertSegmentsToString(description ?? []),
+            };
+          })
+          .filter(Boolean) as Array<{ name: string; type: string; description: string }>;
+        dispatch(updateAgentParametersInNode(agentParameterUpdates));
       }
 
       if (parameter && isCustomCodeParameter(parameter)) {
@@ -478,7 +493,7 @@ const ParameterSection = ({
     );
 
     if (isUpdating) {
-      dispatch(updateAgentParametersInNode({ name, type, description }));
+      dispatch(updateAgentParametersInNode([{ name, type, description }]));
     }
   };
 

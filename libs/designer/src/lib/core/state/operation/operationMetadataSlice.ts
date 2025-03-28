@@ -358,13 +358,19 @@ export const operationMetadataSlice = createSlice({
         }
       }
     },
-    updateAgentParametersInNode: (state, action: PayloadAction<{ name: string; type: string; description: string }>) => {
-      const { name, type, description } = action.payload;
+    updateAgentParametersInNode: (state, action: PayloadAction<Array<{ name: string; type: string; description: string }>>) => {
+      const updatesMap = new Map(action.payload.map(({ name, type, description }) => [name, { type, description }]));
       Object.entries(state.inputParameters).forEach(([_nodeId, nodeInputs]) => {
         Object.entries(nodeInputs.parameterGroups).forEach(([_parameterId, parameterGroup]) => {
           parameterGroup.parameters.forEach((parameter) => {
             parameter.value.forEach((segment) => {
-              if (isTokenValueSegment(segment) && segment.token?.tokenType === TokenType.AGENTPARAMETER && segment.token?.name === name) {
+              if (
+                isTokenValueSegment(segment) &&
+                segment.token?.tokenType === TokenType.AGENTPARAMETER &&
+                segment.token.name &&
+                updatesMap.has(segment.token.name)
+              ) {
+                const { type, description } = updatesMap.get(segment.token.name)!;
                 segment.token.type = type;
                 segment.token.description = description;
               }
