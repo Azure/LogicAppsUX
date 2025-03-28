@@ -23,7 +23,7 @@ import { escapeString, guid, LOCAL_STORAGE_KEYS, TokenType } from '@microsoft/lo
 import { CreateAgentParameter, generateDefaultAgentParamName } from './tokenpickersection/CreateAgentParameter';
 import { INSERT_TOKEN_NODE } from '../editor/base/plugins/InsertTokenNode';
 import TokenPickerAgentParameterHandler from './plugins/InitializeTokenPickerAgentParameterHandler';
-import { UPDATE_TOKEN_NODES } from '../editor/base/plugins/UpdateTokenNodes';
+import { UPDATE_ALL_EDITORS_EVENT } from '../editor/base/plugins/UpdateTokenNodes';
 
 export const TokenPickerMode = {
   TOKEN: 'token',
@@ -234,7 +234,10 @@ export function TokenPicker({
 
   const handleCreateAgentParameter = (name: string, type: string, description: string) => {
     if (nodeToBeUpdated) {
-      editor?.dispatchCommand(UPDATE_TOKEN_NODES, { key: `agentParameter.${name}`, type, description });
+      const event = new CustomEvent(UPDATE_ALL_EDITORS_EVENT, {
+        detail: { payload: { key: `agentParameter.${name}`, type, description } }, // Pass payload here
+      });
+      window.dispatchEvent(event);
       editor?.dispatchCommand(CLOSE_TOKENPICKER, { focusEditorAfter: true });
     } else {
       const agentParameterValue = `agentParameters('${name}')`;
