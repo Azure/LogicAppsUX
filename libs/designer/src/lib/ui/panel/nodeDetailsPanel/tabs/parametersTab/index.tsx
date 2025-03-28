@@ -3,7 +3,12 @@ import { useShowIdentitySelectorQuery } from '../../../../../core/state/connecti
 import { addOrUpdateCustomCode, renameCustomCodeFile } from '../../../../../core/state/customcode/customcodeSlice';
 import { useHostOptions, useReadOnly } from '../../../../../core/state/designerOptions/designerOptionsSelectors';
 import type { ParameterGroup } from '../../../../../core/state/operation/operationMetadataSlice';
-import { DynamicLoadStatus, ErrorLevel, updateNodeParameters } from '../../../../../core/state/operation/operationMetadataSlice';
+import {
+  DynamicLoadStatus,
+  ErrorLevel,
+  updateAgentParametersInNode,
+  updateNodeParameters,
+} from '../../../../../core/state/operation/operationMetadataSlice';
 import { useDependencies, useNodesInitialized, useOperationErrorInfo } from '../../../../../core/state/operation/operationSelector';
 import { useIsPanelInPinnedViewMode, usePanelLocation } from '../../../../../core/state/panel/panelSelectors';
 import {
@@ -410,7 +415,7 @@ const ParameterSection = ({
     return !!nodeGraphId;
   }, [nodesMetadata, nodeId]);
 
-  const createAgentParameter = (name: string, type: string, description: string) => {
+  const createOrUpdateAgentParameter = (name: string, type: string, description: string, isUpdating?: boolean) => {
     let nodeGraphId = getRecordEntry(nodesMetadata, nodeId)?.graphId;
 
     while (nodeGraphId) {
@@ -471,6 +476,10 @@ const ParameterSection = ({
         ],
       })
     );
+
+    if (isUpdating) {
+      dispatch(updateAgentParametersInNode({ name, type, description }));
+    }
   };
 
   const getTokenPicker = (
@@ -519,7 +528,7 @@ const ParameterSection = ({
         valueType={parameterType}
         parameter={parameter}
         tokenClickedCallback={tokenClickedCallback}
-        createAgentParameter={createAgentParameter}
+        createOrUpdateAgentParameter={createOrUpdateAgentParameter}
       />
     );
   };

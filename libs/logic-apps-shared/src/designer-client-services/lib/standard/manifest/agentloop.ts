@@ -29,6 +29,7 @@ export default {
               'x-ms-editor-options': {
                 isAgentParameter: true,
               },
+              'x-ms-visibility': 'important',
             },
           },
           required: ['description'],

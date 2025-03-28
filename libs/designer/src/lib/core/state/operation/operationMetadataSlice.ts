@@ -5,7 +5,7 @@ import type { RepetitionContext } from '../../utils/parameters/helper';
 import { createTokenValueSegment, isTokenValueSegment } from '../../utils/parameters/segment';
 import { getTokenTitle, normalizeKey } from '../../utils/tokens';
 import { resetNodesLoadStatus, resetTemplatesState, resetWorkflowState, setStateAfterUndoRedo } from '../global';
-import { LogEntryLevel, LoggerService, filterRecord, getRecordEntry } from '@microsoft/logic-apps-shared';
+import { LogEntryLevel, LoggerService, TokenType, filterRecord, getRecordEntry } from '@microsoft/logic-apps-shared';
 import type { ParameterInfo } from '@microsoft/designer-ui';
 import type { FilePickerInfo, InputParameter, OutputParameter, OpenAPIV2, OperationInfo } from '@microsoft/logic-apps-shared';
 import { createSlice } from '@reduxjs/toolkit';
@@ -358,6 +358,21 @@ export const operationMetadataSlice = createSlice({
         }
       }
     },
+    updateAgentParametersInNode: (state, action: PayloadAction<{ name: string; type: string; description: string }>) => {
+      const { name, type, description } = action.payload;
+      Object.entries(state.inputParameters).forEach(([_nodeId, nodeInputs]) => {
+        Object.entries(nodeInputs.parameterGroups).forEach(([_parameterId, parameterGroup]) => {
+          parameterGroup.parameters.forEach((parameter) => {
+            parameter.value.forEach((segment) => {
+              if (isTokenValueSegment(segment) && segment.token?.tokenType === TokenType.AGENTPARAMETER && segment.token?.name === name) {
+                segment.token.type = type;
+                segment.token.description = description;
+              }
+            });
+          });
+        });
+      });
+    },
     updateNodeSettings: (state, action: PayloadAction<AddSettingsPayload>) => {
       const { id, settings } = action.payload;
       const nodeSettings = getRecordEntry(state.settings, id);
@@ -617,19 +632,20 @@ const updateExistingInputTokenTitles = (state: OperationMetadataState, actionPay
     tokenTitles[normalizedKey] = getTokenTitle(outputValue);
   }
 
-  Object.entries(state.inputParameters).forEach(([nodeId, nodeInputs]) => {
-    Object.entries(nodeInputs.parameterGroups).forEach(([parameterId, parameterGroup]) => {
-      parameterGroup.parameters.forEach((parameter, parameterIndex) => {
-        parameter.value.forEach((segment, segmentIndex) => {
+  Object.entries(state.inputParameters).forEach(([_nodeId, nodeInputs]) => {
+    Object.entries(nodeInputs.parameterGroups).forEach(([_parameterId, parameterGroup]) => {
+      parameterGroup.parameters = parameterGroup.parameters.map((parameter, _parameterIndex) => ({
+        ...parameter,
+        value: parameter.value.map((segment, _segmentIndex) => {
           if (isTokenValueSegment(segment) && segment.token?.key) {
             const normalizedKey = normalizeKey(segment.token.key);
             if (normalizedKey in tokenTitles) {
-              state.inputParameters[nodeId].parameterGroups[parameterId].parameters[parameterIndex].value[segmentIndex] =
-                createTokenValueSegment({ ...segment.token, title: tokenTitles[normalizedKey] }, segment.value, segment.type);
+              return createTokenValueSegment({ ...segment.token, title: tokenTitles[normalizedKey] }, segment.value, segment.type);
             }
           }
-        });
-      });
+          return segment;
+        }),
+      }));
     });
   });
 };
@@ -650,6 +666,7 @@ export const {
   updateParameterValidation,
   updateParameterEditorViewModel,
   removeParameterValidationError,
+  updateAgentParametersInNode,
   updateOutputs,
   updateActionMetadata,
   updateRepetitionContext,

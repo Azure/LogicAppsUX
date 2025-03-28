@@ -57,9 +57,7 @@ export const parseVariableEditorSegments = (initialValue: ValueSegment[]): Initi
 
 export const parseSchemaAsVariableEditorSegments = (initialValue: ValueSegment[]): InitializeVariableProps[] => {
   if (isEmptySegments(initialValue)) {
-    return [
-      { name: [createEmptyLiteralValueSegment()], type: [createEmptyLiteralValueSegment()], value: [createEmptyLiteralValueSegment()] },
-    ];
+    return [];
   }
   const nodeMap: Map<string, ValueSegment> = new Map<string, ValueSegment>();
   const initialValueString = convertSegmentsToString(initialValue, nodeMap);
@@ -129,26 +127,28 @@ export const convertVariableEditorSegmentsAsSchema = (variables: InitializeVaria
   const nodeMap = new Map<string, ValueSegment>();
   const properties: Record<string, any> = {};
 
-  variables.forEach((variable) => {
+  for (const variable of variables) {
     const { name: _name, type: _type, description: _description } = variable;
     const name = convertSegmentsToString(_name);
     const type = convertSegmentsToString(_type);
     const description = convertSegmentsToString(_description ?? [], nodeMap);
 
+    if (!name && !type) {
+      return [createEmptyLiteralValueSegment()];
+    }
+
     properties[name] = {
       type,
       ...(description ? { description } : {}),
     };
-  });
+  }
 
   const schema = {
     type: 'object',
     properties,
   };
 
-  const stringifiedSchema = JSON.stringify(schema);
-
-  return convertStringToSegments(stringifiedSchema, nodeMap, { tokensEnabled: true });
+  return convertStringToSegments(JSON.stringify(schema), nodeMap, { tokensEnabled: true });
 };
 
 export const getVariableType = (type: ValueSegment[]): string => {

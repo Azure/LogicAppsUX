@@ -89,9 +89,6 @@ export const InitializeVariableEditor = ({
 
   const handleDeleteVariable = (index: number) => {
     setVariables((prev) => {
-      if (prev.length === 1) {
-        return prev;
-      }
       const updatedVariables = prev.filter((_, i) => i !== index);
       return updateVariables(updatedVariables);
     });
@@ -104,7 +101,7 @@ export const InitializeVariableEditor = ({
     });
   };
 
-  return variables?.length ? (
+  return variables ? (
     <div className="msla-editor-initialize-variables">
       {variables.map((variable, index) => (
         <VariableEditor
@@ -115,7 +112,7 @@ export const InitializeVariableEditor = ({
           variable={variable}
           onDelete={() => handleDeleteVariable(index)}
           onVariableChange={(value: InitializeVariableProps) => handleVariableChange(value, index)}
-          disableDelete={variables.length === 1}
+          disableDelete={!isAgentParameter && variables.length === 1}
           errors={validationErrors?.[index]}
         />
       ))}
