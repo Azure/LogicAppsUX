@@ -268,6 +268,11 @@ const ScopeCardNode = ({ data, targetPosition = Position.Top, sourcePosition = P
         id: 'ZuQSme',
         description: 'Text to explain that there are no tools in this agent',
       }),
+      addTool: intl.formatMessage({
+        defaultMessage: 'Add tool',
+        id: 'dXiXiF',
+        description: 'Text to explain that there are no tools in this agent',
+      }),
     }),
     [actionCount, intl]
   );
@@ -361,7 +366,7 @@ const ScopeCardNode = ({ data, targetPosition = Position.Top, sourcePosition = P
       ) : null}
       {isAgent && actionCount === 0 && !graphCollapsed ? (
         <p className="no-actions-text" data-automation-id={`scope-${id}-no-tools`}>
-          {intlText.emptyAgent}
+          {isMonitoringView ? intlText.emptyAgent : intlText.addTool}
         </p>
       ) : null}
       {showEmptyGraphComponents ? (
