@@ -137,7 +137,7 @@ export const WorkflowsTab = () => {
     [
       useTableSelection({
         selectionMode: 'multiselect',
-        selectedItems: new Set(Object.keys(selectedWorkflowsList)),
+        selectedItems: new Set(selectedWorkflowsList()),
         onSelectionChange: (_, data) => {
           setSelectedWorkflowsList(Array.from(data.selectedItems, String));
         },
