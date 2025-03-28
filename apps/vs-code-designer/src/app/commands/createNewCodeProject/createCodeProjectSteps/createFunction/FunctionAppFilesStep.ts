@@ -161,14 +161,14 @@ export class FunctionAppFilesStep extends AzureWizardPromptStep<IProjectWizardCo
    * @param functionFolderPath The path to the functions folder.
    * @param targetFramework The target framework of the functions app.
    */
-  private async createVscodeConfigFiles(functionFolderPath: string, targetFramework: string): Promise<void> {
+  private async createVscodeConfigFiles(functionFolderPath: string, targetFramework: TargetFramework): Promise<void> {
     await fs.ensureDir(functionFolderPath);
     const vscodePath: string = path.join(functionFolderPath, vscodeFolderName);
     await fs.ensureDir(vscodePath);
 
     await this.generateExtensionsJson(vscodePath);
 
-    await this.generateLaunchJson(vscodePath);
+    await this.generateLaunchJson(vscodePath, targetFramework);
 
     await this.generateSettingsJson(vscodePath, targetFramework);
 
@@ -190,20 +190,35 @@ export class FunctionAppFilesStep extends AzureWizardPromptStep<IProjectWizardCo
   /**
    * Generates the launch.json file in the specified folder.
    * @param folderPath The path to the folder where the launch.json file should be generated.
+   * @param targetFramework The target framework of the functions app.
    */
-  private async generateLaunchJson(folderPath: string): Promise<void> {
+  private async generateLaunchJson(folderPath: string, targetFramework: TargetFramework): Promise<void> {
     const filePath = path.join(folderPath, launchFileName);
-    const content = {
-      version: '0.2.0',
-      configurations: [
-        {
-          name: 'Run/Debug local function',
-          type: 'coreclr',
-          request: 'attach',
-          processName: 'Microsoft.Azure.Workflows.Functions.CustomCodeNetFxWorker.exe',
-        },
-      ],
-    };
+    const content =
+      targetFramework === TargetFramework.Net8
+        ? {
+            version: '0.2.0',
+            configurations: [
+              {
+                name: 'Debug local function',
+                type: 'coreclr',
+                request: 'attach',
+                processId: '${command:azureLogicAppsStandard.pickCustomCodeNetHostProcess}',
+              },
+            ],
+          }
+        : {
+            version: '0.2.0',
+            configurations: [
+              {
+                name: 'Debug local function',
+                type: 'clr',
+                request: 'attach',
+                processName: 'Microsoft.Azure.Workflows.Functions.CustomCodeNetFxWorker.exe',
+              },
+            ],
+          };
+
     await fs.writeJson(filePath, content, { spaces: 2 });
   }
 
@@ -212,7 +227,7 @@ export class FunctionAppFilesStep extends AzureWizardPromptStep<IProjectWizardCo
    * @param folderPath The path to the folder where the settings.json file should be generated.
    * @param targetFramework The target framework of the functions app.
    */
-  private async generateSettingsJson(folderPath: string, targetFramework: string): Promise<void> {
+  private async generateSettingsJson(folderPath: string, targetFramework: TargetFramework): Promise<void> {
     const filePath = path.join(folderPath, settingsFileName);
     const content = {
       'azureFunctions.deploySubpath': `bin/Release/${targetFramework}/publish`,

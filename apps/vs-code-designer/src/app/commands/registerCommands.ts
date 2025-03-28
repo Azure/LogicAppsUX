@@ -63,6 +63,7 @@ import type { FileTreeItem } from '@microsoft/vscode-azext-azureappservice';
 import { registerCommand, registerCommandWithTreeNodeUnwrapping, unwrapTreeNodeCommandCallback } from '@microsoft/vscode-azext-utils';
 import type { AzExtTreeItem, IActionContext, AzExtParentTreeItem } from '@microsoft/vscode-azext-utils';
 import type { Uri } from 'vscode';
+import { pickCustomCodeNetHostProcess } from './pickCustomCodeNetHostProcess';
 
 export function registerCommands(): void {
   registerCommandWithTreeNodeUnwrapping(extensionCommand.openDesigner, openDesigner);
@@ -87,6 +88,7 @@ export function registerCommands(): void {
   registerCommandWithTreeNodeUnwrapping(extensionCommand.stopLogicApp, stopLogicApp);
   registerCommandWithTreeNodeUnwrapping(extensionCommand.restartLogicApp, restartLogicApp);
   registerCommandWithTreeNodeUnwrapping(extensionCommand.pickProcess, pickFuncProcess);
+  registerCommandWithTreeNodeUnwrapping(extensionCommand.pickCustomCodeNetHostProcess, pickCustomCodeNetHostProcess);
   registerCommandWithTreeNodeUnwrapping(extensionCommand.getDebugSymbolDll, getDebugSymbolDll);
   registerCommandWithTreeNodeUnwrapping(extensionCommand.deleteLogicApp, deleteLogicApp);
   registerCommandWithTreeNodeUnwrapping(extensionCommand.openOverview, openOverview);

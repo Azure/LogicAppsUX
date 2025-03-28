@@ -122,6 +122,7 @@ export const extensionCommand = {
   stopLogicApp: 'azureLogicAppsStandard.stopLogicApp',
   restartLogicApp: 'azureLogicAppsStandard.restartLogicApp',
   pickProcess: 'azureLogicAppsStandard.pickProcess',
+  pickCustomCodeNetHostProcess: 'azureLogicAppsStandard.pickCustomCodeNetHostProcess',
   getDebugSymbolDll: 'azureLogicAppsStandard.getDebugSymbolDll',
   deleteLogicApp: 'azureLogicAppsStandard.deleteLogicApp',
   switchToDotnetProject: 'azureLogicAppsStandard.switchToDotnetProject',
