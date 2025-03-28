@@ -55,8 +55,16 @@ export const CreateAgentParameter = ({
   };
 
   const placeholders = {
-    name: intl.formatMessage({ defaultMessage: 'Name this parameter', id: 'AmSRsf', description: 'Name input placeholder' }),
-    type: intl.formatMessage({ defaultMessage: 'Select Type', id: '+Oshid', description: 'Type dropdown placeholder' }),
+    name: intl.formatMessage({
+      defaultMessage: 'Name this parameter',
+      id: 'AmSRsf',
+      description: 'Name input placeholder',
+    }),
+    type: intl.formatMessage({
+      defaultMessage: 'Select Type',
+      id: '+Oshid',
+      description: 'Type dropdown placeholder',
+    }),
     description: intl.formatMessage({
       defaultMessage: 'Describe This Parameter',
       id: 'DwLFBV',
@@ -98,7 +106,7 @@ export const CreateAgentParameter = ({
             placeholder={placeholders.type}
             className="msla-agent-parameter-input"
             value={type}
-            onOptionSelect={(_, data) => setType(data.optionValue ?? '')}
+            onOptionSelect={(_, data) => setType((data.optionValue ?? '').toLowerCase())}
           >
             {options.map((option) => (
               <Option key={option} value={option}>

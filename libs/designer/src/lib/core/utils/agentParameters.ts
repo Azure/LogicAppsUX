@@ -84,7 +84,7 @@ export const convertAgentParameterToOutputToken = (agentParameters?: AgentParame
     const { type, description } = agentParameter;
     const name = key;
     return {
-      key: `agentParameter:${name}`,
+      key: `agentParameter.${name}`,
       brandColor: AgentParameterBrandColor,
       icon: AgentParameterIcon,
       title: name,

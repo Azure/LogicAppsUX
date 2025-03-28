@@ -32,7 +32,7 @@ export default function OpenTokenPicker({ openTokenPicker }: OpenTokenPickerProp
             editor.dispatchCommand(INITIALIZE_TOKENPICKER_EXPRESSION, payload);
           });
         } else if (token?.tokenType === TokenType.AGENTPARAMETER) {
-          openTokenPicker(TokenPickerMode.AGENT_PARAMETER_ADD, () => {
+          openTokenPicker(TokenPickerMode.AGENT_PARAMETER_CREATE, () => {
             editor.dispatchCommand(INITIALIZE_TOKENPICKER_AGENT_PARAMETER, payload);
           });
         }

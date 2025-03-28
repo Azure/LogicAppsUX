@@ -3,8 +3,12 @@ import { createSlice } from '@reduxjs/toolkit';
 import { resetTemplatesState } from '../global';
 
 export const TemplatePanelView = {
+  // Template creation panels
   QuickView: 'quickView',
   CreateWorkflow: 'createWorkflow',
+  // Configure template panels
+  ConfigureWorkflows: 'configureWorkflows',
+  CustomizeParameter: 'customizeParameter',
 } as const;
 export type ConfigPanelView = (typeof TemplatePanelView)[keyof typeof TemplatePanelView];
 
@@ -23,15 +27,16 @@ export const panelSlice = createSlice({
   name: 'panel',
   initialState,
   reducers: {
-    openQuickViewPanelView: (state) => {
-      state.selectedTabId = undefined;
+    openPanelView: (
+      state,
+      action: PayloadAction<{
+        panelView: ConfigPanelView;
+        selectedTabId?: string;
+      }>
+    ) => {
+      state.selectedTabId = action.payload.selectedTabId;
       state.isOpen = true;
-      state.currentPanelView = TemplatePanelView.QuickView;
-    },
-    openCreateWorkflowPanelView: (state) => {
-      state.selectedTabId = undefined;
-      state.isOpen = true;
-      state.currentPanelView = TemplatePanelView.CreateWorkflow;
+      state.currentPanelView = action.payload.panelView;
     },
     selectPanelTab: (state, action: PayloadAction<string | undefined>) => {
       state.selectedTabId = action.payload;
@@ -47,5 +52,5 @@ export const panelSlice = createSlice({
   },
 });
 
-export const { openQuickViewPanelView, openCreateWorkflowPanelView, selectPanelTab, closePanel } = panelSlice.actions;
+export const { openPanelView, selectPanelTab, closePanel } = panelSlice.actions;
 export default panelSlice.reducer;

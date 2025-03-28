@@ -8,6 +8,7 @@ export default {
     brandColor: '#072a8e',
     description:
       'Loop in which the AI agent decides at each step which tools to use and how, and which text to generate to respond to the user.',
+
     allowChildOperations: true,
     subGraphDetails: {
       tools: {
@@ -18,18 +19,18 @@ export default {
           properties: {
             description: {
               type: 'string',
-              title: 'Condition',
-              description: 'The condition to execute this branch',
+              title: 'Description',
+              description: 'Enter some explanation of when you would use this tool.',
             },
             agentParameterSchema: {
               title: 'Agent Parameters',
               description: 'Initialize Agent Parameters',
               type: 'object',
+              'x-ms-visibility': 'important',
               'x-ms-editor': 'initializevariable',
               'x-ms-editor-options': {
                 isAgentParameter: true,
               },
-              'x-ms-visibility': 'important',
             },
           },
           required: ['description'],
@@ -47,32 +48,34 @@ export default {
           'x-ms-connection-required': true,
           'x-ms-visibility': 'important',
         },
-        instructions: {
-          title: 'Instructions',
-          description: 'Provide instructions for your agent',
-          type: 'string',
-          'x-ms-summary': 'Instructions',
-          'x-ms-visibility': 'important',
-        },
-        limit: {
-          type: 'object',
-          'x-ms-group-name': 'Change limits',
-          required: [],
-          default: {},
-          properties: {
-            count: {
-              type: 'integer',
-              title: 'Count',
-            },
-            timeout: {
-              type: 'string',
-              title: 'Timeout',
-              'x-ms-stateless-default': 'PT5M',
+        messages: {
+          description: 'Messages',
+          title: 'Messages',
+          default: [],
+          type: 'array',
+          items: {
+            description: 'Message',
+            required: ['Role', 'Content'],
+            type: 'object',
+            properties: {
+              role: {
+                description: 'Message role',
+                type: 'string',
+                'x-ms-summary': 'Role',
+              },
+              content: {
+                description: 'Message content',
+                type: 'string',
+                'x-ms-summary': 'Content',
+              },
             },
           },
+          required: ['Role', 'Content'],
+          'x-ms-summary': 'Messages',
+          'x-ms-visibility': 'important',
         },
       },
-      required: ['deploymentId', 'instructions'],
+      required: ['deploymentId', 'messages'],
     },
     inputsLocation: ['inputs', 'parameters'],
     isInputsOptional: false,
@@ -97,6 +100,15 @@ export default {
 
     settings: {
       trackedProperties: {
+        scopes: [SettingScope.Action],
+      },
+      timeout: {
+        scopes: [SettingScope.Action],
+      },
+      count: {
+        scopes: [SettingScope.Action],
+      },
+      retryPolicy: {
         scopes: [SettingScope.Action],
       },
     },

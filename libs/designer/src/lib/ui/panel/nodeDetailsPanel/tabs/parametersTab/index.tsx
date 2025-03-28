@@ -454,7 +454,7 @@ const ParameterSection = ({
     if (!conditionParameter?.id) {
       return;
     }
-    const previousConditionValue = parseSchemaAsVariableEditorSegments(conditionParameter.value);
+    const previousConditionValue = parseSchemaAsVariableEditorSegments(conditionParameter.value) ?? [];
     previousConditionValue.push({
       name: [createLiteralValueSegment(name)],
       type: [createLiteralValueSegment(type)],

@@ -183,7 +183,7 @@ export function TokenPicker({
 
   const handleInitializeAgentParameter = (token: Token, n: NodeKey) => {
     setSelectedAgentParameterToken(token);
-    setSelectedMode(TokenPickerMode.AGENT_PARAMETER_ADD);
+    setSelectedMode(TokenPickerMode.AGENT_PARAMETER_CREATE);
     setNodeToBeUpdated(n);
   };
 
@@ -225,6 +225,7 @@ export function TokenPicker({
 
   const cancelCreateAgentParameter = (): void => {
     if (selectedMode === TokenPickerMode.AGENT_PARAMETER_ADD) {
+      // not yet implemented
       setSelectedMode(TokenPickerMode.AGENT_PARAMETER);
     } else {
       editor?.dispatchCommand(CLOSE_TOKENPICKER, { focusEditorAfter: true });

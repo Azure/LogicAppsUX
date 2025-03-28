@@ -1,4 +1,58 @@
 # Logic Apps Designer
+## [5.64.0](https://github.com/Azure/LogicAppsUX/compare/v5.63.0...v5.64.0) (2025-03-28)
+
+
+### Bug Fixes
+
+* **designer:** Agentic workflow fixes  ([#6886](https://github.com/Azure/LogicAppsUX/issues/6886)) ([46d9422](https://github.com/Azure/LogicAppsUX/commit/46d942225bf3bac880ed684067b8d37ac87c00c4))
+* **vscode:** Update validation to allow having the csharp file inside the workflow folder ([#6881](https://github.com/Azure/LogicAppsUX/issues/6881)) ([e8b238b](https://github.com/Azure/LogicAppsUX/commit/e8b238b074875d90826d0761696127fe6b106fb8))
+
+## [5.63.0](https://github.com/Azure/LogicAppsUX/compare/v5.62.0...v5.63.0) (2025-03-27)
+
+
+### Features
+
+* **designer:** Add empty state and inputs/outputs binder for agent action ([#6880](https://github.com/Azure/LogicAppsUX/issues/6880)) ([e15a8b3](https://github.com/Azure/LogicAppsUX/commit/e15a8b350e3f8243c05f14c344873cef441dc804))
+* **Designer:** Node `description` changes + trigger dialog ([#6875](https://github.com/Azure/LogicAppsUX/issues/6875)) ([432a398](https://github.com/Azure/LogicAppsUX/commit/432a398fd0ac59a03cd6aadcb83b55f015ba1a10))
+* **templates:** Adding create consumption workflow from template helper as exportable method ([#6877](https://github.com/Azure/LogicAppsUX/issues/6877)) ([69cb79e](https://github.com/Azure/LogicAppsUX/commit/69cb79e86494ab7c7719fd949e938c09f3ab324c)), closes [#6829](https://github.com/Azure/LogicAppsUX/issues/6829) [#6828](https://github.com/Azure/LogicAppsUX/issues/6828)
+* **Templates:** Exporting `TemplateDisplay` component, connector icons on `ReviewAdd` ([#6879](https://github.com/Azure/LogicAppsUX/issues/6879)) ([77cb3a8](https://github.com/Azure/LogicAppsUX/commit/77cb3a86abf78a8ec86093f25b628ea9ec172d82))
+
+
+### Bug Fixes
+
+* **standalone:** Fix connections update in standalone ([#6876](https://github.com/Azure/LogicAppsUX/issues/6876)) ([9b20d50](https://github.com/Azure/LogicAppsUX/commit/9b20d50174fdc5938b3b867f939b065eac7315a6))
+
+## [5.62.0](https://github.com/Azure/LogicAppsUX/compare/v5.61.0...v5.62.0) (2025-03-27)
+
+## [5.61.0](https://github.com/Azure/LogicAppsUX/compare/v5.60.0...v5.61.0) (2025-03-27)
+
+
+### Features
+
+* **designer:** Implement agent action for monitoring view ([#6838](https://github.com/Azure/LogicAppsUX/issues/6838)) ([d9a1d6d](https://github.com/Azure/LogicAppsUX/commit/d9a1d6d5e051d807876066112df80966d5755ddd))
+
+
+### Bug Fixes
+
+* **templates:** Removing extra path from templates load when getting from storage ([#6874](https://github.com/Azure/LogicAppsUX/issues/6874)) ([8d744cf](https://github.com/Azure/LogicAppsUX/commit/8d744cf49d53dd2eecf7ca7a0d17731acfa181ec))
+
+## [5.60.0](https://github.com/Azure/LogicAppsUX/compare/v5.59.0...v5.60.0) (2025-03-26)
+
+
+### Features
+
+* **Templates:** Configure Template Tabs with Initial Flow ([#6848](https://github.com/Azure/LogicAppsUX/issues/6848)) ([16dc0d9](https://github.com/Azure/LogicAppsUX/commit/16dc0d93b293c8e963d78d10a2c210cf33e38dac))
+* **Templates:** Infer workflow trigger from definition for accelerator ([#6844](https://github.com/Azure/LogicAppsUX/issues/6844)) ([b7044f5](https://github.com/Azure/LogicAppsUX/commit/b7044f5abf736b386fcea212d86e5190473e0bfd))
+* **vscode:** Add subscriptions to telemetry logs when extension gets activated ([#6855](https://github.com/Azure/LogicAppsUX/issues/6855)) ([ddd33b1](https://github.com/Azure/LogicAppsUX/commit/ddd33b1eed97885b3b3800f7597fc582bbc148d4)), closes [#6777](https://github.com/Azure/LogicAppsUX/issues/6777)
+
+
+### Bug Fixes
+
+* **designer:** Move limit at action level, fix connection name and messages ([#6868](https://github.com/Azure/LogicAppsUX/issues/6868)) ([504b4ba](https://github.com/Azure/LogicAppsUX/commit/504b4ba281c4c3b4536b937fcb1d875e2f36e94f)), closes [#6854](https://github.com/Azure/LogicAppsUX/issues/6854)
+* **designer:** Skip auto create connection for oauth in designer and for multi auth ([#6861](https://github.com/Azure/LogicAppsUX/issues/6861)) ([f7b19e5](https://github.com/Azure/LogicAppsUX/commit/f7b19e590112d40e1721e5e38a57b8a05c7e8614))
+* **designer:** Update agent connection model configuration ([#6859](https://github.com/Azure/LogicAppsUX/issues/6859)) ([633f7d5](https://github.com/Azure/LogicAppsUX/commit/633f7d5feaec6556177cb0a7b597a4fbe407adf7))
+* **templates:** Update the endpoint url and few fixes in services ([#6870](https://github.com/Azure/LogicAppsUX/issues/6870)) ([c905539](https://github.com/Azure/LogicAppsUX/commit/c905539e927d961a1cddf2ff327bedb79d2d5633))
+
 ## [5.59.0](https://github.com/Azure/LogicAppsUX/compare/v5.58.0...v5.59.0) (2025-03-22)
 
 

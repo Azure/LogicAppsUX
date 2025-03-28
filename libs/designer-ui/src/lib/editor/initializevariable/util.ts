@@ -16,7 +16,7 @@ import { convertStringToSegments } from '../base/utils/editorToSegment';
 import constants, { VARIABLE_TYPE } from '../../constants';
 import { VARIABLE_PROPERTIES, type InitializeVariableErrors } from './variableEditor';
 
-export const parseVariableEditorSegments = (initialValue: ValueSegment[]): InitializeVariableProps[] => {
+export const parseVariableEditorSegments = (initialValue: ValueSegment[]): InitializeVariableProps[] | undefined => {
   if (isEmptySegments(initialValue)) {
     return [
       { name: [createEmptyLiteralValueSegment()], type: [createEmptyLiteralValueSegment()], value: [createEmptyLiteralValueSegment()] },
@@ -51,11 +51,11 @@ export const parseVariableEditorSegments = (initialValue: ValueSegment[]): Initi
         },
       ],
     });
-    return [];
+    return undefined;
   }
 };
 
-export const parseSchemaAsVariableEditorSegments = (initialValue: ValueSegment[]): InitializeVariableProps[] => {
+export const parseSchemaAsVariableEditorSegments = (initialValue: ValueSegment[]): InitializeVariableProps[] | undefined => {
   if (isEmptySegments(initialValue)) {
     return [];
   }
@@ -89,7 +89,7 @@ export const parseSchemaAsVariableEditorSegments = (initialValue: ValueSegment[]
       message: 'Failed to parse schema editor segments',
       args: [{ error }],
     });
-    return [];
+    return undefined;
   }
 };
 
