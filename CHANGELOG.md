@@ -1,4 +1,13 @@
 # Logic Apps Designer
+## [5.65.0](https://github.com/Azure/LogicAppsUX/compare/v5.64.0...v5.65.0) (2025-03-28)
+
+
+### Bug Fixes
+
+* **desginer:** Update count field and agent manifest ([#6891](https://github.com/Azure/LogicAppsUX/issues/6891)) ([1955db5](https://github.com/Azure/LogicAppsUX/commit/1955db55b867ee28f78f75d7c3747ba4017a6785))
+* **designer:** Add underscore for new tool branch ([#6892](https://github.com/Azure/LogicAppsUX/issues/6892)) ([6c896bd](https://github.com/Azure/LogicAppsUX/commit/6c896bd75d6fd8dc782eace75ccfa65dd827a874))
+* **designer:** Fix correct property for subgraph iteration ([#6890](https://github.com/Azure/LogicAppsUX/issues/6890)) ([bbaa9af](https://github.com/Azure/LogicAppsUX/commit/bbaa9af0396bccf92c3ecbb3d0a7d18f96a6c96f))
+
 ## [5.64.0](https://github.com/Azure/LogicAppsUX/compare/v5.63.0...v5.64.0) (2025-03-28)
 
 

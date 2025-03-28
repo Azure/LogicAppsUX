@@ -44,8 +44,16 @@ export const InitializeVariableEditor = ({
 
   const stringResources = useMemo(
     () => ({
-      ADD_VARIABLE: intl.formatMessage({ defaultMessage: 'Add a Variable', id: 'HET2nV', description: 'label to add a variable' }),
-      ADD_PARAMETER: intl.formatMessage({ defaultMessage: 'Add a Parameter', id: 'ysSmGO', description: 'label to add a parameter' }),
+      ADD_VARIABLE: intl.formatMessage({
+        defaultMessage: 'Add a Variable',
+        id: 'HET2nV',
+        description: 'label to add a variable',
+      }),
+      ADD_PARAMETER: intl.formatMessage({
+        defaultMessage: 'Add a Parameter',
+        id: 'ysSmGO',
+        description: 'label to add a parameter',
+      }),
     }),
     [intl]
   );
@@ -92,7 +100,10 @@ export const InitializeVariableEditor = ({
       const segments = isAgentParameter
         ? convertVariableEditorSegmentsAsSchema(updatedVariables)
         : createVariableEditorSegments(updatedVariables);
-      onChange?.({ value: segments, viewModel: { variables: updatedVariables, hideParameterErrors: true } });
+      onChange?.({
+        value: segments,
+        viewModel: { variables: updatedVariables, hideParameterErrors: true },
+      });
       return updatedVariables;
     },
     [isAgentParameter, onChange]
@@ -145,7 +156,10 @@ export const InitializeVariableEditor = ({
             style={
               variables.length === constants.PARAMETER.VARIABLE_EDITOR_MAX_VARIABLES || props.readonly
                 ? {}
-                : { color: 'var(--colorBrandForeground1)', border: '1px solid #9e9e9e' }
+                : {
+                    color: 'var(--colorBrandForeground1)',
+                    border: '1px solid #9e9e9e',
+                  }
             }
           >
             {addButtonText}
