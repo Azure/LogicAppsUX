@@ -262,7 +262,7 @@ export const General = ({
           placeholder: countRangeDescription,
           type: 'number',
         },
-        visible: timeout?.isSupported,
+        visible: count?.isSupported,
       },
       {
         settingType: 'SettingToggle',
