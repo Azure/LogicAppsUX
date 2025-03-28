@@ -7,15 +7,28 @@ import { useIntl, type IntlShape } from 'react-intl';
 import { useWorkflowsInApp } from '../../../../../core/configuretemplate/utils/queries';
 import { ResourcePicker } from '../../../../templates';
 import { useDispatch, useSelector } from 'react-redux';
-import { useCallback, useEffect, useMemo } from 'react';
-import { equals, hasProperty, type WorkflowResource, type LogicAppResource } from '@microsoft/logic-apps-shared';
+import { useCallback } from 'react';
+import { equals, type WorkflowResource, type LogicAppResource } from '@microsoft/logic-apps-shared';
 import { updateAllWorkflowsData } from '../../../../../core/state/templates/templateSlice';
-import { Checkbox, Text } from '@fluentui/react-components';
-import { useFunctionalState } from '@react-hookz/web';
-import { CheckboxVisibility, DetailsList, Selection, SelectionMode, type IColumn } from '@fluentui/react';
+import {
+  TableBody,
+  TableCell,
+  TableRow,
+  Table,
+  TableHeader,
+  TableHeaderCell,
+  TableSelectionCell,
+  TableCellLayout,
+  useTableFeatures,
+  type TableColumnDefinition,
+  useTableSelection,
+  createTableColumn,
+  Skeleton,
+  SkeletonItem,
+} from '@fluentui/react-components';
 
 export const SelectWorkflows = ({
-  // selectedWorkflowsList,
+  selectedWorkflowsList,
   onWorkflowsSelected,
 }: {
   selectedWorkflowsList: Record<string, Partial<WorkflowResource>>;
@@ -23,7 +36,7 @@ export const SelectWorkflows = ({
 }) => {
   const intl = useIntl();
   const dispatch = useDispatch<AppDispatch>();
-  const { isConsumption, logicAppName, subscriptionId, resourceGroup, workflowsInTemplate } = useSelector((state: RootState) => ({
+  const { isConsumption, logicAppName, subscriptionId, resourceGroup } = useSelector((state: RootState) => ({
     isConsumption: !!state.workflow.isConsumption,
     logicAppName: state.workflow.logicAppName,
     subscriptionId: state.workflow.subscriptionId,
@@ -32,14 +45,6 @@ export const SelectWorkflows = ({
     selectedTabId: state.tab.selectedTabId,
   }));
   const { data: workflows, isLoading } = useWorkflowsInApp(subscriptionId, resourceGroup, logicAppName ?? '', !!isConsumption);
-
-  // const onWorkflowSelected = useCallback(
-  //   (workflowId: string, checked: boolean) => {
-  //     const normalizedWorkflowId = workflowId.toLowerCase();
-  //     dispatch(updateWorkflowData({ data: { id: normalizedWorkflowId }, shouldDelete: !checked }));
-  //   },
-  //   [dispatch]
-  // );
 
   const onLogicAppSelected = useCallback(
     (app: LogicAppResource) => {
@@ -85,136 +90,130 @@ export const SelectWorkflows = ({
     }),
   };
 
-  const [workflowsList, setWorkflowsList] = useFunctionalState<WorkflowResource[]>(workflows ?? []);
-
-  useEffect(() => {
-    setWorkflowsList(workflows ?? []);
-  }, [workflows, setWorkflowsList]);
-
-  const [columns, _setColumns] = useFunctionalState<IColumn[]>([
-    {
-      ariaLabel: intlText.WORKFLOW_NAME,
-      fieldName: 'name',
-      key: '$name',
-      isResizable: true,
-      minWidth: 150,
-      name: intlText.WORKFLOW_NAME,
-      maxWidth: 250,
-    },
-    {
-      ariaLabel: intlText.TRIGGER_TYPE,
-      fieldName: 'trigger',
-      key: '$trigger',
-      isResizable: true,
-      minWidth: 150,
-      name: intlText.TRIGGER_TYPE,
-      maxWidth: 250,
-    },
-  ]);
-
-  const onRenderItemColumn = (item: WorkflowResource, _index: number | undefined, column: IColumn | undefined) => {
-    switch (column?.key) {
-      case '$name':
-        return <Text aria-label={item.name}>{item.name}</Text>;
-
-      case '$trigger':
-        return <Text aria-label={item.triggerType}>{item.triggerType}</Text>;
-
-      default:
-        return null;
-    }
+  type WorkflowsTableItem = {
+    name: string;
+    trigger: string;
   };
 
-  const selection: Selection = useMemo(() => {
-    const onItemsChange = () => {
-      // TODO: reset the selection (pass it from upper component) - done?
-      const selectedItemKeys = Object.keys(workflowsInTemplate);
-      console.log('selectedItemKeys', selectedItemKeys);
-      onWorkflowsSelected([]);
+  const columns: TableColumnDefinition<WorkflowsTableItem>[] = [
+    createTableColumn<WorkflowsTableItem>({
+      columnId: 'name',
+    }),
+    createTableColumn<WorkflowsTableItem>({
+      columnId: 'trigger',
+    }),
+  ];
 
-      // const selectedItems = [...allItemsSelected.current.filter((item) => item.selected)];
-      // if (selection && selection.getItems().length > 0) {
-      //   selectedItemKeys.forEach((workflowKey: string) => {
-      //     console.log("---workflowKey", workflowKey)
-      //       selection.setKeySelected(workflowKey, true, false);
-      //     });
-      // }
+  const items =
+    workflows?.map((workflow) => ({
+      name: workflow.name,
+      trigger: workflow.triggerType,
+    })) ?? [];
+
+  const {
+    getRows,
+    selection: { allRowsSelected, someRowsSelected, toggleAllRows, toggleRow, isRowSelected },
+  } = useTableFeatures(
+    {
+      columns,
+      items,
+    },
+    [
+      useTableSelection({
+        selectionMode: 'multiselect',
+        selectedItems: new Set(Object.keys(selectedWorkflowsList)),
+        onSelectionChange: (_, data) => {
+          onWorkflowsSelected(Array.from(data.selectedItems, String).map((workflowsId) => normalizedWorkflowId(workflowsId)));
+        },
+      }),
+    ]
+  );
+
+  const rows = getRows((row) => {
+    const selected = isRowSelected(normalizedWorkflowId(row.item.name));
+    return {
+      ...row,
+      onClick: (e: React.MouseEvent) => toggleRow(e, normalizedWorkflowId(row.item.name)),
+      onKeyDown: (e: React.KeyboardEvent) => {
+        if (e.key === ' ') {
+          e.preventDefault();
+          toggleRow(e, normalizedWorkflowId(row.item.name));
+        }
+      },
+      selected,
+      appearance: selected ? ('brand' as const) : ('none' as const),
     };
+  });
 
-    const onSelectionChanged = () => {
-      const currentSelection = selection.getSelection() as WorkflowResource[];
-      const selectedItems = currentSelection.map((item) => item.name.toLowerCase());
-      console.log(currentSelection, selectedItems);
-      onWorkflowsSelected(selectedItems);
-
-      if (selection && selection.getItems().length > 0) {
-        console.log('---selection.getItems()', selection.getItems());
-
-        selectedItems.forEach((workflowKey: string) => {
-          selection.setKeySelected(workflowKey, true, true);
-        });
+  const toggleAllKeydown = useCallback(
+    (e: React.KeyboardEvent<HTMLDivElement>) => {
+      if (e.key === ' ') {
+        toggleAllRows(e);
+        e.preventDefault();
       }
-
-      // dispatch(
-      //   updateSelectedWorkFlows({
-      //     selectedWorkflows: selectedItems,
-      //   })
-      // );
-    };
-
-    return new Selection({
-      onSelectionChanged: onSelectionChanged,
-      onItemsChanged: onItemsChange,
-    });
-  }, [workflowsInTemplate, onWorkflowsSelected]);
+    },
+    [toggleAllRows]
+  );
 
   return (
     <div className="msla-templates-tab msla-panel-no-description-tab">
       <TemplatesSection title={intlText.SOURCE} titleHtmlFor={'sourceLabel'} description={intlText.SOURCE_LABEL}>
         <ResourcePicker viewMode={'alllogicapps'} onSelectApp={onLogicAppSelected} />
       </TemplatesSection>
-
       <TemplatesSection title={intlText.WORKFLOWS} titleHtmlFor={'workflowsLabel'} description={intlText.WORKFLOWS_LABEL}>
-        <DetailsList
-          // setKey="name"
-          getKey={(item: any) => {
-            console.log('---getKEy', item.name.toLowerCase());
-            const key = item.name.toLowerCase();
-            return key;
-          }} // Ensure keys match the selectedItemKeys format
-          items={workflowsList()}
-          columns={columns()}
-          compact={true}
-          onRenderItemColumn={onRenderItemColumn}
-          selectionMode={SelectionMode.multiple}
-          selection={selection}
-          selectionPreservedOnEmptyClick={true}
-          checkboxVisibility={CheckboxVisibility.always}
-        />
-      </TemplatesSection>
-
-      <div>
-        <h4>Workflows</h4>
-        <div>
-          {isLoading ? (
-            <div>Loading...</div>
-          ) : (
-            workflows?.map((workflow) => (
-              <Checkbox
-                // onChange={(_, event) => onWorkflowSelected(workflow.id, !!event.checked)}
-                // onChange={(_, event) => onSelectWorkflow(workflow.id, !!event.checked)}
-                checked={hasProperty(workflowsInTemplate, workflow.id) || isConsumption}
-                disabled={isConsumption}
-                label={workflow.name}
-                key={workflow.id}
+        <Table aria-label="Table with multiselect" style={{ minWidth: '550px' }}>
+          <TableHeader>
+            <TableRow>
+              <TableSelectionCell
+                checked={allRowsSelected ? true : someRowsSelected ? 'mixed' : false}
+                onClick={toggleAllRows}
+                onKeyDown={toggleAllKeydown}
+                checkboxIndicator={{ 'aria-label': 'Select all rows' }}
               />
-            ))
-          )}
-        </div>
-      </div>
+
+              <TableHeaderCell>{intlText.WORKFLOW_NAME}</TableHeaderCell>
+              <TableHeaderCell>{intlText.TRIGGER_TYPE}</TableHeaderCell>
+            </TableRow>
+          </TableHeader>
+
+          <TableBody>
+            {isLoading
+              ? logicAppName
+                ? [...Array(5)].map((_, index) => (
+                    <TableRow key={index} aria-hidden="true">
+                      <TableSelectionCell checkboxIndicator={{ 'aria-label': 'Loading row' }} checked={false} />
+                      <TableCell>
+                        <Skeleton aria-label="Loading name">
+                          <SkeletonItem />
+                        </Skeleton>
+                      </TableCell>
+                      <TableCell>
+                        <Skeleton aria-label="Loading trigger">
+                          <SkeletonItem />
+                        </Skeleton>
+                      </TableCell>
+                    </TableRow>
+                  ))
+                : null
+              : rows.map(({ item, selected, onClick, onKeyDown, appearance }) => (
+                  <TableRow key={item.name} onClick={onClick} onKeyDown={onKeyDown} aria-selected={selected} appearance={appearance}>
+                    <TableSelectionCell checked={selected} checkboxIndicator={{ 'aria-label': 'Select row' }} />
+                    <TableCell>
+                      <TableCellLayout>{item.name}</TableCellLayout>
+                    </TableCell>
+                    <TableCell>
+                      <TableCellLayout>{item.trigger}</TableCellLayout>
+                    </TableCell>
+                  </TableRow>
+                ))}
+          </TableBody>
+        </Table>
+      </TemplatesSection>
     </div>
   );
 };
+
+const normalizedWorkflowId = (workflowId: string) => workflowId.toLowerCase();
 
 export const selectWorkflowsTab = (
   intl: IntlShape,
