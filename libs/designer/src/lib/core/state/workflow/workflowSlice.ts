@@ -2,7 +2,7 @@ import constants from '../../../common/constants';
 import { updateNodeConnection } from '../../actions/bjsworkflow/connections';
 import { initializeGraphState } from '../../parsers/ParseReduxAction';
 import type { AddNodePayload } from '../../parsers/addNodeToWorkflow';
-import { addSwitchCaseToWorkflow, addNodeToWorkflow, addAgentConditionToWorkflow } from '../../parsers/addNodeToWorkflow';
+import { addSwitchCaseToWorkflow, addNodeToWorkflow, addAgentToolToWorkflow } from '../../parsers/addNodeToWorkflow';
 import type { DeleteNodePayload } from '../../parsers/deleteNodeFromWorkflow';
 import { deleteWorkflowNode, deleteNodeFromWorkflow } from '../../parsers/deleteNodeFromWorkflow';
 import type { WorkflowNode } from '../../parsers/models/workflowNode';
@@ -495,17 +495,17 @@ export const workflowSlice = createSlice({
         args: [action.payload],
       });
     },
-    addAgentCondition: (state: WorkflowState, action: PayloadAction<{ conditionId: string; nodeId: string }>) => {
+    addAgentCondition: (state: WorkflowState, action: PayloadAction<{ toolId: string; nodeId: string }>) => {
       if (!state.graph) {
         return; // log exception
       }
-      const { conditionId, nodeId } = action.payload;
+      const { toolId, nodeId } = action.payload;
       const graphId = getRecordEntry(state.nodesMetadata, nodeId)?.graphId ?? '';
       const node = getWorkflowNodeFromGraphState(state, graphId);
       if (!node) {
         throw new Error('node not set');
       }
-      addAgentConditionToWorkflow(conditionId, node, state.nodesMetadata, state);
+      addAgentToolToWorkflow(toolId, node, state.nodesMetadata, state);
 
       LoggerService().log({
         level: LogEntryLevel.Verbose,
