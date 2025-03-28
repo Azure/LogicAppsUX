@@ -273,7 +273,6 @@ const getConnectionsForStandard = async (
 
 const getWorkflowDefinitionForStandard = async (workflowId: string): Promise<any> => {
   const queryClient = getReactQueryClient();
-  console.log('workflowId ', workflowId);
   const workflow = await getStandardWorkflow(workflowId, queryClient);
   return workflow.properties.files?.['workflow.json'];
 };

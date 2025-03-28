@@ -13,8 +13,9 @@ import {
   type TableColumnDefinition,
   useTableSelection,
   createTableColumn,
+  Button,
 } from '@fluentui/react-components';
-import type { TemplateTabProps } from '@microsoft/designer-ui';
+import { EmptySearch, type TemplateTabProps } from '@microsoft/designer-ui';
 import constants from '../../../common/constants';
 import { useIntl, type IntlShape } from 'react-intl';
 import { selectWizardTab } from '../../../core/state/templates/tabSlice';
@@ -23,6 +24,7 @@ import { useCallback, useMemo } from 'react';
 import { openPanelView, TemplatePanelView } from '../../../core/state/templates/panelSlice';
 import { ConfigureWorkflowsPanel } from '../../panel/configureTemplatePanel/configureWorkflowsPanel/configureWorkflowsPanel';
 import { useFunctionalState } from '@react-hookz/web';
+import { Add12Filled } from '@fluentui/react-icons';
 
 export const WorkflowsTab = () => {
   const intl = useIntl();
@@ -34,57 +36,79 @@ export const WorkflowsTab = () => {
 
   const [selectedWorkflowsList, setSelectedWorkflowsList] = useFunctionalState<string[]>([]);
 
-  const intlText = {
-    PLACEHOLDER: intl.formatMessage({
-      defaultMessage: '--',
-      id: '5lRHeK',
-      description: 'Accessibility label indicating that the value is not set',
+  const intlText = useMemo(
+    () => ({
+      PLACEHOLDER: intl.formatMessage({
+        defaultMessage: '--',
+        id: '5lRHeK',
+        description: 'Accessibility label indicating that the value is not set',
+      }),
+      ADD_WORKFLOWS: intl.formatMessage({
+        defaultMessage: 'Add workflows',
+        id: 'Ve6uLm',
+        description: 'Button text for opening panel for adding workflows',
+      }),
+      DELETE: intl.formatMessage({
+        defaultMessage: 'Delete',
+        id: 'Ld62T8',
+        description: 'Button text for deleting selected workflows',
+      }),
+      CHECKBOX_ALL_ROWS: intl.formatMessage({
+        defaultMessage: 'Select all rows',
+        id: '+JtwJv',
+        description: 'Accessibility label for the select all rows checkbox',
+      }),
+      CHECKBOX_ROW: intl.formatMessage({
+        defaultMessage: 'Select row',
+        id: 'hpKZGo',
+        description: 'Accessibility label for the select row checkbox',
+      }),
+      WORKFLOW_NAME: intl.formatMessage({
+        defaultMessage: 'Name',
+        id: 'kLqXDY',
+        description: 'Label for workflow Name',
+      }),
+      WORKFLOW_DISPLAY_NAME: intl.formatMessage({
+        defaultMessage: 'Display name',
+        id: 'Sk0Pms',
+        description: 'Label for workflow display name',
+      }),
+      STATE: intl.formatMessage({
+        defaultMessage: 'State',
+        id: 'IG4XXf',
+        description: 'Label for workflow state',
+      }),
+      ADD_WORKFLOWS_FOR_TEMPLATE: intl.formatMessage({
+        defaultMessage: 'Add workflows for this template',
+        id: '5S9Ta6',
+        description: 'Button text for opening panel for adding workflows',
+      }),
     }),
-    WORKFLOW_NAME: intl.formatMessage({
-      defaultMessage: 'Name',
-      id: 'kLqXDY',
-      description: 'Label for workflow Name',
-    }),
-    WORKFLOW_DISPLAY_NAME: intl.formatMessage({
-      defaultMessage: 'Display name',
-      id: 'Sk0Pms',
-      description: 'Label for workflow display name',
-    }),
-    STATE: intl.formatMessage({
-      defaultMessage: 'State',
-      id: 'IG4XXf',
-      description: 'Label for workflow state',
-    }),
-  };
+    [intl]
+  );
+
+  const handleAddWorkflows = useCallback(() => {
+    dispatch(openPanelView({ panelView: TemplatePanelView.ConfigureWorkflows }));
+  }, [dispatch]);
 
   const commandBarItems: ICommandBarItemProps[] = useMemo(
     () => [
       {
         key: 'add',
-        text: intl.formatMessage({
-          defaultMessage: 'Add workflows',
-          id: 'Ve6uLm',
-          description: 'Button text for opening panel for adding workflows',
-        }),
+        text: intlText.ADD_WORKFLOWS,
         iconProps: { iconName: 'Add' },
-        onClick: () => {
-          dispatch(openPanelView({ panelView: TemplatePanelView.ConfigureWorkflows }));
-        },
+        onClick: handleAddWorkflows,
       },
       {
         key: 'delete',
-        text: intl.formatMessage({
-          defaultMessage: 'Delete',
-          id: 'Ld62T8',
-          description: 'Button text for deleting selected workflows',
-        }),
+        text: intlText.DELETE,
         iconProps: { iconName: 'Trash' },
         onClick: () => {
-          //todo remove selected workflows
+          //TODO: remove selected workflows
         },
       },
     ],
-    [intl, dispatch]
+    [intlText, handleAddWorkflows]
   );
 
   type WorkflowsTableItem = {
@@ -182,7 +206,7 @@ export const WorkflowsTab = () => {
                 checked={allRowsSelected ? true : someRowsSelected ? 'mixed' : false}
                 onClick={toggleAllRows}
                 onKeyDown={toggleAllKeydown}
-                checkboxIndicator={{ 'aria-label': 'Select all rows' }}
+                checkboxIndicator={{ 'aria-label': intlText.CHECKBOX_ALL_ROWS }}
               />
 
               <TableHeaderCell>{intlText.WORKFLOW_NAME}</TableHeaderCell>
@@ -192,7 +216,7 @@ export const WorkflowsTab = () => {
           </TableHeader>
           {rows.map(({ item, selected, onClick, onKeyDown, appearance }) => (
             <TableRow key={item.id} onClick={onClick} onKeyDown={onKeyDown} aria-selected={selected} appearance={appearance}>
-              <TableSelectionCell checked={selected} checkboxIndicator={{ 'aria-label': 'Select row' }} />
+              <TableSelectionCell checked={selected} checkboxIndicator={{ 'aria-label': intlText.CHECKBOX_ROW }} />
               <TableCell>
                 <TableCellLayout>{item.name}</TableCellLayout>
               </TableCell>
@@ -206,7 +230,15 @@ export const WorkflowsTab = () => {
           ))}
         </Table>
       ) : (
-        <Text>placeholder - add workflows</Text>
+        <div className="msla-templates-empty-list">
+          <EmptySearch />
+          <Text size={500} weight="semibold" align="start" className="msla-template-empty-list-title">
+            {intlText.ADD_WORKFLOWS_FOR_TEMPLATE}
+          </Text>
+          <Button appearance="primary" icon={<Add12Filled />} onClick={handleAddWorkflows}>
+            {intlText.ADD_WORKFLOWS}
+          </Button>
+        </div>
       )}
     </div>
   );
