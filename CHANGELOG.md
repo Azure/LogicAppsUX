@@ -1,4 +1,32 @@
 # Logic Apps Designer
+### [5.53.9](https://github.com/Azure/LogicAppsUX/compare/v5.64.0...v5.53.9) (2025-03-28)
+
+### [5.53.8](https://github.com/Azure/LogicAppsUX/compare/v5.63.0...v5.53.8) (2025-03-27)
+
+### [5.53.7](https://github.com/Azure/LogicAppsUX/compare/v5.53.6...v5.53.7) (2025-03-22)
+
+### [5.53.6](https://github.com/Azure/LogicAppsUX/compare/v5.59.0...v5.53.6) (2025-03-22)
+
+### [5.53.5](https://github.com/Azure/LogicAppsUX/compare/v5.53.4...v5.53.5) (2025-03-22)
+
+### [5.53.4](https://github.com/Azure/LogicAppsUX/compare/v5.53.3...v5.53.4) (2025-03-21)
+
+### [5.53.3](https://github.com/Azure/LogicAppsUX/compare/v5.57.0...v5.53.3) (2025-03-20)
+
+### [5.53.2](https://github.com/Azure/LogicAppsUX/compare/v5.55.0...v5.53.2) (2025-03-18)
+
+
+### Features
+
+* **Templates:** Review tab improvements + Template provider useExternalRedux flag ([#6829](https://github.com/Azure/LogicAppsUX/issues/6829)) ([9ed541f](https://github.com/Azure/LogicAppsUX/commit/9ed541f8624efbf0944a72f55ca0d42084a7d178)), closes [#6828](https://github.com/Azure/LogicAppsUX/issues/6828)
+
+### [5.53.1](https://github.com/Azure/LogicAppsUX/compare/v5.53.0...v5.53.1) (2025-03-17)
+
+
+### Bug Fixes
+
+* **templates:** Adding a reload handler when a resource changes and services to reload ([15ed538](https://github.com/Azure/LogicAppsUX/commit/15ed53823103194d0c4dcb622a80dc2133835909))
+
 ### [5.53.8](https://github.com/Azure/LogicAppsUX/compare/v5.62.0...v5.53.8) (2025-03-27)
 
 
