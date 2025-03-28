@@ -288,8 +288,9 @@ export const workflowSlice = createSlice({
           ...nodeMetadata,
           runData: {
             status: tools[toolId].status,
-            repetitionCount: tools[toolId].repetitions,
+            repetitionCount: tools[toolId].iterations,
           },
+          runIndex: 0,
         };
         state.nodesMetadata[toolId] = nodeData as NodeMetadata;
       });
