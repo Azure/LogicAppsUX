@@ -230,10 +230,7 @@ export class StandardRunService implements IRunService {
    * @param {string} repetitionId - A string with the resource ID of a repetition record
    * @return {Promise<RunScopeRepetition[]>}
    */
-  async getSubgraphRepetition(
-    action: { nodeId: string; runId: string | undefined },
-    repetitionId: string
-  ): Promise<LogicAppsV2.RunRepetition> {
+  async getSubgraphRepetition(action: { nodeId: string; runId: string | undefined }, repetitionId: string): Promise<any> {
     const { nodeId, runId } = action;
 
     const { apiVersion, baseUrl, httpClient } = this.options;

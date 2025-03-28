@@ -14,7 +14,7 @@ export interface IRunService {
     status?: string
   ): Promise<{ value: LogicAppsV2.RunRepetition[] }>;
   getAgentRepetition(action: { nodeId: string; runId: string | undefined }, repetitionId: string): Promise<LogicAppsV2.RunRepetition>;
-  getSubgraphRepetition(action: { nodeId: string; runId: string | undefined }, repetitionId: string): Promise<LogicAppsV2.RunRepetition>;
+  getSubgraphRepetition(action: { nodeId: string; runId: string | undefined }, repetitionId: string): Promise<any>;
   getRepetition(action: { nodeId: string; runId: string | undefined }, repetitionId: string): Promise<LogicAppsV2.RunRepetition>;
 }
 

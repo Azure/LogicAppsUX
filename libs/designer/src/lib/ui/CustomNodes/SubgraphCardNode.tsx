@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-empty-function */
 import constants from '../../common/constants';
-import { useOperationInfo, useSubgraphRepetition, type AppDispatch } from '../../core';
+import { useOperationInfo, type AppDispatch } from '../../core';
 import { initializeSwitchCaseFromManifest } from '../../core/actions/bjsworkflow/add';
 import { getOperationManifest } from '../../core/queries/operation';
 import { useMonitoringView, useReadOnly } from '../../core/state/designerOptions/designerOptionsSelectors';
@@ -15,11 +15,8 @@ import {
   useNewAdditiveSubgraphId,
   useNodeDisplayName,
   useNodeMetadata,
-  useNodesMetadata,
   useParentNodeId,
   useRunData,
-  useRunIndex,
-  useRunInstance,
   useWorkflowNode,
 } from '../../core/state/workflow/workflowSelectors';
 import { addAgentCondition, addSwitchCase, setFocusNode, toggleCollapsedGraphId } from '../../core/state/workflow/workflowSlice';
@@ -32,8 +29,6 @@ import { memo, useCallback, useMemo } from 'react';
 import { useIntl } from 'react-intl';
 import { useDispatch } from 'react-redux';
 import { Handle, Position, type NodeProps } from '@xyflow/react';
-import { getRepetitionName } from '../common/LoopsPager/helper';
-import { useAllOperations } from '../../core/state/selectors/actionMetadataSelector';
 
 const SubgraphCardNode = ({ targetPosition = Position.Top, sourcePosition = Position.Bottom, id }: NodeProps) => {
   const subgraphId = removeIdTag(id);
@@ -42,7 +37,6 @@ const SubgraphCardNode = ({ targetPosition = Position.Top, sourcePosition = Posi
   const intl = useIntl();
   const readOnly = useReadOnly();
   const dispatch = useDispatch<AppDispatch>();
-  const operationsInfo = useAllOperations();
   const isPinned = useIsNodePinnedToOperationPanel(subgraphId);
   const selected = useIsNodeSelectedInOperationPanel(subgraphId);
   const isLeaf = useIsLeafNode(id);
@@ -56,23 +50,14 @@ const SubgraphCardNode = ({ targetPosition = Position.Top, sourcePosition = Posi
   const runData = useRunData(parentNodeId ?? subgraphId);
   const parentActionMetadata = useActionMetadata(parentNodeId);
   const isParentAgent = parentActionMetadata?.type?.toLowerCase() === constants.NODE.TYPE.AGENT;
-  const runIndex = useRunIndex(subgraphId);
-  const nodesMetaData = useNodesMetadata();
-  const runInstance = useRunInstance();
-
-  const repetitionName = useMemo(
-    () => getRepetitionName(runIndex, subgraphId, nodesMetaData, operationsInfo),
-    [nodesMetaData, runIndex, subgraphId, operationsInfo]
-  );
-
   const title = useNodeDisplayName(subgraphId);
-
   const isSwitchAddCase = metadata?.subgraphType === SUBGRAPH_TYPES.SWITCH_ADD_CASE;
   const isAgentAddCondition = metadata?.subgraphType === SUBGRAPH_TYPES.AGENT_ADD_CONDITON;
-
+  const graphCollapsed = useIsGraphCollapsed(subgraphId);
   const isAddCase = isSwitchAddCase || isAgentAddCondition;
   const actionCount = metadata?.actionCount ?? 0;
   const iconUri = useIconUri(graphId);
+  const showEmptyGraphComponents = isLeaf && !graphCollapsed && !isAddCase;
 
   const stringResources = useMemo(
     () => ({
@@ -131,27 +116,12 @@ const SubgraphCardNode = ({ targetPosition = Position.Top, sourcePosition = Posi
     [isAddCase, graphNode, isAgentAddCondition, operationInfo, iconUri, newCaseIdNewAdditiveSubgraphId, dispatch, subgraphId]
   );
 
-  const graphCollapsed = useIsGraphCollapsed(subgraphId);
   const handleGraphCollapse = useCallback(
     (includeNested?: boolean) => {
       dispatch(toggleCollapsedGraphId({ id: subgraphId, includeNested }));
     },
     [dispatch, subgraphId]
   );
-
-  const { isFetching: isRepetitionFetching, data: repetitionRunData } = useSubgraphRepetition(
-    !!isMonitoringView,
-    isParentAgent,
-    subgraphId,
-    runInstance?.id,
-    repetitionName,
-    runData?.status,
-    runIndex
-  );
-
-  console.log('charlie', subgraphId, runIndex, repetitionName, repetitionRunData, isRepetitionFetching);
-
-  const showEmptyGraphComponents = isLeaf && !graphCollapsed && !isAddCase;
 
   const deleteClick = useCallback(() => {
     dispatch(setShowDeleteModalNodeId(id));

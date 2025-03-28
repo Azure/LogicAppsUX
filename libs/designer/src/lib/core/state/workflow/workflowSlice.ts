@@ -461,6 +461,19 @@ export const workflowSlice = createSlice({
       };
       nodeMetadata.runData = nodeRunData as LogicAppsV2.WorkflowRunAction;
     },
+    setSubgraphRunData: (state: WorkflowState, action: PayloadAction<{ nodeId: string; runData: LogicAppsV2.RunRepetition[] }>) => {
+      const { nodeId, runData } = action.payload;
+      const nodeMetadata = getRecordEntry(state.nodesMetadata, nodeId);
+      if (!nodeMetadata) {
+        return;
+      }
+      const subgraph = runData.reduce((acc, run) => {
+        const runId = run.id.split('/')[4];
+        acc[runId] = run.properties;
+        return acc;
+      }, {} as any);
+      nodeMetadata.subgraphRunData = subgraph;
+    },
     setRunDataInputOutputs: (
       state: WorkflowState,
       action: PayloadAction<{ nodeId: string; inputs: BoundParameters; outputs: BoundParameters }>
@@ -744,6 +757,7 @@ export const {
   replaceId,
   setRunIndex,
   setRepetitionRunData,
+  setSubgraphRunData,
   setIsWorkflowDirty,
   setHostErrorMessages,
   setRunDataInputOutputs,

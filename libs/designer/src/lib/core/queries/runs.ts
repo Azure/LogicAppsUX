@@ -151,7 +151,7 @@ export const useAgentRepetition = (
   );
 };
 
-export const useSubgraphRepetition = (
+export const useAgentActionsRepetition = (
   isMonitoringView: boolean,
   isParentAgent: boolean,
   nodeId: string,
@@ -161,7 +161,7 @@ export const useSubgraphRepetition = (
   runIndex: number | undefined
 ) => {
   return useQuery(
-    ['useSubgraphRepetition', { nodeId, runId, repetitionName, parentStatus, runIndex }],
+    ['useAgentActionsRepetition', { nodeId, runId, repetitionName, parentStatus, runIndex }],
     async () => {
       return RunService().getSubgraphRepetition({ nodeId, runId }, repetitionName);
     },
