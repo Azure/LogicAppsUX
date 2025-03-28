@@ -28,7 +28,7 @@ export const TemplateDisplay = ({ titleLabel, showDescription, cssOverrides }: T
       <Text weight="semibold" className={styles.actionName}>
         {templateTitle}
       </Text>
-      {showDescription && templateDescription && <Markdown>{templateDescription}</Markdown>}
+      {showDescription && templateDescription && <Markdown className={'description'}>{templateDescription}</Markdown>}
     </div>
   );
 };
