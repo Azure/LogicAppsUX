@@ -95,7 +95,8 @@ const ScopeCardNode = ({ data, targetPosition = Position.Top, sourcePosition = P
     runInstance?.id,
     repetitionName,
     parentRunData?.status,
-    parentRunIndex
+    parentRunIndex,
+    false
   );
 
   const { isFetching: isScopeRepetitionFetching, data: scopeRepetitionRunData } = useAgentRepetition(

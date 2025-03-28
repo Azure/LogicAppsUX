@@ -44,7 +44,6 @@ import {
   useParentNodeId,
   useIsLeafNode,
   useIsWithinAgenticLoop,
-  useRunIndex,
 } from '../../core/state/workflow/workflowSelectors';
 import { setRepetitionRunData } from '../../core/state/workflow/workflowSlice';
 import { getRepetitionName } from '../common/LoopsPager/helper';
@@ -94,7 +93,7 @@ const DefaultNode = ({ targetPosition = Position.Top, sourcePosition = Position.
   const graphId = metadata?.graphId ?? '';
   const isWithinAgenticLoop = useIsWithinAgenticLoop(graphId);
   const selfRunData = useRunData(id);
-  const toolRunIndex = useRunIndex(graphId);
+  // const toolRunIndex = useRunIndex(graphId);
 
   const { isFetching: isRepetitionFetching, data: repetitionRunData } = useNodeRepetition(
     !!isMonitoringView,
@@ -102,7 +101,8 @@ const DefaultNode = ({ targetPosition = Position.Top, sourcePosition = Position.
     runInstance?.id,
     repetitionName,
     parentRunData?.status,
-    parentRunIndex
+    parentRunIndex,
+    isWithinAgenticLoop
   );
 
   useEffect(() => {
@@ -111,14 +111,7 @@ const DefaultNode = ({ targetPosition = Position.Top, sourcePosition = Position.
         // if the correlation id is the same, we don't need to update the repetition run data
         return;
       }
-      let operationRepetitionRunData = repetitionRunData.properties;
-      if (isWithinAgenticLoop) {
-        const toolIndex = toolRunIndex ? toolRunIndex - 1 : 0;
-        operationRepetitionRunData = Array.isArray(repetitionRunData.properties)
-          ? repetitionRunData.properties[toolIndex]
-          : repetitionRunData.properties;
-      }
-      dispatch(setRepetitionRunData({ nodeId: id, runData: operationRepetitionRunData as LogicAppsV2.WorkflowRunAction }));
+      dispatch(setRepetitionRunData({ nodeId: id, runData: repetitionRunData.properties as LogicAppsV2.WorkflowRunAction }));
     }
   }, [dispatch, repetitionRunData, id, selfRunData?.correlation?.actionTrackingId]);
 
