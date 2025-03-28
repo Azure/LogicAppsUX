@@ -1967,7 +1967,7 @@ async function loadDynamicData(
 ): Promise<void> {
   if (Object.keys(dependencies?.outputs ?? {}).length) {
     const rootState = getState();
-    loadDynamicOutputsInNode(
+    await loadDynamicOutputsInNode(
       nodeId,
       isTrigger,
       operationInfo,

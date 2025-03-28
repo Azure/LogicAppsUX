@@ -255,7 +255,7 @@ export const VariableEditor = ({
             onClick={handleToggleExpand}
             icon={expanded ? <CollapseIcon /> : <ExpandIcon />}
             aria-expanded={expanded}
-            style={{ justifyContent: 'flex-start', width: '100%' }}
+            style={{ justifyContent: 'flex-start', width: '90%' }}
           >
             {displayName}
           </Button>
