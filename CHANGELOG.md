@@ -1,4 +1,12 @@
 # Logic Apps Designer
+## [5.64.0](https://github.com/Azure/LogicAppsUX/compare/v5.63.0...v5.64.0) (2025-03-28)
+
+
+### Bug Fixes
+
+* **designer:** Agentic workflow fixes  ([#6886](https://github.com/Azure/LogicAppsUX/issues/6886)) ([46d9422](https://github.com/Azure/LogicAppsUX/commit/46d942225bf3bac880ed684067b8d37ac87c00c4))
+* **vscode:** Update validation to allow having the csharp file inside the workflow folder ([#6881](https://github.com/Azure/LogicAppsUX/issues/6881)) ([e8b238b](https://github.com/Azure/LogicAppsUX/commit/e8b238b074875d90826d0761696127fe6b106fb8))
+
 ## [5.63.0](https://github.com/Azure/LogicAppsUX/compare/v5.62.0...v5.63.0) (2025-03-27)
 
 
