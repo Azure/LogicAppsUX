@@ -26,9 +26,6 @@ export async function createRulesFiles(context: IFunctionWizardContext): Promise
 export async function createLibFolder(context: IFunctionWizardContext): Promise<void> {
   fse.mkdirSync(path.join(context.projectPath, 'lib', 'builtinOperationSdks', 'JAR'), { recursive: true });
   fse.mkdirSync(path.join(context.projectPath, 'lib', 'builtinOperationSdks', 'net472'), { recursive: true });
-  if (context.projectType === ProjectType.customCode) {
-    fse.mkdirSync(path.join(context.projectPath, 'lib', 'custom', context.targetFramework), { recursive: true });
-  }
 }
 
 export async function createNewProjectInternalBase(

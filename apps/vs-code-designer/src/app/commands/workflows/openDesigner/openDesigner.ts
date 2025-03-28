@@ -3,6 +3,7 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 import * as path from 'path';
+import * as fse from 'fs-extra';
 import { RemoteWorkflowTreeItem } from '../../../tree/remoteWorkflowsTree/RemoteWorkflowTreeItem';
 import { getWorkflowNode } from '../../../utils/workspace';
 import type { IAzureConnectorsContext } from '../azureConnectorWizard';
@@ -19,7 +20,10 @@ export async function openDesigner(context: IAzureConnectorsContext, node: Uri |
   if (workflowNode instanceof Uri) {
     try {
       const logicAppNode = Uri.file(path.join(workflowNode.fsPath, '../../'));
-      await buildCustomCodeFunctionsProject(context, logicAppNode);
+      // Only build custom code projects on open designer if custom code binaries don't already exist in the logic app folder
+      if (!(await fse.pathExists(path.join(logicAppNode.fsPath, 'lib', 'custom')))) {
+        await buildCustomCodeFunctionsProject(context, logicAppNode);
+      }
     } catch {
       // Ignore error if thrown, forego building custom code project
     }
