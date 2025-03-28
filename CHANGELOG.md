@@ -1,4 +1,11 @@
 # Logic Apps Designer
+## [5.66.0](https://github.com/Azure/LogicAppsUX/compare/v5.65.0...v5.66.0) (2025-03-28)
+
+
+### Features
+
+* **designer:** Implement run history for actions inside tools ([#6895](https://github.com/Azure/LogicAppsUX/issues/6895)) ([1e32c8d](https://github.com/Azure/LogicAppsUX/commit/1e32c8df034be9ebfb6ac2d5fa47d0aed09de8d7))
+
 ## [5.65.0](https://github.com/Azure/LogicAppsUX/compare/v5.64.0...v5.65.0) (2025-03-28)
 
 
