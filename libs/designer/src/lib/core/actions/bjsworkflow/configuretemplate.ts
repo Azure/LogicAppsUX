@@ -171,7 +171,7 @@ export const getTemplateConnections = async (state: RootState, dispatch: ThunkDi
 
   if (isConsumption) {
     const definition = await getWorkflowDefinitionForConsumption(subscriptionId, resourceGroup, logicAppName as string);
-    const connections = await getConnectionsForConsumption(subscriptionId, resourceGroup, logicAppName as string); // THIS ONE
+    const connections = await getConnectionsForConsumption(subscriptionId, resourceGroup, logicAppName as string); // TODO: cache this on getWorkflowsWithDefinitions
     const workflowId = getLogicAppId(subscriptionId, resourceGroup, logicAppName as string);
     const mapping = await getConnectionMappingInDefinition(definition, workflowId);
 
@@ -187,7 +187,7 @@ export const getTemplateConnections = async (state: RootState, dispatch: ThunkDi
     return { connections, mapping };
   }
 
-  const allConnections = await getConnectionsForStandard(subscriptionId, resourceGroup, logicAppName as string); // THIS ONE
+  const allConnections = await getConnectionsForStandard(subscriptionId, resourceGroup, logicAppName as string); // TODO: cache this on getWorkflowsWithDefinitions
   const workflowIds = Object.keys(workflows).map((id) => workflows[id].id);
   const promises = workflowIds.map((workflowId) => getDefinitionAndUsedConnectionMappings(workflowId));
   const workflowsData = clone(workflows);
