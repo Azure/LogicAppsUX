@@ -177,19 +177,6 @@ export interface InputsDependency {
 }
 
 type SwaggerSchema = any;
-
-export interface ChannelSchema {
-  in: {
-    [key: string]: SwaggerSchema;
-    mapping: {
-      message: string;
-    };
-  };
-  out: {
-    [key: string]: SwaggerSchema;
-  };
-}
-
 export interface LocationSwapMap {
   source: string[];
   target: string[];
@@ -197,6 +184,11 @@ export interface LocationSwapMap {
 
 export interface OperationManifest {
   properties: OperationManifestProperties;
+}
+
+export interface SupportedInputChannels {
+  name: string;
+  output: string[];
 }
 
 export interface OperationManifestProperties {
@@ -227,7 +219,6 @@ export interface OperationManifestProperties {
   inputsLocation?: string[]; // Note: If not specified, default value is [ 'inputs' ]
   inputsLocationSwapMap?: LocationSwapMap[];
   isInputsOptional?: boolean;
-  channels?: ChannelSchema;
 
   outputs?: SwaggerSchema;
   outputsSchema?: {
@@ -238,6 +229,8 @@ export interface OperationManifestProperties {
     location?: string[];
     service?: CustomSwaggerServiceDetails;
   };
+
+  supportedChannels?: SupportedInputChannels[];
 
   /*
    * Note: Output resolution takes place as follows. If no payload outputs are present, then use outputs.

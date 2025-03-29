@@ -107,6 +107,13 @@ export default {
     inputsLocation: ['inputs', 'parameters'],
     isInputsOptional: false,
 
+    supportedChannels: [
+      {
+        name: 'request',
+        output: ['response'],
+      },
+    ],
+
     connection: {
       required: true,
       type: 'agent',
