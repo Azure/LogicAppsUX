@@ -34,12 +34,12 @@ export const useConfigureWorkflowPanelTabs = ({
   const onWorkflowsSelected = (normalizedWorkflowIds: string[]) => {
     setSelectedWorkflowsList((prevSelectedWorkflows) => {
       const newSelectedWorkflows: Record<string, Partial<WorkflowTemplateData>> = {};
-      normalizedWorkflowIds.forEach((normalizedWorkflowId) => {
+      for (const normalizedWorkflowId of normalizedWorkflowIds) {
         newSelectedWorkflows[normalizedWorkflowId] = prevSelectedWorkflows[normalizedWorkflowId] ?? {
           id: normalizedWorkflowId,
           workflowName: getWorkflownameFromWorkflowId(normalizedWorkflowId),
         };
-      });
+      }
       return newSelectedWorkflows;
     });
   };

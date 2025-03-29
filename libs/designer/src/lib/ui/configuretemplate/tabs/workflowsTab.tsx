@@ -26,6 +26,7 @@ import { ConfigureWorkflowsPanel } from '../../panel/configureTemplatePanel/conf
 import { useFunctionalState } from '@react-hookz/web';
 import { Add12Filled } from '@fluentui/react-icons';
 import { useTemplatesStrings } from '../../templates/templatesStrings';
+import { deleteWorkflowData } from '../../../core/actions/bjsworkflow/configuretemplate';
 
 export const WorkflowsTab = () => {
   const intl = useIntl();
@@ -92,11 +93,11 @@ export const WorkflowsTab = () => {
         text: intlText.DELETE,
         iconProps: { iconName: 'Trash' },
         onClick: () => {
-          //TODO: remove selected workflows
+          dispatch(deleteWorkflowData({ ids: selectedWorkflowsList() }));
         },
       },
     ],
-    [intlText, handleAddWorkflows]
+    [intlText, handleAddWorkflows, dispatch, selectedWorkflowsList]
   );
 
   type WorkflowsTableItem = {

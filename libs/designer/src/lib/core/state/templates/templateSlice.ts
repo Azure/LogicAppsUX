@@ -183,15 +183,17 @@ export const templateSlice = createSlice({
       (
         state,
         action: PayloadAction<{
-          id: string;
+          ids: string[];
           connectionKeys: string[];
           parameterKeys: string[];
           parametersToUpdate: Record<string, Partial<Template.ParameterDefinition>>;
         }>
       ) => {
         if (action.payload) {
-          const { id, connectionKeys, parameterKeys, parametersToUpdate } = action.payload;
-          delete state.workflows[id];
+          const { ids, connectionKeys, parameterKeys, parametersToUpdate } = action.payload;
+          for (const id of ids) {
+            delete state.workflows[id];
+          }
           for (const key of connectionKeys) {
             delete state.connections[key];
           }

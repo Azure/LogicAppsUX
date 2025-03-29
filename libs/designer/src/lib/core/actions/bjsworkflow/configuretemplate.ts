@@ -93,7 +93,7 @@ export const initializeWorkflowsData = createAsyncThunk(
     connections: Record<string, Template.Connection>;
     parameterDefinitions: Record<string, Partial<Template.ParameterDefinition>>;
   }> => {
-    const { connections, mapping } = await getTemplateConnections(getState() as RootState, dispatch);
+    const { connections, mapping } = await getTemplateConnections(getState() as RootState, dispatch); ///
     const {
       template: { workflows },
     } = getState() as RootState;
@@ -101,7 +101,7 @@ export const initializeWorkflowsData = createAsyncThunk(
     const operationsData = await getOperationDataInDefinitions(workflows, connections);
     dispatch(initializeNodeOperationInputsData(operationsData));
 
-    const parameterDefinitions = await getTemplateParameters(getState() as RootState, mapping);
+    const parameterDefinitions = await getTemplateParameters(getState() as RootState, mapping); ////
     return { connections, parameterDefinitions };
   }
 );
@@ -109,49 +109,57 @@ export const initializeWorkflowsData = createAsyncThunk(
 export const deleteWorkflowData = createAsyncThunk(
   'deleteWorkflowData',
   async (
-    { id }: { id: string },
+    { ids }: { ids: string[] },
     { getState }
   ): Promise<{
-    id: string;
+    ids: string[];
     connectionKeys: string[];
     parameterKeys: string[];
     parametersToUpdate: Record<string, Partial<Template.ParameterDefinition>>;
   }> => {
-    const {
-      template: { workflows, parameterDefinitions },
-    } = getState() as RootState;
-    const workflowId = id.toLowerCase();
-
-    // Getting connection keys to delete
-    const connectionKeysInUse = Object.keys(workflows).reduce((result: string[], currentId: string) => {
-      if (currentId !== workflowId) {
-        result.push(...workflows[currentId].connectionKeys.filter((key) => !result.includes(key)));
-      }
-      return result;
-    }, []);
-    const connectionKeys = (workflows[workflowId]?.connectionKeys ?? []).filter((key) => !connectionKeysInUse.includes(key));
-
-    // Getting parameter keys to delete
+    const combinedConnectionKeys: string[] = [];
+    const combinedParameterKeys: string[] = [];
     const parametersToUpdate: Record<string, Partial<Template.ParameterDefinition>> = {};
-    const parameterKeys = Object.keys(parameterDefinitions).filter((key) => {
-      const { associatedWorkflows, dynamicData } = parameterDefinitions[key];
-      if (associatedWorkflows?.includes(workflowId)) {
-        if (associatedWorkflows.length === 1) {
-          return true;
+
+    for (const id of ids) {
+      const {
+        template: { workflows, parameterDefinitions },
+      } = getState() as RootState;
+
+      const workflowId = id.toLowerCase();
+
+      // Getting connection keys to delete
+      const connectionKeysInUse = Object.keys(workflows).reduce((result: string[], currentId: string) => {
+        if (currentId !== workflowId) {
+          result.push(...workflows[currentId].connectionKeys.filter((key) => !result.includes(key)));
+        }
+        return result;
+      }, []);
+      const connectionKeys = (workflows[workflowId]?.connectionKeys ?? []).filter((key) => !connectionKeysInUse.includes(key));
+      combinedConnectionKeys.push(...connectionKeys);
+
+      // Getting parameter keys to delete
+      const parameterKeys = Object.keys(parameterDefinitions).filter((key) => {
+        const { associatedWorkflows, dynamicData } = parameterDefinitions[key];
+        if (associatedWorkflows?.includes(workflowId)) {
+          if (associatedWorkflows.length === 1) {
+            return true;
+          }
+
+          // TODO: Try fetching the dynamic data from the next workflow in the list, fo rnow just deleting.
+          parametersToUpdate[key] = {
+            ...parameterDefinitions[key],
+            associatedWorkflows: associatedWorkflows.filter((id) => id !== workflowId),
+            dynamicData: dynamicData?.workflow === workflowId ? undefined : dynamicData,
+          };
         }
 
-        // TODO: Try fetching the dynamic data from the next workflow in the list, fo rnow just deleting.
-        parametersToUpdate[key] = {
-          ...parameterDefinitions[key],
-          associatedWorkflows: associatedWorkflows.filter((id) => id !== workflowId),
-          dynamicData: dynamicData?.workflow === workflowId ? undefined : dynamicData,
-        };
-      }
+        return false;
+      });
+      combinedParameterKeys.push(...parameterKeys);
+    }
 
-      return false;
-    });
-
-    return { id: workflowId, connectionKeys, parameterKeys, parametersToUpdate };
+    return { ids, connectionKeys: combinedConnectionKeys, parameterKeys: combinedParameterKeys, parametersToUpdate };
   }
 );
 
@@ -163,7 +171,7 @@ export const getTemplateConnections = async (state: RootState, dispatch: ThunkDi
 
   if (isConsumption) {
     const definition = await getWorkflowDefinitionForConsumption(subscriptionId, resourceGroup, logicAppName as string);
-    const connections = await getConnectionsForConsumption(subscriptionId, resourceGroup, logicAppName as string);
+    const connections = await getConnectionsForConsumption(subscriptionId, resourceGroup, logicAppName as string); // THIS ONE
     const workflowId = getLogicAppId(subscriptionId, resourceGroup, logicAppName as string);
     const mapping = await getConnectionMappingInDefinition(definition, workflowId);
 
@@ -179,7 +187,7 @@ export const getTemplateConnections = async (state: RootState, dispatch: ThunkDi
     return { connections, mapping };
   }
 
-  const allConnections = await getConnectionsForStandard(subscriptionId, resourceGroup, logicAppName as string);
+  const allConnections = await getConnectionsForStandard(subscriptionId, resourceGroup, logicAppName as string); // THIS ONE
   const workflowIds = Object.keys(workflows).map((id) => workflows[id].id);
   const promises = workflowIds.map((workflowId) => getDefinitionAndUsedConnectionMappings(workflowId));
   const workflowsData = clone(workflows);
