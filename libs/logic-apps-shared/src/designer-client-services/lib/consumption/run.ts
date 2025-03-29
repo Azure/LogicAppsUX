@@ -231,6 +231,31 @@ export class ConsumptionRunService implements IRunService {
   }
 
   /**
+   * Retrieves additional agent actions repetition data based on the provided continuation token.
+   *
+   * This method constructs an HTTP GET request using the continuation token as the URI and leverages the authorized HTTP client.
+   * It returns a promise that resolves with the run repetition data in the form of a [[LogicAppsV2.RunRepetition]] object.
+   * @param continuationToken - A string token used to fetch the next set of agent actions repetition data.
+   * @returns A promise that resolves with the run repetition data.
+   * @throws Will throw an error with the corresponding message if the HTTP request fails.
+   */
+  async getMoreAgentActionsRepetition(continuationToken: string): Promise<any> {
+    const { httpClient } = this.options;
+    const headers = this.getAccessTokenHeaders();
+
+    try {
+      const response = await httpClient.get<LogicAppsV2.RunRepetition>({
+        uri: continuationToken,
+        headers: headers as Record<string, any>,
+      });
+
+      return response;
+    } catch (e: any) {
+      throw new Error(e.message);
+    }
+  }
+
+  /**
    * Gets the repetition record for the repetition item with the specified ID
    * @param {{ actionId: string, runId: string }} action - An object with nodeId and the runId of the workflow
    * @param {string} repetitionId - A string with the resource ID of a repetition record

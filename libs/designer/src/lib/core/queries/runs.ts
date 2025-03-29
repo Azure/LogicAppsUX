@@ -163,7 +163,16 @@ export const useAgentActionsRepetition = (
   return useQuery(
     ['useAgentActionsRepetition', { nodeId, runId, repetitionName, parentStatus, runIndex }],
     async () => {
-      return RunService().getAgentActionsRepetition({ nodeId, runId }, repetitionName);
+      const allActions: LogicAppsV2.RunRepetition[] = [];
+      const firstActions = await RunService().getAgentActionsRepetition({ nodeId, runId }, repetitionName);
+      allActions.push(...firstActions.resources);
+      let nextLink = firstActions.nextLink;
+      while (nextLink) {
+        const moreActions = await RunService().getMoreAgentActionsRepetition(nextLink);
+        allActions.push(...moreActions.resources);
+        nextLink = moreActions.nextLink;
+      }
+      return allActions;
     },
     {
       ...queryOpts,

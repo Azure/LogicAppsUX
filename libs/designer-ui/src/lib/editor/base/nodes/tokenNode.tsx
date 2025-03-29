@@ -99,6 +99,31 @@ export class TokenNode extends DecoratorNode<JSX.Element> {
     writable.__data = data;
   }
 
+  // we'll want to do some cleanup to combine with previous function
+  updateToken({ description, type, title }: { description?: string; type?: string; title?: string }): void {
+    const writable = this.getWritable();
+
+    if (description !== undefined) {
+      writable.__description = description;
+      if (writable.__data.token) {
+        writable.__data = Object.assign({}, writable.__data, { token: Object.assign({}, writable.__data.token, { description }) });
+      }
+    }
+
+    if (title !== undefined) {
+      writable.__title = title;
+      if (writable.__data.token) {
+        writable.__data = Object.assign({}, writable.__data, { token: Object.assign({}, writable.__data.token, { title }) });
+      }
+    }
+
+    if (type !== undefined) {
+      if (writable.__data.token) {
+        writable.__data = Object.assign({}, writable.__data, { token: Object.assign({}, writable.__data.token, { type }) });
+      }
+    }
+  }
+
   constructor(
     title: string,
     data: ValueSegment,
