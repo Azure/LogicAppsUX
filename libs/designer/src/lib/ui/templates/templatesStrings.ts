@@ -30,6 +30,36 @@ export const useTemplatesStrings = () => {
         id: 'ekM77J',
         description: 'Label for workflow Name',
       }),
+      WORKFLOW_DISPLAY_NAME: intl.formatMessage({
+        defaultMessage: 'Workflow display name',
+        id: 'JBa1qe',
+        description: 'The label for the workflow display name',
+      }),
+      SUMMARY: intl.formatMessage({
+        defaultMessage: 'Summary',
+        id: 'q1Pd+E',
+        description: 'Label for workflow summary',
+      }),
+      DESCRIPTION: intl.formatMessage({
+        defaultMessage: 'Description',
+        id: 'ae/C2d',
+        description: 'Label for workflow description',
+      }),
+      PREREQUISITES: intl.formatMessage({
+        defaultMessage: 'Prerequisites',
+        id: 'wRkRZc',
+        description: 'Label for workflow prerequisites',
+      }),
+      STATE: intl.formatMessage({
+        defaultMessage: 'State',
+        id: 'IG4XXf',
+        description: 'Label for workflow state',
+      }),
+      GENERAL: intl.formatMessage({
+        defaultMessage: 'General',
+        id: 'UCxXaz',
+        description: 'Label for general section',
+      }),
       TEMPLATE_NAME: intl.formatMessage({
         defaultMessage: 'Template',
         id: '83Vrgj',

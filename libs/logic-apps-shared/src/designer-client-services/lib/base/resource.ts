@@ -72,7 +72,7 @@ export class BaseResourceService implements IResourceService {
     return response.map((item: any) => ({
       id: `/subscriptions/${subscriptionId}/resourceGroups/${resourceGroup}/providers/Microsoft.Web/sites/${logicAppName}/workflows/${item.name}`,
       name: getNameFromId(item.name),
-      trigerType: getTriggerFromDefinition(item.triggers),
+      triggerType: getTriggerFromDefinition(item.triggers),
     }));
   }
 

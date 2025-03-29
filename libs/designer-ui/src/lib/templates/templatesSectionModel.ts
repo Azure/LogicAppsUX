@@ -10,7 +10,7 @@ interface TextItem extends BaseTemplatesSectionItem {
   type: 'text';
 }
 
-interface BaseFieldItem extends BaseTemplatesSectionItem {
+export interface BaseFieldItem extends BaseTemplatesSectionItem {
   id?: string;
   required?: boolean;
   disabled?: boolean;

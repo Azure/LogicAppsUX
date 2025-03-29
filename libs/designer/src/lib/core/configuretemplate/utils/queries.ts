@@ -1,4 +1,4 @@
-import type { ArmResource, LogicAppResource } from '@microsoft/logic-apps-shared';
+import type { ArmResource, LogicAppResource, WorkflowResource } from '@microsoft/logic-apps-shared';
 import { getTriggerFromDefinition, ResourceService } from '@microsoft/logic-apps-shared';
 import type { QueryClient, UseQueryResult } from '@tanstack/react-query';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
@@ -51,7 +51,7 @@ export const useWorkflowsInApp = (
   resourceGroup: string,
   logicAppName: string,
   isConsumption: boolean
-): UseQueryResult<LogicAppResource[], unknown> => {
+): UseQueryResult<WorkflowResource[], unknown> => {
   const queryClient = useQueryClient();
   return useQuery(
     ['workflowsInApp', subscriptionId?.toLowerCase(), resourceGroup?.toLowerCase(), logicAppName?.toLowerCase(), isConsumption],
