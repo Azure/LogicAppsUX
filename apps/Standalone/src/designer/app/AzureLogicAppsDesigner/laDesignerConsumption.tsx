@@ -16,7 +16,7 @@ import {
 } from './Services/WorkflowAndArtifacts';
 import { ArmParser } from './Utilities/ArmParser';
 import { getDataForConsumption, WorkflowUtility } from './Utilities/Workflow';
-import { Chatbot } from '@microsoft/logic-apps-chatbot';
+import { CoPilotChatbot } from '@microsoft/logic-apps-chatbot';
 import type { ContentType } from '@microsoft/logic-apps-shared';
 import {
   BaseApiManagementService,
@@ -310,7 +310,7 @@ const DesignerEditorConsumption = () => {
                 onRunSelected={onRunSelected}
               />
               {showChatBot ? (
-                <Chatbot
+                <CoPilotChatbot
                   getUpdatedWorkflow={getUpdatedWorkflow}
                   openFeedbackPanel={openFeedBackPanel}
                   closeChatBot={() => {

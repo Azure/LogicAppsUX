@@ -2,49 +2,33 @@ import constants from '../common/constants';
 import type { RequestData } from '../common/models/Query';
 import { isSuccessResponse } from '../core/util';
 import { CopilotPanelHeader } from './panelheader';
-import type { ITextField } from '@fluentui/react';
-import { useTheme, Panel, PanelType, css, getId } from '@fluentui/react';
-import { ShieldCheckmarkRegular } from '@fluentui/react-icons';
-import { LogEntryLevel, LoggerService, ChatbotService, guid } from '@microsoft/logic-apps-shared';
+import { getId } from '@fluentui/react';
+import { LogEntryLevel, LoggerService, ChatbotService, guid, type Workflow } from '@microsoft/logic-apps-shared';
 import type { ConversationItem, ChatEntryReaction, AdditionalParametersItem } from '@microsoft/designer-ui';
-import {
-  PanelLocation,
-  ChatInput,
-  ConversationItemType,
-  ConversationMessage,
-  FlowOrigin,
-  ProgressCardWithStopButton,
-  ChatSuggestionGroup,
-  ChatSuggestion,
-} from '@microsoft/designer-ui';
-import type { Workflow } from '@microsoft/logic-apps-designer';
+import { PanelLocation, ConversationItemType, FlowOrigin } from '@microsoft/designer-ui';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useIntl } from 'react-intl';
+import { ChatbotUi, defaultChatbotPanelWidth } from './ChatbotUi';
 
-export const chatbotPanelWidth = '360px';
-
-interface ChatbotProps {
+interface CoPilotChatbotProps {
   panelLocation?: PanelLocation;
   getAuthToken: () => Promise<string>;
   getUpdatedWorkflow: () => Promise<Workflow>;
   openFeedbackPanel: () => void; // callback when feedback panel is opened
   openAzureCopilotPanel?: (prompt?: string) => void; // callback to open Azure Copilot Panel
   closeChatBot?: () => void; // callback when chatbot is closed
+  chatbotWidth?: string;
 }
 
-const QUERY_MIN_LENGTH = 5;
-const QUERY_MAX_LENGTH = 2000;
-
-export const Chatbot = ({
+export const CoPilotChatbot = ({
   panelLocation = PanelLocation.Left,
   getAuthToken,
   getUpdatedWorkflow,
   openFeedbackPanel,
   openAzureCopilotPanel,
   closeChatBot,
-}: ChatbotProps) => {
-  const { isInverted } = useTheme();
-  const textInputRef = useRef<ITextField>(null);
+  chatbotWidth = defaultChatbotPanelWidth,
+}: CoPilotChatbotProps) => {
   const chatSessionId = useRef(guid());
   const intl = useIntl();
   const chatbotService = ChatbotService();
@@ -54,6 +38,7 @@ export const Chatbot = ({
   const [canSaveCurrentFlow, saveCurrentFlow] = useState(false);
   const [canTestCurrentFlow, testCurrentFlow] = useState(false);
   const [isSaving] = useState(false);
+  const [focus, setFocus] = useState(false);
   const [conversation, setConversation] = useState<ConversationItem[]>([
     {
       type: ConversationItemType.Greeting,
@@ -183,21 +168,6 @@ export const Chatbot = ({
     };
   }, [intl, selectedOperation]);
 
-  const inputIconButtonStyles = {
-    enabled: {
-      root: {
-        backgroundColor: 'transparent',
-        color: isInverted ? 'rgb(200, 200, 200)' : 'rgb(51, 51, 51)',
-      },
-    },
-    disabled: {
-      root: {
-        backgroundColor: 'transparent',
-        color: isInverted ? 'rgb(79, 79, 79)' : 'rgb(200, 200, 200)',
-      },
-    },
-  };
-
   const logFeedbackVote = useCallback((reaction: ChatEntryReaction, isRemovedVote?: boolean) => {
     if (isRemovedVote) {
       LoggerService().log({
@@ -270,7 +240,7 @@ export const Chatbot = ({
         ]);
         stopAnswerGeneration(true);
         setTimeout(() => {
-          textInputRef.current?.focus();
+          setFocus(true);
         }, 100);
       } catch (error: any) {
         LoggerService().log({
@@ -318,7 +288,7 @@ export const Chatbot = ({
           stopAnswerGeneration(true);
         }
         setTimeout(() => {
-          textInputRef.current?.focus();
+          setFocus(true);
         }, 100);
       }
     },
@@ -354,76 +324,43 @@ export const Chatbot = ({
   }, [conversation]);
 
   return (
-    <Panel
-      type={panelLocation === PanelLocation.Right ? PanelType.custom : PanelType.customNear}
-      isOpen={!collapsed}
-      customWidth={chatbotPanelWidth}
-      hasCloseButton={false}
-      isBlocking={false}
-      layerProps={{ styles: { root: { zIndex: 0, display: 'flex' } } }}
-      onDismiss={dismissCopilot}
-    >
-      <div className={'msla-chatbot-container'}>
-        <CopilotPanelHeader closeCopilot={dismissCopilot} />
-        <div className={css('msla-chatbot-content')}>
-          {!answerGeneration && (
-            <ProgressCardWithStopButton
-              onStopButtonClick={() => abortFetching()}
-              progressState={intlText.progressCardText}
-              stopButtonLabel={intlText.progressCardStopButtonLabel}
-            />
-          )}
-          {isSaving && <ProgressCardWithStopButton progressState={intlText.progressCardSaveText} />}
-          {conversation.map((item) => (
-            <ConversationMessage key={item.id} item={item} />
-          ))}
-        </div>
-        <div className={'msla-chatbot-footer'}>
-          <div className={'msla-protected-footer'}>
-            <ShieldCheckmarkRegular className="shield-checkmark-regular" /> {intlText.protectedMessage}
-          </div>
-          <ChatSuggestionGroup>
-            {canSaveCurrentFlow && (
-              <ChatSuggestion
-                text={intlText.chatSuggestion.saveButton}
-                iconName={'Save'}
-                onClick={() => saveCurrentFlow(false) /*TODO: add method to save workflow*/}
-              />
-            )}
-            {canTestCurrentFlow && (
-              <ChatSuggestion
-                text={intlText.chatSuggestion.testButton}
-                iconName={'TestBeaker'}
-                onClick={() => testCurrentFlow(false) /*TODO: add method to test workflow*/}
-              />
-            )}
-          </ChatSuggestionGroup>
-          <ChatInput
-            textFieldRef={textInputRef}
-            disabled={!answerGeneration}
-            isMultiline={true}
-            maxQueryLength={QUERY_MAX_LENGTH}
-            onQueryChange={(_ev, newValue) => {
-              setInputQuery(newValue ?? '');
-            }}
-            placeholder={intlText.chatInputPlaceholder}
-            query={inputQuery}
-            showCharCount={true}
-            submitButtonProps={{
-              title: intlText.submitButtonTitle,
-              disabled: !answerGeneration || inputQuery.length < QUERY_MIN_LENGTH,
-              iconProps: {
-                iconName: 'Send',
-                styles:
-                  !answerGeneration || inputQuery.length < QUERY_MIN_LENGTH
-                    ? inputIconButtonStyles.disabled
-                    : inputIconButtonStyles.enabled,
-              },
-              onClick: () => onSubmitInputQuery(inputQuery),
-            }}
-          />
-        </div>
-      </div>
-    </Panel>
+    <ChatbotUi
+      panel={{
+        location: panelLocation,
+        width: chatbotWidth,
+        isOpen: !collapsed,
+        onDismiss: dismissCopilot,
+        header: <CopilotPanelHeader closeCopilot={dismissCopilot} />,
+      }}
+      inputBox={{
+        value: inputQuery,
+        onChange: setInputQuery,
+        placeholder: intlText.chatInputPlaceholder,
+        onSubmit: onSubmitInputQuery,
+      }}
+      data={{
+        isSaving: isSaving,
+        canSave: canSaveCurrentFlow,
+        canTest: canTestCurrentFlow,
+        test: () => testCurrentFlow(false),
+        save: () => saveCurrentFlow(false),
+        abort: abortFetching,
+      }}
+      string={{
+        test: intlText.chatSuggestion.testButton,
+        save: intlText.chatSuggestion.saveButton,
+        submit: intlText.submitButtonTitle,
+        progressState: intlText.progressCardText,
+        progressStop: intlText.progressCardStopButtonLabel,
+        progressSave: intlText.progressCardSaveText,
+        protectedMessage: intlText.protectedMessage,
+      }}
+      body={{
+        messages: conversation,
+        focus: focus,
+        answerGenerationInProgress: !answerGeneration,
+        setFocus: setFocus,
+      }}
+    />
   );
 };
