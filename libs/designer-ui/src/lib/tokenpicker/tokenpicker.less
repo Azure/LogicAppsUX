@@ -44,6 +44,7 @@
     border: 1px solid @defaultBorderColor;
     box-sizing: border-box;
     height: 26px;
+    width: 100%;
   }
 }
 
@@ -55,7 +56,6 @@
 .msla-token-picker-sections {
   box-sizing: border-box;
   overflow-y: auto;
-  // min-height: 100px;
 }
 
 .msla-token-picker-section-header {
@@ -321,5 +321,37 @@
   .msla-tokenpicker-agentparameter-create-buttons {
     display: flex;
     margin-top: 20px;
+  }
+}
+
+.msla-token-picker-agent-parameter-no-results {
+  font-family: @font-family;
+  padding: 0 12px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  .msla-token-picker-agent-parameter-no-results-clear-search {
+    margin-bottom: 10px;
+  }
+}
+.msla-token-picker-agent-parameter-no-results-title {
+  font-size: medium;
+  font-weight: bold;
+  margin-bottom: 10px;
+}
+
+.msla-token-picker-agent-parameter-footer {
+  display: flex;
+  justify-content: center;
+  margin: 20px;
+  button {
+    color: #0078d4;
+    &:hover {
+      background-color: #f0f8ff;
+    }
+    &:focus {
+      background-color: #f0f8ff;
+    }
   }
 }

@@ -13,17 +13,23 @@ import { TokenPickerHeader } from './tokenpickerheader';
 import { TokenPickerPivot } from './tokenpickerpivot';
 import type { GetValueSegmentHandler } from './tokenpickersection/tokenpickeroption';
 import { TokenPickerSection } from './tokenpickersection/tokenpickersection';
-import type { ICalloutContentStyles, ISearchBox, PivotItem } from '@fluentui/react';
-import { SearchBox, DirectionalHint, Callout } from '@fluentui/react';
+import type { ICalloutContentStyles, PivotItem } from '@fluentui/react';
+import { DirectionalHint, Callout } from '@fluentui/react';
 import { useLexicalComposerContext } from '@lexical/react/LexicalComposerContext';
 import { $getSelection, type LexicalEditor, type NodeKey } from 'lexical';
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import { useIntl } from 'react-intl';
-import { escapeString, guid, LOCAL_STORAGE_KEYS, TokenType } from '@microsoft/logic-apps-shared';
-import { CreateAgentParameter, generateDefaultAgentParamName } from './tokenpickersection/CreateAgentParameter';
+import { escapeString, guid, LOCAL_STORAGE_KEYS, TOKEN_PICKER_OUTPUT_SECTIONS, TokenType } from '@microsoft/logic-apps-shared';
+import {
+  CreateAgentParameter,
+  generateDefaultAgentParamDescription,
+  generateDefaultAgentParamName,
+} from './tokenpickersection/agentparameter/CreateAgentParameter';
 import { INSERT_TOKEN_NODE } from '../editor/base/plugins/InsertTokenNode';
 import TokenPickerAgentParameterHandler from './plugins/InitializeTokenPickerAgentParameterHandler';
 import { UPDATE_ALL_EDITORS_EVENT } from '../editor/base/plugins/UpdateTokenNodes';
+import { SelectAgentParameter } from './tokenpickersection/agentparameter/SelectAgentParameter';
+import { SearchBox } from '@fluentui/react-components';
 
 export const TokenPickerMode = {
   TOKEN: 'token',
@@ -37,9 +43,9 @@ export type TokenPickerMode = (typeof TokenPickerMode)[keyof typeof TokenPickerM
 
 export type { Token as OutputToken } from '@microsoft/logic-apps-shared';
 
-const AgentParameterIcon =
+export const AgentParameterIcon =
   'data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHhtbG5zOnhsaW5rPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5L3hsaW5rIiBpZD0idXVpZC1hOTNkNmI0YS02N2Y2LTQ1MjAtODNhOS0yMGIwZGJlMjQ1Y2YiIGRhdGEtbmFtZT0iTGF5ZXIgMSIgd2lkdGg9IjE4IiBoZWlnaHQ9IjE4IiB2aWV3Qm94PSIwIDAgMTggMTgiPg0KICA8ZGVmcz4NCiAgICA8cmFkaWFsR3JhZGllbnQgaWQ9InV1aWQtMGJmODYwMGYtNmQ3ZC00OTZmLWE1ZGMtZDJhZjg2ZGQ2NGNmIiBjeD0iLTY3Ljk4MSIgY3k9Ijc5My4xOTkiIGZ4PSItNjcuOTgxIiBmeT0iNzkzLjE5OSIgcj0iLjQ1IiBncmFkaWVudFRyYW5zZm9ybT0idHJhbnNsYXRlKC0xNzkzOS4wMyAyMDM2OC4wMjkpIHJvdGF0ZSg0NSkgc2NhbGUoMjUuMDkxIC0zNC4xNDkpIiBncmFkaWVudFVuaXRzPSJ1c2VyU3BhY2VPblVzZSI+DQogICAgICA8c3RvcCBvZmZzZXQ9IjAiIHN0b3AtY29sb3I9IiM4M2I5ZjkiLz4NCiAgICAgIDxzdG9wIG9mZnNldD0iMSIgc3RvcC1jb2xvcj0iIzAwNzhkNCIvPg0KICAgIDwvcmFkaWFsR3JhZGllbnQ+DQogIDwvZGVmcz4NCiAgPHBhdGggZD0ibTAsMi43djEyLjZjMCwxLjQ5MSwxLjIwOSwyLjcsMi43LDIuN2gxMi42YzEuNDkxLDAsMi43LTEuMjA5LDIuNy0yLjdWMi43YzAtMS40OTEtMS4yMDktMi43LTIuNy0yLjdIMi43QzEuMjA5LDAsMCwxLjIwOSwwLDIuN1pNMTAuOCwwdjMuNmMwLDMuOTc2LDMuMjI0LDcuMiw3LjIsNy4yaC0zLjZjLTMuOTc2LDAtNy4xOTksMy4yMjItNy4yLDcuMTk4di0zLjU5OGMwLTMuOTc2LTMuMjI0LTcuMi03LjItNy4yaDMuNmMzLjk3NiwwLDcuMi0zLjIyNCw3LjItNy4yWiIgZmlsbD0idXJsKCN1dWlkLTBiZjg2MDBmLTZkN2QtNDk2Zi1hNWRjLWQyYWY4NmRkNjRjZikiIGZpbGwtcnVsZT0iZXZlbm9kZCIgc3Ryb2tlLXdpZHRoPSIwIi8+DQo8L3N2Zz4=';
-const AgentParameterBrandColor = '#072a8e';
+export const AgentParameterBrandColor = '#072a8e';
 
 const directionalHint = DirectionalHint.leftTopEdge;
 const gapSpace = 10;
@@ -107,13 +113,21 @@ export function TokenPicker({
   const [expressionEditorError, setExpressionEditorError] = useState<string>('');
   const containerRef = useRef<HTMLDivElement | null>(null);
   const expressionEditorRef = useRef<editor.IStandaloneCodeEditor | null>(null);
-  const searchBoxRef = useRef<ISearchBox | null>(null);
+  const searchBoxRef = useRef<HTMLInputElement | null>(null);
   const isExpression = initialMode === TokenPickerMode.EXPRESSION;
   const [anchorKey, setAnchorKey] = useState<NodeKey | null>(null);
   const [selectedAgentParameterToken, setSelectedAgentParameterToken] = useState<Token | null>(null);
   const [styleWithMargin, setStyleWithMargin] = useState(false);
   const showCreateAgentParameter =
     selectedMode === TokenPickerMode.AGENT_PARAMETER_CREATE || selectedMode === TokenPickerMode.AGENT_PARAMETER_ADD;
+
+  const agentParameterGroup = useMemo(() => {
+    const agentParameterGroup = tokenGroup?.find((tg) => tg.id === TOKEN_PICKER_OUTPUT_SECTIONS.AGENT_PARAMETERS);
+    if (agentParameterGroup) {
+      return agentParameterGroup;
+    }
+    return undefined;
+  }, [tokenGroup]);
 
   let editor: LexicalEditor | null;
   try {
@@ -217,7 +231,7 @@ export function TokenPicker({
     expressionEditorRef.current?.focus();
   };
 
-  const tokenPickerPlaceHolderText = intl.formatMessage({
+  const tokenPickerSearchPlaceHolderText = intl.formatMessage({
     defaultMessage: 'Search',
     id: 'Mc6ITJ',
     description: 'Placeholder text to search token picker',
@@ -312,7 +326,7 @@ export function TokenPicker({
           ref={containerRef}
         >
           <div className="msla-token-picker">
-            {initialMode ? (
+            {selectedMode ? (
               <TokenPickerHeader
                 fullScreen={fullScreen}
                 isExpression={isExpression}
@@ -320,14 +334,21 @@ export function TokenPicker({
                 pasteLastUsedExpression={pasteLastUsedExpression}
               />
             ) : null}
-            {showCreateAgentParameter ? (
+
+            {selectedMode === TokenPickerMode.AGENT_PARAMETER ? (
+              <SelectAgentParameter
+                agentParameters={agentParameterGroup}
+                onCreateAgentParameter={() => setSelectedMode(TokenPickerMode.AGENT_PARAMETER_ADD)}
+                getValueSegmentFromToken={getValueSegmentFromToken}
+              />
+            ) : showCreateAgentParameter ? (
               <CreateAgentParameter
                 nodeToBeUpdated={nodeToBeUpdated}
                 createAgentParameter={handleCreateAgentParameter}
                 cancelCreateAgentParameter={cancelCreateAgentParameter}
                 defaultName={selectedAgentParameterToken?.name || generateDefaultAgentParamName(parameter)}
                 defaultType={selectedAgentParameterToken?.type || valueType}
-                defaultDescription={selectedAgentParameterToken?.description || ''}
+                defaultDescription={selectedAgentParameterToken?.description || generateDefaultAgentParamDescription(parameter)}
               />
             ) : (
               <>
@@ -352,12 +373,10 @@ export function TokenPicker({
                 <div className="msla-token-picker-search-container">
                   <SearchBox
                     className="msla-token-picker-search"
-                    componentRef={(e) => {
-                      searchBoxRef.current = e;
-                    }}
-                    placeholder={tokenPickerPlaceHolderText}
-                    onChange={(_, newValue) => {
-                      setSearchQuery(newValue ?? '');
+                    ref={searchBoxRef}
+                    placeholder={tokenPickerSearchPlaceHolderText}
+                    onChange={(_, data) => {
+                      setSearchQuery(data.value);
                     }}
                     data-automation-id="msla-token-picker-search"
                   />

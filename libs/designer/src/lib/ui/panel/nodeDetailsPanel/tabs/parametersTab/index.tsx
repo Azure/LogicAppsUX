@@ -95,6 +95,7 @@ export const ParametersTab: React.FC<PanelTabProps> = (props) => {
 
   const connectionName = useNodeConnectionName(selectedNodeId);
   const operationInfo = useOperationInfo(selectedNodeId);
+  console.log(operationInfo);
   const showConnectionDisplay = useAllowUserToChangeConnection(operationInfo);
   const isInlineConnection = useIsInlineConnection(operationInfo);
   const showIdentitySelector = useShowIdentitySelectorQuery(selectedNodeId);
