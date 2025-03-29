@@ -1,18 +1,9 @@
-import type { AppDispatch, RootState } from '../../../core/state/templates/store';
-import { Text } from '@fluentui/react-components';
+import type { AppDispatch } from '../../../core/state/templates/store';
 import type { TemplateTabProps } from '@microsoft/designer-ui';
 import constants from '../../../common/constants';
 import type { IntlShape } from 'react-intl';
 import { selectWizardTab } from '../../../core/state/templates/tabSlice';
-import { useSelector } from 'react-redux';
-
-export const ConnectionsTab = () => {
-  const { connections } = useSelector((state: RootState) => ({
-    connections: state.template.connections,
-  }));
-
-  return <Text>placeholder - show connections {JSON.stringify(connections)}</Text>;
-};
+import { TemplateConnectionsList } from '../connections/connectionslist';
 
 export const connectionsTab = (intl: IntlShape, dispatch: AppDispatch): TemplateTabProps => ({
   id: constants.CONFIGURE_TEMPLATE_WIZARD_TAB_NAMES.CONNECTIONS,
@@ -22,7 +13,12 @@ export const connectionsTab = (intl: IntlShape, dispatch: AppDispatch): Template
     description: 'The tab label for the monitoring connections tab on the configure template wizard',
   }),
   hasError: false,
-  content: <ConnectionsTab />,
+  content: <TemplateConnectionsList />,
+  description: intl.formatMessage({
+    defaultMessage: 'Connections for the following connectors would be required during workflow creation from this template.',
+    id: 'sOd/ie',
+    description: 'The description for the connections tab on the configure template wizard',
+  }),
   footerContent: {
     primaryButtonText: intl.formatMessage({
       defaultMessage: 'Previous',
