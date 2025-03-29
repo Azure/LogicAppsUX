@@ -164,7 +164,7 @@ export const customizeWorkflowsTab = (
   {
     hasError,
     isSaving,
-    onClosePanel,
+    isPrimaryButtonDisabled,
     disabled,
     selectedWorkflowsList,
     updateWorkflowDataField,
@@ -180,6 +180,7 @@ export const customizeWorkflowsTab = (
     id: 'qnio+9',
     description: 'The tab label for the monitoring customize workflows tab on the configure template wizard',
   }),
+  disabled: disabled,
   hasError: hasError,
   content: <CustomizeWorkflows selectedWorkflowsList={selectedWorkflowsList} updateWorkflowDataField={updateWorkflowDataField} />,
   footerContent: {
@@ -192,7 +193,7 @@ export const customizeWorkflowsTab = (
       onSaveChanges();
       dispatch(closePanel());
     },
-    primaryButtonDisabled: disabled,
+    primaryButtonDisabled: isPrimaryButtonDisabled,
     secondaryButtonText: intl.formatMessage({
       defaultMessage: 'Cancel',
       id: '75zXUl',
@@ -200,9 +201,6 @@ export const customizeWorkflowsTab = (
     }),
     secondaryButtonOnClick: () => {
       dispatch(closePanel());
-      onClosePanel();
-
-      //TODO: revert all changes
     },
     secondaryButtonDisabled: isSaving,
   },

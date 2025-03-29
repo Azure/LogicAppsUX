@@ -13,11 +13,7 @@ import {
   initializeWorkflowsData,
 } from '../../../../core/actions/bjsworkflow/configuretemplate';
 
-export const useConfigureWorkflowPanelTabs = ({
-  onClosePanel,
-}: {
-  onClosePanel: () => void;
-}): TemplateTabProps[] => {
+export const useConfigureWorkflowPanelTabs = (): TemplateTabProps[] => {
   const intl = useIntl();
   const dispatch = useDispatch<AppDispatch>();
   const { workflowsInTemplate, workflowState } = useSelector((state: RootState) => ({
@@ -63,27 +59,27 @@ export const useConfigureWorkflowPanelTabs = ({
     dispatch(initializeWorkflowsData({}));
   };
 
+  const isNoWorkflowsSelected = Object.keys(selectedWorkflowsList()).length === 0;
   const missingNameOrDisplayName = Object.values(selectedWorkflowsList()).some(
     (workflow) => !workflow?.workflowName || !workflow?.manifest?.title
   );
 
   return [
     selectWorkflowsTab(intl, dispatch, {
-      hasError,
       isSaving,
-      onClosePanel,
       selectedWorkflowsList: selectedWorkflowsList(),
       onWorkflowsSelected,
       onNextButtonClick,
+      isPrimaryButtonDisabled: isNoWorkflowsSelected,
     }),
     customizeWorkflowsTab(intl, dispatch, {
       hasError,
       isSaving,
-      onClosePanel,
       selectedWorkflowsList: selectedWorkflowsList(),
       updateWorkflowDataField,
       onSaveChanges,
-      disabled: missingNameOrDisplayName,
+      disabled: isNoWorkflowsSelected,
+      isPrimaryButtonDisabled: missingNameOrDisplayName,
     }),
   ];
 };

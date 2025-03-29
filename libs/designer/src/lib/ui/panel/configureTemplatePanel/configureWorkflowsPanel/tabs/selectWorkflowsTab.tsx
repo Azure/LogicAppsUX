@@ -49,10 +49,12 @@ export const SelectWorkflows = ({
   const onLogicAppSelected = useCallback(
     (app: LogicAppResource) => {
       const { id, plan } = app;
-      onWorkflowsSelected([]);
       if (equals(plan, 'Consumption')) {
         const normalizedWorkflowId = id.toLowerCase();
         dispatch(updateAllWorkflowsData({ [normalizedWorkflowId]: { id: normalizedWorkflowId } }));
+        onWorkflowsSelected([normalizedWorkflowId]);
+      } else {
+        onWorkflowsSelected([]);
       }
     },
     [dispatch, onWorkflowsSelected]
@@ -169,6 +171,7 @@ export const SelectWorkflows = ({
             <TableRow>
               <TableSelectionCell
                 checked={allRowsSelected ? true : someRowsSelected ? 'mixed' : false}
+                disabled={isConsumption}
                 onClick={toggleAllRows}
                 onKeyDown={toggleAllKeydown}
                 checkboxIndicator={{ 'aria-label': 'Select all rows' }}
@@ -222,9 +225,8 @@ export const selectWorkflowsTab = (
   intl: IntlShape,
   dispatch: AppDispatch,
   {
-    hasError,
     isSaving,
-    onClosePanel,
+    isPrimaryButtonDisabled,
     selectedWorkflowsList,
     onWorkflowsSelected,
     onNextButtonClick,
@@ -239,7 +241,6 @@ export const selectWorkflowsTab = (
     id: 'vWOWFo',
     description: 'The tab label for the monitoring select workflows tab on the configure template wizard',
   }),
-  hasError: hasError,
   content: <SelectWorkflows selectedWorkflowsList={selectedWorkflowsList} onWorkflowsSelected={onWorkflowsSelected} />,
   footerContent: {
     primaryButtonText: intl.formatMessage({
@@ -251,6 +252,7 @@ export const selectWorkflowsTab = (
       dispatch(selectPanelTab(constants.CONFIGURE_TEMPLATE_WIZARD_TAB_NAMES.CUSTOMIZE_WORKFLOWS));
       await onNextButtonClick();
     },
+    primaryButtonDisabled: isPrimaryButtonDisabled,
     secondaryButtonText: intl.formatMessage({
       defaultMessage: 'Cancel',
       id: '75zXUl',
@@ -258,9 +260,6 @@ export const selectWorkflowsTab = (
     }),
     secondaryButtonOnClick: () => {
       dispatch(closePanel());
-      onClosePanel();
-
-      //TODO: revert all changes
     },
     secondaryButtonDisabled: isSaving,
   },

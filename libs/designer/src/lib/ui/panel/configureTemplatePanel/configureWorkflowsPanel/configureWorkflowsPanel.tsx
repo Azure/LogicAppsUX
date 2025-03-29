@@ -9,10 +9,10 @@ import { useConfigureWorkflowPanelTabs } from './usePanelTabs';
 import type { WorkflowTemplateData } from '../../../../core';
 
 export interface ConfigureWorkflowsTabProps {
-  hasError: boolean;
+  hasError?: boolean;
   disabled?: boolean;
+  isPrimaryButtonDisabled: boolean;
   isSaving: boolean;
-  onClosePanel: () => void;
   selectedWorkflowsList: Record<string, Partial<WorkflowTemplateData>>;
 }
 
@@ -38,11 +38,7 @@ export const ConfigureWorkflowsPanel = () => {
     }),
   };
 
-  const revertAllChanges = useCallback(() => {
-    //TODO: revert all changes
-  }, []);
-
-  const panelTabs: TemplateTabProps[] = useConfigureWorkflowPanelTabs({ onClosePanel: revertAllChanges });
+  const panelTabs: TemplateTabProps[] = useConfigureWorkflowPanelTabs();
 
   const handleSelectTab = (tabId: string): void => {
     dispatch(selectPanelTab(tabId));
@@ -59,8 +55,7 @@ export const ConfigureWorkflowsPanel = () => {
 
   const dismissPanel = useCallback(() => {
     dispatch(closePanel());
-    revertAllChanges();
-  }, [dispatch, revertAllChanges]);
+  }, [dispatch]);
 
   const selectedTabProps = selectedTabId ? panelTabs?.find((tab) => tab.id === selectedTabId) : panelTabs[0];
   const onRenderFooterContent = useCallback(
