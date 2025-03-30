@@ -29,6 +29,7 @@ import {
   getConsumptionWorkflow,
   getParametersInWorkflowApp,
   getStandardWorkflow,
+  getTemplate,
   getTemplateManifest,
   getWorkflowsInTemplate,
 } from '../../configuretemplate/utils/queries';
@@ -88,8 +89,9 @@ export const initializeConfigureTemplateServices = createAsyncThunk(
 
 export const loadCustomTemplate = createAsyncThunk(
   'loadCustomTemplate',
-  async ({ templateId }: { templateId: string }, { dispatch }): Promise<void> => {
+  async ({ templateId }: { templateId: string }, { dispatch }): Promise<{ isPublished: boolean; environment: string }> => {
     const templateName = getResourceNameFromId(templateId);
+    const templateResource = await getTemplate(templateId);
     const manifest = await getTemplateManifest(templateId);
     dispatch(loadTemplate({ templateName, preLoadedManifest: manifest }));
 
@@ -110,6 +112,11 @@ export const loadCustomTemplate = createAsyncThunk(
       {}
     );
     dispatch(updateAllWorkflowsData(allWorkflowsData));
+
+    return {
+      isPublished: templateResource.properties?.provisioningState === 'Succeeded',
+      environment: templateResource.properties?.environment ?? 'Development',
+    };
   }
 );
 
