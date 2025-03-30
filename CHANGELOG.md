@@ -1,4 +1,11 @@
 # Logic Apps Designer
+## [5.68.0](https://github.com/Azure/LogicAppsUX/compare/v5.67.0...v5.68.0) (2025-03-30)
+
+
+### Features
+
+* **designer:** Add operation details in Input/Output channel ([#6909](https://github.com/Azure/LogicAppsUX/issues/6909)) ([4c15f26](https://github.com/Azure/LogicAppsUX/commit/4c15f263fd501404373d87bc68087a35f1d3fc38))
+
 ## [5.67.0](https://github.com/Azure/LogicAppsUX/compare/v5.66.0...v5.67.0) (2025-03-30)
 
 
