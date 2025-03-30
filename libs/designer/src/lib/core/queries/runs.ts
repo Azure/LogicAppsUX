@@ -165,12 +165,12 @@ export const useAgentActionsRepetition = (
     async () => {
       const allActions: LogicAppsV2.RunRepetition[] = [];
       const firstActions = await RunService().getAgentActionsRepetition({ nodeId, runId }, repetitionName);
-      allActions.push(...firstActions.resources);
+      allActions.push(...(firstActions?.value ?? []));
       let nextLink = firstActions.nextLink;
       while (nextLink) {
         const moreActions = await RunService().getMoreAgentActionsRepetition(nextLink);
-        allActions.push(...moreActions.resources);
-        nextLink = moreActions.nextLink;
+        allActions.push(...(moreActions?.value ?? []));
+        nextLink = moreActions?.nextLink;
       }
       return allActions;
     },

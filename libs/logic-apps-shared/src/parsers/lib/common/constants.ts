@@ -177,3 +177,9 @@ export class ExpressionConstants {
     singleQuote: "'",
   };
 }
+
+export const TOKEN_PICKER_OUTPUT_SECTIONS = {
+  AGENT_PARAMETERS: 'agentparameters',
+  WORKFLOW_PARAMETERS: 'workflowparameters',
+  VARIABLES: 'variables',
+};
