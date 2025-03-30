@@ -101,15 +101,14 @@ const useDescriptionSectionItems = (resources: Record<string, string>) => {
 const useCategorySectionItems = (resources: Record<string, string>) => {
   const dispatch = useDispatch<AppDispatch>();
   const { details, tags, featuredConnectors } = useSelector((state: RootState) => state.template.manifest as Template.TemplateManifest);
-  const intl = useIntl();
   const categories = useMemo(
     () =>
-      getLogicAppsCategories(intl).map((category) => ({
+      getLogicAppsCategories().map((category) => ({
         id: category.value,
         label: category.displayName,
         value: category.value,
       })),
-    [intl]
+    []
   );
   const selectedCategories = useMemo(() => {
     return details?.Category ? (details?.Category ?? '').split(',') : [];

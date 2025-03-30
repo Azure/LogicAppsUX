@@ -1,4 +1,5 @@
-import { type IntlShape, useIntl } from 'react-intl';
+import { getIntl } from '@microsoft/logic-apps-shared';
+import { useIntl } from 'react-intl';
 
 export const useResourceStrings = () => {
   const intl = useIntl();
@@ -71,7 +72,8 @@ export const useResourceStrings = () => {
   };
 };
 
-export const getLogicAppsCategories = (intl: IntlShape) => {
+export const getLogicAppsCategories = () => {
+  const intl = getIntl();
   return [
     {
       value: 'Design Patterns',
