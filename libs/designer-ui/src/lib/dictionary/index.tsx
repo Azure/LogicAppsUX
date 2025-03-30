@@ -39,7 +39,6 @@ export const DictionaryEditor: React.FC<DictionaryEditorProps> = ({
   dictionaryType = DictionaryType.DEFAULT,
   keyType = constants.SWAGGER.TYPE.STRING,
   valueType = constants.SWAGGER.TYPE.ANY,
-  getTokenPicker,
   onChange,
   ...baseEditorProps
 }): JSX.Element => {
@@ -83,34 +82,24 @@ export const DictionaryEditor: React.FC<DictionaryEditorProps> = ({
     <div className="msla-dictionary-editor-container" data-automation-id={baseEditorProps.dataAutomationId}>
       {collapsed && !(dictionaryType === DictionaryType.TABLE) ? (
         <CollapsedDictionary
-          labelId={baseEditorProps.labelId}
-          readonly={baseEditorProps.readonly}
-          collapsedValue={collapsedValue}
+          {...baseEditorProps}
+          initialValue={collapsedValue}
           keyType={keyType}
           valueType={valueType}
-          tokenPickerButtonProps={baseEditorProps.tokenPickerButtonProps}
-          getTokenPicker={getTokenPicker}
           setItems={(newItems: DictionaryEditorItemProps[]) => setItems(newItems)}
           setIsValid={setIsValid}
           setCollapsedValue={(val: ValueSegment[]) => setCollapsedValue(val)}
           onBlur={handleCollapsedBlur}
-          tokenMapping={baseEditorProps.tokenMapping}
-          loadParameterValueFromString={baseEditorProps.loadParameterValueFromString}
         />
       ) : (
         <ExpandedDictionary
-          label={baseEditorProps?.label}
+          {...baseEditorProps}
           items={items ?? [{ key: [], value: [], id: guid() }]}
-          readonly={baseEditorProps.readonly}
           keyTitle={keyTitle}
           valueTitle={valueTitle}
           keyType={keyType}
           valueType={valueType}
           setItems={updateItems}
-          tokenPickerButtonProps={baseEditorProps.tokenPickerButtonProps}
-          getTokenPicker={getTokenPicker}
-          tokenMapping={baseEditorProps.tokenMapping}
-          loadParameterValueFromString={baseEditorProps.loadParameterValueFromString}
         />
       )}
 

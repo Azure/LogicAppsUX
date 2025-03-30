@@ -79,6 +79,7 @@ export const httpManifest = {
         method: {
           type: 'string',
           title: 'Method',
+          description: 'Enter method',
           'x-ms-editor': 'combobox',
           'x-ms-editor-options': {
             options: methodOptions,
