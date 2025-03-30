@@ -1,9 +1,8 @@
-
 import type { ConversationItem } from '@microsoft/designer-ui';
 import { ConversationItemType, PanelLocation } from '@microsoft/designer-ui';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useIntl } from 'react-intl';
-import { defaultChatbotPanelWidth, ChatbotUi} from '@microsoft/logic-apps-chatbot';
+import { defaultChatbotPanelWidth, ChatbotUi } from '@microsoft/logic-apps-chatbot';
 import { useChatHistory } from '../../../core/queries/runs';
 import { useMonitoringView } from '../../../core/state/designerOptions/designerOptionsSelectors';
 import { useRunInstance } from '../../../core/state/workflow/workflowSelectors';
@@ -20,91 +19,71 @@ const AgentChatHeader = ({
 }: {
   title: string;
 }) => {
-  return (
-   <h1>
-      {title}
-   </h1>
-  );
-}
+  return <h1>{title}</h1>;
+};
 
 const parseChatHistory = (message: any) => {
-  // agentActionsRepetitionData.map((item: any) => ({
-  //   id: guid(),
-  //   text: item.messageEntryPayload?.content ?? '',
-  //   type: ConversationItemType.Reply,
-  //   timestamp: item.timestamp,
-  // }));
-
   let type: ConversationItemType = ConversationItemType.Reply;
-  let text = ''
+  let text = '';
   switch (message.messageEntryType) {
     case 'Content': {
       type = ConversationItemType.Reply;
       text = message.messageEntryPayload?.content ?? '';
       break;
     }
-    case 'ToolResult':
-      type = ConversationItemType.OperationsNeedingAttention;
+    case 'ToolResult': {
+      type = ConversationItemType.Tool;
+      text = message.toolResultsPayload?.toolResult?.toolName ? `${message.toolResultsPayload?.toolResult?.toolName} - got executed` : '';
       break;
+    }
     default:
       type = ConversationItemType.Reply;
       break;
   }
 
-
-  // This function should parse the chat history and return it in a format that can be used by the chatbot.
-  // For now, it's just a placeholder.
   return {
     id: guid(),
     text,
     type,
     timestamp: message.timestamp,
   };
-}
+};
 
-export const AgentChat = ({
-  panelLocation = PanelLocation.Left,
-  closeChatBot,
-  chatbotWidth = defaultChatbotPanelWidth,
-}: AgentChatProps) => {
+export const AgentChat = ({ panelLocation = PanelLocation.Left, chatbotWidth = defaultChatbotPanelWidth }: AgentChatProps) => {
   const intl = useIntl();
   const [inputQuery, setInputQuery] = useState('');
-  const [answerGeneration, stopAnswerGeneration] = useState(true);
+  const [answerGeneration, _stopAnswerGeneration] = useState(true);
   const [canSaveCurrentFlow, saveCurrentFlow] = useState(false);
   const [canTestCurrentFlow, testCurrentFlow] = useState(false);
   const [isSaving] = useState(false);
   const [focus, setFocus] = useState(false);
   const [conversation, setConversation] = useState<ConversationItem[]>([]);
-  const [controller, setController] = useState(new AbortController());
+  const [controller, _setController] = useState(new AbortController());
   const [selectedOperation] = useState('');
   const isMonitoringView = useMonitoringView();
   const runInstance = useRunInstance();
 
+  const { isFetching: isActionsRepetitionFetching, data: agentActionsRepetitionData } = useChatHistory(
+    !!isMonitoringView,
+    true,
+    'Default_Agent',
+    runInstance?.id
+  );
 
-   const { isFetching: isActionsRepetitionFetching, data: agentActionsRepetitionData } = useChatHistory(
-      !!isMonitoringView,
-      true,
-      "Default_Agent",
-      runInstance?.id,
-    );
-
-  console.log('charloe', agentActionsRepetitionData);
+  console.log('charlie', isActionsRepetitionFetching, agentActionsRepetitionData);
 
   useEffect(() => {
     if (!isNullOrUndefined(agentActionsRepetitionData)) {
-      const newConversations = agentActionsRepetitionData.map((message: any) => parseChatHistory(message)); 
-      setConversation((current) => [
-        ...newConversations,
-        ...current,
-      ]);
+      const newConversations = agentActionsRepetitionData.map((message: any) => parseChatHistory(message));
+      setConversation((current) => [...newConversations, ...current]);
     }
-  }, [ setConversation, agentActionsRepetitionData]);
+  }, [setConversation, agentActionsRepetitionData]);
 
   const intlText = useMemo(() => {
     return {
       chatInputPlaceholder: intl.formatMessage({
         defaultMessage: 'Ask me anything... (read-only mode for now)',
-        id: 'd6jBzPt',
+        id: 'pvfstY',
         description: 'Agent chat input placeholder text',
       }),
       protectedMessage: intl.formatMessage({
@@ -216,7 +195,6 @@ export const AgentChat = ({
     };
   }, [intl, selectedOperation]);
 
-
   const abortFetching = useCallback(() => {
     controller.abort();
   }, [controller]);
@@ -232,14 +210,14 @@ export const AgentChat = ({
         width: chatbotWidth,
         isOpen: true,
         isBlocking: false,
-        onDismiss: ()=>{},
+        onDismiss: () => {},
         header: <AgentChatHeader title="Agent Chat" />,
       }}
       inputBox={{
         value: inputQuery,
         onChange: setInputQuery,
         placeholder: intlText.chatInputPlaceholder,
-        onSubmit: ()=>{},
+        onSubmit: () => {},
         disabled: true, // read-only mode
       }}
       data={{
