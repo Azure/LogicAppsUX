@@ -1,4 +1,13 @@
 # Logic Apps Designer
+## [5.70.0](https://github.com/Azure/LogicAppsUX/compare/v5.69.0...v5.70.0) (2025-03-30)
+
+## [5.69.0](https://github.com/Azure/LogicAppsUX/compare/v5.68.0...v5.69.0) (2025-03-30)
+
+
+### Bug Fixes
+
+* **designer:** Show default channel if enabled after closing/re-opening panel ([#6910](https://github.com/Azure/LogicAppsUX/issues/6910)) ([e93505d](https://github.com/Azure/LogicAppsUX/commit/e93505d9a3b2447b89b925b94852e052e02fc184))
+
 ## [5.68.0](https://github.com/Azure/LogicAppsUX/compare/v5.67.0...v5.68.0) (2025-03-30)
 
 
