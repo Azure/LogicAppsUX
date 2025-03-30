@@ -38,6 +38,7 @@ export interface TokenPickerButtonEditorProps {
   verticalOffSet?: number;
   horizontalOffSet?: number;
   newlineVerticalOffset?: number;
+  showAgentParameterButton?: boolean;
 }
 
 interface TokenPickerButtonProps extends TokenPickerButtonEditorProps {
@@ -50,6 +51,7 @@ export const TokenPickerButton = ({
   verticalOffSet = 20,
   horizontalOffSet = 38,
   newlineVerticalOffset = 15,
+  showAgentParameterButton,
   openTokenPicker,
 }: TokenPickerButtonProps): JSX.Element => {
   const { hideDynamicContent, hideExpression } = hideButtonOptions ?? {};
@@ -83,10 +85,12 @@ export const TokenPickerButton = ({
         const { right, left } = rootElement.getBoundingClientRect();
         const { top } = anchorElement.getBoundingClientRect();
         const additionalOffset = hideExpression || hideDynamicContent ? singleTokenHeightReduction : 0;
+        const shiftUpOffset = showAgentParameterButton ? 15 : 0; // Shift up by 30px if showAgentParameterButton is true
+
         if (anchorElement?.childNodes[0]?.nodeName === 'BR') {
-          boxElem.style.top = `${top - newlineVerticalOffset + additionalOffset}px`;
+          boxElem.style.top = `${top - newlineVerticalOffset + additionalOffset - shiftUpOffset}px`;
         } else {
-          boxElem.style.top = `${top - verticalOffSet + additionalOffset}px`;
+          boxElem.style.top = `${top - verticalOffSet + additionalOffset - shiftUpOffset}px`;
         }
 
         if (location === TokenPickerButtonLocation.Right) {
@@ -96,7 +100,17 @@ export const TokenPickerButton = ({
         }
       }
     }
-  }, [anchorKey, editor, hideExpression, hideDynamicContent, location, newlineVerticalOffset, verticalOffSet, horizontalOffSet]);
+  }, [
+    anchorKey,
+    editor,
+    hideExpression,
+    hideDynamicContent,
+    location,
+    newlineVerticalOffset,
+    verticalOffSet,
+    horizontalOffSet,
+    showAgentParameterButton,
+  ]);
 
   useEffect(() => {
     window.addEventListener('resize', updatePosition);
@@ -122,6 +136,12 @@ export const TokenPickerButton = ({
     defaultMessage: `Insert expression (you can also add by typing '/' in the editor)`,
     id: '9V2Uwf',
     description: 'Label for button to open expression token picker',
+  });
+
+  const agentParameterButtonText = intl.formatMessage({
+    defaultMessage: `Insert agent parameter (you can also add by typing '/' in the editor)`,
+    id: 'OYzNub',
+    description: 'Label for button to open agent parameter token picker',
   });
 
   return (
@@ -156,7 +176,9 @@ export const TokenPickerButton = ({
             <TooltipHost content={expressionButtonText} directionalHint={DirectionalHint.bottomCenter}>
               <IconButton
                 iconProps={expressionButtonProps}
-                styles={{ root: `bottom-root-button-style ${hideDynamicContent ? 'bottom-root-button-style-single' : ''}` }}
+                styles={{
+                  root: `${showAgentParameterButton ? 'middle-root-button-style' : 'bottom-root-button-style'} ${hideDynamicContent ? 'bottom-root-button-style-single' : ''}`,
+                }}
                 className="msla-token-picker-entrypoint-button-dynamic-content"
                 data-automation-id="msla-token-picker-entrypoint-button-expression"
                 onClick={() => {
@@ -171,6 +193,25 @@ export const TokenPickerButton = ({
               />
             </TooltipHost>
           )}
+          {showAgentParameterButton ? (
+            <TooltipHost content={agentParameterButtonText}>
+              <IconButton
+                iconProps={{ iconName: 'Robot' }}
+                styles={{ root: `bottom-root-button-style ${hideDynamicContent ? 'bottom-root-button-style-single' : ''}` }}
+                className="msla-token-picker-entrypoint-button-dynamic-content"
+                data-automation-id="msla-token-picker-entrypoint-button-agent-parameter"
+                onClick={() => {
+                  LoggerService().log({
+                    area: 'TokenPickerButton:openTokenPicker',
+                    args: [TokenPickerMode.AGENT_PARAMETER],
+                    level: LogEntryLevel.Verbose,
+                    message: 'Agent parameter picker opened.',
+                  });
+                  openTokenPicker(TokenPickerMode.AGENT_PARAMETER);
+                }}
+              />
+            </TooltipHost>
+          ) : null}
         </div>
       ) : null}
       <OnChangePlugin onChange={onChange} />

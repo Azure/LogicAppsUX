@@ -160,5 +160,20 @@ export const generateDefaultAgentParamName = (parameter: ParameterInfo): string 
     return label;
   }
 
-  return words.map((word) => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase()).join(' ');
+  return words.map((word) => capitalizeFirstLetter(word)).join(' ');
+};
+
+export const generateDefaultAgentParamDescription = (parameter: ParameterInfo): string => {
+  const { placeholder, label } = parameter;
+  if (!placeholder) {
+    return label;
+  }
+  const words = placeholder.trim().split(/\s+/);
+  if (words[0]) {
+    words.shift();
+  } else {
+    return label;
+  }
+
+  return capitalizeFirstLetter(words.join(' '));
 };

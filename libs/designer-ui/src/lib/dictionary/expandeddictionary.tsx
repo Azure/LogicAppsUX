@@ -95,6 +95,7 @@ export const ExpandedDictionary = ({
             <div className="msla-dictionary-item-cell" ref={(el) => (editorRef.current[index] = el)}>
               <StringEditor
                 {...props}
+                dataAutomationId={`${props.dataAutomationId}-key-${index}`}
                 ariaLabel={`${itemKeyLabel} ${index}`}
                 className="msla-dictionary-editor-container-expanded"
                 placeholder={keyPlaceholder}
@@ -108,6 +109,7 @@ export const ExpandedDictionary = ({
             <div className="msla-dictionary-item-cell" ref={(el) => (editorRef.current[index] = el)}>
               <StringEditor
                 {...props}
+                dataAutomationId={`${props.dataAutomationId}-value-${index}`}
                 ariaLabel={`${itemValueLabel} ${index}`}
                 className="msla-dictionary-editor-container-expanded"
                 placeholder={valuePlaceholder}
