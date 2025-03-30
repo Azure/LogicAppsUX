@@ -109,8 +109,12 @@ export default {
 
     supportedChannels: [
       {
-        name: 'request',
-        output: ['response'],
+        input: {
+          type: 'request',
+        },
+        output: {
+          type: 'response',
+        },
       },
     ],
 

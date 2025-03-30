@@ -187,8 +187,14 @@ export interface OperationManifest {
 }
 
 export interface SupportedInputChannels {
-  name: string;
-  output: string[];
+  input: {
+    type: string;
+    default?: SwaggerSchema;
+  };
+  output: {
+    type: string;
+    default?: SwaggerSchema;
+  };
 }
 
 export interface OperationManifestProperties {
