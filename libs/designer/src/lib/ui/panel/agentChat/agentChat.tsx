@@ -27,7 +27,40 @@ const AgentChatHeader = ({
   );
 }
 
+const parseChatHistory = (message: any) => {
+  // agentActionsRepetitionData.map((item: any) => ({
+  //   id: guid(),
+  //   text: item.messageEntryPayload?.content ?? '',
+  //   type: ConversationItemType.Reply,
+  //   timestamp: item.timestamp,
+  // }));
 
+  let type: ConversationItemType = ConversationItemType.Reply;
+  let text = ''
+  switch (message.messageEntryType) {
+    case 'Content': {
+      type = ConversationItemType.Reply;
+      text = message.messageEntryPayload?.content ?? '';
+      break;
+    }
+    case 'ToolResult':
+      type = ConversationItemType.OperationsNeedingAttention;
+      break;
+    default:
+      type = ConversationItemType.Reply;
+      break;
+  }
+
+
+  // This function should parse the chat history and return it in a format that can be used by the chatbot.
+  // For now, it's just a placeholder.
+  return {
+    id: guid(),
+    text,
+    type,
+    timestamp: message.timestamp,
+  };
+}
 
 export const AgentChat = ({
   panelLocation = PanelLocation.Left,
@@ -59,12 +92,7 @@ export const AgentChat = ({
 
   useEffect(() => {
     if (!isNullOrUndefined(agentActionsRepetitionData)) {
-      const newConversations = agentActionsRepetitionData.map((item: any) => ({
-        id: guid(),
-        text: item.messageEntryPayload?.content ?? '',
-        type: ConversationItemType.Reply,
-        timestamp: item.timestamp,
-      }));
+      const newConversations = agentActionsRepetitionData.map((message: any) => parseChatHistory(message)); 
       setConversation((current) => [
         ...newConversations,
         ...current,
@@ -75,9 +103,9 @@ export const AgentChat = ({
   const intlText = useMemo(() => {
     return {
       chatInputPlaceholder: intl.formatMessage({
-        defaultMessage: 'Ask a question about this workflow or about Azure Logic Apps as a whole ...',
-        id: 'kXn5e0',
-        description: 'Chabot input placeholder text',
+        defaultMessage: 'Ask me anything... (read-only mode for now)',
+        id: 'd6jBzPt',
+        description: 'Agent chat input placeholder text',
       }),
       protectedMessage: intl.formatMessage({
         defaultMessage: 'Your personal and company data are protected in this chat',
@@ -212,6 +240,7 @@ export const AgentChat = ({
         onChange: setInputQuery,
         placeholder: intlText.chatInputPlaceholder,
         onSubmit: ()=>{},
+        disabled: true, // read-only mode
       }}
       data={{
         isSaving: isSaving,
