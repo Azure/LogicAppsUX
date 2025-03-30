@@ -25,10 +25,12 @@ export const TemplatesSection = ({
 
   return (
     <div className="msla-templates-section">
-      <Label className="msla-templates-section-title" required={isTitleRequired} htmlFor={titleHtmlFor}>
-        {title}
-      </Label>
-      {description && (
+      {title ? (
+        <Label className="msla-templates-section-title" required={isTitleRequired} htmlFor={titleHtmlFor}>
+          {title}
+        </Label>
+      ) : null}
+      {description ? (
         <Text className="msla-templates-section-description">
           {description}
           {descriptionLink && (
@@ -38,7 +40,7 @@ export const TemplatesSection = ({
             </Link>
           )}
         </Text>
-      )}
+      ) : null}
 
       <div className="msla-templates-section-items">
         {items

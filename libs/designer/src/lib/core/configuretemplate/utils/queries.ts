@@ -41,7 +41,7 @@ export const getWorkflowsInTemplate = async (templateId: string): Promise<Record
   });
 };
 
-const getTemplate = async (templateId: string): Promise<ArmResource<any>> => {
+export const getTemplate = async (templateId: string): Promise<ArmResource<any>> => {
   const queryClient = getReactQueryClient();
   return queryClient.fetchQuery(['template', templateId.toLowerCase()], async () => TemplateResourceService().getTemplate(templateId));
 };
