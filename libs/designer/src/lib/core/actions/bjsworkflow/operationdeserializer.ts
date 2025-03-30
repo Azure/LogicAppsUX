@@ -51,6 +51,7 @@ import {
   getCustomSwaggerIfNeeded,
   getInputParametersFromManifest,
   getOutputParametersFromManifest,
+  getSupportedChannelsFromManifest,
   updateCallbackUrlInInputs,
   updateCustomCodeInInputs,
   updateInvokerSettings,
@@ -164,7 +165,7 @@ export const initializeOperationMetadata = async (
   dispatch(
     initializeNodes({
       nodes: allNodeData.map((data) => {
-        const { id, nodeInputs, nodeOutputs, nodeDependencies, settings, operationMetadata, staticResult } = data;
+        const { id, nodeInputs, nodeOutputs, nodeDependencies, settings, operationMetadata, staticResult, supportedChannels } = data;
         return {
           id,
           nodeInputs,
@@ -173,6 +174,7 @@ export const initializeOperationMetadata = async (
           settings,
           operationMetadata,
           staticResult,
+          supportedChannels,
           actionMetadata: getRecordEntry(nodesMetadata, id)?.actionMetadata,
           repetitionInfo: getRecordEntry(repetitionInfos, id),
         };
@@ -279,6 +281,8 @@ export const initializeOperationDetailsForManifest = async (
     );
     const nodeDependencies = { inputs: inputDependencies, outputs: outputDependencies };
 
+    const supportedChannels = getSupportedChannelsFromManifest(nodeId, nodeOperationInfo, manifest);
+
     const settings = getOperationSettings(isTrigger, nodeOperationInfo, manifest, undefined /* swagger */, operation, workflowKind);
 
     const childGraphInputs = processChildGraphAndItsInputs(manifest, operation, dispatch);
@@ -292,6 +296,7 @@ export const initializeOperationDetailsForManifest = async (
         settings,
         operationInfo: nodeOperationInfo,
         manifest,
+        supportedChannels,
         operationMetadata: { iconUri, brandColor },
         staticResult: operation?.runtimeConfiguration?.staticResult,
       },

@@ -186,7 +186,7 @@ export interface OperationManifest {
   properties: OperationManifestProperties;
 }
 
-export interface SupportedInputChannels {
+export interface SupportedChannels {
   input: {
     type: string;
     default?: SwaggerSchema;
@@ -236,7 +236,7 @@ export interface OperationManifestProperties {
     service?: CustomSwaggerServiceDetails;
   };
 
-  supportedChannels?: SupportedInputChannels[];
+  supportedChannels?: SupportedChannels[];
 
   /*
    * Note: Output resolution takes place as follows. If no payload outputs are present, then use outputs.
