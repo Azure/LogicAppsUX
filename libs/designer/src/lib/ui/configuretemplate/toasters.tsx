@@ -61,6 +61,7 @@ export const TemplateInfoToast = ({ title, content, show }: { title: string; con
         ),
         ...toastDetails,
         intent: 'success',
+        timeout: 10000,
       });
     }
   }, [content, show, title, toastDetails, updateToast]);
