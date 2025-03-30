@@ -5,7 +5,7 @@ import { validateConnectionsValue, validateParameterValue } from '../../template
 import type { WorkflowTemplateData, TemplatePayload } from '../../actions/bjsworkflow/templates';
 import { loadTemplate, validateWorkflowsBasicInfo } from '../../actions/bjsworkflow/templates';
 import { resetTemplatesState } from '../global';
-import { initializeWorkflowsData, deleteWorkflowData } from '../../actions/bjsworkflow/configuretemplate';
+import { initializeWorkflowsData, deleteWorkflowData, loadCustomTemplate } from '../../actions/bjsworkflow/configuretemplate';
 import { getSupportedSkus } from '../../configuretemplate/utils/helper';
 
 export type TemplateEnvironment = 'Production' | 'Development';
@@ -129,6 +129,9 @@ export const templateSlice = createSlice({
 
       state.workflows = workflows;
     },
+    updateEnvironment: (state, action: PayloadAction<TemplateEnvironment>) => {
+      state.environment = action.payload;
+    },
   },
   extraReducers: (builder) => {
     builder.addCase(resetTemplatesState, () => initialState);
@@ -210,6 +213,14 @@ export const templateSlice = createSlice({
         }
       }
     );
+
+    builder.addCase(loadCustomTemplate.fulfilled, (state, action: PayloadAction<{ isPublished: boolean; environment: string }>) => {
+      if (action.payload) {
+        const { isPublished, environment } = action.payload;
+        state.isPublished = isPublished;
+        state.environment = environment as TemplateEnvironment;
+      }
+    });
   },
 });
 
@@ -226,5 +237,6 @@ export const {
   updateWorkflowData,
   updateAllWorkflowsData,
   updateTemplateManifest,
+  updateEnvironment,
 } = templateSlice.actions;
 export default templateSlice.reducer;
