@@ -8,8 +8,11 @@ import { resetTemplatesState } from '../global';
 import { initializeWorkflowsData, deleteWorkflowData } from '../../actions/bjsworkflow/configuretemplate';
 import { getSupportedSkus } from '../../configuretemplate/utils/helper';
 
+export type TemplateEnvironment = 'Production' | 'Development';
 export interface TemplateState extends TemplatePayload {
   templateName?: string;
+  isPublished?: boolean;
+  environment?: TemplateEnvironment;
 }
 
 const initialState: TemplateState = {
@@ -21,6 +24,8 @@ const initialState: TemplateState = {
     parameters: {},
     connections: undefined,
   },
+  isPublished: true,
+  environment: 'Production',
 };
 
 export const templateSlice = createSlice({

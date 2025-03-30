@@ -8,7 +8,7 @@ import { profileTab } from './profileTab';
 import { publishTab } from './publishTab';
 import { reviewPublishTab } from './reviewPublishTab';
 
-export const useConfigureTemplateWizardTabs = () => {
+export const useConfigureTemplateWizardTabs = ({ onPublish }: { onPublish: () => void }) => {
   const intl = useIntl();
   const dispatch = useDispatch<AppDispatch>();
 
@@ -18,6 +18,6 @@ export const useConfigureTemplateWizardTabs = () => {
     parametersTab(intl, dispatch),
     profileTab(intl, dispatch),
     publishTab(intl, dispatch),
-    reviewPublishTab(intl, dispatch),
+    reviewPublishTab(intl, dispatch, onPublish),
   ];
 };

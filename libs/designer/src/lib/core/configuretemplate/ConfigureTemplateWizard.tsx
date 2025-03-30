@@ -10,7 +10,8 @@ import { updateAllWorkflowsData, updateWorkflowData } from '../state/templates/t
 import { TemplateContent, TemplatesPanelFooter, type TemplateTabProps } from '@microsoft/designer-ui';
 import { useConfigureTemplateWizardTabs } from '../../ui/configuretemplate/tabs/useWizardTabs';
 import { selectWizardTab } from '../state/templates/tabSlice';
-import { FeaturedConnectors } from '../../ui/configuretemplate/templateprofile/connectors';
+import { DismissableSuccessToast, TemplateInfoToast } from '../../ui/configuretemplate/toasters';
+import { useIntl } from 'react-intl';
 
 export const ConfigureTemplateWizard = () => {
   const dispatch = useDispatch<AppDispatch>();
@@ -25,11 +26,26 @@ export const ConfigureTemplateWizard = () => {
     })
   );
   const { data: workflows, isLoading } = useWorkflowsInApp(subscriptionId, resourceGroup, logicAppName ?? '', !!isConsumption);
-  const [showFeaturedConnectors, setShowFeaturedConnectors] = useState(false);
+  const intl = useIntl();
+  const [toasterData, setToasterData] = useState({ title: '', content: '', show: false });
+  const onPublish = () => {
+    setToasterData({
+      title: intl.formatMessage({
+        defaultMessage: 'Your template has been published in production!',
+        id: '6TFn8v',
+        description: 'Title for the toaster after publishing template.',
+      }),
+      content: intl.formatMessage({
+        defaultMessage: 'Head on over to the gallery page to see your template in action.',
+        id: 'ILcDyX',
+        description: 'Content for the toaster for after publishing template.',
+      }),
+      show: true,
+    });
+  };
 
   const onInitializeWorkflows = useCallback(() => {
     dispatch(initializeWorkflowsData({}));
-    setShowFeaturedConnectors(true);
   }, [dispatch]);
 
   const onWorkflowSelected = useCallback(
@@ -55,7 +71,7 @@ export const ConfigureTemplateWizard = () => {
     dispatch(selectWizardTab(tabId));
   };
 
-  const panelTabs: TemplateTabProps[] = useConfigureTemplateWizardTabs();
+  const panelTabs: TemplateTabProps[] = useConfigureTemplateWizardTabs({ onPublish });
   const selectedTabProps = selectedTabId ? panelTabs?.find((tab) => tab.id === selectedTabId) : panelTabs[0];
 
   return (
@@ -83,12 +99,8 @@ export const ConfigureTemplateWizard = () => {
         <Button onClick={onInitializeWorkflows}>{'Initialize Workflows'}</Button>
       </div>
 
-      <p>
-        {'Featured Connectors'}
-        <br />
-        {showFeaturedConnectors ? <FeaturedConnectors /> : 'Click "Initialize Workflows" to show featured connectors'}
-      </p>
-
+      <DismissableSuccessToast {...toasterData} />
+      <TemplateInfoToast />
       <TemplateContent className="msla-template-quickview-tabs" tabs={panelTabs} selectedTab={selectedTabId} selectTab={handleSelectTab} />
       <div className="msla-template-overview-footer">
         {selectedTabProps?.footerContent ? <TemplatesPanelFooter showPrimaryButton={true} {...selectedTabProps?.footerContent} /> : null}
