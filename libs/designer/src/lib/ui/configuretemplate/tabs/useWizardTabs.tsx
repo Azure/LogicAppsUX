@@ -8,12 +8,18 @@ import { profileTab } from './profileTab';
 import { publishTab } from './publishTab';
 import { reviewPublishTab } from './reviewPublishTab';
 
-export const useConfigureTemplateWizardTabs = ({ onPublish }: { onPublish: () => void }) => {
+export const useConfigureTemplateWizardTabs = ({
+  onSaveWorkflows,
+  onPublish,
+}: {
+  onSaveWorkflows: (isMultiWorkflow: boolean) => void;
+  onPublish: () => void;
+}) => {
   const intl = useIntl();
   const dispatch = useDispatch<AppDispatch>();
 
   return [
-    workflowsTab(intl, dispatch),
+    workflowsTab(intl, dispatch, onSaveWorkflows),
     connectionsTab(intl, dispatch),
     parametersTab(intl, dispatch),
     profileTab(intl, dispatch),

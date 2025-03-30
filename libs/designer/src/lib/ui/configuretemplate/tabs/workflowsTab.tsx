@@ -6,18 +6,16 @@ import constants from '../../../common/constants';
 import { useIntl, type IntlShape } from 'react-intl';
 import { selectWizardTab } from '../../../core/state/templates/tabSlice';
 import { CommandBar, type ICommandBarItemProps } from '@fluentui/react';
-import { useMemo, useState } from 'react';
+import { useMemo } from 'react';
 import { openPanelView, TemplatePanelView } from '../../../core/state/templates/panelSlice';
 import { ConfigureWorkflowsPanel } from '../../panel/configureTemplatePanel/configureWorkflowsPanel/configureWorkflowsPanel';
-import { DismissableSuccessToast } from '../toasters';
 
-export const WorkflowsTab = () => {
+export const WorkflowsTab = ({ onSave }: { onSave: (isMultiWorkflow: boolean) => void }) => {
   const intl = useIntl();
   const { workflows, currentPanelView } = useSelector((state: RootState) => ({
     workflows: state.template.workflows,
     currentPanelView: state.panel.currentPanelView,
   }));
-  const [toasterData, setToasterData] = useState({ title: '', content: '', show: false });
   const dispatch = useDispatch<AppDispatch>();
 
   const commandBarItems: ICommandBarItemProps[] = useMemo(
@@ -50,42 +48,9 @@ export const WorkflowsTab = () => {
     [intl, dispatch]
   );
 
-  const handleSave = (isMultiWorkflow: boolean) => {
-    if (isMultiWorkflow) {
-      setToasterData({
-        title: intl.formatMessage({
-          defaultMessage: "You're creating an accelerator template!",
-          id: '3ST5oT',
-          description: 'Title for the toaster after adding workflows.',
-        }),
-        content: intl.formatMessage({
-          defaultMessage: 'This template contains more than one workflow, therefore it is classified as an Accelerator.',
-          id: 'gkUDy6',
-          description: 'Content for the toaster for adding workflows',
-        }),
-        show: true,
-      });
-    } else {
-      setToasterData({
-        title: intl.formatMessage({
-          defaultMessage: "You're creating a workflow template!",
-          id: '7ERTcu',
-          description: 'Title for the toaster after adding a single workflow.',
-        }),
-        content: intl.formatMessage({
-          defaultMessage: 'This template contains one workflow, therefore it is classified as a Workflow.',
-          id: '1AFYij',
-          description: 'Content for the toaster for adding a single workflow.',
-        }),
-        show: true,
-      });
-    }
-  };
-
   return (
     <div>
-      {currentPanelView === TemplatePanelView.ConfigureWorkflows && <ConfigureWorkflowsPanel onSave={handleSave} />}
-      <DismissableSuccessToast {...toasterData} />
+      {currentPanelView === TemplatePanelView.ConfigureWorkflows && <ConfigureWorkflowsPanel onSave={onSave} />}
       <CommandBar
         items={commandBarItems}
         styles={{
@@ -106,7 +71,11 @@ export const WorkflowsTab = () => {
   );
 };
 
-export const workflowsTab = (intl: IntlShape, dispatch: AppDispatch): TemplateTabProps => ({
+export const workflowsTab = (
+  intl: IntlShape,
+  dispatch: AppDispatch,
+  onSaveWorkflows: (isMultiWorkflow: boolean) => void
+): TemplateTabProps => ({
   id: constants.CONFIGURE_TEMPLATE_WIZARD_TAB_NAMES.WORKFLOWS,
   title: intl.formatMessage({
     defaultMessage: 'Workflows',
@@ -114,7 +83,7 @@ export const workflowsTab = (intl: IntlShape, dispatch: AppDispatch): TemplateTa
     description: 'The tab label for the monitoring workflows tab on the configure template wizard',
   }),
   hasError: false,
-  content: <WorkflowsTab />,
+  content: <WorkflowsTab onSave={onSaveWorkflows} />,
   footerContent: {
     primaryButtonText: '',
     primaryButtonOnClick: () => {},

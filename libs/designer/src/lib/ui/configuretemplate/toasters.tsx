@@ -1,13 +1,23 @@
-import { useId, Text, Toaster, useToastController, ToastTitle, Toast, ToastBody } from '@fluentui/react-components';
+import {
+  useId,
+  Text,
+  Toaster,
+  useToastController,
+  ToastTitle,
+  Toast,
+  ToastBody,
+  type ToastPosition,
+  type ToastPoliteness,
+} from '@fluentui/react-components';
 import { useEffect, useMemo } from 'react';
 import { useResourceStrings } from './resources';
 import { useSelector } from 'react-redux';
 import type { RootState } from '../../core/state/templates/store';
 
-export const TemplateInfoToast = () => {
+export const TemplateInfoToast = ({ title, content, show }: { title: string; content: string; show: boolean }) => {
   const toastId = useId('template-info-toast');
   const toasterId = useId('template-info-toaster');
-  const resources = useResourceStrings();
+
   const { workflows, environment, isPublished } = useSelector((state: RootState) => state.template);
   const type = useMemo(() => {
     const workflowKeys = Object.keys(workflows);
@@ -15,49 +25,65 @@ export const TemplateInfoToast = () => {
   }, [workflows]);
   const statusText = useMemo(() => `${isPublished ? 'Published' : 'Unpublished'}, ${environment}`, [environment, isPublished]);
 
-  const { dispatchToast } = useToastController(toasterId);
+  const { dispatchToast, updateToast } = useToastController(toasterId);
+  const toastDetails = useMemo(
+    () => ({
+      toastId,
+      politeness: 'polite' as ToastPoliteness,
+      position: 'top-end' as ToastPosition,
+      timeout: -1,
+    }),
+    [toastId]
+  );
+
+  useEffect(
+    () => dispatchToast(<InfoToastContent type={type} status={statusText} lastSaved="----" />, toastDetails),
+    [dispatchToast, statusText, toastDetails, toastId, type]
+  );
+
   useEffect(() => {
-    dispatchToast(
-      <Toast>
-        <ToastTitle media={null}>{resources.TemplateInformation}</ToastTitle>
-        <ToastBody style={{ display: 'flex', flexDirection: 'column', paddingTop: '10px' }}>
-          <Text>
-            {resources.Type}: {type}
-          </Text>
-          <Text style={{ padding: '5px 0' }}>
-            {resources.Status}: {statusText}
-          </Text>
-          <Text>{resources.LastSaved}: ----</Text>
-        </ToastBody>
-      </Toast>,
-      {
-        toastId,
-        politeness: 'polite',
-        position: 'top-end',
-        timeout: -1,
-      }
-    );
-  }, [dispatchToast, resources.LastSaved, resources.Status, resources.TemplateInformation, resources.Type, statusText, toastId, type]);
+    if (!show) {
+      updateToast({
+        content: <InfoToastContent type={type} status={statusText} lastSaved="----" />,
+        ...toastDetails,
+      });
+    }
+  }, [show, statusText, toastDetails, toastId, type, updateToast]);
+
+  useEffect(() => {
+    if (show) {
+      updateToast({
+        content: (
+          <Toast>
+            <ToastTitle>{title}</ToastTitle>
+            <ToastBody style={{ paddingTop: 12, marginLeft: '-18px', fontSize: 'small' }}>{content}</ToastBody>
+          </Toast>
+        ),
+        ...toastDetails,
+        intent: 'success',
+      });
+    }
+  }, [content, show, title, toastDetails, updateToast]);
 
   return <Toaster toasterId={toasterId} />;
 };
 
-export const DismissableSuccessToast = ({ title, content, show }: { title: string; content: string; show: boolean }) => {
-  const toastId = useId('template-success-toast');
-  const toasterId = useId('template-success-toaster');
-
-  const { dispatchToast } = useToastController(toasterId);
-  useEffect(() => {
-    if (show) {
-      dispatchToast(
-        <Toast>
-          <ToastTitle>{title}</ToastTitle>
-          <ToastBody>{content}</ToastBody>
-        </Toast>,
-        { intent: 'success', position: 'top-end', timeout: 20000, toastId }
-      );
-    }
-  }, [content, dispatchToast, show, title, toastId]);
-
-  return <Toaster toasterId={toasterId} />;
+const InfoToastContent = ({ type, status, lastSaved }: { type: string; status: string; lastSaved: string }) => {
+  const resources = useResourceStrings();
+  return (
+    <Toast>
+      <ToastTitle media={null}>{resources.TemplateInformation}</ToastTitle>
+      <ToastBody style={{ display: 'flex', flexDirection: 'column', paddingTop: '10px' }}>
+        <Text>
+          {resources.Type}: {type}
+        </Text>
+        <Text style={{ padding: '5px 0' }}>
+          {resources.Status}: {status}
+        </Text>
+        <Text>
+          {resources.LastSaved}: {lastSaved}
+        </Text>
+      </ToastBody>
+    </Toast>
+  );
 };
