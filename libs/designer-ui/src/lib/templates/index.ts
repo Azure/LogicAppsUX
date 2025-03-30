@@ -5,3 +5,4 @@ export * from './templatesContent';
 export * from './templatesPanelFooter';
 export * from './templatesPanelHeader';
 export * from './templatesSection';
+export * from './templatesSectionModel';

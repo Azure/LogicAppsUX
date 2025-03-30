@@ -11,6 +11,18 @@ interface ITemplateResourceServiceOptions {
 export class BaseTemplateResourceService implements ITemplateResourceService {
   constructor(private readonly options: ITemplateResourceServiceOptions) {}
 
+  public async getTemplate(id: string) {
+    return Promise.resolve({
+      id,
+      properties: {},
+    } as any);
+  }
+
+  public async getTemplateWorkflows(_id: string) {
+    // NOTE: Make sure when you get all workflow ids, use the toLowerCase() for the key and id inside workflow manifest should be normal id.
+    return Promise.resolve([]);
+  }
+
   public async updateTemplate(_id: string, _manifest: Template.TemplateManifest) {
     throw new Error('Method not implemented.');
   }

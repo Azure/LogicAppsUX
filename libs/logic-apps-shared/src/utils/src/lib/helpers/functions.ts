@@ -1036,6 +1036,15 @@ export function getResourceName(obj: any): string {
 }
 
 /**
+ * Returns the last part of a resource ID.
+ * @arg {string} id - The resource ID to get the name from.
+ * @return {string} - The name of the resource.
+ */
+export function getResourceNameFromId(id: string): string {
+  return id.split('/').pop() ?? id;
+}
+
+/**
  * Returns a filtered record object.
  * @param data - The record to filter over.
  * @param filter - The filter function.

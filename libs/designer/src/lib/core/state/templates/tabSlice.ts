@@ -1,13 +1,16 @@
 import type { PayloadAction } from '@reduxjs/toolkit';
 import { createSlice } from '@reduxjs/toolkit';
 import { resetTemplatesState } from '../global';
+import { loadCustomTemplate } from '../../actions/bjsworkflow/configuretemplate';
 
 export interface TabState {
   selectedTabId: string | undefined;
+  enableWizard: boolean;
 }
 
 const initialState: TabState = {
   selectedTabId: undefined,
+  enableWizard: false,
 };
 
 export const tabSlice = createSlice({
@@ -20,6 +23,10 @@ export const tabSlice = createSlice({
   },
   extraReducers: (builder) => {
     builder.addCase(resetTemplatesState, () => initialState);
+
+    builder.addCase(loadCustomTemplate.fulfilled, (state) => {
+      state.enableWizard = true;
+    });
   },
 });
 

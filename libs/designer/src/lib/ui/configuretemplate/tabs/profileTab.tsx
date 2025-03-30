@@ -1,13 +1,9 @@
 import type { AppDispatch } from '../../../core/state/templates/store';
-import { Text } from '@fluentui/react-components';
 import type { TemplateTabProps } from '@microsoft/designer-ui';
 import constants from '../../../common/constants';
 import type { IntlShape } from 'react-intl';
 import { selectWizardTab } from '../../../core/state/templates/tabSlice';
-
-export const ProfileTab = () => {
-  return <Text>placeholder - show profile</Text>;
-};
+import { TemplateManifestForm } from '../templateprofile/manifestform';
 
 export const profileTab = (intl: IntlShape, dispatch: AppDispatch): TemplateTabProps => ({
   id: constants.CONFIGURE_TEMPLATE_WIZARD_TAB_NAMES.PROFILE,
@@ -17,7 +13,7 @@ export const profileTab = (intl: IntlShape, dispatch: AppDispatch): TemplateTabP
     description: 'The tab label for the monitoring profile tab on the configure template wizard',
   }),
   hasError: false,
-  content: <ProfileTab />,
+  content: <TemplateManifestForm />,
   footerContent: {
     primaryButtonText: intl.formatMessage({
       defaultMessage: 'Previous',
