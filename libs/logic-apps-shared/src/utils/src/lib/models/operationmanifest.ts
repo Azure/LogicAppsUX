@@ -189,10 +189,12 @@ export interface OperationManifest {
 export interface SupportedChannels {
   input: {
     type: string;
+    kind?: string;
     default?: SwaggerSchema;
   };
   output: {
     type: string;
+    kind?: string;
     default?: SwaggerSchema;
   };
 }
