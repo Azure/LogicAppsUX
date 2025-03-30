@@ -74,6 +74,7 @@ export const TemplateConnectionsList = () => {
                   media={
                     <ConnectorIconWithName
                       connectorId={item.id}
+                      showProgress={true}
                       classes={{
                         root: 'msla-template-create-connector',
                         icon: 'msla-template-create-connector-icon',

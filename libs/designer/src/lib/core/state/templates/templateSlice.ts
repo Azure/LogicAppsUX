@@ -6,6 +6,7 @@ import type { WorkflowTemplateData, TemplatePayload } from '../../actions/bjswor
 import { loadTemplate, validateWorkflowsBasicInfo } from '../../actions/bjsworkflow/templates';
 import { resetTemplatesState } from '../global';
 import { initializeWorkflowsData, deleteWorkflowData } from '../../actions/bjsworkflow/configuretemplate';
+import { getSupportedSkus } from 'lib/core/configuretemplate/utils/helper';
 
 export interface TemplateState extends TemplatePayload {
   templateName?: string;
@@ -174,6 +175,7 @@ export const templateSlice = createSlice({
         if (action.payload) {
           state.connections = action.payload.connections;
           state.parameterDefinitions = action.payload.parameterDefinitions as any;
+          (state.manifest as Template.TemplateManifest).skus = getSupportedSkus(action.payload.connections);
         }
       }
     );
