@@ -1,20 +1,35 @@
 import type { PanelTabFn, PanelTabProps } from '@microsoft/designer-ui';
 import constants from '../../../../../common/constants';
 import { MessageBarBody, Switch, type SwitchOnChangeData } from '@fluentui/react-components';
-import { useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useIntl } from 'react-intl';
-import { useSelector } from 'react-redux';
-import type { RootState } from '../../../../../core/store';
+import { useDispatch, useSelector } from 'react-redux';
+import type { RootState, AppDispatch } from '../../../../../core/store';
 import { MessageBar } from '@fluentui/react';
 import ChannelContent from './ChannelContent';
+import type { SupportedChannels } from '@microsoft/logic-apps-shared';
+import { deinitializeNodes } from '../../../../../core/state/operation/operationMetadataSlice';
 
 export const ChannelsTab: React.FC<PanelTabProps> = (props) => {
   const { nodeId: selectedNodeId } = props;
+  const dispatch = useDispatch<AppDispatch>();
   const supportedChannels = useSelector((state: RootState) => state.operations.supportedChannels[selectedNodeId]);
+  const [channel, _setChannel] = useState<SupportedChannels | undefined>(supportedChannels.length > 0 ? supportedChannels[0] : undefined);
+  const inputNodeId = useMemo(() => `${selectedNodeId}-inputchannel-${channel?.input?.type}`, [channel?.input.type, selectedNodeId]);
+  const outputNodeId = useMemo(() => `${selectedNodeId}-outputchannel-${channel?.output?.type}`, [channel?.output.type, selectedNodeId]);
+
+  const inputChannelParameters = useSelector((state: RootState) => state.operations.inputParameters[inputNodeId]);
+
+  const outputChannelParameters = useSelector((state: RootState) => state.operations.inputParameters[outputNodeId]);
 
   const [enabled, setEnabled] = useState(false);
 
   const intl = useIntl();
+
+  const disableChannel = useCallback(() => {
+    dispatch(deinitializeNodes([outputNodeId, inputNodeId]));
+    setEnabled(false);
+  }, [dispatch, inputNodeId, outputNodeId]);
 
   const stringResources = useMemo(
     () => ({
@@ -37,9 +52,12 @@ export const ChannelsTab: React.FC<PanelTabProps> = (props) => {
     [intl]
   );
 
+  useEffect(() => {
+    setEnabled(!!inputChannelParameters || !!outputChannelParameters);
+  }, [inputChannelParameters, outputChannelParameters]);
   return (
     <>
-      {supportedChannels.length === 0 ? (
+      {supportedChannels.length === 0 || !channel ? (
         <MessageBar key={'warning'} className="msla-initialize-variable-warning">
           <MessageBarBody>{stringResources.NO_CHANNEL_SUPPORTED_MSG}</MessageBarBody>
         </MessageBar>
@@ -48,7 +66,11 @@ export const ChannelsTab: React.FC<PanelTabProps> = (props) => {
           <Switch
             checked={enabled}
             onChange={(_, data: SwitchOnChangeData) => {
-              setEnabled(data.checked);
+              if (data.checked) {
+                setEnabled(true);
+              } else {
+                disableChannel();
+              }
             }}
             style={{ display: 'flex', marginBottom: '10px' }}
             label={enabled ? stringResources.ENABLED : stringResources.DISABLED}
@@ -57,7 +79,9 @@ export const ChannelsTab: React.FC<PanelTabProps> = (props) => {
             <ChannelContent
               selectedNodeId={selectedNodeId}
               // TODO: Add support for multiple channels
-              channelToAdd={supportedChannels[0]}
+              channelToAdd={channel}
+              inputNodeId={inputNodeId}
+              outputNodeId={outputNodeId}
             />
           )}
         </>

@@ -12,18 +12,19 @@ import type { AppDispatch } from '../../../../../core/store';
 
 interface ChannelContentProps {
   selectedNodeId: string;
+  inputNodeId: string;
+  outputNodeId: string;
   channelToAdd: SupportedChannels;
 }
 const ChannelContent = (props: ChannelContentProps) => {
   const {
-    selectedNodeId,
+    inputNodeId,
+    outputNodeId,
     channelToAdd: { input, output },
   } = props;
   const [isLoading, setIsLoading] = useState(true);
   const intl = useIntl();
   const dispatch = useDispatch<AppDispatch>();
-  const inputNodeId = useMemo(() => `${selectedNodeId}-input-${input.type}`, [input.type, selectedNodeId]);
-  const outputNodeId = useMemo(() => `${selectedNodeId}-output-${output.type}`, [output.type, selectedNodeId]);
 
   const stringResources = useMemo(
     () => ({
