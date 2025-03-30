@@ -1,12 +1,18 @@
 import type { PanelTabFn, PanelTabProps } from '@microsoft/designer-ui';
 import constants from '../../../../../common/constants';
-import { Switch, type SwitchOnChangeData } from '@fluentui/react-components';
+import { MessageBarBody, Switch, type SwitchOnChangeData } from '@fluentui/react-components';
 import { useMemo, useState } from 'react';
 import { useIntl } from 'react-intl';
+import { useSelector } from 'react-redux';
+import type { RootState } from '../../../../../core/store';
+import { MessageBar } from '@fluentui/react';
+import ChannelContent from './ChannelContent';
 
 export const ChannelsTab: React.FC<PanelTabProps> = (props) => {
   const { nodeId: selectedNodeId } = props;
-  const [channelAdded, setChannelAdded] = useState(false);
+  const supportedChannels = useSelector((state: RootState) => state.operations.supportedChannels[selectedNodeId]);
+
+  const [enabled, setEnabled] = useState(false);
 
   const intl = useIntl();
 
@@ -22,20 +28,40 @@ export const ChannelsTab: React.FC<PanelTabProps> = (props) => {
         id: 'OnjMM3',
         description: 'Channel disabled.',
       }),
+      NO_CHANNEL_SUPPORTED_MSG: intl.formatMessage({
+        defaultMessage: 'No channel supported for this agent.',
+        id: 'di6MC0',
+        description: 'channel not supported message',
+      }),
     }),
     [intl]
   );
 
   return (
     <>
-      <div>{selectedNodeId}</div>
-      <Switch
-        checked={channelAdded}
-        onChange={(_, data: SwitchOnChangeData) => {
-          setChannelAdded(data.checked);
-        }}
-        label={channelAdded ? stringResources.ENABLED : stringResources.DISABLED}
-      />
+      {supportedChannels.length === 0 ? (
+        <MessageBar key={'warning'} className="msla-initialize-variable-warning">
+          <MessageBarBody>{stringResources.NO_CHANNEL_SUPPORTED_MSG}</MessageBarBody>
+        </MessageBar>
+      ) : (
+        <>
+          <Switch
+            checked={enabled}
+            onChange={(_, data: SwitchOnChangeData) => {
+              setEnabled(data.checked);
+            }}
+            style={{ display: 'flex', marginBottom: '10px' }}
+            label={enabled ? stringResources.ENABLED : stringResources.DISABLED}
+          />
+          {enabled && (
+            <ChannelContent
+              selectedNodeId={selectedNodeId}
+              // TODO: Add support for multiple channels
+              channelToAdd={supportedChannels[0]}
+            />
+          )}
+        </>
+      )}
     </>
   );
 };

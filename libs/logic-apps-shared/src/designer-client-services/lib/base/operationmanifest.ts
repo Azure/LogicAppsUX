@@ -279,6 +279,10 @@ export abstract class BaseOperationManifestService implements IOperationManifest
 }
 
 export function isBuiltInOperation(definition: any): boolean {
+  if (!definition?.type) {
+    return false;
+  }
+
   switch (definition?.type?.toLowerCase()) {
     case apimanagement:
     case as2Decode:
