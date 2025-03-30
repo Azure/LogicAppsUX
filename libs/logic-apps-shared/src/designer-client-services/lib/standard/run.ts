@@ -381,4 +381,23 @@ export class StandardRunService implements IRunService {
         throw new UnsupportedException(`Unsupported call connector method - '${method}'`);
     }
   }
+
+  async getChatHistory(action: { nodeId: string; runId: string | undefined }): Promise<any> {
+    const { apiVersion, baseUrl, httpClient } = this.options;
+    const { nodeId, runId } = action;
+    const headers = this.getAccessTokenHeaders();
+
+    const uri = `${baseUrl}${runId}/actions/${nodeId}/chatHistory?api-version=${apiVersion}`;
+    try {
+      const response = await httpClient.get<any>({
+        uri,
+        headers: headers as Record<string, any>,
+      });
+
+      return response.value;
+    } catch (e: any) {
+      throw new Error(e.message);
+    }
+  }
+
 }

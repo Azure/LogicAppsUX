@@ -42,6 +42,7 @@ import { EdgeContextualMenu } from './common/EdgeContextualMenu/EdgeContextualMe
 import { DragPanMonitor } from './common/DragPanMonitor/DragPanMonitor';
 import { CanvasSizeMonitor } from './CanvasSizeMonitor';
 import { useResizeObserver } from '@react-hookz/web';
+import { AgentChat } from './panel/agentChat/agentChat';
 
 export interface DesignerProps {
   backgroundProps?: BackgroundProps;
@@ -214,7 +215,8 @@ export const Designer = (props: DesignerProps) => {
   }, [isInitialized]);
 
   return (
-    <DndProvider options={DND_OPTIONS}>
+    < div style={{ display: 'flex', flexDirection: 'row', height: '100%' , minWidth: '100%' }}>
+       <DndProvider options={DND_OPTIONS}>
       {preloadSearch ? <SearchPreloader /> : null}
       <div className="msla-designer-canvas msla-panel-mode" ref={designerContainerRef}>
         <ReactFlowProvider>
@@ -274,6 +276,9 @@ export const Designer = (props: DesignerProps) => {
           }}
         />
       </div>
-    </DndProvider>
+        </DndProvider>
+        {isMonitoringView ? <AgentChat panelLocation='RIGHT' closeChatBot={()=>{}}/> : null}
+    </div>
+ 
   );
 };
