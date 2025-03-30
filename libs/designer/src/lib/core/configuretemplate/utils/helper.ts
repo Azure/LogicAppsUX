@@ -198,3 +198,13 @@ const findParameterExpressions = (expression: Expression, result: string[]): voi
 export const getConnectorKind = (connectorId: string): Template.FeaturedConnectorType => {
   return isArmResourceId(connectorId) ? 'shared' : connectorId.startsWith('/serviceproviders') ? 'inapp' : 'builtin';
 };
+
+export const getSupportedSkus = (connections: Record<string, Template.Connection>): Template.SkuType[] => {
+  const supportedSkus: Template.SkuType[] = ['standard'];
+
+  if (!Object.values(connections).some((connection) => connection.kind === 'inapp')) {
+    supportedSkus.push('consumption');
+  }
+
+  return supportedSkus;
+};
