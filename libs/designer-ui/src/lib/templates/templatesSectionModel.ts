@@ -53,7 +53,7 @@ interface RadioGroupItem extends BaseFieldItem {
 export type TemplatesSectionItem = TextItem | TextFieldItem | DropdownItem | RadioGroupItem;
 
 interface BaseTemplatesSectionProps {
-  title: string;
+  title?: string;
   isTitleRequired?: boolean;
   titleHtmlFor?: string;
   description?: string;

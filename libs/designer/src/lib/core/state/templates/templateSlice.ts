@@ -7,8 +7,11 @@ import { loadTemplate, validateWorkflowsBasicInfo } from '../../actions/bjsworkf
 import { resetTemplatesState } from '../global';
 import { initializeWorkflowsData, deleteWorkflowData } from '../../actions/bjsworkflow/configuretemplate';
 
+export type TemplateEnvironment = 'Production' | 'Development';
 export interface TemplateState extends TemplatePayload {
   templateName?: string;
+  isPublished?: boolean;
+  environment?: TemplateEnvironment;
 }
 
 const initialState: TemplateState = {
@@ -20,6 +23,8 @@ const initialState: TemplateState = {
     parameters: {},
     connections: undefined,
   },
+  isPublished: true,
+  environment: 'Production',
 };
 
 export const templateSlice = createSlice({
@@ -123,6 +128,9 @@ export const templateSlice = createSlice({
 
       state.workflows = workflows;
     },
+    updateEnvironment: (state, action: PayloadAction<TemplateEnvironment>) => {
+      state.environment = action.payload;
+    },
   },
   extraReducers: (builder) => {
     builder.addCase(resetTemplatesState, () => initialState);
@@ -219,5 +227,6 @@ export const {
   updateWorkflowData,
   updateAllWorkflowsData,
   updateTemplateManifest,
+  updateEnvironment,
 } = templateSlice.actions;
 export default templateSlice.reducer;
