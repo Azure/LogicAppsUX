@@ -1,6 +1,6 @@
-import { Dropdown, Field, Input, Label, Link, Option, Radio, RadioGroup, Text } from '@fluentui/react-components';
+import { Dropdown, Field, Input, Label, Link, Option, Radio, RadioGroup, Text, Textarea } from '@fluentui/react-components';
 import { Open16Regular } from '@fluentui/react-icons';
-import type { TemplatesSectionItem, TemplatesSectionProps } from './templatesSectionModel';
+import type { BaseFieldItem, TemplatesSectionItem, TemplatesSectionProps } from './templatesSectionModel';
 
 export const TemplatesSection = ({
   title,
@@ -49,7 +49,9 @@ export const TemplatesSection = ({
                 <div key={index} className="msla-templates-section-item">
                   {item.label ? (
                     typeof item.label === 'string' ? (
-                      <Label className="msla-templates-section-item-label">{item.label}</Label>
+                      <Label className="msla-templates-section-item-label" required={(item as BaseFieldItem)?.required ?? false}>
+                        {item.label}
+                      </Label>
                     ) : (
                       <div className="msla-templates-section-item-label">{item.label}</div>
                     )
@@ -79,6 +81,19 @@ const CustomFieldInput = (item: TemplatesSectionItem) => {
         />
       );
 
+    case 'textarea':
+      return (
+        <Textarea
+          data-testid={item.id}
+          id={item.id}
+          aria-label={typeof item.label === 'string' ? item.label : undefined}
+          resize="vertical"
+          value={item.value}
+          disabled={item.disabled}
+          onChange={(_event, data) => item.onChange(data.value ?? '')}
+        />
+      );
+
     case 'dropdown':
       return (
         <Dropdown
@@ -86,9 +101,8 @@ const CustomFieldInput = (item: TemplatesSectionItem) => {
           id={item.id}
           onOptionSelect={(e, option) => item.onOptionSelect(option?.selectedOptions)}
           disabled={item.disabled}
-          value={item.value}
-          selectedOptions={item.selectedOptions}
-          size="small"
+          defaultValue={item.value}
+          defaultSelectedOptions={item.selectedOptions}
           placeholder={item.placeholder}
           onBlur={item.onBlur}
           multiselect={item.multiselect}
@@ -109,6 +123,9 @@ const CustomFieldInput = (item: TemplatesSectionItem) => {
           ))}
         </RadioGroup>
       );
+
+    case 'custom':
+      return item.onRenderItem(item);
 
     default:
       return null;

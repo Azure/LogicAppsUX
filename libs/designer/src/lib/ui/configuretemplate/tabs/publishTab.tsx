@@ -8,12 +8,13 @@ import { useDispatch, useSelector } from 'react-redux';
 import type { Template } from '@microsoft/logic-apps-shared';
 import { useMemo } from 'react';
 import { type TemplateEnvironment, updateEnvironment, updateTemplateManifest } from '../../../core/state/templates/templateSlice';
+import { getSupportedSkus } from '../../../core/configuretemplate/utils/helper';
 
-export const PublishTab = () => {
-  const { manifest, environment, isPublished } = useSelector((state: RootState) => state.template);
+const TemplateSettings = () => {
+  const { manifest, environment, isPublished, connections } = useSelector((state: RootState) => state.template);
   const dispatch = useDispatch<AppDispatch>();
   const resources = useResourceStrings();
-
+  const disableSkuSelection = useMemo(() => getSupportedSkus(connections).length === 1, [connections]);
   const skuTypes = useMemo(
     () => [
       { id: '1', label: resources.Standard, value: 'standard' },
@@ -45,6 +46,7 @@ export const PublishTab = () => {
       required: true,
       multiselect: true,
       options: skuTypes,
+      disabled: disableSkuSelection,
       selectedOptions: manifest?.skus as string[],
       onOptionSelect: (selectedOptions: string[]) => dispatch(updateTemplateManifest({ skus: selectedOptions as Template.SkuType[] })),
     },
@@ -73,12 +75,17 @@ export const PublishTab = () => {
 export const publishTab = (intl: IntlShape, dispatch: AppDispatch): TemplateTabProps => ({
   id: constants.CONFIGURE_TEMPLATE_WIZARD_TAB_NAMES.PUBLISH,
   title: intl.formatMessage({
-    defaultMessage: 'Publish',
-    id: 'mI+yA/',
-    description: 'The tab label for the monitoring publish tab on the configure template wizard',
+    defaultMessage: 'Settings',
+    id: '+IsazR',
+    description: 'The tab label for the settings tab on the configure template wizard',
+  }),
+  description: intl.formatMessage({
+    defaultMessage: 'The below are the settings for this template, to publish a template you need to go to Review and Publish and publish.',
+    id: 'uOlHLw',
+    description: 'The description for the settings tab on the configure template wizard',
   }),
   hasError: false,
-  content: <PublishTab />,
+  content: <TemplateSettings />,
   footerContent: {
     primaryButtonText: intl.formatMessage({
       defaultMessage: 'Previous',
