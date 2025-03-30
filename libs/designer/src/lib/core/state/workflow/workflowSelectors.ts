@@ -395,6 +395,19 @@ export const useIsWithinAgenticLoop = (id: string): boolean => {
   );
 };
 
+export const useAgentOpertations = () => {
+  return useSelector(
+    createSelector(getWorkflowState, (state: WorkflowState) => {
+      return Object.entries(state.operations).reduce((acc: string[], [id, node]) => {
+        if (equals(node.type, constants.NODE.TYPE.AGENT)) {
+          acc.push(id);
+        }
+        return acc;
+      }, []);
+    })
+  );
+};
+
 export const getAgentFromCondition = (state: WorkflowState, nodeId: string): string | undefined => {
   if (!nodeId || state.nodesMetadata[nodeId].subgraphType !== SUBGRAPH_TYPES.AGENT_CONDITION) {
     return undefined;

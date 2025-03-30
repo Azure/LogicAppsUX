@@ -5,7 +5,7 @@ import { useIntl } from 'react-intl';
 import { defaultChatbotPanelWidth, ChatbotUi } from '@microsoft/logic-apps-chatbot';
 import { useChatHistory } from '../../../core/queries/runs';
 import { useMonitoringView } from '../../../core/state/designerOptions/designerOptionsSelectors';
-import { useRunInstance } from '../../../core/state/workflow/workflowSelectors';
+import { useAgentOpertations, useRunInstance } from '../../../core/state/workflow/workflowSelectors';
 import { guid, isNullOrUndefined } from '@microsoft/logic-apps-shared';
 
 interface AgentChatProps {
@@ -62,19 +62,19 @@ export const AgentChat = ({ panelLocation = PanelLocation.Left, chatbotWidth = d
   const [selectedOperation] = useState('');
   const isMonitoringView = useMonitoringView();
   const runInstance = useRunInstance();
+  const agentOperations = useAgentOpertations();
 
   const { isFetching: isActionsRepetitionFetching, data: agentActionsRepetitionData } = useChatHistory(
     !!isMonitoringView,
-    true,
-    'Default_Agent',
+    agentOperations,
     runInstance?.id
   );
 
-  console.log('charlie', isActionsRepetitionFetching, agentActionsRepetitionData);
+  console.log('charlie', agentOperations, isActionsRepetitionFetching, agentActionsRepetitionData);
 
   useEffect(() => {
     if (!isNullOrUndefined(agentActionsRepetitionData)) {
-      const newConversations = agentActionsRepetitionData.map((message: any) => parseChatHistory(message));
+      const newConversations = agentActionsRepetitionData.map((message: any) => parseChatHistory(message)) as any;
       setConversation((current) => [...newConversations, ...current]);
     }
   }, [setConversation, agentActionsRepetitionData]);

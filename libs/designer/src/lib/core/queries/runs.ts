@@ -182,22 +182,22 @@ export const useAgentActionsRepetition = (
   );
 };
 
-
-export const useChatHistory = (
-  isMonitoringView: boolean,
-  isAgent: boolean,
-  nodeId: string,
-  runId: string | undefined,
-) => {
+export const useChatHistory = (isMonitoringView: boolean, nodeIds: string[], runId: string | undefined) => {
   return useQuery(
-    ['useChatHistory', { nodeId, runId }],
+    ['useChatHistory', { nodeIds, runId }],
     async () => {
-      return RunService().getChatHistory({ nodeId, runId });
+      const allMessages = [];
+      const ids = [...nodeIds];
+      for (let i = 0; i < nodeIds.length; i++) {
+        const messages = await RunService().getChatHistory({ nodeId: ids[i], runId });
+        allMessages.push(...messages);
+      }
+      return allMessages;
     },
     {
       ...queryOpts,
       retryOnMount: false,
-      enabled: isMonitoringView && isAgent,
+      enabled: isMonitoringView,
     }
   );
 };
