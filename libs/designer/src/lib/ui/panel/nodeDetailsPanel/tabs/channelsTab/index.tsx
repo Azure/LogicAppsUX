@@ -50,7 +50,7 @@ export const ChannelsTab: React.FC<PanelTabProps> = (props) => {
             onChange={(_, data: SwitchOnChangeData) => {
               setEnabled(data.checked);
             }}
-            style={{ display: 'flex', justifyContent: 'center', marginTop: '10px' }}
+            style={{ display: 'flex', marginBottom: '10px' }}
             label={enabled ? stringResources.ENABLED : stringResources.DISABLED}
           />
           {enabled && (
