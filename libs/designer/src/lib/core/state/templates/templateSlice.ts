@@ -6,7 +6,7 @@ import type { WorkflowTemplateData, TemplatePayload } from '../../actions/bjswor
 import { loadTemplate, validateWorkflowsBasicInfo } from '../../actions/bjsworkflow/templates';
 import { resetTemplatesState } from '../global';
 import { initializeWorkflowsData, deleteWorkflowData } from '../../actions/bjsworkflow/configuretemplate';
-import { getSupportedSkus } from 'lib/core/configuretemplate/utils/helper';
+import { getSupportedSkus } from '../../configuretemplate/utils/helper';
 
 export interface TemplateState extends TemplatePayload {
   templateName?: string;

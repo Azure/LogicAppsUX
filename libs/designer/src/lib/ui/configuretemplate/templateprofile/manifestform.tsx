@@ -178,7 +178,7 @@ const TagsInput = ({ tags }: { tags: string[] }) => {
     setInputValue(event.currentTarget.value);
   };
   const handleKeyDown = (event: React.KeyboardEvent) => {
-    if (event.key === 'Enter' && inputValue) {
+    if ((event.code === 'Enter' || event.code === 'Space') && inputValue) {
       setInputValue('');
       if (!selectedOptions.includes(inputValue)) {
         const newOptions = [...selectedOptions, inputValue];
