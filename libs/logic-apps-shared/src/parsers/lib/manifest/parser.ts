@@ -4,7 +4,7 @@ import type { SchemaProcessorOptions } from '../common/schemaprocessor';
 import { SchemaProcessor } from '../common/schemaprocessor';
 import type { InputParameter, OutputParameter } from '../models/operation';
 import { toInputParameter } from '../models/operation';
-import type { OpenAPIV2, OperationManifest } from '../../../utils/src';
+import type { OpenAPIV2, OperationManifest, SupportedChannels } from '../../../utils/src';
 import { getObjectPropertyValue, map } from '../../../utils/src';
 
 type SchemaObject = OpenAPIV2.SchemaObject;
@@ -43,6 +43,13 @@ export class ManifestParser {
   constructor(operationManifest: OperationManifest, isAliasingSupported: boolean) {
     this._operationManifest = operationManifest;
     this._isAliasingSupported = isAliasingSupported;
+  }
+
+  /**
+   * Gets supported channels.
+   */
+  public getSupportedChannels(): SupportedChannels[] {
+    return this._operationManifest.properties.supportedChannels ?? [];
   }
 
   /**

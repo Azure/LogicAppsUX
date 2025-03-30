@@ -95,8 +95,28 @@ export default {
       },
       required: ['deploymentId', 'messages'],
     },
+    channels: {
+      type: 'object',
+      properties: {
+        in: {
+          type: 'object',
+        },
+        out: {},
+      },
+    },
     inputsLocation: ['inputs', 'parameters'],
     isInputsOptional: false,
+
+    supportedChannels: [
+      {
+        input: {
+          type: 'request',
+        },
+        output: {
+          type: 'response',
+        },
+      },
+    ],
 
     connection: {
       required: true,

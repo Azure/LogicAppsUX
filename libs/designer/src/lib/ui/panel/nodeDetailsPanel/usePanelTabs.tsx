@@ -1,3 +1,4 @@
+import { useAgenticWorkflow } from '../../../core/state/designerView/designerViewSelectors';
 import constants from '../../../common/constants';
 import type { RootState } from '../../../core';
 import { useNodeMetadata, useOperationInfo } from '../../../core';
@@ -22,6 +23,7 @@ import { SUBGRAPH_TYPES } from '@microsoft/logic-apps-shared';
 import { useMemo } from 'react';
 import { useIntl } from 'react-intl';
 import { useSelector } from 'react-redux';
+import { channelsTab } from './tabs/channelsTab';
 
 export const usePanelTabs = ({ nodeId }: { nodeId: string }) => {
   const intl = useIntl();
@@ -34,6 +36,8 @@ export const usePanelTabs = ({ nodeId }: { nodeId: string }) => {
   const isTriggerNode = useSelector((state: RootState) => isRootNodeInGraph(nodeId, 'root', state.workflow.nodesMetadata));
   const operationInfo = useOperationInfo(nodeId);
   const nodeMetaData = useNodeMetadata(nodeId);
+  const supportedChannels = useSelector((state: RootState) => state.operations.supportedChannels[nodeId] ?? []);
+  const isAgenticWorkflow = useAgenticWorkflow();
   const hasSchema = useHasSchema(operationInfo?.connectorId, operationInfo?.operationId);
   const runHistory = useRetryHistory(nodeId);
   const isScopeNode = operationInfo?.type.toLowerCase() === constants.NODE.TYPE.SCOPE;
@@ -81,6 +85,14 @@ export const usePanelTabs = ({ nodeId }: { nodeId: string }) => {
     [intl, tabProps, settingValidationErrors]
   );
 
+  const channelsTabItem = useMemo(
+    () => ({
+      ...channelsTab(intl, tabProps),
+      visible: supportedChannels.length > 0 && isAgenticWorkflow,
+    }),
+    [intl, tabProps, supportedChannels, isAgenticWorkflow]
+  );
+
   const codeViewTabItem = useMemo(() => codeViewTab(intl, tabProps), [intl, tabProps]);
 
   const testingTabItem = useMemo(
@@ -125,6 +137,7 @@ export const usePanelTabs = ({ nodeId }: { nodeId: string }) => {
       monitoringTabItem,
       parametersTabItem,
       settingsTabItem,
+      channelsTabItem,
       codeViewTabItem,
       testingTabItem,
       aboutTabItem,
@@ -138,6 +151,7 @@ export const usePanelTabs = ({ nodeId }: { nodeId: string }) => {
     mockResultsTabItem,
     isUnitTestView,
     aboutTabItem,
+    channelsTabItem,
     codeViewTabItem,
     monitorRetryTabItem,
     monitoringTabItem,

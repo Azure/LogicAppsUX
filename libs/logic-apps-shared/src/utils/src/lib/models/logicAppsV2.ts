@@ -810,6 +810,7 @@ export interface SwitchAction extends Action {
 
 export interface AgentAction extends TimeoutableAction {
   tools?: Record<string, AgentCondition>;
+  channels?: AgentChannels;
   deploymentId: string;
   messages: AgentMessage[];
   temperature?: number;
@@ -827,6 +828,18 @@ export interface AgentCondition {
   description?: string;
   type: string;
   agentParameterSchema?: any;
+}
+
+export interface AgentChannels {
+  in: Record<string, AgentInputChannel>;
+  out: Record<string, OperationDefinition>;
+}
+
+export interface AgentInputChannel {
+  trigger: OperationDefinition;
+  mapping?: {
+    message: string;
+  };
 }
 
 export interface ConnectorAction extends Action {
