@@ -7,7 +7,14 @@ import { getTokenTitle, normalizeKey } from '../../utils/tokens';
 import { resetNodesLoadStatus, resetTemplatesState, resetWorkflowState, setStateAfterUndoRedo } from '../global';
 import { LogEntryLevel, LoggerService, TokenType, filterRecord, getRecordEntry } from '@microsoft/logic-apps-shared';
 import type { ParameterInfo } from '@microsoft/designer-ui';
-import type { FilePickerInfo, InputParameter, OutputParameter, OpenAPIV2, OperationInfo } from '@microsoft/logic-apps-shared';
+import type {
+  FilePickerInfo,
+  InputParameter,
+  OutputParameter,
+  OpenAPIV2,
+  OperationInfo,
+  SupportedChannels,
+} from '@microsoft/logic-apps-shared';
 import { createSlice } from '@reduxjs/toolkit';
 import type { PayloadAction } from '@reduxjs/toolkit';
 import type { WritableDraft } from 'immer/dist/internal';
@@ -115,6 +122,7 @@ export interface OperationMetadataState {
   repetitionInfos: Record<string, RepetitionContext>;
   errors: Record<string, Record<ErrorLevel, ErrorInfo | undefined>>;
   loadStatus: OperationMetadataLoadStatus;
+  supportedChannels: Record<string, SupportedChannels[]>;
 }
 
 interface OperationMetadataLoadStatus {
@@ -133,6 +141,7 @@ export const initialState: OperationMetadataState = {
   staticResults: {},
   repetitionInfos: {},
   errors: {},
+  supportedChannels: {},
   loadStatus: {
     nodesInitialized: false,
     nodesAndDynamicDataInitialized: false,
@@ -163,6 +172,7 @@ export interface NodeData {
   operationMetadata: OperationMetadata;
   staticResult?: NodeStaticResults;
   settings?: Settings;
+  supportedChannels?: SupportedChannels[];
   actionMetadata?: Record<string, any>;
   repetitionInfo?: RepetitionContext;
 }
@@ -249,18 +259,31 @@ export const operationMetadataSlice = createSlice({
         state.staticResults = {};
         state.actionMetadata = {};
         state.repetitionInfos = {};
+        state.supportedChannels = {};
       }
+
       for (const nodeData of nodes) {
         if (!nodeData) {
           return;
         }
 
-        const { id, nodeInputs, nodeOutputs, nodeDependencies, settings, operationMetadata, actionMetadata, staticResult, repetitionInfo } =
-          nodeData;
+        const {
+          id,
+          nodeInputs,
+          nodeOutputs,
+          nodeDependencies,
+          settings,
+          operationMetadata,
+          actionMetadata,
+          staticResult,
+          repetitionInfo,
+          supportedChannels,
+        } = nodeData;
         state.inputParameters[id] = nodeInputs;
         state.outputParameters[id] = nodeOutputs;
         state.dependencies[id] = nodeDependencies;
         state.operationMetadata[id] = operationMetadata;
+        state.supportedChannels[id] = supportedChannels ?? [];
 
         if (settings) {
           state.settings[id] = settings;

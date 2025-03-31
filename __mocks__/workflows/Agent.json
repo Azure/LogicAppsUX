@@ -15,6 +15,10 @@
               {
                 "role": "User",
                 "content": "This is a user message."
+              },
+              {
+                "role": "User",
+                "content": "You are a helpful assistant."
               }
             ]
           }

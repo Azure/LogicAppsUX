@@ -11,6 +11,11 @@ const queryOpts = {
   refetchOnReconnect: false,
 };
 
+export interface ChatHistory {
+  nodeId: string;
+  messages: any[];
+}
+
 export const useRuns = (enabled = false) => {
   return useQuery(
     ['runs'],
@@ -165,12 +170,12 @@ export const useAgentActionsRepetition = (
     async () => {
       const allActions: LogicAppsV2.RunRepetition[] = [];
       const firstActions = await RunService().getAgentActionsRepetition({ nodeId, runId }, repetitionName);
-      allActions.push(...firstActions.resources);
+      allActions.push(...(firstActions?.value ?? []));
       let nextLink = firstActions.nextLink;
       while (nextLink) {
         const moreActions = await RunService().getMoreAgentActionsRepetition(nextLink);
-        allActions.push(...moreActions.resources);
-        nextLink = moreActions.nextLink;
+        allActions.push(...(moreActions?.value ?? []));
+        nextLink = moreActions?.nextLink;
       }
       return allActions;
     },
@@ -178,6 +183,25 @@ export const useAgentActionsRepetition = (
       ...queryOpts,
       retryOnMount: false,
       enabled: isMonitoringView && runIndex !== undefined && isParentAgent,
+    }
+  );
+};
+
+export const useChatHistory = (isMonitoringView: boolean, nodeIds: string[], runId: string | undefined) => {
+  return useQuery(
+    ['useChatHistory', { nodeIds, runId }],
+    async () => {
+      const allMessages: ChatHistory[] = [];
+      for (const nodeId of nodeIds) {
+        const messages = await RunService().getChatHistory({ nodeId, runId });
+        allMessages.push({ nodeId, messages });
+      }
+      return allMessages;
+    },
+    {
+      ...queryOpts,
+      retryOnMount: false,
+      enabled: isMonitoringView,
     }
   );
 };

@@ -308,10 +308,12 @@ const DesignerEditor = () => {
         ...connectionsData?.serviceProviderConnections,
         ...newServiceProviderConnections,
       };
-      (connectionsData as ConnectionsData).agentConnections = {
-        ...connectionsData?.agentConnections,
-        ...newAgentConnections,
-      };
+      if (workflow?.kind === 'agentic') {
+        (connectionsData as ConnectionsData).agentConnections = {
+          ...connectionsData?.agentConnections,
+          ...newAgentConnections,
+        };
+      }
     }
 
     const connectionsToUpdate = getConnectionsToUpdate(originalConnectionsData, connectionsData ?? {});

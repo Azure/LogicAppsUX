@@ -1,4 +1,4 @@
-import constants from '../../../common/constants';
+import commonConstants from '../../../common/constants';
 import type { WorkflowEdge, WorkflowNode } from '../../parsers/models/workflowNode';
 import type { RootState } from '../../store';
 import { createWorkflowEdge, getAllParentsForNode } from '../../utils/graph';
@@ -96,7 +96,10 @@ const reduceCollapsed =
         filteredChildren.length === 2
           ? [createWorkflowEdge(filteredChildren[0]?.id, filteredChildren[1]?.id, WORKFLOW_EDGE_TYPES.HIDDEN_EDGE)]
           : [];
-      acc.push({ ...child, ...{ children: filteredChildren, edges: filteredEdges } });
+      acc.push({
+        ...child,
+        ...{ children: filteredChildren, edges: filteredEdges },
+      });
       return acc;
     }, []);
   };
@@ -327,7 +330,9 @@ export const useParentRunIndex = (id: string | undefined): number | undefined =>
       const allParents = getAllParentsForNode(id, state.nodesMetadata);
       const parents = allParents.filter((x) => {
         const operationType = getRecordEntry(state.operations, x)?.type?.toLowerCase() ?? '';
-        return [constants.NODE.TYPE.FOREACH, constants.NODE.TYPE.UNTIL, constants.NODE.TYPE.AGENT].includes(operationType);
+        return [commonConstants.NODE.TYPE.FOREACH, commonConstants.NODE.TYPE.UNTIL, commonConstants.NODE.TYPE.AGENT].includes(
+          operationType
+        );
       });
       return parents.length ? getRecordEntry(state.nodesMetadata, parents[0])?.runIndex : undefined;
     })
@@ -378,7 +383,7 @@ export const useIsWithinAgenticLoop = (id: string): boolean => {
 
       while (currentId) {
         const type = getRecordEntry(state.operations, currentId)?.type;
-        if (equals(type, constants.NODE.TYPE.AGENT)) {
+        if (equals(type, commonConstants.NODE.TYPE.AGENT)) {
           return true;
         }
         const parentId = getRecordEntry(state.nodesMetadata, currentId)?.parentNodeId;
@@ -394,6 +399,41 @@ export const useIsWithinAgenticLoop = (id: string): boolean => {
     })
   );
 };
+
+export const useAgentOperations = () => {
+  return useSelector(
+    createSelector(getWorkflowState, (state: WorkflowState) => {
+      return Object.entries(state.operations).reduce((acc: string[], [id, node]) => {
+        if (equals(node.type, commonConstants.NODE.TYPE.AGENT)) {
+          acc.push(id);
+        }
+        return acc;
+      }, []);
+    })
+  );
+};
+
+export const useIsChatInputEnabled = (nodeId?: string) =>
+  useSelector(
+    createSelector(getWorkflowState, (state: WorkflowState) => {
+      if (nodeId) {
+        const runData = getRecordEntry(state.nodesMetadata, nodeId)?.runData;
+        /**
+         * Chat input is only enabled when the node is an agent, and is currently running,
+         * and input/output channels are configured
+         * */
+        if (equals(runData?.status ?? '', commonConstants.FLOW_STATUS.WAITING)) {
+          const operationKeys = Object.keys(state.operations);
+          return (
+            operationKeys.some((key) => key.toLowerCase().startsWith(`${nodeId}${commonConstants.CHANNELS.INPUT}`.toLowerCase())) &&
+            operationKeys.some((key) => key.toLowerCase().startsWith(`${nodeId}${commonConstants.CHANNELS.OUTPUT}`.toLowerCase()))
+          );
+        }
+      }
+
+      return false;
+    })
+  );
 
 export const getAgentFromCondition = (state: WorkflowState, nodeId: string): string | undefined => {
   if (!nodeId || state.nodesMetadata[nodeId].subgraphType !== SUBGRAPH_TYPES.AGENT_CONDITION) {

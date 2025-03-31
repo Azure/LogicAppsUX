@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import {
+  getLogicAppsCategories,
   getReactQueryClient,
   resetStateOnResourceChange,
   TemplatesDataProvider,
@@ -380,44 +381,7 @@ export const TemplatesStandard = () => {
               detailFilters={{
                 Category: {
                   displayName: 'Categories',
-                  items: [
-                    {
-                      value: 'Design Patterns',
-                      displayName: 'Design Patterns',
-                    },
-                    {
-                      value: 'AI',
-                      displayName: 'AI',
-                    },
-                    {
-                      value: 'B2B',
-                      displayName: 'B2B',
-                    },
-                    {
-                      value: 'EDI',
-                      displayName: 'EDI',
-                    },
-                    {
-                      value: 'Approval',
-                      displayName: 'Approval',
-                    },
-                    {
-                      value: 'RAG',
-                      displayName: 'RAG',
-                    },
-                    {
-                      value: 'Automation',
-                      displayName: 'Automation',
-                    },
-                    {
-                      value: 'BizTalk Migration',
-                      displayName: 'BizTalk Migration',
-                    },
-                    {
-                      value: 'Mainframe Modernization',
-                      displayName: 'Mainframe Modernization',
-                    },
-                  ],
+                  items: getLogicAppsCategories(),
                 },
               }}
             />

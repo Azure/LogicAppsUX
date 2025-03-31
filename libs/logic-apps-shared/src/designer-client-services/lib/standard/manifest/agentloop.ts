@@ -49,54 +49,43 @@ export default {
           'x-ms-visibility': 'important',
         },
         messages: {
-          description: 'Messages',
-          title: 'Messages',
-          default: [
-            {
-              role: 'System',
-              content: 'You are an assistant who will help...',
-            },
-          ],
-          type: 'array',
-          items: {
-            description: 'Message',
-            required: ['Role', 'Content'],
-            type: 'object',
-            properties: {
-              role: {
-                description: 'Message role',
-                type: 'string',
-                title: 'Role',
-                'x-ms-editor': 'dropdown',
-                'x-ms-editor-options': {
-                  options: [
-                    {
-                      value: 'System',
-                      displayName: 'System',
-                    },
-                    {
-                      value: 'User',
-                      displayName: 'User',
-                    },
-                  ],
-                },
-              },
-              content: {
-                description: 'Message content',
-                type: 'string',
-                'x-ms-summary': 'Content',
-              },
-            },
-          },
-          required: ['Role', 'Content'],
-          'x-ms-summary': 'Messages',
+          title: 'Instructions for agent',
           'x-ms-visibility': 'important',
+          'x-ms-editor': 'agentinstruction',
+          type: 'array',
         },
       },
       required: ['deploymentId', 'messages'],
     },
+    channels: {
+      type: 'object',
+      properties: {
+        in: {
+          type: 'object',
+        },
+        out: {},
+      },
+    },
     inputsLocation: ['inputs', 'parameters'],
     isInputsOptional: false,
+
+    supportedChannels: [
+      {
+        input: {
+          type: 'Request',
+          default: {
+            'inputs.$.schema': '{"properties": {"prompt": {"type": "string"}}, "type": "object"}',
+          },
+        },
+        output: {
+          type: 'Response',
+          default: {
+            'inputs.$.statusCode': '200',
+            'inputs.$.body': '{ "responseMessage": "@assistantMessage()" }',
+          },
+        },
+      },
+    ],
 
     connection: {
       required: true,
