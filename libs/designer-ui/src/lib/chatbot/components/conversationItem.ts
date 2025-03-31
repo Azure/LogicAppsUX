@@ -14,6 +14,7 @@ export type ChatEntryReaction = (typeof ChatEntryReaction)[keyof typeof ChatEntr
 export type ConversationItem =
   //TODO: Add other types of items
   | ToolReplyItem
+  | AgentHeaderItem
   | UserQueryItem
   | AssistantReplyItem
   | AssistantReplyWithFlowItem
@@ -50,8 +51,14 @@ export const ConversationItemType = {
   Greeting: 'greeting',
   OperationsNeedingAttention: 'operationsNeedingAttention',
   Tool: 'tool',
+  AgentHeader: 'agentHeader',
 } as const;
 export type ConversationItemType = (typeof ConversationItemType)[keyof typeof ConversationItemType];
+
+export type AgentHeaderItem = BaseConversationItem & {
+  type: typeof ConversationItemType.AgentHeader;
+  text: string;
+};
 
 export type UserQueryItem = BaseConversationItem & {
   type: typeof ConversationItemType.Query;

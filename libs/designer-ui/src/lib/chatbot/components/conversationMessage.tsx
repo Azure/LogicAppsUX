@@ -4,12 +4,13 @@ import { AssistantGreeting } from './assistantGreeting';
 import { AssistantReplyWithFlow } from './assistantReplyWithFlow';
 import { ChatBubble } from './chatBubble';
 import { ConnectionsSetupMessage } from './connectionsSetupMessage';
-import { ContainerWithProgressBar } from './containerWithProgressBar';
 import { ConversationItemType } from './conversationItem';
-import type { ConversationItem, UserQueryItem, AssistantReplyItem, ToolReplyItem } from './conversationItem';
+import type { ConversationItem, UserQueryItem, AssistantReplyItem } from './conversationItem';
 import { OperationsNeedingAttentionMessage } from './operationsNeedAttentionMessage';
 import { useRef } from 'react';
 import Markdown from 'react-markdown';
+import { ToolReply } from './toolReply';
+import { AgentHeader } from './agentHeader';
 
 type ConversationMessageProps = {
   item: ConversationItem;
@@ -33,6 +34,8 @@ export const ConversationMessage = ({ item }: ConversationMessageProps) => {
       return <OperationsNeedingAttentionMessage item={item} />;
     case ConversationItemType.Tool:
       return <ToolReply item={item} />;
+    case ConversationItemType.AgentHeader:
+      return <AgentHeader item={item} />;
     default:
       return null;
   }
@@ -72,20 +75,6 @@ const AssistantReply = ({ item }: { item: AssistantReplyItem }) => {
         </div>
       </ChatBubble>
       {feedbackMessage}
-    </div>
-  );
-};
-
-const ToolReply = ({ item }: { item: ToolReplyItem }) => {
-  const { text } = item;
-  const textRef = useRef<HTMLDivElement | null>(null);
-  return (
-    <div>
-      <ContainerWithProgressBar dataAutomationId={'dataAutomationId'}>
-        <div ref={textRef}>
-          <Markdown>{text}</Markdown>
-        </div>
-      </ContainerWithProgressBar>
     </div>
   );
 };

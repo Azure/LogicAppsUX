@@ -19,10 +19,26 @@ const AgentChatHeader = ({
 }: {
   title: string;
 }) => {
-  return <h1>{title}</h1>;
+  return (
+    <div style={{ display: 'flex', justifyContent: 'center', padding: '10px' }}>
+      <h3>{title}</h3>
+    </div>
+  );
 };
 
-const parseChatHistory = (message: any) => {
+const parseChatHistory = (chatHistory: Record<string, { messages: any[] }>): ConversationItem[] =>
+  Object.entries(chatHistory).reduce<ConversationItem[]>((conversations, [key, { messages }]) => {
+    const parsedMessages: any[] = messages.map((message) => parseMessage(message));
+    conversations.push(...parsedMessages, {
+      id: guid(),
+      text: key,
+      type: ConversationItemType.AgentHeader,
+      date: new Date(), // Using current time for header; modify if needed
+    });
+    return conversations;
+  }, []);
+
+const parseMessage = (message: any) => {
   let type: ConversationItemType = ConversationItemType.Reply;
   let text = '';
   switch (message.messageEntryType) {
@@ -59,7 +75,6 @@ export const AgentChat = ({ panelLocation = PanelLocation.Left, chatbotWidth = d
   const [focus, setFocus] = useState(false);
   const [conversation, setConversation] = useState<ConversationItem[]>([]);
   const [controller, _setController] = useState(new AbortController());
-  const [selectedOperation] = useState('');
   const isMonitoringView = useMonitoringView();
   const runInstance = useRunInstance();
   const agentOperations = useAgentOpertations();
@@ -70,11 +85,11 @@ export const AgentChat = ({ panelLocation = PanelLocation.Left, chatbotWidth = d
     runInstance?.id
   );
 
-  console.log('charlie', agentOperations, isActionsRepetitionFetching, agentActionsRepetitionData);
+  console.log('charlie', isActionsRepetitionFetching, agentActionsRepetitionData);
 
   useEffect(() => {
     if (!isNullOrUndefined(agentActionsRepetitionData)) {
-      const newConversations = agentActionsRepetitionData.map((message: any) => parseChatHistory(message)) as any;
+      const newConversations = parseChatHistory(agentActionsRepetitionData);
       setConversation((current) => [...newConversations, ...current]);
     }
   }, [setConversation, agentActionsRepetitionData]);
@@ -101,60 +116,6 @@ export const AgentChat = ({ panelLocation = PanelLocation.Left, chatbotWidth = d
         id: 'Vqs8hE',
         description: 'Actions button',
       }),
-      queryTemplates: {
-        createFlow1SentenceStart: intl.formatMessage({
-          defaultMessage: 'Send me an email when ',
-          id: '4Levd5',
-          description: 'Chatbot input start of sentence for creating a flow that the user should complete. Trailing space is intentional.',
-        }),
-        createFlow2SentenceStart: intl.formatMessage({
-          defaultMessage: 'Every week on Monday ',
-          id: '635Koz',
-          description: 'Chatbot input start of sentence for creating a flow that the user should complete. Trailing space is intentional.',
-        }),
-        createFlow3SentenceStart: intl.formatMessage({
-          defaultMessage: 'When a new item ',
-          id: 'IsbbsG',
-          description: 'Chatbot input start of sentence for creating a flow that the user should complete. Trailing space is intentional.',
-        }),
-        addActionSentenceStart: intl.formatMessage({
-          defaultMessage: 'Add an action ',
-          id: 'iXW+2l',
-          description: 'Chatbot input start of sentence for adding an action that the user should complete. Trailing space is intentional.',
-        }),
-        replaceActionSentenceStartFormat: intl.formatMessage(
-          {
-            defaultMessage: 'Replace "{selectedOperation}" with ',
-            id: '9QS9a3',
-            description:
-              'Chatbot input start of sentence for replacing an action that the user should complete. Trailing space is intentional.',
-          },
-          { selectedOperation }
-        ),
-        explainActionSentenceFormat: intl.formatMessage(
-          {
-            defaultMessage: 'Explain what the "{selectedOperation}" action does in this flow',
-            id: 'VEbE93',
-            description: 'Chatbot input sentence asking to explain what the selected action does in the flow.',
-          },
-          { selectedOperation }
-        ),
-        explainFlowSentence: intl.formatMessage({
-          defaultMessage: 'Explain what this flow does',
-          id: 'vF+gWH',
-          description: 'Chatbot query sentence that asks to explain what the workflow does',
-        }),
-        questionSentenceStart: intl.formatMessage({
-          defaultMessage: 'Tell me more about ',
-          id: 'dKCp2j',
-          description: 'Chatbot query start of sentence for asking for more explaination on an item that the user can should complete.',
-        }),
-        editFlowSentenceStart: intl.formatMessage({
-          defaultMessage: 'Edit this flow to ',
-          id: 'eI00kb',
-          description: 'Chatbot query start of sentence for editing the workflow that the user can should complete.',
-        }),
-      },
       chatSuggestion: {
         saveButton: intl.formatMessage({
           defaultMessage: 'Save this workflow',
@@ -193,7 +154,7 @@ export const AgentChat = ({ panelLocation = PanelLocation.Left, chatbotWidth = d
         description: 'Chatbot card telling user that the AI response is being canceled',
       }),
     };
-  }, [intl, selectedOperation]);
+  }, [intl]);
 
   const abortFetching = useCallback(() => {
     controller.abort();

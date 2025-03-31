@@ -186,11 +186,10 @@ export const useChatHistory = (isMonitoringView: boolean, nodeIds: string[], run
   return useQuery(
     ['useChatHistory', { nodeIds, runId }],
     async () => {
-      const allMessages = [];
-      const ids = [...nodeIds];
-      for (let i = 0; i < nodeIds.length; i++) {
-        const messages = await RunService().getChatHistory({ nodeId: ids[i], runId });
-        allMessages.push(...messages);
+      const allMessages: any = {};
+      for (const nodeId of nodeIds) {
+        const messages = await RunService().getChatHistory({ nodeId, runId });
+        allMessages[nodeId] = { messages };
       }
       return allMessages;
     },
