@@ -7,7 +7,7 @@ export const ToolReply = ({ item }: { item: ToolReplyItem }) => {
   const textRef = useRef<HTMLDivElement | null>(null);
   return (
     <div ref={textRef}>
-      <Markdown>{text}</Markdown>
+      <Markdown className="msla-system-message">{text}</Markdown>
     </div>
   );
 };

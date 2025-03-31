@@ -35,6 +35,7 @@ type BaseConversationItem = {
   type: ConversationItemType;
   id: string;
   date: Date;
+  metadata?: Record<string, any>;
 };
 
 type BaseAssistantMessageItem = BaseConversationItem & {
