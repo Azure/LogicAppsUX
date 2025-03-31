@@ -1,5 +1,6 @@
-import { ProjectType, type StandardApp } from '@microsoft/vscode-extension-logic-apps';
-import { workflowKind } from '../../../constants';
+import { ProjectType, TemplateCategory, TemplatePromptResult, type StandardApp } from '@microsoft/vscode-extension-logic-apps';
+import { workflowKind, workflowType } from '../../../constants';
+import { localize } from '../../../localize';
 
 /**
  * Returns the workflow template based on the provided parameters.
@@ -8,7 +9,7 @@ import { workflowKind } from '../../../constants';
  * @param {string} projectType - The type of the project.
  * @returns The workflow template.
  */
-export const getFunctionWorkflowTemplate = (methodName: string, isStateful: boolean, projectType: string) => {
+export const getWorkflowTemplate = (methodName: string, isStateful: boolean, projectType: string) => {
   const kind = isStateful ? workflowKind.stateful : workflowKind.stateless;
 
   const customCodeDefinition: StandardApp = {
@@ -117,4 +118,50 @@ export const getCodelessWorkflowTemplate = (isStateful: boolean) => {
   };
 
   return emptyCodelessDefinition;
+};
+
+export const getWorkflowTemplatePickItems = (language: string, isProjectWizard: boolean) => {
+  const picks: any[] = [
+    {
+      id: workflowType.stateful,
+      name: localize('Stateful', 'Stateful workflow'),
+      defaultFunctionName: 'Stateful',
+      language: language,
+      isHttpTrigger: true,
+      isTimerTrigger: false,
+      userPromptedSettings: [],
+      categories: [TemplateCategory.Core],
+    },
+    {
+      id: workflowType.stateless,
+      name: localize('Stateless', 'Stateless workflow'),
+      defaultFunctionName: 'Stateless',
+      language: language,
+      isHttpTrigger: true,
+      isTimerTrigger: false,
+      userPromptedSettings: [],
+      categories: [TemplateCategory.Core],
+    },
+    {
+      id: workflowType.agentic,
+      name: localize('Agentic', 'Agentic workflow'),
+      defaultFunctionName: 'Agentic',
+      language: language,
+      isHttpTrigger: true,
+      isTimerTrigger: false,
+      userPromptedSettings: [],
+      categories: [TemplateCategory.Core],
+    },
+  ];
+
+  // If this is a project wizard, add an option to skip for now
+  if (isProjectWizard) {
+    picks.push({
+      label: localize('skipForNow', '$(clock) Skip for now'),
+      data: TemplatePromptResult.skipForNow,
+      suppressPersistence: true,
+    });
+  }
+
+  return picks;
 };

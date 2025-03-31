@@ -33,7 +33,7 @@ import * as fse from 'fs-extra';
 import * as path from 'path';
 import type { MessageItem } from 'vscode';
 import { validateDotNetIsInstalled } from '../../../dotnet/validateDotNetInstalled';
-import { getFunctionWorkflowTemplate } from '../../../../utils/codeless/templates';
+import { getWorkflowTemplate } from '../../../../utils/codeless/templates';
 
 // This class creates a new workflow for a codeless Azure Function project
 export class CodelessFunctionWorkflow extends WorkflowCreateStepBase<IFunctionWizardContext> {
@@ -61,11 +61,7 @@ export class CodelessFunctionWorkflow extends WorkflowCreateStepBase<IFunctionWi
     const methodName = context.methodName;
 
     // Determine which definition object to use based on the type of workflow template
-    const codelessDefinition: StandardApp = getFunctionWorkflowTemplate(
-      methodName,
-      template?.id === workflowType.stateful,
-      context.projectType
-    );
+    const codelessDefinition: StandardApp = getWorkflowTemplate(methodName, template?.id === workflowType.stateful, context.projectType);
 
     // Write the workflow definition to a JSON file
     const workflowJsonFullPath: string = path.join(functionPath, workflowFileName);

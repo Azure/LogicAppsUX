@@ -86,6 +86,7 @@ export const debugSymbolDll = 'Microsoft.Azure.Workflows.BuildTasks.DebugSymbolG
 export const workflowType = {
   stateful: 'Stateful-Codeless',
   stateless: 'Stateless-Codeless',
+  agentic: 'Agentic-Codeless',
 } as const;
 export type workflowType = (typeof workflowType)[keyof typeof workflowType];
 
