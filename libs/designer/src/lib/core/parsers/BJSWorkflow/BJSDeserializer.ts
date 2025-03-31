@@ -28,7 +28,6 @@ import {
 import { getDurationStringPanelMode, ActionResults } from '@microsoft/designer-ui';
 import type { Assertion, ExpressionFunction, LogicAppsV2, SubgraphType, UnitTestDefinition } from '@microsoft/logic-apps-shared';
 import type { PasteScopeParams } from '../../actions/bjsworkflow/copypaste';
-import { Constants } from 'lib';
 
 const hasMultipleTriggers = (definition: LogicAppsV2.WorkflowDefinition): boolean => {
   return definition && definition.triggers ? Object.keys(definition.triggers).length > 1 : false;
@@ -428,7 +427,7 @@ export const buildGraphFromActions = (
             for (const key of inputChannelKeys) {
               const channelAction = action.channels.in?.[key];
               if (channelAction && channelAction?.trigger) {
-                const id = `${actionName}${Constants.CHANNELS.INPUT}${channelAction.trigger.type}`;
+                const id = `${actionName}${constants.CHANNELS.INPUT}${channelAction.trigger.type}`;
                 allActionNames.push(id);
                 action.tools = {
                   ...action.tools,
