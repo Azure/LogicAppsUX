@@ -1,6 +1,6 @@
 {
   "name": "@microsoft/logic-apps-designer",
-  "version": "5.57.0",
+  "version": "5.71.0",
   "dependencies": {
     "@fluentui/azure-themes": "8.5.70",
     "@fluentui/react": "8.110.2",
@@ -10,6 +10,7 @@
     "@fluentui/utilities": "8.15.0",
     "@microsoft/applicationinsights-core-js": "2.8.9",
     "@microsoft/designer-ui": "workspace:*",
+    "@microsoft/logic-apps-chatbot": "workspace:*",
     "@microsoft/logic-apps-shared": "workspace:*",
     "@react-hookz/web": "22.0.0",
     "@reduxjs/toolkit": "1.8.5",

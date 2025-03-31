@@ -1,31 +1,91 @@
 import { useDispatch, useSelector } from 'react-redux';
 import type { AppDispatch, RootState } from '../state/templates/store';
-import { useCallback } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { ResourcePicker } from '../../ui/templates/basics/resourcepicker';
 import { equals, hasProperty, type LogicAppResource } from '@microsoft/logic-apps-shared';
 import { useWorkflowsInApp } from '../configuretemplate/utils/queries';
 import { Button, Checkbox } from '@fluentui/react-components';
-import { initializeConnectionsFromWorkflows } from '../actions/bjsworkflow/configuretemplate';
+import { initializeWorkflowsData } from '../actions/bjsworkflow/configuretemplate';
 import { updateAllWorkflowsData, updateWorkflowData } from '../state/templates/templateSlice';
+import { TemplateContent, TemplatesPanelFooter, type TemplateTabProps } from '@microsoft/designer-ui';
+import { useConfigureTemplateWizardTabs } from '../../ui/configuretemplate/tabs/useWizardTabs';
+import { selectWizardTab } from '../state/templates/tabSlice';
+import { TemplateInfoToast } from '../../ui/configuretemplate/toasters';
+import { useIntl } from 'react-intl';
 
 export const ConfigureTemplateWizard = () => {
   const dispatch = useDispatch<AppDispatch>();
-  const { isConsumption, logicAppName, subscriptionId, resourceGroup, workflowsInTemplate } = useSelector((state: RootState) => ({
-    isConsumption: !!state.workflow.isConsumption,
-    logicAppName: state.workflow.logicAppName,
-    subscriptionId: state.workflow.subscriptionId,
-    resourceGroup: state.workflow.resourceGroup,
-    workflowsInTemplate: state.template.workflows,
-  }));
+  const { isConsumption, logicAppName, subscriptionId, resourceGroup, workflowsInTemplate, selectedTabId } = useSelector(
+    (state: RootState) => ({
+      isConsumption: !!state.workflow.isConsumption,
+      logicAppName: state.workflow.logicAppName,
+      subscriptionId: state.workflow.subscriptionId,
+      resourceGroup: state.workflow.resourceGroup,
+      workflowsInTemplate: state.template.workflows,
+      selectedTabId: state.tab.selectedTabId,
+    })
+  );
   const { data: workflows, isLoading } = useWorkflowsInApp(subscriptionId, resourceGroup, logicAppName ?? '', !!isConsumption);
+  const intl = useIntl();
+  const [toasterData, setToasterData] = useState({ title: '', content: '', show: false });
 
-  const onGetConnections = useCallback(() => {
-    dispatch(initializeConnectionsFromWorkflows({}));
+  useEffect(() => {
+    if (selectedTabId) {
+      setToasterData({ title: '', content: '', show: false });
+    }
+  }, [selectedTabId]);
+
+  const onSaveWorkflows = (isMultiWorkflow: boolean) => {
+    if (isMultiWorkflow) {
+      setToasterData({
+        title: intl.formatMessage({
+          defaultMessage: "You're creating an accelerator template!",
+          id: '3ST5oT',
+          description: 'Title for the toaster after adding workflows.',
+        }),
+        content: intl.formatMessage({
+          defaultMessage: 'This template contains more than one workflow, therefore it is classified as an Accelerator.',
+          id: 'gkUDy6',
+          description: 'Content for the toaster for adding workflows',
+        }),
+        show: true,
+      });
+    } else {
+      setToasterData({
+        title: intl.formatMessage({
+          defaultMessage: "You're creating a workflow template!",
+          id: '7ERTcu',
+          description: 'Title for the toaster after adding a single workflow.',
+        }),
+        content: intl.formatMessage({
+          defaultMessage: 'This template contains one workflow, therefore it is classified as a Workflow.',
+          id: '1AFYij',
+          description: 'Content for the toaster for adding a single workflow.',
+        }),
+        show: true,
+      });
+    }
+  };
+
+  const onPublish = () => {
+    setToasterData({
+      title: intl.formatMessage({
+        defaultMessage: 'Your template has been published in production!',
+        id: '6TFn8v',
+        description: 'Title for the toaster after publishing template.',
+      }),
+      content: intl.formatMessage({
+        defaultMessage: 'Head on over to the gallery page to see your template in action.',
+        id: 'ILcDyX',
+        description: 'Content for the toaster for after publishing template.',
+      }),
+      show: true,
+    });
+  };
+
+  const onInitializeWorkflows = useCallback(() => {
+    dispatch(initializeWorkflowsData({}));
   }, [dispatch]);
-
-  const onGetParameters = useCallback(() => {
-    // dispatch(initializeParametersFromWorkflows({}));
-  }, []);
 
   const onWorkflowSelected = useCallback(
     (workflowId: string, checked: boolean) => {
@@ -45,6 +105,13 @@ export const ConfigureTemplateWizard = () => {
     },
     [dispatch]
   );
+
+  const handleSelectTab = (tabId: string): void => {
+    dispatch(selectWizardTab(tabId));
+  };
+
+  const panelTabs: TemplateTabProps[] = useConfigureTemplateWizardTabs({ onSaveWorkflows, onPublish });
+  const selectedTabProps = selectedTabId ? panelTabs?.find((tab) => tab.id === selectedTabId) : panelTabs[0];
 
   return (
     <div>
@@ -68,8 +135,13 @@ export const ConfigureTemplateWizard = () => {
         </div>
       </div>
       <div>
-        <Button onClick={onGetConnections}>{'Get Connections'}</Button>
-        <Button onClick={onGetParameters}>{'Get Parameters'}</Button>
+        <Button onClick={onInitializeWorkflows}>{'Initialize Workflows'}</Button>
+      </div>
+
+      <TemplateInfoToast {...toasterData} />
+      <TemplateContent className="msla-template-quickview-tabs" tabs={panelTabs} selectedTab={selectedTabId} selectTab={handleSelectTab} />
+      <div className="msla-template-overview-footer">
+        {selectedTabProps?.footerContent ? <TemplatesPanelFooter showPrimaryButton={true} {...selectedTabProps?.footerContent} /> : null}
       </div>
     </div>
   );

@@ -10,7 +10,7 @@ exports[`lib/card/cardfooter > should render with a comment icon 1`] = `
     className="msla-badges"
   >
     <div
-      aria-label=" Comment: comment"
+      aria-label="test title Description: comment"
       onBlur={[Function]}
       onFocus={[Function]}
       onPointerEnter={[Function]}
@@ -37,7 +37,7 @@ exports[`lib/card/cardfooter > should render with a connection icon 1`] = `
     className="msla-badges"
   >
     <div
-      aria-label=" Connection name: joechung@microsoft.com"
+      aria-label="test title Connection name: joechung@microsoft.com"
       onBlur={[Function]}
       onFocus={[Function]}
       onPointerEnter={[Function]}
@@ -64,7 +64,7 @@ exports[`lib/card/cardfooter > should render with a lock icon 1`] = `
     className="msla-badges"
   >
     <div
-      aria-label=" Secure inputs or outputs enabled: This operation has secure inputs or outputs enabled."
+      aria-label="test title Secure inputs or outputs enabled: This operation has secure inputs or outputs enabled."
       onBlur={[Function]}
       onFocus={[Function]}
       onPointerEnter={[Function]}
@@ -91,7 +91,7 @@ exports[`lib/card/cardfooter > should render with a testing icon 1`] = `
     className="msla-badges"
   >
     <div
-      aria-label=" Testing: This action has testing configured."
+      aria-label="test title Testing: This action has testing configured."
       onBlur={[Function]}
       onFocus={[Function]}
       onPointerEnter={[Function]}

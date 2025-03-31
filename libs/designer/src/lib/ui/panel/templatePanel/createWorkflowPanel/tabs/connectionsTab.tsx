@@ -2,7 +2,7 @@ import type { AppDispatch, RootState } from '../../../../../core/state/templates
 import { useSelector } from 'react-redux';
 import type { IntlShape } from 'react-intl';
 import constants from '../../../../../common/constants';
-import type { TemplatePanelTab } from '@microsoft/designer-ui';
+import type { TemplateTabProps } from '@microsoft/designer-ui';
 import { closePanel, selectPanelTab } from '../../../../../core/state/templates/panelSlice';
 import type { CreateWorkflowTabProps } from '../createWorkflowPanel';
 import { WorkflowConnections } from '../../../../templates/connections/workflowconnections';
@@ -27,7 +27,7 @@ export const connectionsTab = (
     showCloseButton = true,
     onClosePanel,
   }: CreateWorkflowTabProps
-): TemplatePanelTab => ({
+): TemplateTabProps => ({
   id: constants.TEMPLATE_PANEL_TAB_NAMES.CONNECTIONS,
   disabled,
   title: intl.formatMessage({

@@ -13,7 +13,7 @@ import {
 import { type ResourceDetails, setInitialData } from '../state/templates/workflowSlice';
 import type { ConnectionReferences } from '../../common/models/workflow';
 import { getFilteredTemplates } from './utils/helper';
-import { initializeTemplateServices, reloadTemplates } from '../actions/bjsworkflow/templates';
+import { initializeTemplateServices, initializeWorkflowMetadata, reloadTemplates } from '../actions/bjsworkflow/templates';
 import { InitTemplateService, type Template } from '@microsoft/logic-apps-shared';
 import { setEnableResourceSelection, setViewTemplateDetails } from '../state/templates/templateOptionsSlice';
 import { changeCurrentTemplateName } from '../state/templates/templateSlice';
@@ -79,12 +79,13 @@ const DataProviderInner = ({ isConsumption, children, reload, services }: Templa
 export const TemplatesDataProvider = (props: TemplatesDataProviderProps) => {
   const wrapped = useContext(TemplatesWrappedContext);
   const dispatch = useDispatch<AppDispatch>();
-  const { servicesInitialized, subscriptionId, resourceGroup, location, workflowAppName } = useSelector((state: RootState) => ({
+  const { servicesInitialized, subscriptionId, resourceGroup, location, workflowAppName, manifest } = useSelector((state: RootState) => ({
     servicesInitialized: state.templateOptions.servicesInitialized,
     subscriptionId: state.workflow.subscriptionId,
     resourceGroup: state.workflow.resourceGroup,
     location: state.workflow.location,
     workflowAppName: state.workflow.workflowAppName,
+    manifest: state.template.manifest,
   }));
   const {
     services,
@@ -138,6 +139,12 @@ export const TemplatesDataProvider = (props: TemplatesDataProviderProps) => {
       onResourceChange();
     }
   }, [onResourceChange, subscriptionId, resourceGroup, location, workflowAppName]);
+
+  useEffect(() => {
+    if (manifest) {
+      dispatch(initializeWorkflowMetadata());
+    }
+  }, [dispatch, manifest]);
 
   if (!servicesInitialized) {
     return null;

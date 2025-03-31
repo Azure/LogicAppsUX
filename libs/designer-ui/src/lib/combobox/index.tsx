@@ -91,7 +91,6 @@ export const Combobox = ({
   useOption = true,
   onChange,
   onMenuOpen,
-  labelId,
   label,
   errorDetails,
   serialization,
@@ -297,13 +296,12 @@ export const Combobox = ({
         <div className="msla-combobox-editor-container">
           <EditorWrapper
             {...baseEditorProps}
-            labelId={labelId}
-            readonly={baseEditorProps.readonly}
             className="msla-combobox-editor"
             basePlugins={{ clearEditor: true, autoFocus: canAutoFocus, ...basePlugins }}
             initialValue={value}
             onBlur={handleBlur}
             agentParameterButtonProps={{ ...baseEditorProps.agentParameterButtonProps, shifted: true }}
+            tokenPickerButtonProps={{ verticalOffSet: 19.5 }}
           >
             <EditorChangePlugin setValue={setValue} />
           </EditorWrapper>

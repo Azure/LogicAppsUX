@@ -79,22 +79,22 @@
     border-radius: 4px;
 }
 
-.msla-template-create-tabs {
-    .msla-template-create-connector {
-        .msla-template-create-connector-icon {
-            position: relative;
-            top: 2px;
-            width: 20px;
-            height: 20px;
-        }
-
-        .msla-template-create-connector-text {
-            position: relative;
-            top: -3px;
-            padding-left: 10px;
-        }
+.msla-template-create-connector {
+    .msla-template-create-connector-icon {
+        position: relative;
+        top: 2px;
+        width: 20px;
+        height: 20px;
     }
 
+    .msla-template-create-connector-text {
+        position: relative;
+        top: -3px;
+        padding-left: 10px;
+    }
+}
+
+.msla-template-create-tabs {
     .msla-template-connection-status {
         .msla-template-connection-status-badge {
             margin: 6px 8px 0 0;
@@ -118,3 +118,55 @@
     }
 }
   
+.msla-templates-section {
+    display: flex;
+    flex-direction: column;
+    
+    .msla-templates-section-title {
+        font-size: 14px;
+        font-weight: 600;
+        line-height: 20px;
+    }
+
+    .msla-templates-tab-textField {
+        padding: 16px 0 32px 0;
+    }
+
+    .msla-templates-section-description {
+        font-size: 13px;
+        line-height: 18px;
+        padding-top: 5px;
+
+        .msla-templates-section-description-link {
+            margin-left: 3px;
+            display: inline-flex;
+            flex-direction: row;
+            text-align: center;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .msla-templates-section-description-icon {
+            padding-left: 4px;
+        }
+    }
+
+    .msla-templates-section-items {
+        padding: 20px 0 30px 0;
+
+        .msla-templates-section-item {
+            display: flex;
+            flex-direction: row;
+            padding-bottom: 10px;
+    
+            .msla-templates-section-item-label {
+                width: 240px;
+                padding-right: 8px;
+            }
+        
+            .msla-templates-section-item-value {
+                width: 100%;
+            }
+        }
+    }
+}

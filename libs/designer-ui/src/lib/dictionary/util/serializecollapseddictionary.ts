@@ -33,7 +33,7 @@ export const serializeDictionary = (
       }
       setItems(returnItems);
       setIsValid(true);
-    } catch (e) {
+    } catch (_e) {
       setIsValid(false);
     }
   });

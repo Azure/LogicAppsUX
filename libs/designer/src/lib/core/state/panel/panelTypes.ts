@@ -58,13 +58,18 @@ export interface WorkflowParametersPanelContentState {
   panelMode: 'WorkflowParameters';
 }
 
+export interface AssertionsPanelContentState {
+  panelMode: 'Assertions';
+}
+
 export type PanelContentState =
   | ConnectionPanelContentState
   | DiscoveryPanelContentState
   | ErrorPanelContentState
   | OperationPanelContentState
   | NodeSearchPanelContentState
-  | WorkflowParametersPanelContentState;
+  | WorkflowParametersPanelContentState
+  | AssertionsPanelContentState;
 
 export type PanelMode = PanelContentState['panelMode'];
 
@@ -75,4 +80,5 @@ export const PANEL_MODE: Record<PanelMode, PanelMode> = {
   NodeSearch: 'NodeSearch',
   Error: 'Error',
   Connection: 'Connection',
+  Assertions: 'Assertions',
 };

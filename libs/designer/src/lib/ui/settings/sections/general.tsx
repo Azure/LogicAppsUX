@@ -22,6 +22,7 @@ export interface GeneralSectionProps extends SectionProps {
   onTimeoutValueChange: TextChangeHandler;
   onTriggerConditionsChange: ExpressionChangeHandler;
   onClientTrackingIdChange: TextChangeHandler;
+  onCountValueChange: NumberChangeHandler;
 }
 
 export const General = ({
@@ -31,6 +32,7 @@ export const General = ({
   splitOn,
   splitOnConfiguration,
   timeout,
+  count,
   concurrency,
   conditionExpressions,
   invokerConnection,
@@ -42,6 +44,7 @@ export const General = ({
   onSplitOnToggle,
   onSplitOnSelectionChanged,
   onTimeoutValueChange,
+  onCountValueChange,
   onTriggerConditionsChange,
   onClientTrackingIdChange,
   onHeaderClick,
@@ -89,6 +92,24 @@ export const General = ({
     id: 'eHsOsm',
     description: 'description of action timeout format description',
   });
+  const actionCountTitle = intl.formatMessage({
+    defaultMessage: 'Action count',
+    id: 'jzl9bX',
+    description: 'title for action count setting',
+  });
+  const actionCountTooltipText = intl.formatMessage({
+    defaultMessage: 'Limit the maximum iterations for this action.',
+    id: 'g8eDXe',
+    description: 'description of action count setting',
+  });
+  const countRangeDescription = intl.formatMessage(
+    {
+      defaultMessage: 'Enter a positive integer between {min} and {max}',
+      id: 'NkXNx4',
+      description: 'description of count setting',
+    },
+    { max: maximumWaitingRunsMetadata.max, min: maximumWaitingRunsMetadata.min }
+  );
   const concurrencyTitle = intl.formatMessage({
     defaultMessage: 'Concurrency control',
     id: 'Sy4cFC',
@@ -228,6 +249,20 @@ export const General = ({
           placeholder: `${examplePlaceholderText} P1D`,
         },
         visible: timeout?.isSupported,
+      },
+      {
+        settingType: 'SettingTextField',
+        settingProp: {
+          id: 'count',
+          value: count?.value ?? 100,
+          customLabel: getSettingLabel(actionCountTitle, actionCountTooltipText),
+          readOnly,
+          onValueChange: (_, newValue) => onCountValueChange(Number(newValue)),
+          ariaLabel: actionCountTitle,
+          placeholder: countRangeDescription,
+          type: 'number',
+        },
+        visible: count?.isSupported,
       },
       {
         settingType: 'SettingToggle',

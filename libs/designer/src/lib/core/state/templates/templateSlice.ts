@@ -5,10 +5,14 @@ import { validateConnectionsValue, validateParameterValue } from '../../template
 import type { WorkflowTemplateData, TemplatePayload } from '../../actions/bjsworkflow/templates';
 import { loadTemplate, validateWorkflowsBasicInfo } from '../../actions/bjsworkflow/templates';
 import { resetTemplatesState } from '../global';
-import { initializeConnectionsFromWorkflows } from '../../actions/bjsworkflow/configuretemplate';
+import { initializeWorkflowsData, deleteWorkflowData, loadCustomTemplate } from '../../actions/bjsworkflow/configuretemplate';
+import { getSupportedSkus } from '../../configuretemplate/utils/helper';
 
+export type TemplateEnvironment = 'Production' | 'Development';
 export interface TemplateState extends TemplatePayload {
   templateName?: string;
+  isPublished?: boolean;
+  environment?: TemplateEnvironment;
 }
 
 const initialState: TemplateState = {
@@ -20,6 +24,8 @@ const initialState: TemplateState = {
     parameters: {},
     connections: undefined,
   },
+  isPublished: true,
+  environment: 'Production',
 };
 
 export const templateSlice = createSlice({
@@ -93,6 +99,9 @@ export const templateSlice = createSlice({
       state.templateName = undefined;
       state.manifest = undefined;
     },
+    updateTemplateManifest: (state, action: PayloadAction<Partial<Template.TemplateManifest>>) => {
+      state.manifest = { ...(state.manifest ?? {}), ...(action.payload as Template.TemplateManifest) };
+    },
     updateWorkflowData: (
       state,
       action: PayloadAction<{ shouldDelete?: boolean; data: Partial<WorkflowTemplateData> & { id: string } }>
@@ -119,6 +128,9 @@ export const templateSlice = createSlice({
       }
 
       state.workflows = workflows;
+    },
+    updateEnvironment: (state, action: PayloadAction<TemplateEnvironment>) => {
+      state.environment = action.payload;
     },
   },
   extraReducers: (builder) => {
@@ -159,8 +171,55 @@ export const templateSlice = createSlice({
       }
     );
 
-    builder.addCase(initializeConnectionsFromWorkflows.fulfilled, (state, action: PayloadAction<Record<string, Template.Connection>>) => {
-      state.connections = action.payload;
+    builder.addCase(
+      initializeWorkflowsData.fulfilled,
+      (
+        state,
+        action: PayloadAction<{
+          connections: Record<string, Template.Connection>;
+          parameterDefinitions: Record<string, Partial<Template.ParameterDefinition>>;
+        }>
+      ) => {
+        if (action.payload) {
+          state.connections = action.payload.connections;
+          state.parameterDefinitions = action.payload.parameterDefinitions as any;
+          (state.manifest as Template.TemplateManifest).skus = getSupportedSkus(action.payload.connections);
+        }
+      }
+    );
+
+    builder.addCase(
+      deleteWorkflowData.fulfilled,
+      (
+        state,
+        action: PayloadAction<{
+          id: string;
+          connectionKeys: string[];
+          parameterKeys: string[];
+          parametersToUpdate: Record<string, Partial<Template.ParameterDefinition>>;
+        }>
+      ) => {
+        if (action.payload) {
+          const { id, connectionKeys, parameterKeys, parametersToUpdate } = action.payload;
+          delete state.workflows[id];
+          for (const key of connectionKeys) {
+            delete state.connections[key];
+          }
+
+          state.parameterDefinitions = { ...state.parameterDefinitions, ...(parametersToUpdate as any) };
+          for (const key of parameterKeys) {
+            delete state.parameterDefinitions[key];
+          }
+        }
+      }
+    );
+
+    builder.addCase(loadCustomTemplate.fulfilled, (state, action: PayloadAction<{ isPublished: boolean; environment: string }>) => {
+      if (action.payload) {
+        const { isPublished, environment } = action.payload;
+        state.isPublished = isPublished;
+        state.environment = environment as TemplateEnvironment;
+      }
     });
   },
 });
@@ -177,5 +236,7 @@ export const {
   updateTemplateParameterDefinitions,
   updateWorkflowData,
   updateAllWorkflowsData,
+  updateTemplateManifest,
+  updateEnvironment,
 } = templateSlice.actions;
 export default templateSlice.reducer;

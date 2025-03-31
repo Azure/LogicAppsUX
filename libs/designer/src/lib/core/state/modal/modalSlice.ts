@@ -2,31 +2,40 @@ import type { PayloadAction } from '@reduxjs/toolkit';
 import { createSlice } from '@reduxjs/toolkit';
 
 export interface ModalState {
-  isOpen: boolean;
-  resolve?: (useCombined: boolean) => void;
+  isCombineVariableOpen: boolean;
+  resolveCombineVariable?: (useCombined: boolean) => void;
+  isTriggerDescriptionOpen: boolean;
 }
 
 const initialState: ModalState = {
-  isOpen: false,
+  isCombineVariableOpen: false,
+  isTriggerDescriptionOpen: false,
 };
 
 const modalSlice = createSlice({
   name: 'modal',
   initialState,
   reducers: {
-    openModal: (state, action: PayloadAction<{ resolve: (useCombined: boolean) => void }>) => {
-      state.isOpen = true;
-      state.resolve = action.payload.resolve;
+    openCombineVariableModal: (state, action: PayloadAction<{ resolve: (useCombined: boolean) => void }>) => {
+      state.isCombineVariableOpen = true;
+      state.resolveCombineVariable = action.payload.resolve;
     },
-    closeModal: (state, action: PayloadAction<boolean>) => {
-      state.isOpen = false;
-      if (state.resolve) {
-        state.resolve(action.payload);
+    closeCombineVariableModal: (state, action: PayloadAction<boolean>) => {
+      state.isCombineVariableOpen = false;
+      if (state.resolveCombineVariable) {
+        state.resolveCombineVariable(action.payload);
       }
-      state.resolve = undefined;
+      state.resolveCombineVariable = undefined;
+    },
+    openTriggerDescriptionModal: (state) => {
+      state.isTriggerDescriptionOpen = true;
+    },
+    closeTriggerDescriptionModal: (state) => {
+      state.isTriggerDescriptionOpen = false;
     },
   },
 });
 
-export const { openModal, closeModal } = modalSlice.actions;
+export const { openCombineVariableModal, closeCombineVariableModal, openTriggerDescriptionModal, closeTriggerDescriptionModal } =
+  modalSlice.actions;
 export default modalSlice.reducer;

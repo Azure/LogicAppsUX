@@ -1,7 +1,11 @@
+import { cloneElement, useMemo, useState } from 'react';
+import { EditorLanguage, equals, getPropertyValue, replaceWhiteSpaceWithUnderscore } from '@microsoft/logic-apps-shared';
+import type { TokenGroup } from '@microsoft/logic-apps-shared';
+import { AgentInstructionEditor } from '../../agentinstruction';
 import { ArrayEditor } from '../../arrayeditor';
 import { AuthenticationEditor } from '../../authentication';
-import type { FileNameChangeHandler } from '../../code';
 import { CodeEditor } from '../../code';
+import type { FileNameChangeHandler } from '../../code';
 import { isCustomCode } from '../../code/util';
 import { Combobox } from '../../combobox';
 import constants from '../../constants';
@@ -17,6 +21,7 @@ import type {
   loadParameterValueFromStringHandler,
 } from '../../editor/base';
 import type { TokenPickerButtonEditorProps } from '../../editor/base/plugins/tokenpickerbutton';
+import type { AgentParameterButtonProps } from '../../editor/base/plugins/tokenpickerbutton/agentParameterButton';
 import { createLiteralValueSegment, getDropdownOptionsFromOptions } from '../../editor/base/utils/helper';
 import { InitializeVariableEditor } from '../../editor/initializevariable';
 import { StringEditor } from '../../editor/string';
@@ -24,6 +29,8 @@ import { FloatingActionMenuKind } from '../../floatingactionmenu/constants';
 import { FloatingActionMenuInputs } from '../../floatingactionmenu/floatingactionmenuinputs';
 import { FloatingActionMenuOutputs } from '../../floatingactionmenu/floatingactionmenuoutputs';
 import { HTMLEditor } from '../../html';
+import { Label } from '../../label';
+import { MixedInputEditor } from '../../mixedinputeditor/mixedinputeditor';
 import type { PickerCallbackHandlers } from '../../picker/filepickerEditor';
 import { FilePickerEditor } from '../../picker/filepickerEditor';
 import { QueryBuilderEditor } from '../../querybuilder';
@@ -31,18 +38,10 @@ import { HybridQueryBuilderEditor } from '../../querybuilder/HybridQueryBuilder'
 import { SimpleQueryBuilder } from '../../querybuilder/SimpleQueryBuilder';
 import { ScheduleEditor } from '../../recurrence';
 import { SchemaEditor } from '../../schemaeditor';
-import { TableEditor } from '../../table';
-import type { TokenGroup } from '@microsoft/logic-apps-shared';
-import { useId } from '../../useId';
 import type { SettingProps } from './';
 import { CustomTokenField, isCustomEditor } from './customTokenField';
-import { Label } from '../../label';
-import { EditorLanguage, equals, getPropertyValue, replaceWhiteSpaceWithUnderscore } from '@microsoft/logic-apps-shared';
-import { MixedInputEditor } from '../../mixedinputeditor/mixedinputeditor';
-import { cloneElement, useMemo, useState } from 'react';
-import { useIntl } from 'react-intl';
-import type { AgentParameterButtonProps } from '../../editor/base/plugins/tokenpickerbutton/agentParameterButton';
-
+import { TableEditor } from '../../table';
+import { useId } from '../../useId';
 interface EditorHostOptions {
   suppressCastingForSerialize?: boolean;
   isMultiVariableEnabled?: boolean;
@@ -140,26 +139,30 @@ export const TokenField = ({
   hostOptions,
   required,
 }: TokenFieldProps) => {
-  const intl = useIntl();
   const dropdownOptions = useMemo(() => getDropdownOptionsFromOptions(editorOptions), [editorOptions]);
   const labelForAutomationId = useMemo(() => replaceWhiteSpaceWithUnderscore(label), [label]);
 
-  const arrayItemLabel = intl.formatMessage(
-    {
-      defaultMessage: '{label} Item',
-      id: 'fBUCrA',
-      description: 'Label for array item',
-    },
-    { label }
-  );
-
-  const defaultArrayItemLabel = intl.formatMessage({
-    defaultMessage: 'Array Item',
-    id: 'gS4Teq',
-    description: 'Label for array item',
-  });
-
   switch (editor?.toLowerCase()) {
+    case constants.PARAMETER.EDITOR.AGENT_INSTRUCTION:
+      return (
+        <AgentInstructionEditor
+          labelId={labelId}
+          className="msla-setting-token-editor-container"
+          placeholder={placeholder}
+          basePlugins={{ tokens: showTokens }}
+          readonly={readOnly}
+          initialValue={value}
+          tokenPickerButtonProps={tokenpickerButtonProps}
+          agentParameterButtonProps={agentParameterButtonProps}
+          tokenMapping={tokenMapping}
+          loadParameterValueFromString={loadParameterValueFromString}
+          serializeValue={onValueChange}
+          getTokenPicker={getTokenPicker}
+          onChange={hideValidationErrors}
+          onCastParameter={onCastParameter}
+          dataAutomationId={`msla-setting-token-editor-agent-instruction-${labelForAutomationId}`}
+        />
+      );
     case constants.PARAMETER.EDITOR.ARRAY:
       return (
         <ArrayEditor
@@ -167,13 +170,14 @@ export const TokenField = ({
           labelId={labelId}
           arrayType={editorViewModel.arrayType}
           initialMode={editorOptions?.initialMode}
-          labelProps={{ text: label ? arrayItemLabel : defaultArrayItemLabel }}
+          label={label}
           placeholder={placeholder}
           readonly={readOnly}
           initialValue={editorViewModel.uncastedValue}
           agentParameterButtonProps={agentParameterButtonProps}
           tokenPickerButtonProps={tokenpickerButtonProps}
           getTokenPicker={getTokenPicker}
+          basePlugins={{ tokens: showTokens }}
           itemSchema={editorViewModel.itemSchema}
           castParameter={onCastParameter}
           onChange={onValueChange}

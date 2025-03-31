@@ -220,6 +220,16 @@ export const supportedBaseManifestTypes = [
   parsedocumentwithmetadata,
 ];
 
+export const builtInConnectorIds = {
+  dataOperation: dataOperationConnectorId,
+  control: controlConnectorId,
+  agent: agentConnectorId,
+  dateTime: dateTimeConnectorId,
+  schedule: scheduleConnectorId,
+  http: httpConnectorId,
+  variable: variableConnectorId,
+};
+
 export type getAccessTokenType = () => Promise<string>;
 
 export interface BaseOperationManifestServiceOptions {
@@ -262,9 +272,17 @@ export abstract class BaseOperationManifestService implements IOperationManifest
   abstract getOperationInfo(definition: any, isTrigger: boolean): Promise<OperationInfo>;
 
   abstract getOperationManifest(_connectorId: string, _operationId: string): Promise<OperationManifest>;
+
+  abstract isBuiltInConnector(connectorId: string): boolean;
+
+  abstract getBuiltInConnector(connectorId: string): any;
 }
 
 export function isBuiltInOperation(definition: any): boolean {
+  if (!definition?.type) {
+    return false;
+  }
+
   switch (definition?.type?.toLowerCase()) {
     case apimanagement:
     case as2Decode:

@@ -60,7 +60,8 @@ export const getUniqueConnectors = (
 export const getUniqueConnectorsFromConnections = (
   originalAllConnectors: Template.FeaturedConnector[],
   subscriptionId: string,
-  location: string
+  location: string,
+  removeBuiltInConnectors = false
 ): Template.FeaturedConnector[] => {
   const result: Template.FeaturedConnector[] = [];
   const finalConnectorIds: string[] = [];
@@ -68,6 +69,9 @@ export const getUniqueConnectorsFromConnections = (
 
   while (allConnectors.length > 0) {
     const connection = allConnectors.shift() as Template.FeaturedConnector;
+    if (removeBuiltInConnectors && connection.kind === 'builtin') {
+      continue;
+    }
     const normalizedConnectorId = normalizeConnectorId(connection.id, subscriptionId, location).toLowerCase();
     if (!finalConnectorIds.includes(normalizedConnectorId)) {
       finalConnectorIds.push(normalizedConnectorId);
@@ -191,31 +195,6 @@ const _sortTemplateManifestEntriesByTitle = (
     default:
       return templateManifestEntries;
   }
-};
-
-export const getConnectorResources = (intl: IntlShape) => {
-  return {
-    connected: intl.formatMessage({
-      defaultMessage: 'Connected',
-      id: 'oOGTSo',
-      description: 'Connected text',
-    }),
-    notConnected: intl.formatMessage({
-      defaultMessage: 'Not connected',
-      id: 'WxJJcQ',
-      description: 'Not Connected text',
-    }),
-    authenticated: intl.formatMessage({
-      defaultMessage: 'Authenticated',
-      id: 'iwKxSD',
-      description: 'Connection authenticated text',
-    }),
-    notAuthenticated: intl.formatMessage({
-      defaultMessage: 'Not authenticated',
-      id: 'QdRn5z',
-      description: 'Connection not authenticated text',
-    }),
-  };
 };
 
 export const validateParameterValue = (data: { type: string; value?: string }, required = true): string | undefined => {

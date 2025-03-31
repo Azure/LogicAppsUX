@@ -2,7 +2,7 @@
  *  Copyright (c) Microsoft Corporation. All rights reserved.
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
-import { extensionBundleId, hostFileName, extensionCommand } from '../../constants';
+import { extensionBundleId, hostFileName, extensionCommand, workflowFileName } from '../../constants';
 import { localize } from '../../localize';
 import { getWorkspaceSetting, updateWorkspaceSetting } from './vsCodeConfig/settings';
 import { isNullOrUndefined, isString } from '@microsoft/logic-apps-shared';
@@ -18,39 +18,49 @@ const projectSubpathKey = 'projectSubpath';
 // Use 'host.json' and 'local.settings.json' as an indicator that this is a functions project
 export async function isLogicAppProject(folderPath: string): Promise<boolean> {
   const hostFilePath = path.join(folderPath, hostFileName);
-  const hasHostJson: boolean = await fse.pathExists(hostFilePath);
-
-  if (hasHostJson) {
-    const subpaths: string[] = await fse.readdir(folderPath);
-    const workflowJsonPaths = subpaths.map((subpath) => path.join(folderPath, subpath, 'workflow.json'));
-    const validWorkflowJsonPaths = await Promise.all(
-      workflowJsonPaths.map(async (workflowJsonPath) => {
-        if (await fse.pathExists(workflowJsonPath)) {
-          const workflowJsonData = await fse.readFile(workflowJsonPath, 'utf-8');
-          const workflowJson = JSON.parse(workflowJsonData);
-          const schema = workflowJson?.definition?.$schema;
-          if (schema && schema.includes('Microsoft.Logic') && schema.includes('workflowdefinition.json')) {
-            const filesInSubpath = await fse.readdir(path.dirname(workflowJsonPath));
-            if (filesInSubpath.length === 1 && filesInSubpath[0] === 'workflow.json') {
-              return true;
-            }
-          }
-        }
-        return false;
-      })
-    );
-
-    if (!validWorkflowJsonPaths.some(Boolean)) {
-      return false;
-    }
-    const hostJsonData = fse.readFileSync(hostFilePath, 'utf-8');
-    const hostJson = JSON.parse(hostJsonData);
-
-    const hasWorkflowBundle = hostJson?.extensionBundle?.id === extensionBundleId;
-    return hasHostJson && hasWorkflowBundle;
+  if (!(await fse.pathExists(hostFilePath))) {
+    return false;
   }
 
-  return false;
+  const subpaths: string[] = await fse.readdir(folderPath);
+
+  // Helper function to validate a workflow JSON file
+  async function isValidWorkflowFolder(workflowJsonPath: string): Promise<boolean> {
+    if (!(await fse.pathExists(workflowJsonPath))) {
+      return false;
+    }
+    try {
+      const filesInSubpath = await fse.readdir(path.dirname(workflowJsonPath));
+      if (filesInSubpath.includes(workflowFileName)) {
+        const workflowJsonData = await fse.readFile(workflowJsonPath, 'utf-8');
+        const workflowJson = JSON.parse(workflowJsonData);
+        const schema = workflowJson?.definition?.$schema;
+        return schema && schema.includes('Microsoft.Logic') && schema.includes('workflowdefinition.json');
+      }
+    } catch {
+      return false;
+    }
+    return false;
+  }
+
+  const validWorkflowChecks = await Promise.all(
+    subpaths.map(async (subpath) => {
+      const workflowJsonPath = path.join(folderPath, subpath, workflowFileName);
+      return isValidWorkflowFolder(workflowJsonPath);
+    })
+  );
+
+  if (!validWorkflowChecks.some((valid) => valid)) {
+    return false;
+  }
+
+  try {
+    const hostJsonData = await fse.readFile(hostFilePath, 'utf-8');
+    const hostJson = JSON.parse(hostJsonData);
+    return hostJson?.extensionBundle?.id === extensionBundleId;
+  } catch {
+    return false;
+  }
 }
 
 /**
@@ -175,7 +185,6 @@ export const promptOpenProjectOrWorkspace = async (context: IActionContext, mess
 
   const result: vscode.MessageItem = await context.ui.showWarningMessage(message, { modal: true }, newWorkspace, openExistingWorkspace);
 
-  console.log('charlie debug: result', result);
   if (result === newWorkspace) {
     vscode.commands.executeCommand(extensionCommand.createNewWorkspace);
     context.telemetry.properties.noWorkspaceResult = 'createNewWorkspace';
