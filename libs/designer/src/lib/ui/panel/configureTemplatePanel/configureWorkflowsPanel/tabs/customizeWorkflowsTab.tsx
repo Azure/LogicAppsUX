@@ -14,7 +14,7 @@ export const CustomizeWorkflows = () => {
 export const customizeWorkflowsTab = (
   intl: IntlShape,
   dispatch: AppDispatch,
-  { hasError, isSaving, onClosePanel }: ConfigureWorkflowsTabProps
+  { hasError, isSaving, onClosePanel, onSave }: ConfigureWorkflowsTabProps
 ): TemplateTabProps => ({
   id: constants.CONFIGURE_TEMPLATE_WIZARD_TAB_NAMES.CUSTOMIZE_WORKFLOWS,
   title: intl.formatMessage({
@@ -34,6 +34,8 @@ export const customizeWorkflowsTab = (
       //TODO: save changes
       dispatch(initializeWorkflowsData({}));
 
+      // TODO: Make sure to pass the correct value for isMultiWorkflow
+      onSave?.(/* isMultiWorkflow */ false);
       dispatch(closePanel());
     },
     secondaryButtonText: intl.formatMessage({
