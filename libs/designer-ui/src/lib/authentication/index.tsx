@@ -143,7 +143,7 @@ export const AuthenticationEditor = ({
       case AuthenticationType.MSI:
         return <MSIAuthentication {...props} identity={options?.identity} msiProps={msi} setCurrentProps={setCurrentProps} />;
       case AuthenticationType.OAUTH:
-        return <ActiveDirectoryAuthentication OauthProps={aadOAuth} setCurrentProps={setCurrentProps} />;
+        return <ActiveDirectoryAuthentication {...props} OauthProps={aadOAuth} setCurrentProps={setCurrentProps} />;
       case AuthenticationType.NONE:
         return null;
       default:
