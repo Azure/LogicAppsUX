@@ -5,10 +5,13 @@ import { useIntl } from 'react-intl';
 import { defaultChatbotPanelWidth, ChatbotContent } from '@microsoft/logic-apps-chatbot';
 import { useChatHistory } from '../../../core/queries/runs';
 import { useMonitoringView } from '../../../core/state/designerOptions/designerOptionsSelectors';
-import { useAgentOperations, useRunInstance } from '../../../core/state/workflow/workflowSelectors';
+import { useAgentLastOperations, useAgentOperations, useRunInstance } from '../../../core/state/workflow/workflowSelectors';
 import { guid, isNullOrUndefined, labelCase } from '@microsoft/logic-apps-shared';
 import { Button, Drawer, mergeClasses } from '@fluentui/react-components';
 import { ChatFilled, ChevronDoubleRightFilled } from '@fluentui/react-icons';
+import { useDispatch } from 'react-redux';
+import { setFocusNode, setRunIndex } from '../../../core/state/workflow/workflowSlice';
+import { changePanelNode, type AppDispatch } from '../../../core';
 
 interface AgentChatProps {
   panelLocation?: PanelLocation;
@@ -40,10 +43,13 @@ const AgentChatHeader = ({
   );
 };
 
-const parseChatHistory = (chatHistory: Record<string, { messages: any[] }>): ConversationItem[] =>
+const parseChatHistory = (
+  chatHistory: Record<string, { messages: any[] }>,
+  onToolCallback: (agentName: string, toolName: string, iteration: number, subIteration: number) => void
+): ConversationItem[] =>
   Object.entries(chatHistory).reduce<ConversationItem[]>((conversations, [key, { messages }]) => {
-    const parsedMessages: any[] = messages.map((message) => parseMessage(message));
     const agentName = labelCase(key ?? '');
+    const parsedMessages: any[] = messages.map((message) => parseMessage(message, key, onToolCallback));
     conversations.push(...parsedMessages, {
       id: guid(),
       text: agentName,
@@ -53,7 +59,11 @@ const parseChatHistory = (chatHistory: Record<string, { messages: any[] }>): Con
     return conversations;
   }, []);
 
-const parseMessage = (message: any) => {
+const parseMessage = (
+  message: any,
+  agentName: string,
+  onToolCallback: (agentName: string, toolName: string, iteration: number, subIteration: number) => void
+) => {
   let type: ConversationItemType = ConversationItemType.Reply;
   let text = '';
   switch (message.messageEntryType) {
@@ -63,9 +73,19 @@ const parseMessage = (message: any) => {
       break;
     }
     case 'ToolResult': {
-      type = ConversationItemType.Tool;
-      text = message.toolResultsPayload?.toolResult?.toolName ? `${message.toolResultsPayload?.toolResult?.toolName} - got executed` : '';
-      break;
+      const iteration = 0; //message?.iteration ?? 0;
+      const subIteration = 0; //message?.subIteration ?? 0;
+      const toolName = message.toolResultsPayload?.toolResult?.toolName;
+
+      return {
+        id: guid(),
+        text: toolName ?? '',
+        type: ConversationItemType.Tool,
+        onClickCallback: () => {
+          onToolCallback(agentName, toolName, iteration, subIteration);
+        },
+        timestamp: message.timestamp,
+      };
     }
     default:
       type = ConversationItemType.Reply;
@@ -96,16 +116,27 @@ export const AgentChat = ({
   const isMonitoringView = useMonitoringView();
   const runInstance = useRunInstance();
   const agentOperations = useAgentOperations();
+  const agentLastOperations = useAgentLastOperations(agentOperations);
   const [isCollapsed, setIsCollapsed] = useState(false);
   const panelContainerElement = panelContainerRef.current as HTMLElement;
-
   const { isFetching: isChatHistoryFetching, data: chatHistoryData } = useChatHistory(!!isMonitoringView, agentOperations, runInstance?.id);
-
   const drawerWidth = isCollapsed ? PanelSize.Auto : chatbotWidth;
+  const dispatch = useDispatch<AppDispatch>();
+
+  const toolResultCallback = useCallback(
+    (agentName: string, toolName: string, iteration: number, subIteration: number) => {
+      const agentLastOperation = agentLastOperations[agentName][toolName];
+      dispatch(setRunIndex({ page: iteration, nodeId: agentName }));
+      dispatch(setRunIndex({ page: subIteration, nodeId: toolName }));
+      dispatch(setFocusNode(agentLastOperation));
+      dispatch(changePanelNode(agentLastOperation));
+    },
+    [dispatch, agentLastOperations]
+  );
 
   useEffect(() => {
     if (!isNullOrUndefined(chatHistoryData)) {
-      const newConversations = parseChatHistory(chatHistoryData);
+      const newConversations = parseChatHistory(chatHistoryData, toolResultCallback);
       setConversation((current) => [...newConversations, ...current]);
     }
   }, [setConversation, chatHistoryData]);

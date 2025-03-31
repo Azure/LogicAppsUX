@@ -99,15 +99,9 @@ export type AssistantReplyItem = BaseAssistantMessageItem & {
 
 export type ToolReplyItem = BaseAssistantMessageItem & {
   type: typeof ConversationItemType.Tool;
+  iteration: string;
+  onClickCallback: () => void;
   text: string;
-  reaction: ChatEntryReaction | undefined;
-  isMarkdownText: boolean;
-  correlationId?: string;
-  hideFooter?: boolean;
-  __rawRequest: any;
-  __rawResponse: any;
-  additionalDocURL?: string | undefined;
-  azureButtonCallback?: (prompt?: string) => void;
 };
 
 export type ConnectionsSetupItem = BaseAssistantMessageItem & {

@@ -1,13 +1,20 @@
-import { useRef } from 'react';
+import { Link } from '@fluentui/react-components';
 import type { ToolReplyItem } from './conversationItem';
-import Markdown from 'react-markdown';
+import { useIntl } from 'react-intl';
 
 export const ToolReply = ({ item }: { item: ToolReplyItem }) => {
-  const { text } = item;
-  const textRef = useRef<HTMLDivElement | null>(null);
+  const { text, onClickCallback } = item;
+  const intl = useIntl();
+
+  const executedToolText = intl.formatMessage({
+    defaultMessage: 'got executed',
+    id: 'jk272j',
+    description: 'Text to show when a tool is executed',
+  });
+
   return (
-    <div ref={textRef}>
-      <Markdown>{text}</Markdown>
+    <div style={{ margin: '10px 0' }}>
+      <Link onClick={onClickCallback}>{text}</Link> {executedToolText}
     </div>
   );
 };
