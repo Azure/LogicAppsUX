@@ -23,26 +23,26 @@ export async function isLogicAppProject(folderPath: string): Promise<boolean> {
   if (hasHostJson) {
     const subpaths: string[] = await fse.readdir(folderPath);
     const workflowJsonPaths = subpaths.map((subpath) => path.join(folderPath, subpath, 'workflow.json'));
-    const validWorkflowJsonPaths = await Promise.all(
-      workflowJsonPaths.map(async (workflowJsonPath) => {
-        if (await fse.pathExists(workflowJsonPath)) {
-          const workflowJsonData = await fse.readFile(workflowJsonPath, 'utf-8');
-          const workflowJson = JSON.parse(workflowJsonData);
-          const schema = workflowJson?.definition?.$schema;
-          if (schema && schema.includes('Microsoft.Logic') && schema.includes('workflowdefinition.json')) {
-            const filesInSubpath = await fse.readdir(path.dirname(workflowJsonPath));
-            if (filesInSubpath.length === 1 && filesInSubpath[0] === 'workflow.json') {
-              return true;
-            }
-          }
-        }
-        return false;
-      })
-    );
+    // const validWorkflowJsonPaths = await Promise.all(
+    //   workflowJsonPaths.map(async (workflowJsonPath) => {
+    //     if (await fse.pathExists(workflowJsonPath)) {
+    //       const workflowJsonData = await fse.readFile(workflowJsonPath, 'utf-8');
+    //       const workflowJson = JSON.parse(workflowJsonData);
+    //       const schema = workflowJson?.definition?.$schema;
+    //       if (schema && schema.includes('Microsoft.Logic') && schema.includes('workflowdefinition.json')) {
+    //         const filesInSubpath = await fse.readdir(path.dirname(workflowJsonPath));
+    //         if (filesInSubpath.length === 1 && filesInSubpath[0] === 'workflow.json') {
+    //           return true;
+    //         }
+    //       }
+    //     }
+    //     return false;
+    //   })
+    // );
 
-    if (!validWorkflowJsonPaths.some(Boolean)) {
-      return false;
-    }
+    // if (!validWorkflowJsonPaths.some(Boolean)) {
+    //   return false;
+    // }
     const hostJsonData = fse.readFileSync(hostFilePath, 'utf-8');
     const hostJson = JSON.parse(hostJsonData);
 

@@ -127,16 +127,41 @@ export const getCodelessWorkflowTemplate = (isStateful: boolean) => {
 export const getCodefulWorkflowTemplate = (isStateful: boolean) => {
   const kind = isStateful ? workflowKind.stateful : workflowKind.stateless;
 
-  const emptyCodelessDefinition: StandardApp = {
-    definition: {
-      $schema: 'https://schema.management.azure.com/providers/Microsoft.Logic/schemas/2016-06-01/workflowdefinition.json#',
-      actions: {},
-      contentVersion: '1.0.0.0',
-      outputs: {},
-      triggers: {},
-    },
-    kind: kind,
-  };
+  const emptyCodelessDefinition: string = `using System.Collections.Generic;
+using System.Net.Http;
+using System.Threading.Tasks;
+using Microsoft.Azure.WebJobs;
+using Microsoft.Azure.WebJobs.Extensions.DurableTask;
+using Microsoft.Azure.WebJobs.Extensions.Http;
+using Microsoft.Azure.WebJobs.Host;
+using Microsoft.Extensions.Logging;
+using NLog.Fluent;
+
+namespace Company.Function
+{
+    public static class Function1
+    {
+        [FunctionName("Function1")]
+        public static async Task<List<string>> RunOrchestrator(
+            [OrchestrationTrigger] IDurableOrchestrationContext context, ILogger log)
+        {
+            var outputs = new List<string>();
+
+            log.LogInformation("Saying hello to {name}.");
+
+            return outputs;
+        }
+
+        [FunctionName("TimerTrigger1")]
+        public static async Task Run([TimerTrigger("0 */5 * * * *")]TimerInfo myTimer, [DurableClient] IDurableOrchestrationClient starter, ILogger log)
+        {
+            log.LogInformation($"C# Timer trigger function executed at: {DateTime.Now}");
+            string instanceId = await starter.StartNewAsync("Function1", null);
+
+            log.LogInformation("Started orchestration with ID = '{instanceId}'.", instanceId);
+        }
+    }
+}`;
 
   return emptyCodelessDefinition;
 };

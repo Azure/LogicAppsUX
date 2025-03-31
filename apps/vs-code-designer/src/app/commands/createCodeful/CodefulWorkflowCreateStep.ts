@@ -2,41 +2,26 @@
  *  Copyright (c) Microsoft Corporation. All rights reserved.
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
-import {
-  hostFileName,
-  azureWebJobsStorageKey,
-  localSettingsFileName,
-  workflowFileName,
-  workflowType,
-  localEmulatorConnectionString,
-  extensionBundleId,
-  defaultVersionRange,
-} from '../../../../constants';
-import { localize } from '../../../../localize';
-import { setLocalAppSetting } from '../../../utils/appSettings/localSettings';
-import {
-  addFolderToBuildPath,
-  addNugetPackagesToBuildFile,
-  getDotnetBuildFile,
-  suppressJavaScriptBuildWarnings,
-  updateFunctionsSDKVersion,
-  writeBuildFileToDisk,
-} from '../../../utils/codeless/updateBuildFile';
-import { getFramework, validateDotnetInstalled } from '../../../utils/dotnet/executeDotnetTemplateCommand';
-import { writeFormattedJson } from '../../../utils/fs';
-import { parseJson } from '../../../utils/parseJson';
 
 import type { IActionContext } from '@microsoft/vscode-azext-utils';
 import { DialogResponses, nonNullProp, parseError } from '@microsoft/vscode-azext-utils';
 import { WorkflowProjectType, MismatchBehavior } from '@microsoft/vscode-extension-logic-apps';
-import type { IFunctionWizardContext, IWorkflowTemplate, IHostJsonV2, StandardApp } from '@microsoft/vscode-extension-logic-apps';
+import type { IFunctionWizardContext, IWorkflowTemplate, IHostJsonV2 } from '@microsoft/vscode-extension-logic-apps';
 import * as fse from 'fs-extra';
 import * as path from 'path';
 import type { MessageItem } from 'vscode';
 import { WorkflowCreateStepBase } from '../createCodeless/createCodelessSteps/WorkflowCreateStepBase';
-import { getCodelessWorkflowTemplate } from '../../utils/codeless/templates';
+import { getCodefulWorkflowTemplate } from '../../utils/codeless/templates';
+//import { addFolderToBuildPath, addNugetPackagesToBuildFile, getDotnetBuildFile, suppressJavaScriptBuildWarnings, updateFunctionsSDKVersion, writeBuildFileToDisk } from '../../utils/codeless/updateBuildFile';
+import { writeFormattedJson } from '../../utils/fs';
+import { localize } from 'vscode-nls';
+import { workflowType, workflowFileName, hostFileName, extensionBundleId, defaultVersionRange, azureWebJobsStorageKey, localEmulatorConnectionString, localSettingsFileName } from '../../../constants';
+import { setLocalAppSetting } from '../../utils/appSettings/localSettings';
+import { validateDotnetInstalled } from '../../utils/dotnet/executeDotnetTemplateCommand';
+import { parseJson } from '../../utils/parseJson';
 
 export class CodefulWorkflowCreateStep extends WorkflowCreateStepBase<IFunctionWizardContext> {
+
   private constructor() {
     super();
   }
@@ -50,31 +35,34 @@ export class CodefulWorkflowCreateStep extends WorkflowCreateStepBase<IFunctionW
     const template: IWorkflowTemplate = nonNullProp(context, 'functionTemplate');
     const functionPath: string = path.join(context.projectPath, nonNullProp(context, 'functionName'));
 
-    const codelessDefinition: StandardApp = getCodelessWorkflowTemplate(template?.id === workflowType.stateful);
+    const codelessDefinition: string = getCodefulWorkflowTemplate(template?.id === workflowType.stateful);
 
-    const workflowJsonFullPath: string = path.join(functionPath, workflowFileName);
+    const workflowCsFullPath: string = path.join(functionPath, 'workflow.cs');
 
     await fse.ensureDir(functionPath);
-    await writeFormattedJson(workflowJsonFullPath, codelessDefinition);
+    await fse.writeFile(workflowCsFullPath, codelessDefinition);
 
     await this.createSystemArtifacts(context);
 
-    const workflowName = nonNullProp(context, 'functionName');
+    //setLocalAppSetting(context, context.logicAppFolderPath, appKindSetting, "", MismatchBehavior.Overwrite);
 
-    if (nonNullProp(context, 'workflowProjectType') === WorkflowProjectType.Nuget) {
-      let xmlBuildFile: any = await getDotnetBuildFile(context, context.projectPath);
-      const dotnetVersion = await getFramework(context, functionPath);
+   // const workflowName = nonNullProp(context, 'functionName');
 
-      xmlBuildFile = JSON.parse(xmlBuildFile);
-      xmlBuildFile = addFolderToBuildPath(xmlBuildFile, workflowName);
-      xmlBuildFile = addNugetPackagesToBuildFile(xmlBuildFile);
-      xmlBuildFile = suppressJavaScriptBuildWarnings(xmlBuildFile);
-      xmlBuildFile = updateFunctionsSDKVersion(xmlBuildFile, dotnetVersion);
+    // if (nonNullProp(context, 'workflowProjectType') === WorkflowProjectType.Nuget) {
+    //   let xmlBuildFile: any = await getDotnetBuildFile(context, context.projectPath);
+    //   const dotnetVersion = await getFramework(context, functionPath);
 
-      await writeBuildFileToDisk(context, xmlBuildFile, context.projectPath);
-    }
+    //   xmlBuildFile = JSON.parse(xmlBuildFile);
+    //   xmlBuildFile = addFolderToBuildPath(xmlBuildFile, workflowName);
+    //   xmlBuildFile = addNugetPackagesToBuildFile(xmlBuildFile);
+    //   xmlBuildFile = suppressJavaScriptBuildWarnings(xmlBuildFile);
+    //   xmlBuildFile = updateFunctionsSDKVersion(xmlBuildFile, dotnetVersion);
 
-    return workflowJsonFullPath;
+    //   await writeBuildFileToDisk(context, xmlBuildFile, context.projectPath);
+    // }
+    
+
+    return workflowCsFullPath;
   }
 
   private async createSystemArtifacts(context: IFunctionWizardContext): Promise<void> {

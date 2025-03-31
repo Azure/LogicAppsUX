@@ -15,6 +15,7 @@ import { TemplateCategory } from '@microsoft/vscode-extension-logic-apps';
 import { localize } from '../../../localize';
 import { ScriptWorkflowNameStep } from '../createCodeless/createCodelessSteps/ScriptSteps/ScriptWorkflowNameStep';
 import { switchToDotnetProject } from '../workflows/switchToDotnetProject';
+import { CodefulWorkflowCreateStep } from '../createCodeful/CodefulWorkflowCreateStep';
 
 export class WorkflowCodeTypeStep extends AzureWizardPromptStep<IFunctionWizardContext> {
   public hideStepCount = true;
@@ -53,7 +54,7 @@ export class WorkflowCodeTypeStep extends AzureWizardPromptStep<IFunctionWizardC
       const title: string = localize('createCodeless', 'Create new');
 
       promptSteps.push(new ScriptWorkflowNameStep());
-      //executeSteps.push(await switchToDotnetProject(context, undefined, '8'));
+      executeSteps.push(await CodefulWorkflowCreateStep.createStep(context));
 
       return { promptSteps, executeSteps, title };
     }

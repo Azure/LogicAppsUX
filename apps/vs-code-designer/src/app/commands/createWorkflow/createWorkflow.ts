@@ -82,6 +82,8 @@ export async function createWorkflow(
   await wizard.execute();
 
   if (!wizardContext.isCodeless) {
+    
+    
     switchToDotnetProject(wizardContext, undefined, '8', true);
   }
 }
