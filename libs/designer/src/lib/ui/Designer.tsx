@@ -24,7 +24,7 @@ import { PanelRoot } from './panel/panelRoot';
 import { css, setLayerHostSelector } from '@fluentui/react';
 import { PanelLocation } from '@microsoft/designer-ui';
 import type { CustomPanelLocation } from '@microsoft/designer-ui';
-// import type { WorkflowNodeType } from '@microsoft/logic-apps-shared';
+import type { WorkflowNodeType } from '@microsoft/logic-apps-shared';
 import { WORKFLOW_NODE_TYPES, useThrottledEffect } from '@microsoft/logic-apps-shared';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import KeyboardBackendFactory, { isKeyboardDragTrigger } from 'react-dnd-accessible-backend';
@@ -51,7 +51,10 @@ export interface DesignerProps {
   displayRuntimeInfo?: boolean;
 }
 
-const nodeTypes: any = {
+type NodeTypesObj = {
+  [key in WorkflowNodeType]: React.ComponentType<any>;
+};
+const nodeTypes: NodeTypesObj = {
   OPERATION_NODE: OperationNode,
   GRAPH_NODE: GraphNode,
   SUBGRAPH_NODE: GraphNode,
