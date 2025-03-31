@@ -2,8 +2,8 @@
  *  Copyright (c) Microsoft Corporation. All rights reserved.
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
-import { workflowType } from '../../../../../constants';
 import { localize } from '../../../../../localize';
+import { getWorkflowTemplatePickItems } from '../../../../utils/codeless/templates';
 import { ScriptWorkflowNameStep } from '../../../createCodeless/createCodelessSteps/ScriptSteps/ScriptWorkflowNameStep';
 import { CodelessFunctionWorkflow } from './CodelessFunctionWorkflow';
 import type { AzureWizardExecuteStep, IAzureQuickPickItem, IWizardOptions } from '@microsoft/vscode-azext-utils';
@@ -14,7 +14,7 @@ import type {
   IFunctionWizardContext,
   ProjectLanguage,
 } from '@microsoft/vscode-extension-logic-apps';
-import { TemplateCategory, TemplatePromptResult } from '@microsoft/vscode-extension-logic-apps';
+import { TemplatePromptResult } from '@microsoft/vscode-extension-logic-apps';
 
 /**
  * This class represents a prompt step that allows the user to select a workflow type for their Azure Functions project.
@@ -120,51 +120,7 @@ export class CodeProjectWorkflowStateTypeStep extends AzureWizardPromptStep<IFun
    */
   private async getPicks(context: IFunctionWizardContext): Promise<IAzureQuickPickItem<IWorkflowTemplate | TemplatePromptResult>[]> {
     const language: ProjectLanguage = nonNullProp(context, 'language');
-    const picks: IAzureQuickPickItem<IWorkflowTemplate | TemplatePromptResult>[] = [];
 
-    // Define the stateful and stateless workflow templates
-    const stateful: IWorkflowTemplate = {
-      id: workflowType.stateful,
-      name: localize('Stateful', 'Stateful Workflow'),
-      defaultFunctionName: 'Stateful',
-      language: language,
-      isHttpTrigger: true,
-      isTimerTrigger: false,
-      userPromptedSettings: [],
-      categories: [TemplateCategory.Core],
-    };
-
-    const stateless: IWorkflowTemplate = {
-      id: workflowType.stateless,
-      name: localize('Stateless', 'Stateless Workflow'),
-      defaultFunctionName: 'Stateless',
-      language: language,
-      isHttpTrigger: true,
-      isTimerTrigger: false,
-      userPromptedSettings: [],
-      categories: [TemplateCategory.Core],
-    };
-
-    // Add the stateful and stateless workflow templates to the quick pick menu
-    picks.push({
-      label: stateful.name,
-      data: stateful,
-    });
-
-    picks.push({
-      label: stateless.name,
-      data: stateless,
-    });
-
-    // If this is a project wizard, add an option to skip for now
-    if (this.isProjectWizard) {
-      picks.push({
-        label: localize('skipForNow', '$(clock) Skip for now'),
-        data: TemplatePromptResult.skipForNow,
-        suppressPersistence: true,
-      });
-    }
-
-    return picks;
+    return getWorkflowTemplatePickItems(language, this.isProjectWizard);
   }
 }

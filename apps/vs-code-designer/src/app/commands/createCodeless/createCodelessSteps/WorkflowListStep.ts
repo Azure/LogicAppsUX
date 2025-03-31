@@ -13,7 +13,8 @@ import type {
   IFunctionWizardContext,
   ProjectLanguage,
 } from '@microsoft/vscode-extension-logic-apps';
-import { TemplateCategory, TemplatePromptResult } from '@microsoft/vscode-extension-logic-apps';
+import { TemplatePromptResult } from '@microsoft/vscode-extension-logic-apps';
+import { getWorkflowTemplatePickItems } from '../../../utils/codeless/templates';
 
 export class WorkflowListStep extends AzureWizardPromptStep<IFunctionWizardContext> {
   public hideStepCount = true;
@@ -74,47 +75,7 @@ export class WorkflowListStep extends AzureWizardPromptStep<IFunctionWizardConte
 
   private async getPicks(context: IFunctionWizardContext): Promise<IAzureQuickPickItem<IWorkflowTemplate | TemplatePromptResult>[]> {
     const language: ProjectLanguage = nonNullProp(context, 'language');
-    const picks: IAzureQuickPickItem<IWorkflowTemplate | TemplatePromptResult>[] = [];
 
-    const stateful: IWorkflowTemplate = {
-      id: 'Stateful-Codeless',
-      name: localize('Stateful', 'Stateful Workflow'),
-      defaultFunctionName: 'Stateful',
-      language: language,
-      isHttpTrigger: true,
-      isTimerTrigger: false,
-      userPromptedSettings: [],
-      categories: [TemplateCategory.Core],
-    };
-
-    const stateless: IWorkflowTemplate = {
-      id: 'Stateless-Codeless',
-      name: localize('Stateless', 'Stateless Workflow'),
-      defaultFunctionName: 'Stateless',
-      language: language,
-      isHttpTrigger: true,
-      isTimerTrigger: false,
-      userPromptedSettings: [],
-      categories: [TemplateCategory.Core],
-    };
-
-    picks.push({
-      label: stateful.name,
-      data: stateful,
-    });
-
-    picks.push({
-      label: stateless.name,
-      data: stateless,
-    });
-
-    if (this.isProjectWizard) {
-      picks.push({
-        label: localize('skipForNow', '$(clock) Skip for now'),
-        data: TemplatePromptResult.skipForNow,
-        suppressPersistence: true,
-      });
-    }
-    return picks;
+    return getWorkflowTemplatePickItems(language, this.isProjectWizard);
   }
 }
