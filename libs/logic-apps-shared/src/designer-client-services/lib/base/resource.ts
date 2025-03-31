@@ -1,4 +1,4 @@
-import { getTriggerFromDefinition, type ArmResource } from '../../../utils/src';
+import { getResourceNameFromId, getTriggerFromDefinition, type ArmResource } from '../../../utils/src';
 import { fetchAppsByQuery, getAzureResourceRecursive } from '../common/azure';
 import type { IHttpClient } from '../httpClient';
 import type { Resource, IResourceService, LogicAppResource, WorkflowResource } from '../resource';
@@ -18,7 +18,7 @@ export class BaseResourceService implements IResourceService {
       const uri = `${baseUrl}/subscriptions`;
       const queryParameters = { 'api-version': apiVersion };
       const response = await getAzureResourceRecursive(httpClient, uri, queryParameters);
-      return response.map((item) => ({ id: item.id, name: getNameFromId(item.id), displayName: item.displayName }));
+      return response.map((item) => ({ id: item.id, name: getResourceNameFromId(item.id), displayName: item.displayName }));
     } catch (error) {
       throw new Error(error as any);
     }
@@ -71,7 +71,7 @@ export class BaseResourceService implements IResourceService {
     const response: any = await httpClient.get({ uri, queryParameters });
     return response.map((item: any) => ({
       id: `/subscriptions/${subscriptionId}/resourceGroups/${resourceGroup}/providers/Microsoft.Web/sites/${logicAppName}/workflows/${item.name}`,
-      name: getNameFromId(item.name),
+      name: getResourceNameFromId(item.name),
       trigerType: getTriggerFromDefinition(item.triggers),
     }));
   }
@@ -82,7 +82,3 @@ export class BaseResourceService implements IResourceService {
     return httpClient.get({ uri, queryParameters });
   }
 }
-
-const getNameFromId = (id: string): string => {
-  return id.split('/').pop() ?? id;
-};

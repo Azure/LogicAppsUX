@@ -468,7 +468,7 @@ export const workflowSlice = createSlice({
         return;
       }
       const subgraph = runData.reduce((acc, run) => {
-        const nodeId = run.id.split('/')[4];
+        const nodeId = run.name;
         acc[nodeId] = run.properties;
         return acc;
       }, {} as any);

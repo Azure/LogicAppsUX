@@ -1,9 +1,50 @@
-import type { ArmResource, LogicAppResource } from '@microsoft/logic-apps-shared';
-import { getTriggerFromDefinition, ResourceService } from '@microsoft/logic-apps-shared';
+import type { ArmResource, LogicAppResource, Template } from '@microsoft/logic-apps-shared';
+import { getTriggerFromDefinition, ResourceService, TemplateResourceService } from '@microsoft/logic-apps-shared';
 import type { QueryClient, UseQueryResult } from '@tanstack/react-query';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { getConnector } from '../../queries/operation';
 import type { NodeOperation } from '../../state/operation/operationMetadataSlice';
+import { getReactQueryClient } from '../../ReactQueryProvider';
+
+export const getTemplateManifest = async (templateId: string): Promise<Template.TemplateManifest> => {
+  const templateResource = await getTemplate(templateId);
+  return {
+    id: templateResource.id,
+    title: '',
+    summary: '',
+    workflows: {},
+    skus: [],
+    details: {
+      By: '',
+      Type: '',
+      Category: '',
+    },
+  } as Template.TemplateManifest;
+};
+
+export const getWorkflowsInTemplate = async (templateId: string): Promise<Record<string, Template.WorkflowManifest>> => {
+  const queryClient = getReactQueryClient();
+  return queryClient.fetchQuery(['templateWorkflows', templateId.toLowerCase()], async () => {
+    const workflows = await TemplateResourceService().getTemplateWorkflows(templateId);
+    return workflows.reduce((result: Record<string, Template.WorkflowManifest>, workflow) => {
+      const workflowId = workflow.id.toLowerCase();
+      result[workflowId] = {
+        id: workflowId,
+        title: '',
+        summary: '',
+        images: { light: '', dark: '' },
+        parameters: [],
+        connections: {},
+      };
+      return result;
+    }, {});
+  });
+};
+
+export const getTemplate = async (templateId: string): Promise<ArmResource<any>> => {
+  const queryClient = getReactQueryClient();
+  return queryClient.fetchQuery(['template', templateId.toLowerCase()], async () => TemplateResourceService().getTemplate(templateId));
+};
 
 export const useAllConnectors = (operationInfos: Record<string, NodeOperation>) => {
   const allConnectorIds = Object.values(operationInfos).reduce((result: string[], operationInfo) => {

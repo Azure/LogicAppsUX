@@ -13,6 +13,7 @@ import type {
 import {
   clone,
   DevLogger,
+  getResourceNameFromId,
   InitConnectionService,
   InitLoggerService,
   InitOperationManifestService,
@@ -28,6 +29,9 @@ import {
   getConsumptionWorkflow,
   getParametersInWorkflowApp,
   getStandardWorkflow,
+  getTemplate,
+  getTemplateManifest,
+  getWorkflowsInTemplate,
 } from '../../configuretemplate/utils/queries';
 import { getReactQueryClient } from '../../ReactQueryProvider';
 import {
@@ -39,7 +43,7 @@ import {
   getTemplateConnectionsFromConnectionsData,
 } from '../../configuretemplate/utils/helper';
 import { updateAllWorkflowsData, updateWorkflowData } from '../../state/templates/templateSlice';
-import type { WorkflowTemplateData } from './templates';
+import { loadTemplate, type WorkflowTemplateData } from './templates';
 import { initializeNodeOperationInputsData } from '../../state/operation/operationMetadataSlice';
 import type { WorkflowParameter } from '../../../common/models/workflow';
 import { getAllInputParameters } from '../../utils/parameters/helper';
@@ -80,6 +84,39 @@ export const initializeConfigureTemplateServices = createAsyncThunk(
 
     InitWorkflowService(workflowService);
     return true;
+  }
+);
+
+export const loadCustomTemplate = createAsyncThunk(
+  'loadCustomTemplate',
+  async ({ templateId }: { templateId: string }, { dispatch }): Promise<{ isPublished: boolean; environment: string }> => {
+    const templateName = getResourceNameFromId(templateId);
+    const templateResource = await getTemplate(templateId);
+    const manifest = await getTemplateManifest(templateId);
+    dispatch(loadTemplate({ templateName, preLoadedManifest: manifest }));
+
+    const allWorkflowsManifest = await getWorkflowsInTemplate(templateId);
+    const allWorkflowsData = Object.keys(allWorkflowsManifest).reduce(
+      (result: Record<string, Partial<WorkflowTemplateData>>, workflowId) => {
+        const workflowManifest = allWorkflowsManifest[workflowId];
+        const workflowName = getResourceNameFromId(workflowId);
+        result[workflowId.toLowerCase()] = {
+          id: workflowId,
+          workflowName,
+          manifest: workflowManifest,
+          connectionKeys: [],
+          errors: { workflow: undefined },
+        };
+        return result;
+      },
+      {}
+    );
+    dispatch(updateAllWorkflowsData(allWorkflowsData));
+
+    return {
+      isPublished: templateResource.properties?.provisioningState === 'Succeeded',
+      environment: templateResource.properties?.environment ?? 'Development',
+    };
   }
 );
 
