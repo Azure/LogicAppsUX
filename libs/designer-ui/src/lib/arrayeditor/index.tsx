@@ -2,7 +2,6 @@ import type { ComboboxItem } from '../combobox';
 import type { ValueSegment } from '../editor';
 import { EditorCollapseToggle } from '../editor';
 import type { BaseEditorProps, CallbackHandler, CastHandler, GetTokenPickerHandler } from '../editor/base';
-import type { LabelProps } from '../label';
 import { CollapsedArray } from './collapsedarray';
 import { ExpandedComplexArray } from './expandedcomplexarray';
 import { ExpandedSimpleArray } from './expandedsimplearray';
@@ -57,22 +56,25 @@ export interface SimpleArrayItem {
 }
 
 export interface ArrayEditorProps extends BaseEditorProps {
+  // Required Props
+  arrayType: ArrayType;
+  itemSchema: ArrayItemSchema;
+  // Behavior
   canDeleteLastItem?: boolean;
   disableToggle?: boolean;
-  labelProps: LabelProps;
-  itemSchema: ArrayItemSchema;
-  arrayType: ArrayType;
-  castParameter: CastHandler;
   initialMode?: string;
-  // Props for dynamic options
   isDynamic?: boolean;
   isLoading?: boolean;
-  options?: ComboboxItem[];
-  errorDetails?: { message: string };
-  onMenuOpen?: CallbackHandler;
-  suppressCastingForSerialize?: boolean;
   isRequired?: boolean;
+  suppressCastingForSerialize?: boolean;
+  // Data
+  options?: ComboboxItem[];
+  // Event Handlers
+  castParameter: CastHandler;
   getTokenPicker: GetTokenPickerHandler;
+  onMenuOpen?: CallbackHandler;
+  // Error Handling
+  errorDetails?: { message: string };
 }
 
 export const ArrayEditor: React.FC<ArrayEditorProps> = ({
@@ -81,15 +83,15 @@ export const ArrayEditor: React.FC<ArrayEditorProps> = ({
   initialValue,
   arrayType,
   initialMode,
-  labelProps,
+  label,
   itemSchema,
   placeholder,
-  onChange,
-  castParameter,
   dataAutomationId,
   suppressCastingForSerialize,
   isRequired = false,
   getTokenPicker,
+  onChange,
+  castParameter,
   ...baseEditorProps
 }): JSX.Element => {
   const [collapsed, setCollapsed] = useState<boolean>(initialMode === InitialMode.Array);
@@ -167,6 +169,21 @@ export const ArrayEditor: React.FC<ArrayEditorProps> = ({
     description: 'Label for editor toggle button when in collapsed mode',
   });
 
+  const arrayItemLabel = intl.formatMessage(
+    {
+      defaultMessage: '{label} Item',
+      id: 'fBUCrA',
+      description: 'Label for array item',
+    },
+    { label }
+  );
+
+  const defaultArrayItemLabel = intl.formatMessage({
+    defaultMessage: 'Array Item',
+    id: 'gS4Teq',
+    description: 'Label for array item',
+  });
+
   return (
     <div className="msla-array-editor-container" data-automation-id={dataAutomationId}>
       {collapsed ? (
@@ -198,7 +215,7 @@ export const ArrayEditor: React.FC<ArrayEditorProps> = ({
           valueType={itemSchema.type}
           itemEnum={itemSchema.enum}
           items={items as SimpleArrayItem[]}
-          labelProps={labelProps}
+          labelProps={{ text: label ? arrayItemLabel : defaultArrayItemLabel }}
           canDeleteLastItem={canDeleteLastItem}
           setItems={updateSimpleItems}
           getTokenPicker={getTokenPicker}
