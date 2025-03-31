@@ -47,7 +47,6 @@ export function CodeEditor({
   customCodeEditor,
   onFileNameChange,
 }: CodeEditorProps): JSX.Element {
-  console.log(initialValue);
   const intl = useIntl();
   const codeEditorRef = useRef<editor.IStandaloneCodeEditor | null>(null);
   const editorId = useId('msla-tokenpicker-callout-location');

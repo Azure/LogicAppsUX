@@ -1,3 +1,4 @@
+import { convertSegmentsToString } from '../editor/base/utils/parsesegments';
 import constants from '../constants';
 import type { Token, ValueSegment } from '../editor';
 import { TokenType } from '../editor';
@@ -164,10 +165,8 @@ function matchesOutputKey(tokenName: string): boolean {
 }
 
 export const getInitialValue = (initialValue: ValueSegment[]): string => {
-  if (initialValue[0]?.value) {
-    return formatValue(initialValue[0].value);
-  }
-  return '';
+  const stringifiedSegments = convertSegmentsToString(initialValue);
+  return stringifiedSegments;
 };
 
 export const formatValue = (input: string): string => {
