@@ -429,10 +429,15 @@ export const buildGraphFromActions = (
               if (channelAction && channelAction?.trigger) {
                 const id = `${actionName}${constants.CHANNELS.INPUT}${channelAction.trigger.type}`;
                 allActionNames.push(id);
-                action.tools = {
-                  ...action.tools,
-                  [id]: channelAction.trigger,
-                };
+              }
+            }
+
+            const outputChannelKeys = Object.keys(action.channels.out);
+            for (const key of outputChannelKeys) {
+              const channelAction = action.channels.out?.[key];
+              if (channelAction && channelAction?.trigger) {
+                const id = `${actionName}${constants.CHANNELS.OUTPUT}${channelAction.trigger.type}`;
+                allActionNames.push(id);
               }
             }
           }
@@ -660,6 +665,30 @@ export const processScopeActions = (
       SUBGRAPH_TYPES.AGENT_ADD_CONDITON,
       undefined /* subGraphLocation */
     );
+
+    // Add actions for channels
+    if (action.channels) {
+      if (action.channels.in) {
+        const inputChannelKeys = Object.keys(action.channels.in);
+        for (const key of inputChannelKeys) {
+          const channelAction: any = action.channels.in?.[key];
+          if (channelAction && channelAction?.trigger) {
+            const id = `${actionName}${constants.CHANNELS.INPUT}${channelAction.trigger.type}`;
+            allActions[id] = channelAction.trigger;
+          }
+        }
+
+        const outputChannelKeys = Object.keys(action.channels.out);
+        for (const key of outputChannelKeys) {
+          const channelAction: any = action.channels.out?.[key];
+          if (channelAction && channelAction?.trigger) {
+            const id = `${actionName}${constants.CHANNELS.OUTPUT}${channelAction.trigger.type}`;
+            allActions[id] = channelAction.trigger;
+          }
+        }
+      }
+    }
+
     nodesMetadata = {
       ...nodesMetadata,
       [actionName]: {

@@ -7,8 +7,8 @@ import { ParametersTab } from '../parametersTab';
 import { initializeOperationDetails } from '../../../../../core/templates/utils/parametershelper';
 import { getAllNodeData } from '../../../../../core/configuretemplate/utils/helper';
 import { initializeNodeOperationInputsData } from '../../../../../core/state/operation/operationMetadataSlice';
-import { useDispatch } from 'react-redux';
-import type { AppDispatch } from '../../../../../core/store';
+import { useDispatch, useSelector } from 'react-redux';
+import type { AppDispatch, RootState } from '../../../../../core/store';
 
 interface ChannelContentProps {
   selectedNodeId: string;
@@ -25,6 +25,9 @@ const ChannelContent = (props: ChannelContentProps) => {
   const [isLoading, setIsLoading] = useState(true);
   const intl = useIntl();
   const dispatch = useDispatch<AppDispatch>();
+  const inputChannelParameters = useSelector((state: RootState) => state.operations.inputParameters[inputNodeId]);
+
+  const outputChannelParameters = useSelector((state: RootState) => state.operations.inputParameters[outputNodeId]);
 
   const stringResources = useMemo(
     () => ({
@@ -69,10 +72,18 @@ const ChannelContent = (props: ChannelContentProps) => {
       ),
     ]);
 
+    if (inputChannelParameters) {
+      operationsData[0].nodeInputs = inputChannelParameters;
+    }
+
+    if (outputChannelParameters) {
+      operationsData[1].nodeInputs = outputChannelParameters;
+    }
+
     dispatch(initializeNodeOperationInputsData(operationsData));
 
     setIsLoading(false);
-  }, [dispatch, input, inputNodeId, output, outputNodeId]);
+  }, [dispatch, input, inputNodeId, output, outputNodeId, inputChannelParameters, outputChannelParameters]);
 
   useEffect(() => {
     initializeOperation();
