@@ -13,7 +13,8 @@ export type ChatEntryReaction = (typeof ChatEntryReaction)[keyof typeof ChatEntr
 
 export type ConversationItem =
   //TODO: Add other types of items
-
+  | ToolReplyItem
+  | AgentHeaderItem
   | UserQueryItem
   | AssistantReplyItem
   | AssistantReplyWithFlowItem
@@ -49,8 +50,15 @@ export const ConversationItemType = {
   ConnectionsSetup: 'connectionsSetup',
   Greeting: 'greeting',
   OperationsNeedingAttention: 'operationsNeedingAttention',
+  Tool: 'tool',
+  AgentHeader: 'agentHeader',
 } as const;
 export type ConversationItemType = (typeof ConversationItemType)[keyof typeof ConversationItemType];
+
+export type AgentHeaderItem = BaseConversationItem & {
+  type: typeof ConversationItemType.AgentHeader;
+  text: string;
+};
 
 export type UserQueryItem = BaseConversationItem & {
   type: typeof ConversationItemType.Query;
@@ -78,6 +86,19 @@ export type AssistantErrorItem = BaseAssistantMessageItem & {
 
 export type AssistantReplyItem = BaseAssistantMessageItem & {
   type: typeof ConversationItemType.Reply;
+  text: string;
+  reaction: ChatEntryReaction | undefined;
+  isMarkdownText: boolean;
+  correlationId?: string;
+  hideFooter?: boolean;
+  __rawRequest: any;
+  __rawResponse: any;
+  additionalDocURL?: string | undefined;
+  azureButtonCallback?: (prompt?: string) => void;
+};
+
+export type ToolReplyItem = BaseAssistantMessageItem & {
+  type: typeof ConversationItemType.Tool;
   text: string;
   reaction: ChatEntryReaction | undefined;
   isMarkdownText: boolean;

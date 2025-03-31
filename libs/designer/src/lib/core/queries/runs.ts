@@ -181,3 +181,22 @@ export const useAgentActionsRepetition = (
     }
   );
 };
+
+export const useChatHistory = (isMonitoringView: boolean, nodeIds: string[], runId: string | undefined) => {
+  return useQuery(
+    ['useChatHistory', { nodeIds, runId }],
+    async () => {
+      const allMessages: any = {};
+      for (const nodeId of nodeIds) {
+        const messages = await RunService().getChatHistory({ nodeId, runId });
+        allMessages[nodeId] = { messages };
+      }
+      return allMessages;
+    },
+    {
+      ...queryOpts,
+      retryOnMount: false,
+      enabled: isMonitoringView,
+    }
+  );
+};
