@@ -102,8 +102,6 @@ const ChannelContent = (props: ChannelContentProps) => {
       }
     }
 
-    console.log('Data:: ', operationsData);
-
     dispatch(initializeNodeOperationInputsData(operationsData));
 
     setIsLoading(false);

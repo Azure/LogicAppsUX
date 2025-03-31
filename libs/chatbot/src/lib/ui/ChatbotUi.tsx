@@ -126,8 +126,8 @@ export const ChatbotContent = (props: ChatbotUiProps) => {
           <ProgressCardWithStopButton onStopButtonClick={() => abort()} progressState={progressState} stopButtonLabel={progressStop} />
         )}
         {isSaving && <ProgressCardWithStopButton progressState={progressSave} />}
-        {messages.map((item) => (
-          <ConversationMessage key={item.id} item={item} />
+        {messages.map((item, index) => (
+          <ConversationMessage key={`${index}-${item.id}`} item={item} />
         ))}
       </div>
       <div className={'msla-chatbot-footer'}>

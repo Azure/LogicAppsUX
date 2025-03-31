@@ -11,6 +11,11 @@ const queryOpts = {
   refetchOnReconnect: false,
 };
 
+export interface ChatHistory {
+  nodeId: string;
+  messages: any[];
+}
+
 export const useRuns = (enabled = false) => {
   return useQuery(
     ['runs'],
@@ -186,10 +191,10 @@ export const useChatHistory = (isMonitoringView: boolean, nodeIds: string[], run
   return useQuery(
     ['useChatHistory', { nodeIds, runId }],
     async () => {
-      const allMessages: any = {};
+      const allMessages: ChatHistory[] = [];
       for (const nodeId of nodeIds) {
         const messages = await RunService().getChatHistory({ nodeId, runId });
-        allMessages[nodeId] = { messages };
+        allMessages.push({ nodeId, messages });
       }
       return allMessages;
     },
