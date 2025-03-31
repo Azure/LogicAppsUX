@@ -14,6 +14,10 @@ import {
 import { guid, isNullOrUndefined, labelCase } from '@microsoft/logic-apps-shared';
 import { Button, Drawer, mergeClasses } from '@fluentui/react-components';
 import { ChatFilled, ChevronDoubleRightFilled } from '@fluentui/react-icons';
+import { useDispatch } from 'react-redux';
+import { changePanelNode, type AppDispatch } from '../../../core';
+import type { Dispatch } from '@reduxjs/toolkit';
+import { setFocusNode, setRunIndex } from '../../../core/state/workflow/workflowSlice';
 
 interface AgentChatProps {
   panelLocation?: PanelLocation;
@@ -57,18 +61,31 @@ const AgentChatHeader = ({
   );
 };
 
-const parseChatHistory = (chatHistory: ChatHistory[], intl: IntlShape): ConversationItem[] => {
+const parseChatHistory = (
+  chatHistory: ChatHistory[],
+  intl: IntlShape,
+  dispatch: Dispatch,
+  agentLastOperations: Record<string, any>
+): ConversationItem[] => {
   const agentHeaderPrefix = intl.formatMessage({
     defaultMessage: 'Chat moved to',
     id: '25EIWg',
     description: 'Agent header prefix',
   });
 
+  const toolResultCallback = (agentName: string, toolName: string, iteration: number, subIteration: number) => {
+    const agentLastOperation = agentLastOperations[agentName][toolName];
+    dispatch(setRunIndex({ page: iteration, nodeId: agentName }));
+    dispatch(setRunIndex({ page: subIteration, nodeId: toolName }));
+    dispatch(setFocusNode(agentLastOperation));
+    dispatch(changePanelNode(agentLastOperation));
+  };
+
   const conversations: ConversationItem[] = [];
 
   for (const chat of chatHistory) {
     const { nodeId, messages } = chat;
-    const parsedMessages: any[] = (messages ?? []).map((message) => parseMessage(message, nodeId));
+    const parsedMessages: any[] = (messages ?? []).map((message) => parseMessage(message, nodeId, toolResultCallback));
 
     if (parsedMessages.length > 0) {
       const agentName = labelCase(nodeId ?? '');
@@ -84,7 +101,11 @@ const parseChatHistory = (chatHistory: ChatHistory[], intl: IntlShape): Conversa
   return conversations;
 };
 
-const parseMessage = (message: any, id: string) => {
+const parseMessage = (
+  message: any,
+  id: string,
+  toolResultCallback: (agentName: string, toolName: string, iteration: number, subIteration: number) => void
+) => {
   let type: ConversationItemType = ConversationItemType.Reply;
   let text = '';
   switch (message.messageEntryType) {
@@ -94,14 +115,17 @@ const parseMessage = (message: any, id: string) => {
       break;
     }
     case 'ToolResult': {
-      // const iteration = 0; //message?.iteration ?? 0;
-      // const subIteration = 0; //message?.subIteration ?? 0;
+      const iteration = message?.iteration ?? 0;
+      const subIteration = message?.subIteration ?? 0;
       const toolName = message.toolResultsPayload?.toolResult?.toolName;
 
       return {
         id: guid(),
         text: toolName ?? '',
         type: ConversationItemType.Tool,
+        onClick: () => {
+          toolResultCallback(id, toolName, iteration, subIteration);
+        },
         timestamp: message.timestamp,
       };
     }
@@ -143,15 +167,14 @@ export const AgentChat = ({
   const { isFetching: isChatHistoryFetching, data: chatHistoryData } = useChatHistory(!!isMonitoringView, agentOperations, runInstance?.id);
   const drawerWidth = isCollapsed ? PanelSize.Auto : chatbotWidth;
   const isChatInputEnabled = useIsChatInputEnabled(conversation.length > 0 ? conversation[0].metadata?.parentId : undefined);
-
-  console.log('agentChat', agentLastOperations);
+  const dispatch = useDispatch<AppDispatch>();
 
   useEffect(() => {
     if (!isNullOrUndefined(chatHistoryData)) {
-      const newConversations = parseChatHistory(chatHistoryData, intl);
+      const newConversations = parseChatHistory(chatHistoryData, intl, dispatch, agentLastOperations);
       setConversation([...newConversations]);
     }
-  }, [setConversation, chatHistoryData, intl]);
+  }, [setConversation, chatHistoryData, intl, Object.keys(agentLastOperations).length, dispatch]);
 
   const intlText = useMemo(() => {
     return {
