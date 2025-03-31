@@ -19,7 +19,6 @@ export class BaseTemplateResourceService implements ITemplateResourceService {
   }
 
   public async getTemplateWorkflows(_id: string) {
-    // NOTE: Make sure when you get all workflow ids, use the toLowerCase() for the key and id inside workflow manifest should be normal id.
     return Promise.resolve([]);
   }
 

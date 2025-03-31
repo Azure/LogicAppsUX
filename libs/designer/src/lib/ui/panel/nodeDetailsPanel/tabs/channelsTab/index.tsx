@@ -1,14 +1,41 @@
 import type { PanelTabFn, PanelTabProps } from '@microsoft/designer-ui';
 import constants from '../../../../../common/constants';
-import { Switch, type SwitchOnChangeData } from '@fluentui/react-components';
-import { useMemo, useState } from 'react';
+import { MessageBarBody, Switch, type SwitchOnChangeData } from '@fluentui/react-components';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useIntl } from 'react-intl';
+import { useDispatch, useSelector } from 'react-redux';
+import type { RootState, AppDispatch } from '../../../../../core/store';
+import { MessageBar } from '@fluentui/react';
+import ChannelContent from './ChannelContent';
+import type { SupportedChannels } from '@microsoft/logic-apps-shared';
+import { deinitializeNodes } from '../../../../../core/state/operation/operationMetadataSlice';
 
 export const ChannelsTab: React.FC<PanelTabProps> = (props) => {
   const { nodeId: selectedNodeId } = props;
-  const [channelAdded, setChannelAdded] = useState(false);
+  const dispatch = useDispatch<AppDispatch>();
+  const supportedChannels = useSelector((state: RootState) => state.operations.supportedChannels[selectedNodeId]);
+  const [channel, _setChannel] = useState<SupportedChannels | undefined>(supportedChannels.length > 0 ? supportedChannels[0] : undefined);
+  const inputNodeId = useMemo(
+    () => `${selectedNodeId}${constants.CHANNELS.INPUT}${channel?.input?.type}`,
+    [channel?.input.type, selectedNodeId]
+  );
+  const outputNodeId = useMemo(
+    () => `${selectedNodeId}${constants.CHANNELS.OUTPUT}${channel?.output?.type}`,
+    [channel?.output.type, selectedNodeId]
+  );
+
+  const inputChannelParameters = useSelector((state: RootState) => state.operations.inputParameters[inputNodeId]);
+
+  const outputChannelParameters = useSelector((state: RootState) => state.operations.inputParameters[outputNodeId]);
+
+  const [enabled, setEnabled] = useState(false);
 
   const intl = useIntl();
+
+  const disableChannel = useCallback(() => {
+    dispatch(deinitializeNodes([outputNodeId, inputNodeId]));
+    setEnabled(false);
+  }, [dispatch, inputNodeId, outputNodeId]);
 
   const stringResources = useMemo(
     () => ({
@@ -22,20 +49,49 @@ export const ChannelsTab: React.FC<PanelTabProps> = (props) => {
         id: 'OnjMM3',
         description: 'Channel disabled.',
       }),
+      NO_CHANNEL_SUPPORTED_MSG: intl.formatMessage({
+        defaultMessage: 'No channel supported for this agent.',
+        id: 'di6MC0',
+        description: 'channel not supported message',
+      }),
     }),
     [intl]
   );
 
+  useEffect(() => {
+    setEnabled(!!inputChannelParameters || !!outputChannelParameters);
+  }, [inputChannelParameters, outputChannelParameters]);
   return (
     <>
-      <div>{selectedNodeId}</div>
-      <Switch
-        checked={channelAdded}
-        onChange={(_, data: SwitchOnChangeData) => {
-          setChannelAdded(data.checked);
-        }}
-        label={channelAdded ? stringResources.ENABLED : stringResources.DISABLED}
-      />
+      {supportedChannels.length === 0 || !channel ? (
+        <MessageBar key={'warning'} className="msla-initialize-variable-warning">
+          <MessageBarBody>{stringResources.NO_CHANNEL_SUPPORTED_MSG}</MessageBarBody>
+        </MessageBar>
+      ) : (
+        <>
+          <Switch
+            checked={enabled}
+            onChange={(_, data: SwitchOnChangeData) => {
+              if (data.checked) {
+                setEnabled(true);
+              } else {
+                disableChannel();
+              }
+            }}
+            style={{ display: 'flex', marginBottom: '10px' }}
+            label={enabled ? stringResources.ENABLED : stringResources.DISABLED}
+          />
+          {enabled && (
+            <ChannelContent
+              selectedNodeId={selectedNodeId}
+              // TODO: Add support for multiple channels
+              channelToAdd={channel}
+              inputNodeId={inputNodeId}
+              outputNodeId={outputNodeId}
+            />
+          )}
+        </>
+      )}
     </>
   );
 };
