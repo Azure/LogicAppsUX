@@ -1,27 +1,40 @@
 import type { ConversationItem } from '@microsoft/designer-ui';
-import { ConversationItemType, PanelLocation } from '@microsoft/designer-ui';
+import { ConversationItemType, PanelLocation, PanelSize } from '@microsoft/designer-ui';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useIntl } from 'react-intl';
-import { defaultChatbotPanelWidth, ChatbotUi } from '@microsoft/logic-apps-chatbot';
+import { defaultChatbotPanelWidth, ChatbotContent } from '@microsoft/logic-apps-chatbot';
 import { useChatHistory } from '../../../core/queries/runs';
 import { useMonitoringView } from '../../../core/state/designerOptions/designerOptionsSelectors';
 import { useAgentOpertations, useRunInstance } from '../../../core/state/workflow/workflowSelectors';
 import { guid, isNullOrUndefined } from '@microsoft/logic-apps-shared';
+import { Button, Drawer, mergeClasses } from '@fluentui/react-components';
+import { ChatFilled, ChevronDoubleRightFilled } from '@fluentui/react-icons';
 
 interface AgentChatProps {
   panelLocation?: PanelLocation;
   closeChatBot?: () => void; // callback when chatbot is closed
   chatbotWidth?: string;
+  panelContainerRef: React.MutableRefObject<HTMLElement | null>;
 }
 
 const AgentChatHeader = ({
   title,
+  toggleCollapse,
 }: {
   title: string;
+  toggleCollapse: () => void;
 }) => {
   return (
     <div style={{ display: 'flex', justifyContent: 'center', padding: '10px' }}>
       <h3>{title}</h3>
+      <Button
+        id="msla-panel-header-collapse-nav"
+        appearance="subtle"
+        icon={<ChevronDoubleRightFilled />}
+        aria-label={'buttonText'}
+        onClick={toggleCollapse}
+        data-automation-id="msla-panel-header-collapse-nav"
+      />
     </div>
   );
 };
@@ -65,7 +78,11 @@ const parseMessage = (message: any) => {
   };
 };
 
-export const AgentChat = ({ panelLocation = PanelLocation.Left, chatbotWidth = defaultChatbotPanelWidth }: AgentChatProps) => {
+export const AgentChat = ({
+  panelLocation = PanelLocation.Left,
+  chatbotWidth = defaultChatbotPanelWidth,
+  panelContainerRef,
+}: AgentChatProps) => {
   const intl = useIntl();
   const [inputQuery, setInputQuery] = useState('');
   const [answerGeneration, _stopAnswerGeneration] = useState(true);
@@ -78,12 +95,16 @@ export const AgentChat = ({ panelLocation = PanelLocation.Left, chatbotWidth = d
   const isMonitoringView = useMonitoringView();
   const runInstance = useRunInstance();
   const agentOperations = useAgentOpertations();
+  const [isCollapsed, setIsCollapsed] = useState(true);
+  const panelContainerElement = panelContainerRef.current as HTMLElement;
 
   const { isFetching: isActionsRepetitionFetching, data: agentActionsRepetitionData } = useChatHistory(
     !!isMonitoringView,
     agentOperations,
     runInstance?.id
   );
+
+  const drawerWidth = isCollapsed ? PanelSize.Auto : PanelSize.Medium;
 
   console.log('charlie', isActionsRepetitionFetching, agentActionsRepetitionData);
 
@@ -165,45 +186,70 @@ export const AgentChat = ({ panelLocation = PanelLocation.Left, chatbotWidth = d
   }, [conversation]);
 
   return (
-    <ChatbotUi
-      panel={{
-        location: panelLocation,
-        width: chatbotWidth,
-        isOpen: true,
-        isBlocking: false,
-        onDismiss: () => {},
-        header: <AgentChatHeader title="Agent Chat" />,
+    <Drawer
+      aria-label={'panelLabel'}
+      className="msla-panel-container"
+      modalType="non-modal"
+      mountNode={{
+        className: 'msla-panel-host-container',
+        element: panelContainerElement,
       }}
-      inputBox={{
-        value: inputQuery,
-        onChange: setInputQuery,
-        placeholder: intlText.chatInputPlaceholder,
-        onSubmit: () => {},
-        disabled: true, // read-only mode
-      }}
-      data={{
-        isSaving: isSaving,
-        canSave: canSaveCurrentFlow,
-        canTest: canTestCurrentFlow,
-        test: () => testCurrentFlow(false),
-        save: () => saveCurrentFlow(false),
-        abort: abortFetching,
-      }}
-      string={{
-        test: intlText.chatSuggestion.testButton,
-        save: intlText.chatSuggestion.saveButton,
-        submit: intlText.submitButtonTitle,
-        progressState: intlText.progressCardText,
-        progressStop: intlText.progressCardStopButtonLabel,
-        progressSave: intlText.progressCardSaveText,
-        protectedMessage: intlText.protectedMessage,
-      }}
-      body={{
-        messages: conversation,
-        focus: focus,
-        answerGenerationInProgress: !answerGeneration,
-        setFocus: setFocus,
-      }}
-    />
+      open={true}
+      position={'end'}
+      style={{ position: 'relative', maxWidth: '100%', width: drawerWidth, height: '100%' }}
+    >
+      {isCollapsed ? (
+        <Button
+          appearance="subtle"
+          aria-label={'panelCollapseTitle'}
+          className={mergeClasses('collapse-toggle', 'right', 'empty')}
+          icon={<ChatFilled />}
+          onClick={() => setIsCollapsed(false)}
+          data-automation-id="msla-panel-header-collapse-nav"
+        />
+      ) : null}
+      {isCollapsed ? null : (
+        <ChatbotContent
+          panel={{
+            location: panelLocation,
+            width: chatbotWidth,
+            isOpen: true,
+            isBlocking: false,
+            onDismiss: () => {},
+            header: <AgentChatHeader title="Agent Chat" toggleCollapse={() => setIsCollapsed(true)} />,
+          }}
+          inputBox={{
+            value: inputQuery,
+            onChange: setInputQuery,
+            placeholder: intlText.chatInputPlaceholder,
+            onSubmit: () => {},
+            disabled: true, // read-only mode
+          }}
+          data={{
+            isSaving: isSaving,
+            canSave: canSaveCurrentFlow,
+            canTest: canTestCurrentFlow,
+            test: () => testCurrentFlow(false),
+            save: () => saveCurrentFlow(false),
+            abort: abortFetching,
+          }}
+          string={{
+            test: intlText.chatSuggestion.testButton,
+            save: intlText.chatSuggestion.saveButton,
+            submit: intlText.submitButtonTitle,
+            progressState: intlText.progressCardText,
+            progressStop: intlText.progressCardStopButtonLabel,
+            progressSave: intlText.progressCardSaveText,
+            protectedMessage: intlText.protectedMessage,
+          }}
+          body={{
+            messages: conversation,
+            focus: focus,
+            answerGenerationInProgress: !answerGeneration,
+            setFocus: setFocus,
+          }}
+        />
+      )}
+    </Drawer>
   );
 };

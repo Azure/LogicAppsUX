@@ -2,7 +2,7 @@ import { openPanel, useNodesInitialized } from '../core';
 import { useLayout } from '../core/graphlayout';
 import { usePreloadOperationsQuery, usePreloadConnectorsQuery } from '../core/queries/browse';
 import { useMonitoringView, useReadOnly, useHostOptions, useIsVSCode } from '../core/state/designerOptions/designerOptionsSelectors';
-import { useClampPan } from '../core/state/designerView/designerViewSelectors';
+import { useAgenticWorkflow, useClampPan } from '../core/state/designerView/designerViewSelectors';
 import { clearPanel } from '../core/state/panel/panelSlice';
 import { useIsGraphEmpty } from '../core/state/workflow/workflowSelectors';
 import { buildEdgeIdsBySource, updateNodeSizes } from '../core/state/workflow/workflowSlice';
@@ -24,7 +24,7 @@ import { PanelRoot } from './panel/panelRoot';
 import { css, setLayerHostSelector } from '@fluentui/react';
 import { PanelLocation } from '@microsoft/designer-ui';
 import type { CustomPanelLocation } from '@microsoft/designer-ui';
-import type { WorkflowNodeType } from '@microsoft/logic-apps-shared';
+// import type { WorkflowNodeType } from '@microsoft/logic-apps-shared';
 import { WORKFLOW_NODE_TYPES, useThrottledEffect } from '@microsoft/logic-apps-shared';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import KeyboardBackendFactory, { isKeyboardDragTrigger } from 'react-dnd-accessible-backend';
@@ -51,10 +51,7 @@ export interface DesignerProps {
   displayRuntimeInfo?: boolean;
 }
 
-type NodeTypesObj = {
-  [key in WorkflowNodeType]: React.ComponentType<any>;
-};
-const nodeTypes: NodeTypesObj = {
+const nodeTypes: any = {
   OPERATION_NODE: OperationNode,
   GRAPH_NODE: GraphNode,
   SUBGRAPH_NODE: GraphNode,
@@ -112,10 +109,10 @@ export const Designer = (props: DesignerProps) => {
   useThrottledEffect(() => dispatch(buildEdgeIdsBySource()), [graph], 200);
 
   const clampPan = useClampPan();
-	
-	const canvasRef = useRef<HTMLDivElement>(null);
-	const [containerDimensions, setContainerDimentions] = useState(canvasRef.current?.getBoundingClientRect() ?? { width: 0, height: 0 });
-	useResizeObserver(canvasRef, (el) => setContainerDimentions(el.contentRect));
+
+  const canvasRef = useRef<HTMLDivElement>(null);
+  const [containerDimensions, setContainerDimentions] = useState(canvasRef.current?.getBoundingClientRect() ?? { width: 0, height: 0 });
+  useResizeObserver(canvasRef, (el) => setContainerDimentions(el.contentRect));
 
   const [zoom, setZoom] = useState(1);
 
@@ -123,14 +120,14 @@ export const Designer = (props: DesignerProps) => {
     const padding = 64;
     const [flowWidth, flowHeight] = flowSize;
 
-		const xVal = containerDimensions.width / zoom - padding - DEFAULT_NODE_SIZE.width;
-		const yVal = containerDimensions.height / zoom - padding - DEFAULT_NODE_SIZE.height;
+    const xVal = containerDimensions.width / zoom - padding - DEFAULT_NODE_SIZE.width;
+    const yVal = containerDimensions.height / zoom - padding - DEFAULT_NODE_SIZE.height;
 
     return [
       [-xVal, -yVal],
       [xVal + flowWidth, yVal + flowHeight - 30],
     ];
-	}, [flowSize, containerDimensions, zoom]);
+  }, [flowSize, containerDimensions, zoom]);
 
   useEffect(() => setLayerHostSelector('#msla-layer-host'), []);
   const KeyboardTransition = createTransition('keydown', (event) => {
@@ -141,17 +138,27 @@ export const Designer = (props: DesignerProps) => {
     return true;
   });
 
-  useHotkeys(['meta+shift+p', 'ctrl+shift+p'], (event) => {
-    event.preventDefault();
-    dispatch(openPanel({ panelMode: 'NodeSearch' }));
-  },{enabled: !isVSCode});
+  useHotkeys(
+    ['meta+shift+p', 'ctrl+shift+p'],
+    (event) => {
+      event.preventDefault();
+      dispatch(openPanel({ panelMode: 'NodeSearch' }));
+    },
+    { enabled: !isVSCode }
+  );
 
-  useHotkeys(['meta+alt+p', 'ctrl+alt+p', 'meta+option+p',  'ctrl+option+p'], (event) => {
-    event.preventDefault();
-    dispatch(openPanel({ panelMode: 'NodeSearch' }));
-  }, {enabled: isVSCode});
+  useHotkeys(
+    ['meta+alt+p', 'ctrl+alt+p', 'meta+option+p', 'ctrl+option+p'],
+    (event) => {
+      event.preventDefault();
+      dispatch(openPanel({ panelMode: 'NodeSearch' }));
+    },
+    { enabled: isVSCode }
+  );
 
   const isMonitoringView = useMonitoringView();
+  const isAgenticWorkflow = useAgenticWorkflow();
+
   const DND_OPTIONS: any = {
     backends: [
       {
@@ -215,70 +222,71 @@ export const Designer = (props: DesignerProps) => {
   }, [isInitialized]);
 
   return (
-    < div style={{ display: 'flex', flexDirection: 'row', height: '100%' , minWidth: '100%' }}>
-       <DndProvider options={DND_OPTIONS}>
-      {preloadSearch ? <SearchPreloader /> : null}
-      <div className="msla-designer-canvas msla-panel-mode" ref={designerContainerRef}>
-        <ReactFlowProvider>
-					<div style={{ flexGrow: 1}}>
-						<ReactFlow
-							ref={canvasRef}
-							nodeTypes={nodeTypes}
-							nodes={nodesWithPlaceholder}
-							edges={edges}
-							onNodesChange={onNodesChange}
-							nodesConnectable={false}
-							nodesDraggable={false}
-							nodesFocusable={false}
-							edgesFocusable={false}
-							edgeTypes={edgeTypes}
-							panOnScroll={true}
-							deleteKeyCode={['Backspace', 'Delete']}
-							zoomActivationKeyCode={['Ctrl', 'Meta', 'Alt', 'Control']}
-							translateExtent={clampPan ? translateExtent : undefined}
-							onMove={(_e, viewport) => setZoom(viewport.zoom)}
-							minZoom={0.05}
-							onPaneClick={() => dispatch(clearPanel())}
-							disableKeyboardA11y={true}
-							onlyRenderVisibleElements={!userInferredTabNavigation}
-							proOptions={{
-								account: 'paid-sponsor',
-								hideAttribution: true,
-							}}
-						>
-							{backgroundProps ? <Background {...backgroundProps} /> : null}
-							<DeleteModal />
-							<DesignerContextualMenu />
-							<EdgeContextualMenu />
-						</ReactFlow>
-					</div>
-					<PanelRoot
-						panelContainerRef={designerContainerRef}
-						panelLocation={panelLocation}
-						customPanelLocations={customPanelLocations}
-						isResizeable={true}
-					/>
-          <div className={css('msla-designer-tools', panelLocation === PanelLocation.Left && 'left-panel')}>
-            <Controls />
-            <Minimap />
-          </div>
-          <PerformanceDebugTool />
-          <CanvasFinder />
-					<CanvasSizeMonitor canvasRef={canvasRef} />
-          <DragPanMonitor canvasRef={canvasRef} />
-        </ReactFlowProvider>
-        <div
-          id={'msla-layer-host'}
-          style={{
-            position: 'absolute',
-            inset: '0px',
-            visibility: 'hidden',
-          }}
-        />
-      </div>
-        </DndProvider>
-        {isMonitoringView ? <AgentChat panelLocation='RIGHT' closeChatBot={()=>{}}/> : null}
+    <div style={{ display: 'flex', flexDirection: 'row', height: '100%', minWidth: '100%' }}>
+      <DndProvider options={DND_OPTIONS}>
+        {preloadSearch ? <SearchPreloader /> : null}
+        <div className="msla-designer-canvas msla-panel-mode" ref={designerContainerRef}>
+          <ReactFlowProvider>
+            <div style={{ flexGrow: 1 }}>
+              <ReactFlow
+                ref={canvasRef}
+                nodeTypes={nodeTypes}
+                nodes={nodesWithPlaceholder}
+                edges={edges}
+                onNodesChange={onNodesChange}
+                nodesConnectable={false}
+                nodesDraggable={false}
+                nodesFocusable={false}
+                edgesFocusable={false}
+                edgeTypes={edgeTypes}
+                panOnScroll={true}
+                deleteKeyCode={['Backspace', 'Delete']}
+                zoomActivationKeyCode={['Ctrl', 'Meta', 'Alt', 'Control']}
+                translateExtent={clampPan ? translateExtent : undefined}
+                onMove={(_e, viewport) => setZoom(viewport.zoom)}
+                minZoom={0.05}
+                onPaneClick={() => dispatch(clearPanel())}
+                disableKeyboardA11y={true}
+                onlyRenderVisibleElements={!userInferredTabNavigation}
+                proOptions={{
+                  account: 'paid-sponsor',
+                  hideAttribution: true,
+                }}
+              >
+                {backgroundProps ? <Background {...backgroundProps} /> : null}
+                <DeleteModal />
+                <DesignerContextualMenu />
+                <EdgeContextualMenu />
+              </ReactFlow>
+            </div>
+            <PanelRoot
+              panelContainerRef={designerContainerRef}
+              panelLocation={panelLocation}
+              customPanelLocations={customPanelLocations}
+              isResizeable={true}
+            />
+            {isMonitoringView && isAgenticWorkflow ? (
+              <AgentChat panelLocation="RIGHT" panelContainerRef={designerContainerRef} closeChatBot={() => {}} />
+            ) : null}
+            <div className={css('msla-designer-tools', panelLocation === PanelLocation.Left && 'left-panel')}>
+              <Controls />
+              <Minimap />
+            </div>
+            <PerformanceDebugTool />
+            <CanvasFinder />
+            <CanvasSizeMonitor canvasRef={canvasRef} />
+            <DragPanMonitor canvasRef={canvasRef} />
+          </ReactFlowProvider>
+          <div
+            id={'msla-layer-host'}
+            style={{
+              position: 'absolute',
+              inset: '0px',
+              visibility: 'hidden',
+            }}
+          />
+        </div>
+      </DndProvider>
     </div>
- 
   );
 };
