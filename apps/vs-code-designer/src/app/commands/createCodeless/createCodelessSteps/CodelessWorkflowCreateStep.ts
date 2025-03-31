@@ -7,10 +7,10 @@ import {
   azureWebJobsStorageKey,
   localSettingsFileName,
   workflowFileName,
-  workflowType,
   localEmulatorConnectionString,
   extensionBundleId,
   defaultVersionRange,
+  type WorkflowType,
 } from '../../../../constants';
 import { localize } from '../../../../localize';
 import { setLocalAppSetting } from '../../../utils/appSettings/localSettings';
@@ -49,7 +49,7 @@ export class CodelessWorkflowCreateStep extends WorkflowCreateStepBase<IFunction
     const template: IWorkflowTemplate = nonNullProp(context, 'functionTemplate');
     const functionPath: string = path.join(context.projectPath, nonNullProp(context, 'functionName'));
 
-    const codelessDefinition: StandardApp = getCodelessWorkflowTemplate(template?.id === workflowType.stateful);
+    const codelessDefinition: StandardApp = getCodelessWorkflowTemplate(template?.id as WorkflowType);
 
     const workflowJsonFullPath: string = path.join(functionPath, workflowFileName);
 
