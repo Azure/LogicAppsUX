@@ -28,6 +28,7 @@ import {
 import { getDurationStringPanelMode, ActionResults } from '@microsoft/designer-ui';
 import type { Assertion, ExpressionFunction, LogicAppsV2, SubgraphType, UnitTestDefinition } from '@microsoft/logic-apps-shared';
 import type { PasteScopeParams } from '../../actions/bjsworkflow/copypaste';
+import { Constants } from 'lib';
 
 const hasMultipleTriggers = (definition: LogicAppsV2.WorkflowDefinition): boolean => {
   return definition && definition.triggers ? Object.keys(definition.triggers).length > 1 : false;
@@ -129,11 +130,15 @@ const parseOutputsToValueSegment = (mockOutputs: Record<string, any>) => {
   return Object.keys(flattenOutputs).reduce((acc, key) => {
     const id = guid();
     if (isValueSegment({ id, ...flattenOutputs[key][0] })) {
-      return Object.assign({}, acc, { [key]: [{ id, ...flattenOutputs[key] }] });
+      return Object.assign({}, acc, {
+        [key]: [{ id, ...flattenOutputs[key] }],
+      });
     }
     const value =
       isObject(flattenOutputs[key]) || Array.isArray(flattenOutputs[key]) ? JSON.stringify(flattenOutputs[key]) : flattenOutputs[key];
-    return Object.assign({}, acc, { [key]: [createLiteralValueSegment(value)] });
+    return Object.assign({}, acc, {
+      [key]: [createLiteralValueSegment(value)],
+    });
   }, {});
 };
 
@@ -326,7 +331,11 @@ export const deserializeUnitTestDefinition = (
     const { name, description, assertionString } = assertion;
     try {
       const uncastAssertionString = ExpressionParser.parseTemplateExpression(assertionString) as ExpressionFunction;
-      return { name, description, assertionString: uncastAssertionString.expression };
+      return {
+        name,
+        description,
+        assertionString: uncastAssertionString.expression,
+      };
     } catch {
       return { name, description, assertionString: '' };
     }
@@ -393,22 +402,41 @@ export const buildGraphFromActions = (
           delete action.cases[key];
         }
       }
-    } else if (isAgentAction(action) && action?.tools) {
-      const toolKeys = Object.keys(action.tools);
-      for (const key of toolKeys) {
-        if (!allActionNames.includes(key)) {
-          allActionNames.push(key);
-          continue;
+    } else if (isAgentAction(action)) {
+      if (action?.tools) {
+        const toolKeys = Object.keys(action.tools);
+        for (const key of toolKeys) {
+          if (!allActionNames.includes(key)) {
+            allActionNames.push(key);
+            continue;
+          }
+          const toolAction: any = action.tools?.[key];
+          const newToolId = pasteScopeParams ? (pasteScopeParams.renamedNodes[key] ?? key) : getUniqueName(allActionNames, key).name;
+          allActionNames.push(newToolId);
+          if (toolAction) {
+            action.tools = {
+              ...action.tools,
+              [newToolId]: toolAction,
+            };
+            delete action.tools[key];
+          }
         }
-        const toolAction: any = action.tools?.[key];
-        const newToolId = pasteScopeParams ? (pasteScopeParams.renamedNodes[key] ?? key) : getUniqueName(allActionNames, key).name;
-        allActionNames.push(newToolId);
-        if (toolAction) {
-          action.tools = {
-            ...action.tools,
-            [newToolId]: toolAction,
-          };
-          delete action.tools[key];
+
+        if (action?.channels) {
+          if (action.channels.in) {
+            const inputChannelKeys = Object.keys(action.channels.in);
+            for (const key of inputChannelKeys) {
+              const channelAction = action.channels.in?.[key];
+              if (channelAction && channelAction?.trigger) {
+                const id = `${actionName}${Constants.CHANNELS.INPUT}${channelAction.trigger.type}`;
+                allActionNames.push(id);
+                action.tools = {
+                  ...action.tools,
+                  [id]: channelAction.trigger,
+                };
+              }
+            }
+          }
         }
       }
     }
@@ -416,7 +444,10 @@ export const buildGraphFromActions = (
     allActions[actionName] = { ...action };
 
     const isRoot = Object.keys(action.runAfter ?? {}).length === 0 && parentNodeId;
-    nodesMetadata[actionName] = { graphId, ...(parentNodeId ? { parentNodeId: parentNodeId } : {}) };
+    nodesMetadata[actionName] = {
+      graphId,
+      ...(parentNodeId ? { parentNodeId: parentNodeId } : {}),
+    };
     if (isScopeAction(action)) {
       const [scopeNodes, scopeEdges, scopeActions, scopeNodesMetadata] = processScopeActions(
         graphId,
@@ -432,7 +463,10 @@ export const buildGraphFromActions = (
     }
 
     // Assign root prop
-    nodesMetadata[actionName] = { ...nodesMetadata[actionName], ...(isRoot && { isRoot: true }) };
+    nodesMetadata[actionName] = {
+      ...nodesMetadata[actionName],
+      ...(isRoot && { isRoot: true }),
+    };
     if (!isRoot) {
       for (let [runAfterAction, runAfterValue] of Object.entries(action.runAfter ?? {})) {
         // update the run after with the updated ids
