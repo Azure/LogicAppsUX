@@ -7,7 +7,7 @@ import {
   azureWebJobsStorageKey,
   localSettingsFileName,
   workflowFileName,
-  workflowType,
+  WorkflowType,
   localEmulatorConnectionString,
   extensionBundleId,
   defaultVersionRange,
@@ -61,7 +61,7 @@ export class CodelessFunctionWorkflow extends WorkflowCreateStepBase<IFunctionWi
     const methodName = context.methodName;
 
     // Determine which definition object to use based on the type of workflow template
-    const codelessDefinition: StandardApp = getWorkflowTemplate(methodName, template?.id === workflowType.stateful, context.projectType);
+    const codelessDefinition: StandardApp = getWorkflowTemplate(methodName, template?.id === WorkflowType.stateful, context.projectType);
 
     // Write the workflow definition to a JSON file
     const workflowJsonFullPath: string = path.join(functionPath, workflowFileName);

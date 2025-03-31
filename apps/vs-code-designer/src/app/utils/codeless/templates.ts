@@ -1,5 +1,5 @@
 import { ProjectType, TemplateCategory, TemplatePromptResult, type StandardApp } from '@microsoft/vscode-extension-logic-apps';
-import { workflowKind, workflowType } from '../../../constants';
+import { WorkflowKind, WorkflowType } from '../../../constants';
 import { localize } from '../../../localize';
 
 /**
@@ -10,7 +10,7 @@ import { localize } from '../../../localize';
  * @returns The workflow template.
  */
 export const getWorkflowTemplate = (methodName: string, isStateful: boolean, projectType: string) => {
-  const kind = isStateful ? workflowKind.stateful : workflowKind.stateless;
+  const kind = isStateful ? WorkflowKind.stateful : WorkflowKind.stateless;
 
   const customCodeDefinition: StandardApp = {
     definition: {
@@ -103,27 +103,44 @@ export const getWorkflowTemplate = (methodName: string, isStateful: boolean, pro
  * @param {boolean} isStateful - A boolean indicating whether the workflow is stateful or not.
  * @returns The codeless workflow template.
  */
-export const getCodelessWorkflowTemplate = (isStateful: boolean) => {
-  const kind = isStateful ? workflowKind.stateful : workflowKind.stateless;
-
-  const emptyCodelessDefinition: StandardApp = {
+export const getCodelessWorkflowTemplate = (workflowType: WorkflowType) => {
+  const baseDefinition: StandardApp = {
     definition: {
       $schema: 'https://schema.management.azure.com/providers/Microsoft.Logic/schemas/2016-06-01/workflowdefinition.json#',
-      actions: {},
       contentVersion: '1.0.0.0',
+      actions: {},
       outputs: {},
       triggers: {},
     },
-    kind: kind,
+    kind: workflowType === WorkflowType.stateful ? WorkflowKind.stateful : WorkflowKind.stateless,
   };
 
-  return emptyCodelessDefinition;
+  if (workflowType === WorkflowType.agentic) {
+    return {
+      ...baseDefinition,
+      definition: {
+        ...baseDefinition.definition,
+        actions: {
+          Default_Agent: {
+            type: 'Agent',
+            inputs: {},
+            limit: {},
+            tools: {},
+            runAfter: {},
+          },
+        },
+      },
+      kind: WorkflowKind.agentic,
+    };
+  }
+
+  return baseDefinition;
 };
 
 export const getWorkflowTemplatePickItems = (language: string, isProjectWizard: boolean) => {
   const picks: any[] = [
     {
-      id: workflowType.stateful,
+      id: WorkflowType.stateful,
       name: localize('Stateful', 'Stateful workflow'),
       defaultFunctionName: 'Stateful',
       language: language,
@@ -133,7 +150,7 @@ export const getWorkflowTemplatePickItems = (language: string, isProjectWizard: 
       categories: [TemplateCategory.Core],
     },
     {
-      id: workflowType.stateless,
+      id: WorkflowType.stateless,
       name: localize('Stateless', 'Stateless workflow'),
       defaultFunctionName: 'Stateless',
       language: language,
@@ -143,7 +160,7 @@ export const getWorkflowTemplatePickItems = (language: string, isProjectWizard: 
       categories: [TemplateCategory.Core],
     },
     {
-      id: workflowType.agentic,
+      id: WorkflowType.agentic,
       name: localize('Agentic', 'Agentic workflow'),
       defaultFunctionName: 'Agentic',
       language: language,

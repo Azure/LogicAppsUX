@@ -83,18 +83,19 @@ export const workflowAppAADTenantId = 'WORKFLOWAPP_AAD_TENANTID';
 export const workflowAppAADClientSecret = 'WORKFLOWAPP_AAD_CLIENTSECRET';
 export const debugSymbolDll = 'Microsoft.Azure.Workflows.BuildTasks.DebugSymbolGenerator.dll';
 
-export const workflowType = {
+export const WorkflowType = {
   stateful: 'Stateful-Codeless',
   stateless: 'Stateless-Codeless',
   agentic: 'Agentic-Codeless',
 } as const;
-export type workflowType = (typeof workflowType)[keyof typeof workflowType];
+export type WorkflowType = (typeof WorkflowType)[keyof typeof WorkflowType];
 
-export const workflowKind = {
+export const WorkflowKind = {
   stateful: 'Stateful',
   stateless: 'Stateless',
+  agentic: 'Agentic',
 } as const;
-export type workflowKind = (typeof workflowKind)[keyof typeof workflowKind];
+export type WorkflowKind = (typeof WorkflowKind)[keyof typeof WorkflowKind];
 
 // Designer
 export const managementApiPrefix = '/runtime/webhooks/workflow/api/management';
