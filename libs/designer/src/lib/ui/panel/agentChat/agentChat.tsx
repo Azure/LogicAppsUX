@@ -124,7 +124,7 @@ const parseMessage = (
     }
     case 'ToolResult': {
       const iteration = message?.iteration ?? 0;
-      const subIteration = message?.subIteration ?? 0;
+      const subIteration = message.toolResultsPayload?.toolResult?.subIteration ?? 0;
       const toolName = message.toolResultsPayload?.toolResult?.toolName;
 
       return {
