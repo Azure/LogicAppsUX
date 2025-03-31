@@ -1,17 +1,19 @@
 import type { ConversationItem } from '@microsoft/designer-ui';
 import { ConversationItemType, PanelLocation, PanelSize } from '@microsoft/designer-ui';
 import { useCallback, useEffect, useMemo, useState } from 'react';
-import { useIntl } from 'react-intl';
+import { type IntlShape, useIntl } from 'react-intl';
 import { defaultChatbotPanelWidth, ChatbotContent } from '@microsoft/logic-apps-chatbot';
-import { useChatHistory } from '../../../core/queries/runs';
+import { type ChatHistory, useChatHistory } from '../../../core/queries/runs';
 import { useMonitoringView } from '../../../core/state/designerOptions/designerOptionsSelectors';
-import { useAgentLastOperations, useAgentOperations, useRunInstance } from '../../../core/state/workflow/workflowSelectors';
+import {
+  useAgentLastOperations,
+  useAgentOperations,
+  useIsChatInputEnabled,
+  useRunInstance,
+} from '../../../core/state/workflow/workflowSelectors';
 import { guid, isNullOrUndefined, labelCase } from '@microsoft/logic-apps-shared';
 import { Button, Drawer, mergeClasses } from '@fluentui/react-components';
 import { ChatFilled, ChevronDoubleRightFilled } from '@fluentui/react-icons';
-import { useDispatch } from 'react-redux';
-import { setFocusNode, setRunIndex } from '../../../core/state/workflow/workflowSlice';
-import { changePanelNode, type AppDispatch } from '../../../core';
 
 interface AgentChatProps {
   panelLocation?: PanelLocation;
@@ -28,7 +30,14 @@ const AgentChatHeader = ({
   toggleCollapse: () => void;
 }) => {
   return (
-    <div style={{ display: 'flex', position: 'relative', justifyContent: 'center', padding: '10px' }}>
+    <div
+      style={{
+        display: 'flex',
+        position: 'relative',
+        justifyContent: 'center',
+        padding: '10px',
+      }}
+    >
       <h3>{title}</h3>
       <Button
         id="msla-agent-chat-header-collapse"
@@ -37,33 +46,45 @@ const AgentChatHeader = ({
         aria-label={'buttonText'}
         onClick={toggleCollapse}
         data-automation-id="msla-agent-chat-header-collapse"
-        style={{ position: 'absolute', right: '10px', top: '50%', transform: 'translateY(-50%)' }}
+        style={{
+          position: 'absolute',
+          right: '10px',
+          top: '50%',
+          transform: 'translateY(-50%)',
+        }}
       />
     </div>
   );
 };
 
-const parseChatHistory = (
-  chatHistory: Record<string, { messages: any[] }>,
-  onToolCallback: (agentName: string, toolName: string, iteration: number, subIteration: number) => void
-): ConversationItem[] =>
-  Object.entries(chatHistory).reduce<ConversationItem[]>((conversations, [key, { messages }]) => {
-    const agentName = labelCase(key ?? '');
-    const parsedMessages: any[] = messages.map((message) => parseMessage(message, key, onToolCallback));
-    conversations.push(...parsedMessages, {
-      id: guid(),
-      text: agentName,
-      type: ConversationItemType.AgentHeader,
-      date: new Date(), // Using current time for header; modify if needed
-    });
-    return conversations;
-  }, []);
+const parseChatHistory = (chatHistory: ChatHistory[], intl: IntlShape): ConversationItem[] => {
+  const agentHeaderPrefix = intl.formatMessage({
+    defaultMessage: 'Chat moved to',
+    id: '25EIWg',
+    description: 'Agent header prefix',
+  });
 
-const parseMessage = (
-  message: any,
-  agentName: string,
-  onToolCallback: (agentName: string, toolName: string, iteration: number, subIteration: number) => void
-) => {
+  const conversations: ConversationItem[] = [];
+
+  for (const chat of chatHistory) {
+    const { nodeId, messages } = chat;
+    const parsedMessages: any[] = (messages ?? []).map((message) => parseMessage(message, nodeId));
+
+    if (parsedMessages.length > 0) {
+      const agentName = labelCase(nodeId ?? '');
+      conversations.push(...parsedMessages, {
+        id: guid(),
+        text: `${agentHeaderPrefix} ${agentName}`,
+        type: ConversationItemType.AgentHeader,
+        date: new Date(), // Using current time for header; modify if needed
+      });
+    }
+  }
+
+  return conversations;
+};
+
+const parseMessage = (message: any, id: string) => {
   let type: ConversationItemType = ConversationItemType.Reply;
   let text = '';
   switch (message.messageEntryType) {
@@ -73,17 +94,14 @@ const parseMessage = (
       break;
     }
     case 'ToolResult': {
-      const iteration = 0; //message?.iteration ?? 0;
-      const subIteration = 0; //message?.subIteration ?? 0;
+      // const iteration = 0; //message?.iteration ?? 0;
+      // const subIteration = 0; //message?.subIteration ?? 0;
       const toolName = message.toolResultsPayload?.toolResult?.toolName;
 
       return {
         id: guid(),
         text: toolName ?? '',
         type: ConversationItemType.Tool,
-        onClickCallback: () => {
-          onToolCallback(agentName, toolName, iteration, subIteration);
-        },
         timestamp: message.timestamp,
       };
     }
@@ -97,6 +115,9 @@ const parseMessage = (
     text,
     type,
     timestamp: message.timestamp,
+    metadata: {
+      parentId: id,
+    },
   };
 };
 
@@ -121,25 +142,16 @@ export const AgentChat = ({
   const panelContainerElement = panelContainerRef.current as HTMLElement;
   const { isFetching: isChatHistoryFetching, data: chatHistoryData } = useChatHistory(!!isMonitoringView, agentOperations, runInstance?.id);
   const drawerWidth = isCollapsed ? PanelSize.Auto : chatbotWidth;
-  const dispatch = useDispatch<AppDispatch>();
+  const isChatInputEnabled = useIsChatInputEnabled(conversation.length > 0 ? conversation[0].metadata?.parentId : undefined);
 
-  const toolResultCallback = useCallback(
-    (agentName: string, toolName: string, iteration: number, subIteration: number) => {
-      const agentLastOperation = agentLastOperations[agentName][toolName];
-      dispatch(setRunIndex({ page: iteration, nodeId: agentName }));
-      dispatch(setRunIndex({ page: subIteration, nodeId: toolName }));
-      dispatch(setFocusNode(agentLastOperation));
-      dispatch(changePanelNode(agentLastOperation));
-    },
-    [dispatch, agentLastOperations]
-  );
+  console.log('agentChat', agentLastOperations);
 
   useEffect(() => {
     if (!isNullOrUndefined(chatHistoryData)) {
-      const newConversations = parseChatHistory(chatHistoryData, toolResultCallback);
-      setConversation((current) => [...newConversations, ...current]);
+      const newConversations = parseChatHistory(chatHistoryData, intl);
+      setConversation([...newConversations]);
     }
-  }, [setConversation, chatHistoryData]);
+  }, [setConversation, chatHistoryData, intl]);
 
   const intlText = useMemo(() => {
     return {
@@ -148,9 +160,14 @@ export const AgentChat = ({
         id: 'PVT2SW',
         description: 'Agent chat header text',
       }),
+      chatInputDisabledPlaceHolder: intl.formatMessage({
+        defaultMessage: 'The chat is in read-only mode and will be saved in the run history. Agents are no longer available to chat with.',
+        id: 'z/i4aa',
+        description: 'Agent chat input placeholder text when disabled',
+      }),
       chatInputPlaceholder: intl.formatMessage({
-        defaultMessage: 'Ask me anything... (read-only mode for now)',
-        id: 'pvfstY',
+        defaultMessage: 'Ask me anything...',
+        id: '5+Bccl',
         description: 'Agent chat input placeholder text',
       }),
       protectedMessage: intl.formatMessage({
@@ -227,7 +244,12 @@ export const AgentChat = ({
       }}
       open={true}
       position={'end'}
-      style={{ position: 'relative', maxWidth: '100%', width: drawerWidth, height: '100%' }}
+      style={{
+        position: 'relative',
+        maxWidth: '100%',
+        width: drawerWidth,
+        height: '100%',
+      }}
     >
       {isCollapsed ? (
         <Button
@@ -252,9 +274,9 @@ export const AgentChat = ({
           inputBox={{
             value: inputQuery,
             onChange: setInputQuery,
-            placeholder: intlText.chatInputPlaceholder,
+            placeholder: isChatInputEnabled ? intlText.chatInputPlaceholder : intlText.chatInputDisabledPlaceHolder,
             onSubmit: () => {},
-            disabled: true, // read-only mode
+            disabled: isChatInputEnabled, // read-only mode
           }}
           data={{
             isSaving: isSaving,
