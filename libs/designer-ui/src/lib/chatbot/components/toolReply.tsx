@@ -6,10 +6,8 @@ export const ToolReply = ({ item }: { item: ToolReplyItem }) => {
   const { text } = item;
   const textRef = useRef<HTMLDivElement | null>(null);
   return (
-    <div>
-      <div ref={textRef}>
-        <Markdown>{text}</Markdown>
-      </div>
+    <div ref={textRef}>
+      <Markdown>{text}</Markdown>
     </div>
   );
 };

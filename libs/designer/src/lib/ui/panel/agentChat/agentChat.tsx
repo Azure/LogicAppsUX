@@ -6,7 +6,7 @@ import { defaultChatbotPanelWidth, ChatbotContent } from '@microsoft/logic-apps-
 import { useChatHistory } from '../../../core/queries/runs';
 import { useMonitoringView } from '../../../core/state/designerOptions/designerOptionsSelectors';
 import { useAgentOperations, useRunInstance } from '../../../core/state/workflow/workflowSelectors';
-import { guid, isNullOrUndefined } from '@microsoft/logic-apps-shared';
+import { guid, isNullOrUndefined, labelCase } from '@microsoft/logic-apps-shared';
 import { Button, Drawer, mergeClasses } from '@fluentui/react-components';
 import { ChatFilled, ChevronDoubleRightFilled } from '@fluentui/react-icons';
 
@@ -25,15 +25,16 @@ const AgentChatHeader = ({
   toggleCollapse: () => void;
 }) => {
   return (
-    <div style={{ display: 'flex', justifyContent: 'center', padding: '10px' }}>
+    <div style={{ display: 'flex', position: 'relative', justifyContent: 'center', padding: '10px' }}>
       <h3>{title}</h3>
       <Button
-        id="msla-panel-header-collapse-nav"
+        id="msla-agent-chat-header-collapse"
         appearance="subtle"
         icon={<ChevronDoubleRightFilled />}
         aria-label={'buttonText'}
         onClick={toggleCollapse}
-        data-automation-id="msla-panel-header-collapse-nav"
+        data-automation-id="msla-agent-chat-header-collapse"
+        style={{ position: 'absolute', right: '10px', top: '50%', transform: 'translateY(-50%)' }}
       />
     </div>
   );
@@ -42,9 +43,10 @@ const AgentChatHeader = ({
 const parseChatHistory = (chatHistory: Record<string, { messages: any[] }>): ConversationItem[] =>
   Object.entries(chatHistory).reduce<ConversationItem[]>((conversations, [key, { messages }]) => {
     const parsedMessages: any[] = messages.map((message) => parseMessage(message));
+    const agentName = labelCase(key ?? '');
     conversations.push(...parsedMessages, {
       id: guid(),
-      text: key,
+      text: agentName,
       type: ConversationItemType.AgentHeader,
       date: new Date(), // Using current time for header; modify if needed
     });
@@ -85,7 +87,6 @@ export const AgentChat = ({
 }: AgentChatProps) => {
   const intl = useIntl();
   const [inputQuery, setInputQuery] = useState('');
-  const [answerGeneration, _stopAnswerGeneration] = useState(true);
   const [canSaveCurrentFlow, saveCurrentFlow] = useState(false);
   const [canTestCurrentFlow, testCurrentFlow] = useState(false);
   const [isSaving] = useState(false);
@@ -95,28 +96,27 @@ export const AgentChat = ({
   const isMonitoringView = useMonitoringView();
   const runInstance = useRunInstance();
   const agentOperations = useAgentOperations();
-  const [isCollapsed, setIsCollapsed] = useState(true);
+  const [isCollapsed, setIsCollapsed] = useState(false);
   const panelContainerElement = panelContainerRef.current as HTMLElement;
 
-  const { isFetching: isActionsRepetitionFetching, data: agentActionsRepetitionData } = useChatHistory(
-    !!isMonitoringView,
-    agentOperations,
-    runInstance?.id
-  );
+  const { isFetching: isChatHistoryFetching, data: chatHistoryData } = useChatHistory(!!isMonitoringView, agentOperations, runInstance?.id);
 
-  const drawerWidth = isCollapsed ? PanelSize.Auto : PanelSize.Medium;
-
-  console.log('charlie', isActionsRepetitionFetching, agentActionsRepetitionData);
+  const drawerWidth = isCollapsed ? PanelSize.Auto : chatbotWidth;
 
   useEffect(() => {
-    if (!isNullOrUndefined(agentActionsRepetitionData)) {
-      const newConversations = parseChatHistory(agentActionsRepetitionData);
+    if (!isNullOrUndefined(chatHistoryData)) {
+      const newConversations = parseChatHistory(chatHistoryData);
       setConversation((current) => [...newConversations, ...current]);
     }
-  }, [setConversation, agentActionsRepetitionData]);
+  }, [setConversation, chatHistoryData]);
 
   const intlText = useMemo(() => {
     return {
+      agentChatHeader: intl.formatMessage({
+        defaultMessage: 'Agent chat',
+        id: 'PVT2SW',
+        description: 'Agent chat header text',
+      }),
       chatInputPlaceholder: intl.formatMessage({
         defaultMessage: 'Ask me anything... (read-only mode for now)',
         id: 'pvfstY',
@@ -155,9 +155,9 @@ export const AgentChat = ({
         description: 'Chatbot error message',
       }),
       progressCardText: intl.formatMessage({
-        defaultMessage: '🖊️ Working on it...',
-        id: 'O0tSvb',
-        description: 'Chatbot card telling user that the AI response is being generated',
+        defaultMessage: 'Fetching chat history...',
+        id: '7col/w',
+        description: 'Fetching chat history progress card text',
       }),
       progressCardSaveText: intl.formatMessage({
         defaultMessage: '💾 Saving this flow...',
@@ -216,7 +216,7 @@ export const AgentChat = ({
             isOpen: true,
             isBlocking: false,
             onDismiss: () => {},
-            header: <AgentChatHeader title="Agent Chat" toggleCollapse={() => setIsCollapsed(true)} />,
+            header: <AgentChatHeader title={intlText.agentChatHeader} toggleCollapse={() => setIsCollapsed(true)} />,
           }}
           inputBox={{
             value: inputQuery,
@@ -245,7 +245,7 @@ export const AgentChat = ({
           body={{
             messages: conversation,
             focus: focus,
-            answerGenerationInProgress: !answerGeneration,
+            answerGenerationInProgress: isChatHistoryFetching,
             setFocus: setFocus,
           }}
         />
