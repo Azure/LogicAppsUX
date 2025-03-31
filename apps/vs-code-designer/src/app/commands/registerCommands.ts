@@ -55,7 +55,7 @@ import { openDesigner } from './workflows/openDesigner/openDesigner';
 import { openOverview } from './workflows/openOverview';
 import { reviewValidation } from './workflows/reviewValidation';
 import { switchDebugMode } from './workflows/switchDebugMode/switchDebugMode';
-import { switchToDotnetProject } from './workflows/switchToDotnetProject';
+import { switchToDotnetProjectCommand } from './workflows/switchToDotnetProject';
 import { createUnitTest } from './workflows/unitTest/createUnitTest';
 import { editUnitTest } from './workflows/unitTest/editUnitTest';
 import { openUnitTestResults } from './workflows/unitTest/openUnitTestResults';
@@ -97,7 +97,7 @@ export function registerCommands(): void {
   registerCommandWithTreeNodeUnwrapping(extensionCommand.openOverview, openOverview);
   registerCommandWithTreeNodeUnwrapping(extensionCommand.exportLogicApp, exportLogicApp);
   registerCommandWithTreeNodeUnwrapping(extensionCommand.reviewValidation, reviewValidation);
-  registerCommandWithTreeNodeUnwrapping(extensionCommand.switchToDotnetProject, switchToDotnetProject);
+  registerCommandWithTreeNodeUnwrapping(extensionCommand.switchToDotnetProject, switchToDotnetProjectCommand);
   registerCommandWithTreeNodeUnwrapping(extensionCommand.openInPortal, openInPortal);
   registerCommandWithTreeNodeUnwrapping(extensionCommand.browseWebsite, browseWebsite);
   registerCommandWithTreeNodeUnwrapping(extensionCommand.viewProperties, viewProperties);

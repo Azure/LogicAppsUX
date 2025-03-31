@@ -25,6 +25,7 @@ import {
   addFileToBuildPath,
   addLibToPublishPath,
   allowLocalSettingsToPublishDirectory,
+  addCodefulNugetPackagesToBuildFile,
 } from '../../utils/codeless/updateBuildFile';
 import { getLocalDotNetVersionFromBinaries, getProjFiles, getTemplateKeyFromProjFile } from '../../utils/dotnet/dotnet';
 import { getFramework, executeDotnetTemplateCommand } from '../../utils/dotnet/executeDotnetTemplateCommand';
@@ -43,11 +44,15 @@ import * as vscode from 'vscode';
 import { validateDotNetIsInstalled } from '../dotnet/validateDotNetInstalled';
 import { tryGetLogicAppProjectRoot } from '../../utils/verifyIsProject';
 
-export async function switchToDotnetProject(context: IProjectWizardContext, target: vscode.Uri) {
-  const isDotNetInstalled = await validateDotNetIsInstalled(context, target.fsPath);
-  if (!isDotNetInstalled) {
-    return;
-  }
+export async function switchToDotnetProjectCommand(context: IProjectWizardContext, target: vscode.Uri) {
+  switchToDotnetProject(context, target);
+}
+
+export async function switchToDotnetProject(context: IProjectWizardContext, target: vscode.Uri, dotNetVersion: string = '6', isCodeful: boolean = false) {
+  // const isDotNetInstalled = await validateDotNetIsInstalled(context, target.fsPath);
+  // if (!isDotNetInstalled) {
+  //   return;
+  // }
 
   if (target === undefined || Object.keys(target).length === 0) {
     const workspaceFolder = await getWorkspaceFolder(context);
@@ -115,7 +120,7 @@ export async function switchToDotnetProject(context: IProjectWizardContext, targ
   const projTemplateKey = await getTemplateKeyFromProjFile(context, projectPath, version, ProjectLanguage.CSharp);
   const dotnetVersion = await getFramework(context, projectPath);
   const useBinaries = useBinariesDependencies();
-  const dotnetLocalVersion = useBinaries ? await getLocalDotNetVersionFromBinaries('6') : '';
+  const dotnetLocalVersion = useBinaries ? await getLocalDotNetVersionFromBinaries(dotNetVersion) : '';
 
   await deleteBundleProjectFiles(target);
   await renameBundleProjectFiles(target);
@@ -135,7 +140,7 @@ export async function switchToDotnetProject(context: IProjectWizardContext, targ
   );
 
   await copyBundleProjectFiles(target);
-  await updateBuildFile(context, target, dotnetVersion);
+  await updateBuildFile(context, target, dotnetVersion, isCodeful);
   if (useBinaries) {
     await createGlobalJsonFile(dotnetLocalVersion, target.fsPath);
   }
@@ -172,11 +177,14 @@ async function createGlobalJsonFile(sdkVersion: string, projectRoot: string) {
   fse.writeFileSync(globalJsonPath, contentString, 'utf8');
 }
 
-async function updateBuildFile(context: IActionContext, target: vscode.Uri, dotnetVersion: string) {
+async function updateBuildFile(context: IActionContext, target: vscode.Uri, dotnetVersion: string, isCodeful: boolean) {
   const projectArtifacts = await getArtifactNamesFromProject(target);
   let xmlBuildFile: any = await getDotnetBuildFile(context, target.fsPath);
   xmlBuildFile = JSON.parse(xmlBuildFile);
   xmlBuildFile = addNugetPackagesToBuildFile(xmlBuildFile);
+  if (isCodeful) {
+    xmlBuildFile = addCodefulNugetPackagesToBuildFile(xmlBuildFile);
+  }
   xmlBuildFile = suppressJavaScriptBuildWarnings(xmlBuildFile);
   xmlBuildFile = allowLocalSettingsToPublishDirectory(context, xmlBuildFile);
   xmlBuildFile = updateFunctionsSDKVersion(xmlBuildFile, dotnetVersion);

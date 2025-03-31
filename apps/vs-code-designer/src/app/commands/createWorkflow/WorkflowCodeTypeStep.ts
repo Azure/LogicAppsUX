@@ -11,9 +11,10 @@ import type {
   IFunctionWizardContext,
   ProjectLanguage,
 } from '@microsoft/vscode-extension-logic-apps';
-import { TemplateCategory, TemplatePromptResult } from '@microsoft/vscode-extension-logic-apps';
+import { TemplateCategory } from '@microsoft/vscode-extension-logic-apps';
 import { localize } from '../../../localize';
 import { ScriptWorkflowNameStep } from '../createCodeless/createCodelessSteps/ScriptSteps/ScriptWorkflowNameStep';
+import { switchToDotnetProject } from '../workflows/switchToDotnetProject';
 
 export class WorkflowCodeTypeStep extends AzureWizardPromptStep<IFunctionWizardContext> {
   public hideStepCount = true;
@@ -32,37 +33,27 @@ export class WorkflowCodeTypeStep extends AzureWizardPromptStep<IFunctionWizardC
   }
 
   public async prompt(context: IFunctionWizardContext): Promise<void> {
-    while (!context.functionTemplate) {
+
       const placeHolder: string = this.isProjectWizard
         ? localize('selectFirstFuncTemplate', "Select a template for your project's first workflow")
         : localize('selectFuncTemplate', 'Select a template for your workflow');
 
-      const result: IWorkflowTemplate | TemplatePromptResult = (await context.ui.showQuickPick(this.getPicks(context), { placeHolder }))
+      const result: IWorkflowTemplate = (await context.ui.showQuickPick(this.getPicks(context), { placeHolder }))
         .data;
 
-      if (result === TemplatePromptResult.skipForNow) {
-        context.telemetry.properties.templateId = TemplatePromptResult.skipForNow;
-        break;
-      }
-
       context.isCodeless = result.id === workflowCodeType.codeless;
-    }
+      context.functionTemplate = result;
   }
 
   public async getSubWizard(context: IFunctionWizardContext): Promise<IWizardOptions<IFunctionWizardContext> | undefined> {
-    const template: IWorkflowTemplate | undefined = context.functionTemplate;
 
-    if (context.isCodeless) {
+    if (!context.isCodeless) {
       const promptSteps: AzureWizardPromptStep<IFunctionWizardContext>[] = [];
       const executeSteps: AzureWizardExecuteStep<IFunctionWizardContext>[] = [];
-      const title: string = localize('createCodeless', 'Create new {0}', template.name);
+      const title: string = localize('createCodeless', 'Create new');
 
       promptSteps.push(new ScriptWorkflowNameStep());
-      //executeSteps.push(await CodelessWorkflowCreateStep.createStep(context));
-
-      for (const key of Object.keys(this.triggerSettings)) {
-        context[key.toLowerCase()] = this.triggerSettings[key];
-      }
+      //executeSteps.push(await switchToDotnetProject(context, undefined, '8'));
 
       return { promptSteps, executeSteps, title };
     }
@@ -70,12 +61,12 @@ export class WorkflowCodeTypeStep extends AzureWizardPromptStep<IFunctionWizardC
   }
 
   public shouldPrompt(context: IFunctionWizardContext): boolean {
-    return !context.functionTemplate;
+    return context.isCodeless === undefined;
   }
 
-  private async getPicks(context: IFunctionWizardContext): Promise<IAzureQuickPickItem<IWorkflowTemplate | TemplatePromptResult>[]> {
+  private async getPicks(context: IFunctionWizardContext): Promise<IAzureQuickPickItem<IWorkflowTemplate>[]> {
     const language: ProjectLanguage = nonNullProp(context, 'language');
-    const picks: IAzureQuickPickItem<IWorkflowTemplate | TemplatePromptResult>[] = [];
+    const picks: IAzureQuickPickItem<IWorkflowTemplate>[] = [];
 
     const codeful: IWorkflowTemplate = {
       id: workflowCodeType.codeful,
@@ -109,13 +100,6 @@ export class WorkflowCodeTypeStep extends AzureWizardPromptStep<IFunctionWizardC
       data: codeless,
     });
 
-    if (this.isProjectWizard) {
-      picks.push({
-        label: localize('skipForNow', '$(clock) Skip for now'),
-        data: TemplatePromptResult.skipForNow,
-        suppressPersistence: true,
-      });
-    }
     return picks;
   }
 }

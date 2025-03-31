@@ -8,7 +8,7 @@ import { resetNodesLoadStatus, resetTemplatesState, resetWorkflowState, setState
 import { LogEntryLevel, LoggerService, filterRecord, getRecordEntry } from '@microsoft/logic-apps-shared';
 import type { ParameterInfo } from '@microsoft/designer-ui';
 import type { FilePickerInfo, InputParameter, OutputParameter, OpenAPIV2, OperationInfo } from '@microsoft/logic-apps-shared';
-import { createSlice } from '@reduxjs/toolkit';
+import { createSlice, current } from '@reduxjs/toolkit';
 import type { PayloadAction } from '@reduxjs/toolkit';
 import type { WritableDraft } from 'immer/dist/internal';
 import type { UndoRedoPartialRootState } from '../undoRedo/undoRedoTypes';
@@ -608,31 +608,34 @@ export const operationMetadataSlice = createSlice({
   },
 });
 
-const updateExistingInputTokenTitles = (state: OperationMetadataState, actionPayload: AddDynamicOutputsPayload) => {
-  const { outputs } = actionPayload;
 
-  const tokenTitles: Record<string, string> = {};
-  for (const outputValue of Object.values(outputs)) {
-    const normalizedKey = normalizeKey(outputValue.key);
-    tokenTitles[normalizedKey] = getTokenTitle(outputValue);
-  }
-
-  Object.entries(state.inputParameters).forEach(([nodeId, nodeInputs]) => {
-    Object.entries(nodeInputs.parameterGroups).forEach(([parameterId, parameterGroup]) => {
-      parameterGroup.parameters.forEach((parameter, parameterIndex) => {
-        parameter.value.forEach((segment, segmentIndex) => {
-          if (isTokenValueSegment(segment) && segment.token?.key) {
-            const normalizedKey = normalizeKey(segment.token.key);
-            if (normalizedKey in tokenTitles) {
-              state.inputParameters[nodeId].parameterGroups[parameterId].parameters[parameterIndex].value[segmentIndex] =
-                createTokenValueSegment({ ...segment.token, title: tokenTitles[normalizedKey] }, segment.value, segment.type);
+  const updateExistingInputTokenTitles = (state: OperationMetadataState, actionPayload: AddDynamicOutputsPayload) => {
+    const { outputs } = actionPayload;
+   
+    const tokenTitles: Record<string, string> = {};
+    for (const outputValue of Object.values(outputs)) {
+      const normalizedKey = normalizeKey(outputValue.key);
+      tokenTitles[normalizedKey] = getTokenTitle(outputValue);
+    }
+   
+    Object.entries(state.inputParameters).forEach(([_nodeId, nodeInputs]) => {
+      Object.entries(nodeInputs.parameterGroups).forEach(([_parameterId, parameterGroup]) => {
+        parameterGroup.parameters = parameterGroup.parameters.map((parameter, _parameterIndex) => ({
+          ...parameter,
+          value: parameter.value.map((segment, _segmentIndex) => {
+            if (isTokenValueSegment(segment) && segment.token?.key) {
+              const normalizedKey = normalizeKey(segment.token.key);
+              if (normalizedKey in tokenTitles) {
+                return createTokenValueSegment({ ...segment.token, title: tokenTitles[normalizedKey] }, segment.value, segment.type);
+              }
             }
-          }
-        });
+            return segment;
+          }),
+        }));
       });
     });
-  });
-};
+  };
+
 
 // Action creators are generated for each case reducer function
 export const {
