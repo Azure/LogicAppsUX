@@ -1,4 +1,12 @@
 # Logic Apps Designer
+## [5.71.0](https://github.com/Azure/LogicAppsUX/compare/v5.70.0...v5.71.0) (2025-03-31)
+
+
+### Features
+
+* **designer:** Serialize channels for Agentic workflows ([#6913](https://github.com/Azure/LogicAppsUX/issues/6913)) ([4d19077](https://github.com/Azure/LogicAppsUX/commit/4d19077113ca3204467bb646203e2abaf422a25a))
+* **templates:** Adding template settings tab content for custom template wizard ([#6911](https://github.com/Azure/LogicAppsUX/issues/6911)) ([35a51b5](https://github.com/Azure/LogicAppsUX/commit/35a51b59391a7513196936040054b0e975677016))
+
 ## [5.70.0](https://github.com/Azure/LogicAppsUX/compare/v5.69.0...v5.70.0) (2025-03-30)
 
 ## [5.69.0](https://github.com/Azure/LogicAppsUX/compare/v5.68.0...v5.69.0) (2025-03-30)
