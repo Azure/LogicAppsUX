@@ -1,6 +1,13 @@
-import { ProjectType, TemplateCategory, TemplatePromptResult, type StandardApp } from '@microsoft/vscode-extension-logic-apps';
+import {
+  type IWorkflowTemplate,
+  ProjectType,
+  TemplateCategory,
+  TemplatePromptResult,
+  type StandardApp,
+} from '@microsoft/vscode-extension-logic-apps';
 import { WorkflowKind, WorkflowType } from '../../../constants';
 import { localize } from '../../../localize';
+import type { IAzureQuickPickItem } from '@microsoft/vscode-azext-utils';
 
 /**
  * Returns the workflow template based on the provided parameters.
@@ -138,36 +145,51 @@ export const getCodelessWorkflowTemplate = (workflowType: WorkflowType) => {
 };
 
 export const getWorkflowTemplatePickItems = (language: string, isProjectWizard: boolean) => {
-  const picks: any[] = [
+  const stateful: IWorkflowTemplate = {
+    id: WorkflowType.stateful,
+    name: localize('Stateful', 'Stateful workflow'),
+    defaultFunctionName: 'Stateful',
+    language: language,
+    isHttpTrigger: true,
+    isTimerTrigger: false,
+    userPromptedSettings: [],
+    categories: [TemplateCategory.Core],
+  };
+
+  const stateless: IWorkflowTemplate = {
+    id: WorkflowType.stateless,
+    name: localize('Stateless', 'Stateless workflow'),
+    defaultFunctionName: 'Stateless',
+    language: language,
+    isHttpTrigger: true,
+    isTimerTrigger: false,
+    userPromptedSettings: [],
+    categories: [TemplateCategory.Core],
+  };
+
+  const agentic: IWorkflowTemplate = {
+    id: WorkflowType.agentic,
+    name: localize('Agentic', 'Agentic workflow'),
+    defaultFunctionName: 'Agentic',
+    language: language,
+    isHttpTrigger: true,
+    isTimerTrigger: false,
+    userPromptedSettings: [],
+    categories: [TemplateCategory.Core],
+  };
+
+  const picks: IAzureQuickPickItem<IWorkflowTemplate | TemplatePromptResult>[] = [
     {
-      id: WorkflowType.stateful,
-      name: localize('Stateful', 'Stateful workflow'),
-      defaultFunctionName: 'Stateful',
-      language: language,
-      isHttpTrigger: true,
-      isTimerTrigger: false,
-      userPromptedSettings: [],
-      categories: [TemplateCategory.Core],
+      label: stateful.name,
+      data: stateful,
     },
     {
-      id: WorkflowType.stateless,
-      name: localize('Stateless', 'Stateless workflow'),
-      defaultFunctionName: 'Stateless',
-      language: language,
-      isHttpTrigger: true,
-      isTimerTrigger: false,
-      userPromptedSettings: [],
-      categories: [TemplateCategory.Core],
+      label: stateless.name,
+      data: stateless,
     },
     {
-      id: WorkflowType.agentic,
-      name: localize('Agentic', 'Agentic workflow'),
-      defaultFunctionName: 'Agentic',
-      language: language,
-      isHttpTrigger: true,
-      isTimerTrigger: false,
-      userPromptedSettings: [],
-      categories: [TemplateCategory.Core],
+      label: agentic.name,
+      data: agentic,
     },
   ];
 
