@@ -967,4 +967,8 @@ export default {
     SELECT_BATCH_WORKFLOW_TRIGGER: 'sendtobatchtrigger',
     SELECT_MANUAL_WORKFLOW_ACTION: 'invokeworkflow',
   },
+  CHANNELS: {
+    INPUT: '-inputchannel-',
+    OUTPUT: '-outputchannel-',
+  },
 };

@@ -15,8 +15,14 @@ export const ChannelsTab: React.FC<PanelTabProps> = (props) => {
   const dispatch = useDispatch<AppDispatch>();
   const supportedChannels = useSelector((state: RootState) => state.operations.supportedChannels[selectedNodeId]);
   const [channel, _setChannel] = useState<SupportedChannels | undefined>(supportedChannels.length > 0 ? supportedChannels[0] : undefined);
-  const inputNodeId = useMemo(() => `${selectedNodeId}-inputchannel-${channel?.input?.type}`, [channel?.input.type, selectedNodeId]);
-  const outputNodeId = useMemo(() => `${selectedNodeId}-outputchannel-${channel?.output?.type}`, [channel?.output.type, selectedNodeId]);
+  const inputNodeId = useMemo(
+    () => `${selectedNodeId}${constants.CHANNELS.INPUT}${channel?.input?.type}`,
+    [channel?.input.type, selectedNodeId]
+  );
+  const outputNodeId = useMemo(
+    () => `${selectedNodeId}${constants.CHANNELS.OUTPUT}${channel?.output?.type}`,
+    [channel?.output.type, selectedNodeId]
+  );
 
   const inputChannelParameters = useSelector((state: RootState) => state.operations.inputParameters[inputNodeId]);
 
