@@ -72,10 +72,17 @@ export default {
     supportedChannels: [
       {
         input: {
-          type: 'request',
+          type: 'Request',
+          default: {
+            'inputs.$.schema': '{properties: {prompt: {type: "string"}}, type: "object",}',
+          },
         },
         output: {
-          type: 'response',
+          type: 'Response',
+          default: {
+            'inputs.$.statusCode': '200',
+            'inputs.$.body': '{ responseMessage: "@assistantMessage()" }',
+          },
         },
       },
     ],
