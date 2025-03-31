@@ -81,6 +81,11 @@ const parseChatHistory = (
     dispatch(changePanelNode(agentLastOperation));
   };
 
+  const agentCallback = (agentName: string) => {
+    dispatch(setFocusNode(agentName));
+    dispatch(changePanelNode(agentName));
+  };
+
   const conversations: ConversationItem[] = [];
 
   for (const chat of chatHistory) {
@@ -93,6 +98,9 @@ const parseChatHistory = (
         id: guid(),
         text: `${agentHeaderPrefix} ${agentName}`,
         type: ConversationItemType.AgentHeader,
+        onClick: () => {
+          agentCallback(nodeId);
+        },
         date: new Date(), // Using current time for header; modify if needed
       });
     }
