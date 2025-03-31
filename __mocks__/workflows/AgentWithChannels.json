@@ -15,10 +15,6 @@
               {
                 "role": "User",
                 "content": "This is a user message."
-              },
-              {
-                "role": "User",
-                "content": "You are a helpful assistant."
               }
             ]
           }
@@ -83,6 +79,43 @@
                 "Parameter1": {
                   "type": "boolean",
                   "description": "this is a boolean parameter"
+                }
+              }
+            }
+          }
+        },
+        "channels": {
+          "in": {
+            "in-channel-1": {
+              "trigger": {
+                "type": "Request",
+                "kind": "Http",
+                "inputs": {
+                  "schema": {
+                    "properties": {
+                      "prompt": {
+                        "type": "string"
+                      }
+                    },
+                    "type": "object"
+                  }
+                }
+              },
+              "mapping": {
+                "message": "@channelTriggerBody()?['prompt']"
+              }
+            }
+          },
+          "out": {
+            "out-channel-1": {
+              "trigger": {
+                "type": "Response",
+                "kind": "Http",
+                "inputs": {
+                  "statusCode": 200,
+                  "body": {
+                    "responseMessage": "@assistantMessage()"
+                  }
                 }
               }
             }
