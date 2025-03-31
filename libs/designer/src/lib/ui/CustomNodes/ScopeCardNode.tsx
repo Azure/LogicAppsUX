@@ -30,6 +30,7 @@ import {
 } from '../../core/state/workflow/workflowSelectors';
 import {
   setRepetitionRunData,
+  setSubgraphRunData,
   toggleCollapsedGraphId,
   updateAgenticGraph,
   updateAgenticMetadata,
@@ -50,7 +51,7 @@ import { Handle, Position, type NodeProps } from '@xyflow/react';
 import { copyScopeOperation } from '../../core/actions/bjsworkflow/copypaste';
 import { useHotkeys } from 'react-hotkeys-hook';
 import { CopyTooltip } from '../common/DesignerContextualMenu/CopyTooltip';
-import { useNodeRepetition, useAgentRepetition } from '../../core/queries/runs';
+import { useNodeRepetition, useAgentRepetition, useAgentActionsRepetition } from '../../core/queries/runs';
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 const ScopeCardNode = ({ data, targetPosition = Position.Top, sourcePosition = Position.Bottom, id }: NodeProps) => {
@@ -95,7 +96,8 @@ const ScopeCardNode = ({ data, targetPosition = Position.Top, sourcePosition = P
     runInstance?.id,
     repetitionName,
     parentRunData?.status,
-    parentRunIndex
+    parentRunIndex,
+    false
   );
 
   const { isFetching: isScopeRepetitionFetching, data: scopeRepetitionRunData } = useAgentRepetition(
@@ -107,6 +109,23 @@ const ScopeCardNode = ({ data, targetPosition = Position.Top, sourcePosition = P
     parentRunData?.status,
     runIndex
   );
+
+  const { isFetching: isActionsRepetitionFetching, data: agentActionsRepetitionData } = useAgentActionsRepetition(
+    !!isMonitoringView,
+    isAgent,
+    scopeId,
+    runInstance?.id,
+    scopeRepetitionName,
+    parentRunData?.status,
+    runIndex
+  );
+
+  useEffect(() => {
+    if (!isNullOrUndefined(agentActionsRepetitionData)) {
+      const updatePayload = { nodeId: scopeId, runData: agentActionsRepetitionData } as any;
+      dispatch(setSubgraphRunData(updatePayload));
+    }
+  }, [dispatch, scopeRepetitionRunData, scopeId, agentActionsRepetitionData]);
 
   useEffect(() => {
     if (!isNullOrUndefined(scopeRepetitionRunData)) {
@@ -211,8 +230,9 @@ const ScopeCardNode = ({ data, targetPosition = Position.Top, sourcePosition = P
   const opQuery = useOperationQuery(scopeId);
 
   const isLoading = useMemo(
-    () => isRepetitionFetching || isScopeRepetitionFetching || opQuery.isLoading || (!brandColor && !iconUri),
-    [brandColor, iconUri, opQuery.isLoading, isRepetitionFetching, isScopeRepetitionFetching]
+    () =>
+      isRepetitionFetching || isScopeRepetitionFetching || isActionsRepetitionFetching || opQuery.isLoading || (!brandColor && !iconUri),
+    [brandColor, iconUri, opQuery.isLoading, isRepetitionFetching, isScopeRepetitionFetching, isActionsRepetitionFetching]
   );
 
   const comment = useMemo(
@@ -228,35 +248,67 @@ const ScopeCardNode = ({ data, targetPosition = Position.Top, sourcePosition = P
     [brandColor, nodeComment]
   );
 
-  const opManifestErrorText = intl.formatMessage({
-    defaultMessage: 'Error fetching manifest',
-    id: 'HmcHoE',
-    description: 'Error message when manifest fails to load',
-  });
+  const actionCount = metadata?.actionCount ?? 0;
+
+  const intlText = useMemo(
+    () => ({
+      opManifestErrorText: intl.formatMessage({
+        defaultMessage: 'Error fetching manifest',
+        id: 'HmcHoE',
+        description: 'Error message when manifest fails to load',
+      }),
+      settingValidationErrorText: intl.formatMessage({
+        defaultMessage: 'Invalid settings',
+        id: 'Jil/Wa',
+        description: 'Text to explain that there are invalid settings for this node',
+      }),
+      parameterValidationErrorText: intl.formatMessage({
+        defaultMessage: 'Invalid parameters',
+        id: 'Tmr/9e',
+        description: 'Text to explain that there are invalid parameters for this node',
+      }),
+      actionString: intl.formatMessage(
+        {
+          defaultMessage: '{actionCount, plural, one {# Action} =0 {0 Actions} other {# Actions}}',
+          id: 'B/JzwK',
+          description: 'This is the number of actions to be completed in a group',
+        },
+        { actionCount }
+      ),
+      caseString: intl.formatMessage(
+        {
+          defaultMessage: '{actionCount, plural, one {# Case} =0 {0 Cases} other {# Cases}}',
+          id: 'KX1poC',
+          description: 'This is the number of cases or options the program can take',
+        },
+        { actionCount }
+      ),
+      emptyAgent: intl.formatMessage({
+        defaultMessage: 'No tools were executed ',
+        id: 'ZuQSme',
+        description: 'Text to explain that there are no tools in this agent',
+      }),
+      addTool: intl.formatMessage({
+        defaultMessage: 'Add tool',
+        id: 'dXiXiF',
+        description: 'Text to explain that there are no tools in this agent',
+      }),
+    }),
+    [actionCount, intl]
+  );
 
   const settingValidationErrors = useSettingValidationErrors(scopeId);
-  const settingValidationErrorText = intl.formatMessage({
-    defaultMessage: 'Invalid settings',
-    id: 'Jil/Wa',
-    description: 'Text to explain that there are invalid settings for this node',
-  });
-
   const parameterValidationErrors = useParameterValidationErrors(scopeId);
-  const parameterValidationErrorText = intl.formatMessage({
-    defaultMessage: 'Invalid parameters',
-    id: 'Tmr/9e',
-    description: 'Text to explain that there are invalid parameters for this node',
-  });
 
   const { errorMessage, errorLevel } = useMemo(() => {
     if (opQuery?.isError) {
-      return { errorMessage: opManifestErrorText, errorLevel: MessageBarType.error };
+      return { errorMessage: intlText.opManifestErrorText, errorLevel: MessageBarType.error };
     }
     if (settingValidationErrors?.length > 0) {
-      return { errorMessage: settingValidationErrorText, errorLevel: MessageBarType.severeWarning };
+      return { errorMessage: intlText.settingValidationErrorText, errorLevel: MessageBarType.severeWarning };
     }
     if (parameterValidationErrors?.length > 0) {
-      return { errorMessage: parameterValidationErrorText, errorLevel: MessageBarType.severeWarning };
+      return { errorMessage: intlText.parameterValidationErrorText, errorLevel: MessageBarType.severeWarning };
     }
 
     if (isMonitoringView) {
@@ -265,16 +317,7 @@ const ScopeCardNode = ({ data, targetPosition = Position.Top, sourcePosition = P
     }
 
     return { errorMessage: undefined, errorLevel: undefined };
-  }, [
-    opQuery?.isError,
-    opManifestErrorText,
-    settingValidationErrors?.length,
-    settingValidationErrorText,
-    parameterValidationErrors?.length,
-    parameterValidationErrorText,
-    isMonitoringView,
-    runData,
-  ]);
+  }, [opQuery?.isError, intlText, settingValidationErrors?.length, parameterValidationErrors?.length, isMonitoringView, runData]);
 
   const renderLoopsPager = useMemo(() => {
     if (!Array.isArray(metadata?.runData) && metadata?.runData?.status && !equals(metadata.runData.status, 'InProgress')) {
@@ -289,28 +332,10 @@ const ScopeCardNode = ({ data, targetPosition = Position.Top, sourcePosition = P
     return null;
   }
 
-  const actionCount = metadata?.actionCount ?? 0;
-
-  const actionString = intl.formatMessage(
-    {
-      defaultMessage: '{actionCount, plural, one {# Action} =0 {0 Actions} other {# Actions}}',
-      id: 'B/JzwK',
-      description: 'This is the number of actions to be completed in a group',
-    },
-    { actionCount }
-  );
-
-  const caseString = intl.formatMessage(
-    {
-      defaultMessage: '{actionCount, plural, one {# Case} =0 {0 Cases} other {# Cases}}',
-      id: 'KX1poC',
-      description: 'This is the number of cases or options the program can take',
-    },
-    { actionCount }
-  );
-
   const collapsedText =
-    normalizedType === constants.NODE.TYPE.SWITCH || normalizedType === constants.NODE.TYPE.IF || isAgent ? caseString : actionString;
+    normalizedType === constants.NODE.TYPE.SWITCH || normalizedType === constants.NODE.TYPE.IF || isAgent
+      ? intlText.caseString
+      : intlText.actionString;
 
   const isFooter = id.endsWith('#footer');
   const showEmptyGraphComponents = isLeaf && !graphCollapsed && !isFooter && !isAgent;
@@ -357,6 +382,11 @@ const ScopeCardNode = ({ data, targetPosition = Position.Top, sourcePosition = P
       {graphCollapsed && !isFooter ? (
         <p className="no-actions-text" data-automation-id={`scope-${id}-no-actions`}>
           {collapsedText}
+        </p>
+      ) : null}
+      {isAgent && actionCount === 0 && !graphCollapsed ? (
+        <p className="no-actions-text" data-automation-id={`scope-${id}-no-tools`}>
+          {isMonitoringView ? intlText.emptyAgent : intlText.addTool}
         </p>
       ) : null}
       {showEmptyGraphComponents ? (

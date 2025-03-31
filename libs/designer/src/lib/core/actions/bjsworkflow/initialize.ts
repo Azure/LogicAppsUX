@@ -211,6 +211,15 @@ export const getInputParametersFromManifest = (
   return { inputs: nodeInputs, dependencies: getInputDependencies(nodeInputs, allInputParameters) };
 };
 
+export const getSupportedChannelsFromManifest = (_nodeId: string, operationInfo: NodeOperation, manifest: OperationManifest) => {
+  const manifestParser = new ManifestParser(
+    manifest,
+    OperationManifestService().isAliasingSupported(operationInfo.type, operationInfo.kind)
+  );
+
+  return manifestParser.getSupportedChannels();
+};
+
 export const getOutputParametersFromManifest = (
   nodeId: string,
   manifest: OperationManifest,

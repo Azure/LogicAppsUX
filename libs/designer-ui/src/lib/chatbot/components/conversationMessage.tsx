@@ -9,6 +9,8 @@ import type { ConversationItem, UserQueryItem, AssistantReplyItem } from './conv
 import { OperationsNeedingAttentionMessage } from './operationsNeedAttentionMessage';
 import { useRef } from 'react';
 import Markdown from 'react-markdown';
+import { ToolReply } from './toolReply';
+import { AgentHeader } from './agentHeader';
 
 type ConversationMessageProps = {
   item: ConversationItem;
@@ -30,6 +32,10 @@ export const ConversationMessage = ({ item }: ConversationMessageProps) => {
       return <ConnectionsSetupMessage item={item} />;
     case ConversationItemType.OperationsNeedingAttention:
       return <OperationsNeedingAttentionMessage item={item} />;
+    case ConversationItemType.Tool:
+      return <ToolReply item={item} />;
+    case ConversationItemType.AgentHeader:
+      return <AgentHeader item={item} />;
     default:
       return null;
   }

@@ -10,7 +10,7 @@ import { useMemo } from 'react';
 import { openPanelView, TemplatePanelView } from '../../../core/state/templates/panelSlice';
 import { ConfigureWorkflowsPanel } from '../../panel/configureTemplatePanel/configureWorkflowsPanel/configureWorkflowsPanel';
 
-export const WorkflowsTab = () => {
+export const WorkflowsTab = ({ onSave }: { onSave: (isMultiWorkflow: boolean) => void }) => {
   const intl = useIntl();
   const { workflows, currentPanelView } = useSelector((state: RootState) => ({
     workflows: state.template.workflows,
@@ -50,8 +50,7 @@ export const WorkflowsTab = () => {
 
   return (
     <div>
-      {currentPanelView === TemplatePanelView.ConfigureWorkflows && <ConfigureWorkflowsPanel />}
-
+      {currentPanelView === TemplatePanelView.ConfigureWorkflows && <ConfigureWorkflowsPanel onSave={onSave} />}
       <CommandBar
         items={commandBarItems}
         styles={{
@@ -72,7 +71,11 @@ export const WorkflowsTab = () => {
   );
 };
 
-export const workflowsTab = (intl: IntlShape, dispatch: AppDispatch): TemplateTabProps => ({
+export const workflowsTab = (
+  intl: IntlShape,
+  dispatch: AppDispatch,
+  onSaveWorkflows: (isMultiWorkflow: boolean) => void
+): TemplateTabProps => ({
   id: constants.CONFIGURE_TEMPLATE_WIZARD_TAB_NAMES.WORKFLOWS,
   title: intl.formatMessage({
     defaultMessage: 'Workflows',
@@ -80,7 +83,7 @@ export const workflowsTab = (intl: IntlShape, dispatch: AppDispatch): TemplateTa
     description: 'The tab label for the monitoring workflows tab on the configure template wizard',
   }),
   hasError: false,
-  content: <WorkflowsTab />,
+  content: <WorkflowsTab onSave={onSaveWorkflows} />,
   footerContent: {
     primaryButtonText: '',
     primaryButtonOnClick: () => {},

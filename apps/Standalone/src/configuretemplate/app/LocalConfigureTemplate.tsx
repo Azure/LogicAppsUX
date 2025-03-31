@@ -19,6 +19,7 @@ import type { RootState } from '../state/Store';
 import { ArmParser } from '../../designer/app/AzureLogicAppsDesigner/Utilities/ArmParser';
 import { useCurrentTenantId } from '../../designer/app/AzureLogicAppsDesigner/Services/WorkflowAndArtifacts';
 
+const testTemplateId = '/subscriptions/subid/resourceGroups/rg/providers/Microsoft.Logic/workflows/testworkflow';
 export const LocalConfigureTemplate = () => {
   const { theme, resourcePath } = useSelector((state: RootState) => ({
     theme: state.configureTemplateLoader.theme,
@@ -59,7 +60,7 @@ export const LocalConfigureTemplate = () => {
           location: defaultLocation,
         }}
         onResourceChange={onResourceChange}
-        templateId={resourcePath ?? ''}
+        templateId={resourcePath ?? testTemplateId}
         services={services}
       >
         <div

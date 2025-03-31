@@ -203,7 +203,14 @@ export const loadManifestsFromPaths = async (templateIds: string[]) => {
 
 export const loadTemplate = createAsyncThunk(
   'loadTemplate',
-  async ({ preLoadedManifest }: { preLoadedManifest: Template.TemplateManifest | undefined }, thunkAPI) => {
+  async (
+    { preLoadedManifest, templateName }: { preLoadedManifest: Template.TemplateManifest | undefined; templateName?: string },
+    thunkAPI
+  ) => {
+    if (templateName) {
+      return loadTemplateFromResourcePath(templateName, preLoadedManifest);
+    }
+
     const currentState: RootState = thunkAPI.getState() as RootState;
     const currentTemplateName = currentState.template.templateName;
     const viewTemplateDetails = currentState.templateOptions.viewTemplateDetails;

@@ -21,7 +21,6 @@ export interface VariableDeclaration {
 export type AgentParameters = Record<string, AgentParameterDeclarations>;
 export type AgentParameterDeclarations = Record<string, AgentParameterDeclaration>;
 export interface AgentParameterDeclaration {
-  name: string;
   type: string;
   description: string;
 }
@@ -94,13 +93,14 @@ export const tokensSlice = createSlice({
     },
     addAgentParameterToNode: (
       state,
-      action: PayloadAction<{ conditionId: string; agentId: string; agentParameter: AgentParameterDeclaration }>
+      action: PayloadAction<{ conditionId: string; agentId: string; agentParameter: { name: string; type: string; description: string } }>
     ) => {
       const { conditionId, agentId, agentParameter } = action.payload;
+      const { name, type, description } = agentParameter;
       if (!state.agentParameters[agentId]) {
         state.agentParameters[agentId] = {};
       }
-      state.agentParameters[agentId][conditionId] = { ...state.agentParameters[agentId][conditionId], agentParameter };
+      state.agentParameters[agentId][conditionId] = { ...state.agentParameters[agentId][conditionId], [name]: { type, description } };
     },
     updateTokenSecureStatus: (state, action: PayloadAction<{ id: string; isSecure: boolean }>) => {
       const { id, isSecure } = action.payload;

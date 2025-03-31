@@ -206,7 +206,7 @@ export const useNewAdditiveSubgraphId = (baseId: string) =>
       // eslint-disable-next-line no-loop-func
       while (idList.some((id) => id === caseId)) {
         caseCount++;
-        caseId = `${baseId} ${caseCount}`;
+        caseId = `${baseId}_${caseCount}`;
       }
       return caseId;
     })
@@ -312,6 +312,9 @@ export const useRetryHistory = (id: string): LogicAppsV2.RetryHistory[] | undefi
 export const useRunData = (id: string): LogicAppsV2.WorkflowRunAction | LogicAppsV2.WorkflowRunTrigger | undefined =>
   useSelector(createSelector(getWorkflowState, (state: WorkflowState) => getRecordEntry(state.nodesMetadata, id)?.runData));
 
+export const useSubgraphRunData = (id: string): Record<string, { actionResults: LogicAppsV2.WorkflowRunAction[] }> | undefined =>
+  useSelector(createSelector(getWorkflowState, (state: WorkflowState) => getRecordEntry(state.nodesMetadata, id)?.subgraphRunData));
+
 export const useNodesMetadata = (): NodesMetadata =>
   useSelector(createSelector(getWorkflowState, (state: WorkflowState) => state.nodesMetadata));
 
@@ -388,6 +391,19 @@ export const useIsWithinAgenticLoop = (id: string): boolean => {
       }
 
       return false;
+    })
+  );
+};
+
+export const useAgentOperations = () => {
+  return useSelector(
+    createSelector(getWorkflowState, (state: WorkflowState) => {
+      return Object.entries(state.operations).reduce((acc: string[], [id, node]) => {
+        if (equals(node.type, constants.NODE.TYPE.AGENT)) {
+          acc.push(id);
+        }
+        return acc;
+      }, []);
     })
   );
 };
