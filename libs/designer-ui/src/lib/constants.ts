@@ -453,6 +453,7 @@ export default {
 
   PARAMETER: {
     EDITOR: {
+      AGENT_INSTRUCTION: 'agentinstruction',
       ARRAY: 'array',
       AUTHENTICATION: 'authentication',
       CODE: 'code',

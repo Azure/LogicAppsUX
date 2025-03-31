@@ -79,8 +79,8 @@ export const InitializeVariableEditor = ({
   });
 
   const warningAgentParameterBody = intl.formatMessage({
-    defaultMessage: 'This could mean that the agenet parameter schema is set up incorrectly.',
-    id: '9YmvIw',
+    defaultMessage: 'This could mean that the agent parameter schema is set up incorrectly.',
+    id: 'JLd6W7',
     description: 'Warning body for when unable to parse schema',
   });
 
