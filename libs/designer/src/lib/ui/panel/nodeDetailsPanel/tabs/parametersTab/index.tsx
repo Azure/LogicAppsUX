@@ -495,8 +495,6 @@ const ParameterSection = ({
     if (isUpdating) {
       dispatch(updateAgentParametersInNode([{ name, type, description }]));
     }
-
-    return;
   };
 
   const getTokenPicker = (

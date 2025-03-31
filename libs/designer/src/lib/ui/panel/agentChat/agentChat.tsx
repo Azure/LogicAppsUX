@@ -5,7 +5,7 @@ import { useIntl } from 'react-intl';
 import { defaultChatbotPanelWidth, ChatbotContent } from '@microsoft/logic-apps-chatbot';
 import { useChatHistory } from '../../../core/queries/runs';
 import { useMonitoringView } from '../../../core/state/designerOptions/designerOptionsSelectors';
-import { useAgentOpertations, useRunInstance } from '../../../core/state/workflow/workflowSelectors';
+import { useAgentOperations, useRunInstance } from '../../../core/state/workflow/workflowSelectors';
 import { guid, isNullOrUndefined } from '@microsoft/logic-apps-shared';
 import { Button, Drawer, mergeClasses } from '@fluentui/react-components';
 import { ChatFilled, ChevronDoubleRightFilled } from '@fluentui/react-icons';
@@ -94,7 +94,7 @@ export const AgentChat = ({
   const [controller, _setController] = useState(new AbortController());
   const isMonitoringView = useMonitoringView();
   const runInstance = useRunInstance();
-  const agentOperations = useAgentOpertations();
+  const agentOperations = useAgentOperations();
   const [isCollapsed, setIsCollapsed] = useState(true);
   const panelContainerElement = panelContainerRef.current as HTMLElement;
 

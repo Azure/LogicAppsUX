@@ -382,6 +382,18 @@ export class StandardRunService implements IRunService {
     }
   }
 
+  /**
+   * Retrieves the chat history for a specified action.
+   *
+   * This function constructs a URI based on the provided runId and nodeId, along with the
+   * baseUrl and apiVersion from the options. It then sends an HTTP GET request to obtain the
+   * chat history information associated with the specified action.
+   * @param action - An object containing the necessary identifiers.
+   * @param action.nodeId - The unique identifier of the node to retrieve the chat history for.
+   * @param action.runId - The unique identifier of the run; may be undefined.
+   * @returns A promise that resolves with the chat history response.
+   * @throws {Error} Throws an error with a message if the HTTP request fails.
+   */
   async getChatHistory(action: { nodeId: string; runId: string | undefined }): Promise<any> {
     const { apiVersion, baseUrl, httpClient } = this.options;
     const { nodeId, runId } = action;
@@ -399,5 +411,4 @@ export class StandardRunService implements IRunService {
       throw new Error(e.message);
     }
   }
-
 }

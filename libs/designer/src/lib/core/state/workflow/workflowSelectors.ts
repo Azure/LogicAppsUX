@@ -395,7 +395,7 @@ export const useIsWithinAgenticLoop = (id: string): boolean => {
   );
 };
 
-export const useAgentOpertations = () => {
+export const useAgentOperations = () => {
   return useSelector(
     createSelector(getWorkflowState, (state: WorkflowState) => {
       return Object.entries(state.operations).reduce((acc: string[], [id, node]) => {

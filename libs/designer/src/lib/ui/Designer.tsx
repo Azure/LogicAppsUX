@@ -222,71 +222,69 @@ export const Designer = (props: DesignerProps) => {
   }, [isInitialized]);
 
   return (
-    <div style={{ display: 'flex', flexDirection: 'row', height: '100%', minWidth: '100%' }}>
-      <DndProvider options={DND_OPTIONS}>
-        {preloadSearch ? <SearchPreloader /> : null}
-        <div className="msla-designer-canvas msla-panel-mode" ref={designerContainerRef}>
-          <ReactFlowProvider>
-            <div style={{ flexGrow: 1 }}>
-              <ReactFlow
-                ref={canvasRef}
-                nodeTypes={nodeTypes}
-                nodes={nodesWithPlaceholder}
-                edges={edges}
-                onNodesChange={onNodesChange}
-                nodesConnectable={false}
-                nodesDraggable={false}
-                nodesFocusable={false}
-                edgesFocusable={false}
-                edgeTypes={edgeTypes}
-                panOnScroll={true}
-                deleteKeyCode={['Backspace', 'Delete']}
-                zoomActivationKeyCode={['Ctrl', 'Meta', 'Alt', 'Control']}
-                translateExtent={clampPan ? translateExtent : undefined}
-                onMove={(_e, viewport) => setZoom(viewport.zoom)}
-                minZoom={0.05}
-                onPaneClick={() => dispatch(clearPanel())}
-                disableKeyboardA11y={true}
-                onlyRenderVisibleElements={!userInferredTabNavigation}
-                proOptions={{
-                  account: 'paid-sponsor',
-                  hideAttribution: true,
-                }}
-              >
-                {backgroundProps ? <Background {...backgroundProps} /> : null}
-                <DeleteModal />
-                <DesignerContextualMenu />
-                <EdgeContextualMenu />
-              </ReactFlow>
-            </div>
-            <PanelRoot
-              panelContainerRef={designerContainerRef}
-              panelLocation={panelLocation}
-              customPanelLocations={customPanelLocations}
-              isResizeable={true}
-            />
-            {isMonitoringView && isAgenticWorkflow ? (
-              <AgentChat panelLocation="RIGHT" panelContainerRef={designerContainerRef} closeChatBot={() => {}} />
-            ) : null}
-            <div className={css('msla-designer-tools', panelLocation === PanelLocation.Left && 'left-panel')}>
-              <Controls />
-              <Minimap />
-            </div>
-            <PerformanceDebugTool />
-            <CanvasFinder />
-            <CanvasSizeMonitor canvasRef={canvasRef} />
-            <DragPanMonitor canvasRef={canvasRef} />
-          </ReactFlowProvider>
-          <div
-            id={'msla-layer-host'}
-            style={{
-              position: 'absolute',
-              inset: '0px',
-              visibility: 'hidden',
-            }}
+    <DndProvider options={DND_OPTIONS}>
+      {preloadSearch ? <SearchPreloader /> : null}
+      <div className="msla-designer-canvas msla-panel-mode" ref={designerContainerRef}>
+        <ReactFlowProvider>
+          <div style={{ flexGrow: 1 }}>
+            <ReactFlow
+              ref={canvasRef}
+              nodeTypes={nodeTypes}
+              nodes={nodesWithPlaceholder}
+              edges={edges}
+              onNodesChange={onNodesChange}
+              nodesConnectable={false}
+              nodesDraggable={false}
+              nodesFocusable={false}
+              edgesFocusable={false}
+              edgeTypes={edgeTypes}
+              panOnScroll={true}
+              deleteKeyCode={['Backspace', 'Delete']}
+              zoomActivationKeyCode={['Ctrl', 'Meta', 'Alt', 'Control']}
+              translateExtent={clampPan ? translateExtent : undefined}
+              onMove={(_e, viewport) => setZoom(viewport.zoom)}
+              minZoom={0.05}
+              onPaneClick={() => dispatch(clearPanel())}
+              disableKeyboardA11y={true}
+              onlyRenderVisibleElements={!userInferredTabNavigation}
+              proOptions={{
+                account: 'paid-sponsor',
+                hideAttribution: true,
+              }}
+            >
+              {backgroundProps ? <Background {...backgroundProps} /> : null}
+              <DeleteModal />
+              <DesignerContextualMenu />
+              <EdgeContextualMenu />
+            </ReactFlow>
+          </div>
+          <PanelRoot
+            panelContainerRef={designerContainerRef}
+            panelLocation={panelLocation}
+            customPanelLocations={customPanelLocations}
+            isResizeable={true}
           />
-        </div>
-      </DndProvider>
-    </div>
+          {isMonitoringView && isAgenticWorkflow ? (
+            <AgentChat panelLocation="RIGHT" panelContainerRef={designerContainerRef} closeChatBot={() => {}} />
+          ) : null}
+          <div className={css('msla-designer-tools', panelLocation === PanelLocation.Left && 'left-panel')}>
+            <Controls />
+            <Minimap />
+          </div>
+          <PerformanceDebugTool />
+          <CanvasFinder />
+          <CanvasSizeMonitor canvasRef={canvasRef} />
+          <DragPanMonitor canvasRef={canvasRef} />
+        </ReactFlowProvider>
+        <div
+          id={'msla-layer-host'}
+          style={{
+            position: 'absolute',
+            inset: '0px',
+            visibility: 'hidden',
+          }}
+        />
+      </div>
+    </DndProvider>
   );
 };
