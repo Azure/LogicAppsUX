@@ -190,7 +190,7 @@ export interface SupportedChannels {
   input: {
     type: string;
     kind?: string;
-    default?: SwaggerSchema;
+    default?: Record<string, string>;
   };
   output: {
     type: string;

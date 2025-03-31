@@ -30,6 +30,7 @@ const fileOptions = [
 
   // Agent
   { key: 'Agent.json', text: 'Agent' },
+  { key: 'AgentWithChannels.json', text: 'Agent with Input/Output' },
 
   // Run-After
   { key: 'divider_2', text: '-', itemType: DropdownMenuItemType.Divider },

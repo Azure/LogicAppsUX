@@ -261,6 +261,7 @@ export const operationMetadataSlice = createSlice({
         state.repetitionInfos = {};
         state.supportedChannels = {};
       }
+
       for (const nodeData of nodes) {
         if (!nodeData) {
           return;
