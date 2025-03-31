@@ -65,16 +65,6 @@ const parseChatHistory = (chatHistory: ChatHistory[], intl: IntlShape): Conversa
     const { nodeId, messages } = chat;
     const parsedMessages: any[] = (messages ?? []).map((message) => parseMessage(message, nodeId));
 
-    //Test
-    parsedMessages.push({
-      type: ConversationItemType.Tool,
-      text: 'Tool1, tool2',
-    });
-    parsedMessages.push({
-      type: ConversationItemType.Reply,
-      text: 'Agent wants to test xyz',
-    });
-
     if (parsedMessages.length > 0) {
       const agentName = labelCase(nodeId ?? '');
       conversations.push(...parsedMessages, {
