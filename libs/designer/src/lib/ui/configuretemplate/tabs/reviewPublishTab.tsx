@@ -9,7 +9,7 @@ export const ReviewPublishTab = () => {
   return <Text>placeholder - show review + publish</Text>;
 };
 
-export const reviewPublishTab = (intl: IntlShape, dispatch: AppDispatch): TemplateTabProps => ({
+export const reviewPublishTab = (intl: IntlShape, dispatch: AppDispatch, onPublish: () => void): TemplateTabProps => ({
   id: constants.CONFIGURE_TEMPLATE_WIZARD_TAB_NAMES.REVIEW_AND_PUBLISH,
   title: intl.formatMessage({
     defaultMessage: 'Review + publish',
@@ -34,6 +34,7 @@ export const reviewPublishTab = (intl: IntlShape, dispatch: AppDispatch): Templa
     }),
     secondaryButtonOnClick: () => {
       //TODO: service call to publish the template
+      onPublish();
     },
   },
 });

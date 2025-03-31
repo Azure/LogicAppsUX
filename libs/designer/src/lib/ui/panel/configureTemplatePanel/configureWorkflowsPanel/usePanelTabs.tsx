@@ -7,8 +7,10 @@ import type { AppDispatch } from '../../../../core/state/templates/store';
 
 export const useConfigureWorkflowPanelTabs = ({
   onClosePanel,
+  onSave,
 }: {
   onClosePanel: () => void;
+  onSave?: (isMultiWorkflow: boolean) => void;
 }): TemplateTabProps[] => {
   const intl = useIntl();
   const dispatch = useDispatch<AppDispatch>();
@@ -26,6 +28,7 @@ export const useConfigureWorkflowPanelTabs = ({
       hasError,
       isSaving,
       onClosePanel,
+      onSave,
     }),
   ];
 };

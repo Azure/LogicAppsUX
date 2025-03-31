@@ -11,9 +11,10 @@ export interface ConfigureWorkflowsTabProps {
   hasError: boolean;
   isSaving: boolean;
   onClosePanel: () => void;
+  onSave?: (isMultiWorkflow: boolean) => void;
 }
 
-export const ConfigureWorkflowsPanel = () => {
+export const ConfigureWorkflowsPanel = ({ onSave }: { onSave?: (isMultiWorkflow: boolean) => void }) => {
   const dispatch = useDispatch<AppDispatch>();
   const intl = useIntl();
   const { selectedTabId, isOpen, currentPanelView } = useSelector((state: RootState) => ({
@@ -34,7 +35,7 @@ export const ConfigureWorkflowsPanel = () => {
     //TODO: revert all changes
   }, []);
 
-  const panelTabs: TemplateTabProps[] = useConfigureWorkflowPanelTabs({ onClosePanel: revertAllChanges });
+  const panelTabs: TemplateTabProps[] = useConfigureWorkflowPanelTabs({ onClosePanel: revertAllChanges, onSave });
 
   const handleSelectTab = (tabId: string): void => {
     dispatch(selectPanelTab(tabId));

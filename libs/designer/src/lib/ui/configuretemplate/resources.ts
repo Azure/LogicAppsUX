@@ -114,6 +114,21 @@ export const useResourceStrings = () => {
       id: 'SlY7Jz',
       description: 'Tags label',
     }),
+    TemplateInformation: intl.formatMessage({
+      defaultMessage: 'Template information',
+      id: 'am5nER',
+      description: 'Template information toast title',
+    }),
+    Type: intl.formatMessage({
+      defaultMessage: 'Type',
+      id: 'qBKOEO',
+      description: 'Type label',
+    }),
+    LastSaved: intl.formatMessage({
+      defaultMessage: 'Last saved',
+      id: 'r0Nvk3',
+      description: 'Last saved label',
+    }),
   };
 };
 
