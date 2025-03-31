@@ -1,7 +1,7 @@
 import { Link, MessageBar, MessageBarBody, MessageBarTitle, Text } from '@fluentui/react-components';
 import type { BaseEditorProps, CastHandler, ChangeHandler, ChangeState, GetTokenPickerHandler } from '../editor/base';
 import { useIntl } from 'react-intl';
-import { LinkSquare16Regular, LinkSquare16Filled, bundleIcon } from '@fluentui/react-icons';
+import { LinkSquare12Regular, LinkSquare12Filled, bundleIcon } from '@fluentui/react-icons';
 import { StringEditor } from './../editor/string';
 import { useMemo, useState } from 'react';
 import { parseAgentInstruction, AGENT_INSTRUCTION_TYPES, serializeAgentInstructions } from './util';
@@ -9,7 +9,7 @@ import { css } from '@fluentui/utilities';
 import { ArrayEditor, ArrayType } from '../arrayeditor';
 import { Label } from '../label';
 
-const NavigateIcon = bundleIcon(LinkSquare16Regular, LinkSquare16Filled);
+const NavigateIcon = bundleIcon(LinkSquare12Regular, LinkSquare12Filled);
 
 interface AgentInstructionEditorProps extends BaseEditorProps {
   serializeValue?: ChangeHandler;
@@ -74,10 +74,14 @@ export const AgentInstructionEditor = ({
 
   return (
     <div className="msla-agent-instruction-editor-container">
-      <Text>{description} </Text>
-      <Link href="https://learn.microsoft.com/en-us/microsoft-365-copilot/extensibility/declarative-agent-instructions" target="_blank">
+      <Text style={{ fontSize: 12, fontStyle: 'italic' }}>{description} </Text>
+      <Link
+        href="https://learn.microsoft.com/en-us/microsoft-365-copilot/extensibility/declarative-agent-instructions"
+        target="_blank"
+        style={{ fontSize: 12, fontStyle: 'italic' }}
+      >
         {descriptionLink}
-        <NavigateIcon style={{ position: 'relative', top: '4px' }} />
+        <NavigateIcon style={{ position: 'relative', top: '2px' }} />
       </Link>
       <div className="msla-agent-instruction-editors">
         <Label text={systemPromptLabel} />
