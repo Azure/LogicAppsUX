@@ -124,11 +124,6 @@ export const useResourceStrings = () => {
       id: 'qBKOEO',
       description: 'Type label',
     }),
-    Status: intl.formatMessage({
-      defaultMessage: 'Status',
-      id: 's2y5eG',
-      description: 'Status label',
-    }),
     LastSaved: intl.formatMessage({
       defaultMessage: 'Last saved',
       id: 'r0Nvk3',
