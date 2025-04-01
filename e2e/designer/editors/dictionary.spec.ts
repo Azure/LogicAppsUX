@@ -28,7 +28,7 @@ test.describe(
 
       await page.getByRole('tab', { name: 'Code view' }).click();
       // because code view does serialization, it sometimes takes a bit of time to update
-      await page.waitForFunction(() => !document.querySelector('#code-view')?.textContent?.includes('loading'), { timeout: 3000 });
+      await page.waitForFunction(() => !document.querySelector('#code-view')?.textContent?.includes('Loading'), { timeout: 3000 });
       await expect(page.getByRole('code')).toContainText(
         '{ "type": "Http", "inputs": { "uri": "", "method": "", "headers": { "testkey": "testValue", "testkey2": "@{triggerBody()?[\'string\']}" } }, "runAfter": { "Initialize_ArrayVariable": [ "SUCCEEDED" ] }, "runtimeConfiguration": { "contentTransfer": { "transferMode": "Chunked" } }}'
       );
@@ -39,7 +39,7 @@ test.describe(
       await page.getByLabel('Click to delete item').nth(1).click();
       await page.getByRole('tab', { name: 'Code view' }).click();
       // because code view does serialization, it sometimes takes a bit of time to update
-      await page.waitForFunction(() => !document.querySelector('#code-view')?.textContent?.includes('loading'), { timeout: 3000 });
+      await page.waitForFunction(() => !document.querySelector('#code-view')?.textContent?.includes('Loading'), { timeout: 3000 });
       await expect(page.getByRole('code')).toContainText(
         '{ "type": "Http", "inputs": { "uri": "", "method": "", "headers": { "testkey": "testValue" } }, "runAfter": { "Initialize_ArrayVariable": [ "SUCCEEDED" ] }, "runtimeConfiguration": { "contentTransfer": { "transferMode": "Chunked" } }}'
       );
