@@ -34,7 +34,7 @@ export const usePanelStyles = makeStyles({
     paddingRight: '0px',
     paddingLeft: '0px',
     width: `${panelWidth}px`,
-    scrollbarWidth: 'none',
+    overflow: 'hidden',
   },
   targetSchemaBody: {
     position: 'relative',
@@ -48,6 +48,8 @@ export const usePanelBodyStyles = makeStyles({
     width: '100%',
     flexDirection: 'column',
     height: '100%',
+    overflow: 'auto',
+    scrollbarWidth: 'none',
   },
   treeContainer: {
     display: 'flex',
