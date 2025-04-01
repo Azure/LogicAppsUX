@@ -201,7 +201,7 @@ export const useChatHistory = (isMonitoringView: boolean, nodeIds: string[], run
     {
       ...queryOpts,
       retryOnMount: false,
-      enabled: isMonitoringView,
+      enabled: isMonitoringView && runId !== undefined && nodeIds.length > 0,
     }
   );
 };
