@@ -1,4 +1,29 @@
 # Logic Apps Designer
+### [5.71.1](https://github.com/Azure/LogicAppsUX/compare/v5.71.0...v5.71.1) (2025-04-01)
+
+
+### Features
+
+* **designer:** Agent Instruction Editor ([#6914](https://github.com/Azure/LogicAppsUX/issues/6914)) ([1d45213](https://github.com/Azure/LogicAppsUX/commit/1d452130232b73b0e66b0ee92591e2518f47a1be))
+* **designer:** De-serialize channels and set default for Agentic ([#6920](https://github.com/Azure/LogicAppsUX/issues/6920)) ([7ca0d0e](https://github.com/Azure/LogicAppsUX/commit/7ca0d0e5a8d4c5508c52650666e645bf350f6bd5))
+* **Designer:** Exported 2 extra state methods for templates ([#6929](https://github.com/Azure/LogicAppsUX/issues/6929)) ([e97a066](https://github.com/Azure/LogicAppsUX/commit/e97a0667fb903deed84a27fa606e2071b3eae2e2))
+* **designer:** Implement links for tools and agents in chat ([#6928](https://github.com/Azure/LogicAppsUX/issues/6928)) ([c3cd8d2](https://github.com/Azure/LogicAppsUX/commit/c3cd8d2b0677ba4a0647472545ed4ab7dab41b90))
+* **templates:** Adding toaster component in configure template to show template information ([#6912](https://github.com/Azure/LogicAppsUX/issues/6912)) ([62152a3](https://github.com/Azure/LogicAppsUX/commit/62152a3eb39ee7961eb12c1b3b86dd294ce31109))
+* **vscode:** Agentic workflow creation experience ([#6926](https://github.com/Azure/LogicAppsUX/issues/6926)) ([6fb7c10](https://github.com/Azure/LogicAppsUX/commit/6fb7c10f7de45f5c9f8e710dfc846eb6c58e0a17))
+* **vscode:** Introduce agent chat ([#6916](https://github.com/Azure/LogicAppsUX/issues/6916)) ([982033f](https://github.com/Azure/LogicAppsUX/commit/982033f4acae7e6762cf15ae71c9db2b699fa0c7))
+* **vscode:** Remove run queries results from cache to refetch data and add status to tool ([#6937](https://github.com/Azure/LogicAppsUX/issues/6937)) ([2d310e3](https://github.com/Azure/LogicAppsUX/commit/2d310e34c485da991f21555e9929960fbf345d9d))
+
+
+### Bug Fixes
+
+* **Data Mapper:** Fixed scroll cutting off bottom ([#6803](https://github.com/Azure/LogicAppsUX/issues/6803)) ([b79fd19](https://github.com/Azure/LogicAppsUX/commit/b79fd194ae4e33c6a6f35eae47c23881600bd899))
+* **designer:** Add chat and input/output fixes ([#6927](https://github.com/Azure/LogicAppsUX/issues/6927)) ([e69ef92](https://github.com/Azure/LogicAppsUX/commit/e69ef9281af377b69093bdfa0a069acae08f962e))
+* **designer:** agentConnections only added can be added in Agentic workflows  ([#6919](https://github.com/Azure/LogicAppsUX/issues/6919)) ([0203670](https://github.com/Azure/LogicAppsUX/commit/02036704ac7588b59a392a977a542f78fbeac4f3))
+* **designer:** Code Editor fix for deserializing tokens (in token form)  ([#6918](https://github.com/Azure/LogicAppsUX/issues/6918)) ([3b152ba](https://github.com/Azure/LogicAppsUX/commit/3b152badf711a3f8c545173b6eb9f1ffcaf34726))
+* **Designer:** Fixed Auth editor ActiveDirectoryAuthentication missing tokenpicker ([#6917](https://github.com/Azure/LogicAppsUX/issues/6917)) ([19d82a2](https://github.com/Azure/LogicAppsUX/commit/19d82a2b67d085e4ac76a3580f52c8664bb60102))
+* **template:** Hide connection section for standard SKU if LA is not provided ([#6925](https://github.com/Azure/LogicAppsUX/issues/6925)) ([3a3abf3](https://github.com/Azure/LogicAppsUX/commit/3a3abf3ef86ceffe1a144d714093978e08431b9e))
+* **vscode:** no prompt to open workspace when opening logic app project root with "Open folder" ([#6938](https://github.com/Azure/LogicAppsUX/issues/6938)) ([b7a1377](https://github.com/Azure/LogicAppsUX/commit/b7a137709185a58403ce1152c2dbfa5364e5569e))
+
 ## [5.71.0](https://github.com/Azure/LogicAppsUX/compare/v5.70.0...v5.71.0) (2025-03-31)
 
 
