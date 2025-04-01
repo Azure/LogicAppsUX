@@ -14,7 +14,7 @@ import { TokenSegmentConvertor } from './tokensegment';
 import { UncastingUtility } from './uncast';
 import { TokenType, ValueSegmentType } from '@microsoft/designer-ui';
 import type { Token, ValueSegment } from '@microsoft/designer-ui';
-import type { Expression, ExpressionFunction, ExpressionLiteral } from '@microsoft/logic-apps-shared';
+import type { Expression, ExpressionFunction, ExpressionLiteral, InputParameter } from '@microsoft/logic-apps-shared';
 import {
   ExpressionParser,
   ExpressionType,
@@ -27,6 +27,7 @@ import {
   isNullOrUndefined,
   startsWith,
   UnsupportedException,
+  wrapStringInQuotes,
 } from '@microsoft/logic-apps-shared';
 
 /**
@@ -66,22 +67,27 @@ export class ValueSegmentConvertor {
    * @arg {any} value - The value.
    * @return {ValueSegment[]}
    */
-  public convertToValueSegments(value: any, parameterType?: string): ValueSegment[] {
+  public convertToValueSegments(value: any, parameter: InputParameter): ValueSegment[] {
     if (isNullOrUndefined(value)) {
       return [createLiteralValueSegment('')];
     }
     if (typeof value === 'string') {
-      return this._convertStringToValueSegments(value, parameterType);
+      return this._convertStringToValueSegments(value, parameter);
     }
-    return this._convertJsonToValueSegments(JSON.stringify(value, null, 2));
+    return this._convertJsonToValueSegments(JSON.stringify(value, null, 2), parameter);
   }
 
-  private _convertJsonToValueSegments(json: string): ValueSegment[] {
+  private _convertJsonToValueSegments(json: string, parameter: InputParameter): ValueSegment[] {
     const sections = new JsonSplitter(json).split();
     const segments: ValueSegment[] = [];
 
     for (const section of sections) {
       for (const segment of this._convertJsonSectionToSegments(section)) {
+        // console.log(section);
+        // if (parameter.schema?.items?.properties?.[section]?.format) {
+        //   this._options.shouldUncast = false;
+        // }
+
         segments.push(segment);
       }
     }
@@ -116,14 +122,16 @@ export class ValueSegmentConvertor {
     return [this._createLiteralValueSegment(section)];
   }
 
-  private _convertStringToValueSegments(value: string, parameterType?: string): ValueSegment[] {
+  private _convertStringToValueSegments(value: string, parameter: InputParameter): ValueSegment[] {
     if (isTemplateExpression(value)) {
       const expression = ExpressionParser.parseTemplateExpression(value);
       return this._convertTemplateExpressionToValueSegments(expression);
     }
 
-    const isSpecialValue = ['true', 'false', 'null'].includes(value) || /^-?\d+$/.test(value);
-    const stringValue = parameterType === constants.SWAGGER.TYPE.ANY && isSpecialValue ? `"${value}"` : value;
+    const isSpecialValue =
+      [constants.BOOLEAN_PARAMETER_VALUE.TRUE, constants.BOOLEAN_PARAMETER_VALUE.FALSE, constants.PARAMETER_NULL_VALUE].includes(value) ||
+      /^-?\d+$/.test(value);
+    const stringValue = parameter?.type === constants.SWAGGER.TYPE.ANY && isSpecialValue ? wrapStringInQuotes(value) : value;
     return [this._createLiteralValueSegment(stringValue)];
   }
 

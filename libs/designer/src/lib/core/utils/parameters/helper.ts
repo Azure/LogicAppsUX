@@ -918,7 +918,7 @@ export function loadParameterValue(parameter: InputParameter): ValueSegment[] {
     }
   }
 
-  let valueSegments = convertToValueSegments(valueObject, !parameter.suppressCasting /* shouldUncast */, parameter.type);
+  let valueSegments = convertToValueSegments(valueObject, !parameter.suppressCasting && !!parameter?.format, parameter);
 
   valueSegments = compressSegments(valueSegments);
 
@@ -971,13 +971,13 @@ export function convertToTokenExpression(value: any): string {
   return value.toString();
 }
 
-export function convertToValueSegments(value: any, shouldUncast: boolean, parameterType?: string): ValueSegment[] {
+export function convertToValueSegments(value: any, shouldUncast: boolean, parameter: InputParameter): ValueSegment[] {
   try {
     const convertor = new ValueSegmentConvertor({
       shouldUncast,
       rawModeEnabled: true,
     });
-    return convertor.convertToValueSegments(value, parameterType);
+    return convertor.convertToValueSegments(value, parameter);
   } catch {
     return [createLiteralValueSegment(typeof value === 'string' ? value : JSON.stringify(value, null, 2))];
   }

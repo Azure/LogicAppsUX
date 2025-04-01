@@ -20,6 +20,8 @@ export const normalizeAutomationId = (s: string) => s.replace(/\W/g, '-');
 
 export const wrapTokenValue = (s: string) => `@{${s}}`;
 
+export const wrapStringInQuotes = (s: string) => `"${s}"`;
+
 export const wrapStringifiedTokenSegments = (jsonString: string): string => {
   const tokenRegex = /:\s?(@{?(?:[^,}\s]+}?))/g;
 
