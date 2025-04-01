@@ -104,7 +104,7 @@ export type ToolReplyItem = BaseAssistantMessageItem & {
   iteration: string;
   onClickCallback: () => void;
   text: string;
-  status: string;
+  status?: string;
 };
 
 export type ConnectionsSetupItem = BaseAssistantMessageItem & {
