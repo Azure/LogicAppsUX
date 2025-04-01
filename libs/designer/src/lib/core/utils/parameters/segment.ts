@@ -82,9 +82,29 @@ export class ValueSegmentConvertor {
     const sections = new JsonSplitter(json).split();
     const segments: ValueSegment[] = [];
 
+    const hasFormatProperty = (section: string): boolean => {
+      const sectionKey = unwrapQuotesFromString(section);
+      const schema = parameter?.schema;
+
+      if (!schema) {
+        return false;
+      }
+
+      const possibleSchemas = [
+        schema,
+        schema.items?.type === 'object' ? schema.items : undefined,
+        schema.items?.items, // Nested arrays
+        ...(schema.allOf ?? []),
+        ...(schema.oneOf ?? []),
+        ...(schema.anyOf ?? []),
+      ].filter(Boolean); // Remove undefined values
+
+      return possibleSchemas.some((s) => s.properties?.[sectionKey]?.format || s.additionalProperties?.format);
+    };
+
     for (const section of sections) {
       for (const segment of this._convertJsonSectionToSegments(section)) {
-        if (parameter.schema?.items?.properties?.[unwrapQuotesFromString(section)]?.format) {
+        if (hasFormatProperty(section)) {
           this._options.shouldUncast = true;
         }
 

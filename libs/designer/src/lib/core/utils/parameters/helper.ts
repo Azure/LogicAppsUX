@@ -538,7 +538,7 @@ export const loadParameterValueFromString = (
   return loadParameterValue(inputParameter);
 };
 
-const convertStringToInputParameter = (value: string, options: LoadParamteerValueFromStringOptions): InputParameter => {
+export const convertStringToInputParameter = (value: string, options: LoadParamteerValueFromStringOptions): InputParameter => {
   const { removeQuotesFromExpression, trimExpression, convertIfContainsExpression, parameterType } = options ?? {};
   if (typeof value !== 'string') {
     return { key: guid(), name: value, type: parameterType ?? typeof value, hideInUI: false, value };
@@ -555,7 +555,7 @@ const convertStringToInputParameter = (value: string, options: LoadParamteerValu
   return {
     key: guid(),
     name: newValue,
-    type: constants.SWAGGER.TYPE.STRING,
+    type: parameterType ?? typeof newValue,
     hideInUI: false,
     value: newValue,
     suppressCasting: true,
