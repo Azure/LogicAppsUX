@@ -1,15 +1,1 @@
-libs/**/*.ts @hartra344
-libs/**/*.tsx @hartra344
-libs/**/*.js @hartra344
-libs/**/*.jsx @hartra344
 
-
-apps/vs-code-designer/**/*.ts @hartra344
-apps/vs-code-designer/**/*.tsx @hartra344
-apps/vs-code-designer/**/*.js @hartra344
-apps/vs-code-designer/**/*.jsx @hartra344
-
-apps/vs-code-react/**/*.ts @hartra344
-apps/vs-code-react/**/*.tsx @hartra344
-apps/vs-code-react/**/*.js @hartra344
-apps/vs-code-react/**/*.jsx @hartra344
