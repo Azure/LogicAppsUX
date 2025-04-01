@@ -43,12 +43,14 @@ test.describe(
 
         await page.waitForTimeout(100);
 
-        await page.getByTestId('[data-testid="name - 1 contenteditable"]').click();
-        await page.locator('[data-testid="name - 1 contenteditable"]').fill('newVariable');
+        await page.getByTestId('msla-setting-token-editor-initializevariableeditor-variables-name-1').click();
+        await page.keyboard.type('newVariable');
+
         await page.getByText('Select variable type').click();
         await page.getByRole('option', { name: 'Integer' }).click();
-        await page.locator('[data-testid="value - 1 contenteditable"]').click();
-        await page.locator('[data-testid="value - 1 contenteditable"]').fill('17');
+
+        await page.getByTestId('msla-setting-token-editor-initializevariableeditor-variables-value-1').click();
+        await page.keyboard.type('17');
 
         await page.getByRole('tab', { name: 'Code view' }).click();
         await page.waitForFunction(() => !document.querySelector('#code-view')?.textContent?.includes('Loading'), { timeout: 1000 });
