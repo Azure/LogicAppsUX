@@ -24,6 +24,7 @@ export const fetchAppsByQuery = async (query: string): Promise<any[]> => {
             $skipToken: currentSkipToken,
             resultFormat: 'table',
           },
+          subscriptions: ['f34b22a3-2202-4fb1-b040-1332bd928c84'],
         },
         {
           headers: {

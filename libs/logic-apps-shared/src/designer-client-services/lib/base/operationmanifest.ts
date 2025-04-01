@@ -145,6 +145,7 @@ const x12ConnectorId = 'connectionProviders/x12Operations';
 const xmlOperationsConnectionId = 'connectionProviders/xmlOperations';
 const edifactConnectorId = 'connectionProviders/edifactOperations';
 export const inlineCodeConnectorId = 'connectionProviders/inlineCode';
+const aiOperationsConnectorId = 'connectionProviders/aiOperations';
 
 const azurefunction = 'azurefunction';
 const appservice = 'appservice';
@@ -730,15 +731,15 @@ const builtInOperationsMetadata: Record<string, OperationInfo> = {
     operationId: edifactbatchencode,
   },
   [chunktext]: {
-    connectorId: dataOperationConnectorId,
+    connectorId: aiOperationsConnectorId,
     operationId: chunktext,
   },
   [parsedocument]: {
-    connectorId: dataOperationConnectorId,
+    connectorId: aiOperationsConnectorId,
     operationId: parsedocument,
   },
   [parsedocumentwithmetadata]: {
-    connectorId: dataOperationConnectorId,
+    connectorId: aiOperationsConnectorId,
     operationId: parsedocumentwithmetadata,
   },
 };

@@ -11,6 +11,7 @@ import {
   UserErrorCode,
   isCustomConnectorId,
   getUniqueName,
+  getResourceNameFromId,
 } from '../../../utils/src';
 import type { HttpResponse } from '../common/exceptions/service';
 import type { ConnectionCreationInfo, ConnectionParametersMetadata, CreateConnectionResult, IConnectionService } from '../connection';
@@ -141,7 +142,13 @@ export abstract class BaseConnectionService implements IConnectionService {
   protected async _getAzureConnector(connectorId: string): Promise<Connector> {
     const { apiVersion, httpClient, locale } = this.options;
     const headers = locale ? { 'Accept-Language': locale } : undefined;
-    const response = await httpClient.get<Connector>({ uri: connectorId, queryParameters: { 'api-version': apiVersion }, headers });
+    const queryParameters: Record<string, any> = { 'api-version': apiVersion };
+
+    if (!isArmResourceId(connectorId)) {
+      connectorId = `/subscriptions/${this.options.subscriptionId}/providers/microsoft.web/locations/${this.options.location}/managedapis/${getResourceNameFromId(connectorId)}`;
+      // queryParameters['isBuiltIn'] = 'true'; @Bryan: I have kept it commented here so in case you cannot have this deployed before build in backend you can uncomment this.
+    }
+    const response = await httpClient.get<Connector>({ uri: connectorId, queryParameters, headers });
 
     return {
       ...response,
