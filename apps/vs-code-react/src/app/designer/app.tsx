@@ -9,7 +9,15 @@ import { convertConnectionsDataToReferences } from './utilities/workflow';
 import { Spinner, SpinnerSize } from '@fluentui/react';
 import type { ConnectionCreationInfo, LogicAppsV2 } from '@microsoft/logic-apps-shared';
 import type { ConnectionReferences } from '@microsoft/logic-apps-designer';
-import { DesignerProvider, BJSWorkflowProvider, Designer, getTheme, useThemeObserver } from '@microsoft/logic-apps-designer';
+import {
+  DesignerProvider,
+  BJSWorkflowProvider,
+  Designer,
+  getTheme,
+  useThemeObserver,
+  getReactQueryClient,
+  runsQueriesKeys,
+} from '@microsoft/logic-apps-designer';
 import { isEmptyString, isNullOrUndefined, Theme } from '@microsoft/logic-apps-shared';
 import type { FileSystemConnectionInfo, MessageToVsix, StandardApp } from '@microsoft/vscode-extension-logic-apps';
 import { ExtensionCommand } from '@microsoft/vscode-extension-logic-apps';
@@ -138,6 +146,17 @@ export const DesignerApp = () => {
     enabled: (isMonitoringView || isUnitTest) && !isEmptyString(runId),
   });
 
+  const onRefreshMonitoringView = useCallback(() => {
+    if (isMonitoringView) {
+      refetch();
+      const queryClient = getReactQueryClient();
+      queryClient.removeQueries([runsQueriesKeys.useChatHistory]);
+      queryClient.removeQueries([runsQueriesKeys.useAgentActionsRepetition]);
+      queryClient.removeQueries([runsQueriesKeys.useAgentRepetition]);
+      queryClient.removeQueries([runsQueriesKeys.useNodeRepetition]);
+    }
+  }, [isMonitoringView, refetch]);
+
   useEffect(() => {
     if (isMonitoringView && !isNullOrUndefined(runData)) {
       setRunInstance(runData);
@@ -186,7 +205,7 @@ export const DesignerApp = () => {
       <DesignerCommandBar
         isDisabled={isError || isFetching || isLoading}
         isRefreshing={isRefetching}
-        onRefresh={refetch}
+        onRefresh={onRefreshMonitoringView}
         isDarkMode={theme === Theme.Dark}
         isUnitTest={isUnitTest}
         isLocal={isLocal}
