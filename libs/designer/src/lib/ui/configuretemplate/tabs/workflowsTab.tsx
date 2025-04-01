@@ -5,10 +5,6 @@ import type { IntlShape } from 'react-intl';
 import { selectWizardTab } from '../../../core/state/templates/tabSlice';
 import { DisplayWorkflows } from '../workflows/workflows';
 
-export const WorkflowsTab = ({ onSave }: { onSave: (isMultiWorkflow: boolean) => void }) => {
-  return <DisplayWorkflows onSave={onSave} />;
-};
-
 export const workflowsTab = (
   intl: IntlShape,
   dispatch: AppDispatch,
@@ -21,7 +17,7 @@ export const workflowsTab = (
     description: 'The tab label for the monitoring workflows tab on the configure template wizard',
   }),
   hasError: false,
-  content: <WorkflowsTab onSave={onSaveWorkflows} />,
+  content: <DisplayWorkflows onSave={onSaveWorkflows} />,
   footerContent: {
     primaryButtonText: '',
     primaryButtonOnClick: () => {},
