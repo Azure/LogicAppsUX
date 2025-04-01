@@ -6,10 +6,9 @@ import type { ConfigureWorkflowsTabProps } from '../configureWorkflowsPanel';
 import type { IntlShape } from 'react-intl';
 import type { WorkflowTemplateData } from '../../../../../core';
 import { Accordion, AccordionHeader, AccordionItem, AccordionPanel, Text } from '@fluentui/react-components';
-import type { Template } from '@microsoft/logic-apps-shared';
+import { getResourceNameFromId, type Template } from '@microsoft/logic-apps-shared';
 import { useMemo } from 'react';
 import { useTemplatesStrings } from '../../../../templates/templatesStrings';
-import { getWorkflownameFromWorkflowId } from '../../../../../core/actions/bjsworkflow/configuretemplate';
 
 export const CustomizeWorkflows = ({
   selectedWorkflowsList,
@@ -28,11 +27,11 @@ export const CustomizeWorkflows = ({
             {Object.entries(selectedWorkflowsList).map(([workflowId, workflowData]) => (
               <AccordionItem value={workflowId} key={workflowId}>
                 <AccordionHeader>
-                  <Text style={{ fontWeight: 'bold' }}>{getWorkflownameFromWorkflowId(workflowId)}</Text>
+                  <Text style={{ fontWeight: 'bold' }}>{getResourceNameFromId(workflowId)}</Text>
                 </AccordionHeader>
                 <AccordionPanel>
                   <CustomizeWorkflowSection
-                    normalizedWorkflowId={workflowId}
+                    workflowId={workflowId}
                     isMultiWorkflowTemplate={true}
                     workflow={workflowData}
                     updateWorkflowDataField={updateWorkflowDataField}
@@ -43,7 +42,7 @@ export const CustomizeWorkflows = ({
           </Accordion>
         ) : (
           <CustomizeWorkflowSection
-            normalizedWorkflowId={workflowEntries[0][0]}
+            workflowId={workflowEntries[0][0]}
             isMultiWorkflowTemplate={false}
             workflow={workflowEntries[0][1]}
             updateWorkflowDataField={updateWorkflowDataField}
@@ -55,12 +54,12 @@ export const CustomizeWorkflows = ({
 };
 
 const CustomizeWorkflowSection = ({
-  normalizedWorkflowId,
+  workflowId,
   isMultiWorkflowTemplate,
   workflow,
   updateWorkflowDataField,
 }: {
-  normalizedWorkflowId: string;
+  workflowId: string;
   isMultiWorkflowTemplate: boolean;
   workflow: Partial<WorkflowTemplateData>;
   updateWorkflowDataField: (workflowId: string, workflowData: Partial<WorkflowTemplateData>) => void;
@@ -74,7 +73,7 @@ const CustomizeWorkflowSection = ({
         type: 'textfield',
         required: true,
         onChange: (value: string) => {
-          updateWorkflowDataField(normalizedWorkflowId, { workflowName: value });
+          updateWorkflowDataField(workflowId, { workflowName: value });
         },
       },
       {
@@ -83,7 +82,7 @@ const CustomizeWorkflowSection = ({
         type: 'textfield',
         required: true,
         onChange: (value: string) => {
-          updateWorkflowDataField(normalizedWorkflowId, {
+          updateWorkflowDataField(workflowId, {
             ...workflow,
             manifest: {
               ...workflow.manifest,
@@ -94,7 +93,7 @@ const CustomizeWorkflowSection = ({
       },
       //TODO: add state type
     ];
-  }, [normalizedWorkflowId, updateWorkflowDataField, workflow, resourceStrings]);
+  }, [workflowId, updateWorkflowDataField, workflow, resourceStrings]);
 
   const descriptionSectionItems: TemplatesSectionItem[] = useMemo(() => {
     const baseItems: TemplatesSectionItem[] = isMultiWorkflowTemplate
@@ -104,7 +103,7 @@ const CustomizeWorkflowSection = ({
             value: workflow.manifest?.summary || '',
             type: 'textfield',
             onChange: (value: string) => {
-              updateWorkflowDataField(normalizedWorkflowId, {
+              updateWorkflowDataField(workflowId, {
                 ...workflow,
                 manifest: {
                   ...workflow.manifest,
@@ -120,7 +119,7 @@ const CustomizeWorkflowSection = ({
       value: workflow.manifest?.description || '',
       type: 'textfield',
       onChange: (value: string) => {
-        updateWorkflowDataField(normalizedWorkflowId, {
+        updateWorkflowDataField(workflowId, {
           ...workflow,
           manifest: {
             ...workflow.manifest,
@@ -134,7 +133,7 @@ const CustomizeWorkflowSection = ({
       value: workflow.manifest?.prerequisites || '',
       type: 'textfield',
       onChange: (value: string) => {
-        updateWorkflowDataField(normalizedWorkflowId, {
+        updateWorkflowDataField(workflowId, {
           ...workflow,
           manifest: {
             ...workflow.manifest,
@@ -144,7 +143,7 @@ const CustomizeWorkflowSection = ({
       },
     });
     return baseItems;
-  }, [normalizedWorkflowId, updateWorkflowDataField, workflow, isMultiWorkflowTemplate, resourceStrings]);
+  }, [workflowId, updateWorkflowDataField, workflow, isMultiWorkflowTemplate, resourceStrings]);
 
   return (
     <div>

@@ -66,6 +66,28 @@ export const useTemplatesStrings = () => {
         description: 'Label for template',
       }),
     },
+    ariaLabelStrings: {
+      WORKFLOWS_LIST_TABLE_LABEL: intl.formatMessage({
+        defaultMessage: 'Workflows list tabel',
+        id: 'om43/8',
+        description: 'Aria label for workflows list table',
+      }),
+      LOADING_WORKFLOWS_LABEL: intl.formatMessage({
+        defaultMessage: 'Loading workflows aria label',
+        id: 'dhlB0s',
+        description: 'Loading aria-label for workflows list',
+      }),
+      SELECT_ALL_WORKFLOWS_LABEL: intl.formatMessage({
+        defaultMessage: 'Select all workflows checkbox rows label',
+        id: 'FSD5Z4',
+        description: 'Aria label for select all workflows checkbox',
+      }),
+      CHECKBOX_ROW_LABEL: intl.formatMessage({
+        defaultMessage: 'Select workflow row checkbox label',
+        id: 'oChTO9',
+        description: 'Accessibility label for the select workflow row checkbox',
+      }),
+    },
   };
 };
 

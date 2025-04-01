@@ -26,6 +26,7 @@ import {
   Skeleton,
   SkeletonItem,
 } from '@fluentui/react-components';
+import { useTemplatesStrings } from '../../../../../ui/templates/templatesStrings';
 
 export const SelectWorkflows = ({
   selectedWorkflowsList,
@@ -59,6 +60,8 @@ export const SelectWorkflows = ({
     },
     [dispatch, onWorkflowsSelected]
   );
+
+  const { ariaLabelStrings } = useTemplatesStrings();
 
   const intlText = {
     SOURCE: intl.formatMessage({
@@ -128,21 +131,21 @@ export const SelectWorkflows = ({
         selectionMode: 'multiselect',
         selectedItems: new Set(Object.keys(selectedWorkflowsList)),
         onSelectionChange: (_, data) => {
-          onWorkflowsSelected(Array.from(data.selectedItems, String).map((workflowsId) => normalizedWorkflowId(workflowsId)));
+          onWorkflowsSelected(Array.from(data.selectedItems, String).map((workflowsId) => normalizeWorkflowId(workflowsId)));
         },
       }),
     ]
   );
 
   const rows = getRows((row) => {
-    const selected = isRowSelected(normalizedWorkflowId(row.item.id));
+    const selected = isRowSelected(normalizeWorkflowId(row.item.id));
     return {
       ...row,
-      onClick: (e: React.MouseEvent) => toggleRow(e, normalizedWorkflowId(row.item.id)),
+      onClick: (e: React.MouseEvent) => toggleRow(e, normalizeWorkflowId(row.item.id)),
       onKeyDown: (e: React.KeyboardEvent) => {
         if (e.key === ' ') {
           e.preventDefault();
-          toggleRow(e, normalizedWorkflowId(row.item.id));
+          toggleRow(e, normalizeWorkflowId(row.item.id));
         }
       },
       selected,
@@ -166,16 +169,15 @@ export const SelectWorkflows = ({
         <ResourcePicker viewMode={'alllogicapps'} onSelectApp={onLogicAppSelected} />
       </TemplatesSection>
       <TemplatesSection title={intlText.WORKFLOWS} titleHtmlFor={'workflowsLabel'} description={intlText.WORKFLOWS_LABEL}>
-        <Table aria-label="Table with multiselect" style={{ minWidth: '550px' }}>
+        <Table aria-label={ariaLabelStrings.WORKFLOWS_LIST_TABLE_LABEL} style={{ minWidth: '550px' }}>
           <TableHeader>
             <TableRow>
               <TableSelectionCell
                 checked={isConsumption || allRowsSelected ? true : someRowsSelected ? 'mixed' : false}
                 onClick={toggleAllRows}
                 onKeyDown={toggleAllKeydown}
-                checkboxIndicator={{ 'aria-label': 'Select all rows' }}
+                checkboxIndicator={{ 'aria-label': ariaLabelStrings.SELECT_ALL_WORKFLOWS_LABEL }}
               />
-
               <TableHeaderCell>{intlText.WORKFLOW_NAME}</TableHeaderCell>
               <TableHeaderCell>{intlText.TRIGGER_TYPE}</TableHeaderCell>
             </TableRow>
@@ -186,14 +188,14 @@ export const SelectWorkflows = ({
               ? logicAppName
                 ? [...Array(5)].map((_, index) => (
                     <TableRow key={index} aria-hidden="true">
-                      <TableSelectionCell checkboxIndicator={{ 'aria-label': 'Loading row' }} checked={false} />
+                      <TableSelectionCell checkboxIndicator={{ 'aria-label': ariaLabelStrings.LOADING_WORKFLOWS_LABEL }} checked={false} />
                       <TableCell>
-                        <Skeleton aria-label="Loading name">
+                        <Skeleton aria-label={ariaLabelStrings.LOADING_WORKFLOWS_LABEL}>
                           <SkeletonItem />
                         </Skeleton>
                       </TableCell>
                       <TableCell>
-                        <Skeleton aria-label="Loading trigger">
+                        <Skeleton aria-label={ariaLabelStrings.LOADING_WORKFLOWS_LABEL}>
                           <SkeletonItem />
                         </Skeleton>
                       </TableCell>
@@ -202,7 +204,10 @@ export const SelectWorkflows = ({
                 : null
               : rows.map(({ item, selected, onClick, onKeyDown, appearance }) => (
                   <TableRow key={item.id} onClick={onClick} onKeyDown={onKeyDown} aria-selected={selected} appearance={appearance}>
-                    <TableSelectionCell checked={isConsumption || selected} checkboxIndicator={{ 'aria-label': 'Select row' }} />
+                    <TableSelectionCell
+                      checked={isConsumption || selected}
+                      checkboxIndicator={{ 'aria-label': ariaLabelStrings.CHECKBOX_ROW_LABEL }}
+                    />
                     <TableCell>
                       <TableCellLayout>{item.name}</TableCellLayout>
                     </TableCell>
@@ -218,7 +223,7 @@ export const SelectWorkflows = ({
   );
 };
 
-const normalizedWorkflowId = (workflowId: string) => workflowId.toLowerCase();
+const normalizeWorkflowId = (workflowId: string) => workflowId.toLowerCase();
 
 export const selectWorkflowsTab = (
   intl: IntlShape,
@@ -247,9 +252,9 @@ export const selectWorkflowsTab = (
       id: '0UfxUM',
       description: 'Button text for moving to the next tab in the create workflow panel',
     }),
-    primaryButtonOnClick: async () => {
+    primaryButtonOnClick: () => {
       dispatch(selectPanelTab(constants.CONFIGURE_TEMPLATE_WIZARD_TAB_NAMES.CUSTOMIZE_WORKFLOWS));
-      await onNextButtonClick();
+      onNextButtonClick();
     },
     primaryButtonDisabled: isPrimaryButtonDisabled,
     secondaryButtonText: intl.formatMessage({

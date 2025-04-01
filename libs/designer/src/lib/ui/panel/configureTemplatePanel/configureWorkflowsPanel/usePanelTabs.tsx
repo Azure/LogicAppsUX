@@ -7,11 +7,8 @@ import type { AppDispatch, RootState } from '../../../../core/state/templates/st
 import { useFunctionalState } from '@react-hookz/web';
 import type { WorkflowTemplateData } from '../../../../core';
 import { updateAllWorkflowsData } from '../../../../core/state/templates/templateSlice';
-import {
-  getWorkflownameFromWorkflowId,
-  getWorkflowsWithDefinitions,
-  initializeWorkflowsData,
-} from '../../../../core/actions/bjsworkflow/configuretemplate';
+import { getWorkflowsWithDefinitions, initializeWorkflowsData } from '../../../../core/actions/bjsworkflow/configuretemplate';
+import { getResourceNameFromId } from '@microsoft/logic-apps-shared';
 
 export const useConfigureWorkflowPanelTabs = (): TemplateTabProps[] => {
   const intl = useIntl();
@@ -25,7 +22,7 @@ export const useConfigureWorkflowPanelTabs = (): TemplateTabProps[] => {
   const isSaving = false; // Placeholder for actual saving state
 
   const [selectedWorkflowsList, setSelectedWorkflowsList] =
-    useFunctionalState<Record<string, Partial<WorkflowTemplateData>>>(workflowsInTemplate); //TODO: update the initial value to the workflows in the template
+    useFunctionalState<Record<string, Partial<WorkflowTemplateData>>>(workflowsInTemplate);
 
   const onWorkflowsSelected = (normalizedWorkflowIds: string[]) => {
     setSelectedWorkflowsList((prevSelectedWorkflows) => {
@@ -33,7 +30,7 @@ export const useConfigureWorkflowPanelTabs = (): TemplateTabProps[] => {
       for (const normalizedWorkflowId of normalizedWorkflowIds) {
         newSelectedWorkflows[normalizedWorkflowId] = prevSelectedWorkflows[normalizedWorkflowId] ?? {
           id: normalizedWorkflowId,
-          workflowName: getWorkflownameFromWorkflowId(normalizedWorkflowId),
+          workflowName: getResourceNameFromId(normalizedWorkflowId),
         };
       }
       return newSelectedWorkflows;

@@ -18,7 +18,7 @@ export class BaseResourceService implements IResourceService {
       const uri = `${baseUrl}/subscriptions`;
       const queryParameters = { 'api-version': apiVersion };
       const response = await getAzureResourceRecursive(httpClient, uri, queryParameters);
-      return response.map((item) => ({ id: item.id, name: getNameFromId(item.id), displayName: item.displayName }));
+      return response.map((item) => ({ id: item.id, name: getResourceNameFromId(item.id), displayName: item.displayName }));
     } catch (error) {
       throw new Error(error as any);
     }
@@ -71,7 +71,7 @@ export class BaseResourceService implements IResourceService {
     const response: any = await httpClient.get({ uri, queryParameters });
     return response.map((item: any) => ({
       id: `/subscriptions/${subscriptionId}/resourceGroups/${resourceGroup}/providers/Microsoft.Web/sites/${logicAppName}/workflows/${item.name}`,
-      name: getNameFromId(item.name),
+      name: getResourceNameFromId(item.name),
       triggerType: getTriggerFromDefinition(item.triggers),
     }));
   }
@@ -83,6 +83,6 @@ export class BaseResourceService implements IResourceService {
   }
 }
 
-const getNameFromId = (id: string): string => {
+export const getResourceNameFromId = (id: string): string => {
   return id.split('/').pop() ?? id;
 };

@@ -60,21 +60,11 @@ export const WorkflowsTab = () => {
         id: 'Ld62T8',
         description: 'Button text for deleting selected workflows',
       }),
-      CHECKBOX_ALL_ROWS: intl.formatMessage({
-        defaultMessage: 'Select all rows',
-        id: '+JtwJv',
-        description: 'Accessibility label for the select all rows checkbox',
-      }),
-      CHECKBOX_ROW: intl.formatMessage({
-        defaultMessage: 'Select row',
-        id: 'hpKZGo',
-        description: 'Accessibility label for the select row checkbox',
-      }),
     }),
     [intl]
   );
 
-  const { resourceStrings } = useTemplatesStrings();
+  const { resourceStrings, ariaLabelStrings } = useTemplatesStrings();
 
   const handleAddWorkflows = useCallback(() => {
     dispatch(openPanelView({ panelView: TemplatePanelView.ConfigureWorkflows }));
@@ -105,6 +95,8 @@ export const WorkflowsTab = () => {
     name: string;
     displayName: string;
     state: string;
+    trigger: string;
+    date: string;
   };
 
   const columns: TableColumnDefinition<WorkflowsTableItem>[] = [
@@ -117,6 +109,12 @@ export const WorkflowsTab = () => {
     createTableColumn<WorkflowsTableItem>({
       columnId: 'state',
     }),
+    createTableColumn<WorkflowsTableItem>({
+      columnId: 'trigger',
+    }),
+    createTableColumn<WorkflowsTableItem>({
+      columnId: 'date',
+    }),
   ];
 
   const items =
@@ -125,6 +123,8 @@ export const WorkflowsTab = () => {
       name: workflowData?.workflowName ?? intlText.PLACEHOLDER,
       displayName: workflowData?.manifest?.title ?? intlText.PLACEHOLDER,
       state: workflowData?.manifest?.kinds?.join(', ') ?? intlText.PLACEHOLDER,
+      trigger: '-', //TODO: replace this with the actual trigger type
+      date: '-', //TODO: replace this with the actual date
     })) ?? [];
 
   const {
@@ -188,14 +188,14 @@ export const WorkflowsTab = () => {
       />
 
       {Object.keys(workflows).length > 0 ? (
-        <Table aria-label="Table with multiselect" style={{ minWidth: '550px' }}>
+        <Table aria-label={ariaLabelStrings.WORKFLOWS_LIST_TABLE_LABEL} style={{ minWidth: '550px' }}>
           <TableHeader>
             <TableRow>
               <TableSelectionCell
                 checked={allRowsSelected ? true : someRowsSelected ? 'mixed' : false}
                 onClick={toggleAllRows}
                 onKeyDown={toggleAllKeydown}
-                checkboxIndicator={{ 'aria-label': intlText.CHECKBOX_ALL_ROWS }}
+                checkboxIndicator={{ 'aria-label': ariaLabelStrings.SELECT_ALL_WORKFLOWS_LABEL }}
               />
 
               <TableHeaderCell>{resourceStrings.WORKFLOW_NAME}</TableHeaderCell>
@@ -205,7 +205,7 @@ export const WorkflowsTab = () => {
           </TableHeader>
           {rows.map(({ item, selected, onClick, onKeyDown, appearance }) => (
             <TableRow key={item.id} onClick={onClick} onKeyDown={onKeyDown} aria-selected={selected} appearance={appearance}>
-              <TableSelectionCell checked={selected} checkboxIndicator={{ 'aria-label': intlText.CHECKBOX_ROW }} />
+              <TableSelectionCell checked={selected} checkboxIndicator={{ 'aria-label': ariaLabelStrings.CHECKBOX_ROW_LABEL }} />
               <TableCell>
                 <TableCellLayout>{item.name}</TableCellLayout>
               </TableCell>
@@ -214,6 +214,12 @@ export const WorkflowsTab = () => {
               </TableCell>
               <TableCell>
                 <TableCellLayout>{item.state}</TableCellLayout>
+              </TableCell>
+              <TableCell>
+                <TableCellLayout>{item.trigger}</TableCellLayout>
+              </TableCell>
+              <TableCell>
+                <TableCellLayout>{item.date}</TableCellLayout>
               </TableCell>
             </TableRow>
           ))}
