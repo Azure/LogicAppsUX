@@ -135,7 +135,6 @@ using Microsoft.Azure.WebJobs.Extensions.DurableTask;
 using Microsoft.Azure.WebJobs.Extensions.Http;
 using Microsoft.Azure.WebJobs.Host;
 using Microsoft.Extensions.Logging;
-using NLog.Fluent;
 
 namespace Company.Function
 {
@@ -155,7 +154,7 @@ namespace Company.Function
         [FunctionName("TimerTrigger1")]
         public static async Task Run([TimerTrigger("0 */5 * * * *")]TimerInfo myTimer, [DurableClient] IDurableOrchestrationClient starter, ILogger log)
         {
-            log.LogInformation($"C# Timer trigger function executed at: {DateTime.Now}");
+            log.LogInformation($"C# Timer trigger function executed at: ");
             string instanceId = await starter.StartNewAsync("Function1", null);
 
             log.LogInformation("Started orchestration with ID = '{instanceId}'.", instanceId);
