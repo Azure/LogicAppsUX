@@ -43,7 +43,7 @@ test.describe(
 
         await page.waitForTimeout(100);
 
-        await page.getByTestId('name - 1 contenteditable').click();
+        await page.getByTestId('[data-testid="name - 1 contenteditable"]').click();
         await page.locator('[data-testid="name - 1 contenteditable"]').fill('newVariable');
         await page.getByText('Select variable type').click();
         await page.getByRole('option', { name: 'Integer' }).click();
