@@ -136,16 +136,16 @@ export const InitializeVariableEditor = ({
 
   return variables ? (
     <div className="msla-editor-initialize-variables">
-      {props.isMultiVariableEnabled || isAgentParameter ? (
+      {isAgentParameter ? (
         <div className="msla-initialize-variable-add-variable-button">
           <Button
             appearance="subtle"
             aria-label={addButtonText}
             onClick={addVariable}
-            disabled={variables.length === constants.PARAMETER.VARIABLE_EDITOR_MAX_VARIABLES || props.readonly}
+            disabled={props.readonly}
             icon={<CreateIcon />}
             style={
-              variables.length === constants.PARAMETER.VARIABLE_EDITOR_MAX_VARIABLES || props.readonly
+              props.readonly
                 ? {}
                 : {
                     color: 'var(--colorBrandForeground1)',
@@ -170,6 +170,27 @@ export const InitializeVariableEditor = ({
           errors={validationErrors?.[index]}
         />
       ))}
+      {props.isMultiVariableEnabled && !isAgentParameter ? (
+        <div className="msla-initialize-variable-add-variable-button">
+          <Button
+            appearance="subtle"
+            aria-label={addButtonText}
+            onClick={addVariable}
+            disabled={variables.length === constants.PARAMETER.VARIABLE_EDITOR_MAX_VARIABLES || props.readonly}
+            icon={<CreateIcon />}
+            style={
+              variables.length === constants.PARAMETER.VARIABLE_EDITOR_MAX_VARIABLES || props.readonly
+                ? {}
+                : {
+                    color: 'var(--colorBrandForeground1)',
+                    border: '1px solid #9e9e9e',
+                  }
+            }
+          >
+            {addButtonText}
+          </Button>
+        </div>
+      ) : null}
     </div>
   ) : (
     <>
