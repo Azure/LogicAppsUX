@@ -1,5 +1,5 @@
 import { LogEntryLevel, LoggerService, type Template, getTriggerFromDefinition, isNullOrUndefined } from '@microsoft/logic-apps-shared';
-import type { AppDispatch } from '../../../../../core/state/templates/store';
+import type { AppDispatch, RootState } from '../../../../../core/state/templates/store';
 import { useIntl, type IntlShape } from 'react-intl';
 import constants from '../../../../../common/constants';
 import { closePanel, openPanelView, TemplatePanelView } from '../../../../../core/state/templates/panelSlice';
@@ -12,9 +12,11 @@ import { ConnectionsList } from '../../../../templates/connections/connections';
 import { Open16Regular } from '@fluentui/react-icons';
 import { isMultiWorkflowTemplate } from '../../../../../core/actions/bjsworkflow/templates';
 import { useMemo } from 'react';
+import { useSelector } from 'react-redux';
 
 export const SummaryPanel = ({ workflowId }: { workflowId: string }) => {
   const intl = useIntl();
+  const { isConsumption, subscriptionId, resourceGroup, workflowAppName } = useSelector((state: RootState) => state.workflow);
   const workflowTemplate = useWorkflowTemplate(workflowId);
   const workflowManifest = useMemo(() => workflowTemplate?.manifest, [workflowTemplate]);
   const workflowDefinition = useMemo(() => workflowTemplate?.workflowDefinition, [workflowTemplate]);
@@ -38,25 +40,30 @@ export const SummaryPanel = ({ workflowId }: { workflowId: string }) => {
       description: 'Name of the organization that published this template',
     }),
   };
+  const hideConnection = useMemo(() => {
+    return !isConsumption && !(subscriptionId && resourceGroup && workflowAppName);
+  }, [isConsumption, subscriptionId, resourceGroup, workflowAppName]);
 
   return isNullOrUndefined(workflowManifest) || isNullOrUndefined(templateManifest) ? null : (
     <div className="msla-template-overview">
-      <div className="msla-template-overview-section">
-        <Text className="msla-template-overview-section-title" style={templateHasConnections ? undefined : { marginBottom: '-30px' }}>
-          {templateHasConnections
-            ? intl.formatMessage({
-                defaultMessage: 'Connections included in this template',
-                id: 'TnwRGo',
-                description: 'Title for the connections section in the template overview tab',
-              })
-            : intl.formatMessage({
-                defaultMessage: 'No connections are needed in this template',
-                id: 'j2v8BE',
-                description: 'Text to show no connections present in the template.',
-              })}
-        </Text>
-        {templateHasConnections ? <ConnectionsList connections={workflowManifest?.connections ?? {}} /> : null}
-      </div>
+      {hideConnection ? null : (
+        <div className="msla-template-overview-section">
+          <Text className="msla-template-overview-section-title" style={templateHasConnections ? undefined : { marginBottom: '-30px' }}>
+            {templateHasConnections
+              ? intl.formatMessage({
+                  defaultMessage: 'Connections included in this template',
+                  id: 'TnwRGo',
+                  description: 'Title for the connections section in the template overview tab',
+                })
+              : intl.formatMessage({
+                  defaultMessage: 'No connections are needed in this template',
+                  id: 'j2v8BE',
+                  description: 'Text to show no connections present in the template.',
+                })}
+          </Text>
+          {templateHasConnections ? <ConnectionsList connections={workflowManifest?.connections ?? {}} /> : null}
+        </div>
+      )}
       {workflowManifest?.prerequisites ? (
         <div className="msla-template-overview-section">
           <Text className="msla-template-overview-section-title">
