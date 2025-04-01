@@ -22,6 +22,10 @@ vi.mock('@microsoft/vscode-azext-utils', () => {
     AzureWizardPromptStep: vi.fn().mockImplementation(() => {
       return {};
     }),
+    AzureWizard: class {
+      async prompt() {}
+      async execute() {}
+    },
     nonNullProp: vi.fn(),
     nonNullValue: vi.fn(),
     callWithTelemetryAndErrorHandling: (_key: string, callback: Function) => {
@@ -31,6 +35,7 @@ vi.mock('@microsoft/vscode-azext-utils', () => {
     parseError: vi.fn(() => {
       return { message: 'error' };
     }),
+    DialogResponses: vi.fn(),
   };
 });
 

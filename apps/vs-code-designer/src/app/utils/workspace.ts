@@ -134,7 +134,7 @@ export async function getWorkspaceFolder(
   context: IActionContext,
   message?: string,
   skipPromptOnMultipleFolders?: boolean
-): Promise<vscode.WorkspaceFolder | undefined> {
+): Promise<vscode.WorkspaceFolder | string | undefined> {
   const promptMessage: string = message ?? localize('noWorkspaceWarning', 'You must have a workspace open to perform this action.');
 
   if (!vscode.workspace.workspaceFolders || vscode.workspace.workspaceFolders.length === 0) {
@@ -148,7 +148,7 @@ export async function getWorkspaceFolder(
     }
 
     const workspaceFolderPath = workspaceFolder.uri.fsPath;
-    if (isLogicAppProject(workspaceFolderPath)) {
+    if (await isLogicAppProject(workspaceFolderPath)) {
       return workspaceFolder;
     }
     const folders = await fse.readdir(workspaceFolderPath, { withFileTypes: true });
@@ -167,7 +167,7 @@ async function selectLogicAppWorkspaceFolder(
   returnsWorkspaceFolder: boolean,
   subFolders: string[],
   skipPromptOnMultipleFolders?: boolean
-): Promise<vscode.WorkspaceFolder> {
+): Promise<vscode.WorkspaceFolder | string> {
   const logicAppsWorkspaces = [];
   for (const folder of returnsWorkspaceFolder ? vscode.workspace.workspaceFolders : subFolders) {
     const projectRoot = await tryGetLogicAppProjectRoot(context, folder);
