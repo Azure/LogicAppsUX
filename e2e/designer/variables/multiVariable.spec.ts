@@ -30,14 +30,14 @@ test.describe(
 
         await page.getByTestId('card-initialize_variables_2').getByRole('button', { name: 'Initialize variables' }).click();
         await page.getByRole('tab', { name: 'Code view' }).click();
-        await page.waitForFunction(() => !document.querySelector('#code-view')?.textContent?.includes('loading'), { timeout: 1000 });
+        await page.waitForFunction(() => !document.querySelector('#code-view')?.textContent?.includes('Loading'), { timeout: 1000 });
         await expect(page.getByRole('code')).toContainText(
           '{ "type": "InitializeVariable", "inputs": { "variables": [ { "name": "testVariable1", "type": "string", "value": "123" }, { "name": "testVariable2", "type": "float", "value": 123.5 }, { "name": "testVariable3", "type": "array", "value": [] } ] }, "runAfter": {}}'
         );
 
         await page.getByTestId('card-initialize_variables_5').getByRole('button', { name: 'Initialize variables' }).click();
         await page.getByRole('tab', { name: 'Code view' }).click();
-        await page.waitForFunction(() => !document.querySelector('#code-view')?.textContent?.includes('loading'), { timeout: 1000 });
+        await page.waitForFunction(() => !document.querySelector('#code-view')?.textContent?.includes('Loading'), { timeout: 1000 });
         await expect(page.getByRole('code')).toContainText(
           '{ "type": "InitializeVariable", "inputs": { "variables": [ { "name": "testBoolean1", "type": "boolean", "value": true }, { "name": "testBoolean2", "type": "boolean", "value": false }, { "name": "testInteger", "type": "integer", "value": 15 } ] }, "runAfter": { "Scope": [ "SUCCEEDED" ] }}'
         );
@@ -105,7 +105,7 @@ test.describe(
 
       await page.getByTestId('card-initialize_variables_2').getByRole('button', { name: 'Initialize variables' }).click();
       await page.getByRole('tab', { name: 'Code view' }).click();
-      await page.waitForFunction(() => !document.querySelector('#code-view')?.textContent?.includes('loading'), { timeout: 1000 });
+      await page.waitForFunction(() => !document.querySelector('#code-view')?.textContent?.includes('Loading'), { timeout: 1000 });
       await expect(page.getByRole('code')).toContainText(
         '{ "type": "InitializeVariable", "inputs": { "variables": [ { "name": "testVariable1", "type": "string", "value": "123" }, { "name": "testVariable2", "type": "float", "value": 123.5 }, { "name": "testVariable3", "type": "array", "value": [] } ] }, "runAfter": {}}'
       );

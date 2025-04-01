@@ -113,11 +113,15 @@ export const InitializeVariableEditor = ({
     (index: number) => {
       setVariables((prev) => {
         const p = prev ?? [];
+        // If there is only one variable and it's not an agent parameter, don't allow deletion
+        if (p.length === 1 && !isAgentParameter) {
+          return prev;
+        }
         const updatedVariables = p.filter((_, i) => i !== index);
         return updateVariables(updatedVariables);
       });
     },
-    [updateVariables]
+    [isAgentParameter, updateVariables]
   );
 
   const handleVariableChange = useCallback(
@@ -132,6 +136,27 @@ export const InitializeVariableEditor = ({
 
   return variables ? (
     <div className="msla-editor-initialize-variables">
+      {isAgentParameter ? (
+        <div className="msla-initialize-variable-add-variable-button">
+          <Button
+            appearance="subtle"
+            aria-label={addButtonText}
+            onClick={addVariable}
+            disabled={props.readonly}
+            icon={<CreateIcon />}
+            style={
+              props.readonly
+                ? {}
+                : {
+                    color: 'var(--colorBrandForeground1)',
+                    border: '1px solid #9e9e9e',
+                  }
+            }
+          >
+            {addButtonText}
+          </Button>
+        </div>
+      ) : null}
       {variables.map((variable, index) => (
         <VariableEditor
           {...props}
@@ -145,7 +170,7 @@ export const InitializeVariableEditor = ({
           errors={validationErrors?.[index]}
         />
       ))}
-      {props.isMultiVariableEnabled || isAgentParameter ? (
+      {props.isMultiVariableEnabled && !isAgentParameter ? (
         <div className="msla-initialize-variable-add-variable-button">
           <Button
             appearance="subtle"
