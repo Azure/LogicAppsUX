@@ -126,6 +126,7 @@ const parseMessage = (
       const iteration = message?.iteration ?? 0;
       const subIteration = message.toolResultsPayload?.toolResult?.subIteration ?? 0;
       const toolName = message.toolResultsPayload?.toolResult?.toolName;
+      const status = message.toolResultsPayload?.toolResult?.subIteration ?? undefined;
 
       return {
         id: guid(),
@@ -134,6 +135,7 @@ const parseMessage = (
         onClick: () => {
           toolResultCallback(id, toolName, iteration, subIteration);
         },
+        status,
         timestamp: message.timestamp,
       };
     }
