@@ -87,21 +87,20 @@ export const initializeConfigureTemplateServices = createAsyncThunk(
 export const initializeWorkflowsData = createAsyncThunk(
   'initializeWorkflowsData',
   async (
-    _: unknown,
+    { workflows }: { workflows: Record<string, Partial<WorkflowTemplateData>> },
     { getState, dispatch }
   ): Promise<{
     connections: Record<string, Template.Connection>;
     parameterDefinitions: Record<string, Partial<Template.ParameterDefinition>>;
   }> => {
-    const { connections, mapping } = await getTemplateConnections(getState() as RootState, dispatch); ///
-    const {
-      template: { workflows },
-    } = getState() as RootState;
-
-    const operationsData = await getOperationDataInDefinitions(workflows, connections);
+    const { connections, mapping, workflowsWithDefinitions } = await getTemplateConnections(getState() as RootState, dispatch, workflows);
+    const operationsData = await getOperationDataInDefinitions(
+      workflowsWithDefinitions as Record<string, WorkflowTemplateData>,
+      connections
+    );
     dispatch(initializeNodeOperationInputsData(operationsData));
 
-    const parameterDefinitions = await getTemplateParameters(getState() as RootState, mapping); ////
+    const parameterDefinitions = await getTemplateParameters(getState() as RootState, mapping);
     return { connections, parameterDefinitions };
   }
 );
@@ -163,10 +162,13 @@ export const deleteWorkflowData = createAsyncThunk(
   }
 );
 
-export const getTemplateConnections = async (state: RootState, dispatch: ThunkDispatch<unknown, unknown, AnyAction>) => {
+export const getTemplateConnections = async (
+  state: RootState,
+  dispatch: ThunkDispatch<unknown, unknown, AnyAction>,
+  workflows: Record<string, Partial<WorkflowTemplateData>>
+) => {
   const {
     workflow: { subscriptionId, resourceGroup, isConsumption, logicAppName },
-    template: { workflows },
   } = state;
 
   if (isConsumption) {
@@ -175,21 +177,21 @@ export const getTemplateConnections = async (state: RootState, dispatch: ThunkDi
     const workflowId = getLogicAppId(subscriptionId, resourceGroup, logicAppName as string);
     const mapping = await getConnectionMappingInDefinition(definition, workflowId);
 
-    dispatch(
-      updateAllWorkflowsData({
-        [workflowId]: {
-          id: workflowId,
-          workflowDefinition: definition,
-          connectionKeys: Object.keys(connections),
-        },
-      })
-    );
-    return { connections, mapping };
+    const workflowWithDefinition = {
+      [workflowId]: {
+        id: workflowId,
+        workflowDefinition: definition,
+        connectionKeys: Object.keys(connections),
+      },
+    };
+
+    dispatch(updateAllWorkflowsData(workflowWithDefinition));
+    return { connections, mapping, workflowsWithDefinitions: workflowWithDefinition };
   }
 
   const allConnections = await getConnectionsForStandard(subscriptionId, resourceGroup, logicAppName as string);
   const workflowIds = Object.keys(workflows).map((id) => workflows[id].id);
-  const promises = workflowIds.map((workflowId) => getDefinitionAndUsedConnectionMappings(workflowId));
+  const promises = workflowIds.map((workflowId) => getDefinitionAndUsedConnectionMappings(workflowId as string));
   const workflowsData = clone(workflows);
   const allWorkflowsData = (await Promise.all(promises))
     .filter((data) => !!data)
@@ -200,7 +202,7 @@ export const getTemplateConnections = async (state: RootState, dispatch: ThunkDi
         index
       ) => {
         if (data?.definition) {
-          result.push({ id: workflowIds[index], ...data });
+          result.push({ id: workflowIds[index] as string, ...data });
         }
         return result;
       },
@@ -228,7 +230,7 @@ export const getTemplateConnections = async (state: RootState, dispatch: ThunkDi
   }
 
   dispatch(updateAllWorkflowsData(workflowsData));
-  return { connections: connectionsInUse, mapping: allMappings };
+  return { connections: connectionsInUse, mapping: allMappings, workflowsWithDefinitions: workflowsData };
 };
 
 const getConnectionsForConsumption = async (

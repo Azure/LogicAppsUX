@@ -30,9 +30,9 @@ export const ConfigureTemplateWizard = () => {
   const [showFeaturedConnectors, setShowFeaturedConnectors] = useState(false);
 
   const onInitializeWorkflows = useCallback(() => {
-    dispatch(initializeWorkflowsData({}));
+    dispatch(initializeWorkflowsData({ workflows: workflowsInTemplate }));
     setShowFeaturedConnectors(true);
-  }, [dispatch]);
+  }, [dispatch, workflowsInTemplate]);
 
   const onWorkflowSelected = useCallback(
     (workflowId: string, checked: boolean) => {

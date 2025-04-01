@@ -53,7 +53,7 @@ export const useConfigureWorkflowPanelTabs = (): TemplateTabProps[] => {
 
   const onSaveChanges = () => {
     dispatch(updateAllWorkflowsData(selectedWorkflowsList()));
-    dispatch(initializeWorkflowsData({}));
+    dispatch(initializeWorkflowsData({ workflows: selectedWorkflowsList() }));
   };
 
   const isNoWorkflowsSelected = Object.keys(selectedWorkflowsList()).length === 0;
