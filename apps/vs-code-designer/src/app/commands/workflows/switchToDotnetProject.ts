@@ -140,7 +140,7 @@ export async function switchToDotnetProject(context: IProjectWizardContext, targ
   );
 
   await copyBundleProjectFiles(target);
-  await updateBuildFile(context, target, dotnetVersion, isCodeful);
+  await updateBuildFile(context, target, 'net8.0', isCodeful);
   if (useBinaries) {
     await createGlobalJsonFile(dotnetLocalVersion, target.fsPath);
   }

@@ -97,7 +97,7 @@ export function addCodefulNugetPackagesToBuildFile(xmlBuildFile: Record<string, 
     const itemGroup: Record<string, any> = {
       PackageReference: {
         $: {
-          Include: durablePackageVersion,
+          Include: durablePackageName,
           Version: durablePackageVersion,
         },
       },
