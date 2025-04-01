@@ -112,6 +112,16 @@ export async function getLocalSettingsJson(
   return getLocalSettingsSchema(isDesignTime);
 }
 
+export async function removeAppKindFromLocalSettings(  logicAppPath: string, context: IActionContext): Promise<void> {
+  const localSettingsPath: string = path.join(logicAppPath, localSettingsFileName);
+  const settings: ILocalSettingsJson = await getLocalSettingsJson(context, localSettingsPath);
+
+  if (settings.Values && settings.Values[appKindSetting]) {
+    delete settings.Values[appKindSetting];
+    await writeFormattedJson(localSettingsPath, settings);
+  }
+}
+
 /**
  * Set local.settings.json values.
  * @param {IActionContext} context - Command context.

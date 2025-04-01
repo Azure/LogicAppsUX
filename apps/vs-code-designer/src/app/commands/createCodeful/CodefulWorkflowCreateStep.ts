@@ -16,7 +16,7 @@ import { getCodefulWorkflowTemplate } from '../../utils/codeless/templates';
 import { writeFormattedJson } from '../../utils/fs';
 import { localize } from 'vscode-nls';
 import { workflowType, workflowFileName, hostFileName, extensionBundleId, defaultVersionRange, azureWebJobsStorageKey, localEmulatorConnectionString, localSettingsFileName } from '../../../constants';
-import { setLocalAppSetting } from '../../utils/appSettings/localSettings';
+import { removeAppKindFromLocalSettings, setLocalAppSetting } from '../../utils/appSettings/localSettings';
 import { validateDotnetInstalled } from '../../utils/dotnet/executeDotnetTemplateCommand';
 import { parseJson } from '../../utils/parseJson';
 
@@ -70,6 +70,9 @@ export class CodefulWorkflowCreateStep extends WorkflowCreateStepBase<IFunctionW
     let hostJson: IHostJsonV2 = await this.getHostJson(context, hostJsonPath);
     let hostJsonUpdated = false;
 
+    hostJson.extensionBundle = undefined;
+    hostJsonUpdated = true;
+
     if (
       nonNullProp(context, 'workflowProjectType') === WorkflowProjectType.Bundle &&
       (hostJson.extensionBundle === undefined ||
@@ -78,11 +81,12 @@ export class CodefulWorkflowCreateStep extends WorkflowCreateStepBase<IFunctionW
     ) {
       hostJson = {
         ...hostJson,
-        extensionBundle: {
-          id: extensionBundleId,
-          version: defaultVersionRange,
-        },
+        // extensionBundle: {
+        //   id: extensionBundleId,
+        //   version: defaultVersionRange,
+        // },
       };
+      hostJson.extensionBundle = undefined;
       hostJsonUpdated = true;
     }
 
@@ -96,6 +100,7 @@ export class CodefulWorkflowCreateStep extends WorkflowCreateStepBase<IFunctionW
       localEmulatorConnectionString,
       MismatchBehavior.Overwrite
     );
+    await removeAppKindFromLocalSettings(context.projectPath, context);
   }
 
   private async getHostJson(context: IFunctionWizardContext, hostJsonPath: string, allowOverwrite = false): Promise<IHostJsonV2> {
