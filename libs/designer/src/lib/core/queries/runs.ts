@@ -16,9 +16,19 @@ export interface ChatHistory {
   messages: any[];
 }
 
+export const runsQueriesKeys = {
+  runs: 'runs',
+  run: 'run',
+  useNodeRepetition: 'useNodeRepetition',
+  useScopeFailedRepetitions: 'useScopeFailedRepetitions',
+  useAgentRepetition: 'useAgentRepetition',
+  useAgentActionsRepetition: 'useAgentActionsRepetition',
+  useChatHistory: 'useChatHistory',
+};
+
 export const useRuns = (enabled = false) => {
   return useQuery(
-    ['runs'],
+    [runsQueriesKeys.runs],
     async () => {
       const allRuns: Run[] = [];
       const firstRuns = await RunService().getRuns();
@@ -41,7 +51,7 @@ export const useRuns = (enabled = false) => {
 export const getRun = (runId: string) => {
   const queryClient = getReactQueryClient();
   return queryClient.fetchQuery(
-    ['run', runId],
+    [runsQueriesKeys.run, runId],
     async () => {
       const fetchedRun = await RunService().getRun(runId);
       if (isRunError(fetchedRun)) {
@@ -82,7 +92,7 @@ export const useNodeRepetition = (
   isWithinAgenticLoop: boolean
 ) => {
   return useQuery(
-    ['useNodeRepetition', { nodeId, runId, repetitionName, parentStatus, parentRunIndex }],
+    [runsQueriesKeys.useNodeRepetition, { nodeId, runId, repetitionName, parentStatus, parentRunIndex }],
     async () => {
       if (parentStatus === constants.FLOW_STATUS.SKIPPED) {
         return {
@@ -110,7 +120,7 @@ export const useNodeRepetition = (
 
 export const useScopeFailedRepetitions = (normalizedType: string, nodeId: string, runId: string | undefined) => {
   return useQuery(
-    ['useScopeFailedRepetitions', { nodeId, runId }],
+    [runsQueriesKeys.useScopeFailedRepetitions, { nodeId, runId }],
     async () => {
       let failedRunRepetitions: LogicAppsV2.RunRepetition[] = [];
       try {
@@ -144,7 +154,7 @@ export const useAgentRepetition = (
   runIndex: number | undefined
 ) => {
   return useQuery(
-    ['useAgentRepetition', { nodeId, runId, repetitionName, parentStatus, runIndex }],
+    [runsQueriesKeys.useAgentRepetition, { nodeId, runId, repetitionName, parentStatus, runIndex }],
     async () => {
       return RunService().getAgentRepetition({ nodeId, runId }, repetitionName);
     },
@@ -166,7 +176,7 @@ export const useAgentActionsRepetition = (
   runIndex: number | undefined
 ) => {
   return useQuery(
-    ['useAgentActionsRepetition', { nodeId, runId, repetitionName, parentStatus, runIndex }],
+    [runsQueriesKeys.useAgentActionsRepetition, { nodeId, runId, repetitionName, parentStatus, runIndex }],
     async () => {
       const allActions: LogicAppsV2.RunRepetition[] = [];
       const firstActions = await RunService().getAgentActionsRepetition({ nodeId, runId }, repetitionName);
@@ -189,7 +199,7 @@ export const useAgentActionsRepetition = (
 
 export const useChatHistory = (isMonitoringView: boolean, nodeIds: string[], runId: string | undefined) => {
   return useQuery(
-    ['useChatHistory', { nodeIds, runId }],
+    [runsQueriesKeys.useChatHistory, { nodeIds, runId }],
     async () => {
       const allMessages: ChatHistory[] = [];
       for (const nodeId of nodeIds) {
