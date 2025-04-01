@@ -4,7 +4,7 @@ import { Accordion, AccordionHeader, AccordionItem, AccordionPanel, Text } from 
 import { getResourceNameFromId, type Template } from '@microsoft/logic-apps-shared';
 import { useMemo } from 'react';
 import { useResourceStrings } from '../resources';
-import { useTemplatesStrings } from 'lib/ui/templates/templatesStrings';
+import { useTemplatesStrings } from '../../templates/templatesStrings';
 
 export const CustomizeWorkflows = ({
   selectedWorkflowsList,
