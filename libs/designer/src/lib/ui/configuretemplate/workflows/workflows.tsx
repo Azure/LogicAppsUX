@@ -23,8 +23,8 @@ import { openPanelView, TemplatePanelView } from '../../../core/state/templates/
 import { ConfigureWorkflowsPanel } from '../../panel/configureTemplatePanel/configureWorkflowsPanel/configureWorkflowsPanel';
 import { useFunctionalState } from '@react-hookz/web';
 import { Add12Filled } from '@fluentui/react-icons';
-import { useTemplatesStrings } from '../../templates/templatesStrings';
 import { deleteWorkflowData } from '../../../core/actions/bjsworkflow/configuretemplate';
+import { useResourceStrings } from '../resources';
 
 export const DisplayWorkflows = ({ onSave }: { onSave: (isMultiWorkflow: boolean) => void }) => {
   const intl = useIntl();
@@ -62,7 +62,7 @@ export const DisplayWorkflows = ({ onSave }: { onSave: (isMultiWorkflow: boolean
     [intl]
   );
 
-  const { resourceStrings, ariaLabelStrings } = useTemplatesStrings();
+  const resourceStrings = useResourceStrings();
 
   const handleAddWorkflows = useCallback(() => {
     dispatch(openPanelView({ panelView: TemplatePanelView.ConfigureWorkflows }));
@@ -186,24 +186,24 @@ export const DisplayWorkflows = ({ onSave }: { onSave: (isMultiWorkflow: boolean
       />
 
       {Object.keys(workflows).length > 0 ? (
-        <Table aria-label={ariaLabelStrings.WORKFLOWS_LIST_TABLE_LABEL} style={{ minWidth: '550px' }}>
+        <Table aria-label={resourceStrings.WorkflowsListTableLabel} style={{ minWidth: '550px' }}>
           <TableHeader>
             <TableRow>
               <TableSelectionCell
                 checked={allRowsSelected ? true : someRowsSelected ? 'mixed' : false}
                 onClick={toggleAllRows}
                 onKeyDown={toggleAllKeydown}
-                checkboxIndicator={{ 'aria-label': ariaLabelStrings.SELECT_ALL_WORKFLOWS_LABEL }}
+                checkboxIndicator={{ 'aria-label': resourceStrings.SelectAllWorkflowsLabel }}
               />
 
-              <TableHeaderCell>{resourceStrings.WORKFLOW_NAME}</TableHeaderCell>
-              <TableHeaderCell>{resourceStrings.WORKFLOW_DISPLAY_NAME}</TableHeaderCell>
-              <TableHeaderCell>{resourceStrings.STATE}</TableHeaderCell>
+              <TableHeaderCell>{resourceStrings.WorkflowName}</TableHeaderCell>
+              <TableHeaderCell>{resourceStrings.WorkflowDisplayName}</TableHeaderCell>
+              <TableHeaderCell>{resourceStrings.State}</TableHeaderCell>
             </TableRow>
           </TableHeader>
           {rows.map(({ item, selected, onClick, onKeyDown, appearance }) => (
             <TableRow key={item.id} onClick={onClick} onKeyDown={onKeyDown} aria-selected={selected} appearance={appearance}>
-              <TableSelectionCell checked={selected} checkboxIndicator={{ 'aria-label': ariaLabelStrings.CHECKBOX_ROW_LABEL }} />
+              <TableSelectionCell checked={selected} checkboxIndicator={{ 'aria-label': resourceStrings.WorkflowCheckboxRowLabel }} />
               <TableCell>
                 <TableCellLayout>{item.name}</TableCellLayout>
               </TableCell>

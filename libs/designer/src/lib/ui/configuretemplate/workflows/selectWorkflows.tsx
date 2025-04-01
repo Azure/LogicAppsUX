@@ -23,7 +23,7 @@ import {
   Skeleton,
   SkeletonItem,
 } from '@fluentui/react-components';
-import { useTemplatesStrings } from '../../../ui/templates/templatesStrings';
+import { useResourceStrings } from '../resources';
 
 export const SelectWorkflows = ({
   selectedWorkflowsList,
@@ -58,7 +58,7 @@ export const SelectWorkflows = ({
     [dispatch, onWorkflowsSelected]
   );
 
-  const { ariaLabelStrings } = useTemplatesStrings();
+  const resourceStrings = useResourceStrings();
 
   const intlText = {
     SOURCE: intl.formatMessage({
@@ -166,14 +166,14 @@ export const SelectWorkflows = ({
         <ResourcePicker viewMode={'alllogicapps'} onSelectApp={onLogicAppSelected} />
       </TemplatesSection>
       <TemplatesSection title={intlText.WORKFLOWS} titleHtmlFor={'workflowsLabel'} description={intlText.WORKFLOWS_LABEL}>
-        <Table aria-label={ariaLabelStrings.WORKFLOWS_LIST_TABLE_LABEL} style={{ minWidth: '550px' }}>
+        <Table aria-label={resourceStrings.WorkflowsListTableLabel} style={{ minWidth: '550px' }}>
           <TableHeader>
             <TableRow>
               <TableSelectionCell
                 checked={isConsumption || allRowsSelected ? true : someRowsSelected ? 'mixed' : false}
                 onClick={toggleAllRows}
                 onKeyDown={toggleAllKeydown}
-                checkboxIndicator={{ 'aria-label': ariaLabelStrings.SELECT_ALL_WORKFLOWS_LABEL }}
+                checkboxIndicator={{ 'aria-label': resourceStrings.SelectAllWorkflowsLabel }}
               />
               <TableHeaderCell>{intlText.WORKFLOW_NAME}</TableHeaderCell>
               <TableHeaderCell>{intlText.TRIGGER_TYPE}</TableHeaderCell>
@@ -185,14 +185,14 @@ export const SelectWorkflows = ({
               ? logicAppName
                 ? [...Array(5)].map((_, index) => (
                     <TableRow key={index} aria-hidden="true">
-                      <TableSelectionCell checkboxIndicator={{ 'aria-label': ariaLabelStrings.LOADING_WORKFLOWS_LABEL }} checked={false} />
+                      <TableSelectionCell checkboxIndicator={{ 'aria-label': resourceStrings.LoadingWorkflowsLabel }} checked={false} />
                       <TableCell>
-                        <Skeleton aria-label={ariaLabelStrings.LOADING_WORKFLOWS_LABEL}>
+                        <Skeleton aria-label={resourceStrings.LoadingWorkflowsLabel}>
                           <SkeletonItem />
                         </Skeleton>
                       </TableCell>
                       <TableCell>
-                        <Skeleton aria-label={ariaLabelStrings.LOADING_WORKFLOWS_LABEL}>
+                        <Skeleton aria-label={resourceStrings.LoadingWorkflowsLabel}>
                           <SkeletonItem />
                         </Skeleton>
                       </TableCell>
@@ -203,7 +203,7 @@ export const SelectWorkflows = ({
                   <TableRow key={item.id} onClick={onClick} onKeyDown={onKeyDown} aria-selected={selected} appearance={appearance}>
                     <TableSelectionCell
                       checked={isConsumption || selected}
-                      checkboxIndicator={{ 'aria-label': ariaLabelStrings.CHECKBOX_ROW_LABEL }}
+                      checkboxIndicator={{ 'aria-label': resourceStrings.WorkflowCheckboxRowLabel }}
                     />
                     <TableCell>
                       <TableCellLayout>{item.name}</TableCellLayout>
