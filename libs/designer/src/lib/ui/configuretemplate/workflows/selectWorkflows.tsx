@@ -5,7 +5,7 @@ import { useWorkflowsInApp } from '../../../core/configuretemplate/utils/queries
 import { ResourcePicker } from '../../templates';
 import { useSelector } from 'react-redux';
 import { useCallback } from 'react';
-import { equals, type WorkflowResource, type LogicAppResource, getResourceNameFromId } from '@microsoft/logic-apps-shared';
+import { equals, type WorkflowResource, type LogicAppResource } from '@microsoft/logic-apps-shared';
 import {
   TableBody,
   TableCell,
@@ -125,21 +125,21 @@ export const SelectWorkflows = ({
         selectionMode: 'multiselect',
         selectedItems: new Set(Object.keys(selectedWorkflowsList)),
         onSelectionChange: (_, data) => {
-          onWorkflowsSelected(Array.from(data.selectedItems, String).map((workflowsId) => getResourceNameFromId(workflowsId)));
+          onWorkflowsSelected(Array.from(data.selectedItems, String));
         },
       }),
     ]
   );
 
   const rows = getRows((row) => {
-    const selected = isRowSelected(getResourceNameFromId(row.item.id));
+    const selected = isRowSelected(row.item.id);
     return {
       ...row,
-      onClick: (e: React.MouseEvent) => toggleRow(e, getResourceNameFromId(row.item.id)),
+      onClick: (e: React.MouseEvent) => toggleRow(e, row.item.id),
       onKeyDown: (e: React.KeyboardEvent) => {
         if (e.key === ' ') {
           e.preventDefault();
-          toggleRow(e, getResourceNameFromId(row.item.id));
+          toggleRow(e, row.item.id);
         }
       },
       selected,
