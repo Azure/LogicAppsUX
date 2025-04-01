@@ -134,21 +134,7 @@ export class ConsumptionSearchService extends BaseSearchService {
   }
 
   public getBuiltInConnectors(): Promise<Connector[]> {
-    return Promise.resolve([
-      ...getBuiltInConnectorsInConsumption(),
-      ...[
-        {
-          name: 'aiOperations',
-          id: 'connectionProviders/aiOperations',
-          properties: {
-            brandColor: '0x8C6CFF',
-            description: 'AI Operations',
-            displayName: 'AI Operations',
-            iconUri: 'https://logicappsv2resources.blob.core.windows.net/icons/aiOperations.svg',
-          },
-        } as any,
-      ],
-    ]);
+    return Promise.resolve(getBuiltInConnectorsInConsumption());
   }
 
   public async getCustomConnectorsByNextlink(prevNextlink?: string): Promise<any> {
