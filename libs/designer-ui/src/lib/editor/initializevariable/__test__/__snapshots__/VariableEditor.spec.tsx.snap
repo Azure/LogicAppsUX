@@ -73,6 +73,7 @@ exports[`VariableEditor > renders correctly with empty variables 1`] = `
         >
           <div
             class="msla-setting-token-editor-container"
+            data-automation-id="undefined-name-0"
             id="msla-tokenpicker-callout-location3"
             style="position: relative;"
           >
@@ -131,6 +132,7 @@ exports[`VariableEditor > renders correctly with empty variables 1`] = `
         </div>
         <div
           class="msla-dropdown-editor-container"
+          data-automation-id="undefined-type-0"
         >
           <div
             class="ms-Dropdown-container root-185"
@@ -186,6 +188,7 @@ exports[`VariableEditor > renders correctly with empty variables 1`] = `
         >
           <div
             class="msla-setting-token-editor-container"
+            data-automation-id="undefined-value-0"
             id="msla-tokenpicker-callout-location6"
             style="position: relative;"
           >
@@ -384,6 +387,7 @@ exports[`VariableEditor > renders correctly with single variable 1`] = `
         >
           <div
             class="msla-setting-token-editor-container"
+            data-automation-id="undefined-name-0"
             id="msla-tokenpicker-callout-location11"
             style="position: relative;"
           >
@@ -442,6 +446,7 @@ exports[`VariableEditor > renders correctly with single variable 1`] = `
         </div>
         <div
           class="msla-dropdown-editor-container"
+          data-automation-id="undefined-type-0"
         >
           <div
             class="ms-Dropdown-container root-185"
@@ -503,6 +508,7 @@ exports[`VariableEditor > renders correctly with single variable 1`] = `
             >
               <div
                 class="msla-combobox-editor"
+                data-automation-id="undefined-value-0"
                 id="msla-tokenpicker-callout-location14"
                 style="position: relative;"
               >
@@ -742,6 +748,7 @@ exports[`VariableEditor > renders correctly with single variable with Token 1`] 
         >
           <div
             class="msla-setting-token-editor-container"
+            data-automation-id="undefined-name-0"
             id="msla-tokenpicker-callout-location19"
             style="position: relative;"
           >
@@ -800,6 +807,7 @@ exports[`VariableEditor > renders correctly with single variable with Token 1`] 
         </div>
         <div
           class="msla-dropdown-editor-container"
+          data-automation-id="undefined-type-0"
         >
           <div
             class="ms-Dropdown-container root-185"
@@ -861,6 +869,7 @@ exports[`VariableEditor > renders correctly with single variable with Token 1`] 
             >
               <div
                 class="msla-combobox-editor"
+                data-automation-id="undefined-value-0"
                 id="msla-tokenpicker-callout-location22"
                 style="position: relative;"
               >
