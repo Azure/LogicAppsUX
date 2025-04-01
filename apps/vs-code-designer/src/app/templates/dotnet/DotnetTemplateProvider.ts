@@ -51,7 +51,7 @@ export class DotnetTemplateProvider extends TemplateProviderBase {
   }
 
   public async getLatestTemplates(context: IActionContext, latestTemplateVersion: string): Promise<ITemplates> {
-    const projKey = await this.getProjKey(context);
+    const projKey = await this.getProjKey(context); // danielle here
     const projectFilePath: string = getDotnetProjectTemplatePath(this.version, projKey);
     const itemFilePath: string = getDotnetItemTemplatePath(this.version, projKey);
 

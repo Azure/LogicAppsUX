@@ -208,6 +208,7 @@ async function updateBuildFile(context: IActionContext, target: vscode.Uri, dotn
   if (projectArtifacts['lib']) {
     xmlBuildFile = addLibToPublishPath(xmlBuildFile);
   }
+  xmlBuildFile['Project']['PropertyGroup']['TargetFramework'] = 'net8.0';
 
   await writeBuildFileToDisk(context, xmlBuildFile, target.fsPath);
 }
