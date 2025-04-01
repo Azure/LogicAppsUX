@@ -3,7 +3,7 @@ import type { TemplateTabProps } from '@microsoft/designer-ui';
 import constants from '../../../common/constants';
 import type { IntlShape } from 'react-intl';
 import { selectWizardTab } from '../../../core/state/templates/tabSlice';
-import { DisplayWorkflows } from '../workflows/workflows';
+import { DisplayWorkflows } from '../workflows/workflowslist';
 
 export const workflowsTab = (
   intl: IntlShape,

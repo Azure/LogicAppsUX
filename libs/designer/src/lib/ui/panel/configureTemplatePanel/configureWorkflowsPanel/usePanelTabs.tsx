@@ -55,10 +55,10 @@ export const useConfigureWorkflowPanelTabs = ({
     setSelectedWorkflowsList(await getWorkflowsWithDefinitions(workflowState, selectedWorkflowsList()));
   };
 
-  const onSaveChanges = (isMultiWorkflow: boolean) => {
-    onSave?.(isMultiWorkflow);
+  const onSaveChanges = () => {
     dispatch(updateAllWorkflowsData(selectedWorkflowsList()));
     dispatch(initializeWorkflowsData({ workflows: selectedWorkflowsList() }));
+    onSave?.(Object.keys(selectedWorkflowsList()).length > 1);
   };
 
   const isNoWorkflowsSelected = Object.keys(selectedWorkflowsList()).length === 0;

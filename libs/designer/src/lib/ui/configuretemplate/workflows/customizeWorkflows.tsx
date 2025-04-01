@@ -4,6 +4,7 @@ import { Accordion, AccordionHeader, AccordionItem, AccordionPanel, Text } from 
 import { getResourceNameFromId, type Template } from '@microsoft/logic-apps-shared';
 import { useMemo } from 'react';
 import { useResourceStrings } from '../resources';
+import { useTemplatesStrings } from 'lib/ui/templates/templatesStrings';
 
 export const CustomizeWorkflows = ({
   selectedWorkflowsList,
@@ -59,11 +60,13 @@ const CustomizeWorkflowSection = ({
   workflow: Partial<WorkflowTemplateData>;
   updateWorkflowDataField: (workflowId: string, workflowData: Partial<WorkflowTemplateData>) => void;
 }) => {
-  const resourceStrings = useResourceStrings();
+  const customResourceStrings = useResourceStrings();
+  const { resourceStrings } = useTemplatesStrings();
+
   const generalSectionItems: TemplatesSectionItem[] = useMemo(() => {
     return [
       {
-        label: resourceStrings.WorkflowName,
+        label: customResourceStrings.WorkflowName,
         value: workflow.workflowName || '',
         type: 'textfield',
         required: true,
@@ -72,7 +75,7 @@ const CustomizeWorkflowSection = ({
         },
       },
       {
-        label: resourceStrings.WorkflowDisplayName,
+        label: customResourceStrings.WorkflowDisplayName,
         value: workflow.manifest?.title || '',
         type: 'textfield',
         required: true,
@@ -88,13 +91,13 @@ const CustomizeWorkflowSection = ({
       },
       //TODO: add state type
     ];
-  }, [workflowId, updateWorkflowDataField, workflow, resourceStrings]);
+  }, [workflowId, updateWorkflowDataField, workflow, customResourceStrings]);
 
   const descriptionSectionItems: TemplatesSectionItem[] = useMemo(() => {
     const baseItems: TemplatesSectionItem[] = isMultiWorkflowTemplate
       ? [
           {
-            label: resourceStrings.Summary,
+            label: customResourceStrings.Summary,
             value: workflow.manifest?.summary || '',
             type: 'textfield',
             onChange: (value: string) => {
@@ -110,7 +113,7 @@ const CustomizeWorkflowSection = ({
         ]
       : [];
     baseItems.push({
-      label: resourceStrings.Description,
+      label: resourceStrings.DESCRIPTION,
       value: workflow.manifest?.description || '',
       type: 'textfield',
       onChange: (value: string) => {
@@ -124,7 +127,7 @@ const CustomizeWorkflowSection = ({
       },
     });
     baseItems.push({
-      label: resourceStrings.Prerequisites,
+      label: customResourceStrings.Prerequisites,
       value: workflow.manifest?.prerequisites || '',
       type: 'textfield',
       onChange: (value: string) => {
@@ -138,16 +141,16 @@ const CustomizeWorkflowSection = ({
       },
     });
     return baseItems;
-  }, [workflowId, updateWorkflowDataField, workflow, isMultiWorkflowTemplate, resourceStrings]);
+  }, [workflowId, updateWorkflowDataField, workflow, isMultiWorkflowTemplate, resourceStrings, customResourceStrings]);
 
   return (
     <div>
       <TemplatesSection
-        title={isMultiWorkflowTemplate ? '' : resourceStrings.General}
+        title={isMultiWorkflowTemplate ? '' : customResourceStrings.General}
         titleHtmlFor={'generalSectionLabel'}
         items={generalSectionItems}
       />
-      <TemplatesSection title={resourceStrings.Description} titleHtmlFor={'descriptionSectionLabel'} items={descriptionSectionItems} />
+      <TemplatesSection title={resourceStrings.DESCRIPTION} titleHtmlFor={'descriptionSectionLabel'} items={descriptionSectionItems} />
     </div>
   );
 };

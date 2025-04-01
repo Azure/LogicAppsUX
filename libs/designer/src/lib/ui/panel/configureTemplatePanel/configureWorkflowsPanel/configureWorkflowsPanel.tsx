@@ -13,7 +13,7 @@ export interface ConfigureWorkflowsTabProps {
   disabled?: boolean;
   isPrimaryButtonDisabled: boolean;
   isSaving: boolean;
-  onSave?: (isMultiWorkflow: boolean) => void;
+  onSave?: () => void;
   selectedWorkflowsList: Record<string, Partial<WorkflowTemplateData>>;
 }
 

@@ -48,7 +48,7 @@ import { initializeNodeOperationInputsData } from '../../state/operation/operati
 import type { WorkflowParameter } from '../../../common/models/workflow';
 import { getAllInputParameters } from '../../utils/parameters/helper';
 import { shouldAddDynamicData } from '../../templates/utils/parametershelper';
-import type { WorkflowState } from 'lib/core/state/templates/workflowSlice';
+import type { WorkflowState } from '../../state/templates/workflowSlice';
 
 export interface ConfigureTemplateServiceOptions {
   connectionService: IConnectionService;

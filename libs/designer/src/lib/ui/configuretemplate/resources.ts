@@ -134,11 +134,6 @@ export const useResourceStrings = () => {
       id: 'JBa1qe',
       description: 'The label for the workflow display name',
     }),
-    Description: intl.formatMessage({
-      defaultMessage: 'Description',
-      id: 'ae/C2d',
-      description: 'Label for workflow description',
-    }),
     State: intl.formatMessage({
       defaultMessage: 'State',
       id: 'IG4XXf',

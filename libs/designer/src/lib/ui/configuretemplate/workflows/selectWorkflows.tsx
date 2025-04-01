@@ -1,12 +1,11 @@
-import type { AppDispatch, RootState } from '../../../core/state/templates/store';
+import type { RootState } from '../../../core/state/templates/store';
 import { TemplatesSection } from '@microsoft/designer-ui';
 import { useIntl } from 'react-intl';
 import { useWorkflowsInApp } from '../../../core/configuretemplate/utils/queries';
 import { ResourcePicker } from '../../templates';
-import { useDispatch, useSelector } from 'react-redux';
+import { useSelector } from 'react-redux';
 import { useCallback } from 'react';
 import { equals, type WorkflowResource, type LogicAppResource, getResourceNameFromId } from '@microsoft/logic-apps-shared';
-import { updateAllWorkflowsData } from '../../../core/state/templates/templateSlice';
 import {
   TableBody,
   TableCell,
@@ -33,7 +32,6 @@ export const SelectWorkflows = ({
   onWorkflowsSelected: (normalizedWorkflowIds: string[]) => void;
 }) => {
   const intl = useIntl();
-  const dispatch = useDispatch<AppDispatch>();
   const { isConsumption, logicAppName, subscriptionId, resourceGroup } = useSelector((state: RootState) => ({
     isConsumption: !!state.workflow.isConsumption,
     logicAppName: state.workflow.logicAppName,
@@ -49,13 +47,12 @@ export const SelectWorkflows = ({
       const { id, plan } = app;
       if (equals(plan, 'Consumption')) {
         const normalizedWorkflowId = id.toLowerCase();
-        dispatch(updateAllWorkflowsData({ [normalizedWorkflowId]: { id: normalizedWorkflowId } }));
         onWorkflowsSelected([normalizedWorkflowId]);
       } else {
         onWorkflowsSelected([]);
       }
     },
-    [dispatch, onWorkflowsSelected]
+    [onWorkflowsSelected]
   );
 
   const resourceStrings = useResourceStrings();

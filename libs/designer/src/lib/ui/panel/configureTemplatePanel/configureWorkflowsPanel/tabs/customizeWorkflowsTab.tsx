@@ -38,7 +38,7 @@ export const customizeWorkflowsTab = (
       description: 'Button text for saving changes in the configure workflows panel',
     }),
     primaryButtonOnClick: () => {
-      onSave?.(/* isMultiWorkflow */ false);
+      onSave?.();
       dispatch(closePanel());
     },
     primaryButtonDisabled: isPrimaryButtonDisabled,
