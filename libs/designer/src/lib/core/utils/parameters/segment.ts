@@ -28,6 +28,7 @@ import {
   startsWith,
   UnsupportedException,
   wrapStringInQuotes,
+  unwrapQuotesFromString,
 } from '@microsoft/logic-apps-shared';
 
 /**
@@ -83,10 +84,9 @@ export class ValueSegmentConvertor {
 
     for (const section of sections) {
       for (const segment of this._convertJsonSectionToSegments(section)) {
-        // console.log(section);
-        // if (parameter.schema?.items?.properties?.[section]?.format) {
-        //   this._options.shouldUncast = false;
-        // }
+        if (parameter.schema?.items?.properties?.[unwrapQuotesFromString(section)]?.format) {
+          this._options.shouldUncast = true;
+        }
 
         segments.push(segment);
       }
