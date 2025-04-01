@@ -113,11 +113,15 @@ export const InitializeVariableEditor = ({
     (index: number) => {
       setVariables((prev) => {
         const p = prev ?? [];
+        // If there is only one variable and it's not an agent parameter, don't allow deletion
+        if (p.length === 1 && !isAgentParameter) {
+          return prev;
+        }
         const updatedVariables = p.filter((_, i) => i !== index);
         return updateVariables(updatedVariables);
       });
     },
-    [updateVariables]
+    [isAgentParameter, updateVariables]
   );
 
   const handleVariableChange = useCallback(
@@ -132,19 +136,6 @@ export const InitializeVariableEditor = ({
 
   return variables ? (
     <div className="msla-editor-initialize-variables">
-      {variables.map((variable, index) => (
-        <VariableEditor
-          {...props}
-          isAgentParameter={isAgentParameter}
-          key={index}
-          index={index}
-          variable={variable}
-          onDelete={() => handleDeleteVariable(index)}
-          onVariableChange={(value: InitializeVariableProps) => handleVariableChange(value, index)}
-          disableDelete={!isAgentParameter && variables.length === 1}
-          errors={validationErrors?.[index]}
-        />
-      ))}
       {props.isMultiVariableEnabled || isAgentParameter ? (
         <div className="msla-initialize-variable-add-variable-button">
           <Button
@@ -166,6 +157,19 @@ export const InitializeVariableEditor = ({
           </Button>
         </div>
       ) : null}
+      {variables.map((variable, index) => (
+        <VariableEditor
+          {...props}
+          isAgentParameter={isAgentParameter}
+          key={index}
+          index={index}
+          variable={variable}
+          onDelete={() => handleDeleteVariable(index)}
+          onVariableChange={(value: InitializeVariableProps) => handleVariableChange(value, index)}
+          disableDelete={!isAgentParameter && variables.length === 1}
+          errors={validationErrors?.[index]}
+        />
+      ))}
     </div>
   ) : (
     <>

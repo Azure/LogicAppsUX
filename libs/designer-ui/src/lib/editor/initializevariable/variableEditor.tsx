@@ -12,6 +12,8 @@ import {
   ChevronRight24Regular,
   Delete24Filled,
   Delete24Regular,
+  Edit24Filled,
+  Edit24Regular,
 } from '@fluentui/react-icons';
 import { useState } from 'react';
 import { createEmptyLiteralValueSegment, isSingleLiteralValueSegment } from '../base/utils/helper';
@@ -22,6 +24,7 @@ import { useTheme } from '@fluentui/react';
 import type { InitializeVariableProps } from './';
 
 const DeleteIcon = bundleIcon(Delete24Filled, Delete24Regular);
+const EditIcon = bundleIcon(Edit24Filled, Edit24Regular);
 const ExpandIcon = bundleIcon(ChevronRight24Filled, ChevronRight24Regular);
 const CollapseIcon = bundleIcon(ChevronDown24Regular, ChevronDown24Filled);
 
@@ -119,6 +122,12 @@ export const VariableEditor = ({
     defaultMessage: 'Cannot delete the last agent parameter',
     id: 'hcpXlK',
     description: 'Delete label',
+  });
+
+  const editButtonTitle = intl.formatMessage({
+    defaultMessage: 'Edit',
+    id: 'crclvu',
+    description: 'Edit label',
   });
 
   const newAgentParameterName = intl.formatMessage({
@@ -283,27 +292,41 @@ export const VariableEditor = ({
         ) : null}
       </div>
       {preventMultiVariable && !isAgentParameter ? null : (
-        <div className={'msla-variable-editor-edit-or-delete-button'}>
-          <Tooltip
-            relationship="label"
-            content={
-              disableDelete
-                ? isAgentParameter
-                  ? deleteButtonDisabledAgentParameter
-                  : deleteButtonDisabledVariableTitle
-                : deleteButtonTitle
-            }
-          >
-            <Button
-              appearance="subtle"
-              aria-label={deleteButtonTitle}
-              onClick={handleDelete}
-              icon={<DeleteIcon />}
-              disabled={disableDelete || baseEditorProps?.readonly}
-              style={{ color: 'var(--colorBrandForeground1)' }}
-            />
-          </Tooltip>
-        </div>
+        <>
+          <div className={'msla-variable-editor-edit-or-delete-button'}>
+            <Tooltip relationship="label" content={editButtonTitle}>
+              <Button
+                appearance="subtle"
+                aria-label={editButtonTitle}
+                onClick={handleToggleExpand}
+                icon={<EditIcon />}
+                disabled={baseEditorProps?.readonly}
+                style={{ color: 'var(--colorBrandForeground1)' }}
+              />
+            </Tooltip>
+          </div>
+          <div className={'msla-variable-editor-edit-or-delete-button'}>
+            <Tooltip
+              relationship="label"
+              content={
+                disableDelete
+                  ? isAgentParameter
+                    ? deleteButtonDisabledAgentParameter
+                    : deleteButtonDisabledVariableTitle
+                  : deleteButtonTitle
+              }
+            >
+              <Button
+                appearance="subtle"
+                aria-label={deleteButtonTitle}
+                onClick={handleDelete}
+                icon={<DeleteIcon />}
+                disabled={disableDelete || baseEditorProps?.readonly}
+                style={{ color: 'var(--colorBrandForeground1)' }}
+              />
+            </Tooltip>
+          </div>
+        </>
       )}
     </div>
   );
