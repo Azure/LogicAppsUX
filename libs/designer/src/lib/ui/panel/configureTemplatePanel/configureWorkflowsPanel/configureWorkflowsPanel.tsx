@@ -13,6 +13,7 @@ export interface ConfigureWorkflowsTabProps {
   disabled?: boolean;
   isPrimaryButtonDisabled: boolean;
   isSaving: boolean;
+  onSave?: (isMultiWorkflow: boolean) => void;
   selectedWorkflowsList: Record<string, Partial<WorkflowTemplateData>>;
 }
 
@@ -21,7 +22,7 @@ const layerProps = {
   eventBubblingEnabled: true,
 };
 
-export const ConfigureWorkflowsPanel = () => {
+export const ConfigureWorkflowsPanel = ({ onSave }: { onSave?: (isMultiWorkflow: boolean) => void }) => {
   const dispatch = useDispatch<AppDispatch>();
   const intl = useIntl();
   const { selectedTabId, isOpen, currentPanelView } = useSelector((state: RootState) => ({
@@ -38,7 +39,7 @@ export const ConfigureWorkflowsPanel = () => {
     }),
   };
 
-  const panelTabs: TemplateTabProps[] = useConfigureWorkflowPanelTabs();
+  const panelTabs: TemplateTabProps[] = useConfigureWorkflowPanelTabs({ onSave });
 
   const handleSelectTab = (tabId: string): void => {
     dispatch(selectPanelTab(tabId));

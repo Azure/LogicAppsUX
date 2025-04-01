@@ -26,7 +26,7 @@ import { Add12Filled } from '@fluentui/react-icons';
 import { useTemplatesStrings } from '../../templates/templatesStrings';
 import { deleteWorkflowData } from '../../../core/actions/bjsworkflow/configuretemplate';
 
-export const DisplayWorkflows = () => {
+export const DisplayWorkflows = ({ onSave }: { onSave: (isMultiWorkflow: boolean) => void }) => {
   const intl = useIntl();
   const { workflows, currentPanelView } = useSelector((state: RootState) => ({
     workflows: state.template.workflows,
@@ -172,7 +172,7 @@ export const DisplayWorkflows = () => {
 
   return (
     <div>
-      {currentPanelView === TemplatePanelView.ConfigureWorkflows && <ConfigureWorkflowsPanel />}
+      {currentPanelView === TemplatePanelView.ConfigureWorkflows && <ConfigureWorkflowsPanel onSave={onSave} />}
 
       <CommandBar
         items={commandBarItems}

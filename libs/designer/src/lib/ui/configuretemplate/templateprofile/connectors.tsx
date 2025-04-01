@@ -52,7 +52,6 @@ export const FeaturedConnectors = () => {
       disabled={isLoading}
       defaultValue={selectedConnectors?.map((connector) => connector.displayName).join(', ')}
       defaultSelectedOptions={selectedConnectors?.map((connector) => connector.id)}
-      size="small"
       placeholder={isLoading ? texts.LOADING : ''}
     >
       {!isLoading && !allConnectors?.length ? (

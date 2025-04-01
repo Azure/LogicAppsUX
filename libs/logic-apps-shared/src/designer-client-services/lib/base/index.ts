@@ -44,7 +44,7 @@ export type { ChatbotServiceOptions } from './chatbot';
 export { BaseTemplateService } from './template';
 export type { BaseTemplateServiceOptions } from './template';
 export { BaseTemplateResourceService } from './templateresource';
-export { BaseResourceService, getResourceNameFromId } from './resource';
+export { BaseResourceService } from './resource';
 // Tenant
 export { BaseTenantService } from './tenant';
 export type { BaseTenantServiceOptions } from './tenant';

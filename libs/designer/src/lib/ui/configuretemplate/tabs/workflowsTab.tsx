@@ -5,11 +5,15 @@ import type { IntlShape } from 'react-intl';
 import { selectWizardTab } from '../../../core/state/templates/tabSlice';
 import { DisplayWorkflows } from '../workflows/workflows';
 
-export const WorkflowsTab: React.FC = () => {
-  return <DisplayWorkflows />;
+export const WorkflowsTab = ({ onSave }: { onSave: (isMultiWorkflow: boolean) => void }) => {
+  return <DisplayWorkflows onSave={onSave} />;
 };
 
-export const workflowsTab = (intl: IntlShape, dispatch: AppDispatch): TemplateTabProps => ({
+export const workflowsTab = (
+  intl: IntlShape,
+  dispatch: AppDispatch,
+  onSaveWorkflows: (isMultiWorkflow: boolean) => void
+): TemplateTabProps => ({
   id: constants.CONFIGURE_TEMPLATE_WIZARD_TAB_NAMES.WORKFLOWS,
   title: intl.formatMessage({
     defaultMessage: 'Workflows',
@@ -17,7 +21,7 @@ export const workflowsTab = (intl: IntlShape, dispatch: AppDispatch): TemplateTa
     description: 'The tab label for the monitoring workflows tab on the configure template wizard',
   }),
   hasError: false,
-  content: <WorkflowsTab />,
+  content: <WorkflowsTab onSave={onSaveWorkflows} />,
   footerContent: {
     primaryButtonText: '',
     primaryButtonOnClick: () => {},

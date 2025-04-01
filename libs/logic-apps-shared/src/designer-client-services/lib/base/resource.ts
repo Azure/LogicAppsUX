@@ -1,4 +1,4 @@
-import { getTriggerFromDefinition, type ArmResource } from '../../../utils/src';
+import { getResourceNameFromId, getTriggerFromDefinition, type ArmResource } from '../../../utils/src';
 import { fetchAppsByQuery, getAzureResourceRecursive } from '../common/azure';
 import type { IHttpClient } from '../httpClient';
 import type { Resource, IResourceService, LogicAppResource, WorkflowResource } from '../resource';
@@ -82,7 +82,3 @@ export class BaseResourceService implements IResourceService {
     return httpClient.get({ uri, queryParameters });
   }
 }
-
-export const getResourceNameFromId = (id: string): string => {
-  return id.split('/').pop() ?? id;
-};

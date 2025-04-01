@@ -26,7 +26,7 @@ import {
 } from './Services/WorkflowAndArtifacts';
 import { ArmParser } from './Utilities/ArmParser';
 import { WorkflowUtility, addConnectionInJson, addOrUpdateAppSettings } from './Utilities/Workflow';
-import { Chatbot, chatbotPanelWidth } from '@microsoft/logic-apps-chatbot';
+import { CoPilotChatbot } from '@microsoft/logic-apps-chatbot';
 import {
   BaseApiManagementService,
   BaseAppServiceService,
@@ -106,7 +106,10 @@ const DesignerEditor = () => {
   const { data: tenantId } = useCurrentTenantId();
   const { data: objectId } = useCurrentObjectId();
   const [designerID, setDesignerID] = useState(guid());
-  const [workflow, setWorkflow] = useState<Workflow>({ ...data?.properties.files[Artifact.WorkflowFile], id: guid() });
+  const [workflow, setWorkflow] = useState<Workflow>({
+    ...data?.properties.files[Artifact.WorkflowFile],
+    id: guid(),
+  });
   const [designerView, setDesignerView] = useState(true);
   const codeEditorRef = useRef<{ getValue: () => string | undefined }>(null);
   const originalConnectionsData = useMemo(() => data?.properties.files[Artifact.ConnectionsFile] ?? {}, [data?.properties.files]);
@@ -305,10 +308,12 @@ const DesignerEditor = () => {
         ...connectionsData?.serviceProviderConnections,
         ...newServiceProviderConnections,
       };
-      (connectionsData as ConnectionsData).agentConnections = {
-        ...connectionsData?.agentConnections,
-        ...newAgentConnections,
-      };
+      if (workflow?.kind === 'agentic') {
+        (connectionsData as ConnectionsData).agentConnections = {
+          ...connectionsData?.agentConnections,
+          ...newAgentConnections,
+        };
+      }
     }
 
     const connectionsToUpdate = getConnectionsToUpdate(originalConnectionsData, connectionsData ?? {});
@@ -423,24 +428,36 @@ const DesignerEditor = () => {
             appSettings={settingsData?.properties}
             isMultiVariableEnabled={hostOptions.enableMultiVariable}
           >
-            <div style={{ display: 'flex', flexDirection: 'row', height: 'inherit' }}>
+            <div
+              style={{
+                display: 'flex',
+                flexDirection: 'row',
+                height: 'inherit',
+              }}
+            >
               <RunHistoryPanel
                 collapsed={!showRunHistory}
                 onClose={() => dispatch(setRunHistoryEnabled(false))}
                 onRunSelected={onRunSelected}
               />
               {displayChatbotUI ? (
-                <div style={{ minWidth: chatbotPanelWidth }}>
-                  <Chatbot
-                    openAzureCopilotPanel={() => openPanel('Azure Copilot Panel has been opened')}
-                    getAuthToken={getAuthToken}
-                    getUpdatedWorkflow={getUpdatedWorkflow}
-                    openFeedbackPanel={() => openPanel('Azure Feedback Panel has been opened')}
-                    closeChatBot={() => dispatch(setIsChatBotEnabled(false))}
-                  />
-                </div>
+                <CoPilotChatbot
+                  openAzureCopilotPanel={() => openPanel('Azure Copilot Panel has been opened')}
+                  getAuthToken={getAuthToken}
+                  getUpdatedWorkflow={getUpdatedWorkflow}
+                  openFeedbackPanel={() => openPanel('Azure Feedback Panel has been opened')}
+                  closeChatBot={() => dispatch(setIsChatBotEnabled(false))}
+                />
               ) : null}
-              <div style={{ display: 'flex', flexDirection: 'column', height: 'inherit', flexGrow: 1, maxWidth: '100%' }}>
+              <div
+                style={{
+                  display: 'flex',
+                  flexDirection: 'column',
+                  height: 'inherit',
+                  flexGrow: 1,
+                  maxWidth: '100%',
+                }}
+              >
                 <DesignerCommandBar
                   id={workflowId}
                   saveWorkflow={saveWorkflowFromDesigner}

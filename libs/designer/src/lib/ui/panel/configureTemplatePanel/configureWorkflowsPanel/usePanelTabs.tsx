@@ -10,7 +10,11 @@ import { updateAllWorkflowsData } from '../../../../core/state/templates/templat
 import { getWorkflowsWithDefinitions, initializeWorkflowsData } from '../../../../core/actions/bjsworkflow/configuretemplate';
 import { getResourceNameFromId } from '@microsoft/logic-apps-shared';
 
-export const useConfigureWorkflowPanelTabs = (): TemplateTabProps[] => {
+export const useConfigureWorkflowPanelTabs = ({
+  onSave,
+}: {
+  onSave?: (isMultiWorkflow: boolean) => void;
+}): TemplateTabProps[] => {
   const intl = useIntl();
   const dispatch = useDispatch<AppDispatch>();
   const { workflowsInTemplate, workflowState } = useSelector((state: RootState) => ({
@@ -51,7 +55,8 @@ export const useConfigureWorkflowPanelTabs = (): TemplateTabProps[] => {
     setSelectedWorkflowsList(await getWorkflowsWithDefinitions(workflowState, selectedWorkflowsList()));
   };
 
-  const onSaveChanges = () => {
+  const onSaveChanges = (isMultiWorkflow: boolean) => {
+    onSave?.(isMultiWorkflow);
     dispatch(updateAllWorkflowsData(selectedWorkflowsList()));
     dispatch(initializeWorkflowsData({ workflows: selectedWorkflowsList() }));
   };
@@ -74,9 +79,9 @@ export const useConfigureWorkflowPanelTabs = (): TemplateTabProps[] => {
       isSaving,
       selectedWorkflowsList: selectedWorkflowsList(),
       updateWorkflowDataField,
-      onSaveChanges,
       disabled: isNoWorkflowsSelected,
       isPrimaryButtonDisabled: missingNameOrDisplayName,
+      onSave: onSaveChanges,
     }),
   ];
 };

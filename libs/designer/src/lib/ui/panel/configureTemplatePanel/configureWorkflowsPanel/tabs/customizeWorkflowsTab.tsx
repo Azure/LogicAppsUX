@@ -167,10 +167,9 @@ export const customizeWorkflowsTab = (
     disabled,
     selectedWorkflowsList,
     updateWorkflowDataField,
-    onSaveChanges,
+    onSave
   }: ConfigureWorkflowsTabProps & {
     updateWorkflowDataField: (workflowId: string, workflowData: Partial<WorkflowTemplateData>) => void;
-    onSaveChanges: () => void;
   }
 ): TemplateTabProps => ({
   id: constants.CONFIGURE_TEMPLATE_WIZARD_TAB_NAMES.CUSTOMIZE_WORKFLOWS,
@@ -189,7 +188,7 @@ export const customizeWorkflowsTab = (
       description: 'Button text for saving changes in the configure workflows panel',
     }),
     primaryButtonOnClick: () => {
-      onSaveChanges();
+      onSave?.(/* isMultiWorkflow */ false);
       dispatch(closePanel());
     },
     primaryButtonDisabled: isPrimaryButtonDisabled,

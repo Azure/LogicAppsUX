@@ -473,6 +473,7 @@ export default {
     MONITORING: 'MONITORING',
     OPERATION_SELECTOR: 'OPERATION_SELECTOR',
     PARAMETERS: 'PARAMETERS',
+    CHANNELS: 'CHANNELS',
     REQUEST_HISTORY: 'REQUEST_HISTORY',
     RETRY_HISTORY: 'RETRY_HISTORY',
     RUN_AFTER: 'RUN_AFTER',
@@ -965,5 +966,9 @@ export default {
     SELECT_BATCH_WORKFLOW_ACTION: 'sendtobatch',
     SELECT_BATCH_WORKFLOW_TRIGGER: 'sendtobatchtrigger',
     SELECT_MANUAL_WORKFLOW_ACTION: 'invokeworkflow',
+  },
+  CHANNELS: {
+    INPUT: '-inputchannel-',
+    OUTPUT: '-outputchannel-',
   },
 };

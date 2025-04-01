@@ -22,6 +22,7 @@ describe('operationMetadataSlice', () => {
       actionMetadata: {},
       staticResults: {},
       repetitionInfos: {},
+      supportedChannels: {},
       errors: {},
       loadStatus: {
         nodesInitialized: false,

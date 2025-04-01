@@ -95,7 +95,7 @@ importers:
         version: 4.2.1(vite@5.4.11(@types/node@20.12.7)(less@4.2.0)(terser@5.30.2))
       '@vitest/coverage-istanbul':
         specifier: ^2.1.2
-        version: 2.1.3(vitest@2.1.3)
+        version: 2.1.3(vitest@2.1.3(@types/node@20.12.7)(@vitest/ui@2.1.3)(jsdom@24.0.0)(less@4.2.0)(terser@5.30.2))
       '@vitest/ui':
         specifier: ^2.1.2
         version: 2.1.3(vitest@2.1.3)
@@ -633,9 +633,6 @@ importers:
       '@microsoft/designer-ui':
         specifier: workspace:*
         version: link:../designer-ui
-      '@microsoft/logic-apps-designer':
-        specifier: workspace:*
-        version: link:../designer
       '@microsoft/logic-apps-shared':
         specifier: workspace:*
         version: link:../logic-apps-shared
@@ -912,6 +909,9 @@ importers:
       '@microsoft/designer-ui':
         specifier: workspace:*
         version: link:../designer-ui
+      '@microsoft/logic-apps-chatbot':
+        specifier: workspace:*
+        version: link:../chatbot
       '@microsoft/logic-apps-shared':
         specifier: workspace:*
         version: link:../logic-apps-shared
@@ -19153,7 +19153,7 @@ snapshots:
     transitivePeerDependencies:
       - supports-color
 
-  '@vitest/coverage-istanbul@2.1.3(vitest@2.1.3)':
+  '@vitest/coverage-istanbul@2.1.3(vitest@2.1.3(@types/node@20.12.7)(@vitest/ui@2.1.3)(jsdom@24.0.0)(less@4.2.0)(terser@5.30.2))':
     dependencies:
       '@istanbuljs/schema': 0.1.3
       debug: 4.3.7
