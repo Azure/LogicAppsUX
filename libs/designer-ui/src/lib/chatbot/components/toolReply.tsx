@@ -10,7 +10,7 @@ export const ToolReply = ({ item }: { item: ToolReplyItem }) => {
     <div ref={textRef}>
       {onClick ? (
         <Link onClick={() => onClick(id, text)}>
-          <Markdown className="msla-system-message">{text}</Markdown>
+          <Markdown>{text}</Markdown>
         </Link>
       ) : (
         <Markdown className="msla-system-message">{text}</Markdown>
