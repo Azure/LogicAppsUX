@@ -1,12 +1,28 @@
-import { Table, TableBody, TableCell, TableCellLayout, TableHeader, TableHeaderCell, TableRow, Text } from '@fluentui/react-components';
-import type { RootState } from '../../../core/state/templates/store';
-import { useSelector } from 'react-redux';
+import {
+  Button,
+  Table,
+  TableBody,
+  TableCell,
+  TableCellLayout,
+  TableHeader,
+  TableHeaderCell,
+  TableRow,
+  Text,
+} from '@fluentui/react-components';
+import type { AppDispatch, RootState } from '../../../core/state/templates/store';
+import { useDispatch, useSelector } from 'react-redux';
 import { useResourceStrings } from '../resources';
-import { useMemo } from 'react';
+import { useCallback, useMemo } from 'react';
 import { useIntl } from 'react-intl';
+import { getResourceNameFromId } from '@microsoft/logic-apps-shared';
+import { openPanelView, TemplatePanelView } from '../../../core/state/templates/panelSlice';
+import { CustomizeParameterPanel } from '../../panel/configureTemplatePanel/customizeParameterPanel/customizeParameterPanel';
+import { MoreHorizontal16Filled } from '@fluentui/react-icons';
 
 export const TemplateParametersList = () => {
   const intl = useIntl();
+  const dispatch = useDispatch<AppDispatch>();
+
   const intlText = {
     AriaLabel: intl.formatMessage({
       defaultMessage: 'List of parameters in the template',
@@ -15,8 +31,9 @@ export const TemplateParametersList = () => {
     }),
   };
 
-  const { parameterDefinitions } = useSelector((state: RootState) => ({
+  const { parameterDefinitions, currentPanelView } = useSelector((state: RootState) => ({
     parameterDefinitions: state.template.parameterDefinitions,
+    currentPanelView: state.panel.currentPanelView,
   }));
 
   const resourceStrings = useResourceStrings();
@@ -49,8 +66,17 @@ export const TemplateParametersList = () => {
     [parameterDefinitions, resourceStrings]
   );
 
+  const handleSelectParameter = useCallback(
+    (parameterId: string) => {
+      dispatch(openPanelView({ panelView: TemplatePanelView.CustomizeParameter, selectedTabId: parameterId }));
+    },
+    [dispatch]
+  );
+
   return (
     <div style={{ overflowX: 'auto', paddingTop: '12px' }}>
+      {currentPanelView === TemplatePanelView.CustomizeParameter && <CustomizeParameterPanel />}
+
       <Table aria-label={intlText.AriaLabel} size="small" style={{ width: '80%' }}>
         <TableHeader>
           <TableRow>
@@ -80,7 +106,7 @@ export const TemplateParametersList = () => {
                 <TableCellLayout>{item.allowedValues}</TableCellLayout>
               </TableCell>
               <TableCell>
-                <TableCellLayout>{item.associatedWorkflows}</TableCellLayout>
+                <TableCellLayout>{getResourceNameFromId(item.associatedWorkflows)}</TableCellLayout>
               </TableCell>
               <TableCell>
                 <TableCellLayout>{item.description}</TableCellLayout>
@@ -89,7 +115,9 @@ export const TemplateParametersList = () => {
                 <TableCellLayout>{item.required}</TableCellLayout>
               </TableCell>
               <TableCell>
-                <TableCellLayout>{'placeholder'}</TableCellLayout>
+                <TableCellLayout>
+                  <Button icon={<MoreHorizontal16Filled />} appearance="subtle" onClick={() => handleSelectParameter(item.name)} />
+                </TableCellLayout>
               </TableCell>
             </TableRow>
           ))}
