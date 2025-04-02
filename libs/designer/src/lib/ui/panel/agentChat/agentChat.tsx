@@ -111,48 +111,53 @@ const parseChatHistory = (
 
 const parseMessage = (
   message: any,
-  id: string,
+  parentId: string,
   toolResultCallback: (agentName: string, toolName: string, iteration: number, subIteration: number) => void
-) => {
-  let type: ConversationItemType = ConversationItemType.Reply;
-  let text = '';
-  switch (message.messageEntryType) {
+): ConversationItem => {
+  const { messageEntryType, messageEntryPayload, timestamp, role } = message;
+
+  switch (messageEntryType) {
     case 'Content': {
-      type = ConversationItemType.Reply;
-      text = message.messageEntryPayload?.content ?? '';
-      break;
+      const content = messageEntryPayload?.content || '';
+      return {
+        text: content,
+        type: ConversationItemType.Reply,
+        id: guid(),
+        role,
+        hideFooter: true,
+        metadata: { parentId },
+        date: new Date(timestamp),
+        isMarkdownText: false,
+      };
     }
     case 'ToolResult': {
       const iteration = message?.iteration ?? 0;
       const subIteration = message.toolResultsPayload?.toolResult?.subIteration ?? 0;
-      const toolName = message.toolResultsPayload?.toolResult?.toolName;
-      const status = message.toolResultsPayload?.toolResult?.subIteration ?? undefined;
+      const toolName = message.toolResultsPayload?.toolResult?.toolName ?? '';
+      const status = message.toolResultsPayload?.toolResult?.status;
 
       return {
         id: guid(),
-        text: toolName ?? '',
+        text: toolName,
         type: ConversationItemType.Tool,
-        onClick: () => {
-          toolResultCallback(id, toolName, iteration, subIteration);
-        },
+        onClick: () => toolResultCallback(parentId, toolName, iteration, subIteration),
         status,
-        timestamp: message.timestamp,
+        date: new Date(timestamp),
       };
     }
-    default:
-      type = ConversationItemType.Reply;
-      break;
+    default: {
+      return {
+        text: '',
+        type: ConversationItemType.Reply,
+        id: guid(),
+        role,
+        hideFooter: true,
+        metadata: { parentId },
+        date: new Date(timestamp),
+        isMarkdownText: false,
+      };
+    }
   }
-
-  return {
-    id: guid(),
-    text,
-    type,
-    timestamp: message.timestamp,
-    metadata: {
-      parentId: id,
-    },
-  };
 };
 
 export const AgentChat = ({
