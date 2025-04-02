@@ -1,19 +1,18 @@
 import type { IImageStyles, IImageStyleProps, IStyleFunctionOrObject } from '@fluentui/react';
-import { Icon, Shimmer, ShimmerElementType, Spinner, SpinnerSize, Text, css } from '@fluentui/react';
+import { Icon, Shimmer, ShimmerElementType, Spinner, SpinnerSize, css } from '@fluentui/react';
 import { useConnector } from '../../../core/state/connection/connectionSelector';
 import type { Template } from '@microsoft/logic-apps-shared';
-import type { IntlShape } from 'react-intl';
-import { useIntl } from 'react-intl';
 import { getConnectorAllCategories } from '@microsoft/designer-ui';
 import { useConnectionsForConnector } from '../../../core/queries/connections';
-import { getConnectorResources } from '../../../core/templates/utils/helper';
 import { useEffect, useMemo } from 'react';
 import type { ConnectorInfo } from '../../../core/templates/utils/queries';
 import { useConnectorInfo } from '../../../core/templates/utils/queries';
-import { Tooltip } from '@fluentui/react-components';
+import { tokens, Tooltip, Text } from '@fluentui/react-components';
 import { isConnectionValid } from '../../../core/utils/connectors/connections';
 import { useSelector } from 'react-redux';
 import type { RootState } from '../../../core/state/templates/store';
+import { Checkmark16Filled, Dismiss16Filled } from '@fluentui/react-icons';
+import { useConnectorStatusStrings } from '../templatesStrings';
 
 export const ConnectorIcon = ({
   connectorId,
@@ -112,14 +111,13 @@ export const ConnectorWithDetails = ({ id, kind }: Template.FeaturedConnector) =
   const { data: connector, isLoading, isError } = useConnector(id, /* enabled */ true, /* getCachedData */ true);
   const { data: connections, isLoading: isConnectionsLoading } = useConnectionsForConnector(id, /* shouldNotRefetch */ true);
   const connectorConnections = useMemo(() => connections?.filter(isConnectionValid), [connections]);
-  const intl = useIntl();
+  const text = useConnectorStatusStrings();
 
   if (!connector) {
     return isLoading ? <Spinner size={SpinnerSize.small} /> : isError ? <Icon iconName="Error" /> : <Icon iconName="Unknown" />;
   }
 
   const allCategories = getConnectorAllCategories();
-  const text = getConnectorResources(intl);
   return (
     <div className="msla-template-connector">
       {isLoading ? (
@@ -171,31 +169,48 @@ export const ConnectorWithDetails = ({ id, kind }: Template.FeaturedConnector) =
   );
 };
 
-export const ConnectorConnectionStatus = ({
-  connectorId,
-  connectionKey,
-  hasConnection,
-  intl,
-}: { connectorId: string; connectionKey: string; hasConnection: boolean; intl: IntlShape }) => {
+export const ConnectorConnectionName = ({ connectorId, connectionKey }: { connectorId: string; connectionKey: string }) => {
   const { data: connector, isLoading } = useConnector(connectorId, /* enabled */ true, /* getCachedData */ true);
-  const texts = getConnectorResources(intl);
+
+  return isLoading ? (
+    <Shimmer
+      style={{ width: '70%', marginTop: 5 }}
+      shimmerElements={[{ type: ShimmerElementType.line, height: 10, verticalAlign: 'bottom', width: '100%' }]}
+      size={SpinnerSize.xSmall}
+    />
+  ) : (
+    <Text>
+      {connector?.properties?.displayName} ({connectionKey})
+    </Text>
+  );
+};
+
+export const CompactConnectorConnectionStatus = ({ connectorId, hasConnection }: { connectorId: string; hasConnection: boolean }) => {
+  const { data: connector, isLoading } = useConnector(connectorId, /* enabled */ true, /* getCachedData */ true);
 
   return (
     <div className="msla-templates-tab-review-section-details">
       {isLoading ? (
-        <div className="msla-templates-tab-review-section-details-title">
-          <Shimmer
-            style={{ width: '70%', marginTop: 5 }}
-            shimmerElements={[{ type: ShimmerElementType.line, height: 10, verticalAlign: 'bottom', width: '100%' }]}
-            size={SpinnerSize.xSmall}
-          />
-        </div>
+        <Shimmer
+          style={{ width: '70%', marginTop: 5 }}
+          shimmerElements={[{ type: ShimmerElementType.line, height: 15, verticalAlign: 'bottom', width: '100%' }]}
+          size={SpinnerSize.xSmall}
+        />
       ) : (
-        <Text className="msla-templates-tab-review-section-details-title">
-          {connector?.properties?.displayName} ({connectionKey})
-        </Text>
+        <div className="msla-connection-status-compact">
+          {hasConnection ? (
+            <Checkmark16Filled color={tokens.colorStatusSuccessForeground1} />
+          ) : (
+            <Dismiss16Filled color={tokens.colorStatusDangerForeground1} />
+          )}
+          <img
+            className="msla-connection-status-compact-icon"
+            src={connector?.properties?.iconUrl}
+            alt={connector?.properties?.displayName ?? connectorId}
+          />
+          <Text weight="semibold">{connector?.properties?.displayName ?? connectorId}</Text>
+        </div>
       )}
-      <Text className="msla-templates-tab-review-section-details-value">{hasConnection ? texts.connected : texts.notConnected}</Text>
     </div>
   );
 };

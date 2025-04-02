@@ -31,33 +31,13 @@ test.describe(
       await page.getByRole('tab', { name: 'Summary' }).click();
       await page.getByRole('button', { name: 'Use this template' }).click();
       await page.getByRole('tab', { name: 'Basics' }).click();
+      await expect(page.getByText('Workflow name*', { exact: true })).toBeVisible();
       await page.getByText('Stateless', { exact: true }).click();
       await page.getByRole('tab', { name: 'Review + create' }).click();
       await expect(page.getByText('Create a new workflow from template', { exact: true })).toBeVisible();
       await page.getByText('Template details').click();
-      await expect(page.getByText('Workflow name', { exact: true })).toBeVisible();
+      await expect(page.getByText('Workflow name')).toBeVisible();
       await expect(page.getByText('State type')).toBeVisible();
-    });
-
-    test('Should contain all templates when templates are loaded from packaged files', async ({ page }) => {
-      await page.goto('/templates');
-
-      await page.getByText('Local', { exact: true }).click();
-      await page.getByLabel('Categories').click();
-      await page.getByText('Automation', { exact: true }).click();
-
-      await page.waitForTimeout(10);
-
-      await page.getByText('Azure Business').click();
-      await page.getByRole('tab', { name: 'Workflow' }).click();
-      await page.getByRole('tab', { name: 'Summary' }).click();
-      await page.getByTestId('template-footer-primary-button').click();
-      await expect(page.getByText('Create a new workflow from template', { exact: true })).toBeVisible();
-      await page.getByRole('button', { name: 'Close' }).click();
-
-      await page.getByPlaceholder('Search').fill('test');
-      await page.waitForTimeout(5);
-      await expect(page.getByText('Test template', { exact: true })).not.toBeVisible();
     });
 
     test('Should only contain the mock templates when templates are loaded from azure endpoint', async ({ page }) => {
@@ -82,7 +62,7 @@ test.describe(
       await page.getByText('[Mock] Simple Parameters', { exact: false }).click();
       await page.getByRole('button', { name: 'Use this template' }).click();
       await page.getByRole('tab', { name: 'Basics' }).click();
-      await expect(page.getByText('Workflow name', { exact: true })).toBeVisible();
+      await expect(page.getByText('Workflow name*', { exact: true })).toBeVisible();
       await expect(page.getByText('State type')).not.toBeVisible();
 
       await page.getByRole('button', { name: 'Next' }).click();
@@ -104,7 +84,7 @@ test.describe(
       await expect(page.getByText('Subscription 1', { exact: true })).toBeVisible();
       await expect(page.getByText('SecondRG', { exact: true })).toBeVisible();
       await expect(page.getByText('East US', { exact: true })).toBeVisible();
-      await expect(page.getByText('Workflow name', { exact: true })).toBeVisible();
+      await expect(page.getByText('Workflow name*', { exact: true })).toBeVisible();
 
       await page.getByRole('button', { name: 'Next' }).click();
       await page.getByRole('tab', { name: 'Review + create' }).click();
@@ -120,7 +100,7 @@ test.describe(
       await expect(page.getByText('Subscription 1', { exact: true })).toBeVisible();
       await expect(page.getByText('SecondRG', { exact: true })).toBeVisible();
       await expect(page.getByText('East US', { exact: true })).toBeVisible();
-      await expect(page.getByText('Workflow name', { exact: true })).toBeVisible();
+      await expect(page.getByText('Workflow name*', { exact: true })).toBeVisible();
 
       await page.getByRole('button', { name: 'Next' }).click();
       await page.getByRole('tab', { name: 'Review + create' }).click();

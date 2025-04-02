@@ -1,29 +1,19 @@
 import type { DictionaryEditorItemProps } from '.';
 import type { ValueSegment } from '../editor';
-import type { GetTokenPickerHandler, loadParameterValueFromStringHandler } from '../editor/base';
+import type { BaseEditorProps } from '../editor/base';
 import { EditorWrapper } from '../editor/base/EditorWrapper';
-import type { TokenPickerButtonEditorProps } from '../editor/base/plugins/tokenpickerbutton';
 import { CollapsedDictionaryValidation } from './plugins/CollapsedDictionaryValidation';
 import { useIntl } from 'react-intl';
 
-export type CollapsedDictionaryProps = {
-  readonly?: boolean;
-  collapsedValue: ValueSegment[];
+export interface CollapsedDictionaryProps extends BaseEditorProps {
   keyType?: string;
-  valueType?: string;
-  tokenPickerButtonProps?: TokenPickerButtonEditorProps;
   setIsValid: (b: boolean) => void;
   setItems: (items: DictionaryEditorItemProps[]) => void;
   setCollapsedValue: (val: ValueSegment[]) => void;
-  onBlur?: () => void;
-  getTokenPicker: GetTokenPickerHandler;
-  tokenMapping?: Record<string, ValueSegment>;
-  labelId?: string;
-  loadParameterValueFromString?: loadParameterValueFromStringHandler;
-};
+}
 
 export const CollapsedDictionary = ({
-  collapsedValue,
+  initialValue,
   keyType,
   valueType,
   setItems,
@@ -44,13 +34,14 @@ export const CollapsedDictionary = ({
     <div className="msla-dictionary-container msla-dictionary-editor-collapsed">
       <div className="msla-dictionary-content">
         <EditorWrapper
+          placeholder={editorPlaceHolder}
           {...props}
           className="msla-collapsed-editor-container"
           basePlugins={{
             tabbable: true,
           }}
-          placeholder={editorPlaceHolder}
-          initialValue={collapsedValue?.length > 0 ? collapsedValue : ([] as ValueSegment[])}
+          initialValue={initialValue?.length > 0 ? initialValue : ([] as ValueSegment[])}
+          tokenPickerButtonProps={{ verticalOffSet: 17 }}
           onBlur={onBlur}
         >
           <CollapsedDictionaryValidation

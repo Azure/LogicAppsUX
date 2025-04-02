@@ -9,7 +9,6 @@ import * as fse from 'fs-extra';
 import { AzureWizardPromptStep } from '@microsoft/vscode-azext-utils';
 import type { IProjectWizardContext } from '@microsoft/vscode-extension-logic-apps';
 import { logicAppNameValidation } from '../../../../constants';
-import * as path from 'path';
 
 export class LogicAppNameStep extends AzureWizardPromptStep<IProjectWizardContext> {
   public async prompt(context: IProjectWizardContext): Promise<void> {
@@ -35,8 +34,8 @@ export class LogicAppNameStep extends AzureWizardPromptStep<IProjectWizardContex
       const workspaceFileContent = await vscode.workspace.fs.readFile(vscode.Uri.file(context.workspaceCustomFilePath));
       const workspaceFileJson = JSON.parse(workspaceFileContent.toString());
 
-      if (workspaceFileJson.folders && workspaceFileJson.folders.some((folder: { path: string }) => folder.path === path.join('.', name))) {
-        return localize('logicAppNameExists', 'A logic app with this name already exists in the workspace');
+      if (workspaceFileJson.folders && workspaceFileJson.folders.some((folder: { name: string }) => folder.name === name)) {
+        return localize('logicAppNameExists', 'A project with this name already exists in the workspace');
       }
     }
 

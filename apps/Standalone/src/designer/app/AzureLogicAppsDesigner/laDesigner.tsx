@@ -2,7 +2,7 @@ import { environment } from '../../../environments/environment';
 import type { AppDispatch, RootState } from '../../state/store';
 import { changeRunId, setIsChatBotEnabled, setMonitoringView, setReadOnly, setRunHistoryEnabled } from '../../state/workflowLoadingSlice';
 import { DesignerCommandBar } from './DesignerCommandBar';
-import type { ConnectionAndAppSetting, ConnectionsData, ParametersData } from './Models/Workflow';
+import type { ConnectionAndAppSetting, ConnectionReferenceModel, ConnectionsData, ParametersData } from './Models/Workflow';
 import { Artifact } from './Models/Workflow';
 import type { WorkflowApp } from './Models/WorkflowApp';
 import { ArtifactService } from './Services/Artifact';
@@ -26,7 +26,7 @@ import {
 } from './Services/WorkflowAndArtifacts';
 import { ArmParser } from './Utilities/ArmParser';
 import { WorkflowUtility, addConnectionInJson, addOrUpdateAppSettings } from './Utilities/Workflow';
-import { Chatbot, chatbotPanelWidth } from '@microsoft/logic-apps-chatbot';
+import { CoPilotChatbot } from '@microsoft/logic-apps-chatbot';
 import {
   BaseApiManagementService,
   BaseAppServiceService,
@@ -59,6 +59,7 @@ import {
   getSKUDefaultHostOptions,
   RunHistoryPanel,
   CombineInitializeVariableDialog,
+  TriggerDescriptionDialog,
 } from '@microsoft/logic-apps-designer';
 import axios from 'axios';
 import isEqual from 'lodash.isequal';
@@ -82,6 +83,7 @@ const DesignerEditor = () => {
   const {
     isReadOnly,
     isDarkMode,
+    isUnitTest,
     isMonitoringView,
     runId,
     appId,
@@ -104,7 +106,10 @@ const DesignerEditor = () => {
   const { data: tenantId } = useCurrentTenantId();
   const { data: objectId } = useCurrentObjectId();
   const [designerID, setDesignerID] = useState(guid());
-  const [workflow, setWorkflow] = useState<Workflow>({ ...data?.properties.files[Artifact.WorkflowFile], id: guid() });
+  const [workflow, setWorkflow] = useState<Workflow>({
+    ...data?.properties.files[Artifact.WorkflowFile],
+    id: guid(),
+  });
   const [designerView, setDesignerView] = useState(true);
   const codeEditorRef = useRef<{ getValue: () => string | undefined }>(null);
   const originalConnectionsData = useMemo(() => data?.properties.files[Artifact.ConnectionsFile] ?? {}, [data?.properties.files]);
@@ -254,6 +259,7 @@ const DesignerEditor = () => {
       ...(connectionsData?.managedApiConnections ?? {}),
     };
     const newServiceProviderConnections: Record<string, any> = {};
+    const newAgentConnections: Record<string, any> = {};
 
     const referenceKeys = Object.keys(connectionReferences ?? {});
     if (referenceKeys.length) {
@@ -280,6 +286,13 @@ const DesignerEditor = () => {
               connectionProperties,
             };
             newManagedApiConnections[referenceKey] = newConnectionObj;
+          } else if (reference?.connection?.id.startsWith('/connectionProviders/agent/')) {
+            // Service Provider Connection
+            const connectionKey = reference.connection.id.split('/').splice(-1)[0];
+            // We can't apply this directly in case there is a temporary key overlap
+            // We need to move the data out to a new object, delete the old data, then apply the new data at the end
+            newAgentConnections[referenceKey] = connectionsData?.agentConnections?.[connectionKey];
+            delete connectionsData?.agentConnections?.[connectionKey];
           } else if (reference?.connection?.id.startsWith('/serviceProviders/')) {
             // Service Provider Connection
             const connectionKey = reference.connection.id.split('/').splice(-1)[0];
@@ -295,6 +308,12 @@ const DesignerEditor = () => {
         ...connectionsData?.serviceProviderConnections,
         ...newServiceProviderConnections,
       };
+      if (workflow?.kind === 'agentic') {
+        (connectionsData as ConnectionsData).agentConnections = {
+          ...connectionsData?.agentConnections,
+          ...newAgentConnections,
+        };
+      }
     }
 
     const connectionsToUpdate = getConnectionsToUpdate(originalConnectionsData, connectionsData ?? {});
@@ -385,6 +404,7 @@ const DesignerEditor = () => {
           isDarkMode,
           readOnly: isReadOnly,
           isMonitoringView,
+          isUnitTest,
           suppressDefaultNodeSelectFunctionality: suppressDefaultNodeSelect,
           hostOptions: {
             ...hostOptions,
@@ -408,30 +428,43 @@ const DesignerEditor = () => {
             appSettings={settingsData?.properties}
             isMultiVariableEnabled={hostOptions.enableMultiVariable}
           >
-            <div style={{ display: 'flex', flexDirection: 'row', height: 'inherit' }}>
+            <div
+              style={{
+                display: 'flex',
+                flexDirection: 'row',
+                height: 'inherit',
+              }}
+            >
               <RunHistoryPanel
                 collapsed={!showRunHistory}
                 onClose={() => dispatch(setRunHistoryEnabled(false))}
                 onRunSelected={onRunSelected}
               />
               {displayChatbotUI ? (
-                <div style={{ minWidth: chatbotPanelWidth }}>
-                  <Chatbot
-                    openAzureCopilotPanel={() => openPanel('Azure Copilot Panel has been opened')}
-                    getAuthToken={getAuthToken}
-                    getUpdatedWorkflow={getUpdatedWorkflow}
-                    openFeedbackPanel={() => openPanel('Azure Feedback Panel has been opened')}
-                    closeChatBot={() => dispatch(setIsChatBotEnabled(false))}
-                  />
-                </div>
+                <CoPilotChatbot
+                  openAzureCopilotPanel={() => openPanel('Azure Copilot Panel has been opened')}
+                  getAuthToken={getAuthToken}
+                  getUpdatedWorkflow={getUpdatedWorkflow}
+                  openFeedbackPanel={() => openPanel('Azure Feedback Panel has been opened')}
+                  closeChatBot={() => dispatch(setIsChatBotEnabled(false))}
+                />
               ) : null}
-              <div style={{ display: 'flex', flexDirection: 'column', height: 'inherit', flexGrow: 1, maxWidth: '100%' }}>
+              <div
+                style={{
+                  display: 'flex',
+                  flexDirection: 'column',
+                  height: 'inherit',
+                  flexGrow: 1,
+                  maxWidth: '100%',
+                }}
+              >
                 <DesignerCommandBar
                   id={workflowId}
                   saveWorkflow={saveWorkflowFromDesigner}
                   discard={discardAllChanges}
                   location={canonicalLocation}
                   isReadOnly={isReadOnly}
+                  isUnitTest={isUnitTest}
                   isDarkMode={isDarkMode}
                   isDesignerView={designerView}
                   showConnectionsPanel={showConnectionsPanel}
@@ -448,6 +481,7 @@ const DesignerEditor = () => {
                 />
                 {designerView ? <Designer /> : <CodeViewEditor ref={codeEditorRef} workflowKind={workflow?.kind} />}
                 <CombineInitializeVariableDialog />
+                <TriggerDescriptionDialog workflowId={workflowId} />
               </div>
             </div>
           </BJSWorkflowProvider>
@@ -826,24 +860,43 @@ const getDesignerServices = (
     userPreferenceService: new BaseUserPreferenceService(),
   };
 };
+const hasNewKeys = (original: Record<string, any>, updated: Record<string, any>) => {
+  return Object.keys(updated).some((key) => !Object.keys(original).includes(key));
+};
 
-const hasNewKeys = (original: Record<string, any> = {}, updated: Record<string, any> = {}) => {
-  return !Object.keys(updated).some((key) => !Object.keys(original).includes(key));
+const hasNewConnectionRuntimeUrl = (
+  original: Record<string, ConnectionReferenceModel>,
+  updated: Record<string, ConnectionReferenceModel>
+) => {
+  return Object.keys(updated).some((key) => {
+    const originalConnection = original[key];
+    const updatedConnection = updated[key];
+    const haveDifferentRuntimeUrl = originalConnection?.connectionRuntimeUrl !== updatedConnection?.connectionRuntimeUrl;
+    const haveSameConnectionId = originalConnection?.connection.id === updatedConnection?.connection.id;
+    return haveDifferentRuntimeUrl && haveSameConnectionId;
+  });
 };
 
 const getConnectionsToUpdate = (
   originalConnectionsJson: ConnectionsData,
   connectionsJson: ConnectionsData
 ): ConnectionsData | undefined => {
-  const hasNewFunctionKeys = hasNewKeys(originalConnectionsJson.functionConnections, connectionsJson.functionConnections);
-  const hasNewApimKeys = hasNewKeys(originalConnectionsJson.apiManagementConnections, connectionsJson.apiManagementConnections);
-  const hasNewManagedApiKeys = hasNewKeys(originalConnectionsJson.managedApiConnections, connectionsJson.managedApiConnections);
+  const hasNewFunctionKeys = hasNewKeys(originalConnectionsJson.functionConnections ?? {}, connectionsJson.functionConnections ?? {});
+  const hasNewApimKeys = hasNewKeys(originalConnectionsJson.apiManagementConnections ?? {}, connectionsJson.apiManagementConnections ?? {});
+  const hasNewManagedApiKeys = hasNewKeys(originalConnectionsJson.managedApiConnections ?? {}, connectionsJson.managedApiConnections ?? {});
   const hasNewServiceProviderKeys = hasNewKeys(
-    originalConnectionsJson.serviceProviderConnections,
-    connectionsJson.serviceProviderConnections
+    originalConnectionsJson.serviceProviderConnections ?? {},
+    connectionsJson.serviceProviderConnections ?? {}
   );
 
-  if (!hasNewFunctionKeys && !hasNewApimKeys && !hasNewManagedApiKeys && !hasNewServiceProviderKeys) {
+  const hasNewManagedApiConnectionRuntimeUrl = hasNewConnectionRuntimeUrl(
+    originalConnectionsJson.managedApiConnections ?? {},
+    connectionsJson.managedApiConnections ?? {}
+  );
+
+  const hasNewAgentKeys = hasNewKeys(originalConnectionsJson.agentConnections ?? {}, connectionsJson.agentConnections ?? {});
+
+  if (!hasNewFunctionKeys && !hasNewApimKeys && !hasNewManagedApiKeys && !hasNewServiceProviderKeys && !hasNewAgentKeys) {
     return undefined;
   }
 
@@ -870,9 +923,15 @@ const getConnectionsToUpdate = (
   if (hasNewManagedApiKeys) {
     for (const managedApiConnectionName of Object.keys(connectionsJson.managedApiConnections ?? {})) {
       if (originalConnectionsJson.managedApiConnections?.[managedApiConnectionName]) {
-        // eslint-disable-next-line no-param-reassign
-        (connectionsJson.managedApiConnections as any)[managedApiConnectionName] =
+        (connectionsToUpdate.managedApiConnections as any)[managedApiConnectionName] =
           originalConnectionsJson.managedApiConnections[managedApiConnectionName];
+
+        if (hasNewManagedApiConnectionRuntimeUrl) {
+          const newRuntimeUrl = connectionsJson?.managedApiConnections?.[managedApiConnectionName]?.connectionRuntimeUrl;
+          if (newRuntimeUrl !== undefined) {
+            (connectionsToUpdate.managedApiConnections as any)[managedApiConnectionName].connectionRuntimeUrl = newRuntimeUrl;
+          }
+        }
       }
     }
   }
@@ -883,6 +942,15 @@ const getConnectionsToUpdate = (
         // eslint-disable-next-line no-param-reassign
         (connectionsJson.serviceProviderConnections as any)[serviceProviderConnectionName] =
           originalConnectionsJson.serviceProviderConnections[serviceProviderConnectionName];
+      }
+    }
+  }
+
+  if (hasNewAgentKeys) {
+    for (const agentConnectionName of Object.keys(connectionsJson.agentConnections ?? {})) {
+      if (originalConnectionsJson.agentConnections?.[agentConnectionName]) {
+        // eslint-disable-next-line no-param-reassign
+        (connectionsJson.agentConnections as any)[agentConnectionName] = originalConnectionsJson.agentConnections[agentConnectionName];
       }
     }
   }

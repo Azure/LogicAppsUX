@@ -484,9 +484,6 @@ export const dataMapSlice = createSlice({
         deleteConnectionFromConnections(newConnections, sourceIdToRemove, targetId, undefined);
       }
 
-      // Remove the input completely once it has been emptied
-      newConnections[targetId].inputs = [...inputs.slice(0, inputIndex), ...inputs.slice(inputIndex + 1)];
-
       doDataMapOperation(
         state,
         {

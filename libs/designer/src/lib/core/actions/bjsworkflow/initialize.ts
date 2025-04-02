@@ -101,7 +101,7 @@ import {
   getIntl,
   isObject,
 } from '@microsoft/logic-apps-shared';
-import type { OutputToken, ParameterInfo } from '@microsoft/designer-ui';
+import type { ParameterInfo } from '@microsoft/designer-ui';
 import type { Dispatch } from '@reduxjs/toolkit';
 import { addOrUpdateCustomCode } from '../../state/customcode/customcodeSlice';
 
@@ -209,6 +209,15 @@ export const getInputParametersFromManifest = (
 
   const nodeInputs = { dynamicLoadStatus: dynamicInput ? DynamicLoadStatus.NOTSTARTED : undefined, parameterGroups };
   return { inputs: nodeInputs, dependencies: getInputDependencies(nodeInputs, allInputParameters) };
+};
+
+export const getSupportedChannelsFromManifest = (_nodeId: string, operationInfo: NodeOperation, manifest: OperationManifest) => {
+  const manifestParser = new ManifestParser(
+    manifest,
+    OperationManifestService().isAliasingSupported(operationInfo.type, operationInfo.kind)
+  );
+
+  return manifestParser.getSupportedChannels();
 };
 
 export const getOutputParametersFromManifest = (
@@ -347,49 +356,99 @@ export const updateOutputsAndTokens = async (
 ): Promise<void> => {
   const { type, kind, connectorId } = operationInfo;
   const supportsManifest = OperationManifestService().isSupported(type, kind);
-  const splitOnValue = settings.splitOn?.value?.enabled ? settings.splitOn.value.value : undefined;
-  let nodeOutputs: NodeOutputs;
-  let tokens: OutputToken[];
-  if (supportsManifest) {
-    const manifest = await getOperationManifest(operationInfo);
-    nodeOutputs = getOutputParametersFromManifest(nodeId, manifest, isTrigger, inputs, operationInfo, dispatch, splitOnValue).outputs;
-    tokens = [
+  const splitOnValue = settings?.splitOn?.value?.enabled ? settings.splitOn.value.value : undefined;
+
+  const { nodeOutputs, tokens } = supportsManifest
+    ? await getManifestOutputAndTokenData(nodeId, operationInfo, isTrigger, inputs, dispatch, splitOnValue)
+    : await getSwaggerOutputAndTokenData(nodeId, connectorId, operationInfo, isTrigger, inputs, splitOnValue, settings);
+  dispatch(updateOutputs({ id: nodeId, nodeOutputs }));
+
+  dispatch(updateTokens({ id: nodeId, tokens }));
+
+  if (shouldProcessSettings && operationSupportsSplitOn(isTrigger)) {
+    updateSplitOnSetting(dispatch, nodeId, settings, nodeOutputs, supportsManifest);
+  }
+};
+
+const getManifestOutputAndTokenData = async (
+  nodeId: string,
+  operationInfo: NodeOperation,
+  isTrigger: boolean,
+  inputs: NodeInputs,
+  dispatch: Dispatch,
+  splitOnValue?: string
+) => {
+  const manifest = await getOperationManifest(operationInfo);
+
+  return processOutputsAndTokens(nodeId, manifest, isTrigger, inputs, operationInfo, dispatch, splitOnValue);
+};
+
+// Helper to process outputs & tokens
+const processOutputsAndTokens = (
+  nodeId: string,
+  manifest: OperationManifest,
+  isTrigger: boolean,
+  inputs: NodeInputs,
+  operationInfo: NodeOperation,
+  dispatch: Dispatch,
+  splitOnValue?: string
+) => {
+  const nodeOutputs = getOutputParametersFromManifest(nodeId, manifest, isTrigger, inputs, operationInfo, dispatch, splitOnValue).outputs;
+  return {
+    nodeOutputs,
+    tokens: [
       ...getBuiltInTokens(manifest),
       ...convertOutputsToTokens(
         isTrigger ? undefined : nodeId,
-        type,
+        operationInfo.type,
         nodeOutputs.outputs ?? {},
         { iconUri: manifest.properties.iconUri, brandColor: manifest.properties.brandColor },
-        settings
+        {}
       ),
-    ];
-  } else {
-    const { connector, parsedSwagger } = await getConnectorWithSwagger(connectorId);
-    nodeOutputs = getOutputParametersFromSwagger(isTrigger, parsedSwagger, operationInfo, inputs, splitOnValue).outputs;
-    tokens = convertOutputsToTokens(
+    ],
+  };
+};
+
+const getSwaggerOutputAndTokenData = async (
+  nodeId: string,
+  connectorId: string,
+  operationInfo: NodeOperation,
+  isTrigger: boolean,
+  inputs: NodeInputs,
+  splitOnValue?: string,
+  settings?: Settings
+) => {
+  const { connector, parsedSwagger } = await getConnectorWithSwagger(connectorId);
+  const nodeOutputs = getOutputParametersFromSwagger(isTrigger, parsedSwagger, operationInfo, inputs, splitOnValue).outputs;
+  return {
+    nodeOutputs,
+    tokens: convertOutputsToTokens(
       isTrigger ? undefined : nodeId,
-      type,
+      operationInfo.type,
       nodeOutputs.outputs ?? {},
       { iconUri: getIconUriFromConnector(connector), brandColor: getBrandColorFromConnector(connector) },
       settings
+    ),
+  };
+};
+
+// Helper to update splitOn setting
+const updateSplitOnSetting = (
+  dispatch: Dispatch,
+  nodeId: string,
+  settings: Settings,
+  nodeOutputs: NodeOutputs,
+  supportsManifest: boolean
+) => {
+  const hasSplitOnOptions = getSplitOnOptions(nodeOutputs, supportsManifest).length > 0;
+  if (settings.splitOn?.isSupported !== hasSplitOnOptions) {
+    dispatch(
+      updateNodeSettings({
+        id: nodeId,
+        settings: { splitOn: { ...settings.splitOn, isSupported: hasSplitOnOptions } },
+        ignoreDirty: true,
+      })
     );
-  }
-
-  dispatch(updateOutputs({ id: nodeId, nodeOutputs }));
-  dispatch(updateTokens({ id: nodeId, tokens }));
-
-  // NOTE: Split On setting changes as outputs of trigger changes, so we will be recalculating such settings in this block for triggers.
-  if (shouldProcessSettings && operationSupportsSplitOn(isTrigger)) {
-    const hasSplitOnOptions = getSplitOnOptions(nodeOutputs, supportsManifest).length > 0;
-    if (settings.splitOn?.isSupported !== hasSplitOnOptions) {
-      dispatch(
-        updateNodeSettings({
-          id: nodeId,
-          settings: { splitOn: { ...settings.splitOn, isSupported: hasSplitOnOptions } },
-          ignoreDirty: true,
-        })
-      );
-    }
   }
 };
 

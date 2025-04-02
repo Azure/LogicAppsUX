@@ -17,7 +17,6 @@ import {
   ExpressionParser,
   ScannerException,
   guid,
-  isCopilotServiceEnabled,
   unescapeString,
   LOCAL_STORAGE_KEYS,
 } from '@microsoft/logic-apps-shared';
@@ -31,7 +30,7 @@ const FxIcon =
 
 interface TokenPickerFooterProps {
   expression: ExpressionEditorEvent;
-  expressionToBeUpdated: NodeKey | null;
+  nodeToBeUpdated: NodeKey | null;
   tokenGroup: TokenGroup[];
   getValueSegmentFromToken: GetValueSegmentHandler;
   setExpressionEditorError: (error: string) => void;
@@ -39,7 +38,7 @@ interface TokenPickerFooterProps {
 
 export function TokenPickerFooter({
   expression,
-  expressionToBeUpdated,
+  nodeToBeUpdated,
   tokenGroup,
   getValueSegmentFromToken,
   setExpressionEditorError,
@@ -78,11 +77,6 @@ export function TokenPickerFooter({
     defaultMessage: 'The expression is invalid.',
     id: 't9RwOi',
     description: 'Invalid expression alert',
-  });
-  const invalidExpressionFixWithCopilot = intl.formatMessage({
-    defaultMessage: 'This expression has a problem. You can fix it manually or with Copilot.',
-    id: 'QbVD0F',
-    description: 'Invalid expression alert with option to fix with copilot.',
   });
   const invalidExpressionQuotations = intl.formatMessage({
     defaultMessage: 'The expression is invalid. Make sure to use single quotes.',
@@ -123,13 +117,13 @@ export function TokenPickerFooter({
         // if the expression contains misused double quotes, we'll show a different error message
         setExpressionEditorError(invalidExpressionQuotations);
       } else {
-        setExpressionEditorError(isCopilotServiceEnabled() ? invalidExpressionFixWithCopilot : invalidExpression);
+        setExpressionEditorError(invalidExpression);
       }
     }
 
     LoggerService().log({
       area: 'TokenPickerFooter:onUpdateOrAddClicked',
-      args: [expressionToBeUpdated ? 'update' : 'add', currExpression ? 'valid' : 'invalid'],
+      args: [nodeToBeUpdated ? 'update' : 'add', currExpression ? 'valid' : 'invalid'],
       level: LogEntryLevel.Verbose,
       message: 'Expression add/update button clicked.',
     });
@@ -143,7 +137,7 @@ export function TokenPickerFooter({
     }
     // if the expression is just an output token, instead of creating an expression, we'll just insert the token
     const outputToken = getExpressionOutput(currExpression, outputTokenMap);
-    if (outputToken && !expressionToBeUpdated) {
+    if (outputToken && !nodeToBeUpdated) {
       insertOutputToken(outputToken);
     } else {
       const token: Token = {
@@ -157,7 +151,7 @@ export function TokenPickerFooter({
       };
 
       // if the expression is already in the expression editor, we'll update the token node
-      if (expressionToBeUpdated) {
+      if (nodeToBeUpdated) {
         editor?.dispatchCommand(UPDATE_TOKEN_NODE, {
           updatedValue: unescapedExpressionValue,
           updatedTitle: token.title,
@@ -167,7 +161,7 @@ export function TokenPickerFooter({
             value: unescapedExpressionValue,
             token,
           },
-          nodeKey: expressionToBeUpdated,
+          nodeKey: nodeToBeUpdated,
         });
       }
       // otherwise, we'll insert the expression token
@@ -188,7 +182,7 @@ export function TokenPickerFooter({
     <div className="msla-token-picker-footer">
       <PrimaryButton
         data-automation-id="msla-token-picker-expression-addorupdate-button"
-        text={expressionToBeUpdated ? tokenPickerUpdate : tokenPickerAdd}
+        text={nodeToBeUpdated ? tokenPickerUpdate : tokenPickerAdd}
         onClick={onUpdateOrAddClicked}
         style={{ marginLeft: '10px', height: '28px', fontSize: '14px' }}
       />

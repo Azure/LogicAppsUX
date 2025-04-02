@@ -45,11 +45,13 @@ import { isTokenValueSegment } from '../../utils/parameters/segment';
 import { initializeOperationDetailsForSwagger } from '../../utils/swagger/operation';
 import { convertOutputsToTokens, getBuiltInTokens, getTokenNodeIds } from '../../utils/tokens';
 import { getVariableDeclarations, setVariableMetadata } from '../../utils/variables';
+import { initializeAgentParameters } from '../../utils/agentParameters';
 import type { PasteScopeParams } from './copypaste';
 import {
   getCustomSwaggerIfNeeded,
   getInputParametersFromManifest,
   getOutputParametersFromManifest,
+  getSupportedChannelsFromManifest,
   updateCallbackUrlInInputs,
   updateCustomCodeInInputs,
   updateInvokerSettings,
@@ -76,6 +78,7 @@ import {
 import type { InputParameter, OutputParameter, LogicAppsV2, OperationManifest } from '@microsoft/logic-apps-shared';
 import type { Dispatch } from '@reduxjs/toolkit';
 import { operationSupportsSplitOn } from '../../utils/outputs';
+import { initializeConnectorOperationDetails } from './agent';
 
 export interface NodeDataWithOperationMetadata extends NodeData {
   manifest?: OperationManifest;
@@ -130,7 +133,9 @@ export const initializeOperationMetadata = async (
     if (isTrigger) {
       triggerNodeId = operationId;
     }
-    if (operationManifestService.isSupported(operation.type, operation.kind)) {
+    if (operation.type === Constants.NODE.TYPE.CONNECTOR) {
+      promises.push(initializeConnectorOperationDetails(operationId, operation as LogicAppsV2.ConnectorAction, workflowKind, dispatch));
+    } else if (operationManifestService.isSupported(operation.type, operation.kind)) {
       promises.push(initializeOperationDetailsForManifest(operationId, operation, customCode, !!isTrigger, workflowKind, dispatch));
     } else {
       promises.push(initializeOperationDetailsForSwagger(operationId, operation, references, !!isTrigger, workflowKind, dispatch));
@@ -160,7 +165,7 @@ export const initializeOperationMetadata = async (
   dispatch(
     initializeNodes({
       nodes: allNodeData.map((data) => {
-        const { id, nodeInputs, nodeOutputs, nodeDependencies, settings, operationMetadata, staticResult } = data;
+        const { id, nodeInputs, nodeOutputs, nodeDependencies, settings, operationMetadata, staticResult, supportedChannels } = data;
         return {
           id,
           nodeInputs,
@@ -169,6 +174,7 @@ export const initializeOperationMetadata = async (
           settings,
           operationMetadata,
           staticResult,
+          supportedChannels,
           actionMetadata: getRecordEntry(nodesMetadata, id)?.actionMetadata,
           repetitionInfo: getRecordEntry(repetitionInfos, id),
         };
@@ -178,10 +184,13 @@ export const initializeOperationMetadata = async (
   );
 
   const variables = initializeVariables(operations, allNodeData);
+  const agentParameters = initializeAgentParameters(nodesMetadata, allNodeData);
+  const outputTokens = initializeOutputTokensForOperations(allNodeData, operations, graph, nodesMetadata);
   dispatch(
     initializeTokensAndVariables({
-      outputTokens: initializeOutputTokensForOperations(allNodeData, operations, graph, nodesMetadata),
+      outputTokens,
       variables,
+      agentParameters,
     })
   );
 
@@ -272,9 +281,11 @@ export const initializeOperationDetailsForManifest = async (
     );
     const nodeDependencies = { inputs: inputDependencies, outputs: outputDependencies };
 
+    const supportedChannels = getSupportedChannelsFromManifest(nodeId, nodeOperationInfo, manifest);
+
     const settings = getOperationSettings(isTrigger, nodeOperationInfo, manifest, undefined /* swagger */, operation, workflowKind);
 
-    const childGraphInputs = processChildGraphAndItsInputs(manifest, operation);
+    const childGraphInputs = processChildGraphAndItsInputs(manifest, operation, dispatch);
 
     return [
       {
@@ -285,6 +296,7 @@ export const initializeOperationDetailsForManifest = async (
         settings,
         operationInfo: nodeOperationInfo,
         manifest,
+        supportedChannels,
         operationMetadata: { iconUri, brandColor },
         staticResult: operation?.runtimeConfiguration?.staticResult,
       },
@@ -307,17 +319,20 @@ export const initializeOperationDetailsForManifest = async (
 
 const processChildGraphAndItsInputs = (
   manifest: OperationManifest,
-  operation: LogicAppsV2.ActionDefinition | LogicAppsV2.TriggerDefinition
+  operation: LogicAppsV2.ActionDefinition | LogicAppsV2.TriggerDefinition,
+  dispatch: Dispatch
 ): NodeDataWithOperationMetadata[] => {
-  const { subGraphDetails } = manifest.properties;
+  const { subGraphDetails, brandColor = '', iconUri = '' } = manifest.properties;
   const nodesData: NodeDataWithOperationMetadata[] = [];
 
   if (subGraphDetails) {
     for (const subGraphKey of Object.keys(subGraphDetails)) {
-      const { inputs, inputsLocation, isAdditive } = subGraphDetails[subGraphKey];
+      const { inputs, isAdditive, ...restOfManifest } = subGraphDetails[subGraphKey];
       const subOperation = getPropertyValue(operation, subGraphKey) ?? {};
       if (inputs) {
-        const subManifest = { properties: { inputs, inputsLocation } } as any;
+        const subManifest = {
+          properties: { inputs, ...restOfManifest, iconUri, brandColor },
+        } as OperationManifest;
         if (isAdditive) {
           for (const subNodeKey of Object.keys(subOperation)) {
             const { inputs: subNodeInputs, dependencies: subNodeInputDependencies } = getInputParametersFromManifest(
@@ -328,15 +343,25 @@ const processChildGraphAndItsInputs = (
               /* customSwagger */ undefined,
               subOperation[subNodeKey]
             );
-            const subNodeOutputs = { outputs: {} };
+
+            const { outputs: subNodeOutputs, dependencies: subNodeOutputDependencies } = getOutputParametersFromManifest(
+              subNodeKey,
+              subManifest,
+              false,
+              subNodeInputs,
+              { type: '', kind: '', connectorId: '', operationId: '' },
+              dispatch,
+              /* splitOnValue */ undefined
+            );
+
             nodesData.push({
               id: subNodeKey,
               nodeInputs: subNodeInputs,
               nodeOutputs: subNodeOutputs,
-              nodeDependencies: { inputs: subNodeInputDependencies, outputs: {} },
+              nodeDependencies: { inputs: subNodeInputDependencies, outputs: subNodeOutputDependencies },
               operationInfo: { type: '', kind: '', connectorId: '', operationId: '' },
               manifest: subManifest,
-              operationMetadata: { iconUri: manifest?.properties?.iconUri ?? '', brandColor: '' },
+              operationMetadata: { iconUri, brandColor },
             });
           }
         }
@@ -384,7 +409,8 @@ const updateTokenMetadataInParameters = (
               operations,
               workflowParameters,
               nodesMetadata,
-              type
+              type,
+              id
             );
 
             if (pasteParams) {
@@ -407,6 +433,7 @@ const updateTokenMetadataInParameters = (
       }
       if (editorViewModel) {
         flattenAndUpdateViewModel(
+          id,
           repetitionInfo,
           editorViewModel,
           actionNodes,
@@ -433,13 +460,13 @@ const initializeOutputTokensForOperations = (
   for (const id of Object.keys(operations)) {
     nodeMap[id] = id;
   }
+
   const nodesWithData: Record<string, NodeDataWithOperationMetadata> = {};
-  for (const nodeData of allNodesData) {
-    nodesWithData[nodeData.id] = nodeData;
-  }
   const operationInfos: Record<string, NodeOperation> = {};
-  for (const nodeData of allNodesData) {
-    operationInfos[nodeData.id] = nodeData.operationInfo as NodeOperation;
+
+  for (const node of allNodesData) {
+    nodesWithData[node.id] = node;
+    operationInfos[node.id] = node.operationInfo as NodeOperation;
   }
 
   const result: Record<string, NodeTokens> = {};

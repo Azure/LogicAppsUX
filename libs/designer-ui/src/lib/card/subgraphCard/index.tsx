@@ -59,10 +59,10 @@ export const SubgraphCard: React.FC<SubgraphCardProps> = ({
     description: 'add a case to switch statement',
   });
 
-  const addConditionLabel = intl.formatMessage({
-    defaultMessage: 'Add condition',
-    id: '5bEbv9',
-    description: 'add a condition to agent loop',
+  const addToolLabel = intl.formatMessage({
+    defaultMessage: 'Add tool',
+    id: '0XYeZ1',
+    description: 'add a tool to agent loop',
   });
 
   const conditionalTypeText = intl.formatMessage({
@@ -106,6 +106,17 @@ export const SubgraphCard: React.FC<SubgraphCardProps> = ({
         size: 'large',
         id: id,
       },
+      AGENT_CONDITION: {
+        color: '#07518e',
+        title: title,
+        typeText: intl.formatMessage({
+          defaultMessage: 'agent condition',
+          id: 'gOLL4k',
+          description: 'agent condition',
+        }),
+        size: 'large',
+        id: id,
+      },
       SWITCH_DEFAULT: {
         color: '#484F58',
         title: intl.formatMessage({
@@ -143,15 +154,24 @@ export const SubgraphCard: React.FC<SubgraphCardProps> = ({
     onClick?.(data.id);
   };
 
-  const colorVars = { ['--brand-color' as any]: SubgraphTypeData[subgraphType].color };
+  const colorVars = {
+    ['--brand-color' as any]: SubgraphTypeData[subgraphType].color,
+  };
 
   if (subgraphType === SUBGRAPH_TYPES['SWITCH_ADD_CASE'] || subgraphType === SUBGRAPH_TYPES['AGENT_ADD_CONDITON']) {
     if (readOnly) {
       return null;
     }
-    const title = subgraphType === SUBGRAPH_TYPES['AGENT_ADD_CONDITON'] ? addConditionLabel : addCaseLabel;
+    const title = subgraphType === SUBGRAPH_TYPES['AGENT_ADD_CONDITON'] ? addToolLabel : addCaseLabel;
     return (
-      <div style={{ display: 'grid', placeItems: 'center', width: '100%', height: '100%' }}>
+      <div
+        style={{
+          display: 'grid',
+          placeItems: 'center',
+          width: '100%',
+          height: '100%',
+        }}
+      >
         <ActionButtonV2 title={title} onClick={() => onClick?.()} tabIndex={nodeIndex} />
       </div>
     );

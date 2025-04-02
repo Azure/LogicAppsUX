@@ -1,4 +1,4 @@
-import type { ParameterInfo } from '@microsoft/logic-apps-shared';
+import type { OperationInfo } from '@microsoft/logic-apps-shared';
 import {
   capitalizeFirstLetter,
   equals,
@@ -16,7 +16,7 @@ import { convertStringToSegments } from '../base/utils/editorToSegment';
 import constants, { VARIABLE_TYPE } from '../../constants';
 import { VARIABLE_PROPERTIES, type InitializeVariableErrors } from './variableEditor';
 
-export const parseVariableEditorSegments = (initialValue: ValueSegment[]): InitializeVariableProps[] => {
+export const parseVariableEditorSegments = (initialValue: ValueSegment[]): InitializeVariableProps[] | undefined => {
   if (isEmptySegments(initialValue)) {
     return [
       { name: [createEmptyLiteralValueSegment()], type: [createEmptyLiteralValueSegment()], value: [createEmptyLiteralValueSegment()] },
@@ -51,7 +51,45 @@ export const parseVariableEditorSegments = (initialValue: ValueSegment[]): Initi
         },
       ],
     });
+    return undefined;
+  }
+};
+
+export const parseSchemaAsVariableEditorSegments = (initialValue: ValueSegment[]): InitializeVariableProps[] | undefined => {
+  if (isEmptySegments(initialValue)) {
     return [];
+  }
+  const nodeMap: Map<string, ValueSegment> = new Map<string, ValueSegment>();
+  const initialValueString = convertSegmentsToString(initialValue, nodeMap);
+  const wrappedValueString = wrapStringifiedTokenSegments(initialValueString);
+
+  try {
+    const schema = JSON.parse(wrappedValueString);
+
+    if (schema.type !== 'object' || !schema.properties || typeof schema.properties !== 'object') {
+      return [];
+    }
+
+    return Object.entries(schema.properties).map(([key, property]: [string, any]) => {
+      const { name, type, description } = property;
+      return {
+        name: [createLiteralValueSegment(name || key)],
+        type: [createLiteralValueSegment(type)],
+        description: convertStringToSegments(description, nodeMap, {
+          tokensEnabled: true,
+          stringifyNonString: true,
+        }),
+        value: [createEmptyLiteralValueSegment()],
+      };
+    });
+  } catch (error) {
+    LoggerService().log({
+      level: LogEntryLevel.Error,
+      area: 'Schema Editor',
+      message: 'Failed to parse schema editor segments',
+      args: [{ error }],
+    });
+    return undefined;
   }
 };
 
@@ -79,6 +117,38 @@ export const createVariableEditorSegments = (variables: InitializeVariableProps[
   const stringifiedVariables = JSON.stringify(mappedVariables);
 
   return convertStringToSegments(stringifiedVariables, nodeMap, { tokensEnabled: true });
+};
+
+export const convertVariableEditorSegmentsAsSchema = (variables: InitializeVariableProps[] | undefined): ValueSegment[] => {
+  if (!variables || variables.length === 0) {
+    return [createEmptyLiteralValueSegment()];
+  }
+
+  const nodeMap = new Map<string, ValueSegment>();
+  const properties: Record<string, any> = {};
+
+  for (const variable of variables) {
+    const { name: _name, type: _type, description: _description } = variable;
+    const name = convertSegmentsToString(_name);
+    const type = convertSegmentsToString(_type);
+    const description = convertSegmentsToString(_description ?? [], nodeMap);
+
+    if (!name && !type) {
+      return [createEmptyLiteralValueSegment()];
+    }
+
+    properties[name] = {
+      type,
+      ...(description ? { description } : {}),
+    };
+  }
+
+  const schema = {
+    type: 'object',
+    properties,
+  };
+
+  return convertStringToSegments(JSON.stringify(schema), nodeMap, { tokensEnabled: true });
 };
 
 export const getVariableType = (type: ValueSegment[]): string => {
@@ -205,7 +275,7 @@ export const validateVariables = (variables: InitializeVariableProps[]): Initial
   return errors;
 };
 
-export const isInitializeVariableParameter = (parameter: ParameterInfo): boolean => {
-  const { editor } = parameter;
-  return equals(editor, constants.PARAMETER.EDITOR.INITIALIZE_VARIABLE);
+export const isInitializeVariableOperation = (operationInfo: OperationInfo): boolean => {
+  const { connectorId, operationId } = operationInfo;
+  return equals(connectorId, 'connectionProviders/variable') && equals(operationId, 'initializeVariable');
 };

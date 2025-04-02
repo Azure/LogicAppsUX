@@ -3,7 +3,7 @@ import { isConnectionRequiredForOperation } from '../../actions/bjsworkflow/conn
 import { useConnectionResource } from '../../queries/connections';
 import type { RootState } from '../../store';
 import { useConnector, useNodeConnectionId, useSwagger } from '../connection/connectionSelector';
-import type { NodeOperation } from '../operation/operationMetadataSlice';
+import type { NodeOperation, OperationMetadataState } from '../operation/operationMetadataSlice';
 import { OperationManifestService, SwaggerParser, getObjectPropertyValue, getRecordEntry } from '@microsoft/logic-apps-shared';
 import type { LAOperation, OperationManifest } from '@microsoft/logic-apps-shared';
 import { createSelector } from '@reduxjs/toolkit';
@@ -12,19 +12,34 @@ import type { UseQueryResult } from '@tanstack/react-query';
 import { useQuery } from '@tanstack/react-query';
 import { useSelector } from 'react-redux';
 import { getOperationManifest } from '../../queries/operation';
+import Constants from '../../../common/constants';
 
 interface QueryResult {
   isLoading?: boolean;
   result: any;
 }
 
+export const getOperationsState = (state: RootState): OperationMetadataState => state.operations;
+
 export const useIsConnectionRequired = (operationInfo: NodeOperation) => {
   const result = useOperationManifest(operationInfo);
+  if (operationInfo.type === Constants.NODE.TYPE.CONNECTOR) {
+    return false;
+  }
   if (result.isLoading || !result.isFetched || result.isPlaceholderData) {
     return false;
   }
   const manifest = result.data;
   return manifest ? isConnectionRequiredForOperation(manifest) : true;
+};
+
+export const useIsInlineConnection = (operationInfo: NodeOperation) => {
+  const result = useOperationManifest(operationInfo);
+  if (result.isLoading || !result.isFetched || result.isPlaceholderData) {
+    return false;
+  }
+  const manifest = result.data;
+  return manifest?.properties.connector?.id === '/connectionProviders/agent';
 };
 
 export const useAllowUserToChangeConnection = (op: NodeOperation) => {
@@ -101,21 +116,25 @@ export const useOperationQuery = (nodeId: string) => {
   const operationInfo = useOperationInfo(nodeId);
 
   const operationManifestService = OperationManifestService();
-  const useManifest = operationManifestService.isSupported(operationInfo?.type ?? '', operationInfo?.kind ?? '');
+  const isConnectorNode = operationInfo?.type === Constants.NODE.TYPE.CONNECTOR;
+  const useManifest = operationManifestService.isSupported(operationInfo?.type ?? '', operationInfo?.kind ?? '') || isConnectorNode;
 
   const manifestQuery = useOperationManifest(operationInfo, useManifest);
 
-  const connectorQuery = useConnector(operationInfo?.connectorId, !useManifest);
+  const connectorQuery = useConnector(operationInfo?.connectorId, !useManifest && !isConnectorNode);
 
   return useManifest ? manifestQuery : connectorQuery;
 };
 
 const useNodeAttribute = (operationInfo: NodeOperation, propertyInManifest: string[], propertyInConnector: string[]): QueryResult => {
   const operationManifestService = OperationManifestService();
-  const useManifest = operationManifestService.isSupported(operationInfo?.type ?? '', operationInfo?.kind ?? '');
+  const isConnectorNode = operationInfo?.type === Constants.NODE.TYPE.CONNECTOR;
+  const useManifest = operationManifestService.isSupported(operationInfo?.type ?? '', operationInfo?.kind ?? '') || isConnectorNode;
 
   const { data: manifest, isLoading } = useOperationManifest(operationInfo, useManifest);
-  const { data: connector } = useConnector(operationInfo?.connectorId, !useManifest);
+
+  const { data: connector } = useConnector(operationInfo?.connectorId, !useManifest && !isConnectorNode);
+
   return {
     isLoading,
     result: manifest

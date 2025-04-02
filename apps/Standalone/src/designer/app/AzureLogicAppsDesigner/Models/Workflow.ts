@@ -91,6 +91,13 @@ export interface ServiceProviderConnectionModel {
   displayName?: string;
 }
 
+export interface AgentConnectionModel {
+  authentication: Record<string, any>;
+  endpoint: string;
+  type?: string;
+  displayName?: string;
+}
+
 export interface ConnectionAndAppSetting {
   connectionKey: string;
   connectionData: ServiceProviderConnectionModel | FunctionConnectionModel;
@@ -102,6 +109,7 @@ export interface ConnectionsData {
   functionConnections?: Record<string, FunctionConnectionModel>;
   managedApiConnections?: Record<string, ConnectionReferenceModel>;
   serviceProviderConnections?: Record<string, ServiceProviderConnectionModel>;
+  agentConnections?: Record<string, AgentConnectionModel>;
   apiManagementConnections?: Record<string, APIManagementConnectionModel>;
 }
 

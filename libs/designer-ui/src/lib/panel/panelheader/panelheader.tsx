@@ -57,6 +57,7 @@ export interface PanelHeaderProps {
   canShowLogicAppRun?: boolean;
   showLogicAppRun?: () => void;
   showTriggerInfo?: boolean;
+  isTrigger?: boolean;
 }
 
 const DismissIcon = bundleIcon(ChevronDoubleRightFilled, ChevronDoubleRightRegular);
@@ -159,6 +160,7 @@ export const PanelHeader = (props: PanelHeaderProps): JSX.Element => {
     canShowLogicAppRun,
     showLogicAppRun,
     showTriggerInfo,
+    isTrigger,
   } = props;
 
   const { comment, displayName: title, iconUri: cardIcon, isError, isLoading, nodeId } = nodeData;
@@ -185,8 +187,8 @@ export const PanelHeader = (props: PanelHeaderProps): JSX.Element => {
 
   const triggerInfoMessageBar = {
     text: intl.formatMessage({
-      defaultMessage: 'Changes to the trigger name update the callback URL when you save the workflow.',
-      id: '0jNY+o',
+      defaultMessage: 'Changing the trigger name updates the callback URL when you save the workflow.',
+      id: 'Se0HAU',
       description: 'Trigger name update information message',
     }),
     ariaLabel: intl.formatMessage({
@@ -262,13 +264,14 @@ export const PanelHeader = (props: PanelHeaderProps): JSX.Element => {
           </MessageBar>
         </div>
       ) : null}
-      {!isNullOrUndefined(comment) && !noNodeOnCardLevel && !isCollapsed ? (
+      {isTrigger || (!isNullOrUndefined(comment) && !noNodeOnCardLevel && !isCollapsed) ? (
         <PanelHeaderComment
           comment={comment}
           isCollapsed={isCollapsed}
           noNodeSelected={noNodeOnCardLevel}
           readOnlyMode={readOnlyMode}
           commentChange={commentChange}
+          isTrigger={isTrigger}
         />
       ) : null}
       {canResubmit || canShowLogicAppRun ? (

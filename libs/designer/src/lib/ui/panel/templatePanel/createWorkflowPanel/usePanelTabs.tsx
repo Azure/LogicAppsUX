@@ -6,7 +6,7 @@ import { basicsTab } from './tabs/basicsTab';
 import { reviewCreateTab } from './tabs/reviewCreateTab';
 import { useDispatch, useSelector } from 'react-redux';
 import type { AppDispatch, RootState } from '../../../../core/state/templates/store';
-import type { TemplatePanelTab } from '@microsoft/designer-ui';
+import type { TemplateTabProps } from '@microsoft/designer-ui';
 import Constants from '../../../../common/constants';
 import { useExistingWorkflowNames } from '../../../../core/queries/template';
 import { validateWorkflowsBasicInfo } from '../../../../core/actions/bjsworkflow/templates';
@@ -26,13 +26,12 @@ export const useCreateWorkflowPanelTabs = ({
   isMultiWorkflowTemplate: boolean;
   showCloseButton?: boolean;
   onClosePanel?: () => void;
-}): TemplatePanelTab[] => {
+}): TemplateTabProps[] => {
   const intl = useIntl();
   const dispatch = useDispatch<AppDispatch>();
   const { data: existingWorkflowNames } = useExistingWorkflowNames();
   const {
     connections,
-    existingWorkflowName,
     selectedTabId,
     templateName,
     subscriptionId,
@@ -46,7 +45,6 @@ export const useCreateWorkflowPanelTabs = ({
     workflows,
     isCreateView,
   } = useSelector((state: RootState) => ({
-    existingWorkflowName: state.workflow.existingWorkflowName,
     connections: state.workflow.connections,
     workflowAppName: state.workflow.workflowAppName,
     isConsumption: state.workflow.isConsumption,
@@ -81,9 +79,9 @@ export const useCreateWorkflowPanelTabs = ({
       dispatch(validateParameters());
     }
     if (!isConsumption && selectedTabId && selectedTabId !== Constants.TEMPLATE_PANEL_TAB_NAMES.BASIC) {
-      dispatch(validateWorkflowsBasicInfo({ validateName: !existingWorkflowName, existingWorkflowNames: existingWorkflowNames ?? [] }));
+      dispatch(validateWorkflowsBasicInfo({ existingWorkflowNames: existingWorkflowNames ?? [] }));
     }
-  }, [dispatch, isConsumption, existingWorkflowName, existingWorkflowNames, parametersExist, selectedTabId, connections.mapping]);
+  }, [dispatch, isConsumption, existingWorkflowNames, parametersExist, selectedTabId, connections.mapping]);
 
   const onCreateClick = useCallback(async () => {
     const resources = {
@@ -154,7 +152,7 @@ export const useCreateWorkflowPanelTabs = ({
       dispatch(closePanel());
       dispatch(clearTemplateDetails());
 
-      TemplateService()?.openBladeAfterCreate(isMultiWorkflowTemplate ? undefined : (Object.values(workflows)[0].workflowName as string));
+      TemplateService()?.openBladeAfterCreate?.(isMultiWorkflowTemplate ? undefined : (Object.values(workflows)[0].workflowName as string));
     } catch (e: any) {
       setErrorMessage(e.message);
       LoggerService().log({
@@ -259,7 +257,7 @@ export const useCreateWorkflowPanelTabs = ({
       ...reviewCreateTab(intl, dispatch, createWorkflowFromTemplate, {
         shouldClearDetails: !isMultiWorkflowTemplate,
         isCreating,
-        isCreateView,
+        isCreateView: !!isCreateView,
         errorMessage,
         hasError: false,
         isPrimaryButtonDisabled: nameStateTabItem.hasError || !!connectionsError || hasParametersValidationErrors,

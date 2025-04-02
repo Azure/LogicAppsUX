@@ -1,0 +1,142 @@
+{
+  "definition": {
+    "$schema": "https://schema.management.azure.com/providers/Microsoft.Logic/schemas/2016-06-01/workflowdefinition.json#",
+    "actions": {
+      "WorkflowAgent": {
+        "type": "Agent",
+        "inputs": {
+          "parameters": {
+            "deploymentId": "gpt-4o",
+            "messages": [
+              {
+                "role": "System",
+                "content": "This is a system message."
+              },
+              {
+                "role": "User",
+                "content": "This is a user message."
+              }
+            ]
+          }
+        },
+        "tools": {
+          "If_Condition_Y_Matches": {
+            "actions": {
+              "Service_Bus": {
+                "type": "connector",
+                "inputs": {
+                  "operations": "getQueues,getTopics,getTopicSubcriptions,sendMessage",
+                  "connector": "/serviceProviders/serviceBus"
+                },
+                "runAfter": {}
+              }
+            },
+            "description": "If the condition Y matches, execute this branch",
+            "type": "Tool"
+          },
+          "If_Condition_X_Matches": {
+            "actions": {
+              "HTTP": {
+                "type": "Http",
+                "inputs": {
+                  "uri": "http://test.com",
+                  "method": "GET",
+                  "body": "@triggerBody()"
+                },
+                "runtimeConfiguration": {
+                  "contentTransfer": {
+                    "transferMode": "Chunked"
+                  }
+                }
+              },
+              "HTTP_1": {
+                "type": "Http",
+                "inputs": {
+                  "uri": "http://google.com",
+                  "method": "POST",
+                  "headers": "@agentParameters('TestParameter')",
+                  "body": "@agentParameters('Parameter1')"
+                },
+                "runAfter": {
+                  "HTTP": ["SUCCEEDED"]
+                },
+                "runtimeConfiguration": {
+                  "contentTransfer": {
+                    "transferMode": "Chunked"
+                  }
+                }
+              }
+            },
+            "description": "If the condition X matches, execute this branch",
+            "type": "Tool",
+            "agentParameterSchema": {
+              "type": "object",
+              "properties": {
+                "TestParameter": {
+                  "type": "string",
+                  "description": "this is a string parameter"
+                },
+                "Parameter1": {
+                  "type": "boolean",
+                  "description": "this is a boolean parameter"
+                }
+              }
+            }
+          }
+        },
+        "channels": {
+          "in": {
+            "in-channel-1": {
+              "trigger": {
+                "type": "Request",
+                "kind": "Http",
+                "inputs": {
+                  "schema": {
+                    "properties": {
+                      "prompt": {
+                        "type": "string"
+                      }
+                    },
+                    "type": "object"
+                  }
+                }
+              },
+              "mapping": {
+                "message": "@channelTriggerBody()?['prompt']"
+              }
+            }
+          },
+          "out": {
+            "out-channel-1": {
+              "trigger": {
+                "type": "Response",
+                "kind": "Http",
+                "inputs": {
+                  "statusCode": 200,
+                  "body": {
+                    "responseMessage": "@assistantMessage()"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "runAfter": {},
+        "limit": {
+          "timeout": "PT1H",
+          "count": 100
+        }
+      }
+    },
+    "contentVersion": "1.0.0.0",
+    "outputs": {},
+    "parameters": {},
+    "triggers": {
+      "When_a_HTTP_request_is_received": {
+        "type": "Request",
+        "kind": "Http"
+      }
+    }
+  },
+  "kind": "Agentic"
+}

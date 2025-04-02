@@ -20,7 +20,6 @@ import {
   InitConnectionParameterEditorService,
   InitChatbotService,
   InitCustomCodeService,
-  InitCopilotService,
   InitUiInteractionsService,
   InitUserPreferenceService,
   InitExperimentationServiceService,
@@ -32,6 +31,7 @@ import CONSTANTS from '../../../common/constants';
 export const initialDesignerOptionsState: DesignerOptionsState = {
   readOnly: false,
   isMonitoringView: false,
+  isUnitTest: false,
   isDarkMode: false,
   isVSCode: false,
   servicesInitialized: false,
@@ -71,7 +71,6 @@ export const initializeServices = createAsyncThunk(
     connectionParameterEditorService,
     chatbotService,
     customCodeService,
-    copilotService,
     uiInteractionsService,
     userPreferenceService,
     experimentationService,
@@ -111,9 +110,6 @@ export const initializeServices = createAsyncThunk(
     if (chatbotService) {
       InitChatbotService(chatbotService);
     }
-    if (copilotService) {
-      InitCopilotService(copilotService);
-    }
     if (customCodeService) {
       InitCustomCodeService(customCodeService);
     }
@@ -151,6 +147,7 @@ export const designerOptionsSlice = createSlice({
     initDesignerOptions: (state: DesignerOptionsState, action: PayloadAction<Omit<DesignerOptionsState, 'servicesInitialized'>>) => {
       state.readOnly = action.payload.readOnly;
       state.isMonitoringView = action.payload.isMonitoringView;
+      state.isUnitTest = action.payload.isUnitTest;
       state.isDarkMode = action.payload.isDarkMode;
       state.useLegacyWorkflowParameters = action.payload.useLegacyWorkflowParameters;
       state.isXrmConnectionReferenceMode = action.payload.isXrmConnectionReferenceMode;

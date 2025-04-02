@@ -25,6 +25,7 @@ interface TokenPickerSectionProps extends TokenPickerBaseProps {
   fullScreen: boolean;
   noDynamicContent: boolean;
   expressionEditorCurrentHeight: number;
+  calloutMaxHeight?: number;
 }
 
 export const TokenPickerSection = ({

@@ -6,14 +6,31 @@ import { workflowFileName } from '../../constants';
 import { localize } from '../../localize';
 import type { RemoteWorkflowTreeItem } from '../tree/remoteWorkflowsTree/RemoteWorkflowTreeItem';
 import { isPathEqual, isSubpath } from './fs';
-import { promptOpenProject, tryGetLogicAppProjectRoot } from './verifyIsProject';
+import { isLogicAppProject, promptOpenProjectOrWorkspace, tryGetLogicAppProjectRoot } from './verifyIsProject';
 import { isNullOrUndefined, isString } from '@microsoft/logic-apps-shared';
-import { UserCancelledError } from '@microsoft/vscode-azext-utils';
+import { UserCancelledError, nonNullValue } from '@microsoft/vscode-azext-utils';
 import type { IActionContext, IAzureQuickPickItem } from '@microsoft/vscode-azext-utils';
 import globby from 'globby';
 import * as path from 'path';
 import * as vscode from 'vscode';
+import { FileManagement } from '../commands/generateDeploymentScripts/iacGestureHelperFunctions';
+import { ext } from '../../extensionVariables';
 import * as fse from 'fs-extra';
+
+/**
+ * Checks if the current workspace has a Logic App project.
+ * @param {IActionContext} actionContext - The action context.
+ * @returns A promise that resolves to a boolean indicating whether a Logic App project exists in the workspace.
+ */
+export const hasLogicAppProject = async (actionContext: IActionContext): Promise<boolean> => {
+  for (const folder of vscode.workspace.workspaceFolders) {
+    const projectRoot = await tryGetLogicAppProjectRoot(actionContext, folder);
+    if (projectRoot) {
+      return true;
+    }
+  }
+  return false;
+};
 
 /**
  * Gets the folder path that contains the .code-workspace file.
@@ -97,6 +114,16 @@ export function getContainingWorkspace(fsPath: string): vscode.WorkspaceFolder |
 }
 
 /**
+ * Retrieves the path of the workspace folder containing the specified workflow file.
+ * @param workflowFilePath - The path of the workflow file.
+ * @returns The path of the workspace folder.
+ */
+export const getWorkspacePath = (workflowFilePath: string): string => {
+  const workspaceFolder = nonNullValue(getContainingWorkspace(workflowFilePath), 'workspaceFolder');
+  return workspaceFolder.uri.fsPath;
+};
+
+/**
  * Gets workspace folder of project.
  * @param {IActionContext} context - Command context.
  * @param {string} message - The message to display to the user.
@@ -107,28 +134,32 @@ export async function getWorkspaceFolder(
   context: IActionContext,
   message?: string,
   skipPromptOnMultipleFolders?: boolean
-): Promise<vscode.WorkspaceFolder | undefined> {
-  const promptMessage: string = message ?? localize('noWorkspaceWarning', 'You must have a project open to create a workflow.');
-  let folder: vscode.WorkspaceFolder | undefined;
+): Promise<vscode.WorkspaceFolder | string | undefined> {
+  const promptMessage: string = message ?? localize('noWorkspaceWarning', 'You must have a workspace open to perform this action.');
+
   if (!vscode.workspace.workspaceFolders || vscode.workspace.workspaceFolders.length === 0) {
-    await promptOpenProject(context, promptMessage);
-  }
-  if (vscode.workspace.workspaceFolders.length === 1) {
-    if (vscode.workspace.workspaceFile) {
-      folder = vscode.workspace.workspaceFolders[0];
-    } else {
-      const returnsWorkspaceFolder: boolean = false;
-      const folderPath = vscode.workspace.workspaceFolders[0].uri.fsPath;
-      const folders = await fse.readdir(folderPath, { withFileTypes: true });
-      const subFolders = folders.filter((dirent) => dirent.isDirectory()).map((dirent) => path.join(folderPath, dirent.name));
-      folder = await selectLogicAppWorkspaceFolder(context, returnsWorkspaceFolder, subFolders, skipPromptOnMultipleFolders);
-    }
-  } else {
-    const returnsWorkspaceFolder: boolean = true;
-    folder = await selectLogicAppWorkspaceFolder(context, returnsWorkspaceFolder, null, skipPromptOnMultipleFolders);
+    await promptOpenProjectOrWorkspace(context, promptMessage);
   }
 
-  return folder;
+  if (vscode.workspace.workspaceFolders.length === 1) {
+    const workspaceFolder = vscode.workspace.workspaceFolders[0];
+    if (vscode.workspace.workspaceFile) {
+      return workspaceFolder;
+    }
+
+    const workspaceFolderPath = workspaceFolder.uri.fsPath;
+    if (await isLogicAppProject(workspaceFolderPath)) {
+      return workspaceFolder;
+    }
+    const folders = await fse.readdir(workspaceFolderPath, { withFileTypes: true });
+    const subFolders = folders.filter((dirent) => dirent.isDirectory()).map((dirent) => path.join(workspaceFolderPath, dirent.name));
+
+    const returnsWorkspaceFolder: boolean = false;
+    return await selectLogicAppWorkspaceFolder(context, returnsWorkspaceFolder, subFolders, skipPromptOnMultipleFolders);
+  }
+
+  const returnsWorkspaceFolder: boolean = true;
+  return await selectLogicAppWorkspaceFolder(context, returnsWorkspaceFolder, null, skipPromptOnMultipleFolders);
 }
 
 async function selectLogicAppWorkspaceFolder(
@@ -136,7 +167,7 @@ async function selectLogicAppWorkspaceFolder(
   returnsWorkspaceFolder: boolean,
   subFolders: string[],
   skipPromptOnMultipleFolders?: boolean
-): Promise<vscode.WorkspaceFolder> {
+): Promise<vscode.WorkspaceFolder | string> {
   const logicAppsWorkspaces = [];
   for (const folder of returnsWorkspaceFolder ? vscode.workspace.workspaceFolders : subFolders) {
     const projectRoot = await tryGetLogicAppProjectRoot(context, folder);
@@ -144,34 +175,32 @@ async function selectLogicAppWorkspaceFolder(
       logicAppsWorkspaces.push(projectRoot);
     }
   }
-  let folder = null;
+
   if (logicAppsWorkspaces.length === 0) {
     return undefined;
   }
 
-  if (logicAppsWorkspaces.length === 1) {
-    folder = logicAppsWorkspaces[0];
-  } else if (skipPromptOnMultipleFolders) {
-    folder = logicAppsWorkspaces[0];
-  } else {
-    const placeHolder: string = localize('selectProjectFolder', 'Select the folder containing your logic app project');
-    const folderPicks: IAzureQuickPickItem<vscode.WorkspaceFolder>[] = logicAppsWorkspaces.map((projectRoot) => {
-      const workspaceFolder = vscode.workspace.workspaceFolders?.find((folder) => folder.uri.fsPath === projectRoot);
-      return {
-        label: path.basename(projectRoot),
-        description: projectRoot,
-        data: returnsWorkspaceFolder ? workspaceFolder : projectRoot,
-      };
-    });
-
-    const selectedItem = await context.ui.showQuickPick(folderPicks, { placeHolder });
-    folder = selectedItem?.data;
-    if (!folder) {
-      throw new UserCancelledError();
-    }
+  if (logicAppsWorkspaces.length === 1 || skipPromptOnMultipleFolders) {
+    return logicAppsWorkspaces[0];
   }
 
-  return folder;
+  const placeHolder: string = localize('selectProjectFolder', 'Select the folder containing your logic app project');
+  const folderPicks: IAzureQuickPickItem<vscode.WorkspaceFolder>[] = logicAppsWorkspaces.map((projectRoot) => {
+    const workspaceFolder = vscode.workspace.workspaceFolders?.find((folder) => folder.uri.fsPath === projectRoot);
+    return {
+      label: path.basename(projectRoot),
+      description: projectRoot,
+      data: returnsWorkspaceFolder ? workspaceFolder : projectRoot,
+    };
+  });
+
+  const selectedItem = await context.ui.showQuickPick(folderPicks, { placeHolder });
+  const selectedFolder: vscode.WorkspaceFolder = selectedItem?.data;
+  if (!selectedFolder) {
+    throw new UserCancelledError();
+  }
+
+  return selectedFolder;
 }
 
 /**
@@ -314,4 +343,19 @@ export async function selectWorkspaceFile(
     },
     getSubPath
   );
+}
+
+/**
+ * Ensures a directory is added to the workspace if it is not already included.
+ * @param {string} directoryPath - The path to the directory to be added.
+ * @returns {Promise<void>} - A promise that resolves when the directory is added to the workspace (if needed).
+ */
+export async function ensureDirectoryInWorkspace(directoryPath: string): Promise<void> {
+  const workspaceFolders = vscode.workspace.workspaceFolders || [];
+  const isAlreadyInWorkspace = workspaceFolders.some((folder) => folder.uri.fsPath === directoryPath);
+
+  if (!isAlreadyInWorkspace) {
+    ext.outputChannel.appendLog(localize('addingDirectoryToWorkspace', 'Adding directory to workspace: {0}', directoryPath));
+    await FileManagement.addFolderToWorkspace(directoryPath);
+  }
 }

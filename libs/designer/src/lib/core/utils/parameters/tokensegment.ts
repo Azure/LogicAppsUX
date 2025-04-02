@@ -1,6 +1,12 @@
 import Constants from '../../../common/constants';
 import { getNormalizedName } from './helper';
-import { createOutputToken, createParameterToken, createTokenValueSegment, createVariableToken } from './segment';
+import {
+  createAgentParameterToken,
+  createOutputToken,
+  createParameterToken,
+  createTokenValueSegment,
+  createVariableToken,
+} from './segment';
 import { TokenType } from '@microsoft/designer-ui';
 import type { ValueSegment } from '@microsoft/designer-ui';
 import { encodePropertySegment, ExpressionType, isStringLiteral, OutputKeys, OutputSource, equals } from '@microsoft/logic-apps-shared';
@@ -33,6 +39,11 @@ export class TokenSegmentConvertor {
       const parameterName = (expression.arguments[0] as ExpressionLiteral).value;
 
       return createTokenValueSegment(createParameterToken(parameterName), value);
+    }
+    if (TokenSegmentConvertor.isAgentParameterToken(expression)) {
+      const agentParameterName = (expression.arguments[0] as ExpressionLiteral).value;
+      const agentParameterToken = createAgentParameterToken(agentParameterName);
+      return createTokenValueSegment(agentParameterToken, value);
     }
     if (TokenSegmentConvertor.isVariableToken(expression)) {
       const variableName = (expression.arguments[0] as ExpressionLiteral).value;
@@ -168,6 +179,29 @@ export class TokenSegmentConvertor {
     const numberOfArguments = functionArguments.length;
 
     if (!equals(expression.name, Constants.FUNCTION_NAME.PARAMETERS)) {
+      return false;
+    }
+
+    if (numberOfArguments !== 1) {
+      return false;
+    }
+
+    if (functionArguments[0].type !== ExpressionType.StringLiteral) {
+      return false;
+    }
+
+    if (expression.dereferences.length > 0) {
+      return false;
+    }
+
+    return true;
+  }
+
+  public static isAgentParameterToken(expression: ExpressionFunction): boolean {
+    const functionArguments = expression.arguments;
+    const numberOfArguments = functionArguments.length;
+
+    if (!equals(expression.name, Constants.FUNCTION_NAME.AGENT_PARAMETERS)) {
       return false;
     }
 

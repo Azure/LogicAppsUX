@@ -7,7 +7,7 @@ import {
   azureWebJobsStorageKey,
   localSettingsFileName,
   workflowFileName,
-  workflowType,
+  WorkflowType,
   localEmulatorConnectionString,
   extensionBundleId,
   defaultVersionRange,
@@ -33,7 +33,7 @@ import * as fse from 'fs-extra';
 import * as path from 'path';
 import type { MessageItem } from 'vscode';
 import { validateDotNetIsInstalled } from '../../../dotnet/validateDotNetInstalled';
-import { getFunctionWorkflowTemplate } from '../../../../utils/codeless/templates';
+import { getWorkflowTemplate } from '../../../../utils/codeless/templates';
 
 // This class creates a new workflow for a codeless Azure Function project
 export class CodelessFunctionWorkflow extends WorkflowCreateStepBase<IFunctionWizardContext> {
@@ -60,9 +60,9 @@ export class CodelessFunctionWorkflow extends WorkflowCreateStepBase<IFunctionWi
     const functionPath: string = path.join(context.projectPath, nonNullProp(context, 'functionName'));
 
     // Determine which definition object to use based on the type of workflow template
-    const codelessDefinition: StandardApp = getFunctionWorkflowTemplate(
+    const codelessDefinition: StandardApp = getWorkflowTemplate(
       context.functionAppName,
-      template?.id === workflowType.stateful,
+      template?.id === WorkflowType.stateful,
       context.projectType
     );
 

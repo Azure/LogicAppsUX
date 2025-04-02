@@ -2,7 +2,7 @@ import type { AppDispatch } from '../../../../../core/state/templates/store';
 import type { IntlShape } from 'react-intl';
 import constants from '../../../../../common/constants';
 import { DisplayParameters } from '../../../../templates/parameters/displayParameters';
-import type { TemplatePanelTab } from '@microsoft/designer-ui';
+import type { TemplateTabProps } from '@microsoft/designer-ui';
 import { closePanel, selectPanelTab } from '../../../../../core/state/templates/panelSlice';
 import type { CreateWorkflowTabProps } from '../createWorkflowPanel';
 import { clearTemplateDetails } from '../../../../../core/state/templates/templateSlice';
@@ -15,7 +15,7 @@ export const parametersTab = (
   intl: IntlShape,
   dispatch: AppDispatch,
   { isCreating, disabled, shouldClearDetails, previousTabId, hasError, onClosePanel, showCloseButton = true }: CreateWorkflowTabProps
-): TemplatePanelTab => ({
+): TemplateTabProps => ({
   id: constants.TEMPLATE_PANEL_TAB_NAMES.PARAMETERS,
   disabled,
   title: intl.formatMessage({

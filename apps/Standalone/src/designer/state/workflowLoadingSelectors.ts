@@ -25,6 +25,10 @@ export const useIsMonitoringView = () => {
   return useSelector((state: RootState) => state.workflowLoader.isMonitoringView);
 };
 
+export const useIsUnitTestView = () => {
+  return useSelector((state: RootState) => state.workflowLoader.isUnitTest);
+};
+
 export const useResourcePath = () => {
   return useSelector((state: RootState) => state.workflowLoader.resourcePath);
 };
@@ -79,8 +83,4 @@ export const useQueryCachePersist = () => {
 
 export const useIsMultiVariableEnabled = () => {
   return useSelector((state: RootState) => state.workflowLoader.hostOptions.enableMultiVariable);
-};
-
-export const useIsAgenticLoopEnabled = () => {
-  return useSelector((state: RootState) => !!state.workflowLoader.hostOptions.enableAgenticLoops);
 };

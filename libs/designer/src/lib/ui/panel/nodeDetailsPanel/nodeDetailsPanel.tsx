@@ -113,10 +113,10 @@ export const NodeDetailsPanel = (props: CommonPanelProps): JSX.Element => {
       const nodeData = nodeId === pinnedNode ? pinnedNodeData : selectedNodeData;
       const comment = nodeData?.comment;
 
-      // Removing the 'add a note' button for subgraph nodes
-      const isSubgraphContainer = nodeData?.subgraphType === SUBGRAPH_TYPES['SWITCH_CASE'];
+      // Removing the 'add a description' button for subgraph nodes
+      const isSubgraphContainer = nodeData?.subgraphType === SUBGRAPH_TYPES.SWITCH_CASE;
       const headerMenuItems: JSX.Element[] = [];
-      if (!isSubgraphContainer) {
+      if (!isSubgraphContainer && !isTriggerNode) {
         headerMenuItems.push(
           <CommentMenuItem key={'comment'} onClick={() => handleCommentMenuClick(nodeId)} hasComment={!isNullOrUndefined(comment)} />
         );
@@ -127,7 +127,7 @@ export const NodeDetailsPanel = (props: CommonPanelProps): JSX.Element => {
       headerMenuItems.push(<DeleteMenuItem key={'delete'} onClick={() => handleDeleteClick(nodeId)} />);
       return headerMenuItems;
     },
-    [handleCommentMenuClick, handleDeleteClick, handlePinClick, pinnedNode, pinnedNodeData, selectedNode, selectedNodeData]
+    [handleCommentMenuClick, handleDeleteClick, handlePinClick, isTriggerNode, pinnedNode, pinnedNodeData, selectedNode, selectedNodeData]
   );
 
   const onTitleChange = (originalId: string, newId: string): { valid: boolean; oldValue?: string } => {
@@ -253,6 +253,7 @@ export const NodeDetailsPanel = (props: CommonPanelProps): JSX.Element => {
         togglePanel();
       }}
       showTriggerInfo={showTriggerInfo && !readOnly}
+      isTrigger={isTriggerNode}
       trackEvent={handleTrackEvent}
       onCommentChange={onCommentChange}
       onTitleChange={onTitleChange}

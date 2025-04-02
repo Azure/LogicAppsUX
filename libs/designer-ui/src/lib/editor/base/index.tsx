@@ -31,6 +31,9 @@ import { RichTextPlugin } from '@lexical/react/LexicalRichTextPlugin';
 import { useEffect, useRef, useState } from 'react';
 import { createPortal } from 'react-dom';
 import { useIntl } from 'react-intl';
+import type { AgentParameterButtonProps } from './plugins/tokenpickerbutton/agentParameterButton';
+import { AgentParameterButton } from './plugins/tokenpickerbutton/agentParameterButton';
+import UpdateTokenNodes from './plugins/UpdateTokenNodes';
 
 export interface ChangeState {
   value: ValueSegment[];
@@ -54,6 +57,7 @@ export interface DictionaryCallbackProps {
   addItem: (index: number) => void;
   index: number;
 }
+
 export interface BaseEditorProps {
   initialValue: ValueSegment[];
   // Appearance
@@ -68,6 +72,7 @@ export interface BaseEditorProps {
   valueType?: string;
   tokenMapping?: Record<string, ValueSegment>;
   // Plugins & Extensions
+  agentParameterButtonProps?: Partial<AgentParameterButtonProps>;
   basePlugins?: BasePlugins;
   tokenPickerButtonProps?: TokenPickerButtonEditorProps;
   // Event Handlers
@@ -104,6 +109,7 @@ export const BaseEditor = ({
   children,
   labelId,
   ariaLabel,
+  agentParameterButtonProps,
   tokenPickerButtonProps,
   valueType,
   dataAutomationId,
@@ -174,16 +180,27 @@ export const BaseEditor = ({
     }
   };
 
-  const openTokenPicker = (mode: TokenPickerMode) => {
+  const openTokenPicker = (mode: TokenPickerMode, callback?: () => void) => {
     setIsTokenPickerOpened(true);
     setTokenPickerMode(mode);
+
+    // Ensure the callback runs after state updates are applied
+    requestAnimationFrame(() => {
+      callback?.();
+    });
   };
 
   const id = useId('msla-described-by-message');
   const TextPlugin = htmlEditor === 'rich-html' ? RichTextPlugin : PlainTextPlugin;
   return (
     <>
-      <div className={className ?? 'msla-editor-container'} id={editorId} ref={containerRef} data-automation-id={dataAutomationId}>
+      <div
+        className={className ?? 'msla-editor-container'}
+        id={editorId}
+        ref={containerRef}
+        data-automation-id={dataAutomationId}
+        style={{ position: 'relative' }}
+      >
         {htmlEditor ? (
           <RichTextToolbar
             isRawText={htmlEditor === 'raw-html'}
@@ -203,6 +220,7 @@ export const BaseEditor = ({
               ariaDescribedBy={id}
               tabIndex={0}
               title={placeholder}
+              style={{ paddingInlineEnd: '32px' }}
             />
           }
           placeholder={
@@ -233,6 +251,7 @@ export const BaseEditor = ({
             <DeleteTokenNode />
             <OpenTokenPicker openTokenPicker={openTokenPicker} />
             <CloseTokenPicker closeTokenPicker={() => setIsTokenPickerOpened(false)} />
+            <UpdateTokenNodes />
             <TokenTypeAheadPlugin
               openTokenPicker={openTokenPicker}
               isEditorFocused={isEditorFocused}
@@ -246,9 +265,19 @@ export const BaseEditor = ({
         ) : null}
         {children}
         {tokens && isTokenPickerOpened && getTokenPicker ? getTokenPicker(editorId, labelId ?? '', tokenPickerMode, valueType) : null}
+        {tokens && isEditorFocused && !isTokenPickerOpened && agentParameterButtonProps?.showAgentParameterButton ? (
+          <AgentParameterButton openTokenPicker={openTokenPicker} shifted={agentParameterButtonProps?.shifted} />
+        ) : null}
       </div>
       {tokens && isEditorFocused && !isTokenPickerOpened
-        ? createPortal(<TokenPickerButton {...tokenPickerButtonProps} openTokenPicker={openTokenPicker} />, document.body)
+        ? createPortal(
+            <TokenPickerButton
+              {...tokenPickerButtonProps}
+              openTokenPicker={openTokenPicker}
+              showAgentParameterButton={agentParameterButtonProps?.showAgentParameterButton}
+            />,
+            document.body
+          )
         : null}
     </>
   );

@@ -231,6 +231,7 @@ export default {
   FUNCTION_NAME: {
     VARIABLES: 'variables',
     PARAMETERS: 'parameters',
+    AGENT_PARAMETERS: 'agentParameters',
   },
   GATEWAY_CHECKBOX_KEY: '__GATEWAY_CHECKBOX',
   GATEWAY_DEFAULT_REFRESH_INTERVAL_IN_MILLISECONDS: 15000,
@@ -384,6 +385,7 @@ export default {
       SLIDING_WINDOW: 'slidingwindow',
       SWITCH: 'switch',
       AGENT: 'agent',
+      AGENT_CONDITION: 'agentcondition',
       TABLE: 'table',
       TERMINATE: 'terminate',
       UNTIL: 'until',
@@ -391,6 +393,7 @@ export default {
       WORKFLOW: 'workflow',
       XML_VALIDATION: 'xmlvalidation',
       XSLT: 'xslt',
+      CONNECTOR: 'connector',
     },
     KIND: {
       ADDTOTIME: 'addtotime',
@@ -456,6 +459,7 @@ export default {
   },
   PARAMETER_NAMES: {
     VARIABLES: 'variables',
+    AGENT_PARAMETER_SCHEMA: 'agentParameterSchema',
     LIMIT_COUNT: 'limit.count',
     LIMIT_TIMEOUT: 'limit.timeout',
   },
@@ -469,6 +473,7 @@ export default {
     MONITORING: 'MONITORING',
     OPERATION_SELECTOR: 'OPERATION_SELECTOR',
     PARAMETERS: 'PARAMETERS',
+    CHANNELS: 'CHANNELS',
     REQUEST_HISTORY: 'REQUEST_HISTORY',
     RETRY_HISTORY: 'RETRY_HISTORY',
     RUN_AFTER: 'RUN_AFTER',
@@ -477,6 +482,7 @@ export default {
     STATIC_RESULT: 'STATIC_RESULT',
     SWAGGER_ENDPOINT: 'SWAGGER_ENDPOINT',
     TESTING: 'TESTING',
+    MOCK_RESULTS: 'MOCK_RESULTS',
   },
   TEMPLATE_PANEL_TAB_NAMES: {
     OVERVIEW: 'OVERVIEW',
@@ -485,6 +491,16 @@ export default {
     PARAMETERS: 'PARAMETERS',
     BASIC: 'BASIC',
     REVIEW_AND_CREATE: 'REVIEW_AND_CREATE',
+  },
+  CONFIGURE_TEMPLATE_WIZARD_TAB_NAMES: {
+    WORKFLOWS: 'WORKFLOWS',
+    CONNECTIONS: 'CONNECTIONS',
+    PARAMETERS: 'PARAMETERS',
+    PROFILE: 'PROFILE',
+    PUBLISH: 'PUBLISH',
+    REVIEW_AND_PUBLISH: 'REVIEW_AND_PUBLISH',
+    SELECT_WORKFLOWS: 'SELECT_WORKFLOWS',
+    CUSTOMIZE_WORKFLOWS: 'CUSTOMIZE_WORKFLOWS',
   },
   ERRORS_PANEL_TAB_NAMES: {
     ERRORS: 'ERRORS',
@@ -950,5 +966,9 @@ export default {
     SELECT_BATCH_WORKFLOW_ACTION: 'sendtobatch',
     SELECT_BATCH_WORKFLOW_TRIGGER: 'sendtobatchtrigger',
     SELECT_MANUAL_WORKFLOW_ACTION: 'invokeworkflow',
+  },
+  CHANNELS: {
+    INPUT: '-inputchannel-',
+    OUTPUT: '-outputchannel-',
   },
 };

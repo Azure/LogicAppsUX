@@ -16,7 +16,7 @@ import {
 } from './Services/WorkflowAndArtifacts';
 import { ArmParser } from './Utilities/ArmParser';
 import { getDataForConsumption, WorkflowUtility } from './Utilities/Workflow';
-import { Chatbot } from '@microsoft/logic-apps-chatbot';
+import { CoPilotChatbot } from '@microsoft/logic-apps-chatbot';
 import type { ContentType } from '@microsoft/logic-apps-shared';
 import {
   BaseApiManagementService,
@@ -48,6 +48,7 @@ import {
   Constants,
   RunHistoryPanel,
   CombineInitializeVariableDialog,
+  TriggerDescriptionDialog,
 } from '@microsoft/logic-apps-designer';
 import { useDispatch, useSelector } from 'react-redux';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
@@ -309,7 +310,7 @@ const DesignerEditorConsumption = () => {
                 onRunSelected={onRunSelected}
               />
               {showChatBot ? (
-                <Chatbot
+                <CoPilotChatbot
                   getUpdatedWorkflow={getUpdatedWorkflow}
                   openFeedbackPanel={openFeedBackPanel}
                   closeChatBot={() => {
@@ -327,6 +328,7 @@ const DesignerEditorConsumption = () => {
                   isReadOnly={readOnly}
                   isDarkMode={isDarkMode}
                   isDesignerView={designerView}
+                  isUnitTest={false}
                   isMonitoringView={isMonitoringView}
                   showConnectionsPanel={showConnectionsPanel}
                   enableCopilot={() => dispatch(setIsChatBotEnabled(!showChatBot))}
@@ -342,6 +344,7 @@ const DesignerEditorConsumption = () => {
                 />
                 {designerView ? <Designer /> : <CodeViewEditor ref={codeEditorRef} isConsumption />}
                 <CombineInitializeVariableDialog />
+                <TriggerDescriptionDialog workflowId={workflowId} />
               </div>
             </div>
           </BJSWorkflowProvider>

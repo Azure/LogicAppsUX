@@ -34,6 +34,8 @@ import * as vscode from 'vscode';
 import { convertToWorkspace } from './app/commands/createNewCodeProject/CodeProjectBase/ConvertToWorkspace';
 import TelemetryReporter from '@vscode/extension-telemetry';
 import { getCustomCodeFunctionsProjects } from './app/utils/customCodeUtils';
+import { createVSCodeAzureSubscriptionProvider } from './app/utils/services/VSCodeAzureSubscriptionProvider';
+import { logSubscriptions } from './app/utils/telemetry';
 
 const perfStats = {
   loadStartTime: Date.now(),
@@ -58,6 +60,7 @@ export async function activate(context: vscode.ExtensionContext) {
 
   ext.context = context;
   ext.telemetryReporter = new TelemetryReporter(telemetryString);
+  ext.subscriptionProvider = createVSCodeAzureSubscriptionProvider();
   context.subscriptions.push(ext.telemetryReporter);
 
   ext.outputChannel = createAzExtOutputChannel('Azure Logic Apps (Standard)', ext.prefix);
@@ -76,6 +79,7 @@ export async function activate(context: vscode.ExtensionContext) {
 
     runPostWorkflowCreateStepsFromCache();
     runPostExtractStepsFromCache();
+    await logSubscriptions(activateContext);
 
     if (vscode.workspace.workspaceFolders && vscode.workspace.workspaceFolders.length > 0) {
       await convertToWorkspace(activateContext);
@@ -91,6 +95,7 @@ export async function activate(context: vscode.ExtensionContext) {
     promptParameterizeConnections(activateContext, true);
     verifyLocalConnectionKeys(activateContext, true);
     await startOnboarding(activateContext);
+    //await prepareTestExplorer(context, activateContext);
 
     ext.extensionVersion = getExtensionVersion();
     ext.currentBundleVersion = activateContext.telemetry.properties.latestBundleVersion;
@@ -132,6 +137,7 @@ export async function activate(context: vscode.ExtensionContext) {
 
 export function deactivate(): Promise<any> {
   stopDesignTimeApi();
+  ext.unitTestController?.dispose();
   ext.telemetryReporter.dispose();
   return undefined;
 }

@@ -10,7 +10,7 @@ exports[`VariableEditor > renders correctly with empty variables 1`] = `
         <button
           aria-expanded="true"
           class="fui-Button r1alrhcs msla-variable-editor-heading-button ___13arsol_wkbbhs0 fhovq9v f1p3nwhy f11589ue f1q5o8ev f1pdflbu fkfq4zb f1t94bn6 f1s2uweq fr80ssc f1ukrpxl fecsdlb fnwyq0v ft1hn21 fuxngvv fy5bs14 fsv2rcd f1h0usnq fs4ktlq f16h9ulv fx2bmrt f1omzyqd f1dfjoow f1j98vj9 fj8yq94 f4xjyn1 f1et0tmh f9ddjv3 f1wi8ngl"
-          style="justify-content: flex-start;"
+          style="justify-content: flex-start; width: 90%;"
           type="button"
         >
           <span
@@ -73,7 +73,9 @@ exports[`VariableEditor > renders correctly with empty variables 1`] = `
         >
           <div
             class="msla-setting-token-editor-container"
+            data-automation-id="undefined-name-0"
             id="msla-tokenpicker-callout-location3"
+            style="position: relative;"
           >
             <div
               aria-describedby="msla-described-by-message4"
@@ -84,7 +86,7 @@ exports[`VariableEditor > renders correctly with empty variables 1`] = `
               data-testid="name - 0 contenteditable"
               role="textbox"
               spellcheck="false"
-              style="user-select: text; white-space: pre-wrap; word-break: break-word;"
+              style="padding-inline-end: 32px; user-select: text; white-space: pre-wrap; word-break: break-word;"
               tabindex="0"
               title="Enter variable name"
             >
@@ -130,6 +132,7 @@ exports[`VariableEditor > renders correctly with empty variables 1`] = `
         </div>
         <div
           class="msla-dropdown-editor-container"
+          data-automation-id="undefined-type-0"
         >
           <div
             class="ms-Dropdown-container root-185"
@@ -185,7 +188,9 @@ exports[`VariableEditor > renders correctly with empty variables 1`] = `
         >
           <div
             class="msla-setting-token-editor-container"
+            data-automation-id="undefined-value-0"
             id="msla-tokenpicker-callout-location6"
+            style="position: relative;"
           >
             <div
               aria-describedby="msla-described-by-message7"
@@ -196,7 +201,7 @@ exports[`VariableEditor > renders correctly with empty variables 1`] = `
               data-testid="value - 0 contenteditable"
               role="textbox"
               spellcheck="false"
-              style="user-select: text; white-space: pre-wrap; word-break: break-word;"
+              style="padding-inline-end: 32px; user-select: text; white-space: pre-wrap; word-break: break-word;"
               tabindex="0"
               title="Enter initial value"
             >
@@ -220,6 +225,48 @@ exports[`VariableEditor > renders correctly with empty variables 1`] = `
           </div>
         </div>
       </div>
+    </div>
+    <div
+      class="msla-variable-editor-edit-or-delete-button"
+    >
+      <button
+        aria-label="Edit"
+        class="fui-Button r1alrhcs ___w3o4yv0_df8ghi0 fhovq9v f1p3nwhy f11589ue f1q5o8ev f1pdflbu fkfq4zb f1t94bn6 f1s2uweq fr80ssc f1ukrpxl fecsdlb fnwyq0v ft1hn21 fuxngvv fy5bs14 fsv2rcd f1h0usnq fs4ktlq f16h9ulv fx2bmrt f1omzyqd f1dfjoow f1j98vj9 fj8yq94 f4xjyn1 f1et0tmh f9ddjv3 f1wi8ngl f18ktai2 fwbmr0d f44c6la"
+        type="button"
+      >
+        <span
+          class="fui-Button__icon rywnvv2"
+        >
+          <svg
+            aria-hidden="true"
+            class="fui-Icon-filled ___1vjqft9_1uxjcqz fjseox fez10in fg4l7m0"
+            fill="currentColor"
+            height="24"
+            viewBox="0 0 24 24"
+            width="24"
+            xmlns="http://www.w3.org/2000/svg"
+          >
+            <path
+              d="M15.9 3.05a3.58 3.58 0 1 1 5.05 5.06l-.89.9L15 3.93l.9-.9ZM13.93 5l-10 10c-.4.4-.7.92-.82 1.48l-1.1 4.6a.75.75 0 0 0 .9.9l4.6-1.1A3.1 3.1 0 0 0 9 20.07l10-10L13.94 5Z"
+              fill="currentColor"
+            />
+          </svg>
+          <svg
+            aria-hidden="true"
+            class="fui-Icon-regular ___12fm75w_1vnroxd f1w7gpdv fez10in fg4l7m0"
+            fill="currentColor"
+            height="24"
+            viewBox="0 0 24 24"
+            width="24"
+            xmlns="http://www.w3.org/2000/svg"
+          >
+            <path
+              d="M20.95 3.05a3.58 3.58 0 0 0-5.06 0L3.94 15c-.4.4-.7.92-.82 1.48l-1.1 4.6a.75.75 0 0 0 .9.9l4.6-1.1A3.1 3.1 0 0 0 9 20.07L20.95 8.11a3.58 3.58 0 0 0 0-5.06Zm-4 1.06a2.08 2.08 0 1 1 2.94 2.94l-.89.89L16.06 5l.9-.9ZM15 6.06 17.94 9l-10 10a1.6 1.6 0 0 1-.76.43l-3.42.8.82-3.4c.06-.3.21-.56.42-.77l10-10Z"
+              fill="currentColor"
+            />
+          </svg>
+        </span>
+      </button>
     </div>
     <div
       class="msla-variable-editor-edit-or-delete-button"
@@ -277,7 +324,7 @@ exports[`VariableEditor > renders correctly with single variable 1`] = `
         <button
           aria-expanded="true"
           class="fui-Button r1alrhcs msla-variable-editor-heading-button ___13arsol_wkbbhs0 fhovq9v f1p3nwhy f11589ue f1q5o8ev f1pdflbu fkfq4zb f1t94bn6 f1s2uweq fr80ssc f1ukrpxl fecsdlb fnwyq0v ft1hn21 fuxngvv fy5bs14 fsv2rcd f1h0usnq fs4ktlq f16h9ulv fx2bmrt f1omzyqd f1dfjoow f1j98vj9 fj8yq94 f4xjyn1 f1et0tmh f9ddjv3 f1wi8ngl"
-          style="justify-content: flex-start;"
+          style="justify-content: flex-start; width: 90%;"
           type="button"
         >
           <span
@@ -340,7 +387,9 @@ exports[`VariableEditor > renders correctly with single variable 1`] = `
         >
           <div
             class="msla-setting-token-editor-container"
+            data-automation-id="undefined-name-0"
             id="msla-tokenpicker-callout-location11"
+            style="position: relative;"
           >
             <div
               aria-describedby="msla-described-by-message12"
@@ -351,7 +400,7 @@ exports[`VariableEditor > renders correctly with single variable 1`] = `
               data-testid="name - 0 contenteditable"
               role="textbox"
               spellcheck="false"
-              style="user-select: text; white-space: pre-wrap; word-break: break-word;"
+              style="padding-inline-end: 32px; user-select: text; white-space: pre-wrap; word-break: break-word;"
               tabindex="0"
               title="Enter variable name"
             >
@@ -397,6 +446,7 @@ exports[`VariableEditor > renders correctly with single variable 1`] = `
         </div>
         <div
           class="msla-dropdown-editor-container"
+          data-automation-id="undefined-type-0"
         >
           <div
             class="ms-Dropdown-container root-185"
@@ -458,7 +508,9 @@ exports[`VariableEditor > renders correctly with single variable 1`] = `
             >
               <div
                 class="msla-combobox-editor"
+                data-automation-id="undefined-value-0"
                 id="msla-tokenpicker-callout-location14"
+                style="position: relative;"
               >
                 <div
                   aria-describedby="msla-described-by-message15"
@@ -469,7 +521,7 @@ exports[`VariableEditor > renders correctly with single variable 1`] = `
                   data-testid="value - 0 contenteditable"
                   role="textbox"
                   spellcheck="false"
-                  style="user-select: text; white-space: pre-wrap; word-break: break-word;"
+                  style="padding-inline-end: 32px; user-select: text; white-space: pre-wrap; word-break: break-word;"
                   tabindex="0"
                   title="Enter initial value"
                 >
@@ -539,6 +591,48 @@ exports[`VariableEditor > renders correctly with single variable 1`] = `
       class="msla-variable-editor-edit-or-delete-button"
     >
       <button
+        aria-label="Edit"
+        class="fui-Button r1alrhcs ___w3o4yv0_df8ghi0 fhovq9v f1p3nwhy f11589ue f1q5o8ev f1pdflbu fkfq4zb f1t94bn6 f1s2uweq fr80ssc f1ukrpxl fecsdlb fnwyq0v ft1hn21 fuxngvv fy5bs14 fsv2rcd f1h0usnq fs4ktlq f16h9ulv fx2bmrt f1omzyqd f1dfjoow f1j98vj9 fj8yq94 f4xjyn1 f1et0tmh f9ddjv3 f1wi8ngl f18ktai2 fwbmr0d f44c6la"
+        type="button"
+      >
+        <span
+          class="fui-Button__icon rywnvv2"
+        >
+          <svg
+            aria-hidden="true"
+            class="fui-Icon-filled ___1vjqft9_1uxjcqz fjseox fez10in fg4l7m0"
+            fill="currentColor"
+            height="24"
+            viewBox="0 0 24 24"
+            width="24"
+            xmlns="http://www.w3.org/2000/svg"
+          >
+            <path
+              d="M15.9 3.05a3.58 3.58 0 1 1 5.05 5.06l-.89.9L15 3.93l.9-.9ZM13.93 5l-10 10c-.4.4-.7.92-.82 1.48l-1.1 4.6a.75.75 0 0 0 .9.9l4.6-1.1A3.1 3.1 0 0 0 9 20.07l10-10L13.94 5Z"
+              fill="currentColor"
+            />
+          </svg>
+          <svg
+            aria-hidden="true"
+            class="fui-Icon-regular ___12fm75w_1vnroxd f1w7gpdv fez10in fg4l7m0"
+            fill="currentColor"
+            height="24"
+            viewBox="0 0 24 24"
+            width="24"
+            xmlns="http://www.w3.org/2000/svg"
+          >
+            <path
+              d="M20.95 3.05a3.58 3.58 0 0 0-5.06 0L3.94 15c-.4.4-.7.92-.82 1.48l-1.1 4.6a.75.75 0 0 0 .9.9l4.6-1.1A3.1 3.1 0 0 0 9 20.07L20.95 8.11a3.58 3.58 0 0 0 0-5.06Zm-4 1.06a2.08 2.08 0 1 1 2.94 2.94l-.89.89L16.06 5l.9-.9ZM15 6.06 17.94 9l-10 10a1.6 1.6 0 0 1-.76.43l-3.42.8.82-3.4c.06-.3.21-.56.42-.77l10-10Z"
+              fill="currentColor"
+            />
+          </svg>
+        </span>
+      </button>
+    </div>
+    <div
+      class="msla-variable-editor-edit-or-delete-button"
+    >
+      <button
         aria-label="Delete"
         class="fui-Button r1alrhcs ___w3o4yv0_df8ghi0 fhovq9v f1p3nwhy f11589ue f1q5o8ev f1pdflbu fkfq4zb f1t94bn6 f1s2uweq fr80ssc f1ukrpxl fecsdlb fnwyq0v ft1hn21 fuxngvv fy5bs14 fsv2rcd f1h0usnq fs4ktlq f16h9ulv fx2bmrt f1omzyqd f1dfjoow f1j98vj9 fj8yq94 f4xjyn1 f1et0tmh f9ddjv3 f1wi8ngl f18ktai2 fwbmr0d f44c6la"
         type="button"
@@ -591,7 +685,7 @@ exports[`VariableEditor > renders correctly with single variable with Token 1`] 
         <button
           aria-expanded="true"
           class="fui-Button r1alrhcs msla-variable-editor-heading-button ___13arsol_wkbbhs0 fhovq9v f1p3nwhy f11589ue f1q5o8ev f1pdflbu fkfq4zb f1t94bn6 f1s2uweq fr80ssc f1ukrpxl fecsdlb fnwyq0v ft1hn21 fuxngvv fy5bs14 fsv2rcd f1h0usnq fs4ktlq f16h9ulv fx2bmrt f1omzyqd f1dfjoow f1j98vj9 fj8yq94 f4xjyn1 f1et0tmh f9ddjv3 f1wi8ngl"
-          style="justify-content: flex-start;"
+          style="justify-content: flex-start; width: 90%;"
           type="button"
         >
           <span
@@ -654,7 +748,9 @@ exports[`VariableEditor > renders correctly with single variable with Token 1`] 
         >
           <div
             class="msla-setting-token-editor-container"
+            data-automation-id="undefined-name-0"
             id="msla-tokenpicker-callout-location19"
+            style="position: relative;"
           >
             <div
               aria-describedby="msla-described-by-message20"
@@ -665,7 +761,7 @@ exports[`VariableEditor > renders correctly with single variable with Token 1`] 
               data-testid="name - 0 contenteditable"
               role="textbox"
               spellcheck="false"
-              style="user-select: text; white-space: pre-wrap; word-break: break-word;"
+              style="padding-inline-end: 32px; user-select: text; white-space: pre-wrap; word-break: break-word;"
               tabindex="0"
               title="Enter variable name"
             >
@@ -711,6 +807,7 @@ exports[`VariableEditor > renders correctly with single variable with Token 1`] 
         </div>
         <div
           class="msla-dropdown-editor-container"
+          data-automation-id="undefined-type-0"
         >
           <div
             class="ms-Dropdown-container root-185"
@@ -772,7 +869,9 @@ exports[`VariableEditor > renders correctly with single variable with Token 1`] 
             >
               <div
                 class="msla-combobox-editor"
+                data-automation-id="undefined-value-0"
                 id="msla-tokenpicker-callout-location22"
+                style="position: relative;"
               >
                 <div
                   aria-describedby="msla-described-by-message23"
@@ -783,7 +882,7 @@ exports[`VariableEditor > renders correctly with single variable with Token 1`] 
                   data-testid="value - 0 contenteditable"
                   role="textbox"
                   spellcheck="false"
-                  style="user-select: text; white-space: pre-wrap; word-break: break-word;"
+                  style="padding-inline-end: 32px; user-select: text; white-space: pre-wrap; word-break: break-word;"
                   tabindex="0"
                   title="Enter initial value"
                 />
@@ -842,6 +941,48 @@ exports[`VariableEditor > renders correctly with single variable with Token 1`] 
           </div>
         </div>
       </div>
+    </div>
+    <div
+      class="msla-variable-editor-edit-or-delete-button"
+    >
+      <button
+        aria-label="Edit"
+        class="fui-Button r1alrhcs ___w3o4yv0_df8ghi0 fhovq9v f1p3nwhy f11589ue f1q5o8ev f1pdflbu fkfq4zb f1t94bn6 f1s2uweq fr80ssc f1ukrpxl fecsdlb fnwyq0v ft1hn21 fuxngvv fy5bs14 fsv2rcd f1h0usnq fs4ktlq f16h9ulv fx2bmrt f1omzyqd f1dfjoow f1j98vj9 fj8yq94 f4xjyn1 f1et0tmh f9ddjv3 f1wi8ngl f18ktai2 fwbmr0d f44c6la"
+        type="button"
+      >
+        <span
+          class="fui-Button__icon rywnvv2"
+        >
+          <svg
+            aria-hidden="true"
+            class="fui-Icon-filled ___1vjqft9_1uxjcqz fjseox fez10in fg4l7m0"
+            fill="currentColor"
+            height="24"
+            viewBox="0 0 24 24"
+            width="24"
+            xmlns="http://www.w3.org/2000/svg"
+          >
+            <path
+              d="M15.9 3.05a3.58 3.58 0 1 1 5.05 5.06l-.89.9L15 3.93l.9-.9ZM13.93 5l-10 10c-.4.4-.7.92-.82 1.48l-1.1 4.6a.75.75 0 0 0 .9.9l4.6-1.1A3.1 3.1 0 0 0 9 20.07l10-10L13.94 5Z"
+              fill="currentColor"
+            />
+          </svg>
+          <svg
+            aria-hidden="true"
+            class="fui-Icon-regular ___12fm75w_1vnroxd f1w7gpdv fez10in fg4l7m0"
+            fill="currentColor"
+            height="24"
+            viewBox="0 0 24 24"
+            width="24"
+            xmlns="http://www.w3.org/2000/svg"
+          >
+            <path
+              d="M20.95 3.05a3.58 3.58 0 0 0-5.06 0L3.94 15c-.4.4-.7.92-.82 1.48l-1.1 4.6a.75.75 0 0 0 .9.9l4.6-1.1A3.1 3.1 0 0 0 9 20.07L20.95 8.11a3.58 3.58 0 0 0 0-5.06Zm-4 1.06a2.08 2.08 0 1 1 2.94 2.94l-.89.89L16.06 5l.9-.9ZM15 6.06 17.94 9l-10 10a1.6 1.6 0 0 1-.76.43l-3.42.8.82-3.4c.06-.3.21-.56.42-.77l10-10Z"
+              fill="currentColor"
+            />
+          </svg>
+        </span>
+      </button>
     </div>
     <div
       class="msla-variable-editor-edit-or-delete-button"

@@ -15,7 +15,7 @@ import {
 import { useIntl } from 'react-intl';
 import { useOnViewportChange } from '@xyflow/react';
 
-import { useEdgeContextMenuData } from '../../../core/state/designerView/designerViewSelectors';
+import { useAgenticWorkflow, useEdgeContextMenuData } from '../../../core/state/designerView/designerViewSelectors';
 import { addOperation, useNodeDisplayName, useNodeMetadata, type AppDispatch } from '../../../core';
 import { expandDiscoveryPanel } from '../../../core/state/panel/panelSlice';
 import { retrieveClipboardData } from '../../../core/utils/clipboard';
@@ -34,7 +34,6 @@ import {
 } from '@fluentui/react-icons';
 import { pasteOperation, pasteScopeOperation } from '../../../core/actions/bjsworkflow/copypaste';
 import { useUpstreamNodes } from '../../../core/state/tokens/tokenSelectors';
-import { useHostOptions } from '../../../core/state/designerOptions/designerOptionsSelectors';
 
 const AddIcon = bundleIcon(ArrowBetweenDown24Filled, ArrowBetweenDown24Regular);
 const ParallelIcon = bundleIcon(ArrowSplit24Filled, ArrowSplit24Regular);
@@ -45,6 +44,7 @@ export const EdgeContextualMenu = () => {
   const intl = useIntl();
 
   const menuData = useEdgeContextMenuData();
+  const isAgenticWorkflow = useAgenticWorkflow();
   const graphId = useMemo(() => menuData?.graphId, [menuData]);
   const parentId = useMemo(() => menuData?.parentId, [menuData]);
   const childId = useMemo(() => menuData?.childId, [menuData]);
@@ -133,8 +133,6 @@ export const EdgeContextualMenu = () => {
   }, [dispatch, graphId, childId, parentId]);
 
   const showParallelBranchButton = !isLeaf && parentId;
-
-  const { enableAgenticLoops } = useHostOptions();
 
   const [isPasteEnabled, setIsPasteEnabled] = useState<boolean>(false);
   useEffect(() => {
@@ -238,7 +236,7 @@ export const EdgeContextualMenu = () => {
                 {newBranchText}
               </MenuItem>
             )}
-            {enableAgenticLoops && (
+            {isAgenticWorkflow && graphId === 'root' && (
               <MenuItem icon={<AgentIcon />} onClick={addAgenticLoop} data-automation-id={automationId('add-agentic=loop')}>
                 {newAgentText}
               </MenuItem>

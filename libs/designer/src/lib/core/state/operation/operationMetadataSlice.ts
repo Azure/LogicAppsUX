@@ -4,14 +4,23 @@ import { StaticResultOption } from '../../actions/bjsworkflow/staticresults';
 import type { RepetitionContext } from '../../utils/parameters/helper';
 import { createTokenValueSegment, isTokenValueSegment } from '../../utils/parameters/segment';
 import { getTokenTitle, normalizeKey } from '../../utils/tokens';
-import { resetNodesLoadStatus, resetWorkflowState, setStateAfterUndoRedo } from '../global';
-import { LogEntryLevel, LoggerService, filterRecord, getRecordEntry } from '@microsoft/logic-apps-shared';
+import { resetNodesLoadStatus, resetTemplatesState, resetWorkflowState, setStateAfterUndoRedo } from '../global';
+import { LogEntryLevel, LoggerService, TokenType, filterRecord, getRecordEntry } from '@microsoft/logic-apps-shared';
 import type { ParameterInfo } from '@microsoft/designer-ui';
-import type { FilePickerInfo, InputParameter, OutputParameter, OpenAPIV2, OperationInfo } from '@microsoft/logic-apps-shared';
+import type {
+  FilePickerInfo,
+  InputParameter,
+  OutputParameter,
+  OpenAPIV2,
+  OperationInfo,
+  SupportedChannels,
+} from '@microsoft/logic-apps-shared';
 import { createSlice } from '@reduxjs/toolkit';
 import type { PayloadAction } from '@reduxjs/toolkit';
 import type { WritableDraft } from 'immer/dist/internal';
 import type { UndoRedoPartialRootState } from '../undoRedo/undoRedoTypes';
+import { deleteWorkflowData } from '../../actions/bjsworkflow/configuretemplate';
+import { delimiter } from '../../configuretemplate/utils/helper';
 
 export interface ParameterGroup {
   id: string;
@@ -113,6 +122,7 @@ export interface OperationMetadataState {
   repetitionInfos: Record<string, RepetitionContext>;
   errors: Record<string, Record<ErrorLevel, ErrorInfo | undefined>>;
   loadStatus: OperationMetadataLoadStatus;
+  supportedChannels: Record<string, SupportedChannels[]>;
 }
 
 interface OperationMetadataLoadStatus {
@@ -131,6 +141,7 @@ export const initialState: OperationMetadataState = {
   staticResults: {},
   repetitionInfos: {},
   errors: {},
+  supportedChannels: {},
   loadStatus: {
     nodesInitialized: false,
     nodesAndDynamicDataInitialized: false,
@@ -161,6 +172,7 @@ export interface NodeData {
   operationMetadata: OperationMetadata;
   staticResult?: NodeStaticResults;
   settings?: Settings;
+  supportedChannels?: SupportedChannels[];
   actionMetadata?: Record<string, any>;
   repetitionInfo?: RepetitionContext;
 }
@@ -247,18 +259,31 @@ export const operationMetadataSlice = createSlice({
         state.staticResults = {};
         state.actionMetadata = {};
         state.repetitionInfos = {};
+        state.supportedChannels = {};
       }
+
       for (const nodeData of nodes) {
         if (!nodeData) {
           return;
         }
 
-        const { id, nodeInputs, nodeOutputs, nodeDependencies, settings, operationMetadata, actionMetadata, staticResult, repetitionInfo } =
-          nodeData;
+        const {
+          id,
+          nodeInputs,
+          nodeOutputs,
+          nodeDependencies,
+          settings,
+          operationMetadata,
+          actionMetadata,
+          staticResult,
+          repetitionInfo,
+          supportedChannels,
+        } = nodeData;
         state.inputParameters[id] = nodeInputs;
         state.outputParameters[id] = nodeOutputs;
         state.dependencies[id] = nodeDependencies;
         state.operationMetadata[id] = operationMetadata;
+        state.supportedChannels[id] = supportedChannels ?? [];
 
         if (settings) {
           state.settings[id] = settings;
@@ -355,6 +380,27 @@ export const operationMetadataSlice = createSlice({
           }
         }
       }
+    },
+    updateAgentParametersInNode: (state, action: PayloadAction<Array<{ name: string; type: string; description: string }>>) => {
+      const updatesMap = new Map(action.payload.map(({ name, type, description }) => [name, { type, description }]));
+      Object.entries(state.inputParameters).forEach(([_nodeId, nodeInputs]) => {
+        Object.entries(nodeInputs.parameterGroups).forEach(([_parameterId, parameterGroup]) => {
+          parameterGroup.parameters.forEach((parameter) => {
+            parameter.value.forEach((segment) => {
+              if (
+                isTokenValueSegment(segment) &&
+                segment.token?.tokenType === TokenType.AGENTPARAMETER &&
+                segment.token.name &&
+                updatesMap.has(segment.token.name)
+              ) {
+                const { type, description } = updatesMap.get(segment.token.name)!;
+                segment.token.type = type;
+                segment.token.description = description;
+              }
+            });
+          });
+        });
+      });
     },
     updateNodeSettings: (state, action: PayloadAction<AddSettingsPayload>) => {
       const { id, settings } = action.payload;
@@ -588,11 +634,23 @@ export const operationMetadataSlice = createSlice({
   },
   extraReducers: (builder) => {
     builder.addCase(resetWorkflowState, () => initialState);
+    builder.addCase(resetTemplatesState, () => initialState);
     builder.addCase(resetNodesLoadStatus, (state) => {
       state.loadStatus.nodesInitialized = false;
       state.loadStatus.nodesAndDynamicDataInitialized = false;
     });
     builder.addCase(setStateAfterUndoRedo, (_, action: PayloadAction<UndoRedoPartialRootState>) => action.payload.operations);
+    builder.addCase(deleteWorkflowData.fulfilled, (state, action: PayloadAction<{ ids: string[] }>) => {
+      for (const id of action.payload.ids) {
+        const nodeIds = Object.keys(state.operationInfo).filter((nodeId) => nodeId.startsWith(`${id}${delimiter}`));
+
+        for (const nodeId of nodeIds) {
+          delete state.inputParameters[nodeId];
+          delete state.dependencies[nodeId];
+          delete state.operationInfo[nodeId];
+        }
+      }
+    });
   },
 });
 
@@ -605,19 +663,20 @@ const updateExistingInputTokenTitles = (state: OperationMetadataState, actionPay
     tokenTitles[normalizedKey] = getTokenTitle(outputValue);
   }
 
-  Object.entries(state.inputParameters).forEach(([nodeId, nodeInputs]) => {
-    Object.entries(nodeInputs.parameterGroups).forEach(([parameterId, parameterGroup]) => {
-      parameterGroup.parameters.forEach((parameter, parameterIndex) => {
-        parameter.value.forEach((segment, segmentIndex) => {
+  Object.entries(state.inputParameters).forEach(([_nodeId, nodeInputs]) => {
+    Object.entries(nodeInputs.parameterGroups).forEach(([_parameterId, parameterGroup]) => {
+      parameterGroup.parameters = parameterGroup.parameters.map((parameter, _parameterIndex) => ({
+        ...parameter,
+        value: parameter.value.map((segment, _segmentIndex) => {
           if (isTokenValueSegment(segment) && segment.token?.key) {
             const normalizedKey = normalizeKey(segment.token.key);
             if (normalizedKey in tokenTitles) {
-              state.inputParameters[nodeId].parameterGroups[parameterId].parameters[parameterIndex].value[segmentIndex] =
-                createTokenValueSegment({ ...segment.token, title: tokenTitles[normalizedKey] }, segment.value, segment.type);
+              return createTokenValueSegment({ ...segment.token, title: tokenTitles[normalizedKey] }, segment.value, segment.type);
             }
           }
-        });
-      });
+          return segment;
+        }),
+      }));
     });
   });
 };
@@ -638,6 +697,7 @@ export const {
   updateParameterValidation,
   updateParameterEditorViewModel,
   removeParameterValidationError,
+  updateAgentParametersInNode,
   updateOutputs,
   updateActionMetadata,
   updateRepetitionContext,

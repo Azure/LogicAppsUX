@@ -16,7 +16,7 @@ import { localize } from '../../../localize';
 import { getLocalSettingsJson } from '../../utils/appSettings/localSettings';
 import { getConnectionsJson } from '../../utils/codeless/connection';
 import { getAuthorizationToken, getCloudHost } from '../../utils/codeless/getAuthorizationToken';
-import { isConnectionsParameterized } from '../../utils/codeless/parameterizer';
+import { areAllConnectionsParameterized } from '../../utils/codeless/parameterizer';
 import { addLocalFuncTelemetry } from '../../utils/funcCoreTools/funcVersion';
 import { unzipLogicAppArtifacts } from '../../utils/taskUtils';
 import { tryGetLogicAppProjectRoot } from '../../utils/verifyIsProject';
@@ -47,7 +47,7 @@ export async function generateDeploymentScripts(context: IActionContext): Promis
     const projectRoot = vscode.Uri.file(projectPath);
     const connectionsJson = await getConnectionsJson(projectPath);
     const connectionsData: ConnectionsData = isEmptyString(connectionsJson) ? {} : JSON.parse(connectionsJson);
-    const isParameterized = await isConnectionsParameterized(connectionsData);
+    const isParameterized = await areAllConnectionsParameterized(connectionsData);
     const workflowFiles = getWorkflowFilePaths(projectPath);
     if (!(await convertToWorkspace(context))) {
       ext.outputChannel.appendLog(localize('exitScriptGen', 'Exiting script generation...'));
