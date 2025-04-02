@@ -1,6 +1,6 @@
 import type { ConversationItem } from '@microsoft/designer-ui';
-import { ConversationItemType, PanelLocation, PanelSize } from '@microsoft/designer-ui';
-import { useCallback, useEffect, useMemo, useState } from 'react';
+import { ConversationItemType, PanelLocation, PanelResizer, PanelSize } from '@microsoft/designer-ui';
+import { useEffect, useMemo, useState } from 'react';
 import { type IntlShape, useIntl } from 'react-intl';
 import { defaultChatbotPanelWidth, ChatbotContent } from '@microsoft/logic-apps-chatbot';
 import { type ChatHistory, useChatHistory } from '../../../core/queries/runs';
@@ -21,7 +21,6 @@ import { setFocusNode, setRunIndex } from '../../../core/state/workflow/workflow
 
 interface AgentChatProps {
   panelLocation?: PanelLocation;
-  closeChatBot?: () => void; // callback when chatbot is closed
   chatbotWidth?: string;
   panelContainerRef: React.MutableRefObject<HTMLElement | null>;
 }
@@ -167,12 +166,8 @@ export const AgentChat = ({
 }: AgentChatProps) => {
   const intl = useIntl();
   const [inputQuery, setInputQuery] = useState('');
-  const [canSaveCurrentFlow, saveCurrentFlow] = useState(false);
-  const [canTestCurrentFlow, testCurrentFlow] = useState(false);
-  const [isSaving] = useState(false);
   const [focus, setFocus] = useState(false);
   const [conversation, setConversation] = useState<ConversationItem[]>([]);
-  const [controller, _setController] = useState(new AbortController());
   const isMonitoringView = useMonitoringView();
   const runInstance = useRunInstance();
   const agentOperations = useAgentOperations();
@@ -180,16 +175,18 @@ export const AgentChat = ({
   const [isCollapsed, setIsCollapsed] = useState(false);
   const panelContainerElement = panelContainerRef.current as HTMLElement;
   const { isFetching: isChatHistoryFetching, data: chatHistoryData } = useChatHistory(!!isMonitoringView, agentOperations, runInstance?.id);
-  const drawerWidth = isCollapsed ? PanelSize.Auto : chatbotWidth;
+  const [overrideWidth, setOverrideWidth] = useState<string | undefined>();
   const isChatInputEnabled = useIsChatInputEnabled(conversation.length > 0 ? conversation[0].metadata?.parentId : undefined);
   const dispatch = useDispatch<AppDispatch>();
+  const agentsNumber = Object.keys(agentLastOperations).length;
+  const drawerWidth = isCollapsed ? PanelSize.Auto : (overrideWidth ?? chatbotWidth);
 
   useEffect(() => {
     if (!isNullOrUndefined(chatHistoryData)) {
       const newConversations = parseChatHistory(chatHistoryData, intl, dispatch, agentLastOperations);
       setConversation([...newConversations]);
     }
-  }, [setConversation, chatHistoryData, intl, Object.keys(agentLastOperations).length, dispatch]);
+  }, [setConversation, chatHistoryData, intl, agentsNumber, dispatch]);
 
   const intlText = useMemo(() => {
     return {
@@ -263,10 +260,6 @@ export const AgentChat = ({
     };
   }, [intl]);
 
-  const abortFetching = useCallback(() => {
-    controller.abort();
-  }, [controller]);
-
   useEffect(() => {
     setInputQuery('');
   }, [conversation]);
@@ -300,46 +293,42 @@ export const AgentChat = ({
         />
       ) : null}
       {isCollapsed ? null : (
-        <ChatbotContent
-          panel={{
-            location: panelLocation,
-            width: chatbotWidth,
-            isOpen: true,
-            isBlocking: false,
-            onDismiss: () => {},
-            header: <AgentChatHeader title={intlText.agentChatHeader} toggleCollapse={() => setIsCollapsed(true)} />,
-          }}
-          inputBox={{
-            value: inputQuery,
-            onChange: setInputQuery,
-            placeholder: isChatInputEnabled ? intlText.chatInputPlaceholder : intlText.chatInputDisabledPlaceHolder,
-            onSubmit: () => {},
-            disabled: isChatInputEnabled, // read-only mode
-          }}
-          data={{
-            isSaving: isSaving,
-            canSave: canSaveCurrentFlow,
-            canTest: canTestCurrentFlow,
-            test: () => testCurrentFlow(false),
-            save: () => saveCurrentFlow(false),
-            abort: abortFetching,
-          }}
-          string={{
-            test: intlText.chatSuggestion.testButton,
-            save: intlText.chatSuggestion.saveButton,
-            submit: intlText.submitButtonTitle,
-            progressState: intlText.progressCardText,
-            progressStop: intlText.progressCardStopButtonLabel,
-            progressSave: intlText.progressCardSaveText,
-            protectedMessage: intlText.protectedMessage,
-          }}
-          body={{
-            messages: conversation,
-            focus: focus,
-            answerGenerationInProgress: isChatHistoryFetching,
-            setFocus: setFocus,
-          }}
-        />
+        <>
+          <ChatbotContent
+            panel={{
+              location: panelLocation,
+              width: chatbotWidth,
+              isOpen: true,
+              isBlocking: false,
+              onDismiss: () => {},
+              header: <AgentChatHeader title={intlText.agentChatHeader} toggleCollapse={() => setIsCollapsed(true)} />,
+            }}
+            inputBox={{
+              value: inputQuery,
+              onChange: setInputQuery,
+              placeholder: isChatInputEnabled ? intlText.chatInputPlaceholder : intlText.chatInputDisabledPlaceHolder,
+              onSubmit: () => {},
+              disabled: isChatInputEnabled,
+            }}
+            data={{}}
+            string={{
+              test: intlText.chatSuggestion.testButton,
+              save: intlText.chatSuggestion.saveButton,
+              submit: intlText.submitButtonTitle,
+              progressState: intlText.progressCardText,
+              progressStop: intlText.progressCardStopButtonLabel,
+              progressSave: intlText.progressCardSaveText,
+              protectedMessage: intlText.protectedMessage,
+            }}
+            body={{
+              messages: conversation,
+              focus: focus,
+              answerGenerationInProgress: isChatHistoryFetching,
+              setFocus: setFocus,
+            }}
+          />
+          <PanelResizer minWidth={undefined} updatePanelWidth={setOverrideWidth} />
+        </>
       )}
     </Drawer>
   );

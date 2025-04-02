@@ -51,9 +51,7 @@ export interface DesignerProps {
   displayRuntimeInfo?: boolean;
 }
 
-type NodeTypesObj = {
-  [key in WorkflowNodeType]: React.ComponentType<any>;
-};
+type NodeTypesObj = Record<WorkflowNodeType, React.ComponentType<any>>;
 const nodeTypes: NodeTypesObj = {
   OPERATION_NODE: OperationNode,
   GRAPH_NODE: GraphNode,
@@ -268,7 +266,7 @@ export const Designer = (props: DesignerProps) => {
             isResizeable={true}
           />
           {isMonitoringView && isAgenticWorkflow ? (
-            <AgentChat panelLocation="RIGHT" panelContainerRef={designerContainerRef} closeChatBot={() => {}} />
+            <AgentChat panelLocation={PanelLocation.Right} panelContainerRef={designerContainerRef} />
           ) : null}
           <div className={css('msla-designer-tools', panelLocation === PanelLocation.Left && 'left-panel')}>
             <Controls />
