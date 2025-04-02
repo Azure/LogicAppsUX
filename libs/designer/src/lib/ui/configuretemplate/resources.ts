@@ -69,6 +69,11 @@ export const useResourceStrings = () => {
       id: 'N6SVax',
       description: 'Display name label',
     }),
+    Name: intl.formatMessage({
+      defaultMessage: 'Name',
+      id: 'gOkIvb',
+      description: 'Name label',
+    }),
     WorkflowType: intl.formatMessage({
       defaultMessage: 'Workflow type',
       id: 'xBIh0S',
@@ -148,6 +153,36 @@ export const useResourceStrings = () => {
       defaultMessage: 'Workflow name',
       id: 'ekM77J',
       description: 'Label for workflow Name',
+    }),
+    Placeholder: intl.formatMessage({
+      defaultMessage: '--',
+      id: '5lRHeK',
+      description: 'Accessibility label indicating that the value is not set',
+    }),
+    Description: intl.formatMessage({
+      defaultMessage: 'Description',
+      id: 'FOoLuS',
+      description: 'Label for description',
+    }),
+    DefaultValue: intl.formatMessage({
+      defaultMessage: 'Default value',
+      id: 'v5CBNu',
+      description: 'Default value label',
+    }),
+    AllowedValues: intl.formatMessage({
+      defaultMessage: 'Allowed values',
+      id: 'gl+tO3',
+      description: 'Allowed values label',
+    }),
+    AssociatedWorkflows: intl.formatMessage({
+      defaultMessage: 'Associated workflows',
+      id: 'cjSsih',
+      description: 'Associated workflows label',
+    }),
+    Required: intl.formatMessage({
+      defaultMessage: 'Required',
+      id: '2q6Vas',
+      description: 'Required label',
     }),
     // Aria labels
     WorkflowsListTableLabel: intl.formatMessage({
