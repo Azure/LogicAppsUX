@@ -640,13 +640,15 @@ export const operationMetadataSlice = createSlice({
       state.loadStatus.nodesAndDynamicDataInitialized = false;
     });
     builder.addCase(setStateAfterUndoRedo, (_, action: PayloadAction<UndoRedoPartialRootState>) => action.payload.operations);
-    builder.addCase(deleteWorkflowData.fulfilled, (state, action: PayloadAction<{ id: string }>) => {
-      const nodeIds = Object.keys(state.operationInfo).filter((nodeId) => nodeId.startsWith(`${action.payload.id}${delimiter}`));
+    builder.addCase(deleteWorkflowData.fulfilled, (state, action: PayloadAction<{ ids: string[] }>) => {
+      for (const id of action.payload.ids) {
+        const nodeIds = Object.keys(state.operationInfo).filter((nodeId) => nodeId.startsWith(`${id}${delimiter}`));
 
-      for (const nodeId of nodeIds) {
-        delete state.inputParameters[nodeId];
-        delete state.dependencies[nodeId];
-        delete state.operationInfo[nodeId];
+        for (const nodeId of nodeIds) {
+          delete state.inputParameters[nodeId];
+          delete state.dependencies[nodeId];
+          delete state.operationInfo[nodeId];
+        }
       }
     });
   },

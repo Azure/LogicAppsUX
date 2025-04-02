@@ -4,17 +4,23 @@ import type { TemplateTabProps } from '@microsoft/designer-ui';
 import { closePanel } from '../../../../../core/state/templates/panelSlice';
 import type { ConfigureWorkflowsTabProps } from '../configureWorkflowsPanel';
 import type { IntlShape } from 'react-intl';
-import { Text } from '@fluentui/react-components';
-import { initializeWorkflowsData } from '../../../../../core/actions/bjsworkflow/configuretemplate';
-
-export const CustomizeWorkflows = () => {
-  return <Text>CustomizeWorkflows</Text>;
-};
+import type { WorkflowTemplateData } from '../../../../../core';
+import { CustomizeWorkflows } from '../../../../../ui/configuretemplate/workflows/customizeWorkflows';
 
 export const customizeWorkflowsTab = (
   intl: IntlShape,
   dispatch: AppDispatch,
-  { hasError, isSaving, onClosePanel, onSave }: ConfigureWorkflowsTabProps
+  {
+    hasError,
+    isSaving,
+    isPrimaryButtonDisabled,
+    disabled,
+    selectedWorkflowsList,
+    updateWorkflowDataField,
+    onSave,
+  }: ConfigureWorkflowsTabProps & {
+    updateWorkflowDataField: (workflowId: string, workflowData: Partial<WorkflowTemplateData>) => void;
+  }
 ): TemplateTabProps => ({
   id: constants.CONFIGURE_TEMPLATE_WIZARD_TAB_NAMES.CUSTOMIZE_WORKFLOWS,
   title: intl.formatMessage({
@@ -22,8 +28,9 @@ export const customizeWorkflowsTab = (
     id: 'qnio+9',
     description: 'The tab label for the monitoring customize workflows tab on the configure template wizard',
   }),
+  disabled: disabled,
   hasError: hasError,
-  content: <CustomizeWorkflows />,
+  content: <CustomizeWorkflows selectedWorkflowsList={selectedWorkflowsList} updateWorkflowDataField={updateWorkflowDataField} />,
   footerContent: {
     primaryButtonText: intl.formatMessage({
       defaultMessage: 'Save changes',
@@ -31,13 +38,10 @@ export const customizeWorkflowsTab = (
       description: 'Button text for saving changes in the configure workflows panel',
     }),
     primaryButtonOnClick: () => {
-      //TODO: save changes
-      dispatch(initializeWorkflowsData({}));
-
-      // TODO: Make sure to pass the correct value for isMultiWorkflow
-      onSave?.(/* isMultiWorkflow */ false);
+      onSave?.();
       dispatch(closePanel());
     },
+    primaryButtonDisabled: isPrimaryButtonDisabled,
     secondaryButtonText: intl.formatMessage({
       defaultMessage: 'Cancel',
       id: '75zXUl',
@@ -45,9 +49,6 @@ export const customizeWorkflowsTab = (
     }),
     secondaryButtonOnClick: () => {
       dispatch(closePanel());
-      onClosePanel();
-
-      //TODO: revert all changes
     },
     secondaryButtonDisabled: isSaving,
   },

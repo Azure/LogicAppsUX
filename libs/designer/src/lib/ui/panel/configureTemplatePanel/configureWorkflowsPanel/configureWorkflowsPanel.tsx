@@ -6,13 +6,21 @@ import { useCallback } from 'react';
 import { useIntl } from 'react-intl';
 import { Panel, PanelType } from '@fluentui/react';
 import { useConfigureWorkflowPanelTabs } from './usePanelTabs';
+import type { WorkflowTemplateData } from '../../../../core';
 
 export interface ConfigureWorkflowsTabProps {
-  hasError: boolean;
+  hasError?: boolean;
+  disabled?: boolean;
+  isPrimaryButtonDisabled: boolean;
   isSaving: boolean;
-  onClosePanel: () => void;
-  onSave?: (isMultiWorkflow: boolean) => void;
+  onSave?: () => void;
+  selectedWorkflowsList: Record<string, Partial<WorkflowTemplateData>>;
 }
+
+const layerProps = {
+  hostId: 'msla-layer-host',
+  eventBubblingEnabled: true,
+};
 
 export const ConfigureWorkflowsPanel = ({ onSave }: { onSave?: (isMultiWorkflow: boolean) => void }) => {
   const dispatch = useDispatch<AppDispatch>();
@@ -31,11 +39,7 @@ export const ConfigureWorkflowsPanel = ({ onSave }: { onSave?: (isMultiWorkflow:
     }),
   };
 
-  const revertAllChanges = useCallback(() => {
-    //TODO: revert all changes
-  }, []);
-
-  const panelTabs: TemplateTabProps[] = useConfigureWorkflowPanelTabs({ onClosePanel: revertAllChanges, onSave });
+  const panelTabs: TemplateTabProps[] = useConfigureWorkflowPanelTabs({ onSave });
 
   const handleSelectTab = (tabId: string): void => {
     dispatch(selectPanelTab(tabId));
@@ -52,8 +56,7 @@ export const ConfigureWorkflowsPanel = ({ onSave }: { onSave?: (isMultiWorkflow:
 
   const dismissPanel = useCallback(() => {
     dispatch(closePanel());
-    revertAllChanges();
-  }, [dispatch, revertAllChanges]);
+  }, [dispatch]);
 
   const selectedTabProps = selectedTabId ? panelTabs?.find((tab) => tab.id === selectedTabId) : panelTabs[0];
   const onRenderFooterContent = useCallback(
@@ -72,6 +75,7 @@ export const ConfigureWorkflowsPanel = ({ onSave }: { onSave?: (isMultiWorkflow:
       onRenderHeader={onRenderHeaderContent}
       onRenderFooterContent={onRenderFooterContent}
       hasCloseButton={true}
+      layerProps={layerProps}
       isFooterAtBottom={true}
     >
       <TemplateContent tabs={panelTabs} selectedTab={selectedTabId ?? panelTabs?.[0]?.id} selectTab={handleSelectTab} />

@@ -11,6 +11,10 @@ describe('actions/configuretemplate', () => {
   let dispatch: ThunkDispatch<unknown, unknown, AnyAction>;
   let mockedState: RootState;
   const workflowId = getLogicAppId('sub1', 'rg1', 'la1');
+  const workflows = {
+    id1: { id: 'id1' },
+    id2: { id: 'id2' },
+  };
   const resourceService = {
     getResource: (id: string) => {
       if (id.endsWith('connections')) {
@@ -61,10 +65,7 @@ describe('actions/configuretemplate', () => {
           isConsumption: false,
         },
         template: {
-          workflows: {
-            id1: { id: 'id1' },
-            id2: { id: 'id2' },
-          },
+          workflows: workflows,
         },
       } as any;
       InitResourceService(resourceService);
@@ -77,7 +78,7 @@ describe('actions/configuretemplate', () => {
 
     test('should return all connections for consumption workflow', async () => {
       const state = { ...mockedState, workflow: { ...mockedState.workflow, isConsumption: true } };
-      const result = await getTemplateConnections(state, dispatch);
+      const result = await getTemplateConnections(state, dispatch, workflows);
 
       expect(result).toBeDefined();
       expect(result.connections).toEqual({
@@ -98,7 +99,7 @@ describe('actions/configuretemplate', () => {
     });
 
     test('should return only used connections for standard workflows selected in app', async () => {
-      const result = await getTemplateConnections(mockedState, dispatch);
+      const result = await getTemplateConnections(mockedState, dispatch, workflows);
 
       expect(result).toBeDefined();
       expect(result.connections).toEqual(
