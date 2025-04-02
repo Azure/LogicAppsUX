@@ -1,4 +1,11 @@
 # Logic Apps Designer
+### [5.53.10](https://github.com/Azure/LogicAppsUX/compare/v5.53.9...v5.53.10) (2025-04-02)
+
+
+### Features
+
+* **Designer:** Exported 2 extra state methods for templates ([#6936](https://github.com/Azure/LogicAppsUX/issues/6936)) ([59a7a27](https://github.com/Azure/LogicAppsUX/commit/59a7a2773bf350c9045f52dec50aac9a3b193312)), closes [#6929](https://github.com/Azure/LogicAppsUX/issues/6929) [#6932](https://github.com/Azure/LogicAppsUX/issues/6932)
+
 ### [5.53.9](https://github.com/Azure/LogicAppsUX/compare/v5.64.0...v5.53.9) (2025-03-28)
 
 ### [5.53.8](https://github.com/Azure/LogicAppsUX/compare/v5.63.0...v5.53.8) (2025-03-27)
