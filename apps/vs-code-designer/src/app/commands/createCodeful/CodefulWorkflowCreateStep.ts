@@ -5,7 +5,7 @@
 
 import type { IActionContext } from '@microsoft/vscode-azext-utils';
 import { DialogResponses, nonNullProp, parseError } from '@microsoft/vscode-azext-utils';
-import { WorkflowProjectType, MismatchBehavior } from '@microsoft/vscode-extension-logic-apps';
+import { WorkflowProjectType, MismatchBehavior, WorkerRuntime } from '@microsoft/vscode-extension-logic-apps';
 import type { IFunctionWizardContext, IWorkflowTemplate, IHostJsonV2 } from '@microsoft/vscode-extension-logic-apps';
 import * as fse from 'fs-extra';
 import * as path from 'path';
@@ -15,7 +15,7 @@ import { getCodefulWorkflowTemplate } from '../../utils/codeless/templates';
 //import { addFolderToBuildPath, addNugetPackagesToBuildFile, getDotnetBuildFile, suppressJavaScriptBuildWarnings, updateFunctionsSDKVersion, writeBuildFileToDisk } from '../../utils/codeless/updateBuildFile';
 import { writeFormattedJson } from '../../utils/fs';
 import { localize } from 'vscode-nls';
-import { workflowType, workflowFileName, hostFileName, extensionBundleId, defaultVersionRange, azureWebJobsStorageKey, localEmulatorConnectionString, localSettingsFileName } from '../../../constants';
+import { workflowType, hostFileName, extensionBundleId, defaultVersionRange, azureWebJobsStorageKey, localEmulatorConnectionString, localSettingsFileName, workerRuntimeKey } from '../../../constants';
 import { removeAppKindFromLocalSettings, setLocalAppSetting } from '../../utils/appSettings/localSettings';
 import { validateDotnetInstalled } from '../../utils/dotnet/executeDotnetTemplateCommand';
 import { parseJson } from '../../utils/parseJson';
@@ -93,6 +93,13 @@ export class CodefulWorkflowCreateStep extends WorkflowCreateStepBase<IFunctionW
     if (hostJsonUpdated) {
       await writeFormattedJson(hostJsonPath, hostJson);
     }
+    await setLocalAppSetting(
+      context,
+      context.projectPath,
+      workerRuntimeKey,
+      WorkerRuntime.Dotnet,
+      MismatchBehavior.Overwrite
+    );
     await setLocalAppSetting(
       context,
       context.projectPath,

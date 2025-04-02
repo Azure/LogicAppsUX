@@ -187,7 +187,7 @@ export const getLocalSettingsSchema = (isDesignTime: boolean, projectPath?: stri
     IsEncrypted: false,
     Values: {
       [appKindSetting]: logicAppKind,
-      [workerRuntimeKey]: WorkerRuntime.Node,
+      [workerRuntimeKey]: WorkerRuntime.Dotnet,
       ...(projectPath ? { [ProjectDirectoryPath]: projectPath } : {}),
       ...(isDesignTime
         ? { [azureWebJobsSecretStorageTypeKey]: azureStorageTypeSetting }
