@@ -14,7 +14,7 @@ import { TokenSegmentConvertor } from './tokensegment';
 import { UncastingUtility } from './uncast';
 import { TokenType, ValueSegmentType } from '@microsoft/designer-ui';
 import type { Token, ValueSegment } from '@microsoft/designer-ui';
-import type { Expression, ExpressionFunction, ExpressionLiteral, InputParameter } from '@microsoft/logic-apps-shared';
+import type { Expression, ExpressionFunction, ExpressionLiteral } from '@microsoft/logic-apps-shared';
 import {
   ExpressionParser,
   ExpressionType,
@@ -68,23 +68,23 @@ export class ValueSegmentConvertor {
    * @arg {any} value - The value.
    * @return {ValueSegment[]}
    */
-  public convertToValueSegments(value: any, parameter: InputParameter): ValueSegment[] {
+  public convertToValueSegments(value: any, parameterType?: string, parameterSchema?: any): ValueSegment[] {
     if (isNullOrUndefined(value)) {
       return [createLiteralValueSegment('')];
     }
     if (typeof value === 'string') {
-      return this._convertStringToValueSegments(value, parameter);
+      return this._convertStringToValueSegments(value, parameterType);
     }
-    return this._convertJsonToValueSegments(JSON.stringify(value, null, 2), parameter);
+    return this._convertJsonToValueSegments(JSON.stringify(value, null, 2), parameterSchema);
   }
 
-  private _convertJsonToValueSegments(json: string, parameter: InputParameter): ValueSegment[] {
+  private _convertJsonToValueSegments(json: string, parameterSchema?: any): ValueSegment[] {
     const sections = new JsonSplitter(json).split();
     const segments: ValueSegment[] = [];
 
     const hasFormatProperty = (section: string): boolean => {
       const sectionKey = unwrapQuotesFromString(section);
-      const schema = parameter?.schema;
+      const schema = parameterSchema;
 
       if (!schema) {
         return false;
@@ -142,7 +142,7 @@ export class ValueSegmentConvertor {
     return [this._createLiteralValueSegment(section)];
   }
 
-  private _convertStringToValueSegments(value: string, parameter: InputParameter): ValueSegment[] {
+  private _convertStringToValueSegments(value: string, parameterType?: string): ValueSegment[] {
     if (isTemplateExpression(value)) {
       const expression = ExpressionParser.parseTemplateExpression(value);
       return this._convertTemplateExpressionToValueSegments(expression);
@@ -151,7 +151,7 @@ export class ValueSegmentConvertor {
     const isSpecialValue =
       [constants.BOOLEAN_PARAMETER_VALUE.TRUE, constants.BOOLEAN_PARAMETER_VALUE.FALSE, constants.PARAMETER_NULL_VALUE].includes(value) ||
       /^-?\d+$/.test(value);
-    const stringValue = parameter?.type === constants.SWAGGER.TYPE.ANY && isSpecialValue ? wrapStringInQuotes(value) : value;
+    const stringValue = parameterType === constants.SWAGGER.TYPE.ANY && isSpecialValue ? wrapStringInQuotes(value) : value;
     return [this._createLiteralValueSegment(stringValue)];
   }
 
