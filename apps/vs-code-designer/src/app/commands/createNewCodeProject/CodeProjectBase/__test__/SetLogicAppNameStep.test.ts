@@ -2,7 +2,7 @@ import { describe, it, expect, vi, beforeEach, afterEach, test } from 'vitest';
 import * as fse from 'fs-extra';
 import * as vscode from 'vscode';
 import * as path from 'path';
-import { SetLogicAppName } from '../../../generateDeploymentScripts/azureScriptWizard';
+import { LogicAppNameStep } from '../LogicAppNameStep';
 import { ext } from '../../../../../extensionVariables';
 import { localize } from '../../../../../localize';
 import { ProjectType } from '@microsoft/vscode-extension-logic-apps';
@@ -14,14 +14,14 @@ describe('SetLogicAppName', () => {
   const testWorkspace = {
     folders: [{ name: testLogicAppName }],
   };
-  let step: SetLogicAppName;
+  let step: LogicAppNameStep;
   let testContext: any;
   let existsSyncSpy: any;
   let readFileSpy: any;
   let appendLogSpy: any;
 
   beforeEach(() => {
-    step = new SetLogicAppName();
+    step = new LogicAppNameStep();
     testContext = {
       projectType: ProjectType.logicApp,
       workspaceCustomFilePath: testWorkspaceFile,
