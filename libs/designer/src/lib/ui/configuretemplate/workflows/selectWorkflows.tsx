@@ -83,11 +83,6 @@ export const SelectWorkflows = ({
       id: 'kLqXDY',
       description: 'Label for workflow Name',
     }),
-    TRIGGER_TYPE: intl.formatMessage({
-      defaultMessage: 'Trigger',
-      id: 'mXwGRH',
-      description: 'Label for workflow trigger type',
-    }),
   };
 
   type WorkflowsTableItem = {
@@ -173,7 +168,7 @@ export const SelectWorkflows = ({
                 checkboxIndicator={{ 'aria-label': resourceStrings.SelectAllWorkflowsLabel }}
               />
               <TableHeaderCell>{intlText.WORKFLOW_NAME}</TableHeaderCell>
-              <TableHeaderCell>{intlText.TRIGGER_TYPE}</TableHeaderCell>
+              <TableHeaderCell>{resourceStrings.Trigger}</TableHeaderCell>
             </TableRow>
           </TableHeader>
 
