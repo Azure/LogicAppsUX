@@ -29,7 +29,7 @@ import * as path from 'path';
 import * as vscode from 'vscode';
 import * as fs from 'fs-extra';
 import { ext } from '../../../../extensionVariables';
-import { ConvertToWorkspace } from '../../createNewCodeProject/CodeProjectBase/ConvertToWorkspace';
+import { convertToWorkspace } from '../../createNewCodeProject/CodeProjectBase/ConvertToWorkspace';
 
 /**
  * Creates a unit test for a Logic App workflow (codeful only), with telemetry logging and error handling.
@@ -78,7 +78,7 @@ export async function saveBlankUnitTest(
     const workspaceFolder = await getWorkspaceFolder(context);
     const projectPath = await tryGetLogicAppProjectRoot(context, workspaceFolder);
 
-    if (!(await ConvertToWorkspace(context))) {
+    if (!(await convertToWorkspace(context))) {
       logTelemetry(context, {
         multiRootWorkspaceValid: 'false',
       });

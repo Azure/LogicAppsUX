@@ -2,7 +2,7 @@ import { describe, it, expect, vi, beforeEach, afterEach, test } from 'vitest';
 import * as fse from 'fs-extra';
 import * as vscode from 'vscode';
 import * as path from 'path';
-import { SetLogicAppName } from '../SetLogicAppNameStep';
+import { SetLogicAppName } from '../../../generateDeploymentScripts/azureScriptWizard';
 import { ext } from '../../../../../extensionVariables';
 import { localize } from '../../../../../localize';
 import { ProjectType } from '@microsoft/vscode-extension-logic-apps';
