@@ -18,6 +18,18 @@
   }
 }
 
+.msla-chat-agent-header {
+  display: flex;
+  flex-direction: row;
+  gap: 12px;
+  align-items: center;
+
+  .msla-chat-agent-header-icon {
+    width: 24px;
+    height: 24px;
+  }
+}
+
 .msla-bubble {
   word-break: break-word;
   width: 100%;
@@ -52,6 +64,39 @@
   display: flex;
   justify-content: center;
   align-items: center;
+}
+
+.msla-bubble-footer-role {
+  font-size: 10px;
+  display: inline-flex;
+  color: #707070;
+  height: 32px;
+  justify-content: flex-start;
+  align-items: center;
+}
+
+.msla-system-message {
+  display: flex;
+  gap: 4px;
+  color: #707070;
+  justify-content: center;
+  align-items: center;
+  p {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+}
+
+.msla-system-message-link {
+  display: flex;
+  gap: 4px;
+  justify-content: center;
+  p {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
 }
 
 .msla-bubble-actions-footer {
@@ -386,6 +431,11 @@
   .msla-bubble-footer-disclaimer {
     color: #a9a9a9;
   }
+
+  .msla-bubble-footer-role {
+    color: #a9a9a9;
+  }
+
   .msla-copy-button {
     color: #f3f2f1;
   }

@@ -3,6 +3,7 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 import type { IActionContext } from '@microsoft/vscode-azext-utils';
+import { ext } from '../../extensionVariables';
 
 /**
  * Executes function and logs duration in telemetry.
@@ -25,3 +26,18 @@ export async function runWithDurationTelemetry<T>(context: IActionContext, prefi
     context.telemetry.measurements[countKey] = 1 + (context.telemetry.measurements[countKey] || 0);
   }
 }
+
+export const logSubscriptions = async (context: IActionContext) => {
+  let azureSubscriptions: any[] = [];
+  if (await ext.subscriptionProvider.isSignedIn()) {
+    const subscriptions = await ext.subscriptionProvider.getSubscriptions();
+    azureSubscriptions = subscriptions.map((subscription) => {
+      return {
+        subscriptionId: subscription.subscriptionId,
+        tenantId: subscription.tenantId,
+        isCustomCloud: subscription.isCustomCloud,
+      };
+    });
+  }
+  context.telemetry.properties.subscriptions = JSON.stringify(azureSubscriptions);
+};

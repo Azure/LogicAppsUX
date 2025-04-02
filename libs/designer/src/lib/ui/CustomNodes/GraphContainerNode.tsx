@@ -1,6 +1,12 @@
 import { useMonitoringView, useReadOnly } from '../../core/state/designerOptions/designerOptionsSelectors';
 import { useIsNodeSelectedInOperationPanel } from '../../core/state/panel/panelSelectors';
-import { useActionMetadata, useIsLeafNode, useNodeMetadata, useParentRunId, useRunData } from '../../core/state/workflow/workflowSelectors';
+import {
+  useActionMetadata,
+  useIsLeafNode,
+  useNodeMetadata,
+  useParentNodeId,
+  useRunData,
+} from '../../core/state/workflow/workflowSelectors';
 import { DropZone } from '../connections/dropzone';
 import { css } from '@fluentui/react';
 import { GraphContainer } from '@microsoft/designer-ui';
@@ -20,8 +26,8 @@ const GraphContainerNode = ({ targetPosition = Position.Top, sourcePosition = Po
   const isSubgraphContainer = nodeMetadata?.subgraphType !== undefined;
   const hasFooter = nodeMetadata?.subgraphType === SUBGRAPH_TYPES.UNTIL_DO;
   const graphContainerId = isSubgraphContainer ? removeIdTag(id) : id;
-  const parentRunId = useParentRunId(graphContainerId);
-  const runData = useRunData(isSubgraphContainer ? (parentRunId ?? graphContainerId) : graphContainerId);
+  const parentNodeId = useParentNodeId(graphContainerId);
+  const runData = useRunData(isSubgraphContainer ? (parentNodeId ?? graphContainerId) : graphContainerId);
   const nodeSize = useNodeSize(id);
   const nodeLeafIndex = useNodeLeafIndex(id);
 

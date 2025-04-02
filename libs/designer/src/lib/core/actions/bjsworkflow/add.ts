@@ -337,8 +337,10 @@ export const trySetDefaultConnectionForNode = async (
     await ConnectionService().setupConnectionIfNeeded(connection);
     dispatch(updateNodeConnection({ nodeId, connection, connector }));
   } else if (isConnectionRequired) {
-    dispatch(initEmptyConnectionMap(nodeId));
-    dispatch(openPanel({ nodeId, panelMode: 'Connection', referencePanelMode: 'Operation' }));
+    if (connector.id !== '/connectionProviders/agent') {
+      dispatch(initEmptyConnectionMap(nodeId));
+      dispatch(openPanel({ nodeId, panelMode: 'Connection', referencePanelMode: 'Operation' }));
+    }
   }
 };
 

@@ -5,7 +5,7 @@ import type { WorkflowNode } from '../parsers/models/workflowNode';
 import type { NodeOperation, OutputInfo } from '../state/operation/operationMetadataSlice';
 import { updateRepetitionContext } from '../state/operation/operationMetadataSlice';
 import type { TokensState } from '../state/tokens/tokensSlice';
-import type { NodesMetadata } from '../state/workflow/workflowInterfaces';
+import type { NodesMetadata, WorkflowState } from '../state/workflow/workflowInterfaces';
 import type { WorkflowParameterDefinition, WorkflowParametersState } from '../state/workflowparameters/workflowparametersSlice';
 import type { AppDispatch, RootState } from '../store';
 import { getAllNodesInsideNode, getTriggerNodeId, getUpstreamNodeIds } from './graph';
@@ -44,10 +44,12 @@ import {
   equals,
   filterRecord,
   getRecordEntry,
+  TOKEN_PICKER_OUTPUT_SECTIONS,
 } from '@microsoft/logic-apps-shared';
 import type { FunctionDefinition, OutputToken, Token, ValueSegment } from '@microsoft/designer-ui';
 import { UIConstants, TemplateFunctions, TokenType, removeUTFExpressions } from '@microsoft/designer-ui';
 import type { BuiltInOutput, OperationManifest } from '@microsoft/logic-apps-shared';
+import { getAgentParameterTokens } from './agentParameters';
 
 export interface TokenGroup {
   id: string;
@@ -133,6 +135,18 @@ export const convertOutputsToTokens = (
   const { iconUri: icon, brandColor } = operationMetadata;
   const isSecure = hasSecureOutputs(nodeType, settings);
 
+  let tokenType: TokenType;
+  switch (nodeType) {
+    case Constants.NODE.TYPE.FOREACH:
+      tokenType = TokenType.ITEM;
+      break;
+    case Constants.NODE.TYPE.AGENT_CONDITION:
+      tokenType = TokenType.AGENTPARAMETER;
+      break;
+    default:
+      tokenType = TokenType.OUTPUTS;
+  }
+
   // TODO - Look at repetition context to get foreach context correctly in tokens and for splitOn
   return Object.keys(outputs).map((outputKey) => {
     const {
@@ -163,7 +177,7 @@ export const convertOutputsToTokens = (
       description,
       isAdvanced,
       outputInfo: {
-        type: nodeType.toLowerCase() === Constants.NODE.TYPE.FOREACH ? TokenType.ITEM : TokenType.OUTPUTS,
+        type: tokenType,
         required,
         format,
         source,
@@ -212,18 +226,32 @@ export const getOutputTokenSections = (
   nodeType: string,
   tokenState: TokensState,
   workflowParametersState: WorkflowParametersState,
+  workflowState: WorkflowState,
   replacementIds: Record<string, string>,
   includeCurrentNodeTokens = false
 ): TokenGroup[] => {
   const workflowParameters = filterRecord(workflowParametersState.definitions, (_, defintion) => defintion.name !== '');
-  const { variables, outputTokens } = tokenState;
+  const { variables, outputTokens, agentParameters } = tokenState;
   const nodeTokens = getRecordEntry(outputTokens, nodeId);
   const tokenGroups: TokenGroup[] = [];
-
   const intl = getIntl();
+
+  const agentParameterTokens = getAgentParameterTokens(nodeId, agentParameters, workflowState.nodesMetadata);
+  if (agentParameterTokens?.length) {
+    tokenGroups.push({
+      id: TOKEN_PICKER_OUTPUT_SECTIONS.AGENT_PARAMETERS,
+      label: intl.formatMessage({
+        description: 'Heading section for Agent Parameter tokens',
+        defaultMessage: 'Agent Parameters',
+        id: '8/IRht',
+      }),
+      tokens: agentParameterTokens,
+    });
+  }
+
   if (Object.keys(workflowParameters).length) {
     tokenGroups.push({
-      id: 'workflowparameters',
+      id: TOKEN_PICKER_OUTPUT_SECTIONS.WORKFLOW_PARAMETERS,
       label: intl.formatMessage({ description: 'Heading section for Parameter tokens', defaultMessage: 'Parameters', id: 'J9wWry' }),
       tokens: getWorkflowParameterTokens(workflowParameters),
     });
@@ -231,7 +259,7 @@ export const getOutputTokenSections = (
 
   if (nodeTokens) {
     tokenGroups.push({
-      id: 'variables',
+      id: TOKEN_PICKER_OUTPUT_SECTIONS.VARIABLES,
       label: intl.formatMessage({ description: 'Heading section for Variable tokens', defaultMessage: 'Variables', id: 'unMaeV' }),
       tokens: getVariableTokens(variables, nodeTokens).map((token) => ({
         ...token,
@@ -289,7 +317,6 @@ export const getOutputTokenSections = (
 
     tokenGroups.push(...(outputTokenGroups.filter((group) => !!group) as TokenGroup[]));
   }
-
   return tokenGroups;
 };
 
@@ -350,7 +377,7 @@ export const createValueSegmentFromToken = async (
       };
     }
 
-    if (equals(tokenOwnerOperationInfo.type, Constants.NODE.TYPE.FOREACH)) {
+    if (equals(tokenOwnerOperationInfo?.type, Constants.NODE.TYPE.FOREACH)) {
       (tokenValueSegment.token as Token).arrayDetails = {
         ...tokenValueSegment.token?.arrayDetails,
         loopSource: tokenOwnerActionName,
@@ -391,7 +418,13 @@ const getTokenValueSegmentTokenType = (token: OutputToken, nodeType: string): To
     return TokenType.ITERATIONINDEX;
   }
   if (token.outputInfo?.functionName) {
-    return equals(token.outputInfo.functionName, Constants.FUNCTION_NAME.PARAMETERS) ? TokenType.PARAMETER : TokenType.VARIABLE;
+    if (token.outputInfo.functionName === Constants.FUNCTION_NAME.PARAMETERS) {
+      return TokenType.PARAMETER;
+    }
+    if (token.outputInfo.functionName === Constants.FUNCTION_NAME.AGENT_PARAMETERS) {
+      return TokenType.AGENTPARAMETER;
+    }
+    return TokenType.VARIABLE;
   }
   return TokenType.OUTPUTS;
 };

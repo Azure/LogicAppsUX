@@ -11,6 +11,7 @@ vi.mock('@microsoft/vscode-azext-azureutils', () => ({
 
 vi.mock('@microsoft/vscode-azext-azureauth', () => ({
   getSessionFromVSCode: vi.fn(() => Promise.resolve({})), // example of a mocked function
+  VSCodeAzureSubscriptionProvider: class VSCodeAzureSubscriptionProvider {},
 }));
 
 vi.mock('@microsoft/vscode-azext-utils', () => {
@@ -21,8 +22,20 @@ vi.mock('@microsoft/vscode-azext-utils', () => {
     AzureWizardPromptStep: vi.fn().mockImplementation(() => {
       return {};
     }),
+    AzureWizard: class {
+      async prompt() {}
+      async execute() {}
+    },
     nonNullProp: vi.fn(),
     nonNullValue: vi.fn(),
+    callWithTelemetryAndErrorHandling: (_key: string, callback: Function) => {
+      // Simply invoke the callback with a fake telemetry context.
+      return callback({ telemetry: { properties: {} } });
+    },
+    parseError: vi.fn(() => {
+      return { message: 'error' };
+    }),
+    DialogResponses: vi.fn(),
   };
 });
 
@@ -39,14 +52,35 @@ vi.mock('fs', () => ({
 }));
 
 vi.mock('fs-extra', () => ({
+  writeFile: vi.fn(() => Promise.resolve()),
+  ensureDir: vi.fn(() => Promise.resolve()),
+  readFile: vi.fn(() => Promise.resolve()),
+  pathExists: vi.fn(() => Promise.resolve()),
   readdir: vi.fn(() => Promise.resolve()),
 }));
+
+vi.mock('child_process');
+
+vi.mock('util');
 
 vi.mock('axios');
 
 vi.mock('vscode', () => ({
-  window: {},
+  window: {
+    showInformationMessage: vi.fn(),
+    showErrorMessage: vi.fn(),
+  },
   workspace: {
     workspaceFolders: [],
+    updateWorkspaceFolders: vi.fn(), // <-- This ensures the method exists.
   },
+  Uri: {
+    file: (p: string) => ({ fsPath: p, toString: () => p }),
+  },
+  commands: {
+    executeCommand: vi.fn(),
+  },
+  EventEmitter: vi.fn().mockImplementation(() => ({
+    getUser: vi.fn(),
+  })),
 }));

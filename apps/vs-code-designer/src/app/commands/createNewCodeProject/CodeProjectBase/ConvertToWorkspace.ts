@@ -28,7 +28,7 @@ export async function convertToWorkspace(context: IActionContext): Promise<boole
     context.telemetry.properties.isWorkspace = 'false';
     wizardContext.workspaceCustomFilePath =
       (await getWorkspaceFile(wizardContext)) ?? (await getWorkspaceFileInParentDirectory(wizardContext));
-    //save uri variable for open project folder command
+    // save uri variable for open project folder command
     wizardContext.customWorkspaceFolderPath = await getWorkspaceRoot(wizardContext);
     if (wizardContext.workspaceCustomFilePath && !wizardContext.customWorkspaceFolderPath) {
       const message = localize(
@@ -44,6 +44,7 @@ export async function convertToWorkspace(context: IActionContext): Promise<boole
       context.telemetry.properties.openContainingWorkspace = 'false';
       return false;
     }
+
     if (!wizardContext.workspaceCustomFilePath && !wizardContext.customWorkspaceFolderPath) {
       const message = localize(
         'createContainingWorkspace',
@@ -66,6 +67,7 @@ export async function convertToWorkspace(context: IActionContext): Promise<boole
       context.telemetry.properties.createContainingWorkspace = 'false';
       return false;
     }
+
     context.telemetry.properties.isWorkspace = 'true';
     return true;
   }

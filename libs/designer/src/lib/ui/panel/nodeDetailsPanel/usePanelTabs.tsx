@@ -1,7 +1,8 @@
+import { useAgenticWorkflow } from '../../../core/state/designerView/designerViewSelectors';
 import constants from '../../../common/constants';
 import type { RootState } from '../../../core';
 import { useNodeMetadata, useOperationInfo } from '../../../core';
-import { usePanelTabHideKeys, useMonitoringView } from '../../../core/state/designerOptions/designerOptionsSelectors';
+import { usePanelTabHideKeys, useUnitTest, useMonitoringView } from '../../../core/state/designerOptions/designerOptionsSelectors';
 import { useParameterValidationErrors } from '../../../core/state/operation/operationSelector';
 import { useIsNodePinnedToOperationPanel } from '../../../core/state/panel/panelSelectors';
 import { useSettingValidationErrors } from '../../../core/state/setting/settingSelector';
@@ -10,6 +11,7 @@ import { useRetryHistory } from '../../../core/state/workflow/workflowSelectors'
 import { isRootNodeInGraph } from '../../../core/utils/graph';
 import { aboutTab } from './tabs/aboutTab';
 import { codeViewTab } from './tabs/codeViewTab';
+import { mockResultsTab } from './tabs/mockResultsTab/mockResultsTab';
 import { monitoringTab } from './tabs/monitoringTab/monitoringTab';
 import { parametersTab } from './tabs/parametersTab';
 import { monitorRetryTab } from './tabs/retryTab';
@@ -21,17 +23,21 @@ import { SUBGRAPH_TYPES } from '@microsoft/logic-apps-shared';
 import { useMemo } from 'react';
 import { useIntl } from 'react-intl';
 import { useSelector } from 'react-redux';
+import { channelsTab } from './tabs/channelsTab';
 
 export const usePanelTabs = ({ nodeId }: { nodeId: string }) => {
   const intl = useIntl();
 
   const isMonitoringView = useMonitoringView();
+  const isUnitTestView = useUnitTest();
   const panelTabHideKeys = usePanelTabHideKeys();
 
   const isPinnedNode = useIsNodePinnedToOperationPanel(nodeId);
   const isTriggerNode = useSelector((state: RootState) => isRootNodeInGraph(nodeId, 'root', state.workflow.nodesMetadata));
   const operationInfo = useOperationInfo(nodeId);
   const nodeMetaData = useNodeMetadata(nodeId);
+  const supportedChannels = useSelector((state: RootState) => state.operations.supportedChannels[nodeId] ?? []);
+  const isAgenticWorkflow = useAgenticWorkflow();
   const hasSchema = useHasSchema(operationInfo?.connectorId, operationInfo?.operationId);
   const runHistory = useRetryHistory(nodeId);
   const isScopeNode = operationInfo?.type.toLowerCase() === constants.NODE.TYPE.SCOPE;
@@ -54,6 +60,14 @@ export const usePanelTabs = ({ nodeId }: { nodeId: string }) => {
     [intl, isMonitoringView, isScopeNode, tabProps]
   );
 
+  const mockResultsTabItem = useMemo(
+    () => ({
+      ...mockResultsTab(intl, tabProps),
+      visible: isUnitTestView,
+    }),
+    [intl, isUnitTestView, tabProps]
+  );
+
   const parametersTabItem = useMemo(
     () => ({
       ...parametersTab(intl, tabProps),
@@ -69,6 +83,14 @@ export const usePanelTabs = ({ nodeId }: { nodeId: string }) => {
       hasErrors: settingValidationErrors.length > 0,
     }),
     [intl, tabProps, settingValidationErrors]
+  );
+
+  const channelsTabItem = useMemo(
+    () => ({
+      ...channelsTab(intl, tabProps),
+      visible: supportedChannels.length > 0 && isAgenticWorkflow,
+    }),
+    [intl, tabProps, supportedChannels, isAgenticWorkflow]
   );
 
   const codeViewTabItem = useMemo(() => codeViewTab(intl, tabProps), [intl, tabProps]);
@@ -100,8 +122,14 @@ export const usePanelTabs = ({ nodeId }: { nodeId: string }) => {
   );
 
   const tabs = useMemo(() => {
+    if (isUnitTestView) {
+      return [mockResultsTabItem];
+    }
     // Switch cases should only show parameters tab
-    if (nodeMetaData && nodeMetaData.subgraphType === SUBGRAPH_TYPES.SWITCH_CASE) {
+    if (
+      nodeMetaData &&
+      (nodeMetaData.subgraphType === SUBGRAPH_TYPES.SWITCH_CASE || nodeMetaData.subgraphType === SUBGRAPH_TYPES.AGENT_CONDITION)
+    ) {
       return [parametersTabItem];
     }
 
@@ -109,6 +137,7 @@ export const usePanelTabs = ({ nodeId }: { nodeId: string }) => {
       monitoringTabItem,
       parametersTabItem,
       settingsTabItem,
+      channelsTabItem,
       codeViewTabItem,
       testingTabItem,
       aboutTabItem,
@@ -119,7 +148,10 @@ export const usePanelTabs = ({ nodeId }: { nodeId: string }) => {
       .filter((a) => a.visible)
       .sort((a, b) => a.order - b.order);
   }, [
+    mockResultsTabItem,
+    isUnitTestView,
     aboutTabItem,
+    channelsTabItem,
     codeViewTabItem,
     monitorRetryTabItem,
     monitoringTabItem,

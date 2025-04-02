@@ -12,6 +12,7 @@ export interface NodeMetadata {
   isRoot?: boolean;
   runData?: LogicAppsV2.WorkflowRunAction | LogicAppsV2.WorkflowRunTrigger;
   actionMetadata?: Record<string, any>;
+  subgraphRunData?: Record<string, { actionResults: LogicAppsV2.WorkflowRunAction[] }>;
   runIndex?: number;
 }
 export interface NodesMetadata {
@@ -22,6 +23,7 @@ export type Operations = Record<string, LogicAppsV2.OperationDefinition>;
 export const WorkflowKind = {
   STATEFUL: 'stateful',
   STATELESS: 'stateless',
+  AGENTIC: 'agentic',
 } as const;
 export type WorkflowKind = (typeof WorkflowKind)[keyof typeof WorkflowKind] | undefined;
 
@@ -52,4 +54,5 @@ export interface WorkflowState {
   hostData: {
     errorMessages: Partial<Record<MessageLevel, ErrorMessage[]>>;
   };
+  agentsGraph: Record<string, any>;
 }

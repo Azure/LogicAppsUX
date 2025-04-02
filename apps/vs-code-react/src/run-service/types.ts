@@ -145,6 +145,7 @@ export const RouteName = {
   review: 'review',
   designer: 'designer',
   dataMapper: 'dataMapper',
+  unitTest: 'unitTest',
 };
 
 export type RouteNameType = (typeof RouteName)[keyof typeof RouteName];

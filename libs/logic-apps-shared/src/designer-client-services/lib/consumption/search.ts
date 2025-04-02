@@ -137,23 +137,7 @@ export class ConsumptionSearchService extends BaseSearchService {
   }
 
   public getBuiltInConnectors(): Promise<Connector[]> {
-    const clientBuiltInConnectors = getClientBuiltInConnectors();
-    const consumptionBuiltIn: any[] = [
-      ClientOperationsData.dataOperationsGroup,
-      OperationsData.inlineCodeGroup,
-      OperationsData.flatFileGroup,
-      OperationsData.integrationAccountGroup,
-      OperationsData.liquidGroup,
-      OperationsData.xmlGroup,
-      OperationsData.apiManagementGroup,
-      OperationsData.appServiceGroup,
-      OperationsData.functionGroup,
-      OperationsData.invokeWorkflowGroup,
-      OperationsData.selectBatchWorkflowGroup,
-      OperationsData.as2Group,
-      OperationsData.rosettaNetGroup,
-    ];
-    return Promise.resolve([...clientBuiltInConnectors, ...consumptionBuiltIn]);
+    return Promise.resolve(getBuiltInConnectorsInConsumption());
   }
 
   public async getCustomConnectorsByNextlink(prevNextlink?: string): Promise<any> {
@@ -183,3 +167,23 @@ export class ConsumptionSearchService extends BaseSearchService {
   }
   //#endregion
 }
+
+export const getBuiltInConnectorsInConsumption = (): Connector[] => {
+  const clientBuiltInConnectors = getClientBuiltInConnectors();
+  const consumptionBuiltIn: any[] = [
+    ClientOperationsData.dataOperationsGroup,
+    OperationsData.inlineCodeGroup,
+    OperationsData.flatFileGroup,
+    OperationsData.integrationAccountGroup,
+    OperationsData.liquidGroup,
+    OperationsData.xmlGroup,
+    OperationsData.apiManagementGroup,
+    OperationsData.appServiceGroup,
+    OperationsData.functionGroup,
+    OperationsData.invokeWorkflowGroup,
+    OperationsData.selectBatchWorkflowGroup,
+    OperationsData.as2Group,
+    OperationsData.rosettaNetGroup,
+  ];
+  return [...clientBuiltInConnectors, ...consumptionBuiltIn];
+};

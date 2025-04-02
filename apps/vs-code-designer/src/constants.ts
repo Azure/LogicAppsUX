@@ -16,9 +16,9 @@ export const tasksFileName = 'tasks.json';
 export const launchFileName = 'launch.json';
 export const settingsFileName = 'settings.json';
 export const extensionsFileName = 'extensions.json';
-export const vscodeFolderName = '.vscode';
 export const workflowFileName = 'workflow.json';
 export const funcIgnoreFileName = '.funcignore';
+export const unitTestsFileName = '.unit-test.json';
 export const powershellRequirementsFileName = 'requirements.psd1';
 
 // Directories names
@@ -34,6 +34,9 @@ export const schemasDirectory = 'Schemas';
 // Extension Id
 // Folder names
 export const designTimeDirectoryName = 'workflow-designtime';
+export const testsDirectoryName = 'Tests';
+export const testResultsDirectoryName = '.testResults';
+export const vscodeFolderName = '.vscode';
 
 export const logicAppsStandardExtensionId = 'ms-azuretools.vscode-azurelogicapps';
 
@@ -80,17 +83,19 @@ export const workflowAppAADTenantId = 'WORKFLOWAPP_AAD_TENANTID';
 export const workflowAppAADClientSecret = 'WORKFLOWAPP_AAD_CLIENTSECRET';
 export const debugSymbolDll = 'Microsoft.Azure.Workflows.BuildTasks.DebugSymbolGenerator.dll';
 
-export const workflowType = {
+export const WorkflowType = {
   stateful: 'Stateful-Codeless',
   stateless: 'Stateless-Codeless',
+  agentic: 'Agentic-Codeless',
 } as const;
-export type workflowType = (typeof workflowType)[keyof typeof workflowType];
+export type WorkflowType = (typeof WorkflowType)[keyof typeof WorkflowType];
 
-export const workflowKind = {
+export const WorkflowKind = {
   stateful: 'Stateful',
   stateless: 'Stateless',
+  agentic: 'Agentic',
 } as const;
-export type workflowKind = (typeof workflowKind)[keyof typeof workflowKind];
+export type WorkflowKind = (typeof WorkflowKind)[keyof typeof WorkflowKind];
 
 // Designer
 export const managementApiPrefix = '/runtime/webhooks/workflow/api/management';
@@ -104,7 +109,7 @@ export const extensionCommand = {
   viewContent: 'azureLogicAppsStandard.viewContent',
   openFile: 'azureLogicAppsStandard.openFile',
   createNewProject: 'azureLogicAppsStandard.createNewProject',
-  createNewCodeProject: 'azureLogicAppsStandard.createNewCodeProject',
+  createNewWorkspace: 'azureLogicAppsStandard.createNewWorkspace',
   cloudToLocal: 'azureLogicAppsStandard.cloudToLocal',
   buildCustomCodeFunctionsProject: 'azureLogicAppsStandard.buildCustomCodeFunctionsProject',
   customCodeSetFunctionsFolders: 'azureLogicAppsStandard.customCode.setFunctionsFolders',
@@ -176,6 +181,11 @@ export const extensionCommand = {
   dataMapSetDmFolders: 'azureLogicAppsStandard.dataMap.setDmFolders',
   dataMapSaveMapDefinition: 'azureLogicAppsStandard.dataMap.saveMapDefinition',
   dataMapSaveMapXslt: 'azureLogicAppsStandard.dataMap.saveMapXslt',
+  createUnitTest: 'azureLogicAppsStandard.createUnitTest',
+  saveBlankUnitTest: 'azureLogicAppsStandard.saveBlankUnitTest',
+  editUnitTest: 'azureLogicAppsStandard.editUnitTest',
+  openUnitTestResults: 'azureLogicAppsStandard.openUnitTestResults',
+  runUnitTest: 'azureLogicAppsStandard.runUnitTest',
   vscodeOpenFolder: 'vscode.openFolder',
 } as const;
 export type extensionCommand = (typeof extensionCommand)[keyof typeof extensionCommand];
@@ -224,6 +234,7 @@ export const dotNetBinaryPathSettingKey = 'dotnetBinaryPath';
 export const nodeJsBinaryPathSettingKey = 'nodeJsBinaryPath';
 export const funcCoreToolsBinaryPathSettingKey = 'funcCoreToolsBinaryPath';
 export const dependencyTimeoutSettingKey = 'dependencyTimeout';
+export const unitTestExplorer = 'unitTestExplorer';
 export const verifyConnectionKeysSetting = 'verifyConnectionKeys';
 
 // host.json
@@ -325,6 +336,9 @@ export const logicAppFilter = {
   kind: 'functionapp,workflowapp',
 };
 
+// Telemetry Events
+export const saveUnitTestEvent = 'saveUnitTestDefinition';
+export const runUnitTestEvent = 'runUnitTest';
 // Container Apps
 export const containerAppsId = 'containerApps';
 export const managedEnvironmentsId = 'managedEnvironments';

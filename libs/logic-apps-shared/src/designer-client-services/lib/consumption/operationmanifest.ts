@@ -1,4 +1,4 @@
-import type { OperationInfo, OperationManifest } from '../../../utils/src';
+import type { Connector, OperationInfo, OperationManifest } from '../../../utils/src';
 import { ArgumentException, startsWith, UnsupportedException } from '../../../utils/src';
 import { BaseOperationManifestService } from '../base';
 import type { BaseOperationManifestServiceOptions } from '../base/operationmanifest';
@@ -26,6 +26,7 @@ import { rosettaNetEncodeManifest, rosettaNetDecodeManifest, rosettaNetWaitForRe
 import { selectSwaggerFunctionManifest } from './manifests/swaggerFunctions';
 import { xmlTransformManifest, xmlValidationManifest } from './manifests/xml';
 import { functionGroup, functionOperation, invokeWorkflowGroup, invokeWorkflowOperation, swaggerFunctionOperation } from './operations';
+import { getBuiltInConnectorsInConsumption } from './search';
 
 interface ConsumptionOperationManifestServiceOptions extends BaseOperationManifestServiceOptions {
   subscriptionId: string;
@@ -33,6 +34,8 @@ interface ConsumptionOperationManifestServiceOptions extends BaseOperationManife
 }
 
 export class ConsumptionOperationManifestService extends BaseOperationManifestService {
+  private allBuiltInConnectors: Record<string, Connector> = {};
+
   constructor(override readonly options: ConsumptionOperationManifestServiceOptions) {
     super(options);
     const { subscriptionId, location } = options;
@@ -42,6 +45,11 @@ export class ConsumptionOperationManifestService extends BaseOperationManifestSe
     if (!location) {
       throw new ArgumentException('location required');
     }
+
+    this.allBuiltInConnectors = getBuiltInConnectorsInConsumption().reduce((result: Record<string, Connector>, connector: Connector) => {
+      result[connector.id.toLowerCase()] = connector;
+      return result;
+    }, {});
   }
 
   override async getOperationInfo(definition: any, isTrigger: boolean): Promise<OperationInfo> {
@@ -138,6 +146,14 @@ export class ConsumptionOperationManifestService extends BaseOperationManifestSe
       };
     }
   }
+
+  override isBuiltInConnector(connectorId: string): boolean {
+    return this.allBuiltInConnectors[connectorId.toLowerCase()] !== undefined;
+  }
+
+  override getBuiltInConnector(connectorId: string): Connector {
+    return this.allBuiltInConnectors[connectorId.toLowerCase()];
+  }
 }
 
 const openapiconnection = 'openapiconnection';
@@ -209,5 +225,5 @@ const supportedConsumptionManifestObjects = new Map<string, OperationManifest>([
   [rosettanetwaitforresponse, rosettaNetWaitForResponseManifest],
   [chunktext, chunkTextManifest],
   [parsedocument, parseDocumentManifest],
-  [parsedocumentwithmetadata, parseDocumentWithMetadataManifest]
+  [parsedocumentwithmetadata, parseDocumentWithMetadataManifest],
 ]);

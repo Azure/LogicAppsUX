@@ -9,7 +9,7 @@ import { localize } from '../../localize';
 import { getLocalSettingsJson } from '../utils/appSettings/localSettings';
 import { getConnectionsJson, saveConnectionReferences } from '../utils/codeless/connection';
 import { getParametersJson, saveWorkflowParameter } from '../utils/codeless/parameter';
-import { isConnectionsParameterized, parameterizeConnection } from '../utils/codeless/parameterizer';
+import { areAllConnectionsParameterized, parameterizeConnection } from '../utils/codeless/parameterizer';
 import { tryGetLogicAppProjectRoot } from '../utils/verifyIsProject';
 import { getGlobalSetting, updateGlobalSetting } from '../utils/vsCodeConfig/settings';
 import { getWorkspaceFolder } from '../utils/workspace';
@@ -73,7 +73,7 @@ export async function parameterizeConnections(context: IActionContext, skipPromp
           any
         >;
 
-        if (isConnectionsParameterized(connectionsData)) {
+        if (areAllConnectionsParameterized(connectionsData)) {
           window.showInformationMessage(localize('connectionsAlreadyParameterized', 'Connections are already parameterized.'));
           return;
         }
