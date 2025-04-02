@@ -54,7 +54,7 @@ export const parseAgentInstruction = (
 
       return { systemMessage, userMessage };
     }
-  } catch (e) {
+  } catch {
     const intl = getIntl();
     const errorMessage = intl.formatMessage({
       defaultMessage: 'Error parsing agent instructions',
