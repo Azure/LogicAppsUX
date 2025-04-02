@@ -23,6 +23,9 @@ export const parseAgentInstruction = (
   const initialValueString = convertSegmentsToString(initialValue, nodeMap);
 
   try {
+    if (!initialValueString) {
+      return { systemMessage: [], userMessage: [] };
+    }
     const parsedInitialValue: AgentInstructions[] = JSON.parse(initialValueString);
     if (Array.isArray(parsedInitialValue)) {
       let systemMessage: ValueSegment[] = [];
@@ -51,7 +54,7 @@ export const parseAgentInstruction = (
 
       return { systemMessage, userMessage };
     }
-  } catch {
+  } catch (e) {
     const intl = getIntl();
     const errorMessage = intl.formatMessage({
       defaultMessage: 'Error parsing agent instructions',
