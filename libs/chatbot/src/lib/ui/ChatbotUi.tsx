@@ -35,9 +35,9 @@ interface ChatbotUiProps {
     isSaving?: boolean;
     canSave?: boolean;
     canTest?: boolean;
-    test: () => void;
-    save: () => void;
-    abort: () => void;
+    test?: () => void;
+    save?: () => void;
+    abort?: () => void;
   };
   string: {
     test?: string;
@@ -123,7 +123,7 @@ export const ChatbotContent = (props: ChatbotUiProps) => {
       {header}
       <div className={css('msla-chatbot-content')}>
         {answerGenerationInProgress && (
-          <ProgressCardWithStopButton onStopButtonClick={() => abort()} progressState={progressState} stopButtonLabel={progressStop} />
+          <ProgressCardWithStopButton onStopButtonClick={() => abort?.()} progressState={progressState} stopButtonLabel={progressStop} />
         )}
         {isSaving && <ProgressCardWithStopButton progressState={progressSave} />}
         {messages.map((item, index) => (
@@ -135,8 +135,8 @@ export const ChatbotContent = (props: ChatbotUiProps) => {
           <ShieldCheckmarkRegular className="shield-checkmark-regular" /> {protectedMessage}
         </div>
         <ChatSuggestionGroup>
-          {canSave && <ChatSuggestion text={saveString ?? intlText.saveButton} iconName={'Save'} onClick={save} />}
-          {canTest && <ChatSuggestion text={testString ?? intlText.testButton} iconName={'TestBeaker'} onClick={test} />}
+          {canSave && <ChatSuggestion text={saveString ?? intlText.saveButton} iconName={'Save'} onClick={() => save?.()} />}
+          {canTest && <ChatSuggestion text={testString ?? intlText.testButton} iconName={'TestBeaker'} onClick={() => test?.()} />}
         </ChatSuggestionGroup>
         <ChatInput
           textFieldRef={textInputRef}

@@ -65,7 +65,8 @@ export const PanelResizer = (props: PanelResizerProps): JSX.Element => {
   return (
     <div
       className={mergeClasses(styles.resizer, isResizing && styles.resizerActive)}
-      onMouseDown={() => {
+      onMouseDown={(e: React.MouseEvent<HTMLDivElement>) => {
+        e.preventDefault();
         startResizing();
       }}
     />

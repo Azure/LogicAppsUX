@@ -89,20 +89,19 @@ export type AssistantErrorItem = BaseAssistantMessageItem & {
 export type AssistantReplyItem = BaseAssistantMessageItem & {
   type: typeof ConversationItemType.Reply;
   text: string;
-  reaction: ChatEntryReaction | undefined;
+  reaction?: ChatEntryReaction | undefined;
   isMarkdownText: boolean;
   correlationId?: string;
   hideFooter?: boolean;
-  __rawRequest: any;
-  __rawResponse: any;
+  __rawRequest?: any;
+  __rawResponse?: any;
   additionalDocURL?: string | undefined;
+  role?: string;
   azureButtonCallback?: (prompt?: string) => void;
 };
 
 export type ToolReplyItem = BaseAssistantMessageItem & {
   type: typeof ConversationItemType.Tool;
-  iteration: string;
-  onClickCallback: () => void;
   text: string;
   status?: string;
 };

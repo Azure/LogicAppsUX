@@ -27,12 +27,14 @@ type ChatBubbleProps = {
   onThumbsReactionClicked?: (reaction: ChatEntryReaction) => void;
   disabled?: boolean;
   textRef?: React.RefObject<HTMLDivElement>;
+  role?: string;
 };
 
 export const ChatBubble: React.FC<ChatBubbleProps> = ({
   isUserMessage,
   children,
   isAIGenerated,
+  role,
   additionalLinksSection,
   additionalFooterActions,
   hideFooter,
@@ -130,6 +132,7 @@ export const ChatBubble: React.FC<ChatBubbleProps> = ({
           </div>
         </div>
       ) : null}
+      {role && <div className={'msla-bubble-footer-role'}>{role}</div>}
     </div>
   );
 };
