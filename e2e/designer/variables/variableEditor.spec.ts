@@ -33,7 +33,7 @@ test.describe(
         await page.getByLabel('Delete').nth(1).click();
         await page.getByLabel('Delete').first().click();
         await page.getByRole('tab', { name: 'Code view' }).click();
-        await page.waitForFunction(() => !document.querySelector('#code-view')?.textContent?.includes('loading'), { timeout: 1000 });
+        await page.waitForFunction(() => !document.querySelector('#code-view')?.textContent?.includes('Loading'), { timeout: 1000 });
         await expect(page.getByRole('code')).toContainText(
           '{ "type": "InitializeVariable", "inputs": { "variables": [ { "name": "testVariable3", "type": "array", "value": [] } ] }, "runAfter": {}}'
         );
@@ -51,7 +51,7 @@ test.describe(
         await page.locator('[data-testid="value - 1 contenteditable"]').fill('17');
 
         await page.getByRole('tab', { name: 'Code view' }).click();
-        await page.waitForFunction(() => !document.querySelector('#code-view')?.textContent?.includes('loading'), { timeout: 1000 });
+        await page.waitForFunction(() => !document.querySelector('#code-view')?.textContent?.includes('Loading'), { timeout: 1000 });
         await expect(page.getByRole('code')).toContainText(
           '{ "type": "InitializeVariable", "inputs": { "variables": [ { "name": "testVariable3", "type": "array", "value": [] }, { "name": "newVariable", "type": "integer", "value": 17 } ] }, "runAfter": {}}'
         );
