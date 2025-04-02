@@ -75,7 +75,6 @@
   },
   "private": true,
   "scripts": {
-    "postinstall": "pnpm templates",
     "build": "turbo run build",
     "build:lib": "turbo run build:lib",
     "build:extension": "turbo run build:extension",
