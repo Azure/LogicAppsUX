@@ -1,4 +1,11 @@
 # Logic Apps Designer
+### [5.71.2](https://github.com/Azure/LogicAppsUX/compare/v5.71.1...v5.71.2) (2025-04-03)
+
+
+### Features
+
+* **designer:** Updating hotfix branch with latest from main ([#6955](https://github.com/Azure/LogicAppsUX/issues/6955)) ([30fe387](https://github.com/Azure/LogicAppsUX/commit/30fe38704a31d044ba4aca263e989e40fc0e0efa)), closes [#6931](https://github.com/Azure/LogicAppsUX/issues/6931) [#6942](https://github.com/Azure/LogicAppsUX/issues/6942) [#6888](https://github.com/Azure/LogicAppsUX/issues/6888) [#6945](https://github.com/Azure/LogicAppsUX/issues/6945)
+
 ### [5.71.1](https://github.com/Azure/LogicAppsUX/compare/v5.71.0...v5.71.1) (2025-04-01)
 
 
