@@ -212,6 +212,7 @@ export const pasteScopeOperation = createAsyncThunk(
       graphId,
       parentId,
       Object.keys(existingNodesMetadata),
+      true /* shouldAppendAddCase */,
       pasteParams
     );
     actionNodesMetadata[nodeId] = { ...actionNodesMetadata[actionId], isRoot: false, parentNodeId: parentId, graphId };
