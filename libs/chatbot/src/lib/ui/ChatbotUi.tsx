@@ -123,11 +123,7 @@ export const ChatbotContent = (props: ChatbotUiProps) => {
       {header}
       <div className={css('msla-chatbot-content')}>
         {answerGenerationInProgress && (
-          <ProgressCardWithStopButton
-            onStopButtonClick={abort ? () => abort?.() : undefined}
-            progressState={progressState}
-            stopButtonLabel={progressStop}
-          />
+          <ProgressCardWithStopButton onStopButtonClick={abort} progressState={progressState} stopButtonLabel={progressStop} />
         )}
         {isSaving && <ProgressCardWithStopButton progressState={progressSave} />}
         {messages.map((item, index) => (
