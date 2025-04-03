@@ -1,5 +1,5 @@
 import type { ConversationItem } from '@microsoft/designer-ui';
-import { ConversationItemType, PanelLocation, PanelResizer, PanelSize } from '@microsoft/designer-ui';
+import { AgentMessageEntryType, ConversationItemType, PanelLocation, PanelResizer, PanelSize } from '@microsoft/designer-ui';
 import { useEffect, useMemo, useState } from 'react';
 import { type IntlShape, useIntl } from 'react-intl';
 import { defaultChatbotPanelWidth, ChatbotContent } from '@microsoft/logic-apps-chatbot';
@@ -13,52 +13,18 @@ import {
 } from '../../../core/state/workflow/workflowSelectors';
 import { guid, isNullOrUndefined, labelCase } from '@microsoft/logic-apps-shared';
 import { Button, Drawer, mergeClasses } from '@fluentui/react-components';
-import { ChatFilled, ChevronDoubleRightFilled } from '@fluentui/react-icons';
+import { ChatFilled } from '@fluentui/react-icons';
 import { useDispatch } from 'react-redux';
 import { changePanelNode, type AppDispatch } from '../../../core';
 import type { Dispatch } from '@reduxjs/toolkit';
 import { setFocusNode, setRunIndex } from '../../../core/state/workflow/workflowSlice';
+import { AgentChatHeader } from './agentChatHeader';
 
 interface AgentChatProps {
   panelLocation?: PanelLocation;
   chatbotWidth?: string;
   panelContainerRef: React.MutableRefObject<HTMLElement | null>;
 }
-
-const AgentChatHeader = ({
-  title,
-  toggleCollapse,
-}: {
-  title: string;
-  toggleCollapse: () => void;
-}) => {
-  return (
-    <div
-      style={{
-        display: 'flex',
-        position: 'relative',
-        justifyContent: 'center',
-        padding: '10px',
-      }}
-    >
-      <h3>{title}</h3>
-      <Button
-        id="msla-agent-chat-header-collapse"
-        appearance="subtle"
-        icon={<ChevronDoubleRightFilled />}
-        aria-label={'buttonText'}
-        onClick={toggleCollapse}
-        data-automation-id="msla-agent-chat-header-collapse"
-        style={{
-          position: 'absolute',
-          right: '10px',
-          top: '50%',
-          transform: 'translateY(-50%)',
-        }}
-      />
-    </div>
-  );
-};
 
 const parseChatHistory = (
   chatHistory: ChatHistory[],
@@ -116,7 +82,7 @@ const parseMessage = (
   const { messageEntryType, messageEntryPayload, timestamp, role } = message;
 
   switch (messageEntryType) {
-    case 'Content': {
+    case AgentMessageEntryType.Content: {
       const content = messageEntryPayload?.content || '';
       return {
         text: content,
@@ -127,9 +93,10 @@ const parseMessage = (
         metadata: { parentId },
         date: new Date(timestamp),
         isMarkdownText: false,
+        className: 'msla-agent-chat-content',
       };
     }
-    case 'ToolResult': {
+    case AgentMessageEntryType.ToolResult: {
       const iteration = message?.iteration ?? 0;
       const subIteration = message.toolResultsPayload?.toolResult?.subIteration ?? 0;
       const toolName = message.toolResultsPayload?.toolResult?.toolName ?? '';
@@ -195,6 +162,16 @@ export const AgentChat = ({
         id: 'PVT2SW',
         description: 'Agent chat header text',
       }),
+      agentChatPanelAriaLabel: intl.formatMessage({
+        defaultMessage: 'Agent chat panel',
+        id: 'OSugtm',
+        description: 'Agent chat panel aria label text',
+      }),
+      agentChatToggleAriaLabel: intl.formatMessage({
+        defaultMessage: 'Toggle agent chat panel',
+        id: '0Jh+AD',
+        description: 'Toggle agent chat panel aria label text',
+      }),
       chatInputDisabledPlaceHolder: intl.formatMessage({
         defaultMessage: 'The chat is in read-only mode and will be saved in the run history. Agents are no longer available to chat with.',
         id: 'z/i4aa',
@@ -220,18 +197,6 @@ export const AgentChat = ({
         id: 'Vqs8hE',
         description: 'Actions button',
       }),
-      chatSuggestion: {
-        saveButton: intl.formatMessage({
-          defaultMessage: 'Save this workflow',
-          id: 'OYWZE4',
-          description: 'Chatbot suggestion button to save workflow',
-        }),
-        testButton: intl.formatMessage({
-          defaultMessage: 'Test this workflow',
-          id: 'tTIsTX',
-          description: 'Chatbot suggestion button to test this workflow',
-        }),
-      },
       assistantErrorMessage: intl.formatMessage({
         defaultMessage: 'Sorry, something went wrong. Please try again.',
         id: 'fvGvnA',
@@ -247,11 +212,6 @@ export const AgentChat = ({
         id: '4iyEAY',
         description: 'Chatbot card telling user that the workflow is being saved',
       }),
-      progressCardStopButtonLabel: intl.formatMessage({
-        defaultMessage: 'Stop generating',
-        id: 'wP0/uB',
-        description: 'Label for the button on the progress card that stops AI response generation',
-      }),
       cancelGenerationText: intl.formatMessage({
         defaultMessage: 'Copilot chat canceled',
         id: 'JKZpcd',
@@ -266,7 +226,7 @@ export const AgentChat = ({
 
   return (
     <Drawer
-      aria-label={'panelLabel'}
+      aria-label={intlText.agentChatPanelAriaLabel}
       className="msla-panel-container"
       modalType="non-modal"
       mountNode={{
@@ -285,7 +245,7 @@ export const AgentChat = ({
       {isCollapsed ? (
         <Button
           appearance="subtle"
-          aria-label={'panelCollapseTitle'}
+          aria-label={intlText.agentChatToggleAriaLabel}
           className={mergeClasses('collapse-toggle', 'right', 'empty')}
           icon={<ChatFilled />}
           onClick={() => setIsCollapsed(false)}
@@ -312,11 +272,8 @@ export const AgentChat = ({
             }}
             data={{}}
             string={{
-              test: intlText.chatSuggestion.testButton,
-              save: intlText.chatSuggestion.saveButton,
               submit: intlText.submitButtonTitle,
               progressState: intlText.progressCardText,
-              progressStop: intlText.progressCardStopButtonLabel,
               progressSave: intlText.progressCardSaveText,
               protectedMessage: intlText.protectedMessage,
             }}
