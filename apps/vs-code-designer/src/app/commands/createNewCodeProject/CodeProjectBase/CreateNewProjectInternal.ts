@@ -1,6 +1,13 @@
-import { funcVersionSetting, projectLanguageSetting, projectOpenBehaviorSetting, projectTemplateKeySetting } from '../../../../constants';
+import {
+  extensionCommand,
+  funcVersionSetting,
+  projectLanguageSetting,
+  projectOpenBehaviorSetting,
+  projectTemplateKeySetting,
+} from '../../../../constants';
 import { localize } from '../../../../localize';
 import { createArtifactsFolder } from '../../../utils/codeless/artifacts';
+import { getCustomCodeFunctionsProjects } from '../../../utils/customCodeUtils';
 import { addLocalFuncTelemetry, tryGetLocalFuncVersion, tryParseFuncVersion } from '../../../utils/funcCoreTools/funcVersion';
 import { getGlobalSetting, getWorkspaceSetting } from '../../../utils/vsCodeConfig/settings';
 import { FolderListStep } from '../../createNewProject/createProjectSteps/FolderListStep';
@@ -11,7 +18,7 @@ import { latestGAVersion, OpenBehavior, ProjectType } from '@microsoft/vscode-ex
 import type { ICreateFunctionOptions, IFunctionWizardContext, ProjectLanguage } from '@microsoft/vscode-extension-logic-apps';
 import * as fse from 'fs-extra';
 import * as path from 'path';
-import { window } from 'vscode';
+import { window, commands } from 'vscode';
 
 export async function createRulesFiles(context: IFunctionWizardContext): Promise<void> {
   if (context.projectType === ProjectType.rulesEngine) {
@@ -69,6 +76,10 @@ export async function createNewProjectInternalBase(
   await createArtifactsFolder(context as IFunctionWizardContext);
   await createRulesFiles(context as IFunctionWizardContext);
   await createLibFolder(context as IFunctionWizardContext);
+
+  if (wizardContext.isWorkspaceWithFunctions) {
+    commands.executeCommand('setContext', extensionCommand.customCodeSetFunctionsFolders, await getCustomCodeFunctionsProjects(context));
+  }
 
   window.showInformationMessage(localize('finishedCreating', 'Finished creating project.'));
 }

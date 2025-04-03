@@ -13,10 +13,24 @@ export class FunctionAppNamespaceStep extends AzureWizardPromptStep<IProjectWiza
     context.functionAppNamespace = await context.ui.showInputBox({
       placeHolder: localize('setNamespace', 'namespace'),
       prompt: localize('methodNamePrompt', 'Provide a namespace for functions project'),
+      validateInput: async (input: string): Promise<string | undefined> => await this.validateNamespace(input),
     });
   }
 
   public shouldPrompt(_context: IProjectWizardContext): boolean {
     return true;
+  }
+
+  private async validateNamespace(namespace: string | undefined): Promise<string | undefined> {
+    if (!namespace) {
+      return localize('emptyNamespaceError', `Can't have an empty namespace.`);
+    }
+
+    if (!/^[a-zA-Z][a-zA-Z\d_]*$/i.test(namespace)) {
+      return localize(
+        'namespaceInvalidMessage',
+        'The namespace must start with a letter and can only contain letters, digits, or underscores ("_").'
+      );
+    }
   }
 }

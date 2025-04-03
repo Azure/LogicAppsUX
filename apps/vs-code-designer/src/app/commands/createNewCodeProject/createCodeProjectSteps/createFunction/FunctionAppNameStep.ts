@@ -7,7 +7,6 @@ import * as vscode from 'vscode';
 import * as fse from 'fs-extra';
 import { AzureWizardPromptStep } from '@microsoft/vscode-azext-utils';
 import type { IProjectWizardContext } from '@microsoft/vscode-extension-logic-apps';
-import * as path from 'path';
 
 export class FunctionAppNameStep extends AzureWizardPromptStep<IProjectWizardContext> {
   public hideStepCount = true;
@@ -25,9 +24,10 @@ export class FunctionAppNameStep extends AzureWizardPromptStep<IProjectWizardCon
   }
 
   private async validateFunctionName(name: string | undefined, context: IProjectWizardContext): Promise<string | undefined> {
-    if (!name) {
+    if (!name || name.length === 0) {
       return localize('emptyTemplateNameError', `Can't have an empty function name.`);
     }
+
     if (!/^[a-z][a-z\d_]*$/i.test(name)) {
       return localize(
         'functionNameInvalidMessage',
@@ -43,7 +43,7 @@ export class FunctionAppNameStep extends AzureWizardPromptStep<IProjectWizardCon
       const workspaceFileContent = await vscode.workspace.fs.readFile(vscode.Uri.file(context.workspaceCustomFilePath));
       const workspaceFileJson = JSON.parse(workspaceFileContent.toString());
 
-      if (workspaceFileJson.folders && workspaceFileJson.folders.some((folder: { path: string }) => folder.path === path.join('.', name))) {
+      if (workspaceFileJson.folders && workspaceFileJson.folders.some((folder: { name: string }) => folder.name === name)) {
         return localize('functionNameExistsInWorkspaceError', 'A function with this name already exists in the workspace.');
       }
     }

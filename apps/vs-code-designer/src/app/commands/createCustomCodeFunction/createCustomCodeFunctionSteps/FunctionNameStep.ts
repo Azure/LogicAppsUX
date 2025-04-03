@@ -7,7 +7,6 @@ import * as vscode from 'vscode';
 import * as fse from 'fs-extra';
 import { AzureWizardPromptStep } from '@microsoft/vscode-azext-utils';
 import type { IProjectWizardContext } from '@microsoft/vscode-extension-logic-apps';
-import * as path from 'path';
 
 export class FunctionNameStep extends AzureWizardPromptStep<IProjectWizardContext> {
   public hideStepCount = true;
@@ -40,11 +39,14 @@ export class FunctionNameStep extends AzureWizardPromptStep<IProjectWizardContex
     }
 
     if (fse.existsSync(context.workspaceCustomFilePath)) {
-      const workspaceFileContent = await vscode.workspace.fs.readFile(vscode.Uri.file(context.workspaceCustomFilePath));
-      const workspaceFileJson = JSON.parse(workspaceFileContent.toString());
+      const functionAppFiles = await vscode.workspace.fs.readDirectory(vscode.Uri.file(context.functionFolderPath));
+      const functionFileNames = functionAppFiles
+        .map((file) => file[0])
+        .filter((fileName) => fileName.endsWith('.cs'))
+        .map((functionFile) => functionFile.split('.')[0]);
 
-      if (workspaceFileJson.folders && workspaceFileJson.folders.some((folder: { path: string }) => folder.path === path.join('.', name))) {
-        return localize('functionNameExistsInWorkspaceError', 'A function with this name already exists in the workspace.');
+      if (functionFileNames && functionFileNames.includes(name)) {
+        return localize('functionNameExistsInFunctionsProjectError', 'A function with this name already exists in the functions project.');
       }
     }
   }
