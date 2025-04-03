@@ -29,7 +29,6 @@ export const initializeGraphState = createAsyncThunk<
     workflowDefinition: Workflow;
     runInstance: LogicAppsV2.RunInstanceDefinition | null | undefined;
     isMultiVariableEnabled?: boolean;
-    isMonitoringView?: boolean;
   },
   { state: RootState }
 >(
@@ -39,11 +38,10 @@ export const initializeGraphState = createAsyncThunk<
       workflowDefinition: Workflow;
       runInstance: any;
       isMultiVariableEnabled?: boolean;
-      isMonitoringView?: boolean;
     },
     { getState, dispatch }
   ): Promise<InitWorkflowPayload> => {
-    const { workflowDefinition, runInstance, isMultiVariableEnabled, isMonitoringView } = graphState;
+    const { workflowDefinition, runInstance, isMultiVariableEnabled } = graphState;
     const { workflow, designerOptions } = getState() as RootState;
     const spec = workflow.workflowSpec;
 
@@ -82,7 +80,7 @@ export const initializeGraphState = createAsyncThunk<
         }
       }
 
-      const deserializedWorkflow = BJSDeserialize(selectedDefinition, runInstance, !!isMonitoringView);
+      const deserializedWorkflow = BJSDeserialize(selectedDefinition, runInstance, !!designerOptions?.isMonitoringView);
 
       // For situations where there is an existing workflow, respect the node dimensions so that they are not reset
       const previousGraphFlattened = flattenWorkflowNodes(workflow.graph?.children || []);

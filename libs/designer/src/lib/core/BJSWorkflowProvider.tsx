@@ -39,7 +39,6 @@ const DataProviderInner: React.FC<BJSWorkflowProviderProps> = ({
   appSettings,
   unitTestDefinition,
   isMultiVariableEnabled,
-  isMonitoringView,
 }) => {
   const dispatch = useDispatch<AppDispatch>();
 
@@ -49,7 +48,7 @@ const DataProviderInner: React.FC<BJSWorkflowProviderProps> = ({
     dispatch(initRunInstance(runInstance ?? null));
     dispatch(initRunInPanel(runInstance ?? null));
     dispatch(initCustomCode(customCode));
-    dispatch(initializeGraphState({ workflowDefinition: workflow, runInstance, isMultiVariableEnabled, isMonitoringView }));
+    dispatch(initializeGraphState({ workflowDefinition: workflow, runInstance, isMultiVariableEnabled }));
     dispatch(initUnitTestDefinition(deserializeUnitTestDefinition(unitTestDefinition ?? null, workflow)));
   }, [workflowId, runInstance, workflow, customCode, unitTestDefinition]);
 
