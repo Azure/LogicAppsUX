@@ -57,6 +57,7 @@ vi.mock('fs-extra', () => ({
   readFile: vi.fn(() => Promise.resolve()),
   pathExists: vi.fn(() => Promise.resolve()),
   readdir: vi.fn(() => Promise.resolve()),
+  existsSync: vi.fn(() => {}),
 }));
 
 vi.mock('child_process');
@@ -73,6 +74,9 @@ vi.mock('vscode', () => ({
   workspace: {
     workspaceFolders: [],
     updateWorkspaceFolders: vi.fn(), // <-- This ensures the method exists.
+    fs: {
+      readFile: vi.fn(),
+    },
   },
   Uri: {
     file: (p: string) => ({ fsPath: p, toString: () => p }),
@@ -83,4 +87,12 @@ vi.mock('vscode', () => ({
   EventEmitter: vi.fn().mockImplementation(() => ({
     getUser: vi.fn(),
   })),
+}));
+
+vi.mock('./src/extensionVariables', () => ({
+  ext: {
+    outputChannel: {
+      appendLog: vi.fn(),
+    },
+  },
 }));

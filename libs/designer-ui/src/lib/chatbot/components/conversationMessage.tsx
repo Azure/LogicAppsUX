@@ -69,6 +69,7 @@ const AssistantReply = ({ item }: { item: AssistantReplyItem }) => {
         additionalFooterActions={hideFooter ? [] : azureButtonCallback ? [azureCopilotButton] : []}
         hideFooter={hideFooter}
         textRef={textRef}
+        role={item.role}
       >
         <div ref={textRef}>
           <Markdown>{text}</Markdown>
