@@ -33,6 +33,7 @@ export const AgentParameterButton = ({ openTokenPicker, shifted }: AgentParamete
       <Tooltip content={agentParameterButtonText} relationship="label">
         <Button
           icon={<SparkleIcon />}
+          appearance="primary"
           className={'msla-agent-parameter-entrypoint-button'}
           onClick={() => {
             LoggerService().log({
