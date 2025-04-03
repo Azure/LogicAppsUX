@@ -184,6 +184,21 @@ export const useResourceStrings = () => {
       id: '2q6Vas',
       description: 'Required label',
     }),
+    Details: intl.formatMessage({
+      defaultMessage: 'Details',
+      id: 'pr2lJw',
+      description: 'Details label',
+    }),
+    ParameterName: intl.formatMessage({
+      defaultMessage: 'Parameter name',
+      id: '2j1xuE',
+      description: 'Parameter name label',
+    }),
+    ParameterDisplayName: intl.formatMessage({
+      defaultMessage: 'Parameter display name',
+      id: 'uRAbJb',
+      description: 'Parameter display name label',
+    }),
     // Aria labels
     WorkflowsListTableLabel: intl.formatMessage({
       defaultMessage: 'Workflows list tabel',

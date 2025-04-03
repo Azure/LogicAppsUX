@@ -5,6 +5,7 @@ import { TemplatesPanelFooter, TemplatesPanelHeader } from '@microsoft/designer-
 import { useCallback, useMemo } from 'react';
 import { useIntl } from 'react-intl';
 import { Panel, PanelType } from '@fluentui/react';
+import { CustomizeParameter } from '../../../configuretemplate/parameters/customizeParameter';
 
 const layerProps = {
   hostId: 'msla-layer-host',
@@ -78,7 +79,7 @@ export const CustomizeParameterPanel = () => {
       layerProps={layerProps}
       isFooterAtBottom={true}
     >
-      {selectedTabId}
+      <CustomizeParameter parameterId={selectedTabId as string} />
     </Panel>
   );
 };
