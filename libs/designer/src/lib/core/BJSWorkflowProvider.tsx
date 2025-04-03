@@ -27,7 +27,6 @@ export interface BJSWorkflowProviderProps {
   appSettings?: Record<string, any>;
   unitTestDefinition?: UnitTestDefinition | null;
   isMultiVariableEnabled?: boolean;
-  isMonitoringView?: boolean;
 }
 
 const DataProviderInner: React.FC<BJSWorkflowProviderProps> = ({

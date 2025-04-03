@@ -43,7 +43,7 @@ export type DeserializedWorkflow = {
 export const Deserialize = (
   definition: LogicAppsV2.WorkflowDefinition,
   runInstance: LogicAppsV2.RunInstanceDefinition | null,
-  isMonitoringView = false
+  shouldAppendAddCase = true
 ): DeserializedWorkflow => {
   throwIfMultipleTriggers(definition);
 
@@ -98,7 +98,7 @@ export const Deserialize = (
 
   const [remainingChildren, edges, actions, actionNodesMetadata] = isNullOrUndefined(definition.actions)
     ? [[], [], {}]
-    : buildGraphFromActions(definition.actions, 'root', undefined /* parentNodeId */, allActionNames, isMonitoringView);
+    : buildGraphFromActions(definition.actions, 'root', undefined /* parentNodeId */, allActionNames, shouldAppendAddCase);
   allActions = { ...allActions, ...actions };
   nodesMetadata = { ...nodesMetadata, ...actionNodesMetadata };
   nodesMetadata = addActionsInstanceMetaData(nodesMetadata, allActions, runInstance);
@@ -367,7 +367,7 @@ export const buildGraphFromActions = (
   graphId: string,
   parentNodeId: string | undefined,
   allActionNames: string[],
-  isMonitoringView: boolean,
+  shouldAppendAddCase: boolean,
   pasteScopeParams?: PasteScopeParams
 ): [WorkflowNode[], WorkflowEdge[], Operations, NodesMetadata] => {
   const nodes: WorkflowNode[] = [];
@@ -460,7 +460,7 @@ export const buildGraphFromActions = (
         actionName,
         action,
         allActionNames,
-        isMonitoringView,
+        shouldAppendAddCase,
         pasteScopeParams
       );
       node.children = scopeNodes;
@@ -507,7 +507,7 @@ export const processScopeActions = (
   actionName: string,
   action: LogicAppsV2.ScopeAction,
   allActionNames: string[],
-  isMonitoringView: boolean,
+  shouldAppendAddCase: boolean,
   pasteScopeParams?: PasteScopeParams
 ): [WorkflowNode[], WorkflowEdge[], Operations, NodesMetadata] => {
   const nodes: WorkflowNode[] = [];
@@ -528,7 +528,7 @@ export const processScopeActions = (
       actions,
       allActionNames,
       undefined,
-      false,
+      shouldAppendAddCase,
       pasteScopeParams
     );
 
@@ -567,7 +567,15 @@ export const processScopeActions = (
     subgraphType: SubgraphType,
     subGraphLocation: string | undefined
   ) => {
-    const [graph, operations, metadata] = processNestedActions(subgraphId, graphId, actions, allActionNames, true, false, pasteScopeParams);
+    const [graph, operations, metadata] = processNestedActions(
+      subgraphId,
+      graphId,
+      actions,
+      allActionNames,
+      true,
+      shouldAppendAddCase,
+      pasteScopeParams
+    );
     if (!graph?.edges) {
       graph.edges = [];
     }
@@ -620,7 +628,7 @@ export const processScopeActions = (
       actions,
       allActionNames,
       undefined,
-      false,
+      shouldAppendAddCase,
       pasteScopeParams
     );
 
@@ -664,7 +672,7 @@ export const processScopeActions = (
     for (const [caseName, caseAction] of Object.entries(action.cases || {})) {
       applySubgraphActions(actionName, caseName, caseAction.actions, SUBGRAPH_TYPES.SWITCH_CASE, 'cases');
     }
-    if (!isMonitoringView) {
+    if (shouldAppendAddCase) {
       applySubgraphActions(
         actionName,
         `${actionName}-addCase`,
@@ -686,7 +694,7 @@ export const processScopeActions = (
     for (const [toolName, toolAction] of Object.entries(action.tools || {})) {
       applySubgraphActions(actionName, toolName, toolAction.actions, SUBGRAPH_TYPES.AGENT_CONDITION, 'tools');
     }
-    if (!isMonitoringView) {
+    if (shouldAppendAddCase) {
       applySubgraphActions(
         actionName,
         `${actionName}-addCase`,
@@ -752,12 +760,12 @@ const processNestedActions = (
   actions: LogicAppsV2.Actions | undefined,
   allActionNames: string[],
   isSubgraph?: boolean,
-  isMonitoringView = false,
+  shouldAppendAddCase = true,
   pasteScopeParams?: PasteScopeParams
 ): [WorkflowNode, Operations, NodesMetadata] => {
   const [children, edges, scopeActions, scopeNodesMetadata] = isNullOrUndefined(actions)
     ? [[], [], {}, {}]
-    : buildGraphFromActions(actions, graphId, parentNodeId, allActionNames, isMonitoringView, pasteScopeParams);
+    : buildGraphFromActions(actions, graphId, parentNodeId, allActionNames, shouldAppendAddCase, pasteScopeParams);
   return [
     {
       id: graphId,
