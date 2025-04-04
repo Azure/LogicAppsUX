@@ -1,6 +1,12 @@
-import type { ConversationItem } from '@microsoft/designer-ui';
-import { AgentMessageEntryType, ConversationItemType, PanelLocation, PanelResizer, PanelSize } from '@microsoft/designer-ui';
-import { useEffect, useMemo, useState } from 'react';
+import {
+  AgentMessageEntryType,
+  ConversationItemType,
+  PanelLocation,
+  PanelResizer,
+  PanelSize,
+  type ConversationItem,
+} from '@microsoft/designer-ui';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import { type IntlShape, useIntl } from 'react-intl';
 import { defaultChatbotPanelWidth, ChatbotContent } from '@microsoft/logic-apps-chatbot';
 import { type ChatHistory, useChatHistory } from '../../../core/queries/runs';
@@ -142,11 +148,12 @@ export const AgentChat = ({
   const [isCollapsed, setIsCollapsed] = useState(false);
   const panelContainerElement = panelContainerRef.current as HTMLElement;
   const { isFetching: isChatHistoryFetching, data: chatHistoryData } = useChatHistory(!!isMonitoringView, agentOperations, runInstance?.id);
-  const [overrideWidth, setOverrideWidth] = useState<string | undefined>();
+  const [overrideWidth, setOverrideWidth] = useState<string | undefined>(chatbotWidth);
   const isChatInputEnabled = useIsChatInputEnabled(conversation.length > 0 ? conversation[0].metadata?.parentId : undefined);
   const dispatch = useDispatch<AppDispatch>();
   const agentsNumber = Object.keys(agentLastOperations).length;
-  const drawerWidth = isCollapsed ? PanelSize.Auto : (overrideWidth ?? chatbotWidth);
+  const drawerWidth = isCollapsed ? PanelSize.Auto : overrideWidth;
+  const panelRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     if (!isNullOrUndefined(chatHistoryData)) {
@@ -235,6 +242,7 @@ export const AgentChat = ({
       }}
       open={true}
       position={'end'}
+      ref={panelRef}
       style={{
         position: 'relative',
         maxWidth: '100%',
@@ -284,7 +292,7 @@ export const AgentChat = ({
               setFocus: setFocus,
             }}
           />
-          <PanelResizer minWidth={undefined} updatePanelWidth={setOverrideWidth} />
+          <PanelResizer updatePanelWidth={setOverrideWidth} panelRef={panelRef} />
         </>
       )}
     </Drawer>
