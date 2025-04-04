@@ -103,7 +103,11 @@ export type AssistantReplyItem = BaseAssistantMessageItem & {
   __rawRequest?: any;
   __rawResponse?: any;
   additionalDocURL?: string | undefined;
-  role?: string;
+  role?: {
+    text: string;
+    onClick: () => void;
+    agentName: string;
+  };
   azureButtonCallback?: (prompt?: string) => void;
 };
 
