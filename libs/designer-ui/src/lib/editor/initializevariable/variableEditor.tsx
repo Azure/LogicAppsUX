@@ -26,7 +26,7 @@ import type { InitializeVariableProps } from './';
 const DeleteIcon = bundleIcon(Delete24Filled, Delete24Regular);
 const EditIcon = bundleIcon(Edit24Filled, Edit24Regular);
 const ExpandIcon = bundleIcon(ChevronRight24Filled, ChevronRight24Regular);
-const CollapseIcon = bundleIcon(ChevronDown24Regular, ChevronDown24Filled);
+const CollapseIcon = bundleIcon(ChevronDown24Filled, ChevronDown24Regular);
 
 const typeOptions: DropdownItem[] = [
   { key: VARIABLE_TYPE.BOOLEAN, value: VARIABLE_TYPE.BOOLEAN, displayName: 'Boolean' },
@@ -259,78 +259,76 @@ export const VariableEditor = ({
 
   return (
     <div className={'msla-editor-initialize-variable'}>
-      <div>
-        <div>
-          <Button
-            appearance="subtle"
-            className="msla-variable-editor-heading-button"
-            onClick={handleToggleExpand}
-            icon={expanded ? <CollapseIcon /> : <ExpandIcon />}
-            aria-expanded={expanded}
-            style={{ justifyContent: 'flex-start', width: '90%' }}
-          >
-            {displayName}
-          </Button>
+      <div className={'msla-variable-editor-heading'}>
+        <Button
+          appearance="subtle"
+          className="msla-variable-editor-heading-button"
+          onClick={handleToggleExpand}
+          icon={expanded ? <CollapseIcon /> : <ExpandIcon />}
+          aria-expanded={expanded}
+          style={{ justifyContent: 'flex-start', width: '90%' }}
+        >
+          {displayName}
           {Object.values(errors ?? {}).filter((x) => !!x).length > 0 ? (
             <span className="msla-initialize-variable-error-dot">
               <TrafficLightDot fill={RUN_AFTER_COLORS[themeName]['FAILED']} />
             </span>
           ) : null}
-        </div>
-        {expanded ? (
+        </Button>
+        {preventMultiVariable && !isAgentParameter ? null : (
           <>
-            {fields.map(({ label, id, isRequired, editor, editorProps, errorMessage }) => (
-              <FieldEditor
-                key={id}
-                label={label}
-                id={id}
-                index={index}
-                isRequired={isRequired}
-                editor={editor}
-                editorProps={editorProps}
-                errorMessage={errorMessage}
-              />
-            ))}
+            <div className={'msla-variable-editor-edit-or-delete-button'}>
+              <Tooltip relationship="label" content={editButtonTitle}>
+                <Button
+                  appearance="subtle"
+                  aria-label={editButtonTitle}
+                  onClick={handleToggleExpand}
+                  icon={<EditIcon />}
+                  disabled={baseEditorProps?.readonly}
+                  style={{ color: 'var(--colorBrandForeground1)' }}
+                />
+              </Tooltip>
+            </div>
+            <div className={'msla-variable-editor-edit-or-delete-button'}>
+              <Tooltip
+                relationship="label"
+                content={
+                  disableDelete
+                    ? isAgentParameter
+                      ? deleteButtonDisabledAgentParameter
+                      : deleteButtonDisabledVariableTitle
+                    : deleteButtonTitle
+                }
+              >
+                <Button
+                  appearance="subtle"
+                  aria-label={deleteButtonTitle}
+                  onClick={handleDelete}
+                  icon={<DeleteIcon />}
+                  disabled={disableDelete || baseEditorProps?.readonly}
+                  style={{ color: 'var(--colorBrandForeground1)' }}
+                />
+              </Tooltip>
+            </div>
           </>
-        ) : null}
+        )}
       </div>
-      {preventMultiVariable && !isAgentParameter ? null : (
-        <>
-          <div className={'msla-variable-editor-edit-or-delete-button'}>
-            <Tooltip relationship="label" content={editButtonTitle}>
-              <Button
-                appearance="subtle"
-                aria-label={editButtonTitle}
-                onClick={handleToggleExpand}
-                icon={<EditIcon />}
-                disabled={baseEditorProps?.readonly}
-                style={{ color: 'var(--colorBrandForeground1)' }}
-              />
-            </Tooltip>
-          </div>
-          <div className={'msla-variable-editor-edit-or-delete-button'}>
-            <Tooltip
-              relationship="label"
-              content={
-                disableDelete
-                  ? isAgentParameter
-                    ? deleteButtonDisabledAgentParameter
-                    : deleteButtonDisabledVariableTitle
-                  : deleteButtonTitle
-              }
-            >
-              <Button
-                appearance="subtle"
-                aria-label={deleteButtonTitle}
-                onClick={handleDelete}
-                icon={<DeleteIcon />}
-                disabled={disableDelete || baseEditorProps?.readonly}
-                style={{ color: 'var(--colorBrandForeground1)' }}
-              />
-            </Tooltip>
-          </div>
-        </>
-      )}
+      {expanded ? (
+        <div className="msla-variable-editor-content">
+          {fields.map(({ label, id, isRequired, editor, editorProps, errorMessage }) => (
+            <FieldEditor
+              key={id}
+              label={label}
+              id={id}
+              index={index}
+              isRequired={isRequired}
+              editor={editor}
+              editorProps={editorProps}
+              errorMessage={errorMessage}
+            />
+          ))}
+        </div>
+      ) : null}
     </div>
   );
 };

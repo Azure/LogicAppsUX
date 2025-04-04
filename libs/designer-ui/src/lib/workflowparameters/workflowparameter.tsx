@@ -9,7 +9,7 @@ import { useState } from 'react';
 import { useIntl } from 'react-intl';
 
 const ExpandIcon = bundleIcon(ChevronRight24Filled, ChevronRight24Regular);
-const CollapseIcon = bundleIcon(ChevronDown24Regular, ChevronDown24Filled);
+const CollapseIcon = bundleIcon(ChevronDown24Filled, ChevronDown24Regular);
 
 export interface WorkflowParameterUpdateEvent {
   id: string;
