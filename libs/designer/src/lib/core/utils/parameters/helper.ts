@@ -538,7 +538,7 @@ export const loadParameterValueFromString = (
   return loadParameterValue(inputParameter);
 };
 
-const convertStringToInputParameter = (value: string, options: LoadParamteerValueFromStringOptions): InputParameter => {
+export const convertStringToInputParameter = (value: string, options: LoadParamteerValueFromStringOptions): InputParameter => {
   const { removeQuotesFromExpression, trimExpression, convertIfContainsExpression, parameterType } = options ?? {};
   if (typeof value !== 'string') {
     return { key: guid(), name: value, type: parameterType ?? typeof value, hideInUI: false, value };
@@ -555,7 +555,7 @@ const convertStringToInputParameter = (value: string, options: LoadParamteerValu
   return {
     key: guid(),
     name: newValue,
-    type: constants.SWAGGER.TYPE.STRING,
+    type: parameterType ?? typeof newValue,
     hideInUI: false,
     value: newValue,
     suppressCasting: true,
@@ -918,7 +918,12 @@ export function loadParameterValue(parameter: InputParameter): ValueSegment[] {
     }
   }
 
-  let valueSegments = convertToValueSegments(valueObject, !parameter.suppressCasting /* shouldUncast */, parameter.type);
+  let valueSegments = convertToValueSegments(
+    valueObject,
+    !parameter.suppressCasting && !!parameter?.format,
+    parameter.type,
+    parameter.schema
+  );
 
   valueSegments = compressSegments(valueSegments);
 
@@ -971,13 +976,13 @@ export function convertToTokenExpression(value: any): string {
   return value.toString();
 }
 
-export function convertToValueSegments(value: any, shouldUncast: boolean, parameterType?: string): ValueSegment[] {
+export function convertToValueSegments(value: any, shouldUncast: boolean, parameterType?: string, parameterSchema?: any): ValueSegment[] {
   try {
     const convertor = new ValueSegmentConvertor({
       shouldUncast,
       rawModeEnabled: true,
     });
-    return convertor.convertToValueSegments(value, parameterType);
+    return convertor.convertToValueSegments(value, parameterType, parameterSchema);
   } catch {
     return [createLiteralValueSegment(typeof value === 'string' ? value : JSON.stringify(value, null, 2))];
   }
