@@ -7,7 +7,7 @@ import {
   type ConversationItem,
 } from '@microsoft/designer-ui';
 import { useEffect, useMemo, useRef, useState } from 'react';
-import { type IntlShape, useIntl } from 'react-intl';
+import { useIntl } from 'react-intl';
 import { defaultChatbotPanelWidth, ChatbotContent } from '@microsoft/logic-apps-chatbot';
 import { type ChatHistory, useChatHistory } from '../../../core/queries/runs';
 import { useMonitoringView } from '../../../core/state/designerOptions/designerOptionsSelectors';
@@ -32,18 +32,7 @@ interface AgentChatProps {
   panelContainerRef: React.MutableRefObject<HTMLElement | null>;
 }
 
-const parseChatHistory = (
-  chatHistory: ChatHistory[],
-  intl: IntlShape,
-  dispatch: Dispatch,
-  agentLastOperations: Record<string, any>
-): ConversationItem[] => {
-  const agentHeaderPrefix = intl.formatMessage({
-    defaultMessage: 'Chat moved to',
-    id: '25EIWg',
-    description: 'Agent header prefix',
-  });
-
+const parseChatHistory = (chatHistory: ChatHistory[], dispatch: Dispatch, agentLastOperations: Record<string, any>): ConversationItem[] => {
   const toolResultCallback = (agentName: string, toolName: string, iteration: number, subIteration: number) => {
     const agentLastOperation = agentLastOperations[agentName][toolName];
     dispatch(setRunIndex({ page: iteration, nodeId: agentName }));
@@ -52,7 +41,14 @@ const parseChatHistory = (
     dispatch(changePanelNode(agentLastOperation));
   };
 
+  const toolContentCallback = (agentName: string, iteration: number) => {
+    dispatch(setRunIndex({ page: iteration, nodeId: agentName }));
+    dispatch(setFocusNode(agentName));
+    dispatch(changePanelNode(agentName));
+  };
+
   const agentCallback = (agentName: string) => {
+    dispatch(setRunIndex({ page: 0, nodeId: agentName }));
     dispatch(setFocusNode(agentName));
     dispatch(changePanelNode(agentName));
   };
@@ -61,13 +57,13 @@ const parseChatHistory = (
 
   for (const chat of chatHistory) {
     const { nodeId, messages } = chat;
-    const parsedMessages: any[] = (messages ?? []).map((message) => parseMessage(message, nodeId, toolResultCallback));
+    const parsedMessages: any[] = (messages ?? []).map((message) => parseMessage(message, nodeId, toolResultCallback, toolContentCallback));
 
     if (parsedMessages.length > 0) {
-      const agentName = labelCase(nodeId ?? '');
+      const agentName = labelCase(nodeId);
       conversations.push(...parsedMessages, {
         id: guid(),
-        text: `${agentHeaderPrefix} ${agentName}`,
+        text: agentName,
         type: ConversationItemType.AgentHeader,
         onClick: () => {
           agentCallback(nodeId);
@@ -83,9 +79,10 @@ const parseChatHistory = (
 const parseMessage = (
   message: any,
   parentId: string,
-  toolResultCallback: (agentName: string, toolName: string, iteration: number, subIteration: number) => void
+  toolResultCallback: (agentName: string, toolName: string, iteration: number, subIteration: number) => void,
+  toolContentCallback: (agentName: string, iteration: number) => void
 ): ConversationItem => {
-  const { messageEntryType, messageEntryPayload, timestamp, role } = message;
+  const { messageEntryType, messageEntryPayload, timestamp, role, iteration } = message;
 
   switch (messageEntryType) {
     case AgentMessageEntryType.Content: {
@@ -94,7 +91,11 @@ const parseMessage = (
         text: content,
         type: ConversationItemType.Reply,
         id: guid(),
-        role,
+        role: {
+          text: role,
+          agentName: labelCase(parentId),
+          onClick: () => toolContentCallback(parentId, iteration),
+        },
         hideFooter: true,
         metadata: { parentId },
         date: new Date(timestamp),
@@ -103,7 +104,6 @@ const parseMessage = (
       };
     }
     case AgentMessageEntryType.ToolResult: {
-      const iteration = message?.iteration ?? 0;
       const subIteration = message.toolResultsPayload?.toolResult?.subIteration ?? 0;
       const toolName = message.toolResultsPayload?.toolResult?.toolName ?? '';
       const status = message.toolResultsPayload?.toolResult?.status;
@@ -157,10 +157,10 @@ export const AgentChat = ({
 
   useEffect(() => {
     if (!isNullOrUndefined(chatHistoryData)) {
-      const newConversations = parseChatHistory(chatHistoryData, intl, dispatch, agentLastOperations);
+      const newConversations = parseChatHistory(chatHistoryData, dispatch, agentLastOperations);
       setConversation([...newConversations]);
     }
-  }, [setConversation, chatHistoryData, intl, agentsNumber, dispatch]);
+  }, [setConversation, chatHistoryData, agentsNumber, dispatch]);
 
   const intlText = useMemo(() => {
     return {
