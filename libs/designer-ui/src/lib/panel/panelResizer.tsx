@@ -27,10 +27,11 @@ const useStyles = makeStyles({
 interface PanelResizerProps {
   minWidth?: number;
   updatePanelWidth: (width: string) => void;
+  panelRef?: React.RefObject<HTMLDivElement>;
 }
 
 export const PanelResizer = (props: PanelResizerProps): JSX.Element => {
-  const { minWidth = 400, updatePanelWidth } = props;
+  const { minWidth = 400, updatePanelWidth, panelRef } = props;
   const styles = useStyles();
   const [isResizing, setIsResizing] = useState(false);
   const startResizing = useCallback(() => setIsResizing(true), []);
@@ -44,10 +45,18 @@ export const PanelResizer = (props: PanelResizerProps): JSX.Element => {
       }
       e.preventDefault();
       const { clientX } = e;
-      animationFrame.current = requestAnimationFrame(() => {
-        const newWidth = Math.max(window.innerWidth - clientX, minWidth);
-        updatePanelWidth(`${newWidth.toString()}px`);
-      });
+
+      if (panelRef?.current) {
+        const panelRefRect = panelRef.current.getBoundingClientRect();
+        // Calculate width as the distance from the mouse to the container's right edge
+        const newWidth = Math.max(panelRefRect.right - clientX, minWidth);
+        updatePanelWidth(`${newWidth}px`);
+      } else {
+        animationFrame.current = requestAnimationFrame(() => {
+          const newWidth = Math.max(window.innerWidth - clientX, minWidth);
+          updatePanelWidth(`${newWidth.toString()}px`);
+        });
+      }
     },
     [isResizing, minWidth, updatePanelWidth]
   );

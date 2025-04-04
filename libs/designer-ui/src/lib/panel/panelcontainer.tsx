@@ -11,7 +11,7 @@ import {
   MessageBarTitle,
 } from '@fluentui/react-components';
 import { ChevronDoubleRightFilled } from '@fluentui/react-icons';
-import { useCallback } from 'react';
+import { useCallback, useRef } from 'react';
 import { useIntl } from 'react-intl';
 import { EmptyContent } from '../card/emptycontent';
 import type { PageActionTelemetryData } from '../telemetry/models';
@@ -84,6 +84,7 @@ export const PanelContainer = ({
   const isRight = panelLocation === PanelLocation.Right;
   const pinnedNodeId = pinnedNode?.nodeId;
   const pinnedNodeIfDifferent = pinnedNode && pinnedNode.nodeId !== node?.nodeId ? pinnedNode : undefined;
+  const panelRef = useRef<HTMLDivElement>(null);
 
   const drawerWidth = isCollapsed
     ? PanelSize.Auto
@@ -215,6 +216,7 @@ export const PanelContainer = ({
         element: mountNode,
       }}
       open={true}
+      ref={panelRef}
       position={isRight ? 'end' : 'start'}
       style={{ position: 'relative', maxWidth: '100%', width: drawerWidth, height: '100%' }}
     >
@@ -251,7 +253,7 @@ export const PanelContainer = ({
               </>
             )}
           </div>
-          {canResize ? <PanelResizer minWidth={minWidth} updatePanelWidth={setOverrideWidth} /> : null}
+          {canResize ? <PanelResizer minWidth={minWidth} panelRef={panelRef} updatePanelWidth={setOverrideWidth} /> : null}
         </>
       )}
     </Drawer>
