@@ -179,15 +179,10 @@ export const AgentChat = ({
         id: '0Jh+AD',
         description: 'Toggle agent chat panel aria label text',
       }),
-      chatInputDisabledPlaceHolder: intl.formatMessage({
-        defaultMessage: 'The chat is in read-only mode and will be saved in the run history. Agents are no longer available to chat with.',
-        id: 'z/i4aa',
-        description: 'Agent chat input placeholder text when disabled',
-      }),
-      chatInputPlaceholder: intl.formatMessage({
-        defaultMessage: 'Ask me anything...',
-        id: '5+Bccl',
-        description: 'Agent chat input placeholder text',
+      chatReadOnlyMessage: intl.formatMessage({
+        defaultMessage: 'The chat is currently in read-only mode. Agents are not available for live chat.',
+        id: '/fYAbG',
+        description: 'Agent chat read-only message',
       }),
       protectedMessage: intl.formatMessage({
         defaultMessage: 'Your personal and company data are protected in this chat',
@@ -274,11 +269,11 @@ export const AgentChat = ({
             inputBox={{
               value: inputQuery,
               onChange: setInputQuery,
-              placeholder: isChatInputEnabled ? intlText.chatInputPlaceholder : intlText.chatInputDisabledPlaceHolder,
               onSubmit: () => {},
               disabled: isChatInputEnabled,
+              readOnly: true,
+              readOnlyText: intlText.chatReadOnlyMessage,
             }}
-            data={{}}
             string={{
               submit: intlText.submitButtonTitle,
               progressState: intlText.progressCardText,
