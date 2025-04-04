@@ -2,6 +2,7 @@
  *  Copyright (c) Microsoft Corporation. All rights reserved.
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
+import { ext } from '../../../../extensionVariables';
 import { localize } from '../../../../localize';
 import * as vscode from 'vscode';
 import * as fse from 'fs-extra';
@@ -17,6 +18,8 @@ export class FunctionNameStep extends AzureWizardPromptStep<IProjectWizardContex
       prompt: localize('functionNamePrompt', 'Provide a function name'),
       validateInput: async (input: string): Promise<string | undefined> => await this.validateFunctionName(input, context),
     });
+
+    ext.outputChannel.appendLog(localize('functionNameSet', `Function name set to ${context.customCodeFunctionName}`));
   }
 
   public shouldPrompt(): boolean {
@@ -24,9 +27,10 @@ export class FunctionNameStep extends AzureWizardPromptStep<IProjectWizardContex
   }
 
   private async validateFunctionName(name: string | undefined, context: IProjectWizardContext): Promise<string | undefined> {
-    if (!name) {
-      return localize('emptyTemplateNameError', `Can't have an empty function name.`);
+    if (!name || name.length === 0) {
+      return localize('emptyFunctionNameError', `Can't have an empty function name.`);
     }
+
     if (!/^[a-z][a-z\d_]*$/i.test(name)) {
       return localize(
         'functionNameInvalidMessage',
@@ -38,7 +42,7 @@ export class FunctionNameStep extends AzureWizardPromptStep<IProjectWizardContex
       return localize('functionNameSameAsProjectNameError', `Can't use the same name for the function and the logic app project.`);
     }
 
-    if (fse.existsSync(context.workspaceCustomFilePath)) {
+    if (context.functionFolderPath && fse.existsSync(context.functionFolderPath)) {
       const functionAppFiles = await vscode.workspace.fs.readDirectory(vscode.Uri.file(context.functionFolderPath));
       const functionFileNames = functionAppFiles
         .map((file) => file[0])

@@ -2,6 +2,7 @@
  *  Copyright (c) Microsoft Corporation. All rights reserved.
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
+import { ext } from '../../../../../extensionVariables';
 import { localize } from '../../../../../localize';
 import * as vscode from 'vscode';
 import * as fse from 'fs-extra';
@@ -17,6 +18,8 @@ export class FunctionAppNameStep extends AzureWizardPromptStep<IProjectWizardCon
       prompt: localize('functionNamePrompt', 'Provide a function name for functions app project'),
       validateInput: async (input: string): Promise<string | undefined> => await this.validateFunctionName(input, context),
     });
+
+    ext.outputChannel.appendLog(localize('functionAppNameSet', `Function App project name set to ${context.functionAppName}`));
   }
 
   public shouldPrompt(): boolean {
@@ -25,7 +28,7 @@ export class FunctionAppNameStep extends AzureWizardPromptStep<IProjectWizardCon
 
   private async validateFunctionName(name: string | undefined, context: IProjectWizardContext): Promise<string | undefined> {
     if (!name || name.length === 0) {
-      return localize('emptyTemplateNameError', `Can't have an empty function name.`);
+      return localize('emptyFunctionNameError', "Can't have an empty function name.");
     }
 
     if (!/^[a-z][a-z\d_]*$/i.test(name)) {
