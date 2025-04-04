@@ -89,16 +89,14 @@ export function addLibToPublishPath(xmlBuildFile: Record<string, any>): Record<s
   return xmlBuildFile;
 }
 
-export function addCodefulNugetPackagesToBuildFile(xmlBuildFile: Record<string, any>): Record<string, any> {
-  const durablePackageName = 'Microsoft.Azure.WebJobs.Extensions.DurableTask';
-  const durablePackageVersion = '2.12.0';
-  const durableXmlBuildFileString = JSON.stringify(xmlBuildFile);
-  if (durableXmlBuildFileString.indexOf(durablePackageName) < 0) {
+export function addNugetPackagesToBuildFileByName(xmlBuildFile: Record<string, any>, packageName: string, packageVersion: string): Record<string, any> {
+  const xmlBuildFileString = JSON.stringify(xmlBuildFile);
+  if (xmlBuildFileString.indexOf(packageName) < 0) {
     const itemGroup: Record<string, any> = {
       PackageReference: {
         $: {
-          Include: durablePackageName,
-          Version: durablePackageVersion,
+          Include: packageName,
+          Version: packageVersion,
         },
       },
     };

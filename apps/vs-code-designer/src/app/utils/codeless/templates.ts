@@ -1,5 +1,7 @@
 import { ProjectType, type StandardApp } from '@microsoft/vscode-extension-logic-apps';
 import { workflowKind } from '../../../constants';
+import * as fs from 'fs-extra';
+import * as path from 'path';
 
 /**
  * Returns the workflow template based on the provided parameters.
@@ -124,42 +126,11 @@ export const getCodelessWorkflowTemplate = (isStateful: boolean) => {
  * @param {boolean} isStateful - A boolean indicating whether the workflow is stateful or not.
  * @returns The codeful workflow template.
  */
-export const getCodefulWorkflowTemplate = (isStateful: boolean) => {
+export const getCodefulWorkflowTemplate = async () => {
 
-  const emptyCodelessDefinition: string = `using System.Collections.Generic;
-using System.Net.Http;
-using System.Threading.Tasks;
-using Microsoft.Azure.WebJobs;
-using Microsoft.Azure.WebJobs.Extensions.DurableTask;
-using Microsoft.Azure.WebJobs.Extensions.Http;
-using Microsoft.Azure.WebJobs.Host;
-using Microsoft.Extensions.Logging;
+  const templatePath = path.join(__dirname, 'assets', "CodefulWorkflowTemplate", "codefulTemplate.cs");
+  const templateContent = await fs.readFile(templatePath, 'utf-8');
+  
 
-namespace Company.Function
-{
-    public static class Function1
-    {
-        [FunctionName("Function1")]
-        public static async Task<List<string>> RunOrchestrator(
-            [OrchestrationTrigger] IDurableOrchestrationContext context, ILogger log)
-        {
-            var outputs = new List<string>();
-
-            log.LogInformation("Saying hello to {name}.");
-
-            return outputs;
-        }
-
-        [FunctionName("TimerTrigger1")]
-        public static async Task Run([TimerTrigger("0 */5 * * * *")]TimerInfo myTimer, [DurableClient] IDurableOrchestrationClient starter, ILogger log)
-        {
-            log.LogInformation($"C# Timer trigger function executed at: ");
-            string instanceId = await starter.StartNewAsync("Function1", null);
-
-            log.LogInformation("Started orchestration with ID = '{instanceId}'.", instanceId);
-        }
-    }
-}`;
-
-  return emptyCodelessDefinition;
+  return templateContent;
 };

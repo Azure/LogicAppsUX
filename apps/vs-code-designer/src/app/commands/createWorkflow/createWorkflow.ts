@@ -27,7 +27,7 @@ export async function createWorkflow(
   logicAppName?: string,
   triggerSettings?: { [key: string]: string | undefined },
   language?: ProjectLanguage,
-  version?: FuncVersion
+  version?: FuncVersion,
 ): Promise<void> {
   addLocalFuncTelemetry(context);
   let workspaceFolder: WorkspaceFolder | undefined;
@@ -82,8 +82,6 @@ export async function createWorkflow(
   await wizard.execute();
 
   if (!wizardContext.isCodeless) {
-    
-    
     switchToDotnetProject(wizardContext, undefined, '8', true);
   }
 }

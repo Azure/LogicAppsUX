@@ -73,6 +73,7 @@ export const workflowTenantIdKey = 'WORKFLOWS_TENANT_ID';
 export const workflowManagementBaseURIKey = 'WORKFLOWS_MANAGEMENT_BASE_URI';
 export const workflowAppApiVersion = '2018-11-01';
 export const azureWebJobsStorageKey = 'AzureWebJobsStorage';
+export const functionsInprocNet8Enabled = "FUNCTIONS_INPROC_NET8_ENABLED"
 export const azureWebJobsSecretStorageTypeKey = 'AzureWebJobsSecretStorageType';
 export const workflowappRuntime = 'node|18';
 export const viewOutput = localize('viewOutput', 'View Output');

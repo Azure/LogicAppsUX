@@ -15,7 +15,7 @@ import { getCodefulWorkflowTemplate } from '../../utils/codeless/templates';
 //import { addFolderToBuildPath, addNugetPackagesToBuildFile, getDotnetBuildFile, suppressJavaScriptBuildWarnings, updateFunctionsSDKVersion, writeBuildFileToDisk } from '../../utils/codeless/updateBuildFile';
 import { writeFormattedJson } from '../../utils/fs';
 import { localize } from 'vscode-nls';
-import { workflowType, hostFileName, extensionBundleId, defaultVersionRange, azureWebJobsStorageKey, localEmulatorConnectionString, localSettingsFileName, workerRuntimeKey } from '../../../constants';
+import { workflowType, hostFileName, extensionBundleId, defaultVersionRange, azureWebJobsStorageKey, localEmulatorConnectionString, localSettingsFileName, workerRuntimeKey, functionsInprocNet8Enabled } from '../../../constants';
 import { removeAppKindFromLocalSettings, setLocalAppSetting } from '../../utils/appSettings/localSettings';
 import { validateDotnetInstalled } from '../../utils/dotnet/executeDotnetTemplateCommand';
 import { parseJson } from '../../utils/parseJson';
@@ -35,7 +35,7 @@ export class CodefulWorkflowCreateStep extends WorkflowCreateStepBase<IFunctionW
     const template: IWorkflowTemplate = nonNullProp(context, 'functionTemplate');
     const functionPath: string = path.join(context.projectPath, nonNullProp(context, 'functionName'));
 
-    const codelessDefinition: string = getCodefulWorkflowTemplate(template?.id === workflowType.stateful);
+    const codelessDefinition: string = await getCodefulWorkflowTemplate();
 
     const workflowCsFullPath: string = path.join(functionPath, 'workflow.cs');
 
@@ -98,6 +98,13 @@ export class CodefulWorkflowCreateStep extends WorkflowCreateStepBase<IFunctionW
       context.projectPath,
       workerRuntimeKey,
       WorkerRuntime.Dotnet,
+      MismatchBehavior.Overwrite
+    );
+    await setLocalAppSetting(
+      context,
+      context.projectPath,
+      functionsInprocNet8Enabled,
+      '1',
       MismatchBehavior.Overwrite
     );
     await setLocalAppSetting(

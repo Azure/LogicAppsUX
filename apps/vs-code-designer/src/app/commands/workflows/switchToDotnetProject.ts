@@ -25,7 +25,7 @@ import {
   addFileToBuildPath,
   addLibToPublishPath,
   allowLocalSettingsToPublishDirectory,
-  addCodefulNugetPackagesToBuildFile,
+  addNugetPackagesToBuildFileByName,
 } from '../../utils/codeless/updateBuildFile';
 import { getLocalDotNetVersionFromBinaries, getProjFiles, getTemplateKeyFromProjFile } from '../../utils/dotnet/dotnet';
 import { getFramework, executeDotnetTemplateCommand } from '../../utils/dotnet/executeDotnetTemplateCommand';
@@ -49,10 +49,16 @@ export async function switchToDotnetProjectCommand(context: IProjectWizardContex
 }
 
 export async function switchToDotnetProject(context: IProjectWizardContext, target: vscode.Uri, dotNetVersion: string = '6', isCodeful: boolean = false) {
-  // const isDotNetInstalled = await validateDotNetIsInstalled(context, target.fsPath);
-  // if (!isDotNetInstalled) {
-  //   return;
-  // }
+  if (target === undefined || Object.keys(target).length === 0) {
+    const workspaceFolder = await getWorkspaceFolder(context);
+    const projectPath = await tryGetLogicAppProjectRoot(context, workspaceFolder);
+    target = vscode.Uri.file(projectPath);
+  }
+  
+  const isDotNetInstalled = await validateDotNetIsInstalled(context, target.fsPath);
+  if (!isDotNetInstalled) {
+    return;
+  }
 
   if (target === undefined || Object.keys(target).length === 0) {
     const workspaceFolder = await getWorkspaceFolder(context);
@@ -183,7 +189,8 @@ async function updateBuildFile(context: IActionContext, target: vscode.Uri, dotn
   xmlBuildFile = JSON.parse(xmlBuildFile);
   xmlBuildFile = addNugetPackagesToBuildFile(xmlBuildFile);
   if (isCodeful) {
-    xmlBuildFile = addCodefulNugetPackagesToBuildFile(xmlBuildFile);
+    xmlBuildFile = addNugetPackagesToBuildFileByName(xmlBuildFile, 'Microsoft.Azure.WebJobs.Extensions.DurableTask', "3.0.4");
+    xmlBuildFile = addNugetPackagesToBuildFileByName(xmlBuildFile, "LogicApps.Connectors", '1.0.0');
   }
   xmlBuildFile = suppressJavaScriptBuildWarnings(xmlBuildFile);
   xmlBuildFile = allowLocalSettingsToPublishDirectory(context, xmlBuildFile);
@@ -201,6 +208,10 @@ async function updateBuildFile(context: IActionContext, target: vscode.Uri, dotn
     xmlBuildFile = addFileToBuildPath(xmlBuildFile, connectionFile);
   }
 
+  if (isCodeful) {
+    xmlBuildFile = addFileToBuildPath(xmlBuildFile, "connections.json");
+  }
+
   for (const parametersFile of projectArtifacts['parameters']) {
     xmlBuildFile = addFileToBuildPath(xmlBuildFile, parametersFile);
   }
@@ -208,7 +219,9 @@ async function updateBuildFile(context: IActionContext, target: vscode.Uri, dotn
   if (projectArtifacts['lib']) {
     xmlBuildFile = addLibToPublishPath(xmlBuildFile);
   }
-  xmlBuildFile['Project']['PropertyGroup']['TargetFramework'] = 'net8.0';
+  if (isCodeful) {
+    xmlBuildFile['Project']['PropertyGroup']['TargetFramework'] = 'net8.0';
+  }
 
   await writeBuildFileToDisk(context, xmlBuildFile, target.fsPath);
 }
