@@ -5,7 +5,7 @@ import type { ValueSegment } from '../models/parameter';
 import { StringEditor } from '../string';
 import type { InitializeVariableErrors } from './variableEditor';
 import { VariableEditor } from './variableEditor';
-import { Button, MessageBar, MessageBarBody, MessageBarTitle } from '@fluentui/react-components';
+import { Button, Divider, MessageBar, MessageBarBody, MessageBarTitle } from '@fluentui/react-components';
 import { useIntl } from 'react-intl';
 import {
   createVariableEditorSegments,
@@ -139,7 +139,6 @@ export const InitializeVariableEditor = ({
       {isAgentParameter ? (
         <div className="msla-initialize-variable-add-variable-button">
           <Button
-            appearance="subtle"
             aria-label={addButtonText}
             onClick={addVariable}
             disabled={props.readonly}
@@ -149,7 +148,6 @@ export const InitializeVariableEditor = ({
                 ? {}
                 : {
                     color: 'var(--colorBrandForeground1)',
-                    border: '1px solid #9e9e9e',
                   }
             }
           >
@@ -158,17 +156,20 @@ export const InitializeVariableEditor = ({
         </div>
       ) : null}
       {variables.map((variable, index) => (
-        <VariableEditor
-          {...props}
-          isAgentParameter={isAgentParameter}
-          key={index}
-          index={index}
-          variable={variable}
-          onDelete={() => handleDeleteVariable(index)}
-          onVariableChange={(value: InitializeVariableProps) => handleVariableChange(value, index)}
-          disableDelete={!isAgentParameter && variables.length === 1}
-          errors={validationErrors?.[index]}
-        />
+        <>
+          <VariableEditor
+            {...props}
+            isAgentParameter={isAgentParameter}
+            key={index}
+            index={index}
+            variable={variable}
+            onDelete={() => handleDeleteVariable(index)}
+            onVariableChange={(value: InitializeVariableProps) => handleVariableChange(value, index)}
+            disableDelete={!isAgentParameter && variables.length === 1}
+            errors={validationErrors?.[index]}
+          />
+          <Divider />
+        </>
       ))}
       {props.isMultiVariableEnabled && !isAgentParameter ? (
         <div className="msla-initialize-variable-add-variable-button">
