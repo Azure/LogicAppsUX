@@ -57,8 +57,9 @@ export interface IProjectTreeItem {
 }
 
 export interface IProjectWizardContext extends IActionContext {
-  namespaceName?: string;
-  methodName?: string;
+  functionAppNamespace?: string;
+  functionAppName?: string;
+  customCodeFunctionName?: string;
   functionFolderPath?: string;
   logicAppFolderPath?: string;
   projectPath: string;
