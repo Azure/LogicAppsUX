@@ -2,12 +2,12 @@
  *  Copyright (c) Microsoft Corporation. All rights reserved.
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
+import { ext } from '../../../../../extensionVariables';
 import { localize } from '../../../../../localize';
 import * as vscode from 'vscode';
 import * as fse from 'fs-extra';
 import { AzureWizardPromptStep } from '@microsoft/vscode-azext-utils';
 import type { IProjectWizardContext } from '@microsoft/vscode-extension-logic-apps';
-import * as path from 'path';
 
 export class FunctionAppNameStep extends AzureWizardPromptStep<IProjectWizardContext> {
   public hideStepCount = true;
@@ -18,6 +18,8 @@ export class FunctionAppNameStep extends AzureWizardPromptStep<IProjectWizardCon
       prompt: localize('functionNamePrompt', 'Provide a function name for functions app project'),
       validateInput: async (input: string): Promise<string | undefined> => await this.validateFunctionName(input, context),
     });
+
+    ext.outputChannel.appendLog(localize('functionAppNameSet', `Function App project name set to ${context.functionAppName}`));
   }
 
   public shouldPrompt(): boolean {
@@ -25,9 +27,10 @@ export class FunctionAppNameStep extends AzureWizardPromptStep<IProjectWizardCon
   }
 
   private async validateFunctionName(name: string | undefined, context: IProjectWizardContext): Promise<string | undefined> {
-    if (!name) {
-      return localize('emptyTemplateNameError', `Can't have an empty function name.`);
+    if (!name || name.length === 0) {
+      return localize('emptyFunctionNameError', "Can't have an empty function name.");
     }
+
     if (!/^[a-z][a-z\d_]*$/i.test(name)) {
       return localize(
         'functionNameInvalidMessage',
@@ -43,7 +46,7 @@ export class FunctionAppNameStep extends AzureWizardPromptStep<IProjectWizardCon
       const workspaceFileContent = await vscode.workspace.fs.readFile(vscode.Uri.file(context.workspaceCustomFilePath));
       const workspaceFileJson = JSON.parse(workspaceFileContent.toString());
 
-      if (workspaceFileJson.folders && workspaceFileJson.folders.some((folder: { path: string }) => folder.path === path.join('.', name))) {
+      if (workspaceFileJson.folders && workspaceFileJson.folders.some((folder: { name: string }) => folder.name === name)) {
         return localize('functionNameExistsInWorkspaceError', 'A function with this name already exists in the workspace.');
       }
     }

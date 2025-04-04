@@ -2,8 +2,6 @@
  *  Copyright (c) Microsoft Corporation. All rights reserved.
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
-import * as vscode from 'vscode';
-import { extensionCommand } from '../../../constants';
 import { ExistingWorkspaceStep } from '../createNewProject/createProjectSteps/ExistingWorkspaceStep';
 import { isString } from '@microsoft/logic-apps-shared';
 import type { IActionContext } from '@microsoft/vscode-azext-utils';
@@ -15,11 +13,7 @@ import { localize } from '../../../localize';
 import { type Uri, window } from 'vscode';
 import { FunctionNameStep } from './createCustomCodeFunctionSteps/FunctionNameStep';
 import { FunctionFilesStep } from './createCustomCodeFunctionSteps/FunctionFilesStep';
-import {
-  getCustomCodeFunctionsProjectMetadata,
-  getCustomCodeFunctionsProjects,
-  isCustomCodeFunctionsProject,
-} from '../../utils/customCodeUtils';
+import { getCustomCodeFunctionsProjectMetadata, isCustomCodeFunctionsProject } from '../../utils/customCodeUtils';
 
 /**
  * Creates a new function in a custom code functions project.
@@ -37,6 +31,7 @@ export async function createCustomCodeFunctionFromCommand(context: IActionContex
 
     const wizardContext: Partial<IFunctionWizardContext> & IActionContext = Object.assign(context, options);
     wizardContext.projectType = ProjectType.customCode;
+    wizardContext.functionFolderPath = options.folderPath;
     wizardContext.isWorkspaceWithFunctions = true;
     if (!options.folderPath || !(await isCustomCodeFunctionsProject(options.folderPath))) {
       window.showErrorMessage(
@@ -99,11 +94,5 @@ export async function createCustomCodeFunctionFromCommand(context: IActionContex
     });
 
     await wizard.prompt();
-
-    vscode.commands.executeCommand(
-      'setContext',
-      extensionCommand.customCodeSetFunctionsFolders,
-      await getCustomCodeFunctionsProjects(context)
-    );
   }
 }
