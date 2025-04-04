@@ -37,6 +37,7 @@ type BaseConversationItem = {
   date: Date;
   metadata?: Record<string, any>;
   onClick?: (id: string, text?: string) => void;
+  className?: string;
 };
 
 type BaseAssistantMessageItem = BaseConversationItem & {
@@ -56,6 +57,12 @@ export const ConversationItemType = {
   AgentHeader: 'agentHeader',
 } as const;
 export type ConversationItemType = (typeof ConversationItemType)[keyof typeof ConversationItemType];
+
+export const AgentMessageEntryType = {
+  Content: 'Content',
+  ToolResult: 'ToolResult',
+} as const;
+export type AgentMessageEntryType = (typeof AgentMessageEntryType)[keyof typeof AgentMessageEntryType];
 
 export type AgentHeaderItem = BaseConversationItem & {
   type: typeof ConversationItemType.AgentHeader;
