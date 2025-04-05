@@ -1,5 +1,5 @@
 import type { Connector, OperationInfo, OperationManifest } from '../../../utils/src';
-import { ArgumentException, startsWith, UnsupportedException } from '../../../utils/src';
+import { ArgumentException, getResourceNameFromId, isArmResourceId, startsWith, UnsupportedException } from '../../../utils/src';
 import { BaseOperationManifestService } from '../base';
 import type { BaseOperationManifestServiceOptions } from '../base/operationmanifest';
 import {
@@ -13,9 +13,6 @@ import { appServiceActionManifest, appServiceTriggerManifest } from './manifests
 import { as2EncodeManifest, as2DecodeManifest } from './manifests/as2';
 import { batchTriggerManifest, sendToBatchManifest } from './manifests/batchWorkflow';
 import { composeManifest } from './manifests/compose';
-import { chunkTextManifest } from './manifests/chunktext';
-import { parseDocumentManifest } from './manifests/parsedocument';
-import { parseDocumentWithMetadataManifest } from './manifests/parsedocumentwithmetadata';
 import { flatFileDecodingManifest, flatFileEncodingManifest } from './manifests/flatfile';
 import { selectFunctionManifest } from './manifests/functions';
 import { inlineCodeManifest } from './manifests/inlinecode';
@@ -101,10 +98,15 @@ export class ConsumptionOperationManifestService extends BaseOperationManifestSe
 
     const { apiVersion, baseUrl, httpClient } = this.options;
     const operationName = operationId.split('/').slice(-1)[0];
-    const queryParameters = {
+    const queryParameters: Record<string, any> = {
       'api-version': apiVersion,
       $expand: 'properties/manifest',
     };
+
+    if (!isArmResourceId(connectorId)) {
+      connectorId = `/subscriptions/${this.options.subscriptionId}/providers/microsoft.web/locations/${this.options.location}/managedapis/${getResourceNameFromId(connectorId)}`;
+      queryParameters['isBuiltIn'] = 'true';
+    }
 
     try {
       const response = await httpClient.get<any>({
@@ -132,7 +134,7 @@ export class ConsumptionOperationManifestService extends BaseOperationManifestSe
     }
   }
 
-  override async getOperation(_connectorId: string, operationId: string, _useCachedData = false): Promise<any> {
+  override async getOperation(connectorId: string, operationId: string, _useCachedData = false): Promise<any> {
     const supportedManifest = supportedConsumptionManifestObjects.get(operationId);
 
     if (supportedManifest) {
@@ -145,6 +147,35 @@ export class ConsumptionOperationManifestService extends BaseOperationManifestSe
         },
       };
     }
+
+    const { apiVersion, baseUrl, httpClient } = this.options;
+    const operationName = getResourceNameFromId(operationId);
+    const queryParameters: Record<string, any> = {
+      'api-version': apiVersion,
+    };
+
+    if (!isArmResourceId(connectorId)) {
+      connectorId = `/subscriptions/${this.options.subscriptionId}/providers/microsoft.web/locations/${this.options.location}/managedapis/${getResourceNameFromId(connectorId)}`;
+      queryParameters['isBuiltIn'] = 'true';
+    }
+
+    const response = await httpClient.get<any>({
+      uri: `${baseUrl}${connectorId}/apiOperations/${operationName}`,
+      queryParameters,
+    });
+
+    const {
+      properties: { brandColor, description, iconUri, api },
+    } = response;
+
+    return {
+      properties: {
+        connector: { properties: { displayName: api.properties.displayName } },
+        brandColor: brandColor ?? api?.brandColor,
+        description,
+        iconUri: iconUri ?? api?.iconUri,
+      },
+    };
   }
 
   override isBuiltInConnector(connectorId: string): boolean {
@@ -175,9 +206,6 @@ const as2decode = 'as2decode';
 const rosettanetencode = 'rosettanetencode';
 const rosettanetdecode = 'rosettanetdecode';
 const rosettanetwaitforresponse = 'rosettanetwaitforresponse';
-const chunktext = 'chunktext';
-const parsedocument = 'parsedocument';
-const parsedocumentwithmetadata = 'parsedocumentwithmetadata';
 
 // Azure Resource Connectors
 const apimanagement = 'apimanagement';
@@ -223,7 +251,4 @@ const supportedConsumptionManifestObjects = new Map<string, OperationManifest>([
   [rosettanetencode, rosettaNetEncodeManifest],
   [rosettanetdecode, rosettaNetDecodeManifest],
   [rosettanetwaitforresponse, rosettaNetWaitForResponseManifest],
-  [chunktext, chunkTextManifest],
-  [parsedocument, parseDocumentManifest],
-  [parsedocumentwithmetadata, parseDocumentWithMetadataManifest],
 ]);
