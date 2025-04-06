@@ -130,7 +130,6 @@ export const getCodefulWorkflowTemplate = async () => {
 
   const templatePath = path.join(__dirname, 'assets', "CodefulWorkflowTemplate", "codefulTemplate.cs");
   const templateContent = await fs.readFile(templatePath, 'utf-8');
-  
 
   return templateContent;
 };

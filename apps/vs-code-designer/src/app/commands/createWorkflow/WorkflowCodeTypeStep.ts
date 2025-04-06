@@ -14,7 +14,6 @@ import type {
 import { TemplateCategory } from '@microsoft/vscode-extension-logic-apps';
 import { localize } from '../../../localize';
 import { ScriptWorkflowNameStep } from '../createCodeless/createCodelessSteps/ScriptSteps/ScriptWorkflowNameStep';
-import { switchToDotnetProject } from '../workflows/switchToDotnetProject';
 import { CodefulWorkflowCreateStep } from '../createCodeful/CodefulWorkflowCreateStep';
 
 export class WorkflowCodeTypeStep extends AzureWizardPromptStep<IFunctionWizardContext> {

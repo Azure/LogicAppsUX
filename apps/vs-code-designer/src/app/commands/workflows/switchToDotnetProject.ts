@@ -124,7 +124,7 @@ export async function switchToDotnetProject(context: IProjectWizardContext, targ
   const functionsVersion: string = `v${majorVersion}`;
   const projectPath: string = target.fsPath;
   const projTemplateKey = await getTemplateKeyFromProjFile(context, projectPath, version, ProjectLanguage.CSharp);
-  const dotnetVersion = await getFramework(context, projectPath);
+  const dotnetVersion = await getFramework(context, projectPath, isCodeful);
   const useBinaries = useBinariesDependencies();
   const dotnetLocalVersion = useBinaries ? await getLocalDotNetVersionFromBinaries(dotNetVersion) : '';
 
@@ -146,7 +146,7 @@ export async function switchToDotnetProject(context: IProjectWizardContext, targ
   );
 
   await copyBundleProjectFiles(target);
-  await updateBuildFile(context, target, 'net8.0', isCodeful);
+  await updateBuildFile(context, target, dotnetVersion, isCodeful);
   if (useBinaries) {
     await createGlobalJsonFile(dotnetLocalVersion, target.fsPath);
   }
@@ -219,9 +219,8 @@ async function updateBuildFile(context: IActionContext, target: vscode.Uri, dotn
   if (projectArtifacts['lib']) {
     xmlBuildFile = addLibToPublishPath(xmlBuildFile);
   }
-  if (isCodeful) {
-    xmlBuildFile['Project']['PropertyGroup']['TargetFramework'] = 'net8.0';
-  }
+
+  xmlBuildFile['Project']['PropertyGroup']['TargetFramework'] = dotnetVersion;
 
   await writeBuildFileToDisk(context, xmlBuildFile, target.fsPath);
 }
