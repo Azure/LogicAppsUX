@@ -36,8 +36,8 @@ import { getContainingWorkspace, getWorkspaceFolder } from '../../utils/workspac
 import { DotnetInitVSCodeStep } from '../initProjectForVSCode/DotnetInitVSCodeStep';
 import { DialogResponses, nonNullOrEmptyValue } from '@microsoft/vscode-azext-utils';
 import type { IActionContext } from '@microsoft/vscode-azext-utils';
-import type { IProjectWizardContext, FuncVersion, ITemplates } from '@microsoft/vscode-extension-logic-apps';
-import { ProjectLanguage } from '@microsoft/vscode-extension-logic-apps';
+import type { IProjectWizardContext, ITemplates } from '@microsoft/vscode-extension-logic-apps';
+import { FuncVersion, ProjectLanguage } from '@microsoft/vscode-extension-logic-apps';
 import * as fse from 'fs-extra';
 import * as path from 'path';
 import * as vscode from 'vscode';
@@ -61,6 +61,9 @@ export async function switchToDotnetProject(context: IProjectWizardContext, targ
   }
 
   let version: FuncVersion | undefined = tryParseFuncVersion(getWorkspaceSetting(funcVersionSetting, target.fsPath));
+  if (isCodeful) {
+    version = FuncVersion.v4;
+  }
 
   const projectFiles = await getProjFiles(context, ProjectLanguage.CSharp, target.fsPath);
   if (projectFiles.length > 0) {
