@@ -60,12 +60,6 @@ export async function switchToDotnetProject(context: IProjectWizardContext, targ
     return;
   }
 
-  if (target === undefined || Object.keys(target).length === 0) {
-    const workspaceFolder = await getWorkspaceFolder(context);
-    const projectPath = await tryGetLogicAppProjectRoot(context, workspaceFolder);
-    target = vscode.Uri.file(projectPath);
-  }
-
   let version: FuncVersion | undefined = tryParseFuncVersion(getWorkspaceSetting(funcVersionSetting, target.fsPath));
 
   const projectFiles = await getProjFiles(context, ProjectLanguage.CSharp, target.fsPath);

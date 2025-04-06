@@ -6,7 +6,7 @@
 import type { IActionContext } from '@microsoft/vscode-azext-utils';
 import { DialogResponses, nonNullProp, parseError } from '@microsoft/vscode-azext-utils';
 import { WorkflowProjectType, MismatchBehavior, WorkerRuntime } from '@microsoft/vscode-extension-logic-apps';
-import type { IFunctionWizardContext, IWorkflowTemplate, IHostJsonV2 } from '@microsoft/vscode-extension-logic-apps';
+import type { IFunctionWizardContext, IHostJsonV2 } from '@microsoft/vscode-extension-logic-apps';
 import * as fse from 'fs-extra';
 import * as path from 'path';
 import type { MessageItem } from 'vscode';
@@ -15,10 +15,11 @@ import { getCodefulWorkflowTemplate } from '../../utils/codeless/templates';
 //import { addFolderToBuildPath, addNugetPackagesToBuildFile, getDotnetBuildFile, suppressJavaScriptBuildWarnings, updateFunctionsSDKVersion, writeBuildFileToDisk } from '../../utils/codeless/updateBuildFile';
 import { writeFormattedJson } from '../../utils/fs';
 import { localize } from 'vscode-nls';
-import { workflowType, hostFileName, extensionBundleId, defaultVersionRange, azureWebJobsStorageKey, localEmulatorConnectionString, localSettingsFileName, workerRuntimeKey, functionsInprocNet8Enabled } from '../../../constants';
+import { hostFileName, extensionBundleId, defaultVersionRange, azureWebJobsStorageKey, localEmulatorConnectionString, localSettingsFileName, workerRuntimeKey, functionsInprocNet8Enabled } from '../../../constants';
 import { removeAppKindFromLocalSettings, setLocalAppSetting } from '../../utils/appSettings/localSettings';
 import { validateDotnetInstalled } from '../../utils/dotnet/executeDotnetTemplateCommand';
 import { parseJson } from '../../utils/parseJson';
+import { switchToDotnetProject } from '../workflows/switchToDotnetProject';
 
 export class CodefulWorkflowCreateStep extends WorkflowCreateStepBase<IFunctionWizardContext> {
 
@@ -32,7 +33,6 @@ export class CodefulWorkflowCreateStep extends WorkflowCreateStepBase<IFunctionW
   }
 
   public async executeCore(context: IFunctionWizardContext): Promise<string> {
-    const template: IWorkflowTemplate = nonNullProp(context, 'functionTemplate');
     const functionPath: string = path.join(context.projectPath, nonNullProp(context, 'functionName'));
 
     const codelessDefinition: string = await getCodefulWorkflowTemplate();
@@ -44,24 +44,6 @@ export class CodefulWorkflowCreateStep extends WorkflowCreateStepBase<IFunctionW
 
     await this.createSystemArtifacts(context);
 
-    //setLocalAppSetting(context, context.logicAppFolderPath, appKindSetting, "", MismatchBehavior.Overwrite);
-
-   // const workflowName = nonNullProp(context, 'functionName');
-
-    // if (nonNullProp(context, 'workflowProjectType') === WorkflowProjectType.Nuget) {
-    //   let xmlBuildFile: any = await getDotnetBuildFile(context, context.projectPath);
-    //   const dotnetVersion = await getFramework(context, functionPath);
-
-    //   xmlBuildFile = JSON.parse(xmlBuildFile);
-    //   xmlBuildFile = addFolderToBuildPath(xmlBuildFile, workflowName);
-    //   xmlBuildFile = addNugetPackagesToBuildFile(xmlBuildFile);
-    //   xmlBuildFile = suppressJavaScriptBuildWarnings(xmlBuildFile);
-    //   xmlBuildFile = updateFunctionsSDKVersion(xmlBuildFile, dotnetVersion);
-
-    //   await writeBuildFileToDisk(context, xmlBuildFile, context.projectPath);
-    // }
-    
-
     return workflowCsFullPath;
   }
 
@@ -69,6 +51,8 @@ export class CodefulWorkflowCreateStep extends WorkflowCreateStepBase<IFunctionW
     const hostJsonPath: string = path.join(context.projectPath, hostFileName);
     let hostJson: IHostJsonV2 = await this.getHostJson(context, hostJsonPath);
     let hostJsonUpdated = false;
+
+    await switchToDotnetProject(context, undefined, '8', true);
 
     hostJson.extensionBundle = undefined;
     hostJsonUpdated = true;
@@ -81,10 +65,6 @@ export class CodefulWorkflowCreateStep extends WorkflowCreateStepBase<IFunctionW
     ) {
       hostJson = {
         ...hostJson,
-        // extensionBundle: {
-        //   id: extensionBundleId,
-        //   version: defaultVersionRange,
-        // },
       };
       hostJson.extensionBundle = undefined;
       hostJsonUpdated = true;

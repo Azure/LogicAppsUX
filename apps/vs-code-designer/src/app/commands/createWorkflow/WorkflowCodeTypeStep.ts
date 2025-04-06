@@ -54,7 +54,6 @@ export class WorkflowCodeTypeStep extends AzureWizardPromptStep<IFunctionWizardC
 
       promptSteps.push(new ScriptWorkflowNameStep());
       executeSteps.push(await CodefulWorkflowCreateStep.createStep(context));
-
       return { promptSteps, executeSteps, title };
     }
     return undefined;

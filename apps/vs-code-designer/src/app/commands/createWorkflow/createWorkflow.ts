@@ -18,7 +18,6 @@ import { ProjectLanguage, WorkflowProjectType } from '@microsoft/vscode-extensio
 import type { WorkspaceFolder } from 'vscode';
 import { WorkflowStateTypeStep } from '../createCodeless/createCodelessSteps/WorkflowStateTypeStep';
 import { WorkflowCodeTypeStep } from './WorkflowCodeTypeStep';
-import { switchToDotnetProject } from '../workflows/switchToDotnetProject';
 
 export async function createWorkflow(
   context: IActionContext,
@@ -80,8 +79,4 @@ export async function createWorkflow(
 
   await wizard.prompt();
   await wizard.execute();
-
-  if (!wizardContext.isCodeless) {
-    switchToDotnetProject(wizardContext, undefined, '8', true);
-  }
 }

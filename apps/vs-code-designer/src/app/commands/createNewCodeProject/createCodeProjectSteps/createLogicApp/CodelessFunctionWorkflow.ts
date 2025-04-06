@@ -46,7 +46,8 @@ export class CodelessFunctionWorkflow extends WorkflowCreateStepBase<IFunctionWi
   public static async createStep(context: IFunctionWizardContext): Promise<CodelessFunctionWorkflow> {
     // Ensure that the .NET Core SDK is installed on the user's machine
     const projectPath = nonNullProp(context, 'logicAppFolderPath');
-    const isDotNetInstalled = await validateDotNetIsInstalled(context, projectPath);
+    const isDotNetInstalled = 
+    await validateDotNetIsInstalled(context, projectPath);
     if (!isDotNetInstalled) {
       return;
     }
