@@ -24,7 +24,8 @@ export async function ConvertToWorkspace(context: IActionContext): Promise<boole
     const wizardContext: Partial<IFunctionWizardContext> & IActionContext = Object.assign(context, {
       version: tryParseFuncVersion(version),
     });
-    context.telemetry.properties.isWorkspace = 'false';
+    context.
+    telemetry.properties.isWorkspace = 'false';
     wizardContext.workspaceCustomFilePath =
       (await getWorkspaceFile(wizardContext)) ?? (await getWorkspaceFileInParentDirectory(wizardContext));
     //save uri variable for open project folder command

@@ -20,6 +20,7 @@ import { removeAppKindFromLocalSettings, setLocalAppSetting } from '../../utils/
 import { validateDotnetInstalled } from '../../utils/dotnet/executeDotnetTemplateCommand';
 import { parseJson } from '../../utils/parseJson';
 import { switchToDotnetProject } from '../workflows/switchToDotnetProject';
+import * as vscode from 'vscode';
 
 export class CodefulWorkflowCreateStep extends WorkflowCreateStepBase<IFunctionWizardContext> {
 
@@ -52,7 +53,9 @@ export class CodefulWorkflowCreateStep extends WorkflowCreateStepBase<IFunctionW
     let hostJson: IHostJsonV2 = await this.getHostJson(context, hostJsonPath);
     let hostJsonUpdated = false;
 
-    await switchToDotnetProject(context, undefined, '8', true);
+    const target = vscode.Uri.file(context.projectPath);
+
+    await switchToDotnetProject(context, target, '8', true);
 
     hostJson.extensionBundle = undefined;
     hostJsonUpdated = true;
