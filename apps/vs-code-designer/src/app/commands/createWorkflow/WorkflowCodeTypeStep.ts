@@ -42,7 +42,9 @@ export class WorkflowCodeTypeStep extends AzureWizardPromptStep<IFunctionWizardC
         .data;
 
       context.isCodeless = result.id === workflowCodeType.codeless;
-      context.functionTemplate = result;
+      if (!context.isCodeless) {
+        context.functionTemplate = result;
+      }
   }
 
   public async getSubWizard(context: IFunctionWizardContext): Promise<IWizardOptions<IFunctionWizardContext> | undefined> {

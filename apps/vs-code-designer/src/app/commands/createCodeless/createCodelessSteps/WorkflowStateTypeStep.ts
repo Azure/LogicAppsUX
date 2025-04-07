@@ -70,7 +70,7 @@ export class WorkflowStateTypeStep extends AzureWizardPromptStep<IFunctionWizard
   }
 
   public shouldPrompt(context: IFunctionWizardContext): boolean {
-    return !context.functionTemplate || context.isCodeless;
+    return !context.functionTemplate && context.isCodeless;
   }
 
   private async getPicks(context: IFunctionWizardContext): Promise<IAzureQuickPickItem<IWorkflowTemplate | TemplatePromptResult>[]> {
