@@ -31,11 +31,13 @@ export const TemplateParametersList = () => {
     }),
   };
 
-  const { parameterDefinitions, currentPanelView } = useSelector((state: RootState) => ({
+  const { parameterDefinitions, currentPanelView, workflowsInTemplate } = useSelector((state: RootState) => ({
     parameterDefinitions: state.template.parameterDefinitions,
     currentPanelView: state.panel.currentPanelView,
+    workflowsInTemplate: state.template.workflows,
   }));
 
+  const isAccelerator = Object.keys(workflowsInTemplate).length > 1;
   const resourceStrings = useResourceStrings();
 
   const columns = [
@@ -105,9 +107,11 @@ export const TemplateParametersList = () => {
               <TableCell>
                 <TableCellLayout>{item.allowedValues}</TableCellLayout>
               </TableCell>
-              <TableCell>
-                <TableCellLayout>{getResourceNameFromId(item.associatedWorkflows)}</TableCellLayout>
-              </TableCell>
+              {isAccelerator && (
+                <TableCell>
+                  <TableCellLayout>{getResourceNameFromId(item.associatedWorkflows)}</TableCellLayout>
+                </TableCell>
+              )}
               <TableCell>
                 <TableCellLayout>{item.description}</TableCellLayout>
               </TableCell>
