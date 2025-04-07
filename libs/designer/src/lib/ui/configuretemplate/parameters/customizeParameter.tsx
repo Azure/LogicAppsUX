@@ -1,93 +1,95 @@
 import { TemplatesSection, type TemplatesSectionItem } from '@microsoft/designer-ui';
 import { useResourceStrings } from '../resources';
-import { useMemo, useState } from 'react';
-import { useParameterDefinition } from '../../../core/configuretemplate/configuretemplateselectors';
+import { useMemo } from 'react';
 import { getResourceNameFromId, type Template } from '@microsoft/logic-apps-shared';
 import { useSelector } from 'react-redux';
 import type { RootState } from '../../../core/state/templates/store';
 import { Text } from '@fluentui/react-components';
 
-export const CustomizeParameter = ({ parameterId }: { parameterId: string }) => {
+export const CustomizeParameter = ({
+  parameterDefinition,
+  setParameterDefinition,
+}: {
+  parameterDefinition: Template.ParameterDefinition;
+  setParameterDefinition: (parameterDefinition: Template.ParameterDefinition) => void;
+}) => {
   const resourceStrings = useResourceStrings();
-  const parameterDefinition = useParameterDefinition(parameterId);
 
   const { isAccelerator } = useSelector((state: RootState) => ({
     isAccelerator: Object.keys(state.template.workflows).length > 1,
   }));
 
-  const [modifiedParameterDefinition, setModifiedParameterDefinition] = useState<Template.ParameterDefinition>(parameterDefinition);
-
   const detailsSectionItems: TemplatesSectionItem[] = useMemo(() => {
     return [
       {
         label: resourceStrings.ParameterName,
-        value: modifiedParameterDefinition.name || '',
+        value: parameterDefinition.name || '',
         type: 'text',
         required: true,
       },
       {
         label: resourceStrings.Type,
-        value: modifiedParameterDefinition.type || '',
+        value: parameterDefinition.type || '',
         type: 'text',
         required: true,
       },
       {
         label: resourceStrings.ParameterDisplayName,
-        value: modifiedParameterDefinition.displayName || '',
+        value: parameterDefinition.displayName || '',
         type: 'textfield',
         required: true,
         onChange: (value: string) => {
-          setModifiedParameterDefinition((prev) => ({
-            ...prev,
+          setParameterDefinition({
+            ...parameterDefinition,
             displayName: value,
-          }));
+          });
         },
       },
       {
         label: resourceStrings.DefaultValue,
-        value: modifiedParameterDefinition.default || '',
+        value: parameterDefinition.default || '',
         type: 'textfield',
         required: true,
         onChange: (value: string) => {
-          setModifiedParameterDefinition((prev) => ({
-            ...prev,
+          setParameterDefinition({
+            ...parameterDefinition,
             default: value,
-          }));
+          });
         },
       },
       {
         label: resourceStrings.Description,
-        value: modifiedParameterDefinition.description || '',
+        value: parameterDefinition.description || '',
         type: 'textarea',
         required: true,
         onChange: (value: string) => {
-          setModifiedParameterDefinition((prev) => ({
-            ...prev,
+          setParameterDefinition({
+            ...parameterDefinition,
             description: value,
-          }));
+          });
         },
       },
       {
         label: resourceStrings.RequiredField,
-        value: modifiedParameterDefinition.required ?? false,
+        value: parameterDefinition.required ?? false,
         type: 'switch',
         required: true,
         onChange: (value: boolean) => {
-          setModifiedParameterDefinition((prev) => ({
-            ...prev,
+          setParameterDefinition({
+            ...parameterDefinition,
             required: value,
-          }));
+          });
         },
       },
     ];
-  }, [resourceStrings, modifiedParameterDefinition, setModifiedParameterDefinition]);
+  }, [resourceStrings, parameterDefinition, setParameterDefinition]);
 
   return (
     <div>
       <TemplatesSection title={resourceStrings.Details} titleHtmlFor={'detailsSectionLabel'} items={detailsSectionItems} />
-      {isAccelerator && modifiedParameterDefinition.associatedWorkflows && (
+      {isAccelerator && parameterDefinition.associatedWorkflows && (
         <TemplatesSection title={resourceStrings.AssociatedWorkflows} titleHtmlFor={'associatedSectionLabel'}>
-          <Text>{formatAssociatedWorklows(modifiedParameterDefinition.associatedWorkflows)}</Text>
+          <Text>{formatAssociatedWorklows(parameterDefinition.associatedWorkflows)}</Text>
         </TemplatesSection>
       )}
     </div>

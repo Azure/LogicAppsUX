@@ -6,6 +6,10 @@ import { useCallback, useMemo } from 'react';
 import { useIntl } from 'react-intl';
 import { Panel, PanelType } from '@fluentui/react';
 import { CustomizeParameter } from '../../../configuretemplate/parameters/customizeParameter';
+import { updateTemplateParameterDefinition } from '../../../../core/state/templates/templateSlice';
+import { useFunctionalState } from '@react-hookz/web';
+import type { Template } from '@microsoft/logic-apps-shared';
+import { useParameterDefinition } from '../../../../core/configuretemplate/configuretemplateselectors';
 
 const layerProps = {
   hostId: 'msla-layer-host',
@@ -15,11 +19,13 @@ const layerProps = {
 export const CustomizeParameterPanel = () => {
   const dispatch = useDispatch<AppDispatch>();
   const intl = useIntl();
-  const { selectedTabId, isOpen, currentPanelView } = useSelector((state: RootState) => ({
-    selectedTabId: state.panel.selectedTabId,
+  const { parameterId, isOpen, currentPanelView } = useSelector((state: RootState) => ({
+    parameterId: state.panel.selectedTabId,
     isOpen: state.panel.isOpen,
     currentPanelView: state.panel.currentPanelView,
   }));
+
+  const parameterDefinition = useParameterDefinition(parameterId as string);
 
   const resources = {
     customizeParamtersTitle: intl.formatMessage({
@@ -28,6 +34,15 @@ export const CustomizeParameterPanel = () => {
       description: 'Panel header title for customizing parameters',
     }),
   };
+  const [selectedParameterDefinition, setSelectedParameterDefinition] =
+    useFunctionalState<Template.ParameterDefinition>(parameterDefinition);
+
+  const updateParameterDefinition = useCallback(
+    (parameterDefinition: Template.ParameterDefinition) => {
+      setSelectedParameterDefinition(parameterDefinition);
+    },
+    [setSelectedParameterDefinition]
+  );
 
   const onRenderHeaderContent = useCallback(
     () => (
@@ -45,12 +60,18 @@ export const CustomizeParameterPanel = () => {
   const footerContent = useMemo(() => {
     return {
       primaryButtonText: intl.formatMessage({
-        defaultMessage: 'Next',
-        id: '6id6Se',
+        defaultMessage: 'Save',
+        id: '9klmbJ',
         description: 'Button text for saving changes for parameter in the customize parameter panel',
       }),
       primaryButtonOnClick: () => {
         // TODO: onSave
+        dispatch(
+          updateTemplateParameterDefinition({
+            parameterId: parameterId as string,
+            data: selectedParameterDefinition(),
+          })
+        );
         dispatch(closePanel());
       },
       secondaryButtonText: intl.formatMessage({
@@ -62,13 +83,13 @@ export const CustomizeParameterPanel = () => {
         dispatch(closePanel());
       },
     };
-  }, [dispatch, intl]);
+  }, [dispatch, intl, parameterId, selectedParameterDefinition]);
 
   const onRenderFooterContent = useCallback(() => <TemplatesPanelFooter showPrimaryButton={true} {...footerContent} />, [footerContent]);
 
   return (
     <Panel
-    styles={{ main: { padding: '0 20px', zIndex: 1000 }, content: { paddingLeft: '0px' } }}
+      styles={{ main: { padding: '0 20px', zIndex: 1000 }, content: { paddingLeft: '0px' } }}
       isLightDismiss={false}
       type={PanelType.custom}
       customWidth={'50%'}
@@ -80,7 +101,7 @@ export const CustomizeParameterPanel = () => {
       layerProps={layerProps}
       isFooterAtBottom={true}
     >
-      <CustomizeParameter parameterId={selectedTabId as string} />
+      <CustomizeParameter parameterDefinition={selectedParameterDefinition()} setParameterDefinition={updateParameterDefinition} />
     </Panel>
   );
 };

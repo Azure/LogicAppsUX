@@ -29,6 +29,16 @@ export const TemplateParametersList = () => {
       id: 'u2z3kg',
       description: 'The aria label for the parameters table',
     }),
+    True: intl.formatMessage({
+      defaultMessage: 'true',
+      id: '8T3WkV',
+      description: 'The aria label for the required parameter',
+    }),
+    False: intl.formatMessage({
+      defaultMessage: 'false',
+      id: 'natAa1',
+      description: 'The aria label for the non-required parameter',
+    }),
   };
 
   const { parameterDefinitions, currentPanelView, workflowsInTemplate } = useSelector((state: RootState) => ({
@@ -41,8 +51,8 @@ export const TemplateParametersList = () => {
   const resourceStrings = useResourceStrings();
 
   const columns = [
-    { columnKey: 'name', label: resourceStrings.Name },
     { columnKey: 'displayName', label: resourceStrings.DisplayName },
+    { columnKey: 'name', label: resourceStrings.Name },
     { columnKey: 'type', label: resourceStrings.Type },
     { columnKey: 'default', label: resourceStrings.DefaultValue },
     { columnKey: 'allowedValues', label: resourceStrings.AllowedValues },
@@ -116,7 +126,7 @@ export const TemplateParametersList = () => {
                 <TableCellLayout>{item.description}</TableCellLayout>
               </TableCell>
               <TableCell>
-                <TableCellLayout>{item.required}</TableCellLayout>
+                <TableCellLayout>{item.required ? intlText.True : intlText.False}</TableCellLayout>
               </TableCell>
               <TableCell>
                 <TableCellLayout>
