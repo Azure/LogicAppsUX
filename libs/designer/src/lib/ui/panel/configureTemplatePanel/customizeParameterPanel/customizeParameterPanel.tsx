@@ -68,6 +68,7 @@ export const CustomizeParameterPanel = () => {
 
   return (
     <Panel
+    styles={{ main: { padding: '0 20px', zIndex: 1000 }, content: { paddingLeft: '0px' } }}
       isLightDismiss={false}
       type={PanelType.custom}
       customWidth={'50%'}
