@@ -17,7 +17,7 @@ export class TargetFrameworkStep extends AzureWizardPromptStep<IProjectWizardCon
    * Prompts the user to select a target framework.
    * @param {IProjectWizardContext} context - The project wizard context.
    */
-  public async prompt(context: IProjectWizardContext): Promise<void> { // danielle look into this
+  public async prompt(context: IProjectWizardContext): Promise<void> {
     const placeHolder: string = localize('selectTargetFramework', 'Select a target framework.');
     const picks: IAzureQuickPickItem<TargetFramework>[] = [{ label: localize('Net8', '.NET 8'), data: TargetFramework.Net8 }];
     if (process.platform === Platform.windows) {
