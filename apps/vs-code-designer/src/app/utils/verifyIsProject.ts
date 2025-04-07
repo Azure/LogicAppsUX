@@ -23,31 +23,41 @@ export async function isLogicAppProject(folderPath: string): Promise<boolean> {
   if (hasHostJson) {
     const subpaths: string[] = await fse.readdir(folderPath);
     const workflowJsonPaths = subpaths.map((subpath) => path.join(folderPath, subpath, 'workflow.json'));
-    // const validWorkflowJsonPaths = await Promise.all(
-    //   workflowJsonPaths.map(async (workflowJsonPath) => {
-    //     if (await fse.pathExists(workflowJsonPath)) {
-    //       const workflowJsonData = await fse.readFile(workflowJsonPath, 'utf-8');
-    //       const workflowJson = JSON.parse(workflowJsonData);
-    //       const schema = workflowJson?.definition?.$schema;
-    //       if (schema && schema.includes('Microsoft.Logic') && schema.includes('workflowdefinition.json')) {
-    //         const filesInSubpath = await fse.readdir(path.dirname(workflowJsonPath));
-    //         if (filesInSubpath.length === 1 && filesInSubpath[0] === 'workflow.json') {
-    //           return true;
-    //         }
-    //       }
-    //     }
-    //     return false;
-    //   })
-    // );
+    const validWorkflowJsonPaths = await Promise.all(
+      workflowJsonPaths.map(async (workflowJsonPath) => {
+        if (await fse.pathExists(workflowJsonPath)) {
+          const workflowJsonData = await fse.readFile(workflowJsonPath, 'utf-8');
+          const workflowJson = JSON.parse(workflowJsonData);
+          const schema = workflowJson?.definition?.$schema;
+          if (schema && schema.includes('Microsoft.Logic') && schema.includes('workflowdefinition.json')) {
+            const filesInSubpath = await fse.readdir(path.dirname(workflowJsonPath));
+            if (filesInSubpath.length === 1 && filesInSubpath[0] === 'workflow.json') {
+              return true;
+            }
+          }
+        }
+        return false;
+      })
+    );
 
-    // if (!validWorkflowJsonPaths.some(Boolean)) {
-    //   return false;
-    // }
+    const workflowCsPaths = subpaths.map((subpath) => path.join(folderPath, subpath, 'workflow.cs'));
+    const validWorkflowCsPaths = await Promise.all(
+      workflowCsPaths.map(async (workflowJsonPath) => {
+        if (await fse.pathExists(workflowJsonPath)) {
+          return true;
+        }
+        return false;
+      })
+    );
+
+    if (!(validWorkflowJsonPaths.some(Boolean) || validWorkflowCsPaths.some(Boolean))) {
+      return false;
+    }
     const hostJsonData = fse.readFileSync(hostFilePath, 'utf-8');
     const hostJson = JSON.parse(hostJsonData);
 
     const hasWorkflowBundle = hostJson?.extensionBundle?.id === extensionBundleId;
-    return hasHostJson && hasWorkflowBundle;
+    return hasHostJson && (hasWorkflowBundle ||  validWorkflowCsPaths.some(Boolean));
   }
 
   return false;
@@ -102,7 +112,7 @@ export async function tryGetLogicAppProjectRoot(
   if (!(await fse.pathExists(folderPath))) {
     return undefined;
   }
-  if (true) {
+  if (await isLogicAppProject(folderPath)) {
     return folderPath;
   }
   const subpaths: string[] = await fse.readdir(folderPath);
