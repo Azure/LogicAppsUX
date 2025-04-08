@@ -831,15 +831,19 @@ export interface AgentCondition {
 }
 
 export interface AgentChannels {
-  in: Record<string, AgentChannelDefinition>;
-  out: Record<string, AgentChannelDefinition>;
+  in: Record<string, AgentInputChannelDefinition>;
+  out: Record<string, AgentOutputChannelDefinition>;
 }
 
-export interface AgentChannelDefinition {
+export interface AgentInputChannelDefinition {
   trigger: OperationDefinition;
   mapping?: {
     message: string;
   };
+}
+
+export interface AgentOutputChannelDefinition {
+  action: OperationDefinition;
 }
 
 export interface ConnectorAction extends Action {

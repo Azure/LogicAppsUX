@@ -437,8 +437,8 @@ export const buildGraphFromActions = (
             const outputChannelKeys = Object.keys(action.channels.out);
             for (const key of outputChannelKeys) {
               const channelAction = action.channels.out?.[key];
-              if (channelAction && channelAction?.trigger) {
-                const id = `${actionName}${constants.CHANNELS.OUTPUT}${channelAction.trigger.type}`;
+              if (channelAction && channelAction?.action) {
+                const id = `${actionName}${constants.CHANNELS.OUTPUT}${channelAction.action.type}`;
                 allActionNames.push(id);
               }
             }
@@ -719,8 +719,8 @@ export const processScopeActions = (
         const outputChannelKeys = Object.keys(action.channels.out);
         for (const key of outputChannelKeys) {
           const channelAction: any = action.channels.out?.[key];
-          if (channelAction && channelAction?.trigger) {
-            const id = `${actionName}${constants.CHANNELS.OUTPUT}${channelAction.trigger.type}`;
+          if (channelAction && channelAction?.action) {
+            const id = `${actionName}${constants.CHANNELS.OUTPUT}${channelAction.action.type}`;
             allActions[id] = channelAction.trigger;
           }
         }
