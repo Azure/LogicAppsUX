@@ -26,7 +26,7 @@ export async function validateDotNetIsInstalled(context: IActionContext, fsPath:
   await callWithTelemetryAndErrorHandling('azureLogicAppsStandard.validateDotNetIsInstalled', async (innerContext: IActionContext) => {
     innerContext.errorHandling.suppressDisplay = true;
 
-    if (!getWorkspaceSetting<boolean>(validateDotNetSDKSetting, fsPath)) {                                              
+    if (!getWorkspaceSetting<boolean>(validateDotNetSDKSetting, fsPath)) {
       innerContext.telemetry.properties.validateDotNet = 'false';
       installed = true;
     } else if (await isDotNetInstalled()) {
@@ -68,7 +68,7 @@ export async function isDotNetInstalled(): Promise<boolean> {
   try {
     await executeCommand(undefined, undefined, getDotNetCommand(), '--version');
     return true;
-  } catch (error) {
+  } catch (_error) {
     return false;
   }
 }
