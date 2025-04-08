@@ -81,7 +81,7 @@ export const AgentInstructionEditor = ({
         style={{ fontSize: 12, fontStyle: 'italic' }}
       >
         {descriptionLink}
-        <NavigateIcon style={{ position: 'relative', top: '2px' }} />
+        <NavigateIcon style={{ position: 'relative', top: '2px', left: '2px' }} />
       </Link>
       <div className="msla-agent-instruction-editors">
         <Label text={systemPromptLabel} />
