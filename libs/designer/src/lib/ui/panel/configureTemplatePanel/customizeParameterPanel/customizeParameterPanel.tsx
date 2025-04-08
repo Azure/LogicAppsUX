@@ -2,7 +2,7 @@ import type { AppDispatch, RootState } from '../../../../core/state/templates/st
 import { useDispatch, useSelector } from 'react-redux';
 import { closePanel, TemplatePanelView } from '../../../../core/state/templates/panelSlice';
 import { TemplatesPanelFooter, TemplatesPanelHeader } from '@microsoft/designer-ui';
-import { useCallback, useMemo } from 'react';
+import { useCallback, useMemo, useState } from 'react';
 import { useIntl } from 'react-intl';
 import { Panel, PanelType } from '@fluentui/react';
 import { CustomizeParameter } from '../../../configuretemplate/parameters/customizeParameter';
@@ -36,9 +36,11 @@ export const CustomizeParameterPanel = () => {
   };
   const [selectedParameterDefinition, setSelectedParameterDefinition] =
     useFunctionalState<Template.ParameterDefinition>(parameterDefinition);
+  const [isDirty, setIsDirty] = useState(false);
 
   const updateParameterDefinition = useCallback(
     (parameterDefinition: Template.ParameterDefinition) => {
+      setIsDirty(true);
       setSelectedParameterDefinition(parameterDefinition);
     },
     [setSelectedParameterDefinition]
@@ -74,6 +76,7 @@ export const CustomizeParameterPanel = () => {
         );
         dispatch(closePanel());
       },
+      primaryButtonDisabled: !isDirty,
       secondaryButtonText: intl.formatMessage({
         defaultMessage: 'Cancel',
         id: '75zXUl',
@@ -83,7 +86,7 @@ export const CustomizeParameterPanel = () => {
         dispatch(closePanel());
       },
     };
-  }, [dispatch, intl, parameterId, selectedParameterDefinition]);
+  }, [dispatch, intl, isDirty, parameterId, selectedParameterDefinition]);
 
   const onRenderFooterContent = useCallback(() => <TemplatesPanelFooter showPrimaryButton={true} {...footerContent} />, [footerContent]);
 
