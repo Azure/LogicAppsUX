@@ -50,16 +50,23 @@ export const TemplateParametersList = () => {
   const isAccelerator = Object.keys(workflowsInTemplate).length > 1;
   const resourceStrings = useResourceStrings();
 
-  const columns = [
-    { columnKey: 'displayName', label: resourceStrings.DisplayName },
-    { columnKey: 'name', label: resourceStrings.Name },
-    { columnKey: 'type', label: resourceStrings.Type },
-    { columnKey: 'default', label: resourceStrings.DefaultValue },
-    { columnKey: 'allowedValues', label: resourceStrings.AllowedValues },
-    { columnKey: 'associatedWorkflows', label: resourceStrings.AssociatedWorkflows },
-    { columnKey: 'description', label: resourceStrings.Description },
-    { columnKey: 'required', label: resourceStrings.Required },
-  ];
+  const columns = useMemo(() => {
+    const baseColumn = [
+      { columnKey: 'displayName', label: resourceStrings.DisplayName },
+      { columnKey: 'name', label: resourceStrings.Name },
+      { columnKey: 'type', label: resourceStrings.Type },
+      { columnKey: 'default', label: resourceStrings.DefaultValue },
+      { columnKey: 'allowedValues', label: resourceStrings.AllowedValues },
+    ];
+    const column2 = [
+      { columnKey: 'description', label: resourceStrings.Description },
+      { columnKey: 'required', label: resourceStrings.Required },
+    ];
+    if (isAccelerator) {
+      return [...baseColumn, { columnKey: 'associatedWorkflows', label: resourceStrings.AssociatedWorkflows }, ...column2];
+    }
+    return [...baseColumn, ...column2];
+  }, [isAccelerator, resourceStrings]);
 
   const items = useMemo(
     () =>
