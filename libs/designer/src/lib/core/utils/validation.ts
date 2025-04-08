@@ -246,19 +246,15 @@ function validateIntegerFormat(parameterFormat: string, parameterValue: string, 
     const maxValue = maximum ?? Constants.INT_MAX;
     const minValue = minimum ?? Constants.INT_MIN;
 
-    if (Number(parameterValue) > maxValue) {
-      return intl.formatMessage({
-        defaultMessage: 'The integer is too large.',
-        id: 'J3J7Bm',
-        description: 'Error validation message for integers being too large',
-      });
-    }
-    if (Number(parameterValue) < minValue) {
-      return intl.formatMessage({
-        defaultMessage: 'The integer is too small.',
-        id: '5UgEVS',
-        description: 'Error validation message for integers being too small',
-      });
+    if (Number(parameterValue) > maxValue || Number(parameterValue) < minValue) {
+      return intl.formatMessage(
+        {
+          defaultMessage: 'The integer should be between {min} and {max}',
+          id: '1QN3yG',
+          description: 'Error validation message for integers being out of range',
+        },
+        { max: maxValue, min: minValue }
+      );
     }
   }
 
@@ -296,19 +292,15 @@ function validateNumberFormat(parameterFormat: string, parameterValue: string, m
   }
 
   if (!isNullOrUndefined(maximum) && !isNullOrUndefined(minimum)) {
-    if (Number(parameterValue) > maximum) {
-      return intl.formatMessage({
-        defaultMessage: 'The number is too large.',
-        id: '8PZWAK',
-        description: 'Error validation message for number being too large',
-      });
-    }
-    if (Number(parameterValue) < minimum) {
-      return intl.formatMessage({
-        defaultMessage: 'The number is too small.',
-        id: 'wdNIZ7',
-        description: 'Error validation message for number being too small',
-      });
+    if (Number(parameterValue) > maximum || Number(parameterValue) < minimum) {
+      return intl.formatMessage(
+        {
+          defaultMessage: 'The number should be between {min} and {max}',
+          id: '1wygyb',
+          description: 'Error validation message for integers being out of range',
+        },
+        { max: maximum, min: minimum }
+      );
     }
   }
 
