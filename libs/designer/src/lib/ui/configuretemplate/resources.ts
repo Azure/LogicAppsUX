@@ -129,6 +129,47 @@ export const useResourceStrings = () => {
       id: 'r0Nvk3',
       description: 'Last saved label',
     }),
+    WorkflowDisplayName: intl.formatMessage({
+      defaultMessage: 'Workflow display name',
+      id: 'JBa1qe',
+      description: 'The label for the workflow display name',
+    }),
+    State: intl.formatMessage({
+      defaultMessage: 'State',
+      id: 'IG4XXf',
+      description: 'Label for workflow state',
+    }),
+    TemplateName: intl.formatMessage({
+      defaultMessage: 'Template',
+      id: '83Vrgj',
+      description: 'Label for template',
+    }),
+    WorkflowName: intl.formatMessage({
+      defaultMessage: 'Workflow name',
+      id: 'ekM77J',
+      description: 'Label for workflow Name',
+    }),
+    // Aria labels
+    WorkflowsListTableLabel: intl.formatMessage({
+      defaultMessage: 'Workflows list tabel',
+      id: 'om43/8',
+      description: 'Aria label for workflows list table',
+    }),
+    LoadingWorkflowsLabel: intl.formatMessage({
+      defaultMessage: 'Loading workflows aria label',
+      id: 'dhlB0s',
+      description: 'Loading aria-label for workflows list',
+    }),
+    SelectAllWorkflowsLabel: intl.formatMessage({
+      defaultMessage: 'Select all workflows checkbox rows label',
+      id: 'FSD5Z4',
+      description: 'Aria label for select all workflows checkbox',
+    }),
+    WorkflowCheckboxRowLabel: intl.formatMessage({
+      defaultMessage: 'Select workflow row checkbox label',
+      id: 'oChTO9',
+      description: 'Accessibility label for the select workflow row checkbox',
+    }),
   };
 };
 

@@ -391,7 +391,7 @@ const serializeAllChannels = async (rootState: RootState, operationId: string): 
   if (serializedOutputChannelTrigger) {
     serializedOutputChannel = {
       'out-channel-1': {
-        trigger: serializedOutputChannelTrigger,
+        action: serializedOutputChannelTrigger,
       },
     };
   }

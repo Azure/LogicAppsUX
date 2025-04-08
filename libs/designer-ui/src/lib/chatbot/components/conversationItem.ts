@@ -35,6 +35,9 @@ type BaseConversationItem = {
   type: ConversationItemType;
   id: string;
   date: Date;
+  metadata?: Record<string, any>;
+  onClick?: (id: string, text?: string) => void;
+  className?: string;
 };
 
 type BaseAssistantMessageItem = BaseConversationItem & {
@@ -54,6 +57,12 @@ export const ConversationItemType = {
   AgentHeader: 'agentHeader',
 } as const;
 export type ConversationItemType = (typeof ConversationItemType)[keyof typeof ConversationItemType];
+
+export const AgentMessageEntryType = {
+  Content: 'Content',
+  ToolResult: 'ToolResult',
+} as const;
+export type AgentMessageEntryType = (typeof AgentMessageEntryType)[keyof typeof AgentMessageEntryType];
 
 export type AgentHeaderItem = BaseConversationItem & {
   type: typeof ConversationItemType.AgentHeader;
@@ -87,27 +96,25 @@ export type AssistantErrorItem = BaseAssistantMessageItem & {
 export type AssistantReplyItem = BaseAssistantMessageItem & {
   type: typeof ConversationItemType.Reply;
   text: string;
-  reaction: ChatEntryReaction | undefined;
+  reaction?: ChatEntryReaction | undefined;
   isMarkdownText: boolean;
   correlationId?: string;
   hideFooter?: boolean;
-  __rawRequest: any;
-  __rawResponse: any;
+  __rawRequest?: any;
+  __rawResponse?: any;
   additionalDocURL?: string | undefined;
+  role?: {
+    text: string;
+    onClick: () => void;
+    agentName: string;
+  };
   azureButtonCallback?: (prompt?: string) => void;
 };
 
 export type ToolReplyItem = BaseAssistantMessageItem & {
   type: typeof ConversationItemType.Tool;
   text: string;
-  reaction: ChatEntryReaction | undefined;
-  isMarkdownText: boolean;
-  correlationId?: string;
-  hideFooter?: boolean;
-  __rawRequest: any;
-  __rawResponse: any;
-  additionalDocURL?: string | undefined;
-  azureButtonCallback?: (prompt?: string) => void;
+  status?: string;
 };
 
 export type ConnectionsSetupItem = BaseAssistantMessageItem & {

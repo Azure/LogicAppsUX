@@ -138,11 +138,16 @@ const ButtonEdge: React.FC<EdgeProps<LogicAppsEdgeProps>> = ({
 
   const highlighted = useMemo(() => isSourceSelected || isTargetSelected, [isSourceSelected, isTargetSelected]);
 
+  const markerId = useMemo(() => {
+    // encode markerId as base64 to avoid issues with special characters
+    return btoa(`arrow-end-${id}`);
+  }, [id]);
+
   return (
     <>
       <defs>
         <marker
-          id={`arrow-end-${id}`}
+          id={markerId}
           className={css(highlighted ? 'highlighted' : '')}
           viewBox="0 0 20 20"
           refX="6"
@@ -160,7 +165,7 @@ const ButtonEdge: React.FC<EdgeProps<LogicAppsEdgeProps>> = ({
         className={css('react-flow__edge-path', highlighted ? 'highlighted' : '')}
         d={d}
         strokeDasharray={showRunAfter ? '4' : '0'}
-        markerEnd={`url(#arrow-end-${id})`}
+        markerEnd={`url(#${markerId})`}
       />
 
       {/* ADD ACTION / BRANCH BUTTONS */}

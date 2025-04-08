@@ -308,7 +308,7 @@ const DesignerEditor = () => {
         ...connectionsData?.serviceProviderConnections,
         ...newServiceProviderConnections,
       };
-      if (workflow?.kind === 'agentic') {
+      if (workflow?.kind?.toLowerCase() === 'agentic') {
         (connectionsData as ConnectionsData).agentConnections = {
           ...connectionsData?.agentConnections,
           ...newAgentConnections,

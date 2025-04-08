@@ -1,4 +1,5 @@
 import { css, type ITextField, Panel, PanelType, useTheme } from '@fluentui/react';
+import { MessageBar, MessageBarBody } from '@fluentui/react-components';
 import { ShieldCheckmarkRegular } from '@fluentui/react-icons';
 import {
   ChatInput,
@@ -30,21 +31,23 @@ interface ChatbotUiProps {
     placeholder?: string;
     onChange: (value: string) => void;
     onSubmit: (value: string) => void;
+    readOnly?: boolean;
+    readOnlyText?: string;
   };
-  data: {
+  data?: {
     isSaving?: boolean;
     canSave?: boolean;
     canTest?: boolean;
-    test: () => void;
-    save: () => void;
-    abort: () => void;
+    test?: () => void;
+    save?: () => void;
+    abort?: () => void;
   };
   string: {
     test?: string;
     save?: string;
     submit?: string;
     progressState: string;
-    progressStop: string;
+    progressStop?: string;
     progressSave: string;
     protectedMessage: string;
   };
@@ -63,8 +66,8 @@ export const ChatbotContent = (props: ChatbotUiProps) => {
   const {
     panel: { header },
     body: { messages, focus, answerGenerationInProgress, setFocus },
-    inputBox: { disabled, placeholder, value = '', onChange, onSubmit },
-    data: { isSaving, canSave, canTest, test, save, abort },
+    inputBox: { disabled, placeholder, value = '', onChange, onSubmit, readOnly, readOnlyText },
+    data: { isSaving, canSave, canTest, test, save, abort } = {},
     string: { test: testString, save: saveString, submit: submitString, progressState, progressStop, progressSave, protectedMessage },
   } = props;
 
@@ -123,11 +126,11 @@ export const ChatbotContent = (props: ChatbotUiProps) => {
       {header}
       <div className={css('msla-chatbot-content')}>
         {answerGenerationInProgress && (
-          <ProgressCardWithStopButton onStopButtonClick={() => abort()} progressState={progressState} stopButtonLabel={progressStop} />
+          <ProgressCardWithStopButton onStopButtonClick={abort} progressState={progressState} stopButtonLabel={progressStop} />
         )}
         {isSaving && <ProgressCardWithStopButton progressState={progressSave} />}
-        {messages.map((item) => (
-          <ConversationMessage key={item.id} item={item} />
+        {messages.map((item, index) => (
+          <ConversationMessage key={`${index}-${item.id}`} item={item} />
         ))}
       </div>
       <div className={'msla-chatbot-footer'}>
@@ -135,33 +138,39 @@ export const ChatbotContent = (props: ChatbotUiProps) => {
           <ShieldCheckmarkRegular className="shield-checkmark-regular" /> {protectedMessage}
         </div>
         <ChatSuggestionGroup>
-          {canSave && <ChatSuggestion text={saveString ?? intlText.saveButton} iconName={'Save'} onClick={save} />}
-          {canTest && <ChatSuggestion text={testString ?? intlText.testButton} iconName={'TestBeaker'} onClick={test} />}
+          {canSave && <ChatSuggestion text={saveString ?? intlText.saveButton} iconName={'Save'} onClick={() => save?.()} />}
+          {canTest && <ChatSuggestion text={testString ?? intlText.testButton} iconName={'TestBeaker'} onClick={() => test?.()} />}
         </ChatSuggestionGroup>
-        <ChatInput
-          textFieldRef={textInputRef}
-          disabled={answerGenerationInProgress || disabled}
-          isMultiline={true}
-          maxQueryLength={QUERY_MAX_LENGTH}
-          onQueryChange={(_ev, newValue) => {
-            onChange(newValue ?? '');
-          }}
-          placeholder={placeholder ?? intlText.inputPlaceHolder}
-          query={value}
-          showCharCount={true}
-          submitButtonProps={{
-            title: submitString ?? intlText.submitButton,
-            disabled: answerGenerationInProgress || value.length < QUERY_MIN_LENGTH,
-            iconProps: {
-              iconName: 'Send',
-              styles:
-                answerGenerationInProgress || value.length < QUERY_MIN_LENGTH
-                  ? inputIconButtonStyles.disabled
-                  : inputIconButtonStyles.enabled,
-            },
-            onClick: () => onSubmit(value),
-          }}
-        />
+        {readOnly ? (
+          <MessageBar intent={'info'} layout="multiline">
+            <MessageBarBody>{readOnlyText}</MessageBarBody>
+          </MessageBar>
+        ) : (
+          <ChatInput
+            textFieldRef={textInputRef}
+            disabled={answerGenerationInProgress || disabled}
+            isMultiline={true}
+            maxQueryLength={QUERY_MAX_LENGTH}
+            onQueryChange={(_ev, newValue) => {
+              onChange(newValue ?? '');
+            }}
+            placeholder={placeholder ?? intlText.inputPlaceHolder}
+            query={value}
+            showCharCount={true}
+            submitButtonProps={{
+              title: submitString ?? intlText.submitButton,
+              disabled: answerGenerationInProgress || value.length < QUERY_MIN_LENGTH,
+              iconProps: {
+                iconName: 'Send',
+                styles:
+                  answerGenerationInProgress || value.length < QUERY_MIN_LENGTH
+                    ? inputIconButtonStyles.disabled
+                    : inputIconButtonStyles.enabled,
+              },
+              onClick: () => onSubmit(value),
+            }}
+          />
+        )}
       </div>
     </div>
   );

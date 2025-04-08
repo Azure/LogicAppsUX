@@ -81,6 +81,7 @@ export default {
     TRUE: 'true',
     FALSE: 'false',
   },
+  PARAMETER_NULL_VALUE: 'null',
   CONTENT_SIZE_MAX: 262144, // 2^18
   API_CATEGORIES: {
     APP_SERVICES: 'Microsoft.Web/sites',
