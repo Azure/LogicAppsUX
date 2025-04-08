@@ -1188,6 +1188,12 @@ const getSerializedOperationOptions = (operationId: string, settings: Settings, 
     !!settings.requestSchemaValidation?.value,
     deserializedOptions
   );
+  updateOperationOptions(
+    Constants.SETTINGS.OPERATION_OPTIONS.FAILWHENLIMITSREACHED,
+    !!settings.shouldFailOperation?.isSupported,
+    !!settings.shouldFailOperation?.value,
+    deserializedOptions
+  );
 
   return deserializedOptions.length ? deserializedOptions.join(', ') : undefined;
 };
