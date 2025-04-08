@@ -82,7 +82,7 @@ export const templateSlice = createSlice({
         ...data,
       };
     },
-    updateTemplateParameterDefinitions: (state, action: PayloadAction<Record<string, Template.ParameterDefinition>>) => {
+    updateAllTemplateParameterDefinitions: (state, action: PayloadAction<Record<string, Template.ParameterDefinition>>) => {
       state.parameterDefinitions = { ...state.parameterDefinitions, ...action.payload };
     },
     validateParameters: (state) => {
@@ -250,7 +250,7 @@ export const {
   clearTemplateDetails,
   updateWorkflowNameValidationError,
   updateTemplateParameterDefinition,
-  updateTemplateParameterDefinitions,
+  updateAllTemplateParameterDefinitions,
   updateWorkflowData,
   updateAllWorkflowsData,
   updateTemplateManifest,
