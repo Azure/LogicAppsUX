@@ -1,7 +1,13 @@
-import type { ConversationItem } from '@microsoft/designer-ui';
-import { ConversationItemType, PanelLocation, PanelResizer, PanelSize } from '@microsoft/designer-ui';
-import { useEffect, useMemo, useState } from 'react';
-import { type IntlShape, useIntl } from 'react-intl';
+import {
+  AgentMessageEntryType,
+  ConversationItemType,
+  PanelLocation,
+  PanelResizer,
+  PanelSize,
+  type ConversationItem,
+} from '@microsoft/designer-ui';
+import { useEffect, useMemo, useRef, useState } from 'react';
+import { useIntl } from 'react-intl';
 import { defaultChatbotPanelWidth, ChatbotContent } from '@microsoft/logic-apps-chatbot';
 import { type ChatHistory, useChatHistory } from '../../../core/queries/runs';
 import { useMonitoringView } from '../../../core/state/designerOptions/designerOptionsSelectors';
@@ -13,11 +19,12 @@ import {
 } from '../../../core/state/workflow/workflowSelectors';
 import { guid, isNullOrUndefined, labelCase } from '@microsoft/logic-apps-shared';
 import { Button, Drawer, mergeClasses } from '@fluentui/react-components';
-import { ChatFilled, ChevronDoubleRightFilled } from '@fluentui/react-icons';
+import { ChatFilled } from '@fluentui/react-icons';
 import { useDispatch } from 'react-redux';
 import { changePanelNode, type AppDispatch } from '../../../core';
 import type { Dispatch } from '@reduxjs/toolkit';
 import { setFocusNode, setRunIndex } from '../../../core/state/workflow/workflowSlice';
+import { AgentChatHeader } from './agentChatHeader';
 
 interface AgentChatProps {
   panelLocation?: PanelLocation;
@@ -25,53 +32,7 @@ interface AgentChatProps {
   panelContainerRef: React.MutableRefObject<HTMLElement | null>;
 }
 
-const AgentChatHeader = ({
-  title,
-  toggleCollapse,
-}: {
-  title: string;
-  toggleCollapse: () => void;
-}) => {
-  return (
-    <div
-      style={{
-        display: 'flex',
-        position: 'relative',
-        justifyContent: 'center',
-        padding: '10px',
-      }}
-    >
-      <h3>{title}</h3>
-      <Button
-        id="msla-agent-chat-header-collapse"
-        appearance="subtle"
-        icon={<ChevronDoubleRightFilled />}
-        aria-label={'buttonText'}
-        onClick={toggleCollapse}
-        data-automation-id="msla-agent-chat-header-collapse"
-        style={{
-          position: 'absolute',
-          right: '10px',
-          top: '50%',
-          transform: 'translateY(-50%)',
-        }}
-      />
-    </div>
-  );
-};
-
-const parseChatHistory = (
-  chatHistory: ChatHistory[],
-  intl: IntlShape,
-  dispatch: Dispatch,
-  agentLastOperations: Record<string, any>
-): ConversationItem[] => {
-  const agentHeaderPrefix = intl.formatMessage({
-    defaultMessage: 'Chat moved to',
-    id: '25EIWg',
-    description: 'Agent header prefix',
-  });
-
+const parseChatHistory = (chatHistory: ChatHistory[], dispatch: Dispatch, agentLastOperations: Record<string, any>): ConversationItem[] => {
   const toolResultCallback = (agentName: string, toolName: string, iteration: number, subIteration: number) => {
     const agentLastOperation = agentLastOperations[agentName][toolName];
     dispatch(setRunIndex({ page: iteration, nodeId: agentName }));
@@ -80,7 +41,14 @@ const parseChatHistory = (
     dispatch(changePanelNode(agentLastOperation));
   };
 
+  const toolContentCallback = (agentName: string, iteration: number) => {
+    dispatch(setRunIndex({ page: iteration, nodeId: agentName }));
+    dispatch(setFocusNode(agentName));
+    dispatch(changePanelNode(agentName));
+  };
+
   const agentCallback = (agentName: string) => {
+    dispatch(setRunIndex({ page: 0, nodeId: agentName }));
     dispatch(setFocusNode(agentName));
     dispatch(changePanelNode(agentName));
   };
@@ -89,13 +57,13 @@ const parseChatHistory = (
 
   for (const chat of chatHistory) {
     const { nodeId, messages } = chat;
-    const parsedMessages: any[] = (messages ?? []).map((message) => parseMessage(message, nodeId, toolResultCallback));
+    const parsedMessages: any[] = (messages ?? []).map((message) => parseMessage(message, nodeId, toolResultCallback, toolContentCallback));
 
     if (parsedMessages.length > 0) {
-      const agentName = labelCase(nodeId ?? '');
+      const agentName = labelCase(nodeId);
       conversations.push(...parsedMessages, {
         id: guid(),
-        text: `${agentHeaderPrefix} ${agentName}`,
+        text: agentName,
         type: ConversationItemType.AgentHeader,
         onClick: () => {
           agentCallback(nodeId);
@@ -111,26 +79,31 @@ const parseChatHistory = (
 const parseMessage = (
   message: any,
   parentId: string,
-  toolResultCallback: (agentName: string, toolName: string, iteration: number, subIteration: number) => void
+  toolResultCallback: (agentName: string, toolName: string, iteration: number, subIteration: number) => void,
+  toolContentCallback: (agentName: string, iteration: number) => void
 ): ConversationItem => {
-  const { messageEntryType, messageEntryPayload, timestamp, role } = message;
+  const { messageEntryType, messageEntryPayload, timestamp, role, iteration } = message;
 
   switch (messageEntryType) {
-    case 'Content': {
+    case AgentMessageEntryType.Content: {
       const content = messageEntryPayload?.content || '';
       return {
         text: content,
         type: ConversationItemType.Reply,
         id: guid(),
-        role,
+        role: {
+          text: role,
+          agentName: labelCase(parentId),
+          onClick: () => toolContentCallback(parentId, iteration),
+        },
         hideFooter: true,
         metadata: { parentId },
         date: new Date(timestamp),
         isMarkdownText: false,
+        className: 'msla-agent-chat-content',
       };
     }
-    case 'ToolResult': {
-      const iteration = message?.iteration ?? 0;
+    case AgentMessageEntryType.ToolResult: {
       const subIteration = message.toolResultsPayload?.toolResult?.subIteration ?? 0;
       const toolName = message.toolResultsPayload?.toolResult?.toolName ?? '';
       const status = message.toolResultsPayload?.toolResult?.status;
@@ -175,18 +148,19 @@ export const AgentChat = ({
   const [isCollapsed, setIsCollapsed] = useState(false);
   const panelContainerElement = panelContainerRef.current as HTMLElement;
   const { isFetching: isChatHistoryFetching, data: chatHistoryData } = useChatHistory(!!isMonitoringView, agentOperations, runInstance?.id);
-  const [overrideWidth, setOverrideWidth] = useState<string | undefined>();
+  const [overrideWidth, setOverrideWidth] = useState<string | undefined>(chatbotWidth);
   const isChatInputEnabled = useIsChatInputEnabled(conversation.length > 0 ? conversation[0].metadata?.parentId : undefined);
   const dispatch = useDispatch<AppDispatch>();
   const agentsNumber = Object.keys(agentLastOperations).length;
-  const drawerWidth = isCollapsed ? PanelSize.Auto : (overrideWidth ?? chatbotWidth);
+  const drawerWidth = isCollapsed ? PanelSize.Auto : overrideWidth;
+  const panelRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     if (!isNullOrUndefined(chatHistoryData)) {
-      const newConversations = parseChatHistory(chatHistoryData, intl, dispatch, agentLastOperations);
+      const newConversations = parseChatHistory(chatHistoryData, dispatch, agentLastOperations);
       setConversation([...newConversations]);
     }
-  }, [setConversation, chatHistoryData, intl, agentsNumber, dispatch]);
+  }, [setConversation, chatHistoryData, agentsNumber, dispatch]);
 
   const intlText = useMemo(() => {
     return {
@@ -195,15 +169,20 @@ export const AgentChat = ({
         id: 'PVT2SW',
         description: 'Agent chat header text',
       }),
-      chatInputDisabledPlaceHolder: intl.formatMessage({
-        defaultMessage: 'The chat is in read-only mode and will be saved in the run history. Agents are no longer available to chat with.',
-        id: 'z/i4aa',
-        description: 'Agent chat input placeholder text when disabled',
+      agentChatPanelAriaLabel: intl.formatMessage({
+        defaultMessage: 'Agent chat panel',
+        id: 'OSugtm',
+        description: 'Agent chat panel aria label text',
       }),
-      chatInputPlaceholder: intl.formatMessage({
-        defaultMessage: 'Ask me anything...',
-        id: '5+Bccl',
-        description: 'Agent chat input placeholder text',
+      agentChatToggleAriaLabel: intl.formatMessage({
+        defaultMessage: 'Toggle agent chat panel',
+        id: '0Jh+AD',
+        description: 'Toggle agent chat panel aria label text',
+      }),
+      chatReadOnlyMessage: intl.formatMessage({
+        defaultMessage: 'The chat is currently in read-only mode. Agents are not available for live chat.',
+        id: '/fYAbG',
+        description: 'Agent chat read-only message',
       }),
       protectedMessage: intl.formatMessage({
         defaultMessage: 'Your personal and company data are protected in this chat',
@@ -220,18 +199,6 @@ export const AgentChat = ({
         id: 'Vqs8hE',
         description: 'Actions button',
       }),
-      chatSuggestion: {
-        saveButton: intl.formatMessage({
-          defaultMessage: 'Save this workflow',
-          id: 'OYWZE4',
-          description: 'Chatbot suggestion button to save workflow',
-        }),
-        testButton: intl.formatMessage({
-          defaultMessage: 'Test this workflow',
-          id: 'tTIsTX',
-          description: 'Chatbot suggestion button to test this workflow',
-        }),
-      },
       assistantErrorMessage: intl.formatMessage({
         defaultMessage: 'Sorry, something went wrong. Please try again.',
         id: 'fvGvnA',
@@ -247,11 +214,6 @@ export const AgentChat = ({
         id: '4iyEAY',
         description: 'Chatbot card telling user that the workflow is being saved',
       }),
-      progressCardStopButtonLabel: intl.formatMessage({
-        defaultMessage: 'Stop generating',
-        id: 'wP0/uB',
-        description: 'Label for the button on the progress card that stops AI response generation',
-      }),
       cancelGenerationText: intl.formatMessage({
         defaultMessage: 'Copilot chat canceled',
         id: 'JKZpcd',
@@ -266,7 +228,7 @@ export const AgentChat = ({
 
   return (
     <Drawer
-      aria-label={'panelLabel'}
+      aria-label={intlText.agentChatPanelAriaLabel}
       className="msla-panel-container"
       modalType="non-modal"
       mountNode={{
@@ -275,6 +237,7 @@ export const AgentChat = ({
       }}
       open={true}
       position={'end'}
+      ref={panelRef}
       style={{
         position: 'relative',
         maxWidth: '100%',
@@ -285,7 +248,7 @@ export const AgentChat = ({
       {isCollapsed ? (
         <Button
           appearance="subtle"
-          aria-label={'panelCollapseTitle'}
+          aria-label={intlText.agentChatToggleAriaLabel}
           className={mergeClasses('collapse-toggle', 'right', 'empty')}
           icon={<ChatFilled />}
           onClick={() => setIsCollapsed(false)}
@@ -306,17 +269,14 @@ export const AgentChat = ({
             inputBox={{
               value: inputQuery,
               onChange: setInputQuery,
-              placeholder: isChatInputEnabled ? intlText.chatInputPlaceholder : intlText.chatInputDisabledPlaceHolder,
               onSubmit: () => {},
               disabled: isChatInputEnabled,
+              readOnly: true,
+              readOnlyText: intlText.chatReadOnlyMessage,
             }}
-            data={{}}
             string={{
-              test: intlText.chatSuggestion.testButton,
-              save: intlText.chatSuggestion.saveButton,
               submit: intlText.submitButtonTitle,
               progressState: intlText.progressCardText,
-              progressStop: intlText.progressCardStopButtonLabel,
               progressSave: intlText.progressCardSaveText,
               protectedMessage: intlText.protectedMessage,
             }}
@@ -327,7 +287,7 @@ export const AgentChat = ({
               setFocus: setFocus,
             }}
           />
-          <PanelResizer minWidth={undefined} updatePanelWidth={setOverrideWidth} />
+          <PanelResizer updatePanelWidth={setOverrideWidth} panelRef={panelRef} />
         </>
       )}
     </Drawer>
