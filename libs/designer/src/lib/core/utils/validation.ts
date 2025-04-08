@@ -249,8 +249,8 @@ function validateIntegerFormat(parameterFormat: string, parameterValue: string, 
     if (Number(parameterValue) > maxValue || Number(parameterValue) < minValue) {
       return intl.formatMessage(
         {
-          defaultMessage: 'The integer should be between {min} and {max}',
-          id: '1QN3yG',
+          defaultMessage: 'The integer should be between [{min}, {max}]',
+          id: '1KMc+6',
           description: 'Error validation message for integers being out of range',
         },
         { max: maxValue, min: minValue }
@@ -295,8 +295,8 @@ function validateNumberFormat(parameterFormat: string, parameterValue: string, m
     if (Number(parameterValue) > maximum || Number(parameterValue) < minimum) {
       return intl.formatMessage(
         {
-          defaultMessage: 'The number should be between {min} and {max}',
-          id: '1wygyb',
+          defaultMessage: 'The value should be between [{min}, {max}]',
+          id: 'y2Yn1o',
           description: 'Error validation message for integers being out of range',
         },
         { max: maximum, min: minimum }

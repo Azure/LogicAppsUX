@@ -3,19 +3,16 @@ import { validateType } from '../../validation';
 import Constants from '../../../../common/constants';
 import * as shared from '@microsoft/logic-apps-shared';
 
-// Setup mocks for shared helpers.
 describe('validateType', () => {
-  // Before each test, set up the intl mock and ensure that isTemplateExpression returns false by default.
   beforeEach(() => {
     vi.spyOn(shared, 'getIntl').mockReturnValue({
-      // For these tests, simply return the defaultMessage so that error messages can be directly asserted.
+      // Simply return the defaultMessage so that error messages can be directly asserted.
       formatMessage: ({ defaultMessage }: { defaultMessage: string }) => defaultMessage,
     } as any);
     // By default, assume that the parameter value is not an expression.
     vi.spyOn(shared, 'isTemplateExpression').mockReturnValue(false);
   });
 
-  // Restore mocks after each test.
   afterEach(() => {
     vi.restoreAllMocks();
   });
@@ -25,7 +22,6 @@ describe('validateType', () => {
   });
 
   it('should return undefined when the parameterValue is a template expression', () => {
-    // Force isTemplateExpression to return true.
     vi.spyOn(shared, 'isTemplateExpression').mockReturnValue(true);
     const result = validateType(Constants.SWAGGER.TYPE.INTEGER, 'some expression', undefined, {});
     expect(result).toBeUndefined();
@@ -47,7 +43,6 @@ describe('validateType', () => {
   // --- Integer type ---
   it('should return an empty string for a valid integer', () => {
     const result = validateType(Constants.SWAGGER.TYPE.INTEGER, '123', undefined, {});
-    // validateIntegerFormat returns an empty string for valid integers.
     expect(result).toBe('');
   });
 
@@ -56,16 +51,75 @@ describe('validateType', () => {
     expect(result).toBe('Enter a valid integer.');
   });
 
+  // --- Additional Integer Range Tests ---
+  describe('validateType for integer with min and max constraints', () => {
+    it('should return an empty string for a valid integer within range (custom min and max)', () => {
+      const options = { format: 'int32', minimum: 10, maximum: 100 };
+      const result = validateType(Constants.SWAGGER.TYPE.INTEGER, '50', undefined, options);
+      expect(result).toBe('');
+    });
+
+    it('should return an error for an integer below the minimum', () => {
+      const options = { format: 'int32', minimum: 10, maximum: 100 };
+      const result = validateType(Constants.SWAGGER.TYPE.INTEGER, '5', undefined, options);
+      expect(result).toContain('The integer should be between [{min}, {max}]');
+    });
+
+    it('should return an error for an integer below the constant integer minimum', () => {
+      const options = { format: 'int32' };
+      const result = validateType(Constants.SWAGGER.TYPE.INTEGER, '-2147483699', undefined, options);
+      expect(result).toContain('The integer should be between [{min}, {max}]');
+    });
+
+    it('should return an error for an integer above the maximum', () => {
+      const options = { format: 'int32', minimum: 10, maximum: 100 };
+      const result = validateType(Constants.SWAGGER.TYPE.INTEGER, '150', undefined, options);
+      expect(result).toContain('The integer should be between [{min}, {max}]');
+    });
+
+    it('should return an error for an integer above the constant integer maximum', () => {
+      const options = { format: 'int32' };
+      const result = validateType(Constants.SWAGGER.TYPE.INTEGER, '2147483699', undefined, options);
+      expect(result).toContain('The integer should be between [{min}, {max}]');
+    });
+  });
+
   // --- Number type ---
   it('should return an empty string for a valid number', () => {
     const result = validateType(Constants.SWAGGER.TYPE.NUMBER, '123.45', undefined, {});
-    // validateNumberFormat returns an empty string for valid numbers.
     expect(result).toBe('');
   });
 
   it('should return an error for an invalid number', () => {
     const result = validateType(Constants.SWAGGER.TYPE.NUMBER, 'abc', undefined, {});
     expect(result).toBe('Enter a valid number.');
+  });
+
+  // --- Additional Number Range Tests (double/float) ---
+  describe('validateType for number (double/float) with min and max constraints', () => {
+    it('should return an empty string for a valid double within range', () => {
+      const options = { format: 'double', minimum: 1.5, maximum: 10.5 };
+      const result = validateType(Constants.SWAGGER.TYPE.NUMBER, '5.5', undefined, options);
+      expect(result).toBe('');
+    });
+
+    it('should return an error for a double below the minimum', () => {
+      const options = { format: 'double', minimum: 1.5, maximum: 10.5 };
+      const result = validateType(Constants.SWAGGER.TYPE.NUMBER, '1.0', undefined, options);
+      expect(result).toContain('The value should be between [{min}, {max}]');
+    });
+
+    it('should return an error for a float above the maximum', () => {
+      const options = { format: 'float', minimum: 1.5, maximum: 10.5 };
+      const result = validateType(Constants.SWAGGER.TYPE.NUMBER, '11.0', undefined, options);
+      expect(result).toContain('The value should be between [{min}, {max}]');
+    });
+
+    it('should return an error when the number is formatted incorrectly for double', () => {
+      const options = { format: 'double' };
+      const result = validateType(Constants.SWAGGER.TYPE.NUMBER, 'abc', undefined, options);
+      expect(result).toBe('Enter a valid number.');
+    });
   });
 
   // --- Boolean type ---
@@ -96,24 +150,19 @@ describe('validateType', () => {
   });
 
   // --- Array type ---
-  // When collectionFormat is CSV, the regex is used directly.
   it('should return undefined for a valid CSV formatted array string', () => {
-    const result = validateType(Constants.SWAGGER.TYPE.ARRAY, 'a,b,c', undefined, {
-      collectionFormat: Constants.SWAGGER.COLLECTION_FORMAT.CSV,
-    });
+    const options = { collectionFormat: Constants.SWAGGER.COLLECTION_FORMAT.CSV };
+    const result = validateType(Constants.SWAGGER.TYPE.ARRAY, 'a,b,c', undefined, options);
     expect(result).toBeUndefined();
   });
 
   it('should return an error for an invalid CSV formatted array string', () => {
-    // Trailing comma makes it invalid per the regex.
-    const result = validateType(Constants.SWAGGER.TYPE.ARRAY, 'a,b,', undefined, {
-      collectionFormat: Constants.SWAGGER.COLLECTION_FORMAT.CSV,
-    });
+    const options = { collectionFormat: Constants.SWAGGER.COLLECTION_FORMAT.CSV };
+    const result = validateType(Constants.SWAGGER.TYPE.ARRAY, 'a,b,', undefined, options);
     expect(result).toBe('Enter a valid comma-separated string.');
   });
 
-  // When no CSV collection format is provided, a valid JSON array should pass.
-  it('should return undefined for a valid JSON array string', () => {
+  it('should return undefined for a valid JSON array string when no CSV format is provided', () => {
     const result = validateType(Constants.SWAGGER.TYPE.ARRAY, '[1,2,3]', undefined, {});
     expect(result).toBeUndefined();
   });
@@ -130,7 +179,6 @@ describe('validateType', () => {
   });
 
   it('should return an empty string for a valid datetime string when format is datetime', () => {
-    // This value should match the regex defined in validation.ts.
     const validDatetime = '2021-05-21T13:45:30';
     const result = validateType(Constants.SWAGGER.TYPE.STRING, validDatetime, undefined, { format: 'datetime' });
     expect(result).toBe('');
