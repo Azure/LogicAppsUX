@@ -1,25 +1,34 @@
 .msla-editor-initialize-variable {
-  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 10px 0px;
+}
+
+.msla-variable-editor-heading {
   display: flex;
   gap: 8px;
-  padding-bottom: 16px;
-  border-bottom: 1px solid #9e9e9e;
-  & > div:first-child {
-    flex-grow: 1;
-  }
+}
+
+.msla-variable-editor-heading-button {
+  flex-grow: 1;
+}
+
+.msla-variable-editor-content {
+  padding: 0px 16px 16px 16px;
 }
 
 .msla-initialize-variable-add-variable-button {
-  display: flex;
-  gap: 8px;
-  align-items: center;
-  margin-left: 20px;
-  margin-top: 20px;
+  margin: 8px 0px;
 }
 
 .msla-initialize-variable-warning {
   font-size: 12px;
   margin-top: 20px;
+  word-wrap: break-word;
+  span {
+    text-wrap: auto;
+  }
 }
 
 .msla-initialize-variable-error-dot {

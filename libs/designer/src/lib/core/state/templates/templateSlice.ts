@@ -5,10 +5,14 @@ import { validateConnectionsValue, validateParameterValue } from '../../template
 import type { WorkflowTemplateData, TemplatePayload } from '../../actions/bjsworkflow/templates';
 import { loadTemplate, validateWorkflowsBasicInfo } from '../../actions/bjsworkflow/templates';
 import { resetTemplatesState } from '../global';
-import { initializeWorkflowsData, deleteWorkflowData } from '../../actions/bjsworkflow/configuretemplate';
+import { initializeWorkflowsData, deleteWorkflowData, loadCustomTemplate } from '../../actions/bjsworkflow/configuretemplate';
+import { getSupportedSkus } from '../../configuretemplate/utils/helper';
 
+export type TemplateEnvironment = 'Production' | 'Development';
 export interface TemplateState extends TemplatePayload {
   templateName?: string;
+  isPublished?: boolean;
+  environment?: TemplateEnvironment;
 }
 
 const initialState: TemplateState = {
@@ -20,6 +24,8 @@ const initialState: TemplateState = {
     parameters: {},
     connections: undefined,
   },
+  isPublished: true,
+  environment: 'Production',
 };
 
 export const templateSlice = createSlice({
@@ -123,6 +129,9 @@ export const templateSlice = createSlice({
 
       state.workflows = workflows;
     },
+    updateEnvironment: (state, action: PayloadAction<TemplateEnvironment>) => {
+      state.environment = action.payload;
+    },
   },
   extraReducers: (builder) => {
     builder.addCase(resetTemplatesState, () => initialState);
@@ -174,6 +183,7 @@ export const templateSlice = createSlice({
         if (action.payload) {
           state.connections = action.payload.connections;
           state.parameterDefinitions = action.payload.parameterDefinitions as any;
+          (state.manifest as Template.TemplateManifest).skus = getSupportedSkus(action.payload.connections);
         }
       }
     );
@@ -183,15 +193,17 @@ export const templateSlice = createSlice({
       (
         state,
         action: PayloadAction<{
-          id: string;
+          ids: string[];
           connectionKeys: string[];
           parameterKeys: string[];
           parametersToUpdate: Record<string, Partial<Template.ParameterDefinition>>;
         }>
       ) => {
         if (action.payload) {
-          const { id, connectionKeys, parameterKeys, parametersToUpdate } = action.payload;
-          delete state.workflows[id];
+          const { ids, connectionKeys, parameterKeys, parametersToUpdate } = action.payload;
+          for (const id of ids) {
+            delete state.workflows[id];
+          }
           for (const key of connectionKeys) {
             delete state.connections[key];
           }
@@ -203,6 +215,14 @@ export const templateSlice = createSlice({
         }
       }
     );
+
+    builder.addCase(loadCustomTemplate.fulfilled, (state, action: PayloadAction<{ isPublished: boolean; environment: string }>) => {
+      if (action.payload) {
+        const { isPublished, environment } = action.payload;
+        state.isPublished = isPublished;
+        state.environment = environment as TemplateEnvironment;
+      }
+    });
   },
 });
 
@@ -219,5 +239,6 @@ export const {
   updateWorkflowData,
   updateAllWorkflowsData,
   updateTemplateManifest,
+  updateEnvironment,
 } = templateSlice.actions;
 export default templateSlice.reducer;

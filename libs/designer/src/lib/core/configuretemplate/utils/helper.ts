@@ -134,7 +134,13 @@ export const getOperationDataInDefinitions = async (
     }
   }
 
-  const allNodeData = (await Promise.all(promises)).filter((data) => !!data) as OperationDetails[];
+  return getAllNodeData(promises);
+};
+
+export const getAllNodeData = async (
+  operationDetailsPromises: Promise<OperationDetails | undefined>[]
+): Promise<NodeOperationInputsData[]> => {
+  const allNodeData = (await Promise.all(operationDetailsPromises)).filter((data) => !!data) as OperationDetails[];
   return allNodeData.map(({ id, nodeInputs, nodeOperationInfo, inputDependencies }: OperationDetails) => ({
     id,
     nodeInputs,
@@ -145,7 +151,10 @@ export const getOperationDataInDefinitions = async (
 
 const getReferencesFromConnections = (connections: Record<string, Template.Connection>): ConnectionReferences => {
   return Object.keys(connections).reduce((result: ConnectionReferences, connectionKey) => {
-    result[connectionKey] = { api: { id: connections[connectionKey].connectorId }, connection: { id: '' } };
+    result[connectionKey] = {
+      api: { id: connections[connectionKey].connectorId },
+      connection: { id: '' },
+    };
     return result;
   }, {});
 };
@@ -188,4 +197,14 @@ const findParameterExpressions = (expression: Expression, result: string[]): voi
 
 export const getConnectorKind = (connectorId: string): Template.FeaturedConnectorType => {
   return isArmResourceId(connectorId) ? 'shared' : connectorId.startsWith('/serviceproviders') ? 'inapp' : 'builtin';
+};
+
+export const getSupportedSkus = (connections: Record<string, Template.Connection>): Template.SkuType[] => {
+  const supportedSkus: Template.SkuType[] = ['standard'];
+
+  if (!Object.values(connections).some((connection) => connection.kind === 'inapp')) {
+    supportedSkus.push('consumption');
+  }
+
+  return supportedSkus;
 };

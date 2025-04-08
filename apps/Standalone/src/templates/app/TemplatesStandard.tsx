@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import {
+  getLogicAppsCategories,
   getReactQueryClient,
   resetStateOnResourceChange,
   TemplatesDataProvider,
@@ -380,44 +381,7 @@ export const TemplatesStandard = () => {
               detailFilters={{
                 Category: {
                   displayName: 'Categories',
-                  items: [
-                    {
-                      value: 'Design Patterns',
-                      displayName: 'Design Patterns',
-                    },
-                    {
-                      value: 'AI',
-                      displayName: 'AI',
-                    },
-                    {
-                      value: 'B2B',
-                      displayName: 'B2B',
-                    },
-                    {
-                      value: 'EDI',
-                      displayName: 'EDI',
-                    },
-                    {
-                      value: 'Approval',
-                      displayName: 'Approval',
-                    },
-                    {
-                      value: 'RAG',
-                      displayName: 'RAG',
-                    },
-                    {
-                      value: 'Automation',
-                      displayName: 'Automation',
-                    },
-                    {
-                      value: 'BizTalk Migration',
-                      displayName: 'BizTalk Migration',
-                    },
-                    {
-                      value: 'Mainframe Modernization',
-                      displayName: 'Mainframe Modernization',
-                    },
-                  ],
+                  items: getLogicAppsCategories(),
                 },
               }}
             />
@@ -524,7 +488,7 @@ const getResourceBasedServices = (
       httpClient,
     },
     workflowAppDetails: { appName: resourceName, identity: workflowApp?.identity as any },
-    readConnections: () => Promise.resolve(getConnectionsData()),
+    readConnections: () => Promise.resolve(getConnectionsData() as any),
     writeConnection: addConnection as any,
   });
   const oAuthService = new StandaloneOAuthService({
@@ -614,7 +578,7 @@ const getResourceBasedServices = (
   };
 
   const templateService = new StandardTemplateService({
-    endpoint: 'https://priti-cxf4h5cpcteue4az.b02.azurefd.net',
+    endpoint: 'https://priti-cxf4h5cpcteue4az.b02.azurefd.net/logicapps',
     useEndpointForTemplates: useEndpoint,
     baseUrl: armUrl,
     appId: siteResourceId,

@@ -176,6 +176,86 @@ export class ConsumptionRunService implements IRunService {
   }
 
   /**
+   * Gets an array of scope repetition records for a node with the specified status.
+   * @param {{ actionId: string, runId: string }} action - An object with nodeId and the runId of the workflow
+   * @param {string} repetitionId - A string with the resource ID of a repetition record
+   * @return {Promise<RunScopeRepetition[]>}
+   */
+  async getAgentRepetition(
+    action: { nodeId: string; runId: string | undefined },
+    repetitionId: string
+  ): Promise<LogicAppsV2.RunRepetition> {
+    const { nodeId, runId } = action;
+
+    const { apiVersion, baseUrl, httpClient } = this.options;
+    const headers = this.getAccessTokenHeaders();
+
+    const uri = `${baseUrl}${runId}/actions/${nodeId}/agentRepetitions/${repetitionId}?api-version=${apiVersion}`;
+
+    try {
+      const response = await httpClient.get<LogicAppsV2.RunRepetition>({
+        uri,
+        headers: headers as Record<string, any>,
+      });
+
+      return response;
+    } catch (e: any) {
+      throw new Error(e.message);
+    }
+  }
+
+  /**
+   * Gets an array of scope repetition records for a node with the specified status.
+   * @param {{ actionId: string, runId: string }} action - An object with nodeId and the runId of the workflow
+   * @param {string} repetitionId - A string with the resource ID of a repetition record
+   * @return {Promise<RunScopeRepetition[]>}
+   */
+  async getAgentActionsRepetition(action: { nodeId: string; runId: string | undefined }, repetitionId: string): Promise<any> {
+    const { nodeId, runId } = action;
+
+    const { apiVersion, baseUrl, httpClient } = this.options;
+    const headers = this.getAccessTokenHeaders();
+
+    const uri = `${baseUrl}${runId}/actions/${nodeId}/agentRepetitions/${repetitionId}/actions?api-version=${apiVersion}`;
+
+    try {
+      const response = await httpClient.get<LogicAppsV2.RunRepetition>({
+        uri,
+        headers: headers as Record<string, any>,
+      });
+
+      return response;
+    } catch (e: any) {
+      throw new Error(e.message);
+    }
+  }
+
+  /**
+   * Retrieves additional agent actions repetition data based on the provided continuation token.
+   *
+   * This method constructs an HTTP GET request using the continuation token as the URI and leverages the authorized HTTP client.
+   * It returns a promise that resolves with the run repetition data in the form of a [[LogicAppsV2.RunRepetition]] object.
+   * @param continuationToken - A string token used to fetch the next set of agent actions repetition data.
+   * @returns A promise that resolves with the run repetition data.
+   * @throws Will throw an error with the corresponding message if the HTTP request fails.
+   */
+  async getMoreAgentActionsRepetition(continuationToken: string): Promise<any> {
+    const { httpClient } = this.options;
+    const headers = this.getAccessTokenHeaders();
+
+    try {
+      const response = await httpClient.get<LogicAppsV2.RunRepetition>({
+        uri: continuationToken,
+        headers: headers as Record<string, any>,
+      });
+
+      return response;
+    } catch (e: any) {
+      throw new Error(e.message);
+    }
+  }
+
+  /**
    * Gets the repetition record for the repetition item with the specified ID
    * @param {{ actionId: string, runId: string }} action - An object with nodeId and the runId of the workflow
    * @param {string} repetitionId - A string with the resource ID of a repetition record
@@ -271,6 +351,36 @@ export class ConsumptionRunService implements IRunService {
         return httpClient.put(options);
       default:
         throw new UnsupportedException(`Unsupported call connector method - '${method}'`);
+    }
+  }
+
+  /**
+   * Retrieves the chat history for a specified action.
+   *
+   * This function constructs a URI based on the provided runId and nodeId, along with the
+   * baseUrl and apiVersion from the options. It then sends an HTTP GET request to obtain the
+   * chat history information associated with the specified action.
+   * @param action - An object containing the necessary identifiers.
+   * @param action.nodeId - The unique identifier of the node to retrieve the chat history for.
+   * @param action.runId - The unique identifier of the run; may be undefined.
+   * @returns A promise that resolves with the chat history response.
+   * @throws {Error} Throws an error with a message if the HTTP request fails.
+   */
+  async getChatHistory(action: { nodeId: string; runId: string | undefined }): Promise<any> {
+    const { apiVersion, baseUrl, httpClient } = this.options;
+    const { nodeId, runId } = action;
+    const headers = this.getAccessTokenHeaders();
+
+    const uri = `${baseUrl}${runId}/actions/${nodeId}/chatHistory?api-version=${apiVersion}`;
+    try {
+      const response = await httpClient.get<any>({
+        uri,
+        headers: headers as Record<string, any>,
+      });
+
+      return response.value;
+    } catch (e: any) {
+      throw new Error(e.message);
     }
   }
 }

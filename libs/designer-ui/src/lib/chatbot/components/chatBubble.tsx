@@ -3,6 +3,7 @@ import { animations } from './animations';
 import { ThumbsReactionButton } from './thumbsReactionButton';
 import { ActionButton, IconButton, css, useTheme } from '@fluentui/react';
 import type { IButtonProps, IButtonStyles } from '@fluentui/react';
+import { Link } from '@fluentui/react-components';
 import { useConst } from '@fluentui/react-hooks';
 import type React from 'react';
 import { useIntl } from 'react-intl';
@@ -27,12 +28,18 @@ type ChatBubbleProps = {
   onThumbsReactionClicked?: (reaction: ChatEntryReaction) => void;
   disabled?: boolean;
   textRef?: React.RefObject<HTMLDivElement>;
+  role?: {
+    text: string;
+    onClick: () => void;
+    agentName: string;
+  };
 };
 
 export const ChatBubble: React.FC<ChatBubbleProps> = ({
   isUserMessage,
   children,
   isAIGenerated,
+  role,
   additionalLinksSection,
   additionalFooterActions,
   hideFooter,
@@ -130,6 +137,14 @@ export const ChatBubble: React.FC<ChatBubbleProps> = ({
           </div>
         </div>
       ) : null}
+      {role && (
+        <div className="msla-bubble-footer-role">
+          {role.text} -{' '}
+          <Link className="msla-bubble-footer-role--button" onClick={role.onClick}>
+            {role.agentName}
+          </Link>
+        </div>
+      )}
     </div>
   );
 };

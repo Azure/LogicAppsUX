@@ -99,7 +99,9 @@ export const serializeWorkflow = async (rootState: RootState, options?: Serializ
           },
           { invalidNodes }
         ),
-        { errorMessage: `Workflow has invalid connections on the following operations: ${invalidNodes}` }
+        {
+          errorMessage: `Workflow has invalid connections on the following operations: ${invalidNodes}`,
+        }
       );
     }
 
@@ -118,7 +120,9 @@ export const serializeWorkflow = async (rootState: RootState, options?: Serializ
           },
           { invalidNodes }
         ),
-        { errorMessage: `Workflow has settings validation errors on the following operations: ${invalidNodes}` }
+        {
+          errorMessage: `Workflow has settings validation errors on the following operations: ${invalidNodes}`,
+        }
       );
     }
 
@@ -140,7 +144,9 @@ export const serializeWorkflow = async (rootState: RootState, options?: Serializ
           },
           { invalidNodes }
         ),
-        { errorMessage: `Workflow has parameter validation errors on the following operations: ${invalidNodes}` }
+        {
+          errorMessage: `Workflow has parameter validation errors on the following operations: ${invalidNodes}`,
+        }
       );
     }
   }
@@ -306,10 +312,96 @@ export const serializeOperation = async (
 
   const actionMetadata = getRecordEntry(rootState.operations.actionMetadata, operationId);
   if (actionMetadata) {
-    serializedOperation.metadata = { ...serializedOperation.metadata, ...actionMetadata };
+    serializedOperation.metadata = {
+      ...serializedOperation.metadata,
+      ...actionMetadata,
+    };
   }
 
   return serializedOperation;
+};
+
+const serializeChannel = async (
+  rootState: RootState,
+  _operationId: string,
+  _operation: NodeOperation,
+  channelPrefix: string
+): Promise<any> => {
+  const allInputParameterKeys = Object.keys(rootState.operations.inputParameters ?? {});
+  const channelOperationId = allInputParameterKeys.find((id) => id.toLowerCase().startsWith(channelPrefix.toLowerCase()));
+
+  if (channelOperationId) {
+    const channelOperation = getRecordEntry(rootState.operations.operationInfo, channelOperationId);
+
+    if (!channelOperation) {
+      throw new AssertionException(AssertionErrorCode.OPERATION_NOT_FOUND, `Operation with id ${channelOperationId} not found`);
+    }
+    const channelManifest = await getOperationManifest(channelOperation);
+    const inputsToSerialize = getOperationInputsToSerialize(rootState, channelOperationId);
+    const inputs = serializeParametersFromManifest(inputsToSerialize, channelManifest);
+
+    return {
+      type: channelOperation.type,
+      ...optional('kind', channelOperation.kind),
+      inputs,
+    };
+  }
+  return undefined;
+};
+
+const serializeAllChannels = async (rootState: RootState, operationId: string): Promise<any> => {
+  const operation = getRecordEntry(rootState.operations.operationInfo, operationId);
+  if (!operation) {
+    throw new AssertionException(AssertionErrorCode.OPERATION_NOT_FOUND, `Operation with id ${operationId} not found`);
+  }
+
+  // NOTE: Channels is applicable for Agents only so keeping it strictly specific for now
+  if (!equals(operation.type, Constants.NODE.TYPE.AGENT, true)) {
+    return undefined;
+  }
+
+  let serializedInputChannel: Record<string, any> | undefined = undefined;
+  let serializedOutputChannel: Record<string, any> | undefined = undefined;
+
+  const serializedInputChannelTrigger = await serializeChannel(
+    rootState,
+    operationId,
+    operation,
+    `${operationId}${Constants.CHANNELS.INPUT}`
+  );
+
+  if (serializedInputChannelTrigger) {
+    serializedInputChannel = {
+      'in-channel-1': {
+        trigger: serializedInputChannelTrigger,
+        mapping: {
+          message: "@channelTriggerBody()?['prompt']",
+        },
+      },
+    };
+  }
+
+  const serializedOutputChannelTrigger = await serializeChannel(
+    rootState,
+    operationId,
+    operation,
+    `${operationId}${Constants.CHANNELS.OUTPUT}`
+  );
+
+  if (serializedOutputChannelTrigger) {
+    serializedOutputChannel = {
+      'out-channel-1': {
+        action: serializedOutputChannelTrigger,
+      },
+    };
+  }
+
+  const channels = {
+    ...optional('in', serializedInputChannel),
+    ...optional('out', serializedOutputChannel),
+  };
+
+  return Object.keys(channels).length === 0 ? undefined : channels;
 };
 
 const serializeManifestBasedOperation = async (rootState: RootState, operationId: string): Promise<LogicAppsV2.OperationDefinition> => {
@@ -341,6 +433,8 @@ const serializeManifestBasedOperation = async (rootState: RootState, operationId
   const inputsLocation = manifest.properties.inputsLocation ?? ['inputs'];
   const inputsObject = inputsLocation.length ? optional(inputsLocation[0], inputs) : inputs;
 
+  const channels = await serializeAllChannels(rootState, operationId);
+
   setRetryPolicy(inputsObject, nodeSettings);
 
   return {
@@ -349,6 +443,7 @@ const serializeManifestBasedOperation = async (rootState: RootState, operationId
     ...optional('kind', operation.kind),
     ...inputsObject,
     ...childOperations,
+    ...optional('channels', channels),
     ...optional('runAfter', runAfter),
     ...optional('recurrence', recurrence),
     ...serializeSettings(operationId, nodeSettings, nodeStaticResults, isTrigger, rootState),
@@ -371,7 +466,13 @@ const serializeSwaggerBasedOperation = async (rootState: RootState, operationId:
       : undefined;
   const retryPolicy = getRetryPolicy(nodeSettings);
   const inputPathValue = await serializeParametersFromSwagger(inputsToSerialize, operationInfo);
-  const hostInfo = { host: { connection: { referenceName: getRecordEntry(rootState.connections.connectionsMapping, operationId) } } };
+  const hostInfo = {
+    host: {
+      connection: {
+        referenceName: getRecordEntry(rootState.connections.connectionsMapping, operationId),
+      },
+    },
+  };
   const inputs = { ...hostInfo, ...inputPathValue, retryPolicy };
   const serializedType = equals(type, Constants.NODE.TYPE.API_CONNECTION)
     ? Constants.SERIALIZED_TYPE.API_CONNECTION
@@ -484,7 +585,10 @@ export const constructInputValues = (key: string, inputs: SerializedParameter[],
         parameterValue = encodePathValue(parameterValue, encodeCount);
       }
 
-      const serializedParameter = { ...descendantParameter, value: parameterValue };
+      const serializedParameter = {
+        ...descendantParameter,
+        value: parameterValue,
+      };
       if (descendantParameter.info.serialization?.property?.type === PropertySerializationType.ParentObject) {
         propertyNameParameters.push(serializedParameter);
       }
@@ -647,7 +751,10 @@ const swapInputsLocationIfNeeded = (parametersValue: any, swapMap: LocationSwapM
       continue;
     }
 
-    const value = { ...excludePathValueFromTarget(parametersValue, source, target), ...getObjectPropertyValue(parametersValue, source) };
+    const value = {
+      ...excludePathValueFromTarget(parametersValue, source, target),
+      ...getObjectPropertyValue(parametersValue, source),
+    };
     finalValue = target.length ? safeSetObjectPropertyValue(finalValue, target, value) : { ...finalValue, ...value };
   }
 
@@ -686,7 +793,7 @@ interface ServiceProviderConnectionConfigInfo {
 }
 
 interface AgentConnectionInfo {
-  modelConfiguration: {
+  modelConfigurations: {
     model1: {
       referenceName: string;
     };
@@ -758,7 +865,7 @@ const serializeHost = (
       };
     case ConnectionReferenceKeyFormat.AgentConnection:
       return {
-        modelConfiguration: {
+        modelConfigurations: {
           model1: {
             referenceName: referenceKey,
           },
@@ -914,7 +1021,10 @@ const serializeSettings = (
   const conditions = conditionExpressions
     ? conditionExpressions.value?.filter((expression) => !!expression).map((expression) => ({ expression }))
     : undefined;
-  const timeout = settings.timeout?.isSupported && settings.timeout.value ? { timeout: settings.timeout.value } : undefined;
+  const timeout = settings.timeout?.isSupported ? settings.timeout.value : undefined;
+  const count = settings.count?.isSupported ? settings.count.value : undefined;
+  const limit = timeout || count ? { count, timeout } : undefined;
+
   const trackedProperties = settings.trackedProperties?.value;
 
   return {
@@ -923,7 +1033,7 @@ const serializeSettings = (
       ? optional('isInvokerConnectionEnabled', settings.invokerConnection?.value?.enabled)
       : {}),
     ...optional('conditions', conditions),
-    ...optional('limit', timeout),
+    ...optional('limit', limit),
     ...optional('operationOptions', getSerializedOperationOptions(operationId, settings, rootState)),
     ...optional('runtimeConfiguration', getSerializedRuntimeConfiguration(operationId, settings, nodeStaticResults, rootState)),
     ...optional('trackedProperties', trackedProperties),
@@ -1176,7 +1286,10 @@ export const serializeUnitTestDefinition = async (rootState: RootState): Promise
  * @returns A promise that resolves to the serialized unit test definition.
  */
 export const getNodeOutputOperations = (state: RootState) => {
-  const outputOperations: { operationInfo: Record<string, NodeOperation>; outputParameters: Record<string, NodeOutputs> } = {
+  const outputOperations: {
+    operationInfo: Record<string, NodeOperation>;
+    outputParameters: Record<string, NodeOutputs>;
+  } = {
     operationInfo: state.operations.operationInfo,
     outputParameters: state.operations.outputParameters,
   };
@@ -1192,7 +1305,12 @@ const getAssertions = (assertions: Record<string, AssertionDefinition>): Asserti
   return Object.values(assertions).map((assertion) => {
     const { name, description, assertionString } = assertion;
     const assertionValueSegment = createTokenValueSegment(
-      { title: assertionString, key: assertionString, tokenType: TokenType.FX, type: Constants.SWAGGER.TYPE.STRING },
+      {
+        title: assertionString,
+        key: assertionString,
+        tokenType: TokenType.FX,
+        type: Constants.SWAGGER.TYPE.STRING,
+      },
       assertionString,
       TokenType.FX
     );
@@ -1251,7 +1369,10 @@ const unifyOutputs = (outputs: Record<string, any>): Record<string, any> => {
  */
 const getTriggerActionMocks = (
   mockResults: Record<string, OutputMock>
-): { triggerMocks: Record<string, OperationMock>; actionMocks: Record<string, OperationMock> } => {
+): {
+  triggerMocks: Record<string, OperationMock>;
+  actionMocks: Record<string, OperationMock>;
+} => {
   const triggerMocks: Record<string, OperationMock> = {};
   const actionMocks: Record<string, OperationMock> = {};
 

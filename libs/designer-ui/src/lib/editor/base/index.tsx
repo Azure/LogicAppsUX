@@ -33,6 +33,7 @@ import { createPortal } from 'react-dom';
 import { useIntl } from 'react-intl';
 import type { AgentParameterButtonProps } from './plugins/tokenpickerbutton/agentParameterButton';
 import { AgentParameterButton } from './plugins/tokenpickerbutton/agentParameterButton';
+import UpdateTokenNodes from './plugins/UpdateTokenNodes';
 
 export interface ChangeState {
   value: ValueSegment[];
@@ -179,9 +180,14 @@ export const BaseEditor = ({
     }
   };
 
-  const openTokenPicker = (mode: TokenPickerMode) => {
+  const openTokenPicker = (mode: TokenPickerMode, callback?: () => void) => {
     setIsTokenPickerOpened(true);
     setTokenPickerMode(mode);
+
+    // Ensure the callback runs after state updates are applied
+    requestAnimationFrame(() => {
+      callback?.();
+    });
   };
 
   const id = useId('msla-described-by-message');
@@ -245,6 +251,7 @@ export const BaseEditor = ({
             <DeleteTokenNode />
             <OpenTokenPicker openTokenPicker={openTokenPicker} />
             <CloseTokenPicker closeTokenPicker={() => setIsTokenPickerOpened(false)} />
+            <UpdateTokenNodes />
             <TokenTypeAheadPlugin
               openTokenPicker={openTokenPicker}
               isEditorFocused={isEditorFocused}
@@ -263,7 +270,14 @@ export const BaseEditor = ({
         ) : null}
       </div>
       {tokens && isEditorFocused && !isTokenPickerOpened
-        ? createPortal(<TokenPickerButton {...tokenPickerButtonProps} openTokenPicker={openTokenPicker} />, document.body)
+        ? createPortal(
+            <TokenPickerButton
+              {...tokenPickerButtonProps}
+              openTokenPicker={openTokenPicker}
+              showAgentParameterButton={agentParameterButtonProps?.showAgentParameterButton}
+            />,
+            document.body
+          )
         : null}
     </>
   );

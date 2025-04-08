@@ -115,6 +115,7 @@ export interface OperationManifestSettings {
   secureData?: OperationManifestSetting<SecureDataOptions>;
   timeout?: OperationManifestSetting<void>;
   trackedProperties?: OperationManifestSetting<void>;
+  count?: OperationManifestSetting<void>;
 }
 
 export interface Badge {
@@ -176,7 +177,6 @@ export interface InputsDependency {
 }
 
 type SwaggerSchema = any;
-
 export interface LocationSwapMap {
   source: string[];
   target: string[];
@@ -184,6 +184,19 @@ export interface LocationSwapMap {
 
 export interface OperationManifest {
   properties: OperationManifestProperties;
+}
+
+export interface SupportedChannels {
+  input: {
+    type: string;
+    kind?: string;
+    default?: Record<string, string>;
+  };
+  output: {
+    type: string;
+    kind?: string;
+    default?: SwaggerSchema;
+  };
 }
 
 export interface OperationManifestProperties {
@@ -224,6 +237,8 @@ export interface OperationManifestProperties {
     location?: string[];
     service?: CustomSwaggerServiceDetails;
   };
+
+  supportedChannels?: SupportedChannels[];
 
   /*
    * Note: Output resolution takes place as follows. If no payload outputs are present, then use outputs.

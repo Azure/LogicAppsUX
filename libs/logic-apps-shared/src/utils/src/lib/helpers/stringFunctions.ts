@@ -7,6 +7,7 @@ export const replaceWhiteSpaceWithUnderscore = (uiElementName: string): string =
 
 export const containsIdTag = (id: string) => id?.includes('-#');
 export const removeIdTag = (id: string) => id?.split('-#')[0];
+export const containsCaseTag = (id: string) => id?.includes('-addCase');
 
 export const getIdLeaf = (id?: string) => id?.split('/').at(-1) ?? '';
 
@@ -18,6 +19,15 @@ export const capitalizeFirstLetter = (s: string) => s.charAt(0).toUpperCase() + 
 export const normalizeAutomationId = (s: string) => s.replace(/\W/g, '-');
 
 export const wrapTokenValue = (s: string) => `@{${s}}`;
+
+export const wrapStringInQuotes = (s: string) => `"${s}"`;
+
+export const unwrapQuotesFromString = (s: string) => {
+  if (s.startsWith('"') && s.endsWith('"')) {
+    return s.slice(1, -1);
+  }
+  return s;
+};
 
 export const wrapStringifiedTokenSegments = (jsonString: string): string => {
   const tokenRegex = /:\s?(@{?(?:[^,}\s]+}?))/g;

@@ -9,6 +9,8 @@ import type { ConversationItem, UserQueryItem, AssistantReplyItem } from './conv
 import { OperationsNeedingAttentionMessage } from './operationsNeedAttentionMessage';
 import { useRef } from 'react';
 import Markdown from 'react-markdown';
+import { ToolReply } from './toolReply';
+import { AgentHeader } from './agentHeader';
 
 type ConversationMessageProps = {
   item: ConversationItem;
@@ -30,6 +32,10 @@ export const ConversationMessage = ({ item }: ConversationMessageProps) => {
       return <ConnectionsSetupMessage item={item} />;
     case ConversationItemType.OperationsNeedingAttention:
       return <OperationsNeedingAttentionMessage item={item} />;
+    case ConversationItemType.Tool:
+      return <ToolReply item={item} />;
+    case ConversationItemType.AgentHeader:
+      return <AgentHeader item={item} />;
     default:
       return null;
   }
@@ -44,7 +50,7 @@ const UserMessage = ({ item }: { item: UserQueryItem }) => {
 };
 
 const AssistantReply = ({ item }: { item: AssistantReplyItem }) => {
-  const { id, text, hideFooter, date, additionalDocURL, azureButtonCallback } = item;
+  const { id, text, hideFooter, date, additionalDocURL, azureButtonCallback, role, className } = item;
   const azureCopilotButton = useAzureCopilotButton(azureButtonCallback);
   const additionalDocSection = useExternalLink(additionalDocURL ?? undefined);
   const { feedbackMessage, onMessageReactionClicked, reaction } = useFeedbackMessage(item);
@@ -56,6 +62,7 @@ const AssistantReply = ({ item }: { item: AssistantReplyItem }) => {
         isUserMessage={false}
         isAIGenerated={true}
         date={date}
+        className={className}
         selectedReaction={reaction}
         onThumbsReactionClicked={(reaction) => onMessageReactionClicked(reaction)}
         disabled={false} //TODO: add isBlockingOperationInProgress}
@@ -63,6 +70,7 @@ const AssistantReply = ({ item }: { item: AssistantReplyItem }) => {
         additionalFooterActions={hideFooter ? [] : azureButtonCallback ? [azureCopilotButton] : []}
         hideFooter={hideFooter}
         textRef={textRef}
+        role={role}
       >
         <div ref={textRef}>
           <Markdown>{text}</Markdown>

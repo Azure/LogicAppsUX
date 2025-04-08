@@ -1,5 +1,13 @@
-import { ProjectType, type StandardApp } from '@microsoft/vscode-extension-logic-apps';
-import { workflowKind } from '../../../constants';
+import {
+  type IWorkflowTemplate,
+  ProjectType,
+  TemplateCategory,
+  TemplatePromptResult,
+  type StandardApp,
+} from '@microsoft/vscode-extension-logic-apps';
+import { WorkflowKind, WorkflowType } from '../../../constants';
+import { localize } from '../../../localize';
+import type { IAzureQuickPickItem } from '@microsoft/vscode-azext-utils';
 import * as fs from 'fs-extra';
 import * as path from 'path';
 
@@ -10,8 +18,8 @@ import * as path from 'path';
  * @param {string} projectType - The type of the project.
  * @returns The workflow template.
  */
-export const getFunctionWorkflowTemplate = (methodName: string, isStateful: boolean, projectType: string) => {
-  const kind = isStateful ? workflowKind.stateful : workflowKind.stateless;
+export const getWorkflowTemplate = (methodName: string, isStateful: boolean, projectType: string) => {
+  const kind = isStateful ? WorkflowKind.stateful : WorkflowKind.stateless;
 
   const customCodeDefinition: StandardApp = {
     definition: {
@@ -104,21 +112,99 @@ export const getFunctionWorkflowTemplate = (methodName: string, isStateful: bool
  * @param {boolean} isStateful - A boolean indicating whether the workflow is stateful or not.
  * @returns The codeless workflow template.
  */
-export const getCodelessWorkflowTemplate = (isStateful: boolean) => {
-  const kind = isStateful ? workflowKind.stateful : workflowKind.stateless;
-
-  const emptyCodelessDefinition: StandardApp = {
+export const getCodelessWorkflowTemplate = (workflowType: WorkflowType) => {
+  const baseDefinition: StandardApp = {
     definition: {
       $schema: 'https://schema.management.azure.com/providers/Microsoft.Logic/schemas/2016-06-01/workflowdefinition.json#',
-      actions: {},
       contentVersion: '1.0.0.0',
+      actions: {},
       outputs: {},
       triggers: {},
     },
-    kind: kind,
+    kind: workflowType === WorkflowType.stateful ? WorkflowKind.stateful : WorkflowKind.stateless,
   };
 
-  return emptyCodelessDefinition;
+  if (workflowType === WorkflowType.agentic) {
+    return {
+      ...baseDefinition,
+      definition: {
+        ...baseDefinition.definition,
+        actions: {
+          Default_Agent: {
+            type: 'Agent',
+            inputs: {},
+            limit: {},
+            tools: {},
+            runAfter: {},
+          },
+        },
+      },
+      kind: WorkflowKind.agentic,
+    };
+  }
+
+  return baseDefinition;
+};
+
+export const getWorkflowTemplatePickItems = (language: string, isProjectWizard: boolean) => {
+  const stateful: IWorkflowTemplate = {
+    id: WorkflowType.stateful,
+    name: localize('Stateful', 'Stateful workflow'),
+    defaultFunctionName: 'Stateful',
+    language: language,
+    isHttpTrigger: true,
+    isTimerTrigger: false,
+    userPromptedSettings: [],
+    categories: [TemplateCategory.Core],
+  };
+
+  const stateless: IWorkflowTemplate = {
+    id: WorkflowType.stateless,
+    name: localize('Stateless', 'Stateless workflow'),
+    defaultFunctionName: 'Stateless',
+    language: language,
+    isHttpTrigger: true,
+    isTimerTrigger: false,
+    userPromptedSettings: [],
+    categories: [TemplateCategory.Core],
+  };
+
+  const agentic: IWorkflowTemplate = {
+    id: WorkflowType.agentic,
+    name: localize('Agentic', 'Agentic workflow'),
+    defaultFunctionName: 'Agentic',
+    language: language,
+    isHttpTrigger: true,
+    isTimerTrigger: false,
+    userPromptedSettings: [],
+    categories: [TemplateCategory.Core],
+  };
+
+  const picks: IAzureQuickPickItem<IWorkflowTemplate | TemplatePromptResult>[] = [
+    {
+      label: stateful.name,
+      data: stateful,
+    },
+    {
+      label: stateless.name,
+      data: stateless,
+    },
+    {
+      label: agentic.name,
+      data: agentic,
+    },
+  ];
+
+  // If this is a project wizard, add an option to skip for now
+  if (isProjectWizard) {
+    picks.push({
+      label: localize('skipForNow', '$(clock) Skip for now'),
+      data: TemplatePromptResult.skipForNow,
+      suppressPersistence: true,
+    });
+  }
+
+  return picks;
 };
 
 /**
@@ -127,8 +213,7 @@ export const getCodelessWorkflowTemplate = (isStateful: boolean) => {
  * @returns The codeful workflow template.
  */
 export const getCodefulWorkflowTemplate = async () => {
-
-  const templatePath = path.join(__dirname, 'assets', "CodefulWorkflowTemplate", "codefulTemplate.cs");
+  const templatePath = path.join(__dirname, 'assets', 'CodefulWorkflowTemplate', 'codefulTemplate.cs');
   const templateContent = await fs.readFile(templatePath, 'utf-8');
 
   return templateContent;

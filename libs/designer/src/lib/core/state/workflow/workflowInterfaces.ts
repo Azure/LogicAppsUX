@@ -12,6 +12,7 @@ export interface NodeMetadata {
   isRoot?: boolean;
   runData?: LogicAppsV2.WorkflowRunAction | LogicAppsV2.WorkflowRunTrigger;
   actionMetadata?: Record<string, any>;
+  subgraphRunData?: Record<string, { actionResults: LogicAppsV2.WorkflowRunAction[] }>;
   runIndex?: number;
 }
 export interface NodesMetadata {
@@ -53,4 +54,5 @@ export interface WorkflowState {
   hostData: {
     errorMessages: Partial<Record<MessageLevel, ErrorMessage[]>>;
   };
+  agentsGraph: Record<string, any>;
 }

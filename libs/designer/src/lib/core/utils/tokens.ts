@@ -44,6 +44,7 @@ import {
   equals,
   filterRecord,
   getRecordEntry,
+  TOKEN_PICKER_OUTPUT_SECTIONS,
 } from '@microsoft/logic-apps-shared';
 import type { FunctionDefinition, OutputToken, Token, ValueSegment } from '@microsoft/designer-ui';
 import { UIConstants, TemplateFunctions, TokenType, removeUTFExpressions } from '@microsoft/designer-ui';
@@ -238,7 +239,7 @@ export const getOutputTokenSections = (
   const agentParameterTokens = getAgentParameterTokens(nodeId, agentParameters, workflowState.nodesMetadata);
   if (agentParameterTokens?.length) {
     tokenGroups.push({
-      id: 'agentparameters',
+      id: TOKEN_PICKER_OUTPUT_SECTIONS.AGENT_PARAMETERS,
       label: intl.formatMessage({
         description: 'Heading section for Agent Parameter tokens',
         defaultMessage: 'Agent Parameters',
@@ -250,7 +251,7 @@ export const getOutputTokenSections = (
 
   if (Object.keys(workflowParameters).length) {
     tokenGroups.push({
-      id: 'workflowparameters',
+      id: TOKEN_PICKER_OUTPUT_SECTIONS.WORKFLOW_PARAMETERS,
       label: intl.formatMessage({ description: 'Heading section for Parameter tokens', defaultMessage: 'Parameters', id: 'J9wWry' }),
       tokens: getWorkflowParameterTokens(workflowParameters),
     });
@@ -258,7 +259,7 @@ export const getOutputTokenSections = (
 
   if (nodeTokens) {
     tokenGroups.push({
-      id: 'variables',
+      id: TOKEN_PICKER_OUTPUT_SECTIONS.VARIABLES,
       label: intl.formatMessage({ description: 'Heading section for Variable tokens', defaultMessage: 'Variables', id: 'unMaeV' }),
       tokens: getVariableTokens(variables, nodeTokens).map((token) => ({
         ...token,
@@ -417,7 +418,13 @@ const getTokenValueSegmentTokenType = (token: OutputToken, nodeType: string): To
     return TokenType.ITERATIONINDEX;
   }
   if (token.outputInfo?.functionName) {
-    return equals(token.outputInfo.functionName, Constants.FUNCTION_NAME.PARAMETERS) ? TokenType.PARAMETER : TokenType.VARIABLE;
+    if (token.outputInfo.functionName === Constants.FUNCTION_NAME.PARAMETERS) {
+      return TokenType.PARAMETER;
+    }
+    if (token.outputInfo.functionName === Constants.FUNCTION_NAME.AGENT_PARAMETERS) {
+      return TokenType.AGENTPARAMETER;
+    }
+    return TokenType.VARIABLE;
   }
   return TokenType.OUTPUTS;
 };
