@@ -69,7 +69,7 @@ export default {
             },
             maxTokens: {
               title: 'Max tokens',
-              description: 'Max tokens to use',
+              description: 'Max tokens to use (value should be between 1 and 8192)',
               type: 'integer',
               format: 'int32',
               minimum: 1,
@@ -77,7 +77,7 @@ export default {
             },
             frequencyPenalty: {
               title: 'Frequency penalty',
-              description: 'Penalty for frequency of tokens',
+              description: 'Penalty for frequency of tokens (value should be between -2 and 2)',
               type: 'number',
               format: 'float',
               minimum: -2.0,
@@ -85,7 +85,7 @@ export default {
             },
             presencePenalty: {
               title: 'Presence penalty',
-              description: 'Penalty for presence of tokens',
+              description: 'Penalty for presence of tokens (value should be between -2 and 2)',
               type: 'number',
               minimum: -2.0,
               format: 'float',
@@ -93,7 +93,7 @@ export default {
             },
             temperature: {
               title: 'Temperature',
-              description: 'Sampling temperature to use',
+              description: 'Sampling temperature to use (value should be between 0 and 2)',
               type: 'number',
               format: 'float',
               minimum: 0,
@@ -101,7 +101,7 @@ export default {
             },
             topP: {
               title: 'Top P',
-              description: 'Nucleus sampling parameter',
+              description: 'Nucleus sampling parameter (value should be between 0 and 1)',
               type: 'number',
               format: 'float',
               minimum: 0,
