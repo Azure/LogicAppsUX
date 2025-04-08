@@ -1,4 +1,12 @@
 # Logic Apps Designer
+## [5.73.0](https://github.com/Azure/LogicAppsUX/compare/v5.72.0...v5.73.0) (2025-04-08)
+
+
+### Features
+
+* **designer:** Add max and min validation for number/integers inputs ([#6980](https://github.com/Azure/LogicAppsUX/issues/6980)) ([8acc349](https://github.com/Azure/LogicAppsUX/commit/8acc3491f57b69e3563c6174b6fdd35a32db11b1))
+* **designer:** Add operation-option for Operation fail in agentic workflow ([#6987](https://github.com/Azure/LogicAppsUX/issues/6987)) ([90b3060](https://github.com/Azure/LogicAppsUX/commit/90b3060baa41274b68ac775217fc431bf1fe6307))
+
 ## [5.72.0](https://github.com/Azure/LogicAppsUX/compare/v5.71.0...v5.72.0) (2025-04-08)
 
 
