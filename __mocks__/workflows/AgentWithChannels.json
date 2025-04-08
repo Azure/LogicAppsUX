@@ -108,7 +108,7 @@
           },
           "out": {
             "out-channel-1": {
-              "trigger": {
+              "action": {
                 "type": "Response",
                 "kind": "Http",
                 "inputs": {
