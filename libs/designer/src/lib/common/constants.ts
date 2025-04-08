@@ -859,6 +859,7 @@ export default {
       SINGLE_INSTANCE: 'SingleInstance',
       SUPPRESS_WORKFLOW_HEADERS: 'SuppressWorkflowHeaders',
       SUPPRESS_WORKFLOW_HEADERS_ON_RESPONSE: 'SuppressWorkflowHeadersOnResponse',
+      FAILWHENLIMITSREACHED: 'FailWhenLimitsReached',
     },
     TRANSFER_MODE: {
       CHUNKED: 'Chunked',

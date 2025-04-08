@@ -23,6 +23,7 @@ export interface GeneralSectionProps extends SectionProps {
   onTriggerConditionsChange: ExpressionChangeHandler;
   onClientTrackingIdChange: TextChangeHandler;
   onCountValueChange: NumberChangeHandler;
+  onShouldFailOperationToggle: ToggleHandler;
 }
 
 export const General = ({
@@ -49,6 +50,8 @@ export const General = ({
   onClientTrackingIdChange,
   onHeaderClick,
   validationErrors,
+  shouldFailOperation,
+  onShouldFailOperationToggle,
 }: GeneralSectionProps): JSX.Element => {
   const intl = useIntl();
   const nodesMetadata = useNodeMetadata(nodeId);
@@ -189,6 +192,11 @@ export const General = ({
     id: 'NzPnFS',
     description: 'Placeholder text for an example input field',
   });
+  const shouldFailOperationText = intl.formatMessage({
+    defaultMessage: 'Fail operation when limits are reached',
+    id: 'DYbiZw',
+    description: 'Fail operation when limits are reached',
+  });
 
   const generalSectionProps: SettingsSectionProps = {
     id: 'general',
@@ -263,6 +271,17 @@ export const General = ({
           type: 'number',
         },
         visible: count?.isSupported,
+      },
+      {
+        settingType: 'SettingToggle',
+        settingProp: {
+          readOnly,
+          checked: shouldFailOperation?.value,
+          onToggleInputChange: (_, checked) => onShouldFailOperationToggle(!!checked),
+          customLabel: getSettingLabel(shouldFailOperationText, undefined, undefined, undefined, /* isSubLabelToggle*/ true),
+          ariaLabel: shouldFailOperationText,
+        },
+        visible: shouldFailOperation?.isSupported,
       },
       {
         settingType: 'SettingToggle',

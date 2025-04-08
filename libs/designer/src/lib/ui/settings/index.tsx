@@ -242,9 +242,8 @@ function GeneralSettings({
   const operationInfo = useOperationInfo(nodeId) ?? ({} as any);
   const nodeInputs = useRawInputParameters(nodeId) ?? ({} as any);
 
-  const { timeout, splitOn, splitOnConfiguration, concurrency, conditionExpressions, invokerConnection, count } = useSelector(
-    (state: RootState) => getRecordEntry(state.operations.settings, nodeId) ?? {}
-  );
+  const { timeout, splitOn, splitOnConfiguration, concurrency, conditionExpressions, invokerConnection, count, shouldFailOperation } =
+    useSelector((state: RootState) => getRecordEntry(state.operations.settings, nodeId) ?? {});
 
   const onConcurrencyToggle = (checked: boolean): void => {
     const value = checked ? (concurrency?.value?.runs ?? constants.CONCURRENCY_ACTION_SLIDER_LIMITS.DEFAULT) : undefined;
@@ -252,6 +251,15 @@ function GeneralSettings({
       concurrency: {
         isSupported: !!concurrency?.isSupported,
         value: { runs: value, enabled: checked },
+      },
+    });
+  };
+
+  const onShouldFailOperationToggle = (checked: boolean): void => {
+    updateSettings({
+      shouldFailOperation: {
+        isSupported: !!shouldFailOperation?.isSupported,
+        value: checked,
       },
     });
   };
@@ -370,11 +378,13 @@ function GeneralSettings({
         count={count}
         timeout={timeout}
         concurrency={concurrency}
+        shouldFailOperation={shouldFailOperation}
         invokerConnection={invokerConnection}
         conditionExpressions={conditionExpressions}
         splitOnConfiguration={splitOnConfiguration}
         onHeaderClick={(sectionName) => dispatch(setExpandedSections(sectionName))}
         onConcurrencyToggle={onConcurrencyToggle}
+        onShouldFailOperationToggle={onShouldFailOperationToggle}
         onConcurrencyRunValueChange={onConcurrencyRunValueChange}
         onConcurrencyMaxWaitRunChange={onConcurrencyMaxWaitRunChange}
         onInvokerConnectionToggle={onInvokerConnectionToggle}

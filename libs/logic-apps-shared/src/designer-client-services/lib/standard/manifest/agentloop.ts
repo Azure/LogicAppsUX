@@ -1,5 +1,5 @@
 import type { OperationManifest } from '../../../../utils/src';
-import { SettingScope } from '../../../../utils/src';
+import { OperationOptions, SettingScope } from '../../../../utils/src';
 
 export default {
   properties: {
@@ -172,6 +172,10 @@ export default {
       },
       retryPolicy: {
         scopes: [SettingScope.Action],
+      },
+      operationOptions: {
+        scopes: [SettingScope.Action],
+        options: [OperationOptions.FailWhenLimitsReached],
       },
     },
   },
