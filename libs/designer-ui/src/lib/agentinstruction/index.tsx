@@ -84,7 +84,7 @@ export const AgentInstructionEditor = ({
         <NavigateIcon style={{ position: 'relative', top: '2px' }} />
       </Link>
       <div className="msla-agent-instruction-editors">
-        <Label text={systemPromptLabel} />
+        <Label text={systemPromptLabel} isRequiredField />
         <StringEditor
           {...props}
           className={css(className, 'msla-agent-instruction-system-editor editor-custom')}
@@ -95,6 +95,7 @@ export const AgentInstructionEditor = ({
         <Label text={userItemLabel} />
         <ArrayEditor
           {...props}
+          isRequired={false}
           label={userItemLabel}
           placeholder={userPlaceholder}
           itemSchema={{ key: 'userMessage', type: 'string' }}
