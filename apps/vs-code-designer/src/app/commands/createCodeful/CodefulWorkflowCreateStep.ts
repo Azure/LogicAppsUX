@@ -15,7 +15,17 @@ import { getCodefulWorkflowTemplate } from '../../utils/codeless/templates';
 //import { addFolderToBuildPath, addNugetPackagesToBuildFile, getDotnetBuildFile, suppressJavaScriptBuildWarnings, updateFunctionsSDKVersion, writeBuildFileToDisk } from '../../utils/codeless/updateBuildFile';
 import { writeFormattedJson } from '../../utils/fs';
 import { localize } from 'vscode-nls';
-import { hostFileName, extensionBundleId, defaultVersionRange, azureWebJobsStorageKey, localEmulatorConnectionString, localSettingsFileName, workerRuntimeKey, functionsInprocNet8Enabled } from '../../../constants';
+import {
+  hostFileName,
+  extensionBundleId,
+  defaultVersionRange,
+  azureWebJobsStorageKey,
+  localEmulatorConnectionString,
+  localSettingsFileName,
+  workerRuntimeKey,
+  functionsInprocNet8Enabled,
+  codefulWorkflowFileName,
+} from '../../../constants';
 import { removeAppKindFromLocalSettings, setLocalAppSetting } from '../../utils/appSettings/localSettings';
 import { validateDotnetInstalled } from '../../utils/dotnet/executeDotnetTemplateCommand';
 import { parseJson } from '../../utils/parseJson';
@@ -23,7 +33,6 @@ import { switchToDotnetProject } from '../workflows/switchToDotnetProject';
 import * as vscode from 'vscode';
 
 export class CodefulWorkflowCreateStep extends WorkflowCreateStepBase<IFunctionWizardContext> {
-
   private constructor() {
     super();
   }
@@ -38,7 +47,7 @@ export class CodefulWorkflowCreateStep extends WorkflowCreateStepBase<IFunctionW
 
     const codelessDefinition: string = await getCodefulWorkflowTemplate();
 
-    const workflowCsFullPath: string = path.join(functionPath, 'workflow.cs');
+    const workflowCsFullPath: string = path.join(functionPath, codefulWorkflowFileName);
 
     await fse.ensureDir(functionPath);
     await fse.writeFile(workflowCsFullPath, codelessDefinition);
@@ -76,20 +85,8 @@ export class CodefulWorkflowCreateStep extends WorkflowCreateStepBase<IFunctionW
     if (hostJsonUpdated) {
       await writeFormattedJson(hostJsonPath, hostJson);
     }
-    await setLocalAppSetting(
-      context,
-      context.projectPath,
-      workerRuntimeKey,
-      WorkerRuntime.Dotnet,
-      MismatchBehavior.Overwrite
-    );
-    await setLocalAppSetting(
-      context,
-      context.projectPath,
-      functionsInprocNet8Enabled,
-      '1',
-      MismatchBehavior.Overwrite
-    );
+    await setLocalAppSetting(context, context.projectPath, workerRuntimeKey, WorkerRuntime.Dotnet, MismatchBehavior.Overwrite);
+    await setLocalAppSetting(context, context.projectPath, functionsInprocNet8Enabled, '1', MismatchBehavior.Overwrite);
     await setLocalAppSetting(
       context,
       context.projectPath,
