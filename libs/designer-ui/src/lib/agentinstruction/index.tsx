@@ -74,7 +74,7 @@ export const AgentInstructionEditor = ({
 
   return (
     <div className="msla-agent-instruction-editor-container">
-      <Text style={{ fontSize: 12, fontStyle: 'italic' }}>{description} </Text>
+      <Text style={{ fontSize: 12 }}>{description} </Text>
       <Link
         href="https://learn.microsoft.com/en-us/microsoft-365-copilot/extensibility/declarative-agent-instructions"
         target="_blank"
