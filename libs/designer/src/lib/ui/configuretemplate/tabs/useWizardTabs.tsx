@@ -1,6 +1,6 @@
-import type { AppDispatch } from '../../../core/state/templates/store';
+import type { AppDispatch, RootState } from '../../../core/state/templates/store';
 import { useIntl } from 'react-intl';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { workflowsTab } from './workflowsTab';
 import { connectionsTab } from './connectionsTab';
 import { parametersTab } from './parametersTab';
@@ -18,12 +18,33 @@ export const useConfigureTemplateWizardTabs = ({
   const intl = useIntl();
   const dispatch = useDispatch<AppDispatch>();
 
+  const { enableWizard } = useSelector((state: RootState) => ({
+    enableWizard: state.tab.enableWizard,
+  }));
+
   return [
-    workflowsTab(intl, dispatch, onSaveWorkflows),
-    connectionsTab(intl, dispatch),
-    parametersTab(intl, dispatch),
-    profileTab(intl, dispatch),
-    publishTab(intl, dispatch),
-    reviewPublishTab(intl, dispatch, onPublish),
+    workflowsTab(intl, dispatch, onSaveWorkflows, {
+      tabStatusIcon: undefined,
+    }),
+    connectionsTab(intl, dispatch, {
+      tabStatusIcon: enableWizard ? undefined : 'in-progress',
+      disabled: enableWizard,
+    }),
+    parametersTab(intl, dispatch, {
+      tabStatusIcon: enableWizard ? undefined : 'in-progress',
+      disabled: enableWizard,
+    }),
+    profileTab(intl, dispatch, {
+      tabStatusIcon: enableWizard ? undefined : 'in-progress',
+      disabled: enableWizard,
+    }),
+    publishTab(intl, dispatch, {
+      tabStatusIcon: enableWizard ? undefined : 'in-progress',
+      disabled: enableWizard,
+    }),
+    reviewPublishTab(intl, dispatch, onPublish, {
+      tabStatusIcon: enableWizard ? undefined : 'in-progress',
+      disabled: enableWizard,
+    }),
   ];
 };

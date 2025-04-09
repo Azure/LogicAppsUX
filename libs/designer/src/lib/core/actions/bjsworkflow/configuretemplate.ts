@@ -90,7 +90,10 @@ export const initializeConfigureTemplateServices = createAsyncThunk(
 
 export const loadCustomTemplate = createAsyncThunk(
   'loadCustomTemplate',
-  async ({ templateId }: { templateId: string }, { dispatch }): Promise<{ isPublished: boolean; environment: string }> => {
+  async (
+    { templateId }: { templateId: string },
+    { dispatch }
+  ): Promise<{ isPublished: boolean; environment: string; enableWizard: boolean }> => {
     const templateName = getResourceNameFromId(templateId);
     const templateResource = await getTemplate(templateId);
     const manifest = await getTemplateManifest(templateId);
@@ -117,6 +120,7 @@ export const loadCustomTemplate = createAsyncThunk(
     return {
       isPublished: templateResource.properties?.provisioningState === 'Succeeded',
       environment: templateResource.properties?.environment ?? 'Development',
+      enableWizard: allWorkflowsData && Object.keys(allWorkflowsData).length > 0,
     };
   }
 );

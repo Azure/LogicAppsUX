@@ -24,9 +24,12 @@ export const tabSlice = createSlice({
   extraReducers: (builder) => {
     builder.addCase(resetTemplatesState, () => initialState);
 
-    builder.addCase(loadCustomTemplate.fulfilled, (state) => {
-      state.enableWizard = true;
+    builder.addCase(loadCustomTemplate.fulfilled, (state, action: PayloadAction<{ enableWizard: boolean }>) => {
+      state.enableWizard = action.payload.enableWizard;
     });
+
+    //TODO: on initializeWorkflowsData fulfilled, set enableWizard to true after checking workflows length.
+    // TODO: on deleteWorkflowsData fulfilled, set enableWizard to false if workflows length is 0.
   },
 });
 

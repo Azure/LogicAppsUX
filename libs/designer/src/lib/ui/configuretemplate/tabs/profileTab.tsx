@@ -4,15 +4,21 @@ import constants from '../../../common/constants';
 import type { IntlShape } from 'react-intl';
 import { selectWizardTab } from '../../../core/state/templates/tabSlice';
 import { TemplateManifestForm } from '../templateprofile/manifestform';
+import type { CreateWizardTabProps } from './model';
 
-export const profileTab = (intl: IntlShape, dispatch: AppDispatch): TemplateTabProps => ({
+export const profileTab = (
+  intl: IntlShape,
+  dispatch: AppDispatch,
+  { disabled, tabStatusIcon }: CreateWizardTabProps
+): TemplateTabProps => ({
   id: constants.CONFIGURE_TEMPLATE_WIZARD_TAB_NAMES.PROFILE,
   title: intl.formatMessage({
     defaultMessage: 'Profile',
     id: '6ELsbA',
     description: 'The tab label for the monitoring profile tab on the configure template wizard',
   }),
-  tabStatusIcon: undefined,
+  tabStatusIcon,
+  disabled,
   content: <TemplateManifestForm />,
   footerContent: {
     primaryButtonText: intl.formatMessage({

@@ -4,19 +4,26 @@ import type { TemplateTabProps } from '@microsoft/designer-ui';
 import constants from '../../../common/constants';
 import type { IntlShape } from 'react-intl';
 import { selectWizardTab } from '../../../core/state/templates/tabSlice';
+import type { CreateWizardTabProps } from './model';
 
 export const ReviewPublishTab = () => {
   return <Text>placeholder - show review + publish</Text>;
 };
 
-export const reviewPublishTab = (intl: IntlShape, dispatch: AppDispatch, onPublish: () => void): TemplateTabProps => ({
+export const reviewPublishTab = (
+  intl: IntlShape,
+  dispatch: AppDispatch,
+  onPublish: () => void,
+  { disabled, tabStatusIcon }: CreateWizardTabProps
+): TemplateTabProps => ({
   id: constants.CONFIGURE_TEMPLATE_WIZARD_TAB_NAMES.REVIEW_AND_PUBLISH,
   title: intl.formatMessage({
     defaultMessage: 'Review + publish',
     id: 'FJQUqL',
     description: 'The tab label for the monitoring review and publish tab on the configure template wizard',
   }),
-  tabStatusIcon: undefined,
+  tabStatusIcon,
+  disabled,
   content: <ReviewPublishTab />,
   footerContent: {
     primaryButtonText: intl.formatMessage({

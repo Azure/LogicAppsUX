@@ -4,13 +4,13 @@ import constants from '../../../common/constants';
 import type { IntlShape } from 'react-intl';
 import { selectWizardTab } from '../../../core/state/templates/tabSlice';
 import { DisplayWorkflows } from '../workflows/workflowslist';
+import type { CreateWizardTabProps } from './model';
 
 export const workflowsTab = (
   intl: IntlShape,
   dispatch: AppDispatch,
-  // disabled: boolean,
-  onSaveWorkflows: (isMultiWorkflow: boolean) => void
-  // { disabled, hasError }
+  onSaveWorkflows: (isMultiWorkflow: boolean) => void,
+  { disabled, tabStatusIcon }: CreateWizardTabProps
 ): TemplateTabProps => ({
   id: constants.CONFIGURE_TEMPLATE_WIZARD_TAB_NAMES.WORKFLOWS,
   title: intl.formatMessage({
@@ -18,8 +18,8 @@ export const workflowsTab = (
     id: 'R7VvvJ',
     description: 'The tab label for the monitoring workflows tab on the configure template wizard',
   }),
-  // disabled: disabled,
-  // tabStatusIcon: hasError ? 'error' : undefined,
+  disabled: disabled,
+  tabStatusIcon,
   content: <DisplayWorkflows onSave={onSaveWorkflows} />,
   footerContent: {
     primaryButtonText: '',
