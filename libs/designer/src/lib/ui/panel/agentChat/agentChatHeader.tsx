@@ -1,5 +1,6 @@
 import { Button, Subtitle1 } from '@fluentui/react-components';
 import { ChevronDoubleRightFilled } from '@fluentui/react-icons';
+import { useIsDarkMode } from '../../../core/state/designerOptions/designerOptionsSelectors';
 import { useMemo } from 'react';
 import { useIntl } from 'react-intl';
 
@@ -9,6 +10,7 @@ interface AgentChatHeaderProps {
 }
 export const AgentChatHeader = ({ title, toggleCollapse }: AgentChatHeaderProps) => {
   const intl = useIntl();
+  const isDarkMode = useIsDarkMode();
 
   const intlText = useMemo(() => {
     return {
@@ -27,6 +29,7 @@ export const AgentChatHeader = ({ title, toggleCollapse }: AgentChatHeaderProps)
         position: 'relative',
         justifyContent: 'center',
         padding: '10px',
+        borderBottom: `1px solid ${isDarkMode ? '#333333' : '#d6d6d6'}`,
       }}
     >
       <Subtitle1>{title}</Subtitle1>
