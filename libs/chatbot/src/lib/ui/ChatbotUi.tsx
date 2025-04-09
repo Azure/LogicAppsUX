@@ -10,7 +10,7 @@ import {
   PanelLocation,
   ProgressCardWithStopButton,
 } from '@microsoft/designer-ui';
-import { useEffect, useMemo, useRef } from 'react';
+import { useCallback, useEffect, useMemo, useRef } from 'react';
 import { useIntl } from 'react-intl';
 
 export const defaultChatbotPanelWidth = '360px';
@@ -29,7 +29,7 @@ interface ChatbotUiProps {
     disabled?: boolean;
     value?: string;
     placeholder?: string;
-    onChange: (value: string) => void;
+    onChange?: (value: string) => void;
     onSubmit: (value: string) => void;
     readOnly?: boolean;
     readOnlyText?: string;
@@ -70,17 +70,10 @@ export const ChatbotContent = (props: ChatbotUiProps) => {
     data: { isSaving, canSave, canTest, test, save, abort } = {},
     string: { test: testString, save: saveString, submit: submitString, progressState, progressStop, progressSave, protectedMessage },
   } = props;
-
-  const textInputRef = useRef<ITextField>(null);
-  useEffect(() => {
-    if (focus) {
-      textInputRef.current?.focus();
-      setFocus(false);
-    }
-  }, [focus, setFocus, textInputRef]);
-
   const intl = useIntl();
   const { isInverted } = useTheme();
+  const textInputRef = useRef<ITextField>(null);
+
   const inputIconButtonStyles = {
     enabled: {
       root: {
@@ -95,6 +88,24 @@ export const ChatbotContent = (props: ChatbotUiProps) => {
       },
     },
   };
+
+  // Scroll into view specific message
+  const setCanvasCenterToFocus = useCallback(() => {
+    // dispatch(clearFocusNode());
+    // dispatch(clearFocusCollapsedNode());
+  }, []);
+
+  useEffect(() => {
+    if (focus) {
+      textInputRef.current?.focus();
+      setFocus(false);
+    }
+  }, [focus, setFocus, textInputRef]);
+
+  useEffect(() => {
+    setCanvasCenterToFocus();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [focusNode]);
 
   const intlText = useMemo(() => {
     return {
@@ -152,7 +163,7 @@ export const ChatbotContent = (props: ChatbotUiProps) => {
             isMultiline={true}
             maxQueryLength={QUERY_MAX_LENGTH}
             onQueryChange={(_ev, newValue) => {
-              onChange(newValue ?? '');
+              onChange?.(newValue ?? '');
             }}
             placeholder={placeholder ?? intlText.inputPlaceHolder}
             query={value}

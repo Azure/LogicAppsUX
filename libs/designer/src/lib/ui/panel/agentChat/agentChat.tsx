@@ -138,7 +138,6 @@ export const AgentChat = ({
   panelContainerRef,
 }: AgentChatProps) => {
   const intl = useIntl();
-  const [inputQuery, setInputQuery] = useState('');
   const [focus, setFocus] = useState(false);
   const [conversation, setConversation] = useState<ConversationItem[]>([]);
   const isMonitoringView = useMonitoringView();
@@ -224,10 +223,6 @@ export const AgentChat = ({
     };
   }, [intl]);
 
-  useEffect(() => {
-    setInputQuery('');
-  }, [conversation]);
-
   return (
     <Drawer
       aria-label={intlText.agentChatPanelAriaLabel}
@@ -269,8 +264,6 @@ export const AgentChat = ({
               header: <AgentChatHeader title={intlText.agentChatHeader} toggleCollapse={() => setIsCollapsed(true)} />,
             }}
             inputBox={{
-              value: inputQuery,
-              onChange: setInputQuery,
               onSubmit: () => {},
               disabled: isChatInputEnabled,
               readOnly: true,
