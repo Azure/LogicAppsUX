@@ -16,8 +16,16 @@ const fileOptions = [
   // { key: 'straightLine.json', text: 'Straight Line' },
   { key: 'simpleBigworkflow.json', text: 'Simple Big Workflow' },
   { key: 'UnicodeKeys.json', text: 'Unicode Keys' },
-  // Scope Nodes
+
+  // Agent
   { key: 'divider_1', text: '-', itemType: DropdownMenuItemType.Divider },
+  { key: 'AgentHeader', text: 'Agentic Workflows', itemType: DropdownMenuItemType.Header },
+  { key: 'BlankAgent.json', text: 'Empty Agent' },
+  { key: 'Agent.json', text: 'Starter Agent' },
+  { key: 'AgentWithChannels.json', text: 'Agent with Channels' },
+
+  // Scope Nodes
+  { key: 'divider_2', text: '-', itemType: DropdownMenuItemType.Divider },
   { key: 'ScopeNodesHeader', text: 'Scope Node Testing Workflows', itemType: DropdownMenuItemType.Header },
   { key: 'AllScopeNodes.json', text: 'All Scope Nodes' },
   { key: 'Conditionals.json', text: 'Conditionals' },
@@ -28,18 +36,14 @@ const fileOptions = [
   { key: 'simpleForeach.json', text: 'ForEach' },
   // { key: 'Scoped.json', text: 'Scoped' },
 
-  // Agent
-  { key: 'Agent.json', text: 'Agent' },
-  { key: 'AgentWithChannels.json', text: 'Agent with Input/Output' },
-
   // Run-After
-  { key: 'divider_2', text: '-', itemType: DropdownMenuItemType.Divider },
+  { key: 'divider_3', text: '-', itemType: DropdownMenuItemType.Divider },
   { key: 'RunAfterHeader', text: 'Run After Testing Workflows', itemType: DropdownMenuItemType.Header },
   { key: 'RunAfter.json', text: 'General Run After' },
   { key: 'MultipleRunAftersBig.json', text: 'Multiple Run Afters (Big)' },
 
   // Stress Tests
-  { key: 'divider_3', text: '-', itemType: DropdownMenuItemType.Divider },
+  { key: 'divider_4', text: '-', itemType: DropdownMenuItemType.Divider },
   { key: 'StressTestsHeader', text: 'Stress Test Workflows', itemType: DropdownMenuItemType.Header },
   { key: 'StressTest50.json', text: '50 Nodes' },
   { key: 'StressTest100.json', text: '100 Nodes' },
@@ -52,13 +56,13 @@ const fileOptions = [
   { key: 'StressTest1000.json', text: '1000 Nodes' },
 
   // Consumption Workflows
-  { key: 'divider_4', text: '-', itemType: DropdownMenuItemType.Divider },
+  { key: 'divider_5', text: '-', itemType: DropdownMenuItemType.Divider },
   { key: 'WorkflowParametersHeader', text: 'Workflow Parameters', itemType: DropdownMenuItemType.Header },
   { key: 'StandardWorkflowParameters.json', text: 'Standard Workflow Parameters' },
   { key: 'ConsumptionWorkflowParameters.json', text: 'Consumption Workflow Parameters' },
 
   // Monitoring View scenarios
-  { key: 'divider_5', text: '-', itemType: DropdownMenuItemType.Divider },
+  { key: 'divider_6', text: '-', itemType: DropdownMenuItemType.Divider },
   { key: 'MonitoringViewHeader', text: 'Monitoring view scenarios', itemType: DropdownMenuItemType.Header },
   { key: 'MonitoringViewConditional.json', text: 'Monitoring view conditional' },
   { key: 'LoopsPager.json', text: 'Loops pager' },
