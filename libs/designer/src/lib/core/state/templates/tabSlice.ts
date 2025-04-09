@@ -1,7 +1,7 @@
 import type { PayloadAction } from '@reduxjs/toolkit';
 import { createSlice } from '@reduxjs/toolkit';
 import { resetTemplatesState } from '../global';
-import { loadCustomTemplate } from '../../actions/bjsworkflow/configuretemplate';
+import { deleteWorkflowData, initializeWorkflowsData, loadCustomTemplate } from '../../actions/bjsworkflow/configuretemplate';
 
 export interface TabState {
   selectedTabId: string | undefined;
@@ -28,8 +28,15 @@ export const tabSlice = createSlice({
       state.enableWizard = action.payload.enableWizard;
     });
 
-    //TODO: on initializeWorkflowsData fulfilled, set enableWizard to true after checking workflows length.
-    // TODO: on deleteWorkflowsData fulfilled, set enableWizard to false if workflows length is 0.
+    builder.addCase(initializeWorkflowsData.fulfilled, (state) => {
+      state.enableWizard = true;
+    });
+
+    builder.addCase(deleteWorkflowData.fulfilled, (state, action: PayloadAction<{ disableWizard: boolean }>) => {
+      if (action.payload.disableWizard) {
+        state.enableWizard = false;
+      }
+    });
   },
 });
 

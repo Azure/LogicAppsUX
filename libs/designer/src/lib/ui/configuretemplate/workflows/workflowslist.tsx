@@ -28,10 +28,9 @@ import { useResourceStrings } from '../resources';
 
 export const DisplayWorkflows = ({ onSave }: { onSave: (isMultiWorkflow: boolean) => void }) => {
   const intl = useIntl();
-  const { workflows, currentPanelView, enableWizard } = useSelector((state: RootState) => ({
+  const { workflows, currentPanelView } = useSelector((state: RootState) => ({
     workflows: state.template.workflows,
     currentPanelView: state.panel.currentPanelView,
-    enableWizard: state.tab.enableWizard,
   }));
   const dispatch = useDispatch<AppDispatch>();
 
@@ -180,8 +179,6 @@ export const DisplayWorkflows = ({ onSave }: { onSave: (isMultiWorkflow: boolean
           },
         }}
       />
-      {enableWizard ? 'TRUE' : 'FALSE'}
-
       {Object.keys(workflows).length > 0 ? (
         <Table aria-label={resourceStrings.WorkflowsListTableLabel} style={{ minWidth: '550px' }}>
           <TableHeader>

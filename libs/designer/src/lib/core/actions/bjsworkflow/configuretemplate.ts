@@ -156,6 +156,7 @@ export const deleteWorkflowData = createAsyncThunk(
     connectionKeys: string[];
     parameterKeys: string[];
     parametersToUpdate: Record<string, Partial<Template.ParameterDefinition>>;
+    disableWizard: boolean;
   }> => {
     const combinedConnectionKeys: string[] = [];
     const combinedParameterKeys: string[] = [];
@@ -199,7 +200,8 @@ export const deleteWorkflowData = createAsyncThunk(
       combinedParameterKeys.push(...parameterKeys);
     }
 
-    return { ids, connectionKeys: combinedConnectionKeys, parameterKeys: combinedParameterKeys, parametersToUpdate };
+    const disableWizard = Object.keys(workflows).filter((workflowId) => !ids.includes(workflowId)).length === 0;
+    return { ids, connectionKeys: combinedConnectionKeys, parameterKeys: combinedParameterKeys, parametersToUpdate, disableWizard };
   }
 );
 

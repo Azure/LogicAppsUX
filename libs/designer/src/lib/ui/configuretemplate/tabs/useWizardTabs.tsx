@@ -24,27 +24,27 @@ export const useConfigureTemplateWizardTabs = ({
 
   return [
     workflowsTab(intl, dispatch, onSaveWorkflows, {
-      tabStatusIcon: undefined,
+      tabStatusIcon: 'in-progress',
     }),
     connectionsTab(intl, dispatch, {
-      tabStatusIcon: enableWizard ? undefined : 'in-progress',
-      disabled: enableWizard,
+      tabStatusIcon: enableWizard ? 'in-progress' : undefined,
+      disabled: !enableWizard,
     }),
     parametersTab(intl, dispatch, {
-      tabStatusIcon: enableWizard ? undefined : 'in-progress',
-      disabled: enableWizard,
+      tabStatusIcon: enableWizard ? 'in-progress' : undefined,
+      disabled: !enableWizard,
     }),
     profileTab(intl, dispatch, {
-      tabStatusIcon: enableWizard ? undefined : 'in-progress',
-      disabled: enableWizard,
+      tabStatusIcon: enableWizard ? 'in-progress' : undefined,
+      disabled: !enableWizard,
     }),
     publishTab(intl, dispatch, {
-      tabStatusIcon: enableWizard ? undefined : 'in-progress',
-      disabled: enableWizard,
+      tabStatusIcon: enableWizard ? 'in-progress' : undefined,
+      disabled: !enableWizard,
     }),
     reviewPublishTab(intl, dispatch, onPublish, {
-      tabStatusIcon: enableWizard ? undefined : 'in-progress',
-      disabled: enableWizard,
+      tabStatusIcon: enableWizard ? 'in-progress' : undefined,
+      disabled: !enableWizard,
     }),
   ];
 };
