@@ -27,6 +27,8 @@ import {
   isNullOrUndefined,
   startsWith,
   UnsupportedException,
+  wrapStringInQuotes,
+  unwrapQuotesFromString,
 } from '@microsoft/logic-apps-shared';
 
 /**
@@ -66,22 +68,46 @@ export class ValueSegmentConvertor {
    * @arg {any} value - The value.
    * @return {ValueSegment[]}
    */
-  public convertToValueSegments(value: any, parameterType?: string): ValueSegment[] {
+  public convertToValueSegments(value: any, parameterType?: string, parameterSchema?: any): ValueSegment[] {
     if (isNullOrUndefined(value)) {
       return [createLiteralValueSegment('')];
     }
     if (typeof value === 'string') {
       return this._convertStringToValueSegments(value, parameterType);
     }
-    return this._convertJsonToValueSegments(JSON.stringify(value, null, 2));
+    return this._convertJsonToValueSegments(JSON.stringify(value, null, 2), parameterSchema);
   }
 
-  private _convertJsonToValueSegments(json: string): ValueSegment[] {
+  private _convertJsonToValueSegments(json: string, parameterSchema?: any): ValueSegment[] {
     const sections = new JsonSplitter(json).split();
     const segments: ValueSegment[] = [];
 
+    const hasFormatProperty = (section: string): boolean => {
+      const sectionKey = unwrapQuotesFromString(section);
+      const schema = parameterSchema;
+
+      if (!schema) {
+        return false;
+      }
+
+      const possibleSchemas = [
+        schema,
+        schema.items?.type === 'object' ? schema.items : undefined,
+        schema.items?.items, // Nested arrays
+        ...(schema.allOf ?? []),
+        ...(schema.oneOf ?? []),
+        ...(schema.anyOf ?? []),
+      ].filter(Boolean); // Remove undefined values
+
+      return possibleSchemas.some((s) => s.properties?.[sectionKey]?.format || s.additionalProperties?.format);
+    };
+
     for (const section of sections) {
       for (const segment of this._convertJsonSectionToSegments(section)) {
+        if (hasFormatProperty(section)) {
+          this._options.shouldUncast = true;
+        }
+
         segments.push(segment);
       }
     }
@@ -122,8 +148,10 @@ export class ValueSegmentConvertor {
       return this._convertTemplateExpressionToValueSegments(expression);
     }
 
-    const isSpecialValue = ['true', 'false', 'null'].includes(value) || /^-?\d+$/.test(value);
-    const stringValue = parameterType === constants.SWAGGER.TYPE.ANY && isSpecialValue ? `"${value}"` : value;
+    const isSpecialValue =
+      [constants.BOOLEAN_PARAMETER_VALUE.TRUE, constants.BOOLEAN_PARAMETER_VALUE.FALSE, constants.PARAMETER_NULL_VALUE].includes(value) ||
+      /^-?\d+$/.test(value);
+    const stringValue = parameterType === constants.SWAGGER.TYPE.ANY && isSpecialValue ? wrapStringInQuotes(value) : value;
     return [this._createLiteralValueSegment(stringValue)];
   }
 

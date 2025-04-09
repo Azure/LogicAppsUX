@@ -391,7 +391,7 @@ const serializeAllChannels = async (rootState: RootState, operationId: string): 
   if (serializedOutputChannelTrigger) {
     serializedOutputChannel = {
       'out-channel-1': {
-        trigger: serializedOutputChannelTrigger,
+        action: serializedOutputChannelTrigger,
       },
     };
   }
@@ -1186,6 +1186,12 @@ const getSerializedOperationOptions = (operationId: string, settings: Settings, 
     Constants.SETTINGS.OPERATION_OPTIONS.REQUEST_SCHEMA_VALIDATION,
     !!settings.requestSchemaValidation?.isSupported,
     !!settings.requestSchemaValidation?.value,
+    deserializedOptions
+  );
+  updateOperationOptions(
+    Constants.SETTINGS.OPERATION_OPTIONS.FAILWHENLIMITSREACHED,
+    !!settings.shouldFailOperation?.isSupported,
+    !!settings.shouldFailOperation?.value,
     deserializedOptions
   );
 

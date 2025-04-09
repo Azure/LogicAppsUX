@@ -25,43 +25,29 @@ export class BaseTemplateService implements ITemplateService {
     this.options.onAddBlankWorkflow ? this.options.onAddBlankWorkflow() : Promise.resolve();
 
   public getContentPathUrl = (templatePath: string, resourcePath: string): string => {
-    const { endpoint, useEndpointForTemplates } = this.options;
+    const { endpoint } = this.options;
     const resourceName = resourcePath.split('/').pop();
-    return useEndpointForTemplates ? `${endpoint}/${templatePath}/${resourceName}` : resourcePath;
+    return `${endpoint}/${templatePath}/${resourceName}`;
   };
 
   public getAllTemplateNames = async (): Promise<string[]> => {
-    const { httpClient, endpoint, useEndpointForTemplates } = this.options;
-    return useEndpointForTemplates
-      ? httpClient.get<any>({ uri: `${endpoint}/manifest.json`, headers: { 'Access-Control-Allow-Origin': '*' } })
-      : ((await import('./../templates/manifest.json'))?.default as string[]);
+    const { httpClient, endpoint } = this.options;
+    return httpClient.get<any>({ uri: `${endpoint}/manifest.json`, headers: { 'Access-Control-Allow-Origin': '*' } });
   };
 
   public getResourceManifest = async (resourcePath: string): Promise<Template.TemplateManifest | Template.WorkflowManifest> => {
-    const { httpClient, endpoint, useEndpointForTemplates } = this.options;
-    if (useEndpointForTemplates) {
-      return httpClient.get<any>({
-        uri: `${endpoint}/${resourcePath}/manifest.json`,
-        headers: { 'Access-Control-Allow-Origin': '*' },
-      });
-    }
-
-    const paths = resourcePath.split('/');
-
-    return paths.length === 2
-      ? (await import(`./../templates/${paths[0]}/${paths[1]}/manifest.json`)).default
-      : (await import(`./../templates/${resourcePath}/manifest.json`)).default;
+    const { httpClient, endpoint } = this.options;
+    return httpClient.get<any>({
+      uri: `${endpoint}/${resourcePath}/manifest.json`,
+      headers: { 'Access-Control-Allow-Origin': '*' },
+    });
   };
 
   public getWorkflowDefinition = async (templateId: string, workflowId: string): Promise<LogicAppsV2.WorkflowDefinition> => {
-    const { httpClient, endpoint, useEndpointForTemplates } = this.options;
-    if (useEndpointForTemplates) {
-      return httpClient.get<any>({
-        uri: `${endpoint}/${templateId}/${workflowId}/workflow.json`,
-        headers: { 'Access-Control-Allow-Origin': '*' },
-      });
-    }
-
-    return (await import(`./../templates/${templateId}/${workflowId}/workflow.json`)).default;
+    const { httpClient, endpoint } = this.options;
+    return httpClient.get<any>({
+      uri: `${endpoint}/${templateId}/${workflowId}/workflow.json`,
+      headers: { 'Access-Control-Allow-Origin': '*' },
+    });
   };
 }

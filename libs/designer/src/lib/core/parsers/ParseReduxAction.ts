@@ -80,7 +80,11 @@ export const initializeGraphState = createAsyncThunk<
         }
       }
 
-      const deserializedWorkflow = BJSDeserialize(selectedDefinition, runInstance);
+      const deserializedWorkflow = BJSDeserialize(
+        selectedDefinition,
+        runInstance,
+        !(designerOptions.readOnly || designerOptions.isMonitoringView)
+      );
 
       // For situations where there is an existing workflow, respect the node dimensions so that they are not reset
       const previousGraphFlattened = flattenWorkflowNodes(workflow.graph?.children || []);

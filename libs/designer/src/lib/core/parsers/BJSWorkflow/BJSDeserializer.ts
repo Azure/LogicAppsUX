@@ -42,7 +42,8 @@ export type DeserializedWorkflow = {
 
 export const Deserialize = (
   definition: LogicAppsV2.WorkflowDefinition,
-  runInstance: LogicAppsV2.RunInstanceDefinition | null
+  runInstance: LogicAppsV2.RunInstanceDefinition | null,
+  shouldAppendAddCase = true
 ): DeserializedWorkflow => {
   throwIfMultipleTriggers(definition);
 
@@ -97,7 +98,7 @@ export const Deserialize = (
 
   const [remainingChildren, edges, actions, actionNodesMetadata] = isNullOrUndefined(definition.actions)
     ? [[], [], {}]
-    : buildGraphFromActions(definition.actions, 'root', undefined /* parentNodeId */, allActionNames);
+    : buildGraphFromActions(definition.actions, 'root', undefined /* parentNodeId */, allActionNames, shouldAppendAddCase);
   allActions = { ...allActions, ...actions };
   nodesMetadata = { ...nodesMetadata, ...actionNodesMetadata };
   nodesMetadata = addActionsInstanceMetaData(nodesMetadata, allActions, runInstance);
@@ -366,6 +367,7 @@ export const buildGraphFromActions = (
   graphId: string,
   parentNodeId: string | undefined,
   allActionNames: string[],
+  shouldAppendAddCase: boolean,
   pasteScopeParams?: PasteScopeParams
 ): [WorkflowNode[], WorkflowEdge[], Operations, NodesMetadata] => {
   const nodes: WorkflowNode[] = [];
@@ -435,8 +437,8 @@ export const buildGraphFromActions = (
             const outputChannelKeys = Object.keys(action.channels.out);
             for (const key of outputChannelKeys) {
               const channelAction = action.channels.out?.[key];
-              if (channelAction && channelAction?.trigger) {
-                const id = `${actionName}${constants.CHANNELS.OUTPUT}${channelAction.trigger.type}`;
+              if (channelAction && channelAction?.action) {
+                const id = `${actionName}${constants.CHANNELS.OUTPUT}${channelAction.action.type}`;
                 allActionNames.push(id);
               }
             }
@@ -458,6 +460,7 @@ export const buildGraphFromActions = (
         actionName,
         action,
         allActionNames,
+        shouldAppendAddCase,
         pasteScopeParams
       );
       node.children = scopeNodes;
@@ -504,6 +507,7 @@ export const processScopeActions = (
   actionName: string,
   action: LogicAppsV2.ScopeAction,
   allActionNames: string[],
+  shouldAppendAddCase: boolean,
   pasteScopeParams?: PasteScopeParams
 ): [WorkflowNode[], WorkflowEdge[], Operations, NodesMetadata] => {
   const nodes: WorkflowNode[] = [];
@@ -518,7 +522,15 @@ export const processScopeActions = (
 
   // For use on scope nodes with a single flow
   const applyActions = (graphId: string, actions?: LogicAppsV2.Actions) => {
-    const [graph, operations, metadata] = processNestedActions(graphId, graphId, actions, allActionNames, undefined, pasteScopeParams);
+    const [graph, operations, metadata] = processNestedActions(
+      graphId,
+      graphId,
+      actions,
+      allActionNames,
+      undefined,
+      shouldAppendAddCase,
+      pasteScopeParams
+    );
 
     nodes.push(...(graph.children as []));
     edges.push(...(graph.edges as []));
@@ -555,7 +567,15 @@ export const processScopeActions = (
     subgraphType: SubgraphType,
     subGraphLocation: string | undefined
   ) => {
-    const [graph, operations, metadata] = processNestedActions(subgraphId, graphId, actions, allActionNames, true, pasteScopeParams);
+    const [graph, operations, metadata] = processNestedActions(
+      subgraphId,
+      graphId,
+      actions,
+      allActionNames,
+      true,
+      shouldAppendAddCase,
+      pasteScopeParams
+    );
     if (!graph?.edges) {
       graph.edges = [];
     }
@@ -602,7 +622,15 @@ export const processScopeActions = (
     scopeCardNode.id = scopeCardNode.id.replace('#scope', '#subgraph');
     scopeCardNode.type = WORKFLOW_NODE_TYPES.SUBGRAPH_CARD_NODE;
 
-    const [graph, operations, metadata] = processNestedActions(graphId, graphId, actions, allActionNames, undefined, pasteScopeParams);
+    const [graph, operations, metadata] = processNestedActions(
+      graphId,
+      graphId,
+      actions,
+      allActionNames,
+      undefined,
+      shouldAppendAddCase,
+      pasteScopeParams
+    );
 
     nodes.push(...(graph?.children ?? []));
     edges.push(...(graph?.edges ?? []));
@@ -644,7 +672,15 @@ export const processScopeActions = (
     for (const [caseName, caseAction] of Object.entries(action.cases || {})) {
       applySubgraphActions(actionName, caseName, caseAction.actions, SUBGRAPH_TYPES.SWITCH_CASE, 'cases');
     }
-    applySubgraphActions(actionName, `${actionName}-addCase`, undefined, SUBGRAPH_TYPES.SWITCH_ADD_CASE, undefined /* subGraphLocation */);
+    if (shouldAppendAddCase) {
+      applySubgraphActions(
+        actionName,
+        `${actionName}-addCase`,
+        undefined,
+        SUBGRAPH_TYPES.SWITCH_ADD_CASE,
+        undefined /* subGraphLocation */
+      );
+    }
     applySubgraphActions(actionName, `${actionName}-defaultCase`, action.default?.actions, SUBGRAPH_TYPES.SWITCH_DEFAULT, 'default');
     nodesMetadata = {
       ...nodesMetadata,
@@ -658,13 +694,15 @@ export const processScopeActions = (
     for (const [toolName, toolAction] of Object.entries(action.tools || {})) {
       applySubgraphActions(actionName, toolName, toolAction.actions, SUBGRAPH_TYPES.AGENT_CONDITION, 'tools');
     }
-    applySubgraphActions(
-      actionName,
-      `${actionName}-addCase`,
-      undefined,
-      SUBGRAPH_TYPES.AGENT_ADD_CONDITON,
-      undefined /* subGraphLocation */
-    );
+    if (shouldAppendAddCase) {
+      applySubgraphActions(
+        actionName,
+        `${actionName}-addCase`,
+        undefined,
+        SUBGRAPH_TYPES.AGENT_ADD_CONDITON,
+        undefined /* subGraphLocation */
+      );
+    }
 
     // Add actions for channels
     if (action.channels) {
@@ -681,8 +719,8 @@ export const processScopeActions = (
         const outputChannelKeys = Object.keys(action.channels.out);
         for (const key of outputChannelKeys) {
           const channelAction: any = action.channels.out?.[key];
-          if (channelAction && channelAction?.trigger) {
-            const id = `${actionName}${constants.CHANNELS.OUTPUT}${channelAction.trigger.type}`;
+          if (channelAction && channelAction?.action) {
+            const id = `${actionName}${constants.CHANNELS.OUTPUT}${channelAction.action.type}`;
             allActions[id] = channelAction.trigger;
           }
         }
@@ -722,11 +760,12 @@ const processNestedActions = (
   actions: LogicAppsV2.Actions | undefined,
   allActionNames: string[],
   isSubgraph?: boolean,
+  shouldAppendAddCase = true,
   pasteScopeParams?: PasteScopeParams
 ): [WorkflowNode, Operations, NodesMetadata] => {
   const [children, edges, scopeActions, scopeNodesMetadata] = isNullOrUndefined(actions)
     ? [[], [], {}, {}]
-    : buildGraphFromActions(actions, graphId, parentNodeId, allActionNames, pasteScopeParams);
+    : buildGraphFromActions(actions, graphId, parentNodeId, allActionNames, shouldAppendAddCase, pasteScopeParams);
   return [
     {
       id: graphId,
@@ -790,7 +829,8 @@ const addActionsInstanceMetaData = (
   Object.entries(updatedNodesData).forEach(([key, node]) => {
     const nodeRunData = runInstanceActions?.[key];
     const isAgent = allActions[key]?.type.toLowerCase() === constants.NODE.TYPE.AGENT;
-    const runIndex = isAgent ? (nodeRunData?.iterationCount ? nodeRunData.iterationCount - 1 : 0) : 0;
+    const isRunning = nodeRunData?.status === 'Running';
+    const runIndex = isAgent && isRunning ? (nodeRunData?.iterationCount ? nodeRunData.iterationCount - 1 : 0) : 0;
 
     if (!isNullOrUndefined(nodeRunData)) {
       const repetitionRunData = isNullOrUndefined(nodeRunData.repetitionCount)
