@@ -321,7 +321,17 @@ const ScopeCardNode = ({ data, targetPosition = Position.Top, sourcePosition = P
 
   const renderLoopsPager = useMemo(() => {
     if (!Array.isArray(metadata?.runData) && metadata?.runData?.status && !equals(metadata.runData.status, 'InProgress')) {
-      return <LoopsPager metadata={metadata} scopeId={scopeId} collapsed={graphCollapsed} />;
+      const focusElement = (index?: number, id?: string) => {
+        if (rootRef.current) {
+          const element = rootRef.current.querySelector(`[data-automation-id="scope-${id}-repetition-${index}"]`);
+          if (element) {
+            element.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            (element as HTMLElement).focus();
+          }
+        }
+      };
+
+      return <LoopsPager metadata={metadata} scopeId={scopeId} collapsed={graphCollapsed} focusElement={focusElement} />;
     }
     return null;
   }, [graphCollapsed, metadata, scopeId]);

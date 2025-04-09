@@ -155,6 +155,8 @@ export const AgentChat = ({
   const drawerWidth = isCollapsed ? PanelSize.Auto : overrideWidth;
   const panelRef = useRef<HTMLDivElement>(null);
 
+  console.log('charlie', chatHistoryData);
+
   useEffect(() => {
     if (!isNullOrUndefined(chatHistoryData)) {
       const newConversations = parseChatHistory(chatHistoryData, dispatch, agentLastOperations);
