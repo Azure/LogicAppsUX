@@ -75,11 +75,7 @@ export const AgentInstructionEditor = ({
   return (
     <div className="msla-agent-instruction-editor-container">
       <Text style={{ fontSize: 12 }}>{description} </Text>
-      <Link
-        href="https://learn.microsoft.com/en-us/microsoft-365-copilot/extensibility/declarative-agent-instructions"
-        target="_blank"
-        style={{ fontSize: 12, fontStyle: 'italic' }}
-      >
+      <Link href="https://aka.ms/LogicApps/Agents" target="_blank" style={{ fontSize: 12, fontStyle: 'italic' }}>
         {descriptionLink}
         <NavigateIcon style={{ position: 'relative', top: '2px', left: '2px' }} />
       </Link>
