@@ -56,7 +56,7 @@ export const TemplateParametersList = () => {
       { columnKey: 'name', label: resourceStrings.Name },
       { columnKey: 'type', label: resourceStrings.Type },
       { columnKey: 'default', label: resourceStrings.DefaultValue },
-      { columnKey: 'allowedValues', label: resourceStrings.AllowedValues },
+      // { columnKey: 'allowedValues', label: resourceStrings.AllowedValues },  //TODO: revisit allowedValues
     ];
     const column2 = [
       { columnKey: 'description', label: resourceStrings.Description },
@@ -75,9 +75,9 @@ export const TemplateParametersList = () => {
         displayName: parameter?.displayName ?? resourceStrings.Placeholder,
         type: parameter.type,
         default: parameter?.default ?? resourceStrings.Placeholder,
-        allowedValues:
-          parameter?.allowedValues?.map((allowedValue) => `${allowedValue.displayName} ${allowedValue.value}`)?.join(', ') ??
-          resourceStrings.Placeholder,
+        // allowedValues:
+        //   parameter?.allowedValues?.map((allowedValue) => `${allowedValue.displayName} ${allowedValue.value}`)?.join(', ') ??
+        //   resourceStrings.Placeholder,
         associatedWorkflows: parameter?.associatedWorkflows?.join(', ') ?? resourceStrings.Placeholder,
         description: parameter?.description ?? resourceStrings.Placeholder,
         required: parameter?.required ?? false,
@@ -121,9 +121,9 @@ export const TemplateParametersList = () => {
               <TableCell>
                 <TableCellLayout>{item.default}</TableCellLayout>
               </TableCell>
-              <TableCell>
+              {/* <TableCell>
                 <TableCellLayout>{item.allowedValues}</TableCellLayout>
-              </TableCell>
+              </TableCell> */}
               {isAccelerator && (
                 <TableCell>
                   <TableCellLayout>{getResourceNameFromId(item.associatedWorkflows)}</TableCellLayout>

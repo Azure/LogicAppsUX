@@ -25,13 +25,11 @@ export const CustomizeParameter = ({
         label: resourceStrings.ParameterName,
         value: parameterDefinition.name || '',
         type: 'text',
-        required: true,
       },
       {
         label: resourceStrings.Type,
         value: parameterDefinition.type || '',
         type: 'text',
-        required: true,
       },
       {
         label: resourceStrings.ParameterDisplayName,
@@ -49,7 +47,6 @@ export const CustomizeParameter = ({
         label: resourceStrings.DefaultValue,
         value: parameterDefinition.default || '',
         type: 'textfield',
-        required: true,
         onChange: (value: string) => {
           setParameterDefinition({
             ...parameterDefinition,
@@ -61,7 +58,6 @@ export const CustomizeParameter = ({
         label: resourceStrings.Description,
         value: parameterDefinition.description || '',
         type: 'textarea',
-        required: true,
         onChange: (value: string) => {
           setParameterDefinition({
             ...parameterDefinition,
@@ -73,7 +69,6 @@ export const CustomizeParameter = ({
         label: resourceStrings.RequiredField,
         value: parameterDefinition.required ?? false,
         type: 'switch',
-        required: true,
         onChange: (value: boolean) => {
           setParameterDefinition({
             ...parameterDefinition,
