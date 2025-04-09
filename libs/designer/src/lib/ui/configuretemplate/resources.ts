@@ -69,6 +69,11 @@ export const useResourceStrings = () => {
       id: 'N6SVax',
       description: 'Display name label',
     }),
+    Name: intl.formatMessage({
+      defaultMessage: 'Name',
+      id: 'gOkIvb',
+      description: 'Name label',
+    }),
     WorkflowType: intl.formatMessage({
       defaultMessage: 'Workflow type',
       id: 'xBIh0S',
@@ -148,6 +153,56 @@ export const useResourceStrings = () => {
       defaultMessage: 'Workflow name',
       id: 'ekM77J',
       description: 'Label for workflow Name',
+    }),
+    Placeholder: intl.formatMessage({
+      defaultMessage: '--',
+      id: '5lRHeK',
+      description: 'Accessibility label indicating that the value is not set',
+    }),
+    Description: intl.formatMessage({
+      defaultMessage: 'Description',
+      id: 'FOoLuS',
+      description: 'Label for description',
+    }),
+    DefaultValue: intl.formatMessage({
+      defaultMessage: 'Default value',
+      id: 'v5CBNu',
+      description: 'Default value label',
+    }),
+    AllowedValues: intl.formatMessage({
+      defaultMessage: 'Allowed values',
+      id: 'gl+tO3',
+      description: 'Allowed values label',
+    }),
+    AssociatedWorkflows: intl.formatMessage({
+      defaultMessage: 'Associated workflows',
+      id: 'cjSsih',
+      description: 'Associated workflows label',
+    }),
+    Required: intl.formatMessage({
+      defaultMessage: 'Required',
+      id: '2q6Vas',
+      description: 'Required label',
+    }),
+    Details: intl.formatMessage({
+      defaultMessage: 'Details',
+      id: 'pr2lJw',
+      description: 'Details label',
+    }),
+    ParameterName: intl.formatMessage({
+      defaultMessage: 'Parameter name',
+      id: '2j1xuE',
+      description: 'Parameter name label',
+    }),
+    ParameterDisplayName: intl.formatMessage({
+      defaultMessage: 'Parameter display name',
+      id: 'uRAbJb',
+      description: 'Parameter display name label',
+    }),
+    RequiredField: intl.formatMessage({
+      defaultMessage: 'Required Field',
+      id: 'vTxIoS',
+      description: 'Required field label',
     }),
     // Aria labels
     WorkflowsListTableLabel: intl.formatMessage({

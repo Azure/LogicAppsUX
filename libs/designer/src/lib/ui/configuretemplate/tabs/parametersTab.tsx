@@ -1,18 +1,9 @@
-import type { AppDispatch, RootState } from '../../../core/state/templates/store';
-import { Text } from '@fluentui/react-components';
+import type { AppDispatch } from '../../../core/state/templates/store';
 import type { TemplateTabProps } from '@microsoft/designer-ui';
 import constants from '../../../common/constants';
 import type { IntlShape } from 'react-intl';
 import { selectWizardTab } from '../../../core/state/templates/tabSlice';
-import { useSelector } from 'react-redux';
-
-export const ParametersTab = () => {
-  const { parameterDefinitions } = useSelector((state: RootState) => ({
-    parameterDefinitions: state.template.parameterDefinitions,
-  }));
-
-  return <Text>placeholder - show parameters {JSON.stringify(parameterDefinitions)}</Text>;
-};
+import { TemplateParametersList } from '../parameters/parameterslist';
 
 export const parametersTab = (intl: IntlShape, dispatch: AppDispatch): TemplateTabProps => ({
   id: constants.CONFIGURE_TEMPLATE_WIZARD_TAB_NAMES.PARAMETERS,
@@ -22,7 +13,7 @@ export const parametersTab = (intl: IntlShape, dispatch: AppDispatch): TemplateT
     description: 'The tab label for the monitoring parameters tab on the configure template wizard',
   }),
   hasError: false,
-  content: <ParametersTab />,
+  content: <TemplateParametersList />,
   footerContent: {
     primaryButtonText: intl.formatMessage({
       defaultMessage: 'Previous',
