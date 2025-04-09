@@ -30,6 +30,7 @@ const fileOptions = [
 
   // Agent
   { key: 'Agent.json', text: 'Agent' },
+  { key: 'BlankAgent.json', text: 'Empty Agent' },
   { key: 'AgentWithChannels.json', text: 'Agent with Input/Output' },
 
   // Run-After
