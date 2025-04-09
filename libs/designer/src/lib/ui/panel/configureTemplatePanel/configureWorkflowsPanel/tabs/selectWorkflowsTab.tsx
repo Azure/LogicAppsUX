@@ -26,6 +26,7 @@ export const selectWorkflowsTab = (
     id: 'vWOWFo',
     description: 'The tab label for the monitoring select workflows tab on the configure template wizard',
   }),
+  disabled: isSaving,
   content: <SelectWorkflows selectedWorkflowsList={selectedWorkflowsList} onWorkflowsSelected={onWorkflowsSelected} />,
   footerContent: {
     primaryButtonText: intl.formatMessage({

@@ -25,6 +25,7 @@ import { useFunctionalState } from '@react-hookz/web';
 import { Add12Filled } from '@fluentui/react-icons';
 import { deleteWorkflowData } from '../../../core/actions/bjsworkflow/configuretemplate';
 import { useResourceStrings } from '../resources';
+import { setIsWizardUpdating } from '../../../core/state/templates/tabSlice';
 
 export const DisplayWorkflows = ({ onSave }: { onSave: (isMultiWorkflow: boolean) => void }) => {
   const intl = useIntl();
@@ -76,6 +77,7 @@ export const DisplayWorkflows = ({ onSave }: { onSave: (isMultiWorkflow: boolean
         text: intlText.DELETE,
         iconProps: { iconName: 'Trash' },
         onClick: () => {
+          dispatch(setIsWizardUpdating()); //TODO: Found better structure of calling this
           dispatch(deleteWorkflowData({ ids: selectedWorkflowsList() }));
         },
       },

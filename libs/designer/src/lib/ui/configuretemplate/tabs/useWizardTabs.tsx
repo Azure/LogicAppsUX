@@ -18,8 +18,9 @@ export const useConfigureTemplateWizardTabs = ({
   const intl = useIntl();
   const dispatch = useDispatch<AppDispatch>();
 
-  const { enableWizard } = useSelector((state: RootState) => ({
+  const { enableWizard, isWizardUpdating } = useSelector((state: RootState) => ({
     enableWizard: state.tab.enableWizard,
+    isWizardUpdating: state.tab.isWizardUpdating,
   }));
 
   return [
@@ -28,23 +29,23 @@ export const useConfigureTemplateWizardTabs = ({
     }),
     connectionsTab(intl, dispatch, {
       tabStatusIcon: enableWizard ? 'in-progress' : undefined,
-      disabled: !enableWizard,
+      disabled: !enableWizard || isWizardUpdating,
     }),
     parametersTab(intl, dispatch, {
       tabStatusIcon: enableWizard ? 'in-progress' : undefined,
-      disabled: !enableWizard,
+      disabled: !enableWizard || isWizardUpdating,
     }),
     profileTab(intl, dispatch, {
       tabStatusIcon: enableWizard ? 'in-progress' : undefined,
-      disabled: !enableWizard,
+      disabled: !enableWizard || isWizardUpdating,
     }),
     publishTab(intl, dispatch, {
       tabStatusIcon: enableWizard ? 'in-progress' : undefined,
-      disabled: !enableWizard,
+      disabled: !enableWizard || isWizardUpdating,
     }),
     reviewPublishTab(intl, dispatch, onPublish, {
       tabStatusIcon: enableWizard ? 'in-progress' : undefined,
-      disabled: !enableWizard,
+      disabled: !enableWizard || isWizardUpdating,
     }),
   ];
 };

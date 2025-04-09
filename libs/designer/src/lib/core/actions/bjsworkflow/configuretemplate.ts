@@ -49,6 +49,7 @@ import type { WorkflowParameter } from '../../../common/models/workflow';
 import { getAllInputParameters } from '../../utils/parameters/helper';
 import { shouldAddDynamicData } from '../../templates/utils/parametershelper';
 import type { WorkflowState } from '../../state/templates/workflowSlice';
+import { closePanel } from '../../state/templates/panelSlice';
 
 export interface ConfigureTemplateServiceOptions {
   connectionService: IConnectionService;
@@ -134,6 +135,7 @@ export const initializeWorkflowsData = createAsyncThunk(
     connections: Record<string, Template.Connection>;
     parameterDefinitions: Record<string, Partial<Template.ParameterDefinition>>;
   }> => {
+    dispatch(updateAllWorkflowsData(workflows));
     const { connections, mapping, workflowsWithDefinitions } = await getTemplateConnections(getState() as RootState, dispatch, workflows);
     const operationsData = await getOperationDataInDefinitions(
       workflowsWithDefinitions as Record<string, WorkflowTemplateData>,
@@ -142,6 +144,8 @@ export const initializeWorkflowsData = createAsyncThunk(
     dispatch(initializeNodeOperationInputsData(operationsData));
 
     const parameterDefinitions = await getTemplateParameters(getState() as RootState, mapping);
+
+    dispatch(closePanel()); //TODO: better structure calling this
     return { connections, parameterDefinitions };
   }
 );
