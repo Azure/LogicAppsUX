@@ -68,7 +68,21 @@ export const templateSlice = createSlice({
       };
       state.errors.parameters[name] = validationError;
     },
-    updateTemplateParameterDefinitions: (state, action: PayloadAction<Record<string, Template.ParameterDefinition>>) => {
+    updateTemplateParameterDefinition: (
+      state,
+      action: PayloadAction<{
+        parameterId: string;
+        data: Template.ParameterDefinition;
+      }>
+    ) => {
+      const { parameterId, data } = action.payload;
+
+      state.parameterDefinitions[parameterId] = {
+        ...(state.parameterDefinitions[parameterId] ?? {}),
+        ...data,
+      };
+    },
+    updateAllTemplateParameterDefinitions: (state, action: PayloadAction<Record<string, Template.ParameterDefinition>>) => {
       state.parameterDefinitions = { ...state.parameterDefinitions, ...action.payload };
     },
     validateParameters: (state) => {
@@ -235,7 +249,8 @@ export const {
   validateConnections,
   clearTemplateDetails,
   updateWorkflowNameValidationError,
-  updateTemplateParameterDefinitions,
+  updateTemplateParameterDefinition,
+  updateAllTemplateParameterDefinitions,
   updateWorkflowData,
   updateAllWorkflowsData,
   updateTemplateManifest,

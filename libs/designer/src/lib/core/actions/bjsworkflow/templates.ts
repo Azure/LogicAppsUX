@@ -26,7 +26,7 @@ import type { RootState } from '../../state/templates/store';
 import type { TemplateServiceOptions } from '../../templates/TemplatesDesignerContext';
 import { initializeParametersMetadata } from '../../templates/utils/parametershelper';
 import { initializeNodeOperationInputsData } from '../../state/operation/operationMetadataSlice';
-import { updateTemplateParameterDefinitions } from '../../state/templates/templateSlice';
+import { updateAllTemplateParameterDefinitions } from '../../state/templates/templateSlice';
 import { getCurrentWorkflowNames } from '../../templates/utils/helper';
 import {
   loadGithubManifestNames,
@@ -80,7 +80,7 @@ export const initializeWorkflowMetadata = createAsyncThunk(
 
     if (inputsPayload.length) {
       dispatch(initializeNodeOperationInputsData(inputsPayload));
-      dispatch(updateTemplateParameterDefinitions(templateParametersToOverride));
+      dispatch(updateAllTemplateParameterDefinitions(templateParametersToOverride));
     }
   }
 );

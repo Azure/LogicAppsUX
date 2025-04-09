@@ -1,13 +1,19 @@
 import type { Label, Slot } from '@fluentui/react-components';
 
 interface BaseTemplatesSectionItem {
-  type: 'text' | 'textfield' | 'textarea' | 'dropdown' | 'radiogroup' | 'custom';
+  type: 'text' | 'textfield' | 'textarea' | 'dropdown' | 'radiogroup' | 'switch' | 'custom';
   label?: string | React.ReactNode;
   value: any | undefined;
 }
 
 interface TextItem extends BaseTemplatesSectionItem {
   type: 'text';
+}
+
+interface SwitchItem extends BaseTemplatesSectionItem {
+  type: 'switch';
+  value: boolean;
+  onChange: (value: boolean) => void;
 }
 
 export interface BaseFieldItem extends BaseTemplatesSectionItem {
@@ -60,7 +66,7 @@ interface CustomFieldItem extends BaseFieldItem {
   onRenderItem: (item: TemplatesSectionItem) => React.ReactNode;
 }
 
-export type TemplatesSectionItem = TextItem | TextFieldItem | TextAreaItem | DropdownItem | RadioGroupItem | CustomFieldItem;
+export type TemplatesSectionItem = TextItem | TextFieldItem | TextAreaItem | DropdownItem | RadioGroupItem | SwitchItem | CustomFieldItem;
 
 interface BaseTemplatesSectionProps {
   title?: string;

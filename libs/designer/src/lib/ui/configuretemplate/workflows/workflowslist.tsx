@@ -38,11 +38,6 @@ export const DisplayWorkflows = ({ onSave }: { onSave: (isMultiWorkflow: boolean
 
   const intlText = useMemo(
     () => ({
-      PLACEHOLDER: intl.formatMessage({
-        defaultMessage: '--',
-        id: '5lRHeK',
-        description: 'Accessibility label indicating that the value is not set',
-      }),
       ADD_WORKFLOWS: intl.formatMessage({
         defaultMessage: 'Add workflows',
         id: 'Ve6uLm',
@@ -118,9 +113,9 @@ export const DisplayWorkflows = ({ onSave }: { onSave: (isMultiWorkflow: boolean
   const items =
     Object.values(workflows)?.map((workflowData) => ({
       id: workflowData.id,
-      name: workflowData?.workflowName ?? intlText.PLACEHOLDER,
-      displayName: workflowData?.manifest?.title ?? intlText.PLACEHOLDER,
-      state: workflowData?.manifest?.kinds?.join(', ') ?? intlText.PLACEHOLDER,
+      name: workflowData?.workflowName ?? resourceStrings.Placeholder,
+      displayName: workflowData?.manifest?.title ?? resourceStrings.Placeholder,
+      state: workflowData?.manifest?.kinds?.join(', ') ?? resourceStrings.Placeholder,
       trigger: '-', //TODO: replace this with the actual trigger type
       date: '-', //TODO: replace this with the actual date
     })) ?? [];
