@@ -54,6 +54,9 @@ import type { FC } from 'react';
 import { useMemo, useState } from 'react';
 import { useIntl } from 'react-intl';
 import { useDispatch } from 'react-redux';
+import { useActionMetadata } from '../../core/state/workflow/workflowSelectors';
+import constants from '../../common/constants';
+import { AdvancedSettingsMessage } from './advancedSettingsMessage';
 
 const ClearIcon = bundleIcon(Dismiss24Filled, Dismiss24Regular);
 const ChevronDownIcon = bundleIcon(ChevronDown24Filled, ChevronDown24Regular);
@@ -228,6 +231,9 @@ const Setting = ({
   const dispatch = useDispatch<AppDispatch>();
   const readOnly = useReadOnly();
   const [hideErrorMessage, setHideErrorMessage] = useState<boolean[]>(new Array(settings.length).fill(false));
+  const node = useActionMetadata(nodeId);
+  const normalizedType = node?.type.toLowerCase();
+  const isAgent = normalizedType === constants.NODE.TYPE.AGENT;
 
   const updateHideErrorMessage = (index: number, b: boolean) => {
     setHideErrorMessage([...hideErrorMessage.slice(0, index), b, ...hideErrorMessage.slice(index + 1)]);
@@ -379,6 +385,7 @@ const Setting = ({
       {allConditionalSettings.length > 0 && !readOnly ? (
         <div style={{ padding: '24px 0px 16px' }}>
           <Divider style={{ padding: '16px 0px' }} />
+          <AdvancedSettingsMessage shouldShowMessage={isAgent} />
           <SearchableDropdownWithAddAll
             dropdownProps={{
               multiSelect: true,
