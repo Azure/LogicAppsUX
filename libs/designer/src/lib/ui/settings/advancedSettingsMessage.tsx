@@ -24,11 +24,7 @@ export const AdvancedSettingsMessage = ({ shouldShowMessage }: { shouldShowMessa
     shouldShowMessage && (
       <div style={{ paddingBottom: '5px' }}>
         <Text style={{ fontSize: 12 }}>{IntlMessage.message} </Text>
-        <Link
-          href="https://learn.microsoft.com/en-us/azure/logic-apps/connectors/built-in/reference/openai/#get-chat-completions"
-          target="_blank"
-          style={{ fontSize: 12, fontStyle: 'italic' }}
-        >
+        <Link href="https://aka.ms/LogicApps/Agents/parameters" target="_blank" style={{ fontSize: 12, fontStyle: 'italic' }}>
           {IntlMessage.messageLink}
           <NavigateIcon style={{ position: 'relative', top: '2px', left: '2px' }} />
         </Link>
