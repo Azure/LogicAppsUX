@@ -5,7 +5,7 @@ export interface TemplateTabProps {
   id: string;
   title: string;
   description?: string | ReactNode;
-  hasError?: boolean;
+  tabStatusIcon?: 'error' | 'success' | 'in-progress' | undefined;
   disabled?: boolean;
   content: React.ReactElement;
   footerContent: TemplatePanelFooterProps;

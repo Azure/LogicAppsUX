@@ -38,7 +38,7 @@ export const workflowTab = (
     id: 'lFWXhc',
     description: 'The tab label for the monitoring parameters tab on the operation panel',
   }),
-  hasError: false,
+  tabStatusIcon: undefined,
   content: <WorkflowPanel workflowId={workflowId} />,
   footerContent: {
     primaryButtonText: intl.formatMessage({

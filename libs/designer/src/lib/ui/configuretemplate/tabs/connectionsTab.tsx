@@ -12,7 +12,7 @@ export const connectionsTab = (intl: IntlShape, dispatch: AppDispatch): Template
     id: 'ur+ZvW',
     description: 'The tab label for the monitoring connections tab on the configure template wizard',
   }),
-  hasError: false,
+  tabStatusIcon: undefined,
   content: <TemplateConnectionsList />,
   description: intl.formatMessage({
     defaultMessage: 'Connections for the following connectors would be required during workflow creation from this template.',

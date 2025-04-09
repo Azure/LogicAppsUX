@@ -1,7 +1,7 @@
-import { TabList, Tab, Text, tokens } from '@fluentui/react-components';
+import { TabList, Tab, Text } from '@fluentui/react-components';
 import type { SelectTabData, SelectTabEvent } from '@fluentui/react-components';
 import type { TemplateTabProps } from './model';
-import { DismissCircleFilled } from '@fluentui/react-icons';
+import { CheckmarkCircleFilled, CircleHintHalfVertical16Filled, DismissCircleFilled } from '@fluentui/react-icons';
 
 export interface TemplateContentProps {
   className?: string;
@@ -27,7 +27,7 @@ export const TemplateContent = ({ tabs = [], selectedTab, selectTab, className }
       {tabs.length > 1 && (
         <>
           <TabList selectedValue={selectedTabId} onTabSelect={onTabSelected} className={tabClass}>
-            {tabs.map(({ id, title, disabled = false, hasError = false }) => (
+            {tabs.map(({ id, title, disabled = false, tabStatusIcon }) => (
               <Tab
                 disabled={disabled}
                 key={id}
@@ -36,7 +36,7 @@ export const TemplateContent = ({ tabs = [], selectedTab, selectTab, className }
                 className="msla-templates-panel-tabName"
                 value={id}
                 role={'tab'}
-                icon={hasError ? <DismissCircleFilled color={tokens.colorStatusDangerForeground1} /> : undefined}
+                icon={TabStatusIcon(tabStatusIcon)}
               >
                 {title}
               </Tab>
@@ -48,4 +48,18 @@ export const TemplateContent = ({ tabs = [], selectedTab, selectTab, className }
       <div className="msla-panel-content-container">{selectedTabProps?.content}</div>
     </div>
   );
+};
+
+const TabStatusIcon = (iconName: 'error' | 'success' | 'in-progress' | undefined) => {
+  switch (iconName) {
+    case 'error':
+      return <DismissCircleFilled />;
+    case 'success':
+      return <CheckmarkCircleFilled />;
+    case 'in-progress':
+      // return <Question16Filled />;
+      return <CircleHintHalfVertical16Filled />;
+    default:
+      return null;
+  }
 };

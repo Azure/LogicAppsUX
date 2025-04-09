@@ -12,7 +12,7 @@ export const parametersTab = (intl: IntlShape, dispatch: AppDispatch): TemplateT
     id: 'lYAlE9',
     description: 'The tab label for the monitoring parameters tab on the configure template wizard',
   }),
-  hasError: false,
+  tabStatusIcon: undefined,
   content: <TemplateParametersList />,
   footerContent: {
     primaryButtonText: intl.formatMessage({

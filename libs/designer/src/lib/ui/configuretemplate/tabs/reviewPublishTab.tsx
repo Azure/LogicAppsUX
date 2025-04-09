@@ -16,7 +16,7 @@ export const reviewPublishTab = (intl: IntlShape, dispatch: AppDispatch, onPubli
     id: 'FJQUqL',
     description: 'The tab label for the monitoring review and publish tab on the configure template wizard',
   }),
-  hasError: false,
+  tabStatusIcon: undefined,
   content: <ReviewPublishTab />,
   footerContent: {
     primaryButtonText: intl.formatMessage({

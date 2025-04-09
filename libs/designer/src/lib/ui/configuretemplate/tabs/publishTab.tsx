@@ -84,7 +84,7 @@ export const publishTab = (intl: IntlShape, dispatch: AppDispatch): TemplateTabP
     id: 'uOlHLw',
     description: 'The description for the settings tab on the configure template wizard',
   }),
-  hasError: false,
+  tabStatusIcon: undefined,
   content: <TemplateSettings />,
   footerContent: {
     primaryButtonText: intl.formatMessage({

@@ -29,7 +29,7 @@ export const customizeWorkflowsTab = (
     description: 'The tab label for the monitoring customize workflows tab on the configure template wizard',
   }),
   disabled: disabled,
-  hasError: hasError,
+  tabStatusIcon: hasError ? 'error' : undefined,
   content: <CustomizeWorkflows selectedWorkflowsList={selectedWorkflowsList} updateWorkflowDataField={updateWorkflowDataField} />,
   footerContent: {
     primaryButtonText: intl.formatMessage({

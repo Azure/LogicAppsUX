@@ -12,7 +12,7 @@ export const profileTab = (intl: IntlShape, dispatch: AppDispatch): TemplateTabP
     id: '6ELsbA',
     description: 'The tab label for the monitoring profile tab on the configure template wizard',
   }),
-  hasError: false,
+  tabStatusIcon: undefined,
   content: <TemplateManifestForm />,
   footerContent: {
     primaryButtonText: intl.formatMessage({

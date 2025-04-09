@@ -8,7 +8,9 @@ import { DisplayWorkflows } from '../workflows/workflowslist';
 export const workflowsTab = (
   intl: IntlShape,
   dispatch: AppDispatch,
+  // disabled: boolean,
   onSaveWorkflows: (isMultiWorkflow: boolean) => void
+  // { disabled, hasError }
 ): TemplateTabProps => ({
   id: constants.CONFIGURE_TEMPLATE_WIZARD_TAB_NAMES.WORKFLOWS,
   title: intl.formatMessage({
@@ -16,7 +18,8 @@ export const workflowsTab = (
     id: 'R7VvvJ',
     description: 'The tab label for the monitoring workflows tab on the configure template wizard',
   }),
-  hasError: false,
+  // disabled: disabled,
+  // tabStatusIcon: hasError ? 'error' : undefined,
   content: <DisplayWorkflows onSave={onSaveWorkflows} />,
   footerContent: {
     primaryButtonText: '',
