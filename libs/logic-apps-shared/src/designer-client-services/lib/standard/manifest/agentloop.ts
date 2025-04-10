@@ -149,7 +149,7 @@ export default {
                 maximumTokenCount: {
                   type: 'integer',
                   title: 'Maximum token count',
-                  description: 'The maximum number of tokens to keep in the agent history',
+                  description: 'The maximum number of tokens to use for the agent history',
                   conditionalVisibility: true,
                   'x-ms-input-dependencies': {
                     type: 'visibility',
