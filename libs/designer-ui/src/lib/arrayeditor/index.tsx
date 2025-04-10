@@ -94,7 +94,6 @@ export const ArrayEditor: React.FC<ArrayEditorProps> = ({
   castParameter,
   ...baseEditorProps
 }): JSX.Element => {
-  console.log(initialValue);
   const [collapsed, setCollapsed] = useState<boolean>(initialMode === InitialMode.Array);
   const [collapsedValue, setCollapsedValue] = useState<ValueSegment[]>(initialValue);
   const [items, setItems] = useState<ComplexArrayItems[] | SimpleArrayItem[]>([]);

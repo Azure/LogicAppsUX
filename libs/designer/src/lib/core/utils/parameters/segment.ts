@@ -79,7 +79,6 @@ export class ValueSegmentConvertor {
   }
 
   private _convertJsonToValueSegments(json: string, parameterSchema?: any): ValueSegment[] {
-    console.log(json);
     const sections = new JsonSplitter(json).split();
     const segments: ValueSegment[] = [];
 
@@ -106,7 +105,6 @@ export class ValueSegmentConvertor {
       });
     };
 
-    console.log(sections);
     for (const section of sections) {
       for (const segment of this._convertJsonSectionToSegments(section)) {
         if (hasFormatProperty(section)) {
@@ -129,11 +127,8 @@ export class ValueSegmentConvertor {
       const expression = ExpressionParser.parseTemplateExpression(value);
       const segments = this._convertTemplateExpressionToValueSegments(expression);
 
-      // Note: If an non-interpolated expression is turned into a signle TOKEN, we don't surround with double quote. Otherwise,
-      // double quotes are added to surround the expression. This is the existing behaviour.
-      if (segments.length === 1 && isTokenValueSegment(segments[0]) && !isStringInterpolation(expression)) {
-        return segments;
-      }
+      // Note: Previously if there was a non-interpolated single expression, we wouldn't surround with double quotes.
+      // However, this just complicates the logic on deserialization/serialization when it can be managed by the interpolated expression.
       const escapedSegments = segments.map((segment) => {
         // Note: All literal segments must be escaped since they are inside a JSON string.
         if (isLiteralValueSegment(segment)) {
