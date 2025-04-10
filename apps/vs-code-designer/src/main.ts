@@ -11,7 +11,7 @@ import { registerCommands } from './app/commands/registerCommands';
 import { getResourceGroupsApi } from './app/resourcesExtension/getExtensionApi';
 import type { AzureAccountTreeItemWithProjects } from './app/tree/AzureAccountTreeItemWithProjects';
 import { downloadExtensionBundle } from './app/utils/bundleFeed';
-import { stopDesignTimeApi } from './app/utils/codeless/startDesignTimeApi';
+import { stopAllDesignTimeApis } from './app/utils/codeless/startDesignTimeApi';
 import { UriHandler } from './app/utils/codeless/urihandler';
 import { getExtensionVersion } from './app/utils/extension';
 import { registerFuncHostTaskEvents } from './app/utils/funcCoreTools/funcHostTask';
@@ -129,7 +129,7 @@ export async function activate(context: vscode.ExtensionContext) {
 }
 
 export function deactivate(): Promise<any> {
-  stopDesignTimeApi();
+  stopAllDesignTimeApis();
   ext.unitTestController?.dispose();
   ext.telemetryReporter.dispose();
   return undefined;

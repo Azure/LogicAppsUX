@@ -41,7 +41,10 @@ const fakeLogicAppName = 'MyLogicApp';
 
 // Global beforeEach hook to set up common values
 beforeEach(() => {
-  ext.designTimePort = 1234; // ensure designTimePort is defined for tests
+  ext.designTimeInstances.set(projectPath, {
+    port: 1234,
+    process: {} as childProcess.ChildProcess,
+  });
   ext.outputChannel = { appendLog: vi.fn() } as any;
 });
 
@@ -329,7 +332,10 @@ describe('processAndWriteMockableOperations with no actions', () => {
       })
     );
     ext.outputChannel = { appendLog: vi.fn() } as any;
-    ext.designTimePort = 1234;
+    ext.designTimeInstances.set(projectPath, {
+      port: 1234,
+      process: {} as childProcess.ChildProcess,
+    });
     vi.spyOn(axios, 'get').mockResolvedValue({ data: ['Request'] });
   });
 
@@ -423,7 +429,10 @@ describe('processAndWriteMockableOperations', () => {
     );
     ext.outputChannel = { appendLog: vi.fn() } as any;
     // Set designTimePort and stub axios.get so isMockable works without error
-    ext.designTimePort = 1234;
+    ext.designTimeInstances.set(projectPath, {
+      port: 1234,
+      process: {} as childProcess.ChildProcess,
+    });
     vi.spyOn(axios, 'get').mockResolvedValue({ data: ['Http'] });
   });
 

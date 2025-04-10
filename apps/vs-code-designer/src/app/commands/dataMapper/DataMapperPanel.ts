@@ -133,7 +133,8 @@ export default class DataMapperPanel {
         // Send runtime port to webview
         this.sendMsgToWebview({
           command: ExtensionCommand.setRuntimePort,
-          data: `${ext.designTimePort}`,
+          // TODO(aeldridge) - confirm that this is the correct port for data mapper design time
+          data: `${ext.designTimeInstances.get(ext.logicAppWorkspace)?.port}`,
         });
 
         // If loading a data map, handle that + xslt filename

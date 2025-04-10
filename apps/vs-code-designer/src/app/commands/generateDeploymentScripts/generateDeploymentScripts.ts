@@ -313,12 +313,18 @@ async function callStandardResourcesApi(
   try {
     ext.outputChannel.appendLog(localize('initApiWorkflowDesignerPort', 'Initiating API connection through workflow designer port...'));
     await startDesignTimeApi(projectPath);
-    if (ext.designTimePort === undefined) {
+    if (!ext.designTimeInstances.has(projectPath)) {
+      throw new Error(
+        localize('designTimeInstanceNotFound', 'Design time API is undefined. Please retry once Azure Functions Core Tools has started.')
+      );
+    }
+    const designTimeInst = ext.designTimeInstances.get(projectPath);
+    if (designTimeInst.port === undefined) {
       throw new Error(
         localize('errorStandardResourcesApi', 'Design time port is undefined. Please retry once Azure Functions Core Tools has started.')
       );
     }
-    const apiUrl = `http://localhost:${ext.designTimePort}${managementApiPrefix}/generateDeploymentArtifacts`;
+    const apiUrl = `http://localhost:${designTimeInst.port}${managementApiPrefix}/generateDeploymentArtifacts`;
     ext.outputChannel.appendLog(localize('apiUrl', `Calling API URL: ${apiUrl}`));
 
     // Construct the request body based on the parameters
