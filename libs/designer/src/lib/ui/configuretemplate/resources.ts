@@ -144,15 +144,15 @@ export const useResourceStrings = () => {
       id: 'IG4XXf',
       description: 'Label for workflow state',
     }),
+    StateType: intl.formatMessage({
+      defaultMessage: 'State type',
+      id: 'GkbTLA',
+      description: 'Label for workflow state type',
+    }),
     TemplateName: intl.formatMessage({
       defaultMessage: 'Template',
       id: '83Vrgj',
       description: 'Label for template',
-    }),
-    WorkflowName: intl.formatMessage({
-      defaultMessage: 'Workflow name',
-      id: 'ekM77J',
-      description: 'Label for workflow Name',
     }),
     Placeholder: intl.formatMessage({
       defaultMessage: '--',
@@ -203,6 +203,16 @@ export const useResourceStrings = () => {
       defaultMessage: 'Required Field',
       id: 'vTxIoS',
       description: 'Required field label',
+    }),
+    LightModeImage: intl.formatMessage({
+      defaultMessage: 'Light mode image',
+      id: '5LLxEp',
+      description: 'Light mode image label',
+    }),
+    DarkModeImage: intl.formatMessage({
+      defaultMessage: 'Dark mode image',
+      id: 'CdxaGY',
+      description: 'Dark mode image label',
     }),
     // Aria labels
     WorkflowsListTableLabel: intl.formatMessage({
