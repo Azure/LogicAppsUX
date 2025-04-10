@@ -25,12 +25,15 @@ import {
   workerRuntimeKey,
   functionsInprocNet8Enabled,
   codefulWorkflowFileName,
+  appKindSetting,
+  logicAppKind,
 } from '../../../constants';
-import { removeAppKindFromLocalSettings, setLocalAppSetting } from '../../utils/appSettings/localSettings';
+import { setLocalAppSetting } from '../../utils/appSettings/localSettings';
 import { validateDotnetInstalled } from '../../utils/dotnet/executeDotnetTemplateCommand';
 import { parseJson } from '../../utils/parseJson';
 import { switchToDotnetProject } from '../workflows/switchToDotnetProject';
 import * as vscode from 'vscode';
+import { createConnectionsJson } from '../../utils/codeless/connection';
 
 export class CodefulWorkflowCreateStep extends WorkflowCreateStepBase<IFunctionWizardContext> {
   private constructor() {
@@ -53,6 +56,8 @@ export class CodefulWorkflowCreateStep extends WorkflowCreateStepBase<IFunctionW
     await fse.writeFile(workflowCsFullPath, codelessDefinition);
 
     await this.createSystemArtifacts(context);
+
+    await createConnectionsJson(context, context.projectPath);
 
     return workflowCsFullPath;
   }
@@ -87,6 +92,7 @@ export class CodefulWorkflowCreateStep extends WorkflowCreateStepBase<IFunctionW
     }
     await setLocalAppSetting(context, context.projectPath, workerRuntimeKey, WorkerRuntime.Dotnet, MismatchBehavior.Overwrite);
     await setLocalAppSetting(context, context.projectPath, functionsInprocNet8Enabled, '1', MismatchBehavior.Overwrite);
+    await setLocalAppSetting(context, context.projectPath, appKindSetting, logicAppKind, MismatchBehavior.Overwrite);
     await setLocalAppSetting(
       context,
       context.projectPath,
@@ -94,7 +100,6 @@ export class CodefulWorkflowCreateStep extends WorkflowCreateStepBase<IFunctionW
       localEmulatorConnectionString,
       MismatchBehavior.Overwrite
     );
-    await removeAppKindFromLocalSettings(context.projectPath, context);
   }
 
   private async getHostJson(context: IFunctionWizardContext, hostJsonPath: string, allowOverwrite = false): Promise<IHostJsonV2> {
