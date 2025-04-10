@@ -24,6 +24,12 @@ const initialState: PanelState = {
   selectedTabId: undefined,
 };
 
+const closePanelReducer = (state: typeof initialState) => {
+  state.isOpen = false;
+  state.currentPanelView = undefined;
+  state.selectedTabId = undefined;
+};
+
 export const panelSlice = createSlice({
   name: 'panel',
   initialState,
@@ -42,18 +48,12 @@ export const panelSlice = createSlice({
     selectPanelTab: (state, action: PayloadAction<string | undefined>) => {
       state.selectedTabId = action.payload;
     },
-    closePanel: (state) => {
-      state.isOpen = false;
-      state.currentPanelView = undefined;
-      state.selectedTabId = undefined;
-    },
+    closePanel: closePanelReducer,
   },
   extraReducers: (builder) => {
     builder.addCase(resetTemplatesState, () => initialState);
 
-    builder.addCase(initializeWorkflowsData.fulfilled, (state) => {
-      state.isOpen = false;
-    });
+    builder.addCase(initializeWorkflowsData.fulfilled, closePanelReducer);
   },
 });
 

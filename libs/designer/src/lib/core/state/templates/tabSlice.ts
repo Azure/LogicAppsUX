@@ -22,9 +22,6 @@ export const tabSlice = createSlice({
     selectWizardTab: (state, action: PayloadAction<string>) => {
       state.selectedTabId = action.payload;
     },
-    setIsWizardUpdating: (state) => {
-      state.isWizardUpdating = true;
-    },
   },
   extraReducers: (builder) => {
     builder.addCase(resetTemplatesState, () => initialState);
@@ -34,9 +31,18 @@ export const tabSlice = createSlice({
       state.enableWizard = action.payload.enableWizard;
     });
 
+    builder.addCase(initializeWorkflowsData.pending, (state) => {
+      state.isWizardUpdating = true;
+      state.enableWizard = false;
+    });
+
     builder.addCase(initializeWorkflowsData.fulfilled, (state) => {
       state.isWizardUpdating = false;
       state.enableWizard = true;
+    });
+
+    builder.addCase(deleteWorkflowData.pending, (state) => {
+      state.isWizardUpdating = true;
     });
 
     builder.addCase(deleteWorkflowData.fulfilled, (state, action: PayloadAction<{ disableWizard: boolean }>) => {
@@ -48,5 +54,5 @@ export const tabSlice = createSlice({
   },
 });
 
-export const { setIsWizardUpdating, selectWizardTab } = tabSlice.actions;
+export const { selectWizardTab } = tabSlice.actions;
 export default tabSlice.reducer;

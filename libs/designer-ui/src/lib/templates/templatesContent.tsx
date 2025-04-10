@@ -1,6 +1,6 @@
 import { TabList, Tab, Text } from '@fluentui/react-components';
 import type { SelectTabData, SelectTabEvent } from '@fluentui/react-components';
-import type { TemplateTabProps } from './model';
+import type { TemplateTabProps, TemplateTabStatusType } from './model';
 import { CheckmarkCircleFilled, CircleHintHalfVerticalFilled, DismissCircleFilled } from '@fluentui/react-icons';
 
 export interface TemplateContentProps {
@@ -50,7 +50,7 @@ export const TemplateContent = ({ tabs = [], selectedTab, selectTab, className }
   );
 };
 
-const TabStatusIcon = (iconName: 'error' | 'success' | 'in-progress' | undefined) => {
+const TabStatusIcon = (iconName: TemplateTabStatusType) => {
   switch (iconName) {
     case 'error':
       return <DismissCircleFilled />;

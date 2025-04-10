@@ -6,10 +6,8 @@ import { useDispatch, useSelector } from 'react-redux';
 import type { AppDispatch, RootState } from '../../../../core/state/templates/store';
 import { useFunctionalState } from '@react-hookz/web';
 import type { WorkflowTemplateData } from '../../../../core';
-// import { updateAllWorkflowsData } from '../../../../core/state/templates/templateSlice';
 import { getWorkflowsWithDefinitions, initializeWorkflowsData } from '../../../../core/actions/bjsworkflow/configuretemplate';
 import { getResourceNameFromId } from '@microsoft/logic-apps-shared';
-import { setIsWizardUpdating } from '../../../../core/state/templates/tabSlice';
 
 export const useConfigureWorkflowPanelTabs = ({
   onSave,
@@ -57,7 +55,6 @@ export const useConfigureWorkflowPanelTabs = ({
   };
 
   const onSaveChanges = () => {
-    dispatch(setIsWizardUpdating());
     dispatch(initializeWorkflowsData({ workflows: selectedWorkflowsList() }));
     onSave?.(Object.keys(selectedWorkflowsList()).length > 1);
   };
