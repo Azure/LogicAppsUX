@@ -79,6 +79,7 @@ export class ValueSegmentConvertor {
   }
 
   private _convertJsonToValueSegments(json: string, parameterSchema?: any): ValueSegment[] {
+    console.log(json);
     const sections = new JsonSplitter(json).split();
     const segments: ValueSegment[] = [];
 
@@ -99,9 +100,13 @@ export class ValueSegmentConvertor {
         ...(schema.anyOf ?? []),
       ].filter(Boolean); // Remove undefined values
 
-      return possibleSchemas.some((s) => s.properties?.[sectionKey]?.format || s.additionalProperties?.format);
+      return possibleSchemas.some((s) => {
+        const format = s.properties?.[sectionKey]?.format ?? s.additionalProperties?.format;
+        return UncastingUtility.isCastableFormat(format);
+      });
     };
 
+    console.log(sections);
     for (const section of sections) {
       for (const segment of this._convertJsonSectionToSegments(section)) {
         if (hasFormatProperty(section)) {

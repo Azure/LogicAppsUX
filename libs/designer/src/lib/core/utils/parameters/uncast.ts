@@ -92,6 +92,16 @@ export class UncastingUtility {
     return result;
   }
 
+  /**
+   * Checks if the format is uncastable.
+   * @param {string} format - The format to check.
+   * @return {boolean} - True if the format is uncastable, false otherwise.
+   */
+  public static isCastableFormat(format?: string): boolean {
+    const uncastableFormats = new Set(['binary', 'byte', 'datauri']);
+    return !!format && uncastableFormats.has(format.toLowerCase());
+  }
+
   private _uncastOnce(expression: Expression): UncastResult[] | null {
     if (isFunction(expression)) {
       switch (expression.name.toUpperCase()) {

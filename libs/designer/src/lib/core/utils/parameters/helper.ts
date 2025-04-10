@@ -169,6 +169,7 @@ import type {
 import { createAsyncThunk, type Dispatch } from '@reduxjs/toolkit';
 import { getInputDependencies } from '../../actions/bjsworkflow/initialize';
 import { getAllVariables } from '../variables';
+import { UncastingUtility } from './uncast';
 
 // import { debounce } from 'lodash';
 
@@ -920,7 +921,7 @@ export function loadParameterValue(parameter: InputParameter): ValueSegment[] {
 
   let valueSegments = convertToValueSegments(
     valueObject,
-    !parameter.suppressCasting && !!parameter?.format,
+    !parameter.suppressCasting && UncastingUtility.isCastableFormat(parameter?.format),
     parameter.type,
     parameter.schema
   );

@@ -74,7 +74,14 @@ export default {
         input: {
           type: 'Request',
           default: {
-            'inputs.$.schema': '{"properties": {"prompt": {"type": "string"}}, "type": "object"}',
+            'inputs.$.schema': `{
+  "type": "object",
+  "properties": {
+    "prompt": {
+      "type": "string"
+    }
+  }
+}`,
           },
         },
         output: {
