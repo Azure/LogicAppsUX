@@ -1,11 +1,13 @@
 import type { TemplatePanelFooterProps } from './templatesPanelFooter';
 import type { ReactNode } from 'react';
 
+export type TemplateTabStatusType = 'error' | 'success' | 'in-progress' | undefined;
+
 export interface TemplateTabProps {
   id: string;
   title: string;
   description?: string | ReactNode;
-  hasError?: boolean;
+  tabStatusIcon?: TemplateTabStatusType;
   disabled?: boolean;
   content: React.ReactElement;
   footerContent: TemplatePanelFooterProps;

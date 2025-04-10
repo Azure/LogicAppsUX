@@ -28,7 +28,7 @@ export const parametersTab = (
     id: 'oxCSqB',
     description: 'An accessibility label that describes the objective of parameters tab',
   }),
-  hasError: hasError,
+  tabStatusIcon: hasError ? 'error' : undefined,
   content: <ParametersPanel />,
   footerContent: {
     primaryButtonText: intl.formatMessage({

@@ -25,7 +25,7 @@ export const basicsTab = (
     id: 'sVcvcG',
     description: 'The tab label for the monitoring name and state tab on the create workflow panel',
   }),
-  hasError: hasError,
+  tabStatusIcon: hasError ? 'error' : undefined,
   content: <WorkflowBasics />,
   footerContent: {
     primaryButtonText: intl.formatMessage({

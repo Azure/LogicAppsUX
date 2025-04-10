@@ -6,7 +6,6 @@ import { useDispatch, useSelector } from 'react-redux';
 import type { AppDispatch, RootState } from '../../../../core/state/templates/store';
 import { useFunctionalState } from '@react-hookz/web';
 import type { WorkflowTemplateData } from '../../../../core';
-import { updateAllWorkflowsData } from '../../../../core/state/templates/templateSlice';
 import { getWorkflowsWithDefinitions, initializeWorkflowsData } from '../../../../core/actions/bjsworkflow/configuretemplate';
 import { getResourceNameFromId } from '@microsoft/logic-apps-shared';
 
@@ -17,13 +16,13 @@ export const useConfigureWorkflowPanelTabs = ({
 }): TemplateTabProps[] => {
   const intl = useIntl();
   const dispatch = useDispatch<AppDispatch>();
-  const { workflowsInTemplate, workflowState } = useSelector((state: RootState) => ({
+  const { isWizardUpdating, workflowsInTemplate, workflowState } = useSelector((state: RootState) => ({
     workflowsInTemplate: state.template.workflows,
+    isWizardUpdating: state.tab.isWizardUpdating,
     workflowState: state.workflow,
   }));
 
   const hasError = false; // Placeholder for actual error state
-  const isSaving = false; // Placeholder for actual saving state
 
   const [selectedWorkflowsList, setSelectedWorkflowsList] =
     useFunctionalState<Record<string, Partial<WorkflowTemplateData>>>(workflowsInTemplate);
@@ -56,7 +55,6 @@ export const useConfigureWorkflowPanelTabs = ({
   };
 
   const onSaveChanges = () => {
-    dispatch(updateAllWorkflowsData(selectedWorkflowsList()));
     dispatch(initializeWorkflowsData({ workflows: selectedWorkflowsList() }));
     onSave?.(Object.keys(selectedWorkflowsList()).length > 1);
   };
@@ -68,17 +66,17 @@ export const useConfigureWorkflowPanelTabs = ({
 
   return [
     selectWorkflowsTab(intl, dispatch, {
-      isSaving,
       selectedWorkflowsList: selectedWorkflowsList(),
       onWorkflowsSelected,
       onNextButtonClick,
+      isSaving: isWizardUpdating,
       isPrimaryButtonDisabled: isNoWorkflowsSelected,
     }),
     customizeWorkflowsTab(intl, dispatch, {
       hasError,
-      isSaving,
       selectedWorkflowsList: selectedWorkflowsList(),
       updateWorkflowDataField,
+      isSaving: isWizardUpdating,
       disabled: isNoWorkflowsSelected,
       isPrimaryButtonDisabled: missingNameOrDisplayName,
       onSave: onSaveChanges,

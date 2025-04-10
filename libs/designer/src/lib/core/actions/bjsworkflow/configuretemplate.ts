@@ -90,7 +90,10 @@ export const initializeConfigureTemplateServices = createAsyncThunk(
 
 export const loadCustomTemplate = createAsyncThunk(
   'loadCustomTemplate',
-  async ({ templateId }: { templateId: string }, { dispatch }): Promise<{ isPublished: boolean; environment: string }> => {
+  async (
+    { templateId }: { templateId: string },
+    { dispatch }
+  ): Promise<{ isPublished: boolean; environment: string; enableWizard: boolean }> => {
     const templateName = getResourceNameFromId(templateId);
     const templateResource = await getTemplate(templateId);
     const manifest = await getTemplateManifest(templateId);
@@ -117,6 +120,7 @@ export const loadCustomTemplate = createAsyncThunk(
     return {
       isPublished: templateResource.properties?.provisioningState === 'Succeeded',
       environment: templateResource.properties?.environment ?? 'Development',
+      enableWizard: allWorkflowsData && Object.keys(allWorkflowsData).length > 0,
     };
   }
 );
@@ -130,6 +134,7 @@ export const initializeWorkflowsData = createAsyncThunk(
     connections: Record<string, Template.Connection>;
     parameterDefinitions: Record<string, Partial<Template.ParameterDefinition>>;
   }> => {
+    dispatch(updateAllWorkflowsData(workflows));
     const { connections, mapping, workflowsWithDefinitions } = await getTemplateConnections(getState() as RootState, dispatch, workflows);
     const operationsData = await getOperationDataInDefinitions(
       workflowsWithDefinitions as Record<string, WorkflowTemplateData>,
@@ -138,6 +143,7 @@ export const initializeWorkflowsData = createAsyncThunk(
     dispatch(initializeNodeOperationInputsData(operationsData));
 
     const parameterDefinitions = await getTemplateParameters(getState() as RootState, mapping);
+
     return { connections, parameterDefinitions };
   }
 );
@@ -152,6 +158,7 @@ export const deleteWorkflowData = createAsyncThunk(
     connectionKeys: string[];
     parameterKeys: string[];
     parametersToUpdate: Record<string, Partial<Template.ParameterDefinition>>;
+    disableWizard: boolean;
   }> => {
     const combinedConnectionKeys: string[] = [];
     const combinedParameterKeys: string[] = [];
@@ -195,7 +202,8 @@ export const deleteWorkflowData = createAsyncThunk(
       combinedParameterKeys.push(...parameterKeys);
     }
 
-    return { ids, connectionKeys: combinedConnectionKeys, parameterKeys: combinedParameterKeys, parametersToUpdate };
+    const disableWizard = Object.keys(workflows).filter((workflowId) => !ids.includes(workflowId)).length === 0;
+    return { ids, connectionKeys: combinedConnectionKeys, parameterKeys: combinedParameterKeys, parametersToUpdate, disableWizard };
   }
 );
 

@@ -166,6 +166,11 @@ export const useCreateWorkflowPanelTabs = ({
     }
   });
 
+  const nameStateTabItemError = useMemo(
+    () => Object.values(workflows).some((workflowData) => workflowData.errors.kind || workflowData.errors.workflow),
+    [workflows]
+  );
+
   const nameStateTabItem = useMemo(
     () =>
       basicsTab(intl, dispatch, {
@@ -175,7 +180,7 @@ export const useCreateWorkflowPanelTabs = ({
           : parametersExist
             ? Constants.TEMPLATE_PANEL_TAB_NAMES.PARAMETERS
             : Constants.TEMPLATE_PANEL_TAB_NAMES.REVIEW_AND_CREATE,
-        hasError: Object.values(workflows).some((workflowData) => workflowData.errors.kind || workflowData.errors.workflow),
+        hasError: nameStateTabItemError,
         isCreating,
         onClosePanel,
         showCloseButton,
@@ -187,7 +192,7 @@ export const useCreateWorkflowPanelTabs = ({
       isMultiWorkflowTemplate,
       connectionsExist,
       parametersExist,
-      workflows,
+      nameStateTabItemError,
       isCreating,
       onClosePanel,
       showCloseButton,
@@ -260,7 +265,7 @@ export const useCreateWorkflowPanelTabs = ({
         isCreateView: !!isCreateView,
         errorMessage,
         hasError: false,
-        isPrimaryButtonDisabled: nameStateTabItem.hasError || !!connectionsError || hasParametersValidationErrors,
+        isPrimaryButtonDisabled: nameStateTabItemError || !!connectionsError || hasParametersValidationErrors,
         previousTabId: parametersExist
           ? Constants.TEMPLATE_PANEL_TAB_NAMES.PARAMETERS
           : connectionsExist
@@ -281,7 +286,7 @@ export const useCreateWorkflowPanelTabs = ({
       isCreating,
       isCreateView,
       errorMessage,
-      nameStateTabItem.hasError,
+      nameStateTabItemError,
       connectionsError,
       hasParametersValidationErrors,
       parametersExist,
