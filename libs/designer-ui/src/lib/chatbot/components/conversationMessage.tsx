@@ -50,13 +50,13 @@ const UserMessage = ({ item }: { item: UserQueryItem }) => {
 };
 
 const AssistantReply = ({ item }: { item: AssistantReplyItem }) => {
-  const { id, text, hideFooter, date, additionalDocURL, azureButtonCallback, role, className } = item;
+  const { id, text, hideFooter, date, additionalDocURL, azureButtonCallback, role, className, dataScrollTarget } = item;
   const azureCopilotButton = useAzureCopilotButton(azureButtonCallback);
   const additionalDocSection = useExternalLink(additionalDocURL ?? undefined);
   const { feedbackMessage, onMessageReactionClicked, reaction } = useFeedbackMessage(item);
   const textRef = useRef<HTMLDivElement | null>(null);
   return (
-    <div>
+    <div data-scroll-target={dataScrollTarget}>
       <ChatBubble
         key={id}
         isUserMessage={false}

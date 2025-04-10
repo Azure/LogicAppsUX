@@ -10,7 +10,7 @@ import {
   PanelLocation,
   ProgressCardWithStopButton,
 } from '@microsoft/designer-ui';
-import { useCallback, useEffect, useMemo, useRef } from 'react';
+import { useEffect, useMemo, useRef } from 'react';
 import { useIntl } from 'react-intl';
 
 export const defaultChatbotPanelWidth = '360px';
@@ -56,6 +56,8 @@ interface ChatbotUiProps {
     focus: boolean;
     answerGenerationInProgress: boolean;
     setFocus: (value: boolean) => void;
+    focusMessageId?: string;
+    clearFocusMessageId?: () => void;
   };
 }
 
@@ -65,7 +67,7 @@ const QUERY_MAX_LENGTH = 2000;
 export const ChatbotContent = (props: ChatbotUiProps) => {
   const {
     panel: { header },
-    body: { messages, focus, answerGenerationInProgress, setFocus },
+    body: { messages, focus, answerGenerationInProgress, setFocus, focusMessageId, clearFocusMessageId },
     inputBox: { disabled, placeholder, value = '', onChange, onSubmit, readOnly, readOnlyText },
     data: { isSaving, canSave, canTest, test, save, abort } = {},
     string: { test: testString, save: saveString, submit: submitString, progressState, progressStop, progressSave, protectedMessage },
@@ -89,12 +91,6 @@ export const ChatbotContent = (props: ChatbotUiProps) => {
     },
   };
 
-  // Scroll into view specific message
-  const setCanvasCenterToFocus = useCallback(() => {
-    // dispatch(clearFocusNode());
-    // dispatch(clearFocusCollapsedNode());
-  }, []);
-
   useEffect(() => {
     if (focus) {
       textInputRef.current?.focus();
@@ -103,9 +99,15 @@ export const ChatbotContent = (props: ChatbotUiProps) => {
   }, [focus, setFocus, textInputRef]);
 
   useEffect(() => {
-    setCanvasCenterToFocus();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [focusNode]);
+    if (focusMessageId) {
+      const querySelector = `[data-scroll-target="${focusMessageId}"]`;
+      const element = document.querySelector<HTMLElement>(querySelector);
+      if (element) {
+        element.scrollIntoView({ behavior: 'smooth' });
+      }
+      clearFocusMessageId?.();
+    }
+  }, [focusMessageId, clearFocusMessageId]);
 
   const intlText = useMemo(() => {
     return {

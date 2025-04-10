@@ -29,6 +29,7 @@ import {
   useRunIndex,
 } from '../../core/state/workflow/workflowSelectors';
 import {
+  setFocusElement,
   setRepetitionRunData,
   setSubgraphRunData,
   toggleCollapsedGraphId,
@@ -321,14 +322,13 @@ const ScopeCardNode = ({ data, targetPosition = Position.Top, sourcePosition = P
 
   const renderLoopsPager = useMemo(() => {
     if (!Array.isArray(metadata?.runData) && metadata?.runData?.status && !equals(metadata.runData.status, 'InProgress')) {
-      const focusElement = (index?: number, id?: string) => {
-        console.log('charlie', index, id);
+      const focusElement = (index: number, id: string) => {
+        dispatch(setFocusElement(`${id}-${index}-0`));
       };
-
       return <LoopsPager metadata={metadata} scopeId={scopeId} collapsed={graphCollapsed} focusElement={focusElement} />;
     }
     return null;
-  }, [graphCollapsed, metadata, scopeId]);
+  }, [dispatch, graphCollapsed, metadata, scopeId]);
 
   const nodeIndex = useNodeIndex(id);
 

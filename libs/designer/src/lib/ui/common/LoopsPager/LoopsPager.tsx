@@ -12,7 +12,7 @@ export interface LoopsPagerProps {
   metadata: any;
   scopeId: string;
   collapsed: boolean;
-  focusElement?: (index?: number, nodeId?: string) => void;
+  focusElement?: (index: number, nodeId: string) => void;
 }
 
 export const LoopsPager = ({ metadata, scopeId, collapsed, focusElement }: LoopsPagerProps) => {
@@ -36,7 +36,7 @@ export const LoopsPager = ({ metadata, scopeId, collapsed, focusElement }: Loops
       dispatch(setRunIndex({ page: index, nodeId: scopeId }));
       focusElement?.(index, scopeId);
     },
-    [dispatch, scopeId]
+    [dispatch, scopeId, focusElement]
   );
 
   const onClickNextFailed: PageChangeEventHandler = useCallback(
