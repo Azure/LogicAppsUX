@@ -1,4 +1,14 @@
 # Logic Apps Designer
+## [5.75.0](https://github.com/Azure/LogicAppsUX/compare/v5.74.0...v5.75.0) (2025-04-10)
+
+
+### Features
+
+* **designer:** Add agentic section in standalone and introduce empty workflow ([#6992](https://github.com/Azure/LogicAppsUX/issues/6992)) ([e12fab7](https://github.com/Azure/LogicAppsUX/commit/e12fab7365ac20a1a34c4ddf651ee24ef6bb1017))
+* **designer:** Update agent action manifest ([#6996](https://github.com/Azure/LogicAppsUX/issues/6996)) ([e196299](https://github.com/Azure/LogicAppsUX/commit/e1962992a83d21c594293a2d05d167f1ef795b0d))
+* **designer:** Update agent run index and add advanced settings message ([#6993](https://github.com/Azure/LogicAppsUX/issues/6993)) ([beff570](https://github.com/Azure/LogicAppsUX/commit/beff5708c124a8ac3321b3e426ccf7005aed8c84))
+* **Templates:** Custom Templates Parameters Tab ([#6972](https://github.com/Azure/LogicAppsUX/issues/6972)) ([4467e6b](https://github.com/Azure/LogicAppsUX/commit/4467e6b39ffbcf4d02cc32cf19e156a102fe7d23))
+
 ## [5.74.0](https://github.com/Azure/LogicAppsUX/compare/v5.73.0...v5.74.0) (2025-04-08)
 
 ## [5.73.0](https://github.com/Azure/LogicAppsUX/compare/v5.72.0...v5.73.0) (2025-04-08)
