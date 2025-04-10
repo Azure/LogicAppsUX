@@ -4,7 +4,7 @@
  *--------------------------------------------------------------------------------------------*/
 import { createNewProjectInternalBase } from '../createNewCodeProject/CodeProjectBase/CreateNewProjectInternal';
 import { ExistingWorkspaceStep } from './createProjectSteps/ExistingWorkspaceStep';
-import { LogicAppTypeStep } from '../createNewCodeProject/CodeProjectBase/LogicAppTypeStep';
+import { NewProjectLogicAppTypeStep } from './createProjectSteps/NewProjectLogicAppTypeStep';
 import { LogicAppNameStep } from '../createNewCodeProject/CodeProjectBase/LogicAppNameStep';
 import { TargetFrameworkStep } from '../createNewCodeProject/createCodeProjectSteps/createFunction/TargetFrameworkStep';
 import { NewCodeProjectTypeStep } from '../createNewCodeProject/CodeProjectBase/NewCodeProjectTypeStep';
@@ -40,7 +40,7 @@ export async function createNewProjectFromCommand(
       'Create new project',
       [
         new ExistingWorkspaceStep(),
-        new LogicAppTypeStep(),
+        new NewProjectLogicAppTypeStep(),
         new TargetFrameworkStep(),
         new LogicAppNameStep(),
         new NewCodeProjectTypeStep(templateId, functionSettings, false),

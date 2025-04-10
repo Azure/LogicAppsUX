@@ -69,9 +69,12 @@ export class WorkspaceSettingsStep extends AzureWizardPromptStep<IProjectWizardC
 
     const workspaceFolders = [];
     const logicAppName = context.logicAppName || 'LogicApp';
-    workspaceFolders.push({ name: logicAppName, path: `./${logicAppName}` });
-    const functionsFolder = context.functionAppName;
+    if (context.shouldCreateLogicAppProject) {
+      workspaceFolders.push({ name: logicAppName, path: `./${logicAppName}` });
+    }
+
     if (context.isWorkspaceWithFunctions) {
+      const functionsFolder = context.functionAppName;
       workspaceFolders.push({ name: functionsFolder, path: `./${functionsFolder}` });
     }
 

@@ -63,13 +63,15 @@ export class FunctionAppFilesStep extends AzureWizardPromptStep<IProjectWizardCo
     await this.createCsFile(functionFolderPath, functionAppName, namespace, projectType, targetFramework);
 
     // Create the .cs files inside the functions folders for rule code projects
-    await this.createRulesFiles(functionFolderPath, projectType);
+    if (projectType === ProjectType.rulesEngine) {
+      await this.createRulesFiles(functionFolderPath);
+    }
 
     // Create the .csproj file inside the functions folder
     await this.createCsprojFile(functionFolderPath, functionAppName, logicAppName, projectType, targetFramework);
 
     // Generate the Visual Studio Code configuration files in the specified folder.
-    await this.createVscodeConfigFiles(functionFolderPath, targetFramework);
+    await this.createVscodeConfigFiles(functionFolderPath, functionAppName, targetFramework);
   }
 
   /**
@@ -108,15 +110,12 @@ export class FunctionAppFilesStep extends AzureWizardPromptStep<IProjectWizardCo
   /**
    * Creates the rules files for the project.
    * @param {string} functionFolderPath - The path of the function folder.
-   * @param {string} projectType - The type of the project.
    * @returns A promise that resolves when the rules files are created.
    */
-  private async createRulesFiles(functionFolderPath: string, projectType: ProjectType): Promise<void> {
-    if (projectType === ProjectType.rulesEngine) {
-      const csTemplatePath = path.join(__dirname, 'assets', 'RuleSetProjectTemplate', 'ContosoPurchase');
-      const csRuleSetPath = path.join(functionFolderPath, 'ContosoPurchase.cs');
-      await fs.copyFile(csTemplatePath, csRuleSetPath);
-    }
+  private async createRulesFiles(functionFolderPath: string): Promise<void> {
+    const csTemplatePath = path.join(__dirname, 'assets', 'RuleSetProjectTemplate', 'ContosoPurchase');
+    const csRuleSetPath = path.join(functionFolderPath, 'ContosoPurchase.cs');
+    await fs.copyFile(csTemplatePath, csRuleSetPath);
   }
 
   /**
@@ -159,16 +158,21 @@ export class FunctionAppFilesStep extends AzureWizardPromptStep<IProjectWizardCo
   /**
    * Creates the Visual Studio Code configuration files in the .vscode folder of the specified functions app.
    * @param functionFolderPath The path to the functions folder.
+   * @param functionAppName The name of the functions app.
    * @param targetFramework The target framework of the functions app.
    */
-  private async createVscodeConfigFiles(functionFolderPath: string, targetFramework: TargetFramework): Promise<void> {
+  private async createVscodeConfigFiles(
+    functionFolderPath: string,
+    functionAppName: string,
+    targetFramework: TargetFramework
+  ): Promise<void> {
     await fs.ensureDir(functionFolderPath);
     const vscodePath: string = path.join(functionFolderPath, vscodeFolderName);
     await fs.ensureDir(vscodePath);
 
     await this.generateExtensionsJson(vscodePath);
 
-    await this.generateLaunchJson(vscodePath, targetFramework);
+    await this.generateLaunchJson(vscodePath, functionAppName, targetFramework);
 
     await this.generateSettingsJson(vscodePath, targetFramework);
 
@@ -190,9 +194,10 @@ export class FunctionAppFilesStep extends AzureWizardPromptStep<IProjectWizardCo
   /**
    * Generates the launch.json file in the specified folder.
    * @param folderPath The path to the folder where the launch.json file should be generated.
+   * @param functionAppName The name of the functions app.
    * @param targetFramework The target framework of the functions app.
    */
-  private async generateLaunchJson(folderPath: string, targetFramework: TargetFramework): Promise<void> {
+  private async generateLaunchJson(folderPath: string, functionAppName: string, targetFramework: TargetFramework): Promise<void> {
     const filePath = path.join(folderPath, launchFileName);
     const content =
       targetFramework === TargetFramework.Net8
@@ -200,7 +205,7 @@ export class FunctionAppFilesStep extends AzureWizardPromptStep<IProjectWizardCo
             version: '0.2.0',
             configurations: [
               {
-                name: 'Debug local function',
+                name: `Debug local function ${functionAppName}`,
                 type: 'coreclr',
                 request: 'attach',
                 processId: '${command:azureLogicAppsStandard.pickCustomCodeNetHostProcess}',
@@ -211,7 +216,7 @@ export class FunctionAppFilesStep extends AzureWizardPromptStep<IProjectWizardCo
             version: '0.2.0',
             configurations: [
               {
-                name: 'Debug local function',
+                name: `Debug local function ${functionAppName}`,
                 type: 'clr',
                 request: 'attach',
                 processName: 'Microsoft.Azure.Workflows.Functions.CustomCodeNetFxWorker.exe',
@@ -230,14 +235,14 @@ export class FunctionAppFilesStep extends AzureWizardPromptStep<IProjectWizardCo
   private async generateSettingsJson(folderPath: string, targetFramework: TargetFramework): Promise<void> {
     const filePath = path.join(folderPath, settingsFileName);
     const content = {
-      'azureFunctions.deploySubpath': `bin/Release/${targetFramework}/publish`,
+      'azureFunctions.deploySubpath': `bin/Release/${targetFramework ?? TargetFramework.NetFx}/publish`,
       'azureFunctions.projectLanguage': 'C#',
       'azureFunctions.projectRuntime': '~4',
       'debug.internalConsoleOptions': 'neverOpen',
       'azureFunctions.preDeployTask': 'publish (functions)',
       'azureFunctions.templateFilter': 'Core',
       'azureFunctions.showTargetFrameworkWarning': false,
-      'azureFunctions.projectSubpath': `bin\\Release\\${targetFramework}\\publish`,
+      'azureFunctions.projectSubpath': `bin\\Release\\${targetFramework ?? TargetFramework.NetFx}\\publish`,
     };
     await fs.writeJson(filePath, content, { spaces: 2 });
   }

@@ -79,6 +79,7 @@ export interface IProjectWizardContext extends IActionContext {
   openApiSpecificationFile?: Uri[];
   targetFramework?: TargetFramework;
   projectType?: ProjectType;
+  shouldCreateLogicAppProject?: boolean;
   isWorkspaceWithFunctions?: boolean;
   logicAppName?: string;
   packagePath?: string;

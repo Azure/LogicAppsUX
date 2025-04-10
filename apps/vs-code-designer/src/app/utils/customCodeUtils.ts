@@ -171,6 +171,7 @@ export async function isCustomCodeFunctionsProjectInRoot(
 
 /**
  * Checks workspace root folder for custom code functions project.
+ * TODO - this assumes that all custom code functions projects are in the workspace root folder.
  * @param {IActionContext} context - The action context.
  * @param {WorkspaceFolder | string | undefined} workspaceFolder - The workspace folder.
  * @returns {Promise<string | undefined>} Returns the path to the custom code functions project if found, otherwise returns undefined.

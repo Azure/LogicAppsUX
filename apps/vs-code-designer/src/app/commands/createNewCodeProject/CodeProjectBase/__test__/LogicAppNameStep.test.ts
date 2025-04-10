@@ -26,6 +26,7 @@ describe('LogicAppNameStep', () => {
       projectType: ProjectType.logicApp,
       workspaceCustomFilePath: testWorkspaceFile,
       logicAppName: testLogicAppName,
+      shouldCreateLogicAppProject: true,
       ui: {
         showInputBox: vi.fn((options: any) => {
           return options.validateInput(options.testInput).then((validationResult: string | undefined) => {
