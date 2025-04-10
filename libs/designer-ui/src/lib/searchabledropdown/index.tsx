@@ -80,6 +80,7 @@ export const SearchableDropdown: FC<SearchableDropdownProps> = ({
               className="msla-searchable-dropdown-search"
               onChange={(e, newValue) => setFilterText(newValue ?? '')}
               placeholder={searchOperation}
+              key={headerKey}
             />
           );
         }
