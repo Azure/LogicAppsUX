@@ -1181,12 +1181,14 @@ const mockableOperationTypes = new Set<string>();
  * Throws an error if the design time port is undefined or if the request fails.
  */
 export async function getMockableOperationTypes(): Promise<void> {
-  if (!ext.designTimePort) {
+  // The listMockableOperations API can be called on any design time instance, get first in map by default
+  const designTimePort = ext.designTimeInstances.values()?.next()?.value?.port;
+  if (!designTimePort) {
     throw new Error(
       localize('errorStandardResourcesApi', 'Design time port is undefined. Please retry once Azure Functions Core Tools has started.')
     );
   }
-  const baseUrl = `http://localhost:${ext.designTimePort}`;
+  const baseUrl = `http://localhost:${designTimePort}`;
   const listMockableOperationsUrl = `${baseUrl}/runtime/webhooks/workflow/api/management/listMockableOperations`;
   ext.outputChannel.appendLog(localize('listMockableOperations', `Fetching unit test mockable operations at ${listMockableOperationsUrl}`));
   try {
