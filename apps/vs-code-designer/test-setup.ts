@@ -76,6 +76,7 @@ vi.mock('vscode', () => ({
     updateWorkspaceFolders: vi.fn(), // <-- This ensures the method exists.
     fs: {
       readFile: vi.fn(),
+      readDirectory: vi.fn(),
     },
   },
   Uri: {
@@ -87,6 +88,10 @@ vi.mock('vscode', () => ({
   EventEmitter: vi.fn().mockImplementation(() => ({
     getUser: vi.fn(),
   })),
+  FileType: {
+    File: 'file',
+    Directory: 'directory',
+  },
 }));
 
 vi.mock('./src/extensionVariables', () => ({

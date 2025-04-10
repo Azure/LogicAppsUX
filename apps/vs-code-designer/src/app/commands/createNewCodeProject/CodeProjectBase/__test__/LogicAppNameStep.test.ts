@@ -1,31 +1,32 @@
-import { describe, it, expect, vi, beforeEach, afterEach, test } from 'vitest';
+import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 import * as fse from 'fs-extra';
 import * as vscode from 'vscode';
 import * as path from 'path';
-import { SetLogicAppName } from '../SetLogicAppNameStep';
+import { LogicAppNameStep } from '../LogicAppNameStep';
 import { ext } from '../../../../../extensionVariables';
 import { localize } from '../../../../../localize';
-import { ProjectType } from '@microsoft/vscode-extension-logic-apps';
+import { IProjectWizardContext, ProjectType } from '@microsoft/vscode-extension-logic-apps';
 
-describe('SetLogicAppName', () => {
+describe('LogicAppNameStep', () => {
   const testLogicAppName = 'LogicApp';
   const testWorkspaceName = 'TestWorkspace';
   const testWorkspaceFile = path.join('path', 'to', `${testWorkspaceName}.code-workspace`);
   const testWorkspace = {
     folders: [{ name: testLogicAppName }],
   };
-  let step: SetLogicAppName;
+  let logicAppNameStep: LogicAppNameStep;
   let testContext: any;
   let existsSyncSpy: any;
   let readFileSpy: any;
   let appendLogSpy: any;
 
   beforeEach(() => {
-    step = new SetLogicAppName();
+    logicAppNameStep = new LogicAppNameStep();
     testContext = {
       projectType: ProjectType.logicApp,
       workspaceCustomFilePath: testWorkspaceFile,
       logicAppName: testLogicAppName,
+      shouldCreateLogicAppProject: true,
       ui: {
         showInputBox: vi.fn((options: any) => {
           return options.validateInput(options.testInput).then((validationResult: string | undefined) => {
@@ -49,12 +50,12 @@ describe('SetLogicAppName', () => {
 
   describe('shouldPrompt', () => {
     it('returns true when projectType is defined', () => {
-      expect(step.shouldPrompt(testContext)).toBe(true);
+      expect(logicAppNameStep.shouldPrompt(testContext)).toBe(true);
     });
 
     it('returns false when projectType is undefined', () => {
       testContext.projectType = undefined;
-      expect(step.shouldPrompt(testContext)).toBe(false);
+      expect(logicAppNameStep.shouldPrompt(testContext)).toBe(false);
     });
   });
 
@@ -70,7 +71,7 @@ describe('SetLogicAppName', () => {
           return Promise.resolve(validName);
         });
       });
-      await step.prompt(testContext);
+      await logicAppNameStep.prompt(testContext);
       expect(testContext.logicAppName).toBe(validName);
       expect(appendLogSpy).toHaveBeenCalledWith(localize('logicAppNameSet', `Logic App project name set to ${validName}`));
     });
@@ -86,28 +87,29 @@ describe('SetLogicAppName', () => {
           return Promise.resolve(emptyName);
         });
       });
-      await expect(step.prompt(testContext)).rejects.toThrow(localize('logicAppNameEmpty', 'Logic app name cannot be empty'));
+      await expect(logicAppNameStep.prompt(testContext)).rejects.toThrow(localize('logicAppNameEmpty', 'Logic app name cannot be empty'));
     });
   });
 
   describe('validateLogicAppName (private method)', () => {
-    const callValidate = (name: string | undefined, context: any) => (step as any).validateLogicAppName(name, context);
+    const callValidateLogicAppName = (name: string | undefined, context: IProjectWizardContext) =>
+      (logicAppNameStep as any).validateLogicAppName(name, context);
 
     it('returns error message when name is empty', async () => {
-      const res = await callValidate('', testContext);
+      const res = await callValidateLogicAppName('', testContext);
       expect(res).toBe(localize('logicAppNameEmpty', 'Logic app name cannot be empty'));
     });
 
     it('returns error when name already exists in the workspace file', async () => {
       existsSyncSpy.mockReturnValue(true);
 
-      const res = await callValidate(testLogicAppName, testContext);
+      const res = await callValidateLogicAppName(testLogicAppName, testContext);
       expect(res).toBe(localize('logicAppNameExists', 'A project with this name already exists in the workspace'));
     });
 
     it('returns error when name does not pass regex validation', async () => {
       const invalidName = '1InvalidName';
-      const res = await callValidate(invalidName, testContext);
+      const res = await callValidateLogicAppName(invalidName, testContext);
       expect(res).toBe(
         localize('logicAppNameInvalidMessage', 'Logic app name must start with a letter and can only contain letters, digits, "_" and "-".')
       );
@@ -115,7 +117,7 @@ describe('SetLogicAppName', () => {
 
     it('returns undefined for a valid name', async () => {
       const validName = 'My_Valid-Name123';
-      const res = await callValidate(validName, testContext);
+      const res = await callValidateLogicAppName(validName, testContext);
       expect(res).toBeUndefined();
     });
   });

@@ -11,11 +11,11 @@ import type { IFunctionWizardContext } from '@microsoft/vscode-extension-logic-a
 import * as vscode from 'vscode';
 import { window } from 'vscode';
 import { getWorkspaceFile, getWorkspaceFileInParentDirectory, getWorkspaceFolder, getWorkspaceRoot } from '../../../utils/workspace';
-import { SetWorkspaceName } from './SetWorkspaceName';
-import { SetWorkspaceContents } from './SetWorkspaceContents';
+import { WorkspaceNameStep } from './WorkspaceNameStep';
+import { WorkspaceContentsStep } from './WorkspaceContentsStep';
 import { isLogicAppProjectInRoot } from '../../../utils/verifyIsProject';
 
-export async function ConvertToWorkspace(context: IActionContext): Promise<boolean> {
+export async function convertToWorkspace(context: IActionContext): Promise<boolean> {
   const workspaceFolder = await getWorkspaceFolder(context, undefined, true);
   if (await isLogicAppProjectInRoot(workspaceFolder)) {
     addLocalFuncTelemetry(context);
@@ -24,6 +24,7 @@ export async function ConvertToWorkspace(context: IActionContext): Promise<boole
     const wizardContext: Partial<IFunctionWizardContext> & IActionContext = Object.assign(context, {
       version: tryParseFuncVersion(version),
     });
+
     context.telemetry.properties.isWorkspace = 'false';
     wizardContext.workspaceCustomFilePath =
       (await getWorkspaceFile(wizardContext)) ?? (await getWorkspaceFileInParentDirectory(wizardContext));
@@ -53,7 +54,7 @@ export async function ConvertToWorkspace(context: IActionContext): Promise<boole
       if (result === DialogResponses.yes) {
         const workspaceWizard: AzureWizard<IFunctionWizardContext> = new AzureWizard(wizardContext, {
           title: localize('convertToWorkspace', 'Convert to workspace'),
-          promptSteps: [new FolderListStep(), new SetWorkspaceName(), new SetWorkspaceContents()],
+          promptSteps: [new FolderListStep(), new WorkspaceNameStep(), new WorkspaceContentsStep()],
           executeSteps: [new OpenFolderStepCodeProject()],
         });
 
