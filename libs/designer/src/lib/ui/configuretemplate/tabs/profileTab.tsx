@@ -4,12 +4,12 @@ import constants from '../../../common/constants';
 import type { IntlShape } from 'react-intl';
 import { selectWizardTab } from '../../../core/state/templates/tabSlice';
 import { TemplateManifestForm } from '../templateprofile/manifestform';
-import type { CreateWizardTabProps } from './model';
+import type { TemplateWizardTabProps } from './model';
 
 export const profileTab = (
   intl: IntlShape,
   dispatch: AppDispatch,
-  { disabled, tabStatusIcon }: CreateWizardTabProps
+  { disabled, tabStatusIcon }: TemplateWizardTabProps
 ): TemplateTabProps => ({
   id: constants.CONFIGURE_TEMPLATE_WIZARD_TAB_NAMES.PROFILE,
   title: intl.formatMessage({

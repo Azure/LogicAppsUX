@@ -4,7 +4,7 @@ import type { TemplateTabProps } from '@microsoft/designer-ui';
 import constants from '../../../common/constants';
 import type { IntlShape } from 'react-intl';
 import { selectWizardTab } from '../../../core/state/templates/tabSlice';
-import type { CreateWizardTabProps } from './model';
+import type { TemplateWizardTabProps } from './model';
 
 export const ReviewPublishTab = () => {
   return <Text>placeholder - show review + publish</Text>;
@@ -14,7 +14,7 @@ export const reviewPublishTab = (
   intl: IntlShape,
   dispatch: AppDispatch,
   onPublish: () => void,
-  { disabled, tabStatusIcon }: CreateWizardTabProps
+  { disabled, tabStatusIcon }: TemplateWizardTabProps
 ): TemplateTabProps => ({
   id: constants.CONFIGURE_TEMPLATE_WIZARD_TAB_NAMES.REVIEW_AND_PUBLISH,
   title: intl.formatMessage({

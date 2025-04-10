@@ -9,7 +9,7 @@ import type { Template } from '@microsoft/logic-apps-shared';
 import { useMemo } from 'react';
 import { type TemplateEnvironment, updateEnvironment, updateTemplateManifest } from '../../../core/state/templates/templateSlice';
 import { getSupportedSkus } from '../../../core/configuretemplate/utils/helper';
-import type { CreateWizardTabProps } from './model';
+import type { TemplateWizardTabProps } from './model';
 
 const TemplateSettings = () => {
   const { manifest, environment, isPublished, connections } = useSelector((state: RootState) => state.template);
@@ -76,7 +76,7 @@ const TemplateSettings = () => {
 export const publishTab = (
   intl: IntlShape,
   dispatch: AppDispatch,
-  { disabled, tabStatusIcon }: CreateWizardTabProps
+  { disabled, tabStatusIcon }: TemplateWizardTabProps
 ): TemplateTabProps => ({
   id: constants.CONFIGURE_TEMPLATE_WIZARD_TAB_NAMES.PUBLISH,
   title: intl.formatMessage({
