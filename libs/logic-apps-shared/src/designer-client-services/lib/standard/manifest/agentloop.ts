@@ -110,6 +110,60 @@ export default {
                 },
               },
             },
+            agentHistoryReductionSettings: {
+              type: 'object',
+              properties: {
+                agentHistoryReductionType: {
+                  type: 'string',
+                  title: 'Agent history reduction type',
+                  description: 'Type of agent history reduction to use',
+                  'x-ms-editor': 'dropdown',
+                  'x-ms-editor-options': {
+                    options: [
+                      {
+                        value: 'messageCountReduction',
+                        displayName: 'Message count reduction',
+                      },
+                      {
+                        value: 'tokenCountReduction',
+                        displayName: 'Token count reduction',
+                      },
+                    ],
+                  },
+                },
+                messageCountLimit: {
+                  type: 'integer',
+                  title: 'Message count limit',
+                  description: 'The maximum number of messages to keep in the agent history',
+                  'x-ms-visibility': 'important',
+                  'x-ms-input-dependencies': {
+                    type: 'visibility',
+                    parameters: [
+                      {
+                        name: 'agentModelSettings.agentHistoryReductionSettings.agentHistoryReductionType',
+                        values: ['messageCountReduction'],
+                      },
+                    ],
+                  },
+                },
+                maximumTokenCount: {
+                  type: 'integer',
+                  title: 'Maximum token count',
+                  description: 'The maximum number of tokens to keep in the agent history',
+                  'x-ms-visibility': 'important',
+                  'x-ms-input-dependencies': {
+                    type: 'visibility',
+                    parameters: [
+                      {
+                        name: 'agentModelSettings.agentHistoryReductionSettings.agentHistoryReductionType',
+                        values: ['tokenCountReduction'],
+                      },
+                    ],
+                  },
+                },
+              },
+              required: ['agentHistoryReductionType'],
+            },
           },
         },
       },
