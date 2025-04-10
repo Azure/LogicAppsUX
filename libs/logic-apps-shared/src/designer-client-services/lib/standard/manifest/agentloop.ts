@@ -135,7 +135,7 @@ export default {
                   type: 'integer',
                   title: 'Message count limit',
                   description: 'The maximum number of messages to keep in the agent history',
-                  'x-ms-visibility': 'important',
+                  conditionalVisibility: true,
                   'x-ms-input-dependencies': {
                     type: 'visibility',
                     parameters: [
@@ -150,7 +150,7 @@ export default {
                   type: 'integer',
                   title: 'Maximum token count',
                   description: 'The maximum number of tokens to keep in the agent history',
-                  'x-ms-visibility': 'important',
+                  conditionalVisibility: true,
                   'x-ms-input-dependencies': {
                     type: 'visibility',
                     parameters: [
@@ -162,7 +162,6 @@ export default {
                   },
                 },
               },
-              required: ['agentHistoryReductionType'],
             },
           },
         },
