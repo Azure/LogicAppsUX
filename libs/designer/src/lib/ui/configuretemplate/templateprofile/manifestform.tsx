@@ -63,7 +63,7 @@ const useContactInfoSectionItems = (resources: Record<string, string>) => {
   const { manifest } = useSelector((state: RootState) => state.template);
   const items: TemplatesSectionItem[] = [
     {
-      label: resources.ContactInfo,
+      label: resources.BY,
       value: manifest?.details?.By ?? '',
       type: 'textfield',
       required: true,

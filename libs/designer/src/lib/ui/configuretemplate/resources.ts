@@ -184,6 +184,16 @@ export const useResourceStrings = () => {
       id: '2q6Vas',
       description: 'Required label',
     }),
+    RequiredOn: intl.formatMessage({
+      defaultMessage: 'On',
+      id: 'JHp3nE',
+      description: 'The aria label for the required parameter on (required)',
+    }),
+    RequiredOff: intl.formatMessage({
+      defaultMessage: 'Off',
+      id: '4ZPAvT',
+      description: 'The aria label for the required parameter off (not required)',
+    }),
     Details: intl.formatMessage({
       defaultMessage: 'Details',
       id: 'pr2lJw',

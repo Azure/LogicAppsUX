@@ -40,6 +40,11 @@ export const useTemplatesStrings = () => {
         id: 'FOoLuS',
         description: 'Label for description',
       }),
+      BY: intl.formatMessage({
+        defaultMessage: 'By',
+        id: 'lIVS+K',
+        description: 'Name of the organization or developer that published this template',
+      }),
     },
   };
 };

@@ -12,6 +12,7 @@ import { Open16Regular } from '@fluentui/react-icons';
 import { closePanel, TemplatePanelView } from '../../../../core/state/templates/panelSlice';
 import { clearTemplateDetails } from '../../../../core/state/templates/templateSlice';
 import { isMultiWorkflowTemplate } from '../../../../core/actions/bjsworkflow/templates';
+import { useTemplatesStrings } from '../../../templates/templatesStrings';
 
 export interface QuickViewPanelProps {
   showCreate: boolean;
@@ -144,6 +145,8 @@ export const QuickViewPanelHeader = ({
   onBackClick?: () => void;
 }) => {
   const intl = useIntl();
+  const { resourceStrings } = useTemplatesStrings();
+
   const detailsTags: Record<string, string> = useMemo(() => {
     const baseDetailsTags: Record<string, string> = isMultiWorkflowTemplate
       ? {}
@@ -155,13 +158,9 @@ export const QuickViewPanelHeader = ({
           }),
         };
 
-    baseDetailsTags.By = intl.formatMessage({
-      defaultMessage: 'By',
-      id: 'nhEgHb',
-      description: 'Name of the organization that published this template',
-    });
+    baseDetailsTags.By = resourceStrings.BY;
     return baseDetailsTags;
-  }, [isMultiWorkflowTemplate, intl]);
+  }, [isMultiWorkflowTemplate, intl, resourceStrings.BY]);
 
   return (
     <TemplatesPanelHeader title={title} onBackClick={onBackClick}>
