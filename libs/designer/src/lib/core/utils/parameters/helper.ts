@@ -388,7 +388,7 @@ export function createParameterInfo(
     editorViewModel,
     info,
     hideInUI: shouldHideInUI(parameter),
-    conditionalVisibility: shouldSoftHide(parameter) ? hasValue(parameter) : undefined,
+    conditionalVisibility: hasConditionalVisibility(parameter),
     label: parameter.title || parameter.summary || parameter.name,
     parameterKey: parameter.key,
     parameterName: parameter.name,
@@ -419,6 +419,10 @@ function shouldHideInUI(parameter: ResolvedParameter): boolean {
 
 function shouldSoftHide(parameter: ResolvedParameter): boolean {
   return !parameter.required && !equals(getVisibility(parameter), constants.VISIBILITY.IMPORTANT);
+}
+
+function hasConditionalVisibility(parameter: ResolvedParameter): boolean {
+  return parameter?.schema?.conditionalVisibility ?? (shouldSoftHide(parameter) ? hasValue(parameter) : undefined);
 }
 
 function hasValue(parameter: ResolvedParameter): boolean {
