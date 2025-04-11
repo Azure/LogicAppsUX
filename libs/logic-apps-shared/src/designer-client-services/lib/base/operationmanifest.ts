@@ -124,7 +124,6 @@ const edifactencode = 'edifactencode';
 const edifactbatchencode = 'edifactbatchencode';
 const edifactdecode = 'edifactdecode';
 const parsedocument = 'parsedocument';
-const parsedocumentwithmetadata = 'parsedocumentwithmetadata';
 
 export const apiManagementConnectorId = '/connectionProviders/apiManagementOperation';
 export const azureFunctionConnectorId = '/connectionProviders/azureFunctionOperation';
@@ -217,7 +216,6 @@ export const supportedBaseManifestTypes = [
   edifactdecode,
   chunktext,
   parsedocument,
-  parsedocumentwithmetadata,
 ];
 
 export const builtInConnectorIds = {
@@ -348,7 +346,6 @@ export function isBuiltInOperation(definition: any): boolean {
     case invokeworkflow:
     case parsedocument:
     case chunktext:
-    case parsedocumentwithmetadata:
       return true;
 
     default:
@@ -732,10 +729,6 @@ const builtInOperationsMetadata: Record<string, OperationInfo> = {
   [parsedocument]: {
     connectorId: dataOperationConnectorId,
     operationId: parsedocument,
-  },
-  [parsedocumentwithmetadata]: {
-    connectorId: dataOperationConnectorId,
-    operationId: parsedocumentwithmetadata,
   },
 };
 
