@@ -72,13 +72,9 @@ const TemplateSettings = () => {
   );
 };
 
-export const publishTab = (intl: IntlShape, dispatch: AppDispatch): TemplateTabProps => ({
+export const publishTab = (intl: IntlShape, resources: Record<string, string>, dispatch: AppDispatch): TemplateTabProps => ({
   id: constants.CONFIGURE_TEMPLATE_WIZARD_TAB_NAMES.PUBLISH,
-  title: intl.formatMessage({
-    defaultMessage: 'Settings',
-    id: '+IsazR',
-    description: 'The tab label for the settings tab on the configure template wizard',
-  }),
+  title: resources.SettingsTabLabel,
   description: intl.formatMessage({
     defaultMessage: 'The below are the settings for this template, to publish a template you need to go to Review and Publish and publish.',
     id: 'uOlHLw',
@@ -87,19 +83,11 @@ export const publishTab = (intl: IntlShape, dispatch: AppDispatch): TemplateTabP
   hasError: false,
   content: <TemplateSettings />,
   footerContent: {
-    primaryButtonText: intl.formatMessage({
-      defaultMessage: 'Previous',
-      id: 'Q1LEiE',
-      description: 'Button text for going back to the previous tab',
-    }),
+    primaryButtonText: resources.PreviousButtonText,
     primaryButtonOnClick: () => {
       dispatch(selectWizardTab(constants.CONFIGURE_TEMPLATE_WIZARD_TAB_NAMES.PROFILE));
     },
-    secondaryButtonText: intl.formatMessage({
-      defaultMessage: 'Next',
-      id: 'daThty',
-      description: 'Button text for proceeding to the next tab',
-    }),
+    secondaryButtonText: resources.NextButtonText,
     secondaryButtonOnClick: () => {
       dispatch(selectWizardTab(constants.CONFIGURE_TEMPLATE_WIZARD_TAB_NAMES.REVIEW_AND_PUBLISH));
     },

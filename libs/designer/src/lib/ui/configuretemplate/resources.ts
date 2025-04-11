@@ -245,6 +245,37 @@ export const useResourceStrings = () => {
       id: 'oChTO9',
       description: 'Accessibility label for the select workflow row checkbox',
     }),
+    // Tab labels
+    WorkflowsTabLabel: intl.formatMessage({
+      defaultMessage: 'Workflows',
+      id: 'R7VvvJ',
+      description: 'The tab label for the monitoring workflows tab on the configure template wizard',
+    }),
+    ConnectionsTabLabel: intl.formatMessage({
+      defaultMessage: 'Connections',
+      id: 'ur+ZvW',
+      description: 'The tab label for the monitoring connections tab on the configure template wizard',
+    }),
+    ParametersTabLabel: intl.formatMessage({
+      defaultMessage: 'Parameters',
+      id: 'lYAlE9',
+      description: 'The tab label for the monitoring parameters tab on the configure template wizard',
+    }),
+    ProfileTabLabel: intl.formatMessage({
+      defaultMessage: 'Profile',
+      id: '6ELsbA',
+      description: 'The tab label for the monitoring profile tab on the configure template wizard',
+    }),
+    SettingsTabLabel: intl.formatMessage({
+      defaultMessage: 'Settings',
+      id: '+IsazR',
+      description: 'The tab label for the settings tab on the configure template wizard',
+    }),
+    ReviewPublishTabLabel: intl.formatMessage({
+      defaultMessage: 'Review + publish',
+      id: 'FJQUqL',
+      description: 'The tab label for the monitoring review and publish tab on the configure template wizard',
+    }),
   };
 };
 

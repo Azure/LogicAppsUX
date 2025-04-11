@@ -1,10 +1,11 @@
-import { Accordion, AccordionHeader, AccordionItem, AccordionPanel, Text } from '@fluentui/react-components';
+import { Accordion, AccordionHeader, AccordionItem, AccordionPanel, Divider, Text } from '@fluentui/react-components';
 import { useResourceStrings } from '../resources';
 import { useTemplatesStrings } from '../../templates/templatesStrings';
 import { TemplatesSection, type TemplatesSectionItem } from '@microsoft/designer-ui';
 import { useSelector } from 'react-redux';
 import type { RootState } from '../../../core/state/templates/store';
 import { useIntl } from 'react-intl';
+import { getResourceNameFromId } from '@microsoft/logic-apps-shared';
 
 const SectionDividerItem: TemplatesSectionItem = {
   type: 'divider',
@@ -18,6 +19,16 @@ export const TemplateReviewList = () => {
       defaultMessage: 'Template display name',
       id: 'a7d1Dp',
       description: 'The aria label for the template display name',
+    }),
+    NoConnectionInTemplate: intl.formatMessage({
+      defaultMessage: 'No connections in this template',
+      id: 'oIRKrF',
+      description: 'Text to show no connections present in the template.',
+    }),
+    NoParameterInTemplate: intl.formatMessage({
+      defaultMessage: 'No parameters in this template',
+      id: 'sMjDlb',
+      description: 'Text to show no parameters present in the template.',
     }),
   };
 
@@ -33,45 +44,59 @@ export const TemplateReviewList = () => {
       <Accordion multiple={true}>
         <AccordionItem value={'workflowId'} key={'workflowId'}>
           <AccordionHeader>
-            <Text style={{ fontWeight: 'bold' }}>{resources.WORKFLOW_NAME}</Text>
-            {/*TODO*/}
+            <Text style={{ fontWeight: 'bold' }}>{resources.WorkflowsTabLabel}</Text>
           </AccordionHeader>
           <AccordionPanel>
             <TemplatesSection items={workflowsSectionItems} />
           </AccordionPanel>
         </AccordionItem>
 
-        <AccordionItem value={'connection'} key={'connection'}>
+        <Divider />
+
+        <AccordionItem value={'connections'} key={'connections'}>
           <AccordionHeader>
-            <Text style={{ fontWeight: 'bold' }}>{resources.WORKFLOW_NAME}</Text>
-            {/*TODO*/}
+            <Text style={{ fontWeight: 'bold' }}>{resources.ConnectionsTabLabel}</Text>
           </AccordionHeader>
           <AccordionPanel>
-            <TemplatesSection items={connectionsSectionItems} />
+            {connectionsSectionItems?.length ? (
+              <TemplatesSection items={connectionsSectionItems} />
+            ) : (
+              <Text>{resources.NoConnectionInTemplate}</Text>
+            )}
           </AccordionPanel>
         </AccordionItem>
 
-        <AccordionItem value={'parameter'} key={'parameter'}>
+        <Divider />
+
+        <AccordionItem value={'parameters'} key={'parameters'}>
           <AccordionHeader>
-            <Text style={{ fontWeight: 'bold' }}>{resources.ParameterName}</Text> {/*TODO*/}
+            <Text style={{ fontWeight: 'bold' }}>{resources.ParametersTabLabel}</Text>
           </AccordionHeader>
           <AccordionPanel>
-            <TemplatesSection items={paramtersSectionItems} />
+            {paramtersSectionItems?.length ? (
+              <TemplatesSection items={paramtersSectionItems} />
+            ) : (
+              <Text>{resources.NoParameterInTemplate}</Text>
+            )}
           </AccordionPanel>
         </AccordionItem>
 
-        <AccordionItem value={'parameter'} key={'parameter'}>
+        <Divider />
+
+        <AccordionItem value={'profile'} key={'profile'}>
           <AccordionHeader>
-            <Text style={{ fontWeight: 'bold' }}>{resources.ParameterName}</Text> {/*TODO*/}
+            <Text style={{ fontWeight: 'bold' }}>{resources.ProfileTabLabel}</Text>
           </AccordionHeader>
           <AccordionPanel>
             <TemplatesSection items={profileSectionItems} />
           </AccordionPanel>
         </AccordionItem>
 
-        <AccordionItem value={'parameter'} key={'parameter'}>
+        <Divider />
+
+        <AccordionItem value={'settings'} key={'settings'}>
           <AccordionHeader>
-            <Text style={{ fontWeight: 'bold' }}>{resources.ParameterName}</Text> {/*TODO*/}
+            <Text style={{ fontWeight: 'bold' }}>{resources.SettingsTabLabel}</Text>
           </AccordionHeader>
           <AccordionPanel>
             <TemplatesSection items={settingsSectionItems} />
@@ -202,7 +227,9 @@ const useParameterSectionItems = (resources: Record<string, string>) => {
       },
       {
         label: resources.AssociatedWorkflows,
-        value: parameter.associatedWorkflows?.join(', ') ?? resources.Placeholder,
+        value:
+          parameter.associatedWorkflows?.map((associatedWorkflow) => getResourceNameFromId(associatedWorkflow))?.join(', ') ??
+          resources.Placeholder,
         type: 'text',
       },
       {
@@ -239,7 +266,7 @@ const useProfileSectionItems = (resources: Record<string, string>) => {
     },
     {
       label: resources.WorkflowType,
-      value: Object.keys(workflows).length > 1 ? 'Accelerator' : 'Workflow', //TODO: intl this
+      value: Object.keys(workflows).length > 1 ? resources.ACCELERATOR : resources.WORKFLOW,
       type: 'text',
     },
     {

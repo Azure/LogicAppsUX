@@ -7,6 +7,8 @@ import { parametersTab } from './parametersTab';
 import { profileTab } from './profileTab';
 import { publishTab } from './publishTab';
 import { reviewPublishTab } from './reviewPublishTab';
+import { useTemplatesStrings } from '../../templates/templatesStrings';
+import { useResourceStrings } from '../resources';
 
 export const useConfigureTemplateWizardTabs = ({
   onSaveWorkflows,
@@ -17,13 +19,14 @@ export const useConfigureTemplateWizardTabs = ({
 }) => {
   const intl = useIntl();
   const dispatch = useDispatch<AppDispatch>();
+  const resources = { ...useTemplatesStrings().tabLabelStrings, ...useResourceStrings() };
 
   return [
-    workflowsTab(intl, dispatch, onSaveWorkflows),
-    connectionsTab(intl, dispatch),
-    parametersTab(intl, dispatch),
-    profileTab(intl, dispatch),
-    publishTab(intl, dispatch),
-    reviewPublishTab(intl, dispatch, onPublish),
+    workflowsTab(resources, dispatch, onSaveWorkflows),
+    connectionsTab(intl, resources, dispatch),
+    parametersTab(resources, dispatch),
+    profileTab(resources, dispatch),
+    publishTab(intl, resources, dispatch),
+    reviewPublishTab(intl, resources, dispatch, onPublish),
   ];
 };

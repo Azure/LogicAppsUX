@@ -45,6 +45,28 @@ export const useTemplatesStrings = () => {
         id: 'lIVS+K',
         description: 'Name of the organization or developer that published this template',
       }),
+      ACCELERATOR: intl.formatMessage({
+        defaultMessage: 'Accelerator',
+        id: '2Js04W',
+        description: 'Label for accelerator template which contains multiple workflows',
+      }),
+      WORKFLOW: intl.formatMessage({
+        defaultMessage: 'Workflow',
+        id: 'JsUu6b',
+        description: 'Label for workflow template which contains single workflow',
+      }),
+    },
+    tabLabelStrings: {
+      PreviousButtonText: intl.formatMessage({
+        defaultMessage: 'Previous',
+        id: 'Q1LEiE',
+        description: 'Button text for going back to the previous tab',
+      }),
+      NextButtonText: intl.formatMessage({
+        defaultMessage: 'Next',
+        id: 'daThty',
+        description: 'Button text for proceeding to the next tab',
+      }),
     },
   };
 };
