@@ -173,17 +173,17 @@ export const AgentChat = ({
   const [overrideWidth, setOverrideWidth] = useState<string | undefined>(chatbotWidth);
   const isChatInputEnabled = useIsChatInputEnabled(conversation.length > 0 ? conversation[0].metadata?.parentId : undefined);
   const dispatch = useDispatch<AppDispatch>();
-  const agentsNumber = Object.keys(agentLastOperations).length;
   const drawerWidth = isCollapsed ? PanelSize.Auto : overrideWidth;
   const panelRef = useRef<HTMLDivElement>(null);
   const focusElement = useFocusElement();
 
   useEffect(() => {
     if (!isNullOrUndefined(chatHistoryData)) {
+      console.log('charlie');
       const newConversations = parseChatHistory(chatHistoryData, dispatch, agentLastOperations);
       setConversation([...newConversations]);
     }
-  }, [setConversation, chatHistoryData, agentsNumber, dispatch, agentLastOperations]);
+  }, [setConversation, chatHistoryData, dispatch, agentLastOperations]);
 
   const intlText = useMemo(() => {
     return {
