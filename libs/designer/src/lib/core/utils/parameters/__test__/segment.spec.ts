@@ -70,17 +70,19 @@ describe('core/utils/parameters/segment', () => {
       expectOutputTokenSegment(segments[1], 'b', OutputSource.Body, 'bar', 'outputs.$.body.bar', undefined, true);
     });
 
-    it('should not have double quote for single non interpolated token.', () => {
+    it('should have double quote for single non interpolated token.', () => {
       const convertor = new ValueSegmentConvertor();
       const segments = convertor.convertToValueSegments({
         foo: '@triggerBody().foo',
       });
-      expect(segments.length).toEqual(5);
+      expect(segments.length).toEqual(7);
       expectLiteralSegment(segments[0], '{\n  ');
       expectLiteralSegment(segments[1], '"foo"');
       expectLiteralSegment(segments[2], ': ');
-      expectOutputTokenSegment(segments[3], undefined, OutputSource.Body, 'foo', 'outputs.$.body.foo', undefined, true);
-      expectLiteralSegment(segments[4], '\n}');
+      expectLiteralSegment(segments[3], '"');
+      expectOutputTokenSegment(segments[4], undefined, OutputSource.Body, 'foo', 'outputs.$.body.foo', undefined, true);
+      expectLiteralSegment(segments[5], '"');
+      expectLiteralSegment(segments[6], '\n}');
     });
 
     it('should add @ if the string starts with @ when raw mode is enabled.', () => {
@@ -179,7 +181,7 @@ describe('core/utils/parameters/segment', () => {
         interpolation: "@{triggerBody().foo}@{variables('v')}",
         expression: '@triggerBody().foo',
       });
-      expect(segments.length).toEqual(18);
+      expect(segments.length).toEqual(20);
       expectLiteralSegment(segments[0], '{\n  ');
       expectLiteralSegment(segments[1], '"boolean"');
       expectLiteralSegment(segments[2], ': false,\n  ');
@@ -196,8 +198,10 @@ describe('core/utils/parameters/segment', () => {
       expectLiteralSegment(segments[13], ',\n  ');
       expectLiteralSegment(segments[14], '"expression"');
       expectLiteralSegment(segments[15], ': ');
-      expectOutputTokenSegment(segments[16], undefined, OutputSource.Body, 'foo', 'outputs.$.body.foo', undefined, true);
-      expectLiteralSegment(segments[17], '\n}');
+      expectLiteralSegment(segments[16], '"');
+      expectOutputTokenSegment(segments[17], undefined, OutputSource.Body, 'foo', 'outputs.$.body.foo', undefined, true);
+      expectLiteralSegment(segments[18], '"');
+      expectLiteralSegment(segments[19], '\n}');
     });
 
     it('should convert FX token expression to token segment successfully.', () => {
