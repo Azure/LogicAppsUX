@@ -29,7 +29,7 @@ interface ChatbotUiProps {
     disabled?: boolean;
     value?: string;
     placeholder?: string;
-    onChange: (value: string) => void;
+    onChange?: (value: string) => void;
     onSubmit: (value: string) => void;
     readOnly?: boolean;
     readOnlyText?: string;
@@ -56,6 +56,8 @@ interface ChatbotUiProps {
     focus: boolean;
     answerGenerationInProgress: boolean;
     setFocus: (value: boolean) => void;
+    focusMessageId?: string;
+    clearFocusMessageId?: () => void;
   };
 }
 
@@ -65,22 +67,15 @@ const QUERY_MAX_LENGTH = 2000;
 export const ChatbotContent = (props: ChatbotUiProps) => {
   const {
     panel: { header },
-    body: { messages, focus, answerGenerationInProgress, setFocus },
+    body: { messages, focus, answerGenerationInProgress, setFocus, focusMessageId, clearFocusMessageId },
     inputBox: { disabled, placeholder, value = '', onChange, onSubmit, readOnly, readOnlyText },
     data: { isSaving, canSave, canTest, test, save, abort } = {},
     string: { test: testString, save: saveString, submit: submitString, progressState, progressStop, progressSave, protectedMessage },
   } = props;
-
-  const textInputRef = useRef<ITextField>(null);
-  useEffect(() => {
-    if (focus) {
-      textInputRef.current?.focus();
-      setFocus(false);
-    }
-  }, [focus, setFocus, textInputRef]);
-
   const intl = useIntl();
   const { isInverted } = useTheme();
+  const textInputRef = useRef<ITextField>(null);
+
   const inputIconButtonStyles = {
     enabled: {
       root: {
@@ -95,6 +90,24 @@ export const ChatbotContent = (props: ChatbotUiProps) => {
       },
     },
   };
+
+  useEffect(() => {
+    if (focus) {
+      textInputRef.current?.focus();
+      setFocus(false);
+    }
+  }, [focus, setFocus, textInputRef]);
+
+  useEffect(() => {
+    if (focusMessageId) {
+      const querySelector = `[data-scroll-target="${focusMessageId}"]`;
+      const element = document.querySelector<HTMLElement>(querySelector);
+      if (element) {
+        element.scrollIntoView({ behavior: 'smooth' });
+      }
+      clearFocusMessageId?.();
+    }
+  }, [focusMessageId, clearFocusMessageId]);
 
   const intlText = useMemo(() => {
     return {
@@ -152,7 +165,7 @@ export const ChatbotContent = (props: ChatbotUiProps) => {
             isMultiline={true}
             maxQueryLength={QUERY_MAX_LENGTH}
             onQueryChange={(_ev, newValue) => {
-              onChange(newValue ?? '');
+              onChange?.(newValue ?? '');
             }}
             placeholder={placeholder ?? intlText.inputPlaceHolder}
             query={value}
