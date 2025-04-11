@@ -179,7 +179,6 @@ export const AgentChat = ({
 
   useEffect(() => {
     if (!isNullOrUndefined(chatHistoryData)) {
-      console.log('charlie');
       const newConversations = parseChatHistory(chatHistoryData, dispatch, agentLastOperations);
       setConversation([...newConversations]);
     }
