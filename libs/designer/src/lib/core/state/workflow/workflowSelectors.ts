@@ -471,32 +471,6 @@ export const useAgentLastOperations = (agentOperations: string[]) => {
   return useSelector(lastOperationsSelector);
 };
 
-// export const useAgentLastOperations = (agentOperations: string[]) => {
-//   return useSelector(
-//     createSelector(getWorkflowState, (state: WorkflowState) => {
-//       const lastOperationsAgent: Record<string, any> = {};
-
-//       for (const agentId of agentOperations) {
-//         const agentGraph = state.agentsGraph[agentId];
-
-//         if (agentGraph) {
-//           const tools = agentGraph.children?.filter((child: WorkflowNode) => child.subGraphLocation === 'tools');
-//           const lastOperationTools: Record<string, string> = {};
-//           for (const tool of tools ?? []) {
-//             const toolSubgraph = agentGraph.children.find((child: WorkflowNode) => child.id === tool.id);
-//             const lastOperation = toolSubgraph?.children ? toolSubgraph.children[toolSubgraph.children.length - 1] : undefined;
-//             lastOperationTools[tool.id] = lastOperation?.id ?? '';
-//           }
-
-//           lastOperationsAgent[agentId] = lastOperationTools;
-//         }
-//       }
-
-//       return lastOperationsAgent;
-//     })
-//   );
-// };
-
 export const getAgentFromCondition = (state: WorkflowState, nodeId: string): string | undefined => {
   if (!nodeId || state.nodesMetadata[nodeId].subgraphType !== SUBGRAPH_TYPES.AGENT_CONDITION) {
     return undefined;
