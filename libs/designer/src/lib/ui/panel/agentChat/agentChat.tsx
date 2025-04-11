@@ -14,6 +14,7 @@ import { useMonitoringView } from '../../../core/state/designerOptions/designerO
 import {
   useAgentLastOperations,
   useAgentOperations,
+  useFocusElement,
   useIsChatInputEnabled,
   useRunInstance,
 } from '../../../core/state/workflow/workflowSelectors';
@@ -23,7 +24,7 @@ import { ChatFilled } from '@fluentui/react-icons';
 import { useDispatch } from 'react-redux';
 import { changePanelNode, type AppDispatch } from '../../../core';
 import type { Dispatch } from '@reduxjs/toolkit';
-import { setFocusNode, setRunIndex } from '../../../core/state/workflow/workflowSlice';
+import { clearFocusElement, setFocusNode, setRunIndex } from '../../../core/state/workflow/workflowSlice';
 import { AgentChatHeader } from './agentChatHeader';
 
 interface AgentChatProps {
@@ -53,25 +54,44 @@ const parseChatHistory = (chatHistory: ChatHistory[], dispatch: Dispatch, agentL
     dispatch(changePanelNode(agentName));
   };
 
-  const conversations: ConversationItem[] = [];
-
-  for (const chat of chatHistory) {
-    const { nodeId, messages } = chat;
-    const parsedMessages: any[] = (messages ?? []).map((message) => parseMessage(message, nodeId, toolResultCallback, toolContentCallback));
-
-    if (parsedMessages.length > 0) {
-      const agentName = labelCase(nodeId);
-      conversations.push(...parsedMessages, {
-        id: guid(),
-        text: agentName,
-        type: ConversationItemType.AgentHeader,
-        onClick: () => {
-          agentCallback(nodeId);
-        },
-        date: new Date(), // Using current time for header; modify if needed
-      });
+  // Improved version for processing chatHistory into conversations:
+  const conversations: ConversationItem[] = chatHistory.flatMap(({ nodeId, messages }) => {
+    if (!messages || messages.length === 0) {
+      return [];
     }
-  }
+
+    let lastIteration: number | undefined;
+    let messageCountInIteration = 0;
+    const processedMessages: ConversationItem[] = [];
+
+    // Iterate backwards to properly count message occurrences per iteration
+    for (let i = messages.length - 1; i >= 0; i--) {
+      const message = messages[i];
+      const { iteration } = message;
+
+      if (lastIteration !== iteration) {
+        messageCountInIteration = 0;
+        lastIteration = iteration;
+      } else {
+        messageCountInIteration++;
+      }
+
+      const dataScrollTarget = `${nodeId}-${iteration}-${messageCountInIteration}`;
+      processedMessages.push(parseMessage(message, nodeId, dataScrollTarget, toolResultCallback, toolContentCallback));
+    }
+
+    // Restore original message order and append the agent header item
+    return [
+      ...processedMessages.reverse(),
+      {
+        id: guid(),
+        text: labelCase(nodeId),
+        type: ConversationItemType.AgentHeader,
+        onClick: () => agentCallback(nodeId),
+        date: new Date(), // Uses current time for header; update if needed
+      },
+    ];
+  });
 
   return conversations;
 };
@@ -79,6 +99,7 @@ const parseChatHistory = (chatHistory: ChatHistory[], dispatch: Dispatch, agentL
 const parseMessage = (
   message: any,
   parentId: string,
+  dataScrollTarget: string,
   toolResultCallback: (agentName: string, toolName: string, iteration: number, subIteration: number) => void,
   toolContentCallback: (agentName: string, iteration: number) => void
 ): ConversationItem => {
@@ -101,6 +122,7 @@ const parseMessage = (
         date: new Date(timestamp),
         isMarkdownText: false,
         className: 'msla-agent-chat-content',
+        dataScrollTarget,
       };
     }
     case AgentMessageEntryType.ToolResult: {
@@ -115,6 +137,7 @@ const parseMessage = (
         onClick: () => toolResultCallback(parentId, toolName, iteration, subIteration),
         status,
         date: new Date(timestamp),
+        dataScrollTarget,
       };
     }
     default: {
@@ -138,7 +161,6 @@ export const AgentChat = ({
   panelContainerRef,
 }: AgentChatProps) => {
   const intl = useIntl();
-  const [inputQuery, setInputQuery] = useState('');
   const [focus, setFocus] = useState(false);
   const [conversation, setConversation] = useState<ConversationItem[]>([]);
   const isMonitoringView = useMonitoringView();
@@ -154,6 +176,7 @@ export const AgentChat = ({
   const agentsNumber = Object.keys(agentLastOperations).length;
   const drawerWidth = isCollapsed ? PanelSize.Auto : overrideWidth;
   const panelRef = useRef<HTMLDivElement>(null);
+  const focusElement = useFocusElement();
 
   useEffect(() => {
     if (!isNullOrUndefined(chatHistoryData)) {
@@ -222,10 +245,6 @@ export const AgentChat = ({
     };
   }, [intl]);
 
-  useEffect(() => {
-    setInputQuery('');
-  }, [conversation]);
-
   return (
     <Drawer
       aria-label={intlText.agentChatPanelAriaLabel}
@@ -267,8 +286,6 @@ export const AgentChat = ({
               header: <AgentChatHeader title={intlText.agentChatHeader} toggleCollapse={() => setIsCollapsed(true)} />,
             }}
             inputBox={{
-              value: inputQuery,
-              onChange: setInputQuery,
               onSubmit: () => {},
               disabled: isChatInputEnabled,
               readOnly: true,
@@ -285,6 +302,8 @@ export const AgentChat = ({
               focus: focus,
               answerGenerationInProgress: isChatHistoryFetching,
               setFocus: setFocus,
+              focusMessageId: focusElement,
+              clearFocusMessageId: () => dispatch(clearFocusElement()),
             }}
           />
           <PanelResizer updatePanelWidth={setOverrideWidth} panelRef={panelRef} />
