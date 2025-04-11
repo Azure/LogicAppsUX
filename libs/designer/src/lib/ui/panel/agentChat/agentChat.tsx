@@ -6,7 +6,7 @@ import {
   PanelSize,
   type ConversationItem,
 } from '@microsoft/designer-ui';
-import { useEffect, useMemo, useRef, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useIntl } from 'react-intl';
 import { defaultChatbotPanelWidth, ChatbotContent } from '@microsoft/logic-apps-chatbot';
 import { type ChatHistory, useChatHistory } from '../../../core/queries/runs';
@@ -33,15 +33,11 @@ interface AgentChatProps {
   panelContainerRef: React.MutableRefObject<HTMLElement | null>;
 }
 
-const parseChatHistory = (chatHistory: ChatHistory[], dispatch: Dispatch, agentLastOperations: Record<string, any>): ConversationItem[] => {
-  const toolResultCallback = (agentName: string, toolName: string, iteration: number, subIteration: number) => {
-    const agentLastOperation = agentLastOperations[agentName][toolName];
-    dispatch(setRunIndex({ page: iteration, nodeId: agentName }));
-    dispatch(setRunIndex({ page: subIteration, nodeId: toolName }));
-    dispatch(setFocusNode(agentLastOperation));
-    dispatch(changePanelNode(agentLastOperation));
-  };
-
+const parseChatHistory = (
+  chatHistory: ChatHistory[],
+  dispatch: Dispatch,
+  toolResultCallback: (agentName: string, toolName: string, iteration: number, subIteration: number) => void
+): ConversationItem[] => {
   const toolContentCallback = (agentName: string, iteration: number) => {
     dispatch(setRunIndex({ page: iteration, nodeId: agentName }));
     dispatch(setFocusNode(agentName));
@@ -178,15 +174,24 @@ export const AgentChat = ({
   const drawerWidth = isCollapsed ? PanelSize.Auto : overrideWidth;
   const panelRef = useRef<HTMLDivElement>(null);
   const focusElement = useFocusElement();
-  const agentOperationsRef = useRef(agentLastOperations);
+
+  const toolResultCallback = useCallback(
+    (agentName: string, toolName: string, iteration: number, subIteration: number) => {
+      const agentLastOperation = agentLastOperations[agentName][toolName];
+      dispatch(setRunIndex({ page: iteration, nodeId: agentName }));
+      dispatch(setRunIndex({ page: subIteration, nodeId: toolName }));
+      dispatch(setFocusNode(agentLastOperation));
+      dispatch(changePanelNode(agentLastOperation));
+    },
+    [Object.keys(agentLastOperations).length, dispatch]
+  );
 
   useEffect(() => {
     if (!isNullOrUndefined(chatHistoryData)) {
-      console.log('charlie', agentOperationsRef.current);
-      const newConversations = parseChatHistory(chatHistoryData, dispatch, agentOperationsRef.current);
+      const newConversations = parseChatHistory(chatHistoryData, dispatch, toolResultCallback);
       setConversation([...newConversations]);
     }
-  }, [setConversation, chatHistoryData, dispatch, agentOperationsRef]);
+  }, [setConversation, chatHistoryData, dispatch, toolResultCallback]);
 
   const intlText = useMemo(() => {
     return {

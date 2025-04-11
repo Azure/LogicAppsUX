@@ -440,7 +440,7 @@ export const useIsChatInputEnabled = (nodeId?: string) =>
     })
   );
 
-export const useAgentLastOperations = (agentOperations: string[]) => {
+export const useAgentLastOperations = (agentOperations: string[]): Record<string, any> => {
   const lastOperationsSelector = useMemo(
     () =>
       createSelector(getWorkflowState, (state: WorkflowState) => {
