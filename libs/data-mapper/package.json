@@ -1,6 +1,6 @@
 {
   "name": "@microsoft/logic-apps-data-mapper",
-  "version": "5.58.5",
+  "version": "5.58.6",
   "dependencies": {
     "@fluentui/azure-themes": "8.5.70",
     "@fluentui/react": "8.110.2",
