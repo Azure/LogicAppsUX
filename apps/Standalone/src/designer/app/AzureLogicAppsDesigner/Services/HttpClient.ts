@@ -33,12 +33,17 @@ export class HttpClient implements IHttpClient {
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   async post<ReturnType, BodyType>(options: HttpRequestOptions<BodyType>): Promise<ReturnType> {
+    const auth = options.noAuth
+      ? {}
+      : {
+          Authorization: `Bearer ${environment.armToken}`,
+        };
     const response = await axios.post(getRequestUrl(options), options.content, {
       headers: {
         ...this._extraHeaders,
         ...options.headers,
         'Content-Type': 'application/json',
-        Authorization: `Bearer ${environment.armToken}`,
+        ...auth,
       },
     });
 
