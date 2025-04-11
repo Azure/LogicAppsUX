@@ -403,16 +403,19 @@ export const useIsWithinAgenticLoop = (id: string): boolean => {
 };
 
 export const useAgentOperations = () => {
-  return useSelector(
-    createSelector(getWorkflowState, (state: WorkflowState) => {
-      return Object.entries(state.operations).reduce((acc: string[], [id, node]) => {
-        if (equals(node.type, commonConstants.NODE.TYPE.AGENT)) {
-          acc.push(id);
-        }
-        return acc;
-      }, []);
-    })
+  const agentOperationsSelector = useMemo(
+    () =>
+      createSelector(getWorkflowState, (state: WorkflowState) => {
+        return Object.entries(state.operations).reduce((acc: string[], [id, node]) => {
+          if (equals(node.type, commonConstants.NODE.TYPE.AGENT)) {
+            acc.push(id);
+          }
+          return acc;
+        }, []);
+      }),
+    []
   );
+  return useSelector(agentOperationsSelector);
 };
 
 export const useIsChatInputEnabled = (nodeId?: string) =>
@@ -438,29 +441,34 @@ export const useIsChatInputEnabled = (nodeId?: string) =>
   );
 
 export const useAgentLastOperations = (agentOperations: string[]) => {
-  return useSelector(
-    createSelector(getWorkflowState, (state: WorkflowState) => {
-      const lastOperationsAgent: Record<string, any> = {};
+  const lastOperationsSelector = useMemo(
+    () =>
+      createSelector(getWorkflowState, (state: WorkflowState) => {
+        const lastOperationsAgent: Record<string, any> = {};
 
-      for (const agentId of agentOperations) {
-        const agentGraph = state.agentsGraph[agentId];
+        for (const agentId of agentOperations) {
+          const agentGraph = state.agentsGraph[agentId];
 
-        if (agentGraph) {
-          const tools = agentGraph.children?.filter((child: WorkflowNode) => child.subGraphLocation === 'tools');
-          const lastOperationTools: Record<string, string> = {};
-          for (const tool of tools ?? []) {
-            const toolSubgraph = agentGraph.children.find((child: WorkflowNode) => child.id === tool.id);
-            const lastOperation = toolSubgraph?.children ? toolSubgraph.children[toolSubgraph.children.length - 1] : undefined;
-            lastOperationTools[tool.id] = lastOperation?.id ?? '';
+          if (agentGraph) {
+            const tools = agentGraph.children?.filter((child: WorkflowNode) => child.subGraphLocation === 'tools');
+            const lastOperationTools: Record<string, string> = {};
+            for (const tool of tools ?? []) {
+              const toolSubgraph = agentGraph.children.find((child: WorkflowNode) => child.id === tool.id);
+              const lastOperation = toolSubgraph?.children ? toolSubgraph.children[toolSubgraph.children.length - 1] : undefined;
+              lastOperationTools[tool.id] = lastOperation?.id ?? '';
+            }
+
+            lastOperationsAgent[agentId] = lastOperationTools;
           }
-
-          lastOperationsAgent[agentId] = lastOperationTools;
         }
-      }
 
-      return lastOperationsAgent;
-    })
+        return lastOperationsAgent;
+      }),
+    // Only recreate the selector if agentOperations changes.
+    [agentOperations]
   );
+
+  return useSelector(lastOperationsSelector);
 };
 
 export const getAgentFromCondition = (state: WorkflowState, nodeId: string): string | undefined => {
