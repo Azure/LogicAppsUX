@@ -108,13 +108,14 @@ const parseMessage = (
   switch (messageEntryType) {
     case AgentMessageEntryType.Content: {
       const content = messageEntryPayload?.content || '';
-      const type = role === 'User' ? ConversationItemType.Query : ConversationItemType.Reply;
+      const isUserMessage = role === 'User';
+      const type = isUserMessage ? ConversationItemType.Query : ConversationItemType.Reply;
       return {
         text: content,
         type,
         id: guid(),
         role: {
-          text: role === 'User' ? undefined : role,
+          text: isUserMessage ? undefined : role,
           agentName: labelCase(parentId),
           onClick: () => toolContentCallback(parentId, iteration),
         },
@@ -177,13 +178,15 @@ export const AgentChat = ({
   const drawerWidth = isCollapsed ? PanelSize.Auto : overrideWidth;
   const panelRef = useRef<HTMLDivElement>(null);
   const focusElement = useFocusElement();
+  const agentOperationsRef = useRef(agentLastOperations);
 
   useEffect(() => {
     if (!isNullOrUndefined(chatHistoryData)) {
-      const newConversations = parseChatHistory(chatHistoryData, dispatch, agentLastOperations);
+      console.log('charlie', agentOperationsRef.current);
+      const newConversations = parseChatHistory(chatHistoryData, dispatch, agentOperationsRef.current);
       setConversation([...newConversations]);
     }
-  }, [setConversation, chatHistoryData, dispatch, agentLastOperations]);
+  }, [setConversation, chatHistoryData, dispatch, agentOperationsRef]);
 
   const intlText = useMemo(() => {
     return {
