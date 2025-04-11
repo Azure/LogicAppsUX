@@ -1,4 +1,13 @@
 # Logic Apps Designer
+### [5.58.5](https://github.com/Azure/LogicAppsUX/compare/v5.58.4...v5.58.5) (2025-04-11)
+
+
+### Bug Fixes
+
+* **designer:** revert Introduce "Parse document with metadata" action for consumption ([#7009](https://github.com/Azure/LogicAppsUX/issues/7009)) ([ed4254d](https://github.com/Azure/LogicAppsUX/commit/ed4254d781ac04ea864aae46dfc40d19264699bd))
+* **vscode:** Delete statusCode from root def ([#6977](https://github.com/Azure/LogicAppsUX/issues/6977)) ([b574192](https://github.com/Azure/LogicAppsUX/commit/b574192490db5b863d41214baf6452a5901a1e28))
+* **vscode:** Update validation to allow having the csharp file inside the workflow folder ([#6884](https://github.com/Azure/LogicAppsUX/issues/6884)) ([abd4a6a](https://github.com/Azure/LogicAppsUX/commit/abd4a6aac8037143899c7720c4739e6265430f5d)), closes [#6881](https://github.com/Azure/LogicAppsUX/issues/6881)
+
 ### [5.58.4](https://github.com/Azure/LogicAppsUX/compare/v5.58.3...v5.58.4) (2025-03-28)
 
 
