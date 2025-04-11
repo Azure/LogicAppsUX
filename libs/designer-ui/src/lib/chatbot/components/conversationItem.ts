@@ -73,11 +73,6 @@ export type AgentHeaderItem = BaseConversationItem & {
 export type UserQueryItem = BaseConversationItem & {
   type: typeof ConversationItemType.Query;
   text: string;
-  role?: {
-    text: string;
-    onClick: () => void;
-    agentName: string;
-  };
 };
 
 export function isUserQueryItem(item: ConversationItem): item is UserQueryItem {
