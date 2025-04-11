@@ -211,6 +211,7 @@ export const ArrayEditor: React.FC<ArrayEditorProps> = ({
       ) : (
         <ExpandedSimpleArray
           {...baseEditorProps}
+          isRequired={isRequired}
           placeholder={placeholder}
           valueType={itemSchema.type}
           itemEnum={itemSchema.enum}

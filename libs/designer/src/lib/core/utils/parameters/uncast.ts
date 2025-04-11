@@ -1,5 +1,6 @@
 import type { Expression, ExpressionFunction } from '@microsoft/logic-apps-shared';
 import { isFunction, isStringLiteral, equals } from '@microsoft/logic-apps-shared';
+import constants from '../../../common/constants';
 
 export interface UncastResult {
   expression: Expression;
@@ -92,6 +93,16 @@ export class UncastingUtility {
     return result;
   }
 
+  /**
+   * Checks if the format is uncastable.
+   * @param {string} format - The format to check.
+   * @return {boolean} - True if the format is uncastable, false otherwise.
+   */
+  public static isCastableFormat(format?: string): boolean {
+    const castableFormats = new Set([constants.SWAGGER.FORMAT.BINARY, constants.SWAGGER.FORMAT.BYTE, constants.SWAGGER.FORMAT.DATAURI]);
+    return !!format && castableFormats.has(format.toLowerCase());
+  }
+
   private _uncastOnce(expression: Expression): UncastResult[] | null {
     if (isFunction(expression)) {
       switch (expression.name.toUpperCase()) {
@@ -100,13 +111,13 @@ export class UncastingUtility {
         case 'CONCAT':
           return this._uncastConcat(expression);
         case 'BASE64TOBINARY':
-          return this._uncastSingleFunction(expression, 'byte');
+          return this._uncastSingleFunction(expression, constants.SWAGGER.FORMAT.BYTE);
         case 'BASE64TOSTRING':
-          return this._uncastSingleFunction(expression, 'byte');
+          return this._uncastSingleFunction(expression, constants.SWAGGER.FORMAT.BYTE);
         case 'ENCODEURICOMPONENT':
           return this._uncastSingleFunction(expression, '');
         case 'DECODEDATAURI':
-          return this._uncastSingleFunction(expression, 'datauri');
+          return this._uncastSingleFunction(expression, constants.SWAGGER.FORMAT.DATAURI);
         default:
           return null;
       }
@@ -126,7 +137,7 @@ export class UncastingUtility {
           return concatArguments.map((argument) => ({ expression: argument, format: '' }));
         }
       } else {
-        return functionArguments.map((argument) => ({ expression: argument, format: 'binary' }));
+        return functionArguments.map((argument) => ({ expression: argument, format: constants.SWAGGER.FORMAT.BINARY }));
       }
     }
 
@@ -143,7 +154,7 @@ export class UncastingUtility {
         switch (value.toUpperCase()) {
           case 'DATA:APPLICATION/OCTET-STREAM;BASE64,':
           case 'DATA:;BASE64,': {
-            format = 'byte';
+            format = constants.SWAGGER.FORMAT.BYTE;
             break;
           }
           case 'DATA:APPLICATION/OCTET-STREAM,':

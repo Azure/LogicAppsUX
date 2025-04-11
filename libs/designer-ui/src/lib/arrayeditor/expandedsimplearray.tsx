@@ -41,6 +41,7 @@ export interface ExpandedSimpleArrayProps {
   tokenMapping?: Record<string, ValueSegment>;
   loadParameterValueFromString?: loadParameterValueFromStringHandler;
   isDynamic?: boolean;
+  isRequired?: boolean;
 }
 
 export const ExpandedSimpleArray = ({
@@ -54,6 +55,7 @@ export const ExpandedSimpleArray = ({
   readonly,
   options,
   isDynamic,
+  isRequired,
   ...props
 }: ExpandedSimpleArrayProps): JSX.Element => {
   const intl = useIntl();
@@ -84,7 +86,7 @@ export const ExpandedSimpleArray = ({
         return (
           <div key={item.key + index} className="msla-array-item">
             <div className="msla-array-item-header">
-              {renderLabel(index, labelProps.text, true)}
+              {renderLabel(index, labelProps.text, isRequired)}
               <div className="msla-array-item-commands">
                 <ItemMenuButton
                   disabled={!!readonly}
