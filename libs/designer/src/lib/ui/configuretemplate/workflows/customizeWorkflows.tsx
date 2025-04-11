@@ -90,6 +90,11 @@ const CustomizeWorkflowSection = ({
         },
       },
       //TODO: add state type
+      {
+        label: customResourceStrings.Trigger,
+        value: workflow.triggerType,
+        type: 'text',
+      },
     ];
   }, [workflowId, updateWorkflowDataField, workflow, customResourceStrings]);
 

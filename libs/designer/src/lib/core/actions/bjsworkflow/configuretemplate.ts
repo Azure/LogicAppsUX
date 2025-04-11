@@ -14,6 +14,7 @@ import {
   clone,
   DevLogger,
   getResourceNameFromId,
+  getTriggerFromDefinition,
   InitConnectionService,
   InitLoggerService,
   InitOperationManifestService,
@@ -218,6 +219,7 @@ export const getTemplateConnections = async (
       [workflowId]: {
         id: workflowId,
         workflowDefinition: definition,
+        triggerType: getTriggerFromDefinition(definition?.triggers ?? {}),
         connectionKeys: Object.keys(connections),
       },
     };
@@ -254,6 +256,7 @@ export const getTemplateConnections = async (
     workflowsData[workflowId] = {
       ...(workflowsData[workflowId] ?? {}),
       workflowDefinition: definition,
+      triggerType: getTriggerFromDefinition(definition?.triggers ?? {}),
       kind: workflowData.kind,
       connectionKeys,
     };
@@ -454,6 +457,7 @@ export const getWorkflowsWithDefinitions = async (
     workflows[workflowId] = {
       ...(workflows[workflowId] ?? {}),
       workflowDefinition: definition,
+      triggerType: getTriggerFromDefinition(definition?.triggers ?? {}),
     };
     return workflows;
   }
@@ -470,6 +474,7 @@ export const getWorkflowsWithDefinitions = async (
         id,
         kind,
         workflowDefinition,
+        triggerType: getTriggerFromDefinition(workflowDefinition?.triggers ?? {}),
       };
     }
     return result;

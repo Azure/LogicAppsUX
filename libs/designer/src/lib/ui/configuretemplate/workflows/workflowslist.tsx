@@ -89,7 +89,7 @@ export const DisplayWorkflows = ({ onSave }: { onSave: (isMultiWorkflow: boolean
     displayName: string;
     state: string;
     trigger: string;
-    date: string;
+    // date: string; //TODO: removed until back-end updates us
   };
 
   const columns: TableColumnDefinition<WorkflowsTableItem>[] = [
@@ -105,9 +105,10 @@ export const DisplayWorkflows = ({ onSave }: { onSave: (isMultiWorkflow: boolean
     createTableColumn<WorkflowsTableItem>({
       columnId: 'trigger',
     }),
-    createTableColumn<WorkflowsTableItem>({
-      columnId: 'date',
-    }),
+    //TODO: removed until back-end updates us
+    // createTableColumn<WorkflowsTableItem>({
+    //   columnId: 'date',
+    // }),
   ];
 
   const items =
@@ -116,8 +117,8 @@ export const DisplayWorkflows = ({ onSave }: { onSave: (isMultiWorkflow: boolean
       name: workflowData?.workflowName ?? resourceStrings.Placeholder,
       displayName: workflowData?.manifest?.title ?? resourceStrings.Placeholder,
       state: workflowData?.manifest?.kinds?.join(', ') ?? resourceStrings.Placeholder,
-      trigger: '-', //TODO: replace this with the actual trigger type
-      date: '-', //TODO: replace this with the actual date
+      trigger: workflowData?.triggerType,
+      // date: '-', //TODO: removed until back-end updates us
     })) ?? [];
 
   const {
@@ -194,6 +195,7 @@ export const DisplayWorkflows = ({ onSave }: { onSave: (isMultiWorkflow: boolean
               <TableHeaderCell>{resourceStrings.WorkflowName}</TableHeaderCell>
               <TableHeaderCell>{resourceStrings.WorkflowDisplayName}</TableHeaderCell>
               <TableHeaderCell>{resourceStrings.State}</TableHeaderCell>
+              <TableHeaderCell>{resourceStrings.Trigger}</TableHeaderCell>
             </TableRow>
           </TableHeader>
           {rows.map(({ item, selected, onClick, onKeyDown, appearance }) => (
@@ -211,9 +213,10 @@ export const DisplayWorkflows = ({ onSave }: { onSave: (isMultiWorkflow: boolean
               <TableCell>
                 <TableCellLayout>{item.trigger}</TableCellLayout>
               </TableCell>
+              {/* //TODO: removed until back-end updates us
               <TableCell>
                 <TableCellLayout>{item.date}</TableCellLayout>
-              </TableCell>
+              </TableCell> */}
             </TableRow>
           ))}
         </Table>
