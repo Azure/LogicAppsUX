@@ -176,7 +176,7 @@ export const AgentChat = ({
     isFetching: isChatHistoryFetching,
     data: chatHistoryData,
   } = useChatHistory(!!isMonitoringView, agentOperations, runInstance?.id);
-  const { isFetching: isChatInvokeUriFetching, data: chatInvokeUri } = useAgentChatInvokeUri(!!isMonitoringView, true, agentChatSuffixUri);
+  const { data: chatInvokeUri } = useAgentChatInvokeUri(!!isMonitoringView, true, agentChatSuffixUri);
   const [overrideWidth, setOverrideWidth] = useState<string | undefined>(chatbotWidth);
   const dispatch = useDispatch<AppDispatch>();
   const drawerWidth = isCollapsed ? PanelSize.Auto : overrideWidth;
@@ -188,20 +188,22 @@ export const AgentChat = ({
       return;
     }
 
-    const invokeChat = await RunService().invokeAgentChat({
-      id: chatInvokeUri,
-      data: { role: 'User', content: textInput },
-    });
-    if (invokeChat.status !== 200) {
+    try {
+      await RunService().invokeAgentChat({
+        id: chatInvokeUri,
+        data: { role: 'User', content: textInput },
+      });
+
+      refetchChatHistory();
+    } catch (e: any) {
       LoggerService().log({
         level: LogEntryLevel.Error,
         area: 'agentchat',
-        message: invokeChat.statusText,
-        error: invokeChat.statusText,
+        message: 'Agent chat invocation failed',
+        error: e,
       });
-    } else {
-      refetchChatHistory();
     }
+
     setTextInput('');
   }, [textInput, chatInvokeUri, refetchChatHistory]);
 
@@ -318,7 +320,7 @@ export const AgentChat = ({
               },
               onChange: setTextInput,
               value: textInput,
-              readOnly: isChatInvokeUriFetching || !chatInvokeUri,
+              readOnly: !chatInvokeUri,
               readOnlyText: intlText.chatReadOnlyMessage,
             }}
             string={{
