@@ -5,9 +5,10 @@ import { TemplatesSection, type TemplatesSectionItem } from '@microsoft/designer
 import { useSelector } from 'react-redux';
 import type { RootState } from '../../../core/state/templates/store';
 import { useIntl } from 'react-intl';
-import { getResourceNameFromId } from '@microsoft/logic-apps-shared';
+import { equals, getResourceNameFromId } from '@microsoft/logic-apps-shared';
 import { ConnectorConnectionName } from '../../templates/connections/connector';
-import React from 'react';
+import React, { useMemo } from 'react';
+import { useAllConnectors } from '../../../core/configuretemplate/utils/queries';
 
 const SectionDividerItem: TemplatesSectionItem = {
   type: 'divider',
@@ -245,10 +246,16 @@ const useParameterSectionItems = (resources: Record<string, string>) => {
 };
 
 const useProfileSectionItems = (resources: Record<string, string>) => {
-  const { templateManifest, workflows } = useSelector((state: RootState) => ({
+  const { operationInfos, templateManifest, workflows } = useSelector((state: RootState) => ({
+    operationInfos: state.operation.operationInfo,
     templateManifest: state.template.manifest,
     workflows: state.template.workflows,
   }));
+
+  const { data: allConnectors } = useAllConnectors(operationInfos);
+  const selectedConnectors = useMemo(() => {
+    return allConnectors?.filter((connector) => templateManifest?.featuredConnectors?.some((conn) => equals(conn.id, connector.id)));
+  }, [allConnectors, templateManifest]);
 
   const items: TemplatesSectionItem[] = [
     {
@@ -273,7 +280,7 @@ const useProfileSectionItems = (resources: Record<string, string>) => {
     },
     {
       label: resources.FeaturedConnectors,
-      value: templateManifest?.featuredConnectors?.join(', ') ?? resources.Placeholder,
+      value: selectedConnectors?.map((connector) => connector.displayName).join(', ') ?? resources.Placeholder,
       type: 'text',
     },
     {
