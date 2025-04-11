@@ -31,7 +31,7 @@ export async function verifyLocalConnectionKeys(context: IActionContext, project
         return;
       }
       const connectionsData: ConnectionsData = JSON.parse(connectionsJson);
-      const parametersData = getParametersJson(projectPath);
+      const parametersData = await getParametersJson(projectPath);
       const managedApiConnectionReferences = connectionsData.managedApiConnections;
 
       if (connectionsData.managedApiConnections && !(Object.keys(managedApiConnectionReferences).length === 0)) {
@@ -44,7 +44,7 @@ export async function verifyLocalConnectionKeys(context: IActionContext, project
           parametersData
         );
 
-        await saveConnectionReferences(this.context, projectPath, connectionsAndSettingsToUpdate);
+        await saveConnectionReferences(context, projectPath, connectionsAndSettingsToUpdate);
       }
     } catch (error) {
       const errorMessage = localize(

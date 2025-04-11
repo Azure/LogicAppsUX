@@ -149,7 +149,7 @@ export async function getWorkspaceLogicAppFolders(context: IActionContext, messa
     }
   }
 
-  return logicAppRoots.map((s) => (isString(s) ? s : s.uri.fsPath));
+  return logicAppRoots.map((f) => (isString(f) ? f : f.uri.fsPath));
 }
 
 /**
