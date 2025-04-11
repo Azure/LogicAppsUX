@@ -224,6 +224,16 @@ export const useResourceStrings = () => {
       id: 'CdxaGY',
       description: 'Dark mode image label',
     }),
+    InAppKind: intl.formatMessage({
+      defaultMessage: 'In-app',
+      id: 'n6/Zp0',
+      description: 'The label for the in-app connector kind',
+    }),
+    SharedKind: intl.formatMessage({
+      defaultMessage: 'Shared',
+      id: 'PYku3O',
+      description: 'The label for shared connector kind',
+    }),
     // Aria labels
     WorkflowsListTableLabel: intl.formatMessage({
       defaultMessage: 'Workflows list tabel',

@@ -56,6 +56,18 @@ export const useTemplatesStrings = () => {
         description: 'Label for workflow template which contains single workflow',
       }),
     },
+    connectorKinds: {
+      inapp: intl.formatMessage({
+        defaultMessage: 'In-app',
+        id: 'n6/Zp0',
+        description: 'The label for the in-app connector kind',
+      }),
+      shared: intl.formatMessage({
+        defaultMessage: 'Shared',
+        id: 'PYku3O',
+        description: 'The label for shared connector kind',
+      }),
+    } as Record<string, string>,
     tabLabelStrings: {
       PreviousButtonText: intl.formatMessage({
         defaultMessage: 'Previous',

@@ -6,6 +6,7 @@ import { useSelector } from 'react-redux';
 import type { RootState } from '../../../core/state/templates/store';
 import { useIntl } from 'react-intl';
 import { getResourceNameFromId } from '@microsoft/logic-apps-shared';
+import { ConnectorConnectionName } from '../../templates/connections/connector';
 
 const SectionDividerItem: TemplatesSectionItem = {
   type: 'divider',
@@ -30,9 +31,21 @@ export const TemplateReviewList = () => {
       id: 'sMjDlb',
       description: 'Text to show no parameters present in the template.',
     }),
+    ConnectorNameLabel: intl.formatMessage({
+      defaultMessage: 'Connector Name',
+      id: '0zMOIe',
+      description: 'The label for the connector name',
+    }),
+    ConnectorTypeLabel: intl.formatMessage({
+      defaultMessage: 'Connector Type',
+      id: '0m0zNa',
+      description: 'The label for the connector type',
+    }),
   };
 
-  const resources = { ...useTemplatesStrings().resourceStrings, ...useResourceStrings(), ...intlText };
+  const { connectorKinds, resourceStrings: templateResourceStrings } = useTemplatesStrings();
+  const resources = { ...templateResourceStrings, ...connectorKinds, ...useResourceStrings(), ...intlText };
+
   const workflowsSectionItems = useWorkflowSectionItems(resources);
   const connectionsSectionItems: TemplatesSectionItem[] = useConnectionSectionItems(resources);
   const paramtersSectionItems: TemplatesSectionItem[] = useParameterSectionItems(resources);
@@ -166,8 +179,7 @@ const useWorkflowSectionItems = (resources: Record<string, string>) => {
   });
 };
 
-/// TODO: change this to use resources?
-const useConnectionSectionItems = (_resources: Record<string, string>) => {
+const useConnectionSectionItems = (resources: Record<string, string>) => {
   const { connections } = useSelector((state: RootState) => ({
     connections: state.template.connections,
   }));
@@ -177,13 +189,14 @@ const useConnectionSectionItems = (_resources: Record<string, string>) => {
     const isLast = index === connectionsValues.length - 1;
     const thisParameterSectionItems: TemplatesSectionItem[] = [
       {
-        label: 'ConnectorLabel',
+        label: resources.ConnectorNameLabel,
         value: connection.connectorId,
-        type: 'text',
+        onRenderItem: () => <ConnectorConnectionName connectorId={connection.connectorId} connectionKey={undefined} />,
+        type: 'custom',
       },
       {
-        label: 'Kind',
-        value: connection.kind,
+        label: resources.ConnectorTypeLabel,
+        value: resources[connection.kind as string],
         type: 'text',
       },
     ];
