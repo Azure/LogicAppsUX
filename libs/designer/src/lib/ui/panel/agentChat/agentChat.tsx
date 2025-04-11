@@ -6,19 +6,19 @@ import {
   PanelSize,
   type ConversationItem,
 } from '@microsoft/designer-ui';
-import { useEffect, useMemo, useRef, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useIntl } from 'react-intl';
 import { defaultChatbotPanelWidth, ChatbotContent } from '@microsoft/logic-apps-chatbot';
-import { type ChatHistory, useChatHistory } from '../../../core/queries/runs';
+import { type ChatHistory, useAgentChatInvokeUri, useChatHistory } from '../../../core/queries/runs';
 import { useMonitoringView } from '../../../core/state/designerOptions/designerOptionsSelectors';
 import {
   useAgentLastOperations,
   useAgentOperations,
   useFocusElement,
-  useIsChatInputEnabled,
+  useUriForAgentChat,
   useRunInstance,
 } from '../../../core/state/workflow/workflowSelectors';
-import { guid, isNullOrUndefined, labelCase } from '@microsoft/logic-apps-shared';
+import { guid, isNullOrUndefined, labelCase, LogEntryLevel, LoggerService, RunService } from '@microsoft/logic-apps-shared';
 import { Button, Drawer, mergeClasses } from '@fluentui/react-components';
 import { ChatFilled } from '@fluentui/react-icons';
 import { useDispatch } from 'react-redux';
@@ -163,19 +163,47 @@ export const AgentChat = ({
   const intl = useIntl();
   const [focus, setFocus] = useState(false);
   const [conversation, setConversation] = useState<ConversationItem[]>([]);
+  const [textInput, setTextInput] = useState<string>('');
   const isMonitoringView = useMonitoringView();
   const runInstance = useRunInstance();
   const agentOperations = useAgentOperations();
   const agentLastOperations = useAgentLastOperations(agentOperations);
   const [isCollapsed, setIsCollapsed] = useState(false);
   const panelContainerElement = panelContainerRef.current as HTMLElement;
-  const { isFetching: isChatHistoryFetching, data: chatHistoryData } = useChatHistory(!!isMonitoringView, agentOperations, runInstance?.id);
+  const agentChatSuffixUri = useUriForAgentChat(conversation.length > 0 ? conversation[0].metadata?.parentId : undefined);
+  const {
+    refetch: refetchChatHistory,
+    isFetching: isChatHistoryFetching,
+    data: chatHistoryData,
+  } = useChatHistory(!!isMonitoringView, agentOperations, runInstance?.id);
+  const { isFetching: isChatInvokeUriFetching, data: chatInvokeUri } = useAgentChatInvokeUri(!!isMonitoringView, true, agentChatSuffixUri);
   const [overrideWidth, setOverrideWidth] = useState<string | undefined>(chatbotWidth);
-  const isChatInputEnabled = useIsChatInputEnabled(conversation.length > 0 ? conversation[0].metadata?.parentId : undefined);
   const dispatch = useDispatch<AppDispatch>();
   const drawerWidth = isCollapsed ? PanelSize.Auto : overrideWidth;
   const panelRef = useRef<HTMLDivElement>(null);
   const focusElement = useFocusElement();
+
+  const onChatSubmit = useCallback(async () => {
+    if (!textInput || isNullOrUndefined(chatInvokeUri)) {
+      return;
+    }
+
+    const invokeChat = await RunService().invokeAgentChat({
+      id: chatInvokeUri,
+      data: { role: 'User', content: textInput },
+    });
+    if (invokeChat.status !== 200) {
+      LoggerService().log({
+        level: LogEntryLevel.Error,
+        area: 'agentchat',
+        message: invokeChat.statusText,
+        error: invokeChat.statusText,
+      });
+    } else {
+      refetchChatHistory();
+    }
+    setTextInput('');
+  }, [textInput, chatInvokeUri, refetchChatHistory]);
 
   useEffect(() => {
     if (!isNullOrUndefined(chatHistoryData)) {
@@ -285,9 +313,12 @@ export const AgentChat = ({
               header: <AgentChatHeader title={intlText.agentChatHeader} toggleCollapse={() => setIsCollapsed(true)} />,
             }}
             inputBox={{
-              onSubmit: () => {},
-              disabled: isChatInputEnabled,
-              readOnly: true,
+              onSubmit: () => {
+                onChatSubmit();
+              },
+              onChange: setTextInput,
+              value: textInput,
+              readOnly: isChatInvokeUriFetching || !chatInvokeUri,
               readOnlyText: intlText.chatReadOnlyMessage,
             }}
             string={{
