@@ -178,7 +178,7 @@ export const ChatbotContent = (props: ChatbotUiProps) => {
 
 export const ChatbotUi = (props: ChatbotUiProps) => {
   const {
-    panel: { width = defaultChatbotPanelWidth, location = PanelLocation.Left, isOpen, hasCloseButton, isBlocking, onDismiss },
+    panel: { width = defaultChatbotPanelWidth, location = PanelLocation.Left, isOpen, hasCloseButton = false, isBlocking, onDismiss },
   } = props;
 
   return (
