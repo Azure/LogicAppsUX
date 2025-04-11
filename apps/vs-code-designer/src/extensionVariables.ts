@@ -43,7 +43,7 @@ export namespace ext {
   export const designTimeInstances: Map<string, DesignTimeInstance> = new Map();
   export let workflowDotNetProcess: cp.ChildProcess | undefined;
   export let workflowNodeProcess: cp.ChildProcess | undefined;
-  export let logicAppWorkspace: string;
+  export let defaultLogicAppPath: string;
   export let outputChannel: IAzExtOutputChannel;
   export let workflowRuntimePort: number;
   export let extensionVersion: string;

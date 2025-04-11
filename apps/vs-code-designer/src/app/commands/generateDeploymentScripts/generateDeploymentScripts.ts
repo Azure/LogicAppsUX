@@ -36,15 +36,29 @@ import * as fs from 'fs';
 import { v4 as uuidv4 } from 'uuid';
 import { ConvertToWorkspace } from '../createNewCodeProject/CodeProjectBase/ConvertToWorkspace';
 
-export async function generateDeploymentScripts(context: IActionContext): Promise<void> {
+/**
+ * Generates deployment scripts for a Logic App project.
+ * @param {IActionContext} context - The action context.
+ * @param {string} node - The node representing the Logic App project. If not provided, the user will be prompted to select a project.
+ * @returns {Promise<void>} - A promise that resolves when the deployment scripts are generated.
+ */
+export async function generateDeploymentScripts(context: IActionContext, node?: vscode.Uri): Promise<void> {
   try {
     ext.outputChannel.show();
     ext.outputChannel.appendLog(localize('initScriptGen', 'Initiating script generation...'));
 
     addLocalFuncTelemetry(context);
-    const workspaceFolder = await getWorkspaceFolder(context);
-    const projectPath = await tryGetLogicAppProjectRoot(context, workspaceFolder);
-    const projectRoot = vscode.Uri.file(projectPath);
+    let projectPath: string;
+    let projectRoot: vscode.Uri;
+    if (node) {
+      projectPath = node.fsPath;
+      projectRoot = node;
+    } else {
+      const workspaceFolder = await getWorkspaceFolder(context);
+      projectPath = await tryGetLogicAppProjectRoot(context, workspaceFolder);
+      projectRoot = vscode.Uri.file(projectPath);
+    }
+
     const connectionsJson = await getConnectionsJson(projectPath);
     const connectionsData: ConnectionsData = isEmptyString(connectionsJson) ? {} : JSON.parse(connectionsJson);
     const isParameterized = await areAllConnectionsParameterized(connectionsData);

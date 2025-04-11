@@ -101,21 +101,20 @@ export async function isLogicAppProjectInRoot(workspaceFolder: WorkspaceFolder |
  * @returns A promise that resolves to an array of logic app project roots.
  */
 export async function tryGetAllLogicAppProjectRoots(workspaceFolder: WorkspaceFolder | string | undefined): Promise<string[]> {
-  const logicAppProjectRoots: string[] = [];
   if (isNullOrUndefined(workspaceFolder)) {
-    return logicAppProjectRoots;
+    return [];
   }
 
   const folderPath = isString(workspaceFolder) ? workspaceFolder : workspaceFolder.uri.fsPath;
   if (!(await fse.pathExists(folderPath))) {
-    return logicAppProjectRoots;
+    return [];
   }
 
   if (await isLogicAppProject(folderPath)) {
-    logicAppProjectRoots.push(folderPath);
-    return logicAppProjectRoots;
+    return [folderPath];
   }
 
+  const logicAppProjectRoots: string[] = [];
   const subpaths: string[] = await fse.readdir(folderPath);
   await Promise.all(
     subpaths.map(async (s) => {

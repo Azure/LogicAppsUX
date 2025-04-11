@@ -128,7 +128,13 @@ export const getWorkspacePath = (workflowFilePath: string): string => {
   return workspaceFolder.uri.fsPath;
 };
 
-export async function getWorkspaceLogicAppFolders(context: IActionContext, message?: string): Promise<(vscode.WorkspaceFolder | string)[]> {
+/**
+ * Gets the logic app roots from all workspace folders.
+ * @param {IActionContext} context - Command context.
+ * @param {string} message - The message to display to the user.
+ * @returns {Promise<(vscode.WorkspaceFolder | string)[]>} Returns an array of logic app roots.
+ */
+export async function getWorkspaceLogicAppFolders(context: IActionContext, message?: string): Promise<string[]> {
   const promptMessage: string = message ?? localize('noWorkspaceWarning', 'You must have a workspace open to perform this action.');
 
   if (!vscode.workspace.workspaceFolders || vscode.workspace.workspaceFolders.length === 0) {
@@ -143,7 +149,7 @@ export async function getWorkspaceLogicAppFolders(context: IActionContext, messa
     }
   }
 
-  return logicAppRoots;
+  return logicAppRoots.map((s) => (isString(s) ? s : s.uri.fsPath));
 }
 
 /**

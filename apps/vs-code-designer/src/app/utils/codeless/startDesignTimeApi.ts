@@ -48,7 +48,6 @@ import { Uri, window, workspace, type MessageItem } from 'vscode';
 import { findChildProcess } from '../../commands/pickFuncProcess';
 import pstree from 'ps-tree';
 import find_process from 'find-process';
-import { isString } from '@microsoft/logic-apps-shared';
 
 export async function startDesignTimeApi(projectPath: string): Promise<void> {
   await callWithTelemetryAndErrorHandling('azureLogicAppsStandard.startDesignTimeApi', async (actionContext: IActionContext) => {
@@ -313,12 +312,7 @@ export function stopDesignTimeApi(projectPath: string): void {
 export async function startAllDesignTimeApis(context: IActionContext): Promise<void> {
   if (vscode.workspace.workspaceFolders && vscode.workspace.workspaceFolders.length > 0) {
     const logicAppFolders = await getWorkspaceLogicAppFolders(context);
-    if (logicAppFolders && logicAppFolders.length > 0) {
-      for (const logicAppFolder of logicAppFolders) {
-        const projectPath = isString(logicAppFolder) ? logicAppFolder : logicAppFolder.uri.fsPath;
-        startDesignTimeApi(projectPath);
-      }
-    }
+    logicAppFolders.forEach(startDesignTimeApi);
   }
 }
 
@@ -354,9 +348,7 @@ export async function promptStartDesignTimeOption(context: IActionContext) {
         } while (result === DialogResponses.learnMore);
       }
 
-      for (const logicAppFolder of logicAppFolders) {
-        const projectPath = isString(logicAppFolder) ? logicAppFolder : logicAppFolder.uri.fsPath;
-
+      for (const projectPath of logicAppFolders) {
         if (!fs.existsSync(path.join(projectPath, localSettingsFileName))) {
           const settingsFileContent = getLocalSettingsSchema(false, projectPath);
           const projectUri: Uri = Uri.file(projectPath);

@@ -1392,7 +1392,7 @@ using System.IO;
 namespace <%= LogicAppName %>.Tests
 {
     public class TestExecutor
-    {                
+    {
         /// <summary>
         /// The root directory.
         /// </summary>
