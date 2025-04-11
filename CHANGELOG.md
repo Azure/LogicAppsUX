@@ -1,4 +1,16 @@
 # Logic Apps Designer
+## [5.77.0](https://github.com/Azure/LogicAppsUX/compare/v5.76.0...v5.77.0) (2025-04-11)
+
+
+### Features
+
+* **designer:** Implementation for focus element when changing run index ([#6994](https://github.com/Azure/LogicAppsUX/issues/6994)) ([98e57bf](https://github.com/Azure/LogicAppsUX/commit/98e57bf0beee79301a79b7143b93db8af5da9b32))
+
+
+### Bug Fixes
+
+* **designer:** Memoize selectors and fix run data from agent ([#7014](https://github.com/Azure/LogicAppsUX/issues/7014)) ([18b0650](https://github.com/Azure/LogicAppsUX/commit/18b0650239da17608304e19157df3872e6db9b2e))
+
 ## [5.76.0](https://github.com/Azure/LogicAppsUX/compare/v5.75.0...v5.76.0) (2025-04-11)
 
 
