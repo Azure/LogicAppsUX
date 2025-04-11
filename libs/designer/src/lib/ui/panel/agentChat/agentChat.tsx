@@ -108,12 +108,13 @@ const parseMessage = (
   switch (messageEntryType) {
     case AgentMessageEntryType.Content: {
       const content = messageEntryPayload?.content || '';
+      const type = role === 'User' ? ConversationItemType.Query : ConversationItemType.Reply;
       return {
         text: content,
-        type: ConversationItemType.Reply,
+        type,
         id: guid(),
         role: {
-          text: role,
+          text: role === 'User' ? undefined : role,
           agentName: labelCase(parentId),
           onClick: () => toolContentCallback(parentId, iteration),
         },
