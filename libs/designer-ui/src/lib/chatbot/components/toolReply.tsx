@@ -4,10 +4,10 @@ import Markdown from 'react-markdown';
 import { useRef } from 'react';
 
 export const ToolReply = ({ item }: { item: ToolReplyItem }) => {
-  const { text, onClick, id, status } = item;
+  const { text, onClick, id, status, dataScrollTarget } = item;
   const textRef = useRef<HTMLDivElement | null>(null);
   return (
-    <div ref={textRef}>
+    <div data-scroll-target={dataScrollTarget} ref={textRef}>
       {onClick ? (
         <div className="msla-system-message-link">
           <Link onClick={() => onClick(id, text)} inline>

@@ -336,6 +336,12 @@ export const workflowSlice = createSlice({
     clearFocusNode: (state: WorkflowState) => {
       state.focusedCanvasNodeId = undefined;
     },
+    setFocusElement: (state: WorkflowState, action: PayloadAction<string>) => {
+      state.focusElement = action.payload;
+    },
+    clearFocusElement: (state: WorkflowState) => {
+      state.focusElement = undefined;
+    },
     clearFocusCollapsedNode: (state: WorkflowState) => {
       state.focusCollapsedNodeId = undefined;
     },
@@ -765,6 +771,8 @@ export const {
   clearFocusCollapsedNode,
   updateAgenticGraph,
   updateAgenticMetadata,
+  setFocusElement,
+  clearFocusElement,
 } = workflowSlice.actions;
 
 export default workflowSlice.reducer;
