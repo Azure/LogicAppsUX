@@ -1,4 +1,12 @@
 # Logic Apps Designer
+## [5.76.0](https://github.com/Azure/LogicAppsUX/compare/v5.75.0...v5.76.0) (2025-04-11)
+
+
+### Bug Fixes
+
+* **designer:** Fix close button default value for assistant chat ([#7005](https://github.com/Azure/LogicAppsUX/issues/7005)) ([fda34ad](https://github.com/Azure/LogicAppsUX/commit/fda34ad157e6d73827a0e73756014473f3f1e08a))
+* **designer:** Fix run history crash with channels setup ([#7008](https://github.com/Azure/LogicAppsUX/issues/7008)) ([b55d48e](https://github.com/Azure/LogicAppsUX/commit/b55d48ef5c858d63fd01bcad28dcc20aff301a59))
+
 ## [5.75.0](https://github.com/Azure/LogicAppsUX/compare/v5.74.0...v5.75.0) (2025-04-10)
 
 
