@@ -721,7 +721,7 @@ export const processScopeActions = (
           const channelAction: any = action.channels.out?.[key];
           if (channelAction && channelAction?.action) {
             const id = `${actionName}${constants.CHANNELS.OUTPUT}${channelAction.action.type}`;
-            allActions[id] = channelAction.trigger;
+            allActions[id] = channelAction.action;
           }
         }
       }
