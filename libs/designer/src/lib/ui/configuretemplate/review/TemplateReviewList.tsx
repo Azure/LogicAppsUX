@@ -7,6 +7,7 @@ import type { RootState } from '../../../core/state/templates/store';
 import { useIntl } from 'react-intl';
 import { getResourceNameFromId } from '@microsoft/logic-apps-shared';
 import { ConnectorConnectionName } from '../../templates/connections/connector';
+import React from 'react';
 
 const SectionDividerItem: TemplatesSectionItem = {
   type: 'divider',
@@ -52,69 +53,47 @@ export const TemplateReviewList = () => {
   const profileSectionItems: TemplatesSectionItem[] = useProfileSectionItems(resources);
   const settingsSectionItems: TemplatesSectionItem[] = useSettingsSection(resources);
 
+  const sectionItems: Record<string, { label: string; value: TemplatesSectionItem[]; emptyText?: string }> = {
+    workflows: {
+      label: resources.WorkflowsTabLabel,
+      value: workflowsSectionItems,
+    },
+    connections: {
+      label: resources.ConnectionsTabLabel,
+      value: connectionsSectionItems,
+      emptyText: resources.NoConnectionInTemplate,
+    },
+    parameters: {
+      label: resources.ParametersTabLabel,
+      value: paramtersSectionItems,
+      emptyText: resources.NoParameterInTemplate,
+    },
+    profile: {
+      label: resources.ProfileTabLabel,
+      value: profileSectionItems,
+    },
+    settings: {
+      label: resources.SettingsTabLabel,
+      value: settingsSectionItems,
+    },
+  };
+
   return (
     <div>
-      <Accordion multiple={true}>
-        <AccordionItem value={'workflowId'} key={'workflowId'}>
-          <AccordionHeader>
-            <Text style={{ fontWeight: 'bold' }}>{resources.WorkflowsTabLabel}</Text>
-          </AccordionHeader>
-          <AccordionPanel>
-            <TemplatesSection items={workflowsSectionItems} />
-          </AccordionPanel>
-        </AccordionItem>
-
-        <Divider />
-
-        <AccordionItem value={'connections'} key={'connections'}>
-          <AccordionHeader>
-            <Text style={{ fontWeight: 'bold' }}>{resources.ConnectionsTabLabel}</Text>
-          </AccordionHeader>
-          <AccordionPanel>
-            {connectionsSectionItems?.length ? (
-              <TemplatesSection items={connectionsSectionItems} />
-            ) : (
-              <Text>{resources.NoConnectionInTemplate}</Text>
-            )}
-          </AccordionPanel>
-        </AccordionItem>
-
-        <Divider />
-
-        <AccordionItem value={'parameters'} key={'parameters'}>
-          <AccordionHeader>
-            <Text style={{ fontWeight: 'bold' }}>{resources.ParametersTabLabel}</Text>
-          </AccordionHeader>
-          <AccordionPanel>
-            {paramtersSectionItems?.length ? (
-              <TemplatesSection items={paramtersSectionItems} />
-            ) : (
-              <Text>{resources.NoParameterInTemplate}</Text>
-            )}
-          </AccordionPanel>
-        </AccordionItem>
-
-        <Divider />
-
-        <AccordionItem value={'profile'} key={'profile'}>
-          <AccordionHeader>
-            <Text style={{ fontWeight: 'bold' }}>{resources.ProfileTabLabel}</Text>
-          </AccordionHeader>
-          <AccordionPanel>
-            <TemplatesSection items={profileSectionItems} />
-          </AccordionPanel>
-        </AccordionItem>
-
-        <Divider />
-
-        <AccordionItem value={'settings'} key={'settings'}>
-          <AccordionHeader>
-            <Text style={{ fontWeight: 'bold' }}>{resources.SettingsTabLabel}</Text>
-          </AccordionHeader>
-          <AccordionPanel>
-            <TemplatesSection items={settingsSectionItems} />
-          </AccordionPanel>
-        </AccordionItem>
+      <Accordion multiple={true} defaultOpenItems={Object.keys(sectionItems)}>
+        {Object.entries(sectionItems).map(([key, { label, value, emptyText }]) => (
+          <React.Fragment key={key}>
+            <AccordionItem value={key} key={key}>
+              <AccordionHeader>
+                <Text style={{ fontWeight: 'bold' }}>{label}</Text>
+              </AccordionHeader>
+              <AccordionPanel>
+                {value?.length ? <TemplatesSection items={value} /> : emptyText ? <Text>{emptyText}</Text> : null}
+              </AccordionPanel>
+            </AccordionItem>
+            <Divider />
+          </React.Fragment>
+        ))}
       </Accordion>
     </div>
   );
