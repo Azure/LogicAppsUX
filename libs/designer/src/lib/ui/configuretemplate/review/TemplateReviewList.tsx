@@ -4,8 +4,7 @@ import { useTemplatesStrings } from '../../templates/templatesStrings';
 import { TemplatesSection, type TemplatesSectionItem } from '@microsoft/designer-ui';
 import { useSelector } from 'react-redux';
 import type { RootState } from '../../../core/state/templates/store';
-import { useMemo } from 'react';
-// import { useIntl } from 'react-intl';
+import { useIntl } from 'react-intl';
 
 const SectionDividerItem: TemplatesSectionItem = {
   type: 'divider',
@@ -13,215 +12,29 @@ const SectionDividerItem: TemplatesSectionItem = {
 };
 
 export const TemplateReviewList = () => {
-  //   const intl = useIntl();
-  //   const intlText = {
-  //     TemplateDisplayName: intl.formatMessage({
-  //       defaultMessage: 'Template display name',
-  //       id: 'a7d1Dp',
-  //       description: 'The aria label for the template display name',
-  //     }),
-  //   };
+  const intl = useIntl();
+  const intlText = {
+    TemplateDisplayName: intl.formatMessage({
+      defaultMessage: 'Template display name',
+      id: 'a7d1Dp',
+      description: 'The aria label for the template display name',
+    }),
+  };
 
-  const {
-    workflows,
-    connections,
-    // parameterDefinitions, templateManifest
-  } = useSelector((state: RootState) => ({
-    workflows: state.template.workflows,
-    connections: state.template.connections,
-    parameterDefinitions: state.template.parameterDefinitions,
-    templateManifest: state.template.manifest,
-  }));
-
-  const customResourceStrings = useResourceStrings();
-  const { resourceStrings } = useTemplatesStrings();
-
-  const workflowsSectionItems: TemplatesSectionItem[] = useMemo(() => {
-    const workflowDatas = Object.values(workflows);
-    return workflowDatas?.flatMap((workflow, index) => {
-      const isLast = index === workflowDatas.length - 1;
-      const thisWorkflowSectionItems: TemplatesSectionItem[] = [
-        {
-          label: resourceStrings.WORKFLOW_NAME,
-          value: workflow.workflowName,
-          type: 'text',
-        },
-        {
-          label: customResourceStrings.WorkflowDisplayName,
-          value: workflow?.manifest?.title,
-          type: 'text',
-        },
-        {
-          label: customResourceStrings.StateType,
-          value: workflow?.manifest?.kinds?.join(', ') ?? customResourceStrings.Placeholder,
-          type: 'text',
-        },
-        {
-          label: customResourceStrings.Summary,
-          value: workflow?.manifest?.summary ?? customResourceStrings.Placeholder,
-          type: 'text',
-        },
-        {
-          label: customResourceStrings.Description,
-          value: workflow?.manifest?.description ?? customResourceStrings.Placeholder,
-          type: 'text',
-        },
-        {
-          label: customResourceStrings.Prerequisites,
-          value: workflow?.manifest?.prerequisites ?? customResourceStrings.Placeholder,
-          type: 'text',
-        },
-        {
-          label: customResourceStrings.LightModeImage,
-          value: workflow?.manifest?.images?.light ?? customResourceStrings.Placeholder,
-          type: 'text',
-        },
-        {
-          label: customResourceStrings.DarkModeImage,
-          value: workflow?.manifest?.images?.dark ?? customResourceStrings.Placeholder,
-          type: 'text',
-        },
-      ];
-
-      if (!isLast) {
-        thisWorkflowSectionItems.push(SectionDividerItem);
-      }
-
-      return thisWorkflowSectionItems;
-    });
-  }, [workflows, customResourceStrings, resourceStrings]);
-
-  const connectionsSectionItems: TemplatesSectionItem[] = useMemo(() => {
-    const connectionsValues = Object.values(connections);
-    return connectionsValues?.flatMap((connection, index) => {
-      const isLast = index === connectionsValues.length - 1;
-      const thisParameterSectionItems: TemplatesSectionItem[] = [
-        {
-          label: 'ConnectorLabel',
-          value: connection.connectorId,
-          type: 'text',
-        },
-        {
-          label: 'Kind',
-          value: connection.kind,
-          type: 'text',
-        },
-      ];
-
-      if (!isLast) {
-        thisParameterSectionItems.push(SectionDividerItem);
-      }
-
-      return thisParameterSectionItems;
-    });
-  }, [connections]);
-
-  //   const paramtersSectionItems: TemplatesSectionItem[] = useMemo(() => {
-  //     const parameterValues = Object.values(parameterDefinitions);
-  //     return parameterValues?.flatMap((parameter, index) => {
-  //       const isLast = index === parameterValues.length - 1;
-  //       const thisParameterSectionItems: TemplatesSectionItem[] = [
-  //         {
-  //           label: customResourceStrings.ParameterName,
-  //           value: parameter.name ?? customResourceStrings.Placeholder,
-  //           type: 'text',
-  //         },
-  //         {
-  //             label: customResourceStrings.ParameterDisplayName,
-  //             value: parameter.displayName ?? customResourceStrings.Placeholder,
-  //             type: 'text',
-  //           },
-  //           {
-  //             label: customResourceStrings.Type,
-  //             value: parameter.type,
-  //             type: 'text',
-  //           },
-  //           {
-  //             label: customResourceStrings.DefaultValue,
-  //             value: parameter.default ?? customResourceStrings.Placeholder,
-  //             type: 'text',
-  //           },
-  //           {
-  //             label: customResourceStrings.AssociatedWorkflows,
-  //             value: parameter.associatedWorkflows?.join(', ') ?? customResourceStrings.Placeholder,
-  //             type: 'text',
-  //           },
-  //           {
-  //             label: customResourceStrings.Description,
-  //             value: parameter.description ?? customResourceStrings.Placeholder,
-  //             type: 'text',
-  //           },
-  //           {
-  //             label: customResourceStrings.Required,
-  //             value: parameter.required ? customResourceStrings.RequiredOn : customResourceStrings.RequiredOff,
-  //             type: 'text',
-  //           },
-  //       ];
-
-  //       if (!isLast) {
-  //         thisParameterSectionItems.push(SectionDividerItem);
-  //       }
-
-  //       return thisParameterSectionItems;
-  //     });
-  //   }, [parameterDefinitions, customResourceStrings]);
-
-  //   const profileSectionItems: TemplatesSectionItem[] = useMemo(() => {
-  //     const parameterValues = Object.values(parameterDefinitions);
-  //     return parameterValues?.flatMap((parameter, index) => {
-  //       const isLast = index === parameterValues.length - 1;
-  //       const thisParameterSectionItems: TemplatesSectionItem[] = [
-  //         {
-  //           label: intlText.TemplateDisplayName,
-  //           value: templateManifest?.title ?? customResourceStrings.Placeholder,
-  //           type: 'text',
-  //         },
-  //         {
-  //             label: customResourceStrings.WorkflowType,
-  //             value: Object.keys(workflows).length > 1 ? 'Accelerator' : 'Workflow',  //TODO: intl this
-  //             type: 'text',
-  //           },
-  //           {
-  //             label: customResourceStrings.Host,
-  //             value: 'TODO',
-  //             type: 'text',
-  //           },
-  //         //   {
-  //         //     label: resourceStrings.BY,
-  //         //     value: parameter.default ?? customResourceStrings.Placeholder,
-  //         //     type: 'text',
-  //         //   },
-  //         //   {
-  //         //     label: customResourceStrings.AssociatedWorkflows,
-  //         //     value: parameter.associatedWorkflows?.join(', ') ?? customResourceStrings.Placeholder,
-  //         //     type: 'text',
-  //         //   },
-  //         //   {
-  //         //     label: customResourceStrings.Description,
-  //         //     value: parameter.description ?? customResourceStrings.Placeholder,
-  //         //     type: 'text',
-  //         //   },
-  //         //   {
-  //         //     label: customResourceStrings.Required,
-  //         //     value: parameter.required ? customResourceStrings.RequiredOn : customResourceStrings.RequiredOff,
-  //         //     type: 'text',
-  //         //   },
-  //       ];
-
-  //       if (!isLast) {
-  //         thisParameterSectionItems.push(SectionDividerItem);
-  //       }
-
-  //       return thisParameterSectionItems;
-  //     });
-  //   }, [parameterDefinitions, customResourceStrings]);
+  const resources = { ...useTemplatesStrings().resourceStrings, ...useResourceStrings(), ...intlText };
+  const workflowsSectionItems = useWorkflowSectionItems(resources);
+  const connectionsSectionItems: TemplatesSectionItem[] = useConnectionSectionItems(resources);
+  const paramtersSectionItems: TemplatesSectionItem[] = useParameterSectionItems(resources);
+  const profileSectionItems: TemplatesSectionItem[] = useProfileSectionItems(resources);
+  const settingsSectionItems: TemplatesSectionItem[] = useSettingsSection(resources);
 
   return (
     <div>
       <Accordion multiple={true}>
         <AccordionItem value={'workflowId'} key={'workflowId'}>
           <AccordionHeader>
-            <Text style={{ fontWeight: 'bold' }}>{resourceStrings.WORKFLOW_NAME}</Text>
+            <Text style={{ fontWeight: 'bold' }}>{resources.WORKFLOW_NAME}</Text>
+            {/*TODO*/}
           </AccordionHeader>
           <AccordionPanel>
             <TemplatesSection items={workflowsSectionItems} />
@@ -230,13 +43,250 @@ export const TemplateReviewList = () => {
 
         <AccordionItem value={'connection'} key={'connection'}>
           <AccordionHeader>
-            <Text style={{ fontWeight: 'bold' }}>{resourceStrings.WORKFLOW_NAME}</Text>
+            <Text style={{ fontWeight: 'bold' }}>{resources.WORKFLOW_NAME}</Text>
+            {/*TODO*/}
           </AccordionHeader>
           <AccordionPanel>
             <TemplatesSection items={connectionsSectionItems} />
           </AccordionPanel>
         </AccordionItem>
+
+        <AccordionItem value={'parameter'} key={'parameter'}>
+          <AccordionHeader>
+            <Text style={{ fontWeight: 'bold' }}>{resources.ParameterName}</Text> {/*TODO*/}
+          </AccordionHeader>
+          <AccordionPanel>
+            <TemplatesSection items={paramtersSectionItems} />
+          </AccordionPanel>
+        </AccordionItem>
+
+        <AccordionItem value={'parameter'} key={'parameter'}>
+          <AccordionHeader>
+            <Text style={{ fontWeight: 'bold' }}>{resources.ParameterName}</Text> {/*TODO*/}
+          </AccordionHeader>
+          <AccordionPanel>
+            <TemplatesSection items={profileSectionItems} />
+          </AccordionPanel>
+        </AccordionItem>
+
+        <AccordionItem value={'parameter'} key={'parameter'}>
+          <AccordionHeader>
+            <Text style={{ fontWeight: 'bold' }}>{resources.ParameterName}</Text> {/*TODO*/}
+          </AccordionHeader>
+          <AccordionPanel>
+            <TemplatesSection items={settingsSectionItems} />
+          </AccordionPanel>
+        </AccordionItem>
       </Accordion>
     </div>
   );
+};
+
+const useWorkflowSectionItems = (resources: Record<string, string>) => {
+  const { workflows } = useSelector((state: RootState) => ({
+    workflows: state.template.workflows,
+  }));
+
+  const workflowDatas = Object.values(workflows);
+  return workflowDatas?.flatMap((workflow, index) => {
+    const isLast = index === workflowDatas.length - 1;
+    const thisWorkflowSectionItems: TemplatesSectionItem[] = [
+      {
+        label: resources.WORKFLOW_NAME,
+        value: workflow.workflowName,
+        type: 'text',
+      },
+      {
+        label: resources.WorkflowDisplayName,
+        value: workflow?.manifest?.title,
+        type: 'text',
+      },
+      {
+        label: resources.StateType,
+        value: workflow?.manifest?.kinds?.join(', ') ?? resources.Placeholder,
+        type: 'text',
+      },
+      {
+        label: resources.Summary,
+        value: workflow?.manifest?.summary ?? resources.Placeholder,
+        type: 'text',
+      },
+      {
+        label: resources.Description,
+        value: workflow?.manifest?.description ?? resources.Placeholder,
+        type: 'text',
+      },
+      {
+        label: resources.Prerequisites,
+        value: workflow?.manifest?.prerequisites ?? resources.Placeholder,
+        type: 'text',
+      },
+      {
+        label: resources.LightModeImage,
+        value: workflow?.manifest?.images?.light ?? resources.Placeholder,
+        type: 'text',
+      },
+      {
+        label: resources.DarkModeImage,
+        value: workflow?.manifest?.images?.dark ?? resources.Placeholder,
+        type: 'text',
+      },
+    ];
+
+    if (!isLast) {
+      thisWorkflowSectionItems.push(SectionDividerItem);
+    }
+
+    return thisWorkflowSectionItems;
+  });
+};
+
+/// TODO: change this to use resources?
+const useConnectionSectionItems = (_resources: Record<string, string>) => {
+  const { connections } = useSelector((state: RootState) => ({
+    connections: state.template.connections,
+  }));
+
+  const connectionsValues = Object.values(connections);
+  return connectionsValues?.flatMap((connection, index) => {
+    const isLast = index === connectionsValues.length - 1;
+    const thisParameterSectionItems: TemplatesSectionItem[] = [
+      {
+        label: 'ConnectorLabel',
+        value: connection.connectorId,
+        type: 'text',
+      },
+      {
+        label: 'Kind',
+        value: connection.kind,
+        type: 'text',
+      },
+    ];
+
+    if (!isLast) {
+      thisParameterSectionItems.push(SectionDividerItem);
+    }
+
+    return thisParameterSectionItems;
+  });
+};
+
+const useParameterSectionItems = (resources: Record<string, string>) => {
+  const { parameterDefinitions } = useSelector((state: RootState) => ({
+    parameterDefinitions: state.template.parameterDefinitions,
+  }));
+
+  const parameterValues = Object.values(parameterDefinitions);
+  return parameterValues?.flatMap((parameter, index) => {
+    const isLast = index === parameterValues.length - 1;
+    const thisParameterSectionItems: TemplatesSectionItem[] = [
+      {
+        label: resources.ParameterName,
+        value: parameter.name ?? resources.Placeholder,
+        type: 'text',
+      },
+      {
+        label: resources.ParameterDisplayName,
+        value: parameter.displayName ?? resources.Placeholder,
+        type: 'text',
+      },
+      {
+        label: resources.Type,
+        value: parameter.type,
+        type: 'text',
+      },
+      {
+        label: resources.DefaultValue,
+        value: parameter.default ?? resources.Placeholder,
+        type: 'text',
+      },
+      {
+        label: resources.AssociatedWorkflows,
+        value: parameter.associatedWorkflows?.join(', ') ?? resources.Placeholder,
+        type: 'text',
+      },
+      {
+        label: resources.Description,
+        value: parameter.description ?? resources.Placeholder,
+        type: 'text',
+      },
+      {
+        label: resources.Required,
+        value: parameter.required ? resources.RequiredOn : resources.RequiredOff,
+        type: 'text',
+      },
+    ];
+
+    if (!isLast) {
+      thisParameterSectionItems.push(SectionDividerItem);
+    }
+
+    return thisParameterSectionItems;
+  });
+};
+
+const useProfileSectionItems = (resources: Record<string, string>) => {
+  const { templateManifest, workflows } = useSelector((state: RootState) => ({
+    templateManifest: state.template.manifest,
+    workflows: state.template.workflows,
+  }));
+
+  const items: TemplatesSectionItem[] = [
+    {
+      label: resources.TemplateDisplayName,
+      value: templateManifest?.title ?? resources.Placeholder,
+      type: 'text',
+    },
+    {
+      label: resources.WorkflowType,
+      value: Object.keys(workflows).length > 1 ? 'Accelerator' : 'Workflow', //TODO: intl this
+      type: 'text',
+    },
+    {
+      label: resources.BY,
+      value: templateManifest?.details?.By ?? resources.Placeholder,
+      type: 'text',
+    },
+    {
+      label: resources.Category,
+      value: templateManifest?.details?.Category ?? resources.Placeholder,
+      type: 'text',
+    },
+    {
+      label: resources.FeaturedConnectors,
+      value: templateManifest?.featuredConnectors?.join(', ') ?? resources.Placeholder,
+      type: 'text',
+    },
+    {
+      label: resources.Tags,
+      value: templateManifest?.tags?.join(', ') ?? resources.Placeholder,
+      type: 'text',
+    },
+  ];
+
+  return items;
+};
+
+const useSettingsSection = (resources: Record<string, string>) => {
+  const { manifest, environment, isPublished } = useSelector((state: RootState) => state.template);
+
+  const items: TemplatesSectionItem[] = [
+    {
+      label: resources.Host,
+      value: manifest?.skus?.join(', ') ?? resources.Placeholder,
+      type: 'text',
+    },
+    {
+      label: resources.Environment,
+      value: environment ?? resources.Placeholder,
+      type: 'text',
+    },
+    {
+      label: resources.Status,
+      value: isPublished ? resources.Published : resources.Unpublished,
+      type: 'text',
+    },
+  ];
+
+  return items;
 };
