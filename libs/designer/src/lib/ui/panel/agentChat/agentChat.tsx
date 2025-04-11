@@ -160,7 +160,7 @@ export const AgentChat = ({
       const newConversations = parseChatHistory(chatHistoryData, dispatch, agentLastOperations);
       setConversation([...newConversations]);
     }
-  }, [setConversation, chatHistoryData, agentsNumber, dispatch]);
+  }, [setConversation, chatHistoryData, agentsNumber, dispatch, agentLastOperations]);
 
   const intlText = useMemo(() => {
     return {
