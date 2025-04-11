@@ -23,6 +23,25 @@ env:
   BUMP_COMMAND: pnpm run bump --release-as ${{ github.event.inputs.release_type || 'minor' }}
 
 jobs:
+  validation:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check branch and release type
+        id: validate
+        run: |
+          BRANCH_NAME=$(echo "${{ github.ref_name }}" | awk -F'/' '{print $NF}')
+          echo "Branch: $BRANCH_NAME"
+          
+          if [[ "$BRANCH_NAME" == "main" && "${{ github.event.inputs.release_type }}" == "patch" ]]; then
+            echo "Patch releases are not allowed on the main branch."
+            exit 1
+          fi
+
+          if [[ "$BRANCH_NAME" != "main" && "${{ github.event.inputs.release_type }}" != "patch" ]]; then
+            echo "Major and minor releases are only allowed on the main branch."
+            exit 1
+          fi
+
   bump-version:
     runs-on: ubuntu-latest
     steps:
