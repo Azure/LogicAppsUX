@@ -139,7 +139,12 @@ export const ChatBubble: React.FC<ChatBubbleProps> = ({
       ) : null}
       {role && (
         <div className="msla-bubble-footer-role">
-          {role.text} -{' '}
+          {role?.text && (
+            <>
+              {role.text}
+              {' - '}
+            </>
+          )}
           <Link className="msla-bubble-footer-role--button" onClick={role.onClick}>
             {role.agentName}
           </Link>
