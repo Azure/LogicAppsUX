@@ -38,6 +38,7 @@ type BaseConversationItem = {
   metadata?: Record<string, any>;
   onClick?: (id: string, text?: string) => void;
   className?: string;
+  dataScrollTarget?: string;
 };
 
 type BaseAssistantMessageItem = BaseConversationItem & {
@@ -103,7 +104,6 @@ export type AssistantReplyItem = BaseAssistantMessageItem & {
   __rawRequest?: any;
   __rawResponse?: any;
   additionalDocURL?: string | undefined;
-  dataScrollTarget?: string;
   role?: {
     text: string;
     onClick: () => void;
@@ -116,7 +116,6 @@ export type ToolReplyItem = BaseAssistantMessageItem & {
   type: typeof ConversationItemType.Tool;
   text: string;
   status?: string;
-  dataScrollTarget?: string;
 };
 
 export type ConnectionsSetupItem = BaseAssistantMessageItem & {

@@ -42,10 +42,13 @@ export const ConversationMessage = ({ item }: ConversationMessageProps) => {
 };
 
 const UserMessage = ({ item }: { item: UserQueryItem }) => {
+  const { id, text, date, dataScrollTarget } = item;
   return (
-    <ChatBubble key={item.id} isUserMessage={true} isAIGenerated={false} date={item.date}>
-      {item.text}
-    </ChatBubble>
+    <div data-scroll-target={dataScrollTarget} style={{ alignSelf: 'flex-end' }}>
+      <ChatBubble key={id} isUserMessage={true} isAIGenerated={false} date={date}>
+        {text}
+      </ChatBubble>
+    </div>
   );
 };
 

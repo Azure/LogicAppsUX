@@ -33,15 +33,11 @@ interface AgentChatProps {
   panelContainerRef: React.MutableRefObject<HTMLElement | null>;
 }
 
-const parseChatHistory = (chatHistory: ChatHistory[], dispatch: Dispatch, agentLastOperations: Record<string, any>): ConversationItem[] => {
-  const toolResultCallback = (agentName: string, toolName: string, iteration: number, subIteration: number) => {
-    const agentLastOperation = agentLastOperations[agentName][toolName];
-    dispatch(setRunIndex({ page: iteration, nodeId: agentName }));
-    dispatch(setRunIndex({ page: subIteration, nodeId: toolName }));
-    dispatch(setFocusNode(agentLastOperation));
-    dispatch(changePanelNode(agentLastOperation));
-  };
-
+const parseChatHistory = (
+  chatHistory: ChatHistory[],
+  dispatch: Dispatch,
+  toolResultCallback: (agentName: string, toolName: string, iteration: number, subIteration: number) => void
+): ConversationItem[] => {
   const toolContentCallback = (agentName: string, iteration: number) => {
     dispatch(setRunIndex({ page: iteration, nodeId: agentName }));
     dispatch(setFocusNode(agentName));
@@ -108,12 +104,14 @@ const parseMessage = (
   switch (messageEntryType) {
     case AgentMessageEntryType.Content: {
       const content = messageEntryPayload?.content || '';
+      const isUserMessage = role === 'User';
+      const type = isUserMessage ? ConversationItemType.Query : ConversationItemType.Reply;
       return {
         text: content,
-        type: ConversationItemType.Reply,
+        type,
         id: guid(),
         role: {
-          text: role,
+          text: isUserMessage ? undefined : role,
           agentName: labelCase(parentId),
           onClick: () => toolContentCallback(parentId, iteration),
         },
@@ -183,6 +181,16 @@ export const AgentChat = ({
   const panelRef = useRef<HTMLDivElement>(null);
   const focusElement = useFocusElement();
 
+  const toolResultCallback = useCallback(
+    (agentName: string, toolName: string, iteration: number, subIteration: number) => {
+      const agentLastOperation = agentLastOperations[agentName][toolName];
+      dispatch(setRunIndex({ page: iteration, nodeId: agentName }));
+      dispatch(setRunIndex({ page: subIteration, nodeId: toolName }));
+      dispatch(setFocusNode(agentLastOperation));
+      dispatch(changePanelNode(agentLastOperation));
+    },
+    [Object.keys(agentLastOperations).length, dispatch]
+  );
   const onChatSubmit = useCallback(async () => {
     if (!textInput || isNullOrUndefined(chatInvokeUri)) {
       return;
@@ -209,10 +217,10 @@ export const AgentChat = ({
 
   useEffect(() => {
     if (!isNullOrUndefined(chatHistoryData)) {
-      const newConversations = parseChatHistory(chatHistoryData, dispatch, agentLastOperations);
+      const newConversations = parseChatHistory(chatHistoryData, dispatch, toolResultCallback);
       setConversation([...newConversations]);
     }
-  }, [setConversation, chatHistoryData, dispatch, agentLastOperations]);
+  }, [setConversation, chatHistoryData, dispatch, toolResultCallback]);
 
   const intlText = useMemo(() => {
     return {
