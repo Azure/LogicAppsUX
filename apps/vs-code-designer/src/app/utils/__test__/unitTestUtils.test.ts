@@ -4,9 +4,9 @@ import * as fse from 'fs-extra';
 import * as childProcess from 'child_process';
 import * as util from 'util';
 import path from 'path';
-import * as localizeModule from '../../../../localize';
-import { ext } from '../../../../extensionVariables';
-import type { IAzureConnectorsContext } from '../../../commands/workflows/azureConnectorWizard';
+import * as localizeModule from '../../../localize';
+import { ext } from '../../../extensionVariables';
+import type { IAzureConnectorsContext } from '../../commands/workflows/azureConnectorWizard';
 import {
   extractAndValidateRunId,
   validateRunId,
@@ -25,7 +25,7 @@ import {
   createTestSettingsConfigFile,
   updateSolutionWithProject,
   validateWorkflowPath,
-} from '../../unitTests';
+} from '../unitTests';
 
 // ============================================================================
 // Global Constants and Test Hooks
