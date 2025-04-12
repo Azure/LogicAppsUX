@@ -41,6 +41,18 @@ export const useTemplatesStrings = () => {
         description: 'Label for description',
       }),
     },
+    stateTypes: {
+      STATEFUL: intl.formatMessage({
+        defaultMessage: 'Stateful',
+        id: 'Qqmb+W',
+        description: 'Dropdown option for stateful type',
+      }),
+      STATELESS: intl.formatMessage({
+        defaultMessage: 'Stateless',
+        id: 'cNXS5n',
+        description: 'Dropdown option for stateless type',
+      }),
+    },
   };
 };
 

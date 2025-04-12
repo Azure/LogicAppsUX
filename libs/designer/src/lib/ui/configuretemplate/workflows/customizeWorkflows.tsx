@@ -5,6 +5,7 @@ import { getResourceNameFromId, type Template } from '@microsoft/logic-apps-shar
 import { useMemo } from 'react';
 import { useResourceStrings } from '../resources';
 import { useTemplatesStrings } from '../../templates/templatesStrings';
+import { WorkflowKind } from '../../../core/state/workflow/workflowInterfaces';
 
 export const CustomizeWorkflows = ({
   selectedWorkflowsList,
@@ -61,7 +62,22 @@ const CustomizeWorkflowSection = ({
   updateWorkflowDataField: (workflowId: string, workflowData: Partial<WorkflowTemplateData>) => void;
 }) => {
   const customResourceStrings = useResourceStrings();
-  const { resourceStrings } = useTemplatesStrings();
+  const { resourceStrings, stateTypes } = useTemplatesStrings();
+
+  const defaultKindOptions = useMemo(
+    () => [
+      { id: WorkflowKind.STATEFUL, value: WorkflowKind.STATEFUL, label: stateTypes.STATEFUL },
+      { id: WorkflowKind.STATELESS, value: WorkflowKind.STATELESS, label: stateTypes.STATELESS },
+    ],
+    [stateTypes]
+  );
+
+  const selectedKinds = workflow.manifest?.kinds || [];
+
+  const kindValue = defaultKindOptions
+    .filter((kind) => selectedKinds.includes(kind.value))
+    .map((kind) => kind.label)
+    .join(', ');
 
   const generalSectionItems: TemplatesSectionItem[] = useMemo(() => {
     return [
@@ -89,14 +105,30 @@ const CustomizeWorkflowSection = ({
           });
         },
       },
-      //TODO: add state type
+      {
+        label: customResourceStrings.State,
+        value: kindValue,
+        type: 'dropdown',
+        multiselect: true,
+        options: defaultKindOptions,
+        selectedOptions: workflow.manifest?.kinds || [],
+        onOptionSelect: (selectedOptions) => {
+          updateWorkflowDataField(workflowId, {
+            ...workflow,
+            manifest: {
+              ...workflow.manifest,
+              kinds: selectedOptions,
+            } as Template.WorkflowManifest,
+          });
+        },
+      },
       {
         label: customResourceStrings.Trigger,
         value: workflow.triggerType,
         type: 'text',
       },
     ];
-  }, [workflowId, updateWorkflowDataField, workflow, customResourceStrings]);
+  }, [workflowId, updateWorkflowDataField, workflow, customResourceStrings, kindValue, defaultKindOptions]);
 
   const descriptionSectionItems: TemplatesSectionItem[] = useMemo(() => {
     const baseItems: TemplatesSectionItem[] = isMultiWorkflowTemplate
@@ -104,7 +136,7 @@ const CustomizeWorkflowSection = ({
           {
             label: customResourceStrings.Summary,
             value: workflow.manifest?.summary || '',
-            type: 'textfield',
+            type: 'textarea',
             onChange: (value: string) => {
               updateWorkflowDataField(workflowId, {
                 ...workflow,
@@ -120,7 +152,7 @@ const CustomizeWorkflowSection = ({
     baseItems.push({
       label: resourceStrings.DESCRIPTION,
       value: workflow.manifest?.description || '',
-      type: 'textfield',
+      type: 'textarea',
       onChange: (value: string) => {
         updateWorkflowDataField(workflowId, {
           ...workflow,
@@ -134,7 +166,7 @@ const CustomizeWorkflowSection = ({
     baseItems.push({
       label: customResourceStrings.Prerequisites,
       value: workflow.manifest?.prerequisites || '',
-      type: 'textfield',
+      type: 'textarea',
       onChange: (value: string) => {
         updateWorkflowDataField(workflowId, {
           ...workflow,
