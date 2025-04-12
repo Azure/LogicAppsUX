@@ -418,7 +418,7 @@ export const useAgentOperations = () => {
   return useSelector(agentOperationsSelector);
 };
 
-export const useIsChatInputEnabled = (nodeId?: string) =>
+export const useUriForAgentChat = (nodeId?: string) =>
   useSelector(
     createSelector(getWorkflowState, (state: WorkflowState) => {
       if (nodeId) {
@@ -428,15 +428,18 @@ export const useIsChatInputEnabled = (nodeId?: string) =>
          * and input/output channels are configured
          * */
         if (equals(runData?.status ?? '', commonConstants.FLOW_STATUS.WAITING)) {
-          const operationKeys = Object.keys(state.operations);
-          return (
-            operationKeys.some((key) => key.toLowerCase().startsWith(`${nodeId}${commonConstants.CHANNELS.INPUT}`.toLowerCase())) &&
-            operationKeys.some((key) => key.toLowerCase().startsWith(`${nodeId}${commonConstants.CHANNELS.OUTPUT}`.toLowerCase()))
-          );
+          const operation = getRecordEntry(state.operations, nodeId);
+          if (operation) {
+            const operationDefinitionAsAgentOperation = operation as LogicAppsV2.AgentAction;
+            const allInputChannelKeys = Object.keys(operationDefinitionAsAgentOperation.channels?.in ?? {});
+            if (allInputChannelKeys.length > 0) {
+              return `${state.runInstance?.id ?? ''}/agents/${nodeId}/channels/${allInputChannelKeys[0]}`;
+            }
+          }
         }
       }
 
-      return false;
+      return undefined;
     })
   );
 
