@@ -162,6 +162,7 @@ export const AgentChat = ({
   const [focus, setFocus] = useState(false);
   const [conversation, setConversation] = useState<ConversationItem[]>([]);
   const [textInput, setTextInput] = useState<string>('');
+  const [isWaitingForResponse, setIsWaitingForResponse] = useState(false);
   const isMonitoringView = useMonitoringView();
   const runInstance = useRunInstance();
   const agentOperations = useAgentOperations();
@@ -189,12 +190,14 @@ export const AgentChat = ({
       dispatch(setFocusNode(agentLastOperation));
       dispatch(changePanelNode(agentLastOperation));
     },
-    [Object.keys(agentLastOperations).length, dispatch]
+    [agentLastOperations, dispatch]
   );
   const onChatSubmit = useCallback(async () => {
     if (!textInput || isNullOrUndefined(chatInvokeUri)) {
       return;
     }
+
+    setIsWaitingForResponse(true);
 
     try {
       await RunService().invokeAgentChat({
@@ -212,6 +215,7 @@ export const AgentChat = ({
       });
     }
 
+    setIsWaitingForResponse(false);
     setTextInput('');
   }, [textInput, chatInvokeUri, refetchChatHistory]);
 
@@ -340,7 +344,7 @@ export const AgentChat = ({
             body={{
               messages: conversation,
               focus: focus,
-              answerGenerationInProgress: isChatHistoryFetching,
+              answerGenerationInProgress: isChatHistoryFetching || isWaitingForResponse,
               setFocus: setFocus,
               focusMessageId: focusElement,
               clearFocusMessageId: () => dispatch(clearFocusElement()),
