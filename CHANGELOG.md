@@ -1,4 +1,19 @@
 # Logic Apps Designer
+## [5.78.0](https://github.com/Azure/LogicAppsUX/compare/v5.77.0...v5.78.0) (2025-04-14)
+
+
+### Features
+
+* **designer:** Experimental Flags + Parse Document Functionality ([#7021](https://github.com/Azure/LogicAppsUX/issues/7021)) ([1e29c64](https://github.com/Azure/LogicAppsUX/commit/1e29c646d0525620420180864f46e1974502b8c5))
+* **designer:** Wire up input channel with chat ([#7018](https://github.com/Azure/LogicAppsUX/issues/7018)) ([b2244fb](https://github.com/Azure/LogicAppsUX/commit/b2244fba218946f43933002e7023dcf72a2c7154))
+
+
+### Bug Fixes
+
+* **designer:** Add waiting for input and update output channel to be optional ([#7024](https://github.com/Azure/LogicAppsUX/issues/7024)) ([6827da9](https://github.com/Azure/LogicAppsUX/commit/6827da90120afa6d03d7a08a04d32c1a74a5ba34))
+* **designer:** Array Editor Bugfixes ([#7006](https://github.com/Azure/LogicAppsUX/issues/7006)) ([16494a2](https://github.com/Azure/LogicAppsUX/commit/16494a2197220bca633ffa0ed604cf80eab74096))
+* **designer:** Update messages styles in chat ([#7015](https://github.com/Azure/LogicAppsUX/issues/7015)) ([1916672](https://github.com/Azure/LogicAppsUX/commit/1916672cafbb9461dc79806a8b9b9a1b81f84f9c))
+
 ## [5.77.0](https://github.com/Azure/LogicAppsUX/compare/v5.76.0...v5.77.0) (2025-04-11)
 
 

@@ -35,6 +35,7 @@ export const AgentChat = ({
   const [focus, setFocus] = useState(false);
   const [conversation, setConversation] = useState<ConversationItem[]>([]);
   const [textInput, setTextInput] = useState<string>('');
+  const [isWaitingForResponse, setIsWaitingForResponse] = useState(false);
   const isMonitoringView = useMonitoringView();
   const runInstance = useRunInstance();
   const agentOperations = useAgentOperations();
@@ -53,17 +54,17 @@ export const AgentChat = ({
   const drawerWidth = isCollapsed ? PanelSize.Auto : overrideWidth;
   const panelRef = useRef<HTMLDivElement>(null);
   const focusElement = useFocusElement();
-  const rawOpsString = JSON.stringify(agentLastOperations);
+  const rawAgentLastOperations = JSON.stringify(agentLastOperations);
 
   const toolResultCallback = useCallback(
     (agentName: string, toolName: string, iteration: number, subIteration: number) => {
-      const agentLastOperation = JSON.parse(rawOpsString)?.[agentName]?.[toolName];
+      const agentLastOperation = JSON.parse(rawAgentLastOperations)?.[agentName]?.[toolName];
       dispatch(setRunIndex({ page: iteration, nodeId: agentName }));
       dispatch(setRunIndex({ page: subIteration, nodeId: toolName }));
       dispatch(setFocusNode(agentLastOperation));
       dispatch(changePanelNode(agentLastOperation));
     },
-    [dispatch, rawOpsString]
+    [dispatch, rawAgentLastOperations]
   );
 
   const toolContentCallback = useCallback(
@@ -89,6 +90,8 @@ export const AgentChat = ({
       return;
     }
 
+    setIsWaitingForResponse(true);
+
     try {
       await RunService().invokeAgentChat({
         id: chatInvokeUri,
@@ -105,6 +108,7 @@ export const AgentChat = ({
       });
     }
 
+    setIsWaitingForResponse(false);
     setTextInput('');
   }, [textInput, chatInvokeUri, refetchChatHistory]);
 
@@ -233,7 +237,7 @@ export const AgentChat = ({
             body={{
               messages: conversation,
               focus: focus,
-              answerGenerationInProgress: isChatHistoryFetching,
+              answerGenerationInProgress: isChatHistoryFetching || isWaitingForResponse,
               setFocus: setFocus,
               focusMessageId: focusElement,
               clearFocusMessageId: () => dispatch(clearFocusElement()),
