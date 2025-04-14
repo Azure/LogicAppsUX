@@ -124,6 +124,7 @@ const edifactencode = 'edifactencode';
 const edifactbatchencode = 'edifactbatchencode';
 const edifactdecode = 'edifactdecode';
 const parsedocument = 'parsedocument';
+export const parsedocumentwithmetadata = 'parsedocumentwithmetadata';
 
 export const apiManagementConnectorId = '/connectionProviders/apiManagementOperation';
 export const azureFunctionConnectorId = '/connectionProviders/azureFunctionOperation';
