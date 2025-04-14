@@ -162,9 +162,9 @@ export const AgentChat = ({
         description: 'Chatbot error message',
       }),
       progressCardText: intl.formatMessage({
-        defaultMessage: 'Fetching chat history...',
-        id: '7col/w',
-        description: 'Fetching chat history progress card text',
+        defaultMessage: 'Processing...',
+        id: '6776lH',
+        description: 'Processing message in the chatbot',
       }),
       progressCardSaveText: intl.formatMessage({
         defaultMessage: '💾 Saving this flow...',
