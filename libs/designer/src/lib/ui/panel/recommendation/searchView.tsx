@@ -15,6 +15,7 @@ import { useCallback, useEffect, useState } from 'react';
 import { useDispatch } from 'react-redux';
 import { useDiscoveryPanelRelationshipIds } from '../../../core/state/panel/panelSelectors';
 import { useAgenticWorkflow } from '../../../core/state/designerView/designerViewSelectors';
+import { useShouldEnableParseDocumentWithMetadata } from './hooks';
 
 type SearchViewProps = {
   searchTerm: string;
@@ -30,6 +31,7 @@ type SearchViewProps = {
 export const SearchView: React.FC<SearchViewProps> = (props) => {
   const { searchTerm, allOperations, groupByConnector, isLoading, filters, onOperationClick, displayRuntimeInfo } = props;
   const isAgenticWorkflow = useAgenticWorkflow();
+  const shouldEnableParseDocWithMetadata = useShouldEnableParseDocumentWithMetadata();
   const isRoot = useDiscoveryPanelRelationshipIds().graphId === 'root';
 
   const dispatch = useDispatch<AppDispatch>();
@@ -62,7 +64,7 @@ export const SearchView: React.FC<SearchViewProps> = (props) => {
 
       const searchResultsPromise = searchOperations
         ? searchOperations(searchTerm, filters['actionType'], filters['runtime'], filterAgenticLoops)
-        : new DefaultSearchOperationsService(allOperations).searchOperations(
+        : new DefaultSearchOperationsService(allOperations, shouldEnableParseDocWithMetadata ?? false).searchOperations(
             searchTerm,
             filters['actionType'],
             filters['runtime'],
@@ -74,7 +76,7 @@ export const SearchView: React.FC<SearchViewProps> = (props) => {
         setIsLoadingSearchResults(false);
       });
     },
-    [searchTerm, allOperations, filters, filterAgenticLoops],
+    [searchTerm, allOperations, filters, filterAgenticLoops, shouldEnableParseDocWithMetadata],
     200
   );
 
@@ -97,7 +99,10 @@ export const SearchView: React.FC<SearchViewProps> = (props) => {
 };
 
 class DefaultSearchOperationsService implements Pick<ISearchService, 'searchOperations'> {
-  constructor(private allOperations: DiscoveryOpArray) {}
+  constructor(
+    private allOperations: DiscoveryOpArray,
+    private showParseDocWithMetadata: boolean
+  ) {}
 
   private compareItems(
     a: Fuse.FuseResult<DiscoveryOperation<DiscoveryResultTypes>>,
@@ -160,31 +165,43 @@ class DefaultSearchOperationsService implements Pick<ISearchService, 'searchOper
     };
   }
 
-  public searchOperations(
+  public async searchOperations(
     searchTerm: string,
-    actionType?: string | undefined,
-    runtimeFilter?: string | undefined,
+    actionType?: string,
+    runtimeFilter?: string,
     additionalFilter?: (operation: DiscoveryOperation<DiscoveryResultTypes>) => boolean
   ): Promise<DiscoveryOpArray> {
     type FuseSearchResult = Fuse.FuseResult<DiscoveryOperation<DiscoveryResultTypes>>;
 
-    const filterItems = (searchResult: FuseSearchResult): boolean => {
+    if (!this.allOperations) {
+      return [];
+    }
+
+    const showParseDocWithMetadata = this.showParseDocWithMetadata;
+
+    const filterItems = (result: FuseSearchResult): boolean => {
+      const { item } = result;
+
+      if (!showParseDocWithMetadata && item.id === 'parsedocumentwithmetadata') {
+        return false;
+      }
+
+      const api = item.properties.api;
+
       if (runtimeFilter) {
-        if (runtimeFilter === 'inapp' && !isBuiltInConnector(searchResult.item.properties.api)) {
+        if (runtimeFilter === 'inapp' && !isBuiltInConnector(api)) {
           return false;
         }
-        if (runtimeFilter === 'custom' && !isCustomConnector(searchResult.item.properties.api)) {
+        if (runtimeFilter === 'custom' && !isCustomConnector(api)) {
           return false;
         }
-        if (runtimeFilter === 'shared') {
-          if (isBuiltInConnector(searchResult.item.properties.api) || isCustomConnector(searchResult.item.properties.api)) {
-            return false;
-          }
+        if (runtimeFilter === 'shared' && (isBuiltInConnector(api) || isCustomConnector(api))) {
+          return false;
         }
       }
 
       if (actionType) {
-        const isTrigger = searchResult.item.properties?.trigger !== undefined;
+        const isTrigger = item.properties?.trigger !== undefined;
         if (actionType.toLowerCase() === 'actions' && isTrigger) {
           return false;
         }
@@ -192,23 +209,22 @@ class DefaultSearchOperationsService implements Pick<ISearchService, 'searchOper
           return false;
         }
       }
-      if (additionalFilter && !additionalFilter(searchResult.item)) {
+
+      if (additionalFilter && !additionalFilter(item)) {
         return false;
       }
+
       return true;
     };
 
-    if (!this.allOperations) {
-      return Promise.resolve([]);
-    }
-
     const fuse = new Fuse(this.allOperations, this.searchOptions());
-    return Promise.resolve(
-      fuse
-        .search(searchTerm, { limit: 200 })
-        .filter(filterItems)
-        .sort(this.compareItems)
-        .map((result) => result.item)
-    );
+
+    const results = fuse
+      .search(searchTerm, { limit: 100 })
+      .filter(filterItems)
+      .sort(this.compareItems)
+      .map((result) => result.item);
+
+    return results;
   }
 }
