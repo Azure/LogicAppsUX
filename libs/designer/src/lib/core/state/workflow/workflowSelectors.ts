@@ -424,10 +424,15 @@ export const useUriForAgentChat = (nodeId?: string) =>
       if (nodeId) {
         const runData = getRecordEntry(state.nodesMetadata, nodeId)?.runData;
         /**
-         * Chat input is only enabled when the node is an agent, and is currently running,
-         * and input/output channels are configured
+         * Chat input is only enabled when the node is an agent, and is currently running or succeeded,
+         * Workflow itself is running,
+         * and input channel is configured
          * */
-        if (equals(runData?.status ?? '', commonConstants.FLOW_STATUS.WAITING)) {
+        if (
+          equals(state.runInstance?.properties.status ?? '', commonConstants.FLOW_STATUS.RUNNING) &&
+          (equals(runData?.status ?? '', commonConstants.FLOW_STATUS.SUCCEEDED) ||
+            equals(runData?.status ?? '', commonConstants.FLOW_STATUS.RUNNING))
+        ) {
           const operation = getRecordEntry(state.operations, nodeId);
           if (operation) {
             const operationDefinitionAsAgentOperation = operation as LogicAppsV2.AgentAction;
