@@ -13,7 +13,7 @@ import {
   updateNodeSettings,
 } from '../../state/operation/operationMetadataSlice';
 import type { RelationshipIds } from '../../state/panel/panelTypes';
-import { changePanelNode, openPanel, setIsPanelLoading } from '../../state/panel/panelSlice';
+import { changePanelNode, openPanel, setIsPanelLoading, setPinnedNode } from '../../state/panel/panelSlice';
 import { addResultSchema } from '../../state/staticresultschema/staticresultsSlice';
 import type { NodeTokens, VariableDeclaration } from '../../state/tokens/tokensSlice';
 import { initializeTokensAndVariables } from '../../state/tokens/tokensSlice';
@@ -86,9 +86,9 @@ export const addOperation = createAsyncThunk('addOperation', async (payload: Add
     const isAddingAgentTool = (getState() as RootState).panel.discoveryContent.isAgentTool;
     const nodeId = getNonDuplicateNodeId(workflowState.nodesMetadata, actionId, workflowState.idReplacements);
     const newPayload = { ...payload, nodeId };
+    const newToolGraphId = (getState() as RootState).panel.discoveryContent.relationshipIds.graphId;
 
     if (isAddingAgentTool) {
-      const newToolGraphId = (getState() as RootState).panel.discoveryContent.relationshipIds.graphId;
       const newToolSubgraphId = (getState() as RootState).panel.discoveryContent.relationshipIds.subgraphId;
       if (newToolSubgraphId && newToolGraphId) {
         dispatch(addAgentTool({ toolId: newToolGraphId, nodeId: newToolSubgraphId }));
@@ -107,9 +107,15 @@ export const addOperation = createAsyncThunk('addOperation', async (payload: Add
     dispatch(initializeOperationInfo({ id: nodeId, ...nodeOperationInfo }));
     initializeOperationDetails(nodeId, nodeOperationInfo, getState as () => RootState, dispatch, presetParameterValues, actionMetadata);
 
-    // Update settings for children and parents
-
     dispatch(setFocusNode(nodeId));
+    if (isAddingAgentTool) {
+      dispatch(
+        setPinnedNode({
+          nodeId: newToolGraphId,
+          updatePanelOpenState: true,
+        })
+      );
+    }
   });
 });
 
