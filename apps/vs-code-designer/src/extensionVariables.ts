@@ -49,8 +49,9 @@ export namespace ext {
   export let extensionVersion: string;
   export let bundleFolderRoot: string | undefined;
   export const prefix = 'azureLogicAppsStandard';
-  export let currentBundleVersion: string;
-  export let pinnedBundleVersion: boolean;
+  export const currentBundleVersion: Map<string, string> = new Map();
+  export const pinnedBundleVersion: Map<string, boolean> = new Map();
+  export let defaultBundleVersion: string;
   export let latestBundleVersion: string;
 
   // Services

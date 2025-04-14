@@ -92,7 +92,7 @@ export async function activate(context: vscode.ExtensionContext) {
     //await prepareTestExplorer(context, activateContext);
 
     ext.extensionVersion = getExtensionVersion();
-    ext.currentBundleVersion = activateContext.telemetry.properties.latestBundleVersion;
+    ext.defaultBundleVersion = activateContext.telemetry.properties.latestBundleVersion;
     ext.latestBundleVersion = activateContext.telemetry.properties.latestBundleVersion;
 
     ext.rgApi = await getResourceGroupsApi();

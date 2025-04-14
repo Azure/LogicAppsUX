@@ -115,18 +115,17 @@ export async function startDesignTimeApi(projectPath: string): Promise<void> {
         const portArgs = `--port ${designTimeInst.port}`;
         startDesignTimeProcess(ext.outputChannel, cwd, getFunctionsCommand(), 'host', 'start', portArgs);
         await waitForDesignTimeStartUp(projectPath, url, new Date().getTime());
-        ext.pinnedBundleVersion = false;
+        ext.pinnedBundleVersion.set(projectPath, false);
         const hostfilepath: Uri = Uri.file(path.join(cwd, hostFileName));
         const data = JSON.parse(fs.readFileSync(hostfilepath.fsPath, 'utf-8'));
         if (data.extensionBundle) {
           const versionWithoutSpaces = data.extensionBundle.version.replace(/\s+/g, '');
           const rangeWithoutSpaces = defaultVersionRange.replace(/\s+/g, '');
           if (data.extensionBundle.id === extensionBundleId && versionWithoutSpaces === rangeWithoutSpaces) {
-            // TODO - if we start design time for multiple projects, currentBundleVersion will be set to the last one
-            ext.currentBundleVersion = ext.latestBundleVersion;
+            ext.currentBundleVersion.set(projectPath, ext.latestBundleVersion);
           } else if (data.extensionBundle.id === extensionBundleId && versionWithoutSpaces !== rangeWithoutSpaces) {
-            ext.currentBundleVersion = extractPinnedVersion(data.extensionBundle.version) ?? data.extensionBundle.version;
-            ext.pinnedBundleVersion = true;
+            ext.currentBundleVersion.set(projectPath, extractPinnedVersion(data.extensionBundle.version) ?? data.extensionBundle.version);
+            ext.pinnedBundleVersion.set(projectPath, true);
           }
         }
         actionContext.telemetry.properties.startDesignTimeApi = 'true';
@@ -312,7 +311,9 @@ export function stopDesignTimeApi(projectPath: string): void {
 export async function startAllDesignTimeApis(context: IActionContext): Promise<void> {
   if (vscode.workspace.workspaceFolders && vscode.workspace.workspaceFolders.length > 0) {
     const logicAppFolders = await getWorkspaceLogicAppFolders(context);
-    logicAppFolders.forEach(startDesignTimeApi);
+    for (const projectPath of logicAppFolders) {
+      await startDesignTimeApi(projectPath);
+    }
   }
 }
 
@@ -356,7 +357,7 @@ export async function promptStartDesignTimeOption(context: IActionContext) {
         }
 
         if (autoStartDesignTime) {
-          startDesignTimeApi(projectPath);
+          await startDesignTimeApi(projectPath);
         }
       }
     }

@@ -43,13 +43,14 @@ import { ConvertToWorkspace } from '../createNewCodeProject/CodeProjectBase/Conv
  * @returns {Promise<void>} - A promise that resolves when the deployment scripts are generated.
  */
 export async function generateDeploymentScripts(context: IActionContext, node?: vscode.Uri): Promise<void> {
+  let projectPath: string;
+  let projectRoot: vscode.Uri;
+
   try {
     ext.outputChannel.show();
     ext.outputChannel.appendLog(localize('initScriptGen', 'Initiating script generation...'));
 
     addLocalFuncTelemetry(context);
-    let projectPath: string;
-    let projectRoot: vscode.Uri;
     if (node) {
       projectPath = node.fsPath;
       projectRoot = node;
@@ -106,13 +107,17 @@ export async function generateDeploymentScripts(context: IActionContext, node?: 
 
     const correlationId = uuidv4();
     const currentDateTime = new Date().toISOString();
-    workflowFiles.forEach((filePath) => updateMetadata(filePath, correlationId, currentDateTime));
+    workflowFiles.forEach((filePath) => updateMetadata(filePath, projectPath, correlationId, currentDateTime));
   } catch (error) {
     const errorMessage = localize('errorScriptGen', 'Error during deployment script generation: {0}', error.message ?? error);
     ext.outputChannel.appendLog(errorMessage);
     context.telemetry.properties.error = errorMessage;
-    context.telemetry.properties.pinnedBundleVersion = ext.pinnedBundleVersion.toString();
-    context.telemetry.properties.currentWorkflowBundleVersion = ext.currentBundleVersion;
+    context.telemetry.properties.pinnedBundleVersion = ext.pinnedBundleVersion.has(projectPath)
+      ? ext.pinnedBundleVersion.get(projectPath).toString()
+      : 'false';
+    context.telemetry.properties.currentWorkflowBundleVersion = ext.currentBundleVersion.has(projectPath)
+      ? ext.currentBundleVersion.get(projectPath)
+      : ext.defaultBundleVersion;
     if (!errorMessage.includes(COMMON_ERRORS.OPERATION_CANCELLED)) {
       throw new Error(errorMessage);
     }
@@ -133,7 +138,7 @@ function getWorkflowFilePaths(source: string): string[] {
     .map((name) => path.join(source, name, workflowFileName));
 }
 
-function updateMetadata(filePath: string, correlationId: string, currentDateTime: string): void {
+function updateMetadata(filePath: string, projectPath: string, correlationId: string, currentDateTime: string): void {
   const data = JSON.parse(fs.readFileSync(filePath, 'utf-8'));
 
   // Normalize the metadata key to lowercase
@@ -147,8 +152,10 @@ function updateMetadata(filePath: string, correlationId: string, currentDateTime
     IaCGenerationDate: currentDateTime,
     IaCWorkflowCorrelationId: correlationId,
     LogicAppsExtensionVersion: ext.extensionVersion,
-    LogicAppsPinnedBundle: ext.pinnedBundleVersion,
-    LogicAppsCurrentBundleVersion: ext.currentBundleVersion,
+    LogicAppsPinnedBundle: ext.pinnedBundleVersion.has(projectPath) ? ext.pinnedBundleVersion.get(projectPath) : false,
+    LogicAppsCurrentBundleVersion: ext.currentBundleVersion.has(projectPath)
+      ? ext.currentBundleVersion.get(projectPath)
+      : ext.defaultBundleVersion,
   };
 
   if (data.definition.metadata) {
