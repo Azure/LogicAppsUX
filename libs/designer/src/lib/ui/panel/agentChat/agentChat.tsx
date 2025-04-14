@@ -167,6 +167,7 @@ export const AgentChat = ({
   const runInstance = useRunInstance();
   const agentOperations = useAgentOperations();
   const agentLastOperations = useAgentLastOperations(agentOperations);
+  const operationLength = useMemo(() => Object.keys(agentLastOperations).length, [agentLastOperations]);
   const [isCollapsed, setIsCollapsed] = useState(false);
   const panelContainerElement = panelContainerRef.current as HTMLElement;
   const agentChatSuffixUri = useUriForAgentChat(conversation.length > 0 ? conversation[0].metadata?.parentId : undefined);
@@ -190,7 +191,8 @@ export const AgentChat = ({
       dispatch(setFocusNode(agentLastOperation));
       dispatch(changePanelNode(agentLastOperation));
     },
-    [agentLastOperations, dispatch]
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [operationLength, dispatch]
   );
   const onChatSubmit = useCallback(async () => {
     if (!textInput || isNullOrUndefined(chatInvokeUri)) {
