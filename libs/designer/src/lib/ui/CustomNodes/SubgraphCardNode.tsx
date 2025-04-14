@@ -7,7 +7,7 @@ import { useMonitoringView, useReadOnly } from '../../core/state/designerOptions
 import { setNodeContextMenuData, setShowDeleteModalNodeId } from '../../core/state/designerView/designerViewSlice';
 import { useIconUri, useParameterValidationErrors } from '../../core/state/operation/operationSelector';
 import { useIsNodePinnedToOperationPanel, useIsNodeSelectedInOperationPanel } from '../../core/state/panel/panelSelectors';
-import { changePanelNode } from '../../core/state/panel/panelSlice';
+import { changePanelNode, expandDiscoveryPanel } from '../../core/state/panel/panelSlice';
 import {
   useActionMetadata,
   useIsGraphCollapsed,
@@ -19,12 +19,12 @@ import {
   useRunData,
   useWorkflowNode,
 } from '../../core/state/workflow/workflowSelectors';
-import { addAgentCondition, addSwitchCase, setFocusNode, toggleCollapsedGraphId } from '../../core/state/workflow/workflowSlice';
+import { addAgentTool, addSwitchCase, setFocusNode, toggleCollapsedGraphId } from '../../core/state/workflow/workflowSlice';
 import { LoopsPager } from '../common/LoopsPager/LoopsPager';
 import { DropZone } from '../connections/dropzone';
 import { MessageBarType } from '@fluentui/react';
 import { SubgraphCard } from '@microsoft/designer-ui';
-import { SUBGRAPH_TYPES, isNullOrUndefined, removeIdTag, useNodeIndex } from '@microsoft/logic-apps-shared';
+import { SUBGRAPH_TYPES, guid, isNullOrUndefined, removeIdTag, useNodeIndex } from '@microsoft/logic-apps-shared';
 import { memo, useCallback, useMemo } from 'react';
 import { useIntl } from 'react-intl';
 import { useDispatch } from 'react-redux';
@@ -55,9 +55,9 @@ const SubgraphCardNode = ({ targetPosition = Position.Top, sourcePosition = Posi
   const title = useNodeDisplayName(subgraphId);
 
   const isSwitchAddCase = metadata?.subgraphType === SUBGRAPH_TYPES.SWITCH_ADD_CASE;
-  const isAgentAddCondition = metadata?.subgraphType === SUBGRAPH_TYPES.AGENT_ADD_CONDITON;
+  const isAgentAddTool = metadata?.subgraphType === SUBGRAPH_TYPES.AGENT_ADD_CONDITON;
 
-  const isAddCase = isSwitchAddCase || isAgentAddCondition;
+  const isAddCase = isSwitchAddCase || isAgentAddTool;
   const actionCount = metadata?.actionCount ?? 0;
   const iconUri = useIconUri(graphId);
 
@@ -90,12 +90,14 @@ const SubgraphCardNode = ({ targetPosition = Position.Top, sourcePosition = Posi
     [actionCount, intl]
   );
 
-  const newCaseIdNewAdditiveSubgraphId = useNewAdditiveSubgraphId(isAgentAddCondition ? stringResources.TOOL : stringResources.CASE);
+  const newCaseIdNewAdditiveSubgraphId = useNewAdditiveSubgraphId(isAgentAddTool ? stringResources.TOOL : stringResources.CASE);
   const subgraphClick = useCallback(
     async (_id: string) => {
       if (isAddCase && graphNode) {
-        if (isAgentAddCondition) {
-          dispatch(addAgentCondition({ toolId: newCaseIdNewAdditiveSubgraphId, nodeId: subgraphId }));
+        if (isAgentAddTool) {
+          dispatch(addAgentTool({ toolId: newCaseIdNewAdditiveSubgraphId, nodeId: subgraphId }));
+          const relationshipIds = { graphId: newCaseIdNewAdditiveSubgraphId, parentId: `${newCaseIdNewAdditiveSubgraphId}-#subgraph` };
+          dispatch(expandDiscoveryPanel({ nodeId: guid(), relationshipIds }));
         } else {
           dispatch(addSwitchCase({ caseId: newCaseIdNewAdditiveSubgraphId, nodeId: subgraphId }));
         }
@@ -109,13 +111,15 @@ const SubgraphCardNode = ({ targetPosition = Position.Top, sourcePosition = Posi
           properties: { ...caseManifestData, iconUri: iconUri ?? '', brandColor: '' },
         };
         initializeSwitchCaseFromManifest(newCaseIdNewAdditiveSubgraphId, subGraphManifest, dispatch);
-        dispatch(changePanelNode(newCaseIdNewAdditiveSubgraphId));
+        if (!isAgentAddTool) {
+          dispatch(changePanelNode(newCaseIdNewAdditiveSubgraphId));
+        }
         dispatch(setFocusNode(newCaseIdNewAdditiveSubgraphId));
       } else {
         dispatch(changePanelNode(_id));
       }
     },
-    [isAddCase, graphNode, isAgentAddCondition, operationInfo, iconUri, newCaseIdNewAdditiveSubgraphId, dispatch, subgraphId]
+    [isAddCase, graphNode, isAgentAddTool, operationInfo, iconUri, newCaseIdNewAdditiveSubgraphId, dispatch, subgraphId]
   );
 
   const graphCollapsed = useIsGraphCollapsed(subgraphId);
