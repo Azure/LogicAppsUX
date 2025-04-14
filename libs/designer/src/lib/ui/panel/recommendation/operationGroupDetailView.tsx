@@ -1,12 +1,18 @@
 import type { OperationActionData } from '@microsoft/designer-ui';
 import { OperationActionDataFromOperation, OperationGroupDetailsPage } from '@microsoft/designer-ui';
-import type { Connector, DiscoveryOpArray } from '@microsoft/logic-apps-shared';
+import {
+  initializeVariableOperation,
+  parsedocumentwithmetadata,
+  type Connector,
+  type DiscoveryOpArray,
+} from '@microsoft/logic-apps-shared';
 import { useCallback, useMemo } from 'react';
 import { useDiscoveryPanelRelationshipIds } from '../../../core/state/panel/panelSelectors';
 import { useIsWithinAgenticLoop } from '../../../core/state/workflow/workflowSelectors';
 import { useDispatch } from 'react-redux';
 import { addConnectorAsOperation, type AppDispatch } from '../../../core';
 import { selectOperationGroupId } from '../../../core/state/panel/panelSlice';
+import { useShouldEnableParseDocumentWithMetadata } from './hooks';
 
 type OperationGroupDetailViewProps = {
   connector?: Connector;
@@ -24,13 +30,18 @@ export const OperationGroupDetailView = (props: OperationGroupDetailViewProps) =
   const graphId = useMemo(() => relationshipIds.graphId, [relationshipIds]);
   const isRoot = useMemo(() => graphId === 'root', [graphId]);
   const isWithinAgenticLoop = useIsWithinAgenticLoop(graphId);
+  const shouldEnableParseDocWithMetadata = useShouldEnableParseDocumentWithMetadata();
 
   const dispatch = useDispatch<AppDispatch>();
 
   const filterItems = useCallback(
     (data: OperationActionData): boolean => {
-      if (!isRoot && data.apiId === 'connectionProviders/variable' && data.id === 'initializevariable') {
+      if (!isRoot && data.apiId === 'connectionProviders/variable' && data.id === initializeVariableOperation.id) {
         return false; // Filter out initialize variables when in a scope
+      }
+
+      if (shouldEnableParseDocWithMetadata === false && data.id === parsedocumentwithmetadata.id) {
+        return false;
       }
 
       return (
@@ -40,9 +51,8 @@ export const OperationGroupDetailView = (props: OperationGroupDetailViewProps) =
         (filters?.['actionType'] === 'actions' && ignoreActionsFilter) // or that the filter is action, and that I should ignore the actions filter
       );
     },
-    [filters, ignoreActionsFilter, isRoot]
+    [filters, ignoreActionsFilter, isRoot, shouldEnableParseDocWithMetadata]
   );
-
   const operationGroupActions: OperationActionData[] = groupOperations
     .map((operation) => OperationActionDataFromOperation(operation))
     .filter(filterItems);

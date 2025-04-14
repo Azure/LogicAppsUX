@@ -31,6 +31,8 @@ import {
   BaseApiManagementService,
   BaseAppServiceService,
   BaseChatbotService,
+  BaseExperimentationService,
+  BaseUserPreferenceService,
   BaseFunctionService,
   BaseGatewayService,
   BaseTenantService,
@@ -68,7 +70,6 @@ import type { QueryClient } from '@tanstack/react-query';
 import { useDispatch, useSelector } from 'react-redux';
 import { useHostingPlan } from '../../state/workflowLoadingSelectors';
 import CodeViewEditor from './CodeView';
-import { BaseUserPreferenceService } from '@microsoft/logic-apps-shared';
 
 const apiVersion = '2020-06-01';
 const httpClient = new HttpClient();
@@ -858,6 +859,7 @@ const getDesignerServices = (
     chatbotService,
     customCodeService,
     userPreferenceService: new BaseUserPreferenceService(),
+    experimentationService: new BaseExperimentationService(),
   };
 };
 const hasNewKeys = (original: Record<string, any>, updated: Record<string, any>) => {
