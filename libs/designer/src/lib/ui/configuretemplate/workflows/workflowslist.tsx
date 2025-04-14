@@ -180,7 +180,6 @@ export const DisplayWorkflows = ({ onSave }: { onSave: (isMultiWorkflow: boolean
           },
         }}
       />
-
       {Object.keys(workflows).length > 0 ? (
         <Table aria-label={resourceStrings.WorkflowsListTableLabel} style={{ minWidth: '550px' }}>
           <TableHeader>

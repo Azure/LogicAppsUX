@@ -418,29 +418,37 @@ export const useAgentOperations = () => {
   return useSelector(agentOperationsSelector);
 };
 
-export const useIsChatInputEnabled = (nodeId?: string) =>
+export const useUriForAgentChat = (nodeId?: string) =>
   useSelector(
     createSelector(getWorkflowState, (state: WorkflowState) => {
       if (nodeId) {
         const runData = getRecordEntry(state.nodesMetadata, nodeId)?.runData;
         /**
-         * Chat input is only enabled when the node is an agent, and is currently running,
-         * and input/output channels are configured
+         * Chat input is only enabled when the node is an agent, and is currently running or succeeded,
+         * Workflow itself is running,
+         * and input channel is configured
          * */
-        if (equals(runData?.status ?? '', commonConstants.FLOW_STATUS.WAITING)) {
-          const operationKeys = Object.keys(state.operations);
-          return (
-            operationKeys.some((key) => key.toLowerCase().startsWith(`${nodeId}${commonConstants.CHANNELS.INPUT}`.toLowerCase())) &&
-            operationKeys.some((key) => key.toLowerCase().startsWith(`${nodeId}${commonConstants.CHANNELS.OUTPUT}`.toLowerCase()))
-          );
+        if (
+          equals(state.runInstance?.properties.status ?? '', commonConstants.FLOW_STATUS.RUNNING) &&
+          (equals(runData?.status ?? '', commonConstants.FLOW_STATUS.SUCCEEDED) ||
+            equals(runData?.status ?? '', commonConstants.FLOW_STATUS.RUNNING))
+        ) {
+          const operation = getRecordEntry(state.operations, nodeId);
+          if (operation) {
+            const operationDefinitionAsAgentOperation = operation as LogicAppsV2.AgentAction;
+            const allInputChannelKeys = Object.keys(operationDefinitionAsAgentOperation.channels?.in ?? {});
+            if (allInputChannelKeys.length > 0) {
+              return `${state.runInstance?.id ?? ''}/agents/${nodeId}/channels/${allInputChannelKeys[0]}`;
+            }
+          }
         }
       }
 
-      return false;
+      return undefined;
     })
   );
 
-export const useAgentLastOperations = (agentOperations: string[]) => {
+export const useAgentLastOperations = (agentOperations: string[]): Record<string, any> => {
   const lastOperationsSelector = useMemo(
     () =>
       createSelector(getWorkflowState, (state: WorkflowState) => {
