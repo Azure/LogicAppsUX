@@ -8,7 +8,6 @@ export const parseChatHistory = (
   toolContentCallback: (agentName: string, iteration: number) => void,
   agentCallback: (agentName: string) => void
 ): ConversationItem[] => {
-  // Improved version for processing chatHistory into conversations:
   const conversations: ConversationItem[] = chatHistory.flatMap(({ nodeId, messages }) => {
     if (!messages || messages.length === 0) {
       return [];
@@ -42,7 +41,7 @@ export const parseChatHistory = (
         text: labelCase(nodeId),
         type: ConversationItemType.AgentHeader,
         onClick: () => agentCallback(nodeId),
-        date: new Date(), // Uses current time for header; update if needed
+        date: new Date(),
       },
     ];
   });
