@@ -1138,6 +1138,10 @@ export function generateCSharpClasses(
     ...data, // Merge the data (including "description", subfields, etc.)
   });
 
+  if (rootDef.properties && Array.isArray(rootDef.properties)) {
+    rootDef.properties = rootDef.properties.filter((prop) => prop.propertyName !== 'StatusCode');
+  }
+
   rootDef.inheritsFrom = 'MockOutput';
 
   const sanitizedWorkflowName = workflowName.replace(/-/g, '_');
