@@ -1,15 +1,8 @@
-import {
-  AgentMessageEntryType,
-  ConversationItemType,
-  PanelLocation,
-  PanelResizer,
-  PanelSize,
-  type ConversationItem,
-} from '@microsoft/designer-ui';
+import { PanelLocation, PanelResizer, PanelSize, type ConversationItem } from '@microsoft/designer-ui';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useIntl } from 'react-intl';
-import { defaultChatbotPanelWidth, ChatbotContent } from '@microsoft/logic-apps-chatbot';
-import { type ChatHistory, useAgentChatInvokeUri, useChatHistory } from '../../../core/queries/runs';
+import { defaultChatbotPanelWidth, ChatbotUI } from '@microsoft/logic-apps-chatbot';
+import { useAgentChatInvokeUri, useChatHistory } from '../../../core/queries/runs';
 import { useMonitoringView } from '../../../core/state/designerOptions/designerOptionsSelectors';
 import {
   useAgentLastOperations,
@@ -18,140 +11,20 @@ import {
   useUriForAgentChat,
   useRunInstance,
 } from '../../../core/state/workflow/workflowSelectors';
-import { guid, isNullOrUndefined, labelCase, LogEntryLevel, LoggerService, RunService } from '@microsoft/logic-apps-shared';
+import { isNullOrUndefined, LogEntryLevel, LoggerService, RunService } from '@microsoft/logic-apps-shared';
 import { Button, Drawer, mergeClasses } from '@fluentui/react-components';
 import { ChatFilled } from '@fluentui/react-icons';
 import { useDispatch } from 'react-redux';
 import { changePanelNode, type AppDispatch } from '../../../core';
-import type { Dispatch } from '@reduxjs/toolkit';
 import { clearFocusElement, setFocusNode, setRunIndex } from '../../../core/state/workflow/workflowSlice';
 import { AgentChatHeader } from './agentChatHeader';
+import { parseChatHistory } from './helper';
 
 interface AgentChatProps {
   panelLocation?: PanelLocation;
   chatbotWidth?: string;
   panelContainerRef: React.MutableRefObject<HTMLElement | null>;
 }
-
-const parseChatHistory = (
-  chatHistory: ChatHistory[],
-  dispatch: Dispatch,
-  toolResultCallback: (agentName: string, toolName: string, iteration: number, subIteration: number) => void
-): ConversationItem[] => {
-  const toolContentCallback = (agentName: string, iteration: number) => {
-    dispatch(setRunIndex({ page: iteration, nodeId: agentName }));
-    dispatch(setFocusNode(agentName));
-    dispatch(changePanelNode(agentName));
-  };
-
-  const agentCallback = (agentName: string) => {
-    dispatch(setRunIndex({ page: 0, nodeId: agentName }));
-    dispatch(setFocusNode(agentName));
-    dispatch(changePanelNode(agentName));
-  };
-
-  // Improved version for processing chatHistory into conversations:
-  const conversations: ConversationItem[] = chatHistory.flatMap(({ nodeId, messages }) => {
-    if (!messages || messages.length === 0) {
-      return [];
-    }
-
-    let lastIteration: number | undefined;
-    let messageCountInIteration = 0;
-    const processedMessages: ConversationItem[] = [];
-
-    // Iterate backwards to properly count message occurrences per iteration
-    for (let i = messages.length - 1; i >= 0; i--) {
-      const message = messages[i];
-      const { iteration } = message;
-
-      if (lastIteration !== iteration) {
-        messageCountInIteration = 0;
-        lastIteration = iteration;
-      } else {
-        messageCountInIteration++;
-      }
-
-      const dataScrollTarget = `${nodeId}-${iteration}-${messageCountInIteration}`;
-      processedMessages.push(parseMessage(message, nodeId, dataScrollTarget, toolResultCallback, toolContentCallback));
-    }
-
-    // Restore original message order and append the agent header item
-    return [
-      ...processedMessages.reverse(),
-      {
-        id: guid(),
-        text: labelCase(nodeId),
-        type: ConversationItemType.AgentHeader,
-        onClick: () => agentCallback(nodeId),
-        date: new Date(), // Uses current time for header; update if needed
-      },
-    ];
-  });
-
-  return conversations;
-};
-
-const parseMessage = (
-  message: any,
-  parentId: string,
-  dataScrollTarget: string,
-  toolResultCallback: (agentName: string, toolName: string, iteration: number, subIteration: number) => void,
-  toolContentCallback: (agentName: string, iteration: number) => void
-): ConversationItem => {
-  const { messageEntryType, messageEntryPayload, timestamp, role, iteration } = message;
-
-  switch (messageEntryType) {
-    case AgentMessageEntryType.Content: {
-      const content = messageEntryPayload?.content || '';
-      const isUserMessage = role === 'User';
-      const type = isUserMessage ? ConversationItemType.Query : ConversationItemType.Reply;
-      return {
-        text: content,
-        type,
-        id: guid(),
-        role: {
-          text: isUserMessage ? undefined : role,
-          agentName: labelCase(parentId),
-          onClick: () => toolContentCallback(parentId, iteration),
-        },
-        hideFooter: true,
-        metadata: { parentId },
-        date: new Date(timestamp),
-        isMarkdownText: false,
-        className: 'msla-agent-chat-content',
-        dataScrollTarget,
-      };
-    }
-    case AgentMessageEntryType.ToolResult: {
-      const subIteration = message.toolResultsPayload?.toolResult?.subIteration ?? 0;
-      const toolName = message.toolResultsPayload?.toolResult?.toolName ?? '';
-      const status = message.toolResultsPayload?.toolResult?.status;
-
-      return {
-        id: guid(),
-        text: toolName,
-        type: ConversationItemType.Tool,
-        onClick: () => toolResultCallback(parentId, toolName, iteration, subIteration),
-        status,
-        date: new Date(timestamp),
-        dataScrollTarget,
-      };
-    }
-    default: {
-      return {
-        text: '',
-        type: ConversationItemType.Reply,
-        id: guid(),
-        role,
-        hideFooter: true,
-        metadata: { parentId },
-        date: new Date(timestamp),
-        isMarkdownText: false,
-      };
-    }
-  }
-};
 
 export const AgentChat = ({
   panelLocation = PanelLocation.Left,
@@ -167,7 +40,6 @@ export const AgentChat = ({
   const runInstance = useRunInstance();
   const agentOperations = useAgentOperations();
   const agentLastOperations = useAgentLastOperations(agentOperations);
-  const operationLength = useMemo(() => Object.keys(agentLastOperations).length, [agentLastOperations]);
   const [isCollapsed, setIsCollapsed] = useState(false);
   const panelContainerElement = panelContainerRef.current as HTMLElement;
   const agentChatSuffixUri = useUriForAgentChat(conversation.length > 0 ? conversation[0].metadata?.parentId : undefined);
@@ -182,18 +54,37 @@ export const AgentChat = ({
   const drawerWidth = isCollapsed ? PanelSize.Auto : overrideWidth;
   const panelRef = useRef<HTMLDivElement>(null);
   const focusElement = useFocusElement();
+  const rawAgentLastOperations = JSON.stringify(agentLastOperations);
 
   const toolResultCallback = useCallback(
     (agentName: string, toolName: string, iteration: number, subIteration: number) => {
-      const agentLastOperation = agentLastOperations[agentName][toolName];
+      const agentLastOperation = JSON.parse(rawAgentLastOperations)?.[agentName]?.[toolName];
       dispatch(setRunIndex({ page: iteration, nodeId: agentName }));
       dispatch(setRunIndex({ page: subIteration, nodeId: toolName }));
       dispatch(setFocusNode(agentLastOperation));
       dispatch(changePanelNode(agentLastOperation));
     },
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    [operationLength, dispatch]
+    [dispatch, rawAgentLastOperations]
   );
+
+  const toolContentCallback = useCallback(
+    (agentName: string, iteration: number) => {
+      dispatch(setRunIndex({ page: iteration, nodeId: agentName }));
+      dispatch(setFocusNode(agentName));
+      dispatch(changePanelNode(agentName));
+    },
+    [dispatch]
+  );
+
+  const agentCallback = useCallback(
+    (agentName: string) => {
+      dispatch(setRunIndex({ page: 0, nodeId: agentName }));
+      dispatch(setFocusNode(agentName));
+      dispatch(changePanelNode(agentName));
+    },
+    [dispatch]
+  );
+
   const onChatSubmit = useCallback(async () => {
     if (!textInput || isNullOrUndefined(chatInvokeUri)) {
       return;
@@ -223,10 +114,10 @@ export const AgentChat = ({
 
   useEffect(() => {
     if (!isNullOrUndefined(chatHistoryData)) {
-      const newConversations = parseChatHistory(chatHistoryData, dispatch, toolResultCallback);
+      const newConversations = parseChatHistory(chatHistoryData, toolResultCallback, toolContentCallback, agentCallback);
       setConversation([...newConversations]);
     }
-  }, [setConversation, chatHistoryData, dispatch, toolResultCallback]);
+  }, [setConversation, chatHistoryData, dispatch, toolResultCallback, toolContentCallback, agentCallback]);
 
   const intlText = useMemo(() => {
     return {
@@ -319,7 +210,7 @@ export const AgentChat = ({
       ) : null}
       {isCollapsed ? null : (
         <>
-          <ChatbotContent
+          <ChatbotUI
             panel={{
               location: panelLocation,
               width: chatbotWidth,

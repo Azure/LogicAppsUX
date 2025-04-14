@@ -133,6 +133,8 @@ export const workflowLoadingSlice = createSlice({
     },
     changeRunId: (state, action: PayloadAction<string | undefined>) => {
       state.runId = action.payload;
+      // set runId to history
+      setStateHistory(state);
     },
     setResourcePath: (state, action: PayloadAction<string>) => {
       state.resourcePath = action.payload;
