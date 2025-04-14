@@ -20,12 +20,11 @@ export const getQuickViewTabs = (
   onCloseButtonClick?: () => void
 ) => {
   return [
-    workflowTab(
+    summaryTab(
       intl,
       dispatch,
       workflowId,
       showCreate,
-      undefined,
       {
         templateId,
         workflowAppName,
@@ -33,11 +32,12 @@ export const getQuickViewTabs = (
       },
       onCloseButtonClick
     ),
-    summaryTab(
+    workflowTab(
       intl,
       dispatch,
       workflowId,
       showCreate,
+      undefined,
       {
         templateId,
         workflowAppName,
