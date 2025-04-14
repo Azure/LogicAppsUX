@@ -6,19 +6,19 @@ import {
   PanelSize,
   type ConversationItem,
 } from '@microsoft/designer-ui';
-import { useEffect, useMemo, useRef, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useIntl } from 'react-intl';
 import { defaultChatbotPanelWidth, ChatbotContent } from '@microsoft/logic-apps-chatbot';
-import { type ChatHistory, useChatHistory } from '../../../core/queries/runs';
+import { type ChatHistory, useAgentChatInvokeUri, useChatHistory } from '../../../core/queries/runs';
 import { useMonitoringView } from '../../../core/state/designerOptions/designerOptionsSelectors';
 import {
   useAgentLastOperations,
   useAgentOperations,
   useFocusElement,
-  useIsChatInputEnabled,
+  useUriForAgentChat,
   useRunInstance,
 } from '../../../core/state/workflow/workflowSelectors';
-import { guid, isNullOrUndefined, labelCase } from '@microsoft/logic-apps-shared';
+import { guid, isNullOrUndefined, labelCase, LogEntryLevel, LoggerService, RunService } from '@microsoft/logic-apps-shared';
 import { Button, Drawer, mergeClasses } from '@fluentui/react-components';
 import { ChatFilled } from '@fluentui/react-icons';
 import { useDispatch } from 'react-redux';
@@ -33,15 +33,11 @@ interface AgentChatProps {
   panelContainerRef: React.MutableRefObject<HTMLElement | null>;
 }
 
-const parseChatHistory = (chatHistory: ChatHistory[], dispatch: Dispatch, agentLastOperations: Record<string, any>): ConversationItem[] => {
-  const toolResultCallback = (agentName: string, toolName: string, iteration: number, subIteration: number) => {
-    const agentLastOperation = agentLastOperations[agentName][toolName];
-    dispatch(setRunIndex({ page: iteration, nodeId: agentName }));
-    dispatch(setRunIndex({ page: subIteration, nodeId: toolName }));
-    dispatch(setFocusNode(agentLastOperation));
-    dispatch(changePanelNode(agentLastOperation));
-  };
-
+const parseChatHistory = (
+  chatHistory: ChatHistory[],
+  dispatch: Dispatch,
+  toolResultCallback: (agentName: string, toolName: string, iteration: number, subIteration: number) => void
+): ConversationItem[] => {
   const toolContentCallback = (agentName: string, iteration: number) => {
     dispatch(setRunIndex({ page: iteration, nodeId: agentName }));
     dispatch(setFocusNode(agentName));
@@ -108,12 +104,14 @@ const parseMessage = (
   switch (messageEntryType) {
     case AgentMessageEntryType.Content: {
       const content = messageEntryPayload?.content || '';
+      const isUserMessage = role === 'User';
+      const type = isUserMessage ? ConversationItemType.Query : ConversationItemType.Reply;
       return {
         text: content,
-        type: ConversationItemType.Reply,
+        type,
         id: guid(),
         role: {
-          text: role,
+          text: isUserMessage ? undefined : role,
           agentName: labelCase(parentId),
           onClick: () => toolContentCallback(parentId, iteration),
         },
@@ -163,26 +161,66 @@ export const AgentChat = ({
   const intl = useIntl();
   const [focus, setFocus] = useState(false);
   const [conversation, setConversation] = useState<ConversationItem[]>([]);
+  const [textInput, setTextInput] = useState<string>('');
   const isMonitoringView = useMonitoringView();
   const runInstance = useRunInstance();
   const agentOperations = useAgentOperations();
   const agentLastOperations = useAgentLastOperations(agentOperations);
   const [isCollapsed, setIsCollapsed] = useState(false);
   const panelContainerElement = panelContainerRef.current as HTMLElement;
-  const { isFetching: isChatHistoryFetching, data: chatHistoryData } = useChatHistory(!!isMonitoringView, agentOperations, runInstance?.id);
+  const agentChatSuffixUri = useUriForAgentChat(conversation.length > 0 ? conversation[0].metadata?.parentId : undefined);
+  const {
+    refetch: refetchChatHistory,
+    isFetching: isChatHistoryFetching,
+    data: chatHistoryData,
+  } = useChatHistory(!!isMonitoringView, agentOperations, runInstance?.id);
+  const { data: chatInvokeUri } = useAgentChatInvokeUri(!!isMonitoringView, true, agentChatSuffixUri);
   const [overrideWidth, setOverrideWidth] = useState<string | undefined>(chatbotWidth);
-  const isChatInputEnabled = useIsChatInputEnabled(conversation.length > 0 ? conversation[0].metadata?.parentId : undefined);
   const dispatch = useDispatch<AppDispatch>();
   const drawerWidth = isCollapsed ? PanelSize.Auto : overrideWidth;
   const panelRef = useRef<HTMLDivElement>(null);
   const focusElement = useFocusElement();
 
+  const toolResultCallback = useCallback(
+    (agentName: string, toolName: string, iteration: number, subIteration: number) => {
+      const agentLastOperation = agentLastOperations[agentName][toolName];
+      dispatch(setRunIndex({ page: iteration, nodeId: agentName }));
+      dispatch(setRunIndex({ page: subIteration, nodeId: toolName }));
+      dispatch(setFocusNode(agentLastOperation));
+      dispatch(changePanelNode(agentLastOperation));
+    },
+    [Object.keys(agentLastOperations).length, dispatch]
+  );
+  const onChatSubmit = useCallback(async () => {
+    if (!textInput || isNullOrUndefined(chatInvokeUri)) {
+      return;
+    }
+
+    try {
+      await RunService().invokeAgentChat({
+        id: chatInvokeUri,
+        data: { role: 'User', content: textInput },
+      });
+
+      refetchChatHistory();
+    } catch (e: any) {
+      LoggerService().log({
+        level: LogEntryLevel.Error,
+        area: 'agentchat',
+        message: 'Agent chat invocation failed',
+        error: e,
+      });
+    }
+
+    setTextInput('');
+  }, [textInput, chatInvokeUri, refetchChatHistory]);
+
   useEffect(() => {
     if (!isNullOrUndefined(chatHistoryData)) {
-      const newConversations = parseChatHistory(chatHistoryData, dispatch, agentLastOperations);
+      const newConversations = parseChatHistory(chatHistoryData, dispatch, toolResultCallback);
       setConversation([...newConversations]);
     }
-  }, [setConversation, chatHistoryData, dispatch, agentLastOperations]);
+  }, [setConversation, chatHistoryData, dispatch, toolResultCallback]);
 
   const intlText = useMemo(() => {
     return {
@@ -285,9 +323,12 @@ export const AgentChat = ({
               header: <AgentChatHeader title={intlText.agentChatHeader} toggleCollapse={() => setIsCollapsed(true)} />,
             }}
             inputBox={{
-              onSubmit: () => {},
-              disabled: isChatInputEnabled,
-              readOnly: true,
+              onSubmit: () => {
+                onChatSubmit();
+              },
+              onChange: setTextInput,
+              value: textInput,
+              readOnly: !chatInvokeUri,
               readOnlyText: intlText.chatReadOnlyMessage,
             }}
             string={{
