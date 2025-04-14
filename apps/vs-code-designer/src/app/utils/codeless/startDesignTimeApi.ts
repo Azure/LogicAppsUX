@@ -311,9 +311,7 @@ export function stopDesignTimeApi(projectPath: string): void {
 export async function startAllDesignTimeApis(context: IActionContext): Promise<void> {
   if (vscode.workspace.workspaceFolders && vscode.workspace.workspaceFolders.length > 0) {
     const logicAppFolders = await getWorkspaceLogicAppFolders(context);
-    for (const projectPath of logicAppFolders) {
-      await startDesignTimeApi(projectPath);
-    }
+    await Promise.all(logicAppFolders.map(startDesignTimeApi));
   }
 }
 
@@ -357,7 +355,7 @@ export async function promptStartDesignTimeOption(context: IActionContext) {
         }
 
         if (autoStartDesignTime) {
-          await startDesignTimeApi(projectPath);
+          startDesignTimeApi(projectPath);
         }
       }
     }
