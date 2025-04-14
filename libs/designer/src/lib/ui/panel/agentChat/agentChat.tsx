@@ -162,10 +162,12 @@ export const AgentChat = ({
   const [focus, setFocus] = useState(false);
   const [conversation, setConversation] = useState<ConversationItem[]>([]);
   const [textInput, setTextInput] = useState<string>('');
+  const [isWaitingForResponse, setIsWaitingForResponse] = useState(false);
   const isMonitoringView = useMonitoringView();
   const runInstance = useRunInstance();
   const agentOperations = useAgentOperations();
   const agentLastOperations = useAgentLastOperations(agentOperations);
+  const operationLength = useMemo(() => Object.keys(agentLastOperations).length, [agentLastOperations]);
   const [isCollapsed, setIsCollapsed] = useState(false);
   const panelContainerElement = panelContainerRef.current as HTMLElement;
   const agentChatSuffixUri = useUriForAgentChat(conversation.length > 0 ? conversation[0].metadata?.parentId : undefined);
@@ -189,12 +191,15 @@ export const AgentChat = ({
       dispatch(setFocusNode(agentLastOperation));
       dispatch(changePanelNode(agentLastOperation));
     },
-    [Object.keys(agentLastOperations).length, dispatch]
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [operationLength, dispatch]
   );
   const onChatSubmit = useCallback(async () => {
     if (!textInput || isNullOrUndefined(chatInvokeUri)) {
       return;
     }
+
+    setIsWaitingForResponse(true);
 
     try {
       await RunService().invokeAgentChat({
@@ -212,6 +217,7 @@ export const AgentChat = ({
       });
     }
 
+    setIsWaitingForResponse(false);
     setTextInput('');
   }, [textInput, chatInvokeUri, refetchChatHistory]);
 
@@ -340,7 +346,7 @@ export const AgentChat = ({
             body={{
               messages: conversation,
               focus: focus,
-              answerGenerationInProgress: isChatHistoryFetching,
+              answerGenerationInProgress: isChatHistoryFetching || isWaitingForResponse,
               setFocus: setFocus,
               focusMessageId: focusElement,
               clearFocusMessageId: () => dispatch(clearFocusElement()),
