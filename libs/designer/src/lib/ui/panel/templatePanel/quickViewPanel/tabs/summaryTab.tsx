@@ -160,7 +160,7 @@ export const summaryTab = (
     id: 'mgD2ZT',
     description: 'The tab label for the monitoring parameters tab on the operation panel',
   }),
-  hasError: false,
+  tabStatusIcon: undefined,
   content: <SummaryPanel workflowId={workflowId} />,
   footerContent: {
     primaryButtonText: intl.formatMessage({

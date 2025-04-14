@@ -57,7 +57,7 @@ export const reviewCreateTab = (
       description: 'An accessibility label that describes the objective of review and update tab',
     })
   ),
-  hasError: false,
+  tabStatusIcon: undefined,
   content: <ReviewCreatePanel />,
   footerContent: {
     primaryButtonText: isCreating ? (
