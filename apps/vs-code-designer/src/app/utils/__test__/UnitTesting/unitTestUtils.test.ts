@@ -188,6 +188,40 @@ describe('parseErrorBeforeTelemetry', () => {
   });
 });
 
+describe('generateCSharpClasses - StatusCode Removal', () => {
+  it('should remove the redundant StatusCode property from the generated class definition', () => {
+    // Simulate JSON output with a redundant StatusCode property.
+    const dataWithStatusCode = {
+      nestedTypeProperty: 'object',
+      Body: { nestedTypeProperty: 'object', description: 'Response body' },
+      StatusCode: { nestedTypeProperty: 'integer', description: 'The status code' },
+    };
+
+    const classCode = generateCSharpClasses('TestNamespace', 'TestClass', 'WorkflowName', 'Action', 'MockClass', dataWithStatusCode);
+
+    // The generated code should include the constructor setting the base's StatusCode.
+    expect(classCode).toContain('this.StatusCode = HttpStatusCode.OK;');
+    // It should not contain a separate integer property for StatusCode in the class body.
+    expect(classCode).not.toContain('public int StatusCode { get; set; }');
+    // Optionally, check that other properties are still generated correctly.
+    expect(classCode).toContain('public JObject Body { get; set; }');
+  });
+
+  it('should not remove properties other than StatusCode', () => {
+    const dataWithoutStatusCode = {
+      nestedTypeProperty: 'object',
+      Key1: { nestedTypeProperty: 'string', description: 'Test key description' },
+    };
+
+    const classCode = generateCSharpClasses('TestNamespace', 'TestClass', 'WorkflowName', 'Action', 'MockClass', dataWithoutStatusCode);
+
+    // Ensure that a valid property is generated.
+    expect(classCode).toContain('public string Key1 { get; set; }');
+    // And still the base class initialization for StatusCode should be present.
+    expect(classCode).toContain('this.StatusCode = HttpStatusCode.OK;');
+  });
+});
+
 describe('generateCSharpClasses', () => {
   it('should generate C# class code from a class definition', () => {
     const workflowName = 'TestWorkflow';
