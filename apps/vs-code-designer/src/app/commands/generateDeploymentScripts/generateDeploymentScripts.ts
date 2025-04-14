@@ -36,15 +36,30 @@ import * as fs from 'fs';
 import { v4 as uuidv4 } from 'uuid';
 import { ConvertToWorkspace } from '../createNewCodeProject/CodeProjectBase/ConvertToWorkspace';
 
-export async function generateDeploymentScripts(context: IActionContext): Promise<void> {
+/**
+ * Generates deployment scripts for a Logic App project.
+ * @param {IActionContext} context - The action context.
+ * @param {string} node - The node representing the Logic App project. If not provided, the user will be prompted to select a project.
+ * @returns {Promise<void>} - A promise that resolves when the deployment scripts are generated.
+ */
+export async function generateDeploymentScripts(context: IActionContext, node?: vscode.Uri): Promise<void> {
+  let projectPath: string;
+  let projectRoot: vscode.Uri;
+
   try {
     ext.outputChannel.show();
     ext.outputChannel.appendLog(localize('initScriptGen', 'Initiating script generation...'));
 
     addLocalFuncTelemetry(context);
-    const workspaceFolder = await getWorkspaceFolder(context);
-    const projectPath = await tryGetLogicAppProjectRoot(context, workspaceFolder);
-    const projectRoot = vscode.Uri.file(projectPath);
+    if (node) {
+      projectPath = node.fsPath;
+      projectRoot = node;
+    } else {
+      const workspaceFolder = await getWorkspaceFolder(context);
+      projectPath = await tryGetLogicAppProjectRoot(context, workspaceFolder);
+      projectRoot = vscode.Uri.file(projectPath);
+    }
+
     const connectionsJson = await getConnectionsJson(projectPath);
     const connectionsData: ConnectionsData = isEmptyString(connectionsJson) ? {} : JSON.parse(connectionsJson);
     const isParameterized = await areAllConnectionsParameterized(connectionsData);
@@ -92,13 +107,17 @@ export async function generateDeploymentScripts(context: IActionContext): Promis
 
     const correlationId = uuidv4();
     const currentDateTime = new Date().toISOString();
-    workflowFiles.forEach((filePath) => updateMetadata(filePath, correlationId, currentDateTime));
+    workflowFiles.forEach((filePath) => updateMetadata(filePath, projectPath, correlationId, currentDateTime));
   } catch (error) {
     const errorMessage = localize('errorScriptGen', 'Error during deployment script generation: {0}', error.message ?? error);
     ext.outputChannel.appendLog(errorMessage);
     context.telemetry.properties.error = errorMessage;
-    context.telemetry.properties.pinnedBundleVersion = ext.pinnedBundleVersion.toString();
-    context.telemetry.properties.currentWorkflowBundleVersion = ext.currentBundleVersion;
+    context.telemetry.properties.pinnedBundleVersion = ext.pinnedBundleVersion.has(projectPath)
+      ? ext.pinnedBundleVersion.get(projectPath).toString()
+      : 'false';
+    context.telemetry.properties.currentWorkflowBundleVersion = ext.currentBundleVersion.has(projectPath)
+      ? ext.currentBundleVersion.get(projectPath)
+      : ext.defaultBundleVersion;
     if (!errorMessage.includes(COMMON_ERRORS.OPERATION_CANCELLED)) {
       throw new Error(errorMessage);
     }
@@ -119,7 +138,7 @@ function getWorkflowFilePaths(source: string): string[] {
     .map((name) => path.join(source, name, workflowFileName));
 }
 
-function updateMetadata(filePath: string, correlationId: string, currentDateTime: string): void {
+function updateMetadata(filePath: string, projectPath: string, correlationId: string, currentDateTime: string): void {
   const data = JSON.parse(fs.readFileSync(filePath, 'utf-8'));
 
   // Normalize the metadata key to lowercase
@@ -133,8 +152,10 @@ function updateMetadata(filePath: string, correlationId: string, currentDateTime
     IaCGenerationDate: currentDateTime,
     IaCWorkflowCorrelationId: correlationId,
     LogicAppsExtensionVersion: ext.extensionVersion,
-    LogicAppsPinnedBundle: ext.pinnedBundleVersion,
-    LogicAppsCurrentBundleVersion: ext.currentBundleVersion,
+    LogicAppsPinnedBundle: ext.pinnedBundleVersion.has(projectPath) ? ext.pinnedBundleVersion.get(projectPath) : false,
+    LogicAppsCurrentBundleVersion: ext.currentBundleVersion.has(projectPath)
+      ? ext.currentBundleVersion.get(projectPath)
+      : ext.defaultBundleVersion,
   };
 
   if (data.definition.metadata) {
@@ -313,12 +334,18 @@ async function callStandardResourcesApi(
   try {
     ext.outputChannel.appendLog(localize('initApiWorkflowDesignerPort', 'Initiating API connection through workflow designer port...'));
     await startDesignTimeApi(projectPath);
-    if (ext.designTimePort === undefined) {
+    if (!ext.designTimeInstances.has(projectPath)) {
+      throw new Error(
+        localize('designTimeInstanceNotFound', 'Design time API is undefined. Please retry once Azure Functions Core Tools has started.')
+      );
+    }
+    const designTimeInst = ext.designTimeInstances.get(projectPath);
+    if (designTimeInst.port === undefined) {
       throw new Error(
         localize('errorStandardResourcesApi', 'Design time port is undefined. Please retry once Azure Functions Core Tools has started.')
       );
     }
-    const apiUrl = `http://localhost:${ext.designTimePort}${managementApiPrefix}/generateDeploymentArtifacts`;
+    const apiUrl = `http://localhost:${designTimeInst.port}${managementApiPrefix}/generateDeploymentArtifacts`;
     ext.outputChannel.appendLog(localize('apiUrl', `Calling API URL: ${apiUrl}`));
 
     // Construct the request body based on the parameters

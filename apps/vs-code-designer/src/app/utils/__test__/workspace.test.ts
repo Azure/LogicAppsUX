@@ -1,8 +1,9 @@
 import { describe, it, expect, vi, beforeEach, afterEach, Mock } from 'vitest';
+import { promptOpenProjectOrWorkspace, tryGetLogicAppProjectRoot, tryGetAllLogicAppProjectRoots } from '../verifyIsProject';
 import * as vscode from 'vscode';
 import * as workspaceUtils from '../workspace';
-import { promptOpenProjectOrWorkspace, tryGetLogicAppProjectRoot } from '../verifyIsProject';
 import * as fse from 'fs-extra';
+import * as path from 'path';
 
 vi.mock('../verifyIsProject');
 
@@ -196,5 +197,62 @@ describe('workspaceUtils.getWorkspaceFolder', () => {
     vi.spyOn(mockContext.ui, 'showQuickPick').mockResolvedValue(undefined);
 
     await expect(workspaceUtils.getWorkspaceFolder(mockContext)).rejects.toThrowError();
+  });
+
+  describe('workspaceUtils.getWorkspaceLogicAppFolders', () => {
+    const mockContext: any = {};
+    const testLogicAppProjectPath1 = path.join('test', 'project', 'LogicApp1');
+    const testLogicAppProjectPath2 = path.join('test', 'project', 'LogicApp2');
+    const testWorkspaceFolders = [
+      { name: 'LogicApp1', uri: { fsPath: testLogicAppProjectPath1 }, index: 0 },
+      { name: 'LogicApp2', uri: { fsPath: testLogicAppProjectPath2 }, index: 1 },
+    ];
+
+    beforeEach(() => {
+      (vscode.workspace as any).workspaceFolders = testWorkspaceFolders;
+    });
+
+    afterEach(() => {
+      vi.restoreAllMocks();
+    });
+
+    it('should prompt to open project if no workspace folders are open', async () => {
+      (vscode.workspace as any).workspaceFolders = [];
+      const promptOpenProjectOrWorkspaceSpy = vi.fn((context, promptMessage) => {});
+      (promptOpenProjectOrWorkspace as Mock).mockImplementation(promptOpenProjectOrWorkspaceSpy);
+
+      await workspaceUtils.getWorkspaceLogicAppFolders(mockContext, 'Custom warning message');
+
+      expect(promptOpenProjectOrWorkspaceSpy).toHaveBeenCalledWith(mockContext, 'Custom warning message');
+    });
+
+    it('should collect logic app roots from each workspace folder', async () => {
+      const tryGetAllLogicAppProjectRootsSpy = vi.fn(async (folder: vscode.WorkspaceFolder) => {
+        if (folder.uri.fsPath === testLogicAppProjectPath1) {
+          return [folder];
+        } else if (folder.uri.fsPath === testLogicAppProjectPath2) {
+          return ['root2a', 'root2b'];
+        }
+        return [];
+      });
+      (tryGetAllLogicAppProjectRoots as Mock).mockImplementation(tryGetAllLogicAppProjectRootsSpy);
+
+      const result = await workspaceUtils.getWorkspaceLogicAppFolders(mockContext);
+
+      expect(tryGetAllLogicAppProjectRootsSpy).toHaveBeenCalledTimes(2);
+      expect(result).toEqual([testLogicAppProjectPath1, 'root2a', 'root2b']);
+    });
+
+    it('should return an empty array if none of the workspace folders contain a logic app project', async () => {
+      const tryGetAllLogicAppProjectRootsSpy = vi.fn(async () => {
+        return [];
+      });
+      (tryGetAllLogicAppProjectRoots as Mock).mockImplementation(tryGetAllLogicAppProjectRootsSpy);
+
+      const result = await workspaceUtils.getWorkspaceLogicAppFolders(mockContext);
+
+      expect(tryGetAllLogicAppProjectRootsSpy).toHaveBeenCalledTimes(2);
+      expect(result).toEqual([]);
+    });
   });
 });

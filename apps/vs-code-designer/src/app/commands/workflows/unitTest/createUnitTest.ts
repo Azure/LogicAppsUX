@@ -24,7 +24,7 @@ import {
   validateWorkflowPath,
 } from '../../../utils/unitTests';
 import { tryGetLogicAppProjectRoot } from '../../../utils/verifyIsProject';
-import { ensureDirectoryInWorkspace, getWorkflowNode, getWorkspaceFolder } from '../../../utils/workspace';
+import { ensureDirectoryInWorkspace, getWorkflowNode, getWorkspaceFolder, getWorkspacePath } from '../../../utils/workspace';
 import type { IAzureConnectorsContext } from '../azureConnectorWizard';
 import { type IActionContext, callWithTelemetryAndErrorHandling, parseError } from '@microsoft/vscode-azext-utils';
 import * as path from 'path';
@@ -53,10 +53,6 @@ export async function createUnitTest(
     // Validate and extract Run ID
     const validatedRunId = await extractAndValidateRunId(runId);
 
-    // Get workspace folder and project root
-    const workspaceFolder = await getWorkspaceFolder(context);
-    const projectPath = await tryGetLogicAppProjectRoot(context, workspaceFolder);
-
     if (!(await ConvertToWorkspace(context))) {
       ext.outputChannel.appendLog(
         localize('createUnitTestCancelled', 'Exiting unit test creation, a workspace is required to create unit tests.')
@@ -73,7 +69,16 @@ export async function createUnitTest(
     });
 
     // Determine workflow node
-    const workflowNode = node ? (getWorkflowNode(node) as vscode.Uri) : await selectWorkflowNode(context, projectPath);
+    let workflowNode = getWorkflowNode(node) as vscode.Uri;
+    let projectPath: string | undefined;
+    if (workflowNode) {
+      const workspaceFolder = getWorkspacePath(workflowNode.fsPath);
+      projectPath = await tryGetLogicAppProjectRoot(context, workspaceFolder);
+    } else {
+      const workspaceFolder = await getWorkspaceFolder(context);
+      projectPath = await tryGetLogicAppProjectRoot(context, workspaceFolder);
+      workflowNode = await selectWorkflowNode(context, projectPath);
+    }
 
     try {
       validateWorkflowPath(projectPath, workflowNode.fsPath);

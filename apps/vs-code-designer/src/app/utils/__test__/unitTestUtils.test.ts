@@ -4,9 +4,9 @@ import * as fse from 'fs-extra';
 import * as childProcess from 'child_process';
 import * as util from 'util';
 import path from 'path';
-import * as localizeModule from '../../../../localize';
-import { ext } from '../../../../extensionVariables';
-import type { IAzureConnectorsContext } from '../../../commands/workflows/azureConnectorWizard';
+import * as localizeModule from '../../../localize';
+import { ext } from '../../../extensionVariables';
+import type { IAzureConnectorsContext } from '../../commands/workflows/azureConnectorWizard';
 import {
   extractAndValidateRunId,
   validateRunId,
@@ -25,7 +25,7 @@ import {
   createTestSettingsConfigFile,
   updateSolutionWithProject,
   validateWorkflowPath,
-} from '../../unitTests';
+} from '../unitTests';
 
 // ============================================================================
 // Global Constants and Test Hooks
@@ -41,7 +41,10 @@ const fakeLogicAppName = 'MyLogicApp';
 
 // Global beforeEach hook to set up common values
 beforeEach(() => {
-  ext.designTimePort = 1234; // ensure designTimePort is defined for tests
+  ext.designTimeInstances.set(projectPath, {
+    port: 1234,
+    process: {} as childProcess.ChildProcess,
+  });
   ext.outputChannel = { appendLog: vi.fn() } as any;
 });
 
@@ -329,7 +332,10 @@ describe('processAndWriteMockableOperations with no actions', () => {
       })
     );
     ext.outputChannel = { appendLog: vi.fn() } as any;
-    ext.designTimePort = 1234;
+    ext.designTimeInstances.set(projectPath, {
+      port: 1234,
+      process: {} as childProcess.ChildProcess,
+    });
     vi.spyOn(axios, 'get').mockResolvedValue({ data: ['Request'] });
   });
 
@@ -423,7 +429,10 @@ describe('processAndWriteMockableOperations', () => {
     );
     ext.outputChannel = { appendLog: vi.fn() } as any;
     // Set designTimePort and stub axios.get so isMockable works without error
-    ext.designTimePort = 1234;
+    ext.designTimeInstances.set(projectPath, {
+      port: 1234,
+      process: {} as childProcess.ChildProcess,
+    });
     vi.spyOn(axios, 'get').mockResolvedValue({ data: ['Http'] });
   });
 
@@ -1383,7 +1392,7 @@ using System.IO;
 namespace <%= LogicAppName %>.Tests
 {
     public class TestExecutor
-    {                
+    {
         /// <summary>
         /// The root directory.
         /// </summary>

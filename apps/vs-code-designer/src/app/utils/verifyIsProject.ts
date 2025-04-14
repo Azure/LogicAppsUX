@@ -96,6 +96,40 @@ export async function isLogicAppProjectInRoot(workspaceFolder: WorkspaceFolder |
 
 /**
  * Checks root folder and subFolders one level down
+ * If any logic app projects are found return the paths.
+ * @param workspaceFolder - The workspace folder to check.
+ * @returns A promise that resolves to an array of logic app project roots.
+ */
+export async function tryGetAllLogicAppProjectRoots(workspaceFolder: WorkspaceFolder | string | undefined): Promise<string[]> {
+  if (isNullOrUndefined(workspaceFolder)) {
+    return [];
+  }
+
+  const folderPath = isString(workspaceFolder) ? workspaceFolder : workspaceFolder.uri.fsPath;
+  if (!(await fse.pathExists(folderPath))) {
+    return [];
+  }
+
+  if (await isLogicAppProject(folderPath)) {
+    return [folderPath];
+  }
+
+  const logicAppProjectRoots: string[] = [];
+  const subpaths: string[] = await fse.readdir(folderPath);
+  await Promise.all(
+    subpaths.map(async (s) => {
+      const subpath = path.join(folderPath, s);
+      if (await isLogicAppProject(subpath)) {
+        logicAppProjectRoots.push(subpath);
+      }
+    })
+  );
+
+  return logicAppProjectRoots;
+}
+
+/**
+ * Checks root folder and subFolders one level down
  * If a single logic app project is found, return that path.
  * If multiple projects are found, prompt to pick the project.
  */
