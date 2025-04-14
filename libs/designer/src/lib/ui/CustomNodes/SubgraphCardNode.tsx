@@ -19,7 +19,7 @@ import {
   useRunData,
   useWorkflowNode,
 } from '../../core/state/workflow/workflowSelectors';
-import { addAgentTool, addSwitchCase, setFocusNode, toggleCollapsedGraphId } from '../../core/state/workflow/workflowSlice';
+import { addSwitchCase, setFocusNode, toggleCollapsedGraphId } from '../../core/state/workflow/workflowSlice';
 import { LoopsPager } from '../common/LoopsPager/LoopsPager';
 import { DropZone } from '../connections/dropzone';
 import { MessageBarType } from '@fluentui/react';
@@ -95,9 +95,12 @@ const SubgraphCardNode = ({ targetPosition = Position.Top, sourcePosition = Posi
     async (_id: string) => {
       if (isAddCase && graphNode) {
         if (isAgentAddTool) {
-          dispatch(addAgentTool({ toolId: newCaseIdNewAdditiveSubgraphId, nodeId: subgraphId }));
-          const relationshipIds = { graphId: newCaseIdNewAdditiveSubgraphId, parentId: `${newCaseIdNewAdditiveSubgraphId}-#subgraph` };
-          dispatch(expandDiscoveryPanel({ nodeId: guid(), relationshipIds }));
+          const relationshipIds = {
+            graphId: newCaseIdNewAdditiveSubgraphId,
+            parentId: `${newCaseIdNewAdditiveSubgraphId}-#subgraph`,
+            subgraphId: subgraphId,
+          };
+          dispatch(expandDiscoveryPanel({ nodeId: guid(), relationshipIds, isAgentTool: true }));
         } else {
           dispatch(addSwitchCase({ caseId: newCaseIdNewAdditiveSubgraphId, nodeId: subgraphId }));
         }

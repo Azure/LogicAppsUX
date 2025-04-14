@@ -18,7 +18,7 @@ import { addResultSchema } from '../../state/staticresultschema/staticresultsSli
 import type { NodeTokens, VariableDeclaration } from '../../state/tokens/tokensSlice';
 import { initializeTokensAndVariables } from '../../state/tokens/tokensSlice';
 import type { NodesMetadata, WorkflowState } from '../../state/workflow/workflowInterfaces';
-import { addNode, setFocusNode } from '../../state/workflow/workflowSlice';
+import { addAgentTool, addNode, setFocusNode } from '../../state/workflow/workflowSlice';
 import type { AppDispatch, RootState } from '../../store';
 import { getBrandColorFromManifest, getIconUriFromManifest } from '../../utils/card';
 import { getTriggerNodeId, isRootNodeInGraph } from '../../utils/graph';
@@ -83,8 +83,17 @@ export const addOperation = createAsyncThunk('addOperation', async (payload: Add
     }
 
     const workflowState = (getState() as RootState).workflow;
+    const isAddingAgentTool = (getState() as RootState).panel.discoveryContent.isAgentTool;
     const nodeId = getNonDuplicateNodeId(workflowState.nodesMetadata, actionId, workflowState.idReplacements);
     const newPayload = { ...payload, nodeId };
+
+    if (isAddingAgentTool) {
+      const newToolGraphId = (getState() as RootState).panel.discoveryContent.relationshipIds.graphId;
+      const newToolSubgraphId = (getState() as RootState).panel.discoveryContent.relationshipIds.subgraphId;
+      if (newToolSubgraphId && newToolGraphId) {
+        dispatch(addAgentTool({ toolId: newToolGraphId, nodeId: newToolSubgraphId }));
+      }
+    }
 
     dispatch(addNode(newPayload as any));
 
