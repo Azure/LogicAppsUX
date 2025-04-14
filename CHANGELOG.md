@@ -1,4 +1,11 @@
 # Logic Apps Designer
+### [5.58.7](https://github.com/Azure/LogicAppsUX/compare/v5.58.6...v5.58.7) (2025-04-14)
+
+
+### Features
+
+* **designer:** Experimental Flags + Parse Document Functionality ([#7022](https://github.com/Azure/LogicAppsUX/issues/7022)) ([84d6ec1](https://github.com/Azure/LogicAppsUX/commit/84d6ec12d35925c24f5d777a66d1dc8162791a9e))
+
 ### [5.58.6](https://github.com/Azure/LogicAppsUX/compare/v5.58.5...v5.58.6) (2025-04-11)
 
 
