@@ -117,7 +117,7 @@ const DesignerEditor = () => {
   const originalCustomCodeData = useMemo(() => Object.keys(customCodeData ?? {}), [customCodeData]);
   const parameters = useMemo(() => data?.properties.files[Artifact.ParametersFile] ?? {}, [data?.properties.files]);
   const queryClient = getReactQueryClient();
-  const displayChatbotUI = showChatBot && designerView;
+  const displayCopilotChatbot = showChatBot && designerView;
 
   const connectionsData = useMemo(
     () =>
@@ -441,7 +441,7 @@ const DesignerEditor = () => {
                 onClose={() => dispatch(setRunHistoryEnabled(false))}
                 onRunSelected={onRunSelected}
               />
-              {displayChatbotUI ? (
+              {displayCopilotChatbot ? (
                 <CoPilotChatbot
                   openAzureCopilotPanel={() => openPanel('Azure Copilot Panel has been opened')}
                   getAuthToken={getAuthToken}

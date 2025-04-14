@@ -1,7 +1,7 @@
 import { PanelLocation, PanelResizer, PanelSize, type ConversationItem } from '@microsoft/designer-ui';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useIntl } from 'react-intl';
-import { defaultChatbotPanelWidth, ChatbotContent } from '@microsoft/logic-apps-chatbot';
+import { defaultChatbotPanelWidth, ChatbotUI } from '@microsoft/logic-apps-chatbot';
 import { useAgentChatInvokeUri, useChatHistory } from '../../../core/queries/runs';
 import { useMonitoringView } from '../../../core/state/designerOptions/designerOptionsSelectors';
 import {
@@ -210,7 +210,7 @@ export const AgentChat = ({
       ) : null}
       {isCollapsed ? null : (
         <>
-          <ChatbotContent
+          <ChatbotUI
             panel={{
               location: panelLocation,
               width: chatbotWidth,

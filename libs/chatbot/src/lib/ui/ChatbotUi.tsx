@@ -15,7 +15,7 @@ import { useIntl } from 'react-intl';
 
 export const defaultChatbotPanelWidth = '360px';
 
-interface ChatbotUiProps {
+interface ChatbotUIProps {
   panel: {
     width?: string;
     location?: PanelLocation;
@@ -64,7 +64,7 @@ interface ChatbotUiProps {
 const QUERY_MIN_LENGTH = 5;
 const QUERY_MAX_LENGTH = 2000;
 
-export const ChatbotContent = (props: ChatbotUiProps) => {
+export const ChatbotUI = (props: ChatbotUIProps) => {
   const {
     panel: { header },
     body: { messages, focus, answerGenerationInProgress, setFocus, focusMessageId, clearFocusMessageId },
@@ -189,7 +189,7 @@ export const ChatbotContent = (props: ChatbotUiProps) => {
   );
 };
 
-export const AssistantChat = (props: ChatbotUiProps) => {
+export const AssistantChat = (props: ChatbotUIProps) => {
   const {
     panel: { width = defaultChatbotPanelWidth, location = PanelLocation.Left, isOpen, hasCloseButton = false, isBlocking, onDismiss },
   } = props;
@@ -204,7 +204,7 @@ export const AssistantChat = (props: ChatbotUiProps) => {
       layerProps={{ styles: { root: { zIndex: 0, display: 'flex' } } }}
       onDismiss={onDismiss}
     >
-      <ChatbotContent {...props} />
+      <ChatbotUI {...props} />
     </Panel>
   );
 };
