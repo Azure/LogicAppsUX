@@ -231,7 +231,7 @@ export const useAgentChatInvokeUri = (isMonitoringView: boolean, isAgenticWorkfl
     },
     {
       ...queryOpts,
-      retryOnMount: true,
+      retryOnMount: false,
       enabled: isMonitoringView && isAgenticWorkflow && id !== undefined,
     }
   );
