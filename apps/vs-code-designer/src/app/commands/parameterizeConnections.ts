@@ -24,29 +24,26 @@ import type { ConnectionsData } from '@microsoft/vscode-extension-logic-apps';
  */
 export async function promptParameterizeConnections(context: IActionContext): Promise<void> {
   if (workspace.workspaceFolders && workspace.workspaceFolders.length > 0) {
-    const projectPaths = await getWorkspaceLogicAppFolders(context);
-
-    for (const projectPath of projectPaths) {
-      const logicAppName = path.basename(projectPath);
-      const message = localize(
-        'allowParameterizeConnections',
-        `Allow parameterization for connections when your project "${logicAppName}" loads?`
-      );
-      const parameterizeConnectionsSetting = getGlobalSetting(parameterizeConnectionsInProjectLoadSetting);
-
-      if (parameterizeConnectionsSetting === null) {
-        const result = await window.showInformationMessage(message, DialogResponses.yes, DialogResponses.no, DialogResponses.dontWarnAgain);
-        if (result === DialogResponses.yes) {
-          await updateGlobalSetting(parameterizeConnectionsInProjectLoadSetting, true);
-          context.telemetry.properties.parameterizeConnectionsInProjectLoadSetting = 'true';
-          await parameterizeConnections(context, projectPath);
-        } else if (result === DialogResponses.dontWarnAgain) {
-          await updateGlobalSetting(parameterizeConnectionsInProjectLoadSetting, false);
-          context.telemetry.properties.parameterizeConnectionsInProjectLoadSetting = 'false';
-        }
-      } else if (parameterizeConnectionsSetting) {
-        await parameterizeConnections(context, projectPath);
+    const message = localize('allowParameterizeConnections', 'Allow parameterization for connections when your project loads?');
+    const parameterizeConnectionsSetting = getGlobalSetting(parameterizeConnectionsInProjectLoadSetting);
+    let shouldParameterizeConnections = false;
+    if (parameterizeConnectionsSetting === null || parameterizeConnectionsSetting === undefined) {
+      const result = await window.showInformationMessage(message, DialogResponses.yes, DialogResponses.no, DialogResponses.dontWarnAgain);
+      if (result === DialogResponses.yes) {
+        await updateGlobalSetting(parameterizeConnectionsInProjectLoadSetting, true);
+        shouldParameterizeConnections = true;
+        context.telemetry.properties.parameterizeConnectionsInProjectLoadSetting = 'true';
+      } else if (result === DialogResponses.dontWarnAgain) {
+        await updateGlobalSetting(parameterizeConnectionsInProjectLoadSetting, false);
+        context.telemetry.properties.parameterizeConnectionsInProjectLoadSetting = 'false';
       }
+    } else if (parameterizeConnectionsSetting) {
+      shouldParameterizeConnections = true;
+    }
+
+    if (shouldParameterizeConnections) {
+      const projectPaths = await getWorkspaceLogicAppFolders(context);
+      await Promise.all(projectPaths.map((projectPath) => parameterizeConnections(context, projectPath)));
     }
   }
 }
