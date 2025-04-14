@@ -1,4 +1,11 @@
 # Logic Apps Designer
+### [5.58.6](https://github.com/Azure/LogicAppsUX/compare/v5.58.5...v5.58.6) (2025-04-11)
+
+
+### Bug Fixes
+
+* **designer:** revert Support parsedocumentwithmetadat in standard ([#7010](https://github.com/Azure/LogicAppsUX/issues/7010)) ([2d119cb](https://github.com/Azure/LogicAppsUX/commit/2d119cb19023da443a42d1525cd12cae33c78ff4)), closes [#6696](https://github.com/Azure/LogicAppsUX/issues/6696)
+
 ### [5.58.5](https://github.com/Azure/LogicAppsUX/compare/v5.58.4...v5.58.5) (2025-04-11)
 
 

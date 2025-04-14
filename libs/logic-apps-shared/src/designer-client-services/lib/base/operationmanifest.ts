@@ -217,7 +217,6 @@ export const supportedBaseManifestTypes = [
   edifactdecode,
   chunktext,
   parsedocument,
-  parsedocumentwithmetadata,
 ];
 
 export const builtInConnectorIds = {
@@ -348,7 +347,6 @@ export function isBuiltInOperation(definition: any): boolean {
     case invokeworkflow:
     case parsedocument:
     case chunktext:
-    case parsedocumentwithmetadata:
       return true;
 
     default:
@@ -732,10 +730,6 @@ const builtInOperationsMetadata: Record<string, OperationInfo> = {
   [parsedocument]: {
     connectorId: dataOperationConnectorId,
     operationId: parsedocument,
-  },
-  [parsedocumentwithmetadata]: {
-    connectorId: dataOperationConnectorId,
-    operationId: parsedocumentwithmetadata,
   },
 };
 
