@@ -170,11 +170,12 @@ export const panelSlice = createSlice({
         addingTrigger?: boolean;
         focusReturnElementId?: string;
         isParallelBranch?: boolean;
+        isAgentTool?: boolean;
         nodeId: string;
         relationshipIds: RelationshipIds;
       }>
     ) => {
-      const { addingTrigger, focusReturnElementId, isParallelBranch, nodeId, relationshipIds } = action.payload;
+      const { addingTrigger, focusReturnElementId, isParallelBranch, nodeId, relationshipIds, isAgentTool } = action.payload;
 
       state.currentPanelMode = 'Discovery';
       state.focusReturnElementId = focusReturnElementId;
@@ -183,6 +184,7 @@ export const panelSlice = createSlice({
       state.discoveryContent.isParallelBranch = isParallelBranch ?? false;
       state.discoveryContent.relationshipIds = relationshipIds;
       state.discoveryContent.selectedNodeIds = [nodeId];
+      state.discoveryContent.isAgentTool = isAgentTool;
 
       LoggerService().log({
         level: LogEntryLevel.Verbose,

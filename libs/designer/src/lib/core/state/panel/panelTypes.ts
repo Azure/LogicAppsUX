@@ -19,6 +19,7 @@ export interface RelationshipIds {
   graphId: string;
   parentId?: string;
   childId?: string;
+  subgraphId?: string;
 }
 
 export interface ConnectionPanelContentState {
@@ -30,6 +31,7 @@ export interface ConnectionPanelContentState {
 export interface DiscoveryPanelContentState {
   isAddingTrigger: boolean;
   isParallelBranch: boolean;
+  isAgentTool?: boolean;
   panelMode: 'Discovery';
   relationshipIds: RelationshipIds;
   selectedNodeIds: string[];
