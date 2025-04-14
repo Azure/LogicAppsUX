@@ -5,7 +5,7 @@ import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useIntl } from 'react-intl';
 import { useDispatch, useSelector } from 'react-redux';
 import type { RootState, AppDispatch } from '../../../../../core/store';
-import { MessageBar } from '@fluentui/react';
+import { MessageBar, MessageBarType } from '@fluentui/react';
 import ChannelContent from './ChannelContent';
 import type { SupportedChannels } from '@microsoft/logic-apps-shared';
 import { deinitializeNodes } from '../../../../../core/state/operation/operationMetadataSlice';
@@ -54,6 +54,12 @@ export const ChannelsTab: React.FC<PanelTabProps> = (props) => {
         id: 'di6MC0',
         description: 'channel not supported message',
       }),
+      OUTPUT_CHANNEL_MESSAGE: intl.formatMessage({
+        defaultMessage:
+          "Output channel should be enabled if you want to actively interact with the agent and don't expect workflow to return a response.",
+        id: 'hp0f0R',
+        description: 'Output channel info message.',
+      }),
     }),
     [intl]
   );
@@ -82,13 +88,18 @@ export const ChannelsTab: React.FC<PanelTabProps> = (props) => {
             label={enabled ? stringResources.ENABLED : stringResources.DISABLED}
           />
           {enabled && (
-            <ChannelContent
-              selectedNodeId={selectedNodeId}
-              // TODO: Add support for multiple channels
-              channelToAdd={channel}
-              inputNodeId={inputNodeId}
-              outputNodeId={outputNodeId}
-            />
+            <>
+              <MessageBar messageBarType={MessageBarType.info} isMultiline={true}>
+                {stringResources.OUTPUT_CHANNEL_MESSAGE}
+              </MessageBar>
+              <ChannelContent
+                selectedNodeId={selectedNodeId}
+                // TODO: Add support for multiple channels
+                channelToAdd={channel}
+                inputNodeId={inputNodeId}
+                outputNodeId={outputNodeId}
+              />
+            </>
           )}
         </>
       )}
