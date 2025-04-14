@@ -5,6 +5,7 @@ export * from './lib/operationmanifest';
 export * from './lib/search';
 export * from './lib/oAuth';
 export * from './lib/experimentation';
+export * from './lib/experimentationFlags';
 export * from './lib/workflow';
 export * from './lib/httpClient';
 export * from './lib/common/exceptions';
