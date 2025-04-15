@@ -200,7 +200,9 @@ export default {
           type: 'Response',
           default: {
             'inputs.$.statusCode': '200',
-            'inputs.$.body': '{ "responseMessage": "@assistantMessage()" }',
+            'inputs.$.body': `{ 
+  "responseMessage": "@assistantMessage()"
+}`,
           },
         },
       },
