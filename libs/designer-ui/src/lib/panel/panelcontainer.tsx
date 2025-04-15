@@ -1,7 +1,7 @@
 import type { ILayerProps } from '@fluentui/react';
 import {
   Button,
-  // Divider,
+  Divider,
   mergeClasses,
   MessageBar,
   MessageBarBody,
@@ -11,7 +11,7 @@ import {
   MessageBarTitle,
 } from '@fluentui/react-components';
 import { ChevronDoubleRightFilled } from '@fluentui/react-icons';
-import { useCallback, useRef } from 'react';
+import { useCallback, useRef, useMemo } from 'react';
 import { useIntl } from 'react-intl';
 import { EmptyContent } from '../card/emptycontent';
 import type { PageActionTelemetryData } from '../telemetry/models';
@@ -83,7 +83,10 @@ export const PanelContainer = ({
   const isEmptyPanel = noNodeSelected && panelScope === PanelScope.CardLevel;
   const isRight = panelLocation === PanelLocation.Right;
   const pinnedNodeId = pinnedNode?.nodeId;
-  const isPinnedNodeDifferent = undefined;
+  const isPinnedNodeDifferent = useMemo(
+    () => (pinnedNode && !nodes?.find((node) => node.nodeId === pinnedNodeId) ? [pinnedNode] : undefined),
+    [pinnedNode, nodes, pinnedNodeId]
+  );
   const panelRef = useRef<HTMLDivElement>(null);
 
   const drawerWidth = isCollapsed
@@ -172,8 +175,8 @@ export const PanelContainer = ({
   });
 
   const renderPanelContents = useCallback(
-    (contentsNode: NonNullable<typeof nodes>, type: 'pinned' | 'selected'): JSX.Element => {
-      const test = contentsNode.map((node, index) => {
+    (contentsNode: NonNullable<typeof nodes>, type: 'pinned' | 'selected'): JSX.Element[] => {
+      return contentsNode.map((node, index) => {
         const { errorMessage, isError, isLoading, nodeId, onSelectTab, selectedTab, tabs } = node;
 
         return (
@@ -198,8 +201,6 @@ export const PanelContainer = ({
           </div>
         );
       });
-
-      return test as any;
     },
     [renderHeader, panelErrorMessage, trackEvent, panelErrorTitle]
   );
@@ -249,12 +250,12 @@ export const PanelContainer = ({
             ) : (
               <>
                 {nodes ? renderPanelContents(nodes, 'selected') : null}
-                {/* {isPinnedNodeDifferent ? (
+                {isPinnedNodeDifferent ? (
                   <>
                     <Divider vertical={true} />
                     {renderPanelContents(isPinnedNodeDifferent, 'pinned')}
                   </>
-                ) : null} */}
+                ) : null}
               </>
             )}
           </div>
