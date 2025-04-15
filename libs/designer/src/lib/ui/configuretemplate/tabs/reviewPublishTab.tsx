@@ -1,36 +1,25 @@
 import type { AppDispatch } from '../../../core/state/templates/store';
-import { Text } from '@fluentui/react-components';
 import type { TemplateTabProps } from '@microsoft/designer-ui';
 import constants from '../../../common/constants';
 import type { IntlShape } from 'react-intl';
 import { selectWizardTab } from '../../../core/state/templates/tabSlice';
+import { TemplateReviewList } from '../review/TemplateReviewList';
 import type { TemplateWizardTabProps } from './model';
-
-export const ReviewPublishTab = () => {
-  return <Text>placeholder - show review + publish</Text>;
-};
 
 export const reviewPublishTab = (
   intl: IntlShape,
+  resources: Record<string, string>,
   dispatch: AppDispatch,
   onPublish: () => void,
   { disabled, tabStatusIcon }: TemplateWizardTabProps
 ): TemplateTabProps => ({
   id: constants.CONFIGURE_TEMPLATE_WIZARD_TAB_NAMES.REVIEW_AND_PUBLISH,
-  title: intl.formatMessage({
-    defaultMessage: 'Review + publish',
-    id: 'FJQUqL',
-    description: 'The tab label for the monitoring review and publish tab on the configure template wizard',
-  }),
+  title: resources.ReviewPublishTabLabel,
+  content: <TemplateReviewList />,
   tabStatusIcon,
   disabled,
-  content: <ReviewPublishTab />,
   footerContent: {
-    primaryButtonText: intl.formatMessage({
-      defaultMessage: 'Previous',
-      id: 'Q1LEiE',
-      description: 'Button text for going back to the previous tab',
-    }),
+    primaryButtonText: resources.PreviousButtonText,
     primaryButtonOnClick: () => {
       dispatch(selectWizardTab(constants.CONFIGURE_TEMPLATE_WIZARD_TAB_NAMES.PUBLISH));
     },

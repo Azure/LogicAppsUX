@@ -169,7 +169,7 @@ export const ConnectorWithDetails = ({ id, kind }: Template.FeaturedConnector) =
   );
 };
 
-export const ConnectorConnectionName = ({ connectorId, connectionKey }: { connectorId: string; connectionKey: string }) => {
+export const ConnectorConnectionName = ({ connectorId, connectionKey }: { connectorId: string; connectionKey: string | undefined }) => {
   const { data: connector, isLoading } = useConnector(connectorId, /* enabled */ true, /* getCachedData */ true);
 
   return isLoading ? (
@@ -180,7 +180,8 @@ export const ConnectorConnectionName = ({ connectorId, connectionKey }: { connec
     />
   ) : (
     <Text>
-      {connector?.properties?.displayName} ({connectionKey})
+      {connector?.properties?.displayName}
+      {connectionKey ? ` (${connectionKey})` : ''}
     </Text>
   );
 };

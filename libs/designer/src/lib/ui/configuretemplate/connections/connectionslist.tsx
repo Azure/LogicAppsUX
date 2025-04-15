@@ -4,6 +4,7 @@ import { Table, TableBody, TableCell, TableCellLayout, TableHeader, TableHeaderC
 import { useMemo } from 'react';
 import { useIntl } from 'react-intl';
 import { ConnectorIconWithName } from '../../templates/connections/connector';
+import { useTemplatesStrings } from '../../templates/templatesStrings';
 
 export const TemplateConnectionsList = () => {
   const intl = useIntl();
@@ -23,19 +24,8 @@ export const TemplateConnectionsList = () => {
       id: 'OF3adl',
       description: 'The label for the kind column',
     }),
-    Kinds: {
-      inapp: intl.formatMessage({
-        defaultMessage: 'In-app',
-        id: 'n6/Zp0',
-        description: 'The label for the in-app connector kind',
-      }),
-      shared: intl.formatMessage({
-        defaultMessage: 'Shared',
-        id: 'PYku3O',
-        description: 'The label for shared connector kind',
-      }),
-    } as Record<string, string>,
   };
+  const { connectorKinds } = useTemplatesStrings();
   const { connections } = useSelector((state: RootState) => ({
     connections: state.template.connections,
   }));
@@ -84,7 +74,7 @@ export const TemplateConnectionsList = () => {
                   }
                 />
               </TableCell>
-              <TableCell>{resources.Kinds[item.kind as string]}</TableCell>
+              <TableCell>{connectorKinds[item.kind as string]}</TableCell>
             </TableRow>
           ))}
         </TableBody>

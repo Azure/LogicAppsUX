@@ -7,6 +7,8 @@ import { parametersTab } from './parametersTab';
 import { profileTab } from './profileTab';
 import { publishTab } from './publishTab';
 import { reviewPublishTab } from './reviewPublishTab';
+import { useTemplatesStrings } from '../../templates/templatesStrings';
+import { useResourceStrings } from '../resources';
 
 export const useConfigureTemplateWizardTabs = ({
   onSaveWorkflows,
@@ -17,6 +19,7 @@ export const useConfigureTemplateWizardTabs = ({
 }) => {
   const intl = useIntl();
   const dispatch = useDispatch<AppDispatch>();
+  const resources = { ...useTemplatesStrings().tabLabelStrings, ...useResourceStrings() };
 
   const { enableWizard, isWizardUpdating } = useSelector((state: RootState) => ({
     enableWizard: state.tab.enableWizard,
@@ -24,26 +27,26 @@ export const useConfigureTemplateWizardTabs = ({
   }));
 
   return [
-    workflowsTab(intl, dispatch, onSaveWorkflows, {
+    workflowsTab(resources, dispatch, onSaveWorkflows, {
       tabStatusIcon: 'in-progress',
     }),
-    connectionsTab(intl, dispatch, {
+    connectionsTab(intl, resources, dispatch, {
       tabStatusIcon: enableWizard ? 'in-progress' : undefined,
       disabled: !enableWizard || isWizardUpdating,
     }),
-    parametersTab(intl, dispatch, {
+    parametersTab(resources, dispatch, {
       tabStatusIcon: enableWizard ? 'in-progress' : undefined,
       disabled: !enableWizard || isWizardUpdating,
     }),
-    profileTab(intl, dispatch, {
+    profileTab(resources, dispatch, {
       tabStatusIcon: enableWizard ? 'in-progress' : undefined,
       disabled: !enableWizard || isWizardUpdating,
     }),
-    publishTab(intl, dispatch, {
+    publishTab(intl, resources, dispatch, {
       tabStatusIcon: enableWizard ? 'in-progress' : undefined,
       disabled: !enableWizard || isWizardUpdating,
     }),
-    reviewPublishTab(intl, dispatch, onPublish, {
+    reviewPublishTab(intl, resources, dispatch, onPublish, {
       tabStatusIcon: enableWizard ? 'in-progress' : undefined,
       disabled: !enableWizard || isWizardUpdating,
     }),
