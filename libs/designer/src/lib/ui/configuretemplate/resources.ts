@@ -144,15 +144,15 @@ export const useResourceStrings = () => {
       id: 'IG4XXf',
       description: 'Label for workflow state',
     }),
+    StateType: intl.formatMessage({
+      defaultMessage: 'State type',
+      id: 'GkbTLA',
+      description: 'Label for workflow state type',
+    }),
     TemplateName: intl.formatMessage({
       defaultMessage: 'Template',
       id: '83Vrgj',
       description: 'Label for template',
-    }),
-    WorkflowName: intl.formatMessage({
-      defaultMessage: 'Workflow name',
-      id: 'ekM77J',
-      description: 'Label for workflow Name',
     }),
     Placeholder: intl.formatMessage({
       defaultMessage: '--',
@@ -184,6 +184,16 @@ export const useResourceStrings = () => {
       id: '2q6Vas',
       description: 'Required label',
     }),
+    RequiredOn: intl.formatMessage({
+      defaultMessage: 'On',
+      id: 'JHp3nE',
+      description: 'The aria label for the required parameter on (required)',
+    }),
+    RequiredOff: intl.formatMessage({
+      defaultMessage: 'Off',
+      id: '4ZPAvT',
+      description: 'The aria label for the required parameter off (not required)',
+    }),
     Details: intl.formatMessage({
       defaultMessage: 'Details',
       id: 'pr2lJw',
@@ -203,6 +213,26 @@ export const useResourceStrings = () => {
       defaultMessage: 'Required Field',
       id: 'vTxIoS',
       description: 'Required field label',
+    }),
+    LightModeImage: intl.formatMessage({
+      defaultMessage: 'Light mode image',
+      id: '5LLxEp',
+      description: 'Light mode image label',
+    }),
+    DarkModeImage: intl.formatMessage({
+      defaultMessage: 'Dark mode image',
+      id: 'CdxaGY',
+      description: 'Dark mode image label',
+    }),
+    InAppKind: intl.formatMessage({
+      defaultMessage: 'In-app',
+      id: 'n6/Zp0',
+      description: 'The label for the in-app connector kind',
+    }),
+    SharedKind: intl.formatMessage({
+      defaultMessage: 'Shared',
+      id: 'PYku3O',
+      description: 'The label for shared connector kind',
     }),
     // Aria labels
     WorkflowsListTableLabel: intl.formatMessage({
@@ -224,6 +254,37 @@ export const useResourceStrings = () => {
       defaultMessage: 'Select workflow row checkbox label',
       id: 'oChTO9',
       description: 'Accessibility label for the select workflow row checkbox',
+    }),
+    // Tab labels
+    WorkflowsTabLabel: intl.formatMessage({
+      defaultMessage: 'Workflows',
+      id: 'R7VvvJ',
+      description: 'The tab label for the monitoring workflows tab on the configure template wizard',
+    }),
+    ConnectionsTabLabel: intl.formatMessage({
+      defaultMessage: 'Connections',
+      id: 'ur+ZvW',
+      description: 'The tab label for the monitoring connections tab on the configure template wizard',
+    }),
+    ParametersTabLabel: intl.formatMessage({
+      defaultMessage: 'Parameters',
+      id: 'lYAlE9',
+      description: 'The tab label for the monitoring parameters tab on the configure template wizard',
+    }),
+    ProfileTabLabel: intl.formatMessage({
+      defaultMessage: 'Profile',
+      id: '6ELsbA',
+      description: 'The tab label for the monitoring profile tab on the configure template wizard',
+    }),
+    SettingsTabLabel: intl.formatMessage({
+      defaultMessage: 'Settings',
+      id: '+IsazR',
+      description: 'The tab label for the settings tab on the configure template wizard',
+    }),
+    ReviewPublishTabLabel: intl.formatMessage({
+      defaultMessage: 'Review + publish',
+      id: 'FJQUqL',
+      description: 'The tab label for the monitoring review and publish tab on the configure template wizard',
     }),
   };
 };
