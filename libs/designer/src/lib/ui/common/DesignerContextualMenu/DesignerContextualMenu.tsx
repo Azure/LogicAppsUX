@@ -17,7 +17,7 @@ import { PinMenuItem } from '../../../ui/menuItems/pinMenuItem';
 import { RunAfterMenuItem } from '../../../ui/menuItems/runAfterMenuItem';
 import { useOperationInfo, type AppDispatch, type RootState } from '../../../core';
 import { setShowDeleteModalNodeId } from '../../../core/state/designerView/designerViewSlice';
-import { useOperationPanelPinnedNodeId } from '../../../core/state/panel/panelSelectors';
+import { useOperationAlternateSelectedNodeId } from '../../../core/state/panel/panelSelectors';
 import {
   changePanelNode,
   setSelectedPanelActiveTab,
@@ -57,7 +57,7 @@ export const DesignerContextualMenu = () => {
   const dispatch = useDispatch<AppDispatch>();
 
   const rootState = useSelector((state: RootState) => state);
-  const pinnedNodeId = useOperationPanelPinnedNodeId();
+  const alternateSelectedNodeId = useOperationAlternateSelectedNodeId();
 
   const runInstance = useRunInstance();
   const runData = useRunData(nodeId);
@@ -88,12 +88,12 @@ export const DesignerContextualMenu = () => {
   const pinClick = useCallback(() => {
     dispatch(
       setAlternateSelectedNode({
-        nodeId: nodeId === pinnedNodeId ? '' : nodeId,
+        nodeId: nodeId === alternateSelectedNodeId ? '' : nodeId,
         updatePanelOpenState: true,
         panelPersistence: 'pinned',
       })
     );
-  }, [dispatch, nodeId, pinnedNodeId]);
+  }, [dispatch, nodeId, alternateSelectedNodeId]);
 
   const collapseClick = useCallback(() => {
     dispatch(toggleCollapsedActionId(nodeId));

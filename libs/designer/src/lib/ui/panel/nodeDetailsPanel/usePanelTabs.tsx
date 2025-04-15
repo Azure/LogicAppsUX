@@ -32,7 +32,7 @@ export const usePanelTabs = ({ nodeId }: { nodeId: string }) => {
   const isUnitTestView = useUnitTest();
   const panelTabHideKeys = usePanelTabHideKeys();
 
-  const isPinnedNode = useIsNodePinnedToOperationPanel(nodeId);
+  const isAlternateSelectedNode = useIsNodePinnedToOperationPanel(nodeId);
   const isTriggerNode = useSelector((state: RootState) => isRootNodeInGraph(nodeId, 'root', state.workflow.nodesMetadata));
   const operationInfo = useOperationInfo(nodeId);
   const nodeMetaData = useNodeMetadata(nodeId);
@@ -46,10 +46,10 @@ export const usePanelTabs = ({ nodeId }: { nodeId: string }) => {
 
   const tabProps: PanelTabProps = useMemo(
     () => ({
-      isPanelPinned: isPinnedNode,
+      isPanelPinned: isAlternateSelectedNode,
       nodeId,
     }),
-    [isPinnedNode, nodeId]
+    [isAlternateSelectedNode, nodeId]
   );
 
   const monitoringTabItem = useMemo(

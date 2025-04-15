@@ -49,14 +49,17 @@ export const useIsNodeSelectedInOperationPanel = (nodeId: string) =>
 
 export const useIsPanelInPinnedViewMode = (): boolean => {
   const selectedNodeId = useOperationPanelSelectedNodeId();
-  const pinnedNodeId = useOperationPanelPinnedNodeId();
-  return !!(selectedNodeId && pinnedNodeId && pinnedNodeId !== selectedNodeId);
+  const alternateSelectedNode = useOperationAlternateSelectedNodeId();
+  return !!(selectedNodeId && alternateSelectedNode && alternateSelectedNode !== selectedNodeId);
 };
 
-export const useOperationPanelPinnedNodeId = () =>
+export const useOperationAlternateSelectedNodeId = () =>
   useSelector(createSelector(getPanelState, (state) => state.operationContent.alternateSelectedNode?.nodeId ?? ''));
 
-export const useOperationPanelPinnedNodeActiveTabId = () =>
+export const useOperationAlternateSelectedNode = () =>
+  useSelector(createSelector(getPanelState, (state) => state.operationContent.alternateSelectedNode ?? {}));
+
+export const useOperationPanelAlternateNodeActiveTabId = () =>
   useSelector(createSelector(getPanelState, (state) => state.operationContent.alternateSelectedNode?.activeTabId));
 
 export const useOperationPanelSelectedNodeId = () =>

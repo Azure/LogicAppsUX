@@ -113,7 +113,7 @@ export const addOperation = createAsyncThunk('addOperation', async (payload: Add
         setAlternateSelectedNode({
           nodeId: newToolGraphId,
           updatePanelOpenState: true,
-          panelPersistence: 'default',
+          panelPersistence: 'selected',
         })
       );
     }

@@ -31,8 +31,9 @@ export type PanelContainerProps = {
   readOnlyMode?: boolean;
   node: PanelNodeData | undefined;
   nodeHeaderItems: JSX.Element[];
-  pinnedNode: PanelNodeData | undefined;
-  pinnedNodeHeaderItems: JSX.Element[];
+  alternateSelectedNode: PanelNodeData | undefined;
+  alternateSelectedNodeHeaderItems: JSX.Element[];
+  alternateSelectedNodePersistance: 'pinned' | 'selected';
   layerProps?: ILayerProps;
   canResubmit?: boolean;
   overrideWidth?: string;
@@ -62,8 +63,9 @@ export const PanelContainer = ({
   readOnlyMode,
   node,
   nodeHeaderItems,
-  pinnedNode,
-  pinnedNodeHeaderItems,
+  alternateSelectedNode,
+  alternateSelectedNodeHeaderItems,
+  alternateSelectedNodePersistance,
   toggleCollapse,
   trackEvent,
   onCommentChange,
@@ -82,26 +84,27 @@ export const PanelContainer = ({
   const canResize = !!(isResizeable && setOverrideWidth);
   const isEmptyPanel = noNodeSelected && panelScope === PanelScope.CardLevel;
   const isRight = panelLocation === PanelLocation.Right;
-  const pinnedNodeId = pinnedNode?.nodeId;
-  const isPinnedNodeDifferent = pinnedNode && pinnedNode.nodeId !== node?.nodeId ? pinnedNode : undefined;
+  const alternateSelectedNodeId = alternateSelectedNode?.nodeId;
+  const isAlternateNodeDifferent =
+    alternateSelectedNode && alternateSelectedNode.nodeId !== node?.nodeId ? alternateSelectedNode : undefined;
   const panelRef = useRef<HTMLDivElement>(null);
   const drawerWidth = isCollapsed
     ? PanelSize.Auto
-    : ((canResize ? overrideWidth : undefined) ?? (isPinnedNodeDifferent ? PanelSize.DualView : PanelSize.Medium));
+    : ((canResize ? overrideWidth : undefined) ?? (isAlternateNodeDifferent ? PanelSize.DualView : PanelSize.Medium));
 
   const renderHeader = useCallback(
     (headerNode: PanelNodeData): JSX.Element => {
       const { nodeId } = headerNode;
-      const panelHasPinnedNode = !!isPinnedNodeDifferent;
-      const isPinnedNode = pinnedNodeId === nodeId;
-      const canUnpin = !!onUnpinAction && isPinnedNode;
+      const panelHasAlternateNode = !!isAlternateNodeDifferent;
+      const isAlternateNode = alternateSelectedNodeId === nodeId;
+      const canUnpin = !!onUnpinAction && isAlternateNode;
 
       return (
         <PanelHeader
           nodeData={headerNode}
           isCollapsed={isCollapsed}
-          isOutermostPanel={!panelHasPinnedNode || !isPinnedNode}
-          headerItems={isPinnedNode ? pinnedNodeHeaderItems : nodeHeaderItems}
+          isOutermostPanel={!panelHasAlternateNode || !isAlternateNode}
+          headerItems={isAlternateNode ? alternateSelectedNodeHeaderItems : nodeHeaderItems}
           headerLocation={panelLocation}
           noNodeSelected={noNodeSelected}
           panelScope={panelScope}
@@ -122,11 +125,11 @@ export const PanelContainer = ({
       );
     },
     [
-      isPinnedNodeDifferent,
-      pinnedNodeId,
+      isAlternateNodeDifferent,
+      alternateSelectedNodeId,
       onUnpinAction,
       isCollapsed,
-      pinnedNodeHeaderItems,
+      alternateSelectedNodeHeaderItems,
       nodeHeaderItems,
       panelLocation,
       noNodeSelected,
@@ -198,7 +201,7 @@ export const PanelContainer = ({
     [renderHeader, panelErrorMessage, trackEvent, panelErrorTitle]
   );
 
-  const minWidth = pinnedNode ? Number.parseInt(PanelSize.DualView, 10) : undefined;
+  const minWidth = alternateSelectedNode ? Number.parseInt(PanelSize.DualView, 10) : undefined;
 
   if (suppressDefaultNodeSelectFunctionality) {
     // Used in cases like BPT where we do not want to show the panel during node selection
@@ -235,7 +238,7 @@ export const PanelContainer = ({
             className={mergeClasses(
               'msla-panel-container-nested',
               `msla-panel-container-nested-${panelLocation.toLowerCase()}`,
-              !isEmptyPanel && isPinnedNodeDifferent && 'msla-panel-container-nested-dual'
+              !isEmptyPanel && isAlternateNodeDifferent && 'msla-panel-container-nested-dual'
             )}
           >
             {isEmptyPanel ? (
@@ -243,10 +246,10 @@ export const PanelContainer = ({
             ) : (
               <>
                 {node ? renderPanelContents(node, 'selected') : null}
-                {isPinnedNodeDifferent ? (
+                {isAlternateNodeDifferent ? (
                   <>
                     <Divider vertical={true} />
-                    {renderPanelContents(isPinnedNodeDifferent, 'pinned')}
+                    {renderPanelContents(isAlternateNodeDifferent, alternateSelectedNodePersistance)}
                   </>
                 ) : null}
               </>

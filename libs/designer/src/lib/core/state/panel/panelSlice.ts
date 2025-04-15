@@ -108,7 +108,7 @@ export const panelSlice = createSlice({
           alternateSelectedNode: state.operationContent.alternateSelectedNode,
         };
       }
-      if (state.operationContent.alternateSelectedNode?.persistance === 'default') {
+      if (state.operationContent.alternateSelectedNode?.persistance === 'selected') {
         state.operationContent.alternateSelectedNode.activeTabId = undefined;
         state.operationContent.alternateSelectedNode.nodeId = undefined;
       }
@@ -120,7 +120,7 @@ export const panelSlice = createSlice({
     },
     setAlternateSelectedNode: (
       state,
-      action: PayloadAction<{ nodeId: string; updatePanelOpenState?: boolean; panelPersistence?: 'default' | 'pinned' }>
+      action: PayloadAction<{ nodeId: string; updatePanelOpenState?: boolean; panelPersistence?: 'selected' | 'pinned' }>
     ) => {
       const { nodeId, updatePanelOpenState } = action.payload;
       const hasSelectedNode = !!state.operationContent.selectedNodeId;
@@ -152,7 +152,7 @@ export const panelSlice = createSlice({
       state.connectionContent.selectedNodeIds = selectedNodes;
       state.discoveryContent.selectedNodeIds = selectedNodes;
       state.operationContent.selectedNodeId = selectedNodes[0];
-      if (state.operationContent.alternateSelectedNode?.persistance === 'default') {
+      if (state.operationContent.alternateSelectedNode?.persistance === 'selected') {
         state.operationContent.alternateSelectedNode.nodeId = '';
       }
     },
@@ -164,7 +164,7 @@ export const panelSlice = createSlice({
       state.connectionContent.selectedNodeIds = selectedNodes;
       state.operationContent.selectedNodeId = selectedNodes[0];
       state.operationContent.selectedNodeActiveTabId = undefined;
-      if (state.operationContent.alternateSelectedNode?.persistance === 'default') {
+      if (state.operationContent.alternateSelectedNode?.persistance === 'selected') {
         state.operationContent.alternateSelectedNode.nodeId = '';
       }
 
@@ -238,7 +238,7 @@ export const panelSlice = createSlice({
       state.discoveryContent.selectedNodeIds = selectedNodes;
       state.operationContent.selectedNodeId = selectedNodes[0];
 
-      if (state.operationContent.alternateSelectedNode?.persistance === 'default') {
+      if (state.operationContent.alternateSelectedNode?.persistance === 'selected') {
         state.operationContent.alternateSelectedNode.nodeId = '';
       }
     },
