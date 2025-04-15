@@ -1,7 +1,7 @@
 import type { ILayerProps } from '@fluentui/react';
 import {
   Button,
-  Divider,
+  // Divider,
   mergeClasses,
   MessageBar,
   MessageBarBody,
@@ -29,7 +29,7 @@ export type PanelContainerProps = {
   suppressDefaultNodeSelectFunctionality?: boolean;
   pivotDisabled?: boolean;
   readOnlyMode?: boolean;
-  node: PanelNodeData | undefined;
+  nodes: PanelNodeData[] | undefined;
   nodeHeaderItems: JSX.Element[];
   pinnedNode: PanelNodeData | undefined;
   pinnedNodeHeaderItems: JSX.Element[];
@@ -60,7 +60,7 @@ export const PanelContainer = ({
   resubmitOperation,
   onUnpinAction,
   readOnlyMode,
-  node,
+  nodes,
   nodeHeaderItems,
   pinnedNode,
   pinnedNodeHeaderItems,
@@ -83,7 +83,7 @@ export const PanelContainer = ({
   const isEmptyPanel = noNodeSelected && panelScope === PanelScope.CardLevel;
   const isRight = panelLocation === PanelLocation.Right;
   const pinnedNodeId = pinnedNode?.nodeId;
-  const isPinnedNodeDifferent = pinnedNode && pinnedNode.nodeId !== node?.nodeId ? pinnedNode : undefined;
+  const isPinnedNodeDifferent = undefined;
   const panelRef = useRef<HTMLDivElement>(null);
 
   const drawerWidth = isCollapsed
@@ -172,29 +172,34 @@ export const PanelContainer = ({
   });
 
   const renderPanelContents = useCallback(
-    (contentsNode: NonNullable<typeof node>, type: 'pinned' | 'selected'): JSX.Element => {
-      const { errorMessage, isError, isLoading, nodeId, onSelectTab, selectedTab, tabs } = contentsNode;
-      return (
-        <div className={mergeClasses('msla-panel-layout', `msla-panel-layout-${type}`)}>
-          {renderHeader(contentsNode)}
-          <div className={`${isError ? 'msla-panel-contents--error' : 'msla-panel-contents'}`}>
-            {isLoading ? (
-              <div className="msla-loading-container">
-                <Spinner size={'large'} />
-              </div>
-            ) : isError ? (
-              <MessageBar intent={'error'}>
-                <MessageBarBody>
-                  <MessageBarTitle>{panelErrorTitle}</MessageBarTitle>
-                  <Text>{errorMessage ?? panelErrorMessage}</Text>
-                </MessageBarBody>
-              </MessageBar>
-            ) : (
-              <PanelContent tabs={tabs} trackEvent={trackEvent} nodeId={nodeId} selectedTab={selectedTab} selectTab={onSelectTab} />
-            )}
+    (contentsNode: NonNullable<typeof nodes>, type: 'pinned' | 'selected'): JSX.Element => {
+      const test = contentsNode.map((node, index) => {
+        const { errorMessage, isError, isLoading, nodeId, onSelectTab, selectedTab, tabs } = node;
+
+        return (
+          <div key={index} className={mergeClasses('msla-panel-layout', `msla-panel-layout-${type}`)}>
+            {renderHeader(node)}
+            <div className={`${isError ? 'msla-panel-contents--error' : 'msla-panel-contents'}`}>
+              {isLoading ? (
+                <div className="msla-loading-container">
+                  <Spinner size={'large'} />
+                </div>
+              ) : isError ? (
+                <MessageBar intent={'error'}>
+                  <MessageBarBody>
+                    <MessageBarTitle>{panelErrorTitle}</MessageBarTitle>
+                    <Text>{errorMessage ?? panelErrorMessage}</Text>
+                  </MessageBarBody>
+                </MessageBar>
+              ) : (
+                <PanelContent tabs={tabs} trackEvent={trackEvent} nodeId={nodeId} selectedTab={selectedTab} selectTab={onSelectTab} />
+              )}
+            </div>
           </div>
-        </div>
-      );
+        );
+      });
+
+      return test as any;
     },
     [renderHeader, panelErrorMessage, trackEvent, panelErrorTitle]
   );
@@ -243,13 +248,13 @@ export const PanelContainer = ({
               <EmptyContent />
             ) : (
               <>
-                {node ? renderPanelContents(node, 'selected') : null}
-                {isPinnedNodeDifferent ? (
+                {nodes ? renderPanelContents(nodes, 'selected') : null}
+                {/* {isPinnedNodeDifferent ? (
                   <>
                     <Divider vertical={true} />
                     {renderPanelContents(isPinnedNodeDifferent, 'pinned')}
                   </>
-                ) : null}
+                ) : null} */}
               </>
             )}
           </div>

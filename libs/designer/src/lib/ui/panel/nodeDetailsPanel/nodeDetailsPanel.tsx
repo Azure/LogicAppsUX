@@ -218,7 +218,7 @@ export const NodeDetailsPanel = (props: CommonPanelProps): JSX.Element => {
       noNodeSelected={!selectedNode}
       panelScope={PanelScope.CardLevel}
       suppressDefaultNodeSelectFunctionality={suppressDefaultNodeSelectFunctionality}
-      node={selectedNodeData}
+      nodes={selectedNodeData ? [selectedNodeData] : undefined}
       nodeHeaderItems={getHeaderMenuItems(selectedNode)}
       pinnedNode={pinnedNodeData}
       pinnedNodeHeaderItems={getHeaderMenuItems(pinnedNode)}
