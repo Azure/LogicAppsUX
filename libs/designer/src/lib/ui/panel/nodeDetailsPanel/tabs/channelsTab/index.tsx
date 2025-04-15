@@ -53,9 +53,9 @@ export const ChannelsTab: React.FC<PanelTabProps> = (props) => {
       }),
       OUTPUT_CHANNEL_MESSAGE: intl.formatMessage({
         defaultMessage:
-          "Output channel should be enabled if you want to actively interact with the agent and don't expect workflow to return a response.",
-        id: 'hp0f0R',
-        description: 'Output channel info message.',
+          'Channels will be auto-configured to help you communicate with the agent easily. Disable Output channel if you do not want to receive messages from the agent and only want to send messages to the agent.',
+        id: '7df0xk',
+        description: 'Channel info message.',
       }),
     }),
     [intl]

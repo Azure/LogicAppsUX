@@ -76,7 +76,7 @@ const ChannelContent = (props: ChannelContentProps) => {
           >
             <Label id={'input-channel-label'} isRequiredField={true} text={stringResources.INPUT} />
           </Button>
-          {expandInputChannel ? <ParametersTab nodeId={inputNodeId} isPanelPinned={false} /> : null}
+          {expandInputChannel ? <ParametersTab nodeId={inputNodeId} isPanelPinned={false} isTabReadOnly={true} /> : null}
         </div>
       </div>
 
@@ -107,7 +107,7 @@ const ChannelContent = (props: ChannelContentProps) => {
           </Button>
           {expandOutputChannel ? (
             outputChannelEnabled ? (
-              <ParametersTab nodeId={outputNodeId} isPanelPinned={false} />
+              <ParametersTab nodeId={outputNodeId} isPanelPinned={false} isTabReadOnly={true} />
             ) : (
               <div className="msla-setting-section-settings">{stringResources.NO_OUTPUT_CHANNEL_MSG}</div>
             )
