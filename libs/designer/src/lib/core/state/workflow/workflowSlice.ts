@@ -518,7 +518,7 @@ export const workflowSlice = createSlice({
         args: [action.payload],
       });
     },
-    addAgentCondition: (state: WorkflowState, action: PayloadAction<{ toolId: string; nodeId: string }>) => {
+    addAgentTool: (state: WorkflowState, action: PayloadAction<{ toolId: string; nodeId: string }>) => {
       if (!state.graph) {
         return; // log exception
       }
@@ -718,7 +718,7 @@ export const workflowSlice = createSlice({
         deleteNode,
         addSwitchCase,
         deleteSwitchCase,
-        addAgentCondition,
+        addAgentTool,
         addImplicitForeachNode,
         pasteScopeNode,
         setNodeDescription,
@@ -753,7 +753,7 @@ export const {
   setNodeDescription,
   toggleCollapsedGraphId,
   addSwitchCase,
-  addAgentCondition,
+  addAgentTool,
   discardAllChanges,
   buildEdgeIdsBySource,
   updateRunAfter,

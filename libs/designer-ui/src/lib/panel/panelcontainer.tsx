@@ -80,20 +80,20 @@ export const PanelContainer = ({
 }: PanelContainerProps) => {
   const intl = useIntl();
   const canResize = !!(isResizeable && setOverrideWidth);
-  const isEmptyPane = noNodeSelected && panelScope === PanelScope.CardLevel;
+  const isEmptyPanel = noNodeSelected && panelScope === PanelScope.CardLevel;
   const isRight = panelLocation === PanelLocation.Right;
   const pinnedNodeId = pinnedNode?.nodeId;
-  const pinnedNodeIfDifferent = pinnedNode && pinnedNode.nodeId !== node?.nodeId ? pinnedNode : undefined;
+  const isPinnedNodeDifferent = pinnedNode && pinnedNode.nodeId !== node?.nodeId ? pinnedNode : undefined;
   const panelRef = useRef<HTMLDivElement>(null);
 
   const drawerWidth = isCollapsed
     ? PanelSize.Auto
-    : ((canResize ? overrideWidth : undefined) ?? (pinnedNodeIfDifferent ? PanelSize.DualView : PanelSize.Medium));
+    : ((canResize ? overrideWidth : undefined) ?? (isPinnedNodeDifferent ? PanelSize.DualView : PanelSize.Medium));
 
   const renderHeader = useCallback(
     (headerNode: PanelNodeData): JSX.Element => {
       const { nodeId } = headerNode;
-      const panelHasPinnedNode = !!pinnedNodeIfDifferent;
+      const panelHasPinnedNode = !!isPinnedNodeDifferent;
       const isPinnedNode = pinnedNodeId === nodeId;
       const canUnpin = !!onUnpinAction && isPinnedNode;
 
@@ -123,7 +123,7 @@ export const PanelContainer = ({
       );
     },
     [
-      pinnedNodeIfDifferent,
+      isPinnedNodeDifferent,
       pinnedNodeId,
       onUnpinAction,
       isCollapsed,
@@ -220,7 +220,7 @@ export const PanelContainer = ({
       position={isRight ? 'end' : 'start'}
       style={{ position: 'relative', maxWidth: '100%', width: drawerWidth, height: '100%' }}
     >
-      {isEmptyPane || isCollapsed ? (
+      {isEmptyPanel || isCollapsed ? (
         <Button
           appearance="subtle"
           aria-label={panelCollapseTitle}
@@ -236,18 +236,18 @@ export const PanelContainer = ({
             className={mergeClasses(
               'msla-panel-container-nested',
               `msla-panel-container-nested-${panelLocation.toLowerCase()}`,
-              !isEmptyPane && pinnedNodeIfDifferent && 'msla-panel-container-nested-dual'
+              !isEmptyPanel && isPinnedNodeDifferent && 'msla-panel-container-nested-dual'
             )}
           >
-            {isEmptyPane ? (
+            {isEmptyPanel ? (
               <EmptyContent />
             ) : (
               <>
                 {node ? renderPanelContents(node, 'selected') : null}
-                {pinnedNodeIfDifferent ? (
+                {isPinnedNodeDifferent ? (
                   <>
                     <Divider vertical={true} />
-                    {renderPanelContents(pinnedNodeIfDifferent, 'pinned')}
+                    {renderPanelContents(isPinnedNodeDifferent, 'pinned')}
                   </>
                 ) : null}
               </>

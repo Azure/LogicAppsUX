@@ -25,6 +25,7 @@ import { useFunctionalState } from '@react-hookz/web';
 import { Add12Filled } from '@fluentui/react-icons';
 import { deleteWorkflowData } from '../../../core/actions/bjsworkflow/configuretemplate';
 import { useResourceStrings } from '../resources';
+import { useTemplatesStrings } from '../../templates/templatesStrings';
 
 export const DisplayWorkflows = ({ onSave }: { onSave: (isMultiWorkflow: boolean) => void }) => {
   const intl = useIntl();
@@ -57,7 +58,8 @@ export const DisplayWorkflows = ({ onSave }: { onSave: (isMultiWorkflow: boolean
     [intl]
   );
 
-  const resourceStrings = useResourceStrings();
+  const customResourceStrings = useResourceStrings();
+  const { resourceStrings } = useTemplatesStrings();
 
   const handleAddWorkflows = useCallback(() => {
     dispatch(openPanelView({ panelView: TemplatePanelView.ConfigureWorkflows }));
@@ -113,9 +115,9 @@ export const DisplayWorkflows = ({ onSave }: { onSave: (isMultiWorkflow: boolean
   const items =
     Object.values(workflows)?.map((workflowData) => ({
       id: workflowData.id,
-      name: workflowData?.workflowName ?? resourceStrings.Placeholder,
-      displayName: workflowData?.manifest?.title ?? resourceStrings.Placeholder,
-      state: workflowData?.manifest?.kinds?.join(', ') ?? resourceStrings.Placeholder,
+      name: workflowData?.workflowName ?? customResourceStrings.Placeholder,
+      displayName: workflowData?.manifest?.title ?? customResourceStrings.Placeholder,
+      state: workflowData?.manifest?.kinds?.join(', ') ?? customResourceStrings.Placeholder,
       trigger: '-', //TODO: replace this with the actual trigger type
       date: '-', //TODO: replace this with the actual date
     })) ?? [];
@@ -180,24 +182,24 @@ export const DisplayWorkflows = ({ onSave }: { onSave: (isMultiWorkflow: boolean
         }}
       />
       {Object.keys(workflows).length > 0 ? (
-        <Table aria-label={resourceStrings.WorkflowsListTableLabel} style={{ minWidth: '550px' }}>
+        <Table aria-label={customResourceStrings.WorkflowsListTableLabel} style={{ minWidth: '550px' }}>
           <TableHeader>
             <TableRow>
               <TableSelectionCell
                 checked={allRowsSelected ? true : someRowsSelected ? 'mixed' : false}
                 onClick={toggleAllRows}
                 onKeyDown={toggleAllKeydown}
-                checkboxIndicator={{ 'aria-label': resourceStrings.SelectAllWorkflowsLabel }}
+                checkboxIndicator={{ 'aria-label': customResourceStrings.SelectAllWorkflowsLabel }}
               />
 
-              <TableHeaderCell>{resourceStrings.WorkflowName}</TableHeaderCell>
-              <TableHeaderCell>{resourceStrings.WorkflowDisplayName}</TableHeaderCell>
-              <TableHeaderCell>{resourceStrings.State}</TableHeaderCell>
+              <TableHeaderCell>{resourceStrings.WORKFLOW_NAME}</TableHeaderCell>
+              <TableHeaderCell>{customResourceStrings.WorkflowDisplayName}</TableHeaderCell>
+              <TableHeaderCell>{customResourceStrings.State}</TableHeaderCell>
             </TableRow>
           </TableHeader>
           {rows.map(({ item, selected, onClick, onKeyDown, appearance }) => (
             <TableRow key={item.id} onClick={onClick} onKeyDown={onKeyDown} aria-selected={selected} appearance={appearance}>
-              <TableSelectionCell checked={selected} checkboxIndicator={{ 'aria-label': resourceStrings.WorkflowCheckboxRowLabel }} />
+              <TableSelectionCell checked={selected} checkboxIndicator={{ 'aria-label': customResourceStrings.WorkflowCheckboxRowLabel }} />
               <TableCell>
                 <TableCellLayout>{item.name}</TableCellLayout>
               </TableCell>

@@ -29,16 +29,6 @@ export const TemplateParametersList = () => {
       id: 'u2z3kg',
       description: 'The aria label for the parameters table',
     }),
-    True: intl.formatMessage({
-      defaultMessage: 'true',
-      id: '8T3WkV',
-      description: 'The aria label for the required parameter',
-    }),
-    False: intl.formatMessage({
-      defaultMessage: 'false',
-      id: 'natAa1',
-      description: 'The aria label for the non-required parameter',
-    }),
   };
 
   const { parameterDefinitions, currentPanelView, workflowsInTemplate } = useSelector((state: RootState) => ({
@@ -133,7 +123,7 @@ export const TemplateParametersList = () => {
                 <TableCellLayout>{item.description}</TableCellLayout>
               </TableCell>
               <TableCell>
-                <TableCellLayout>{item.required ? intlText.True : intlText.False}</TableCellLayout>
+                <TableCellLayout>{item.required ? resourceStrings.RequiredOn : resourceStrings.RequiredOff}</TableCellLayout>
               </TableCell>
               <TableCell>
                 <TableCellLayout>
