@@ -48,13 +48,13 @@ export async function switchToDotnetProjectCommand(context: IProjectWizardContex
   switchToDotnetProject(context, target);
 }
 
-export async function switchToDotnetProject(context: IProjectWizardContext, target: vscode.Uri, dotNetVersion: string = '6', isCodeful: boolean = false) {
+export async function switchToDotnetProject(context: IProjectWizardContext, target: vscode.Uri, dotNetVersion = '6', isCodeful = false) {
   if (target === undefined || Object.keys(target).length === 0) {
     const workspaceFolder = await getWorkspaceFolder(context);
     const projectPath = await tryGetLogicAppProjectRoot(context, workspaceFolder);
     target = vscode.Uri.file(projectPath);
   }
-  
+
   const isDotNetInstalled = await validateDotNetIsInstalled(context, target.fsPath);
   if (!isDotNetInstalled) {
     return;
@@ -186,8 +186,8 @@ async function updateBuildFile(context: IActionContext, target: vscode.Uri, dotn
   xmlBuildFile = JSON.parse(xmlBuildFile);
   xmlBuildFile = addNugetPackagesToBuildFile(xmlBuildFile);
   if (isCodeful) {
-    xmlBuildFile = addNugetPackagesToBuildFileByName(xmlBuildFile, 'Microsoft.Azure.WebJobs.Extensions.DurableTask', "3.0.4");
-    xmlBuildFile = addNugetPackagesToBuildFileByName(xmlBuildFile, "LogicApps.Connectors", '1.0.0');
+    xmlBuildFile = addNugetPackagesToBuildFileByName(xmlBuildFile, 'Microsoft.Azure.WebJobs.Extensions.DurableTask', '3.0.4');
+    xmlBuildFile = addNugetPackagesToBuildFileByName(xmlBuildFile, 'LogicApps.Connectors', '1.0.0');
   }
   xmlBuildFile = suppressJavaScriptBuildWarnings(xmlBuildFile);
   xmlBuildFile = allowLocalSettingsToPublishDirectory(context, xmlBuildFile);
@@ -203,10 +203,6 @@ async function updateBuildFile(context: IActionContext, target: vscode.Uri, dotn
 
   for (const connectionFile of projectArtifacts['connections']) {
     xmlBuildFile = addFileToBuildPath(xmlBuildFile, connectionFile);
-  }
-
-  if (isCodeful) {
-    xmlBuildFile = addFileToBuildPath(xmlBuildFile, "connections.json");
   }
 
   for (const parametersFile of projectArtifacts['parameters']) {

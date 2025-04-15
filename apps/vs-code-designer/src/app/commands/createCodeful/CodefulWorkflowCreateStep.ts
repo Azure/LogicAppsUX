@@ -55,9 +55,9 @@ export class CodefulWorkflowCreateStep extends WorkflowCreateStepBase<IFunctionW
     await fse.ensureDir(functionPath);
     await fse.writeFile(workflowCsFullPath, codelessDefinition);
 
-    await this.createSystemArtifacts(context);
-
     await createConnectionsJson(context, context.projectPath);
+
+    await this.createSystemArtifacts(context);
 
     return workflowCsFullPath;
   }
@@ -90,6 +90,7 @@ export class CodefulWorkflowCreateStep extends WorkflowCreateStepBase<IFunctionW
     if (hostJsonUpdated) {
       await writeFormattedJson(hostJsonPath, hostJson);
     }
+
     await setLocalAppSetting(context, context.projectPath, workerRuntimeKey, WorkerRuntime.Dotnet, MismatchBehavior.Overwrite);
     await setLocalAppSetting(context, context.projectPath, functionsInprocNet8Enabled, '1', MismatchBehavior.Overwrite);
     await setLocalAppSetting(context, context.projectPath, appKindSetting, logicAppKind, MismatchBehavior.Overwrite);
