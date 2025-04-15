@@ -1,20 +1,24 @@
 import type { PanelTabFn, PanelTabProps } from '@microsoft/designer-ui';
 import constants from '../../../../../common/constants';
 import { MessageBarBody, Switch, type SwitchOnChangeData } from '@fluentui/react-components';
-import { useCallback, useEffect, useMemo, useState } from 'react';
+import { useCallback, useMemo, useState } from 'react';
 import { useIntl } from 'react-intl';
 import { useDispatch, useSelector } from 'react-redux';
 import type { RootState, AppDispatch } from '../../../../../core/store';
 import { MessageBar, MessageBarType } from '@fluentui/react';
 import ChannelContent from './ChannelContent';
 import type { SupportedChannels } from '@microsoft/logic-apps-shared';
-import { deinitializeNodes } from '../../../../../core/state/operation/operationMetadataSlice';
+import { deinitializeNodes, initializeNodeOperationInputsData } from '../../../../../core/state/operation/operationMetadataSlice';
+import { getAllNodeData } from '../../../../../core/configuretemplate/utils/helper';
+import { initializeOperationDetails } from '../../../../../core/templates/utils/parametershelper';
+import { setIsWorkflowParametersDirty } from '../../../../../core/state/workflowparameters/workflowparametersSlice';
 
 export const ChannelsTab: React.FC<PanelTabProps> = (props) => {
   const { nodeId: selectedNodeId } = props;
   const dispatch = useDispatch<AppDispatch>();
   const supportedChannels = useSelector((state: RootState) => state.operations.supportedChannels[selectedNodeId]);
   const [channel, _setChannel] = useState<SupportedChannels | undefined>(supportedChannels.length > 0 ? supportedChannels[0] : undefined);
+  const [isLoading, setIsLoading] = useState(false);
   const inputNodeId = useMemo(
     () => `${selectedNodeId}${constants.CHANNELS.INPUT}${channel?.input?.type}`,
     [channel?.input.type, selectedNodeId]
@@ -28,14 +32,7 @@ export const ChannelsTab: React.FC<PanelTabProps> = (props) => {
 
   const outputChannelParameters = useSelector((state: RootState) => state.operations.inputParameters[outputNodeId]);
 
-  const [enabled, setEnabled] = useState(false);
-
   const intl = useIntl();
-
-  const disableChannel = useCallback(() => {
-    dispatch(deinitializeNodes([outputNodeId, inputNodeId]));
-    setEnabled(false);
-  }, [dispatch, inputNodeId, outputNodeId]);
 
   const stringResources = useMemo(
     () => ({
@@ -64,9 +61,100 @@ export const ChannelsTab: React.FC<PanelTabProps> = (props) => {
     [intl]
   );
 
-  useEffect(() => {
-    setEnabled(!!inputChannelParameters || !!outputChannelParameters);
-  }, [inputChannelParameters, outputChannelParameters]);
+  const enabled = useMemo(() => !!inputChannelParameters, [inputChannelParameters]);
+
+  const disableOperation = useCallback(
+    (operationOptions: { input: boolean; output: boolean }) => {
+      const disableNodes = [];
+      if (operationOptions.input) {
+        disableNodes.push(inputNodeId);
+      }
+      if (operationOptions.output) {
+        disableNodes.push(outputNodeId);
+      }
+      dispatch(deinitializeNodes(disableNodes));
+      // TODO: Need to handle content change
+      dispatch(setIsWorkflowParametersDirty(true));
+    },
+    [dispatch, inputNodeId, outputNodeId]
+  );
+
+  const initializeOperation = useCallback(
+    async (operationOptions: { input: boolean; output: boolean }) => {
+      if (!channel) {
+        return;
+      }
+      setIsLoading(true);
+      const { input, output } = channel;
+      const { type: inputOperationType } = input;
+      const { type: outputOperationType } = output;
+
+      const operationsData = await getAllNodeData([
+        initializeOperationDetails(
+          inputNodeId,
+          {
+            type: inputOperationType,
+          },
+          undefined,
+          true,
+          [],
+          {}
+        ),
+        initializeOperationDetails(
+          outputNodeId,
+          {
+            type: outputOperationType,
+          },
+          undefined,
+          false,
+          [],
+          {}
+        ),
+      ]);
+
+      const updatedOperationsData = [];
+
+      if (operationOptions.input) {
+        if (inputChannelParameters) {
+          operationsData[0].nodeInputs = inputChannelParameters;
+        } else if (operationsData[0].nodeInputs.parameterGroups['default']) {
+          for (const [key, defaultValue] of Object.entries(channel?.input.default ?? {})) {
+            const index = operationsData[0].nodeInputs.parameterGroups['default'].rawInputs.findIndex((item) => item.key === key);
+            if (index >= 0) {
+              operationsData[0].nodeInputs.parameterGroups['default'].rawInputs[index].value = defaultValue;
+
+              operationsData[0].nodeInputs.parameterGroups['default'].parameters[index].value[0].value = defaultValue as string;
+            }
+          }
+        }
+
+        updatedOperationsData.push(operationsData[0]);
+      }
+
+      if (operationOptions.output) {
+        if (outputChannelParameters) {
+          operationsData[1].nodeInputs = outputChannelParameters;
+        } else if (operationsData[1].nodeInputs.parameterGroups['default']) {
+          for (const [key, defaultValue] of Object.entries(channel?.output.default ?? {})) {
+            const index = operationsData[1].nodeInputs.parameterGroups['default'].rawInputs.findIndex((item) => item.key === key);
+            if (index >= 0) {
+              operationsData[1].nodeInputs.parameterGroups['default'].rawInputs[index].value = defaultValue;
+              operationsData[1].nodeInputs.parameterGroups['default'].parameters[index].value[0].value = defaultValue as string;
+            }
+          }
+        }
+
+        updatedOperationsData.push(operationsData[1]);
+      }
+
+      setIsLoading(false);
+      dispatch(initializeNodeOperationInputsData(updatedOperationsData));
+      // TODO: Need to handle content change
+      dispatch(setIsWorkflowParametersDirty(true));
+    },
+    [dispatch, channel, inputNodeId, outputNodeId, inputChannelParameters, outputChannelParameters]
+  );
+
   return (
     <>
       {supportedChannels.length === 0 || !channel ? (
@@ -79,9 +167,9 @@ export const ChannelsTab: React.FC<PanelTabProps> = (props) => {
             checked={enabled}
             onChange={(_, data: SwitchOnChangeData) => {
               if (data.checked) {
-                setEnabled(true);
+                initializeOperation({ input: true, output: true });
               } else {
-                disableChannel();
+                disableOperation({ input: true, output: true });
               }
             }}
             style={{ display: 'flex', marginBottom: '10px' }}
@@ -98,6 +186,9 @@ export const ChannelsTab: React.FC<PanelTabProps> = (props) => {
                 channelToAdd={channel}
                 inputNodeId={inputNodeId}
                 outputNodeId={outputNodeId}
+                initializeOperation={initializeOperation}
+                disableOperation={disableOperation}
+                isLoading={isLoading}
               />
             </>
           )}
