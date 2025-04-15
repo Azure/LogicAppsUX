@@ -40,7 +40,7 @@ export const connectionsTab = (
     id: 'pqprxZ',
     description: 'An accessibility label that describes the objective of connections tab',
   }),
-  hasError: hasError,
+  tabStatusIcon: hasError ? 'error' : undefined,
   content: <ConnectionsPanel />,
   footerContent: {
     primaryButtonText: intl.formatMessage({

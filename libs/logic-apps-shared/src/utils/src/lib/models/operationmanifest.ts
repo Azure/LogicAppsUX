@@ -47,6 +47,7 @@ export const OperationOptions = {
   EnableSchemaValidation: 'EnableSchemaValidation',
   SuppressWorkflowHeaders: 'SuppressWorkflowHeaders',
   SuppressWorkflowHeadersOnResponse: 'SuppressWorkflowHeadersOnResponse',
+  FailWhenLimitsReached: 'FailWhenLimitsReached',
 };
 export type OperationOptions = (typeof OperationOptions)[keyof typeof OperationOptions];
 

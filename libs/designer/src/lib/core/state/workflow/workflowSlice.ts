@@ -336,6 +336,12 @@ export const workflowSlice = createSlice({
     clearFocusNode: (state: WorkflowState) => {
       state.focusedCanvasNodeId = undefined;
     },
+    setFocusElement: (state: WorkflowState, action: PayloadAction<string>) => {
+      state.focusElement = action.payload;
+    },
+    clearFocusElement: (state: WorkflowState) => {
+      state.focusElement = undefined;
+    },
     clearFocusCollapsedNode: (state: WorkflowState) => {
       state.focusCollapsedNodeId = undefined;
     },
@@ -446,14 +452,17 @@ export const workflowSlice = createSlice({
       }
       nodeMetadata.runIndex = page;
     },
-    setRepetitionRunData: (state: WorkflowState, action: PayloadAction<{ nodeId: string; runData: LogicAppsV2.WorkflowRunAction }>) => {
-      const { nodeId, runData } = action.payload;
+    setRepetitionRunData: (
+      state: WorkflowState,
+      action: PayloadAction<{ nodeId: string; runData: LogicAppsV2.WorkflowRunAction; isWithinAgentic?: boolean }>
+    ) => {
+      const { nodeId, runData, isWithinAgentic = false } = action.payload;
       const nodeMetadata = getRecordEntry(state.nodesMetadata, nodeId);
       if (!nodeMetadata) {
         return;
       }
       const nodeRunData = {
-        ...nodeMetadata.runData,
+        ...(isWithinAgentic ? {} : nodeMetadata.runData),
         ...runData,
         inputsLink: runData?.inputsLink ?? null,
         outputsLink: runData?.outputsLink ?? null,
@@ -509,7 +518,7 @@ export const workflowSlice = createSlice({
         args: [action.payload],
       });
     },
-    addAgentCondition: (state: WorkflowState, action: PayloadAction<{ toolId: string; nodeId: string }>) => {
+    addAgentTool: (state: WorkflowState, action: PayloadAction<{ toolId: string; nodeId: string }>) => {
       if (!state.graph) {
         return; // log exception
       }
@@ -709,7 +718,7 @@ export const workflowSlice = createSlice({
         deleteNode,
         addSwitchCase,
         deleteSwitchCase,
-        addAgentCondition,
+        addAgentTool,
         addImplicitForeachNode,
         pasteScopeNode,
         setNodeDescription,
@@ -744,7 +753,7 @@ export const {
   setNodeDescription,
   toggleCollapsedGraphId,
   addSwitchCase,
-  addAgentCondition,
+  addAgentTool,
   discardAllChanges,
   buildEdgeIdsBySource,
   updateRunAfter,
@@ -765,6 +774,8 @@ export const {
   clearFocusCollapsedNode,
   updateAgenticGraph,
   updateAgenticMetadata,
+  setFocusElement,
+  clearFocusElement,
 } = workflowSlice.actions;
 
 export default workflowSlice.reducer;

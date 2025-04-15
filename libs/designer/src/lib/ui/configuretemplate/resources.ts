@@ -69,6 +69,11 @@ export const useResourceStrings = () => {
       id: 'N6SVax',
       description: 'Display name label',
     }),
+    Name: intl.formatMessage({
+      defaultMessage: 'Name',
+      id: 'gOkIvb',
+      description: 'Name label',
+    }),
     WorkflowType: intl.formatMessage({
       defaultMessage: 'Workflow type',
       id: 'xBIh0S',
@@ -139,15 +144,95 @@ export const useResourceStrings = () => {
       id: 'IG4XXf',
       description: 'Label for workflow state',
     }),
+    StateType: intl.formatMessage({
+      defaultMessage: 'State type',
+      id: 'GkbTLA',
+      description: 'Label for workflow state type',
+    }),
     TemplateName: intl.formatMessage({
       defaultMessage: 'Template',
       id: '83Vrgj',
       description: 'Label for template',
     }),
-    WorkflowName: intl.formatMessage({
-      defaultMessage: 'Workflow name',
-      id: 'ekM77J',
-      description: 'Label for workflow Name',
+    Placeholder: intl.formatMessage({
+      defaultMessage: '--',
+      id: '5lRHeK',
+      description: 'Accessibility label indicating that the value is not set',
+    }),
+    Description: intl.formatMessage({
+      defaultMessage: 'Description',
+      id: 'FOoLuS',
+      description: 'Label for description',
+    }),
+    DefaultValue: intl.formatMessage({
+      defaultMessage: 'Default value',
+      id: 'v5CBNu',
+      description: 'Default value label',
+    }),
+    AllowedValues: intl.formatMessage({
+      defaultMessage: 'Allowed values',
+      id: 'gl+tO3',
+      description: 'Allowed values label',
+    }),
+    AssociatedWorkflows: intl.formatMessage({
+      defaultMessage: 'Associated workflows',
+      id: 'cjSsih',
+      description: 'Associated workflows label',
+    }),
+    Required: intl.formatMessage({
+      defaultMessage: 'Required',
+      id: '2q6Vas',
+      description: 'Required label',
+    }),
+    RequiredOn: intl.formatMessage({
+      defaultMessage: 'On',
+      id: 'JHp3nE',
+      description: 'The aria label for the required parameter on (required)',
+    }),
+    RequiredOff: intl.formatMessage({
+      defaultMessage: 'Off',
+      id: '4ZPAvT',
+      description: 'The aria label for the required parameter off (not required)',
+    }),
+    Details: intl.formatMessage({
+      defaultMessage: 'Details',
+      id: 'pr2lJw',
+      description: 'Details label',
+    }),
+    ParameterName: intl.formatMessage({
+      defaultMessage: 'Parameter name',
+      id: '2j1xuE',
+      description: 'Parameter name label',
+    }),
+    ParameterDisplayName: intl.formatMessage({
+      defaultMessage: 'Parameter display name',
+      id: 'uRAbJb',
+      description: 'Parameter display name label',
+    }),
+    RequiredField: intl.formatMessage({
+      defaultMessage: 'Required Field',
+      id: 'vTxIoS',
+      description: 'Required field label',
+    }),
+    LightModeImage: intl.formatMessage({
+      defaultMessage: 'Light mode image',
+      id: '5LLxEp',
+      description: 'Light mode image label',
+    }),
+    DarkModeImage: intl.formatMessage({
+      defaultMessage: 'Dark mode image',
+      id: 'CdxaGY',
+      description: 'Dark mode image label',
+    }),
+    InAppKind: intl.formatMessage({
+      defaultMessage: 'In-app',
+      id: 'n6/Zp0',
+      description: 'The label for the in-app connector kind',
+    }),
+    SharedKind: intl.formatMessage({
+      defaultMessage: 'Shared',
+      id: 'PYku3O',
+      description: 'The label for shared connector kind',
     }),
     // Aria labels
     WorkflowsListTableLabel: intl.formatMessage({
@@ -169,6 +254,37 @@ export const useResourceStrings = () => {
       defaultMessage: 'Select workflow row checkbox label',
       id: 'oChTO9',
       description: 'Accessibility label for the select workflow row checkbox',
+    }),
+    // Tab labels
+    WorkflowsTabLabel: intl.formatMessage({
+      defaultMessage: 'Workflows',
+      id: 'R7VvvJ',
+      description: 'The tab label for the monitoring workflows tab on the configure template wizard',
+    }),
+    ConnectionsTabLabel: intl.formatMessage({
+      defaultMessage: 'Connections',
+      id: 'ur+ZvW',
+      description: 'The tab label for the monitoring connections tab on the configure template wizard',
+    }),
+    ParametersTabLabel: intl.formatMessage({
+      defaultMessage: 'Parameters',
+      id: 'lYAlE9',
+      description: 'The tab label for the monitoring parameters tab on the configure template wizard',
+    }),
+    ProfileTabLabel: intl.formatMessage({
+      defaultMessage: 'Profile',
+      id: '6ELsbA',
+      description: 'The tab label for the monitoring profile tab on the configure template wizard',
+    }),
+    SettingsTabLabel: intl.formatMessage({
+      defaultMessage: 'Settings',
+      id: '+IsazR',
+      description: 'The tab label for the settings tab on the configure template wizard',
+    }),
+    ReviewPublishTabLabel: intl.formatMessage({
+      defaultMessage: 'Review + publish',
+      id: 'FJQUqL',
+      description: 'The tab label for the monitoring review and publish tab on the configure template wizard',
     }),
   };
 };
