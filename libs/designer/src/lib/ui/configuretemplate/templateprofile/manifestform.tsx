@@ -35,7 +35,7 @@ const useGeneralSectionItems = (resources: Record<string, string>) => {
   const items: TemplatesSectionItem[] = [
     {
       label: resources.DisplayName,
-      value: manifest?.title ?? '',
+      value: manifest?.title || '',
       type: 'textfield',
       required: true,
       onChange: (value: string) => dispatch(updateTemplateManifest({ title: value })),
@@ -63,8 +63,8 @@ const useContactInfoSectionItems = (resources: Record<string, string>) => {
   const { manifest } = useSelector((state: RootState) => state.template);
   const items: TemplatesSectionItem[] = [
     {
-      label: resources.ContactInfo,
-      value: manifest?.details?.By ?? '',
+      label: resources.BY,
+      value: manifest?.details?.By || '',
       type: 'textfield',
       required: true,
       onChange: (value: string) => dispatch(updateTemplateManifest({ details: { ...(manifest?.details ?? {}), By: value } as any })),
@@ -81,14 +81,14 @@ const useDescriptionSectionItems = (resources: Record<string, string>) => {
   const items: TemplatesSectionItem[] = [
     {
       label: resources.Summary,
-      value: manifest?.summary ?? '',
+      value: manifest?.summary || '',
       type: 'textarea',
       required: true,
       onChange: (value: string) => dispatch(updateTemplateManifest({ summary: value })),
     },
     {
       label: isMultiWorkflow ? resources.Features : resources.Prerequisites,
-      value: manifest?.description ?? '',
+      value: manifest?.description || '',
       type: 'textarea',
       required: true,
       onChange: (value: string) => dispatch(updateTemplateManifest({ description: value })),
@@ -125,7 +125,7 @@ const useCategorySectionItems = (resources: Record<string, string>) => {
   const items: TemplatesSectionItem[] = [
     {
       label: resources.FeaturedConnectors,
-      value: featuredConnectors ?? [],
+      value: featuredConnectors || [],
       type: 'custom',
       required: true,
       onRenderItem: () => <FeaturedConnectors />,
@@ -143,7 +143,7 @@ const useCategorySectionItems = (resources: Record<string, string>) => {
     },
     {
       label: resources.Tags,
-      value: tags ?? [],
+      value: tags || [],
       type: 'custom',
       onRenderItem: () => <TagsInput tags={tags ?? []} />,
     },

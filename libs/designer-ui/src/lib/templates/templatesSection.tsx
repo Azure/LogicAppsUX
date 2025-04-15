@@ -1,4 +1,17 @@
-import { Dropdown, Field, Input, Label, Link, Option, Radio, RadioGroup, Switch, Text, Textarea } from '@fluentui/react-components';
+import {
+  Divider,
+  Dropdown,
+  Field,
+  Input,
+  Label,
+  Link,
+  Option,
+  Radio,
+  RadioGroup,
+  Switch,
+  Text,
+  Textarea,
+} from '@fluentui/react-components';
 import { Open16Regular } from '@fluentui/react-icons';
 import type { BaseFieldItem, TemplatesSectionItem, TemplatesSectionProps } from './templatesSectionModel';
 
@@ -12,6 +25,10 @@ export const TemplatesSection = ({
   children = null,
 }: TemplatesSectionProps) => {
   const onRenderItem = (item: TemplatesSectionItem) => {
+    if (item.type === 'divider') {
+      return <Divider className="msla-templates-section-item-divider" />;
+    }
+
     if (item.type === 'text') {
       return <Text className="msla-templates-section-item-text">{item.value}</Text>;
     }

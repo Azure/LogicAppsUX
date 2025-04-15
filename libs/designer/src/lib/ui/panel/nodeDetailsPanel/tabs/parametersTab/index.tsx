@@ -80,8 +80,13 @@ import { useDispatch, useSelector } from 'react-redux';
 import { ConnectionInline } from './connectionInline';
 import { ConnectionsSubMenu } from './connectionsSubMenu';
 
-export const ParametersTab: React.FC<PanelTabProps> = (props) => {
-  const { nodeId: selectedNodeId } = props;
+// TODO: Add a readonly per settings section/group
+export interface ParametersTabProps extends PanelTabProps {
+  isTabReadOnly?: boolean;
+}
+
+export const ParametersTab: React.FC<ParametersTabProps> = (props) => {
+  const { nodeId: selectedNodeId, isTabReadOnly } = props;
   const nodeMetadata = useNodeMetadata(selectedNodeId);
   const inputs = useSelector((state: RootState) => state.operations.inputParameters[selectedNodeId]);
   const { tokenState, workflowParametersState, workflowState } = useSelector((state: RootState) => ({
@@ -90,7 +95,7 @@ export const ParametersTab: React.FC<PanelTabProps> = (props) => {
     workflowState: state.workflow,
   }));
   const nodeType = useSelector((state: RootState) => state.operations.operationInfo[selectedNodeId]?.type);
-  const readOnly = useReadOnly();
+  const readOnly = useReadOnly() || isTabReadOnly;
   const nodesInitialized = useNodesInitialized();
 
   const connectionName = useNodeConnectionName(selectedNodeId);
@@ -311,7 +316,11 @@ const ParameterSection = ({
               description: convertSegmentsToString(description ?? []),
             };
           })
-          .filter(Boolean) as Array<{ name: string; type: string; description: string }>;
+          .filter(Boolean) as Array<{
+          name: string;
+          type: string;
+          description: string;
+        }>;
         dispatch(updateAgentParametersInNode(agentParameterUpdates));
       }
 
@@ -370,7 +379,12 @@ const ParameterSection = ({
 
   const fileNameChange = useCallback(
     (originalFileName: string, fileName: string): void => {
-      dispatch(renameCustomCodeFile({ newFileName: fileName, oldFileName: originalFileName }));
+      dispatch(
+        renameCustomCodeFile({
+          newFileName: fileName,
+          oldFileName: originalFileName,
+        })
+      );
     },
     [dispatch]
   );
@@ -486,7 +500,10 @@ const ParameterSection = ({
           {
             groupId: ParameterGroupKeys.DEFAULT,
             parameterId: conditionParameter.id,
-            propertiesToUpdate: { value: newConditionValue, preservedValue: undefined },
+            propertiesToUpdate: {
+              value: newConditionValue,
+              preservedValue: undefined,
+            },
           },
         ],
       })
@@ -618,7 +635,10 @@ const ParameterSection = ({
             location: panelLocation === PanelLocation.Left ? TokenPickerButtonLocation.Right : TokenPickerButtonLocation.Left,
           },
           agentParameterButtonProps: { showAgentParameterButton },
-          hostOptions: { suppressCastingForSerialize, isMultiVariableEnabled: enableMultiVariable },
+          hostOptions: {
+            suppressCastingForSerialize,
+            isMultiVariableEnabled: enableMultiVariable,
+          },
           onCastParameter: (value: ValueSegment[], type?: string, format?: string, suppressCasting?: boolean) =>
             parameterValueToString(
               {

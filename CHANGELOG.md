@@ -1,4 +1,19 @@
 # Logic Apps Designer
+## [5.80.0](https://github.com/Azure/LogicAppsUX/compare/v5.79.0...v5.80.0) (2025-04-15)
+
+
+### Features
+
+* **designer:** Implement adding tool and action in a single click ([#7028](https://github.com/Azure/LogicAppsUX/issues/7028)) ([d41f7ac](https://github.com/Azure/LogicAppsUX/commit/d41f7acfd1c668f5bdcff83c0e544c2d4881989e))
+* **Templates:** Custom Templates Review + Publish tab Implementation ([#7016](https://github.com/Azure/LogicAppsUX/issues/7016)) ([f539e12](https://github.com/Azure/LogicAppsUX/commit/f539e127586cddd28624907920a30754c39dd3b2))
+* **Templates:** Custom Templates Tab Management ([#6997](https://github.com/Azure/LogicAppsUX/issues/6997)) ([63111c3](https://github.com/Azure/LogicAppsUX/commit/63111c36d7d3d40352d60240218d7310a704d56d))
+
+
+### Bug Fixes
+
+* **designer:** Refactor to remove redundancy, add disabled and dirty state for Agentic channels ([#7030](https://github.com/Azure/LogicAppsUX/issues/7030)) ([4a931b1](https://github.com/Azure/LogicAppsUX/commit/4a931b1c65f7181b85fecf060e9cb0f495849adb))
+* **vscode:** Delete statusCode from root def  ([#7027](https://github.com/Azure/LogicAppsUX/issues/7027)) ([1e6ab78](https://github.com/Azure/LogicAppsUX/commit/1e6ab78a911eeb44ce3ddec3e8aeab23951fb185)), closes [#6977](https://github.com/Azure/LogicAppsUX/issues/6977)
+
 ## [5.79.0](https://github.com/Azure/LogicAppsUX/compare/v5.78.0...v5.79.0) (2025-04-14)
 
 
