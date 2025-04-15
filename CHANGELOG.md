@@ -1,4 +1,11 @@
 # Logic Apps Designer
+### [5.53.11](https://github.com/Azure/LogicAppsUX/compare/v5.53.10...v5.53.11) (2025-04-15)
+
+
+### Features
+
+* **Templates:** Markdown template description + exports ([#7035](https://github.com/Azure/LogicAppsUX/issues/7035)) ([2411044](https://github.com/Azure/LogicAppsUX/commit/241104405a405fa2aae47afecf677c9f9089c28e)), closes [#6893](https://github.com/Azure/LogicAppsUX/issues/6893) [#7034](https://github.com/Azure/LogicAppsUX/issues/7034)
+
 ### [5.53.10](https://github.com/Azure/LogicAppsUX/compare/v5.53.9...v5.53.10) (2025-04-02)
 
 
