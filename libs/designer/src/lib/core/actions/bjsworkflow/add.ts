@@ -13,7 +13,7 @@ import {
   updateNodeSettings,
 } from '../../state/operation/operationMetadataSlice';
 import type { RelationshipIds } from '../../state/panel/panelTypes';
-import { changePanelNode, openPanel, setIsPanelLoading, setPinnedNode } from '../../state/panel/panelSlice';
+import { changePanelNode, openPanel, setIsPanelLoading, setAlternateSelectedNode } from '../../state/panel/panelSlice';
 import { addResultSchema } from '../../state/staticresultschema/staticresultsSlice';
 import type { NodeTokens, VariableDeclaration } from '../../state/tokens/tokensSlice';
 import { initializeTokensAndVariables } from '../../state/tokens/tokensSlice';
@@ -110,9 +110,10 @@ export const addOperation = createAsyncThunk('addOperation', async (payload: Add
     dispatch(setFocusNode(nodeId));
     if (isAddingAgentTool) {
       dispatch(
-        setPinnedNode({
+        setAlternateSelectedNode({
           nodeId: newToolGraphId,
           updatePanelOpenState: true,
+          panelPersistence: 'default',
         })
       );
     }

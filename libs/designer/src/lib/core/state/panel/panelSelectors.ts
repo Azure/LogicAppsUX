@@ -39,7 +39,10 @@ export const useIsPanelCollapsed = () => useSelector(createSelector(getPanelStat
 export const useIsPanelLoading = () => useSelector(createSelector(getPanelState, (state) => state.isLoading));
 
 export const useIsNodePinnedToOperationPanel = (nodeId: string) =>
-  useSelector(createSelector(getPanelState, (state) => (state.operationContent.pinnedNodeId ?? '') === nodeId));
+  useSelector(createSelector(getPanelState, (state) => (state.operationContent.alternateSelectedNode?.nodeId ?? '') === nodeId));
+
+export const useIsAlternateNodePinned = () =>
+  useSelector(createSelector(getPanelState, (state) => (state.operationContent.alternateSelectedNode?.persistance ?? '') === 'pinned'));
 
 export const useIsNodeSelectedInOperationPanel = (nodeId: string) =>
   useSelector(createSelector(getPanelState, (state) => (state.operationContent.selectedNodeId ?? '') === nodeId));
@@ -51,10 +54,10 @@ export const useIsPanelInPinnedViewMode = (): boolean => {
 };
 
 export const useOperationPanelPinnedNodeId = () =>
-  useSelector(createSelector(getPanelState, (state) => state.operationContent.pinnedNodeId ?? ''));
+  useSelector(createSelector(getPanelState, (state) => state.operationContent.alternateSelectedNode?.nodeId ?? ''));
 
 export const useOperationPanelPinnedNodeActiveTabId = () =>
-  useSelector(createSelector(getPanelState, (state) => state.operationContent.pinnedNodeActiveTabId));
+  useSelector(createSelector(getPanelState, (state) => state.operationContent.alternateSelectedNode?.activeTabId));
 
 export const useOperationPanelSelectedNodeId = () =>
   useSelector(createSelector(getPanelState, (state) => state.operationContent.selectedNodeId ?? ''));

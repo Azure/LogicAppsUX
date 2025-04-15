@@ -18,7 +18,12 @@ import { RunAfterMenuItem } from '../../../ui/menuItems/runAfterMenuItem';
 import { useOperationInfo, type AppDispatch, type RootState } from '../../../core';
 import { setShowDeleteModalNodeId } from '../../../core/state/designerView/designerViewSlice';
 import { useOperationPanelPinnedNodeId } from '../../../core/state/panel/panelSelectors';
-import { changePanelNode, setSelectedPanelActiveTab, setPinnedNode, setSelectedNodeId } from '../../../core/state/panel/panelSlice';
+import {
+  changePanelNode,
+  setSelectedPanelActiveTab,
+  setAlternateSelectedNode,
+  setSelectedNodeId,
+} from '../../../core/state/panel/panelSlice';
 import { RUN_AFTER_PANEL_TAB } from '../../../ui/CustomNodes/constants';
 import { shouldDisplayRunAfter } from '../../../ui/CustomNodes/helpers';
 import {
@@ -82,9 +87,10 @@ export const DesignerContextualMenu = () => {
 
   const pinClick = useCallback(() => {
     dispatch(
-      setPinnedNode({
+      setAlternateSelectedNode({
         nodeId: nodeId === pinnedNodeId ? '' : nodeId,
         updatePanelOpenState: true,
+        panelPersistence: 'pinned',
       })
     );
   }, [dispatch, nodeId, pinnedNodeId]);

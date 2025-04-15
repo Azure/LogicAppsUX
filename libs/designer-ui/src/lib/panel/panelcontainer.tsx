@@ -85,7 +85,6 @@ export const PanelContainer = ({
   const pinnedNodeId = pinnedNode?.nodeId;
   const isPinnedNodeDifferent = pinnedNode && pinnedNode.nodeId !== node?.nodeId ? pinnedNode : undefined;
   const panelRef = useRef<HTMLDivElement>(null);
-
   const drawerWidth = isCollapsed
     ? PanelSize.Auto
     : ((canResize ? overrideWidth : undefined) ?? (isPinnedNodeDifferent ? PanelSize.DualView : PanelSize.Medium));

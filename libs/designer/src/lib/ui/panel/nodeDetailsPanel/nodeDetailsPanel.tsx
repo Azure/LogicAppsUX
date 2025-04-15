@@ -9,7 +9,7 @@ import {
   useOperationPanelPinnedNodeId,
   useOperationPanelSelectedNodeId,
 } from '../../../core/state/panel/panelSelectors';
-import { expandPanel, setPinnedNode, updatePanelLocation } from '../../../core/state/panel/panelSlice';
+import { expandPanel, setAlternateSelectedNode, updatePanelLocation } from '../../../core/state/panel/panelSlice';
 import { useUndoRedoClickToggle } from '../../../core/state/undoRedo/undoRedoSelectors';
 import { useActionMetadata, useRunData, useRunInstance } from '../../../core/state/workflow/workflowSelectors';
 import { replaceId, setNodeDescription } from '../../../core/state/workflow/workflowSlice';
@@ -88,7 +88,7 @@ export const NodeDetailsPanel = (props: CommonPanelProps): JSX.Element => {
 
   const handlePinClick = useCallback(
     (nodeId: string) => {
-      dispatch(setPinnedNode({ nodeId }));
+      dispatch(setAlternateSelectedNode({ nodeId }));
     },
     [dispatch]
   );
@@ -146,7 +146,7 @@ export const NodeDetailsPanel = (props: CommonPanelProps): JSX.Element => {
   const togglePanel = (): void => (collapsed ? expand() : collapse());
   const dismissPanel = () => dispatch(clearPanel());
 
-  const unpinAction = () => dispatch(setPinnedNode({ nodeId: '' }));
+  const unpinAction = () => dispatch(setAlternateSelectedNode({ nodeId: '' }));
 
   const runInstance = useRunInstance();
 

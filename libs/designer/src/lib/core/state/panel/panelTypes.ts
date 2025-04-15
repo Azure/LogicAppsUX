@@ -46,10 +46,13 @@ export interface ErrorPanelContentState {
 
 export interface OperationPanelContentState {
   panelMode: 'Operation';
-  pinnedNodeId?: string;
-  pinnedNodeActiveTabId?: string;
   selectedNodeId?: string;
   selectedNodeActiveTabId?: string;
+  alternateSelectedNode?: {
+    nodeId?: string;
+    activeTabId?: string;
+    persistance?: 'default' | 'pinned';
+  };
 }
 
 export interface NodeSearchPanelContentState {
