@@ -4,17 +4,20 @@ import constants from '../../../common/constants';
 import type { IntlShape } from 'react-intl';
 import { selectWizardTab } from '../../../core/state/templates/tabSlice';
 import { TemplateReviewList } from '../review/TemplateReviewList';
+import type { TemplateWizardTabProps } from './model';
 
 export const reviewPublishTab = (
   intl: IntlShape,
   resources: Record<string, string>,
   dispatch: AppDispatch,
-  onPublish: () => void
+  onPublish: () => void,
+  { disabled, tabStatusIcon }: TemplateWizardTabProps
 ): TemplateTabProps => ({
   id: constants.CONFIGURE_TEMPLATE_WIZARD_TAB_NAMES.REVIEW_AND_PUBLISH,
   title: resources.ReviewPublishTabLabel,
-  hasError: false,
   content: <TemplateReviewList />,
+  tabStatusIcon,
+  disabled,
   footerContent: {
     primaryButtonText: resources.PreviousButtonText,
     primaryButtonOnClick: () => {

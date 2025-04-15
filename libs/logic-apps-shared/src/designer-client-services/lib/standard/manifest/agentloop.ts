@@ -151,6 +151,7 @@ export default {
                   title: 'Maximum token count',
                   description: 'The maximum number of tokens to use for the agent history',
                   conditionalVisibility: true,
+                  default: 128000,
                   'x-ms-input-dependencies': {
                     type: 'visibility',
                     parameters: [
@@ -185,7 +186,14 @@ export default {
         input: {
           type: 'Request',
           default: {
-            'inputs.$.schema': '{"properties": {"prompt": {"type": "string"}}, "type": "object"}',
+            'inputs.$.schema': `{
+  "type": "object",
+  "properties": {
+    "prompt": {
+      "type": "string"
+    }
+  }
+}`,
           },
         },
         output: {

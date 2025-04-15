@@ -9,6 +9,7 @@ import type { Template } from '@microsoft/logic-apps-shared';
 import { useMemo } from 'react';
 import { type TemplateEnvironment, updateEnvironment, updateTemplateManifest } from '../../../core/state/templates/templateSlice';
 import { getSupportedSkus } from '../../../core/configuretemplate/utils/helper';
+import type { TemplateWizardTabProps } from './model';
 
 const TemplateSettings = () => {
   const { manifest, environment, isPublished, connections } = useSelector((state: RootState) => state.template);
@@ -72,7 +73,12 @@ const TemplateSettings = () => {
   );
 };
 
-export const publishTab = (intl: IntlShape, resources: Record<string, string>, dispatch: AppDispatch): TemplateTabProps => ({
+export const publishTab = (
+  intl: IntlShape,
+  resources: Record<string, string>,
+  dispatch: AppDispatch,
+  { disabled, tabStatusIcon }: TemplateWizardTabProps
+): TemplateTabProps => ({
   id: constants.CONFIGURE_TEMPLATE_WIZARD_TAB_NAMES.PUBLISH,
   title: resources.SettingsTabLabel,
   description: intl.formatMessage({
@@ -80,7 +86,8 @@ export const publishTab = (intl: IntlShape, resources: Record<string, string>, d
     id: 'uOlHLw',
     description: 'The description for the settings tab on the configure template wizard',
   }),
-  hasError: false,
+  tabStatusIcon,
+  disabled,
   content: <TemplateSettings />,
   footerContent: {
     primaryButtonText: resources.PreviousButtonText,

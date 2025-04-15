@@ -1,4 +1,52 @@
 # Logic Apps Designer
+## [5.79.0](https://github.com/Azure/LogicAppsUX/compare/v5.78.0...v5.79.0) (2025-04-14)
+
+
+### Features
+
+* **Templates:** Move summary tab before workflow tab ([#7017](https://github.com/Azure/LogicAppsUX/issues/7017)) ([7369702](https://github.com/Azure/LogicAppsUX/commit/7369702c2b662cb05e686e85a92005b5af80be1d))
+
+
+### Bug Fixes
+
+* **designer:** Move parse chat history to helper and fix callback re-render ([#7025](https://github.com/Azure/LogicAppsUX/issues/7025)) ([ecb5386](https://github.com/Azure/LogicAppsUX/commit/ecb538699490a2e346c507e8b29115ed201c9959))
+* **designer:** Update workflow condition for Agent chat ([#7026](https://github.com/Azure/LogicAppsUX/issues/7026)) ([4939afc](https://github.com/Azure/LogicAppsUX/commit/4939afc8b406e2a6f216305c44ab42b6769214d4))
+
+## [5.78.0](https://github.com/Azure/LogicAppsUX/compare/v5.77.0...v5.78.0) (2025-04-14)
+
+
+### Features
+
+* **designer:** Experimental Flags + Parse Document Functionality ([#7021](https://github.com/Azure/LogicAppsUX/issues/7021)) ([1e29c64](https://github.com/Azure/LogicAppsUX/commit/1e29c646d0525620420180864f46e1974502b8c5))
+* **designer:** Wire up input channel with chat ([#7018](https://github.com/Azure/LogicAppsUX/issues/7018)) ([b2244fb](https://github.com/Azure/LogicAppsUX/commit/b2244fba218946f43933002e7023dcf72a2c7154))
+
+
+### Bug Fixes
+
+* **designer:** Add waiting for input and update output channel to be optional ([#7024](https://github.com/Azure/LogicAppsUX/issues/7024)) ([6827da9](https://github.com/Azure/LogicAppsUX/commit/6827da90120afa6d03d7a08a04d32c1a74a5ba34))
+* **designer:** Array Editor Bugfixes ([#7006](https://github.com/Azure/LogicAppsUX/issues/7006)) ([16494a2](https://github.com/Azure/LogicAppsUX/commit/16494a2197220bca633ffa0ed604cf80eab74096))
+* **designer:** Update messages styles in chat ([#7015](https://github.com/Azure/LogicAppsUX/issues/7015)) ([1916672](https://github.com/Azure/LogicAppsUX/commit/1916672cafbb9461dc79806a8b9b9a1b81f84f9c))
+
+## [5.77.0](https://github.com/Azure/LogicAppsUX/compare/v5.76.0...v5.77.0) (2025-04-11)
+
+
+### Features
+
+* **designer:** Implementation for focus element when changing run index ([#6994](https://github.com/Azure/LogicAppsUX/issues/6994)) ([98e57bf](https://github.com/Azure/LogicAppsUX/commit/98e57bf0beee79301a79b7143b93db8af5da9b32))
+
+
+### Bug Fixes
+
+* **designer:** Memoize selectors and fix run data from agent ([#7014](https://github.com/Azure/LogicAppsUX/issues/7014)) ([18b0650](https://github.com/Azure/LogicAppsUX/commit/18b0650239da17608304e19157df3872e6db9b2e))
+
+## [5.76.0](https://github.com/Azure/LogicAppsUX/compare/v5.75.0...v5.76.0) (2025-04-11)
+
+
+### Bug Fixes
+
+* **designer:** Fix close button default value for assistant chat ([#7005](https://github.com/Azure/LogicAppsUX/issues/7005)) ([fda34ad](https://github.com/Azure/LogicAppsUX/commit/fda34ad157e6d73827a0e73756014473f3f1e08a))
+* **designer:** Fix run history crash with channels setup ([#7008](https://github.com/Azure/LogicAppsUX/issues/7008)) ([b55d48e](https://github.com/Azure/LogicAppsUX/commit/b55d48ef5c858d63fd01bcad28dcc20aff301a59))
+
 ## [5.75.0](https://github.com/Azure/LogicAppsUX/compare/v5.74.0...v5.75.0) (2025-04-10)
 
 

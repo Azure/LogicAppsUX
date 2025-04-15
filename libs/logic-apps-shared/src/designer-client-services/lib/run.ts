@@ -18,6 +18,8 @@ export interface IRunService {
   getMoreAgentActionsRepetition(continuationToken: string): Promise<any>;
   getRepetition(action: { nodeId: string; runId: string | undefined }, repetitionId: string): Promise<LogicAppsV2.RunRepetition>;
   getChatHistory(action: { nodeId: string; runId: string | undefined }): Promise<any>;
+  getAgentChatInvokeUri(action: { idSuffix: string }): Promise<any>;
+  invokeAgentChat(action: { id: string; data: any }): Promise<any>;
 }
 
 let service: IRunService;
