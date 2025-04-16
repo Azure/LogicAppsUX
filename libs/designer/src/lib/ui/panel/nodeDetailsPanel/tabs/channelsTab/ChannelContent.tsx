@@ -95,8 +95,8 @@ const ChannelContent = (props: ChannelContentProps) => {
               <Checkbox
                 label={stringResources.ENABLE_OUTPUT_CHANNEL}
                 checked={outputChannelEnabled}
-                onChange={(_, checked) => {
-                  if (checked) {
+                onChange={(_, data) => {
+                  if (data.checked) {
                     initializeOperation({ input: false, output: true });
                   } else {
                     disableOperation({ input: false, output: true });
