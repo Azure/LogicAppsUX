@@ -51,7 +51,7 @@ export interface OperationPanelContentState {
   alternateSelectedNode?: {
     nodeId?: string;
     activeTabId?: string;
-    persistance?: 'selected' | 'pinned';
+    persistence?: 'selected' | 'pinned';
   };
 }
 

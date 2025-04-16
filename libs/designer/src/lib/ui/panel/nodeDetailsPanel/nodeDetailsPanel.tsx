@@ -42,7 +42,7 @@ export const NodeDetailsPanel = (props: CommonPanelProps): JSX.Element => {
 
   const alternateSelectedNode = useOperationAlternateSelectedNode();
   const alternateSelectedNodeId = alternateSelectedNode?.nodeId ?? '';
-  const alternateSelectedNodePersistance = alternateSelectedNode?.persistance ?? 'selected';
+  const alternateSelectedNodePersistence = alternateSelectedNode?.persistence ?? 'selected';
 
   const selectedNode = useOperationPanelSelectedNodeId();
 
@@ -233,7 +233,7 @@ export const NodeDetailsPanel = (props: CommonPanelProps): JSX.Element => {
       node={selectedNodeData}
       nodeHeaderItems={getHeaderMenuItems(selectedNode)}
       alternateSelectedNode={alternateSelectedNodeData}
-      alternateSelectedNodePersistance={alternateSelectedNodePersistance}
+      alternateSelectedNodePersistence={alternateSelectedNodePersistence}
       alternateSelectedNodeHeaderItems={getHeaderMenuItems(alternateSelectedNodeId)}
       readOnlyMode={readOnly}
       canResubmit={runData?.canResubmit ?? false}

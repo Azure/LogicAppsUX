@@ -43,13 +43,13 @@ export const useIsNodePinnedToOperationPanel = (nodeId: string) =>
     createSelector(getPanelState, (state) => {
       return (
         (state.operationContent.alternateSelectedNode?.nodeId ?? '') === nodeId &&
-        (state.operationContent.alternateSelectedNode?.persistance ?? '') === 'pinned'
+        (state.operationContent.alternateSelectedNode?.persistence ?? '') === 'pinned'
       );
     })
   );
 
 export const useIsAlternateNodePinned = () =>
-  useSelector(createSelector(getPanelState, (state) => (state.operationContent.alternateSelectedNode?.persistance ?? '') === 'pinned'));
+  useSelector(createSelector(getPanelState, (state) => (state.operationContent.alternateSelectedNode?.persistence ?? '') === 'pinned'));
 
 export const useIsNodeSelectedInOperationPanel = (nodeId: string) =>
   useSelector(createSelector(getPanelState, (state) => (state.operationContent.selectedNodeId ?? '') === nodeId));

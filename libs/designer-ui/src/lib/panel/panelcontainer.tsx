@@ -33,7 +33,7 @@ export type PanelContainerProps = {
   nodeHeaderItems: JSX.Element[];
   alternateSelectedNode: PanelNodeData | undefined;
   alternateSelectedNodeHeaderItems: JSX.Element[];
-  alternateSelectedNodePersistance: 'pinned' | 'selected';
+  alternateSelectedNodePersistence: 'pinned' | 'selected';
   layerProps?: ILayerProps;
   canResubmit?: boolean;
   overrideWidth?: string;
@@ -65,7 +65,7 @@ export const PanelContainer = ({
   nodeHeaderItems,
   alternateSelectedNode,
   alternateSelectedNodeHeaderItems,
-  alternateSelectedNodePersistance,
+  alternateSelectedNodePersistence,
   toggleCollapse,
   trackEvent,
   onCommentChange,
@@ -97,7 +97,7 @@ export const PanelContainer = ({
       const { nodeId } = headerNode;
       const panelHasAlternateNode = !!isAlternateNodeDifferent;
       const isAlternateNode = alternateSelectedNodeId === nodeId;
-      const canUnpin = !!onUnpinAction && isAlternateNode && alternateSelectedNodePersistance === 'pinned';
+      const canUnpin = !!onUnpinAction && isAlternateNode && alternateSelectedNodePersistence === 'pinned';
 
       return (
         <PanelHeader
@@ -128,7 +128,7 @@ export const PanelContainer = ({
       isAlternateNodeDifferent,
       alternateSelectedNodeId,
       onUnpinAction,
-      alternateSelectedNodePersistance,
+      alternateSelectedNodePersistence,
       isCollapsed,
       alternateSelectedNodeHeaderItems,
       nodeHeaderItems,
@@ -252,7 +252,7 @@ export const PanelContainer = ({
                 {isAlternateNodeDifferent ? (
                   <>
                     <Divider vertical={true} />
-                    {renderPanelContents(isAlternateNodeDifferent, alternateSelectedNodePersistance, true)}
+                    {renderPanelContents(isAlternateNodeDifferent, alternateSelectedNodePersistence, true)}
                   </>
                 ) : null}
               </>

@@ -102,14 +102,14 @@ export const panelSlice = createSlice({
         state.operationContent = getInitialOperationContentState();
       } else {
         state.isCollapsed = !(
-          state.operationContent.alternateSelectedNode?.nodeId && state.operationContent.alternateSelectedNode.persistance === 'pinned'
+          state.operationContent.alternateSelectedNode?.nodeId && state.operationContent.alternateSelectedNode.persistence === 'pinned'
         );
         state.operationContent = {
           ...getInitialOperationContentState(),
           alternateSelectedNode: state.operationContent.alternateSelectedNode,
         };
       }
-      if (state.operationContent.alternateSelectedNode?.persistance === 'selected') {
+      if (state.operationContent.alternateSelectedNode?.persistence === 'selected') {
         state.operationContent.alternateSelectedNode = {};
       }
     },
@@ -134,7 +134,7 @@ export const panelSlice = createSlice({
       state.operationContent.alternateSelectedNode = {
         nodeId: nodeId,
         activeTabId: undefined,
-        persistance: action.payload.panelPersistence ?? 'pinned',
+        persistence: action.payload.panelPersistence ?? 'pinned',
       };
 
       if (updatePanelOpenState) {
@@ -152,7 +152,7 @@ export const panelSlice = createSlice({
       state.connectionContent.selectedNodeIds = selectedNodes;
       state.discoveryContent.selectedNodeIds = selectedNodes;
       state.operationContent.selectedNodeId = selectedNodes[0];
-      if (state.operationContent.alternateSelectedNode?.persistance === 'selected') {
+      if (state.operationContent.alternateSelectedNode?.persistence === 'selected') {
         state.operationContent.alternateSelectedNode.nodeId = '';
       }
     },
@@ -164,7 +164,7 @@ export const panelSlice = createSlice({
       state.connectionContent.selectedNodeIds = selectedNodes;
       state.operationContent.selectedNodeId = selectedNodes[0];
       state.operationContent.selectedNodeActiveTabId = undefined;
-      if (state.operationContent.alternateSelectedNode?.persistance === 'selected') {
+      if (state.operationContent.alternateSelectedNode?.persistence === 'selected') {
         state.operationContent.alternateSelectedNode.nodeId = '';
       }
 
@@ -238,7 +238,7 @@ export const panelSlice = createSlice({
       state.discoveryContent.selectedNodeIds = selectedNodes;
       state.operationContent.selectedNodeId = selectedNodes[0];
 
-      if (state.operationContent.alternateSelectedNode?.persistance === 'selected') {
+      if (state.operationContent.alternateSelectedNode?.persistence === 'selected') {
         state.operationContent.alternateSelectedNode.nodeId = '';
       }
     },
