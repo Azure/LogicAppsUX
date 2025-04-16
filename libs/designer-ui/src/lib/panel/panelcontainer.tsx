@@ -97,7 +97,7 @@ export const PanelContainer = ({
       const { nodeId } = headerNode;
       const panelHasAlternateNode = !!isAlternateNodeDifferent;
       const isAlternateNode = alternateSelectedNodeId === nodeId;
-      const canUnpin = !!onUnpinAction && isAlternateNode;
+      const canUnpin = !!onUnpinAction && isAlternateNode && alternateSelectedNodePersistance === 'pinned';
 
       return (
         <PanelHeader
@@ -128,6 +128,7 @@ export const PanelContainer = ({
       isAlternateNodeDifferent,
       alternateSelectedNodeId,
       onUnpinAction,
+      alternateSelectedNodePersistance,
       isCollapsed,
       alternateSelectedNodeHeaderItems,
       nodeHeaderItems,
@@ -142,10 +143,10 @@ export const PanelContainer = ({
       toggleCollapse,
       onTitleChange,
       handleTitleUpdate,
-      resubmitOperation,
-      onCommentChange,
       showTriggerInfo,
       isTrigger,
+      resubmitOperation,
+      onCommentChange,
     ]
   );
 
