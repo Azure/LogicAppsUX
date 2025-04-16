@@ -174,10 +174,12 @@ export const PanelContainer = ({
   });
 
   const renderPanelContents = useCallback(
-    (contentsNode: NonNullable<typeof node>, type: 'pinned' | 'selected'): JSX.Element => {
+    (contentsNode: NonNullable<typeof node>, type: 'pinned' | 'selected', isAlternateSelectedNode: boolean): JSX.Element => {
       const { errorMessage, isError, isLoading, nodeId, onSelectTab, selectedTab, tabs } = contentsNode;
       return (
-        <div className={mergeClasses('msla-panel-layout', `msla-panel-layout-${type}`)}>
+        <div
+          className={mergeClasses('msla-panel-layout', `msla-panel-border-${type}`, isAlternateSelectedNode && 'msla-panel-layout-pinned')}
+        >
           {renderHeader(contentsNode)}
           <div className={`${isError ? 'msla-panel-contents--error' : 'msla-panel-contents'}`}>
             {isLoading ? (
@@ -245,11 +247,11 @@ export const PanelContainer = ({
               <EmptyContent />
             ) : (
               <>
-                {node ? renderPanelContents(node, 'selected') : null}
+                {node ? renderPanelContents(node, 'selected', false) : null}
                 {isAlternateNodeDifferent ? (
                   <>
                     <Divider vertical={true} />
-                    {renderPanelContents(isAlternateNodeDifferent, alternateSelectedNodePersistance)}
+                    {renderPanelContents(isAlternateNodeDifferent, alternateSelectedNodePersistance, true)}
                   </>
                 ) : null}
               </>
