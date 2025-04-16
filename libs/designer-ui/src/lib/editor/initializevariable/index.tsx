@@ -15,6 +15,7 @@ import {
 } from './util';
 import constants from '../../constants';
 import { Add24Filled, Add24Regular, bundleIcon } from '@fluentui/react-icons';
+import { useInitializeVariableStyles } from './styles';
 
 const CreateIcon = bundleIcon(Add24Filled, Add24Regular);
 export interface InitializeVariableProps {
@@ -59,6 +60,7 @@ export const InitializeVariableEditor = ({
   );
 
   const addButtonText = isAgentParameter ? stringResources.ADD_PARAMETER : stringResources.ADD_VARIABLE;
+  const styles = useInitializeVariableStyles();
 
   const warningTitleVariable = intl.formatMessage({
     defaultMessage: 'Unable to Parse Variables',
@@ -140,6 +142,8 @@ export const InitializeVariableEditor = ({
         <div className="msla-initialize-variable-add-variable-button">
           <Button
             aria-label={addButtonText}
+            appearance={'subtle'}
+            className={styles.addButton}
             onClick={addVariable}
             disabled={props.readonly}
             icon={<CreateIcon />}
