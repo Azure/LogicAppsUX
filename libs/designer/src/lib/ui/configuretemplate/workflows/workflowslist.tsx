@@ -26,6 +26,8 @@ import { Add12Filled } from '@fluentui/react-icons';
 import { deleteWorkflowData } from '../../../core/actions/bjsworkflow/configuretemplate';
 import { useResourceStrings } from '../resources';
 import { useTemplatesStrings } from '../../templates/templatesStrings';
+import { WorkflowKind } from '../../../core/state/workflow/workflowInterfaces';
+import { equals } from '@microsoft/logic-apps-shared';
 
 export const DisplayWorkflows = ({ onSave }: { onSave: (isMultiWorkflow: boolean) => void }) => {
   const intl = useIntl();
@@ -59,7 +61,7 @@ export const DisplayWorkflows = ({ onSave }: { onSave: (isMultiWorkflow: boolean
   );
 
   const customResourceStrings = useResourceStrings();
-  const { resourceStrings } = useTemplatesStrings();
+  const { stateTypes, resourceStrings } = useTemplatesStrings();
 
   const handleAddWorkflows = useCallback(() => {
     dispatch(openPanelView({ panelView: TemplatePanelView.ConfigureWorkflows }));
@@ -118,7 +120,12 @@ export const DisplayWorkflows = ({ onSave }: { onSave: (isMultiWorkflow: boolean
       id: workflowData.id,
       name: workflowData?.workflowName ?? customResourceStrings.Placeholder,
       displayName: workflowData?.manifest?.title ?? customResourceStrings.Placeholder,
-      state: workflowData?.manifest?.kinds?.join(', ') ?? customResourceStrings.Placeholder,
+      state:
+        workflowData?.manifest?.kinds
+          ?.map((kind) =>
+            equals(kind, WorkflowKind.STATEFUL) ? stateTypes.STATEFUL : equals(kind, WorkflowKind.STATELESS) ? stateTypes.STATELESS : ''
+          )
+          ?.join(', ') ?? customResourceStrings.Placeholder,
       trigger: workflowData?.triggerType,
       // date: '-', //TODO: removed until back-end updates us
     })) ?? [];
