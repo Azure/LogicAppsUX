@@ -53,7 +53,7 @@ export { useReplacedIds } from './state/workflow/workflowSelectors';
 export {
   useConnectionPanelSelectedNodeIds,
   useDiscoveryPanelSelectedNodeIds,
-  useOperationPanelPinnedNodeId,
+  useOperationAlternateSelectedNodeId,
   useOperationPanelSelectedNodeId,
 } from './state/panel/panelSelectors';
 export { initializeServices } from './state/designerOptions/designerOptionsSlice';
