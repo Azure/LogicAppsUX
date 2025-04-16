@@ -26,7 +26,7 @@ test.describe(
         await page.waitForTimeout(100);
         await page.getByRole('button', { name: 'Yes' }).click();
         await page.getByRole('button', { name: 'Toolbox' }).click();
-        await page.getByLabel('fit view').click({ force: true });
+        await page.getByLabel('Zoom view to fit').click({ force: true });
 
         await page.getByTestId('card-initialize_variables_2').getByRole('button', { name: 'Initialize variables' }).click();
 

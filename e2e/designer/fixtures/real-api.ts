@@ -22,7 +22,7 @@ export class RealDataApi {
     await this.page.getByRole('option', { name: workflowName ?? this.workflowName, exact: true }).click();
     await this.page.getByRole('button', { name: 'Toolbox' }).click();
     await this.page.waitForTimeout(2000);
-    await this.page.getByLabel('fit view').click({ force: true });
+    await this.page.getByLabel('Zoom view to fit').click({ force: true });
   }
   async saveWorkflow() {
     const responsePromise = this.page.waitForResponse(

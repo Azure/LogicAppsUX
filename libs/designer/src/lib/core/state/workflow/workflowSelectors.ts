@@ -39,6 +39,17 @@ export const useFocusElement = () => useSelector(createSelector(getWorkflowState
 
 export const useIsWorkflowDirty = () => useSelector(createSelector(getWorkflowState, (state: WorkflowState) => state.isDirty));
 
+export const useIsEverythingExpanded = () =>
+  useSelector(
+    createSelector(getWorkflowState, (data) => {
+      const collapsedIds = data.collapsedGraphIds;
+      const collapsedActionsIds = data.collapsedActionIds;
+      const numberOfCollapsedGraphs = Object.keys(collapsedIds ?? {}).filter((id) => collapsedIds[id]).length;
+      const numberOfCollapsedActions = Object.keys(collapsedActionsIds ?? {}).length;
+      return numberOfCollapsedGraphs === 0 && numberOfCollapsedActions === 0;
+    })
+  );
+
 export const getRootWorkflowGraphForLayout = createSelector(getWorkflowState, (data) => {
   const rootNode = data.graph;
   const collapsedIds = data.collapsedGraphIds;

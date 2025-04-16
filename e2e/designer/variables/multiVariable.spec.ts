@@ -13,7 +13,10 @@ test.describe(
       },
       async ({ page }) => {
         await page.goto('/');
-        await page.evaluate(() => localStorage.clear());
+        await page.evaluate(() => {
+          localStorage.clear();
+          localStorage.setItem('control-expand-collapse-button', 'true');
+        });
         await page.getByText('Local', { exact: true }).click();
 
         // enable multivariable
@@ -26,7 +29,7 @@ test.describe(
         await page.waitForTimeout(100);
         await page.getByRole('button', { name: 'Yes' }).click();
         await page.getByRole('button', { name: 'Toolbox' }).click();
-        await page.getByLabel('fit view').click({ force: true });
+        await page.getByLabel('Zoom view to fit').click({ force: true });
 
         await page.getByTestId('card-initialize_variables_2').getByRole('button', { name: 'Initialize variables' }).click();
         await page.getByRole('tab', { name: 'Code view' }).click();
@@ -46,7 +49,10 @@ test.describe(
 
     test('Should be able to opt out of combining Initialize Variables', async ({ page }) => {
       await page.goto('/');
-      await page.evaluate(() => localStorage.clear());
+      await page.evaluate(() => {
+        localStorage.clear();
+        localStorage.setItem('control-expand-collapse-button', 'true');
+      });
       await page.getByText('Local', { exact: true }).click();
 
       // enable multivariable
@@ -59,9 +65,9 @@ test.describe(
       await page.waitForTimeout(100);
       await page.getByRole('button', { name: 'No' }).click();
       await page.getByRole('button', { name: 'Toolbox' }).click();
-      await page.getByLabel('fit view').click({ force: true });
+      await page.getByLabel('Zoom view to fit').click({ force: true });
 
-      await page.getByLabel('fit view').press('ControlOrMeta+Shift+P');
+      await page.getByLabel('Zoom view to fit').press('ControlOrMeta+Shift+P');
       await expect(page.getByLabel('Initialize variables 1', { exact: true })).toContainText('Initialize variables 1');
       await expect(page.getByLabel('Initialize variables 3', { exact: true })).toContainText('Initialize variables 3');
       await expect(page.getByLabel('Initialize variables 4', { exact: true }).locator('span')).toContainText('Initialize variables 4');
@@ -82,7 +88,10 @@ test.describe(
 
     test('Should be able to remember to combine/not to combine Initialize Variables', async ({ page }) => {
       await page.goto('/');
-      await page.evaluate(() => localStorage.clear());
+      await page.evaluate(() => {
+        localStorage.clear();
+        localStorage.setItem('control-expand-collapse-button', 'true');
+      });
       await page.getByText('Local', { exact: true }).click();
 
       // enable multivariable
@@ -96,7 +105,7 @@ test.describe(
       await page.getByLabel('Remember my choice').check();
       await page.getByRole('button', { name: 'Yes' }).click();
       await page.getByRole('button', { name: 'Toolbox' }).click();
-      await page.getByLabel('fit view').click({ force: true });
+      await page.getByLabel('Zoom view to fit').click({ force: true });
 
       await page.waitForFunction(() => localStorage.getItem('msla-combine-initialize-variables') !== null);
 
@@ -120,7 +129,7 @@ test.describe(
       await page.getByText('Select an option').click();
       await page.getByRole('option', { name: 'Multi Variable', exact: true }).click();
       await page.getByRole('button', { name: 'Toolbox' }).click();
-      await page.getByLabel('fit view').click();
+      await page.getByLabel('Zoom view to fit').click();
       await page.getByTestId('card-initialize_variables_2').getByRole('button', { name: 'Initialize variables' }).click();
       await page.getByRole('tab', { name: 'Code view' }).click();
       await expect(page.getByRole('code')).toContainText(
