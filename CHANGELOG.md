@@ -1,4 +1,22 @@
 # Logic Apps Designer
+## [5.81.0](https://github.com/Azure/LogicAppsUX/compare/v5.80.0...v5.81.0) (2025-04-16)
+
+
+### Features
+
+* **designer:** Add expand/collapse all button to controls and rework controls appearance ([#7036](https://github.com/Azure/LogicAppsUX/issues/7036)) ([8b645fb](https://github.com/Azure/LogicAppsUX/commit/8b645fb54e23128a897adf06dc671167a64dcadf))
+* **designer:** Update pinned node to alternated selected node ([#7037](https://github.com/Azure/LogicAppsUX/issues/7037)) ([24c087c](https://github.com/Azure/LogicAppsUX/commit/24c087ce0f9c60660bcc54bbc7dbf0ec9596da17))
+* **Templates:** Exported 3 templates actions ([#7034](https://github.com/Azure/LogicAppsUX/issues/7034)) ([7748ec4](https://github.com/Azure/LogicAppsUX/commit/7748ec4b5f045bf064a8efe377fa4918bb84e446))
+* **vscode:** Add "file a bug" button in vscode ([#7031](https://github.com/Azure/LogicAppsUX/issues/7031)) ([1592095](https://github.com/Azure/LogicAppsUX/commit/15920950eee23b9e7d939b1f6311aa8194198056))
+
+
+### Bug Fixes
+
+* **deigner:** Position nodes at top of designer on start instead of middle ([#7038](https://github.com/Azure/LogicAppsUX/issues/7038)) ([48abd65](https://github.com/Azure/LogicAppsUX/commit/48abd65a69f7930866da387b3cc5482af021b123))
+* **designer:** Add styles for code tags inside the chat bubble ([#7044](https://github.com/Azure/LogicAppsUX/issues/7044)) ([2c0d281](https://github.com/Azure/LogicAppsUX/commit/2c0d281e7c7ca481bba9daf7f8f00b0d7a85593d))
+* **designer:** Agent workflow fixes ([#7046](https://github.com/Azure/LogicAppsUX/issues/7046)) ([dcd9b38](https://github.com/Azure/LogicAppsUX/commit/dcd9b38b356373f14756f5e3fd8ad74caaf561b2))
+* **designer:** Fix issue where retry policy error wouldn't disappear when retry policy changed ([#7039](https://github.com/Azure/LogicAppsUX/issues/7039)) ([244aeeb](https://github.com/Azure/LogicAppsUX/commit/244aeeb95f24779f13cccb9695990c59b526ff24))
+
 ## [5.80.0](https://github.com/Azure/LogicAppsUX/compare/v5.79.0...v5.80.0) (2025-04-15)
 
 
