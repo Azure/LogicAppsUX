@@ -8,7 +8,7 @@ export const GoToRealWorkflow = async (page: Page, appName: string, workflowName
   await page.getByRole('option', { name: workflowName }).click();
   await page.waitForTimeout(100);
   await page.getByRole('button', { name: 'Toolbox' }).click();
-  await page.getByLabel('fit view').click({ force: true });
+  await page.getByLabel('Zoom view to fit').click({ force: true });
 };
 
 export const GoToMockWorkflow = async (page: Page, workflowName: string) => {
@@ -17,7 +17,7 @@ export const GoToMockWorkflow = async (page: Page, workflowName: string) => {
   await page.getByRole('option', { name: workflowName, exact: true }).click();
   await page.waitForTimeout(100);
   await page.getByRole('button', { name: 'Toolbox' }).click();
-  await page.getByLabel('fit view').click({ force: true });
+  await page.getByLabel('Zoom view to fit').click({ force: true });
 };
 
 export const LoadRunFile = async (page: Page, runName: string) => {
