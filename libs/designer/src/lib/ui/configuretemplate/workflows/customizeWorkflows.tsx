@@ -82,7 +82,7 @@ const CustomizeWorkflowSection = ({
   const generalSectionItems: TemplatesSectionItem[] = useMemo(() => {
     return [
       {
-        label: customResourceStrings.WorkflowName,
+        label: resourceStrings.WORKFLOW_NAME,
         value: workflow.workflowName || '',
         type: 'textfield',
         required: true,
@@ -128,7 +128,7 @@ const CustomizeWorkflowSection = ({
         type: 'text',
       },
     ];
-  }, [workflowId, updateWorkflowDataField, workflow, customResourceStrings, kindValue, defaultKindOptions]);
+  }, [workflowId, updateWorkflowDataField, workflow, customResourceStrings, defaultKindOptions, kindValue, resourceStrings]);
 
   const descriptionSectionItems: TemplatesSectionItem[] = useMemo(() => {
     const baseItems: TemplatesSectionItem[] = isMultiWorkflowTemplate

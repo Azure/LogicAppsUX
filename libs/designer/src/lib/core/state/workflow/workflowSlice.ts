@@ -518,7 +518,7 @@ export const workflowSlice = createSlice({
         args: [action.payload],
       });
     },
-    addAgentCondition: (state: WorkflowState, action: PayloadAction<{ toolId: string; nodeId: string }>) => {
+    addAgentTool: (state: WorkflowState, action: PayloadAction<{ toolId: string; nodeId: string }>) => {
       if (!state.graph) {
         return; // log exception
       }
@@ -676,16 +676,10 @@ export const workflowSlice = createSlice({
     // Add reducers for additional action types here, and handle loading state as needed
     builder.addCase(initializeGraphState.fulfilled, (state, action) => {
       const { deserializedWorkflow, originalDefinition } = action.payload;
-      const isFirstLoad = !state.graph;
       state.originalDefinition = originalDefinition;
       state.graph = deserializedWorkflow.graph;
       state.operations = deserializedWorkflow.actionData;
       state.nodesMetadata = deserializedWorkflow.nodesMetadata;
-
-      // Only interested in behavior like centering canvas when it is the first load of the workflow
-      state.focusedCanvasNodeId = isFirstLoad
-        ? Object.entries(deserializedWorkflow?.actionData ?? {}).find(([, value]) => !(value as LogicAppsV2.ActionDefinition).runAfter)?.[0]
-        : undefined;
     });
     builder.addCase(updateNodeParameters, (state, action) => {
       state.isDirty = state.isDirty || action.payload.isUserAction || false;
@@ -718,7 +712,7 @@ export const workflowSlice = createSlice({
         deleteNode,
         addSwitchCase,
         deleteSwitchCase,
-        addAgentCondition,
+        addAgentTool,
         addImplicitForeachNode,
         pasteScopeNode,
         setNodeDescription,
@@ -753,7 +747,7 @@ export const {
   setNodeDescription,
   toggleCollapsedGraphId,
   addSwitchCase,
-  addAgentCondition,
+  addAgentTool,
   discardAllChanges,
   buildEdgeIdsBySource,
   updateRunAfter,
