@@ -101,16 +101,16 @@ export const panelSlice = createSlice({
         state.isCollapsed = true;
         state.operationContent = getInitialOperationContentState();
       } else {
-        state.isCollapsed =
-          !state.operationContent.alternateSelectedNode?.nodeId && state.operationContent.alternateSelectedNode?.persistance === 'pinned';
+        state.isCollapsed = !(
+          state.operationContent.alternateSelectedNode?.nodeId && state.operationContent.alternateSelectedNode.persistance === 'pinned'
+        );
         state.operationContent = {
           ...getInitialOperationContentState(),
           alternateSelectedNode: state.operationContent.alternateSelectedNode,
         };
       }
       if (state.operationContent.alternateSelectedNode?.persistance === 'selected') {
-        state.operationContent.alternateSelectedNode.activeTabId = undefined;
-        state.operationContent.alternateSelectedNode.nodeId = undefined;
+        state.operationContent.alternateSelectedNode = {};
       }
     },
     updatePanelLocation: (state, action: PayloadAction<PanelLocation | undefined>) => {
@@ -295,6 +295,11 @@ export const panelSlice = createSlice({
       if (state.operationContent.selectedNodeId && !actionIds.includes(state.operationContent.selectedNodeId ?? '')) {
         state.operationContent.selectedNodeId = undefined;
       }
+      console.log(
+        'charlie',
+        state.operationContent.alternateSelectedNode?.nodeId,
+        state.operationContent.alternateSelectedNode?.nodeId == null
+      );
       if (state.operationContent.alternateSelectedNode?.nodeId == null && state.operationContent.selectedNodeId == null) {
         state.operationContent = getInitialOperationContentState();
         state.isCollapsed = true;

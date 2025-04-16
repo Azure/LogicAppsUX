@@ -19,7 +19,7 @@ export const usePanelNodeData = (nodeId: string | undefined): PanelNodeData | un
 
   const dispatch = useDispatch<AppDispatch>();
 
-  const isAlternateSelectedNode = useIsNodePinnedToOperationPanel(nonNullNodeId);
+  const isPinnedNode = useIsNodePinnedToOperationPanel(nonNullNodeId);
   const comment = useNodeDescription(nonNullNodeId);
   const displayName = useNodeDisplayName(nonNullNodeId);
   const errorInfo = useOperationErrorInfo(nonNullNodeId);
@@ -37,8 +37,8 @@ export const usePanelNodeData = (nodeId: string | undefined): PanelNodeData | un
     return undefined;
   }
 
-  const selectedTab = isAlternateSelectedNode ? alternateNodeActiveTab : selectedNodeActiveTab;
-  const selectTab = isAlternateSelectedNode ? setPinnedPanelActiveTab : setSelectedPanelActiveTab;
+  const selectedTab = isPinnedNode ? alternateNodeActiveTab : selectedNodeActiveTab;
+  const selectTab = isPinnedNode ? setPinnedPanelActiveTab : setSelectedPanelActiveTab;
   const subgraphType = nodeMetadata?.subgraphType;
   const isError = errorInfo?.level === ErrorLevel.Critical || opQuery?.isError;
 
