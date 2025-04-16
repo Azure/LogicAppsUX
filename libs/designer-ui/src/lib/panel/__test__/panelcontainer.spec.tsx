@@ -11,8 +11,8 @@ describe('ui/panel/panelContainer', () => {
     minimal = {
       node: undefined,
       nodeHeaderItems: [],
-      pinnedNode: undefined,
-      pinnedNodeHeaderItems: [],
+      alternateSelectedNode: undefined,
+      alternateSelectedNodeHeaderItems: [],
       isCollapsed: false,
       panelLocation: PanelLocation.Right,
       noNodeSelected: false,

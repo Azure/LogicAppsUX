@@ -5,7 +5,7 @@ import { useIconUri, useOperationErrorInfo } from '../../../core/state/operation
 import { setPinnedPanelActiveTab, setSelectedPanelActiveTab } from '../../../core/state/panel/panelSlice';
 import {
   useIsNodePinnedToOperationPanel,
-  useOperationPanelPinnedNodeActiveTabId,
+  useOperationPanelAlternateNodeActiveTabId,
   useOperationPanelSelectedNodeActiveTabId,
 } from '../../../core/state/panel/panelSelectors';
 import { useOperationQuery } from '../../../core/state/selectors/actionMetadataSelector';
@@ -31,13 +31,13 @@ export const usePanelNodeData = (nodeId: string | undefined): PanelNodeData | un
   const opQuery = useOperationQuery(nonNullNodeId);
 
   const selectedNodeActiveTab = useOperationPanelSelectedNodeActiveTabId();
-  const pinnedNodeActiveTab = useOperationPanelPinnedNodeActiveTabId();
+  const alternateNodeActiveTab = useOperationPanelAlternateNodeActiveTabId();
 
   if (!nodeId) {
     return undefined;
   }
 
-  const selectedTab = isPinnedNode ? pinnedNodeActiveTab : selectedNodeActiveTab;
+  const selectedTab = isPinnedNode ? alternateNodeActiveTab : selectedNodeActiveTab;
   const selectTab = isPinnedNode ? setPinnedPanelActiveTab : setSelectedPanelActiveTab;
   const subgraphType = nodeMetadata?.subgraphType;
   const isError = errorInfo?.level === ErrorLevel.Critical || opQuery?.isError;
