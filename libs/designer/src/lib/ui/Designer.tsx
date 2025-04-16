@@ -43,6 +43,7 @@ import { DragPanMonitor } from './common/DragPanMonitor/DragPanMonitor';
 import { CanvasSizeMonitor } from './CanvasSizeMonitor';
 import { useResizeObserver } from '@react-hookz/web';
 import { AgentChat } from './panel/agentChat/agentChat';
+import { DesignerFlowViewPadding } from '../core/utils/designerLayoutHelpers';
 
 export interface DesignerProps {
   backgroundProps?: BackgroundProps;
@@ -118,7 +119,7 @@ export const Designer = (props: DesignerProps) => {
   const [zoom, setZoom] = useState(1);
 
   const translateExtent = useMemo((): [[number, number], [number, number]] => {
-    const padding = 64;
+    const padding = DesignerFlowViewPadding;
     const [flowWidth, flowHeight] = flowSize;
 
     const xVal = containerDimensions.width / zoom - padding - DEFAULT_NODE_SIZE.width;
