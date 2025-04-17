@@ -3,8 +3,8 @@ import type { RootState } from '../../../state/store';
 import { IconButton, Shimmer } from '@fluentui/react';
 import type { IIconProps } from '@fluentui/react';
 import { LargeText, MediumText, XLargeText } from '@microsoft/designer-ui';
+import { useExportStrings } from '../../../assets/strings';
 import { useMemo } from 'react';
-import { useIntl } from 'react-intl';
 import { useSelector } from 'react-redux';
 
 export interface ISelectedListProps {
@@ -13,18 +13,10 @@ export interface ISelectedListProps {
 }
 
 export const SelectedList: React.FC<ISelectedListProps> = ({ isLoading, deselectWorkflow }) => {
-  const intl = useIntl();
   const workflowState = useSelector((state: RootState) => state.workflow);
   const { exportData } = workflowState;
   const { selectedWorkflows } = exportData;
-
-  const intlText = {
-    SELECTED_APPS: intl.formatMessage({
-      defaultMessage: 'Selected logic apps',
-      id: 'fDpDnc',
-      description: 'Selected logic apps title',
-    }),
-  };
+  const { SELECTED_APPS } = useExportStrings();
 
   const shimmerList = useMemo(() => {
     return new Array(5).fill(0).map((_element, index) => {
@@ -60,7 +52,7 @@ export const SelectedList: React.FC<ISelectedListProps> = ({ isLoading, deselect
 
   return (
     <div className="msla-export-workflows-panel-selected">
-      <XLargeText text={intlText.SELECTED_APPS} style={{ display: 'block' }} className="msla-export-workflows-panel-selected-title" />
+      <XLargeText text={SELECTED_APPS} style={{ display: 'block' }} className="msla-export-workflows-panel-selected-title" />
       <div className="msla-export-workflows-panel-selected-list">{renderItems}</div>
     </div>
   );
