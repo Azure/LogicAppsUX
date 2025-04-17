@@ -26,6 +26,8 @@ import { Add12Filled } from '@fluentui/react-icons';
 import { deleteWorkflowData } from '../../../core/actions/bjsworkflow/configuretemplate';
 import { useResourceStrings } from '../resources';
 import { useTemplatesStrings } from '../../templates/templatesStrings';
+import { WorkflowKind } from '../../../core/state/workflow/workflowInterfaces';
+import { equals } from '@microsoft/logic-apps-shared';
 
 export const DisplayWorkflows = ({ onSave }: { onSave: (isMultiWorkflow: boolean) => void }) => {
   const intl = useIntl();
@@ -59,7 +61,7 @@ export const DisplayWorkflows = ({ onSave }: { onSave: (isMultiWorkflow: boolean
   );
 
   const customResourceStrings = useResourceStrings();
-  const { resourceStrings } = useTemplatesStrings();
+  const { stateTypes, resourceStrings } = useTemplatesStrings();
 
   const handleAddWorkflows = useCallback(() => {
     dispatch(openPanelView({ panelView: TemplatePanelView.ConfigureWorkflows }));
@@ -91,7 +93,7 @@ export const DisplayWorkflows = ({ onSave }: { onSave: (isMultiWorkflow: boolean
     displayName: string;
     state: string;
     trigger: string;
-    date: string;
+    // date: string; //TODO: removed until back-end updates us
   };
 
   const columns: TableColumnDefinition<WorkflowsTableItem>[] = [
@@ -107,9 +109,10 @@ export const DisplayWorkflows = ({ onSave }: { onSave: (isMultiWorkflow: boolean
     createTableColumn<WorkflowsTableItem>({
       columnId: 'trigger',
     }),
-    createTableColumn<WorkflowsTableItem>({
-      columnId: 'date',
-    }),
+    //TODO: removed until back-end updates us
+    // createTableColumn<WorkflowsTableItem>({
+    //   columnId: 'date',
+    // }),
   ];
 
   const items =
@@ -117,9 +120,14 @@ export const DisplayWorkflows = ({ onSave }: { onSave: (isMultiWorkflow: boolean
       id: workflowData.id,
       name: workflowData?.workflowName ?? customResourceStrings.Placeholder,
       displayName: workflowData?.manifest?.title ?? customResourceStrings.Placeholder,
-      state: workflowData?.manifest?.kinds?.join(', ') ?? customResourceStrings.Placeholder,
-      trigger: '-', //TODO: replace this with the actual trigger type
-      date: '-', //TODO: replace this with the actual date
+      state:
+        workflowData?.manifest?.kinds
+          ?.map((kind) =>
+            equals(kind, WorkflowKind.STATEFUL) ? stateTypes.STATEFUL : equals(kind, WorkflowKind.STATELESS) ? stateTypes.STATELESS : ''
+          )
+          ?.join(', ') ?? customResourceStrings.Placeholder,
+      trigger: workflowData?.triggerType,
+      // date: '-', //TODO: removed until back-end updates us
     })) ?? [];
 
   const {
@@ -191,10 +199,10 @@ export const DisplayWorkflows = ({ onSave }: { onSave: (isMultiWorkflow: boolean
                 onKeyDown={toggleAllKeydown}
                 checkboxIndicator={{ 'aria-label': customResourceStrings.SelectAllWorkflowsLabel }}
               />
-
               <TableHeaderCell>{resourceStrings.WORKFLOW_NAME}</TableHeaderCell>
               <TableHeaderCell>{customResourceStrings.WorkflowDisplayName}</TableHeaderCell>
               <TableHeaderCell>{customResourceStrings.State}</TableHeaderCell>
+              <TableHeaderCell>{customResourceStrings.Trigger}</TableHeaderCell>
             </TableRow>
           </TableHeader>
           {rows.map(({ item, selected, onClick, onKeyDown, appearance }) => (
@@ -212,9 +220,10 @@ export const DisplayWorkflows = ({ onSave }: { onSave: (isMultiWorkflow: boolean
               <TableCell>
                 <TableCellLayout>{item.trigger}</TableCellLayout>
               </TableCell>
+              {/* //TODO: removed until back-end updates us
               <TableCell>
                 <TableCellLayout>{item.date}</TableCellLayout>
-              </TableCell>
+              </TableCell> */}
             </TableRow>
           ))}
         </Table>
