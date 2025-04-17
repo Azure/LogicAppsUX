@@ -5,7 +5,7 @@ import { useIntl } from 'react-intl';
 import { useDispatch, useSelector } from 'react-redux';
 import type { AppDispatch, RootState } from '../../core/state/templates/store';
 import type { Template } from '@microsoft/logic-apps-shared';
-import { getPropertyValue, getTriggerFromDefinition, unmap } from '@microsoft/logic-apps-shared';
+import { getPropertyValue, unmap } from '@microsoft/logic-apps-shared';
 import { Link, Text } from '@fluentui/react-components';
 import { QuickViewPanel, QuickViewPanelHeader } from '../panel/templatePanel/quickViewPanel/quickViewPanel';
 import { ConnectionsList } from './connections/connections';
@@ -167,7 +167,7 @@ const WorkflowList = ({
     unmap(workflows).map((workflow) => {
       const { id, manifest } = workflow;
       const { title } = manifest as Template.WorkflowManifest;
-      return { id, name: title, trigger: getTriggerFromDefinition(workflow.workflowDefinition.triggers ?? {}) };
+      return { id, name: title, trigger: workflow.triggerType };
     })
   );
   const columnsNames = {

@@ -47,10 +47,10 @@ const useGeneralSectionItems = (resources: Record<string, string>) => {
     },
   ];
 
-  if (isMultiWorkflow) {
+  if (!isMultiWorkflow) {
     items.push({
       label: resources.Trigger,
-      value: 'Empty', // TODO: Please add the trigger value stored from the first workflow here.
+      value: manifest?.details.Trigger ?? '',
       type: 'text',
     });
   }

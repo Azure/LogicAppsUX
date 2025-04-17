@@ -20,6 +20,7 @@ import {
   TemplateService,
   type Template,
   clone,
+  getTriggerFromDefinition,
 } from '@microsoft/logic-apps-shared';
 import { createAsyncThunk } from '@reduxjs/toolkit';
 import type { RootState } from '../../state/templates/store';
@@ -46,6 +47,7 @@ export interface WorkflowTemplateData {
     light?: string;
     dark?: string;
   };
+  triggerType: string;
   connectionKeys: string[];
   errors: {
     workflow: string | undefined;
@@ -415,6 +417,7 @@ const loadWorkflowTemplate = async (
             : workflowManifest.kinds?.length
               ? workflowManifest.kinds[0]
               : 'stateful',
+        triggerType: getTriggerFromDefinition(templateWorkflowDefinition.triggers ?? {}),
         images: {
           light: TemplateService().getContentPathUrl(`${templateId}/${workflowId}`, workflowManifest.images.light),
           dark: TemplateService().getContentPathUrl(`${templateId}/${workflowId}`, workflowManifest.images.dark),
