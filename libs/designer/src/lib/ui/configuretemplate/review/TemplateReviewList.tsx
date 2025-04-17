@@ -9,6 +9,7 @@ import { equals, getResourceNameFromId } from '@microsoft/logic-apps-shared';
 import { ConnectorConnectionName } from '../../templates/connections/connector';
 import React, { useMemo } from 'react';
 import { useAllConnectors } from '../../../core/configuretemplate/utils/queries';
+import { WorkflowKind } from '../../../core/state/workflow/workflowInterfaces';
 
 const SectionDividerItem: TemplatesSectionItem = {
   type: 'divider',
@@ -45,8 +46,8 @@ export const TemplateReviewList = () => {
     }),
   };
 
-  const { connectorKinds, resourceStrings: templateResourceStrings } = useTemplatesStrings();
-  const resources = { ...templateResourceStrings, ...connectorKinds, ...useResourceStrings(), ...intlText };
+  const { connectorKinds, stateTypes, resourceStrings: templateResourceStrings } = useTemplatesStrings();
+  const resources = { ...templateResourceStrings, ...connectorKinds, ...stateTypes, ...useResourceStrings(), ...intlText };
 
   const workflowsSectionItems = useWorkflowSectionItems(resources);
   const connectionsSectionItems: TemplatesSectionItem[] = useConnectionSectionItems(resources);
@@ -121,7 +122,12 @@ const useWorkflowSectionItems = (resources: Record<string, string>) => {
       },
       {
         label: resources.StateType,
-        value: workflow?.manifest?.kinds?.join(', ') ?? resources.Placeholder,
+        value:
+          workflow?.manifest?.kinds
+            ?.map((kind) =>
+              equals(kind, WorkflowKind.STATEFUL) ? resources.STATEFUL : equals(kind, WorkflowKind.STATELESS) ? resources.STATELESS : ''
+            )
+            ?.join(', ') ?? resources.Placeholder,
         type: 'text',
       },
       {
@@ -299,7 +305,12 @@ const useSettingsSection = (resources: Record<string, string>) => {
   const items: TemplatesSectionItem[] = [
     {
       label: resources.Host,
-      value: manifest?.skus?.join(', ') ?? resources.Placeholder,
+      value:
+        manifest?.skus
+          ?.map((skuKind) =>
+            equals(skuKind, 'standard') ? resources.Standard : equals(skuKind, 'consumption') ? resources.Consumption : ''
+          )
+          ?.join(', ') ?? resources.Placeholder,
       type: 'text',
     },
     {
