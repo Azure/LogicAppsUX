@@ -932,16 +932,6 @@
             "description": "Ask to confirm before deploying to a function app in Azure. Deployment overwrites any previous deployment and can't be undone.",
             "default": true
           },
-          "azureLogicAppsStandard.showCoreToolsWarning": {
-            "type": "boolean",
-            "description": "Show a warning when your installed version of the Azure Functions Core Tools is outdated.",
-            "default": true
-          },
-          "azureLogicAppsStandard.showDotNetWarning": {
-            "type": "boolean",
-            "description": "Show a warning when your installed version of the .NET SDK is outdated.",
-            "default": true
-          },
           "azureLogicAppsStandard.showNodeJsWarning": {
             "type": "boolean",
             "description": "Show a warning when your installed version of Node JS is outdated.",

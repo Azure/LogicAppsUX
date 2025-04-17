@@ -15,6 +15,7 @@ import {
   DependencyDefaultPath,
   nodeJsBinaryPathSettingKey,
   funcCoreToolsBinaryPathSettingKey,
+  funcDependencyName,
 } from '../../constants';
 import { ext } from '../../extensionVariables';
 import { localize } from '../../localize';
@@ -34,6 +35,8 @@ import * as vscode from 'vscode';
 
 import AdmZip = require('adm-zip');
 import { isNullOrUndefined } from '@microsoft/logic-apps-shared';
+import { setFunctionsCommand } from './funcCoreTools/funcVersion';
+import { startDesignTimeApi } from './codeless/startDesignTimeApi';
 
 /**
  * Download and Extracts dependency zip.
@@ -95,6 +98,10 @@ export async function downloadAndExtractDependency(
       } else {
         await extractDependency(dependencyFilePath, targetFolder, dependencyName);
         vscode.window.showInformationMessage(localize('successInstall', `Successfully installed ${dependencyName}`));
+        if (dependencyName === funcDependencyName) {
+          await setFunctionsCommand();
+          await startDesignTimeApi(ext.logicAppWorkspace);
+        }
       }
       // remove the temp folder.
       fs.rmSync(tempFolderPath, { recursive: true });
