@@ -21,6 +21,8 @@ const initialState: TemplateState = {
   parameterDefinitions: {},
   connections: {},
   errors: {
+    manifest: {},
+    workflows: {},
     parameters: {},
     connections: undefined,
   },
@@ -107,6 +109,8 @@ export const templateSlice = createSlice({
       state.parameterDefinitions = {};
       state.connections = {};
       state.errors = {
+        manifest: {},
+        workflows: {},
         parameters: {},
         connections: undefined,
       };
@@ -175,6 +179,8 @@ export const templateSlice = createSlice({
       state.parameterDefinitions = {};
       state.connections = {};
       state.errors = {
+        manifest: {},
+        workflows: {},
         parameters: {},
         connections: undefined,
       };

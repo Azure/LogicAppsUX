@@ -61,6 +61,8 @@ export interface TemplatePayload {
   parameterDefinitions: Record<string, Template.ParameterDefinition>;
   connections: Record<string, Template.Connection>;
   errors: {
+    manifest: Record<string, string | undefined>;
+    workflows: Record<string, string | undefined>;
     parameters: Record<string, string | undefined>;
     connections: string | undefined;
   };
@@ -334,6 +336,8 @@ const loadTemplateFromResourcePath = async (
     parameterDefinitions: {},
     connections: {},
     errors: {
+      manifest: {},
+      workflows: {},
       parameters: {},
       connections: undefined,
     },
