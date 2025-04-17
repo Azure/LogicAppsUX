@@ -1,4 +1,16 @@
 # Logic Apps Designer
+## [5.82.0](https://github.com/Azure/LogicAppsUX/compare/v5.81.0...v5.82.0) (2025-04-17)
+
+
+### Features
+
+* **vscode:** Automatically update function core tools and dotnet binaries ([#7045](https://github.com/Azure/LogicAppsUX/issues/7045)) ([0e1f8c1](https://github.com/Azure/LogicAppsUX/commit/0e1f8c11ce853eef813588e71f0d380fb02277ea))
+
+
+### Bug Fixes
+
+* **designer:** Do not serialize user messages if empty ([#7051](https://github.com/Azure/LogicAppsUX/issues/7051)) ([ec8e576](https://github.com/Azure/LogicAppsUX/commit/ec8e576a759de58e784d5c25a4a28670010cc631))
+
 ## [5.81.0](https://github.com/Azure/LogicAppsUX/compare/v5.80.0...v5.81.0) (2025-04-16)
 
 
