@@ -298,7 +298,7 @@ const getServices = (
   };
   const templateService = new ConsumptionTemplateService({
     ...defaultServiceParams,
-    endpoint: 'https://priti-cxf4h5cpcteue4az.b02.azurefd.net/logicapps',
+    endpoint: '/templatesLocalProxy/templates/logicapps',
     useEndpointForTemplates: !!useEndpoint,
     openBladeAfterCreate: (_workflowName: string | undefined) => {
       window.alert('Open blade after create, consumption creation is complete');
