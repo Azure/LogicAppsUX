@@ -59,8 +59,8 @@ export const templateSlice = createSlice({
     },
     updateTemplateTriggerDescription: (state, action: PayloadAction<{ id: string; description: string | undefined }>) => {
       const { id, description } = action.payload;
-      const triggerKey = Object.keys(state.workflows[id]?.workflowDefinition?.triggers ?? {})?.[0];
-      if (state.workflows[id]?.workflowDefinition?.triggers?.[triggerKey]) {
+      const triggerKey = Object.keys(state.workflows?.[id]?.workflowDefinition?.triggers ?? {})?.[0];
+      if (triggerKey && state.workflows?.[id]?.workflowDefinition?.triggers?.[triggerKey]) {
         state.workflows[id].workflowDefinition.triggers[triggerKey].description = description;
       }
     },
