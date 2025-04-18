@@ -21,7 +21,8 @@ env:
   AI_KEY: ${{ vars.AI_KEY }}
   NX_AI_CON_STR: InstrumentationKey=3cf0d6ae-3327-414a-b7c1-12f31ef45eff;IngestionEndpoint=https://eastus-8.in.applicationinsights.azure.com/;LiveEndpoint=https://eastus.livediagnostics.monitor.azure.com/
   BUMP_COMMAND: pnpm run bump --release-as ${{ github.event.inputs.release_type || 'minor' }}
-
+  
+permissions: write-all
 jobs:
   validation:
     runs-on: ubuntu-latest
@@ -48,7 +49,7 @@ jobs:
       - name: 'Checkout Github Action'
         uses: actions/checkout@master
         with:
-          token: ${{ secrets.AUTOMATION_PAT }}
+          token: ${{ secrets.GITHUB_TOKEN }}
           fetch-depth: 0
 
       - name: Set up Node.js
@@ -69,7 +70,7 @@ jobs:
       - name: Push changes
         uses: ad-m/github-push-action@master
         with:
-          github_token: ${{ secrets.AUTOMATION_PAT }}
+          github_token: ${{ secrets.GITHUB_TOKEN }}
           branch: ${{ github.ref }}
 
   build:
@@ -124,7 +125,7 @@ jobs:
           artifacts: 'LICENSE.md,apps/vs-code-designer/dist/*.vsix'
           generateReleaseNotes: true
           tag: '${{ steps.previoustag.outputs.tag }}'
-          token: ${{ secrets.AUTOMATION_PAT }}
+          token: ${{ secrets.GITHUB_TOKEN }}
 
   publish:
     needs: bump-version
@@ -136,7 +137,7 @@ jobs:
       - name: 'Checkout Github Action'
         uses: actions/checkout@master
         with:
-          token: ${{ secrets.AUTOMATION_PAT }}
+          token: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Azure login
         uses: azure/login@v2
