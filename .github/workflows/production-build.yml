@@ -48,7 +48,7 @@ jobs:
       - name: 'Checkout Github Action'
         uses: actions/checkout@master
         with:
-          token: ${{ secrets.AUTOMATION_PAT }}
+          token: ${{ System.AccessToken }}
           fetch-depth: 0
 
       - name: Set up Node.js
@@ -69,7 +69,7 @@ jobs:
       - name: Push changes
         uses: ad-m/github-push-action@master
         with:
-          github_token: ${{ secrets.AUTOMATION_PAT }}
+          github_token: ${{ System.AccessToken }}
           branch: ${{ github.ref }}
 
   build:
@@ -124,7 +124,7 @@ jobs:
           artifacts: 'LICENSE.md,apps/vs-code-designer/dist/*.vsix'
           generateReleaseNotes: true
           tag: '${{ steps.previoustag.outputs.tag }}'
-          token: ${{ secrets.AUTOMATION_PAT }}
+          token: ${{ System.AccessToken }}
 
   publish:
     needs: bump-version
@@ -136,7 +136,7 @@ jobs:
       - name: 'Checkout Github Action'
         uses: actions/checkout@master
         with:
-          token: ${{ secrets.AUTOMATION_PAT }}
+          token: ${{ System.AccessToken }}
 
       - name: Azure login
         uses: azure/login@v2
