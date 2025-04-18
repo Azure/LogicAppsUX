@@ -28,7 +28,7 @@ import { saveUnitTestDefinition } from '../../../utils/unitTests';
 import { createNewDataMapCmd } from '../../dataMapper/dataMapper';
 import { OpenDesignerBase } from './openDesignerBase';
 import { HTTP_METHODS } from '@microsoft/logic-apps-shared';
-import type { IActionContext } from '@microsoft/vscode-azext-utils';
+import { openUrl, type IActionContext } from '@microsoft/vscode-azext-utils';
 import type {
   AzureConnectorDetails,
   FileSystemConnectionInfo,
@@ -248,6 +248,10 @@ export default class OpenDesignerForLocalProject extends OpenDesignerBase {
         ext.telemetryReporter.sendTelemetryEvent(eventName, { ...msg.data });
         break;
       }
+      case ExtensionCommand.fileABug: {
+        await openUrl('https://github.com/Azure/LogicAppsUX/issues/new?template=bug_report.yml');
+        break;
+      }
 
       default:
         break;
@@ -337,7 +341,7 @@ export default class OpenDesignerForLocalProject extends OpenDesignerBase {
     } catch (error) {
       if (error.statusCode !== 404) {
         const errorMessage = localize('workflowValidationFailed', 'Workflow validation failed: ') + error.message;
-        await window.showErrorMessage(errorMessage, localize('OK', 'OK'));
+        window.showErrorMessage(errorMessage, localize('OK', 'OK'));
       }
     }
   }

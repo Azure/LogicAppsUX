@@ -25,6 +25,7 @@ import {
   createTestSettingsConfigFile,
   updateSolutionWithProject,
   validateWorkflowPath,
+  validateUnitTestName,
 } from '../../unitTests';
 
 // ============================================================================
@@ -96,6 +97,52 @@ describe('validateRunId', () => {
   it('should throw an error for an empty runId', async () => {
     const runId = '';
     await expect(validateRunId(runId)).rejects.toThrowError('Invalid runId format.');
+  });
+});
+
+describe('validateUnitTestName', () => {
+  const testProjectPath = path.join('test', 'project', 'LogicApp1');
+  const testWorkflowName = 'workflow1';
+  let localizeSpy: any;
+
+  beforeEach(() => {
+    localizeSpy = vi
+      .spyOn(localizeModule, 'localize')
+      .mockImplementation((key: string, defaultMessage: string, ...args: any[]) => defaultMessage);
+  });
+
+  afterEach(() => {
+    vi.restoreAllMocks();
+  });
+
+  it('should return an error if unit test name is empty', async () => {
+    const result = await validateUnitTestName(testProjectPath, testWorkflowName, '');
+    expect(result).toBe('The unit test name cannot be empty.');
+  });
+
+  it('should return an error if unit test name contains invalid characters', async () => {
+    const result = await validateUnitTestName(testProjectPath, testWorkflowName, 'Invalid@Name');
+    expect(result).toBe('Unit test name must start with a letter and can only contain letters, digits, "_" and "-".');
+  });
+
+  it('should return an error if another folder with the same name exists in the test project', async () => {
+    vi.spyOn(fse, 'existsSync').mockReturnValue(true);
+    vi.spyOn(fse, 'readdir').mockResolvedValue(['TestActionMock.cs']);
+    const result = await validateUnitTestName(testProjectPath, testWorkflowName, 'test1');
+    expect(result).toBe('Another folder with this name already exists in the test project.');
+  });
+
+  it('should return an error if another unit test with the same name exists in the test project', async () => {
+    vi.spyOn(fse, 'existsSync').mockReturnValue(true);
+    vi.spyOn(fse, 'readdir').mockResolvedValue(['test1.cs']);
+    const result = await validateUnitTestName(testProjectPath, testWorkflowName, 'test1');
+    expect(result).toBe('A unit test with this name already exists in the test project.');
+  });
+
+  it('should return undefined if the unit test name is valid', async () => {
+    vi.spyOn(fse, 'existsSync').mockReturnValue(false);
+    const result = await validateUnitTestName(testProjectPath, testWorkflowName, 'Valid_Test');
+    expect(result).toBeUndefined();
   });
 });
 
@@ -185,6 +232,40 @@ describe('parseErrorBeforeTelemetry', () => {
     const error = 42;
     const result = parseErrorBeforeTelemetry(error);
     expect(result).toBe('42');
+  });
+});
+
+describe('generateCSharpClasses - StatusCode Removal', () => {
+  it('should remove the redundant StatusCode property from the generated class definition', () => {
+    // Simulate JSON output with a redundant StatusCode property.
+    const dataWithStatusCode = {
+      nestedTypeProperty: 'object',
+      Body: { nestedTypeProperty: 'object', description: 'Response body' },
+      StatusCode: { nestedTypeProperty: 'integer', description: 'The status code' },
+    };
+
+    const classCode = generateCSharpClasses('TestNamespace', 'TestClass', 'WorkflowName', 'Action', 'MockClass', dataWithStatusCode);
+
+    // The generated code should include the constructor setting the base's StatusCode.
+    expect(classCode).toContain('this.StatusCode = HttpStatusCode.OK;');
+    // It should not contain a separate integer property for StatusCode in the class body.
+    expect(classCode).not.toContain('public int StatusCode { get; set; }');
+    // Optionally, check that other properties are still generated correctly.
+    expect(classCode).toContain('public JObject Body { get; set; }');
+  });
+
+  it('should not remove properties other than StatusCode', () => {
+    const dataWithoutStatusCode = {
+      nestedTypeProperty: 'object',
+      Key1: { nestedTypeProperty: 'string', description: 'Test key description' },
+    };
+
+    const classCode = generateCSharpClasses('TestNamespace', 'TestClass', 'WorkflowName', 'Action', 'MockClass', dataWithoutStatusCode);
+
+    // Ensure that a valid property is generated.
+    expect(classCode).toContain('public string Key1 { get; set; }');
+    // And still the base class initialization for StatusCode should be present.
+    expect(classCode).toContain('this.StatusCode = HttpStatusCode.OK;');
   });
 });
 

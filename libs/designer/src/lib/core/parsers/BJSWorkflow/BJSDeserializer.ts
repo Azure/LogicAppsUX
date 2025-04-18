@@ -721,7 +721,7 @@ export const processScopeActions = (
           const channelAction: any = action.channels.out?.[key];
           if (channelAction && channelAction?.action) {
             const id = `${actionName}${constants.CHANNELS.OUTPUT}${channelAction.action.type}`;
-            allActions[id] = channelAction.trigger;
+            allActions[id] = channelAction.action;
           }
         }
       }
@@ -829,20 +829,22 @@ const addActionsInstanceMetaData = (
   Object.entries(updatedNodesData).forEach(([key, node]) => {
     const nodeRunData = runInstanceActions?.[key];
     const isAgent = allActions[key]?.type.toLowerCase() === constants.NODE.TYPE.AGENT;
-    const runIndex = isAgent ? (nodeRunData?.iterationCount ? nodeRunData.iterationCount - 1 : 0) : 0;
+    const isRunning = nodeRunData?.status === 'Running';
+    const runIndex = isAgent && isRunning ? (nodeRunData?.iterationCount ? nodeRunData.iterationCount - 1 : 0) : 0;
 
     if (!isNullOrUndefined(nodeRunData)) {
-      const repetitionRunData = isNullOrUndefined(nodeRunData.repetitionCount)
-        ? {
-            runData: {
-              ...nodeRunData,
-              duration: getDurationStringPanelMode(
-                Date.parse(nodeRunData.endTime) - Date.parse(nodeRunData.startTime),
-                /* abbreviated */ true
-              ),
-            },
-          }
-        : {};
+      const repetitionRunData =
+        isNullOrUndefined(nodeRunData.repetitionCount) || isAgent
+          ? {
+              runData: {
+                ...nodeRunData,
+                duration: getDurationStringPanelMode(
+                  Date.parse(nodeRunData.endTime) - Date.parse(nodeRunData.startTime),
+                  /* abbreviated */ true
+                ),
+              },
+            }
+          : {};
 
       updatedNodesData[key] = {
         ...node,

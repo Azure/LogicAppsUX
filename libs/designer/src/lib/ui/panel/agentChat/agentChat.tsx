@@ -1,30 +1,24 @@
-import {
-  AgentMessageEntryType,
-  ConversationItemType,
-  PanelLocation,
-  PanelResizer,
-  PanelSize,
-  type ConversationItem,
-} from '@microsoft/designer-ui';
-import { useEffect, useMemo, useRef, useState } from 'react';
+import { PanelLocation, PanelResizer, PanelSize, type ConversationItem } from '@microsoft/designer-ui';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useIntl } from 'react-intl';
-import { defaultChatbotPanelWidth, ChatbotContent } from '@microsoft/logic-apps-chatbot';
-import { type ChatHistory, useChatHistory } from '../../../core/queries/runs';
+import { defaultChatbotPanelWidth, ChatbotUI } from '@microsoft/logic-apps-chatbot';
+import { useAgentChatInvokeUri, useChatHistory } from '../../../core/queries/runs';
 import { useMonitoringView } from '../../../core/state/designerOptions/designerOptionsSelectors';
 import {
   useAgentLastOperations,
   useAgentOperations,
-  useIsChatInputEnabled,
+  useFocusElement,
+  useUriForAgentChat,
   useRunInstance,
 } from '../../../core/state/workflow/workflowSelectors';
-import { guid, isNullOrUndefined, labelCase } from '@microsoft/logic-apps-shared';
+import { isNullOrUndefined, LogEntryLevel, LoggerService, RunService } from '@microsoft/logic-apps-shared';
 import { Button, Drawer, mergeClasses } from '@fluentui/react-components';
 import { ChatFilled } from '@fluentui/react-icons';
 import { useDispatch } from 'react-redux';
 import { changePanelNode, type AppDispatch } from '../../../core';
-import type { Dispatch } from '@reduxjs/toolkit';
-import { setFocusNode, setRunIndex } from '../../../core/state/workflow/workflowSlice';
+import { clearFocusElement, setFocusNode, setRunIndex } from '../../../core/state/workflow/workflowSlice';
 import { AgentChatHeader } from './agentChatHeader';
+import { parseChatHistory } from './helper';
 
 interface AgentChatProps {
   panelLocation?: PanelLocation;
@@ -32,135 +26,98 @@ interface AgentChatProps {
   panelContainerRef: React.MutableRefObject<HTMLElement | null>;
 }
 
-const parseChatHistory = (chatHistory: ChatHistory[], dispatch: Dispatch, agentLastOperations: Record<string, any>): ConversationItem[] => {
-  const toolResultCallback = (agentName: string, toolName: string, iteration: number, subIteration: number) => {
-    const agentLastOperation = agentLastOperations[agentName][toolName];
-    dispatch(setRunIndex({ page: iteration, nodeId: agentName }));
-    dispatch(setRunIndex({ page: subIteration, nodeId: toolName }));
-    dispatch(setFocusNode(agentLastOperation));
-    dispatch(changePanelNode(agentLastOperation));
-  };
-
-  const toolContentCallback = (agentName: string, iteration: number) => {
-    dispatch(setRunIndex({ page: iteration, nodeId: agentName }));
-    dispatch(setFocusNode(agentName));
-    dispatch(changePanelNode(agentName));
-  };
-
-  const agentCallback = (agentName: string) => {
-    dispatch(setRunIndex({ page: 0, nodeId: agentName }));
-    dispatch(setFocusNode(agentName));
-    dispatch(changePanelNode(agentName));
-  };
-
-  const conversations: ConversationItem[] = [];
-
-  for (const chat of chatHistory) {
-    const { nodeId, messages } = chat;
-    const parsedMessages: any[] = (messages ?? []).map((message) => parseMessage(message, nodeId, toolResultCallback, toolContentCallback));
-
-    if (parsedMessages.length > 0) {
-      const agentName = labelCase(nodeId);
-      conversations.push(...parsedMessages, {
-        id: guid(),
-        text: agentName,
-        type: ConversationItemType.AgentHeader,
-        onClick: () => {
-          agentCallback(nodeId);
-        },
-        date: new Date(), // Using current time for header; modify if needed
-      });
-    }
-  }
-
-  return conversations;
-};
-
-const parseMessage = (
-  message: any,
-  parentId: string,
-  toolResultCallback: (agentName: string, toolName: string, iteration: number, subIteration: number) => void,
-  toolContentCallback: (agentName: string, iteration: number) => void
-): ConversationItem => {
-  const { messageEntryType, messageEntryPayload, timestamp, role, iteration } = message;
-
-  switch (messageEntryType) {
-    case AgentMessageEntryType.Content: {
-      const content = messageEntryPayload?.content || '';
-      return {
-        text: content,
-        type: ConversationItemType.Reply,
-        id: guid(),
-        role: {
-          text: role,
-          agentName: labelCase(parentId),
-          onClick: () => toolContentCallback(parentId, iteration),
-        },
-        hideFooter: true,
-        metadata: { parentId },
-        date: new Date(timestamp),
-        isMarkdownText: false,
-        className: 'msla-agent-chat-content',
-      };
-    }
-    case AgentMessageEntryType.ToolResult: {
-      const subIteration = message.toolResultsPayload?.toolResult?.subIteration ?? 0;
-      const toolName = message.toolResultsPayload?.toolResult?.toolName ?? '';
-      const status = message.toolResultsPayload?.toolResult?.status;
-
-      return {
-        id: guid(),
-        text: toolName,
-        type: ConversationItemType.Tool,
-        onClick: () => toolResultCallback(parentId, toolName, iteration, subIteration),
-        status,
-        date: new Date(timestamp),
-      };
-    }
-    default: {
-      return {
-        text: '',
-        type: ConversationItemType.Reply,
-        id: guid(),
-        role,
-        hideFooter: true,
-        metadata: { parentId },
-        date: new Date(timestamp),
-        isMarkdownText: false,
-      };
-    }
-  }
-};
-
 export const AgentChat = ({
   panelLocation = PanelLocation.Left,
   chatbotWidth = defaultChatbotPanelWidth,
   panelContainerRef,
 }: AgentChatProps) => {
   const intl = useIntl();
-  const [inputQuery, setInputQuery] = useState('');
   const [focus, setFocus] = useState(false);
   const [conversation, setConversation] = useState<ConversationItem[]>([]);
+  const [textInput, setTextInput] = useState<string>('');
+  const [isWaitingForResponse, setIsWaitingForResponse] = useState(false);
   const isMonitoringView = useMonitoringView();
   const runInstance = useRunInstance();
   const agentOperations = useAgentOperations();
   const agentLastOperations = useAgentLastOperations(agentOperations);
   const [isCollapsed, setIsCollapsed] = useState(false);
   const panelContainerElement = panelContainerRef.current as HTMLElement;
-  const { isFetching: isChatHistoryFetching, data: chatHistoryData } = useChatHistory(!!isMonitoringView, agentOperations, runInstance?.id);
+  const agentChatSuffixUri = useUriForAgentChat(conversation.length > 0 ? conversation[0].metadata?.parentId : undefined);
+  const {
+    refetch: refetchChatHistory,
+    isFetching: isChatHistoryFetching,
+    data: chatHistoryData,
+  } = useChatHistory(!!isMonitoringView, agentOperations, runInstance?.id);
+  const { data: chatInvokeUri } = useAgentChatInvokeUri(!!isMonitoringView, true, agentChatSuffixUri);
   const [overrideWidth, setOverrideWidth] = useState<string | undefined>(chatbotWidth);
-  const isChatInputEnabled = useIsChatInputEnabled(conversation.length > 0 ? conversation[0].metadata?.parentId : undefined);
   const dispatch = useDispatch<AppDispatch>();
-  const agentsNumber = Object.keys(agentLastOperations).length;
   const drawerWidth = isCollapsed ? PanelSize.Auto : overrideWidth;
   const panelRef = useRef<HTMLDivElement>(null);
+  const focusElement = useFocusElement();
+  const rawAgentLastOperations = JSON.stringify(agentLastOperations);
+
+  const toolResultCallback = useCallback(
+    (agentName: string, toolName: string, iteration: number, subIteration: number) => {
+      const agentLastOperation = JSON.parse(rawAgentLastOperations)?.[agentName]?.[toolName];
+      dispatch(setRunIndex({ page: iteration, nodeId: agentName }));
+      dispatch(setRunIndex({ page: subIteration, nodeId: toolName }));
+      dispatch(setFocusNode(agentLastOperation));
+      dispatch(changePanelNode(agentLastOperation));
+    },
+    [dispatch, rawAgentLastOperations]
+  );
+
+  const toolContentCallback = useCallback(
+    (agentName: string, iteration: number) => {
+      dispatch(setRunIndex({ page: iteration, nodeId: agentName }));
+      dispatch(setFocusNode(agentName));
+      dispatch(changePanelNode(agentName));
+    },
+    [dispatch]
+  );
+
+  const agentCallback = useCallback(
+    (agentName: string) => {
+      dispatch(setRunIndex({ page: 0, nodeId: agentName }));
+      dispatch(setFocusNode(agentName));
+      dispatch(changePanelNode(agentName));
+    },
+    [dispatch]
+  );
+
+  const onChatSubmit = useCallback(async () => {
+    if (!textInput || isNullOrUndefined(chatInvokeUri)) {
+      return;
+    }
+
+    setIsWaitingForResponse(true);
+
+    try {
+      await RunService().invokeAgentChat({
+        id: chatInvokeUri,
+        data: { role: 'User', content: textInput },
+      });
+
+      refetchChatHistory();
+    } catch (e: any) {
+      LoggerService().log({
+        level: LogEntryLevel.Error,
+        area: 'agentchat',
+        message: 'Agent chat invocation failed',
+        error: e,
+      });
+    }
+
+    setIsWaitingForResponse(false);
+    setTextInput('');
+  }, [textInput, chatInvokeUri, refetchChatHistory]);
 
   useEffect(() => {
     if (!isNullOrUndefined(chatHistoryData)) {
-      const newConversations = parseChatHistory(chatHistoryData, dispatch, agentLastOperations);
+      const newConversations = parseChatHistory(chatHistoryData, toolResultCallback, toolContentCallback, agentCallback);
       setConversation([...newConversations]);
     }
-  }, [setConversation, chatHistoryData, agentsNumber, dispatch]);
+  }, [setConversation, chatHistoryData, dispatch, toolResultCallback, toolContentCallback, agentCallback]);
 
   const intlText = useMemo(() => {
     return {
@@ -205,9 +162,9 @@ export const AgentChat = ({
         description: 'Chatbot error message',
       }),
       progressCardText: intl.formatMessage({
-        defaultMessage: 'Fetching chat history...',
-        id: '7col/w',
-        description: 'Fetching chat history progress card text',
+        defaultMessage: 'Processing...',
+        id: '6776lH',
+        description: 'Processing message in the chatbot',
       }),
       progressCardSaveText: intl.formatMessage({
         defaultMessage: '💾 Saving this flow...',
@@ -221,10 +178,6 @@ export const AgentChat = ({
       }),
     };
   }, [intl]);
-
-  useEffect(() => {
-    setInputQuery('');
-  }, [conversation]);
 
   return (
     <Drawer
@@ -257,7 +210,7 @@ export const AgentChat = ({
       ) : null}
       {isCollapsed ? null : (
         <>
-          <ChatbotContent
+          <ChatbotUI
             panel={{
               location: panelLocation,
               width: chatbotWidth,
@@ -267,11 +220,12 @@ export const AgentChat = ({
               header: <AgentChatHeader title={intlText.agentChatHeader} toggleCollapse={() => setIsCollapsed(true)} />,
             }}
             inputBox={{
-              value: inputQuery,
-              onChange: setInputQuery,
-              onSubmit: () => {},
-              disabled: isChatInputEnabled,
-              readOnly: true,
+              onSubmit: () => {
+                onChatSubmit();
+              },
+              onChange: setTextInput,
+              value: textInput,
+              readOnly: !chatInvokeUri,
               readOnlyText: intlText.chatReadOnlyMessage,
             }}
             string={{
@@ -283,8 +237,10 @@ export const AgentChat = ({
             body={{
               messages: conversation,
               focus: focus,
-              answerGenerationInProgress: isChatHistoryFetching,
+              answerGenerationInProgress: isChatHistoryFetching || isWaitingForResponse,
               setFocus: setFocus,
+              focusMessageId: focusElement,
+              clearFocusMessageId: () => dispatch(clearFocusElement()),
             }}
           />
           <PanelResizer updatePanelWidth={setOverrideWidth} panelRef={panelRef} />

@@ -41,8 +41,8 @@ export const saveUnitTestDefinition = async (
     await vscode.window.withProgress(options, async () => {
       const projectName = path.basename(projectPath);
       const testsDirectory = getTestsDirectory(projectPath);
-      const unitTestsPath = getUnitTestsPath(testsDirectory.fsPath, projectName, workflowName, unitTestName);
-      const workflowTestsPath = getWorkflowTestsPath(testsDirectory.fsPath, projectName, workflowName);
+      const unitTestsPath = path.join(projectPath, projectName, workflowName, `${unitTestName}${unitTestsFileName}`);
+      const workflowTestsPath = path.join(testsDirectory.fsPath, projectName, workflowName);
 
       if (!fse.existsSync(workflowTestsPath)) {
         fse.mkdirSync(workflowTestsPath, { recursive: true });
@@ -85,70 +85,6 @@ export const getTestsDirectory = (projectPath: string) => {
   const workspacePath = path.dirname(projectPath);
   const testsDirectory = vscode.Uri.file(path.join(workspacePath, testsDirectoryName));
   return testsDirectory;
-};
-
-/**
- * Returns the path of a unit test file for a given project, workflow, and unit test name.
- * @param {string} projectPath - The path of the project.
- * @param {string} workflowName - The name of the workflow.
- * @param {string} unitTestName - The name of the unit test.
- * @returns The path of the unit test file.
- */
-const getUnitTestsPath = (projectPath: string, projectName: string, workflowName: string, unitTestName: string) => {
-  return path.join(projectPath, projectName, workflowName, `${unitTestName}${unitTestsFileName}`);
-};
-
-/**
- * Returns the path to the a workflow tests directory.
- * @param {string} projectPath - The path to the project directory.
- * @param {string} workflowName - The name of the workflow.
- * @returns The path to the workflow tests directory.
- */
-const getWorkflowTestsPath = (projectPath: string, projectName: string, workflowName: string) => {
-  return path.join(projectPath, projectName, workflowName);
-};
-
-/**
- * Validates the unit test name.
- * @param {string} projectPath - The path of the project.
- * @param {string} workflowName - The name of the workflow.
- * @param {string | undefined} name - The unit test name to validate.
- * @returns A promise that resolves to a string if the unit test name is invalid, or undefined if it is valid.
- */
-export const validateUnitTestName = async (
-  projectPath: string,
-  workflowName: string,
-  name: string | undefined
-): Promise<string | undefined> => {
-  if (!name) {
-    return localize('emptyUnitTestNameError', 'The unit test name cannot be empty.');
-  }
-  if (!/^[a-z][a-z\d_-]*$/i.test(name)) {
-    return localize(
-      'unitTestNameInvalidMessage',
-      'Unit test name must start with a letter and can only contain letters, digits, "_" and "-".'
-    );
-  }
-
-  return await validateUnitTestNameCore(projectPath, workflowName, name);
-};
-
-/**
- * Validates the unit test name for a given project, workflow, and name.
- * @param {string} projectPath - The path of the project.
- * @param {string} workflowName - The name of the workflow.
- * @param {string} name - The name of the unit test.
- * @returns A string representing an error message if a unit test with the same name already exists, otherwise undefined.
- */
-const validateUnitTestNameCore = async (projectPath: string, workflowName: string, name: string): Promise<string | undefined> => {
-  const projectName = path.basename(projectPath);
-  const testsDirectory = getTestsDirectory(projectPath);
-  const workflowTestsPath = getWorkflowTestsPath(testsDirectory.fsPath, projectName, workflowName);
-
-  if (await fse.pathExists(path.join(workflowTestsPath, `${name}${unitTestsFileName}`))) {
-    return localize('existingUnitTestError', 'A unit test with the name "{0}" already exists.', name);
-  }
-  return undefined;
 };
 
 /**
@@ -590,7 +526,7 @@ export function getUnitTestPaths(
 } {
   const testsDirectoryUri = getTestsDirectory(projectPath);
   const testsDirectory = testsDirectoryUri.fsPath;
-  const logicAppName = path.basename(path.dirname(path.join(projectPath, workflowName)));
+  const logicAppName = path.basename(projectPath);
   const logicAppTestFolderPath = path.join(testsDirectory, logicAppName);
   const workflowTestFolderPath = path.join(logicAppTestFolderPath, workflowName);
   const paths = {
@@ -619,6 +555,41 @@ export async function promptForUnitTestName(context: IAzureConnectorsContext, pr
     validateInput: (name: string) => validateUnitTestName(projectPath, workflowName, name),
   });
 }
+
+/**
+ * Validates the unit test name.
+ * @param {string} projectPath - The path of the project.
+ * @param {string} workflowName - The name of the workflow.
+ * @param {string | undefined} name - The unit test name to validate.
+ * @returns A promise that resolves to a string if the unit test name is invalid, or undefined if it is valid.
+ */
+export const validateUnitTestName = async (
+  projectPath: string,
+  workflowName: string,
+  name: string | undefined
+): Promise<string | undefined> => {
+  if (!name) {
+    return localize('emptyUnitTestNameError', 'The unit test name cannot be empty.');
+  }
+  if (!/^[a-z][a-z\d_-]*$/i.test(name)) {
+    return localize(
+      'unitTestNameInvalidMessage',
+      'Unit test name must start with a letter and can only contain letters, digits, "_" and "-".'
+    );
+  }
+
+  const testsFolderPath = getTestsDirectory(projectPath);
+  const logicAppName = path.basename(projectPath);
+  const testPath = path.join(testsFolderPath.fsPath, logicAppName, workflowName, name);
+  if (fse.existsSync(testPath)) {
+    if ((await fse.readdir(testPath)).includes(`${name}.cs`)) {
+      return localize('unitTestExists', 'A unit test with this name already exists in the test project.');
+    }
+    return localize('unitTestFolderNameExists', 'Another folder with this name already exists in the test project.');
+  }
+
+  return undefined;
+};
 
 /**
  * Logs telemetry properties for unit test creation.
@@ -1137,6 +1108,10 @@ export function generateCSharpClasses(
     nestedTypeProperty: 'object',
     ...data, // Merge the data (including "description", subfields, etc.)
   });
+
+  if (rootDef.properties && Array.isArray(rootDef.properties)) {
+    rootDef.properties = rootDef.properties.filter((prop) => prop.propertyName !== 'StatusCode');
+  }
 
   rootDef.inheritsFrom = 'MockOutput';
 

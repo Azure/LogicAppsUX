@@ -16,7 +16,7 @@ test.describe(
       // Delete required parameter value
       await page.getByRole('button', { name: 'HTTP', exact: true }).click();
       await page.getByLabel('URI*').fill('');
-      await page.getByLabel('Collapse').click();
+      await page.getByTestId('msla-panel-header-collapse-nav').click();
       // Open errors panel
       await page.getByRole('button', { name: 'Errors' }).click();
       await expect(page.getByText("'URI' is required.")).toBeVisible();
@@ -25,13 +25,13 @@ test.describe(
 
       // Change uri param to an invalid value
       await page.getByLabel('URI*').fill('test');
-      await page.getByLabel('Collapse').click();
+      await page.getByTestId('msla-panel-header-collapse-nav').click();
       // Open errors panel
       await page.getByRole('button', { name: 'Errors' }).click();
       await expect(page.getByText('Enter a valid URI.')).toBeVisible();
       await page.getByText('Open operation').click();
       await expect(page.getByText('Enter a valid URI.')).toBeVisible();
-      await page.getByLabel('Collapse').click();
+      await page.getByTestId('msla-panel-header-collapse-nav').click();
     });
 
     test('Should show workflow parameters errors in errors panel', async ({ page }) => {

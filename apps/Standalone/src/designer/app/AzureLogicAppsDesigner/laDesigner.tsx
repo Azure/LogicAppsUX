@@ -31,6 +31,8 @@ import {
   BaseApiManagementService,
   BaseAppServiceService,
   BaseChatbotService,
+  BaseExperimentationService,
+  BaseUserPreferenceService,
   BaseFunctionService,
   BaseGatewayService,
   BaseTenantService,
@@ -68,7 +70,6 @@ import type { QueryClient } from '@tanstack/react-query';
 import { useDispatch, useSelector } from 'react-redux';
 import { useHostingPlan } from '../../state/workflowLoadingSelectors';
 import CodeViewEditor from './CodeView';
-import { BaseUserPreferenceService } from '@microsoft/logic-apps-shared';
 
 const apiVersion = '2020-06-01';
 const httpClient = new HttpClient();
@@ -116,7 +117,7 @@ const DesignerEditor = () => {
   const originalCustomCodeData = useMemo(() => Object.keys(customCodeData ?? {}), [customCodeData]);
   const parameters = useMemo(() => data?.properties.files[Artifact.ParametersFile] ?? {}, [data?.properties.files]);
   const queryClient = getReactQueryClient();
-  const displayChatbotUI = showChatBot && designerView;
+  const displayCopilotChatbot = showChatBot && designerView;
 
   const connectionsData = useMemo(
     () =>
@@ -166,11 +167,12 @@ const DesignerEditor = () => {
   };
 
   const canonicalLocation = WorkflowUtility.convertToCanonicalFormat(workflowAppData?.location ?? '');
+  const supportsStateful = !equals(workflow?.kind, 'stateless');
   const services = useMemo(
     () =>
       getDesignerServices(
         workflowId,
-        equals(workflow?.kind, 'stateful'),
+        supportsStateful,
         isHybridLogicApp,
         connectionsData ?? {},
         workflowAppData as WorkflowApp,
@@ -440,7 +442,7 @@ const DesignerEditor = () => {
                 onClose={() => dispatch(setRunHistoryEnabled(false))}
                 onRunSelected={onRunSelected}
               />
-              {displayChatbotUI ? (
+              {displayCopilotChatbot ? (
                 <CoPilotChatbot
                   openAzureCopilotPanel={() => openPanel('Azure Copilot Panel has been opened')}
                   getAuthToken={getAuthToken}
@@ -858,6 +860,7 @@ const getDesignerServices = (
     chatbotService,
     customCodeService,
     userPreferenceService: new BaseUserPreferenceService(),
+    experimentationService: new BaseExperimentationService(),
   };
 };
 const hasNewKeys = (original: Record<string, any>, updated: Record<string, any>) => {

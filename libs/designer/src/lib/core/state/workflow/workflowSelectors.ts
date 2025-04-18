@@ -35,7 +35,20 @@ export const useNodeDescription = (id: string) =>
 export const useShouldNodeFocus = (id: string) =>
   useSelector(createSelector(getWorkflowState, (state: WorkflowState) => state.focusedCanvasNodeId === id));
 
+export const useFocusElement = () => useSelector(createSelector(getWorkflowState, (state: WorkflowState) => state.focusElement));
+
 export const useIsWorkflowDirty = () => useSelector(createSelector(getWorkflowState, (state: WorkflowState) => state.isDirty));
+
+export const useIsEverythingExpanded = () =>
+  useSelector(
+    createSelector(getWorkflowState, (data) => {
+      const collapsedIds = data.collapsedGraphIds;
+      const collapsedActionsIds = data.collapsedActionIds;
+      const numberOfCollapsedGraphs = Object.keys(collapsedIds ?? {}).filter((id) => collapsedIds[id]).length;
+      const numberOfCollapsedActions = Object.keys(collapsedActionsIds ?? {}).length;
+      return numberOfCollapsedGraphs === 0 && numberOfCollapsedActions === 0;
+    })
+  );
 
 export const getRootWorkflowGraphForLayout = createSelector(getWorkflowState, (data) => {
   const rootNode = data.graph;
@@ -401,64 +414,80 @@ export const useIsWithinAgenticLoop = (id: string): boolean => {
 };
 
 export const useAgentOperations = () => {
-  return useSelector(
-    createSelector(getWorkflowState, (state: WorkflowState) => {
-      return Object.entries(state.operations).reduce((acc: string[], [id, node]) => {
-        if (equals(node.type, commonConstants.NODE.TYPE.AGENT)) {
-          acc.push(id);
-        }
-        return acc;
-      }, []);
-    })
+  const agentOperationsSelector = useMemo(
+    () =>
+      createSelector(getWorkflowState, (state: WorkflowState) => {
+        return Object.entries(state.operations).reduce((acc: string[], [id, node]) => {
+          if (equals(node.type, commonConstants.NODE.TYPE.AGENT)) {
+            acc.push(id);
+          }
+          return acc;
+        }, []);
+      }),
+    []
   );
+  return useSelector(agentOperationsSelector);
 };
 
-export const useIsChatInputEnabled = (nodeId?: string) =>
+export const useUriForAgentChat = (nodeId?: string) =>
   useSelector(
     createSelector(getWorkflowState, (state: WorkflowState) => {
       if (nodeId) {
         const runData = getRecordEntry(state.nodesMetadata, nodeId)?.runData;
         /**
-         * Chat input is only enabled when the node is an agent, and is currently running,
-         * and input/output channels are configured
+         * Chat input is only enabled when the node is an agent, and is currently running or succeeded,
+         * Workflow itself is running,
+         * and input channel is configured
          * */
-        if (equals(runData?.status ?? '', commonConstants.FLOW_STATUS.WAITING)) {
-          const operationKeys = Object.keys(state.operations);
-          return (
-            operationKeys.some((key) => key.toLowerCase().startsWith(`${nodeId}${commonConstants.CHANNELS.INPUT}`.toLowerCase())) &&
-            operationKeys.some((key) => key.toLowerCase().startsWith(`${nodeId}${commonConstants.CHANNELS.OUTPUT}`.toLowerCase()))
-          );
-        }
-      }
-
-      return false;
-    })
-  );
-
-export const useAgentLastOperations = (agentOperations: string[]) => {
-  return useSelector(
-    createSelector(getWorkflowState, (state: WorkflowState) => {
-      const lastOperationsAgent: Record<string, any> = {};
-
-      for (const agentId of agentOperations) {
-        const agentGraph = state.agentsGraph[agentId];
-
-        if (agentGraph) {
-          const tools = agentGraph.children?.filter((child: WorkflowNode) => child.subGraphLocation === 'tools');
-          const lastOperationTools: Record<string, string> = {};
-          for (const tool of tools ?? []) {
-            const toolSubgraph = agentGraph.children.find((child: WorkflowNode) => child.id === tool.id);
-            const lastOperation = toolSubgraph?.children ? toolSubgraph.children[toolSubgraph.children.length - 1] : undefined;
-            lastOperationTools[tool.id] = lastOperation?.id ?? '';
+        if (
+          equals(state.runInstance?.properties.status ?? '', commonConstants.FLOW_STATUS.RUNNING) &&
+          (equals(runData?.status ?? '', commonConstants.FLOW_STATUS.SUCCEEDED) ||
+            equals(runData?.status ?? '', commonConstants.FLOW_STATUS.RUNNING))
+        ) {
+          const operation = getRecordEntry(state.operations, nodeId);
+          if (operation) {
+            const operationDefinitionAsAgentOperation = operation as LogicAppsV2.AgentAction;
+            const allInputChannelKeys = Object.keys(operationDefinitionAsAgentOperation.channels?.in ?? {});
+            if (allInputChannelKeys.length > 0) {
+              return `${state.runInstance?.id ?? ''}/agents/${nodeId}/channels/${allInputChannelKeys[0]}`;
+            }
           }
-
-          lastOperationsAgent[agentId] = lastOperationTools;
         }
       }
 
-      return lastOperationsAgent;
+      return undefined;
     })
   );
+
+export const useAgentLastOperations = (agentOperations: string[]): Record<string, any> => {
+  const lastOperationsSelector = useMemo(
+    () =>
+      createSelector(getWorkflowState, (state: WorkflowState) => {
+        const lastOperationsAgent: Record<string, any> = {};
+
+        for (const agentId of agentOperations) {
+          const agentGraph = state.agentsGraph[agentId];
+
+          if (agentGraph) {
+            const tools = agentGraph.children?.filter((child: WorkflowNode) => child.subGraphLocation === 'tools');
+            const lastOperationTools: Record<string, string> = {};
+            for (const tool of tools ?? []) {
+              const toolSubgraph = agentGraph.children.find((child: WorkflowNode) => child.id === tool.id);
+              const lastOperation = toolSubgraph?.children ? toolSubgraph.children[toolSubgraph.children.length - 1] : undefined;
+              lastOperationTools[tool.id] = lastOperation?.id ?? '';
+            }
+
+            lastOperationsAgent[agentId] = lastOperationTools;
+          }
+        }
+
+        return lastOperationsAgent;
+      }),
+    // Only recreate the selector if agentOperations changes.
+    [agentOperations]
+  );
+
+  return useSelector(lastOperationsSelector);
 };
 
 export const getAgentFromCondition = (state: WorkflowState, nodeId: string): string | undefined => {

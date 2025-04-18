@@ -169,6 +169,7 @@ import type {
 import { createAsyncThunk, type Dispatch } from '@reduxjs/toolkit';
 import { getInputDependencies } from '../../actions/bjsworkflow/initialize';
 import { getAllVariables } from '../variables';
+import { UncastingUtility } from './uncast';
 
 // import { debounce } from 'lodash';
 
@@ -388,7 +389,7 @@ export function createParameterInfo(
     editorViewModel,
     info,
     hideInUI: shouldHideInUI(parameter),
-    conditionalVisibility: shouldSoftHide(parameter) ? hasValue(parameter) : undefined,
+    conditionalVisibility: hasConditionalVisibility(parameter),
     label: parameter.title || parameter.summary || parameter.name,
     parameterKey: parameter.key,
     parameterName: parameter.name,
@@ -419,6 +420,10 @@ function shouldHideInUI(parameter: ResolvedParameter): boolean {
 
 function shouldSoftHide(parameter: ResolvedParameter): boolean {
   return !parameter.required && !equals(getVisibility(parameter), constants.VISIBILITY.IMPORTANT);
+}
+
+function hasConditionalVisibility(parameter: ResolvedParameter): boolean {
+  return parameter?.schema?.conditionalVisibility ?? (shouldSoftHide(parameter) ? hasValue(parameter) : undefined);
 }
 
 function hasValue(parameter: ResolvedParameter): boolean {
@@ -920,7 +925,7 @@ export function loadParameterValue(parameter: InputParameter): ValueSegment[] {
 
   let valueSegments = convertToValueSegments(
     valueObject,
-    !parameter.suppressCasting && !!parameter?.format,
+    !parameter.suppressCasting && UncastingUtility.isCastableFormat(parameter?.format),
     parameter.type,
     parameter.schema
   );

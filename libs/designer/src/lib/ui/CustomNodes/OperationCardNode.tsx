@@ -122,7 +122,13 @@ const DefaultNode = ({ targetPosition = Position.Top, sourcePosition = Position.
     if (isWithinAgenticLoop && !isNullOrUndefined(toolRunIndex)) {
       const subgraphRunData = parentSubgraphRunData?.[id]?.actionResults?.[toolRunIndex];
       if (subgraphRunData) {
-        dispatch(setRepetitionRunData({ nodeId: id, runData: subgraphRunData as LogicAppsV2.WorkflowRunAction }));
+        dispatch(
+          setRepetitionRunData({
+            nodeId: id,
+            runData: subgraphRunData as LogicAppsV2.WorkflowRunAction,
+            isWithinAgentic: isWithinAgenticLoop,
+          })
+        );
       }
     }
   }, [isWithinAgenticLoop, id, dispatch, toolRunIndex, parentSubgraphRunData]);

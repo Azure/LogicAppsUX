@@ -24,6 +24,7 @@ export const runsQueriesKeys = {
   useAgentRepetition: 'useAgentRepetition',
   useAgentActionsRepetition: 'useAgentActionsRepetition',
   useChatHistory: 'useChatHistory',
+  useAgentChatInvokeUri: 'useAgentChatInvokeUri',
 };
 
 export const useRuns = (enabled = false) => {
@@ -212,6 +213,26 @@ export const useChatHistory = (isMonitoringView: boolean, nodeIds: string[], run
       ...queryOpts,
       retryOnMount: false,
       enabled: isMonitoringView && runId !== undefined && nodeIds.length > 0,
+    }
+  );
+};
+
+export const useAgentChatInvokeUri = (isMonitoringView: boolean, isAgenticWorkflow: boolean, id: string | undefined) => {
+  return useQuery(
+    [runsQueriesKeys.useAgentChatInvokeUri, { id }],
+    async () => {
+      if (isNullOrUndefined(id)) {
+        return null;
+      }
+      const uri = await RunService().getAgentChatInvokeUri({
+        idSuffix: id,
+      });
+      return uri ?? '';
+    },
+    {
+      ...queryOpts,
+      retryOnMount: false,
+      enabled: isMonitoringView && isAgenticWorkflow && id !== undefined,
     }
   );
 };

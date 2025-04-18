@@ -20,13 +20,14 @@ import {
   TemplateService,
   type Template,
   clone,
+  getTriggerFromDefinition,
 } from '@microsoft/logic-apps-shared';
 import { createAsyncThunk } from '@reduxjs/toolkit';
 import type { RootState } from '../../state/templates/store';
 import type { TemplateServiceOptions } from '../../templates/TemplatesDesignerContext';
 import { initializeParametersMetadata } from '../../templates/utils/parametershelper';
 import { initializeNodeOperationInputsData } from '../../state/operation/operationMetadataSlice';
-import { updateTemplateParameterDefinitions } from '../../state/templates/templateSlice';
+import { updateAllTemplateParameterDefinitions } from '../../state/templates/templateSlice';
 import { getCurrentWorkflowNames } from '../../templates/utils/helper';
 import {
   loadGithubManifestNames,
@@ -46,6 +47,7 @@ export interface WorkflowTemplateData {
     light?: string;
     dark?: string;
   };
+  triggerType: string;
   connectionKeys: string[];
   errors: {
     workflow: string | undefined;
@@ -80,7 +82,7 @@ export const initializeWorkflowMetadata = createAsyncThunk(
 
     if (inputsPayload.length) {
       dispatch(initializeNodeOperationInputsData(inputsPayload));
-      dispatch(updateTemplateParameterDefinitions(templateParametersToOverride));
+      dispatch(updateAllTemplateParameterDefinitions(templateParametersToOverride));
     }
   }
 );
@@ -415,6 +417,7 @@ const loadWorkflowTemplate = async (
             : workflowManifest.kinds?.length
               ? workflowManifest.kinds[0]
               : 'stateful',
+        triggerType: getTriggerFromDefinition(templateWorkflowDefinition.triggers ?? {}),
         images: {
           light: TemplateService().getContentPathUrl(`${templateId}/${workflowId}`, workflowManifest.images.light),
           dark: TemplateService().getContentPathUrl(`${templateId}/${workflowId}`, workflowManifest.images.dark),

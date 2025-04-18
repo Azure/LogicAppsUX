@@ -38,6 +38,7 @@ type BaseConversationItem = {
   metadata?: Record<string, any>;
   onClick?: (id: string, text?: string) => void;
   className?: string;
+  dataScrollTarget?: string;
 };
 
 type BaseAssistantMessageItem = BaseConversationItem & {
