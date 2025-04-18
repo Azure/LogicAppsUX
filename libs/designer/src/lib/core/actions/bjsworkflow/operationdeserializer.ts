@@ -607,6 +607,8 @@ export const initializeDynamicDataInNodes = async (
 
       const isTrigger = isRootNodeInGraph(nodeId, 'root', nodesMetadata);
       const connectionReference = getConnectionReference(connections, nodeId);
+      const isFreshCreatedAgent =
+        Object.keys(connections.connectionReferences).length === 0 && equals(operation.type, Constants.NODE.TYPE.AGENT);
 
       return updateDynamicDataForValidConnection(
         nodeId,
@@ -616,7 +618,8 @@ export const initializeDynamicDataInNodes = async (
         nodeDependencies,
         dispatch,
         getState,
-        operation
+        operation,
+        isFreshCreatedAgent
       );
     })
   );
@@ -632,13 +635,14 @@ const updateDynamicDataForValidConnection = async (
   dependencies: NodeDependencies,
   dispatch: Dispatch,
   getState: () => RootState,
-  operation: LogicAppsV2.ActionDefinition | LogicAppsV2.TriggerDefinition
+  operation: LogicAppsV2.ActionDefinition | LogicAppsV2.TriggerDefinition,
+  isFreshCreatedAgent: boolean
 ): Promise<void> => {
   const isValidConnection = await isConnectionReferenceValid(operationInfo, reference);
 
   if (isValidConnection) {
     await updateDynamicDataInNode(nodeId, isTrigger, operationInfo, reference, dependencies, dispatch, getState, operation);
-  } else {
+  } else if (!isFreshCreatedAgent) {
     LoggerService().log({
       level: LogEntryLevel.Warning,
       area: 'OperationDeserializer:UpdateDynamicData',
