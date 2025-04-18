@@ -28,7 +28,7 @@ import type { NodeTokens, VariableDeclaration } from '../../state/tokens/tokensS
 import { initializeTokensAndVariables } from '../../state/tokens/tokensSlice';
 import type { NodesMetadata, Operations, WorkflowKind } from '../../state/workflow/workflowInterfaces';
 import type { RootState } from '../../store';
-import { getConnectionReference, isConnectionReferenceValid } from '../../utils/connectors/connections';
+import { getConnectionReference, isConnectionReferenceValid, mockConnectionReference } from '../../utils/connectors/connections';
 import { isRootNodeInGraph } from '../../utils/graph';
 import { getRepetitionContext } from '../../utils/loops';
 import type { RepetitionContext } from '../../utils/parameters/helper';
@@ -74,6 +74,7 @@ import {
   getRecordEntry,
   parseErrorMessage,
   cleanResourceId,
+  deepCompareObjects,
 } from '@microsoft/logic-apps-shared';
 import type { InputParameter, OutputParameter, LogicAppsV2, OperationManifest } from '@microsoft/logic-apps-shared';
 import type { Dispatch } from '@reduxjs/toolkit';
@@ -608,7 +609,8 @@ export const initializeDynamicDataInNodes = async (
       const isTrigger = isRootNodeInGraph(nodeId, 'root', nodesMetadata);
       const connectionReference = getConnectionReference(connections, nodeId);
       const isFreshCreatedAgent =
-        Object.keys(connections.connectionReferences).length === 0 && equals(operation.type, Constants.NODE.TYPE.AGENT);
+        (Object.keys(connections.connectionReferences).length === 0 || deepCompareObjects(connectionReference, mockConnectionReference)) &&
+        equals(operation.type, Constants.NODE.TYPE.AGENT);
 
       return updateDynamicDataForValidConnection(
         nodeId,
