@@ -7,6 +7,7 @@ import { type IProjectWizardContext, ProjectLanguage, WorkflowProjectType } from
 import * as fs from 'fs-extra';
 import * as path from 'path';
 import { OpenBehavior } from '@microsoft/vscode-extension-logic-apps';
+import { testsDirectoryName } from '../../../../constants';
 
 export class SetWorkspaceSettings extends AzureWizardPromptStep<IProjectWizardContext> {
   // Hide the step count in the wizard UI
@@ -128,6 +129,13 @@ export class SetWorkspaceSettings extends AzureWizardPromptStep<IProjectWizardCo
     workspaceFolders.push({ name: logicAppName, path: `./${logicAppName}` });
 
     workspaceContent.folders = [...workspaceContent.folders, ...workspaceFolders];
+
+    // Move the tests folder to the end of the workspace folders
+    const testsIndex = workspaceContent.folders.findIndex((folder) => folder.name === testsDirectoryName);
+    if (testsIndex !== -1 && testsIndex !== workspaceContent.folders.length - 1) {
+      const [testsFolder] = workspaceContent.folders.splice(testsIndex, 1);
+      workspaceContent.folders.push(testsFolder);
+    }
 
     await fs.writeJSON(context.workspaceCustomFilePath, workspaceContent, { spaces: 2 });
   }
