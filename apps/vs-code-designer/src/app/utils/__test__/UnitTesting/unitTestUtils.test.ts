@@ -909,7 +909,7 @@ namespace <%= LogicAppName %>.Tests
             var triggerMock = new <%= TriggerMockClassName %>(outputs: triggerMockOutput);
 
             // Generate mock action data.
-            // OPTION 1 : defining a callback class
+            // OPTION 1 : defining a callback function
             var actionMock = new <%= ActionMockClassName %>(name: "<%= ActionMockName %>", onGetActionMock: <%= ActionMockClassName %>OutputCallback);
             // OPTION 2: defining inline using a lambda
             /*var actionMock = new <%= ActionMockClassName %>(name: "<%= ActionMockName %>", onGetActionMock: (testExecutionContext) =>
@@ -1050,7 +1050,7 @@ namespace <%= LogicAppName %>.Tests
             // Generate mock action and trigger data.
             var mockData = this.GetTestMockDefinition();
             var sampleActionMock = mockData.ActionMocks["<%= ActionMockName %>"];
-            sampleActionMock.Outputs["your-property-name"] = "your-property-value";
+            // sampleActionMock.Outputs["your-property-name"] = "your-property-value";
 
             // ACT
             // Create an instance of UnitTestExecutor, and run the workflow with the mock data.
@@ -1074,7 +1074,7 @@ namespace <%= LogicAppName %>.Tests
             // PREPARE
             // Generate mock action and trigger data.
             var mockData = this.GetTestMockDefinition();
-            // OPTION 1 : defining a callback class
+            // OPTION 1 : defining a callback function
             mockData.ActionMocks["<%= ActionMockName %>"] = new <%= ActionMockClassName %>(name: "<%= ActionMockName %>", onGetActionMock: <%= ActionMockClassName %>OutputCallback);
             // OPTION 2: defining inline using a lambda
             mockData.ActionMocks["<%= ActionMockName %>"] = new <%= ActionMockClassName %>(name: "<%= ActionMockName %>", onGetActionMock: (testExecutionContext) =>
@@ -1347,7 +1347,7 @@ namespace <%= LogicAppName %>.Tests
             // PREPARE Mock
             // Generate mock action and trigger data.
             var mockData = this.GetTestMockDefinition();
-            mockData.TriggerMock.Outputs["your-property-name"] = "your-property-value";
+            // mockData.TriggerMock.Outputs["your-property-name"] = "your-property-value";
 
             // ACT
             // Create an instance of UnitTestExecutor, and run the workflow with the mock data.

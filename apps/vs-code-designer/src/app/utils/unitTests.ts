@@ -11,7 +11,7 @@ import * as xml2js from 'xml2js';
 import { type IActionContext, callWithTelemetryAndErrorHandling, type IAzureQuickPickItem } from '@microsoft/vscode-azext-utils';
 import type { UnitTestResult } from '@microsoft/vscode-extension-logic-apps';
 import { toPascalCase } from '@microsoft/logic-apps-shared';
-import { saveUnitTestEvent, testsDirectoryName, unitTestsFileName, workflowFileName } from '../../constants';
+import { saveUnitTestEvent, testMockOutputsDirectory, testsDirectoryName, unitTestsFileName, workflowFileName } from '../../constants';
 import { ext } from '../../extensionVariables';
 import { localize } from '../../localize';
 import { getWorkflowsInLocalProject } from './codeless/common';
@@ -329,7 +329,7 @@ export async function updateCsprojFile(csprojFilePath: string, workflowName: str
  * @param {string} triggerOutputClassName - The name of the trigger output class.
  * @param {string} triggerMockClassName - The name of the trigger mock class.
  */
-export async function createCsFile(
+export async function createTestCsFile(
   unitTestFolderPath: string,
   unitTestName: string,
   cleanedUnitTestName: string,
@@ -390,7 +390,7 @@ export async function createCsFile(
   const csFilePath = path.join(unitTestFolderPath, `${unitTestName}.cs`);
   await fse.writeFile(csFilePath, templateContent);
 
-  ext.outputChannel.appendLog(localize('csFileCreated', 'Created .cs file at: {0}', csFilePath));
+  ext.outputChannel.appendLog(localize('csTestFileCreated', 'Created .cs file for unit test at: {0}', csFilePath));
 }
 
 /**
@@ -522,6 +522,7 @@ export function getUnitTestPaths(
   logicAppName: string;
   logicAppTestFolderPath: string;
   workflowTestFolderPath: string;
+  mocksFolderPath: string;
   unitTestFolderPath?: string;
 } {
   const testsDirectoryUri = getTestsDirectory(projectPath);
@@ -529,16 +530,16 @@ export function getUnitTestPaths(
   const logicAppName = path.basename(projectPath);
   const logicAppTestFolderPath = path.join(testsDirectory, logicAppName);
   const workflowTestFolderPath = path.join(logicAppTestFolderPath, workflowName);
-  const paths = {
+  const mocksFolderPath = path.join(workflowTestFolderPath, testMockOutputsDirectory);
+
+  return {
     testsDirectory,
     logicAppName,
     logicAppTestFolderPath,
     workflowTestFolderPath,
+    mocksFolderPath,
+    unitTestFolderPath: unitTestName ? path.join(workflowTestFolderPath, unitTestName) : undefined,
   };
-  if (unitTestName) {
-    paths['unitTestFolderPath'] = path.join(workflowTestFolderPath, unitTestName);
-  }
-  return paths;
 }
 
 /**
@@ -998,35 +999,36 @@ export function generateClassCode(classDef: ClassDefinition): string {
 }
 
 /**
- * Filters mockable operations, transforms their output parameters,
- * and writes C# class definitions to .cs files.
+ * Filters mockable operations, transforms their output parameters, and generates C# class content.
  * @param operationInfo - The operation info object.
  * @param outputParameters - The output parameters object.
- * @param workflowTestFolderPath - The path to the workflow folder where the .cs files will be saved.
  * @param workflowName - The name of the workflow.
  * @param logicAppName - The name of the Logic App to use as the namespace.
  */
-export async function processAndWriteMockableOperations(
+export async function getOperationMockClassContent(
   operationInfo: any,
   outputParameters: any,
   workflowPath: string,
-  workflowTestFolderPath: string,
   workflowName: string,
   logicAppName: string
-): Promise<{ foundActionMocks: Record<string, string>; foundTriggerMocks: Record<string, string> }> {
+): Promise<{
+  mockClassContent: Record<string, string>;
+  foundActionMocks: Record<string, string>;
+  foundTriggerMocks: Record<string, string>;
+}> {
   // Keep track of all operation IDs we've processed to avoid duplicates
   const processedOperationIds = new Set<string>();
 
-  // Create or verify the "MockOutputs" folder inside the logicApp folder
-  const mockOutputsFolderPath = path.join(workflowTestFolderPath, 'MockOutputs');
-  await fse.ensureDir(mockOutputsFolderPath);
-
   // Dictionaries to store mockable operation names and their corresponding class names
+  const mockClassContent: Record<string, string> = {};
   const foundActionMocks: Record<string, string> = {};
   const foundTriggerMocks: Record<string, string> = {};
 
   const workflowContent = JSON.parse(await fse.readFile(workflowPath, 'utf8'));
   const triggerName = Object.keys(workflowContent?.definition?.triggers)?.[0] ?? null;
+  if (triggerName === null) {
+    throw new Error(localize('noTriggersFound', 'No trigger found in the workflow. Unit tests must include a mocked trigger.'));
+  }
 
   for (const operationName in operationInfo) {
     const operation = operationInfo[operationName];
@@ -1064,13 +1066,8 @@ export async function processAndWriteMockableOperations(
 
       // Generate C# class content
       const classContent = generateCSharpClasses(sanitizedLogicAppName, className, workflowName, mockType, mockClassName, outputs);
+      mockClassContent[className] = classContent;
 
-      // Write the .cs file
-      const filePath = path.join(mockOutputsFolderPath, `${className}.cs`);
-      await fse.writeFile(filePath, classContent, 'utf-8');
-
-      // Log to output channel
-      ext.outputChannel.appendLog(localize('csFileCreated', 'Created .cs file at: {0}', filePath));
       // Store the operation name and class name in the appropriate dictionary
       if (isTrigger) {
         foundTriggerMocks[operationName] = className;
@@ -1079,7 +1076,7 @@ export async function processAndWriteMockableOperations(
       }
     }
   }
-  return { foundActionMocks, foundTriggerMocks };
+  return { mockClassContent, foundActionMocks, foundTriggerMocks };
 }
 
 /**
