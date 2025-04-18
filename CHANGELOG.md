@@ -1,4 +1,18 @@
 # Logic Apps Designer
+## [5.84.0](https://github.com/Azure/LogicAppsUX/compare/v5.83.0...v5.84.0) (2025-04-18)
+
+
+### Features
+
+* **Templates:** Infer TriggerType from workflow json ([#7047](https://github.com/Azure/LogicAppsUX/issues/7047)) ([251fe77](https://github.com/Azure/LogicAppsUX/commit/251fe77d8307122dcc40bb13a7cd4c9455fc390e))
+
+
+### Bug Fixes
+
+* **designer:** Load agent run data from general run data ([#7055](https://github.com/Azure/LogicAppsUX/issues/7055)) ([d585126](https://github.com/Azure/LogicAppsUX/commit/d585126fa6be8695e16d4110952eed7f44ebea74))
+* **designer:** Update value in services to support stateful in agentic ([#7054](https://github.com/Azure/LogicAppsUX/issues/7054)) ([e1582b9](https://github.com/Azure/LogicAppsUX/commit/e1582b91c66e2e7cc1cbdf85440fb065f8052db6))
+* **vscode:** Add unit test name validation check for existing test/folder with same name ([#7056](https://github.com/Azure/LogicAppsUX/issues/7056)) ([d3739e8](https://github.com/Azure/LogicAppsUX/commit/d3739e8088af55a31ae6d4dc65868ed3e5cc2f1b))
+
 ## [5.83.0](https://github.com/Azure/LogicAppsUX/compare/v5.82.0...v5.83.0) (2025-04-17)
 
 ## [5.82.0](https://github.com/Azure/LogicAppsUX/compare/v5.81.0...v5.82.0) (2025-04-17)
