@@ -163,8 +163,8 @@ export const SelectWorkflows = ({
             <TableRow>
               <TableSelectionCell
                 checked={isConsumption || allRowsSelected ? true : someRowsSelected ? 'mixed' : false}
-                onClick={toggleAllRows}
-                onKeyDown={toggleAllKeydown}
+                onClick={isConsumption ? () => {} : toggleAllRows}
+                onKeyDown={isConsumption ? () => {} : toggleAllKeydown}
                 checkboxIndicator={{ 'aria-label': resourceStrings.SelectAllWorkflowsLabel }}
               />
               <TableHeaderCell>{intlText.WORKFLOW_NAME}</TableHeaderCell>
@@ -192,7 +192,13 @@ export const SelectWorkflows = ({
                   ))
                 : null
               : rows.map(({ item, selected, onClick, onKeyDown, appearance }) => (
-                  <TableRow key={item.id} onClick={onClick} onKeyDown={onKeyDown} aria-selected={selected} appearance={appearance}>
+                  <TableRow
+                    key={item.id}
+                    onClick={isConsumption ? () => {} : onClick}
+                    onKeyDown={isConsumption ? () => {} : onKeyDown}
+                    aria-selected={selected}
+                    appearance={appearance}
+                  >
                     <TableSelectionCell
                       checked={isConsumption || selected}
                       checkboxIndicator={{ 'aria-label': resourceStrings.WorkflowCheckboxRowLabel }}
