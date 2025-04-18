@@ -25,6 +25,7 @@ import {
   createTestSettingsConfigFile,
   updateSolutionWithProject,
   validateWorkflowPath,
+  validateUnitTestName,
 } from '../../unitTests';
 
 // ============================================================================
@@ -96,6 +97,52 @@ describe('validateRunId', () => {
   it('should throw an error for an empty runId', async () => {
     const runId = '';
     await expect(validateRunId(runId)).rejects.toThrowError('Invalid runId format.');
+  });
+});
+
+describe('validateUnitTestName', () => {
+  const testProjectPath = path.join('test', 'project', 'LogicApp1');
+  const testWorkflowName = 'workflow1';
+  let localizeSpy: any;
+
+  beforeEach(() => {
+    localizeSpy = vi
+      .spyOn(localizeModule, 'localize')
+      .mockImplementation((key: string, defaultMessage: string, ...args: any[]) => defaultMessage);
+  });
+
+  afterEach(() => {
+    vi.restoreAllMocks();
+  });
+
+  it('should return an error if unit test name is empty', async () => {
+    const result = await validateUnitTestName(testProjectPath, testWorkflowName, '');
+    expect(result).toBe('The unit test name cannot be empty.');
+  });
+
+  it('should return an error if unit test name contains invalid characters', async () => {
+    const result = await validateUnitTestName(testProjectPath, testWorkflowName, 'Invalid@Name');
+    expect(result).toBe('Unit test name must start with a letter and can only contain letters, digits, "_" and "-".');
+  });
+
+  it('should return an error if another folder with the same name exists in the test project', async () => {
+    vi.spyOn(fse, 'existsSync').mockReturnValue(true);
+    vi.spyOn(fse, 'readdir').mockResolvedValue(['TestActionMock.cs']);
+    const result = await validateUnitTestName(testProjectPath, testWorkflowName, 'test1');
+    expect(result).toBe('Another folder with this name already exists in the test project.');
+  });
+
+  it('should return an error if another unit test with the same name exists in the test project', async () => {
+    vi.spyOn(fse, 'existsSync').mockReturnValue(true);
+    vi.spyOn(fse, 'readdir').mockResolvedValue(['test1.cs']);
+    const result = await validateUnitTestName(testProjectPath, testWorkflowName, 'test1');
+    expect(result).toBe('A unit test with this name already exists in the test project.');
+  });
+
+  it('should return undefined if the unit test name is valid', async () => {
+    vi.spyOn(fse, 'existsSync').mockReturnValue(false);
+    const result = await validateUnitTestName(testProjectPath, testWorkflowName, 'Valid_Test');
+    expect(result).toBeUndefined();
   });
 });
 

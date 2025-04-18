@@ -197,7 +197,8 @@ export const validateNodeSettings = (
           }
           if (
             (type === constants.RETRY_POLICY_TYPE.EXPONENTIAL || type === constants.RETRY_POLICY_TYPE.FIXED) &&
-            minimumInterval && !isTemplateExpression(minimumInterval.toString()) &&
+            minimumInterval &&
+            !isTemplateExpression(minimumInterval.toString()) &&
             !isISO8601(minimumInterval)
           ) {
             validationErrors.push({
@@ -208,7 +209,8 @@ export const validateNodeSettings = (
           }
           if (
             (type === constants.RETRY_POLICY_TYPE.EXPONENTIAL || type === constants.RETRY_POLICY_TYPE.FIXED) &&
-            maximumInterval && !isTemplateExpression(maximumInterval.toString()) &&
+            maximumInterval &&
+            !isTemplateExpression(maximumInterval.toString()) &&
             !isISO8601(maximumInterval)
           ) {
             validationErrors.push({

@@ -85,6 +85,18 @@ export const useTemplatesStrings = () => {
         description: 'Button text for proceeding to the next tab',
       }),
     },
+    stateTypes: {
+      STATEFUL: intl.formatMessage({
+        defaultMessage: 'Stateful',
+        id: 'Qqmb+W',
+        description: 'Dropdown option for stateful type',
+      }),
+      STATELESS: intl.formatMessage({
+        defaultMessage: 'Stateless',
+        id: 'cNXS5n',
+        description: 'Dropdown option for stateless type',
+      }),
+    },
   };
 };
 

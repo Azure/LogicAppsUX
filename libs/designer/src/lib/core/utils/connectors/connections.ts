@@ -40,7 +40,7 @@ export function getConnectionReference(state: ConnectionsStoreState, nodeId: str
   return getRecordEntry(connectionReferences, getRecordEntry(connectionsMapping, nodeId) ?? '') ?? mockConnectionReference;
 }
 
-const mockConnectionReference: ConnectionReference = {
+export const mockConnectionReference: ConnectionReference = {
   api: { id: 'apiId' },
   connection: { id: 'connectionId' },
 };
@@ -66,6 +66,7 @@ export async function isConnectionReferenceValid(
 
   try {
     const connection = await getConnection(reference.connection.id, connectorId, /* fetchResourceIfNeeded */ true);
+    console.log('charlie isConnectionValid', connection);
     return !!connection && isConnectionValid(connection);
   } catch (_error: any) {
     return false;
