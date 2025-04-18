@@ -2,7 +2,6 @@
  *  Copyright (c) Microsoft Corporation. All rights reserved.
  *  Licensed under the MIT License. See License.md in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
-import { exec } from 'child_process';
 import axios from 'axios';
 import * as fse from 'fs-extra';
 import * as path from 'path';
@@ -11,12 +10,20 @@ import * as xml2js from 'xml2js';
 import { type IActionContext, callWithTelemetryAndErrorHandling, type IAzureQuickPickItem } from '@microsoft/vscode-azext-utils';
 import type { UnitTestResult } from '@microsoft/vscode-extension-logic-apps';
 import { toPascalCase } from '@microsoft/logic-apps-shared';
-import { saveUnitTestEvent, testMockOutputsDirectory, testsDirectoryName, unitTestsFileName, workflowFileName } from '../../constants';
+import {
+  dotNetBinaryPathSettingKey,
+  saveUnitTestEvent,
+  testMockOutputsDirectory,
+  testsDirectoryName,
+  unitTestsFileName,
+  workflowFileName,
+} from '../../constants';
 import { ext } from '../../extensionVariables';
 import { localize } from '../../localize';
 import { getWorkflowsInLocalProject } from './codeless/common';
 import type { IAzureConnectorsContext } from '../commands/workflows/azureConnectorWizard';
-import { promisify } from 'util';
+import { executeCommand } from './funcCoreTools/cpUtils';
+import { getGlobalSetting } from './vsCodeConfig/settings';
 
 /**
  * Saves the unit test definition for a workflow.
@@ -1049,14 +1056,13 @@ export async function getOperationMockClassContent(
     if (await isMockable(type)) {
       // Set operationName as className
       const cleanedOperationName = removeInvalidCharacters(operationName);
-      let className = toPascalCase(cleanedOperationName);
+      let mockOutputClassName = toPascalCase(cleanedOperationName);
       let mockClassName = toPascalCase(cleanedOperationName);
 
       // Append suffix based on whether it's a trigger
-      className += isTrigger ? 'TriggerOutput' : 'ActionOutput';
-
+      mockOutputClassName += isTrigger ? 'TriggerOutput' : 'ActionOutput';
       const mockType = isTrigger ? 'TriggerMock' : 'ActionMock';
-      mockClassName += isTrigger ? 'TriggerMock' : 'ActionMock';
+      mockClassName += mockType;
 
       // Transform the output parameters for this operation
       const outputs = outputParameters[operationName]?.outputs;
@@ -1065,14 +1071,21 @@ export async function getOperationMockClassContent(
       const sanitizedLogicAppName = logicAppName.replace(/-/g, '_');
 
       // Generate C# class content
-      const classContent = generateCSharpClasses(sanitizedLogicAppName, className, workflowName, mockType, mockClassName, outputs);
-      mockClassContent[className] = classContent;
+      const classContent = generateCSharpClasses(
+        sanitizedLogicAppName,
+        mockOutputClassName,
+        workflowName,
+        mockType,
+        mockClassName,
+        outputs
+      );
+      mockClassContent[mockOutputClassName] = classContent;
 
       // Store the operation name and class name in the appropriate dictionary
       if (isTrigger) {
-        foundTriggerMocks[operationName] = className;
+        foundTriggerMocks[operationName] = mockOutputClassName;
       } else {
-        foundActionMocks[operationName] = className;
+        foundActionMocks[operationName] = mockOutputClassName;
       }
     }
   }
@@ -1209,7 +1222,7 @@ export async function isMockable(type: string): Promise<boolean> {
 }
 
 /**
- * Creates a new solution file and adds the specified Logic App .csproj to it.
+ * Creates a new solution file if one doesn't exist and adds the specified Logic App .csproj to it.
  *
  * This function performs the following steps in the tests directory:
  * 1. Runs 'dotnet new sln -n Tests' to create a new solution file named Tests.sln.
@@ -1219,10 +1232,10 @@ export async function isMockable(type: string): Promise<boolean> {
  * @param testsDirectory - The absolute path to the tests directory root.
  * @param logicAppCsprojPath - The absolute path to the Logic App's .csproj file.
  */
-export async function updateSolutionWithProject(testsDirectory: string, logicAppCsprojPath: string): Promise<void> {
+export async function updateTestsSln(testsDirectory: string, logicAppCsprojPath: string): Promise<void> {
   const solutionName = 'Tests'; // This will create "Tests.sln"
   const solutionFile = path.join(testsDirectory, `${solutionName}.sln`);
-  const execAsync = promisify(exec);
+  const dotnetBinaryPath = getGlobalSetting(dotNetBinaryPathSettingKey);
 
   try {
     // Create a new solution file if it doesn't already exist.
@@ -1230,14 +1243,14 @@ export async function updateSolutionWithProject(testsDirectory: string, logicApp
       ext.outputChannel.appendLog(`Solution file already exists at ${solutionFile}.`);
     } else {
       ext.outputChannel.appendLog(`Creating new solution file at ${solutionFile}...`);
-      await execAsync(`dotnet new sln -n ${solutionName}`, { cwd: testsDirectory });
+      await executeCommand(ext.outputChannel, testsDirectory, `${dotnetBinaryPath} new sln -n ${solutionName}`);
       ext.outputChannel.appendLog(`Solution file created: ${solutionFile}`);
     }
 
     // Compute the relative path from the tests directory to the Logic App .csproj.
     const relativeProjectPath = path.relative(testsDirectory, logicAppCsprojPath);
     ext.outputChannel.appendLog(`Adding project '${relativeProjectPath}' to solution '${solutionFile}'...`);
-    await execAsync(`dotnet sln "${solutionFile}" add "${relativeProjectPath}"`, { cwd: testsDirectory });
+    await executeCommand(ext.outputChannel, testsDirectory, `${dotnetBinaryPath} sln "${solutionFile}" add "${relativeProjectPath}"`);
     ext.outputChannel.appendLog('Project added to solution successfully.');
   } catch (err) {
     ext.outputChannel.appendLog(`Error updating solution: ${err}`);

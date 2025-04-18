@@ -58,7 +58,7 @@ namespace <%= LogicAppName %>.Tests
         /// This method shows how to set up mock data, execute the workflow, and assert the outcome.
         /// </summary>
         [TestMethod]
-        public async Task <%= WorkflowName %>_<%= UnitTestName %>_ExecuteWorkflow_FAILED_Sample3()
+        public async Task <%= WorkflowName %>_<%= UnitTestName %>_ExecuteWorkflow_FAILED_Sample2()
         {
             // PREPARE
             // Generate mock action and trigger data.

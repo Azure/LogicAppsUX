@@ -20,7 +20,7 @@ import {
   getOperationMockClassContent,
   promptForUnitTestName,
   selectWorkflowNode,
-  updateSolutionWithProject,
+  updateTestsSln,
   validateWorkflowPath,
 } from '../../../utils/unitTests';
 import { tryGetLogicAppProjectRoot } from '../../../utils/verifyIsProject';
@@ -308,7 +308,7 @@ async function generateUnitTestFromRun(
       const csprojFilePath = path.join(paths.logicAppTestFolderPath, `${paths.logicAppName}.csproj`);
 
       ext.outputChannel.appendLog(`Updating solution in tests folder: ${paths.testsDirectory}`);
-      await updateSolutionWithProject(paths.testsDirectory, csprojFilePath);
+      await updateTestsSln(paths.testsDirectory, csprojFilePath);
     } catch (solutionError) {
       ext.outputChannel.appendLog(`Failed to update solution: ${solutionError}`);
     }
