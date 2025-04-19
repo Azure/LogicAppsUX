@@ -35,6 +35,8 @@ import { ConvertToWorkspace } from './app/commands/createNewCodeProject/CodeProj
 import TelemetryReporter from '@vscode/extension-telemetry';
 import { createVSCodeAzureSubscriptionProvider } from './app/utils/services/VSCodeAzureSubscriptionProvider';
 import { logSubscriptions } from './app/utils/telemetry';
+import type { Executable, ServerOptions, LanguageClientOptions } from 'vscode-languageclient/node';
+import { TransportKind, LanguageClient } from 'vscode-languageclient/node';
 
 const perfStats = {
   loadStartTime: Date.now(),
@@ -43,7 +45,40 @@ const perfStats = {
 
 const telemetryString = 'setInGitHubBuild';
 
+let client: LanguageClient;
+
 export async function activate(context: vscode.ExtensionContext) {
+  const exe: Executable = {
+    command: 'abc',
+    transport: {
+      kind: TransportKind.socket,
+      port: 6009,
+    },
+    //options:
+  };
+
+  // If the extension is launched in debug mode then the debug server options are used
+  // Otherwise the run options are used
+  const serverOptions: ServerOptions = {
+    debug: exe,
+    run: exe,
+  };
+
+  // Options to control the language client
+  const clientOptions: LanguageClientOptions = {
+    // Register the server for plain text documents
+    documentSelector: [{ scheme: 'file', language: 'plaintext' }],
+    synchronize: {
+      // Notify the server about file changes to '.clientrc files contained in the workspace
+      fileEvents: vscode.workspace.createFileSystemWatcher('**/**.cs'),
+    },
+  };
+
+  // Create the language client and start the client.
+  client = new LanguageClient('languageServerExample', 'Language Server Example', serverOptions, clientOptions);
+
+  client.start();
+
   // Data Mapper context
   vscode.commands.executeCommand(
     'setContext',
