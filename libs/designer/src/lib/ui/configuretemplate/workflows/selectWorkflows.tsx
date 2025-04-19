@@ -192,7 +192,13 @@ export const SelectWorkflows = ({
                   ))
                 : null
               : rows.map(({ item, selected, onClick, onKeyDown, appearance }) => (
-                  <TableRow key={item.id} onClick={isConsumption ? () => {} : onClick} onKeyDown={isConsumption ? () => {} : onKeyDown} aria-selected={selected} appearance={appearance}>
+                  <TableRow
+                    key={item.id}
+                    onClick={isConsumption ? () => {} : onClick}
+                    onKeyDown={isConsumption ? () => {} : onKeyDown}
+                    aria-selected={selected}
+                    appearance={appearance}
+                  >
                     <TableSelectionCell
                       checked={isConsumption || selected}
                       checkboxIndicator={{ 'aria-label': resourceStrings.WorkflowCheckboxRowLabel }}
