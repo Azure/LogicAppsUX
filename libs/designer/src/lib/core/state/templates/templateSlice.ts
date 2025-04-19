@@ -51,6 +51,14 @@ export const templateSlice = createSlice({
       state.workflows[id].kind = kind;
       state.workflows[id].errors.kind = undefined;
     },
+    updateTemplateTriggerDescription: (state, action: PayloadAction<{ id: string; description: string | undefined }>) => {
+      const { id, description } = action.payload;
+      const triggerKey = Object.keys(state.workflows?.[id]?.workflowDefinition?.triggers ?? {})?.[0];
+      const trigger = state.workflows?.[id]?.workflowDefinition?.triggers?.[triggerKey];
+      if (trigger) {
+        trigger.description = description;
+      }
+    },
     updateTemplateParameterValue: (state, action: PayloadAction<Template.ParameterDefinition>) => {
       const { name, type, value, required } = action.payload;
 
@@ -210,6 +218,7 @@ export const {
   changeCurrentTemplateName,
   updateWorkflowName,
   updateKind,
+  updateTemplateTriggerDescription,
   updateTemplateParameterValue,
   validateParameters,
   validateConnections,

@@ -614,7 +614,7 @@ const getResourceBasedServices = (
   };
 
   const templateService = new StandardTemplateService({
-    endpoint: 'https://priti-cxf4h5cpcteue4az.b02.azurefd.net/logicapps',
+    endpoint: '/templatesLocalProxy/templates/logicapps',
     useEndpointForTemplates: useEndpoint,
     baseUrl: armUrl,
     appId: siteResourceId,
