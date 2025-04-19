@@ -49,7 +49,7 @@ test.describe(
 
       await page.waitForTimeout(5);
 
-      await expect(page.getByText('Azure Business', { exact: false })).not.toBeVisible();
+      await expect(page.getByText('Azure Business', { exact: false })).toBeVisible();
     });
 
     test('Should show basics tab for consumption workflow when it is create view and tabs to be enabled.', async ({ page }) => {

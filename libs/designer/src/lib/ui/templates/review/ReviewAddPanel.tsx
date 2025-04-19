@@ -18,6 +18,7 @@ type ReviewCreatePanelProps = {
   resourceOverrides?: {
     templateName?: string;
     workflowName?: string;
+    triggerDescription?: string;
   };
 };
 
@@ -68,7 +69,16 @@ export const ReviewAddPanel = ({ resourceOverrides }: ReviewCreatePanelProps) =>
         <Text>{resourceOverrides?.workflowName ?? resourceStrings.WORKFLOW_NAME}</Text>
         {Object.values(workflows).map((workflow) => (
           <Text weight="semibold" key={workflow.id}>
-            {workflow.workflowName}
+            {workflow.workflowName ?? intlText.PLACEHOLDER}
+          </Text>
+        ))}
+      </div>
+
+      <div className="msla-templates-review-block">
+        <Text>{resourceOverrides?.triggerDescription ?? resourceStrings.TRIGGER_DESCRIPTION}</Text>
+        {Object.values(workflows).map((workflow) => (
+          <Text weight="semibold" key={workflow.id}>
+            {Object.values(workflow?.workflowDefinition?.triggers ?? {})?.[0]?.description ?? intlText.PLACEHOLDER}
           </Text>
         ))}
       </div>
