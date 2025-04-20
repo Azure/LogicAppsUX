@@ -132,6 +132,7 @@ export const templateSlice = createSlice({
       state.manifest = undefined;
     },
     updateTemplateManifest: (state, action: PayloadAction<Partial<Template.TemplateManifest>>) => {
+      //TODO: update with validation if needed?
       state.manifest = { ...(state.manifest ?? {}), ...(action.payload as Template.TemplateManifest) };
     },
     updateWorkflowData: (

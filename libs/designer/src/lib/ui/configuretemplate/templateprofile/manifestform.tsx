@@ -29,7 +29,7 @@ export const TemplateManifestForm = () => {
 
 const useGeneralSectionItems = (resources: Record<string, string>) => {
   const dispatch = useDispatch<AppDispatch>();
-  const { manifest, workflows } = useSelector((state: RootState) => state.template);
+  const { manifest, workflows, errors } = useSelector((state: RootState) => state.template);
   const workflowKeys = Object.keys(workflows);
   const isMultiWorkflow = workflowKeys.length > 1;
   const items: TemplatesSectionItem[] = [
@@ -39,6 +39,7 @@ const useGeneralSectionItems = (resources: Record<string, string>) => {
       type: 'textfield',
       required: true,
       onChange: (value: string) => dispatch(updateTemplateManifest({ title: value })),
+      errorMessage: errors?.manifest?.title,
     },
     {
       label: resources.WorkflowType,
@@ -60,7 +61,7 @@ const useGeneralSectionItems = (resources: Record<string, string>) => {
 
 const useContactInfoSectionItems = (resources: Record<string, string>) => {
   const dispatch = useDispatch<AppDispatch>();
-  const { manifest } = useSelector((state: RootState) => state.template);
+  const { manifest, errors } = useSelector((state: RootState) => state.template);
   const items: TemplatesSectionItem[] = [
     {
       label: resources.BY,
@@ -68,6 +69,7 @@ const useContactInfoSectionItems = (resources: Record<string, string>) => {
       type: 'textfield',
       required: true,
       onChange: (value: string) => dispatch(updateTemplateManifest({ details: { ...(manifest?.details ?? {}), By: value } as any })),
+      errorMessage: errors?.manifest?.['details.By'],
     },
   ];
 
@@ -76,7 +78,7 @@ const useContactInfoSectionItems = (resources: Record<string, string>) => {
 
 const useDescriptionSectionItems = (resources: Record<string, string>) => {
   const dispatch = useDispatch<AppDispatch>();
-  const { manifest, workflows } = useSelector((state: RootState) => state.template);
+  const { manifest, workflows, errors } = useSelector((state: RootState) => state.template);
   const isMultiWorkflow = Object.keys(workflows).length > 1;
   const items: TemplatesSectionItem[] = [
     {
@@ -85,15 +87,18 @@ const useDescriptionSectionItems = (resources: Record<string, string>) => {
       type: 'textarea',
       required: true,
       onChange: (value: string) => dispatch(updateTemplateManifest({ summary: value })),
-    },
-    {
-      label: isMultiWorkflow ? resources.Features : resources.Prerequisites,
-      value: manifest?.description || '',
-      type: 'textarea',
-      required: true,
-      onChange: (value: string) => dispatch(updateTemplateManifest({ description: value })),
+      errorMessage: errors?.manifest?.summary,
     },
   ];
+
+  if (isMultiWorkflow) {
+    items.push({
+      label: resources.Features,
+      value: manifest?.description || '',
+      type: 'textarea',
+      onChange: (value: string) => dispatch(updateTemplateManifest({ description: value })),
+    });
+  }
 
   return items;
 };
@@ -101,6 +106,7 @@ const useDescriptionSectionItems = (resources: Record<string, string>) => {
 const useCategorySectionItems = (resources: Record<string, string>) => {
   const dispatch = useDispatch<AppDispatch>();
   const { details, tags, featuredConnectors } = useSelector((state: RootState) => state.template.manifest as Template.TemplateManifest);
+  const errors = useSelector((state: RootState) => state.template.errors);
   const categories = useMemo(
     () =>
       getLogicAppsCategories().map((category) => ({
@@ -127,7 +133,6 @@ const useCategorySectionItems = (resources: Record<string, string>) => {
       label: resources.FeaturedConnectors,
       value: featuredConnectors || [],
       type: 'custom',
-      required: true,
       onRenderItem: () => <FeaturedConnectors />,
     },
     {
@@ -140,6 +145,7 @@ const useCategorySectionItems = (resources: Record<string, string>) => {
       selectedOptions: selectedCategories,
       onOptionSelect: (selectedOptions) =>
         dispatch(updateTemplateManifest({ details: { ...(details ?? {}), Category: selectedOptions.join(',') } as any })),
+      errorMessage: errors?.manifest?.['details.Category'],
     },
     {
       label: resources.Tags,
