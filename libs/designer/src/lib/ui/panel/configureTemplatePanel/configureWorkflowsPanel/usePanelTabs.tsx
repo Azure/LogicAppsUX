@@ -41,17 +41,21 @@ export const useConfigureWorkflowPanelTabs = ({
     });
   };
 
-  const updateWorkflowDataField = (workflowId: string, workflowData: Partial<WorkflowTemplateData>) => {
+  const updateWorkflowDataField = (workflowId: string, workflowData: Partial<WorkflowTemplateData>, runManifestValidation: boolean) => {
     setSelectedWorkflowsList((prevSelectedWorkflows) => {
       const updatedWorkflowData = {
         ...prevSelectedWorkflows[workflowId],
         ...workflowData,
       };
+      const { workflow: workflowNameError, manifest: updatedManifestError } = validateWorkflowData(updatedWorkflowData);
       return {
         ...prevSelectedWorkflows,
         [workflowId]: {
           ...updatedWorkflowData,
-          errors: validateWorkflowData(updatedWorkflowData),
+          errors: {
+            workflow: workflowNameError,
+            manifest: runManifestValidation ? updatedManifestError : updatedWorkflowData?.errors?.manifest,
+          },
         },
       };
     });
@@ -68,7 +72,7 @@ export const useConfigureWorkflowPanelTabs = ({
 
   const isNoWorkflowsSelected = Object.keys(selectedWorkflowsList()).length === 0;
   const missingNameOrDisplayName = Object.values(selectedWorkflowsList()).some(
-    (workflow) => !workflow?.workflowName || !workflow?.manifest?.title
+    (workflow) => !workflow?.workflowName || (Object.keys(selectedWorkflowsList()).length > 1 && !workflow?.manifest?.title)
   );
 
   return [

@@ -236,6 +236,7 @@ export const validateWorkflowData = (workflowData: Partial<WorkflowTemplateData>
 
   const manifestErrors: Record<string, string | undefined> = {};
 
+  //TODO: validation - give format.
   const workflowNameError = isUndefinedOrEmptyString(workflowName)
     ? intl.formatMessage({
         defaultMessage: 'Workflow name is required.',

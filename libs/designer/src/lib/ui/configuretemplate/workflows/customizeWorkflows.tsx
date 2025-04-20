@@ -12,7 +12,7 @@ export const CustomizeWorkflows = ({
   updateWorkflowDataField,
 }: {
   selectedWorkflowsList: Record<string, Partial<WorkflowTemplateData>>;
-  updateWorkflowDataField: (workflowId: string, workflowData: Partial<WorkflowTemplateData>) => void;
+  updateWorkflowDataField: (workflowId: string, workflowData: Partial<WorkflowTemplateData>, runManifestValidation: boolean) => void;
 }) => {
   const workflowEntries = Object.entries(selectedWorkflowsList);
 
@@ -59,7 +59,7 @@ const CustomizeWorkflowSection = ({
   workflowId: string;
   isMultiWorkflowTemplate: boolean;
   workflow: Partial<WorkflowTemplateData>;
-  updateWorkflowDataField: (workflowId: string, workflowData: Partial<WorkflowTemplateData>) => void;
+  updateWorkflowDataField: (workflowId: string, workflowData: Partial<WorkflowTemplateData>, runManifestValidation: boolean) => void;
 }) => {
   const customResourceStrings = useResourceStrings();
   const { resourceStrings, stateTypes } = useTemplatesStrings();
@@ -87,7 +87,7 @@ const CustomizeWorkflowSection = ({
         type: 'textfield',
         required: true,
         onChange: (value: string) => {
-          updateWorkflowDataField(workflowId, { workflowName: value });
+          updateWorkflowDataField(workflowId, { workflowName: value }, false);
         },
         errorMessage: workflow.errors?.workflow,
       },
@@ -99,13 +99,17 @@ const CustomizeWorkflowSection = ({
         type: 'textfield',
         required: true,
         onChange: (value: string) => {
-          updateWorkflowDataField(workflowId, {
-            ...workflow,
-            manifest: {
-              ...workflow.manifest,
-              title: value,
-            } as Template.WorkflowManifest,
-          });
+          updateWorkflowDataField(
+            workflowId,
+            {
+              ...workflow,
+              manifest: {
+                ...workflow.manifest,
+                title: value,
+              } as Template.WorkflowManifest,
+            },
+            !!workflow.errors?.manifest?.title
+          );
         },
         errorMessage: workflow.errors?.manifest?.title,
       });
@@ -118,13 +122,17 @@ const CustomizeWorkflowSection = ({
       options: defaultKindOptions,
       selectedOptions: workflow.manifest?.kinds || [],
       onOptionSelect: (selectedOptions) => {
-        updateWorkflowDataField(workflowId, {
-          ...workflow,
-          manifest: {
-            ...workflow.manifest,
-            kinds: selectedOptions,
-          } as Template.WorkflowManifest,
-        });
+        updateWorkflowDataField(
+          workflowId,
+          {
+            ...workflow,
+            manifest: {
+              ...workflow.manifest,
+              kinds: selectedOptions,
+            } as Template.WorkflowManifest,
+          },
+          false
+        );
       },
     });
     baseItems.push({
@@ -152,13 +160,17 @@ const CustomizeWorkflowSection = ({
             value: workflow.manifest?.summary || '',
             type: 'textarea',
             onChange: (value: string) => {
-              updateWorkflowDataField(workflowId, {
-                ...workflow,
-                manifest: {
-                  ...workflow.manifest,
-                  summary: value,
-                } as Template.WorkflowManifest,
-              });
+              updateWorkflowDataField(
+                workflowId,
+                {
+                  ...workflow,
+                  manifest: {
+                    ...workflow.manifest,
+                    summary: value,
+                  } as Template.WorkflowManifest,
+                },
+                !!workflow.errors?.manifest?.summary
+              );
             },
             errorMessage: workflow.errors?.manifest?.summary,
           },
@@ -169,13 +181,17 @@ const CustomizeWorkflowSection = ({
       value: workflow.manifest?.description || '',
       type: 'textarea',
       onChange: (value: string) => {
-        updateWorkflowDataField(workflowId, {
-          ...workflow,
-          manifest: {
-            ...workflow.manifest,
-            description: value,
-          } as Template.WorkflowManifest,
-        });
+        updateWorkflowDataField(
+          workflowId,
+          {
+            ...workflow,
+            manifest: {
+              ...workflow.manifest,
+              description: value,
+            } as Template.WorkflowManifest,
+          },
+          false
+        );
       },
     });
     baseItems.push({
@@ -183,13 +199,17 @@ const CustomizeWorkflowSection = ({
       value: workflow.manifest?.prerequisites || '',
       type: 'textarea',
       onChange: (value: string) => {
-        updateWorkflowDataField(workflowId, {
-          ...workflow,
-          manifest: {
-            ...workflow.manifest,
-            prerequisites: value,
-          } as Template.WorkflowManifest,
-        });
+        updateWorkflowDataField(
+          workflowId,
+          {
+            ...workflow,
+            manifest: {
+              ...workflow.manifest,
+              prerequisites: value,
+            } as Template.WorkflowManifest,
+          },
+          false
+        );
       },
     });
     return baseItems;
@@ -202,16 +222,20 @@ const CustomizeWorkflowSection = ({
         value: workflow.manifest?.images?.light || '',
         type: 'textfield',
         onChange: (value: string) => {
-          updateWorkflowDataField(workflowId, {
-            ...workflow,
-            manifest: {
-              ...workflow.manifest,
-              images: {
-                ...workflow.manifest?.images,
-                light: value,
-              },
-            } as Template.WorkflowManifest,
-          });
+          updateWorkflowDataField(
+            workflowId,
+            {
+              ...workflow,
+              manifest: {
+                ...workflow.manifest,
+                images: {
+                  ...workflow.manifest?.images,
+                  light: value,
+                },
+              } as Template.WorkflowManifest,
+            },
+            !!workflow.errors?.manifest?.['images.light']
+          );
         },
         errorMessage: workflow.errors?.manifest?.['images.light'],
       },
@@ -220,16 +244,20 @@ const CustomizeWorkflowSection = ({
         value: workflow.manifest?.images?.dark || '',
         type: 'textfield',
         onChange: (value: string) => {
-          updateWorkflowDataField(workflowId, {
-            ...workflow,
-            manifest: {
-              ...workflow.manifest,
-              images: {
-                ...workflow.manifest?.images,
-                dark: value,
-              },
-            } as Template.WorkflowManifest,
-          });
+          updateWorkflowDataField(
+            workflowId,
+            {
+              ...workflow,
+              manifest: {
+                ...workflow.manifest,
+                images: {
+                  ...workflow.manifest?.images,
+                  dark: value,
+                },
+              } as Template.WorkflowManifest,
+            },
+            !!workflow.errors?.manifest?.['images.dark']
+          );
         },
         errorMessage: workflow.errors?.manifest?.['images.dark'],
       },
