@@ -8,6 +8,7 @@ import { useFunctionalState } from '@react-hookz/web';
 import type { WorkflowTemplateData } from '../../../../core';
 import { getWorkflowsWithDefinitions, initializeWorkflowsData } from '../../../../core/actions/bjsworkflow/configuretemplate';
 import { getResourceNameFromId } from '@microsoft/logic-apps-shared';
+import { validateWorkflowData } from '../../../../core/templates/utils/helper';
 
 export const useConfigureWorkflowPanelTabs = ({
   onSave,
@@ -41,13 +42,19 @@ export const useConfigureWorkflowPanelTabs = ({
   };
 
   const updateWorkflowDataField = (workflowId: string, workflowData: Partial<WorkflowTemplateData>) => {
-    setSelectedWorkflowsList((prevSelectedWorkflows) => ({
-      ...prevSelectedWorkflows,
-      [workflowId]: {
+    setSelectedWorkflowsList((prevSelectedWorkflows) => {
+      const updatedWorkflowData = {
         ...prevSelectedWorkflows[workflowId],
         ...workflowData,
-      },
-    }));
+      };
+      return {
+        ...prevSelectedWorkflows,
+        [workflowId]: {
+          ...updatedWorkflowData,
+          errors: validateWorkflowData(updatedWorkflowData),
+        },
+      };
+    });
   };
 
   const onNextButtonClick = async () => {

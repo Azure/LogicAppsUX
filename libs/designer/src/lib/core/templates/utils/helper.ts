@@ -1,5 +1,5 @@
 import { type Template, getIntl, isUndefinedOrEmptyString, normalizeConnectorId } from '@microsoft/logic-apps-shared';
-import type { AppDispatch } from '../../../core';
+import type { AppDispatch, WorkflowTemplateData } from '../../../core';
 import { summaryTab } from '../../../ui/panel/templatePanel/quickViewPanel/tabs/summaryTab';
 import { workflowTab } from '../../../ui/panel/templatePanel/quickViewPanel/tabs/workflowTab';
 import type { IntlShape } from 'react-intl';
@@ -230,51 +230,56 @@ export const validateConnectionsValue = (
   return Object.keys(manifestConnections).some((connectionKey) => !connectionsMapping[connectionKey]) ? errorMessage : undefined;
 };
 
-export const validateWorkflowManifestData = (workflowManifest: Template.WorkflowManifest) => {
+export const validateWorkflowData = (workflowData: Partial<WorkflowTemplateData>) => {
+  const { manifest: workflowManifest, workflowName } = workflowData;
   const intl = getIntl();
-  const errors: Record<string, string> = {};
 
-  if (isUndefinedOrEmptyString(workflowManifest.id)) {
-    errors['id'] = intl.formatMessage({
-      defaultMessage: 'Workflow name (id) is required.',
-      id: 'uKJaTF',
-      description: 'Error message when the workflow name field which is id is empty',
-    });
-  }
+  const manifestErrors: Record<string, string | undefined> = {};
 
-  if (isUndefinedOrEmptyString(workflowManifest.title)) {
-    errors['title'] = intl.formatMessage({
-      defaultMessage: 'Workflow display name (title) is required.',
-      id: 'WnHWrD',
-      description: 'Error message when the workflow display name field which is title is empty',
-    });
-  }
+  const workflowNameError = isUndefinedOrEmptyString(workflowName)
+    ? intl.formatMessage({
+        defaultMessage: 'Workflow name is required.',
+        id: 'SakW8J',
+        description: 'Error message when the workflow name field is empty',
+      })
+    : undefined;
 
-  if (isUndefinedOrEmptyString(workflowManifest.summary)) {
-    errors['workflowDescription'] = intl.formatMessage({
-      defaultMessage: 'Workflow summary is required.',
-      id: 'erGyZT',
-      description: 'Error message when the workflow description is empty',
-    });
-  }
+  manifestErrors['title'] = isUndefinedOrEmptyString(workflowManifest?.title)
+    ? intl.formatMessage({
+        defaultMessage: 'Workflow display name (title) is required.',
+        id: 'WnHWrD',
+        description: 'Error message when the workflow display name field which is title is empty',
+      })
+    : undefined;
 
-  if (isUndefinedOrEmptyString(workflowManifest.images?.light)) {
-    errors['workflowImage.light'] = intl.formatMessage({
-      defaultMessage: 'Workflow light image is required.',
-      id: '1Cds91',
-      description: 'Error message when the workflow light image is empty',
-    });
-  }
+  manifestErrors['summary'] = isUndefinedOrEmptyString(workflowManifest?.summary)
+    ? intl.formatMessage({
+        defaultMessage: 'Workflow summary is required.',
+        id: 'erGyZT',
+        description: 'Error message when the workflow description is empty',
+      })
+    : undefined;
 
-  if (isUndefinedOrEmptyString(workflowManifest.images?.dark)) {
-    errors['workflowImage.dark'] = intl.formatMessage({
-      defaultMessage: 'Workflow dark image is required.',
-      id: 'k194gz',
-      description: 'Error message when the workflow dark image is empty',
-    });
-  }
+  manifestErrors['images.light'] = isUndefinedOrEmptyString(workflowManifest?.images?.light)
+    ? intl.formatMessage({
+        defaultMessage: 'Workflow light image is required.',
+        id: '1Cds91',
+        description: 'Error message when the workflow light image is empty',
+      })
+    : undefined;
 
-  return errors;
+  manifestErrors['images.dark'] = isUndefinedOrEmptyString(workflowManifest?.images?.dark)
+    ? intl.formatMessage({
+        defaultMessage: 'Workflow dark image is required.',
+        id: 'k194gz',
+        description: 'Error message when the workflow dark image is empty',
+      })
+    : undefined;
+
+  return {
+    workflow: workflowNameError,
+    manifest: manifestErrors,
+  };
 };
 
 export const validateTemplateManifestValue = (manifest: Template.TemplateManifest): Record<string, string | undefined> => {

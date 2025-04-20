@@ -5,7 +5,7 @@ import {
   validateConnectionsValue,
   validateParameterValue,
   validateTemplateManifestValue,
-  validateWorkflowManifestData,
+  validateWorkflowData,
 } from '../../templates/utils/helper';
 import type { WorkflowTemplateData, TemplatePayload } from '../../actions/bjsworkflow/templates';
 import { loadTemplate, validateWorkflowsBasicInfo } from '../../actions/bjsworkflow/templates';
@@ -93,8 +93,8 @@ export const templateSlice = createSlice({
     },
     validateWorkflowManifestsData: (state) => {
       Object.keys(state.workflows).forEach((workflowId) => {
-        const workflowManifestData = state.workflows[workflowId].manifest;
-        state.workflows[workflowId].errors.manifest = validateWorkflowManifestData(workflowManifestData);
+        const workflowData = state.workflows[workflowId];
+        state.workflows[workflowId].errors = validateWorkflowData(workflowData);
       });
     },
     validateTemplateManifest: (state) => {
