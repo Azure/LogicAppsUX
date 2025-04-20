@@ -7,7 +7,12 @@ import { useResourceStrings } from '../resources';
 import { useDispatch, useSelector } from 'react-redux';
 import type { Template } from '@microsoft/logic-apps-shared';
 import { useMemo } from 'react';
-import { type TemplateEnvironment, updateEnvironment, updateTemplateManifest } from '../../../core/state/templates/templateSlice';
+import {
+  type TemplateEnvironment,
+  updateEnvironment,
+  updateTemplateManifest,
+  validateTemplateManifest,
+} from '../../../core/state/templates/templateSlice';
 import { getSupportedSkus } from '../../../core/configuretemplate/utils/helper';
 import type { TemplateWizardTabProps } from './model';
 
@@ -96,6 +101,7 @@ export const publishTab = (
     },
     secondaryButtonText: resources.NextButtonText,
     secondaryButtonOnClick: () => {
+      dispatch(validateTemplateManifest());
       dispatch(selectWizardTab(constants.CONFIGURE_TEMPLATE_WIZARD_TAB_NAMES.REVIEW_AND_PUBLISH));
     },
   },

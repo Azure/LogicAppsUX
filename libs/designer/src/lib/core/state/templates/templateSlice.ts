@@ -1,7 +1,12 @@
 import { getRecordEntry, type Template } from '@microsoft/logic-apps-shared';
 import type { PayloadAction } from '@reduxjs/toolkit';
 import { createSlice } from '@reduxjs/toolkit';
-import { validateConnectionsValue, validateParameterValue } from '../../templates/utils/helper';
+import {
+  validateConnectionsValue,
+  validateParameterValue,
+  validateTemplateManifestValue,
+  validateWorkflowManifestData,
+} from '../../templates/utils/helper';
 import type { WorkflowTemplateData, TemplatePayload } from '../../actions/bjsworkflow/templates';
 import { loadTemplate, validateWorkflowsBasicInfo } from '../../actions/bjsworkflow/templates';
 import { resetTemplatesState } from '../global';
@@ -22,7 +27,6 @@ const initialState: TemplateState = {
   connections: {},
   errors: {
     manifest: {},
-    workflows: {},
     parameters: {},
     connections: undefined,
   },
@@ -87,6 +91,17 @@ export const templateSlice = createSlice({
     updateAllTemplateParameterDefinitions: (state, action: PayloadAction<Record<string, Template.ParameterDefinition>>) => {
       state.parameterDefinitions = { ...state.parameterDefinitions, ...action.payload };
     },
+    validateWorkflowManifestsData: (state) => {
+      Object.keys(state.workflows).forEach((workflowId) => {
+        const workflowManifestData = state.workflows[workflowId].manifest;
+        state.workflows[workflowId].errors.manifest = validateWorkflowManifestData(workflowManifestData);
+      });
+    },
+    validateTemplateManifest: (state) => {
+      if (state.manifest) {
+        state.errors.manifest = validateTemplateManifestValue(state.manifest);
+      }
+    },
     validateParameters: (state) => {
       const parametersDefinition = { ...state.parameterDefinitions };
       const parametersValidationErrors = { ...state.errors.parameters };
@@ -110,7 +125,6 @@ export const templateSlice = createSlice({
       state.connections = {};
       state.errors = {
         manifest: {},
-        workflows: {},
         parameters: {},
         connections: undefined,
       };
@@ -180,7 +194,6 @@ export const templateSlice = createSlice({
       state.connections = {};
       state.errors = {
         manifest: {},
-        workflows: {},
         parameters: {},
         connections: undefined,
       };
@@ -275,6 +288,7 @@ export const {
   clearTemplateDetails,
   updateWorkflowNameValidationError,
   updateTemplateParameterDefinition,
+  validateTemplateManifest,
   updateAllTemplateParameterDefinitions,
   updateWorkflowData,
   updateAllWorkflowsData,

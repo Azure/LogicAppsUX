@@ -41,8 +41,8 @@ export interface WorkflowTemplateData {
   id: string;
   workflowDefinition: LogicAppsV2.WorkflowDefinition;
   manifest: Template.WorkflowManifest;
-  workflowName?: string;
-  kind?: string;
+  workflowName?: string; // errors.workflow - not needed for configure template
+  kind?: string; // not needed for configure template
   images?: {
     light?: string;
     dark?: string;
@@ -52,6 +52,7 @@ export interface WorkflowTemplateData {
   errors: {
     workflow: string | undefined;
     kind?: string;
+    manifest?: Record<string, string | undefined>;
   };
 }
 
@@ -62,7 +63,6 @@ export interface TemplatePayload {
   connections: Record<string, Template.Connection>;
   errors: {
     manifest: Record<string, string | undefined>;
-    workflows: Record<string, string | undefined>;
     parameters: Record<string, string | undefined>;
     connections: string | undefined;
   };
@@ -337,7 +337,6 @@ const loadTemplateFromResourcePath = async (
     connections: {},
     errors: {
       manifest: {},
-      workflows: {},
       parameters: {},
       connections: undefined,
     },

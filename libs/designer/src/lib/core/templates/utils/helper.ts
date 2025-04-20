@@ -1,4 +1,4 @@
-import { type Template, getIntl, normalizeConnectorId } from '@microsoft/logic-apps-shared';
+import { type Template, getIntl, isUndefinedOrEmptyString, normalizeConnectorId } from '@microsoft/logic-apps-shared';
 import type { AppDispatch } from '../../../core';
 import { summaryTab } from '../../../ui/panel/templatePanel/quickViewPanel/tabs/summaryTab';
 import { workflowTab } from '../../../ui/panel/templatePanel/quickViewPanel/tabs/workflowTab';
@@ -228,4 +228,116 @@ export const validateConnectionsValue = (
   });
 
   return Object.keys(manifestConnections).some((connectionKey) => !connectionsMapping[connectionKey]) ? errorMessage : undefined;
+};
+
+export const validateWorkflowManifestData = (workflowManifest: Template.WorkflowManifest) => {
+  const intl = getIntl();
+  const errors: Record<string, string> = {};
+
+  if (isUndefinedOrEmptyString(workflowManifest.id)) {
+    errors['id'] = intl.formatMessage({
+      defaultMessage: 'Workflow name (id) is required.',
+      id: 'uKJaTF',
+      description: 'Error message when the workflow name field which is id is empty',
+    });
+  }
+
+  if (isUndefinedOrEmptyString(workflowManifest.title)) {
+    errors['title'] = intl.formatMessage({
+      defaultMessage: 'Workflow display name (title) is required.',
+      id: 'WnHWrD',
+      description: 'Error message when the workflow display name field which is title is empty',
+    });
+  }
+
+  if (isUndefinedOrEmptyString(workflowManifest.summary)) {
+    errors['workflowDescription'] = intl.formatMessage({
+      defaultMessage: 'Workflow summary is required.',
+      id: 'erGyZT',
+      description: 'Error message when the workflow description is empty',
+    });
+  }
+
+  if (isUndefinedOrEmptyString(workflowManifest.images?.light)) {
+    errors['workflowImage.light'] = intl.formatMessage({
+      defaultMessage: 'Workflow light image is required.',
+      id: '1Cds91',
+      description: 'Error message when the workflow light image is empty',
+    });
+  }
+
+  if (isUndefinedOrEmptyString(workflowManifest.images?.dark)) {
+    errors['workflowImage.dark'] = intl.formatMessage({
+      defaultMessage: 'Workflow dark image is required.',
+      id: 'k194gz',
+      description: 'Error message when the workflow dark image is empty',
+    });
+  }
+
+  return errors;
+};
+
+export const validateTemplateManifestValue = (manifest: Template.TemplateManifest): Record<string, string | undefined> => {
+  const intl = getIntl();
+  const errors: Record<string, string> = {};
+
+  if (isUndefinedOrEmptyString(manifest.title)) {
+    errors['title'] = intl.formatMessage({
+      defaultMessage: 'Title is required.',
+      id: 'oF5+jB',
+      description: 'Error shown when the template title is missing or empty',
+    });
+  }
+
+  if (isUndefinedOrEmptyString(manifest.summary)) {
+    errors['summary'] = intl.formatMessage({
+      defaultMessage: 'Summary is required.',
+      id: 'h4OHMi',
+      description: 'Error shown when the template summary is missing or empty',
+    });
+  }
+
+  // if (!Array.isArray(manifest.skus) || manifest.skus.length === 0) {
+  //   errors["skus"] = intl.formatMessage({
+  //     defaultMessage: "At least one SKU is required.",
+  //     id: "manifest.error.skus.required",
+  //     description: "Error shown when the SKU list is missing or empty",
+  //   });
+  // }
+
+  if (!manifest.workflows || Object.keys(manifest.workflows).length === 0) {
+    errors['workflows'] = intl.formatMessage({
+      defaultMessage: 'At least one workflow is required to generate a template.',
+      id: '66VaWb',
+      description: 'Error shown when the template has no workflows',
+    });
+  } else {
+    // for (const [key, workflow] of Object.entries(manifest.workflows)) {
+    //   if (!workflow.name || workflow.name.trim() === "") {
+    //     errors[`workflows.${key}.name`] = intl.formatMessage({
+    //       defaultMessage: "Workflow name is required.",
+    //       id: "manifest.error.workflowName.required",
+    //       description: `Error shown when the workflow "${key}" has no name`,
+    //     });
+    //   }
+    // }
+  }
+
+  if (isUndefinedOrEmptyString(manifest.details.By)) {
+    errors['details.By'] = intl.formatMessage({
+      defaultMessage: 'By field is required.',
+      id: 'JSWwJH',
+      description: 'Error shown when the author (By) field is missing',
+    });
+  }
+
+  if (isUndefinedOrEmptyString(manifest.details.Category)) {
+    errors['details.Category'] = intl.formatMessage({
+      defaultMessage: 'At least one category is required.',
+      id: '5GmlRf',
+      description: 'Error shown when the Category field is missing',
+    });
+  }
+
+  return errors;
 };
