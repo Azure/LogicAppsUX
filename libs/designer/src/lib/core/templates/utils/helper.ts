@@ -283,7 +283,7 @@ export const validateWorkflowData = (workflowData: Partial<WorkflowTemplateData>
     : checkWorkflowNameWithRegex(intl, workflowName);
 
   manifestErrors['title'] =
-    !isAccelerator && isUndefinedOrEmptyString(workflowManifest?.title)
+    isAccelerator && isUndefinedOrEmptyString(workflowManifest?.title)
       ? intl.formatMessage({
           defaultMessage: 'Workflow display name (title) is required.',
           id: 'WnHWrD',
@@ -292,7 +292,7 @@ export const validateWorkflowData = (workflowData: Partial<WorkflowTemplateData>
       : undefined;
 
   manifestErrors['summary'] =
-    !isAccelerator && isUndefinedOrEmptyString(workflowManifest?.summary)
+    isAccelerator && isUndefinedOrEmptyString(workflowManifest?.summary)
       ? intl.formatMessage({
           defaultMessage: 'Workflow summary is required.',
           id: 'erGyZT',

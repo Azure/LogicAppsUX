@@ -66,7 +66,7 @@ describe('Template Validation Tests', () => {
     });
 
     test('Missing all data with single template case', async () => {
-      expect(validateWorkflowData({}, true)).toStrictEqual({
+      expect(validateWorkflowData({}, false)).toStrictEqual({
         workflow: intl.formatMessage({
           defaultMessage: 'Workflow name is required.',
           id: 'x2z3kg',
