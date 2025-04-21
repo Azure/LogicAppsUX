@@ -132,8 +132,12 @@ export const templateSlice = createSlice({
       state.manifest = undefined;
     },
     updateTemplateManifest: (state, action: PayloadAction<Partial<Template.TemplateManifest>>) => {
-      //TODO: update with validation if needed?
       state.manifest = { ...(state.manifest ?? {}), ...(action.payload as Template.TemplateManifest) };
+      const templateManifestHasError = Object.values(state.errors.manifest).some((value) => value !== undefined);
+
+      if (templateManifestHasError) {
+        state.errors.manifest = validateTemplateManifestValue(state.manifest);
+      }
     },
     updateWorkflowData: (
       state,

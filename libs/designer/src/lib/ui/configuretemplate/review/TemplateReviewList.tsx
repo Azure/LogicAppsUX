@@ -10,7 +10,7 @@ import { ConnectorConnectionName } from '../../templates/connections/connector';
 import React, { useEffect, useMemo } from 'react';
 import { useAllConnectors } from '../../../core/configuretemplate/utils/queries';
 import { WorkflowKind } from '../../../core/state/workflow/workflowInterfaces';
-import { validateTemplateManifest, validateWorkflowManifestsData } from '../../../core/state/templates/templateSlice';
+import { validateParameters, validateTemplateManifest, validateWorkflowManifestsData } from '../../../core/state/templates/templateSlice';
 
 const SectionDividerItem: TemplatesSectionItem = {
   type: 'divider',
@@ -51,6 +51,7 @@ export const TemplateReviewList = () => {
   useEffect(() => {
     dispatch(validateWorkflowManifestsData());
     dispatch(validateTemplateManifest());
+    dispatch(validateParameters());
   }, [dispatch]);
 
   const { connectorKinds, stateTypes, resourceStrings: templateResourceStrings } = useTemplatesStrings();
