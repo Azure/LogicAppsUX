@@ -36,6 +36,9 @@ export const useConfigureWorkflowPanelTabs = ({
         newSelectedWorkflows[normalizedWorkflowId] = prevSelectedWorkflows[normalizedWorkflowId] ?? {
           id: normalizedWorkflowId,
           workflowName: getResourceNameFromId(normalizedWorkflowId),
+          manifest: {
+            kinds: ['stateful', 'stateless'],
+          },
         };
       }
       return newSelectedWorkflows;

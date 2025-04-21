@@ -230,20 +230,31 @@ export const validateConnectionsValue = (
   return Object.keys(manifestConnections).some((connectionKey) => !connectionsMapping[connectionKey]) ? errorMessage : undefined;
 };
 
+export const checkWorkflowNameWithRegex = (intl: IntlShape, workflowName: string) => {
+  const regex = /^[A-Za-z][A-Za-z0-9]*(?:[_-][A-Za-z0-9]+)*$/;
+  if (!regex.test(workflowName)) {
+    return intl.formatMessage({
+      defaultMessage: 'Name does not match the given pattern.',
+      id: 'zMKxg9',
+      description: 'Error message when the workflow name is invalid regex.',
+    });
+  }
+  return undefined;
+};
+
 export const validateWorkflowData = (workflowData: Partial<WorkflowTemplateData>) => {
   const { manifest: workflowManifest, workflowName } = workflowData;
   const intl = getIntl();
 
   const manifestErrors: Record<string, string | undefined> = {};
 
-  //TODO: validation - give format.
   const workflowNameError = isUndefinedOrEmptyString(workflowName)
     ? intl.formatMessage({
         defaultMessage: 'Workflow name is required.',
         id: 'SakW8J',
         description: 'Error message when the workflow name field is empty',
       })
-    : undefined;
+    : checkWorkflowNameWithRegex(intl, workflowName);
 
   // TODO: don't check if single workflow
   manifestErrors['title'] = isUndefinedOrEmptyString(workflowManifest?.title)
@@ -262,6 +273,14 @@ export const validateWorkflowData = (workflowData: Partial<WorkflowTemplateData>
         description: 'Error message when the workflow description is empty',
       })
     : undefined;
+
+  manifestErrors['kinds'] = (workflowManifest?.kinds ?? []).length
+    ? undefined
+    : intl.formatMessage({
+        defaultMessage: 'At least one state type is required.',
+        id: '3+Xsk7',
+        description: 'Error shown when the State type list is missing or empty',
+      });
 
   manifestErrors['images.light'] = isUndefinedOrEmptyString(workflowManifest?.images?.light)
     ? intl.formatMessage({
@@ -304,14 +323,6 @@ export const validateTemplateManifestValue = (manifest: Template.TemplateManifes
       description: 'Error shown when the template summary is missing or empty',
     });
   }
-
-  // if (!Array.isArray(manifest.skus) || manifest.skus.length === 0) {
-  //   errors["skus"] = intl.formatMessage({
-  //     defaultMessage: "At least one SKU is required.",
-  //     id: "manifest.error.skus.required",
-  //     description: "Error shown when the SKU list is missing or empty",
-  //   });
-  // }
 
   // if (!manifest.workflows || Object.keys(manifest.workflows).length === 0) {
   //   errors['workflows'] = intl.formatMessage({

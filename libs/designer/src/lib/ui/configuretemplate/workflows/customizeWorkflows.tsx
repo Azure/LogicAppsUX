@@ -84,6 +84,7 @@ const CustomizeWorkflowSection = ({
       {
         label: resourceStrings.WORKFLOW_NAME,
         value: workflow.workflowName || '',
+        hint: resourceStrings.WORKFLOW_NAME_DESCRIPTION,
         type: 'textfield',
         required: true,
         onChange: (value: string) => {
