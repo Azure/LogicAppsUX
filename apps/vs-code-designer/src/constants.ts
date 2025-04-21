@@ -35,6 +35,7 @@ export const schemasDirectory = 'Schemas';
 // Folder names
 export const designTimeDirectoryName = 'workflow-designtime';
 export const testsDirectoryName = 'Tests';
+export const testMockOutputsDirectory = 'MockOutputs';
 export const testResultsDirectoryName = '.testResults';
 export const vscodeFolderName = '.vscode';
 
