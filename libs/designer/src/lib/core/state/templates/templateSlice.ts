@@ -3,6 +3,7 @@ import type { PayloadAction } from '@reduxjs/toolkit';
 import { createSlice } from '@reduxjs/toolkit';
 import {
   validateConnectionsValue,
+  validateParameterDetail,
   validateParameterValue,
   validateTemplateManifestValue,
   validateWorkflowData,
@@ -119,17 +120,7 @@ export const templateSlice = createSlice({
       const parametersValidationErrors = { ...state.errors.parameters };
       Object.keys(parametersDefinition).forEach((parameterName) => {
         const thisParameter = parametersDefinition[parameterName];
-        if (!thisParameter.displayName) {
-          //TODO: intl this.
-          parametersValidationErrors[parameterName] = 'Parameter display name is required';
-        } else if (!thisParameter.description) {
-          parametersValidationErrors[parameterName] = 'Description is required';
-        } else if (thisParameter.default) {
-          parametersValidationErrors[parameterName] = validateParameterValue(
-            { type: thisParameter.type, value: thisParameter.default },
-            thisParameter.required
-          );
-        }
+        parametersValidationErrors[parameterName] = validateParameterDetail(thisParameter);
       });
       console.log('parametersValidationErrors', parametersValidationErrors);
       state.errors.parameters = parametersValidationErrors;

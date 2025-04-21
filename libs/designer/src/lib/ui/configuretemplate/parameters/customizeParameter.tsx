@@ -83,7 +83,11 @@ export const CustomizeParameter = ({
 
   return (
     <div>
-      {parameterError && <MessageBar intent="error">{parameterError}</MessageBar>}
+      {parameterError && (
+        <MessageBar intent="error" style={{ marginBottom: '8px' }}>
+          {parameterError}
+        </MessageBar>
+      )}
       <TemplatesSection title={resourceStrings.Details} titleHtmlFor={'detailsSectionLabel'} items={detailsSectionItems} />
       {isAccelerator && parameterDefinition.associatedWorkflows && (
         <TemplatesSection title={resourceStrings.AssociatedWorkflows} titleHtmlFor={'associatedSectionLabel'}>

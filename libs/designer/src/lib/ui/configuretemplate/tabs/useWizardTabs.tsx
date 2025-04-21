@@ -21,23 +21,16 @@ export const useConfigureTemplateWizardTabs = ({
   const dispatch = useDispatch<AppDispatch>();
   const resources = { ...useTemplatesStrings().tabLabelStrings, ...useResourceStrings() };
 
-  const {
-    enableWizard,
-    isWizardUpdating,
-    workflows,
-    parametersHasError,
-    templateManifestHasError,
-    runValidation,
-    templateManifestHasError1,
-  } = useSelector((state: RootState) => ({
-    enableWizard: state.tab.enableWizard,
-    isWizardUpdating: state.tab.isWizardUpdating,
-    runValidation: state.tab.runValidation,
-    workflows: state.template.workflows,
-    parametersHasError: Object.values(state.template.errors.parameters).some((value) => value !== undefined),
-    templateManifestHasError: Object.values(state.template.errors.manifest).some((value) => value !== undefined),
-    templateManifestHasError1: state.template.errors.manifest,
-  }));
+  const { enableWizard, isWizardUpdating, workflows, parametersHasError, templateManifestHasError, runValidation } = useSelector(
+    (state: RootState) => ({
+      enableWizard: state.tab.enableWizard,
+      isWizardUpdating: state.tab.isWizardUpdating,
+      runValidation: state.tab.runValidation,
+      workflows: state.template.workflows,
+      parametersHasError: Object.values(state.template.errors.parameters).some((value) => value !== undefined),
+      templateManifestHasError: Object.values(state.template.errors.manifest).some((value) => value !== undefined),
+    })
+  );
 
   const hasAnyWorkflowErrors = Object.values(workflows).some(
     ({ errors }) =>
@@ -46,8 +39,6 @@ export const useConfigureTemplateWizardTabs = ({
       (errors?.manifest && Object.values(errors?.manifest ?? {}).some((value) => value !== undefined))
   );
 
-  console.log('state.template.errors.manifest', templateManifestHasError1);
-  // Add flag - runValidation to true when we want to run validation on the workflow data
   return [
     workflowsTab(resources, dispatch, onSaveWorkflows, {
       tabStatusIcon: hasAnyWorkflowErrors ? 'error' : runValidation ? 'success' : 'in-progress',

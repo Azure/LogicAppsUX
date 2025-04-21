@@ -216,6 +216,29 @@ export const validateParameterValue = (data: { type: string; value?: string }, r
   return validateParameterValueWithSwaggerType(type, valueToValidate, required, intl);
 };
 
+export const validateParameterDetail = (data: { type: string; displayName?: string; description?: string; default?: string }) => {
+  const intl = getIntl();
+  let errorMessages: string | undefined = undefined;
+  if (isUndefinedOrEmptyString(data?.displayName)) {
+    errorMessages = intl.formatMessage({
+      defaultMessage: 'Display name is required.',
+      id: 'jtOu0/',
+      description: 'Error message when the workflow parameter display name is empty.',
+    });
+  }
+  if (isUndefinedOrEmptyString(data?.description)) {
+    errorMessages = `${errorMessages ?? ''}${intl.formatMessage({
+      defaultMessage: 'Description is required.',
+      id: 'QDhqY3',
+      description: 'Error message when the workflow parameter description is empty.',
+    })}`;
+  }
+  if (!isUndefinedOrEmptyString(data?.default)) {
+    errorMessages = `${errorMessages ?? ''}${validateParameterValueWithSwaggerType(data?.type, data?.default, false, intl)}`;
+  }
+  return errorMessages;
+};
+
 export const validateConnectionsValue = (
   manifestConnections: Record<string, Template.Connection>,
   connectionsMapping: Record<string, string>

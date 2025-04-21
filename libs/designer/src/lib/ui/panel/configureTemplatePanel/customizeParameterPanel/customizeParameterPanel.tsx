@@ -6,7 +6,7 @@ import { useCallback, useMemo, useState } from 'react';
 import { useIntl } from 'react-intl';
 import { Panel, PanelType } from '@fluentui/react';
 import { CustomizeParameter } from '../../../configuretemplate/parameters/customizeParameter';
-import { updateTemplateParameterDefinition } from '../../../../core/state/templates/templateSlice';
+import { updateTemplateParameterDefinition, validateParameterDetails } from '../../../../core/state/templates/templateSlice';
 import { useFunctionalState } from '@react-hookz/web';
 import type { Template } from '@microsoft/logic-apps-shared';
 import { useParameterDefinition } from '../../../../core/configuretemplate/configuretemplateselectors';
@@ -19,8 +19,9 @@ const layerProps = {
 export const CustomizeParameterPanel = () => {
   const dispatch = useDispatch<AppDispatch>();
   const intl = useIntl();
-  const { parameterId, isOpen, currentPanelView, parameterErrors } = useSelector((state: RootState) => ({
+  const { parameterId, runValidation, isOpen, currentPanelView, parameterErrors } = useSelector((state: RootState) => ({
     parameterId: state.panel.selectedTabId,
+    runValidation: state.tab.runValidation,
     isOpen: state.panel.isOpen,
     currentPanelView: state.panel.currentPanelView,
     parameterErrors: state.template.errors.parameters,
@@ -75,6 +76,9 @@ export const CustomizeParameterPanel = () => {
             data: selectedParameterDefinition(),
           })
         );
+        if (runValidation) {
+          dispatch(validateParameterDetails());
+        }
         dispatch(closePanel());
       },
       primaryButtonDisabled: !isDirty,
@@ -87,7 +91,7 @@ export const CustomizeParameterPanel = () => {
         dispatch(closePanel());
       },
     };
-  }, [dispatch, intl, isDirty, parameterId, selectedParameterDefinition]);
+  }, [dispatch, intl, isDirty, parameterId, runValidation, selectedParameterDefinition]);
 
   const onRenderFooterContent = useCallback(() => <TemplatesPanelFooter showPrimaryButton={true} {...footerContent} />, [footerContent]);
 
