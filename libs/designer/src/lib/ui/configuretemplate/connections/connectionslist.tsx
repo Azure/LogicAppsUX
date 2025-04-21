@@ -45,7 +45,7 @@ export const TemplateConnectionsList = () => {
   ];
 
   return (
-    <div style={{ overflowX: 'auto', paddingTop: '12px' }}>
+    <div className="msla-templates-wizard-tab-content" style={{ overflowX: 'auto', paddingTop: '12px' }}>
       <Table aria-label={resources.AriaLabel} size="small" style={{ width: '80%' }}>
         <TableHeader>
           <TableRow>
