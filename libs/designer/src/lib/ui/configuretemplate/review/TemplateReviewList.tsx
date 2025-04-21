@@ -81,7 +81,7 @@ export const TemplateReviewList = () => {
   };
 
   return (
-    <div>
+    <div className="msla-templates-wizard-tab-content">
       <Accordion multiple={true} defaultOpenItems={Object.keys(sectionItems)}>
         {Object.entries(sectionItems).map(([key, { label, value, emptyText }]) => (
           <React.Fragment key={key}>
