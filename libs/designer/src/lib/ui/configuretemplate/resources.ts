@@ -239,6 +239,16 @@ export const useResourceStrings = () => {
       id: 'PYku3O',
       description: 'The label for shared connector kind',
     }),
+    NoConnectionInTemplate: intl.formatMessage({
+      defaultMessage: 'No connections in this template',
+      id: 'oIRKrF',
+      description: 'Text to show no connections present in the template.',
+    }),
+    NoParameterInTemplate: intl.formatMessage({
+      defaultMessage: 'No parameters in this template',
+      id: 'sMjDlb',
+      description: 'Text to show no parameters present in the template.',
+    }),
     // Aria labels
     WorkflowsListTableLabel: intl.formatMessage({
       defaultMessage: 'Workflows list tabel',

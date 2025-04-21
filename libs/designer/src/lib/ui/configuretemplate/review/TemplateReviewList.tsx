@@ -26,16 +26,6 @@ export const TemplateReviewList = () => {
       id: 'a7d1Dp',
       description: 'The aria label for the template display name',
     }),
-    NoConnectionInTemplate: intl.formatMessage({
-      defaultMessage: 'No connections in this template',
-      id: 'oIRKrF',
-      description: 'Text to show no connections present in the template.',
-    }),
-    NoParameterInTemplate: intl.formatMessage({
-      defaultMessage: 'No parameters in this template',
-      id: 'sMjDlb',
-      description: 'Text to show no parameters present in the template.',
-    }),
     ConnectorNameLabel: intl.formatMessage({
       defaultMessage: 'Connector Name',
       id: '0zMOIe',
