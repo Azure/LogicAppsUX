@@ -922,13 +922,13 @@ export function loadParameterValue(parameter: InputParameter): ValueSegment[] {
       valueObject = parameter?.default;
     }
   }
+  console.log('charlie schema', parameter.name, parameter.encode);
 
-  let valueSegments = convertToValueSegments(
-    valueObject,
-    !parameter.suppressCasting && UncastingUtility.isCastableFormat(parameter?.format),
-    parameter.type,
-    parameter.schema
-  );
+  const requiresUrlEncoding = parameter.in === ParameterLocations.Path || parameter.encode !== undefined;
+  // : parameter.in === ParameterLocations.Path;
+  const shouldUncast = !parameter.suppressCasting && (UncastingUtility.isCastableFormat(parameter?.format) || requiresUrlEncoding);
+
+  let valueSegments = convertToValueSegments(valueObject, shouldUncast, parameter.type, parameter.schema);
 
   valueSegments = compressSegments(valueSegments);
 

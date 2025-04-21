@@ -609,6 +609,7 @@ const ParameterSection = ({
       const { editor, editorOptions } = getEditorAndOptions(operationInfo, param, upstreamNodeIds ?? [], variables);
 
       const { value: remappedValues } = isRecordNotEmpty(idReplacements) ? remapValueSegmentsWithNewIds(value, idReplacements) : { value };
+      // console.log('charlie remappedValues', id, placeholder, remappedValues);
       const isCodeEditor = editor?.toLowerCase() === constants.EDITOR.CODE;
       const subComponent = getSubComponent(param);
       const subMenu = getSubMenu(param);
