@@ -21,33 +21,43 @@ export const useConfigureTemplateWizardTabs = ({
   const dispatch = useDispatch<AppDispatch>();
   const resources = { ...useTemplatesStrings().tabLabelStrings, ...useResourceStrings() };
 
-  const { enableWizard, isWizardUpdating } = useSelector((state: RootState) => ({
+  const { enableWizard, isWizardUpdating, workflows, parametersHasError, templateManifestHasError } = useSelector((state: RootState) => ({
     enableWizard: state.tab.enableWizard,
     isWizardUpdating: state.tab.isWizardUpdating,
+    workflows: state.template.workflows,
+    parametersHasError: Object.values(state.template.errors.parameters).some((value) => value !== undefined),
+    templateManifestHasError: Object.values(state.template.errors.manifest).some((value) => value !== undefined),
   }));
+
+  const hasAnyWorkflowErrors = Object.values(workflows).some(
+    ({ errors }) =>
+      !!errors?.workflow ||
+      !!errors?.kind ||
+      (errors?.manifest && Object.values(errors?.manifest ?? {}).some((value) => value !== undefined))
+  );
 
   return [
     workflowsTab(resources, dispatch, onSaveWorkflows, {
-      tabStatusIcon: 'in-progress',
+      tabStatusIcon: hasAnyWorkflowErrors ? 'error' : 'in-progress',
     }),
     connectionsTab(intl, resources, dispatch, {
-      tabStatusIcon: enableWizard ? 'in-progress' : undefined,
+      tabStatusIcon: enableWizard ? 'success' : undefined,
       disabled: !enableWizard || isWizardUpdating,
     }),
     parametersTab(resources, dispatch, {
-      tabStatusIcon: enableWizard ? 'in-progress' : undefined,
+      tabStatusIcon: parametersHasError ? 'error' : enableWizard ? 'in-progress' : undefined,
       disabled: !enableWizard || isWizardUpdating,
     }),
     profileTab(resources, dispatch, {
-      tabStatusIcon: enableWizard ? 'in-progress' : undefined,
+      tabStatusIcon: templateManifestHasError ? 'error' : enableWizard ? 'in-progress' : undefined,
       disabled: !enableWizard || isWizardUpdating,
     }),
     publishTab(intl, resources, dispatch, {
-      tabStatusIcon: enableWizard ? 'in-progress' : undefined,
+      tabStatusIcon: undefined,
       disabled: !enableWizard || isWizardUpdating,
     }),
     reviewPublishTab(intl, resources, dispatch, onPublish, {
-      tabStatusIcon: enableWizard ? 'in-progress' : undefined,
+      tabStatusIcon: undefined,
       disabled: !enableWizard || isWizardUpdating,
     }),
   ];

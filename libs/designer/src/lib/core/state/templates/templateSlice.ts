@@ -289,6 +289,7 @@ export const {
   clearTemplateDetails,
   updateWorkflowNameValidationError,
   updateTemplateParameterDefinition,
+  validateWorkflowManifestsData,
   validateTemplateManifest,
   updateAllTemplateParameterDefinitions,
   updateWorkflowData,
