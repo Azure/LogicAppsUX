@@ -4,12 +4,14 @@ import { useMemo } from 'react';
 import { getResourceNameFromId, type Template } from '@microsoft/logic-apps-shared';
 import { useSelector } from 'react-redux';
 import type { RootState } from '../../../core/state/templates/store';
-import { Text } from '@fluentui/react-components';
+import { MessageBar, Text } from '@fluentui/react-components';
 
 export const CustomizeParameter = ({
+  parameterError,
   parameterDefinition,
   setParameterDefinition,
 }: {
+  parameterError: string | undefined;
   parameterDefinition: Template.ParameterDefinition;
   setParameterDefinition: (parameterDefinition: Template.ParameterDefinition) => void;
 }) => {
@@ -81,6 +83,7 @@ export const CustomizeParameter = ({
 
   return (
     <div>
+      {parameterError && <MessageBar intent="error">{parameterError}</MessageBar>}
       <TemplatesSection title={resourceStrings.Details} titleHtmlFor={'detailsSectionLabel'} items={detailsSectionItems} />
       {isAccelerator && parameterDefinition.associatedWorkflows && (
         <TemplatesSection title={resourceStrings.AssociatedWorkflows} titleHtmlFor={'associatedSectionLabel'}>

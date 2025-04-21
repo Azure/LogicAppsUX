@@ -245,6 +245,7 @@ export const validateWorkflowData = (workflowData: Partial<WorkflowTemplateData>
       })
     : undefined;
 
+  // TODO: don't check if single workflow
   manifestErrors['title'] = isUndefinedOrEmptyString(workflowManifest?.title)
     ? intl.formatMessage({
         defaultMessage: 'Workflow display name (title) is required.',
@@ -253,6 +254,7 @@ export const validateWorkflowData = (workflowData: Partial<WorkflowTemplateData>
       })
     : undefined;
 
+  // TODO: don't check if single workflow
   manifestErrors['summary'] = isUndefinedOrEmptyString(workflowManifest?.summary)
     ? intl.formatMessage({
         defaultMessage: 'Workflow summary is required.',
@@ -311,23 +313,23 @@ export const validateTemplateManifestValue = (manifest: Template.TemplateManifes
   //   });
   // }
 
-  if (!manifest.workflows || Object.keys(manifest.workflows).length === 0) {
-    errors['workflows'] = intl.formatMessage({
-      defaultMessage: 'At least one workflow is required to generate a template.',
-      id: '66VaWb',
-      description: 'Error shown when the template has no workflows',
-    });
-  } else {
-    // for (const [key, workflow] of Object.entries(manifest.workflows)) {
-    //   if (!workflow.name || workflow.name.trim() === "") {
-    //     errors[`workflows.${key}.name`] = intl.formatMessage({
-    //       defaultMessage: "Workflow name is required.",
-    //       id: "manifest.error.workflowName.required",
-    //       description: `Error shown when the workflow "${key}" has no name`,
-    //     });
-    //   }
-    // }
-  }
+  // if (!manifest.workflows || Object.keys(manifest.workflows).length === 0) {
+  //   errors['workflows'] = intl.formatMessage({
+  //     defaultMessage: 'At least one workflow is required to generate a template.',
+  //     id: '66VaWb',
+  //     description: 'Error shown when the template has no workflows',
+  //   });
+  // } else {
+  //   // for (const [key, workflow] of Object.entries(manifest.workflows)) {
+  //   //   if (!workflow.name || workflow.name.trim() === "") {
+  //   //     errors[`workflows.${key}.name`] = intl.formatMessage({
+  //   //       defaultMessage: "Workflow name is required.",
+  //   //       id: "manifest.error.workflowName.required",
+  //   //       description: `Error shown when the workflow "${key}" has no name`,
+  //   //     });
+  //   //   }
+  //   // }
+  // }
 
   if (isUndefinedOrEmptyString(manifest.details.By)) {
     errors['details.By'] = intl.formatMessage({

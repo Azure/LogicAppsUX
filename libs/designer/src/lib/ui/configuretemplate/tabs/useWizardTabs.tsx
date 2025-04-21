@@ -21,12 +21,22 @@ export const useConfigureTemplateWizardTabs = ({
   const dispatch = useDispatch<AppDispatch>();
   const resources = { ...useTemplatesStrings().tabLabelStrings, ...useResourceStrings() };
 
-  const { enableWizard, isWizardUpdating, workflows, parametersHasError, templateManifestHasError } = useSelector((state: RootState) => ({
+  const {
+    enableWizard,
+    isWizardUpdating,
+    workflows,
+    parametersHasError,
+    templateManifestHasError,
+    runValidation,
+    templateManifestHasError1,
+  } = useSelector((state: RootState) => ({
     enableWizard: state.tab.enableWizard,
     isWizardUpdating: state.tab.isWizardUpdating,
+    runValidation: state.tab.runValidation,
     workflows: state.template.workflows,
     parametersHasError: Object.values(state.template.errors.parameters).some((value) => value !== undefined),
     templateManifestHasError: Object.values(state.template.errors.manifest).some((value) => value !== undefined),
+    templateManifestHasError1: state.template.errors.manifest,
   }));
 
   const hasAnyWorkflowErrors = Object.values(workflows).some(
@@ -36,22 +46,22 @@ export const useConfigureTemplateWizardTabs = ({
       (errors?.manifest && Object.values(errors?.manifest ?? {}).some((value) => value !== undefined))
   );
 
+  console.log('state.template.errors.manifest', templateManifestHasError1);
   // Add flag - runValidation to true when we want to run validation on the workflow data
-
   return [
     workflowsTab(resources, dispatch, onSaveWorkflows, {
-      tabStatusIcon: hasAnyWorkflowErrors ? 'error' : 'in-progress',
+      tabStatusIcon: hasAnyWorkflowErrors ? 'error' : runValidation ? 'success' : 'in-progress',
     }),
     connectionsTab(intl, resources, dispatch, {
       tabStatusIcon: enableWizard ? 'success' : undefined,
       disabled: !enableWizard || isWizardUpdating,
     }),
     parametersTab(resources, dispatch, {
-      tabStatusIcon: parametersHasError ? 'error' : enableWizard ? 'in-progress' : undefined,
+      tabStatusIcon: parametersHasError ? 'error' : enableWizard ? (runValidation ? 'success' : 'in-progress') : undefined,
       disabled: !enableWizard || isWizardUpdating,
     }),
     profileTab(resources, dispatch, {
-      tabStatusIcon: templateManifestHasError ? 'error' : enableWizard ? 'in-progress' : undefined,
+      tabStatusIcon: templateManifestHasError ? 'error' : runValidation ? 'success' : enableWizard ? 'in-progress' : undefined,
       disabled: !enableWizard || isWizardUpdating,
     }),
     publishTab(intl, resources, dispatch, {

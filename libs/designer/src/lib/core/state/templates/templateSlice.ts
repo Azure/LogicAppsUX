@@ -102,8 +102,7 @@ export const templateSlice = createSlice({
         state.errors.manifest = validateTemplateManifestValue(state.manifest);
       }
     },
-    //TODO: change to validate paramter values
-    validateParameters: (state) => {
+    validateParameterValues: (state) => {
       const parametersDefinition = { ...state.parameterDefinitions };
       const parametersValidationErrors = { ...state.errors.parameters };
       Object.keys(parametersDefinition).forEach((parameterName) => {
@@ -113,6 +112,26 @@ export const templateSlice = createSlice({
           thisParameter.required
         );
       });
+      state.errors.parameters = parametersValidationErrors;
+    },
+    validateParameterDetails: (state) => {
+      const parametersDefinition = { ...state.parameterDefinitions };
+      const parametersValidationErrors = { ...state.errors.parameters };
+      Object.keys(parametersDefinition).forEach((parameterName) => {
+        const thisParameter = parametersDefinition[parameterName];
+        if (!thisParameter.displayName) {
+          //TODO: intl this.
+          parametersValidationErrors[parameterName] = 'Parameter display name is required';
+        } else if (!thisParameter.description) {
+          parametersValidationErrors[parameterName] = 'Description is required';
+        } else if (thisParameter.default) {
+          parametersValidationErrors[parameterName] = validateParameterValue(
+            { type: thisParameter.type, value: thisParameter.default },
+            thisParameter.required
+          );
+        }
+      });
+      console.log('parametersValidationErrors', parametersValidationErrors);
       state.errors.parameters = parametersValidationErrors;
     },
     validateConnections: (state, action: PayloadAction<Record<string, string>>) => {
@@ -284,7 +303,8 @@ export const {
   updateWorkflowName,
   updateKind,
   updateTemplateParameterValue,
-  validateParameters,
+  validateParameterValues,
+  validateParameterDetails,
   validateConnections,
   clearTemplateDetails,
   updateWorkflowNameValidationError,

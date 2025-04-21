@@ -19,10 +19,11 @@ const layerProps = {
 export const CustomizeParameterPanel = () => {
   const dispatch = useDispatch<AppDispatch>();
   const intl = useIntl();
-  const { parameterId, isOpen, currentPanelView } = useSelector((state: RootState) => ({
+  const { parameterId, isOpen, currentPanelView, parameterErrors } = useSelector((state: RootState) => ({
     parameterId: state.panel.selectedTabId,
     isOpen: state.panel.isOpen,
     currentPanelView: state.panel.currentPanelView,
+    parameterErrors: state.template.errors.parameters,
   }));
 
   const parameterDefinition = useParameterDefinition(parameterId as string);
@@ -104,7 +105,11 @@ export const CustomizeParameterPanel = () => {
       layerProps={layerProps}
       isFooterAtBottom={true}
     >
-      <CustomizeParameter parameterDefinition={selectedParameterDefinition()} setParameterDefinition={updateParameterDefinition} />
+      <CustomizeParameter
+        parameterError={parameterErrors?.[parameterId as string]}
+        parameterDefinition={selectedParameterDefinition()}
+        setParameterDefinition={updateParameterDefinition}
+      />
     </Panel>
   );
 };
