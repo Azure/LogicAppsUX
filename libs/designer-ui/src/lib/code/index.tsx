@@ -33,6 +33,7 @@ export interface CodeEditorProps extends BaseEditorProps {
   customCodeEditor?: boolean;
   originalFileName: string;
   onFileNameChange?: FileNameChangeHandler;
+  fileNames?: string[];
 }
 
 export function CodeEditor({
@@ -46,6 +47,7 @@ export function CodeEditor({
   originalFileName = '',
   customCodeEditor,
   onFileNameChange,
+  fileNames,
 }: CodeEditorProps): JSX.Element {
   const intl = useIntl();
   const codeEditorRef = useRef<editor.IStandaloneCodeEditor | null>(null);
@@ -57,21 +59,34 @@ export function CodeEditor({
   const [getInTokenPicker, setInTokenPicker] = useFunctionalState(false);
   const [showMessageBar, setShowMessageBar] = useState(true);
   const [getFileName, setFileName] = useFunctionalState(originalFileName);
+  const [errorMessage, setErrorMessage] = useState('');
 
   const handleFileNameChange = (fileName: string) => {
     setFileName(fileName);
-    if (originalFileName !== fileName) {
-      onFileNameChange?.(originalFileName, fileName);
-      onChange?.({
-        value: [createLiteralValueSegment(fileName)],
-        viewModel: {
-          customCodeData: {
-            fileData: getCurrentValue(),
-            fileExtension: getFileExtensionName(language),
-            fileName,
+    const fileNameExists = fileNames?.some((name) => name === fileName);
+    if (fileNameExists) {
+      setErrorMessage(
+        intl.formatMessage({
+          defaultMessage: 'The name already exists or is invalid. Update the name before you continue.',
+          id: '0xLWzG',
+          description: 'Text for invalid operation title name',
+        })
+      );
+    } else {
+      setErrorMessage('');
+      if (originalFileName !== fileName) {
+        onFileNameChange?.(originalFileName, fileName);
+        onChange?.({
+          value: [createLiteralValueSegment(fileName)],
+          viewModel: {
+            customCodeData: {
+              fileData: getCurrentValue(),
+              fileExtension: getFileExtensionName(language),
+              fileName,
+            },
           },
-        },
-      });
+        });
+      }
     }
   };
 
@@ -174,8 +189,19 @@ export function CodeEditor({
     <div className={customCodeEditor ? 'msla-custom-code-editor-body' : 'msla-code-editor-body'} id={editorId}>
       {customCodeEditor ? (
         <div className="msla-custom-code-editor-file">
-          <Icon iconName="FileCode" styles={customCodeIconStyle} />
-          <EditableFileName fileExtension={fileExtensionName} initialFileName={getFileName()} handleFileNameChange={handleFileNameChange} />
+          <div className="msla-custom-code-editor-file-input">
+            <Icon iconName="FileCode" styles={customCodeIconStyle} />
+            <EditableFileName
+              fileExtension={fileExtensionName}
+              initialFileName={getFileName()}
+              handleFileNameChange={handleFileNameChange}
+            />
+          </div>
+          {errorMessage && (
+            <div className="msla-error-text" style={{ fontSize: '12px' }}>
+              {errorMessage}
+            </div>
+          )}
         </div>
       ) : null}
       <MonacoEditor

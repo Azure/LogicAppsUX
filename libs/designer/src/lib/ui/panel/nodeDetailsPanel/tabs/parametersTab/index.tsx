@@ -79,6 +79,7 @@ import { useIntl } from 'react-intl';
 import { useDispatch, useSelector } from 'react-redux';
 import { ConnectionInline } from './connectionInline';
 import { ConnectionsSubMenu } from './connectionsSubMenu';
+import { useCustomCodeFileNames } from '../../../../../core/state/customcode/customcodeSelector';
 
 // TODO: Add a readonly per settings section/group
 export interface ParametersTabProps extends PanelTabProps {
@@ -246,6 +247,7 @@ const ParameterSection = ({
   const rootState = useSelector((state: RootState) => state);
   const displayNameResult = useConnectorName(operationInfo);
   const panelLocation = usePanelLocation();
+  const customCodeFileNames = useCustomCodeFileNames();
 
   const { suppressCastingForSerialize, hideUTFExpressions, enableMultiVariable } = useHostOptions();
 
@@ -630,6 +632,7 @@ const ParameterSection = ({
           onValueChange: (newState: ChangeState, skipStateSave?: boolean) => onValueChange(id, newState, skipStateSave),
           onComboboxMenuOpen: () => onComboboxMenuOpen(param),
           onFileNameChange: fileNameChange,
+          fileNames: customCodeFileNames,
           pickerCallbacks: getPickerCallbacks(param),
           tokenpickerButtonProps: {
             location: panelLocation === PanelLocation.Left ? TokenPickerButtonLocation.Right : TokenPickerButtonLocation.Left,

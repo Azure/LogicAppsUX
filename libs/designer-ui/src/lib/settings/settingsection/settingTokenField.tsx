@@ -71,6 +71,7 @@ export interface SettingTokenFieldProps extends SettingProps {
   onComboboxMenuOpen?: CallbackHandler;
   onCastParameter: CastHandler;
   onFileNameChange?: FileNameChangeHandler;
+  fileNames?: string[];
   pickerCallbacks?: PickerCallbackHandlers;
   agentParameterButtonProps?: Partial<AgentParameterButtonProps>;
   tokenpickerButtonProps?: TokenPickerButtonEditorProps;
@@ -133,6 +134,7 @@ export const TokenField = ({
   onValueChange,
   onComboboxMenuOpen,
   onFileNameChange,
+  fileNames,
   hideValidationErrors,
   onCastParameter,
   getTokenPicker,
@@ -231,6 +233,7 @@ export const TokenField = ({
           initialValue={initialValue}
           getTokenPicker={getTokenPicker}
           onFileNameChange={onFileNameChange}
+          fileNames={fileNames}
           language={language}
           onChange={onValueChange}
           readonly={readOnly}
