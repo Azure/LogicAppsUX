@@ -1,4 +1,16 @@
 # Logic Apps Designer
+## [5.87.0](https://github.com/Azure/LogicAppsUX/compare/v5.86.0...v5.87.0) (2025-04-21)
+
+
+### Features
+
+* **Templates:** Added template trigger description validation ([#7064](https://github.com/Azure/LogicAppsUX/issues/7064)) ([ac875b2](https://github.com/Azure/LogicAppsUX/commit/ac875b2d0552393bfe34b1532c9d32ea8cfb495e))
+
+
+### Bug Fixes
+
+* **vscode:** Add validation for data map name ([#7063](https://github.com/Azure/LogicAppsUX/issues/7063)) ([a8b0846](https://github.com/Azure/LogicAppsUX/commit/a8b0846efd248231a1d01fa261fc2f623ee84aae))
+
 ## [5.86.0](https://github.com/Azure/LogicAppsUX/compare/v5.85.0...v5.86.0) (2025-04-21)
 
 
