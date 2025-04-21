@@ -17,10 +17,11 @@ export const useConfigureWorkflowPanelTabs = ({
 }): TemplateTabProps[] => {
   const intl = useIntl();
   const dispatch = useDispatch<AppDispatch>();
-  const { isWizardUpdating, workflowsInTemplate, workflowState } = useSelector((state: RootState) => ({
+  const { isWizardUpdating, workflowsInTemplate, workflowState, runValidation } = useSelector((state: RootState) => ({
     workflowsInTemplate: state.template.workflows,
     isWizardUpdating: state.tab.isWizardUpdating,
     workflowState: state.workflow,
+    runValidation: state.tab.runValidation,
   }));
 
   const hasError = false; // Placeholder for actual error state
@@ -41,7 +42,7 @@ export const useConfigureWorkflowPanelTabs = ({
     });
   };
 
-  const updateWorkflowDataField = (workflowId: string, workflowData: Partial<WorkflowTemplateData>, runManifestValidation: boolean) => {
+  const updateWorkflowDataField = (workflowId: string, workflowData: Partial<WorkflowTemplateData>) => {
     setSelectedWorkflowsList((prevSelectedWorkflows) => {
       const updatedWorkflowData = {
         ...prevSelectedWorkflows[workflowId],
@@ -54,7 +55,7 @@ export const useConfigureWorkflowPanelTabs = ({
           ...updatedWorkflowData,
           errors: {
             workflow: workflowNameError,
-            manifest: runManifestValidation ? updatedManifestError : updatedWorkflowData?.errors?.manifest,
+            manifest: runValidation ? updatedManifestError : updatedWorkflowData?.errors?.manifest,
           },
         },
       };

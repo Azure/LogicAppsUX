@@ -102,6 +102,7 @@ export const templateSlice = createSlice({
         state.errors.manifest = validateTemplateManifestValue(state.manifest);
       }
     },
+    //TODO: change to validate paramter values
     validateParameters: (state) => {
       const parametersDefinition = { ...state.parameterDefinitions };
       const parametersValidationErrors = { ...state.errors.parameters };
@@ -133,11 +134,6 @@ export const templateSlice = createSlice({
     },
     updateTemplateManifest: (state, action: PayloadAction<Partial<Template.TemplateManifest>>) => {
       state.manifest = { ...(state.manifest ?? {}), ...(action.payload as Template.TemplateManifest) };
-      const templateManifestHasError = Object.values(state.errors.manifest).some((value) => value !== undefined);
-
-      if (templateManifestHasError) {
-        state.errors.manifest = validateTemplateManifestValue(state.manifest);
-      }
     },
     updateWorkflowData: (
       state,

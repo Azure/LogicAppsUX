@@ -20,7 +20,7 @@ export const customizeWorkflowsTab = (
     updateWorkflowDataField,
     onSave,
   }: ConfigureWorkflowsTabProps & {
-    updateWorkflowDataField: (workflowId: string, workflowData: Partial<WorkflowTemplateData>, runManifestValidation: boolean) => void;
+    updateWorkflowDataField: (workflowId: string, workflowData: Partial<WorkflowTemplateData>) => void;
   }
 ): TemplateTabProps => ({
   id: constants.CONFIGURE_TEMPLATE_WIZARD_TAB_NAMES.CUSTOMIZE_WORKFLOWS,

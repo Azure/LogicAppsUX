@@ -4,18 +4,28 @@ import type { AppDispatch, RootState } from '../../../core/state/templates/store
 import { TemplatesSection, type TemplatesSectionItem } from '@microsoft/designer-ui';
 import { useTemplatesStrings } from '../../templates/templatesStrings';
 import { getLogicAppsCategories, useResourceStrings } from '../resources';
-import { updateTemplateManifest } from '../../../core/state/templates/templateSlice';
+import { updateTemplateManifest, validateTemplateManifest } from '../../../core/state/templates/templateSlice';
 import { useMemo, useState } from 'react';
 import { useIntl } from 'react-intl';
 import { FeaturedConnectors } from './connectors';
 import type { Template } from '@microsoft/logic-apps-shared';
 
 export const TemplateManifestForm = () => {
+  const dispatch = useDispatch<AppDispatch>();
+  const runValidation = useSelector((state: RootState) => state.tab.runValidation);
+
   const resources = { ...useTemplatesStrings().resourceStrings, ...useResourceStrings() };
-  const generalSectionItems = useGeneralSectionItems(resources);
-  const contactInfoSectionItems = useContactInfoSectionItems(resources);
-  const descriptionSectionItems = useDescriptionSectionItems(resources);
-  const categorySectionItems = useCategorySectionItems(resources);
+  const handleUpdateManifest = (manifest: Partial<Template.TemplateManifest>) => {
+    dispatch(updateTemplateManifest(manifest));
+    if (runValidation) {
+      dispatch(validateTemplateManifest());
+    }
+  };
+
+  const generalSectionItems = useGeneralSectionItems(resources, handleUpdateManifest);
+  const contactInfoSectionItems = useContactInfoSectionItems(resources, handleUpdateManifest);
+  const descriptionSectionItems = useDescriptionSectionItems(resources, handleUpdateManifest);
+  const categorySectionItems = useCategorySectionItems(resources, handleUpdateManifest);
 
   return (
     <div style={{ width: '70%' }}>
@@ -27,8 +37,10 @@ export const TemplateManifestForm = () => {
   );
 };
 
-const useGeneralSectionItems = (resources: Record<string, string>) => {
-  const dispatch = useDispatch<AppDispatch>();
+const useGeneralSectionItems = (
+  resources: Record<string, string>,
+  handleUpdateManifest: (manifest: Partial<Template.TemplateManifest>) => void
+) => {
   const { manifest, workflows, errors } = useSelector((state: RootState) => state.template);
   const workflowKeys = Object.keys(workflows);
   const isMultiWorkflow = workflowKeys.length > 1;
@@ -38,7 +50,7 @@ const useGeneralSectionItems = (resources: Record<string, string>) => {
       value: manifest?.title || '',
       type: 'textfield',
       required: true,
-      onChange: (value: string) => dispatch(updateTemplateManifest({ title: value })),
+      onChange: (value: string) => handleUpdateManifest({ title: value }),
       errorMessage: errors?.manifest?.title,
     },
     {
@@ -59,8 +71,10 @@ const useGeneralSectionItems = (resources: Record<string, string>) => {
   return items;
 };
 
-const useContactInfoSectionItems = (resources: Record<string, string>) => {
-  const dispatch = useDispatch<AppDispatch>();
+const useContactInfoSectionItems = (
+  resources: Record<string, string>,
+  handleUpdateManifest: (manifest: Partial<Template.TemplateManifest>) => void
+) => {
   const { manifest, errors } = useSelector((state: RootState) => state.template);
   const items: TemplatesSectionItem[] = [
     {
@@ -68,7 +82,7 @@ const useContactInfoSectionItems = (resources: Record<string, string>) => {
       value: manifest?.details?.By || '',
       type: 'textfield',
       required: true,
-      onChange: (value: string) => dispatch(updateTemplateManifest({ details: { ...(manifest?.details ?? {}), By: value } as any })),
+      onChange: (value: string) => handleUpdateManifest({ details: { ...(manifest?.details ?? {}), By: value } as any }),
       errorMessage: errors?.manifest?.['details.By'],
     },
   ];
@@ -76,8 +90,10 @@ const useContactInfoSectionItems = (resources: Record<string, string>) => {
   return items;
 };
 
-const useDescriptionSectionItems = (resources: Record<string, string>) => {
-  const dispatch = useDispatch<AppDispatch>();
+const useDescriptionSectionItems = (
+  resources: Record<string, string>,
+  handleUpdateManifest: (manifest: Partial<Template.TemplateManifest>) => void
+) => {
   const { manifest, workflows, errors } = useSelector((state: RootState) => state.template);
   const isMultiWorkflow = Object.keys(workflows).length > 1;
   const items: TemplatesSectionItem[] = [
@@ -86,7 +102,7 @@ const useDescriptionSectionItems = (resources: Record<string, string>) => {
       value: manifest?.summary || '',
       type: 'textarea',
       required: true,
-      onChange: (value: string) => dispatch(updateTemplateManifest({ summary: value })),
+      onChange: (value: string) => handleUpdateManifest({ summary: value }),
       errorMessage: errors?.manifest?.summary,
     },
   ];
@@ -96,15 +112,17 @@ const useDescriptionSectionItems = (resources: Record<string, string>) => {
       label: resources.Features,
       value: manifest?.description || '',
       type: 'textarea',
-      onChange: (value: string) => dispatch(updateTemplateManifest({ description: value })),
+      onChange: (value: string) => handleUpdateManifest({ description: value }),
     });
   }
 
   return items;
 };
 
-const useCategorySectionItems = (resources: Record<string, string>) => {
-  const dispatch = useDispatch<AppDispatch>();
+const useCategorySectionItems = (
+  resources: Record<string, string>,
+  handleUpdateManifest: (manifest: Partial<Template.TemplateManifest>) => void
+) => {
   const { details, tags, featuredConnectors } = useSelector((state: RootState) => state.template.manifest as Template.TemplateManifest);
   const errors = useSelector((state: RootState) => state.template.errors);
   const categories = useMemo(
@@ -144,22 +162,24 @@ const useCategorySectionItems = (resources: Record<string, string>) => {
       options: categories,
       selectedOptions: selectedCategories,
       onOptionSelect: (selectedOptions) =>
-        dispatch(updateTemplateManifest({ details: { ...(details ?? {}), Category: selectedOptions.join(',') } as any })),
+        handleUpdateManifest({ details: { ...(details ?? {}), Category: selectedOptions.join(',') } as any }),
       errorMessage: errors?.manifest?.['details.Category'],
     },
     {
       label: resources.Tags,
       value: tags || [],
       type: 'custom',
-      onRenderItem: () => <TagsInput tags={tags ?? []} />,
+      onRenderItem: () => <TagsInput tags={tags ?? []} handleUpdateManifest={handleUpdateManifest} />,
     },
   ];
 
   return items;
 };
 
-const TagsInput = ({ tags }: { tags: string[] }) => {
-  const dispatch = useDispatch<AppDispatch>();
+const TagsInput = ({
+  tags,
+  handleUpdateManifest,
+}: { tags: string[]; handleUpdateManifest: (manifest: Partial<Template.TemplateManifest>) => void }) => {
   const intl = useIntl();
   const texts = {
     Content_AriaLabel: intl.formatMessage({
@@ -178,7 +198,7 @@ const TagsInput = ({ tags }: { tags: string[] }) => {
 
   const onOptionSelect: TagPickerProps['onOptionSelect'] = (_, data) => {
     setSelectedOptions(data.selectedOptions);
-    dispatch(updateTemplateManifest({ tags: data.selectedOptions }));
+    handleUpdateManifest({ tags: data.selectedOptions });
   };
   const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setInputValue(event.currentTarget.value);
@@ -189,7 +209,7 @@ const TagsInput = ({ tags }: { tags: string[] }) => {
       if (!selectedOptions.includes(inputValue)) {
         const newOptions = [...selectedOptions, inputValue];
         setSelectedOptions(newOptions);
-        dispatch(updateTemplateManifest({ tags: newOptions }));
+        handleUpdateManifest({ tags: newOptions });
       }
     }
   };

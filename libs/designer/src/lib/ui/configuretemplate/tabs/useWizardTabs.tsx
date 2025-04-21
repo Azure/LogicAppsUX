@@ -36,6 +36,8 @@ export const useConfigureTemplateWizardTabs = ({
       (errors?.manifest && Object.values(errors?.manifest ?? {}).some((value) => value !== undefined))
   );
 
+  // Add flag - runValidation to true when we want to run validation on the workflow data
+
   return [
     workflowsTab(resources, dispatch, onSaveWorkflows, {
       tabStatusIcon: hasAnyWorkflowErrors ? 'error' : 'in-progress',

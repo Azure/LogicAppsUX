@@ -11,6 +11,7 @@ import React, { useEffect, useMemo } from 'react';
 import { useAllConnectors } from '../../../core/configuretemplate/utils/queries';
 import { WorkflowKind } from '../../../core/state/workflow/workflowInterfaces';
 import { validateParameters, validateTemplateManifest, validateWorkflowManifestsData } from '../../../core/state/templates/templateSlice';
+import { setRunValidation } from '../../../core/state/templates/tabSlice';
 
 const SectionDividerItem: TemplatesSectionItem = {
   type: 'divider',
@@ -39,6 +40,7 @@ export const TemplateReviewList = () => {
   };
 
   useEffect(() => {
+    dispatch(setRunValidation(true));
     dispatch(validateWorkflowManifestsData());
     dispatch(validateTemplateManifest());
     dispatch(validateParameters());
