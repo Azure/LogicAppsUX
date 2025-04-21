@@ -11,8 +11,9 @@ import { useIntl } from 'react-intl';
 export const ConfigureTemplateWizard = () => {
   useEffect(() => setLayerHostSelector('#msla-layer-host'), []);
   const dispatch = useDispatch<AppDispatch>();
-  const { selectedTabId } = useSelector((state: RootState) => ({
+  const { selectedTabId, isPanelOpen } = useSelector((state: RootState) => ({
     selectedTabId: state.tab.selectedTabId,
+    isPanelOpen: state.panel.isOpen,
   }));
   const intl = useIntl();
   const [toasterData, setToasterData] = useState({ title: '', content: '', show: false });
@@ -80,7 +81,7 @@ export const ConfigureTemplateWizard = () => {
 
   return (
     <div>
-      <TemplateInfoToast {...toasterData} />
+      {!isPanelOpen && <TemplateInfoToast {...toasterData} />}
       <TemplateContent className="msla-template-quickview-tabs" tabs={panelTabs} selectedTab={selectedTabId} selectTab={handleSelectTab} />
       <div className="msla-template-overview-footer">
         {selectedTabProps?.footerContent ? <TemplatesPanelFooter showPrimaryButton={true} {...selectedTabProps?.footerContent} /> : null}

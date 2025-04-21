@@ -67,7 +67,7 @@ const TemplateSettings = () => {
   ];
 
   return (
-    <div style={{ width: '70%' }}>
+    <div className="msla-templates-wizard-tab-content" style={{ width: '70%' }}>
       <TemplatesSection items={items} />
     </div>
   );

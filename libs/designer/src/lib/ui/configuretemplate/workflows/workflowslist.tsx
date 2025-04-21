@@ -177,7 +177,7 @@ export const DisplayWorkflows = ({ onSave }: { onSave: (isMultiWorkflow: boolean
   );
 
   return (
-    <div>
+    <div className="msla-templates-wizard-tab-content">
       {currentPanelView === TemplatePanelView.ConfigureWorkflows && <ConfigureWorkflowsPanel onSave={onSave} />}
 
       <CommandBar

@@ -91,7 +91,7 @@ export const TemplateParametersList = () => {
   }
 
   return (
-    <div style={{ overflowX: 'auto', paddingTop: '12px' }}>
+    <div className="msla-templates-wizard-tab-content" style={{ overflowX: 'auto', paddingTop: '12px' }}>
       {currentPanelView === TemplatePanelView.CustomizeParameter && <CustomizeParameterPanel />}
 
       <Table aria-label={intlText.AriaLabel} size="small" style={{ width: '80%' }}>
@@ -111,7 +111,23 @@ export const TemplateParametersList = () => {
                 <TableCellLayout>{item.displayName}</TableCellLayout>
               </TableCell>
               <TableCell>
-                <TableCellLayout>{item.name}</TableCellLayout>
+                <TableCellLayout
+                  style={{
+                    overflow: 'hidden',
+                  }}
+                >
+                  <Text
+                    style={{
+                      display: '-webkit-box',
+                      WebkitLineClamp: 2,
+                      WebkitBoxOrient: 'vertical',
+                      overflow: 'hidden',
+                      textOverflow: 'ellipsis',
+                    }}
+                  >
+                    {item.name}
+                  </Text>
+                </TableCellLayout>
               </TableCell>
               <TableCell>
                 <TableCellLayout>{item.type}</TableCellLayout>
