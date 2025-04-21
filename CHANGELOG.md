@@ -1,4 +1,29 @@
 # Logic Apps Designer
+## [5.87.0](https://github.com/Azure/LogicAppsUX/compare/v5.86.0...v5.87.0) (2025-04-21)
+
+
+### Features
+
+* **Templates:** Added template trigger description validation ([#7064](https://github.com/Azure/LogicAppsUX/issues/7064)) ([ac875b2](https://github.com/Azure/LogicAppsUX/commit/ac875b2d0552393bfe34b1532c9d32ea8cfb495e))
+
+
+### Bug Fixes
+
+* **vscode:** Add validation for data map name ([#7063](https://github.com/Azure/LogicAppsUX/issues/7063)) ([a8b0846](https://github.com/Azure/LogicAppsUX/commit/a8b0846efd248231a1d01fa261fc2f623ee84aae))
+
+## [5.86.0](https://github.com/Azure/LogicAppsUX/compare/v5.85.0...v5.86.0) (2025-04-21)
+
+
+### Features
+
+* **designer:** Add logic to not validate freshly created agent workflow ([#7057](https://github.com/Azure/LogicAppsUX/issues/7057)) ([9646cc4](https://github.com/Azure/LogicAppsUX/commit/9646cc485741a3429f3928c3a39b5c9a2c0b4482))
+* **Templates:** Added trigger description input on basics + review steps ([#7058](https://github.com/Azure/LogicAppsUX/issues/7058)) ([5ad05ee](https://github.com/Azure/LogicAppsUX/commit/5ad05eee17f3bd63c592357c9f56872fd689cb18))
+
+
+### Bug Fixes
+
+* **vscode:** Test authoring fixes ([#7059](https://github.com/Azure/LogicAppsUX/issues/7059)) ([831b26b](https://github.com/Azure/LogicAppsUX/commit/831b26bd3abcbb48e30214e273d568548f7656da))
+
 ## [5.85.0](https://github.com/Azure/LogicAppsUX/compare/v5.84.0...v5.85.0) (2025-04-18)
 
 ## [5.84.0](https://github.com/Azure/LogicAppsUX/compare/v5.83.0...v5.84.0) (2025-04-18)

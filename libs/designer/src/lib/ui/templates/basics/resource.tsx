@@ -7,8 +7,9 @@ import {
   updateWorkflowName,
   updateWorkflowNameValidationError,
   updateTemplateTriggerDescription,
+  updateTemplateTriggerDescriptionValidationError,
 } from '../../../core/state/templates/templateSlice';
-import { validateWorkflowName } from '../../../core/actions/bjsworkflow/templates';
+import { validateTriggerDescription, validateWorkflowName } from '../../../core/actions/bjsworkflow/templates';
 import { useIntl } from 'react-intl';
 import { useTemplatesStrings } from '../templatesStrings';
 import { TemplateDisplay } from '../templateDisplay';
@@ -37,7 +38,7 @@ const useStyles = makeStyles({
     margin: '12px 0',
   },
   triggerDescription: {
-    margin: '12px 0',
+    margin: '0 0 12px 0',
   },
 });
 
@@ -144,6 +145,7 @@ const WorkflowTriggerDescription = ({
     () => Object.values(workflowTemplate?.workflowDefinition?.triggers ?? {})?.[0]?.description,
     [workflowTemplate]
   );
+  const triggerDescriptionError = useMemo(() => workflowTemplate?.errors?.triggerDescription, [workflowTemplate]);
 
   return (
     <Field
@@ -152,6 +154,7 @@ const WorkflowTriggerDescription = ({
       }}
       required={true}
       className={styles.triggerDescription}
+      validationMessage={triggerDescriptionError}
     >
       <Textarea
         placeholder={placeholder}
@@ -161,6 +164,10 @@ const WorkflowTriggerDescription = ({
         maxLength={256}
         required
         style={{ height: '64px' }}
+        onBlur={async () => {
+          const validationError = await validateTriggerDescription(triggerDescription);
+          dispatch(updateTemplateTriggerDescriptionValidationError({ id: workflowId, error: validationError }));
+        }}
       />
     </Field>
   );

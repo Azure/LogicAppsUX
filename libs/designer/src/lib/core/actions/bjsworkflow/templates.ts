@@ -53,6 +53,7 @@ export interface WorkflowTemplateData {
     workflow: string | undefined;
     kind?: string;
     manifest?: Record<string, string | undefined>;
+    triggerDescription?: string;
   };
 }
 
@@ -230,12 +231,22 @@ export const loadTemplate = createAsyncThunk(
 
 export const validateWorkflowsBasicInfo = createAsyncThunk(
   'validateWorkflowsBasicInfo',
-  async ({ existingWorkflowNames }: { existingWorkflowNames: string[] }, thunkAPI) => {
+  async (
+    { existingWorkflowNames, requireDescription = false }: { existingWorkflowNames: string[]; requireDescription?: boolean },
+    thunkAPI
+  ) => {
     const state: RootState = thunkAPI.getState() as RootState;
     const { subscriptionId, resourceGroup: resourceGroupName, isConsumption } = state.workflow;
     const { workflows } = state.template;
     const workflowIds = Object.keys(workflows);
-    const result: Record<string, { kindError?: string; nameError?: string }> = {};
+    const result: Record<
+      string,
+      {
+        kindError?: string;
+        nameError?: string;
+        triggerDescriptionError?: string;
+      }
+    > = {};
     if (workflowIds.length) {
       const intl = getIntl();
       for (const id of workflowIds) {
@@ -263,6 +274,16 @@ export const validateWorkflowsBasicInfo = createAsyncThunk(
           ...result[id],
           nameError,
         };
+
+        if (requireDescription) {
+          const triggerDescriptionError = await validateTriggerDescription(workflows[id]?.workflowDefinition.triggers?.[0]?.description);
+          if (triggerDescriptionError) {
+            result[id] = {
+              ...result[id],
+              triggerDescriptionError,
+            };
+          }
+        }
       }
     }
 
@@ -314,6 +335,18 @@ export const validateWorkflowName = async (
     return availabilityError;
   }
 
+  return undefined;
+};
+
+export const validateTriggerDescription = async (triggerDescription: string | undefined) => {
+  const intl = getIntl();
+  if (!triggerDescription) {
+    return intl.formatMessage({
+      defaultMessage: 'Must provide value for description.',
+      id: 'OZ42O1',
+      description: 'Error message when the description is empty.',
+    });
+  }
   return undefined;
 };
 

@@ -66,7 +66,6 @@ export async function isConnectionReferenceValid(
 
   try {
     const connection = await getConnection(reference.connection.id, connectorId, /* fetchResourceIfNeeded */ true);
-    console.log('charlie isConnectionValid', connection);
     return !!connection && isConnectionValid(connection);
   } catch (_error: any) {
     return false;
