@@ -29,7 +29,7 @@ describe('Template Validation Tests', () => {
 
   describe('validateWorkflowData', () => {
     test('Missing all data with accelearator case', async () => {
-      expect(validateWorkflowData({}, true)).toBe({
+      expect(validateWorkflowData({}, true)).toStrictEqual({
         workflow: intl.formatMessage({
           defaultMessage: 'Workflow name is required.',
           id: 'x2z3kg',
@@ -66,7 +66,7 @@ describe('Template Validation Tests', () => {
     });
 
     test('Missing all data with single template case', async () => {
-      expect(validateWorkflowData({}, true)).toBe({
+      expect(validateWorkflowData({}, true)).toStrictEqual({
         workflow: intl.formatMessage({
           defaultMessage: 'Workflow name is required.',
           id: 'x2z3kg',
