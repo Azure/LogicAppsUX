@@ -35,6 +35,11 @@ export const useTemplatesStrings = () => {
         id: 'ekM77J',
         description: 'Label for workflow Name',
       }),
+      TRIGGER_DESCRIPTION: intl.formatMessage({
+        defaultMessage: 'Trigger description',
+        id: 'h3V6DM',
+        description: 'Label for trigger description',
+      }),
       TEMPLATE_NAME: intl.formatMessage({
         defaultMessage: 'Template',
         id: '83Vrgj',

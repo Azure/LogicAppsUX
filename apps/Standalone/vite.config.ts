@@ -26,6 +26,14 @@ export default defineConfig({
   ],
   server: {
     port: 4200,
+    proxy: {
+      '/templatesLocalProxy': {
+        target: 'https://logicappsux-cdcee2hegtgdhegv.b02.azurefd.net',
+        changeOrigin: true,
+        rewrite: (path) => path.replace(/^\/templatesLocalProxy/, ''),
+        secure: false, // Optional: skip SSL validation in dev
+      },
+    },
   },
   define: {
     global: 'globalThis',
