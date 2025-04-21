@@ -35,7 +35,7 @@ export const TemplatesPanelFooter = ({
       <DefaultButton
         onClick={secondaryButtonOnClick}
         style={{
-          marginLeft: '8px',
+          marginLeft: showPrimaryButton ? '8px' : undefined,
         }}
         disabled={secondaryButtonDisabled}
       >
