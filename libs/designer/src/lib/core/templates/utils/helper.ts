@@ -350,7 +350,7 @@ export const validateTemplateManifestValue = (manifest: Template.TemplateManifes
     });
   }
 
-  if (isUndefinedOrEmptyString(manifest.details.By)) {
+  if (isUndefinedOrEmptyString(manifest.details?.By)) {
     errors['details.By'] = intl.formatMessage({
       defaultMessage: 'By field is required.',
       id: 'JSWwJH',
@@ -358,7 +358,7 @@ export const validateTemplateManifestValue = (manifest: Template.TemplateManifes
     });
   }
 
-  if (isUndefinedOrEmptyString(manifest.details.Category)) {
+  if (isUndefinedOrEmptyString(manifest.details?.Category)) {
     errors['details.Category'] = intl.formatMessage({
       defaultMessage: 'At least one category is required.',
       id: '5GmlRf',
