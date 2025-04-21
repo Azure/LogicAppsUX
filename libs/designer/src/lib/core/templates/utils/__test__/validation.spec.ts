@@ -1,6 +1,6 @@
-import { getIntl } from '@microsoft/logic-apps-shared';
+import { getIntl, Template } from '@microsoft/logic-apps-shared';
 import { describe, expect, test } from 'vitest';
-import { checkWorkflowNameWithRegex, validateWorkflowData } from '../helper';
+import { checkWorkflowNameWithRegex, validateTemplateManifestValue, validateWorkflowData } from '../helper';
 
 describe('Template Validation Tests', () => {
   const intl = getIntl();
@@ -91,6 +91,33 @@ describe('Template Validation Tests', () => {
             description: 'Error message when the workflow dark image is empty',
           }),
         },
+      });
+    });
+  });
+
+  describe('validateTemplateManifestValue', () => {
+    test('Missing all data', async () => {
+      expect(validateTemplateManifestValue({} as Template.TemplateManifest)).toStrictEqual({
+        title: intl.formatMessage({
+          defaultMessage: 'Title is required.',
+          id: 'oF5+jB',
+          description: 'Error shown when the template title is missing or empty',
+        }),
+        summary: intl.formatMessage({
+          defaultMessage: 'Summary is required.',
+          id: 'h4OHMi',
+          description: 'Error shown when the template summary is missing or empty',
+        }),
+        'details.By': intl.formatMessage({
+          defaultMessage: 'By field is required.',
+          id: 'JSWwJH',
+          description: 'Error shown when the author (By) field is missing',
+        }),
+        'details.Category': intl.formatMessage({
+          defaultMessage: 'At least one category is required.',
+          id: '5GmlRf',
+          description: 'Error shown when the Category field is missing',
+        }),
       });
     });
   });
