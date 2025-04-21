@@ -101,9 +101,10 @@ export const templateSlice = createSlice({
       state.parameterDefinitions = { ...state.parameterDefinitions, ...action.payload };
     },
     validateWorkflowManifestsData: (state) => {
-      Object.keys(state.workflows).forEach((workflowId) => {
+      const workflowKeys = Object.keys(state.workflows);
+      workflowKeys.forEach((workflowId) => {
         const workflowData = state.workflows[workflowId];
-        state.workflows[workflowId].errors = validateWorkflowData(workflowData);
+        state.workflows[workflowId].errors = validateWorkflowData(workflowData, workflowKeys.length > 1);
       });
     },
     validateTemplateManifest: (state) => {

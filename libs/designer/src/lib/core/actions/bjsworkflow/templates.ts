@@ -41,8 +41,8 @@ export interface WorkflowTemplateData {
   id: string;
   workflowDefinition: LogicAppsV2.WorkflowDefinition;
   manifest: Template.WorkflowManifest;
-  workflowName?: string; // errors.workflow - not needed for configure template
-  kind?: string; // not needed for configure template
+  workflowName?: string;
+  kind?: string;
   images?: {
     light?: string;
     dark?: string;

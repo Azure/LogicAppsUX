@@ -268,7 +268,7 @@ export const checkWorkflowNameWithRegex = (intl: IntlShape, workflowName: string
   return undefined;
 };
 
-export const validateWorkflowData = (workflowData: Partial<WorkflowTemplateData>) => {
+export const validateWorkflowData = (workflowData: Partial<WorkflowTemplateData>, isAccelerator: boolean) => {
   const { manifest: workflowManifest, workflowName } = workflowData;
   const intl = getIntl();
 
@@ -282,23 +282,23 @@ export const validateWorkflowData = (workflowData: Partial<WorkflowTemplateData>
       })
     : checkWorkflowNameWithRegex(intl, workflowName);
 
-  // TODO: don't check if single workflow
-  manifestErrors['title'] = isUndefinedOrEmptyString(workflowManifest?.title)
-    ? intl.formatMessage({
-        defaultMessage: 'Workflow display name (title) is required.',
-        id: 'WnHWrD',
-        description: 'Error message when the workflow display name field which is title is empty',
-      })
-    : undefined;
+  manifestErrors['title'] =
+    !isAccelerator && isUndefinedOrEmptyString(workflowManifest?.title)
+      ? intl.formatMessage({
+          defaultMessage: 'Workflow display name (title) is required.',
+          id: 'WnHWrD',
+          description: 'Error message when the workflow display name field which is title is empty',
+        })
+      : undefined;
 
-  // TODO: don't check if single workflow
-  manifestErrors['summary'] = isUndefinedOrEmptyString(workflowManifest?.summary)
-    ? intl.formatMessage({
-        defaultMessage: 'Workflow summary is required.',
-        id: 'erGyZT',
-        description: 'Error message when the workflow description is empty',
-      })
-    : undefined;
+  manifestErrors['summary'] =
+    !isAccelerator && isUndefinedOrEmptyString(workflowManifest?.summary)
+      ? intl.formatMessage({
+          defaultMessage: 'Workflow summary is required.',
+          id: 'erGyZT',
+          description: 'Error message when the workflow description is empty',
+        })
+      : undefined;
 
   manifestErrors['kinds'] = (workflowManifest?.kinds ?? []).length
     ? undefined
@@ -349,24 +349,6 @@ export const validateTemplateManifestValue = (manifest: Template.TemplateManifes
       description: 'Error shown when the template summary is missing or empty',
     });
   }
-
-  // if (!manifest.workflows || Object.keys(manifest.workflows).length === 0) {
-  //   errors['workflows'] = intl.formatMessage({
-  //     defaultMessage: 'At least one workflow is required to generate a template.',
-  //     id: '66VaWb',
-  //     description: 'Error shown when the template has no workflows',
-  //   });
-  // } else {
-  //   // for (const [key, workflow] of Object.entries(manifest.workflows)) {
-  //   //   if (!workflow.name || workflow.name.trim() === "") {
-  //   //     errors[`workflows.${key}.name`] = intl.formatMessage({
-  //   //       defaultMessage: "Workflow name is required.",
-  //   //       id: "manifest.error.workflowName.required",
-  //   //       description: `Error shown when the workflow "${key}" has no name`,
-  //   //     });
-  //   //   }
-  //   // }
-  // }
 
   if (isUndefinedOrEmptyString(manifest.details.By)) {
     errors['details.By'] = intl.formatMessage({

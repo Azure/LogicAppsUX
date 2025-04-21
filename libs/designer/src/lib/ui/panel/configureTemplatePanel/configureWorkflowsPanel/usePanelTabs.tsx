@@ -51,7 +51,10 @@ export const useConfigureWorkflowPanelTabs = ({
         ...prevSelectedWorkflows[workflowId],
         ...workflowData,
       };
-      const { workflow: workflowNameError, manifest: updatedManifestError } = validateWorkflowData(updatedWorkflowData);
+      const { workflow: workflowNameError, manifest: updatedManifestError } = validateWorkflowData(
+        updatedWorkflowData,
+        Object.keys(prevSelectedWorkflows).length > 1
+      );
       return {
         ...prevSelectedWorkflows,
         [workflowId]: {
