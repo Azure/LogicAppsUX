@@ -234,7 +234,10 @@ export const validateParameterDetail = (data: { type: string; displayName?: stri
     })}`;
   }
   if (!isUndefinedOrEmptyString(data?.default)) {
-    errorMessages = `${errorMessages ?? ''}${validateParameterValueWithSwaggerType(data?.type, data?.default, false, intl)}`;
+    const DefaultValueValidationError = validateParameterValueWithSwaggerType(data?.type, data?.default, false, intl);
+    if (DefaultValueValidationError) {
+      errorMessages = `${errorMessages ?? ''}${DefaultValueValidationError}`;
+    }
   }
   return errorMessages;
 };

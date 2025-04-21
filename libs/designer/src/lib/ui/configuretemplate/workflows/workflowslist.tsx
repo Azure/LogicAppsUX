@@ -36,6 +36,7 @@ export const DisplayWorkflows = ({ onSave }: { onSave: (isMultiWorkflow: boolean
     currentPanelView: state.panel.currentPanelView,
   }));
   const dispatch = useDispatch<AppDispatch>();
+  const isMultiWorkflow = Object.keys(workflows).length > 1;
 
   const [selectedWorkflowsList, setSelectedWorkflowsList] = useFunctionalState<string[]>([]);
 
@@ -200,7 +201,7 @@ export const DisplayWorkflows = ({ onSave }: { onSave: (isMultiWorkflow: boolean
                 checkboxIndicator={{ 'aria-label': customResourceStrings.SelectAllWorkflowsLabel }}
               />
               <TableHeaderCell>{resourceStrings.WORKFLOW_NAME}</TableHeaderCell>
-              <TableHeaderCell>{customResourceStrings.WorkflowDisplayName}</TableHeaderCell>
+              {isMultiWorkflow && <TableHeaderCell>{customResourceStrings.WorkflowDisplayName}</TableHeaderCell>}
               <TableHeaderCell>{customResourceStrings.State}</TableHeaderCell>
               <TableHeaderCell>{customResourceStrings.Trigger}</TableHeaderCell>
             </TableRow>
@@ -211,9 +212,11 @@ export const DisplayWorkflows = ({ onSave }: { onSave: (isMultiWorkflow: boolean
               <TableCell>
                 <TableCellLayout>{item.name}</TableCellLayout>
               </TableCell>
-              <TableCell>
-                <TableCellLayout>{item.displayName}</TableCellLayout>
-              </TableCell>
+              {isMultiWorkflow && (
+                <TableCell>
+                  <TableCellLayout>{item.displayName}</TableCellLayout>
+                </TableCell>
+              )}
               <TableCell>
                 <TableCellLayout>{item.state}</TableCellLayout>
               </TableCell>

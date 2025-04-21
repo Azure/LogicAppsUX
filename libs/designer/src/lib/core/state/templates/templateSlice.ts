@@ -122,7 +122,6 @@ export const templateSlice = createSlice({
         const thisParameter = parametersDefinition[parameterName];
         parametersValidationErrors[parameterName] = validateParameterDetail(thisParameter);
       });
-      console.log('parametersValidationErrors', parametersValidationErrors);
       state.errors.parameters = parametersValidationErrors;
     },
     validateConnections: (state, action: PayloadAction<Record<string, string>>) => {
