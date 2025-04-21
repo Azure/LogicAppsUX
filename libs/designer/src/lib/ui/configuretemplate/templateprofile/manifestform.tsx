@@ -28,7 +28,7 @@ export const TemplateManifestForm = () => {
   const categorySectionItems = useCategorySectionItems(resources, handleUpdateManifest);
 
   return (
-    <div style={{ width: '70%' }}>
+    <div className="msla-templates-wizard-tab-content" style={{ width: '70%' }}>
       <TemplatesSection title={resources.General} titleHtmlFor={'generalSectionLabel'} items={generalSectionItems} />
       <TemplatesSection title={resources.ContactInfo} titleHtmlFor={'contactInfoSectionLabel'} items={contactInfoSectionItems} />
       <TemplatesSection title={resources.DESCRIPTION} titleHtmlFor={'descriptionSectionLabel'} items={descriptionSectionItems} />
