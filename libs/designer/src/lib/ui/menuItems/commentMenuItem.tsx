@@ -34,8 +34,8 @@ export const CommentMenuItem = (props: CommentMenuItemProps) => {
   });
   const commentDelete = intl.formatMessage({
     defaultMessage: 'Delete description',
-    id: 'IY0Nus',
-    description: 'Text to tell users to click to delete description',
+    id: 'inBzaB',
+    description: 'Text that tells you to select description for deletion',
   });
 
   return (

@@ -15,8 +15,8 @@ export const AdvancedSettingsMessage = ({ shouldShowMessage }: { shouldShowMessa
     }),
     messageLink: intl.formatMessage({
       defaultMessage: 'Guideline for agent advanced parameters',
-      description: 'Agent advance parameters description link',
-      id: '6F4Knf',
+      description: 'Description link for agent advanced parameters',
+      id: 'ZGGkV+',
     }),
   };
 

@@ -132,8 +132,8 @@ export const VariableEditor = ({
 
   const newAgentParameterName = intl.formatMessage({
     defaultMessage: 'New agent parameter',
-    id: 'rqesbd',
-    description: 'Heading title for an agent parameter without name',
+    id: 'qkDzwI',
+    description: 'Heading title for an unnamed agent parameter',
   });
 
   const newVariableName = intl.formatMessage({

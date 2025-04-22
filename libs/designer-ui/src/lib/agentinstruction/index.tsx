@@ -46,8 +46,8 @@ export const AgentInstructionEditor = ({
   });
   const userPlaceholder = intl.formatMessage({
     defaultMessage: 'Enter instructions for the user',
-    description: 'Agent User placeholder',
-    id: 'Jzbnc/',
+    description: 'Agent user placeholder',
+    id: 'SPaCir',
   });
   const userItemLabel = intl.formatMessage({
     defaultMessage: 'User Instructions',

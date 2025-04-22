@@ -21,8 +21,8 @@ export const NoAgentParameters = ({ usingSearch, clearSearch }: { usingSearch: b
 
   const createMoreMessage = intl.formatMessage({
     defaultMessage: 'To create an agent parameter, select the button below',
-    id: '5gechT',
-    description: 'Message displayed to create more agent parameters',
+    id: 'in/o/y',
+    description: 'Message shown to create more agent parameters',
   });
 
   const clearSearchButtonLabel = intl.formatMessage({

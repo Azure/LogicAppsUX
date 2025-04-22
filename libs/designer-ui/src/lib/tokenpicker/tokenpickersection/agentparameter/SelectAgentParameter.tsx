@@ -41,8 +41,8 @@ export const SelectAgentParameter = ({ agentParameters, onCreateAgentParameter, 
 
   const createAgentParameterButtonLabel = intl.formatMessage({
     defaultMessage: 'Create new',
-    id: 'FZfFAA',
-    description: 'Create new agent parameter button label',
+    id: 'Ud5V1C',
+    description: 'Button label for create agent parameter',
   });
 
   const onAgentParameterClicked = useCallback(
