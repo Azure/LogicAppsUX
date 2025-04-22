@@ -5,6 +5,7 @@ export const ExtensionCommand = {
   loadRun: 'LoadRun',
   dispose: 'dispose',
   fetchSchema: 'fetchSchema',
+  loadConnection: 'loadConnection',
   getConfigurationSetting: 'getConfigurationSetting',
   getAvailableCustomXsltPaths: 'getAvailableCustomXsltPaths',
   getAvailableCustomXsltPathsV2: 'getAvailableCustomXsltPathsV2',

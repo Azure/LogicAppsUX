@@ -1,15 +1,16 @@
 import type { IActionContext } from '@microsoft/vscode-azext-utils';
 import { webviewType } from './constants';
 import { ViewColumn, window } from 'vscode';
+import ConnectionsPanel from './ConnectionsPanel';
 
 export default class ConnectionsExt {
   public static async openConnectionsPanel(context: IActionContext, connectionId: string) {
     ConnectionsExt.createOrShow(connectionId);
   }
-  public static createOrShow(_connectionId: string) {
+  public static createOrShow(connectionId: string) {
     // danielle handle panel already open
 
-    window.createWebviewPanel(
+    const panel = window.createWebviewPanel(
       webviewType, // Key used to reference the panel,
       'Connections', // danielle to change
       ViewColumn.Active, // Editor column to show the new webview panel in
@@ -20,6 +21,8 @@ export default class ConnectionsExt {
         retainContextWhenHidden: true,
       }
     );
+
+    new ConnectionsPanel(panel, connectionId);
 
     // ext.dataMapPanelManagers[dataMapName] = new DataMapperPanel(
     //   panel,

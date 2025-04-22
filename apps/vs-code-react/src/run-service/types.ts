@@ -146,6 +146,7 @@ export const RouteName = {
   designer: 'designer',
   dataMapper: 'dataMapper',
   unitTest: 'unitTest',
+  connections: 'connections',
 };
 
 export type RouteNameType = (typeof RouteName)[keyof typeof RouteName];

@@ -1,3 +1,4 @@
+import { ConnectionsApp } from '../app/connections/connectionsApp';
 import { DataMapperApp } from '../app/dataMapper/app';
 import { DesignerApp } from '../app/designer/app';
 import { ExportApp } from '../app/export/export';
@@ -14,6 +15,7 @@ import { StateWrapper } from '../stateWrapper';
 import { MemoryRouter, Route, Routes } from 'react-router-dom';
 
 export const Router: React.FC = () => {
+  console.log();
   return (
     <MemoryRouter>
       <Routes>
@@ -30,6 +32,7 @@ export const Router: React.FC = () => {
         <Route path={`/${RouteName.dataMapper}`} element={<DataMapperApp />} />
         <Route path={`/${RouteName.designer}`} element={<DesignerApp />} />
         <Route path={`/${RouteName.unitTest}`} element={<UnitTestResults />} />
+        <Route path={`/${RouteName.connections}`} element={<ConnectionsApp />} />
       </Routes>
     </MemoryRouter>
   );

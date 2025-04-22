@@ -86,6 +86,7 @@ export const WebViewCommunication: React.FC<{ children: ReactNode }> = ({ childr
     const message = event.data; // The JSON data our extension sent
     if (message.command === ExtensionCommand.initialize_frame) {
       dispatch(initialize(message.data.project));
+      console.log('Project initialized:', message.data.project);
     }
 
     switch (projectState?.project ?? message?.data?.project) {
@@ -109,6 +110,13 @@ export const WebViewCommunication: React.FC<{ children: ReactNode }> = ({ childr
           }
           default:
             throw new Error('Unknown post message received');
+        }
+        break;
+      }
+      case ProjectName.connections: {
+        if (message.command === ExtensionCommand.initialize_frame) {
+          dispatch(initializeDesigner(message.data));
+          console.log('Connections project initialized');
         }
         break;
       }
