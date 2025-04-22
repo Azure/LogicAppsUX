@@ -8,12 +8,20 @@ import { ExtensionCommand } from '@microsoft/vscode-extension-logic-apps';
 import * as query from 'querystring';
 // querystring = require('querystring');
 import * as vscode from 'vscode';
+import { extensionCommand } from '../../../constants';
 
 export class UriHandler extends vscode.EventEmitter<vscode.Uri> implements vscode.UriHandler {
   public handleUri(uri: vscode.Uri): vscode.ProviderResult<void> {
     if (uri.path === '/authcomplete') {
       handleOAuthRedirect(uri);
     }
+    handleConnectionUri(uri);
+  }
+}
+
+function handleConnectionUri(uri: vscode.Uri): void {
+  if (uri.path.includes('connection')) {
+    vscode.commands.executeCommand(extensionCommand.openConnectionView, uri);
   }
 }
 
