@@ -276,7 +276,9 @@ export const validateWorkflowsBasicInfo = createAsyncThunk(
         };
 
         if (requireDescription) {
-          const triggerDescriptionError = await validateTriggerDescription(workflows[id]?.workflowDefinition.triggers?.[0]?.description);
+          const triggerKey = Object.keys(workflows?.[id]?.workflowDefinition?.triggers ?? {})?.[0];
+          const trigger = workflows?.[id]?.workflowDefinition?.triggers?.[triggerKey];
+          const triggerDescriptionError = await validateTriggerDescription(trigger?.description);
           if (triggerDescriptionError) {
             result[id] = {
               ...result[id],
