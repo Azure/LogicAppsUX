@@ -40,10 +40,15 @@ export const ChannelsTab: React.FC<PanelTabProps> = (props) => {
         id: 'di6MC0',
         description: 'channel not supported message',
       }),
-      INPUT_OUTPUT_TITLE: intl.formatMessage({
-        defaultMessage: 'Enable both input and output channel',
-        id: 'KO3EeY',
-        description: 'Channel input/output.',
+      INPUT_TITLE: intl.formatMessage({
+        defaultMessage: 'Enable input channel',
+        id: 'YfieDm',
+        description: 'Channel input.',
+      }),
+      OUTPUT_TITLE: intl.formatMessage({
+        defaultMessage: 'Enable output channel',
+        id: 'BgLF7r',
+        description: 'Channel output.',
       }),
       INPUT_OUTPUT_INFO: intl.formatMessage({
         defaultMessage:
@@ -53,14 +58,9 @@ export const ChannelsTab: React.FC<PanelTabProps> = (props) => {
       }),
       INPUT_OUTPUT_DESCRIPTION: intl.formatMessage({
         defaultMessage:
-          'Enabling both input and output channels allows for seamless, real-time interaction with the agent, facilitating the development of conversational experiences.',
-        id: 'Bj6h0r',
+          'Enabling output channel requires the input channel to be enabled which allows for seamless, real-time interaction with the agent, facilitating the development of conversational experiences.',
+        id: 'D+4/fO',
         description: 'Input and output channel configuration.',
-      }),
-      INPUT_TITLE: intl.formatMessage({
-        defaultMessage: 'Enable only input channel',
-        id: 'v4oypz',
-        description: 'Channel input.',
       }),
       INPUT_INFO: intl.formatMessage({
         defaultMessage:
@@ -69,15 +69,14 @@ export const ChannelsTab: React.FC<PanelTabProps> = (props) => {
         description: 'Input channel info config.',
       }),
       INPUT_DESCRIPTION: intl.formatMessage({
-        defaultMessage:
-          'Configuring only the input channel enables you to send messages to the agent while maintaining an active workflow.',
-        id: 'Y+cxTz',
+        defaultMessage: 'Enabling the input channel enables you to send messages to the agent while maintaining an active workflow.',
+        id: 'Zu7DUk',
         description: 'Input channel configuration.',
       }),
       CHANNEL_DESCRIPTION: intl.formatMessage({
         defaultMessage:
-          'Configuring channels for your agent will help you communicate with the agent. We will automatically configure the details for you upon enabling the channel.',
-        id: 'op3Gy7',
+          'Configuring communication channels for your agent will facilitate seamless interaction. The necessary details will be automatically set up once the channel is enabled.',
+        id: 'qInOXQ',
         description: 'Channel description.',
       }),
       LEARN_MORE: intl.formatMessage({
@@ -194,37 +193,34 @@ export const ChannelsTab: React.FC<PanelTabProps> = (props) => {
           </div>
           <div className="msla-channel-settings">
             <SettingToggle
-              disabled={isLoading}
-              readOnly={false}
-              checked={!!inputChannelParameters && !!outputChannelParameters}
-              onToggleInputChange={(_, checked?: boolean) => {
-                if (checked) {
-                  initializeOperation({ input: true, output: true });
-                } else {
-                  disableOperation({ input: true, output: true });
-                }
-              }}
-              customLabel={getSettingLabel(
-                stringResources.INPUT_OUTPUT_TITLE,
-                stringResources.INPUT_OUTPUT_INFO,
-                stringResources.INPUT_OUTPUT_DESCRIPTION
-              )}
-              ariaLabel={stringResources.INPUT_OUTPUT_TITLE}
-            />
-            <SettingToggle
-              disabled={isLoading}
-              readOnly={false}
-              checked={!!inputChannelParameters && !outputChannelParameters}
+              readOnly={isLoading}
+              checked={!!inputChannelParameters}
               onToggleInputChange={(_, checked?: boolean) => {
                 if (checked) {
                   initializeOperation({ input: true, output: false });
-                  disableOperation({ input: false, output: true });
                 } else {
                   disableOperation({ input: true, output: true });
                 }
               }}
               customLabel={getSettingLabel(stringResources.INPUT_TITLE, stringResources.INPUT_INFO, stringResources.INPUT_DESCRIPTION)}
               ariaLabel={stringResources.INPUT_TITLE}
+            />
+            <SettingToggle
+              readOnly={isLoading || !inputChannelParameters}
+              checked={!!outputChannelParameters}
+              onToggleInputChange={(_, checked?: boolean) => {
+                if (checked) {
+                  initializeOperation({ input: false, output: true });
+                } else {
+                  disableOperation({ input: false, output: true });
+                }
+              }}
+              customLabel={getSettingLabel(
+                stringResources.OUTPUT_TITLE,
+                stringResources.INPUT_OUTPUT_INFO,
+                stringResources.INPUT_OUTPUT_DESCRIPTION
+              )}
+              ariaLabel={stringResources.OUTPUT_TITLE}
             />
           </div>
         </div>
