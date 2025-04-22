@@ -285,9 +285,9 @@ const ScopeCardNode = ({ data, targetPosition = Position.Top, sourcePosition = P
         { actionCount }
       ),
       emptyAgent: intl.formatMessage({
-        defaultMessage: 'This iteration did not involve any tool executions',
-        id: 'iXwUGq',
-        description: 'Text to explain that there are no tools in the agent iteration',
+        defaultMessage: 'This iteration has completed without any tool execution',
+        id: 'w2rxzD',
+        description: 'Text to explain that there are no executed tools in the agent iteration',
       }),
       addTool: intl.formatMessage({
         defaultMessage: 'Add tool',
@@ -394,7 +394,7 @@ const ScopeCardNode = ({ data, targetPosition = Position.Top, sourcePosition = P
         </p>
       ) : null}
       {isAgent && actionCount === 0 && !graphCollapsed ? (
-        <p className="no-actions-text" data-automation-id={`scope-${id}-no-tools`}>
+        <p className="no-actions-text" style={{ margin: shouldShowPager ? 0 : '1em' }} data-automation-id={`scope-${id}-no-tools`}>
           {isMonitoringView ? intlText.emptyAgent : intlText.addTool}
         </p>
       ) : null}
