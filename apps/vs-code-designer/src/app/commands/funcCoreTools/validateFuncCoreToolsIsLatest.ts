@@ -6,7 +6,7 @@ import { PackageManager, funcDependencyName } from '../../../constants';
 import { localize } from '../../../localize';
 import { executeOnFunctions } from '../../functionsExtension/executeOnFunctionsExt';
 import { binariesExist, getLatestFunctionCoreToolsVersion, useBinariesDependencies } from '../../utils/binaries';
-import { stopDesignTimeApi } from '../../utils/codeless/startDesignTimeApi';
+import { startAllDesignTimeApis, stopAllDesignTimeApis } from '../../utils/codeless/startDesignTimeApi';
 import { getFunctionsCommand, getLocalFuncCoreToolsVersion, tryParseFuncVersion } from '../../utils/funcCoreTools/funcVersion';
 import { getBrewPackageName } from '../../utils/funcCoreTools/getBrewPackageName';
 import { getFuncPackageManagers } from '../../utils/funcCoreTools/getFuncPackageManagers';
@@ -47,8 +47,9 @@ export async function validateFuncCoreToolsIsLatestBinaries(majorVersion?: strin
 
       if (semver.major(newestVersion) === semver.major(localVersion) && semver.gt(newestVersion, localVersion)) {
         context.telemetry.properties.outOfDateFunc = 'true';
-        stopDesignTimeApi();
+        stopAllDesignTimeApis();
         await installFuncCoreToolsBinaries(context, majorVersion);
+        await startAllDesignTimeApis(context);
       }
     } else {
       await installFuncCoreToolsBinaries(context, majorVersion);

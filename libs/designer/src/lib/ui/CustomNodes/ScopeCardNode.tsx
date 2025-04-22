@@ -285,14 +285,19 @@ const ScopeCardNode = ({ data, targetPosition = Position.Top, sourcePosition = P
         { actionCount }
       ),
       emptyAgent: intl.formatMessage({
-        defaultMessage: 'No tools were executed ',
-        id: '514n6S',
-        description: 'Text that explains no tools exist in this agent iteration',
+        defaultMessage: 'This iteration has completed without any tool execution',
+        id: 'w2rxzD',
+        description: 'Text to explain that there are no executed tools in the agent iteration',
       }),
       addTool: intl.formatMessage({
         defaultMessage: 'Add tool',
         id: 'Nl4O59',
         description: 'Text that explains no tools exist in this agent',
+      }),
+      noActions: intl.formatMessage({
+        defaultMessage: 'No actions',
+        id: 'CN+Jfd',
+        description: 'Text to explain that there are no actions',
       }),
     }),
     [actionCount, intl]
@@ -389,13 +394,13 @@ const ScopeCardNode = ({ data, targetPosition = Position.Top, sourcePosition = P
         </p>
       ) : null}
       {isAgent && actionCount === 0 && !graphCollapsed ? (
-        <p className="no-actions-text" data-automation-id={`scope-${id}-no-tools`}>
+        <p className="no-actions-text" style={{ margin: shouldShowPager ? 0 : '1em' }} data-automation-id={`scope-${id}-no-tools`}>
           {isMonitoringView ? intlText.emptyAgent : intlText.addTool}
         </p>
       ) : null}
       {showEmptyGraphComponents ? (
         readOnly ? (
-          <p className="no-actions-text">No Actions</p>
+          <p className="no-actions-text">{intlText.noActions}</p>
         ) : (
           <div className={'edge-drop-zone-container'}>
             <DropZone graphId={scopeId} parentId={id} isLeaf={isLeaf} tabIndex={nodeIndex} />

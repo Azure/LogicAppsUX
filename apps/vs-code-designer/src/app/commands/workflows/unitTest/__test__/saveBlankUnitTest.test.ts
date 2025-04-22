@@ -65,6 +65,7 @@ describe('saveBlankUnitTest', () => {
 
   beforeEach(() => {
     // Stub utility functions used in saveBlankUnitTest
+    vi.spyOn(workspaceUtils, 'getWorkspacePath').mockResolvedValue(dummyWorkspaceFolder.uri.fsPath);
     vi.spyOn(workspaceUtils, 'getWorkspaceFolder').mockResolvedValue(dummyWorkspaceFolder);
     vi.spyOn(projectRootUtils, 'tryGetLogicAppProjectRoot').mockResolvedValue(dummyProjectPath);
     vi.spyOn(unitTestUtils, 'parseUnitTestOutputs').mockResolvedValue({} as any);

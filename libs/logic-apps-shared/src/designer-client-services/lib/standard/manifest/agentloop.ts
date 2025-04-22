@@ -125,7 +125,7 @@ export default {
                         displayName: 'Message count reduction',
                       },
                       {
-                        value: 'tokenCountReduction',
+                        value: 'maximumTokenCountReduction',
                         displayName: 'Token count reduction',
                       },
                     ],
@@ -157,7 +157,7 @@ export default {
                     parameters: [
                       {
                         name: 'agentModelSettings.agentHistoryReductionSettings.agentHistoryReductionType',
-                        values: ['tokenCountReduction'],
+                        values: ['maximumTokenCountReduction'],
                       },
                     ],
                   },
