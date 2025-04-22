@@ -7,7 +7,7 @@ import {
   updateWorkflowName,
   updateWorkflowNameValidationError,
   updateTemplateTriggerDescription,
-	updateTemplateTriggerDescriptionValidationError,
+  updateTemplateTriggerDescriptionValidationError,
 } from '../../../core/state/templates/templateSlice';
 import { validateTriggerDescription, validateWorkflowName } from '../../../core/actions/bjsworkflow/templates';
 import { useIntl } from 'react-intl';
@@ -145,10 +145,7 @@ const WorkflowTriggerDescription = ({
     () => Object.values(workflowTemplate?.workflowDefinition?.triggers ?? {})?.[0]?.description,
     [workflowTemplate]
   );
-	const triggerDescriptionError = useMemo(
-		() => workflowTemplate?.errors?.triggerDescription,
-		[workflowTemplate]
-	);
+  const triggerDescriptionError = useMemo(() => workflowTemplate?.errors?.triggerDescription, [workflowTemplate]);
 
   return (
     <Field
@@ -157,7 +154,7 @@ const WorkflowTriggerDescription = ({
       }}
       required={true}
       className={styles.triggerDescription}
-			validationMessage={triggerDescriptionError}
+      validationMessage={triggerDescriptionError}
     >
       <Textarea
         placeholder={placeholder}
@@ -167,10 +164,10 @@ const WorkflowTriggerDescription = ({
         maxLength={256}
         required
         style={{ height: '64px' }}
-				onBlur={async () => {
-					const validationError = await validateTriggerDescription(triggerDescription);
-					dispatch(updateTemplateTriggerDescriptionValidationError({ id: workflowId, error: validationError }));
-				}}
+        onBlur={async () => {
+          const validationError = await validateTriggerDescription(triggerDescription);
+          dispatch(updateTemplateTriggerDescriptionValidationError({ id: workflowId, error: validationError }));
+        }}
       />
     </Field>
   );
