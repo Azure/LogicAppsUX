@@ -1,6 +1,6 @@
 import { isEmptyString } from '@microsoft/logic-apps-shared';
 import { localize } from '../../../localize';
-import { getWorkspaceLogicAppFolders } from '../workspace';
+import { getWorkspaceFolder } from '../workspace';
 import { getAzureConnectorDetailsForLocalProject } from '../codeless/common';
 import { getParametersJson } from '../codeless/parameter';
 import type { IActionContext } from '@microsoft/vscode-azext-utils';
@@ -8,6 +8,7 @@ import { workspace } from 'vscode';
 import { ext } from '../../../extensionVariables';
 import type { ConnectionsData } from '@microsoft/vscode-extension-logic-apps';
 import { getConnectionsAndSettingsToUpdate, getConnectionsJson, saveConnectionReferences } from '../codeless/connection';
+import { tryGetLogicAppProjectRoot } from '../verifyIsProject';
 
 /**
  * Verifies the local connection keys for the specified Logic App project, or all Logic App projects in the workspace by default.
@@ -18,9 +19,11 @@ import { getConnectionsAndSettingsToUpdate, getConnectionsJson, saveConnectionRe
 export async function verifyLocalConnectionKeys(context: IActionContext, projectPath?: string): Promise<void> {
   if (workspace.workspaceFolders && workspace.workspaceFolders.length > 0) {
     if (!projectPath) {
-      const workspaceLogicAppFolders = await getWorkspaceLogicAppFolders(context);
-      await Promise.all(workspaceLogicAppFolders.map((projectPath) => verifyLocalConnectionKeys(context, projectPath)));
-      return;
+      const workspaceFolder = await getWorkspaceFolder(context);
+      projectPath = await tryGetLogicAppProjectRoot(context, workspaceFolder);
+      if (!projectPath) {
+        return;
+      }
     }
 
     const azureDetails = await getAzureConnectorDetailsForLocalProject(context, projectPath);

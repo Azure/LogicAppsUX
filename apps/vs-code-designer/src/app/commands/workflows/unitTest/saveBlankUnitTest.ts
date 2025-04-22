@@ -23,7 +23,6 @@ import {
 } from '../../../utils/unitTests';
 import { tryGetLogicAppProjectRoot } from '../../../utils/verifyIsProject';
 import { ensureDirectoryInWorkspace, getWorkflowNode, getWorkspaceFolder, getWorkspacePath } from '../../../utils/workspace';
-import type { IAzureConnectorsContext } from '../azureConnectorWizard';
 import { type IActionContext, callWithTelemetryAndErrorHandling, parseError } from '@microsoft/vscode-azext-utils';
 import * as path from 'path';
 import * as vscode from 'vscode';
@@ -33,16 +32,12 @@ import { ConvertToWorkspace } from '../../createNewCodeProject/CodeProjectBase/C
 
 /**
  * Creates a unit test for a Logic App workflow (codeful only), with telemetry logging and error handling.
- * @param {IAzureConnectorsContext} context - The context object for Azure Connectors.
+ * @param {IActionContext} context - The action context.
  * @param {vscode.Uri | undefined} node - The URI of the workflow node, if available.
  * @param {any} unitTestDefinition - The definition of the unit test.
  * @returns {Promise<void>} - A Promise that resolves when the unit test is created.
  */
-export async function saveBlankUnitTest(
-  context: IAzureConnectorsContext,
-  node: vscode.Uri | undefined,
-  unitTestDefinition: any
-): Promise<void> {
+export async function saveBlankUnitTest(context: IActionContext, node: vscode.Uri | undefined, unitTestDefinition: any): Promise<void> {
   const startTime = Date.now();
 
   // Initialize telemetry properties
@@ -188,14 +183,14 @@ export async function saveBlankUnitTest(
 
 /**
  * Generates a codeful unit test by calling the backend API, unzipping the response, and creating the .cs file.
- * @param {IAzureConnectorsContext} context - The context for Azure Connectors.
+ * @param {IActionContext} context - The action context.
  * @param {string} projectPath - The path to the project directory.
  * @param {string} workflowName - The name of the workflow for which the test is being created.
  * @param {string} unitTestName - The name of the unit test to be created.
  * @returns {Promise<void>} - A promise that resolves when the unit test has been generated.
  */
 async function generateBlankCodefulUnitTest(
-  context: IAzureConnectorsContext,
+  context: IActionContext,
   projectPath: string,
   workflowName: string,
   unitTestName: string,

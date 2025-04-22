@@ -4,10 +4,12 @@ import { localize } from '../../../../localize';
 import { verifyLocalConnectionKeys } from '../connectionKeys';
 import * as vscode from 'vscode';
 import * as workspace from '../../workspace';
+import * as verifyIsProject from '../../verifyIsProject';
 import * as parameter from '../../codeless/parameter';
 import * as common from '../../codeless/common';
 import * as connection from '../../codeless/connection';
 import * as path from 'path';
+import { AzureConnectorDetails } from '@microsoft/vscode-extension-logic-apps';
 
 vi.mock('../workspace', () => ({
   getWorkspaceLogicAppFolders: vi.fn(),
@@ -96,8 +98,9 @@ describe('verifyLocalConnectionKeys', () => {
     expect(connection.saveConnectionReferences).toHaveBeenCalledWith(testContext, testLogicAppProjectPath1, connectionsAndSettingsToUpdate);
   });
 
-  it('should save connection references for all logic apps in the workspace when no project path is provided', async () => {
-    vi.spyOn(workspace, 'getWorkspaceLogicAppFolders').mockResolvedValue(testWorkspaceFolders.map((f) => f.uri.fsPath));
+  it('should save connection references for the user-selected project', async () => {
+    vi.spyOn(workspace, 'getWorkspaceFolder').mockResolvedValue(testWorkspaceFolders[0].uri.fsPath);
+    vi.spyOn(verifyIsProject, 'tryGetLogicAppProjectRoot').mockResolvedValue(testWorkspaceFolders[0].uri.fsPath);
 
     const sampleConnections = { managedApiConnections: { conn1: {} } };
     vi.spyOn(connection, 'getConnectionsJson').mockResolvedValue(JSON.stringify(sampleConnections));
@@ -118,9 +121,21 @@ describe('verifyLocalConnectionKeys', () => {
 
     await verifyLocalConnectionKeys(testContext);
 
-    expect(connection.getConnectionsJson).toHaveBeenCalledTimes(2);
-    expect(connection.getConnectionsAndSettingsToUpdate).toHaveBeenCalledTimes(2);
-    expect(connection.saveConnectionReferences).toHaveBeenCalledTimes(2);
+    expect(connection.getConnectionsJson).toHaveBeenCalledTimes(1);
+    expect(connection.getConnectionsAndSettingsToUpdate).toHaveBeenCalledTimes(1);
+    expect(connection.saveConnectionReferences).toHaveBeenCalledTimes(1);
+  });
+
+  it('should return without saving connection references when project path is undefined after user selection', async () => {
+    vi.spyOn(workspace, 'getWorkspaceFolder').mockResolvedValue(undefined);
+    vi.spyOn(verifyIsProject, 'tryGetLogicAppProjectRoot').mockResolvedValue(undefined);
+    const getAzureConnectorDetailsSpy = vi
+      .spyOn(common, 'getAzureConnectorDetailsForLocalProject')
+      .mockResolvedValue({} as AzureConnectorDetails);
+
+    await verifyLocalConnectionKeys(testContext);
+
+    expect(common.getAzureConnectorDetailsForLocalProject).not.toHaveBeenCalled();
   });
 
   it('should throw error when an error occurs during verification', async () => {

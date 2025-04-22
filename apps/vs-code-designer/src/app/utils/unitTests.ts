@@ -15,7 +15,6 @@ import { saveUnitTestEvent, testsDirectoryName, unitTestsFileName, workflowFileN
 import { ext } from '../../extensionVariables';
 import { localize } from '../../localize';
 import { getWorkflowsInLocalProject } from './codeless/common';
-import type { IAzureConnectorsContext } from '../commands/workflows/azureConnectorWizard';
 import { promisify } from 'util';
 
 /**
@@ -296,11 +295,11 @@ export const getWorkflowsPick = async (projectPath: string): Promise<IAzureQuick
 
 /**
  * Selects a workflow node by prompting the user if none is provided.
- * @param {IAzureConnectorsContext} context - The Azure Connectors context.
+ * @param {IActionContext} context - The action context.
  * @param {string} projectPath - Path to the project directory.
  * @returns {Promise<vscode.Uri>} Selected workflow node URI.
  */
-export async function selectWorkflowNode(context: IAzureConnectorsContext, projectPath: string): Promise<vscode.Uri> {
+export async function selectWorkflowNode(context: IActionContext, projectPath: string): Promise<vscode.Uri> {
   const workflow = await pickWorkflow(context, projectPath);
   return vscode.Uri.file(workflow.data) as vscode.Uri;
 }
@@ -607,12 +606,12 @@ export function getUnitTestPaths(
 
 /**
  * Prompts the user for a unit test name with validation.
- * @param {IAzureConnectorsContext} context - The Azure Connectors context.
+ * @param {IActionContext} context - The action context.
  * @param {string} projectPath - Path to the project directory.
  * @param {string} workflowName - Name of the workflow.
  * @returns {Promise<string>} The validated unit test name.
  */
-export async function promptForUnitTestName(context: IAzureConnectorsContext, projectPath: string, workflowName: string): Promise<string> {
+export async function promptForUnitTestName(context: IActionContext, projectPath: string, workflowName: string): Promise<string> {
   return context.ui.showInputBox({
     prompt: localize('unitTestNamePrompt', 'Provide a unit test name'),
     placeHolder: localize('unitTestNamePlaceholder', 'Unit test name'),
@@ -622,20 +621,20 @@ export async function promptForUnitTestName(context: IAzureConnectorsContext, pr
 
 /**
  * Logs telemetry properties for unit test creation.
- * @param {IAzureConnectorsContext} context - The Azure Connectors context.
+ * @param {IActionContext} context - The action context.
  * @param {Record<string, string | undefined>} properties - Telemetry properties.
  */
-export function logTelemetry(context: IAzureConnectorsContext, properties: Record<string, string | undefined>): void {
+export function logTelemetry(context: IActionContext, properties: Record<string, string | undefined>): void {
   Object.assign(context.telemetry.properties, properties);
 }
 
 /**
  * Handles errors by logging them and displaying user-facing messages.
- * @param {IAzureConnectorsContext} context - The Azure Connectors context.
+ * @param {IActionContext} context - The action context.
  * @param {unknown} error - The error object.
  * @param {string} source - The source of the error.
  */
-export function handleError(context: IAzureConnectorsContext, error: unknown, source: string): void {
+export function handleError(context: IActionContext, error: unknown, source: string): void {
   const errorMessage = error instanceof Error ? error.message : String(error);
   context.telemetry.properties[`${source}Error`] = errorMessage;
   vscode.window.showErrorMessage(localize(`${source}Error`, 'An error occurred: {0}', errorMessage));
@@ -1229,6 +1228,7 @@ export async function isMockable(type: string): Promise<boolean> {
     return true;
   }
   // Otherwise, check the static sets (action and trigger types)
+  // TODO: We shouldn't require these checks if listMockableOperations returns all mockable operations, is there an issue with the API?
   if (Array.from(mockableActionTypes).some((t) => t.toUpperCase() === normalizedType)) {
     return true;
   }

@@ -25,7 +25,6 @@ import {
 } from '../../../utils/unitTests';
 import { tryGetLogicAppProjectRoot } from '../../../utils/verifyIsProject';
 import { ensureDirectoryInWorkspace, getWorkflowNode, getWorkspaceFolder, getWorkspacePath } from '../../../utils/workspace';
-import type { IAzureConnectorsContext } from '../azureConnectorWizard';
 import { type IActionContext, callWithTelemetryAndErrorHandling, parseError } from '@microsoft/vscode-azext-utils';
 import * as path from 'path';
 import * as vscode from 'vscode';
@@ -37,14 +36,14 @@ import { unzipLogicAppArtifacts } from '../../../utils/taskUtils';
 /**
  * Handles the creation of a unit test for a Logic App workflow.
  * Validates input, manages workflow node selection, and triggers unit test generation.
- * @param {IAzureConnectorsContext} context - The Azure Connectors context.
+ * @param {IActionContext} context - The action context.
  * @param {vscode.Uri | undefined} node - Optional URI of the workflow node.
  * @param {string | undefined} runId - Optional run ID.
  * @param {any} unitTestDefinition - The unit test definition.
  * @returns {Promise<void>} Resolves when the unit test creation process completes.
  */
 export async function createUnitTest(
-  context: IAzureConnectorsContext,
+  context: IActionContext,
   node: vscode.Uri | undefined,
   runId?: string,
   unitTestDefinition?: any
@@ -108,7 +107,7 @@ export async function createUnitTest(
 /**
 /**
  * Generates a codeful unit test by calling the backend API, processing the response, and creating necessary files.
- * @param {IAzureConnectorsContext} context - The Azure Connectors context.
+ * @param {IActionContext} context - The action context.
  * @param {string} projectPath - Path to the project directory.
  * @param {string} workflowName - Name of the workflow.
  * @param {string} unitTestName - Name of the unit test.
@@ -117,7 +116,7 @@ export async function createUnitTest(
  * @returns {Promise<void>} Resolves when the unit test has been generated.
  */
 async function generateUnitTestFromRun(
-  context: IAzureConnectorsContext,
+  context: IActionContext,
   projectPath: string,
   workflowName: string,
   unitTestName: string,

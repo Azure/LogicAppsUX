@@ -6,7 +6,6 @@ import * as util from 'util';
 import path from 'path';
 import * as localizeModule from '../../../localize';
 import { ext } from '../../../extensionVariables';
-import type { IAzureConnectorsContext } from '../../commands/workflows/azureConnectorWizard';
 import {
   extractAndValidateRunId,
   validateRunId,
@@ -26,6 +25,7 @@ import {
   updateSolutionWithProject,
   validateWorkflowPath,
 } from '../unitTests';
+import type { IActionContext } from '@microsoft/vscode-azext-utils';
 
 // ============================================================================
 // Global Constants and Test Hooks
@@ -292,13 +292,13 @@ describe('generateClassCode', () => {
 
 describe('logTelemetry function', () => {
   it('should add properties to context.telemetry.properties', () => {
-    const context = { telemetry: { properties: {} } } as unknown as IAzureConnectorsContext;
+    const context = { telemetry: { properties: {} } } as unknown as IActionContext;
     logTelemetry(context, { key1: 'value1', key2: 'value2' });
     expect(context.telemetry.properties).toEqual({ key1: 'value1', key2: 'value2' });
   });
 
   it('should merge properties when called multiple times', () => {
-    const context = { telemetry: { properties: { key1: 'initialValue' } } } as unknown as IAzureConnectorsContext;
+    const context = { telemetry: { properties: { key1: 'initialValue' } } } as unknown as IActionContext;
     logTelemetry(context, { key2: 'value2' });
     expect(context.telemetry.properties).toEqual({ key1: 'initialValue', key2: 'value2' });
     logTelemetry(context, { key1: 'updatedValue', key3: 'value3' });
