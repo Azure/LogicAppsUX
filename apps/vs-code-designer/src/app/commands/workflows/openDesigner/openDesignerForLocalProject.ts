@@ -105,7 +105,14 @@ export default class OpenDesignerForLocalProject extends OpenDesignerBase {
 
     await startDesignTimeApi(this.projectPath);
 
-    this.baseUrl = `http://localhost:${ext.designTimePort}${managementApiPrefix}`;
+    if (!ext.designTimeInstances.has(this.projectPath)) {
+      throw new Error(localize('designTimeNotRunning', `Design time is not running for project ${this.projectPath}.`));
+    }
+    const designTimePort = ext.designTimeInstances.get(this.projectPath).port;
+    if (!designTimePort) {
+      throw new Error(localize('designTimePortNotFound', 'Design time port not found.'));
+    }
+    this.baseUrl = `http://localhost:${designTimePort}${managementApiPrefix}`;
     this.workflowRuntimeBaseUrl = `http://localhost:${ext.workflowRuntimePort}${managementApiPrefix}`;
 
     this.panel = window.createWebviewPanel(
@@ -330,7 +337,14 @@ export default class OpenDesignerForLocalProject extends OpenDesignerBase {
    * @param {any} workflow - Workflow schema to validate.
    */
   private async validateWorkflow(workflow: any): Promise<void> {
-    const url = `http://localhost:${ext.designTimePort}${managementApiPrefix}/workflows/${this.workflowName}/validate?api-version=${this.apiVersion}`;
+    if (!ext.designTimeInstances.has(this.projectPath)) {
+      throw new Error(localize('designTimeNotRunning', `Design time is not running for project ${this.projectPath}.`));
+    }
+    const designTimePort = ext.designTimeInstances.get(this.projectPath).port;
+    if (!designTimePort) {
+      throw new Error(localize('designTimePortNotFound', 'Design time port not found.'));
+    }
+    const url = `http://localhost:${designTimePort}${managementApiPrefix}/workflows/${this.workflowName}/validate?api-version=${this.apiVersion}`;
     try {
       await sendRequest(this.context, {
         url,

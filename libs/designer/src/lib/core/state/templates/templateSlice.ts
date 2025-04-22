@@ -65,16 +65,13 @@ export const templateSlice = createSlice({
         trigger.description = description;
       }
     },
-		updateTemplateTriggerDescriptionValidationError: (
-			state,
-			action: PayloadAction<{ id: string; error: string | undefined }>
-		) => {
-			const { id, error } = action.payload;
-			if (!state.workflows[id]) {
-				return;
-			}
-			state.workflows[id].errors.triggerDescription = error;
-		},
+    updateTemplateTriggerDescriptionValidationError: (state, action: PayloadAction<{ id: string; error: string | undefined }>) => {
+      const { id, error } = action.payload;
+      if (!state.workflows[id]) {
+        return;
+      }
+      state.workflows[id].errors.triggerDescription = error;
+    },
     updateTemplateParameterValue: (state, action: PayloadAction<Template.ParameterDefinition>) => {
       const { name, type, value, required } = action.payload;
 
@@ -200,18 +197,26 @@ export const templateSlice = createSlice({
 
     builder.addCase(
       validateWorkflowsBasicInfo.fulfilled,
-      (state, action: PayloadAction<Record<string, { 
-				kindError?: string; 
-				nameError?: string;
-				triggerDescriptionError?: string;
-			}>>) => {
+      (
+        state,
+        action: PayloadAction<
+          Record<
+            string,
+            {
+              kindError?: string;
+              nameError?: string;
+              triggerDescriptionError?: string;
+            }
+          >
+        >
+      ) => {
         const workflows = action.payload;
         for (const workflowId of Object.keys(workflows)) {
           const { kindError, nameError, triggerDescriptionError } = workflows[workflowId];
           if (state.workflows[workflowId]) {
             state.workflows[workflowId].errors.kind = kindError;
             state.workflows[workflowId].errors.workflow = nameError;
-						state.workflows[workflowId].errors.triggerDescription = triggerDescriptionError;
+            state.workflows[workflowId].errors.triggerDescription = triggerDescriptionError;
           }
         }
       }
@@ -287,7 +292,7 @@ export const {
   updateWorkflowName,
   updateKind,
   updateTemplateTriggerDescription,
-	updateTemplateTriggerDescriptionValidationError,
+  updateTemplateTriggerDescriptionValidationError,
   updateTemplateParameterValue,
   validateParameters,
   validateConnections,
