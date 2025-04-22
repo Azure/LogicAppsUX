@@ -29,16 +29,6 @@ export const TemplateParametersList = () => {
       id: 'u2z3kg',
       description: 'The aria label for the parameters table',
     }),
-    True: intl.formatMessage({
-      defaultMessage: 'true',
-      id: '8T3WkV',
-      description: 'The aria label for the required parameter',
-    }),
-    False: intl.formatMessage({
-      defaultMessage: 'false',
-      id: 'natAa1',
-      description: 'The aria label for the non-required parameter',
-    }),
   };
 
   const { parameterDefinitions, currentPanelView, workflowsInTemplate } = useSelector((state: RootState) => ({
@@ -93,7 +83,7 @@ export const TemplateParametersList = () => {
   );
 
   return (
-    <div style={{ overflowX: 'auto', paddingTop: '12px' }}>
+    <div className="msla-templates-wizard-tab-content" style={{ overflowX: 'auto', paddingTop: '12px' }}>
       {currentPanelView === TemplatePanelView.CustomizeParameter && <CustomizeParameterPanel />}
 
       <Table aria-label={intlText.AriaLabel} size="small" style={{ width: '80%' }}>
@@ -113,7 +103,23 @@ export const TemplateParametersList = () => {
                 <TableCellLayout>{item.displayName}</TableCellLayout>
               </TableCell>
               <TableCell>
-                <TableCellLayout>{item.name}</TableCellLayout>
+                <TableCellLayout
+                  style={{
+                    overflow: 'hidden',
+                  }}
+                >
+                  <Text
+                    style={{
+                      display: '-webkit-box',
+                      WebkitLineClamp: 2,
+                      WebkitBoxOrient: 'vertical',
+                      overflow: 'hidden',
+                      textOverflow: 'ellipsis',
+                    }}
+                  >
+                    {item.name}
+                  </Text>
+                </TableCellLayout>
               </TableCell>
               <TableCell>
                 <TableCellLayout>{item.type}</TableCellLayout>
@@ -133,7 +139,7 @@ export const TemplateParametersList = () => {
                 <TableCellLayout>{item.description}</TableCellLayout>
               </TableCell>
               <TableCell>
-                <TableCellLayout>{item.required ? intlText.True : intlText.False}</TableCellLayout>
+                <TableCellLayout>{item.required ? resourceStrings.RequiredOn : resourceStrings.RequiredOff}</TableCellLayout>
               </TableCell>
               <TableCell>
                 <TableCellLayout>

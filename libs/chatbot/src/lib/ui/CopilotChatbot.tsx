@@ -8,7 +8,7 @@ import type { ConversationItem, ChatEntryReaction, AdditionalParametersItem } fr
 import { PanelLocation, ConversationItemType, FlowOrigin } from '@microsoft/designer-ui';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useIntl } from 'react-intl';
-import { ChatbotUi, defaultChatbotPanelWidth } from './ChatbotUi';
+import { AssistantChat, defaultChatbotPanelWidth } from './ChatbotUi';
 
 interface CoPilotChatbotProps {
   panelLocation?: PanelLocation;
@@ -324,7 +324,7 @@ export const CoPilotChatbot = ({
   }, [conversation]);
 
   return (
-    <ChatbotUi
+    <AssistantChat
       panel={{
         location: panelLocation,
         width: chatbotWidth,

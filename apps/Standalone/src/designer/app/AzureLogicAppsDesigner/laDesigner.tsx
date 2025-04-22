@@ -31,6 +31,8 @@ import {
   BaseApiManagementService,
   BaseAppServiceService,
   BaseChatbotService,
+  BaseExperimentationService,
+  BaseUserPreferenceService,
   BaseFunctionService,
   BaseGatewayService,
   BaseTenantService,
@@ -68,7 +70,6 @@ import type { QueryClient } from '@tanstack/react-query';
 import { useDispatch, useSelector } from 'react-redux';
 import { useHostingPlan } from '../../state/workflowLoadingSelectors';
 import CodeViewEditor from './CodeView';
-import { BaseUserPreferenceService } from '@microsoft/logic-apps-shared';
 
 const apiVersion = '2020-06-01';
 const httpClient = new HttpClient();
@@ -116,7 +117,7 @@ const DesignerEditor = () => {
   const originalCustomCodeData = useMemo(() => Object.keys(customCodeData ?? {}), [customCodeData]);
   const parameters = useMemo(() => data?.properties.files[Artifact.ParametersFile] ?? {}, [data?.properties.files]);
   const queryClient = getReactQueryClient();
-  const displayChatbotUI = showChatBot && designerView;
+  const displayCopilotChatbot = showChatBot && designerView;
 
   const connectionsData = useMemo(
     () =>
@@ -166,11 +167,12 @@ const DesignerEditor = () => {
   };
 
   const canonicalLocation = WorkflowUtility.convertToCanonicalFormat(workflowAppData?.location ?? '');
+  const supportsStateful = !equals(workflow?.kind, 'stateless');
   const services = useMemo(
     () =>
       getDesignerServices(
         workflowId,
-        equals(workflow?.kind, 'stateful'),
+        supportsStateful,
         isHybridLogicApp,
         connectionsData ?? {},
         workflowAppData as WorkflowApp,
@@ -230,6 +232,50 @@ const DesignerEditor = () => {
     },
     [dispatch]
   );
+
+  const workflowDefinition = useMemo(() => {
+    if (equals(workflow?.kind ?? '', 'Agentic', true)) {
+      if (workflow?.definition) {
+        const { actions, triggers, outputs, parameters } = workflow.definition;
+        if (
+          Object.keys(actions ?? {}).length === 0 &&
+          Object.keys(triggers ?? {}).length === 0 &&
+          Object.keys(outputs ?? {}).length === 0 &&
+          Object.keys(parameters ?? {}).length === 0
+        ) {
+          return {
+            ...workflow.definition,
+            actions: {
+              Default_Agent: {
+                type: 'Agent',
+                limit: {},
+                inputs: {},
+                tools: {},
+                runAfter: {},
+              },
+            },
+          };
+        }
+      } else {
+        return {
+          $schema: 'https://schema.management.azure.com/providers/Microsoft.Logic/schemas/2016-06-01/workflowdefinition.json#',
+          contentVersion: '1.0.0.0',
+          actions: {
+            Default_Agent: {
+              type: 'Agent',
+              limit: {},
+              inputs: {},
+              tools: {},
+              runAfter: {},
+            },
+          },
+          outputs: {},
+          triggers: {},
+        };
+      }
+    }
+    return workflow?.definition;
+  }, [workflow?.definition, workflow?.kind]);
 
   if (isLoading || appLoading || settingsLoading || customCodeLoading) {
     return <></>;
@@ -417,7 +463,7 @@ const DesignerEditor = () => {
         {workflow?.definition ? (
           <BJSWorkflowProvider
             workflow={{
-              definition: workflow?.definition,
+              definition: workflowDefinition,
               connectionReferences,
               parameters,
               kind: workflow?.kind,
@@ -440,7 +486,7 @@ const DesignerEditor = () => {
                 onClose={() => dispatch(setRunHistoryEnabled(false))}
                 onRunSelected={onRunSelected}
               />
-              {displayChatbotUI ? (
+              {displayCopilotChatbot ? (
                 <CoPilotChatbot
                   openAzureCopilotPanel={() => openPanel('Azure Copilot Panel has been opened')}
                   getAuthToken={getAuthToken}
@@ -858,6 +904,7 @@ const getDesignerServices = (
     chatbotService,
     customCodeService,
     userPreferenceService: new BaseUserPreferenceService(),
+    experimentationService: new BaseExperimentationService(),
   };
 };
 const hasNewKeys = (original: Record<string, any>, updated: Record<string, any>) => {

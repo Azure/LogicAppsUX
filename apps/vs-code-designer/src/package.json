@@ -1,7 +1,7 @@
 {
   "name": "vscode-azurelogicapps",
   "displayName": "Azure Logic Apps (Standard)",
-  "version": "5.74.0",
+  "version": "5.88.0",
   "aiKey": "setInGitHubBuild",
   "repository": "https://github.com/Azure/LogicAppsUX",
   "main": "main.js",
@@ -858,16 +858,6 @@
           "azureLogicAppsStandard.showDeployConfirmation": {
             "type": "boolean",
             "description": "Ask to confirm before deploying to a function app in Azure. Deployment overwrites any previous deployment and can't be undone.",
-            "default": true
-          },
-          "azureLogicAppsStandard.showCoreToolsWarning": {
-            "type": "boolean",
-            "description": "Show a warning when your installed version of the Azure Functions Core Tools is outdated.",
-            "default": true
-          },
-          "azureLogicAppsStandard.showDotNetWarning": {
-            "type": "boolean",
-            "description": "Show a warning when your installed version of the .NET SDK is outdated.",
             "default": true
           },
           "azureLogicAppsStandard.showNodeJsWarning": {

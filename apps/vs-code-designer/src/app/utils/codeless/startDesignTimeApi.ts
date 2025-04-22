@@ -138,7 +138,7 @@ export async function startDesignTimeApi(projectPath: string): Promise<void> {
       const message = localize('DesignTimeError', "Can't start the background design-time process.") + errorMessage;
       actionContext.telemetry.properties.startDesignTimeApiError = errorMessage;
 
-      await window.showErrorMessage(message, viewOutput).then(async (result) => {
+      window.showErrorMessage(message, viewOutput).then(async (result) => {
         if (result === viewOutput) {
           ext.outputChannel.show();
         }

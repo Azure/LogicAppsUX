@@ -4,7 +4,7 @@
  *--------------------------------------------------------------------------------------------*/
 import { localize } from '../../../../localize';
 import {
-  createCsFile,
+  createTestCsFile,
   createTestSettingsConfigFile,
   createTestExecutorFile,
   ensureCsproj,
@@ -17,8 +17,8 @@ import {
   parseUnitTestOutputs,
   promptForUnitTestName,
   selectWorkflowNode,
-  processAndWriteMockableOperations,
-  updateSolutionWithProject,
+  getOperationMockClassContent,
+  updateTestsSln,
   validateWorkflowPath,
 } from '../../../utils/unitTests';
 import { tryGetLogicAppProjectRoot } from '../../../utils/verifyIsProject';
@@ -26,7 +26,7 @@ import { ensureDirectoryInWorkspace, getWorkflowNode, getWorkspaceFolder, getWor
 import { type IActionContext, callWithTelemetryAndErrorHandling, parseError } from '@microsoft/vscode-azext-utils';
 import * as path from 'path';
 import * as vscode from 'vscode';
-import * as fs from 'fs-extra';
+import * as fse from 'fs-extra';
 import { ext } from '../../../../extensionVariables';
 import { ConvertToWorkspace } from '../../createNewCodeProject/CodeProjectBase/ConvertToWorkspace';
 
@@ -132,23 +132,20 @@ export async function saveBlankUnitTest(context: IActionContext, node: vscode.Ur
       workflowName,
       unitTestName
     );
-    // Retrieve necessary paths
-    // Indicate that we resolved the folder path
     logTelemetry(context, {
       workflowTestFolderPathResolved: workflowTestFolderPath ? 'true' : 'false',
     });
 
-    // Ensure required directories exist
-    await fs.ensureDir(unitTestFolderPath);
-    await fs.ensureDir(workflowTestFolderPath);
-    const { foundActionMocks, foundTriggerMocks } = await processAndWriteMockableOperations(
+    const { mockClassContent, foundActionMocks, foundTriggerMocks } = await getOperationMockClassContent(
       operationInfo,
       outputParameters,
       workflowNode.fsPath,
-      workflowTestFolderPath,
       workflowName,
       logicAppName
     );
+    if (!foundTriggerMocks || Object.keys(foundTriggerMocks).length === 0) {
+      throw new Error(localize('noTriggersFound', 'No trigger found in the workflow. Unit tests must include a mocked trigger.'));
+    }
 
     // Log telemetry before proceeding
     logTelemetry(context, { workflowName, unitTestName });
@@ -156,18 +153,27 @@ export async function saveBlankUnitTest(context: IActionContext, node: vscode.Ur
     // Save the unit test
     await callWithTelemetryAndErrorHandling('logicApp.saveBlankUnitTest', async (telemetryContext: IActionContext) => {
       Object.assign(telemetryContext, context);
-      await generateBlankCodefulUnitTest(context, projectPath, workflowName, unitTestName, foundActionMocks, foundTriggerMocks);
+      await generateBlankCodefulUnitTest(
+        context,
+        projectPath,
+        workflowName,
+        unitTestName,
+        mockClassContent,
+        foundActionMocks,
+        foundTriggerMocks
+      );
     });
 
     logTelemetry(context, {
       unitTestSaveStatus: 'Success',
       unitTestProcessingTimeMs: (Date.now() - startTime).toString(),
     });
+
     try {
-      // Construct the path for the .csproj file using the logic app test folder
       const csprojFilePath = path.join(logicAppTestFolderPath, `${logicAppName}.csproj`);
+
       ext.outputChannel.appendLog(`Updating solution in tests folder: ${unitTestFolderPath}`);
-      await updateSolutionWithProject(testsDirectory, csprojFilePath);
+      await updateTestsSln(testsDirectory, csprojFilePath);
     } catch (solutionError) {
       ext.outputChannel.appendLog(`Failed to update solution: ${solutionError}`);
     }
@@ -187,6 +193,9 @@ export async function saveBlankUnitTest(context: IActionContext, node: vscode.Ur
  * @param {string} projectPath - The path to the project directory.
  * @param {string} workflowName - The name of the workflow for which the test is being created.
  * @param {string} unitTestName - The name of the unit test to be created.
+ * @param {Record<string, string>} mockClassContent - The content of the mock classes.
+ * @param {Record<string, string>} foundActionMocks - The action mocks found in the workflow.
+ * @param {Record<string, string>} foundTriggerMocks - The trigger mocks found in the workflow.
  * @returns {Promise<void>} - A promise that resolves when the unit test has been generated.
  */
 async function generateBlankCodefulUnitTest(
@@ -194,16 +203,14 @@ async function generateBlankCodefulUnitTest(
   projectPath: string,
   workflowName: string,
   unitTestName: string,
+  mockClassContent: Record<string, string>,
   foundActionMocks: Record<string, string>,
   foundTriggerMocks: Record<string, string>
 ): Promise<void> {
   try {
     // Get required paths
-    const { testsDirectory, logicAppName, logicAppTestFolderPath, workflowTestFolderPath, unitTestFolderPath } = getUnitTestPaths(
-      projectPath,
-      workflowName,
-      unitTestName
-    );
+    const { testsDirectory, logicAppName, logicAppTestFolderPath, workflowTestFolderPath, mocksFolderPath, unitTestFolderPath } =
+      getUnitTestPaths(projectPath, workflowName, unitTestName);
 
     ext.outputChannel.appendLog(
       localize(
@@ -221,23 +228,34 @@ async function generateBlankCodefulUnitTest(
 
     // Ensure directories exist
     ext.outputChannel.appendLog(localize('ensuringDirectories', 'Ensuring required directories exist...'));
-    await Promise.all([fs.ensureDir(logicAppTestFolderPath), fs.ensureDir(workflowTestFolderPath), fs.ensureDir(unitTestFolderPath)]);
+    await Promise.all([
+      fse.ensureDir(logicAppTestFolderPath),
+      fse.ensureDir(workflowTestFolderPath),
+      fse.ensureDir(unitTestFolderPath),
+      fse.ensureDir(mocksFolderPath),
+    ]);
 
-    // Create the testSettings.config file for the unit test
+    // Create the testSettings.config and TestExecutor.cs files
     ext.outputChannel.appendLog(localize('creatingTestSettingsConfig', 'Creating testSettings.config file for unit test...'));
     await createTestSettingsConfigFile(workflowTestFolderPath, workflowName, logicAppName);
     await createTestExecutorFile(logicAppTestFolderPath, cleanedLogicAppName);
 
-    // Get the first actionMock in foundActionMocks
     const [actionName, actionOutputClassName] = Object.entries(foundActionMocks)[0] || [];
-    // Get the first actionMock in foundActionMocks
     const [, triggerOutputClassName] = Object.entries(foundTriggerMocks)[0] || [];
+
     // Create actionMockClassName by replacing "Output" with "Mock" in actionOutputClassName
     const actionMockClassName = actionOutputClassName?.replace(/(.*)Output$/, '$1Mock');
     const triggerMockClassName = triggerOutputClassName.replace(/(.*)Output$/, '$1Mock');
+
+    // Create the mock files
+    for (const [mockClassName, classContent] of Object.entries(mockClassContent)) {
+      const mockFilePath = path.join(mocksFolderPath, `${mockClassName}.cs`);
+      await fse.writeFile(mockFilePath, classContent, 'utf-8');
+      ext.outputChannel.appendLog(localize('csMockFileCreated', 'Created .cs file for mock at: {0}', mockFilePath));
+    }
+
     // Create the .cs file for the unit test
-    ext.outputChannel.appendLog(localize('creatingCsFile', 'Creating .cs file for unit test...'));
-    await createCsFile(
+    await createTestCsFile(
       unitTestFolderPath,
       unitTestName,
       cleanedUnitTestName,
@@ -285,12 +303,11 @@ async function generateBlankCodefulUnitTest(
     vscode.window.showInformationMessage(
       localize('info.generateCodefulUnitTest', 'Generated unit test "{0}" in "{1}"', unitTestName, unitTestFolderPath)
     );
-    // Log success and notify the user
+
     const successMessage = localize('info.generateCodefulUnitTest', 'Generated unit test "{0}" in "{1}"', unitTestName, unitTestFolderPath);
     logSuccess(context, 'unitTestGenerationStatus', successMessage);
     vscode.window.showInformationMessage(successMessage);
   } catch (error: any) {
-    // Log the error using helper functions
     logError(context, error, 'generateBlankCodefulUnitTest');
   }
 }

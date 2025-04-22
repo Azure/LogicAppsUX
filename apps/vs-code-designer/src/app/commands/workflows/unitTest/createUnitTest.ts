@@ -6,7 +6,7 @@
 import { localize } from '../../../../localize';
 import { ConvertToWorkspace } from '../../createNewCodeProject/CodeProjectBase/ConvertToWorkspace';
 import {
-  createCsFile,
+  createTestCsFile,
   createTestExecutorFile,
   createTestSettingsConfigFile,
   ensureCsproj,
@@ -17,10 +17,10 @@ import {
   logTelemetry,
   parseErrorBeforeTelemetry,
   parseUnitTestOutputs,
-  processAndWriteMockableOperations,
+  getOperationMockClassContent,
   promptForUnitTestName,
   selectWorkflowNode,
-  updateSolutionWithProject,
+  updateTestsSln,
   validateWorkflowPath,
 } from '../../../utils/unitTests';
 import { tryGetLogicAppProjectRoot } from '../../../utils/verifyIsProject';
@@ -28,7 +28,7 @@ import { ensureDirectoryInWorkspace, getWorkflowNode, getWorkspaceFolder, getWor
 import { type IActionContext, callWithTelemetryAndErrorHandling, parseError } from '@microsoft/vscode-azext-utils';
 import * as path from 'path';
 import * as vscode from 'vscode';
-import * as fs from 'fs-extra';
+import * as fse from 'fs-extra';
 import axios from 'axios';
 import { ext } from '../../../../extensionVariables';
 import { unzipLogicAppArtifacts } from '../../../utils/taskUtils';
@@ -206,27 +206,24 @@ async function generateUnitTestFromRun(
     }
 
     const paths = getUnitTestPaths(projectPath, workflowName, unitTestName);
-    await fs.ensureDir(paths.unitTestFolderPath);
-    const { foundActionMocks, foundTriggerMocks } = await processAndWriteMockableOperations(
+    const { mockClassContent, foundActionMocks, foundTriggerMocks } = await getOperationMockClassContent(
       operationInfo,
       outputParameters,
       workflowPath,
-      paths.workflowTestFolderPath,
       workflowName,
       paths.logicAppName
     );
+    if (!foundTriggerMocks || Object.keys(foundTriggerMocks).length === 0) {
+      throw new Error(localize('noTriggersFound', 'No trigger found in the workflow. Unit tests must include a mocked trigger.'));
+    }
 
     // Get cleaned versions of strings
     const cleanedUnitTestName = unitTestName.replace(/-/g, '_');
     const cleanedWorkflowName = workflowName.replace(/-/g, '_');
     const cleanedLogicAppName = paths.logicAppName.replace(/-/g, '_');
 
-    // Create the testSettings.config file for the unit test
-    ext.outputChannel.appendLog(localize('creatingTestSettingsConfig', 'Creating testSettings.config file for unit test...'));
-    await createTestSettingsConfigFile(paths.workflowTestFolderPath, workflowName, paths.logicAppName);
-    await createTestExecutorFile(paths.logicAppTestFolderPath, cleanedLogicAppName);
-
     try {
+      await fse.ensureDir(paths.unitTestFolderPath);
       ext.outputChannel.appendLog(localize('unzippingFiles', `Unzipping Mock.json into: ${paths.unitTestFolderPath}`));
       await unzipLogicAppArtifacts(zipBuffer, paths.unitTestFolderPath);
       logTelemetry(context, { filesUnzipped: 'true', processStage: 'Files Unzipped' });
@@ -239,14 +236,26 @@ async function generateUnitTestFromRun(
     }
 
     try {
-      // Get the first actionMock in foundActionMocks
+      // Create the testSettings.config and TestExecutor.cs files
+      ext.outputChannel.appendLog(localize('creatingTestSettingsConfig', 'Creating testSettings.config file for unit test...'));
+      await createTestSettingsConfigFile(paths.workflowTestFolderPath, workflowName, paths.logicAppName);
+      await createTestExecutorFile(paths.logicAppTestFolderPath, cleanedLogicAppName);
+
       const [actionName, actionOutputClassName] = Object.entries(foundActionMocks)[0] || [];
-      // Get the first actionMock in foundActionMocks
       const [, triggerOutputClassName] = Object.entries(foundTriggerMocks)[0] || [];
+
       // Create actionMockClassName by replacing "Output" with "Mock" in actionOutputClassName
       const actionMockClassName = actionOutputClassName?.replace(/(.*)Output$/, '$1Mock');
       const triggerMockClassName = triggerOutputClassName.replace(/(.*)Output$/, '$1Mock');
-      await createCsFile(
+
+      await fse.ensureDir(paths.mocksFolderPath);
+      for (const [mockClassName, classContent] of Object.entries(mockClassContent)) {
+        const mockFilePath = path.join(paths.mocksFolderPath, `${mockClassName}.cs`);
+        await fse.writeFile(mockFilePath, classContent, 'utf-8');
+        ext.outputChannel.appendLog(localize('csMockFileCreated', 'Created .cs file for mock at: {0}', mockFilePath));
+      }
+
+      await createTestCsFile(
         paths.unitTestFolderPath!,
         unitTestName,
         cleanedUnitTestName,
@@ -303,7 +312,7 @@ async function generateUnitTestFromRun(
       const csprojFilePath = path.join(paths.logicAppTestFolderPath, `${paths.logicAppName}.csproj`);
 
       ext.outputChannel.appendLog(`Updating solution in tests folder: ${paths.testsDirectory}`);
-      await updateSolutionWithProject(paths.testsDirectory, csprojFilePath);
+      await updateTestsSln(paths.testsDirectory, csprojFilePath);
     } catch (solutionError) {
       ext.outputChannel.appendLog(`Failed to update solution: ${solutionError}`);
     }

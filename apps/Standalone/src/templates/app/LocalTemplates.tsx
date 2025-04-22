@@ -243,7 +243,7 @@ const getServices = (
   };
 
   const baseService = new BaseTemplateService({
-    endpoint: 'https://priti-cxf4h5cpcteue4az.b02.azurefd.net/logicapps',
+    endpoint: '/templatesLocalProxy/templates/logicapps',
     useEndpointForTemplates: useEndpoint,
     openBladeAfterCreate: (workflowName: string | undefined) => {
       window.alert(`Open blade after create, workflowName is: ${workflowName}`);
@@ -256,7 +256,7 @@ const getServices = (
   });
   const templateService = new LocalTemplateService({
     service: baseService,
-    endpoint: 'https://priti-cxf4h5cpcteue4az.b02.azurefd.net',
+    endpoint: '/templatesLocalProxy/templates/logicapps',
     useEndpointForTemplates: useEndpoint,
     baseUrl: '/url',
     appId: 'siteResourceId', //TODO: double check

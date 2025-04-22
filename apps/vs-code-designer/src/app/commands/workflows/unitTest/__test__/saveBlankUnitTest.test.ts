@@ -4,8 +4,6 @@ import * as fs from 'fs-extra';
 import * as path from 'path';
 import * as util from 'util';
 import * as childProcess from 'child_process';
-
-// Import the function under test and the utility modules
 import { saveBlankUnitTest } from '../saveBlankUnitTest';
 import * as workspaceUtils from '../../../../utils/workspace';
 import * as projectRootUtils from '../../../../utils/verifyIsProject';
@@ -45,12 +43,22 @@ describe('saveBlankUnitTest', () => {
     logicAppName: 'LogicApp1',
     logicAppTestFolderPath: '/fake/project/myLogicApp',
     workflowTestFolderPath: path.join(dummyProjectPath, 'workflows', dummyWorkflowName),
+    mocksFolderPath: path.join(dummyProjectPath, 'workflows', dummyWorkflowName, 'MockOutputs'),
     testsDirectory: path.join(dummyProjectPath, 'tests'),
   };
 
-  const dummyMockOperations: { foundActionMocks: Record<string, string>; foundTriggerMocks: Record<string, string> } = {
+  const dummyMockOperations: {
+    mockClassContent: Record<string, string>;
+    foundActionMocks: Record<string, string>;
+    foundTriggerMocks: Record<string, string>;
+  } = {
+    mockClassContent: {
+      TestOperationTriggerOutput: 'dummy class content',
+    },
     foundActionMocks: {},
-    foundTriggerMocks: {},
+    foundTriggerMocks: {
+      Test_operation: 'TestOperationTriggerOutput',
+    },
   };
 
   let updateSolutionWithProjectSpy: any;
@@ -65,7 +73,7 @@ describe('saveBlankUnitTest', () => {
     vi.spyOn(unitTestUtils, 'promptForUnitTestName').mockResolvedValue(dummyUnitTestName);
     vi.spyOn(unitTestUtils, 'validateWorkflowPath').mockResolvedValue();
     vi.spyOn(unitTestUtils, 'getUnitTestPaths').mockReturnValue(dummyPaths);
-    vi.spyOn(unitTestUtils, 'processAndWriteMockableOperations').mockResolvedValue(dummyMockOperations);
+    vi.spyOn(unitTestUtils, 'getOperationMockClassContent').mockResolvedValue(dummyMockOperations);
 
     // Stub directory creation
     vi.spyOn(fs, 'ensureDir').mockResolvedValue();
@@ -89,13 +97,13 @@ describe('saveBlankUnitTest', () => {
     });
 
     // Stub methods used within generateBlankCodefulUnitTest
-    vi.spyOn(unitTestUtils, 'createCsFile').mockResolvedValue();
+    vi.spyOn(unitTestUtils, 'createTestCsFile').mockResolvedValue();
     vi.spyOn(unitTestUtils, 'ensureCsproj').mockResolvedValue();
     vi.spyOn(workspaceUtils, 'ensureDirectoryInWorkspace').mockResolvedValue();
     vi.spyOn(ext.outputChannel, 'appendLog').mockImplementation(() => {});
 
     // Stub the methods used in updateSolutionWithProject
-    updateSolutionWithProjectSpy = vi.spyOn(unitTestUtils, 'updateSolutionWithProject');
+    updateSolutionWithProjectSpy = vi.spyOn(unitTestUtils, 'updateTestsSln');
     vi.spyOn(util, 'promisify').mockImplementation((fn) => fn);
     vi.spyOn(childProcess, 'exec').mockResolvedValue(new childProcess.ChildProcess());
   });
@@ -107,13 +115,9 @@ describe('saveBlankUnitTest', () => {
   test('should successfully create a blank unit test', async () => {
     await saveBlankUnitTest(dummyContext, dummyNode, dummyUnitTestDefinition);
 
-    // Verify that telemetry was logged indicating a successful process
     expect(unitTestUtils.logTelemetry).toHaveBeenCalledWith(dummyContext, expect.objectContaining({ unitTestSaveStatus: 'Success' }));
-    // Verify that the unit test name was prompted
     expect(unitTestUtils.promptForUnitTestName).toHaveBeenCalledTimes(1);
-    // Verify that required directories were ensured to exist
     expect(fs.ensureDir).toHaveBeenCalled();
-    // Verify that the backend process was invoked via callWithTelemetryAndErrorHandling
     expect(azextUtils.callWithTelemetryAndErrorHandling).toHaveBeenCalled();
 
     expect(updateSolutionWithProjectSpy).toHaveBeenCalledOnce();

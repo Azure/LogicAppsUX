@@ -77,7 +77,7 @@ export async function tryGetLocalFuncVersion(): Promise<FuncVersion | undefined>
     if (version) {
       return tryParseFuncVersion(version);
     }
-  } catch (err) {
+  } catch {
     // swallow errors and return undefined
   }
 
@@ -107,7 +107,7 @@ export async function getLocalFuncCoreToolsVersion(): Promise<string | null> {
     }
 
     return null;
-  } catch (error) {
+  } catch {
     return null;
   }
 }
