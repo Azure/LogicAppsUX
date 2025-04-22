@@ -2,11 +2,11 @@
  *  Copyright (c) Microsoft Corporation. All rights reserved.
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
+import type { IActionContext } from '@microsoft/vscode-azext-utils';
 import { testsDirectoryName, workflowFileName } from '../../../../constants';
 import { localize } from '../../../../localize';
 import { getUnitTestName, pickUnitTest } from '../../../utils/unitTests';
 import { getWorkflowNode, isMultiRootWorkspace } from '../../../utils/workspace';
-import type { IAzureConnectorsContext } from '../azureConnectorWizard';
 import OpenDesignerForLocalProject from '../openDesigner/openDesignerForLocalProject';
 import { readFileSync } from 'fs';
 import * as path from 'path';
@@ -14,11 +14,11 @@ import * as vscode from 'vscode';
 
 /**
  * Edits a unit test for a Logic App workflow.
- * @param {IAzureConnectorsContext} context - The Azure Connectors context.
+ * @param {IActionContext} context - The action context.
  * @param {vscode.Uri} node - The URI of the unit test file to edit. If not provided, the user will be prompted to select a unit test file.
  * @returns A Promise that resolves when the unit test has been edited.
  */
-export async function editUnitTest(context: IAzureConnectorsContext, node: vscode.Uri | vscode.TestItem): Promise<void> {
+export async function editUnitTest(context: IActionContext, node: vscode.Uri | vscode.TestItem): Promise<void> {
   if (isMultiRootWorkspace()) {
     let unitTestNode: vscode.Uri;
     const workspacePath = path.dirname(vscode.workspace.workspaceFolders[0].uri.fsPath);

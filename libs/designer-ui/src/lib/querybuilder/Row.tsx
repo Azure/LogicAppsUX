@@ -269,7 +269,7 @@ export const Row = ({
           editorBlur={handleKeySave}
           tokenPickerButtonProps={{
             location: TokenPickerButtonLocation.Left,
-            newlineVerticalOffset: 16,
+            newlineVerticalOffset: isSimpleQueryBuilder ? 16.5 : 16,
             horizontalOffSet: isSimpleQueryBuilder ? undefined /* uses default of 38*/ : 33,
           }}
           {...baseEditorProps}
@@ -284,7 +284,11 @@ export const Row = ({
           getTokenPicker={getTokenPicker}
           editorBlur={handleValueSave}
           clearEditorOnTokenInsertion={clearEditorOnTokenInsertion}
-          tokenPickerButtonProps={{ location: TokenPickerButtonLocation.Left, newlineVerticalOffset: 16, horizontalOffSet: 33 }}
+          tokenPickerButtonProps={{
+            location: TokenPickerButtonLocation.Left,
+            newlineVerticalOffset: isSimpleQueryBuilder ? 16.5 : 16,
+            horizontalOffSet: 33,
+          }}
           {...baseEditorProps}
         />
       </div>

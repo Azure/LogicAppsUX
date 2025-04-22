@@ -1,23 +1,24 @@
-import type { ConversationItem } from '@microsoft/designer-ui';
-import { ConversationItemType, PanelLocation, PanelResizer, PanelSize } from '@microsoft/designer-ui';
-import { useEffect, useMemo, useState } from 'react';
-import { type IntlShape, useIntl } from 'react-intl';
-import { defaultChatbotPanelWidth, ChatbotContent } from '@microsoft/logic-apps-chatbot';
-import { type ChatHistory, useChatHistory } from '../../../core/queries/runs';
+import { PanelLocation, PanelResizer, PanelSize, type ConversationItem } from '@microsoft/designer-ui';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { useIntl } from 'react-intl';
+import { defaultChatbotPanelWidth, ChatbotUI } from '@microsoft/logic-apps-chatbot';
+import { useAgentChatInvokeUri, useChatHistory } from '../../../core/queries/runs';
 import { useMonitoringView } from '../../../core/state/designerOptions/designerOptionsSelectors';
 import {
   useAgentLastOperations,
   useAgentOperations,
-  useIsChatInputEnabled,
+  useFocusElement,
+  useUriForAgentChat,
   useRunInstance,
 } from '../../../core/state/workflow/workflowSelectors';
-import { guid, isNullOrUndefined, labelCase } from '@microsoft/logic-apps-shared';
+import { isNullOrUndefined, LogEntryLevel, LoggerService, RunService } from '@microsoft/logic-apps-shared';
 import { Button, Drawer, mergeClasses } from '@fluentui/react-components';
-import { ChatFilled, ChevronDoubleRightFilled } from '@fluentui/react-icons';
+import { ChatFilled } from '@fluentui/react-icons';
 import { useDispatch } from 'react-redux';
 import { changePanelNode, type AppDispatch } from '../../../core';
-import type { Dispatch } from '@reduxjs/toolkit';
-import { setFocusNode, setRunIndex } from '../../../core/state/workflow/workflowSlice';
+import { clearFocusElement, setFocusNode, setRunIndex } from '../../../core/state/workflow/workflowSlice';
+import { AgentChatHeader } from './agentChatHeader';
+import { parseChatHistory } from './helper';
 
 interface AgentChatProps {
   panelLocation?: PanelLocation;
@@ -25,168 +26,98 @@ interface AgentChatProps {
   panelContainerRef: React.MutableRefObject<HTMLElement | null>;
 }
 
-const AgentChatHeader = ({
-  title,
-  toggleCollapse,
-}: {
-  title: string;
-  toggleCollapse: () => void;
-}) => {
-  return (
-    <div
-      style={{
-        display: 'flex',
-        position: 'relative',
-        justifyContent: 'center',
-        padding: '10px',
-      }}
-    >
-      <h3>{title}</h3>
-      <Button
-        id="msla-agent-chat-header-collapse"
-        appearance="subtle"
-        icon={<ChevronDoubleRightFilled />}
-        aria-label={'buttonText'}
-        onClick={toggleCollapse}
-        data-automation-id="msla-agent-chat-header-collapse"
-        style={{
-          position: 'absolute',
-          right: '10px',
-          top: '50%',
-          transform: 'translateY(-50%)',
-        }}
-      />
-    </div>
-  );
-};
-
-const parseChatHistory = (
-  chatHistory: ChatHistory[],
-  intl: IntlShape,
-  dispatch: Dispatch,
-  agentLastOperations: Record<string, any>
-): ConversationItem[] => {
-  const agentHeaderPrefix = intl.formatMessage({
-    defaultMessage: 'Chat moved to',
-    id: '25EIWg',
-    description: 'Agent header prefix',
-  });
-
-  const toolResultCallback = (agentName: string, toolName: string, iteration: number, subIteration: number) => {
-    const agentLastOperation = agentLastOperations[agentName][toolName];
-    dispatch(setRunIndex({ page: iteration, nodeId: agentName }));
-    dispatch(setRunIndex({ page: subIteration, nodeId: toolName }));
-    dispatch(setFocusNode(agentLastOperation));
-    dispatch(changePanelNode(agentLastOperation));
-  };
-
-  const agentCallback = (agentName: string) => {
-    dispatch(setFocusNode(agentName));
-    dispatch(changePanelNode(agentName));
-  };
-
-  const conversations: ConversationItem[] = [];
-
-  for (const chat of chatHistory) {
-    const { nodeId, messages } = chat;
-    const parsedMessages: any[] = (messages ?? []).map((message) => parseMessage(message, nodeId, toolResultCallback));
-
-    if (parsedMessages.length > 0) {
-      const agentName = labelCase(nodeId ?? '');
-      conversations.push(...parsedMessages, {
-        id: guid(),
-        text: `${agentHeaderPrefix} ${agentName}`,
-        type: ConversationItemType.AgentHeader,
-        onClick: () => {
-          agentCallback(nodeId);
-        },
-        date: new Date(), // Using current time for header; modify if needed
-      });
-    }
-  }
-
-  return conversations;
-};
-
-const parseMessage = (
-  message: any,
-  parentId: string,
-  toolResultCallback: (agentName: string, toolName: string, iteration: number, subIteration: number) => void
-): ConversationItem => {
-  const { messageEntryType, messageEntryPayload, timestamp, role } = message;
-
-  switch (messageEntryType) {
-    case 'Content': {
-      const content = messageEntryPayload?.content || '';
-      return {
-        text: content,
-        type: ConversationItemType.Reply,
-        id: guid(),
-        role,
-        hideFooter: true,
-        metadata: { parentId },
-        date: new Date(timestamp),
-        isMarkdownText: false,
-      };
-    }
-    case 'ToolResult': {
-      const iteration = message?.iteration ?? 0;
-      const subIteration = message.toolResultsPayload?.toolResult?.subIteration ?? 0;
-      const toolName = message.toolResultsPayload?.toolResult?.toolName ?? '';
-      const status = message.toolResultsPayload?.toolResult?.status;
-
-      return {
-        id: guid(),
-        text: toolName,
-        type: ConversationItemType.Tool,
-        onClick: () => toolResultCallback(parentId, toolName, iteration, subIteration),
-        status,
-        date: new Date(timestamp),
-      };
-    }
-    default: {
-      return {
-        text: '',
-        type: ConversationItemType.Reply,
-        id: guid(),
-        role,
-        hideFooter: true,
-        metadata: { parentId },
-        date: new Date(timestamp),
-        isMarkdownText: false,
-      };
-    }
-  }
-};
-
 export const AgentChat = ({
   panelLocation = PanelLocation.Left,
   chatbotWidth = defaultChatbotPanelWidth,
   panelContainerRef,
 }: AgentChatProps) => {
   const intl = useIntl();
-  const [inputQuery, setInputQuery] = useState('');
   const [focus, setFocus] = useState(false);
   const [conversation, setConversation] = useState<ConversationItem[]>([]);
+  const [textInput, setTextInput] = useState<string>('');
+  const [isWaitingForResponse, setIsWaitingForResponse] = useState(false);
   const isMonitoringView = useMonitoringView();
   const runInstance = useRunInstance();
   const agentOperations = useAgentOperations();
   const agentLastOperations = useAgentLastOperations(agentOperations);
   const [isCollapsed, setIsCollapsed] = useState(false);
   const panelContainerElement = panelContainerRef.current as HTMLElement;
-  const { isFetching: isChatHistoryFetching, data: chatHistoryData } = useChatHistory(!!isMonitoringView, agentOperations, runInstance?.id);
-  const [overrideWidth, setOverrideWidth] = useState<string | undefined>();
-  const isChatInputEnabled = useIsChatInputEnabled(conversation.length > 0 ? conversation[0].metadata?.parentId : undefined);
+  const agentChatSuffixUri = useUriForAgentChat(conversation.length > 0 ? conversation[0].metadata?.parentId : undefined);
+  const {
+    refetch: refetchChatHistory,
+    isFetching: isChatHistoryFetching,
+    data: chatHistoryData,
+  } = useChatHistory(!!isMonitoringView, agentOperations, runInstance?.id);
+  const { data: chatInvokeUri } = useAgentChatInvokeUri(!!isMonitoringView, true, agentChatSuffixUri);
+  const [overrideWidth, setOverrideWidth] = useState<string | undefined>(chatbotWidth);
   const dispatch = useDispatch<AppDispatch>();
-  const agentsNumber = Object.keys(agentLastOperations).length;
-  const drawerWidth = isCollapsed ? PanelSize.Auto : (overrideWidth ?? chatbotWidth);
+  const drawerWidth = isCollapsed ? PanelSize.Auto : overrideWidth;
+  const panelRef = useRef<HTMLDivElement>(null);
+  const focusElement = useFocusElement();
+  const rawAgentLastOperations = JSON.stringify(agentLastOperations);
+
+  const toolResultCallback = useCallback(
+    (agentName: string, toolName: string, iteration: number, subIteration: number) => {
+      const agentLastOperation = JSON.parse(rawAgentLastOperations)?.[agentName]?.[toolName];
+      dispatch(setRunIndex({ page: iteration, nodeId: agentName }));
+      dispatch(setRunIndex({ page: subIteration, nodeId: toolName }));
+      dispatch(setFocusNode(agentLastOperation));
+      dispatch(changePanelNode(agentLastOperation));
+    },
+    [dispatch, rawAgentLastOperations]
+  );
+
+  const toolContentCallback = useCallback(
+    (agentName: string, iteration: number) => {
+      dispatch(setRunIndex({ page: iteration, nodeId: agentName }));
+      dispatch(setFocusNode(agentName));
+      dispatch(changePanelNode(agentName));
+    },
+    [dispatch]
+  );
+
+  const agentCallback = useCallback(
+    (agentName: string) => {
+      dispatch(setRunIndex({ page: 0, nodeId: agentName }));
+      dispatch(setFocusNode(agentName));
+      dispatch(changePanelNode(agentName));
+    },
+    [dispatch]
+  );
+
+  const onChatSubmit = useCallback(async () => {
+    if (!textInput || isNullOrUndefined(chatInvokeUri)) {
+      return;
+    }
+
+    setIsWaitingForResponse(true);
+
+    try {
+      await RunService().invokeAgentChat({
+        id: chatInvokeUri,
+        data: { role: 'User', content: textInput },
+      });
+
+      refetchChatHistory();
+    } catch (e: any) {
+      LoggerService().log({
+        level: LogEntryLevel.Error,
+        area: 'agentchat',
+        message: 'Agent chat invocation failed',
+        error: e,
+      });
+    }
+
+    setIsWaitingForResponse(false);
+    setTextInput('');
+  }, [textInput, chatInvokeUri, refetchChatHistory]);
 
   useEffect(() => {
     if (!isNullOrUndefined(chatHistoryData)) {
-      const newConversations = parseChatHistory(chatHistoryData, intl, dispatch, agentLastOperations);
+      const newConversations = parseChatHistory(chatHistoryData, toolResultCallback, toolContentCallback, agentCallback);
       setConversation([...newConversations]);
     }
-  }, [setConversation, chatHistoryData, intl, agentsNumber, dispatch]);
+  }, [setConversation, chatHistoryData, dispatch, toolResultCallback, toolContentCallback, agentCallback]);
 
   const intlText = useMemo(() => {
     return {
@@ -195,15 +126,20 @@ export const AgentChat = ({
         id: 'PVT2SW',
         description: 'Agent chat header text',
       }),
-      chatInputDisabledPlaceHolder: intl.formatMessage({
-        defaultMessage: 'The chat is in read-only mode and will be saved in the run history. Agents are no longer available to chat with.',
-        id: 'z/i4aa',
-        description: 'Agent chat input placeholder text when disabled',
+      agentChatPanelAriaLabel: intl.formatMessage({
+        defaultMessage: 'Agent chat panel',
+        id: 'OSugtm',
+        description: 'Agent chat panel aria label text',
       }),
-      chatInputPlaceholder: intl.formatMessage({
-        defaultMessage: 'Ask me anything...',
-        id: '5+Bccl',
-        description: 'Agent chat input placeholder text',
+      agentChatToggleAriaLabel: intl.formatMessage({
+        defaultMessage: 'Toggle agent chat panel',
+        id: '0Jh+AD',
+        description: 'Toggle agent chat panel aria label text',
+      }),
+      chatReadOnlyMessage: intl.formatMessage({
+        defaultMessage: 'The chat is currently in read-only mode. Agents are not available for live chat.',
+        id: '/fYAbG',
+        description: 'Agent chat read-only message',
       }),
       protectedMessage: intl.formatMessage({
         defaultMessage: 'Your personal and company data are protected in this chat',
@@ -220,37 +156,20 @@ export const AgentChat = ({
         id: 'Vqs8hE',
         description: 'Actions button',
       }),
-      chatSuggestion: {
-        saveButton: intl.formatMessage({
-          defaultMessage: 'Save this workflow',
-          id: 'OYWZE4',
-          description: 'Chatbot suggestion button to save workflow',
-        }),
-        testButton: intl.formatMessage({
-          defaultMessage: 'Test this workflow',
-          id: 'tTIsTX',
-          description: 'Chatbot suggestion button to test this workflow',
-        }),
-      },
       assistantErrorMessage: intl.formatMessage({
         defaultMessage: 'Sorry, something went wrong. Please try again.',
         id: 'fvGvnA',
         description: 'Chatbot error message',
       }),
       progressCardText: intl.formatMessage({
-        defaultMessage: 'Fetching chat history...',
-        id: '7col/w',
-        description: 'Fetching chat history progress card text',
+        defaultMessage: 'Processing...',
+        id: '6776lH',
+        description: 'Processing message in the chatbot',
       }),
       progressCardSaveText: intl.formatMessage({
         defaultMessage: '💾 Saving this flow...',
         id: '4iyEAY',
         description: 'Chatbot card telling user that the workflow is being saved',
-      }),
-      progressCardStopButtonLabel: intl.formatMessage({
-        defaultMessage: 'Stop generating',
-        id: 'wP0/uB',
-        description: 'Label for the button on the progress card that stops AI response generation',
       }),
       cancelGenerationText: intl.formatMessage({
         defaultMessage: 'Copilot chat canceled',
@@ -260,13 +179,9 @@ export const AgentChat = ({
     };
   }, [intl]);
 
-  useEffect(() => {
-    setInputQuery('');
-  }, [conversation]);
-
   return (
     <Drawer
-      aria-label={'panelLabel'}
+      aria-label={intlText.agentChatPanelAriaLabel}
       className="msla-panel-container"
       modalType="non-modal"
       mountNode={{
@@ -275,6 +190,7 @@ export const AgentChat = ({
       }}
       open={true}
       position={'end'}
+      ref={panelRef}
       style={{
         position: 'relative',
         maxWidth: '100%',
@@ -285,7 +201,7 @@ export const AgentChat = ({
       {isCollapsed ? (
         <Button
           appearance="subtle"
-          aria-label={'panelCollapseTitle'}
+          aria-label={intlText.agentChatToggleAriaLabel}
           className={mergeClasses('collapse-toggle', 'right', 'empty')}
           icon={<ChatFilled />}
           onClick={() => setIsCollapsed(false)}
@@ -294,7 +210,7 @@ export const AgentChat = ({
       ) : null}
       {isCollapsed ? null : (
         <>
-          <ChatbotContent
+          <ChatbotUI
             panel={{
               location: panelLocation,
               width: chatbotWidth,
@@ -304,30 +220,30 @@ export const AgentChat = ({
               header: <AgentChatHeader title={intlText.agentChatHeader} toggleCollapse={() => setIsCollapsed(true)} />,
             }}
             inputBox={{
-              value: inputQuery,
-              onChange: setInputQuery,
-              placeholder: isChatInputEnabled ? intlText.chatInputPlaceholder : intlText.chatInputDisabledPlaceHolder,
-              onSubmit: () => {},
-              disabled: isChatInputEnabled,
+              onSubmit: () => {
+                onChatSubmit();
+              },
+              onChange: setTextInput,
+              value: textInput,
+              readOnly: !chatInvokeUri,
+              readOnlyText: intlText.chatReadOnlyMessage,
             }}
-            data={{}}
             string={{
-              test: intlText.chatSuggestion.testButton,
-              save: intlText.chatSuggestion.saveButton,
               submit: intlText.submitButtonTitle,
               progressState: intlText.progressCardText,
-              progressStop: intlText.progressCardStopButtonLabel,
               progressSave: intlText.progressCardSaveText,
               protectedMessage: intlText.protectedMessage,
             }}
             body={{
               messages: conversation,
               focus: focus,
-              answerGenerationInProgress: isChatHistoryFetching,
+              answerGenerationInProgress: isChatHistoryFetching || isWaitingForResponse,
               setFocus: setFocus,
+              focusMessageId: focusElement,
+              clearFocusMessageId: () => dispatch(clearFocusElement()),
             }}
           />
-          <PanelResizer minWidth={undefined} updatePanelWidth={setOverrideWidth} />
+          <PanelResizer updatePanelWidth={setOverrideWidth} panelRef={panelRef} />
         </>
       )}
     </Drawer>

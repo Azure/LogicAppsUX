@@ -99,5 +99,6 @@ vi.mock('./src/extensionVariables', () => ({
     outputChannel: {
       appendLog: vi.fn(),
     },
+    designTimeInstances: new Map(),
   },
 }));

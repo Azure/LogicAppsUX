@@ -169,8 +169,7 @@ import type {
 import { createAsyncThunk, type Dispatch } from '@reduxjs/toolkit';
 import { getInputDependencies } from '../../actions/bjsworkflow/initialize';
 import { getAllVariables } from '../variables';
-
-// import { debounce } from 'lodash';
+import { UncastingUtility } from './uncast';
 
 export const ParameterBrandColor = '#916F6F';
 export const ParameterIcon =
@@ -273,13 +272,14 @@ export function getParametersSortedByVisibility(parameters: ParameterInfo[]): Pa
 export function addRecurrenceParametersInGroup(
   parameterGroups: Record<string, ParameterGroup>,
   recurrence: RecurrenceSetting | undefined,
-  definition: any
+  definition: any,
+  shouldEncodeBasedOnMetadata = true
 ): void {
   if (!recurrence) {
     return;
   }
 
-  const { parameters: recurrenceParameters, rawParameters } = getRecurrenceParameters(recurrence, definition);
+  const { parameters: recurrenceParameters, rawParameters } = getRecurrenceParameters(recurrence, definition, shouldEncodeBasedOnMetadata);
 
   if (recurrenceParameters.length) {
     const intl = getIntl();
@@ -324,12 +324,16 @@ export const getDependentParameters = (
  * @arg {InputParameter[]} inputParameters - The input parameters.
  * @arg {any} [stepDefinition] - The step definition.
  */
-export function toParameterInfoMap(inputParameters: InputParameter[], stepDefinition?: any): ParameterInfo[] {
+export function toParameterInfoMap(
+  inputParameters: InputParameter[],
+  stepDefinition?: any,
+  shouldEncodeBasedOnMetadata = true
+): ParameterInfo[] {
   const metadata = stepDefinition && stepDefinition.metadata;
   const result: ParameterInfo[] = [];
   for (const inputParameter of inputParameters) {
     if (!inputParameter.dynamicSchema) {
-      const parameter = createParameterInfo(inputParameter, metadata);
+      const parameter = createParameterInfo(inputParameter, metadata, shouldEncodeBasedOnMetadata);
       result.push(parameter);
     }
   }
@@ -347,9 +351,10 @@ export function toParameterInfoMap(inputParameters: InputParameter[], stepDefini
 export function createParameterInfo(
   parameter: ResolvedParameter,
   metadata?: Record<string, string>,
-  shouldIgnoreDefaultValue = false
+  shouldIgnoreDefaultValue = false,
+  shouldEncodeBasedOnMetadata = true
 ): ParameterInfo {
-  const value = loadParameterValue(parameter);
+  const value = loadParameterValue(parameter, shouldEncodeBasedOnMetadata);
   const { editor, editorOptions, editorViewModel, schema } = getParameterEditorProps(parameter, value, shouldIgnoreDefaultValue, metadata);
   const {
     alternativeKey,
@@ -388,7 +393,7 @@ export function createParameterInfo(
     editorViewModel,
     info,
     hideInUI: shouldHideInUI(parameter),
-    conditionalVisibility: shouldSoftHide(parameter) ? hasValue(parameter) : undefined,
+    conditionalVisibility: hasConditionalVisibility(parameter),
     label: parameter.title || parameter.summary || parameter.name,
     parameterKey: parameter.key,
     parameterName: parameter.name,
@@ -419,6 +424,10 @@ function shouldHideInUI(parameter: ResolvedParameter): boolean {
 
 function shouldSoftHide(parameter: ResolvedParameter): boolean {
   return !parameter.required && !equals(getVisibility(parameter), constants.VISIBILITY.IMPORTANT);
+}
+
+function hasConditionalVisibility(parameter: ResolvedParameter): boolean {
+  return parameter?.schema?.conditionalVisibility ?? (shouldSoftHide(parameter) ? hasValue(parameter) : undefined);
 }
 
 function hasValue(parameter: ResolvedParameter): boolean {
@@ -538,7 +547,7 @@ export const loadParameterValueFromString = (
   return loadParameterValue(inputParameter);
 };
 
-const convertStringToInputParameter = (value: string, options: LoadParamteerValueFromStringOptions): InputParameter => {
+export const convertStringToInputParameter = (value: string, options: LoadParamteerValueFromStringOptions): InputParameter => {
   const { removeQuotesFromExpression, trimExpression, convertIfContainsExpression, parameterType } = options ?? {};
   if (typeof value !== 'string') {
     return { key: guid(), name: value, type: parameterType ?? typeof value, hideInUI: false, value };
@@ -555,7 +564,7 @@ const convertStringToInputParameter = (value: string, options: LoadParamteerValu
   return {
     key: guid(),
     name: newValue,
-    type: constants.SWAGGER.TYPE.STRING,
+    type: parameterType ?? typeof newValue,
     hideInUI: false,
     value: newValue,
     suppressCasting: true,
@@ -906,7 +915,7 @@ export function shouldIncludeSelfForRepetitionReference(manifest: OperationManif
   return false;
 }
 
-export function loadParameterValue(parameter: InputParameter): ValueSegment[] {
+export function loadParameterValue(parameter: InputParameter, shouldEncodeBasedOnMetadata = true): ValueSegment[] {
   let valueObject: unknown = undefined;
 
   if (parameter.isNotificationUrl) {
@@ -917,8 +926,12 @@ export function loadParameterValue(parameter: InputParameter): ValueSegment[] {
       valueObject = parameter?.default;
     }
   }
+  const requiresUrlEncoding = shouldEncodeBasedOnMetadata
+    ? parameter.in === ParameterLocations.Path || parameter.encode !== undefined
+    : parameter.in === ParameterLocations.Path;
+  const shouldUncast = !parameter.suppressCasting && (UncastingUtility.isCastableFormat(parameter?.format) || requiresUrlEncoding);
 
-  let valueSegments = convertToValueSegments(valueObject, !parameter.suppressCasting /* shouldUncast */, parameter.type);
+  let valueSegments = convertToValueSegments(valueObject, shouldUncast, parameter.type, parameter.schema);
 
   valueSegments = compressSegments(valueSegments);
 
@@ -971,13 +984,13 @@ export function convertToTokenExpression(value: any): string {
   return value.toString();
 }
 
-export function convertToValueSegments(value: any, shouldUncast: boolean, parameterType?: string): ValueSegment[] {
+export function convertToValueSegments(value: any, shouldUncast: boolean, parameterType?: string, parameterSchema?: any): ValueSegment[] {
   try {
     const convertor = new ValueSegmentConvertor({
       shouldUncast,
       rawModeEnabled: true,
     });
-    return convertor.convertToValueSegments(value, parameterType);
+    return convertor.convertToValueSegments(value, parameterType, parameterSchema);
   } catch {
     return [createLiteralValueSegment(typeof value === 'string' ? value : JSON.stringify(value, null, 2))];
   }

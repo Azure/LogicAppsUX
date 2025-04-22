@@ -28,7 +28,7 @@ import { saveUnitTestDefinition } from '../../../utils/unitTests';
 import { createNewDataMapCmd } from '../../dataMapper/dataMapper';
 import { OpenDesignerBase } from './openDesignerBase';
 import { HTTP_METHODS } from '@microsoft/logic-apps-shared';
-import type { IActionContext } from '@microsoft/vscode-azext-utils';
+import { openUrl, type IActionContext } from '@microsoft/vscode-azext-utils';
 import type {
   AzureConnectorDetails,
   FileSystemConnectionInfo,
@@ -105,7 +105,14 @@ export default class OpenDesignerForLocalProject extends OpenDesignerBase {
 
     await startDesignTimeApi(this.projectPath);
 
-    this.baseUrl = `http://localhost:${ext.designTimePort}${managementApiPrefix}`;
+    if (!ext.designTimeInstances.has(this.projectPath)) {
+      throw new Error(localize('designTimeNotRunning', `Design time is not running for project ${this.projectPath}.`));
+    }
+    const designTimePort = ext.designTimeInstances.get(this.projectPath).port;
+    if (!designTimePort) {
+      throw new Error(localize('designTimePortNotFound', 'Design time port not found.'));
+    }
+    this.baseUrl = `http://localhost:${designTimePort}${managementApiPrefix}`;
     this.workflowRuntimeBaseUrl = `http://localhost:${ext.workflowRuntimePort}${managementApiPrefix}`;
 
     this.panel = window.createWebviewPanel(
@@ -248,6 +255,10 @@ export default class OpenDesignerForLocalProject extends OpenDesignerBase {
         ext.telemetryReporter.sendTelemetryEvent(eventName, { ...msg.data });
         break;
       }
+      case ExtensionCommand.fileABug: {
+        await openUrl('https://github.com/Azure/LogicAppsUX/issues/new?template=bug_report.yml');
+        break;
+      }
 
       default:
         break;
@@ -326,7 +337,14 @@ export default class OpenDesignerForLocalProject extends OpenDesignerBase {
    * @param {any} workflow - Workflow schema to validate.
    */
   private async validateWorkflow(workflow: any): Promise<void> {
-    const url = `http://localhost:${ext.designTimePort}${managementApiPrefix}/workflows/${this.workflowName}/validate?api-version=${this.apiVersion}`;
+    if (!ext.designTimeInstances.has(this.projectPath)) {
+      throw new Error(localize('designTimeNotRunning', `Design time is not running for project ${this.projectPath}.`));
+    }
+    const designTimePort = ext.designTimeInstances.get(this.projectPath).port;
+    if (!designTimePort) {
+      throw new Error(localize('designTimePortNotFound', 'Design time port not found.'));
+    }
+    const url = `http://localhost:${designTimePort}${managementApiPrefix}/workflows/${this.workflowName}/validate?api-version=${this.apiVersion}`;
     try {
       await sendRequest(this.context, {
         url,
@@ -337,7 +355,7 @@ export default class OpenDesignerForLocalProject extends OpenDesignerBase {
     } catch (error) {
       if (error.statusCode !== 404) {
         const errorMessage = localize('workflowValidationFailed', 'Workflow validation failed: ') + error.message;
-        await window.showErrorMessage(errorMessage, localize('OK', 'OK'));
+        window.showErrorMessage(errorMessage, localize('OK', 'OK'));
       }
     }
   }

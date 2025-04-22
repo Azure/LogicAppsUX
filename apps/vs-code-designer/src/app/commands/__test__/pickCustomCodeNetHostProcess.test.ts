@@ -52,7 +52,7 @@ describe('pickCustomCodeNetHostProcess', () => {
   beforeEach(() => {
     (vscode.workspace as any).workspaceFolders = [testLogicAppWorkspaceFolder, testFunctionAppWorkspaceFolder];
 
-    vi.spyOn(validatePreDebug, 'getMatchingWorkspace').mockReturnValue(testLogicAppWorkspaceFolder);
+    vi.spyOn(validatePreDebug, 'getMatchingWorkspaceFolder').mockReturnValue(testLogicAppWorkspaceFolder);
     vi.spyOn(customCodeUtils, 'getCustomCodeFunctionsProjectMetadata').mockResolvedValue(testFunctionsProjectMetadata);
     vi.spyOn(pickFuncProcessModule, 'pickChildProcess').mockResolvedValue(testFuncPid);
   });

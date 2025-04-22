@@ -77,7 +77,7 @@ namespace <%= LogicAppName %>.Tests
             var triggerMock = new <%= TriggerMockClassName %>(outputs: triggerMockOutput);
 
             // Generate mock action data.
-            // OPTION 1 : defining a callback class
+            // OPTION 1 : defining a callback function
             var actionMock = new <%= ActionMockClassName %>(name: "<%= ActionMockName %>", onGetActionMock: <%= ActionMockClassName %>OutputCallback);
             // OPTION 2: defining inline using a lambda
             /*var actionMock = new <%= ActionMockClassName %>(name: "<%= ActionMockName %>", onGetActionMock: (testExecutionContext) =>

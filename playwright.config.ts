@@ -24,6 +24,20 @@ export default defineConfig({
     baseURL: 'http://localhost:4200',
     video: 'on-first-retry',
     trace: 'on',
+    storageState: {
+      cookies: [],
+      origins: [
+        {
+          origin: 'http://localhost:4200',
+          localStorage: [
+            {
+              name: 'control-expand-collapse-button',
+              value: 'true',
+            },
+          ],
+        },
+      ],
+    },
   },
 
   /* Configure projects for major browsers */

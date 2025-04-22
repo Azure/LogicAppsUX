@@ -19,11 +19,10 @@ import {
   getParametersFromFile,
 } from '../../../utils/codeless/connection';
 import { sendRequest } from '../../../utils/requestUtils';
-import type { IAzureConnectorsContext } from '../azureConnectorWizard';
 import { createUnitTest } from '../unitTest/createUnitTest';
 import { OpenMonitoringViewBase } from './openMonitoringViewBase';
 import { getTriggerName, HTTP_METHODS } from '@microsoft/logic-apps-shared';
-import type { IActionContext } from '@microsoft/vscode-azext-utils';
+import { openUrl, type IActionContext } from '@microsoft/vscode-azext-utils';
 import type { AzureConnectorDetails, IDesignerPanelMetadata, Parameter } from '@microsoft/vscode-extension-logic-apps';
 import { ExtensionCommand, ProjectName } from '@microsoft/vscode-extension-logic-apps';
 import { promises, readFileSync } from 'fs';
@@ -149,16 +148,15 @@ export default class OpenMonitoringViewForLocal extends OpenMonitoringViewBase {
         break;
       }
       case ExtensionCommand.createUnitTest: {
-        await createUnitTest(
-          this.context as IAzureConnectorsContext,
-          vscode.Uri.file(this.workflowFilePath),
-          message.runId,
-          message.definition
-        );
+        await createUnitTest(this.context, vscode.Uri.file(this.workflowFilePath), message.runId, message.definition);
         break;
       }
       case ExtensionCommand.saveBlankUnitTest: {
-        await saveBlankUnitTest(this.context as IAzureConnectorsContext, vscode.Uri.file(this.workflowFilePath), message.definition);
+        await saveBlankUnitTest(this.context, vscode.Uri.file(this.workflowFilePath), message.definition);
+        break;
+      }
+      case ExtensionCommand.fileABug: {
+        await openUrl('https://github.com/Azure/LogicAppsUX/issues/new?template=bug_report.yml');
         break;
       }
       default:

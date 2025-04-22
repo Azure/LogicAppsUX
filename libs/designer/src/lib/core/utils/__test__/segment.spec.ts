@@ -1,6 +1,7 @@
 import { beforeAll, describe, expect, it } from 'vitest';
 import { createLiteralValueSegment, ValueSegmentConvertor, ValueSegmentConvertorOptions } from '../parameters/segment';
 import constants from '../../../common/constants';
+import { convertStringToInputParameter } from '../parameters/helper';
 
 describe('convertToValueSegments', () => {
   const convertor = new ValueSegmentConvertor({

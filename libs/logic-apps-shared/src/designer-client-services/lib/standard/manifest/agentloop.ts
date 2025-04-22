@@ -1,5 +1,5 @@
 import type { OperationManifest } from '../../../../utils/src';
-import { SettingScope } from '../../../../utils/src';
+import { OperationOptions, SettingScope } from '../../../../utils/src';
 
 export default {
   properties: {
@@ -48,11 +48,123 @@ export default {
           'x-ms-connection-required': true,
           'x-ms-visibility': 'important',
         },
+        agentModelType: {
+          title: 'Agent model type',
+          description: 'Type of agent model to use',
+          default: 'AzureOpenAI',
+          type: 'string',
+          hideInUI: true,
+        },
         messages: {
           title: 'Instructions for agent',
           'x-ms-visibility': 'important',
           'x-ms-editor': 'agentinstruction',
           type: 'array',
+        },
+        agentModelSettings: {
+          type: 'object',
+          'x-ms-visibility': 'advanced',
+          properties: {
+            agentChatCompletionSettings: {
+              type: 'object',
+              properties: {
+                maxTokens: {
+                  title: 'Max tokens',
+                  description: 'Max tokens to use (value should be between 1 and 8192)',
+                  type: 'integer',
+                  format: 'int32',
+                  minimum: 1,
+                  maximum: 8192,
+                },
+                frequencyPenalty: {
+                  title: 'Frequency penalty',
+                  description: 'Penalty for frequency of tokens (value should be between -2 and 2)',
+                  type: 'number',
+                  format: 'float',
+                  minimum: -2.0,
+                  maximum: 2.0,
+                },
+                presencePenalty: {
+                  title: 'Presence penalty',
+                  description: 'Penalty for presence of tokens (value should be between -2 and 2)',
+                  type: 'number',
+                  minimum: -2.0,
+                  format: 'float',
+                  maximum: 2.0,
+                },
+                temperature: {
+                  title: 'Temperature',
+                  description: 'Sampling temperature to use (value should be between 0 and 2)',
+                  type: 'number',
+                  format: 'float',
+                  minimum: 0,
+                  maximum: 2.0,
+                },
+                topP: {
+                  title: 'Top P',
+                  description: 'Nucleus sampling parameter (value should be between 0 and 1)',
+                  type: 'number',
+                  format: 'float',
+                  minimum: 0,
+                  maximum: 1.0,
+                },
+              },
+            },
+            agentHistoryReductionSettings: {
+              type: 'object',
+              properties: {
+                agentHistoryReductionType: {
+                  type: 'string',
+                  title: 'Agent history reduction type',
+                  description: 'Type of agent history reduction to use',
+                  'x-ms-editor': 'dropdown',
+                  'x-ms-editor-options': {
+                    options: [
+                      {
+                        value: 'messageCountReduction',
+                        displayName: 'Message count reduction',
+                      },
+                      {
+                        value: 'maximumTokenCountReduction',
+                        displayName: 'Token count reduction',
+                      },
+                    ],
+                  },
+                },
+                messageCountLimit: {
+                  type: 'integer',
+                  title: 'Message count limit',
+                  description: 'The maximum number of messages to keep in the agent history',
+                  conditionalVisibility: true,
+                  'x-ms-input-dependencies': {
+                    type: 'visibility',
+                    parameters: [
+                      {
+                        name: 'agentModelSettings.agentHistoryReductionSettings.agentHistoryReductionType',
+                        values: ['messageCountReduction'],
+                      },
+                    ],
+                  },
+                },
+                maximumTokenCount: {
+                  type: 'integer',
+                  title: 'Maximum token count',
+                  description: 'The maximum number of tokens to use for the agent history',
+                  conditionalVisibility: true,
+                  default: 128000,
+                  'x-ms-input-dependencies': {
+                    type: 'visibility',
+                    parameters: [
+                      {
+                        name: 'agentModelSettings.agentHistoryReductionSettings.agentHistoryReductionType',
+                        values: ['maximumTokenCountReduction'],
+                      },
+                    ],
+                  },
+                },
+              },
+            },
+          },
         },
       },
       required: ['deploymentId', 'messages'],
@@ -74,14 +186,23 @@ export default {
         input: {
           type: 'Request',
           default: {
-            'inputs.$.schema': '{"properties": {"prompt": {"type": "string"}}, "type": "object"}',
+            'inputs.$.schema': `{
+  "type": "object",
+  "properties": {
+    "prompt": {
+      "type": "string"
+    }
+  }
+}`,
           },
         },
         output: {
           type: 'Response',
           default: {
             'inputs.$.statusCode': '200',
-            'inputs.$.body': '{ "responseMessage": "@assistantMessage()" }',
+            'inputs.$.body': `{ 
+  "responseMessage": "@assistantMessage()"
+}`,
           },
         },
       },
@@ -117,6 +238,10 @@ export default {
       },
       retryPolicy: {
         scopes: [SettingScope.Action],
+      },
+      operationOptions: {
+        scopes: [SettingScope.Action],
+        options: [OperationOptions.FailWhenLimitsReached],
       },
     },
   },

@@ -5,7 +5,7 @@ import type { ValueSegment } from '../models/parameter';
 import { StringEditor } from '../string';
 import type { InitializeVariableErrors } from './variableEditor';
 import { VariableEditor } from './variableEditor';
-import { Button, MessageBar, MessageBarBody, MessageBarTitle } from '@fluentui/react-components';
+import { Button, Divider, MessageBar, MessageBarBody, MessageBarTitle } from '@fluentui/react-components';
 import { useIntl } from 'react-intl';
 import {
   createVariableEditorSegments,
@@ -15,6 +15,7 @@ import {
 } from './util';
 import constants from '../../constants';
 import { Add24Filled, Add24Regular, bundleIcon } from '@fluentui/react-icons';
+import { useInitializeVariableStyles } from './styles';
 
 const CreateIcon = bundleIcon(Add24Filled, Add24Regular);
 export interface InitializeVariableProps {
@@ -59,6 +60,7 @@ export const InitializeVariableEditor = ({
   );
 
   const addButtonText = isAgentParameter ? stringResources.ADD_PARAMETER : stringResources.ADD_VARIABLE;
+  const styles = useInitializeVariableStyles();
 
   const warningTitleVariable = intl.formatMessage({
     defaultMessage: 'Unable to Parse Variables',
@@ -139,8 +141,9 @@ export const InitializeVariableEditor = ({
       {isAgentParameter ? (
         <div className="msla-initialize-variable-add-variable-button">
           <Button
-            appearance="subtle"
             aria-label={addButtonText}
+            appearance={'subtle'}
+            className={styles.addButton}
             onClick={addVariable}
             disabled={props.readonly}
             icon={<CreateIcon />}
@@ -149,7 +152,6 @@ export const InitializeVariableEditor = ({
                 ? {}
                 : {
                     color: 'var(--colorBrandForeground1)',
-                    border: '1px solid #9e9e9e',
                   }
             }
           >
@@ -158,17 +160,20 @@ export const InitializeVariableEditor = ({
         </div>
       ) : null}
       {variables.map((variable, index) => (
-        <VariableEditor
-          {...props}
-          isAgentParameter={isAgentParameter}
-          key={index}
-          index={index}
-          variable={variable}
-          onDelete={() => handleDeleteVariable(index)}
-          onVariableChange={(value: InitializeVariableProps) => handleVariableChange(value, index)}
-          disableDelete={!isAgentParameter && variables.length === 1}
-          errors={validationErrors?.[index]}
-        />
+        <>
+          <VariableEditor
+            {...props}
+            isAgentParameter={isAgentParameter}
+            key={index}
+            index={index}
+            variable={variable}
+            onDelete={() => handleDeleteVariable(index)}
+            onVariableChange={(value: InitializeVariableProps) => handleVariableChange(value, index)}
+            disableDelete={!isAgentParameter && variables.length === 1}
+            errors={validationErrors?.[index]}
+          />
+          <Divider />
+        </>
       ))}
       {props.isMultiVariableEnabled && !isAgentParameter ? (
         <div className="msla-initialize-variable-add-variable-button">

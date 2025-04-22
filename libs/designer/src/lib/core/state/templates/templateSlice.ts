@@ -57,6 +57,21 @@ export const templateSlice = createSlice({
       state.workflows[id].kind = kind;
       state.workflows[id].errors.kind = undefined;
     },
+    updateTemplateTriggerDescription: (state, action: PayloadAction<{ id: string; description: string | undefined }>) => {
+      const { id, description } = action.payload;
+      const triggerKey = Object.keys(state.workflows?.[id]?.workflowDefinition?.triggers ?? {})?.[0];
+      const trigger = state.workflows?.[id]?.workflowDefinition?.triggers?.[triggerKey];
+      if (trigger) {
+        trigger.description = description;
+      }
+    },
+    updateTemplateTriggerDescriptionValidationError: (state, action: PayloadAction<{ id: string; error: string | undefined }>) => {
+      const { id, error } = action.payload;
+      if (!state.workflows[id]) {
+        return;
+      }
+      state.workflows[id].errors.triggerDescription = error;
+    },
     updateTemplateParameterValue: (state, action: PayloadAction<Template.ParameterDefinition>) => {
       const { name, type, value, required } = action.payload;
 
@@ -68,7 +83,21 @@ export const templateSlice = createSlice({
       };
       state.errors.parameters[name] = validationError;
     },
-    updateTemplateParameterDefinitions: (state, action: PayloadAction<Record<string, Template.ParameterDefinition>>) => {
+    updateTemplateParameterDefinition: (
+      state,
+      action: PayloadAction<{
+        parameterId: string;
+        data: Template.ParameterDefinition;
+      }>
+    ) => {
+      const { parameterId, data } = action.payload;
+
+      state.parameterDefinitions[parameterId] = {
+        ...(state.parameterDefinitions[parameterId] ?? {}),
+        ...data,
+      };
+    },
+    updateAllTemplateParameterDefinitions: (state, action: PayloadAction<Record<string, Template.ParameterDefinition>>) => {
       state.parameterDefinitions = { ...state.parameterDefinitions, ...action.payload };
     },
     validateParameters: (state) => {
@@ -127,6 +156,15 @@ export const templateSlice = createSlice({
         workflows[id] = { ...(state.workflows[id] ?? {}), ...data };
       }
 
+      // Update the manifest with the trigger type if there is only one workflow, otherwise undefined
+      state.manifest = {
+        ...(state.manifest ?? {}),
+        details: {
+          ...(state.manifest?.details ?? {}),
+          Trigger: Object.keys(workflows).length === 1 ? workflows[Object.keys(workflows)[0]].triggerType : undefined,
+        },
+      } as Template.TemplateManifest;
+
       state.workflows = workflows;
     },
     updateEnvironment: (state, action: PayloadAction<TemplateEnvironment>) => {
@@ -159,13 +197,26 @@ export const templateSlice = createSlice({
 
     builder.addCase(
       validateWorkflowsBasicInfo.fulfilled,
-      (state, action: PayloadAction<Record<string, { kindError?: string; nameError?: string }>>) => {
+      (
+        state,
+        action: PayloadAction<
+          Record<
+            string,
+            {
+              kindError?: string;
+              nameError?: string;
+              triggerDescriptionError?: string;
+            }
+          >
+        >
+      ) => {
         const workflows = action.payload;
         for (const workflowId of Object.keys(workflows)) {
-          const { kindError, nameError } = workflows[workflowId];
+          const { kindError, nameError, triggerDescriptionError } = workflows[workflowId];
           if (state.workflows[workflowId]) {
             state.workflows[workflowId].errors.kind = kindError;
             state.workflows[workflowId].errors.workflow = nameError;
+            state.workflows[workflowId].errors.triggerDescription = triggerDescriptionError;
           }
         }
       }
@@ -204,6 +255,16 @@ export const templateSlice = createSlice({
           for (const id of ids) {
             delete state.workflows[id];
           }
+
+          // Update the manifest with the trigger type if there is only one workflow, otherwise undefined
+          state.manifest = {
+            ...(state.manifest ?? {}),
+            details: {
+              ...(state.manifest?.details ?? {}),
+              Trigger: Object.keys(state.workflows).length === 1 ? state.workflows[Object.keys(state.workflows)[0]].triggerType : undefined,
+            },
+          } as Template.TemplateManifest;
+
           for (const key of connectionKeys) {
             delete state.connections[key];
           }
@@ -230,12 +291,15 @@ export const {
   changeCurrentTemplateName,
   updateWorkflowName,
   updateKind,
+  updateTemplateTriggerDescription,
+  updateTemplateTriggerDescriptionValidationError,
   updateTemplateParameterValue,
   validateParameters,
   validateConnections,
   clearTemplateDetails,
   updateWorkflowNameValidationError,
-  updateTemplateParameterDefinitions,
+  updateTemplateParameterDefinition,
+  updateAllTemplateParameterDefinitions,
   updateWorkflowData,
   updateAllWorkflowsData,
   updateTemplateManifest,

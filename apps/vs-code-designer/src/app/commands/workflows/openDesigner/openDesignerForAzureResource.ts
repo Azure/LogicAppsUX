@@ -1,3 +1,4 @@
+import { openUrl } from '@microsoft/vscode-azext-utils';
 import { workflowAppApiVersion } from '../../../../constants';
 import { ext } from '../../../../extensionVariables';
 import type { RemoteWorkflowTreeItem } from '../../../tree/remoteWorkflowsTree/RemoteWorkflowTreeItem';
@@ -99,6 +100,10 @@ export class OpenDesignerForAzureResource extends OpenDesignerBase {
       case ExtensionCommand.logTelemetry: {
         const eventName = msg.data.name ?? msg.data.area;
         ext.telemetryReporter.sendTelemetryEvent(eventName, { ...msg.data });
+        break;
+      }
+      case ExtensionCommand.fileABug: {
+        await openUrl('https://github.com/Azure/LogicAppsUX/issues/new?template=bug_report.yml');
         break;
       }
       default:

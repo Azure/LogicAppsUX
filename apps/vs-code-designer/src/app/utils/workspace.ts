@@ -6,7 +6,12 @@ import { workflowFileName } from '../../constants';
 import { localize } from '../../localize';
 import type { RemoteWorkflowTreeItem } from '../tree/remoteWorkflowsTree/RemoteWorkflowTreeItem';
 import { isPathEqual, isSubpath } from './fs';
-import { isLogicAppProject, promptOpenProjectOrWorkspace, tryGetLogicAppProjectRoot } from './verifyIsProject';
+import {
+  isLogicAppProject,
+  promptOpenProjectOrWorkspace,
+  tryGetAllLogicAppProjectRoots,
+  tryGetLogicAppProjectRoot,
+} from './verifyIsProject';
 import { isNullOrUndefined, isString } from '@microsoft/logic-apps-shared';
 import { UserCancelledError, nonNullValue } from '@microsoft/vscode-azext-utils';
 import type { IActionContext, IAzureQuickPickItem } from '@microsoft/vscode-azext-utils';
@@ -123,6 +128,30 @@ export const getWorkspacePath = (workflowFilePath: string): string => {
   const workspaceFolder = nonNullValue(getContainingWorkspace(workflowFilePath), 'workspaceFolder');
   return workspaceFolder.uri.fsPath;
 };
+
+/**
+ * Gets the logic app roots from all workspace folders.
+ * @param {IActionContext} context - Command context.
+ * @param {string} message - The message to display to the user.
+ * @returns {Promise<(vscode.WorkspaceFolder | string)[]>} Returns an array of logic app roots.
+ */
+export async function getWorkspaceLogicAppFolders(context: IActionContext, message?: string): Promise<string[]> {
+  const promptMessage: string = message ?? localize('noWorkspaceWarning', 'You must have a workspace open to perform this action.');
+
+  if (!vscode.workspace.workspaceFolders || vscode.workspace.workspaceFolders.length === 0) {
+    await promptOpenProjectOrWorkspace(context, promptMessage);
+  }
+
+  const logicAppRoots: (vscode.WorkspaceFolder | string)[] = [];
+  for (const folder of vscode.workspace.workspaceFolders) {
+    const projectRoots = await tryGetAllLogicAppProjectRoots(folder);
+    if (projectRoots && projectRoots.length > 0) {
+      logicAppRoots.push(...projectRoots);
+    }
+  }
+
+  return logicAppRoots.map((f) => (isString(f) ? f : f.uri.fsPath));
+}
 
 /**
  * Gets workspace folder of project.
