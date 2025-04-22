@@ -1,4 +1,16 @@
 # Logic Apps Designer
+## [5.88.0](https://github.com/Azure/LogicAppsUX/compare/v5.87.0...v5.88.0) (2025-04-22)
+
+
+### Features
+
+* **Templates:** Custom Templates UI Enhancements ([#7062](https://github.com/Azure/LogicAppsUX/issues/7062)) ([7e087ce](https://github.com/Azure/LogicAppsUX/commit/7e087ce728c05e0acfdf0f183c1ccbc8c7978054))
+
+
+### Bug Fixes
+
+* **Templates:** Fixed template trigger description validation ([#7067](https://github.com/Azure/LogicAppsUX/issues/7067)) ([c880097](https://github.com/Azure/LogicAppsUX/commit/c8800972adcef7120d337248609e869846f0ae14))
+
 ## [5.87.0](https://github.com/Azure/LogicAppsUX/compare/v5.86.0...v5.87.0) (2025-04-21)
 
 
