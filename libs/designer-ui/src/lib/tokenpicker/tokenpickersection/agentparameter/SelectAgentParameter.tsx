@@ -35,8 +35,8 @@ export const SelectAgentParameter = ({ agentParameters, onCreateAgentParameter, 
 
   const agentParameterLabel = intl.formatMessage({
     defaultMessage: 'Agent parameters',
-    id: 'O9IzqW',
-    description: 'Agent parameters label',
+    id: 'MKDWQd',
+    description: 'Label for agent parameters',
   });
 
   const createAgentParameterButtonLabel = intl.formatMessage({

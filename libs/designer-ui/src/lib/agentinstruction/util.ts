@@ -58,8 +58,8 @@ export const parseAgentInstruction = (
     const intl = getIntl();
     const errorMessage = intl.formatMessage({
       defaultMessage: 'Error occurred while parsing agent instructions.',
-      description: 'Error message for agent instructions parsing failure',
-      id: 'WmLk8l',
+      description: 'Error message for the agent instructions parsing failure.',
+      id: '4ggAK+',
     });
     setErrorMessage(errorMessage);
   }

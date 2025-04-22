@@ -53,8 +53,8 @@ export const ChannelsTab: React.FC<PanelTabProps> = (props) => {
       }),
       OUTPUT_CHANNEL_MESSAGE: intl.formatMessage({
         defaultMessage:
-          'Channels will be auto-configured to help you communicate with the agent easily. Disable Output channel if you do not want to receive messages from the agent and only want to send messages to the agent.',
-        id: '7df0xk',
+          'Channels are automatically set up so you can easily communicate with the agent. To only send messages to the agent, and not receive them, disable the Output channel.',
+        id: 'ncjY1H',
         description: 'Channel info message.',
       }),
     }),
