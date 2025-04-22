@@ -25,7 +25,8 @@ const getRecurrenceSchema = (recurrenceType?: RecurrenceType): OpenAPIV2.SchemaO
 
 export const getRecurrenceParameters = (
   recurrence: RecurrenceSetting | undefined,
-  operationDefinition: any
+  operationDefinition: any,
+  shouldEncodeBasedOnMetadata = true
 ): { parameters: ParameterInfo[]; rawParameters: InputParameter[] } => {
   if (!recurrence || recurrence.type === RecurrenceType.None) {
     return { parameters: [], rawParameters: [] };
@@ -60,5 +61,8 @@ export const getRecurrenceParameters = (
     loadParameterValuesFromDefault(map(recurrenceParameters, OutputMapKey));
   }
 
-  return { parameters: toParameterInfoMap(recurrenceParameters, operationDefinition), rawParameters: recurrenceParameters };
+  return {
+    parameters: toParameterInfoMap(recurrenceParameters, operationDefinition, shouldEncodeBasedOnMetadata),
+    rawParameters: recurrenceParameters,
+  };
 };

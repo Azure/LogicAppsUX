@@ -467,7 +467,9 @@ function getParameterValuesForLegacyDynamicOperation(
   const { method, path } = operation;
   const operationInputs = map(
     toParameterInfoMap(
-      unmap(swagger.getInputParameters(operationId as string, { excludeInternalParameters: false, excludeInternalOperations: false }).byId)
+      unmap(swagger.getInputParameters(operationId as string, { excludeInternalParameters: false, excludeInternalOperations: false }).byId),
+      undefined,
+      shouldEncodeBasedOnMetadata
     ),
     'parameterName'
   );
