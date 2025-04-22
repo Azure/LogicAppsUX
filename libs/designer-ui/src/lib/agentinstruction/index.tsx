@@ -31,13 +31,13 @@ export const AgentInstructionEditor = ({
   const description = intl.formatMessage({
     defaultMessage:
       'Add instructions so the agent understands its role and tasks. It can be helpful to include information about workflow structure, restrictions, tools, and interaction in certain scenarios.',
-    description: 'Agent Instruction Editor description',
-    id: 'gzwIqh',
+    description: 'Description for agent instruction editor',
+    id: '6kDNbB',
   });
   const descriptionLink = intl.formatMessage({
     defaultMessage: 'Tips for writing agent instructions',
-    description: 'Agent Instruction Editor description link',
-    id: 'cC7hlj',
+    description: 'Description link for agent instruction editor',
+    id: 'Vp5rnF',
   });
   const systemPlaceholder = intl.formatMessage({
     defaultMessage: 'Enter the instructions for the agent.',

@@ -29,8 +29,8 @@ export const CommentMenuItem = (props: CommentMenuItemProps) => {
   });
   const commentAdd = intl.formatMessage({
     defaultMessage: 'Add a description',
-    id: 'wD5i+Z',
-    description: 'Text to tell users to click to add description',
+    id: 'ZyntX1',
+    description: 'Text that tells you to select for adding a description',
   });
   const commentDelete = intl.formatMessage({
     defaultMessage: 'Delete description',

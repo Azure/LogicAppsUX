@@ -10,8 +10,8 @@ export const AdvancedSettingsMessage = ({ shouldShowMessage }: { shouldShowMessa
     message: intl.formatMessage({
       defaultMessage:
         'Add advanced parameters to further customize how the language model responds. These advanced options are optional and can help you fine-tune the experience.',
-      description: 'Agent advance parameters description',
-      id: 'yJfhNL',
+      description: 'Description for agent advanced parameters',
+      id: 'uohgys',
     }),
     messageLink: intl.formatMessage({
       defaultMessage: 'Guideline for agent advanced parameters',

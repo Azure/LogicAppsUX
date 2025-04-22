@@ -65,8 +65,8 @@ export const PanelHeaderComment = ({
 
     const commentPlaceholder = intl.formatMessage({
       defaultMessage: 'Add a description',
-      id: 'wD5i+Z',
-      description: 'Text to tell users to click to add description',
+      id: 'ZyntX1',
+      description: 'Text that tells you to select for adding a description',
     });
 
     const onCommentBlur = (_: React.FocusEvent<HTMLInputElement | HTMLTextAreaElement>): void => {

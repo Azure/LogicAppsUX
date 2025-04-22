@@ -286,13 +286,13 @@ const ScopeCardNode = ({ data, targetPosition = Position.Top, sourcePosition = P
       ),
       emptyAgent: intl.formatMessage({
         defaultMessage: 'No tools were executed ',
-        id: 'ZuQSme',
-        description: 'Text to explain that there are no tools in this agent',
+        id: '514n6S',
+        description: 'Text that explains no tools exist in this agent iteration',
       }),
       addTool: intl.formatMessage({
         defaultMessage: 'Add tool',
-        id: 'dXiXiF',
-        description: 'Text to explain that there are no tools in this agent',
+        id: 'Nl4O59',
+        description: 'Text that explains no tools exist in this agent',
       }),
     }),
     [actionCount, intl]

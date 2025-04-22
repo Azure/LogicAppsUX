@@ -20,8 +20,8 @@ export const AgentParameterButton = ({ openTokenPicker, shifted }: AgentParamete
 
   const agentParameterButtonText = intl.formatMessage({
     defaultMessage: 'Click to generate Agent Parameter',
-    id: 'nhD0ye',
-    description: 'Label for button to auto-generate agent parameter',
+    id: 'fgeXzC',
+    description: 'Button label to automaticlaly generate agent parameter',
   });
 
   return (
