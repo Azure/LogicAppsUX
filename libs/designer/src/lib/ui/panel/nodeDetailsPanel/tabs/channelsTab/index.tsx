@@ -190,7 +190,7 @@ export const ChannelsTab: React.FC<PanelTabProps> = (props) => {
       ) : (
         <div className="msla-channel-settings-container">
           <div className="msla-channel-title-description">
-            {stringResources.CHANNEL_DESCRIPTION} <Link href={''}>{stringResources.LEARN_MORE}</Link>
+            {stringResources.CHANNEL_DESCRIPTION} <Link href={'https://aka.ms/agent-channels'}>{stringResources.LEARN_MORE}</Link>
           </div>
           <div className="msla-channel-settings">
             <SettingToggle
