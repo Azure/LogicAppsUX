@@ -285,14 +285,19 @@ const ScopeCardNode = ({ data, targetPosition = Position.Top, sourcePosition = P
         { actionCount }
       ),
       emptyAgent: intl.formatMessage({
-        defaultMessage: 'No tools were executed ',
-        id: 'ZuQSme',
-        description: 'Text to explain that there are no tools in this agent',
+        defaultMessage: 'This iteration did not involve any tool executions',
+        id: 'iXwUGq',
+        description: 'Text to explain that there are no tools in the agent iteration',
       }),
       addTool: intl.formatMessage({
         defaultMessage: 'Add tool',
         id: 'dXiXiF',
         description: 'Text to explain that there are no tools in this agent',
+      }),
+      noActions: intl.formatMessage({
+        defaultMessage: 'No actions',
+        id: 'CN+Jfd',
+        description: 'Text to explain that there are no actions',
       }),
     }),
     [actionCount, intl]
@@ -395,7 +400,7 @@ const ScopeCardNode = ({ data, targetPosition = Position.Top, sourcePosition = P
       ) : null}
       {showEmptyGraphComponents ? (
         readOnly ? (
-          <p className="no-actions-text">No Actions</p>
+          <p className="no-actions-text">{intlText.noActions}</p>
         ) : (
           <div className={'edge-drop-zone-container'}>
             <DropZone graphId={scopeId} parentId={id} isLeaf={isLeaf} tabIndex={nodeIndex} />
