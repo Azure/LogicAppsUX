@@ -40,9 +40,9 @@ export const AgentInstructionEditor = ({
     id: 'cC7hlj',
   });
   const systemPlaceholder = intl.formatMessage({
-    defaultMessage: 'Enter instructions for the agent',
-    description: 'Agent System placeholder',
-    id: '1MXRVZ',
+    defaultMessage: 'Enter the instructions for the agent.',
+    description: 'Agent system placeholder',
+    id: 'dlLxEo',
   });
   const userPlaceholder = intl.formatMessage({
     defaultMessage: 'Enter instructions for the user',
