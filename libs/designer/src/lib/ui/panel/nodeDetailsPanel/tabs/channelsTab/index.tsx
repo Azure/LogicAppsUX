@@ -1,12 +1,11 @@
-import type { PanelTabFn, PanelTabProps } from '@microsoft/designer-ui';
+import { getSettingLabel, SettingToggle, type PanelTabFn, type PanelTabProps } from '@microsoft/designer-ui';
 import constants from '../../../../../common/constants';
-import { MessageBarBody, Switch, type SwitchOnChangeData } from '@fluentui/react-components';
+import { MessageBarBody } from '@fluentui/react-components';
 import { useCallback, useMemo, useState } from 'react';
 import { useIntl } from 'react-intl';
 import { useDispatch, useSelector } from 'react-redux';
 import type { RootState, AppDispatch } from '../../../../../core/store';
-import { MessageBar, MessageBarType } from '@fluentui/react';
-import ChannelContent from './ChannelContent';
+import { Link, MessageBar } from '@fluentui/react';
 import type { SupportedChannels } from '@microsoft/logic-apps-shared';
 import { deinitializeNodes, initializeNodeOperationInputsData } from '../../../../../core/state/operation/operationMetadataSlice';
 import { getAllNodeData } from '../../../../../core/configuretemplate/utils/helper';
@@ -36,32 +35,59 @@ export const ChannelsTab: React.FC<PanelTabProps> = (props) => {
 
   const stringResources = useMemo(
     () => ({
-      ENABLED: intl.formatMessage({
-        defaultMessage: 'Enabled',
-        id: 'rRM1pj',
-        description: 'Channel enabled.',
-      }),
-      DISABLED: intl.formatMessage({
-        defaultMessage: 'Disabled',
-        id: 'OnjMM3',
-        description: 'Channel disabled.',
-      }),
       NO_CHANNEL_SUPPORTED_MSG: intl.formatMessage({
         defaultMessage: 'No channel supported for this agent.',
         id: 'di6MC0',
         description: 'channel not supported message',
       }),
-      OUTPUT_CHANNEL_MESSAGE: intl.formatMessage({
+      INPUT_OUTPUT_TITLE: intl.formatMessage({
+        defaultMessage: 'Enable both input and output channel',
+        id: 'KO3EeY',
+        description: 'Channel input/output.',
+      }),
+      INPUT_OUTPUT_INFO: intl.formatMessage({
         defaultMessage:
-          'Channels will be auto-configured to help you communicate with the agent easily. Disable Output channel if you do not want to receive messages from the agent and only want to send messages to the agent.',
-        id: '7df0xk',
-        description: 'Channel info message.',
+          'The agent stays active and responsive throughout the session, awaiting input and generating output until the user explicitly stops the run.',
+        id: '9VE4qe',
+        description: 'Input and output channel info config.',
+      }),
+      INPUT_OUTPUT_DESCRIPTION: intl.formatMessage({
+        defaultMessage:
+          'Enabling both input and output channels allows for seamless, real-time interaction with the agent, facilitating the development of conversational experiences.',
+        id: 'Bj6h0r',
+        description: 'Input and output channel configuration.',
+      }),
+      INPUT_TITLE: intl.formatMessage({
+        defaultMessage: 'Enable only input channel',
+        id: 'v4oypz',
+        description: 'Channel input.',
+      }),
+      INPUT_INFO: intl.formatMessage({
+        defaultMessage:
+          'The agent stays idle but active, waiting for user input. Once input is received, it proceeds to process the data and continue through the workflow.',
+        id: 'tBK+HP',
+        description: 'Input channel info config.',
+      }),
+      INPUT_DESCRIPTION: intl.formatMessage({
+        defaultMessage:
+          'Configuring only the input channel enables you to send messages to the agent while maintaining an active workflow.',
+        id: 'Y+cxTz',
+        description: 'Input channel configuration.',
+      }),
+      CHANNEL_DESCRIPTION: intl.formatMessage({
+        defaultMessage:
+          'Configuring channels for your agent will help you communicate with the agent. We will automatically configure the details for you upon enabling the channel.',
+        id: 'op3Gy7',
+        description: 'Channel description.',
+      }),
+      LEARN_MORE: intl.formatMessage({
+        defaultMessage: 'Learn more',
+        id: 'M2ICLg',
+        description: 'Learn more about channels.',
       }),
     }),
     [intl]
   );
-
-  const enabled = useMemo(() => !!inputChannelParameters, [inputChannelParameters]);
 
   const disableOperation = useCallback(
     (operationOptions: { input: boolean; output: boolean }) => {
@@ -162,37 +188,46 @@ export const ChannelsTab: React.FC<PanelTabProps> = (props) => {
           <MessageBarBody>{stringResources.NO_CHANNEL_SUPPORTED_MSG}</MessageBarBody>
         </MessageBar>
       ) : (
-        <>
-          <Switch
-            checked={enabled}
-            onChange={(_, data: SwitchOnChangeData) => {
-              if (data.checked) {
-                initializeOperation({ input: true, output: true });
-              } else {
-                disableOperation({ input: true, output: true });
-              }
-            }}
-            style={{ display: 'flex', marginBottom: '10px' }}
-            label={enabled ? stringResources.ENABLED : stringResources.DISABLED}
-          />
-          {enabled && (
-            <>
-              <MessageBar messageBarType={MessageBarType.info} isMultiline={true}>
-                {stringResources.OUTPUT_CHANNEL_MESSAGE}
-              </MessageBar>
-              <ChannelContent
-                selectedNodeId={selectedNodeId}
-                // TODO: Add support for multiple channels
-                channelToAdd={channel}
-                inputNodeId={inputNodeId}
-                outputNodeId={outputNodeId}
-                initializeOperation={initializeOperation}
-                disableOperation={disableOperation}
-                isLoading={isLoading}
-              />
-            </>
-          )}
-        </>
+        <div className="msla-channel-settings-container">
+          <div className="msla-channel-title-description">
+            {stringResources.CHANNEL_DESCRIPTION} <Link href={''}>{stringResources.LEARN_MORE}</Link>
+          </div>
+          <div className="msla-channel-settings">
+            <SettingToggle
+              disabled={isLoading}
+              readOnly={false}
+              checked={!!inputChannelParameters && !!outputChannelParameters}
+              onToggleInputChange={(_, checked?: boolean) => {
+                if (checked) {
+                  initializeOperation({ input: true, output: true });
+                } else {
+                  disableOperation({ input: true, output: true });
+                }
+              }}
+              customLabel={getSettingLabel(
+                stringResources.INPUT_OUTPUT_TITLE,
+                stringResources.INPUT_OUTPUT_INFO,
+                stringResources.INPUT_OUTPUT_DESCRIPTION
+              )}
+              ariaLabel={stringResources.INPUT_OUTPUT_TITLE}
+            />
+            <SettingToggle
+              disabled={isLoading}
+              readOnly={false}
+              checked={!!inputChannelParameters && !outputChannelParameters}
+              onToggleInputChange={(_, checked?: boolean) => {
+                if (checked) {
+                  initializeOperation({ input: true, output: false });
+                  disableOperation({ input: false, output: true });
+                } else {
+                  disableOperation({ input: true, output: true });
+                }
+              }}
+              customLabel={getSettingLabel(stringResources.INPUT_TITLE, stringResources.INPUT_INFO, stringResources.INPUT_DESCRIPTION)}
+              ariaLabel={stringResources.INPUT_TITLE}
+            />
+          </div>
+        </div>
       )}
     </>
   );
