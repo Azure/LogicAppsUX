@@ -22,8 +22,7 @@ import {
   validateWorkflowPath,
 } from '../../../utils/unitTests';
 import { tryGetLogicAppProjectRoot } from '../../../utils/verifyIsProject';
-import { ensureDirectoryInWorkspace, getWorkflowNode, getWorkspaceFolder } from '../../../utils/workspace';
-import type { IAzureConnectorsContext } from '../azureConnectorWizard';
+import { ensureDirectoryInWorkspace, getWorkflowNode, getWorkspaceFolder, getWorkspacePath } from '../../../utils/workspace';
 import { type IActionContext, callWithTelemetryAndErrorHandling, parseError } from '@microsoft/vscode-azext-utils';
 import * as path from 'path';
 import * as vscode from 'vscode';
@@ -33,16 +32,12 @@ import { ConvertToWorkspace } from '../../createNewCodeProject/CodeProjectBase/C
 
 /**
  * Creates a unit test for a Logic App workflow (codeful only), with telemetry logging and error handling.
- * @param {IAzureConnectorsContext} context - The context object for Azure Connectors.
+ * @param {IActionContext} context - The action context.
  * @param {vscode.Uri | undefined} node - The URI of the workflow node, if available.
  * @param {any} unitTestDefinition - The definition of the unit test.
  * @returns {Promise<void>} - A Promise that resolves when the unit test is created.
  */
-export async function saveBlankUnitTest(
-  context: IAzureConnectorsContext,
-  node: vscode.Uri | undefined,
-  unitTestDefinition: any
-): Promise<void> {
+export async function saveBlankUnitTest(context: IActionContext, node: vscode.Uri | undefined, unitTestDefinition: any): Promise<void> {
   const startTime = Date.now();
 
   // Initialize telemetry properties
@@ -74,10 +69,6 @@ export async function saveBlankUnitTest(
   });
 
   try {
-    // Get workspace and project root
-    const workspaceFolder = await getWorkspaceFolder(context);
-    const projectPath = await tryGetLogicAppProjectRoot(context, workspaceFolder);
-
     if (!(await ConvertToWorkspace(context))) {
       logTelemetry(context, {
         multiRootWorkspaceValid: 'false',
@@ -105,7 +96,17 @@ export async function saveBlankUnitTest(
     });
 
     // Determine workflow node
-    const workflowNode = node ? (getWorkflowNode(node) as vscode.Uri) : await selectWorkflowNode(context, projectPath);
+    let workflowNode = getWorkflowNode(node) as vscode.Uri;
+    let projectPath: string | undefined;
+    if (workflowNode) {
+      const workspaceFolder = getWorkspacePath(workflowNode.fsPath);
+      projectPath = await tryGetLogicAppProjectRoot(context, workspaceFolder);
+    } else {
+      const workspaceFolder = await getWorkspaceFolder(context);
+      projectPath = await tryGetLogicAppProjectRoot(context, workspaceFolder);
+      workflowNode = await selectWorkflowNode(context, projectPath);
+    }
+
     logTelemetry(context, {
       workflowNodeSelected: 'true',
       workflowNodePath: workflowNode ? workflowNode.fsPath : '',
@@ -188,7 +189,7 @@ export async function saveBlankUnitTest(
 
 /**
  * Generates a codeful unit test by calling the backend API, unzipping the response, and creating the .cs file.
- * @param {IAzureConnectorsContext} context - The context for Azure Connectors.
+ * @param {IActionContext} context - The action context.
  * @param {string} projectPath - The path to the project directory.
  * @param {string} workflowName - The name of the workflow for which the test is being created.
  * @param {string} unitTestName - The name of the unit test to be created.
@@ -198,7 +199,7 @@ export async function saveBlankUnitTest(
  * @returns {Promise<void>} - A promise that resolves when the unit test has been generated.
  */
 async function generateBlankCodefulUnitTest(
-  context: IAzureConnectorsContext,
+  context: IActionContext,
   projectPath: string,
   workflowName: string,
   unitTestName: string,

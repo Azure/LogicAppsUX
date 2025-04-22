@@ -13,7 +13,7 @@ import { dataMapNameValidation } from '../../../constants';
 
 export default class DataMapperExt {
   public static async openDataMapperPanel(context: IActionContext, dataMapName?: string, mapDefinitionData?: MapDefinitionData) {
-    await startBackendRuntime(ext.logicAppWorkspace, context);
+    await startBackendRuntime(ext.defaultLogicAppPath, context);
     const name =
       dataMapName ??
       (await context.ui.showInputBox({

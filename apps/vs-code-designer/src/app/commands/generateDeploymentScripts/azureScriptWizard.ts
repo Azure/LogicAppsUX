@@ -36,11 +36,7 @@ export interface IAzureScriptWizard extends IProjectWizardContext, IActionContex
  */
 // Your existing function for creating the Azure Wizard
 export function createAzureWizard(wizardContext: IAzureScriptWizard): AzureWizard<IAzureScriptWizard> {
-  if (isMultiRootWorkspace) {
-    wizardContext.isValidWorkspace = true;
-  } else {
-    wizardContext.isValidWorkspace = false;
-  }
+  wizardContext.isValidWorkspace = isMultiRootWorkspace();
 
   // Create the Azure Wizard with the modified steps
   return new AzureWizard(wizardContext, {
@@ -92,8 +88,8 @@ export class SourceControlPathListStep extends AzureWizardExecuteStep<IAzureScri
 
 // Define the ConfigureInitialLogicAppStep class
 class ConfigureInitialLogicAppStep extends AzureWizardPromptStep<IAzureScriptWizard> {
-  public async prompt(context: IAzureScriptWizard): Promise<void> {
-    context.enabled = true;
+  public async prompt(_: IAzureScriptWizard): Promise<void> {
+    // No prompt needed for this step
   }
 
   public shouldPrompt(): boolean {
@@ -101,6 +97,7 @@ class ConfigureInitialLogicAppStep extends AzureWizardPromptStep<IAzureScriptWiz
   }
 
   public async getSubWizard(context: IAzureScriptWizard): Promise<IWizardOptions<IAzureScriptWizard> | undefined> {
+    // TODO - this looks like it may have side effects by setting context.subscriptionId and context.resourceGroup
     const azurePromptSteps: AzureWizardPromptStep<IActionContext>[] = [];
     const subscriptionPromptStep: AzureWizardPromptStep<IActionContext> | undefined =
       await ext.azureAccountTreeItem.getSubscriptionPromptStep(context);

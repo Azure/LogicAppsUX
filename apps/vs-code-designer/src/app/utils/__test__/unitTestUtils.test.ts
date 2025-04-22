@@ -1,13 +1,13 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 import axios from 'axios';
+import * as childProcess from 'child_process';
 import * as fse from 'fs-extra';
 import * as util from 'util';
 import path from 'path';
-import * as localizeModule from '../../../../localize';
-import * as vscodeConfigSettings from '../../../utils/vsCodeConfig/settings';
-import * as cpUtils from '../../../utils/funcCoreTools/cpUtils';
-import { ext } from '../../../../extensionVariables';
-import type { IAzureConnectorsContext } from '../../../commands/workflows/azureConnectorWizard';
+import * as localizeModule from '../../../localize';
+import * as vscodeConfigSettings from '../../utils/vsCodeConfig/settings';
+import * as cpUtils from '../../utils/funcCoreTools/cpUtils';
+import { ext } from '../../../extensionVariables';
 import {
   extractAndValidateRunId,
   validateRunId,
@@ -27,7 +27,8 @@ import {
   updateTestsSln,
   validateWorkflowPath,
   validateUnitTestName,
-} from '../../unitTests';
+} from '../unitTests';
+import type { IActionContext } from '@microsoft/vscode-azext-utils';
 
 // ============================================================================
 // Global Constants and Test Hooks
@@ -43,7 +44,10 @@ const fakeLogicAppName = 'MyLogicApp';
 
 // Global beforeEach hook to set up common values
 beforeEach(() => {
-  ext.designTimePort = 1234; // ensure designTimePort is defined for tests
+  ext.designTimeInstances.set(projectPath, {
+    port: 1234,
+    process: {} as childProcess.ChildProcess,
+  });
   ext.outputChannel = { appendLog: vi.fn() } as any;
 });
 
@@ -371,13 +375,13 @@ describe('generateClassCode', () => {
 
 describe('logTelemetry function', () => {
   it('should add properties to context.telemetry.properties', () => {
-    const context = { telemetry: { properties: {} } } as unknown as IAzureConnectorsContext;
+    const context = { telemetry: { properties: {} } } as unknown as IActionContext;
     logTelemetry(context, { key1: 'value1', key2: 'value2' });
     expect(context.telemetry.properties).toEqual({ key1: 'value1', key2: 'value2' });
   });
 
   it('should merge properties when called multiple times', () => {
-    const context = { telemetry: { properties: { key1: 'initialValue' } } } as unknown as IAzureConnectorsContext;
+    const context = { telemetry: { properties: { key1: 'initialValue' } } } as unknown as IActionContext;
     logTelemetry(context, { key2: 'value2' });
     expect(context.telemetry.properties).toEqual({ key1: 'initialValue', key2: 'value2' });
     logTelemetry(context, { key1: 'updatedValue', key3: 'value3' });
@@ -407,7 +411,10 @@ describe('getOperationMockClassContent with no actions', () => {
       })
     );
     ext.outputChannel = { appendLog: vi.fn() } as any;
-    ext.designTimePort = 1234;
+    ext.designTimeInstances.set(projectPath, {
+      port: 1234,
+      process: {} as childProcess.ChildProcess,
+    });
     vi.spyOn(axios, 'get').mockResolvedValue({ data: ['Request'] });
   });
 
@@ -497,7 +504,11 @@ describe('getOperationMockClassContent', () => {
       })
     );
     ext.outputChannel = { appendLog: vi.fn() } as any;
-    ext.designTimePort = 1234;
+    // Set designTimePort and stub axios.get so isMockable works without error
+    ext.designTimeInstances.set(projectPath, {
+      port: 1234,
+      process: {} as childProcess.ChildProcess,
+    });
     vi.spyOn(axios, 'get').mockResolvedValue({ data: ['Http'] });
   });
 
@@ -1515,7 +1526,7 @@ using System.IO;
 namespace <%= LogicAppName %>.Tests
 {
     public class TestExecutor
-    {                
+    {
         /// <summary>
         /// The root directory.
         /// </summary>

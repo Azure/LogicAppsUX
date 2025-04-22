@@ -13,7 +13,7 @@ import { getWorkspaceFolder } from '../../utils/workspace';
 import { verifyAndPromptToCreateProject } from '../../utils/verifyIsProject';
 
 export const createNewDataMapCmd = async (context: IActionContext) => {
-  if (isNullOrUndefined(ext.logicAppWorkspace)) {
+  if (isNullOrUndefined(ext.defaultLogicAppPath)) {
     const workspaceFolder = await getWorkspaceFolder(
       context,
       localize('openLogicAppsProject', 'You must have a logic apps project open to use the Data Mapper.')
@@ -23,7 +23,7 @@ export const createNewDataMapCmd = async (context: IActionContext) => {
     if (!projectPath) {
       return;
     }
-    ext.logicAppWorkspace = projectPath;
+    ext.defaultLogicAppPath = projectPath;
   }
   DataMapperExt.openDataMapperPanel(context);
 };
@@ -31,7 +31,7 @@ export const createNewDataMapCmd = async (context: IActionContext) => {
 export const loadDataMapFileCmd = async (context: IActionContext, uri: Uri) => {
   let mapDefinitionPath: string | undefined = uri?.fsPath;
   let draftFileIsFoundAndShouldBeUsed = false;
-  if (isNullOrUndefined(ext.logicAppWorkspace)) {
+  if (isNullOrUndefined(ext.defaultLogicAppPath)) {
     const workspaceFolder = await getWorkspaceFolder(
       context,
       localize('openLogicAppsProject', 'You must have a logic apps project open to use the Data Mapper.')
@@ -41,14 +41,14 @@ export const loadDataMapFileCmd = async (context: IActionContext, uri: Uri) => {
     if (!projectPath) {
       return;
     }
-    ext.logicAppWorkspace = projectPath;
+    ext.defaultLogicAppPath = projectPath;
   }
 
   // Handle if Uri isn't provided/defined (cmd pallette or btn)
   if (!mapDefinitionPath) {
     const fileUris = await window.showOpenDialog({
       title: 'Select a data map definition to load',
-      defaultUri: Uri.file(path.join(ext.logicAppWorkspace, dataMapDefinitionsPath)),
+      defaultUri: Uri.file(path.join(ext.defaultLogicAppPath, dataMapDefinitionsPath)),
       canSelectMany: false,
       canSelectFiles: true,
       canSelectFolders: false,
@@ -108,7 +108,7 @@ export const loadDataMapFileCmd = async (context: IActionContext, uri: Uri) => {
   }
 
   // Attempt to load schema files if specified
-  const schemasFolder = path.join(ext.logicAppWorkspace, schemasPath);
+  const schemasFolder = path.join(ext.defaultLogicAppPath, schemasPath);
   const srcSchemaPath = path.join(schemasFolder, mapDefinition.$sourceSchema);
   const tgtSchemaPath = path.join(schemasFolder, mapDefinition.$targetSchema);
 

@@ -2,6 +2,7 @@
  *  Copyright (c) Microsoft Corporation. All rights reserved.
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
+import * as path from 'path';
 import {
   workflowLocationKey,
   workflowManagementBaseURIKey,
@@ -28,14 +29,24 @@ export interface IAzureConnectorsContext extends IActionContext {
 
 export function createAzureWizard(wizardContext: IAzureConnectorsContext, projectPath: string): AzureWizard<IAzureConnectorsContext> {
   return new AzureWizard(wizardContext, {
-    promptSteps: [new GetSubscriptionDetailsStep()],
+    promptSteps: [new GetSubscriptionDetailsStep(projectPath)],
     executeSteps: [new SaveAzureContext(projectPath)],
   });
 }
 
 class GetSubscriptionDetailsStep extends AzureWizardPromptStep<IAzureConnectorsContext> {
+  private _projectPath: string;
+
+  constructor(projectPath: string) {
+    super();
+    this._projectPath = projectPath;
+  }
+
   public async prompt(context: IAzureConnectorsContext): Promise<void> {
-    const placeHolder: string = localize('enableAzureResource', 'Enable connectors in Azure');
+    const placeHolder: string = localize(
+      'enableAzureResource',
+      `Enable connectors in Azure for Logic App ${path.basename(this._projectPath)}`
+    );
     const picks: IAzureQuickPickItem<string>[] = [
       { label: localize('useConnectorsFromAzure', 'Use connectors from Azure'), data: 'yes' },
       { label: localize('skipConnectorsFromAzure', 'Skip for now'), data: 'no' },
