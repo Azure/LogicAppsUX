@@ -29,7 +29,7 @@ export async function pickCustomCodeNetHostProcess(
     throw new Error(
       localize(
         'noFuncTask',
-        'Failed to find a running func task for the logic app "{0}" corresponding to the functions project "{1}". The functions host must be running to attach the debugger.',
+        'Failed to find a running func task for the logic app "{0}" corresponding to the functions project "{1}". The logic app must be running to attach the debugger.',
         functionsProjectMetadata.logicAppName,
         functionsProjectMetadata.functionAppName
       )
