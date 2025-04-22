@@ -35,8 +35,8 @@ import { ConvertToWorkspace } from './app/commands/createNewCodeProject/CodeProj
 import TelemetryReporter from '@vscode/extension-telemetry';
 import { createVSCodeAzureSubscriptionProvider } from './app/utils/services/VSCodeAzureSubscriptionProvider';
 import { logSubscriptions } from './app/utils/telemetry';
-import type { Executable, ServerOptions, LanguageClientOptions } from 'vscode-languageclient/node';
-import { TransportKind, LanguageClient } from 'vscode-languageclient/node';
+import type { Executable, ServerOptions, LanguageClientOptions, HoverMiddleware, Middleware } from 'vscode-languageclient/node';
+import { LanguageClient } from 'vscode-languageclient/node';
 
 const perfStats = {
   loadStartTime: Date.now(),
@@ -49,33 +49,53 @@ let client: LanguageClient;
 
 export async function activate(context: vscode.ExtensionContext) {
   const exe: Executable = {
-    command: 'abc',
-    transport: {
-      kind: TransportKind.socket,
-      port: 6009,
-    },
-    //options:
+    command: 'dotnet',
+    args: ['C:\\Users\\dacogbur\\source\\repos\\ConsoleApp1\\ConsoleApp1\\bin\\Release\\net9.0\\publish\\ConsoleApp1.dll'],
   };
 
-  // If the extension is launched in debug mode then the debug server options are used
-  // Otherwise the run options are used
   const serverOptions: ServerOptions = {
     debug: exe,
     run: exe,
   };
 
-  // Options to control the language client
-  const clientOptions: LanguageClientOptions = {
-    // Register the server for plain text documents
-    documentSelector: [{ scheme: 'file', language: 'plaintext' }],
-    synchronize: {
-      // Notify the server about file changes to '.clientrc files contained in the workspace
-      fileEvents: vscode.workspace.createFileSystemWatcher('**/**.cs'),
+  const fileSystemWatcher = vscode.workspace.createFileSystemWatcher('**/*.cs');
+
+  fileSystemWatcher.onDidChange((uri) => {
+    console.log(`File changed: ${uri.fsPath}`);
+  });
+
+  const hoverMiddleware: HoverMiddleware = {
+    provideHover: (document, position, token, next) => {
+      console.log(`Hover requested at ${position.line}:${position.character}`);
+      return next(document, position, token);
     },
+  };
+
+  const generalMiddleware: Middleware = {
+    sendRequest: (type, param, token, next) => {
+      console.log(`Request sent: ${type}`);
+      return next(type, param, token);
+    },
+    sendNotification: (type, next, params) => {
+      console.log(`Notification sent: ${type}`);
+      return next(type, params);
+    },
+  };
+
+  const clientOptions: LanguageClientOptions = {
+    documentSelector: [{ scheme: 'file', language: 'csharp' }],
+    synchronize: {
+      fileEvents: fileSystemWatcher,
+    },
+    middleware: { ...hoverMiddleware, ...generalMiddleware },
   };
 
   // Create the language client and start the client.
   client = new LanguageClient('languageServerExample', 'Language Server Example', serverOptions, clientOptions);
+
+  client.onDidChangeState((e) => {
+    console.log(`Client state changed: ${e.newState}`);
+  });
 
   client.start();
 
