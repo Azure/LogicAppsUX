@@ -30,9 +30,9 @@ export const AgentInstructionEditor = ({
   }, [initialValue]);
   const description = intl.formatMessage({
     defaultMessage:
-      'Add instructions so the agent understands its role and tasks. It can be helpful to include information about workflow structure, restrictions, tools, and interaction in certain scenarios.',
+      'Add instructions so the agent understands its role and tasks. Include helpful information about workflow structure, restrictions, tools, and interactions in specific scenarios.',
     description: 'Description for agent instruction editor',
-    id: '6kDNbB',
+    id: 'hRLAFg',
   });
   const descriptionLink = intl.formatMessage({
     defaultMessage: 'Tips for writing agent instructions',

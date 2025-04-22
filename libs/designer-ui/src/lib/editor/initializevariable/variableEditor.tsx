@@ -119,9 +119,9 @@ export const VariableEditor = ({
   });
 
   const deleteButtonDisabledAgentParameter = intl.formatMessage({
-    defaultMessage: 'Cannot delete the last agent parameter',
-    id: 'hcpXlK',
-    description: 'Delete label',
+    defaultMessage: "Can't delete the last agent parameter.",
+    id: 'zOq84J',
+    description: 'Delete agent last parameter label',
   });
 
   const editButtonTitle = intl.formatMessage({
@@ -161,9 +161,9 @@ export const VariableEditor = ({
   });
 
   const typeAgentParameterPlaceholder = intl.formatMessage({
-    defaultMessage: 'Select agent parameter type',
-    id: 'gQSH6J',
-    description: 'Placeholder for agent parameter type',
+    defaultMessage: 'Select the agent parameter type',
+    id: 'vp016T',
+    description: 'Placeholder for the agent parameter type',
   });
 
   const valuePlaceHolder = intl.formatMessage({

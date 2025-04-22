@@ -19,8 +19,8 @@ export const AgentParameterButton = ({ openTokenPicker, shifted }: AgentParamete
   const boxRef = useRef<HTMLDivElement>(null);
 
   const agentParameterButtonText = intl.formatMessage({
-    defaultMessage: 'Click to generate Agent Parameter',
-    id: 'fgeXzC',
+    defaultMessage: 'Select to generate the agent parameter',
+    id: 'ol3TWp',
     description: 'Button label to automaticlaly generate agent parameter',
   });
 

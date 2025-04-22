@@ -44,7 +44,7 @@ export const CreateAgentParameter = ({
   }, [defaultDescription, defaultType, defaultName]);
 
   const labels = {
-    title: intl.formatMessage({ defaultMessage: 'Create new agent parameter', id: 'uhxyi+', description: 'Create new parameter' }),
+    title: intl.formatMessage({ defaultMessage: 'Create agent parameter', id: 'YsOyuE', description: 'Create agent parameter' }),
     editTitle: intl.formatMessage({ defaultMessage: 'Edit agent parameter', id: 'nwTyEd', description: 'Edit parameter' }),
     updateButton: intl.formatMessage({ defaultMessage: 'Update', id: 'Xpo7B8', description: 'Update button label' }),
     createButton: intl.formatMessage({ defaultMessage: 'Create', id: 'M4MGQN', description: 'Create button label' }),

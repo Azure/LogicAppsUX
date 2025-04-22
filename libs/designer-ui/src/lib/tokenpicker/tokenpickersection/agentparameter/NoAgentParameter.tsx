@@ -8,8 +8,8 @@ export const NoAgentParameters = ({ usingSearch, clearSearch }: { usingSearch: b
   const intl = useIntl();
 
   const noAgentParametersTitle = intl.formatMessage({
-    defaultMessage: 'No agent parameters to display',
-    id: 'tjzxSa',
+    defaultMessage: 'No agent parameters are available to display.',
+    id: 'doABYk',
     description: 'Title for no agent parameters found',
   });
 
