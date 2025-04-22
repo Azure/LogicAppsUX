@@ -20,7 +20,7 @@ export const CustomizeWorkflows = ({
     <div className="msla-templates-tab msla-panel-no-description-tab">
       {workflowEntries.length ? (
         workflowEntries.length > 1 ? (
-          <Accordion multiple={true}>
+          <Accordion multiple={true} defaultOpenItems={Object.keys(selectedWorkflowsList)}>
             {Object.entries(selectedWorkflowsList).map(([workflowId, workflowData]) => (
               <AccordionItem value={workflowId} key={workflowId}>
                 <AccordionHeader>
