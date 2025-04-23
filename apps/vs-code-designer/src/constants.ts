@@ -35,6 +35,7 @@ export const schemasDirectory = 'Schemas';
 // Folder names
 export const designTimeDirectoryName = 'workflow-designtime';
 export const testsDirectoryName = 'Tests';
+export const testMockOutputsDirectory = 'MockOutputs';
 export const testResultsDirectoryName = '.testResults';
 export const vscodeFolderName = '.vscode';
 
@@ -177,9 +178,6 @@ export const extensionCommand = {
   dataMapSaveMapXslt: 'azureLogicAppsStandard.dataMap.saveMapXslt',
   createUnitTest: 'azureLogicAppsStandard.createUnitTest',
   saveBlankUnitTest: 'azureLogicAppsStandard.saveBlankUnitTest',
-  editUnitTest: 'azureLogicAppsStandard.editUnitTest',
-  openUnitTestResults: 'azureLogicAppsStandard.openUnitTestResults',
-  runUnitTest: 'azureLogicAppsStandard.runUnitTest',
   vscodeOpenFolder: 'vscode.openFolder',
 } as const;
 export type extensionCommand = (typeof extensionCommand)[keyof typeof extensionCommand];
