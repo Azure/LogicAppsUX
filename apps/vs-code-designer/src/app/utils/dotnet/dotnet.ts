@@ -224,7 +224,7 @@ export function getDotNetCommand(): string {
   return command;
 }
 
-export async function setDotNetCommand(context: IActionContext): Promise<void> {
+export async function setDotNetCommand(): Promise<void> {
   const binariesLocation = getGlobalSetting<string>(autoRuntimeDependenciesPathSettingKey);
   const dotNetBinariesPath = path.join(binariesLocation, dotnetDependencyName);
   const binariesExist = fs.existsSync(dotNetBinariesPath);
@@ -239,7 +239,7 @@ export async function setDotNetCommand(context: IActionContext): Promise<void> {
     fs.chmodSync(dotNetBinariesPath, 0o777);
 
     try {
-      const workspaceLogicAppFolders = await getWorkspaceLogicAppFolders(context);
+      const workspaceLogicAppFolders = await getWorkspaceLogicAppFolders();
       for (const projectPath of workspaceLogicAppFolders) {
         const pathEnv = {
           PATH: newPath,
