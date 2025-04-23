@@ -19,13 +19,33 @@ export async function pickCustomCodeNetHostProcess(
   debugConfig: vscode.DebugConfiguration
 ): Promise<string | undefined> {
   context.telemetry.properties.lastStep = 'getMatchingWorkspaceFolder';
-  const workspace: vscode.WorkspaceFolder = getMatchingWorkspaceFolder(debugConfig);
+  const workspaceFolder: vscode.WorkspaceFolder = getMatchingWorkspaceFolder(debugConfig);
+  if (!workspaceFolder) {
+    const errorMessage = 'Failed to find a workspace folder matching the debug configuration.';
+    context.telemetry.properties.result = 'Failed';
+    context.telemetry.properties.error = errorMessage;
+    throw new Error(localize('noMatchingWorkspaceFolder', errorMessage));
+  }
 
-  context.telemetry.properties.lastStep = 'isCustomCodeFunctionsProject';
-  const functionsProjectMetadata = await getCustomCodeFunctionsProjectMetadata(workspace.uri.fsPath);
+  context.telemetry.properties.lastStep = 'getCustomCodeFunctionsProjectMetadata';
+  const functionsProjectMetadata = await getCustomCodeFunctionsProjectMetadata(workspaceFolder.uri.fsPath);
+  if (!functionsProjectMetadata) {
+    const errorMessage = 'Failed to load metadata for custom code functions project at "{0}".';
+    context.telemetry.properties.result = 'Failed';
+    context.telemetry.properties.error = errorMessage.replace('{0}', workspaceFolder.uri.fsPath);
+    throw new Error(localize('noCustomCodeFunctionsProjectMetadata', errorMessage, workspaceFolder.uri.fsPath));
+  }
+
+  context.telemetry.properties.lastStep = 'findLogicAppFolder';
   const logicAppFolder: vscode.WorkspaceFolder = vscode.workspace.workspaceFolders?.find(
-    (workspace) => workspace.name === functionsProjectMetadata.logicAppName
+    (workspaceFolder) => workspaceFolder.name === functionsProjectMetadata?.logicAppName
   );
+  if (!logicAppFolder) {
+    const errorMessage = 'Failed to find a logic app folder matching the functions project.';
+    context.telemetry.properties.result = 'Failed';
+    context.telemetry.properties.error = errorMessage;
+    throw new Error(localize('noMatchingLogicAppFolder', errorMessage));
+  }
 
   context.telemetry.properties.lastStep = 'getRunningFuncTask';
   const taskInfo: IRunningFuncTask | undefined = runningFuncTaskMap.get(logicAppFolder);
