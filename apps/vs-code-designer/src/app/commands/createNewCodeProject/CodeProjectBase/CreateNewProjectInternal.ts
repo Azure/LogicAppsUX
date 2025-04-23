@@ -14,7 +14,6 @@ import * as path from 'path';
 import { window } from 'vscode';
 
 export async function createRulesFiles(context: IFunctionWizardContext): Promise<void> {
-  // here
   if (context.projectType === ProjectType.rulesEngine) {
     // SampleRuleSet.xml
     const sampleRuleSetPath = path.join(__dirname, 'assets', 'RuleSetProjectTemplate', 'SampleRuleSet');
