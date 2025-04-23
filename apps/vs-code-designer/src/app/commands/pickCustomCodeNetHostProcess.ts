@@ -41,10 +41,10 @@ export async function pickCustomCodeNetHostProcess(
     (workspaceFolder) => workspaceFolder.name === functionsProjectMetadata?.logicAppName
   );
   if (!logicAppFolder) {
-    const errorMessage = 'Failed to find a logic app folder matching the functions project.';
+    const errorMessage = 'Failed to find a logic app folder matching the custom code functions project at "{0}".';
     context.telemetry.properties.result = 'Failed';
-    context.telemetry.properties.error = errorMessage;
-    throw new Error(localize('noMatchingLogicAppFolder', errorMessage));
+    context.telemetry.properties.error = errorMessage.replace('{0}', workspaceFolder.uri.fsPath);
+    throw new Error(localize('noMatchingLogicAppFolder', errorMessage, workspaceFolder.uri.fsPath));
   }
 
   context.telemetry.properties.lastStep = 'getRunningFuncTask';
