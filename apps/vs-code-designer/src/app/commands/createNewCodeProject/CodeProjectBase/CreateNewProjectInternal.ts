@@ -72,11 +72,11 @@ export async function createNewProjectInternalBase(
   });
 
   await wizard.prompt();
-  await wizard.execute();
 
   await createArtifactsFolder(context as IFunctionWizardContext);
   await createRulesFiles(context as IFunctionWizardContext);
   await createLibFolder(context as IFunctionWizardContext);
+  await wizard.execute();
 
   window.showInformationMessage(localize('finishedCreating', 'Finished creating project.'));
 }
