@@ -10,11 +10,11 @@ import { type TemplateEnvironment, updateEnvironment } from '../../../core/state
 import type { TemplateWizardTabProps } from './model';
 
 const TemplateSettings = () => {
-  const { environment } = useSelector((state: RootState) => state.template);
+  const { status } = useSelector((state: RootState) => state.template);
   const dispatch = useDispatch<AppDispatch>();
   const resources = useResourceStrings();
 
-  const environmentValues = useMemo(
+  const statusValues = useMemo(
     () => [
       { id: resources.DevelopmentEnvironment, label: resources.DevelopmentEnvironment, value: 'Development' },
       { id: resources.TestingEnvironment, label: resources.TestingEnvironment, value: 'Testing' },
@@ -26,10 +26,10 @@ const TemplateSettings = () => {
   const items: TemplatesSectionItem[] = [
     {
       label: resources.Status,
-      value: environmentValues.find((env) => env.value === environment)?.label,
+      value: statusValues.find((env) => env.value === status)?.label,
       type: 'dropdown',
-      options: environmentValues,
-      selectedOptions: [environment as string],
+      options: statusValues,
+      selectedOptions: [status as string],
       onOptionSelect: (selectedOptions: string[]) => dispatch(updateEnvironment(selectedOptions[0] as TemplateEnvironment)),
     },
   ];

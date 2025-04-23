@@ -44,16 +44,6 @@ export const useResourceStrings = () => {
       id: '0sbIhI',
       description: 'The text for the production environment',
     }),
-    Published: intl.formatMessage({
-      defaultMessage: 'Published',
-      id: 'mdhy9X',
-      description: 'The text for the published status',
-    }),
-    Unpublished: intl.formatMessage({
-      defaultMessage: 'Unpublished',
-      id: 'pd0whZ',
-      description: 'The text for the unpublished status',
-    }),
     General: intl.formatMessage({
       defaultMessage: 'General',
       id: 'FLeN8N',

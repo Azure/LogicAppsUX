@@ -18,12 +18,12 @@ export const TemplateInfoToast = ({ title, content, show }: { title: string; con
   const toastId = useId('template-info-toast');
   const toasterId = useId('template-info-toaster');
 
-  const { workflows, environment, isPublished } = useSelector((state: RootState) => state.template);
+  const { workflows, status } = useSelector((state: RootState) => state.template);
   const type = useMemo(() => {
     const workflowKeys = Object.keys(workflows);
     return workflowKeys.length === 1 ? 'Workflow' : workflowKeys.length > 1 ? 'Accelerator' : '----';
   }, [workflows]);
-  const statusText = useMemo(() => `${isPublished ? 'Published' : 'Unpublished'}, ${environment}`, [environment, isPublished]);
+  const statusText = useMemo(() => `${status ?? 'Development'}`, [status]);
 
   const { dispatchToast, updateToast } = useToastController(toasterId);
   const toastDetails = useMemo(
