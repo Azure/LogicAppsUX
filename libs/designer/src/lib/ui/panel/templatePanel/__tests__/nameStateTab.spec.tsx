@@ -22,6 +22,7 @@ describe('panel/templatePanel/createWorkflowPanel/nameStateTab', () => {
           id: 'default',
           workflowName: 'workflowName 1',
           kind: undefined,
+          triggerType: '',
           manifest: {
             id: 'default',
             title: 'Template 1',
@@ -55,6 +56,8 @@ describe('panel/templatePanel/createWorkflowPanel/nameStateTab', () => {
       parameterDefinitions: {},
       connections: {},
       errors: {
+        manifest: {},
+        workflows: {},
         parameters: {},
         connections: undefined,
       },

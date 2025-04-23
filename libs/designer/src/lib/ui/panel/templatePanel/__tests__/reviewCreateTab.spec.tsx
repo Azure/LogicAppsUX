@@ -41,6 +41,7 @@ describe('panel/templatePanel/createWorkflowPanel/reviewCreateTab', () => {
           id: 'default',
           workflowName: 'workflowName 1',
           kind: undefined,
+          triggerType: '',
           manifest: {
             id: 'default',
             title: 'Template 1',
@@ -80,6 +81,8 @@ describe('panel/templatePanel/createWorkflowPanel/reviewCreateTab', () => {
       }, {}),
       connections: {},
       errors: {
+        manifest: {},
+        workflows: {},
         parameters: {},
         connections: undefined,
       },

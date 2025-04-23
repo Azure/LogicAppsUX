@@ -5,6 +5,11 @@ export const useTemplatesStrings = () => {
 
   return {
     resourceStrings: {
+      WORKFLOW_NAME_DESCRIPTION: intl.formatMessage({
+        defaultMessage: 'Avoid spaces and the following symbols in your workflow name: \\ / : * ? " < > | @, #, $, %, &',
+        id: 'ZbeL1D',
+        description: 'Description for workflow name field and the expected format of the name.',
+      }),
       SUBSCRIPTION: intl.formatMessage({
         defaultMessage: 'Subscription',
         id: 'K5t+Ia',

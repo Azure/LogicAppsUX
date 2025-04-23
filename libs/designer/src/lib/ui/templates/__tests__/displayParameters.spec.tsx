@@ -89,6 +89,7 @@ describe('ui/templates/DisplayParameters', () => {
           id: 'default',
           workflowName: '',
           kind: undefined,
+          triggerType: '',
           manifest: workflow1Manifest,
           workflowDefinition: {
             $schema: 'https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#',
@@ -111,6 +112,8 @@ describe('ui/templates/DisplayParameters', () => {
       }, {}),
       connections: workflow1Manifest.connections,
       errors: {
+        manifest: {},
+        workflows: {},
         parameters: {},
         connections: undefined,
       },

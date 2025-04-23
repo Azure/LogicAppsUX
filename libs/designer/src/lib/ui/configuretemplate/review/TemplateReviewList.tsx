@@ -2,14 +2,20 @@ import { Accordion, AccordionHeader, AccordionItem, AccordionPanel, Divider, Tex
 import { useResourceStrings } from '../resources';
 import { useTemplatesStrings } from '../../templates/templatesStrings';
 import { TemplatesSection, type TemplatesSectionItem } from '@microsoft/designer-ui';
-import { useSelector } from 'react-redux';
-import type { RootState } from '../../../core/state/templates/store';
+import { useDispatch, useSelector } from 'react-redux';
+import type { AppDispatch, RootState } from '../../../core/state/templates/store';
 import { useIntl } from 'react-intl';
 import { equals, getResourceNameFromId } from '@microsoft/logic-apps-shared';
 import { ConnectorConnectionName } from '../../templates/connections/connector';
-import React, { useMemo } from 'react';
+import React, { useEffect, useMemo } from 'react';
 import { useAllConnectors } from '../../../core/configuretemplate/utils/queries';
 import { WorkflowKind } from '../../../core/state/workflow/workflowInterfaces';
+import {
+  validateParameterDetails,
+  validateTemplateManifest,
+  validateWorkflowManifestsData,
+} from '../../../core/state/templates/templateSlice';
+import { setRunValidation } from '../../../core/state/templates/tabSlice';
 
 const SectionDividerItem: TemplatesSectionItem = {
   type: 'divider',
@@ -17,22 +23,13 @@ const SectionDividerItem: TemplatesSectionItem = {
 };
 
 export const TemplateReviewList = () => {
+  const dispatch = useDispatch<AppDispatch>();
   const intl = useIntl();
   const intlText = {
     TemplateDisplayName: intl.formatMessage({
       defaultMessage: 'Template display name',
       id: 'a7d1Dp',
       description: 'The aria label for the template display name',
-    }),
-    NoConnectionInTemplate: intl.formatMessage({
-      defaultMessage: 'No connections in this template',
-      id: 'oIRKrF',
-      description: 'Text to show no connections present in the template.',
-    }),
-    NoParameterInTemplate: intl.formatMessage({
-      defaultMessage: 'No parameters in this template',
-      id: 'sMjDlb',
-      description: 'Text to show no parameters present in the template.',
     }),
     ConnectorNameLabel: intl.formatMessage({
       defaultMessage: 'Connector Name',
@@ -45,6 +42,13 @@ export const TemplateReviewList = () => {
       description: 'The label for the connector type',
     }),
   };
+
+  useEffect(() => {
+    dispatch(setRunValidation(true));
+    dispatch(validateWorkflowManifestsData());
+    dispatch(validateTemplateManifest());
+    dispatch(validateParameterDetails());
+  }, [dispatch]);
 
   const { connectorKinds, stateTypes, resourceStrings: templateResourceStrings } = useTemplatesStrings();
   const resources = { ...templateResourceStrings, ...connectorKinds, ...stateTypes, ...useResourceStrings(), ...intlText };
