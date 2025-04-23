@@ -34,6 +34,11 @@ export const useResourceStrings = () => {
       id: 'DmZRZn',
       description: 'The text for the development environment',
     }),
+    TestingEnvironment: intl.formatMessage({
+      defaultMessage: 'Testing',
+      id: '/LO3Ia',
+      description: 'The text for the testing environment',
+    }),
     ProductionEnvironment: intl.formatMessage({
       defaultMessage: 'Production',
       id: '0sbIhI',

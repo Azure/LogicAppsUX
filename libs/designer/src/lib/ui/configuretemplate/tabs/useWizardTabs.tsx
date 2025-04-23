@@ -55,11 +55,11 @@ export const useConfigureTemplateWizardTabs = ({
       tabStatusIcon: templateManifestHasError ? 'error' : runValidation ? 'success' : enableWizard ? 'in-progress' : undefined,
       disabled: !enableWizard || isWizardUpdating,
     }),
-    publishTab(intl, resources, dispatch, {
+    reviewPublishTab(intl, resources, dispatch, onPublish, {
       tabStatusIcon: undefined,
       disabled: !enableWizard || isWizardUpdating,
     }),
-    reviewPublishTab(intl, resources, dispatch, onPublish, {
+    publishTab(intl, resources, dispatch, {
       tabStatusIcon: undefined,
       disabled: !enableWizard || isWizardUpdating,
     }),
