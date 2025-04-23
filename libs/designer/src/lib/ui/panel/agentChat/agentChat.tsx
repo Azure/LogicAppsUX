@@ -132,13 +132,13 @@ export const AgentChat = ({
         description: 'Agent chat panel aria label text',
       }),
       agentChatToggleAriaLabel: intl.formatMessage({
-        defaultMessage: 'Toggle agent chat panel',
-        id: '0Jh+AD',
-        description: 'Toggle agent chat panel aria label text',
+        defaultMessage: 'Toggle the agent chat panel.',
+        id: 'fTpBGQ',
+        description: 'Toggle the agent chat panel aria label text',
       }),
       chatReadOnlyMessage: intl.formatMessage({
-        defaultMessage: 'The chat is currently in read-only mode. Agents are not available for live chat.',
-        id: '/fYAbG',
+        defaultMessage: 'The chat is currently in read-only mode. Agents are unavailable for live chat.',
+        id: '7c50FE',
         description: 'Agent chat read-only message',
       }),
       protectedMessage: intl.formatMessage({
