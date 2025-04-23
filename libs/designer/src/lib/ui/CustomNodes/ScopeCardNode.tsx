@@ -394,7 +394,7 @@ const ScopeCardNode = ({ data, targetPosition = Position.Top, sourcePosition = P
         </p>
       ) : null}
       {isAgent && actionCount === 0 && !graphCollapsed ? (
-        <p className="no-actions-text" style={{ margin: shouldShowPager ? 0 : '1em' }} data-automation-id={`scope-${id}-no-tools`}>
+        <p className="no-actions-text" style={{ margin: shouldShowPager ? 0 : '1em 0' }} data-automation-id={`scope-${id}-no-tools`}>
           {isMonitoringView ? intlText.emptyAgent : intlText.addTool}
         </p>
       ) : null}
