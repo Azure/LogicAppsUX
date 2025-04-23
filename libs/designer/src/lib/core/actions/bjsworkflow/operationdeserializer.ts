@@ -305,7 +305,7 @@ export const initializeOperationDetailsForManifest = async (
     ];
   } catch (error: any) {
     const errorMessage = parseErrorMessage(error);
-    const message = `Unable to initialize operation details for operation - ${nodeId}. Error details - ${errorMessage}`;
+    const message = `Can't initialize operation details for operation: ${nodeId}. Error details: ${errorMessage}`;
     LoggerService().log({
       level: LogEntryLevel.Error,
       area: 'operation deserializer',
@@ -500,7 +500,7 @@ const initializeOutputTokensForOperations = (
       LoggerService().log({
         level: LogEntryLevel.Warning,
         area: 'OperationDeserializer:InitializeOutputTokens',
-        message: `Error initializing output tokens for operation - ${operationId}. Error details - ${errorMessage}`,
+        message: `Error occurred while initializing output tokens for operation: ${operationId}. Error details: ${errorMessage}`,
       });
     }
 
@@ -658,9 +658,9 @@ const updateDynamicDataForValidConnection = async (
         errorInfo: {
           level: ErrorLevel.Connection,
           message: intl.formatMessage({
-            defaultMessage: 'Invalid connection, please update your connection to load complete details',
+            defaultMessage: 'Invalid connection. To load complete details, complete or update the connection.',
             id: 'tMdcE1',
-            description: 'Error message to show on connection error during deserialization',
+            description: 'Error message to show for connection error during deserialization.',
           }),
         },
       })
