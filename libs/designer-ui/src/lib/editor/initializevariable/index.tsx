@@ -69,8 +69,8 @@ export const InitializeVariableEditor = ({
   });
 
   const warningTitleAgentParameter = intl.formatMessage({
-    defaultMessage: 'Unable to Parse Agent Parameter Schema',
-    id: '4vZjpN',
+    defaultMessage: "Can't parse the schema for the agent parameter.",
+    id: 'xd5jz/',
     description: 'Warning title for when unable to parse schema',
   });
 
@@ -81,8 +81,8 @@ export const InitializeVariableEditor = ({
   });
 
   const warningAgentParameterBody = intl.formatMessage({
-    defaultMessage: 'This could mean that the agent parameter schema is set up incorrectly.',
-    id: 'JLd6W7',
+    defaultMessage: 'This error might mean that the agent parameter schema is incorrectly set up.',
+    id: 'mnuwWm',
     description: 'Warning body for when unable to parse schema',
   });
 

@@ -102,8 +102,8 @@ export const EdgeContextualMenu = () => {
 
   const newAgentText = intl.formatMessage({
     defaultMessage: 'Add an agentic loop',
-    id: 'J7ybbb',
-    description: 'Text for button to add an agentic loop',
+    id: 'Wq8rLF',
+    description: 'Button text for adding an agentic loop',
   });
 
   const pasteFromClipboard = intl.formatMessage({

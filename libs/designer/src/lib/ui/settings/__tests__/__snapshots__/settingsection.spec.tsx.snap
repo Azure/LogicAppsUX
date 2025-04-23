@@ -9,7 +9,7 @@ exports[`ui/settings/settingsection > should construct 1`] = `
   >
     <Button
       appearance="subtle"
-      aria-label="Collapsed Sample Setting Section, Click to expand"
+      aria-label="Collapsed Sample Setting Section, Select to expand"
       className="msla-setting-section-header"
       icon={<CompoundIcon />}
       onClick={[Function]}

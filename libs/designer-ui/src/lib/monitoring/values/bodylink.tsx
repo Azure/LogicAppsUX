@@ -10,8 +10,8 @@ export const BodyLinkValue: React.FC<ValueProps> = (props) => {
   const Resources = {
     DOWNLOAD_PROMPT_ARIA_LABEL: intl.formatMessage(
       {
-        defaultMessage: `Alt/Option + click to download ''{displayName}''`,
-        id: 'DQV7aK',
+        defaultMessage: `Alt/Option + select to download ''{displayName}''`,
+        id: 'kZk/Ed',
         description:
           'ARIA label text for the download link. Do not remove the double single quotes around the display name, as it is needed to wrap the placeholder text.',
       },

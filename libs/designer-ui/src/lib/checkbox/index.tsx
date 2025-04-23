@@ -55,8 +55,8 @@ export const Checkbox: React.FC<CheckboxProps> = ({
 
   const moreInfoMessage = intl.formatMessage({
     defaultMessage: 'More info',
-    id: 'kvUaFw',
-    description: 'This is shown as an aria label on button as well as the tooltip that is shown after clicking the button',
+    id: 'XY5SKM',
+    description: 'Shown as an aria label on button and as the tooltip shown after you select the button.',
   });
 
   return (

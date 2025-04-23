@@ -34,15 +34,15 @@ export const SelectAgentParameter = ({ agentParameters, onCreateAgentParameter, 
   });
 
   const agentParameterLabel = intl.formatMessage({
-    defaultMessage: 'Agent Parameters',
-    id: '0r+ujR',
-    description: 'Agent Parameters label',
+    defaultMessage: 'Agent parameters',
+    id: 'MKDWQd',
+    description: 'Label for agent parameters',
   });
 
   const createAgentParameterButtonLabel = intl.formatMessage({
     defaultMessage: 'Create new',
-    id: 'FZfFAA',
-    description: 'Create new agent parameter button label',
+    id: 'Ud5V1C',
+    description: 'Button label for create agent parameter',
   });
 
   const onAgentParameterClicked = useCallback(

@@ -24,8 +24,8 @@ export const OperationSearchGroup = (props: OperationSearchGroupProps) => {
 
   const seeMoreText = intl.formatMessage({
     defaultMessage: 'See more',
-    id: 'LlYz9c',
-    description: 'Text that will be clicked to show more details for the connector',
+    id: '0aREuu',
+    description: 'Text to select for more connector information',
   });
 
   return (

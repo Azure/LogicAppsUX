@@ -41,7 +41,7 @@ exports[`ui/monitoring/values/value > should render a body link value 1`] = `
     className="msla-trace-value-text"
   >
     <a
-      aria-label="Alt/Option + click to download 'displayName'"
+      aria-label="Alt/Option + select to download 'displayName'"
       className="ms-Link root-109"
       href="uri"
       onClick={[Function]}

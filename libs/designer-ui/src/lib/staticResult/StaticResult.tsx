@@ -43,8 +43,8 @@ export const StaticResult = ({
   });
 
   const infoButtonLabel = intl.formatMessage({
-    defaultMessage: 'Click for more information on static result',
-    id: 'XL5UbT',
+    defaultMessage: 'Select to view more information about static result',
+    id: 'sjswr/',
     description: 'button label to show more information on static result',
   });
   return (
