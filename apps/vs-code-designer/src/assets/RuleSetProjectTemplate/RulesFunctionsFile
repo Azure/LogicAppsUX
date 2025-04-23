@@ -10,8 +10,10 @@ namespace <%= namespace %>
     using Microsoft.Azure.Functions.Extensions.Workflows;
     using Microsoft.Azure.WebJobs;
     using Microsoft.Azure.Workflows.RuleEngine;
+    using Microsoft.Azure.Workflows.RuleEngine.Common;
     using Microsoft.Extensions.Logging;
     using System.Xml;
+    using System.Text;
 
     /// <summary>
     /// Represents the <%= methodName %> flow invoked function.
@@ -20,9 +22,12 @@ namespace <%= namespace %>
     {
         private readonly ILogger<<%= methodName %>> logger;
 
+        private FileStoreRuleExplorer ruleExplorer;
+
         public <%= methodName %>(ILoggerFactory loggerFactory)
         {
             logger = loggerFactory.CreateLogger<<%= methodName %>>();
+            this.ruleExplorer = new FileStoreRuleExplorer(loggerFactory); 
         }
 
         /// <summary>
@@ -53,9 +58,7 @@ namespace <%= namespace %>
             
             try
             {
-                // Get the ruleset based on ruleset name
-                var ruleExplorer = new FileStoreRuleExplorer();
-                var ruleSet = ruleExplorer.GetRuleSet(ruleSetName);
+                var ruleSet = this.ruleExplorer.GetRuleSet(ruleSetName);
 
                 // Check if ruleset exists
                 if(ruleSet == null)
@@ -93,6 +96,18 @@ namespace <%= namespace %>
             {
                 // Log any rule engine exceptions
                 this.logger.LogCritical(ruleEngineException.ToString());
+                throw;
+            }
+            catch(XmlException xmlException)
+            {
+                // Log any xml exceptions
+                this.logger.LogCritical("Encountered exception while handling xml. " + xmlException.ToString());
+                throw;
+            }
+            catch(Exception ex)
+            {
+                // Log any other exceptions
+                this.logger.LogCritical(ex.ToString());
                 throw;
             }
         }

@@ -15,11 +15,18 @@ import { window } from 'vscode';
 
 export async function createRulesFiles(context: IFunctionWizardContext): Promise<void> {
   if (context.projectType === ProjectType.rulesEngine) {
-    const xmlTemplatePath = path.join(__dirname, 'assets', 'RuleSetProjectTemplate', 'SampleRuleSet');
-    const xmlRuleSetPath = path.join(context.projectPath, 'Artifacts', 'Rules', 'SampleRuleSet.xml');
-    const xmlTemplateContent = await fse.readFile(xmlTemplatePath, 'utf-8');
-    const xmlFileContent = xmlTemplateContent.replace(/<%= methodName %>/g, context.methodName);
-    await fse.writeFile(xmlRuleSetPath, xmlFileContent);
+    // SampleRuleSet.xml
+    const sampleRuleSetPath = path.join(__dirname, 'assets', 'RuleSetProjectTemplate', 'SampleRuleSet');
+    const sampleRuleSetXMLPath = path.join(context.projectPath, 'Artifacts', 'Rules', 'SampleRuleSet.xml');
+    const sampleRuleSetXMLContent = await fse.readFile(sampleRuleSetPath, 'utf-8');
+    const sampleRuleSetXMLFileContent = sampleRuleSetXMLContent.replace(/<%= methodName %>/g, context.methodName);
+    await fse.writeFile(sampleRuleSetXMLPath, sampleRuleSetXMLFileContent);
+
+    // SchemaUser.xsd
+    const schemaUserPath = path.join(__dirname, 'assets', 'RuleSetProjectTemplate', 'SchemaUser');
+    const schemaUserXSDPath = path.join(context.projectPath, 'Artifacts', 'Schemas', 'SchemaUser.xsd');
+    const schemaUserXSDContent = await fse.readFile(schemaUserPath, 'utf-8');
+    await fse.writeFile(schemaUserXSDPath, schemaUserXSDContent);
   }
 }
 
@@ -65,11 +72,11 @@ export async function createNewProjectInternalBase(
   });
 
   await wizard.prompt();
-  await wizard.execute();
 
   await createArtifactsFolder(context as IFunctionWizardContext);
   await createRulesFiles(context as IFunctionWizardContext);
   await createLibFolder(context as IFunctionWizardContext);
+  await wizard.execute();
 
   window.showInformationMessage(localize('finishedCreating', 'Finished creating project.'));
 }
