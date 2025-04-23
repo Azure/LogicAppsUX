@@ -4,11 +4,10 @@
  *--------------------------------------------------------------------------------------------*/
 import { ExistingWorkspaceStep } from '../createNewProject/createProjectSteps/ExistingWorkspaceStep';
 import { isString } from '@microsoft/logic-apps-shared';
-import type { IActionContext } from '@microsoft/vscode-azext-utils';
 import { type IFunctionWizardContext, ProjectType } from '@microsoft/vscode-extension-logic-apps';
 import { convertToWorkspace } from '../createNewCodeProject/CodeProjectBase/ConvertToWorkspace';
 import { addLocalFuncTelemetry } from '../../utils/funcCoreTools/funcVersion';
-import { AzureWizard } from '@microsoft/vscode-azext-utils';
+import { type IActionContext, AzureWizard, UserCancelledError } from '@microsoft/vscode-azext-utils';
 import { localize } from '../../../localize';
 import { type Uri, window } from 'vscode';
 import { FunctionNameStep } from './createCustomCodeFunctionSteps/FunctionNameStep';
@@ -29,58 +28,55 @@ export async function createCustomCodeFunctionFromCommand(context: IActionContex
       folderPath: isString(folderPath) ? folderPath : folderPath !== undefined ? folderPath.fsPath : undefined,
     };
 
+    // Init wizard context
     const wizardContext: Partial<IFunctionWizardContext> & IActionContext = Object.assign(context, options);
     wizardContext.projectType = ProjectType.customCode;
     wizardContext.functionFolderPath = options.folderPath;
     wizardContext.isWorkspaceWithFunctions = true;
+
+    // Check if the folder is a valid custom code functions project
+    context.telemetry.properties.lastStep = 'isCustomCodeFunctionsProject';
     if (!options.folderPath || !(await isCustomCodeFunctionsProject(options.folderPath))) {
-      window.showErrorMessage(
-        localize(
-          'azureLogicAppsStandard.invalidCustomCodeFunctionsProject',
-          `The target folder ${options.folderPath} is not a valid custom code functions project.`
-        )
-      );
+      const errorMessage = 'The target folder "{0}" is not a valid custom code functions project.';
+      window.showErrorMessage(localize('azureLogicAppsStandard.invalidCustomCodeFunctionsProject', errorMessage, options.folderPath));
+      context.telemetry.properties.result = 'Failed';
+      context.telemetry.properties.error = errorMessage.replace('{0}', options.folderPath);
       return;
     }
+
+    // Get the functions project metadata and verify that properties are valid
+    context.telemetry.properties.lastStep = 'getCustomCodeFunctionsProjectMetadata';
     const functionsProjectMetadata = await getCustomCodeFunctionsProjectMetadata(options.folderPath);
     wizardContext.functionAppName = functionsProjectMetadata?.functionAppName;
     if (!wizardContext.functionAppName) {
-      window.showErrorMessage(
-        localize(
-          'azureLogicAppsStandard.invalidFunctionAppName',
-          `Could not resolve the function name for the target folder ${options.folderPath}.`
-        )
-      );
+      const errorMessage = 'Could not resolve the function app name for the target folder "{0}".';
+      window.showErrorMessage(localize('azureLogicAppsStandard.invalidFunctionAppName', errorMessage, options.folderPath));
+      context.telemetry.properties.result = 'Failed';
+      context.telemetry.properties.error = errorMessage.replace('{0}', options.folderPath);
       return;
     }
     wizardContext.logicAppName = functionsProjectMetadata?.logicAppName;
     if (!wizardContext.logicAppName) {
-      window.showErrorMessage(
-        localize(
-          'azureLogicAppsStandard.invalidLogicAppReference',
-          `Could not find a valid logic app reference in the target folder ${options.folderPath}.`
-        )
-      );
+      const errorMessage = 'Could not find a valid logic app reference in the target folder "{0}".';
+      window.showErrorMessage(localize('azureLogicAppsStandard.invalidLogicAppReference', errorMessage, options.folderPath));
+      context.telemetry.properties.result = 'Failed';
+      context.telemetry.properties.error = errorMessage.replace('{0}', options.folderPath);
       return;
     }
     wizardContext.targetFramework = functionsProjectMetadata?.targetFramework;
     if (!wizardContext.targetFramework) {
-      window.showErrorMessage(
-        localize(
-          'azureLogicAppsStandard.invalidTargetFramework',
-          `Could not find a valid target framework in the target folder ${options.folderPath}.`
-        )
-      );
+      const errorMessage = 'Could not find a valid target framework in the target folder "{0}".';
+      window.showErrorMessage(localize('azureLogicAppsStandard.invalidTargetFramework', errorMessage, options.folderPath));
+      context.telemetry.properties.result = 'Failed';
+      context.telemetry.properties.error = errorMessage.replace('{0}', options.folderPath);
       return;
     }
     wizardContext.functionAppNamespace = functionsProjectMetadata?.namespace;
     if (!wizardContext.functionAppNamespace) {
-      window.showErrorMessage(
-        localize(
-          'azureLogicAppsStandard.invalidFunctionAppNamespace',
-          `Could not find a valid function app namespace in the target folder ${options.folderPath}.`
-        )
-      );
+      const errorMessage = 'Could not find a valid function app namespace in the target folder "{0}".';
+      window.showErrorMessage(localize('azureLogicAppsStandard.invalidFunctionAppNamespace', errorMessage, options.folderPath));
+      context.telemetry.properties.result = 'Failed';
+      context.telemetry.properties.error = errorMessage.replace('{0}', options.folderPath);
       return;
     }
 
@@ -93,6 +89,18 @@ export async function createCustomCodeFunctionFromCommand(context: IActionContex
       promptSteps,
     });
 
-    await wizard.prompt();
+    try {
+      context.telemetry.properties.lastStep = 'prompt';
+      await wizard.prompt();
+    } catch (err) {
+      if (err instanceof UserCancelledError) {
+        context.telemetry.properties.result = 'Canceled';
+        return;
+      }
+      context.telemetry.properties.result = 'Failed';
+      context.telemetry.properties.error = err.message;
+      throw err;
+    }
+    context.telemetry.properties.result = 'Succeeded';
   }
 }
