@@ -64,7 +64,7 @@ export const publishTab = (
     },
     secondaryButtonText: resources.NextButtonText,
     secondaryButtonOnClick: () => {
-      dispatch(selectWizardTab(constants.CONFIGURE_TEMPLATE_WIZARD_TAB_NAMES.REVIEW_AND_PUBLISH));
+      dispatch(selectWizardTab(constants.CONFIGURE_TEMPLATE_WIZARD_TAB_NAMES.REVIEW));
     },
   },
 });

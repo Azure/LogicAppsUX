@@ -6,15 +6,15 @@ import { selectWizardTab } from '../../../core/state/templates/tabSlice';
 import { TemplateReviewList } from '../review/TemplateReviewList';
 import type { TemplateWizardTabProps } from './model';
 
-export const reviewPublishTab = (
+export const reviewTab = (
   intl: IntlShape,
   resources: Record<string, string>,
   dispatch: AppDispatch,
   onPublish: () => void,
   { disabled, tabStatusIcon }: TemplateWizardTabProps
 ): TemplateTabProps => ({
-  id: constants.CONFIGURE_TEMPLATE_WIZARD_TAB_NAMES.REVIEW_AND_PUBLISH,
-  title: resources.ReviewPublishTabLabel,
+  id: constants.CONFIGURE_TEMPLATE_WIZARD_TAB_NAMES.REVIEW,
+  title: resources.ReviewTabLabel,
   content: <TemplateReviewList />,
   tabStatusIcon,
   disabled,

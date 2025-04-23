@@ -291,10 +291,10 @@ export const useResourceStrings = () => {
       id: '+IsazR',
       description: 'The tab label for the settings tab on the configure template wizard',
     }),
-    ReviewPublishTabLabel: intl.formatMessage({
-      defaultMessage: 'Review + publish',
-      id: 'FJQUqL',
-      description: 'The tab label for the monitoring review and publish tab on the configure template wizard',
+    ReviewTabLabel: intl.formatMessage({
+      defaultMessage: 'Review',
+      id: 'uQtott',
+      description: 'The tab label for the review tab on the configure template wizard',
     }),
   };
 };
