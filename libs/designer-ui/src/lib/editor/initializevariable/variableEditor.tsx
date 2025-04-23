@@ -119,9 +119,9 @@ export const VariableEditor = ({
   });
 
   const deleteButtonDisabledAgentParameter = intl.formatMessage({
-    defaultMessage: 'Cannot delete the last agent parameter',
-    id: 'hcpXlK',
-    description: 'Delete label',
+    defaultMessage: "Can't delete the last agent parameter.",
+    id: 'zOq84J',
+    description: 'Delete agent last parameter label',
   });
 
   const editButtonTitle = intl.formatMessage({
@@ -131,9 +131,9 @@ export const VariableEditor = ({
   });
 
   const newAgentParameterName = intl.formatMessage({
-    defaultMessage: 'New Agent Parameter',
-    id: '2bR583',
-    description: 'Heading Title for a Agent Parameter Without Name',
+    defaultMessage: 'New agent parameter',
+    id: 'qkDzwI',
+    description: 'Heading title for an unnamed agent parameter',
   });
 
   const newVariableName = intl.formatMessage({
@@ -149,8 +149,8 @@ export const VariableEditor = ({
   });
 
   const nameAgentParameterPlaceHolder = intl.formatMessage({
-    defaultMessage: 'Enter agent parameter name',
-    id: '02TAGZ',
+    defaultMessage: 'Enter the agent parameter name',
+    id: 'umS0FT',
     description: 'Placeholder for parameter name',
   });
 
@@ -161,9 +161,9 @@ export const VariableEditor = ({
   });
 
   const typeAgentParameterPlaceholder = intl.formatMessage({
-    defaultMessage: 'Select agent parameter type',
-    id: 'gQSH6J',
-    description: 'Placeholder for agent parameter type',
+    defaultMessage: 'Select the agent parameter type',
+    id: 'vp016T',
+    description: 'Placeholder for the agent parameter type',
   });
 
   const valuePlaceHolder = intl.formatMessage({

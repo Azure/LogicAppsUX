@@ -4,11 +4,14 @@ import { useMemo } from 'react';
 import { getResourceNameFromId, type Template } from '@microsoft/logic-apps-shared';
 import { useSelector } from 'react-redux';
 import type { RootState } from '../../../core/state/templates/store';
+import { MessageBar } from '@fluentui/react-components';
 
 export const CustomizeParameter = ({
+  parameterError,
   parameterDefinition,
   setParameterDefinition,
 }: {
+  parameterError: string | undefined;
   parameterDefinition: Template.ParameterDefinition;
   setParameterDefinition: (parameterDefinition: Template.ParameterDefinition) => void;
 }) => {
@@ -88,6 +91,11 @@ export const CustomizeParameter = ({
 
   return (
     <div>
+      {parameterError && (
+        <MessageBar intent="error" style={{ marginBottom: '8px' }}>
+          {parameterError}
+        </MessageBar>
+      )}
       <TemplatesSection title={resourceStrings.Details} titleHtmlFor={'detailsSectionLabel'} items={detailsSectionItems} />
     </div>
   );

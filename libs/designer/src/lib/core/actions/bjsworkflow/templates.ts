@@ -28,7 +28,7 @@ import type { TemplateServiceOptions } from '../../templates/TemplatesDesignerCo
 import { initializeParametersMetadata } from '../../templates/utils/parametershelper';
 import { initializeNodeOperationInputsData } from '../../state/operation/operationMetadataSlice';
 import { updateAllTemplateParameterDefinitions } from '../../state/templates/templateSlice';
-import { getCurrentWorkflowNames } from '../../templates/utils/helper';
+import { checkWorkflowNameWithRegex, getCurrentWorkflowNames } from '../../templates/utils/helper';
 import {
   loadGithubManifestNames,
   setavailableTemplates,
@@ -52,6 +52,7 @@ export interface WorkflowTemplateData {
   errors: {
     workflow: string | undefined;
     kind?: string;
+    manifest?: Record<string, string | undefined>;
     triggerDescription?: string;
   };
 }
@@ -62,6 +63,7 @@ export interface TemplatePayload {
   parameterDefinitions: Record<string, Template.ParameterDefinition>;
   connections: Record<string, Template.Connection>;
   errors: {
+    manifest: Record<string, string | undefined>;
     parameters: Record<string, string | undefined>;
     connections: string | undefined;
   };
@@ -310,13 +312,10 @@ export const validateWorkflowName = async (
       description: 'Error message when the workflow name is empty.',
     });
   }
-  const regex = /^[A-Za-z][A-Za-z0-9]*(?:[_-][A-Za-z0-9]+)*$/;
-  if (!regex.test(workflowName)) {
-    return intl.formatMessage({
-      defaultMessage: 'Name does not match the given pattern.',
-      id: 'zMKxg9',
-      description: 'Error message when the workflow name is invalid regex.',
-    });
+
+  const regexError = checkWorkflowNameWithRegex(intl, workflowName);
+  if (regexError) {
+    return regexError;
   }
 
   const availabilityError = intl.formatMessage(
@@ -369,6 +368,7 @@ const loadTemplateFromResourcePath = async (
     parameterDefinitions: {},
     connections: {},
     errors: {
+      manifest: {},
       parameters: {},
       connections: undefined,
     },
