@@ -98,7 +98,7 @@ describe('parameterizeConnections', () => {
   it('should parameterize connections for all logic apps in the workspace when no project path is provided', async () => {
     const paramSpy = vi.spyOn(parameterizerUtil, 'areAllConnectionsParameterized').mockReturnValue(false);
     await parameterizeConnections(testContext);
-    expect(workspaceUtil.getWorkspaceLogicAppFolders).toHaveBeenCalledWith(testContext);
+    expect(workspaceUtil.getWorkspaceLogicAppFolders).toHaveBeenCalled();
     expect(connectionUtil.getConnectionsJson).toHaveBeenCalledTimes(2);
     expect(connectionUtil.getConnectionsJson).toHaveBeenCalledWith(testLogicAppProjectPath1);
     expect(connectionUtil.getConnectionsJson).toHaveBeenCalledWith(testLogicAppProjectPath2);

@@ -49,7 +49,7 @@ export async function validateFuncCoreToolsIsLatestBinaries(majorVersion?: strin
         context.telemetry.properties.outOfDateFunc = 'true';
         stopAllDesignTimeApis();
         await installFuncCoreToolsBinaries(context, majorVersion);
-        await startAllDesignTimeApis(context);
+        await startAllDesignTimeApis();
       }
     } else {
       await installFuncCoreToolsBinaries(context, majorVersion);

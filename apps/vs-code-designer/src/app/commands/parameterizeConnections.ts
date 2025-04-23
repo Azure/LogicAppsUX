@@ -42,7 +42,7 @@ export async function promptParameterizeConnections(context: IActionContext): Pr
     }
 
     if (shouldParameterizeConnections) {
-      const projectPaths = await getWorkspaceLogicAppFolders(context);
+      const projectPaths = await getWorkspaceLogicAppFolders();
       await Promise.all(projectPaths.map((projectPath) => parameterizeConnections(context, projectPath)));
     }
   }
@@ -57,7 +57,7 @@ export async function promptParameterizeConnections(context: IActionContext): Pr
 export async function parameterizeConnections(context: IActionContext, projectPath?: string): Promise<void> {
   if (workspace.workspaceFolders && workspace.workspaceFolders.length > 0) {
     if (!projectPath) {
-      const workspaceLogicAppFolders = await getWorkspaceLogicAppFolders(context);
+      const workspaceLogicAppFolders = await getWorkspaceLogicAppFolders();
       await Promise.all(workspaceLogicAppFolders.map((projectPath) => parameterizeConnections(context, projectPath)));
       return;
     }

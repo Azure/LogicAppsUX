@@ -200,7 +200,6 @@ describe('workspaceUtils.getWorkspaceFolder', () => {
   });
 
   describe('workspaceUtils.getWorkspaceLogicAppFolders', () => {
-    const mockContext: any = {};
     const testLogicAppProjectPath1 = path.join('test', 'project', 'LogicApp1');
     const testLogicAppProjectPath2 = path.join('test', 'project', 'LogicApp2');
     const testWorkspaceFolders = [
@@ -216,14 +215,21 @@ describe('workspaceUtils.getWorkspaceFolder', () => {
       vi.restoreAllMocks();
     });
 
-    it('should prompt to open project if no workspace folders are open', async () => {
+    it('should return an empty array if no workspace folders are open', async () => {
       (vscode.workspace as any).workspaceFolders = [];
-      const promptOpenProjectOrWorkspaceSpy = vi.fn((context, promptMessage) => {});
-      (promptOpenProjectOrWorkspace as Mock).mockImplementation(promptOpenProjectOrWorkspaceSpy);
+      const tryGetAllLogicAppProjectRootsSpy = vi.fn(async (folder: vscode.WorkspaceFolder) => {
+        if (folder.uri.fsPath === testLogicAppProjectPath1) {
+          return [folder];
+        } else if (folder.uri.fsPath === testLogicAppProjectPath2) {
+          return ['root2a', 'root2b'];
+        }
+        return [];
+      });
 
-      await workspaceUtils.getWorkspaceLogicAppFolders(mockContext, 'Custom warning message');
+      const result = await workspaceUtils.getWorkspaceLogicAppFolders();
 
-      expect(promptOpenProjectOrWorkspaceSpy).toHaveBeenCalledWith(mockContext, 'Custom warning message');
+      expect(tryGetAllLogicAppProjectRootsSpy).not.toHaveBeenCalled();
+      expect(result).toEqual([]);
     });
 
     it('should collect logic app roots from each workspace folder', async () => {
@@ -237,7 +243,7 @@ describe('workspaceUtils.getWorkspaceFolder', () => {
       });
       (tryGetAllLogicAppProjectRoots as Mock).mockImplementation(tryGetAllLogicAppProjectRootsSpy);
 
-      const result = await workspaceUtils.getWorkspaceLogicAppFolders(mockContext);
+      const result = await workspaceUtils.getWorkspaceLogicAppFolders();
 
       expect(tryGetAllLogicAppProjectRootsSpy).toHaveBeenCalledTimes(2);
       expect(result).toEqual([testLogicAppProjectPath1, 'root2a', 'root2b']);
@@ -249,7 +255,7 @@ describe('workspaceUtils.getWorkspaceFolder', () => {
       });
       (tryGetAllLogicAppProjectRoots as Mock).mockImplementation(tryGetAllLogicAppProjectRootsSpy);
 
-      const result = await workspaceUtils.getWorkspaceLogicAppFolders(mockContext);
+      const result = await workspaceUtils.getWorkspaceLogicAppFolders();
 
       expect(tryGetAllLogicAppProjectRootsSpy).toHaveBeenCalledTimes(2);
       expect(result).toEqual([]);

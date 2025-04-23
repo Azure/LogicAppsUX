@@ -46,7 +46,7 @@ namespace <%= LogicAppName %>.Tests
 
             // ACT
             // Create an instance of UnitTestExecutor, and run the workflow with the mock data.
-           var testMock = new TestMockDefinition(
+            var testMock = new TestMockDefinition(
                 triggerMock: triggerMock,
                 actionMocks: new Dictionary<string, ActionMock>()
                 {

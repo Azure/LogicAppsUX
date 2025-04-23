@@ -97,7 +97,7 @@ export async function validateAndInstallBinaries(context: IActionContext) {
             'https://dotnet.microsoft.com/en-us/download/dotnet',
             dotnetDependencies
           );
-          await setDotNetCommand(context);
+          await setDotNetCommand();
         });
         ext.outputChannel.appendLog(
           localize(

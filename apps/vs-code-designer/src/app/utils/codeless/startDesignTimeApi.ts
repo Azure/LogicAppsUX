@@ -305,12 +305,11 @@ export function stopDesignTimeApi(projectPath: string): void {
 
 /**
  * Starts the design-time API for all Logic Apps in the workspace.
- * @param {IActionContext} context - The action context.
  * @returns {Promise<void>} A promise that resolves when each design-time API is in the starting state.
  */
-export async function startAllDesignTimeApis(context: IActionContext): Promise<void> {
+export async function startAllDesignTimeApis(): Promise<void> {
   if (vscode.workspace.workspaceFolders && vscode.workspace.workspaceFolders.length > 0) {
-    const logicAppFolders = await getWorkspaceLogicAppFolders(context);
+    const logicAppFolders = await getWorkspaceLogicAppFolders();
     await Promise.all(logicAppFolders.map(startDesignTimeApi));
   }
 }
@@ -322,7 +321,7 @@ export async function startAllDesignTimeApis(context: IActionContext): Promise<v
  */
 export async function promptStartDesignTimeOption(context: IActionContext) {
   if (vscode.workspace.workspaceFolders && vscode.workspace.workspaceFolders.length > 0) {
-    const logicAppFolders = await getWorkspaceLogicAppFolders(context);
+    const logicAppFolders = await getWorkspaceLogicAppFolders();
     const showStartDesignTimeMessage = !!getWorkspaceSetting<boolean>(showStartDesignTimeMessageSetting);
     let autoStartDesignTime = !!getWorkspaceSetting<boolean>(autoStartDesignTimeSetting);
 
