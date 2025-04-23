@@ -50,6 +50,8 @@ describe('panel/templatePanel/createWorkflowPanel/parametersTab', () => {
       }, {}),
       connections: {},
       errors: {
+        manifest: {},
+        workflows: {},
         parameters: {},
         connections: undefined,
       },
