@@ -1,4 +1,16 @@
 # Logic Apps Designer
+### [5.58.8](https://github.com/Azure/LogicAppsUX/compare/v5.58.7...v5.58.8) (2025-04-23)
+
+
+### Features
+
+* **vscode:** Automatically update function core tools and dotnet binaries ([#7052](https://github.com/Azure/LogicAppsUX/issues/7052)) ([72a2d48](https://github.com/Azure/LogicAppsUX/commit/72a2d48b665f2504869d186c28bf52a433bf1fe3)), closes [#7045](https://github.com/Azure/LogicAppsUX/issues/7045)
+
+
+### Bug Fixes
+
+* **vscode:** Unit test fixes  ([#7074](https://github.com/Azure/LogicAppsUX/issues/7074)) ([39c6406](https://github.com/Azure/LogicAppsUX/commit/39c6406446d8c07eefb209ed77b6269ea22b7d2d)), closes [#7059](https://github.com/Azure/LogicAppsUX/issues/7059) [#7073](https://github.com/Azure/LogicAppsUX/issues/7073)
+
 ### [5.58.7](https://github.com/Azure/LogicAppsUX/compare/v5.58.6...v5.58.7) (2025-04-14)
 
 
