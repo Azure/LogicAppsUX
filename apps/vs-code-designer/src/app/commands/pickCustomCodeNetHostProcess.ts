@@ -3,7 +3,7 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 import { Platform } from '../../constants';
-import { getMatchingWorkspace } from '../debug/validatePreDebug';
+import { getMatchingWorkspaceFolder } from '../debug/validatePreDebug';
 import { runningFuncTaskMap } from '../utils/funcCoreTools/funcHostTask';
 import type { IRunningFuncTask } from '../utils/funcCoreTools/funcHostTask';
 import type { IActionContext } from '@microsoft/vscode-azext-utils';
@@ -18,7 +18,7 @@ export async function pickCustomCodeNetHostProcess(
   context: IActionContext,
   debugConfig: vscode.DebugConfiguration
 ): Promise<string | undefined> {
-  const workspace: vscode.WorkspaceFolder = getMatchingWorkspace(debugConfig);
+  const workspace: vscode.WorkspaceFolder = getMatchingWorkspaceFolder(debugConfig);
   const functionsProjectMetadata = await getCustomCodeFunctionsProjectMetadata(workspace.uri.fsPath);
   const logicAppFolder: vscode.WorkspaceFolder = vscode.workspace.workspaceFolders?.find(
     (workspace) => workspace.name === functionsProjectMetadata.logicAppName
@@ -29,7 +29,7 @@ export async function pickCustomCodeNetHostProcess(
     throw new Error(
       localize(
         'noFuncTask',
-        'Failed to find a running func task for the logic app "{0}" corresponding to the functions project "{1}". The functions host must be running to attach the debugger.',
+        'Failed to find a running func task for the logic app "{0}" corresponding to the functions project "{1}". The logic app must be running to attach the debugger.',
         functionsProjectMetadata.logicAppName,
         functionsProjectMetadata.functionAppName
       )
