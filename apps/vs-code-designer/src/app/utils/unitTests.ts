@@ -2,7 +2,6 @@
  *  Copyright (c) Microsoft Corporation. All rights reserved.
  *  Licensed under the MIT License. See License.md in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
-import { exec } from 'child_process';
 import axios from 'axios';
 import * as fse from 'fs-extra';
 import * as path from 'path';
@@ -11,12 +10,19 @@ import * as xml2js from 'xml2js';
 import { type IActionContext, callWithTelemetryAndErrorHandling, type IAzureQuickPickItem } from '@microsoft/vscode-azext-utils';
 import type { UnitTestResult } from '@microsoft/vscode-extension-logic-apps';
 import { toPascalCase } from '@microsoft/logic-apps-shared';
-import { saveUnitTestEvent, testsDirectoryName, unitTestsFileName, workflowFileName } from '../../constants';
+import {
+  dotNetBinaryPathSettingKey,
+  saveUnitTestEvent,
+  testMockOutputsDirectory,
+  testsDirectoryName,
+  unitTestsFileName,
+  workflowFileName,
+} from '../../constants';
 import { ext } from '../../extensionVariables';
 import { localize } from '../../localize';
 import { getWorkflowsInLocalProject } from './codeless/common';
-import type { IAzureConnectorsContext } from '../commands/workflows/azureConnectorWizard';
-import { promisify } from 'util';
+import { executeCommand } from './funcCoreTools/cpUtils';
+import { getGlobalSetting } from './vsCodeConfig/settings';
 
 /**
  * Saves the unit test definition for a workflow.
@@ -41,8 +47,8 @@ export const saveUnitTestDefinition = async (
     await vscode.window.withProgress(options, async () => {
       const projectName = path.basename(projectPath);
       const testsDirectory = getTestsDirectory(projectPath);
-      const unitTestsPath = getUnitTestsPath(testsDirectory.fsPath, projectName, workflowName, unitTestName);
-      const workflowTestsPath = getWorkflowTestsPath(testsDirectory.fsPath, projectName, workflowName);
+      const unitTestsPath = path.join(projectPath, projectName, workflowName, `${unitTestName}${unitTestsFileName}`);
+      const workflowTestsPath = path.join(testsDirectory.fsPath, projectName, workflowName);
 
       if (!fse.existsSync(workflowTestsPath)) {
         fse.mkdirSync(workflowTestsPath, { recursive: true });
@@ -85,70 +91,6 @@ export const getTestsDirectory = (projectPath: string) => {
   const workspacePath = path.dirname(projectPath);
   const testsDirectory = vscode.Uri.file(path.join(workspacePath, testsDirectoryName));
   return testsDirectory;
-};
-
-/**
- * Returns the path of a unit test file for a given project, workflow, and unit test name.
- * @param {string} projectPath - The path of the project.
- * @param {string} workflowName - The name of the workflow.
- * @param {string} unitTestName - The name of the unit test.
- * @returns The path of the unit test file.
- */
-const getUnitTestsPath = (projectPath: string, projectName: string, workflowName: string, unitTestName: string) => {
-  return path.join(projectPath, projectName, workflowName, `${unitTestName}${unitTestsFileName}`);
-};
-
-/**
- * Returns the path to the a workflow tests directory.
- * @param {string} projectPath - The path to the project directory.
- * @param {string} workflowName - The name of the workflow.
- * @returns The path to the workflow tests directory.
- */
-const getWorkflowTestsPath = (projectPath: string, projectName: string, workflowName: string) => {
-  return path.join(projectPath, projectName, workflowName);
-};
-
-/**
- * Validates the unit test name.
- * @param {string} projectPath - The path of the project.
- * @param {string} workflowName - The name of the workflow.
- * @param {string | undefined} name - The unit test name to validate.
- * @returns A promise that resolves to a string if the unit test name is invalid, or undefined if it is valid.
- */
-export const validateUnitTestName = async (
-  projectPath: string,
-  workflowName: string,
-  name: string | undefined
-): Promise<string | undefined> => {
-  if (!name) {
-    return localize('emptyUnitTestNameError', 'The unit test name cannot be empty.');
-  }
-  if (!/^[a-z][a-z\d_-]*$/i.test(name)) {
-    return localize(
-      'unitTestNameInvalidMessage',
-      'Unit test name must start with a letter and can only contain letters, digits, "_" and "-".'
-    );
-  }
-
-  return await validateUnitTestNameCore(projectPath, workflowName, name);
-};
-
-/**
- * Validates the unit test name for a given project, workflow, and name.
- * @param {string} projectPath - The path of the project.
- * @param {string} workflowName - The name of the workflow.
- * @param {string} name - The name of the unit test.
- * @returns A string representing an error message if a unit test with the same name already exists, otherwise undefined.
- */
-const validateUnitTestNameCore = async (projectPath: string, workflowName: string, name: string): Promise<string | undefined> => {
-  const projectName = path.basename(projectPath);
-  const testsDirectory = getTestsDirectory(projectPath);
-  const workflowTestsPath = getWorkflowTestsPath(testsDirectory.fsPath, projectName, workflowName);
-
-  if (await fse.pathExists(path.join(workflowTestsPath, `${name}${unitTestsFileName}`))) {
-    return localize('existingUnitTestError', 'A unit test with the name "{0}" already exists.', name);
-  }
-  return undefined;
 };
 
 /**
@@ -296,11 +238,11 @@ export const getWorkflowsPick = async (projectPath: string): Promise<IAzureQuick
 
 /**
  * Selects a workflow node by prompting the user if none is provided.
- * @param {IAzureConnectorsContext} context - The Azure Connectors context.
+ * @param {IActionContext} context - The action context.
  * @param {string} projectPath - Path to the project directory.
  * @returns {Promise<vscode.Uri>} Selected workflow node URI.
  */
-export async function selectWorkflowNode(context: IAzureConnectorsContext, projectPath: string): Promise<vscode.Uri> {
+export async function selectWorkflowNode(context: IActionContext, projectPath: string): Promise<vscode.Uri> {
   const workflow = await pickWorkflow(context, projectPath);
   return vscode.Uri.file(workflow.data) as vscode.Uri;
 }
@@ -393,7 +335,7 @@ export async function updateCsprojFile(csprojFilePath: string, workflowName: str
  * @param {string} triggerOutputClassName - The name of the trigger output class.
  * @param {string} triggerMockClassName - The name of the trigger mock class.
  */
-export async function createCsFile(
+export async function createTestCsFile(
   unitTestFolderPath: string,
   unitTestName: string,
   cleanedUnitTestName: string,
@@ -454,7 +396,7 @@ export async function createCsFile(
   const csFilePath = path.join(unitTestFolderPath, `${unitTestName}.cs`);
   await fse.writeFile(csFilePath, templateContent);
 
-  ext.outputChannel.appendLog(localize('csFileCreated', 'Created .cs file at: {0}', csFilePath));
+  ext.outputChannel.appendLog(localize('csTestFileCreated', 'Created .cs file for unit test at: {0}', csFilePath));
 }
 
 /**
@@ -586,33 +528,34 @@ export function getUnitTestPaths(
   logicAppName: string;
   logicAppTestFolderPath: string;
   workflowTestFolderPath: string;
+  mocksFolderPath: string;
   unitTestFolderPath?: string;
 } {
   const testsDirectoryUri = getTestsDirectory(projectPath);
   const testsDirectory = testsDirectoryUri.fsPath;
-  const logicAppName = path.basename(path.dirname(path.join(projectPath, workflowName)));
+  const logicAppName = path.basename(projectPath);
   const logicAppTestFolderPath = path.join(testsDirectory, logicAppName);
   const workflowTestFolderPath = path.join(logicAppTestFolderPath, workflowName);
-  const paths = {
+  const mocksFolderPath = path.join(workflowTestFolderPath, testMockOutputsDirectory);
+
+  return {
     testsDirectory,
     logicAppName,
     logicAppTestFolderPath,
     workflowTestFolderPath,
+    mocksFolderPath,
+    unitTestFolderPath: unitTestName ? path.join(workflowTestFolderPath, unitTestName) : undefined,
   };
-  if (unitTestName) {
-    paths['unitTestFolderPath'] = path.join(workflowTestFolderPath, unitTestName);
-  }
-  return paths;
 }
 
 /**
  * Prompts the user for a unit test name with validation.
- * @param {IAzureConnectorsContext} context - The Azure Connectors context.
+ * @param {IActionContext} context - The action context.
  * @param {string} projectPath - Path to the project directory.
  * @param {string} workflowName - Name of the workflow.
  * @returns {Promise<string>} The validated unit test name.
  */
-export async function promptForUnitTestName(context: IAzureConnectorsContext, projectPath: string, workflowName: string): Promise<string> {
+export async function promptForUnitTestName(context: IActionContext, projectPath: string, workflowName: string): Promise<string> {
   return context.ui.showInputBox({
     prompt: localize('unitTestNamePrompt', 'Provide a unit test name'),
     placeHolder: localize('unitTestNamePlaceholder', 'Unit test name'),
@@ -621,21 +564,56 @@ export async function promptForUnitTestName(context: IAzureConnectorsContext, pr
 }
 
 /**
+ * Validates the unit test name.
+ * @param {string} projectPath - The path of the project.
+ * @param {string} workflowName - The name of the workflow.
+ * @param {string | undefined} name - The unit test name to validate.
+ * @returns A promise that resolves to a string if the unit test name is invalid, or undefined if it is valid.
+ */
+export const validateUnitTestName = async (
+  projectPath: string,
+  workflowName: string,
+  name: string | undefined
+): Promise<string | undefined> => {
+  if (!name) {
+    return localize('emptyUnitTestNameError', 'The unit test name cannot be empty.');
+  }
+  if (!/^[a-z][a-z\d_-]*$/i.test(name)) {
+    return localize(
+      'unitTestNameInvalidMessage',
+      'Unit test name must start with a letter and can only contain letters, digits, "_" and "-".'
+    );
+  }
+
+  const testsFolderPath = getTestsDirectory(projectPath);
+  const logicAppName = path.basename(projectPath);
+  const testPath = path.join(testsFolderPath.fsPath, logicAppName, workflowName, name);
+  if (fse.existsSync(testPath)) {
+    if ((await fse.readdir(testPath)).includes(`${name}.cs`)) {
+      return localize('unitTestExists', 'A unit test with this name already exists in the test project.');
+    }
+    return localize('unitTestFolderNameExists', 'Another folder with this name already exists in the test project.');
+  }
+
+  return undefined;
+};
+
+/**
  * Logs telemetry properties for unit test creation.
- * @param {IAzureConnectorsContext} context - The Azure Connectors context.
+ * @param {IActionContext} context - The action context.
  * @param {Record<string, string | undefined>} properties - Telemetry properties.
  */
-export function logTelemetry(context: IAzureConnectorsContext, properties: Record<string, string | undefined>): void {
+export function logTelemetry(context: IActionContext, properties: Record<string, string | undefined>): void {
   Object.assign(context.telemetry.properties, properties);
 }
 
 /**
  * Handles errors by logging them and displaying user-facing messages.
- * @param {IAzureConnectorsContext} context - The Azure Connectors context.
+ * @param {IActionContext} context - The action context.
  * @param {unknown} error - The error object.
  * @param {string} source - The source of the error.
  */
-export function handleError(context: IAzureConnectorsContext, error: unknown, source: string): void {
+export function handleError(context: IActionContext, error: unknown, source: string): void {
   const errorMessage = error instanceof Error ? error.message : String(error);
   context.telemetry.properties[`${source}Error`] = errorMessage;
   vscode.window.showErrorMessage(localize(`${source}Error`, 'An error occurred: {0}', errorMessage));
@@ -1027,35 +1005,36 @@ export function generateClassCode(classDef: ClassDefinition): string {
 }
 
 /**
- * Filters mockable operations, transforms their output parameters,
- * and writes C# class definitions to .cs files.
+ * Filters mockable operations, transforms their output parameters, and generates C# class content.
  * @param operationInfo - The operation info object.
  * @param outputParameters - The output parameters object.
- * @param workflowTestFolderPath - The path to the workflow folder where the .cs files will be saved.
  * @param workflowName - The name of the workflow.
  * @param logicAppName - The name of the Logic App to use as the namespace.
  */
-export async function processAndWriteMockableOperations(
+export async function getOperationMockClassContent(
   operationInfo: any,
   outputParameters: any,
   workflowPath: string,
-  workflowTestFolderPath: string,
   workflowName: string,
   logicAppName: string
-): Promise<{ foundActionMocks: Record<string, string>; foundTriggerMocks: Record<string, string> }> {
+): Promise<{
+  mockClassContent: Record<string, string>;
+  foundActionMocks: Record<string, string>;
+  foundTriggerMocks: Record<string, string>;
+}> {
   // Keep track of all operation IDs we've processed to avoid duplicates
   const processedOperationIds = new Set<string>();
 
-  // Create or verify the "MockOutputs" folder inside the logicApp folder
-  const mockOutputsFolderPath = path.join(workflowTestFolderPath, 'MockOutputs');
-  await fse.ensureDir(mockOutputsFolderPath);
-
   // Dictionaries to store mockable operation names and their corresponding class names
+  const mockClassContent: Record<string, string> = {};
   const foundActionMocks: Record<string, string> = {};
   const foundTriggerMocks: Record<string, string> = {};
 
   const workflowContent = JSON.parse(await fse.readFile(workflowPath, 'utf8'));
   const triggerName = Object.keys(workflowContent?.definition?.triggers)?.[0] ?? null;
+  if (triggerName === null) {
+    throw new Error(localize('noTriggersFound', 'No trigger found in the workflow. Unit tests must include a mocked trigger.'));
+  }
 
   for (const operationName in operationInfo) {
     const operation = operationInfo[operationName];
@@ -1076,14 +1055,13 @@ export async function processAndWriteMockableOperations(
     if (await isMockable(type)) {
       // Set operationName as className
       const cleanedOperationName = removeInvalidCharacters(operationName);
-      let className = toPascalCase(cleanedOperationName);
+      let mockOutputClassName = toPascalCase(cleanedOperationName);
       let mockClassName = toPascalCase(cleanedOperationName);
 
       // Append suffix based on whether it's a trigger
-      className += isTrigger ? 'TriggerOutput' : 'ActionOutput';
-
+      mockOutputClassName += isTrigger ? 'TriggerOutput' : 'ActionOutput';
       const mockType = isTrigger ? 'TriggerMock' : 'ActionMock';
-      mockClassName += isTrigger ? 'TriggerMock' : 'ActionMock';
+      mockClassName += mockType;
 
       // Transform the output parameters for this operation
       const outputs = outputParameters[operationName]?.outputs;
@@ -1092,23 +1070,25 @@ export async function processAndWriteMockableOperations(
       const sanitizedLogicAppName = logicAppName.replace(/-/g, '_');
 
       // Generate C# class content
-      const classContent = generateCSharpClasses(sanitizedLogicAppName, className, workflowName, mockType, mockClassName, outputs);
+      const classContent = generateCSharpClasses(
+        sanitizedLogicAppName,
+        mockOutputClassName,
+        workflowName,
+        mockType,
+        mockClassName,
+        outputs
+      );
+      mockClassContent[mockOutputClassName] = classContent;
 
-      // Write the .cs file
-      const filePath = path.join(mockOutputsFolderPath, `${className}.cs`);
-      await fse.writeFile(filePath, classContent, 'utf-8');
-
-      // Log to output channel
-      ext.outputChannel.appendLog(localize('csFileCreated', 'Created .cs file at: {0}', filePath));
       // Store the operation name and class name in the appropriate dictionary
       if (isTrigger) {
-        foundTriggerMocks[operationName] = className;
+        foundTriggerMocks[operationName] = mockOutputClassName;
       } else {
-        foundActionMocks[operationName] = className;
+        foundActionMocks[operationName] = mockOutputClassName;
       }
     }
   }
-  return { foundActionMocks, foundTriggerMocks };
+  return { mockClassContent, foundActionMocks, foundTriggerMocks };
 }
 
 /**
@@ -1137,6 +1117,10 @@ export function generateCSharpClasses(
     nestedTypeProperty: 'object',
     ...data, // Merge the data (including "description", subfields, etc.)
   });
+
+  if (rootDef.properties && Array.isArray(rootDef.properties)) {
+    rootDef.properties = rootDef.properties.filter((prop) => prop.propertyName !== 'StatusCode');
+  }
 
   rootDef.inheritsFrom = 'MockOutput';
 
@@ -1181,12 +1165,14 @@ const mockableOperationTypes = new Set<string>();
  * Throws an error if the design time port is undefined or if the request fails.
  */
 export async function getMockableOperationTypes(): Promise<void> {
-  if (!ext.designTimePort) {
+  // The listMockableOperations API can be called on any design time instance, get first in map by default
+  const designTimePort = ext.designTimeInstances.values()?.next()?.value?.port;
+  if (!designTimePort) {
     throw new Error(
       localize('errorStandardResourcesApi', 'Design time port is undefined. Please retry once Azure Functions Core Tools has started.')
     );
   }
-  const baseUrl = `http://localhost:${ext.designTimePort}`;
+  const baseUrl = `http://localhost:${designTimePort}`;
   const listMockableOperationsUrl = `${baseUrl}/runtime/webhooks/workflow/api/management/listMockableOperations`;
   ext.outputChannel.appendLog(localize('listMockableOperations', `Fetching unit test mockable operations at ${listMockableOperationsUrl}`));
   try {
@@ -1227,6 +1213,7 @@ export async function isMockable(type: string): Promise<boolean> {
     return true;
   }
   // Otherwise, check the static sets (action and trigger types)
+  // TODO: We shouldn't require these checks if listMockableOperations returns all mockable operations, is there an issue with the API?
   if (Array.from(mockableActionTypes).some((t) => t.toUpperCase() === normalizedType)) {
     return true;
   }
@@ -1237,7 +1224,7 @@ export async function isMockable(type: string): Promise<boolean> {
 }
 
 /**
- * Creates a new solution file and adds the specified Logic App .csproj to it.
+ * Creates a new solution file if one doesn't exist and adds the specified Logic App .csproj to it.
  *
  * This function performs the following steps in the tests directory:
  * 1. Runs 'dotnet new sln -n Tests' to create a new solution file named Tests.sln.
@@ -1247,10 +1234,10 @@ export async function isMockable(type: string): Promise<boolean> {
  * @param testsDirectory - The absolute path to the tests directory root.
  * @param logicAppCsprojPath - The absolute path to the Logic App's .csproj file.
  */
-export async function updateSolutionWithProject(testsDirectory: string, logicAppCsprojPath: string): Promise<void> {
+export async function updateTestsSln(testsDirectory: string, logicAppCsprojPath: string): Promise<void> {
   const solutionName = 'Tests'; // This will create "Tests.sln"
   const solutionFile = path.join(testsDirectory, `${solutionName}.sln`);
-  const execAsync = promisify(exec);
+  const dotnetBinaryPath = getGlobalSetting(dotNetBinaryPathSettingKey);
 
   try {
     // Create a new solution file if it doesn't already exist.
@@ -1258,14 +1245,14 @@ export async function updateSolutionWithProject(testsDirectory: string, logicApp
       ext.outputChannel.appendLog(`Solution file already exists at ${solutionFile}.`);
     } else {
       ext.outputChannel.appendLog(`Creating new solution file at ${solutionFile}...`);
-      await execAsync(`dotnet new sln -n ${solutionName}`, { cwd: testsDirectory });
+      await executeCommand(ext.outputChannel, testsDirectory, `${dotnetBinaryPath} new sln -n ${solutionName}`);
       ext.outputChannel.appendLog(`Solution file created: ${solutionFile}`);
     }
 
     // Compute the relative path from the tests directory to the Logic App .csproj.
     const relativeProjectPath = path.relative(testsDirectory, logicAppCsprojPath);
     ext.outputChannel.appendLog(`Adding project '${relativeProjectPath}' to solution '${solutionFile}'...`);
-    await execAsync(`dotnet sln "${solutionFile}" add "${relativeProjectPath}"`, { cwd: testsDirectory });
+    await executeCommand(ext.outputChannel, testsDirectory, `${dotnetBinaryPath} sln "${solutionFile}" add "${relativeProjectPath}"`);
     ext.outputChannel.appendLog('Project added to solution successfully.');
   } catch (err) {
     ext.outputChannel.appendLog(`Error updating solution: ${err}`);

@@ -11,7 +11,7 @@ import { registerCommands } from './app/commands/registerCommands';
 import { getResourceGroupsApi } from './app/resourcesExtension/getExtensionApi';
 import type { AzureAccountTreeItemWithProjects } from './app/tree/AzureAccountTreeItemWithProjects';
 import { downloadExtensionBundle } from './app/utils/bundleFeed';
-import { stopDesignTimeApi } from './app/utils/codeless/startDesignTimeApi';
+import { stopAllDesignTimeApis } from './app/utils/codeless/startDesignTimeApi';
 import { UriHandler } from './app/utils/codeless/urihandler';
 import { getExtensionVersion } from './app/utils/extension';
 import { registerFuncHostTaskEvents } from './app/utils/funcCoreTools/funcHostTask';
@@ -92,13 +92,14 @@ export async function activate(context: vscode.ExtensionContext) {
       const errorMessage = `Error downloading and extracting the Logic Apps Standard extension bundle: ${error.message}`;
       activateContext.telemetry.properties.errorMessage = errorMessage;
     }
-    promptParameterizeConnections(activateContext, true);
-    verifyLocalConnectionKeys(activateContext, true);
+
+    promptParameterizeConnections(activateContext);
+    verifyLocalConnectionKeys(activateContext);
     await startOnboarding(activateContext);
     //await prepareTestExplorer(context, activateContext);
 
     ext.extensionVersion = getExtensionVersion();
-    ext.currentBundleVersion = activateContext.telemetry.properties.latestBundleVersion;
+    ext.defaultBundleVersion = activateContext.telemetry.properties.latestBundleVersion;
     ext.latestBundleVersion = activateContext.telemetry.properties.latestBundleVersion;
 
     ext.rgApi = await getResourceGroupsApi();
@@ -136,7 +137,7 @@ export async function activate(context: vscode.ExtensionContext) {
 }
 
 export function deactivate(): Promise<any> {
-  stopDesignTimeApi();
+  stopAllDesignTimeApis();
   ext.unitTestController?.dispose();
   ext.telemetryReporter.dispose();
   return undefined;

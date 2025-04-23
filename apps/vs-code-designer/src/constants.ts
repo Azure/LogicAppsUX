@@ -35,6 +35,7 @@ export const schemasDirectory = 'Schemas';
 // Folder names
 export const designTimeDirectoryName = 'workflow-designtime';
 export const testsDirectoryName = 'Tests';
+export const testMockOutputsDirectory = 'MockOutputs';
 export const testResultsDirectoryName = '.testResults';
 export const vscodeFolderName = '.vscode';
 
@@ -183,9 +184,6 @@ export const extensionCommand = {
   dataMapSaveMapXslt: 'azureLogicAppsStandard.dataMap.saveMapXslt',
   createUnitTest: 'azureLogicAppsStandard.createUnitTest',
   saveBlankUnitTest: 'azureLogicAppsStandard.saveBlankUnitTest',
-  editUnitTest: 'azureLogicAppsStandard.editUnitTest',
-  openUnitTestResults: 'azureLogicAppsStandard.openUnitTestResults',
-  runUnitTest: 'azureLogicAppsStandard.runUnitTest',
   vscodeOpenFolder: 'vscode.openFolder',
 } as const;
 export type extensionCommand = (typeof extensionCommand)[keyof typeof extensionCommand];
@@ -370,4 +368,5 @@ export const sqlConnectionStringSecretName = 'sqlconnectionstring';
 //Regex validations
 export const workflowNameValidation = /^[a-z][a-z0-9]*(?:[_-][a-z0-9]+)*$/i;
 export const logicAppNameValidation = /^[a-z][a-z0-9]*(?:[_-][a-z0-9]+)*$/i;
+export const dataMapNameValidation = /^[a-z][a-z0-9]*(?:[_-][a-z0-9]+)*$/i;
 export const workspaceNameValidation = /^[a-z][a-z0-9]*(?:[_-][a-z0-9]+)*$/i;

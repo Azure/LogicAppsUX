@@ -19,6 +19,7 @@ import {
   endsWith,
   equals,
   startsWith,
+  isNullOrUndefined,
 } from '@microsoft/logic-apps-shared';
 import type { Expression, ExpressionLiteral } from '@microsoft/logic-apps-shared';
 import { convertWorkflowParameterTypeToSwaggerType } from './tokens';
@@ -60,7 +61,12 @@ export function validateStaticParameterInfo(
   const editor = parameterMetadata.editor;
   const required = isParameterRequired(parameterMetadata);
   const parameterErrorMessages: string[] = [];
-  const typeError = validateType(type, parameterValue, editor, { format: parameterFormat, collectionFormat: parameterCollectionFormat });
+  const typeError = validateType(type, parameterValue, editor, {
+    format: parameterFormat,
+    collectionFormat: parameterCollectionFormat,
+    minimum: parameterMetadata.schema?.minimum,
+    maximum: parameterMetadata.schema?.maximum,
+  });
   const isUnknown = parameterMetadata.info.isUnknown;
 
   if (typeError) {
@@ -122,9 +128,9 @@ export function validateType(
   type: string,
   parameterValue: string,
   editor: string | undefined,
-  validationOptions: { format?: string; collectionFormat?: string }
+  validationOptions: { format?: string; collectionFormat?: string; minimum?: number; maximum?: number }
 ): string | undefined {
-  const { format: parameterFormat = '', collectionFormat } = validationOptions;
+  const { format: parameterFormat = '', collectionFormat, minimum, maximum } = validationOptions;
   if (!parameterValue) {
     return;
   }
@@ -156,7 +162,7 @@ export function validateType(
           description: 'Error validation message for Integers',
         });
       }
-      return validateIntegerFormat(parameterFormat, parameterValue);
+      return validateIntegerFormat(parameterFormat, parameterValue, minimum, maximum);
     }
 
     case Constants.SWAGGER.TYPE.NUMBER: {
@@ -170,7 +176,7 @@ export function validateType(
           description: 'Error validation message for Numbers',
         });
       }
-      return validateNumberFormat(parameterFormat, parameterValue);
+      return validateNumberFormat(parameterFormat, parameterValue, minimum, maximum);
     }
 
     case Constants.SWAGGER.TYPE.BOOLEAN: {
@@ -230,26 +236,32 @@ export function validateType(
   }
 }
 
-function validateIntegerFormat(parameterFormat: string, parameterValue: string): string {
+function validateIntegerFormat(parameterFormat: string, parameterValue: string, minimum?: number, maximum?: number): string {
   if (!parameterFormat) {
     return '';
   }
 
   const intl = getIntl();
   if (parameterFormat.toLowerCase() === 'int32') {
-    if (Number(parameterValue) > Constants.INT_MAX || Number(parameterValue) < Constants.INT_MIN) {
-      return intl.formatMessage({
-        defaultMessage: 'The value is too large.',
-        id: 'hihfHd',
-        description: 'Error validation message integers',
-      });
+    const maxValue = maximum ?? Constants.INT_MAX;
+    const minValue = minimum ?? Constants.INT_MIN;
+
+    if (Number(parameterValue) > maxValue || Number(parameterValue) < minValue) {
+      return intl.formatMessage(
+        {
+          defaultMessage: 'The integer should be between [{min}, {max}]',
+          id: '1KMc+6',
+          description: 'Error validation message for integers being out of range',
+        },
+        { max: maxValue, min: minValue }
+      );
     }
   }
 
   return '';
 }
 
-function validateNumberFormat(parameterFormat: string, parameterValue: string): string {
+function validateNumberFormat(parameterFormat: string, parameterValue: string, minimum?: number, maximum?: number): string {
   if (!parameterFormat) {
     return '';
   }
@@ -277,9 +289,19 @@ function validateNumberFormat(parameterFormat: string, parameterValue: string): 
       }
       break;
     }
+  }
 
-    default:
-      return '';
+  if (!isNullOrUndefined(maximum) && !isNullOrUndefined(minimum)) {
+    if (Number(parameterValue) > maximum || Number(parameterValue) < minimum) {
+      return intl.formatMessage(
+        {
+          defaultMessage: 'The value should be between [{min}, {max}]',
+          id: 'y2Yn1o',
+          description: 'Error validation message for integers being out of range',
+        },
+        { max: maximum, min: minimum }
+      );
+    }
   }
 
   return '';

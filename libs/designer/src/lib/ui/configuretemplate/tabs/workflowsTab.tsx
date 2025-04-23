@@ -1,32 +1,26 @@
 import type { AppDispatch } from '../../../core/state/templates/store';
 import type { TemplateTabProps } from '@microsoft/designer-ui';
 import constants from '../../../common/constants';
-import type { IntlShape } from 'react-intl';
 import { selectWizardTab } from '../../../core/state/templates/tabSlice';
 import { DisplayWorkflows } from '../workflows/workflowslist';
+import type { TemplateWizardTabProps } from './model';
 
 export const workflowsTab = (
-  intl: IntlShape,
+  resources: Record<string, string>,
   dispatch: AppDispatch,
-  onSaveWorkflows: (isMultiWorkflow: boolean) => void
+  onSaveWorkflows: (isMultiWorkflow: boolean) => void,
+  { disabled, tabStatusIcon }: TemplateWizardTabProps
 ): TemplateTabProps => ({
   id: constants.CONFIGURE_TEMPLATE_WIZARD_TAB_NAMES.WORKFLOWS,
-  title: intl.formatMessage({
-    defaultMessage: 'Workflows',
-    id: 'R7VvvJ',
-    description: 'The tab label for the monitoring workflows tab on the configure template wizard',
-  }),
-  hasError: false,
+  title: resources.WorkflowsTabLabel,
+  disabled: disabled,
+  tabStatusIcon,
   content: <DisplayWorkflows onSave={onSaveWorkflows} />,
   footerContent: {
     primaryButtonText: '',
     primaryButtonOnClick: () => {},
     showPrimaryButton: false,
-    secondaryButtonText: intl.formatMessage({
-      defaultMessage: 'Next',
-      id: 'daThty',
-      description: 'Button text for proceeding to the next tab',
-    }),
+    secondaryButtonText: resources.NextButtonText,
     secondaryButtonOnClick: () => {
       dispatch(selectWizardTab(constants.CONFIGURE_TEMPLATE_WIZARD_TAB_NAMES.CONNECTIONS));
     },

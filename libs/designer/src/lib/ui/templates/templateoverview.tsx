@@ -5,7 +5,7 @@ import { useIntl } from 'react-intl';
 import { useDispatch, useSelector } from 'react-redux';
 import type { AppDispatch, RootState } from '../../core/state/templates/store';
 import type { Template } from '@microsoft/logic-apps-shared';
-import { getPropertyValue, getTriggerFromDefinition, unmap } from '@microsoft/logic-apps-shared';
+import { getPropertyValue, unmap } from '@microsoft/logic-apps-shared';
 import { Link, Text } from '@fluentui/react-components';
 import { QuickViewPanel, QuickViewPanelHeader } from '../panel/templatePanel/quickViewPanel/quickViewPanel';
 import { ConnectionsList } from './connections/connections';
@@ -16,6 +16,7 @@ import { TemplatesPanelFooter } from '@microsoft/designer-ui';
 import { workflowTab } from '../panel/templatePanel/quickViewPanel/tabs/workflowTab';
 import { clearTemplateDetails } from '../../core/state/templates/templateSlice';
 import { CreateWorkflowPanel } from '../panel/templatePanel/createWorkflowPanel/createWorkflowPanel';
+import { useTemplatesStrings } from './templatesStrings';
 
 export const TemplateOverview = ({
   createWorkflow,
@@ -42,19 +43,15 @@ export const TemplateOverview = ({
   }));
   const { title, summary, sourceCodeUrl, details, description } = manifest as Template.TemplateManifest;
   const resources = {
-    by: intl.formatMessage({
-      defaultMessage: 'By',
-      id: '+5Jp42',
-      description: 'Title for publisher',
-    }),
     type: intl.formatMessage({
       defaultMessage: 'Type',
       id: 'k/X2ml',
       description: 'Title for solution type',
     }),
   };
+  const { resourceStrings } = useTemplatesStrings();
   const info = {
-    [resources.by]: getPropertyValue(details, 'by'),
+    [resourceStrings.BY]: getPropertyValue(details, 'by'),
     [resources.type]: getPropertyValue(details, 'type'),
   };
   const templateHasConnections = Object.keys(connections).length > 0;
@@ -170,7 +167,7 @@ const WorkflowList = ({
     unmap(workflows).map((workflow) => {
       const { id, manifest } = workflow;
       const { title } = manifest as Template.WorkflowManifest;
-      return { id, name: title, trigger: getTriggerFromDefinition(workflow.workflowDefinition.triggers ?? {}) };
+      return { id, name: title, trigger: workflow.triggerType };
     })
   );
   const columnsNames = {

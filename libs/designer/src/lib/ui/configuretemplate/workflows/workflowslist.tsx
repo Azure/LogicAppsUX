@@ -25,6 +25,9 @@ import { useFunctionalState } from '@react-hookz/web';
 import { Add12Filled } from '@fluentui/react-icons';
 import { deleteWorkflowData } from '../../../core/actions/bjsworkflow/configuretemplate';
 import { useResourceStrings } from '../resources';
+import { useTemplatesStrings } from '../../templates/templatesStrings';
+import { WorkflowKind } from '../../../core/state/workflow/workflowInterfaces';
+import { equals } from '@microsoft/logic-apps-shared';
 
 export const DisplayWorkflows = ({ onSave }: { onSave: (isMultiWorkflow: boolean) => void }) => {
   const intl = useIntl();
@@ -38,11 +41,6 @@ export const DisplayWorkflows = ({ onSave }: { onSave: (isMultiWorkflow: boolean
 
   const intlText = useMemo(
     () => ({
-      PLACEHOLDER: intl.formatMessage({
-        defaultMessage: '--',
-        id: '5lRHeK',
-        description: 'Accessibility label indicating that the value is not set',
-      }),
       ADD_WORKFLOWS: intl.formatMessage({
         defaultMessage: 'Add workflows',
         id: 'Ve6uLm',
@@ -62,7 +60,8 @@ export const DisplayWorkflows = ({ onSave }: { onSave: (isMultiWorkflow: boolean
     [intl]
   );
 
-  const resourceStrings = useResourceStrings();
+  const customResourceStrings = useResourceStrings();
+  const { stateTypes, resourceStrings } = useTemplatesStrings();
 
   const handleAddWorkflows = useCallback(() => {
     dispatch(openPanelView({ panelView: TemplatePanelView.ConfigureWorkflows }));
@@ -94,7 +93,7 @@ export const DisplayWorkflows = ({ onSave }: { onSave: (isMultiWorkflow: boolean
     displayName: string;
     state: string;
     trigger: string;
-    date: string;
+    // date: string; //TODO: removed until back-end updates us
   };
 
   const columns: TableColumnDefinition<WorkflowsTableItem>[] = [
@@ -110,19 +109,25 @@ export const DisplayWorkflows = ({ onSave }: { onSave: (isMultiWorkflow: boolean
     createTableColumn<WorkflowsTableItem>({
       columnId: 'trigger',
     }),
-    createTableColumn<WorkflowsTableItem>({
-      columnId: 'date',
-    }),
+    //TODO: removed until back-end updates us
+    // createTableColumn<WorkflowsTableItem>({
+    //   columnId: 'date',
+    // }),
   ];
 
   const items =
     Object.values(workflows)?.map((workflowData) => ({
       id: workflowData.id,
-      name: workflowData?.workflowName ?? intlText.PLACEHOLDER,
-      displayName: workflowData?.manifest?.title ?? intlText.PLACEHOLDER,
-      state: workflowData?.manifest?.kinds?.join(', ') ?? intlText.PLACEHOLDER,
-      trigger: '-', //TODO: replace this with the actual trigger type
-      date: '-', //TODO: replace this with the actual date
+      name: workflowData?.workflowName ?? customResourceStrings.Placeholder,
+      displayName: workflowData?.manifest?.title ?? customResourceStrings.Placeholder,
+      state:
+        workflowData?.manifest?.kinds
+          ?.map((kind) =>
+            equals(kind, WorkflowKind.STATEFUL) ? stateTypes.STATEFUL : equals(kind, WorkflowKind.STATELESS) ? stateTypes.STATELESS : ''
+          )
+          ?.join(', ') ?? customResourceStrings.Placeholder,
+      trigger: workflowData?.triggerType,
+      // date: '-', //TODO: removed until back-end updates us
     })) ?? [];
 
   const {
@@ -171,7 +176,7 @@ export const DisplayWorkflows = ({ onSave }: { onSave: (isMultiWorkflow: boolean
   );
 
   return (
-    <div>
+    <div className="msla-templates-wizard-tab-content">
       {currentPanelView === TemplatePanelView.ConfigureWorkflows && <ConfigureWorkflowsPanel onSave={onSave} />}
 
       <CommandBar
@@ -184,26 +189,25 @@ export const DisplayWorkflows = ({ onSave }: { onSave: (isMultiWorkflow: boolean
           },
         }}
       />
-
       {Object.keys(workflows).length > 0 ? (
-        <Table aria-label={resourceStrings.WorkflowsListTableLabel} style={{ minWidth: '550px' }}>
+        <Table aria-label={customResourceStrings.WorkflowsListTableLabel} style={{ minWidth: '550px' }}>
           <TableHeader>
             <TableRow>
               <TableSelectionCell
                 checked={allRowsSelected ? true : someRowsSelected ? 'mixed' : false}
                 onClick={toggleAllRows}
                 onKeyDown={toggleAllKeydown}
-                checkboxIndicator={{ 'aria-label': resourceStrings.SelectAllWorkflowsLabel }}
+                checkboxIndicator={{ 'aria-label': customResourceStrings.SelectAllWorkflowsLabel }}
               />
-
-              <TableHeaderCell>{resourceStrings.WorkflowName}</TableHeaderCell>
-              <TableHeaderCell>{resourceStrings.WorkflowDisplayName}</TableHeaderCell>
-              <TableHeaderCell>{resourceStrings.State}</TableHeaderCell>
+              <TableHeaderCell>{resourceStrings.WORKFLOW_NAME}</TableHeaderCell>
+              <TableHeaderCell>{customResourceStrings.WorkflowDisplayName}</TableHeaderCell>
+              <TableHeaderCell>{customResourceStrings.State}</TableHeaderCell>
+              <TableHeaderCell>{customResourceStrings.Trigger}</TableHeaderCell>
             </TableRow>
           </TableHeader>
           {rows.map(({ item, selected, onClick, onKeyDown, appearance }) => (
             <TableRow key={item.id} onClick={onClick} onKeyDown={onKeyDown} aria-selected={selected} appearance={appearance}>
-              <TableSelectionCell checked={selected} checkboxIndicator={{ 'aria-label': resourceStrings.WorkflowCheckboxRowLabel }} />
+              <TableSelectionCell checked={selected} checkboxIndicator={{ 'aria-label': customResourceStrings.WorkflowCheckboxRowLabel }} />
               <TableCell>
                 <TableCellLayout>{item.name}</TableCellLayout>
               </TableCell>
@@ -216,9 +220,10 @@ export const DisplayWorkflows = ({ onSave }: { onSave: (isMultiWorkflow: boolean
               <TableCell>
                 <TableCellLayout>{item.trigger}</TableCellLayout>
               </TableCell>
+              {/* //TODO: removed until back-end updates us
               <TableCell>
                 <TableCellLayout>{item.date}</TableCellLayout>
-              </TableCell>
+              </TableCell> */}
             </TableRow>
           ))}
         </Table>

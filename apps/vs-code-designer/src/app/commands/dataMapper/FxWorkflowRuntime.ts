@@ -31,13 +31,19 @@ import { ProgressLocation, type Uri, window } from 'vscode';
 
 export async function startBackendRuntime(projectPath: string, context: IActionContext): Promise<void> {
   const designTimeDirectory: Uri | undefined = await getOrCreateDesignTimeDirectory(designTimeDirectoryName, projectPath);
+  if (!ext.designTimeInstances.has(projectPath)) {
+    ext.designTimeInstances.set(projectPath, {
+      port: await portfinder.getPortPromise(),
+    });
+  }
+  const designTimeInst = ext.designTimeInstances.get(projectPath);
 
-  if (!ext.designTimePort) {
-    ext.designTimePort = await portfinder.getPortPromise();
+  if (!designTimeInst.port) {
+    designTimeInst.port = await portfinder.getPortPromise();
   }
 
   // Note: Must append operationGroups as it's a valid endpoint to ping
-  const url = `${backendRuntimeBaseUrl}${ext.designTimePort}${designerStartApi}`;
+  const url = `${backendRuntimeBaseUrl}${designTimeInst.port}${designerStartApi}`;
 
   await window.withProgress({ location: ProgressLocation.Notification }, async (progress) => {
     progress.report({ message: 'Starting backend runtime, this may take a few seconds...' });
@@ -64,10 +70,10 @@ export async function startBackendRuntime(projectPath: string, context: IActionC
           true
         );
         const cwd: string = designTimeDirectory.fsPath;
-        const portArgs = `--port ${ext.designTimePort}`;
+        const portArgs = `--port ${designTimeInst.port}`;
         startDesignTimeProcess(ext.outputChannel, cwd, getFunctionsCommand(), 'host', 'start', portArgs);
 
-        await waitForDesignTimeStartUp(url, new Date().getTime());
+        await waitForDesignTimeStartUp(projectPath, url, new Date().getTime());
       } else {
         throw new Error("Workflow folder doesn't exist");
       }

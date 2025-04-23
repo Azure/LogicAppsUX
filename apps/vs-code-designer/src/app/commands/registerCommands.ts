@@ -47,7 +47,6 @@ import { startLogicApp } from './startLogicApp';
 import { stopLogicApp } from './stopLogicApp';
 import { swapSlot } from './swapSlot';
 import { viewProperties } from './viewProperties';
-import type { IAzureConnectorsContext } from './workflows/azureConnectorWizard';
 import { configureWebhookRedirectEndpoint } from './workflows/configureWebhookRedirectEndpoint/configureWebhookRedirectEndpoint';
 import { enableAzureConnectors } from './workflows/enableAzureConnectors';
 import { exportLogicApp } from './workflows/exportLogicApp';
@@ -57,10 +56,6 @@ import { openOverview } from './workflows/openOverview';
 import { reviewValidation } from './workflows/reviewValidation';
 import { switchDebugMode } from './workflows/switchDebugMode/switchDebugMode';
 import { switchToDotnetProject } from './workflows/switchToDotnetProject';
-import { createUnitTest } from './workflows/unitTest/createUnitTest';
-import { editUnitTest } from './workflows/unitTest/editUnitTest';
-import { openUnitTestResults } from './workflows/unitTest/openUnitTestResults';
-import { runUnitTest } from './workflows/unitTest/runUnitTest';
 import { useSQLStorage } from './workflows/useSQLStorage';
 import { viewContent } from './workflows/viewContent';
 import { AppSettingsTreeItem, AppSettingTreeItem, registerSiteCommand } from '@microsoft/vscode-azext-azureappservice';
@@ -149,13 +144,7 @@ export function registerCommands(): void {
   // Data Mapper Commands
   registerCommand(extensionCommand.createNewDataMap, (context: IActionContext) => createNewDataMapCmd(context));
   registerCommand(extensionCommand.loadDataMapFile, (context: IActionContext, uri: Uri) => loadDataMapFileCmd(context, uri));
+  // Custom code commands
   registerCommandWithTreeNodeUnwrapping(extensionCommand.buildCustomCodeFunctionsProject, buildCustomCodeFunctionsProject);
   registerCommand(extensionCommand.createCustomCodeFunction, createCustomCodeFunctionFromCommand);
-  // Unit Test Commands
-  registerCommandWithTreeNodeUnwrapping(extensionCommand.createUnitTest, async (context: IAzureConnectorsContext, node: Uri | undefined) =>
-    createUnitTest(context, node)
-  );
-  registerCommandWithTreeNodeUnwrapping(extensionCommand.editUnitTest, editUnitTest);
-  registerCommandWithTreeNodeUnwrapping(extensionCommand.openUnitTestResults, openUnitTestResults);
-  registerCommandWithTreeNodeUnwrapping(extensionCommand.runUnitTest, runUnitTest);
 }
