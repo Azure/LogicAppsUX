@@ -18,25 +18,38 @@ export async function pickCustomCodeNetHostProcess(
   context: IActionContext,
   debugConfig: vscode.DebugConfiguration
 ): Promise<string | undefined> {
+  context.telemetry.properties.lastStep = 'getMatchingWorkspaceFolder';
   const workspace: vscode.WorkspaceFolder = getMatchingWorkspaceFolder(debugConfig);
+
+  context.telemetry.properties.lastStep = 'isCustomCodeFunctionsProject';
   const functionsProjectMetadata = await getCustomCodeFunctionsProjectMetadata(workspace.uri.fsPath);
   const logicAppFolder: vscode.WorkspaceFolder = vscode.workspace.workspaceFolders?.find(
     (workspace) => workspace.name === functionsProjectMetadata.logicAppName
   );
 
+  context.telemetry.properties.lastStep = 'getRunningFuncTask';
   const taskInfo: IRunningFuncTask | undefined = runningFuncTaskMap.get(logicAppFolder);
   if (!taskInfo) {
-    throw new Error(
-      localize(
-        'noFuncTask',
-        'Failed to find a running func task for the logic app "{0}" corresponding to the functions project "{1}". The logic app must be running to attach the debugger.',
-        functionsProjectMetadata.logicAppName,
-        functionsProjectMetadata.functionAppName
-      )
-    );
+    const errorMessage =
+      'Failed to find a running func task for the logic app "{0}" corresponding to the functions project "{1}". The logic app must be running to attach the debugger.';
+    context.telemetry.properties.result = 'Failed';
+    context.telemetry.properties.error = errorMessage
+      .replace('{0}', functionsProjectMetadata.logicAppName)
+      .replace('{1}', functionsProjectMetadata.functionAppName);
+    throw new Error(localize('noFuncTask', errorMessage, functionsProjectMetadata.logicAppName, functionsProjectMetadata.functionAppName));
   }
 
-  return await pickNetHostChildProcess(taskInfo);
+  context.telemetry.properties.lastStep = 'pickNetHostChildProcess';
+  const customCodeNetHostProcess = await pickNetHostChildProcess(taskInfo);
+  if (!customCodeNetHostProcess) {
+    const errorMessage = 'Failed to find the .NET host process for the functions project "{0}".';
+    context.telemetry.properties.result = 'Failed';
+    context.telemetry.properties.error = errorMessage.replace('{0}', functionsProjectMetadata.functionAppName);
+    throw new Error(localize('netHostProcessNotFound', errorMessage, functionsProjectMetadata.functionAppName));
+  }
+
+  context.telemetry.properties.result = 'Succeeded';
+  return customCodeNetHostProcess;
 }
 
 async function pickNetHostChildProcess(taskInfo: IRunningFuncTask): Promise<string | undefined> {

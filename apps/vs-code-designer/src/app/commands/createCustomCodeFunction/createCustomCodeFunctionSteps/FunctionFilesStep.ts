@@ -29,7 +29,9 @@ export class FunctionFilesStep extends AzureWizardPromptStep<IProjectWizardConte
   public async prompt(context: IProjectWizardContext): Promise<void> {
     const functionsFolderPath = path.join(context.workspacePath, context.functionAppName);
     if (!(await fs.pathExists(functionsFolderPath)) || !(await fs.stat(functionsFolderPath)).isDirectory()) {
-      ext.outputChannel.appendLog(`The target folder ${functionsFolderPath} is not a valid directory.`);
+      ext.outputChannel.appendLog(
+        localize('invalidFunctionsFolderPath', `The target folder ${functionsFolderPath} is not a valid directory.`)
+      );
       return;
     }
 

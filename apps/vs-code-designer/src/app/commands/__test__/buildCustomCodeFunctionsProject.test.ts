@@ -48,7 +48,9 @@ describe('buildWorkspaceCustomCodeFunctionsProjects', () => {
   let onDidEndTaskProcessEmitter: MockEventEmitter<any>;
 
   beforeEach(() => {
-    context = {} as IActionContext;
+    context = {
+      telemetry: { properties: {} },
+    } as IActionContext;
     vi.restoreAllMocks();
 
     vi.spyOn(workspaceUtils, 'getWorkspaceRoot').mockResolvedValue(testWorkspaceFolder);
@@ -69,6 +71,8 @@ describe('buildWorkspaceCustomCodeFunctionsProjects', () => {
     await buildWorkspaceCustomCodeFunctionsProjects(context);
 
     expect(ext.outputChannel.appendLog).toHaveBeenCalledWith('No custom code functions projects found.');
+    expect(context.telemetry.properties.result).toBe('Succeeded');
+    expect(context.telemetry.properties.lastStep).toBe('tryGetCustomCodeFunctionsProjects');
   });
 
   it('should build all custom code functions projects successfully', async () => {
@@ -105,6 +109,8 @@ describe('buildWorkspaceCustomCodeFunctionsProjects', () => {
     }
     expect(ext.outputChannel.appendLog).toHaveBeenCalledTimes(projectPaths.length);
     expect(window.showWarningMessage).not.toHaveBeenCalled();
+    expect(context.telemetry.properties.result).toBe('Succeeded');
+    expect(context.telemetry.properties.lastStep).toBe('buildCustomCodeProjects');
   });
 
   it('should handle errors during build for a custom code functions project', async () => {
@@ -127,9 +133,11 @@ describe('buildWorkspaceCustomCodeFunctionsProjects', () => {
 
     await buildPromise;
 
-    const testErrorMessage = `Error building custom code functions project at ${projectPaths[0]}: 1`;
+    const testErrorMessage = `Error building custom code functions project at "${projectPaths[0]}": 1`;
     expect(ext.outputChannel.appendLog).toHaveBeenCalledWith(testErrorMessage);
     expect(window.showWarningMessage).toHaveBeenCalledWith(testErrorMessage);
     expect(window.showInformationMessage).not.toHaveBeenCalled();
+    expect(context.telemetry.properties.result).toBe('Failed');
+    expect(context.telemetry.properties.error).toBeDefined();
   });
 });
