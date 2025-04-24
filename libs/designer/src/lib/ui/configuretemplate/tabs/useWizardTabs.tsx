@@ -6,7 +6,7 @@ import { connectionsTab } from './connectionsTab';
 import { parametersTab } from './parametersTab';
 import { profileTab } from './profileTab';
 import { publishTab } from './publishTab';
-import { reviewPublishTab } from './reviewPublishTab';
+import { reviewTab } from './reviewTab';
 import { useTemplatesStrings } from '../../templates/templatesStrings';
 import { useResourceStrings } from '../resources';
 
@@ -55,11 +55,11 @@ export const useConfigureTemplateWizardTabs = ({
       tabStatusIcon: templateManifestHasError ? 'error' : runValidation ? 'success' : enableWizard ? 'in-progress' : undefined,
       disabled: !enableWizard || isWizardUpdating,
     }),
-    publishTab(intl, resources, dispatch, {
+    reviewTab(resources, dispatch, {
       tabStatusIcon: undefined,
       disabled: !enableWizard || isWizardUpdating,
     }),
-    reviewPublishTab(intl, resources, dispatch, onPublish, {
+    publishTab(intl, resources, dispatch, onPublish, {
       tabStatusIcon: undefined,
       disabled: !enableWizard || isWizardUpdating,
     }),

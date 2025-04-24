@@ -10,7 +10,7 @@ import * as projectRootUtils from '../../../../utils/verifyIsProject';
 import * as unitTestUtils from '../../../../utils/unitTests';
 import * as azextUtils from '@microsoft/vscode-azext-utils';
 import { ext } from '../../../../../extensionVariables';
-import * as convertWorkspace from '../../../../commands/createNewCodeProject/CodeProjectBase/ConvertToWorkspace';
+import * as ConvertWorkspace from '../../../../commands/createNewCodeProject/CodeProjectBase/ConvertToWorkspace';
 
 vi.mock('../../../../../extensionVariables', () => ({
   ext: {
@@ -88,7 +88,7 @@ describe('saveBlankUnitTest', () => {
 
     // Stub isMultiRootWorkspace to simulate a valid multi-root environment
     vi.spyOn(workspaceUtils, 'isMultiRootWorkspace').mockReturnValue(true);
-    vi.spyOn(convertWorkspace, 'ConvertToWorkspace').mockResolvedValue(true);
+    vi.spyOn(ConvertWorkspace, 'convertToWorkspace').mockResolvedValue(true);
 
     // Stub the callWithTelemetryAndErrorHandling wrapper used inside saveBlankUnitTest
     vi.spyOn(azextUtils, 'callWithTelemetryAndErrorHandling').mockImplementation(async (eventName, callback) => {
@@ -126,7 +126,7 @@ describe('saveBlankUnitTest', () => {
 
   test('should not continue if not a valid workspace', async () => {
     vi.spyOn(workspaceUtils, 'isMultiRootWorkspace').mockReturnValue(false);
-    vi.spyOn(convertWorkspace, 'ConvertToWorkspace').mockResolvedValue(false);
+    vi.spyOn(ConvertWorkspace, 'convertToWorkspace').mockResolvedValue(false);
 
     await saveBlankUnitTest(dummyContext, dummyNode, dummyUnitTestDefinition);
     expect(unitTestUtils.promptForUnitTestName).toHaveBeenCalledTimes(0);
