@@ -14,7 +14,7 @@ import { resetTemplatesState } from '../global';
 import { initializeWorkflowsData, deleteWorkflowData, loadCustomTemplate } from '../../actions/bjsworkflow/configuretemplate';
 import { getSupportedSkus } from '../../configuretemplate/utils/helper';
 
-export type TemplateEnvironment = 'Production' | 'Development';
+export type TemplateEnvironment = 'Production' | 'Testing' | 'Development';
 export interface TemplateState extends TemplatePayload {
   templateName?: string;
   status?: TemplateEnvironment;
