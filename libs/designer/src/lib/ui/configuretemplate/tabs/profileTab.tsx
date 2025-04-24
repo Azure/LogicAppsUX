@@ -22,7 +22,7 @@ export const profileTab = (
     },
     secondaryButtonText: resources.NextButtonText,
     secondaryButtonOnClick: () => {
-      dispatch(selectWizardTab(constants.CONFIGURE_TEMPLATE_WIZARD_TAB_NAMES.PUBLISH));
+      dispatch(selectWizardTab(constants.CONFIGURE_TEMPLATE_WIZARD_TAB_NAMES.REVIEW));
     },
   },
 });

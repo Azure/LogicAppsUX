@@ -304,7 +304,7 @@ const useProfileSectionItems = (resources: Record<string, string>) => {
 };
 
 const useSettingsSection = (resources: Record<string, string>) => {
-  const { manifest, environment, isPublished } = useSelector((state: RootState) => state.template);
+  const { manifest, status } = useSelector((state: RootState) => state.template);
 
   const items: TemplatesSectionItem[] = [
     {
@@ -318,13 +318,8 @@ const useSettingsSection = (resources: Record<string, string>) => {
       type: 'text',
     },
     {
-      label: resources.Environment,
-      value: environment ?? resources.Placeholder,
-      type: 'text',
-    },
-    {
       label: resources.Status,
-      value: isPublished ? resources.Published : resources.Unpublished,
+      value: status ?? resources.Placeholder,
       type: 'text',
     },
   ];

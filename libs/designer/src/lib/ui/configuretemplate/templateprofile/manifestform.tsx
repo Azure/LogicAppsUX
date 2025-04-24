@@ -9,6 +9,7 @@ import { useMemo, useState } from 'react';
 import { useIntl } from 'react-intl';
 import { FeaturedConnectors } from './connectors';
 import type { Template } from '@microsoft/logic-apps-shared';
+import { getSupportedSkus } from '../../../core/configuretemplate/utils/helper';
 
 export const TemplateManifestForm = () => {
   const dispatch = useDispatch<AppDispatch>();
@@ -41,9 +42,26 @@ const useGeneralSectionItems = (
   resources: Record<string, string>,
   handleUpdateManifest: (manifest: Partial<Template.TemplateManifest>) => void
 ) => {
-  const { manifest, workflows, errors } = useSelector((state: RootState) => state.template);
+  const { manifest, workflows, errors, connections } = useSelector((state: RootState) => state.template);
   const workflowKeys = Object.keys(workflows);
   const isMultiWorkflow = workflowKeys.length > 1;
+  const disableSkuSelection = useMemo(() => getSupportedSkus(connections).length === 1, [connections]);
+  const skuTypes = useMemo(
+    () => [
+      { id: '1', label: resources.Standard, value: 'standard' },
+      { id: '2', label: resources.Consumption, value: 'consumption' },
+    ],
+    [resources.Consumption, resources.Standard]
+  );
+  const skuValue = useMemo(
+    () =>
+      skuTypes
+        .filter((skuType) => (manifest?.skus as string[]).includes(skuType.value))
+        .map((sku) => sku.label)
+        .join(', '),
+    [skuTypes, manifest?.skus]
+  );
+
   const items: TemplatesSectionItem[] = [
     {
       label: resources.DisplayName,
@@ -67,6 +85,18 @@ const useGeneralSectionItems = (
       type: 'text',
     });
   }
+
+  items.push({
+    label: resources.Host,
+    value: skuValue,
+    type: 'dropdown',
+    required: true,
+    multiselect: true,
+    options: skuTypes,
+    disabled: disableSkuSelection,
+    selectedOptions: manifest?.skus as string[],
+    onOptionSelect: (selectedOptions: string[]) => handleUpdateManifest({ skus: selectedOptions as Template.SkuType[] }),
+  });
 
   return items;
 };

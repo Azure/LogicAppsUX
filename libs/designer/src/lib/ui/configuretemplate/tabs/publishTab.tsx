@@ -5,64 +5,32 @@ import type { IntlShape } from 'react-intl';
 import { selectWizardTab } from '../../../core/state/templates/tabSlice';
 import { useResourceStrings } from '../resources';
 import { useDispatch, useSelector } from 'react-redux';
-import type { Template } from '@microsoft/logic-apps-shared';
 import { useMemo } from 'react';
-import { type TemplateEnvironment, updateEnvironment, updateTemplateManifest } from '../../../core/state/templates/templateSlice';
-import { getSupportedSkus } from '../../../core/configuretemplate/utils/helper';
+import { type TemplateEnvironment, updateEnvironment } from '../../../core/state/templates/templateSlice';
 import type { TemplateWizardTabProps } from './model';
 
 const TemplateSettings = () => {
-  const { manifest, environment, isPublished, connections } = useSelector((state: RootState) => state.template);
+  const { status } = useSelector((state: RootState) => state.template);
   const dispatch = useDispatch<AppDispatch>();
   const resources = useResourceStrings();
-  const disableSkuSelection = useMemo(() => getSupportedSkus(connections).length === 1, [connections]);
-  const skuTypes = useMemo(
+
+  const statusValues = useMemo(
     () => [
-      { id: '1', label: resources.Standard, value: 'standard' },
-      { id: '2', label: resources.Consumption, value: 'consumption' },
+      { id: resources.DevelopmentEnvironment, label: resources.DevelopmentEnvironment, value: 'Development' },
+      { id: resources.TestingEnvironment, label: resources.TestingEnvironment, value: 'Testing' },
+      { id: resources.ProductionEnvironment, label: resources.ProductionEnvironment, value: 'Production' },
     ],
-    [resources.Consumption, resources.Standard]
-  );
-  const skuValue = useMemo(
-    () =>
-      skuTypes
-        .filter((skuType) => (manifest?.skus as string[]).includes(skuType.value))
-        .map((sku) => sku.label)
-        .join(', '),
-    [skuTypes, manifest?.skus]
-  );
-  const environmentValues = useMemo(
-    () => [
-      { id: '3', label: resources.DevelopmentEnvironment, value: 'Development' },
-      { id: '4', label: resources.ProductionEnvironment, value: 'Production' },
-    ],
-    [resources.DevelopmentEnvironment, resources.ProductionEnvironment]
+    [resources.DevelopmentEnvironment, resources.TestingEnvironment, resources.ProductionEnvironment]
   );
 
   const items: TemplatesSectionItem[] = [
     {
-      label: resources.Host,
-      value: skuValue,
-      type: 'dropdown',
-      required: true,
-      multiselect: true,
-      options: skuTypes,
-      disabled: disableSkuSelection,
-      selectedOptions: manifest?.skus as string[],
-      onOptionSelect: (selectedOptions: string[]) => dispatch(updateTemplateManifest({ skus: selectedOptions as Template.SkuType[] })),
-    },
-    {
-      label: resources.Environment,
-      value: environmentValues.find((env) => env.value === environment)?.label,
-      type: 'dropdown',
-      options: environmentValues,
-      selectedOptions: [environment as string],
-      onOptionSelect: (selectedOptions: string[]) => dispatch(updateEnvironment(selectedOptions[0] as TemplateEnvironment)),
-    },
-    {
       label: resources.Status,
-      value: isPublished ? resources.Published : resources.Unpublished,
-      type: 'text',
+      value: statusValues.find((env) => env.value === status)?.label,
+      type: 'dropdown',
+      options: statusValues,
+      selectedOptions: [status as string],
+      onOptionSelect: (selectedOptions: string[]) => dispatch(updateEnvironment(selectedOptions[0] as TemplateEnvironment)),
     },
   ];
 
@@ -77,6 +45,7 @@ export const publishTab = (
   intl: IntlShape,
   resources: Record<string, string>,
   dispatch: AppDispatch,
+  onPublish: () => void,
   { disabled, tabStatusIcon }: TemplateWizardTabProps
 ): TemplateTabProps => ({
   id: constants.CONFIGURE_TEMPLATE_WIZARD_TAB_NAMES.PUBLISH,
@@ -92,11 +61,16 @@ export const publishTab = (
   footerContent: {
     primaryButtonText: resources.PreviousButtonText,
     primaryButtonOnClick: () => {
-      dispatch(selectWizardTab(constants.CONFIGURE_TEMPLATE_WIZARD_TAB_NAMES.PROFILE));
+      dispatch(selectWizardTab(constants.CONFIGURE_TEMPLATE_WIZARD_TAB_NAMES.REVIEW));
     },
-    secondaryButtonText: resources.NextButtonText,
+    secondaryButtonText: intl.formatMessage({
+      defaultMessage: 'Publish',
+      id: 'RkT4rN',
+      description: 'Button text for publishing the template',
+    }),
     secondaryButtonOnClick: () => {
-      dispatch(selectWizardTab(constants.CONFIGURE_TEMPLATE_WIZARD_TAB_NAMES.REVIEW_AND_PUBLISH));
+      //TODO: service call to publish the template
+      onPublish();
     },
   },
 });
