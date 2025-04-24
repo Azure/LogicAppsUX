@@ -11,7 +11,7 @@ import {
   MessageBarTitle,
 } from '@fluentui/react-components';
 import { ChevronDoubleRightFilled } from '@fluentui/react-icons';
-import { useCallback, useRef } from 'react';
+import { useCallback, useMemo, useRef, useState } from 'react';
 import { useIntl } from 'react-intl';
 import { EmptyContent } from '../card/emptycontent';
 import type { PageActionTelemetryData } from '../telemetry/models';
@@ -22,6 +22,9 @@ import { PanelResizer } from './panelResizer';
 import type { CommonPanelProps } from './panelUtil';
 import { PanelLocation, PanelScope, PanelSize } from './panelUtil';
 import type { PanelNodeData } from './types';
+import { equals, guid, SUBGRAPH_TYPES } from '@microsoft/logic-apps-shared';
+import constants from '../constants';
+import { TeachingPopup } from '../teachingPopup';
 
 export type PanelContainerProps = {
   noNodeSelected: boolean;
@@ -63,7 +66,6 @@ export const PanelContainer = ({
   readOnlyMode,
   node,
   nodeHeaderItems,
-  alternateSelectedNode,
   alternateSelectedNodeHeaderItems,
   alternateSelectedNodePersistence,
   toggleCollapse,
@@ -79,24 +81,41 @@ export const PanelContainer = ({
   showLogicAppRun,
   showTriggerInfo,
   isTrigger,
+  ...rest
 }: PanelContainerProps) => {
   const intl = useIntl();
   const canResize = !!(isResizeable && setOverrideWidth);
   const isEmptyPanel = noNodeSelected && panelScope === PanelScope.CardLevel;
   const isRight = panelLocation === PanelLocation.Right;
-  const alternateSelectedNodeId = alternateSelectedNode?.nodeId;
-  const isAlternateNodeDifferent =
-    alternateSelectedNode && alternateSelectedNode.nodeId !== node?.nodeId ? alternateSelectedNode : undefined;
+  const alternateSelectedNode = useMemo(
+    () => (rest.alternateSelectedNode && rest.alternateSelectedNode.nodeId !== node?.nodeId ? rest.alternateSelectedNode : undefined),
+    [node, rest.alternateSelectedNode]
+  );
+
+  const alternateSelectedNodeContainerId = useMemo(
+    () =>
+      alternateSelectedNode?.subgraphType &&
+      alternateSelectedNodePersistence === 'selected' &&
+      equals(alternateSelectedNode.subgraphType, SUBGRAPH_TYPES['AGENT_CONDITION'], true)
+        ? guid()
+        : undefined,
+    [alternateSelectedNode?.subgraphType, alternateSelectedNodePersistence]
+  );
+
+  const targetElement = alternateSelectedNodeContainerId && document.getElementById(alternateSelectedNodeContainerId);
+  const [shouldDisplayPopup, setShouldDisplayPopup] = useState(
+    localStorage.getItem(constants.TEACHING_POPOVER_ID.agentToolPanel) !== 'true'
+  );
   const panelRef = useRef<HTMLDivElement>(null);
   const drawerWidth = isCollapsed
     ? PanelSize.Auto
-    : ((canResize ? overrideWidth : undefined) ?? (isAlternateNodeDifferent ? PanelSize.DualView : PanelSize.Medium));
+    : ((canResize ? overrideWidth : undefined) ?? (alternateSelectedNode ? PanelSize.DualView : PanelSize.Medium));
 
   const renderHeader = useCallback(
     (headerNode: PanelNodeData): JSX.Element => {
       const { nodeId } = headerNode;
-      const panelHasAlternateNode = !!isAlternateNodeDifferent;
-      const isAlternateNode = alternateSelectedNodeId === nodeId;
+      const panelHasAlternateNode = !!alternateSelectedNode;
+      const isAlternateNode = rest.alternateSelectedNode?.nodeId === nodeId;
       const canUnpin = !!onUnpinAction && isAlternateNode && alternateSelectedNodePersistence === 'pinned';
 
       return (
@@ -125,8 +144,7 @@ export const PanelContainer = ({
       );
     },
     [
-      isAlternateNodeDifferent,
-      alternateSelectedNodeId,
+      alternateSelectedNode,
       onUnpinAction,
       alternateSelectedNodePersistence,
       isCollapsed,
@@ -147,6 +165,7 @@ export const PanelContainer = ({
       isTrigger,
       resubmitOperation,
       onCommentChange,
+      rest.alternateSelectedNode,
     ]
   );
 
@@ -174,12 +193,25 @@ export const PanelContainer = ({
     description: 'Text of Tooltip to collapse',
   });
 
+  const toolBranchTitle = intl.formatMessage({
+    defaultMessage: 'Tool branch for the Agent',
+    id: 'TgtIUN',
+    description: 'Text of Tooltip to show tool branch',
+  });
+
+  const toolBranchMessage = intl.formatMessage({
+    defaultMessage: 'Each action provided to the agent should be within a tool branch. We are adding a tool branch by default for you.',
+    id: 'n55ef6',
+    description: 'Text of Tooltip to show tool branch',
+  });
+
   const renderPanelContents = useCallback(
     (contentsNode: NonNullable<typeof node>, type: 'pinned' | 'selected', isAlternateSelectedNode: boolean): JSX.Element => {
       const { errorMessage, isError, isLoading, nodeId, onSelectTab, selectedTab, tabs } = contentsNode;
       return (
         <div
           className={mergeClasses('msla-panel-layout', `msla-panel-border-${type}`, isAlternateSelectedNode && 'msla-panel-layout-pinned')}
+          id={isAlternateSelectedNode ? alternateSelectedNodeContainerId : undefined}
         >
           {renderHeader(contentsNode)}
           <div className={`${isError ? 'msla-panel-contents--error' : 'msla-panel-contents'}`}>
@@ -201,7 +233,7 @@ export const PanelContainer = ({
         </div>
       );
     },
-    [renderHeader, panelErrorMessage, trackEvent, panelErrorTitle]
+    [renderHeader, panelErrorMessage, trackEvent, panelErrorTitle, alternateSelectedNodeContainerId]
   );
 
   const minWidth = alternateSelectedNode ? Number.parseInt(PanelSize.DualView, 10) : undefined;
@@ -223,7 +255,12 @@ export const PanelContainer = ({
       open={true}
       ref={panelRef}
       position={isRight ? 'end' : 'start'}
-      style={{ position: 'relative', maxWidth: '100%', width: drawerWidth, height: '100%' }}
+      style={{
+        position: 'relative',
+        maxWidth: '100%',
+        width: drawerWidth,
+        height: '100%',
+      }}
     >
       {isEmptyPanel || isCollapsed ? (
         <Button
@@ -241,7 +278,7 @@ export const PanelContainer = ({
             className={mergeClasses(
               'msla-panel-container-nested',
               `msla-panel-container-nested-${panelLocation.toLowerCase()}`,
-              !isEmptyPanel && isAlternateNodeDifferent && 'msla-panel-container-nested-dual'
+              !isEmptyPanel && alternateSelectedNode && 'msla-panel-container-nested-dual'
             )}
           >
             {isEmptyPanel ? (
@@ -249,10 +286,22 @@ export const PanelContainer = ({
             ) : (
               <>
                 {node ? renderPanelContents(node, 'selected', false) : null}
-                {isAlternateNodeDifferent ? (
+                {alternateSelectedNode ? (
                   <>
                     <Divider vertical={true} />
-                    {renderPanelContents(isAlternateNodeDifferent, alternateSelectedNodePersistence, true)}
+                    {renderPanelContents(alternateSelectedNode, alternateSelectedNodePersistence, true)}
+                    {shouldDisplayPopup && targetElement ? (
+                      <TeachingPopup
+                        targetElement={targetElement}
+                        title={toolBranchTitle}
+                        message={toolBranchMessage}
+                        withArrow={true}
+                        handlePopupPrimaryOnClick={() => {
+                          localStorage.setItem(constants.TEACHING_POPOVER_ID.agentToolPanel, 'true');
+                          setShouldDisplayPopup(false);
+                        }}
+                      />
+                    ) : null}
                   </>
                 ) : null}
               </>
