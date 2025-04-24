@@ -45,6 +45,7 @@ export const publishTab = (
   intl: IntlShape,
   resources: Record<string, string>,
   dispatch: AppDispatch,
+  onPublish: () => void,
   { disabled, tabStatusIcon }: TemplateWizardTabProps
 ): TemplateTabProps => ({
   id: constants.CONFIGURE_TEMPLATE_WIZARD_TAB_NAMES.PUBLISH,
@@ -60,11 +61,16 @@ export const publishTab = (
   footerContent: {
     primaryButtonText: resources.PreviousButtonText,
     primaryButtonOnClick: () => {
-      dispatch(selectWizardTab(constants.CONFIGURE_TEMPLATE_WIZARD_TAB_NAMES.PROFILE));
-    },
-    secondaryButtonText: resources.NextButtonText,
-    secondaryButtonOnClick: () => {
       dispatch(selectWizardTab(constants.CONFIGURE_TEMPLATE_WIZARD_TAB_NAMES.REVIEW));
+    },
+    secondaryButtonText: intl.formatMessage({
+      defaultMessage: 'Publish',
+      id: 'RkT4rN',
+      description: 'Button text for publishing the template',
+    }),
+    secondaryButtonOnClick: () => {
+      //TODO: service call to publish the template
+      onPublish();
     },
   },
 });
