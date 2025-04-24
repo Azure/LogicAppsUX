@@ -83,38 +83,6 @@
   padding-top: 1em;
 }
 
-.msla-designer-canvas {
-  display: flex;
-  flex: 1;
-  margin: 0 auto;
-  min-width: 100%;
-  overflow: hidden;
-
-  @media only screen and (max-width: calc(@card-max-width + 40)) {
-    width: 100%;
-    min-width: @card-min-width;
-  }
-
-  img {
-    vertical-align: baseline;
-  }
-
-  /*
-		Weird new fluent bug where this generated css is causing weird
-		behavior when opening / closing panels.
-		This does not have any other effect.
-	*/
-  & > div {
-    --fui-Drawer--size: 0px;
-  }
-}
-
-.msla-theme-dark {
-  .msla-designer-canvas {
-    background-color: @ms-color-bodyBackground;
-  }
-}
-
 ::-webkit-input-placeholder {
   /* Chrome */
   color: @parameter-placeholder-color;

@@ -1,7 +1,13 @@
 import { openPanel, useNodesInitialized } from '../core';
 import { useLayout } from '../core/graphlayout';
 import { usePreloadOperationsQuery, usePreloadConnectorsQuery } from '../core/queries/browse';
-import { useMonitoringView, useReadOnly, useHostOptions, useIsVSCode } from '../core/state/designerOptions/designerOptionsSelectors';
+import {
+  useMonitoringView,
+  useReadOnly,
+  useHostOptions,
+  useIsVSCode,
+  useIsDarkMode,
+} from '../core/state/designerOptions/designerOptionsSelectors';
 import { useAgenticWorkflow, useClampPan } from '../core/state/designerView/designerViewSelectors';
 import { clearPanel } from '../core/state/panel/panelSlice';
 import { useIsGraphEmpty } from '../core/state/workflow/workflowSelectors';
@@ -44,6 +50,8 @@ import { CanvasSizeMonitor } from './CanvasSizeMonitor';
 import { useResizeObserver } from '@react-hookz/web';
 import { AgentChat } from './panel/agentChat/agentChat';
 import { DesignerFlowViewPadding } from '../core/utils/designerLayoutHelpers';
+import { useDesignerStyles } from './designer.styles';
+import { mergeClasses } from '@fluentui/react-components';
 
 export interface DesignerProps {
   backgroundProps?: BackgroundProps;
@@ -190,7 +198,8 @@ export const Designer = (props: DesignerProps) => {
       return recurrenceInterval ?? null;
     },
   });
-
+  const classNames = useDesignerStyles();
+  const isDarkMode = useIsDarkMode();
   // Adding workflowKind (stateful or stateless) to the query to access outside of functional components
   const workflowKind = useSelector((state: RootState) => state.workflow.workflowKind);
   // This delayes the query until the workflowKind is available
@@ -226,7 +235,21 @@ export const Designer = (props: DesignerProps) => {
   return (
     <DndProvider options={DND_OPTIONS}>
       {preloadSearch ? <SearchPreloader /> : null}
-      <div className="msla-designer-canvas msla-panel-mode" ref={designerContainerRef}>
+      <div
+        className={mergeClasses(
+          classNames.designerPanelMode,
+          classNames.designerCanvas,
+          isDarkMode && classNames.designerCanvasDark,
+          classNames.designerWithBrowserOverrides,
+          classNames.designerWithFluentOverrides,
+          isDarkMode && classNames.designerWithFluentOverridesDark,
+          classNames.designerWithReactFlow,
+          isDarkMode && classNames.designerWithReactFlowDark,
+          classNames.designerWithJsPlumbToolkit,
+          isDarkMode && classNames.designerWithJsPlumbToolkitDark
+        )}
+        ref={designerContainerRef}
+      >
         <ReactFlowProvider>
           <div style={{ flexGrow: 1 }}>
             <ReactFlow
