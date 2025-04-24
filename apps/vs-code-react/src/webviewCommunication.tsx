@@ -1,3 +1,4 @@
+import { initializeConnection } from './state/ConnectionSlice';
 import type {
   UpdateAccessTokenMessage,
   UpdateExportPathMessage,
@@ -18,6 +19,7 @@ import type {
   ShowAvailableSchemasMessageV2,
   GetTestFeatureEnablementStatus,
   GetAvailableCustomXsltPathsMessageV2,
+  LoadConnection,
 } from './run-service';
 import {
   changeCustomXsltPathList,
@@ -62,6 +64,7 @@ const vscode: WebviewApi<unknown> = acquireVsCodeApi();
 export const VSCodeContext = React.createContext(vscode);
 
 type DesignerMessageType = ReceiveCallbackMessage | CompleteFileSystemConnectionMessage | UpdatePanelMetadataMessage;
+type ConnectionsMessageType = LoadConnection;
 type DataMapperMessageType =
   | FetchSchemaMessage
   | LoadDataMapMessage
@@ -75,7 +78,7 @@ type DataMapperMessageType =
   | GetDataMapperVersionMessage
   | GetTestFeatureEnablementStatus;
 type WorkflowMessageType = UpdateAccessTokenMessage | UpdateExportPathMessage | AddStatusMessage | SetFinalStatusMessage;
-type MessageType = InjectValuesMessage | DesignerMessageType | DataMapperMessageType | WorkflowMessageType;
+type MessageType = InjectValuesMessage | DesignerMessageType | DataMapperMessageType | WorkflowMessageType | ConnectionsMessageType;
 
 export const WebViewCommunication: React.FC<{ children: ReactNode }> = ({ children }) => {
   const dispatch: AppDispatch = useDispatch();
@@ -114,8 +117,8 @@ export const WebViewCommunication: React.FC<{ children: ReactNode }> = ({ childr
         break;
       }
       case ProjectName.connections: {
-        if (message.command === ExtensionCommand.initialize_frame) {
-          dispatch(initializeDesigner(message.data));
+        if (message.command === ExtensionCommand.loadConnection) {
+          dispatch(initializeConnection(message.data.connectionId));
           console.log('Connections project initialized');
         }
         break;

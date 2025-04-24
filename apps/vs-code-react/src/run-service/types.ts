@@ -370,3 +370,11 @@ export interface GetTestFeatureEnablementStatus {
   command: typeof ExtensionCommand.isTestDisabledForOS;
   data: boolean;
 }
+
+// Connections messages
+export interface LoadConnection {
+  command: typeof ExtensionCommand.loadConnection;
+  data: {
+    connectionId: string;
+  };
+}

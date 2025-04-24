@@ -3,6 +3,7 @@ import type { ExtensionCommand } from '@microsoft/vscode-extension-logic-apps';
 export const webviewType = 'dataMapperWebview';
 
 export type InitializeConnection = {
+  // danielle move this to be shared by vscode-react
   connectionId: string;
 };
 

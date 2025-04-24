@@ -26,10 +26,15 @@ export default class ConnectionsPanel {
     // Handle messages from the webview (Data Mapper component)
     this.panel.webview.onDidReceiveMessage(this._handleWebviewMsg, undefined, ext.context.subscriptions);
 
-    // this.sendMsgToWebview({
-    //     command: ExtensionCommand.initialize_frame,
-    //     data: { connectionId: connectionName, project: ProjectName.connections },
-    //   });
+    this.sendMsgToWebview({
+      command: ExtensionCommand.initialize_frame,
+      data: { connectionId: connectionName, project: ProjectName.connections },
+    });
+
+    this.sendMsgToWebview({
+      command: ExtensionCommand.loadConnection,
+      data: { connectionId: connectionName },
+    });
   }
 
   private async _setWebviewHtml() {

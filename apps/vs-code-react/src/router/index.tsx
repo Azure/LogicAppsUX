@@ -15,7 +15,7 @@ import { StateWrapper } from '../stateWrapper';
 import { MemoryRouter, Route, Routes } from 'react-router-dom';
 
 export const Router: React.FC = () => {
-  console.log();
+  console.log('in router');
   return (
     <MemoryRouter>
       <Routes>
