@@ -115,7 +115,7 @@ export const PanelContainer = ({
     (headerNode: PanelNodeData): JSX.Element => {
       const { nodeId } = headerNode;
       const panelHasAlternateNode = !!alternateSelectedNode;
-      const isAlternateNode = alternateSelectedNode?.nodeId === nodeId;
+      const isAlternateNode = rest.alternateSelectedNode?.nodeId === nodeId;
       const canUnpin = !!onUnpinAction && isAlternateNode && alternateSelectedNodePersistence === 'pinned';
 
       return (
@@ -165,6 +165,7 @@ export const PanelContainer = ({
       isTrigger,
       resubmitOperation,
       onCommentChange,
+      rest.alternateSelectedNode,
     ]
   );
 
