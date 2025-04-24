@@ -74,8 +74,8 @@ export const SelectWorkflows = ({
       description: 'Title for the workflows selection section',
     }),
     WORKFLOWS_LABEL: intl.formatMessage({
-      defaultMessage: 'Select the workflows you would like to add to this template.',
-      id: 'YGe6mJ',
+      defaultMessage: 'Select the workflows to add to this template.',
+      id: 'ODtEzQ',
       description: 'Label for the workflows selection description',
     }),
     WORKFLOW_NAME: intl.formatMessage({
