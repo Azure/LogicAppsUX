@@ -1,4 +1,4 @@
-import { AccordionHeader, AccordionItem, AccordionPanel, Link, Text, tokens } from '@fluentui/react-components';
+import { AccordionHeader, AccordionItem, AccordionPanel, Link, makeStyles, Text, tokens } from '@fluentui/react-components';
 import type { PropsWithChildren } from 'react';
 import { useCallback, useMemo, useState } from 'react';
 import { BrowseGrid } from '../browseResults';
@@ -6,6 +6,18 @@ import { useIntl } from 'react-intl';
 import { filterOperationData } from '../helpers';
 import { RecommendationPanelConstants } from '../../../constants';
 import type { OperationActionData, OperationGroupCardData } from '../interfaces';
+
+const useSpotlightSectionStyles = makeStyles({
+  linkText: {
+    marginLeft: 'auto',
+    marginRight: tokens.spacingHorizontalM,
+    fontSize: tokens.fontSizeBase200,
+    color: tokens.colorNeutralForeground1,
+    '&:hover': {
+      color: tokens.colorNeutralForeground1,
+    },
+  },
+});
 
 export const SpotlightCategoryType = {
   AICapabilities: 'AICapabilities',
@@ -41,6 +53,8 @@ export const SpotlightSection = ({
   children,
 }: PropsWithChildren<SpotlightSectionProps>) => {
   const intl = useIntl();
+
+  const classNames = useSpotlightSectionStyles();
 
   const [isExpanded, setIsExpanded] = useState(false);
 
@@ -89,7 +103,7 @@ export const SpotlightSection = ({
           </Text>
         </AccordionHeader>
         {isOpen && operationsCount > RecommendationPanelConstants.ACTION_SPOTLIGHT.MAX_AMOUNT_OF_SPOTLIGHT_ITEMS ? (
-          <Link onClick={() => setIsExpanded((v) => !v)} className={'msla-recommendation-panel-spotlight-section-header-link'}>
+          <Link onClick={() => setIsExpanded((v) => !v)} className={classNames.linkText}>
             {isExpanded ? seeLessText : seeAllText}
           </Link>
         ) : null}
