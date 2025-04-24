@@ -50,33 +50,22 @@ export const ChannelsTab: React.FC<PanelTabProps> = (props) => {
         id: 'BgLF7r',
         description: 'Channel output.',
       }),
-      INPUT_OUTPUT_INFO: intl.formatMessage({
-        defaultMessage:
-          'The agent stays active and responsive throughout the session, awaiting input and generating output until the user explicitly stops the run.',
-        id: '9VE4qe',
-        description: 'Input and output channel info config.',
-      }),
       INPUT_OUTPUT_DESCRIPTION: intl.formatMessage({
         defaultMessage:
-          'Enabling output channel requires the input channel to be enabled which allows for seamless, real-time interaction with the agent, facilitating the development of conversational experiences.',
-        id: 'D+4/fO',
+          'Send messages to and get responses from the agent while the workflow is running. The workflow continues to run as the agent responds in real time for a conversational-like interaction.',
+        id: 'l40RIH',
         description: 'Input and output channel configuration.',
       }),
-      INPUT_INFO: intl.formatMessage({
-        defaultMessage:
-          'The agent stays idle but active, waiting for user input. Once input is received, it proceeds to process the data and continue through the workflow.',
-        id: 'tBK+HP',
-        description: 'Input channel info config.',
-      }),
       INPUT_DESCRIPTION: intl.formatMessage({
-        defaultMessage: 'Enabling the input channel enables you to send messages to the agent while maintaining an active workflow.',
-        id: 'Zu7DUk',
-        description: 'Input channel configuration.',
+        defaultMessage:
+          'Send messages to the agent while the workflow is running. This will keep the agent in running state until the user responds.',
+        id: 'zeb1vr',
+        description: 'Input channel info config.',
       }),
       CHANNEL_DESCRIPTION: intl.formatMessage({
         defaultMessage:
-          'Configuring communication channels for your agent will facilitate seamless interaction. The necessary details will be automatically set up once the channel is enabled.',
-        id: 'qInOXQ',
+          'Channels are where you and the agent can send and receive messages. You can communicate with the agent directly in the chat, or use the URL provided in the response header of your workflow trigger to integrate with a front-end chat interface or chat widget.',
+        id: 'jR/Dwl',
         description: 'Channel description.',
       }),
       LEARN_MORE: intl.formatMessage({
@@ -202,7 +191,7 @@ export const ChannelsTab: React.FC<PanelTabProps> = (props) => {
                   disableOperation({ input: true, output: true });
                 }
               }}
-              customLabel={getSettingLabel(stringResources.INPUT_TITLE, stringResources.INPUT_INFO, stringResources.INPUT_DESCRIPTION)}
+              customLabel={getSettingLabel(stringResources.INPUT_TITLE, undefined, stringResources.INPUT_DESCRIPTION)}
               ariaLabel={stringResources.INPUT_TITLE}
             />
             <SettingToggle
@@ -215,11 +204,7 @@ export const ChannelsTab: React.FC<PanelTabProps> = (props) => {
                   disableOperation({ input: false, output: true });
                 }
               }}
-              customLabel={getSettingLabel(
-                stringResources.OUTPUT_TITLE,
-                stringResources.INPUT_OUTPUT_INFO,
-                stringResources.INPUT_OUTPUT_DESCRIPTION
-              )}
+              customLabel={getSettingLabel(stringResources.OUTPUT_TITLE, undefined, stringResources.INPUT_OUTPUT_DESCRIPTION)}
               ariaLabel={stringResources.OUTPUT_TITLE}
             />
           </div>
