@@ -14,6 +14,7 @@ import {
   useTableSelection,
   createTableColumn,
   Button,
+  MessageBar,
 } from '@fluentui/react-components';
 import { EmptySearch } from '@microsoft/designer-ui';
 import { useIntl } from 'react-intl';
@@ -190,6 +191,13 @@ export const DisplayWorkflows = ({ onSave }: { onSave: (isMultiWorkflow: boolean
           },
         }}
       />
+
+      <MessageBar intent="error" className="msla-templates-error-message-bar" hidden={!Object.keys(workflows).length}>
+        {/* {"parameterError"} */}
+        <div>sdkfjsdk</div>
+        <div>sdkfjsdk</div>
+      </MessageBar>
+
       {Object.keys(workflows).length > 0 ? (
         <Table aria-label={customResourceStrings.WorkflowsListTableLabel} style={{ minWidth: '550px' }}>
           <TableHeader>
