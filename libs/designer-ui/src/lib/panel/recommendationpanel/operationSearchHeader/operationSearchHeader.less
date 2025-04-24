@@ -1,6 +1,5 @@
 .msla-sub-heading-container {
-  margin: 0px -24px 12px;
-  padding: 12px 24px;
+  padding: 12px 0;
   z-index: 1;
   position: sticky;
   top: 68px;
@@ -10,8 +9,17 @@
   gap: 8px;
   background-color: #fff;
 
+  .msla-sub-heading {
+    position: sticky;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+  }
+
   .msla-search-box {
     margin: 0px;
+    background-color: transparent;
+    width: 100%;
 
     .ms-SearchBox-iconContainer {
       max-width: 24px;
@@ -41,4 +49,8 @@
   .msla-sub-heading-container {
     background-color: @ms-color-secondaryBackground;
   }
+}
+
+.msla-filter-operation-type-header {
+  font-size: 200;
 }

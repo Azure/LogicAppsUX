@@ -5,6 +5,7 @@ import type { PayloadAction } from '@reduxjs/toolkit';
 import { createSlice } from '@reduxjs/toolkit';
 import { resetWorkflowState, setStateAfterUndoRedo } from '../global';
 import type {
+  ActionPanelFavoriteItem,
   ConnectionPanelContentState,
   DiscoveryPanelContentState,
   ErrorPanelContentState,
@@ -33,6 +34,7 @@ const getInitialDiscoveryContentState = (): DiscoveryPanelContentState => ({
   selectedNodeIds: [],
   selectedOperationGroupId: '',
   selectedOperationId: '',
+  favoriteOperations: [],
 });
 
 const getInitialErrorContentState = (): ErrorPanelContentState => ({
@@ -89,7 +91,10 @@ export const panelSlice = createSlice({
 
       state.connectionContent = getInitialConnectionContentState();
       state.currentPanelMode = 'Operation';
-      state.discoveryContent = getInitialDiscoveryContentState();
+      state.discoveryContent = {
+        ...getInitialDiscoveryContentState(),
+        favoriteOperations: state.discoveryContent.favoriteOperations,
+      };
       state.errorContent = getInitialErrorContentState();
       state.nodeSearchContent = getInitialNodeSearchContentState();
       state.previousPanelMode = undefined;
@@ -206,6 +211,9 @@ export const panelSlice = createSlice({
     selectOperationId: (state, action: PayloadAction<string>) => {
       state.discoveryContent.selectedOperationId = action.payload;
     },
+    setFavoriteOperations: (state, action: PayloadAction<ActionPanelFavoriteItem[]>) => {
+      state.discoveryContent.favoriteOperations = action.payload;
+    },
     openPanel: (
       state,
       action: PayloadAction<{
@@ -297,6 +305,7 @@ export const {
   selectErrorsPanelTab,
   selectOperationGroupId,
   selectOperationId,
+  setFavoriteOperations,
   setPinnedPanelActiveTab,
   setSelectedPanelActiveTab,
   setIsCreatingConnection,

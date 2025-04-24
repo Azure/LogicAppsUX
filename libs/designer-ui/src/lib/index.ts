@@ -82,4 +82,3 @@ export * from './unitTesting/outputMocks';
 export * from './unitTesting/conditionExpression';
 export { FunctionGroupDefinitions as TemplateFunctions } from './workflow/languageservice/templatefunctions';
 export type { FunctionDefinition } from './workflow/languageservice/templatefunctions';
-export { removeUTFExpressions } from './workflow/languageservice/workflowlanguageservice';

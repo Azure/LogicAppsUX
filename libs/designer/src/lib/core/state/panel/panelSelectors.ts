@@ -27,6 +27,12 @@ export const useDiscoveryPanelIsParallelBranch = () =>
 export const useDiscoveryPanelRelationshipIds = () =>
   useSelector(createSelector(getPanelState, (state) => state.discoveryContent.relationshipIds));
 
+export const useDiscoveryPanelFavoriteOperations = () =>
+  useSelector(createSelector(getPanelState, (state) => state.discoveryContent.favoriteOperations));
+
+export const useDiscoveryPanelIsOperationFavorited = (connectorId: string, operationId?: string) =>
+  useDiscoveryPanelFavoriteOperations().some((favorite) => favorite.connectorId === connectorId && favorite.operationId === operationId);
+
 export const useErrorsPanelSelectedTabId = () => useSelector(createSelector(getPanelState, (state) => state.errorContent.selectedTabId));
 
 export const useFocusReturnElementId = () => useSelector(createSelector(getPanelState, (state) => state.focusReturnElementId));

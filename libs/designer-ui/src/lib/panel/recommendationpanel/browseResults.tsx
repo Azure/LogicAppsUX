@@ -1,52 +1,95 @@
 import NoResultsSvg from '../../../assets/search/noResults.svg';
 import { ConnectorSummaryCard } from '../../connectorsummarycard';
-import { getConnectorCategoryString } from '../../utils';
 import { List } from '@fluentui/react';
 import { Spinner, Text } from '@fluentui/react-components';
 import type { Connector } from '@microsoft/logic-apps-shared';
-import { useCallback, useLayoutEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import { useIntl } from 'react-intl';
+import type { OperationActionData, OperationGroupCardData } from './interfaces';
+import { getListHeight, getShouldUseSingleColumn } from './helpers';
+import type { OperationGroupData, OperationsData } from './recommendationPanelCard';
+import { RecommendationPanelCard } from './recommendationPanelCard';
 
 export type BrowseGridProps = {
-  onConnectorSelected: (connectorId: string) => void;
-  connectors: Connector[];
+  onConnectorSelected?: (connectorId: string) => void;
+  onOperationSelected?: (operationId: string, apiId?: string) => void;
+  operationsData: Connector[] | Array<OperationActionData | OperationGroupCardData>;
   isLoading: boolean;
   displayRuntimeInfo: boolean;
+  showConnectorName?: boolean;
+  hideNoResultsText?: boolean;
+  isConnector?: boolean;
 };
 
-export const BrowseGrid = (props: BrowseGridProps) => {
-  const { connectors, onConnectorSelected, isLoading, displayRuntimeInfo } = props;
-
+export const BrowseGrid = ({
+  operationsData,
+  onConnectorSelected,
+  onOperationSelected,
+  isLoading,
+  displayRuntimeInfo,
+  showConnectorName,
+  hideNoResultsText,
+  isConnector,
+}: BrowseGridProps) => {
   const intl = useIntl();
-  const ref = useRef(null);
+  const ref = useRef<HTMLDivElement>(null);
   const [forceSingleCol, setForceSingleCol] = useState(false);
 
   const checkCol = useCallback(() => {
-    setForceSingleCol((ref.current as any)?.clientWidth < 560);
+    setForceSingleCol(getShouldUseSingleColumn(ref.current?.clientWidth));
   }, []);
-  window.onresize = checkCol;
-  useLayoutEffect(checkCol, [checkCol]);
+
+  useEffect(() => {
+    checkCol();
+    window.addEventListener('resize', checkCol);
+
+    return () => {
+      window.removeEventListener('resize', checkCol);
+    };
+  }, [checkCol]);
 
   const onRenderCell = useCallback(
-    (connector?: Connector, _index?: number) => {
-      if (!connector) {
+    (operationData?: Connector | OperationActionData | OperationGroupCardData) => {
+      if (!operationData) {
         return;
       }
+
+      if (isConnector) {
+        const connector = operationData as Connector;
+        return (
+          <div className="msla-browse-list-tile-wrapper">
+            <div className="msla-browse-list-tile" style={{ width: forceSingleCol ? '100%' : '50%' }}>
+              <ConnectorSummaryCard
+                key={connector.id}
+                connector={connector}
+                onClick={onConnectorSelected}
+                displayRuntimeInfo={displayRuntimeInfo}
+              />
+            </div>
+          </div>
+        );
+      }
+
+      const typedData: OperationGroupData | OperationsData =
+        'id' in operationData
+          ? { type: 'Operation', data: operationData as OperationActionData }
+          : { type: 'OperationGroup', data: operationData as OperationGroupCardData };
+
       return (
-        <div className="mlsa-browse-list-tile-wrapper">
+        <div className="msla-browse-list-tile-wrapper">
           <div className="msla-browse-list-tile" style={{ width: forceSingleCol ? '100%' : '50%' }}>
-            <ConnectorSummaryCard
-              key={connector.id}
-              connector={connector}
-              onClick={onConnectorSelected}
-              category={getConnectorCategoryString(connector)}
-              displayRuntimeInfo={displayRuntimeInfo}
+            <RecommendationPanelCard
+              operationData={typedData}
+              onConnectorClick={onConnectorSelected}
+              onOperationClick={onOperationSelected}
+              showUnfilledFavoriteOnlyOnHover={true}
+              showConnectorName={showConnectorName}
             />
           </div>
         </div>
       );
     },
-    [forceSingleCol, onConnectorSelected, displayRuntimeInfo]
+    [displayRuntimeInfo, forceSingleCol, isConnector, onConnectorSelected, onOperationSelected, showConnectorName]
   );
 
   const noResultsText = intl.formatMessage({
@@ -61,7 +104,7 @@ export const BrowseGrid = (props: BrowseGridProps) => {
     description: 'Message to show under the loading icon when loading connectors',
   });
 
-  if (!isLoading && connectors.length === 0) {
+  if (!isLoading && operationsData.length === 0 && !hideNoResultsText) {
     return (
       <div className="msla-no-results-container">
         <img src={NoResultsSvg} alt={noResultsText?.toString()} />
@@ -77,7 +120,8 @@ export const BrowseGrid = (props: BrowseGridProps) => {
           <Spinner size="extra-small" label={loadingText} aria-live="assertive" />
         </div>
       )}
-      <List onRenderCell={onRenderCell} items={connectors} getPageHeight={() => (forceSingleCol ? 80 * 10 : 80 * 5)} />
+
+      <List onRenderCell={onRenderCell} items={operationsData} getPageHeight={() => getListHeight(forceSingleCol)} />
     </div>
   );
 };

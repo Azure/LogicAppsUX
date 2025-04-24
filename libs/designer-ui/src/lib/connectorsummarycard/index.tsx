@@ -1,27 +1,23 @@
-import { isBuiltInConnector, isPremiumConnector } from '../connectors/predicates';
+import { isBuiltInConnector } from '../connectors/predicates';
 import { InfoDot } from '../infoDot';
 import { css } from '@fluentui/react';
-import { Badge, Text } from '@fluentui/react-components';
+import { mergeClasses, Text } from '@fluentui/react-components';
 import type { Connector, OperationApi } from '@microsoft/logic-apps-shared';
 import { getDescriptionFromConnector, getDisplayNameFromConnector, getIconUriFromConnector } from '@microsoft/logic-apps-shared';
+import { OperationRuntimeBadges } from './operationRuntimeBadges';
 import { useCallback } from 'react';
+import { ChevronRight12Regular } from '@fluentui/react-icons';
+import { FavoriteButton } from '../panel';
 
 export interface ConnectorSummaryCardProps {
   connector: Connector | OperationApi;
   displayRuntimeInfo: boolean;
-  category: string;
   onClick?: (id: string) => void;
   isCard?: boolean;
 }
 
-const pseudoBadgeStyles = {
-  fontSize: '11px',
-  lineHeight: '16px',
-  fontWeight: 600,
-};
-
 export const ConnectorSummaryCard = (props: ConnectorSummaryCardProps) => {
-  const { connector, category, onClick, isCard = true, displayRuntimeInfo } = props;
+  const { connector, onClick, isCard = true, displayRuntimeInfo } = props;
   const { id } = connector;
 
   const connectorName = getDisplayNameFromConnector(connector);
@@ -35,7 +31,6 @@ export const ConnectorSummaryCard = (props: ConnectorSummaryCardProps) => {
   }, [connectorName, iconUrl, isCard]);
 
   const isBuiltIn = isBuiltInConnector(connector);
-  const isPremium = isPremiumConnector(connector);
 
   const Content = () => (
     <>
@@ -47,19 +42,19 @@ export const ConnectorSummaryCard = (props: ConnectorSummaryCardProps) => {
           description={description}
           style={isCard ? undefined : { marginRight: '8px' }}
           innerAriaHidden="true"
+          className={mergeClasses('msla-recommendation-panel-card-visible-on-hover', 'info-dot-visible-on-hover')}
         />
+        <FavoriteButton
+          connectorId={connector.id}
+          operationId={undefined}
+          showFilledFavoriteOnlyOnHover={false}
+          showUnfilledFavoriteOnlyOnHover={true}
+        />
+        <ChevronRight12Regular />
       </div>
       {displayRuntimeInfo ? (
         <div className="msla-connector-summary-labels">
-          {isBuiltIn ? (
-            <Badge style={pseudoBadgeStyles} appearance="outline">
-              {category}
-            </Badge>
-          ) : isPremium ? (
-            <Badge style={pseudoBadgeStyles} appearance="outline" shape="square" color="success">
-              {category}
-            </Badge>
-          ) : null}
+          <OperationRuntimeBadges isBuiltIn={isBuiltIn} />
         </div>
       ) : null}
     </>

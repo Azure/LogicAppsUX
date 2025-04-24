@@ -1,8 +1,7 @@
 import Constants from '../../constants';
-import { isHighContrastBlack } from '../../utils';
 import type { FunctionDefinition, SignatureInfo } from './templatefunctions';
 import { FunctionGroupDefinitions } from './templatefunctions';
-import { ExpressionScanner, ExpressionTokenType, equals, first, getPropertyValue, map } from '@microsoft/logic-apps-shared';
+import { ExpressionScanner, ExpressionTokenType, first, getPropertyValue, map } from '@microsoft/logic-apps-shared';
 import type { ExpressionToken } from '@microsoft/logic-apps-shared';
 import type { languages, editor, Position } from 'monaco-editor';
 
@@ -72,10 +71,11 @@ interface IdentifierTokenInfo {
 export function registerWorkflowLanguageProviders(
   monacoLanguages: typeof languages,
   monacoEditor: typeof editor,
-  hideUTFExpressions?: boolean
+  themeOptions: { isInverted: boolean }
 ): void {
   const languageName = Constants.LANGUAGE_NAMES.WORKFLOW;
-  const templateFunctions = getTemplateFunctions(hideUTFExpressions);
+  const themeName = Constants.LANGUAGE_NAMES.THEME;
+  const templateFunctions = getTemplateFunctions();
 
   monacoLanguages.register({ id: languageName });
 
@@ -107,7 +107,7 @@ export function registerWorkflowLanguageProviders(
   });
 
   // Define a new theme that contains only rules that match this language
-  monacoEditor.defineTheme(languageName, createThemeData(isHighContrastBlack()));
+  monacoEditor.defineTheme(themeName, createThemeData(themeOptions.isInverted));
 }
 
 export function createThemeData(isInverted: boolean): IStandaloneThemeData {
@@ -117,20 +117,19 @@ export function createThemeData(isInverted: boolean): IStandaloneThemeData {
     rules: [
       {
         token: tokenNames.FUNCTION,
-        foreground: '110188',
-        fontStyle: 'bold',
+        foreground: isInverted ? 'ffd700' : '110188',
       },
       {
         token: tokenNames.STRING,
-        foreground: 'a31515',
+        foreground: isInverted ? 'ce9178' : 'a31515',
       },
       {
         token: tokenNames.NUMBER,
-        foreground: '09885a',
+        foreground: isInverted ? 'b5cea8' : '098658',
       },
       {
         token: tokenNames.KEYWORD,
-        foreground: '0000ff',
+        foreground: isInverted ? '569cd6' : '0000ff',
       },
     ],
     colors: {},
@@ -438,19 +437,10 @@ function parseExpression(value: string, position: Position, templateFunctions: R
   };
 }
 
-export function getTemplateFunctions(hideUTFExpressions?: boolean): FunctionDefinition[] {
-  const templateFunctions: FunctionDefinition[] = [];
-  for (const functionGroup of FunctionGroupDefinitions) {
-    templateFunctions.push(...(hideUTFExpressions ? removeUTFExpressions(functionGroup.functions) : functionGroup.functions));
-  }
-
-  return templateFunctions;
+export function getTemplateFunctions(): FunctionDefinition[] {
+  return FunctionGroupDefinitions.flatMap((group) => group.functions);
 }
 
 function signatureHasVariableParameters(signature: SignatureInfo): boolean {
   return signature.parameters.some((parameter) => !!parameter.isVariable);
-}
-
-export function removeUTFExpressions(functionGroupFunctions: FunctionDefinition[]): FunctionDefinition[] {
-  return functionGroupFunctions.filter((func) => !equals(func.name, 'utf8Length') && !equals(func.name, 'utf16Length'));
 }

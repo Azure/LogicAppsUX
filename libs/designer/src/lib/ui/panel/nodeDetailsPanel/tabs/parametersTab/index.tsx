@@ -104,7 +104,6 @@ export const ParametersTab: React.FC<ParametersTabProps> = (props) => {
   const isInlineConnection = useIsInlineConnection(operationInfo);
   const showIdentitySelector = useShowIdentitySelectorQuery(selectedNodeId);
   const errorInfo = useOperationErrorInfo(selectedNodeId);
-  const { hideUTFExpressions } = useHostOptions();
   const replacedIds = useReplacedIds();
   const switchOrAgentParentInfo = useGetSwitchOrAgentParentId(selectedNodeId);
 
@@ -161,7 +160,7 @@ export const ParametersTab: React.FC<ParametersTabProps> = (props) => {
     workflowState,
     replacedIds
   );
-  const expressionGroup = getExpressionTokenSections(hideUTFExpressions);
+  const expressionGroup = getExpressionTokenSections();
 
   return (
     <>
@@ -247,7 +246,7 @@ const ParameterSection = ({
   const displayNameResult = useConnectorName(operationInfo);
   const panelLocation = usePanelLocation();
 
-  const { suppressCastingForSerialize, hideUTFExpressions, enableMultiVariable } = useHostOptions();
+  const { suppressCastingForSerialize, enableMultiVariable } = useHostOptions();
 
   const [tokenMapping, setTokenMapping] = useState<Record<string, ValueSegment>>({});
 
@@ -552,7 +551,6 @@ const ParameterSection = ({
         tokenGroup={tokenGroup}
         filteredTokenGroup={filteredTokenGroup}
         expressionGroup={expressionGroup}
-        hideUTFExpressions={hideUTFExpressions}
         initialMode={tokenPickerMode}
         getValueSegmentFromToken={(token: OutputToken, addImplicitForeach: boolean) =>
           getValueSegmentFromToken(parameter.id, token, addImplicitForeach, !!isCodeEditor)

@@ -81,7 +81,6 @@ export interface TokenPickerProps {
   initialMode?: TokenPickerMode;
   // tokenClickedCallback is used for the code Editor TokenPicker(Legacy Token Picker)
   tokenClickedCallback?: (token: ValueSegment) => void;
-  hideUTFExpressions?: boolean;
   valueType?: string;
   parameter: ParameterInfo;
   createOrUpdateAgentParameter?: (name: string, type: string, description: string, isUpdating?: boolean) => void;
@@ -93,7 +92,6 @@ export function TokenPicker({
   filteredTokenGroup,
   expressionGroup,
   initialMode,
-  hideUTFExpressions,
   valueType,
   parameter,
   getValueSegmentFromToken,
@@ -364,7 +362,6 @@ export function TokenPicker({
                       currentHeight={expressionEditorCurrentHeight}
                       setCurrentHeight={setExpressionEditorCurrentHeight}
                       setExpressionEditorError={setExpressionEditorError}
-                      hideUTFExpressions={hideUTFExpressions}
                     />
                     <div className="msla-token-picker-expression-editor-error">{expressionEditorError}</div>
                     <TokenPickerPivot selectedKey={selectedMode} selectKey={handleSelectKey} hideExpressions={!!tokenClickedCallback} />

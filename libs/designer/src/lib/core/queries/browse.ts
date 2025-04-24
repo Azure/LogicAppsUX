@@ -1,6 +1,8 @@
+import type { Connector, DiscoveryOpArray } from '@microsoft/logic-apps-shared';
 import { SearchService, cleanConnectorId } from '@microsoft/logic-apps-shared';
 import { useEffect, useMemo } from 'react';
 import { useInfiniteQuery, useQuery } from '@tanstack/react-query';
+import type { ActionPanelFavoriteItem } from '../state/panel/panelTypes';
 
 /*
   Riley - The general idea here is that each lazy query will fetch one 'page' at a time,
@@ -19,6 +21,8 @@ const queryOpts = {
 const pagedOpts = {
   getNextPageParam: (lastPage: any) => (lastPage.data.length > 0 ? lastPage.pageParam + 1 : undefined),
 };
+
+const favoriteActionQueryPageSize = 10;
 
 /// Operations ///
 
@@ -280,3 +284,145 @@ const useBuiltInConnectorsQuery = () =>
     },
     queryOpts
   );
+
+/// Favorites ///
+
+// Returns a map of connectorId to Connector
+const useConnectorsMap = () => {
+  const { data: connectors, isLoading: connectorsLoading } = useAllConnectors();
+
+  return useMemo(() => {
+    const connectorsMap: Record<string, Connector> = {};
+    for (const connector of connectors) {
+      connectorsMap[connector.id] = connector;
+    }
+    return { connectorsMap, connectorsLoading };
+  }, [connectors, connectorsLoading]);
+};
+
+const useFavoriteConnectors = (favoriteItems: ActionPanelFavoriteItem[]) => {
+  const { connectorsMap, connectorsLoading } = useConnectorsMap();
+
+  // Favorite item is a connector if it doesn't have an operation id
+  const favoriteConnectorIds = useMemo(() => {
+    if (!favoriteItems) {
+      return [];
+    }
+    const isConnectorFavorite = (favoriteItem: ActionPanelFavoriteItem) => !favoriteItem.operationId;
+    return favoriteItems.filter(isConnectorFavorite);
+  }, [favoriteItems]);
+
+  // Return connectors for favorited connector ids
+  return useMemo(() => {
+    const favoriteConnectorsData = [];
+    for (const favoriteConnectorId of favoriteConnectorIds) {
+      const id = favoriteConnectorId.connectorId;
+      if (connectorsMap[id]) {
+        favoriteConnectorsData.push(connectorsMap[id]);
+      }
+    }
+    return { favoriteConnectorsData, connectorsLoading };
+  }, [favoriteConnectorIds, connectorsLoading, connectorsMap]);
+};
+
+const useFavoriteActionsQuery = (favoriteItems: ActionPanelFavoriteItem[]) => {
+  // Favorite item is a operation/action if it has an operation id specified
+  const favoriteActionIds = useMemo(() => {
+    if (!favoriteItems) {
+      return [];
+    }
+    const isActionFavorite = (favoriteItem: ActionPanelFavoriteItem) => favoriteItem.operationId;
+    return favoriteItems.filter(isActionFavorite);
+  }, [favoriteItems]);
+
+  // Return paged operations for favorited operation ids. This query is paged to reduce number of get operations calls at once.
+  return useInfiniteQuery(
+    ['favoriteActions', favoriteActionIds],
+    async ({ pageParam = 0 }) => {
+      const favoriteActionIdsForCurrentPage = favoriteActionIds.slice(pageParam, pageParam + favoriteActionQueryPageSize);
+
+      // Fetch all actions for the de-duped connectorIds on the current page
+      const uniqueConnectorIdsForCurrentPage = new Set<string>();
+      favoriteActionIdsForCurrentPage.forEach((favoriteActionId) => uniqueConnectorIdsForCurrentPage.add(favoriteActionId.connectorId));
+
+      const allActions = await getOperationsForConnectors();
+
+      // Get the favorited actions for the current page from fetched operations
+      const favoriteActions = filterOperationsFromList(favoriteActionIdsForCurrentPage, allActions);
+      return { favoriteActions, pageParam };
+    },
+    {
+      ...queryOpts,
+      getNextPageParam: (lastPage) =>
+        favoriteActionIds.length > lastPage.pageParam + favoriteActionQueryPageSize
+          ? lastPage.pageParam + favoriteActionQueryPageSize
+          : undefined,
+    }
+  );
+};
+
+export const useFavoriteOperations = (favoriteItems: ActionPanelFavoriteItem[]) => {
+  const { favoriteConnectorsData, connectorsLoading } = useFavoriteConnectors(favoriteItems);
+  const {
+    data: favoriteActionsPages,
+    fetchNextPage: favoriteActionsFetchNextPage,
+    hasNextPage: favoriteActionsHasNextPage,
+    isFetching: favoriteActionsIsFetching,
+    isFetchingNextPage: favoriteActionsIsFetchingNextPage,
+  } = useFavoriteActionsQuery(favoriteItems);
+
+  const favoriteActionsData = useMemo(
+    () => favoriteActionsPages?.pages.flatMap((page) => page.favoriteActions) ?? [],
+    [favoriteActionsPages]
+  );
+
+  return useMemo(
+    () => ({
+      favoriteConnectorsData: favoriteConnectorsData ?? [],
+      favoriteActionsData: favoriteActionsData ?? [],
+      isLoadingFavoriteConnectors: connectorsLoading,
+      favoriteActionsFetchNextPage,
+      favoriteActionsHasNextPage,
+      favoriteActionsIsFetchingNextPage,
+      favoriteActionsIsFetching,
+    }),
+    [
+      favoriteConnectorsData,
+      favoriteActionsData,
+      connectorsLoading,
+      favoriteActionsFetchNextPage,
+      favoriteActionsHasNextPage,
+      favoriteActionsIsFetchingNextPage,
+      favoriteActionsIsFetching,
+    ]
+  );
+};
+
+/// Helpers ///
+
+const getOperationsForConnectors = async () => {
+  const connectorPromises = Array<Promise<DiscoveryOpArray>>();
+
+  connectorPromises.push(SearchService().getAllOperations?.() ?? Promise.resolve([]));
+
+  return (await Promise.all(connectorPromises)).flatMap((ops) => ops);
+};
+
+const filterOperationsFromList = (
+  operationsToRetrieve: { connectorId: string; operationId?: string }[],
+  allOperations: DiscoveryOpArray
+) => {
+  const filteredOperations: DiscoveryOpArray = [];
+  for (const operationToRetrieve of operationsToRetrieve) {
+    console.log('operationToRetrieve', operationToRetrieve);
+    const operation = allOperations.find(
+      (op) =>
+        op.properties.api.id.toLowerCase() === operationToRetrieve.connectorId.toLowerCase() &&
+        op.id.toLowerCase() === operationToRetrieve.operationId?.toLowerCase()
+    );
+    if (operation) {
+      filteredOperations.push(operation);
+    }
+  }
+  return filteredOperations;
+};

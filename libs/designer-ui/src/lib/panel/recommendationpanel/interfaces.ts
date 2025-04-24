@@ -9,7 +9,16 @@ export interface OperationActionData {
   iconUri?: string;
   isTrigger: boolean;
   isBuiltIn?: boolean;
-  isPremium?: boolean;
+  isCustom?: boolean;
   apiId?: string;
   releaseStatus?: string;
+}
+
+export interface OperationGroupCardData {
+  apiId: string;
+  connectorName: string;
+  description?: string;
+  iconUri?: string;
+  brandColor?: string;
+  isCustom?: boolean;
 }

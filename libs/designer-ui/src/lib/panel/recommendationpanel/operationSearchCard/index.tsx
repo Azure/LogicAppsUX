@@ -1,45 +1,20 @@
+import { Avatar, Body1Strong, Caption1, Card } from '@fluentui/react-components';
+import { ArrowFlowUpRightFilled } from '@fluentui/react-icons';
 import { InfoDot } from '../../../infoDot';
-import { getPreviewTag } from '../../../utils';
 import type { OperationActionData } from '../interfaces';
-import { Image } from '@fluentui/react';
-import { Badge, Text } from '@fluentui/react-components';
 import { replaceWhiteSpaceWithUnderscore } from '@microsoft/logic-apps-shared';
-import { useIntl } from 'react-intl';
+import { OperationRuntimeBadges } from '../../../connectorsummarycard/operationRuntimeBadges';
 
-export type OperationSearchCardProps = {
+export interface OperationSearchCardProps {
   operationActionData: OperationActionData;
-  displayRuntimeInfo: boolean;
+  showConnectorName?: boolean;
   showImage?: boolean;
-  style?: any;
   onClick: (operationId: string, apiId?: string) => void;
-} & CommonCardProps;
-
-export interface CommonCardProps {
-  brandColor?: string;
 }
 
-export const OperationSearchCard = (props: OperationSearchCardProps) => {
-  const { operationActionData, onClick, showImage = false, style, displayRuntimeInfo } = props;
-  const {
-    title,
-    description,
-    category,
-    isBuiltIn,
-    isPremium,
-    isTrigger,
-    brandColor = '#000',
-    iconUri,
-    releaseStatus,
-  } = operationActionData;
-
-  const intl = useIntl();
-  const previewTag = getPreviewTag(releaseStatus);
-
-  const triggerBadgeText = intl.formatMessage({
-    defaultMessage: 'Trigger',
-    id: '02vyBk',
-    description: 'Badge showing an action is a logic apps trigger',
-  });
+export const OperationSearchCard: React.FC<OperationSearchCardProps> = (props) => {
+  const { operationActionData, onClick, showConnectorName = false, showImage = false } = props;
+  const { title, description, connectorName, isBuiltIn, isTrigger, brandColor = '#000', iconUri } = operationActionData;
 
   const onCardClick = () => {
     const apiId = operationActionData.apiId ?? '';
@@ -49,42 +24,45 @@ export const OperationSearchCard = (props: OperationSearchCardProps) => {
   const buttonId = `msla-op-search-result-${replaceWhiteSpaceWithUnderscore(operationActionData.id)}`;
 
   return (
-    <button
-      id={buttonId}
-      className="msla-op-search-card-container"
-      onClick={() => onCardClick()}
-      style={style}
-      data-automation-id={`msla-op-search-result-${replaceWhiteSpaceWithUnderscore(operationActionData.id)}`}
-      aria-label={title}
-    >
-      <div className="msla-op-search-card-color-line" style={{ background: brandColor }} />
-      {showImage && iconUri ? <Image className="msla-op-search-card-image" alt={title} src={iconUri} /> : null}
-      <Text className="msla-op-search-card-name">{title}</Text>
-      {displayRuntimeInfo && (
-        <>
-          {previewTag ? (
-            <Badge appearance="outline" shape="rounded">
-              {previewTag}
-            </Badge>
+    <div className="msla-op-search-card-container">
+      <Card
+        id={buttonId}
+        className="msla-op-search-card-container"
+        onClick={() => onCardClick()}
+        data-automation-id={buttonId}
+        aria-label={title}
+        focusMode="off"
+      >
+        <div className="msla-op-search-card-color-line" style={{ background: brandColor }} />
+        {showImage && iconUri ? (
+          <Avatar
+            className="msla-op-search-card-image"
+            icon={<ArrowFlowUpRightFilled style={{ color: brandColor }} />}
+            image={{ src: iconUri }}
+            role="presentation"
+          />
+        ) : null}
+        <div className="msla-op-search-card-text">
+          <Body1Strong
+            className="msla-op-search-card-title"
+            onKeyDown={(evt: React.KeyboardEvent<HTMLElement>) => {
+              if (evt.key === 'Enter') {
+                onCardClick();
+              }
+            }}
+            tabIndex={0}
+          >
+            {title}
+          </Body1Strong>
+          {showConnectorName && connectorName ? (
+            <span className="msla-op-search-card-subtitle">
+              <Caption1>{connectorName}</Caption1>
+            </span>
           ) : null}
-          {isBuiltIn && category ? (
-            <Badge appearance="outline" shape="rounded">
-              {category}
-            </Badge>
-          ) : isPremium && category ? (
-            <Badge color="success" appearance="outline" shape="square">
-              {category}
-            </Badge>
-          ) : null}
-          {isTrigger ? (
-            <Badge appearance="outline" shape="rounded">
-              {triggerBadgeText}
-            </Badge>
-          ) : null}
-        </>
-      )}
-
-      {description ? <InfoDot ariaDescribedBy={buttonId} description={description} innerAriaHidden="true" /> : null}
-    </button>
+        </div>
+        <OperationRuntimeBadges isBuiltIn={isBuiltIn} isTrigger={isTrigger} />
+        <InfoDot ariaDescribedBy={buttonId} description={description} innerAriaHidden="true" title={title} />
+      </Card>
+    </div>
   );
 };

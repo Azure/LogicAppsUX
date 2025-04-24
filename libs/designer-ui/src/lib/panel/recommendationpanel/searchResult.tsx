@@ -1,16 +1,21 @@
 import NoResultsSvg from '../../../assets/search/noResults.svg';
 import { AriaSearchResultsAlert } from '../../ariaSearchResults/ariaSearchResultsAlert';
-import { isBuiltInConnector, isPremiumConnector } from '../../connectors';
+import { isBuiltInConnector } from '../../connectors';
 import { getConnectorCategoryString } from '../../utils';
+import type { SearchResultSortOption } from '../types';
+import { SearchResultSortOptions } from '../types';
 import type { OperationActionData } from './interfaces';
-import { OperationSearchCard } from './operationSearchCard';
 import { OperationSearchGroup } from './operationSearchGroup';
 import { List } from '@fluentui/react';
 import { Spinner, Text } from '@fluentui/react-components';
-import type { DiscoveryOpArray, DiscoveryOperation, DiscoveryResultTypes } from '@microsoft/logic-apps-shared';
+import type { DiscoveryOpArray, DiscoveryOperation, DiscoveryResultTypes, OperationApi } from '@microsoft/logic-apps-shared';
 import type { PropsWithChildren } from 'react';
 import React, { useMemo } from 'react';
 import { useIntl } from 'react-intl';
+import { RuntimeFilterTagList } from './runtimeFilterTagList';
+import { BrowseGrid } from './browseResults';
+import { getOperationCardDataFromOperation } from './helpers';
+import { RecommendationPanelConstants } from '../../constants';
 
 export type SearchResultsGridProps = {
   isLoadingMore: boolean;
@@ -20,53 +25,60 @@ export type SearchResultsGridProps = {
   onConnectorClick: (connectorId: string) => void;
   onOperationClick: (operationId: string, apiId?: string) => void;
   displayRuntimeInfo: boolean;
-  groupByConnector?: boolean;
+  groupByConnector: boolean;
+  setGroupByConnector: (groupByConnector: boolean) => void;
+  filters: Record<string, string>;
+  setFilters: (filters: Record<string, string>) => void;
 };
 
-export const SearchResultsGrid: React.FC<PropsWithChildren<SearchResultsGridProps>> = (props) => {
-  const {
-    isLoadingMore,
-    isLoadingSearch,
-    searchTerm,
-    operationSearchResults,
-    onConnectorClick,
-    onOperationClick,
-    groupByConnector,
-    displayRuntimeInfo,
-  } = props;
+const maxOperationsToDisplay = RecommendationPanelConstants.SEARCH_VIEW.MAX_OPERATIONS_IN_SEARCH_GROUP;
 
+export const SearchResultsGrid: React.FC<PropsWithChildren<SearchResultsGridProps>> = ({
+  isLoadingMore,
+  isLoadingSearch,
+  searchTerm,
+  operationSearchResults,
+  onConnectorClick,
+  onOperationClick,
+  groupByConnector,
+  setGroupByConnector,
+  displayRuntimeInfo,
+  filters,
+  setFilters,
+}: SearchResultsGridProps) => {
   const intl = useIntl();
 
-  const apiIds = useMemo(
-    () => Array.from(new Set(operationSearchResults.filter((r) => r !== undefined).map((res) => res.properties?.api?.id))),
-    [operationSearchResults]
-  );
+  const [resultsSorting, setResultsSorting] = React.useState<SearchResultSortOption>(SearchResultSortOptions.unsorted);
 
-  const onRenderOperationCell = React.useCallback(
-    (operation: DiscoveryOperation<DiscoveryResultTypes> | undefined, _index: number | undefined) => {
-      if (!operation) {
-        return;
-      }
-      return (
-        <OperationSearchCard
-          key={operation.id}
-          operationActionData={OperationActionDataFromOperation(operation)}
-          onClick={() => onOperationClick(operation.id, operation.properties.api.id)}
-          showImage={true}
-          style={{ marginBottom: '8px' }}
-          displayRuntimeInfo={displayRuntimeInfo}
-        />
-      );
-    },
-    [onOperationClick, displayRuntimeInfo]
+  const getApiNameWithFallback = (api: OperationApi): string => {
+    return api.name ?? api.id;
+  };
+
+  const apiNames = useMemo(
+    () =>
+      Array.from(
+        new Set(
+          operationSearchResults
+            .filter((r) => r !== undefined)
+            .map((res) => getApiNameWithFallback(res.properties.api))
+            .sort((a, b) =>
+              resultsSorting === SearchResultSortOptions.unsorted
+                ? 0
+                : resultsSorting === SearchResultSortOptions.ascending
+                  ? a.localeCompare(b)
+                  : b.localeCompare(a)
+            )
+        )
+      ),
+    [operationSearchResults, resultsSorting]
   );
 
   const onRenderOperationGroup = React.useCallback(
-    (apiId: string | undefined, _index: number | undefined) => {
-      if (!apiId) {
+    (apiName: string | undefined, _index: number | undefined) => {
+      if (!apiName) {
         return;
       }
-      const operations = operationSearchResults.filter((res) => res?.properties.api.id === apiId);
+      const operations = operationSearchResults.filter((res) => res?.properties.api.name === apiName);
       if (operations.length === 0) {
         return null;
       }
@@ -74,18 +86,30 @@ export const SearchResultsGrid: React.FC<PropsWithChildren<SearchResultsGridProp
       return (
         <div style={{ marginBottom: '24px' }}>
           <OperationSearchGroup
-            key={apiId}
+            key={apiName}
             operationApi={api}
-            operationActionsData={operations.map((operation) => OperationActionDataFromOperation(operation))}
+            operationActionsData={operations.map((operation) => getOperationCardDataFromOperation(operation))}
             onConnectorClick={onConnectorClick}
             onOperationClick={onOperationClick}
-            displayRuntimeInfo={displayRuntimeInfo}
+            maxOperationsToDisplay={maxOperationsToDisplay}
           />
         </div>
       );
     },
-    [onConnectorClick, onOperationClick, operationSearchResults, displayRuntimeInfo]
+    [onConnectorClick, onOperationClick, operationSearchResults]
   );
+
+  const sortedOperationsData = useMemo(() => {
+    const operationCardData = operationSearchResults.map((operation) => OperationActionDataFromOperation(operation));
+
+    if (resultsSorting !== SearchResultSortOptions.unsorted) {
+      operationCardData.sort((a, b) =>
+        resultsSorting === SearchResultSortOptions.ascending ? a.title.localeCompare(b.title) : b.title.localeCompare(a.title)
+      );
+    }
+
+    return operationCardData;
+  }, [operationSearchResults, resultsSorting]);
 
   const noResultsText = intl.formatMessage(
     {
@@ -126,15 +150,35 @@ export const SearchResultsGrid: React.FC<PropsWithChildren<SearchResultsGridProp
 
   if (!isLoadingMore && !isLoadingSearch && operationSearchResults.length === 0) {
     return (
-      <div className="msla-no-results-container">
-        <img src={NoResultsSvg} alt={noResultsText?.toString()} />
-        <Text role="alert">{noResultsText}</Text>
-      </div>
+      <>
+        <RuntimeFilterTagList
+          filters={filters}
+          setFilters={setFilters}
+          isSearchResult={true}
+          setGroupedByConnector={setGroupByConnector}
+          groupedByConnector={groupByConnector}
+          resultsSorting={resultsSorting}
+          setResultsSorting={setResultsSorting}
+        />
+        <div className="msla-no-results-container">
+          <img src={NoResultsSvg} alt={noResultsText?.toString()} />
+          <Text role="alert">{noResultsText}</Text>
+        </div>
+      </>
     );
   }
 
   return (
     <div className="msla-result-list">
+      <RuntimeFilterTagList
+        filters={filters}
+        setFilters={setFilters}
+        isSearchResult={true}
+        setGroupedByConnector={setGroupByConnector}
+        groupedByConnector={groupByConnector}
+        resultsSorting={resultsSorting}
+        setResultsSorting={setResultsSorting}
+      />
       {isLoadingMore && (
         <div style={{ marginBottom: '16px' }}>
           <Spinner label={loadingText} size="extra-small" aria-live="assertive" />
@@ -142,13 +186,20 @@ export const SearchResultsGrid: React.FC<PropsWithChildren<SearchResultsGridProp
       )}
       {groupByConnector ? (
         <>
-          <AriaSearchResultsAlert resultCount={apiIds.length} resultDescription={connectorText} />
-          <List items={apiIds} onRenderCell={onRenderOperationGroup} />
+          <AriaSearchResultsAlert resultCount={apiNames.length} resultDescription={connectorText} />
+          <List items={apiNames} onRenderCell={onRenderOperationGroup} />
         </>
       ) : (
         <>
           <AriaSearchResultsAlert resultCount={operationSearchResults.length} resultDescription={actionText} />
-          <List items={operationSearchResults} onRenderCell={onRenderOperationCell} />
+          <BrowseGrid
+            // Loading spinner is shown at top of search results view, so avoid showing it again
+            isLoading={false}
+            operationsData={sortedOperationsData}
+            onOperationSelected={onOperationClick}
+            showConnectorName={!groupByConnector}
+            displayRuntimeInfo={displayRuntimeInfo}
+          />
         </>
       )}
     </div>
@@ -165,7 +216,6 @@ export const OperationActionDataFromOperation = (operation: DiscoveryOperation<D
   category: getConnectorCategoryString(operation.properties.api),
   isTrigger: !!operation.properties?.trigger,
   isBuiltIn: isBuiltInConnector(operation.properties.api),
-  isPremium: isPremiumConnector(operation.properties.api),
   apiId: operation.properties.api.id,
   releaseStatus: operation.properties.annotation?.status,
 });
