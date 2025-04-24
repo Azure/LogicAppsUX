@@ -190,7 +190,7 @@
   "3ST5oT": "You're creating an accelerator template.",
   "3X4FHS": "Choose the user input type",
   "3Xf/4S": "Swagger endpoint",
-  "3Y8a6G": "The required {parameters} parameters aren't set or valid.",
+  "3Y8a6G": "The following required parameters are either invalid or aren't set: {parameters}.",
   "3a3eHg": "Select actions",
   "3cZFcy": "Error panel",
   "3cZZKj": "Divider",
