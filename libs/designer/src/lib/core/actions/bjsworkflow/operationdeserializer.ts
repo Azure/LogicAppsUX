@@ -659,7 +659,7 @@ const updateDynamicDataForValidConnection = async (
           level: ErrorLevel.Connection,
           message: intl.formatMessage({
             defaultMessage: 'Invalid connection. To load complete details, complete or update the connection.',
-            id: 'tMdcE1',
+            id: '4bT5AR',
             description: 'Error message to show for connection error during deserialization.',
           }),
         },

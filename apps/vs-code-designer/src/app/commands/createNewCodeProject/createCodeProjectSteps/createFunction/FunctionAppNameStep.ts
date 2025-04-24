@@ -2,22 +2,24 @@
  *  Copyright (c) Microsoft Corporation. All rights reserved.
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
+import { ext } from '../../../../../extensionVariables';
 import { localize } from '../../../../../localize';
 import * as vscode from 'vscode';
 import * as fse from 'fs-extra';
 import { AzureWizardPromptStep } from '@microsoft/vscode-azext-utils';
 import type { IProjectWizardContext } from '@microsoft/vscode-extension-logic-apps';
-import * as path from 'path';
 
-export class setMethodName extends AzureWizardPromptStep<IProjectWizardContext> {
+export class FunctionAppNameStep extends AzureWizardPromptStep<IProjectWizardContext> {
   public hideStepCount = true;
 
   public async prompt(context: IProjectWizardContext): Promise<void> {
-    context.methodName = await context.ui.showInputBox({
-      placeHolder: localize('setFunctioname', 'Function name'),
+    context.functionAppName = await context.ui.showInputBox({
+      placeHolder: localize('setFunctionName', 'Function name'),
       prompt: localize('functionNamePrompt', 'Provide a function name for functions app project'),
       validateInput: async (input: string): Promise<string | undefined> => await this.validateFunctionName(input, context),
     });
+
+    ext.outputChannel.appendLog(localize('functionAppNameSet', `Function App project name set to ${context.functionAppName}`));
   }
 
   public shouldPrompt(): boolean {
@@ -25,9 +27,10 @@ export class setMethodName extends AzureWizardPromptStep<IProjectWizardContext> 
   }
 
   private async validateFunctionName(name: string | undefined, context: IProjectWizardContext): Promise<string | undefined> {
-    if (!name) {
-      return localize('emptyTemplateNameError', `Can't have an empty function name.`);
+    if (!name || name.length === 0) {
+      return localize('emptyFunctionNameError', "Can't have an empty function name.");
     }
+
     if (!/^[a-z][a-z\d_]*$/i.test(name)) {
       return localize(
         'functionNameInvalidMessage',
@@ -36,14 +39,14 @@ export class setMethodName extends AzureWizardPromptStep<IProjectWizardContext> 
     }
 
     if (name === context.logicAppName) {
-      return localize('functionNameSameAsProjectNameError', `Can't use the same name for the function name and the project name.`);
+      return localize('functionNameSameAsProjectNameError', `Can't use the same name for the function and the logic app project.`);
     }
 
     if (fse.existsSync(context.workspaceCustomFilePath)) {
       const workspaceFileContent = await vscode.workspace.fs.readFile(vscode.Uri.file(context.workspaceCustomFilePath));
       const workspaceFileJson = JSON.parse(workspaceFileContent.toString());
 
-      if (workspaceFileJson.folders && workspaceFileJson.folders.some((folder: { path: string }) => folder.path === path.join('.', name))) {
+      if (workspaceFileJson.folders && workspaceFileJson.folders.some((folder: { name: string }) => folder.name === name)) {
         return localize('functionNameExistsInWorkspaceError', 'A function with this name already exists in the workspace.');
       }
     }
