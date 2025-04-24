@@ -34,7 +34,7 @@ import * as path from 'path';
 import * as vscode from 'vscode';
 import * as fs from 'fs';
 import { v4 as uuidv4 } from 'uuid';
-import { ConvertToWorkspace } from '../createNewCodeProject/CodeProjectBase/ConvertToWorkspace';
+import { convertToWorkspace } from '../createNewCodeProject/CodeProjectBase/ConvertToWorkspace';
 
 /**
  * Generates deployment scripts for a Logic App project.
@@ -64,7 +64,7 @@ export async function generateDeploymentScripts(context: IActionContext, node?: 
     const connectionsData: ConnectionsData = isEmptyString(connectionsJson) ? {} : JSON.parse(connectionsJson);
     const isParameterized = await areAllConnectionsParameterized(connectionsData);
     const workflowFiles = getWorkflowFilePaths(projectPath);
-    if (!(await ConvertToWorkspace(context))) {
+    if (!(await convertToWorkspace(context))) {
       ext.outputChannel.appendLog(localize('exitScriptGen', 'Exiting script generation...'));
       return;
     }

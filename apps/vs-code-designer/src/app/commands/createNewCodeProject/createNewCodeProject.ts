@@ -6,10 +6,10 @@ import { createNewProjectInternalBase } from './CodeProjectBase/CreateNewProject
 import { OpenBehaviorStep } from '../createNewProject/OpenBehaviorStep';
 import { FolderListStep } from '../createNewProject/createProjectSteps/FolderListStep';
 import { NewCodeProjectTypeStep } from './CodeProjectBase/NewCodeProjectTypeStep';
-import { SetWorkspaceSettings } from './CodeProjectBase/SetWorkspaceSettings';
-import { SetLogicAppName } from './CodeProjectBase/SetLogicAppNameStep';
-import { SetWorkspaceName } from './CodeProjectBase/SetWorkspaceName';
-import { SetLogicAppType } from './CodeProjectBase/setLogicAppType';
+import { WorkspaceSettingsStep } from './CodeProjectBase/WorkspaceSettingsStep';
+import { LogicAppNameStep } from './CodeProjectBase/LogicAppNameStep';
+import { WorkspaceNameStep } from './CodeProjectBase/WorkspaceNameStep';
+import { LogicAppTypeStep } from './CodeProjectBase/LogicAppTypeStep';
 import { isString } from '@microsoft/logic-apps-shared';
 import type { IActionContext } from '@microsoft/vscode-azext-utils';
 import type { ProjectLanguage, ProjectVersion } from '@microsoft/vscode-extension-logic-apps';
@@ -40,12 +40,12 @@ export async function createNewCodeProjectFromCommand(
     'Create new logic app workspace',
     [
       new FolderListStep(),
-      new SetWorkspaceName(),
-      new SetLogicAppType(),
+      new WorkspaceNameStep(),
+      new LogicAppTypeStep(),
       new TargetFrameworkStep(),
-      new SetLogicAppName(),
+      new LogicAppNameStep(),
       new NewCodeProjectTypeStep(templateId, functionSettings, false),
-      new SetWorkspaceSettings(),
+      new WorkspaceSettingsStep(),
       new OpenBehaviorStep(),
     ]
   );

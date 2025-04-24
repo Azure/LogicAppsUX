@@ -31,8 +31,9 @@ import {
 } from '@microsoft/vscode-azext-utils';
 import type { IActionContext } from '@microsoft/vscode-azext-utils';
 import * as vscode from 'vscode';
-import { ConvertToWorkspace } from './app/commands/createNewCodeProject/CodeProjectBase/ConvertToWorkspace';
+import { convertToWorkspace } from './app/commands/createNewCodeProject/CodeProjectBase/ConvertToWorkspace';
 import TelemetryReporter from '@vscode/extension-telemetry';
+import { getCustomCodeFunctionsProjects } from './app/utils/customCodeUtils';
 import { createVSCodeAzureSubscriptionProvider } from './app/utils/services/VSCodeAzureSubscriptionProvider';
 import { logSubscriptions } from './app/utils/telemetry';
 
@@ -67,6 +68,12 @@ export async function activate(context: vscode.ExtensionContext) {
   registerAppServiceExtensionVariables(ext);
 
   await callWithTelemetryAndErrorHandling(extensionCommand.activate, async (activateContext: IActionContext) => {
+    vscode.commands.executeCommand(
+      'setContext',
+      extensionCommand.customCodeSetFunctionsFolders,
+      await getCustomCodeFunctionsProjects(activateContext)
+    );
+
     activateContext.telemetry.properties.isActivationEvent = 'true';
     activateContext.telemetry.measurements.mainFileLoad = (perfStats.loadEndTime - perfStats.loadStartTime) / 1000;
 
@@ -75,7 +82,7 @@ export async function activate(context: vscode.ExtensionContext) {
     await logSubscriptions(activateContext);
 
     if (vscode.workspace.workspaceFolders && vscode.workspace.workspaceFolders.length > 0) {
-      await ConvertToWorkspace(activateContext);
+      await convertToWorkspace(activateContext);
     }
 
     try {

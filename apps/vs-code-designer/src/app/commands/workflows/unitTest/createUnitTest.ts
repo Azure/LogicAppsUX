@@ -4,7 +4,7 @@
  *--------------------------------------------------------------------------------------------*/
 
 import { localize } from '../../../../localize';
-import { ConvertToWorkspace } from '../../createNewCodeProject/CodeProjectBase/ConvertToWorkspace';
+import { convertToWorkspace } from '../../createNewCodeProject/CodeProjectBase/ConvertToWorkspace';
 import {
   createTestCsFile,
   createTestExecutorFile,
@@ -52,7 +52,7 @@ export async function createUnitTest(
     // Validate and extract Run ID
     const validatedRunId = await extractAndValidateRunId(runId);
 
-    if (!(await ConvertToWorkspace(context))) {
+    if (!(await convertToWorkspace(context))) {
       ext.outputChannel.appendLog(
         localize('createUnitTestCancelled', 'Exiting unit test creation, a workspace is required to create unit tests.')
       );

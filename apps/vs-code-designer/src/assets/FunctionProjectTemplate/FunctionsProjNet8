@@ -5,7 +5,6 @@
     <AzureFunctionsVersion>v4</AzureFunctionsVersion>
     <OutputType>Library</OutputType>
     <PlatformTarget>AnyCPU</PlatformTarget>
-    <!-- Please replace 'LogicAppFolder' with the name of your folder that contains your logic app project. -->
     <LogicAppFolder>LogicApp</LogicAppFolder>
     <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     <SelfContained>false</SelfContained>

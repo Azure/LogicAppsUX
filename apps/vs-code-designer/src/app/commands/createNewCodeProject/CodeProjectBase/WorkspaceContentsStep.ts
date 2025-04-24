@@ -10,7 +10,7 @@ import { OpenBehavior } from '@microsoft/vscode-extension-logic-apps';
 import * as vscode from 'vscode';
 import { isLogicAppProject } from '../../../utils/verifyIsProject';
 
-export class SetWorkspaceContents extends AzureWizardPromptStep<IProjectWizardContext> {
+export class WorkspaceContentsStep extends AzureWizardPromptStep<IProjectWizardContext> {
   // Hide the step count in the wizard UI
   public hideStepCount = true;
 

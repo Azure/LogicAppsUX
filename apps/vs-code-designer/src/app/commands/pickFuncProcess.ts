@@ -36,6 +36,7 @@ import type { IProcessInfo } from '@microsoft/vscode-extension-logic-apps';
 import unixPsTree from 'ps-tree';
 import * as vscode from 'vscode';
 import parser from 'yargs-parser';
+import { buildCustomCodeFunctionsProject } from './buildCustomCodeFunctionsProject';
 
 type OSAgnosticProcess = { command: string | undefined; pid: number | string };
 type ActualUnixPS = unixPsTree.PS & { COMM?: string };
@@ -64,6 +65,8 @@ export async function pickFuncProcess(context: IActionContext, debugConfig: vsco
   if (!shouldContinue) {
     throw new UserCancelledError('preDebugValidate');
   }
+
+  await buildCustomCodeFunctionsProject(context, workspaceFolder.uri);
 
   await waitForPrevFuncTaskToStop(workspaceFolder);
   const projectFiles = await getProjFiles(context, ProjectLanguage.CSharp, projectPath);
@@ -238,7 +241,7 @@ async function startFuncTask(
  * 3. Starting with the .NET 5 worker, Windows sometimes has an inner process we _don't_ want like 'conhost.exe'
  * The only processes we should want to attach to are the "func" process itself or a "dotnet" process running a dll, so we will pick the innermost one of those
  */
-async function pickChildProcess(taskInfo: IRunningFuncTask): Promise<string> {
+export async function pickChildProcess(taskInfo: IRunningFuncTask): Promise<string> {
   // Workaround for https://github.com/microsoft/vscode-azurefunctions/issues/2656
   if (!isRunning(taskInfo.processId) && vscode.window.activeTerminal) {
     const terminalPid = await vscode.window.activeTerminal.processId;
@@ -260,7 +263,7 @@ export async function findChildProcess(processId: number): Promise<string | unde
   return child ? child.pid.toString() : String(processId);
 }
 
-async function getUnixChildren(pid: number): Promise<OSAgnosticProcess[]> {
+export async function getUnixChildren(pid: number): Promise<OSAgnosticProcess[]> {
   const processes: ActualUnixPS[] = await new Promise((resolve, reject): void => {
     unixPsTree(pid, (error: Error | null, result: unixPsTree.PS[]) => {
       if (error) {
@@ -275,7 +278,7 @@ async function getUnixChildren(pid: number): Promise<OSAgnosticProcess[]> {
   });
 }
 
-async function getWindowsChildren(pid: number): Promise<OSAgnosticProcess[]> {
+export async function getWindowsChildren(pid: number): Promise<OSAgnosticProcess[]> {
   const processes: IProcessInfo[] = await getWindowsProcess(pid);
   return (processes || []).map((c) => {
     return { command: c.name, pid: c.pid };
