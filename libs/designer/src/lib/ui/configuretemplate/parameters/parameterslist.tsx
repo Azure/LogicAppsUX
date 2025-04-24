@@ -82,6 +82,14 @@ export const TemplateParametersList = () => {
     [dispatch]
   );
 
+  if (Object.keys(parameterDefinitions).length === 0) {
+    return (
+      <div style={{ overflowX: 'auto', paddingTop: '12px' }}>
+        <Text>{resourceStrings.NoParameterInTemplate}</Text>
+      </div>
+    );
+  }
+
   return (
     <div className="msla-templates-wizard-tab-content" style={{ overflowX: 'auto', paddingTop: '12px' }}>
       {currentPanelView === TemplatePanelView.CustomizeParameter && <CustomizeParameterPanel />}

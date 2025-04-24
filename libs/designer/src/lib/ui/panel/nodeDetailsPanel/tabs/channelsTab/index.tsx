@@ -36,9 +36,9 @@ export const ChannelsTab: React.FC<PanelTabProps> = (props) => {
   const stringResources = useMemo(
     () => ({
       NO_CHANNEL_SUPPORTED_MSG: intl.formatMessage({
-        defaultMessage: 'No channel supported for this agent.',
-        id: 'di6MC0',
-        description: 'channel not supported message',
+        defaultMessage: 'No supported channels exist for this agent.',
+        id: 'PPvsfZ',
+        description: 'Channel not supported message',
       }),
       INPUT_TITLE: intl.formatMessage({
         defaultMessage: 'Enable input channel',

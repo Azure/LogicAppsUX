@@ -154,6 +154,7 @@ describe('panel/templatePanel/quickViewPanel', () => {
             $schema: 'https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#',
             contentVersion: '',
           },
+          triggerType: '',
           errors: {
             workflow: undefined,
             kind: undefined,
@@ -172,6 +173,8 @@ describe('panel/templatePanel/quickViewPanel', () => {
       }, {}),
       connections: workflow1Manifest.connections,
       errors: {
+        manifest: {},
+        workflows: {},
         parameters: {},
         connections: undefined,
       },

@@ -1,7 +1,7 @@
 {
   "name": "vscode-azurelogicapps",
   "displayName": "Azure Logic Apps (Standard)",
-  "version": "5.88.0",
+  "version": "5.89.0",
   "aiKey": "setInGitHubBuild",
   "repository": "https://github.com/Azure/LogicAppsUX",
   "main": "main.js",
@@ -50,12 +50,12 @@
     "commands": [
       {
         "command": "azureLogicAppsStandard.openDesigner",
-        "title": "Open Designer",
+        "title": "Open designer",
         "category": "Azure Logic Apps"
       },
       {
         "command": "azureLogicAppsStandard.viewContent",
-        "title": "View Content",
+        "title": "View content",
         "category": "Azure Logic Apps"
       },
       {
@@ -99,7 +99,7 @@
       },
       {
         "command": "azureLogicAppsStandard.deploySlot",
-        "title": "Deploy to Slot...",
+        "title": "Deploy to slot...",
         "category": "Azure Logic Apps"
       },
       {
@@ -134,7 +134,7 @@
       },
       {
         "command": "azureLogicAppsStandard.pickProcess",
-        "title": "Pick Process",
+        "title": "Pick process",
         "category": "Azure Logic Apps"
       },
       {
@@ -183,57 +183,57 @@
       },
       {
         "command": "azureLogicAppsStandard.openInPortal",
-        "title": "Open in Portal",
+        "title": "Open in portal",
         "category": "Azure Logic Apps"
       },
       {
         "command": "azureLogicAppsStandard.browseWebsite",
-        "title": "Browse Website",
+        "title": "Browse website",
         "category": "Azure Logic Apps"
       },
       {
         "command": "azureLogicAppsStandard.viewProperties",
-        "title": "View Properties",
+        "title": "View properties",
         "category": "Azure Logic Apps"
       },
       {
         "command": "azureLogicAppsStandard.createSlot",
-        "title": "Create Slot...",
+        "title": "Create slot...",
         "category": "Azure Logic Apps"
       },
       {
         "command": "azureLogicAppsStandard.deleteSlot",
-        "title": "Delete Slot...",
+        "title": "Delete slot...",
         "category": "Azure Logic Apps"
       },
       {
         "command": "azureLogicAppsStandard.viewDeploymentLogs",
-        "title": "View Deployment Logs",
+        "title": "View deployment logs",
         "category": "Azure Logic Apps"
       },
       {
         "command": "azureLogicAppsStandard.startStreamingLogs",
-        "title": "Start Streaming Logs",
+        "title": "Start streaming logs",
         "category": "Azure Logic Apps"
       },
       {
         "command": "azureLogicAppsStandard.stopStreamingLogs",
-        "title": "Stop Streaming Logs",
+        "title": "Stop streaming logs",
         "category": "Azure Logic Apps"
       },
       {
         "command": "azureLogicAppsStandard.reviewValidation",
-        "title": "Review Validation",
+        "title": "Review validation",
         "category": "Azure Logic Apps"
       },
       {
         "command": "azureLogicAppsStandard.swapSlot",
-        "title": "Swap Slot...",
+        "title": "Swap slot...",
         "category": "Azure Logic Apps"
       },
       {
         "command": "azureLogicAppsStandard.toggleAppSettingVisibility",
-        "title": "Toggle App Setting Visibility.",
+        "title": "Toggle app setting visibility.",
         "category": "Azure Logic Apps",
         "icon": {
           "light": "assets/light/visible.svg",
@@ -242,37 +242,37 @@
       },
       {
         "command": "azureLogicAppsStandard.appSettings.add",
-        "title": "Add New Setting...",
+        "title": "Add new setting...",
         "category": "Azure Logic Apps"
       },
       {
         "command": "azureLogicAppsStandard.appSettings.delete",
-        "title": "Delete Setting...",
+        "title": "Delete setting...",
         "category": "Azure Logic Apps"
       },
       {
         "command": "azureLogicAppsStandard.appSettings.download",
-        "title": "Download Remote Settings...",
+        "title": "Download remote settings...",
         "category": "Azure Logic Apps"
       },
       {
         "command": "azureLogicAppsStandard.appSettings.edit",
-        "title": "Edit Setting...",
+        "title": "Edit setting...",
         "category": "Azure Logic Apps"
       },
       {
         "command": "azureLogicAppsStandard.appSettings.rename",
-        "title": "Rename Setting...",
+        "title": "Rename setting...",
         "category": "Azure Logic Apps"
       },
       {
         "command": "azureLogicAppsStandard.appSettings.toggleSlotSetting",
-        "title": "Toggle as Slot Setting",
+        "title": "Toggle as slot setting",
         "category": "Azure Logic Apps"
       },
       {
         "command": "azureLogicAppsStandard.appSettings.upload",
-        "title": "Upload Local Settings...",
+        "title": "Upload local settings...",
         "category": "Azure Logic Apps"
       },
       {
@@ -287,42 +287,42 @@
       },
       {
         "command": "azureLogicAppsStandard.configureWebhookRedirectEndpoint",
-        "title": "Configure Webhook Redirect Endpoint",
+        "title": "Configure webhook redirect endpoint",
         "category": "Azure Logic Apps"
       },
       {
         "command": "azureLogicAppsStandard.enableAzureConnectors",
-        "title": "Use Connectors from Azure",
+        "title": "Use connectors from Azure",
         "category": "Azure Logic Apps"
       },
       {
         "command": "azureLogicAppsStandard.viewCommitInGitHub",
-        "title": "View Commit in GitHub",
+        "title": "View commit in GitHub",
         "category": "Azure Logic Apps"
       },
       {
         "command": "azureLogicAppsStandard.connectToGitHub",
-        "title": "Connect to GitHub Repository...",
+        "title": "Connect to GitHub repository...",
         "category": "Azure Logic Apps"
       },
       {
         "command": "azureLogicAppsStandard.disconnectRepo",
-        "title": "Disconnect from Repo...",
+        "title": "Disconnect from repo...",
         "category": "Azure Logic Apps"
       },
       {
         "command": "azureLogicAppsStandard.startRemoteDebug",
-        "title": "Start Remote Debugging",
+        "title": "Start remote debugging",
         "category": "Azure Logic Apps"
       },
       {
         "command": "azureLogicAppsStandard.initProjectForVSCode",
-        "title": "Initialize Project for Use with VS Code...",
+        "title": "Initialize project for use with VS Code...",
         "category": "Azure Logic Apps"
       },
       {
         "command": "azureLogicAppsStandard.configureDeploymentSource",
-        "title": "Configure Deployment Source...",
+        "title": "Configure deployment source...",
         "category": "Azure Logic Apps"
       },
       {

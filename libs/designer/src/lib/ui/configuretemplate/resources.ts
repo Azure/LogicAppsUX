@@ -214,6 +214,11 @@ export const useResourceStrings = () => {
       id: 'vTxIoS',
       description: 'Required field label',
     }),
+    WorkflowImages: intl.formatMessage({
+      defaultMessage: 'Workflow images',
+      id: 'an1Z0T',
+      description: 'Label for the workflow images section',
+    }),
     LightModeImage: intl.formatMessage({
       defaultMessage: 'Light mode image',
       id: '5LLxEp',
@@ -233,6 +238,16 @@ export const useResourceStrings = () => {
       defaultMessage: 'Shared',
       id: 'PYku3O',
       description: 'The label for shared connector kind',
+    }),
+    NoConnectionInTemplate: intl.formatMessage({
+      defaultMessage: 'No connections in this template',
+      id: 'oIRKrF',
+      description: 'Text to show no connections present in the template.',
+    }),
+    NoParameterInTemplate: intl.formatMessage({
+      defaultMessage: 'No parameters in this template',
+      id: 'sMjDlb',
+      description: 'Text to show no parameters present in the template.',
     }),
     // Aria labels
     WorkflowsListTableLabel: intl.formatMessage({
