@@ -12,7 +12,7 @@ export class NewProjectLogicAppTypeStep extends AzureWizardPromptStep<IProjectWi
     const picks: IAzureQuickPickItem<ProjectType>[] = [
       { label: localize('logicApp', 'Logic app'), data: ProjectType.logicApp },
       { label: localize('logicAppCustomCode', 'Custom code project'), data: ProjectType.customCode },
-      { label: localize('logicAppRulesEngine', 'Rules engine project (preview)'), data: ProjectType.rulesEngine },
+      { label: localize('logicAppRulesEngine', 'Rules engine project'), data: ProjectType.rulesEngine },
     ];
 
     const placeHolder = localize('logicAppProjectTemplatePlaceHolder', 'Select a template for your new project');
