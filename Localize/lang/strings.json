@@ -12,7 +12,7 @@
   "+M72+a": "Overview",
   "+M7bC6": "Succeeded with retries.",
   "+Oshid": "Select type",
-  "+R90eK": "Retry policy interval is invalid. The interval must match ISO 8601 duration format.",
+  "+R90eK": "The interval is invalid for the retry policy and must match ISO 8601 duration format.",
   "+Uvo/p": "Alt text for down chevron",
   "+ZSBrq": "Context menu for {title} card",
   "+ijo/2": "Paste last used expression",
