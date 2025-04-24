@@ -214,6 +214,7 @@ export const isOperationNameValid = (
   if (!name || isTemplateExpression(name) || name.length > 80 || hasInvalidChars(name, [':', '#'])) {
     return false;
   }
+
   const isAgentCondition = equals(getRecordEntry(nodesMetadata, nodeId)?.subgraphType, 'AGENT_CONDITION', false);
   if (isAgentCondition) {
     return /^[a-zA-Z_][a-zA-Z0-9_]{0,47}$/.test(name);
