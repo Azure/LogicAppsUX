@@ -13,9 +13,10 @@ import { setCollapsedGraphIds } from '../../../core/state/workflow/workflowSlice
 // import { useState } from 'react';
 import { useIntl } from 'react-intl';
 import { useDispatch } from 'react-redux';
-import { TeachingPopup } from '../teachingPopup';
 import { useState } from 'react';
 import { useIsEverythingExpanded } from '../../../core/state/workflow/workflowSelectors';
+import { TeachingPopup } from '@microsoft/designer-ui/src/lib/teachingPopup';
+import constants from '@microsoft/designer-ui/src/lib/constants';
 
 export const expandCollapseControlId = 'control-expand-collapse-button';
 
@@ -51,9 +52,11 @@ const CollapseExpandControl = () => {
     }
   };
 
-  const [shouldDisplayPopup, setShouldDisplayPopup] = useState(localStorage.getItem(expandCollapseControlId) !== 'true');
+  const [shouldDisplayPopup, setShouldDisplayPopup] = useState(
+    localStorage.getItem(constants.TEACHING_POPOVER_ID.expandCollapseButton) !== 'true'
+  );
   const handlePopupDismiss = () => {
-    localStorage.setItem(expandCollapseControlId, 'true');
+    localStorage.setItem(constants.TEACHING_POPOVER_ID.expandCollapseButton, 'true');
     setShouldDisplayPopup(false);
   };
 
