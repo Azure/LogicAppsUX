@@ -69,7 +69,7 @@ export const parseSchemaAsVariableEditorSegments = (initialValue: ValueSegment[]
     if (schema.type !== 'object' || !schema.properties || typeof schema.properties !== 'object') {
       return [];
     }
-
+    // here
     return Object.entries(schema.properties).map(([key, property]: [string, any]) => {
       const { name, type, description } = property;
       return {

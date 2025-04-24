@@ -66,8 +66,11 @@ export function validateStaticParameterInfo(
     collectionFormat: parameterCollectionFormat,
     minimum: parameterMetadata.schema?.minimum,
     maximum: parameterMetadata.schema?.maximum,
+    regex: parameterMetadata.schema?.regex,
+    customMessage: parameterMetadata.schema?.customMessage,
   });
   const isUnknown = parameterMetadata.info.isUnknown;
+  console.log('charlie pattern', pattern);
 
   if (typeError) {
     parameterErrorMessages.push(typeError);
@@ -128,9 +131,16 @@ export function validateType(
   type: string,
   parameterValue: string,
   editor: string | undefined,
-  validationOptions: { format?: string; collectionFormat?: string; minimum?: number; maximum?: number }
+  validationOptions: {
+    format?: string;
+    collectionFormat?: string;
+    minimum?: number;
+    maximum?: number;
+    regex?: string;
+    customMessage?: string;
+  } = {}
 ): string | undefined {
-  const { format: parameterFormat = '', collectionFormat, minimum, maximum } = validationOptions;
+  const { format: parameterFormat = '', collectionFormat, minimum, maximum, regex: regexFormat, customMessage } = validationOptions;
   if (!parameterValue) {
     return;
   }
@@ -229,7 +239,7 @@ export function validateType(
       return;
     }
     case Constants.SWAGGER.TYPE.STRING:
-      return validateStringFormat(parameterFormat, parameterValue, isExpression);
+      return validateStringFormat(parameterFormat, parameterValue, isExpression, regexFormat, customMessage);
 
     default:
       return;
@@ -307,7 +317,13 @@ function validateNumberFormat(parameterFormat: string, parameterValue: string, m
   return '';
 }
 
-function validateStringFormat(parameterFormat: string, parameterValue: string, isTemplateExpression: boolean): string {
+function validateStringFormat(
+  parameterFormat: string,
+  parameterValue: string,
+  isTemplateExpression: boolean,
+  regexFormat?: string,
+  customMessage?: string
+): string {
   if (!parameterFormat) {
     return '';
   }
@@ -359,6 +375,19 @@ function validateStringFormat(parameterFormat: string, parameterValue: string, i
       if (!regex.url.test(parameterValue)) {
         return intl.formatMessage({ defaultMessage: 'Enter a valid URI.', id: '1r9ljA', description: 'Error validation message for URIs' });
       }
+      break;
+    }
+
+    case Constants.SWAGGER.FORMAT.CUSTOM: {
+      if (regexFormat) {
+        if (isTemplateExpression) {
+          return '';
+        }
+        if (!new RegExp(regexFormat).test(parameterValue)) {
+          return customMessage || '';
+        }
+      }
+
       break;
     }
 

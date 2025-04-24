@@ -21,6 +21,10 @@ export default {
               type: 'string',
               title: 'Description',
               description: 'Enter some explanation of when you would use this tool.',
+              format: 'custom',
+              regex: '/^[a-zA-Z_][a-zA-Z0-9_]{0,47}$/',
+              customMessage:
+                'Enter a valid description, start with a letter or “_”, and use only letters, numbers, or underscores (max 48 characters).',
             },
             agentParameterSchema: {
               title: 'Agent Parameters',

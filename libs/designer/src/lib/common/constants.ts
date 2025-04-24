@@ -38,6 +38,7 @@ const SWAGGER = {
     JAVASCRIPT: 'javascript',
     URI: 'uri',
     UUID: 'uuid',
+    CUSTOM: 'custom',
   },
   COLLECTION_FORMAT: {
     CSV: 'csv',
