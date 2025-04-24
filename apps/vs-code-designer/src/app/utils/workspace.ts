@@ -6,7 +6,12 @@ import { workflowFileName } from '../../constants';
 import { localize } from '../../localize';
 import type { RemoteWorkflowTreeItem } from '../tree/remoteWorkflowsTree/RemoteWorkflowTreeItem';
 import { isPathEqual, isSubpath } from './fs';
-import { isLogicAppProject, promptOpenProjectOrWorkspace, tryGetLogicAppProjectRoot } from './verifyIsProject';
+import {
+  isLogicAppProject,
+  promptOpenProjectOrWorkspace,
+  tryGetAllLogicAppProjectRoots,
+  tryGetLogicAppProjectRoot,
+} from './verifyIsProject';
 import { isNullOrUndefined, isString } from '@microsoft/logic-apps-shared';
 import { UserCancelledError, nonNullValue } from '@microsoft/vscode-azext-utils';
 import type { IActionContext, IAzureQuickPickItem } from '@microsoft/vscode-azext-utils';
@@ -122,6 +127,26 @@ export const getWorkspacePath = (workflowFilePath: string): string => {
   const workspaceFolder = nonNullValue(getContainingWorkspace(workflowFilePath), 'workspaceFolder');
   return workspaceFolder.uri.fsPath;
 };
+
+/**
+ * Gets the logic app roots from all workspace folders.
+ * @returns {Promise<(vscode.WorkspaceFolder | string)[]>} Returns an array of logic app roots.
+ */
+export async function getWorkspaceLogicAppFolders(): Promise<string[]> {
+  if (!vscode.workspace.workspaceFolders || vscode.workspace.workspaceFolders.length === 0) {
+    return [];
+  }
+
+  const logicAppRoots: (vscode.WorkspaceFolder | string)[] = [];
+  for (const folder of vscode.workspace.workspaceFolders) {
+    const projectRoots = await tryGetAllLogicAppProjectRoots(folder);
+    if (projectRoots && projectRoots.length > 0) {
+      logicAppRoots.push(...projectRoots);
+    }
+  }
+
+  return logicAppRoots.map((f) => (isString(f) ? f : f.uri.fsPath));
+}
 
 /**
  * Gets workspace folder of project.

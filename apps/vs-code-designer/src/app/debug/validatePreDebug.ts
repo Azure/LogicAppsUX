@@ -13,13 +13,11 @@ import {
 import { localize } from '../../localize';
 import { validateFuncCoreToolsInstalled } from '../commands/funcCoreTools/validateFuncCoreToolsInstalled';
 import { getAzureWebJobsStorage, setLocalAppSetting } from '../utils/appSettings/localSettings';
-import { tryGetLogicAppProjectRoot } from '../utils/verifyIsProject';
 import { getDebugConfigs, isDebugConfigEqual } from '../utils/vsCodeConfig/launch';
 import { getWorkspaceSetting, getFunctionsWorkerRuntime } from '../utils/vsCodeConfig/settings';
 import type { IActionContext } from '@microsoft/vscode-azext-utils';
 import { parseError } from '@microsoft/vscode-azext-utils';
 import { MismatchBehavior } from '@microsoft/vscode-extension-logic-apps';
-import type { IPreDebugValidateResult } from '@microsoft/vscode-extension-logic-apps';
 import * as azureStorage from 'azure-storage';
 import * as vscode from 'vscode';
 
@@ -27,10 +25,14 @@ import * as vscode from 'vscode';
  * Validates functions core tools is installed and azure emulator is running
  * @param {IActionContext} context - Command context.
  * @param {vscode.DebugConfiguration} debugConfig - Workspace debug configuration.
- * @returns {IPreDebugValidateResult} Structure to determine if debug should continue.
+ * @param {string} projectPath - The logic app project path.
+ * @returns {boolean} Flag to determine if debug should continue.
  */
-export async function preDebugValidate(context: IActionContext, debugConfig: vscode.DebugConfiguration): Promise<IPreDebugValidateResult> {
-  const workspace: vscode.WorkspaceFolder = getMatchingWorkspace(debugConfig);
+export async function preDebugValidate(
+  context: IActionContext,
+  debugConfig: vscode.DebugConfiguration,
+  projectPath: string
+): Promise<boolean> {
   let shouldContinue: boolean;
   context.telemetry.properties.debugType = debugConfig.type;
 
@@ -40,22 +42,17 @@ export async function preDebugValidate(context: IActionContext, debugConfig: vsc
       'installFuncTools',
       'You must have the Azure Functions Core Tools installed to debug your local functions.'
     );
-    shouldContinue = await validateFuncCoreToolsInstalled(context, message, workspace.uri.fsPath);
+    shouldContinue = await validateFuncCoreToolsInstalled(context, message, projectPath);
 
     if (shouldContinue) {
-      context.telemetry.properties.lastValidateStep = 'getProjectRoot';
-      const projectPath: string | undefined = await tryGetLogicAppProjectRoot(context, workspace, true /* suppressPrompt */);
+      const projectLanguage: string | undefined = getWorkspaceSetting(projectLanguageSetting, projectPath);
+      context.telemetry.properties.projectLanguage = projectLanguage;
 
-      if (projectPath) {
-        const projectLanguage: string | undefined = getWorkspaceSetting(projectLanguageSetting, projectPath);
-        context.telemetry.properties.projectLanguage = projectLanguage;
+      context.telemetry.properties.lastValidateStep = 'workerRuntime';
+      await validateWorkerRuntime(context, projectLanguage, projectPath);
 
-        context.telemetry.properties.lastValidateStep = 'workerRuntime';
-        await validateWorkerRuntime(context, projectLanguage, projectPath);
-
-        context.telemetry.properties.lastValidateStep = 'emulatorRunning';
-        shouldContinue = await validateEmulatorIsRunning(context, projectPath);
-      }
+      context.telemetry.properties.lastValidateStep = 'emulatorRunning';
+      shouldContinue = await validateEmulatorIsRunning(context, projectPath);
     }
   } catch (error) {
     if (parseError(error).isUserCancelledError) {
@@ -67,16 +64,21 @@ export async function preDebugValidate(context: IActionContext, debugConfig: vsc
 
   context.telemetry.properties.shouldContinue = String(shouldContinue);
 
-  return { workspace, shouldContinue };
+  return shouldContinue;
 }
 
-function getMatchingWorkspace(debugConfig: vscode.DebugConfiguration): vscode.WorkspaceFolder {
+/**
+ * Gets the workspace folder that matches the debug configuration.
+ * @param {vscode.DebugConfiguration} debugConfig - Debug configuration to match.
+ * @returns {vscode.WorkspaceFolder} The workspace folder that matches the debug configuration.
+ */
+export function getMatchingWorkspaceFolder(debugConfig: vscode.DebugConfiguration): vscode.WorkspaceFolder {
   if (vscode.workspace.workspaceFolders) {
-    for (const workspace of vscode.workspace.workspaceFolders) {
+    for (const workspaceFolder of vscode.workspace.workspaceFolders) {
       try {
-        const configs: vscode.DebugConfiguration[] = getDebugConfigs(workspace);
+        const configs: vscode.DebugConfiguration[] = getDebugConfigs(workspaceFolder);
         if (configs.some((c) => isDebugConfigEqual(c, debugConfig))) {
-          return workspace;
+          return workspaceFolder;
         }
       } catch {
         // ignore and try next workspace
@@ -132,7 +134,7 @@ export async function validateEmulatorIsRunning(
           err ? reject(err) : resolve();
         });
       });
-    } catch (error) {
+    } catch {
       if (!promptWarningMessage) {
         return false;
       }

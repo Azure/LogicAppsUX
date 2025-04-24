@@ -12,10 +12,11 @@
 
   <ItemGroup>
     <PackageReference Include="Microsoft.Azure.WebJobs.Core" Version="3.0.39" />
-    <PackageReference Include="Microsoft.Azure.Workflows.WebJobs.Sdk" Version="1.1.0" />
+    <PackageReference Include="Microsoft.Azure.Workflows.RulesEngine" Version="1.0.0" />
+    <PackageReference Include="Microsoft.Azure.Workflows.WebJobs.Sdk" Version="1.2.0" />
     <PackageReference Include="Microsoft.NET.Sdk.Functions" Version="4.2.0" />
-    <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="2.1.1" />
-    <PackageReference Include="Microsoft.Extensions.Logging" Version="2.1.1" />
+    <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="6.0.0" />
+    <PackageReference Include="Microsoft.Extensions.Logging" Version="6.0.0" />
   </ItemGroup>
 
   <!-- UserAssembly: Please add any .NET compatible assemblies here, these can be referred to create rule facts.

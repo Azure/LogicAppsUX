@@ -1,7 +1,13 @@
 import { getRecordEntry, type Template } from '@microsoft/logic-apps-shared';
 import type { PayloadAction } from '@reduxjs/toolkit';
 import { createSlice } from '@reduxjs/toolkit';
-import { validateConnectionsValue, validateParameterValue } from '../../templates/utils/helper';
+import {
+  validateConnectionsValue,
+  validateParameterDetail,
+  validateParameterValue,
+  validateTemplateManifestValue,
+  validateWorkflowData,
+} from '../../templates/utils/helper';
 import type { WorkflowTemplateData, TemplatePayload } from '../../actions/bjsworkflow/templates';
 import { loadTemplate, validateWorkflowsBasicInfo } from '../../actions/bjsworkflow/templates';
 import { resetTemplatesState } from '../global';
@@ -21,6 +27,7 @@ const initialState: TemplateState = {
   parameterDefinitions: {},
   connections: {},
   errors: {
+    manifest: {},
     parameters: {},
     connections: undefined,
   },
@@ -65,16 +72,13 @@ export const templateSlice = createSlice({
         trigger.description = description;
       }
     },
-		updateTemplateTriggerDescriptionValidationError: (
-			state,
-			action: PayloadAction<{ id: string; error: string | undefined }>
-		) => {
-			const { id, error } = action.payload;
-			if (!state.workflows[id]) {
-				return;
-			}
-			state.workflows[id].errors.triggerDescription = error;
-		},
+    updateTemplateTriggerDescriptionValidationError: (state, action: PayloadAction<{ id: string; error: string | undefined }>) => {
+      const { id, error } = action.payload;
+      if (!state.workflows[id]) {
+        return;
+      }
+      state.workflows[id].errors.triggerDescription = error;
+    },
     updateTemplateParameterValue: (state, action: PayloadAction<Template.ParameterDefinition>) => {
       const { name, type, value, required } = action.payload;
 
@@ -103,7 +107,19 @@ export const templateSlice = createSlice({
     updateAllTemplateParameterDefinitions: (state, action: PayloadAction<Record<string, Template.ParameterDefinition>>) => {
       state.parameterDefinitions = { ...state.parameterDefinitions, ...action.payload };
     },
-    validateParameters: (state) => {
+    validateWorkflowManifestsData: (state) => {
+      const workflowKeys = Object.keys(state.workflows);
+      workflowKeys.forEach((workflowId) => {
+        const workflowData = state.workflows[workflowId];
+        state.workflows[workflowId].errors = validateWorkflowData(workflowData, workflowKeys.length > 1);
+      });
+    },
+    validateTemplateManifest: (state) => {
+      if (state.manifest) {
+        state.errors.manifest = validateTemplateManifestValue(state.manifest);
+      }
+    },
+    validateParameterValues: (state) => {
       const parametersDefinition = { ...state.parameterDefinitions };
       const parametersValidationErrors = { ...state.errors.parameters };
       Object.keys(parametersDefinition).forEach((parameterName) => {
@@ -112,6 +128,15 @@ export const templateSlice = createSlice({
           { type: thisParameter.type, value: thisParameter.value },
           thisParameter.required
         );
+      });
+      state.errors.parameters = parametersValidationErrors;
+    },
+    validateParameterDetails: (state) => {
+      const parametersDefinition = { ...state.parameterDefinitions };
+      const parametersValidationErrors = { ...state.errors.parameters };
+      Object.keys(parametersDefinition).forEach((parameterName) => {
+        const thisParameter = parametersDefinition[parameterName];
+        parametersValidationErrors[parameterName] = validateParameterDetail(thisParameter);
       });
       state.errors.parameters = parametersValidationErrors;
     },
@@ -125,6 +150,7 @@ export const templateSlice = createSlice({
       state.parameterDefinitions = {};
       state.connections = {};
       state.errors = {
+        manifest: {},
         parameters: {},
         connections: undefined,
       };
@@ -193,6 +219,7 @@ export const templateSlice = createSlice({
       state.parameterDefinitions = {};
       state.connections = {};
       state.errors = {
+        manifest: {},
         parameters: {},
         connections: undefined,
       };
@@ -200,18 +227,26 @@ export const templateSlice = createSlice({
 
     builder.addCase(
       validateWorkflowsBasicInfo.fulfilled,
-      (state, action: PayloadAction<Record<string, { 
-				kindError?: string; 
-				nameError?: string;
-				triggerDescriptionError?: string;
-			}>>) => {
+      (
+        state,
+        action: PayloadAction<
+          Record<
+            string,
+            {
+              kindError?: string;
+              nameError?: string;
+              triggerDescriptionError?: string;
+            }
+          >
+        >
+      ) => {
         const workflows = action.payload;
         for (const workflowId of Object.keys(workflows)) {
           const { kindError, nameError, triggerDescriptionError } = workflows[workflowId];
           if (state.workflows[workflowId]) {
             state.workflows[workflowId].errors.kind = kindError;
             state.workflows[workflowId].errors.workflow = nameError;
-						state.workflows[workflowId].errors.triggerDescription = triggerDescriptionError;
+            state.workflows[workflowId].errors.triggerDescription = triggerDescriptionError;
           }
         }
       }
@@ -287,13 +322,16 @@ export const {
   updateWorkflowName,
   updateKind,
   updateTemplateTriggerDescription,
-	updateTemplateTriggerDescriptionValidationError,
+  updateTemplateTriggerDescriptionValidationError,
   updateTemplateParameterValue,
-  validateParameters,
+  validateParameterValues,
+  validateParameterDetails,
   validateConnections,
   clearTemplateDetails,
   updateWorkflowNameValidationError,
   updateTemplateParameterDefinition,
+  validateWorkflowManifestsData,
+  validateTemplateManifest,
   updateAllTemplateParameterDefinitions,
   updateWorkflowData,
   updateAllWorkflowsData,

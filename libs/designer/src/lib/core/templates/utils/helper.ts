@@ -1,5 +1,5 @@
-import { type Template, getIntl, normalizeConnectorId } from '@microsoft/logic-apps-shared';
-import type { AppDispatch } from '../../../core';
+import { type Template, getIntl, isUndefinedOrEmptyString, normalizeConnectorId } from '@microsoft/logic-apps-shared';
+import type { AppDispatch, WorkflowTemplateData } from '../../../core';
 import { summaryTab } from '../../../ui/panel/templatePanel/quickViewPanel/tabs/summaryTab';
 import { workflowTab } from '../../../ui/panel/templatePanel/quickViewPanel/tabs/workflowTab';
 import type { IntlShape } from 'react-intl';
@@ -216,6 +216,32 @@ export const validateParameterValue = (data: { type: string; value?: string }, r
   return validateParameterValueWithSwaggerType(type, valueToValidate, required, intl);
 };
 
+export const validateParameterDetail = (data: { type: string; displayName?: string; description?: string; default?: string }) => {
+  const intl = getIntl();
+  let errorMessages: string | undefined = undefined;
+  if (isUndefinedOrEmptyString(data?.displayName)) {
+    errorMessages = intl.formatMessage({
+      defaultMessage: 'Display name is required.',
+      id: 'jtOu0/',
+      description: 'Error message when the workflow parameter display name is empty.',
+    });
+  }
+  if (isUndefinedOrEmptyString(data?.description)) {
+    errorMessages = `${errorMessages ?? ''}${intl.formatMessage({
+      defaultMessage: 'Description is required.',
+      id: 'QDhqY3',
+      description: 'Error message when the workflow parameter description is empty.',
+    })}`;
+  }
+  if (!isUndefinedOrEmptyString(data?.default)) {
+    const DefaultValueValidationError = validateParameterValueWithSwaggerType(data?.type, data?.default, false, intl);
+    if (DefaultValueValidationError) {
+      errorMessages = `${errorMessages ?? ''}${DefaultValueValidationError}`;
+    }
+  }
+  return errorMessages;
+};
+
 export const validateConnectionsValue = (
   manifestConnections: Record<string, Template.Connection>,
   connectionsMapping: Record<string, string>
@@ -228,4 +254,117 @@ export const validateConnectionsValue = (
   });
 
   return Object.keys(manifestConnections).some((connectionKey) => !connectionsMapping[connectionKey]) ? errorMessage : undefined;
+};
+
+export const checkWorkflowNameWithRegex = (intl: IntlShape, workflowName: string) => {
+  const regex = /^[A-Za-z][A-Za-z0-9]*(?:[_-][A-Za-z0-9]+)*$/;
+  if (!regex.test(workflowName)) {
+    return intl.formatMessage({
+      defaultMessage: 'Name does not match the given pattern.',
+      id: 'zMKxg9',
+      description: 'Error message when the workflow name is invalid regex.',
+    });
+  }
+  return undefined;
+};
+
+export const validateWorkflowData = (workflowData: Partial<WorkflowTemplateData>, isAccelerator: boolean) => {
+  const { manifest: workflowManifest, workflowName } = workflowData;
+  const intl = getIntl();
+
+  const manifestErrors: Record<string, string | undefined> = {};
+
+  const workflowNameError = isUndefinedOrEmptyString(workflowName)
+    ? intl.formatMessage({
+        defaultMessage: 'Workflow name is required.',
+        id: 'SakW8J',
+        description: 'Error message when the workflow name field is empty',
+      })
+    : checkWorkflowNameWithRegex(intl, workflowName);
+
+  manifestErrors['title'] =
+    isAccelerator && isUndefinedOrEmptyString(workflowManifest?.title)
+      ? intl.formatMessage({
+          defaultMessage: 'Workflow display name (title) is required.',
+          id: 'WnHWrD',
+          description: 'Error message when the workflow display name field which is title is empty',
+        })
+      : undefined;
+
+  manifestErrors['summary'] =
+    isAccelerator && isUndefinedOrEmptyString(workflowManifest?.summary)
+      ? intl.formatMessage({
+          defaultMessage: 'Workflow summary is required.',
+          id: 'erGyZT',
+          description: 'Error message when the workflow description is empty',
+        })
+      : undefined;
+
+  manifestErrors['kinds'] = (workflowManifest?.kinds ?? []).length
+    ? undefined
+    : intl.formatMessage({
+        defaultMessage: 'At least one state type is required.',
+        id: '3+Xsk7',
+        description: 'Error shown when the State type list is missing or empty',
+      });
+
+  manifestErrors['images.light'] = isUndefinedOrEmptyString(workflowManifest?.images?.light)
+    ? intl.formatMessage({
+        defaultMessage: 'Workflow light image is required.',
+        id: '1Cds91',
+        description: 'Error message when the workflow light image is empty',
+      })
+    : undefined;
+
+  manifestErrors['images.dark'] = isUndefinedOrEmptyString(workflowManifest?.images?.dark)
+    ? intl.formatMessage({
+        defaultMessage: 'Workflow dark image is required.',
+        id: 'k194gz',
+        description: 'Error message when the workflow dark image is empty',
+      })
+    : undefined;
+
+  return {
+    workflow: workflowNameError,
+    manifest: manifestErrors,
+  };
+};
+
+export const validateTemplateManifestValue = (manifest: Template.TemplateManifest): Record<string, string | undefined> => {
+  const intl = getIntl();
+  const errors: Record<string, string> = {};
+
+  if (isUndefinedOrEmptyString(manifest.title)) {
+    errors['title'] = intl.formatMessage({
+      defaultMessage: 'Title is required.',
+      id: 'oF5+jB',
+      description: 'Error shown when the template title is missing or empty',
+    });
+  }
+
+  if (isUndefinedOrEmptyString(manifest.summary)) {
+    errors['summary'] = intl.formatMessage({
+      defaultMessage: 'Summary is required.',
+      id: 'h4OHMi',
+      description: 'Error shown when the template summary is missing or empty',
+    });
+  }
+
+  if (isUndefinedOrEmptyString(manifest.details?.By)) {
+    errors['details.By'] = intl.formatMessage({
+      defaultMessage: 'By field is required.',
+      id: 'JSWwJH',
+      description: 'Error shown when the author (By) field is missing',
+    });
+  }
+
+  if (isUndefinedOrEmptyString(manifest.details?.Category)) {
+    errors['details.Category'] = intl.formatMessage({
+      defaultMessage: 'At least one category is required.',
+      id: '5GmlRf',
+      description: 'Error shown when the Category field is missing',
+    });
+  }
+
+  return errors;
 };

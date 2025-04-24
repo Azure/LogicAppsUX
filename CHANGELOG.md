@@ -1,4 +1,29 @@
 # Logic Apps Designer
+## [5.89.0](https://github.com/Azure/LogicAppsUX/compare/v5.88.0...v5.89.0) (2025-04-23)
+
+
+### Bug Fixes
+
+* **designer:** Uncasting parameters based on url encoding ([#7071](https://github.com/Azure/LogicAppsUX/issues/7071)) ([0820eb0](https://github.com/Azure/LogicAppsUX/commit/0820eb0dfde5ae3f83ebdc8bb0cfdd4b3ff5185c))
+* **designer:** Update agent settings and intl text ([#7072](https://github.com/Azure/LogicAppsUX/issues/7072)) ([a1d1957](https://github.com/Azure/LogicAppsUX/commit/a1d1957f91dfe36ba5d9f1ca3b98f7542a35e0c2))
+* **designer:** Update channels tab to be more information and abstract out details not required right now ([#7077](https://github.com/Azure/LogicAppsUX/issues/7077)) ([ce0a672](https://github.com/Azure/LogicAppsUX/commit/ce0a67219595b72970428dd72950dcd5583f5e74))
+* **Templates:** Fixed issue with templates connections during creation ([#7079](https://github.com/Azure/LogicAppsUX/issues/7079)) ([ff2490d](https://github.com/Azure/LogicAppsUX/commit/ff2490d73c4e0ea87a358f64b660eed967c00206))
+* **vscode:** Create separate instance of design time for each logic app, remove unneeded prompts for logic app ([#7007](https://github.com/Azure/LogicAppsUX/issues/7007)) ([2865649](https://github.com/Azure/LogicAppsUX/commit/2865649d576e1623319aa92a420181cf49d96445))
+* **vscode:** Remove user-facing commands for automated testing ([#7073](https://github.com/Azure/LogicAppsUX/issues/7073)) ([a824864](https://github.com/Azure/LogicAppsUX/commit/a824864a93f0fba7284dc5d6c7f576aeb7b28efc))
+* **vscode:** Standardize commands titles ([#7078](https://github.com/Azure/LogicAppsUX/issues/7078)) ([d41dd1c](https://github.com/Azure/LogicAppsUX/commit/d41dd1ce8eb90453921f0cb9fca00c7cf9010a3f))
+
+## [5.88.0](https://github.com/Azure/LogicAppsUX/compare/v5.87.0...v5.88.0) (2025-04-22)
+
+
+### Features
+
+* **Templates:** Custom Templates UI Enhancements ([#7062](https://github.com/Azure/LogicAppsUX/issues/7062)) ([7e087ce](https://github.com/Azure/LogicAppsUX/commit/7e087ce728c05e0acfdf0f183c1ccbc8c7978054))
+
+
+### Bug Fixes
+
+* **Templates:** Fixed template trigger description validation ([#7067](https://github.com/Azure/LogicAppsUX/issues/7067)) ([c880097](https://github.com/Azure/LogicAppsUX/commit/c8800972adcef7120d337248609e869846f0ae14))
+
 ## [5.87.0](https://github.com/Azure/LogicAppsUX/compare/v5.86.0...v5.87.0) (2025-04-21)
 
 

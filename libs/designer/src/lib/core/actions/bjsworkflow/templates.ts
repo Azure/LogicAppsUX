@@ -28,7 +28,7 @@ import type { TemplateServiceOptions } from '../../templates/TemplatesDesignerCo
 import { initializeParametersMetadata } from '../../templates/utils/parametershelper';
 import { initializeNodeOperationInputsData } from '../../state/operation/operationMetadataSlice';
 import { updateAllTemplateParameterDefinitions } from '../../state/templates/templateSlice';
-import { getCurrentWorkflowNames } from '../../templates/utils/helper';
+import { checkWorkflowNameWithRegex, getCurrentWorkflowNames } from '../../templates/utils/helper';
 import {
   loadGithubManifestNames,
   setavailableTemplates,
@@ -52,7 +52,8 @@ export interface WorkflowTemplateData {
   errors: {
     workflow: string | undefined;
     kind?: string;
-		triggerDescription?: string;
+    manifest?: Record<string, string | undefined>;
+    triggerDescription?: string;
   };
 }
 
@@ -62,6 +63,7 @@ export interface TemplatePayload {
   parameterDefinitions: Record<string, Template.ParameterDefinition>;
   connections: Record<string, Template.Connection>;
   errors: {
+    manifest: Record<string, string | undefined>;
     parameters: Record<string, string | undefined>;
     connections: string | undefined;
   };
@@ -229,16 +231,22 @@ export const loadTemplate = createAsyncThunk(
 
 export const validateWorkflowsBasicInfo = createAsyncThunk(
   'validateWorkflowsBasicInfo',
-	async ({ existingWorkflowNames, requireDescription = false }: { existingWorkflowNames: string[], requireDescription?: boolean }, thunkAPI) => {
+  async (
+    { existingWorkflowNames, requireDescription = false }: { existingWorkflowNames: string[]; requireDescription?: boolean },
+    thunkAPI
+  ) => {
     const state: RootState = thunkAPI.getState() as RootState;
     const { subscriptionId, resourceGroup: resourceGroupName, isConsumption } = state.workflow;
     const { workflows } = state.template;
     const workflowIds = Object.keys(workflows);
-    const result: Record<string, { 
-			kindError?: string; 
-			nameError?: string;
-			triggerDescriptionError?: string;
-		}> = {};
+    const result: Record<
+      string,
+      {
+        kindError?: string;
+        nameError?: string;
+        triggerDescriptionError?: string;
+      }
+    > = {};
     if (workflowIds.length) {
       const intl = getIntl();
       for (const id of workflowIds) {
@@ -262,20 +270,22 @@ export const validateWorkflowsBasicInfo = createAsyncThunk(
           resourceGroupName,
           existingWorkflowNames: [...existingWorkflowNames, ...currentWorkflowNames],
         });
-				result[id] = {
-					...result[id],
-					nameError,
-				};
+        result[id] = {
+          ...result[id],
+          nameError,
+        };
 
-				if (requireDescription) {
-					const triggerDescriptionError = await validateTriggerDescription(workflows[id]?.workflowDefinition.triggers?.[0]?.description);
-					if (triggerDescriptionError) {
-						result[id] = {
-							...result[id],
-							triggerDescriptionError,
-						};
-					}
-				}
+        if (requireDescription) {
+          const triggerKey = Object.keys(workflows?.[id]?.workflowDefinition?.triggers ?? {})?.[0];
+          const trigger = workflows?.[id]?.workflowDefinition?.triggers?.[triggerKey];
+          const triggerDescriptionError = await validateTriggerDescription(trigger?.description);
+          if (triggerDescriptionError) {
+            result[id] = {
+              ...result[id],
+              triggerDescriptionError,
+            };
+          }
+        }
       }
     }
 
@@ -302,13 +312,10 @@ export const validateWorkflowName = async (
       description: 'Error message when the workflow name is empty.',
     });
   }
-  const regex = /^[A-Za-z][A-Za-z0-9]*(?:[_-][A-Za-z0-9]+)*$/;
-  if (!regex.test(workflowName)) {
-    return intl.formatMessage({
-      defaultMessage: 'Name does not match the given pattern.',
-      id: 'zMKxg9',
-      description: 'Error message when the workflow name is invalid regex.',
-    });
+
+  const regexError = checkWorkflowNameWithRegex(intl, workflowName);
+  if (regexError) {
+    return regexError;
   }
 
   const availabilityError = intl.formatMessage(
@@ -333,19 +340,17 @@ export const validateWorkflowName = async (
   return undefined;
 };
 
-export const validateTriggerDescription = async (
-	triggerDescription: string | undefined,
-) => {
-	const intl = getIntl();
-	if (!triggerDescription) {
-		return intl.formatMessage({
-			defaultMessage: 'Must provide value for description.',
-			id: 'OZ42O1',
-			description: 'Error message when the description is empty.',
-		});
-	}
-	return undefined;
-}
+export const validateTriggerDescription = async (triggerDescription: string | undefined) => {
+  const intl = getIntl();
+  if (!triggerDescription) {
+    return intl.formatMessage({
+      defaultMessage: 'Must provide value for description.',
+      id: 'OZ42O1',
+      description: 'Error message when the description is empty.',
+    });
+  }
+  return undefined;
+};
 
 const loadTemplateFromResourcePath = async (
   templateId: string,
@@ -363,6 +368,7 @@ const loadTemplateFromResourcePath = async (
     parameterDefinitions: {},
     connections: {},
     errors: {
+      manifest: {},
       parameters: {},
       connections: undefined,
     },
