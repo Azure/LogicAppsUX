@@ -36,7 +36,7 @@
   "/WW7If": "True",
   "/X2+cq": "Open Azure Copilot",
   "/c1l10": "⌘+C",
-  "/csbOB": "The retry policy count is invalid. The value must be from {min} to {max}.",
+  "/csbOB": "The count value is invalid for the retry policy and must be from {min} to {max}.",
   "/doURb": "Convert the input to an array.",
   "/km5eO": "(UTC-04:00) Asuncion",
   "/mjH84": "Show raw outputs",
