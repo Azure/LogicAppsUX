@@ -20,12 +20,11 @@ type OperationGroupDetailViewProps = {
   filters: Record<string, string>;
   onOperationClick: (id: string, apiId?: string) => void;
   isLoading: boolean;
-  displayRuntimeInfo: boolean;
   ignoreActionsFilter: boolean;
 };
 
 export const OperationGroupDetailView = (props: OperationGroupDetailViewProps) => {
-  const { connector, groupOperations, filters, onOperationClick, isLoading, displayRuntimeInfo, ignoreActionsFilter } = props;
+  const { connector, groupOperations, filters, onOperationClick, isLoading, ignoreActionsFilter } = props;
   const relationshipIds = useDiscoveryPanelRelationshipIds();
   const graphId = useMemo(() => relationshipIds.graphId, [relationshipIds]);
   const isRoot = useMemo(() => graphId === 'root', [graphId]);
@@ -71,7 +70,6 @@ export const OperationGroupDetailView = (props: OperationGroupDetailViewProps) =
       operationActionsData={operationGroupActions}
       onOperationClick={onOperationClick}
       isLoading={isLoading}
-      displayRuntimeInfo={displayRuntimeInfo}
       addAsConnector={isWithinAgenticLoop ? addOperationAsConnector : undefined}
     />
   );

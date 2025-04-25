@@ -112,13 +112,13 @@ export const convertStringToSegments = (
           // keyNoNewline = key, but replace all newlines with no space
           const keyNoNewline = removeNewlinesAndSpaces(key);
           const encodedKeyNoNewline = removeNewlinesAndSpaces(processStringSegmentTokensInDomAndLexicalContext(key, nodeMap, true));
-          const decodedKeyNoNewlibe = removeNewlinesAndSpaces(processStringSegmentTokensInDomAndLexicalContext(key, nodeMap, false));
+          const decodedKeyNoNewline = removeNewlinesAndSpaces(processStringSegmentTokensInDomAndLexicalContext(key, nodeMap, false));
           // if the nodemap key and modified HTML segment match,
           // take the corresponding HTML node in the nodemap
           if (
             keyNoNewline === modifiedSegmentSoFar ||
             encodedKeyNoNewline === modifiedSegmentSoFar ||
-            decodedKeyNoNewlibe === modifiedSegmentSoFar
+            decodedKeyNoNewline === modifiedSegmentSoFar
           ) {
             token = nodeMap.get(key);
             break;

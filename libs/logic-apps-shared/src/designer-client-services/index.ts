@@ -32,3 +32,4 @@ export * from './lib/tenant';
 export * from './lib/uiInteractionsService';
 export * from './lib/userpreference';
 export * from './lib/resource';
+export * from './lib/providers/FavoriteContextProvider';

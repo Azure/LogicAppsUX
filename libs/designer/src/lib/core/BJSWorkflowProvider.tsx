@@ -16,6 +16,7 @@ import { useContext, useEffect } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { useDispatch } from 'react-redux';
 import { initRunInPanel } from './state/panel/panelSlice';
+import { initializeDiscoveryPanelFavoriteOperations } from './actions/bjsworkflow/initialize';
 
 export interface BJSWorkflowProviderProps {
   // used to force a workflow rerender when switching from code view
@@ -78,6 +79,10 @@ export const BJSWorkflowProvider: React.FC<BJSWorkflowProviderProps> = (props) =
       dispatch(initializeServices(wrapped));
     }
   }, [dispatch, servicesInitialized, wrapped]);
+
+  useEffect(() => {
+    initializeDiscoveryPanelFavoriteOperations(dispatch);
+  }, [dispatch]);
 
   if (!designerOptionsInitialized || !servicesInitialized) {
     return null;

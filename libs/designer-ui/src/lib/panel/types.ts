@@ -15,3 +15,10 @@ export interface PanelNodeData {
   subgraphType: string | undefined;
   tabs: PanelTab[];
 }
+
+export type SearchResultSortOption = 'unsorted' | 'ascending' | 'descending';
+export const SearchResultSortOptions: Record<SearchResultSortOption, SearchResultSortOption> = {
+  unsorted: 'unsorted',
+  ascending: 'ascending',
+  descending: 'descending',
+};

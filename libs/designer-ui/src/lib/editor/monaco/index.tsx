@@ -55,7 +55,6 @@ export interface MonacoOptions {
   lineHeight?: number;
   minimapEnabled?: boolean;
   scrollBeyondLastLine?: boolean;
-  hideUTFExpressions?: boolean;
   wordWrap?: 'off' | 'on' | 'wordWrapColumn' | 'bounded';
   wordWrapColumn?: number;
   contextMenu?: boolean;
@@ -78,7 +77,6 @@ export const MonacoEditor = forwardRef<editor.IStandaloneCodeEditor, MonacoProps
       minimapEnabled = false,
       value,
       scrollBeyondLastLine = false,
-      hideUTFExpressions,
       height,
       width,
       lineNumbersMinChars,
@@ -115,10 +113,10 @@ export const MonacoEditor = forwardRef<editor.IStandaloneCodeEditor, MonacoProps
     const initTemplateLanguage = useCallback(async () => {
       const { languages, editor } = await loader.init();
       if (!languages.getLanguages().some((lang: any) => lang.id === Constants.LANGUAGE_NAMES.WORKFLOW)) {
-        registerWorkflowLanguageProviders(languages, editor, hideUTFExpressions);
+        registerWorkflowLanguageProviders(languages, editor, { isInverted });
       }
       setCanRender(true);
-    }, [hideUTFExpressions]);
+    }, [isInverted]);
 
     useEffect(() => {
       if (language === EditorLanguage.templateExpressionLanguage) {
@@ -254,6 +252,10 @@ export const MonacoEditor = forwardRef<editor.IStandaloneCodeEditor, MonacoProps
             keepCurrentModel={true}
             className={className}
             options={{
+              bracketPairColorization: {
+                enabled: true,
+                independentColorPoolPerBracketType: true,
+              },
               readOnly: readOnly,
               contextmenu: contextMenu,
               folding: folding,
@@ -270,7 +272,7 @@ export const MonacoEditor = forwardRef<editor.IStandaloneCodeEditor, MonacoProps
             value={value}
             defaultValue={defaultValue}
             defaultLanguage={language ? language.toString() : undefined}
-            theme={isInverted ? 'vs-dark' : 'vs'}
+            theme={Constants.LANGUAGE_NAMES.THEME}
             onMount={handleEditorMounted}
             onChange={handleUpdate}
             height={height}

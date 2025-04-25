@@ -13,7 +13,6 @@ export interface IHostService {
   fetchAndDisplayContent(title: string, url: string, type: ContentType): void;
   isBuiltInConnector?: IsConnectorFn;
   isCustomConnector?: IsConnectorFn;
-  isPremiumConnector?: IsConnectorFn;
   openWorkflowParametersBlade?(): void;
   openConnectionResource?(connectionId: string): void;
   openMonitorView?(resourceId: string, runName: string): void;

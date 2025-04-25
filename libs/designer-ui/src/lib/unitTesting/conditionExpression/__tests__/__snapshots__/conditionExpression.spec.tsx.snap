@@ -16,7 +16,6 @@ exports[`ui/unitTesting/conditionExpression/index > should render without assert
           "current": null,
         }
       }
-      hideUTFExpressions={false}
       initialValue="@equals(1, 1)"
       isDragging={false}
       isReadOnly={false}

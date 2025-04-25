@@ -41,11 +41,12 @@ test.describe(
 
       await page.getByLabel('Insert a new step after HTTP').click();
       await page.getByText('Add an action').click();
-      await page.getByPlaceholder('Search').fill('scope');
-      await page.getByLabel('Scope').click();
+      await page.getByPlaceholder('Search for an action or').fill('scope');
+      await page.getByLabel('Scope', { exact: true }).click();
       await page.getByLabel('Scope', { exact: true }).click({
         button: 'right',
       });
+
       await expect(page.getByRole('menuitem', { name: 'Run After' })).toBeVisible();
       await page.getByRole('menu').getByText('Run After').click();
       await expect(page.getByLabel('Expand HTTP HTTP')).toBeVisible();

@@ -47,7 +47,7 @@ import {
   TOKEN_PICKER_OUTPUT_SECTIONS,
 } from '@microsoft/logic-apps-shared';
 import type { FunctionDefinition, OutputToken, Token, ValueSegment } from '@microsoft/designer-ui';
-import { UIConstants, TemplateFunctions, TokenType, removeUTFExpressions } from '@microsoft/designer-ui';
+import { UIConstants, TemplateFunctions, TokenType } from '@microsoft/designer-ui';
 import type { BuiltInOutput, OperationManifest } from '@microsoft/logic-apps-shared';
 import { getAgentParameterTokens } from './agentParameters';
 
@@ -191,12 +191,11 @@ export const convertOutputsToTokens = (
   });
 };
 
-export const getExpressionTokenSections = (hideUTFExpressions?: boolean): TokenGroup[] => {
+export const getExpressionTokenSections = (): TokenGroup[] => {
   return TemplateFunctions.map((functionGroup) => {
     const { id, name, functions } = functionGroup;
     const hasAdvanced = functions.some((func) => func.isAdvanced);
-    const filteredFunctions = hideUTFExpressions ? removeUTFExpressions(functions) : functions;
-    const tokens = filteredFunctions.map(({ name, defaultSignature, description, isAdvanced }: FunctionDefinition) => ({
+    const tokens = functions.map(({ name, defaultSignature, description, isAdvanced }: FunctionDefinition) => ({
       key: name,
       brandColor: FxBrandColor,
       icon: FxIcon,

@@ -58,7 +58,7 @@ export const PanelResizer = (props: PanelResizerProps): JSX.Element => {
         });
       }
     },
-    [isResizing, minWidth, updatePanelWidth]
+    [isResizing, minWidth, panelRef, updatePanelWidth]
   );
 
   useEffect(() => {

@@ -28,7 +28,13 @@ export interface ConnectionPanelContentState {
   selectedNodeIds: string[];
 }
 
+export type ActionPanelFavoriteItem = {
+  connectorId: string;
+  operationId?: string;
+};
+
 export interface DiscoveryPanelContentState {
+  favoriteOperations: ActionPanelFavoriteItem[];
   isAddingTrigger: boolean;
   isParallelBranch: boolean;
   isAgentTool?: boolean;

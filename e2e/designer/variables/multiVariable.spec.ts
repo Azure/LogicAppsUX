@@ -70,8 +70,8 @@ test.describe(
       await page.getByLabel('Zoom view to fit').press('ControlOrMeta+Shift+P');
       await expect(page.getByLabel('Initialize variables 1', { exact: true })).toContainText('Initialize variables 1');
       await expect(page.getByLabel('Initialize variables 3', { exact: true })).toContainText('Initialize variables 3');
-      await expect(page.getByLabel('Initialize variables 4', { exact: true }).locator('span')).toContainText('Initialize variables 4');
-      await expect(page.getByLabel('Initialize variables 5', { exact: true }).locator('span')).toContainText('Initialize variables 5');
+      await expect(page.getByLabel('Initialize variables 4', { exact: true })).toContainText('Initialize variables 4');
+      await expect(page.getByLabel('Initialize variables 5', { exact: true })).toContainText('Initialize variables 5');
       await expect(page.getByLabel('Initialize variables 2', { exact: true })).toContainText('Initialize variables 2');
       await expect(page.getByLabel('Initialize variables', { exact: true })).toContainText('Initialize variables');
       await page.getByLabel('Initialize variables 4', { exact: true }).click();

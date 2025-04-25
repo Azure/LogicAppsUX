@@ -22,13 +22,3 @@ export const isCustomConnector = (connector: Connector | OperationApi | string):
   const connectorId = isString(connector) ? connector : connector.id;
   return isCustomConnectorId(connectorId);
 };
-
-export const isPremiumConnector = (connector: Connector | OperationApi | string): boolean => {
-  const hostIsCustomConnectorFn = HostService()?.isPremiumConnector;
-  if (hostIsCustomConnectorFn) {
-    const connectorParameter = isString(connector) ? connector : getAllConnectorProperties(connector);
-    return hostIsCustomConnectorFn(connectorParameter);
-  }
-
-  return false;
-};
