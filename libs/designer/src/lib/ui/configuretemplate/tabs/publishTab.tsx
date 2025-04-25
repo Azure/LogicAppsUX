@@ -49,7 +49,7 @@ export const publishTab = (
   { disabled, tabStatusIcon }: TemplateWizardTabProps
 ): TemplateTabProps => ({
   id: constants.CONFIGURE_TEMPLATE_WIZARD_TAB_NAMES.PUBLISH,
-  title: resources.SettingsTabLabel,
+  title: resources.PublishTabLabel,
   description: intl.formatMessage({
     defaultMessage: 'The below are the settings for this template, to publish a template you need to go to Review and Publish and publish.',
     id: 'uOlHLw',

@@ -43,7 +43,7 @@ export const TemplateReviewList = () => {
   const connectionsSectionItems: TemplatesSectionItem[] = useConnectionSectionItems(resources);
   const paramtersSectionItems: TemplatesSectionItem[] = useParameterSectionItems(resources);
   const profileSectionItems: TemplatesSectionItem[] = useProfileSectionItems(resources);
-  const settingsSectionItems: TemplatesSectionItem[] = useSettingsSection(resources);
+  const publishSectionItems: TemplatesSectionItem[] = usePublishSection(resources);
 
   const sectionItems: Record<string, { label: string; value: TemplatesSectionItem[]; emptyText?: string }> = {
     workflows: {
@@ -64,9 +64,9 @@ export const TemplateReviewList = () => {
       label: resources.ProfileTabLabel,
       value: profileSectionItems,
     },
-    settings: {
-      label: resources.SettingsTabLabel,
-      value: settingsSectionItems,
+    publish: {
+      label: resources.PublishTabLabel,
+      value: publishSectionItems,
     },
   };
 
@@ -265,6 +265,16 @@ const useProfileSectionItems = (resources: Record<string, string>) => {
       type: 'text',
     },
     {
+      label: resources.Host,
+      value:
+        templateManifest?.skus
+          ?.map((skuKind) =>
+            equals(skuKind, 'standard') ? resources.Standard : equals(skuKind, 'consumption') ? resources.Consumption : ''
+          )
+          ?.join(', ') ?? resources.Placeholder,
+      type: 'text',
+    },
+    {
       label: resources.BY,
       value: templateManifest?.details?.By ?? resources.Placeholder,
       type: 'text',
@@ -289,20 +299,10 @@ const useProfileSectionItems = (resources: Record<string, string>) => {
   return items;
 };
 
-const useSettingsSection = (resources: Record<string, string>) => {
-  const { manifest, status } = useSelector((state: RootState) => state.template);
+const usePublishSection = (resources: Record<string, string>) => {
+  const { status } = useSelector((state: RootState) => state.template);
 
   const items: TemplatesSectionItem[] = [
-    {
-      label: resources.Host,
-      value:
-        manifest?.skus
-          ?.map((skuKind) =>
-            equals(skuKind, 'standard') ? resources.Standard : equals(skuKind, 'consumption') ? resources.Consumption : ''
-          )
-          ?.join(', ') ?? resources.Placeholder,
-      type: 'text',
-    },
     {
       label: resources.Status,
       value: status ?? resources.Placeholder,
