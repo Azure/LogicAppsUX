@@ -1,4 +1,17 @@
 # Logic Apps Designer
+## [5.92.0](https://github.com/Azure/LogicAppsUX/compare/v5.91.0...v5.92.0) (2025-04-25)
+
+
+### Features
+
+* **Templates:** Review and Publish Re-ordering ([#7087](https://github.com/Azure/LogicAppsUX/issues/7087)) ([1f89068](https://github.com/Azure/LogicAppsUX/commit/1f89068a8d8d596794782e27c51a5fa4e78bedac))
+
+
+### Bug Fixes
+
+* **desinger:** Add validation for agent tool name ([#7091](https://github.com/Azure/LogicAppsUX/issues/7091)) ([1b67769](https://github.com/Azure/LogicAppsUX/commit/1b677691fc3bae7da668fbbacbcb455347de6245))
+* **Templates:** Workflows tab content fixes ([#7092](https://github.com/Azure/LogicAppsUX/issues/7092)) ([3e55d19](https://github.com/Azure/LogicAppsUX/commit/3e55d194f3e3b86df8f71e7cc5736289304bfc90))
+
 ## [5.91.0](https://github.com/Azure/LogicAppsUX/compare/v5.90.0...v5.91.0) (2025-04-24)
 
 ## [5.90.0](https://github.com/Azure/LogicAppsUX/compare/v5.89.0...v5.90.0) (2025-04-24)
