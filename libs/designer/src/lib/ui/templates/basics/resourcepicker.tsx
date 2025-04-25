@@ -54,8 +54,8 @@ export const ResourcePicker = ({ viewMode = 'default', onSelectApp }: ResourcePi
         description: 'Validation error message when a resource is not selected',
       }),
       ALL_LOGIC_APPS: intl.formatMessage({
-        defaultMessage: 'Logic App instance',
-        id: 'Tx+tIP',
+        defaultMessage: 'Logic app instance',
+        id: 'IpD27y',
         description: 'Label field for logic app instance',
       }),
     }),
