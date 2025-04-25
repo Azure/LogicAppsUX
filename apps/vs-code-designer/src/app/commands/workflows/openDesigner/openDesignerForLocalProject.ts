@@ -54,7 +54,7 @@ export default class OpenDesignerForLocalProject extends OpenDesignerBase {
   constructor(context: IActionContext, node: Uri, unitTestName?: string, unitTestDefinition?: any, runId?: string) {
     const workflowName = path.basename(path.dirname(node.fsPath));
     const logicAppName = path.basename(path.dirname(path.dirname(node.fsPath)));
-    const panelName = `${workspace.name}-${logicAppName}-${workflowName}${unitTestName ? `-${unitTestName}` : ''}`;
+    const panelName = `Agent chat`;
     const panelGroupKey = ext.webViewKey.designerLocal;
     const runName = runId ? runId.split('/').slice(-1)[0] : '';
 

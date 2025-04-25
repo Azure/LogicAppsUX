@@ -399,7 +399,7 @@ export class StandardRunService implements IRunService {
     const { nodeId, runId } = action;
     const headers = this.getAccessTokenHeaders();
 
-    const uri = 'https://management.azure.com/subscriptions/f34b22a3-2202-4fb1-b040-1332bd928c84/resourceGroups/laveeshb-agent-test-01/providers/Microsoft.Web/sites/laveeshb-agent-test-01/hostruntime/runtime/webhooks/workflow/api/management/workflows/agent-101/runs/08584559934894731099697598734CU00/actions/Default_Agent/chatHistory?api-version=2018-11-01';
+    const uri = 'http://localhost:7691/api/GetAllChatHistory';
     try {
       const response = await httpClient.get<any>({
         uri,

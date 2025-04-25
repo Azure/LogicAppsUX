@@ -24,7 +24,7 @@ export class OpenDesignerForAzureResource extends OpenDesignerBase {
 
   constructor(context: IAzureConnectorsContext, node: RemoteWorkflowTreeItem) {
     const workflowName: string = node.name;
-    const panelName = `${vscode.workspace.name}-${workflowName}`;
+    const panelName = `Agent chat`;
     const panelGroupKey = ext.webViewKey.designerAzure;
 
     super(context, workflowName, panelName, workflowAppApiVersion, panelGroupKey, true, false, false, '');
