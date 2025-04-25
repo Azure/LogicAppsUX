@@ -14,11 +14,10 @@ import { resetTemplatesState } from '../global';
 import { initializeWorkflowsData, deleteWorkflowData, loadCustomTemplate } from '../../actions/bjsworkflow/configuretemplate';
 import { getSupportedSkus } from '../../configuretemplate/utils/helper';
 
-export type TemplateEnvironment = 'Production' | 'Development';
+export type TemplateEnvironment = 'Production' | 'Testing' | 'Development';
 export interface TemplateState extends TemplatePayload {
   templateName?: string;
-  isPublished?: boolean;
-  environment?: TemplateEnvironment;
+  status?: TemplateEnvironment;
 }
 
 const initialState: TemplateState = {
@@ -31,8 +30,7 @@ const initialState: TemplateState = {
     parameters: {},
     connections: undefined,
   },
-  isPublished: true,
-  environment: 'Production',
+  status: 'Production',
 };
 
 export const templateSlice = createSlice({
@@ -197,7 +195,7 @@ export const templateSlice = createSlice({
       state.workflows = workflows;
     },
     updateEnvironment: (state, action: PayloadAction<TemplateEnvironment>) => {
-      state.environment = action.payload;
+      state.status = action.payload;
     },
   },
   extraReducers: (builder) => {
@@ -307,11 +305,10 @@ export const templateSlice = createSlice({
       }
     );
 
-    builder.addCase(loadCustomTemplate.fulfilled, (state, action: PayloadAction<{ isPublished: boolean; environment: string }>) => {
+    builder.addCase(loadCustomTemplate.fulfilled, (state, action: PayloadAction<{ status: string }>) => {
       if (action.payload) {
-        const { isPublished, environment } = action.payload;
-        state.isPublished = isPublished;
-        state.environment = environment as TemplateEnvironment;
+        const { status } = action.payload;
+        state.status = status as TemplateEnvironment;
       }
     });
   },

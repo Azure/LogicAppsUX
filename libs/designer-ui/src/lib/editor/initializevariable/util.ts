@@ -146,6 +146,7 @@ export const convertVariableEditorSegmentsAsSchema = (variables: InitializeVaria
   const schema = {
     type: 'object',
     properties,
+    required: Object.keys(properties),
   };
 
   return convertStringToSegments(JSON.stringify(schema), nodeMap, { tokensEnabled: true });

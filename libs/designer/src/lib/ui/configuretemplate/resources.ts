@@ -34,20 +34,15 @@ export const useResourceStrings = () => {
       id: 'DmZRZn',
       description: 'The text for the development environment',
     }),
+    TestingEnvironment: intl.formatMessage({
+      defaultMessage: 'Testing',
+      id: '/LO3Ia',
+      description: 'The text for the testing environment',
+    }),
     ProductionEnvironment: intl.formatMessage({
       defaultMessage: 'Production',
       id: '0sbIhI',
       description: 'The text for the production environment',
-    }),
-    Published: intl.formatMessage({
-      defaultMessage: 'Published',
-      id: 'mdhy9X',
-      description: 'The text for the published status',
-    }),
-    Unpublished: intl.formatMessage({
-      defaultMessage: 'Unpublished',
-      id: 'pd0whZ',
-      description: 'The text for the unpublished status',
     }),
     General: intl.formatMessage({
       defaultMessage: 'General',
@@ -296,10 +291,10 @@ export const useResourceStrings = () => {
       id: '+IsazR',
       description: 'The tab label for the settings tab on the configure template wizard',
     }),
-    ReviewPublishTabLabel: intl.formatMessage({
-      defaultMessage: 'Review + publish',
-      id: 'FJQUqL',
-      description: 'The tab label for the monitoring review and publish tab on the configure template wizard',
+    ReviewTabLabel: intl.formatMessage({
+      defaultMessage: 'Review',
+      id: 'uQtott',
+      description: 'The tab label for the review tab on the configure template wizard',
     }),
   };
 };

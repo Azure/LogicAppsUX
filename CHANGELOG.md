@@ -1,4 +1,36 @@
 # Logic Apps Designer
+## [5.92.0](https://github.com/Azure/LogicAppsUX/compare/v5.91.0...v5.92.0) (2025-04-25)
+
+
+### Features
+
+* **Templates:** Review and Publish Re-ordering ([#7087](https://github.com/Azure/LogicAppsUX/issues/7087)) ([1f89068](https://github.com/Azure/LogicAppsUX/commit/1f89068a8d8d596794782e27c51a5fa4e78bedac))
+
+
+### Bug Fixes
+
+* **desinger:** Add validation for agent tool name ([#7091](https://github.com/Azure/LogicAppsUX/issues/7091)) ([1b67769](https://github.com/Azure/LogicAppsUX/commit/1b677691fc3bae7da668fbbacbcb455347de6245))
+* **Templates:** Workflows tab content fixes ([#7092](https://github.com/Azure/LogicAppsUX/issues/7092)) ([3e55d19](https://github.com/Azure/LogicAppsUX/commit/3e55d194f3e3b86df8f71e7cc5736289304bfc90))
+
+## [5.91.0](https://github.com/Azure/LogicAppsUX/compare/v5.90.0...v5.91.0) (2025-04-24)
+
+## [5.90.0](https://github.com/Azure/LogicAppsUX/compare/v5.89.0...v5.90.0) (2025-04-24)
+
+
+### Features
+
+* **Templates:** Custom Templates Validation & Error Handling ([#7061](https://github.com/Azure/LogicAppsUX/issues/7061)) ([3c70504](https://github.com/Azure/LogicAppsUX/commit/3c70504cb4760c311ac529fb7ed217ccf8ade5fe))
+* **vscode:** Update Rules Engine files and remove preview ([#7080](https://github.com/Azure/LogicAppsUX/issues/7080)) ([8b0ba59](https://github.com/Azure/LogicAppsUX/commit/8b0ba590e5a2fc42265d58d69aec027ae0e9f2bf))
+
+
+### Bug Fixes
+
+* **designer:**  Edit pass on agent UX strings. Replace "Click" with the more accessible term, "Select". ([#7066](https://github.com/Azure/LogicAppsUX/issues/7066)) ([b657efd](https://github.com/Azure/LogicAppsUX/commit/b657efd83d8b61a5b77e2fefa3d6cd683a35c5ad))
+* **designer:** Agentic workflows fit and finish 1 ([#7088](https://github.com/Azure/LogicAppsUX/issues/7088)) ([18b7c4a](https://github.com/Azure/LogicAppsUX/commit/18b7c4a4fa1bc89a5fed755c983826e4b989ca8c))
+* **designer:** Update messages strings for operation deserializer ([#7083](https://github.com/Azure/LogicAppsUX/issues/7083)) ([0d4ea37](https://github.com/Azure/LogicAppsUX/commit/0d4ea3758745df37bce2acd42cbf837774b153cd))
+* **vscode:** Custom code papercuts ([#6940](https://github.com/Azure/LogicAppsUX/issues/6940)) ([20b028a](https://github.com/Azure/LogicAppsUX/commit/20b028aa4560310e184f44b2c968200b704d1cac)), closes [#6758](https://github.com/Azure/LogicAppsUX/issues/6758) [#6816](https://github.com/Azure/LogicAppsUX/issues/6816) [#6853](https://github.com/Azure/LogicAppsUX/issues/6853) [#6897](https://github.com/Azure/LogicAppsUX/issues/6897) [#6961](https://github.com/Azure/LogicAppsUX/issues/6961) [#7003](https://github.com/Azure/LogicAppsUX/issues/7003) [#7081](https://github.com/Azure/LogicAppsUX/issues/7081)
+* **vscode:** prompt appearing when empty workspace opened ([#7085](https://github.com/Azure/LogicAppsUX/issues/7085)) ([bfc1e36](https://github.com/Azure/LogicAppsUX/commit/bfc1e363e68e75ac58ea312e352472b3390a55b1))
+
 ## [5.89.0](https://github.com/Azure/LogicAppsUX/compare/v5.88.0...v5.89.0) (2025-04-23)
 
 

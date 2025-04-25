@@ -1,7 +1,7 @@
 {
   "name": "vscode-azurelogicapps",
   "displayName": "Azure Logic Apps (Standard)",
-  "version": "5.89.0",
+  "version": "5.92.0",
   "aiKey": "setInGitHubBuild",
   "repository": "https://github.com/Azure/LogicAppsUX",
   "main": "main.js",
@@ -138,6 +138,11 @@
         "category": "Azure Logic Apps"
       },
       {
+        "command": "azureLogicAppsStandard.pickCustomCodeNetHostProcess",
+        "title": "Pick Custom Code .NET Host Process",
+        "category": "Azure Logic Apps"
+      },
+      {
         "command": "azureLogicAppsStandard.openOverview",
         "title": "Overview",
         "category": "Azure Logic Apps"
@@ -145,6 +150,16 @@
       {
         "command": "azureLogicAppsStandard.cloudToLocal",
         "title": "Create new logic app workspace from package...",
+        "category": "Azure Logic Apps"
+      },
+      {
+        "command": "azureLogicAppsStandard.buildCustomCodeFunctionsProject",
+        "title": "Build functions project...",
+        "category": "Azure Logic Apps"
+      },
+      {
+        "command": "azureLogicAppsStandard.createCustomCodeFunction",
+        "title": "New function...",
         "category": "Azure Logic Apps"
       },
       {
@@ -660,6 +675,16 @@
           "group": "zzz_LogicApptools@1"
         },
         {
+          "command": "azureLogicAppsStandard.createCustomCodeFunction",
+          "when": "explorerResourceIsRoot == true && resourcePath in azureLogicAppsStandard.customCode.setFunctionsFolders",
+          "group": "navigation@1"
+        },
+        {
+          "command": "azureLogicAppsStandard.buildCustomCodeFunctionsProject",
+          "when": "explorerResourceIsRoot == true && resourcePath in azureLogicAppsStandard.customCode.setFunctionsFolders",
+          "group": "zzz_LogicApptools@1"
+        },
+        {
           "command": "azureLogicAppsStandard.openOverview",
           "when": "resourceFilename==workflow.json",
           "group": "navigation@1"
@@ -716,6 +741,10 @@
         },
         {
           "command": "azureLogicAppsStandard.pickProcess",
+          "when": "never"
+        },
+        {
+          "command": "azureLogicAppsStandard.pickCustomCodeNetHostProcess",
           "when": "never"
         },
         {
@@ -989,10 +1018,13 @@
     "onCommand:azureLogicAppsStandard.stopLogicApp",
     "onCommand:azureLogicAppsStandard.restartLogicApp",
     "onCommand:azureLogicAppsStandard.pickProcess",
+    "onCommand:azureLogicAppsStandard.pickCustomCodeNetHostProcess",
     "onCommand:azureLogicAppsStandard.deleteLogicApp",
     "onCommand:azureLogicAppsStandard.openOverview",
     "onCommand:azureLogicAppsStandard.exportLogicApp",
     "onCommand:azureLogicAppsStandard.cloudToLocal",
+    "onCommand:azureLogicAppsStandard.buildCustomCodeFunctionsProject",
+    "onCommand:azureLogicAppsStandard.createCustomCodeFunction",
     "onCommand:azureLogicAppsStandard.reviewValidation",
     "onCommand:azureLogicAppsStandard.switchToDotnetProject",
     "onCommand:azureLogicAppsStandard.openInPortal",

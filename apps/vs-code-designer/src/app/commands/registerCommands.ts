@@ -14,6 +14,7 @@ import { uploadAppSettings } from './appSettings/uploadAppSettings';
 import { disableValidateAndInstallBinaries, resetValidateAndInstallBinaries } from './binaries/resetValidateAndInstallBinaries';
 import { validateAndInstallBinaries } from './binaries/validateAndInstallBinaries';
 import { browseWebsite } from './browseWebsite';
+import { buildCustomCodeFunctionsProject } from './buildCustomCodeFunctionsProject';
 import { configureDeploymentSource } from './configureDeploymentSource';
 import { createChildNode } from './createChildNode';
 import { createCodeless } from './createCodeless/createCodeless';
@@ -21,6 +22,7 @@ import { createLogicApp, createLogicAppAdvanced } from './createLogicApp/createL
 import { cloudToLocalCommand } from './createNewCodeProject/cloudToLocal';
 import { createNewCodeProjectFromCommand } from './createNewCodeProject/createNewCodeProject';
 import { createNewProjectFromCommand } from './createNewProject/createNewProject';
+import { createCustomCodeFunctionFromCommand } from './createCustomCodeFunction/createCustomCodeFunction';
 import { createSlot } from './createSlot';
 import { createNewDataMapCmd, loadDataMapFileCmd } from './dataMapper/dataMapper';
 import { deleteLogicApp } from './deleteLogicApp/deleteLogicApp';
@@ -61,6 +63,7 @@ import type { FileTreeItem } from '@microsoft/vscode-azext-azureappservice';
 import { registerCommand, registerCommandWithTreeNodeUnwrapping, unwrapTreeNodeCommandCallback } from '@microsoft/vscode-azext-utils';
 import type { AzExtTreeItem, IActionContext, AzExtParentTreeItem } from '@microsoft/vscode-azext-utils';
 import type { Uri } from 'vscode';
+import { pickCustomCodeNetHostProcess } from './pickCustomCodeNetHostProcess';
 
 export function registerCommands(): void {
   registerCommandWithTreeNodeUnwrapping(extensionCommand.openDesigner, openDesigner);
@@ -85,6 +88,7 @@ export function registerCommands(): void {
   registerCommandWithTreeNodeUnwrapping(extensionCommand.stopLogicApp, stopLogicApp);
   registerCommandWithTreeNodeUnwrapping(extensionCommand.restartLogicApp, restartLogicApp);
   registerCommandWithTreeNodeUnwrapping(extensionCommand.pickProcess, pickFuncProcess);
+  registerCommandWithTreeNodeUnwrapping(extensionCommand.pickCustomCodeNetHostProcess, pickCustomCodeNetHostProcess);
   registerCommandWithTreeNodeUnwrapping(extensionCommand.getDebugSymbolDll, getDebugSymbolDll);
   registerCommandWithTreeNodeUnwrapping(extensionCommand.deleteLogicApp, deleteLogicApp);
   registerCommandWithTreeNodeUnwrapping(extensionCommand.openOverview, openOverview);
@@ -140,4 +144,7 @@ export function registerCommands(): void {
   // Data Mapper Commands
   registerCommand(extensionCommand.createNewDataMap, (context: IActionContext) => createNewDataMapCmd(context));
   registerCommand(extensionCommand.loadDataMapFile, (context: IActionContext, uri: Uri) => loadDataMapFileCmd(context, uri));
+  // Custom code commands
+  registerCommandWithTreeNodeUnwrapping(extensionCommand.buildCustomCodeFunctionsProject, buildCustomCodeFunctionsProject);
+  registerCommand(extensionCommand.createCustomCodeFunction, createCustomCodeFunctionFromCommand);
 }
