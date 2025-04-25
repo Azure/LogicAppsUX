@@ -62,9 +62,9 @@ export const ConnectorSummaryCard = (props: ConnectorSummaryCardProps) => {
 
   if (isCard) {
     return (
-      <button className="msla-connector-summary-card" onClick={handleClick} aria-label={connectorName} data-automation-id={id}>
+      <div className="msla-connector-summary-card" onClick={handleClick} aria-label={connectorName} data-automation-id={id}>
         <Content />
-      </button>
+      </div>
     );
   }
 

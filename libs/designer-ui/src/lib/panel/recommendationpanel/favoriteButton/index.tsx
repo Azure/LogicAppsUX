@@ -10,13 +10,13 @@ export interface IFavoriteButtonProps {
   showUnfilledFavoriteOnlyOnHover?: boolean;
 }
 
-const useFavoriteButtonStyles = makeStyles({
-  favoriteButton: {
+const useStyles = makeStyles({
+  button: {
     color: tokens.colorBrandForeground2,
-    padding: '0px',
+    padding: 0,
     minWidth: '20px',
   },
-  visibleOnHover: {
+  hoverVisible: {
     display: 'none',
   },
 });
@@ -29,34 +29,33 @@ export const FavoriteButton: React.FC<IFavoriteButtonProps> = ({
 }) => {
   const { isOperationFavorited, onFavoriteClick } = useFavoriteContext();
   const isFavorited = isOperationFavorited(connectorId, operationId);
-
   const intl = useIntl();
-  const classNames = useFavoriteButtonStyles();
+  const styles = useStyles();
 
-  const visibleOnHoverClasses = mergeClasses(classNames.visibleOnHover, 'favorite-button-visible-on-hover');
-  const favoriteButtonClasses = mergeClasses(
-    classNames.favoriteButton,
-    ((isFavorited && showFilledFavoriteOnlyOnHover) || (!isFavorited && showUnfilledFavoriteOnlyOnHover)) && visibleOnHoverClasses
+  const shouldHideByDefault = (isFavorited && showFilledFavoriteOnlyOnHover) || (!isFavorited && showUnfilledFavoriteOnlyOnHover);
+
+  const buttonClass = mergeClasses(
+    styles.button,
+    shouldHideByDefault && styles.hoverVisible,
+    shouldHideByDefault && 'favorite-button-visible-on-hover'
   );
 
-  const StarIcon = isFavorited ? Star12Filled : Star12Regular;
-
-  const favoriteButtonText = intl.formatMessage({
-    defaultMessage: 'Favorite',
-    id: 'MXTnCr',
-    description: 'Favorite button text',
-  });
+  const handleClick = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    onFavoriteClick(!isFavorited, connectorId, operationId);
+  };
 
   return (
     <Button
-      className={favoriteButtonClasses}
+      className={buttonClass}
       appearance="transparent"
-      onClick={(e) => {
-        e.stopPropagation();
-        onFavoriteClick(!isFavorited, connectorId, operationId);
-      }}
-      icon={<StarIcon />}
-      title={favoriteButtonText}
+      onClick={handleClick}
+      icon={isFavorited ? <Star12Filled /> : <Star12Regular />}
+      title={intl.formatMessage({
+        defaultMessage: 'Favorite',
+        id: 'MXTnCr',
+        description: 'Favorite button text',
+      })}
     />
   );
 };

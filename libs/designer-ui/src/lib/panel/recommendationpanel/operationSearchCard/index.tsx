@@ -1,9 +1,9 @@
 import { Avatar, Body1Strong, Caption1, Card } from '@fluentui/react-components';
 import { ArrowFlowUpRightFilled } from '@fluentui/react-icons';
 import { InfoDot } from '../../../infoDot';
-import type { OperationActionData } from '../interfaces';
-import { replaceWhiteSpaceWithUnderscore } from '@microsoft/logic-apps-shared';
 import { OperationRuntimeBadges } from '../../../connectorsummarycard/operationRuntimeBadges';
+import { replaceWhiteSpaceWithUnderscore } from '@microsoft/logic-apps-shared';
+import type { OperationActionData } from '../interfaces';
 
 export interface OperationSearchCardProps {
   operationActionData: OperationActionData;
@@ -12,23 +12,25 @@ export interface OperationSearchCardProps {
   onClick: (operationId: string, apiId?: string) => void;
 }
 
-export const OperationSearchCard: React.FC<OperationSearchCardProps> = (props) => {
-  const { operationActionData, onClick, showConnectorName = false, showImage = false } = props;
+export const OperationSearchCard: React.FC<OperationSearchCardProps> = ({
+  operationActionData,
+  onClick,
+  showConnectorName = false,
+  showImage = false,
+}) => {
   const { title, description, connectorName, isBuiltIn, isTrigger, brandColor = '#000', iconUri } = operationActionData;
+  const { id, apiId } = operationActionData;
 
-  const onCardClick = () => {
-    const apiId = operationActionData.apiId ?? '';
-    onClick(operationActionData.id, apiId);
-  };
+  const handleCardClick = () => onClick(id, apiId);
 
-  const buttonId = `msla-op-search-result-${replaceWhiteSpaceWithUnderscore(operationActionData.id)}`;
+  const buttonId = `msla-op-search-result-${replaceWhiteSpaceWithUnderscore(id)}`;
 
   return (
     <div className="msla-op-search-card-container">
       <Card
         id={buttonId}
         className="msla-op-search-card-container"
-        onClick={() => onCardClick()}
+        onClick={handleCardClick}
         data-automation-id={buttonId}
         aria-label={title}
         focusMode="off"
@@ -47,7 +49,7 @@ export const OperationSearchCard: React.FC<OperationSearchCardProps> = (props) =
             className="msla-op-search-card-title"
             onKeyDown={(evt: React.KeyboardEvent<HTMLElement>) => {
               if (evt.key === 'Enter') {
-                onCardClick();
+                handleCardClick();
               }
             }}
             tabIndex={0}

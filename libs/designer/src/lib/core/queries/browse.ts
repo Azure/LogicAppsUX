@@ -326,6 +326,8 @@ const useFavoriteConnectors = (favoriteItems: ActionPanelFavoriteItem[]) => {
 };
 
 const useFavoriteActionsQuery = (favoriteItems: ActionPanelFavoriteItem[]) => {
+  const { data: allActions = [], isLoading } = useAllOperations();
+
   // Favorite item is a operation/action if it has an operation id specified
   const favoriteActionIds = useMemo(() => {
     if (!favoriteItems) {
@@ -345,13 +347,12 @@ const useFavoriteActionsQuery = (favoriteItems: ActionPanelFavoriteItem[]) => {
       const uniqueConnectorIdsForCurrentPage = new Set<string>();
       favoriteActionIdsForCurrentPage.forEach((favoriteActionId) => uniqueConnectorIdsForCurrentPage.add(favoriteActionId.connectorId));
 
-      const allActions = await getOperationsForConnectors();
-
       // Get the favorited actions for the current page from fetched operations
       const favoriteActions = filterOperationsFromList(favoriteActionIdsForCurrentPage, allActions);
       return { favoriteActions, pageParam };
     },
     {
+      enabled: !isLoading,
       ...queryOpts,
       getNextPageParam: (lastPage) =>
         favoriteActionIds.length > lastPage.pageParam + favoriteActionQueryPageSize
@@ -400,21 +401,12 @@ export const useFavoriteOperations = (favoriteItems: ActionPanelFavoriteItem[]) 
 
 /// Helpers ///
 
-const getOperationsForConnectors = async () => {
-  const connectorPromises = Array<Promise<DiscoveryOpArray>>();
-
-  connectorPromises.push(SearchService().getAllOperations?.() ?? Promise.resolve([]));
-
-  return (await Promise.all(connectorPromises)).flatMap((ops) => ops);
-};
-
 const filterOperationsFromList = (
   operationsToRetrieve: { connectorId: string; operationId?: string }[],
   allOperations: DiscoveryOpArray
 ) => {
   const filteredOperations: DiscoveryOpArray = [];
   for (const operationToRetrieve of operationsToRetrieve) {
-    console.log('operationToRetrieve', operationToRetrieve);
     const operation = allOperations.find(
       (op) =>
         op.properties.api.id.toLowerCase() === operationToRetrieve.connectorId.toLowerCase() &&

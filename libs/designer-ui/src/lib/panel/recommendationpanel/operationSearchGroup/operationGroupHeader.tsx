@@ -1,16 +1,14 @@
 import { Text } from '@fluentui/react-components';
-import type { Connector, OperationApi } from '@microsoft/logic-apps-shared';
 import { getDisplayNameFromConnector } from '@microsoft/logic-apps-shared';
 import { FavoriteButton } from '../favoriteButton';
+import type { Connector, OperationApi } from '@microsoft/logic-apps-shared';
 
 export interface OperationGroupHeaderNewProps {
   connector: Connector | OperationApi;
 }
 
-export const OperationGroupHeaderNew = (props: OperationGroupHeaderNewProps) => {
-  const { connector } = props;
+export const OperationGroupHeaderNew = ({ connector }: OperationGroupHeaderNewProps) => {
   const { id } = connector;
-
   const connectorName = getDisplayNameFromConnector(connector);
 
   return (

@@ -1,21 +1,21 @@
 import NoResultsSvg from '../../../assets/search/noResults.svg';
-import { AriaSearchResultsAlert } from '../../ariaSearchResults/ariaSearchResultsAlert';
-import { isBuiltInConnector } from '../../connectors';
-import { getConnectorCategoryString } from '../../utils';
-import type { SearchResultSortOption } from '../types';
-import { SearchResultSortOptions } from '../types';
-import type { OperationActionData } from './interfaces';
-import { OperationSearchGroup } from './operationSearchGroup';
+import { AriaSearchResultsAlert } from '../../../../ariaSearchResults/ariaSearchResultsAlert';
+
+import type { SearchResultSortOption } from '../../../types';
+import { SearchResultSortOptions } from '../../../types';
+
+import { OperationSearchGroup } from '../../operationSearchGroup';
 import { List } from '@fluentui/react';
 import { Spinner, Text } from '@fluentui/react-components';
-import type { DiscoveryOpArray, DiscoveryOperation, DiscoveryResultTypes, OperationApi } from '@microsoft/logic-apps-shared';
+import type { DiscoveryOpArray, OperationApi } from '@microsoft/logic-apps-shared';
 import type { PropsWithChildren } from 'react';
 import React, { useMemo } from 'react';
 import { useIntl } from 'react-intl';
-import { RuntimeFilterTagList } from './runtimeFilterTagList';
-import { BrowseGrid } from './browseResults';
-import { getOperationCardDataFromOperation } from './helpers';
-import { RecommendationPanelConstants } from '../../constants';
+import { RuntimeFilterTagList } from '../../runtimeFilterTagList';
+import { BrowseGrid } from '../../browseResults';
+import { getOperationCardDataFromOperation } from '../../helpers';
+import { RecommendationPanelConstants } from '../../../../constants';
+import { OperationActionDataFromOperation } from './helper';
 
 export type SearchResultsGridProps = {
   isLoadingMore: boolean;
@@ -205,17 +205,3 @@ export const SearchResultsGrid: React.FC<PropsWithChildren<SearchResultsGridProp
     </div>
   );
 };
-
-export const OperationActionDataFromOperation = (operation: DiscoveryOperation<DiscoveryResultTypes>): OperationActionData => ({
-  id: operation.id,
-  title: operation.properties.summary,
-  description: operation.properties.description,
-  brandColor: operation.properties.api.brandColor,
-  iconUri: operation.properties.api.iconUri,
-  connectorName: operation.properties.api.displayName,
-  category: getConnectorCategoryString(operation.properties.api),
-  isTrigger: !!operation.properties?.trigger,
-  isBuiltIn: isBuiltInConnector(operation.properties.api),
-  apiId: operation.properties.api.id,
-  releaseStatus: operation.properties.annotation?.status,
-});
