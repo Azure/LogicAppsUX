@@ -1,3 +1,4 @@
+import type { IntlShape } from 'react-intl';
 import { isWorkflowGraph } from '../parsers/models/workflowNode';
 import type { WorkflowEdge, WorkflowNode } from '../parsers/models/workflowNode';
 import type { NodesMetadata, Operations, WorkflowState } from '../state/workflow/workflowInterfaces';
@@ -202,27 +203,49 @@ export const isOperationNameValid = (
   newName: string,
   isTrigger: boolean,
   nodesMetadata: NodesMetadata,
-  idReplacements: Record<string, string>
-): boolean => {
+  idReplacements: Record<string, string>,
+  intl: IntlShape
+): { isValid: boolean; message: string } => {
   const name = transformOperationTitle(newName);
+  const subgraphType = getRecordEntry(nodesMetadata, nodeId)?.subgraphType;
+
+  const messages = {
+    DEFAULT: intl.formatMessage({
+      id: '0xLWzG',
+      defaultMessage: 'The name already exists or is invalid. Update the name before you continue.',
+      description: 'Text for invalid operation title name',
+    }),
+    AGENT_CONDITION: intl.formatMessage({
+      id: 'cd+qhI',
+      defaultMessage: 'Enter a valid tool name using only alphanumeric characters, starting with a letter (max 48 characters).',
+      description: 'Text for invalid agent tool name',
+    }),
+  };
 
   // Check for invalid characters.
-  if (!getRecordEntry(nodesMetadata, nodeId)?.subgraphType && !isTrigger && startsWith(name, 'internal.')) {
-    return false;
+  if (!subgraphType && !isTrigger && startsWith(name, 'internal.')) {
+    return { isValid: false, message: messages.DEFAULT };
   }
 
   if (!name || isTemplateExpression(name) || name.length > 80 || hasInvalidChars(name, [':', '#'])) {
-    return false;
+    return { isValid: false, message: messages.DEFAULT };
   }
 
-  const isAgentCondition = equals(getRecordEntry(nodesMetadata, nodeId)?.subgraphType, 'AGENT_CONDITION', false);
-  if (isAgentCondition) {
-    return /^[a-zA-Z_][a-zA-Z0-9_]{0,47}$/.test(name);
+  // Agent condition specific validation
+  if (subgraphType === 'AGENT_CONDITION') {
+    const agentPattern = /^[A-Za-z_][A-Za-z0-9_]{0,47}$/;
+    if (!agentPattern.test(name)) {
+      return { isValid: false, message: messages.AGENT_CONDITION };
+    }
   }
 
   // Check for name uniqueness.
-  const allNodes = Object.keys(nodesMetadata).map((id) => getRecordEntry(idReplacements, id) ?? id);
-  return !allNodes.some((nodeName) => equals(nodeName, name));
+  const existingNames = Object.keys(nodesMetadata).map((id) => getRecordEntry(idReplacements, id) ?? id);
+  const isDuplicateName = existingNames.some((nodeName) => equals(nodeName, name));
+  if (isDuplicateName) {
+    return { isValid: false, message: messages.DEFAULT };
+  }
+  return { isValid: true, message: '' };
 };
 
 export const transformOperationTitle = (title: string): string => title.replaceAll(' ', '_');
