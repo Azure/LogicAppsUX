@@ -27,33 +27,38 @@ const useInteractionTagListStyles = makeStyles({
   },
 });
 
-export const InteractionTagList = (props: InteractionTagListProps & Partial<InteractionTagProps>) => {
-  const { items, onTagSelect, initialSelectedItem, ...interactionTagProps } = props;
+export const InteractionTagList = ({
+  items,
+  onTagSelect,
+  initialSelectedItem,
+  ...interactionTagProps
+}: InteractionTagListProps & Partial<InteractionTagProps>) => {
   const [selectedItem, setSelectedItem] = React.useState<string | undefined>(initialSelectedItem ?? items[0]?.value);
-
   const classNames = useInteractionTagListStyles();
+
+  const handleTagSelect = (value: string) => {
+    setSelectedItem(value);
+    onTagSelect(value);
+  };
 
   return (
     <TagGroup>
-      {items.map((item) => (
+      {items.map(({ key, text, value }) => (
         <InteractionTag
+          key={key}
           {...interactionTagDefaultProps}
           {...interactionTagProps}
-          value={item.value}
-          key={item.key}
-          appearance={selectedItem === item.value ? 'brand' : 'outline'}
+          value={value}
+          appearance={selectedItem === value ? 'brand' : 'outline'}
         >
           <InteractionTagPrimary
-            onClick={() => {
-              setSelectedItem(item.value);
-              onTagSelect(item.value);
-            }}
-            aria-pressed={selectedItem === item.value}
-            aria-label={item.text}
-            data-automation-id={item.value}
-            className={selectedItem === item.value ? classNames.selectedTag : undefined}
+            onClick={() => handleTagSelect(value)}
+            aria-pressed={selectedItem === value}
+            aria-label={text}
+            data-automation-id={value}
+            className={selectedItem === value ? classNames.selectedTag : undefined}
           >
-            {item.text}
+            {text}
           </InteractionTagPrimary>
         </InteractionTag>
       ))}

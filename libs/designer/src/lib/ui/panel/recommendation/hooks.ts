@@ -26,7 +26,6 @@ export const useOnFavoriteClick = () => {
   return useCallback(
     (isSelected: boolean, connectorId: string, operationId?: string) => {
       let newFavorites = [...favorites];
-      console.log(isSelected, connectorId, operationId);
       if (isSelected) {
         newFavorites.push({
           connectorId,

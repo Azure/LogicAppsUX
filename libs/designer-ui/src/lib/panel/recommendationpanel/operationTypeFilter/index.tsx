@@ -1,4 +1,3 @@
-import type { MenuCheckedValueChangeData, MenuCheckedValueChangeEvent } from '@fluentui/react-components';
 import {
   Menu,
   MenuButton,
@@ -10,8 +9,9 @@ import {
   MenuTrigger,
 } from '@fluentui/react-components';
 import { FilterRegular } from '@fluentui/react-icons';
-import * as React from 'react';
 import { useIntl } from 'react-intl';
+import type { MenuCheckedValueChangeData, MenuCheckedValueChangeEvent } from '@fluentui/react-components';
+import { useMemo, useState } from 'react';
 
 interface OperationTypeFilter {
   key: string;
@@ -32,15 +32,13 @@ export const OperationTypeFilter = ({ disabled, actionTypeFilters, filters = {},
   const intl = useIntl();
   const operationTypeKey = ACTION_TYPE;
 
-  const allFilterValues = React.useMemo(() => actionTypeFilters.map((f) => f.value), [actionTypeFilters]);
-  const initialCheckedValues = React.useMemo(
-    () => ({
-      [operationTypeKey]: filters[operationTypeKey] ? [filters[operationTypeKey]] : allFilterValues,
-    }),
+  const allFilterValues = useMemo(() => actionTypeFilters.map((filter) => filter.value), [actionTypeFilters]);
+  const initialCheckedValues = useMemo(
+    () => ({ [operationTypeKey]: filters[operationTypeKey] ? [filters[operationTypeKey]] : allFilterValues }),
     [operationTypeKey, filters, allFilterValues]
   );
 
-  const [checkedItems, setCheckedItems] = React.useState<Record<string, string[]>>(initialCheckedValues);
+  const [checkedItems, setCheckedItems] = useState<Record<string, string[]>>(initialCheckedValues);
 
   const updateFilters = (value?: string) => {
     const updatedFilters = { ...filters };

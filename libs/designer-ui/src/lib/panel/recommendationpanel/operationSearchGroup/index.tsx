@@ -23,6 +23,7 @@ export const OperationSearchGroup = ({
 }: OperationSearchGroupProps) => {
   const { id } = operationApi;
   const intl = useIntl();
+
   const seeMoreText = intl.formatMessage({
     defaultMessage: 'See more',
     id: 'LlYz9c',
