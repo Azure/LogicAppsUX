@@ -1,4 +1,4 @@
-import NoResultsSvg from '../../../../assets/search/noResults.svg';
+import NoResultsSvg from '../../../../../assets/search/noResults.svg';
 import { AriaSearchResultsAlert } from '../../../../ariaSearchResults/ariaSearchResultsAlert';
 
 import type { SearchResultSortOption } from '../../../types';
