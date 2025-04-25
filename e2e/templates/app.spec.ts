@@ -43,7 +43,6 @@ test.describe(
     test('Should only contain the mock templates when templates are loaded from azure endpoint', async ({ page }) => {
       await page.goto('/templates');
       await page.getByText('Local', { exact: true }).click();
-      await page.getByText('Use Endpoint', { exact: true }).click();
       await page.getByLabel('Categories').click();
       await page.getByText('Automation', { exact: true }).click();
 
