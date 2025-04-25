@@ -1,4 +1,12 @@
 # Logic Apps Designer
+## [5.94.0](https://github.com/Azure/LogicAppsUX/compare/v5.93.0...v5.94.0) (2025-04-25)
+
+
+### Features
+
+* **designer:** Add "maximumTokenCountReduction" as default in agent settings ([#7097](https://github.com/Azure/LogicAppsUX/issues/7097)) ([373b4e3](https://github.com/Azure/LogicAppsUX/commit/373b4e30544aff7473f3a66c7dbd41f173d00559))
+* **Designer:** Panel Rework ([#7089](https://github.com/Azure/LogicAppsUX/issues/7089)) ([a2e7578](https://github.com/Azure/LogicAppsUX/commit/a2e7578863bd7ba788e7fbc82348e20fab013507))
+
 ## [5.93.0](https://github.com/Azure/LogicAppsUX/compare/v5.92.0...v5.93.0) (2025-04-25)
 
 
