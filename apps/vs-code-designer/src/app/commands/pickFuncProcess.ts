@@ -12,7 +12,7 @@ import {
 } from '../../constants';
 import { ext } from '../../extensionVariables';
 import { localize } from '../../localize';
-import { preDebugValidate } from '../debug/validatePreDebug';
+import { getMatchingWorkspaceFolder, preDebugValidate } from '../debug/validatePreDebug';
 import { verifyLocalConnectionKeys } from '../utils/appSettings/connectionKeys';
 import { activateAzurite } from '../utils/azurite/activateAzurite';
 import { getProjFiles } from '../utils/dotnet/dotnet';
@@ -21,6 +21,7 @@ import type { IRunningFuncTask } from '../utils/funcCoreTools/funcHostTask';
 import { isTimeoutError } from '../utils/requestUtils';
 import { executeIfNotActive } from '../utils/taskUtils';
 import { runWithDurationTelemetry } from '../utils/telemetry';
+import { tryGetLogicAppProjectRoot } from '../utils/verifyIsProject';
 import { getWorkspaceSetting } from '../utils/vsCodeConfig/settings';
 import { getWindowsProcess } from '../utils/windowsProcess';
 import type { HttpOperationResponse } from '@azure/ms-rest-js';
@@ -31,10 +32,11 @@ import { sendRequestWithTimeout } from '@microsoft/vscode-azext-azureutils';
 import { UserCancelledError, callWithTelemetryAndErrorHandling } from '@microsoft/vscode-azext-utils';
 import type { IActionContext } from '@microsoft/vscode-azext-utils';
 import { ProjectLanguage } from '@microsoft/vscode-extension-logic-apps';
-import type { IPreDebugValidateResult, IProcessInfo } from '@microsoft/vscode-extension-logic-apps';
+import type { IProcessInfo } from '@microsoft/vscode-extension-logic-apps';
 import unixPsTree from 'ps-tree';
 import * as vscode from 'vscode';
 import parser from 'yargs-parser';
+import { buildCustomCodeFunctionsProject } from './buildCustomCodeFunctionsProject';
 
 type OSAgnosticProcess = { command: string | undefined; pid: number | string };
 type ActualUnixPS = unixPsTree.PS & { COMM?: string };
@@ -45,30 +47,39 @@ export async function pickFuncProcess(context: IActionContext, debugConfig: vsco
       await activateAzurite(context);
     });
   });
+
+  const workspaceFolder: vscode.WorkspaceFolder = getMatchingWorkspaceFolder(debugConfig);
+  const projectPath: string | undefined = await tryGetLogicAppProjectRoot(context, workspaceFolder);
+  if (!projectPath) {
+    throw new Error(localize('noProjectRoot', 'Unable to find the project root.'));
+  }
+
   await callWithTelemetryAndErrorHandling(verifyConnectionKeysSetting, async (actionContext: IActionContext) => {
     await runWithDurationTelemetry(actionContext, verifyConnectionKeysSetting, async () => {
-      await verifyLocalConnectionKeys(context);
+      await verifyLocalConnectionKeys(context, projectPath);
     });
   });
 
-  const result: IPreDebugValidateResult = await preDebugValidate(context, debugConfig);
+  const shouldContinue: boolean = await preDebugValidate(context, debugConfig, projectPath);
 
-  if (!result.shouldContinue) {
+  if (!shouldContinue) {
     throw new UserCancelledError('preDebugValidate');
   }
 
-  await waitForPrevFuncTaskToStop(result.workspace);
-  const projectFiles = await getProjFiles(context, ProjectLanguage.CSharp, result.workspace.uri.fsPath);
+  await buildCustomCodeFunctionsProject(context, workspaceFolder.uri);
+
+  await waitForPrevFuncTaskToStop(workspaceFolder);
+  const projectFiles = await getProjFiles(context, ProjectLanguage.CSharp, projectPath);
   const isBundleProject: boolean = projectFiles.length > 0 ? false : true;
 
   const preLaunchTaskName: string | undefined = debugConfig.preLaunchTask;
   const tasks: vscode.Task[] = await vscode.tasks.fetchTasks();
   const funcTask: vscode.Task | undefined = tasks.find((task) => {
-    return task.scope === result.workspace && (preLaunchTaskName ? task.name === preLaunchTaskName : isFuncHostTask(task));
+    return task.scope === workspaceFolder && (preLaunchTaskName ? task.name === preLaunchTaskName : isFuncHostTask(task));
   });
 
   const debugTask: vscode.Task | undefined = tasks.find((task) => {
-    return task.scope === result.workspace && task.name === 'generateDebugSymbols';
+    return task.scope === workspaceFolder && task.name === 'generateDebugSymbols';
   });
 
   if (!funcTask) {
@@ -80,10 +91,10 @@ export async function pickFuncProcess(context: IActionContext, debugConfig: vsco
   getPickProcessTimeout(context);
 
   if (debugTask && !debugConfig['noDebug'] && isBundleProject) {
-    await startDebugTask(debugTask, result.workspace);
+    await startDebugTask(debugTask, workspaceFolder);
   }
 
-  const taskInfo = await startFuncTask(context, result.workspace, funcTask);
+  const taskInfo = await startFuncTask(context, workspaceFolder, funcTask);
   return await pickChildProcess(taskInfo);
 }
 
@@ -230,7 +241,7 @@ async function startFuncTask(
  * 3. Starting with the .NET 5 worker, Windows sometimes has an inner process we _don't_ want like 'conhost.exe'
  * The only processes we should want to attach to are the "func" process itself or a "dotnet" process running a dll, so we will pick the innermost one of those
  */
-async function pickChildProcess(taskInfo: IRunningFuncTask): Promise<string> {
+export async function pickChildProcess(taskInfo: IRunningFuncTask): Promise<string> {
   // Workaround for https://github.com/microsoft/vscode-azurefunctions/issues/2656
   if (!isRunning(taskInfo.processId) && vscode.window.activeTerminal) {
     const terminalPid = await vscode.window.activeTerminal.processId;
@@ -252,7 +263,7 @@ export async function findChildProcess(processId: number): Promise<string | unde
   return child ? child.pid.toString() : String(processId);
 }
 
-async function getUnixChildren(pid: number): Promise<OSAgnosticProcess[]> {
+export async function getUnixChildren(pid: number): Promise<OSAgnosticProcess[]> {
   const processes: ActualUnixPS[] = await new Promise((resolve, reject): void => {
     unixPsTree(pid, (error: Error | null, result: unixPsTree.PS[]) => {
       if (error) {
@@ -267,7 +278,7 @@ async function getUnixChildren(pid: number): Promise<OSAgnosticProcess[]> {
   });
 }
 
-async function getWindowsChildren(pid: number): Promise<OSAgnosticProcess[]> {
+export async function getWindowsChildren(pid: number): Promise<OSAgnosticProcess[]> {
   const processes: IProcessInfo[] = await getWindowsProcess(pid);
   return (processes || []).map((c) => {
     return { command: c.name, pid: c.pid };

@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from 'react';
+import { useMemo } from 'react';
 import { TemplatesDataProvider, TemplatesView } from '@microsoft/logic-apps-designer';
 import type { RootState } from '../state/Store';
 import { TemplatesDesigner, TemplatesDesignerProvider, templateStore, resetStateOnResourceChange } from '@microsoft/logic-apps-designer';
@@ -38,25 +38,17 @@ export const LocalTemplates = () => {
     theme: state.workflowLoader.theme,
     templatesView: state.workflowLoader.templatesView,
   }));
-  const { hostingPlan, useEndpoint, isCreateView, enableResourceSelection } = useSelector((state: RootState) => state.workflowLoader);
-  const [reload, setReload] = useState<boolean | undefined>(undefined);
-
+  const { hostingPlan, isCreateView, enableResourceSelection } = useSelector((state: RootState) => state.workflowLoader);
   const isConsumption = hostingPlan === 'consumption';
 
   const createWorkflowCall = async () => {
     alert("Congrats you created the workflow! (Not really, you're in standalone)");
   };
 
-  useEffect(() => {
-    if (useEndpoint !== undefined) {
-      setReload(true);
-    }
-  }, [useEndpoint]);
-
   const services = useMemo(
-    () => getServices(defaultSubscriptionId, defaultResourceGroup, defaultLocation, isConsumption, !!useEndpoint),
+    () => getServices(defaultSubscriptionId, defaultResourceGroup, defaultLocation, isConsumption),
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    [isConsumption, useEndpoint]
+    [isConsumption]
   );
   const onReloadServices = () => {
     const { subscriptionId, resourceGroup, location } = templateStore.getState().workflow;
@@ -73,7 +65,6 @@ export const LocalTemplates = () => {
           location: defaultLocation,
           workflowAppName: 'app1',
         }}
-        reload={reload}
         connectionReferences={{}}
         services={services}
         isConsumption={isConsumption}
@@ -170,13 +161,7 @@ export const LocalTemplates = () => {
 
 const httpClient = new HttpClient();
 
-const getServices = (
-  subscriptionId: string,
-  resourceGroup: string,
-  location: string,
-  isConsumption: boolean,
-  useEndpoint: boolean
-): any => {
+const getServices = (subscriptionId: string, resourceGroup: string, location: string, isConsumption: boolean): any => {
   const connectionService = isConsumption
     ? new ConsumptionConnectionService({
         apiVersion: '2018-07-01-preview',
@@ -243,8 +228,8 @@ const getServices = (
   };
 
   const baseService = new BaseTemplateService({
-    endpoint: 'https://priti-cxf4h5cpcteue4az.b02.azurefd.net/logicapps',
-    useEndpointForTemplates: useEndpoint,
+    endpoint: '/templatesLocalProxy/templates/logicapps',
+    useEndpointForTemplates: true,
     openBladeAfterCreate: (workflowName: string | undefined) => {
       window.alert(`Open blade after create, workflowName is: ${workflowName}`);
     },
@@ -256,8 +241,8 @@ const getServices = (
   });
   const templateService = new LocalTemplateService({
     service: baseService,
-    endpoint: 'https://priti-cxf4h5cpcteue4az.b02.azurefd.net',
-    useEndpointForTemplates: useEndpoint,
+    endpoint: '/templatesLocalProxy/templates/logicapps',
+    useEndpointForTemplates: true,
     baseUrl: '/url',
     appId: 'siteResourceId', //TODO: double check
     httpClient,

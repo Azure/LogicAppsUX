@@ -14,7 +14,6 @@ export interface WorkflowLoadingState {
   theme: ThemeType;
   language: string;
   templatesView: string;
-  useEndpoint?: boolean;
   isCreateView?: boolean;
   enableResourceSelection?: boolean;
 }
@@ -71,9 +70,6 @@ export const workflowLoaderSlice = createSlice({
     changeTheme: (state, action: PayloadAction<ThemeType>) => {
       state.theme = action.payload;
     },
-    setUseEndpoint: (state, action: PayloadAction<boolean>) => {
-      state.useEndpoint = action.payload;
-    },
     setCreateView: (state, action: PayloadAction<boolean>) => {
       state.isCreateView = action.payload;
     },
@@ -90,7 +86,6 @@ export const {
   clearWorkflowDetails,
   setHostingPlan,
   changeRunId,
-  setUseEndpoint,
   setCreateView,
   setEnableResourceSelection,
 } = workflowLoaderSlice.actions;

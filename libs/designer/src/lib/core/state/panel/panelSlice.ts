@@ -48,10 +48,12 @@ const getInitialNodeSearchContentState = (): NodeSearchPanelContentState => ({
 
 const getInitialOperationContentState = (): OperationPanelContentState => ({
   panelMode: 'Operation',
-  pinnedNodeId: undefined,
-  pinnedNodeActiveTabId: undefined,
   selectedNodeId: undefined,
   selectedNodeActiveTabId: undefined,
+  alternateSelectedNode: {
+    nodeId: undefined,
+    activeTabId: undefined,
+  },
 });
 
 const getInitialWorkflowParametersContentState = (): WorkflowParametersPanelContentState => ({
@@ -104,12 +106,16 @@ export const panelSlice = createSlice({
         state.isCollapsed = true;
         state.operationContent = getInitialOperationContentState();
       } else {
-        state.isCollapsed = !state.operationContent.pinnedNodeId;
+        state.isCollapsed = !(
+          state.operationContent.alternateSelectedNode?.nodeId && state.operationContent.alternateSelectedNode.persistence === 'pinned'
+        );
         state.operationContent = {
           ...getInitialOperationContentState(),
-          pinnedNodeId: state.operationContent.pinnedNodeId,
-          pinnedNodeActiveTabId: state.operationContent.pinnedNodeActiveTabId,
+          alternateSelectedNode: state.operationContent.alternateSelectedNode,
         };
+      }
+      if (state.operationContent.alternateSelectedNode?.persistence === 'selected') {
+        state.operationContent.alternateSelectedNode = {};
       }
     },
     updatePanelLocation: (state, action: PayloadAction<PanelLocation | undefined>) => {
@@ -117,7 +123,10 @@ export const panelSlice = createSlice({
         state.location = action.payload;
       }
     },
-    setPinnedNode: (state, action: PayloadAction<{ nodeId: string; updatePanelOpenState?: boolean }>) => {
+    setAlternateSelectedNode: (
+      state,
+      action: PayloadAction<{ nodeId: string; updatePanelOpenState?: boolean; panelPersistence?: 'selected' | 'pinned' }>
+    ) => {
       const { nodeId, updatePanelOpenState } = action.payload;
       const hasSelectedNode = !!state.operationContent.selectedNodeId;
 
@@ -127,8 +136,11 @@ export const panelSlice = createSlice({
         state.operationContent.selectedNodeId = nodeId;
       }
 
-      state.operationContent.pinnedNodeId = nodeId;
-      state.operationContent.pinnedNodeActiveTabId = undefined;
+      state.operationContent.alternateSelectedNode = {
+        nodeId: nodeId,
+        activeTabId: undefined,
+        persistence: action.payload.panelPersistence ?? 'pinned',
+      };
 
       if (updatePanelOpenState) {
         if (nodeId) {
@@ -145,13 +157,9 @@ export const panelSlice = createSlice({
       state.connectionContent.selectedNodeIds = selectedNodes;
       state.discoveryContent.selectedNodeIds = selectedNodes;
       state.operationContent.selectedNodeId = selectedNodes[0];
-    },
-    setSelectedNodeIds: (state, action: PayloadAction<string[]>) => {
-      const selectedNodes = action.payload;
-
-      state.connectionContent.selectedNodeIds = selectedNodes;
-      state.discoveryContent.selectedNodeIds = selectedNodes;
-      state.operationContent.selectedNodeId = selectedNodes[0];
+      if (state.operationContent.alternateSelectedNode?.persistence === 'selected') {
+        state.operationContent.alternateSelectedNode.nodeId = '';
+      }
     },
     changePanelNode: (state, action: PayloadAction<string>) => {
       const selectedNodes = [action.payload];
@@ -161,6 +169,9 @@ export const panelSlice = createSlice({
       state.connectionContent.selectedNodeIds = selectedNodes;
       state.operationContent.selectedNodeId = selectedNodes[0];
       state.operationContent.selectedNodeActiveTabId = undefined;
+      if (state.operationContent.alternateSelectedNode?.persistence === 'selected') {
+        state.operationContent.alternateSelectedNode.nodeId = '';
+      }
 
       LoggerService().log({
         level: LogEntryLevel.Verbose,
@@ -234,9 +245,15 @@ export const panelSlice = createSlice({
       state.connectionContent.selectedNodeIds = selectedNodes;
       state.discoveryContent.selectedNodeIds = selectedNodes;
       state.operationContent.selectedNodeId = selectedNodes[0];
+
+      if (state.operationContent.alternateSelectedNode?.persistence === 'selected') {
+        state.operationContent.alternateSelectedNode.nodeId = '';
+      }
     },
     setPinnedPanelActiveTab: (state, action: PayloadAction<string | undefined>) => {
-      state.operationContent.pinnedNodeActiveTabId = action.payload;
+      if (state.operationContent.alternateSelectedNode) {
+        state.operationContent.alternateSelectedNode.activeTabId = action.payload;
+      }
 
       LoggerService().log({
         level: LogEntryLevel.Verbose,
@@ -277,13 +294,16 @@ export const panelSlice = createSlice({
       if (actionIds.length === 0) {
         return; // This is sometimes run too early when we don't have any actions yet
       }
-      if (state.operationContent.pinnedNodeId && !actionIds.includes(state.operationContent.pinnedNodeId ?? '')) {
-        state.operationContent.pinnedNodeId = undefined;
+      if (
+        state.operationContent.alternateSelectedNode?.nodeId &&
+        !actionIds.includes(state.operationContent.alternateSelectedNode.nodeId ?? '')
+      ) {
+        state.operationContent.alternateSelectedNode.nodeId = undefined;
       }
       if (state.operationContent.selectedNodeId && !actionIds.includes(state.operationContent.selectedNodeId ?? '')) {
         state.operationContent.selectedNodeId = undefined;
       }
-      if (state.operationContent.pinnedNodeId == null && state.operationContent.selectedNodeId == null) {
+      if (state.operationContent.alternateSelectedNode?.nodeId == null && state.operationContent.selectedNodeId == null) {
         state.operationContent = getInitialOperationContentState();
         state.isCollapsed = true;
       }
@@ -310,9 +330,8 @@ export const {
   setSelectedPanelActiveTab,
   setIsCreatingConnection,
   setIsPanelLoading,
-  setPinnedNode,
+  setAlternateSelectedNode,
   setSelectedNodeId,
-  setSelectedNodeIds,
   updatePanelLocation,
   initRunInPanel,
 } = panelSlice.actions;

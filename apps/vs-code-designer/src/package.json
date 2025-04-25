@@ -1,7 +1,7 @@
 {
   "name": "vscode-azurelogicapps",
   "displayName": "Azure Logic Apps (Standard)",
-  "version": "5.80.0",
+  "version": "5.92.0",
   "aiKey": "setInGitHubBuild",
   "repository": "https://github.com/Azure/LogicAppsUX",
   "main": "main.js",
@@ -50,12 +50,12 @@
     "commands": [
       {
         "command": "azureLogicAppsStandard.openDesigner",
-        "title": "Open Designer",
+        "title": "Open designer",
         "category": "Azure Logic Apps"
       },
       {
         "command": "azureLogicAppsStandard.viewContent",
-        "title": "View Content",
+        "title": "View content",
         "category": "Azure Logic Apps"
       },
       {
@@ -99,7 +99,7 @@
       },
       {
         "command": "azureLogicAppsStandard.deploySlot",
-        "title": "Deploy to Slot...",
+        "title": "Deploy to slot...",
         "category": "Azure Logic Apps"
       },
       {
@@ -134,7 +134,12 @@
       },
       {
         "command": "azureLogicAppsStandard.pickProcess",
-        "title": "Pick Process",
+        "title": "Pick process",
+        "category": "Azure Logic Apps"
+      },
+      {
+        "command": "azureLogicAppsStandard.pickCustomCodeNetHostProcess",
+        "title": "Pick Custom Code .NET Host Process",
         "category": "Azure Logic Apps"
       },
       {
@@ -145,6 +150,16 @@
       {
         "command": "azureLogicAppsStandard.cloudToLocal",
         "title": "Create new logic app workspace from package...",
+        "category": "Azure Logic Apps"
+      },
+      {
+        "command": "azureLogicAppsStandard.buildCustomCodeFunctionsProject",
+        "title": "Build functions project...",
+        "category": "Azure Logic Apps"
+      },
+      {
+        "command": "azureLogicAppsStandard.createCustomCodeFunction",
+        "title": "New function...",
         "category": "Azure Logic Apps"
       },
       {
@@ -168,57 +183,57 @@
       },
       {
         "command": "azureLogicAppsStandard.openInPortal",
-        "title": "Open in Portal",
+        "title": "Open in portal",
         "category": "Azure Logic Apps"
       },
       {
         "command": "azureLogicAppsStandard.browseWebsite",
-        "title": "Browse Website",
+        "title": "Browse website",
         "category": "Azure Logic Apps"
       },
       {
         "command": "azureLogicAppsStandard.viewProperties",
-        "title": "View Properties",
+        "title": "View properties",
         "category": "Azure Logic Apps"
       },
       {
         "command": "azureLogicAppsStandard.createSlot",
-        "title": "Create Slot...",
+        "title": "Create slot...",
         "category": "Azure Logic Apps"
       },
       {
         "command": "azureLogicAppsStandard.deleteSlot",
-        "title": "Delete Slot...",
+        "title": "Delete slot...",
         "category": "Azure Logic Apps"
       },
       {
         "command": "azureLogicAppsStandard.viewDeploymentLogs",
-        "title": "View Deployment Logs",
+        "title": "View deployment logs",
         "category": "Azure Logic Apps"
       },
       {
         "command": "azureLogicAppsStandard.startStreamingLogs",
-        "title": "Start Streaming Logs",
+        "title": "Start streaming logs",
         "category": "Azure Logic Apps"
       },
       {
         "command": "azureLogicAppsStandard.stopStreamingLogs",
-        "title": "Stop Streaming Logs",
+        "title": "Stop streaming logs",
         "category": "Azure Logic Apps"
       },
       {
         "command": "azureLogicAppsStandard.reviewValidation",
-        "title": "Review Validation",
+        "title": "Review validation",
         "category": "Azure Logic Apps"
       },
       {
         "command": "azureLogicAppsStandard.swapSlot",
-        "title": "Swap Slot...",
+        "title": "Swap slot...",
         "category": "Azure Logic Apps"
       },
       {
         "command": "azureLogicAppsStandard.toggleAppSettingVisibility",
-        "title": "Toggle App Setting Visibility.",
+        "title": "Toggle app setting visibility.",
         "category": "Azure Logic Apps",
         "icon": {
           "light": "assets/light/visible.svg",
@@ -227,37 +242,37 @@
       },
       {
         "command": "azureLogicAppsStandard.appSettings.add",
-        "title": "Add New Setting...",
+        "title": "Add new setting...",
         "category": "Azure Logic Apps"
       },
       {
         "command": "azureLogicAppsStandard.appSettings.delete",
-        "title": "Delete Setting...",
+        "title": "Delete setting...",
         "category": "Azure Logic Apps"
       },
       {
         "command": "azureLogicAppsStandard.appSettings.download",
-        "title": "Download Remote Settings...",
+        "title": "Download remote settings...",
         "category": "Azure Logic Apps"
       },
       {
         "command": "azureLogicAppsStandard.appSettings.edit",
-        "title": "Edit Setting...",
+        "title": "Edit setting...",
         "category": "Azure Logic Apps"
       },
       {
         "command": "azureLogicAppsStandard.appSettings.rename",
-        "title": "Rename Setting...",
+        "title": "Rename setting...",
         "category": "Azure Logic Apps"
       },
       {
         "command": "azureLogicAppsStandard.appSettings.toggleSlotSetting",
-        "title": "Toggle as Slot Setting",
+        "title": "Toggle as slot setting",
         "category": "Azure Logic Apps"
       },
       {
         "command": "azureLogicAppsStandard.appSettings.upload",
-        "title": "Upload Local Settings...",
+        "title": "Upload local settings...",
         "category": "Azure Logic Apps"
       },
       {
@@ -272,42 +287,42 @@
       },
       {
         "command": "azureLogicAppsStandard.configureWebhookRedirectEndpoint",
-        "title": "Configure Webhook Redirect Endpoint",
+        "title": "Configure webhook redirect endpoint",
         "category": "Azure Logic Apps"
       },
       {
         "command": "azureLogicAppsStandard.enableAzureConnectors",
-        "title": "Use Connectors from Azure",
+        "title": "Use connectors from Azure",
         "category": "Azure Logic Apps"
       },
       {
         "command": "azureLogicAppsStandard.viewCommitInGitHub",
-        "title": "View Commit in GitHub",
+        "title": "View commit in GitHub",
         "category": "Azure Logic Apps"
       },
       {
         "command": "azureLogicAppsStandard.connectToGitHub",
-        "title": "Connect to GitHub Repository...",
+        "title": "Connect to GitHub repository...",
         "category": "Azure Logic Apps"
       },
       {
         "command": "azureLogicAppsStandard.disconnectRepo",
-        "title": "Disconnect from Repo...",
+        "title": "Disconnect from repo...",
         "category": "Azure Logic Apps"
       },
       {
         "command": "azureLogicAppsStandard.startRemoteDebug",
-        "title": "Start Remote Debugging",
+        "title": "Start remote debugging",
         "category": "Azure Logic Apps"
       },
       {
         "command": "azureLogicAppsStandard.initProjectForVSCode",
-        "title": "Initialize Project for Use with VS Code...",
+        "title": "Initialize project for use with VS Code...",
         "category": "Azure Logic Apps"
       },
       {
         "command": "azureLogicAppsStandard.configureDeploymentSource",
-        "title": "Configure Deployment Source...",
+        "title": "Configure deployment source...",
         "category": "Azure Logic Apps"
       },
       {
@@ -340,33 +355,6 @@
         "command": "azureLogicAppsStandard.dataMap.loadDataMapFile",
         "title": "Data Mapper: Load existing data map",
         "when": "resourceExtname in azureLogicAppsStandard.dataMap.setSupportedDataMapDefinitionFileExts"
-      },
-      {
-        "command": "azureLogicAppsStandard.createUnitTest",
-        "title": "Create unit test",
-        "category": "Azure Logic Apps"
-      },
-      {
-        "command": "azureLogicAppsStandard.openUnitTestResults",
-        "title": "View unit test results",
-        "category": "Azure Logic Apps",
-        "icon": "$(tasklist)"
-      },
-      {
-        "command": "azureLogicAppsStandard.saveBlankUnitTest",
-        "title": "Create blank unit test",
-        "category": "Azure Logic Apps"
-      },
-      {
-        "command": "azureLogicAppsStandard.editUnitTest",
-        "title": "Edit unit test",
-        "category": "Azure Logic Apps",
-        "icon": "$(edit)"
-      },
-      {
-        "command": "azureLogicAppsStandard.runUnitTest",
-        "title": "Run unit test",
-        "category": "Azure Logic Apps"
       },
       {
         "command": "azureLogicAppsStandard.parameterizeConnections",
@@ -687,6 +675,16 @@
           "group": "zzz_LogicApptools@1"
         },
         {
+          "command": "azureLogicAppsStandard.createCustomCodeFunction",
+          "when": "explorerResourceIsRoot == true && resourcePath in azureLogicAppsStandard.customCode.setFunctionsFolders",
+          "group": "navigation@1"
+        },
+        {
+          "command": "azureLogicAppsStandard.buildCustomCodeFunctionsProject",
+          "when": "explorerResourceIsRoot == true && resourcePath in azureLogicAppsStandard.customCode.setFunctionsFolders",
+          "group": "zzz_LogicApptools@1"
+        },
+        {
           "command": "azureLogicAppsStandard.openOverview",
           "when": "resourceFilename==workflow.json",
           "group": "navigation@1"
@@ -730,31 +728,6 @@
           "command": "azureLogicAppsStandard.dataMap.loadDataMapFile",
           "group": "navigation",
           "when": "resourceExtname in azureLogicAppsStandard.dataMap.setSupportedDataMapDefinitionFileExts"
-        },
-        {
-          "command": "azureLogicAppsStandard.createUnitTest",
-          "when": "false",
-          "group": "navigation@4"
-        },
-        {
-          "command": "azureLogicAppsStandard.saveBlankUnitTest",
-          "when": "false",
-          "group": "navigation@4"
-        },
-        {
-          "command": "azureLogicAppsStandard.openUnitTestResults",
-          "when": "false",
-          "group": "navigation@5"
-        },
-        {
-          "command": "azureLogicAppsStandard.editUnitTest",
-          "when": "false",
-          "group": "navigation@4"
-        },
-        {
-          "command": "azureLogicAppsStandard.runUnitTest",
-          "when": "false",
-          "group": "navigation@4"
         }
       ],
       "commandPalette": [
@@ -768,6 +741,10 @@
         },
         {
           "command": "azureLogicAppsStandard.pickProcess",
+          "when": "never"
+        },
+        {
+          "command": "azureLogicAppsStandard.pickCustomCodeNetHostProcess",
           "when": "never"
         },
         {
@@ -793,26 +770,6 @@
         {
           "command": "azureLogicAppsStandard.createNewProject",
           "when": "never"
-        }
-      ],
-      "testing/item/context": [
-        {
-          "command": "azureLogicAppsStandard.editUnitTest",
-          "group": "inline@3",
-          "when": "false"
-        },
-        {
-          "command": "azureLogicAppsStandard.openUnitTestResults",
-          "group": "inline@4",
-          "when": "false"
-        },
-        {
-          "command": "azureLogicAppsStandard.editUnitTest",
-          "when": "false"
-        },
-        {
-          "command": "azureLogicAppsStandard.openUnitTestResults",
-          "when": "false"
         }
       ]
     },
@@ -930,16 +887,6 @@
           "azureLogicAppsStandard.showDeployConfirmation": {
             "type": "boolean",
             "description": "Ask to confirm before deploying to a function app in Azure. Deployment overwrites any previous deployment and can't be undone.",
-            "default": true
-          },
-          "azureLogicAppsStandard.showCoreToolsWarning": {
-            "type": "boolean",
-            "description": "Show a warning when your installed version of the Azure Functions Core Tools is outdated.",
-            "default": true
-          },
-          "azureLogicAppsStandard.showDotNetWarning": {
-            "type": "boolean",
-            "description": "Show a warning when your installed version of the .NET SDK is outdated.",
             "default": true
           },
           "azureLogicAppsStandard.showNodeJsWarning": {
@@ -1071,10 +1018,13 @@
     "onCommand:azureLogicAppsStandard.stopLogicApp",
     "onCommand:azureLogicAppsStandard.restartLogicApp",
     "onCommand:azureLogicAppsStandard.pickProcess",
+    "onCommand:azureLogicAppsStandard.pickCustomCodeNetHostProcess",
     "onCommand:azureLogicAppsStandard.deleteLogicApp",
     "onCommand:azureLogicAppsStandard.openOverview",
     "onCommand:azureLogicAppsStandard.exportLogicApp",
     "onCommand:azureLogicAppsStandard.cloudToLocal",
+    "onCommand:azureLogicAppsStandard.buildCustomCodeFunctionsProject",
+    "onCommand:azureLogicAppsStandard.createCustomCodeFunction",
     "onCommand:azureLogicAppsStandard.reviewValidation",
     "onCommand:azureLogicAppsStandard.switchToDotnetProject",
     "onCommand:azureLogicAppsStandard.openInPortal",
