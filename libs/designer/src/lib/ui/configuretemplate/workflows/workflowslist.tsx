@@ -200,12 +200,14 @@ export const DisplayWorkflows = ({ onSave }: { onSave: (isMultiWorkflow: boolean
         }}
       />
 
-      <MessageBar intent="error" className="msla-templates-error-message-bar" hidden={!workflowNamesWithErrors.length}>
+{workflowNamesWithErrors.length ? (
+      <MessageBar intent="error" className="msla-templates-error-message-bar">
         <MessageBarBody>
           <MessageBarTitle>{customResourceStrings.MissingRequiredFields}</MessageBarTitle>
           <Text>{workflowNamesWithErrors.join(', ')}</Text>
         </MessageBarBody>
       </MessageBar>
+) : null}
 
       {Object.keys(workflows).length > 0 ? (
         <Table aria-label={customResourceStrings.WorkflowsListTableLabel} style={{ minWidth: '550px' }}>

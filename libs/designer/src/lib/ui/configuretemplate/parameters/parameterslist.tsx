@@ -103,12 +103,14 @@ export const TemplateParametersList = () => {
   return (
     <div className="msla-templates-wizard-tab-content" style={{ overflowX: 'auto', paddingTop: '12px' }}>
       {currentPanelView === TemplatePanelView.CustomizeParameter && <CustomizeParameterPanel />}
-      <MessageBar intent="error" className="msla-templates-error-message-bar" hidden={!parameterErrorIds.length}>
-        <MessageBarBody>
-          <MessageBarTitle>{resourceStrings.MissingRequiredFields}</MessageBarTitle>
-          <Text>{parameterErrorIds.join(', ')}</Text>
-        </MessageBarBody>
-      </MessageBar>
+      {parameterErrorIds.length ? (
+        <MessageBar intent="error" className="msla-templates-error-message-bar">
+          <MessageBarBody>
+            <MessageBarTitle>{resourceStrings.MissingRequiredFields}</MessageBarTitle>
+            <Text>{parameterErrorIds.join(', ')}</Text>
+          </MessageBarBody>
+        </MessageBar>
+      ) : null}
 
       <Table aria-label={intlText.AriaLabel} size="small" style={{ width: '80%' }}>
         <TableHeader>
