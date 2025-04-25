@@ -228,11 +228,11 @@ export const Designer = (props: DesignerProps) => {
       {preloadSearch ? <SearchPreloader /> : null}
       <div className="msla-designer-canvas msla-panel-mode" ref={designerContainerRef}>
         <ReactFlowProvider>
-          <div style={{ flexGrow: 1 }}>
+          <div style={{ visibility: 'hidden', flexGrow: 1 }}>
             <ReactFlow
               ref={canvasRef}
               nodeTypes={nodeTypes}
-              nodes={nodesWithPlaceholder}
+              nodes={[]}
               edges={edges}
               onNodesChange={onNodesChange}
               nodesConnectable={false}
@@ -249,6 +249,7 @@ export const Designer = (props: DesignerProps) => {
               onPaneClick={() => dispatch(clearPanel())}
               disableKeyboardA11y={true}
               onlyRenderVisibleElements={!userInferredTabNavigation}
+              style={{ visibility: 'hidden'}}
               proOptions={{
                 account: 'paid-sponsor',
                 hideAttribution: true,
@@ -266,17 +267,10 @@ export const Designer = (props: DesignerProps) => {
             customPanelLocations={customPanelLocations}
             isResizeable={true}
           />
-          {isMonitoringView && isAgenticWorkflow ? (
+          {
             <AgentChat panelLocation={PanelLocation.Right} panelContainerRef={designerContainerRef} />
-          ) : null}
-          <div className={css('msla-designer-tools', panelLocation === PanelLocation.Left && 'left-panel')}>
-            <Controls />
-            <Minimap />
-          </div>
-          <PerformanceDebugTool />
-          <CanvasFinder />
-          <CanvasSizeMonitor canvasRef={canvasRef} />
-          <DragPanMonitor canvasRef={canvasRef} />
+          }
+
         </ReactFlowProvider>
         <div
           id={'msla-layer-host'}

@@ -6,9 +6,7 @@ import { useAgentChatInvokeUri, useChatHistory } from '../../../core/queries/run
 import { useMonitoringView } from '../../../core/state/designerOptions/designerOptionsSelectors';
 import {
   useAgentLastOperations,
-  useAgentOperations,
   useFocusElement,
-  useUriForAgentChat,
   useRunInstance,
 } from '../../../core/state/workflow/workflowSelectors';
 import { isNullOrUndefined, LogEntryLevel, LoggerService, RunService } from '@microsoft/logic-apps-shared';
@@ -36,19 +34,19 @@ export const AgentChat = ({
   const [conversation, setConversation] = useState<ConversationItem[]>([]);
   const [textInput, setTextInput] = useState<string>('');
   const [isWaitingForResponse, setIsWaitingForResponse] = useState(false);
-  const isMonitoringView = useMonitoringView();
+  const isMonitoringView = true;
   const runInstance = useRunInstance();
-  const agentOperations = useAgentOperations();
+  const agentOperations = ['tstagent'];
   const agentLastOperations = useAgentLastOperations(agentOperations);
   const [isCollapsed, setIsCollapsed] = useState(false);
   const panelContainerElement = panelContainerRef.current as HTMLElement;
-  const agentChatSuffixUri = useUriForAgentChat(conversation.length > 0 ? conversation[0].metadata?.parentId : undefined);
+  //const agentChatSuffixUri = useUriForAgentChat(conversation.length > 0 ? conversation[0].metadata?.parentId : undefined);
   const {
     refetch: refetchChatHistory,
     isFetching: isChatHistoryFetching,
     data: chatHistoryData,
-  } = useChatHistory(!!isMonitoringView, agentOperations, runInstance?.id);
-  const { data: chatInvokeUri } = useAgentChatInvokeUri(!!isMonitoringView, true, agentChatSuffixUri);
+  } = useChatHistory(isMonitoringView, agentOperations, runInstance?.id ?? '');
+  const { data: chatInvokeUri } = { data : "https://laveeshb-agent-test-01.azurewebsites.net/runtime/webhooks/workflow/scaleUnits/prod-00/workflows/9d86d005b9d54650bc1e91dc0a055e11/runs/08584559934894731099697598734CU00/agents/Default_Agent/channels/in-channel-1/invoke?api-version=2019-10-01-edge-preview&scaleUnit=CU00&code=_e_WFm0xe7z82eJlnsZoi9QOMPEjdau61A1fYs5EYS1SAzFukCdDMw%3d%3d&se=2025-04-25T21%3A38%3A06.3661509Z&sp=%2Fruns%2F08584559934894731099697598734CU00%2Fagents%2FDefault_Agent%2Fchannels%2Fin-channel-1%2Frun&sv=1.0&sig=_2vXDFEgNSZErz39vj8ayDndi4FCifDxaOvp94uJsB4" };
   const [overrideWidth, setOverrideWidth] = useState<string | undefined>(chatbotWidth);
   const dispatch = useDispatch<AppDispatch>();
   const drawerWidth = isCollapsed ? PanelSize.Auto : overrideWidth;

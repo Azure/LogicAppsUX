@@ -248,7 +248,6 @@ export const DesignerApp = () => {
           },
         }}
       >
-        {designerCommandBar}
         {isError ? errorApp : isFetching || isLoading ? loadingApp : designerApp}
       </DesignerProvider>
     </div>
