@@ -16,11 +16,14 @@ test.describe(
       await page.getByLabel('Content').click();
       await page.locator('[data-automation-id="msla-token-picker-entrypoint-button-dynamic-content"]').click();
       await expect(page.getByRole('button', { name: 'EILCO Admin Nominations-OCSA' })).toBeVisible();
-      await page.getByPlaceholder('Search for an action or').fill('OCSA');
+      await page.getByPlaceholder('Search').click();
+      await page.getByPlaceholder('Search').fill('OCSA');
       await expect(page.getByRole('button', { name: 'EILCO Admin Nominations-OCSA' })).toBeVisible();
-      await page.getByPlaceholder('Search for an action or').fill('_L2');
+      await page.getByPlaceholder('Search').click();
+      await page.getByPlaceholder('Search').fill('_L2');
       await expect(page.getByRole('button', { name: 'EILCO Admin Nominations-OCSA' })).toBeVisible();
-      await page.getByPlaceholder('Search for an action or').fill('OCSR');
+      await page.getByPlaceholder('Search').click();
+      await page.getByPlaceholder('Search').fill('OCSR');
       await expect(page.getByRole('button', { name: 'EILCO Admin Nominations-OCSA' })).toBeVisible();
     });
 

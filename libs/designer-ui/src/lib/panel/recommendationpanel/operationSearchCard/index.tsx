@@ -26,45 +26,44 @@ export const OperationSearchCard: React.FC<OperationSearchCardProps> = ({
   const buttonId = `msla-op-search-result-${replaceWhiteSpaceWithUnderscore(id)}`;
 
   return (
-    <div className="msla-op-search-card-container">
-      <Card
-        id={buttonId}
-        className="msla-op-search-card-container"
-        onClick={handleCardClick}
-        data-automation-id={buttonId}
-        aria-label={title}
-        focusMode="off"
-      >
-        <div className="msla-op-search-card-color-line" style={{ background: brandColor }} />
-        {showImage && iconUri ? (
-          <Avatar
-            className="msla-op-search-card-image"
-            icon={<ArrowFlowUpRightFilled style={{ color: brandColor }} />}
-            image={{ src: iconUri }}
-            role="presentation"
-          />
+    <Card
+      id={buttonId}
+      className="msla-op-search-card-container"
+      onClick={handleCardClick}
+      data-automation-id={buttonId}
+      aria-label={title}
+      focusMode="off"
+      style={{'flexDirection': 'row'}}
+    >
+      <div className="msla-op-search-card-color-line" style={{ background: brandColor }} />
+      {showImage && iconUri ? (
+        <Avatar
+          className="msla-op-search-card-image"
+          icon={<ArrowFlowUpRightFilled style={{ color: brandColor }} />}
+          image={{ src: iconUri }}
+          role="presentation"
+        />
+      ) : null}
+      <div className="msla-op-search-card-text">
+        <Body1Strong
+          className="msla-op-search-card-title"
+          onKeyDown={(evt: React.KeyboardEvent<HTMLElement>) => {
+            if (evt.key === 'Enter') {
+              handleCardClick();
+            }
+          }}
+          tabIndex={0}
+        >
+          {title}
+        </Body1Strong>
+        {showConnectorName && connectorName ? (
+          <span className="msla-op-search-card-subtitle">
+            <Caption1>{connectorName}</Caption1>
+          </span>
         ) : null}
-        <div className="msla-op-search-card-text">
-          <Body1Strong
-            className="msla-op-search-card-title"
-            onKeyDown={(evt: React.KeyboardEvent<HTMLElement>) => {
-              if (evt.key === 'Enter') {
-                handleCardClick();
-              }
-            }}
-            tabIndex={0}
-          >
-            {title}
-          </Body1Strong>
-          {showConnectorName && connectorName ? (
-            <span className="msla-op-search-card-subtitle">
-              <Caption1>{connectorName}</Caption1>
-            </span>
-          ) : null}
-        </div>
-        <OperationRuntimeBadges isBuiltIn={isBuiltIn} isTrigger={isTrigger} />
-        <InfoDot ariaDescribedBy={buttonId} description={description} innerAriaHidden="true" title={title} />
-      </Card>
-    </div>
+      </div>
+      <OperationRuntimeBadges isBuiltIn={isBuiltIn} isTrigger={isTrigger} />
+      <InfoDot ariaDescribedBy={buttonId} description={description} innerAriaHidden="true" title={title} />
+    </Card>
   );
 };
