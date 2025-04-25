@@ -116,6 +116,7 @@ export default {
                 agentHistoryReductionType: {
                   type: 'string',
                   title: 'Agent history reduction type',
+                  default: 'maximumTokenCountReduction',
                   description: 'Type of agent history reduction to use',
                   'x-ms-editor': 'dropdown',
                   'x-ms-editor-options': {

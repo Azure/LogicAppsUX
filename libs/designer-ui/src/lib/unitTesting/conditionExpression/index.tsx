@@ -157,7 +157,6 @@ export function ConditionExpression({
           currentHeight={expressionEditorCurrentHeight}
           setCurrentHeight={setExpressionEditorCurrentHeight}
           setExpressionEditorError={setExpressionEditorError}
-          hideUTFExpressions={false}
           onFocus={handleFocusExpression}
           onContentChanged={onContentChanged}
           isReadOnly={isReadOnly}

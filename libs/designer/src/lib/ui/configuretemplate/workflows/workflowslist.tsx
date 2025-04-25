@@ -39,6 +39,7 @@ export const DisplayWorkflows = ({ onSave }: { onSave: (isMultiWorkflow: boolean
     currentPanelView: state.panel.currentPanelView,
   }));
   const dispatch = useDispatch<AppDispatch>();
+  const workflowsExist = Object.keys(workflows).length > 0;
   const isMultiWorkflow = Object.keys(workflows).length > 1;
 
   const workflowNamesWithErrors = useMemo(() => {
@@ -51,14 +52,24 @@ export const DisplayWorkflows = ({ onSave }: { onSave: (isMultiWorkflow: boolean
 
   const intlText = useMemo(
     () => ({
+      ADD: intl.formatMessage({
+        defaultMessage: 'Add',
+        id: '+0Kbqd',
+        description: 'command bar button text for opening panel for adding workflows',
+      }),
       ADD_WORKFLOWS: intl.formatMessage({
         defaultMessage: 'Add workflows',
         id: 'Ve6uLm',
         description: 'Button text for opening panel for adding workflows',
       }),
+      EDIT: intl.formatMessage({
+        defaultMessage: 'Edit',
+        id: 'p2eSD1',
+        description: 'Button text for opening panel for editing workflows',
+      }),
       ADD_WORKFLOWS_FOR_TEMPLATE: intl.formatMessage({
-        defaultMessage: 'Add workflows for this template',
-        id: '5S9Ta6',
+        defaultMessage: 'Add workflows to this template',
+        id: 'jSyH3j',
         description: 'Button text for opening panel for adding workflows',
       }),
       DELETE: intl.formatMessage({
@@ -77,14 +88,22 @@ export const DisplayWorkflows = ({ onSave }: { onSave: (isMultiWorkflow: boolean
     dispatch(openPanelView({ panelView: TemplatePanelView.ConfigureWorkflows }));
   }, [dispatch]);
 
-  const commandBarItems: ICommandBarItemProps[] = useMemo(
-    () => [
-      {
-        key: 'add',
-        text: intlText.ADD_WORKFLOWS,
-        iconProps: { iconName: 'Add' },
-        onClick: handleAddWorkflows,
-      },
+  const commandBarItems: ICommandBarItemProps[] = useMemo(() => {
+    const addEditItem = workflowsExist
+      ? {
+          key: 'edit',
+          text: intlText.EDIT,
+          iconProps: { iconName: 'Edit' },
+          onClick: handleAddWorkflows,
+        }
+      : {
+          key: 'add',
+          text: intlText.ADD,
+          iconProps: { iconName: 'Add' },
+          onClick: handleAddWorkflows,
+        };
+    return [
+      addEditItem,
       {
         key: 'delete',
         text: intlText.DELETE,
@@ -93,9 +112,8 @@ export const DisplayWorkflows = ({ onSave }: { onSave: (isMultiWorkflow: boolean
           dispatch(deleteWorkflowData({ ids: selectedWorkflowsList() }));
         },
       },
-    ],
-    [intlText, handleAddWorkflows, dispatch, selectedWorkflowsList]
-  );
+    ];
+  }, [intlText, workflowsExist, handleAddWorkflows, dispatch, selectedWorkflowsList]);
 
   type WorkflowsTableItem = {
     id: string;

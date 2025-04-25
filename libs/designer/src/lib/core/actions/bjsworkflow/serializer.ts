@@ -1000,6 +1000,13 @@ const serializeSubGraph = async (
   if (graphDetail?.inputs && graphDetail?.inputsLocation) {
     const inputs = serializeParametersFromManifest(getOperationInputsToSerialize(rootState, graphId), { properties: graphDetail } as any);
     safeSetObjectPropertyValue(result, [...graphInputsLocation, ...graphDetail.inputsLocation], inputs, true);
+    if (inputs?.agentParameterSchema?.required) {
+      safeSetObjectPropertyValue(
+        result,
+        [...graphInputsLocation, 'agentParameterSchema', 'required'],
+        inputs?.agentParameterSchema?.required
+      );
+    }
   }
 
   return result;
