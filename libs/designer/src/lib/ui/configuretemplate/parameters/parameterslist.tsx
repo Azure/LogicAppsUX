@@ -41,13 +41,10 @@ export const TemplateParametersList = () => {
     parameterErrors: state.template.errors.parameters,
   }));
 
-  const parameterErrorsToShow: { id: string; message: string }[] = useMemo(() => {
+  const parameterErrorIds = useMemo(() => {
     return Object.entries(parameterErrors)
       .filter(([_id, error]) => error)
-      .map(([id, error]) => ({
-        id,
-        message: error,
-      })) as { id: string; message: string }[];
+      .map(([id]) => id);
   }, [parameterErrors]);
 
   const isAccelerator = Object.keys(workflowsInTemplate).length > 1;
@@ -106,19 +103,10 @@ export const TemplateParametersList = () => {
   return (
     <div className="msla-templates-wizard-tab-content" style={{ overflowX: 'auto', paddingTop: '12px' }}>
       {currentPanelView === TemplatePanelView.CustomizeParameter && <CustomizeParameterPanel />}
-      <MessageBar intent="error" className="msla-templates-error-message-bar" hidden={!parameterErrorsToShow.length}>
+      <MessageBar intent="error" className="msla-templates-error-message-bar" hidden={!parameterErrorIds.length}>
         <MessageBarBody>
-          <MessageBarTitle>Missing required fields:</MessageBarTitle>
-          {parameterErrorsToShow.map((errorDetails) => (
-            <div key={errorDetails.id}>
-              <ul>
-                <li>{errorDetails.id}</li>
-                <ul>
-                  <li>{errorDetails.message}</li>
-                </ul>
-              </ul>
-            </div>
-          ))}
+          <MessageBarTitle>{resourceStrings.MissingRequiredFields}</MessageBarTitle>
+          <Text>{parameterErrorIds.join(', ')}</Text>
         </MessageBarBody>
       </MessageBar>
 

@@ -244,6 +244,11 @@ export const useResourceStrings = () => {
       id: 'sMjDlb',
       description: 'Text to show no parameters present in the template.',
     }),
+    MissingRequiredFields: intl.formatMessage({
+      defaultMessage: 'Missing required fields: ',
+      id: 'uXecuj',
+      description: 'Text to show missing required fields in the template.',
+    }),
     // Aria labels
     WorkflowsListTableLabel: intl.formatMessage({
       defaultMessage: 'Workflows list tabel',

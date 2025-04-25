@@ -41,13 +41,10 @@ export const DisplayWorkflows = ({ onSave }: { onSave: (isMultiWorkflow: boolean
   const dispatch = useDispatch<AppDispatch>();
   const isMultiWorkflow = Object.keys(workflows).length > 1;
 
-  const workflowErrors = useMemo(() => {
+  const workflowNamesWithErrors = useMemo(() => {
     return Object.values(workflows)
-      .map((workflow) => ({
-        workflowName: workflow.workflowName,
-        manifestErrors: Object.values(workflow.errors?.manifest ?? {}).filter((error) => error),
-      }))
-      .filter((workflowError) => workflowError.manifestErrors.length > 0);
+      .filter((workflow) => Object.values(workflow.errors?.manifest ?? {}).some((error) => error))
+      .map((workflow) => workflow.workflowName);
   }, [workflows]);
 
   const [selectedWorkflowsList, setSelectedWorkflowsList] = useFunctionalState<string[]>([]);
@@ -203,22 +200,10 @@ export const DisplayWorkflows = ({ onSave }: { onSave: (isMultiWorkflow: boolean
         }}
       />
 
-      <MessageBar intent="error" className="msla-templates-error-message-bar" hidden={!workflowErrors.length}>
+      <MessageBar intent="error" className="msla-templates-error-message-bar" hidden={!workflowNamesWithErrors.length}>
         <MessageBarBody>
-          <MessageBarTitle>Missing required fields:</MessageBarTitle>
-          {workflowErrors.map((workflowError) => (
-            <div key={workflowError.workflowName}>
-              <ul>
-                <li>{workflowError.workflowName}</li>
-                <ul>
-                  {workflowError.manifestErrors?.map((error, index) => (
-                    <li key={index}>{error}</li>
-                  ))}
-                  {/* <li>{JSON.stringify(workflowError.manifestErrors ?? {})}</li> */}
-                </ul>
-              </ul>
-            </div>
-          ))}
+          <MessageBarTitle>{customResourceStrings.MissingRequiredFields}</MessageBarTitle>
+          <Text>{workflowNamesWithErrors.join(', ')}</Text>
         </MessageBarBody>
       </MessageBar>
 
