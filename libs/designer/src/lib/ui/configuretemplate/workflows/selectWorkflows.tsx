@@ -64,9 +64,9 @@ export const SelectWorkflows = ({
       description: 'Title for the resource selection section',
     }),
     SOURCE_LABEL: intl.formatMessage({
-      defaultMessage: 'Select the Logic App service you would like to add workflows from.',
-      id: 'CLb9Hv',
-      description: 'Label for the logic app service resource selection description',
+      defaultMessage: 'Select the logic app from where you want to add workflows.',
+      id: 'LbblPE',
+      description: 'Label for the logic app resource selection description',
     }),
     WORKFLOWS: intl.formatMessage({
       defaultMessage: 'Workflows',
@@ -74,8 +74,8 @@ export const SelectWorkflows = ({
       description: 'Title for the workflows selection section',
     }),
     WORKFLOWS_LABEL: intl.formatMessage({
-      defaultMessage: 'Select the workflows you would like to add to this template.',
-      id: 'YGe6mJ',
+      defaultMessage: 'Select the workflows to add to this template.',
+      id: 'ODtEzQ',
       description: 'Label for the workflows selection description',
     }),
     WORKFLOW_NAME: intl.formatMessage({

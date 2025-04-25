@@ -4,7 +4,8 @@
   border-radius: 2px;
   border: none;
   outline: none;
-  box-shadow: 0px 0.3px 4px 0px rgba(0, 0, 0, 0.1), 0px 1.6px 4px 0px rgba(0, 0, 0, 0.14);
+  box-shadow: 0px 0.3px 4px 0px rgba(0, 0, 0, 0.1),
+    0px 1.6px 4px 0px rgba(0, 0, 0, 0.14);
   cursor: pointer;
   display: flex;
   flex-wrap: nowrap;
@@ -20,7 +21,8 @@
 
   &:focus,
   &:hover {
-    box-shadow: 0 1.2px 3.6px rgba(0, 0, 0, 0.1), 0 6.4px 14.4px rgba(0, 0, 0, 0.13);
+    box-shadow: 0 1.2px 3.6px rgba(0, 0, 0, 0.1),
+      0 6.4px 14.4px rgba(0, 0, 0, 0.13);
   }
 
   .msla-op-search-card-color-line {
@@ -36,6 +38,30 @@
     height: 24px;
     border-radius: 2px;
     margin: -4px 0px;
+  }
+
+  .msla-op-search-card-text {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    overflow: hidden;
+    flex-grow: 1;
+
+    .msla-op-search-card-title {
+      overflow: hidden;
+      white-space: nowrap;
+      text-overflow: ellipsis;
+    }
+
+    .msla-op-search-card-subtitle {
+      overflow: hidden;
+      white-space: nowrap;
+      text-overflow: ellipsis;
+      display: block;
+      font-size: 12px;
+      line-height: 20px;
+      color: @ms-color-neutralSecondary;
+    }
   }
 
   .msla-op-search-card-name {
@@ -73,10 +99,9 @@
     &:hover {
       background-color: @ms-color-primaryBackgroundHover;
     }
-    
   }
 
-  .msla-op-search-card-name  {
+  .msla-op-search-card-name {
     color: @ms-color-black;
   }
 }

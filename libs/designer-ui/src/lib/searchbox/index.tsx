@@ -1,31 +1,36 @@
-import { useTheme } from '@fluentui/react';
-import { SearchBox } from '@fluentui/react/lib/SearchBox';
 import { getIntl } from '@microsoft/logic-apps-shared';
+import constants from '../constants';
+import { useMemo } from 'react';
+import { SearchBox } from '@fluentui/react-components';
 
 export interface SearchBoxProps {
   searchCallback: (term: string) => void;
+  placeholder?: string;
   searchTerm?: string;
 }
 
 export const DesignerSearchBox: React.FC<SearchBoxProps> = (props) => {
   const { searchCallback, searchTerm = '' } = props;
-  const { isInverted } = useTheme();
 
   const intl = getIntl();
-  const placeholder = intl.formatMessage({
+  const defaultPlaceholder = intl.formatMessage({
     defaultMessage: 'Search',
-    id: 'c2XklE',
-    description: 'Placeholder text for Operation/Connector search bar',
+    id: 'DMugTX',
+    description: 'Search placeholder text',
   });
+
+  const placeholder = useMemo(() => {
+    return props.placeholder ?? defaultPlaceholder;
+  }, [props.placeholder, defaultPlaceholder]);
 
   return (
     <SearchBox
-      styles={{ root: { backgroundColor: 'transparent' }, field: { color: isInverted ? 'white' : 'black' } }}
+      maxLength={constants.PANEL.MAX_TITLE_LENGTH}
       autoFocus
-      ariaLabel={placeholder}
+      aria-label={placeholder}
       placeholder={placeholder}
       className="msla-search-box"
-      onChange={(_event?: React.ChangeEvent<HTMLInputElement>, newValue?: string) => searchCallback(newValue ?? '')}
+      onChange={(_event, data) => searchCallback(data.value ?? '')}
       value={searchTerm}
       data-automation-id="msla-search-box"
     />
