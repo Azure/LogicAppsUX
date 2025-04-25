@@ -1,4 +1,12 @@
 # Logic Apps Designer
+## [5.93.0](https://github.com/Azure/LogicAppsUX/compare/v5.92.0...v5.93.0) (2025-04-25)
+
+
+### Bug Fixes
+
+* **designer:** Fix required in agent parameters ([#7094](https://github.com/Azure/LogicAppsUX/issues/7094)) ([b42808f](https://github.com/Azure/LogicAppsUX/commit/b42808f5debd5dc097f72d10f88ed2e28c733baa))
+* **templates:** Using test storage account and removing endpoint checkbox from test pages ([#7095](https://github.com/Azure/LogicAppsUX/issues/7095)) ([a70f05a](https://github.com/Azure/LogicAppsUX/commit/a70f05a5712a37b53f9e6df835d00e0fcaa87412))
+
 ## [5.92.0](https://github.com/Azure/LogicAppsUX/compare/v5.91.0...v5.92.0) (2025-04-25)
 
 
