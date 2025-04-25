@@ -52,13 +52,6 @@ export const DevToolbox = ({ templatesList = [] }: { templatesList?: { key: stri
     [dispatch]
   );
 
-  const changeEndpointUsage = useCallback(
-    (_: unknown, data: CheckboxOnChangeData) => {
-      dispatch(workflowLoaderSlice.actions.setUseEndpoint(!!data.checked));
-    },
-    [dispatch]
-  );
-
   const changeCreateView = useCallback(
     (_: unknown, data: CheckboxOnChangeData) => {
       dispatch(workflowLoaderSlice.actions.setCreateView(!!data.checked));
@@ -120,7 +113,6 @@ export const DevToolbox = ({ templatesList = [] }: { templatesList?: { key: stri
                       options={[...templatesViewOptions, ...templatesList]}
                       style={{ width: '250px' }}
                     />
-                    <Checkbox label="Use Endpoint" onChange={changeEndpointUsage} />
                     <Checkbox label="Create View" onChange={changeCreateView} />
                     <Checkbox label="Resource Selection" onChange={changeResourceSelection} />
                   </StackItem>
