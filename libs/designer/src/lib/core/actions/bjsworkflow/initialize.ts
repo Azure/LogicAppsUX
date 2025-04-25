@@ -105,6 +105,7 @@ import {
 import type { ParameterInfo } from '@microsoft/designer-ui';
 import type { Dispatch } from '@reduxjs/toolkit';
 import { addOrUpdateCustomCode } from '../../state/customcode/customcodeSlice';
+import { setFavoriteOperations } from '../../state/panel/panelSlice';
 
 export interface ServiceOptions {
   connectionService: IConnectionService;
@@ -710,5 +711,17 @@ export const updateInvokerSettings = (
         updateNodeSettingsCallback({ invokerConnection: { isSupported: true, value: { enabled: true } } });
       }
     });
+  }
+};
+
+export const initializeDiscoveryPanelFavoriteOperations = async (dispatch: Dispatch): Promise<void> => {
+  try {
+    const rawFavorites = localStorage.getItem('msla-favoriteOperations');
+    const favoriteOperations = rawFavorites ? JSON.parse(rawFavorites) : [];
+
+    dispatch(setFavoriteOperations(favoriteOperations));
+  } catch (error) {
+    console.error('Failed to initialize favorite operations from localStorage:', error);
+    dispatch(setFavoriteOperations([])); // fallback to empty if there's an error
   }
 };
