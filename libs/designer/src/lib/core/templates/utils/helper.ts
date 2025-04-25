@@ -310,16 +310,16 @@ export const validateWorkflowData = (workflowData: Partial<WorkflowTemplateData>
 
   manifestErrors['images.light'] = isUndefinedOrEmptyString(workflowManifest?.images?.light)
     ? intl.formatMessage({
-        defaultMessage: 'Workflow light image is required.',
-        id: '1Cds91',
+        defaultMessage: 'The light image version of the workflow is required.',
+        id: 'JhJ8qX',
         description: 'Error message when the workflow light image is empty',
       })
     : undefined;
 
   manifestErrors['images.dark'] = isUndefinedOrEmptyString(workflowManifest?.images?.dark)
     ? intl.formatMessage({
-        defaultMessage: 'Workflow dark image is required.',
-        id: 'k194gz',
+        defaultMessage: 'The dark image version of the workflow is required.',
+        id: '7xiCnC',
         description: 'Error message when the workflow dark image is empty',
       })
     : undefined;
