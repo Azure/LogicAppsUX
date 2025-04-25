@@ -15,6 +15,8 @@ import {
   createTableColumn,
   Button,
   MessageBar,
+  MessageBarBody,
+  MessageBarTitle,
 } from '@fluentui/react-components';
 import { EmptySearch } from '@microsoft/designer-ui';
 import { useIntl } from 'react-intl';
@@ -38,6 +40,15 @@ export const DisplayWorkflows = ({ onSave }: { onSave: (isMultiWorkflow: boolean
   }));
   const dispatch = useDispatch<AppDispatch>();
   const isMultiWorkflow = Object.keys(workflows).length > 1;
+
+  const workflowErrors = useMemo(() => {
+    return Object.values(workflows)
+      .map((workflow) => ({
+        workflowName: workflow.workflowName,
+        manifestErrors: Object.values(workflow.errors?.manifest ?? {}).filter((error) => error),
+      }))
+      .filter((workflowError) => workflowError.manifestErrors.length > 0);
+  }, [workflows]);
 
   const [selectedWorkflowsList, setSelectedWorkflowsList] = useFunctionalState<string[]>([]);
 
@@ -192,10 +203,23 @@ export const DisplayWorkflows = ({ onSave }: { onSave: (isMultiWorkflow: boolean
         }}
       />
 
-      <MessageBar intent="error" className="msla-templates-error-message-bar" hidden={!Object.keys(workflows).length}>
-        {/* {"parameterError"} */}
-        <div>sdkfjsdk</div>
-        <div>sdkfjsdk</div>
+      <MessageBar intent="error" className="msla-templates-error-message-bar" hidden={!workflowErrors.length}>
+        <MessageBarBody>
+          <MessageBarTitle>Missing required fields:</MessageBarTitle>
+          {workflowErrors.map((workflowError) => (
+            <div key={workflowError.workflowName}>
+              <ul>
+                <li>{workflowError.workflowName}</li>
+                <ul>
+                  {workflowError.manifestErrors?.map((error, index) => (
+                    <li key={index}>{error}</li>
+                  ))}
+                  {/* <li>{JSON.stringify(workflowError.manifestErrors ?? {})}</li> */}
+                </ul>
+              </ul>
+            </div>
+          ))}
+        </MessageBarBody>
       </MessageBar>
 
       {Object.keys(workflows).length > 0 ? (

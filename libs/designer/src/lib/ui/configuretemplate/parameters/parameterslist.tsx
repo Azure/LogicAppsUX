@@ -1,5 +1,8 @@
 import {
   Button,
+  MessageBar,
+  MessageBarBody,
+  MessageBarTitle,
   Table,
   TableBody,
   TableCell,
@@ -31,11 +34,21 @@ export const TemplateParametersList = () => {
     }),
   };
 
-  const { parameterDefinitions, currentPanelView, workflowsInTemplate } = useSelector((state: RootState) => ({
+  const { parameterDefinitions, currentPanelView, workflowsInTemplate, parameterErrors } = useSelector((state: RootState) => ({
     parameterDefinitions: state.template.parameterDefinitions,
     currentPanelView: state.panel.currentPanelView,
     workflowsInTemplate: state.template.workflows,
+    parameterErrors: state.template.errors.parameters,
   }));
+
+  const parameterErrorsToShow: { id: string; message: string }[] = useMemo(() => {
+    return Object.entries(parameterErrors)
+      .filter(([_id, error]) => error)
+      .map(([id, error]) => ({
+        id,
+        message: error,
+      })) as { id: string; message: string }[];
+  }, [parameterErrors]);
 
   const isAccelerator = Object.keys(workflowsInTemplate).length > 1;
   const resourceStrings = useResourceStrings();
@@ -93,6 +106,21 @@ export const TemplateParametersList = () => {
   return (
     <div className="msla-templates-wizard-tab-content" style={{ overflowX: 'auto', paddingTop: '12px' }}>
       {currentPanelView === TemplatePanelView.CustomizeParameter && <CustomizeParameterPanel />}
+      <MessageBar intent="error" className="msla-templates-error-message-bar" hidden={!parameterErrorsToShow.length}>
+        <MessageBarBody>
+          <MessageBarTitle>Missing required fields:</MessageBarTitle>
+          {parameterErrorsToShow.map((errorDetails) => (
+            <div key={errorDetails.id}>
+              <ul>
+                <li>{errorDetails.id}</li>
+                <ul>
+                  <li>{errorDetails.message}</li>
+                </ul>
+              </ul>
+            </div>
+          ))}
+        </MessageBarBody>
+      </MessageBar>
 
       <Table aria-label={intlText.AriaLabel} size="small" style={{ width: '80%' }}>
         <TableHeader>
