@@ -40,16 +40,12 @@ export const RecommendationPanelCard = ({
   const { apiId = '', connectorName, description, iconUri, brandColor, isCustom } = data;
 
   const isOperationAction = isOperationData(operationData);
-  const operationTitle = isOperationAction ? operationData.data.title : (connectorName ?? '');
+
+  const operationTitle = isOperationAction ? operationData.data.title : (operationData.data.connectorName ?? '');
   const previewTag = isOperationAction ? getPreviewTag(operationData.data.releaseStatus) : undefined;
 
-  const handleClick = () => {
-    if (isOperationAction) {
-      onOperationClick?.(operationData.data.id, operationData.data.apiId);
-    } else {
-      onConnectorClick?.(apiId);
-    }
-  };
+  const handleClick = () =>
+    isOperationAction ? onOperationClick?.(operationData.data.id, operationData.data.apiId) : onConnectorClick?.(apiId);
 
   return (
     <Card
@@ -63,7 +59,7 @@ export const RecommendationPanelCard = ({
     >
       <div className="msla-recommendation-panel-card-image">
         <ConnectorAvatar
-          className="msla-recommendation-panel-card-connector-image"
+          className={'msla-recommendation-panel-card-connector-image'}
           displayName={connectorName ?? ''}
           isCustomApi={isCustom}
           id={apiId}
@@ -72,21 +68,20 @@ export const RecommendationPanelCard = ({
           size={24}
         />
       </div>
-
       <div className="msla-recommendation-panel-card-text">
         <div className="msla-recommendation-panel-card-horizontal-flex-items">
           <Text className="msla-recommendation-panel-card-title">{operationTitle}</Text>
           {previewTag ? (
             <Badge appearance="tint" shape="circular" color="informative" size="medium">
-              {previewTag}
+              <div>{previewTag}</div>
             </Badge>
           ) : null}
         </div>
-
-        {showConnectorName && connectorName && <Caption1 className="msla-recommendation-panel-card-subtitle">{connectorName}</Caption1>}
+        {showConnectorName && connectorName ? (
+          <Caption1 className="msla-recommendation-panel-card-subtitle">{connectorName}</Caption1>
+        ) : null}
       </div>
-
-      <div className="msla-recommendation-panel-card-horizontal-flex-items">
+      <div className={'msla-recommendation-panel-card-horizontal-flex-items'}>
         <InfoDot
           className={mergeClasses('msla-recommendation-panel-card-visible-on-hover', 'info-dot-visible-on-hover')}
           title={operationTitle}

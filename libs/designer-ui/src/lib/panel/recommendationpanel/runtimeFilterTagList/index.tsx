@@ -36,7 +36,8 @@ export const RuntimeFilterTagList = ({
 
   const onTabSelect = (tabValue: string | undefined, filterProperty: string) => {
     if (tabValue) {
-      const newFilters = { ...filters, [filterProperty]: tabValue };
+      const newFilters = { ...filters };
+      newFilters[filterProperty] = tabValue;
       setFilters?.(newFilters);
       LoggerService().log({
         area: 'RuntimeFilterTagList:onTabSelect',
@@ -47,15 +48,19 @@ export const RuntimeFilterTagList = ({
     }
   };
 
-  const handleGroupByConnectorClick = () => setGroupedByConnector?.(!groupedByConnector);
+  const handleGroupByConnectorClick = () => {
+    if (setGroupedByConnector) {
+      setGroupedByConnector(!groupedByConnector);
+    }
+  };
 
   const handleSortClick = () => {
     if (setResultsSorting) {
-      setResultsSorting(
-        resultsSorting === SearchResultSortOptions.unsorted || resultsSorting === SearchResultSortOptions.descending
-          ? SearchResultSortOptions.ascending
-          : SearchResultSortOptions.descending
-      );
+      if (resultsSorting === SearchResultSortOptions.unsorted || resultsSorting === SearchResultSortOptions.descending) {
+        setResultsSorting(SearchResultSortOptions.ascending);
+      } else {
+        setResultsSorting(SearchResultSortOptions.descending);
+      }
     }
   };
 
@@ -64,7 +69,6 @@ export const RuntimeFilterTagList = ({
     id: 'zujc0T',
     description: 'Tooltip text for sorting results',
   });
-
   const groupByConnectorTooltipText = groupedByConnector
     ? intl.formatMessage({
         defaultMessage: 'Ungroup actions',
@@ -82,7 +86,6 @@ export const RuntimeFilterTagList = ({
     id: 'DN+7zV',
     description: 'Label for the checkbox to group results by connector',
   });
-
   return (
     <>
       {isSearchResult ? null : <Text className="msla-runtime-filter-tag-list-heading">{ByConnectorLabel}</Text>}
@@ -93,18 +96,18 @@ export const RuntimeFilterTagList = ({
           onTagSelect={(value) => onTabSelect(value, 'runtime')}
         />
         {isSearchResult ? (
-          <div className="msla-runtime-filter-tag-list-buttons-container">
-            <Tooltip content={sortResultsTooltipText} relationship="label">
+          <div className={'msla-runtime-filter-tag-list-buttons-container'}>
+            <Tooltip content={sortResultsTooltipText} relationship={'label'}>
               <ToggleButton
-                appearance="subtle"
+                appearance={'subtle'}
                 icon={resultsSorting === SearchResultSortOptions.descending ? <TextSortDescendingRegular /> : <TextSortAscendingRegular />}
                 onClick={handleSortClick}
                 checked={resultsSorting !== SearchResultSortOptions.unsorted}
               />
             </Tooltip>
-            <Tooltip content={groupByConnectorTooltipText} relationship="label">
+            <Tooltip content={groupByConnectorTooltipText} relationship={'label'}>
               <ToggleButton
-                appearance="subtle"
+                appearance={'subtle'}
                 icon={groupedByConnector ? <GridFilled /> : <GridRegular />}
                 checked={groupedByConnector}
                 onClick={handleGroupByConnectorClick}

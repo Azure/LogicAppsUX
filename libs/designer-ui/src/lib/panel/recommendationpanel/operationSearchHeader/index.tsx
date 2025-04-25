@@ -10,7 +10,9 @@ interface OperationSearchHeaderProps {
   isTriggerNode: boolean;
 }
 
-export const OperationSearchHeader = ({ searchCallback, searchTerm, filters, setFilters, isTriggerNode }: OperationSearchHeaderProps) => {
+export const OperationSearchHeader = (props: OperationSearchHeaderProps) => {
+  const { searchCallback, searchTerm, filters, setFilters, isTriggerNode } = props;
+
   const intl = useIntl();
 
   const actionTypeFilters = isTriggerNode

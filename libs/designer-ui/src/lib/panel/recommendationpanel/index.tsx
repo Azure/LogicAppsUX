@@ -1,6 +1,6 @@
 export * from './browseResults';
 export * from './interfaces';
-export * from './operationGroupDetails/searchResult/searchResult';
+export * from './searchResult';
 export * from './spotlightSection';
 export * from './runtimeFilterTagList';
 export * from './favoriteButton';

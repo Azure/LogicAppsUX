@@ -69,14 +69,6 @@ export const ActionSpotlight = (props: ActionSpotlightProps) => {
     return builtIns;
   }, [allConnectors]);
 
-  const aiActions = useMemo(() => {
-    const allowedIds = ['managedApis/azureopenai', '/serviceProviders/openai', 'connectionProviders/agent'];
-    const aiActions = allConnectors
-      .filter((connector: Connector) => allowedIds.some((id) => connector.id.includes(id)))
-      .map((connector) => getOperationGroupCardDataFromConnector(connector));
-    return aiActions;
-  }, [allConnectors]);
-
   const favoriteOperations = useMemo(
     () => [
       ...favoriteConnectorsData.map((connector) => getOperationGroupCardDataFromConnector(connector)),
@@ -108,11 +100,6 @@ export const ActionSpotlight = (props: ActionSpotlightProps) => {
     id: 'TuSLAk',
     description: 'Built-in tools label',
   });
-  const aiCapabilitiesLabel = intl.formatMessage({
-    defaultMessage: 'AI capabilities',
-    id: 'TfDH7O',
-    description: 'AI capabilities label',
-  });
   return (
     <Accordion className={classNames.accordion} multiple={true} collapsible={true} openItems={openItems} onToggle={handleToggle}>
       <SpotlightSection
@@ -131,16 +118,13 @@ export const ActionSpotlight = (props: ActionSpotlightProps) => {
           </Link>
         ) : null}
       </SpotlightSection>
-      <SpotlightSection
-        index={SpotlightCategoryType.AICapabilities}
-        title={aiCapabilitiesLabel}
-        operationsData={aiActions}
-        isLoading={isLoadingConnectors}
+      {/* <AICapabilitiesSpotlightSection
         isOpen={openItems.includes(SpotlightCategoryType.AICapabilities)}
         onConnectorSelected={onConnectorSelected}
         onOperationSelected={onOperationSelected}
         filters={filters}
-      />
+        removeSideMargin={removeSideMargin}
+      /> */}
       <SpotlightSection
         index={SpotlightCategoryType.BuiltIns}
         title={builtInLabel}

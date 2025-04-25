@@ -1,16 +1,14 @@
-import { useCallback, useEffect, useRef, useState } from 'react';
-import { useIntl } from 'react-intl';
-import { List } from '@fluentui/react';
-import { Spinner, Text } from '@fluentui/react-components';
-
 import NoResultsSvg from '../../../assets/search/noResults.svg';
 import { ConnectorSummaryCard } from '../../connectorsummarycard';
-import { RecommendationPanelCard } from './recommendationPanelCard';
-import { getListHeight, getShouldUseSingleColumn } from './helpers';
-
+import { List } from '@fluentui/react';
+import { Spinner, Text } from '@fluentui/react-components';
 import type { Connector } from '@microsoft/logic-apps-shared';
+import { useCallback, useEffect, useRef, useState } from 'react';
+import { useIntl } from 'react-intl';
 import type { OperationActionData, OperationGroupCardData } from './interfaces';
+import { getListHeight, getShouldUseSingleColumn } from './helpers';
 import type { OperationGroupData, OperationsData } from './recommendationPanelCard';
+import { RecommendationPanelCard } from './recommendationPanelCard';
 
 export type BrowseGridProps = {
   onConnectorSelected?: (connectorId: string) => void;
@@ -34,46 +32,36 @@ export const BrowseGrid = ({
   isConnector,
 }: BrowseGridProps) => {
   const intl = useIntl();
+  const ref = useRef<HTMLDivElement>(null);
   const [forceSingleCol, setForceSingleCol] = useState(false);
-  const containerRef = useRef<HTMLDivElement>(null);
 
-  useEffect(() => {
-    const element = containerRef.current;
-    if (!element) {
-      return;
-    }
-
-    const updateLayout = () => {
-      setForceSingleCol(getShouldUseSingleColumn(element.clientWidth));
-    };
-
-    updateLayout(); // Initial layout
-
-    const observer = new ResizeObserver(() => {
-      updateLayout();
-    });
-
-    observer.observe(element);
-
-    return () => observer.disconnect();
+  const checkCol = useCallback(() => {
+    setForceSingleCol(getShouldUseSingleColumn(ref.current?.clientWidth));
   }, []);
 
+  useEffect(() => {
+    checkCol();
+    window.addEventListener('resize', checkCol);
+
+    return () => {
+      window.removeEventListener('resize', checkCol);
+    };
+  }, [checkCol]);
+
   const onRenderCell = useCallback(
-    (item?: Connector | OperationActionData | OperationGroupCardData) => {
-      if (!item) {
-        return null;
+    (operationData?: Connector | OperationActionData | OperationGroupCardData) => {
+      if (!operationData) {
+        return;
       }
 
-      const style = { width: forceSingleCol ? '100%' : '50%' };
-      const className = 'msla-browse-list-tile';
-
       if (isConnector) {
+        const connector = operationData as Connector;
         return (
           <div className="msla-browse-list-tile-wrapper">
-            <div className={className} style={style}>
+            <div className="msla-browse-list-tile" style={{ width: forceSingleCol ? '100%' : '50%' }}>
               <ConnectorSummaryCard
-                key={(item as Connector).id}
-                connector={item as Connector}
+                key={connector.id}
+                connector={connector}
                 onClick={onConnectorSelected}
                 displayRuntimeInfo={displayRuntimeInfo}
               />
@@ -83,18 +71,18 @@ export const BrowseGrid = ({
       }
 
       const typedData: OperationGroupData | OperationsData =
-        'id' in item
-          ? { type: 'Operation', data: item as OperationActionData }
-          : { type: 'OperationGroup', data: item as OperationGroupCardData };
+        'id' in operationData
+          ? { type: 'Operation', data: operationData as OperationActionData }
+          : { type: 'OperationGroup', data: operationData as OperationGroupCardData };
 
       return (
         <div className="msla-browse-list-tile-wrapper">
-          <div className={className} style={style}>
+          <div className="msla-browse-list-tile" style={{ width: forceSingleCol ? '100%' : '50%' }}>
             <RecommendationPanelCard
               operationData={typedData}
               onConnectorClick={onConnectorSelected}
               onOperationClick={onOperationSelected}
-              showUnfilledFavoriteOnlyOnHover
+              showUnfilledFavoriteOnlyOnHover={true}
               showConnectorName={showConnectorName}
             />
           </div>
@@ -119,20 +107,21 @@ export const BrowseGrid = ({
   if (!isLoading && operationsData.length === 0 && !hideNoResultsText) {
     return (
       <div className="msla-no-results-container">
-        <img src={NoResultsSvg} alt={noResultsText} />
+        <img src={NoResultsSvg} alt={noResultsText?.toString()} />
         <Text>{noResultsText}</Text>
       </div>
     );
   }
 
   return (
-    <div ref={containerRef} className="msla-browse-list">
+    <div ref={ref} className="msla-browse-list">
       {isLoading && (
-        <div style={{ marginBottom: 16 }}>
+        <div style={{ marginBottom: '16px' }}>
           <Spinner size="extra-small" label={loadingText} aria-live="assertive" />
         </div>
       )}
-      <List items={operationsData} onRenderCell={onRenderCell} getPageHeight={() => getListHeight(forceSingleCol)} />
+
+      <List onRenderCell={onRenderCell} items={operationsData} getPageHeight={() => getListHeight(forceSingleCol)} />
     </div>
   );
 };

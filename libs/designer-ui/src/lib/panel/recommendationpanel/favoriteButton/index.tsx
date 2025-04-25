@@ -10,13 +10,13 @@ export interface IFavoriteButtonProps {
   showUnfilledFavoriteOnlyOnHover?: boolean;
 }
 
-const useStyles = makeStyles({
-  button: {
+const useFavoriteButtonStyles = makeStyles({
+  favoriteButton: {
     color: tokens.colorBrandForeground2,
-    padding: 0,
+    padding: '0px',
     minWidth: '20px',
   },
-  hoverVisible: {
+  visibleOnHover: {
     display: 'none',
   },
 });
@@ -29,33 +29,34 @@ export const FavoriteButton: React.FC<IFavoriteButtonProps> = ({
 }) => {
   const { isOperationFavorited, onFavoriteClick } = useFavoriteContext();
   const isFavorited = isOperationFavorited(connectorId, operationId);
+
   const intl = useIntl();
-  const styles = useStyles();
+  const classNames = useFavoriteButtonStyles();
 
-  const shouldHideByDefault = (isFavorited && showFilledFavoriteOnlyOnHover) || (!isFavorited && showUnfilledFavoriteOnlyOnHover);
-
-  const buttonClass = mergeClasses(
-    styles.button,
-    shouldHideByDefault && styles.hoverVisible,
-    shouldHideByDefault && 'favorite-button-visible-on-hover'
+  const visibleOnHoverClasses = mergeClasses(classNames.visibleOnHover, 'favorite-button-visible-on-hover');
+  const favoriteButtonClasses = mergeClasses(
+    classNames.favoriteButton,
+    ((isFavorited && showFilledFavoriteOnlyOnHover) || (!isFavorited && showUnfilledFavoriteOnlyOnHover)) && visibleOnHoverClasses
   );
 
-  const handleClick = (e: React.MouseEvent) => {
-    e.stopPropagation();
-    onFavoriteClick(!isFavorited, connectorId, operationId);
-  };
+  const StarIcon = isFavorited ? Star12Filled : Star12Regular;
+
+  const favoriteButtonText = intl.formatMessage({
+    defaultMessage: 'Favorite',
+    id: 'MXTnCr',
+    description: 'Favorite button text',
+  });
 
   return (
     <Button
-      className={buttonClass}
+      className={favoriteButtonClasses}
       appearance="transparent"
-      onClick={handleClick}
-      icon={isFavorited ? <Star12Filled /> : <Star12Regular />}
-      title={intl.formatMessage({
-        defaultMessage: 'Favorite',
-        id: 'MXTnCr',
-        description: 'Favorite button text',
-      })}
+      onClick={(e) => {
+        e.stopPropagation();
+        onFavoriteClick(!isFavorited, connectorId, operationId);
+      }}
+      icon={<StarIcon />}
+      title={favoriteButtonText}
     />
   );
 };
