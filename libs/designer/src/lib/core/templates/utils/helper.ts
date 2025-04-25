@@ -221,25 +221,29 @@ export const validateParameterDetail = (data: { type: string; displayName?: stri
   let errorMessages: string | undefined = undefined;
   if (isUndefinedOrEmptyString(data?.displayName)) {
     errorMessages = intl.formatMessage({
-      defaultMessage: 'Display name is required.',
-      id: 'jtOu0/',
+      defaultMessage: 'Display name is required. ',
+      id: 'kvFOza',
       description: 'Error message when the workflow parameter display name is empty.',
     });
   }
   if (isUndefinedOrEmptyString(data?.description)) {
     errorMessages = `${errorMessages ?? ''}${intl.formatMessage({
-      defaultMessage: 'Description is required.',
-      id: 'QDhqY3',
+      defaultMessage: 'Description is required. ',
+      id: '/5PrlZ',
       description: 'Error message when the workflow parameter description is empty.',
     })}`;
   }
   if (!isUndefinedOrEmptyString(data?.default)) {
     const DefaultValueValidationError = validateParameterValueWithSwaggerType(data?.type, data?.default, false, intl);
     if (DefaultValueValidationError) {
-      errorMessages = `${errorMessages ?? ''}${DefaultValueValidationError}`;
+      errorMessages = `${errorMessages ?? ''}${intl.formatMessage({
+        defaultMessage: 'For default value: ',
+        id: '6WOs0A',
+        description: 'Error message when the workflow parameter description is empty.',
+      })}${DefaultValueValidationError}`;
     }
   }
-  return errorMessages;
+  return errorMessages ? errorMessages.trim() : undefined;
 };
 
 export const validateConnectionsValue = (
