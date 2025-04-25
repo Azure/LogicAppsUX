@@ -31,11 +31,13 @@ import {
 } from '@microsoft/logic-apps-shared';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
+import { useIntl } from 'react-intl';
 
 export const NodeDetailsPanel = (props: CommonPanelProps): JSX.Element => {
   const { isResizeable, panelLocation } = props;
 
   const dispatch = useDispatch<AppDispatch>();
+  const intl = useIntl();
 
   const readOnly = useReadOnly();
   const collapsed = useIsPanelCollapsed();
@@ -142,9 +144,9 @@ export const NodeDetailsPanel = (props: CommonPanelProps): JSX.Element => {
     ]
   );
 
-  const onTitleChange = (originalId: string, newId: string): { valid: boolean; oldValue?: string } => {
-    const isValid = isOperationNameValid(originalId, newId, isTriggerNode, nodesMetadata, idReplacements);
-    return { valid: isValid, oldValue: isValid ? newId : originalId };
+  const onTitleChange = (originalId: string, newId: string): { valid: boolean; oldValue?: string; message: string } => {
+    const validation = isOperationNameValid(originalId, newId, isTriggerNode, nodesMetadata, idReplacements, intl);
+    return { valid: validation.isValid, oldValue: validation.isValid ? newId : originalId, message: validation.message };
   };
 
   const handleTitleUpdate = (originalId: string, newId: string) => {
