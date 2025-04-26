@@ -24,5 +24,6 @@ export const profileTab = (
     secondaryButtonOnClick: () => {
       dispatch(selectWizardTab(constants.CONFIGURE_TEMPLATE_WIZARD_TAB_NAMES.REVIEW));
     },
+    thirdButtonText: 'Save',
   },
 });

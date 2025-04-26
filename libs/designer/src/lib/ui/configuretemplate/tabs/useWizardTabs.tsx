@@ -42,6 +42,7 @@ export const useConfigureTemplateWizardTabs = ({
   return [
     workflowsTab(resources, dispatch, onSaveWorkflows, {
       tabStatusIcon: hasAnyWorkflowErrors ? 'error' : runValidation ? 'success' : 'in-progress',
+      disabled: !enableWizard || isWizardUpdating,
     }),
     connectionsTab(intl, resources, dispatch, {
       tabStatusIcon: enableWizard ? 'success' : undefined,
