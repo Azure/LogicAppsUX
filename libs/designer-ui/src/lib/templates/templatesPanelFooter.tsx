@@ -58,7 +58,7 @@ export const TemplatesPanelFooter = ({
         <Divider
           vertical={true}
           style={{
-            display: 'inline-block', // Important
+            display: 'inline-block',
             height: '100%',
             paddingLeft: '8px',
           }}
