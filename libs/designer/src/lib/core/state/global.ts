@@ -1,6 +1,6 @@
 import { resetCustomCode } from './customcode/customcodeSlice';
 import { useIsWorkflowDirty } from './workflow/workflowSelectors';
-import { setIsWorkflowDirty } from './workflow/workflowSlice';
+import { resetIdReplacements, setIsWorkflowDirty } from './workflow/workflowSlice';
 import { setIsWorkflowParametersDirty } from './workflowparameters/workflowparametersSlice';
 import { useIsWorkflowParametersDirty } from './workflowparameters/workflowparametersselector';
 import { createAction, createAsyncThunk } from '@reduxjs/toolkit';
@@ -22,4 +22,5 @@ export const resetDesignerDirtyState = createAsyncThunk('resetDesignerDirtyState
   dispatch(setIsWorkflowDirty(false));
   dispatch(setIsWorkflowParametersDirty(false));
   dispatch(resetCustomCode());
+  dispatch(resetIdReplacements());
 });
