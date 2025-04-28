@@ -39,9 +39,15 @@ export const useConfigureTemplateWizardTabs = ({
       (errors?.manifest && Object.values(errors?.manifest ?? {}).some((value) => value !== undefined))
   );
 
+  const onProfileSave = () => {
+    // TODO: Implement the save logic for the profile tab
+  };
+  const disableProfileSave = false;
+
   return [
     workflowsTab(resources, dispatch, onSaveWorkflows, {
       tabStatusIcon: hasAnyWorkflowErrors ? 'error' : runValidation ? 'success' : 'in-progress',
+      disabled: !enableWizard || isWizardUpdating,
     }),
     connectionsTab(intl, resources, dispatch, {
       tabStatusIcon: enableWizard ? 'success' : undefined,
@@ -51,9 +57,11 @@ export const useConfigureTemplateWizardTabs = ({
       tabStatusIcon: parametersHasError ? 'error' : enableWizard ? (runValidation ? 'success' : 'in-progress') : undefined,
       disabled: !enableWizard || isWizardUpdating,
     }),
-    profileTab(resources, dispatch, {
+    profileTab(intl, resources, dispatch, {
       tabStatusIcon: templateManifestHasError ? 'error' : runValidation ? 'success' : enableWizard ? 'in-progress' : undefined,
       disabled: !enableWizard || isWizardUpdating,
+      onSave: onProfileSave,
+      disableSave: disableProfileSave,
     }),
     reviewTab(resources, dispatch, {
       tabStatusIcon: undefined,
