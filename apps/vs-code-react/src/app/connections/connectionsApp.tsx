@@ -19,8 +19,8 @@ import { useIntl } from 'react-intl';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { useDispatch, useSelector } from 'react-redux';
 import { XLargeText } from '@microsoft/designer-ui';
-import { getDesignerServices } from 'app/designer/servicesHelper';
-import { convertConnectionsDataToReferences } from 'app/designer/utilities/workflow';
+import { getDesignerServices } from '../designer/servicesHelper';
+import { convertConnectionsDataToReferences } from '../designer/utilities/workflow';
 
 export const DesignerApp = () => {
   const vscode = useContext(VSCodeContext);

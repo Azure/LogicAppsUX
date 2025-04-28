@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import { XLargeText } from '@microsoft/designer-ui';
 import type { AppDispatch } from '../../../core';
 import { updateNodeConnection, useOperationInfo, useOperationPanelSelectedNodeId } from '../../../core';
@@ -30,20 +31,20 @@ export const ConnectionPanel = (props: CommonPanelProps) => {
 
   const isCreatingConnection = useIsCreatingConnection();
 
-  useEffect(() => {
-    if (selectedNodeId && connector && !connectionQuery.isLoading && !connectionQuery.isError && connections.length === 0) {
-      autoCreateConnectionIfPossible({
-        connector: connector as Connector,
-        referenceKeys: Object.keys(references),
-        operationInfo,
-        skipOAuth: true,
-        applyNewConnection: (connection: Connection) =>
-          dispatch(updateNodeConnection({ nodeId: selectedNodeId, connection, connector: connector as Connector })),
-        onSuccess: () => dispatch(closeConnectionsFlow({ nodeId: selectedNodeId })),
-        onManualConnectionCreation: () => dispatch(setIsCreatingConnection(true)),
-      });
-    }
-  }, [connectionQuery.isError, connectionQuery.isLoading, connections, connector, dispatch, operationInfo, references, selectedNodeId]);
+  // useEffect(() => {
+  //   if (selectedNodeId && connector && !connectionQuery.isLoading && !connectionQuery.isError && connections.length === 0) {
+  //     autoCreateConnectionIfPossible({
+  //       connector: connector as Connector,
+  //       referenceKeys: Object.keys(references),
+  //       operationInfo,
+  //       skipOAuth: true,
+  //       applyNewConnection: (connection: Connection) =>
+  //         dispatch(updateNodeConnection({ nodeId: selectedNodeId, connection, connector: connector as Connector })),
+  //       onSuccess: () => dispatch(closeConnectionsFlow({ nodeId: selectedNodeId })),
+  //       onManualConnectionCreation: () => dispatch(setIsCreatingConnection(true)),
+  //     });
+  //   }
+  // }, [connectionQuery.isError, connectionQuery.isLoading, connections, connector, dispatch, operationInfo, references, selectedNodeId]);
 
   const panelStatus = useMemo(() => {
     if (!selectedNodeId) {
