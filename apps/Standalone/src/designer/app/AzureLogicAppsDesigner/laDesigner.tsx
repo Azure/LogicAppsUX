@@ -524,6 +524,7 @@ const DesignerEditor = () => {
                   }}
                   switchViews={handleSwitchView}
                   saveWorkflowFromCode={saveWorkflowFromCode}
+                  setWorkflow={setWorkflow}
                 />
                 {designerView ? <Designer /> : <CodeViewEditor ref={codeEditorRef} workflowKind={workflow?.kind} />}
                 <CombineInitializeVariableDialog />

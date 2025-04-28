@@ -671,6 +671,10 @@ export const workflowSlice = createSlice({
       }
       state.hostData.errorMessages[action.payload.level] = action.payload.errorMessages;
     },
+    // on save we want to remove all id replacements
+    resetIdReplacements: (state) => {
+      state.idReplacements = {};
+    },
   },
   extraReducers: (builder) => {
     // Add reducers for additional action types here, and handle loading state as needed
@@ -770,6 +774,7 @@ export const {
   updateAgenticMetadata,
   setFocusElement,
   clearFocusElement,
+  resetIdReplacements,
 } = workflowSlice.actions;
 
 export default workflowSlice.reducer;
