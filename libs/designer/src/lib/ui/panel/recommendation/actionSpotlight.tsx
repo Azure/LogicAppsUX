@@ -7,6 +7,7 @@ import type { Connector } from '@microsoft/logic-apps-shared';
 import { getOperationCardDataFromOperation, getOperationGroupCardDataFromConnector } from './helpers';
 import { useIntl } from 'react-intl';
 import { SpotlightCategoryType, SpotlightSection } from '@microsoft/designer-ui';
+import { useAgenticWorkflow } from '../../../core/state/designerView/designerViewSelectors';
 
 export interface ActionSpotlightProps {
   onConnectorSelected: (connectorId: string, origin?: string) => void;
@@ -31,6 +32,7 @@ export const ActionSpotlight = (props: ActionSpotlightProps) => {
   const intl = useIntl();
   const { filters, onConnectorSelected, onOperationSelected } = props;
   const { data: allConnectors, isLoading: isLoadingConnectors } = useAllConnectors();
+  const isAgenticWorkflow = useAgenticWorkflow();
 
   const favoriteOperationIds = useDiscoveryPanelFavoriteOperations();
   const {
@@ -70,20 +72,21 @@ export const ActionSpotlight = (props: ActionSpotlightProps) => {
   }, [allConnectors]);
 
   const aiActions = useMemo(() => {
-    const allowedIds = ['managedApis/azureopenai', '/serviceProviders/openai', 'connectionProviders/agent'];
-    const aiActions = allConnectors
-      .filter((connector: Connector) => allowedIds.some((id) => connector.id.includes(id)))
-      .map((connector) => getOperationGroupCardDataFromConnector(connector));
-    return aiActions;
-  }, [allConnectors]);
+    const baseIds = ['managedApis/azureopenai', '/serviceProviders/openai'];
+    const allowedIds = isAgenticWorkflow ? [...baseIds, 'connectionProviders/agent'] : baseIds;
 
-  const favoriteOperations = useMemo(
-    () => [
-      ...favoriteConnectorsData.map((connector) => getOperationGroupCardDataFromConnector(connector)),
-      ...favoriteActionsData.map((operation) => getOperationCardDataFromOperation(operation)),
-    ],
-    [favoriteConnectorsData, favoriteActionsData]
-  );
+    return allConnectors
+      .filter((connector) => allowedIds.some((id) => connector.id.includes(id)))
+      .map(getOperationGroupCardDataFromConnector);
+  }, [allConnectors, isAgenticWorkflow]);
+
+  const favoriteOperations = useMemo(() => {
+    const favorites = [
+      ...favoriteConnectorsData.map(getOperationGroupCardDataFromConnector),
+      ...favoriteActionsData.map(getOperationCardDataFromOperation),
+    ];
+    return isAgenticWorkflow ? favorites : favorites.filter((f) => f.apiId !== 'connectionProviders/agent');
+  }, [favoriteConnectorsData, favoriteActionsData, isAgenticWorkflow]);
 
   const favoritesLabel = intl.formatMessage({
     defaultMessage: 'Favorites',
