@@ -13,7 +13,6 @@ export const workflowsTab = (
 ): TemplateTabProps => ({
   id: constants.CONFIGURE_TEMPLATE_WIZARD_TAB_NAMES.WORKFLOWS,
   title: resources.WorkflowsTabLabel,
-  disabled: disabled,
   tabStatusIcon,
   content: <DisplayWorkflows onSave={onSaveWorkflows} />,
   footerContent: {
@@ -24,5 +23,6 @@ export const workflowsTab = (
     secondaryButtonOnClick: () => {
       dispatch(selectWizardTab(constants.CONFIGURE_TEMPLATE_WIZARD_TAB_NAMES.CONNECTIONS));
     },
+    secondaryButtonDisabled: disabled,
   },
 });
