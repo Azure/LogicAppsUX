@@ -1,7 +1,7 @@
 import type { PayloadAction } from '@reduxjs/toolkit';
 import { createSlice } from '@reduxjs/toolkit';
 import { resetTemplatesState } from '../global';
-import { initializeWorkflowsData } from '../../actions/bjsworkflow/configuretemplate';
+import { initializeWorkflowsData, updateWorkflowParameter } from '../../actions/bjsworkflow/configuretemplate';
 
 export const TemplatePanelView = {
   // Template creation panels
@@ -54,6 +54,7 @@ export const panelSlice = createSlice({
     builder.addCase(resetTemplatesState, () => initialState);
 
     builder.addCase(initializeWorkflowsData.fulfilled, closePanelReducer);
+    builder.addCase(updateWorkflowParameter.fulfilled, closePanelReducer);
   },
 });
 

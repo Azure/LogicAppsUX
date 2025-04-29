@@ -1,5 +1,5 @@
 import type { ArmResource, LogicAppResource, WorkflowResource, Template } from '@microsoft/logic-apps-shared';
-import { getTriggerFromDefinition, ResourceService, TemplateResourceService } from '@microsoft/logic-apps-shared';
+import { getResourceNameFromId, getTriggerFromDefinition, ResourceService, TemplateResourceService } from '@microsoft/logic-apps-shared';
 import type { QueryClient, UseQueryResult } from '@tanstack/react-query';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { getConnector } from '../../queries/operation';
@@ -8,34 +8,40 @@ import { getReactQueryClient } from '../../ReactQueryProvider';
 
 export const getTemplateManifest = async (templateId: string): Promise<Template.TemplateManifest> => {
   const templateResource = await getTemplate(templateId);
-  return {
-    id: templateResource.id,
-    title: '',
-    summary: '',
-    workflows: {},
-    skus: [],
-    details: {
-      By: '',
-      Type: '',
-      Category: '',
-    },
-  } as Template.TemplateManifest;
+  return (
+    templateResource?.properties?.manifest
+      ? { id: templateResource.id, ...templateResource.properties.manifest }
+      : {
+          id: templateResource.id,
+          title: '',
+          summary: '',
+          workflows: {},
+          skus: [],
+          details: {
+            By: '',
+            Type: '',
+            Category: '',
+          },
+        }
+  ) as Template.TemplateManifest;
 };
 
 export const getWorkflowsInTemplate = async (templateId: string): Promise<Record<string, Template.WorkflowManifest>> => {
   const queryClient = getReactQueryClient();
-  return queryClient.fetchQuery(['templateWorkflows', templateId.toLowerCase()], async () => {
+  return queryClient.fetchQuery(['templateworkflows', templateId.toLowerCase()], async () => {
     const workflows = await TemplateResourceService().getTemplateWorkflows(templateId);
     return workflows.reduce((result: Record<string, Template.WorkflowManifest>, workflow) => {
-      const workflowId = workflow.id.toLowerCase();
-      result[workflowId] = {
-        id: workflowId,
-        title: '',
-        summary: '',
-        images: { light: '', dark: '' },
-        parameters: [],
-        connections: {},
-      };
+      const workflowId = getResourceNameFromId(workflow.id.toLowerCase());
+      result[workflowId] = workflow.properties.manifest
+        ? { id: workflowId, ...workflow.properties.manifest }
+        : {
+            id: workflowId,
+            title: '',
+            summary: '',
+            images: { light: '', dark: '' },
+            parameters: [],
+            connections: {},
+          };
       return result;
     }, {});
   });
@@ -175,7 +181,12 @@ export const getParametersInWorkflowApp = async (
   };
   return queryClient.fetchQuery(['parametersdata', resourceId.toLowerCase()], async () => {
     try {
-      return ResourceService().getResource(resourceId, queryParameters);
+      const parameters: Record<string, any> = await ResourceService().getResource(resourceId, queryParameters);
+      return Object.keys(parameters ?? {}).reduce((result: Record<string, any>, parameterKey: string) => {
+        result[parameterKey] = { ...parameters[parameterKey] };
+        delete result[parameterKey].value;
+        return result;
+      }, {});
     } catch (error: any) {
       if (error?.response?.status === 404) {
         return {};

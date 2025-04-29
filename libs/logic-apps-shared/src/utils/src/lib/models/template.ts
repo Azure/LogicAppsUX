@@ -42,6 +42,9 @@ export interface WorkflowManifest {
   };
   parameters: Parameter[];
   connections: Record<string, Connection>;
+  metadata?: {
+    workflowSourceId: string;
+  };
 
   sourceCodeUrl?: string; // Automatically generated for public templates, otherwise optional
 }

@@ -59,6 +59,10 @@ export const DynamicValuesType = {
 };
 export type DynamicValuesType = (typeof DynamicValuesType)[keyof typeof DynamicValuesType];
 
+export function isLegacyDynamicValuesBuiltInExtension(extension: ParameterDynamicValues): boolean {
+  return isLegacyDynamicValuesExtension(extension) && !!extension.extension.builtInOperation;
+}
+
 export function isLegacyDynamicValuesExtension(extension: ParameterDynamicValues): extension is LegacyDynamicValues {
   return extension.type === DynamicValuesType.LegacyDynamicValues;
 }

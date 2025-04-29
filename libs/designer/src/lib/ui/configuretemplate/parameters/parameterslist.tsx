@@ -16,8 +16,8 @@ import { useCallback, useMemo } from 'react';
 import { useIntl } from 'react-intl';
 import { getResourceNameFromId } from '@microsoft/logic-apps-shared';
 import { openPanelView, TemplatePanelView } from '../../../core/state/templates/panelSlice';
-import { CustomizeParameterPanel } from '../../panel/configureTemplatePanel/customizeParameterPanel/customizeParameterPanel';
 import { MoreHorizontal16Filled } from '@fluentui/react-icons';
+import { CustomizeParameterPanel } from '../panels/customizeParameterPanel/customizeParameterPanel';
 
 export const TemplateParametersList = () => {
   const intl = useIntl();
