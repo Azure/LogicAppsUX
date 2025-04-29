@@ -1,4 +1,4 @@
-import type { ArmResource, Template } from '../../../index';
+import { getPropertyValue, type ArmResource, type Template } from '../../../index';
 import { getAzureResourceRecursive } from '../common/azure';
 import type { IHttpClient } from '../httpClient';
 import type { ITemplateResourceService, WorkflowData } from '../templateresource';
@@ -10,9 +10,6 @@ interface ITemplateResourceServiceOptions {
 }
 
 export class BaseTemplateResourceService implements ITemplateResourceService {
-  private _location: string | undefined;
-  private _tags: Record<string, string> | undefined;
-
   constructor(private readonly options: ITemplateResourceServiceOptions) {}
 
   public async getTemplate(resourceId: string) {
@@ -20,9 +17,25 @@ export class BaseTemplateResourceService implements ITemplateResourceService {
       const { baseUrl, apiVersion, httpClient } = this.options;
       const uri = `${baseUrl}${resourceId}`;
       const response = await httpClient.get<ArmResource<any>>({ uri, queryParameters: { 'api-version': apiVersion } });
+      const manifest = response?.properties?.manifest;
+      if (manifest) {
+        manifest.skus = manifest.supportedSkus?.split(',').map((sku: string) => sku.trim().toLowerCase());
+        manifest.tags = manifest.keywords;
 
-      this._location = response?.location;
-      this._tags = response?.tags;
+        if (manifest.details) {
+          manifest.details = {
+            By: getPropertyValue(manifest.details, 'by'),
+            Type: getPropertyValue(manifest.details, 'type'),
+            Category: getPropertyValue(manifest.details, 'category'),
+            Trigger: getPropertyValue(manifest.details, 'trigger'),
+          };
+        }
+
+        delete manifest.supportedSkus;
+        delete manifest.keywords;
+        response.properties.manifest = manifest;
+      }
+
       return response;
     } catch (error) {
       throw new Error(error as any);
@@ -47,13 +60,20 @@ export class BaseTemplateResourceService implements ITemplateResourceService {
     try {
       const { baseUrl, apiVersion, httpClient } = this.options;
       const uri = `${baseUrl}${resourceId}`;
-      await httpClient.put({
+      const manifestToUpdate: any = { ...manifest };
+      manifestToUpdate.supportedSkus = manifest.skus.join(',');
+      manifestToUpdate.keywords = (manifest.tags ?? []).map((tag: string) => tag.trim());
+
+      delete manifestToUpdate.id;
+      delete manifestToUpdate.workflows;
+      delete manifestToUpdate.skus;
+      delete manifestToUpdate.tags;
+
+      await httpClient.patch({
         uri,
         queryParameters: { 'api-version': apiVersion },
         content: {
-          location: this._location,
-          tags: this._tags,
-          properties: { state, manifest },
+          properties: { state, manifest: manifestToUpdate },
         },
       });
     } catch (error) {

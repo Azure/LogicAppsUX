@@ -10,7 +10,7 @@ export const getTemplateManifest = async (templateId: string): Promise<Template.
   const templateResource = await getTemplate(templateId);
   return (
     templateResource?.properties?.manifest
-      ? { id: templateResource.id, ...templateResource.properties.manifest }
+      ? { id: templateResource.id, workflows: {}, ...templateResource.properties.manifest }
       : {
           id: templateResource.id,
           title: '',
