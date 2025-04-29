@@ -249,7 +249,24 @@ const DesignerEditor = () => {
               Default_Agent: {
                 type: 'Agent',
                 limit: {},
-                inputs: {},
+                inputs: {
+                  parameters: {
+                    deploymentId: '',
+                    messages: '',
+                    agentModelType: 'AzureOpenAI',
+                    agentModelSettings: {
+                      agentHistoryReductionSettings: {
+                        agentHistoryReductionType: 'maximumTokenCountReduction',
+                        maximumTokenCount: 128000,
+                      },
+                    },
+                  },
+                  modelConfigurations: {
+                    model1: {
+                      referenceName: '',
+                    },
+                  },
+                },
                 tools: {},
                 runAfter: {},
               },
@@ -264,7 +281,24 @@ const DesignerEditor = () => {
             Default_Agent: {
               type: 'Agent',
               limit: {},
-              inputs: {},
+              inputs: {
+                parameters: {
+                  deploymentId: '',
+                  messages: '',
+                  agentModelType: 'AzureOpenAI',
+                  agentModelSettings: {
+                    agentHistoryReductionSettings: {
+                      agentHistoryReductionType: 'maximumTokenCountReduction',
+                      maximumTokenCount: 128000,
+                    },
+                  },
+                },
+                modelConfigurations: {
+                  model1: {
+                    referenceName: '',
+                  },
+                },
+              },
               tools: {},
               runAfter: {},
             },

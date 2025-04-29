@@ -168,7 +168,7 @@ export default {
           },
         },
       },
-      required: ['deploymentId', 'messages'],
+      required: ['deploymentId', 'messages', 'agentModelType'],
     },
     channels: {
       type: 'object',

@@ -130,7 +130,24 @@ export const getCodelessWorkflowTemplate = (workflowType: WorkflowType) => {
         actions: {
           Default_Agent: {
             type: 'Agent',
-            inputs: {},
+            inputs: {
+              parameters: {
+                deploymentId: '',
+                messages: '',
+                agentModelType: 'AzureOpenAI',
+                agentModelSettings: {
+                  agentHistoryReductionSettings: {
+                    agentHistoryReductionType: 'maximumTokenCountReduction',
+                    maximumTokenCount: 128000,
+                  },
+                },
+              },
+              modelConfigurations: {
+                model1: {
+                  referenceName: '',
+                },
+              },
+            },
             limit: {},
             tools: {},
             runAfter: {},
