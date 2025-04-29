@@ -313,8 +313,8 @@ export const validateWorkflowName = async (
   const regex = /^[A-Za-z][A-Za-z0-9]*(?:[_-][A-Za-z0-9]+)*$/;
   if (!regex.test(workflowName)) {
     return intl.formatMessage({
-      defaultMessage: 'Name does not match the given pattern.',
-      id: 'zMKxg9',
+      defaultMessage: "Name can only contain letters, numbers, and ' - ', '(', ')', '_' or '.",
+      id: 'DhCTdn',
       description: 'Error message when the workflow name is invalid regex.',
     });
   }
