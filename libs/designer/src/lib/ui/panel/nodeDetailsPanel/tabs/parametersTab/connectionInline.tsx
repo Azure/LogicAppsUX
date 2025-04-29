@@ -63,8 +63,8 @@ export const ConnectionInline: React.FC<ConnectionInlineProps> = ({ showSubCompo
       }),
       NO_CONNECTION_SELECTED: intl.formatMessage({
         defaultMessage: 'No connection has been selected',
-        id: 'bV03ZF',
-        description: 'Text to show that no connection is selected',
+        id: 'WtO4Wv',
+        description: 'Text to show that no connection has been selected',
       }),
     }),
     [intl]
@@ -84,10 +84,6 @@ export const ConnectionInline: React.FC<ConnectionInlineProps> = ({ showSubCompo
       return <Text style={{ fontSize: 12 }}>{intlText.NO_CONNECTION_SELECTED} </Text>;
     }
     return <Text style={{ fontSize: 12 }}>{selectedConnection.properties.displayName} </Text>;
-  }
-
-  if (!showSubComponent) {
-    return null;
   }
 
   return showCreateConnection ? (
