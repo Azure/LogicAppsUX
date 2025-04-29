@@ -159,6 +159,13 @@ const getReferencesFromConnections = (connections: Record<string, Template.Conne
   }, {});
 };
 
+export const getParametersForWorkflow = (
+  allParameters: Template.ParameterDefinition[],
+  workflowId: string
+): Template.ParameterDefinition[] => {
+  return allParameters.filter((parameter) => parameter.associatedWorkflows?.includes(workflowId));
+};
+
 export const getParameterReferencesFromValue = (segments: ValueSegment[]): string[] => {
   const tokenSegments = segments.filter(isTokenValueSegment);
   const result: string[] = [];

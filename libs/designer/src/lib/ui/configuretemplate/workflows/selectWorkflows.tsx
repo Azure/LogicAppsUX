@@ -5,7 +5,7 @@ import { useWorkflowsInApp } from '../../../core/configuretemplate/utils/queries
 import { ResourcePicker } from '../../templates';
 import { useSelector } from 'react-redux';
 import { useCallback } from 'react';
-import { equals, type WorkflowResource, type LogicAppResource } from '@microsoft/logic-apps-shared';
+import { equals, type LogicAppResource } from '@microsoft/logic-apps-shared';
 import {
   TableBody,
   TableCell,
@@ -23,12 +23,13 @@ import {
   SkeletonItem,
 } from '@fluentui/react-components';
 import { useResourceStrings } from '../resources';
+import type { WorkflowTemplateData } from '../../../core';
 
 export const SelectWorkflows = ({
   selectedWorkflowsList,
   onWorkflowsSelected,
 }: {
-  selectedWorkflowsList: Record<string, Partial<WorkflowResource>>;
+  selectedWorkflowsList: Record<string, Partial<WorkflowTemplateData>>;
   onWorkflowsSelected: (normalizedWorkflowIds: string[]) => void;
 }) => {
   const intl = useIntl();
@@ -118,7 +119,9 @@ export const SelectWorkflows = ({
     [
       useTableSelection({
         selectionMode: 'multiselect',
-        selectedItems: new Set(Object.keys(selectedWorkflowsList)),
+        selectedItems: new Set(
+          Object.values(selectedWorkflowsList).map((workflow) => workflow.manifest?.metadata?.workflowSourceId as string)
+        ),
         onSelectionChange: (_, data) => {
           onWorkflowsSelected(Array.from(data.selectedItems, String));
         },

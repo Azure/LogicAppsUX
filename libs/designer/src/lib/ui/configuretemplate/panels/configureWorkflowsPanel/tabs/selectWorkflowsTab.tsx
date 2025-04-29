@@ -4,7 +4,7 @@ import type { TemplateTabProps } from '@microsoft/designer-ui';
 import { closePanel, selectPanelTab } from '../../../../../core/state/templates/panelSlice';
 import type { ConfigureWorkflowsTabProps } from '../configureWorkflowsPanel';
 import type { IntlShape } from 'react-intl';
-import { SelectWorkflows } from '../../../../../ui/configuretemplate/workflows/selectWorkflows';
+import { SelectWorkflows } from '../../../workflows/selectWorkflows';
 
 export const selectWorkflowsTab = (
   intl: IntlShape,
