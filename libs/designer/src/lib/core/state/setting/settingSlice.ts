@@ -12,6 +12,7 @@ export const initialState: SettingsState = {
     SettingSectionName.GENERAL,
     SettingSectionName.NETWORKING,
     SettingSectionName.RUNAFTER,
+    SettingSectionName.TRANSITIONS,
     SettingSectionName.SECURITY,
     SettingSectionName.TRACKING,
   ],

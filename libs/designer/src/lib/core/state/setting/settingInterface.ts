@@ -5,6 +5,7 @@ export const SettingSectionName = {
   GENERAL: 'general',
   NETWORKING: 'networking',
   RUNAFTER: 'runafter',
+  TRANSITIONS: 'transitions',
   SECURITY: 'security',
   TRACKING: 'tracking',
 } as const;

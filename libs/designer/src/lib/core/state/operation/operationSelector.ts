@@ -12,6 +12,8 @@ import { useSelector } from 'react-redux';
 
 const getOperationState = (state: RootState) => state.operations;
 
+export const useOperationMetadata = () => useSelector(createSelector(getOperationState, (state) => state.operationMetadata));
+
 export const useOperationVisuals = (nodeId: string) =>
   useSelector(
     createSelector(getOperationState, (state) => getRecordEntry(state.operationMetadata, nodeId) ?? { brandColor: '', iconUri: '' })

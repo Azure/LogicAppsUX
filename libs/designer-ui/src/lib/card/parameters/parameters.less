@@ -31,8 +31,18 @@
   }
 }
 
+.error {
+	.editor-input {
+		border-color: #b40e1b !important;
+	}
+}
+
 .msla-input-parameter-error {
+	font-size: 12px;
   color: @dynamic-param-error-color;
+	display: flex;
+	align-items: center;
+	gap: 2px;
 
   @msla-label-margin-left: (@parameter-label-width + @parameter-label-inputbox-margin);
 }

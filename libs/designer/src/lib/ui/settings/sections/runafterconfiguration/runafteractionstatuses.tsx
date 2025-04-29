@@ -18,8 +18,8 @@ export function RunAfterActionStatuses({ isReadOnly, statuses, onStatusChange }:
     {
       id: RUN_AFTER_STATUS.SUCCEEDED,
       label: intl.formatMessage({
-        defaultMessage: 'Is successful',
-        id: 'rh5g4p',
+        defaultMessage: 'Successful',
+        id: 'bmGHbk',
         description: 'Successful run',
       }),
       icon: <Succeeded />,
@@ -27,8 +27,8 @@ export function RunAfterActionStatuses({ isReadOnly, statuses, onStatusChange }:
     {
       id: RUN_AFTER_STATUS.TIMEDOUT,
       label: intl.formatMessage({
-        defaultMessage: 'Has timed out',
-        id: 'nmFupX',
+        defaultMessage: 'Timed out',
+        id: '/2V8bQ',
         description: 'Timed out run',
       }),
       icon: <TimedOut />,
@@ -36,8 +36,8 @@ export function RunAfterActionStatuses({ isReadOnly, statuses, onStatusChange }:
     {
       id: RUN_AFTER_STATUS.SKIPPED,
       label: intl.formatMessage({
-        defaultMessage: 'Is skipped',
-        id: 'I3mifR',
+        defaultMessage: 'Skipped',
+        id: 'DSzVx1',
         description: 'Skipped run',
       }),
       icon: <Skipped />,
@@ -45,8 +45,8 @@ export function RunAfterActionStatuses({ isReadOnly, statuses, onStatusChange }:
     {
       id: RUN_AFTER_STATUS.FAILED,
       label: intl.formatMessage({
-        defaultMessage: 'Has failed',
-        id: 'O+3Y9f',
+        defaultMessage: 'Failed',
+        id: 'SxrtOC',
         description: 'Failed run',
       }),
       icon: <Failed />,

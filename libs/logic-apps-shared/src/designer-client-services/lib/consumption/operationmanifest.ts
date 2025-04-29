@@ -94,7 +94,6 @@ export class ConsumptionOperationManifestService extends BaseOperationManifestSe
 
   override async getOperationManifest(connectorId: string, operationId: string): Promise<OperationManifest> {
     const supportedManifest = supportedConsumptionManifestObjects.get(operationId);
-
     if (supportedManifest) {
       return supportedManifest;
     }

@@ -54,6 +54,7 @@ export interface OperationPanelContentState {
   panelMode: 'Operation';
   selectedNodeId?: string;
   selectedNodeActiveTabId?: string;
+  selectedTransitionTargetId?: string;
   alternateSelectedNode?: {
     nodeId?: string;
     activeTabId?: string;

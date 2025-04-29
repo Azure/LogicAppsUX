@@ -225,6 +225,7 @@ export const initializeOperationDetails = async (
     const { connector: swaggerConnector, parsedSwagger } = await getConnectorWithSwagger(connectorId);
     swagger = parsedSwagger;
     connector = swaggerConnector;
+
     const iconUri = getIconUriFromConnector(connector);
     const brandColor = getBrandColorFromConnector(connector);
 

@@ -491,6 +491,7 @@ export const TokenField = ({
           getTokenPicker={getTokenPicker}
           onChange={hideValidationErrors}
           dataAutomationId={`msla-setting-token-editor-stringeditor-${labelForAutomationId}`}
+          errorDetails={errorDetails}
         />
       );
   }

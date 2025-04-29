@@ -15,3 +15,5 @@ export * from './recurrence';
 export * from './run';
 export * from './stringFunctions';
 export * from './localStorage';
+export * from './useEdgesData';
+export * from './useNodeGlobalPosition';
