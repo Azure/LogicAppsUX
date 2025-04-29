@@ -1,4 +1,11 @@
 # Logic Apps Designer
+### [5.89.1](https://github.com/Azure/LogicAppsUX/compare/v5.89.0...v5.89.1) (2025-04-29)
+
+
+### Bug Fixes
+
+* **Templates:** Modified template workflow name validation error message ([#7119](https://github.com/Azure/LogicAppsUX/issues/7119)) ([f7f6abe](https://github.com/Azure/LogicAppsUX/commit/f7f6abe0b0e1c20a23a504b577869ecde0903c7b))
+
 ## [5.89.0](https://github.com/Azure/LogicAppsUX/compare/v5.88.0...v5.89.0) (2025-04-23)
 
 
