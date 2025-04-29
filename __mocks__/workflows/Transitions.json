@@ -1,0 +1,97 @@
+{
+	"definition": {
+		"$schema": "https://schema.management.azure.com/providers/Microsoft.Logic/schemas/2016-06-01/workflowdefinition.json#",
+		"triggers": {
+			"manual": {
+				"type": "Request",
+				"kind": "Http",
+				"inputs": {
+					"method": "GET"
+				},
+				"transitions": {
+					"Initialize_Variable": {
+						"when": [
+							"SUCCEEDED"
+						]
+					}
+				}
+			}
+		},
+		"actions": {
+			"Initialize_Variable": {
+				"type": "InitializeVariable",
+				"inputs": {
+					"variables": [
+						{
+							"name": "IntegerVariable",
+							"type": "integer",
+							"value": 0
+						}
+					]
+				},
+				"runAfter": {},
+				"transitions": {
+					"HTTP": {
+						"when": [
+							"SUCCEEDED"
+						]
+					}
+				}
+			},
+			"HTTP": {
+				"type": "Http",
+				"inputs": {
+					"uri": "https://www.google.com",
+					"method": "GET"
+				},
+				"runAfter": {},
+				"transitions": {
+					"Increment_variable": {
+						"when": [
+							"SUCCEEDED"
+						]
+					}
+				},
+				"runtimeConfiguration": {
+					"contentTransfer": {
+						"transferMode": "Chunked"
+					}
+				}
+			},
+			"Increment_variable": {
+				"type": "IncrementVariable",
+				"inputs": {
+					"name": "IntegerVariable",
+					"value": 1
+				},
+				"runAfter": {},
+				"transitions": {
+					"Response": {
+						"when": [
+							"SUCCEEDED"
+						]
+					},
+					"HTTP": {
+						"when": [
+							"SUCCEEDED"
+						]
+					}
+				}
+			},
+			"Response": {
+				"type": "Response",
+				"kind": "Http",
+				"inputs": {
+					"statusCode": 200,
+					"body": "@variables('IntegerVariable')"
+				},
+				"runAfter": {},
+				"transitions": {}
+			}
+		},
+		"contentVersion": "1.0.0.0",
+		"outputs": {}
+	},
+	"connectionReferences": {},
+	"parameters": {}
+}

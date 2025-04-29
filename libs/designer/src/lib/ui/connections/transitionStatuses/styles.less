@@ -1,0 +1,82 @@
+.msla-run-after-dot-container {
+	display: flex;
+	flex-direction: row;
+	align-items: center;
+	justify-content: center;
+	gap: 1px;
+	border-radius: 64px;
+	padding: 2px;
+	background: @card-background-color;
+}
+
+.msla-theme-light {
+	.msla-run-after-dot-container {
+		background: #fff;
+	}
+}
+
+.msla-theme-dark {
+	.msla-run-after-dot-container {
+		background: @ms-color-primaryBackground;
+	}
+}
+
+.msla-run-after-dot {
+	width: 8px;
+	height: 8px;
+	display: flex;
+}
+
+.msla-cog {
+	width: 8px;
+	height: 8px;
+	display: flex;
+}
+
+.msla-theme-dark {
+	.msla-run-after-overflow {
+		background: #323130;
+	}
+}
+
+.msla-run-after-overflow {
+	box-sizing: border-box;
+	font-family: 'Segoe UI Semibold', sans-serif;
+	font-size: 10px;
+	line-height: 1.2;
+	background-color: #d3d3d3;
+	border-radius: 8px;
+	text-align: center;
+	display: flex;
+	flex-direction: column;
+}
+
+.msla-run-after-content {
+	height: 360px;
+	overflow-y: auto;
+}
+
+.msla-run-after-tooltip-container {
+	display: flex;
+	flex-direction: column;
+	padding: 4px;
+	gap: 8px;
+	min-width: 180px;
+	max-width: 300px;
+
+	.msla-run-after-label {
+		display: flex;
+		flex-direction: row;
+		align-items: center;
+		justify-content: flex-start;
+		gap: 6px;
+	}
+
+	.msla-run-after-label-badge {
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		width: 16px;
+		height: 16px;
+	}
+}

@@ -1,0 +1,48 @@
+
+.fui-Slider__rail {
+	// Set a variable
+	--fui-Slider__rail--color: #b1b1b7;
+	--fui-Slider__progress--color: #1f85ff;
+}
+
+.fui-Slider__thumb {
+	box-shadow: none !important;
+	border: 2px solid white;
+
+	--fui-Slider__thumb--size: 12px;
+	--fui-Slider__thumb--color: #1f85ff;
+	--colorNeutralStroke1: white;
+	// ::before {
+	// 	border: 1px solid white !important;
+	// }
+}
+
+.fui-Slider__thumb::before {
+	border: none !important;
+}
+
+.msla-timeline-node {
+	position: relative;
+	display: flex;
+	flex-direction: row;
+	align-items: center;
+	gap: 8px;
+	border-radius: 8px;
+	cursor: pointer;
+	margin: -4px;
+	padding: 4px;
+
+	&:hover {
+		background-color: #1f85ff20;
+	}
+
+	.selection-box {
+		position: absolute;
+		top: 0;
+		left: 0;
+		width: calc(100% - 4px);
+		height: calc(100% - 4px);
+		border: 2px solid #1f85ff;
+		border-radius: 8px;
+	}
+}

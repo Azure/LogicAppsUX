@@ -183,13 +183,14 @@
     display: flex;
     justify-content: center;
     align-content: center;
-    height: @card-v2-small-height;
-    max-width: @card-v2-small-width;
+    height: 24px;
+    max-width: 24px;
     cursor: grab;
     margin: 0px auto;
     box-sizing: border-box;
 
     &.canDrop {
+			max-width: @card-v2-small-width;
       background: #e7f4ff;
       outline: 2px dashed #0078d4;
       border-radius: 4px;

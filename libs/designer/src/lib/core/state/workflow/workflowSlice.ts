@@ -73,6 +73,8 @@ export const initialWorkflowState: WorkflowState = {
   hostData: {
     errorMessages: {},
   },
+  transitionRepetitionIndex: 0,
+  transitionRepetitionArray: [],
 };
 
 export const workflowSlice = createSlice({
@@ -239,7 +241,7 @@ export const workflowSlice = createSlice({
           WORKFLOW_NODE_TYPES.PLACEHOLDER_NODE
         );
         for (const childId of existingChildren) {
-          addNewEdge(state, constants.NODE.TYPE.PLACEHOLDER_TRIGGER, childId, graph, false);
+          addNewEdge(state, constants.NODE.TYPE.PLACEHOLDER_TRIGGER, childId, graph);
         }
       } else {
         deleteNodeFromWorkflow(action.payload, graph, state.nodesMetadata, state);
@@ -470,6 +472,13 @@ export const workflowSlice = createSlice({
       };
       nodeMetadata.runData = nodeRunData as LogicAppsV2.WorkflowRunAction;
     },
+    clearAllRepetitionRunData: (state: WorkflowState) => {
+      for (const node of Object.values(state.nodesMetadata)) {
+        if (node.runData) {
+          delete node.runData;
+        }
+      }
+    },
     setSubgraphRunData: (state: WorkflowState, action: PayloadAction<{ nodeId: string; runData: LogicAppsV2.RunRepetition[] }>) => {
       const { nodeId, runData } = action.payload;
       const nodeMetadata = getRecordEntry(state.nodesMetadata, nodeId);
@@ -603,7 +612,7 @@ export const workflowSlice = createSlice({
       }
       graph.edges = graph.edges?.filter((x) => x.source !== parentOperationId || x.target !== childOperationId) ?? [];
     },
-    addEdgeFromRunAfter: (state: WorkflowState, action: PayloadAction<{ childOperationId: string; parentOperationId: string }>) => {
+    addEdgeToRunAfter: (state: WorkflowState, action: PayloadAction<{ childOperationId: string; parentOperationId: string }>) => {
       const { childOperationId, parentOperationId } = action.payload;
       const parentOperation = getRecordEntry(state.operations, parentOperationId);
       const childOperation: LogicAppsV2.ActionDefinition | undefined = getRecordEntry(state.operations, childOperationId);
@@ -639,6 +648,80 @@ export const workflowSlice = createSlice({
         type: 'BUTTON_EDGE',
       });
     },
+    addEdgeToTransitions: (state: WorkflowState, action: PayloadAction<{ sourceId: string; targetId: string }>) => {
+      const { sourceId, targetId } = action.payload;
+      const sourceOperation = getRecordEntry(state.operations, sourceId);
+      const targetOperation = getRecordEntry(state.operations, targetId);
+      if (!sourceOperation || !targetOperation) {
+        return;
+      }
+      if (!sourceOperation.transitions) {
+        sourceOperation.transitions = {};
+      }
+      if (!targetOperation.transitions) {
+        targetOperation.transitions = {};
+      }
+
+      sourceOperation.transitions = {
+        ...(sourceOperation.transitions ?? {}),
+        [targetId]: {
+          when: [RUN_AFTER_STATUS.SUCCEEDED],
+        },
+      };
+
+      const graphPath: string[] = [];
+      let operationGraph = getRecordEntry(state.nodesMetadata, targetId);
+
+      while (operationGraph && !equals(operationGraph.graphId, 'root')) {
+        graphPath.push(operationGraph.graphId);
+        operationGraph = state.nodesMetadata[operationGraph.graphId];
+      }
+      let graph = state.graph;
+      for (const id of graphPath.reverse()) {
+        graph = graph?.children?.find((x) => x.id === id) ?? null;
+      }
+      graph?.edges?.push({
+        id: `${sourceId}-${targetId}`,
+        source: sourceId,
+        target: targetId,
+        type: 'TRANSITION_EDGE',
+      });
+    },
+    removeEdgeFromTransitions: (state: WorkflowState, action: PayloadAction<{ sourceId: string; targetId: string }>) => {
+      const { sourceId, targetId } = action.payload;
+      const sourceOperation = getRecordEntry(state.operations, sourceId);
+      const targetOperation = getRecordEntry(state.operations, targetId);
+      if (!sourceOperation || !targetOperation) {
+        return;
+      }
+
+      delete sourceOperation.transitions?.[targetId];
+      if (Object.keys(sourceOperation.transitions ?? {}).length === 0) {
+        delete sourceOperation.transitions;
+      }
+
+      const graphPath: string[] = [];
+      let operationGraph = getRecordEntry(state.nodesMetadata, targetId);
+
+      while (operationGraph && !equals(operationGraph?.graphId, 'root')) {
+        graphPath.push(operationGraph.graphId);
+        operationGraph = getRecordEntry(state.nodesMetadata, operationGraph?.graphId);
+      }
+      let graph = state.graph;
+      for (const id of graphPath.reverse()) {
+        graph = graph?.children?.find((x) => x.id === id) ?? null;
+      }
+      if (!graph) {
+        return;
+      }
+      graph.edges = graph.edges?.filter((x) => x.source !== sourceId || x.target !== targetId) ?? [];
+    },
+    setTransitionRepetitionIndex: (state: WorkflowState, action: PayloadAction<number>) => {
+      state.transitionRepetitionIndex = action.payload;
+    },
+    setTransitionRepetitionArray: (state: WorkflowState, action: PayloadAction<string[]>) => {
+      state.transitionRepetitionArray = action.payload;
+    },
     updateRunAfter: (
       state: WorkflowState,
       action: PayloadAction<{ childOperation: string; parentOperation: string; statuses: string[] }>
@@ -651,6 +734,27 @@ export const workflowSlice = createSlice({
         childOperation.runAfter = {};
       }
       childOperation.runAfter[action.payload.parentOperation] = action.payload.statuses;
+    },
+    updateTransitions: (
+      state: WorkflowState,
+      action: PayloadAction<{ sourceId: string; targetId: string; transition: LogicAppsV2.Transition | undefined }>
+    ) => {
+      const { sourceId, targetId, transition } = action.payload;
+      const nodeOperation = getRecordEntry(state.operations, sourceId);
+      if (!nodeOperation) {
+        return;
+      }
+      if (transition) {
+        if (!nodeOperation.transitions) {
+          nodeOperation.transitions = {};
+        }
+        nodeOperation.transitions[targetId] = transition;
+      } else if (nodeOperation.transitions) {
+        delete nodeOperation.transitions[targetId];
+        if (Object.keys(nodeOperation.transitions).length === 0) {
+          delete nodeOperation.transitions;
+        }
+      }
     },
     replaceId: (state: WorkflowState, action: PayloadAction<{ originalId: string; newId: string }>) => {
       const { originalId, newId } = action.payload;
@@ -718,7 +822,7 @@ export const workflowSlice = createSlice({
         setNodeDescription,
         updateRunAfter,
         removeEdgeFromRunAfter,
-        addEdgeFromRunAfter,
+        addEdgeToRunAfter,
         replaceId,
         updateNodeConnection.fulfilled,
         updateStaticResults,
@@ -751,8 +855,13 @@ export const {
   discardAllChanges,
   buildEdgeIdsBySource,
   updateRunAfter,
-  addEdgeFromRunAfter,
+  updateTransitions,
+  addEdgeToRunAfter,
   removeEdgeFromRunAfter,
+  addEdgeToTransitions,
+  removeEdgeFromTransitions,
+  setTransitionRepetitionIndex,
+  setTransitionRepetitionArray,
   clearFocusNode,
   setFocusNode,
   setCollapsedGraphIds,
@@ -760,6 +869,7 @@ export const {
   replaceId,
   setRunIndex,
   setRepetitionRunData,
+  clearAllRepetitionRunData,
   setSubgraphRunData,
   setIsWorkflowDirty,
   setHostErrorMessages,

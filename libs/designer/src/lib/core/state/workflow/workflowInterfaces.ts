@@ -56,4 +56,6 @@ export interface WorkflowState {
     errorMessages: Partial<Record<MessageLevel, ErrorMessage[]>>;
   };
   agentsGraph: Record<string, any>;
+  transitionRepetitionIndex: number;
+  transitionRepetitionArray: string[];
 }

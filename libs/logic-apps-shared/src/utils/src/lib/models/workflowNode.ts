@@ -18,10 +18,11 @@ export const WORKFLOW_NODE_TYPES: Record<string, WorkflowNodeType> = {
   COLLAPSED_NODE: 'COLLAPSED_NODE',
 };
 
-export type WorkflowEdgeType = 'BUTTON_EDGE' | 'HEADING_EDGE' | 'ONLY_EDGE' | 'HIDDEN_EDGE';
+export type WorkflowEdgeType = 'BUTTON_EDGE' | 'HEADING_EDGE' | 'ONLY_EDGE' | 'HIDDEN_EDGE' | 'TRANSITION_EDGE';
 export const WORKFLOW_EDGE_TYPES: Record<string, WorkflowEdgeType> = {
   BUTTON_EDGE: 'BUTTON_EDGE',
   HEADING_EDGE: 'HEADING_EDGE',
   ONLY_EDGE: 'ONLY_EDGE',
   HIDDEN_EDGE: 'HIDDEN_EDGE',
+  TRANSITION_EDGE: 'TRANSITION_EDGE',
 };

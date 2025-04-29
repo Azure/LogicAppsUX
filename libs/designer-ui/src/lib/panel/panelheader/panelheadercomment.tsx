@@ -33,7 +33,7 @@ export const PanelHeaderComment = ({
   readOnlyMode,
   commentChange,
   isTrigger,
-}: PanelHeaderCommentProps): JSX.Element => {
+}: PanelHeaderCommentProps): JSX.Element | undefined => {
   const intl = useIntl();
 
   const [commentHasFocus, setCommentHasFocus] = useState(false);
@@ -109,6 +109,11 @@ export const PanelHeaderComment = ({
       />
     );
   };
+
+  if (readOnlyMode && !comment) {
+    return undefined;
+  }
+
   return (
     <div className="msla-panel-comment-container" hidden={isCollapsed}>
       {noNodeSelected ? null : getDescriptionIcon()}

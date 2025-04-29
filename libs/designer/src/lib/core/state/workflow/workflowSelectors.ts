@@ -39,6 +39,134 @@ export const useFocusElement = () => useSelector(createSelector(getWorkflowState
 
 export const useIsWorkflowDirty = () => useSelector(createSelector(getWorkflowState, (state: WorkflowState) => state.isDirty));
 
+export const useTransition = (sourceId: string, targetId: string) =>
+  useSelector(
+    createSelector(getWorkflowState, (state: WorkflowState) => {
+      const operations = state.operations;
+      const source = operations?.[sourceId];
+      const target = operations?.[targetId];
+      if (source && target) {
+        const transition = source.transitions?.[targetId];
+        if (transition) {
+          return transition;
+        }
+      }
+      return undefined;
+    })
+  );
+
+export const useIsLoop = (id1: string, id2: string) =>
+  useSelector(
+    createSelector(getWorkflowState, (state: WorkflowState) => {
+      const edgeIdsBySource = state.edgeIdsBySource;
+      const queue = new Queue<string>();
+      const checkedIds = new Set<string>();
+      queue.enqueue(id2);
+      while (queue.size > 0) {
+        const currentId = queue.dequeue();
+        if (currentId && !checkedIds.has(currentId)) {
+          checkedIds.add(currentId);
+          const childIds = edgeIdsBySource[currentId];
+          if (childIds) {
+            for (const childId of childIds) {
+              if (childId === id1) {
+                return true;
+              }
+              queue.enqueue(childId);
+            }
+          }
+        }
+      }
+      return false;
+    })
+  );
+
+export const useIsInfiniteLoop = (id1: string, id2: string) => {
+  const loopPath = useLoopEdgePath(id1, id2) ?? [];
+  const transitions = useSelector(
+    createSelector(getWorkflowState, (state: WorkflowState) => {
+      const operations = state.operations;
+      const output: LogicAppsV2.Transitions = {};
+      // Iterate over loop path
+      for (let i = 0; i < loopPath.length - 1; i++) {
+        const source = loopPath[i];
+        const target = loopPath[i + 1];
+        const transition = operations?.[source]?.transitions?.[target];
+        if (transition) {
+          output[target] = transition;
+        }
+      }
+      // Also check the last transition
+      const lastSource = loopPath[loopPath.length - 1];
+      const lastTarget = loopPath[0];
+      const lastTransition = operations?.[lastSource]?.transitions?.[lastTarget];
+      if (lastTransition) {
+        output[lastTarget] = lastTransition;
+      }
+
+      return output;
+    })
+  );
+  return useMemo(() => {
+    if (loopPath.length < 1) {
+      return false;
+    }
+    const noConditions = !Object.entries(transitions).some(([_, t]) => !!t.condition);
+    return noConditions;
+  }, [loopPath.length, transitions]);
+};
+
+export const useLoopEdgePath = (id1: string, id2: string) =>
+  useSelector(
+    createSelector(getWorkflowState, (state: WorkflowState) => {
+      const edgeIdsBySource = state.edgeIdsBySource;
+      const queue = new Queue<string>();
+      const visited = new Set<string>();
+
+      const parentMap: Record<string, string | null> = {};
+
+      queue.enqueue(id2);
+      parentMap[id2] = null;
+
+      while (queue.size > 0) {
+        const currentId = queue.dequeue();
+
+        if (!currentId || visited.has(currentId)) {
+          continue;
+        }
+        visited.add(currentId);
+
+        const childIds = edgeIdsBySource[currentId];
+        if (childIds) {
+          for (const childId of childIds) {
+            if (!(childId in parentMap)) {
+              parentMap[childId] = currentId;
+            }
+
+            if (childId === id1) {
+              // Found a loop back to the starting node
+              const path: string[] = [id1];
+              let trace: string | null = currentId;
+              while (trace !== null) {
+                path.unshift(trace);
+                trace = parentMap[trace];
+              }
+              return path;
+            }
+            queue.enqueue(childId);
+          }
+        }
+      }
+      return null;
+    })
+  );
+
+export const useTransitionRepetitionIndex = () =>
+  useSelector(createSelector(getWorkflowState, (state: WorkflowState) => state.transitionRepetitionIndex));
+
+export const useTransitionRepetitionArray = () =>
+  useSelector(createSelector(getWorkflowState, (state: WorkflowState) => state.transitionRepetitionArray));
+
 export const useIsEverythingExpanded = () =>
   useSelector(
     createSelector(getWorkflowState, (data) => {
@@ -254,6 +382,32 @@ export const getParentsUncollapseFromGraphState = (state: WorkflowState, actionI
 
 export const useNodeGraphId = (nodeId: string): string =>
   useSelector(createSelector(getWorkflowState, (state: WorkflowState) => getRecordEntry(state.nodesMetadata, nodeId)?.graphId ?? ''));
+
+export const useNodeGraphObject = (nodeId: string): WorkflowNode | undefined =>
+  useSelector(
+    createSelector(getWorkflowState, (state: WorkflowState) => {
+      const graph = state.graph;
+      if (!graph) {
+        return undefined;
+      }
+
+      const traverseGraph = (node: WorkflowNode): WorkflowNode | undefined => {
+        if (node.id === nodeId) {
+          return node;
+        }
+
+        let result: WorkflowNode | undefined;
+        for (const child of node.children ?? []) {
+          const childRes = traverseGraph(child);
+          if (childRes) {
+            result = childRes;
+          }
+        }
+        return result;
+      };
+      return traverseGraph(graph);
+    })
+  );
 
 // BFS search for nodeId
 const getChildrenOfNodeId = (childrenNodes: string[], nodeId: string, rootNode?: WorkflowNode) => {

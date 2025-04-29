@@ -1,0 +1,120 @@
+{
+	"definition": {
+		"$schema": "https://schema.management.azure.com/providers/Microsoft.Logic/schemas/2016-06-01/workflowdefinition.json#",
+		"triggers": {
+			"When_a_HTTP_request_is_received": {
+				"type": "Request",
+				"kind": "Http",
+				"transitions": {
+					"stateA": {
+						"inputs": {
+							"goto": "stateB"
+						}
+					}
+				}
+			}
+		},
+		"actions": {
+			"stateA": {
+				"type": "Compose",
+				"inputs": {
+					"goto": "stateB"
+				},
+				"transitions": {
+					"stateB": {
+						"when": [
+							"succeeded"
+						],
+						"condition": "@equals(outputs()?['goto'], 'stateB')",
+						"inputs": {
+							"goto": "stateC"
+						}
+					},
+					"stateC": {
+						"when": [
+							"succeeded"
+						],
+						"condition": "@equals(outputs()?['goto'], 'stateC')",
+						"inputs": {
+							"goto": "End"
+						}
+					}
+				}
+			},
+			"stateB": {
+				"type": "Compose",
+				"inputs": {
+					"goto": "stateA"
+				},
+				"transitions": {
+					"stateA": {
+						"when": [
+							"succeeded"
+						],
+						"condition": "@equals(outputs()?['goto'], 'stateA')",
+						"inputs": {
+							"goto": "stateC"
+						}
+					},
+					"stateC": {
+						"when": [
+							"succeeded"
+						],
+						"condition": "@equals(outputs()?['goto'], 'stateC')",
+						"inputs": {
+							"goto": "End"
+						}
+					}
+				}
+			},
+			"stateC": {
+				"type": "Compose",
+				"inputs": {
+					"goto": "End"
+				},
+				"transitions": {
+					"stateA": {
+						"when": [
+							"succeeded"
+						],
+						"condition": "@equals(outputs()?['goto'], 'stateA')",
+						"inputs": {
+							"goto": "stateC"
+						}
+					},
+					"stateB": {
+						"when": [
+							"succeeded"
+						],
+						"condition": "@equals(outputs()?['goto'], 'stateB')",
+						"inputs": {
+							"goto": "End"
+						}
+					},
+					"End": {
+						"when": [
+							"succeeded"
+						],
+						"condition": "@equals(outputs()?['goto'], 'End')",
+						"inputs": {
+							"goto": "End"
+						}
+					}
+				}
+			},
+			"End": {
+				"type": "Response",
+				"kind": "Http",
+				"inputs": {
+					"statusCode": 200,
+					"body": ""
+				}
+			}
+		},
+		"contentVersion": "1.0.0.0",
+		"outputs": {}
+	},
+	"kind": "stateMachine"
+}
+
+		

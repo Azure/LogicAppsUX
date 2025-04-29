@@ -1,0 +1,209 @@
+{
+	"definition": {
+		"$schema": "https://schema.management.azure.com/providers/Microsoft.Logic/schemas/2016-06-01/workflowdefinition.json#",
+		"triggers": {
+			"When_a_HTTP_request_is_received": {
+				"type": "Request",
+				"kind": "Http",
+				"transitions": {
+					"Document_variable": {
+						"when": [
+							"SUCCEEDED"
+						]
+					}
+				}
+			}
+		},
+		"actions": {
+			"Document_variable": {
+				"type": "InitializeVariable",
+				"inputs": {
+					"variables": [
+						{
+							"name": "Document",
+							"type": "string"
+						}
+					]
+				},
+				"transitions": {
+					"Document_state": {
+						"when": [
+							"SUCCEEDED"
+						]
+					}
+				}
+			},
+			"Document_state": {
+				"type": "InitializeVariable",
+				"inputs": {
+					"variables": [
+						{
+							"name": "DocumentState",
+							"type": "string",
+							"value": "Writing"
+						}
+					]
+				},
+				"transitions": {
+					"Writer": {
+						"when": [
+							"SUCCEEDED"
+						]
+					}
+				}
+			},
+			"Writer": {
+				"type": "Agent",
+				"inputs": {
+					"parameters": {
+						"deploymentId": "gpt-4o",
+						"messages": [{}]
+					},
+					"modelConfiguration": {
+						"connectionName": "agent",
+						"operationId": "agent",
+						"agentId": "connectionProviders/agent"
+					}
+				},
+				"tools": {
+					"Write": {
+						"actions": {
+							"Write_draft_document": {
+								"type": "SetVariable",
+								"inputs": {
+									"name": "Document",
+									"value": "Test"
+								}
+							}
+						},
+						"description": "Test"
+					}
+				},
+				"limit": {
+					"count": 100,
+					"timeout": "PT1H"
+				},
+				"transitions": {
+					"Reviewer": {
+						"when": [
+							"SUCCEEDED"
+						]
+					}
+				}
+			},
+			"Reviewer": {
+				"type": "Agent",
+				"inputs": {
+					"parameters": {
+						"deploymentId": "gpt-4o",
+						"messages": [{}]
+					},
+					"modelConfiguration": {
+						"connectionName": "agent",
+						"operationId": "agent",
+						"agentId": "connectionProviders/agent"
+					}
+				},
+				"tools": {
+					"Review": {
+						"actions": {
+							"Send_to_publisher": {
+								"type": "SetVariable",
+								"inputs": {
+									"name": "DocumentState",
+									"value": "Publishing"
+								}
+							}
+						},
+						"description": "Test"
+					},
+					"Rewrite": {
+						"actions": {
+							"Return_to_writer": {
+								"type": "SetVariable",
+								"inputs": {
+									"name": "DocumentState",
+									"value": "Writing"
+								}
+							}
+						},
+						"description": "Test"
+					}
+				},
+				"limit": {
+					"count": 100,
+					"timeout": "PT1H"
+				},
+				"transitions": {
+					"Writer": {
+						"when": [
+							"SUCCEEDED"
+						],
+						"condition": "@{equals(variables('DocumentState'),'Writing')}"
+					},
+					"Publisher": {
+						"when": [
+							"SUCCEEDED"
+						],
+						"condition": "@{equals(variables('DocumentState'),'Publishing')}"
+					}
+				}
+			},
+			"Publisher": {
+				"type": "Agent",
+				"inputs": {
+					"parameters": {
+						"deploymentId": "gpt-4o",
+						"messages": [{}]
+					},
+					"modelConfiguration": {
+						"connectionName": "agent",
+						"operationId": "agent",
+						"agentId": "connectionProviders/agent"
+					}
+				},
+				"tools": {
+					"Publish": {
+						"actions": {
+							"HTTP": {
+								"type": "Http",
+								"inputs": {
+									"uri": "https://www.google.com",
+									"method": "GET"
+								},
+								"runtimeConfiguration": {
+									"contentTransfer": {
+										"transferMode": "Chunked"
+									}
+								}
+							}
+						},
+						"description": "Test"
+					}
+				},
+				"limit": {
+					"count": 100,
+					"timeout": "PT1H"
+				},
+				"transitions": {
+					"Response": {
+						"when": [
+							"SUCCEEDED"
+						]
+					}
+				}
+			},
+			"Response": {
+				"type": "Response",
+				"kind": "Http",
+				"inputs": {
+					"statusCode": 200,
+					"body": "@variables('Document')"
+				}
+			}
+		},
+		"contentVersion": "1.0.0.0",
+		"outputs": {}
+	},
+	"kind": "Agentic"
+}

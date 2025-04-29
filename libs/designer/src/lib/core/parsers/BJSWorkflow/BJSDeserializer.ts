@@ -53,6 +53,9 @@ export const Deserialize = (
     source: 'BJSDeserializer.ts',
   });
 
+  const children = [];
+  const rootEdges: WorkflowEdge[] = [];
+
   // Process Trigger
   let triggerNode: WorkflowNode | null = null;
   let allActions: Operations = {};
@@ -70,6 +73,17 @@ export const Deserialize = (
       ...addTriggerInstanceMetaData(runInstance),
     };
     allActionNames.push(tID);
+
+    // For each trigger, if it has transitions then create edges
+    const triggers = Object.entries(definition.triggers);
+    for (const [triggerName, trigger] of triggers) {
+      if (trigger?.transitions) {
+        const transitionKeys = Object.keys(trigger.transitions);
+        for (const target of transitionKeys) {
+          rootEdges.push(createWorkflowEdge(triggerName, target, WORKFLOW_EDGE_TYPES.TRANSITION_EDGE));
+        }
+      }
+    }
   } else {
     // Workflow has no trigger, create a placeholder trigger node to reference during initialization
     const tID = constants.NODE.TYPE.PLACEHOLDER_TRIGGER;
@@ -82,19 +96,22 @@ export const Deserialize = (
     allActionNames.push(tID);
   }
 
-  const children = [];
-  const rootEdges: WorkflowEdge[] = [];
-  if (triggerNode) {
-    children.push(triggerNode);
-  }
+  children.push(triggerNode);
 
-  if (definition.actions) {
-    const entries = Object.entries(definition.actions);
-    const parentlessChildren = entries.filter(([, value]) => isNullOrEmpty(value.runAfter));
-    for (const [key] of parentlessChildren) {
-      rootEdges.push(createWorkflowEdge(triggerNode?.id ?? '', key));
-    }
-  }
+  // if (definition.actions) {
+  //   const entries = Object.entries(definition.actions);
+  //   // const parentlessChildren = entries.filter(([, value]) => isNullOrEmpty(value.runAfter));
+  //   // for (const [key] of parentlessChildren) {
+  // 	// 	rootEdges.push(createWorkflowEdge(triggerNode?.id ?? '', key));
+  //   // }
+  // 	const nodesWithTransitions = entries.filter(([, value]) => !isNullOrEmpty(value.transitions));
+  // 	for (const [source, action] of nodesWithTransitions) {
+  // 		const transitions = Object.entries(action.transitions ?? {});
+  // 		for (const [target] of Object.keys(transitions)) {
+  // 			rootEdges.push(createWorkflowEdge(source, target, WORKFLOW_EDGE_TYPES.TRANSITION_EDGE));
+  // 		}
+  // 	}
+  // }
 
   const [remainingChildren, edges, actions, actionNodesMetadata] = isNullOrUndefined(definition.actions)
     ? [[], [], {}]
@@ -486,6 +503,14 @@ export const buildGraphFromActions = (
           action.runAfter[runAfterAction] = runAfterValue;
         }
         edges.push(createWorkflowEdge(runAfterAction, actionName));
+      }
+    }
+
+    // Assign transitions
+    if (action.transitions) {
+      const transitionKeys = Object.keys(action.transitions);
+      for (const key of transitionKeys) {
+        edges.push(createWorkflowEdge(actionName, key, WORKFLOW_EDGE_TYPES.TRANSITION_EDGE));
       }
     }
 

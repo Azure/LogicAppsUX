@@ -42,6 +42,13 @@ const fileOptions = [
   { key: 'RunAfter.json', text: 'General Run After' },
   { key: 'MultipleRunAftersBig.json', text: 'Multiple Run Afters (Big)' },
 
+  // Transitions
+  { key: 'divider_3_1', text: '-', itemType: DropdownMenuItemType.Divider },
+  { key: 'TransitionsHeader', text: 'Transitions Testing Workflows', itemType: DropdownMenuItemType.Header },
+  { key: 'Transitions.json', text: 'General Transitions' },
+  { key: 'AgentLoopback.json', text: 'Agent Loopback' },
+  { key: 'Rohitha.json', text: 'Rohitha' },
+
   // Stress Tests
   { key: 'divider_4', text: '-', itemType: DropdownMenuItemType.Divider },
   { key: 'StressTestsHeader', text: 'Stress Test Workflows', itemType: DropdownMenuItemType.Header },
