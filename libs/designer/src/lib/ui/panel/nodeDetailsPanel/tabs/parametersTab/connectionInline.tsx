@@ -1,4 +1,3 @@
-import { Button } from '@fluentui/react-components';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import {
   CreateConnectionInternal,
@@ -6,7 +5,7 @@ import {
 } from '../../../connectionsPanel/createConnection/createConnectionWrapper';
 import { useDispatch, useSelector } from 'react-redux';
 import { getConnectionMetadata, reloadParametersTab, updateNodeConnection } from '../../../../../core/actions/bjsworkflow/connections';
-import { useConnectorByNodeId } from '../../../../../core/state/connection/connectionSelector';
+import { useConnectorByNodeId, useNodeConnectionId } from '../../../../../core/state/connection/connectionSelector';
 import { useConnectionPanelSelectedNodeIds, useOperationPanelSelectedNodeId } from '../../../../../core/state/panel/panelSelectors';
 import { useOperationManifest } from '../../../../../core/state/selectors/actionMetadataSelector';
 import { getAssistedConnectionProps } from '../../../../../core/utils/connectors/connections';
@@ -14,6 +13,8 @@ import type { AppDispatch, RootState } from '../../../../../core';
 import { useOperationInfo } from '../../../../../core';
 import { useIntl } from 'react-intl';
 import { useConnectionsForConnector } from '../../../../../core/queries/connections';
+import { isNullOrUndefined } from '@microsoft/logic-apps-shared';
+import { Button, Text } from '@fluentui/react-components';
 
 interface ConnectionInlineProps {
   setShowSubComponent?: React.Dispatch<React.SetStateAction<boolean>>;
@@ -34,6 +35,11 @@ export const ConnectionInline: React.FC<ConnectionInlineProps> = ({ showSubCompo
   const connections = useMemo(() => connectionQuery?.data ?? [], [connectionQuery]);
   const hasExistingConnections = connections.length > 0;
   const [showCreateConnection, setShowCreation] = useState(hasExistingConnections);
+  const currentConnectionId = useNodeConnectionId(nodeId);
+  const selectedConnection = useMemo(
+    () => connections.find((connection) => connection.id === currentConnectionId),
+    [connections, currentConnectionId]
+  );
 
   const setConnection = useCallback(() => {
     setShowCreation(true);
@@ -55,6 +61,11 @@ export const ConnectionInline: React.FC<ConnectionInlineProps> = ({ showSubCompo
         id: 'F0rSr0',
         description: 'Text to show that the user can create the connection',
       }),
+      NO_CONNECTION_SELECTED: intl.formatMessage({
+        defaultMessage: 'No connection has been selected',
+        id: 'bV03ZF',
+        description: 'Text to show that no connection is selected',
+      }),
     }),
     [intl]
   );
@@ -69,6 +80,13 @@ export const ConnectionInline: React.FC<ConnectionInlineProps> = ({ showSubCompo
   );
 
   if (!showSubComponent && hasExistingConnections) {
+    if (isNullOrUndefined(selectedConnection)) {
+      return <Text style={{ fontSize: 12 }}>{intlText.NO_CONNECTION_SELECTED} </Text>;
+    }
+    return <Text style={{ fontSize: 12 }}>{selectedConnection.properties.displayName} </Text>;
+  }
+
+  if (!showSubComponent) {
     return null;
   }
 
