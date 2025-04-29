@@ -80,10 +80,10 @@ export const ConnectionInline: React.FC<ConnectionInlineProps> = ({ showSubCompo
   );
 
   if (!showSubComponent && hasExistingConnections) {
-    if (isNullOrUndefined(selectedConnection)) {
-      return <Text style={{ fontSize: 12 }}>{intlText.NO_CONNECTION_SELECTED} </Text>;
-    }
-    return <Text style={{ fontSize: 12 }}>{selectedConnection.properties.displayName} </Text>;
+    const connectionText = isNullOrUndefined(selectedConnection)
+      ? intlText.NO_CONNECTION_SELECTED
+      : selectedConnection.properties.displayName;
+    return <Text style={{ fontSize: 12 }}>{connectionText} </Text>;
   }
 
   return showCreateConnection ? (
