@@ -20,7 +20,6 @@ import { useIntl } from 'react-intl';
 import { CommandBar, type ICommandBarItemProps } from '@fluentui/react';
 import { useCallback, useMemo } from 'react';
 import { openPanelView, TemplatePanelView } from '../../../core/state/templates/panelSlice';
-import { ConfigureWorkflowsPanel } from '../../panel/configureTemplatePanel/configureWorkflowsPanel/configureWorkflowsPanel';
 import { useFunctionalState } from '@react-hookz/web';
 import { Add12Filled } from '@fluentui/react-icons';
 import { deleteWorkflowData } from '../../../core/actions/bjsworkflow/configuretemplate';
@@ -28,6 +27,7 @@ import { useResourceStrings } from '../resources';
 import { useTemplatesStrings } from '../../templates/templatesStrings';
 import { WorkflowKind } from '../../../core/state/workflow/workflowInterfaces';
 import { equals } from '@microsoft/logic-apps-shared';
+import { ConfigureWorkflowsPanel } from '../panels/configureWorkflowsPanel/configureWorkflowsPanel';
 
 export const DisplayWorkflows = ({ onSave }: { onSave: (isMultiWorkflow: boolean) => void }) => {
   const intl = useIntl();

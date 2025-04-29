@@ -5,7 +5,7 @@ import { closePanel } from '../../../../../core/state/templates/panelSlice';
 import type { ConfigureWorkflowsTabProps } from '../configureWorkflowsPanel';
 import type { IntlShape } from 'react-intl';
 import type { WorkflowTemplateData } from '../../../../../core';
-import { CustomizeWorkflows } from '../../../../../ui/configuretemplate/workflows/customizeWorkflows';
+import { CustomizeWorkflows } from '../../../workflows/customizeWorkflows';
 import { Spinner } from '@fluentui/react-components';
 
 export const customizeWorkflowsTab = (

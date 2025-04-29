@@ -31,6 +31,32 @@ export class HttpClient implements IHttpClient {
     return response.data;
   }
 
+  async patch<ReturnType, BodyType>(options: HttpRequestOptions<BodyType>): Promise<ReturnType> {
+    const auth = options.noAuth
+      ? {}
+      : {
+          Authorization: `Bearer ${environment.armToken}`,
+        };
+    const response = await axios.patch(getRequestUrl(options), options.content, {
+      headers: {
+        ...this._extraHeaders,
+        ...options.headers,
+        'Content-Type': 'application/json',
+        ...auth,
+      },
+    });
+
+    if (!isSuccessResponse(response.status)) {
+      return Promise.reject(response);
+    }
+
+    try {
+      return response.data;
+    } catch {
+      return response as any;
+    }
+  }
+
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   async post<ReturnType, BodyType>(options: HttpRequestOptions<BodyType>): Promise<ReturnType> {
     const auth = options.noAuth

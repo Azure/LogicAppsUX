@@ -11,7 +11,7 @@ import {
 import type { WorkflowTemplateData, TemplatePayload } from '../../actions/bjsworkflow/templates';
 import { loadTemplate, validateWorkflowsBasicInfo } from '../../actions/bjsworkflow/templates';
 import { resetTemplatesState } from '../global';
-import { initializeWorkflowsData, deleteWorkflowData, loadCustomTemplate } from '../../actions/bjsworkflow/configuretemplate';
+import { deleteWorkflowData, loadCustomTemplate } from '../../actions/bjsworkflow/configuretemplate';
 import { getSupportedSkus } from '../../configuretemplate/utils/helper';
 
 export type TemplateEnvironment = 'Production' | 'Testing' | 'Development';
@@ -194,6 +194,19 @@ export const templateSlice = createSlice({
 
       state.workflows = workflows;
     },
+    updateConnectionAndParameterDefinitions: (
+      state,
+      action: PayloadAction<{
+        connections: Record<string, Template.Connection>;
+        parameterDefinitions: Record<string, Partial<Template.ParameterDefinition>>;
+      }>
+    ) => {
+      if (action.payload) {
+        state.connections = action.payload.connections;
+        state.parameterDefinitions = action.payload.parameterDefinitions as any;
+        (state.manifest as Template.TemplateManifest).skus = getSupportedSkus(action.payload.connections);
+      }
+    },
     updateEnvironment: (state, action: PayloadAction<TemplateEnvironment>) => {
       state.status = action.payload;
     },
@@ -246,23 +259,6 @@ export const templateSlice = createSlice({
             state.workflows[workflowId].errors.workflow = nameError;
             state.workflows[workflowId].errors.triggerDescription = triggerDescriptionError;
           }
-        }
-      }
-    );
-
-    builder.addCase(
-      initializeWorkflowsData.fulfilled,
-      (
-        state,
-        action: PayloadAction<{
-          connections: Record<string, Template.Connection>;
-          parameterDefinitions: Record<string, Partial<Template.ParameterDefinition>>;
-        }>
-      ) => {
-        if (action.payload) {
-          state.connections = action.payload.connections;
-          state.parameterDefinitions = action.payload.parameterDefinitions as any;
-          (state.manifest as Template.TemplateManifest).skus = getSupportedSkus(action.payload.connections);
         }
       }
     );
@@ -333,6 +329,7 @@ export const {
   updateWorkflowData,
   updateAllWorkflowsData,
   updateTemplateManifest,
+  updateConnectionAndParameterDefinitions,
   updateEnvironment,
 } = templateSlice.actions;
 export default templateSlice.reducer;

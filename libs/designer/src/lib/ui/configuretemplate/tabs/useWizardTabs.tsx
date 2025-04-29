@@ -9,6 +9,8 @@ import { publishTab } from './publishTab';
 import { reviewTab } from './reviewTab';
 import { useTemplatesStrings } from '../../templates/templatesStrings';
 import { useResourceStrings } from '../resources';
+import type { Template } from '@microsoft/logic-apps-shared';
+import { TemplateResourceService } from '@microsoft/logic-apps-shared';
 
 export const useConfigureTemplateWizardTabs = ({
   onSaveWorkflows,
@@ -21,16 +23,25 @@ export const useConfigureTemplateWizardTabs = ({
   const dispatch = useDispatch<AppDispatch>();
   const resources = { ...useTemplatesStrings().tabLabelStrings, ...useResourceStrings() };
 
-  const { enableWizard, isWizardUpdating, workflows, parametersHasError, templateManifestHasError, runValidation } = useSelector(
-    (state: RootState) => ({
-      enableWizard: state.tab.enableWizard,
-      isWizardUpdating: state.tab.isWizardUpdating,
-      runValidation: state.tab.runValidation,
-      workflows: state.template.workflows,
-      parametersHasError: Object.values(state.template.errors.parameters).some((value) => value !== undefined),
-      templateManifestHasError: Object.values(state.template.errors.manifest).some((value) => value !== undefined),
-    })
-  );
+  const {
+    enableWizard,
+    isWizardUpdating,
+    templateManifest,
+    state,
+    workflows,
+    parametersHasError,
+    templateManifestHasError,
+    runValidation,
+  } = useSelector((state: RootState) => ({
+    enableWizard: state.tab.enableWizard,
+    isWizardUpdating: state.tab.isWizardUpdating,
+    runValidation: state.tab.runValidation,
+    templateManifest: state.template.manifest,
+    state: state.template.status,
+    workflows: state.template.workflows,
+    parametersHasError: Object.values(state.template.errors.parameters).some((value) => value !== undefined),
+    templateManifestHasError: Object.values(state.template.errors.manifest).some((value) => value !== undefined),
+  }));
 
   const hasAnyWorkflowErrors = Object.values(workflows).some(
     ({ errors }) =>
@@ -40,7 +51,14 @@ export const useConfigureTemplateWizardTabs = ({
   );
 
   const onProfileSave = () => {
-    // TODO: Implement the save logic for the profile tab
+    const manifestToUpdate: Template.TemplateManifest = {
+      ...(templateManifest as Template.TemplateManifest),
+      details: {
+        ...templateManifest?.details,
+        Type: Object.keys(workflows).length > 1 ? 'Accelerator' : 'Workflow',
+      } as any,
+    };
+    TemplateResourceService().updateTemplate(templateManifest?.id as string, manifestToUpdate, state);
   };
   const disableProfileSave = false;
 

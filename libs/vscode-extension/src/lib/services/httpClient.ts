@@ -43,6 +43,36 @@ export class HttpClient implements IHttpClient {
     return responseData?.data;
   }
 
+  async patch<ReturnType, BodyType>(options: HttpRequestOptions<BodyType>): Promise<ReturnType> {
+    const isArmId = isArmResourceId(options.uri);
+    const request = {
+      ...options,
+      url: this.getRequestUrl(options),
+      headers: {
+        ...this._extraHeaders,
+        ...options.headers,
+        Authorization: `${isArmId ? this._accessToken : ''}`,
+        'Content-Type': 'application/json',
+      },
+      data: options.content,
+      commandName: 'Designer.httpClient.patch',
+    };
+    const responseData = await axios({
+      method: HTTP_METHODS.PATCH,
+      ...request,
+    });
+
+    if (!isSuccessResponse(responseData.status)) {
+      return Promise.reject(responseData);
+    }
+
+    try {
+      return JSON.parse(responseData.data);
+    } catch {
+      return responseData.data as any;
+    }
+  }
+
   async post<ReturnType, BodyType>(options: HttpRequestOptions<BodyType>): Promise<ReturnType> {
     const isArmId = isArmResourceId(options.uri);
     const request = {

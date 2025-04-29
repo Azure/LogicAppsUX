@@ -8,6 +8,10 @@ export class MockHttpClient implements IHttpClient {
     const a: unknown = {};
     return a as ReturnType;
   }
+  patch<ReturnType>() {
+    const a: unknown = {};
+    return a as ReturnType;
+  }
   post<ReturnType>() {
     const a: unknown = {};
     return a as ReturnType;
