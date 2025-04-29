@@ -2,9 +2,21 @@ import type { IActionContext } from '@microsoft/vscode-azext-utils';
 import { webviewType } from './constants';
 import { ViewColumn, window } from 'vscode';
 import ConnectionsPanel from './ConnectionsPanel';
+import { startDesignTimeApi } from '../../utils/codeless/startDesignTimeApi';
+import { getLogicAppProjectRoot } from '../../utils/codeless/connection';
+import * as vscode from 'vscode';
 
 export default class ConnectionsExt {
-  public static async openConnectionsPanel(context: IActionContext, connectionId: string) {
+  public connectionId: string;
+
+  public static async openConnectionsPanel(context: IActionContext, entryUri: string) {
+
+    const connectionId = entryUri.split('/').pop() || '';
+
+    const p = vscode.window.activeTextEditor?.document.uri;
+    //const project = vscode.workspace.workspaceFolders[0].uri.fsPath;
+    const projectPath = await getLogicAppProjectRoot(context, p.fsPath); // danielle need to fix 
+    await startDesignTimeApi(projectPath);
     ConnectionsExt.createOrShow(connectionId);
   }
   public static createOrShow(connectionId: string) {

@@ -49,6 +49,11 @@
     },
     "commands": [
       {
+        "command": "azureLogicAppsStandard.openConnectionView",
+        "title": "Open Connections for testing",
+        "category": "Azure Logic Apps"
+      },
+      {
         "command": "azureLogicAppsStandard.openDesigner",
         "title": "Open Designer",
         "category": "Azure Logic Apps"
@@ -455,6 +460,12 @@
           "group": "2@5"
         },
         {
+          "command": "azureLogicAppsStandard.openConnectionView",
+          "when": "view == azureResourceGroups && viewItem =~ /Remote;.*;Workflow;/i",
+          "group": "1@2"
+        },
+        
+        {
           "command": "azureLogicAppsStandard.openDesigner",
           "when": "view == azureResourceGroups && viewItem =~ /Remote;.*;Workflow;/i",
           "group": "1@2"
@@ -690,6 +701,16 @@
           "command": "azureLogicAppsStandard.openOverview",
           "when": "resourceFilename==workflow.json",
           "group": "navigation@1"
+        },
+        {
+          "command": "azureLogicAppsStandard.openConnectionView",
+          "when": "resourceFilename==workflow.json",
+          "group": "navigation@3"
+        },
+        {
+          "command": "azureLogicAppsStandard.openConnectionView",
+          "when": "resourceFilename==workflow.cs",
+          "group": "navigation@3"
         },
         {
           "command": "azureLogicAppsStandard.openDesigner",

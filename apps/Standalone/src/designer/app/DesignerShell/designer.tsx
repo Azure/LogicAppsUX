@@ -7,6 +7,7 @@ import LogicAppsDesignerConsumption from '../AzureLogicAppsDesigner/laDesignerCo
 import { LocalDesigner } from '../LocalDesigner/localDesigner';
 import { ReactQueryProvider } from '@microsoft/logic-apps-designer';
 import { useQuery } from '@tanstack/react-query';
+import { ConnectionsEditor } from '../AzureLogicAppsDesigner/laConnections';
 
 const LoadWhenArmTokenIsLoaded = ({ children }: { children: ReactNode }) => {
   const { isLoading } = useQuery(['armToken'], loadToken);
@@ -29,7 +30,7 @@ export const DesignerWrapper = () => {
             hostingPlan === 'consumption' ? (
               <LogicAppsDesignerConsumption />
             ) : (
-              <LogicAppsDesignerStandard />
+              <ConnectionsEditor />
             )
           ) : null}
         </div>

@@ -376,5 +376,17 @@ export interface LoadConnection {
   command: typeof ExtensionCommand.loadConnection;
   data: {
     connectionId: string;
+    baseUrl: string;
+    workflowRuntimeBaseUrl: string;
+  };
+}
+
+export interface InitializeConnection {
+  command: typeof ExtensionCommand.initializeConnectionFrame;
+  data: {
+    connectionId: string;
+    baseUrl: string;
+    workflowRuntimeBaseUrl: string;
+    project: string;
   };
 }

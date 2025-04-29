@@ -177,7 +177,8 @@ export class StandardConnectionService extends BaseConnectionService implements 
         }
 
         response = await httpClient.get<Connector>({
-          uri: `${baseUrl}/operationGroups/${connectorIdKeyword}?api-version=${apiVersion}`,
+          uri:  `${baseUrl}/operationGroups/${connectorIdKeyword}?api-version=${apiVersion}`,
+          //`http://localhost:8000/runtime/webhooks/workflow/api/management/operationGroups/${connectorIdKeyword}?api-version=${apiVersion}`,
         });
       }
 

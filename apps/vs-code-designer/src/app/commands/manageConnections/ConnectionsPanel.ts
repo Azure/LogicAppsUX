@@ -5,9 +5,12 @@ import type { MessageToVsix } from '@microsoft/vscode-extension-logic-apps';
 import { ExtensionCommand, ProjectName } from '@microsoft/vscode-extension-logic-apps';
 import type { WebviewPanel } from 'vscode';
 import type { MessageToCommandWebview } from './constants';
+import { managementApiPrefix } from '../../../constants';
 
 export default class ConnectionsPanel {
   public panel: WebviewPanel;
+  private baseUrl: string;
+  private workflowRuntimeBaseUrl: string;
 
   public connectionName: string;
 
@@ -16,7 +19,10 @@ export default class ConnectionsPanel {
   constructor(panel: WebviewPanel, connectionName: string) {
     this.panel = panel;
     this.connectionName = connectionName;
-
+   
+    this.baseUrl = `http://localhost:${ext.designTimePort}${managementApiPrefix}`;
+    this.workflowRuntimeBaseUrl = `http://localhost:${ext.workflowRuntimePort}${managementApiPrefix}`;
+    
     this._handleWebviewMsg = this._handleWebviewMsg.bind(this);
 
     ext.context.subscriptions.push(panel);
@@ -27,8 +33,9 @@ export default class ConnectionsPanel {
     this.panel.webview.onDidReceiveMessage(this._handleWebviewMsg, undefined, ext.context.subscriptions);
 
     this.sendMsgToWebview({
-      command: ExtensionCommand.initialize_frame,
-      data: { connectionId: connectionName, project: ProjectName.connections },
+      command: ExtensionCommand.initializeConnectionFrame,
+      data: { connectionId: connectionName, project: ProjectName.connections, baseUrl: this.baseUrl,
+        workflowRuntimeBaseUrl: this.workflowRuntimeBaseUrl, },
     });
 
     this.sendMsgToWebview({
@@ -49,8 +56,11 @@ export default class ConnectionsPanel {
     switch (msg.command) {
       case ExtensionCommand.initialize: {
         this.sendMsgToWebview({
-          command: ExtensionCommand.initialize_frame,
-          data: { connectionId: this.connectionName, project: ProjectName.connections },
+          command: ExtensionCommand.initializeConnectionFrame,
+          data: { connectionId: this.connectionName, project: ProjectName.connections,
+            baseUrl: this.baseUrl,
+            workflowRuntimeBaseUrl: this.workflowRuntimeBaseUrl,
+           },
         });
         break;
       }

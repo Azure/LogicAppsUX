@@ -1,3 +1,4 @@
+import { connectionSlice } from './ConnectionSlice';
 import { dataMapSlice as dataMapSliceV1 } from './DataMapSlice';
 import { dataMapSlice as dataMapSliceV2 } from './DataMapSliceV2';
 import { designerSlice } from './DesignerSlice';
@@ -11,6 +12,7 @@ export const store = configureStore({
     project: projectSlice.reducer,
     workflow: workflowSlice.reducer,
     designer: designerSlice.reducer,
+    connection: connectionSlice.reducer,
     unitTest: unitTestSlice.reducer,
     dataMapDataLoader: dataMapSliceV1.reducer, // Data Mapper V1
     dataMap: dataMapSliceV2.reducer, // Data Mapper V2

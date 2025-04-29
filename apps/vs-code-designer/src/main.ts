@@ -82,22 +82,22 @@ export async function activate(context: vscode.ExtensionContext) {
     },
   };
 
-  const clientOptions: LanguageClientOptions = {
-    documentSelector: [{ scheme: 'file', language: 'csharp' }],
-    synchronize: {
-      fileEvents: fileSystemWatcher,
-    },
-    middleware: { ...hoverMiddleware, ...generalMiddleware },
-  };
+  // const clientOptions: LanguageClientOptions = {
+  //   documentSelector: [{ scheme: 'file', language: 'csharp' }],
+  //   synchronize: {
+  //     fileEvents: fileSystemWatcher,
+  //   },
+  //   middleware: { ...hoverMiddleware, ...generalMiddleware },
+  // };
 
-  // Create the language client and start the client.
-  client = new LanguageClient('languageServerExample', 'Language Server Example', serverOptions, clientOptions);
+  // // Create the language client and start the client.
+  // client = new LanguageClient('languageServerExample', 'Language Server Example', serverOptions, clientOptions);
 
-  client.onDidChangeState((e) => {
-    console.log(`Client state changed: ${e.newState}`);
-  });
+  // client.onDidChangeState((e) => {
+  //   console.log(`Client state changed: ${e.newState}`);
+  // });
 
-  client.start();
+  // client.start();
 
   // Data Mapper context
   vscode.commands.executeCommand(

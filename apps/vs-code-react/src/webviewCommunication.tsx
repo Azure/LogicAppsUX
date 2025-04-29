@@ -20,6 +20,7 @@ import type {
   GetTestFeatureEnablementStatus,
   GetAvailableCustomXsltPathsMessageV2,
   LoadConnection,
+  InitializeConnection,
 } from './run-service';
 import {
   changeCustomXsltPathList,
@@ -47,7 +48,7 @@ import {
   changeXsltContent as changeXsltContentV2,
   changeXsltFilename as changeXsltFilenameV2,
 } from './state/DataMapSliceV2';
-import { initializeDesigner, updateCallbackUrl, updateFileSystemConnection, updatePanelMetadata } from './state/DesignerSlice';
+import { initializeConnectionsDesigner, initializeDesigner, updateCallbackUrl, updateFileSystemConnection, updatePanelMetadata } from './state/DesignerSlice';
 import type { InitializePayload } from './state/WorkflowSlice';
 import { initializeWorkflow, updateAccessToken, updateTargetDirectory, addStatus, setFinalStatus } from './state/WorkflowSlice';
 import { changeDataMapperVersion, initialize } from './state/projectSlice';
@@ -64,7 +65,7 @@ const vscode: WebviewApi<unknown> = acquireVsCodeApi();
 export const VSCodeContext = React.createContext(vscode);
 
 type DesignerMessageType = ReceiveCallbackMessage | CompleteFileSystemConnectionMessage | UpdatePanelMetadataMessage;
-type ConnectionsMessageType = LoadConnection;
+type ConnectionsMessageType = InitializeConnection;
 type DataMapperMessageType =
   | FetchSchemaMessage
   | LoadDataMapMessage
@@ -117,9 +118,12 @@ export const WebViewCommunication: React.FC<{ children: ReactNode }> = ({ childr
         break;
       }
       case ProjectName.connections: {
-        if (message.command === ExtensionCommand.loadConnection) {
+        if (message.command === ExtensionCommand.initializeConnectionFrame) {
+          dispatch(initializeConnectionsDesigner(message.data));
           dispatch(initializeConnection(message.data.connectionId));
-          console.log('Connections project initialized');
+          dispatch(initialize(message.data.project));
+          console.log('Connections project initialized:' + message.data.baseUrl );
+          console.log('Connections project initialized:' + message.data.connectionId );
         }
         break;
       }

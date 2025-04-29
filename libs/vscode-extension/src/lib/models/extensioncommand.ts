@@ -9,6 +9,7 @@ export const ExtensionCommand = {
   getConfigurationSetting: 'getConfigurationSetting',
   getAvailableCustomXsltPaths: 'getAvailableCustomXsltPaths',
   getAvailableCustomXsltPathsV2: 'getAvailableCustomXsltPathsV2',
+  initializeConnectionFrame: 'initializeConnectionFrame',
   initialize_frame: 'initialize-frame',
   loadDataMap: 'loadDataMap',
   update_access_token: 'update-access-token',

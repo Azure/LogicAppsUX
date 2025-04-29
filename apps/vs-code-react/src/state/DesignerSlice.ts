@@ -1,7 +1,7 @@
 import type { ApiHubServiceDetails, ListDynamicValue, UnitTestDefinition } from '@microsoft/logic-apps-shared';
 import type { ConnectionsData, ICallbackUrlResponse, IDesignerPanelMetadata } from '@microsoft/vscode-extension-logic-apps';
 import type { PayloadAction } from '@reduxjs/toolkit';
-import { createSlice } from '@reduxjs/toolkit';
+import { createSlice, current } from '@reduxjs/toolkit';
 
 export interface DesignerState {
   panelMetaData: IDesignerPanelMetadata | null;
@@ -23,7 +23,7 @@ export interface DesignerState {
   unitTestDefinition: UnitTestDefinition | null;
 }
 
-const initialState: DesignerState = {
+export const initialState: DesignerState = {
   panelMetaData: null,
   baseUrl: '/url',
   workflowRuntimeBaseUrl: '',
@@ -92,6 +92,10 @@ export const designerSlice = createSlice({
       state.isUnitTest = isUnitTest;
       state.unitTestDefinition = unitTestDefinition;
     },
+    initializeConnectionsDesigner: (state, action: PayloadAction<Partial<DesignerState>>) => {
+      console.log('initializeConnectionsDesigner');
+      state.baseUrl = 'http://localhost:8000/runtime/webhooks/workflow/api/management';
+    },
     updateCallbackUrl: (state, action: PayloadAction<any>) => {
       const { callbackInfo } = action.payload;
       state.callbackInfo = callbackInfo;
@@ -132,6 +136,7 @@ export const designerSlice = createSlice({
 
 export const {
   initializeDesigner,
+  initializeConnectionsDesigner,
   updateCallbackUrl,
   createFileSystemConnection,
   updateFileSystemConnection,

@@ -83,6 +83,8 @@ export const getDesignerServices = (
 
   const armUrl = 'https://management.azure.com';
 
+  console.log('base url from service creation ' + baseUrl)
+
   if (panelMetadata) {
     authToken = panelMetadata.accessToken ?? '';
     panelId = panelMetadata.panelId;

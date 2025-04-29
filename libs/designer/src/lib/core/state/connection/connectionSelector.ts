@@ -39,6 +39,11 @@ export const useConnector = (connectorId?: string, enabled = true, useCachedData
     }
   );
 
+export const useConnectorById = (connectorId?: string): Connector | undefined => {
+  const connector = useConnector(connectorId)?.data;
+  return connector
+}
+
 export const useConnectors = (connectorIds?: string[]) =>
   useQuery(
     ['connectors', connectorIds],
