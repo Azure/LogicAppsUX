@@ -689,6 +689,7 @@ export interface Operation {
   metadata?: any;
   operationOptions?: string;
   runtimeConfiguration?: any;
+  transitions?: Transitions;
 }
 
 export type TriggerDefinition =
@@ -1039,4 +1040,16 @@ export interface RunInstanceDefinition {
   id: string;
   name: string;
   type: string;
+}
+
+/* Transitions */
+
+export interface Transitions {
+  [actionName: string]: Transition;
+}
+
+export interface Transition {
+  when: string[];
+  condition?: string | undefined;
+  inputs?: any;
 }

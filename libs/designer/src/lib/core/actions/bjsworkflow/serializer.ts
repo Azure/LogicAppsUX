@@ -422,6 +422,7 @@ const serializeManifestBasedOperation = async (rootState: RootState, operationId
   const runAfter = isRootNode(operationId, rootState.workflow.nodesMetadata)
     ? undefined
     : getRunAfter(operationFromWorkflow, idReplacements);
+  const transitions = getTransitions(operationFromWorkflow, idReplacements);
   const recurrence =
     isTrigger && manifest.properties.recurrence && manifest.properties.recurrence.type !== RecurrenceType.None
       ? constructInputValues('recurrence.$.recurrence', inputsToSerialize, false /* encodePathComponents */)
@@ -445,6 +446,7 @@ const serializeManifestBasedOperation = async (rootState: RootState, operationId
     ...childOperations,
     ...optional('channels', channels),
     ...optional('runAfter', runAfter),
+    ...optional('transitions', transitions),
     ...optional('recurrence', recurrence),
     ...serializeSettings(operationId, nodeSettings, nodeStaticResults, isTrigger, rootState),
   };
@@ -460,6 +462,7 @@ const serializeSwaggerBasedOperation = async (rootState: RootState, operationId:
   const nodeStaticResults = getRecordEntry(rootState.operations.staticResults, operationId) ?? ({} as NodeStaticResults);
   const operationFromWorkflow = getRecordEntry(rootState.workflow.operations, operationId) as LogicAppsV2.OperationDefinition;
   const runAfter = isTrigger ? undefined : getRunAfter(operationFromWorkflow, idReplacements);
+  const transitions = getTransitions(operationFromWorkflow, idReplacements);
   const recurrence =
     isTrigger && equals(type, Constants.NODE.TYPE.API_CONNECTION)
       ? constructInputValues('recurrence.$.recurrence', inputsToSerialize, false /* encodePathComponents */)
@@ -488,6 +491,7 @@ const serializeSwaggerBasedOperation = async (rootState: RootState, operationId:
     ...optional('kind', kind),
     ...optional('inputs', inputs),
     ...optional('runAfter', runAfter),
+    ...optional('transitions', transitions),
     ...optional('recurrence', recurrence),
     ...serializeSettings(operationId, nodeSettings, nodeStaticResults, isTrigger, rootState),
   };
@@ -506,6 +510,7 @@ export const serializeAgentConnectorOperation = async (
   const inputPathValue = serializeParametersFromManifest(inputsToSerialize, ConnectorManifest);
   const operationFromWorkflow = getRecordEntry(rootState.workflow.operations, operationId) as LogicAppsV2.OperationDefinition;
   const runAfter = getRunAfter(operationFromWorkflow, idReplacements);
+  const transitions = getTransitions(operationFromWorkflow, idReplacements);
 
   return {
     type: operation.type,
@@ -513,6 +518,7 @@ export const serializeAgentConnectorOperation = async (
     ...optional('kind', operation.kind),
     ...optional('inputs', inputPathValue),
     ...optional('runAfter', runAfter),
+    ...optional('transitions', transitions),
   };
 };
 
@@ -521,6 +527,16 @@ const getRunAfter = (operation: LogicAppsV2.ActionDefinition, idReplacements: Re
     return {};
   }
   return Object.entries(operation.runAfter).reduce((acc: LogicAppsV2.RunAfter, [key, value]) => {
+    acc[getRecordEntry(idReplacements, key) ?? key] = value;
+    return acc;
+  }, {});
+};
+
+const getTransitions = (operation: LogicAppsV2.ActionDefinition, idReplacements: Record<string, string>): LogicAppsV2.Transitions => {
+  if (!operation.transitions) {
+    return {};
+  }
+  return Object.entries(operation.transitions).reduce((acc: LogicAppsV2.Transitions, [key, value]) => {
     acc[getRecordEntry(idReplacements, key) ?? key] = value;
     return acc;
   }, {});

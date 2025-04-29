@@ -75,6 +75,9 @@ export const useOperationPanelSelectedNodeId = () =>
 export const useOperationPanelSelectedNodeActiveTabId = () =>
   useSelector(createSelector(getPanelState, (state) => state.operationContent.selectedNodeActiveTabId));
 
+export const useOperationPanelSelectedTransitionTargetId = () =>
+  useSelector(createSelector(getPanelState, (state) => state.operationContent.selectedTransitionTargetId));
+
 export const usePanelLocation = () => useSelector(createSelector(getPanelState, (state) => state.location));
 
 export const usePreviousPanelMode = () => useSelector(createSelector(getPanelState, (state) => state.previousPanelMode));

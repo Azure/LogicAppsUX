@@ -1,8 +1,22 @@
-import type { IIconProps, IIconStyles, ITextFieldStyles } from '@fluentui/react';
-import { css, Icon, IconButton, TextField, TooltipHost } from '@fluentui/react';
-import { Text } from '@fluentui/react-components';
+import type { ITextFieldStyles } from '@fluentui/react';
+import { css, TextField } from '@fluentui/react';
+import { Button, Text, Tooltip } from '@fluentui/react-components';
 import React, { useCallback, useEffect, useMemo } from 'react';
 import { useIntl } from 'react-intl';
+
+import {
+  bundleIcon,
+  ChevronLeftFilled,
+  ChevronLeftRegular,
+  ChevronRightFilled,
+  ChevronRightRegular,
+  ImportantFilled,
+  ImportantRegular,
+} from '@fluentui/react-icons';
+
+const ChevronPrevious = bundleIcon(ChevronLeftFilled, ChevronLeftRegular);
+const ChevronNext = bundleIcon(ChevronRightFilled, ChevronRightRegular);
+const ImportantIcon = bundleIcon(ImportantFilled, ImportantRegular);
 
 export type PageChangeEventHandler = (e: PageChangeEventArgs) => void;
 
@@ -40,34 +54,10 @@ export interface PagerProps {
 interface PagerButtonProps {
   disabled: boolean;
   failed?: boolean;
-  iconProps: IIconProps;
+  icon: any;
   text: string;
   onClick(): void;
 }
-
-const iconFailedProps: IIconProps = {
-  iconName: 'Important',
-};
-
-const iconFailedNextStyles: IIconStyles = {
-  root: {
-    right: 0,
-  },
-};
-
-const iconFailedPreviousStyles: IIconStyles = {
-  root: {
-    left: 0,
-  },
-};
-
-const nextIconProps: IIconProps = {
-  iconName: 'ChevronRight',
-};
-
-const previousIconProps: IIconProps = {
-  iconName: 'ChevronLeft',
-};
 
 export const Pager: React.FC<PagerProps> = ({
   current: initialCurrent = 1,
@@ -259,12 +249,12 @@ export const Pager: React.FC<PagerProps> = ({
         </div>
       )}
       <div className="msla-pager-v2" onClick={handleClick}>
-        <PagerButton disabled={current <= min} iconProps={previousIconProps} text={pagerPreviousString} onClick={handlePreviousClick} />
+        <PagerButton disabled={current <= min} icon={<ChevronPrevious />} text={pagerPreviousString} onClick={handlePreviousClick} />
         {failedIterationProps && (
           <PagerButton
             disabled={failedMin < 1 || current <= failedMin}
             failed={true}
-            iconProps={previousIconProps}
+            icon={<ChevronPrevious />}
             text={previousPagerFailedStrign}
             onClick={handlePreviousFailedClick}
           />
@@ -313,38 +303,25 @@ export const Pager: React.FC<PagerProps> = ({
           <PagerButton
             disabled={failedMax < 1 || current >= failedMax}
             failed={true}
-            iconProps={nextIconProps}
+            icon={<ChevronNext />}
             text={pagerNextFailedString}
             onClick={handleNextFailedClick}
           />
         )}
-        <PagerButton disabled={current >= max} iconProps={nextIconProps} text={pagerNextString} onClick={handleNextClick} />
+        <PagerButton disabled={current >= max} icon={<ChevronNext />} text={pagerNextString} onClick={handleNextClick} />
       </div>
       {countInfo && <div />}
     </div>
   );
 };
 
-const PagerButton: React.FC<PagerButtonProps> = ({ disabled, failed, iconProps, text, onClick }) => {
-  const intl = useIntl();
-  const previousPagerFailedString = intl.formatMessage({
-    defaultMessage: 'Previous failed',
-    id: 'gKq3Jv',
-    description: 'Label of a button to go to the previous failed page option',
-  });
-
+const PagerButton: React.FC<PagerButtonProps> = ({ disabled, failed, icon, text, onClick }) => {
   return (
     <div className="msla-pager-failed-container">
-      <TooltipHost content={text}>
-        <IconButton ariaLabel={text} disabled={disabled} iconProps={iconProps} text={text} onClick={onClick} />
-      </TooltipHost>
-      {failed && (
-        <Icon
-          className="msla-pager-failed-icon"
-          iconName={iconFailedProps.iconName}
-          styles={text === previousPagerFailedString ? iconFailedPreviousStyles : iconFailedNextStyles}
-        />
-      )}
+      <Tooltip content={text} relationship="description" showDelay={800}>
+        <Button disabled={disabled} icon={icon} onClick={onClick} appearance={'subtle'} />
+      </Tooltip>
+      {failed && <ImportantIcon className="msla-pager-failed-icon" />}
     </div>
   );
 };

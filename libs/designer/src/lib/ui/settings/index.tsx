@@ -10,14 +10,12 @@ import { useOperationDownloadChunkMetadata, useOperationUploadChunkMetadata } fr
 import { useExpandedSections } from '../../core/state/setting/settingSelector';
 import { setExpandedSections } from '../../core/state/setting/settingSlice';
 import { updateTokenSecureStatus } from '../../core/state/tokens/tokensSlice';
-import { useRootTriggerId } from '../../core/state/workflow/workflowSelectors';
 import type { AppDispatch, RootState } from '../../core/store';
 import { isRootNodeInGraph } from '../../core/utils/graph';
 import { isSecureOutputsLinkedToInputs } from '../../core/utils/setting';
 import { DataHandling } from './sections/datahandling';
 import { General } from './sections/general';
 import { Networking } from './sections/networking';
-import { RunAfter } from './sections/runafter';
 import { Security } from './sections/security';
 import { Tracking } from './sections/tracking';
 import type { ValidationError } from './validation/validation';
@@ -36,6 +34,7 @@ export const SettingSectionName = {
   GENERAL: 'general',
   NETWORKING: 'networking',
   RUNAFTER: 'runafter',
+  TRANSITIONS: 'transitions',
   SECURITY: 'security',
   TRACKING: 'tracking',
 } as const;
@@ -43,8 +42,8 @@ export type SettingSectionName = (typeof SettingSectionName)[keyof typeof Settin
 
 export interface SectionProps extends Settings {
   readOnly: boolean | undefined;
-  nodeId: string;
-  expanded: boolean;
+  nodeId?: string;
+  expanded?: boolean;
   onHeaderClick?: HeaderClickHandler;
   validationErrors?: ValidationError[];
 }
@@ -163,11 +162,6 @@ export const SettingsPanel: React.FC<PanelTabProps> = (props) => {
         downloadChunkMetadata={downloadChunkMetadata}
         updateSettings={(settings, validateSetting) => handleUpdateSettings(settings, SettingSectionName.NETWORKING, validateSetting)}
         {...getPropsBasedOnSection(SettingSectionName.NETWORKING)}
-      />
-      <RunAfterSettings
-        {...baseSettingProps}
-        updateSettings={(settings, validateSetting) => handleUpdateSettings(settings, SettingSectionName.RUNAFTER, validateSetting)}
-        {...getPropsBasedOnSection(SettingSectionName.RUNAFTER)}
       />
       <SecuritySettings
         {...baseSettingProps}
@@ -666,24 +660,6 @@ function NetworkingSettings({
     );
   }
   return null;
-}
-
-function RunAfterSettings({ nodeId, readOnly, isExpanded, validationErrors, dispatch }: SettingSectionProps): JSX.Element | null {
-  // Don't show run after for the root trigger
-  const rootTriggerId = useRootTriggerId();
-  if (nodeId === rootTriggerId) {
-    return null;
-  }
-
-  return (
-    <RunAfter
-      nodeId={nodeId}
-      readOnly={readOnly}
-      expanded={isExpanded}
-      validationErrors={validationErrors}
-      onHeaderClick={(sectionName) => dispatch(setExpandedSections(sectionName))}
-    />
-  );
 }
 
 function SecuritySettings({

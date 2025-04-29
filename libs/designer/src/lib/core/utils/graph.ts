@@ -62,7 +62,7 @@ export const createWorkflowEdge = (source: string, target: string, type?: Workfl
   id: `${source}-${target}`,
   source,
   target,
-  type: type ?? WORKFLOW_EDGE_TYPES.BUTTON_EDGE,
+  type: type ?? WORKFLOW_EDGE_TYPES.TRANSITION_EDGE,
 });
 
 export const createElkEdge = (source: string, target: string, type?: WorkflowEdgeType): ElkExtendedEdge => ({
@@ -70,7 +70,7 @@ export const createElkEdge = (source: string, target: string, type?: WorkflowEdg
   sources: [source],
   targets: [target],
   layoutOptions: {
-    edgeType: type ?? WORKFLOW_EDGE_TYPES.BUTTON_EDGE,
+    edgeType: type ?? WORKFLOW_EDGE_TYPES.TRANSITION_EDGE,
   },
 });
 

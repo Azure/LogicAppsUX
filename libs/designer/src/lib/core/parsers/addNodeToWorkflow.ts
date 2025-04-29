@@ -13,6 +13,7 @@ import {
   isScopeOperation,
   WORKFLOW_NODE_TYPES,
   getRecordEntry,
+  clone,
 } from '@microsoft/logic-apps-shared';
 
 export interface AddNodePayload {
@@ -54,24 +55,23 @@ export const addNodeToWorkflow = (
   state.newlyAddedOperations[newNodeId] = newNodeId;
   state.isDirty = true;
 
-  const isAfterTrigger = getRecordEntry(nodesMetadata, parentId ?? '')?.isRoot && graphId === 'root';
-  const shouldAddRunAfters = !isRoot && !isAfterTrigger;
   nodesMetadata[newNodeId] = { graphId, parentNodeId, isRoot };
   state.operations[newNodeId] = { ...state.operations[newNodeId], type: operation.type };
   state.newlyAddedOperations[newNodeId] = newNodeId;
 
   // Parallel Branch creation, just add the singular node
   if (isParallelBranch && parentId) {
-    addNewEdge(state, parentId, newNodeId, workflowGraph, shouldAddRunAfters);
+    addNewEdge(state, parentId, newNodeId, workflowGraph);
   }
   // 1 parent, 1 child
   else if (parentId && childId) {
-    const childRunAfter = (getRecordEntry(state.operations, childId) as any)?.runAfter;
-    addNewEdge(state, parentId, newNodeId, workflowGraph, shouldAddRunAfters);
-    addNewEdge(state, newNodeId, childId, workflowGraph, true);
+    const parentTransitions = getRecordEntry(state.operations, parentId)?.transitions;
+    const oldParentTransition = clone(getRecordEntry(parentTransitions, childId));
+    addNewEdge(state, parentId, newNodeId, workflowGraph);
+    addNewEdge(state, newNodeId, childId, workflowGraph);
     removeEdge(state, parentId, childId, workflowGraph);
-    if (childRunAfter && shouldAddRunAfters) {
-      (getRecordEntry(state.operations, newNodeId) as any).runAfter[parentId] = getRecordEntry(childRunAfter, parentId);
+    if (parentTransitions && oldParentTransition) {
+      getRecordEntry(state.operations, parentId)!.transitions![newNodeId] = oldParentTransition;
     }
   }
   // X parents, 1 child
@@ -82,7 +82,7 @@ export const addNodeToWorkflow = (
   // 1 parent, X children
   else if (parentId) {
     reassignEdgeSources(state, parentId, newNodeId, workflowGraph);
-    addNewEdge(state, parentId, newNodeId, workflowGraph, shouldAddRunAfters);
+    addNewEdge(state, parentId, newNodeId, workflowGraph);
   }
 
   applyIsRootNode(state, workflowGraph, nodesMetadata);

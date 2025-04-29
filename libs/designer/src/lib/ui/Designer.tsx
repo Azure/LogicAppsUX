@@ -20,6 +20,7 @@ import Minimap from './Minimap';
 import DeleteModal from './common/DeleteModal/DeleteModal';
 import ButtonEdge from './connections/edge';
 import HiddenEdge from './connections/hiddenEdge';
+import TransitionEdge from './connections/transitionEdge';
 import { PanelRoot } from './panel/panelRoot';
 import { css, setLayerHostSelector } from '@fluentui/react';
 import { PanelLocation } from '@microsoft/designer-ui';
@@ -44,6 +45,7 @@ import { CanvasSizeMonitor } from './CanvasSizeMonitor';
 import { useResizeObserver } from '@react-hookz/web';
 import { AgentChat } from './panel/agentChat/agentChat';
 import { DesignerFlowViewPadding } from '../core/utils/designerLayoutHelpers';
+import TransitionTimeline from './transitionTimeline';
 
 export interface DesignerProps {
   backgroundProps?: BackgroundProps;
@@ -66,9 +68,10 @@ const nodeTypes: NodeTypesObj = {
 
 const edgeTypes = {
   BUTTON_EDGE: ButtonEdge,
-  HEADING_EDGE: ButtonEdge, // This is functionally the same as a button edge
+  HEADING_EDGE: TransitionEdge, // This is functionally the same as a button edge
   ONLY_EDGE: BezierEdge, // Setting it as default React Flow Edge, can be changed as needed
   HIDDEN_EDGE: HiddenEdge,
+  TRANSITION_EDGE: TransitionEdge,
 } as EdgeTypes;
 
 export const SearchPreloader = () => {
@@ -273,6 +276,7 @@ export const Designer = (props: DesignerProps) => {
             <Controls />
             <Minimap />
           </div>
+          {isMonitoringView && <TransitionTimeline />}
           <PerformanceDebugTool />
           <CanvasFinder />
           <CanvasSizeMonitor canvasRef={canvasRef} />

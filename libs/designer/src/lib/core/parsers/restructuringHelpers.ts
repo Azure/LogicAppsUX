@@ -6,24 +6,31 @@ import type { WorkflowEdge, WorkflowNode } from './models/workflowNode';
 import type { LogicAppsV2 } from '@microsoft/logic-apps-shared';
 import { containsIdTag, getRecordEntry, RUN_AFTER_STATUS, WORKFLOW_EDGE_TYPES } from '@microsoft/logic-apps-shared';
 
+const defaultTransitionObject = {
+  when: [RUN_AFTER_STATUS.SUCCEEDED],
+};
+
 ///////////////////////////////////////////////////////////
 // EDGES
 
-export const addNewEdge = (state: WorkflowState, source: string, target: string, graph: WorkflowNode, addRunAfter = true) => {
+export const addNewEdge = (state: WorkflowState, source: string, target: string, graph: WorkflowNode) => {
   const workflowEdge: WorkflowEdge = {
     id: `${source}-${target}`,
     source,
     target,
-    type: WORKFLOW_EDGE_TYPES.BUTTON_EDGE,
+    type: WORKFLOW_EDGE_TYPES.TRANSITION_EDGE,
   };
   if (!graph?.edges) {
     graph.edges = [];
   }
   graph?.edges.push(workflowEdge);
 
-  const targetOp = getRecordEntry(state.operations, target) as any;
-  if (targetOp && addRunAfter) {
-    targetOp.runAfter = { ...targetOp.runAfter, [source]: [RUN_AFTER_STATUS.SUCCEEDED] };
+  const sourceOp = getRecordEntry(state.operations, source) as any;
+  if (sourceOp) {
+    if (!sourceOp?.transitions) {
+      sourceOp.transitions = {};
+    }
+    sourceOp.transitions = { ...sourceOp.transitions, [target]: defaultTransitionObject };
   }
 };
 
@@ -32,9 +39,9 @@ export const removeEdge = (state: WorkflowState, sourceId: string, targetId: str
     return;
   }
   graph.edges = graph.edges?.filter((edge) => !(edge.source === sourceId && edge.target === targetId));
-  const targetRunAfter = (getRecordEntry(state.operations, targetId) as any)?.runAfter;
-  if (targetRunAfter) {
-    delete targetRunAfter?.[sourceId as any];
+  const sourceTransitions = (getRecordEntry(state.operations, sourceId) as any)?.transitions;
+  if (sourceTransitions) {
+    delete sourceTransitions?.[targetId as any];
   }
 };
 
@@ -54,13 +61,7 @@ const setEdgeTarget = (edge: WorkflowEdge, newTarget: string) => {
 // Reassign edge source ids to new node id
 //   /|\   =>   |
 //             /|\
-export const reassignEdgeSources = (
-  state: WorkflowState,
-  oldSourceId: string,
-  newSourceId: string,
-  graph: WorkflowNode,
-  shouldHaveRunAfters = true
-) => {
+export const reassignEdgeSources = (state: WorkflowState, oldSourceId: string, newSourceId: string, graph: WorkflowNode) => {
   if (!state) {
     return;
   }
@@ -73,14 +74,14 @@ export const reassignEdgeSources = (
   targetEdges.forEach((tEdge) => {
     if (graph.edges?.some((aEdge) => aEdge.source === newSourceId && aEdge.target === tEdge.target)) {
       removeEdge(state, oldSourceId, tEdge.target, graph);
-      moveRunAfterSource(state, tEdge.target, oldSourceId, newSourceId, shouldHaveRunAfters);
+      moveEdgeSource(state, tEdge.target, oldSourceId, newSourceId);
     }
   });
 
   graph.edges = graph.edges?.map((edge) => {
     if (edge.source === oldSourceId) {
       setEdgeSource(edge, newSourceId);
-      moveRunAfterSource(state, edge.target, oldSourceId, newSourceId, shouldHaveRunAfters);
+      moveEdgeSource(state, edge.target, oldSourceId, newSourceId);
     }
     return edge;
   });
@@ -90,7 +91,7 @@ export const reassignEdgeSources = (
 //   \|/   =>   \|/
 //               |
 export const reassignEdgeTargets = (state: WorkflowState, oldTargetId: string, newTargetId: string, graph: WorkflowNode) => {
-  moveRunAfterTarget(state, oldTargetId, newTargetId);
+  moveEdgeTarget(state, oldTargetId, newTargetId);
   graph.edges = graph.edges?.map((edge) => {
     if (edge.target === oldTargetId) {
       setEdgeTarget(edge, newTargetId);
@@ -99,7 +100,7 @@ export const reassignEdgeTargets = (state: WorkflowState, oldTargetId: string, n
   });
 };
 
-export const moveRunAfterTarget = (state: WorkflowState | undefined, oldTargetId: string, newTargetId: string) => {
+export const moveEdgeTarget = (state: WorkflowState | undefined, oldTargetId: string, newTargetId: string) => {
   if (!state) {
     return;
   }
@@ -110,27 +111,21 @@ export const moveRunAfterTarget = (state: WorkflowState | undefined, oldTargetId
   }
 };
 
-export const moveRunAfterSource = (
-  state: WorkflowState | undefined,
-  nodeId: string,
-  oldSourceId: string,
-  newSourceId: string,
-  shouldHaveRunAfters: boolean
-) => {
+export const moveEdgeSource = (state: WorkflowState | undefined, nodeId: string, oldSourceId: string, newSourceId: string) => {
   if (!getRecordEntry(state?.operations, nodeId)) {
     return;
   }
-  const targetRunAfter = (getRecordEntry(state?.operations, nodeId) as LogicAppsV2.ActionDefinition)?.runAfter ?? {};
-  if (shouldHaveRunAfters && !getRecordEntry(targetRunAfter, newSourceId)) {
-    targetRunAfter[newSourceId] = getRecordEntry(targetRunAfter, oldSourceId) ?? [RUN_AFTER_STATUS.SUCCEEDED];
+  const targetTransitions = (getRecordEntry(state?.operations, nodeId) as LogicAppsV2.ActionDefinition)?.transitions ?? {};
+  if (!getRecordEntry(targetTransitions, newSourceId)) {
+    targetTransitions[newSourceId] = getRecordEntry(targetTransitions, oldSourceId) ?? defaultTransitionObject;
   }
 
-  delete targetRunAfter[oldSourceId];
+  delete targetTransitions[oldSourceId];
 
-  if (Object.keys(targetRunAfter).length !== 0) {
-    (getRecordEntry(state?.operations, nodeId) as LogicAppsV2.ActionDefinition).runAfter = targetRunAfter;
+  if (Object.keys(targetTransitions).length !== 0) {
+    (getRecordEntry(state?.operations, nodeId) as LogicAppsV2.ActionDefinition).transitions = targetTransitions;
   } else {
-    delete (getRecordEntry(state?.operations, nodeId) as LogicAppsV2.ActionDefinition).runAfter;
+    delete (getRecordEntry(state?.operations, nodeId) as LogicAppsV2.ActionDefinition).transitions;
   }
 };
 
@@ -148,9 +143,6 @@ export const applyIsRootNode = (state: WorkflowState, graph: WorkflowNode, metad
     const nodeMetadata = getRecordEntry(metadata, node.id);
     if (nodeMetadata) {
       nodeMetadata.isRoot = isRoot;
-    }
-    if (isRoot) {
-      delete (getRecordEntry(state.operations, node.id) as LogicAppsV2.ActionDefinition)?.runAfter;
     }
   });
 };

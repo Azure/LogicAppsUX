@@ -1,0 +1,90 @@
+@line-height: 24px;
+@card-header-logo-height: 48px;
+@card-header-logo-width: @card-header-logo-height;
+
+.msla-run-after-status {
+  vertical-align: top;
+  padding: 2px 10px;
+  box-sizing: border-box;
+}
+
+.msla-run-after-edge-header {
+  height: auto;
+  display: inline-block;
+  width: 100%;
+
+  .msla-run-after-edge-header-contents {
+		width: inherit;
+    display: flex;
+    gap: 8px;
+    align-items: center;
+    padding: 4px 4px 4px 8px;
+		text-align: left;
+  }
+
+  .msla-run-after-node-image {
+    border-radius: 2px;
+    width: 24px;
+    height: 24px;
+  }
+
+  .msla-run-after-node-title {
+    flex-grow: 1;
+  }
+
+  .msla-run-after-traffic-lights {
+    display: flex;
+    gap: 2px;
+  }
+}
+
+.msla-run-after-statuses {
+  margin: 4px 0px 4px 39px;
+  display: flex;
+  flex-direction: column;
+
+  .status-label {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+
+    svg {
+      width: 16px;
+      height: 16px;
+    }
+  }
+}
+
+.msla-run-after-action-search-input {
+  width: 100%;
+}
+
+.msla-run-after-action-menu-list {
+  overflow-y: scroll;
+  max-height: 400px;
+	padding: 2px;
+
+	.fui-MenuItemCheckbox {
+		align-items: center;
+
+		.fui-MenuItemCheckbox__icon {
+			min-width: 24px;
+			height: 24px;
+			border-radius: 2px;
+			overflow: hidden;
+		}
+	}
+}
+
+.msla-run-after-edge-header {
+	display: flex;
+	gap: 4px;
+}
+
+.msla-run-after-divider {
+	margin: 8px 0px;
+
+	&:last-of-type {
+		display: none;
+	}
+}

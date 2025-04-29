@@ -24,6 +24,7 @@ import { useMemo } from 'react';
 import { useIntl } from 'react-intl';
 import { useSelector } from 'react-redux';
 import { channelsTab } from './tabs/channelsTab';
+import { transitionsTab } from './tabs/transitionsTab';
 
 export const usePanelTabs = ({ nodeId }: { nodeId: string }) => {
   const intl = useIntl();
@@ -93,6 +94,14 @@ export const usePanelTabs = ({ nodeId }: { nodeId: string }) => {
     [intl, tabProps, supportedChannels, isAgenticWorkflow]
   );
 
+  const transitionsTabItem = useMemo(
+    () => ({
+      ...transitionsTab(intl, tabProps),
+      visible: true,
+    }),
+    [intl, tabProps]
+  );
+
   const codeViewTabItem = useMemo(() => codeViewTab(intl, tabProps), [intl, tabProps]);
 
   const testingTabItem = useMemo(
@@ -138,6 +147,7 @@ export const usePanelTabs = ({ nodeId }: { nodeId: string }) => {
       parametersTabItem,
       settingsTabItem,
       channelsTabItem,
+      transitionsTabItem,
       codeViewTabItem,
       testingTabItem,
       aboutTabItem,
@@ -152,6 +162,7 @@ export const usePanelTabs = ({ nodeId }: { nodeId: string }) => {
     isUnitTestView,
     aboutTabItem,
     channelsTabItem,
+    transitionsTabItem,
     codeViewTabItem,
     monitorRetryTabItem,
     monitoringTabItem,

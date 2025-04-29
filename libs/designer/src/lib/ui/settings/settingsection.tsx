@@ -57,6 +57,8 @@ import { useDispatch } from 'react-redux';
 import { useActionMetadata } from '../../core/state/workflow/workflowSelectors';
 import constants from '../../common/constants';
 import { AdvancedSettingsMessage } from './advancedSettingsMessage';
+import { Transitions } from './sections/transitionsConfiguration';
+import type { TransitionsProps } from './sections/transitionsConfiguration';
 
 const ClearIcon = bundleIcon(Dismiss24Filled, Dismiss24Regular);
 const ChevronDownIcon = bundleIcon(ChevronDown24Filled, ChevronDown24Regular);
@@ -116,6 +118,10 @@ export type Settings = SettingBase &
     | {
         settingType: 'RunAfter';
         settingProp: RunAfterProps;
+      }
+    | {
+        settingType: 'Transitions';
+        settingProp: TransitionsProps;
       }
     | {
         settingType: 'SettingDropdown';
@@ -331,6 +337,8 @@ const Setting = ({
           );
         case 'RunAfter':
           return <RunAfter {...settingProp} />;
+        case 'Transitions':
+          return <Transitions {...settingProp} />;
         case 'SettingDropdown':
           return <SettingDropdown {...settingProp} />;
         default:

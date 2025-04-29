@@ -164,6 +164,7 @@ export const panelSlice = createSlice({
       state.connectionContent.selectedNodeIds = selectedNodes;
       state.operationContent.selectedNodeId = selectedNodes[0];
       state.operationContent.selectedNodeActiveTabId = undefined;
+      state.operationContent.selectedTransitionTargetId = undefined;
       if (state.operationContent.alternateSelectedNode?.persistence === 'selected') {
         state.operationContent.alternateSelectedNode.nodeId = '';
       }
@@ -264,6 +265,9 @@ export const panelSlice = createSlice({
         args: [action.payload],
       });
     },
+    setSelectedTransitionTarget: (state, action: PayloadAction<string | undefined>) => {
+      state.operationContent.selectedTransitionTargetId = action.payload;
+    },
     setIsPanelLoading: (state, action: PayloadAction<boolean>) => {
       state.isLoading = action.payload;
     },
@@ -319,6 +323,7 @@ export const {
   selectOperationId,
   setPinnedPanelActiveTab,
   setSelectedPanelActiveTab,
+  setSelectedTransitionTarget,
   setIsCreatingConnection,
   setIsPanelLoading,
   setAlternateSelectedNode,
