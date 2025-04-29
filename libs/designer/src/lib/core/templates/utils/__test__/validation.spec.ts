@@ -15,7 +15,7 @@ describe('Template Validation Tests', () => {
 
     test('Acceptable names for workflow should pass with undefined', async () => {
       const nameDoesNotMath = intl.formatMessage({
-        defaultMessage: 'Name does not match the given pattern.',
+        defaultMessage: "Name can only contain letters, numbers, and '-', '(', ')', '_' or '.",
         id: 'zMKxg9',
         description: 'Error message when the workflow name is invalid regex.',
       });
