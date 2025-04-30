@@ -16,6 +16,7 @@ interface AgentChatHeaderProps {
   title: string;
   toggleCollapse: () => void;
   refreshChat: () => void;
+  stopChat: () => void;
 }
 
 // Agent chat icons
@@ -23,7 +24,7 @@ const StopIcon = bundleIcon(Stop16Filled, Stop16Regular);
 const RefreshIcon = bundleIcon(ArrowClockwise16Filled, ArrowClockwise16Regular);
 const CollapseIcon = bundleIcon(ChevronDoubleRight16Filled, ChevronDoubleRight16Regular);
 
-export const AgentChatHeader = ({ title, toggleCollapse, refreshChat }: AgentChatHeaderProps) => {
+export const AgentChatHeader = ({ title, toggleCollapse, refreshChat, stopChat }: AgentChatHeaderProps) => {
   const intl = useIntl();
   const isDarkMode = useIsDarkMode();
 
@@ -71,7 +72,9 @@ export const AgentChatHeader = ({ title, toggleCollapse, refreshChat }: AgentCha
           appearance="subtle"
           icon={<StopIcon />}
           aria-label={intlText.COLLAPSE_BUTTON_ARIA_LABEL}
-          onClick={toggleCollapse}
+          onClick={() => {
+            stopChat();
+          }}
           data-automation-id="msla-agent-chat-header-stop"
           title={intlText.COLLAPSE_BUTTON_TITLE}
         />

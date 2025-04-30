@@ -457,4 +457,32 @@ export class StandardRunService implements IRunService {
       throw new Error(e.message);
     }
   }
+
+  async cancelRun(runId: string): Promise<any> {
+    const { apiVersion, baseUrl, httpClient, workflowName } = this.options;
+    const onlyRunId = runId.split('/')?.at(-1);
+
+    let uri = `${baseUrl}/workflows/${workflowName}/runs/${onlyRunId}/cancel?api-version=${apiVersion}`;
+    try {
+      if (isHybridLogicApp(uri)) {
+        uri = `${baseUrl}/workflows/${workflowName}/runs/${onlyRunId}/cancel`;
+
+        const { uri: newUri, headerPath } = StandardRunService.getProxyUrl(uri);
+        const response = await httpClient.post({
+          uri: newUri,
+          headers: {
+            'X-Ms-Logicapps-Proxy-Path': headerPath,
+            'X-Ms-Logicapps-Proxy-Method': 'GET',
+          },
+        });
+        return response;
+      }
+      const response = await httpClient.post({
+        uri,
+      });
+      return response;
+    } catch (e: any) {
+      return new Error(e.message);
+    }
+  }
 }

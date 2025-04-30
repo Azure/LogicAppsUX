@@ -2,7 +2,7 @@ import { PanelLocation, PanelResizer, PanelSize, type ConversationItem } from '@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useIntl } from 'react-intl';
 import { defaultChatbotPanelWidth, ChatbotUI } from '@microsoft/logic-apps-chatbot';
-import { runsQueriesKeys, useAgentChatInvokeUri, useChatHistory } from '../../../core/queries/runs';
+import { runsQueriesKeys, useAgentChatInvokeUri, useCancelRun, useChatHistory } from '../../../core/queries/runs';
 import { useMonitoringView } from '../../../core/state/designerOptions/designerOptionsSelectors';
 import {
   useAgentLastOperations,
@@ -65,6 +65,13 @@ export const AgentChat = ({
     await queryClient.refetchQueries([runsQueriesKeys.useAgentRepetition]);
     await queryClient.refetchQueries([runsQueriesKeys.useNodeRepetition]);
   });
+
+  const { mutate: cancelRun } = useCancelRun(runInstance?.id);
+
+  const stopChat = useCallback(async () => {
+    cancelRun();
+    refreshChat();
+  }, [cancelRun, refreshChat]);
 
   const toolResultCallback = useCallback(
     (agentName: string, toolName: string, iteration: number, subIteration: number) => {
@@ -228,7 +235,12 @@ export const AgentChat = ({
               isBlocking: false,
               onDismiss: () => {},
               header: (
-                <AgentChatHeader title={intlText.agentChatHeader} refreshChat={refreshChat} toggleCollapse={() => setIsCollapsed(true)} />
+                <AgentChatHeader
+                  title={intlText.agentChatHeader}
+                  stopChat={stopChat}
+                  refreshChat={refreshChat}
+                  toggleCollapse={() => setIsCollapsed(true)}
+                />
               ),
             }}
             inputBox={{

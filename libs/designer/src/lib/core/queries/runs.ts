@@ -1,4 +1,4 @@
-import { useQuery } from '@tanstack/react-query';
+import { useMutation, useQuery } from '@tanstack/react-query';
 import { isNullOrUndefined, type LogicAppsV2, type Run, RunService } from '@microsoft/logic-apps-shared';
 import { getReactQueryClient } from '../ReactQueryProvider';
 import { isRunError } from '@microsoft/designer-ui';
@@ -26,6 +26,7 @@ export const runsQueriesKeys = {
   useChatHistory: 'useChatHistory',
   useAgentChatInvokeUri: 'useAgentChatInvokeUri',
   useRunInstance: 'useRunInstance',
+  useCancelRun: 'useCancelRun',
 };
 
 export const useRuns = (enabled = false) => {
@@ -166,6 +167,14 @@ export const useAgentRepetition = (
       enabled: isMonitoringView && runIndex !== undefined && isAgent,
     }
   );
+};
+
+export const useCancelRun = (runId: string | undefined) => {
+  return useMutation([runsQueriesKeys.useCancelRun, { runId }], async () => {
+    if (!isNullOrUndefined(runId)) {
+      return await RunService().cancelRun(runId);
+    }
+  });
 };
 
 export const useAgentActionsRepetition = (
