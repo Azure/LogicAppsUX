@@ -30,6 +30,7 @@ export type PanelTabFn = (intl: IntlShape, props: PanelTabProps) => PanelTab;
 export interface PanelTabProps {
   isPanelPinned: boolean;
   nodeId: string;
+  isAgenticConditionPanel?: boolean;
 }
 
 export interface PanelTab {

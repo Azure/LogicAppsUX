@@ -374,9 +374,6 @@ const serializeAllChannels = async (rootState: RootState, operationId: string): 
     serializedInputChannel = {
       'in-channel-1': {
         trigger: serializedInputChannelTrigger,
-        mapping: {
-          message: "@channelTriggerBody()?['prompt']",
-        },
       },
     };
   }

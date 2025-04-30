@@ -48,8 +48,9 @@ export const usePanelTabs = ({ nodeId }: { nodeId: string }) => {
     () => ({
       isPanelPinned: isPinnedNode,
       nodeId,
+      isAgenticConditionPanel: nodeMetaData?.subgraphType === SUBGRAPH_TYPES.AGENT_CONDITION,
     }),
-    [isPinnedNode, nodeId]
+    [isPinnedNode, nodeId, nodeMetaData?.subgraphType]
   );
 
   const monitoringTabItem = useMemo(

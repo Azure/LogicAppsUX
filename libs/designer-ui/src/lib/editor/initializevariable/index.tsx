@@ -51,8 +51,8 @@ export const InitializeVariableEditor = ({
         description: 'label to add a variable',
       }),
       ADD_PARAMETER: intl.formatMessage({
-        defaultMessage: 'Add a Parameter',
-        id: 'ysSmGO',
+        defaultMessage: 'Create Parameter',
+        id: 'SC5XB0',
         description: 'label to add a parameter',
       }),
     }),
