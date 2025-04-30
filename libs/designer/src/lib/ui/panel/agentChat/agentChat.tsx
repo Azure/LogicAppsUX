@@ -213,6 +213,26 @@ export const AgentChat = ({
         id: 'JKZpcd',
         description: 'Chatbot card telling user that the AI response is being canceled',
       }),
+      stopChatTitle: intl.formatMessage({
+        defaultMessage: 'Stop chat',
+        id: '9KwscD',
+        description: 'Stop chat title',
+      }),
+      stopChatMessage: intl.formatMessage({
+        defaultMessage: 'Do you want to stop the agent chat? This will cancel the workflow.',
+        id: '7cPLnJ',
+        description: 'Stop chat message',
+      }),
+      cancelDialog: intl.formatMessage({
+        defaultMessage: 'Cancel',
+        id: 'hHNj31',
+        description: 'Cancel button text',
+      }),
+      okDialog: intl.formatMessage({
+        defaultMessage: 'ok',
+        id: 'bGGruY',
+        description: 'Ok button text',
+      }),
     };
   }, [intl]);
 
@@ -257,9 +277,9 @@ export const AgentChat = ({
               header: (
                 <AgentChatHeader
                   title={intlText.agentChatHeader}
-                  stopChat={stopChat}
-                  refreshChat={refreshChat}
-                  toggleCollapse={() => setIsCollapsed(true)}
+                  onStopChat={stopChat}
+                  onRefreshChat={refreshChat}
+                  onToggleCollapse={() => setIsCollapsed(true)}
                 />
               ),
             }}
@@ -288,21 +308,31 @@ export const AgentChat = ({
             }}
           />
           <PanelResizer updatePanelWidth={setOverrideWidth} panelRef={panelRef} />
-          <Dialog inertTrapFocus={true} open={dialogOpen} aria-labelledby={'title'} onOpenChange={onClosingDialog} surfaceMotion={null}>
-            <DialogSurface mountNode={panelRef.current}>
+          <Dialog
+            inertTrapFocus={true}
+            open={dialogOpen}
+            aria-labelledby={intlText.stopChatTitle}
+            onOpenChange={onClosingDialog}
+            surfaceMotion={null}
+          >
+            <DialogSurface
+              style={{
+                maxWidth: '80%',
+                width: 'fit-content',
+              }}
+              mountNode={panelRef.current}
+            >
               <DialogBody>
-                <DialogTitle>Stop agent chat</DialogTitle>
-                <DialogContent className="msla-modal-container">
-                  Do you want to stop the agent chat? This will cancel any ongoing operations and close the chat.
-                </DialogContent>
+                <DialogTitle>{intlText.stopChatTitle}</DialogTitle>
+                <DialogContent>{intlText.stopChatMessage}</DialogContent>
                 <DialogActions fluid>
                   <DialogTrigger>
                     <Button appearance="primary" onClick={onCancel}>
-                      {'confirmText'}
+                      {intlText.okDialog}
                     </Button>
                   </DialogTrigger>
                   <DialogTrigger>
-                    <Button onClick={onClosingDialog}>{'cancelText'}</Button>
+                    <Button onClick={onClosingDialog}>{intlText.cancelDialog}</Button>
                   </DialogTrigger>
                 </DialogActions>
               </DialogBody>

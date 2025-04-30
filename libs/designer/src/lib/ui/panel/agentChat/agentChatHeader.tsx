@@ -14,9 +14,9 @@ import { useIntl } from 'react-intl';
 
 interface AgentChatHeaderProps {
   title: string;
-  toggleCollapse: () => void;
-  refreshChat: () => void;
-  stopChat: () => void;
+  onToggleCollapse: () => void;
+  onRefreshChat: () => void;
+  onStopChat: () => void;
 }
 
 // Agent chat icons
@@ -24,7 +24,7 @@ const StopIcon = bundleIcon(Stop16Filled, Stop16Regular);
 const RefreshIcon = bundleIcon(ArrowClockwise16Filled, ArrowClockwise16Regular);
 const CollapseIcon = bundleIcon(ChevronDoubleRight16Filled, ChevronDoubleRight16Regular);
 
-export const AgentChatHeader = ({ title, toggleCollapse, refreshChat, stopChat }: AgentChatHeaderProps) => {
+export const AgentChatHeader = ({ title, onToggleCollapse, onRefreshChat, onStopChat }: AgentChatHeaderProps) => {
   const intl = useIntl();
   const isDarkMode = useIsDarkMode();
 
@@ -46,8 +46,18 @@ export const AgentChatHeader = ({ title, toggleCollapse, refreshChat, stopChat }
         description: 'Aria label for refresh button',
       }),
       REFRESH_BUTTON_TITLE: intl.formatMessage({
-        defaultMessage: 'Refresh chat panel',
-        id: '5BGUkr',
+        defaultMessage: 'Refresh chat',
+        id: 'oyW9J4',
+        description: 'Refresh button title',
+      }),
+      STOP_BUTTON_ARIA_LABEL: intl.formatMessage({
+        defaultMessage: 'Stop',
+        id: 'BIG5Dz',
+        description: 'Aria label for stop button',
+      }),
+      STOP_BUTTON_TITLE: intl.formatMessage({
+        defaultMessage: 'Stop chat',
+        id: 'KwYMAL',
         description: 'Refresh button title',
       }),
     }),
@@ -71,21 +81,17 @@ export const AgentChatHeader = ({ title, toggleCollapse, refreshChat, stopChat }
           id="msla-agent-chat-header-stop"
           appearance="subtle"
           icon={<StopIcon />}
-          aria-label={intlText.COLLAPSE_BUTTON_ARIA_LABEL}
-          onClick={() => {
-            stopChat();
-          }}
+          aria-label={intlText.STOP_BUTTON_ARIA_LABEL}
+          onClick={onStopChat}
           data-automation-id="msla-agent-chat-header-stop"
-          title={intlText.COLLAPSE_BUTTON_TITLE}
+          title={intlText.STOP_BUTTON_TITLE}
         />
         <Button
           id="msla-agent-chat-header-refresh"
           appearance="subtle"
           icon={<RefreshIcon />}
           aria-label={intlText.REFRESH_BUTTON_ARIA_LABEL}
-          onClick={() => {
-            refreshChat();
-          }}
+          onClick={onRefreshChat}
           data-automation-id="msla-agent-chat-header-refresh"
           title={intlText.REFRESH_BUTTON_TITLE}
         />
@@ -94,7 +100,7 @@ export const AgentChatHeader = ({ title, toggleCollapse, refreshChat, stopChat }
           appearance="subtle"
           icon={<CollapseIcon />}
           aria-label={intlText.COLLAPSE_BUTTON_ARIA_LABEL}
-          onClick={toggleCollapse}
+          onClick={onToggleCollapse}
           data-automation-id="msla-agent-chat-header-collapse"
           title={intlText.COLLAPSE_BUTTON_TITLE}
         />
