@@ -208,6 +208,11 @@ export default class OpenDesignerForLocalProject extends OpenDesignerBase {
           this.panelMetadata.azureDetails?.workflowManagementBaseUrl
         );
         await this.validateWorkflow(this.panelMetadata.workflowContent);
+
+        this.sendMsgToWebview({
+          command: ExtensionCommand.setIsWorkflowDirty,
+          data: false,
+        });
         break;
       }
       case ExtensionCommand.saveBlankUnitTest: {
