@@ -33,7 +33,7 @@ import type { IActionContext } from '@microsoft/vscode-azext-utils';
 import * as vscode from 'vscode';
 import { convertToWorkspace } from './app/commands/createNewCodeProject/CodeProjectBase/ConvertToWorkspace';
 import TelemetryReporter from '@vscode/extension-telemetry';
-import { getCustomCodeFunctionsProjects } from './app/utils/customCodeUtils';
+import { getAllCustomCodeFunctionsProjects } from './app/utils/customCodeUtils';
 import { createVSCodeAzureSubscriptionProvider } from './app/utils/services/VSCodeAzureSubscriptionProvider';
 import { logSubscriptions } from './app/utils/telemetry';
 
@@ -71,7 +71,7 @@ export async function activate(context: vscode.ExtensionContext) {
     vscode.commands.executeCommand(
       'setContext',
       extensionCommand.customCodeSetFunctionsFolders,
-      await getCustomCodeFunctionsProjects(activateContext)
+      await getAllCustomCodeFunctionsProjects(activateContext)
     );
 
     activateContext.telemetry.properties.isActivationEvent = 'true';
@@ -129,6 +129,16 @@ export async function activate(context: vscode.ExtensionContext) {
     registerCommands();
     activateContext.telemetry.properties.lastStep = 'registerFuncHostTaskEvents';
     registerFuncHostTaskEvents();
+
+    vscode.debug.registerDebugConfigurationProvider('logicapp', {
+      resolveDebugConfiguration: async (folder, debugConfig) => {
+        if (!debugConfig.funcRuntime) {
+          debugConfig.funcRuntime = 'coreclr';
+        }
+        await vscode.commands.executeCommand(extensionCommand.debugLogicApp, debugConfig, folder);
+        return undefined;
+      },
+    });
 
     ext.rgApi.registerApplicationResourceResolver(getAzExtResourceType(logicAppFilter), new LogicAppResolver());
 

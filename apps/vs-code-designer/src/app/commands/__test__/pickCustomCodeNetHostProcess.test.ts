@@ -1,12 +1,12 @@
 import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest';
 import * as vscode from 'vscode';
-import { pickCustomCodeNetHostProcess } from '../pickCustomCodeNetHostProcess';
+import { pickCustomCodeNetHostProcess, pickCustomCodeNetHostProcessInternal } from '../pickCustomCodeNetHostProcess';
 import * as validatePreDebug from '../../debug/validatePreDebug';
-import * as customCodeUtils from '../../utils/customCodeUtils';
 import { IRunningFuncTask, runningFuncTaskMap } from '../../utils/funcCoreTools/funcHostTask';
 import * as pickFuncProcessModule from '../pickFuncProcess';
-import { TargetFramework } from '@microsoft/vscode-extension-logic-apps';
+import * as verifyIsProject from '../../utils/verifyIsProject';
 import { IActionContext } from '@microsoft/vscode-azext-utils';
+import * as path from 'path';
 
 vi.mock('vscode', () => ({
   Uri: {
@@ -21,8 +21,8 @@ vi.mock('vscode', () => ({
 describe('pickCustomCodeNetHostProcess', () => {
   const testLogicAppName = 'LogicApp';
   const testFunctionAppName = 'FunctionApp';
-  const testLogicAppPath = `/path/to/${testLogicAppName}`;
-  const testFunctionAppPath = `/path/to/${testFunctionAppName}`;
+  const testLogicAppPath = path.join('path', 'to', testLogicAppName);
+  const testFunctionAppPath = path.join('path', 'to', testFunctionAppName);
   const testFuncPid = '12345';
   const testDotnetPid = '67890';
 
@@ -40,13 +40,6 @@ describe('pickCustomCodeNetHostProcess', () => {
   const testActionContext = {
     telemetry: { properties: {} },
   } as IActionContext;
-  const testFunctionsProjectMetadata = {
-    projectPath: `/path/to/${testFunctionAppName}`,
-    functionAppName: testFunctionAppName,
-    logicAppName: testLogicAppName,
-    targetFramework: TargetFramework.Net8,
-    namespace: 'TestNamespace',
-  };
   const testFuncTask: IRunningFuncTask = {
     startTime: Date.now(),
     processId: Number(testFuncPid),
@@ -56,8 +49,8 @@ describe('pickCustomCodeNetHostProcess', () => {
     (vscode.workspace as any).workspaceFolders = [testLogicAppWorkspaceFolder, testFunctionAppWorkspaceFolder];
 
     vi.spyOn(validatePreDebug, 'getMatchingWorkspaceFolder').mockReturnValue(testLogicAppWorkspaceFolder);
-    vi.spyOn(customCodeUtils, 'getCustomCodeFunctionsProjectMetadata').mockResolvedValue(testFunctionsProjectMetadata);
     vi.spyOn(pickFuncProcessModule, 'pickChildProcess').mockResolvedValue(testFuncPid);
+    vi.spyOn(verifyIsProject, 'tryGetLogicAppProjectRoot').mockResolvedValue(testLogicAppPath);
   });
 
   afterEach(() => {
@@ -85,21 +78,6 @@ describe('pickCustomCodeNetHostProcess', () => {
     expect(testActionContext.telemetry.properties.lastStep).toBe('pickNetHostChildProcess');
   });
 
-  it('should throw an error when no child dotnet process exists on the logic app functions host', async () => {
-    runningFuncTaskMap.set(testLogicAppWorkspaceFolder, testFuncTask);
-    await expect(pickCustomCodeNetHostProcess(testActionContext, testDebugConfig)).rejects.toThrow();
-    expect(testActionContext.telemetry.properties.result).toBe('Failed');
-    expect(testActionContext.telemetry.properties.lastStep).toBe('pickNetHostChildProcess');
-  });
-
-  it('should throw an error when no running task is found', async () => {
-    await expect(pickCustomCodeNetHostProcess(testActionContext, testDebugConfig)).rejects.toThrow(
-      `Failed to find a running func task for the logic app "${testLogicAppName}" corresponding to the functions project "${testFunctionAppName}".`
-    );
-    expect(testActionContext.telemetry.properties.result).toBe('Failed');
-    expect(testActionContext.telemetry.properties.lastStep).toBe('getRunningFuncTask');
-  });
-
   it('should throw an error when no workspace folder matching the debug configuration is found', async () => {
     vi.spyOn(validatePreDebug, 'getMatchingWorkspaceFolder').mockReturnValue(undefined);
     await expect(pickCustomCodeNetHostProcess(testActionContext, testDebugConfig)).rejects.toThrow();
@@ -107,17 +85,57 @@ describe('pickCustomCodeNetHostProcess', () => {
     expect(testActionContext.telemetry.properties.lastStep).toBe('getMatchingWorkspaceFolder');
   });
 
-  it('should throw an error when no functions project metadata is found', async () => {
-    vi.spyOn(customCodeUtils, 'getCustomCodeFunctionsProjectMetadata').mockResolvedValue(undefined);
+  it('should throw an error when no logic app folder project is found in the workspace folder', async () => {
+    vi.spyOn(verifyIsProject, 'tryGetLogicAppProjectRoot').mockResolvedValue(undefined);
     await expect(pickCustomCodeNetHostProcess(testActionContext, testDebugConfig)).rejects.toThrow();
     expect(testActionContext.telemetry.properties.result).toBe('Failed');
-    expect(testActionContext.telemetry.properties.lastStep).toBe('getCustomCodeFunctionsProjectMetadata');
+    expect(testActionContext.telemetry.properties.lastStep).toBe('tryGetLogicAppProjectRoot');
+  });
+});
+
+describe('pickCustomCodeNetHostProcessInternal', () => {
+  const testLogicAppName = 'LogicApp';
+  const testLogicAppPath = path.join('path', 'to', testLogicAppName);
+  const testFuncPid = '12345';
+
+  const testLogicAppWorkspaceFolder: vscode.WorkspaceFolder = {
+    uri: vscode.Uri.file(testLogicAppPath),
+    name: testLogicAppName,
+    index: 0,
+  };
+  const testActionContext = {
+    telemetry: { properties: {} },
+  } as IActionContext;
+  const testFuncTask: IRunningFuncTask = {
+    startTime: Date.now(),
+    processId: Number(testFuncPid),
+  };
+
+  beforeEach(() => {
+    (vscode.workspace as any).workspaceFolders = [testLogicAppWorkspaceFolder];
+
+    vi.spyOn(validatePreDebug, 'getMatchingWorkspaceFolder').mockReturnValue(testLogicAppWorkspaceFolder);
+    vi.spyOn(pickFuncProcessModule, 'pickChildProcess').mockResolvedValue(testFuncPid);
+    vi.spyOn(verifyIsProject, 'tryGetLogicAppProjectRoot').mockResolvedValue(testLogicAppPath);
   });
 
-  it('should throw an error when no logic app folder matching the functions project is found', async () => {
-    (vscode.workspace as any).workspaceFolders = [testFunctionAppWorkspaceFolder];
-    await expect(pickCustomCodeNetHostProcess(testActionContext, testDebugConfig)).rejects.toThrow();
+  afterEach(() => {
+    vi.restoreAllMocks();
+    runningFuncTaskMap.clear();
+  });
+
+  it('should throw an error when no child dotnet process exists on the logic app functions host', async () => {
+    runningFuncTaskMap.set(testLogicAppWorkspaceFolder, testFuncTask);
+    await expect(pickCustomCodeNetHostProcessInternal(testActionContext, testLogicAppWorkspaceFolder, testLogicAppPath)).rejects.toThrow();
     expect(testActionContext.telemetry.properties.result).toBe('Failed');
-    expect(testActionContext.telemetry.properties.lastStep).toBe('findLogicAppFolder');
+    expect(testActionContext.telemetry.properties.lastStep).toBe('pickNetHostChildProcess');
+  });
+
+  it('should throw an error when no running task is found', async () => {
+    await expect(pickCustomCodeNetHostProcessInternal(testActionContext, testLogicAppWorkspaceFolder, testLogicAppPath)).rejects.toThrow(
+      `Failed to find a running func task for the logic app "${testLogicAppName}". The logic app must be running to attach the function debugger.`
+    );
+    expect(testActionContext.telemetry.properties.result).toBe('Failed');
+    expect(testActionContext.telemetry.properties.lastStep).toBe('getRunningFuncTask');
   });
 });

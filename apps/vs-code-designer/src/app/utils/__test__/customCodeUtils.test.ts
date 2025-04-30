@@ -6,7 +6,7 @@ import { describe, it, expect, vi, beforeEach } from 'vitest';
 import {
   CustomCodeFunctionsProjectMetadata,
   getCustomCodeFunctionsProjectMetadata,
-  getCustomCodeFunctionsProjects,
+  getAllCustomCodeFunctionsProjects,
   isCustomCodeFunctionsProject,
   isCustomCodeFunctionsProjectInRoot,
   tryGetCustomCodeFunctionsProjects,
@@ -131,7 +131,7 @@ describe('customCodeUtils', () => {
     vi.restoreAllMocks();
   });
 
-  describe('getCustomCodeFunctionsProjects', () => {
+  describe('getAllCustomCodeFunctionsProjects', () => {
     const testContext: any = {};
     const testWorkspaceRoot = path.join('test', 'workspace');
 
@@ -142,7 +142,7 @@ describe('customCodeUtils', () => {
 
     it('should return an empty array if workspace root is undefined', async () => {
       vi.spyOn(workspaceUtils, 'getWorkspaceRoot').mockResolvedValue(undefined);
-      const result = await getCustomCodeFunctionsProjects(testContext);
+      const result = await getAllCustomCodeFunctionsProjects(testContext);
       expect(result).toEqual([]);
     });
 
@@ -169,7 +169,7 @@ describe('customCodeUtils', () => {
         return '';
       });
 
-      const result = await getCustomCodeFunctionsProjects(testContext);
+      const result = await getAllCustomCodeFunctionsProjects(testContext);
       expect(result).toEqual([path.join(testWorkspaceRoot, 'proj1'), path.join(testWorkspaceRoot, 'proj2')]);
     });
 
@@ -193,7 +193,7 @@ describe('customCodeUtils', () => {
         return '';
       });
 
-      const result = await getCustomCodeFunctionsProjects(testContext);
+      const result = await getAllCustomCodeFunctionsProjects(testContext);
       expect(result).toEqual([]);
     });
   });

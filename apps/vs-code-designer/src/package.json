@@ -994,6 +994,30 @@
           }
         }
       }
+    ],
+    "debuggers": [
+      {
+        "type": "logicapp",
+        "label": "Debug Logic App",
+        "configurationAttributes": {
+          "launch": {
+            "required": ["funcRuntime"],
+            "properties": {
+              "funcRuntime": {
+                "type": "string",
+                "description": "The runtime to use for the Azure Functions host process.",
+                "enum": ["coreclr", "clr"],
+                "default": "coreclr"
+              },
+              "customCodeRuntime": {
+                "type": "string",
+                "description": "The runtime to use for the .NET custom code host process.",
+                "enum": ["coreclr", "clr"]
+              }
+            }
+          }
+        }
+      }
     ]
   },
   "extensionDependencies": [
