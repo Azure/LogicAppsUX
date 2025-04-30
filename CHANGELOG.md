@@ -1,4 +1,21 @@
 # Logic Apps Designer
+### [5.93.1](https://github.com/Azure/LogicAppsUX/compare/v5.93.0...v5.93.1) (2025-04-30)
+
+
+### Features
+
+* **designer:** Add "maximumTokenCountReduction" as default in agent settings ([#7097](https://github.com/Azure/LogicAppsUX/issues/7097)) ([373b4e3](https://github.com/Azure/LogicAppsUX/commit/373b4e30544aff7473f3a66c7dbd41f173d00559))
+* **Designer:** Panel Rework ([#7089](https://github.com/Azure/LogicAppsUX/issues/7089)) ([a2e7578](https://github.com/Azure/LogicAppsUX/commit/a2e7578863bd7ba788e7fbc82348e20fab013507))
+
+
+### Bug Fixes
+
+* **designer:** Bugs in Initialize Variable Editor ([#7125](https://github.com/Azure/LogicAppsUX/issues/7125)) ([2e3b61d](https://github.com/Azure/LogicAppsUX/commit/2e3b61da4885ade413f09c77c148ceb7cbdc2bdb))
+* **designer:** Cosmetic Change on Agent Conditions/ Update Templates ([#7103](https://github.com/Azure/LogicAppsUX/issues/7103)) ([1b9b961](https://github.com/Azure/LogicAppsUX/commit/1b9b961adbaaa9131c5573ea6d8350851158271a))
+* **designer:** Move Hybrid Api versions to a single location in Libraries ([#7133](https://github.com/Azure/LogicAppsUX/issues/7133)) ([00890c0](https://github.com/Azure/LogicAppsUX/commit/00890c019ae96232cfe869be7b86f579850538f3))
+* **designer:** Remove agent in non-agent flow ([#7102](https://github.com/Azure/LogicAppsUX/issues/7102)) ([6a7d763](https://github.com/Azure/LogicAppsUX/commit/6a7d763d069494134a7718aa61eaff0073ecf410))
+* **designer:** Reset id replacements when reset designer dirty state  ([#7118](https://github.com/Azure/LogicAppsUX/issues/7118)) ([9a2a2a2](https://github.com/Azure/LogicAppsUX/commit/9a2a2a201a4653bba2b3075e009ab8fded24cc1d)), closes [#7105](https://github.com/Azure/LogicAppsUX/issues/7105)
+
 ## [5.93.0](https://github.com/Azure/LogicAppsUX/compare/v5.92.0...v5.93.0) (2025-04-25)
 
 
