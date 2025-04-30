@@ -13,6 +13,7 @@ import {
 } from '../../../../core/actions/bjsworkflow/configuretemplate';
 import { getResourceNameFromId, equals } from '@microsoft/logic-apps-shared';
 import { validateWorkflowData } from '../../../../core/templates/utils/helper';
+import { useMemo } from 'react';
 
 export const useConfigureWorkflowPanelTabs = ({
   onSave,
@@ -32,6 +33,23 @@ export const useConfigureWorkflowPanelTabs = ({
 
   const [selectedWorkflowsList, setSelectedWorkflowsList] =
     useFunctionalState<Record<string, Partial<WorkflowTemplateData>>>(workflowsInTemplate);
+
+  const currentSelectedWorkflowsList = selectedWorkflowsList();
+  const duplicateIds = useMemo(() => {
+    const seen = new Set<string>();
+    const duplicateIds = new Set<string>();
+    console.log('selectedWorkflowsList', currentSelectedWorkflowsList);
+    for (const { id } of Object.values(currentSelectedWorkflowsList)) {
+      if (!id) {
+        continue;
+      }
+      if (seen.has(id)) {
+        duplicateIds.add(id);
+      }
+      seen.add(id);
+    }
+    return Array.from(duplicateIds);
+  }, [currentSelectedWorkflowsList]);
 
   const onWorkflowsSelected = (normalizedWorkflowIds: string[]) => {
     setSelectedWorkflowsList((prevSelectedWorkflows) => {
@@ -63,16 +81,14 @@ export const useConfigureWorkflowPanelTabs = ({
         ...prevSelectedWorkflows[workflowId],
         ...workflowData,
       };
-      const { workflow: workflowNameError, manifest: updatedManifestError } = validateWorkflowData(
-        updatedWorkflowData,
-        Object.keys(prevSelectedWorkflows).length > 1
-      );
+      const updatedManifestError = validateWorkflowData(updatedWorkflowData, Object.keys(prevSelectedWorkflows).length > 1);
       return {
         ...prevSelectedWorkflows,
         [workflowId]: {
           ...updatedWorkflowData,
           errors: {
-            workflow: workflowNameError,
+            // workflow: workflowNameError,
+            workflow: undefined,
             manifest: runValidation ? updatedManifestError : updatedWorkflowData?.errors?.manifest,
           },
         },
@@ -112,8 +128,9 @@ export const useConfigureWorkflowPanelTabs = ({
       updateWorkflowDataField,
       isSaving: isWizardUpdating,
       disabled: isNoWorkflowsSelected,
-      isPrimaryButtonDisabled: missingNameOrDisplayName,
+      isPrimaryButtonDisabled: missingNameOrDisplayName || duplicateIds.length > 0,
       onSave: onSaveChanges,
+      duplicateIds,
     }),
   ];
 };

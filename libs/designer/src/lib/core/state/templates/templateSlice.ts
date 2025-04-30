@@ -109,7 +109,7 @@ export const templateSlice = createSlice({
       const workflowKeys = Object.keys(state.workflows);
       workflowKeys.forEach((workflowId) => {
         const workflowData = state.workflows[workflowId];
-        state.workflows[workflowId].errors = validateWorkflowData(workflowData, workflowKeys.length > 1);
+        state.workflows[workflowId].errors.manifest = validateWorkflowData(workflowData, workflowKeys.length > 1);
       });
     },
     validateTemplateManifest: (state) => {

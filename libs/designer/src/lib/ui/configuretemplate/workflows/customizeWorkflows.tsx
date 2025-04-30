@@ -1,7 +1,7 @@
 import { TemplatesSection, type TemplatesSectionItem } from '@microsoft/designer-ui';
 import type { WorkflowTemplateData } from '../../../core';
 import { Accordion, AccordionHeader, AccordionItem, AccordionPanel, Text } from '@fluentui/react-components';
-import { getResourceNameFromId, type Template } from '@microsoft/logic-apps-shared';
+import type { Template } from '@microsoft/logic-apps-shared';
 import { useMemo } from 'react';
 import { useResourceStrings } from '../resources';
 import { useTemplatesStrings } from '../../templates/templatesStrings';
@@ -10,21 +10,25 @@ import { WorkflowKind } from '../../../core/state/workflow/workflowInterfaces';
 export const CustomizeWorkflows = ({
   selectedWorkflowsList,
   updateWorkflowDataField,
+  duplicateIds,
 }: {
   selectedWorkflowsList: Record<string, Partial<WorkflowTemplateData>>;
   updateWorkflowDataField: (workflowId: string, workflowData: Partial<WorkflowTemplateData>) => void;
+  duplicateIds: string[];
 }) => {
   const workflowEntries = Object.entries(selectedWorkflowsList);
 
   return (
     <div className="msla-templates-tab msla-panel-no-description-tab">
+      {'HELLO'}
+      {JSON.stringify(duplicateIds)}
       {workflowEntries.length ? (
         workflowEntries.length > 1 ? (
           <Accordion multiple={true} defaultOpenItems={Object.keys(selectedWorkflowsList)}>
             {Object.entries(selectedWorkflowsList).map(([workflowId, workflowData]) => (
               <AccordionItem value={workflowId} key={workflowId}>
                 <AccordionHeader>
-                  <Text style={{ fontWeight: 'bold' }}>{getResourceNameFromId(workflowId)}</Text>
+                  <Text style={{ fontWeight: 'bold' }}>{workflowData.id}</Text>
                 </AccordionHeader>
                 <AccordionPanel>
                   <CustomizeWorkflowSection
@@ -83,14 +87,14 @@ const CustomizeWorkflowSection = ({
     const baseItems: TemplatesSectionItem[] = [
       {
         label: resourceStrings.WORKFLOW_NAME,
-        value: workflow.workflowName || '',
+        value: workflow.id || '',
         hint: resourceStrings.WORKFLOW_NAME_DESCRIPTION,
         type: 'textfield',
         required: true,
         onChange: (value: string) => {
-          updateWorkflowDataField(workflowId, { workflowName: value });
+          updateWorkflowDataField(workflowId, { id: value });
         },
-        errorMessage: workflow.errors?.workflow,
+        // errorMessage: workflow.errors?.workflow,
       },
     ];
     if (isMultiWorkflowTemplate) {

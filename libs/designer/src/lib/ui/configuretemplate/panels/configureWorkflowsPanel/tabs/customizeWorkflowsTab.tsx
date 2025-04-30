@@ -19,7 +19,9 @@ export const customizeWorkflowsTab = (
     selectedWorkflowsList,
     updateWorkflowDataField,
     onSave,
+    duplicateIds,
   }: ConfigureWorkflowsTabProps & {
+    duplicateIds: string[];
     updateWorkflowDataField: (workflowId: string, workflowData: Partial<WorkflowTemplateData>) => void;
   }
 ): TemplateTabProps => ({
@@ -31,7 +33,13 @@ export const customizeWorkflowsTab = (
   }),
   disabled: disabled,
   tabStatusIcon: hasError ? 'error' : undefined,
-  content: <CustomizeWorkflows selectedWorkflowsList={selectedWorkflowsList} updateWorkflowDataField={updateWorkflowDataField} />,
+  content: (
+    <CustomizeWorkflows
+      selectedWorkflowsList={selectedWorkflowsList}
+      updateWorkflowDataField={updateWorkflowDataField}
+      duplicateIds={duplicateIds}
+    />
+  ),
   footerContent: {
     primaryButtonText: isSaving ? (
       <Spinner size="tiny" />
