@@ -72,6 +72,12 @@ export const ChannelsTab: React.FC<PanelTabProps> = (props) => {
         id: 'Iasy6i',
         description: 'No channel selected.',
       }),
+      NO_CHANNEL_DESCRIPTION: intl.formatMessage({
+        defaultMessage:
+          'Disable all channels. The agent will not be able to send or receive messages directly from the user while running.',
+        id: 'ag7IUL',
+        description: 'No channel selected.',
+      }),
       LEARN_MORE: intl.formatMessage({
         defaultMessage: 'Learn more',
         id: 'M2ICLg',
@@ -225,7 +231,7 @@ export const ChannelsTab: React.FC<PanelTabProps> = (props) => {
                 className={'msla-channel-settings-radio'}
                 value={'none'}
                 key={'none'}
-                label={getSettingLabel(stringResources.NO_CHANNEL_TITLE)}
+                label={getSettingLabel(stringResources.NO_CHANNEL_TITLE, undefined, stringResources.NO_CHANNEL_DESCRIPTION)}
               />
             </RadioGroup>
           </div>
