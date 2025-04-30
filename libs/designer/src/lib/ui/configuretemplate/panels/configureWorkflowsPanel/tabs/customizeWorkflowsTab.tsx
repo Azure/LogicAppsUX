@@ -12,7 +12,6 @@ export const customizeWorkflowsTab = (
   intl: IntlShape,
   dispatch: AppDispatch,
   {
-    hasError,
     isSaving,
     isPrimaryButtonDisabled,
     disabled,
@@ -32,7 +31,7 @@ export const customizeWorkflowsTab = (
     description: 'The tab label for the monitoring customize workflows tab on the configure template wizard',
   }),
   disabled: disabled,
-  tabStatusIcon: hasError ? 'error' : undefined,
+  tabStatusIcon: undefined,
   content: (
     <CustomizeWorkflows
       selectedWorkflowsList={selectedWorkflowsList}

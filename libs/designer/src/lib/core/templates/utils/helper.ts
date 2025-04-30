@@ -269,21 +269,10 @@ export const checkWorkflowNameWithRegex = (intl: IntlShape, workflowName: string
 };
 
 export const validateWorkflowData = (workflowData: Partial<WorkflowTemplateData>, isAccelerator: boolean) => {
-  const {
-    manifest: workflowManifest,
-    // , workflowName
-  } = workflowData;
+  const { manifest: workflowManifest } = workflowData;
   const intl = getIntl();
 
   const manifestErrors: Record<string, string | undefined> = {};
-
-  // const workflowNameError = isUndefinedOrEmptyString(workflowName)
-  //   ? intl.formatMessage({
-  //       defaultMessage: 'Workflow name is required.',
-  //       id: 'SakW8J',
-  //       description: 'Error message when the workflow name field is empty',
-  //     })
-  //   : checkWorkflowNameWithRegex(intl, workflowName);
 
   manifestErrors['title'] =
     isAccelerator && isUndefinedOrEmptyString(workflowManifest?.title)

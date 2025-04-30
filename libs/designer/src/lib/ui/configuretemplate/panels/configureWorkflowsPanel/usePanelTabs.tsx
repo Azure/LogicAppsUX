@@ -128,6 +128,7 @@ export const useConfigureWorkflowPanelTabs = ({
         ? originalWorkflowIds.some((resourceId) => !selectedWorkflowIds.includes(resourceId))
         : true;
 
+    console.log('--selectedWorkflowsList() ', selectedWorkflowsList(), hasWorkflowListChanged);
     if (hasWorkflowListChanged) {
       dispatch(initializeAndSaveWorkflowsData({ workflows: selectedWorkflowsList(), onSaveCompleted }));
     } else {

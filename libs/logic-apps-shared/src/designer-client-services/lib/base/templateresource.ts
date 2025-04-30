@@ -101,10 +101,12 @@ export class BaseTemplateResourceService implements ITemplateResourceService {
 
   public async addWorkflow(resourceId: string, workflowName: string, data: WorkflowData) {
     try {
+      console.log('---workflow ', workflowName, data);
       const { baseUrl, apiVersion, httpClient } = this.options;
       const uri = `${baseUrl}${resourceId}/workflows/${workflowName}`;
       const manifest: any = { ...data.manifest, details: data.manifest?.description, allowedKinds: data.manifest?.kinds };
 
+      delete manifest.id;
       delete manifest.kinds;
       delete manifest.description;
 

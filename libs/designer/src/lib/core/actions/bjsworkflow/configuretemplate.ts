@@ -235,6 +235,8 @@ export const initializeAndSaveWorkflowsData = createAsyncThunk(
     const parameterDefinitions = await getTemplateParameters(getState() as RootState, mapping);
     dispatch(updateConnectionAndParameterDefinitions({ connections, parameterDefinitions }));
 
+    console.log('ELAINA: initializeAndSaveWorkflowsData ---workflows ', workflows);
+
     await saveWorkflowsInTemplateInternal((getState() as RootState).template, /* clearWorkflows */ true);
     onSaveCompleted?.();
   }
