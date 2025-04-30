@@ -38,7 +38,7 @@ export const useConfigureWorkflowPanelTabs = ({
   const duplicateIds = useMemo(() => {
     const seen = new Set<string>();
     const duplicateIds = new Set<string>();
-    console.log('selectedWorkflowsList', currentSelectedWorkflowsList);
+    // console.log('selectedWorkflowsList', currentSelectedWorkflowsList);
     for (const { id } of Object.values(currentSelectedWorkflowsList)) {
       if (!id) {
         continue;
@@ -125,6 +125,9 @@ export const useConfigureWorkflowPanelTabs = ({
   const missingNameOrDisplayName = Object.values(selectedWorkflowsList()).some(
     (workflow) => !workflow?.workflowName || (Object.keys(selectedWorkflowsList()).length > 1 && !workflow?.manifest?.title)
   );
+
+  // console.log('selectedWorkflowsList', selectedWorkflowsList());
+  // console.log('currentSelectedWorkflowsList', currentSelectedWorkflowsList);
 
   return [
     selectWorkflowsTab(intl, dispatch, {
