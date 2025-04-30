@@ -12,7 +12,18 @@ import {
   useRunInstance,
 } from '../../../core/state/workflow/workflowSelectors';
 import { isNullOrUndefined, LogEntryLevel, LoggerService, RunService } from '@microsoft/logic-apps-shared';
-import { Button, Drawer, mergeClasses } from '@fluentui/react-components';
+import {
+  Button,
+  Dialog,
+  DialogActions,
+  DialogBody,
+  DialogContent,
+  DialogSurface,
+  DialogTitle,
+  DialogTrigger,
+  Drawer,
+  mergeClasses,
+} from '@fluentui/react-components';
 import { ChatFilled } from '@fluentui/react-icons';
 import { useDispatch } from 'react-redux';
 import { changePanelNode, getReactQueryClient, type AppDispatch } from '../../../core';
@@ -56,6 +67,7 @@ export const AgentChat = ({
   const panelRef = useRef<HTMLDivElement>(null);
   const focusElement = useFocusElement();
   const rawAgentLastOperations = JSON.stringify(agentLastOperations);
+  const [dialogOpen, setDialogOpen] = useState(false);
 
   const { mutate: refreshChat } = useMutation(async () => {
     const queryClient = getReactQueryClient();
@@ -69,9 +81,17 @@ export const AgentChat = ({
   const { mutate: cancelRun } = useCancelRun(runInstance?.id);
 
   const stopChat = useCallback(async () => {
+    setDialogOpen(true);
+  }, []);
+
+  const onCancel = useCallback(() => {
     cancelRun();
     refreshChat();
   }, [cancelRun, refreshChat]);
+
+  const onClosingDialog = useCallback(() => {
+    setDialogOpen(false);
+  }, []);
 
   const toolResultCallback = useCallback(
     (agentName: string, toolName: string, iteration: number, subIteration: number) => {
@@ -268,6 +288,26 @@ export const AgentChat = ({
             }}
           />
           <PanelResizer updatePanelWidth={setOverrideWidth} panelRef={panelRef} />
+          <Dialog inertTrapFocus={true} open={dialogOpen} aria-labelledby={'title'} onOpenChange={onClosingDialog} surfaceMotion={null}>
+            <DialogSurface mountNode={panelRef.current}>
+              <DialogBody>
+                <DialogTitle>Stop agent chat</DialogTitle>
+                <DialogContent className="msla-modal-container">
+                  Do you want to stop the agent chat? This will cancel any ongoing operations and close the chat.
+                </DialogContent>
+                <DialogActions fluid>
+                  <DialogTrigger>
+                    <Button appearance="primary" onClick={onCancel}>
+                      {'confirmText'}
+                    </Button>
+                  </DialogTrigger>
+                  <DialogTrigger>
+                    <Button onClick={onClosingDialog}>{'cancelText'}</Button>
+                  </DialogTrigger>
+                </DialogActions>
+              </DialogBody>
+            </DialogSurface>
+          </Dialog>
         </>
       )}
     </Drawer>
