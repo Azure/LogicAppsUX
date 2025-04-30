@@ -1,7 +1,7 @@
 import type { PayloadAction } from '@reduxjs/toolkit';
 import { createSlice } from '@reduxjs/toolkit';
 import { resetTemplatesState } from '../global';
-import { deleteWorkflowData, initializeWorkflowsData, loadCustomTemplate } from '../../actions/bjsworkflow/configuretemplate';
+import { deleteWorkflowData, initializeAndSaveWorkflowsData, loadCustomTemplate } from '../../actions/bjsworkflow/configuretemplate';
 
 export interface TabState {
   selectedTabId: string | undefined;
@@ -36,12 +36,12 @@ export const tabSlice = createSlice({
       state.enableWizard = action.payload.enableWizard;
     });
 
-    builder.addCase(initializeWorkflowsData.pending, (state) => {
+    builder.addCase(initializeAndSaveWorkflowsData.pending, (state) => {
       state.isWizardUpdating = true;
       state.enableWizard = false;
     });
 
-    builder.addCase(initializeWorkflowsData.fulfilled, (state) => {
+    builder.addCase(initializeAndSaveWorkflowsData.fulfilled, (state) => {
       state.isWizardUpdating = false;
       state.enableWizard = true;
     });

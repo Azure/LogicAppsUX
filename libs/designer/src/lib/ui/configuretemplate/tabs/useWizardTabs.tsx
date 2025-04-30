@@ -11,6 +11,8 @@ import { useTemplatesStrings } from '../../templates/templatesStrings';
 import { useResourceStrings } from '../resources';
 import type { Template } from '@microsoft/logic-apps-shared';
 import { TemplateResourceService } from '@microsoft/logic-apps-shared';
+import { useQueryClient } from '@tanstack/react-query';
+import { useCallback } from 'react';
 
 export const useConfigureTemplateWizardTabs = ({
   onSaveWorkflows,
@@ -21,6 +23,7 @@ export const useConfigureTemplateWizardTabs = ({
 }) => {
   const intl = useIntl();
   const dispatch = useDispatch<AppDispatch>();
+  const queryClient = useQueryClient();
   const resources = { ...useTemplatesStrings().tabLabelStrings, ...useResourceStrings() };
 
   const {
@@ -50,16 +53,24 @@ export const useConfigureTemplateWizardTabs = ({
       (errors?.manifest && Object.values(errors?.manifest ?? {}).some((value) => value !== undefined))
   );
 
-  const onProfileSave = () => {
-    const manifestToUpdate: Template.TemplateManifest = {
-      ...(templateManifest as Template.TemplateManifest),
-      details: {
-        ...templateManifest?.details,
-        Type: Object.keys(workflows).length > 1 ? 'Accelerator' : 'Workflow',
-      } as any,
-    };
-    TemplateResourceService().updateTemplate(templateManifest?.id as string, manifestToUpdate, state);
-  };
+  const onTemplateSave = useCallback(
+    async (publishState: string) => {
+      const manifestToUpdate: Template.TemplateManifest = {
+        ...(templateManifest as Template.TemplateManifest),
+        details: {
+          ...templateManifest?.details,
+          Type: Object.keys(workflows).length > 1 ? 'Accelerator' : 'Workflow',
+        } as any,
+      };
+      const templateId = templateManifest?.id as string;
+      await TemplateResourceService().updateTemplate(templateId, manifestToUpdate, publishState);
+
+      queryClient.removeQueries(['template', templateId.toLowerCase()]);
+    },
+    [queryClient, templateManifest, workflows]
+  );
+
+  const onProfileSave = useCallback(async () => onTemplateSave(state as string), [onTemplateSave, state]);
   const disableProfileSave = false;
 
   return [

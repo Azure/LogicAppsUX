@@ -8,11 +8,12 @@ import { useFunctionalState } from '@react-hookz/web';
 import type { WorkflowTemplateData } from '../../../../core';
 import {
   getWorkflowsWithDefinitions,
-  initializeWorkflowsData,
-  saveWorkflowsInTemplate,
+  initializeAndSaveWorkflowsData,
+  saveWorkflowsData,
 } from '../../../../core/actions/bjsworkflow/configuretemplate';
 import { getResourceNameFromId, equals } from '@microsoft/logic-apps-shared';
 import { validateWorkflowData } from '../../../../core/templates/utils/helper';
+import { useCallback } from 'react';
 
 export const useConfigureWorkflowPanelTabs = ({
   onSave,
@@ -84,13 +85,25 @@ export const useConfigureWorkflowPanelTabs = ({
     setSelectedWorkflowsList(await getWorkflowsWithDefinitions(workflowState, selectedWorkflowsList()));
   };
 
-  const onSaveWorkflowsInTemplate = async (newState: RootState) => {
-    await saveWorkflowsInTemplate(newState);
-    onSave?.(Object.keys(selectedWorkflowsList()).length > 1);
-  };
+  const onSaveCompleted = useCallback(() => onSave?.(Object.keys(selectedWorkflowsList()).length > 1), [onSave, selectedWorkflowsList]);
 
   const onSaveChanges = () => {
-    dispatch(initializeWorkflowsData({ workflows: selectedWorkflowsList(), onCompleted: onSaveWorkflowsInTemplate }));
+    const selectedWorkflowIds = Object.values(selectedWorkflowsList()).map((workflow) =>
+      workflow.manifest?.metadata?.workflowSourceId?.toLowerCase()
+    );
+    const originalWorkflowIds = Object.values(workflowsInTemplate).map((workflow) =>
+      workflow.manifest?.metadata?.workflowSourceId?.toLowerCase()
+    );
+    const hasWorkflowListChanged =
+      originalWorkflowIds.length === selectedWorkflowIds.length
+        ? originalWorkflowIds.some((resourceId) => !selectedWorkflowIds.includes(resourceId))
+        : true;
+
+    if (hasWorkflowListChanged) {
+      dispatch(initializeAndSaveWorkflowsData({ workflows: selectedWorkflowsList(), onSaveCompleted }));
+    } else {
+      dispatch(saveWorkflowsData({ workflows: selectedWorkflowsList(), onSaveCompleted }));
+    }
   };
 
   const isNoWorkflowsSelected = Object.keys(selectedWorkflowsList()).length === 0;

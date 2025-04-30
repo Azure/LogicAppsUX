@@ -1,5 +1,5 @@
 import type { ArmResource, LogicAppResource, WorkflowResource, Template } from '@microsoft/logic-apps-shared';
-import { getResourceNameFromId, getTriggerFromDefinition, ResourceService, TemplateResourceService } from '@microsoft/logic-apps-shared';
+import { getTriggerFromDefinition, ResourceService, TemplateResourceService } from '@microsoft/logic-apps-shared';
 import type { QueryClient, UseQueryResult } from '@tanstack/react-query';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { getConnector } from '../../queries/operation';
@@ -10,9 +10,9 @@ export const getTemplateManifest = async (templateId: string): Promise<Template.
   const templateResource = await getTemplate(templateId);
   return (
     templateResource?.properties?.manifest
-      ? { id: templateResource.id, workflows: {}, ...templateResource.properties.manifest }
+      ? { id: templateId, workflows: {}, ...templateResource.properties.manifest }
       : {
-          id: templateResource.id,
+          id: templateId,
           title: '',
           summary: '',
           workflows: {},
@@ -31,9 +31,9 @@ export const getWorkflowsInTemplate = async (templateId: string): Promise<Record
   return queryClient.fetchQuery(['templateworkflows', templateId.toLowerCase()], async () => {
     const workflows = await TemplateResourceService().getTemplateWorkflows(templateId);
     return workflows.reduce((result: Record<string, Template.WorkflowManifest>, workflow) => {
-      const workflowId = getResourceNameFromId(workflow.id.toLowerCase());
+      const workflowId = workflow.properties.manifest.id;
       result[workflowId] = workflow.properties.manifest
-        ? { id: workflowId, ...workflow.properties.manifest }
+        ? workflow.properties.manifest
         : {
             id: workflowId,
             title: '',
