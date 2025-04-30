@@ -7,7 +7,7 @@ import {
 } from '../../../../constants';
 import { localize } from '../../../../localize';
 import { createArtifactsFolder } from '../../../utils/codeless/artifacts';
-import { getCustomCodeFunctionsProjects } from '../../../utils/customCodeUtils';
+import { getAllCustomCodeFunctionsProjects } from '../../../utils/customCodeUtils';
 import { addLocalFuncTelemetry, tryGetLocalFuncVersion, tryParseFuncVersion } from '../../../utils/funcCoreTools/funcVersion';
 import { getGlobalSetting, getWorkspaceSetting } from '../../../utils/vsCodeConfig/settings';
 import { FolderListStep } from '../../createNewProject/createProjectSteps/FolderListStep';
@@ -85,7 +85,7 @@ export async function createNewProjectInternalBase(
   await wizard.execute();
 
   if (wizardContext.isWorkspaceWithFunctions) {
-    commands.executeCommand('setContext', extensionCommand.customCodeSetFunctionsFolders, await getCustomCodeFunctionsProjects(context));
+    commands.executeCommand('setContext', extensionCommand.customCodeSetFunctionsFolders, await getAllCustomCodeFunctionsProjects(context));
   }
 
   window.showInformationMessage(localize('finishedCreating', 'Finished creating project.'));

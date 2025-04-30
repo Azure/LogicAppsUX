@@ -19,7 +19,13 @@ import {
 } from '../../../../../../constants';
 import { ext } from '../../../../../../extensionVariables';
 import { localize } from '../../../../../../localize';
+import {
+  type CustomCodeFunctionsProjectMetadata,
+  getCustomCodeFunctionsProjectMetadata,
+  tryGetLogicAppCustomCodeFunctionsProjects,
+} from '../../../../../utils/customCodeUtils';
 import { isSubpath, confirmEditJsonFile, confirmOverwriteFile } from '../../../../../utils/fs';
+import { tryGetLogicAppProjectRoot } from '../../../../../utils/verifyIsProject';
 import {
   getDebugConfigs,
   getLaunchVersion,
@@ -49,7 +55,7 @@ import type {
   ILaunchJson,
   IExtensionsJson,
 } from '@microsoft/vscode-extension-logic-apps';
-import { WorkflowProjectType, FuncVersion } from '@microsoft/vscode-extension-logic-apps';
+import { WorkflowProjectType, FuncVersion, TargetFramework } from '@microsoft/vscode-extension-logic-apps';
 import * as fse from 'fs-extra';
 import * as path from 'path';
 import type { TaskDefinition, DebugConfiguration, WorkspaceFolder } from 'vscode';
@@ -64,9 +70,23 @@ export abstract class InitCodeProject extends AzureWizardExecuteStep<IProjectWiz
   protected getTaskInputs?(): ITaskInputs[];
   protected getWorkspaceSettings?(): ISettingToAdd[];
 
-  protected getDebugConfiguration(version: FuncVersion, logicAppName: string): DebugConfiguration {
+  protected getDebugConfiguration(
+    version: FuncVersion,
+    logicAppName: string,
+    customCodeTargetFramework?: TargetFramework
+  ): DebugConfiguration {
+    if (customCodeTargetFramework) {
+      return {
+        name: localize('debugLogicApp', `Run/Debug logic app with local function ${logicAppName}`),
+        type: 'logicapp',
+        request: 'launch',
+        funcRuntime: version === FuncVersion.v1 ? 'clr' : 'coreclr',
+        customCodeRuntime: customCodeTargetFramework === TargetFramework.Net8 ? 'coreclr' : 'clr',
+      };
+    }
+
     return {
-      name: localize('attachToNetFunc', `Attach to logic app ${logicAppName}`),
+      name: localize('attachToNetFunc', `Run/debug logic app ${logicAppName}`),
       type: version === FuncVersion.v1 ? 'clr' : 'coreclr',
       request: 'attach',
       processId: `\${command:${extensionCommand.pickProcess}}`,
@@ -95,7 +115,14 @@ export abstract class InitCodeProject extends AzureWizardExecuteStep<IProjectWiz
 
     // Write the necessary Visual Studio Code configuration files.
     await this.writeTasksJson(context, vscodePath);
-    await this.writeLaunchJson(context, context.workspaceFolder, vscodePath, version, context.logicAppName || context.workspaceFolder.name);
+    await this.writeLaunchJson(
+      context,
+      context.workspaceFolder,
+      vscodePath,
+      version,
+      context.logicAppName || context.workspaceFolder.name,
+      context.targetFramework
+    );
     await this.writeSettingsJson(context, vscodePath, language, version);
     await this.writeExtensionsJson(context, vscodePath, language);
 
@@ -261,10 +288,22 @@ export abstract class InitCodeProject extends AzureWizardExecuteStep<IProjectWiz
     folder: WorkspaceFolder | undefined,
     vscodePath: string,
     version: FuncVersion,
-    logicAppName: string
+    logicAppName: string,
+    customCodeTargetFramework?: TargetFramework
   ): Promise<void> {
     if (this.getDebugConfiguration) {
-      const newDebugConfig: DebugConfiguration = this.getDebugConfiguration(version, logicAppName);
+      if (!customCodeTargetFramework) {
+        const logicAppFolderPath = await tryGetLogicAppProjectRoot(context, folder);
+        const customCodeProjectPaths = await tryGetLogicAppCustomCodeFunctionsProjects(logicAppFolderPath);
+        let customCodeProjectsMetadata: CustomCodeFunctionsProjectMetadata[];
+        if (customCodeProjectPaths && customCodeProjectPaths.length > 0) {
+          customCodeProjectsMetadata = await Promise.all(customCodeProjectPaths.map(getCustomCodeFunctionsProjectMetadata));
+        }
+        // Currently only support one custom code functions project per logic app
+        customCodeTargetFramework = customCodeProjectsMetadata ? customCodeProjectsMetadata[0].targetFramework : undefined;
+      }
+
+      const newDebugConfig: DebugConfiguration = this.getDebugConfiguration(version, logicAppName, customCodeTargetFramework);
       const versionMismatchError: Error = new Error(
         localize(
           'versionMismatchError',
