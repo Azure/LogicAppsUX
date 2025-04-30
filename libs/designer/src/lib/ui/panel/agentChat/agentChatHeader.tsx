@@ -1,5 +1,13 @@
 import { Button, Subtitle2 } from '@fluentui/react-components';
-import { ArrowClockwise16Regular, ChevronDoubleRight16Filled, Stop16Regular } from '@fluentui/react-icons';
+import {
+  ArrowClockwise16Filled,
+  ArrowClockwise16Regular,
+  bundleIcon,
+  ChevronDoubleRight16Filled,
+  ChevronDoubleRight16Regular,
+  Stop16Filled,
+  Stop16Regular,
+} from '@fluentui/react-icons';
 import { useIsDarkMode } from '../../../core/state/designerOptions/designerOptionsSelectors';
 import { useMemo } from 'react';
 import { useIntl } from 'react-intl';
@@ -8,6 +16,12 @@ interface AgentChatHeaderProps {
   title: string;
   toggleCollapse: () => void;
 }
+
+// Agent chat icons
+const StopIcon = bundleIcon(Stop16Filled, Stop16Regular);
+const RefreshIcon = bundleIcon(ArrowClockwise16Filled, ArrowClockwise16Regular);
+const CollapseIcon = bundleIcon(ChevronDoubleRight16Filled, ChevronDoubleRight16Regular);
+
 export const AgentChatHeader = ({ title, toggleCollapse }: AgentChatHeaderProps) => {
   const intl = useIntl();
   const isDarkMode = useIsDarkMode();
@@ -54,7 +68,7 @@ export const AgentChatHeader = ({ title, toggleCollapse }: AgentChatHeaderProps)
         <Button
           id="msla-agent-chat-header-stop"
           appearance="subtle"
-          icon={<Stop16Regular />}
+          icon={<StopIcon />}
           aria-label={intlText.COLLAPSE_BUTTON_ARIA_LABEL}
           onClick={toggleCollapse}
           data-automation-id="msla-agent-chat-header-stop"
@@ -63,7 +77,7 @@ export const AgentChatHeader = ({ title, toggleCollapse }: AgentChatHeaderProps)
         <Button
           id="msla-agent-chat-header-refresh"
           appearance="subtle"
-          icon={<ArrowClockwise16Regular />}
+          icon={<RefreshIcon />}
           aria-label={intlText.REFRESH_BUTTON_ARIA_LABEL}
           onClick={toggleCollapse}
           data-automation-id="msla-agent-chat-header-refresh"
@@ -72,7 +86,7 @@ export const AgentChatHeader = ({ title, toggleCollapse }: AgentChatHeaderProps)
         <Button
           id="msla-agent-chat-header-collapse"
           appearance="subtle"
-          icon={<ChevronDoubleRight16Filled />}
+          icon={<CollapseIcon />}
           aria-label={intlText.COLLAPSE_BUTTON_ARIA_LABEL}
           onClick={toggleCollapse}
           data-automation-id="msla-agent-chat-header-collapse"
