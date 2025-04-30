@@ -15,6 +15,7 @@ import { useIntl } from 'react-intl';
 interface AgentChatHeaderProps {
   title: string;
   toggleCollapse: () => void;
+  refreshChat: () => void;
 }
 
 // Agent chat icons
@@ -22,7 +23,7 @@ const StopIcon = bundleIcon(Stop16Filled, Stop16Regular);
 const RefreshIcon = bundleIcon(ArrowClockwise16Filled, ArrowClockwise16Regular);
 const CollapseIcon = bundleIcon(ChevronDoubleRight16Filled, ChevronDoubleRight16Regular);
 
-export const AgentChatHeader = ({ title, toggleCollapse }: AgentChatHeaderProps) => {
+export const AgentChatHeader = ({ title, toggleCollapse, refreshChat }: AgentChatHeaderProps) => {
   const intl = useIntl();
   const isDarkMode = useIsDarkMode();
 
@@ -79,7 +80,9 @@ export const AgentChatHeader = ({ title, toggleCollapse }: AgentChatHeaderProps)
           appearance="subtle"
           icon={<RefreshIcon />}
           aria-label={intlText.REFRESH_BUTTON_ARIA_LABEL}
-          onClick={toggleCollapse}
+          onClick={() => {
+            refreshChat();
+          }}
           data-automation-id="msla-agent-chat-header-refresh"
           title={intlText.REFRESH_BUTTON_TITLE}
         />

@@ -2,7 +2,7 @@ import { PanelLocation, PanelResizer, PanelSize, type ConversationItem } from '@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useIntl } from 'react-intl';
 import { defaultChatbotPanelWidth, ChatbotUI } from '@microsoft/logic-apps-chatbot';
-import { useAgentChatInvokeUri, useChatHistory } from '../../../core/queries/runs';
+import { runsQueriesKeys, useAgentChatInvokeUri, useChatHistory } from '../../../core/queries/runs';
 import { useMonitoringView } from '../../../core/state/designerOptions/designerOptionsSelectors';
 import {
   useAgentLastOperations,
@@ -15,10 +15,11 @@ import { isNullOrUndefined, LogEntryLevel, LoggerService, RunService } from '@mi
 import { Button, Drawer, mergeClasses } from '@fluentui/react-components';
 import { ChatFilled } from '@fluentui/react-icons';
 import { useDispatch } from 'react-redux';
-import { changePanelNode, type AppDispatch } from '../../../core';
+import { changePanelNode, getReactQueryClient, type AppDispatch } from '../../../core';
 import { clearFocusElement, setFocusNode, setRunIndex } from '../../../core/state/workflow/workflowSlice';
 import { AgentChatHeader } from './agentChatHeader';
 import { parseChatHistory } from './helper';
+import { useMutation } from '@tanstack/react-query';
 
 interface AgentChatProps {
   panelLocation?: PanelLocation;
@@ -55,6 +56,15 @@ export const AgentChat = ({
   const panelRef = useRef<HTMLDivElement>(null);
   const focusElement = useFocusElement();
   const rawAgentLastOperations = JSON.stringify(agentLastOperations);
+
+  const { mutate: refreshChat } = useMutation(async () => {
+    const queryClient = getReactQueryClient();
+    await queryClient.refetchQueries([runsQueriesKeys.useRunInstance]);
+    await queryClient.refetchQueries([runsQueriesKeys.useChatHistory]);
+    await queryClient.refetchQueries([runsQueriesKeys.useAgentActionsRepetition]);
+    await queryClient.refetchQueries([runsQueriesKeys.useAgentRepetition]);
+    await queryClient.refetchQueries([runsQueriesKeys.useNodeRepetition]);
+  });
 
   const toolResultCallback = useCallback(
     (agentName: string, toolName: string, iteration: number, subIteration: number) => {
@@ -217,7 +227,9 @@ export const AgentChat = ({
               isOpen: true,
               isBlocking: false,
               onDismiss: () => {},
-              header: <AgentChatHeader title={intlText.agentChatHeader} toggleCollapse={() => setIsCollapsed(true)} />,
+              header: (
+                <AgentChatHeader title={intlText.agentChatHeader} refreshChat={refreshChat} toggleCollapse={() => setIsCollapsed(true)} />
+              ),
             }}
             inputBox={{
               onSubmit: () => {

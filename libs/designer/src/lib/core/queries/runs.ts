@@ -25,6 +25,7 @@ export const runsQueriesKeys = {
   useAgentActionsRepetition: 'useAgentActionsRepetition',
   useChatHistory: 'useChatHistory',
   useAgentChatInvokeUri: 'useAgentChatInvokeUri',
+  useRunInstance: 'useRunInstance',
 };
 
 export const useRuns = (enabled = false) => {
