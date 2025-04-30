@@ -106,6 +106,18 @@ export const useConfigureWorkflowPanelTabs = ({
   };
 
   const onSaveChanges = () => {
+    setSelectedWorkflowsList((prevSelectedWorkflows) => {
+      const newSelectedWorkflows: Record<string, Partial<WorkflowTemplateData>> = prevSelectedWorkflows;
+      for (const [workflowId, workflowData] of Object.entries(prevSelectedWorkflows)) {
+        // Update workflowId with user-input id (For newly selected workflow)
+        if (workflowData.id && workflowId !== workflowData.id) {
+          prevSelectedWorkflows[workflowData.id] = workflowData;
+          delete prevSelectedWorkflows[workflowId];
+        }
+      }
+      return newSelectedWorkflows;
+    });
+
     dispatch(initializeWorkflowsData({ workflows: selectedWorkflowsList(), onCompleted: onSaveWorkflowsInTemplate }));
   };
 

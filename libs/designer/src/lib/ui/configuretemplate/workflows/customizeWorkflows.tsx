@@ -89,7 +89,8 @@ const CustomizeWorkflowSection = ({
         label: resourceStrings.WORKFLOW_NAME,
         value: workflow.id || '',
         hint: resourceStrings.WORKFLOW_NAME_DESCRIPTION,
-        type: 'textfield',
+        // TODO - change this logic (if resource id then hasn't been saved yet, so textfield; otherwise unchangeable text)
+        type: workflowId?.startsWith('/') ? 'text' : 'textfield',
         required: true,
         onChange: (value: string) => {
           updateWorkflowDataField(workflowId, { id: value });
