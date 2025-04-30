@@ -119,7 +119,7 @@ export const WebViewCommunication: React.FC<{ children: ReactNode }> = ({ childr
       }
       case ProjectName.connections: {
         if (message.command === ExtensionCommand.initializeConnectionFrame) {
-          dispatch(initializeConnectionsDesigner(message.data));
+          dispatch(initializeConnectionsDesigner({state: message.data, accessToken: message.data.azureDetails.accessToken ?? ''}));
           dispatch(initializeConnection(message.data.connectionId));
           dispatch(initialize(message.data.project));
           console.log('Connections project initialized:' + message.data.baseUrl );

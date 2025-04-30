@@ -14,8 +14,17 @@ type InitializeFrame = {
   baseUrl: string;
   workflowRuntimeBaseUrl: string;
   connections: ConnectionsData;
-  azureDetails: AzureConnectorDetails
+  azureDetails: AzureConnectorDetails,
+  apiHubServiceDetails: Record<string, any>;
+
 };
+
+export interface CreateConnectionPanel {
+  connectionId: string,
+  connectionsData: ConnectionsData,
+  azureDetails: AzureConnectorDetails,
+  apiHubServiceDetails: Record<string, any>;
+}
 
 export type MessageToCommandWebview =
   | {

@@ -38,6 +38,7 @@ import type { WebviewApi } from 'vscode-webview';
 import { CustomEditorService } from './customEditorService';
 import packagejson from '../../../package.json';
 import { LoggerService } from '../services/Logger';
+import { access } from 'fs';
 
 export interface IDesignerServices {
   connectionService: StandardConnectionService;
@@ -69,7 +70,8 @@ export const getDesignerServices = (
   oauthRedirectUrl: string,
   hostVersion: string,
   queryClient: QueryClient,
-  sendMsgToVsix: (msg: MessageToVsix) => void
+  sendMsgToVsix: (msg: MessageToVsix) => void,
+  accessToken?: string,
 ): IDesignerServices => {
   let authToken = '';
   let panelId = '';
@@ -86,12 +88,14 @@ export const getDesignerServices = (
   console.log('base url from service creation ' + baseUrl)
 
   if (panelMetadata) {
-    authToken = panelMetadata.accessToken ?? '';
+    authToken = panelMetadata.accessToken ?? accessToken ?? '';
     panelId = panelMetadata.panelId;
     workflowDetails = panelMetadata.workflowDetails;
     workflowName = panelMetadata.workflowName;
     appSettings = panelMetadata.localSettings;
     isStateful = panelMetadata.standardApp?.stateful ?? false;
+  }else {
+    authToken = accessToken ?? '';
   }
 
   const addConnectionData = async (connectionAndSetting: ConnectionAndAppSetting): Promise<void> => {

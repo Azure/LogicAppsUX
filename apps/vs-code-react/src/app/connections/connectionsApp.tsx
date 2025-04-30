@@ -56,6 +56,7 @@ export const ConnectionsApp = () => {
     isUnitTest,
     unitTestDefinition,
     workflowRuntimeBaseUrl,
+    accessToken
   } = vscodeState;
 
   const [theme, setTheme] = useState<Theme>(getTheme(document.body));
@@ -117,7 +118,8 @@ export const ConnectionsApp = () => {
         oauthRedirectUrl,
         hostVersion,
         queryClient,
-        sendMsgToVsix
+        sendMsgToVsix,
+        accessToken
       );
     }
     return undefined;
