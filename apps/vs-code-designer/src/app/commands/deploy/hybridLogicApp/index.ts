@@ -10,7 +10,7 @@ import { updateSMBConnectedEnvironment } from '../../../utils/codeless/hybridLog
 import path from 'path';
 import { getAuthorizationToken } from '../../../utils/codeless/getAuthorizationToken';
 import { getWorkspaceSetting } from '../../../utils/vsCodeConfig/settings';
-import { azurePublicBaseUrl, driveLetterSMBSetting } from '../../../../constants';
+import { azurePublicBaseUrl, driveLetterSMBSetting, hybridAppApiVersion } from '../../../../constants';
 import axios from 'axios';
 import { isSuccessResponse } from '@microsoft/vscode-extension-logic-apps';
 
@@ -112,7 +112,7 @@ const getSMBDetails = async (context: IActionContext, node: SlotTreeItem) => {
 const getStorageInfoForConnectedEnv = async (connectedEnvId: string, storageName: string, context: IActionContext, node: SlotTreeItem) => {
   const accessToken = await getAuthorizationToken();
 
-  const url = `${azurePublicBaseUrl}/${connectedEnvId}/storages/${storageName}?api-version=2024-02-02-preview`;
+  const url = `${azurePublicBaseUrl}/${connectedEnvId}/storages/${storageName}?api-version=${hybridAppApiVersion}`;
 
   try {
     const response = await axios.get(url, { headers: { authorization: accessToken } });

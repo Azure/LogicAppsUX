@@ -7,6 +7,7 @@ import {
   appKindSetting,
   azurePublicBaseUrl,
   extensionVersionKey,
+  hybridAppApiVersion,
   localSettingsFileName,
   logicAppKind,
   sqlConnectionStringSecretName,
@@ -140,7 +141,7 @@ export const createOrUpdateHybridApp = async (context: IActionContext, accessTok
         },
       };
 
-  const url = `${azurePublicBaseUrl}/subscriptions/${subscriptionId}/resourceGroups/${resourceGroup}/providers/Microsoft.App/containerApps/${siteName}?api-version=2024-02-02-preview`;
+  const url = `${azurePublicBaseUrl}/subscriptions/${subscriptionId}/resourceGroups/${resourceGroup}/providers/Microsoft.App/containerApps/${siteName}?api-version=${hybridAppApiVersion}`;
 
   try {
     const method = hybridApp ? HTTP_METHODS.PATCH : HTTP_METHODS.PUT;
@@ -171,7 +172,7 @@ export const createOrUpdateHybridApp = async (context: IActionContext, accessTok
  * @throws An error if there is an issue in getting the connection.
  */
 export const createLogicAppExtension = async (context: ILogicAppWizardContext, accessToken: string) => {
-  const url = `${azurePublicBaseUrl}/subscriptions/${context.subscriptionId}/resourceGroups/${context.resourceGroup.name}/providers/Microsoft.App/containerApps/${context.newSiteName}/providers/Microsoft.App/logicApps/${context.newSiteName}?api-version=2024-02-02-preview`;
+  const url = `${azurePublicBaseUrl}/subscriptions/${context.subscriptionId}/resourceGroups/${context.resourceGroup.name}/providers/Microsoft.App/containerApps/${context.newSiteName}/providers/Microsoft.App/logicApps/${context.newSiteName}?api-version=${hybridAppApiVersion}`;
 
   try {
     const response = await axios.put(

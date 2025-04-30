@@ -3,7 +3,7 @@ import { ConnectionType, equals } from '../../../utils/src';
 import { BaseOperationManifestService } from '../base';
 import type { BaseOperationManifestServiceOptions } from '../base/operationmanifest';
 import { getBuiltInOperationInfo, isBuiltInOperation, supportedBaseManifestObjects } from '../base/operationmanifest';
-import { getHybridAppBaseRelativeUrl, isHybridLogicApp } from './hybrid';
+import { getHybridAppBaseRelativeUrl, hybridApiVersion, isHybridLogicApp } from './hybrid';
 import { getClientBuiltInConnectors } from '../base/search';
 
 export interface StandardOperationManifestServiceOptions extends BaseOperationManifestServiceOptions {
@@ -71,7 +71,7 @@ export class StandardOperationManifestService extends BaseOperationManifestServi
     let response = null;
     if (isHybridLogicApp(baseUrl)) {
       response = await httpClient.post<any, null>({
-        uri: `${getHybridAppBaseRelativeUrl(baseUrl.split('hostruntime')[0])}/invoke?api-version=2024-02-02-preview`,
+        uri: `${getHybridAppBaseRelativeUrl(baseUrl.split('hostruntime')[0])}/invoke?api-version=${hybridApiVersion}`,
         headers: {
           'x-ms-logicapps-proxy-path': `/runtime/webhooks/workflow/api/management/operationGroups/${connectorName}/operations/${operationName}?$expand=properties/manifest`,
           'x-ms-logicapps-proxy-method': 'GET',
@@ -116,7 +116,7 @@ export class StandardOperationManifestService extends BaseOperationManifestServi
       let response = null;
       if (isHybridLogicApp(baseUrl)) {
         response = await httpClient.post<any, null>({
-          uri: `${getHybridAppBaseRelativeUrl(baseUrl.split('hostruntime')[0])}/invoke?api-version=2024-02-02-preview`,
+          uri: `${getHybridAppBaseRelativeUrl(baseUrl.split('hostruntime')[0])}/invoke?api-version=${hybridApiVersion}`,
           headers: {
             'x-ms-logicapps-proxy-path': `/runtime/webhooks/workflow/api/management/operationGroups/${connectorName}/operations/${operationName}?$expand=properties/manifest`,
             'x-ms-logicapps-proxy-method': 'GET',

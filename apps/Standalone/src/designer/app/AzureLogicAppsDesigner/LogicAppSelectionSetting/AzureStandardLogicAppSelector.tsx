@@ -11,7 +11,7 @@ import axios from 'axios';
 import { useEffect } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { useDispatch } from 'react-redux';
-import { HybridAppUtility } from '../Utilities/HybridAppUtilities';
+import { HybridAppUtility, hybridApiVersion } from '../Utilities/HybridAppUtilities';
 
 const columnProps: Partial<IStackProps> = {
   tokens: { childrenGap: 15 },
@@ -41,7 +41,7 @@ export const AzureStandardLogicAppSelector = () => {
 
     const getWorkflowUrl =
       hostingPlan === 'hybrid'
-        ? `https://management.azure.com${HybridAppUtility.getHybridAppBaseRelativeUrl(appId)}/workflows?api-version=2024-02-02-preview`
+        ? `https://management.azure.com${HybridAppUtility.getHybridAppBaseRelativeUrl(appId)}/workflows?api-version=${hybridApiVersion}`
         : `https://management.azure.com${appId}/workflows?api-version=2018-11-01`;
 
     const results = await axios.get<WorkflowList>(getWorkflowUrl, {

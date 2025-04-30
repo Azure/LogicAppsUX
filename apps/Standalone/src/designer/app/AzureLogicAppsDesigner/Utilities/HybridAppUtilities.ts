@@ -15,7 +15,7 @@ export class HybridAppUtility {
     appName.pop();
 
     return (
-      await axios.post<T>(`${baseUri}providers/Microsoft.App/logicapps/${appName.pop()}/invoke?api-version=2024-02-02-preview`, data, {
+      await axios.post<T>(`${baseUri}providers/Microsoft.App/logicapps/${appName.pop()}/invoke?api-version=${hybridApiVersion}`, data, {
         headers: {
           ...headers,
           'x-ms-logicapps-proxy-path': `${path}`,
@@ -30,7 +30,7 @@ export class HybridAppUtility {
     const splitUri = uri.split('/hostruntime/');
     const appName = splitUri[0].split('/').pop();
     return (
-      await axios.post<T>(`${splitUri[0]}/providers/Microsoft.App/logicapps/${appName}/invoke?api-version=2024-02-02-preview`, data, {
+      await axios.post<T>(`${splitUri[0]}/providers/Microsoft.App/logicapps/${appName}/invoke?api-version=${hybridApiVersion}`, data, {
         headers: {
           ...headers,
           'x-ms-logicapps-proxy-path': `/${splitUri[1]}`,
@@ -45,7 +45,7 @@ export class HybridAppUtility {
     const [baseUri, path] = uri.split('/hostruntime/');
     const appName = baseUri.split('/').pop();
 
-    return await axios.post<T>(`${baseUri}/providers/Microsoft.App/logicapps/${appName}/invoke?api-version=2024-02-02-preview`, data, {
+    return await axios.post<T>(`${baseUri}/providers/Microsoft.App/logicapps/${appName}/invoke?api-version=${hybridApiVersion}`, data, {
       headers: {
         ...headers,
         'x-ms-logicapps-proxy-path': `${path}/`,
@@ -59,3 +59,5 @@ export class HybridAppUtility {
     return uri.toLowerCase().includes('microsoft.app');
   }
 }
+
+export const hybridApiVersion = '2024-02-02-preview';

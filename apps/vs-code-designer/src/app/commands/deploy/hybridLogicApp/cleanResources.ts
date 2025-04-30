@@ -1,7 +1,7 @@
 import axios from 'axios';
 import { localize } from '../../../../localize';
 import { executeCommand } from '../../../utils/funcCoreTools/cpUtils';
-import { azurePublicBaseUrl, Platform } from '../../../../constants';
+import { azurePublicBaseUrl, Platform, hybridAppApiVersion } from '../../../../constants';
 import * as fse from 'fs-extra';
 import * as path from 'path';
 import { isSuccessResponse } from '@microsoft/vscode-extension-logic-apps';
@@ -11,7 +11,7 @@ import { isSuccessResponse } from '@microsoft/vscode-extension-logic-apps';
  * @returns A Promise that resolves when the hybrid app is created.
  */
 export const cleanSMB = async (connectedEnvironmentId: string, storageName: string, accessToken: string): Promise<void> => {
-  const url = `${azurePublicBaseUrl}/${connectedEnvironmentId}/storages/${storageName}?api-version=2024-02-02-preview`;
+  const url = `${azurePublicBaseUrl}/${connectedEnvironmentId}/storages/${storageName}?api-version=${hybridAppApiVersion}`;
   try {
     const response = await axios.delete(url, {
       headers: { authorization: accessToken },

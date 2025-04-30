@@ -5,7 +5,7 @@ import type { BaseConnectorServiceOptions } from '../base';
 import { BaseConnectorService } from '../base';
 import type { ListDynamicValue, ManagedIdentityRequestProperties, TreeDynamicExtension, TreeDynamicValue } from '../connector';
 import { pathCombine } from '../helpers';
-import { getHybridAppBaseRelativeUrl, isHybridLogicApp } from './hybrid';
+import { getHybridAppBaseRelativeUrl, hybridApiVersion, isHybridLogicApp } from './hybrid';
 
 type GetConfigurationFunction = (connectionId: string) => Promise<Record<string, any>>;
 
@@ -70,7 +70,7 @@ export class StandardConnectorService extends BaseConnectorService {
     let response = null;
     if (isHybridLogicApp(uri)) {
       response = await httpClient.post({
-        uri: `${getHybridAppBaseRelativeUrl(baseUrl.split('hostruntime')[0])}/invoke?api-version=2024-02-02-preview`,
+        uri: `${getHybridAppBaseRelativeUrl(baseUrl.split('hostruntime')[0])}/invoke?api-version=${hybridApiVersion}`,
         headers: {
           'x-ms-logicapps-proxy-path': `/runtime/webhooks/workflow/api/management/operationGroups/${connectorId
             .split('/')
@@ -123,7 +123,7 @@ export class StandardConnectorService extends BaseConnectorService {
     let response = null;
     if (isHybridLogicApp(uri)) {
       response = await httpClient.post({
-        uri: `${getHybridAppBaseRelativeUrl(baseUrl.split('hostruntime')[0])}/invoke?api-version=2024-02-02-preview`,
+        uri: `${getHybridAppBaseRelativeUrl(baseUrl.split('hostruntime')[0])}/invoke?api-version=${hybridApiVersion}`,
         headers: {
           'x-ms-logicapps-proxy-path': `/runtime/webhooks/workflow/api/management/operationGroups/${connectorId
             .split('/')
