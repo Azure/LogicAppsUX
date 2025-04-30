@@ -203,7 +203,6 @@ const DesignerEditor = () => {
 
   useEffect(() => {
     if (isMonitoringView && runInstanceData) {
-      console.log('charlie runInstanceData', runInstanceData);
       setWorkflow((previousWorkflow: Workflow) => {
         return {
           ...previousWorkflow,
