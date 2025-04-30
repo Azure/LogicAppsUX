@@ -25,7 +25,7 @@ import { LoggerService } from '../logger';
 import { LogEntryLevel, Status } from '../logging/logEntry';
 import type { IOAuthPopup } from '../oAuth';
 import { OAuthService } from '../oAuth';
-import { getHybridAppBaseRelativeUrl, isHybridLogicApp } from './hybrid';
+import { getHybridAppBaseRelativeUrl, hybridApiVersion, isHybridLogicApp } from './hybrid';
 import { validateRequiredServiceArguments } from '../../../utils/src/lib/helpers/functions';
 import agentloopConnector from '../standard/manifest/agentLoopConnector';
 
@@ -164,7 +164,7 @@ export class StandardConnectionService extends BaseConnectionService implements 
       let response = null;
       if (isHybridLogicApp(baseUrl)) {
         response = await httpClient.post<any, null>({
-          uri: `${getHybridAppBaseRelativeUrl(baseUrl.split('hostruntime')[0])}/invoke?api-version=2024-02-02-preview`,
+          uri: `${getHybridAppBaseRelativeUrl(baseUrl.split('hostruntime')[0])}/invoke?api-version=${hybridApiVersion}`,
           headers: {
             'x-ms-logicapps-proxy-path': `/runtime/webhooks/workflow/api/management/operationGroups/${connectorId.split('/').at(-1)}/`,
             'x-ms-logicapps-proxy-method': 'GET',
@@ -611,7 +611,7 @@ export class StandardConnectionService extends BaseConnectionService implements 
 
       if (isHybridLogicApp(uri)) {
         const [baseUri, proxyPath] = uri.split('/hostruntime');
-        uri = `${getHybridAppBaseRelativeUrl(baseUri)}/invoke?api-version=2024-02-02-preview`;
+        uri = `${getHybridAppBaseRelativeUrl(baseUri)}/invoke?api-version=${hybridApiVersion}`;
         queryParameters = {};
         headers = {
           'x-ms-logicapps-proxy-path': proxyPath || '',
