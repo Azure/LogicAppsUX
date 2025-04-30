@@ -737,16 +737,28 @@ const hasParametersToAuthor = (parameterGroups: Record<string, ParameterGroup>):
 
 export const parametersTab: PanelTabFn = (intl, props) => ({
   id: constants.PANEL_TAB_NAMES.PARAMETERS,
-  title: intl.formatMessage({
-    defaultMessage: 'Parameters',
-    id: 'uxKRO/',
-    description: 'Parameters tab title',
-  }),
-  description: intl.formatMessage({
-    defaultMessage: 'Configure parameters for this node',
-    id: 'SToblZ',
-    description: 'Parameters tab description',
-  }),
+  title: props.isAgenticConditionPanel
+    ? intl.formatMessage({
+        defaultMessage: 'Details',
+        id: 'RXj9tF',
+        description: 'Details tab title',
+      })
+    : intl.formatMessage({
+        defaultMessage: 'Parameters',
+        id: 'uxKRO/',
+        description: 'Parameters tab title',
+      }),
+  description: props.isAgenticConditionPanel
+    ? intl.formatMessage({
+        defaultMessage: 'Configure details for this node',
+        id: 'or0uUQ',
+        description: 'Details tab description',
+      })
+    : intl.formatMessage({
+        defaultMessage: 'Configure parameters for this node',
+        id: 'SToblZ',
+        description: 'Parameters tab description',
+      }),
   visible: true,
   content: <ParametersTab {...props} />,
   order: 0,
