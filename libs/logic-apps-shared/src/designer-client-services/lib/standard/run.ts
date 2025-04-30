@@ -12,7 +12,7 @@ import {
   isNullOrUndefined,
   validateRequiredServiceArguments,
 } from '../../../utils/src';
-import { isHybridLogicApp } from './hybrid';
+import { hybridApiVersion, isHybridLogicApp } from './hybrid';
 import { LogEntryLevel } from '../logging/logEntry';
 import { LoggerService } from '../logger';
 
@@ -101,7 +101,7 @@ export class StandardRunService implements IRunService {
     const appName = baseUri.split('/');
     appName.pop();
     return {
-      uri: `${baseUri}/providers/Microsoft.App/logicapps/${appName.pop()}/invoke?api-version=2024-02-02-preview`,
+      uri: `${baseUri}/providers/Microsoft.App/logicapps/${appName.pop()}/invoke?api-version=${hybridApiVersion}`,
       headerPath: path,
     };
   }
