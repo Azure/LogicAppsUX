@@ -3730,7 +3730,6 @@ export function parameterValueToJSONString(parameterValue: ValueSegment[], apply
   let parameterValueString = '';
   let numberOfDoubleQuotes = 0;
   const rawStringFormat = parameterValueToStringWithoutCasting(parameterValue, forValidation);
-  console.log('rawStringFormat', rawStringFormat);
   const updatedParameterValue: ValueSegment[] = parameterValue.map((expression) => ({ ...expression }));
 
   // We return the raw stringified form, if value is not a valid json
