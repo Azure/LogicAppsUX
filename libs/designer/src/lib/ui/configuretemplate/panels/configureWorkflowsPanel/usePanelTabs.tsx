@@ -57,12 +57,11 @@ export const useConfigureWorkflowPanelTabs = ({
         );
 
         const workflowId = prevSelectedWorkflow?.id ?? normalizedWorkflowId;
-        const formattedId = prevSelectedWorkflow?.id ?? getResourceNameFromId(normalizedWorkflowId);
 
         newSelectedWorkflows[workflowId] = prevSelectedWorkflow
           ? prevSelectedWorkflow
           : ({
-              id: formattedId,
+              id: getResourceNameFromId(normalizedWorkflowId),
               manifest: {
                 kinds: ['stateful', 'stateless'],
                 metadata: {
@@ -106,7 +105,6 @@ export const useConfigureWorkflowPanelTabs = ({
     setSelectedWorkflowsList((prevSelectedWorkflows) => {
       const newSelectedWorkflows: Record<string, Partial<WorkflowTemplateData>> = prevSelectedWorkflows;
       for (const [workflowId, workflowData] of Object.entries(prevSelectedWorkflows)) {
-        // Update workflowId with user-input id (For newly selected workflow)
         if (workflowData.id && workflowId !== workflowData.id) {
           prevSelectedWorkflows[workflowData.id] = workflowData;
           delete prevSelectedWorkflows[workflowId];
@@ -115,8 +113,7 @@ export const useConfigureWorkflowPanelTabs = ({
       return newSelectedWorkflows;
     });
 
-    // 2. Check if the workflow list has changed
-    // If the workflow list has changed, initialize and save the workflows data
+    // 2. With updated workflowIds, dispatch based on whether workflows data have changed
     const selectedWorkflowIds = Object.values(selectedWorkflowsList()).map((workflow) =>
       workflow.manifest?.metadata?.workflowSourceId?.toLowerCase()
     );
@@ -128,7 +125,6 @@ export const useConfigureWorkflowPanelTabs = ({
         ? originalWorkflowIds.some((resourceId) => !selectedWorkflowIds.includes(resourceId))
         : true;
 
-    console.log('--selectedWorkflowsList() ', selectedWorkflowsList(), hasWorkflowListChanged);
     if (hasWorkflowListChanged) {
       dispatch(initializeAndSaveWorkflowsData({ workflows: selectedWorkflowsList(), onSaveCompleted }));
     } else {
@@ -139,7 +135,7 @@ export const useConfigureWorkflowPanelTabs = ({
   const isNoWorkflowsSelected = Object.keys(selectedWorkflowsList()).length === 0;
   const hasInvalidIdOrTitle = Object.values(selectedWorkflowsList()).some(
     (workflow) =>
-      !workflow?.id ||
+      isUndefinedOrEmptyString(workflow?.id) ||
       !isUndefinedOrEmptyString(workflow?.errors?.workflow) ||
       (Object.keys(selectedWorkflowsList()).length > 1 && !workflow?.manifest?.title)
   );

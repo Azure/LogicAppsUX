@@ -112,8 +112,7 @@ const CustomizeWorkflowSection = ({
         label: resourceStrings.WORKFLOW_NAME,
         value: workflow.id || '',
         hint: resourceStrings.WORKFLOW_NAME_DESCRIPTION,
-        // TODO - change this logic (if resource id then hasn't been saved yet, so textfield; otherwise unchangeable text)
-        type: workflowId?.startsWith('/') ? 'textfield' : 'text',
+        type: isResourceId(workflowId) ? 'textfield' : 'text',
         required: true,
         onChange: (value: string) => {
           updateWorkflowDataField(workflowId, { id: value });
@@ -276,4 +275,8 @@ const CustomizeWorkflowSection = ({
       <TemplatesSection title={customResourceStrings.WorkflowImages} titleHtmlFor={'imagesSectionLabel'} items={imageSectionItems} />
     </div>
   );
+};
+
+const isResourceId = (id: string) => {
+  return id.startsWith('/');
 };

@@ -50,12 +50,10 @@ export const SelectWorkflows = ({
         const normalizedWorkflowId = id.toLowerCase();
         onWorkflowsSelected([normalizedWorkflowId]);
       } else {
-        const workflowsOfSameSubscription =
-          Object.values(selectedWorkflowsList).map((workflow) => workflow.manifest?.metadata?.workflowSourceId as string) ?? [];
-        onWorkflowsSelected(workflowsOfSameSubscription);
+        onWorkflowsSelected([]);
       }
     },
-    [onWorkflowsSelected, selectedWorkflowsList]
+    [onWorkflowsSelected]
   );
 
   const resourceStrings = useResourceStrings();
@@ -124,7 +122,6 @@ export const SelectWorkflows = ({
         selectedItems: new Set(
           Object.values(selectedWorkflowsList).map((workflow) => workflow.manifest?.metadata?.workflowSourceId as string)
         ),
-        // selectedItems: Object.values(selectedWorkflowsList).map((workflow) => workflow.manifest?.metadata?.workflowSourceId as string),
         onSelectionChange: (_, data) => {
           onWorkflowsSelected(Array.from(data.selectedItems, String));
         },
