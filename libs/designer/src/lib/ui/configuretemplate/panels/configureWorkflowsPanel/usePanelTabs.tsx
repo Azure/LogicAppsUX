@@ -8,13 +8,12 @@ import { useFunctionalState } from '@react-hookz/web';
 import type { WorkflowTemplateData } from '../../../../core';
 import {
   getWorkflowsWithDefinitions,
-  initializeWorkflowsData,
-  saveWorkflowsInTemplate,
+  initializeAndSaveWorkflowsData,
+  saveWorkflowsData,
 } from '../../../../core/actions/bjsworkflow/configuretemplate';
 import { getResourceNameFromId, equals } from '@microsoft/logic-apps-shared';
 import { validateWorkflowData } from '../../../../core/templates/utils/helper';
 import { useCallback } from 'react';
-import { closePanel } from '../../../../core/state/templates/panelSlice';
 
 export const useConfigureWorkflowPanelTabs = ({
   onSave,
@@ -23,11 +22,10 @@ export const useConfigureWorkflowPanelTabs = ({
 }): TemplateTabProps[] => {
   const intl = useIntl();
   const dispatch = useDispatch<AppDispatch>();
-  const { isWizardUpdating, workflowsInTemplate, templateState, workflowState, runValidation } = useSelector((state: RootState) => ({
+  const { isWizardUpdating, workflowsInTemplate, workflowState, runValidation } = useSelector((state: RootState) => ({
     workflowsInTemplate: state.template.workflows,
     isWizardUpdating: state.tab.isWizardUpdating,
     workflowState: state.workflow,
-    templateState: state.template,
     runValidation: state.tab.runValidation,
   }));
 
@@ -87,17 +85,7 @@ export const useConfigureWorkflowPanelTabs = ({
     setSelectedWorkflowsList(await getWorkflowsWithDefinitions(workflowState, selectedWorkflowsList()));
   };
 
-  const onSaveWorkflowsInTemplate = useCallback(
-    async (clearWorkflows: boolean) => {
-      await saveWorkflowsInTemplate(templateState, clearWorkflows);
-      onSave?.(Object.keys(selectedWorkflowsList()).length > 1);
-
-      if (!clearWorkflows) {
-        dispatch(closePanel());
-      }
-    },
-    [templateState, onSave, selectedWorkflowsList, dispatch]
-  );
+  const onSaveCompleted = useCallback(() => onSave?.(Object.keys(selectedWorkflowsList()).length > 1), [onSave, selectedWorkflowsList]);
 
   const onSaveChanges = () => {
     const selectedWorkflowIds = Object.values(selectedWorkflowsList()).map((workflow) =>
@@ -112,9 +100,9 @@ export const useConfigureWorkflowPanelTabs = ({
         : true;
 
     if (hasWorkflowListChanged) {
-      dispatch(initializeWorkflowsData({ workflows: selectedWorkflowsList(), onCompleted: () => onSaveWorkflowsInTemplate(true) }));
+      dispatch(initializeAndSaveWorkflowsData({ workflows: selectedWorkflowsList(), onSaveCompleted }));
     } else {
-      onSaveWorkflowsInTemplate(false);
+      dispatch(saveWorkflowsData({ workflows: selectedWorkflowsList(), onSaveCompleted }));
     }
   };
 

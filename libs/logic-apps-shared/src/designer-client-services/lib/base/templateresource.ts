@@ -51,8 +51,12 @@ export class BaseTemplateResourceService implements ITemplateResourceService {
         const manifest = workflow?.properties?.manifest;
         const workflowId = getResourceNameFromId(workflow.id);
         if (manifest) {
+          manifest.kinds = manifest.allowedKinds;
           manifest.description = manifest.details;
+
+          delete manifest.allowedKinds;
           delete manifest.details;
+
           manifest.id = workflowId;
           workflow.properties.manifest = manifest;
         } else {
@@ -99,8 +103,9 @@ export class BaseTemplateResourceService implements ITemplateResourceService {
     try {
       const { baseUrl, apiVersion, httpClient } = this.options;
       const uri = `${baseUrl}${resourceId}/workflows/${workflowName}`;
-      const manifest: any = { ...data.manifest, details: data.manifest?.description };
+      const manifest: any = { ...data.manifest, details: data.manifest?.description, allowedKinds: data.manifest?.kinds };
 
+      delete manifest.kinds;
       delete manifest.description;
 
       if (data.workflow) {

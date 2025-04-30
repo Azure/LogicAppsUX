@@ -151,19 +151,21 @@ export const loadCustomTemplate = createAsyncThunk(
     dispatch(updateAllWorkflowsData(allWorkflowsData));
     dispatch(updateConnectionAndParameterDefinitions({ connections: allConnectionsData, parameterDefinitions: allParametersData }));
 
-    const segments = workflowSourceId.split('/');
-    const isConsumption = equals(segments[6], 'microsoft.logic');
-    dispatch(
-      setInitialData({
-        subscriptionId: segments[2],
-        resourceGroup: segments[4],
-        location: templateResource.location as string,
-        workflowAppName: isConsumption ? '' : segments[8],
-        logicAppName: segments[8],
-        isConsumption,
-        reloadServices: true,
-      } as any)
-    );
+    if (workflowSourceId) {
+      const segments = workflowSourceId.split('/');
+      const isConsumption = equals(segments[6], 'microsoft.logic');
+      dispatch(
+        setInitialData({
+          subscriptionId: segments[2],
+          resourceGroup: segments[4],
+          location: templateResource.location as string,
+          workflowAppName: isConsumption ? '' : segments[8],
+          logicAppName: segments[8],
+          isConsumption,
+          reloadServices: true,
+        } as any)
+      );
+    }
 
     const operationsData = await getOperationDataInDefinitions(
       allWorkflowsData as Record<string, WorkflowTemplateData>,
@@ -178,7 +180,79 @@ export const loadCustomTemplate = createAsyncThunk(
   }
 );
 
-export const saveWorkflowsInTemplate = async (newState: TemplateState, clearWorkflows = true): Promise<void> => {
+export const updateWorkflowParameter = createAsyncThunk(
+  'updateWorkflowParameter',
+  async (
+    { parameterId, definition }: { parameterId: string; definition: Template.ParameterDefinition },
+    { getState, dispatch }
+  ): Promise<void> => {
+    dispatch(
+      updateTemplateParameterDefinition({
+        parameterId: parameterId as string,
+        data: definition,
+      })
+    );
+
+    const {
+      template: { manifest, parameterDefinitions },
+    } = getState() as RootState;
+    const parameter = parameterDefinitions[parameterId];
+    const allParameters = Object.values(parameterDefinitions);
+    const associatedWorkflows = parameter?.associatedWorkflows as string[];
+    const promises: Promise<void>[] = [];
+    const service = TemplateResourceService();
+
+    for (const workflowId of associatedWorkflows) {
+      const parametersInWorkflow = getParametersForWorkflow(allParameters, workflowId).map((parameter) => {
+        const updatedParameter = { ...parameter };
+        delete updatedParameter.associatedWorkflows;
+        delete updatedParameter.associatedOperationParameter;
+        return updatedParameter;
+      });
+      promises.push(service.updateWorkflow(manifest?.id as string, workflowId, { parameters: parametersInWorkflow }));
+    }
+
+    await Promise.all(promises);
+    const queryClient = getReactQueryClient();
+    queryClient.removeQueries(['templateworkflows', manifest?.id.toLowerCase()]);
+  }
+);
+
+export const initializeAndSaveWorkflowsData = createAsyncThunk(
+  'initializeAndSaveWorkflowsData',
+  async (
+    { workflows, onSaveCompleted }: { workflows: Record<string, Partial<WorkflowTemplateData>>; onSaveCompleted?: () => void },
+    { getState, dispatch }
+  ): Promise<void> => {
+    dispatch(updateAllWorkflowsData(workflows));
+    const { connections, mapping, workflowsWithDefinitions } = await getTemplateConnections(getState() as RootState, dispatch, workflows);
+    const operationsData = await getOperationDataInDefinitions(
+      workflowsWithDefinitions as Record<string, WorkflowTemplateData>,
+      connections
+    );
+    dispatch(initializeNodeOperationInputsData(operationsData));
+
+    const parameterDefinitions = await getTemplateParameters(getState() as RootState, mapping);
+    dispatch(updateConnectionAndParameterDefinitions({ connections, parameterDefinitions }));
+
+    await saveWorkflowsInTemplateInternal((getState() as RootState).template, /* clearWorkflows */ true);
+    onSaveCompleted?.();
+  }
+);
+
+export const saveWorkflowsData = createAsyncThunk(
+  'saveWorkflowsData',
+  async (
+    { workflows, onSaveCompleted }: { workflows: Record<string, Partial<WorkflowTemplateData>>; onSaveCompleted?: () => void },
+    { getState, dispatch }
+  ): Promise<void> => {
+    dispatch(updateAllWorkflowsData(workflows));
+    await saveWorkflowsInTemplateInternal((getState() as RootState).template, /* clearWorkflows */ false);
+    onSaveCompleted?.();
+  }
+);
+
+const saveWorkflowsInTemplateInternal = async (newState: TemplateState, clearWorkflows = true): Promise<void> => {
   const { manifest: templateManifest, workflows, connections, parameterDefinitions } = newState;
   const promises: Promise<void>[] = [];
   const service = TemplateResourceService();
@@ -219,67 +293,6 @@ export const saveWorkflowsInTemplate = async (newState: TemplateState, clearWork
   queryClient.removeQueries(['templateworkflows', templateId.toLowerCase()]);
 };
 
-export const updateWorkflowParameter = createAsyncThunk(
-  'updateWorkflowParameter',
-  async (
-    { parameterId, definition }: { parameterId: string; definition: Template.ParameterDefinition },
-    { getState, dispatch }
-  ): Promise<void> => {
-    dispatch(
-      updateTemplateParameterDefinition({
-        parameterId: parameterId as string,
-        data: definition,
-      })
-    );
-
-    const {
-      template: { manifest, parameterDefinitions },
-    } = getState() as RootState;
-    const parameter = parameterDefinitions[parameterId];
-    const allParameters = Object.values(parameterDefinitions);
-    const associatedWorkflows = parameter?.associatedWorkflows as string[];
-    const promises: Promise<void>[] = [];
-    const service = TemplateResourceService();
-
-    for (const workflowId of associatedWorkflows) {
-      const parametersInWorkflow = getParametersForWorkflow(allParameters, workflowId).map((parameter) => {
-        const updatedParameter = { ...parameter };
-        delete updatedParameter.associatedWorkflows;
-        delete updatedParameter.associatedOperationParameter;
-        return updatedParameter;
-      });
-      promises.push(service.updateWorkflow(manifest?.id as string, workflowId, { parameters: parametersInWorkflow }));
-    }
-
-    await Promise.all(promises);
-    const queryClient = getReactQueryClient();
-    queryClient.removeQueries(['templateworkflows', manifest?.id.toLowerCase()]);
-  }
-);
-
-export const initializeWorkflowsData = createAsyncThunk(
-  'initializeWorkflowsData',
-  async (
-    { workflows, onCompleted }: { workflows: Record<string, Partial<WorkflowTemplateData>>; onCompleted?: () => Promise<void> },
-    { getState, dispatch }
-  ): Promise<void> => {
-    dispatch(updateAllWorkflowsData(workflows));
-    const { connections, mapping, workflowsWithDefinitions } = await getTemplateConnections(getState() as RootState, dispatch, workflows);
-    const operationsData = await getOperationDataInDefinitions(
-      workflowsWithDefinitions as Record<string, WorkflowTemplateData>,
-      connections
-    );
-    dispatch(initializeNodeOperationInputsData(operationsData));
-
-    const parameterDefinitions = await getTemplateParameters(getState() as RootState, mapping);
-    dispatch(updateConnectionAndParameterDefinitions({ connections, parameterDefinitions }));
-
-    if (onCompleted) {
-      await onCompleted();
-    }
-  }
-);
-
 export const deleteWorkflowData = createAsyncThunk(
   'deleteWorkflowData',
   async (
@@ -299,6 +312,7 @@ export const deleteWorkflowData = createAsyncThunk(
     const {
       template: { workflows, parameterDefinitions, manifest },
     } = getState() as RootState;
+    const templateId = manifest?.id as string;
 
     for (const id of ids) {
       const workflowId = id.toLowerCase();
@@ -333,12 +347,15 @@ export const deleteWorkflowData = createAsyncThunk(
       });
       combinedParameterKeys.push(...parameterKeys);
 
-      promises.push(TemplateResourceService().deleteWorkflow(manifest?.id as string, workflowId));
+      promises.push(TemplateResourceService().deleteWorkflow(templateId, workflowId));
     }
 
     const disableWizard = Object.keys(workflows).filter((workflowId) => !ids.includes(workflowId)).length === 0;
 
     await Promise.all(promises);
+    const queryClient = getReactQueryClient();
+    queryClient.removeQueries(['templateworkflows', templateId.toLowerCase()]);
+
     return { ids, connectionKeys: combinedConnectionKeys, parameterKeys: combinedParameterKeys, parametersToUpdate, disableWizard };
   }
 );
