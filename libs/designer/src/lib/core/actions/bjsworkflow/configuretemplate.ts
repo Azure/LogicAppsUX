@@ -25,6 +25,7 @@ import {
   LoggerService,
   TemplateResourceService,
   isLegacyDynamicValuesBuiltInExtension,
+  equals,
 } from '@microsoft/logic-apps-shared';
 import type { RootState } from '../../state/templates/store';
 import {
@@ -45,6 +46,7 @@ import {
   getParametersForWorkflow,
   getTemplateConnectionsFromConnectionsData,
 } from '../../configuretemplate/utils/helper';
+import type { TemplateState } from '../../state/templates/templateSlice';
 import {
   updateAllWorkflowsData,
   updateConnectionAndParameterDefinitions,
@@ -55,7 +57,7 @@ import { initializeNodeOperationInputsData } from '../../state/operation/operati
 import type { WorkflowParameter } from '../../../common/models/workflow';
 import { getAllInputParameters } from '../../utils/parameters/helper';
 import { shouldAddDynamicData } from '../../templates/utils/parametershelper';
-import type { WorkflowState } from '../../state/templates/workflowSlice';
+import { setInitialData, type WorkflowState } from '../../state/templates/workflowSlice';
 
 export interface ConfigureTemplateServiceOptions {
   connectionService: IConnectionService;
@@ -104,15 +106,42 @@ export const loadCustomTemplate = createAsyncThunk(
     dispatch(loadTemplate({ templateName, preLoadedManifest: manifest }));
 
     const allWorkflowsManifest = await getWorkflowsInTemplate(templateId);
+    let workflowSourceId = '';
+    let allParametersData: Record<string, Template.ParameterDefinition> = {};
+    let allConnectionsData: Record<string, Template.Connection> = {};
+
     const allWorkflowsData = Object.keys(allWorkflowsManifest).reduce(
       (result: Record<string, Partial<WorkflowTemplateData>>, workflowId) => {
         const workflowManifest = allWorkflowsManifest[workflowId];
-        const workflowName = getResourceNameFromId(workflowId);
-        result[workflowId.toLowerCase()] = {
+        const workflowDefinition = (workflowManifest?.artifacts?.find((artifact) => equals(artifact.type, 'workflow')) as any)
+          ?.file as LogicAppsV2.WorkflowDefinition;
+        const { connections, parameters } = workflowManifest;
+
+        if (!workflowSourceId) {
+          workflowSourceId = workflowManifest?.metadata?.workflowSourceId as string;
+        }
+
+        allConnectionsData = { ...allConnectionsData, ...(connections ?? {}) };
+        allParametersData = (parameters ?? []).reduce((result: Record<string, Template.ParameterDefinition>, parameter) => {
+          const parameterId = parameter.name;
+          if (result[parameterId]) {
+            result[parameterId].associatedWorkflows?.push(workflowId);
+          } else {
+            result[parameterId] = {
+              ...parameter,
+              associatedWorkflows: [workflowId],
+            };
+          }
+          return result;
+        }, allParametersData);
+
+        result[workflowId] = {
           id: workflowId,
-          workflowName,
+          workflowName: workflowId,
           manifest: workflowManifest,
-          connectionKeys: [],
+          workflowDefinition,
+          connectionKeys: connections ? Object.keys(connections) : [],
+          triggerType: getTriggerFromDefinition(workflowDefinition?.triggers ?? {}),
           errors: { workflow: undefined },
         };
         return result;
@@ -120,20 +149,45 @@ export const loadCustomTemplate = createAsyncThunk(
       {}
     );
     dispatch(updateAllWorkflowsData(allWorkflowsData));
+    dispatch(updateConnectionAndParameterDefinitions({ connections: allConnectionsData, parameterDefinitions: allParametersData }));
+
+    const segments = workflowSourceId.split('/');
+    const isConsumption = equals(segments[6], 'microsoft.logic');
+    dispatch(
+      setInitialData({
+        subscriptionId: segments[2],
+        resourceGroup: segments[4],
+        location: templateResource.location as string,
+        workflowAppName: isConsumption ? '' : segments[8],
+        logicAppName: segments[8],
+        isConsumption,
+        reloadServices: true,
+      } as any)
+    );
+
+    const operationsData = await getOperationDataInDefinitions(
+      allWorkflowsData as Record<string, WorkflowTemplateData>,
+      allConnectionsData
+    );
+    dispatch(initializeNodeOperationInputsData(operationsData));
 
     return {
-      status: templateResource.properties?.state ?? 'Development',
+      status: templateResource.properties?.state,
       enableWizard: allWorkflowsData && Object.keys(allWorkflowsData).length > 0,
     };
   }
 );
 
-export const saveWorkflowsInTemplate = async (newState: RootState): Promise<void> => {
-  const {
-    template: { manifest: templateManifest, workflows, connections, parameterDefinitions },
-  } = newState;
+export const saveWorkflowsInTemplate = async (newState: TemplateState, clearWorkflows = true): Promise<void> => {
+  const { manifest: templateManifest, workflows, connections, parameterDefinitions } = newState;
   const promises: Promise<void>[] = [];
   const service = TemplateResourceService();
+  const templateId = templateManifest?.id as string;
+
+  if (clearWorkflows) {
+    await service.deleteAllWorkflows(templateId);
+  }
+
   for (const workflowId of Object.keys(workflows)) {
     const { workflowDefinition, manifest, connectionKeys } = workflows[workflowId];
     const connectionsInWorkflow = connectionKeys.reduce((result: Record<string, Template.Connection>, key) => {
@@ -153,7 +207,7 @@ export const saveWorkflowsInTemplate = async (newState: RootState): Promise<void
       return result;
     }, []);
     promises.push(
-      service.addWorkflow(templateManifest?.id as string, workflowId, {
+      service.addWorkflow(templateId, workflowId, {
         manifest: { ...manifest, connections: connectionsInWorkflow, parameters: parametersInWorkflow },
         workflow: workflowDefinition,
       })
@@ -162,7 +216,7 @@ export const saveWorkflowsInTemplate = async (newState: RootState): Promise<void
 
   await Promise.all(promises);
   const queryClient = getReactQueryClient();
-  queryClient.removeQueries(['templateworkflows', templateManifest?.id.toLowerCase()]);
+  queryClient.removeQueries(['templateworkflows', templateId.toLowerCase()]);
 };
 
 export const updateWorkflowParameter = createAsyncThunk(
@@ -206,10 +260,7 @@ export const updateWorkflowParameter = createAsyncThunk(
 export const initializeWorkflowsData = createAsyncThunk(
   'initializeWorkflowsData',
   async (
-    {
-      workflows,
-      onCompleted,
-    }: { workflows: Record<string, Partial<WorkflowTemplateData>>; onCompleted?: (newState: RootState) => Promise<void> },
+    { workflows, onCompleted }: { workflows: Record<string, Partial<WorkflowTemplateData>>; onCompleted?: () => Promise<void> },
     { getState, dispatch }
   ): Promise<void> => {
     dispatch(updateAllWorkflowsData(workflows));
@@ -224,7 +275,7 @@ export const initializeWorkflowsData = createAsyncThunk(
     dispatch(updateConnectionAndParameterDefinitions({ connections, parameterDefinitions }));
 
     if (onCompleted) {
-      await onCompleted(getState() as RootState);
+      await onCompleted();
     }
   }
 );
@@ -244,9 +295,9 @@ export const deleteWorkflowData = createAsyncThunk(
     const combinedConnectionKeys: string[] = [];
     const combinedParameterKeys: string[] = [];
     const parametersToUpdate: Record<string, Partial<Template.ParameterDefinition>> = {};
-
+    const promises: Promise<void>[] = [];
     const {
-      template: { workflows, parameterDefinitions },
+      template: { workflows, parameterDefinitions, manifest },
     } = getState() as RootState;
 
     for (const id of ids) {
@@ -281,9 +332,13 @@ export const deleteWorkflowData = createAsyncThunk(
         return false;
       });
       combinedParameterKeys.push(...parameterKeys);
+
+      promises.push(TemplateResourceService().deleteWorkflow(manifest?.id as string, workflowId));
     }
 
     const disableWizard = Object.keys(workflows).filter((workflowId) => !ids.includes(workflowId)).length === 0;
+
+    await Promise.all(promises);
     return { ids, connectionKeys: combinedConnectionKeys, parameterKeys: combinedParameterKeys, parametersToUpdate, disableWizard };
   }
 );

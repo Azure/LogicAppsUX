@@ -1,4 +1,4 @@
-import { getPropertyValue, type ArmResource, type Template } from '../../../index';
+import { getPropertyValue, getResourceNameFromId, type ArmResource, type Template } from '../../../index';
 import { getAzureResourceRecursive } from '../common/azure';
 import type { IHttpClient } from '../httpClient';
 import type { ITemplateResourceService, WorkflowData } from '../templateresource';
@@ -46,7 +46,21 @@ export class BaseTemplateResourceService implements ITemplateResourceService {
     try {
       const { baseUrl, apiVersion, httpClient } = this.options;
       const uri = `${baseUrl}${resourceId}/workflows`;
-      return getAzureResourceRecursive(httpClient, uri, { 'api-version': apiVersion });
+      const response = await getAzureResourceRecursive(httpClient, uri, { 'api-version': apiVersion });
+      return response.map((workflow: ArmResource<any>) => {
+        const manifest = workflow?.properties?.manifest;
+        const workflowId = getResourceNameFromId(workflow.id);
+        if (manifest) {
+          manifest.description = manifest.details;
+          delete manifest.details;
+          manifest.id = workflowId;
+          workflow.properties.manifest = manifest;
+        } else {
+          workflow.properties.manifest = { id: workflowId };
+        }
+
+        return workflow;
+      });
     } catch (error: any) {
       if (error?.response?.status === 404) {
         return [];
@@ -105,8 +119,7 @@ export class BaseTemplateResourceService implements ITemplateResourceService {
         },
       });
     } catch (error) {
-      console.log(error);
-      // throw new Error(error as any);
+      throw new Error(error as any);
     }
   }
 
@@ -122,8 +135,7 @@ export class BaseTemplateResourceService implements ITemplateResourceService {
         },
       });
     } catch (error) {
-      console.log(error);
-      // throw new Error(error as any);
+      throw new Error(error as any);
     }
   }
 
@@ -133,8 +145,16 @@ export class BaseTemplateResourceService implements ITemplateResourceService {
       const uri = `${baseUrl}${resourceId}/workflows/${workflowName}`;
       await httpClient.delete({ uri, queryParameters: { 'api-version': apiVersion } });
     } catch (error) {
-      console.log(error);
-      // throw new Error(error as any);
+      throw new Error(error as any);
+    }
+  }
+
+  public async deleteAllWorkflows(resourceId: string) {
+    try {
+      const workflows = await this.getTemplateWorkflows(resourceId);
+      await Promise.all(workflows.map((workflow) => this.deleteWorkflow(resourceId, workflow.name)));
+    } catch (error) {
+      throw new Error(error as any);
     }
   }
 

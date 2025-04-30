@@ -13,6 +13,8 @@ import {
 } from '../../../../core/actions/bjsworkflow/configuretemplate';
 import { getResourceNameFromId, equals } from '@microsoft/logic-apps-shared';
 import { validateWorkflowData } from '../../../../core/templates/utils/helper';
+import { useCallback } from 'react';
+import { closePanel } from '../../../../core/state/templates/panelSlice';
 
 export const useConfigureWorkflowPanelTabs = ({
   onSave,
@@ -21,10 +23,11 @@ export const useConfigureWorkflowPanelTabs = ({
 }): TemplateTabProps[] => {
   const intl = useIntl();
   const dispatch = useDispatch<AppDispatch>();
-  const { isWizardUpdating, workflowsInTemplate, workflowState, runValidation } = useSelector((state: RootState) => ({
+  const { isWizardUpdating, workflowsInTemplate, templateState, workflowState, runValidation } = useSelector((state: RootState) => ({
     workflowsInTemplate: state.template.workflows,
     isWizardUpdating: state.tab.isWizardUpdating,
     workflowState: state.workflow,
+    templateState: state.template,
     runValidation: state.tab.runValidation,
   }));
 
@@ -84,13 +87,35 @@ export const useConfigureWorkflowPanelTabs = ({
     setSelectedWorkflowsList(await getWorkflowsWithDefinitions(workflowState, selectedWorkflowsList()));
   };
 
-  const onSaveWorkflowsInTemplate = async (newState: RootState) => {
-    await saveWorkflowsInTemplate(newState);
-    onSave?.(Object.keys(selectedWorkflowsList()).length > 1);
-  };
+  const onSaveWorkflowsInTemplate = useCallback(
+    async (clearWorkflows: boolean) => {
+      await saveWorkflowsInTemplate(templateState, clearWorkflows);
+      onSave?.(Object.keys(selectedWorkflowsList()).length > 1);
+
+      if (!clearWorkflows) {
+        dispatch(closePanel());
+      }
+    },
+    [templateState, onSave, selectedWorkflowsList, dispatch]
+  );
 
   const onSaveChanges = () => {
-    dispatch(initializeWorkflowsData({ workflows: selectedWorkflowsList(), onCompleted: onSaveWorkflowsInTemplate }));
+    const selectedWorkflowIds = Object.values(selectedWorkflowsList()).map((workflow) =>
+      workflow.manifest?.metadata?.workflowSourceId?.toLowerCase()
+    );
+    const originalWorkflowIds = Object.values(workflowsInTemplate).map((workflow) =>
+      workflow.manifest?.metadata?.workflowSourceId?.toLowerCase()
+    );
+    const hasWorkflowListChanged =
+      originalWorkflowIds.length === selectedWorkflowIds.length
+        ? originalWorkflowIds.some((resourceId) => !selectedWorkflowIds.includes(resourceId))
+        : true;
+
+    if (hasWorkflowListChanged) {
+      dispatch(initializeWorkflowsData({ workflows: selectedWorkflowsList(), onCompleted: () => onSaveWorkflowsInTemplate(true) }));
+    } else {
+      onSaveWorkflowsInTemplate(false);
+    }
   };
 
   const isNoWorkflowsSelected = Object.keys(selectedWorkflowsList()).length === 0;
