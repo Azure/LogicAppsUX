@@ -31,18 +31,20 @@ export const CustomizeWorkflows = ({
 
   return (
     <div className="msla-templates-tab msla-panel-no-description-tab">
-      <MessageBar intent="error" className="msla-templates-error-message-bar">
-        <MessageBarBody>
-          <MessageBarTitle>
-            {intl.formatMessage({
-              defaultMessage: 'Workflow names must be unique. Duplicate workflow ids: ',
-              id: 'v95bFR',
-              description: 'Error message title for duplicate workflow ids',
-            })}
-          </MessageBarTitle>
-          <Text>{duplicateIds.join(', ')}</Text>
-        </MessageBarBody>
-      </MessageBar>
+      {duplicateIds.length ? (
+        <MessageBar intent="error" className="msla-templates-error-message-bar">
+          <MessageBarBody>
+            <MessageBarTitle>
+              {intl.formatMessage({
+                defaultMessage: 'Workflow names must be unique. Duplicate workflow ids: ',
+                id: 'v95bFR',
+                description: 'Error message title for duplicate workflow ids',
+              })}
+            </MessageBarTitle>
+            <Text>{duplicateIds.join(', ')}</Text>
+          </MessageBarBody>
+        </MessageBar>
+      ) : null}
       {workflowEntries.length ? (
         workflowEntries.length > 1 ? (
           <Accordion multiple={true} defaultOpenItems={Object.keys(selectedWorkflowsList)}>
@@ -116,7 +118,7 @@ const CustomizeWorkflowSection = ({
         onChange: (value: string) => {
           updateWorkflowDataField(workflowId, { id: value });
         },
-        // errorMessage: workflow.errors?.workflow,
+        errorMessage: workflow.errors?.workflow,
       },
     ];
     if (isMultiWorkflowTemplate) {

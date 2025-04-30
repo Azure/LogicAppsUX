@@ -11,8 +11,8 @@ import {
   initializeAndSaveWorkflowsData,
   saveWorkflowsData,
 } from '../../../../core/actions/bjsworkflow/configuretemplate';
-import { getResourceNameFromId, equals } from '@microsoft/logic-apps-shared';
-import { validateWorkflowData } from '../../../../core/templates/utils/helper';
+import { getResourceNameFromId, equals, isUndefinedOrEmptyString } from '@microsoft/logic-apps-shared';
+import { checkWorkflowNameWithRegex, validateWorkflowData } from '../../../../core/templates/utils/helper';
 import { useMemo, useCallback } from 'react';
 
 export const useConfigureWorkflowPanelTabs = ({
@@ -29,8 +29,6 @@ export const useConfigureWorkflowPanelTabs = ({
     runValidation: state.tab.runValidation,
   }));
 
-  const hasError = false; // Placeholder for actual error state
-
   const [selectedWorkflowsList, setSelectedWorkflowsList] =
     useFunctionalState<Record<string, Partial<WorkflowTemplateData>>>(workflowsInTemplate);
 
@@ -38,7 +36,6 @@ export const useConfigureWorkflowPanelTabs = ({
   const duplicateIds = useMemo(() => {
     const seen = new Set<string>();
     const duplicateIds = new Set<string>();
-    // console.log('selectedWorkflowsList', currentSelectedWorkflowsList);
     for (const { id } of Object.values(currentSelectedWorkflowsList)) {
       if (!id) {
         continue;
@@ -90,8 +87,7 @@ export const useConfigureWorkflowPanelTabs = ({
         [workflowId]: {
           ...updatedWorkflowData,
           errors: {
-            // workflow: workflowNameError,
-            workflow: undefined,
+            workflow: updatedWorkflowData.id ? checkWorkflowNameWithRegex(intl, updatedWorkflowData.id) : undefined,
             manifest: runValidation ? updatedManifestError : updatedWorkflowData?.errors?.manifest,
           },
         },
@@ -140,12 +136,12 @@ export const useConfigureWorkflowPanelTabs = ({
   };
 
   const isNoWorkflowsSelected = Object.keys(selectedWorkflowsList()).length === 0;
-  const missingNameOrDisplayName = Object.values(selectedWorkflowsList()).some(
-    (workflow) => !workflow?.id || (Object.keys(selectedWorkflowsList()).length > 1 && !workflow?.manifest?.title)
+  const hasInvalidIdOrTitle = Object.values(selectedWorkflowsList()).some(
+    (workflow) =>
+      !workflow?.id ||
+      !isUndefinedOrEmptyString(workflow?.errors?.workflow) ||
+      (Object.keys(selectedWorkflowsList()).length > 1 && !workflow?.manifest?.title)
   );
-
-  // console.log('selectedWorkflowsList', selectedWorkflowsList());
-  // console.log('currentSelectedWorkflowsList', currentSelectedWorkflowsList);
 
   return [
     selectWorkflowsTab(intl, dispatch, {
@@ -156,12 +152,11 @@ export const useConfigureWorkflowPanelTabs = ({
       isPrimaryButtonDisabled: isNoWorkflowsSelected,
     }),
     customizeWorkflowsTab(intl, dispatch, {
-      hasError,
       selectedWorkflowsList: selectedWorkflowsList(),
       updateWorkflowDataField,
       isSaving: isWizardUpdating,
       disabled: isNoWorkflowsSelected,
-      isPrimaryButtonDisabled: missingNameOrDisplayName || duplicateIds.length > 0,
+      isPrimaryButtonDisabled: hasInvalidIdOrTitle || duplicateIds.length > 0,
       onSave: onSaveChanges,
       duplicateIds,
     }),
