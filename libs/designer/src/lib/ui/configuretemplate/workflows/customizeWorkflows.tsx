@@ -1,11 +1,21 @@
 import { TemplatesSection, type TemplatesSectionItem } from '@microsoft/designer-ui';
 import type { WorkflowTemplateData } from '../../../core';
-import { Accordion, AccordionHeader, AccordionItem, AccordionPanel, Text } from '@fluentui/react-components';
+import {
+  Accordion,
+  AccordionHeader,
+  AccordionItem,
+  AccordionPanel,
+  MessageBar,
+  MessageBarBody,
+  MessageBarTitle,
+  Text,
+} from '@fluentui/react-components';
 import type { Template } from '@microsoft/logic-apps-shared';
 import { useMemo } from 'react';
 import { useResourceStrings } from '../resources';
 import { useTemplatesStrings } from '../../templates/templatesStrings';
 import { WorkflowKind } from '../../../core/state/workflow/workflowInterfaces';
+import { useIntl } from 'react-intl';
 
 export const CustomizeWorkflows = ({
   selectedWorkflowsList,
@@ -16,12 +26,23 @@ export const CustomizeWorkflows = ({
   updateWorkflowDataField: (workflowId: string, workflowData: Partial<WorkflowTemplateData>) => void;
   duplicateIds: string[];
 }) => {
+  const intl = useIntl();
   const workflowEntries = Object.entries(selectedWorkflowsList);
 
   return (
     <div className="msla-templates-tab msla-panel-no-description-tab">
-      {'HELLO'}
-      {JSON.stringify(duplicateIds)}
+      <MessageBar intent="error" className="msla-templates-error-message-bar">
+        <MessageBarBody>
+          <MessageBarTitle>
+            {intl.formatMessage({
+              defaultMessage: 'Workflow names must be unique. Duplicate workflow ids: ',
+              id: 'v95bFR',
+              description: 'Error message title for duplicate workflow ids',
+            })}
+          </MessageBarTitle>
+          <Text>{duplicateIds.join(', ')}</Text>
+        </MessageBarBody>
+      </MessageBar>
       {workflowEntries.length ? (
         workflowEntries.length > 1 ? (
           <Accordion multiple={true} defaultOpenItems={Object.keys(selectedWorkflowsList)}>
@@ -90,7 +111,7 @@ const CustomizeWorkflowSection = ({
         value: workflow.id || '',
         hint: resourceStrings.WORKFLOW_NAME_DESCRIPTION,
         // TODO - change this logic (if resource id then hasn't been saved yet, so textfield; otherwise unchangeable text)
-        type: workflowId?.startsWith('/') ? 'text' : 'textfield',
+        type: workflowId?.startsWith('/') ? 'textfield' : 'text',
         required: true,
         onChange: (value: string) => {
           updateWorkflowDataField(workflowId, { id: value });

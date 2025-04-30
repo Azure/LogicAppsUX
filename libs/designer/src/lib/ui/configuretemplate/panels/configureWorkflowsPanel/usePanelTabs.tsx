@@ -58,11 +58,14 @@ export const useConfigureWorkflowPanelTabs = ({
         const prevSelectedWorkflow = Object.values(prevSelectedWorkflows).find((workflow) =>
           equals(workflow.manifest?.metadata?.workflowSourceId, normalizedWorkflowId)
         );
-        const id = prevSelectedWorkflow?.id ?? getResourceNameFromId(normalizedWorkflowId);
-        newSelectedWorkflows[id] = prevSelectedWorkflow
+
+        const workflowId = prevSelectedWorkflow?.id ?? normalizedWorkflowId;
+        const formattedId = prevSelectedWorkflow?.id ?? getResourceNameFromId(normalizedWorkflowId);
+
+        newSelectedWorkflows[workflowId] = prevSelectedWorkflow
           ? prevSelectedWorkflow
           : ({
-              id,
+              id: formattedId,
               manifest: {
                 kinds: ['stateful', 'stateless'],
                 metadata: {
@@ -138,7 +141,7 @@ export const useConfigureWorkflowPanelTabs = ({
 
   const isNoWorkflowsSelected = Object.keys(selectedWorkflowsList()).length === 0;
   const missingNameOrDisplayName = Object.values(selectedWorkflowsList()).some(
-    (workflow) => !workflow?.workflowName || (Object.keys(selectedWorkflowsList()).length > 1 && !workflow?.manifest?.title)
+    (workflow) => !workflow?.id || (Object.keys(selectedWorkflowsList()).length > 1 && !workflow?.manifest?.title)
   );
 
   // console.log('selectedWorkflowsList', selectedWorkflowsList());

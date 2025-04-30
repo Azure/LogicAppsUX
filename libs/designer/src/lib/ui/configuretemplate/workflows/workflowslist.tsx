@@ -228,7 +228,7 @@ export const DisplayWorkflows = ({ onSave }: { onSave: (isMultiWorkflow: boolean
             <TableRow key={item.id} onClick={onClick} onKeyDown={onKeyDown} aria-selected={selected} appearance={appearance}>
               <TableSelectionCell checked={selected} checkboxIndicator={{ 'aria-label': customResourceStrings.WorkflowCheckboxRowLabel }} />
               <TableCell>
-                <TableCellLayout>{item.name}</TableCellLayout>
+                <TableCellLayout>{item.id}</TableCellLayout>
               </TableCell>
               {isMultiWorkflow && (
                 <TableCell>
