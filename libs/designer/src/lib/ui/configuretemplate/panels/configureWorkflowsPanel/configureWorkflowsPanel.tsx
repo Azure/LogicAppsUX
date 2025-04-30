@@ -9,6 +9,7 @@ import { useConfigureWorkflowPanelTabs } from './usePanelTabs';
 import type { WorkflowTemplateData } from '../../../../core';
 
 export interface ConfigureWorkflowsTabProps {
+  onTabClick?: () => void;
   hasError?: boolean;
   disabled?: boolean;
   isPrimaryButtonDisabled: boolean;

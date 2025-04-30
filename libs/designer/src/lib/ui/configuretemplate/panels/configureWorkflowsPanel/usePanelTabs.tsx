@@ -94,7 +94,7 @@ export const useConfigureWorkflowPanelTabs = ({
     });
   };
 
-  const onNextButtonClick = async () => {
+  const onCustomizeWorkflowsTabNavigation = async () => {
     setSelectedWorkflowsList(await getWorkflowsWithDefinitions(workflowState, selectedWorkflowsList()));
   };
 
@@ -144,12 +144,13 @@ export const useConfigureWorkflowPanelTabs = ({
     selectWorkflowsTab(intl, dispatch, {
       selectedWorkflowsList: selectedWorkflowsList(),
       onWorkflowsSelected,
-      onNextButtonClick,
+      onNextButtonClick: onCustomizeWorkflowsTabNavigation,
       isSaving: isWizardUpdating,
       isPrimaryButtonDisabled: isNoWorkflowsSelected,
     }),
     customizeWorkflowsTab(intl, dispatch, {
       selectedWorkflowsList: selectedWorkflowsList(),
+      onTabClick: onCustomizeWorkflowsTabNavigation,
       updateWorkflowDataField,
       isSaving: isWizardUpdating,
       disabled: isNoWorkflowsSelected,

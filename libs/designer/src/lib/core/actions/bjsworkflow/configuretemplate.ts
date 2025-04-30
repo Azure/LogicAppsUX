@@ -622,16 +622,20 @@ export const getWorkflowsWithDefinitions = async (
     return workflows;
   }
 
+  const allWorkflowKeys = Object.keys(workflows);
   const allWorkflows = Object.values(workflows);
+
   const promises = allWorkflows.map((workflow) =>
     getWorkflowDefinitionForStandard(workflow.manifest?.metadata?.workflowSourceId as string)
   );
   const allWorkflowsData = (await Promise.all(promises)).reduce((result: Record<string, Partial<WorkflowTemplateData>>, data, index) => {
     const { kind, definition: workflowDefinition } = data;
     if (workflowDefinition) {
+      const workflowId = allWorkflowKeys[index];
       const id = allWorkflows[index].id as string;
-      result[id] = {
-        ...workflows[id],
+
+      result[workflowId] = {
+        ...workflows[workflowId],
         id,
         kind,
         workflowDefinition,

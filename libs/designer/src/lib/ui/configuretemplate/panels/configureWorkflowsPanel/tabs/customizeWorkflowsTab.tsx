@@ -14,6 +14,7 @@ export const customizeWorkflowsTab = (
   {
     isSaving,
     isPrimaryButtonDisabled,
+    onTabClick,
     disabled,
     selectedWorkflowsList,
     updateWorkflowDataField,
@@ -30,6 +31,7 @@ export const customizeWorkflowsTab = (
     id: 'qnio+9',
     description: 'The tab label for the monitoring customize workflows tab on the configure template wizard',
   }),
+  onTabClick: onTabClick,
   disabled: disabled,
   tabStatusIcon: undefined,
   content: (
