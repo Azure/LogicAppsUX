@@ -1,4 +1,11 @@
 # Logic Apps Designer
+### [5.58.9](https://github.com/Azure/LogicAppsUX/compare/v5.58.8...v5.58.9) (2025-04-30)
+
+
+### Features
+
+* **vscode:** Add subscriptions to telemetry logs when extension gets activated ([#7127](https://github.com/Azure/LogicAppsUX/issues/7127)) ([e19beeb](https://github.com/Azure/LogicAppsUX/commit/e19beebb732c8ef026f733f9ea7db506175ae8d5)), closes [#6855](https://github.com/Azure/LogicAppsUX/issues/6855) [#6777](https://github.com/Azure/LogicAppsUX/issues/6777)
+
 ### [5.58.8](https://github.com/Azure/LogicAppsUX/compare/v5.58.7...v5.58.8) (2025-04-23)
 
 
