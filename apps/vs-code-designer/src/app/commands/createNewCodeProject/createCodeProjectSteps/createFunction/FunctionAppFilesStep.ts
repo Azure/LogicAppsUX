@@ -10,12 +10,17 @@ import {
   launchFileName,
   settingsFileName,
   tasksFileName,
+  extensionCommand,
 } from '../../../../../constants';
 import { AzureWizardPromptStep } from '@microsoft/vscode-azext-utils';
-import type { IProjectWizardContext } from '@microsoft/vscode-extension-logic-apps';
+import { FuncVersion, type IProjectWizardContext } from '@microsoft/vscode-extension-logic-apps';
 import { TargetFramework, ProjectType } from '@microsoft/vscode-extension-logic-apps';
 import * as fs from 'fs-extra';
 import * as path from 'path';
+import { getDebugConfigs, updateDebugConfigs } from '../../../../utils/vsCodeConfig/launch';
+import { getContainingWorkspace, isMultiRootWorkspace } from '../../../../utils/workspace';
+import { localize } from '../../../../../localize';
+import { tryGetLocalFuncVersion } from '../../../../utils/funcCoreTools/funcVersion';
 
 /**
  * This class represents a prompt step that allows the user to set up an Azure Function project.
@@ -51,6 +56,7 @@ export class FunctionAppFilesStep extends AzureWizardPromptStep<IProjectWizardCo
     const namespace = context.functionAppNamespace;
     const targetFramework = context.targetFramework;
     const logicAppName = context.logicAppName || 'LogicApp';
+    const funcVersion = context.version ?? (await tryGetLocalFuncVersion());
 
     // Define the functions folder path using the context property of the wizard
     const functionFolderPath = path.join(context.workspacePath, context.functionAppName);
@@ -71,7 +77,8 @@ export class FunctionAppFilesStep extends AzureWizardPromptStep<IProjectWizardCo
     await this.createCsprojFile(functionFolderPath, functionAppName, logicAppName, projectType, targetFramework);
 
     // Generate the Visual Studio Code configuration files in the specified folder.
-    await this.createVscodeConfigFiles(functionFolderPath, functionAppName, targetFramework);
+    const isNewLogicAppProject = context.shouldCreateLogicAppProject;
+    await this.createVscodeConfigFiles(functionFolderPath, targetFramework, funcVersion, logicAppName, isNewLogicAppProject);
   }
 
   /**
@@ -158,13 +165,17 @@ export class FunctionAppFilesStep extends AzureWizardPromptStep<IProjectWizardCo
   /**
    * Creates the Visual Studio Code configuration files in the .vscode folder of the specified functions app.
    * @param functionFolderPath The path to the functions folder.
-   * @param functionAppName The name of the functions app.
    * @param targetFramework The target framework of the functions app.
+   * @param funcVersion The version of the functions app.
+   * @param logicAppName The name of the logic app.
+   * @param isNewLogicAppProject Indicates if the logic app project is new.
    */
   private async createVscodeConfigFiles(
     functionFolderPath: string,
-    functionAppName: string,
-    targetFramework: TargetFramework
+    targetFramework: TargetFramework,
+    funcVersion: FuncVersion,
+    logicAppName: string,
+    isNewLogicAppProject: boolean
   ): Promise<void> {
     await fs.ensureDir(functionFolderPath);
     const vscodePath: string = path.join(functionFolderPath, vscodeFolderName);
@@ -172,7 +183,10 @@ export class FunctionAppFilesStep extends AzureWizardPromptStep<IProjectWizardCo
 
     await this.generateExtensionsJson(vscodePath);
 
-    await this.generateLaunchJson(vscodePath, functionAppName, targetFramework);
+    // Update launch config for existing logic app project (new projects will be created with the correct config)
+    if (!isNewLogicAppProject) {
+      await this.updateLogicAppLaunchJson(vscodePath, targetFramework, funcVersion, logicAppName);
+    }
 
     await this.generateSettingsJson(vscodePath, targetFramework);
 
@@ -192,39 +206,60 @@ export class FunctionAppFilesStep extends AzureWizardPromptStep<IProjectWizardCo
   }
 
   /**
-   * Generates the launch.json file in the specified folder.
-   * @param folderPath The path to the folder where the launch.json file should be generated.
-   * @param functionAppName The name of the functions app.
+   * Updates the launch.json file for the logic app corresponding to this functions app.
+   * @param folderPath The functions app folder path.
    * @param targetFramework The target framework of the functions app.
+   * @param funcVersion The version of the functions app.
+   * @param logicAppName The name of the logic app.
    */
-  private async generateLaunchJson(folderPath: string, functionAppName: string, targetFramework: TargetFramework): Promise<void> {
-    const filePath = path.join(folderPath, launchFileName);
-    const content =
-      targetFramework === TargetFramework.Net8
-        ? {
-            version: '0.2.0',
-            configurations: [
-              {
-                name: `Debug local function ${functionAppName}`,
-                type: 'coreclr',
-                request: 'attach',
-                processId: '${command:azureLogicAppsStandard.pickCustomCodeNetHostProcess}',
-              },
-            ],
+  private async updateLogicAppLaunchJson(
+    folderPath: string,
+    targetFramework: TargetFramework,
+    funcVersion: FuncVersion,
+    logicAppName: string
+  ): Promise<void> {
+    const logicAppLaunchJsonPath = path.join(folderPath, '..', '..', logicAppName, vscodeFolderName, launchFileName);
+    const logicAppWorkspaceFolder = getContainingWorkspace(logicAppLaunchJsonPath);
+    const debugConfigs = getDebugConfigs(logicAppWorkspaceFolder);
+    const updatedDebugConfigs = debugConfigs.some((debugConfig) => debugConfig.type === 'logicapp')
+      ? debugConfigs.map((debugConfig) => {
+          // Update the logic app debug configuration to use the correct runtime for custom code
+          if (debugConfig.type === 'logicapp') {
+            return {
+              ...debugConfig,
+              customCodeRuntime: targetFramework === TargetFramework.Net8 ? 'coreclr' : 'clr',
+            };
           }
-        : {
-            version: '0.2.0',
-            configurations: [
-              {
-                name: `Debug local function ${functionAppName}`,
-                type: 'clr',
-                request: 'attach',
-                processName: 'Microsoft.Azure.Workflows.Functions.CustomCodeNetFxWorker.exe',
-              },
-            ],
-          };
+          return debugConfig;
+        })
+      : [
+          {
+            name: localize('debugLogicApp', `Run/Debug logic app with local function ${logicAppName}`),
+            type: 'logicapp',
+            request: 'launch',
+            funcRuntime: funcVersion === FuncVersion.v1 ? 'clr' : 'coreclr',
+            customCodeRuntime: targetFramework === TargetFramework.Net8 ? 'coreclr' : 'clr',
+          },
+          ...debugConfigs.filter(
+            (debugConfig) => debugConfig.request !== 'attach' || debugConfig.processId !== `\${command:${extensionCommand.pickProcess}}`
+          ),
+        ];
 
-    await fs.writeJson(filePath, content, { spaces: 2 });
+    if (isMultiRootWorkspace()) {
+      let launchJsonContent: any;
+      if (await fs.pathExists(logicAppLaunchJsonPath)) {
+        launchJsonContent = await fs.readJson(logicAppLaunchJsonPath);
+        launchJsonContent['configurations'] = updatedDebugConfigs;
+      } else {
+        launchJsonContent = {
+          version: '0.2.0',
+          configurations: updatedDebugConfigs,
+        };
+      }
+      await fs.writeJson(logicAppLaunchJsonPath, launchJsonContent, { spaces: 2 });
+    } else {
+      updateDebugConfigs(logicAppWorkspaceFolder, updatedDebugConfigs);
+    }
   }
 
   /**
