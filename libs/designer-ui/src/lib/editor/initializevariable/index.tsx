@@ -1,5 +1,5 @@
 import { useCallback, useMemo, useState } from 'react';
-import type { BaseEditorProps } from '../base';
+import type { BaseEditorProps, ChangeState } from '../base';
 import { createEmptyLiteralValueSegment } from '../base/utils/helper';
 import type { ValueSegment } from '../models/parameter';
 import { StringEditor } from '../string';
@@ -136,6 +136,14 @@ export const InitializeVariableEditor = ({
     [updateVariables]
   );
 
+  const handleStringChange = useCallback(
+    (newState: ChangeState) => {
+      const { value } = newState;
+      onChange?.({ value, viewModel: { hideErrorMessage: true } });
+    },
+    [onChange]
+  );
+
   return variables ? (
     <div className="msla-editor-initialize-variables">
       {isAgentParameter ? (
@@ -160,7 +168,7 @@ export const InitializeVariableEditor = ({
         </div>
       ) : null}
       {variables.map((variable, index) => (
-        <>
+        <div key={index}>
           <VariableEditor
             {...props}
             isAgentParameter={isAgentParameter}
@@ -173,7 +181,7 @@ export const InitializeVariableEditor = ({
             errors={validationErrors?.[index]}
           />
           <Divider />
-        </>
+        </div>
       ))}
       {props.isMultiVariableEnabled && !isAgentParameter ? (
         <div className="msla-initialize-variable-add-variable-button">
@@ -199,8 +207,7 @@ export const InitializeVariableEditor = ({
     </div>
   ) : (
     <>
-      <StringEditor {...props} initialValue={initialValue} />
-      {/** TODO: Error should only be shown if there's no error */}
+      <StringEditor {...props} initialValue={initialValue} onChange={(newState) => handleStringChange(newState)} />
       <MessageBar key={'warning'} intent={'warning'} className="msla-initialize-variable-warning">
         <MessageBarBody>
           <MessageBarTitle>{isAgentParameter ? warningTitleAgentParameter : warningTitleVariable}</MessageBarTitle>

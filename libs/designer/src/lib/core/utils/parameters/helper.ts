@@ -1857,7 +1857,7 @@ export const updateParameterAndDependencies = createAsyncThunk(
       validateUntilAction(dispatch, nodeId, groupId, parameterId, nodeInputs.parameterGroups[groupId].parameters, properties);
     }
     if (operationInfo?.type?.toLowerCase() === constants.NODE.TYPE.INITIALIZE_VARIABLE) {
-      validateInitializeVariable(dispatch, nodeId, groupId, parameterId, nodeInputs.parameterGroups[groupId].parameters, properties);
+      validateInitializeVariable(dispatch, nodeId, groupId, parameterId, updatedParameter, properties);
     }
 
     if (dependenciesToUpdate) {
@@ -3771,7 +3771,6 @@ export function parameterValueToJSONString(parameterValue: ValueSegment[], apply
       parameterValueString += tokenExpression;
     } else {
       numberOfDoubleQuotes += (tokenExpression.replace(/\\"/g, '').match(/"/g) || []).length;
-
       shouldInterpolate = numberOfDoubleQuotes % 2 === 1;
       parameterValueString += expression.value;
     }
@@ -4158,7 +4157,7 @@ export function validateInitializeVariable(
   nodeId: string,
   groupId: string,
   parameterId: string,
-  parameters: ParameterInfo[],
+  parameter: ParameterInfo,
   changedParameter: Partial<ParameterInfo>
 ) {
   const intl = getIntl();
@@ -4168,7 +4167,6 @@ export function validateInitializeVariable(
     description: 'Error message to show when multiple variables have errors',
   });
 
-  const parameter = parameters.find((param) => param.parameterName === constants.PARAMETER_NAMES.VARIABLES);
   const variables: InitializeVariableProps[] =
     parameter?.id === parameterId ? (changedParameter?.editorViewModel?.variables ?? []) : (parameter?.editorViewModel?.variables ?? []);
 

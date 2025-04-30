@@ -1,4 +1,12 @@
-import { escapeString, idDisplayCase, labelCase, canStringBeConverted, unescapeString, toPascalCase } from '../stringFunctions';
+import {
+  escapeString,
+  idDisplayCase,
+  labelCase,
+  canStringBeConverted,
+  unescapeString,
+  toPascalCase,
+  wrapStringifiedTokenSegments,
+} from '../stringFunctions';
 import { describe, it, expect } from 'vitest';
 describe('label_case', () => {
   it('should replace _ with spaces', () => {
@@ -224,5 +232,55 @@ describe('toPascalCase', () => {
     const input = '_example_string';
     const result = toPascalCase(input);
     expect(result).toBe('ExampleString');
+  });
+});
+
+describe('wrapStringifiedTokenSegments', () => {
+  it('wraps a simple unquoted token', () => {
+    const input = `{"key": @{myValue}}`;
+    const expected = `{"key": "@{myValue}"}`;
+    expect(wrapStringifiedTokenSegments(input)).toBe(expected);
+  });
+
+  it('wraps a quoted token and escapes it properly', () => {
+    const input = `{"key": "@{my\\"quoted\\"Value}"}`;
+    const expected = `{"key": "@{my\\\\\\"quoted\\\\\\"Value}"}`;
+    expect(wrapStringifiedTokenSegments(input)).toBe(expected);
+  });
+
+  it('escapes newlines and carriage returns in token', () => {
+    const input = `{"key": "@{line1\\nline2\\rline3}"}`;
+    const expected = `{"key": "@{line1\\\\nline2\\\\rline3}"}`;
+    expect(wrapStringifiedTokenSegments(input)).toBe(expected);
+  });
+
+  it('escapes backslashes and tabs inside token', () => {
+    const input = `{"key": "@{line\\twith\\vtabs\\backslashes}"}`;
+    const expected = `{"key": "@{line\\\\twith\\\\vtabs\\\\backslashes}"}`;
+    expect(wrapStringifiedTokenSegments(input)).toBe(expected);
+  });
+
+  it('handles mixed quoted and unquoted tokens', () => {
+    const input = `{"a": @{x}, "b": "@{y}"}`;
+    const expected = `{"a": "@{x}", "b": "@{y}"}`;
+    expect(wrapStringifiedTokenSegments(input)).toBe(expected);
+  });
+
+  it('ignores properties without token expressions', () => {
+    const input = `{"key": "value"}`;
+    const expected = `{"key": "value"}`;
+    expect(wrapStringifiedTokenSegments(input)).toBe(expected);
+  });
+
+  it('handles malformed token-like strings safely', () => {
+    const input = `{"key": "@{incomplete"}`;
+    const expected = `{"key": "@{incomplete"}`;
+    expect(wrapStringifiedTokenSegments(input)).toBe(expected);
+  });
+
+  it('normalizes newline and carriage return within tokens before escaping', () => {
+    const input = `{"key": "@{line1\nline2\rline3}"}`;
+    const expected = String.raw`{"key": "@{line1\\nline2\\rline3}"}`;
+    expect(wrapStringifiedTokenSegments(input)).toBe(expected);
   });
 });

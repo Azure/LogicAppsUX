@@ -7,9 +7,10 @@ import {
   LogEntryLevel,
   LoggerService,
   wrapStringifiedTokenSegments,
+  normalizeEscapes,
 } from '@microsoft/logic-apps-shared';
 import type { InitializeVariableProps } from '.';
-import { createEmptyLiteralValueSegment, createLiteralValueSegment } from '../base/utils/helper';
+import { createEmptyLiteralValueSegment, createLiteralValueSegment, isTokenValueSegment } from '../base/utils/helper';
 import { convertSegmentsToString, isEmptySegments } from '../base/utils/parsesegments';
 import type { ValueSegment } from '../models/parameter';
 import { convertStringToSegments } from '../base/utils/editorToSegment';
@@ -23,9 +24,19 @@ export const parseVariableEditorSegments = (initialValue: ValueSegment[]): Initi
     ];
   }
 
-  const nodeMap: Map<string, ValueSegment> = new Map<string, ValueSegment>();
-  const initialValueString = convertSegmentsToString(initialValue, nodeMap);
+  const originalNodeMap = new Map<string, ValueSegment>();
+
+  // Convert segments to string and store in the original node map
+  const initialValueString = convertSegmentsToString(initialValue, originalNodeMap);
+
+  // Wrap token segments for safe parsing
   const wrappedValueString = wrapStringifiedTokenSegments(initialValueString);
+
+  // Create a new node map, normalizing escape sequences for keys
+  const nodeMap = new Map<string, ValueSegment>();
+  for (const [key, segment] of originalNodeMap.entries()) {
+    nodeMap.set(normalizeEscapes(key), segment);
+  }
 
   try {
     const variables = JSON.parse(wrappedValueString);
@@ -45,11 +56,7 @@ export const parseVariableEditorSegments = (initialValue: ValueSegment[]): Initi
       level: LogEntryLevel.Error,
       area: 'Variable Editor',
       message: 'Failed to parse variable editor segments',
-      args: [
-        {
-          error,
-        },
-      ],
+      args: [{ error }],
     });
     return undefined;
   }
@@ -99,23 +106,44 @@ export const createVariableEditorSegments = (variables: InitializeVariableProps[
   }
 
   const nodeMap = new Map<string, ValueSegment>();
+
   const mappedVariables = variables.map((variable) => {
     const name = convertSegmentsToString(variable.name);
     const type = convertSegmentsToString(variable.type);
-    let value = convertSegmentsToString(variable.value, nodeMap);
+
+    const isStringType = type === VARIABLE_TYPE.STRING;
+    const valueSegments = variable.value;
+    const isTokenSegment = isTokenValueSegment(valueSegments);
+    let value = convertSegmentsToString(valueSegments, nodeMap);
 
     try {
-      if (type !== VARIABLE_TYPE.STRING) {
+      if (!isStringType) {
         value = JSON.parse(value);
       }
     } catch (_error) {
-      // do nothing
+      // ignore parse errors
     }
-    return value !== '' ? { name, type, value } : { name, type };
+
+    if (value === '') {
+      return `{ "name": "${name}", "type": "${type}" }`;
+    }
+    let valueStr = '';
+    if (isTokenSegment) {
+      if (type === VARIABLE_TYPE.STRING) {
+        valueStr = `"${value}"`;
+      } else {
+        valueStr = value;
+      }
+    } else {
+      // Handle whether the value should be quoted (string) or left raw (object/number)
+      valueStr = typeof value === 'string' ? `"${value}"` : JSON.stringify(value);
+    }
+
+    return `{ "name": "${name}", "type": "${type}", "value": ${valueStr} }`;
   });
 
-  const stringifiedVariables = JSON.stringify(mappedVariables);
-
+  // Manually create JSON array string
+  const stringifiedVariables = `[${mappedVariables.join(',')}]`;
   return convertStringToSegments(stringifiedVariables, nodeMap, { tokensEnabled: true });
 };
 
