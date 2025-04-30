@@ -7,6 +7,8 @@ import { initializeServices, ProviderWrappedContext, type AppDispatch } from '..
 import { openPanel, setIsCreatingConnection, setSelectedNodeId } from '../../core/state/panel/panelSlice';
 import { useAreServicesInitialized } from '../../core/state/designerOptions/designerOptionsSelectors';
 import { CreateConnectionWrapperSeparate } from '../../ui/panel/connectionsPanel/createConnection/createConnectionWrapperSeparate';
+import { ConnectionsPanel } from '../../ui/panel/templatePanel/createWorkflowPanel/tabs/connectionsTab';
+import { ConnectionPanelSeparate } from '../../ui';
 
 export interface ConnectionsProps {
   connectorId: string
@@ -34,6 +36,7 @@ export const Connections = (props: ConnectionsProps) => {
         panelContainerRef={designerContainerRef} 
         panelLocation="RIGHT" 
       />
+      <ConnectionPanelSeparate connectorId={props.connectorId} isCollapsed={false} toggleCollapse={() => null} panelLocation='RIGHT' />
       {props.connectorId &&
       <CreateConnectionWrapperSeparate connectorId={props.connectorId}></CreateConnectionWrapperSeparate>}
       </div>

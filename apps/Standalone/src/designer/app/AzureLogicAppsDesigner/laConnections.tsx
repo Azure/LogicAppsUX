@@ -278,7 +278,7 @@ export const ConnectionsEditor = () => {
           showPerformanceDebug,
         }}
       >
-        <ConnectionsProvider><Connections/></ConnectionsProvider>
+        <ConnectionsProvider><Connections connectorId={'/subscriptions/4201f397-837b-48ea-8943-980767f294ac/providers/microsoft.web/locations/westus3/managedapis/visualstudioteamservices'}/></ConnectionsProvider>
       </DesignerProvider>
     </div>
   );

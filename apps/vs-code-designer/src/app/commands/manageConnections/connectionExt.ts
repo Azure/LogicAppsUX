@@ -3,8 +3,12 @@ import { webviewType } from './constants';
 import { ViewColumn, window } from 'vscode';
 import ConnectionsPanel from './ConnectionsPanel';
 import { startDesignTimeApi } from '../../utils/codeless/startDesignTimeApi';
-import { getLogicAppProjectRoot } from '../../utils/codeless/connection';
+import { getConnectionsFromFile, getLogicAppProjectRoot } from '../../utils/codeless/connection';
 import * as vscode from 'vscode';
+import { ConnectionsData } from '@microsoft/logic-apps-shared';
+import { getAzureConnectorDetailsForLocalProject } from '../../utils/codeless/common';
+import { AzureConnectorDetails } from '@microsoft/vscode-extension-logic-apps';
+import { az } from 'vitest/dist/chunks/reporters.C4ZHgdxQ';
 
 export default class ConnectionsExt {
   public connectionId: string;
@@ -13,13 +17,19 @@ export default class ConnectionsExt {
 
     const connectionId = entryUri.split('/').pop() || '';
 
-    const p = vscode.window.activeTextEditor?.document.uri;
-    //const project = vscode.workspace.workspaceFolders[0].uri.fsPath;
-    const projectPath = await getLogicAppProjectRoot(context, p.fsPath); // danielle need to fix 
+    const currentDocumentPath = vscode.window.activeTextEditor?.document.uri.fsPath;
+
+    const connectionsData: string = await getConnectionsFromFile(context, currentDocumentPath);
+    const projectPath = await getLogicAppProjectRoot(context, currentDocumentPath); // danielle need to fix 
+
+    const azureDetails = await getAzureConnectorDetailsForLocalProject(context, projectPath);
+
+    const connections: ConnectionsData = JSON.parse(connectionsData);
+
     await startDesignTimeApi(projectPath);
-    ConnectionsExt.createOrShow(connectionId);
+    ConnectionsExt.createOrShow(connectionId, connections, azureDetails);
   }
-  public static createOrShow(connectionId: string) {
+  public static createOrShow(connectionId: string, connectionsData: ConnectionsData, azureDetails: AzureConnectorDetails) {
     // danielle handle panel already open
 
     const panel = window.createWebviewPanel(
@@ -34,23 +44,7 @@ export default class ConnectionsExt {
       }
     );
 
-    new ConnectionsPanel(panel, connectionId);
+    new ConnectionsPanel(panel, connectionId, connectionsData, azureDetails);
 
-    // ext.dataMapPanelManagers[dataMapName] = new DataMapperPanel(
-    //   panel,
-    //   dataMapName
-    // );
-    // ext.dataMapPanelManagers[dataMapName].panel.iconPath = {
-    //   light: Uri.file(
-    //     path.join(ext.context.extensionPath, "assets", "light", "wand.png")
-    //   ),
-    //   dark: Uri.file(
-    //     path.join(ext.context.extensionPath, "assets", "dark", "wand.png")
-    //   ),
-    // };
-    // ext.dataMapPanelManagers[dataMapName].updateWebviewPanelTitle();
-    // ext.dataMapPanelManagers[dataMapName].mapDefinitionData = mapDefinitionData;
-
-    // From here, VSIX will handle any other initial-load-time events once receive webviewLoaded msg
   }
 }

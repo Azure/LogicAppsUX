@@ -1,24 +1,29 @@
 import { ext } from '../../../extensionVariables';
 import { localize } from '../../../localize';
 import { getWebViewHTML } from '../../utils/codeless/getWebViewHTML';
-import type { MessageToVsix } from '@microsoft/vscode-extension-logic-apps';
+import type { AzureConnectorDetails, MessageToVsix } from '@microsoft/vscode-extension-logic-apps';
 import { ExtensionCommand, ProjectName } from '@microsoft/vscode-extension-logic-apps';
 import type { WebviewPanel } from 'vscode';
 import type { MessageToCommandWebview } from './constants';
 import { managementApiPrefix } from '../../../constants';
+import type { ConnectionsData } from '@microsoft/logic-apps-shared';
 
 export default class ConnectionsPanel {
   public panel: WebviewPanel;
   private baseUrl: string;
   private workflowRuntimeBaseUrl: string;
+  private existingConnections: ConnectionsData;
+  private azureDetails: AzureConnectorDetails;
 
   public connectionName: string;
 
   private telemetryPrefix = 'connections-vscode-extension';
 
-  constructor(panel: WebviewPanel, connectionName: string) {
+  constructor(panel: WebviewPanel, connectionName: string, connectionData: ConnectionsData, azureDetails: AzureConnectorDetails) {
     this.panel = panel;
     this.connectionName = connectionName;
+    this.existingConnections = connectionData;
+    this.azureDetails = azureDetails;
    
     this.baseUrl = `http://localhost:${ext.designTimePort}${managementApiPrefix}`;
     this.workflowRuntimeBaseUrl = `http://localhost:${ext.workflowRuntimePort}${managementApiPrefix}`;
@@ -32,16 +37,6 @@ export default class ConnectionsPanel {
     // Handle messages from the webview (Data Mapper component)
     this.panel.webview.onDidReceiveMessage(this._handleWebviewMsg, undefined, ext.context.subscriptions);
 
-    this.sendMsgToWebview({
-      command: ExtensionCommand.initializeConnectionFrame,
-      data: { connectionId: connectionName, project: ProjectName.connections, baseUrl: this.baseUrl,
-        workflowRuntimeBaseUrl: this.workflowRuntimeBaseUrl, },
-    });
-
-    this.sendMsgToWebview({
-      command: ExtensionCommand.loadConnection,
-      data: { connectionId: connectionName },
-    });
   }
 
   private async _setWebviewHtml() {
@@ -60,6 +55,8 @@ export default class ConnectionsPanel {
           data: { connectionId: this.connectionName, project: ProjectName.connections,
             baseUrl: this.baseUrl,
             workflowRuntimeBaseUrl: this.workflowRuntimeBaseUrl,
+            connections: this.existingConnections,
+            azureDetails: this.azureDetails,
            },
         });
         break;

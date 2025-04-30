@@ -1,6 +1,6 @@
 import type { InitializePayload, Status } from '../state/WorkflowSlice';
 import type { ApiHubServiceDetails, SchemaType, IFileSysTreeItem } from '@microsoft/logic-apps-shared';
-import type { MapDefinitionData, ExtensionCommand, ConnectionsData, IDesignerPanelMetadata } from '@microsoft/vscode-extension-logic-apps';
+import type { MapDefinitionData, ExtensionCommand, ConnectionsData, IDesignerPanelMetadata, AzureConnectorDetails } from '@microsoft/vscode-extension-logic-apps';
 
 export interface IApiService {
   getWorkflows(subscriptionId: string, iseId?: string, location?: string): Promise<WorkflowsList[]>;
@@ -339,6 +339,7 @@ export const StyledDetailCategory = {
   requiredStep: 'Required Step',
   information: 'Information',
 };
+
 export type StyledDetailCategory = (typeof StyledDetailCategory)[keyof typeof StyledDetailCategory];
 
 export interface ITargetDirectory {
@@ -388,5 +389,7 @@ export interface InitializeConnection {
     baseUrl: string;
     workflowRuntimeBaseUrl: string;
     project: string;
+    connections: ConnectionsData;
+    azureDetails: AzureConnectorDetails;
   };
 }

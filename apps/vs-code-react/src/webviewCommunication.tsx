@@ -124,6 +124,7 @@ export const WebViewCommunication: React.FC<{ children: ReactNode }> = ({ childr
           dispatch(initialize(message.data.project));
           console.log('Connections project initialized:' + message.data.baseUrl );
           console.log('Connections project initialized:' + message.data.connectionId );
+          console.log('all data:' + JSON.stringify(message.data));
         }
         break;
       }

@@ -94,6 +94,7 @@ export const designerSlice = createSlice({
     },
     initializeConnectionsDesigner: (state, action: PayloadAction<Partial<DesignerState>>) => {
       console.log('initializeConnectionsDesigner');
+      state.connectionData = action.payload.connectionData ?? {};
       state.baseUrl = 'http://localhost:8000/runtime/webhooks/workflow/api/management';
     },
     updateCallbackUrl: (state, action: PayloadAction<any>) => {
