@@ -70,7 +70,7 @@ export const AgentChat = ({
   const rawAgentLastOperations = JSON.stringify(agentLastOperations);
   const [dialogOpen, setDialogOpen] = useState(false);
 
-  const { mutate: refreshChat } = useMutation(async () => {
+  const { mutateAsync: refreshChat } = useMutation(async () => {
     const queryClient = getReactQueryClient();
     await queryClient.resetQueries([runsQueriesKeys.useRunInstance]);
     await queryClient.resetQueries([runsQueriesKeys.useChatHistory]);
@@ -89,15 +89,15 @@ export const AgentChat = ({
     return runInstance?.properties?.status === constants.FLOW_STATUS.RUNNING;
   }, [runInstance]);
 
-  const { mutate: cancelRun } = useCancelRun(runInstance?.id ?? '');
+  const { mutateAsync: cancelRun } = useCancelRun(runInstance?.id ?? '');
 
-  const stopChat = useCallback(async () => {
+  const stopChat = useCallback(() => {
     setDialogOpen(true);
   }, []);
 
-  const onCancel = useCallback(() => {
-    cancelRun();
-    refreshChat();
+  const onCancel = useCallback(async () => {
+    await cancelRun();
+    await refreshChat();
   }, [cancelRun, refreshChat]);
 
   const onClosingDialog = useCallback(() => {
