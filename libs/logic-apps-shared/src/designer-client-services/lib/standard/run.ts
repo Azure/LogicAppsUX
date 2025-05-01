@@ -459,13 +459,12 @@ export class StandardRunService implements IRunService {
   }
 
   async cancelRun(runId: string): Promise<any> {
-    const { apiVersion, baseUrl, httpClient, workflowName } = this.options;
-    const onlyRunId = runId.split('/')?.at(-1);
+    const { apiVersion, baseUrl, httpClient } = this.options;
 
-    let uri = `${baseUrl}/workflows/${workflowName}/runs/${onlyRunId}/cancel?api-version=${apiVersion}`;
+    let uri = `${baseUrl}${runId}/cancel?api-version=${apiVersion}`;
     try {
       if (isHybridLogicApp(uri)) {
-        uri = `${baseUrl}/workflows/${workflowName}/runs/${onlyRunId}/cancel`;
+        uri = `${baseUrl}${runId}/cancel`;
 
         const { uri: newUri, headerPath } = StandardRunService.getProxyUrl(uri);
         const response = await httpClient.post({

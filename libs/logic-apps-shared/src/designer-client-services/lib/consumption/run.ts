@@ -428,4 +428,18 @@ export class ConsumptionRunService implements IRunService {
       throw new Error(e.message);
     }
   }
+
+  async cancelRun(runId: string): Promise<any> {
+    const { apiVersion, baseUrl, httpClient } = this.options;
+
+    const uri = `${baseUrl}${runId}/cancel?api-version=${apiVersion}`;
+    try {
+      const response = await httpClient.post({
+        uri,
+      });
+      return response;
+    } catch (e: any) {
+      return new Error(e.message);
+    }
+  }
 }
