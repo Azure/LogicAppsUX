@@ -238,6 +238,7 @@ const getServices = (subscriptionId: string, resourceGroup: string, location: st
     },
     httpClient,
     baseUrl: '/url',
+    templateApiVersion: '2025-06-01-preview',
   });
   const templateService = new LocalTemplateService({
     service: baseService,

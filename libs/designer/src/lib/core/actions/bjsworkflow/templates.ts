@@ -29,6 +29,7 @@ import { initializeParametersMetadata } from '../../templates/utils/parametershe
 import { initializeNodeOperationInputsData } from '../../state/operation/operationMetadataSlice';
 import { updateAllTemplateParameterDefinitions } from '../../state/templates/templateSlice';
 import { checkWorkflowNameWithRegex, getCurrentWorkflowNames } from '../../templates/utils/helper';
+import type { TemplateData } from '../../state/templates/manifestSlice';
 import {
   loadGithubManifestNames,
   setavailableTemplates,
@@ -36,6 +37,7 @@ import {
   setFilteredTemplateNames,
 } from '../../state/templates/manifestSlice';
 import { clearConnectionCaches } from '../../queries/connections';
+import { getCustomTemplates } from '../../queries/template';
 
 export interface WorkflowTemplateData {
   id: string;
@@ -185,6 +187,28 @@ export const reloadTemplates = createAsyncThunk('reloadTemplates', async ({ clea
   dispatch(loadGithubManifestNames());
 });
 
+export const loadCustomTemplates = createAsyncThunk(
+  'loadCustomTemplates',
+  async (_, { getState }): Promise<Record<string, TemplateData>> => {
+    try {
+      const { subscriptionId, resourceGroup } = (getState() as RootState).workflow;
+      const customTemplates = await getCustomTemplates(subscriptionId, resourceGroup);
+      return customTemplates.reduce((result: Record<string, TemplateData>, template) => {
+        result[template.id.toLowerCase()] = {
+          ...template.manifest,
+          publishState: template.state,
+          details: { ...template.manifest.details, publishedBy: 'Custom' } as any,
+        };
+
+        return result;
+      }, {});
+    } catch (ex) {
+      console.error(ex);
+      return {};
+    }
+  }
+);
+
 export const loadManifestsFromPaths = async (templateIds: string[]) => {
   try {
     const manifestPromises = templateIds.map(async (templateId) => {
@@ -192,7 +216,13 @@ export const loadManifestsFromPaths = async (templateIds: string[]) => {
     });
     const templateManifestsArray = (await Promise.all(manifestPromises)) as Template.TemplateManifest[];
     return templateManifestsArray.reduce((result: Record<string, Template.TemplateManifest>, manifestFile: any, index: number) => {
-      result[templateIds[index]] = manifestFile;
+      result[templateIds[index]] = {
+        ...manifestFile,
+        details: {
+          ...manifestFile.details,
+          publishedBy: manifestFile.details?.By,
+        },
+      };
       return result;
     }, {});
   } catch (error) {

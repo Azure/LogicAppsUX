@@ -277,6 +277,7 @@ const getServices = (
   };
   const templateService = new ConsumptionTemplateService({
     ...defaultServiceParams,
+    templateApiVersion: '2025-06-01-preview',
     endpoint: '/templatesLocalProxy/templates/logicapps',
     useEndpointForTemplates: true,
     openBladeAfterCreate: (_workflowName: string | undefined) => {

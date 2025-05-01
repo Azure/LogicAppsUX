@@ -570,6 +570,7 @@ const getResourceBasedServices = (
     endpoint: '/templatesLocalProxy/templates/logicapps',
     useEndpointForTemplates: true,
     baseUrl: armUrl,
+    templateApiVersion: '2025-06-01-preview',
     appId: siteResourceId,
     httpClient,
     apiVersions: {

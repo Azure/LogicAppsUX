@@ -4,7 +4,7 @@
     border: 1px solid rgba(204, 204, 204, 0.50);
     border-radius: 8px;
 
-    height: 220px;
+    height: 230px;
     box-shadow: 0px 1.6px 3.6px 0px rgba(0, 0, 0, 0.13), 0px 0.3px 0.9px 0px rgba(0, 0, 0, 0.11);
 }
 
@@ -81,13 +81,14 @@
     width: 100%;
     display: flex;
     flex-direction: column;
-    align-items: flex-start;    
+    position: sticky;
+    bottom: 0;  
 }
 
 .msla-template-card-tags {
     display: flex;
     flex-direction: row;
-    padding: 12px 0px;
+    padding: 18px 0px 10px 0;
 
     .msla-template-card-tag {
         margin-right: 12px;
@@ -98,9 +99,22 @@
     }
 }
 
+.msla-template-card-features {
+    display: flex;
+    justify-content: space-between;
+}
+
+.msla-template-card-publish-badge {
+   padding: 6px 0;
+
+   .msla-template-card-publish-text {
+      padding: 0 4px 0 10px;
+      vertical-align: middle;
+   }
+}
+
 .msla-template-card-connectors-list {
-    justify-content: center;
-    padding: 12px 0px;
+    padding: 6px 0px;
     display: flex;
     flex-wrap: wrap;
     gap: 10px;

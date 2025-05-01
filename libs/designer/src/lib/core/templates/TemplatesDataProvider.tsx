@@ -13,7 +13,12 @@ import {
 import { type ResourceDetails, setInitialData } from '../state/templates/workflowSlice';
 import type { ConnectionReferences } from '../../common/models/workflow';
 import { getFilteredTemplates } from './utils/helper';
-import { initializeTemplateServices, initializeWorkflowMetadata, reloadTemplates } from '../actions/bjsworkflow/templates';
+import {
+  initializeTemplateServices,
+  initializeWorkflowMetadata,
+  loadCustomTemplates,
+  reloadTemplates,
+} from '../actions/bjsworkflow/templates';
 import { InitTemplateService, type Template } from '@microsoft/logic-apps-shared';
 import { setEnableResourceSelection, setViewTemplateDetails } from '../state/templates/templateOptionsSlice';
 import { changeCurrentTemplateName } from '../state/templates/templateSlice';
@@ -43,6 +48,7 @@ const DataProviderInner = ({ isConsumption, children, reload, services }: Templa
 
   useEffect(() => {
     dispatch(loadGithubManifestNames());
+    dispatch(loadCustomTemplates());
   }, [dispatch]);
 
   useEffect(() => {
