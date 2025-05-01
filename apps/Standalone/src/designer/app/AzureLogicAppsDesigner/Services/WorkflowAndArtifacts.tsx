@@ -12,13 +12,12 @@ import { useQuery } from '@tanstack/react-query';
 import { isSuccessResponse } from './HttpClient';
 import { fetchFileData, fetchFilesFromFolder } from './vfsService';
 import type { CustomCodeFileNameMapping } from '@microsoft/logic-apps-designer';
-import { HybridAppUtility } from '../Utilities/HybridAppUtilities';
+import { HybridAppUtility, hybridApiVersion } from '../Utilities/HybridAppUtilities';
 import type { HostingPlanTypes } from '../../../state/workflowLoadingSlice';
 import { ArmParser } from '../Utilities/ArmParser';
 
 const baseUrl = 'https://management.azure.com';
 const standardApiVersion = '2020-06-01';
-const hybridApiVersion = '2024-02-02-preview';
 const consumptionApiVersion = '2019-05-01';
 
 export const useConnectionsData = (appId?: string) => {
@@ -330,7 +329,7 @@ export const useAppSettings = (siteResourceId: string) => {
 export const getAppSettings = async (siteResourceId: string) => {
   if (HybridAppUtility.isHybridLogicApp(siteResourceId)) {
     const containerAppInfo = (
-      await axios.get(`${baseUrl}${siteResourceId}?api-version=2024-02-02-preview`, {
+      await axios.get(`${baseUrl}${siteResourceId}?api-version=${hybridApiVersion}`, {
         headers: {
           Authorization: `Bearer ${environment.armToken}`,
         },
