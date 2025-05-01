@@ -18,6 +18,36 @@ export const profileTab = (
   disabled,
   content: <TemplateManifestForm />,
   footerContent: {
+    buttonContents: [
+      {
+        type: 'button',
+        text: resources.PreviousButtonText,
+        onClick: () => {
+          dispatch(selectWizardTab(constants.CONFIGURE_TEMPLATE_WIZARD_TAB_NAMES.PARAMETERS));
+        },
+      },
+      {
+        type: 'button',
+        text: resources.NextButtonText,
+        onClick: () => {
+          dispatch(selectWizardTab(constants.CONFIGURE_TEMPLATE_WIZARD_TAB_NAMES.REVIEW));
+        },
+      },
+      {
+        type: 'divider',
+      },
+      {
+        type: 'button',
+        text: intl.formatMessage({
+          defaultMessage: 'Save',
+          id: 'GGmFte',
+          description: 'The description for saving the profile tab content to the service provider',
+        }),
+        appreance: 'primary',
+        onClick: onSave,
+        disabled: disableSave,
+      },
+    ],
     primaryButtonText: resources.PreviousButtonText,
     primaryButtonOnClick: () => {
       dispatch(selectWizardTab(constants.CONFIGURE_TEMPLATE_WIZARD_TAB_NAMES.PARAMETERS));
