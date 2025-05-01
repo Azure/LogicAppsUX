@@ -81,6 +81,7 @@ export const CreateConnectionWrapperSeparate = (props: CreateConnectionWrapperSe
   const updateConnectionInState = useCallback(
     (payload: CreatedConnectionPayload) => {
       for (const nodeId of nodeIds) {
+        console.log('updateConnectionInState', nodeId, payload);
         dispatch(updateNodeConnection({ ...payload, nodeId }));
       }
     },
@@ -294,9 +295,11 @@ export const CreateConnectionInternal = (props: {
             .catch((errorMessage) => (err = errorMessage));
         }
 
+        console.log('createConnectionCallback', connection, err);
         if (connection) {
           updateNewConnectionInCache(connection);
           applyNewConnection(connection, identitySelected);
+          // danielle save connection
         } else if (err) {
           setErrorMessage(String(err));
         }

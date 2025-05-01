@@ -512,12 +512,15 @@ export class StandardConnectionService extends BaseConnectionService implements 
         throw new Error(atob(loginResponse.error));
       }
       if (loginResponse.code) {
+        console.log(`loginResponse.code: ${loginResponse.code}`);
         await oAuthService.confirmConsentCodeForConnection(connectionId, loginResponse.code);
       }
 
+      console.log("confirmed consent code")
       await this._createConnectionAclIfNeeded(connection);
 
       const fetchedConnection = await this.getConnection(connection.id);
+      console.log('fetchedConnection', fetchedConnection);
       await this.testConnection(fetchedConnection);
 
       return { connection: fetchedConnection };

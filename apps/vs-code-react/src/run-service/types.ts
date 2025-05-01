@@ -391,5 +391,6 @@ export interface InitializeConnection {
     project: string;
     connections: ConnectionsData;
     azureDetails: AzureConnectorDetails;
+    panelId: string;
   };
 }

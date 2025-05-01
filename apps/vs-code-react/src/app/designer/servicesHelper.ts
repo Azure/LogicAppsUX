@@ -72,6 +72,7 @@ export const getDesignerServices = (
   queryClient: QueryClient,
   sendMsgToVsix: (msg: MessageToVsix) => void,
   accessToken?: string,
+  connectionPanelId?: string,
 ): IDesignerServices => {
   let authToken = '';
   let panelId = '';
@@ -96,6 +97,8 @@ export const getDesignerServices = (
     isStateful = panelMetadata.standardApp?.stateful ?? false;
   }else {
     authToken = accessToken ?? '';
+    panelId = connectionPanelId ?? '';
+    console.log('panelId', panelId);
   }
 
   const addConnectionData = async (connectionAndSetting: ConnectionAndAppSetting): Promise<void> => {

@@ -20,7 +20,7 @@ export class UriHandler extends vscode.EventEmitter<vscode.Uri> implements vscod
 }
 
 function handleConnectionUri(uri: vscode.Uri): void {
-  if (uri.path.includes('connection')) {
+  if (uri.path.includes('/connection')) {
     vscode.commands.executeCommand(extensionCommand.openConnectionView, uri);
   }
 }
@@ -28,6 +28,8 @@ function handleConnectionUri(uri: vscode.Uri): void {
 function handleOAuthRedirect(uri: vscode.Uri): void {
   const queryParams = uri.query ? (query.parse(uri.query) as Record<string, string>) : {};
   const designerPanel = tryGetWebviewPanel(ext.webViewKey.designerLocal, queryParams['pid']);
+
+  const connectionPanel = tryGetWebviewPanel(ext.webViewKey.connection, queryParams['pid']);
 
   if (designerPanel) {
     const value: Record<string, string> = {
@@ -42,6 +44,23 @@ function handleOAuthRedirect(uri: vscode.Uri): void {
     }
 
     designerPanel.webview.postMessage({
+      command: ExtensionCommand.completeOauthLogin,
+      value,
+    });
+  }
+  if (connectionPanel) { // danielle clean up
+    const value: Record<string, string> = {
+      ...queryParams,
+    };
+
+    console.log(uri);
+
+    if (!queryParams['error']) {
+      value.redirectUrl = '';
+      value.code = value.code ? value.code : 'valid';
+    }
+
+    connectionPanel.webview.postMessage({
       command: ExtensionCommand.completeOauthLogin,
       value,
     });

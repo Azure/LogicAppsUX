@@ -84,6 +84,7 @@ export namespace ext {
     export: 'export',
     overview: 'overview',
     unitTest: 'unitTest',
+    connection: 'connection',
   } as const;
   export type webViewKey = keyof typeof webViewKey;
 
@@ -93,6 +94,7 @@ export namespace ext {
     [webViewKey.monitoring]: {},
     [webViewKey.export]: {},
     [webViewKey.overview]: {},
+    [webViewKey.connection]: {},
   };
 
   export const log = (text: string) => {

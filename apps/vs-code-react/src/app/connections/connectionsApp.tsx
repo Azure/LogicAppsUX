@@ -56,7 +56,8 @@ export const ConnectionsApp = () => {
     isUnitTest,
     unitTestDefinition,
     workflowRuntimeBaseUrl,
-    accessToken
+    accessToken,
+    panelId
   } = vscodeState;
 
   const [theme, setTheme] = useState<Theme>(getTheme(document.body));
@@ -119,7 +120,8 @@ export const ConnectionsApp = () => {
         hostVersion,
         queryClient,
         sendMsgToVsix,
-        accessToken
+        accessToken,
+        panelId
       );
     }
     return undefined;
@@ -137,6 +139,8 @@ export const ConnectionsApp = () => {
     hostVersion,
     queryClient,
     sendMsgToVsix,
+    accessToken,
+    panelId,
   ]);
 
   const connectionReferences: ConnectionReferences = useMemo(() => {

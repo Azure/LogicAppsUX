@@ -240,6 +240,7 @@ export const CreateConnectionInternal = (props: {
             const oAuthParameterKey = oAuthParameter?.[0];
             const oAuthParameterObj = oAuthParameter?.[1];
             const redirectUrl = oAuthParameterObj?.oAuthSettings?.redirectUrl;
+            console.log('redirectUrl', redirectUrl);
             outputParameterValues[oAuthParameterKey] = redirectUrl;
           }
         }

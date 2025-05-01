@@ -95,6 +95,7 @@ class OAuthPopup {
 
   // Handle messages posted by the extension to the Webview window when the openExternal window processes actions in the authorization popup.
   public _handleMessage = ({ data }: any): void => {
+    console.log('handleMessage', data);
     // tslint:disable-line: no-any
     if (this.closed || !data || typeof data !== 'object' || !data.value || this.options.panelId !== data.value.pid) {
       return;
@@ -103,10 +104,13 @@ class OAuthPopup {
     switch (data.command) {
       // When the extension receives the result from redirect url it will post a 'CompleteOauthLogin' message with data.
       case ExtensionCommand.completeOauthLogin: {
+        console.log('OAuthPopup: _handleMessage', data);
         this._msg = data.value;
         this.close();
         break;
       }
+
+      
 
       default:
         break;
@@ -123,6 +127,7 @@ export class BaseOAuthService implements IOAuthService {
   }
 
   public openLoginPopup({ consentUrl }: OAuthPopupOptions): IOAuthPopup {
+    console.log('openLoginPopup', consentUrl);
     return new OAuthPopup({
       consentUrl,
       vscode: this.options.vscode,
@@ -136,6 +141,7 @@ export class BaseOAuthService implements IOAuthService {
   }
 
   public async confirmConsentCodeForConnection(connectionName: string, code: string) {
+    console.log('confirmConsentCodeForConnection', connectionName, code);
     if (code === 'valid') {
       return null;
     }

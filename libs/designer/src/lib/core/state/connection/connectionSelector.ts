@@ -84,19 +84,22 @@ export const useGatewayServiceConfig = () => useMemo(() => GatewayService().getC
 export const useTenants = () => useQuery(['tenants'], async () => TenantService().getTenants?.());
 
 export const useConnectorByNodeId = (nodeId: string): Connector | undefined => {
-  const connectorFromManifest = useOperationManifest(useOperationInfo(nodeId)).data?.properties.connector;
+  //const connectorFromManifest = useOperationManifest(useOperationInfo(nodeId)).data?.properties.connector;
   const storeConnectorId = useNodeConnectorId(nodeId);
-  const operationInfo = useOperationInfo(nodeId);
+  //const operationInfo = useOperationInfo(nodeId);
+
+  const connectorFromService = useConnector(storeConnectorId, false)?.data;
+  return connectorFromService
 
   // Connector data inside of operation manifests is missing some connection data currently (7/24/2023).
   // The below logic is to only use the manifest connector data when we expect a service call to fail. (i.e. our built-in local operations)
-  const isManifestSupported = OperationManifestService().isSupported(operationInfo?.type ?? '', operationInfo?.kind ?? '');
-  const isServiceProvider = isServiceProviderOperation(operationInfo?.type);
-  const isConnectorNode = operationInfo?.type === Constants.NODE.TYPE.CONNECTOR;
-  const useManifestConnector = isManifestSupported && !isServiceProvider;
-  const enableConnectorFromService = (!connectorFromManifest || !useManifestConnector) && !isConnectorNode;
-  const connectorFromService = useConnector(storeConnectorId, enableConnectorFromService)?.data;
-  return connectorFromService ?? connectorFromManifest;
+  // const isManifestSupported = OperationManifestService().isSupported(operationInfo?.type ?? '', operationInfo?.kind ?? '');
+  // const isServiceProvider = isServiceProviderOperation(operationInfo?.type);
+  // const isConnectorNode = operationInfo?.type === Constants.NODE.TYPE.CONNECTOR;
+  // const useManifestConnector = isManifestSupported && !isServiceProvider;
+  // const enableConnectorFromService = (!connectorFromManifest || !useManifestConnector) && !isConnectorNode;
+  // const connectorFromService = useConnector(storeConnectorId, enableConnectorFromService)?.data;
+  // return connectorFromService ?? connectorFromManifest;
 };
 
 export const useNodeConnectionId = (nodeId: string): string => {

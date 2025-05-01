@@ -21,6 +21,7 @@ export interface DesignerState {
   hostVersion: string;
   isUnitTest: boolean;
   accessToken?: string;
+  panelId?: string;
   unitTestDefinition: UnitTestDefinition | null;
 }
 
@@ -93,10 +94,12 @@ export const designerSlice = createSlice({
       state.isUnitTest = isUnitTest;
       state.unitTestDefinition = unitTestDefinition;
     },
-    initializeConnectionsDesigner: (state, action: PayloadAction< { state:Partial<DesignerState>, accessToken: string}>) => {
+    initializeConnectionsDesigner: (state, action: PayloadAction< { state:Partial<DesignerState>, accessToken: string, panelId: string}>) => {
       console.log('initializeConnectionsDesigner');
       state.apiHubServiceDetails = action.payload.state.apiHubServiceDetails ?? initialState.apiHubServiceDetails;
       state.connectionData = action.payload.state.connectionData ?? {};
+      state.oauthRedirectUrl = action.payload.state.oauthRedirectUrl ?? '';
+      state.panelId = action.payload.panelId;
       
       state.accessToken = action.payload.accessToken;
       state.baseUrl = 'http://localhost:8000/runtime/webhooks/workflow/api/management';

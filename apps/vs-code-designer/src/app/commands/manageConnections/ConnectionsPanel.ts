@@ -2,39 +2,40 @@ import { ext } from "../../../extensionVariables";
 import { localize } from "../../../localize";
 import { getWebViewHTML } from "../../utils/codeless/getWebViewHTML";
 import type {
-  AzureConnectorDetails,
+  FileSystemConnectionInfo,
   MessageToVsix,
 } from "@microsoft/vscode-extension-logic-apps";
 import {
   ExtensionCommand,
   ProjectName,
 } from "@microsoft/vscode-extension-logic-apps";
-import type { WebviewPanel } from "vscode";
-import type { CreateConnectionPanel, MessageToCommandWebview } from "./constants";
+import { env, type WebviewPanel } from "vscode";
+import type {
+  CreateConnectionPanel,
+  MessageToCommandVsix,
+  MessageToCommandWebview,
+} from "./constants";
 import { managementApiPrefix } from "../../../constants";
-import type { ConnectionsData } from "@microsoft/logic-apps-shared";
+import { addConnectionData } from "../../utils/codeless/connection";
+import { exec } from "child_process";
 
 export default class ConnectionsPanel {
   public panel: WebviewPanel;
   private baseUrl: string;
   private workflowRuntimeBaseUrl: string;
-  private existingConnections: ConnectionsData;
-  private azureDetails: AzureConnectorDetails;
-  private apiHubServiceDetails: Record<string, any>;
-
+  private createConnectionsPanel: CreateConnectionPanel;
   public connectionName: string;
   public connectionUri: string;
 
   private telemetryPrefix = "connections-vscode-extension";
 
-  constructor(panel: WebviewPanel,
-    createConnectionsPanel :CreateConnectionPanel
+  constructor(
+    panel: WebviewPanel,
+    createConnectionsPanel: CreateConnectionPanel
   ) {
     this.panel = panel;
     this.connectionName = createConnectionsPanel.connectionId;
-    this.existingConnections = createConnectionsPanel.connectionsData;
-    this.azureDetails = createConnectionsPanel.azureDetails;
-    this.apiHubServiceDetails = createConnectionsPanel.apiHubServiceDetails;
+    this.createConnectionsPanel = createConnectionsPanel;
 
     this.baseUrl = `http://localhost:${ext.designTimePort}${managementApiPrefix}`;
     this.workflowRuntimeBaseUrl = `http://localhost:${ext.workflowRuntimePort}${managementApiPrefix}`;
@@ -42,8 +43,8 @@ export default class ConnectionsPanel {
     this._handleWebviewMsg = this._handleWebviewMsg.bind(this);
 
     //this.connectionUri = `/subscriptions/${this.azureDetails.subscriptionId}/resourceGroups/${this.azureDetails.resourceGroupName}/providers/Microsoft.Web/connections/${this.connectionName}`
-    this.connectionUri = `/subscriptions/${this.azureDetails.subscriptionId}/providers/Microsoft.Web/locations/${this.azureDetails.location}}/managedApis/${this.connectionName}`
-//
+    this.connectionUri = `/subscriptions/${this.createConnectionsPanel.azureDetails.subscriptionId}/providers/Microsoft.Web/locations/${this.createConnectionsPanel.azureDetails.location}}/managedApis/${this.connectionName}`;
+    //
 
     ext.context.subscriptions.push(panel);
 
@@ -61,11 +62,11 @@ export default class ConnectionsPanel {
     this.panel.webview.html = await getWebViewHTML("vs-code-react", this.panel);
   }
 
-  public sendMsgToWebview(msg: MessageToCommandWebview) {
+  public sendMsgToWebview(msg: MessageToCommandWebview | any) {
     this.panel.webview.postMessage(msg);
   }
 
-  private _handleWebviewMsg(msg: MessageToVsix) {
+  private async _handleWebviewMsg(msg: MessageToVsix | any) {
     switch (msg.command) {
       case ExtensionCommand.initialize: {
         this.sendMsgToWebview({
@@ -75,37 +76,40 @@ export default class ConnectionsPanel {
             project: ProjectName.connections,
             baseUrl: this.baseUrl,
             workflowRuntimeBaseUrl: this.workflowRuntimeBaseUrl,
-            connections: this.existingConnections,
-            azureDetails: this.azureDetails,
-            apiHubServiceDetails: this.apiHubServiceDetails,
+            connections: this.createConnectionsPanel.connectionsData,
+            azureDetails: this.createConnectionsPanel.azureDetails,
+            apiHubServiceDetails:
+              this.createConnectionsPanel.apiHubServiceDetails,
+            oauthRedirectUrl: this.createConnectionsPanel.oauthRedirectUrl,
+            panelId: this.createConnectionsPanel.panelId,
           },
         });
         break;
       }
-      //   case ExtensionCommand.webviewLoaded: {
-      //     // Send runtime port to webview
-      //     this.sendMsgToWebview({
-      //       command: ExtensionCommand.setRuntimePort,
-      //       data: `${ext.designTimePort}`,
-      //     });
-
-      //     break;
-      //   }
-      case ExtensionCommand.webviewRscLoadError: {
-        // Handle DM top-level errors (such as loading schemas added from file, or general function manifest fetching issues)
-        ext.showError(
-          localize(
-            "WebviewRscLoadError",
-            `Error loading Data Mapper resource: "{0}"`,
-            msg.data
-          )
+      case ExtensionCommand.addConnection: {
+        await addConnectionData(
+          this.createConnectionsPanel.context,
+          this.createConnectionsPanel.projectPath,
+          msg.connectionAndSetting
         );
         break;
       }
-      //   case ExtensionCommand.addSchemaFromFile: {
-      //     this.addSchemaFromFile(msg.data);
-      //     break;
-      //   }
+      case ExtensionCommand.createFileSystemConnection: {
+        {
+          const connectionName = msg.connectionName;
+          const { connection, errorMessage } =
+            await this.createFileSystemConnection(msg.connectionInfo);
+          this.sendMsgToWebview({
+            command: ExtensionCommand.completeFileSystemConnection,
+            data: {
+              connectionName,
+              connection,
+              errorMessage,
+            },
+          });
+        }
+        break;
+      }
       case ExtensionCommand.logTelemetry: {
         const eventName = `${this.telemetryPrefix}/${
           msg.data.name ?? msg.data.area
@@ -113,6 +117,36 @@ export default class ConnectionsPanel {
         ext.telemetryReporter.sendTelemetryEvent(eventName, { ...msg.data });
         break;
       }
+      case ExtensionCommand.openOauthLoginPopup: {
+        await env.openExternal(msg.url);
+        break;
+      }
+      // case ExtensionCommand.saveConnection: {
+
+      // }
     }
   }
+
+  private createFileSystemConnection = (
+    connectionInfo: FileSystemConnectionInfo
+  ): Promise<any> => {
+    // danielle this is duplicate code
+    const rootFolder = connectionInfo.connectionParameters?.["rootFolder"];
+    const username = connectionInfo.connectionParameters?.["username"];
+    const password = connectionInfo.connectionParameters?.["password"];
+
+    return new Promise((resolve) => {
+      exec(`net use ${rootFolder} ${password} /user:${username}`, (error) => {
+        if (error) {
+          resolve({ errorMessage: JSON.stringify(error.message) });
+        }
+        resolve({
+          connection: {
+            ...connectionInfo,
+            connectionParameters: { mountPath: rootFolder },
+          },
+        });
+      });
+    });
+  };
 }

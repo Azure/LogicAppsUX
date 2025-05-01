@@ -1,5 +1,5 @@
 import type { IActionContext } from "@microsoft/vscode-azext-utils";
-import { CreateConnectionPanel, webviewType } from "./constants";
+import type { CreateConnectionPanel} from "./constants";
 import { ViewColumn, window } from "vscode";
 import ConnectionsPanel from "./ConnectionsPanel";
 import { startDesignTimeApi } from "../../utils/codeless/startDesignTimeApi";
@@ -8,12 +8,12 @@ import {
   getLogicAppProjectRoot,
 } from "../../utils/codeless/connection";
 import * as vscode from "vscode";
+import type {
+  ConnectionsData} from "@microsoft/logic-apps-shared";
 import {
-  ApiHubServiceDetails,
-  ConnectionsData,
   getRecordEntry,
 } from "@microsoft/logic-apps-shared";
-import { getAzureConnectorDetailsForLocalProject } from "../../utils/codeless/common";
+import { cacheWebviewPanel, getAzureConnectorDetailsForLocalProject } from "../../utils/codeless/common";
 import { AzureConnectorDetails } from "@microsoft/vscode-extension-logic-apps";
 import {
   azurePublicBaseUrl,
@@ -22,12 +22,16 @@ import {
 } from "../../../constants";
 import { getLocalSettingsJson } from "../../utils/appSettings/localSettings";
 import path from "path";
+import { ext } from "../../../extensionVariables";
 
 export default class ConnectionsExt {
   public connectionId: string;
 
+
   public static async openConnectionsPanel(context: IActionContext, entryUri: string) {
     const connectionId = entryUri.split("/").pop() || "";
+
+    const panelName = `${connectionId}-Connections`;
 
     const currentDocumentPath =
       vscode.window.activeTextEditor?.document.uri.fsPath;
@@ -40,6 +44,12 @@ export default class ConnectionsExt {
       context,
       currentDocumentPath
     ); // danielle need to fix
+
+    const callbackUri: vscode.Uri = await (vscode.env as any).asExternalUri(
+      vscode.Uri.parse(`${vscode.env.uriScheme}://ms-azuretools.vscode-azurelogicapps/authcomplete`)
+    );
+     
+    const oauthRedirectUrl = callbackUri.toString(true);
 
     const azureDetails = await getAzureConnectorDetailsForLocalProject(
       context,
@@ -67,6 +77,10 @@ export default class ConnectionsExt {
         connectionsData: connections,
         azureDetails,
         apiHubServiceDetails,
+        oauthRedirectUrl,
+        panelId: panelName,
+        projectPath,
+        context
       }
     );
   }
@@ -74,10 +88,11 @@ export default class ConnectionsExt {
     connectionParams: CreateConnectionPanel
   ) {
     // danielle handle panel already open
+    const panelGroupKey = ext.webViewKey.connection;
 
     const panel = window.createWebviewPanel(
-      webviewType, // Key used to reference the panel,
-      "Connections", // danielle to change
+      panelGroupKey, // Key used to reference the panel,
+      connectionParams.panelId, // danielle to change
       ViewColumn.Active, // Editor column to show the new webview panel in
       {
         enableScripts: true,
@@ -86,6 +101,8 @@ export default class ConnectionsExt {
         retainContextWhenHidden: true,
       }
     );
+
+    cacheWebviewPanel(panelGroupKey, connectionParams.panelId, panel);
 
     new ConnectionsPanel(panel, connectionParams);
   }

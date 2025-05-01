@@ -46,6 +46,7 @@ export const connectionSlice = createSlice({
           authentication,
         };
         state.connectionsMapping[nodeId] = newReferenceKey;
+        console.log('New connection reference created:', newReferenceKey);
       }
 
       LoggerService().log({
