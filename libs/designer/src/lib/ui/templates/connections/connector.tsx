@@ -145,13 +145,10 @@ export const ConnectorWithDetails = ({ id, kind }: Template.FeaturedConnector) =
           <div className="msla-template-connector-name">{connector.properties?.displayName}</div>
         )}
         <div className="msla-template-connector-type">
-          <Text style={textStyles.connectorSubDetails} className="msla-template-card-tag">
-            {allCategories[kind ?? ''] ?? kind}
-          </Text>
-          <Icon style={{ padding: 5, color: '#8b8b8b', fontSize: 7 }} iconName="LocationDot" />
+          <Text style={textStyles.connectorSubDetails}>{allCategories[kind ?? ''] ?? kind}</Text>
+          <Text style={textStyles.connectorSubDetails}>•</Text>
           {isConnectionsLoading ? (
             <Shimmer
-              className="msla-template-card-tag"
               style={{ width: '70px', marginTop: 5 }}
               shimmerElements={[{ type: ShimmerElementType.line, height: 10, verticalAlign: 'bottom', width: '100%' }]}
               size={SpinnerSize.xSmall}
@@ -159,9 +156,7 @@ export const ConnectorWithDetails = ({ id, kind }: Template.FeaturedConnector) =
           ) : (connectorConnections ?? []).length > 0 ? (
             <Text style={{ ...textStyles.connectorSubDetails, color: '#50821b' }}>{text.connected}</Text>
           ) : (
-            <Text style={textStyles.connectorSubDetails} className="msla-template-card-tag">
-              {text.notConnected}
-            </Text>
+            <Text style={textStyles.connectorSubDetails}>{text.notConnected}</Text>
           )}
         </div>
       </div>
