@@ -2,7 +2,8 @@ import type { UseQueryResult } from '@tanstack/react-query';
 import { useQuery } from '@tanstack/react-query';
 import { getConnector, getOperation } from '../../queries/operation';
 import type { LogicAppResource, Resource } from '@microsoft/logic-apps-shared';
-import { ResourceService } from '@microsoft/logic-apps-shared';
+import { ResourceService, TemplateService } from '@microsoft/logic-apps-shared';
+import { getReactQueryClient } from '../../ReactQueryProvider';
 
 export interface ConnectorInfo {
   id: string;
@@ -117,4 +118,11 @@ export const useLogicApps = (
       enabled: enabled && !!subscriptionId && !!resourceGroup,
     }
   );
+};
+
+export const getCustomTemplates = async (subscriptionId: string, resourceGroup: string) => {
+  const queryClient = getReactQueryClient();
+  return queryClient.fetchQuery(['customtemplates', subscriptionId.toLowerCase(), resourceGroup.toLowerCase()], async () => {
+    return (await TemplateService()?.getCustomTemplates?.(subscriptionId, resourceGroup)) ?? [];
+  });
 };

@@ -1,12 +1,20 @@
 import type { LogicAppsV2, Template } from '../../utils/src';
 import { AssertionErrorCode, AssertionException } from '../../utils/src';
 
+export interface CustomTemplateResource {
+  id: string;
+  name: string;
+  state: string;
+  manifest: Template.TemplateManifest;
+}
+
 export interface ITemplateService {
   getExistingWorkflowNames?: () => Promise<string[]>;
   isResourceAvailable?: (resourceId: string) => Promise<boolean>;
   openBladeAfterCreate?: (workflowName: string | undefined) => void;
   onAddBlankWorkflow?: () => Promise<void>;
   getAllTemplateNames: () => Promise<string[]>;
+  getCustomTemplates?: (subscrpitionId: string, resourceGroup: string) => Promise<CustomTemplateResource[]>;
   getResourceManifest: (resourcePath: string) => Promise<Template.TemplateManifest | Template.WorkflowManifest>;
   getWorkflowDefinition: (templateId: string, workflowId: string) => Promise<LogicAppsV2.WorkflowDefinition>;
   getContentPathUrl: (templatePath: string, resourcePath: string) => string;

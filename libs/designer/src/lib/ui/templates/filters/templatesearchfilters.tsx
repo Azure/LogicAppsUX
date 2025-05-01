@@ -44,7 +44,7 @@ export const TemplateSearchAndFilters = ({
   const dispatch = useDispatch<AppDispatch>();
   const { sortKey, detailFilters: appliedDetailFilters } = useSelector((state: RootState) => state?.manifest?.filters);
   const intl = useIntl();
-  const { isConsumption, availableTemplates } = useSelector((state: RootState) => ({
+  const { availableTemplates } = useSelector((state: RootState) => ({
     isConsumption: state.workflow.isConsumption,
     availableTemplates: state.manifest.availableTemplates ?? {},
   }));
@@ -65,6 +65,16 @@ export const TemplateSearchAndFilters = ({
       defaultMessage: 'Sort By',
       id: 'ZOIvqN',
       description: 'Label text for sort by filter',
+    }),
+    MY_TEMPLATES: intl.formatMessage({
+      defaultMessage: 'My Templates',
+      id: 'aWcxdZ',
+      description: 'Label text custom templates tab',
+    }),
+    MICROSOFT_AUTHORED: intl.formatMessage({
+      defaultMessage: 'Microsoft Authored',
+      id: 'VjvWve',
+      description: 'Label text for Microsoft authored templates tab',
     }),
   };
 
@@ -104,28 +114,20 @@ export const TemplateSearchAndFilters = ({
       return [...basicTabs, ...tabDetails];
     }
 
-    if (!isConsumption && !!availableTemplates) {
+    if (availableTemplates) {
       basicTabs.push({
-        name: 'Workflow',
-        displayName: intl.formatMessage({
-          defaultMessage: 'Workflows',
-          id: 'fxue5l',
-          description: 'Workflows only templates tab',
-        }),
-        filterKey: 'Type',
+        name: 'Custom',
+        displayName: intlText.MY_TEMPLATES,
+        filterKey: 'publishedBy',
       });
       basicTabs.push({
-        name: 'Accelerator',
-        displayName: intl.formatMessage({
-          defaultMessage: 'Accelerators',
-          id: 'A5/UwX',
-          description: 'Accelerators only templates tab',
-        }),
-        filterKey: 'Type',
+        name: 'Microsoft',
+        displayName: intlText.MICROSOFT_AUTHORED,
+        filterKey: 'publishedBy',
       });
     }
     return basicTabs;
-  }, [intl, tabDetails, isConsumption, availableTemplates]);
+  }, [intl, tabDetails, availableTemplates, intlText.MY_TEMPLATES, intlText.MICROSOFT_AUTHORED]);
 
   const onTabSelected = (e?: SelectTabEvent, data?: SelectTabData): void => {
     if (data) {

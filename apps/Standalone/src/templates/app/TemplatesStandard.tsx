@@ -28,6 +28,7 @@ import {
   BaseApiManagementService,
   BaseResourceService,
   equals,
+  BaseTemplateResourceService,
 } from '@microsoft/logic-apps-shared';
 import {
   getConnectionStandard,
@@ -417,6 +418,7 @@ const getServices = (
   });
   const operationManifestService = new StandardOperationManifestService(defaultServiceParams);
   const resourceService = new BaseResourceService({ baseUrl: armUrl, httpClient, apiVersion });
+  const templateResourceService = new BaseTemplateResourceService({ baseUrl: armUrl, httpClient, apiVersion: '2025-06-01-preview' });
   const { connectionService, oAuthService, connectorService, workflowService, templateService } = getResourceBasedServices(
     siteResourceId,
     workflowApp,
@@ -439,6 +441,7 @@ const getServices = (
     workflowService,
     connectorService,
     resourceService,
+    templateResourceService,
   };
 };
 

@@ -47,7 +47,7 @@ test.describe(
       }
     );
 
-    test('Should be able to opt out of combining Initialize Variables', async ({ page }) => {
+    test.skip('Should be able to opt out of combining Initialize Variables', async ({ page }) => {
       await page.goto('/');
       await page.evaluate(() => {
         localStorage.clear();

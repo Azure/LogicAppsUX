@@ -17,6 +17,7 @@ import {
   type LogicAppsV2,
   BaseTemplateService,
   type IResourceService,
+  BaseTemplateResourceService,
 } from '@microsoft/logic-apps-shared';
 import { HttpClient } from '../../designer/app/AzureLogicAppsDesigner/Services/HttpClient';
 
@@ -267,6 +268,7 @@ const getServices = (subscriptionId: string, resourceGroup: string, location: st
     templateService,
     workflowService,
     resourceService: new LocalResourceService(),
+    templateResourceService: new BaseTemplateResourceService({ baseUrl: 'baseUrl', httpClient, apiVersion: '2025-06-01-preview' }),
   };
 };
 

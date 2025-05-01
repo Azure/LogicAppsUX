@@ -1,6 +1,6 @@
 import { getRecordEntry, type Template } from '@microsoft/logic-apps-shared';
 import type { PayloadAction } from '@reduxjs/toolkit';
-import { createSlice } from '@reduxjs/toolkit';
+import { createSlice, isAnyOf } from '@reduxjs/toolkit';
 import {
   validateConnectionsValue,
   validateParameterDetail,
@@ -9,7 +9,7 @@ import {
   validateWorkflowData,
 } from '../../templates/utils/helper';
 import type { WorkflowTemplateData, TemplatePayload } from '../../actions/bjsworkflow/templates';
-import { loadTemplate, validateWorkflowsBasicInfo } from '../../actions/bjsworkflow/templates';
+import { loadCustomTemplateArtifacts, loadTemplate, validateWorkflowsBasicInfo } from '../../actions/bjsworkflow/templates';
 import { resetTemplatesState } from '../global';
 import { deleteWorkflowData, loadCustomTemplate } from '../../actions/bjsworkflow/configuretemplate';
 import { getSupportedSkus } from '../../configuretemplate/utils/helper';
@@ -213,28 +213,6 @@ export const templateSlice = createSlice({
   },
   extraReducers: (builder) => {
     builder.addCase(resetTemplatesState, () => initialState);
-    builder.addCase(loadTemplate.fulfilled, (state, action: PayloadAction<TemplatePayload | undefined>) => {
-      if (action.payload) {
-        const { workflows, parameterDefinitions, connections, errors, manifest } = action.payload;
-        state.workflows = workflows;
-        state.parameterDefinitions = parameterDefinitions;
-        state.connections = connections;
-        state.errors = errors;
-        state.manifest = manifest;
-      }
-    });
-
-    builder.addCase(loadTemplate.rejected, (state) => {
-      // TODO change to null for error handling case
-      state.workflows = {};
-      state.parameterDefinitions = {};
-      state.connections = {};
-      state.errors = {
-        manifest: {},
-        parameters: {},
-        connections: undefined,
-      };
-    });
 
     builder.addCase(
       validateWorkflowsBasicInfo.fulfilled,
@@ -306,6 +284,32 @@ export const templateSlice = createSlice({
         const { status } = action.payload;
         state.status = status as TemplateEnvironment;
       }
+    });
+
+    builder.addMatcher(
+      isAnyOf(loadTemplate.fulfilled, loadCustomTemplateArtifacts.fulfilled),
+      (state, action: PayloadAction<TemplatePayload | undefined>) => {
+        if (action.payload) {
+          const { workflows, parameterDefinitions, connections, errors, manifest } = action.payload;
+          state.workflows = workflows;
+          state.parameterDefinitions = parameterDefinitions;
+          state.connections = connections;
+          state.errors = errors;
+          state.manifest = manifest;
+        }
+      }
+    );
+
+    builder.addMatcher(isAnyOf(loadTemplate.rejected, loadCustomTemplateArtifacts.rejected), (state) => {
+      // TODO change to null for error handling case
+      state.workflows = {};
+      state.parameterDefinitions = {};
+      state.connections = {};
+      state.errors = {
+        manifest: {},
+        parameters: {},
+        connections: undefined,
+      };
     });
   },
 });
