@@ -242,7 +242,10 @@ export const DesignerCommandBar: React.FC<DesignerCommandBarProps> = ({
   const haveAssertionErrors = Object.keys(allAssertionsErrors ?? {}).length > 0;
 
   const isSaveUnitTestDisabled = isSavingUnitTest || haveAssertionErrors;
-  const isSaveBlankUnitTestDisabled = isSavingBlankUnitTest || haveAssertionErrors;
+  const isSaveBlankUnitTestDisabled = useMemo(
+    () => isSavingBlankUnitTest || haveAssertionErrors || designerIsDirty,
+    [isSavingBlankUnitTest, haveAssertionErrors, designerIsDirty]
+  );
   const haveErrors = useMemo(
     () => haveInputErrors || haveWorkflowParameterErrors || haveSettingsErrors || haveConnectionErrors,
     [haveInputErrors, haveWorkflowParameterErrors, haveSettingsErrors, haveConnectionErrors]
@@ -309,7 +312,7 @@ export const DesignerCommandBar: React.FC<DesignerCommandBarProps> = ({
     },
     {
       key: 'SaveBlank',
-      disabled: isDisabled,
+      disabled: isSaveBlankUnitTestDisabled,
       text: Resources.UNIT_TEST_CREATE_BLANK,
       ariaLabel: Resources.UNIT_TEST_CREATE_BLANK,
       icon: isSavingBlankUnitTest ? <Spinner size="extra-small" /> : <SaveBlankUnitTestIcon />,

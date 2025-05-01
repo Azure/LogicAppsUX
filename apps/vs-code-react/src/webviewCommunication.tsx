@@ -18,6 +18,7 @@ import type {
   ShowAvailableSchemasMessageV2,
   GetTestFeatureEnablementStatus,
   GetAvailableCustomXsltPathsMessageV2,
+  SetIsWorkflowDirtyMessage,
 } from './run-service';
 import {
   changeCustomXsltPathList,
@@ -57,11 +58,16 @@ import type { ReactNode } from 'react';
 import React, { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import type { WebviewApi } from 'vscode-webview';
+import { setIsWorkflowDirty, store as DesignerStore } from '@microsoft/logic-apps-designer';
 
 const vscode: WebviewApi<unknown> = acquireVsCodeApi();
 export const VSCodeContext = React.createContext(vscode);
 
-type DesignerMessageType = ReceiveCallbackMessage | CompleteFileSystemConnectionMessage | UpdatePanelMetadataMessage;
+type DesignerMessageType =
+  | ReceiveCallbackMessage
+  | SetIsWorkflowDirtyMessage
+  | CompleteFileSystemConnectionMessage
+  | UpdatePanelMetadataMessage;
 type DataMapperMessageType =
   | FetchSchemaMessage
   | LoadDataMapMessage
@@ -79,6 +85,7 @@ type MessageType = InjectValuesMessage | DesignerMessageType | DataMapperMessage
 
 export const WebViewCommunication: React.FC<{ children: ReactNode }> = ({ children }) => {
   const dispatch: AppDispatch = useDispatch();
+  const designerDispatch: AppDispatch = DesignerStore.dispatch;
   const projectState = useSelector((state: RootState) => state.project);
   const dataMapperVersion = projectState.dataMapperVersion;
 
@@ -105,6 +112,10 @@ export const WebViewCommunication: React.FC<{ children: ReactNode }> = ({ childr
           }
           case ExtensionCommand.update_panel_metadata: {
             dispatch(updatePanelMetadata(message.data));
+            break;
+          }
+          case ExtensionCommand.setIsWorkflowDirty: {
+            designerDispatch(setIsWorkflowDirty(message.data));
             break;
           }
           default:

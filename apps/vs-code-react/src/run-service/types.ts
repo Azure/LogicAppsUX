@@ -261,6 +261,11 @@ export interface ReceiveCallbackMessage {
   data: any;
 }
 
+export interface SetIsWorkflowDirtyMessage {
+  command: typeof ExtensionCommand.setIsWorkflowDirty;
+  data: boolean;
+}
+
 export interface CompleteFileSystemConnectionMessage {
   command: typeof ExtensionCommand.completeFileSystemConnection;
   data: { connectionName: string; connection: any; error: string };
