@@ -72,11 +72,17 @@ export const AgentChat = ({
 
   const { mutate: refreshChat } = useMutation(async () => {
     const queryClient = getReactQueryClient();
+    await queryClient.resetQueries([runsQueriesKeys.useRunInstance]);
+    await queryClient.resetQueries([runsQueriesKeys.useChatHistory]);
+    await queryClient.resetQueries([runsQueriesKeys.useAgentActionsRepetition]);
+    await queryClient.resetQueries([runsQueriesKeys.useAgentRepetition]);
+    await queryClient.resetQueries([runsQueriesKeys.useNodeRepetition]);
+
     await queryClient.refetchQueries([runsQueriesKeys.useRunInstance]);
-    await queryClient.refetchQueries([runsQueriesKeys.useChatHistory]);
-    await queryClient.refetchQueries([runsQueriesKeys.useAgentActionsRepetition]);
     await queryClient.refetchQueries([runsQueriesKeys.useAgentRepetition]);
+    await queryClient.refetchQueries([runsQueriesKeys.useAgentActionsRepetition]);
     await queryClient.refetchQueries([runsQueriesKeys.useNodeRepetition]);
+    await queryClient.refetchQueries([runsQueriesKeys.useChatHistory]);
   });
 
   const showStopButton = useMemo(() => {
