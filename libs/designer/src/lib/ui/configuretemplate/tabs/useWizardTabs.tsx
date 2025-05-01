@@ -9,10 +9,17 @@ import { publishTab } from './publishTab';
 import { reviewTab } from './reviewTab';
 import { useTemplatesStrings } from '../../templates/templatesStrings';
 import { useResourceStrings } from '../resources';
+import { setRunValidation } from '../../../core/state/templates/tabSlice';
+import {
+  validateParameterDetails,
+  validateTemplateManifest,
+  validateWorkflowManifestsData,
+} from '../../../core/state/templates/templateSlice';
+import constants from '../../../common/constants';
 import type { Template } from '@microsoft/logic-apps-shared';
 import { TemplateResourceService } from '@microsoft/logic-apps-shared';
 import { useQueryClient } from '@tanstack/react-query';
-import { useCallback } from 'react';
+import { useEffect, useCallback } from 'react';
 
 export const useConfigureTemplateWizardTabs = ({
   onSaveWorkflows,
@@ -35,6 +42,7 @@ export const useConfigureTemplateWizardTabs = ({
     parametersHasError,
     templateManifestHasError,
     runValidation,
+    selectedTabId,
   } = useSelector((state: RootState) => ({
     enableWizard: state.tab.enableWizard,
     isWizardUpdating: state.tab.isWizardUpdating,
@@ -44,6 +52,7 @@ export const useConfigureTemplateWizardTabs = ({
     workflows: state.template.workflows,
     parametersHasError: Object.values(state.template.errors.parameters).some((value) => value !== undefined),
     templateManifestHasError: Object.values(state.template.errors.manifest).some((value) => value !== undefined),
+    selectedTabId: state.tab.selectedTabId,
   }));
 
   const hasAnyWorkflowErrors = Object.values(workflows).some(
@@ -52,6 +61,18 @@ export const useConfigureTemplateWizardTabs = ({
       !!errors?.kind ||
       (errors?.manifest && Object.values(errors?.manifest ?? {}).some((value) => value !== undefined))
   );
+
+  useEffect(() => {
+    if (
+      selectedTabId === constants.CONFIGURE_TEMPLATE_WIZARD_TAB_NAMES.REVIEW ||
+      selectedTabId === constants.CONFIGURE_TEMPLATE_WIZARD_TAB_NAMES.PUBLISH
+    ) {
+      dispatch(setRunValidation(true));
+      dispatch(validateWorkflowManifestsData());
+      dispatch(validateTemplateManifest());
+      dispatch(validateParameterDetails());
+    }
+  }, [dispatch, selectedTabId]);
 
   const onTemplateSave = useCallback(
     async (publishState: string) => {
