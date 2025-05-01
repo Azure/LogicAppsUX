@@ -7,7 +7,6 @@ import type { CustomTemplateResource, ITemplateService } from '../template';
 export interface BaseTemplateServiceOptions {
   baseUrl: string;
   httpClient: IHttpClient;
-  templateApiVersion: string;
   endpoint: string;
   useEndpointForTemplates: boolean;
   openBladeAfterCreate?: (workflowName: string | undefined) => void;
@@ -55,6 +54,7 @@ export class BaseTemplateService implements ITemplateService {
         manifest: {
           ...getTemplateManifestFromResourceManifest(resource.manifest),
           id: resource.id,
+          workflows: {},
         } as Template.TemplateManifest,
       }));
   };

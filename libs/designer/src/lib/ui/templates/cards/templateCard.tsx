@@ -13,7 +13,7 @@ import { equals, isArmResourceId, LogEntryLevel, LoggerService } from '@microsof
 import MicrosoftIcon from '../../../common/images/templates/microsoft.svg';
 import WorkflowIcon from '../../../common/images/templates/logicapps.svg';
 import { Beaker20Regular, BuildingMultiple20Regular, CheckmarkCircle20Regular, PeopleCommunity16Regular } from '@fluentui/react-icons';
-import { isMultiWorkflowTemplate, loadTemplate } from '../../../core/actions/bjsworkflow/templates';
+import { isMultiWorkflowTemplate, loadCustomTemplateArtifacts, loadTemplate } from '../../../core/actions/bjsworkflow/templates';
 import { useMemo } from 'react';
 import { BlankWorkflowTemplateCard } from './blankworklowcard';
 import { LoadingTemplateCard } from './loadingcard';
@@ -81,7 +81,12 @@ export const TemplateCard = ({ templateName, isLightweight, blankWorkflowProps, 
       args: [templateName, workflowAppName, `isMultiWorkflowTemplate:${isMultiWorkflow}`],
     });
     dispatch(changeCurrentTemplateName(templateName));
-    dispatch(loadTemplate({ preLoadedManifest: templateManifest }));
+
+    if (isArmResourceId(templateManifest?.id)) {
+      dispatch(loadCustomTemplateArtifacts(templateManifest));
+    } else {
+      dispatch(loadTemplate({ preLoadedManifest: templateManifest }));
+    }
 
     onSelect?.(templateName, !isMultiWorkflow);
   };

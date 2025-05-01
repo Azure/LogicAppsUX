@@ -41,6 +41,7 @@ import { getReactQueryClient } from '../../ReactQueryProvider';
 import {
   delimiter,
   getConnectionMappingInDefinition,
+  getDefinitionFromWorkflowManifest,
   getOperationDataInDefinitions,
   getParameterReferencesFromValue,
   getParametersForWorkflow,
@@ -113,8 +114,7 @@ export const loadCustomTemplate = createAsyncThunk(
     const allWorkflowsData = Object.keys(allWorkflowsManifest).reduce(
       (result: Record<string, Partial<WorkflowTemplateData>>, workflowId) => {
         const workflowManifest = allWorkflowsManifest[workflowId];
-        const workflowDefinition = (workflowManifest?.artifacts?.find((artifact) => equals(artifact.type, 'workflow')) as any)
-          ?.file as LogicAppsV2.WorkflowDefinition;
+        const workflowDefinition = getDefinitionFromWorkflowManifest(workflowManifest);
         const { connections, parameters } = workflowManifest;
 
         if (!workflowSourceId) {

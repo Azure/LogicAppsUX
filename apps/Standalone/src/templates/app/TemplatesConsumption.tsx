@@ -22,6 +22,7 @@ import {
   ConsumptionConnectorService,
   ConsumptionTemplateService,
   BaseResourceService,
+  BaseTemplateResourceService,
 } from '@microsoft/logic-apps-shared';
 import {
   getWorkflowAndArtifactsConsumption,
@@ -277,7 +278,6 @@ const getServices = (
   };
   const templateService = new ConsumptionTemplateService({
     ...defaultServiceParams,
-    templateApiVersion: '2025-06-01-preview',
     endpoint: '/templatesLocalProxy/templates/logicapps',
     useEndpointForTemplates: true,
     openBladeAfterCreate: (_workflowName: string | undefined) => {
@@ -286,6 +286,8 @@ const getServices = (
     onAddBlankWorkflow: onBlankWorkflowClick,
   });
   const resourceService = new BaseResourceService(defaultServiceParams);
+  const templateResourceService = new BaseTemplateResourceService({ baseUrl, httpClient, apiVersion: '2025-06-01-preview' });
+
   const { connectionService, oAuthService, operationManifestService, connectorService } = getResourceBasedServices(
     subscriptionId,
     resourceGroup,
@@ -307,6 +309,7 @@ const getServices = (
     workflowService,
     connectorService,
     resourceService,
+    templateResourceService,
   };
 };
 
