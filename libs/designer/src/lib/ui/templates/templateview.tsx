@@ -24,7 +24,6 @@ export const TemplatesView = (props: TemplateViewProps) => {
   const intl = useIntl();
   const { templateName, manifest } = useSelector((state: RootState) => ({
     templateName: state.template.templateName,
-    allTemplates: state.manifest.availableTemplates,
     manifest: state.template.manifest,
   }));
 

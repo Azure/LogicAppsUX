@@ -11,8 +11,8 @@ import {
 } from '../state/templates/manifestSlice';
 import { type ResourceDetails, setInitialData } from '../state/templates/workflowSlice';
 import type { ConnectionReferences } from '../../common/models/workflow';
-import { initializeTemplateServices, initializeWorkflowMetadata, reloadTemplates } from '../actions/bjsworkflow/templates';
-import { InitTemplateService, type Template } from '@microsoft/logic-apps-shared';
+import { initializeTemplateServices, initializeWorkflowMetadata, loadCustomTemplates } from '../actions/bjsworkflow/templates';
+import type { Template } from '@microsoft/logic-apps-shared';
 import { setEnableResourceSelection, setViewTemplateDetails } from '../state/templates/templateOptionsSlice';
 import { changeCurrentTemplateName } from '../state/templates/templateSlice';
 
@@ -24,31 +24,21 @@ export interface TemplatesDataProviderProps {
   connectionReferences: ConnectionReferences;
   viewTemplate?: Template.ViewTemplateDetails;
   children?: React.ReactNode;
-  reload?: boolean;
   servicesToReload?: Partial<TemplateServiceOptions>;
   enableResourceSelection?: boolean;
   onResourceChange?: () => void;
 }
 
-const DataProviderInner = ({ children, reload, services }: TemplatesDataProviderProps) => {
+const DataProviderInner = ({ children }: TemplatesDataProviderProps) => {
   const dispatch = useDispatch<AppDispatch>();
-  const { githubTemplateNames, servicesInitialized } = useSelector((state: RootState) => ({
+  const { githubTemplateNames } = useSelector((state: RootState) => ({
     githubTemplateNames: state.manifest.githubTemplateNames,
-    servicesInitialized: state.templateOptions.servicesInitialized,
   }));
 
   useEffect(() => {
     dispatch(loadGithubManifestNames());
+    dispatch(loadCustomTemplates());
   }, [dispatch]);
-
-  useEffect(() => {
-    if (reload !== undefined) {
-      if (servicesInitialized && services.templateService) {
-        InitTemplateService(services.templateService);
-      }
-      dispatch(reloadTemplates({ clear: true }));
-    }
-  }, [reload, dispatch, services.templateService, servicesInitialized]);
 
   useEffect(() => {
     if (githubTemplateNames) {

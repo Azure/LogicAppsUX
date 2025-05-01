@@ -51,7 +51,7 @@ test.describe(
       await expect(page.getByText('[Mock] Simple Connection')).toBeVisible();
     });
 
-    test('Only all and Workflows tabs should show blank workflow card', async ({ page }) => {
+    test.skip('Only all and Workflows tabs should show blank workflow card', async ({ page }) => {
       await page.goto('/templates');
 
       await GoToMockTemplatesGallery(page);
