@@ -31,6 +31,7 @@ import { updateAllTemplateParameterDefinitions } from '../../state/templates/tem
 import { checkWorkflowNameWithRegex, getCurrentWorkflowNames } from '../../templates/utils/helper';
 import { loadGithubManifestNames, setavailableTemplates, setavailableTemplatesNames } from '../../state/templates/manifestSlice';
 import { clearConnectionCaches } from '../../queries/connections';
+import { getCustomTemplates } from '../../templates/utils/queries';
 
 export interface WorkflowTemplateData {
   id: string;
@@ -220,6 +221,26 @@ export const loadTemplate = createAsyncThunk(
     }
 
     return undefined;
+  }
+);
+
+export const loadCustomTemplates = createAsyncThunk(
+  'loadCustomTemplates',
+  async (_, { getState }): Promise<Record<string, Template.TemplateManifest>> => {
+    try {
+      const { subscriptionId, resourceGroup } = (getState() as RootState).workflow;
+      const customTemplates = await getCustomTemplates(subscriptionId, resourceGroup);
+      return customTemplates.reduce((result: Record<string, Template.TemplateManifest>, template) => {
+        result[template.id.toLowerCase()] = {
+          ...template.manifest,
+        };
+
+        return result;
+      }, {});
+    } catch (ex) {
+      console.error(ex);
+      return {};
+    }
   }
 );
 

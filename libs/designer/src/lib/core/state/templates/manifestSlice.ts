@@ -3,7 +3,7 @@ import type { PayloadAction } from '@reduxjs/toolkit';
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
 import type { RootState } from './store';
 import type { FilterObject } from '@microsoft/designer-ui';
-import { loadManifestsFromPaths } from '../../actions/bjsworkflow/templates';
+import { loadCustomTemplates, loadManifestsFromPaths } from '../../actions/bjsworkflow/templates';
 import { resetTemplatesState } from '../global';
 
 export const templatesCountPerPage = 25;
@@ -119,6 +119,10 @@ export const manifestSlice = createSlice({
     builder.addCase(loadGithubManifests.rejected, (state) => {
       // TODO some way of handling error
       state.availableTemplates = undefined;
+    });
+
+    builder.addCase(loadCustomTemplates.fulfilled, (state, action) => {
+      state.availableTemplates = { ...state.availableTemplates, ...(action.payload ?? {}) };
     });
 
     builder.addCase(lazyLoadGithubManifests.fulfilled, (state, action) => {
