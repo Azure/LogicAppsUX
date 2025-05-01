@@ -32,7 +32,6 @@ import { AgentChatHeader } from './agentChatHeader';
 import { parseChatHistory } from './helper';
 import { useMutation } from '@tanstack/react-query';
 import constants from '../../../common/constants';
-import '../agentChat.less';
 
 interface AgentChatProps {
   panelLocation?: PanelLocation;
@@ -84,7 +83,7 @@ export const AgentChat = ({
     return runInstance?.properties?.status === constants.FLOW_STATUS.RUNNING;
   }, [runInstance]);
 
-  const { mutate: cancelRun } = useCancelRun(runInstance?.id);
+  const { mutate: cancelRun } = useCancelRun(runInstance?.id ?? '');
 
   const stopChat = useCallback(async () => {
     setDialogOpen(true);
@@ -315,32 +314,37 @@ export const AgentChat = ({
             }}
           />
           <PanelResizer updatePanelWidth={setOverrideWidth} panelRef={panelRef} />
-          <div className="msla-agent-chat-dialog">
-            <Dialog
-              inertTrapFocus={true}
-              open={dialogOpen}
-              aria-labelledby={intlText.stopChatTitle}
-              onOpenChange={onClosingDialog}
-              surfaceMotion={null}
+          <Dialog
+            inertTrapFocus={true}
+            open={dialogOpen}
+            aria-labelledby={intlText.stopChatTitle}
+            onOpenChange={onClosingDialog}
+            surfaceMotion={null}
+          >
+            <DialogSurface
+              style={{
+                maxWidth: '80%',
+                width: 'fit-content',
+              }}
+              backdrop={<div style={{ width: '100%', height: '100%', backgroundColor: 'rgba(0,0,0,0.4)' }}> </div>}
+              mountNode={panelRef.current}
             >
-              <DialogSurface className="msla-agent-chat-dialog-surface" mountNode={panelRef.current}>
-                <DialogBody>
-                  <DialogTitle>{intlText.stopChatTitle}</DialogTitle>
-                  <DialogContent>{intlText.stopChatMessage}</DialogContent>
-                  <DialogActions fluid>
-                    <DialogTrigger>
-                      <Button appearance="primary" onClick={onCancel}>
-                        {intlText.okDialog}
-                      </Button>
-                    </DialogTrigger>
-                    <DialogTrigger>
-                      <Button onClick={onClosingDialog}>{intlText.cancelDialog}</Button>
-                    </DialogTrigger>
-                  </DialogActions>
-                </DialogBody>
-              </DialogSurface>
-            </Dialog>
-          </div>
+              <DialogBody>
+                <DialogTitle>{intlText.stopChatTitle}</DialogTitle>
+                <DialogContent>{intlText.stopChatMessage}</DialogContent>
+                <DialogActions fluid>
+                  <DialogTrigger>
+                    <Button appearance="primary" onClick={onCancel}>
+                      {intlText.okDialog}
+                    </Button>
+                  </DialogTrigger>
+                  <DialogTrigger>
+                    <Button onClick={onClosingDialog}>{intlText.cancelDialog}</Button>
+                  </DialogTrigger>
+                </DialogActions>
+              </DialogBody>
+            </DialogSurface>
+          </Dialog>
         </>
       )}
     </Drawer>

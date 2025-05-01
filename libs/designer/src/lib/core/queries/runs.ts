@@ -169,11 +169,9 @@ export const useAgentRepetition = (
   );
 };
 
-export const useCancelRun = (runId: string | undefined) => {
+export const useCancelRun = (runId: string) => {
   return useMutation([runsQueriesKeys.useCancelRun, { runId }], async () => {
-    if (!isNullOrUndefined(runId)) {
-      return await RunService().cancelRun(runId);
-    }
+    return await RunService().cancelRun(runId);
   });
 };
 
