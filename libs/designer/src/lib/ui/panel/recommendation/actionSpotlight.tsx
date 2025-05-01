@@ -1,18 +1,19 @@
 import { Link } from '@fluentui/react';
 import { Accordion, type AccordionToggleEventHandler, makeStyles, tokens } from '@fluentui/react-components';
 import { useAllConnectors, useFavoriteOperations } from '../../../core/queries/browse';
-import { useDiscoveryPanelFavoriteOperations } from '../../../core/state/panel/panelSelectors';
+import { useDiscoveryPanelFavoriteOperations, useDiscoveryPanelRelationshipIds } from '../../../core/state/panel/panelSelectors';
+import { useIsWithinAgenticLoop } from '../../../core/state/workflow/workflowSelectors';
 import { useEffect, useMemo, useState } from 'react';
-import type { Connector } from '@microsoft/logic-apps-shared';
+import type { Connector, DiscoveryOpArray } from '@microsoft/logic-apps-shared';
 import { getOperationCardDataFromOperation, getOperationGroupCardDataFromConnector } from './helpers';
 import { useIntl } from 'react-intl';
 import { SpotlightCategoryType, SpotlightSection } from '@microsoft/designer-ui';
 import { useAgenticWorkflow } from '../../../core/state/designerView/designerViewSelectors';
-
 export interface ActionSpotlightProps {
   onConnectorSelected: (connectorId: string, origin?: string) => void;
   onOperationSelected: (operationId: string, apiId?: string) => void;
   filters?: Record<string, string>;
+  allOperations: DiscoveryOpArray;
 }
 
 const useActionSpotlightStyles = makeStyles({
@@ -30,8 +31,10 @@ const useActionSpotlightStyles = makeStyles({
 
 export const ActionSpotlight = (props: ActionSpotlightProps) => {
   const intl = useIntl();
-  const { filters, onConnectorSelected, onOperationSelected } = props;
+  const { filters, allOperations, onConnectorSelected, onOperationSelected } = props;
   const { data: allConnectors, isLoading: isLoadingConnectors } = useAllConnectors();
+  const parentGraphId = useDiscoveryPanelRelationshipIds().graphId;
+  const isWithinAgenticLoop = useIsWithinAgenticLoop(parentGraphId);
   const isAgenticWorkflow = useAgenticWorkflow();
 
   const favoriteOperationIds = useDiscoveryPanelFavoriteOperations();
@@ -48,6 +51,7 @@ export const ActionSpotlight = (props: ActionSpotlightProps) => {
   const [openItems, setOpenItems] = useState<SpotlightCategoryType[]>([
     SpotlightCategoryType.BuiltIns,
     SpotlightCategoryType.AICapabilities,
+    SpotlightCategoryType.KnowledgeBase,
     ...(favoriteOperationIds.length > 0 ? [SpotlightCategoryType.Favorites] : []),
   ]);
 
@@ -62,24 +66,75 @@ export const ActionSpotlight = (props: ActionSpotlightProps) => {
   const classNames = useActionSpotlightStyles();
 
   const builtInActions = useMemo(() => {
-    const allowedIds = ['connectionProviders/control', 'connectionProviders/dataOperationNew', 'connectionProviders/datetime'];
+    const allowedIds =
+      filters?.['actionType'] === 'triggers'
+        ? ['connectionProviders/request', 'connectionProviders/schedule', 'connectionProviders/http']
+        : [
+            'connectionProviders/control',
+            'connectionProviders/dataOperationNew',
+            'connectionProviders/datetime',
+            'connectionProviders/http',
+          ];
 
     const builtIns = allConnectors
       .filter((connector: Connector) => allowedIds.includes(connector.id))
       .map((connector) => getOperationGroupCardDataFromConnector(connector));
 
     return builtIns;
-  }, [allConnectors]);
+  }, [allConnectors, filters]);
 
   const aiActions = useMemo(() => {
+    if (filters?.['actionType'] === 'triggers') {
+      return [];
+    }
+
     const baseIds = ['managedApis/azureopenai', '/serviceProviders/openai'];
     const allowedIds = isAgenticWorkflow ? [...baseIds, 'connectionProviders/agent'] : baseIds;
 
     return allConnectors
       .filter((connector) => allowedIds.some((id) => connector.id.includes(id)))
       .map(getOperationGroupCardDataFromConnector);
-  }, [allConnectors, isAgenticWorkflow]);
+  }, [allConnectors, isAgenticWorkflow, filters]);
 
+  const knowledgeBaseActions = useMemo(() => {
+    const allowedSuffixes = new Set([
+      'httpaction',
+      'managedApis/sharepointonline/apiOperations/GetFileItem',
+      'managedApis/sharepointonline/apiOperations/GetFileContent',
+      'managedApis/sharepointonline/apiOperations/GetFileContentByPath',
+      'managedApis/onedriveforbusiness/apiOperations/GetFileMetadata',
+      'managedApis/onedriveforbusiness/apiOperations/GetFileMetadataByPath',
+      'managedApis/onedriveforbusiness/apiOperations/GetFileContent',
+      'managedApis/onedriveforbusiness/apiOperations/GetFileContentByPath',
+      'managedApis/onedrive/apiOperations/GetFileMetadata',
+      'managedApis/onedrive/apiOperations/GetFileMetadataByPath',
+      'managedApis/onedrive/apiOperations/GetFileContent',
+      'managedApis/onedrive/apiOperations/GetFileContentByPath',
+      'managedApis/azureblob/apiOperations/GetFileMetadataByPath_V2',
+      'managedApis/azureblob/apiOperations/GetFileContentByPath_V2',
+      'managedApis/amazons3/apiOperations/ListObjects',
+      'managedApis/amazons3/apiOperations/GetObjectMetadata',
+      'managedApis/amazons3/apiOperations/GetObjectContent',
+      'managedApis/dropbox/apiOperations/GetFileMetadata',
+      'managedApis/dropbox/apiOperations/GetFileMetadataByPath',
+      'managedApis/dropbox/apiOperations/GetFileContent',
+      'managedApis/dropbox/apiOperations/GetFileContentByPath',
+      'managedApis/service-now/apiOperations/GetKnowledgeArticles',
+      'managedApis/service-now/apiOperations/GetRecords',
+      'managedApis/service-now/apiOperations/GetRecord',
+    ]);
+
+    return allOperations
+      .filter((operation) => {
+        for (const suffix of allowedSuffixes) {
+          if (operation.id.endsWith(suffix)) {
+            return true;
+          }
+        }
+        return false;
+      })
+      .map(getOperationCardDataFromOperation);
+  }, [allOperations]);
   const favoriteOperations = useMemo(() => {
     const favorites = [
       ...favoriteConnectorsData.map(getOperationGroupCardDataFromConnector),
@@ -116,6 +171,17 @@ export const ActionSpotlight = (props: ActionSpotlightProps) => {
     id: 'TfDH7O',
     description: 'AI capabilities label',
   });
+  const knowledgeBaseLabel = intl.formatMessage({
+    defaultMessage: 'Knowledge Sources',
+    id: 'UQ5Zn2',
+    description: 'Knowledge base label',
+  });
+
+  const noOperationDescription = intl.formatMessage({
+    defaultMessage: 'No Favorite actions or connectors found. Use the Star icon next to existing actions to add them to your favorites.',
+    id: 'rPw0Hp',
+    description: 'No actions available text',
+  });
   return (
     <Accordion className={classNames.accordion} multiple={true} collapsible={true} openItems={openItems} onToggle={handleToggle}>
       <SpotlightSection
@@ -127,6 +193,7 @@ export const ActionSpotlight = (props: ActionSpotlightProps) => {
         onConnectorSelected={onConnectorSelected}
         onOperationSelected={onOperationSelected}
         filters={filters}
+        noOperationDescription={noOperationDescription}
       >
         {favoriteActionsHasNextPage || favoriteActionsIsFetchingNextPage ? (
           <Link className={classNames.favoriteLoadMoreLink} onClick={() => favoriteActionsFetchNextPage()}>
@@ -134,6 +201,18 @@ export const ActionSpotlight = (props: ActionSpotlightProps) => {
           </Link>
         ) : null}
       </SpotlightSection>
+      {isAgenticWorkflow && isWithinAgenticLoop ? (
+        <SpotlightSection
+          index={SpotlightCategoryType.KnowledgeBase}
+          title={knowledgeBaseLabel}
+          operationsData={knowledgeBaseActions}
+          isLoading={isLoadingConnectors}
+          isOpen={openItems.includes(SpotlightCategoryType.KnowledgeBase)}
+          onConnectorSelected={onConnectorSelected}
+          onOperationSelected={onOperationSelected}
+          filters={filters}
+        />
+      ) : null}
       <SpotlightSection
         index={SpotlightCategoryType.AICapabilities}
         title={aiCapabilitiesLabel}
