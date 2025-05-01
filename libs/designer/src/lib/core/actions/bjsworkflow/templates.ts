@@ -29,12 +29,7 @@ import { initializeParametersMetadata } from '../../templates/utils/parametershe
 import { initializeNodeOperationInputsData } from '../../state/operation/operationMetadataSlice';
 import { updateAllTemplateParameterDefinitions } from '../../state/templates/templateSlice';
 import { checkWorkflowNameWithRegex, getCurrentWorkflowNames } from '../../templates/utils/helper';
-import {
-  loadGithubManifestNames,
-  setavailableTemplates,
-  setavailableTemplatesNames,
-  setFilteredTemplateNames,
-} from '../../state/templates/manifestSlice';
+import { loadGithubManifestNames, setavailableTemplates, setavailableTemplatesNames } from '../../state/templates/manifestSlice';
 import { clearConnectionCaches } from '../../queries/connections';
 
 export interface WorkflowTemplateData {
@@ -179,7 +174,6 @@ export const reloadTemplates = createAsyncThunk('reloadTemplates', async ({ clea
   if (clear) {
     dispatch(setavailableTemplatesNames(undefined));
     dispatch(setavailableTemplates(undefined));
-    dispatch(setFilteredTemplateNames(undefined));
   }
 
   dispatch(loadGithubManifestNames());
