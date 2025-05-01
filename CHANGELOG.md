@@ -1,4 +1,11 @@
 # Logic Apps Designer
+### [5.94.1](https://github.com/Azure/LogicAppsUX/compare/v5.93.1...v5.94.1) (2025-05-01)
+
+
+### Bug Fixes
+
+* **designer:** Increment package version to the correct minor version ([#7139](https://github.com/Azure/LogicAppsUX/issues/7139)) ([a50dbee](https://github.com/Azure/LogicAppsUX/commit/a50dbee65a87d9e970d5ce6d2c6dfa086e237cb0))
+
 ### [5.93.1](https://github.com/Azure/LogicAppsUX/compare/v5.93.0...v5.93.1) (2025-04-30)
 
 
