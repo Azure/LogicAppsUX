@@ -1,5 +1,5 @@
-import { Callout, css, DetailsList, type IColumn, Label, SelectionMode } from '@fluentui/react';
-import { Link, Text } from '@fluentui/react-components';
+import { css, DetailsList, type IColumn, Label, SelectionMode } from '@fluentui/react';
+import { Link, Popover, PopoverSurface, PopoverTrigger, Text } from '@fluentui/react-components';
 import { updateTemplateParameterValue } from '../../../core/state/templates/templateSlice';
 import type { AppDispatch, RootState } from '../../../core/state/templates/store';
 import { useDispatch, useSelector } from 'react-redux';
@@ -7,7 +7,7 @@ import { getPropertyValue, type Template } from '@microsoft/logic-apps-shared';
 import { useFunctionalState } from '@react-hookz/web';
 import { type IntlShape, useIntl } from 'react-intl';
 import { useMemo } from 'react';
-import { useBoolean, useId } from '@fluentui/react-hooks';
+import { useId } from '@fluentui/react-hooks';
 import { ParameterEditor } from './parametereditor';
 import { getWorkflowParameterTypeDisplayNames } from '@microsoft/designer-ui';
 
@@ -164,25 +164,20 @@ const ParameterName = ({
   intl,
   isSingleWorkflow,
 }: { item: Template.ParameterDefinition; intl: IntlShape; isSingleWorkflow: boolean }): JSX.Element => {
-  const [isCalloutVisible, { toggle: toggleIsCalloutVisible }] = useBoolean(false);
   const buttonId = useId('callout-button');
 
   return (
     <div className="msla-template-parameters-tab-name">
-      <Link id={buttonId} as="button" onClick={toggleIsCalloutVisible}>
-        <Label className={css('msla-templates-parameters-values', 'link')} required={item.required}>
-          {item.displayName}
-        </Label>
-      </Link>
-      {isCalloutVisible && (
-        <Callout
-          className="msla-templates-parameters-callout"
-          role="dialog"
-          gapSpace={0}
-          target={`#${buttonId}`}
-          onDismiss={toggleIsCalloutVisible}
-          setInitialFocus
-        >
+      <Popover withArrow>
+        <PopoverTrigger disableButtonEnhancement>
+          <Link id={buttonId} as="button">
+            <Label className={'msla-templates-parameters-values link'} required={item.required}>
+              {item.displayName}
+            </Label>
+          </Link>
+        </PopoverTrigger>
+
+        <PopoverSurface autoFocus className={'msla-templates-parameters-callout'}>
           {!isSingleWorkflow && (
             <Text className="msla-templates-parameter-callout-title" block>
               {intl.formatMessage({ defaultMessage: 'Details', description: 'Title text for details', id: 'c2ZT7p' })}
@@ -210,8 +205,8 @@ const ParameterName = ({
               ))}
             </div>
           )}
-        </Callout>
-      )}
+        </PopoverSurface>
+      </Popover>
     </div>
   );
 };
