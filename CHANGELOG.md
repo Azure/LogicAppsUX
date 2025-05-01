@@ -1,4 +1,11 @@
 # Logic Apps Designer
+### [5.94.2](https://github.com/Azure/LogicAppsUX/compare/v5.94.1...v5.94.2) (2025-05-01)
+
+
+### Bug Fixes
+
+* **Templates:** Templates cherry-picks (validation error, dark mode, race condition ([#7144](https://github.com/Azure/LogicAppsUX/issues/7144)) ([7390eea](https://github.com/Azure/LogicAppsUX/commit/7390eeaabab63b96d548f66d532f41b2f48db5f4)), closes [#7119](https://github.com/Azure/LogicAppsUX/issues/7119) [#7126](https://github.com/Azure/LogicAppsUX/issues/7126) [#7143](https://github.com/Azure/LogicAppsUX/issues/7143)
+
 ### [5.94.1](https://github.com/Azure/LogicAppsUX/compare/v5.93.1...v5.94.1) (2025-05-01)
 
 
