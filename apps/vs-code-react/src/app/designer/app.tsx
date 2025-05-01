@@ -139,7 +139,7 @@ export const DesignerApp = () => {
     isLoading,
     isRefetching,
     data: runData,
-  } = useQuery<any>(['runInstance', { runId }], getRunInstance, {
+  } = useQuery<any>([runsQueriesKeys.useRunInstance, { runId }], getRunInstance, {
     refetchOnWindowFocus: false,
     refetchOnMount: true,
     initialData: null,

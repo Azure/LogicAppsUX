@@ -20,6 +20,7 @@ export interface IRunService {
   getChatHistory(action: { nodeId: string; runId: string | undefined }): Promise<any>;
   getAgentChatInvokeUri(action: { idSuffix: string }): Promise<any>;
   invokeAgentChat(action: { id: string; data: any }): Promise<any>;
+  cancelRun(runId: string): Promise<any>;
 }
 
 let service: IRunService;

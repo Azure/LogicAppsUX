@@ -16,15 +16,23 @@ vi.mock('../../../core/state/designerOptions/designerOptionsSelectors', () => ({
 }));
 
 describe('AgentChatHeader', () => {
-  const mockToggleCollapse = vi.fn();
+  const mockOnToggleCollapse = vi.fn();
+  const mockOnStopChat = vi.fn();
+  const mockOnRefreshChat = vi.fn();
 
-  const renderComponent = () => {
+  const renderComponent = ({ showStopButton }) => {
     const queryClient = getReactQueryClient();
 
     return renderWithRedux(
       <QueryClientProvider client={queryClient}>
         <IntlProvider locale="en">
-          <AgentChatHeader title="Test Title" toggleCollapse={mockToggleCollapse} />
+          <AgentChatHeader
+            title="Test Title"
+            onStopChat={mockOnStopChat}
+            onRefreshChat={mockOnRefreshChat}
+            onToggleCollapse={mockOnToggleCollapse}
+            showStopButton={showStopButton}
+          />
         </IntlProvider>
       </QueryClientProvider>
     );
@@ -32,29 +40,53 @@ describe('AgentChatHeader', () => {
 
   beforeEach(() => {
     // Reset mocks before each test
-    mockToggleCollapse.mockReset();
+    mockOnToggleCollapse.mockReset();
     mockIsDarkMode.mockReset();
   });
 
   it('renders correctly and matches snapshot with dark mode off', () => {
     mockIsDarkMode.mockReturnValue(false);
-    const header = renderComponent();
+    const header = renderComponent({ showStopButton: false });
+    expect(header).toMatchSnapshot();
+    getReactQueryClient;
+  });
+
+  it('renders correctly and matches snapshot when showing stop button', () => {
+    const header = renderComponent({ showStopButton: true });
     expect(header).toMatchSnapshot();
     getReactQueryClient;
   });
 
   it('renders correctly when dark mode is on', () => {
     mockIsDarkMode.mockReturnValue(true);
-    const header = renderComponent();
+    const header = renderComponent({ showStopButton: false });
     expect(header).toMatchSnapshot();
   });
 
-  it('calls toggleCollapse when button is clicked', () => {
+  it('calls onToggleCollapse when button is clicked', () => {
     mockIsDarkMode.mockReturnValue(false);
-    const header = renderComponent();
+    const header = renderComponent({ showStopButton: false });
 
     const container = header.root;
     container.findByProps({ id: 'msla-agent-chat-header-collapse' }).props.onClick();
-    expect(mockToggleCollapse).toHaveBeenCalled();
+    expect(mockOnToggleCollapse).toHaveBeenCalled();
+  });
+
+  it('calls onRefresh when button is clicked', () => {
+    mockIsDarkMode.mockReturnValue(false);
+    const header = renderComponent({ showStopButton: false });
+
+    const container = header.root;
+    container.findByProps({ id: 'msla-agent-chat-header-refresh' }).props.onClick();
+    expect(mockOnRefreshChat).toHaveBeenCalled();
+  });
+
+  it('calls onStopChat when button is clicked', () => {
+    mockIsDarkMode.mockReturnValue(false);
+    const header = renderComponent({ showStopButton: true });
+
+    const container = header.root;
+    container.findByProps({ id: 'msla-agent-chat-header-stop' }).props.onClick();
+    expect(mockOnStopChat).toHaveBeenCalled();
   });
 });
