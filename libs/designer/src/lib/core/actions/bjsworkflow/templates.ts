@@ -32,9 +32,9 @@ import { updateAllTemplateParameterDefinitions } from '../../state/templates/tem
 import { checkWorkflowNameWithRegex, getCurrentWorkflowNames } from '../../templates/utils/helper';
 import type { TemplateData } from '../../state/templates/manifestSlice';
 import { clearConnectionCaches } from '../../queries/connections';
-import { getCustomTemplates } from '../../queries/template';
 import { getWorkflowsInTemplate } from '../../configuretemplate/utils/queries';
 import { getDefinitionFromWorkflowManifest } from '../../configuretemplate/utils/helper';
+import { getCustomTemplates } from '../../templates/utils/queries';
 
 export interface WorkflowTemplateData {
   id: string;
