@@ -100,6 +100,86 @@
 		{
 			"properties": {
 				"actions": {
+					"stateB": {
+						"name": "stateB",
+						"inputsLink": {
+							"contentId": "20a24c5c-c865-41f4-80c1-e10b39eb9196"
+						},
+						"outputsLink": {
+							"contentId": "20a24c5c-c865-41f4-80c1-e10b39eb9196"
+						},
+						"startTime": "2025-04-28T17:53:58.7848357Z",
+						"endTime": "2025-04-28T17:53:58.7861994Z",
+						"trackingId": "fc6f0649-8059-4481-ad06-35d517297649",
+						"clientTrackingId": "00000000-0000-0000-0000-000000000000",
+						"code": "OK",
+						"status": "Succeeded"
+					},
+					"stateA": {
+						"name": "stateA",
+						"inputsLink": {
+							"contentId": "9e86a627-f0d2-419f-8c52-abc2302d8a4c"
+						},
+						"outputsLink": {
+							"contentId": "9e86a627-f0d2-419f-8c52-abc2302d8a4c"
+						},
+						"startTime": "2025-04-28T17:53:58.6317916Z",
+						"endTime": "2025-04-28T17:53:58.681851Z",
+						"trackingId": "df7bd624-88b8-402f-a2ec-8eb7154955e2",
+						"clientTrackingId": "00000000-0000-0000-0000-000000000000",
+						"code": "OK",
+						"status": "Succeeded"
+					}
+				},
+				"canResubmit": false,
+				"startTime": "2025-04-28T17:53:58.7925738Z",
+				"correlation": {
+					"actionTrackingId": "144623a5-ef67-43ec-8ca7-dda207c49832",
+					"clientTrackingId": "00000000-0000-0000-0000-000000000000"
+				},
+				"status": "Running",
+				"code": "Accepted"
+			},
+			"id": "/workflows/agent/runs/08584557440656102805810317215CU00/actions/default/agentRepetitions/000003",
+			"name": "000003",
+			"type": "workflows/runs/actions/agentRepetitions"
+		},
+		{
+			"properties": {
+				"actions": {
+					"stateC": {
+						"name": "stateC",
+						"inputsLink": {
+							"contentId": "a11180cc-f4c9-424c-87a6-4081693bfd72"
+						},
+						"outputsLink": {
+							"contentId": "a11180cc-f4c9-424c-87a6-4081693bfd72"
+						},
+						"startTime": "2025-04-28T17:53:58.7967602Z",
+						"endTime": "2025-04-28T17:53:58.7976295Z",
+						"trackingId": "fc9fb04c-5a5f-4aec-ae0b-2e01dc6f06a0",
+						"clientTrackingId": "00000000-0000-0000-0000-000000000000",
+						"code": "OK",
+						"status": "Succeeded"
+					}
+				},
+				"canResubmit": false,
+				"startTime": "2025-04-28T17:53:58.8011001Z",
+				"endTime": "2025-04-28T17:53:58.8016899Z",
+				"correlation": {
+					"actionTrackingId": "144623a5-ef67-43ec-8ca7-dda207c49832",
+					"clientTrackingId": "00000000-0000-0000-0000-000000000000"
+				},
+				"status": "Succeeded",
+				"code": "OK"
+			},
+			"id": "/workflows/agent/runs/08584557440656102805810317215CU00/actions/default/agentRepetitions/000004",
+			"name": "000004",
+			"type": "workflows/runs/actions/agentRepetitions"
+		},
+		{
+			"properties": {
+				"actions": {
 					"End": {
 						"name": "End",
 						"inputsLink": {
@@ -126,8 +206,8 @@
 				"status": "Succeeded",
 				"code": "OK"
 			},
-			"id": "/workflows/agent/runs/08584557440656102805810317215CU00/actions/default/agentRepetitions/000003",
-			"name": "000003",
+			"id": "/workflows/agent/runs/08584557440656102805810317215CU00/actions/default/agentRepetitions/000005",
+			"name": "000005",
 			"type": "workflows/runs/actions/agentRepetitions"
 		}
 	]
