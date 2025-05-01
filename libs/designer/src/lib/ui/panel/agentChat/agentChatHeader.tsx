@@ -14,6 +14,7 @@ import { useIntl } from 'react-intl';
 
 interface AgentChatHeaderProps {
   title: string;
+  showStopButton?: boolean;
   onToggleCollapse: () => void;
   onRefreshChat: () => void;
   onStopChat: () => void;
@@ -24,7 +25,7 @@ const StopIcon = bundleIcon(Stop16Filled, Stop16Regular);
 const RefreshIcon = bundleIcon(ArrowClockwise16Filled, ArrowClockwise16Regular);
 const CollapseIcon = bundleIcon(ChevronDoubleRight16Filled, ChevronDoubleRight16Regular);
 
-export const AgentChatHeader = ({ title, onToggleCollapse, onRefreshChat, onStopChat }: AgentChatHeaderProps) => {
+export const AgentChatHeader = ({ title, onToggleCollapse, onRefreshChat, onStopChat, showStopButton }: AgentChatHeaderProps) => {
   const intl = useIntl();
   const isDarkMode = useIsDarkMode();
 
@@ -77,15 +78,17 @@ export const AgentChatHeader = ({ title, onToggleCollapse, onRefreshChat, onStop
     >
       <Subtitle2 style={{ marginLeft: '10px' }}>{title}</Subtitle2>
       <div className="msla-agent-chat-header-buttons">
-        <Button
-          id="msla-agent-chat-header-stop"
-          appearance="subtle"
-          icon={<StopIcon />}
-          aria-label={intlText.STOP_BUTTON_ARIA_LABEL}
-          onClick={onStopChat}
-          data-automation-id="msla-agent-chat-header-stop"
-          title={intlText.STOP_BUTTON_TITLE}
-        />
+        {showStopButton && (
+          <Button
+            id="msla-agent-chat-header-stop"
+            appearance="subtle"
+            icon={<StopIcon />}
+            aria-label={intlText.STOP_BUTTON_ARIA_LABEL}
+            onClick={onStopChat}
+            data-automation-id="msla-agent-chat-header-stop"
+            title={intlText.STOP_BUTTON_TITLE}
+          />
+        )}
         <Button
           id="msla-agent-chat-header-refresh"
           appearance="subtle"

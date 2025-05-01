@@ -31,6 +31,7 @@ import { clearFocusElement, setFocusNode, setRunIndex } from '../../../core/stat
 import { AgentChatHeader } from './agentChatHeader';
 import { parseChatHistory } from './helper';
 import { useMutation } from '@tanstack/react-query';
+import constants from '../../../common/constants';
 
 interface AgentChatProps {
   panelLocation?: PanelLocation;
@@ -77,6 +78,10 @@ export const AgentChat = ({
     await queryClient.refetchQueries([runsQueriesKeys.useAgentRepetition]);
     await queryClient.refetchQueries([runsQueriesKeys.useNodeRepetition]);
   });
+
+  const showStopButton = useMemo(() => {
+    return runInstance?.properties?.status === constants.FLOW_STATUS.RUNNING;
+  }, [runInstance]);
 
   const { mutate: cancelRun } = useCancelRun(runInstance?.id);
 
@@ -229,8 +234,8 @@ export const AgentChat = ({
         description: 'Cancel button text',
       }),
       okDialog: intl.formatMessage({
-        defaultMessage: 'ok',
-        id: 'bGGruY',
+        defaultMessage: 'OK',
+        id: 'wWuzqz',
         description: 'Ok button text',
       }),
     };
@@ -276,6 +281,7 @@ export const AgentChat = ({
               onDismiss: () => {},
               header: (
                 <AgentChatHeader
+                  showStopButton={showStopButton}
                   title={intlText.agentChatHeader}
                   onStopChat={stopChat}
                   onRefreshChat={refreshChat}
@@ -308,36 +314,42 @@ export const AgentChat = ({
             }}
           />
           <PanelResizer updatePanelWidth={setOverrideWidth} panelRef={panelRef} />
-          <Dialog
-            inertTrapFocus={true}
-            open={dialogOpen}
-            aria-labelledby={intlText.stopChatTitle}
-            onOpenChange={onClosingDialog}
-            surfaceMotion={null}
+          <div
+            style={{
+              backgroundColor: 'rgba(0, 0, 0, 0.4)' /* Simulates the modal backdrop */,
+            }}
           >
-            <DialogSurface
-              style={{
-                maxWidth: '80%',
-                width: 'fit-content',
-              }}
-              mountNode={panelRef.current}
+            <Dialog
+              inertTrapFocus={true}
+              open={dialogOpen}
+              aria-labelledby={intlText.stopChatTitle}
+              onOpenChange={onClosingDialog}
+              surfaceMotion={null}
             >
-              <DialogBody>
-                <DialogTitle>{intlText.stopChatTitle}</DialogTitle>
-                <DialogContent>{intlText.stopChatMessage}</DialogContent>
-                <DialogActions fluid>
-                  <DialogTrigger>
-                    <Button appearance="primary" onClick={onCancel}>
-                      {intlText.okDialog}
-                    </Button>
-                  </DialogTrigger>
-                  <DialogTrigger>
-                    <Button onClick={onClosingDialog}>{intlText.cancelDialog}</Button>
-                  </DialogTrigger>
-                </DialogActions>
-              </DialogBody>
-            </DialogSurface>
-          </Dialog>
+              <DialogSurface
+                style={{
+                  maxWidth: '80%',
+                  width: 'fit-content',
+                }}
+                mountNode={panelRef.current}
+              >
+                <DialogBody>
+                  <DialogTitle>{intlText.stopChatTitle}</DialogTitle>
+                  <DialogContent>{intlText.stopChatMessage}</DialogContent>
+                  <DialogActions fluid>
+                    <DialogTrigger>
+                      <Button appearance="primary" onClick={onCancel}>
+                        {intlText.okDialog}
+                      </Button>
+                    </DialogTrigger>
+                    <DialogTrigger>
+                      <Button onClick={onClosingDialog}>{intlText.cancelDialog}</Button>
+                    </DialogTrigger>
+                  </DialogActions>
+                </DialogBody>
+              </DialogSurface>
+            </Dialog>
+          </div>
         </>
       )}
     </Drawer>
