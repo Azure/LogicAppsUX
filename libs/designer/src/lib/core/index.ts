@@ -96,7 +96,6 @@ export { resetDesignerView } from './state/designerView/designerViewSlice';
 export * from './queries/runs';
 export * from './queries/template';
 export {
-  reloadTemplates,
   resetStateOnResourceChange,
   type WorkflowTemplateData,
   validateWorkflowsBasicInfo,

@@ -1,4 +1,5 @@
-import { equals } from '../../utils/src';
+import type { Template } from '../../utils/src';
+import { equals, getPropertyValue } from '../../utils/src';
 
 export function pathCombine(url: string, path: string): string {
   let pathUrl: string;
@@ -50,4 +51,24 @@ export function isFunctionContainer(kind: any): boolean {
   return (
     kinds.some(($kind) => equals($kind, 'functionapp')) && !kinds.some(($kind) => equals($kind, 'botapp') || equals($kind, 'workflowapp'))
   );
+}
+
+export function getTemplateManifestFromResourceManifest(resourceManifest: any): Template.TemplateManifest {
+  const manifest: Template.TemplateManifest = { ...resourceManifest };
+  manifest.skus = resourceManifest.supportedSkus?.split(',').map((sku: string) => sku.trim().toLowerCase());
+  manifest.tags = resourceManifest.keywords;
+
+  if (manifest.details) {
+    manifest.details = {
+      By: getPropertyValue(manifest.details, 'by'),
+      Type: getPropertyValue(manifest.details, 'type'),
+      Category: getPropertyValue(manifest.details, 'category'),
+      Trigger: getPropertyValue(manifest.details, 'trigger'),
+    };
+  }
+
+  delete (manifest as any).supportedSkus;
+  delete (manifest as any).keywords;
+
+  return manifest;
 }
