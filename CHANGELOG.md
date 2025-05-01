@@ -1,4 +1,29 @@
 # Logic Apps Designer
+## [5.95.0](https://github.com/Azure/LogicAppsUX/compare/v5.94.0...v5.95.0) (2025-05-01)
+
+
+### Features
+
+* **designer:** Add header actions buttons for agent chat ([#7128](https://github.com/Azure/LogicAppsUX/issues/7128)) ([3513d3c](https://github.com/Azure/LogicAppsUX/commit/3513d3c3524c05c63a7720ccfa064ac4a6c2a280))
+* **Templates:** Add third button support to footer & save button for profile ([#7100](https://github.com/Azure/LogicAppsUX/issues/7100)) ([1ed15d8](https://github.com/Azure/LogicAppsUX/commit/1ed15d884dd2c75b0352028f9ada1b881fa5e961))
+* **templates:** Adding template backend api integration ([#7109](https://github.com/Azure/LogicAppsUX/issues/7109)) ([cc76549](https://github.com/Azure/LogicAppsUX/commit/cc76549688bac8f3f1d6477b96d4fcf430cb19c8))
+* **templates:** Loading existing template and its workflows data on wizard load ([#7122](https://github.com/Azure/LogicAppsUX/issues/7122)) ([b3c21e2](https://github.com/Azure/LogicAppsUX/commit/b3c21e256d321cbf9e9522683dfc0706dde43ed8))
+* **vscode:** New debug config provider for logic app project with custom code ([#7131](https://github.com/Azure/LogicAppsUX/issues/7131)) ([1ba864f](https://github.com/Azure/LogicAppsUX/commit/1ba864f2e4ec3fd8c2948828b8a05b47ad4731d9))
+
+
+### Bug Fixes
+
+* **designer:** Bugs in Initialize Variable Editor ([#7123](https://github.com/Azure/LogicAppsUX/issues/7123)) ([8c9e2d5](https://github.com/Azure/LogicAppsUX/commit/8c9e2d51a5c98e4e7db922fcaf52d0689af5c8d4))
+* **designer:** Cosmetic Change on Agent Conditions/ Update Templates ([#7104](https://github.com/Azure/LogicAppsUX/issues/7104)) ([b1824d5](https://github.com/Azure/LogicAppsUX/commit/b1824d530a486d16105ae3ce10584b9d73b90f1d))
+* **designer:** disable designer 'Save' after saving, disable 'Create unit test' when designer state dirty ([#7130](https://github.com/Azure/LogicAppsUX/issues/7130)) ([1f52187](https://github.com/Azure/LogicAppsUX/commit/1f521873a0afdb4c5032c07890256a792bf8a06d))
+* **designer:** Remove agent in non-agent flow ([#7101](https://github.com/Azure/LogicAppsUX/issues/7101)) ([bb4ec7d](https://github.com/Azure/LogicAppsUX/commit/bb4ec7de0fc75e1dedff224eb49cd761c30763b9))
+* **designer:** Remove default, rename tab and update channel ([#7136](https://github.com/Azure/LogicAppsUX/issues/7136)) ([a650377](https://github.com/Azure/LogicAppsUX/commit/a650377ca91bb20bdc671d3bb1849d83235f0e43))
+* **designer:** Reset id replacements when reset designer dirty state ([#7105](https://github.com/Azure/LogicAppsUX/issues/7105)) ([fefe073](https://github.com/Azure/LogicAppsUX/commit/fefe073987f0d2ab913466bee24387cc3f5f1ca5))
+* **designer:** Update agent initial template and add connection label ([#7120](https://github.com/Azure/LogicAppsUX/issues/7120)) ([524b80e](https://github.com/Azure/LogicAppsUX/commit/524b80eb4d1d92346e4cfb4a9f960babcccc6956))
+* **desinger:** Move Hybrid Api versions to a single location in Libraries ([#7132](https://github.com/Azure/LogicAppsUX/issues/7132)) ([c30ac6b](https://github.com/Azure/LogicAppsUX/commit/c30ac6b4fcf83a81558f6fec468170f6938828e7))
+* **Templates:** Fixed dark mode styling bugs ([#7126](https://github.com/Azure/LogicAppsUX/issues/7126)) ([3c9bdaf](https://github.com/Azure/LogicAppsUX/commit/3c9bdafe6b3ad8c0c5e67e469ff3f5d50386f83b))
+* **Templates:** Modified template workflow name validation error message ([#7119](https://github.com/Azure/LogicAppsUX/issues/7119)) ([0961f4b](https://github.com/Azure/LogicAppsUX/commit/0961f4bcc7f4ae6652e8da784571f8de20ef16f0))
+
 ## [5.94.0](https://github.com/Azure/LogicAppsUX/compare/v5.93.0...v5.94.0) (2025-04-25)
 
 
