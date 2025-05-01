@@ -1,7 +1,11 @@
 import { Link } from '@fluentui/react';
 import { Accordion, type AccordionToggleEventHandler, makeStyles, tokens } from '@fluentui/react-components';
 import { useAllConnectors, useFavoriteOperations } from '../../../core/queries/browse';
-import { useDiscoveryPanelFavoriteOperations, useDiscoveryPanelRelationshipIds } from '../../../core/state/panel/panelSelectors';
+import {
+  useDiscoveryPanelFavoriteOperations,
+  useDiscoveryPanelRelationshipIds,
+  useIsAgentTool,
+} from '../../../core/state/panel/panelSelectors';
 import { useIsWithinAgenticLoop } from '../../../core/state/workflow/workflowSelectors';
 import { useEffect, useMemo, useState } from 'react';
 import type { Connector, DiscoveryOpArray } from '@microsoft/logic-apps-shared';
@@ -35,6 +39,8 @@ export const ActionSpotlight = (props: ActionSpotlightProps) => {
   const { data: allConnectors, isLoading: isLoadingConnectors } = useAllConnectors();
   const parentGraphId = useDiscoveryPanelRelationshipIds().graphId;
   const isWithinAgenticLoop = useIsWithinAgenticLoop(parentGraphId);
+
+  const isAgentTool = useIsAgentTool();
   const isAgenticWorkflow = useAgenticWorkflow();
 
   const favoriteOperationIds = useDiscoveryPanelFavoriteOperations();
@@ -201,7 +207,7 @@ export const ActionSpotlight = (props: ActionSpotlightProps) => {
           </Link>
         ) : null}
       </SpotlightSection>
-      {isAgenticWorkflow && isWithinAgenticLoop ? (
+      {isAgenticWorkflow && (isWithinAgenticLoop || isAgentTool) ? (
         <SpotlightSection
           index={SpotlightCategoryType.KnowledgeBase}
           title={knowledgeBaseLabel}
