@@ -12,7 +12,7 @@ import {
   isNullOrUndefined,
   validateRequiredServiceArguments,
 } from '../../../utils/src';
-import { isHybridLogicApp } from './hybrid';
+import { hybridApiVersion, isHybridLogicApp } from './hybrid';
 import { LogEntryLevel } from '../logging/logEntry';
 import { LoggerService } from '../logger';
 
@@ -101,7 +101,7 @@ export class StandardRunService implements IRunService {
     const appName = baseUri.split('/');
     appName.pop();
     return {
-      uri: `${baseUri}/providers/Microsoft.App/logicapps/${appName.pop()}/invoke?api-version=2024-02-02-preview`,
+      uri: `${baseUri}/providers/Microsoft.App/logicapps/${appName.pop()}/invoke?api-version=${hybridApiVersion}`,
       headerPath: path,
     };
   }
@@ -455,6 +455,33 @@ export class StandardRunService implements IRunService {
       return response;
     } catch (e: any) {
       throw new Error(e.message);
+    }
+  }
+
+  async cancelRun(runId: string): Promise<any> {
+    const { apiVersion, baseUrl, httpClient } = this.options;
+
+    let uri = `${baseUrl}${runId}/cancel?api-version=${apiVersion}`;
+    try {
+      if (isHybridLogicApp(uri)) {
+        uri = `${baseUrl}${runId}/cancel`;
+
+        const { uri: newUri, headerPath } = StandardRunService.getProxyUrl(uri);
+        const response = await httpClient.post({
+          uri: newUri,
+          headers: {
+            'X-Ms-Logicapps-Proxy-Path': headerPath,
+            'X-Ms-Logicapps-Proxy-Method': 'GET',
+          },
+        });
+        return response;
+      }
+      const response = await httpClient.post({
+        uri,
+      });
+      return response;
+    } catch (e: any) {
+      return new Error(e.message);
     }
   }
 }

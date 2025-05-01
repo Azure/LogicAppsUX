@@ -10,11 +10,10 @@ let spy: any;
 describe('actions/configuretemplate', () => {
   let dispatch: ThunkDispatch<unknown, unknown, AnyAction>;
   let mockedState: RootState;
-  const workflowId = getLogicAppId('sub1', 'rg1', 'la1');
   const workflows = {
-    id1: { id: 'id1' },
-    id2: { id: 'id2' },
-  };
+    id1: { id: 'id1', manifest: { metadata: { workflowSourceId: 'id1' } } },
+    id2: { id: 'id2', manifest: { metadata: { workflowSourceId: 'id2' } } },
+  } as any;
   const resourceService = {
     getResource: (id: string) => {
       if (id.endsWith('connections')) {
@@ -85,12 +84,12 @@ describe('actions/configuretemplate', () => {
         'office365-1': { connectorId: '/shared/api1', kind: 'shared' },
       });
       expect(result.mapping).toEqual({
-        [`${workflowId}::::::Get_emails_(V3)`]: 'office365-1',
+        [`${workflows.id1.id}::::::Get_emails_(V3)`]: 'office365-1',
       });
       expect(dispatch).toHaveBeenCalledWith(
         expect.objectContaining({
           payload: {
-            [workflowId]: expect.objectContaining({
+            [workflows.id1.id]: expect.objectContaining({
               connectionKeys: ['office365-1'],
             }),
           },
@@ -236,8 +235,18 @@ describe('actions/configuretemplate', () => {
         },
         template: {
           workflows: {
-            id1: { id: 'id1', workflowDefinition: workflow1.definition, connectionKeys: [] },
-            id2: { id: 'id2', workflowDefinition: workflow2.definition, connectionKeys: [] },
+            id1: {
+              id: 'id1',
+              workflowDefinition: workflow1.definition,
+              connectionKeys: [],
+              manifest: { metadata: { workflowSourceId: 'id1' } },
+            },
+            id2: {
+              id: 'id2',
+              workflowDefinition: workflow2.definition,
+              connectionKeys: [],
+              manifest: { metadata: { workflowSourceId: 'id2' } },
+            },
           },
           connections: {},
           parameterDefinitions: {},
@@ -280,7 +289,7 @@ describe('actions/configuretemplate', () => {
             'id2::::::HTTP': { inputs: {}, outputs: {} },
             'id2::::::Get_emails_(V3)': {
               inputs: {
-                'body.$.4': { dependencyType: 'ListValues' },
+                'body.$.4': { dependencyType: 'ListValues', definition: { type: 'LegacyDynamicValues' } },
               },
             },
           },

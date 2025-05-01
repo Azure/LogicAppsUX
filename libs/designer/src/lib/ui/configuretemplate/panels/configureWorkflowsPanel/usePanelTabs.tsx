@@ -6,9 +6,14 @@ import { useDispatch, useSelector } from 'react-redux';
 import type { AppDispatch, RootState } from '../../../../core/state/templates/store';
 import { useFunctionalState } from '@react-hookz/web';
 import type { WorkflowTemplateData } from '../../../../core';
-import { getWorkflowsWithDefinitions, initializeWorkflowsData } from '../../../../core/actions/bjsworkflow/configuretemplate';
-import { getResourceNameFromId } from '@microsoft/logic-apps-shared';
+import {
+  getWorkflowsWithDefinitions,
+  initializeAndSaveWorkflowsData,
+  saveWorkflowsData,
+} from '../../../../core/actions/bjsworkflow/configuretemplate';
+import { getResourceNameFromId, equals } from '@microsoft/logic-apps-shared';
 import { validateWorkflowData } from '../../../../core/templates/utils/helper';
+import { useCallback } from 'react';
 
 export const useConfigureWorkflowPanelTabs = ({
   onSave,
@@ -33,13 +38,21 @@ export const useConfigureWorkflowPanelTabs = ({
     setSelectedWorkflowsList((prevSelectedWorkflows) => {
       const newSelectedWorkflows: Record<string, Partial<WorkflowTemplateData>> = {};
       for (const normalizedWorkflowId of normalizedWorkflowIds) {
-        newSelectedWorkflows[normalizedWorkflowId] = prevSelectedWorkflows[normalizedWorkflowId] ?? {
-          id: normalizedWorkflowId,
-          workflowName: getResourceNameFromId(normalizedWorkflowId),
-          manifest: {
-            kinds: ['stateful', 'stateless'],
-          },
-        };
+        const prevSelectedWorkflow = Object.values(prevSelectedWorkflows).find((workflow) =>
+          equals(workflow.manifest?.metadata?.workflowSourceId, normalizedWorkflowId)
+        );
+        const id = prevSelectedWorkflow?.id ?? getResourceNameFromId(normalizedWorkflowId);
+        newSelectedWorkflows[id] = prevSelectedWorkflow
+          ? prevSelectedWorkflow
+          : ({
+              id,
+              manifest: {
+                kinds: ['stateful', 'stateless'],
+                metadata: {
+                  workflowSourceId: normalizedWorkflowId,
+                },
+              },
+            } as Partial<WorkflowTemplateData>);
       }
       return newSelectedWorkflows;
     });
@@ -72,9 +85,25 @@ export const useConfigureWorkflowPanelTabs = ({
     setSelectedWorkflowsList(await getWorkflowsWithDefinitions(workflowState, selectedWorkflowsList()));
   };
 
+  const onSaveCompleted = useCallback(() => onSave?.(Object.keys(selectedWorkflowsList()).length > 1), [onSave, selectedWorkflowsList]);
+
   const onSaveChanges = () => {
-    dispatch(initializeWorkflowsData({ workflows: selectedWorkflowsList() }));
-    onSave?.(Object.keys(selectedWorkflowsList()).length > 1);
+    const selectedWorkflowIds = Object.values(selectedWorkflowsList()).map((workflow) =>
+      workflow.manifest?.metadata?.workflowSourceId?.toLowerCase()
+    );
+    const originalWorkflowIds = Object.values(workflowsInTemplate).map((workflow) =>
+      workflow.manifest?.metadata?.workflowSourceId?.toLowerCase()
+    );
+    const hasWorkflowListChanged =
+      originalWorkflowIds.length === selectedWorkflowIds.length
+        ? originalWorkflowIds.some((resourceId) => !selectedWorkflowIds.includes(resourceId))
+        : true;
+
+    if (hasWorkflowListChanged) {
+      dispatch(initializeAndSaveWorkflowsData({ workflows: selectedWorkflowsList(), onSaveCompleted }));
+    } else {
+      dispatch(saveWorkflowsData({ workflows: selectedWorkflowsList(), onSaveCompleted }));
+    }
   };
 
   const isNoWorkflowsSelected = Object.keys(selectedWorkflowsList()).length === 0;

@@ -9,8 +9,11 @@ export interface WorkflowData {
 export interface ITemplateResourceService {
   getTemplate: (id: string) => Promise<ArmResource<any>>;
   getTemplateWorkflows: (id: string) => Promise<ArmResource<any>[]>;
-  updateTemplate: (id: string, manifest: Template.TemplateManifest) => Promise<void>;
-  updateWorkflow: (id: string, data: WorkflowData) => Promise<void>;
+  updateTemplate: (id: string, manifest: Template.TemplateManifest, state?: string) => Promise<void>;
+  addWorkflow: (id: string, workflowName: string, data: WorkflowData) => Promise<void>;
+  updateWorkflow: (id: string, workflowName: string, manifest: Partial<Template.WorkflowManifest>) => Promise<void>;
+  deleteWorkflow: (id: string, workflowName: string) => Promise<void>;
+  deleteAllWorkflows: (id: string) => Promise<void>;
   createArtifact: (templateId: string, artifact: Template.Artifact) => Promise<void>;
   isWorkflowNameAvailable: (id: string, name: string) => Promise<boolean>;
 }

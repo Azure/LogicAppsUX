@@ -6,10 +6,11 @@ import { useCallback, useMemo, useState } from 'react';
 import { useIntl } from 'react-intl';
 import { Panel, PanelType } from '@fluentui/react';
 import { CustomizeParameter } from '../../../configuretemplate/parameters/customizeParameter';
-import { updateTemplateParameterDefinition, validateParameterDetails } from '../../../../core/state/templates/templateSlice';
+import { validateParameterDetails } from '../../../../core/state/templates/templateSlice';
 import { useFunctionalState } from '@react-hookz/web';
 import type { Template } from '@microsoft/logic-apps-shared';
 import { useParameterDefinition } from '../../../../core/configuretemplate/configuretemplateselectors';
+import { updateWorkflowParameter } from '../../../../core/actions/bjsworkflow/configuretemplate';
 
 const layerProps = {
   hostId: 'msla-layer-host',
@@ -69,17 +70,10 @@ export const CustomizeParameterPanel = () => {
         description: 'Button text for saving changes for parameter in the customize parameter panel',
       }),
       primaryButtonOnClick: () => {
-        // TODO: onSave
-        dispatch(
-          updateTemplateParameterDefinition({
-            parameterId: parameterId as string,
-            data: selectedParameterDefinition(),
-          })
-        );
+        dispatch(updateWorkflowParameter({ parameterId: parameterId as string, definition: selectedParameterDefinition() }));
         if (runValidation) {
           dispatch(validateParameterDetails());
         }
-        dispatch(closePanel());
       },
       primaryButtonDisabled: !isDirty,
       secondaryButtonText: intl.formatMessage({

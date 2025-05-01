@@ -23,6 +23,9 @@ import {
   InitWorkflowService,
   LogEntryLevel,
   LoggerService,
+  TemplateResourceService,
+  isLegacyDynamicValuesBuiltInExtension,
+  equals,
 } from '@microsoft/logic-apps-shared';
 import type { RootState } from '../../state/templates/store';
 import {
@@ -38,18 +41,23 @@ import { getReactQueryClient } from '../../ReactQueryProvider';
 import {
   delimiter,
   getConnectionMappingInDefinition,
-  getLogicAppId,
   getOperationDataInDefinitions,
   getParameterReferencesFromValue,
+  getParametersForWorkflow,
   getTemplateConnectionsFromConnectionsData,
 } from '../../configuretemplate/utils/helper';
-import { updateAllWorkflowsData } from '../../state/templates/templateSlice';
+import type { TemplateState } from '../../state/templates/templateSlice';
+import {
+  updateAllWorkflowsData,
+  updateConnectionAndParameterDefinitions,
+  updateTemplateParameterDefinition,
+} from '../../state/templates/templateSlice';
 import { loadTemplate, type WorkflowTemplateData } from './templates';
 import { initializeNodeOperationInputsData } from '../../state/operation/operationMetadataSlice';
 import type { WorkflowParameter } from '../../../common/models/workflow';
 import { getAllInputParameters } from '../../utils/parameters/helper';
 import { shouldAddDynamicData } from '../../templates/utils/parametershelper';
-import type { WorkflowState } from '../../state/templates/workflowSlice';
+import { setInitialData, type WorkflowState } from '../../state/templates/workflowSlice';
 
 export interface ConfigureTemplateServiceOptions {
   connectionService: IConnectionService;
@@ -98,15 +106,42 @@ export const loadCustomTemplate = createAsyncThunk(
     dispatch(loadTemplate({ templateName, preLoadedManifest: manifest }));
 
     const allWorkflowsManifest = await getWorkflowsInTemplate(templateId);
+    let workflowSourceId = '';
+    let allParametersData: Record<string, Template.ParameterDefinition> = {};
+    let allConnectionsData: Record<string, Template.Connection> = {};
+
     const allWorkflowsData = Object.keys(allWorkflowsManifest).reduce(
       (result: Record<string, Partial<WorkflowTemplateData>>, workflowId) => {
         const workflowManifest = allWorkflowsManifest[workflowId];
-        const workflowName = getResourceNameFromId(workflowId);
-        result[workflowId.toLowerCase()] = {
+        const workflowDefinition = (workflowManifest?.artifacts?.find((artifact) => equals(artifact.type, 'workflow')) as any)
+          ?.file as LogicAppsV2.WorkflowDefinition;
+        const { connections, parameters } = workflowManifest;
+
+        if (!workflowSourceId) {
+          workflowSourceId = workflowManifest?.metadata?.workflowSourceId as string;
+        }
+
+        allConnectionsData = { ...allConnectionsData, ...(connections ?? {}) };
+        allParametersData = (parameters ?? []).reduce((result: Record<string, Template.ParameterDefinition>, parameter) => {
+          const parameterId = parameter.name;
+          if (result[parameterId]) {
+            result[parameterId].associatedWorkflows?.push(workflowId);
+          } else {
+            result[parameterId] = {
+              ...parameter,
+              associatedWorkflows: [workflowId],
+            };
+          }
+          return result;
+        }, allParametersData);
+
+        result[workflowId] = {
           id: workflowId,
-          workflowName,
+          workflowName: workflowId,
           manifest: workflowManifest,
-          connectionKeys: [],
+          workflowDefinition,
+          connectionKeys: connections ? Object.keys(connections) : [],
+          triggerType: getTriggerFromDefinition(workflowDefinition?.triggers ?? {}),
           errors: { workflow: undefined },
         };
         return result;
@@ -114,23 +149,81 @@ export const loadCustomTemplate = createAsyncThunk(
       {}
     );
     dispatch(updateAllWorkflowsData(allWorkflowsData));
+    dispatch(updateConnectionAndParameterDefinitions({ connections: allConnectionsData, parameterDefinitions: allParametersData }));
+
+    if (workflowSourceId) {
+      const segments = workflowSourceId.split('/');
+      const isConsumption = equals(segments[6], 'microsoft.logic');
+      dispatch(
+        setInitialData({
+          subscriptionId: segments[2],
+          resourceGroup: segments[4],
+          location: templateResource.location as string,
+          workflowAppName: isConsumption ? '' : segments[8],
+          logicAppName: segments[8],
+          isConsumption,
+          reloadServices: true,
+        } as any)
+      );
+    }
+
+    const operationsData = await getOperationDataInDefinitions(
+      allWorkflowsData as Record<string, WorkflowTemplateData>,
+      allConnectionsData
+    );
+    dispatch(initializeNodeOperationInputsData(operationsData));
 
     return {
-      status: templateResource.properties?.status ?? 'Development',
+      status: templateResource.properties?.state,
       enableWizard: allWorkflowsData && Object.keys(allWorkflowsData).length > 0,
     };
   }
 );
 
-export const initializeWorkflowsData = createAsyncThunk(
-  'initializeWorkflowsData',
+export const updateWorkflowParameter = createAsyncThunk(
+  'updateWorkflowParameter',
   async (
-    { workflows }: { workflows: Record<string, Partial<WorkflowTemplateData>> },
+    { parameterId, definition }: { parameterId: string; definition: Template.ParameterDefinition },
     { getState, dispatch }
-  ): Promise<{
-    connections: Record<string, Template.Connection>;
-    parameterDefinitions: Record<string, Partial<Template.ParameterDefinition>>;
-  }> => {
+  ): Promise<void> => {
+    dispatch(
+      updateTemplateParameterDefinition({
+        parameterId: parameterId as string,
+        data: definition,
+      })
+    );
+
+    const {
+      template: { manifest, parameterDefinitions },
+    } = getState() as RootState;
+    const parameter = parameterDefinitions[parameterId];
+    const allParameters = Object.values(parameterDefinitions);
+    const associatedWorkflows = parameter?.associatedWorkflows as string[];
+    const promises: Promise<void>[] = [];
+    const service = TemplateResourceService();
+
+    for (const workflowId of associatedWorkflows) {
+      const parametersInWorkflow = getParametersForWorkflow(allParameters, workflowId).map((parameter) => {
+        const updatedParameter = { ...parameter };
+        delete updatedParameter.associatedWorkflows;
+        delete updatedParameter.associatedOperationParameter;
+        return updatedParameter;
+      });
+      promises.push(service.updateWorkflow(manifest?.id as string, workflowId, { parameters: parametersInWorkflow }));
+    }
+
+    await Promise.all(promises);
+    const queryClient = getReactQueryClient();
+    queryClient.removeQueries(['templateworkflows', manifest?.id.toLowerCase()]);
+  }
+);
+
+export const initializeAndSaveWorkflowsData = createAsyncThunk(
+  'initializeAndSaveWorkflowsData',
+  async (
+    { workflows, onSaveCompleted }: { workflows: Record<string, Partial<WorkflowTemplateData>>; onSaveCompleted?: () => void },
+    { getState, dispatch }
+  ): Promise<void> => {
     dispatch(updateAllWorkflowsData(workflows));
     const { connections, mapping, workflowsWithDefinitions } = await getTemplateConnections(getState() as RootState, dispatch, workflows);
     const operationsData = await getOperationDataInDefinitions(
@@ -140,10 +233,65 @@ export const initializeWorkflowsData = createAsyncThunk(
     dispatch(initializeNodeOperationInputsData(operationsData));
 
     const parameterDefinitions = await getTemplateParameters(getState() as RootState, mapping);
+    dispatch(updateConnectionAndParameterDefinitions({ connections, parameterDefinitions }));
 
-    return { connections, parameterDefinitions };
+    await saveWorkflowsInTemplateInternal((getState() as RootState).template, /* clearWorkflows */ true);
+    onSaveCompleted?.();
   }
 );
+
+export const saveWorkflowsData = createAsyncThunk(
+  'saveWorkflowsData',
+  async (
+    { workflows, onSaveCompleted }: { workflows: Record<string, Partial<WorkflowTemplateData>>; onSaveCompleted?: () => void },
+    { getState, dispatch }
+  ): Promise<void> => {
+    dispatch(updateAllWorkflowsData(workflows));
+    await saveWorkflowsInTemplateInternal((getState() as RootState).template, /* clearWorkflows */ false);
+    onSaveCompleted?.();
+  }
+);
+
+const saveWorkflowsInTemplateInternal = async (newState: TemplateState, clearWorkflows = true): Promise<void> => {
+  const { manifest: templateManifest, workflows, connections, parameterDefinitions } = newState;
+  const promises: Promise<void>[] = [];
+  const service = TemplateResourceService();
+  const templateId = templateManifest?.id as string;
+
+  if (clearWorkflows) {
+    await service.deleteAllWorkflows(templateId);
+  }
+
+  for (const workflowId of Object.keys(workflows)) {
+    const { workflowDefinition, manifest, connectionKeys } = workflows[workflowId];
+    const connectionsInWorkflow = connectionKeys.reduce((result: Record<string, Template.Connection>, key) => {
+      if (connections[key]) {
+        result[key] = connections[key];
+      }
+      return result;
+    }, {});
+    const parametersInWorkflow = Object.keys(parameterDefinitions).reduce((result: Template.Parameter[], key) => {
+      const { associatedWorkflows } = parameterDefinitions[key];
+      if (associatedWorkflows?.includes(workflowId)) {
+        const parameter = { ...parameterDefinitions[key] };
+        delete parameter.associatedWorkflows;
+        delete parameter.associatedOperationParameter;
+        result.push(parameter);
+      }
+      return result;
+    }, []);
+    promises.push(
+      service.addWorkflow(templateId, workflowId, {
+        manifest: { ...manifest, connections: connectionsInWorkflow, parameters: parametersInWorkflow },
+        workflow: workflowDefinition,
+      })
+    );
+  }
+
+  await Promise.all(promises);
+  const queryClient = getReactQueryClient();
+  queryClient.removeQueries(['templateworkflows', templateId.toLowerCase()]);
+};
 
 export const deleteWorkflowData = createAsyncThunk(
   'deleteWorkflowData',
@@ -160,10 +308,11 @@ export const deleteWorkflowData = createAsyncThunk(
     const combinedConnectionKeys: string[] = [];
     const combinedParameterKeys: string[] = [];
     const parametersToUpdate: Record<string, Partial<Template.ParameterDefinition>> = {};
-
+    const promises: Promise<void>[] = [];
     const {
-      template: { workflows, parameterDefinitions },
+      template: { workflows, parameterDefinitions, manifest },
     } = getState() as RootState;
+    const templateId = manifest?.id as string;
 
     for (const id of ids) {
       const workflowId = id.toLowerCase();
@@ -197,9 +346,16 @@ export const deleteWorkflowData = createAsyncThunk(
         return false;
       });
       combinedParameterKeys.push(...parameterKeys);
+
+      promises.push(TemplateResourceService().deleteWorkflow(templateId, workflowId));
     }
 
     const disableWizard = Object.keys(workflows).filter((workflowId) => !ids.includes(workflowId)).length === 0;
+
+    await Promise.all(promises);
+    const queryClient = getReactQueryClient();
+    queryClient.removeQueries(['templateworkflows', templateId.toLowerCase()]);
+
     return { ids, connectionKeys: combinedConnectionKeys, parameterKeys: combinedParameterKeys, parametersToUpdate, disableWizard };
   }
 );
@@ -216,7 +372,7 @@ export const getTemplateConnections = async (
   if (isConsumption) {
     const definition = await getWorkflowDefinitionForConsumption(subscriptionId, resourceGroup, logicAppName as string);
     const connections = await getConnectionsForConsumption(subscriptionId, resourceGroup, logicAppName as string);
-    const workflowId = getLogicAppId(subscriptionId, resourceGroup, logicAppName as string);
+    const workflowId = Object.keys(workflows)[0];
     const mapping = await getConnectionMappingInDefinition(definition, workflowId);
 
     const workflowWithDefinition = {
@@ -233,19 +389,17 @@ export const getTemplateConnections = async (
   }
 
   const allConnections = await getConnectionsForStandard(subscriptionId, resourceGroup, logicAppName as string);
-  const workflowIds = Object.keys(workflows).map((id) => workflows[id].id);
-  const promises = workflowIds.map((workflowId) => getDefinitionAndUsedConnectionMappings(workflowId as string));
+  const allWorkflows = Object.values(workflows);
+  const promises = allWorkflows.map((workflow) =>
+    getDefinitionAndUsedConnectionMappings(workflow.manifest?.metadata?.workflowSourceId as string, workflow.id as string)
+  );
   const workflowsData = clone(workflows);
   const allWorkflowsData = (await Promise.all(promises))
     .filter((data) => !!data)
     .reduce(
-      (
-        result: { id: string; kind?: string; definition: LogicAppsV2.WorkflowDefinition; mapping: Record<string, string> }[],
-        data,
-        index
-      ) => {
+      (result: { id: string; kind?: string; definition: LogicAppsV2.WorkflowDefinition; mapping: Record<string, string> }[], data) => {
         if (data?.definition) {
-          result.push({ id: workflowIds[index] as string, ...data });
+          result.push({ ...data });
         }
         return result;
       },
@@ -338,18 +492,19 @@ const getWorkflowDefinitionForConsumption = async (subscriptionId: string, resou
 };
 
 const getDefinitionAndUsedConnectionMappings = async (
+  sourceWorkflowId: string,
   workflowId: string
-): Promise<{ definition: LogicAppsV2.WorkflowDefinition; kind?: string; mapping: Record<string, string> } | undefined> => {
+): Promise<{ id: string; definition: LogicAppsV2.WorkflowDefinition; kind?: string; mapping: Record<string, string> } | undefined> => {
   try {
-    const { definition, kind } = await getWorkflowDefinitionForStandard(workflowId);
+    const { definition, kind } = await getWorkflowDefinitionForStandard(sourceWorkflowId);
     const mapping = await getConnectionMappingInDefinition(definition, workflowId);
-    return { definition, kind, mapping };
+    return { id: workflowId, definition, kind, mapping };
   } catch (error: any) {
     LoggerService().log({
       level: LogEntryLevel.Error,
       area: 'ConfigureTemplate.getDefinitionAndUsedConnectionMappings',
       error,
-      message: `Error while getting definition and connection mappings for workflow: ${workflowId}`,
+      message: `Error while getting definition and connection mappings for workflow: ${sourceWorkflowId}`,
     });
     return undefined;
   }
@@ -388,7 +543,11 @@ export const getTemplateParameters = async (state: RootState, mapping: Record<st
         if (addDynamicData && currentUsedParameters[parameterName] && !currentUsedParameters[parameterName].dynamicData) {
           const dependency = inputDependencies[parameter.parameterKey];
           const dependencyType =
-            dependency?.dependencyType === 'ListValues' ? 'list' : dependency?.dependencyType === 'TreeNavigation' ? 'picker' : undefined;
+            dependency?.dependencyType === 'ListValues' && !isLegacyDynamicValuesBuiltInExtension(dependency.definition)
+              ? 'list'
+              : dependency?.dependencyType === 'TreeNavigation'
+                ? 'picker'
+                : undefined;
           if (dependencyType) {
             currentUsedParameters[parameterName] = {
               ...currentUsedParameters[parameterName],
@@ -423,14 +582,12 @@ const getAllParametersForWorkflows = async (
   try {
     if (isConsumption) {
       const logicApp = await getConsumptionWorkflow(subscriptionId, resourceGroup, logicAppName, queryClient);
-      const parametersWithValues = logicApp.properties.parameters ?? {};
       const parametersInDefinition = { ...(logicApp.properties.definition?.parameters ?? {}) };
       delete parametersInDefinition.$connections;
       allParameters = Object.keys(parametersInDefinition).reduce((result: Record<string, WorkflowParameter>, parameterKey: string) => {
         result[parameterKey] = {
           ...parametersInDefinition[parameterKey],
           default: parametersInDefinition[parameterKey].defaultValue,
-          value: parametersWithValues[parameterKey]?.value,
         };
         return result;
       }, {});
@@ -456,8 +613,7 @@ export const getWorkflowsWithDefinitions = async (
 ) => {
   if (isConsumption) {
     const definition = await getWorkflowDefinitionForConsumption(subscriptionId, resourceGroup, logicAppName as string);
-    // TODO: cache getConnectionsForConsumption
-    const workflowId = getLogicAppId(subscriptionId, resourceGroup, logicAppName as string);
+    const workflowId = Object.keys(workflows)[0];
     workflows[workflowId] = {
       ...(workflows[workflowId] ?? {}),
       workflowDefinition: definition,
@@ -466,13 +622,14 @@ export const getWorkflowsWithDefinitions = async (
     return workflows;
   }
 
-  const workflowIds = Object.keys(workflows);
-  const promises = Object.keys(workflows).map((workflowId) => getWorkflowDefinitionForStandard(workflowId));
-  // TODO: cache getConnectionsForStandard
+  const allWorkflows = Object.values(workflows);
+  const promises = allWorkflows.map((workflow) =>
+    getWorkflowDefinitionForStandard(workflow.manifest?.metadata?.workflowSourceId as string)
+  );
   const allWorkflowsData = (await Promise.all(promises)).reduce((result: Record<string, Partial<WorkflowTemplateData>>, data, index) => {
     const { kind, definition: workflowDefinition } = data;
     if (workflowDefinition) {
-      const id = workflowIds[index];
+      const id = allWorkflows[index].id as string;
       result[id] = {
         ...workflows[id],
         id,

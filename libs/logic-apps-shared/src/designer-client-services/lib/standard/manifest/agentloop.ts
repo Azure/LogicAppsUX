@@ -168,7 +168,7 @@ export default {
           },
         },
       },
-      required: ['deploymentId', 'messages'],
+      required: ['deploymentId', 'messages', 'agentModelType'],
     },
     channels: {
       type: 'object',
@@ -186,25 +186,9 @@ export default {
       {
         input: {
           type: 'Request',
-          default: {
-            'inputs.$.schema': `{
-  "type": "object",
-  "properties": {
-    "prompt": {
-      "type": "string"
-    }
-  }
-}`,
-          },
         },
         output: {
           type: 'Response',
-          default: {
-            'inputs.$.statusCode': '200',
-            'inputs.$.body': `{ 
-  "responseMessage": "@assistantMessage()"
-}`,
-          },
         },
       },
     ],

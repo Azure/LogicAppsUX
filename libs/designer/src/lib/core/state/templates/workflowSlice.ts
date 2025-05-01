@@ -47,6 +47,7 @@ interface InitialWorkflowState {
   resourceGroup: string;
   location: string;
   workflowAppName?: string;
+  logicAppName?: string;
   references?: ConnectionReferences;
   isCreateView?: boolean;
 }
@@ -56,13 +57,18 @@ export const workflowSlice = createSlice({
   initialState,
   reducers: {
     setInitialData: (state, action: PayloadAction<InitialWorkflowState>) => {
-      const { isConsumption, subscriptionId, resourceGroup, location, workflowAppName, references, isCreateView } = action.payload;
+      const { isConsumption, subscriptionId, resourceGroup, location, workflowAppName, logicAppName, references, isCreateView } =
+        action.payload;
 
       state.isConsumption = !!isConsumption;
       state.subscriptionId = subscriptionId;
       state.resourceGroup = resourceGroup;
       state.location = location;
       state.workflowAppName = workflowAppName;
+
+      if (logicAppName) {
+        state.logicAppName = logicAppName;
+      }
 
       if (references) {
         state.connections.references = references;
