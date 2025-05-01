@@ -32,6 +32,7 @@ import { AgentChatHeader } from './agentChatHeader';
 import { parseChatHistory } from './helper';
 import { useMutation } from '@tanstack/react-query';
 import constants from '../../../common/constants';
+import '../agentChat.less';
 
 interface AgentChatProps {
   panelLocation?: PanelLocation;
@@ -314,11 +315,7 @@ export const AgentChat = ({
             }}
           />
           <PanelResizer updatePanelWidth={setOverrideWidth} panelRef={panelRef} />
-          <div
-            style={{
-              backgroundColor: 'rgba(0, 0, 0, 0.4)' /* Simulates the modal backdrop */,
-            }}
-          >
+          <div className="msla-agent-chat-dialog">
             <Dialog
               inertTrapFocus={true}
               open={dialogOpen}
@@ -326,13 +323,7 @@ export const AgentChat = ({
               onOpenChange={onClosingDialog}
               surfaceMotion={null}
             >
-              <DialogSurface
-                style={{
-                  maxWidth: '80%',
-                  width: 'fit-content',
-                }}
-                mountNode={panelRef.current}
-              >
+              <DialogSurface className="msla-agent-chat-dialog-surface" mountNode={panelRef.current}>
                 <DialogBody>
                   <DialogTitle>{intlText.stopChatTitle}</DialogTitle>
                   <DialogContent>{intlText.stopChatMessage}</DialogContent>
