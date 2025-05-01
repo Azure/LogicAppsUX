@@ -6,13 +6,11 @@ import type { AppDispatch, RootState } from '../state/templates/store';
 import {
   loadGithubManifestNames,
   loadGithubManifests,
-  setFilteredTemplateNames,
   templatesCountPerPage,
   lazyLoadGithubManifests,
 } from '../state/templates/manifestSlice';
 import { type ResourceDetails, setInitialData } from '../state/templates/workflowSlice';
 import type { ConnectionReferences } from '../../common/models/workflow';
-import { getFilteredTemplates } from './utils/helper';
 import { initializeTemplateServices, initializeWorkflowMetadata, reloadTemplates } from '../actions/bjsworkflow/templates';
 import { InitTemplateService, type Template } from '@microsoft/logic-apps-shared';
 import { setEnableResourceSelection, setViewTemplateDetails } from '../state/templates/templateOptionsSlice';
@@ -32,12 +30,10 @@ export interface TemplatesDataProviderProps {
   onResourceChange?: () => void;
 }
 
-const DataProviderInner = ({ isConsumption, children, reload, services }: TemplatesDataProviderProps) => {
+const DataProviderInner = ({ children, reload, services }: TemplatesDataProviderProps) => {
   const dispatch = useDispatch<AppDispatch>();
-  const { githubTemplateNames, availableTemplates, filters, servicesInitialized } = useSelector((state: RootState) => ({
+  const { githubTemplateNames, servicesInitialized } = useSelector((state: RootState) => ({
     githubTemplateNames: state.manifest.githubTemplateNames,
-    availableTemplates: state.manifest.availableTemplates,
-    filters: state.manifest.filters,
     servicesInitialized: state.templateOptions.servicesInitialized,
   }));
 
@@ -63,15 +59,6 @@ const DataProviderInner = ({ isConsumption, children, reload, services }: Templa
       }
     }
   }, [dispatch, githubTemplateNames]);
-
-  useEffect(() => {
-    if (!availableTemplates) {
-      dispatch(setFilteredTemplateNames(undefined));
-      return;
-    }
-    const filteredTemplateNames = getFilteredTemplates(availableTemplates, filters, !!isConsumption);
-    dispatch(setFilteredTemplateNames(filteredTemplateNames));
-  }, [dispatch, availableTemplates, filters, isConsumption]);
 
   return <>{children}</>;
 };

@@ -6,6 +6,7 @@ import { setPageNum, templatesCountPerPage } from '../../../core/state/templates
 import { Text } from '@fluentui/react-components';
 import { useIntl } from 'react-intl';
 import { css } from '@fluentui/utilities';
+import { useFilteredTemplateNames } from '../../../core/state/templates/templateselectors';
 
 interface TemplatesGalleryProps {
   isLightweight?: boolean;
@@ -24,8 +25,8 @@ export const TemplatesGallery = ({
 }: TemplatesGalleryProps) => {
   const {
     filters: { pageNum },
-    filteredTemplateNames,
   } = useSelector((state: RootState) => state.manifest);
+  const filteredTemplateNames = useFilteredTemplateNames();
   const intl = useIntl();
   const dispatch = useDispatch<AppDispatch>();
   const intlText = {
