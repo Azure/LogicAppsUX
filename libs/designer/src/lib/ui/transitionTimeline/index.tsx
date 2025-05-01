@@ -35,16 +35,15 @@ const TransitionTimeline = () => {
 
   const repetitions = useMemo(() => {
     const output: {
-      actionId: string | undefined;
+      actionIds: string[] | undefined;
       repetitionIndex: number;
-      actionCount?: number;
       data?: TransitionRepetition;
     }[] = [];
     // Add trigger (not a repetition)
     const triggerId = runInstance?.properties?.trigger?.name ?? '';
     const trigger = runInstance?.properties?.trigger as WorkflowRunTrigger;
     output.push({
-      actionId: triggerId,
+      actionIds: [triggerId],
       repetitionIndex: -1,
       data: {
         id: triggerId,
@@ -64,17 +63,17 @@ const TransitionTimeline = () => {
     // Add all repetitions
     output.push(
       ...repetitionData.map((repetition) => ({
-        actionId: Object.keys(repetition.properties.actions)[0],
+        actionIds: Object.keys(repetition.properties.actions),
         repetitionIndex: Number(repetition.name),
-        actionCount: Object.keys(repetition.properties.actions).length,
         data: repetition,
       }))
     );
+    console.log('#> TransitionTimeline -> repetitions', output);
     return output;
   }, [repetitionData, runInstance?.properties?.trigger]);
 
   useEffect(() => {
-    dispatch(setTransitionRepetitionArray(repetitions.map((repetition) => repetition.actionId ?? '')));
+    dispatch(setTransitionRepetitionArray(repetitions.map((repetition) => repetition.actionIds ?? [])));
   }, [dispatch, repetitions]);
 
   const [expanded, setExpanded] = useState(false);
@@ -84,8 +83,8 @@ const TransitionTimeline = () => {
   useThrottledEffect(
     () => {
       const selectedRepetition = repetitions[transitionIndex];
-      const id = selectedRepetition?.actionId;
-      if (id) {
+      const firstNodeId = selectedRepetition?.actionIds?.[0];
+      if (firstNodeId) {
         dispatch(clearAllRepetitionRunData());
 
         for (const a of Object.entries(selectedRepetition?.data?.properties?.actions ?? {})) {
@@ -100,9 +99,9 @@ const TransitionTimeline = () => {
 
         dispatch(setTransitionRepetitionIndex(transitionIndex));
 
-        dispatch(setSelectedNodeId(id));
-        dispatch(openPanel({ nodeId: id, panelMode: 'Operation' }));
-        dispatch(setFocusNode(id));
+        dispatch(setSelectedNodeId(firstNodeId));
+        dispatch(openPanel({ nodeId: firstNodeId, panelMode: 'Operation' }));
+        dispatch(setFocusNode(firstNodeId));
       }
     },
     [dispatch, transitionIndex],
@@ -128,7 +127,6 @@ const TransitionTimeline = () => {
           <TimelineRegular style={{ color: '#1f85ff', width: '32px', height: '32px', transform: 'rotate(180deg)' }} />
           {expanded && <Text weight={'semibold'}>{'TransitionTimeline'}</Text>}
         </div>
-
         <Divider />
         <div
           style={{
@@ -152,12 +150,12 @@ const TransitionTimeline = () => {
           >
             {repetitions.map((repetition, index) => (
               <TimelineNode
-                key={repetition.actionId}
+                key={repetition.repetitionIndex}
                 index={index}
-                nodeId={repetition.actionId}
                 selected={index === transitionIndex}
                 onSelect={() => setTransitionIndex(index)}
                 expanded={expanded}
+                data={repetition.data}
               />
             ))}
           </div>

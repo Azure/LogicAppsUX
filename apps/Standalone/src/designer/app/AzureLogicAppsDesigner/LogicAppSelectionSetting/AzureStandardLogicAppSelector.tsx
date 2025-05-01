@@ -17,7 +17,10 @@ const columnProps: Partial<IStackProps> = {
   tokens: { childrenGap: 15 },
 };
 const comboBoxStyles: Partial<IComboBoxStyles> = {
-  callout: { maxWidth: '90vw' },
+  callout: {
+    maxWidth: '90vw',
+    maxHeight: '50vh',
+  },
 };
 const resourceIdValidation =
   /^\/subscriptions\/[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}\/resourceGroups\/[a-zA-Z0-9](?:[a-zA-Z0-9-_.]*[a-zA-Z0-9])?\/providers\/[a-zA-Z0-9-_.]+\/[a-zA-Z0-9-_./]+$/;

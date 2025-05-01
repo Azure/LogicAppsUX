@@ -719,7 +719,7 @@ export const workflowSlice = createSlice({
     setTransitionRepetitionIndex: (state: WorkflowState, action: PayloadAction<number>) => {
       state.transitionRepetitionIndex = action.payload;
     },
-    setTransitionRepetitionArray: (state: WorkflowState, action: PayloadAction<string[]>) => {
+    setTransitionRepetitionArray: (state: WorkflowState, action: PayloadAction<string[][]>) => {
       state.transitionRepetitionArray = action.payload;
     },
     updateRunAfter: (
