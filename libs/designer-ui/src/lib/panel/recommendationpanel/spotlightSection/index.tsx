@@ -108,7 +108,7 @@ export const SpotlightSection = ({
           </Link>
         ) : null}
       </div>
-      <AccordionPanel>
+      <AccordionPanel style={{ margin: 0 }}>
         {onSectionBodyRender ? (
           onSectionBodyRender(isExpanded)
         ) : (
