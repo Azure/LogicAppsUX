@@ -11,7 +11,6 @@ const initialPageNum = 0;
 
 export interface ManifestState {
   availableTemplateNames?: ManifestName[];
-  filteredTemplateNames?: ManifestName[];
   githubTemplateNames?: ManifestName[];
   availableTemplates?: Record<ManifestName, Template.TemplateManifest>;
   filters: {
@@ -68,9 +67,6 @@ export const manifestSlice = createSlice({
     },
     setavailableTemplates: (state, action: PayloadAction<Record<ManifestName, Template.TemplateManifest> | undefined>) => {
       state.availableTemplates = action.payload;
-    },
-    setFilteredTemplateNames: (state, action: PayloadAction<ManifestName[] | undefined>) => {
-      state.filteredTemplateNames = action.payload;
     },
     setPageNum: (state, action: PayloadAction<number>) => {
       state.filters.pageNum = action.payload;
@@ -134,7 +130,6 @@ export const manifestSlice = createSlice({
 export const {
   setavailableTemplatesNames,
   setavailableTemplates,
-  setFilteredTemplateNames,
   setPageNum,
   setKeywordFilter,
   setSortKey,
