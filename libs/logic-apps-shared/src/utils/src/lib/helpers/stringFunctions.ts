@@ -29,11 +29,33 @@ export const unwrapQuotesFromString = (s: string) => {
   return s;
 };
 
-export const wrapStringifiedTokenSegments = (jsonString: string): string => {
-  const tokenRegex = /:\s?(@{?(?:[^,}\s]+}?))/g;
+export const normalizeEscapes = (key: string): string => key.replace(/\n/g, '\\n').replace(/\r/g, '\\r');
 
-  return jsonString.replace(tokenRegex, (match, token) => {
-    return /^".*"$/.test(token) ? match : `: "${token}"`;
+export const wrapStringifiedTokenSegments = (jsonString: string): string => {
+  const tokenRegex = /:\s?("@\{.*?\}")|:\s?(@\{.*?\})/gs;
+
+  // First, normalize newlines and carriage returns inside @{...} expressions
+  const normalized = jsonString.replace(/@{[^}]*}/gs, (match) => match.replace(/\n/g, '\\n').replace(/\r/g, '\\r'));
+
+  // Escape backslashes, quotes, and other special characters within the token string
+  return normalized.replace(tokenRegex, (match, quotedToken, unquotedToken) => {
+    const token = quotedToken ?? unquotedToken;
+    if (!token) {
+      return match;
+    }
+
+    const isQuoted = quotedToken !== undefined;
+    const innerToken = isQuoted ? token.slice(1, -1) : token;
+
+    const escaped = innerToken
+      .replace(/\\/g, '\\\\') // Escape backslashes
+      .replace(/"/g, '\\"') // Escape double quotes
+      .replace(/\n/g, '\\n') // Escape newline
+      .replace(/\r/g, '\\r') // Escape carriage return
+      .replace(/\t/g, '\\t') // Escape tab
+      .replace(/\v/g, '\\v'); // Escape vertical tab
+
+    return `: "${escaped}"`;
   });
 };
 

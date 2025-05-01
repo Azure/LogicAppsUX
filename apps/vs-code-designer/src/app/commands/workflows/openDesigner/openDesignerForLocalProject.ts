@@ -325,6 +325,11 @@ export default class OpenDesignerForLocalProject extends OpenDesignerBase {
         }
 
         writeFileSync(filePath, JSON.stringify(workflow, null, 4));
+
+        this.sendMsgToWebview({
+          command: ExtensionCommand.setIsWorkflowDirty,
+          data: false,
+        });
       } catch (error) {
         window.showErrorMessage(`${localize('saveFailure', 'Workflow not saved.')} ${error.message}`, localize('OK', 'OK'));
         throw error;

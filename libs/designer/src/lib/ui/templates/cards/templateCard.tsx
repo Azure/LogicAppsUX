@@ -1,7 +1,7 @@
 import type { AppDispatch, RootState } from '../../../core/state/templates/store';
 import { changeCurrentTemplateName } from '../../../core/state/templates/templateSlice';
 import { useDispatch, useSelector } from 'react-redux';
-import { Text } from '@fluentui/react-components';
+import { Divider, Tag, Text } from '@fluentui/react-components';
 import type { IContextualMenuItem, IContextualMenuProps, IDocumentCardStyles } from '@fluentui/react';
 import { css, DocumentCard, IconButton, Image } from '@fluentui/react';
 import { ConnectorIcon, ConnectorIconWithName } from '../connections/connector';
@@ -115,6 +115,7 @@ export const TemplateCard = ({ templateName, isLightweight, blankWorkflowProps, 
         </div>
       </div>
 
+      <Divider />
       <div className="msla-template-card-body" style={isLightweight ? undefined : templateCardBodyStyles.cardBody}>
         <div className="msla-template-card-title-wrapper" style={isLightweight ? undefined : templateCardBodyStyles.cardTitle}>
           <Text size={400} weight="semibold" align="start" className={css('msla-template-card-title', cssOverrides?.['cardTitle'])}>
@@ -164,13 +165,13 @@ const TemplateFeaturedConnectors = ({ manifest, intl }: { manifest: TemplateData
   return (
     <div className="msla-template-card-footer">
       <div className="msla-template-card-tags">
-        <Text size={300} className="msla-template-card-tag">
+        <Tag appearance="brand" size="small">
           {details.Type}
-        </Text>
+        </Tag>
         {details.Trigger ? (
-          <Text size={300} className="msla-template-card-tag">
+          <Tag appearance="brand" size="small">
             {details.Trigger}
-          </Text>
+          </Tag>
         ) : null}
       </div>
       <div className="msla-template-card-features">
