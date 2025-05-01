@@ -5,7 +5,7 @@ import type { WorkflowNode } from '../../parsers/models/workflowNode';
 import { removeNodeConnectionData } from '../../state/connection/connectionSlice';
 import { deleteCustomCode } from '../../state/customcode/customcodeSlice';
 import { deinitializeNodes, deinitializeOperationInfo, updateNodeParameters } from '../../state/operation/operationMetadataSlice';
-import { clearPanel } from '../../state/panel/panelSlice';
+import { clearPanel, setAlternateSelectedNode } from '../../state/panel/panelSlice';
 import { setValidationError } from '../../state/setting/settingSlice';
 import { deinitializeStaticResultProperty } from '../../state/staticresultschema/staticresultsSlice';
 import { deinitializeTokensAndVariables } from '../../state/tokens/tokensSlice';
@@ -46,6 +46,7 @@ export const deleteOperation = createAsyncThunk(
       deleteCustomCodeInfo(nodeId, dispatch, getState() as RootState);
       deleteOperationDetails(nodeId, dispatch, getState() as RootState, isTrigger);
       updateAllUpstreamNodes(getState() as RootState, dispatch);
+      deletePinnedOperation(nodeId, dispatch, getState() as RootState);
     });
   }
 );
@@ -129,6 +130,13 @@ const deleteCustomCodeInfo = (nodeId: string, dispatch: Dispatch, state: RootSta
       // if the file name is not present, then it is a new custom code and we just need to remove the file data
       dispatch(deleteCustomCode({ nodeId, fileName }));
     }
+  }
+};
+
+const deletePinnedOperation = (nodeId: string, dispatch: Dispatch, state: RootState): void => {
+  const pinnedOperation = state.panel?.operationContent?.alternateSelectedNode;
+  if (pinnedOperation && pinnedOperation.nodeId === nodeId && pinnedOperation.persistence === 'pinned') {
+    dispatch(setAlternateSelectedNode({ nodeId: '' }));
   }
 };
 
