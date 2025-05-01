@@ -57,5 +57,5 @@ export interface WorkflowState {
   };
   agentsGraph: Record<string, any>;
   transitionRepetitionIndex: number;
-  transitionRepetitionArray: string[];
+  transitionRepetitionArray: string[][];
 }

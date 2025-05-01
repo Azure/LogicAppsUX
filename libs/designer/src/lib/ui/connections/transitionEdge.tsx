@@ -135,23 +135,16 @@ const TransitionEdge: React.FC<EdgeProps<LogicAppsEdgeProps>> = ({ id, source, t
   const transitionRepetitionArray = useTransitionRepetitionArray();
   const isNextTransition = useMemo(
     () =>
-      transitionRepetitionArray?.[transitionRepetitionIndex + 1] === targetId &&
-      transitionRepetitionArray?.[transitionRepetitionIndex] === sourceId,
+      (transitionRepetitionArray?.[transitionRepetitionIndex + 1] ?? []).includes(targetId) &&
+      (transitionRepetitionArray?.[transitionRepetitionIndex] ?? []).includes(sourceId),
     [sourceId, targetId, transitionRepetitionArray, transitionRepetitionIndex]
   );
   const isPreviousTransition = useMemo(
     () =>
-      transitionRepetitionArray?.[transitionRepetitionIndex - 1] === sourceId &&
-      transitionRepetitionArray?.[transitionRepetitionIndex] === targetId,
+      (transitionRepetitionArray?.[transitionRepetitionIndex - 1] ?? []).includes(sourceId) &&
+      (transitionRepetitionArray?.[transitionRepetitionIndex] ?? []).includes(targetId),
     [sourceId, targetId, transitionRepetitionArray, transitionRepetitionIndex]
   );
-
-  const highlighted = useMemo(() => {
-    if (readOnly) {
-      return isNextTransition || isPreviousTransition;
-    }
-    return selected;
-  }, [isNextTransition, isPreviousTransition, readOnly, selected]);
 
   const dimmed = useMemo(() => {
     if (!readOnly) {
@@ -159,6 +152,24 @@ const TransitionEdge: React.FC<EdgeProps<LogicAppsEdgeProps>> = ({ id, source, t
     }
     return !isNextTransition && !isPreviousTransition;
   }, [isNextTransition, isPreviousTransition, readOnly]);
+
+  const colorClass = useMemo(() => {
+    if (dimmed) {
+      return 'dimmed';
+    }
+    if (readOnly) {
+      if (isNextTransition) {
+        return 'nextTransition';
+      }
+      if (isPreviousTransition) {
+        return 'previousTransition';
+      }
+    }
+    if (selected) {
+      return 'selected';
+    }
+    return '';
+  }, [dimmed, isNextTransition, isPreviousTransition, readOnly, selected]);
 
   const markerId = useMemo(() => {
     // encode markerId as base64 to avoid issues with special characters
@@ -182,7 +193,7 @@ const TransitionEdge: React.FC<EdgeProps<LogicAppsEdgeProps>> = ({ id, source, t
       return { x: 0, y: 0 };
       // eslint-disable-next-line react-hooks/exhaustive-deps
     },
-    [splinePath, pathRef, pathReady]
+    [pathRef, pathReady]
   );
 
   const [midpoint, setMidpoint] = useState<XYPosition>({ x: -999, y: -999 });
@@ -211,7 +222,7 @@ const TransitionEdge: React.FC<EdgeProps<LogicAppsEdgeProps>> = ({ id, source, t
       <defs>
         <marker
           id={markerId}
-          className={css('transition', highlighted ? 'highlighted' : '', dimmed ? 'dimmed' : '', isInfiniteLoop ? 'infinite-loop' : '')}
+          className={css('transition', colorClass, isInfiniteLoop ? 'infinite-loop' : '')}
           viewBox="0 0 20 20"
           refX="6"
           refY="6"
@@ -227,13 +238,7 @@ const TransitionEdge: React.FC<EdgeProps<LogicAppsEdgeProps>> = ({ id, source, t
         id={id}
         ref={pathRef}
         style={style}
-        className={css(
-          'react-flow__edge-path',
-          'transition',
-          highlighted ? 'highlighted' : '',
-          dimmed ? 'dimmed' : '',
-          isInfiniteLoop ? 'infinite-loop' : ''
-        )}
+        className={css('react-flow__edge-path', 'transition', colorClass, isInfiniteLoop ? 'infinite-loop' : '')}
         d={splinePath}
         strokeDasharray={isNonStandardTransition ? '4' : '0'}
         markerEnd={`url(#${markerId})`}

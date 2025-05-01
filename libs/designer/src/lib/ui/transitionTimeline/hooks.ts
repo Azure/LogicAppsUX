@@ -1,5 +1,7 @@
 import { useMemo } from 'react';
-import sampleData from './sampleData.json';
+// import sampleData from './sampleData.json';
+// import sampleData from './sampleData-looping.json';
+import sampleData from './sampleData-multiAction.json';
 import type { WorkflowRunAction } from '@microsoft/logic-apps-shared/src/utils/src/lib/models/logicAppsV2';
 
 export interface TransitionRepetition {

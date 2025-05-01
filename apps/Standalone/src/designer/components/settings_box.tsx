@@ -1,9 +1,6 @@
-import { AzureConsumptionLogicAppSelector } from '../app/AzureLogicAppsDesigner/LogicAppSelectionSetting/AzureConsumptionLogicAppSelector';
-import { AzureStandardLogicAppSelector } from '../app/AzureLogicAppsDesigner/LogicAppSelectionSetting/AzureStandardLogicAppSelector';
-import { LocalLogicAppSelector } from '../app/LocalDesigner/LogicAppSelector/LogicAppSelector';
 import ContextSettings from '../app/SettingsSections/contextSettings';
 import SourceSettings from '../app/SettingsSections/sourceSettings';
-import { useHostingPlan, useIsDarkMode, useIsLocal } from '../state/workflowLoadingSelectors';
+import { useIsDarkMode } from '../state/workflowLoadingSelectors';
 import { LocalizationSettings } from './LocalizationSettings';
 import styles from './settings_box.module.less';
 import { darkTheme } from './themes';
@@ -14,8 +11,6 @@ import { css } from '@fluentui/utilities';
 export const SettingsBox = () => {
   const [active, toggleActive] = useBoolean(true);
   const isDark = useIsDarkMode();
-  const isLocal = useIsLocal();
-  const isConsumption = useHostingPlan() === 'consumption';
   const cs = css(styles.toybox, active && styles.active, isDark && styles.dark);
 
   const SettingsSection = (props: any) => {
@@ -42,9 +37,6 @@ export const SettingsBox = () => {
         <div className={styles.contentWrapper}>
           <SettingsSection title="Logic App Source">
             <SourceSettings />
-          </SettingsSection>
-          <SettingsSection title="Workflow Load Settings">
-            {isLocal ? <LocalLogicAppSelector /> : isConsumption ? <AzureConsumptionLogicAppSelector /> : <AzureStandardLogicAppSelector />}
           </SettingsSection>
           <SettingsSection title="Context Settings" startExpanded={false}>
             <ContextSettings />
