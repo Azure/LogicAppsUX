@@ -15,7 +15,6 @@ export interface TemplateData extends Template.TemplateManifest {
 
 export interface ManifestState {
   availableTemplateNames?: ManifestName[];
-  filteredTemplateNames?: ManifestName[];
   githubTemplateNames?: ManifestName[];
   customTemplateNames?: ManifestName[];
   availableTemplates?: Record<ManifestName, TemplateData>;
@@ -73,9 +72,6 @@ export const manifestSlice = createSlice({
     },
     setavailableTemplates: (state, action: PayloadAction<Record<ManifestName, Template.TemplateManifest> | undefined>) => {
       state.availableTemplates = action.payload;
-    },
-    setFilteredTemplateNames: (state, action: PayloadAction<ManifestName[] | undefined>) => {
-      state.filteredTemplateNames = action.payload;
     },
     setPageNum: (state, action: PayloadAction<number>) => {
       state.filters.pageNum = action.payload;
@@ -143,7 +139,6 @@ export const manifestSlice = createSlice({
 export const {
   setavailableTemplatesNames,
   setavailableTemplates,
-  setFilteredTemplateNames,
   setPageNum,
   setKeywordFilter,
   setSortKey,

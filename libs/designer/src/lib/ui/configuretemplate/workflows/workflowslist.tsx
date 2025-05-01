@@ -14,6 +14,9 @@ import {
   useTableSelection,
   createTableColumn,
   Button,
+  MessageBar,
+  MessageBarBody,
+  MessageBarTitle,
 } from '@fluentui/react-components';
 import { EmptySearch } from '@microsoft/designer-ui';
 import { useIntl } from 'react-intl';
@@ -38,6 +41,12 @@ export const DisplayWorkflows = ({ onSave }: { onSave: (isMultiWorkflow: boolean
   const dispatch = useDispatch<AppDispatch>();
   const workflowsExist = Object.keys(workflows).length > 0;
   const isMultiWorkflow = Object.keys(workflows).length > 1;
+
+  const workflowNamesWithErrors = useMemo(() => {
+    return Object.values(workflows)
+      .filter((workflow) => Object.values(workflow.errors?.manifest ?? {}).some((error) => error))
+      .map((workflow) => workflow.workflowName);
+  }, [workflows]);
 
   const [selectedWorkflowsList, setSelectedWorkflowsList] = useFunctionalState<string[]>([]);
 
@@ -208,6 +217,16 @@ export const DisplayWorkflows = ({ onSave }: { onSave: (isMultiWorkflow: boolean
           },
         }}
       />
+
+      {workflowNamesWithErrors.length ? (
+        <MessageBar intent="error" className="msla-templates-error-message-bar">
+          <MessageBarBody>
+            <MessageBarTitle>{customResourceStrings.MissingRequiredFields}</MessageBarTitle>
+            <Text>{workflowNamesWithErrors.join(', ')}</Text>
+          </MessageBarBody>
+        </MessageBar>
+      ) : null}
+
       {Object.keys(workflows).length > 0 ? (
         <Table aria-label={customResourceStrings.WorkflowsListTableLabel} style={{ minWidth: '550px' }}>
           <TableHeader>

@@ -6,13 +6,11 @@ import type { AppDispatch, RootState } from '../state/templates/store';
 import {
   loadGithubManifestNames,
   loadGithubManifests,
-  setFilteredTemplateNames,
   templatesCountPerPage,
   lazyLoadGithubManifests,
 } from '../state/templates/manifestSlice';
 import { type ResourceDetails, setInitialData } from '../state/templates/workflowSlice';
 import type { ConnectionReferences } from '../../common/models/workflow';
-import { getFilteredTemplates } from './utils/helper';
 import { initializeTemplateServices, initializeWorkflowMetadata, loadCustomTemplates } from '../actions/bjsworkflow/templates';
 import type { Template } from '@microsoft/logic-apps-shared';
 import { setEnableResourceSelection, setViewTemplateDetails } from '../state/templates/templateOptionsSlice';
@@ -31,13 +29,10 @@ export interface TemplatesDataProviderProps {
   onResourceChange?: () => void;
 }
 
-const DataProviderInner = ({ isConsumption, children }: TemplatesDataProviderProps) => {
+const DataProviderInner = ({ children }: TemplatesDataProviderProps) => {
   const dispatch = useDispatch<AppDispatch>();
-  const { githubTemplateNames, availableTemplates, filters } = useSelector((state: RootState) => ({
+  const { githubTemplateNames } = useSelector((state: RootState) => ({
     githubTemplateNames: state.manifest.githubTemplateNames,
-    availableTemplates: state.manifest.availableTemplates,
-    filters: state.manifest.filters,
-    servicesInitialized: state.templateOptions.servicesInitialized,
   }));
 
   useEffect(() => {
@@ -54,15 +49,6 @@ const DataProviderInner = ({ isConsumption, children }: TemplatesDataProviderPro
       }
     }
   }, [dispatch, githubTemplateNames]);
-
-  useEffect(() => {
-    if (!availableTemplates) {
-      dispatch(setFilteredTemplateNames(undefined));
-      return;
-    }
-    const filteredTemplateNames = getFilteredTemplates(availableTemplates, filters, !!isConsumption);
-    dispatch(setFilteredTemplateNames(filteredTemplateNames));
-  }, [dispatch, availableTemplates, filters, isConsumption]);
 
   return <>{children}</>;
 };
