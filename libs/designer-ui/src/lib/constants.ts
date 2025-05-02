@@ -46,6 +46,7 @@ export const VARIABLE_TYPE = {
   INTEGER: 'integer',
   OBJECT: 'object',
   STRING: 'string',
+  NUMBER: 'number',
 };
 
 const PANEL_TAB_NAMES = {
