@@ -51,13 +51,13 @@ export const getDefaultRuntimeCategories = (): OperationRuntimeCategory[] => {
   ];
 };
 
-export const getShouldUseSingleColumn = (clientWidth?: number): boolean => (clientWidth ?? 0) < 560;
+export const getShouldUseSingleColumn = (clientWidth?: number): boolean => (clientWidth ?? 0) < 400;
 
 export const getListHeight = (isSingleColumn: boolean): number => (isSingleColumn ? 800 : 400);
 
 export const getOperationCardDataFromOperation = (operation: DiscoveryOperation<DiscoveryResultTypes>): OperationActionData => {
   const { id, properties } = operation;
-  const { summary: title, description, api, trigger, annotation } = properties;
+  const { summary: title, description, api, trigger, annotation, capabilities } = properties;
 
   return {
     id,
@@ -67,7 +67,7 @@ export const getOperationCardDataFromOperation = (operation: DiscoveryOperation<
     iconUri: api.iconUri,
     connectorName: api.displayName,
     category: getConnectorCategoryString(api),
-    isTrigger: !!trigger,
+    isTrigger: capabilities?.includes('triggers') || !!trigger,
     isBuiltIn: isBuiltInConnector(api),
     isCustom: isCustomConnector(api),
     apiId: api.id,
@@ -77,7 +77,7 @@ export const getOperationCardDataFromOperation = (operation: DiscoveryOperation<
 
 export const filterOperationData = (data: OperationActionData, filters?: Record<string, string>): boolean => {
   const actionType = filters?.['actionType'];
-  if (!actionType) {
+  if (!actionType || !data.id) {
     return true;
   }
   if (actionType === 'actions') {
