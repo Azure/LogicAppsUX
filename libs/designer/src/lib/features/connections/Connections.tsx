@@ -1,15 +1,13 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 
-import React, { useContext, useEffect, useRef } from 'react';
+import type React from 'react';
+import { useContext, useEffect, useRef } from 'react';
 import { useDispatch } from 'react-redux';
-import { PanelRoot } from '../../ui/panel/panelRoot';
 import { initializeServices, ProviderWrappedContext, type AppDispatch } from '../../core';
 import { openPanel, setIsCreatingConnection, setSelectedNodeId } from '../../core/state/panel/panelSlice';
 import { useAreServicesInitialized } from '../../core/state/designerOptions/designerOptionsSelectors';
-import { CreateConnectionWrapperSeparate } from '../../ui/panel/connectionsPanel/createConnection/createConnectionWrapperSeparate';
-import { ConnectionsPanel } from '../../ui/panel/templatePanel/createWorkflowPanel/tabs/connectionsTab';
 import { ConnectionPanelSeparate } from '../../ui';
-import { type ConnectionReferences } from '@microsoft/logic-apps-shared';
+import type { ConnectionReferences } from '@microsoft/logic-apps-shared';
 import { initializeConnectionReferences } from '../../core/state/connection/connectionSlice';
 
 export interface ConnectionsProps {
@@ -34,13 +32,14 @@ export const Connections = (props: ConnectionsProps) => {
         height: 'inherit',
       }}
     >
-      <div>Connections</div>
       <div className="msla-designer-canvas msla-panel-mode" ref={designerContainerRef}>
-      <PanelRoot 
-        panelContainerRef={designerContainerRef} 
-        panelLocation="RIGHT" 
-      />
-      <ConnectionPanelSeparate saveConnection={props.saveConnection} connectorId={props.connectorId} isCollapsed={false} toggleCollapse={() => null} panelLocation='RIGHT' />
+        <ConnectionPanelSeparate
+          saveConnection={props.saveConnection}
+          connectorId={props.connectorId}
+          isCollapsed={false}
+          toggleCollapse={() => null}
+          panelLocation="RIGHT"
+        />
       </div>
     </div>
   );

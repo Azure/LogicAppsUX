@@ -54,11 +54,10 @@ import { useIntl } from 'react-intl';
 import { useDispatch, useSelector } from 'react-redux';
 import type { AssistedConnectionProps } from '@microsoft/designer-ui';
 import type { ApiHubAuthentication } from 'lib/common/models/workflow';
-import { on } from 'events';
 
 export interface CreateConnectionWrapperSeparateProps {
   connectorId: string;
-  operationId?: string
+  operationId?: string;
   saveConnection: (connectionReferences: ConnectionReferences) => void;
 }
 
@@ -67,13 +66,11 @@ export const CreateConnectionWrapperSeparate = (props: CreateConnectionWrapperSe
 
   const nodeId: string = useOperationPanelSelectedNodeId();
   const nodeIds = useConnectionPanelSelectedNodeIds();
-  const connector = useConnectorById(props.connectorId)
+  const connector = useConnectorById(props.connectorId);
   const operationInfo = useOperationInfo('executeQuery');
   const { data: operationManifest } = useOperationManifest(operationInfo);
   const connectionMetadata = getConnectionMetadata(operationManifest);
   const hasExistingConnection = useSelector((state: RootState) => !!getRecordEntry(state.connections.connectionsMapping, nodeId));
-
-  const connectionForNode = useSelector((state: RootState) => getRecordEntry(state.connections.connectionReferences, nodeIds[0]));
 
   const existingReferences = useSelector((state: RootState) => Object.keys(state.connections.connectionReferences));
 
@@ -86,49 +83,29 @@ export const CreateConnectionWrapperSeparate = (props: CreateConnectionWrapperSe
   const updateConnectionInState = useCallback(
     (payload: CreatedConnectionPayload) => {
       for (const nodeId of nodeIds) {
-        console.log('updateConnectionInState', nodeId, payload);
         dispatch(updateNodeConnection({ ...payload, nodeId }));
       }
     },
     [dispatch, nodeIds]
   );
 
-  if (connectionForNode) {
-    console.log('connectionForNode', connectionForNode);
-  }
-
-  // {
-  //   api: { id: connectorId },
-  //   connection: { id: connectionId },
-  //   connectionName: connectionId.split('/').at(-1) as string,
-  //   connectionProperties,
-  //   connectionRuntimeUrl,
-  //   authentication,
-  // }
-
   const onConnectionCreated = (conn: CreatedConnectionPayload) => {
-    console.log('onConnectionCreated', nodeId);
     dispatch(closeConnectionsFlow({ nodeId, panelMode: referencePanelMode }));
-    console.log('connectionforNode', connectionForNode);
-    console.log('conn', conn)
 
     if (conn) {
       const connectionReferences: ConnectionReferences = {
-        [nodeId]: 
-          {
-            api: { id: conn.connector.id },
-            connection: { id: conn.connection.id },
-            connectionName: conn.connection.id.split('/').at(-1) as string,
-            connectionProperties: conn.connectionProperties,
-            connectionRuntimeUrl: conn.connection.properties.connectionRuntimeUrl, // danielle revisit
-            authentication: conn.authentication, // danielle ensure we don't need to reauthenticate
-          
-        }
+        [nodeId]: {
+          api: { id: conn.connector.id },
+          connection: { id: conn.connection.id },
+          connectionName: conn.connection.id.split('/').at(-1) as string,
+          connectionProperties: conn.connectionProperties,
+          connectionRuntimeUrl: conn.connection.properties.connectionRuntimeUrl, // danielle revisit
+          authentication: conn.authentication, // danielle ensure we don't need to reauthenticate
+        },
       };
       props.saveConnection(connectionReferences);
     }
-
-  }
+  };
 
   return (
     <CreateConnectionInternal
@@ -162,7 +139,7 @@ export const CreateConnectionInternal = (props: {
   hideCancelButton: boolean;
   showActionBar: boolean;
   updateConnectionInState: (payload: CreatedConnectionPayload) => void;
-  onConnectionCreated: (connection: onConnectionCreated) => void;
+  onConnectionCreated: (connection: CreatedConnectionPayload) => void;
   onConnectionCancelled?: () => void;
   createButtonTexts?: CreateButtonTexts;
   description?: string;
@@ -244,7 +221,6 @@ export const CreateConnectionInternal = (props: {
       }
 
       updateConnectionInState(payload);
-      console.log('applyNewConnection', payload);
       onConnectionCreated(payload);
     },
     [connector, onConnectionCreated, updateConnectionInState]
@@ -339,7 +315,6 @@ export const CreateConnectionInternal = (props: {
             .catch((errorMessage) => (err = errorMessage));
         }
 
-        console.log('createConnectionCallback', connection, err);
         if (connection) {
           updateNewConnectionInCache(connection);
           applyNewConnection(connection, identitySelected);
@@ -386,14 +361,11 @@ export const CreateConnectionInternal = (props: {
     description: 'Message to show under the loading icon when loading connection parameters',
   });
 
-  console.log('connecitonCreated '+  connectionCreated)
-
   if (connectionCreated === true) {
-    return <div>Connection Created successfully</div>
+    return <div>Connection Created successfully</div>;
   }
 
   if (connector?.properties === undefined) {
-    console.log('connecitonCreated '+  connectionCreated)
     return (
       <div className="msla-loading-container">
         <Spinner size={SpinnerSize.small} label={loadingText} />

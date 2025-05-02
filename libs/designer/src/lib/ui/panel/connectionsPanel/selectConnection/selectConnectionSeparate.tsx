@@ -1,7 +1,7 @@
 import { useOperationInfo, type AppDispatch } from '../../../../core';
 import { autoCreateConnectionIfPossible, updateNodeConnection } from '../../../../core/actions/bjsworkflow/connections';
 import { useConnectionsForConnector } from '../../../../core/queries/connections';
-import { useConnectionRefs, useConnectorById, useConnectorByNodeId, useNodeConnectionId } from '../../../../core/state/connection/connectionSelector';
+import { useConnectionRefs, useConnectorById, useNodeConnectionId } from '../../../../core/state/connection/connectionSelector';
 import { useIsXrmConnectionReferenceMode } from '../../../../core/state/designerOptions/designerOptionsSelectors';
 import { useConnectionPanelSelectedNodeIds, usePreviousPanelMode } from '../../../../core/state/panel/panelSelectors';
 import { openPanel, setIsCreatingConnection } from '../../../../core/state/panel/panelSlice';
@@ -20,16 +20,15 @@ import { useIntl } from 'react-intl';
 import { useDispatch } from 'react-redux';
 
 export interface SelectConnectionProps {
-    connectorId: string;
+  connectorId: string;
 }
 
 export const SelectConnectionSeparate = (props: SelectConnectionProps) => {
-  console.log('SelectConnection');
   const dispatch = useDispatch<AppDispatch>();
 
   const intl = useIntl();
   const selectedNodeIds = useConnectionPanelSelectedNodeIds();
-  const connector = useConnectorById(props.connectorId)
+  const connector = useConnectorById(props.connectorId);
   const isXrmConnectionReferenceMode = useIsXrmConnectionReferenceMode();
   const referencePanelMode = usePreviousPanelMode();
   const [isInlineCreatingConnection, setIsInlineCreatingConnection] = useState(false);

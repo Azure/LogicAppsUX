@@ -1,23 +1,19 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import { XLargeText } from '@microsoft/designer-ui';
 
-import { Button } from '@fluentui/react-components';
-import { bundleIcon, Dismiss24Filled, Dismiss24Regular } from '@fluentui/react-icons';
 import type { CommonPanelProps } from '@microsoft/designer-ui';
-import { useCallback, useEffect, useMemo } from 'react';
+import { useCallback, useMemo, useState } from 'react';
 import { useIntl } from 'react-intl';
 import { useDispatch } from 'react-redux';
-import type { Connection, ConnectionReferences, Connector } from '@microsoft/logic-apps-shared';
+import type { ConnectionReferences } from '@microsoft/logic-apps-shared';
 import { CreateConnectionWrapperSeparate } from './createConnection/createConnectionWrapperSeparate';
 import { useConnectionRefs, useConnectorById } from '../../../core/state/connection/connectionSelector';
-import type { AppDispatch} from '../../../core';
+import type { AppDispatch } from '../../../core';
 import { useOperationInfo, useOperationPanelSelectedNodeId } from '../../../core';
 import { useConnectionsForConnector } from '../../../core/queries/connections';
 import { useIsCreatingConnection } from '../../../core/state/panel/panelSelectors';
-import { SelectConnection } from './selectConnection/selectConnection';
 import { SelectConnectionSeparate } from './selectConnection/selectConnectionSeparate';
-
-const CloseIcon = bundleIcon(Dismiss24Filled, Dismiss24Regular);
+import { useIsXrmConnectionReferenceMode } from '../../../core/state/designerOptions/designerOptionsSelectors';
 
 export interface ConnectionPanelSeparateProps extends CommonPanelProps {
   connectorId: string;
@@ -27,35 +23,25 @@ export interface ConnectionPanelSeparateProps extends CommonPanelProps {
 export const ConnectionPanelSeparate = (props: ConnectionPanelSeparateProps) => {
   const dispatch = useDispatch<AppDispatch>();
   const selectedNodeId = useOperationPanelSelectedNodeId();
-  const connector = useConnectorById(props.connectorId)
+  const connector = useConnectorById(props.connectorId);
   const operationInfo = useOperationInfo(selectedNodeId);
   const references = useConnectionRefs();
   const connectionQuery = useConnectionsForConnector(connector?.id ?? '');
   const connections = useMemo(() => connectionQuery.data ?? [], [connectionQuery.data]);
+  const [isCreated, setIsCreated] = useState(false);
+  const isXrmConnectionReferenceMode = useIsXrmConnectionReferenceMode();
 
   const isCreatingConnection = useIsCreatingConnection();
 
-  // useEffect(() => {
-  //   if (selectedNodeId && connector && !connectionQuery.isLoading && !connectionQuery.isError && connections.length === 0) {
-  //     autoCreateConnectionIfPossible({
-  //       connector: connector as Connector,
-  //       referenceKeys: Object.keys(references),
-  //       operationInfo,
-  //       skipOAuth: true,
-  //       applyNewConnection: (connection: Connection) =>
-  //         dispatch(updateNodeConnection({ nodeId: selectedNodeId, connection, connector: connector as Connector })),
-  //       onSuccess: () => dispatch(closeConnectionsFlow({ nodeId: selectedNodeId })),
-  //       onManualConnectionCreation: () => dispatch(setIsCreatingConnection(true)),
-  //     });
-  //   }
-  // }, [connectionQuery.isError, connectionQuery.isLoading, connections, connector, dispatch, operationInfo, references, selectedNodeId]);
-
   const panelStatus = useMemo(() => {
+    if (isCreated) {
+      return 'done';
+    }
     if (!selectedNodeId) {
       return 'default';
     }
     return isCreatingConnection ? 'create' : 'select';
-  }, [isCreatingConnection, selectedNodeId]);
+  }, [isCreatingConnection, selectedNodeId, isCreated]);
 
   /// INTL
   const intl = useIntl();
@@ -82,6 +68,8 @@ export const ConnectionPanelSeparate = (props: ConnectionPanelSeparateProps) => 
 
   const panelHeaderText = useMemo(() => {
     switch (panelStatus) {
+      case 'done':
+        return undefined;
       case 'default':
         return connectionsPanelDefaultHeader;
       case 'select':
@@ -91,22 +79,32 @@ export const ConnectionPanelSeparate = (props: ConnectionPanelSeparateProps) => 
     }
   }, [connectionsPanelDefaultHeader, createConnectionPanelHeader, panelStatus, selectConnectionPanelHeader]);
 
+  const onConnectionSave = useCallback(
+    (connectionReferences: ConnectionReferences) => {
+      props.saveConnection(connectionReferences);
+      setIsCreated(true);
+    },
+    [props]
+  );
+
   const renderContent = useCallback(() => {
     switch (panelStatus) {
+      case 'done':
+        return <div>Connection Created</div>;
       case 'select':
         return <SelectConnectionSeparate connectorId={props.connectorId} />;
       case 'create':
-        return <CreateConnectionWrapperSeparate connectorId={props.connectorId} saveConnection={props.saveConnection}/>;
-        case 'default':
-            return  <CreateConnectionWrapperSeparate saveConnection={props.saveConnection} connectorId={props.connectorId}/>;
+        return <CreateConnectionWrapperSeparate connectorId={props.connectorId} saveConnection={onConnectionSave} />;
+      case 'default':
+        return <CreateConnectionWrapperSeparate saveConnection={props.saveConnection} connectorId={props.connectorId} />;
     }
-  }, [panelStatus, props.connectorId, props.saveConnection]);
+  }, [panelStatus, props.connectorId, onConnectionSave, props.saveConnection]);
 
   return (
-    <div style={{ width: '100%', height: '100%' }} className="msla-connections-panel">
+    <div style={{ padding: '20px', width: '50%', minWidth: '500px', height: '100%' }} className="msla-connections-panel">
       <div className="msla-app-action-header">
         <XLargeText text={panelHeaderText} />
-        <Button aria-label={closeButtonAriaLabel} appearance="subtle" onClick={props.toggleCollapse} icon={<CloseIcon />} />
+        {/* <Button aria-label={closeButtonAriaLabel} appearance="subtle" onClick={props.toggleCollapse} icon={<CloseIcon />} /> */}
       </div>
       <div className="msla-connections-panel-body">{renderContent()}</div>
     </div>
