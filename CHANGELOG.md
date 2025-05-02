@@ -1,4 +1,16 @@
 # Logic Apps Designer
+### [5.94.3](https://github.com/Azure/LogicAppsUX/compare/v5.94.1...v5.94.3) (2025-05-02)
+
+
+### Features
+
+* **templates:** Adding support to load custom templates from service for gallery ([#7146](https://github.com/Azure/LogicAppsUX/issues/7146)) ([553216d](https://github.com/Azure/LogicAppsUX/commit/553216d4da92a3a99be12f6f818588fb935dbc4c))
+
+
+### Bug Fixes
+
+* **Templates:** Templates cherry-picks (validation error, dark mode, race condition ([#7144](https://github.com/Azure/LogicAppsUX/issues/7144)) ([7390eea](https://github.com/Azure/LogicAppsUX/commit/7390eeaabab63b96d548f66d532f41b2f48db5f4)), closes [#7119](https://github.com/Azure/LogicAppsUX/issues/7119) [#7126](https://github.com/Azure/LogicAppsUX/issues/7126) [#7143](https://github.com/Azure/LogicAppsUX/issues/7143)
+
 ### [5.94.1](https://github.com/Azure/LogicAppsUX/compare/v5.93.1...v5.94.1) (2025-05-01)
 
 
