@@ -53,7 +53,7 @@ export class BaseCognitiveServiceService implements ICognitiveServiceService {
     }
   }
 
-  async fetchAllCognitiveServiceAccounts(): Promise<any> {
+  async fetchAllCognitiveServiceAccounts(subscriptionId: string): Promise<any> {
     const { httpClient, baseUrl } = this.options;
 
     const uri = `${baseUrl}/providers/Microsoft.ResourceGraph/resources?api-version=2021-03-01`;
@@ -61,7 +61,8 @@ export class BaseCognitiveServiceService implements ICognitiveServiceService {
     const response = await fetchAppsByQuery(
       httpClient,
       uri,
-      'Resources\n\n| where type == "microsoft.cognitiveservices/accounts"\n| where kind in ("OpenAI", "AIServices")\n        \n        \n        \n        \n        \n        | order by [\'name\'] asc'
+      'Resources\n\n| where type == "microsoft.cognitiveservices/accounts"\n| where kind in ("OpenAI", "AIServices")\n        \n        \n        \n        \n        \n        | order by [\'name\'] asc',
+      [subscriptionId]
     );
     return response;
   }
