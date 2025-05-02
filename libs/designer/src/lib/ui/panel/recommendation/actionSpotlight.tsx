@@ -8,7 +8,7 @@ import {
 } from '../../../core/state/panel/panelSelectors';
 import { useIsWithinAgenticLoop } from '../../../core/state/workflow/workflowSelectors';
 import { useEffect, useMemo, useState } from 'react';
-import type { Connector, DiscoveryOpArray } from '@microsoft/logic-apps-shared';
+import { equals, type Connector, type DiscoveryOpArray } from '@microsoft/logic-apps-shared';
 import { getOperationCardDataFromOperation, getOperationGroupCardDataFromConnector } from './helpers';
 import { useIntl } from 'react-intl';
 import { SpotlightCategoryType, SpotlightSection } from '@microsoft/designer-ui';
@@ -56,7 +56,6 @@ export const ActionSpotlight = (props: ActionSpotlightProps) => {
 
   const [openItems, setOpenItems] = useState<SpotlightCategoryType[]>([
     SpotlightCategoryType.BuiltIns,
-    SpotlightCategoryType.AICapabilities,
     SpotlightCategoryType.KnowledgeBase,
     ...(favoriteOperationIds.length > 0 ? [SpotlightCategoryType.Favorites] : []),
   ]);
@@ -116,8 +115,6 @@ export const ActionSpotlight = (props: ActionSpotlightProps) => {
       'managedApis/onedrive/apiOperations/GetFileMetadataByPath',
       'managedApis/onedrive/apiOperations/GetFileContent',
       'managedApis/onedrive/apiOperations/GetFileContentByPath',
-      'managedApis/azureblob/apiOperations/GetFileMetadataByPath_V2',
-      'managedApis/azureblob/apiOperations/GetFileContentByPath_V2',
       'managedApis/amazons3/apiOperations/ListObjects',
       'managedApis/amazons3/apiOperations/GetObjectMetadata',
       'managedApis/amazons3/apiOperations/GetObjectContent',
@@ -129,9 +126,17 @@ export const ActionSpotlight = (props: ActionSpotlightProps) => {
       'managedApis/service-now/apiOperations/GetRecords',
       'managedApis/service-now/apiOperations/GetRecord',
     ]);
+    const AzureBlobServiceProviderIds = ['getBlobMetadata', 'readBlob', 'readBlobFromUri'];
 
     return allOperations
       .filter((operation) => {
+        if (operation?.properties?.api?.id === '/serviceProviders/AzureBlob') {
+          for (const id of AzureBlobServiceProviderIds) {
+            if (equals(operation.id, id)) {
+              return true;
+            }
+          }
+        }
         for (const suffix of allowedSuffixes) {
           if (operation.id.endsWith(suffix)) {
             return true;

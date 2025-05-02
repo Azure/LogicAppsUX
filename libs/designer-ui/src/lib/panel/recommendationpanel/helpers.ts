@@ -51,7 +51,7 @@ export const getDefaultRuntimeCategories = (): OperationRuntimeCategory[] => {
   ];
 };
 
-export const getShouldUseSingleColumn = (clientWidth?: number): boolean => (clientWidth ?? 0) < 560;
+export const getShouldUseSingleColumn = (clientWidth?: number): boolean => (clientWidth ?? 0) < 400;
 
 export const getListHeight = (isSingleColumn: boolean): number => (isSingleColumn ? 800 : 400);
 

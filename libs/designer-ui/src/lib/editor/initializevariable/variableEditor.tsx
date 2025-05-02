@@ -55,7 +55,7 @@ interface VariableEditorProps extends Partial<BaseEditorProps> {
   errors?: InitializeVariableErrors;
   onDelete: () => void;
   onVariableChange: (value: InitializeVariableProps) => void;
-  preventMultiVariable?: boolean;
+  isMultiVariableEnabled?: boolean;
   isAgentParameter?: boolean;
 }
 
@@ -92,7 +92,7 @@ export const VariableEditor = ({
   onVariableChange,
   errors,
   index,
-  preventMultiVariable,
+  isMultiVariableEnabled,
   isAgentParameter,
   ...baseEditorProps
 }: VariableEditorProps) => {
@@ -179,7 +179,10 @@ export const VariableEditor = ({
   });
 
   const handleBlur = (newState: ChangeState, property: string): void => {
-    const newVariable = { ...variable, [property]: isEmptySegments(newState.value) ? [createEmptyLiteralValueSegment()] : newState.value };
+    const newVariable = {
+      ...variable,
+      [property]: isEmptySegments(newState.value) ? [createEmptyLiteralValueSegment()] : newState.value,
+    };
     onVariableChange(newVariable);
   };
 
@@ -275,7 +278,7 @@ export const VariableEditor = ({
             </span>
           ) : null}
         </Button>
-        {preventMultiVariable && !isAgentParameter ? null : (
+        {!isMultiVariableEnabled && !isAgentParameter ? null : (
           <>
             <div className={'msla-variable-editor-edit-or-delete-button'}>
               <Tooltip relationship="label" content={editButtonTitle}>
