@@ -96,6 +96,7 @@ export interface AgentConnectionModel {
   endpoint: string;
   type?: string;
   displayName?: string;
+  resourceId: string;
 }
 
 export interface ConnectionAndAppSetting {
