@@ -423,12 +423,18 @@ export abstract class BaseConnectionService implements IConnectionService {
     const request = {
       uri: id,
       queryParameters: { 'api-version': this.options.apiVersion },
+      skipBatch: true,
     };
 
     return this.options.httpClient
       .get<Connection>(request)
       .then(() => false)
-      .catch(() => true);
+      .catch((e) => {
+        if (e?.httpStatusCode === 404 || e?.status === 404) {
+          return true;
+        }
+        return false;
+      });
   }
 
   private async getAllConnectionsInLocation(): Promise<Connection[]> {
