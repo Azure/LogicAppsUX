@@ -21,6 +21,7 @@ interface TemplateFooterButtonProps extends TemplateFooterItemProps {
   onClick: () => void | Promise<void>;
   disabled?: boolean;
   appreance?: 'primary' | 'subtle';
+  hide?: boolean;
   menuItems?: {
     text: string;
     onClick: () => void;
@@ -45,7 +46,10 @@ export const TemplatesPanelFooter = ({ buttonContents }: TemplatePanelFooterProp
     <div className="msla-templates-panel-footer">
       {buttonContents?.map((buttonContent, index) => {
         if (buttonContent?.type === 'button') {
-          const { text, onClick, disabled, appreance, menuItems } = buttonContent;
+          const { text, onClick, disabled, appreance, hide, menuItems } = buttonContent;
+          if (hide) {
+            return null;
+          }
           if (menuItems && menuItems.length) {
             return (
               <Menu key={index} positioning="below-end">

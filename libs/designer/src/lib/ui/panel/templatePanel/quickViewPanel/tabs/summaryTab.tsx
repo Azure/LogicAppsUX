@@ -150,7 +150,7 @@ export const summaryTab = (
   dispatch: AppDispatch,
   workflowId: string,
   clearDetailsOnClose: boolean,
-  { templateId, workflowAppName, isMultiWorkflow }: Template.TemplateContext,
+  { templateId, workflowAppName, isMultiWorkflow, showCreate, showCloseButton }: Template.TemplateContext,
   onClose?: () => void
 ): TemplateTabProps => ({
   id: constants.TEMPLATE_PANEL_TAB_NAMES.OVERVIEW,
@@ -180,6 +180,7 @@ export const summaryTab = (
           });
           dispatch(openPanelView({ panelView: TemplatePanelView.CreateWorkflow }));
         },
+        hide: !showCreate,
       },
       {
         type: 'button',
@@ -195,6 +196,7 @@ export const summaryTab = (
           }
           onClose?.();
         },
+        disabled: !showCloseButton,
       },
     ],
   },

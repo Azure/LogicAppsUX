@@ -29,7 +29,7 @@ export const workflowTab = (
   workflowId: string,
   clearDetailsOnClose: boolean,
   onPrimaryButtonClick: (() => void) | undefined,
-  { templateId, workflowAppName, isMultiWorkflow }: Template.TemplateContext,
+  { templateId, workflowAppName, isMultiWorkflow, showCreate, showCloseButton }: Template.TemplateContext,
   onClose?: () => void
 ): TemplateTabProps => ({
   id: constants.TEMPLATE_PANEL_TAB_NAMES.WORKFLOW_VIEW,
@@ -60,6 +60,7 @@ export const workflowTab = (
           dispatch(openPanelView({ panelView: TemplatePanelView.CreateWorkflow }));
           onPrimaryButtonClick?.();
         },
+        hide: !showCreate,
       },
       {
         type: 'button',
@@ -75,6 +76,7 @@ export const workflowTab = (
           }
           onClose?.();
         },
+        disabled: !showCloseButton,
       },
     ],
   },
