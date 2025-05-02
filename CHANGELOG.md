@@ -1,4 +1,20 @@
 # Logic Apps Designer
+## [5.96.0](https://github.com/Azure/LogicAppsUX/compare/v5.95.0...v5.96.0) (2025-05-02)
+
+
+### Features
+
+* **Templates:** Add Error Labeling for tabs ([#7098](https://github.com/Azure/LogicAppsUX/issues/7098)) ([61e66e7](https://github.com/Azure/LogicAppsUX/commit/61e66e7c9c06e89cdcedf275e6a73a5a77725a21))
+* **templates:** Adding loading of user templates in the gallery ([#7141](https://github.com/Azure/LogicAppsUX/issues/7141)) ([97b8999](https://github.com/Azure/LogicAppsUX/commit/97b899917f43d03c7b33568e9f7137d96a0231ad))
+
+
+### Bug Fixes
+
+* **designer:** Add cognitive account dropdown and auto-fill the values for Agentic connections ([#7148](https://github.com/Azure/LogicAppsUX/issues/7148)) ([92b2b7f](https://github.com/Azure/LogicAppsUX/commit/92b2b7f499681a168c88463230a35012a55d29c2))
+* **designer:** Refactor and remove unsupported types from Agent parameter creation ([#7142](https://github.com/Azure/LogicAppsUX/issues/7142)) ([7eaec25](https://github.com/Azure/LogicAppsUX/commit/7eaec25028ef00119f08a002fee6117ae47ed954))
+* **designer:** Remove Pin on Deleting Node ([#7140](https://github.com/Azure/LogicAppsUX/issues/7140)) ([c45a9e3](https://github.com/Azure/LogicAppsUX/commit/c45a9e3f7d1cafb75a555aa1a07a9e51a303c125))
+* **Templates:** Refactored `filteredTemplateNames` out of state / into selector  ([#7143](https://github.com/Azure/LogicAppsUX/issues/7143)) ([8459d6c](https://github.com/Azure/LogicAppsUX/commit/8459d6cd37dbbc65757cbb9300e466c329b98528))
+
 ## [5.95.0](https://github.com/Azure/LogicAppsUX/compare/v5.94.0...v5.95.0) (2025-05-01)
 
 
