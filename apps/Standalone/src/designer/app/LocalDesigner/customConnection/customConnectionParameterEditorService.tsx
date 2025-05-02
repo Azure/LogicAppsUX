@@ -4,9 +4,10 @@ import type {
   IConnectionParameterInfo,
 } from '@microsoft/logic-apps-shared';
 import { TargetPicker } from './TargetPicker';
+import { CustomOpenAIConnector } from '@microsoft/logic-apps-designer';
 
 export class CustomConnectionParameterEditorService implements IConnectionParameterEditorService {
-  public areCustomEditorsEnabled = false;
+  public areCustomEditorsEnabled = true;
 
   public getConnectionParameterEditor({
     connectorId,
@@ -19,6 +20,12 @@ export class CustomConnectionParameterEditorService implements IConnectionParame
     if (connectorId === '/providers/Microsoft.PowerApps/apis/shared_uiflow' && parameterKey === 'targetId') {
       return {
         EditorComponent: TargetPicker,
+      };
+    }
+
+    if (connectorId === 'connectionProviders/agent') {
+      return {
+        EditorComponent: CustomOpenAIConnector,
       };
     }
 
