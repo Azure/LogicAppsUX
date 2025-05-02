@@ -194,6 +194,16 @@ export default {
       },
       required: ['deploymentId', 'messages', 'agentModelType', 'deploymentModelProperties'],
     },
+    outputs: {
+      type: 'object',
+      properties: {
+        messages: {
+          type: 'object',
+          title: 'Messages',
+        },
+      },
+    },
+    isOutputsOptional: false,
     channels: {
       type: 'object',
       properties: {
