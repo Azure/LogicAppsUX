@@ -31,6 +31,7 @@ export const connectionsTab = (
       {
         type: 'button',
         text: resources.PreviousButtonText,
+        appreance: 'primary',
         onClick: () => {
           dispatch(selectWizardTab(constants.CONFIGURE_TEMPLATE_WIZARD_TAB_NAMES.WORKFLOWS));
         },
