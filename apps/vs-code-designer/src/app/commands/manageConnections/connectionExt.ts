@@ -106,8 +106,6 @@ export default class ConnectionsExt {
 
     new ConnectionsPanel(panel, connectionParams);
   }
-
-
 }
 
 function getApiHubServiceDetails(

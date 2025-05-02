@@ -47,16 +47,19 @@ import {
   type ConnectionParameterSetValues,
   type Connector,
   type ManagedIdentity,
+  type ConnectionReferences,
 } from '@microsoft/logic-apps-shared';
 import { useCallback, useMemo, useState } from 'react';
 import { useIntl } from 'react-intl';
 import { useDispatch, useSelector } from 'react-redux';
 import type { AssistedConnectionProps } from '@microsoft/designer-ui';
 import type { ApiHubAuthentication } from 'lib/common/models/workflow';
+import { on } from 'events';
 
 export interface CreateConnectionWrapperSeparateProps {
   connectorId: string;
   operationId?: string
+  saveConnection: (connectionReferences: ConnectionReferences) => void;
 }
 
 export const CreateConnectionWrapperSeparate = (props: CreateConnectionWrapperSeparateProps) => {
@@ -69,6 +72,8 @@ export const CreateConnectionWrapperSeparate = (props: CreateConnectionWrapperSe
   const { data: operationManifest } = useOperationManifest(operationInfo);
   const connectionMetadata = getConnectionMetadata(operationManifest);
   const hasExistingConnection = useSelector((state: RootState) => !!getRecordEntry(state.connections.connectionsMapping, nodeId));
+
+  const connectionForNode = useSelector((state: RootState) => getRecordEntry(state.connections.connectionReferences, nodeIds[0]));
 
   const existingReferences = useSelector((state: RootState) => Object.keys(state.connections.connectionReferences));
 
@@ -88,6 +93,43 @@ export const CreateConnectionWrapperSeparate = (props: CreateConnectionWrapperSe
     [dispatch, nodeIds]
   );
 
+  if (connectionForNode) {
+    console.log('connectionForNode', connectionForNode);
+  }
+
+  // {
+  //   api: { id: connectorId },
+  //   connection: { id: connectionId },
+  //   connectionName: connectionId.split('/').at(-1) as string,
+  //   connectionProperties,
+  //   connectionRuntimeUrl,
+  //   authentication,
+  // }
+
+  const onConnectionCreated = (conn: CreatedConnectionPayload) => {
+    console.log('onConnectionCreated', nodeId);
+    dispatch(closeConnectionsFlow({ nodeId, panelMode: referencePanelMode }));
+    console.log('connectionforNode', connectionForNode);
+    console.log('conn', conn)
+
+    if (conn) {
+      const connectionReferences: ConnectionReferences = {
+        [nodeId]: 
+          {
+            api: { id: conn.connector.id },
+            connection: { id: conn.connection.id },
+            connectionName: conn.connection.id.split('/').at(-1) as string,
+            connectionProperties: conn.connectionProperties,
+            connectionRuntimeUrl: conn.connection.properties.connectionRuntimeUrl, // danielle revisit
+            authentication: conn.authentication, // danielle ensure we don't need to reauthenticate
+          
+        }
+      };
+      props.saveConnection(connectionReferences);
+    }
+
+  }
+
   return (
     <CreateConnectionInternal
       connectorId={connector?.id ?? ''}
@@ -99,7 +141,7 @@ export const CreateConnectionWrapperSeparate = (props: CreateConnectionWrapperSe
       showActionBar={true}
       hideCancelButton={!hasExistingConnection}
       updateConnectionInState={updateConnectionInState}
-      onConnectionCreated={() => dispatch(closeConnectionsFlow({ nodeId, panelMode: referencePanelMode }))}
+      onConnectionCreated={onConnectionCreated}
     />
   );
 };
@@ -120,7 +162,7 @@ export const CreateConnectionInternal = (props: {
   hideCancelButton: boolean;
   showActionBar: boolean;
   updateConnectionInState: (payload: CreatedConnectionPayload) => void;
-  onConnectionCreated: (connection: Connection) => void;
+  onConnectionCreated: (connection: onConnectionCreated) => void;
   onConnectionCancelled?: () => void;
   createButtonTexts?: CreateButtonTexts;
   description?: string;
@@ -159,6 +201,7 @@ export const CreateConnectionInternal = (props: {
   const identity = WorkflowService().getAppIdentity?.() as ManagedIdentity;
 
   const [isCreating, setIsCreating] = useState(false);
+  const [connectionCreated, setIsConnectionCreated] = useState(false);
   const [errorMessage, setErrorMessage] = useState<string | undefined>(undefined);
   const [selectedResourceId, setSelectedResourceId] = useState<string>('');
   const [selectedSubResource, setSelectedSubResource] = useState<any | undefined>();
@@ -201,7 +244,8 @@ export const CreateConnectionInternal = (props: {
       }
 
       updateConnectionInState(payload);
-      onConnectionCreated(newConnection);
+      console.log('applyNewConnection', payload);
+      onConnectionCreated(payload);
     },
     [connector, onConnectionCreated, updateConnectionInState]
   );
@@ -299,6 +343,7 @@ export const CreateConnectionInternal = (props: {
         if (connection) {
           updateNewConnectionInCache(connection);
           applyNewConnection(connection, identitySelected);
+          setIsConnectionCreated(true);
           // danielle save connection
         } else if (err) {
           setErrorMessage(String(err));
@@ -314,6 +359,7 @@ export const CreateConnectionInternal = (props: {
         });
       }
       setIsCreating(false);
+      setIsConnectionCreated(true);
     },
     [
       applyNewConnection,
@@ -340,7 +386,14 @@ export const CreateConnectionInternal = (props: {
     description: 'Message to show under the loading icon when loading connection parameters',
   });
 
+  console.log('connecitonCreated '+  connectionCreated)
+
+  if (connectionCreated === true) {
+    return <div>Connection Created successfully</div>
+  }
+
   if (connector?.properties === undefined) {
+    console.log('connecitonCreated '+  connectionCreated)
     return (
       <div className="msla-loading-container">
         <Spinner size={SpinnerSize.small} label={loadingText} />

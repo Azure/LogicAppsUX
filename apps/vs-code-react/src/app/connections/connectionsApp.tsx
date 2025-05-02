@@ -144,8 +144,17 @@ export const ConnectionsApp = () => {
   ]);
 
   const connectionReferences: ConnectionReferences = useMemo(() => {
+    console.log("connectionData in references", connectionData);
     return convertConnectionsDataToReferences(connectionData);
   }, [connectionData]);
+
+  const saveConnection = (connection: ConnectionReferences) => {
+    console.log("saveConnection", connection);
+    sendMsgToVsix({
+      command: ExtensionCommand.saveConnection,
+      data: {connectionReferences: connection },
+    });
+  }
 
   const errorApp = (
     <XLargeText
@@ -163,26 +172,7 @@ export const ConnectionsApp = () => {
     />
   );
 
-  const connectionsApp = <Connections connectorId={connectionId} />;
-
-  // const designerApp = standardApp ? (
-  //   <BJSWorkflowProvider
-  //     workflow={{
-  //       definition: standardApp.definition,
-  //       connectionReferences,
-  //       parameters: panelMetaData?.parametersData,
-  //       kind: standardApp.kind,
-  //     }}
-  //     customCode={customCode}
-  //     runInstance={runInstance}
-  //     unitTestDefinition={unitTestDefinition}
-  //     appSettings={panelMetaData?.localSettings}
-  //   >
-  //     <Designer />
-  //   </BJSWorkflowProvider>
-  // ) : (
-  //   loadingApp
-  // );
+  const connectionsApp = <Connections connectorId={connectionId} saveConnection={saveConnection} connectionReferences={connectionReferences}/>;
 
   return (
     <div style={{ height: "100vh" }}>
@@ -203,7 +193,6 @@ export const ConnectionsApp = () => {
             },
           }}
         >
-          {" "}
           <ConnectionsProvider>{connectionsApp}</ConnectionsProvider>{" "}
         </DesignerProvider>
       )}

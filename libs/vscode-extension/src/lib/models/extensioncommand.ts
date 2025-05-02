@@ -53,6 +53,7 @@ export const ExtensionCommand = {
   sendNotification: 'sendNotification',
   isTestDisabledForOS: 'isTestDisabledForOS',
   fileABug: 'fileABug',
+  saveConnection: 'saveConnection',
 } as const;
 export type ExtensionCommand = (typeof ExtensionCommand)[keyof typeof ExtensionCommand];
 

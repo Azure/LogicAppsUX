@@ -1,5 +1,5 @@
 import type { ExtensionCommand } from './extensioncommand';
-import type { IFileSysTreeItem, MapDefinitionEntry, MapMetadata, SchemaType } from '@microsoft/logic-apps-shared';
+import type { ConnectionReference, ConnectionReferences, IFileSysTreeItem, MapDefinitionEntry, MapMetadata, SchemaType } from '@microsoft/logic-apps-shared';
 
 type InitializeData = { project: string };
 type FetchSchemaData = { fileName: string; type: SchemaType };
@@ -38,6 +38,10 @@ export type MessageToWebview =
   | { command: typeof ExtensionCommand.isTestDisabledForOS; data: boolean };
 
 export type MessageToVsix =
+{
+  command: typeof ExtensionCommand.saveConnection;
+  data: { connectionReferences: ConnectionReferences };
+}
   | {
       command: typeof ExtensionCommand.initialize;
       data: any;

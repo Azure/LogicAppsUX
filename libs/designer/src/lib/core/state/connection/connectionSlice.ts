@@ -24,6 +24,7 @@ export const connectionSlice = createSlice({
   initialState: initialConnectionsState,
   reducers: {
     initializeConnectionReferences: (state, action: PayloadAction<ConnectionReferences>) => {
+      console.log('Initializing connection references:', action.payload);
       state.connectionReferences = action.payload;
     },
     initializeConnectionsMappings: (state, action: PayloadAction<ConnectionMapping>) => {

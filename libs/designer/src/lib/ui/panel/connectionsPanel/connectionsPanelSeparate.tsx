@@ -7,7 +7,7 @@ import type { CommonPanelProps } from '@microsoft/designer-ui';
 import { useCallback, useEffect, useMemo } from 'react';
 import { useIntl } from 'react-intl';
 import { useDispatch } from 'react-redux';
-import type { Connection, Connector } from '@microsoft/logic-apps-shared';
+import type { Connection, ConnectionReferences, Connector } from '@microsoft/logic-apps-shared';
 import { CreateConnectionWrapperSeparate } from './createConnection/createConnectionWrapperSeparate';
 import { useConnectionRefs, useConnectorById } from '../../../core/state/connection/connectionSelector';
 import type { AppDispatch} from '../../../core';
@@ -15,11 +15,13 @@ import { useOperationInfo, useOperationPanelSelectedNodeId } from '../../../core
 import { useConnectionsForConnector } from '../../../core/queries/connections';
 import { useIsCreatingConnection } from '../../../core/state/panel/panelSelectors';
 import { SelectConnection } from './selectConnection/selectConnection';
+import { SelectConnectionSeparate } from './selectConnection/selectConnectionSeparate';
 
 const CloseIcon = bundleIcon(Dismiss24Filled, Dismiss24Regular);
 
 export interface ConnectionPanelSeparateProps extends CommonPanelProps {
   connectorId: string;
+  saveConnection: (connectionReferences: ConnectionReferences) => void;
 }
 
 export const ConnectionPanelSeparate = (props: ConnectionPanelSeparateProps) => {
@@ -92,21 +94,21 @@ export const ConnectionPanelSeparate = (props: ConnectionPanelSeparateProps) => 
   const renderContent = useCallback(() => {
     switch (panelStatus) {
       case 'select':
-        return <SelectConnection />;
+        return <SelectConnectionSeparate connectorId={props.connectorId} />;
       case 'create':
-        return <CreateConnectionWrapperSeparate connectorId={props.connectorId}/>;
+        return <CreateConnectionWrapperSeparate connectorId={props.connectorId} saveConnection={props.saveConnection}/>;
         case 'default':
-            return  <CreateConnectionWrapperSeparate connectorId={props.connectorId}/>;
+            return  <CreateConnectionWrapperSeparate saveConnection={props.saveConnection} connectorId={props.connectorId}/>;
     }
-  }, [panelStatus, props.connectorId]);
+  }, [panelStatus, props.connectorId, props.saveConnection]);
 
   return (
-    <>
+    <div style={{ width: '100%', height: '100%' }} className="msla-connections-panel">
       <div className="msla-app-action-header">
         <XLargeText text={panelHeaderText} />
         <Button aria-label={closeButtonAriaLabel} appearance="subtle" onClick={props.toggleCollapse} icon={<CloseIcon />} />
       </div>
       <div className="msla-connections-panel-body">{renderContent()}</div>
-    </>
+    </div>
   );
 };

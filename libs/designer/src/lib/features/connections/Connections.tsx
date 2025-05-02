@@ -9,9 +9,13 @@ import { useAreServicesInitialized } from '../../core/state/designerOptions/desi
 import { CreateConnectionWrapperSeparate } from '../../ui/panel/connectionsPanel/createConnection/createConnectionWrapperSeparate';
 import { ConnectionsPanel } from '../../ui/panel/templatePanel/createWorkflowPanel/tabs/connectionsTab';
 import { ConnectionPanelSeparate } from '../../ui';
+import { type ConnectionReferences } from '@microsoft/logic-apps-shared';
+import { initializeConnectionReferences } from '../../core/state/connection/connectionSlice';
 
 export interface ConnectionsProps {
-  connectorId: string
+  connectorId: string;
+  saveConnection: (connectionReferences: ConnectionReferences) => void;
+  connectionReferences: ConnectionReferences;
 }
 
 export const Connections = (props: ConnectionsProps) => {
@@ -22,7 +26,7 @@ export const Connections = (props: ConnectionsProps) => {
   dispatch(setIsCreatingConnection(true));
   dispatch(openPanel({ panelMode: 'Connection' }));
   dispatch(setSelectedNodeId('123'));
-  console.log('Connections in designer');
+  dispatch(initializeConnectionReferences(props.connectionReferences ?? {}));
 
   return (
     <div
@@ -36,9 +40,7 @@ export const Connections = (props: ConnectionsProps) => {
         panelContainerRef={designerContainerRef} 
         panelLocation="RIGHT" 
       />
-      <ConnectionPanelSeparate connectorId={props.connectorId} isCollapsed={false} toggleCollapse={() => null} panelLocation='RIGHT' />
-      {props.connectorId &&
-      <CreateConnectionWrapperSeparate connectorId={props.connectorId}></CreateConnectionWrapperSeparate>}
+      <ConnectionPanelSeparate saveConnection={props.saveConnection} connectorId={props.connectorId} isCollapsed={false} toggleCollapse={() => null} panelLocation='RIGHT' />
       </div>
     </div>
   );

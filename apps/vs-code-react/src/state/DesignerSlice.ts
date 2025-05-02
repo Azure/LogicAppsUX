@@ -94,10 +94,9 @@ export const designerSlice = createSlice({
       state.isUnitTest = isUnitTest;
       state.unitTestDefinition = unitTestDefinition;
     },
-    initializeConnectionsDesigner: (state, action: PayloadAction< { state:Partial<DesignerState>, accessToken: string, panelId: string}>) => {
-      console.log('initializeConnectionsDesigner');
+    initializeConnectionsDesigner: (state, action: PayloadAction< { state:Partial<DesignerState>, accessToken: string, panelId: string, connections: ConnectionsData}>) => {
       state.apiHubServiceDetails = action.payload.state.apiHubServiceDetails ?? initialState.apiHubServiceDetails;
-      state.connectionData = action.payload.state.connectionData ?? {};
+      state.connectionData = action.payload.connections?? {};
       state.oauthRedirectUrl = action.payload.state.oauthRedirectUrl ?? '';
       state.panelId = action.payload.panelId;
       

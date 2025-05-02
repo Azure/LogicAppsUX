@@ -16,7 +16,7 @@ import type {
   MessageToCommandWebview,
 } from "./constants";
 import { managementApiPrefix } from "../../../constants";
-import { addConnectionData } from "../../utils/codeless/connection";
+import { addConnectionData, getConnectionsAndSettingsToUpdate, saveConnectionReferences } from "../../utils/codeless/connection";
 import { exec } from "child_process";
 
 export default class ConnectionsPanel {
@@ -42,9 +42,8 @@ export default class ConnectionsPanel {
 
     this._handleWebviewMsg = this._handleWebviewMsg.bind(this);
 
-    //this.connectionUri = `/subscriptions/${this.azureDetails.subscriptionId}/resourceGroups/${this.azureDetails.resourceGroupName}/providers/Microsoft.Web/connections/${this.connectionName}`
-    this.connectionUri = `/subscriptions/${this.createConnectionsPanel.azureDetails.subscriptionId}/providers/Microsoft.Web/locations/${this.createConnectionsPanel.azureDetails.location}}/managedApis/${this.connectionName}`;
-    //
+    this.connectionUri = this.connectionName;  `/subscriptions/${this.createConnectionsPanel.azureDetails.subscriptionId}/providers/Microsoft.Web/locations/${this.createConnectionsPanel.azureDetails.location}}/managedApis/${this.connectionName}`;
+    // this.connectionName; 
 
     ext.context.subscriptions.push(panel);
 
@@ -121,9 +120,21 @@ export default class ConnectionsPanel {
         await env.openExternal(msg.url);
         break;
       }
-      // case ExtensionCommand.saveConnection: {
+      case ExtensionCommand.saveConnection: {
+        if (msg.data.connectionReferences) {
+          const connectionsAndSettingsToUpdate = await getConnectionsAndSettingsToUpdate(
+            this.createConnectionsPanel.context,
+            this.createConnectionsPanel.projectPath,
+            msg.data.connectionReferences,
+            this.createConnectionsPanel.azureDetails.tenantId,
+            this.createConnectionsPanel.azureDetails.workflowManagementBaseUrl,
+            {}
+          );
 
-      // }
+          await saveConnectionReferences(this.createConnectionsPanel.context, this.createConnectionsPanel.projectPath, connectionsAndSettingsToUpdate);
+        }
+        break;
+      }
     }
   }
 
