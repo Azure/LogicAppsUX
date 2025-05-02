@@ -827,10 +827,12 @@ export const getEditorAndOptions = (
     return {
       editor,
       editorOptions: {
-        options: deploymentsForCognitiveServiceAccount.map((deployment: any) => ({
-          value: deployment.name,
-          displayName: `${deployment.name} ${deployment.properties?.model?.name ? `(${deployment.properties?.model?.name})` : ''}`,
-        })),
+        options: deploymentsForCognitiveServiceAccount
+          .filter((deployment: any) => constants.SUPPORTED_AGENT_MODELS.includes((deployment.properties?.model?.name ?? '').toLowerCase()))
+          .map((deployment: any) => ({
+            value: deployment.name,
+            displayName: `${deployment.name} ${deployment.properties?.model?.name ? `(${deployment.properties?.model?.name})` : ''}`,
+          })),
       },
     };
   }
