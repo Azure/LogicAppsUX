@@ -549,7 +549,7 @@ export const CreateConnection = (props: CreateConnectionProps) => {
       availableGateways,
       availableSubscriptions,
       identity,
-      setAllValues: setParameterValues,
+      setKeyValue: (customKey: string, val: any) => setParameterValues({ ...parameterValues, [customKey]: val }),
     };
 
     const customParameterOptions = ConnectionParameterEditorService()?.getConnectionParameterEditor({

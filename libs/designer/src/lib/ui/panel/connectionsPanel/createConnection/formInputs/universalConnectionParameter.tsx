@@ -20,7 +20,7 @@ export interface ConnectionParameterProps {
   availableGateways?: any[];
   availableSubscriptions?: any[];
   identity?: ManagedIdentity;
-  setAllValues?: (value: any) => void;
+  setKeyValue?: (key: string, value: any) => void;
 }
 
 export const UniversalConnectionParameter = (props: ConnectionParameterProps) => {

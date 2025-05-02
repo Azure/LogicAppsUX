@@ -21,6 +21,38 @@ export class BaseCognitiveServiceService implements ICognitiveServiceService {
     }
   }
 
+  async fetchCognitiveServiceAccountById(accountId: string): Promise<any> {
+    const { httpClient, baseUrl, apiVersion } = this.options;
+    const uri = `${baseUrl}${accountId}`;
+    try {
+      const response = await httpClient.get({
+        uri,
+        queryParameters: {
+          'api-version': apiVersion,
+        },
+      });
+      return response;
+    } catch (e: any) {
+      return new Error(e?.message ?? e);
+    }
+  }
+
+  async fetchCognitiveServiceAccountKeysById(accountId: string): Promise<any> {
+    const { httpClient, baseUrl, apiVersion } = this.options;
+    const uri = `${baseUrl}${accountId}/listKeys`;
+    try {
+      const response = await httpClient.post({
+        uri,
+        queryParameters: {
+          'api-version': apiVersion,
+        },
+      });
+      return response;
+    } catch (e: any) {
+      return new Error(e?.message ?? e);
+    }
+  }
+
   async fetchAllCognitiveServiceAccounts(): Promise<any> {
     const { httpClient, baseUrl } = this.options;
 

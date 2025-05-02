@@ -1,14 +1,14 @@
-import type { IConnectionParameterEditorProps } from '@microsoft/logic-apps-shared';
-import { UniversalConnectionParameter } from '../formInputs/universalConnectionParameter';
+import { CognitiveServiceService, LogEntryLevel, LoggerService } from '@microsoft/logic-apps-shared';
+import { type ConnectionParameterProps, UniversalConnectionParameter } from '../formInputs/universalConnectionParameter';
 import { ConnectionParameterRow } from '../connectionParameterRow';
 import { useIntl } from 'react-intl';
-import { useMemo } from 'react';
+import { useEffect, useMemo } from 'react';
 import { Dropdown, Spinner } from '@fluentui/react';
 import { useAllCognitiveServiceAccounts } from './useCognitiveService';
 import { useStyles } from './styles';
 
-export const CustomOpenAIConnector = (props: IConnectionParameterEditorProps) => {
-  const { parameterKey } = props;
+export const CustomOpenAIConnector = (props: ConnectionParameterProps) => {
+  const { parameterKey, value, setKeyValue } = props;
   const intl = useIntl();
   const { isFetching, data: allCognitiveServiceAccounts } = useAllCognitiveServiceAccounts();
   const styles = useStyles();
@@ -33,6 +33,41 @@ export const CustomOpenAIConnector = (props: IConnectionParameterEditorProps) =>
     }),
     [intl]
   );
+
+  useEffect(() => {
+    async function fetchAccount() {
+      try {
+        const accountResponse = await CognitiveServiceService().fetchCognitiveServiceAccountById(value);
+        setKeyValue?.('openAIEndpoint', accountResponse?.properties?.endpoint ?? '');
+      } catch (e: any) {
+        LoggerService().log({
+          level: LogEntryLevel.Error,
+          area: 'agent-connection-account',
+          message: 'Failed to fetch account details for cognitive service',
+          error: e,
+        });
+      }
+    }
+
+    async function fetchKey() {
+      try {
+        const accountResponse = await CognitiveServiceService().fetchCognitiveServiceAccountKeysById(value);
+        setKeyValue?.('openAIEndpoint', accountResponse?.key1 ?? '');
+      } catch (e: any) {
+        LoggerService().log({
+          level: LogEntryLevel.Error,
+          area: 'agent-connection-account-key',
+          message: 'Failed to fetch account key for cognitive service',
+          error: e,
+        });
+      }
+    }
+
+    if (parameterKey === 'openAIEndpoint') {
+      fetchAccount();
+      fetchKey();
+    }
+  }, [parameterKey, setKeyValue, value]);
 
   if (parameterKey === 'openAIEndpoint') {
     return (
