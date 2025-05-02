@@ -4,6 +4,7 @@ export * from './lib/gateway';
 export * from './lib/operationmanifest';
 export * from './lib/search';
 export * from './lib/oAuth';
+export * from './lib/cognitiveService';
 export * from './lib/experimentation';
 export * from './lib/experimentationFlags';
 export * from './lib/workflow';

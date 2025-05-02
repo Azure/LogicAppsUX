@@ -52,7 +52,7 @@ export class BaseResourceService implements IResourceService {
     const { baseUrl, httpClient } = this.options;
     const uri = `${baseUrl}/providers/Microsoft.ResourceGraph/resources?api-version=2019-04-01`;
     const query = `resources | where type == "microsoft.web/sites" and kind contains "workflowapp" and resourceGroup =~ "${resourceGroup.toLowerCase()}"`;
-    const response = await fetchAppsByQuery(httpClient, uri, [subscriptionId], query);
+    const response = await fetchAppsByQuery(httpClient, uri, query, [subscriptionId]);
     return response.map((item) => ({ id: item.id, name: item.name, location: item.location, plan: 'Standard' }));
   }
 
@@ -60,7 +60,7 @@ export class BaseResourceService implements IResourceService {
     const { baseUrl, httpClient } = this.options;
     const uri = `${baseUrl}/providers/Microsoft.ResourceGraph/resources?api-version=2019-04-01`;
     const query = `resources | where type =~ 'microsoft.logic/workflows' or (type =~ 'microsoft.web/sites' and kind contains 'workflowapp') | where resourceGroup =~ '${resourceGroup.toLowerCase()}' | extend plan = case(kind contains 'workflowapp', 'Standard', 'Consumption')`;
-    const response = await fetchAppsByQuery(httpClient, uri, [subscriptionId], query);
+    const response = await fetchAppsByQuery(httpClient, uri, query, [subscriptionId]);
     return response.map((item) => ({ id: item.id, name: item.name, location: item.location, plan: item.plan }));
   }
 

@@ -83,6 +83,7 @@ interface APIManagementConnectionModel {
 export interface AgentConnectionModel {
   authentication: Record<string, any>;
   endpoint: string;
+  resourceId: string;
   type?: string;
   displayName?: string;
 }
@@ -571,10 +572,6 @@ export class StandardConnectionService extends BaseConnectionService implements 
           connectionsData.connectionKey,
           connectionsData.connectionData as AgentConnectionModel
         );
-
-        // if (connector.properties.testConnectionUrl) {
-        //   await this._testServiceProviderConnection(connector.properties.testConnectionUrl, rawConnection);
-        // }
         break;
       }
       default: {
@@ -741,6 +738,7 @@ function convertToAgentConnectionsData(
         key: parameterValues?.['openAIKey'],
       },
       endpoint: parameterValues?.['openAIEndpoint'],
+      resourceId: parameterValues?.['cognitiveServiceAccountId'],
       type: 'model',
     },
     settings,

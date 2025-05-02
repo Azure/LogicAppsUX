@@ -16,6 +16,7 @@ import {
   clone,
   isEmptyString,
   BaseTenantService,
+  BaseCognitiveServiceService,
 } from '@microsoft/logic-apps-shared';
 import type {
   ApiHubServiceDetails,
@@ -325,6 +326,12 @@ export const getDesignerServices = (
     httpClient,
   });
 
+  const cognitiveServiceService = new BaseCognitiveServiceService({
+    apiVersion: '2023-10-01-preview',
+    baseUrl: armUrl,
+    httpClient,
+  });
+
   const editorService = new CustomEditorService({
     areCustomEditorsEnabled: true,
     openRelativeLink: (relativeLink: string) => {
@@ -353,6 +360,7 @@ export const getDesignerServices = (
     editorService,
     apimService,
     loggerService,
+    cognitiveServiceService,
     functionService,
   };
 };

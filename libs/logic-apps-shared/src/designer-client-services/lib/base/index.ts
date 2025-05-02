@@ -52,3 +52,5 @@ export type { BaseTenantServiceOptions } from './tenant';
 export { BaseUserPreferenceService } from './userpreference';
 
 export { BaseExperimentationService } from './experimentation';
+
+export { BaseCognitiveServiceService } from './cognitiveService';

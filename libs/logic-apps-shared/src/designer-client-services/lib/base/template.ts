@@ -43,7 +43,7 @@ export class BaseTemplateService implements ITemplateService {
     const uri = `${baseUrl}/providers/Microsoft.ResourceGraph/resources?api-version=2019-04-01`;
     const query = `resources | where type =~ "microsoft.logic/templates" and resourceGroup =~ "${resourceGroup.toLowerCase()}"
     | where properties.state !~ "Development" | project id, name, manifest = properties.manifest, state = properties.state`;
-    const response = await fetchAppsByQuery(httpClient, uri, [subscriptionId], query);
+    const response = await fetchAppsByQuery(httpClient, uri, query, [subscriptionId]);
 
     return response
       .filter((resource) => !!resource.manifest)

@@ -35,7 +35,7 @@ export interface Tenant {
   domains: string[];
 }
 
-export const fetchAppsByQuery = async (httpClient: IHttpClient, uri: string, subscriptionIds: string[], query: string): Promise<any[]> => {
+export const fetchAppsByQuery = async (httpClient: IHttpClient, uri: string, query: string, subscriptionIds?: string[]): Promise<any[]> => {
   const requestPage = async (value: any[] = [], pageNum = 0, currentSkipToken = ''): Promise<any> => {
     try {
       const pageSize = 500;

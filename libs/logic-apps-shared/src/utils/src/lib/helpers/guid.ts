@@ -32,6 +32,18 @@ export function guid(): string {
   )}${separator}${oct.substr(19, 12)}`;
 }
 
+export function customLengthGuid(length: number): string {
+  if (length > 0) {
+    return 'x'.repeat(length).replace(/[xy]/g, (c) => {
+      const r = (Math.random() * 16) | 0;
+      const v = c === 'x' ? r : (r & 0x3) | 0x8;
+      return v.toString(16);
+    });
+  }
+
+  return '';
+}
+
 /**
  * Checks to see if the string is in the xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx.
  *
