@@ -47,6 +47,7 @@ import {
   guid,
   isArmResourceId,
   optional,
+  BaseCognitiveServiceService,
 } from '@microsoft/logic-apps-shared';
 import type { ContentType, IHostService, IWorkflowService } from '@microsoft/logic-apps-shared';
 import type { AllCustomCodeFiles, CustomCodeFileNameMapping, Workflow } from '@microsoft/logic-apps-designer';
@@ -921,6 +922,12 @@ const getDesignerServices = (
     httpClient,
   });
 
+  const cognitiveServiceService = new BaseCognitiveServiceService({
+    apiVersion: '2023-10-01-preview',
+    baseUrl: armUrl,
+    httpClient,
+  });
+
   return {
     appService,
     connectionService,
@@ -938,6 +945,7 @@ const getDesignerServices = (
     hostService,
     chatbotService,
     customCodeService,
+    cognitiveServiceService,
     userPreferenceService: new BaseUserPreferenceService(),
     experimentationService: new BaseExperimentationService(),
   };
