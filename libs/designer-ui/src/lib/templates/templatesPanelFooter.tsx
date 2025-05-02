@@ -1,75 +1,122 @@
-import { Button, Divider } from '@fluentui/react-components';
+import {
+  Button,
+  Divider,
+  Menu,
+  type MenuButtonProps,
+  MenuItem,
+  MenuList,
+  MenuPopover,
+  MenuTrigger,
+  SplitButton,
+} from '@fluentui/react-components';
 import type { ReactNode } from 'react';
 
-export interface TemplatePanelFooterProps {
-  primaryButtonText: string | ReactNode;
-  primaryButtonOnClick: () => void | Promise<void>;
-  primaryButtonDisabled?: boolean;
-  showPrimaryButton?: boolean;
-
-  secondaryButtonText: string;
-  secondaryButtonOnClick: () => void;
-  secondaryButtonDisabled?: boolean;
-
-  thirdButtonText?: string;
-  thirdButtonOnClick?: () => void;
-  thirdButtonDisabled?: boolean;
+interface TemplateFooterItemProps {
+  type: 'button' | 'divider';
 }
 
-export const TemplatesPanelFooter = ({
-  primaryButtonText,
-  primaryButtonDisabled = false,
-  primaryButtonOnClick,
-  showPrimaryButton = true,
+interface TemplateFooterButtonProps extends TemplateFooterItemProps {
+  type: 'button';
+  text: string | ReactNode;
+  onClick: () => void | Promise<void>;
+  disabled?: boolean;
+  appreance?: 'primary' | 'subtle';
+  hide?: boolean;
+  menuItems?: {
+    text: string;
+    onClick: () => void;
+    disabled?: boolean;
+  }[];
+}
 
-  secondaryButtonText,
-  secondaryButtonOnClick,
-  secondaryButtonDisabled = false,
+interface DividerProps extends TemplateFooterItemProps {
+  type: 'divider';
+}
 
-  thirdButtonText,
-  thirdButtonOnClick = () => {},
-  thirdButtonDisabled,
-}: TemplatePanelFooterProps) => {
+export interface TemplatePanelFooterProps {
+  buttonContents?: (TemplateFooterButtonProps | DividerProps)[];
+}
+
+const templateFooterItemStyle = {
+  marginLeft: '8px',
+};
+
+export const TemplatesPanelFooter = ({ buttonContents }: TemplatePanelFooterProps) => {
   return (
     <div className="msla-templates-panel-footer">
-      {showPrimaryButton ? (
-        <Button
-          appearance="primary"
-          data-testid={'template-footer-primary-button'}
-          data-automation-id={'template-footer-primary-button'}
-          onClick={primaryButtonOnClick}
-          disabled={primaryButtonDisabled}
-        >
-          {primaryButtonText}
-        </Button>
-      ) : null}
+      {buttonContents?.map((buttonContent, index) => {
+        if (buttonContent?.type === 'button') {
+          const { text, onClick, disabled, appreance, hide, menuItems } = buttonContent;
+          if (hide) {
+            return null;
+          }
+          if (menuItems && menuItems.length) {
+            return (
+              <Menu key={index} positioning="below-end">
+                <MenuTrigger disableButtonEnhancement>
+                  {(triggerProps: MenuButtonProps) => (
+                    <SplitButton
+                      style={index < buttonContents.length ? templateFooterItemStyle : {}}
+                      menuButton={triggerProps}
+                      primaryActionButton={triggerProps}
+                      appearance={appreance}
+                    >
+                      {text}
+                    </SplitButton>
+                  )}
+                </MenuTrigger>
 
-      <Button
-        onClick={secondaryButtonOnClick}
-        style={{
-          marginLeft: showPrimaryButton ? '8px' : undefined,
-        }}
-        disabled={secondaryButtonDisabled}
-      >
-        {secondaryButtonText}
-      </Button>
-
-      {thirdButtonText ? (
-        <Divider
-          vertical={true}
-          style={{
-            display: 'inline-block',
-            height: '100%',
-            paddingLeft: '8px',
-          }}
-        />
-      ) : null}
-
-      {thirdButtonText ? (
-        <Button appearance="subtle" disabled={thirdButtonDisabled} onClick={thirdButtonOnClick} style={{ marginLeft: '8px' }}>
-          {thirdButtonText}
-        </Button>
-      ) : null}
+                <MenuPopover>
+                  <MenuList>
+                    {menuItems.map((item, index) => {
+                      const { text, onClick, disabled } = item;
+                      return (
+                        <MenuItem
+                          key={index}
+                          onClick={onClick}
+                          disabled={disabled}
+                          data-testid={`template-footer-menu-item-${index}`}
+                          data-automation-id={`template-footer-menu-item-${index}`}
+                        >
+                          {text}
+                        </MenuItem>
+                      );
+                    })}
+                  </MenuList>
+                </MenuPopover>
+              </Menu>
+            );
+          }
+          return (
+            <Button
+              key={index}
+              style={index < buttonContents.length ? templateFooterItemStyle : {}}
+              appearance={appreance}
+              onClick={onClick}
+              disabled={disabled}
+              data-testid={`template-footer-button-${index}`}
+              data-automation-id={`template-footer-button-${index}`}
+            >
+              {text}
+            </Button>
+          );
+        }
+        if (buttonContent?.type === 'divider') {
+          return (
+            <Divider
+              key={index}
+              vertical={true}
+              style={{
+                ...(index < buttonContents.length ? templateFooterItemStyle : {}),
+                display: 'inline-block',
+                height: '100%',
+                paddingLeft: '8px',
+              }}
+            />
+          );
+        }
+        return null;
+      })}
     </div>
   );
 };

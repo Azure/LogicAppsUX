@@ -28,29 +28,38 @@ export const basicsTab = (
   tabStatusIcon: hasError ? 'error' : undefined,
   content: <WorkflowBasics />,
   footerContent: {
-    primaryButtonText: intl.formatMessage({
-      defaultMessage: 'Next',
-      id: '0UfxUM',
-      description: 'Button text for moving to the next tab in the create workflow panel',
-    }),
-    primaryButtonOnClick: () => {
-      dispatch(selectPanelTab(nextTabId));
-    },
-    primaryButtonDisabled: disabled,
-    secondaryButtonText: intl.formatMessage({
-      defaultMessage: 'Close',
-      id: 'FTrMxN',
-      description: 'Button text for closing the panel',
-    }),
-    secondaryButtonOnClick: () => {
-      dispatch(closePanel());
+    buttonContents: [
+      {
+        type: 'button',
+        text: intl.formatMessage({
+          defaultMessage: 'Next',
+          id: '0UfxUM',
+          description: 'Button text for moving to the next tab in the create workflow panel',
+        }),
+        onClick: () => {
+          dispatch(selectPanelTab(nextTabId));
+        },
+        appreance: 'primary',
+        disabled,
+      },
+      {
+        type: 'button',
+        text: intl.formatMessage({
+          defaultMessage: 'Close',
+          id: 'FTrMxN',
+          description: 'Button text for closing the panel',
+        }),
+        onClick: () => {
+          dispatch(closePanel());
 
-      if (shouldClearDetails) {
-        dispatch(clearTemplateDetails());
-      }
+          if (shouldClearDetails) {
+            dispatch(clearTemplateDetails());
+          }
 
-      onClosePanel?.();
-    },
-    secondaryButtonDisabled: !showCloseButton || isCreating,
+          onClosePanel?.();
+        },
+        disabled: !showCloseButton || isCreating,
+      },
+    ],
   },
 });

@@ -111,7 +111,7 @@ export const CreateWorkflowPanel = ({
 
   const selectedTabProps = selectedTabId ? panelTabs?.find((tab) => tab.id === selectedTabId) : panelTabs[0];
   const onRenderFooterContent = useCallback(
-    () => (selectedTabProps?.footerContent ? <TemplatesPanelFooter showPrimaryButton={true} {...selectedTabProps?.footerContent} /> : null),
+    () => (selectedTabProps?.footerContent ? <TemplatesPanelFooter {...selectedTabProps?.footerContent} /> : null),
     [selectedTabProps?.footerContent]
   );
 

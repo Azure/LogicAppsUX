@@ -16,13 +16,16 @@ export const workflowsTab = (
   tabStatusIcon,
   content: <DisplayWorkflows onSave={onSaveWorkflows} />,
   footerContent: {
-    primaryButtonText: '',
-    primaryButtonOnClick: () => {},
-    showPrimaryButton: false,
-    secondaryButtonText: resources.NextButtonText,
-    secondaryButtonOnClick: () => {
-      dispatch(selectWizardTab(constants.CONFIGURE_TEMPLATE_WIZARD_TAB_NAMES.CONNECTIONS));
-    },
-    secondaryButtonDisabled: disabled,
+    buttonContents: [
+      {
+        type: 'button',
+        text: resources.NextButtonText,
+        appreance: 'primary',
+        onClick: () => {
+          dispatch(selectWizardTab(constants.CONFIGURE_TEMPLATE_WIZARD_TAB_NAMES.CONNECTIONS));
+        },
+        disabled,
+      },
+    ],
   },
 });
