@@ -84,3 +84,5 @@ export const useOperationPanelSelectedNodeActiveTabId = () =>
 export const usePanelLocation = () => useSelector(createSelector(getPanelState, (state) => state.location));
 
 export const usePreviousPanelMode = () => useSelector(createSelector(getPanelState, (state) => state.previousPanelMode));
+
+export const useIsAgentTool = () => useSelector(createSelector(getPanelState, (state) => state.discoveryContent.isAgentTool));

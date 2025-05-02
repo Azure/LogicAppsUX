@@ -28,13 +28,20 @@ const EditIcon = bundleIcon(Edit24Filled, Edit24Regular);
 const ExpandIcon = bundleIcon(ChevronRight24Filled, ChevronRight24Regular);
 const CollapseIcon = bundleIcon(ChevronDown24Filled, ChevronDown24Regular);
 
-const typeOptions: DropdownItem[] = [
+const variableOptions: DropdownItem[] = [
   { key: VARIABLE_TYPE.BOOLEAN, value: VARIABLE_TYPE.BOOLEAN, displayName: 'Boolean' },
   { key: VARIABLE_TYPE.INTEGER, value: VARIABLE_TYPE.INTEGER, displayName: 'Integer' },
   { key: VARIABLE_TYPE.FLOAT, value: VARIABLE_TYPE.FLOAT, displayName: 'Float' },
   { key: VARIABLE_TYPE.STRING, value: VARIABLE_TYPE.STRING, displayName: 'String' },
   { key: VARIABLE_TYPE.OBJECT, value: VARIABLE_TYPE.OBJECT, displayName: 'Object' },
   { key: VARIABLE_TYPE.ARRAY, value: VARIABLE_TYPE.ARRAY, displayName: 'Array' },
+];
+
+const agentParameterOptions: DropdownItem[] = [
+  { key: VARIABLE_TYPE.STRING, value: VARIABLE_TYPE.STRING, displayName: 'String' },
+  { key: VARIABLE_TYPE.INTEGER, value: VARIABLE_TYPE.INTEGER, displayName: 'Integer' },
+  { key: VARIABLE_TYPE.NUMBER, value: VARIABLE_TYPE.NUMBER, displayName: 'Float (Number)' },
+  { key: VARIABLE_TYPE.BOOLEAN, value: VARIABLE_TYPE.BOOLEAN, displayName: 'Boolean' },
 ];
 
 export const VARIABLE_PROPERTIES = {
@@ -55,7 +62,7 @@ interface VariableEditorProps extends Partial<BaseEditorProps> {
   errors?: InitializeVariableErrors;
   onDelete: () => void;
   onVariableChange: (value: InitializeVariableProps) => void;
-  preventMultiVariable?: boolean;
+  isMultiVariableEnabled?: boolean;
   isAgentParameter?: boolean;
 }
 
@@ -92,7 +99,7 @@ export const VariableEditor = ({
   onVariableChange,
   errors,
   index,
-  preventMultiVariable,
+  isMultiVariableEnabled,
   isAgentParameter,
   ...baseEditorProps
 }: VariableEditorProps) => {
@@ -179,7 +186,10 @@ export const VariableEditor = ({
   });
 
   const handleBlur = (newState: ChangeState, property: string): void => {
-    const newVariable = { ...variable, [property]: isEmptySegments(newState.value) ? [createEmptyLiteralValueSegment()] : newState.value };
+    const newVariable = {
+      ...variable,
+      [property]: isEmptySegments(newState.value) ? [createEmptyLiteralValueSegment()] : newState.value,
+    };
     onVariableChange(newVariable);
   };
 
@@ -218,7 +228,7 @@ export const VariableEditor = ({
         ...baseEditorProps,
         key: `${VARIABLE_PROPERTIES.TYPE}-${variableId}`,
         initialValue: type,
-        options: typeOptions,
+        options: isAgentParameter ? agentParameterOptions : variableOptions,
         onChange: (newState: ChangeState) => handleBlur(newState, VARIABLE_PROPERTIES.TYPE),
         placeholder: isAgentParameter ? typeAgentParameterPlaceholder : typeVariablePlaceHolder,
         dataAutomationId: `${baseEditorProps.dataAutomationId}-${VARIABLE_PROPERTIES.TYPE}-${index}`,
@@ -275,7 +285,7 @@ export const VariableEditor = ({
             </span>
           ) : null}
         </Button>
-        {preventMultiVariable && !isAgentParameter ? null : (
+        {!isMultiVariableEnabled && !isAgentParameter ? null : (
           <>
             <div className={'msla-variable-editor-edit-or-delete-button'}>
               <Tooltip relationship="label" content={editButtonTitle}>

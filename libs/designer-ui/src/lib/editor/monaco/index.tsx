@@ -46,24 +46,29 @@ export interface MonacoProps extends MonacoOptions {
   openTokenPicker?(): void;
 }
 
-export interface MonacoOptions {
-  folding?: boolean;
-  fontSize?: number;
-  readOnly?: boolean;
-  lineNumbers?: 'on' | 'off' | 'relative' | 'interval' | ((lineNumber: number) => string);
-  lineNumbersMinChars?: number;
-  lineHeight?: number;
+type SupportedEditorOptions = Pick<
+  editor.IEditorOptions,
+  | 'folding'
+  | 'fontSize'
+  | 'readOnly'
+  | 'lineNumbers'
+  | 'lineNumbersMinChars'
+  | 'lineHeight'
+  | 'scrollBeyondLastLine'
+  | 'wordWrap'
+  | 'wordWrapColumn'
+  | 'scrollbar'
+  | 'overviewRulerLanes'
+  | 'overviewRulerBorder'
+  | 'wrappingIndent'
+  | 'automaticLayout'
+> &
+  Pick<editor.IGlobalEditorOptions, 'tabSize' | 'insertSpaces'>;
+
+export type MonacoOptions = SupportedEditorOptions & {
   minimapEnabled?: boolean;
-  scrollBeyondLastLine?: boolean;
-  wordWrap?: 'off' | 'on' | 'wordWrapColumn' | 'bounded';
-  wordWrapColumn?: number;
   contextMenu?: boolean;
-  scrollbar?: editor.IEditorScrollbarOptions;
-  overviewRulerLanes?: number;
-  overviewRulerBorder?: boolean;
-  wrappingIndent?: 'none' | 'same' | 'indent' | 'deepIndent';
-  automaticLayout?: boolean;
-}
+};
 
 export const MonacoEditor = forwardRef<editor.IStandaloneCodeEditor, MonacoProps>(
   (
@@ -262,7 +267,11 @@ export const MonacoEditor = forwardRef<editor.IStandaloneCodeEditor, MonacoProps
               minimap: { enabled: minimapEnabled },
               scrollBeyondLastLine: scrollBeyondLastLine,
               lineNumbersMinChars: lineNumbersMinChars,
-              unicodeHighlight: { invisibleCharacters: false, nonBasicASCII: false, ambiguousCharacters: false },
+              unicodeHighlight: {
+                invisibleCharacters: false,
+                nonBasicASCII: false,
+                ambiguousCharacters: false,
+              },
               renderWhitespace: 'none',
               ariaLabel: label,
               wordWrap,
@@ -272,7 +281,7 @@ export const MonacoEditor = forwardRef<editor.IStandaloneCodeEditor, MonacoProps
             value={value}
             defaultValue={defaultValue}
             defaultLanguage={language ? language.toString() : undefined}
-            theme={Constants.LANGUAGE_NAMES.THEME}
+            theme={isInverted ? 'vs-dark' : 'vs'}
             onMount={handleEditorMounted}
             onChange={handleUpdate}
             height={height}

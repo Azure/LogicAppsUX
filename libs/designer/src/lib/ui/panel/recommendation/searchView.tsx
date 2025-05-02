@@ -1,15 +1,17 @@
 import type { AppDispatch } from '../../../core';
 import { selectOperationGroupId } from '../../../core/state/panel/panelSlice';
+import { useIsWithinAgenticLoop } from '../../../core/state/workflow/workflowSelectors';
 import { SearchService, type DiscoveryOpArray, type DiscoveryOperation, type DiscoveryResultTypes } from '@microsoft/logic-apps-shared';
 import { SearchResultsGrid } from '@microsoft/designer-ui';
 import { useDebouncedEffect } from '@react-hookz/web';
-import type React from 'react';
-import { useCallback, useEffect, useState } from 'react';
+import type { FC } from 'react';
+import { useCallback, useEffect, useState, useMemo } from 'react';
 import { useDispatch } from 'react-redux';
 import { useDiscoveryPanelRelationshipIds } from '../../../core/state/panel/panelSelectors';
 import { useAgenticWorkflow } from '../../../core/state/designerView/designerViewSelectors';
 import { useShouldEnableParseDocumentWithMetadata } from './hooks';
 import { DefaultSearchOperationsService } from './SearchOpeationsService';
+import constants from '../../../common/constants';
 
 type SearchViewProps = {
   searchTerm: string;
@@ -24,7 +26,7 @@ type SearchViewProps = {
   displayRuntimeInfo: boolean;
 };
 
-export const SearchView: React.FC<SearchViewProps> = ({
+export const SearchView: FC<SearchViewProps> = ({
   searchTerm,
   allOperations,
   groupByConnector,
@@ -37,7 +39,9 @@ export const SearchView: React.FC<SearchViewProps> = ({
 }) => {
   const isAgenticWorkflow = useAgenticWorkflow();
   const shouldEnableParseDocWithMetadata = useShouldEnableParseDocumentWithMetadata();
-  const isRoot = useDiscoveryPanelRelationshipIds().graphId === 'root';
+  const parentGraphId = useDiscoveryPanelRelationshipIds().graphId;
+  const isWithinAgenticLoop = useIsWithinAgenticLoop(parentGraphId);
+  const isRoot = useMemo(() => parentGraphId === 'root', [parentGraphId]);
 
   const dispatch = useDispatch<AppDispatch>();
 
@@ -55,12 +59,23 @@ export const SearchView: React.FC<SearchViewProps> = ({
       if ((!isAgenticWorkflow || !isRoot) && operation.type === 'Agent') {
         return false;
       }
-      if (!isRoot && operation.id === 'initializevariable') {
+      if (!isRoot && operation.id === constants.NODE.TYPE.INITIALIZE_VARIABLE) {
+        return false;
+      }
+      if (
+        isWithinAgenticLoop &&
+        // can't filter on all control because of terminate
+        (operation.id === constants.NODE.TYPE.SWITCH ||
+          operation.id === constants.NODE.TYPE.SCOPE ||
+          operation.id === constants.NODE.TYPE.IF ||
+          operation.id === constants.NODE.TYPE.UNTIL ||
+          operation.id === constants.NODE.TYPE.FOREACH)
+      ) {
         return false;
       }
       return true;
     },
-    [isAgenticWorkflow, isRoot]
+    [isAgenticWorkflow, isRoot, isWithinAgenticLoop]
   );
 
   useDebouncedEffect(
