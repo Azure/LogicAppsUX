@@ -122,7 +122,6 @@ export const CustomOpenAIConnector = (props: ConnectionParameterProps) => {
                 setSelectedSubscriptionId(option?.key as string);
               }
             }}
-            errorMessage={errorMessage}
           >
             {isFetchingSubscription ? (
               <Spinner
