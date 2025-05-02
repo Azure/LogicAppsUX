@@ -15,17 +15,17 @@ export const queryKeys = {
   allCognitiveServiceAccountsDeployments: 'allCognitiveServiceAccountsDeployments',
 };
 
-export const useAllCognitiveServiceAccounts = () => {
+export const useAllCognitiveServiceAccounts = (subscriptionId: string) => {
   return useQuery(
-    [queryKeys.allCognitiveServiceAccounts],
+    [queryKeys.allCognitiveServiceAccounts, { subscriptionId }],
     async () => {
-      const allCognitiveServiceAccounts = await CognitiveServiceService().fetchAllCognitiveServiceAccounts();
+      const allCognitiveServiceAccounts = await CognitiveServiceService().fetchAllCognitiveServiceAccounts(subscriptionId);
       return allCognitiveServiceAccounts ?? [];
     },
     {
       ...queryOpts,
       retryOnMount: true,
-      enabled: true,
+      enabled: !!subscriptionId,
     }
   );
 };
