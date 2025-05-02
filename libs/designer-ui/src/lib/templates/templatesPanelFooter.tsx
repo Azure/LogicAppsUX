@@ -35,13 +35,13 @@ interface DividerProps extends TemplateFooterItemProps {
 export interface TemplatePanelFooterProps {
   buttonContents?: (TemplateFooterButtonProps | DividerProps)[];
 
-  primaryButtonText: string | ReactNode;
-  primaryButtonOnClick: () => void | Promise<void>;
+  primaryButtonText?: string | ReactNode;
+  primaryButtonOnClick?: () => void | Promise<void>;
   primaryButtonDisabled?: boolean;
   showPrimaryButton?: boolean;
 
-  secondaryButtonText: string;
-  secondaryButtonOnClick: () => void;
+  secondaryButtonText?: string;
+  secondaryButtonOnClick?: () => void;
   secondaryButtonDisabled?: boolean;
 
   thirdButtonText?: string;
