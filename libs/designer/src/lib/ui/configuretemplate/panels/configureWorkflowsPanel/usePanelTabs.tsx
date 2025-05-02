@@ -52,11 +52,11 @@ export const useConfigureWorkflowPanelTabs = ({
     setSelectedWorkflowsList((prevSelectedWorkflows) => {
       const newSelectedWorkflows: Record<string, Partial<WorkflowTemplateData>> = {};
       for (const normalizedWorkflowId of normalizedWorkflowIds) {
-        const [preSelectedWorkflowId, prevSelectedWorkflow] = Object.entries(prevSelectedWorkflows).find(([, workflow]) =>
+        const [prevSelectedWorkflowId, prevSelectedWorkflow] = Object.entries(prevSelectedWorkflows).find(([, workflow]) =>
           equals(workflow.manifest?.metadata?.workflowSourceId, normalizedWorkflowId)
         ) ?? [undefined, undefined];
 
-        const workflowId = preSelectedWorkflowId ?? normalizedWorkflowId;
+        const workflowId = prevSelectedWorkflowId ?? normalizedWorkflowId;
 
         newSelectedWorkflows[workflowId] = prevSelectedWorkflow
           ? prevSelectedWorkflow
