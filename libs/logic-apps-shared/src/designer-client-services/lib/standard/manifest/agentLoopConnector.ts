@@ -24,7 +24,7 @@ export default {
               parameterSource: 'AppConfiguration',
               uiDefinition: {
                 displayName: 'API endpoint',
-                description: 'Endpoint will be automatically populated based on the selected resource',
+                description: 'Endpoint will be filled automatically.',
                 tooltip: 'The endpoint of the resource that hosts the AI model',
                 constraints: {
                   clearText: true,
@@ -37,7 +37,7 @@ export default {
               parameterSource: 'AppConfiguration',
               uiDefinition: {
                 displayName: 'API key',
-                description: 'Key will be automatically populated based on the selected resource',
+                description: 'Key will be filled automatically.',
                 tooltip: 'The API key to access the resource that hosts the AI model',
                 constraints: {
                   clearText: false,

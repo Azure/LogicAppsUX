@@ -17,11 +17,11 @@ export const useAllCognitiveServiceAccounts = () => {
     [queryKeys.allCognitiveServiceAccounts],
     async () => {
       const allCognitiveServiceAccounts = await CognitiveServiceService().fetchAllCognitiveServiceAccounts();
-      return allCognitiveServiceAccounts;
+      return allCognitiveServiceAccounts ?? [];
     },
     {
       ...queryOpts,
-      retryOnMount: false,
+      retryOnMount: true,
       enabled: true,
     }
   );

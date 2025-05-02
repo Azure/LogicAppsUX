@@ -71,6 +71,7 @@ import type { QueryClient } from '@tanstack/react-query';
 import { useDispatch, useSelector } from 'react-redux';
 import { useHostingPlan } from '../../state/workflowLoadingSelectors';
 import CodeViewEditor from './CodeView';
+import { CustomConnectionParameterEditorService } from './Services/customConnectionParameterEditorService';
 
 const apiVersion = '2020-06-01';
 const httpClient = new HttpClient();
@@ -928,6 +929,8 @@ const getDesignerServices = (
     httpClient,
   });
 
+  const connectionParameterEditorService = new CustomConnectionParameterEditorService();
+
   return {
     appService,
     connectionService,
@@ -946,6 +949,7 @@ const getDesignerServices = (
     chatbotService,
     customCodeService,
     cognitiveServiceService,
+    connectionParameterEditorService,
     userPreferenceService: new BaseUserPreferenceService(),
     experimentationService: new BaseExperimentationService(),
   };
