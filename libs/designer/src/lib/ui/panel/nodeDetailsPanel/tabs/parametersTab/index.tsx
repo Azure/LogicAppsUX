@@ -79,6 +79,8 @@ import { useIntl } from 'react-intl';
 import { useDispatch, useSelector } from 'react-redux';
 import { ConnectionInline } from './connectionInline';
 import { ConnectionsSubMenu } from './connectionsSubMenu';
+import { isAgentConnector } from '../../../../../common/utilities/Utils';
+import { useCognitiveServiceAccountDeploymentsForNode } from '../../../connectionsPanel/createConnection/custom/useCognitiveService';
 
 // TODO: Add a readonly per settings section/group
 export interface ParametersTabProps extends PanelTabProps {
@@ -228,6 +230,9 @@ const ParameterSection = ({
   const isTrigger = useSelector((state: RootState) => isRootNodeInGraph(nodeId, 'root', state.workflow.nodesMetadata));
   const operationInfo = useOperationInfo(nodeId);
   const dependencies = useDependencies(nodeId);
+
+  // Specific for agentic scenarios
+  const { data: deploymentsForCognitiveServiceAccount } = useCognitiveServiceAccountDeploymentsForNode(nodeId, operationInfo?.connectorId);
   const { variables, upstreamNodeIds, operationDefinition, connectionReference, idReplacements, workflowParameters, nodesMetadata } =
     useSelector((state: RootState) => {
       return {
@@ -604,7 +609,13 @@ const ParameterSection = ({
         editorViewModel: remappedEditorViewModel,
         conditionalVisibility,
       };
-      const { editor, editorOptions } = getEditorAndOptions(operationInfo, param, upstreamNodeIds ?? [], variables);
+      const { editor, editorOptions } = getEditorAndOptions(
+        operationInfo,
+        param,
+        upstreamNodeIds ?? [],
+        variables,
+        deploymentsForCognitiveServiceAccount ?? []
+      );
 
       const { value: remappedValues } = isRecordNotEmpty(idReplacements) ? remapValueSegmentsWithNewIds(value, idReplacements) : { value };
       const isCodeEditor = editor?.toLowerCase() === constants.EDITOR.CODE;
@@ -697,7 +708,8 @@ export const getEditorAndOptions = (
   operationInfo: OperationInfo,
   parameter: ParameterInfo,
   upstreamNodeIds: string[],
-  variables: Record<string, VariableDeclaration[]>
+  variables: Record<string, VariableDeclaration[]>,
+  deploymentsForCognitiveServiceAccount: any[] = []
 ): { editor?: string; editorOptions?: any } => {
   const customEditor = EditorService()?.getEditor({
     operationInfo,
@@ -724,6 +736,22 @@ export const getEditorAndOptions = (
             value: variable.name,
             displayName: variable.name,
           })),
+      },
+    };
+  }
+
+  if (
+    equals(editor, 'combobox') &&
+    isAgentConnector(operationInfo?.connectorId ?? '') &&
+    equals(parameter.parameterKey, 'inputs.$.deploymentId', true)
+  ) {
+    return {
+      editor,
+      editorOptions: {
+        options: deploymentsForCognitiveServiceAccount.map((deployment: any) => ({
+          value: deployment.name,
+          displayName: `${deployment.name} ${deployment.properties?.model?.name ? `(${deployment.properties?.model?.name})` : ''}`,
+        })),
       },
     };
   }

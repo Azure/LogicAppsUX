@@ -43,10 +43,11 @@ export default {
       properties: {
         deploymentId: {
           type: 'string',
-          title: 'Deployment Model',
-          description: 'The deployment model connection',
+          title: 'Deployment Model Name',
+          description: 'The deployment name of the model you want to use.',
           'x-ms-connection-required': true,
           'x-ms-visibility': 'important',
+          'x-ms-editor': 'combobox',
         },
         agentModelType: {
           title: 'Agent model type',

@@ -4,6 +4,7 @@ export interface ICognitiveServiceService {
   fetchAllCognitiveServiceAccounts(): Promise<any>;
   fetchCognitiveServiceAccountById(accountId: string): Promise<any>;
   fetchCognitiveServiceAccountKeysById(accountId: string): Promise<any>;
+  fetchAllCognitiveServiceAccountDeployments(accountId: string): Promise<any>;
 }
 
 let service: ICognitiveServiceService;

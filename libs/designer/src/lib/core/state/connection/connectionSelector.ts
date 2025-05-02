@@ -1,5 +1,5 @@
 import type { ConnectionMapping, ConnectionReference, ConnectionReferences } from '../../../common/models/workflow';
-import { useConnectionResource } from '../../queries/connections';
+import { useConnectionResource, useConnectionsForConnector } from '../../queries/connections';
 import type { RootState } from '../../store';
 import { getConnectionReference, isConnectionMultiAuthManagedIdentityType } from '../../utils/connectors/connections';
 import { useNodeConnectorId } from '../operation/operationSelector';
@@ -153,4 +153,12 @@ export const getConnectionReferenceForNodeId = (
   const { connectionReferences, connectionsMapping } = connectionState;
   const referenceKey = connectionsMapping[nodeId];
   return referenceKey ? { connectionReference: connectionReferences[referenceKey], referenceKey } : undefined;
+};
+
+export const useSelectedConnection = (nodeId: string) => {
+  const connector = useConnectorByNodeId(nodeId);
+  const connectionQuery = useConnectionsForConnector(connector?.id ?? '');
+  const connections = useMemo(() => connectionQuery?.data ?? [], [connectionQuery]);
+  const currentConnectionId = useNodeConnectionId(nodeId);
+  return connections.find((connection) => connection.id === currentConnectionId);
 };

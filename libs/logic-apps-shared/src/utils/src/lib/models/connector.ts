@@ -150,6 +150,7 @@ export type ConnectionAlternativeParameters = Record<string, ConnectionParameter
 
 export interface ConnectionParameterMetadata {
   sourceType?: string;
+  value?: string;
 }
 
 export const ConnectionParameterSource = {
