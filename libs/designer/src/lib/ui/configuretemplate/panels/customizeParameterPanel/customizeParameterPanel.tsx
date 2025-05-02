@@ -1,7 +1,7 @@
 import type { AppDispatch, RootState } from '../../../../core/state/templates/store';
 import { useDispatch, useSelector } from 'react-redux';
 import { closePanel, TemplatePanelView } from '../../../../core/state/templates/panelSlice';
-import { TemplatesPanelFooter, TemplatesPanelHeader } from '@microsoft/designer-ui';
+import { type TemplatePanelFooterProps, TemplatesPanelFooter, TemplatesPanelHeader } from '@microsoft/designer-ui';
 import { useCallback, useMemo, useState } from 'react';
 import { useIntl } from 'react-intl';
 import { Panel, PanelType } from '@fluentui/react';
@@ -62,32 +62,41 @@ export const CustomizeParameterPanel = () => {
     dispatch(closePanel());
   }, [dispatch]);
 
-  const footerContent = useMemo(() => {
+  const footerContent: TemplatePanelFooterProps = useMemo(() => {
     return {
-      primaryButtonText: intl.formatMessage({
-        defaultMessage: 'Save',
-        id: '9klmbJ',
-        description: 'Button text for saving changes for parameter in the customize parameter panel',
-      }),
-      primaryButtonOnClick: () => {
-        dispatch(updateWorkflowParameter({ parameterId: parameterId as string, definition: selectedParameterDefinition() }));
-        if (runValidation) {
-          dispatch(validateParameterDetails());
-        }
-      },
-      primaryButtonDisabled: !isDirty,
-      secondaryButtonText: intl.formatMessage({
-        defaultMessage: 'Cancel',
-        id: '75zXUl',
-        description: 'Button text for closing the panel',
-      }),
-      secondaryButtonOnClick: () => {
-        dispatch(closePanel());
-      },
+      buttonContents: [
+        {
+          type: 'button',
+          text: intl.formatMessage({
+            defaultMessage: 'Save',
+            id: '9klmbJ',
+            description: 'Button text for saving changes for parameter in the customize parameter panel',
+          }),
+          appreance: 'primary',
+          onClick: () => {
+            dispatch(updateWorkflowParameter({ parameterId: parameterId as string, definition: selectedParameterDefinition() }));
+            if (runValidation) {
+              dispatch(validateParameterDetails());
+            }
+          },
+          disabled: !isDirty,
+        },
+        {
+          type: 'button',
+          text: intl.formatMessage({
+            defaultMessage: 'Cancel',
+            id: '75zXUl',
+            description: 'Button text for closing the panel',
+          }),
+          onClick: () => {
+            dispatch(closePanel());
+          },
+        },
+      ],
     };
   }, [dispatch, intl, isDirty, parameterId, runValidation, selectedParameterDefinition]);
 
-  const onRenderFooterContent = useCallback(() => <TemplatesPanelFooter showPrimaryButton={true} {...footerContent} />, [footerContent]);
+  const onRenderFooterContent = useCallback(() => <TemplatesPanelFooter {...footerContent} />, [footerContent]);
 
   return (
     <Panel

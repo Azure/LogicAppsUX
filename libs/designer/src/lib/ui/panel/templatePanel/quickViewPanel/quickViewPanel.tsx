@@ -59,6 +59,8 @@ export const QuickViewPanel = ({
       templateId: templateName ?? '',
       workflowAppName,
       isMultiWorkflow: false,
+      showCreate,
+      showCloseButton,
     },
     onClose
   );
@@ -89,15 +91,8 @@ export const QuickViewPanel = ({
 
   const selectedTabProps = selectedTabId ? panelTabs?.find((tab) => tab.id === selectedTabId) : panelTabs[0];
   const onRenderFooterContent = useCallback(
-    () =>
-      selectedTabProps?.footerContent ? (
-        <TemplatesPanelFooter
-          showPrimaryButton={showCreate}
-          secondaryButtonDisabled={!showCloseButton}
-          {...selectedTabProps?.footerContent}
-        />
-      ) : null,
-    [selectedTabProps?.footerContent, showCloseButton, showCreate]
+    () => (selectedTabProps?.footerContent ? <TemplatesPanelFooter {...selectedTabProps?.footerContent} /> : null),
+    [selectedTabProps?.footerContent]
   );
 
   if (!manifest) {

@@ -84,7 +84,7 @@ export const ConfigureTemplateWizard = () => {
       {!isPanelOpen && <TemplateInfoToast {...toasterData} />}
       <TemplateContent className="msla-template-quickview-tabs" tabs={panelTabs} selectedTab={selectedTabId} selectTab={handleSelectTab} />
       <div className="msla-template-overview-footer">
-        {selectedTabProps?.footerContent ? <TemplatesPanelFooter showPrimaryButton={true} {...selectedTabProps?.footerContent} /> : null}
+        {selectedTabProps?.footerContent ? <TemplatesPanelFooter {...selectedTabProps?.footerContent} /> : null}
       </div>
 
       <div

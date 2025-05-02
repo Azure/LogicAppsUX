@@ -27,13 +27,23 @@ export const connectionsTab = (
     description: 'The description for the connections tab on the configure template wizard',
   }),
   footerContent: {
-    primaryButtonText: resources.PreviousButtonText,
-    primaryButtonOnClick: () => {
-      dispatch(selectWizardTab(constants.CONFIGURE_TEMPLATE_WIZARD_TAB_NAMES.WORKFLOWS));
-    },
-    secondaryButtonText: resources.NextButtonText,
-    secondaryButtonOnClick: () => {
-      dispatch(selectWizardTab(constants.CONFIGURE_TEMPLATE_WIZARD_TAB_NAMES.PARAMETERS));
-    },
+    buttonContents: [
+      {
+        type: 'button',
+        text: resources.PreviousButtonText,
+        appreance: 'primary',
+        onClick: () => {
+          dispatch(selectWizardTab(constants.CONFIGURE_TEMPLATE_WIZARD_TAB_NAMES.WORKFLOWS));
+        },
+      },
+      {
+        type: 'button',
+        text: resources.NextButtonText,
+        appreance: 'primary',
+        onClick: () => {
+          dispatch(selectWizardTab(constants.CONFIGURE_TEMPLATE_WIZARD_TAB_NAMES.PARAMETERS));
+        },
+      },
+    ],
   },
 });

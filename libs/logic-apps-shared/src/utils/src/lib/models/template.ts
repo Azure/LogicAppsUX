@@ -93,6 +93,8 @@ export interface TemplateContext {
   templateId: string;
   workflowAppName?: string;
   isMultiWorkflow: boolean;
+  showCreate: boolean;
+  showCloseButton: boolean;
 }
 
 interface ContentInfo<T> {

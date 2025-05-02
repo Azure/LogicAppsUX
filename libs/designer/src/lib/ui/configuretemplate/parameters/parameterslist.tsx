@@ -94,7 +94,7 @@ export const TemplateParametersList = () => {
 
   if (Object.keys(parameterDefinitions).length === 0) {
     return (
-      <div style={{ overflowX: 'auto', paddingTop: '12px' }}>
+      <div className="msla-templates-wizard-tab-content" style={{ overflowX: 'auto', paddingTop: '12px' }}>
         <Text>{resourceStrings.NoParameterInTemplate}</Text>
       </div>
     );

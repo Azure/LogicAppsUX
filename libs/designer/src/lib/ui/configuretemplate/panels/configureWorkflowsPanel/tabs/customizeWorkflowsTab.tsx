@@ -33,28 +33,36 @@ export const customizeWorkflowsTab = (
   tabStatusIcon: hasError ? 'error' : undefined,
   content: <CustomizeWorkflows selectedWorkflowsList={selectedWorkflowsList} updateWorkflowDataField={updateWorkflowDataField} />,
   footerContent: {
-    primaryButtonText: isSaving ? (
-      <Spinner size="tiny" />
-    ) : (
-      intl.formatMessage({
-        defaultMessage: 'Save changes',
-        id: '3jqHdn',
-        description: 'Button text for saving changes in the configure workflows panel',
-      })
-    ),
-    primaryButtonOnClick: () => {
-      onSave?.();
-      // dispatch(closePanel());
-    },
-    primaryButtonDisabled: isPrimaryButtonDisabled || isSaving,
-    secondaryButtonText: intl.formatMessage({
-      defaultMessage: 'Cancel',
-      id: '75zXUl',
-      description: 'Button text for closing the panel',
-    }),
-    secondaryButtonOnClick: () => {
-      dispatch(closePanel());
-    },
-    secondaryButtonDisabled: isSaving,
+    buttonContents: [
+      {
+        type: 'button',
+        text: isSaving ? (
+          <Spinner size="tiny" />
+        ) : (
+          intl.formatMessage({
+            defaultMessage: 'Save changes',
+            id: '3jqHdn',
+            description: 'Button text for saving changes in the configure workflows panel',
+          })
+        ),
+        onClick: () => {
+          onSave?.();
+        },
+        appreance: 'primary',
+        disabled: isPrimaryButtonDisabled || isSaving,
+      },
+      {
+        type: 'button',
+        text: intl.formatMessage({
+          defaultMessage: 'Cancel',
+          id: '75zXUl',
+          description: 'Button text for closing the panel',
+        }),
+        onClick: () => {
+          dispatch(closePanel());
+        },
+        disabled: isSaving,
+      },
+    ],
   },
 });

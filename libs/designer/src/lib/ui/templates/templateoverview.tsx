@@ -75,6 +75,8 @@ export const TemplateOverview = ({
       templateId: templateName ?? '',
       workflowAppName,
       isMultiWorkflow: true,
+      showCreate: true,
+      showCloseButton,
     },
     onClose
   ).footerContent;
@@ -118,7 +120,7 @@ export const TemplateOverview = ({
         </div>
       </div>
       <div className="msla-template-overview-footer">
-        <TemplatesPanelFooter showPrimaryButton={true} secondaryButtonDisabled={!showCloseButton} {...footerContentProps} />
+        <TemplatesPanelFooter {...footerContentProps} />
       </div>
 
       {selectedWorkflow ? (

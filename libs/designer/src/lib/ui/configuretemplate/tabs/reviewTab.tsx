@@ -16,13 +16,21 @@ export const reviewTab = (
   tabStatusIcon,
   disabled,
   footerContent: {
-    primaryButtonText: resources.PreviousButtonText,
-    primaryButtonOnClick: () => {
-      dispatch(selectWizardTab(constants.CONFIGURE_TEMPLATE_WIZARD_TAB_NAMES.PROFILE));
-    },
-    secondaryButtonText: resources.NextButtonText,
-    secondaryButtonOnClick: () => {
-      dispatch(selectWizardTab(constants.CONFIGURE_TEMPLATE_WIZARD_TAB_NAMES.PUBLISH));
-    },
+    buttonContents: [
+      {
+        type: 'button',
+        text: resources.PreviousButtonText,
+        onClick: () => {
+          dispatch(selectWizardTab(constants.CONFIGURE_TEMPLATE_WIZARD_TAB_NAMES.PROFILE));
+        },
+      },
+      {
+        type: 'button',
+        text: resources.SaveButtonText,
+        appreance: 'primary',
+        onClick: () => {},
+        //TODO
+      },
+    ],
   },
 });

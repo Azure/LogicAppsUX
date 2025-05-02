@@ -23,7 +23,7 @@ import { useEffect, useCallback } from 'react';
 
 export const useConfigureTemplateWizardTabs = ({
   onSaveWorkflows,
-  onPublish,
+  // onPublish,
 }: {
   onSaveWorkflows: (isMultiWorkflow: boolean) => void;
   onPublish: () => void;
@@ -117,7 +117,7 @@ export const useConfigureTemplateWizardTabs = ({
       tabStatusIcon: undefined,
       disabled: !enableWizard || isWizardUpdating,
     }),
-    publishTab(intl, resources, dispatch, onPublish, {
+    publishTab(intl, resources, {
       tabStatusIcon: undefined,
       disabled: !enableWizard || isWizardUpdating,
     }),
