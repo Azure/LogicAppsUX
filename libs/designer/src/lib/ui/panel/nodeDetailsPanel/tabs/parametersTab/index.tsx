@@ -71,7 +71,16 @@ import type {
   PanelTabProps,
   InitializeVariableProps,
 } from '@microsoft/designer-ui';
-import { EditorService, equals, getPropertyValue, getRecordEntry, isRecordNotEmpty, SUBGRAPH_TYPES } from '@microsoft/logic-apps-shared';
+import {
+  clone,
+  EditorService,
+  equals,
+  getPropertyValue,
+  getRecordEntry,
+  guid,
+  isRecordNotEmpty,
+  SUBGRAPH_TYPES,
+} from '@microsoft/logic-apps-shared';
 import type { OperationInfo } from '@microsoft/logic-apps-shared';
 import type React from 'react';
 import { useCallback, useEffect, useMemo, useState } from 'react';
@@ -263,7 +272,9 @@ const ParameterSection = ({
   const onValueChange = useCallback(
     (id: string, newState: ChangeState, skipStateSave?: boolean) => {
       const { value, viewModel } = newState;
-      const parameter = nodeInputs.parameterGroups[group.id].parameters.find((param: any) => param.id === id);
+      const parameterGroup = nodeInputs.parameterGroups[group.id];
+      const parameter = parameterGroup.parameters.find((param: any) => param.id === id);
+      const updatedDependencies = clone(dependencies);
 
       const propertiesToUpdate: Partial<ParameterInfo> = {
         value,
@@ -333,6 +344,73 @@ const ParameterSection = ({
         dispatch(addOrUpdateCustomCode({ nodeId, fileData, fileExtension, fileName }));
       }
 
+      if (isAgentConnectorAndDeploymentId(operationInfo.connectorId ?? '', parameter?.parameterKey ?? '')) {
+        const deploymentInfo =
+          value.length > 0
+            ? deploymentsForCognitiveServiceAccount?.find((deployment: any) => deployment.name === value[0]?.value)
+            : undefined;
+
+        if (!updatedDependencies.inputs) {
+          updatedDependencies.inputs = {};
+        }
+
+        const getDependentInputParameter = (key: string, apiValue?: any) => {
+          const parameterAgentDeploymentName = parameterGroup.parameters.find((param) => equals(key, param.parameterKey, true));
+
+          const value = apiValue ?? parameterAgentDeploymentName?.schema?.default;
+
+          if (value) {
+            return {
+              definition: parameterAgentDeploymentName?.schema,
+              dependencyType: 'AgentSchema' as any,
+              dependentParameters: {
+                [id]: {
+                  isValid: true,
+                },
+              },
+              parameter: {
+                key: key,
+                type: parameterAgentDeploymentName?.type ?? '',
+                name: parameterAgentDeploymentName?.parameterName ?? '',
+                value: [
+                  {
+                    value: value,
+                    type: 'literal',
+                    id: guid(),
+                  },
+                ],
+              },
+            };
+          }
+
+          return undefined;
+        };
+
+        const agentDeploymentKeys = [
+          {
+            key: 'inputs.$.agentModelSettings.deploymentModelProperties.name',
+            default: deploymentInfo?.properties?.model?.name,
+          },
+
+          {
+            key: 'inputs.$.agentModelSettings.deploymentModelProperties.format',
+            default: deploymentInfo?.properties?.model?.format,
+          },
+
+          {
+            key: 'inputs.$.agentModelSettings.deploymentModelProperties.version',
+            default: deploymentInfo?.properties?.model?.version,
+          },
+        ];
+
+        for (const entry of agentDeploymentKeys) {
+          const info = getDependentInputParameter(entry.key, entry.default);
+          if (info) {
+            updatedDependencies.inputs[entry.key] = info;
+          }
+        }
+      }
+
       dispatch(
         updateParameterAndDependencies({
           nodeId,
@@ -343,7 +421,7 @@ const ParameterSection = ({
           operationInfo,
           connectionReference,
           nodeInputs,
-          dependencies,
+          dependencies: updatedDependencies,
           operationDefinition,
           skipStateSave,
         })
@@ -357,6 +435,7 @@ const ParameterSection = ({
       dispatch,
       isTrigger,
       operationInfo,
+      deploymentsForCognitiveServiceAccount,
       connectionReference,
       dependencies,
       operationDefinition,
@@ -704,6 +783,10 @@ const getSubMenu = (parameter: ParameterInfo) => {
   return null;
 };
 
+const isAgentConnectorAndDeploymentId = (id: string, key: string): boolean => {
+  return isAgentConnector(id) && equals(key, 'inputs.$.deploymentId', true);
+};
+
 export const getEditorAndOptions = (
   operationInfo: OperationInfo,
   parameter: ParameterInfo,
@@ -740,11 +823,7 @@ export const getEditorAndOptions = (
     };
   }
 
-  if (
-    equals(editor, 'combobox') &&
-    isAgentConnector(operationInfo?.connectorId ?? '') &&
-    equals(parameter.parameterKey, 'inputs.$.deploymentId', true)
-  ) {
+  if (equals(editor, 'combobox') && isAgentConnectorAndDeploymentId(operationInfo.connectorId ?? '', parameter.parameterKey)) {
     return {
       editor,
       editorOptions: {
