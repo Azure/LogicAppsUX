@@ -1,4 +1,12 @@
 # Logic Apps Designer
+## [5.97.0](https://github.com/Azure/LogicAppsUX/compare/v5.96.0...v5.97.0) (2025-05-02)
+
+
+### Bug Fixes
+
+* **designer:** Dropdown items for deployment names ([#7154](https://github.com/Azure/LogicAppsUX/issues/7154)) ([c66ec52](https://github.com/Azure/LogicAppsUX/commit/c66ec52c5e3b3e659c77d93756e739b4dd8446c4))
+* **Designer:** Fixed standalone oauth for testing ([#7152](https://github.com/Azure/LogicAppsUX/issues/7152)) ([0fdc2c0](https://github.com/Azure/LogicAppsUX/commit/0fdc2c0472bc4ee448ad5ab874fced7fcf7d717e))
+
 ## [5.96.0](https://github.com/Azure/LogicAppsUX/compare/v5.95.0...v5.96.0) (2025-05-02)
 
 
