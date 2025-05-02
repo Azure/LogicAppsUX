@@ -57,7 +57,7 @@ export interface OAuthPopupOptions {
 }
 
 const popupId = 'msla-logicapps-oauthpopup';
-const redirectUrl = `https://ema.hosting.portal.azure.net/ema/Content/2.30508.1.8/Html/authredirectv2.html?pid=${popupId}`;
+const redirectUrl = `https://localhost:4200/authredirect.html?pid=${popupId}`;
 
 export class StandaloneOAuthPopup implements IOAuthPopup {
   public loginPromise: Promise<LoginResult>;
