@@ -12,7 +12,6 @@ export interface ResolvedParameter extends InputParameter {
 
 export interface InputParameter extends ParameterBase {
   in?: string;
-  value?: any;
   // This defines a complex type for the object supported by the editors.
   schema?: any;
   suppressCasting?: boolean;
@@ -241,6 +240,7 @@ interface ParameterBase {
   name: string;
   type: string;
   default?: any;
+  value?: any;
   dependencies?: InputDependencies;
   description?: string;
   dynamicSchema?: ParameterDynamicSchema;

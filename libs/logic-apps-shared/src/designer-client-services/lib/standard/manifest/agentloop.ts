@@ -166,10 +166,33 @@ export default {
                 },
               },
             },
+            deploymentModelProperties: {
+              type: 'object',
+              properties: {
+                name: {
+                  title: 'Model name',
+                  description: 'Name of the model which you want to use for the agent',
+                  type: 'string',
+                  default: 'gpt-4.1',
+                },
+                format: {
+                  title: 'Model format',
+                  description: 'Format of the model you are using',
+                  type: 'string',
+                  default: 'OpenAI',
+                },
+                version: {
+                  title: 'Model version',
+                  description: 'Version of the model you are using',
+                  type: 'string',
+                  default: '2025-04-14',
+                },
+              },
+            },
           },
         },
       },
-      required: ['deploymentId', 'messages', 'agentModelType'],
+      required: ['deploymentId', 'messages', 'agentModelType', 'deploymentModelProperties'],
     },
     outputs: {
       type: 'object',

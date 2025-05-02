@@ -973,4 +973,5 @@ export default {
     INPUT: '-inputchannel-',
     OUTPUT: '-outputchannel-',
   },
+  SUPPORTED_AGENT_MODELS: ['gpt-35-turbo', 'gpt-4', 'gpt-4.1', 'gpt-4.1-mini', 'gpt-4.1-nano', 'gpt-4o', 'gpt-4o-mini'],
 };
