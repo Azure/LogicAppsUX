@@ -19,13 +19,26 @@ export default {
         {
           name: 'Key',
           parameters: {
+            cognitiveServiceAccountId: {
+              type: 'string',
+              parameterSource: 'AppConfiguration',
+              uiDefinition: {
+                displayName: 'Azure Cognitive Service Account',
+                description: 'Select the Azure Cognitive Service Account to use for this connection',
+                tooltip: 'Select the Azure Cognitive Service Account to use for this connection',
+                constraints: {
+                  clearText: true,
+                  required: 'true',
+                },
+              },
+            },
             openAIEndpoint: {
               type: 'string',
               parameterSource: 'AppConfiguration',
               uiDefinition: {
-                displayName: 'AI endpoint',
-                description: 'The endpoint of the resource that hosts the AI model',
-                tooltip: 'Provide the AI endpoint',
+                displayName: 'API endpoint',
+                description: 'Endpoint will be filled automatically.',
+                tooltip: 'The endpoint of the resource that hosts the AI model',
                 constraints: {
                   clearText: true,
                   required: 'true',
@@ -37,8 +50,8 @@ export default {
               parameterSource: 'AppConfiguration',
               uiDefinition: {
                 displayName: 'API key',
-                description: 'The API key to access the resource that hosts the AI model',
-                tooltip: 'Provide the AI API key',
+                description: 'Key will be filled automatically.',
+                tooltip: 'The API key to access the resource that hosts the AI model',
                 constraints: {
                   clearText: false,
                   required: 'true',

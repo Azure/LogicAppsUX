@@ -304,7 +304,12 @@ export const RecommendationPanelContext = (props: CommonPanelProps) => {
                 />
               ) : (
                 <>
-                  <ActionSpotlight onConnectorSelected={onConnectorCardSelected} onOperationSelected={onOperationClick} filters={filters} />
+                  <ActionSpotlight
+                    onConnectorSelected={onConnectorCardSelected}
+                    onOperationSelected={onOperationClick}
+                    filters={filters}
+                    allOperations={allOperations}
+                  />
                   <BrowseView
                     filters={filters}
                     isLoadingOperations={isLoadingOperations}

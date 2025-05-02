@@ -1,6 +1,6 @@
-import { getSettingLabel, SettingToggle, type PanelTabFn, type PanelTabProps } from '@microsoft/designer-ui';
+import { getSettingLabel, type PanelTabFn, type PanelTabProps } from '@microsoft/designer-ui';
 import constants from '../../../../../common/constants';
-import { MessageBarBody } from '@fluentui/react-components';
+import { MessageBarBody, Radio, RadioGroup, type RadioGroupOnChangeData } from '@fluentui/react-components';
 import { useCallback, useMemo, useState } from 'react';
 import { useIntl } from 'react-intl';
 import { useDispatch, useSelector } from 'react-redux';
@@ -41,14 +41,14 @@ export const ChannelsTab: React.FC<PanelTabProps> = (props) => {
         description: 'Channel not supported message',
       }),
       INPUT_TITLE: intl.formatMessage({
-        defaultMessage: 'Enable input channel',
-        id: 'YfieDm',
+        defaultMessage: 'Allow only input channels',
+        id: 'oxvDB0',
         description: 'Channel input.',
       }),
-      OUTPUT_TITLE: intl.formatMessage({
-        defaultMessage: 'Enable output channel',
-        id: 'BgLF7r',
-        description: 'Channel output.',
+      INPUT_OUTPUT_TITLE: intl.formatMessage({
+        defaultMessage: 'Allow both input and output channels',
+        id: 'XsgpXt',
+        description: 'Channel input/output.',
       }),
       INPUT_OUTPUT_DESCRIPTION: intl.formatMessage({
         defaultMessage:
@@ -57,9 +57,8 @@ export const ChannelsTab: React.FC<PanelTabProps> = (props) => {
         description: 'Input and output channel configuration.',
       }),
       INPUT_DESCRIPTION: intl.formatMessage({
-        defaultMessage:
-          'Send messages to the agent while the workflow is running. This will keep the agent in running state until the user responds.',
-        id: 'zeb1vr',
+        defaultMessage: 'Send messages to the agent while the workflow is running. This will pause the workflow until the agent responds.',
+        id: 'Kr/FEL',
         description: 'Input channel info config.',
       }),
       CHANNEL_DESCRIPTION: intl.formatMessage({
@@ -67,6 +66,17 @@ export const ChannelsTab: React.FC<PanelTabProps> = (props) => {
           'Channels are where you and the agent can send and receive messages. You can communicate with the agent directly in the chat, or use the URL provided in the response header of your workflow trigger to integrate with a front-end chat interface or chat widget.',
         id: 'jR/Dwl',
         description: 'Channel description.',
+      }),
+      NO_CHANNEL_TITLE: intl.formatMessage({
+        defaultMessage: 'Do not allow channels',
+        id: 'Iasy6i',
+        description: 'No channel selected.',
+      }),
+      NO_CHANNEL_DESCRIPTION: intl.formatMessage({
+        defaultMessage:
+          'Disable all channels. The agent will not be able to send or receive messages directly from the user while running.',
+        id: 'ag7IUL',
+        description: 'No channel selected.',
       }),
       LEARN_MORE: intl.formatMessage({
         defaultMessage: 'Learn more',
@@ -169,6 +179,20 @@ export const ChannelsTab: React.FC<PanelTabProps> = (props) => {
     [dispatch, channel, inputNodeId, outputNodeId, inputChannelParameters, outputChannelParameters]
   );
 
+  const onOptionChange = useCallback(
+    (option: string) => {
+      if (option === 'none') {
+        disableOperation({ input: true, output: true });
+      } else if (option === 'input') {
+        initializeOperation({ input: true, output: false });
+        disableOperation({ input: false, output: true });
+      } else if (option === 'input-ouput') {
+        initializeOperation({ input: true, output: true });
+      }
+    },
+    [disableOperation, initializeOperation]
+  );
+
   return (
     <>
       {supportedChannels.length === 0 || !channel ? (
@@ -178,35 +202,38 @@ export const ChannelsTab: React.FC<PanelTabProps> = (props) => {
       ) : (
         <div className="msla-channel-settings-container">
           <div className="msla-channel-title-description">
-            {stringResources.CHANNEL_DESCRIPTION} <Link href={'https://aka.ms/agent-channels'}>{stringResources.LEARN_MORE}</Link>
+            {stringResources.CHANNEL_DESCRIPTION}{' '}
+            <Link href={'https://aka.ms/agent-channels'} target="_blank" style={{ fontSize: 12, fontStyle: 'italic' }}>
+              {stringResources.LEARN_MORE}
+            </Link>
           </div>
           <div className="msla-channel-settings">
-            <SettingToggle
-              readOnly={isLoading}
-              checked={!!inputChannelParameters}
-              onToggleInputChange={(_, checked?: boolean) => {
-                if (checked) {
-                  initializeOperation({ input: true, output: false });
-                } else {
-                  disableOperation({ input: true, output: true });
-                }
-              }}
-              customLabel={getSettingLabel(stringResources.INPUT_TITLE, undefined, stringResources.INPUT_DESCRIPTION)}
-              ariaLabel={stringResources.INPUT_TITLE}
-            />
-            <SettingToggle
-              readOnly={isLoading || !inputChannelParameters}
-              checked={!!outputChannelParameters}
-              onToggleInputChange={(_, checked?: boolean) => {
-                if (checked) {
-                  initializeOperation({ input: false, output: true });
-                } else {
-                  disableOperation({ input: false, output: true });
-                }
-              }}
-              customLabel={getSettingLabel(stringResources.OUTPUT_TITLE, undefined, stringResources.INPUT_OUTPUT_DESCRIPTION)}
-              ariaLabel={stringResources.OUTPUT_TITLE}
-            />
+            <RadioGroup
+              value={inputChannelParameters && outputChannelParameters ? 'input-ouput' : inputChannelParameters ? 'input' : 'none'}
+              className={'msla-channel-settings-radio-group'}
+              required={true}
+              disabled={isLoading}
+              onChange={(_e: any, option: RadioGroupOnChangeData) => onOptionChange(option.value)}
+            >
+              <Radio
+                className={'msla-channel-settings-radio'}
+                value={'input-ouput'}
+                key={'input-output'}
+                label={getSettingLabel(stringResources.INPUT_OUTPUT_TITLE, undefined, stringResources.INPUT_OUTPUT_DESCRIPTION)}
+              />
+              <Radio
+                className={'msla-channel-settings-radio'}
+                value={'input'}
+                key={'input'}
+                label={getSettingLabel(stringResources.INPUT_TITLE, undefined, stringResources.INPUT_DESCRIPTION)}
+              />
+              <Radio
+                className={'msla-channel-settings-radio'}
+                value={'none'}
+                key={'none'}
+                label={getSettingLabel(stringResources.NO_CHANNEL_TITLE, undefined, stringResources.NO_CHANNEL_DESCRIPTION)}
+              />
+            </RadioGroup>
           </div>
         </div>
       )}
