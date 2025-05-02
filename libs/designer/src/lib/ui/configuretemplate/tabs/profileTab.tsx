@@ -48,20 +48,5 @@ export const profileTab = (
         disabled: disableSave,
       },
     ],
-    primaryButtonText: resources.PreviousButtonText,
-    primaryButtonOnClick: () => {
-      dispatch(selectWizardTab(constants.CONFIGURE_TEMPLATE_WIZARD_TAB_NAMES.PARAMETERS));
-    },
-    secondaryButtonText: resources.NextButtonText,
-    secondaryButtonOnClick: () => {
-      dispatch(selectWizardTab(constants.CONFIGURE_TEMPLATE_WIZARD_TAB_NAMES.REVIEW));
-    },
-    thirdButtonText: intl.formatMessage({
-      defaultMessage: 'Save',
-      id: 'GGmFte',
-      description: 'The description for saving the profile tab content to the service provider',
-    }),
-    thirdButtonOnClick: onSave,
-    thirdButtonDisabled: disableSave,
   },
 });
