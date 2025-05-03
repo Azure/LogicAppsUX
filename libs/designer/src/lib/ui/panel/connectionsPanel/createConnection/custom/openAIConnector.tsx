@@ -1,4 +1,10 @@
-import { CognitiveServiceService, LogEntryLevel, LoggerService, type Resource } from '@microsoft/logic-apps-shared';
+import {
+  CognitiveServiceService,
+  isUndefinedOrEmptyString,
+  LogEntryLevel,
+  LoggerService,
+  type Resource,
+} from '@microsoft/logic-apps-shared';
 import { type ConnectionParameterProps, UniversalConnectionParameter } from '../formInputs/universalConnectionParameter';
 import { ConnectionParameterRow } from '../connectionParameterRow';
 import { useIntl } from 'react-intl';
@@ -105,7 +111,7 @@ export const CustomOpenAIConnector = (props: ConnectionParameterProps) => {
             required={true}
             disabled={isFetchingSubscription}
             placeholder={isFetchingSubscription ? stringResources.LOADING_SUBSCRIPTION : stringResources.SELECT_SUBSCRIPTION}
-            selectedKey={selectedSubscriptionId === undefined || '' ? null : selectedSubscriptionId}
+            selectedKey={isUndefinedOrEmptyString(selectedSubscriptionId) ? null : selectedSubscriptionId}
             className={styles.dropdown}
             options={(subscriptions ?? [])
               .sort((a, b) => a.displayName.localeCompare(b.displayName))
@@ -140,7 +146,7 @@ export const CustomOpenAIConnector = (props: ConnectionParameterProps) => {
             required={true}
             disabled={isFetchingAccount || isFetchingSubscription || !selectedSubscriptionId}
             placeholder={isFetchingAccount ? stringResources.LOADING_ACCOUNTS : stringResources.SELECT_COGNITIVE_SERVICE_ACCOUNT}
-            selectedKey={value === undefined || '' ? null : value}
+            selectedKey={isUndefinedOrEmptyString(value) ? null : value}
             className={styles.dropdown}
             options={(allCognitiveServiceAccounts ?? []).map((account: any) => {
               return {
