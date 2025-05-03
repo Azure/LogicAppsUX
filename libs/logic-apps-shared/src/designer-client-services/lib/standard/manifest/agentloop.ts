@@ -48,6 +48,11 @@ export default {
           'x-ms-connection-required': true,
           'x-ms-visibility': 'important',
           'x-ms-editor': 'combobox',
+          'x-ms-capabilities': {
+            'create-new': {
+              'value-title': 'Create new',
+            },
+          },
         },
         agentModelType: {
           title: 'Agent model type',

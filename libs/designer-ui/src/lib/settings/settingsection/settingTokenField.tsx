@@ -1,6 +1,6 @@
 import { cloneElement, useMemo, useState } from 'react';
 import { EditorLanguage, equals, getPropertyValue, replaceWhiteSpaceWithUnderscore } from '@microsoft/logic-apps-shared';
-import type { TokenGroup } from '@microsoft/logic-apps-shared';
+import type { ICreateNewEditor, TokenGroup } from '@microsoft/logic-apps-shared';
 import { AgentInstructionEditor } from '../../agentinstruction';
 import { ArrayEditor } from '../../arrayeditor';
 import { AuthenticationEditor } from '../../authentication';
@@ -80,6 +80,7 @@ export interface SettingTokenFieldProps extends SettingProps {
   hostOptions?: EditorHostOptions;
   subComponent?: JSX.Element | null;
   subMenu?: JSX.Element | null;
+  createNew?: ICreateNewEditor;
 }
 
 export const SettingTokenField = ({ ...props }: SettingTokenFieldProps) => {
@@ -141,6 +142,7 @@ export const TokenField = ({
   getTokenPicker,
   hostOptions,
   required,
+  createNew,
 }: TokenFieldProps) => {
   const dropdownOptions = useMemo(() => getDropdownOptionsFromOptions(editorOptions), [editorOptions]);
   const labelForAutomationId = useMemo(() => replaceWhiteSpaceWithUnderscore(label), [label]);
@@ -265,6 +267,7 @@ export const TokenField = ({
           tokenMapping={tokenMapping}
           loadParameterValueFromString={loadParameterValueFromString}
           agentParameterButtonProps={agentParameterButtonProps}
+          createNew={createNew}
         />
       );
 

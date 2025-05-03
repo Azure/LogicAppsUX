@@ -91,6 +91,14 @@ export interface IEditorParameterInfo {
   parameter: ParameterInfo;
 }
 
+export interface ICreateNewEditor {
+  title?: string;
+  onClose?: () => void;
+  className?: string;
+  size?: 'small' | 'medium' | 'large';
+  editor: JSX.Element;
+}
+
 export interface ICustomEditorOptions {
   /**
    * The component to render for the custom editor.
@@ -116,6 +124,8 @@ export interface ICustomEditorOptions {
 
 export interface IEditorService {
   getEditor(parameter: IEditorParameterInfo): undefined | ICustomEditorOptions;
+
+  getCreateNewEditor(connectorId?: string, parameterKey?: string): undefined | ICreateNewEditor;
 }
 
 let service: IEditorService | undefined;

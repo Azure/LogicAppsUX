@@ -34,6 +34,7 @@ import { useIntl } from 'react-intl';
 import type { AgentParameterButtonProps } from './plugins/tokenpickerbutton/agentParameterButton';
 import { AgentParameterButton } from './plugins/tokenpickerbutton/agentParameterButton';
 import UpdateTokenNodes from './plugins/UpdateTokenNodes';
+import type { ICreateNewEditor } from '@microsoft/logic-apps-shared';
 
 export interface ChangeState {
   value: ValueSegment[];
@@ -85,6 +86,7 @@ export interface BaseEditorProps {
   // Misc
   dataAutomationId?: string;
   children?: React.ReactNode;
+  createNew?: ICreateNewEditor;
 }
 
 export interface BasePlugins {

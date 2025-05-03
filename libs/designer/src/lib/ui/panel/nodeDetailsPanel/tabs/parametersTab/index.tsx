@@ -671,6 +671,21 @@ const ParameterSection = ({
     }
   };
 
+  const getCreateNewComponent = useCallback(
+    (parameter: ParameterInfo) => {
+      const capabilities = getPropertyValue(parameter.schema, 'x-ms-capabilities');
+
+      if (capabilities) {
+        const createNewEnabled = getPropertyValue(capabilities, 'create-new');
+        if (createNewEnabled) {
+          return EditorService()?.getCreateNewEditor(operationInfo.connectorId);
+        }
+      }
+      return undefined;
+    },
+    [operationInfo.connectorId]
+  );
+
   const settings: Settings[] = group?.parameters
     .filter((x) => !x.hideInUI && shouldUseParameterInGroup(x, group.parameters))
     .map((param) => {
@@ -748,6 +763,7 @@ const ParameterSection = ({
           ) => getTokenPicker(param, editorId, labelId, tokenPickerMode, editorType, isCodeEditor, tokenClickedCallback),
           subComponent: subComponent,
           subMenu: subMenu,
+          createNew: getCreateNewComponent(param),
         },
       };
     });

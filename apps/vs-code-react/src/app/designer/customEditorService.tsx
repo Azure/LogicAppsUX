@@ -35,6 +35,15 @@ export class CustomEditorService implements IEditorService {
     return undefined;
   };
 
+  public getCreateNewEditor = (connectorId?: string) => {
+    if (connectorId === 'connectionProviders/agent') {
+      return {
+        editor: <span />,
+      };
+    }
+    return undefined;
+  };
+
   DisplayTextEditor = ({ editorOptions }: IEditorProps) => {
     return (
       <>

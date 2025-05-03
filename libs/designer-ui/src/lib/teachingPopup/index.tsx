@@ -11,15 +11,17 @@ import {
   TeachingPopoverSurface,
   TeachingPopoverTitle,
 } from '@fluentui/react-components';
+import { useState } from 'react';
 import { useIntl } from 'react-intl';
 
 interface TeachingPopupOwnProps {
+  defaultClose?: boolean;
   targetElement: HTMLElement | null;
   title: string;
-  message: string;
+  message?: string;
   messageBody?: JSX.Element;
   primaryButtonText?: string;
-  handlePopupPrimaryOnClick: () => void;
+  handlePopupPrimaryOnClick?: () => void;
   secondaryButtonText?: string;
   handlePopupSecondaryOnClick?: () => void;
 }
@@ -45,8 +47,10 @@ export const TeachingPopup: React.FC<TeachingPopupProps> = (props) => {
     handlePopupSecondaryOnClick,
     size,
     withArrow,
+    defaultClose,
   } = props;
   const intl = useIntl();
+  const [open, setOpen] = useState(!defaultClose);
 
   const classNames = useStyles();
 
@@ -58,28 +62,44 @@ export const TeachingPopup: React.FC<TeachingPopupProps> = (props) => {
 
   return (
     <TeachingPopover
-      defaultOpen={true}
+      onOpenChange={(_e, data) => setOpen(data.open)}
       appearance={'brand'}
       withArrow={withArrow}
-      positioning={positioning ?? { target: targetElement, position: 'after', align: 'top' }}
+      positioning={
+        positioning ?? {
+          target: targetElement,
+          position: 'after',
+          align: 'top',
+        }
+      }
       size={size || 'small'}
-      open={true}
+      open={open}
       trapFocus={false}
     >
       <TeachingPopoverSurface className={classNames.popoverSurface}>
         <TeachingPopoverBody>
           <TeachingPopoverTitle>{title}</TeachingPopoverTitle>
           {message}
-          <br />
+          {message && messageBody ? <br /> : null}
           {messageBody}
         </TeachingPopoverBody>
-        <TeachingPopoverFooter
-          primary={{
-            children: primaryButtonText || defaultPrimaryButtonText,
-            onClick: handlePopupPrimaryOnClick,
-          }}
-          secondary={secondaryButtonText ? { children: secondaryButtonText, onClick: handlePopupSecondaryOnClick } : undefined}
-        />
+
+        {handlePopupPrimaryOnClick ? (
+          <TeachingPopoverFooter
+            primary={{
+              children: primaryButtonText || defaultPrimaryButtonText,
+              onClick: handlePopupPrimaryOnClick,
+            }}
+            secondary={
+              handlePopupSecondaryOnClick
+                ? {
+                    children: secondaryButtonText,
+                    onClick: handlePopupSecondaryOnClick,
+                  }
+                : undefined
+            }
+          />
+        ) : null}
       </TeachingPopoverSurface>
     </TeachingPopover>
   );

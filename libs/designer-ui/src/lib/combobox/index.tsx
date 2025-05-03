@@ -5,15 +5,16 @@ import { EditorWrapper } from '../editor/base/EditorWrapper';
 import { EditorChangePlugin } from '../editor/base/plugins/EditorChange';
 import { createLiteralValueSegment, notEqual } from '../editor/base/utils/helper';
 import type { IComboBox, IComboBoxOption, IComboBoxOptionStyles, IComboBoxStyles } from '@fluentui/react';
-import { SelectableOptionMenuItemType, ComboBox } from '@fluentui/react';
+import { SelectableOptionMenuItemType, ComboBox, Text } from '@fluentui/react';
 import { Button, Spinner, Tooltip } from '@fluentui/react-components';
 import { bundleIcon, Dismiss24Filled, Dismiss24Regular } from '@fluentui/react-icons';
-import { equals, getIntl } from '@microsoft/logic-apps-shared';
+import { equals, getIntl, guid } from '@microsoft/logic-apps-shared';
 import { isEmptySegments } from '../editor/base/utils/parsesegments';
 import { useRef, useState, useCallback, useMemo, useEffect } from 'react';
 import type { FormEvent } from 'react';
 import { useIntl } from 'react-intl';
 import { isComboboxItemMatch } from './helpers/isComboboxItemMatch';
+import { TeachingPopup } from '../teachingPopup';
 
 const ClearIcon = bundleIcon(Dismiss24Filled, Dismiss24Regular);
 
@@ -95,9 +96,11 @@ export const Combobox = ({
   errorDetails,
   serialization,
   basePlugins,
+  createNew,
   ...baseEditorProps
 }: ComboboxProps): JSX.Element => {
   const intl = useIntl();
+  const comboxboxId = `combobox-${guid()}`;
   const comboBoxRef = useRef<IComboBox>(null);
   const optionKey = getSelectedKey(options, initialValue, isLoading, isCaseSensitive);
   const optionKeys = getSelectedKeys(options, initialValue, serialization, isCaseSensitive);
@@ -137,6 +140,12 @@ export const Combobox = ({
     }
   }, [isLoading, options, shouldSort]);
 
+  const createNewTitle = intl.formatMessage({
+    defaultMessage: 'Create new',
+    id: 'bYrT4q',
+    description: 'Label for button to create new item in combobox',
+  });
+
   const comboboxOptions = useMemo(() => {
     const loadingOption: ComboboxItem = {
       key: 'isloading',
@@ -169,7 +178,12 @@ export const Combobox = ({
           id: '/KRvvg',
           description: 'Label for when no values match search value.',
         });
-        newOptions.push({ key: 'header', value: noValuesLabel, disabled: true, displayName: noValuesLabel });
+        newOptions.push({
+          key: 'header',
+          value: noValuesLabel,
+          disabled: true,
+          displayName: noValuesLabel,
+        });
       }
       newOptions.push({ key: 'divider', value: '-', displayName: '-' });
       if (options.filter((option) => option.value === searchValue).length === 0 && searchValue !== '' && useOption) {
@@ -297,10 +311,17 @@ export const Combobox = ({
           <EditorWrapper
             {...baseEditorProps}
             className="msla-combobox-editor"
-            basePlugins={{ clearEditor: true, autoFocus: canAutoFocus, ...basePlugins }}
+            basePlugins={{
+              clearEditor: true,
+              autoFocus: canAutoFocus,
+              ...basePlugins,
+            }}
             initialValue={value}
             onBlur={handleBlur}
-            agentParameterButtonProps={{ ...baseEditorProps.agentParameterButtonProps, shifted: true }}
+            agentParameterButtonProps={{
+              ...baseEditorProps.agentParameterButtonProps,
+              shifted: true,
+            }}
             tokenPickerButtonProps={{ verticalOffSet: 19.5 }}
           >
             <EditorChangePlugin setValue={setValue} />
@@ -317,26 +338,30 @@ export const Combobox = ({
           </Tooltip>
         </div>
       ) : (
-        <ComboBox
-          ariaLabel={label}
-          className="msla-combobox"
-          selectedKey={multiSelect ? selectedKeys : selectedKey}
-          componentRef={comboBoxRef}
-          useComboBoxAsMenuWidth
-          allowFreeform
-          autoComplete="off"
-          options={comboboxOptions}
-          disabled={baseEditorProps.readonly}
-          placeholder={baseEditorProps.placeholder}
-          onInputValueChange={updateOptions}
-          onClick={toggleExpand}
-          onRenderOption={onRenderOption}
-          multiSelect={multiSelect}
-          styles={comboboxStyles}
-          onChange={multiSelect ? handleOptionMultiSelect : handleOptionSelect}
-          onMenuOpen={handleMenuOpen}
-          onBlur={handleComboBoxBlur}
-        />
+        <div className="msla-combobox-container">
+          <ComboBox
+            ariaLabel={label}
+            className="msla-combobox"
+            selectedKey={multiSelect ? selectedKeys : selectedKey}
+            componentRef={comboBoxRef}
+            useComboBoxAsMenuWidth
+            allowFreeform
+            autoComplete="off"
+            options={comboboxOptions}
+            disabled={baseEditorProps.readonly}
+            placeholder={baseEditorProps.placeholder}
+            onInputValueChange={updateOptions}
+            onClick={toggleExpand}
+            onRenderOption={onRenderOption}
+            multiSelect={multiSelect}
+            styles={comboboxStyles}
+            onChange={multiSelect ? handleOptionMultiSelect : handleOptionSelect}
+            onMenuOpen={handleMenuOpen}
+            onBlur={handleComboBoxBlur}
+          />
+          <Text id={comboxboxId}>{createNewTitle}</Text>
+          <TeachingPopup targetElement={document.getElementById(comboxboxId)} title={createNew?.title ?? createNewTitle} />
+        </div>
       )}
     </div>
   );
@@ -362,15 +387,44 @@ const getOptions = (options: ComboboxItem[]): IComboBoxOption[] => {
           const { key, displayName, disabled, type } = option;
           switch (key) {
             case 'divider':
-              return { key: key, text: displayName, itemType: SelectableOptionMenuItemType.Divider, disabled: disabled, data: type };
+              return {
+                key: key,
+                text: displayName,
+                itemType: SelectableOptionMenuItemType.Divider,
+                disabled: disabled,
+                data: type,
+              };
             case 'header':
-              return { key: key, text: displayName, itemType: SelectableOptionMenuItemType.Header, data: type, disabed: disabled };
+              return {
+                key: key,
+                text: displayName,
+                itemType: SelectableOptionMenuItemType.Header,
+                data: type,
+                disabed: disabled,
+              };
             default:
-              return { key: key, text: displayName, disabled: disabled, data: type };
+              return {
+                key: key,
+                text: displayName,
+                disabled: disabled,
+                data: type,
+              };
           }
         })
-      : [{ key: 'noOptions', text: noOptionsExists, itemType: SelectableOptionMenuItemType.Header, disabled: true }]),
-    { key: 'customValue', text: customValueLabel, styles: customValueStyles, data: 'customrender' },
+      : [
+          {
+            key: 'noOptions',
+            text: noOptionsExists,
+            itemType: SelectableOptionMenuItemType.Header,
+            disabled: true,
+          },
+        ]),
+    {
+      key: 'customValue',
+      text: customValueLabel,
+      styles: customValueStyles,
+      data: 'customrender',
+    },
   ];
 };
 
