@@ -47,6 +47,7 @@ export interface WorkflowTemplateData {
     light?: string;
     dark?: string;
   };
+  isManageWorkflow?: boolean;
   triggerType: string;
   connectionKeys: string[];
   errors: {

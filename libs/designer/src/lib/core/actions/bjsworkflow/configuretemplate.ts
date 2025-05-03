@@ -142,6 +142,7 @@ export const loadCustomTemplate = createAsyncThunk(
           workflowDefinition,
           connectionKeys: connections ? Object.keys(connections) : [],
           triggerType: getTriggerFromDefinition(workflowDefinition?.triggers ?? {}),
+          isManageWorkflow: true,
           errors: { workflow: undefined },
         };
         return result;
@@ -263,7 +264,7 @@ const saveWorkflowsInTemplateInternal = async (newState: TemplateState, clearWor
   }
 
   for (const workflowId of Object.keys(workflows)) {
-    const { workflowDefinition, manifest, connectionKeys } = workflows[workflowId];
+    const { id, workflowDefinition, manifest, connectionKeys } = workflows[workflowId];
     const connectionsInWorkflow = connectionKeys.reduce((result: Record<string, Template.Connection>, key) => {
       if (connections[key]) {
         result[key] = connections[key];
@@ -272,7 +273,7 @@ const saveWorkflowsInTemplateInternal = async (newState: TemplateState, clearWor
     }, {});
     const parametersInWorkflow = Object.keys(parameterDefinitions).reduce((result: Template.Parameter[], key) => {
       const { associatedWorkflows } = parameterDefinitions[key];
-      if (associatedWorkflows?.includes(workflowId)) {
+      if (associatedWorkflows?.includes(id)) {
         const parameter = { ...parameterDefinitions[key] };
         delete parameter.associatedWorkflows;
         delete parameter.associatedOperationParameter;
@@ -281,7 +282,7 @@ const saveWorkflowsInTemplateInternal = async (newState: TemplateState, clearWor
       return result;
     }, []);
     promises.push(
-      service.addWorkflow(templateId, workflowId, {
+      service.addWorkflow(templateId, id, {
         manifest: { ...manifest, connections: connectionsInWorkflow, parameters: parametersInWorkflow },
         workflow: workflowDefinition,
       })
@@ -350,7 +351,7 @@ export const deleteWorkflowData = createAsyncThunk(
       promises.push(TemplateResourceService().deleteWorkflow(templateId, workflowId));
     }
 
-    const disableWizard = Object.keys(workflows).filter((workflowId) => !ids.includes(workflowId)).length === 0;
+    const disableWizard = Object.values(workflows).filter((workflowData) => !ids.includes(workflowData.id)).length === 0;
 
     await Promise.all(promises);
     const queryClient = getReactQueryClient();
@@ -372,13 +373,14 @@ export const getTemplateConnections = async (
   if (isConsumption) {
     const definition = await getWorkflowDefinitionForConsumption(subscriptionId, resourceGroup, logicAppName as string);
     const connections = await getConnectionsForConsumption(subscriptionId, resourceGroup, logicAppName as string);
-    const workflowId = Object.keys(workflows)[0];
+    const workflowId = Object.values(workflows)[0].id as string;
     const mapping = await getConnectionMappingInDefinition(definition, workflowId);
 
     const workflowWithDefinition = {
       [workflowId]: {
         id: workflowId,
         workflowDefinition: definition,
+        isManageWorkflow: true,
         triggerType: getTriggerFromDefinition(definition?.triggers ?? {}),
         connectionKeys: Object.keys(connections),
       },
@@ -414,6 +416,7 @@ export const getTemplateConnections = async (
     workflowsData[workflowId] = {
       ...(workflowsData[workflowId] ?? {}),
       workflowDefinition: definition,
+      isManageWorkflow: true,
       triggerType: getTriggerFromDefinition(definition?.triggers ?? {}),
       kind: workflowData.kind,
       connectionKeys,
@@ -613,10 +616,11 @@ export const getWorkflowsWithDefinitions = async (
 ) => {
   if (isConsumption) {
     const definition = await getWorkflowDefinitionForConsumption(subscriptionId, resourceGroup, logicAppName as string);
-    const workflowId = Object.keys(workflows)[0];
+    const workflowId = Object.values(workflows)[0].id as string;
     workflows[workflowId] = {
       ...(workflows[workflowId] ?? {}),
       workflowDefinition: definition,
+      isManageWorkflow: true,
       triggerType: getTriggerFromDefinition(definition?.triggers ?? {}),
     };
     return workflows;

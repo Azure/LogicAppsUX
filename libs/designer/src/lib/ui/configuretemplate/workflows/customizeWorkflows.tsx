@@ -112,7 +112,7 @@ const CustomizeWorkflowSection = ({
         label: resourceStrings.WORKFLOW_NAME,
         value: workflow.id || '',
         hint: resourceStrings.WORKFLOW_NAME_DESCRIPTION,
-        type: isResourceId(workflowId) ? 'textfield' : 'text',
+        type: workflow.isManageWorkflow ? 'text' : 'textfield',
         required: true,
         onChange: (value: string) => {
           updateWorkflowDataField(workflowId, { id: value });
@@ -275,8 +275,4 @@ const CustomizeWorkflowSection = ({
       <TemplatesSection title={customResourceStrings.WorkflowImages} titleHtmlFor={'imagesSectionLabel'} items={imageSectionItems} />
     </div>
   );
-};
-
-const isResourceId = (id: string) => {
-  return id.startsWith('/');
 };
