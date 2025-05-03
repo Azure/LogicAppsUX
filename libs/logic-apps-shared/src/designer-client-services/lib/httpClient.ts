@@ -12,6 +12,7 @@ export interface HttpRequestOptions<ContentType> {
   noAuth?: boolean;
   includeAuth?: boolean;
   returnHeaders?: boolean;
+  skipBatch?: boolean;
 }
 
 export interface QueryParameters {
