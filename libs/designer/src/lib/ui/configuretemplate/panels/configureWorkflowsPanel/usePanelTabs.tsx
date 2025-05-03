@@ -86,7 +86,9 @@ export const useConfigureWorkflowPanelTabs = ({
         ...workflowData,
       };
       const updatedManifestError = validateWorkflowData(updatedWorkflowData, Object.keys(prevSelectedWorkflows).length > 1);
-      const formattedSelectedIds = Object.values(prevSelectedWorkflows).map((workflow) => getResourceNameFromId(workflow.id as string));
+      const formattedOtherSelectedIds = Object.entries(prevSelectedWorkflows).map(
+        ([curWorkflowId, workflow]) => workflowId !== curWorkflowId && getResourceNameFromId(workflow.id as string)
+      );
 
       return {
         ...prevSelectedWorkflows,
@@ -94,7 +96,7 @@ export const useConfigureWorkflowPanelTabs = ({
           ...updatedWorkflowData,
           errors: {
             workflow: updatedWorkflowData.id
-              ? formattedSelectedIds.includes(updatedWorkflowData.id)
+              ? formattedOtherSelectedIds.includes(updatedWorkflowData.id)
                 ? intl.formatMessage({
                     defaultMessage: 'Name must be unique.',
                     id: 'u60lSZ',
