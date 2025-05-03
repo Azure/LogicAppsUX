@@ -197,9 +197,10 @@ export default {
     outputs: {
       type: 'object',
       properties: {
-        messages: {
+        lastAssistantMessage: {
           type: 'object',
-          title: 'Messages',
+          title: 'Last Assitant Message',
+          description: 'This is the final message returned by the model',
         },
       },
     },
