@@ -103,10 +103,9 @@ export const CustomOpenAIConnector = (props: ConnectionParameterProps) => {
         <ConnectionParameterRow parameterKey={'subscription-id'} displayName={stringResources.SUBSCRIPTION} required={true}>
           <ComboBox
             required={true}
-            defaultValue={selectedSubscriptionId}
             disabled={isFetchingSubscription}
             placeholder={isFetchingSubscription ? stringResources.LOADING_SUBSCRIPTION : stringResources.SELECT_SUBSCRIPTION}
-            selectedKey={value}
+            selectedKey={selectedSubscriptionId === undefined || '' ? null : selectedSubscriptionId}
             className={styles.dropdown}
             options={(subscriptions ?? [])
               .sort((a, b) => a.displayName.localeCompare(b.displayName))
@@ -139,10 +138,9 @@ export const CustomOpenAIConnector = (props: ConnectionParameterProps) => {
         >
           <ComboBox
             required={true}
-            defaultValue={'openAIEndpoint'}
             disabled={isFetchingAccount || isFetchingSubscription || !selectedSubscriptionId}
             placeholder={isFetchingAccount ? stringResources.LOADING_ACCOUNTS : stringResources.SELECT_COGNITIVE_SERVICE_ACCOUNT}
-            selectedKey={value}
+            selectedKey={value === undefined || '' ? null : value}
             className={styles.dropdown}
             options={(allCognitiveServiceAccounts ?? []).map((account: any) => {
               return {
