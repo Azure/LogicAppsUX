@@ -7,8 +7,8 @@ import {
   useIsAgentTool,
 } from '../../../core/state/panel/panelSelectors';
 import { useIsWithinAgenticLoop } from '../../../core/state/workflow/workflowSelectors';
-import { useEffect, useMemo, useState } from 'react';
-import { equals, type Connector, type DiscoveryOpArray } from '@microsoft/logic-apps-shared';
+import { useMemo, useState } from 'react';
+import { equals, LOCAL_STORAGE_KEYS, type Connector, type DiscoveryOpArray } from '@microsoft/logic-apps-shared';
 import { getOperationCardDataFromOperation, getOperationGroupCardDataFromConnector } from './helpers';
 import { useIntl } from 'react-intl';
 import { SpotlightCategoryType, SpotlightSection } from '@microsoft/designer-ui';
@@ -54,18 +54,33 @@ export const ActionSpotlight = (props: ActionSpotlightProps) => {
     favoriteActionsIsFetchingNextPage,
   } = useFavoriteOperations(favoriteOperationIds);
 
-  const [openItems, setOpenItems] = useState<SpotlightCategoryType[]>([
-    SpotlightCategoryType.BuiltIns,
-    SpotlightCategoryType.KnowledgeBase,
-    ...(favoriteOperationIds.length > 0 ? [SpotlightCategoryType.Favorites] : []),
-  ]);
+  const getInitialOpenItems = (): SpotlightCategoryType[] => {
+    try {
+      const stored = localStorage.getItem(LOCAL_STORAGE_KEYS.ACTION_SPOTLIGHT_OPEN_ITEMS);
+      if (stored) {
+        const parsed = JSON.parse(stored);
+        if (Array.isArray(parsed)) {
+          return parsed;
+        }
+      }
+    } catch {
+      // Fail silently and fall back to default
+    }
 
-  useEffect(() => {
-    setOpenItems((prevItems) => [...prevItems, ...(favoriteOperationIds.length > 0 ? [SpotlightCategoryType.Favorites] : [])]);
-  }, [favoriteOperationIds.length]);
+    // First-time default
+    const defaultItems: SpotlightCategoryType[] = [
+      SpotlightCategoryType.BuiltIns,
+      SpotlightCategoryType.KnowledgeBase,
+      ...(favoriteOperationIds.length > 0 ? [SpotlightCategoryType.Favorites] : []),
+    ];
+    return defaultItems;
+  };
+
+  const [openItems, setOpenItems] = useState<SpotlightCategoryType[]>(getInitialOpenItems);
 
   const handleToggle: AccordionToggleEventHandler<SpotlightCategoryType> = (_event, data) => {
     setOpenItems(data.openItems);
+    localStorage.setItem(LOCAL_STORAGE_KEYS.ACTION_SPOTLIGHT_OPEN_ITEMS, JSON.stringify(data.openItems));
   };
 
   const classNames = useActionSpotlightStyles();
