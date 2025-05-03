@@ -65,6 +65,42 @@ export default {
             description: 'URL and key-based authentication',
           },
         },
+        {
+          name: 'ManagedServiceIdentity',
+          parameters: {
+            cognitiveServiceAccountId: {
+              type: 'string',
+              parameterSource: 'AppConfiguration',
+              uiDefinition: {
+                displayName: 'Azure Cognitive Service Account',
+                description: 'Select the Azure Cognitive Service Account to use for this connection',
+                tooltip: 'Select the Azure Cognitive Service Account to use for this connection',
+                constraints: {
+                  clearText: true,
+                  required: 'true',
+                },
+              },
+            },
+            openAIEndpoint: {
+              type: 'string',
+              parameterSource: 'AppConfiguration',
+              uiDefinition: {
+                displayName: 'API endpoint',
+                description: 'Endpoint will be filled automatically.',
+                tooltip: 'The endpoint of the resource that hosts the AI model',
+                constraints: {
+                  clearText: true,
+                  required: 'true',
+                },
+              },
+            },
+          },
+          uiDefinition: {
+            displayName: 'Managed Service Identity',
+            tooltip: 'Managed Service Identity',
+            description: 'Managed Service Identity',
+          },
+        },
       ],
     },
   },

@@ -753,7 +753,7 @@ function convertToAgentConnectionsData(
       displayName,
       authentication: {
         type: connectionParametersSetValues?.name,
-        key: parameterValues?.['openAIKey'],
+        key: equals(connectionParametersSetValues?.name ?? '', 'ManagedServiceIdentity', true) ? undefined : parameterValues?.['openAIKey'],
       },
       endpoint: parameterValues?.['openAIEndpoint'],
       resourceId: parameterValues?.['cognitiveServiceAccountId'],
