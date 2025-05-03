@@ -1,4 +1,12 @@
 # Logic Apps Designer
+### [5.94.5](https://github.com/Azure/LogicAppsUX/compare/v5.94.4...v5.94.5) (2025-05-03)
+
+
+### Bug Fixes
+
+* **designer:** Add skip batch to HttpRequestOptions ([#7163](https://github.com/Azure/LogicAppsUX/issues/7163)) ([a47605d](https://github.com/Azure/LogicAppsUX/commit/a47605dc854b4323036da9255eb68c887b882722))
+* **designer:** Cherry-pick for MSI and cognitive service resourceId ([#7167](https://github.com/Azure/LogicAppsUX/issues/7167)) ([976bd84](https://github.com/Azure/LogicAppsUX/commit/976bd843f6a97dbf0dfe2d65c46616f23ddd8372)), closes [#7164](https://github.com/Azure/LogicAppsUX/issues/7164)
+
 ### [5.94.4](https://github.com/Azure/LogicAppsUX/compare/v5.94.3...v5.94.4) (2025-05-03)
 
 
