@@ -11,7 +11,7 @@ import {
   initializeAndSaveWorkflowsData,
   saveWorkflowsData,
 } from '../../../../core/actions/bjsworkflow/configuretemplate';
-import { getResourceNameFromId, equals, isUndefinedOrEmptyString } from '@microsoft/logic-apps-shared';
+import { getResourceNameFromId, equals, isUndefinedOrEmptyString, getUniqueName } from '@microsoft/logic-apps-shared';
 import { checkWorkflowNameWithRegex, validateWorkflowData } from '../../../../core/templates/utils/helper';
 import { useMemo, useCallback } from 'react';
 
@@ -57,11 +57,16 @@ export const useConfigureWorkflowPanelTabs = ({
         ) ?? [undefined, undefined];
 
         const workflowId = prevSelectedWorkflowId ?? normalizedWorkflowId;
+        const defaultIdFromResource = getResourceNameFromId(normalizedWorkflowId);
+
+        const formattedSelectedIds = Object.values(prevSelectedWorkflows).map((workflow) => getResourceNameFromId(workflow.id as string));
 
         newSelectedWorkflows[workflowId] = prevSelectedWorkflow
           ? prevSelectedWorkflow
           : ({
-              id: getResourceNameFromId(normalizedWorkflowId),
+              id: formattedSelectedIds.includes(defaultIdFromResource)
+                ? getUniqueName(formattedSelectedIds, defaultIdFromResource).name
+                : defaultIdFromResource,
               manifest: {
                 kinds: ['stateful', 'stateless'],
                 metadata: {
@@ -81,12 +86,26 @@ export const useConfigureWorkflowPanelTabs = ({
         ...workflowData,
       };
       const updatedManifestError = validateWorkflowData(updatedWorkflowData, Object.keys(prevSelectedWorkflows).length > 1);
+      const formattedSelectedIds = Object.values(prevSelectedWorkflows).map((workflow) => getResourceNameFromId(workflow.id as string));
+
       return {
         ...prevSelectedWorkflows,
         [workflowId]: {
           ...updatedWorkflowData,
           errors: {
-            workflow: updatedWorkflowData.id ? checkWorkflowNameWithRegex(intl, updatedWorkflowData.id) : undefined,
+            workflow: updatedWorkflowData.id
+              ? formattedSelectedIds.includes(updatedWorkflowData.id)
+                ? intl.formatMessage({
+                    defaultMessage: 'Name must be unique.',
+                    id: 'u60lSZ',
+                    description: 'Error message title for duplicate workflow ids',
+                  })
+                : checkWorkflowNameWithRegex(intl, updatedWorkflowData.id)
+              : intl.formatMessage({
+                  defaultMessage: 'Name must not be empty.',
+                  id: '0/hw21',
+                  description: 'Error message title for empty name',
+                }),
             manifest: runValidation ? updatedManifestError : updatedWorkflowData?.errors?.manifest,
           },
         },
