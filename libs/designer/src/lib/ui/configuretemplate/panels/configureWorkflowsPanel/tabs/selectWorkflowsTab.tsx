@@ -29,24 +29,33 @@ export const selectWorkflowsTab = (
   disabled: isSaving,
   content: <SelectWorkflows selectedWorkflowsList={selectedWorkflowsList} onWorkflowsSelected={onWorkflowsSelected} />,
   footerContent: {
-    primaryButtonText: intl.formatMessage({
-      defaultMessage: 'Next',
-      id: '0UfxUM',
-      description: 'Button text for moving to the next tab in the create workflow panel',
-    }),
-    primaryButtonOnClick: () => {
-      dispatch(selectPanelTab(constants.CONFIGURE_TEMPLATE_WIZARD_TAB_NAMES.CUSTOMIZE_WORKFLOWS));
-      onNextButtonClick();
-    },
-    primaryButtonDisabled: isPrimaryButtonDisabled,
-    secondaryButtonText: intl.formatMessage({
-      defaultMessage: 'Cancel',
-      id: '75zXUl',
-      description: 'Button text for closing the panel',
-    }),
-    secondaryButtonOnClick: () => {
-      dispatch(closePanel());
-    },
-    secondaryButtonDisabled: isSaving,
+    buttonContents: [
+      {
+        type: 'button',
+        text: intl.formatMessage({
+          defaultMessage: 'Next',
+          id: '0UfxUM',
+          description: 'Button text for moving to the next tab in the create workflow panel',
+        }),
+        appreance: 'primary',
+        onClick: () => {
+          dispatch(selectPanelTab(constants.CONFIGURE_TEMPLATE_WIZARD_TAB_NAMES.CUSTOMIZE_WORKFLOWS));
+          onNextButtonClick();
+        },
+        disabled: isPrimaryButtonDisabled,
+      },
+      {
+        type: 'button',
+        text: intl.formatMessage({
+          defaultMessage: 'Cancel',
+          id: '75zXUl',
+          description: 'Button text for closing the panel',
+        }),
+        onClick: () => {
+          dispatch(closePanel());
+        },
+        disabled: isSaving,
+      },
+    ],
   },
 });

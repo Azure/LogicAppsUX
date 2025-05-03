@@ -15,8 +15,8 @@ export const getQuickViewTabs = (
   intl: IntlShape,
   dispatch: AppDispatch,
   workflowId: string,
-  showCreate: boolean,
-  { templateId, workflowAppName, isMultiWorkflow }: Template.TemplateContext,
+  clearDetailsOnClose: boolean,
+  { templateId, workflowAppName, isMultiWorkflow, showCreate, showCloseButton }: Template.TemplateContext,
   onCloseButtonClick?: () => void
 ) => {
   return [
@@ -24,11 +24,13 @@ export const getQuickViewTabs = (
       intl,
       dispatch,
       workflowId,
-      showCreate,
+      clearDetailsOnClose,
       {
         templateId,
         workflowAppName,
         isMultiWorkflow,
+        showCreate,
+        showCloseButton,
       },
       onCloseButtonClick
     ),
@@ -36,12 +38,14 @@ export const getQuickViewTabs = (
       intl,
       dispatch,
       workflowId,
-      showCreate,
+      clearDetailsOnClose,
       undefined,
       {
         templateId,
         workflowAppName,
         isMultiWorkflow,
+        showCreate,
+        showCloseButton,
       },
       onCloseButtonClick
     ),

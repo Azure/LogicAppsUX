@@ -1,9 +1,10 @@
 import { AssertionErrorCode, AssertionException } from '../../utils/src';
 
 export interface ICognitiveServiceService {
-  fetchAllCognitiveServiceAccounts(): Promise<any>;
+  fetchAllCognitiveServiceAccounts(subscriptionId: string): Promise<any>;
   fetchCognitiveServiceAccountById(accountId: string): Promise<any>;
   fetchCognitiveServiceAccountKeysById(accountId: string): Promise<any>;
+  fetchAllCognitiveServiceAccountDeployments(accountId: string): Promise<any>;
 }
 
 let service: ICognitiveServiceService;

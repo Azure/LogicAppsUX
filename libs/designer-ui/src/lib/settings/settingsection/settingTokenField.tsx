@@ -103,7 +103,10 @@ export const SettingTokenField = ({ ...props }: SettingTokenFieldProps) => {
       </div>
       {props.subComponent ? (
         <div className="msla-input-parameter-subcomponent">
-          {cloneElement(props.subComponent, { showSubComponent, setShowSubComponent })}
+          {cloneElement(props.subComponent, {
+            showSubComponent,
+            setShowSubComponent,
+          })}
         </div>
       ) : null}
     </>
@@ -163,6 +166,7 @@ export const TokenField = ({
           dataAutomationId={`msla-setting-token-editor-agent-instruction-${labelForAutomationId}`}
         />
       );
+
     case constants.PARAMETER.EDITOR.ARRAY:
       return (
         <ArrayEditor
@@ -321,7 +325,11 @@ export const TokenField = ({
           label={label}
           readonly={readOnly}
           initialValue={value}
-          options={dropdownOptions.map((option: any, index: number) => ({ key: index.toString(), ...option }))}
+          options={dropdownOptions.map((option: any, index: number) => ({
+            key: index.toString(),
+            ...option,
+          }))}
+          placeholder={placeholder}
           multiSelect={!!getPropertyValue(editorOptions, 'multiSelect')}
           serialization={editorOptions?.serialization}
           onChange={onValueChange}

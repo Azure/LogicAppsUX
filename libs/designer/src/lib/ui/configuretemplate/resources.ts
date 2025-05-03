@@ -249,6 +249,11 @@ export const useResourceStrings = () => {
       id: 'uXecuj',
       description: 'Text to show missing required fields in the template.',
     }),
+    SaveButtonText: intl.formatMessage({
+      defaultMessage: 'Save',
+      id: 'DTIrLI',
+      description: 'The description for button text of saving the template',
+    }),
     // Aria labels
     WorkflowsListTableLabel: intl.formatMessage({
       defaultMessage: 'Workflows list tabel',

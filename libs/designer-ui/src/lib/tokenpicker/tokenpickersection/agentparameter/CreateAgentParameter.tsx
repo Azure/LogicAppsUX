@@ -2,6 +2,7 @@ import { Dropdown, type IDropdownOption } from '@fluentui/react';
 import { Button, Input, Label, Textarea, useId } from '@fluentui/react-components';
 import { capitalizeFirstLetter, equals, type ParameterInfo } from '@microsoft/logic-apps-shared';
 import type { NodeKey } from 'lexical';
+import { VARIABLE_TYPE } from '../../../constants';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useIntl } from 'react-intl';
 
@@ -9,19 +10,19 @@ import { useIntl } from 'react-intl';
 const options: IDropdownOption[] = [
   {
     text: 'String',
-    key: 'string',
+    key: VARIABLE_TYPE.STRING,
   },
   {
     text: 'Integer',
-    key: 'integer',
+    key: VARIABLE_TYPE.INTEGER,
   },
   {
     text: 'Float (Number)',
-    key: 'number',
+    key: VARIABLE_TYPE.NUMBER,
   },
   {
     text: 'Boolean',
-    key: 'boolean',
+    key: VARIABLE_TYPE.BOOLEAN,
   },
 ];
 

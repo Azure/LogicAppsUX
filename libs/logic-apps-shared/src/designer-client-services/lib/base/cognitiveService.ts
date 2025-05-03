@@ -1,7 +1,7 @@
 import type { ICognitiveServiceService } from '../cognitiveService';
 import type { IHttpClient } from '../httpClient';
 import { ArgumentException } from '../../../utils/src';
-import { fetchAppsByQuery } from '../common/azure';
+import { fetchAppsByQuery, getAzureResourceRecursive } from '../common/azure';
 
 export interface BaseCognitiveServiceServiceOptions {
   baseUrl: string;
@@ -53,7 +53,7 @@ export class BaseCognitiveServiceService implements ICognitiveServiceService {
     }
   }
 
-  async fetchAllCognitiveServiceAccounts(): Promise<any> {
+  async fetchAllCognitiveServiceAccounts(subscriptionId: string): Promise<any> {
     const { httpClient, baseUrl } = this.options;
 
     const uri = `${baseUrl}/providers/Microsoft.ResourceGraph/resources?api-version=2021-03-01`;
@@ -61,8 +61,18 @@ export class BaseCognitiveServiceService implements ICognitiveServiceService {
     const response = await fetchAppsByQuery(
       httpClient,
       uri,
-      'Resources\n\n| where type == "microsoft.cognitiveservices/accounts"\n| where kind in ("OpenAI", "AIServices")\n        \n        \n        \n        \n        \n        | order by [\'name\'] asc'
+      'Resources\n\n| where type == "microsoft.cognitiveservices/accounts"\n| where kind in ("OpenAI", "AIServices")\n        \n        \n        \n        \n        \n        | order by [\'name\'] asc',
+      [subscriptionId]
     );
+    return response;
+  }
+
+  async fetchAllCognitiveServiceAccountDeployments(accountId: string): Promise<any[]> {
+    const { httpClient, baseUrl, apiVersion } = this.options;
+    const uri = `${baseUrl}${accountId}/deployments`;
+    const response = await getAzureResourceRecursive(httpClient, uri, {
+      'api-version': apiVersion,
+    });
     return response;
   }
 }
