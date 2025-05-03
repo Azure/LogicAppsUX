@@ -1,4 +1,20 @@
 # Logic Apps Designer
+## [5.98.0](https://github.com/Azure/LogicAppsUX/compare/v5.97.0...v5.98.0) (2025-05-03)
+
+
+### Features
+
+* **designer:** Search Enhancements ([#7147](https://github.com/Azure/LogicAppsUX/issues/7147)) ([008b99c](https://github.com/Azure/LogicAppsUX/commit/008b99cc10d504548c1dd3330e55f7fd0c7f48ef))
+* **Templates:** Support Multi-button structure for footer ([#7156](https://github.com/Azure/LogicAppsUX/issues/7156)) ([0e84995](https://github.com/Azure/LogicAppsUX/commit/0e849952a79e7eae157919ceefea098d5988f3a9))
+
+
+### Bug Fixes
+
+* **designer:** Add MSI support for Agent connections ([#7164](https://github.com/Azure/LogicAppsUX/issues/7164)) ([681f0a3](https://github.com/Azure/LogicAppsUX/commit/681f0a30f25bc2d12b6ef95be232f5f3bcf42c45))
+* **designer:** Add skip batch to HttpRequestOptions ([#7153](https://github.com/Azure/LogicAppsUX/issues/7153)) ([7c6e4f7](https://github.com/Azure/LogicAppsUX/commit/7c6e4f7c6c797acfb09374fc5b8a755ad21a5ad0))
+* **designer:** Browse Action Spotlight to Local Storage ([#7159](https://github.com/Azure/LogicAppsUX/issues/7159)) ([13fa312](https://github.com/Azure/LogicAppsUX/commit/13fa312ef4d1cc454cad4ed816d962ee62f6f1ef))
+* **designer:** Set properties per Model and add a subscription filter ([#7157](https://github.com/Azure/LogicAppsUX/issues/7157)) ([ba3c32b](https://github.com/Azure/LogicAppsUX/commit/ba3c32bc437399b0356214cd728aa01f0893210a))
+
 ## [5.97.0](https://github.com/Azure/LogicAppsUX/compare/v5.96.0...v5.97.0) (2025-05-02)
 
 
