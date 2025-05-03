@@ -1,4 +1,12 @@
 # Logic Apps Designer
+### [5.94.4](https://github.com/Azure/LogicAppsUX/compare/v5.94.3...v5.94.4) (2025-05-03)
+
+
+### Bug Fixes
+
+* **designer:** Browse Action Spotlight to Local Storage ([#7160](https://github.com/Azure/LogicAppsUX/issues/7160)) ([ea55b84](https://github.com/Azure/LogicAppsUX/commit/ea55b8437c686113c8ea099f66ddb9b5b485bcdc)), closes [#7140](https://github.com/Azure/LogicAppsUX/issues/7140) [#7142](https://github.com/Azure/LogicAppsUX/issues/7142) [#7147](https://github.com/Azure/LogicAppsUX/issues/7147) [#7136](https://github.com/Azure/LogicAppsUX/issues/7136) [#7128](https://github.com/Azure/LogicAppsUX/issues/7128) [#7120](https://github.com/Azure/LogicAppsUX/issues/7120) [#7154](https://github.com/Azure/LogicAppsUX/issues/7154) [#7157](https://github.com/Azure/LogicAppsUX/issues/7157)
+* **designer:** Cherry Picks ([#7158](https://github.com/Azure/LogicAppsUX/issues/7158)) ([6cbc616](https://github.com/Azure/LogicAppsUX/commit/6cbc61689ee53f82de468ad5b1a0963cc8357fac)), closes [#7140](https://github.com/Azure/LogicAppsUX/issues/7140) [#7142](https://github.com/Azure/LogicAppsUX/issues/7142) [#7147](https://github.com/Azure/LogicAppsUX/issues/7147) [#7136](https://github.com/Azure/LogicAppsUX/issues/7136) [#7128](https://github.com/Azure/LogicAppsUX/issues/7128) [#7120](https://github.com/Azure/LogicAppsUX/issues/7120) [#7154](https://github.com/Azure/LogicAppsUX/issues/7154) [#7157](https://github.com/Azure/LogicAppsUX/issues/7157)
+
 ### [5.94.3](https://github.com/Azure/LogicAppsUX/compare/v5.94.1...v5.94.3) (2025-05-02)
 
 
