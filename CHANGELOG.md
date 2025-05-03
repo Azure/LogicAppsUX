@@ -1,4 +1,11 @@
 # Logic Apps Designer
+## [5.99.0](https://github.com/Azure/LogicAppsUX/compare/v5.98.0...v5.99.0) (2025-05-03)
+
+
+### Bug Fixes
+
+* **desginer:** Remove cognitive resource id from app-setting ([#7166](https://github.com/Azure/LogicAppsUX/issues/7166)) ([129772a](https://github.com/Azure/LogicAppsUX/commit/129772ad0b844ee9578b13d1383326bb5cf52577))
+
 ## [5.98.0](https://github.com/Azure/LogicAppsUX/compare/v5.97.0...v5.98.0) (2025-05-03)
 
 
