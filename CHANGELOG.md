@@ -1,4 +1,11 @@
 # Logic Apps Designer
+### [5.58.10](https://github.com/Azure/LogicAppsUX/compare/v5.58.9...v5.58.10) (2025-05-04)
+
+
+### Bug Fixes
+
+* **designer:** Add skip batch to HttpRequestOptions ([#7162](https://github.com/Azure/LogicAppsUX/issues/7162)) ([52ab0b3](https://github.com/Azure/LogicAppsUX/commit/52ab0b3389dca40d7bd95d0681218339ad528f4a))
+
 ### [5.58.9](https://github.com/Azure/LogicAppsUX/compare/v5.58.8...v5.58.9) (2025-04-30)
 
 
