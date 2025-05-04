@@ -13,6 +13,11 @@ import { ComboBox, type IComboBoxOption, Spinner } from '@fluentui/react';
 import { useAllCognitiveServiceAccounts } from './useCognitiveService';
 import { useStyles } from './styles';
 import { useSubscriptions } from '../../../../../core/templates/utils/queries';
+import { Link, tokens } from '@fluentui/react-components';
+import { NavigateIcon } from '@microsoft/designer-ui';
+import { ArrowClockwise16Filled, ArrowClockwise16Regular, bundleIcon } from '@fluentui/react-icons';
+
+const RefreshIcon = bundleIcon(ArrowClockwise16Regular, ArrowClockwise16Filled);
 
 export const CustomOpenAIConnector = (props: ConnectionParameterProps) => {
   const { parameterKey, value, setKeyValue, setValue, parameter } = props;
@@ -21,19 +26,23 @@ export const CustomOpenAIConnector = (props: ConnectionParameterProps) => {
   const [errorMessage, setErrorMessage] = useState<string>('');
   const [loadingAccountDetails, setLoadingAccountDetails] = useState<boolean>(false);
   const [selectedSubscriptionId, setSelectedSubscriptionId] = useState('');
-  const { isFetching: isFetchingAccount, data: allCognitiveServiceAccounts } = useAllCognitiveServiceAccounts(selectedSubscriptionId);
+  const {
+    isFetching: isFetchingAccount,
+    data: allCognitiveServiceAccounts,
+    refetch,
+  } = useAllCognitiveServiceAccounts(selectedSubscriptionId);
   const { isFetching: isFetchingSubscription, data: subscriptions } = useSubscriptions();
 
   const stringResources = useMemo(
     () => ({
       COGNITIVE_SERVICE_ACCOUNT: intl.formatMessage({
-        defaultMessage: 'Azure Cognitive Service Account',
-        id: 'tC4yyC',
+        defaultMessage: 'Azure OpenAI resource',
+        id: 'u5LIuT',
         description: 'Select the Azure Cognitive Service Account to use for this connection',
       }),
       SELECT_COGNITIVE_SERVICE_ACCOUNT: intl.formatMessage({
-        defaultMessage: 'Select an Azure Cognitive Service Account',
-        id: '6GgvQU',
+        defaultMessage: 'Select an Azure OpenAI resource',
+        id: 'BR/bBa',
         description: 'Select the Azure Cognitive Service Account to use for this connection',
       }),
       LOADING_ACCOUNTS: intl.formatMessage({
@@ -57,9 +66,19 @@ export const CustomOpenAIConnector = (props: ConnectionParameterProps) => {
         description: 'Subscription',
       }),
       SELECT_SUBSCRIPTION: intl.formatMessage({
-        defaultMessage: 'Select the subscription for your cognitive service account',
-        id: 'FHNw8P',
+        defaultMessage: 'Select the subscription for your OpenAI resource',
+        id: 'MFCzRk',
         description: 'Subscription',
+      }),
+      CREATE_NEW: intl.formatMessage({
+        defaultMessage: 'Create new',
+        id: 'W1WsMz',
+        description: 'Create new',
+      }),
+      LEARN_MORE_CREATE_NEW: intl.formatMessage({
+        defaultMessage: 'Learn more about creating a new Azure OpenAI resource',
+        id: 'D/CS5p',
+        description: 'learn more for create new',
       }),
     }),
     [intl]
@@ -103,6 +122,17 @@ export const CustomOpenAIConnector = (props: ConnectionParameterProps) => {
     [setKeyValue]
   );
 
+  const openAIComboboxDisabled = useMemo(
+    () => isFetchingAccount || isFetchingSubscription || !selectedSubscriptionId || (allCognitiveServiceAccounts ?? []).length === 0,
+    [allCognitiveServiceAccounts, isFetchingAccount, isFetchingSubscription, selectedSubscriptionId]
+  );
+
+  const onRefreshClick = useCallback(() => {
+    if (!openAIComboboxDisabled) {
+      refetch();
+    }
+  }, [openAIComboboxDisabled, refetch]);
+
   if (parameterKey === 'cognitiveServiceAccountId') {
     return (
       <>
@@ -112,7 +142,7 @@ export const CustomOpenAIConnector = (props: ConnectionParameterProps) => {
             disabled={isFetchingSubscription}
             placeholder={isFetchingSubscription ? stringResources.LOADING_SUBSCRIPTION : stringResources.SELECT_SUBSCRIPTION}
             selectedKey={isUndefinedOrEmptyString(selectedSubscriptionId) ? null : selectedSubscriptionId}
-            className={styles.dropdown}
+            className={styles.subscriptionCombobox}
             options={(subscriptions ?? [])
               .sort((a, b) => a.displayName.localeCompare(b.displayName))
               .map((subscription: Resource) => {
@@ -141,38 +171,59 @@ export const CustomOpenAIConnector = (props: ConnectionParameterProps) => {
           parameterKey={'cognitive-service-resource-id'}
           displayName={stringResources.COGNITIVE_SERVICE_ACCOUNT}
           required={true}
+          tooltip={
+            <Link href="https://go.microsoft.com/fwlink/?linkid=2189193" target="_blank">
+              {stringResources.LEARN_MORE_CREATE_NEW}
+            </Link>
+          }
         >
-          <ComboBox
-            required={true}
-            disabled={isFetchingAccount || isFetchingSubscription || !selectedSubscriptionId}
-            placeholder={isFetchingAccount ? stringResources.LOADING_ACCOUNTS : stringResources.SELECT_COGNITIVE_SERVICE_ACCOUNT}
-            selectedKey={isUndefinedOrEmptyString(value) ? null : value}
-            className={styles.dropdown}
-            options={(allCognitiveServiceAccounts ?? []).map((account: any) => {
-              return {
-                key: account.id,
-                text: `${account.name} (/${account.resourceGroup})`,
-              };
-            })}
-            onChange={async (_e, option?: IComboBoxOption) => {
-              if (option?.key) {
-                const value = option?.key as string;
-                setValue(value);
-                setLoadingAccountDetails(true);
-                await Promise.all([fetchAccount(value), fetchKey(value)]);
-                setLoadingAccountDetails(false);
-              }
-            }}
-            errorMessage={errorMessage}
-          >
-            {isFetchingAccount ? (
-              <Spinner
-                style={{ position: 'absolute', bottom: '6px', left: '8px' }}
-                labelPosition="right"
-                label={stringResources.LOADING_ACCOUNTS}
-              />
-            ) : null}
-          </ComboBox>
+          <div className={styles.openAIContainer}>
+            <div className={styles.comboxbox}>
+              <ComboBox
+                required={true}
+                disabled={openAIComboboxDisabled}
+                placeholder={isFetchingAccount ? stringResources.LOADING_ACCOUNTS : stringResources.SELECT_COGNITIVE_SERVICE_ACCOUNT}
+                selectedKey={isUndefinedOrEmptyString(value) ? null : value}
+                className={styles.openAICombobox}
+                options={(allCognitiveServiceAccounts ?? []).map((account: any) => {
+                  return {
+                    key: account.id,
+                    text: `${account.name} (/${account.resourceGroup})`,
+                  };
+                })}
+                onChange={async (_e, option?: IComboBoxOption) => {
+                  if (option?.key) {
+                    const value = option?.key as string;
+                    setValue(value);
+                    setLoadingAccountDetails(true);
+                    await Promise.all([fetchAccount(value), fetchKey(value)]);
+                    setLoadingAccountDetails(false);
+                  }
+                }}
+                errorMessage={errorMessage}
+              >
+                {isFetchingAccount ? (
+                  <Spinner
+                    style={{ position: 'absolute', bottom: '6px', left: '8px' }}
+                    labelPosition="right"
+                    label={stringResources.LOADING_ACCOUNTS}
+                  />
+                ) : null}
+              </ComboBox>
+              <Link className={styles.createNewButton} target="_blank" href="https://aka.ms/openAICreate">
+                {stringResources.CREATE_NEW}
+                <NavigateIcon style={{ position: 'relative', top: '2px', left: '2px' }} />
+              </Link>
+            </div>
+            <RefreshIcon
+              style={{
+                marginTop: '4px',
+                marginLeft: '4px',
+                color: openAIComboboxDisabled ? tokens.colorBrandBackground2Pressed : tokens.colorBrandBackground,
+              }}
+              onClick={onRefreshClick}
+            />
+          </div>
         </ConnectionParameterRow>
       </>
     );
