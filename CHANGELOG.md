@@ -1,4 +1,11 @@
 # Logic Apps Designer
+## [5.100.0](https://github.com/Azure/LogicAppsUX/compare/v5.99.0...v5.100.0) (2025-05-04)
+
+
+### Bug Fixes
+
+* **designer:** Add create new for OpenAI resource and update strings ([#7168](https://github.com/Azure/LogicAppsUX/issues/7168)) ([8162f3a](https://github.com/Azure/LogicAppsUX/commit/8162f3a747a94611ad1da3adcc809555dc67c3f7))
+
 ## [5.99.0](https://github.com/Azure/LogicAppsUX/compare/v5.98.0...v5.99.0) (2025-05-03)
 
 
