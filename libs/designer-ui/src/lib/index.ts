@@ -1,5 +1,6 @@
 export * from './about';
 export * from './actionbuttonv2';
+export * from './agentinstruction';
 export * from './announcedmatches';
 export * from './arrayeditor';
 export * from './authentication';
