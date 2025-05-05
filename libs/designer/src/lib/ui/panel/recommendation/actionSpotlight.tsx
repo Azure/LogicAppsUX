@@ -86,22 +86,18 @@ export const ActionSpotlight = (props: ActionSpotlightProps) => {
   const classNames = useActionSpotlightStyles();
 
   const builtInActions = useMemo(() => {
-    const allowedIds =
-      filters?.['actionType'] === 'triggers'
-        ? ['connectionProviders/request', 'connectionProviders/schedule', 'connectionProviders/http']
-        : [
-            'connectionProviders/control',
-            'connectionProviders/dataOperationNew',
-            'connectionProviders/datetime',
-            'connectionProviders/http',
-          ];
+    let allowedIds: string[] = [];
 
-    const builtIns = allConnectors
-      .filter((connector: Connector) => allowedIds.includes(connector.id))
-      .map((connector) => getOperationGroupCardDataFromConnector(connector));
+    if (filters?.['actionType'] === 'triggers') {
+      allowedIds = ['connectionProviders/request', 'connectionProviders/schedule', 'connectionProviders/http'];
+    } else {
+      const commonIds = ['connectionProviders/dataOperationNew', 'connectionProviders/datetime', 'connectionProviders/http'];
 
-    return builtIns;
-  }, [allConnectors, filters]);
+      allowedIds = isAgentTool ? commonIds : ['connectionProviders/control', ...commonIds];
+    }
+
+    return allConnectors.filter((connector: Connector) => allowedIds.includes(connector.id)).map(getOperationGroupCardDataFromConnector);
+  }, [allConnectors, filters, isAgentTool]);
 
   const aiActions = useMemo(() => {
     if (filters?.['actionType'] === 'triggers') {
@@ -109,12 +105,9 @@ export const ActionSpotlight = (props: ActionSpotlightProps) => {
     }
 
     const baseIds = ['managedApis/azureopenai', '/serviceProviders/openai'];
-    const allowedIds = isAgenticWorkflow ? [...baseIds, 'connectionProviders/agent'] : baseIds;
 
-    return allConnectors
-      .filter((connector) => allowedIds.some((id) => connector.id.includes(id)))
-      .map(getOperationGroupCardDataFromConnector);
-  }, [allConnectors, isAgenticWorkflow, filters]);
+    return allConnectors.filter((connector) => baseIds.some((id) => connector.id.includes(id))).map(getOperationGroupCardDataFromConnector);
+  }, [filters, allConnectors]);
 
   const knowledgeBaseActions = useMemo(() => {
     const allowedSuffixes = new Set([
