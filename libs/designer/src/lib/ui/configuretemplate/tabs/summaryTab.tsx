@@ -11,7 +11,7 @@ export const summaryTab = (
   { disabled, tabStatusIcon }: TemplateWizardTabProps
 ): TemplateTabProps => ({
   id: constants.CONFIGURE_TEMPLATE_WIZARD_TAB_NAMES.SUMMARY,
-  title: resources.ReviewTabLabel,
+  title: resources.SummaryTabLabel,
   content: <TemplateReviewList />,
   tabStatusIcon,
   disabled,

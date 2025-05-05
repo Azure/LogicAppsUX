@@ -316,10 +316,10 @@ export const useResourceStrings = () => {
       id: 'hA5Aif',
       description: 'The tab label for the publish tab on the configure template wizard',
     }),
-    ReviewTabLabel: intl.formatMessage({
-      defaultMessage: 'Review',
-      id: 'uQtott',
-      description: 'The tab label for the review tab on the configure template wizard',
+    SummaryTabLabel: intl.formatMessage({
+      defaultMessage: 'Summary',
+      id: 'cCmFCI',
+      description: 'The tab label for the summary tab on the configure template wizard',
     }),
   };
 };

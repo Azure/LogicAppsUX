@@ -5,7 +5,6 @@ import { workflowsTab } from './workflowsTab';
 import { connectionsTab } from './connectionsTab';
 import { parametersTab } from './parametersTab';
 import { profileTab } from './profileTab';
-import { publishTab } from './publishTab';
 import { summaryTab } from './summaryTab';
 import { useTemplatesStrings } from '../../templates/templatesStrings';
 import { useResourceStrings } from '../resources';
@@ -63,10 +62,7 @@ export const useConfigureTemplateWizardTabs = ({
   );
 
   useEffect(() => {
-    if (
-      selectedTabId === constants.CONFIGURE_TEMPLATE_WIZARD_TAB_NAMES.SUMMARY ||
-      selectedTabId === constants.CONFIGURE_TEMPLATE_WIZARD_TAB_NAMES.PUBLISH
-    ) {
+    if (selectedTabId === constants.CONFIGURE_TEMPLATE_WIZARD_TAB_NAMES.SUMMARY) {
       dispatch(setRunValidation(true));
       dispatch(validateWorkflowManifestsData());
       dispatch(validateTemplateManifest());
@@ -114,10 +110,6 @@ export const useConfigureTemplateWizardTabs = ({
       disableSave: disableProfileSave,
     }),
     summaryTab(resources, dispatch, {
-      tabStatusIcon: undefined,
-      disabled: !enableWizard || isWizardUpdating,
-    }),
-    publishTab(intl, resources, {
       tabStatusIcon: undefined,
       disabled: !enableWizard || isWizardUpdating,
     }),
