@@ -1,3 +1,4 @@
+import React from 'react';
 import type { SearchableDropdownProps } from '..';
 import { SearchableDropdown } from '..';
 import renderer from 'react-test-renderer';

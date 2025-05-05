@@ -32,7 +32,7 @@ export const useAllCognitiveServiceAccounts = (subscriptionId: string) => {
 
 export const useCognitiveServiceAccountDeploymentsForNode = (nodeId: string, connectorId?: string) => {
   const selectedConnection = useSelectedConnection(nodeId);
-  const resourceId = selectedConnection?.properties.connectionParameters?.cognitiveServiceAccountId.metadata?.value;
+  const resourceId = selectedConnection?.properties?.connectionParameters?.cognitiveServiceAccountId?.metadata?.value;
   return useQuery(
     [queryKeys.allCognitiveServiceAccountsDeployments, { resourceId }],
     async () => {
