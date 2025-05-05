@@ -165,6 +165,7 @@ export default {
                   },
                 },
               },
+              required: ['maximumTokenCount', 'messageCountLimit'],
             },
             deploymentModelProperties: {
               type: 'object',
@@ -190,9 +191,10 @@ export default {
               },
             },
           },
+          required: ['agentHistoryReductionSettings'],
         },
       },
-      required: ['deploymentId', 'messages', 'agentModelType', 'deploymentModelProperties'],
+      required: ['deploymentId', 'messages', 'agentModelType', 'deploymentModelProperties', 'agentModelSettings'],
     },
     outputs: {
       type: 'object',
