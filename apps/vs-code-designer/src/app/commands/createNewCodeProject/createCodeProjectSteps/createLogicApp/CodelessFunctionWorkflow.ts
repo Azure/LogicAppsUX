@@ -111,6 +111,7 @@ export class CodelessFunctionWorkflow extends WorkflowCreateStepBase<IFunctionWi
     if (hostJsonUpdated) {
       await writeFormattedJson(hostJsonPath, hostJson);
     }
+
     await setLocalAppSetting(
       context,
       context.projectPath,

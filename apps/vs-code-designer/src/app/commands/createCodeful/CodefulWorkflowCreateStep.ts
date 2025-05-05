@@ -11,7 +11,6 @@ import * as fse from 'fs-extra';
 import * as path from 'path';
 import { WorkflowCreateStepBase } from '../createCodeless/createCodelessSteps/WorkflowCreateStepBase';
 import { getCodefulWorkflowTemplate } from '../../utils/codeless/templates';
-//import { addFolderToBuildPath, addNugetPackagesToBuildFile, getDotnetBuildFile, suppressJavaScriptBuildWarnings, updateFunctionsSDKVersion, writeBuildFileToDisk } from '../../utils/codeless/updateBuildFile';
 import { writeFormattedJson } from '../../utils/fs';
 import {
   hostFileName,
@@ -58,14 +57,10 @@ export class CodefulWorkflowCreateStep extends WorkflowCreateStepBase<IFunctionW
     return workflowCsFullPath;
   }
 
-  private async createSystemArtifacts(context: IFunctionWizardContext): Promise<void> {
+  private async updateHostJson(context: IFunctionWizardContext, hostFileName: string): Promise<void> {
     const hostJsonPath: string = path.join(context.projectPath, hostFileName);
     let hostJson: IHostJsonV2 = await this.getHostJson(context, hostJsonPath);
     let hostJsonUpdated = false;
-
-    const target = vscode.Uri.file(context.projectPath);
-
-    await switchToDotnetProject(context, target, '8', true);
 
     hostJson.extensionBundle = undefined;
     hostJsonUpdated = true;
@@ -79,13 +74,20 @@ export class CodefulWorkflowCreateStep extends WorkflowCreateStepBase<IFunctionW
       hostJson = {
         ...hostJson,
       };
-      hostJson.extensionBundle = undefined;
       hostJsonUpdated = true;
     }
 
     if (hostJsonUpdated) {
       await writeFormattedJson(hostJsonPath, hostJson);
     }
+  }
+
+  private async createSystemArtifacts(context: IFunctionWizardContext): Promise<void> {
+    const target = vscode.Uri.file(context.projectPath);
+
+    await switchToDotnetProject(context, target, '8', true);
+
+    await this.updateHostJson(context, hostFileName);
 
     await setLocalAppSetting(context, context.projectPath, workerRuntimeKey, WorkerRuntime.Dotnet, MismatchBehavior.Overwrite);
     await setLocalAppSetting(context, context.projectPath, functionsInprocNet8Enabled, '1', MismatchBehavior.Overwrite);
