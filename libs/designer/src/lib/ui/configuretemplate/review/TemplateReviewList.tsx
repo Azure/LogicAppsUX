@@ -34,18 +34,27 @@ export const TemplateReviewList = () => {
       id: '0m0zNa',
       description: 'The label for the connector type',
     }),
+    StatusAndPlanLabel: intl.formatMessage({
+      defaultMessage: 'Status and Plan',
+      id: 'oiME91',
+      description: 'The label for the status and plan tab label',
+    }),
   };
 
   const { connectorKinds, stateTypes, resourceStrings: templateResourceStrings } = useTemplatesStrings();
   const resources = { ...templateResourceStrings, ...connectorKinds, ...stateTypes, ...useResourceStrings(), ...intlText };
 
-  const workflowsSectionItems = useWorkflowSectionItems(resources);
+  const statusAndPlanItems: TemplatesSectionItem[] = useStatusAndPlanItems(resources);
+  const workflowsSectionItems: TemplatesSectionItem[] = useWorkflowSectionItems(resources);
   const connectionsSectionItems: TemplatesSectionItem[] = useConnectionSectionItems(resources);
   const paramtersSectionItems: TemplatesSectionItem[] = useParameterSectionItems(resources);
   const profileSectionItems: TemplatesSectionItem[] = useProfileSectionItems(resources);
-  const publishSectionItems: TemplatesSectionItem[] = usePublishSection(resources);
 
   const sectionItems: Record<string, { label: string; value: TemplatesSectionItem[]; emptyText?: string }> = {
+    statusAndPlan: {
+      label: resources.StatusAndPlanLabel,
+      value: statusAndPlanItems,
+    },
     workflows: {
       label: resources.WorkflowsTabLabel,
       value: workflowsSectionItems,
@@ -63,10 +72,6 @@ export const TemplateReviewList = () => {
     profile: {
       label: resources.ProfileTabLabel,
       value: profileSectionItems,
-    },
-    publish: {
-      label: resources.PublishTabLabel,
-      value: publishSectionItems,
     },
   };
 
@@ -89,6 +94,37 @@ export const TemplateReviewList = () => {
       </Accordion>
     </div>
   );
+};
+
+const useStatusAndPlanItems = (resources: Record<string, string>) => {
+  const { status, templateManifest } = useSelector((state: RootState) => ({
+    status: state.template.status,
+    templateManifest: state.template.manifest,
+  }));
+
+  const items: TemplatesSectionItem[] = [
+    {
+      label: resources.Host,
+      value:
+        templateManifest?.skus
+          ?.map((skuKind) =>
+            equals(skuKind, 'standard') ? resources.Standard : equals(skuKind, 'consumption') ? resources.Consumption : ''
+          )
+          ?.join(', ') ?? resources.Placeholder,
+      type: 'text',
+    },
+    {
+      label: resources.Status,
+      value: equals(status, resources.ProductionEnvironment)
+        ? resources.ProductionEnvironment
+        : equals(status, resources.TestingEnvironment)
+          ? resources.TestingEnvironment
+          : resources.DevelopmentEnvironment,
+      type: 'text',
+    },
+  ];
+
+  return items;
 };
 
 const useWorkflowSectionItems = (resources: Record<string, string>) => {
@@ -265,16 +301,6 @@ const useProfileSectionItems = (resources: Record<string, string>) => {
       type: 'text',
     },
     {
-      label: resources.Host,
-      value:
-        templateManifest?.skus
-          ?.map((skuKind) =>
-            equals(skuKind, 'standard') ? resources.Standard : equals(skuKind, 'consumption') ? resources.Consumption : ''
-          )
-          ?.join(', ') ?? resources.Placeholder,
-      type: 'text',
-    },
-    {
       label: resources.BY,
       value: templateManifest?.details?.By ?? resources.Placeholder,
       type: 'text',
@@ -292,20 +318,6 @@ const useProfileSectionItems = (resources: Record<string, string>) => {
     {
       label: resources.Tags,
       value: templateManifest?.tags?.join(', ') ?? resources.Placeholder,
-      type: 'text',
-    },
-  ];
-
-  return items;
-};
-
-const usePublishSection = (resources: Record<string, string>) => {
-  const { status } = useSelector((state: RootState) => state.template);
-
-  const items: TemplatesSectionItem[] = [
-    {
-      label: resources.Status,
-      value: status ?? resources.Placeholder,
       type: 'text',
     },
   ];

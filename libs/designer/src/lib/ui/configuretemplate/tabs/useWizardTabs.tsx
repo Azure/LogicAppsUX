@@ -6,7 +6,7 @@ import { connectionsTab } from './connectionsTab';
 import { parametersTab } from './parametersTab';
 import { profileTab } from './profileTab';
 import { publishTab } from './publishTab';
-import { reviewTab } from './reviewTab';
+import { summaryTab } from './summaryTab';
 import { useTemplatesStrings } from '../../templates/templatesStrings';
 import { useResourceStrings } from '../resources';
 import { setRunValidation } from '../../../core/state/templates/tabSlice';
@@ -64,7 +64,7 @@ export const useConfigureTemplateWizardTabs = ({
 
   useEffect(() => {
     if (
-      selectedTabId === constants.CONFIGURE_TEMPLATE_WIZARD_TAB_NAMES.REVIEW ||
+      selectedTabId === constants.CONFIGURE_TEMPLATE_WIZARD_TAB_NAMES.SUMMARY ||
       selectedTabId === constants.CONFIGURE_TEMPLATE_WIZARD_TAB_NAMES.PUBLISH
     ) {
       dispatch(setRunValidation(true));
@@ -113,7 +113,7 @@ export const useConfigureTemplateWizardTabs = ({
       onSave: onProfileSave,
       disableSave: disableProfileSave,
     }),
-    reviewTab(resources, dispatch, {
+    summaryTab(resources, dispatch, {
       tabStatusIcon: undefined,
       disabled: !enableWizard || isWizardUpdating,
     }),

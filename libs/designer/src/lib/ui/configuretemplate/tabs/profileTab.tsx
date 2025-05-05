@@ -30,7 +30,7 @@ export const profileTab = (
         type: 'button',
         text: resources.NextButtonText,
         onClick: () => {
-          dispatch(selectWizardTab(constants.CONFIGURE_TEMPLATE_WIZARD_TAB_NAMES.REVIEW));
+          dispatch(selectWizardTab(constants.CONFIGURE_TEMPLATE_WIZARD_TAB_NAMES.SUMMARY));
         },
       },
       {

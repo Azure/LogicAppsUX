@@ -5,12 +5,12 @@ import { selectWizardTab } from '../../../core/state/templates/tabSlice';
 import { TemplateReviewList } from '../review/TemplateReviewList';
 import type { TemplateWizardTabProps } from './model';
 
-export const reviewTab = (
+export const summaryTab = (
   resources: Record<string, string>,
   dispatch: AppDispatch,
   { disabled, tabStatusIcon }: TemplateWizardTabProps
 ): TemplateTabProps => ({
-  id: constants.CONFIGURE_TEMPLATE_WIZARD_TAB_NAMES.REVIEW,
+  id: constants.CONFIGURE_TEMPLATE_WIZARD_TAB_NAMES.SUMMARY,
   title: resources.ReviewTabLabel,
   content: <TemplateReviewList />,
   tabStatusIcon,
