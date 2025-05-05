@@ -1,4 +1,11 @@
 # Logic Apps Designer
+### [5.94.9](https://github.com/Azure/LogicAppsUX/compare/v5.94.8...v5.94.9) (2025-05-05)
+
+
+### Bug Fixes
+
+* **Designer:** Non-latin characters in action name breaking designer ([#7178](https://github.com/Azure/LogicAppsUX/issues/7178)) ([17093e6](https://github.com/Azure/LogicAppsUX/commit/17093e689b8da8aa3e8c20cea6934a4854ecde3f)), closes [#6957](https://github.com/Azure/LogicAppsUX/issues/6957)
+
 ### [5.94.8](https://github.com/Azure/LogicAppsUX/compare/v5.94.7...v5.94.8) (2025-05-05)
 
 
