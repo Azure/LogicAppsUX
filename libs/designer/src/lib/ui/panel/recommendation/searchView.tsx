@@ -7,7 +7,7 @@ import { useDebouncedEffect } from '@react-hookz/web';
 import type { FC } from 'react';
 import { useCallback, useEffect, useState, useMemo } from 'react';
 import { useDispatch } from 'react-redux';
-import { useDiscoveryPanelRelationshipIds } from '../../../core/state/panel/panelSelectors';
+import { useDiscoveryPanelRelationshipIds, useIsAgentTool } from '../../../core/state/panel/panelSelectors';
 import { useAgenticWorkflow } from '../../../core/state/designerView/designerViewSelectors';
 import { useShouldEnableParseDocumentWithMetadata } from './hooks';
 import { DefaultSearchOperationsService } from './SearchOpeationsService';
@@ -41,6 +41,7 @@ export const SearchView: FC<SearchViewProps> = ({
   const shouldEnableParseDocWithMetadata = useShouldEnableParseDocumentWithMetadata();
   const parentGraphId = useDiscoveryPanelRelationshipIds().graphId;
   const isWithinAgenticLoop = useIsWithinAgenticLoop(parentGraphId);
+  const isAgentTool = useIsAgentTool();
   const isRoot = useMemo(() => parentGraphId === 'root', [parentGraphId]);
 
   const dispatch = useDispatch<AppDispatch>();
@@ -63,19 +64,20 @@ export const SearchView: FC<SearchViewProps> = ({
         return false;
       }
       if (
-        isWithinAgenticLoop &&
-        // can't filter on all control because of terminate
-        (operation.id === constants.NODE.TYPE.SWITCH ||
-          operation.id === constants.NODE.TYPE.SCOPE ||
-          operation.id === constants.NODE.TYPE.IF ||
-          operation.id === constants.NODE.TYPE.UNTIL ||
-          operation.id === constants.NODE.TYPE.FOREACH)
+        isWithinAgenticLoop ||
+        (isAgentTool &&
+          // can't filter on all control because of terminate
+          (operation.id === constants.NODE.TYPE.SWITCH ||
+            operation.id === constants.NODE.TYPE.SCOPE ||
+            operation.id === constants.NODE.TYPE.IF ||
+            operation.id === constants.NODE.TYPE.UNTIL ||
+            operation.id === constants.NODE.TYPE.FOREACH))
       ) {
         return false;
       }
       return true;
     },
-    [isAgenticWorkflow, isRoot, isWithinAgenticLoop]
+    [isAgentTool, isAgenticWorkflow, isRoot, isWithinAgenticLoop]
   );
 
   useDebouncedEffect(
