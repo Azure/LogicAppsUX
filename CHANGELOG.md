@@ -1,4 +1,12 @@
 # Logic Apps Designer
+### [5.94.8](https://github.com/Azure/LogicAppsUX/compare/v5.94.7...v5.94.8) (2025-05-05)
+
+
+### Bug Fixes
+
+* **designer:** Prevent error for undefined cognitiveServiceAccountId ([#7171](https://github.com/Azure/LogicAppsUX/issues/7171)) ([491f0e7](https://github.com/Azure/LogicAppsUX/commit/491f0e76ac93e6aad5f889a18cf8fe7d832b670b))
+* **designer:** Update Agent Tool Filtering ([#7174](https://github.com/Azure/LogicAppsUX/issues/7174)) ([aa868db](https://github.com/Azure/LogicAppsUX/commit/aa868dbb062e01cd1ea8603a3f2b8e5c70565847))
+
 ### [5.94.7](https://github.com/Azure/LogicAppsUX/compare/v5.94.6...v5.94.7) (2025-05-04)
 
 
