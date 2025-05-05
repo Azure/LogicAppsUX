@@ -254,6 +254,21 @@ export const useResourceStrings = () => {
       id: 'DTIrLI',
       description: 'The description for button text of saving the template',
     }),
+    SavePublishForTestingButton: intl.formatMessage({
+      defaultMessage: 'Save + publish for testing',
+      id: 'hrs5f4',
+      description: 'The description for button text of saving the template as testing status',
+    }),
+    SavePublishForProdButton: intl.formatMessage({
+      defaultMessage: 'Save + publish for production',
+      id: '0UjRS5',
+      description: 'The description for button text of saving the template as production status',
+    }),
+    SaveUnpublishButton: intl.formatMessage({
+      defaultMessage: 'Save + unpublish template',
+      id: 'TEYRnv',
+      description: 'The description for button text of saving the template rolling back to development status',
+    }),
     // Aria labels
     WorkflowsListTableLabel: intl.formatMessage({
       defaultMessage: 'Workflows list tabel',

@@ -1,7 +1,7 @@
 import { useDispatch, useSelector } from 'react-redux';
 import { useCallback, useMemo } from 'react';
 import type { OptionOnSelectData, SelectionEvents } from '@fluentui/react-components';
-import { Dropdown, Option } from '@fluentui/react-components';
+import { Dropdown, Field, Option } from '@fluentui/react-components';
 import { equals } from '@microsoft/logic-apps-shared';
 import { useIntl } from 'react-intl';
 import type { AppDispatch, RootState } from '../../../core/state/templates/store';
@@ -45,26 +45,28 @@ export const FeaturedConnectors = () => {
   );
 
   return (
-    <Dropdown
-      style={{ width: '100%' }}
-      multiselect={true}
-      onOptionSelect={onOptionSelect}
-      disabled={isLoading}
-      defaultValue={selectedConnectors?.map((connector) => connector.displayName).join(', ')}
-      defaultSelectedOptions={selectedConnectors?.map((connector) => connector.id)}
-      placeholder={isLoading ? texts.LOADING : ''}
-    >
-      {!isLoading && !allConnectors?.length ? (
-        <Option key={'no-items'} value={'#noitem#'} disabled>
-          {texts.NO_ITEMS}
-        </Option>
-      ) : (
-        allConnectors?.map((resource) => (
-          <Option key={resource.id} value={resource.id}>
-            {resource.displayName}
+    <Field required={true}>
+      <Dropdown
+        style={{ width: '100%' }}
+        multiselect={true}
+        onOptionSelect={onOptionSelect}
+        disabled={isLoading}
+        defaultValue={selectedConnectors?.map((connector) => connector.displayName).join(', ')}
+        defaultSelectedOptions={selectedConnectors?.map((connector) => connector.id)}
+        placeholder={isLoading ? texts.LOADING : ''}
+      >
+        {!isLoading && !allConnectors?.length ? (
+          <Option key={'no-items'} value={'#noitem#'} disabled>
+            {texts.NO_ITEMS}
           </Option>
-        ))
-      )}
-    </Dropdown>
+        ) : (
+          allConnectors?.map((resource) => (
+            <Option key={resource.id} value={resource.id}>
+              {resource.displayName}
+            </Option>
+          ))
+        )}
+      </Dropdown>
+    </Field>
   );
 };
