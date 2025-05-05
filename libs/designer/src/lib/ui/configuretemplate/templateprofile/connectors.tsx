@@ -25,10 +25,11 @@ export const FeaturedConnectors = () => {
   };
   const dispatch = useDispatch<AppDispatch>();
 
-  const { operationInfos, featuredConnectors } = useSelector((state: RootState) => {
+  const { operationInfos, featuredConnectors, errors } = useSelector((state: RootState) => {
     return {
       operationInfos: state.operation.operationInfo,
       featuredConnectors: state.template.manifest?.featuredConnectors ?? [],
+      errors: state.template.errors,
     };
   });
   const { data: allConnectors, isLoading } = useAllConnectors(operationInfos);
@@ -45,7 +46,7 @@ export const FeaturedConnectors = () => {
   );
 
   return (
-    <Field required={true}>
+    <Field required={true} validationMessage={errors?.manifest?.['featuredConnectors']}>
       <Dropdown
         style={{ width: '100%' }}
         multiselect={true}
